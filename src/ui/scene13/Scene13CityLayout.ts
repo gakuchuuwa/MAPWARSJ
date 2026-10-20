@@ -142,9 +142,13 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     //    即内陆干旱区的城）不挖——历史上这类城要么是干壕、要么根本无壕，凭空挖一圈水不符合地理。
     const moatOn = moatW > 0 && this.buildingStyleFor(1) !== 'YURT' && this.environmentPlan?.waterKind !== 'none';
     if (this.defenderCityType === 'pass') {
-        // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形形制：台地边界按矩形双圈算（旧方形不传，走原算法一个像素不动）
+        // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形/镜像矩形：台地边界按对应双圈算（旧方形不传，走原算法一个像素不动）
+        // 🔴 [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」] `defenderPassTerrain === 'flat'`：把高台整个抹平（城坐平地）
         gl.flattenPassTerraces(cx, cy, W, H, seedStr, this.wallGates, this.defBuildings,
-            this.defenderPassShape === 'rect' ? passRingHalfExtents(true) : undefined);
+            this.defenderPassShape && this.defenderPassShape !== 'square'
+                ? passRingHalfExtents(this.defenderPassShape)
+                : undefined,
+            this.defenderPassTerrain === 'flat');
     } else if (this.defenderCityType === 'stockade') {
         gl.flattenStockadeTerraces(cx, cy, W, H, seedStr, this.wallGates);
     } else {
@@ -593,6 +597,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             // 候选点位涵盖：瓮城夹道（两圈城墙之间走廊）、外门内侧防区、内廷营防死角
             // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形双圈（内 21×13 / 外 29×21）的夹道在 i 向 −12.5 / j 向 ±8.5：
             //    方形那组里的 [±9.5~10.5, 0.5] 在矩形下会落回内城里压内墙 ⇒ 矩形换一组按 inner/outer 半长中点算的点位。
+            // 🔴 [2026-10-20 主人令「再做一个镜像的矩形」] rect_mirror 把 i/j 两轴对调（内 13×21 / 外 21×29），夹道点位同步对调。
             const passCandidates: ReadonlyArray<readonly [number, number]> = this.defenderPassShape === 'rect'
                 ? [
                     // 瓮城夹道四边中点（i 半长内 10.5→外 14.5 取 12.5、j 半长 6.5→10.5 取 8.5）
@@ -604,7 +609,15 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     // 内城要塞四隅与城堡夹道（与方形同一组，矩形内城中心不变）
                     [-2.2, 2.2], [3.2, -2.2], [-2.2, -2.2], [3.2, 3.2],
                 ]
-                : [
+                : this.defenderPassShape === 'rect_mirror'
+                    ? [
+                        // 镜像矩形：夹道在 j 向 −12.5 / i 向 ±8.5
+                        [-8, 0.5], [9, 0.5], [0.5, -12], [0.5, 13],
+                        [-8, -12], [9, -12], [-8, 13], [9, 13],
+                        [-8, -6], [9, -6], [-8, 7], [9, 7],
+                        [-2.2, 2.2], [3.2, -2.2], [-2.2, -2.2], [3.2, 3.2],
+                    ]
+                    : [
                     // 瓮城夹道四面走廊（内墙与外墙之间空当）
                     [-9.5, 0.5],   // 西夹道中
                     [10.5, 0.5],   // 东夹道中

@@ -1645,8 +1645,14 @@ export const PASS_SQUARE_RINGS = {
     outer: { segI: 10, segJ: 10 },  // Li 25 × Lj 25
 } as const;
 export const PASS_RECT_RINGS = {
-    inner: { segI: 8, segJ: 4 },    // Li 21 × Lj 13
+    inner: { segI: 8, segJ: 4 },    // Li 21 × Lj 13（长轴沿 i：屏幕 ↘）
     outer: { segI: 12, segJ: 8 },   // Li 29 × Lj 21
+} as const;
+/** 🔴 [2026-10-20 主人令「再做一个镜像的矩形」] 矩形镜像：长轴换到 j 方向（屏幕 ↙），
+ *  即把上面长/短轴对调（内 13×21、外 21×29）；周长、件数、9 栋塔位规则完全同矩形，只是整体镜像过去。 */
+export const PASS_RECT_MIRROR_RINGS = {
+    inner: { segI: 4, segJ: 8 },    // Li 13 × Lj 21
+    outer: { segI: 8, segJ: 12 },   // Li 21 × Lj 29
 } as const;
 
 export interface PassRingHalfExtents {
@@ -1656,9 +1662,17 @@ export interface PassRingHalfExtents {
     outerHalfI: number; outerHalfJ: number;
 }
 
-/** 取险要双圈的半边长（格）；`Scene13GroundLayerGL.flattenPassTerraces` 的矩形分支用它算台地边界。 */
-export function passRingHalfExtents(rect: boolean): PassRingHalfExtents {
-    const r = rect ? PASS_RECT_RINGS : PASS_SQUARE_RINGS;
+/** 险要形制（square＝现状；rect＝矩形；rect_mirror＝矩形镜像） */
+export type PassShapeMode = 'square' | 'rect' | 'rect_mirror';
+
+/** 取险要双圈的半边长（格）；`Scene13GroundLayerGL.flattenPassTerraces` 的矩形分支用它算台地边界。
+ *  兼容旧调用：传 boolean（true＝矩形 / false＝方形）仍可用。 */
+export function passRingHalfExtents(shape: PassShapeMode | boolean): PassRingHalfExtents {
+    const r = typeof shape === 'boolean'
+        ? (shape ? PASS_RECT_RINGS : PASS_SQUARE_RINGS)
+        : shape === 'rect' ? PASS_RECT_RINGS
+            : shape === 'rect_mirror' ? PASS_RECT_MIRROR_RINGS
+                : PASS_SQUARE_RINGS;
     return {
         innerHalfI: (2 * r.inner.segI + 5) / 2,
         innerHalfJ: (2 * r.inner.segJ + 5) / 2,

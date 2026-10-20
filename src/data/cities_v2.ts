@@ -810,7 +810,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         troops: 10000,
         note: '钓鱼城；合州山城要塞',
     },
-    { id: 'city_diezhou', name: '迭部', factionId: 'dangchang', lat: 33.975273, lng: 103.482971, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '定级依据§6.2：迭部非关隘（唐742叠州改合川郡、治合川县），按城市判级；人口查无可靠估计，落最小城档 → 城寨' },
+    { id: 'city_diezhou', name: '迭部', factionId: 'dangchang', lat: 33.975273, lng: 103.482971, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', note: '定级依据§6.2：迭部非关隘（唐742叠州改合川郡、治合川县），按城市判级；人口查无可靠估计，落最小城档 → 城寨。🔴 [2026-10-20 主人令「没有历史吗，为什么让我定」] 风格按史实改：叠州＝宕昌羌故地，8 世纪起属吐蕃，甘南藏区，当地最著名的是藏式碉房、木构与寺院（与同属甘南的玛曲一致），库里「青藏」风格另含「古典发羌」＝早期羌人，宕昌羌亦归此 → TIBET（原 BASHU）' },
 
 
     { id: 'city_panzhou', name: '潘寨', factionId: 'gaoliang', lat: 33.578015, lng: 103.029785, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },

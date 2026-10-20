@@ -3270,6 +3270,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     bfe_sun_ru: { generalId: 'bfe_sun_ru', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 孙儒
     bfe_gao_zhihui: { generalId: 'bfe_gao_zhihui', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 高智慧
     aiji_psamtik_iii: { generalId: 'aiji_psamtik_iii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 普萨美提克三世：佩鲁西姆败亡，普将
+    gen_zhang_rou: { generalId: 'gen_zhang_rou', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_039', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 张柔
+    gen_feng_sheng: { generalId: 'gen_feng_sheng', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_039', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 冯胜
+    zhongxiang_zhongxiang: { generalId: 'zhongxiang_zhongxiang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 钟相
+    shuofang_sujian: { generalId: 'shuofang_sujian', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 苏建
+    mixiya_arsames: { generalId: 'mixiya_arsames', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿萨米斯
     bfe2_pollis: { generalId: 'bfe2_pollis', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 波利斯
     bfe3_86: { generalId: 'bfe3_86', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 克诺多马尔
     bfe_su_ding: { generalId: 'bfe_su_ding', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 交趾太守 苏定

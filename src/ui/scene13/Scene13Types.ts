@@ -578,8 +578,12 @@ export interface Scene13WarInit {
     /** [2026-08-22] 攻城战守方城等级（big_city/medium_city/small_city/pass）——决定守城建筑池的时代。 */
     defenderCityType?: CityType | null;
     /** [2026-10-20 主人令「东方很多险要应该都是矩形的……先做个样子」]
-     *  险要（pass）城墙形制：'rect'＝矩形 2:1 新形制（预览/验收 opt-in）；不传或 'square'＝现有方形，一个像素不动。 */
-    defenderPassShape?: 'square' | 'rect' | null;
+     *  险要（pass）城墙形制：'rect'＝矩形 2:1（长轴屏幕↘）、'rect_mirror'＝矩形镜像（长轴屏幕↙）；
+     *  不传或 'square'＝现有方形，一个像素不动。 */
+    defenderPassShape?: 'square' | 'rect' | 'rect_mirror' | null;
+    /** [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」]
+     *  险要地形：'flat'＝把城墙脚下的高台抹平（城坐平地，城外只留丘陵与大山）；不传＝现状多层高台。 */
+    defenderPassTerrain?: 'mound' | 'flat' | null;
     /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观：守方城中央立奇观地标）。 */
     defenderCityId?: string | null;
     /** [2026-09-12] 剧本战斗标题（`fieldBattleData.title`，如「伊苏斯战役」）；战斗面板大标题直接用它。 */

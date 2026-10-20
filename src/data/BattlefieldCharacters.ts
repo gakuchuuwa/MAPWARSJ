@@ -674,6 +674,10 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         note: '史无载，拟名：柔然社仑破高车诸部立柔然汗国，《魏书·蠕蠕传》',
     },
     // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    // 1213 中山之战：金中山守将姓名未载，拟名「完颜守忠」
+    bfe_jin_zhongshan: { generalId: 'bfe_jin_zhongshan', generalName: '完颜守忠', factionId: 'jin_d', portrait: '', note: '史无载，拟名：1213 年蒙古攻中山时金军守将姓名未传。' },
+    // 1372 河西之战：元亦集乃路守将姓名未载，拟名「朵儿只」
+    bfe_yuan_hexi: { generalId: 'bfe_yuan_hexi', generalName: '朵儿只', factionId: 'yuan', portrait: '', note: '史无载，拟名：1372 年明军攻河西时元军守将姓名未传。' },
 };
 
 /** 按 id 取战场人物（查不到返回 null） */

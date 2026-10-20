@@ -137,6 +137,11 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     hao_d_weirui: { birth: 442, death: 520 },              // 韦睿
     gen_theodoric_great: { birth: 454, death: 526 },       // 狄奥多里克大帝
     gen_clovis_i: { birth: 466, death: 511 },              // 克洛维
+    gen_zhang_rou: { birth: 1190, death: 1268, kaoju: '推定' },
+    gen_feng_sheng: { birth: 1330, death: 1395, kaoju: '推定' },
+    zhongxiang_zhongxiang: { birth: 1077, death: 1130, kaoju: '推定' },
+    shuofang_sujian: { birth: -150, death: -110, kaoju: '推定' },
+    mixiya_arsames: { birth: -380, death: -334, kaoju: '推定' },
     bfe2_pollis: { birth: -410, death: -376, kaoju: '推定' },
     bfe3_86: { birth: 250, death: 300, kaoju: '推定' },
     bfe_su_ding: { birth: -30, death: 40, kaoju: '推定' },
