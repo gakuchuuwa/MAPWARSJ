@@ -296,6 +296,15 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 里昂
+    // 🔴 2026-10-20 首战补敌将
+    'sashan_khosrow_ii': 'SASANIAN',   // 萨珊｜霍斯劳二世｜据点 菲鲁扎巴德
+    'sui_yuwenshu': 'JIANGNAN',        // 隋｜宇文述｜据点 汉东
+    'tujue_xielikehan': 'MONGOL',      // 突厥｜颉利可汗｜据点 于都斤山
+    // 🔴 2026-10-20 首战补敌将
+    'sashan_beilusi': 'SASANIAN',        // 萨珊｜卑路斯一世｜据点 菲鲁扎巴德
+    'luoma_xiageliwusi': 'ROMA',         // 罗马帝国｜西阿格里乌斯｜据点 罗马城
+    'tuoba_yuanying': 'WEI',             // 拓跋｜元英｜据点 大同
+    'rouran_anagui': 'MONGOL',           // 柔然｜阿那瓌｜据点 赛尔乌苏
     'gen_constantine_great': 'LATIN',   // 摩泽尔｜君士坦丁｜据点 特里尔
     'gen_cortes': 'SPANISH',   // 西属墨西哥｜科尔特斯｜据点 韦拉克鲁斯
     'gen_cuauhtemoc': 'AMERICA',   // 阿兹特克｜库奥特莫克｜据点 特诺奇提特兰
@@ -430,6 +439,9 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_tashfin': 'BERBER',   // 穆拉比特｜塔什芬｜据点 马拉喀什
     'gen_tassilo_iii': 'GERMANIC',   // 巴伐利亚｜塔西洛三世｜据点 雷根斯堡
     'gen_themistocles': 'ATHENIANS',   // 阿提卡｜地米斯托｜据点 雅典
+    'gen_miltiades': 'ATHENIANS',      // 阿提卡｜米太亚德｜据点 雅典（2026-10-20 首战规则新增）
+    'gen_cambyses': 'PERSIAN',         // 埃兰｜冈比西斯二世｜据点 苏萨（2026-10-20 首战规则新增）
+    'wu_fuchai': 'JIANGNAN',           // 吴国｜夫差｜据点 姑苏（2026-10-20 首战规则新增）
     'gen_theodoric_great': 'GOTHS',   // 东哥特｜狄奥多里克｜据点 拉文纳
     'gen_thoros': 'ORIE',   // 鲁本｜托罗斯二世｜据点 瓦卡
     'gen_tome_sousa': 'PORTUGUESE',   // 巴伊亚｜托梅｜据点 萨尔瓦多

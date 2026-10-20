@@ -87,11 +87,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     // ───────────────────────────────────────────────────────────────────
     {
         name: '帝国时代西班牙征服军团',
-        formationMode: 'crescent',
+        formationMode: 'echelon',
         slots: [
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'conquistador', count: 2 },
-            { type: 'missionary', count: 4 },   // 🔴 [2026-10-19 主人令「把这 5 个法术兵按历史编进对应文明的军团」] 原 heavy_crossbowman；按史：西班牙征服美洲，传教士随军
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'conquistador', count: 3 },
+            { type: 'missionary', count: 2 },
         ],
         regions: ['SPANISH'],
         parentLegion: '帝国时代西班牙方阵军团',

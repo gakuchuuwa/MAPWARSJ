@@ -119,7 +119,7 @@ const DE_BUILDING_SCALES: Record<string, number> = {
 };
 
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
-const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
+const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
 // 城寨建筑池（15 种：定居点 / 棚屋 A~G / 哨站 / 强化哨站 / 黑暗时代房屋 / 黑暗时代磨坊 / 黑暗时代兵营 / 黑暗时代定居点 / 黑暗时代部落中心，随机取 9 种，2026-10-01 主人定）
 // 🔴 [2026-10-19 主人令] 通用池移除蒙古包 A~D：非草原文明城寨不得随机出帐篷；蒙古包只给草原文明（蒙古/鲜卑/匈人/库曼等）。
@@ -146,7 +146,7 @@ const DE_STOCKADE_SCALES: Record<string, number> = {
  *   旧椭圆表是「中 1 ＋ 环周 6 ＝ 7 栋」，现为「中 1 ＋ 前后两排各 4 ＝ **9 栋**」。 */
 
 // 中城城堡时代建筑池（12 种，随机取 9：磨坊/民居/兵营/铁匠铺/靶场/警戒箭塔/城镇中心/马厩/市场 + 攻城武器厂/大学/修道院）
-const DE_MEDIUM_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
+const DE_MEDIUM_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
 
 // 大城帝国时代建筑池（11 种；[2026-08-27 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学 3 种 AGE4 必有，
 //   城镇中心固定居中、市场/大学分布周围，其余 8 种 AGE3 随机取 6 补足周8 —— 对齐战术 SIEGE_IMPERIAL_BUILDINGS）
@@ -162,7 +162,7 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
     ['MILL', 'AGE3'],
     ['MONASTERY', 'AGE3'],
     ['SIEGE_WORKSHOP', 'AGE3'],
-    ['TOWER', 'AGE4'], // [2026-09-08 主人定] 大型箭塔辅选项
+
 ];
 
 /** 🔴 [2026-10-18 主人定「漠北的应该是漠南的。真实的漠北 9 建筑都是蒙古包。」＋「中间的城堡换成蒙古包」]
@@ -1162,12 +1162,6 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
                     ? (DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'])
                     : (DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA']),
                 groundTile: cityGroundTile(buildingStyle, 'rd2'),
-                auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
-                    { b: 'TOWER', age: 'AGE3', ci: -8, cj: -8 },
-                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: -8 },
-                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: 9 },
-                    { b: 'TOWER', age: 'AGE3', ci: -8, cj: 9 },
-                ],
             }, buildingStyle);
     }
 
@@ -1275,7 +1269,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             const j = Math.floor(rnd() * (i + 1));
             [secondary[i], secondary[j]] = [secondary[j], secondary[i]];
         }
-        pool = [...noble, ...secondary.slice(0, 6)];
+        pool = [...noble, ...secondary.slice(0, centerCastle ? 5 : 6)];
         // 9 建筑整体洗牌打乱（中心不再固定，位置完全随机）
         for (let i = pool.length - 1; i > 0; i--) {
             const j = Math.floor(rnd() * (i + 1));
@@ -1290,7 +1284,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     if (native) {
         const full: Array<[string, string]> = isMobeiStyle(buildingStyle)
             ? pool.map(([b]): [string, string] => [b, 'AGE3'])
-            : [...DE_IMPERIAL_CITY_POOL];
+            : [...pool];
         for (let i = full.length - 1; i > 0; i--) {
             const j = Math.floor(rnd() * (i + 1));
             [full[i], full[j]] = [full[j], full[i]];
@@ -1309,16 +1303,6 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             seg: 9, near: 3.5, far: 9, corner: true, slotCenters: bigSlotCenters, gateEdges: [true, true, true, true],
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],
             groundTile: cityGroundTile(buildingStyle, 'rd1'),
-            auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
-                { b: 'TOWER', age: 'AGE4', ci: -9, cj: -9 },
-                { b: 'TOWER', age: 'AGE4', ci: 10, cj: -9 },
-                { b: 'TOWER', age: 'AGE4', ci: 10, cj: 10 },
-                { b: 'TOWER', age: 'AGE4', ci: -9, cj: 10 },
-                { b: 'HOUSE', age: 'AGE3', ci: -3.5, cj: 4.5 },
-                { b: 'HOUSE', age: 'AGE3', ci: 4.5, cj: -3.5 },
-                { b: 'HOUSE', age: 'AGE3', ci: -8.5, cj: -3.5 },
-                { b: 'HOUSE', age: 'AGE3', ci: 9.5, cj: 4.5 },
-            ],
         }, buildingStyle);
     }
 
@@ -1505,7 +1489,7 @@ function buildDeCityGridHtml(
     if (!g.slotCenters) slots.sort((a, b) => a.y - b.y);   // 按屏幕 y 升序取建筑（与战略版同一取法）
 
     /** 放一栋：给素材目录名 + 占地 s + 位中心 (ci,cj) + 是否镜像 */
-    const placeBuilding = (dir: string, src: string, boxW: number, s: number, ci: number, cj: number, flip: boolean): void => {
+    const placeBuilding = (dir: string, src: string, boxW: number, s: number, ci: number, cj: number, flip: boolean, isAux = false): void => {
         const a0i = Math.round(ci - (s - 1) / 2), a0j = Math.round(cj - (s - 1) / 2);   // 占地左上格（吸附到整格）
         const ti = a0i + (s - 1) / 2, tj = a0j + (s - 1) / 2;                           // 占地中心（格坐标）
         const px = (ti - tj) * TW / 2, py = (ti + tj) * TH / 2;
@@ -1515,7 +1499,7 @@ function buildDeCityGridHtml(
         const pctY = anc ? anc[1] / bh * 100 : 65;
         const pctX = flip ? 100 - pctX0 : pctX0;
         parts.push(
-            `<img src="${src}" style="position:absolute;left:50%;top:50%;width:${boxW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${px.toFixed(1)}px),calc(-${pctY.toFixed(1)}% + ${py.toFixed(1)}px))${flip ? ' scaleX(-1)' : ''};z-index:${Math.round(500 + py)};" />`
+            `<img src="${src}"${isAux ? ' data-aux="1"' : ''} style="position:absolute;left:50%;top:50%;width:${boxW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${px.toFixed(1)}px),calc(-${pctY.toFixed(1)}% + ${py.toFixed(1)}px))${flip ? ' scaleX(-1)' : ''};z-index:${Math.round(500 + py)};" />`
         );
     };
     const dirOf = (src: string): string => /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(src)?.[1] ?? '';
@@ -1539,6 +1523,17 @@ function buildDeCityGridHtml(
             placeBuilding(dir, src, bW, deBuildingFootprint(b), slot.ci, slot.cj, bFlip);
         }
     });
+
+    if (g.auxBuildings) {
+        const bStyle = g.buildingStyle ?? style;
+        g.auxBuildings.forEach((aux, ai) => {
+            const src = g.rawDirNames ? `/SUCAI_BUILDING/${aux.b}/preview.png` : cityBuildingSrc(bStyle, aux.b, aux.age);
+            const dir = dirOf(src);
+            const bW = (g.rawDirNames ? native.spriteW?.[aux.b] : (nativeW(native, aux.b, aux.age) ?? DE_SPRITE_BOX_W[dir])) ?? (baseSize * 0.32 * AUTO);
+            const bFlip = (deHashString(cityId + '|aux|' + aux.b + '|' + ai) & 1) === 1;
+            placeBuilding(dir, src, bW, deBuildingFootprint(aux.b), aux.ci, aux.cj, bFlip, true);
+        });
+    }
 
     // 城墙：按格逐件（见上 ring）。🔴 [2026-10-12 主人「为什么只有巴黎这里缺一块」] 不镜像（原来 50% 整圈翻转，
     //    把东北向素材镜像去顶替东南向 ⇒ 门塔接墙处错位）；每件按朝向取 DE 素材，宽度、锚点都取素材原值。

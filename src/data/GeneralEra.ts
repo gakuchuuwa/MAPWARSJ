@@ -341,6 +341,15 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_city_syracuse': 'antiquity',
     'gen_civilis': 'antiquity',
     'gen_clovis_i': 'feudal',
+    // 🔴 2026-10-20 首战补敌将（霍斯劳二世/宇文述/颉利可汗，均按生年过 476 分界＝封建）
+    'sashan_khosrow_ii': 'feudal',
+    'sui_yuwenshu': 'feudal',
+    'tujue_xielikehan': 'feudal',
+    // 🔴 2026-10-20 首战补敌将（时代按生年过 476 分界：440/430/460 古典，480 封建）
+    'sashan_beilusi': 'antiquity',
+    'luoma_xiageliwusi': 'antiquity',
+    'tuoba_yuanying': 'antiquity',
+    'rouran_anagui': 'feudal',
     'gen_constantine_great': 'antiquity',
     'gen_cuauhtemoc': 'imperial',
     'gen_cuchacique': 'imperial',
@@ -439,6 +448,9 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_tashfin': 'castle',
     'gen_tassilo_iii': 'feudal',
     'gen_themistocles': 'antiquity',
+    'gen_miltiades': 'antiquity',          // 米太亚德（马拉松，据点 雅典）
+    'gen_cambyses': 'antiquity',           // 冈比西斯二世（据点 苏萨）
+    'wu_fuchai': 'antiquity',              // 夫差（据点 姑苏）
     'gen_theodoric_great': 'antiquity',
     'gen_tibirica': 'imperial',
     'gen_tome_sousa': 'imperial',
