@@ -1563,8 +1563,8 @@ export const ANDE_BASE_TIERS: CompositionTier[] = [
  *  以文化正式名 CULTURE_NAMES 为底；特例 STEPPE 用「草原」（REGION_LABELS）而非「蒙古」，
  *  因「蒙古」留给第二层蒙古系支军团，避免重名。 */
 export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
-    CENTRAL: '古典时代秦汉军团',
-    NORTH: '古典时代秦汉军团',
+    CENTRAL: '古典时代华夏军团',
+    NORTH: '古典时代华夏军团',
     NORTHEAST: '古典时代羌族军团',
     KOREA: "封建时代新罗军团",
     JAPAN: "城堡时代幕府军团",
@@ -1574,8 +1574,8 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     STEPPE_IMPERIAL: "帝国时代蒙古军团",
     STEPPE_ANTIQUITY: "古典漠北军团",
     STEPPE_FEUDAL: "封建时代草原军团",
-    HEXI: "古典时代秦汉军团",
-    JIANGNAN: "封建时代隋唐军团",
+    HEXI: "古典时代华夏军团",
+    JIANGNAN: "封建时代中华军团",
     TIBET: "封建时代吐蕃军团",
     TIBET_CASTLE: '城堡时代萨迦军团',
     TIBET_IMPERIAL: "帝国时代卫藏军团",
@@ -2452,7 +2452,7 @@ export function resolveCityDefenseLegionName(
             : ((typeof window !== 'undefined'
                 ? ((window as any).game?.scriptCityVisibility?.getCurrentEvent?.()?.year
                     ?? (window as any).game?.timeSystem?.getYear?.())
-                : null) ?? -845);
+                : null) ?? -832);
     const targetAge = getEraByYear(resolvedYear);
 
     const candidates = LEVEL_2_CIV_62_LEGIONS.filter((l) => String(l.buildingStyle) === String(style));

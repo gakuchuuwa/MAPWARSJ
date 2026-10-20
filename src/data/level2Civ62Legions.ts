@@ -320,7 +320,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（咸阳、洛阳；秦阿房宫夯土台基、汉未央宫遗址、白马寺；青铜长剑、秦弩连射方阵、汉代铁戟环首刀与轻装具装汉骑）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代秦汉军团', civ: '中原', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '古典时代华夏军团', civ: '中原', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
@@ -337,7 +337,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（长安、洛阳；大雁塔、洛阳龙门奉先寺卢舍那大佛、含元殿；府兵制重步兵、唐陌刀劈砍大阵、明光铠与破阵马槊铁骑）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代隋唐军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '封建时代中华军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
