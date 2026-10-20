@@ -5199,7 +5199,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 35000,
         enemyFactionId: 'song',
         enemyFactionName: '北宋',
-        enemyGeneralId: 'song_peiji',   // 🔴 [2026-10-20 首战规则] 1002 灵州知州裴济（原势力误填灵州藩镇）
+        enemyGeneralId: 'song_peiji',   // 🔴 [2026-10-20 主人令] 1002 灵州守将裴济（据点武将+剧本敌将，双身份）
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '宋廷欲夺我定难五州断我祖业，党项儿郎绝不为奴！灵州被困数月粮绝水源尽，勇士们，随本统领拔城立西夏千秋业！' },
@@ -9751,13 +9751,13 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '奥龙特斯河畔卡迭石',
-        targetCityId: 'city_damasikusi',
+        targetCityId: 'city_emesa',   // 🔴 [2026-10-20 按首战规则④] 卡迭石（Tell Nebi Mend）在奥龙特斯河谷，最近据点＝埃梅萨（霍姆斯，约 26 公里）；原填大马士革（约 120 公里）
         targetLat: 34.558,
         targetLng: 36.519,
         myTroops: 40000,
         enemyFactionId: 'aiji',
         enemyFactionName: '新王国埃及大军',
-        enemyGeneralId: 'bfe2_ramses_ii',
+        enemyGeneralId: 'aiji_lameisisi',   // 🔴 [2026-10-20 双身份] 拉美西斯二世就是据点武将「拉美西斯」（孟菲斯），不另用战场人物 bfe2_ramses_ii
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '埃及年轻法老轻兵冒进，阿蒙军团与拉军团已首尾脱节！赫梯三千五百乘三人重型战车已潜伏河东，勇士，随大王渡河拦腰截断敌阵！' },
@@ -9817,7 +9817,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '奥龙特斯河畔卡迭石',
-        targetCityId: 'city_damasikusi',
+        targetCityId: 'city_emesa',   // 🔴 [2026-10-20 按首战规则④] 卡迭石（Tell Nebi Mend）在奥龙特斯河谷，最近据点＝埃梅萨（霍姆斯，约 26 公里）；原填大马士革（约 120 公里）
         targetLat: 34.558,
         targetLng: 36.519,
         myTroops: 25000,

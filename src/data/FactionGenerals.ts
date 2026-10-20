@@ -1136,7 +1136,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     huan: { generalId: 'huan_zhongshidao', generalName: '种师道', portrait: '/assets/zhaosong/huan_zhongshidao.png' },
     wei2: { generalId: 'wei2_hunjian', generalName: '浑瑊', portrait: '/assets/zhaosong/wei2_hunjian.png' },
     // 🔴 [2026-10-20 抽查] 仆固怀恩：唐朔方节度使（原挂灵州藩镇势力）→ 势力=唐国；据点回乐（灵州/灵武）✓；精锐 朔方军 T1
-    lingzhou: { generalId: 'pugu_puguhuaien', generalName: '仆固怀恩', portrait: '/assets/litang/lingzhou_puguhuaien.png', factionId: 'tang', eliteName: '朔方军', eliteTier: 1 },
+    lingzhou: [
+        { generalId: 'pugu_puguhuaien', generalName: '仆固怀恩', portrait: '/assets/litang/lingzhou_puguhuaien.png', factionId: 'tang', eliteName: '朔方军', eliteTier: 1 },
+        // 🔴 [2026-10-20 主人令「裴济就放灵州，用灵州的军团也是对的；裴济带领大夏军团没有问题，夏州本来就是宋地，灵州本来也有少数民族对抗李继迁」] 裴济＝北宋灵州知州（1002 城陷战死），双身份：据点武将＋该战守方主帅；军团＝灵州城的封建时代归义军团；立绘留空
+        { generalId: 'song_peiji', generalName: '裴济', portrait: '', factionId: 'song', legionName: '封建时代归义军团' },
+    ],
     ningkou: { generalId: 'ningkou_liling', generalName: '李陵', portrait: '/assets/liuhan/ningkou_liling.png' },
     juqu_d: { generalId: 'juqu_d_juqumengxun', generalName: '沮渠蒙逊', portrait: '/assets/HEXI/juqu_d_juqumengxun.png' },
         zhengzhou: { generalId: 'zhengzhou_chenqingzhi', generalName: '陈庆之', portrait: '/assets/NORTH/zhengzhou_chenqingzhi.png' },
@@ -1471,8 +1475,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'song_zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhaosong/song_zhaokuangyin.png' },
         // 🔴 [2026-10-20 首战规则] 赵光义＝宋太宗（979 高梁河之战亲征，被耶律休哥大败）→ 开封·宋国；名将；立绘留空
         { generalId: 'song_zhaoguangyi', generalName: '赵光义', portrait: '' },
-        // 🔴 [2026-10-20 首战规则] 裴济＝北宋灵州知州（1002 灵州陷落战死）→ 回乐（灵州）·宋国；普将；封建×契丹＝封建时代归义军团；立绘留空
-        { generalId: 'song_peiji', generalName: '裴济', portrait: '', legionName: '封建时代归义军团' },
         // 🔴 [2026-10-20 首战规则] 任福＝北宋好水川之战主帅（1041 中伏战死）→ 萧关（好水川一带）·宋国；普将；立绘留空
         { generalId: 'song_renfu', generalName: '任福', portrait: '' },
         // 🔴 [2026-10-20 首战规则] 张浚＝南宋川陕五路主帅（1130 富平之战被完颜娄室大败）→ 开封·宋国（驻兴州，城库无，锚定宋代表据点）；普将；立绘留空

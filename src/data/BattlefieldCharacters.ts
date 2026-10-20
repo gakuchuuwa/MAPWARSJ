@@ -582,7 +582,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         generalId: 'bfe2_ramses_ii',
         generalName: '拉美西斯二世',
         factionId: 'aiji',
-        portrait: '',
+        portrait: '/assets/WEST_ASIA/bfe2_ramses_ii.png',
         note: '实有其人：埃及法老，前1274年卡迭石战役统帅。',
     },
     // 🔴 [2026-10-20 主人令「双方武将必须实名」] 首战回补·第二批

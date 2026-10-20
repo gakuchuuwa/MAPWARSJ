@@ -117,7 +117,7 @@ export const BATTLEFIELDS: BattlefieldData[] = [
     // ── 公元前335年 多瑙河渡河战役（马其顿 vs 盖塔人） ──
     {
         id: 'bf_duonaohe',
-        name: '多瑙河渡河',
+        name: '多瑙河渡口',
         lat: 44.19,
         lng: 27.26,
         scriptYear: -335,

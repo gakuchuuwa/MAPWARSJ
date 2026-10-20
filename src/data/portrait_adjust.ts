@@ -8093,7 +8093,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/WEST_ASIA/emesene_xierkuhe.png": {
-            "scale": 1.14,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -8141,6 +8141,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.21,
             "offsetX": 0,
             "offsetY": 3
+        },
+        "/assets/WEST_ASIA/bfe2_ramses_ii.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/ORIE/aosiruowen_abujiaer.png": {
+            "scale": 1.32,
+            "offsetX": 0,
+            "offsetY": 19
         }
     },
     "folderGuides": {
