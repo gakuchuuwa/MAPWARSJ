@@ -336,17 +336,10 @@ export class Scene13WarLayer {
     /** 列阵推进阶段是否仍在进行（见 MARCH_REL）；解除后整场不再回到列阵 */
     private marching = false;
     /**
-     * 🔴 [2026-10-11 主人令「所有建筑改为贴图。确保士兵通行」] 每场只做一次：
-     *    开战 30 秒后**全场非墙装饰去碰撞**（树/石/摆设一律可通行）。不塌墙、不碰建筑 ——
-     *    墙另有「受伤自动坍塌」（见下）与「血归零即塌」两条，都只塌**已经掉血**的墙。
+     * 🔴 [2026-10-20 主人令「城墙的坍塌不是血量0，是随机形成75.50.25.0四种效果」]
+     * 每段城墙/垛墙/栅栏/篱笆的破口档（0.75 / 0.50 / 0.25 / 0），首次用到时随机定下、本场不变（见 wallBreachRatio）。
      */
-    private wallAutoCollapsed = false;
-    /**
-     * 🔴 [2026-10-15 主人令「把受伤的城墙自动坍塌逻辑加回来。只有不是满血的城墙才能自动坍塌」]
-     * 下一处墙缺口自动坍塌的时刻（battleSec）；1e9 = 已无墙可塌，停止轮询。
-     * 规则：每 10 秒塌一处，只挑**掉过血**（hp < maxHp）的墙/门/垛/栅栏，先塌最早挨打的那一处。
-     */
-    private nextWallGapSec = 10;
+    private wallBreachRatios = new WeakMap<WarBuilding, number>();
     /**
      * 🔴 [2026-10-03] 本场是不是「**真有城墙的攻城战**」（城寨守方、漠北蒙古守方按野战算 —— 见 2026-09-03、
      *    2026-09-19 主人定「城寨/漠北蒙古与野战一致：直接开战」）。
@@ -1444,8 +1437,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-09-03 主人定] 城寨(stockade)与野战一致：守方不待命，直接开战。
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
         this.siegeWithWalls = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
-        this.wallAutoCollapsed = false;   // 每场重新计（30 秒「全场非墙装饰去碰撞」那一下，见 step）
-        this.nextWallGapSec = 10;         // 🔴 [2026-10-15 主人令] 受伤城墙自动坍塌：每 10 秒塌一处，每场重新起算
+        this.wallBreachRatios = new WeakMap();   // 🔴 [2026-10-20 主人令] 城墙破损档每场重新随机
         // [2026-08-31] 本地名将加成已删（名将/精锐都走八环唯一通道，见 dmgVs 上方说明）。
         // [军事科技] 双方文化区 + 年份来源 + 分表重置（新一场战斗按当前年份重算，不沿用旧缓存）
         // 🔴 [2026-08-19] 双方兜底同为 CENTRAL：上游 GameAppCombatHooks 已按战场坐标兜过一次，
@@ -4400,23 +4392,6 @@ export class Scene13WarLayer {
         return chosen;
     }
 
-    /**
-     * 🔴 [2026-10-11 主人令「所有建筑改为贴图。确保士兵通行」] 开战 30 秒这一下：
-     *    把**非墙装饰**（树/石/摆设/建筑贴图）全部去碰撞 —— 全场可通行，士兵不再被景物卡住。
-     *    ⚠️ 不碰墙/门/垛/栅栏（墙另有「受伤自动坍塌」与「血归零即塌」两条，见下）。
-     */
-    private clearNonWallObstructions(): void {
-        this.lastCollapseAt = performance.now();
-        const wallSprites = new Set<DecorSprite>();
-        for (const b of this.wallGates) { wallSprites.add(b.sprite); if (b.extraSprites) for (const sp of b.extraSprites) wallSprites.add(sp); }
-        for (const sp of this.decorSprites) {
-            if (wallSprites.has(sp)) continue;
-            if (!sp.obstruction && sp.obstructionDisabled) continue;
-            sp.obstruction = undefined;
-            sp.obstructionDisabled = true;
-        }
-    }
-
     /** 墙/门/垛段是否还立着（`_DAMAGED` 也算立着；_RUBBLE/已销毁/正在倒塌 = 不立） */
     private wallStanding(b: WarBuilding): boolean {
         if (b.bld) return b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
@@ -4424,37 +4399,69 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-10-15 主人令「把受伤的城墙自动坍塌逻辑加回来。只有不是满血的城墙才能自动坍塌」]
-     * （前身：2026-10-12「10秒坍塌一个，靠近敌方或受到攻击的先塌」＋2026-10-14「只有受到攻击的城墙才能坍塌」）
-     *
-     * 每 10 秒自动塌一处**伤口**（`collapseNextWallGap` 由 step 每 10 秒调一次）：
-     *   · 只在城墙/城门/城垛/栅栏（= `wallGates`）里挑，**满血的一律跳过**（`hp >= maxHp` 不塌）；
-     *   · 候选中挑**最早挨打**的那一处（`hitAt` 最小），所以"靠近敌方 / 正在被打"的那段先塌；
-     *   · 一处都挑不到（全场墙都满血）⇒ 返回 true，10 秒后再看一次；
-     *   · 墙已全部塌完 / 没有墙 ⇒ 返回 false，停止轮询（`nextWallGapSec = 1e9`）；
-     *   · 城内建筑、箭塔、营寨**不参与**自动坍塌（它们只能被打到 0 血后倒塌，见 `onDefBuildingHit`）。
-     */
-    /**
      * 🔴 [2026-10-16 主人令「城墙，栅栏这些不需要完全摧毁，可以75%就可以通行，有的50%就剋，有点25%就可以，有点0%，这样城墙被摧毁的样子就多样化。更加真实……但是城门要摧毁」]
-     * 单格城墙/垛墙/栅栏/篱笆达到该剩余血量比例（0.75 / 0.50 / 0.25 / 0 四档交错）即视为破口通行并定格对应破损形态；城门与建筑恒为 0（必须打到 0% 完全摧毁）。
+     * 🔴 [2026-10-20 主人令「城墙的坍塌不是血量0，是随机形成75.50.25.0四种效果」] 四档改为**随机**（原按列表序号轮流，每座城塌出来都一个样）：
+     * 每段城墙/垛墙/栅栏/篱笆第一次用到时随机抽一档，本场不变；达到该剩余血量比例即破口通行并定格对应破损形态。城门与建筑恒为 0（必须打到 0% 完全摧毁）。
      */
     private wallBreachRatio(b: WarBuilding): number {
         if (b.bld || b.key === 'STONE_GATE') return 0;
-        const idx = Math.max(0, this.wallGates.indexOf(b));
-        return ([0.75, 0.50, 0.25, 0] as const)[idx & 3];
+        let r = this.wallBreachRatios.get(b);
+        if (r === undefined) {
+            r = ([0.75, 0.50, 0.25, 0] as const)[Math.floor(Math.random() * 4)];
+            this.wallBreachRatios.set(b, r);
+        }
+        return r;
     }
 
-    private collapseNextWallGap(): boolean {
-        const alive = this.wallGates.filter(b => this.wallStanding(b));
-        if (alive.length === 0) return false;            // 没墙可塌了 → 停轮询
-        let pick: WarBuilding | undefined;
-        for (const b of alive) {
-            if (b.key === 'STONE_GATE' || b.hp >= b.maxHp) continue; // 🔴 城门必须打到 0 血摧毁；只有不是满血的城墙才能自动坍塌
-            if (!pick || (b.hitAt ?? this.battleSec) < (pick.hitAt ?? this.battleSec)) pick = b;
+    /**
+     * 🔴 [2026-10-20 主人令「城门至城垛为一段。城门坍塌，同时也坍塌一段城墙」「并可以通行士兵，这样可以避免AI寻路」]
+     * 城门倒塌时，**随机一侧**从城门到第一座城垛（`_POST` / 篱笆转角 `CORNER`，城垛本身不塌）之间的城墙一起坍塌：
+     *   · 每块按各自随机破口档（wallBreachRatio）定格成 75/50/25/0 四种破损样子之一，全部解除阻挡可通行；
+     *   · 沿城门所在那条墙线找：门的走向与门两侧碰撞体同一口径（`_SE` 与左右镜像决定斜向），偏离墙线太远的不算；
+     *   · 墙件间距取全场墙件最近邻距离的中位数，相邻两块之间隔得太远（墙线断开/拐角）就停；
+     *   · 倒塌音只播一次（城门那一下已播），这一段静音塌。
+     */
+    private collapseGateSideSegment(gate: WarBuilding): void {
+        const dir = gate.sprite.asset.replace(/^BUILDING:/, '');
+        const dSign = (/_SE$/.test(dir) ? 1 : -1) * (gate.sprite.flip ? -1 : 1);
+        const ul = Math.hypot(24, 12);
+        const side = Math.random() < 0.5 ? 1 : -1;
+        const ux = (24 / ul) * side, uy = (12 * dSign / ul) * side;
+        const walls = this.wallGates.filter((b) => b !== gate && b.key !== 'STONE_GATE' && !b.bld);
+        if (walls.length < 2) return;
+        // 墙件间距：全场墙件最近邻距离的中位数
+        const nn: number[] = [];
+        for (const a of walls) {
+            let best = Infinity;
+            for (const b of walls) {
+                if (a === b) continue;
+                const d = Math.hypot(a.x - b.x, a.y - b.y);
+                if (d > 0.5 && d < best) best = d;
+            }
+            if (best < Infinity) nn.push(best);
         }
-        if (!pick) return true;                          // 全都满血：这一轮不塌，10 秒后再看
-        this.collapseOneWall(pick);                      // 复用同一条倒塌链（含 DE 倒塌动画 + 残骸 + 音效）
-        return true;
+        nn.sort((p, q) => p - q);
+        const spacing = nn[Math.floor(nn.length / 2)] ?? 40;
+        const maxStep = spacing * 2.2;
+        const isPost = (b: WarBuilding): boolean => /_POST|CORNER/.test(b.sprite.asset) || /_POST|CORNER/.test(b.rubbleAsset ?? '');
+        const visited = new Set<WarBuilding>();
+        let px = gate.x, py = gate.y;
+        for (let n = 0; n < 16; n++) {
+            let next: WarBuilding | null = null, nextAlong = Infinity;
+            for (const b of walls) {
+                if (visited.has(b)) continue;
+                const vx = b.x - px, vy = b.y - py;
+                const along = vx * ux + vy * uy;
+                if (along <= 0.5 || along > maxStep) continue;
+                const perp = Math.abs(vx * uy - vy * ux);
+                if (perp > along * 0.45 + spacing * 0.25) continue;
+                if (along < nextAlong) { nextAlong = along; next = b; }
+            }
+            if (!next || isPost(next)) break;   // 墙线断了 / 到城垛了 → 这一段到此为止
+            visited.add(next);
+            if (this.wallStanding(next)) this.collapseOneWall(next, true);
+            px = next.x; py = next.y;
+        }
     }
 
     /** 单个墙/门/垛段坍塌（严格对齐 DE empires2_x2_p1.dat）：
@@ -4462,12 +4469,14 @@ export class Scene13WarLayer {
      *  - 木栅栏(Unit 72) / 强木栅栏(Unit 119)：按 `wallBreachRatio` 阈值触发 `FX_WALL_DUST` + 切 `FOUNDATION_1X1_RUBBLE`；
      *  - 篱笆(Unit 1062)：按 `wallBreachRatio` 阈值触发 `FX_WALL_DUST` + 切 `BATTLEFIELD:FENCE_RUBBLE`；
      *  - 城门(Unit 64)：必须 0 血完全摧毁，照播 DE 独立 100 帧倒塌动画（`*_GATE_*_DESTR` → `*_GATE_*_RUBBLE`）。 */
-    private collapseOneWall(b: WarBuilding): void {
+    private collapseOneWall(b: WarBuilding, quiet = false): void {
         b.sprite.obstruction = undefined;
         b.sprite.obstructionDisabled = true;
         if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
-        // 🔴 [2026-10-15] 墙/门/垛塌（自动坍塌或被打穿阈值）都走这里 → 只在这一处播倒塌音，避免重复播放
-        audioManager.play('wall_collapse');
+        // 🔴 [2026-10-15] 墙/门/垛塌都走这里 → 只在这一处播倒塌音，避免重复播放（城门带塌的那一段传 quiet，不重复播）
+        if (!quiet) audioManager.play('wall_collapse');
+        // 🔴 [2026-10-20 主人令「城门坍塌，同时也坍塌一段城墙」] 必须在下面改贴图之前调：要按城门原贴图判墙线走向
+        if (b.key === 'STONE_GATE') this.collapseGateSideSegment(b);
         this.lastCollapseAt = performance.now();
         const br = this.wallBreachRatio(b);
         if (b.sprite.asset.includes('FENCE') || b.rubbleAsset === 'BATTLEFIELD:FENCE_RUBBLE') {
@@ -5880,18 +5889,9 @@ export class Scene13WarLayer {
             }
         }
         // 🔴 [2026-08-29 主人需求] 城墙内侧箭塔开火（射程内最近攻方士兵 → 射箭 + 开火火花；纯视觉）
-        // 🔴 [2026-10-15 主人令] 城墙的**两条**坍塌路径（都只对"已经掉血"的墙生效）：
-        //    ① **受伤自动坍塌**：每 10 秒塌一处掉过血的墙/门/垛/栅栏，先塌最早挨打的那一处（`collapseNextWallGap`）；
-        //    ② 被打穿：血归零立刻塌（`collapseOneWall`，见 onDefBuildingHit / 投射物伤害那两处）。
-        //    城内建筑、箭塔、营寨**不自动坍塌** —— 它们只能被打到 0 血后倒（见 `onDefBuildingHit`）。
-        // 🔴 [2026-10-11 主人令「确保士兵通行」] 下面 30 秒这一下只做「非墙装饰去碰撞」，不塌任何东西。
-        if (this.battleType === 'siege' && this.battleSec >= this.nextWallGapSec && this.nextWallGapSec < 1e9) {
-            this.nextWallGapSec = this.collapseNextWallGap() ? this.nextWallGapSec + 10 : 1e9;
-        }
-        if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= 30) {
-            this.wallAutoCollapsed = true;
-            this.clearNonWallObstructions();
-        }
+        // 🔴 [2026-10-20 主人令「删除战术模式中的10秒，30秒自动坍塌，改为，城门坍塌后，城门一边的城墙也自动坍塌，并可以通行」]
+        //    城墙不再定时自动坍塌（原「受伤城墙每 10 秒塌一处」已删）；30 秒「非墙装饰去碰撞」也删 —— 开局就已全部可通行。
+        //    现行两条：① 墙被打到各自随机破口档即塌（`collapseOneWall`）；② 城门 0 血倒塌 → 门旁至城垛那一段城墙同塌（`collapseGateSideSegment`）。
         if (this.battleType === 'siege' && this.siegeWithWalls) this.ensureGateInfo();
         if (this.battleType === 'siege' && this.siegeWithWalls && this.deployT <= 0 && this.battleSec - this.flowBuiltAt >= 1) this.buildFlowField();
         // 🔴 [2026-10-18 主人定] 当城门被摧毁后，守方集体发动反攻：立即解除城内原位驻守限制（guardPost 与 holdLanes），全军主动出击
@@ -6010,8 +6010,8 @@ export class Scene13WarLayer {
             //    · 曾规定「攻城战开局双方按兵不动（30 秒待命），等攻城器把墙砸塌」（2026-08-23/09-09）；
             //    · 2026-10-11 去掉待命闸、2026-10-13「所有都改为开局就动」⇒ **开局待命已作废**
             //      （现在只有上面的 `deploying` 列阵渐显 2.5 秒会让人站住）。
-            //    · 墙的坍塌规则现行：**受伤的墙每 10 秒自动塌一处**（2026-10-15 令）＋ 被打到 0 血立刻塌
-            //      （见 step 里 `collapseNextWallGap` 与 `collapseOneWall`）；攻城武器照旧优先砸最近的门/墙。
+            //    · 墙的坍塌规则现行（2026-10-20 令）：不再定时自动塌；墙打到随机破口档即塌，城门倒 → 门旁至城垛一段同塌
+            //      （见 `collapseOneWall` / `collapseGateSideSegment`）；攻城武器照旧优先砸最近的门/墙。
             // [2026-09-05 玩家] 玩家有键盘输入 → 本帧只走不打；受控编队「待命」= 不动、够得着照打
             if (m.hero && this.stepHeroInput(m, dt)) continue;
             // 玩家的点地面令：走到就作废（之后归队/索敌照旧接管）

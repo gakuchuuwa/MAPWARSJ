@@ -1576,12 +1576,14 @@ export function buildCornerGateRingOnGrid(seg: number, tileW: number, tileH: num
     ];
     for (const c of [W, N, E, S]) pieces.push({ ...at(c.i, c.j), type: 'POST' });
     for (const e of edges) {
-        // 🔴 [2026-10-12 主人令「把城门再次移动，在城垛和城门之间添加一个城墙」] 城垛(t=0) → 墙(t=1) → 门(t=2…5，门心 3.5) → 墙(t=6…L−1)
-        pieces.push({ ...at(e.from.i + e.di * 1, e.from.j + e.dj * 1), type: e.dir });
-        for (let t = 6; t <= L - 1; t++) pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
-        pieces.push({ ...at(e.from.i + e.di * 3.5, e.from.j + e.dj * 3.5), type: 'GATE', gateDir: e.dir });
+        // 🔴 [2026-10-20 主人令「8 个城门挨得有点近，分开一些，让 8 个城门间距差不多」]
+        //    L = 25，8 门均匀环绕要塞（门心间距均约为 12~13 步，彻底消除角楼两侧扎堆拥挤）：
+        //    角垛(t=0) → 墙(t=1..4, 4件) → 门1(t=5..8，门心 6.5) → 中段墙(t=9..16, 8件) → 门2(t=17..20，门心 18.5) → 墙(t=21..24, 4件) → 下一角垛(t=25)
+        for (let t = 1; t <= 4; t++) pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
+        pieces.push({ ...at(e.from.i + e.di * 6.5, e.from.j + e.dj * 6.5), type: 'GATE', gateDir: e.dir });
+        for (let t = 9; t <= 16; t++) pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
+        pieces.push({ ...at(e.from.i + e.di * 18.5, e.from.j + e.dj * 18.5), type: 'GATE', gateDir: e.dir });
+        for (let t = 21; t <= L - 1; t++) pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
     }
     return { pieces, L, a };
 }
-
-

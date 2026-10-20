@@ -425,7 +425,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const defCityForInterior: any = this.defenderCityRecord();
     const interiorBldStyle = defCityForInterior?.buildingStyle ?? this.environmentPlan?.buildingStyle;
     const isYurtOrNomadCity = this.buildingStyleFor(1) === 'YURT' || interiorBldStyle === 'MONGOL';
-    if (!isYurtOrNomadCity && (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade')) {
+    if (!isYurtOrNomadCity && (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade' || this.defenderCityType === 'pass')) {
         const TW = 96, TH = 48;
         const isoToWorld = (ci: number, cj: number): { x: number; y: number } => {
             let dx = (ci - cj) * (TW * 0.5);
@@ -455,67 +455,232 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             (sp as any).cityInterior = true;
             this.decorSprites.push(sp);
         };
-        // 1) 四座城门内侧迎宾立柱火把（门内主街两侧各一盏，共 4 盏）
-        const gateTorchCoords: ReadonlyArray<readonly [number, number, string]> = this.defenderCityType === 'big_city'
-            ? [[-2.0, -9.2, 'BATTLEFIELD:TORCH_A'], [9.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 10.2, 'BATTLEFIELD:TORCH_A'], [-8.8, 2.0, 'BATTLEFIELD:TORCH_B']]
+        // ── 随机辅助：基于本城 mRnd 确定性洗牌（保证同一座城布局稳定不闪烁，但不同城池独一无二） ──
+        const shuffleWithMSeed = <T>(arr: readonly T[]): T[] => {
+            const list = [...arr];
+            for (let i = list.length - 1; i > 0; i--) {
+                const j = Math.floor(mRnd() * (i + 1));
+                const tmp = list[i];
+                list[i] = list[j];
+                list[j] = tmp;
+            }
+            return list;
+        };
+
+        // 1) 四座城门内侧迎宾立柱火把（TORCH_A / TORCH_B 随机混用，带微小位置与缩放抖动，保持每座城生动自然）
+        const baseGateTorchCoords: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
+            ? [[-2.0, -9.2], [9.8, -1.0], [3.0, 10.2], [-8.8, 2.0]]
             : this.defenderCityType === 'medium_city'
-                ? [[-2.0, -8.2, 'BATTLEFIELD:TORCH_A'], [8.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 9.2, 'BATTLEFIELD:TORCH_A'], [-7.8, 2.0, 'BATTLEFIELD:TORCH_B']]
+                ? [[-2.0, -8.2], [8.8, -1.0], [3.0, 9.2], [-7.8, 2.0]]
                 : this.defenderCityType === 'small_city'
-                    ? [[-2.0, -7.2, 'BATTLEFIELD:TORCH_A'], [7.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 8.2, 'BATTLEFIELD:TORCH_A'], [-6.8, 2.0, 'BATTLEFIELD:TORCH_B']]
-                    : [[-2.0, -6.2, 'BATTLEFIELD:TORCH_A'], [6.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 7.2, 'BATTLEFIELD:TORCH_A'], [-5.8, 2.0, 'BATTLEFIELD:TORCH_B']];
-        for (const [ti, tj, tAsset] of gateTorchCoords) {
-            pushInteriorDecor(tAsset, ti, tj, 0.92);
+                    ? [[-2.0, -7.2], [7.8, -1.0], [3.0, 8.2], [-6.8, 2.0]]
+                    : this.defenderCityType === 'stockade'
+                        ? [[-2.0, -6.2], [6.8, -1.0], [3.0, 7.2], [-5.8, 2.0]]
+                        : [
+                            // 险要外围 8 座城门迎宾火把（每段外墙两门）
+                            [-11.2, 6.5], [-11.2, -5.5],
+                            [-5.5, -11.2], [6.5, -11.2],
+                            [12.2, -5.5], [12.2, 6.5],
+                            [6.5, 12.2], [-5.5, 12.2],
+                        ];
+        for (const [ti, tj] of baseGateTorchCoords) {
+            const tAsset = mRnd() < 0.5 ? 'BATTLEFIELD:TORCH_A' : 'BATTLEFIELD:TORCH_B';
+            const ji = (mRnd() - 0.5) * 0.22;
+            const jj = (mRnd() - 0.5) * 0.22;
+            pushInteriorDecor(tAsset, ti + ji, tj + jj, 0.88 + mRnd() * 0.08);
         }
-        // 2) 城内庭院园林树木（取当前气候带的代表树种，点缀在城堡广场与街坊空隙，树冠参差错落）
+
+        // ── 地理气候环境感知：严格契合历史地理地貌（干旱荒漠/戈壁、高寒雪原、温带山岳与湿润丘陵） ──
+        const siteBaseTile = this.environmentPlan?.baseTerrain ?? 'gr1';
+        const siteLat = defCityForInterior?.lat ?? this.centerLat ?? 30;
+        const siteLng = defCityForInterior?.lng ?? this.centerLng ?? 110;
+        const isAridSite = /pal|des|ds5|qs|gravel|drt/.test(siteBaseTile) || (siteLat >= 34 && siteLng <= 104 && siteLng >= 75);
+        const isSnowSite = /sno|sn2|snf|snd|snr|ic3|ice/.test(siteBaseTile);
+
+        // 2) 城内庭院园林树木（普通城市候选点随机抽选；严格契合地理树种与季节，兼顾主副乔灌木层次多样性）
         const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
         const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
             ? rawCalSeason
             : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
         const courtyardTreeAsset = pickTree({
-            baseTile: this.environmentPlan?.baseTerrain ?? 'gr1',
-            lat: defCityForInterior?.lat ?? this.centerLat ?? 30,
-            lng: defCityForInterior?.lng ?? this.centerLng ?? 110,
+            baseTile: siteBaseTile,
+            lat: siteLat,
+            lng: siteLng,
             season: calSeason,
             isSiege: true,
             buildingStyle: interiorBldStyle,
         });
-        const treeCoords: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
-            ? [[-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5]]
+        const treeCandidateSlots: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
+            ? [[-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5], [-1.8, -4.8], [1.8, 4.8], [-4.8, 1.8], [4.8, -1.8]]
             : this.defenderCityType === 'medium_city'
-                ? [[-2.5, -2.5], [3.5, 3.5], [-2.5, 3.5], [3.5, -2.5]]
+                ? [[-2.5, -2.5], [3.5, 3.5], [-2.5, 3.5], [3.5, -2.5], [0.6, -3.6], [-0.6, 3.6]]
                 : this.defenderCityType === 'small_city'
-                    ? [[-2.2, -2.2], [3.2, 3.2]]
+                    ? [[-2.2, -2.2], [3.2, 3.2], [-2.2, 3.2], [3.2, -2.2]]
                     : [];
-        for (const [ti, tj] of treeCoords) {
-            pushInteriorDecor(courtyardTreeAsset, ti + (mRnd() - 0.5) * 0.16, tj + (mRnd() - 0.5) * 0.16, 0.78 + mRnd() * 0.12);
+        if (treeCandidateSlots.length > 0) {
+            const targetTreeCount = this.defenderCityType === 'big_city'
+                ? 3 + Math.floor(mRnd() * 3) // 3~5 棵
+                : this.defenderCityType === 'medium_city'
+                    ? 2 + Math.floor(mRnd() * 2) // 2~3 棵
+                    : 1 + Math.floor(mRnd() * 2); // 1~2 棵
+            const pickedTreeSlots = shuffleWithMSeed(treeCandidateSlots).slice(0, targetTreeCount);
+            pickedTreeSlots.forEach(([ti, tj], idx) => {
+                const jx = (mRnd() - 0.5) * 0.28;
+                const jy = (mRnd() - 0.5) * 0.28;
+                // 第 1 棵固定当地代表乔木；后续树木有 40% 概率混搭下层园林小树/矮丛，形成自然错落的生态层次
+                const treeAsset = (idx > 0 && mRnd() < 0.40)
+                    ? (isAridSite ? 'BUSH_TREE_A' : (mRnd() < 0.5 ? 'BUSH_TREE_B' : 'SHRUB_GREEN'))
+                    : courtyardTreeAsset;
+                pushInteriorDecor(treeAsset, ti + jx, tj + jy, 0.74 + mRnd() * 0.16);
+            });
         }
-        // 3) 街坊屋宇旁的生活气息小物件（木桶粮袋 BARRELS；去掉石板路上的野花丛 FLOWERBED）
-        const propCoords: ReadonlyArray<readonly [number, number, string, number]> = this.defenderCityType === 'big_city'
-            ? [
-                [-2.2, 3.2, 'BARRELS', 0.88],
-                [3.2, -2.2, 'BARRELS', 0.88],
-                [-2.2, -2.2, 'BARRELS', 0.85],
-                [3.2, 3.2, 'BARRELS', 0.85],
-            ]
-            : this.defenderCityType === 'medium_city'
+
+        // 3) 内部生活/军备/自然细节道具库（程序化随机摆放：种类、数量、点位与缩放全面多样化）
+        if (this.defenderCityType === 'stockade') {
+            // 城寨：粗犷要塞荒野风，以伐木老桩、倒木、野灌木、破车架、粮木桶、碎石为主
+            const stockadeCandidates: ReadonlyArray<readonly [number, number]> = [
+                [-6.0, 1.2],   // 西北墙根
+                [6.0, -1.2],   // 东南墙根
+                [-1.5, 6.2],   // 西南角隅
+                [1.5, -6.2],   // 东北角隅
+                [-2.2, 2.0],   // 营舍西侧空隙
+                [2.2, -2.0],   // 营舍东侧空隙
+                [-5.5, 3.2],   // 西南木栅内缘
+                [5.5, -3.2],   // 东北木栅内缘
+                [-3.2, 5.8],   // 南侧外沿近角
+                [3.2, -5.8],   // 北侧外沿近角
+                [-6.2, -1.5],  // 西北外沿
+                [6.2, 1.5],    // 东南外沿
+                [-2.0, -2.2],  // 营舍北空隙
+                [2.0, 2.2],    // 营舍南空隙
+                [-4.2, -3.6],  // 北侧寨墙内角
+                [4.2, 3.6],    // 南侧寨墙内角
+            ];
+            // 候选道具池：混入残桩、倒木、野灌木、粮桶、碎石、破辎重车
+            const stockadeFlora = isAridSite
+                ? (mRnd() < 0.5 ? 'GRASS_DRY' : 'ROCK1')
+                : (mRnd() < 0.5 ? 'BUSH_GREEN' : 'SHRUB_GREEN');
+            const stockadePropsPool = [
+                'BARRELS',
+                stockadeFlora,
+                'STUMP_GENERIC',
+                'FELLED_GENERIC',
+                'BATTLEFIELD:CART_BROKEN',
+                'ROCK1',
+                'ROCK2',
+                'BARRELS',
+                stockadeFlora,
+            ];
+            const stockadeCount = 5 + Math.floor(mRnd() * 3); // 每座城寨随机 5~7 处装饰
+            const chosenSlots = shuffleWithMSeed(stockadeCandidates).slice(0, stockadeCount);
+            const shuffledPool = shuffleWithMSeed(stockadePropsPool);
+            chosenSlots.forEach(([pi, pj], idx) => {
+                const pAsset = shuffledPool[idx % shuffledPool.length];
+                const ji = (mRnd() - 0.5) * 0.28;
+                const jj = (mRnd() - 0.5) * 0.28;
+                const pScale = pAsset === 'STUMP_GENERIC' ? (0.72 + mRnd() * 0.08)
+                    : pAsset === 'FELLED_GENERIC' ? (0.75 + mRnd() * 0.10)
+                    : pAsset === 'BUSH_GREEN' ? (0.74 + mRnd() * 0.12)
+                    : pAsset === 'BATTLEFIELD:CART_BROKEN' ? (0.80 + mRnd() * 0.10)
+                    : pAsset.startsWith('ROCK') ? (0.68 + mRnd() * 0.12)
+                    : (0.78 + mRnd() * 0.10); // BARRELS
+                pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale);
+            });
+        } else if (this.defenderCityType === 'pass') {
+            // 险要（关隘）：双重石构城郭、瓮城夹道防线与内城要塞细节
+            // 候选点位涵盖：瓮城夹道（两圈城墙之间走廊）、外门内侧防区、内廷营防死角
+            const passCandidates: ReadonlyArray<readonly [number, number]> = [
+                // 瓮城夹道四面走廊（内墙与外墙之间空当）
+                [-9.5, 0.5],   // 西夹道中
+                [10.5, 0.5],   // 东夹道中
+                [0.5, -9.5],   // 北夹道中
+                [0.5, 10.5],   // 南夹道中
+                [-8.5, -4.5],  // 西北夹道
+                [8.5, 4.5],    // 东南夹道
+                [-4.5, -8.5],  // 东北夹道偏北
+                [4.5, 8.5],    // 西南夹道偏南
+                [-8.5, 4.5],   // 西南夹道偏西
+                [8.5, -4.5],   // 东北夹道偏东
+                [-4.5, 8.5],   // 西南夹道走廊
+                [4.5, -8.5],   // 东北夹道走廊
+                // 内城要塞四隅与城堡夹道
+                [-2.2, 2.2],   // 内城西侧
+                [3.2, -2.2],   // 内城东侧
+                [-2.2, -2.2],  // 内城北空隙
+                [3.2, 3.2],    // 内城南空隙
+            ];
+            // 军备防御道具池：拒马、礌石擂石、战备粮箱粮桶、破损辎重车、城根荒野灌木
+            const passFlora = isAridSite ? 'GRASS_DRY' : (mRnd() < 0.5 ? 'BUSH_GREEN' : 'SHRUB_GREEN');
+            const passPropsPool = [
+                'BATTLEFIELD:STAKE_BARRICADE',
+                'BATTLEFIELD:STAKE_BARRICADE',
+                'ROCK1',
+                'ROCK2',
+                'BARRELS',
+                'BARRELS',
+                'BATTLEFIELD:CART_BROKEN',
+                passFlora,
+                isAridSite ? 'ROCK2' : 'SHRUB_GREEN',
+            ];
+            const passPropCount = 7 + Math.floor(mRnd() * 3); // 7~9 处细节
+            const chosenPassSlots = shuffleWithMSeed(passCandidates).slice(0, passPropCount);
+            const shuffledPassPool = shuffleWithMSeed(passPropsPool);
+            chosenPassSlots.forEach(([pi, pj], idx) => {
+                const pAsset = shuffledPassPool[idx % shuffledPassPool.length];
+                const ji = (mRnd() - 0.5) * 0.25;
+                const jj = (mRnd() - 0.5) * 0.25;
+                const pScale = pAsset === 'BATTLEFIELD:STAKE_BARRICADE' ? (0.85 + mRnd() * 0.10)
+                    : pAsset === 'BATTLEFIELD:CART_BROKEN' ? (0.80 + mRnd() * 0.10)
+                    : pAsset.startsWith('BUSH') || pAsset.startsWith('SHRUB') ? (0.74 + mRnd() * 0.12)
+                    : pAsset.startsWith('ROCK') ? (0.72 + mRnd() * 0.14)
+                    : (0.80 + mRnd() * 0.10); // BARRELS
+                pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale);
+            });
+        } else {
+            // 普通城市（大/中/小）：后勤粮桶、街角野灌木、破损辎重车、碎石杂物
+            const cityCandidates: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
                 ? [
-                    [-2.2, 2.6, 'BARRELS', 0.85],
-                    [3.2, -1.6, 'BARRELS', 0.85],
+                    [-2.2, 3.2], [3.2, -2.2], [-2.2, -2.2], [3.2, 3.2],
+                    [-1.8, -6.5], [6.5, 1.8], [-6.5, -1.8], [1.8, 6.5],
+                    [-7.2, 1.5], [7.2, -1.5], [-1.5, 7.2], [1.5, -7.2],
+                    [-4.2, -4.2], [4.2, 4.2], [-4.2, 4.2], [4.2, -4.2],
                 ]
-                : this.defenderCityType === 'small_city'
+                : this.defenderCityType === 'medium_city'
                     ? [
-                        [-2.2, 2.4, 'BARRELS', 0.82],
-                        [3.2, -1.4, 'BARRELS', 0.82],
+                        [-2.2, 2.6], [3.2, -1.6], [-2.2, -2.2], [3.2, 2.2],
+                        [-1.8, -5.5], [5.5, 1.8], [-5.5, -1.8], [1.8, 5.5],
+                        [-6.2, 1.5], [6.2, -1.5], [-1.5, 6.2], [1.5, -6.2],
                     ]
                     : [
-                        [-2.0, 1.8, 'BARRELS', 0.80],
-                        [2.2, -1.2, 'BARRELS', 0.80],
-                        [-6.0, 1.0, 'BUSH_GREEN', 0.78],
-                        [6.0, -1.0, 'BUSH_GREEN', 0.78],
-                        [-1.5, 6.5, 'STUMP_GENERIC', 0.75],
+                        [-2.2, 2.4], [3.2, -1.4], [-1.8, -4.5], [4.5, 1.8],
+                        [-4.5, -1.8], [1.8, 4.5], [-5.2, 1.5], [5.2, -1.5],
+                        [-1.5, 5.2], [1.5, -5.2],
                     ];
-        for (const [pi, pj, pAsset, pScale] of propCoords) {
-            pushInteriorDecor(pAsset, pi, pj, pScale);
+            const cityPropsPool = [
+                'BARRELS',
+                'BARRELS',
+                'BUSH_GREEN',
+                'BATTLEFIELD:CART_BROKEN',
+                'ROCK1',
+                'ROCK2',
+            ];
+            const cityPropCount = this.defenderCityType === 'big_city'
+                ? 6 + Math.floor(mRnd() * 3) // 6~8 个
+                : this.defenderCityType === 'medium_city'
+                    ? 4 + Math.floor(mRnd() * 3) // 4~6 个
+                    : 3 + Math.floor(mRnd() * 2); // 3~4 个
+            const chosenCitySlots = shuffleWithMSeed(cityCandidates).slice(0, cityPropCount);
+            const shuffledCityPool = shuffleWithMSeed(cityPropsPool);
+            chosenCitySlots.forEach(([pi, pj], idx) => {
+                const pAsset = shuffledCityPool[idx % shuffledCityPool.length];
+                const ji = (mRnd() - 0.5) * 0.25;
+                const jj = (mRnd() - 0.5) * 0.25;
+                const pScale = pAsset === 'BUSH_GREEN' ? (0.74 + mRnd() * 0.12)
+                    : pAsset === 'BATTLEFIELD:CART_BROKEN' ? (0.80 + mRnd() * 0.10)
+                    : pAsset.startsWith('ROCK') ? (0.68 + mRnd() * 0.12)
+                    : (0.80 + mRnd() * 0.10); // BARRELS
+                pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale);
+            });
         }
     }
 
