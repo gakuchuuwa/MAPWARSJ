@@ -3057,6 +3057,42 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     abasi_muwafake: { generalId: 'abasi_muwafake', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 穆瓦法克：876 代尔阿库勒胜，名将
     falanji_kalman: { generalId: 'falanji_kalman', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 卡洛曼：摩拉维亚败，普将
     nanzhao_duanqiuxian: { generalId: 'nanzhao_duanqiuxian', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 段酋迁：交趾被破，普将
+    danmai_guthrum: { generalId: 'danmai_guthrum', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 古思伦：扫荡英格兰诸国的维京首领，名将
+    aliya_muhammad_tahir: { generalId: 'aliya_muhammad_tahir', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 塔希尔末王：希拉特败，普将
+    dang_d_pangshigu: { generalId: 'dang_d_pangshigu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 庞师古：清口被斩，普将
+    liang_d_wangjingren: { generalId: 'liang_d_wangjingren', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 王景仁：柏乡败，普将
+    xisi_amr: { generalId: 'xisi_amr', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿姆尔：萨法尔扩张的埃米尔，名将
+    baizanting_romanosi: { generalId: 'baizanting_romanosi', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 罗曼努斯一世：拜占庭皇帝，名将
+    bohai_dayinzhuan: { generalId: 'bohai_dayinzhuan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 大諲撰：亡国，普将
+    liao_d_xiaopaiya: { generalId: 'liao_d_xiaopaiya', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 萧排押：龟州败，普将
+    xin_liuchong: { generalId: 'xin_liuchong', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 刘崇：高平败，普将
+    song_zhaoguangyi: { generalId: 'song_zhaoguangyi', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 赵光义：灭北汉的宋太宗，名将
+    song_wangbing: { generalId: 'song_wangbing', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 王禀：死守太原殉国，普将
+    liao_d_xiaoduli: { generalId: 'liao_d_xiaoduli', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 萧咄李：雁门被斩，普将
+    sengjialuo_mahinda_v: { generalId: 'sengjialuo_mahinda_v', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 摩哂陀五世：国都被陷，普将
+    liao_d_handewei: { generalId: 'liao_d_handewei', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 韩德威：子河汊败，普将
+    song_peiji: { generalId: 'song_peiji', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 裴济：灵州殉国，普将
+    duonaobaojia_samuel: { generalId: 'duonaobaojia_samuel', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 萨穆伊尔：长期破拜占庭，名将
+    jiazini_masud: { generalId: 'jiazini_masud', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 马斯乌德：伽色尼苏丹，名将
+    gaer_sigtrygg: { generalId: 'gaer_sigtrygg', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 西格特里格：克朗塔夫败，普将
+    suomunate_bhima_i: { generalId: 'suomunate_bhima_i', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 毗摩一世：索姆纳特被劫，普将
+    song_renfu: { generalId: 'song_renfu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 任福：好水川中伏战死，普将
+    luoma_diguo_leo_ix: { generalId: 'luoma_diguo_leo_ix', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 利奥九世：奇维塔特败，普将
+    tubo_muzheng: { generalId: 'tubo_muzheng', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 木征：熙河降，普将
+    womaya_yahya: { generalId: 'womaya_yahya', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 叶海亚：托莱多陷，普将
+    sailiugu_yaghi: { generalId: 'sailiugu_yaghi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 雅吉·西扬：安条克战死，普将
+    liao_d_tianzuodi: { generalId: 'liao_d_tianzuodi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 天祚帝：护步达冈大败，普将
+    song_zhangjun: { generalId: 'song_zhangjun', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 张浚：富平大败，普将
+    jiazini_khusrau_malik: { generalId: 'jiazini_khusrau_malik', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 伽色尼末王，普将
+    taira_pingzongsheng: { generalId: 'taira_pingzongsheng', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 平宗盛：富士川不战而溃，普将
+    kasidiliya_afangsuoba: { generalId: 'kasidiliya_afangsuoba', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿方索八世：托洛萨大捷，名将
+    dajin_wanyanchengyu: { generalId: 'dajin_wanyanchengyu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 完颜承裕：野狐岭大败，普将
+    yelusalengwg_amalric: { generalId: 'yelusalengwg_amalric', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿马尔里克：屡征埃及，普将
+    baizanting_isaac_ii: { generalId: 'baizanting_isaac_ii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 伊萨克二世：被推翻，普将
+    baizanting_alexios_v: { generalId: 'baizanting_alexios_v', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 阿莱克修斯五世：城破，普将
+    huarazim_jalal: { generalId: 'huarazim_jalal', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 扎兰丁：屡败蒙古后复国，名将
+    dajin_wanyanheda: { generalId: 'dajin_wanyanheda', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 完颜合达：三峰山覆没，普将
+    abasi_mustasim: { generalId: 'abasi_mustasim', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 穆斯塔西姆：亡国，普将
     aiji_psamtik_iii: { generalId: 'aiji_psamtik_iii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 普萨美提克三世：佩鲁西姆败亡，普将
     tujue_wusumishi: { generalId: 'tujue_wusumishi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 乌苏米施：末代可汗被灭，普将
     tubo_xinuoluo: { generalId: 'tubo_xinuoluo', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 悉诺逻恭禄：吐蕃名将（破唐边城），名将

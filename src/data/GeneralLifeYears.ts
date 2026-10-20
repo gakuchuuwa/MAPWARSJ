@@ -137,6 +137,42 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     hao_d_weirui: { birth: 442, death: 520 },              // 韦睿
     gen_theodoric_great: { birth: 454, death: 526 },       // 狄奥多里克大帝
     gen_clovis_i: { birth: 466, death: 511 },              // 克洛维
+    huarazim_jalal: { birth: 1199, death: 1231 },           // 扎兰丁（花剌子模末代沙阿）
+    dajin_wanyanheda: { birth: 1180, death: 1232, kaoju: '推定' },  // 完颜合达（金军三峰山主帅）
+    abasi_mustasim: { birth: 1213, death: 1258 },           // 穆斯塔西姆（末代哈里发）
+    taira_pingzongsheng: { birth: 1147, death: 1185 },             // 平宗盛（平家总帅）
+    kasidiliya_afangsuoba: { birth: 1155, death: 1214 },           // 阿方索八世（卡斯蒂利亚）
+    dajin_wanyanchengyu: { birth: 1160, death: 1213, kaoju: '推定' },  // 完颜承裕（金军野狐岭主帅）
+    yelusalengwg_amalric: { birth: 1136, death: 1174 },            // 阿马尔里克（耶路撒冷王）
+    baizanting_isaac_ii: { birth: 1156, death: 1204 },             // 伊萨克二世·安格洛斯
+    baizanting_alexios_v: { birth: 1140, death: 1205, kaoju: '推定' },  // 阿莱克修斯五世
+    liao_d_tianzuodi: { birth: 1075, death: 1128 },                // 天祚帝耶律延禧
+    song_zhangjun: { birth: 1097, death: 1164 },                   // 张浚（南宋川陕主帅）
+    jiazini_khusrau_malik: { birth: 1130, death: 1191, kaoju: '推定' },  // 呼斯劳·马利克（伽色尼末王）
+    gaer_sigtrygg: { birth: 960, death: 1042, kaoju: '推定' },   // 西格特里格·丝须
+    suomunate_bhima_i: { birth: 990, death: 1064, kaoju: '推定' }, // 毗摩一世
+    song_renfu: { birth: 980, death: 1041, kaoju: '推定' },        // 任福（好水川战死）
+    luoma_diguo_leo_ix: { birth: 1002, death: 1054 },              // 教皇利奥九世
+    tubo_muzheng: { birth: 1030, death: 1090, kaoju: '推定' },     // 木征（吐蕃熙河首领）
+    womaya_yahya: { birth: 1030, death: 1092, kaoju: '推定' },     // 叶海亚（托莱多泰法王）
+    sailiugu_yaghi: { birth: 1030, death: 1098, kaoju: '推定' },   // 雅吉·西扬（安条克守将）
+    sengjialuo_mahinda_v: { birth: 960, death: 1017, kaoju: '推定' },  // 摩哂陀五世（僧伽罗王）
+    liao_d_handewei: { birth: 940, death: 1000, kaoju: '推定' },       // 韩德威（辽将）
+    song_peiji: { birth: 950, death: 1002, kaoju: '推定' },            // 裴济（灵州殉国）
+    duonaobaojia_samuel: { birth: 958, death: 1014 },                  // 萨穆伊尔（保加利亚沙皇）
+    jiazini_masud: { birth: 998, death: 1041 },                        // 马斯乌德（伽色尼苏丹）
+    liao_d_xiaoduli: { birth: 950, death: 980, kaoju: '推定' },     // 萧咄李（980 雁门阵斩）
+    bohai_dayinzhuan: { birth: 880, death: 926, kaoju: '推定' },    // 大諲撰（渤海末王）
+    liao_d_xiaopaiya: { birth: 970, death: 1020, kaoju: '推定' },   // 萧排押（辽将）
+    xin_liuchong: { birth: 895, death: 954 },                      // 刘崇（北汉世祖）
+    song_zhaoguangyi: { birth: 939, death: 997 },                  // 赵光义（宋太宗）
+    song_wangbing: { birth: 1080, death: 1126, kaoju: '推定' },     // 王禀（太原殉国）
+    dang_d_pangshigu: { birth: 850, death: 897, kaoju: '推定' },     // 庞师古（清口战死）
+    liang_d_wangjingren: { birth: 860, death: 920, kaoju: '推定' },  // 王景仁（后梁将）
+    xisi_amr: { birth: 830, death: 902, kaoju: '推定' },            // 阿姆尔·本·莱斯（萨法尔埃米尔）
+    baizanting_romanosi: { birth: 870, death: 948 },                // 罗曼努斯一世（拜占庭皇帝）
+    danmai_guthrum: { birth: 840, death: 890, kaoju: '推定' },        // 古思伦（丹麦维京首领）
+    aliya_muhammad_tahir: { birth: 820, death: 873, kaoju: '推定' },  // 穆罕默德·本·塔希尔（塔希尔末王）
     huihu_wusa: { birth: 790, death: 840, kaoju: '推定' },      // 㕎馺可汗（回鹘末代可汗）
     abasi_muwafake: { birth: 844, death: 891 },                // 穆瓦法克（阿拔斯摄政）
     falanji_kalman: { birth: 830, death: 880 },                // 卡洛曼（巴伐利亚王）
