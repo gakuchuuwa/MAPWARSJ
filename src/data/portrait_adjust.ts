@@ -3977,11 +3977,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -18
         },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_32.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 24
-        },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_33.png": {
             "scale": 1,
             "offsetX": 0,
@@ -8151,6 +8146,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.32,
             "offsetX": 0,
             "offsetY": 19
+        },
+        "/assets/WEST_ASIA/yashu_shaermanasaiersanshi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 24
         }
     },
     "folderGuides": {

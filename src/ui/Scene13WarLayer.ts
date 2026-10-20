@@ -11,7 +11,7 @@
  *   - Scene13MapWaterAdapter.ts  ：战术水体搬迁与真实海向自适应校正
  */
 
-import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getRegionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, resolveCityDefenseLegionName, resolveCityDefenseLegionComposition, type FormationMode } from '../types/CultureFormations';
+import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getRegionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, resolveGeneralLegionName, resolveCityLegionName, resolveCityLegionComposition, type FormationMode } from '../types/CultureFormations';
 import { Scene13GroundLayerGL, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
@@ -1968,19 +1968,22 @@ export class Scene13WarLayer {
      *   口径与 CombatUI 的战斗面板军团名完全同源（同一句 FACTION_COMPOSITIONS ?? getCultureLegionName）。
      */
     private sideLegionName(side: 0 | 1): string {
+        // 🔴 [2026-10-21 主人令「军团只看武将，删除一切无关逻辑」] 攻守一律按这一方的武将取军团
+        //    守城无在场武将（只剩普通守军）→ 当时年份 × 据点建筑风格（2026-10-21 主人令）
         const fid = this.sideFaction[side];
-        if (side === 1 && this.battleType === 'siege') {
-            const defName = resolveCityDefenseLegionName(
-                this.defenderCityId,
-                this.techYearGetter?.() ?? this.techYear,
-                this.defenderCityRecord()?.buildingStyle,
-                fid,
-            );
-            if (defName) return defName;
-        }
-        const byFaction = fid ? FACTION_COMPOSITIONS[fid]?.legionName : undefined;
-        if (byFaction) return byFaction;
-        return getCultureLegionName(this.sideCulture[side] as RegionType) || '';
+        const name = side === 1 && this.battleType === 'siege'
+            ? resolveCityLegionName(fid, this.sideGeneralId[side], this.garrisonLegionCtx())
+            : resolveGeneralLegionName(fid, this.sideGeneralId[side]);
+        return name || getCultureLegionName(this.sideCulture[side] as RegionType) || '';
+    }
+
+    /** 守城军团的取数上下文：守方据点 + 当前战术年份 */
+    private garrisonLegionCtx(): { cityId: string | null; buildingStyle: string | null; year: number | null } {
+        return {
+            cityId: this.defenderCityId ?? null,
+            buildingStyle: this.defenderCityRecord()?.buildingStyle ?? null,
+            year: this.techYearGetter?.() ?? this.techYear ?? null,
+        };
     }
 
     /**
@@ -2584,30 +2587,13 @@ export class Scene13WarLayer {
         //    无将、或这位武将此刻不在场（百岁/剧本模式里只剩「XX将军」普通守军）⇒ 不追加第 10 口主将队。战场人物只在那一仗出场，照算有将。
         if (!this.hasStageGeneral(generalId)) generalId = null;
         try {
-            // 🔴 [2026-10-18 主人定「每个时代每个据点，防守的时候，只能出本文化该时代的军团」]
-            if (sideF === 1 && this.battleType === 'siege') {
-                const defComp = resolveCityDefenseLegionComposition(
-                    this.defenderCityId,
-                    this.techYearGetter?.() ?? this.techYear,
-                    this.defenderCityRecord()?.buildingStyle,
-                    factionId,
-                );
-                if (defComp?.slots?.length) {
-                    const types = expandCompositionSlots(defComp.slots);
-                    if (types.length === 9) {
-                        return withCommander(generalId, types, {
-                            factionId,
-                            seedKey: region,
-                            hasElite,
-                            legionCommanderUnit: defComp.commanderUnit,
-                        }).map((key) => ({
-                            key: WAR_TYPES[key] ? key : 'light_infantry',
-                        }));
-                    }
-                }
-            }
+            // 🔴 [2026-10-21 主人令「防守的也是武将，武将是什么军团，就出什么军团」
+            //    「如果守城时武将不在场、只剩普通守军，就看当时的年份+建筑风格找军团」]
+            const garrison = sideF === 1 && this.battleType === 'siege'
+                ? resolveCityLegionComposition(factionId, generalId, this.garrisonLegionCtx())
+                : null;
             // 🔴 势力专属方阵最优先（如伊贺 iga_d 忍者军团、织田 owari 等）
-            const factionSlots = factionId ? getFactionCompositionSlots(factionId, generalId) : null;
+            const factionSlots = garrison?.slots ?? (factionId ? getFactionCompositionSlots(factionId, generalId) : null);
             const tier = factionSlots ? { slots: factionSlots } : getCultureTier(region as any, 50000);
             if (tier?.slots?.length) {
                 const types = expandCompositionSlots(tier.slots);
@@ -2615,8 +2601,10 @@ export class Scene13WarLayer {
                 if (types.length === 9) {
                     // 🔴 防御：WAR_TYPES 没有的兵种（势力专属/新兵种）替换成轻步，防运行时 wt.cls 崩溃
                     // 🔴 [2026-09-23] 编制 9 口 + 主将队第 10 口
-                    const legionCommanderUnit = (factionId ? getFactionLegionComposition(factionId, generalId)?.commanderUnit : undefined)
-                        ?? getRegionLegionComposition(region as any)?.commanderUnit;
+                    const legionCommanderUnit = garrison
+                        ? garrison.commanderUnit
+                        : ((factionId ? getFactionLegionComposition(factionId, generalId)?.commanderUnit : undefined)
+                            ?? getRegionLegionComposition(region as any)?.commanderUnit);
                     return withCommander(generalId, types, { factionId, seedKey: region, hasElite, legionCommanderUnit }).map((key) => ({
                         key: WAR_TYPES[key] ? key : 'light_infantry',
                     }));
@@ -2636,14 +2624,10 @@ export class Scene13WarLayer {
     /** 从编制槽位结构推断阵型（鱼鳞/三角/雁行）；与 slotsOf 用同一 tier，保证布局一致 */
     private formationModeOf(region: string, factionId?: string | null, generalId?: string | null, sideF?: 0 | 1): FormationMode {
         try {
+            // 🔴 [2026-10-21 主人令] 守城：在场武将 → 武将的军团；无在场武将 → 当时年份 × 据点建筑风格（与 slotsOf 同源）
             if (sideF === 1 && this.battleType === 'siege') {
-                const defComp = resolveCityDefenseLegionComposition(
-                    this.defenderCityId,
-                    this.techYearGetter?.() ?? this.techYear,
-                    this.defenderCityRecord()?.buildingStyle,
-                    factionId,
-                );
-                if (defComp?.formationMode) return defComp.formationMode;
+                const garrison = resolveCityLegionComposition(factionId, generalId, this.garrisonLegionCtx());
+                if (garrison?.formationMode) return garrison.formationMode;
             }
             if (factionId) {
                 // 🔴 [2026-09-14] 势力表只剩指针，阵型跟着它挂的那支军团走
@@ -6211,7 +6195,9 @@ export class Scene13WarLayer {
             const isGuard = !!m.guardPost;
             // 🔴 [2026-10-20 主人令「战术模式中，乱入者作为防守方，不需要等待。不然镜头不动了」]
             //    守方乱入者在「自动」下不吃本队的列阵待敌（holdLanes）与分队待命（laneStandby），一直自己找敌人打。
-            const heroHunt = m.hero === true && m.f === 1 && this.playerCmd === 'attack';
+            // 🔴 [2026-10-21 主人报「战术模式中，乱入者复活后不动了」] 攻方乱入者同样适用：复活时本队常已全灭（没有锚点、
+            //    laneTargets 也没有这一队）⇒ 原先落进 laneStandby 原地站死在出兵口。现攻守两方「自动」下都自己找敌人打。
+            const heroHunt = m.hero === true && this.playerCmd === 'attack';
             // 🔴 [2026-10-15 主人定] 每个目标最多 4 队攻击；超出 4 队且场上已无其他可打目标的分队，原地列阵待命
             const laneStandby = !heroHunt && !this.marching && !m.march && m.lane >= 0 && !this.heroOrderPending(m) && !m.siegeW && !isGuard
                 && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane);
@@ -7640,11 +7626,4 @@ export class Scene13WarLayer {
     /** 采样统计：返回 {n, avg, p50, p95, max}，全部保留两位 */
     private perfStat(a: number[]): Record<string, number> | null {
         if (!a.length) return null;
-        const s = [...a].sort((x, y) => x - y);
-        const sum = a.reduce((p, c) => p + c, 0);
-        const q = (f: number) => +s[Math.min(s.length - 1, Math.floor(s.length * f))].toFixed(2);
-        return { n: a.length, avg: +(sum / a.length).toFixed(2), p50: q(0.5), p95: q(0.95), max: +s[s.length - 1].toFixed(2) };
-    }
-
-
-}
+        const s = [..

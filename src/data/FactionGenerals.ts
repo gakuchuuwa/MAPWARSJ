@@ -13839,7 +13839,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     yashu: [
         { generalId: 'bfe2_sin_shar_ishkun', generalName: '辛·沙尔·伊什昆', portrait: '', legionName: '古典时代近东军团' },
-        { generalId: 'bfe2_shalmaneser_iii', generalName: '沙尔马那塞尔三世', portrait: '', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_shalmaneser_iii', generalName: '沙尔马那塞尔三世', portrait: '/assets/WEST_ASIA/yashu_shaermanasaiersanshi.png', legionName: '古典时代近东军团' },
         { generalId: 'yashu_saergong', generalName: '萨尔贡', portrait: '/assets/WEST_ASIA/yashu_saergong.png' },
         { generalId: 'bfe2_esarhaddon', generalName: '以撒哈顿', portrait: '', legionName: '古典时代近东军团' },
     ],
