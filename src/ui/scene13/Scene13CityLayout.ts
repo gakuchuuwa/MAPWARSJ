@@ -389,101 +389,285 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const cGx = cityCell ? cityCell.gx : N * 0.5;
     const cGy = cityCell ? cityCell.gy : N * 0.5;
 
-    // 🔴 [2026-10-20 主人令「在城周围的高地上多放山和树林」「树要多放大片树林，不妨碍行军的，都是贴图」]
-    if (this.defenderCityType === 'pass') {
-        const siteBaseTile = this.environmentPlan?.baseTerrain ?? 'gr1';
-        const defCityRec: any = this.defenderCityRecord();
-        const siteLat = defCityRec?.lat ?? this.centerLat ?? 30;
-        const siteLng = defCityRec?.lng ?? this.centerLng ?? 110;
-        const rawCalSeason = this.environmentPlan?.season;
-        const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
-            ? rawCalSeason
-            : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
-        const passTreeAsset = pickTree({
-            baseTile: siteBaseTile,
-            lat: siteLat,
-            lng: siteLng,
-            season: calSeason,
-            isSiege: true,
-        });
-        this.ensureNatureAsset(passTreeAsset);
+    // 🔴 [2026-10-21 主人令「树木要成林，你放一堆一个树干什么？」「看看DE是怎么做的。看看文档里有做树林的方法吗」]
+    // 严格遵循帝国时代 II (DE) 原版引擎与 RMS 森林生成法则（见 tools/rms/rmsEngine.mjs line 914）：
+    // 1. 【DE 森林生成机制】：
+    //    · 森林本质是网格地形斑块 (create_terrain WOODIES)，靠连续网格细胞自然连片生长；
+    //    · 每个属于森林网格的格子 (gx, gy)，仅在格中心 (gx + 0.5, gy + 0.5) 立【恰好一棵树】！
+    //    · 严格基于等轴网格坐标 cellToScreen，绝不用人工小圆圈循环塞几十棵树挤成一团；
+    //    · 【树种纯净】：全林 100% 统一为当地当季主导树种 (primaryTree)，靠 0~7 帧与随机轻度翻转呈现自然多样性，绝不把红黄绿白各色树种乱搅成沙拉球！
+    //    · 森林脚下 100% 满铺林地腐殖土 (gl.addForestAt)。
+    // 2. 【微景观种类搭配，数量克制】：
+    //    · 林缘：整片森林外缘仅放 1 根倒木 (FELLED_GENERIC) 或树桩 (STUMP_GENERIC)，伴生 1 簇蕨草；
+    //    · 岩伴草灌 (DE second_object)：全图仅 3~4 处单石微景（1 块石头配 1 丛草/矮灌木）；
+    //    · 悬崖地标：山巅断崖处仅 1 处风蚀柱石 (ROCK_FORMATION)，伴生孤松；
+    //    · 浆果丛 (Forage Clump)：全图仅 1 处，4 丛野果灌木聚在山脚草地；
+    //    · 向阳野花斑：开阔处仅 1~2 处小野花草甸；
+    //    · 古道旧痕：远郊路旁仅 1 辆废弃破木车 (CART_BROKEN) 伴生木桶。
+    const siteBaseTile = this.environmentPlan?.baseTerrain ?? 'gr1';
+    const defCityRec: any = this.defenderCityRecord();
+    const siteLat = defCityRec?.lat ?? this.centerLat ?? 30;
+    const siteLng = defCityRec?.lng ?? this.centerLng ?? 110;
+    const isArid = /^(des|pal|qs|ds5|pal1)/i.test(siteBaseTile);
+    const isSnow = this.sceneSeason === 2 || gl.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(siteBaseTile);
+    const rawCalSeason = this.environmentPlan?.season;
+    const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
+        ? rawCalSeason
+        : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
 
-        // 扫描南北两翼高山（elev >= 2.0）上的高地台面与坡面
-        const highHillSpots: Array<{ x: number; y: number; elev: number }> = [];
-        for (let gy = 4; gy <= N - 4; gy += 2) {
-            for (let gx = 4; gx <= N - 4; gx += 2) {
+    // DE 核心：整片森林采用统一当季主导树种，纯正和谐
+    const forestTreeAsset = pickTree({
+        baseTile: siteBaseTile,
+        lat: siteLat,
+        lng: siteLng,
+        season: calSeason,
+        isSiege: true,
+    });
+    this.ensureNatureAsset(forestTreeAsset);
+
+    // 预热微景观素材
+    const landmarkRocks = isArid
+        ? ['ROCK_FORMATION2', 'ROCK_FORMATION3', 'ROCK3']
+        : isSnow
+            ? ['ROCK_FORMATION1', 'ROCK_LIMESTONE', 'ROCK1']
+            : ['ROCK_FORMATION1', 'ROCK_FORMATION2', 'ROCK_LIMESTONE', 'ROCK3'];
+    for (const lr of landmarkRocks) this.ensureNatureAsset(lr);
+    this.ensureNatureAsset('ROCK1');
+    this.ensureNatureAsset('ROCK2');
+    this.ensureNatureAsset('MINE_STONE');
+    this.ensureNatureAsset('FORAGE_BUSH');
+    this.ensureNatureAsset('BUSH_GREEN');
+    this.ensureNatureAsset('SHRUB_GREEN');
+    this.ensureNatureAsset('GRASS_GREEN');
+    this.ensureNatureAsset('GRASS_DRY');
+    this.ensureNatureAsset('FERNPATCH');
+    this.ensureNatureAsset('FLOWER_1');
+    this.ensureNatureAsset('FLOWER_2');
+    this.ensureNatureAsset('STUMP_GENERIC');
+    this.ensureNatureAsset('FELLED_GENERIC');
+    this.ensureNatureAsset('DEAD_TREE');
+    this.ensureNatureAsset('BATTLEFIELD:CART_BROKEN');
+    this.ensureNatureAsset('BATTLEFIELD:TORCH_A');
+    this.ensureNatureAsset('BARRELS');
+
+    // 纯视觉安全放置函数（不阻碍行军，不重叠建筑和道路）
+    const pushSafeDecor = (
+        asset: string,
+        x: number,
+        y: number,
+        scale = 1.0,
+        frame = 0,
+        flip = false,
+        extraZ = 0
+    ): boolean => {
+        if (inCity(x, y) || inGateRoad(x, y)) return false;
+        if (gl.isWaterAt(x, y, W, H) || (inMoat && inMoat(x, y))) return false;
+        for (const sp of this.spawns) {
+            if (Math.hypot(x - sp.x, (y - sp.y) * 1.5) < 320) return false;
+        }
+        this.decorSprites.push({
+            asset,
+            frame,
+            x,
+            y,
+            flip,
+            scale,
+            layer: 'world',
+            z: extraZ,
+            indestructible: true,
+            obstruction: undefined,
+            obstructionContactSec: 0,
+            obstructionTouched: false,
+            obstructionDisabled: true,
+        });
+        return true;
+    };
+
+    // ── 1. 【DE 原版森林算法：网格连续生长，每格一树】：
+    // 在南北山体高地上挑选 2~3 个森林种子格，采用连续网格连通生长（BFS/Dijkstra 类似 DE create_terrain WOODIES）
+    // 扩展出一片自然的连绵森林地块。每属于森林的一个网格 (gx, gy)，仅在格中心 (gx + 0.5, gy + 0.5) 种一棵树！
+    const isPassType = this.defenderCityType === 'pass';
+    const forestCellSet = new Set<string>();
+
+    const growForestClump = (seedGx: number, seedGy: number, targetCellCount: number) => {
+        const queue: Array<[number, number]> = [[seedGx, seedGy]];
+        forestCellSet.add(`${seedGx},${seedGy}`);
+
+        while (queue.length > 0 && forestCellSet.size < targetCellCount) {
+            // 随机从前沿挑一个格向四邻生长（模拟 DE RMS clumping 生长）
+            const qIdx = Math.floor(mRnd() * queue.length);
+            const [curGx, curGy] = queue.splice(qIdx, 1)[0];
+
+            const neighbors: Array<[number, number]> = [
+                [curGx - 1, curGy], [curGx + 1, curGy],
+                [curGx, curGy - 1], [curGx, curGy + 1],
+                [curGx - 1, curGy - 1], [curGx + 1, curGy + 1],
+                [curGx - 1, curGy + 1], [curGx + 1, curGy - 1],
+            ];
+            // 打乱邻居
+            for (let i = neighbors.length - 1; i > 0; i--) {
+                const j = Math.floor(mRnd() * (i + 1));
+                [neighbors[i], neighbors[j]] = [neighbors[j], neighbors[i]];
+            }
+
+            for (const [ngx, ngy] of neighbors) {
+                if (ngx < 4 || ngx > N - 5 || ngy < 4 || ngy > N - 5) continue;
+                const nKey = `${ngx},${ngy}`;
+                if (forestCellSet.has(nKey)) continue;
+
+                const pt = gl.cellToScreen(ngx + 0.5, ngy + 0.5, W, H);
+                if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) continue;
+                if (gl.isWaterAt(pt.x, pt.y, W, H) || (inMoat && inMoat(pt.x, pt.y))) continue;
+
+                // 关隘森林生长在南北两侧山脉上（远离中央关卡峡谷，|ngy - cGy| >= 14 格）
+                if (isPassType && Math.abs(ngy - cGy) < 14.0) continue;
+                const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
+                if (elev < 1.4) continue;
+
+                forestCellSet.add(nKey);
+                queue.push([ngx, ngy]);
+                if (forestCellSet.size >= targetCellCount) break;
+            }
+        }
+    };
+
+    if (isPassType) {
+        // 北翼森林种子（选在正北与东北高山腰）
+        growForestClump(Math.round(cGx - 12), Math.round(cGy - 19), 32);
+        growForestClump(Math.round(cGx + 16), Math.round(cGy - 18), 28);
+        // 南翼森林种子（选在正南与西南高山梁）
+        growForestClump(Math.round(cGx - 14), Math.round(cGy + 19), 32);
+        growForestClump(Math.round(cGx + 15), Math.round(cGy + 18), 28);
+    } else {
+        // 普通城池在远郊山地上长 2 片森林
+        const outerHill = [];
+        for (let gy = 6; gy <= N - 6; gy += 4) {
+            for (let gx = 6; gx <= N - 6; gx += 4) {
                 const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
                 if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) continue;
-                const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
-                if (elev >= 2.0) {
-                    highHillSpots.push({ x: pt.x, y: pt.y, elev });
+                if (Math.hypot(gx - cGx, gy - cGy) >= minHillDistCells + 4.0 && gl.elevationLevelAt(pt.x, pt.y, W, H) >= 1.5) {
+                    outerHill.push([gx, gy]);
                 }
             }
         }
-        highHillSpots.sort(() => mRnd() - 0.5);
-        const totalPassTrees = Math.min(highHillSpots.length, 140 + Math.floor(mRnd() * 40));
-        for (let i = 0; i < totalPassTrees; i++) {
-            const spot = highHillSpots[i];
-            const tx = spot.x + (mRnd() - 0.5) * 58;
-            const ty = spot.y + (mRnd() - 0.5) * 30;
-            if (inCity(tx, ty) || inGateRoad(tx, ty)) continue;
-            this.decorSprites.push({
-                asset: passTreeAsset,
-                frame: Math.floor(mRnd() * 8),
-                x: tx,
-                y: ty,
-                flip: mRnd() < 0.5,
-                scale: 0.92 + mRnd() * 0.22,
-                layer: 'world',
-                z: 0,
-                indestructible: true,
-                obstruction: undefined,
-                obstructionContactSec: 0,
-                obstructionTouched: false,
-                obstructionDisabled: true,
-            });
+        if (outerHill.length > 0) {
+            const seed = outerHill[Math.floor(mRnd() * outerHill.length)];
+            growForestClump(seed[0], seed[1], 35);
+        }
+    }
+
+    // 【DE 关键实现】：遍历森林网格，每格中心恰好种 1 棵树！
+    // 树木间距完全由网格保证（天然等轴 96×48px），树木错落有序、树冠相接、绝不堆叠！
+    let placedForestEdgeWood = false;
+    for (const key of forestCellSet) {
+        const [gxStr, gyStr] = key.split(',');
+        const gx = parseInt(gxStr, 10), gy = parseInt(gyStr, 10);
+        // 格中心轻微自然微扰（±5px），打破机械对齐，仍保持独立格距
+        const jx = (mRnd() - 0.5) * 10;
+        const jy = (mRnd() - 0.5) * 6;
+        const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+        const tx = pt.x + jx, ty = pt.y + jy;
+
+        const tScale = 0.96 + (mRnd() - 0.5) * 0.12;
+        const tFrame = Math.floor(mRnd() * 8);
+
+        if (pushSafeDecor(forestTreeAsset, tx, ty, tScale, tFrame, mRnd() < 0.5)) {
+            // 格内地表渲染 DE 森林底泥
             gl.addForestAt(tx, ty, W, H, 1.4);
-        }
-    }
 
-    if (removedFlatTrees.length > 0) {
-        const existingTrees = this.decorSprites.filter((sp) => TREE_FILTER_RE.test(sp.asset));
-        const bareHillSpots: Array<{ x: number; y: number; elev: number }> = [];
-        for (let gy = 8; gy <= N - 8; gy += 3) {
-            for (let gx = 8; gx <= N - 8; gx += 3) {
-                const dCells = Math.hypot(gx - cGx, gy - cGy);
-                if (dCells < minHillDistCells + 1.2 || dCells > 50) continue;
-                const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
-                if (gl.isWaterAt(pt.x, pt.y, W, H) || (inMoat && inMoat(pt.x, pt.y)) || inGateRoad(pt.x, pt.y) || inCity(pt.x, pt.y)) continue;
-                const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
-                if (elev < 1.5) continue;
-                const hasNearTree = existingTrees.some((t) => Math.hypot(t.x - pt.x, (t.y - pt.y) * 1.5) < 280);
-                if (!hasNearTree) {
-                    bareHillSpots.push({ x: pt.x, y: pt.y, elev });
-                }
-            }
-        }
-        bareHillSpots.sort((a, b) => b.elev - a.elev);
-        const maxRelocate = Math.min(removedFlatTrees.length, Math.min(bareHillSpots.length * 2, 28));
-        let rIdx = 0;
-        for (let sIdx = 0; sIdx < bareHillSpots.length && rIdx < maxRelocate; sIdx++) {
-            const spot = bareHillSpots[sIdx];
-            const clusterCnt = 1 + (mRnd() < 0.55 ? 1 : 0);
-            for (let k = 0; k < clusterCnt && rIdx < maxRelocate; k++) {
-                const tx = spot.x + (mRnd() - 0.5) * 86;
-                const ty = spot.y + (mRnd() - 0.5) * 44;
-                if (gl.isWaterAt(tx, ty, W, H) || (inMoat && inMoat(tx, ty)) || inGateRoad(tx, ty) || inCity(tx, ty)) continue;
-                if (gl.elevationLevelAt(tx, ty, W, H) < 1.2) continue;
-                const treeSp = removedFlatTrees[rIdx++];
-                treeSp.x = tx;
-                treeSp.y = ty;
-                this.decorSprites.push(treeSp);
-                gl.addForestAt(tx, ty, W, H, 1.25);
+            // 偶尔在林缘放 1 根倒木伴生蕨草（全林仅 1~2 处）
+            if (!placedForestEdgeWood && mRnd() < 0.08) {
+                placedForestEdgeWood = true;
+                const edgeWood = mRnd() < 0.5 ? 'STUMP_GENERIC' : 'FELLED_GENERIC';
+                pushSafeDecor(edgeWood, tx + 24, ty + 12, 0.85, 0, mRnd() < 0.5);
+                pushSafeDecor('FERNPATCH', tx + 38, ty + 16, 0.75, 0, mRnd() < 0.5, -1);
             }
         }
     }
 
-    gl.flushFoundation();
+    // ── 2. 【高崖地标险石（Cliff Landmark）】：全图仅 1 处，立于最高山梁 ──
+    const highSpots: Array<{ gx: number; gy: number; x: number; y: number; elev: number }> = [];
+    const midSlopeSpots: Array<{ x: number; y: number; elev: number }> = [];
+    const plainSpots: Array<{ x: number; y: number; elev: number }> = [];
+
+    for (let gy = 4; gy <= N - 4; gy += 3) {
+        for (let gx = 4; gx <= N - 4; gx += 3) {
+            const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+            if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) continue;
+            if (gl.isWaterAt(pt.x, pt.y, W, H) || (inMoat && inMoat(pt.x, pt.y))) continue;
+            const distCells = Math.hypot(gx - cGx, gy - cGy);
+            const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
+            if (elev >= 2.0 && (!isPassType || Math.abs(gy - cGy) >= 16.0)) {
+                highSpots.push({ gx, gy, x: pt.x, y: pt.y, elev });
+            } else if (elev >= 0.8 && elev < 2.0) {
+                midSlopeSpots.push({ x: pt.x, y: pt.y, elev });
+            } else if (elev < 1.0 && distCells >= minHillDistCells + 2.0) {
+                plainSpots.push({ x: pt.x, y: pt.y, elev });
+            }
+        }
+    }
+
+    if (highSpots.length > 0) {
+        const peakSpot = [...highSpots].sort((a, b) => b.elev - a.elev)[0];
+        if (peakSpot) {
+            const rfAsset = landmarkRocks[Math.floor(mRnd() * landmarkRocks.length)];
+            if (pushSafeDecor(rfAsset, peakSpot.x, peakSpot.y, 1.10, 0, mRnd() < 0.5)) {
+                const lonePine = isSnow ? 'PINE' : (isArid ? 'DEAD_TREE' : 'ASIAN_PINE');
+                this.ensureNatureAsset(lonePine);
+                pushSafeDecor(lonePine, peakSpot.x + 32, peakSpot.y - 16, 0.82, 0, mRnd() < 0.5);
+            }
+        }
+    }
+
+    // ── 3. 【岩伴草灌微景（Rock + Flora Pairing，DE second_object）】：全图严格仅 3~4 处单石微景 ──
+    const rockSpots = [...(midSlopeSpots.length > 0 ? midSlopeSpots : plainSpots)]
+        .sort(() => mRnd() - 0.5)
+        .slice(0, isPassType ? 4 : 3);
+
+    for (const rs of rockSpots) {
+        const rockAsset = mRnd() < 0.55 ? 'ROCK1' : 'ROCK2';
+        if (pushSafeDecor(rockAsset, rs.x, rs.y, 0.90, Math.floor(mRnd() * 6), mRnd() < 0.5)) {
+            const companion = isArid ? 'GRASS_DRY' : (mRnd() < 0.5 ? 'SHRUB_GREEN' : 'GRASS_GREEN');
+            pushSafeDecor(companion, rs.x + (mRnd() < 0.5 ? -22 : 22), rs.y + 8, 0.72, 0, mRnd() < 0.5, -1);
+        }
+    }
+
+    // ── 4. 【露天采石点 (Stone Mine)】：全图仅 1 处 ──
+    if (highSpots.length > 1) {
+        const mineSpot = highSpots[1];
+        pushSafeDecor('MINE_STONE', mineSpot.x, mineSpot.y, 1.05, 0, mRnd() < 0.5);
+    }
+
+    // ── 5. 【野生浆果灌木丛 (Forage Berry Bushes)】：全图仅 1 处成簇，4 丛聚在一块 ──
+    if (plainSpots.length > 0) {
+        const berryCenter = plainSpots[0];
+        const berryOffsets = [[0, 0], [22, -8], [-18, 10], [12, 14]];
+        for (const [bx, by] of berryOffsets) {
+            pushSafeDecor('FORAGE_BUSH', berryCenter.x + bx, berryCenter.y + by, 0.88, Math.floor(mRnd() * 4), mRnd() < 0.5);
+        }
+    }
+
+    // ── 6. 【向阳野花草甸 (Wildflower Patches)】：全图仅 1~2 处小野花斑 ──
+    if (!isArid && !isSnow && plainSpots.length > 1) {
+        const flowerSpots = plainSpots.slice(1, 3);
+        const flowerPick = ['FLOWER_1', 'FLOWER_2'];
+        for (let i = 0; i < flowerSpots.length; i++) {
+            const fs = flowerSpots[i];
+            pushSafeDecor(flowerPick[i % flowerPick.length], fs.x, fs.y, 0.85, 0, mRnd() < 0.5);
+        }
+    }
+
+    // ── 7. 【古道遗痕 (Roadside Relic)】：远郊路旁仅 1 处废弃破木车伴生木桶 ──
+    if (plainSpots.length > 3) {
+        const rSpot = plainSpots[3];
+        if (pushSafeDecor('BATTLEFIELD:CART_BROKEN', rSpot.x, rSpot.y, 0.90, 0, false)) {
+            pushSafeDecor('BARRELS', rSpot.x + 26, rSpot.y + 10, 0.80, 0, false);
+        }
+        if (plainSpots.length > 4) {
+            const torchSpot = plainSpots[4];
+            pushSafeDecor('BATTLEFIELD:TORCH_A', torchSpot.x, torchSpot.y, 0.95, 0, false);
+        }
+    }
 
     // ── 大城 / 中城 / 小城 城内景观与街角细节（庭院绿植、内门火把、街角木桶与花坛，纯视觉点缀不挡路、不可摧毁） ──
     const defCityForInterior: any = this.defenderCityRecord();
@@ -798,24 +982,18 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         //   1) 远离城墙与护城河（dCells >= minHillDistCells + 9.5，且屏幕椭圆外扩 >= 920×520px）；
         //   2) 严格避开四门进出军大道与桥头延长线（di >= 8.5 && dj >= 8.5），只落在正北/正南/正东/正西四翼远郊高地；
         //   3) 避开左侧攻方主冲锋走廊与所有出生点（>= 780px），且山脚 3 格半径内不沾水体。
+        // 🔴 [2026-10-21 主人令「不要把山离城这么近，随机放到地图的高地上去」]
+        // 1. 彻底推远大山，严禁贴城：城池外侧至少保持 980px 远距离缓冲（关隘两翼至少 |gy - cGy| >= 16.5 格），绝不堵塞城墙视野与行军走廊；
+        // 2. 纯随机选点：在全图高地（elev >= 2.0，基座 3 级/5 级/7 级）候选点里随机洗牌抽取，自然散落各方高地。
         const isMountainSafeSpot = (gx: number, gy: number, pt: { x: number; y: number }): boolean => {
+            if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) return false;
+            const distFromCityCenter = Math.hypot((pt.x - cx) / 1.15, (pt.y - cy) * 1.45);
+            if (distFromCityCenter < 980) return false;
             if (this.defenderCityType === 'pass') {
-                if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) return false;
-                // 🔴 [2026-10-20 主人令「在城周围的高地上多放山和树林」]
-                // 关隘：必须坐落在南北两翼高山（|gy - cGy| >= 13.0 格），避开中央峡谷行军走廊
-                if (Math.abs(gy - cGy) < 11.5) return false;
-                for (const sp of this.spawns) {
-                    if (Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.5) < 620) return false;
-                }
-                return true;
+                if (Math.abs(gy - cGy) < 16.0) return false;
             }
-            if (((pt.x - cx) / (rx + 920)) ** 2 + ((pt.y - cy) / (ry + 520)) ** 2 < 1.0) return false;
-            const u = (pt.x - cx) / (TAC_TILE_W / 2), v = (pt.y - cy) / (TAC_TILE_H / 2);
-            const di = Math.abs((u + v) / 2 - 0.5), dj = Math.abs((v - u) / 2 - 0.5);
-            if (di < 8.5 || dj < 8.5) return false;
-            if (pt.x < cx && Math.abs(pt.y - cy) < 680) return false;
             for (const sp of this.spawns) {
-                if (Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.5) < 780) return false;
+                if (Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.5) < 700) return false;
             }
             for (const dy of [-3, 0, 3]) {
                 for (const dx of [-3, 0, 3]) {
@@ -827,76 +1005,26 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             }
             return true;
         };
-        const hillCandidates: Array<{ x: number; y: number; elev: number; score: number }> = [];
-        const minElevList = this.defenderCityType === 'pass' ? [5.0, 4.0, 3.0, 2.0] : [1.8, 1.35];
-        for (const minElev of minElevList) {
-            for (let gy = 4; gy <= N - 4; gy += 2) {
-                for (let gx = 4; gx <= N - 4; gx += 2) {
-                    const dCells = Math.hypot(gx - cGx, gy - cGy);
-                    const minCheckD = this.defenderCityType === 'pass' ? 13.0 : minHillDistCells + 9.5;
-                    if (dCells < minCheckD || dCells > 56) continue;
-                    const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
-                    if (!isMountainSafeSpot(gx, gy, pt)) continue;
-                    const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
-                    if (elev < minElev) continue;
-                    const pL = gl.cellToScreen(gx - 0.5, gy + 0.5, W, H);
-                    const pR = gl.cellToScreen(gx + 1.5, gy + 0.5, W, H);
-                    const pU = gl.cellToScreen(gx + 0.5, gy - 0.5, W, H);
-                    const pD = gl.cellToScreen(gx + 0.5, gy + 1.5, W, H);
-                    const nbrElev = (
-                        gl.elevationLevelAt(pL.x, pL.y, W, H) +
-                        gl.elevationLevelAt(pR.x, pR.y, W, H) +
-                        gl.elevationLevelAt(pU.x, pU.y, W, H) +
-                        gl.elevationLevelAt(pD.x, pD.y, W, H)
-                    ) * 0.25;
-                    if (nbrElev < minElev - 0.2) continue;
-                    const plateauScore = elev * 0.65 + nbrElev * 0.35;
-                    hillCandidates.push({
-                        x: pt.x + (mRnd() - 0.5) * 16,
-                        y: pt.y + (mRnd() - 0.5) * 10,
-                        elev,
-                        score: plateauScore + mRnd() * 0.35,
-                    });
-                }
+
+        const hillCandidates: Array<{ x: number; y: number; elev: number }> = [];
+        for (let gy = 4; gy <= N - 4; gy += 2) {
+            for (let gx = 4; gx <= N - 4; gx += 2) {
+                const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+                if (!isMountainSafeSpot(gx, gy, pt)) continue;
+                const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
+                if (elev < 2.0) continue;
+                hillCandidates.push({
+                    x: pt.x + (mRnd() - 0.5) * 18,
+                    y: pt.y + (mRnd() - 0.5) * 10,
+                    elev,
+                });
             }
-            const needCount = this.defenderCityType === "pass" ? 18 : 2;
-            if (hillCandidates.length >= needCount) break;
         }
-        // 🔴 [2026-10-20 主人令「在城周围的高地上多放山和树林」]
-        if (this.defenderCityType === 'pass') {
-            // 分别收集北翼山脉与南翼山脉上的候选点，紧凑环抱关隘（|dy|: 580~980px，|dx| <= 1350px）
-            const northCands: typeof hillCandidates = [];
-            const southCands: typeof hillCandidates = [];
-            for (const cand of hillCandidates) {
-                const dy = cand.y - cy;
-                const dx = cand.x - cx;
-                if (Math.abs(dx) > 1350) continue;
-                if (dy <= -560 && dy >= -1050) northCands.push(cand);
-                else if (dy >= 560 && dy <= 1050) southCands.push(cand);
-            }
-            // 优先选择高程 >= 3.0、且距离城关适度（北翼 640~760px，南翼 680~820px 黄金环抱带）的近山位点
-            const scoreNorth = (c: typeof hillCandidates[0]) => {
-                const dyAbs = Math.abs(c.y - cy);
-                return c.elev * 100 + (1000 - Math.abs(dyAbs - 680));
-            };
-            const scoreSouth = (c: typeof hillCandidates[0]) => {
-                const dyAbs = Math.abs(c.y - cy);
-                return c.elev * 100 + (1000 - Math.abs(dyAbs - 740));
-            };
-            northCands.sort((a, b) => scoreNorth(b) - scoreNorth(a));
-            southCands.sort((a, b) => scoreSouth(b) - scoreSouth(a));
-            
-            hillCandidates.length = 0;
-            const maxPairs = Math.max(northCands.length, southCands.length);
-            for (let i = 0; i < maxPairs; i++) {
-                if (i < northCands.length) hillCandidates.push(northCands[i]);
-                if (i < southCands.length) hillCandidates.push(southCands[i]);
-            }
-        } else {
-            hillCandidates.sort((a, b) => b.score - a.score);
-        }
-        const targetCount = this.defenderCityType === 'pass'
-            ? (6 + Math.floor(mRnd() * 3))
+        // 纯随机打散洗牌，随机放到地图的高地上去
+        hillCandidates.sort(() => mRnd() - 0.5);
+
+                const targetCount = this.defenderCityType === 'pass'
+            ? (4 + Math.floor(mRnd() * 3))
             : isHighlandSite
                 ? (1 + Math.floor(mRnd() * 2))
                 : 1;
