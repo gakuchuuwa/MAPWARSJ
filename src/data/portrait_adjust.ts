@@ -8103,9 +8103,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/PERSIAN/eerbulushi_beisusi.png": {
-            "scale": 1.08,
+            "scale": 1.12,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -1
         },
         "/assets/CENTRAL_ASIA/sute_sipitaminisi.png": {
             "scale": 1.05,

@@ -6308,5 +6308,204 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚拉-圣多明各",
+                type: "sea",
+                id: "sea_city_yala_city_shengduomingge_1792484957049",
+                startConnection: "city_yala",
+                endConnection: "city_shengduomingge"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-76.85, 20.35],
+                    [-77.16667, 19.58333],
+                    [-74.66667, 19.58333],
+                    [-75, 18.5],
+                    [-74.33333, 17.75],
+                    [-72.33333, 17.75],
+                    [-71.33333, 17.08333],
+                    [-70.66667, 17.91667],
+                    [-69.83333, 17.91667],
+                    [-69.8868, 18.4715],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚拉-卡塔赫纳",
+                type: "sea",
+                id: "sea_city_yala_city_katachena_1792484974183",
+                startConnection: "city_yala",
+                endConnection: "city_katachena"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-76.85, 20.35],
+                    [-77.34924, 20.47848],
+                    [-77.948, 19.715],
+                    [-78.2, 19],
+                    [-78.71186, 17.95403],
+                    [-79.25373, 16.84673],
+                    [-79.66388, 16.0086],
+                    [-79.6812, 14.20728],
+                    [-80, 9.75],
+                    [-76.11059, 10.25031],
+                    [-75.5442, 10.4266],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "邓纳德-利默里克",
+                type: "sea",
+                id: "sea_city_dunadd_city_limerick_1792485054176",
+                startConnection: "city_dunadd",
+                endConnection: "city_limerick"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-5.4875, 56.0914],
+                    [-6.20178, 55.42278],
+                    [-8, 55.75],
+                    [-9.5, 54.91667],
+                    [-10.75, 54.5],
+                    [-10.75, 53.16667],
+                    [-9.95487, 52.54156],
+                    [-9.72673, 52.55337],
+                    [-9.66605, 52.58582],
+                    [-9.54227, 52.58435],
+                    [-9.37481, 52.60056],
+                    [-9.31413, 52.57845],
+                    [-9.09085, 52.63593],
+                    [-8.94522, 52.66832],
+                    [-8.6957, 52.6664],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "邓纳德-都柏林",
+                type: "sea",
+                id: "sea_city_dunadd_city_dublin_1792485069547",
+                startConnection: "city_dunadd",
+                endConnection: "city_dublin"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-5.4875, 56.0914],
+                    [-6.20178, 55.42278],
+                    [-5.24769, 54.66648],
+                    [-5.48997, 53.98807],
+                    [-6.26, 53.34],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "巴达维亚-巨港",
+                type: "sea",
+                id: "sea_city_batavia_city_sanfoqi_1792485737963",
+                startConnection: "city_batavia",
+                endConnection: "city_sanfoqi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [106.8133, -6.1352],
+                    [106.86813, -5.91658],
+                    [106.8, -5.2],
+                    [106.1, -3],
+                    [105.90519, -2.89234],
+                    [105.68628, -2.34565],
+                    [105.06324, -2.16898],
+                    [104.75, -2.99],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "巴达维亚-淡马锡",
+                type: "sea",
+                id: "sea_city_batavia_city_danmaxi_1792485760751",
+                startConnection: "city_batavia",
+                endConnection: "city_danmaxi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [106.8133, -6.1352],
+                    [106.86813, -5.91658],
+                    [106.8, -5.2],
+                    [107.29248, -3.59018],
+                    [107.25128, -2.4986],
+                    [106.66667, -1.91667],
+                    [106.08333, -1],
+                    [105.25, -0.33333],
+                    [105.25, 0.66667],
+                    [104.58333, 1.83333],
+                    [104.48229, 1.34131],
+                    [103.85, 1.29],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "丹塔普拉-阿努拉德",
+                type: "sea",
+                id: "sea_city_danta_city_anulade_1792486058652",
+                startConnection: "city_danta",
+                endConnection: "city_anulade"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [84, 18.4],
+                    [84.16667, 17.91667],
+                    [83.33333, 17.08333],
+                    [82.75, 16.5],
+                    [81.66667, 15.91667],
+                    [80.58333, 15.33333],
+                    [80.58333, 14],
+                    [80.58333, 12.83333],
+                    [80.25, 11.83333],
+                    [80.25, 10.33333],
+                    [80.66667, 10.25],
+                    [81.75, 9],
+                    [80.3956, 8.3533],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "丹塔普拉-耽摩栗底",
+                type: "sea",
+                id: "sea_city_danta_city_danmoledi_1792486086113",
+                startConnection: "city_danta",
+                endConnection: "city_danmoledi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [84, 18.4],
+                    [84.9566, 18.5238],
+                    [88, 21],
+                    [87.93869, 21.68423],
+                    [87.92, 22.28],
+                ]
+            }
+        },
     ]
 };

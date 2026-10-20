@@ -531,7 +531,6 @@ korea_a: 0.646,  // -17.2 LUFS
     georgians_a: 0.716,  // -18.1 LUFS
     georgians_b: 0.716,  // -18.1 LUFS
     latin_a: 0.610,  // -16.7 LUFS
-    persian_a: 0.684,  // -17.7 LUFS
     roma_a: 0.684,  // -17.7 LUFS
     roma_b: 0.646,  // -17.2 LUFS
     sicilians_a: 0.638,  // -17.1 LUFS
@@ -563,7 +562,6 @@ korea_a: 0.646,  // -17.2 LUFS
     spartans_b: 0.668,  // -17.5 LUFS
     macedonian_a: 0.631,  // -17.0 LUFS
     macedonian_b: 0.668,  // -17.5 LUFS
-    mayans_a: 0.646,  // -17.2 LUFS
     mayans_b: 0.638,  // -17.1 LUFS
     muisca_a: 0.700,  // -17.9 LUFS
     muisca_b: 0.661,  // -17.4 LUFS
@@ -686,13 +684,13 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     MAGYAR: ['de_MAGYAR', 'magyar_a', 'magyar_b'],
     MALAY: ['de_MALAY', 'malay_a', 'malay_b'],
     MAPUCHE: ['de_MAPUCHE', 'mapuche_a', 'mapuche_b'],
-    MAYANS: ['de_MAYANS', 'mayans_a', 'mayans_b'],
+    MAYANS: ['de_MAYANS', 'mayans_b'],
     MONGOL: ['de_MONGOL', 'STEPPE', 'mongol_a'],
     MUGHAL: ['de_MUGHAL', 'mughal_a', 'mughal_b'],
     MUISCA: ['de_MUISCA', 'muisca_a', 'muisca_b'],
     NORTHEAST: ['de_NORTHEAST', 'NORTHEAST', 'xianqin', 'yingqin'],
     ORIE: ['de_ORIE', 'holy_land_battle', 'desert_war', 'ottoman_drums'],
-    PERSIAN: ['de_PERSIAN', 'persian_a', 'persian_b'],
+    PERSIAN: ['de_PERSIAN', 'persian_b'],
     POLES: ['de_POLES', 'poles_a', 'poles_b'],
     PORTUGUESE: ['de_PORTUGUESE', 'portuguese_a', 'portuguese_b'],
     PURU: ['de_PURU', 'puru_a', 'puru_b'],
