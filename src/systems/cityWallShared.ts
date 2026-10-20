@@ -1665,6 +1665,13 @@ export interface PassRingHalfExtents {
 /** 险要形制（square＝现状；rect＝矩形；rect_mirror＝矩形镜像） */
 export type PassShapeMode = 'square' | 'rect' | 'rect_mirror';
 
+/** 形制镜像：rect ↔ rect_mirror，square 不变。
+ *  🔴 [2026-10-20 主人令「据点的有镜像的，请随机」] 险要镜像走每局随机的 `city.mirror`：
+ *     视觉形制 = 镜像后的形制；建筑栈本身还要按镜像再反一次（外面还有一层 scaleX(-1) 外壳）。 */
+export function mirrorPassShape(mode: PassShapeMode): PassShapeMode {
+    return mode === 'rect' ? 'rect_mirror' : mode === 'rect_mirror' ? 'rect' : 'square';
+}
+
 /** 取险要双圈的半边长（格）；`Scene13GroundLayerGL.flattenPassTerraces` 的矩形分支用它算台地边界。
  *  兼容旧调用：传 boolean（true＝矩形 / false＝方形）仍可用。 */
 export function passRingHalfExtents(shape: PassShapeMode | boolean): PassRingHalfExtents {

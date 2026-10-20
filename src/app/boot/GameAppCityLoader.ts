@@ -38,8 +38,7 @@ export function loadGameAppCityData(app: GameApp): void {
             buildingStyle: c.buildingStyle,
             image: getCityImage(c),
             // 🔴 [2026-10-03 主人令「大中小城寨，战场都要随机镜像。PASS不要随机镜像」]
-            //    大/中/小/城寨**一律每局随机掷一次**（原先「带专属立绘的据点整支照数据」那条约 131 座永远不翻、
-            //    以及数据里写了 mirror:true 的照数据的例外，按本条令一并去掉）；
+            //    大/中/小城寨**一律每局随机掷一次**；
             //    险要（pass）**不掷签** —— `rollSessionCityMirror` 内部对 pass 只认数据。
             mirror: rollSessionCityMirror(c.type, c.mirror),
             startYear: c.startYear,

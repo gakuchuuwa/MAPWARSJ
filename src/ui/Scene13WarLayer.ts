@@ -24,6 +24,8 @@ import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
 import { type RegionType } from '../systems/RegionSystem';
 import { resolveCastleAsset } from '../config/deCastleAssets';
 import { CITIES_V2 } from '../data/cities_v2';
+import { passShapeForCity } from '../data/passShapes';
+import { mirrorPassShape } from '../systems/cityWallShared';
 import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import type { BattleType } from '../combat/CombatSystem';
 import type { CityType } from '../types/core';
@@ -152,8 +154,12 @@ export class Scene13WarLayer {
     /** [2026-08-22] 攻城战守方城等级（big_city/medium_city/small_city/pass）——决定守城建筑池时代 */
     defenderCityType: CityType | null = null;    /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观，守方城中央立奇观地标） */
     defenderCityId: string | null = null;
-    /** 🔴 [2026-10-20 主人令「东方很多险要应该都是矩形的……先做个样子」] 险要形制：'rect'＝矩形 2:1、'rect_mirror'＝镜像矩形（预览 opt-in）；null/方形＝现状 */
+    /** 🔴 [2026-10-20] 险要**视觉**形制：'rect'＝矩形 2:1、'rect_mirror'＝镜像矩形；null/方形＝现状。
+     *  视觉形制 = 据点显式形制（`passShapes.ts`）按**战术模式每场随机**的镜像翻一次；
+     *  建筑栈本身用 `defenderPassLayoutShape`（再反一次，外面还有 scaleX(-1) 外壳）。 */
     defenderPassShape: 'square' | 'rect' | 'rect_mirror' | null = null;
+    /** 险要**建筑布局**形制（画墙/夹道点位用的、未镜像的形制；镜像由 `city.mirror` 外壳负责） */
+    defenderPassLayoutShape: 'square' | 'rect' | 'rect_mirror' | null = null;
     /** 🔴 [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」] 险要地形：'flat'＝抹平、'plateau'＝整块矩形高台；null＝现状多层高台 */
     defenderPassTerrain: 'mound' | 'flat' | 'plateau' | null = null;
     /** 🔴 [2026-09-11 主人「和游戏同步」] 守方据点经**战略地图同一解析**得到的 DE 建筑风格前缀（null = 该据点无风格，走旧的两层）。 */
@@ -1543,9 +1549,26 @@ export class Scene13WarLayer {
             //    攻城战同走八方向：城池＝战略地图同款建筑栈，摆在地图正中；攻方从真实来向出现。
             if (this.battleType === 'siege') {
                 const rec: any = this.defenderCityRecord();
+                // 🔴 [2026-10-20 主人令「战略地图不要镜像随机，我说的是战术模式」] 险要形制 + 镜像：
+                //   · 据点默认形制走 `src/data/passShapes.ts`（按据点填，缺的按文化默认）；
+                //   · **镜像只在战术模式随机**：每场攻城战掷一次 50%（战略地图仍用数据 mirror，不随机）；
+                //     预览页（init 带形制）保持确定性，按数据 mirror，方便逐形制截图；
+                //   · 视觉形制 = 默认形制按镜像翻一次；建筑布局形制 = 视觉形制再反一次
+                //     （`strategicCityHtmlWith` 最后会套 scaleX(-1) 外壳，两层必须抵消）；
+                //   · 预览页手选形制时 `init.defenderPassShape` 就是**视觉**形制，同样反推布局形制。
+                const passMirror = this.defenderCityType === 'pass'
+                    ? (init.defenderPassShape ? !!rec?.mirror : Math.random() < 0.5)
+                    : !!rec?.mirror;
+                const passBase: 'square' | 'rect' = this.defenderCityType === 'pass' && rec
+                    ? passShapeForCity(rec.id, rec.buildingStyle)
+                    : 'square';
+                const passVisual = init.defenderPassShape ?? (passMirror ? mirrorPassShape(passBase) : passBase);
+                this.defenderPassShape = passVisual;
+                this.defenderPassLayoutShape = passMirror ? mirrorPassShape(passVisual) : passVisual;
+                this.defenderPassTerrain = init.defenderPassTerrain ?? (passVisual !== 'square' ? 'plateau' : null);
                 const city: any = rec
-                    ? { ...rec, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type }
-                    : { id: this.defenderCityId || 'siege_city', name: '城池', type: this.defenderCityType || 'medium_city', region: init.defenderRegion || 'CENTRAL', factionId: init.defenderFactionId ?? null, latitude: init.defenderCityLat ?? init.centerLat ?? 30, longitude: init.defenderCityLng ?? init.centerLng ?? 110 };
+                    ? { ...rec, mirror: passMirror, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type }
+                    : { id: this.defenderCityId || 'siege_city', name: '城池', type: this.defenderCityType || 'medium_city', region: init.defenderRegion || 'CENTRAL', factionId: init.defenderFactionId ?? null, mirror: passMirror, latitude: init.defenderCityLat ?? init.centerLat ?? 30, longitude: init.defenderCityLng ?? init.centerLng ?? 110 };
                 // 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」]
                 //    战术攻城战守方据点同步生成战略地图同款建筑栈，确保 initWar 立即就绪，彻底避免异步延迟导致 fallback 进旧 13 左右布阵与残垣旧墙
                 // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 走 **DE 原生像素**版：件表按素材原生像素
@@ -1554,8 +1577,8 @@ export class Scene13WarLayer {
                 //    （实测八个方向基座恒为 512,450）。战略地图那条路不传原生表，一个像素不动。
                 this.deCity = city
                     ? strategicCityHtmlNative(city,
-                        this.defenderPassShape && this.defenderPassShape !== 'square'
-                            ? { passShape: this.defenderPassShape }
+                        this.defenderPassLayoutShape && this.defenderPassLayoutShape !== 'square'
+                            ? { passShape: this.defenderPassLayoutShape }
                             : undefined)
                     : null;
                 this.deCityCenter = { x: this.worldCX, y: this.worldCY };
