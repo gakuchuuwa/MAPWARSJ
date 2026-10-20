@@ -1072,7 +1072,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -45
         },
-        "/assets/HEXI/hunxie_xuziwei.png": {
+        "/assets/HEXI/__闲置__HEXI_20.png": {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": 0

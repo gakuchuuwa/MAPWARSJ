@@ -296,6 +296,22 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 里昂
+    'mazhaer_charles_i': 'MAGYAR',      // 匈牙利｜查理一世｜据点 布达佩斯
+    'baojialiya_mikhail': 'BULGARIANS', // 保加利亚｜米哈伊尔·希什曼｜据点 特尔诺沃
+    'yuan_d_tuotuo': 'MONGOL',          // 元朝｜脱脱｜据点 上都
+    'yuan_d_manzihaiya': 'MONGOL',      // 元朝｜蛮子海牙｜据点 上都
+    'yuan_d_daulashah': 'MONGOL',   // 元朝｜倒剌沙｜据点 上都
+    'yinggelan_warenne': 'SAXONS',   // 英格兰｜约翰·德·瓦伦｜据点 伦敦
+    'gaolu_john_ii': 'FRANKS',       // 法兰西｜约翰二世｜据点 巴黎
+    'xiliao_uthman': 'CENTRAL_ASIA',   // 西辽｜奥斯曼｜据点 撒马尔罕
+    'hre_manfred': 'SICILIANS',        // 神圣罗马帝国｜曼弗雷德｜据点 巴勒莫
+    'hre_siegfried': 'FRANKS',         // 神圣罗马帝国｜西格弗里德｜据点 科隆
+    'jinzhang_nogai': 'CENTRAL_ASIA',  // 金帐｜那海｜据点 萨莱
+    'champa_jaya_indravarman_iv': 'KHMER',  // 占婆｜阇耶因陀罗跋摩四世｜据点 美山
+    'mazhaer_bela_iv': 'MAGYAR',            // 匈牙利｜贝拉四世｜据点 布达佩斯
+    'yilihanguo_kitbuqa': 'PERSIAN',        // 伊儿汗国｜怯的不花｜据点 赞詹
+    'menggu_d_mongke': 'MONGOL',            // 蒙古｜蒙哥｜据点 哈拉和林
+    'falanji_baodewen': 'FRANKS',           // 法兰克｜鲍德温一世｜据点 科隆
     'huarazim_jalal': 'CENTRAL_ASIA',   // 花剌子模｜扎兰丁｜据点 玉龙杰赤
     'dajin_wanyanheda': 'NORTHEAST',    // 大金｜完颜合达｜据点 会宁府
     'abasi_mustasim': 'ORIE',           // 阿拔斯｜穆斯塔西姆｜据点 巴格达

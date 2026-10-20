@@ -137,6 +137,22 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     hao_d_weirui: { birth: 442, death: 520 },              // 韦睿
     gen_theodoric_great: { birth: 454, death: 526 },       // 狄奥多里克大帝
     gen_clovis_i: { birth: 466, death: 511 },              // 克洛维
+    mazhaer_charles_i: { birth: 1288, death: 1342 },       // 查理一世（匈牙利）
+    baojialiya_mikhail: { birth: 1280, death: 1330, kaoju: '推定' },  // 米哈伊尔·希什曼（保加利亚沙皇）
+    yuan_d_tuotuo: { birth: 1314, death: 1356 },           // 脱脱（元末丞相）
+    yuan_d_manzihaiya: { birth: 1300, death: 1360, kaoju: '推定' },   // 蛮子海牙（元将）
+    yuan_d_daulashah: { birth: 1280, death: 1328, kaoju: '推定' },  // 倒剌沙（元上都派权臣）
+    yinggelan_warenne: { birth: 1231, death: 1304 },       // 约翰·德·瓦伦
+    gaolu_john_ii: { birth: 1319, death: 1364 },           // 约翰二世（法兰西国王）
+    xiliao_uthman: { birth: 1175, death: 1212 },            // 奥斯曼（西喀喇汗末王）
+    hre_manfred: { birth: 1232, death: 1266 },              // 曼弗雷德（西西里王）
+    hre_siegfried: { birth: 1230, death: 1297, kaoju: '推定' },  // 西格弗里德（科隆大主教）
+    jinzhang_nogai: { birth: 1240, death: 1300, kaoju: '推定' },  // 那海（金帐权臣）
+    champa_jaya_indravarman_iv: { birth: 1130, death: 1190, kaoju: '推定' },  // 阇耶因陀罗跋摩四世（占婆王）
+    mazhaer_bela_iv: { birth: 1206, death: 1270 },                            // 贝拉四世（匈牙利王）
+    yilihanguo_kitbuqa: { birth: 1230, death: 1260, kaoju: '推定' },          // 怯的不花（伊儿汗国先锋）
+    menggu_d_mongke: { birth: 1209, death: 1259 },                            // 蒙哥（蒙古大汗）
+    falanji_baodewen: { birth: 1172, death: 1205 },                           // 鲍德温一世（拉丁帝国皇帝）
     huarazim_jalal: { birth: 1199, death: 1231 },           // 扎兰丁（花剌子模末代沙阿）
     dajin_wanyanheda: { birth: 1180, death: 1232, kaoju: '推定' },  // 完颜合达（金军三峰山主帅）
     abasi_mustasim: { birth: 1213, death: 1258 },           // 穆斯塔西姆（末代哈里发）

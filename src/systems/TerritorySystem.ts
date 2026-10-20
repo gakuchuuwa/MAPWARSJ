@@ -628,10 +628,10 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
                     groundTile: cityGroundTile(buildingStyle, 'sr2'),
                     slotCenters: slotCenters.map((sc) => ({ ci: sc.ci, cj: sc.cj, isCenter: sc.isCenter })),
                     auxBuildings: [
-                        { b: 'TOWER', age: 'AGE2', ci: -7, cj: -7 },
-                        { b: 'TOWER', age: 'AGE2', ci: 8, cj: -7 },
-                        { b: 'TOWER', age: 'AGE2', ci: 8, cj: 8 },
                         { b: 'TOWER', age: 'AGE2', ci: -7, cj: 8 },
+                        { b: 'TOWER', age: 'AGE2', ci: 8, cj: -7 },
+                        { b: 'TOWER', age: 'AGE2', ci: -8, cj: -3 },
+                        { b: 'TOWER', age: 'AGE2', ci: 8, cj: 3 },
                     ],
                 }, buildingStyle);
         }
@@ -1169,10 +1169,10 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
                     : (DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA']),
                 groundTile: cityGroundTile(buildingStyle, 'rd2'),
                 auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
-                    { b: 'TOWER', age: 'AGE3', ci: -8, cj: -8 },
-                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: -8 },
-                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: 9 },
                     { b: 'TOWER', age: 'AGE3', ci: -8, cj: 9 },
+                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: -8 },
+                    { b: 'TOWER', age: 'AGE3', ci: -9, cj: -4 },
+                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: 4 },
                 ],
             }, buildingStyle);
     }
@@ -1316,10 +1316,10 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],
             groundTile: cityGroundTile(buildingStyle, 'rd1'),
             auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
-                { b: 'TOWER', age: 'AGE4', ci: -9, cj: -9 },
-                { b: 'TOWER', age: 'AGE4', ci: 10, cj: -9 },
-                { b: 'TOWER', age: 'AGE4', ci: 10, cj: 10 },
                 { b: 'TOWER', age: 'AGE4', ci: -9, cj: 10 },
+                { b: 'TOWER', age: 'AGE4', ci: 10, cj: -9 },
+                { b: 'TOWER', age: 'AGE4', ci: -10, cj: -5 },
+                { b: 'TOWER', age: 'AGE4', ci: 10, cj: 5 },
             ],
         }, buildingStyle);
     }
