@@ -3733,7 +3733,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代爱奥尼亚军团",
         legionType: "sub",
     },
-    "wangdaer": {
+    "xiluoma": {
         legionName: "古典时代罗马军团",
         legionType: "sub",
     },
@@ -4545,6 +4545,102 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "muxikani": {
         legionName: "古典时代贵霜军团",
         legionType: "region",
+    },
+    "dalriada": {
+        legionName: "封建时代高王近卫军团",
+        legionType: "sub",
+    },
+    "scotland": {
+        legionName: "城堡时代盖尔军团",
+        legionType: "sub",
+    },
+    "hre": {
+        legionName: "城堡时代德意志骑士军团",
+        legionType: "sub",
+    },
+    "chanka": {
+        legionName: "城堡时代印加军团",
+        legionType: "sub",
+    },
+    "ouchi": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "cueva": {
+        legionName: "帝国时代格查武士军团",
+        legionType: "sub",
+    },
+    "maynila": {
+        legionName: "帝国时代马六甲军团",
+        legionType: "sub",
+    },
+    "gujarat": {
+        legionName: "帝国时代古吉拉特军团",
+        legionType: "sub",
+    },
+    "arakan": {
+        legionName: "帝国时代东吁军团",
+        legionType: "sub",
+    },
+    "voc": {
+        legionName: "帝国时代马六甲军团",
+        legionType: "sub",
+    },
+    "malla": {
+        legionName: "帝国时代卫藏军团",
+        legionType: "sub",
+    },
+    "qiangfang": {
+        legionName: "古典时代发羌军团",
+        legionType: "sub",
+    },
+    "huaiyi": {
+        legionName: "古典时代华夏军团",
+        legionType: "sub",
+    },
+    "pisa": {
+        legionName: "古典时代爱奥尼亚军团",
+        legionType: "sub",
+    },
+    "cimmerian": {
+        legionName: "古典时代萨尔马提亚军团",
+        legionType: "sub",
+    },
+    "libya": {
+        legionName: "古典时代迦太基军团",
+        legionType: "sub",
+    },
+    "kosala": {
+        legionName: "古典时代泰米尔军团",
+        legionType: "sub",
+    },
+    "kalinga": {
+        legionName: "古典时代泰米尔军团",
+        legionType: "sub",
+    },
+    "anga": {
+        legionName: "古典时代贵霜军团",
+        legionType: "sub",
+    },
+    "shunga": {
+        legionName: "古典时代泰米尔军团",
+        legionType: "sub",
+    },
+    "antigonid": {
+        legionName: "古典时代马其顿军团",
+        legionType: "sub",
+    },
+    "mimo": {
+        legionName: "古典时代巴蜀军团",
+        legionType: "sub",
+    },
+    "xizhou": {
+        legionName: "古典时代华夏军团",
+        legionType: "sub",
+    },
+    "shijun": {
+        legionName: "封建时代瞿越军团",
+        legionType: "sub",
     },
 };
 

@@ -24,4 +24,5 @@ export const AMERICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     xinnidelan: { name: '新尼守军', tier: 4 },  // 新阿姆斯特丹·斯泰弗森特：荷兰西印度公司殖民地守军
     xinfalanxi: { name: '新法民兵', tier: 4 },  // 魁北克·尚普兰：新法兰西殖民民兵
     xinxibanya: { name: '迭戈守军', tier: 4 },  // 阿卡普尔科·乌尔达内塔：1617年圣迭戈堡防海盗守军
+    cueva: { name: '库埃瓦弓手', tier: 4 },   // 科马格雷·达连酋长 库纳：科马格雷·库纳：达连酋邦的毒箭弓手，1514年抗西班牙征服者
 };

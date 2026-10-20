@@ -20,4 +20,5 @@ export const ANDE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     tamoyue: { name: '塔莫约勇士', tier: 3 },   // 卡布弗里乌·昆汉贝贝：塔莫约联盟战士
     naweierbuta: { name: '断腕勇士', tier: 3 },   // 科利普利·加尔瓦里诺：断腕复仇的马普切战士
     alaokaniya: { name: '战巫女卫', tier: 3 },   // 彼得罗阿·瓜科尔达：阿劳卡尼亚战巫女卫队
+    chanka: { name: '昌卡石斧手', tier: 3 },   // 安达瓦伊拉斯·昌卡部族盟主 阿斯塔瓦兰卡：安达瓦伊拉斯·阿斯塔瓦兰卡：昌卡战士持石斧与投石索，1438年围攻库斯科
 };

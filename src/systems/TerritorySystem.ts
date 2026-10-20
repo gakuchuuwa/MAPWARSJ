@@ -238,7 +238,7 @@ export interface CityNativeSizes {
 }
 
 /** 取某建筑的原生宽：先 AGE 前缀，再裸名 */
-function nativeW(native: CityNativeSizes | undefined, name: string, age: 'AGE2' | 'AGE3'): number | null {
+function nativeW(native: CityNativeSizes | undefined, name: string, age: 'AGE2' | 'AGE3' | 'AGE4' | string): number | null {
     if (!native || !native.widths) return null;
     return native.widths[`${age}:${name}`] ?? native.widths[name] ?? null;
 }
@@ -1162,6 +1162,12 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
                     ? (DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'])
                     : (DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA']),
                 groundTile: cityGroundTile(buildingStyle, 'rd2'),
+                auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
+                    { b: 'TOWER', age: 'AGE3', ci: -8, cj: -8 },
+                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: -8 },
+                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: 9 },
+                    { b: 'TOWER', age: 'AGE3', ci: -8, cj: 9 },
+                ],
             }, buildingStyle);
     }
 
@@ -1303,6 +1309,16 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             seg: 9, near: 3.5, far: 9, corner: true, slotCenters: bigSlotCenters, gateEdges: [true, true, true, true],
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],
             groundTile: cityGroundTile(buildingStyle, 'rd1'),
+            auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
+                { b: 'TOWER', age: 'AGE4', ci: -9, cj: -9 },
+                { b: 'TOWER', age: 'AGE4', ci: 10, cj: -9 },
+                { b: 'TOWER', age: 'AGE4', ci: 10, cj: 10 },
+                { b: 'TOWER', age: 'AGE4', ci: -9, cj: 10 },
+                { b: 'HOUSE', age: 'AGE3', ci: -3.5, cj: 4.5 },
+                { b: 'HOUSE', age: 'AGE3', ci: 4.5, cj: -3.5 },
+                { b: 'HOUSE', age: 'AGE3', ci: -8.5, cj: -3.5 },
+                { b: 'HOUSE', age: 'AGE3', ci: 9.5, cj: 4.5 },
+            ],
         }, buildingStyle);
     }
 
@@ -1437,6 +1453,8 @@ interface CityGridSpec {
     buildingStyle?: string;
     /** 不铺城内整片地面（游牧毡帐直接立在草地上，无地基） */
     noGround?: boolean;
+    /** 战术侧城内附属点缀建筑（四角防御塔、大城街坊民居；带 data-aux="1" 不占守军 9 个出兵槽位） */
+    auxBuildings?: ReadonlyArray<{ b: string; age: string; ci: number; cj: number }>;
 }
 
 function buildDeCityGridHtml(

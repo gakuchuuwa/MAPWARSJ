@@ -96,7 +96,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   aquidan: '阿奎',
   puluowangsi: '普罗',
   lunbadi: '伦巴',
-  wangdaer: '西罗',  // 西罗马（希波）
+  xiluoma: '西罗',  // 西罗马（希波）
 'donggete': '东哥',
   xigete: '西哥',
   andaluoxiya: '安达',
@@ -1298,6 +1298,30 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'muertan': '木尔',
     'muxikani': '穆西',
     'xindu': '信度',
+  dalriada: '达里',  // 达尔里阿达
+  scotland: '苏格',  // 苏格兰
+  hre: '神罗',  // 神圣罗马帝国
+  chanka: '昌卡',  // 昌卡
+  ouchi: '大内',  // 大内
+  cueva: '库埃',  // 库埃瓦
+  maynila: '马尼',  // 马尼拉土邦
+  gujarat: '古吉',  // 古吉拉特
+  arakan: '若开',  // 阿拉干
+  voc: '荷印',  // 荷兰东印度公司
+  malla: '马拉',  // 马拉
+  qiangfang: '羌方',  // 羌方
+  huaiyi: '淮夷',  // 淮夷
+  pisa: '皮萨',  // 皮萨
+  cimmerian: '辛梅',  // 辛梅里安
+  libya: '利比',  // 利比亚
+  kosala: '拘萨',  // 拘萨罗
+  kalinga: '羯陵',  // 羯陵伽
+  anga: '鸯伽',  // 鸯伽
+  shunga: '巽伽',  // 巽伽
+  antigonid: '安提',  // 安提柯
+  mimo: '靡莫',  // 靡莫
+  xizhou: '西州',  // 西州
+  shijun: '使君',  // 十二使君
 };
 
 // @ts-ignore

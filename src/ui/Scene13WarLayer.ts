@@ -100,7 +100,7 @@ import {
     FLAG_SCALE, FLAG_FALL, FLAG_POLE_RATIO, FLAG_POLE_LIFT, BATCH_COOLDOWN, FADE_IN,
     DEPLOY_SECS, DEPLOY_FADE, ARRIVE_EPS, MARCH_REL, LANE_REGROUP_SEC, LANE_TRACK_EPS,
     LANE_W, MARCH_R, CHARGE_CYCLE, GANG_CAP, SPREAD_CAP, SEP_DIST, ZORDER_EPS,
-    SEP_SMOOTH, SEP_SPD, SEP_FIGHT, CELL_S, STUCK_IDLE_SEC, NET_STUCK_WINDOW,
+    SEP_SMOOTH, SEP_SPD, SEP_FIGHT, LEASH_LAT, CELL_S, STUCK_IDLE_SEC, NET_STUCK_WINDOW,
     SLIDE_RATE, SLIDE_W, KEEP_TARGET_HP, KITE_RETREAT_DIST, KITE_SAFE, KITE_RETREAT_CAP,
     ATTRITION_START_SEC, ATTRITION_RAMP_SEC, ATTRITION_CAP, HKEY, CELL_M, CELL_R,
     gangMul, PIKE_BRACE_ENABLED, PIKE_BRACE_FRONT_DEG, PIKE_BRACE_TAKEN,
@@ -5443,7 +5443,7 @@ export class Scene13WarLayer {
                     stuckT: 0, sepX: 0, sepY: 0, y0: s.y,
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch && !outsideFirst, port: inMarch && !outsideFirst ? s : null, dep, slotY, pop: s.pop,
-                    lane: s.lane,
+                    lane: s.lane, outside1: outsideFirst || undefined,
                     guardPost: (s.f === 1 && this.battleType === 'siege' && !!this.deCity && !outsideFirst && !this.isDefenderGateDestroyed())
                         ? { x: spawnX, y: spawnY }
                         : undefined,
@@ -6094,6 +6094,16 @@ export class Scene13WarLayer {
         let pBest: WarMan | null = null, pBd = r2;
         let pInRange: WarMan | null = null, pRd = r2;
         let pFree: WarMan | null = null, pFd = r2;
+        // 🔴 [2026-10-20 主人令「两军交战总是拥挤在一起」→ 方案二 分路索敌] 野战：优先打自己拴绳带内（正对面）的敌人，
+        //    带内一个都没有才落回原有的选法（本队目标敌队 → 全视野最近）。贴脸 65px 内的一律算带内（自卫）。
+        const bandHome = (typeof wm.lane === 'number' && wm.key !== undefined) ? this.leashHome(m as WarMan) : null;
+        const bandW = bandHome !== null ? LEASH_LAT + Math.max(this.statsFor(wm.key!, m.f as 0 | 1).rng, 65) : 0;
+        const bandU = bandHome !== null ? this.leashAxis(m as WarMan)! : this.sideVec[0];
+        let bBest: WarMan | null = null, bBd = r2;
+        let bInRange: WarMan | null = null, bRd = r2;
+        let bFree: WarMan | null = null, bFd = r2;
+        const inBand = (o: WarMan, d: number): boolean => bandHome !== null
+            && (d < 65 * 65 || Math.abs(this.latAlong(bandU, o.x, o.y) - bandHome) <= bandW);
         // 🔴 [2026-08-17] 投石车/投石机有最小射程：贴太近就抛不出去（DE 同款）。
         //    原来只在**放弹丸**那一步判 tooClose，结果贴脸时「照样扣血、就是不出石弹」——
         //    主人实锤「看不到投石兵的石弹」。改成索敌时就避开太近的目标：
@@ -6120,15 +6130,21 @@ export class Scene13WarLayer {
                     if (!tooNear && d < pRd) { pRd = d; pInRange = o; }
                     if (o.claims < SPREAD_CAP && !tooNear && d < pFd) { pFd = d; pFree = o; }
                 }
+                if (inBand(o, d)) {
+                    if (d < bBd) { bBd = d; bBest = o; }
+                    if (!tooNear && d < bRd) { bRd = d; bInRange = o; }
+                    if (o.claims < SPREAD_CAP && !tooNear && d < bFd) { bFd = d; bFree = o; }
+                }
                 if (o.claims >= SPREAD_CAP) continue;
                 if (!tooNear && d < fd) { fd = d; free = o; }
             }
         } else {
             for (let ring = 0; ring <= span; ring++) {
                 // 只有找到未满且满足最小射程的目标才能提前结束；若指定了 prefLane 则须等 pFree 找到才可提前结束。
-                if (prefLane !== undefined ? pFree : free) {
+                // 🔴 [2026-10-20] 野战分路索敌：须等带内空闲目标（bFree）找到才可提前结束
+                if (bandHome !== null ? bFree : (prefLane !== undefined ? pFree : free)) {
                     const floor = (ring - 1) * cell;
-                    if (floor > 0 && (prefLane !== undefined ? pFd : fd) < floor * floor) break;
+                    if (floor > 0 && (bandHome !== null ? bFd : (prefLane !== undefined ? pFd : fd)) < floor * floor) break;
                 }
                 for (let gx = cx - ring; gx <= cx + ring; gx++) {
                     const isEdgeX = gx === cx - ring || gx === cx + ring;
@@ -6153,6 +6169,11 @@ export class Scene13WarLayer {
                                 if (!tooNear && d < pRd) { pRd = d; pInRange = o; }
                                 if (o.claims < SPREAD_CAP && !tooNear && d < pFd) { pFd = d; pFree = o; }
                             }
+                            if (inBand(o, d)) {
+                                if (d < bBd) { bBd = d; bBest = o; }
+                                if (!tooNear && d < bRd) { bRd = d; bInRange = o; }
+                                if (o.claims < SPREAD_CAP && !tooNear && d < bFd) { bFd = d; bFree = o; }
+                            }
                             if (o.claims >= SPREAD_CAP) continue;
                             if (!tooNear && d < fd) { fd = d; free = o; }
                         }
@@ -6161,7 +6182,7 @@ export class Scene13WarLayer {
             }
         }
         const isHero = (m as { hero?: boolean }).hero === true;
-        const manChosen = (pFree ?? pInRange ?? pBest) ?? (free ?? inRange ?? best);
+        const manChosen = (bFree ?? bInRange ?? bBest) ?? (pFree ?? pInRange ?? pBest) ?? (free ?? inRange ?? best);
         // 🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」]
         // 🔴 [2026-10-15 主人令「在进攻的途中，攻城武器不打人，直接往敌军中冲，这样不现实」]
         //    1) 若最近的目标城门/城墙/建筑已进入攻城武器自身射程（reach2）⇒ 优先锁定并摧毁该建筑；
@@ -7183,7 +7204,9 @@ export class Scene13WarLayer {
                 return this.gateExit(m, this.defenderCityReturnGoal(m));
             }
         }
-        return this.gateExit(m, this.flowRedirect(m, this.aimAtRaw(m)));
+        const raw = this.aimAtRaw(m);
+        // 🔴 [2026-10-20] 野战阵位拴绳：寻敌落点横向收回本兵的带内（见 leashHome）
+        return this.gateExit(m, this.flowRedirect(m, raw ? this.leashPoint(m, raw, this.statsFor(m.key, m.f).sight ?? 160) : raw));
     }
 
     /** 地块坐标（以画布中心为原点，与 resolveWorldObstructions 同一套） */
@@ -7536,6 +7559,68 @@ export class Scene13WarLayer {
     }
 
     /**
+     * 🔴 [2026-10-20 主人令「两军交战总是拥挤在一起，能不能展开战斗」「按你专业分析的执行」「野战和攻城战分开」]
+     * 野战阵位拴绳：接战后每个兵横向（沿 sideVec）只在自己出生槽位 ± LEASH_LAT 内找敌、追敌，
+     * 前后不限（战线照常推进），于是左中右各队各打各的，不再全军向接触点中心收拢成一团。
+     * 生效范围：
+     *   · 野战（含没有城墙的攻城战，与 siegeWithWalls 同一口径）：全场生效；
+     *   · 🔴 [2026-10-20 主人令「攻城战分两段，第一波守军在城外，相当于野战，也注意这点」] 有城墙的攻城战**第一段**：
+     *     第一波城外列阵的守军（outside1）还有人在城外 ⇒ 这批守军与城外的攻方兵照野战拴绳；
+     *     城外守军打光（或退进城）⇒ 第二段攻城，全体解除，照旧走城门 / 绕缺口 / 打墙（原样不动）。
+     *     城外守军的阵与最正对攻方的那面城墙平行（见 defOutsideBase），所以他们的横向轴用那面墙的方向，不用 sideVec。
+     * 玩家本人、攻城武器、守门兵、残兵队（全图找敌）不拴。
+     * `fieldLeash` 只给验收探针做新旧对照用，游戏里恒为 true。
+     */
+    fieldLeash = true;
+    /** 本帧城外还有第一波守军活着（step 开头算一次，见 refreshOutsideWave1） */
+    private outsideWave1Alive = false;
+    private refreshOutsideWave1(): void {
+        this.outsideWave1Alive = false;
+        if (!(this.battleType === 'siege' && this.siegeWithWalls)) return;
+        this.ensureGateInfo();
+        for (const m of this.men) {
+            if (m.hp > 0 && m.outside1 && !this.insideRing(m.x, m.y)) { this.outsideWave1Alive = true; return; }
+        }
+    }
+    /** 本兵拴绳的横向轴；不拴返回 null */
+    private leashAxis(m: WarMan): { x: number; y: number } | null {
+        if (!this.fieldLeash) return null;
+        if (m.lane < 0 || m.hero || m.siegeW || m.guardPost || this.remnantLanes.has(m.lane)) return null;
+        if (this.battleType === 'siege' && this.siegeWithWalls) {
+            if (!this.outsideWave1Alive || this.insideRing(m.x, m.y)) return null;
+            if (m.f === 1) return m.outside1 ? this.defOutsideBaseCached().side : null;
+        }
+        return this.sideVec[m.f];
+    }
+    private leashHome(m: WarMan): number | null {
+        const u = this.leashAxis(m);
+        if (!u) return null;
+        const sp = this.spawns[m.lane];
+        if (!sp || sp.lane !== m.lane) return null;
+        let px = sp.x, py = sp.y;
+        if (sp.f === 1 && sp.outFwd !== undefined && sp.outSide !== undefined && this.battleType === 'siege' && this.deCity) {
+            const B = this.defOutsideBaseCached();
+            px = B.x + B.fwd.x * sp.outFwd + B.side.x * sp.outSide;
+            py = B.y + B.fwd.y * sp.outFwd + B.side.y * sp.outSide;
+        }
+        return this.latAlong(u, px, py) + m.slotY;
+    }
+    /** 横向坐标（沿给定横向轴，以画布中心为原点） */
+    private latAlong(u: { x: number; y: number }, x: number, y: number): number {
+        return (x - this.worldCX) * u.x + (y - this.worldCY) * u.y;
+    }
+    /** 把移动目标点横向收回拴绳带内；目标离带太远（带内够不着，slack 之外）则原样放行，免得站在带边干等 */
+    private leashPoint(m: WarMan, p: { x: number; y: number }, slack: number): { x: number; y: number } {
+        const home = this.leashHome(m);
+        if (home === null) return p;
+        const u = this.leashAxis(m)!;
+        const off = this.latAlong(u, p.x, p.y) - home;
+        if (Math.abs(off) <= LEASH_LAT || Math.abs(off) > LEASH_LAT + slack) return p;
+        const d = (off > 0 ? LEASH_LAT : -LEASH_LAT) - off;
+        return { x: p.x + u.x * d, y: p.y + u.y * d };
+    }
+
+    /**
      * 玩家本人**有还没走完的令**（点地面）：这道令优先于一切自动换目标。
      * 🔴 [2026-10-03] 为什么必须单独立这一条：UI 写的是「点战场地面：玩家前往该点」
      *    （`PlayerScene13Control` 的提示原文），可真机实测（`scratch/_probe_lane_regroup_effects.mjs` ③）
@@ -7751,6 +7836,7 @@ export class Scene13WarLayer {
         this.marchTick(dt, deploying);
 
         this.rebuild();
+        this.refreshOutsideWave1();   // 🔴 [2026-10-20] 攻城战第一段（城外守军在）照野战拴绳，见 leashAxis
         if (!deploying) this.updateLaneTargets();
         // 先登记全体有效锁定，新索敌者才能看见排在自己后面的同伴已占用的名额。
         this.reserveExistingTargets(deploying);
@@ -7950,7 +8036,8 @@ export class Scene13WarLayer {
             const lt = (m.lane >= 0 && !m.siegeW) ? this.laneTargets.get(m.lane) : undefined;
             const wrongLaneFoe = lt !== undefined && m.next <= 0 && m.foe !== null && !('sprite' in m.foe)
                 && lt.targetLane !== undefined && m.foe.lane !== lt.targetLane
-                && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > 75 * 75;
+                && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > 75 * 75
+                && this.leashHome(m) === null;   // 🔴 [2026-10-20] 野战拴绳兵按带内正对面找敌，不再归拢回本队目标敌队
             // 🔴 [2026-10-20 主人报「武将贴着墙的时候，为什么不打墙呢」]
             //    攻方近战兵（含乱入者）锁着墙后的敌兵、被一段敌墙顶住超过 0.35 秒、敌兵又不在挥刀距离内 ⇒ 放掉这个目标重新索敌，
             //    search 攻方段据此改砍挡着自己的这段墙（原先 canKeepTarget 一直放行：乱入者不吃 wallSeparates、
@@ -8270,9 +8357,10 @@ export class Scene13WarLayer {
                     // 角度由 jx/jy 推出（出生时定死，终身不变），所以每个兵稳定从同一个方位围上去。
                     // 停手判据仍看「离目标本人多远」（inReach），所以偏移不会让人够不着。见 CHASE_RING。
                     const ra = Math.atan2(m.jy, m.jx);
+                    // 🔴 [2026-10-20] 野战阵位拴绳：围上去的那个点横向收回本兵的带内（目标在带内够得着才收，见 leashPoint）
                     const rawChase = 'sprite' in foe
                         ? { x: foe.x, y: foe.y }
-                        : { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING };
+                        : this.leashPoint(m, { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING }, REACH);
                     const chasePt = isGuard
                         ? rawChase
                         : (('sprite' in foe && !foe.bld) ? rawChase : (this.gateExit(m, this.flowRedirect(m, rawChase)) ?? rawChase));

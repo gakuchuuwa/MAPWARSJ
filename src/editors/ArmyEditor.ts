@@ -155,7 +155,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     ANGLO_SAXON: 'falanji',
     GHANA: 'mali',
     KHAZARS: 'seljuq',
-    VANDALS: 'wangdaer',
+    VANDALS: 'xiluoma',
     LOMBARDS: 'lunbadi',
     ROURAN: 'rouran',
     SOGDIANS: 'sogdian',

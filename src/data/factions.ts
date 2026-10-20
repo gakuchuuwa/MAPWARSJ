@@ -2086,7 +2086,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jialiboli', name: '加里波利' },  // 鲁西翁·加里波利（奥斯曼加里波利桑贾克辖境含 Keşan 一带，鲁西翁在其中）
     { id: 'naxos_ancient', name: '纳克索斯' },
     { id: 'sijitai', name: '斯基泰' },
-    { id: 'wangdaer', name: '西罗马' },  // 希波·博尼法提乌斯西罗马阿非利加守军
+    { id: 'xiluoma', name: '西罗马' },  // 希波·博尼法提乌斯西罗马阿非利加守军
     { id: 'yamaxun', name: '亚马逊' },
     { id: 'aswaka', name: '阿斯瓦卡' },  // 斯瓦特·马萨加（阿萨卡诺伊王族）· 公元前327年「马萨加战役」守方
     { id: 'malli', name: '马利' },  // 摩罗婆·马里斯（木尔坦卫城）· 公元前325年「马里斯战役」守方
@@ -2133,6 +2133,31 @@ export const FACTIONS: Faction[] = [
     { id: 'porbazhyn_huihu', name: '博尔巴任回鹘' }, // 2026-10-19：博尔巴任（8 世纪回鹘城址）
     { id: 'kuman_oleshky', name: '库曼' },           // 2026-10-19：奥列什基（第聂伯河口库曼商埠）
     { id: 'qincha_saksin', name: '钦察' },           // 2026-10-19：萨克辛（伏尔加三角洲钦察要塞）
+  // ── 🔴 [2026-10-20 主人令「看武将，以武将来定义势力」] 起义占位首战改挂真实政权 ──
+  { id: 'dalriada', name: '达尔里阿达' },  // 邓纳德
+  { id: 'scotland', name: '苏格兰' },  // 斯昆
+  { id: 'hre', name: '神圣罗马帝国' },  // 法兰克福
+  { id: 'chanka', name: '昌卡' },  // 安达瓦伊拉斯
+  { id: 'ouchi', name: '大内' },  // 山口
+  { id: 'cueva', name: '库埃瓦' },  // 科马格雷
+  { id: 'maynila', name: '马尼拉土邦' },  // 汤多
+  { id: 'gujarat', name: '古吉拉特' },  // 艾哈迈达巴德
+  { id: 'arakan', name: '阿拉干' },  // 妙乌
+  { id: 'voc', name: '荷兰东印度公司' },  // 巴达维亚
+  { id: 'malla', name: '马拉' },  // 巴德岗
+  { id: 'qiangfang', name: '羌方' },  // 羌邑
+  { id: 'huaiyi', name: '淮夷' },  // 淮浦
+  { id: 'pisa', name: '皮萨' },  // 皮萨提斯
+  { id: 'cimmerian', name: '辛梅里安' },  // 辛梅里孔
+  { id: 'libya', name: '利比亚' },  // 马尔马里卡
+  { id: 'kosala', name: '拘萨罗' },  // 舍卫城
+  { id: 'kalinga', name: '羯陵伽' },  // 丹塔普拉
+  { id: 'anga', name: '鸯伽' },  // 瞻波
+  { id: 'shunga', name: '巽伽' },  // 阿逾陀
+  { id: 'antigonid', name: '安提柯' },  // 凯莱奈
+  { id: 'mimo', name: '靡莫' },  // 靡莫邑
+  { id: 'xizhou', name: '西州' },  // 平襄
+  { id: 'shijun', name: '十二使君' },  // 杜洞江
 ];
 
 // @ts-ignore
