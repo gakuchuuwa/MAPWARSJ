@@ -479,7 +479,6 @@ korea_a: 0.646,  // -17.2 LUFS
     central_asia_a: 0.668,  // -17.5 LUFS
     western_a: 0.603,  // -16.6 LUFS
     cuman_a: 0.589,  // -16.4 LUFS
-    cuman_b: 0.646,  // -17.2 LUFS
     huns_a: 0.610,  // -16.7 LUFS
     huns_b: 0.603,  // -16.6 LUFS
     turks_a: 0.708,  // -18.0 LUFS
@@ -659,7 +658,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     CELTS: ['de_CELTS', 'celts_a', 'celts_b'],
     CENTRAL: ['de_CENTRAL', 'CENTRAL', 'NORTH', 'daming', 'litang', 'liuhan', 'manqing', 'shadow_assassin'],
     CENTRAL_ASIA: ['de_CENTRAL_ASIA', 'CENTRAL_ASIA', 'central_asia_a'],
-    CUMAN: ['de_CUMAN', 'cuman_a', 'cuman_b'],
+    CUMAN: ['de_CUMAN', 'cuman_a'],
     DANES: ['de_DANES', 'furious_march', 'danes_a', 'danes_b'],
     ETHIOPIANS: ['de_ETHIOPIANS', 'ethiopians_a', 'ethiopians_b'],
     FRANKS: ['de_FRANKS', 'franks_a', 'franks_b'],
