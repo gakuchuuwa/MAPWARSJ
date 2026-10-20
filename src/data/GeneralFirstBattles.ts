@@ -382,10 +382,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'xila',
         enemyFactionName: '阿提卡',
-        enemyGeneralId: 'gen_themistocles',
+        enemyGeneralId: 'gen_miltiades',   // 🔴 [2026-10-20 首战规则] 前490 马拉松雅典主将是米太亚德，不是前490后才崛起的地米斯托
         enemyTroops: 11000,
         introLines: [
-            { speaker: 'general', text: '优卑亚诸城已下，唯有雅典仍敢抗拒波斯王命！我军即将渡过海峡登陆马拉松平原，与雅典将领米太亚得决战，你可愿随军冲锋？' },
+            { speaker: 'general', text: '优卑亚诸城已下，唯有雅典仍敢抗拒波斯王命！我军即将渡过海峡登陆马拉松平原，与雅典将领米太亚德决战，你可愿随军冲锋？' },
             { speaker: 'player', text: '愿随达提斯统帅渡海西进，决战马拉松平原！' },
         ],
     },
@@ -3022,6 +3022,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 50000,
         enemyFactionId: 'sashan',
         enemyFactionName: '萨珊波斯',
+        enemyGeneralId: 'sashan_beilusi',   // 🔴 [2026-10-20 首战规则] 萨珊王卑路斯一世（484 此役战死）
         enemyTroops: 70000,
         introLines: [
             { speaker: 'general', text: '萨珊王卑路斯背信弃义三犯我境！我已下令伪装干壕陷阱，勇士，随我引诱波斯重骑入网，阵斩萨珊国王！' },
@@ -3043,6 +3044,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 50000,
         enemyFactionId: 'tuoba',
         enemyFactionName: '北魏',
+        enemyGeneralId: 'tuoba_yuanying',   // 🔴 [2026-10-20 首战规则] 钟离之战北魏主帅元英
         enemyTroops: 100000,
         introLines: [
             { speaker: 'general', text: '元英百万之众扎连桥围钟离孤城，淮水春汛已至！某虽羸弱乘柴车，壮士，持长矛火炬随我乘舰纵火，焚断敌桥！' },
@@ -3120,17 +3122,18 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleYear: 486,
         battleType: 'field',
         role: 'attacker',
-        targetName: '里昂',
-        targetCityId: 'city_lyon',
-        targetLat: 45.76,
-        targetLng: 4.83,
+        targetName: '苏瓦松',   // 🔴 [2026-10-20 首战规则] 城库无苏瓦松，锚定同地区最近的兰斯（约 60 公里）；坐标用苏瓦松史实地点
+        targetCityId: 'city_lansi',
+        targetLat: 49.38,
+        targetLng: 3.32,
         myTroops: 30000,
         enemyFactionId: 'luoma_diguo',
         enemyFactionName: '罗马苏瓦松残余',
+        enemyGeneralId: 'luoma_xiageliwusi',   // 🔴 [2026-10-20 首战规则] 罗马苏瓦松残部首领西阿格里乌斯
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '罗马的高卢总督已是强弩之末！法兰克的战士们，握紧手中的投掷战斧，随我踏碎苏瓦松防线，夺下整片高卢！' },
-            { speaker: 'player', text: '愿随克洛维国王于高卢就地决战，击败西亚格里乌斯、奠定法兰克王国霸业！' },
+            { speaker: 'player', text: '愿随克洛维国王于高卢就地决战，击败西阿格里乌斯、奠定法兰克王国霸业！' },
         ],
     },
 
@@ -3169,6 +3172,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 50000,
         enemyFactionId: 'rouran',
         enemyFactionName: '柔然',
+        enemyGeneralId: 'rouran_anagui',   // 🔴 [2026-10-20 首战规则] 柔然末代可汗阿那瓌（552 被突厥击败）
         enemyTroops: 60000,
         introLines: [
             { speaker: 'general', text: '柔然蛮主辱我锻奴，今日便是大漠易主之时！草原的勇士，拔出弯刀跨上骏马，随伊利可汗踏碎柔然王庭！' },
@@ -3403,6 +3407,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'sashan',
         enemyFactionName: '萨珊波斯',
+        enemyGeneralId: 'sashan_khosrow_ii',   // 🔴 [2026-10-20 首战规则] 596 吉兰会战对手是霍斯劳二世（维斯塔姆之乱）
         enemyTroops: 45000,
         introLines: [
             { speaker: 'general', text: '库思老小儿忘恩负义倒行逆施，自封万王之王！厄尔布尔士群山是我们的要塞，波斯勇士，随我迎击伪王！' },
@@ -3422,8 +3427,9 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.62,
         targetLng: 125.66,
         myTroops: 50000,
-        enemyFactionId: 'lelang',
+        enemyFactionId: 'sui',
         enemyFactionName: '隋朝',
+        enemyGeneralId: 'sui_yuwenshu',   // 🔴 [2026-10-20 首战规则] 612 萨水隋军主帅宇文述（原势力误填乐浪）
         enemyTroops: 100000,
         introLines: [
             { speaker: 'general', text: '隋军数十万深入粮尽已是强弩之末！神策究天文妙算穷地理，萨水决堤就在今朝，勇士，随我半渡而击！' },
@@ -3442,9 +3448,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetCityId: 'city_eyangling',
         targetLat: 39.91,
         targetLng: 111.65,
-        myTroops: 10000,
+        // 🔴 [2026-10-20 兵力规则] 李靖夜袭本为三千精骑，按「守方≤攻方×2」取 2 万，颉利牙帐 4 万＝2 倍
+        myTroops: 20000,
         enemyFactionId: 'tujue',
         enemyFactionName: '东突厥',
+        enemyGeneralId: 'tujue_xielikehan',   // 🔴 [2026-10-20 首战规则] 630 阴山夜袭对手是颉利可汗
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '颉利退守铁山心存侥幸！大雾弥漫良机稍纵即逝，某率三千精骑夜衔枚疾进，壮士，随药师直捣虏廷活捉可汗！' },
@@ -9565,18 +9573,21 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     },
 
     // #442 沙姆希·阿达德一世 (-1808 ~ -1776) — 公元前1796年征服马里之战
+    // 🔴 [2026-10-20 修正] 马里在幼发拉底河畔（不是底格里斯），城库里没有马里据点 → 按模糊历史锚定同河最近的
+    //    幼发拉底城邦「阿纳特」（约95公里）作攻城落点、坐标仍用马里（34.55/40.89）；敌方原本误填「亚述(yashu)」，
+    //    改为守方马里王国的城邦势力「幼发拉底」，敌将仍是马里王亚赫敦林。
     guyashu_shamushi: {
         generalId: 'guyashu_shamushi',
         battleName: '征服马里之战',
         battleYear: -1796,
         battleType: 'siege',
         role: 'attacker',
-        targetName: '底格里斯河畔尼尼微与马里',
-        targetCityId: 'city_niniwei',
+        targetName: '幼发拉底河畔马里',
+        targetCityId: 'city_anate',
         targetLat: 34.55,
         targetLng: 40.89,
         myTroops: 35000,
-        enemyFactionId: 'yashu',
+        enemyFactionId: 'youfaladi',
         enemyFactionName: '马里王国',
         enemyGeneralId: 'bfe2_yahdun_lim',
         enemyTroops: 25000,
@@ -9602,7 +9613,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyFactionId: 'shang',
         enemyFactionName: '商朝大军',
         enemyGeneralId: 'yin_dixin',   // 🔴 子受＝帝辛，与朝歌据点武将是同一人（双身份），不再另立战场人物
-        enemyTroops: 100000,
+        // 🔴 [2026-10-20 主人令「史记称商军七十万，这就是游戏不合理；按合理的设计兵力」]
+        //    周军 4.5 万＝《史记》实数（戎车三百乘、虎贲三千、甲士四万五千）；商军不取七十万/十七万，
+        //    按「守方 ≤ 攻方×2」的游戏口径取 9 万，既保「商众周寡」的史实态势，又不出现以多打少的失衡。
+        enemyTroops: 90000,
         introLines: [
             { speaker: 'general', text: '商王受无道暴虐百姓，孤率戎车三百乘、虎贲三千人、甲士四万五千人会诸侯于牧野！壮士，左杖黄钺右秉白旄，随孤一战克商！' },
             { speaker: 'player', text: '愿随姬发将军共赴牧野之战，大破商朝大军！' },
@@ -9991,9 +10005,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '蒲县箕地',
-        targetCityId: 'city_jining',
-        targetLat: 41.03,
-        targetLng: 113.1,
+        // 🔴 [2026-10-20 修正] 原 targetCityId 填集宁（内蒙古 41.03/113.1），箕在晋地蒲县（36.41/111.10）
+        //    → 锚定最近的晋国城曲沃（狄伐晋、晋迎击于箕，战场在晋地）
+        targetCityId: 'city_quwo',
+        targetLat: 36.41,
+        targetLng: 111.10,
         myTroops: 20000,
         enemyFactionId: 'jin',
         enemyFactionName: '晋国',
@@ -10170,9 +10186,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'defender',
         targetName: '温泉关狭道',
-        targetCityId: 'city_sparta',
-        targetLat: 37.07,
-        targetLng: 22.42,
+        // 🔴 [2026-10-20 修正] 原 targetCityId 填斯巴达、坐标也是斯巴达（37.07/22.42），温泉关在希腊中部马利斯（38.79/22.53）
+        //    → 锚定最近的福基斯·德尔斐，坐标改温泉关
+        targetCityId: 'city_deerfei',
+        targetLat: 38.79,
+        targetLng: 22.53,
         myTroops: 10000,
         enemyFactionId: 'aqimeinide',
         enemyFactionName: '波斯阿契美尼德帝国',
@@ -10214,13 +10232,15 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '苏州吴江笠泽',
-        targetCityId: 'city_kuaiji',
-        targetLat: 29.987,
-        targetLng: 120.582,
+        // 🔴 [2026-10-20 修正] 原 targetCityId 填会稽、坐标也是会稽（绍兴 29.99/120.58），笠泽在吴地太湖东岸（31.16/120.63）
+        //    → 锚定吴国·姑苏
+        targetCityId: 'city_gusu',
+        targetLat: 31.16,
+        targetLng: 120.63,
         myTroops: 40000,
         enemyFactionId: 'wu',
         enemyFactionName: '吴国',
-        enemyGeneralId: 'wu_sunwu',
+        enemyGeneralId: 'wu_fuchai',   // 🔴 [2026-10-20 首战规则] 前478 吴方君主是夫差；孙武前496年后已隐退，不能当敌将
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '卧薪尝胆二十年，越国三千甲士今日当雪会稽之耻！某两翼虚设战鼓诱其分兵，壮士，随孤中军精锐潜渡夜袭破吴！' },
@@ -10236,9 +10256,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '萨拉米斯海峡',
-        targetCityId: 'city_salamanca',
-        targetLat: 40.96,
-        targetLng: -5.66,
+        // 🔴 [2026-10-20 修正] 原 targetCityId 填「萨拉曼卡」（西班牙，40.96/-5.66），萨拉米斯在雅典西面海峡（37.93/23.47）
+        //    → 锚定阿提卡·雅典（萨拉米斯海战在当时雅典辖海，且希腊方指挥地米斯托在此）
+        targetCityId: 'city_yadian',
+        targetLat: 37.93,
+        targetLng: 23.47,
         myTroops: 15000,
         enemyFactionId: 'xila',
         enemyFactionName: '希腊同盟舰队',
@@ -10396,7 +10418,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 10000,
         enemyFactionId: 'aqimeinide',
         enemyFactionName: '波斯阿契美尼德帝国',
-        enemyGeneralId: 'aqimeinide_daliushi',
+        enemyGeneralId: 'gen_cambyses',   // 🔴 [2026-10-20 首战规则] 前524 在位的是冈比西斯二世（前530–522），大流士前522才即位
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '冈比西斯狂妄狂徒遣五万兵欲焚阿蒙神庙！大漠狂沙遮天蔽日，沙漠勇士，拔出弯刀随神官乘沙暴掩杀，尽歼狂徒！' },

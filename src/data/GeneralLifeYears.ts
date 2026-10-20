@@ -137,6 +137,15 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     hao_d_weirui: { birth: 442, death: 520 },              // 韦睿
     gen_theodoric_great: { birth: 454, death: 526 },       // 狄奥多里克大帝
     gen_clovis_i: { birth: 466, death: 511 },              // 克洛维
+    // 🔴 2026-10-20 首战补敌将
+    sashan_khosrow_ii: { birth: 570, death: 628, kaoju: '推定' },   // 霍斯劳二世（萨珊末代雄主）
+    sui_yuwenshu: { birth: 546, death: 616 },                      // 宇文述（隋，萨水主帅）
+    tujue_xielikehan: { birth: 580, death: 634, kaoju: '推定' },    // 颉利可汗（东突厥末代大可汗）
+    // 🔴 2026-10-20 首战补敌将（生卒史料不全者按「推定」）
+    sashan_beilusi: { birth: 440, death: 484, kaoju: '推定' },        // 卑路斯一世（484 赫拉特之战战死）
+    luoma_xiageliwusi: { birth: 430, death: 487, kaoju: '推定' },     // 西阿格里乌斯（486 苏瓦松战败，487 被杀）
+    tuoba_yuanying: { birth: 460, death: 510, kaoju: '推定' },        // 元英（北魏中山王）
+    rouran_anagui: { birth: 480, death: 552, kaoju: '推定' },         // 阿那瓌（柔然末代可汗）
     zhengzhou_chenqingzhi: { birth: 484, death: 539 },     // 陈庆之
     erzhu_erzhurong: { birth: 493, death: 530 },           // 尔朱荣
     gaoqi_d_gaohuan: { birth: 496, death: 547 },           // 高欢
@@ -422,6 +431,9 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_olaf_skotkonung: { birth: 980, death: 1022 },  // 奥拉夫
     gen_hamilcar: { birth: -275, death: -228 },  // 哈米尔卡
     gen_themistocles: { birth: -524, death: -459 },  // 地米斯托
+    gen_miltiades: { birth: -550, death: -489, kaoju: '推定' },  // 米太亚德（马拉松雅典主将；生年约前550）
+    gen_cambyses: { birth: -560, death: -522, kaoju: '推定' },  // 冈比西斯二世（前530–522 在位）
+    wu_fuchai: { birth: -528, death: -473, kaoju: '推定' },  // 夫差（吴王，前495–473 在位）
     xila_leosthenes: { birth: -365, death: -323, kaoju: '推定' },  // 莱奥斯塞尼斯
     xila_antiphilus: { birth: -360, death: -315, kaoju: '推定' },  // 安提菲洛斯
     gen_city_syracuse: { birth: -361, death: -289 },  // 阿加索克利

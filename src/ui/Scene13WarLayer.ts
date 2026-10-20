@@ -2687,7 +2687,7 @@ export class Scene13WarLayer {
                     obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
                 };
                 this.decorSprites.push(sprite);
-                if (p.kind === 'building') { this.trackCityBuilding(sprite); return; }
+                if (p.kind === 'building') { if (p.aux) (sprite as any).isAux = true; this.trackCityBuilding(sprite); return; }
                 sprite.obstruction = { x: 0.95, y: 0.95 };
                 if (p.kind === 'wall') {
                     // 木栅栏/篱笆走 WOOD_WALL 档；石墙/垛墙 STONE_WALL（加固墙取 FORTIFIED_WALL 3000 血）、破墙前按 HP 切 D25/D50/D75
@@ -2977,7 +2977,7 @@ export class Scene13WarLayer {
         const TREE_FILTER_RE = /^(?!PLANT|UNDERBRUSH|ROCK|FORAGE|FALLEN_LEAVES|FELLED|STUMP|FLOWER|GRASS|WEED|SHRUB|BUSH_GREEN).*(TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE)/i;
         const removedFlatTrees: DecorSprite[] = [];
         this.decorSprites = this.decorSprites.filter((sp) => {
-            if (sp.asset.startsWith('MOUNTAIN_')) return false;
+            if (sp.asset.startsWith('MOUNTAIN_') || (sp as any).cityInterior) return false;
             if (sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
             const isTree = TREE_FILTER_RE.test(sp.asset);
             const spElev = gl.elevationLevelAt(sp.x, sp.y, W, H);
@@ -3049,6 +3049,92 @@ export class Scene13WarLayer {
         }
 
         gl.flushFoundation();
+
+        // ── 大城 / 中城 / 小城 城内景观与街角细节（庭院绿植、内门火把、街角木桶与花坛，纯视觉点缀不挡路、不可摧毁） ──
+        const defCityForInterior: any = this.defenderCityRecord();
+        const interiorBldStyle = defCityForInterior?.buildingStyle ?? this.environmentPlan?.buildingStyle;
+        const isYurtOrNomadCity = this.buildingStyleFor(1) === 'YURT' || interiorBldStyle === 'MONGOL';
+        if (!isYurtOrNomadCity && (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city')) {
+            const TW = 96, TH = 48;
+            const isoToWorld = (ci: number, cj: number): { x: number; y: number } => {
+                let dx = (ci - cj) * (TW * 0.5);
+                const dy = (ci + cj) * (TH * 0.5);
+                if (this.deCity?.mirror) dx = -dx;
+                return { x: cx + dx, y: cy + dy };
+            };
+            const pushInteriorDecor = (asset: string, ci: number, cj: number, scale: number): void => {
+                const pt = isoToWorld(ci, cj);
+                const lift = gl.elevationLiftAt(pt.x, pt.y, W, H);
+                this.ensureNatureAsset(asset);
+                const sp: DecorSprite = {
+                    asset,
+                    frame: Math.floor(mRnd() * 100),
+                    x: pt.x,
+                    y: pt.y,
+                    flip: mRnd() < 0.5,
+                    layer: 'world',
+                    z: 0,
+                    lift,
+                    scale,
+                    obstruction: undefined,
+                    obstructionContactSec: 0,
+                    obstructionTouched: false,
+                    obstructionDisabled: true,
+                };
+                (sp as any).cityInterior = true;
+                this.decorSprites.push(sp);
+            };
+            // 1) 四座城门内侧迎宾立柱火把（门内主街两侧各一盏，共 4 盏）
+            const gateTorchCoords: ReadonlyArray<readonly [number, number, string]> = this.defenderCityType === 'big_city'
+                ? [[-2.0, -9.2, 'BATTLEFIELD:TORCH_A'], [9.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 10.2, 'BATTLEFIELD:TORCH_A'], [-8.8, 2.0, 'BATTLEFIELD:TORCH_B']]
+                : this.defenderCityType === 'medium_city'
+                    ? [[-2.0, -8.2, 'BATTLEFIELD:TORCH_A'], [8.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 9.2, 'BATTLEFIELD:TORCH_A'], [-7.8, 2.0, 'BATTLEFIELD:TORCH_B']]
+                    : [[-2.0, -7.2, 'BATTLEFIELD:TORCH_A'], [7.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 8.2, 'BATTLEFIELD:TORCH_A'], [-6.8, 2.0, 'BATTLEFIELD:TORCH_B']];
+            for (const [ti, tj, tAsset] of gateTorchCoords) {
+                pushInteriorDecor(tAsset, ti, tj, 0.92);
+            }
+            // 2) 城内庭院园林树木（取当前气候带的代表树种，点缀在城堡广场与街坊空隙，树冠参差错落）
+            const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
+            const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
+                ? rawCalSeason
+                : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
+            const courtyardTreeAsset = pickTree({
+                baseTile: this.environmentPlan?.baseTerrain ?? 'gr1',
+                lat: defCityForInterior?.lat ?? this.centerLat ?? 30,
+                lng: defCityForInterior?.lng ?? this.centerLng ?? 110,
+                season: calSeason,
+                isSiege: true,
+                buildingStyle: interiorBldStyle,
+            });
+            const treeCoords: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
+                ? [[-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5]]
+                : this.defenderCityType === 'medium_city'
+                    ? [[-2.5, -2.5], [3.5, 3.5], [-2.5, 3.5], [3.5, -2.5]]
+                    : [[-7.2, 8.2], [8.2, -7.2]];
+            for (const [ti, tj] of treeCoords) {
+                pushInteriorDecor(courtyardTreeAsset, ti + (mRnd() - 0.5) * 0.16, tj + (mRnd() - 0.5) * 0.16, 0.78 + mRnd() * 0.12);
+            }
+            // 3) 街坊屋宇旁的生活气息小物件（木桶粮袋 BARRELS；去掉石板路上的野花丛 FLOWERBED）
+            const propCoords: ReadonlyArray<readonly [number, number, string, number]> = this.defenderCityType === 'big_city'
+                ? [
+                    [-2.2, 3.2, 'BARRELS', 0.88],
+                    [3.2, -2.2, 'BARRELS', 0.88],
+                    [-2.2, -2.2, 'BARRELS', 0.85],
+                    [3.2, 3.2, 'BARRELS', 0.85],
+                ]
+                : this.defenderCityType === 'medium_city'
+                    ? [
+                        [-2.2, 2.6, 'BARRELS', 0.85],
+                        [3.2, -1.6, 'BARRELS', 0.85],
+                    ]
+                    : [
+                        [-2.2, 2.4, 'BARRELS', 0.82],
+                        [3.2, -1.4, 'BARRELS', 0.82],
+                    ];
+            for (const [pi, pj, pAsset, pScale] of propCoords) {
+                pushInteriorDecor(pAsset, pi, pj, pScale);
+            }
+        }
 
         // ── 按真实山地地理与据点种子，在城外围的高地平顶台面（>= 1.8 级）中心摆放 DE 大山模型（MOUNTAIN_01~11，缩放 2.0，纯视觉点缀绝不挡路） ──
         const defCity: any = this.defenderCityRecord();

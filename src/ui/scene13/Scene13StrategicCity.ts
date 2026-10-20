@@ -43,6 +43,7 @@ export interface StrategicCityPiece {
     width: number;
     height: number;
     flip: boolean;
+    aux?: boolean;
 }
 
 const BUILDING_RE = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/;
@@ -138,6 +139,7 @@ function strategicCityHtmlWith(
     const height = root ? parseFloat(root.style.height) || 0 : 0;
     const slots: Array<{ x: number; y: number }> = [];
     for (const img of Array.from(doc.querySelectorAll('img'))) {
+        if (img.getAttribute('data-aux') === '1') continue;
         const m = BUILDING_RE.exec(img.getAttribute('src') ?? '');
         if (!m || pieceKind(m[1]) !== 'building') continue;
         const t = /translate\((.*)\)/.exec(img.style.transform ?? '');
@@ -186,6 +188,7 @@ export async function measureStrategicCity(c: StrategicCityHtml): Promise<Strate
                 dir: m[1], kind: pieceKind(m[1]),
                 left: r.left - cx, top: r.top - cy, width: r.width, height: r.height,
                 flip: ownFlip !== c.mirror,
+                aux: im.getAttribute('data-aux') === '1',
             });
         }
         return out;

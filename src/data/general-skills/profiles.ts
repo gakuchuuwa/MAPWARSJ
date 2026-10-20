@@ -3385,6 +3385,15 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     zhou_jifu: { generalId: 'zhou_jifu', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
     yin_yuejin: { generalId: 'yin_yuejin', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' },
     xibolai_majiabi: { generalId: 'xibolai_majiabi', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'attack' },
+    // 🔴 [2026-10-20 首战补敌将] 四人按《武将分级标准·终版》三闸判普将（本人亲统却无史载够格胜绩）→ 仅战术技
+    sashan_beilusi: { generalId: 'sashan_beilusi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 卑路斯一世：484 赫拉特战败身死
+    luoma_xiageliwusi: { generalId: 'luoma_xiageliwusi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 西阿格里乌斯：486 苏瓦松战败
+    tuoba_yuanying: { generalId: 'tuoba_yuanying', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 元英：507 钟离之战北魏主帅（败）
+    rouran_anagui: { generalId: 'rouran_anagui', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 阿那瓌：552 被突厥击败身死
+    // 🔴 [2026-10-20 首战补敌将]
+    sashan_khosrow_ii: { generalId: 'sashan_khosrow_ii', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' },   // 霍斯劳二世：590 借兵复国、收复失地，名将
+    sui_yuwenshu: { generalId: 'sui_yuwenshu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 宇文述：萨水大败，普将
+    tujue_xielikehan: { generalId: 'tujue_xielikehan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 颉利可汗：630 阴山被擒，普将
 };
 
 
