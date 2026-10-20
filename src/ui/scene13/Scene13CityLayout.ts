@@ -388,6 +388,64 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const N = gl.data?.width ?? 120;
     const cGx = cityCell ? cityCell.gx : N * 0.5;
     const cGy = cityCell ? cityCell.gy : N * 0.5;
+
+    // 🔴 [2026-10-20 主人令「在城周围的高地上多放山和树林」「树要多放大片树林，不妨碍行军的，都是贴图」]
+    if (this.defenderCityType === 'pass') {
+        const siteBaseTile = this.environmentPlan?.baseTerrain ?? 'gr1';
+        const defCityRec: any = this.defenderCityRecord();
+        const siteLat = defCityRec?.lat ?? this.centerLat ?? 30;
+        const siteLng = defCityRec?.lng ?? this.centerLng ?? 110;
+        const rawCalSeason = this.environmentPlan?.season;
+        const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
+            ? rawCalSeason
+            : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
+        const passTreeAsset = pickTree({
+            baseTile: siteBaseTile,
+            lat: siteLat,
+            lng: siteLng,
+            season: calSeason,
+            isSiege: true,
+        });
+        this.ensureNatureAsset(passTreeAsset);
+
+        // 扫描南北两翼高山（elev >= 2.0）上的高地台面与坡面
+        const highHillSpots: Array<{ x: number; y: number; elev: number }> = [];
+        for (let gy = 4; gy <= N - 4; gy += 2) {
+            for (let gx = 4; gx <= N - 4; gx += 2) {
+                const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+                if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) continue;
+                const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
+                if (elev >= 2.0) {
+                    highHillSpots.push({ x: pt.x, y: pt.y, elev });
+                }
+            }
+        }
+        highHillSpots.sort(() => mRnd() - 0.5);
+        const totalPassTrees = Math.min(highHillSpots.length, 140 + Math.floor(mRnd() * 40));
+        for (let i = 0; i < totalPassTrees; i++) {
+            const spot = highHillSpots[i];
+            const tx = spot.x + (mRnd() - 0.5) * 58;
+            const ty = spot.y + (mRnd() - 0.5) * 30;
+            if (inCity(tx, ty) || inGateRoad(tx, ty)) continue;
+            this.decorSprites.push({
+                asset: passTreeAsset,
+                frame: Math.floor(mRnd() * 8),
+                x: tx,
+                y: ty,
+                flip: mRnd() < 0.5,
+                scale: 0.92 + mRnd() * 0.22,
+                layer: 'world',
+                z: 0,
+                indestructible: true,
+                obstruction: undefined,
+                obstructionContactSec: 0,
+                obstructionTouched: false,
+                obstructionDisabled: true,
+            });
+            gl.addForestAt(tx, ty, W, H, 1.4);
+        }
+    }
+
     if (removedFlatTrees.length > 0) {
         const existingTrees = this.decorSprites.filter((sp) => TREE_FILTER_RE.test(sp.asset));
         const bareHillSpots: Array<{ x: number; y: number; elev: number }> = [];
@@ -598,7 +656,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形双圈（内 21×13 / 外 29×21）的夹道在 i 向 −12.5 / j 向 ±8.5：
             //    方形那组里的 [±9.5~10.5, 0.5] 在矩形下会落回内城里压内墙 ⇒ 矩形换一组按 inner/outer 半长中点算的点位。
             // 🔴 [2026-10-20 主人令「再做一个镜像的矩形」] rect_mirror 把 i/j 两轴对调（内 13×21 / 外 21×29），夹道点位同步对调。
-            const passCandidates: ReadonlyArray<readonly [number, number]> = this.defenderPassShape === 'rect'
+            // 🔴 [2026-10-20 主人令「据点的有镜像的，请随机」] 夹道点位按**建筑布局形制**算（未镜像）；
+            //    镜像由 `isoToWorld` 里的 `deCity.mirror` 负责（dx 取反），所以这里不能用视觉形制。
+            const passCandidates: ReadonlyArray<readonly [number, number]> = this.defenderPassLayoutShape === 'rect'
                 ? [
                     // 瓮城夹道四边中点（i 半长内 10.5→外 14.5 取 12.5、j 半长 6.5→10.5 取 8.5）
                     [-12, 0.5], [13, 0.5], [0.5, -8], [0.5, 9],
@@ -609,7 +669,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     // 内城要塞四隅与城堡夹道（与方形同一组，矩形内城中心不变）
                     [-2.2, 2.2], [3.2, -2.2], [-2.2, -2.2], [3.2, 3.2],
                 ]
-                : this.defenderPassShape === 'rect_mirror'
+                : this.defenderPassLayoutShape === 'rect_mirror'
                     ? [
                         // 镜像矩形：夹道在 j 向 −12.5 / i 向 ±8.5
                         [-8, 0.5], [9, 0.5], [0.5, -12], [0.5, 13],
@@ -739,6 +799,16 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         //   2) 严格避开四门进出军大道与桥头延长线（di >= 8.5 && dj >= 8.5），只落在正北/正南/正东/正西四翼远郊高地；
         //   3) 避开左侧攻方主冲锋走廊与所有出生点（>= 780px），且山脚 3 格半径内不沾水体。
         const isMountainSafeSpot = (gx: number, gy: number, pt: { x: number; y: number }): boolean => {
+            if (this.defenderCityType === 'pass') {
+                if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) return false;
+                // 🔴 [2026-10-20 主人令「在城周围的高地上多放山和树林」]
+                // 关隘：必须坐落在南北两翼高山（|gy - cGy| >= 13.0 格），避开中央峡谷行军走廊
+                if (Math.abs(gy - cGy) < 11.5) return false;
+                for (const sp of this.spawns) {
+                    if (Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.5) < 620) return false;
+                }
+                return true;
+            }
             if (((pt.x - cx) / (rx + 920)) ** 2 + ((pt.y - cy) / (ry + 520)) ** 2 < 1.0) return false;
             const u = (pt.x - cx) / (TAC_TILE_W / 2), v = (pt.y - cy) / (TAC_TILE_H / 2);
             const di = Math.abs((u + v) / 2 - 0.5), dj = Math.abs((v - u) / 2 - 0.5);
@@ -758,11 +828,13 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             return true;
         };
         const hillCandidates: Array<{ x: number; y: number; elev: number; score: number }> = [];
-        for (const minElev of [1.8, 1.35]) {
-            for (let gy = 6; gy <= N - 6; gy += 2) {
-                for (let gx = 6; gx <= N - 6; gx += 2) {
+        const minElevList = this.defenderCityType === 'pass' ? [5.0, 4.0, 3.0, 2.0] : [1.8, 1.35];
+        for (const minElev of minElevList) {
+            for (let gy = 4; gy <= N - 4; gy += 2) {
+                for (let gx = 4; gx <= N - 4; gx += 2) {
                     const dCells = Math.hypot(gx - cGx, gy - cGy);
-                    if (dCells < minHillDistCells + 9.5 || dCells > 52) continue;
+                    const minCheckD = this.defenderCityType === 'pass' ? 13.0 : minHillDistCells + 9.5;
+                    if (dCells < minCheckD || dCells > 56) continue;
                     const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
                     if (!isMountainSafeSpot(gx, gy, pt)) continue;
                     const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
@@ -787,11 +859,44 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     });
                 }
             }
-            if (hillCandidates.length >= 2) break;
+            const needCount = this.defenderCityType === "pass" ? 18 : 2;
+            if (hillCandidates.length >= needCount) break;
         }
-        hillCandidates.sort((a, b) => b.score - a.score);
+        // 🔴 [2026-10-20 主人令「在城周围的高地上多放山和树林」]
+        if (this.defenderCityType === 'pass') {
+            // 分别收集北翼山脉与南翼山脉上的候选点，紧凑环抱关隘（|dy|: 580~980px，|dx| <= 1350px）
+            const northCands: typeof hillCandidates = [];
+            const southCands: typeof hillCandidates = [];
+            for (const cand of hillCandidates) {
+                const dy = cand.y - cy;
+                const dx = cand.x - cx;
+                if (Math.abs(dx) > 1350) continue;
+                if (dy <= -560 && dy >= -1050) northCands.push(cand);
+                else if (dy >= 560 && dy <= 1050) southCands.push(cand);
+            }
+            // 优先选择高程 >= 3.0、且距离城关适度（北翼 640~760px，南翼 680~820px 黄金环抱带）的近山位点
+            const scoreNorth = (c: typeof hillCandidates[0]) => {
+                const dyAbs = Math.abs(c.y - cy);
+                return c.elev * 100 + (1000 - Math.abs(dyAbs - 680));
+            };
+            const scoreSouth = (c: typeof hillCandidates[0]) => {
+                const dyAbs = Math.abs(c.y - cy);
+                return c.elev * 100 + (1000 - Math.abs(dyAbs - 740));
+            };
+            northCands.sort((a, b) => scoreNorth(b) - scoreNorth(a));
+            southCands.sort((a, b) => scoreSouth(b) - scoreSouth(a));
+            
+            hillCandidates.length = 0;
+            const maxPairs = Math.max(northCands.length, southCands.length);
+            for (let i = 0; i < maxPairs; i++) {
+                if (i < northCands.length) hillCandidates.push(northCands[i]);
+                if (i < southCands.length) hillCandidates.push(southCands[i]);
+            }
+        } else {
+            hillCandidates.sort((a, b) => b.score - a.score);
+        }
         const targetCount = this.defenderCityType === 'pass'
-            ? (2 + (mRnd() < 0.45 ? 1 : 0))
+            ? (6 + Math.floor(mRnd() * 3))
             : isHighlandSite
                 ? (1 + Math.floor(mRnd() * 2))
                 : 1;
@@ -804,7 +909,8 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             if (placed === 0 && this.passMountainConfig?.y !== undefined) my = this.passMountainConfig.y;
             if (placed === 1 && this.passMountainConfig?.northX !== undefined) mx = this.passMountainConfig.northX;
             if (placed === 1 && this.passMountainConfig?.northY !== undefined) my = this.passMountainConfig.northY;
-            if (chosenPts.some((p) => Math.hypot(p.x - mx, (p.y - my) * 1.6) < 1350)) continue;
+            const minMountainDist = this.defenderCityType === 'pass' ? 520 : 1350;
+            if (chosenPts.some((p) => Math.hypot(p.x - mx, (p.y - my) * 1.6) < minMountainDist)) continue;
             chosenPts.push({ x: mx, y: my });
             const pick = pool[Math.floor(mRnd() * pool.length)];
             const mAsset = (placed === 0 && this.passMountainConfig?.asset)

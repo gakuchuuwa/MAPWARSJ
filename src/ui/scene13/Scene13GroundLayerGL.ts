@@ -911,8 +911,9 @@ export class Scene13GroundLayerGL {
     gl.enableVertexAttribArray(this.loc.aLight as number);
     gl.enableVertexAttribArray(this.loc.aElev as number);
 
-    if (!this.buf) {
+    if (!this.buf || this.elevDirty) {
       this.rebuildBuffers();
+      this.elevDirty = false;
     }
 
     if (this.buf && this.vertCount > 0) {
@@ -1347,6 +1348,223 @@ export class Scene13GroundLayerGL {
    * 3. 外圈 1~2 格阶梯斜坡 + 内部宽阔平坦台地顶面（Plateau Top），树木与大山稳立于平顶丘陵与山坡之上；
    * 4. `0x141046720` / `0x141046AE0` 填平 1 格窄沟、削去 1 格刀刃尖脊，保留清晰硬朗的平顶台地棱线。
    */
+  /**
+   * 🔴 [2026-10-20 主人令「整个地图的感觉就像，只有攻下险要才能过去的感觉」＋「添加非常多的高地，最高级别的高地」]
+   * 关隘（险要）专属「峡谷天险横断」地貌生成器：
+   * 1. 中央峡谷通道：行军走廊在城池外侧保持平整开阔（0 级），关隘内城 5 级、外城 2 级稳坐峡谷咽喉；
+   * 2. 两翼崇山天堑（6~7 级最高峰）：南北两翼横贯整张地图，山势从谷底陡峭攀升至 6~7 级平顶崇山与连绵险峰；
+   * 3. 严格遵循 DE 8 邻域高差 <= 1、填平窄沟、削去尖脊、角点保边光照，360° 等轴浮雕光影；
+   * 4. 彻底封死侧翼绕行，形成「两山夹一关，断绝通路，唯有关城可通」的千古雄关史诗气势。
+   */
+  private generatePassGorgeTerrain(
+    cx: number,
+    cy: number,
+    wallCenterI: number,
+    wallCenterJ: number,
+    outerHalfI: number,
+    outerHalfJ: number,
+    rnd: () => number
+  ): void {
+    const N = this.N;
+    const V = N + 1;
+    const tileElev = new Int8Array(N * N);
+
+    const cgx = cx + (wallCenterI - wallCenterJ) * 0.5;
+    const cgy = cy + (wallCenterI + wallCenterJ) * 0.5;
+
+    // 保护范围：关隘城池本身及外围缓坡
+    const inPassProtect = (gx: number, gy: number): boolean => {
+      const ddx = gx - cx, ddy = gy - cy;
+      const di = (ddx + ddy) - wallCenterI;
+      const dj = (ddy - ddx) - wallCenterJ;
+      const dOut = Math.max(Math.abs(di) - outerHalfI, Math.abs(dj) - outerHalfJ);
+      return dOut <= 1.2;
+    };
+
+    const isWet = (gx: number, gy: number) =>
+      gx >= 0 && gx < N && gy >= 0 && gy < N && (this.smoothWater[gy * N + gx] ?? 0) >= 0.16;
+
+    // 峡谷南北山脚线：
+    // 关城外圈在屏幕 Y 方向半跨度约为 12.5~14.5 格
+    const halfCorridorY = Math.max(11.8, (outerHalfI + outerHalfJ) * 0.5 - 0.2);
+    const p1 = rnd() * 6.28, p2 = rnd() * 6.28, p3 = rnd() * 6.28, p4 = rnd() * 6.28;
+
+    for (let gy = 0; gy < N; gy++) {
+      for (let gx = 0; gx < N; gx++) {
+        if (inPassProtect(gx, gy) || isWet(gx, gy)) continue;
+
+        // 沿 X 轴的自然山脚起伏（但在关隘附近收紧，使山脚与关隘城墙精准咬合）
+        const distFromCenter = Math.abs(gx - cgx);
+        const damp = Math.min(1.0, Math.max(0.2, distFromCenter / 14.0));
+        const jitter = (2.2 * Math.sin(gx * 0.13 + p1) + 1.4 * Math.cos(gx * 0.29 + p2)) * damp;
+
+        const northFoot = (cgy - halfCorridorY) + jitter;
+        const southFoot = (cgy + halfCorridorY) - jitter;
+
+        let dMountain = 0;
+        if (gy < northFoot) {
+          dMountain = northFoot - gy;
+        } else if (gy > southFoot) {
+          dMountain = gy - southFoot;
+        }
+
+        if (dMountain <= 0) {
+          tileElev[gy * N + gx] = 0;
+        } else {
+          // 陡峭崇山峻岭：山脚紧贴关塞两端，快速陡峭抬升至 6~7 级巍峨绝顶
+          let h = 0;
+          if (dMountain <= 0.8) h = 1;
+          else if (dMountain <= 1.8) h = 2;
+          else if (dMountain <= 2.9) h = 3;
+          else if (dMountain <= 4.2) h = 4;
+          else if (dMountain <= 5.6) h = 5;
+          else if (dMountain <= 7.2) h = 6;
+          else h = 7; // 最高 7 级平顶崇山天幕！
+
+          // 叠加自然山脊/主峰扰动，让山顶产生错落起伏的峰峦
+          const ridgeNoise = Math.sin(gx * 0.24 + gy * 0.20 + p3) * 0.6 + Math.cos(gx * 0.36 - gy * 0.28 + p4) * 0.4;
+          if (h >= 4 && ridgeNoise > 0.38) {
+            h = Math.min(7, h + 1);
+          } else if (h >= 5 && ridgeNoise < -0.42) {
+            h = h - 1;
+          }
+
+          tileElev[gy * N + gx] = Math.max(0, Math.min(7, h));
+        }
+      }
+    }
+
+    const D4: ReadonlyArray<[number, number]> = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    const D8: ReadonlyArray<[number, number]> = [
+      [-1, 0], [1, 0], [0, -1], [0, 1],
+      [-1, -1], [1, -1], [-1, 1], [1, 1],
+    ];
+
+    // DE clean_elevation：1) 填平窄沟 2) 削去尖脊 3) 强制 8 邻域落差 <= 1
+    for (let pass = 0; pass < 2; pass++) {
+      for (let y = 2; y < N - 2; y++) {
+        for (let x = 2; x < N - 2; x++) {
+          if (inPassProtect(x, y) || isWet(x, y)) continue;
+          const idx = y * N + x;
+          const h = tileElev[idx];
+          const hN = tileElev[(y - 1) * N + x], hS = tileElev[(y + 1) * N + x];
+          const hW = tileElev[y * N + (x - 1)], hE = tileElev[y * N + (x + 1)];
+          if ((hN > h && hS > h) || (hW > h && hE > h)) {
+            tileElev[idx] = Math.min(7, h + 1);
+          }
+        }
+      }
+      for (let y = 2; y < N - 2; y++) {
+        for (let x = 2; x < N - 2; x++) {
+          const idx = y * N + x;
+          const h = tileElev[idx];
+          if (h <= 0) continue;
+          const hN = tileElev[(y - 1) * N + x], hS = tileElev[(y + 1) * N + x];
+          const hW = tileElev[y * N + (x - 1)], hE = tileElev[y * N + (x + 1)];
+          if ((hN < h && hS < h) || (hW < h && hE < h)) {
+            tileElev[idx] = h - 1;
+          }
+        }
+      }
+    }
+
+    for (let pass = 0; pass < 5; pass++) {
+      let changed = false;
+      for (let y = 1; y < N - 1; y++) {
+        for (let x = 1; x < N - 1; x++) {
+          if (inPassProtect(x, y) || isWet(x, y)) {
+            if (tileElev[y * N + x] !== 0) {
+              tileElev[y * N + x] = 0;
+              changed = true;
+            }
+            continue;
+          }
+          const cur = tileElev[y * N + x];
+          if (cur <= 0) continue;
+          for (const [dx, dy] of D8) {
+            const nbrH = tileElev[(y + dy) * N + (x + dx)];
+            if (cur - nbrH > 1) {
+              tileElev[y * N + x] = nbrH + 1;
+              changed = true;
+              break;
+            }
+          }
+        }
+      }
+      if (!changed) break;
+    }
+
+    // 转换至角点网格
+    const hillCorners = new Float32Array(V * V);
+    const isFlatCorner = new Uint8Array(V * V);
+    for (let gy = 0; gy <= N; gy++) {
+      for (let gx = 0; gx <= N; gx++) {
+        if (inPassProtect(gx, gy)) {
+          isFlatCorner[gy * V + gx] = 1;
+          continue;
+        }
+        if (
+          (gx > 0 && gy > 0 && isWet(gx - 1, gy - 1)) ||
+          (gx < N && gy > 0 && isWet(gx, gy - 1)) ||
+          (gx > 0 && gy < N && isWet(gx - 1, gy)) ||
+          (gx < N && gy < N && isWet(gx, gy))
+        ) {
+          isFlatCorner[gy * V + gx] = 1;
+          continue;
+        }
+
+        let sum = 0, count = 0, minT = 99, maxT = -99;
+        const sampleT = (tx: number, ty: number) => {
+          const v = tileElev[ty * N + tx];
+          sum += v;
+          count++;
+          if (v < minT) minT = v;
+          if (v > maxT) maxT = v;
+        };
+        if (gx > 0 && gy > 0) sampleT(gx - 1, gy - 1);
+        if (gx < N && gy > 0) sampleT(gx, gy - 1);
+        if (gx > 0 && gy < N) sampleT(gx - 1, gy);
+        if (gx < N && gy < N) sampleT(gx, gy);
+
+        const h = count > 0 ? sum / count : 0;
+        hillCorners[gy * V + gx] = h;
+        if (minT === maxT) {
+          isFlatCorner[gy * V + gx] = 1;
+        }
+      }
+    }
+
+    // 斜坡角点轻量圆角
+    const prev = new Float32Array(hillCorners);
+    for (let gy = 1; gy < N; gy++) {
+      for (let gx = 1; gx < N; gx++) {
+        const idx = gy * V + gx;
+        if (isFlatCorner[idx]) continue;
+        const self = prev[idx];
+        const avg4 = 0.25 * (
+          prev[(gy - 1) * V + gx] +
+          prev[(gy + 1) * V + gx] +
+          prev[gy * V + (gx - 1)] +
+          prev[gy * V + (gx + 1)]
+        );
+        hillCorners[idx] = self * 0.68 + avg4 * 0.32;
+      }
+    }
+
+    for (let i = 0; i < V * V; i++) {
+      if (hillCorners[i] > this.cornerElev[i]) {
+        this.cornerElev[i] = hillCorners[i];
+      }
+    }
+    if (this.data?.elev && this.data.elev.length === N * N) {
+      for (let i = 0; i < N * N; i++) {
+        if (tileElev[i] > this.data.elev[i]) {
+          this.data.elev[i] = tileElev[i];
+        }
+      }
+    }
+  }
+
   private generateDeElevationGrid(
     cx: number,
     cy: number,
@@ -1950,42 +2168,50 @@ export class Scene13GroundLayerGL {
       return { castleLevel: 0, innerLevel: 0, outerLevel: 0 };
     }
 
-    // 🔴 [2026-10-20 主人令「你能帮我设计高地和城差不多大吗，以居庸关为例」] 整块矩形高台：
-    //    高台与城**差不多大**：台边紧贴外圈城墙圈（PLATEAU_MARGIN ＝ 0），PAD 仅留 0.8 格做地面双线性插值余量；
-    //    整座外圈城正好占满整块平顶高台（5 级），城居中、城堡也在台面上；台外 3.5 格斜坡落回谷底。
-    //    高地与城廓浑然一体，外圈城墙外不再留出一圈宽大草地，真正呈现「关隘雄踞险要高地之巅」的气势。
+    // 墙件实际中心与外廓
+    let wallCenterI = 0.5, wallCenterJ = 0.5;
+    let minWallI = Infinity, maxWallI = -Infinity;
+    let minWallJ = Infinity, maxWallJ = -Infinity;
+    for (const p of wallPts) {
+      const q = this.screenToCell(p.x, p.y, W, H);
+      if (!q) continue;
+      const ddx = q.gx - c.gx, ddy = q.gy - c.gy;
+      const I = ddx + ddy, J = ddy - ddx;
+      minWallI = Math.min(minWallI, I); maxWallI = Math.max(maxWallI, I);
+      minWallJ = Math.min(minWallJ, J); maxWallJ = Math.max(maxWallJ, J);
+    }
+    let outerHalfI = rect ? rect.outerHalfI : 12.5;
+    let outerHalfJ = rect ? rect.outerHalfJ : 12.5;
+    let innerHalfI = rect ? rect.innerHalfI : 8.5;
+    let innerHalfJ = rect ? rect.innerHalfJ : 8.5;
+    if (minWallI < maxWallI && minWallJ < maxWallJ) {
+      wallCenterI = (minWallI + maxWallI) / 2;
+      wallCenterJ = (minWallJ + maxWallJ) / 2;
+      // 🔴 严格按实测墙件尺寸定长/短轴半长（防止 I/J 方向反转导致高台与城池成十字交叉错位）
+      outerHalfI = (maxWallI - minWallI) / 2;
+      outerHalfJ = (maxWallJ - minWallJ) / 2;
+      innerHalfI = Math.max(2.0, outerHalfI - 4.0);
+      innerHalfJ = Math.max(2.0, outerHalfJ - 4.0);
+    }
+
+    // 🔴 [2026-10-20] 整块矩形高台：整座外圈城（内外圈墙）同在高台顶（5 级）
     if (terrain === 'plateau') {
-      const PLATEAU_MARGIN = 0.0;          // 台边紧贴外圈墙线（高地和城差不多大）
-      const cgx = c.gx, cgy = c.gy + 0.5;
-      let hI = 0, hJ = 0;
-      if (rect) {
-        hI = rect.outerHalfI + PLATEAU_MARGIN;
-        hJ = rect.outerHalfJ + PLATEAU_MARGIN;
-      } else {
-        // 方形：用墙件实测换算出等轴 i/j 半长（墙件曼哈顿距离 = max(|i|,|j|)）
-        for (const p of wallPts) {
-          const q = this.screenToCell(p.x, p.y, W, H);
-          if (!q) continue;
-          const ddx = q.gx - cgx, ddy = q.gy - cgy;
-          const I = ddx + ddy, J = ddy - ddx;
-          hI = Math.max(hI, Math.abs(I));
-          hJ = Math.max(hJ, Math.abs(J));
-        }
-        if (hI <= 0) hI = hJ = 12.5;
-        hI += PLATEAU_MARGIN; hJ += PLATEAU_MARGIN;
-      }
-      const PAD = 0.8, slopeW = 3.5;
+      const PLATEAU_MARGIN = 1.0;          // 台边比外圈墙线外扩 1 格护脚，城墙与城门稳立高台，不塌角
+      const hI = outerHalfI + PLATEAU_MARGIN;
+      const hJ = outerHalfJ + PLATEAU_MARGIN;
+      const PAD = 0.6, slopeW = 3.5;
       const plateauLevel = 5.0;
       const R3 = Math.max(hI, hJ) + PAD;
       const maxCheck = R3 + slopeW + 2;
       const phase1 = rnd() * 6.28, phase2 = rnd() * 6.28;
-      const deformAmp = 0.06 + rnd() * 0.05;
+      const deformAmp = 0.05 + rnd() * 0.04;
       this.cornerElev.fill(0);
       for (let y = 0; y <= N; y++) {
         for (let x = 0; x <= N; x++) {
-          const dxc = x - cgx, dyc = y - cgy;
-          const di = dxc + dyc, dj = dyc - dxc;
-          const d = Math.max(Math.abs(di) - hI, Math.abs(dj) - hJ);   // 到矩形台边的距离（台内为负）
+          const ddx = x - c.gx, ddy = y - c.gy;
+          const di = (ddx + ddy) - wallCenterI;
+          const dj = (ddy - ddx) - wallCenterJ;
+          const d = Math.max(Math.abs(di) - hI, Math.abs(dj) - hJ);
           if (d > maxCheck) continue;
           const theta = Math.atan2(dj, di);
           const rJitter = 1.0 + deformAmp * Math.sin(2 * theta + phase1) + (deformAmp * 0.65) * Math.cos(3 * theta + phase2);
@@ -2000,75 +2226,70 @@ export class Scene13GroundLayerGL {
           if (targetH > this.cornerElev[idx]) this.cornerElev[idx] = targetH;
         }
       }
-      this.generateDeElevationGrid(cgx, cgy, R3 + 5.5, 2.5, rnd, 'pass');
+      this.generatePassGorgeTerrain(c.gx, c.gy, wallCenterI, wallCenterJ, outerHalfI, outerHalfJ, rnd);
       this.updateCornerLight();
       this.elevDirty = true;
       return { castleLevel: plateauLevel, innerLevel: plateauLevel, outerLevel: plateauLevel };
     }
 
-    // 🔴 [2026-10-20 主人令「东方很多险要应该都是矩形的，不是方形的……先做个样子」]
-    //    矩形双圈专属台地：方形版靠「墙件曼哈顿距离找内/外圈间隙」，矩形两圈的距离范围会重叠（内圈角 10.5 > 外圈短边 10.5），
-    //    所以这里直接用矩形边界算：在等轴 i/j 坐标里取「到矩形的最大轴向距离」——dIn / dOut 为点到内/外圈矩形外面的距离（圈内为负）。
-    //    层次与方形一致：城堡城台(6.5~7) → 内城平台(4.5~5) → 外城平台(3~3.5) → 外坡落回谷底(0)。
-    //    屏幕格坐标 (x,y) → 等轴 i/j：圈心恒在屏幕 (0, +TH/2)（格坐标里 y 偏 +0.5），i = dxc+dyc、j = dyc−dxc。
+    // 🔴 [2026-10-20 主人令「高地也是矩形，这外围城墙都到下边了」]
+    //    矩形多层高台形制：
+    //    1. 高地也是矩形（与内城差不多大）：整座内城（城堡、广场、8 座箭塔、内圈石墙）
+    //       整座居于一整块平整的 5 级矩形平顶高地上，不再在城堡脚下画小方台，高台平顶与内城廓形制完全同构；
+    //    2. 外围城墙在下边：内墙与外墙之间（4 格夹道空当）是顺滑缓坡，平滑跌落至外城地基（2 级）；
+    //       外围城墙及 8 门稳立在山脚下平地上（「这外围城墙都到下边了」）；
+    //    3. 外城门外侧按有机缓坡跌落至 0 级谷底，远郊崇山环抱，完美再现居庸关「重关锁隘、内城高耸、外墙据谷」的险要形制。
     if (rect) {
-      const { innerHalfI, innerHalfJ, outerHalfI, outerHalfJ } = rect;
-      const cx = c.gx, cy = c.gy + 0.5;
-      const PAD = 1.0;                     // 平台比墙线外扩（地面双线性插值的余量）
-      // 🔴 [2026-10-20 主人令「不是扩大高地面积」] 城堡脚下仍是原来的小方台（平顶半径 2.6 / 坡脚 3.6），**不加大**；
-      //    「整座城一块矩形高台」走上面的 terrain === 'plateau' 分支（内外圈同高、城堡正好在同一高地上）。
-      const castleTop = 2.6, castleFoot = 3.6;
-      const innerSlope = 2.0;              // 内圈墙外 → 外城平台的坡宽
-      const outerSlope = 3.5;              // 外圈墙外 → 谷底的坡宽
-      const R3 = Math.max(outerHalfI, outerHalfJ) + PAD;   // 外坡起点
-      const maxCheck = R3 + outerSlope + 2;
-      // 有机起伏（与方形分支同一手法）：外坡坡脚按方位角做双频扰动，避免矩形台地边缘像刀切一样笔直
+      const PAD = 0.8;
+      const innerSlopeW = 2.4; // 夹道坡宽（内外墙间隔正好 4 格：PAD 0.8 + 坡宽 2.4 = 3.2，在到达外墙前降平）
+      const outerSlopeW = 3.5; // 外圈城墙脚外向谷底的缓坡
+      const innerPlateauH = 5.0; // 内城矩形高台高度（城堡与内城整片在 5 级平顶）
+      const outerGroundH = 2.0;  // 外围城墙高度（外墙稳立在 2 级下层地面）
+      const R3 = Math.max(outerHalfI, outerHalfJ) + PAD;
+      const maxCheck = R3 + outerSlopeW + 2;
       const phase1 = rnd() * 6.28, phase2 = rnd() * 6.28;
-      const deformAmp = 0.06 + rnd() * 0.05;
+      const deformAmp = 0.05 + rnd() * 0.04;
+
       this.cornerElev.fill(0);
       for (let y = 0; y <= N; y++) {
         for (let x = 0; x <= N; x++) {
-          const dxc = x - cx, dyc = y - cy;
-          const di = dxc + dyc, dj = dyc - dxc;
+          const ddx = x - c.gx, ddy = y - c.gy;
+          const di = (ddx + ddy) - wallCenterI;
+          const dj = (ddy - ddx) - wallCenterJ;
           const dOut = Math.max(Math.abs(di) - outerHalfI, Math.abs(dj) - outerHalfJ);
-          if (dOut > maxCheck) continue;   // 超出外坡范围由外围地形接管
+          if (dOut > maxCheck) continue;
+
           const dIn = Math.max(Math.abs(di) - innerHalfI, Math.abs(dj) - innerHalfJ);
-          const dCenter = Math.max(Math.abs(di), Math.abs(dj));
           const theta = Math.atan2(dj, di);
           const rJitter = 1.0 + deformAmp * Math.sin(2 * theta + phase1) + (deformAmp * 0.65) * Math.cos(3 * theta + phase2);
+
           let targetH = 0;
           if (dIn <= PAD) {
-            // 内圈以内（含城堡）：小方台平顶 → 平滑降到内城平台 → 平台一直铺到内墙脚下
-            if (dCenter <= castleTop) targetH = castleLevel;
-            else if (dCenter <= castleFoot) {
-              const s = (dCenter - castleTop) / (castleFoot - castleTop);
-              const t = s * s * (3 - 2 * s);
-              targetH = castleLevel + (innerLevel - castleLevel) * t;
-            } else targetH = innerLevel;
-          } else if (dIn <= PAD + innerSlope) {
-            // 内墙 → 外墙之间：从内城平台平滑降到外城平台
-            const s = (dIn - PAD) / innerSlope;
+            // 1) 矩形高台顶面（5 级）：城堡、8 座箭塔、广场与内圈墙全在矩形高台面上（高地也是矩形，和内城同大）
+            targetH = innerPlateauH;
+          } else if (dIn <= PAD + innerSlopeW) {
+            // 2) 内墙外侧向外城地面平滑滑落（5 级 → 2 级）
+            const s = (dIn - PAD) / innerSlopeW;
             const t = s * s * (3 - 2 * s);
-            targetH = innerLevel + (outerLevel - innerLevel) * t;
+            targetH = innerPlateauH + (outerGroundH - innerPlateauH) * t;
           } else if (dOut <= PAD) {
-            // 外城平台：外圈墙与四门都站在这一层
-            targetH = outerLevel;
+            // 3) 外城地面（2 级）：外围城墙与 8 座城门坐落在下边的平整地面（「这外围城墙都到下边了」）
+            targetH = outerGroundH;
           } else {
-            // 外圈墙脚下：按方位角带有机起伏的缓坡落回 0 级谷底（攻方仰攻）
-            const s = Math.min(1, (dOut - PAD) / (outerSlope * rJitter));
+            // 4) 外圈城门外侧：顺缓坡跌落回 0 级谷底（攻方仰攻）
+            const s = Math.min(1, (dOut - PAD) / (outerSlopeW * rJitter));
             const t = s * s * (3 - 2 * s);
-            targetH = outerLevel * (1 - t);
+            targetH = outerGroundH * (1 - t);
           }
           const idx = y * V + x;
           if (targetH > this.cornerElev[idx]) this.cornerElev[idx] = targetH;
         }
       }
-      this.generateDeElevationGrid(cx, cy, R3 + 5.5, outerLevel - 0.5, rnd, 'pass');
+      this.generatePassGorgeTerrain(c.gx, c.gy, wallCenterI, wallCenterJ, outerHalfI, outerHalfJ, rnd);
       this.updateCornerLight();
       this.elevDirty = true;
-      return { castleLevel, innerLevel, outerLevel };
+      return { castleLevel: innerPlateauH, innerLevel: innerPlateauH, outerLevel: outerGroundH };
     }
-
     // 3. 台地边缘按实际墙件 / 建筑位置定（曼哈顿距离 |dx|+|dy|：两圈城墙在地面格里都是菱形）
     // 🔴 [2026-10-15 主人令「险要的内墙、箭塔不平你来修」] 原写死 R1=4.0（+1.8 坡）/ R2=8.6 / R3=14.2，实测独松关：
     //    箭塔在 5~6 格、坡到 5.8 才完 ⇒ 箭塔 5.01~6.15 级；内墙在 8~9 格、R2=8.6 切在墙上 ⇒ 内墙 3.81~5.00 级。
@@ -2152,7 +2373,7 @@ export class Scene13GroundLayerGL {
     }
 
     // 4. 外围城墙外围：外围丘陵推远到 R3 + 5.5 之外生成，且最高不超过 outerLevel - 0.5（彻底杜绝堵门与高程倒挂）
-    this.generateDeElevationGrid(cx, cy, R3 + 5.5, outerLevel - 0.5, rnd, 'pass');
+    this.generatePassGorgeTerrain(cx, cy, 0.5, 0.5, R3, R3, rnd);
 
     // 6. 重新计算等轴浮雕坡面光照并标记脏标记
     this.updateCornerLight();
