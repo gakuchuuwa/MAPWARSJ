@@ -121,6 +121,46 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portrait: '',
         note: '史无载，拟名：前1457年米吉多之战，迦南—卡迭石联军由卡迭石王统领，其名未传。',
     },
+    // 🔴 [2026-10-20 首战规则] 572 年伦巴第围帕维亚，东罗马（拜占庭）守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_pavia_shoujiang: {
+        generalId: 'bfe_pavia_shoujiang',
+        generalName: '帕维亚东罗马守将',
+        factionId: 'baizanting',
+        portrait: '',
+        note: '史无载，拟名：572 年帕维亚（Ticinum）围城战，守军为东罗马（拜占庭）驻军，守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 686 年三佛齐征爪哇，马打蓝守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_jawa_shoujiang: {
+        generalId: 'bfe_jawa_shoujiang',
+        generalName: '马打蓝守城将',
+        factionId: 'medang',
+        portrait: '',
+        note: '史无载，拟名：686 年三佛齐征爪哇之战，马打蓝（Medang）守城将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 749 年哥舒翰夺石堡城，吐蕃守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_shibaocheng_shoujiang: {
+        generalId: 'bfe_shibaocheng_shoujiang',
+        generalName: '石堡城吐蕃守将',
+        factionId: 'tubo',
+        portrait: '',
+        note: '史无载，拟名：749 年哥舒翰攻石堡城，吐蕃守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 838 年阿拔斯攻阿莫里姆，拜占庭守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_amorium_shoujiang: {
+        generalId: 'bfe_amorium_shoujiang',
+        generalName: '阿莫里姆守将',
+        factionId: 'baizanting',
+        portrait: '',
+        note: '史无载，拟名：838 年阿拔斯哈里发穆塔西姆攻阿莫里姆，拜占庭守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 848 年张议潮沙州起义，吐蕃守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_shazhou_shoujiang: {
+        generalId: 'bfe_shazhou_shoujiang',
+        generalName: '沙州吐蕃守将',
+        factionId: 'tubo',
+        portrait: '',
+        note: '史无载，拟名：848 年张议潮逐吐蕃守军复沙州，吐蕃守将姓名未传。',
+    },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_achish: {
         generalId: 'bfe_achish',

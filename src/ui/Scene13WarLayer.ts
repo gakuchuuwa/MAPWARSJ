@@ -3110,7 +3110,7 @@ export class Scene13WarLayer {
                 ? [[-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5]]
                 : this.defenderCityType === 'medium_city'
                     ? [[-2.5, -2.5], [3.5, 3.5], [-2.5, 3.5], [3.5, -2.5]]
-                    : [[-7.2, 8.2], [8.2, -7.2]];
+                    : [[-2.2, -2.2], [3.2, 3.2]];
             for (const [ti, tj] of treeCoords) {
                 pushInteriorDecor(courtyardTreeAsset, ti + (mRnd() - 0.5) * 0.16, tj + (mRnd() - 0.5) * 0.16, 0.78 + mRnd() * 0.12);
             }

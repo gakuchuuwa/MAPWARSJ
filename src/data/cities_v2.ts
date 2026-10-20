@@ -3542,7 +3542,8 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_anate', name: '阿纳特', factionId: 'youfaladi', lat: 34.47, lng: 41.96, type: 'pass', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE' },
     { id: 'city_hamadan', name: '哈马丹', factionId: 'midi', lat: 34.8, lng: 48.51, type: 'medium_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '古称埃克巴塔那，米底王国都城与阿契美尼德帝国夏都' },
     { id: 'city_adana', name: '阿达纳', factionId: 'qiliqiya', lat: 37.0, lng: 35.3213, type: 'small_city', troops: 10000, region: 'HITTITES', buildingStyle: 'ORIE', note: '定级依据§6.2：1572年城内1023纳税户约5100人（Adana Mufassal Tahrir），未达中城10万门槛 → 小城。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.06,35.77 偏离阿达纳城 40.4 公里（落在杰伊汉一带），按英文维基百科 Adana 坐标改为 37.0,35.3213。' },
-    { id: 'city_bosibolisi', name: '波斯波利斯', factionId: 'aqimeinide', lat: 29.93, lng: 52.89, type: 'small_city', troops: 10000, region: 'ACHAEMENIDS', buildingStyle: 'PERSIAN', note: '定级依据§6.2：城内无可靠人口数字；全平原含农村约43600人（Sumner 1986），学界共识"礼仪都城非大城" → 小城' },
+    { id: 'city_bosibolisi', name: '波斯波利斯', factionId: 'aqimeinide', lat: 29.93, lng: 52.89, type: 'small_city', troops: 20000, region: 'PERSIAN', buildingStyle: 'PERSIAN' },
+
 
     { id: 'city_feiluzhabade', name: '菲鲁扎巴德', factionId: 'sashan', lat: 28.85, lng: 52.53, type: 'pass', troops: 10000, region: 'PERSIAN', buildingStyle: 'SASANIAN', note: '萨珊建立者阿尔达希尔一世所建第一城（古阿尔达希尔-花拉），今伊朗法尔斯' },
     { id: 'city_susa', name: '苏萨', factionId: 'ailan', lat: 32.1906, lng: 48.2578, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '定级依据§6.2：城内2.5万–4万（阿契美尼德，Chase-Dunn/Chandler）；"20万"说口径不明不采，未达中城10万门槛 → 小城。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 32.19,48.24 偏离苏萨城 1.67 公里，按英文维基百科 Susa 坐标改为 32.1906,48.2578。' },

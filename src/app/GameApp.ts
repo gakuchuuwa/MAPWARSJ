@@ -80,7 +80,7 @@ import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync
 import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
 import { refreshEraFactionDisplays } from '../data/eraFactionDisplay';
-import { syncCentenarianGeneralOwners } from '../events/centenarianGeneralOwnersSync';
+import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump } from '../events/centenarianGeneralOwnersSync';
 import { setScriptYearProvider, setCentenarianYearProvider, setGameModeProvider } from '../data/generalOnStage';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
@@ -930,6 +930,33 @@ export class GameApp {
         this.cityManager.getTerritorySystem().patchFactionFlagTexts(changedSet);
     }
 
+    /**
+     * 🔴 [2026-10-20 主人令「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代，
+     *    并对应好所有的登场武将，城市，特殊建筑」]
+     * 只在百岁模式生效。据点归属按「开局」口径重来（先还原原主，再归给新年份的在场武将）；
+     * 武将登场、时代名旗号、大中城降级、特殊建筑建成年代全部按新年份重算。返回实际跳到的年份。
+     */
+    public jumpToYear(input: number): number | null {
+        if ((this.playerHero?.autoPlan ?? 'centenarian') !== 'centenarian') return null;
+        if (!Number.isFinite(input)) return null;
+        const { TIMELINE_START_YEAR, TIMELINE_END_YEAR } = GameConfig.TIME;
+        let year = Math.round(input);
+        year = Math.max(TIMELINE_START_YEAR, Math.min(TIMELINE_END_YEAR, year));
+        if (year === 0) year = 1;   // 没有公元 0 年
+        resetCentenarianGeneralOwnersForYearJump(this.cityManager);
+        // setYear → onYearChange：地图道路/河流、时间 HUD、武将在场与据点归属、时代名旗号
+        this.timeSystem.setYear(year);
+        // 暂停时主循环不跑 updateYear → 这里直接推：大中城降级、特殊建筑建成年代
+        this.cityManager.updateYear(year);
+        this.syncCityFoundedTypes();
+        this.map.getMonumentLayer()?.syncFoundedYear();
+        this.map.getMonumentLayer()?.refresh();
+        this.cityManager.refreshCityVisibility();
+        this.map.getBattlefieldLayer()?.renderBattlefields();
+        this.historicalEventManager?.getLegionManager()?.refreshCultureFormations();
+        return year;
+    }
+
     private setupPlayer(legionManager: LegionManager): void {
         const allCities = this.cityManager.getCities();
         if (allCities.length === 0) return;
@@ -1087,6 +1114,8 @@ export class GameApp {
             isFollowing: () => this.cameraFollowUI.isFollowingPlayer(),
             getSpeed: () => this.timeSystem.getSpeed(),
             setSpeed: (mult: number) => this.timeSystem.setSpeed(mult),
+            getYear: () => this.timeSystem.getYear(),
+            jumpToYear: (year: number) => this.jumpToYear(year),
             setCompanionPanelsExpanded: (expanded) => {
                 // 🔴 [2026-09-24 主人定] 剧本期：军团/军情两块不显示（CSS 藏）也不展开（免得白刷列表）。
                 // 🔴 [2026-09-26 主人两道令] 先令「把右下角的信息面板也隐藏」，随即报障

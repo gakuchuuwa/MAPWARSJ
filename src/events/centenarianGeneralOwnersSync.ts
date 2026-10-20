@@ -47,6 +47,25 @@ const lastLead = new Map<string, { generalId: string; factionId: string } | null
 const applied = new Map<string, string>();
 let active = false;
 
+/**
+ * 🔴 [2026-10-20 主人令「玩家面板加年代输入，跳到哪个年代就对应好所有登场武将、城市」]
+ * 跳年前调：全部据点还原成原主（不播报），清空同步状态 —— 下一次 `syncCentenarianGeneralOwners`
+ * 就按「开局」口径把据点归给新年份的在场武将；同时放开「武将已出完」标记，让新年代的武将能出兵。
+ */
+export function resetCentenarianGeneralOwnersForYearJump(cityManager: CityManager): void {
+    for (const city of cityManager.getCities()) {
+        const melee = MELEE_OWNER.get(city.id);
+        if (melee && city.factionId !== melee) {
+            cityManager.updateCity(city.id, { factionId: melee }, { skipCaptureLog: true });
+        }
+        const updated = cityManager.getCity(city.id);
+        if (updated) updated.spawnGeneralUsed = false;
+    }
+    applied.clear();
+    lastLead.clear();
+    active = false;
+}
+
 export function syncCentenarianGeneralOwners(cityManager: CityManager, centenarianOn: boolean): void {
     if (!centenarianOn) {
         for (const [cityId, factionId] of applied) {

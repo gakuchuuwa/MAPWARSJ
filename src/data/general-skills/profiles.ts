@@ -3032,6 +3032,35 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     xiongren_atila: { generalId: 'xiongren_atila', tier: 'famous', tacticalSkillId: 'ts_250', atkBalanceSkillId: 'ts_020', atkAdvantageSkillId: 'ts_399', atkDisadvantageSkillId: 'ts_580', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_418', aptitude: 'create', attackStyle: 'attack' }, // 阿提拉：横扫欧洲 → 擅攻
     gen_city_syracuse: { generalId: 'gen_city_syracuse', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_511', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_760', defDisadvantageSkillId: 'ts_635', aptitude: 'leverage', attackStyle: 'attack' },
     gen_olaf_skotkonung: { generalId: 'gen_olaf_skotkonung', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_525', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_764', defDisadvantageSkillId: 'ts_650', aptitude: 'leverage', attackStyle: 'attack' },
+    // 🔴 [2026-10-20 首战剧情] 新增名将定档
+    gen_miltiades: { generalId: 'gen_miltiades', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 米太亚德：马拉松大捷，名将
+    wu_fuchai: { generalId: 'wu_fuchai', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 夫差：夫椒破越，名将
+    gen_cambyses: { generalId: 'gen_cambyses', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 冈比西斯二世：佩鲁西姆灭埃及，名将
+    // 🔴 [2026-10-20 首战剧情] 巴赫拉姆六世：590 破霍斯劳、僭位泰西封，名将
+    sashan_bahram_vi: { generalId: 'sashan_bahram_vi', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    rierman_odoacer: { generalId: 'rierman_odoacer', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 奥多亚克：拉文纳被围杀，普将
+    yidou_qixin: { generalId: 'yidou_qixin', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 戚昕：狼尾滩被破，普将
+    maidina_ali: { generalId: 'maidina_ali', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿里：骆驼之战胜，名将
+    xijue_ashina_funian: { generalId: 'xijue_ashina_funian', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 匐念：被计擒，普将
+    xigete_roderic: { generalId: 'xigete_roderic', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 罗德里克：战败溺死，普将
+    womaya_muslim: { generalId: 'womaya_muslim', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 穆斯林：渴水日大败，普将
+    womaya_abdrahman: { generalId: 'womaya_abdrahman', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿卜杜勒·拉赫曼：征服伊比利亚的胜将，名将
+    zhuozhou_anshouzhong: { generalId: 'zhuozhou_anshouzhong', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 安守忠：香积寺败退，普将
+    zhuozhou_shisiming: { generalId: 'zhuozhou_shisiming', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 史思明：759 邺城破唐九节度，名将
+    lunbadi_desiderius: { generalId: 'lunbadi_desiderius', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 德西德里乌斯：帕维亚被围降，普将
+    tang_zhuci: { generalId: 'tang_zhuci', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 朱泚：据长安被李晟破，普将
+    gurjara_vatsaraja: { generalId: 'gurjara_vatsaraja', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 瓦萨拉贾：曾破波罗军，名将
+    gurjara_nagabhata_ii: { generalId: 'gurjara_nagabhata_ii', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 那加巴塔二世：820 大破波罗军，名将
+    tubo_lunmangre: { generalId: 'tubo_lunmangre', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 论莽热：维州被围歼，普将
+    baizanting_nikephoros_i: { generalId: 'baizanting_nikephoros_i', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 尼基弗鲁斯一世：亲征保加利亚的皇帝，名将
+    huihu_wusa: { generalId: 'huihu_wusa', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 㕎馺可汗：亡国，普将
+    abasi_muwafake: { generalId: 'abasi_muwafake', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 穆瓦法克：876 代尔阿库勒胜，名将
+    falanji_kalman: { generalId: 'falanji_kalman', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 卡洛曼：摩拉维亚败，普将
+    nanzhao_duanqiuxian: { generalId: 'nanzhao_duanqiuxian', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 段酋迁：交趾被破，普将
+    aiji_psamtik_iii: { generalId: 'aiji_psamtik_iii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 普萨美提克三世：佩鲁西姆败亡，普将
+    tujue_wusumishi: { generalId: 'tujue_wusumishi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 乌苏米施：末代可汗被灭，普将
+    tubo_xinuoluo: { generalId: 'tubo_xinuoluo', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 悉诺逻恭禄：吐蕃名将（破唐边城），名将
+    tang_limi: { generalId: 'tang_limi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 李宓：西洱河覆没，普将
     gen_themistocles: { generalId: 'gen_themistocles', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_730', aptitude: 'leverage', attackStyle: 'defense' },
     gen_civilis: { generalId: 'gen_civilis', tier: 'famous', tacticalSkillId: 'ts_001', atkBalanceSkillId: 'ts_628', atkAdvantageSkillId: 'ts_570', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_768', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage', attackStyle: 'attack' },
     gen_clovis_i: { generalId: 'gen_clovis_i', tier: 'famous', tacticalSkillId: 'ts_519', atkAdvantageSkillId: 'ts_519', atkBalanceSkillId: 'ts_521', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage', attackStyle: 'attack' },
@@ -3394,6 +3423,13 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     sashan_khosrow_ii: { generalId: 'sashan_khosrow_ii', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' },   // 霍斯劳二世：590 借兵复国、收复失地，名将
     sui_yuwenshu: { generalId: 'sui_yuwenshu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 宇文述：萨水大败，普将
     tujue_xielikehan: { generalId: 'tujue_xielikehan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 颉利可汗：630 阴山被擒，普将
+    nanqi_xiaobaojuan: { generalId: 'nanqi_xiaobaojuan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 萧宝卷：暴君无胜绩，普将
+    erzhu_erzhuzhao: { generalId: 'erzhu_erzhuzhao', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 尔朱兆：韩陵山败，普将
+    gaoqi_d_xiaogui: { generalId: 'gaoqi_d_xiaogui', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 萧轨：白下败，普将
+    yuwen_yuwenxian: { generalId: 'yuwen_yuwenxian', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 宇文宪：北周名将（屡破北齐），名将
+    yiduhu_quwentai: { generalId: 'yiduhu_quwentai', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 麴文泰：无胜绩，普将
+    kongque_aluonashun: { generalId: 'kongque_aluonashun', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 阿罗那顺：被擒，普将
+    dayu_liqianshi: { generalId: 'dayu_liqianshi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 李迁仕：被斩，普将
 };
 
 

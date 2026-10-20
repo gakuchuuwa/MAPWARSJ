@@ -296,6 +296,37 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 里昂
+    'huihu_wusa': 'MONGOL',           // 回鹘｜㕎馺可汗｜据点 青岭牙帐
+    'abasi_muwafake': 'ORIE',         // 阿拔斯｜穆瓦法克｜据点 巴格达
+    'falanji_kalman': 'FRANKS',       // 法兰克｜卡洛曼｜据点 科隆
+    'nanzhao_duanqiuxian': 'BASHU',   // 南诏｜段酋迁｜据点 蒙舍城
+    'gurjara_vatsaraja': 'GURJARAS',      // 瞿折罗｜瓦萨拉贾｜据点 帕坦
+    'gurjara_nagabhata_ii': 'GURJARAS',   // 瞿折罗｜那加巴塔二世｜据点 帕坦
+    'tubo_lunmangre': 'TIBET',            // 吐蕃｜论莽热｜据点 逻些
+    'baizanting_nikephoros_i': 'BYZANTINE', // 拜占庭｜尼基弗鲁斯一世｜据点 君士坦丁堡
+    'lunbadi_desiderius': 'LATIN',   // 伦巴第｜德西德里乌斯｜据点 米兰
+    'tang_zhuci': 'CENTRAL',         // 唐国｜朱泚｜据点 长安
+    'zhuozhou_anshouzhong': 'WEI',   // 涿州｜安守忠｜据点 范阳
+    'zhuozhou_shisiming': 'WEI',     // 涿州｜史思明｜据点 范阳
+    'xijue_ashina_funian': 'CENTRAL_ASIA',   // 十箭｜阿史那匐念｜据点 碎叶
+    'xigete_roderic': 'GOTHS',               // 西哥特｜罗德里克｜据点 托莱多
+    'womaya_muslim': 'ORIE',                 // 倭马亚｜穆斯林·本·赛义德｜据点 大马士革
+    'womaya_abdrahman': 'ORIE',              // 倭马亚｜阿卜杜勒·拉赫曼｜据点 大马士革
+    'rierman_odoacer': 'GERMANIC',   // 莱茵兰｜奥多亚克｜据点 美因茨
+    'yidou_qixin': 'JIANGNAN',       // 宜都｜戚昕｜据点 夷陵
+    'maidina_ali': 'ORIE',           // 拉希顿｜阿里｜据点 麦地那
+    'sashan_bahram_vi': 'SASANIAN',   // 萨珊｜巴赫拉姆六世｜据点 菲鲁扎巴德
+    'tujue_wusumishi': 'MONGOL',   // 突厥｜乌苏米施可汗｜据点 于都斤山
+    'tubo_xinuoluo': 'TIBET',      // 吐蕃｜悉诺逻恭禄｜据点 逻些
+    'tang_limi': 'CENTRAL',        // 唐国｜李宓｜据点 长安
+    'aiji_psamtik_iii': 'ORIE',   // 埃及｜普萨美提克三世｜据点 孟菲斯
+    'yiduhu_quwentai': 'WESTERN',      // 亦都护｜麴文泰｜据点 高昌
+    'kongque_aluonashun': 'PURU',      // 孔雀｜阿罗那顺｜据点 华氏城
+    'dayu_liqianshi': 'JIANGNAN',      // 大庾｜李迁仕｜据点 南康
+    'nanqi_xiaobaojuan': 'JIANGNAN',   // 南国｜萧宝卷｜据点 金陵
+    'erzhu_erzhuzhao': 'WEI',          // 尔朱｜尔朱兆｜据点 秀容川
+    'gaoqi_d_xiaogui': 'WEI',          // 北齐｜萧轨｜据点 蓨城
+    'yuwen_yuwenxian': 'XIANBEI',      // 宇文｜宇文宪｜据点 武川镇
     // 🔴 2026-10-20 首战补敌将
     'sashan_khosrow_ii': 'SASANIAN',   // 萨珊｜霍斯劳二世｜据点 菲鲁扎巴德
     'sui_yuwenshu': 'JIANGNAN',        // 隋｜宇文述｜据点 汉东
@@ -662,7 +693,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'lelang_wangqi': 'KOREA',   // 乐浪｜王颀｜据点 息谷
     'leloi': 'VIETNAMESE',   // 清化｜黎利｜据点 蓝山
     'li_bian': 'JIANGNAN',   // 泰州｜李昪｜据点 海陵
-    'li_lx_d_liguang': 'CENTRAL',   // 陇西｜李广｜据点 襄武
+    'li_lx_d_liguang': 'WEI',   // 无终｜李广｜据点 无终（右北平郡治）
     'li_s_mayuan': 'JIANGNAN',   // 静海｜马援｜据点 海门
     'liang_d_zhangxun': 'CENTRAL',   // 梁国｜张巡｜据点 商丘
     'liangshidu_longjia': 'WEI',   // 绥州｜龙贾｜据点 绥德
@@ -900,7 +931,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'shuizu_panxinjian': 'BASHU',   // 水族｜潘新简｜据点 三都
     'shule_aersilan': 'WESTERN',   // 疏勒｜阿尔斯兰｜据点 盘橐
     'shuntian_linshuangwen': 'JIANGNAN',   // 天地会｜林爽文｜据点 彰化
-    'shuofang_weiqing': 'XIANBEI',   // 朔方｜卫青｜据点 延恩
+    'shuofang_weiqing': 'CENTRAL',   // 长安｜卫青｜据点 长安
     'siam_nalixuan': 'KHMER',   // 暹罗｜纳黎萱｜据点 阿瑜陀耶
     'sijitai_ateas': 'GREECE',   // 斯基泰｜阿泰阿斯｜据点 塔纳伊斯
     'sijitai_satraces': 'GREECE',   // 斯基泰｜萨特拉克斯｜据点 塔纳伊斯
@@ -932,7 +963,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'sute_spitamenes': 'CENTRAL_ASIA',   // 诺塔卡｜斯皮塔米尼斯｜据点 诺塔卡
     'suwa_d_zoufanglaizhong': 'JAPAN',   // 诹访｜诹访赖重｜据点 高岛
     'suzhou_d_shikefa': 'CENTRAL',   // 宿州｜史可法｜据点 符离
-    'suzhou_huoqubing': 'KHITAN',   // 肃州｜霍去病｜据点 嘉峪关
+    'suzhou_huoqubing': 'CENTRAL',   // 长安｜霍去病｜据点 长安
     'taiping_shidakai': 'JIANGNAN',   // 太平｜石达开｜据点 金田村
     'taira_pingzhisheng': 'JAPAN',   // 长门｜平知盛｜据点 赤间关
     'taiyuan_menglai': 'MALAY',   // 泰沅｜孟莱｜据点 清坎寨
