@@ -296,11 +296,26 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 里昂
+    'gen_toghus_temur': 'XIANBEI',    // 北元｜脱古思帖木儿｜据点 应昌（XIANBEI）
+    'gen_si_lunfa': 'BURMESE',        // 麓川｜思伦发｜据点 勐卯（BURMESE）
+    'gen_li_jinglong': 'JIANGNAN',    // 南军｜李景隆｜据点 南京（JIANGNAN）
+    'gen_bayezid_i': 'TURKS',         // 奥斯曼｜巴耶济德一世｜据点 布尔萨（TURKS）
+    'gen_vukasin': 'SLAVIC',      // 塞尔维亚｜武卡辛｜据点 贝尔格莱德（SLAVIC）
+    'gen_mamai': 'CENTRAL_ASIA',  // 金帐｜马麦｜据点 萨莱（CENTRAL_ASIA）
+    'gen_juan_i_castile': 'SPANISH', // 卡斯蒂利亚｜胡安一世｜据点 马德里（SPANISH）
+    'gen_abu_yahya': 'LATIN',        // 马略卡总督｜阿布·叶海亚｜据点 巴塞罗那（LATIN）
+    'gen_pietro_tiepolo': 'LATIN',   // 米兰执政官｜皮耶罗·提埃波洛｜据点 米兰（LATIN）
+    'gen_kutlug_buga': 'CENTRAL_ASIA', // 金帐王公｜库特卢格·布加｜据点 萨莱（CENTRAL_ASIA）
+    'gen_ali_ibn_yusuf': 'BERBER',   // 穆拉比特｜阿里·本·优素福｜据点 马拉喀什（BERBER）
+    'gen_kusaila': 'BERBER',      // 柏柏尔｜库赛拉｜据点 丹吉尔（BERBER）
+    'malin_abulhasan': 'BERBER',  // 马林王朝｜阿布·哈桑·阿里｜据点 非斯（BERBER）
+    'zhao_gerong': 'CENTRAL',        // 六镇起义｜葛荣｜据点 邯郸（CENTRAL）
+    'gen_ramiro_ii': 'SPANISH',      // 莱昂王国｜拉米罗二世｜据点 萨拉曼卡（SPANISH）
     'mazhaer_charles_i': 'MAGYAR',      // 匈牙利｜查理一世｜据点 布达佩斯
     'baojialiya_mikhail': 'BULGARIANS', // 保加利亚｜米哈伊尔·希什曼｜据点 特尔诺沃
-    'yuan_d_tuotuo': 'MONGOL',          // 元朝｜脱脱｜据点 上都
-    'yuan_d_manzihaiya': 'MONGOL',      // 元朝｜蛮子海牙｜据点 上都
-    'yuan_d_daulashah': 'MONGOL',   // 元朝｜倒剌沙｜据点 上都
+    'yuan_d_tuotuo': 'XIANBEI',        // 元朝｜脱脱｜据点 上都（XIANBEI 风格）
+    'yuan_d_manzihaiya': 'XIANBEI',    // 元朝｜蛮子海牙｜据点 上都（XIANBEI 风格）
+    'yuan_d_daulashah': 'XIANBEI', // 元朝｜倒剌沙｜据点 上都（XIANBEI 风格）
     'yinggelan_warenne': 'SAXONS',   // 英格兰｜约翰·德·瓦伦｜据点 伦敦
     'gaolu_john_ii': 'FRANKS',       // 法兰西｜约翰二世｜据点 巴黎
     'xiliao_uthman': 'CENTRAL_ASIA',   // 西辽｜奥斯曼｜据点 撒马尔罕

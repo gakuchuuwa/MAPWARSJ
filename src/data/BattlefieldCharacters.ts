@@ -241,6 +241,22 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portrait: '',
         note: '史有其人：夏王窦建德（573–621），621 年虎牢关之战兵败被李世民所俘。',
     },
+    // 🔴 [2026-10-20 首战规则] 1366 加里波利：奥斯曼守将姓名不载，拟名「哈桑·贝伊」
+    bfe_gallipoli_guard: { generalId: 'bfe_gallipoli_guard', generalName: '哈桑·贝伊', factionId: 'osman', portrait: '', note: '史无载，拟名：1366 年萨伏依十字军攻加里波利，奥斯曼守将姓名未传。' },
+    // 🔴 [2026-10-20 首战规则] 1354 帕竹攻灭萨迦：萨迦末代本钦姓名不载，拟名「旺尊」
+    bfe_sakya_ponchen: { generalId: 'bfe_sakya_ponchen', generalName: '旺尊', factionId: 'khon', portrait: '', note: '史无载，拟名：1354 年绛曲坚赞攻灭萨迦时萨迦本钦姓名未传。' },
+    // 🔴 [2026-10-20 首战规则] 745 桑乾河：奚／契丹联军首领，拟名奚王「李延宠」（奚王李延宠见于唐开元末，此役按奚部首领拟名）
+    bfe_xiwang_liyanchong: { generalId: 'bfe_xiwang_liyanchong', generalName: '李延宠', factionId: 'kumo', portrait: '', note: '拟名：745 年桑乾河之战奚／契丹联军首领，姓名不载，按奚王拟名。' },
+    // 🔴 [2026-10-20 首战规则] 1101 十字军：伦巴第十字军统领「阿尔伯特」（史有其人，生卒不详）
+    bfe_albert_lombard: { generalId: 'bfe_albert_lombard', generalName: '阿尔伯特', factionId: 'lunbadi', portrait: '', note: '史有其人：1101 年伦巴第十字军统领阿尔伯特（Albert of Biandrate），生卒不详。' },
+    // 🔴 [2026-10-20 首战规则] 1111 萨尔尼察河：库曼汗姓名不载，拟名「沙鲁」
+    bfe_kuman_khan: { generalId: 'bfe_kuman_khan', generalName: '沙鲁', factionId: 'kuman_oleshky', portrait: '', note: '史无载，拟名：1111 年萨尔尼察河之战库曼汗姓名未传。' },
+    // 🔴 [2026-10-20 首战规则] 645 辽东城之战：高句丽守将姓名不载，拟名「高延武」（高句丽王族姓高）
+    bfe_liaodong_guard: { generalId: 'bfe_liaodong_guard', generalName: '高延武', factionId: 'gaogouli', portrait: '', note: '史无载，拟名：645 年唐攻辽东城，高句丽守将姓名未传。' },
+    // 🔴 [2026-10-20 首战规则] 662 天山之战：铁勒九姓首领姓名不载，拟名叶护「骨利干」
+    bfe_tiele_yehu: { generalId: 'bfe_tiele_yehu', generalName: '骨利干', factionId: 'tujue', portrait: '', note: '史无载，拟名：662 年薛仁贵天山破铁勒，铁勒九姓首领姓名未传。' },
+    // 🔴 [2026-10-20 首战规则] 965 萨尔克尔之战：可萨汗姓名不载，拟名「伊尔克」
+    bfe_khazar_khan: { generalId: 'bfe_khazar_khan', generalName: '伊尔克', factionId: 'kesa', portrait: '', note: '史无载，拟名：965 年斯维亚托斯拉夫破可萨，可萨汗姓名未传。' },
     // 🔴 [2026-10-20 首战规则] 1242 楚德湖冰上战役条顿/利沃尼亚骑士团主将姓名未传 → 拟名战场人物（立绘留空）
     bfe_teutonic_jiang: {
         generalId: 'bfe_teutonic_jiang',
