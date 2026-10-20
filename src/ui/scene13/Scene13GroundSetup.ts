@@ -463,6 +463,10 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
             }
             applyDeCityToGround.call(this);
             spawnBattlefieldRelics.call(this, glLayer, VW, VH);
+            // 🔴 [2026-10-21 主人报「拒马立在河里」] 兜底清扫：不管拒马/木栅残骸是哪条支路摆进来的
+            //    （营地拒马圈 / 攻城残骸），只要脚下是水（密度 ≥0.18 的湿岸也算）就一律移除。
+            //    放在最后一步做，是因为前面 carveFoundation 会改水体势场，就地判断可能漏掉。
+            pruneWetBarricades.call(this, glLayer, VW, VH);
             releaseGround();
         } catch (err) {
             console.warn('[Scene13WarLayer] ⚠️ WebGL 地面层初始化失败（已无旧 2D 地面兜底，本场没有地面）:', err);
@@ -512,7 +516,10 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                 if ((di <= roadMaxU && dj <= roadMaxV) || (dj <= roadMaxU && di <= roadMaxV)) return false;
             }
         }
-        if (glLayer.isWaterAt(sx, sy, VW, VH)) return false;
+        // 🔴 [2026-10-21 主人报「拒马/残骸立在河里」] 水面与湿岸都不放：原来只用 isWaterAt（密度≥0.45，只挡深水），
+        //    浅水/湿岸（0.18~0.45）照放，看上去仍在河里 → 改按水体密度 ≥0.18 一刀切。
+        const wc = glLayer.screenToCell(sx, sy, VW, VH);
+        if (!wc || glLayer.getWaterDensityAt(wc.gx, wc.gy) >= 0.18) return false;
         for (const sp of this.spawns) {
             if (Math.hypot(sx - sp.x, (sy - sp.y) * 1.4) < 340) return false;
         }
@@ -610,4 +617,28 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
         }
     }
+}
+
+/**
+ * 🔴 [2026-10-21 主人报「拒马立在河里」] 兜底清扫：把落在水里 / 湿岸上的拒马、木栅残骸从装饰列表移除。
+ * 理由：这些道具来自多条支路（营地拒马圈、攻城残骸、险要城内道具），就地判断容易被
+ * `carveFoundation` 的水体势场改写绕过；统一在场地生成完之后按**最终**水体密度清一遍。
+ * 阈值 0.18 = 湿岸也算水（0.18~0.45 是浅水泥岸，拒马插在那里同样违和）。
+ */
+export function pruneWetBarricades(this: Scene13WarLayer, glLayer: Scene13GroundLayerGL, VW: number, VH: number): void {
+    const before = this.decorSprites.length;
+    this.decorSprites = this.decorSprites.filter((sp) => {
+        if (!/STAKE_BARRICADE|BARRICADE_RUBBLE/.test(String(sp.asset))) return true;
+        const c = glLayer.screenToCell(sp.x, sp.y, VW, VH);
+        if (!c) return false;
+        const gx = Math.round(c.gx), gy = Math.round(c.gy);
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (glLayer.getWaterDensityAt(gx + dx, gy + dy) >= 0.18) return false;
+            }
+        }
+        return true;
+    });
+    const removed = before - this.decorSprites.length;
+    if (removed > 0) console.info(`[Scene13] 拒马/木栅残骸清了 ${removed} 件（在水里或湿岸上）`);
 }

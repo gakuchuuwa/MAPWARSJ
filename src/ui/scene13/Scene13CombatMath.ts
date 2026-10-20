@@ -62,7 +62,7 @@ export const MELEE_QUIET_SEC = 2.5;
 export const NO_KILL_SEC = 60;
 export const HARD_STOP_SEC = 600;
 /** 🔴 [2026-10-12 主人令] 一场战斗最长 5 分钟，到点未分胜负攻方输 */
-export const BATTLE_LIMIT_SEC = 300;
+export const BATTLE_LIMIT_SEC = 540;   // 🔴 [2026-10-21 主人令] 战斗时间改为 9 分钟
 /** 🔴 [2026-10-15 主人令「现在的建筑被击毁的又太快了，我觉得应该给每个建筑一个基础被摧毁保底时间」] */
 export const BLD_MIN_DESTROY_BASE = 8;
 export const BLD_MIN_DESTROY_PER_SIDE = 4;

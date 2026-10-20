@@ -124,6 +124,10 @@ export interface PlayerQuest {
         enemyFactionId: string;
         enemyTroops: number;
         enemyGeneralId?: string;
+        /** 野战首战：敌军等攻方抵达战场才生成（生成前为 true） */
+        enemySpawnPending?: boolean;
+        enemyLegionName?: string;
+        enemyPortrait?: string;
         engaged?: boolean;
     };
 }
@@ -1726,40 +1730,9 @@ export class PlayerQuestSystem {
 
         let enemyArmyId: string | undefined;
         if (effectiveBattleType === 'field') {
+            // 🔴 [2026-10-21 主人令「防守方不需要显示，只等攻击方抵达后直接显示战术模式」]
+            //    野战首战的敌军不再开局就摆在战场上等；攻方抵达战场时才生成（spawnFirstBattleFieldEnemy），随即接战进战术模式。
             (host as Army & { forceFirstBattleField?: boolean }).forceFirstBattleField = true;
-            const enemySpawnPos = isOnTheSpot
-                ? { lat: targetPos.lat, lng: targetPos.lng + 0.03 }
-                : { lat: targetPos.lat, lng: targetPos.lng };
-            const enemyArmy = this.deps.legionManager.createLegion(
-                enemySpawnPos,
-                enemyTroops,
-                enemyFactionId,
-                enemyLegionName,
-                undefined,
-                undefined,
-                fb.targetCityId,
-                enemyGeneralId,
-                true,
-            );
-            if (enemyArmy) {
-                enemyArmy.setTroops(enemyTroops);
-                enemyArmy.isElite = true;
-                if (enemyGeneralId) {
-                    enemyArmy.generalId = enemyGeneralId;
-                }
-                if (existingEnemyGen?.portrait) enemyArmy.portraitPath = existingEnemyGen.portrait;
-                if (isOnTheSpot) {
-                    enemyArmy.setPosition(targetPos.lat, targetPos.lng + 0.03);
-                }
-                (enemyArmy as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
-                (enemyArmy as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
-                (enemyArmy as Army & { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy = true;
-                (enemyArmy as Army & { firstBattlePairHeroId?: string }).firstBattlePairHeroId = host.id;
-                (host as Army & { firstBattlePairEnemyId?: string }).firstBattlePairEnemyId = enemyArmy.id;
-                enemyArmy.scriptMarchExempt = true;
-                applyLegionCultureComposition(enemyArmy, enemyArmy.cultureRegion ?? undefined);
-                enemyArmyId = enemyArmy.id;
-            }
         } else if (role === 'defender') {
             const defendedCity = targetCity ?? city;
             defendedCity.factionId = myFactionId;
@@ -1840,6 +1813,9 @@ export class PlayerQuestSystem {
                 enemyFactionId,
                 enemyTroops,
                 enemyGeneralId,
+                enemySpawnPending: effectiveBattleType === 'field',
+                enemyLegionName,
+                enemyPortrait: existingEnemyGen?.portrait || undefined,
                 engaged: false,
             },
         };
@@ -1899,6 +1875,7 @@ export class PlayerQuestSystem {
         host.scriptMarchExempt = false;
 
         if (fbState.battleType === 'field') {
+            if (fbState.enemySpawnPending) this.spawnFirstBattleFieldEnemy(q, host);
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
             if (enemyArmy && !enemyArmy.isDestroyed) {
                 enemyArmy.scriptMarchExempt = false;
@@ -1969,6 +1946,39 @@ export class PlayerQuestSystem {
                 fbState.engaged = true;
             }
         }
+    }
+
+    /** 野战首战：攻方抵达战场时才生成敌军，贴在攻方身边，接战即进战术模式 */
+    private spawnFirstBattleFieldEnemy(q: PlayerQuest, host: Army): void {
+        const fbState = q.firstBattle;
+        if (!fbState) return;
+        fbState.enemySpawnPending = false;
+        const hPos = host.getPosition();
+        const spawnPos = { lat: hPos.lat, lng: hPos.lng + 0.03 };
+        const enemyArmy = this.deps.legionManager.createLegion(
+            spawnPos,
+            fbState.enemyTroops,
+            fbState.enemyFactionId,
+            fbState.enemyLegionName ?? '',
+            undefined,
+            undefined,
+            fbState.targetCityId,
+            fbState.enemyGeneralId,
+            true,
+        );
+        if (!enemyArmy) return;
+        enemyArmy.setTroops(fbState.enemyTroops);
+        enemyArmy.isElite = true;
+        if (fbState.enemyGeneralId) enemyArmy.generalId = fbState.enemyGeneralId;
+        if (fbState.enemyPortrait) enemyArmy.portraitPath = fbState.enemyPortrait;
+        enemyArmy.setPosition(spawnPos.lat, spawnPos.lng);
+        (enemyArmy as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
+        (enemyArmy as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
+        (enemyArmy as Army & { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy = true;
+        (enemyArmy as Army & { firstBattlePairHeroId?: string }).firstBattlePairHeroId = host.id;
+        (host as Army & { firstBattlePairEnemyId?: string }).firstBattlePairEnemyId = enemyArmy.id;
+        applyLegionCultureComposition(enemyArmy, enemyArmy.cultureRegion ?? undefined);
+        fbState.enemyArmyId = enemyArmy.id;
     }
 
     private cleanupFirstBattleState(q: PlayerQuest | null): void {
@@ -2121,7 +2131,7 @@ export class PlayerQuestSystem {
 
         if (fbState.battleType === 'field') {
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
-            if (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0) {
+            if (!fbState.enemySpawnPending && (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0)) {
                 this.completeFirstBattleAndContinueExpedition(q, host);
                 return;
             }

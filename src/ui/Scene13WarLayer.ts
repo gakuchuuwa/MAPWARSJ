@@ -1509,6 +1509,7 @@ export class Scene13WarLayer {
         this.siegeWithWalls = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
         this.wallBreachRatios = new WeakMap();   // 🔴 [2026-10-20 主人令] 城墙破损档每场重新随机
         this.wallOrigAsset = new WeakMap();
+        this.pendingWallFalls = [];
         // [2026-08-31] 本地名将加成已删（名将/精锐都走八环唯一通道，见 dmgVs 上方说明）。
         // [军事科技] 双方文化区 + 年份来源 + 分表重置（新一场战斗按当前年份重算，不沿用旧缓存）
         // 🔴 [2026-08-19] 双方兜底同为 CENTRAL：上游 GameAppCombatHooks 已按战场坐标兜过一次，
@@ -2201,6 +2202,8 @@ export class Scene13WarLayer {
     /** [诊断 2026-08-29] 尖峰帧快照：step/render 超阈值的帧记下战场状态，定位「无水也卡」来源 */
     private spikeLog: Array<Record<string, number>> = [];
     private lastCollapseAt = 0;
+    /** 🔴 [2026-10-21 主人令「城门旁整段墙逐节坍塌」] 待倒的城墙件：到 battleSec ≥ at 时静音塌 */
+    private pendingWallFalls: { b: WarBuilding; at: number }[] = [];
     private lastBakeCorpseAt = 0;
     /** 出生递增序号（zid 分配源）：渲染 z-order 稳定排序用，见 WarMan.zid */
     private manSeq = 0;
@@ -4620,7 +4623,14 @@ export class Scene13WarLayer {
                 }
                 if (!next || isPost(next)) break;   // 墙线断了 / 到城垛了 → 这一段到此为止
                 visited.add(next);
-                if (this.wallStanding(next)) { this.collapseOneWall(next, true); fell++; }
+                if (this.wallStanding(next)) {
+                    // 从城门向外逐节塌：每节间隔 0.1 秒；先解除阻挡，保证士兵随时可通行
+                    this.pendingWallFalls.push({ b: next, at: this.battleSec + 0.1 * (fell + 1) });
+                    next.sprite.obstruction = undefined;
+                    next.sprite.obstructionDisabled = true;
+                    if (next.extraSprites) for (const sp of next.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
+                    fell++;
+                }
                 px = next.x; py = next.y;
             }
             return visited.size + fell;
@@ -6032,6 +6042,13 @@ export class Scene13WarLayer {
         this.meleeContactCount = 0;
         // ── 打不完的检测（当前只观察不动手，见 STALL_GUARD_ENFORCE）──
         this.battleSec += dt;
+        if (this.pendingWallFalls.length) {
+            const due = this.pendingWallFalls.filter((p) => p.at <= this.battleSec);
+            if (due.length) {
+                this.pendingWallFalls = this.pendingWallFalls.filter((p) => p.at > this.battleSec);
+                for (const p of due) this.collapseOneWall(p.b, true);
+            }
+        }
         const hardStop = this.battleSec > HARD_STOP_SEC;
         // lastKillSec > 0 = 本场已经死过人；第一滴血之前不启用这条（开局双方还在相向而行）
         const noKill = this.lastKillSec > 0 && this.battleSec - this.lastKillSec > NO_KILL_SEC;
@@ -6227,7 +6244,7 @@ export class Scene13WarLayer {
                 if (step > 0) {
                     m.x += ux * step;
                     m.y += uy * step;
-                    this.steerManDir(m, ux, uy, dt);
+                    m.walked = true;   // 朝向由 step 末尾按实际位移定（DE 口径）
                 }
                 m.tx = m.x + ux * 60;
                 m.ty = m.y + uy * 60;
@@ -6474,7 +6491,7 @@ export class Scene13WarLayer {
                         // 越过地图边界或本方大本营底线即停止风筝
                         } else {
                             m.x = bx; m.y = by;
-                            this.steerManDir(m, dx, dy, dt);   // 朝向 = 逃跑方向（带迟滞与冷却防抖）→ 转身跑，不是倒着滑
+                            m.walked = true;   // 朝向 = 实际逃跑方向（step 末尾按位移定）→ 转身跑，不是倒着滑
                             m.st = 0;                    // 走路状态：尾部才会推走路动画
                             m.fightT = 0;
                             m.kiteLeg = (m.kiteLeg ?? 0) + step;
@@ -6589,7 +6606,7 @@ export class Scene13WarLayer {
                         if (d < (m.dir === fwdDir ? 36 : 24)) {
                             this.commitManDir(m, fwdDir, dt);
                         } else {
-                            this.steerManDir(m, dx, dy, dt);
+                            m.walked = true;
                         }
                     }
                     // 🔴 这里 continue 会跳过循环尾部的渐显与动画推进，必须就地补上
@@ -6673,12 +6690,10 @@ export class Scene13WarLayer {
                     m.y += mvy * mv;
                     // 🔴 [2026-10-18 主人报「士兵在行进过程中，有的时候会频繁改变朝向，出现颤抖的感觉」]
                     //    追击朝向对准追击目标方向 (fdx, fdy) 而非瞬态侧滑向量 (mvx, mvy)，并走带确认与冷却锁的 steerManDir。
-                    // 🔴 [2026-10-21 主人报「攻城塔往北往上走，但是朝向不对」] 攻城武器是车，不会侧着滑：
-                    //    被己方兵挡住侧滑绕行时，车头跟实际行进方向 (mvx, mvy)，不对准追击目标。士兵仍按上条口径。
-                    if (fd > ARRIVE_EPS && m.siegeW) {
-                        this.steerManDir(m, mvx, mvy, dt);
-                    } else if (fd > ARRIVE_EPS) {
-                        this.steerManDir(m, fdx, fdy, dt);
+                    // 🔴 [2026-10-21 主人报「攻城塔往北走朝向不对」「士兵也不能朝向不对」] 改按 DE：
+                    //    朝向 = 实际行进方向（含侧滑绕行），由 step 末尾按平滑位移统一定，不再对准追击目标。
+                    if (fd > ARRIVE_EPS) {
+                        m.walked = true;
                     } else {
                         this.steerManDir(m, foe.x - m.x, foe.y - m.y, dt);
                     }
@@ -7041,7 +7056,7 @@ export class Scene13WarLayer {
                     if (slot && leader && d < (m.dir === leader.dir ? 36 : 24)) {
                         this.commitManDir(m, leader.dir, dt);
                     } else {
-                        this.steerManDir(m, dx, dy, dt);
+                        m.walked = true;
                     }
                 } else if (isGuard) {
                     const uFwd = this.advanceVec[m.f];
@@ -7113,6 +7128,23 @@ export class Scene13WarLayer {
         //    想走却被前面的人堵住时位移≈0，此时再播移动帧就是**原地迈腿**（主人实锤）。
         //    这里只记录，渲染层据此改播待命帧；用累计时间而不是单帧，避免在走/停边界上每帧切动画。
         for (const m of this.men) {
+            // 🔴 [2026-10-21 主人令「朝向统一按 DE 修」] 走路朝向 = 平滑后的**实际位移**方向（推挤、侧滑、边界都已收口）。
+            //    DE 本体：陆军 max_yaw_per_second = FLT_MAX（转身不限速，869 个战斗单位里只有船与投石机限速）；
+            //    MovingObject 把位移按「新 0.2 + 旧 0.8」指数平滑（二进制实证文档 §3.3）。平滑本身就是防抖，
+            //    所以这里只留 8 向扇区边界迟滞（dir8Hyst），不再用确认/冷却锁。
+            if (m.walked) {
+                const fdx = m.x - m.prevX, fdy = m.y - m.prevY;
+                m.mvX = (m.mvX ?? fdx) * 0.8 + fdx * 0.2;
+                m.mvY = (m.mvY ?? fdy) * 0.8 + fdy * 0.2;
+                const spdF = (this.statsFor(m.key, m.f).spd || 0) * dt;
+                if (spdF > 0 && m.mvX * m.mvX + m.mvY * m.mvY > (spdF * 0.3) ** 2) {
+                    const nd = this.dir8Hyst(m.dir, m.mvX, m.mvY);
+                    if (nd !== m.dir) { m.dir = nd; m.dirCd = 0; m.pendingDir = nd; m.pendingDirT = 0; }
+                }
+                m.walked = false;
+            } else {
+                m.mvX = undefined; m.mvY = undefined;
+            }
             // 🔴 [2026-10-03 修·冲锋静止] 列阵推进中等待槽位不属于卡死堵路，不累加 stuckT
             if (deploying || m.march) {
                 m.stuckT = 0;

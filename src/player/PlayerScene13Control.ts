@@ -152,11 +152,11 @@ export class PlayerScene13Control {
         const info = document.createElement('span');
         bar.appendChild(info);
         const countdown = document.createElement('span');
-        countdown.title = '战术模式 300 秒倒计时（到时未攻下城池则算打平）';
+        countdown.title = '战术模式 9 分钟倒计时（到时未攻下城池则算打平）';
         countdown.style.cssText = `
             padding:3px 9px; font-weight:900; font-size:13px; color:#ffd27a;
             background:rgba(212,175,55,0.14); border:1px solid rgba(212,175,55,0.55); border-radius:6px;`;
-        countdown.textContent = '⏳ 300秒';
+        countdown.textContent = '⏳ 9:00';
         bar.appendChild(countdown);
         this.countdownEl = countdown;
         const mk = (label: string, cmd: 'attack' | 'hold') => {
@@ -272,7 +272,7 @@ export class PlayerScene13Control {
         this.syncZoomUI();
         if (this.countdownEl) {
             const rem = this.scene.getRemainingSec();
-            this.countdownEl.textContent = `⏳ ${rem}秒`;
+            this.countdownEl.textContent = `⏳ ${Math.floor(rem / 60)}:${String(rem % 60).padStart(2, '0')}`;
             this.countdownEl.style.color = rem <= 60 ? '#ff6b6b' : '#ffd27a';
             this.countdownEl.style.borderColor = rem <= 60 ? 'rgba(255,107,107,0.75)' : 'rgba(212,175,55,0.55)';
         }
