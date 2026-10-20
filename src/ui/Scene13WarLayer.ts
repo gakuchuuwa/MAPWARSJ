@@ -154,8 +154,8 @@ export class Scene13WarLayer {
     defenderCityId: string | null = null;
     /** 🔴 [2026-10-20 主人令「东方很多险要应该都是矩形的……先做个样子」] 险要形制：'rect'＝矩形 2:1、'rect_mirror'＝镜像矩形（预览 opt-in）；null/方形＝现状 */
     defenderPassShape: 'square' | 'rect' | 'rect_mirror' | null = null;
-    /** 🔴 [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」] 险要地形：'flat'＝抹平高台（城坐平地）；null＝现状多层高台 */
-    defenderPassTerrain: 'mound' | 'flat' | null = null;
+    /** 🔴 [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」] 险要地形：'flat'＝抹平、'plateau'＝整块矩形高台；null＝现状多层高台 */
+    defenderPassTerrain: 'mound' | 'flat' | 'plateau' | null = null;
     /** 🔴 [2026-09-11 主人「和游戏同步」] 守方据点经**战略地图同一解析**得到的 DE 建筑风格前缀（null = 该据点无风格，走旧的两层）。 */
     private defenderMapStyle: string | null = null;
     men: WarMan[] = [];

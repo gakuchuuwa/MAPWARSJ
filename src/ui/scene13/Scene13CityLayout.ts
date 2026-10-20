@@ -143,12 +143,12 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const moatOn = moatW > 0 && this.buildingStyleFor(1) !== 'YURT' && this.environmentPlan?.waterKind !== 'none';
     if (this.defenderCityType === 'pass') {
         // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形/镜像矩形：台地边界按对应双圈算（旧方形不传，走原算法一个像素不动）
-        // 🔴 [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」] `defenderPassTerrain === 'flat'`：把高台整个抹平（城坐平地）
+        // 🔴 [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」] 地形三选一：mound 多层高台 / plateau 整块矩形高台 / flat 抹平
         gl.flattenPassTerraces(cx, cy, W, H, seedStr, this.wallGates, this.defBuildings,
             this.defenderPassShape && this.defenderPassShape !== 'square'
                 ? passRingHalfExtents(this.defenderPassShape)
                 : undefined,
-            this.defenderPassTerrain === 'flat');
+            this.defenderPassTerrain ?? 'mound');
     } else if (this.defenderCityType === 'stockade') {
         gl.flattenStockadeTerraces(cx, cy, W, H, seedStr, this.wallGates);
     } else {
