@@ -33,7 +33,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）
     hansa: { name: '商船护军', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫；避势力「汉萨」叠字
     batawei: { name: '巴达维辅', tier: 3 },          // 乌特勒支·西维利斯：巴达维辅助军/之乱
-    wangdaer: { name: '布切拉里骑', tier: 1 },      // 希波·博尼法提乌斯：罗马阿非利加布切拉里近卫重骑
+    xiluoma: { name: '布切拉里骑', tier: 1 },      // 希波·博尼法提乌斯：罗马阿非利加布切拉里近卫重骑
 
     // ── T4 存在之兵 ──
     habusibao: { name: '帝国禁卫', tier: 4 },          // 维也纳·马克西米
@@ -63,4 +63,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     anggelu: { name: '撒克逊盾墙', tier: 2 },
     gewennesi: { name: '斯诺登战团', tier: 3 },   // 哈瓦登·戴菲德：1282夜袭哈瓦登城堡点燃抗英终战，斯诺登要塞山地战团
     weiershigongguo: { name: '红龙卫队', tier: 2 }, // 布伊尔斯·卢埃林：威尔士公国大公亲王卫队，高举红龙战旗，1282欧温桥之战
+    dalriada: { name: '盖尔战船队', tier: 4 },   // 邓纳德·达尔里阿达王 费尔古斯·麦克·埃赫达赫：邓纳德·达尔里阿达：盖尔人以海湾桨船征发的"船队"兵役（Sluaged），736年邓哈芬之役
+    scotland: { name: '苏格兰枪阵', tier: 3 },   // 斯昆·约翰·科明：斯昆·科明：苏格兰长枪圆阵（schiltron）步兵，1298年福尔柯克之役
+    hre: { name: '帝国骑士团', tier: 3 },   // 法兰克福·西吉斯蒙德：法兰克福·西吉斯蒙德：神圣罗马皇帝率领的帝国诸侯重骑，1420年对胡斯派十字军
 };

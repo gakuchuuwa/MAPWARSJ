@@ -129,6 +129,8 @@ export const ZORDER_EPS = 4;
 export const SEP_SMOOTH = 0.15;
 export const SEP_SPD = 120;
 export const SEP_FIGHT = 0.5;
+/** 🔴 [2026-10-20 主人令「两军交战总是拥挤在一起，能不能展开战斗」] 野战阵位拴绳：士兵横向最多离开自己出生槽位多远（px） */
+export const LEASH_LAT = 120;
 export const CELL_S = 20;
 export const STUCK_IDLE_SEC = 0.3;
 export const NET_STUCK_WINDOW = 0.25;

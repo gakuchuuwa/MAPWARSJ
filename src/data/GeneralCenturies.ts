@@ -1055,7 +1055,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_ferdinand_ii': 16,                              // 斐迪南二世 · trastamara · 拉莫塔堡（1452-1516，收复那不勒斯与创立西班牙方阵）
     'gen_seuthes_iii': -4,
     'gen_chabrias': -4,
-    'wangdaer_gaisalike': 5,                             // 盖萨里克 · wangdaer · 希波
+    'wangdaer_gaisalike': 5,                             // 盖萨里克 · xiluoma · 希波
 
     // ══════ 封建与全库新增武将成名世纪（57人，史实核定补入）══════
     'xiongren_atila':                    5,     // 阿提拉 · xiongren · 匈人帝国上帝之鞭（在位434-453）
@@ -1145,7 +1145,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_caffa_consul':                  14,    // 奥贝托·斯夸尔 · kelimiya · 热那亚卡法领事（Squarciafico 家族）
     'gen_nur_ad_din':                    12,    // 努尔丁 · antiaokegongguo · 叙利亚抗十字军
     'gen_abgar':                          1,    // 阿布加尔 · aosiruowen · 奥斯若恩王
-    'gen_bonifatius':                     5,    // 博尼法提乌斯 · wangdaer · 罗马阿非利加守将
+    'gen_bonifatius':                     5,    // 博尼法提乌斯 · xiluoma · 罗马阿非利加守将
     'gen_cipriano_figueiredo':           16,    // 西普里亚诺 · yasuer · 亚速尔群岛抵抗西班牙名督（1581年萨尔加战役）
     'liaozu_saitatila':                  16,    // 赛塔提腊 · liaozu · 澜沧王国迁都万象抗缅雄主（1548-1571在位）
     'kanata_lamalaya':                   16,    // 阿里亚·拉玛·拉亚 · kanata · 维奢耶那伽罗王朝塔利科塔战役（1565年）

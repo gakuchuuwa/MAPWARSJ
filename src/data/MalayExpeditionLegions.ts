@@ -18,4 +18,6 @@ export const MALAY_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     //    番号取查莫罗社会分层「Matua（马图阿，拉特石时期的上层/武士）」—— 建制可考、且是同时代独树一帜的兵种构成，
     //    但**无明确战术大捷记录** ⇒ 按 v3 五级制落 **T3 知名**（文化辨识度／兵种特色，而非战术战绩）。
     chamorro: { name: '马图阿武士', tier: 3 },   // 阿加尼亚·胡劳：查莫罗 Matua 阶层武士（拉特石时期）
+    maynila: { name: '兰塔卡炮手', tier: 4 },   // 汤多·拉者苏莱曼三世：汤多·苏莱曼：马尼拉土邦以铜铸兰塔卡（lantaka）小炮守木堡，1571年抗西班牙
+    voc: { name: '公司火枪队', tier: 4 },   // 巴达维亚·揆一：巴达维亚·揆一：东印度公司雇佣的荷兰火枪兵，1661年守热兰遮城
 };

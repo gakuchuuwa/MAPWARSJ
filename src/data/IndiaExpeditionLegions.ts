@@ -27,4 +27,10 @@ export const INDIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     tomara_gwalior: { name: '拉其普特', tier: 3 },
     qutb_shahi: { name: '德干火枪', tier: 3 },
     mallabhum: { name: '达尔炮队', tier: 4 },
+    gujarat: { name: '苏丹古拉姆', tier: 3 },   // 艾哈迈达巴德·穆扎法尔·沙阿三世：艾哈迈达巴德·穆扎法尔：古吉拉特苏丹的奴隶亲军（ghulam），1573年阿克巴来攻
+    arakan: { name: '若开象兵', tier: 4 },   // 妙乌·阿拉干守将 阿萨杜拉：妙乌·阿萨杜拉：阿拉干王国的战象与桨船队，1666年守吉大港
+    kosala: { name: '拘萨罗象兵', tier: 3 },   // 舍卫城·拘萨罗王 波斯匿：舍卫城·波斯匿：拘萨罗以战象与车兵著称，与摩揭陀、迦尸争雄
+    kalinga: { name: '羯陵伽战象', tier: 3 },   // 丹塔普拉·羯陵伽王 婆摩：丹塔普拉·婆摩：羯陵伽以战象闻名天下，后为阿育王所灭
+    anga: { name: '鸯伽舟师', tier: 4 },   // 瞻波·鸯伽王 达摩婆罗：瞻波·达摩婆罗：鸯伽据恒河水路的舟师，被频毗娑罗所灭
+    shunga: { name: '巽伽战车', tier: 4 },   // 阿逾陀·巽伽王 普沙密多罗：阿逾陀·普沙密多罗：巽伽王朝的战车与象骑，抗击大夏希腊人东进
 };

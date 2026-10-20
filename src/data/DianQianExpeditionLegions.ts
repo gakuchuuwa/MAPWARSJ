@@ -46,4 +46,5 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     wenling: { name: '福建水师', tier: 3 },
     miaomin: { name: '苗疆义军', tier: 4 },
     dongzu: { name: '侗家义军', tier: 4 },
+    mimo: { name: '靡莫射手', tier: 4 },   // 靡莫邑·靡莫大酋 苴兰：靡莫邑·苴兰：滇东靡莫诸部的射手，前278年庄蹻入滇所遇
 };

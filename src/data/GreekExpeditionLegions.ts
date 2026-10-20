@@ -45,4 +45,6 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     maqidun: { name: '伙伴骑兵', tier: 0 },
     panfeiliya: { name: '佩尔格方阵', tier: 3 },
     hesitiya: { name: '色萨利铁骑', tier: 1 },
+    pisa: { name: '皮萨僭主卫', tier: 4 },   // 皮萨提斯·皮萨王 潘塔琉斯：皮萨提斯·潘塔琉斯：皮萨僭主的卫队，与伊利斯争夺奥林匹亚
+    antigonid: { name: '安提柯卫队', tier: 3 },   // 凯莱奈·安提柯一世：凯莱奈·安提柯：独眼安提柯的马其顿老兵与亚洲诸军，前317年帕拉塔克奈之役
 };

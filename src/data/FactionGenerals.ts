@@ -89,7 +89,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     aiduoniya: { generalId: 'gen_brasidas', generalName: '巴西达斯', portrait: '/assets/GREEK/aiduoniya_baxidasi.png' },
     qiesuonisuosi: { generalId: 'gen_lysander', generalName: '吕山德', portrait: '/assets/GREEK/qiesuonisuosi_lvshande.png' },
     mixiya: { generalId: 'gen_parmenion', generalName: '帕曼纽', portrait: '/assets/GREEK/mixiya_pamanniu.png' },
-    xiaaiji: { generalId: 'gen_perdiccas', generalName: '佩尔狄卡斯', portrait: '/assets/GREEK/xiaaiji_peierdikaosi.png' },
+    // 🔴 [2026-10-20 主人令「佩尔狄卡斯挂下埃及不对，修复」] 他是亚历山大部将、帝国摄政，史实政权＝马其顿/亚历山大帝国；
+    //    据点佩鲁西姆（他公元前 321/320 年征埃及、死于埃及）不改，只挂马其顿旗（武将自带势力）
+    xiaaiji: { generalId: 'gen_perdiccas', generalName: '佩尔狄卡斯', portrait: '/assets/GREEK/xiaaiji_peierdikaosi.png', factionId: 'maqidun' },
     kaliya: [
         { generalId: 'gen_artemisia', generalName: '阿尔特米西亚', portrait: '/assets/GREEK/kaliya_aertermixiya.png' },
         // 公元前334年哈利卡纳苏斯战役守帅（罗得岛的门农，波斯西部沿海统帅，阿里安 I.20 记其与卡里亚总督据城死守），立绘按铁律留空、待主人亲自放图分配
@@ -104,13 +106,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     telakaigongguo: { generalId: 'gen_kestutis', generalName: '科斯图提斯', portrait: '/assets/SLAVIC/telakaigongguo_kesitutisi.png' },
     duobuluojia: { generalId: 'gen_ivaylo', generalName: '伊瓦伊洛', portrait: '/assets/SLAVIC/duobuluojia_yiwaiyiluo.png' },
     aertai: { generalId: 'gen_kuchlug', generalName: '屈出律', portrait: '/assets/STEPPE/aertai_quchulv.png' },
-    kumanni: { generalId: 'gen_girgen', generalName: '吉尔根汗', portrait: '/assets/STEPPE/xikuman_jiergenhan.png' },
+    // 🔴 [2026-10-20 主人令「以政权为主，势力的目的是判断该不该打仗：该打的就不合并，不该打的就合并」]
+    //    吉尔根汗＝库曼（钦察）汗，库曼尼亚就是库曼人的地（Cumania），与忽炭汗同一政权、不是敌人 → 统一挂库曼
+    kumanni: { generalId: 'gen_girgen', generalName: '吉尔根汗', portrait: '/assets/STEPPE/xikuman_jiergenhan.png', factionId: 'kuman_oleshky' },
     kuman_oleshky: [
         { generalId: 'gen_kotyan', generalName: '忽炭汗', portrait: '/assets/STEPPE/kumanni_hutanhan.png' },
         // 2026-10-20：克里米亚汗国奠基者哈吉·格莱（1397–1466）→ 黑海北岸库曼（克里米亚鞑靼族源）奥列什基；CUMAN×城堡＝库曼军团
         { generalId: 'gen_haci_giray', generalName: '哈吉格莱', portrait: '', legionName: '城堡时代库曼军团' },
     ],
-    qincha_saksin: { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png' },
+    // 巴奇曼＝伏尔加钦察汗；钦察＝库曼（Cuman-Kipchak 同一联盟，汉名钦察／西名库曼），与忽炭汗同一边、不是敌人 → 统一挂库曼
+    qincha_saksin: { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png', factionId: 'kuman_oleshky' },
     feierganna: { generalId: 'gen_qutlugh', generalName: '忽都鲁', portrait: '/assets/CENTRAL_ASIA/feierganna_hudulu.png' },
     qibucha: { generalId: 'gen_pacanchiq', generalName: '帕坎奇克', portrait: '/assets/SOUTH_AMERICA/qibucha_pakanqike.png' },
     tamoyue: { generalId: 'gen_cunhambebe', generalName: '昆汉贝贝', portrait: '/assets/SOUTH_AMERICA/tamoyue_kunhanbeibei.png' },
@@ -121,7 +126,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     geluositeboguo: { generalId: 'gen_gilbert', generalName: '吉尔伯特', portrait: '/assets/GERMANIC/geluositeboguo_jierbaite.png' },
     baerta: { generalId: 'gen_alaric', generalName: '亚拉里克', portrait: '/assets/GERMANIC/baerta_yalarike.png' },
     saiputimanniya: { generalId: 'gen_ataulf', generalName: '阿陶尔夫', portrait: '/assets/GERMANIC/saiputimanniya_ataoerfu.png' },
-    bogengnidielan: { generalId: 'gen_philip_good', generalName: '好人菲利普', portrait: '/assets/GERMANIC/bogengnidielan_haorenfeilipu.png' },
+    // 🔴 [2026-10-20 主人令「按历史来，该是什么势力就是什么势力」] 瓦卢瓦勃艮第三家同属一国 → 统一挂勃艮第公国
+    bogengnidielan: { generalId: 'gen_philip_good', generalName: '好人菲利普', portrait: '/assets/GERMANIC/bogengnidielan_haorenfeilipu.png', factionId: 'bogendigongguo' },
     gewennesi: { generalId: 'gen_dafydd', generalName: '戴菲德', portrait: '/assets/GERMANIC/gewennesi_daifeide.png' },
     weiershigongguo: { generalId: 'gen_llywelyn', generalName: '卢埃林', portrait: '/assets/GERMANIC/weiershigongguo_luwailin.png' },
     huanzhou: { generalId: 'gen_dinhle', generalName: '丁礼', portrait: '/assets/SOUTHEAST_ASIA/huanzhou_dingli.png' },
@@ -247,7 +253,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     xilagu: { generalId: 'gen_city_syracuse', generalName: '阿加索克利', portrait: '/assets/LATIN/xilagu_ajiasuokeli.png' },
     fulandesi: { generalId: 'gen_robert_ii', generalName: '罗贝尔二世', portrait: '/assets/LATIN/fulandesi_luobeierershi.png' },
-    bogendi: { generalId: 'bogendi_chali', generalName: '大胆查理', portrait: '/assets/GERMANIC/bogendi_dadanchali.png' },
+    // 大胆查理＝瓦卢瓦勃艮第末代公爵，同属勃艮第公国 → 挂勃艮第公国（与无畏的约翰、好人菲利普同一国）
+    bogendi: { generalId: 'bogendi_chali', generalName: '大胆查理', portrait: '/assets/GERMANIC/bogendi_dadanchali.png', factionId: 'bogendigongguo' },
     bulabante: { generalId: 'bulabante_yuehanyishi', generalName: '约翰一世', portrait: '/assets/GERMANIC/bulabante_yuehanyishi.png' },
     gaolu: { generalId: 'gen_charles_vii', generalName: '查理七世', portrait: '/assets/LATIN/gaolu_chaliqishi.png' },
     kaernute: { generalId: 'gen_kaernute_kotuatousi', generalName: '科图阿图斯', portrait: '/assets/GERMANIC/kaernute_ketuatusi.png' },
@@ -293,7 +300,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     mozeer: { generalId: 'gen_constantine_great', generalName: '君士坦丁', portrait: '/assets/GERMANIC/mozeer_junshitanding.png' },
     ruishi: { generalId: 'gen_winkelried', generalName: '温克尔里德', portrait: '/assets/GERMANIC/ruishi_ciwenli.png' },
     aersasi: { generalId: 'gen_julian_apostate', generalName: '尤里安', portrait: '/assets/GERMANIC/aersasi_youlian.png' },
-    molaweiya: { generalId: 'gen_swatopluk', generalName: '斯瓦托', portrait: '/assets/GERMANIC/molaweiya_siwatuo.png' },
+    // 斯瓦托普卢克＝大摩拉维亚国王（摩拉维亚势力只是同国另一据点）→ 挂大摩拉维亚
+    molaweiya: { generalId: 'gen_swatopluk', generalName: '斯瓦托', portrait: '/assets/GERMANIC/molaweiya_siwatuo.png', factionId: 'damolaweiya' },
     damolaweiya: { generalId: 'gen_mojmir_i', generalName: '莫伊米尔', portrait: '/assets/GERMANIC/damolaweiya_moyimier.png' },
 
     luosi: { generalId: 'gen_yaroslav', generalName: '雅罗斯拉夫', portrait: '/assets/SLAVIC/luosi_yaluosilafu.png' },
@@ -503,7 +511,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yehe: { generalId: 'yehe_jintaiji', generalName: '金台吉', portrait: '/assets/NORTHEAST/yehe_jintaiji.png' },
 
     guishuang: { generalId: 'guishuang_qiujiuque', generalName: '丘就却', portrait: '/assets/CENTRAL_ASIA/guishuang_qiujiuque.png' },
-    qidan: { generalId: 'qidan_shulvping', generalName: '述律平', portrait: '/assets/STEPPE/qidan_shulvping.png' },
+    // 述律平＝辽太祖皇后（契丹国号前后同一政权）→ 与耶律倍统一挂大辽
+    qidan: { generalId: 'qidan_shulvping', generalName: '述律平', portrait: '/assets/STEPPE/qidan_shulvping.png', factionId: 'liao_d' },
     hui: { generalId: 'hui_bunaihou', generalName: '不耐', portrait: '/assets/KOREA/hui_bunaihou.png' },
 // ── 东北区 2026-06-18 ──
     jilizhou: { generalId: 'jilizhou_chengmingzhen', generalName: '程名振', portrait: '/assets/NORTHEAST/jilizhou_chengmingzhen.png' },
@@ -531,7 +540,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yeren_nvzhen: { generalId: 'yeren_nvzhen_boke', generalName: '博克', portrait: '/assets/NORTHEAST/yeren_nvzhen_boke.png' },
     wuji: { generalId: 'wuji_yilizhi', generalName: '乙力支', portrait: '/assets/NORTHEAST/wuji_yilizhi.png' },
     jilin: { generalId: 'jilin_fujun', generalName: '富俊', portrait: '/assets/NORTHEAST/jilin_fujun.png' },
-    dongdan: { generalId: 'dongdan_yelvbei', generalName: '耶律倍', portrait: '/assets/STEPPE/dongdan_yelbei.png' },
+    // 🔴 [2026-10-20 主人令「东丹/契丹同属辽，必须合并」] 耶律倍＝辽太子、东丹国王（东丹是辽属国）→ 统一挂大辽
+    dongdan: { generalId: 'dongdan_yelvbei', generalName: '耶律倍', portrait: '/assets/STEPPE/dongdan_yelbei.png', factionId: 'liao_d' },
     kuye: { generalId: 'kuye_kuye_qichayi', generalName: '齐查伊', portrait: '/assets/NORTHEAST/kuye_kuye_qichayi.png' },
     sushen: { generalId: 'sushen_tudiji', generalName: '突地稽', portrait: '/assets/NORTHEAST/sushen_tudiji.png' },
     yilou: { generalId: 'yilou_naoya', generalName: '恼犽', portrait: '/assets/NORTHEAST/yilou_naoya.png' },
@@ -586,9 +596,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     shatuo: { generalId: 'shatuo_likeyong', generalName: '李克用', portrait: '/assets/CENTRAL/shatuo_likeyong.png' },
     xueyantuo: { generalId: 'xueyantuo_yinan', generalName: '夷男', portrait: '/assets/STEPPE/xueyantuo_yinan.png' },
 
-    huige: { generalId: 'huige_gulipeiluo', generalName: '骨力裴罗', portrait: '/assets/STEPPE/huige_gulipeiluo.png' },
+    // 骨力裴罗＝回纥（后改称回鹘）汗国开国可汗，回纥/回鹘/博尔巴任回鹘是同一汗国 → 统一挂回鹘
+    huige: { generalId: 'huige_gulipeiluo', generalName: '骨力裴罗', portrait: '/assets/STEPPE/huige_gulipeiluo.png', factionId: 'huihu' },
     porbazhyn_huihu: [
-        { generalId: 'porbazhyn_mouyu', generalName: '牟羽可汗', portrait: '/assets/STEPPE/porbazhyn_mouyu.png' },   // 博尔巴任专属；骨力裴罗只留卜古罕城
+        // 牟羽可汗＝回鹘汗国可汗（博尔巴任只是同国据点）→ 挂回鹘
+        { generalId: 'porbazhyn_mouyu', generalName: '牟羽可汗', portrait: '/assets/STEPPE/porbazhyn_mouyu.png', factionId: 'huihu' },   // 博尔巴任专属；骨力裴罗只留卜古罕城
     ],
     huizhou_d: { generalId: 'huizhou_zhugeliang', generalName: '诸葛亮', portrait: '/assets/BASHU/huizhou_zhugeliang.png' },
     kereyid: { generalId: 'kereyid_wanghan', generalName: '脱斡霖', portrait: '/assets/STEPPE/kereyid_tuowolin.png' },
@@ -820,7 +832,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     nguyen_guangnan: { generalId: 'nguyen_guangnan_ruanfuying', generalName: '阮福映', portrait: '/assets/LINGNAN/nguyen_guangnan_ruanfuying.png' },
     zhuang_d: { generalId: 'zhuang_d_washifuren', generalName: '瓦氏', portrait: '/assets/LINGNAN/zhuang_d_washifuren.png' },
     nanyue: { generalId: 'nanyue_zhaotuo', generalName: '赵佗', portrait: '/assets/yingqin/nanyue_zhaotuo.png' },
-    zhancheng: { generalId: 'zhancheng_zhimin', generalName: '制旻', portrait: '/assets/LINGNAN/zhancheng_zhimin.png' },
+    // 制旻＝占城（占婆）国王，「占城」是占婆的汉名 → 统一挂占婆
+    zhancheng: { generalId: 'zhancheng_zhimin', generalName: '制旻', portrait: '/assets/LINGNAN/zhancheng_zhimin.png', factionId: 'champa' },
     xiou: { generalId: 'xiou_yixusong', generalName: '译吁宋', portrait: '/assets/LINGNAN/xiou_yixusong.png' },
     xichu: { generalId: 'xichu_xiangyu', generalName: '项羽', portrait: '/assets/CENTRAL/xichu_xiangyu.png' },
     gouding: { generalId: 'gouding_wubo', generalName: '毋波', portrait: '/assets/LINGNAN/gouding_wubo.png' },
@@ -959,7 +972,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     qi: { generalId: 'qi_simarangju', generalName: '司马穰苴', portrait: '/assets/xianqin/qi_simarangju.png' },
     huaiyang: { generalId: 'huaiyang_zhouyafu', generalName: '周亚夫', portrait: '/assets/liuhan/huaiyang_zhouyafu.png' },
     yingzhou_d: { generalId: 'yingzhou_d_liuqi', generalName: '刘锜', portrait: '/assets/zhaosong/yingzhou_d_liuqi.png' },
-    cao_d: { generalId: 'cao_d_caocao', generalName: '曹操', portrait: '/assets/CENTRAL/cao_d_caocao.png' },
+    cao_d: [
+        { generalId: 'cao_d_caocao', generalName: '曹操', portrait: '/assets/CENTRAL/cao_d_caocao.png' },
+        // 🔴 [2026-10-20 主人令「乐进挂殷国不对，修复」] 乐进是曹魏五子良将，与商/殷无关；
+        //    原挂「殷国·朝歌」是把他籍贯「阳平卫国（县）」误当卫国故地朝歌。现归曹操本营亳州·谯县（曹魏起家地）。
+        { generalId: 'yin_yuejin', generalName: '乐进', portrait: '/assets/CENTRAL/yin_yuejin.png' },
+    ],
     long2: { generalId: 'long2_weixiaokuan', generalName: '韦孝宽', portrait: '/assets/CENTRAL/long2_weixiaokuan.png' },
     dongxian: { generalId: 'dongxian_sunbin', generalName: '孙膑', portrait: '/assets/xianqin/dongxian_sunbin.png' },
     mi: { generalId: 'mi_mizhu', generalName: '麋竺', portrait: '/assets/CENTRAL/mi_mizhu.png' },
@@ -981,7 +999,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     suzhou_d: { generalId: 'suzhou_d_shikefa', generalName: '史可法', portrait: '/assets/daming/suzhou_d_shikefa.png' },
     pizhou: { generalId: 'pizhou_lvbu', generalName: '吕布', portrait: '/assets/CENTRAL/pizhou_lvbu.png' },
     yin: [
-        { generalId: 'yin_yuejin', generalName: '乐进', portrait: '/assets/CENTRAL/yin_yuejin.png' },
         // 🔴 [2026-10-20 主人令「相同势力，归到一个势力中」] 子受＝商王帝辛（殷即商），与安阳妇好同属商 → 挂商国旗、不与商互打
         { generalId: 'yin_dixin', generalName: '子受', portrait: '/assets/xianqin/yin_dixin.png', factionId: 'shang' },
     ],
@@ -1250,7 +1267,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     dongsheng: { generalId: 'dongsheng_weishang', generalName: '魏尚', portrait: '/assets/liuhan/dongsheng_weishang.png' },
     weiyuan: { generalId: 'weiyuan_d_niangengyao', generalName: '年羹尧', portrait: '/assets/manqing/weiyuan_d_niangengyao.png' },
     yansui: { generalId: 'yansui_wangwei', generalName: '王威', portrait: '/assets/daming/yansui_wangwei.png' },
-    xiazhou: { generalId: 'xiazhou_lijiqian', generalName: '李继迁', portrait: '/assets/HEXI/xiazhou_lijiqian.png' },
+    // 🔴 [2026-10-20 主人令「大夏/夏州本来就该合并，这是一家，一个政权，必须合并」]
+    //    李继迁＝党项李氏夏州政权首领（李元昊祖父辈），与李元昊的大夏（西夏）是同一政权的前后两段
+    //    → 挂大夏（dangxiang）旗；据点（靖边堡）归属不动，在场时城归大夏，退场后还原
+    xiazhou: { generalId: 'xiazhou_lijiqian', generalName: '李继迁', portrait: '/assets/HEXI/xiazhou_lijiqian.png', factionId: 'dangxiang' },
     shizhou: { generalId: 'shizhou_liucong', generalName: '刘聪', portrait: '/assets/HEXI/shizhou_liucong.png' },
     yanzhou: { generalId: 'yanzhou_zhongshiheng', generalName: '种世衡', portrait: '/assets/zhaosong/yanzhou_zhongshiheng.png' },
     cangsong: { generalId: 'cangsong_machao', generalName: '马超', portrait: '/assets/HEXI/cangsong_machao.png' },
@@ -1296,6 +1316,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'xibolai_dawei', generalName: '大卫', portrait: '/assets/WEST_ASIA/xibolai_dawei.png' },
         // 2026-10-20 主人令「有名字的武将也可以安置据点」：名将双身份（据点武将＋剧本敌将）
         { generalId: 'bfe3_1', generalName: '西底家', portrait: '', legionName: '古典时代黎凡特军团' },
+        // 🔴 [2026-10-20 主人令「人物该是谁就是谁」] 哈斯蒙尼王朝的阿里斯托布鲁斯二世（前65年阿雷塔斯围耶路撒冷的守方）
+        { generalId: 'gen_aristobulus_ii', generalName: '阿里斯托布鲁斯二世', portrait: '', legionName: '古典时代黎凡特军团' },
     ],
     yelusalengwg: [
         { generalId: 'gen_baodewen_iv', generalName: '鲍德温四世', portrait: '/assets/WEST_ASIA/yelusalengwg_baodewensishi.png' },
@@ -1305,7 +1327,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     shengdian_qishi: { generalId: 'shengdian_qishi_demolai', generalName: '莫莱', portrait: '/assets/GERMANIC/shengdian_qishi_demolai.png' },
     maerta_qishi: { generalId: 'maerta_qishi_walaite', generalName: '瓦莱特', portrait: '/assets/GERMANIC/maerta_qishi_lawalaite.png' },
     dibisi: [
-        { generalId: 'dibisi_tahaerka', generalName: '塔哈尔卡', portrait: '/assets/ORIE/dibisi_tahaerka.png' },
+        // 🔴 [2026-10-20 主人令「按历史来，该是什么势力就是什么势力」] 塔哈尔卡＝埃及第二十五王朝法老（上埃及只是同一埃及的另一据点）→ 挂埃及
+        { generalId: 'dibisi_tahaerka', generalName: '塔哈尔卡', portrait: '/assets/ORIE/dibisi_tahaerka.png', factionId: 'aiji' },
         // 🔴 [2026-10-20 主人令「相同势力，归到一个势力中」] 图特摩斯三世与拉美西斯二世同属新王国统一埃及（第十八／十九王朝）→ 挂埃及旗、不与埃及互打
         { generalId: 'dibisi_tutemosi', generalName: '图特摩斯', portrait: '/assets/WEST_ASIA/dibisi_tutemosi.png', factionId: 'aiji' },
     ],
@@ -1532,7 +1555,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'yamaxun_faernake', generalName: '法尔纳克', portrait: '/assets/ORIE/yamaxun_faernake.png' },
         { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
     ],
-    wangdaer: { generalId: 'gen_bonifatius', generalName: '博尼法提乌斯', portrait: '/assets/ROMA/wangdaer_bonifatiwusi.png' },
+    // 🔴 [2026-10-20 主人令「按历史来，该是什么势力就是什么势力」] 博尼法提乌斯＝西罗马阿非利加守将；
+    //    西罗马是罗马帝国西半（395 分治），同属罗马 → 挂罗马帝国（与埃提乌斯、霍诺留同国）
+    xiluoma: { generalId: 'gen_bonifatius', generalName: '博尼法提乌斯', portrait: '/assets/ROMA/wangdaer_bonifatiwusi.png', factionId: 'luoma_diguo' },
     // 公元前327年马萨加战役守帅（阿萨卡诺伊/阿斯瓦卡女王克莱奥菲斯），立绘按铁律留空走回落、待主人亲自放图分配
     aswaka: { generalId: 'aswaka_cleophis', generalName: '克莱奥菲斯', portrait: '/assets/INDIA/aswaka_kelaiaofeisi.png' },
     // 公元前326年奥诺斯岩围城战守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、科塞亚首领同一记法）；
@@ -1580,6 +1605,31 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     muertan: { generalId: 'muertan_naxierding', generalName: '纳西尔丁', portrait: '/assets/INDIA/muertan_naxierding.png' },
     muxikani: { generalId: 'muxikani_muxikanuosi', generalName: '穆西卡诺斯', portrait: '/assets/INDIA/muxikani_muxikanuosi.png' },
     xindu: { generalId: 'xindu_bahelamuhan', generalName: '巴赫拉姆汗', portrait: '/assets/INDIA/xindu_bahelamuhan.png' },
+    // ── 🔴 [2026-10-20 主人令「看武将，以武将来定义势力」] 起义占位首战改挂真实政权：敌将落为本势力据点武将（立绘留空） ──
+    dalriada: { generalId: 'bfe_dalriada_king', generalName: '达尔里阿达王 费尔古斯·麦克·埃赫达赫', portrait: '' },
+    scotland: { generalId: 'gen_john_comyn', generalName: '约翰·科明', portrait: '' },
+    hre: { generalId: 'bfe_sigismund', generalName: '西吉斯蒙德', portrait: '' },
+    chanka: { generalId: 'bfe_chanca_chief', generalName: '昌卡部族盟主 阿斯塔瓦兰卡', portrait: '' },
+    ouchi: { generalId: 'bfe_sue_harutaka', generalName: '陶晴贤', portrait: '' },
+    cueva: { generalId: 'bfe_darien_chief', generalName: '达连酋长 库纳', portrait: '' },
+    maynila: { generalId: 'bfe_rajah_sulayman', generalName: '拉者苏莱曼三世', portrait: '' },
+    gujarat: { generalId: 'bfe_muzaffar_shah', generalName: '穆扎法尔·沙阿三世', portrait: '' },
+    arakan: { generalId: 'bfe_arakan_general', generalName: '阿拉干守将 阿萨杜拉', portrait: '' },
+    voc: { generalId: 'bfe_coyett', generalName: '揆一', portrait: '' },
+    malla: { generalId: 'bfe_jaya_prakash', generalName: '贾亚·普拉卡什·马拉', portrait: '' },
+    qiangfang: { generalId: 'bfe_qiang_bo', generalName: '羌方首领 羌伯砺', portrait: '' },
+    huaiyi: { generalId: 'bfe_huaiyi_chief', generalName: '淮夷首领 嬴夷吾', portrait: '' },
+    pisa: { generalId: 'bfe_pisa_king', generalName: '皮萨王 潘塔琉斯', portrait: '' },
+    cimmerian: { generalId: 'bfe_cimmerian_king', generalName: '辛梅里安王 图格达梅', portrait: '' },
+    libya: { generalId: 'bfe_libyan_chief', generalName: '利比亚诸部盟主 阿迪尔', portrait: '' },
+    kosala: { generalId: 'bfe_prasenajit', generalName: '拘萨罗王 波斯匿', portrait: '' },
+    kalinga: { generalId: 'bfe_kalinga_king', generalName: '羯陵伽王 婆摩', portrait: '' },
+    anga: { generalId: 'bfe_anga_king', generalName: '鸯伽王 达摩婆罗', portrait: '' },
+    shunga: { generalId: 'bfe_pushyamitra', generalName: '巽伽王 普沙密多罗', portrait: '' },
+    antigonid: { generalId: 'bfe_antigonus', generalName: '安提柯一世', portrait: '' },
+    mimo: { generalId: 'bfe_dian_chief', generalName: '靡莫大酋 苴兰', portrait: '' },
+    xizhou: { generalId: 'bfe_niu_han', generalName: '隗嚣将 牛邯', portrait: '' },
+    shijun: { generalId: 'bfe_ngo_nhat_khanh', generalName: '吴日庆', portrait: '' },
 };
 
 /** 🔴 [2026-09-12 主人「**一势力一将，这个规则取消**」]

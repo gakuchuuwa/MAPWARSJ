@@ -1110,7 +1110,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yilisi_yifeituosi': 'GREECE',   // 埃利斯｜伊菲托斯｜据点 奥林匹亚
     'yilou_naoya': 'NORTHEAST',   // 挹娄｜恼犽｜据点 凤林寨
     'yin_dixin': 'CENTRAL',   // 殷国｜子受｜据点 朝歌
-    'yin_yuejin': 'CENTRAL',   // 殷国｜乐进｜据点 朝歌
+    'yin_yuejin': 'CENTRAL',   // 亳州｜乐进｜据点 谯县（2026-10-20 自殷国归曹魏，文化 CENTRAL 不变）
     'ying_caojingzong': 'JIANGNAN',   // 郢州｜曹景宗｜据点 郊郢
     'yingli_jilasiyi': 'KHITAN',   // 应理｜籍辣思义｜据点 鸣沙
     'yingzhou_d_liuqi': 'CENTRAL',   // 颍州｜刘锜｜据点 顺昌
@@ -1192,6 +1192,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'baolusi': 'ROMA',                    // 保卢斯｜罗马｜罗马城
     'waluo': 'ROMA',                      // 瓦罗｜罗马｜罗马城
     'aitiliusi': 'ROMA',                  // 埃提乌斯｜罗马｜罗马城
+    'gen_aristobulus_ii': 'ORIE',   // 阿里斯托布鲁斯二世｜哈斯蒙尼｜耶路撒冷
     'bfe3_1': 'ORIE',   // 西底家｜据点文化
     'bfe3_13': 'JIANGNAN',   // 项燕｜据点文化
     'bfe3_28': 'JIANGNAN',   // 刘濞｜据点文化
@@ -1222,6 +1223,30 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe3_20': 'KOREA',   // 卫满｜据点文化
     'bfe3_31': 'KOREA',   // 卫右渠｜据点文化
     'bfe3_74': 'XIANBEI',   // 轲比能｜据点文化
+    'bfe_dalriada_king': 'CELTS',   // 达尔里阿达｜达尔里阿达王 费尔古斯·麦克·埃赫达赫｜据点 邓纳德
+    'gen_john_comyn': 'CELTS',   // 苏格兰｜约翰·科明｜据点 斯昆
+    'bfe_sigismund': 'GERMANIC',   // 神圣罗马帝国｜西吉斯蒙德｜据点 法兰克福
+    'bfe_chanca_chief': 'INCA',   // 昌卡｜昌卡部族盟主 阿斯塔瓦兰卡｜据点 安达瓦伊拉斯
+    'bfe_sue_harutaka': 'JAPAN',   // 大内｜陶晴贤｜据点 山口
+    'bfe_darien_chief': 'MUISCA',   // 库埃瓦｜达连酋长 库纳｜据点 科马格雷
+    'bfe_rajah_sulayman': 'MALAY',   // 马尼拉土邦｜拉者苏莱曼三世｜据点 汤多
+    'bfe_muzaffar_shah': 'GURJARAS',   // 古吉拉特｜穆扎法尔·沙阿三世｜据点 艾哈迈达巴德
+    'bfe_arakan_general': 'BURMESE',   // 阿拉干｜阿拉干守将 阿萨杜拉｜据点 妙乌
+    'bfe_coyett': 'MALAY',   // 荷兰东印度公司｜揆一｜据点 巴达维亚
+    'bfe_jaya_prakash': 'TIBET',   // 马拉｜贾亚·普拉卡什·马拉｜据点 巴德岗
+    'bfe_qiang_bo': 'TIBET',   // 羌方｜羌方首领 羌伯砺｜据点 羌邑
+    'bfe_huaiyi_chief': 'CENTRAL',   // 淮夷｜淮夷首领 嬴夷吾｜据点 淮浦
+    'bfe_pisa_king': 'GREECE',   // 皮萨｜皮萨王 潘塔琉斯｜据点 皮萨提斯
+    'bfe_cimmerian_king': 'CUMAN',   // 辛梅里安｜辛梅里安王 图格达梅｜据点 辛梅里孔
+    'bfe_libyan_chief': 'BERBER',   // 利比亚｜利比亚诸部盟主 阿迪尔｜据点 马尔马里卡
+    'bfe_prasenajit': 'INDIA',   // 拘萨罗｜拘萨罗王 波斯匿｜据点 舍卫城
+    'bfe_kalinga_king': 'INDIA',   // 羯陵伽｜羯陵伽王 婆摩｜据点 丹塔普拉
+    'bfe_anga_king': 'PURU',   // 鸯伽｜鸯伽王 达摩婆罗｜据点 瞻波
+    'bfe_pushyamitra': 'INDIA',   // 巽伽｜巽伽王 普沙密多罗｜据点 阿逾陀
+    'bfe_antigonus': 'MACEDONIAN',   // 安提柯｜安提柯一世｜据点 凯莱奈
+    'bfe_dian_chief': 'BASHU',   // 靡莫｜靡莫大酋 苴兰｜据点 靡莫邑
+    'bfe_niu_han': 'CENTRAL',   // 西州｜隗嚣将 牛邯｜据点 平襄
+    'bfe_ngo_nhat_khanh': 'VIETNAMESE',   // 十二使君｜吴日庆｜据点 杜洞江
 };
 
 /** 武将的建筑文化；表里没有返回 undefined */

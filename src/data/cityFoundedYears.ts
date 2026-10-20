@@ -453,5 +453,9 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_tikal: -400,        // 蒂卡尔：考古：纪念性建筑早至前4 世纪，城址由此成型（英文维基 Tikal），取世纪起点 -400（约）；第一座纪年石碑为 292 年。
     city_bacata: 1537,        // 巴卡塔：成城年无记载；1537 年4 月20 日克萨达所部抵此、巴卡塔见载于史，按「首次见载」取 1537（推定）。
     city_madula: -300,        // 马杜赖：桑伽姆文献（约前300 年起）已见 Madurai 为潘地亚都城，为该地最早记载（英文维基 Madurai），取世纪起点 -300（约）。
+    city_yamaguchi: 1360,   // 山口
+    city_ahmedabad: 1411,   // 艾哈迈达巴德
+    city_miaowu: 1430,   // 妙乌
+    city_batavia: 1619,   // 巴达维亚
 };
 

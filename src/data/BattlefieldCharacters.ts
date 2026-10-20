@@ -122,14 +122,6 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         note: '史无载，拟名：前1457年米吉多之战，迦南—卡迭石联军由卡迭石王统领，其名未传。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_qiang_bo: {
-        generalId: 'bfe_qiang_bo',
-        generalName: '羌方首领 羌伯砺',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：羌方首领，名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_achish: {
         generalId: 'bfe_achish',
         generalName: '迦特王 亚吉',
@@ -138,66 +130,10 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         note: '实有其人：《撒母耳记》非利士迦特王亚吉。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_huaiyi_chief: {
-        generalId: 'bfe_huaiyi_chief',
-        generalName: '淮夷首领 嬴夷吾',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：淮夷君长名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_pisa_king: {
-        generalId: 'bfe_pisa_king',
-        generalName: '皮萨王 潘塔琉斯',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史载异说，取潘塔琉斯：皮萨僭主，名字存异说。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_cimmerian_king: {
-        generalId: 'bfe_cimmerian_king',
-        generalName: '辛梅里安王 图格达梅',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：辛梅里安酋长名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_libyan_chief: {
-        generalId: 'bfe_libyan_chief',
-        generalName: '利比亚诸部盟主 阿迪尔',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：利比亚部落联盟首领名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_prasenajit: {
-        generalId: 'bfe_prasenajit',
-        generalName: '拘萨罗王 普拉萨纳吉特',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：拘萨罗国王波斯匿王。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_anga_king: {
-        generalId: 'bfe_anga_king',
-        generalName: '鸯伽王 达摩婆罗',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：鸯伽王名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_kalinga_king: {
-        generalId: 'bfe_kalinga_king',
-        generalName: '羯陵伽王 婆摩',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：羯陵伽王名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_jin_general: {
         generalId: 'bfe_jin_general',
         generalName: '晋军主将 栾施',
-        factionId: 'panjun',
+        factionId: 'jin',
         portrait: '',
         note: '实有其人（晋大夫栾施）；此役晋军主将史无载，取同期晋将拟任。',
     },
@@ -205,7 +141,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_prince_chao: {
         generalId: 'bfe_prince_chao',
         generalName: '王子朝',
-        factionId: 'panjun',
+        factionId: 'zhou',
         portrait: '',
         note: '实有其人：周景王之子，王子朝之乱。',
     },
@@ -213,7 +149,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_cleombrotus: {
         generalId: 'bfe_cleombrotus',
         generalName: '斯巴达将 克里奥姆布罗图斯',
-        factionId: 'panjun',
+        factionId: 'lagoniya',
         portrait: '',
         note: '实有其人：斯巴达摄政王克里奥姆布罗图斯。',
     },
@@ -237,17 +173,9 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_persian_rebel: {
         generalId: 'bfe_persian_rebel',
         generalName: '波斯叛首 阿萨西斯',
-        factionId: 'panjun',
+        factionId: 'aqimeinide',
         portrait: '',
         note: '史无载，拟名：卡曼尼亚地方叛军首领名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_antigonus: {
-        generalId: 'bfe_antigonus',
-        generalName: '安提柯',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：继业者安提柯一世。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_bomilcar: {
@@ -258,34 +186,18 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         note: '实有其人：迦太基将领波米尔卡。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_dian_chief: {
-        generalId: 'bfe_dian_chief',
-        generalName: '滇部大酋 苴兰',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：滇部首领名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_gaius_livius: {
         generalId: 'bfe_gaius_livius',
         generalName: '罗马舰队司令 盖乌斯·李维乌斯',
-        factionId: 'panjun',
+        factionId: 'luoma_diguo',
         portrait: '',
         note: '实有其人：罗马舰队指挥李维乌斯·萨利纳托尔。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_pushyamitra: {
-        generalId: 'bfe_pushyamitra',
-        generalName: '巽伽王 普沙密多罗',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：巽伽王朝开国君主普沙密多罗·巽伽。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_qielan_lord: {
         generalId: 'bfe_qielan_lord',
         generalName: '且兰君 耆',
-        factionId: 'panjun',
+        factionId: 'miao_qing',
         portrait: '',
         note: '史无载，拟名：且兰君长名字未传。',
     },
@@ -293,7 +205,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_ma_heluo: {
         generalId: 'bfe_ma_heluo',
         generalName: '马何罗',
-        factionId: 'panjun',
+        factionId: 'han_d',
         portrait: '',
         note: '实有其人：汉武帝时谋逆者马何罗。',
     },
@@ -301,7 +213,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_roman_merchant: {
         generalId: 'bfe_roman_merchant',
         generalName: '罗马行商首领 卢基乌斯·李锡尼乌斯',
-        factionId: 'panjun',
+        factionId: 'luoma_diguo',
         portrait: '',
         note: '史无载，拟名：塞纳布姆被杀的罗马行商首领名字未传。',
     },
@@ -320,14 +232,6 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'panjun',
         portrait: '',
         note: '实有其人：东汉云台将任光。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_niu_han: {
-        generalId: 'bfe_niu_han',
-        generalName: '隗嚣将 牛邯',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：隗嚣部将牛邯。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_su_ding: {
@@ -349,7 +253,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_guangde: {
         generalId: 'bfe_guangde',
         generalName: '于阗王 广德',
-        factionId: 'panjun',
+        factionId: 'yuchi',
         portrait: '',
         note: '实有其人：于阗王广德。',
     },
@@ -365,7 +269,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_meherdates: {
         generalId: 'bfe_meherdates',
         generalName: '梅哈尔达特',
-        factionId: 'panjun',
+        factionId: 'ansxi',
         portrait: '',
         note: '实有其人：帕提亚争位者梅哈尔达特。',
     },
@@ -376,14 +280,6 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'panjun',
         portrait: '',
         note: '实有其人：隋初江南叛乱首领高智慧。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_dalriada_king: {
-        generalId: 'bfe_dalriada_king',
-        generalName: '达尔里阿达王 费尔古斯·麦克·埃赫达赫',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：此役达尔里阿达主将史无载。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_yin_ziqi: {
@@ -405,17 +301,9 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_sun_ru: {
         generalId: 'bfe_sun_ru',
         generalName: '孙儒',
-        factionId: 'panjun',
+        factionId: 'cai',
         portrait: '',
         note: '实有其人：唐末军阀孙儒。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_ngo_nhat_khanh: {
-        generalId: 'bfe_ngo_nhat_khanh',
-        generalName: '吴日庆',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：十二使君之一吴日庆。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_isaac_komnenos: {
@@ -429,7 +317,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_nikaido_sadefuji: {
         generalId: 'bfe_nikaido_sadefuji',
         generalName: '幕府军大将 二阶堂贞藤',
-        factionId: 'panjun',
+        factionId: 'genji',
         portrait: '',
         note: '史无载，拟名：幕府攻千早城的大将史无载。',
     },
@@ -445,7 +333,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_luang_prabang_king: {
         generalId: 'bfe_luang_prabang_king',
         generalName: '琅勃拉邦王 坎豪',
-        factionId: 'panjun',
+        factionId: 'liaozu',
         portrait: '',
         note: '史无载，拟名：琅勃拉邦古邦首领名字未传。',
     },
@@ -466,52 +354,20 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         note: '实有其人：荒山大捷被斩的倭寇首领阿只拔都。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_sigismund: {
-        generalId: 'bfe_sigismund',
-        generalName: '西吉斯蒙德',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：神圣罗马皇帝、第一次十字军统帅西吉斯蒙德。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_chanca_chief: {
-        generalId: 'bfe_chanca_chief',
-        generalName: '昌卡部族盟主 阿斯塔瓦兰卡',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：昌卡部族同盟首领名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_rasul_khan: {
         generalId: 'bfe_rasul_khan',
         generalName: '果阿守将 拉苏尔汗',
-        factionId: 'panjun',
+        factionId: 'adile',
         portrait: '',
         note: '实有其人：比贾布尔果阿守将拉苏尔汗。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_darien_chief: {
-        generalId: 'bfe_darien_chief',
-        generalName: '达连酋长 库纳',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：达连土著酋长名字未传。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_zhu_chenhao: {
         generalId: 'bfe_zhu_chenhao',
         generalName: '宁王 朱宸濠',
-        factionId: 'panjun',
+        factionId: 'hongzhou',
         portrait: '',
         note: '实有其人：宁王朱宸濠。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_sue_harutaka: {
-        generalId: 'bfe_sue_harutaka',
-        generalName: '陶晴贤',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：大内家臣陶晴贤。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_xu_hai: {
@@ -528,46 +384,6 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'panjun',
         portrait: '',
         note: '实有其人：嘉靖倭寇首领陈东。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_rajah_sulayman: {
-        generalId: 'bfe_rajah_sulayman',
-        generalName: '苏莱曼三世',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：马尼拉土邦首领苏莱曼三世。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_muzaffar_shah: {
-        generalId: 'bfe_muzaffar_shah',
-        generalName: '穆扎法尔·沙阿',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：古吉拉特末代苏丹穆扎法尔·沙阿。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_coyett: {
-        generalId: 'bfe_coyett',
-        generalName: '揆一',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：荷兰东印度公司驻台长官揆一。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_arakan_general: {
-        generalId: 'bfe_arakan_general',
-        generalName: '阿拉干守将 阿萨杜拉',
-        factionId: 'panjun',
-        portrait: '',
-        note: '史无载，拟名：阿拉干守将名字未传。',
-    },
-    // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
-    bfe_jaya_prakash: {
-        generalId: 'bfe_jaya_prakash',
-        generalName: '贾亚·普拉卡什·马拉',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：加德满都马拉王贾亚·普拉卡什·马拉。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_sonom: {
@@ -696,14 +512,6 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'qi',
         portrait: '',
         note: '实有其人：齐顷公。',
-    },
-    // 🔴 [2026-10-20 主人令「双方武将必须实名」] 首战回补·第二批
-    bfe2_zedekiah: {
-        generalId: 'bfe2_zedekiah',
-        generalName: '西底家',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：犹大王西底家。',
     },
     // 🔴 [2026-10-20 主人令「双方武将必须实名」] 首战回补·第二批
     bfe2_nabonidus: {

@@ -75,4 +75,5 @@ shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军�
     shuizu: { name: '水族藤甲', tier: 3 },
     wuxi: { name: '武陵弓蛮', tier: 3 },
     liaozu: { name: '寮族兵', tier: 3 },
+    shijun: { name: '使君乡兵', tier: 4 },   // 杜洞江·吴日庆：杜洞江·吴日庆：十二使君各据乡兵，968年为丁部领所平
 };

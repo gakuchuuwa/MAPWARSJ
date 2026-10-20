@@ -75,4 +75,5 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     jinchuan_g: { name: '嘉绒碉锋', tier: 3 },
     shanzhou: { name: '陇右骁骑', tier: 1 },
     tufa_d: { name: '南凉铁骑', tier: 4 },
+    malla: { name: '纽瓦尔弓兵', tier: 4 },   // 巴德岗·贾亚·普拉卡什·马拉：巴德岗·贾亚·普拉卡什：加德满都谷地纽瓦尔人的弓兵，1768年抗廓尔喀
 };
