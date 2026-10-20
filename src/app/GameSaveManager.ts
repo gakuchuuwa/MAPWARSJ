@@ -70,6 +70,8 @@ export interface ArmySnapshot {
     homeCityId?: string | null;
     sourceCityId?: string | null;
     winStreak?: number;
+    /** 🔴 [2026-10-20] 军团出身势力（百岁模式下真实势力随武将，老家据点仍是出身势力） */
+    homeFactionId?: string;
 }
 
 export interface GameSave {
@@ -138,6 +140,7 @@ export class GameSaveManager {
                 homeCityId: a.homeCityId,
                 sourceCityId: a.getSourceCityId(),
                 winStreak: a.winStreak ?? 0,
+                homeFactionId: a.getHomeFactionId(),
             };
         });
 
@@ -208,7 +211,8 @@ export class GameSaveManager {
                 { lat: s.lat, lng: s.lng },
                 null,                       // targetCity：恢复为待命，由 AI 重新下令
                 s.troops,
-                s.factionId,
+                // 按出身势力建；构造里挂上武将后，百岁模式自动换回武将自己的势力（Army.syncGeneralFaction）
+                s.homeFactionId ?? s.factionId,
                 () => { },                  // onArrive：与 createArmy 一致
                 undefined,                  // onBattleTick
                 undefined,                  // destination

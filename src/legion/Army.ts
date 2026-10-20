@@ -35,6 +35,7 @@ import { applyLegionCultureComposition, getCultureMovementClass, isCultureCavalr
 import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { getGeneralOwnFactionId } from '../data/FactionGenerals';
+import { getGameMode } from '../data/generalOnStage';
 import { isDeployHeld } from './DeployGate';
 import { getArmyCulturePlainSpeedMultiplier, getArmyCultureSeaSpeedMultiplier, isArmyCultureMountainMarchImmune } from './march/MarchAttritionSystem';
 
@@ -55,6 +56,12 @@ export class Army implements IBattleUnit {
     public siegeTargetCityId: string | null = null;
     public troops: number; // [IBattleUnit] Must be public
     private _factionId: string;
+    /**
+     * 🔴 [2026-10-20 主人令「百岁模式，出城的军团是真归秦了，但长安这座城本身仍属唐国」]
+     * 军团**出身势力**（建军时 / 外部 setFactionId 时的势力，＝老家据点的势力）。
+     * 百岁模式里 `_factionId` 会跟武将自己的势力走（王离出长安 → qin），老家判定（失守 / 撤回 / 不打老家）看这个。
+     */
+    private _baseFactionId: string;
     private onArrive: (army: Army) => void;
 
     /** 事件链攻城任务的完成回调：只在最终目标城之战结束时触发（途中 hop 战不触发） */
@@ -608,6 +615,7 @@ export class Army implements IBattleUnit {
         if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
         // 🔴 [2026-10-20 主人令「哪个武将登场，挂哪个势力的旗帜」] 换将即同步显示势力（旗/染色/名牌）
         this.syncDisplayFaction();
+        this.syncGeneralFaction();
     }
     public portraitPath?: string; // [NEW] 军队创建时随机固定立绘
     /** 精锐军团（精锐番号 + 名将 + 战力加成）；≥4万必精锐，<4万 50% 概率。出生定，不降级 */
@@ -660,6 +668,7 @@ export class Army implements IBattleUnit {
         this.troops = troops;
         this.initialTroops = troops;
         this._factionId = factionId;
+        this._baseFactionId = factionId;
         this.onArrive = onArrive;
 
         this.id = `army_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -1457,8 +1466,28 @@ export class Army implements IBattleUnit {
         if (this.renderer) this.renderer.factionId = this.getDisplayFactionId();
     }
 
+    /** 军团出身势力（老家据点的势力；百岁模式下可能与 `getFactionId()` 不同） */
+    public getHomeFactionId(): string {
+        return this._baseFactionId;
+    }
+
+    /**
+     * 🔴 [2026-10-20 主人令「不能让同势力的人乱打，不能白起打王龁」「百岁模式，出城的军团是真归秦了」]
+     * 百岁模式：军团**真实势力**＝武将自己的势力（没有就回出身势力）→ 敌我、占城归属都按它。
+     * 剧本 / 乱斗 / 编辑器不动（乱斗一据点只出一将，见 getFactionGeneralsResolved）。
+     */
+    private syncGeneralFaction(): void {
+        if (getGameMode() !== 'centenarian' || this._baseFactionId === undefined) return;
+        const want = getGeneralOwnFactionId(this._generalId) ?? this._baseFactionId;
+        if (want === this._factionId) return;
+        this._factionId = want;
+        this.syncDisplayFaction();
+        if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
+    }
+
     /** 事件链接管军团时统一势力 id（如旧 huaxia → qin） */
     public setFactionId(factionId: string): void {
+        this._baseFactionId = factionId;
         if (this._factionId === factionId) return;
         this._factionId = factionId;
         this.syncDisplayFaction();

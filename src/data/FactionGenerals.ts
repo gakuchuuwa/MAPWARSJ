@@ -25,7 +25,7 @@
  */
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getBattlefieldCharacter } from './BattlefieldCharacters';
-import { isGeneralOnStage } from './generalOnStage';
+import { isGeneralOnStage, getGameMode } from './generalOnStage';
 import { getGeneralProfile } from './general-skills/profiles';
 
 export interface FactionGeneral {
@@ -610,7 +610,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     cheshihou: { generalId: 'cheshihou_angui', generalName: '安归', portrait: '/assets/STEPPE/cheshihou_angui.png' },
     kaerka: { generalId: 'kaerka_abadaihan', generalName: '阿巴岱', portrait: '/assets/STEPPE/kaerka_abadaihan.png' },
     huyan: { generalId: 'huyan_peicen', generalName: '呼衍蒲奴', portrait: '/assets/STEPPE/huyan_peicen.png' },
-    chahar: { generalId: 'chahar_yantiemuer', generalName: '燕帖木儿', portrait: '/assets/STEPPE/chahar_yantiemuer.png' },
+    chahar: [
+        { generalId: 'chahar_yantiemuer', generalName: '燕帖木儿', portrait: '/assets/STEPPE/chahar_yantiemuer.png' },
+        // 名将双身份：轲比能（据点武将＋剧本敌将）
+        // 🔴 [2026-10-20 主人令「不可能出现同一年、同一座城，在场武将来自不同势力……如果真有，那么就是没弄对，需要换据点」]
+        //    原挂盛乐，与拓跋力微（索头）在场年份重叠 195～294 → 按史迁兴和城：轲比能部在代郡、上谷塞外，弹汗山（尚义）一带；兴和城建筑 XIANBEI，军团不变
+        { generalId: 'bfe3_74', generalName: '轲比能', portrait: '', legionName: '古典时代鲜卑军团', factionId: 'xianbei' },
+    ],
     ongut: { generalId: 'ongut_alawusi', generalName: '阿剌兀思', portrait: '/assets/STEPPE/ongut_alawusi.png' },
     rouran: { generalId: 'rouran_shelun', generalName: '社仑', portrait: '/assets/STEPPE/rouran_shelun.png' },
     chagatai: { generalId: 'chagatai_genggong', generalName: '耿恭', portrait: '/assets/liuhan/chagatai_genggong.png' },
@@ -1056,11 +1062,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     chu_d: { generalId: 'chu_d_lukang', generalName: '陆康', portrait: '/assets/JIANGNAN/wan_lukang.png' },
     yan: { generalId: 'yan_leyi', generalName: '乐毅', portrait: '/assets/xianqin/yan_leyi.png' },
     zhao: { generalId: 'zhao_lianpo', generalName: '廉颇', portrait: '/assets/xianqin/zhao_lianpo.png' },
-    yunzhong: [
-        { generalId: 'yunzhong_tuobaliwei', generalName: '拓跋力微', portrait: '/assets/STEPPE/yunzhong_tuobaliwei.png' },
-        // 名将双身份：轲比能（据点武将＋剧本敌将）
-        { generalId: 'bfe3_74', generalName: '轲比能', portrait: '', legionName: '古典时代鲜卑军团', factionId: 'xianbei' },
-    ],
+    yunzhong: { generalId: 'yunzhong_tuobaliwei', generalName: '拓跋力微', portrait: '/assets/STEPPE/yunzhong_tuobaliwei.png' },
     yang_aner: { generalId: 'yang_aner_yangan', generalName: '杨安', portrait: '/assets/panjun/yang_aner_yanganer.png' },
         xie_cj_d: { generalId: 'xie_xiefangde', generalName: '谢枋得', portrait: '/assets/JIANGNAN/xie_xiefangde.png' }, // 葛溪·信州抗元殉国
     wan: { generalId: 'wan_liuyuan', generalName: '刘源', portrait: '/assets/JIANGNAN/wan_liuyuan.png' },
@@ -1197,7 +1199,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kangba: { generalId: 'kangba_suonuomugunbu', generalName: '索诺木衮布', portrait: '/assets/TIBET/kangba_suonuomugunbu.png' },
     yong: { generalId: 'yong_lujili', generalName: '庐戢黎', portrait: '/assets/xianqin/yong_lujili.png' },
     jingcheng_d: { generalId: 'jingcheng_d_yuyouzhao', generalName: '鱼有沼', portrait: '/assets/KOREA/jingcheng_d_yuyouzhao.png' },
-    xin: { generalId: 'xin_baiqi', generalName: '白起', portrait: '/assets/yingqin/xin_baiqi.png' },
+    // 🔴 [2026-10-20 主人令「不能让同势力的人乱打，不能白起打王龁」] 白起是秦将 → 出场挂秦（百岁模式出城即归秦）
+    xin: { generalId: 'xin_baiqi', generalName: '白起', portrait: '/assets/yingqin/xin_baiqi.png', factionId: 'qin' },
   pangzha: { generalId: 'pangzha_halixinge', generalName: '哈里辛格', portrait: '/assets/INDIA/pangzha_halixinge.png' },
     najie: { generalId: 'najie_minande', generalName: '米南德', portrait: '/assets/CENTRAL_ASIA/najie_minande.png' },
     dulan_d: { generalId: 'dulan_d_aihamaide', generalName: '艾哈迈德', portrait: '/assets/CENTRAL_ASIA/dulan_d_aihamaide.png' },
@@ -1581,8 +1584,16 @@ export function getFactionGenerals(factionId: string): FactionGeneral[] {
  * 🔴 [2026-10-19 主人定：「一个据点，一个势力，可以多个武将，一个武将一支精锐」]
  */
 export function getFactionGeneralsResolved(factionId: string): FactionGeneral[] {
-    const list = getFactionGenerals(factionId);
+    let list = getFactionGenerals(factionId);
+    // 🔴 [2026-10-20 主人令「乱斗模式的话，一个据点一个武将一个势力，多武将不并存」]
+    //    乱斗：只留一位 —— 优先本势力的武将（不带别家 factionId），名将优先（见下方排序）；
+    //    据点只有带别家势力的武将（如长子只有白起）→ 照样用他，乱斗里军团势力不随武将变，仍是据点势力。
+    const melee = getGameMode() === 'melee';
     if (!list.length) return [];
+    if (melee) {
+        const native = list.filter((g) => !g.factionId || g.factionId === factionId);
+        if (native.length) list = native;
+    }
     const resolved = list.map((g, idx) => {
         const portrait = _generalPortraitOverrides[g.generalId] ?? g.portrait;
         const isFamous = getGeneralProfile(g.generalId)?.tier === 'famous';
@@ -1600,7 +1611,8 @@ export function getFactionGeneralsResolved(factionId: string): FactionGeneral[] 
         if (a.isFamous !== b.isFamous) return a.isFamous ? -1 : 1;
         return a.idx - b.idx;
     });
-    return resolved.map((r) => r.item);
+    const out = resolved.map((r) => r.item);
+    return melee ? out.slice(0, 1) : out;
 }
 
 /** 取某势力的开局名将（多个将时优先取当前在场且未被 excludeGeneralIds 占用的名将，否则取在场首将或数组第一个）；未配置返回 null */
@@ -1691,8 +1703,10 @@ export function getFactionIdOfGeneral(generalId: string | null | undefined): str
 
 /**
  * 🔴 [2026-10-20 主人令「一个武将一个势力，哪个武将登场挂哪个势力的旗帜」]
- * 武将**自己的势力**（只用于显示：旗/染色/名牌）；不填返回 null＝跟据点势力。
- * 注意：这不是「他归哪个据点」——据点归属仍用 `getFactionIdOfGeneral`（取据点势力）。
+ * 武将**自己的势力**；不填返回 null＝跟据点势力。
+ * 🔴 [2026-10-20 主人令「百岁模式，出城的军团是真归秦了，但长安这座城本身仍属唐国」]
+ *    百岁模式下它也是出城军团的**真实势力**（敌我、占城归属都按它，见 `Army.generalId`）；
+ *    据点归属仍用 `getFactionIdOfGeneral`（取据点势力），据点本身不变。
  */
 export function getGeneralOwnFactionId(generalId: string | null | undefined): string | null {
     if (!generalId) return null;
