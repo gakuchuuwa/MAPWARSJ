@@ -867,6 +867,16 @@ export class PlayerHUD {
             window.setTimeout(() => {
                 if (this.overlay) primary.onPick();
             }, 3000);
+        } else if (this.hero.autoMode) {
+            // 🔴 [2026-10-21 主人报「卡住不动了」] 「兵马不足五千」这类只有「告辞」的对话没有主选项，
+            //    自动模式下没人点就一直停着（对话还把游戏暂停了）→ 自动模式下 3 秒后自动「告辞」，换下一位武将。
+            const leave = p.options.find((o) => o.label.includes('告辞')) ?? p.options[p.options.length - 1];
+            if (leave) {
+                const shown = overlay;
+                window.setTimeout(() => {
+                    if (this.overlay === shown) leave.onPick();
+                }, 3000);
+            }
         }
         box.appendChild(btns);
         overlay.appendChild(box);

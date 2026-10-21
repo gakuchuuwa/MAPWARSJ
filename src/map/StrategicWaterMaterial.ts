@@ -173,8 +173,9 @@ export function renderStrategicWater(
                 const raw = neighbor?.coverage ? neighbor.coverage[px] : (neighbor ? neighbor.mask[px] * 255 : mask[px] * 255);
                 cov[(y + pad) * pw + x + pad] = raw / 255;
             }
-            blur3(cov, f1);      // 一遍 3×3：把 2×2 降采样的 1/4 台阶抹平
-            cov.set(f1);
+            blur3(cov, f1);
+            blur3(f1, cov);      // 两遍 3×3：把 2×2 降采样的 1/4 台阶彻底抹平
+
         } else {
             const f0 = new Float32Array(pw * ph);
             for (let i = 0; i < f0.length; i++) f0[i] = water[i];
@@ -187,7 +188,7 @@ export function renderStrategicWater(
     }
 
     /** 岸线湿滩色：水侧向外压、陆侧铺一圈，比纯土色更贴泥滩 */
-    const WET_R0 = 150, WET_G0 = 142, WET_B0 = 112;
+    const WET_R0 = 138, WET_G0 = 133, WET_B0 = 106;
     const smoothstep01 = (v: number): number => {
         const t = v <= 0 ? 0 : v >= 1 ? 1 : v;
         return t * t * (3 - 2 * t);
@@ -289,9 +290,9 @@ export function renderStrategicWater(
                 b = base[2] + (deep[2] - base[2]) * t2;
             }
 
-            if (dist < 4.5) {
+            if (dist < 6.5) {
                 // 贴岸 4.5px 内微透清浅浅滩色 (shallowReef)
-                const seamT = Math.pow(1 - dist / 4.5, 1.2) * 0.42;
+                const seamT = Math.pow(1 - dist / 6.5, 1.2) * 0.26;
                 r = r * (1 - seamT) + reefR * seamT;
                 g = g * (1 - seamT) + reefG * seamT;
                 b = b * (1 - seamT) + reefB * seamT;
@@ -314,7 +315,7 @@ export function renderStrategicWater(
             }
 
             // 岸边极细断续碎沫微光 (距岸 1.4 像素内的点缀微浪，绝不连成白线)
-            const glint = dist < 1.4
+            const glint = dist < 1.0
                 ? Math.max(0, Math.sin(wx / 5 + Math.sin(wy / 8)) - 0.52) * 30 : 0;
 
             out[o] = Math.min(255, Math.max(0, r + tone * 0.7 + grain * 0.65 + glint));
