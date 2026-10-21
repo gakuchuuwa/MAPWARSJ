@@ -114,21 +114,22 @@ import { render } from './scene13/Scene13Render';
 
 /**
  * 🔴 [2026-10-20 主人令「对方刚放的计优先用克它的计回应」] 六计相克表（对方刚放的计 → 我方回应：首选、备选），
- * 按战术模式里六计的实际效果定（见 triggerScene13Skill）：
- *   攻（猛攻增伤）→ 敌（回血＋减伤四成）｜混（驱散）
- *   敌（固守减伤）→ 并（破甲：清护盾＋承伤 +35%）｜混（驱散）
- *   混（我方乱阵、增益被驱散）→ 敌（回血固守撑过混乱）｜胜（补生力军）
- *   并（我方破甲承伤 +35%）→ 混（清除己方破甲，反乱敌阵）｜敌（减伤抵消）
- *   胜（对方增兵 8%）→ 败（当场折损敌军 8%）｜攻（猛攻吃掉新兵）
- *   败（我方折损 8%）→ 胜（补回 8% 生力军）｜敌（固守止损）
+ * 🔴 [2026-10-21 主人令「相克改为与界面提示一致」] 并换成「夺敌兵」后重定，与 CombatUI 每计提示里的「破某计」对齐：
+ *   攻（猛攻增伤）→ 敌（回血＋减伤四成）｜混（驱散增益）
+ *   敌（固守减伤）→ 败（折损前线，绕开护盾）｜混（驱散护盾）
+ *   混（乱阵＋驱散）→ 胜（补生力军，不受乱阵影响）｜敌（回血固守撑过混乱）
+ *   并（夺敌兵倒戈）→ 攻（猛攻压住摇摆的兵）｜混（扰乱）
+ *   胜（对方增兵 8%）→ 混（乱阵搅散新兵）｜败（折损抵消）
+ *   败（我方折损 8%）→ 并（夺回兵力）｜胜（补回生力军）
+ * 武将放计的逻辑不变：看对方上一次放的是什么，优先用克它的计（须在本方当前形势的计池里、且不是我上一计）。
  */
 const SIX_COUNTER: Readonly<Record<TacticalSixSet, readonly TacticalSixSet[]>> = {
     gongzhan: ['dizhan', 'hunzhan'],
-    dizhan: ['bingzhan', 'hunzhan'],
-    hunzhan: ['dizhan', 'shengzhan'],
-    bingzhan: ['hunzhan', 'dizhan'],
-    shengzhan: ['baizhan', 'gongzhan'],
-    baizhan: ['shengzhan', 'dizhan'],
+    dizhan: ['baizhan', 'hunzhan'],
+    hunzhan: ['shengzhan', 'dizhan'],
+    bingzhan: ['gongzhan', 'hunzhan'],
+    shengzhan: ['hunzhan', 'baizhan'],
+    baizhan: ['bingzhan', 'shengzhan'],
 };
 /** 三势计池（六计三类见 `SIX_SET_TO_TRI_CLASS`）：优势＝优势组＋均势组；劣势＝劣势组＋均势组；均势＝六计全有 */
 const SIX_POOL_BY_STANCE: Readonly<Record<'adv' | 'bal' | 'dis', readonly TacticalSixSet[]>> = {
