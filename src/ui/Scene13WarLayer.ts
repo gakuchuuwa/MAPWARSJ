@@ -207,6 +207,8 @@ export class Scene13WarLayer {
     defBuildings: WarBuilding[] = [];
     /** 🔴 [2026-10-12] 攻城战中心建筑（城堡 > 城镇中心 > 最居中的一栋）；undefined = 未选，null = 本场没有 */
     private centerBld: WarBuilding | null | undefined = undefined;
+    /** 🔴 [2026-10-21 主人令「攻击方要打攻城战的时候，要至少有一队先打中心建筑」] 攻方专打中心建筑的那一队（分队号）；null＝未指定 */
+    private centerLane: number | null = null;
     /** 🔴 [2026-10-12 主人令「开始」流场寻敌] 攻城战流场：每格到中心建筑的步数（INF=不通），格 = 1 个等轴地块，a/b 为地块坐标 */
     private flowDist: Int16Array | null = null;
     private flowR = 0;
@@ -1071,7 +1073,8 @@ export class Scene13WarLayer {
         const spd = this.statsFor(m.key, m.f).spd * spdK;
         const dx = inp.dx;
         const dy = inp.dy;
-        const [bx, by] = this.fieldBound(m.x + dx * spd * dt, m.y + dy * spd * dt);
+        const upK = this.uphillSpeedK(m.x, m.y, dx, dy);
+        const [bx, by] = this.fieldBound(m.x + dx * spd * upK * dt, m.y + dy * spd * upK * dt);
         m.x = bx; m.y = by; m.tx = bx; m.ty = by;
         m.dir = this.dir8Hyst(m.dir, dx, dy);
         m.st = 0;
@@ -1131,6 +1134,9 @@ export class Scene13WarLayer {
         m.foe = null; m.lock = 0; m.st = 0; m.fightT = 0; m.stuckT = 0; m.kiting = false;
         m.fadeT = 2; m.fadeMax = 2;
         this.heroInput = null;
+        // 🔴 [2026-10-21 主人报「乱入者复活后有的时候不动」] 阵亡前点的地面令没走到就死了 → 复活后还挂着：
+        //    目标点已被上面重置成复活点，而「走到才清」比的是旧点地位置 ⇒ 永远清不掉、原地站死。复活一律作废。
+        this.heroClickOrder = null;
         if (!this.men.includes(m)) {
             this.men.push(m);
         }
@@ -2329,6 +2335,7 @@ export class Scene13WarLayer {
         this.wallGates = [];
         this.defBuildings = [];
         this.centerBld = undefined;
+        this.centerLane = null;
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
@@ -2702,6 +2709,7 @@ export class Scene13WarLayer {
         this.wallGates = [];
         this.defBuildings = [];
         this.centerBld = undefined;
+        this.centerLane = null;
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
@@ -2795,6 +2803,21 @@ export class Scene13WarLayer {
             return this.groundLayerGL.terrainSpeedAt(screenX, screenY, this.worldCX * 2, this.worldCY * 2);
         }
         return this.isWaterAt(screenX, screenY) ? 0.6 : 1.0;
+    }
+
+    // 🔴 [2026-10-21 主人令「战术模式中，上坡的时候士兵应该减速。」主人批「上坡乘 0.8，下坡和平地不变」]
+    //    非 DE 设定：AoE2 DE 坡地只影响攻击（±25%）与建筑放置，不影响移速（Wiki「Elevation」「Speed」两页均无）。
+    private static readonly UPHILL_SPEED_K = 0.8;
+    /** 上坡减速系数：沿本帧移动方向 (ux, uy) 前探一小段，前方地面高程高于脚下 → ×0.8；平地、下坡 ×1.0 */
+    private uphillSpeedK(x: number, y: number, ux: number, uy: number): number {
+        const g = this.groundLayerGL;
+        if (!g) return 1.0;
+        const l = Math.hypot(ux, uy);
+        if (l < 1e-6) return 1.0;
+        const W = this.worldCX * 2, H = this.worldCY * 2;
+        const ahead = 16 / l;
+        const dz = g.elevationLevelAt(x + ux * ahead, y + uy * ahead, W, H) - g.elevationLevelAt(x, y, W, H);
+        return dz > 0.01 ? Scene13WarLayer.UPHILL_SPEED_K : 1.0;
     }
 
     /** 河流 / 湖泊模板水体从东北角迁到城边（实现见 Scene13MapWaterAdapter.ts） */
@@ -3956,6 +3979,7 @@ export class Scene13WarLayer {
     }
 
     /** 🔴 [2026-10-20 主人令「普通远程兵不打墙、城门和建筑，带攻城加成的远程兵照打」]
+     *  → 🔴 [2026-10-21 主人改「我的意思是最后打建筑」] 普通远程兵先打兵、最后打城门/建筑（见索敌处）。
      *  「带攻城加成」= DE 加成表里对建筑护甲类（11 全建筑 / 13 石质防御 / 21 标准建筑 / 22 城墙城门）有正加成。 */
     private rangedHitsBuildings(key: string): boolean {
         const bon = this.statsFor(key, 0).bonus;
@@ -3972,6 +3996,31 @@ export class Scene13WarLayer {
             || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, 0).rng <= 65 || this.rangedHitsBuildings(m.key)) return false;
         this.ensureGateInfo();
         return !this.ringOpen() && !this.insideRing(m.x, m.y);
+    }
+
+    /**
+     * 🔴 [2026-10-21 主人令「远程兵最后打建筑」「不是视野内，是地图中优先打人」]
+     * 攻城战攻方**普通远程兵**（无攻城加成）：全图还有打得到的敌兵，就先去打人，不碰城门/建筑。
+     * 「打得到」：城墙未破、自己在城外时，墙里射程外的敌兵不算（隔墙够不着，见 rangedHoldsOutside）。
+     * 🔴 [2026-10-21 主人批「先追本队锁定的敌队」] 顺序：本队锁定的敌队（laneTargets.targetLane）里最近那个 →
+     *    本队没锁敌队（或那队已打不到）→ 全图最近的敌兵；都没有 → null（才轮到城门/建筑）。不是普通远程兵恒 null。
+     */
+    private rangedMapFoe(m: WarMan): WarMan | null {
+        if (this.battleType !== 'siege' || m.f !== 0 || !m.key || m.siegeW || WALL_PASS_TYPES.has(m.key)) return null;
+        if (this.statsFor(m.key, 0).rng <= 65 || this.rangedHitsBuildings(m.key) || this.inCenterLane(m)) return null;
+        const hold = this.rangedHoldsOutside(m);
+        const reach2 = hold ? this.rangedShootReach2(m) : 0;
+        const laneFoe = m.lane >= 0 ? this.laneTargets.get(m.lane)?.targetLane : undefined;
+        let best: WarMan | null = null, bd = Infinity;
+        let laneBest: WarMan | null = null, lbd = Infinity;
+        for (const o of this.men) {
+            if (o.f === m.f || o.hp <= 0 || o.siegeW) continue;
+            const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
+            if (hold && d > reach2 && this.insideRing(o.x, o.y)) continue;
+            if (d < bd) { bd = d; best = o; }
+            if (laneFoe !== undefined && o.lane === laneFoe && d < lbd) { lbd = d; laneBest = o; }
+        }
+        return laneBest ?? best;
     }
 
     /** 远程兵站着不动就射得到的距离²（射程 + 自身半径 + 余量） */
@@ -4150,8 +4199,14 @@ export class Scene13WarLayer {
         const laneClaims = new Map<number, number>();
         const bldClaims = new Map<WarBuilding, number>();
 
+        // 🔴 [2026-10-21 主人令「攻击方要打攻城战的时候，要至少有一队先打中心建筑」]
+        //    攻方固定一队专打中心建筑（拆掉＝攻方胜）：优先近战队（普通远程有兵就先打兵，见 rangedMapFoe），
+        //    取离中心建筑最近的；这一队打光了换下一队。它的队级目标恒为中心建筑，不参与下面两遍的改派。
+        this.assignCenterLane(laneInfo);
+        if (this.centerLane !== null && this.centerBld) bldClaims.set(this.centerBld, 1);
+
         // 第一遍：按离当前目标由近到远校验并保留各队已有的目标（离目标最近的 4 队优先占住名额，第 5 队起释放改打其他目标）
-        const existingEntries = [...laneInfo.entries()].filter(([lane]) => this.laneTargets.has(lane)).sort(([laneA, infoA], [laneB, infoB]) => {
+        const existingEntries = [...laneInfo.entries()].filter(([lane]) => this.laneTargets.has(lane) && lane !== this.centerLane).sort(([laneA, infoA], [laneB, infoB]) => {
             const pA = this.laneTargets.get(laneA)!, pB = this.laneTargets.get(laneB)!;
             const dA = (pA.x - infoA.x) ** 2 + (pA.y - infoA.y) ** 2;
             const dB = (pB.x - infoB.x) ** 2 + (pB.y - infoB.y) ** 2;
@@ -4288,6 +4343,34 @@ export class Scene13WarLayer {
                 this.laneTargets.set(lane, { targetLane: fallbackCityELane, x: eInfo.x, y: eInfo.y });
             }
         }
+    }
+
+    /** 指定 / 维持攻方专打中心建筑的那一队，并把它的队级目标钉在中心建筑上（中心建筑已倒 → 取消） */
+    private assignCenterLane(laneInfo: Map<number, { f: number; x: number; y: number; meleeOnly: boolean }>): void {
+        if (this.battleType !== 'siege') { this.centerLane = null; return; }
+        if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
+        const c = this.centerBld;
+        if (!c || !this.wallStanding(c)) {
+            if (this.centerLane !== null && this.laneTargets.get(this.centerLane)?.targetBld === c) this.laneTargets.delete(this.centerLane);
+            this.centerLane = null;
+            return;
+        }
+        const cur = this.centerLane !== null ? laneInfo.get(this.centerLane) : undefined;
+        if (!cur || cur.f !== 0) {
+            let pick: number | null = null, pickMelee = false, pd = Infinity;
+            for (const [lane, info] of laneInfo) {
+                if (info.f !== 0) continue;
+                const d = (info.x - c.x) ** 2 + (info.y - c.y) ** 2;
+                if ((info.meleeOnly && !pickMelee) || (info.meleeOnly === pickMelee && d < pd)) { pick = lane; pickMelee = info.meleeOnly; pd = d; }
+            }
+            this.centerLane = pick;
+        }
+        if (this.centerLane !== null) this.laneTargets.set(this.centerLane, { targetBld: c, x: c.x, y: c.y });
+    }
+
+    /** 这名士兵是不是攻方专打中心建筑那一队的（乱入者不算，他归玩家指挥） */
+    private inCenterLane(m: { lane?: number; hero?: boolean; siegeW?: boolean }): boolean {
+        return this.centerLane !== null && m.lane === this.centerLane && !m.hero && !m.siegeW && !!this.centerBld && this.wallStanding(this.centerBld);
     }
 
     private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0, reserve = true): WarMan | WarBuilding | null {
@@ -4460,11 +4543,34 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-20 主人令「普通远程兵不打墙、城门和建筑，带攻城加成的远程兵照打」]
             //    DE 护甲算法下普通弓弩打石墙（远防 10）/城门（远防 6）每发只扣 1 点，等于白射。
             //    「带攻城加成」= DE 加成表里对建筑护甲类（11 全建筑 / 13 石质防御 / 21 标准建筑 / 22 城墙城门）有正加成。
-            if (mRng > 65) {
-                if (!mKey || !this.rangedHitsBuildings(mKey)) {
-                    if (manChosen && reserve) manChosen.claims++;
+            // 🔴 [2026-10-21 主人令「攻击方要打攻城战的时候，要至少有一队先打中心建筑」]
+            //    专打中心建筑那一队：视野内有兵先打兵；没兵且进得去（墙已破或人在城内）就直奔中心建筑，不打别的建筑；
+            //    还在城外、墙没破 ⇒ 照常（先清城外的兵、打门），破门后直奔中心。
+            if (this.inCenterLane(wm) && this.centerBld) {
+                this.ensureGateInfo();
+                const shut = this.siegeWithWalls && !this.ringOpen() && !this.insideRing(m.x, m.y);
+                if (!shut) {
+                    // 🔴 [2026-10-21 主人定「先打兵，没兵再有一队优先攻击中心建筑」] 视野内有兵先打兵（与全军同口径）
+                    if (manChosen) {
+                        if (reserve) manChosen.claims++;
+                        return manChosen;
+                    }
+                    if (this.bldDist2(m.x, m.y, this.centerBld) < r2) {
+                        if (reserve) this.centerBld.claims++;
+                        return this.centerBld;
+                    }
+                    return null;   // 中心建筑还在视野外：不追兵，由 aimAtRaw ③ 按队级目标走向中心
+                }
+            }
+            // 🔴 [2026-10-21 主人令「远程兵现在是不打建筑，这样是不对的，我的意思是最后打建筑」]
+            //    普通远程兵：有敌兵先打敌兵；没有敌兵可打才落到下面打城门/建筑（与近战同一套就近口径）。
+            //    「不是视野内，是地图中优先打人」：视野里没兵、但全图还有打得到的敌兵 ⇒ 不锁建筑（由 aimAtRaw 带去打人）。
+            if (mRng > 65 && (!mKey || !this.rangedHitsBuildings(mKey))) {
+                if (manChosen) {
+                    if (reserve) manChosen.claims++;
                     return manChosen;
                 }
+                if (this.rangedMapFoe(m as WarMan)) return null;
             }
             // 近战兵已被墙/门死死顶住（stuckT > 0.35s）且眼前的敌兵不在挥刀距离内 ⇒ 先砍开正挡着自己的这段墙/门，防隔墙锁敌在墙角空抖
             if (manChosen && !(bg && bg.f !== m.f && mRng <= 65 && (wm.stuckT ?? 0) > 0.35 && (manChosen.x - m.x) ** 2 + (manChosen.y - m.y) ** 2 > (mReach + 18) ** 2)) {
@@ -5693,6 +5799,10 @@ export class Scene13WarLayer {
             if (g) return { x: g.x + m.jx, y: g.y + m.jy };
         }
 
+        // ②½ 🔴 [2026-10-21 主人令「地图中优先打人」] 攻方普通远程兵：全图还有打得到的敌兵 ⇒ 直奔最近那个，不去城门/建筑
+        const mapFoe = this.rangedMapFoe(m);
+        if (mapFoe) return { x: mapFoe.x + ringX, y: mapFoe.y + ringY };
+
         // ③ 本队统一目标（含乱入者）：敌方分队或城门/建筑
         const lt = (m.lane >= 0 && !m.siegeW) ? this.laneTargets.get(m.lane) : undefined;
         // 🔴 [2026-10-20] 城外待命的普通远程：本队目标敌队在墙里就不追（追了只会顶墙打转），落到下面的城门外列队
@@ -6226,7 +6336,7 @@ export class Scene13WarLayer {
                 }
                 const ux = Math.cos(m.panicAng);
                 const uy = Math.sin(m.panicAng);
-                const step = stats.spd * spdK * dt;
+                const step = stats.spd * spdK * this.uphillSpeedK(m.x, m.y, ux, uy) * dt;
                 if (step > 0) {
                     m.x += ux * step;
                     m.y += uy * step;
@@ -6463,7 +6573,7 @@ export class Scene13WarLayer {
                         const uB = this.advanceVec[m.f], rx = (m.x - foe.x) / (kd || 1), ry = (m.y - foe.y) / (kd || 1);
                         const backOk = (rx * -uB.x + ry * -uB.y) >= -0.2;
                         const dx = backOk ? -uB.x : rx, dy = backOk ? -uB.y : ry, d = 1;
-                        const step = stats.spd * spdK * dt;
+                        const step = stats.spd * spdK * this.uphillSpeedK(m.x, m.y, dx, dy) * dt;
                         const nx = m.x + dx / d * step, ny = m.y + dy / d * step;
                         const [bx, by] = this.fieldBound(nx, ny);
                         // 🔴 退到屏幕边上就**别退了，回身打**（主人 2026-08-19 定）：
@@ -6581,7 +6691,7 @@ export class Scene13WarLayer {
                 if (m.march && !inReach && !holdCmd) {
                     m.st = 0;
                     const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy);
-                    const step = stats.spd * spdK * dt;
+                    const step = stats.spd * spdK * this.uphillSpeedK(m.x, m.y, dx, dy) * dt;
                     if (stats.spd > 0 && d > LANE_TRACK_EPS) {
                         const mv = Math.min(step, d);
                         m.x += (dx / d) * mv;
@@ -6670,7 +6780,7 @@ export class Scene13WarLayer {
                         const bl = Math.hypot(bx, by) || 1;
                         mvx = bx / bl; mvy = by / bl;
                     }
-                    const step = stats.spd * spdK * (avoiding ? SLIDE_RATE : 1) * dt;
+                    const step = stats.spd * spdK * this.uphillSpeedK(m.x, m.y, mvx, mvy) * (avoiding ? SLIDE_RATE : 1) * dt;
                     const mv = Math.min(step, fd);   // 限制单步不超过剩余距离 fd，彻底杜绝跨过航点后每帧 180° 往返闪动
                     m.x += mvx * mv;
                     m.y += mvy * mv;
@@ -7030,7 +7140,7 @@ export class Scene13WarLayer {
                 //    见 LANE_TRACK_EPS 头注与 scratch/_probe_tremble_trace.mjs 的逐帧轨迹。
                 const slot = isGuard ? null : this.laneSlotTarget(m, laneLeaders);
                 const trackSlot = !!slot || m.march || isGuard;
-                const step = (m.hero && (slot || m.march) && this.spawns[m.lane] ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd) : stats.spd) * spdK * dt;
+                const step = (m.hero && (slot || m.march) && this.spawns[m.lane] ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd) : stats.spd) * spdK * this.uphillSpeedK(m.x, m.y, dx, dy) * dt;
                 const arriveAt = trackSlot ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
                 if (stats.spd > 0 && d > arriveAt) {
                     const mv = trackSlot ? Math.min(step, d) : step;   // 跟随锚点/列阵推进/原位警戒归位：连续跟随，不迈整步
@@ -7228,7 +7338,7 @@ export class Scene13WarLayer {
         this.corpses = this.corpses.filter(c => c.keep !== true);
         // 溃逃兵：反向移动 + 渐隐，跑完即消失（主人 2026-08-16）；穿林涉水同受地形减速
         for (const f of this.fleers) {
-            const fSpdK = this.terrainSpeedAt(f.x, f.y);
+            const fSpdK = this.terrainSpeedAt(f.x, f.y) * this.uphillSpeedK(f.x, f.y, f.vx, f.vy);
             f.t += dt;
             f.x += f.vx * fSpdK * dt;
             f.y += f.vy * fSpdK * dt;
@@ -7626,4 +7736,11 @@ export class Scene13WarLayer {
     /** 采样统计：返回 {n, avg, p50, p95, max}，全部保留两位 */
     private perfStat(a: number[]): Record<string, number> | null {
         if (!a.length) return null;
-        const s = [..
+        const s = [...a].sort((x, y) => x - y);
+        const sum = a.reduce((p, c) => p + c, 0);
+        const q = (f: number) => +s[Math.min(s.length - 1, Math.floor(s.length * f))].toFixed(2);
+        return { n: a.length, avg: +(sum / a.length).toFixed(2), p50: q(0.5), p95: q(0.95), max: +s[s.length - 1].toFixed(2) };
+    }
+
+
+}

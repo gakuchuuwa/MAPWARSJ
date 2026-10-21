@@ -4347,7 +4347,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -1,
             "offsetY": -12
         },
-        "/assets/WESTERN/gaochang_quwentai.png": {
+        "/assets/WESTERN/__闲置__WESTERN_38.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": -1
@@ -5771,11 +5771,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.15,
             "offsetX": 0,
             "offsetY": -29
-        },
-        "/assets/WESTERN/__闲置__WESTERN_38.png": {
-            "scale": 1.16,
-            "offsetX": 0,
-            "offsetY": 18
         },
         "/assets/WESTERN/weiwuer_yusubu.png": {
             "scale": 1.07,
@@ -8137,7 +8132,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/WEST_ASIA/bfe2_ramses_ii.png": {
+        "/assets/WEST_ASIA/__多余__WEST_ASIA_03.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 0
