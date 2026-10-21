@@ -3,7 +3,7 @@
  *
  * 🔴 [2026-08-25/26 主人定 C 方案：MARNET 打底 + 沿岸网，远洋惩罚我来定]
  *
- *    换掉的旧数据 public/assets/sea_routes.geojson 有两个硬伤（实测，不是印象）：
+ *    换掉的旧数据 public/data/sea_routes.geojson 有两个硬伤（实测，不是印象）：
  *      · 314 条**现代渡轮** + 239 条商业航线；途经苏伊士 90 个顶点、巴拿马 48 个
  *        —— 这两条运河在游戏年代都不存在
  *      · **图碎成 152 块**，最大分量只占 34.8% —— 而这份数据不只是背景参考，
@@ -19,7 +19,7 @@ const bad = (m: string) => { console.log(`  🔴 ${m}`); fail++; };
 
 interface Feat { properties?: Record<string, unknown>; geometry: { type: string; coordinates: unknown } }
 
-const COMBINED = 'public/assets/sea_routes_combined.geojson';
+const COMBINED = 'public/data/sea_routes_combined.geojson';
 const SRC = readFileSync('src/sea/SeaRouteEditor.ts', 'utf8');
 
 // ── ① 编辑器必须读合并版 ──

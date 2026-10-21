@@ -5,7 +5,7 @@
  *   scripts/source-data/shipping_lanes_v1.geojson  (CIA 全球航运线, 3 条 MultiLineString)
  *   scripts/source-data/ne_10m_roads.geojson       (Natural Earth 路网, 提 Ferry Route)
  * 输出:
- *   public/assets/sea_routes.geojson
+ *   public/data/sea_routes.geojson
  *
  * 每条 feature 打标:
  *   source: 'shipping_lane' | 'ferry'
@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 
 const SHIPPING_IN = path.join(__dirname, 'source-data/shipping_lanes_v1.geojson');
 const NE_ROADS_IN = path.join(__dirname, 'source-data/ne_10m_roads.geojson');
-const OUTPUT = path.join(__dirname, '../public/assets/sea_routes.geojson');
+const OUTPUT = path.join(__dirname, '../public/data/sea_routes.geojson');
 
 // ===== 1. 全球航运线：拆 MultiLineString → 单条 LineString =====
 const shipping = JSON.parse(fs.readFileSync(SHIPPING_IN, 'utf8'));

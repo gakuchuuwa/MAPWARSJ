@@ -88,7 +88,7 @@ console.log('\n全量连接数（遍历所有城池，不是只遍历有连接�
 //    落在网格上就等于船真能走。首尾两点是据点本身（城在陆上），不参与判定。
 console.log('\n海路可航性（中间点是否落在海路网格上）：');
 {
-    const NET = 'public/assets/sea_routes_combined.geojson';
+    const NET = 'public/data/sea_routes_combined.geojson';
     if (!existsSync(NET)) console.log('  ⚪ 缺 sea_routes_combined.geojson，跳过');
     else {
         const SNAP = 0.05;

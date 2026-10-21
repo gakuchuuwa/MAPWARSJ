@@ -31,9 +31,9 @@ from collections import defaultdict
 import numpy as np
 from scipy.spatial import cKDTree
 
-MARNET = 'public/assets/sea_routes_marnet.geojson'
-COASTAL = 'public/assets/sea_routes_coastal.geojson'
-OUT = 'public/assets/sea_routes_combined.geojson'
+MARNET = 'public/data/sea_routes_marnet.geojson'
+COASTAL = 'public/data/sea_routes_coastal.geojson'
+OUT = 'public/data/sea_routes_combined.geojson'
 
 STITCH_EVERY = 10       # 沿岸环上每隔几个点尝试接驳一次（≈90km 一个接口）
 STITCH_MAX_KM = 120.0   # 超过这个距离不接驳（中位数 105km，给一点余量）

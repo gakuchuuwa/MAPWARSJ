@@ -717,7 +717,7 @@ async function initEnvironment() {
         const [sites, koppen, rivers, manRaw, blendTab, water] = await Promise.all([
             loadJson('./sites.json'),
             loadJson('./koppen_01deg.json'),
-            loadJson('/public/assets/ne_10m_rivers_lake_centerlines.geojson'),
+            loadJson('/public/data/ne_10m_rivers_lake_centerlines.geojson'),
             loadJson('../../../scratch/de_terrain_manifest.json'),
             loadJson('../../../scratch/de_terrain_blend.json').catch(() => null),
             loadImg('../../../public/SUCAI_TERRAIN/water-anim/default.png')

@@ -2,7 +2,7 @@
  * SeaRouteEditor — 海路编辑器（独立于道路编辑器）
  *
  * 与 VectorRoadEditor 完全分离，专门编辑海上航线：
- *  - 路网底图：public/assets/sea_routes.geojson（Natural Earth Ferry Route + 手工历史航线）
+ *  - 路网底图：public/data/sea_routes.geojson（Natural Earth Ferry Route + 手工历史航线）
  *  - 点击两个港口城市 → 在海上航线上 Dijkstra 寻路 → 生成海路 → 保存到 VectorSeaRouteData.ts
  *  - 跨洋无既有航线时回退为「大圆航线（great-circle）」，供用户手动微调
  *
@@ -399,7 +399,7 @@ export class SeaRouteEditor implements IEditor {
             //      · stitch  571 条接驳边（沿岸点到最近主干点，≤120km），没有它两张图不通
             //    实测 328 座沿海城**全部**落在主网上；剩下的碎片是南北极和无城的太平洋孤岛。
             //    旧文件保留在 public/assets/ 未删，要对照随时能切回来。
-            const res = await fetch(`${basePath}assets/sea_routes_combined.geojson`);
+            const res = await fetch(`${basePath}data/sea_routes_combined.geojson`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const geojson = await res.json();
             if (!(await loadLandMask(`${basePath}${LAND_MASK_PATH}`))) {
