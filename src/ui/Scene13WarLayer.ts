@@ -85,7 +85,7 @@ import {
 } from './scene13/Scene13ProjectilesAndFx';
 
 import {
-    COLLAPSE_ANIM_DUR, HERO_ATTACK_RATE, HERO_HP_MULT, HERO_DAMAGE_TAKEN, dmgVs,
+    COLLAPSE_ANIM_DUR, HERO_ATTACK_RATE, HERO_HP_MULT, HERO_DAMAGE_TAKEN, HERO_SPEED_MULT, HERO_DAMAGE_MULT, dmgVs,
     HUSSITE_SECONDARY_SHOT, UNIT_PX, AIM_JITTER, CHASE_RING, STALL_GUARD_ENFORCE,
     MELEE_QUIET_SEC, NO_KILL_SEC, HARD_STOP_SEC, BATTLE_LIMIT_SEC, BLD_MIN_DESTROY_BASE,
     BLD_MIN_DESTROY_PER_SIDE, FLOW_SUB, PASS_INSIDE_DAMAGE_TAKEN, REMNANT_FRAC,
@@ -1069,7 +1069,7 @@ export class Scene13WarLayer {
     private stepHeroInput(m: WarMan, dt: number): boolean {
         const inp = this.heroInput;
         if (!inp) return false;
-        const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0);
+        const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
         const spd = this.statsFor(m.key, m.f).spd * spdK;
         const dx = inp.dx;
         const dy = inp.dy;
@@ -6320,7 +6320,7 @@ export class Scene13WarLayer {
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
             // 地形细分减速（森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
-            const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0);
+            const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
             // 【混】乱阵：处于混乱期的敌方前线士兵胡乱走动 8 秒（每隔 0.85~1.6 秒或受阻时随机换向，期间停止攻击，受近战 1.4x 伤害）
             if (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW && !isGuard) {
                 m.st = 0;
@@ -6975,7 +6975,7 @@ export class Scene13WarLayer {
                 const projectileDamageCount = ORGAN_GUN_TYPES.has(m.key) ? (PROJ_VOLLEY[m.key] ?? 1) : 1;
                 // 🔴 [2026-09-18 主人定·攻城武器无法近身攻击]
                 //    处于最小射程盲区（tooClose）内时严禁开火，主伤害严格为 0！
-                const primaryDamage = (!tooClose && m.accHit !== false) ? dmgVs(shooter, target) * projectileDamageCount : 0;
+                const primaryDamage = (!tooClose && m.accHit !== false) ? dmgVs(shooter, target) * projectileDamageCount * (m.hero ? HERO_DAMAGE_MULT : 1) : 0;
                 const secondaryHitCount = (!tooClose && (m.key === 'hussite_wagon' || m.key === 'elite_hussite_wagon'))
                     ? (m.hussiteSecondaryHits?.filter(Boolean).length ?? 0)
                     : 0;

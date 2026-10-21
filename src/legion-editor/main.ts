@@ -1410,7 +1410,7 @@ let catalogAgeFilter: 'all' | UnitAge = 'all';
 let catalogSrcFilter: 'all' | DeSourceType | 'none' = 'all';
 const getUnitSource = (id: string): DeSourceType | 'none' => DE_UNIT_SOURCE_TYPE[id] ?? 'none';
 const srcLabel = (t: DeSourceType | 'none'): string => t === 'none' ? '项目自建' : DE_SOURCE_TYPE_LABEL[t];
-let catalogSortCol: 'name' | 'id' | 'category' | 'subcategory' | 'source' | 'tier' | 'age' | 'hp' | 'atk' | 'rng' | 'power' | 'model' = 'name';
+let catalogSortCol: 'name' | 'id' | 'category' | 'subcategory' | 'source' | 'tier' | 'age' | 'hp' | 'atk' | 'rng' | 'spd' | 'power' | 'model' = 'name';
 let catalogSortAsc = true;
 let selectedUnitId: string | null = null;
 
@@ -5024,7 +5024,7 @@ function sortCatalogRows(): void {
             if (pa !== pb) return dir * (pa - pb);
             return a.name.localeCompare(b.name, 'zh-CN');
         }
-        if (catalogSortCol === 'hp' || catalogSortCol === 'atk' || catalogSortCol === 'rng') {
+        if (catalogSortCol === 'hp' || catalogSortCol === 'atk' || catalogSortCol === 'rng' || catalogSortCol === 'spd') {
             // 没属性的（船只等）一律沉底，不跟着正反序来回跳
             const sa = getUnitStats(a.id), sb = getUnitStats(b.id);
             if (!sa && !sb) return a.name.localeCompare(b.name, 'zh-CN');
@@ -5080,6 +5080,7 @@ function renderCatalogTable(): void {
           <th style="width:62px;" title="近防 / 远防（DE melee armor / pierce armor）">防</th>
           <th data-col="rng" style="width:58px;" title="DE max_range，单位「格」；白刃 = 贴身">射程${arrow('rng')}</th>
           <th style="width:52px;" title="DE reload_time 装填秒数，越小越快">射速</th>
+          <th data-col="spd" style="width:58px;" title="13 战术模式移速，单位像素/秒（DE 五维不含移速，这是本作自己的档位）；点表头可排序">移速${arrow('spd')}</th>
           <th data-col="id" style="width:170px;">兵种 ID${arrow('id')}</th>
           <th data-col="model" style="width:104px;" title="兵模标签 = 同一套素材（同一张/同一组贴图）；×人数 = 全库共用这个兵模的兵种数，「独」= 全库只有它自己用这套素材">兵模${arrow('model')}</th>
           <th>素材目录</th>
@@ -5117,6 +5118,7 @@ function renderCatalogTable(): void {
             <td class="stat-cell">${st ? `<span style="color:#9fb8c8;">${st.meleeArmor}/${st.pierceArmor}</span>` : dash}</td>
             <td class="stat-cell">${st ? (st.rng > 0 ? rangeInTiles(st.rng) : `<span style="color:#7a7266;">白刃</span>`) : dash}</td>
             <td class="stat-cell">${st ? st.reload : dash}</td>
+            <td class="stat-cell">${st ? `<b style="color:#8fc8a8;">${st.spd}</b>` : dash}</td>
             <td><span class="cell-id" style="margin-left:0;">${u.id}</span></td>
             <td><span class="sub-tag" style="font-family:monospace;${modelShared ? '' : 'color:#f0d080;'}" title="${modelShared ? '共用兵模（' + modelPeers.length + ' 个兵种）：' + modelPeers.join('、') : '独用兵模：全库只有它自己用这套素材'}">${modelTag}${modelShared ? ' ×' + modelPeers.length : ' 独'}</span></td>
             <td><span class="cell-path">${u.pathPrefix}</span></td>

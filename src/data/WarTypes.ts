@@ -347,7 +347,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     urumi_swordsman: { name: '达罗毗荼软剑士', cls: 'melee', sz: 1, hp: 55, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 44, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
     war_chariot: { name: '双轮战车', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 54, dmgType: 'melee', bonus: { 1: 5 }, armorTags: [8, 19, 31] },
     // 🔴 [2026-09-17 主人定 / 2026-10-08 改定] 先秦军团战车射程恢复为 240
-    war_chariot_ranged: { name: '先秦远程战车', cls: 'cav', sz: 1, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 36, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [8, 20, 19, 31, 37] },
+    war_chariot_ranged: { name: '先秦远程战车', cls: 'cav', sz: 1, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 52, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [8, 20, 19, 31, 37] },
     war_dog: { name: '战犬', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1.7, spd: 42, dmgType: 'melee', armorTags: [29, 31] },
     war_wagon: { name: '高丽战车', cls: 'cav', sz: 1, hp: 150, atk: 9, meleeArmor: 0, pierceArmor: 2, rng: 160, reload: 2.5, spd: 48, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
     warrior_priest: { name: '亚美尼亚修士战士高级', cls: 'melee', sz: 1, hp: 80, atk: 11, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 34, dmgType: 'melee', armorTags: [1, 25, 19, 31] },

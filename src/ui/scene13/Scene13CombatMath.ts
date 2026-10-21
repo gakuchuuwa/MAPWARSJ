@@ -7,9 +7,13 @@ import type { WarBuilding, WarMan } from './Scene13Types';
  *  改 8.33 对齐 DE 的坍塌速度。 */
 export const COLLAPSE_ANIM_DUR = 8.33;
 
-export const HERO_ATTACK_RATE = 2.0;
-export const HERO_HP_MULT = 3.0;
-export const HERO_DAMAGE_TAKEN = 0.3;
+// 🔴 [2026-10-21 主人令「提高乱入者战术模式中的各项属性，尤其是行军速度」]
+//    攻速 2.0→2.5｜血量 ×3→×6｜受到伤害 ×0.3→×0.2｜新增：移速 ×1.8（键盘/自动行进一律）、出手伤害 ×1.5。
+export const HERO_ATTACK_RATE = 2.5;
+export const HERO_HP_MULT = 6.0;
+export const HERO_DAMAGE_TAKEN = 0.2;
+export const HERO_SPEED_MULT = 1.8;
+export const HERO_DAMAGE_MULT = 1.5;
 
 /**
  * 单次出手伤害（纯 DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防)。
