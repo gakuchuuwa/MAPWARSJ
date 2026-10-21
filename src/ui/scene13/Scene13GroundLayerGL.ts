@@ -130,6 +130,7 @@ uniform sampler2D uGrassTex;
 uniform sampler2D uSandTex;
 uniform sampler2D uForestTex;
 uniform sampler2D uWaterTex;
+uniform sampler2D uMoatWaterTex;
 uniform sampler2D uDirtTex;
 uniform sampler2D uDryTex;
 uniform float uMapSize;
@@ -265,8 +266,10 @@ void main() {
     // 液态水体：以气候水体贴图 uWaterTex 本色为基底（碧绿河水/浑浊沼泽/蔚蓝海面各司其职）
     vec2 wuv1 = fract(vGUV * 0.22 + vec2(uTime * 0.028, uTime * 0.014));
     vec2 wuv2 = fract(vGUV * 0.27 + vec2(-uTime * 0.019, uTime * 0.022));
-    vec3 wave1 = texture2D(uWaterTex, wuv1).rgb;
-    vec3 wave2 = texture2D(uWaterTex, wuv2).rgb;
+    // 🔴 [2026-10-21 主人令「淡水一种，海水一种」] 护城河格（field.b 标记）改采淡水色贴图 uMoatWaterTex；其余水格用本图主水色 uWaterTex
+    float moatMark = smoothstep(0.02, 0.09, field.b);
+    vec3 wave1 = mix(texture2D(uWaterTex, wuv1).rgb, texture2D(uMoatWaterTex, wuv1).rgb, moatMark);
+    vec3 wave2 = mix(texture2D(uWaterTex, wuv2).rgb, texture2D(uMoatWaterTex, wuv2).rgb, moatMark);
     vec3 rawWater = (wave1 + wave2) * 0.5;
     float luma = dot(rawWater, vec3(0.299, 0.587, 0.114));
     float liftScale = luma < 0.26 ? 1.48 : 1.12;
@@ -284,6 +287,10 @@ void main() {
     float rip2 = cos(ripUV.x * 1.5 - ripUV.y * 2.8 - uTime * 1.6);
     float shimmer = pow(clamp(rip1 * rip2 * 0.5 + 0.5, 0.0, 1.0), 5.0) * (1.0 - isDeepWater * 0.4);
     waterCol += vec3(0.12, 0.16, 0.20) * shimmer;
+
+    // 🔴 [2026-10-21 主人报「护城河水有点蓝，有浅色的水吗」] 护城河格在 field.b 里写了个很小的标记（0.12，远低于森林阈值，水格本无森林），
+    //    只在护城河上把水色往浅青绿（DE 浅滩 Shallows 的清透感）调淡；河、湖、海不带标记，不受影响。
+    waterCol = mix(waterCol, vec3(0.58, 0.76, 0.72) + vec3(0.12, 0.16, 0.20) * shimmer, moatMark * 0.55);
 
     // 岸边动态拍岸涌浪与碎浪泡沫（DE 标志性动态浪花，随潮汐向沙滩推涌）
     float waveTide = sin(uTime * 1.6 + (vGUV.x * 0.4 + vGUV.y * 0.8) * 0.15) * 0.025;
@@ -442,6 +449,7 @@ export class Scene13GroundLayerGL {
   private sandTex: WebGLTexture | null = null;
   private forestTex: WebGLTexture | null = null;
   private waterTex: WebGLTexture | null = null;
+  private moatWaterTex: WebGLTexture | null = null;
   private dirtTex: WebGLTexture | null = null;
   private dryTex: WebGLTexture | null = null;
   public isIce = false;
@@ -637,6 +645,7 @@ export class Scene13GroundLayerGL {
       uSandTex: U('uSandTex'),
       uForestTex: U('uForestTex'),
       uWaterTex: U('uWaterTex'),
+      uMoatWaterTex: U('uMoatWaterTex'),
       uDirtTex: U('uDirtTex'),
       uDryTex: U('uDryTex'),
     };
@@ -904,6 +913,12 @@ export class Scene13GroundLayerGL {
       gl.activeTexture(gl.TEXTURE4);
       gl.bindTexture(gl.TEXTURE_2D, this.waterTex);
       gl.uniform1i(this.loc.uWaterTex as WebGLUniformLocation, 4);
+    }
+    // 护城河淡水色：没单独设置时沿用主水色，保证着色器两个水采样器都有图
+    if (this.moatWaterTex ?? this.waterTex) {
+      gl.activeTexture(gl.TEXTURE7);
+      gl.bindTexture(gl.TEXTURE_2D, (this.moatWaterTex ?? this.waterTex) as WebGLTexture);
+      gl.uniform1i(this.loc.uMoatWaterTex as WebGLUniformLocation, 7);
     }
     if (this.dirtTex) {
       gl.activeTexture(gl.TEXTURE5);
@@ -1239,7 +1254,7 @@ export class Scene13GroundLayerGL {
       this.smoothForest[i] = 0;
       px[i * 4 + 0] = Math.max(px[i * 4 + 0], Math.round(lvl * 255));
       px[i * 4 + 1] = Math.max(px[i * 4 + 1], Math.round((1 - lvl * 0.55) * 140));
-      px[i * 4 + 2] = 0;
+      px[i * 4 + 2] = 30;   // 护城河/引水渠标记（见着色器 moatMark；水格没有森林，不会误触发林地）
       if (lvl >= 0.45) hitWater.push(i);
     }
     // 为护城河紧邻一圈岸线格补写湿沙过渡带（G 通道），消除生硬蓝边直切草地
@@ -2789,6 +2804,22 @@ export class Scene13GroundLayerGL {
     this.fieldDirty = false;
   }
 
+  /** 护城河淡水色贴图（见着色器 uMoatWaterTex） */
+  public setMoatWaterImage(img: HTMLImageElement, tile: string): void {
+    const gl = this.gl;
+    const tex = gl.createTexture();
+    if (!tex) return;
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    attachTexImage(tex, img, tile);
+    if (this.moatWaterTex) gl.deleteTexture(this.moatWaterTex);
+    this.moatWaterTex = tex;
+  }
+
   public destroy(): void {
     const gl = this.gl;
     if (this.buf) gl.deleteBuffer(this.buf);
@@ -2797,6 +2828,7 @@ export class Scene13GroundLayerGL {
     if (this.sandTex) gl.deleteTexture(this.sandTex);
     if (this.forestTex) gl.deleteTexture(this.forestTex);
     if (this.waterTex) gl.deleteTexture(this.waterTex);
+    if (this.moatWaterTex) gl.deleteTexture(this.moatWaterTex);
     if (this.dirtTex) gl.deleteTexture(this.dirtTex);
     if (this.dryTex) gl.deleteTexture(this.dryTex);
     gl.deleteProgram(this.prog);
@@ -2835,6 +2867,11 @@ export class Scene13GroundLayerGL {
     if (layer.sandTex) attachTexImage(layer.sandTex, sand.img, sand.tile);
     if (layer.forestTex) attachTexImage(layer.forestTex, forest.img, forest.tile);
     if (layer.waterTex) attachTexImage(layer.waterTex, water.img, water.tile);
+    // 护城河淡水色（与主水色相同就不另建贴图）
+    if (tiles?.moatWater && tiles.moatWater !== water.tile) {
+      const moat = await loadTile(tiles.moatWater, water.tile);
+      if (moat.img) layer.setMoatWaterImage(moat.img, moat.tile);
+    }
     if (layer.dirtTex) attachTexImage(layer.dirtTex, dirt.img, dirt.tile);
     if (layer.dryTex) attachTexImage(layer.dryTex, dry.img, dry.tile);
     return layer;

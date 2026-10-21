@@ -23,6 +23,7 @@ import {
     forestFloorTilesForTheme,
     beachTerrainForTheme,
     waterTerrainForTheme,
+    freshWaterTileForStyle,
     resolveDeMapTheme,
     terrainForTheme,
     type DeMapThemeId,
@@ -59,8 +60,10 @@ export interface Scene13GroundTiles {
     sand: string;
     /** 森林底（林下腐殖土等） */
     forest: string;
-    /** 水体 */
+    /** 水体（海边的图＝海水色；河/湖图＝淡水色） */
     water: string;
+    /** 护城河/引水渠的水（淡水色；与 water 相同时不另采样） */
+    moatWater?: string;
     /** 泥土/黄褐土斑块（DIRT） */
     dirt?: string;
     /** 旱草/枯草/副地表（DRY GRASS / GRAVEL） */
@@ -270,7 +273,16 @@ export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13Cl
                 : isSnowBase
                     ? 'snf'
                     : forestFloorTilesForTheme(theme, biome, season, input.lat ?? 35, elev, input.lng)[0],
-            water: waterTerrainForTheme(theme, season, input.lat ?? 35, elev, biome, input.lng),
+            // 🔴 [2026-10-21 主人令「一个据点图用一种水；淡水一种，海水一种」] 海边的图用海水色；河、湖、无水的图用该文化区的淡水色；
+            //    护城河一律淡水色（moatWater）。冬季结冰（ic2）不换色。
+            water: ((): string => {
+                const sea = waterTerrainForTheme(theme, season, input.lat ?? 35, elev, biome, input.lng);
+                return (waterKind === 'sea' || sea === 'ic2') ? sea : freshWaterTileForStyle(buildingStyle);
+            })(),
+            moatWater: ((): string => {
+                const sea = waterTerrainForTheme(theme, season, input.lat ?? 35, elev, biome, input.lng);
+                return sea === 'ic2' ? sea : freshWaterTileForStyle(buildingStyle);
+            })(),
             dirt: themeDirt,
             dry: themeDry,
         };

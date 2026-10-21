@@ -2,12 +2,12 @@
  * 非洲 BGM 合成器 —— 生成一首**纯器乐**的非洲风格曲（撒哈拉以南：djembe 鼓组 + kora 拨弦 + balafon 木琴 + 沙锤 + 低音鼓）。
  *
  * 为什么要自己合成（2026-10-02 主人令）：
- *   原 `public/assets/bgm/AFRICA_bgm.aud` 是 **Baba Yetu（Christopher Tin，带人声的歌曲）** ——
+ *   原 `public/bgm/AFRICA_bgm.aud` 是 **Baba Yetu（Christopher Tin，带人声的歌曲）** ——
  *   主人定「BGM 不许是歌、要纯音乐」（人声会盖住行军播报），且那首是受版权保护的商业作品。
  *   网上能免费下载的非洲曲目要么版权不明、要么同样带人声，所以这里**自己合成一首**：无版权问题、确定纯器乐、可复现可调。
  *
  * 用法：node tools/africa_bgm_synth.mjs <输出.wav>
- *   然后 `ffmpeg -i out.wav -af "aecho=...,loudnorm=..." -c:a libvorbis public/assets/bgm/AFRICA_bgm.aud`
+ *   然后 `ffmpeg -i out.wav -af "aecho=...,loudnorm=..." -c:a libvorbis public/bgm/AFRICA_bgm.aud`
  *   最后 `npm run bgm:audit` 核准响度并把实测 LUFS 写回 `BGM_REGION_GAIN.AFRICA`。
  *
  * 曲子规格：D 小调五声音阶（D F G A C）· 104 BPM · 4/4 · 64 小节 ≈ 2:28 · 44.1kHz 立体声 16bit。

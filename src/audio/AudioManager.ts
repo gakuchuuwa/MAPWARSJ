@@ -219,7 +219,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     flamethrower_fire: sounds('battle', ['flamethrower_fire_1', 'flamethrower_fire_2', 'flamethrower_fire_3', 'flamethrower_fire_4', 'flamethrower_fire_5'], 0.65, 500),
     // DE 战术开战冲锋号角 Charge Horn (wem 450474346，-26.8 LUFS)
     battle_horn: sound('battle', 'battle_horn', 0.60, 3000),
-    bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
+    bgm_main: { category: 'bgm', sources: ['/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 
 function sound(
@@ -519,14 +519,14 @@ korea_a: 0.646,  // -17.2 LUFS
     magyar_b: 0.661,  // -17.4 LUFS
     lithuanians_a: 0.708,  // -18.0 LUFS
     // 🔴 [2026-10-18 主人令「把这个曲子删除」] lithuanians_b（立陶宛排箫 Skudučiai）已删除：
-    //    文件 public/assets/bgm/lithuanians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.LITHUANIANS 同步移除。
+    //    文件 public/bgm/lithuanians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.LITHUANIANS 同步移除。
     bulgarians_a: 0.661,  // -17.4 LUFS
     bulgarians_b: 0.653,  // -17.3 LUFS
     byzantine_a: 0.750,  // -18.5 LUFS
     byzantine_b: 0.676,  // -17.6 LUFS
     armenians_a: 0.767,  // -18.7 LUFS
     // 🔴 [2026-10-20 主人令「把亚美尼亚卡农琴 Kanun [armenians_b]删除。把这个曲子删除。」] armenians_b（亚美尼亚卡农琴 Kanun）已删除：
-    //    文件 public/assets/bgm/armenians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.ARMENIANS 同步移除。
+    //    文件 public/bgm/armenians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.ARMENIANS 同步移除。
     georgians_a: 0.716,  // -18.1 LUFS
     georgians_b: 0.716,  // -18.1 LUFS
     latin_a: 0.610,  // -16.7 LUFS
@@ -545,7 +545,7 @@ korea_a: 0.646,  // -17.2 LUFS
     khmer_a: 0.716,  // -18.1 LUFS
     khmer_b: 0.700,  // -17.9 LUFS
     // 🔴 [2026-10-18 主人令「删除，越南独弦琴 Dan Bau [vietnamese_a]」] vietnamese_a 已删除：
-    //    文件 public/assets/bgm/vietnamese_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.VIETNAMESE 同步移除。
+    //    文件 public/bgm/vietnamese_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.VIETNAMESE 同步移除。
     vietnamese_b: 0.668,  // -17.5 LUFS
     malay_a: 0.716,  // -18.1 LUFS
     malay_b: 0.708,  // -18.0 LUFS
@@ -1321,7 +1321,7 @@ export class AudioManager {
      *    · 开场那一首也从全库随机 —— 原来分两条「按人物定曲子」的路，实测都会把开场锁死：
      *      ① 立绘夹专属 BGM（`portraitDir`，如 CENTRAL/LATIN/manqing…）→ 实测开局连开三局**全是 CENTRAL**
      *         （`node scratch/_probe_bgm_branch.mjs` 打出：lastBgmRequest.portraitPath = /assets/CENTRAL/__闲置__CENTRAL_43.png
-     *         → cameraRegionFolder=CENTRAL → /assets/bgm/CENTRAL_bgm.aud），主人听着就是「BGM 是固定的」；
+     *         → cameraRegionFolder=CENTRAL → /bgm/CENTRAL_bgm.aud），主人听着就是「BGM 是固定的」；
      *      ② 16 母体文化池（马其顿所在 LATIN 池只有两首）→ 每局也都是那两首之一。
      *    · 保留不动的两条老规矩：**有歌在放就绝不打断**（applyCameraFolder，2026-09-16「都听到」）、
      *      文件缺失回落 `GENERIC_BGM_FALLBACK`。
@@ -1404,10 +1404,10 @@ export class AudioManager {
     }
 
     /** 播放某文化区/势力夹 BGM；单曲不循环，放完在全部有效曲目中洗牌轮播。
-     *  集中目录：public/assets/bgm/{folder}_bgm.aud（2026-08-04 集中管理，原分散各立绘夹） */
+     *  集中目录：public/bgm/{folder}_bgm.aud（2026-08-04 集中管理，原分散各立绘夹） */
     private playBgmFolder(folder: string): void {
         folder = resolveAvailableBgmFolder(folder);
-        const src = `/assets/bgm/${folder}_bgm.aud`;
+        const src = `/bgm/${folder}_bgm.aud`;
         // 同一首已在播 → 跳过（dedup 用逻辑路径，blob URL 无法比对）
         if (this.currentBgmSrc === src && this.bgmAudio && !this.bgmAudio.paused) return;
         this.currentBgmFolder = folder;

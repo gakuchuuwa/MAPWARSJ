@@ -837,6 +837,29 @@ export function waterTerrainForTheme(
     return 'wtr';
 }
 
+/**
+ * 🔴 [2026-10-21 主人令「一个据点图用一种水；护城河、河流、湖泊淡水一种，海水一种；按真实地理和历史分给 66 个建筑文化区」]
+ * 淡水（河、湖、护城河）的水色按**据点建筑文化**定；海水仍走 `waterTerrainForTheme`（DE F_seasons 的地中海/热带蔚蓝海规则）。
+ * DE 自带的水色贴图：标准 wtr（蓝绿）｜黄 wt_yellow（DE 的 PH_ASIAN 东亚黄水）｜绿 wt_green｜褐 wt_brown。
+ *   · 黄水＝黄河流域含沙量大：中原 CENTRAL、河朔 WEI、漠南 XIANBEI、河西/契丹 KHITAN（黄河、辽河）；
+ *   · 绿水＝水清的江南山水与山溪：江南 JIANGNAN、巴蜀 BASHU、朝鲜 KOREA、日本 JAPAN；
+ *   · 褐水＝大型冲积平原泥沙河（恒河/印度河、伊洛瓦底、湄公河、红河、尼罗河、两河、尼日尔/刚果、亚马孙）：
+ *     印度 INDIA/PURU/BENGALIS/MUGHAL、缅 BURMESE、高棉 KHMER、越 VIETNAMESE、近东 ORIE（尼罗河/两河）、
+ *     非洲 AFRICA、埃塞俄比亚 ETHIOPIANS（青尼罗河）、图皮 TUPI（亚马孙）；
+ *   · 其余（欧洲、草原、高原、地中海、波斯等）保持 DE 标准水 wtr。
+ */
+const FRESH_WATER_BY_STYLE: Readonly<Record<string, string>> = {
+    CENTRAL: 'wt_yellow', WEI: 'wt_yellow', XIANBEI: 'wt_yellow', KHITAN: 'wt_yellow',
+    JIANGNAN: 'wt_green', BASHU: 'wt_green', KOREA: 'wt_green', JAPAN: 'wt_green',
+    INDIA: 'wt_brown', PURU: 'wt_brown', BENGALIS: 'wt_brown', MUGHAL: 'wt_brown',
+    BURMESE: 'wt_brown', KHMER: 'wt_brown', VIETNAMESE: 'wt_brown', ORIE: 'wt_brown',
+    AFRICA: 'wt_brown', ETHIOPIANS: 'wt_brown', TUPI: 'wt_brown',
+};
+
+export function freshWaterTileForStyle(buildingStyle: string | undefined | null): string {
+    return (buildingStyle && FRESH_WATER_BY_STYLE[buildingStyle]) || 'wtr';
+}
+
 export function beachTerrainForTheme(
     theme: DeMapThemePalette,
     season: 0 | 1 | 2,

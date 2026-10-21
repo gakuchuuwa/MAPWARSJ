@@ -15,7 +15,7 @@ import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const BGM_DIR = path.join(ROOT, 'public/assets/bgm');
+const BGM_DIR = path.join(ROOT, 'public/bgm');
 const TARGET = -21.0;
 const TOL = 1.0;            // 容差 ±1dB：听感上基本察觉不到
 

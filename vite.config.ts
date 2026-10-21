@@ -611,7 +611,7 @@ export default defineConfig({
                 // 🔴 [2026-10-02 主人令「建立一个自助编辑器，让我自己安排城门/城垛/城墙，设计好后保存样式」]
                 //   围栏编辑器 /api/stockade-wall-editor/save（页面 /stockade-wall-editor.html）
                 //   一次写两处，免得手抄漏配：
-                //     ① public/assets/stockade_wall_styles.json —— 编辑器自己读回来接着改
+                //     ① public/data/stockade_wall_styles.json —— 编辑器自己读回来接着改
                 //     ② src/data/stockadeWallStyles.ts        —— **游戏 import 用**（构建期就带上）
                 //   前端已按「围栏三件套标准」校验过（validateStockadeRing），服务端再兜一道：
                 //   有违规就拒绝写盘，绝不让不合标准的样式进游戏。
@@ -670,7 +670,7 @@ export default defineConfig({
                                 }
                             }
                             // ── ① JSON（编辑器读）──
-                            const jsonPath = path.resolve(__dirname, 'public/assets/stockade_wall_styles.json');
+                            const jsonPath = path.resolve(__dirname, 'public/data/stockade_wall_styles.json');
                             serverSafeWriteFileSync(jsonPath, JSON.stringify({
                                 generatedFrom: 'stockade-wall-editor.html',
                                 rule: '围栏三件套标准：城门 / 城垛 / 城墙（NE·SE）—— 朝向一变必须有城垛、城门只一扇且两边接城墙、城垛两边接城墙',
@@ -743,7 +743,7 @@ export default defineConfig({
                             const tsPath = path.resolve(__dirname, 'src/data/stockadeWallStyles.ts');
                             serverSafeWriteFileSync(tsPath, tsLines.join('\n'));
                             const assigned = styles.reduce((n: number, s: any) => n + (Array.isArray(s.applyTo) ? s.applyTo.length : 0), 0);
-                            console.log(`[StockadeWallEditor] ✅ 保存 ${styles.length} 套样式（指派 ${assigned} 座据点）→ public/assets/stockade_wall_styles.json + src/data/stockadeWallStyles.ts`);
+                            console.log(`[StockadeWallEditor] ✅ 保存 ${styles.length} 套样式（指派 ${assigned} 座据点）→ public/data/stockade_wall_styles.json + src/data/stockadeWallStyles.ts`);
                             res.end(JSON.stringify({ ok: true, styles: styles.length, assigned, files: 'stockade_wall_styles.json + stockadeWallStyles.ts' }));
                         } catch (err: any) {
                             console.error('[StockadeWallEditor] ❌ 保存失败:', err.message);
