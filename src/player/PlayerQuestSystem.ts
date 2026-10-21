@@ -2166,6 +2166,9 @@ export class PlayerQuestSystem {
         host.isRetreatingHome = false;
         host.weakCheckAfterBattle = false;
         host.expeditionUnlocked = true;
+        // 🔴 [2026-10-21 主人报「姬发每次打完剧情都卡，战术模式结束后立马又战术模式」] 首战一打完就直扑邻近敌城，
+        //    前一场战术场景还没收干净，下一场攻城战的战术场景又进来 → 卡住。打完留一段休整（游戏秒），先让战术场景收尾再出征。
+        host.startPostBattleRest();   // 用现有的战后驻留设定（GameConfig TIME.POST_BATTLE_REST），不另起时长
 
         this.deps.hero.addMerit(500);
         const anchorCity =
