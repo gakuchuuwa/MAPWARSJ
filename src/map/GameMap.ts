@@ -18,7 +18,6 @@ import { VegetationLayer } from './VegetationLayer';
 import { MarineLifeLayer, registerMarineLifeLayer } from './MarineLifeLayer';
 import { setAnimalAmbientLayerVisible, setLandAnimalVisible, setFlyingAnimalVisible } from './AnimalAmbientLayer';
 import { setTradeTrafficLayerVisible } from './TradeTrafficLayer';
-import { ROAD_LAYER_VISIBLE_BY_DEFAULT } from '../roads/SimpleVectorRoadRenderer';
 import { isMacroMapZoom } from '../config/StrategicView';
 import { gameLog } from '../utils/GameLogger';
 
@@ -270,7 +269,7 @@ export class GameMap {
     /** 线上部署：无右侧 Leaflet 面板，仍启用与开发版相同的默认图层 */
     private applyProductionMapDefaults(): void {
         this.applyDefaultMapVisuals(false);
-        window.dispatchEvent(new CustomEvent('toggle-road-layer', { detail: { visible: ROAD_LAYER_VISIBLE_BY_DEFAULT } }));
+        window.dispatchEvent(new CustomEvent('toggle-road-layer', { detail: { visible: false } }));
         window.dispatchEvent(new CustomEvent('toggle-city-texture', { detail: { visible: true } }));
     }
 
@@ -1247,8 +1246,8 @@ export class GameMap {
 
             const chkRoad = document.getElementById('chk-road') as HTMLInputElement;
             if (chkRoad) {
-                chkRoad.checked = ROAD_LAYER_VISIBLE_BY_DEFAULT;
-                window.dispatchEvent(new CustomEvent('toggle-road-layer', { detail: { visible: ROAD_LAYER_VISIBLE_BY_DEFAULT } }));
+                chkRoad.checked = false;
+                window.dispatchEvent(new CustomEvent('toggle-road-layer', { detail: { visible: false } }));
                 chkRoad.addEventListener('change', (e: any) => {
                     window.dispatchEvent(new CustomEvent('toggle-road-layer', {
                         detail: { visible: e.target.checked }

@@ -21,7 +21,7 @@ import { CityEditor } from '../editors/CityEditor';
 import { VectorRoadEditor } from '../roads/VectorRoadEditor';
 import { ArmyEditor } from '../editors/ArmyEditor';
 import { UnifiedEditorManager } from '../editors/UnifiedEditorManager';
-import { SimpleVectorRoadRenderer, ROAD_LAYER_VISIBLE_BY_DEFAULT } from '../roads/SimpleVectorRoadRenderer';
+import { SimpleVectorRoadRenderer } from '../roads/SimpleVectorRoadRenderer';
 import { FACTIONS } from '../data/factions';
 import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { FactionTintSystem } from '../systems/tinting/FactionTintSystem';
@@ -663,9 +663,6 @@ export class GameApp {
             this.roadRenderer = new SimpleVectorRoadRenderer(this.map.getLeafletMap());
             this.roadRenderer.setYear(this.timeSystem.getYear());
             this.timeSystem.onYearChange((y) => this.roadRenderer.setYear(y));
-            // 🔴 2026-10-21 主人令「中原要美化」第一步：官道默认显示。
-            //   注意必须在这里开：GameMap 构造函数里派的 toggle-road-layer 事件早于本渲染器创建，收不到。
-            this.roadRenderer.toggle(ROAD_LAYER_VISIBLE_BY_DEFAULT);
 
             if (import.meta.env.DEV) {
                 this.roadEditor = new VectorRoadEditor(this.map.getLeafletMap(), this.cityManager);

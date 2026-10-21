@@ -98,8 +98,12 @@ export function migratePortraitAdjustKeys(root, moves, opts = {}) {
     const byKey = new Map(entries.map((e) => [e.key, e]));
     const remap = new Map();                       // from → to
     for (const mv of moves) {
-        if (!mv?.folder || !mv?.from || !mv?.to) continue;
-        remap.set(`/assets/${mv.folder}/${mv.from}`, `/assets/${mv.folder}/${mv.to}`);
+        if (!mv) continue;
+        // 同夹改名：folder + from/to；跨夹迁移（武将立绘归文化夹）：直接给 fromWeb/toWeb
+        const fromWeb = mv.fromWeb ?? (mv.folder && mv.from ? `/assets/${mv.folder}/${mv.from}` : null);
+        const toWeb = mv.toWeb ?? (mv.folder && mv.to ? `/assets/${mv.folder}/${mv.to}` : null);
+        if (!fromWeb || !toWeb) continue;
+        remap.set(fromWeb, toWeb);
     }
 
     // 先把要搬的值整体读出来，再统一写回 —— 顺序替换会让 a→b、b→c 串味

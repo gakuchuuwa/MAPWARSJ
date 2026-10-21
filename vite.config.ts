@@ -3937,8 +3937,9 @@ function serverGetCurrentPortraitPath(filePath: string, generalId: string): stri
     return m?.[1] ?? null;
 }
 
-// 立绘分类改名的口径与 TOOL/rename_duplicate_idle_portraits.mjs 保持一致：
-//   未引用 + 同文件夹重复 → __多余__；仅跨文件夹重复 → __暂留__；独一无二 → __闲置__
+// 立绘分类改名的口径与 tools/rename_duplicate_idle_portraits.mjs 保持一致：
+//   未引用 + 全库有同图（同夹/跨夹都算）→ __多余__；全库独一无二 → __闲置__
+//   （2026-10-21 主人令：__暂留__ 与 __多余__ 合并，不再区分文件夹）
 const PORTRAIT_SCAN_EXCLUDE_TOP = new Set(['avg', 'bgm_backup', 'inbox']);
 
 /** 遍历 public/assets 下参与比对的立绘（排除 avg/bgm_backup/inbox 与 _prev_ 备份） */
@@ -4002,11 +4003,13 @@ function serverDuplicateScope(
 /**
  * 取某夹下一个空闲的 __{前缀}__{夹名}_{NN}.png 名。
  * 编号取全库（同前缀 + 同 token）最大值 +1，保证跨夹不重名——与启动期分类脚本同一口径。
+ * 🔴 [2026-10-21 主人令「__暂留__ 和 __多余__ 合并，不再区分文件夹」] 现在只有「多余 / 闲置」两档前缀；
+ * NUM_RE 仍认旧 `__暂留__` 名，只为存量编号不撞号（存量会在下次 dev 启动被脚本改名）。
  */
 function serverNextClassifiedName(
     publicAssetsRoot: string,
     dirAbs: string,
-    prefix: '闲置' | '暂留' | '多余',
+    prefix: '闲置' | '多余',
 ): string {
     const token = path.basename(dirAbs);
     const key = `${prefix}|${token.toLowerCase()}`;
@@ -4028,10 +4031,13 @@ function serverNextClassifiedName(
     return name;
 }
 
-/** 被顶下来的旧立绘按重复范围分类：同夹 → __多余__，跨夹 → __暂留__，无重复 → __闲置__。 */
+/**
+ * 被顶下来的旧立绘按重复范围分类（2026-10-21 合并后）：
+ * 全库还有同图（同夹或跨夹都算）→ __多余__；全库无同图 → __闲置__。
+ */
 function serverNextDemotedName(publicAssetsRoot: string, dirAbs: string, fileAbs: string): string {
     const scope = serverDuplicateScope(publicAssetsRoot, fileAbs);
-    const prefix = scope === 'same-folder' ? '多余' : scope === 'cross-folder' ? '暂留' : '闲置';
+    const prefix = scope === 'none' ? '闲置' : '多余';
     return serverNextClassifiedName(publicAssetsRoot, dirAbs, prefix);
 }
 
@@ -4151,8 +4157,9 @@ function serverBindGeneralPortrait(
             console.log(`  🗂️  [BindPortrait] 目标位置旧立绘退役 → ${backupName}`);
         }
         // ③ 源图 → 目标（始终在源图自己的文件夹内，不跨文化区）：
-        //    闲置/暂留图直接改名「认领」，不留重复；其它图复制（可能被他人共用，不夺走源图）。
-        if (/^__(闲置|暂留)__/.test(path.basename(srcAbs))) {
+        //    闲置/多余图直接改名「认领」，不留重复；其它图复制（可能被他人共用，不夺走源图）。
+        //    （旧 __暂留__ 名仍按「可认领」处理，只兼容存量；2026-10-21 起分类脚本不再产生该前缀）
+        if (/^__(闲置|暂留|多余)__/.test(path.basename(srcAbs))) {
             fs.renameSync(srcAbs, destAbs);
             adjustMoves.push({ from: sourceWebPath, to: destWeb });
         } else {
