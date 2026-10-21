@@ -124,6 +124,8 @@ export interface PlayerQuest {
         enemyFactionId: string;
         enemyTroops: number;
         enemyGeneralId?: string;
+        /** 野战首战打赢后按史实指定的奖励据点 */
+        rewardCityId?: string;
         /** 野战首战：敌军等攻方抵达战场才生成（生成前为 true） */
         enemySpawnPending?: boolean;
         enemyLegionName?: string;
@@ -1872,6 +1874,7 @@ export class PlayerQuestSystem {
                 enemyFactionId,
                 enemyTroops,
                 enemyGeneralId,
+                rewardCityId: fb.rewardCityId,
                 enemySpawnPending: effectiveBattleType === 'field',
                 enemyLegionName,
                 enemyPortrait: existingEnemyGen?.portrait || undefined,
@@ -2131,8 +2134,10 @@ export class PlayerQuestSystem {
         if (fbState?.battleType === 'field') {
             const cities = this.deps.cityManager.getCities();
             const battlePos = { lat: fbState.targetLat, lng: fbState.targetLng };
-            let reward = fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
-            if (!reward || reward.factionId === q.factionId) {
+            // 🔴 [2026-10-21 主人令「奖励不要搞最近据点，按历史做成指定据点」] 先取史实指定的奖励据点，没指定的才走下面的旧规则
+            const fixedReward = fbState.rewardCityId ? this.deps.cityManager.getCity(fbState.rewardCityId) : undefined;
+            let reward = fixedReward ?? (fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined);
+            if (!fixedReward && (!reward || reward.factionId === q.factionId)) {
                 let best: City | undefined;
                 let bestDist = Infinity;
                 for (const c of cities) {
