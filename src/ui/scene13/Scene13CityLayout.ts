@@ -881,6 +881,10 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         }
     }
 
+    // 🔴 [2026-10-21 主人报「DD 昨天把护城河删了」] 10-19 版这里有 flushFoundation()：把护城河/引水渠写进水体势场、
+    //    城下地基的改动一次上传到 GPU；拆模块时漏了这一行，水只写进内存没上传，护城河就画不出来。
+    gl.flushFoundation();
+
     // ── 按真实山地地理与据点种子，在城外围的高地平顶台面（>= 1.8 级）中心摆放 DE 大山模型（MOUNTAIN_01~11，缩放 2.0，纯视觉点缀绝不挡路） ──
     const defCity: any = this.defenderCityRecord();
     const cLat = defCity?.lat ?? this.centerLat;

@@ -199,7 +199,7 @@ import {
  *   每一件摆在**整数格点** (i·stepX, j·stepY) 上，它的朝向 = 它到**下一件**的那一步方向。
  *   所以画墙只要一路点过去，朝向自动算；转向处点「自动补垛」即可合规。
  * 存盘：POST /api/stockade-wall-editor/save → 写
- *   · public/assets/stockade_wall_styles.json （编辑器/工具读）
+ *   · public/data/stockade_wall_styles.json （编辑器/工具读）
  *   · src/data/stockadeWallStyles.ts        （游戏 import，构建期就用上）
  * ========================================================================== */
 
@@ -587,7 +587,7 @@ async function saveStyle(asNew) {
   if (res.ok) {
     S.styleKey = style.key;
     el('saveState').innerHTML = `<span class="ok">✅ 已存盘（${res.files || ''}）</span>`;
-    toast('✅ 已保存样式「' + style.name + '」：写出 public/assets/stockade_wall_styles.json + src/data/stockadeWallStyles.ts');
+    toast('✅ 已保存样式「' + style.name + '」：写出 public/data/stockade_wall_styles.json + src/data/stockadeWallStyles.ts');
     renderStyleList();
   } else {
     el('saveState').innerHTML = `<span class="err">❌ 存盘失败：${res.error || '未知'}</span>`;
@@ -596,7 +596,7 @@ async function saveStyle(asNew) {
 }
 
 async function loadStyleList() {
-  const data = await fetch('/assets/stockade_wall_styles.json', { cache: 'no-store' })
+  const data = await fetch('/data/stockade_wall_styles.json', { cache: 'no-store' })
     .then((r) => (r.ok ? r.json() : { styles: [] })).catch(() => ({ styles: [] }));
   S.savedStyles = Array.isArray(data.styles) ? data.styles : [];
   renderStyleList();

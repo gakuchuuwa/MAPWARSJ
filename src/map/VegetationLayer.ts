@@ -791,13 +791,19 @@ export class VegetationLayer {
                 // 真实卫星郁闭度驱动（0~100%）：决定当前格点是否生长树木
                 const canopyDensity = queryStrategicCanopyDensity(ptLatLng.lat, ptLatLng.lng);
                 const clusterWeight = forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal);
-                if (clusterWeight <= 0 || hash(gx, gy, 46) > clusterWeight) continue;
+                // 🔴 [2026-10-21 主人问「战略地图上的树该成片，还是该单个？」→ 成片]
+                //    原来按 clusterWeight 当概率逐格抽签（hash > weight 就留白）→ 林区里也是稀稀拉拉的孤树，像噪点。
+                //    改为按权重定「林区」：权重够高的格子连成片栽（权重是连续场，天然连片），
+                //    林缘（权重低）只做软过渡，不再有单棵孤树；林区内部只留少量随机林隙。
+                if (clusterWeight < 0.12) continue;
+                if (clusterWeight < 0.24 && hash(gx, gy, 46) > (clusterWeight - 0.12) / 0.12) continue;   // 林缘软过渡
+                if (clusterWeight >= 0.24 && clusterWeight < 0.40 && hash(gx, gy, 47) > 0.88) continue;   // 林内偶有小林隙
 
-                // 🔴 自然树丛聚簇（Grove Clustering）：告别“一格一棵孤树撒豆子”，
-                //    按郁闭度与聚簇度生成 2~4 棵主次分明、树冠紧簇相依的自然树丛（主树高大居中 + 伴生树错落环绕）
-                const count = (canopyDensity >= 55 && noiseVal > 0.62)
-                    ? (hash(gx, gy, 53) > 0.45 ? 4 : 3)
-                    : ((canopyDensity >= 30 || noiseVal > 0.48) ? (hash(gx, gy, 53) > 0.30 ? 2 : 1) : 1);
+                // 🔴 自然树丛聚簇（Grove Clustering）：一格至少 2 棵（不再有孤树），林区深处 3~4 棵，
+                //    主树高大居中 + 伴生树错落环绕，相邻格的树丛连成林海。
+                const count = clusterWeight >= 0.40
+                    ? (hash(gx, gy, 53) > 0.5 ? 4 : 3)
+                    : (clusterWeight >= 0.24 ? 3 : 2);
 
                 for (let i = 0; i < count; i++) {
                     let curPx = px;
