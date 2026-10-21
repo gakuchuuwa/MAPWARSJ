@@ -41,6 +41,8 @@ export interface GeneralFirstBattle {
     targetName: string;
     /** 目标据点 ID（攻城战必填；据点位置野战可选填以校准坐标） */
     targetCityId?: string;
+    /** 🔴 [2026-10-21 主人令「奖励不要搞最近据点，按历史做成指定据点」] 野战打赢后奖励的据点（按史实指定）；没填的暂按旧规则取离战场最近的 */
+    rewardCityId?: string;
     /** 战场纬度 */
     targetLat: number;
     /** 战场经度 */
@@ -9811,6 +9813,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         //   原写安阳 city_anyang（殷墟，离牧野约90公里）会把战场摆到安阳。不绑据点，按坐标就地开战，奖励据点取最近的朝歌。
         targetLat: 35.35,
         targetLng: 114.05,
+        rewardCityId: 'city_zhaoge',   // 牧野战后周军入朝歌，商亡（《史记·周本纪》）
         myTroops: 45000,
         enemyFactionId: 'shang',
         enemyFactionName: '商朝大军',
