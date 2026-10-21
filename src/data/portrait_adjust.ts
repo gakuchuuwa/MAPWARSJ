@@ -8146,6 +8146,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 24
+        },
+        "/assets/ORIE/teluoyi_maniya.png": {
+            "scale": 1.14,
+            "offsetX": -2,
+            "offsetY": 28
+        },
+        "/assets/WEST_ASIA/meisuobudamiya_sabin.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

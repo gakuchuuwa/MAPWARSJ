@@ -4608,7 +4608,8 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-15 主人令「优先士兵打兵，其次城门建筑，但是现在兵到了墙根后，也不打墙，也过不去」]
             //    最后一档：视野内兵、城门、建筑都没有，又正被一段墙挡着（blockedWall：1.5 秒内被它推开过、它还立着）⇒ 砍这一段墙。
             //    只砍挡着自己的那段；打穿（hp≤0）即解除碰撞，blockedWall 不再返回它，不会接着砍。
-            if (!t && bg && bg.f !== m.f) {
+            // 🔴 [2026-10-21 主人令「远程兵没兵的时候会打建筑城门等，但是不要打城墙了」] 远程兵不砍墙段（城门仍打）
+            if (!t && bg && bg.f !== m.f && (mRng <= 65 || bg.key === 'STONE_GATE')) {
                 t = bg;
             }
             if (t && reserve) t.claims++;
@@ -4619,6 +4620,7 @@ export class Scene13WarLayer {
             if (manChosen) break;   // 🔴 [2026-10-12] 士兵优先打兵
             // 🔴 [2026-10-12 主人令「优先攻击其他，最后考虑城墙」] 攻方士兵：视野内没敌兵、又没有进城的路时才打墙
             if (this.battleType === 'siege' && m.f === 0 && b !== this.blockedWall(m as Partial<WarMan>)) continue;   // 只打正挡着自己的那段墙
+            if (this.battleType === 'siege' && m.f === 0 && b.key !== 'STONE_GATE' && (this.statsFor(wm.key ?? '', 0).rng ?? 0) > 65) continue;   // 远程兵不砍墙
             // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（兜底循环同样跳过，防全塌）
             if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
@@ -4656,7 +4658,7 @@ export class Scene13WarLayer {
 
     /**
      * 🔴 [2026-10-20 主人令「城门至城垛为一段。城门坍塌，同时也坍塌一段城墙」「并可以通行士兵，这样可以避免AI寻路」]
-     * 城门倒塌时，**随机一侧**从城门到第一座城垛（`_POST` / 篱笆转角 `CORNER`，城垛本身不塌）之间的城墙一起坍塌：
+     * 城门倒塌时，**两侧**从城门到第一座城垛（`_POST` / 篱笆转角 `CORNER`，城垛本身不塌）之间的城墙一起坍塌：
      *   · 每块按各自随机破口档（wallBreachRatio）定格成 75/50/25/0 四种破损样子之一，全部解除阻挡可通行；
      *   · 沿城门所在那条墙线找：走向按城门附近墙件的实际位置判（不靠素材名），偏离墙线太远的不算；
      *   · 墙件间距取全场墙件最近邻距离的中位数；门心到第一块墙最远放宽到 4 格（门本身占 4 格），之后相邻两块隔得太远（墙线断开/拐角）就停；
@@ -4725,9 +4727,9 @@ export class Scene13WarLayer {
             }
             return visited.size + fell;
         };
-        // 随机一侧；那一侧门到城垛之间没有墙（门紧挨角楼）就换另一侧，保证总有一段塌
-        const side: 1 | -1 = Math.random() < 0.5 ? 1 : -1;
-        if (walk(side) === 0) walk(side === 1 ? -1 : 1);
+        // 🔴 [2026-10-21 主人令「城门到城门算一段，城门到城垛也算一段，城门坍塌改为两边城墙都坍塌」] 两侧都塌
+        walk(1);
+        walk(-1);
     }
 
     /** 单个墙/门/垛段坍塌（严格对齐 DE empires2_x2_p1.dat）：
