@@ -420,6 +420,8 @@ export class CombatUI {
     private currentAttackerEliteName: string = '';
     private currentDefenderLegionName: string = '';
     private currentDefenderEliteName: string = '';
+    /** 守城无在场武将时显示「XX驻军」（此时不显示精锐） */
+    private defenderGarrisonLabel: string = '';
 
 
     /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
@@ -1780,9 +1782,13 @@ export class CombatUI {
         this.currentAttackerEliteName = (init.attackerEliteName && init.attackerEliteName.trim())
             || (init.attackerFactionId ? getExpeditionEliteLegionName(init.attackerFactionId) : '') || '';
         this.currentDefenderLegionName = defLegionName || '';
-        this.currentDefenderEliteName = (init.defenderEliteName && init.defenderEliteName.trim())
+        // 🔴 [2026-10-21 主人令] 精锐跟着武将走（一将一精锐）：守城无在场武将 → 不显示精锐，改显示「XX据点驻军」
+        const defCityObj = init.defenderCityId ? (window as any).game?.cityManager?.getCity?.(init.defenderCityId) : null;
+        this.defenderGarrisonLabel = (!resolvedDefGeneralId && init.defenderCityId)
+            ? `${defCityObj?.name || init.defenderCityId}驻军` : '';
+        this.currentDefenderEliteName = this.defenderGarrisonLabel ? '' : ((init.defenderEliteName && init.defenderEliteName.trim())
             || (init.defenderCityId ? getCityEliteLegionName(init.defenderCityId) : '')
-            || (init.defenderFactionId ? getExpeditionEliteLegionName(init.defenderFactionId) : '') || '';
+            || (init.defenderFactionId ? getExpeditionEliteLegionName(init.defenderFactionId) : '') || '');
 
 
 
@@ -2018,7 +2024,8 @@ export class CombatUI {
         isAtt: boolean,
     ): void {
         const legionName = (isAtt ? this.currentAttackerLegionName : this.currentDefenderLegionName) || '';
-        const eliteName = (isAtt ? this.currentAttackerEliteName : this.currentDefenderEliteName) || '';
+        const garrisonLabel = isAtt ? '' : this.defenderGarrisonLabel;
+        const eliteName = garrisonLabel || (isAtt ? this.currentAttackerEliteName : this.currentDefenderEliteName) || '';
         const sig = own.map((t) => t.id).join(',') + '|' + foe.map((t) => t.id).join(',') + `|${legionName}|${eliteName}|${isAtt}`;
         if (box.dataset.sig === sig) return;   // 每帧调用，内容没变就不重绘 DOM
         box.dataset.sig = sig;
@@ -2078,6 +2085,7 @@ export class CombatUI {
 
         const legionChip = this.createLegionChip(legionName, isAtt);
         const eliteChip = eliteName ? this.createEliteChip(eliteName) : null;
+        if (eliteChip && garrisonLabel) eliteChip.title = garrisonLabel;
 
         // 科技标签
         const tag = document.createElement('span');
@@ -6251,7 +6259,9 @@ export class CombatUI {
             if (resolvedElite) this.currentAttackerEliteName = resolvedElite;
         } else {
             if (legionName) this.currentDefenderLegionName = legionName;
-            if (resolvedElite) this.currentDefenderEliteName = resolvedElite;
+            if (rec) this.defenderGarrisonLabel = '';
+            if (this.defenderGarrisonLabel) this.currentDefenderEliteName = '';
+            else if (resolvedElite) this.currentDefenderEliteName = resolvedElite;
         }
         // 🔴 [2026-09-19 主人定] 战术模式中，武将名字下写势力
         const factionName = this.resolveUnitFactionDisplayName(nameUnit, side, generalId);
