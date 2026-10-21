@@ -2269,8 +2269,8 @@ export class CombatUI {
             { key: 'shengzhan', char: '胜', sub: '增兵', tip: '【胜】增己兵（破【混】）：立即征召8%初始兵力从出兵口涌入战场\n点击钦定/取消下次释放' },
             { key: 'dizhan', char: '敌', sub: '固防', tip: '【敌】固己防（破【攻】）：场上全军满血恢复，且8秒内减伤40%\n点击钦定/取消下次释放' },
             { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵（破【胜】）：令敌军前线混乱8秒（胡乱走动且无法攻击，受1.4倍近战重创）\n点击钦定/取消下次释放' },
-            { key: 'bingzhan', char: '并', sub: '挫锐', tip: '【并】挫敌锐（破【败】）：野战打断敌将50%集气槽 / 攻城战破防增伤35%持续8秒\n点击钦定/取消下次释放' },
-            { key: 'baizhan', char: '败', sub: '减兵', tip: '【败】减敌兵（破【敌】）：直接折损敌方当前8%兵力\n点击钦定/取消下次释放' },
+            { key: 'bingzhan', char: '并', sub: '夺兵', tip: '【并】夺敌兵（破【败】）：策反敌方总兵力5%倒戈为己方（先取前线在场兵，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
+            { key: 'baizhan', char: '败', sub: '减兵', tip: '【败】减敌兵（破【敌】）：折损敌方总兵力8%（先让前线敌兵溃逃退场，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
         ];
 
         for (const item of SIX_LIST) {
@@ -2397,7 +2397,7 @@ export class CombatUI {
             shengzhan: '增己兵',
             dizhan: '固己防',
             hunzhan: '乱敌阵',
-            bingzhan: '挫敌锐',
+            bingzhan: '夺敌兵',
             baizhan: '减敌兵',
         };
         const THEME_OF: Record<TacticalSixSet, { color: string; bg: string; border: string; glow: string }> = {

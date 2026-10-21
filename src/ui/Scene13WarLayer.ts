@@ -670,7 +670,32 @@ export class Scene13WarLayer {
     }
 
     /** 【胜】增己兵专用：立即从该侧 9 个出兵口一次性刷出全部 8% 增援士兵参战 */
-    private spawnImmediateSkillReinforcements(f: 0 | 1, addTotalPop: number): void {
+    /** 本方在场士兵的重心（无人时取出兵口） */
+    private sideCentroid(f: 0 | 1): [number, number] {
+        let cx = 0, cy = 0, n = 0;
+        for (const m of this.men) if (m.f === f && m.hp > 0 && !m.siegeW) { cx += m.x; cy += m.y; n++; }
+        if (n > 0) return [cx / n, cy / n];
+        const sp = this.spawns.find((q) => q.f === f);
+        return [sp?.x ?? this.worldCX, sp?.y ?? this.worldCY];
+    }
+
+    /** 从某方的后备池（下一波）里扣掉 quotaPop 人口，轮流取各出兵口；返回扣掉的每一批（兵种、人口） */
+    private drainSidePool(side: 0 | 1, quotaPop: number): Array<{ key: string; pop: number }> {
+        const taken: Array<{ key: string; pop: number }> = [];
+        const sps = this.spawns.filter((sp) => sp.f === side && !sp.playerElite && sp.pool > 0);
+        let idx = 0, guard = 0;
+        while (quotaPop > 0 && sps.some((sp) => sp.pool > 0) && guard++ < 100000) {
+            const sp = sps[idx % sps.length]; idx++;
+            if (sp.pool <= 0) continue;
+            const unit = Math.max(1, sp.pop);
+            sp.pool--;
+            quotaPop -= unit;
+            taken.push({ key: sp.key, pop: unit });
+        }
+        return taken;
+    }
+
+    private spawnImmediateSkillReinforcements(f: 0 | 1, addTotalPop: number, keys?: string[]): void {
         const mySpawns = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
         if (mySpawns.length === 0) return;
 
@@ -701,10 +726,10 @@ export class Scene13WarLayer {
             const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
             const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
             this.men.push({
-                f: s.f, key: s.key, jx, jy,
+                f: s.f, key: keys && keys.length ? keys[(idx - 1) % keys.length] : s.key, jx, jy,
                 zid: this.manSeq++,
                 x: spawnX, y: spawnY, tx: spawnX, ty: spawnY,
-                hp: this.statsFor(s.key, s.f).hp,
+                hp: this.statsFor(keys && keys.length ? keys[(idx - 1) % keys.length] : s.key, s.f).hp,
                 dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                 ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.15,
                 fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
@@ -758,7 +783,7 @@ export class Scene13WarLayer {
             shengzhan: f === 0 ? '全军突击' : '众志成城',
             dizhan: f === 0 ? '步步为营' : '固若金汤',
             hunzhan: f === 0 ? '声东击西' : '疑兵之计',
-            bingzhan: f === 0 ? '势如破竹' : '坚壁清野',
+            bingzhan: f === 0 ? '策反倒戈' : '离间反戈',
             baizhan: f === 0 ? '雷霆万钧' : '背水一战',
         };
         const displayName = pickedEntry?.displayName ?? fallbackNames[six];
@@ -776,25 +801,22 @@ export class Scene13WarLayer {
             const addTotalPop = Math.max(12, Math.round(this.initPool[f] * 0.08));
             this.spawnImmediateSkillReinforcements(f, addTotalPop);
         } else if (six === 'baizhan') {
-            // 2. 【败】死战：当场直接折损敌方 8% 当前总兵力（后备池削减 + 前线敌军直接阵亡一批）
-            for (const sp of this.spawns) {
-                if (sp.f === ef && sp.pool > 0) {
-                    sp.pool = Math.max(0, Math.floor(sp.pool * 0.92));
-                }
-            }
+            // 2. 【败】死战：折损敌方总兵力 8%（额度按总兵力算，体现在在场兵力上）
+            // 🔴 [2026-10-21 主人令「所有的8%/5%是总兵力的，但体现是在场兵力；在场不够就从下一波继续」+「死前线的，逃跑退场不留尸」]
+            //    先让离我方最近的前线敌兵溃逃退场（不留尸体），额度没用完再从敌方下一波（后备池）里扣。
+            let quotaPop = Math.max(1, Math.round(this.initPool[ef] * 0.08));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
-            if (enemyLiving.length > 0) {
-                const killCount = Math.max(1, Math.round(enemyLiving.length * 0.08));
-                const step = enemyLiving.length / killCount;
-                for (let i = 0; i < killCount; i++) {
-                    const idx = Math.min(enemyLiving.length - 1, Math.floor((i + 0.5) * step));
-                    const victim = enemyLiving[idx];
-                    if (victim && victim.hp > 0) {
-                        victim.hp = 0;
-                        this.onManKilled(victim, victim);
-                    }
-                }
+            const [fcx, fcy] = this.sideCentroid(f);
+            enemyLiving.sort((m1, m2) => ((m1.x - fcx) ** 2 + (m1.y - fcy) ** 2) - ((m2.x - fcx) ** 2 + (m2.y - fcy) ** 2));
+            for (const victim of enemyLiving) {
+                if (quotaPop <= 0) break;
+                if (victim.hp <= 0) continue;
+                quotaPop -= Math.max(1, victim.pop || 1);
+                victim.hp = 0;
+                (victim as WarMan & { forceFlee?: boolean }).forceFlee = true;   // 退场方式＝溃逃，不留尸体（见 pushCorpse）
+                this.onManKilled(victim, victim);
             }
+            if (quotaPop > 0) this.drainSidePool(ef, quotaPop);
         } else if (six === 'gongzhan') {
             // 3. 【攻】猛攻：8 秒内己方全军攻速 ×1.30、移速 ×1.20、伤害 ×1.30
             this.skillFrenzyTimer[f] = 8.0;
@@ -814,10 +836,36 @@ export class Scene13WarLayer {
             this.skillVulnTimer[f] = 0;
             this.skillPanicTimer[ef] = 8.0;
         } else if (six === 'bingzhan') {
-            // 6. 【并】奇袭：8 秒内己方全军打出破甲奇袭（无视敌方护盾减伤，且令敌方全体承伤 +35%），同时压制敌方集气
-            this.skillShieldTimer[ef] = 0;
-            this.skillVulnTimer[ef] = 8.0;
-            this.skillGauge[ef] = Math.max(0, this.skillGauge[ef] - 35);
+            // 6. 【并】夺敌兵（倒戈）：策反敌方总兵力 5%，体现在在场兵力上
+            // 🔴 [2026-10-21 主人令「让敌方5%的在场兵力变为己方」替换原「挫敌锐」；额度按总兵力，在场不够就从下一波继续]
+            let quotaPop = Math.max(1, Math.round(this.initPool[ef] * 0.05));
+            const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
+            const [fcx, fcy] = this.sideCentroid(f);
+            enemyLiving.sort((m1, m2) => ((m1.x - fcx) ** 2 + (m1.y - fcy) ** 2) - ((m2.x - fcx) ** 2 + (m2.y - fcy) ** 2));
+            const myLanes = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
+            const converted: WarMan[] = [];
+            for (const m of enemyLiving) {
+                if (quotaPop <= 0) break;
+                quotaPop -= Math.max(1, m.pop || 1);
+                // 就地倒戈：换成我方阵营，归到离它最近的我方出兵口队列，清掉所有对阵关系
+                m.f = f;
+                const nl = myLanes.reduce<typeof myLanes[number] | null>((best, sp) =>
+                    (!best || (sp.x - m.x) ** 2 + (sp.y - m.y) ** 2 < (best.x - m.x) ** 2 + (best.y - m.y) ** 2) ? sp : best, null);
+                if (nl) m.lane = nl.lane;
+                m.foe = null; m.fightT = 0; m.lock = 0; m.st = 0; m.march = false; m.port = null; m.guardPost = undefined;
+                m.tx = m.x; m.ty = m.y; m.claims = 0; m.claimsNext = 0; m.atkers = 0; m.atkNext = 0;
+                m.fadeT = FADE_IN; m.fadeMax = FADE_IN;
+                converted.push(m);
+            }
+            if (converted.length > 0) {
+                const set = new Set(converted);
+                for (const o of this.men) if (o.foe && set.has(o.foe as WarMan)) o.foe = null;   // 别人原先盯着它打，现在是自己人
+            }
+            // 在场不够：从敌方下一波（后备池）继续策反，直接以敌方兵种在我方出兵口入列
+            if (quotaPop > 0) {
+                const taken = this.drainSidePool(ef, quotaPop);
+                if (taken.length > 0) this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key));
+            }
         }
 
         // 通知 CombatUI 播放立绘脉冲缩放与技能名 Cut-in 动画
@@ -7541,7 +7589,9 @@ export class Scene13WarLayer {
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;
         }
-        if (this.takeCorpseSlot()) {
+        // 🔴 [2026-10-21 主人令「【败】折损的 8% 采用逃跑的退场，不用留尸体」] 被「败」计折损的兵一律溃逃退场，不占尸体名额、不留尸体
+        const forceFlee = (m as WarMan & { forceFlee?: boolean }).forceFlee === true;
+        if (!forceFlee && this.takeCorpseSlot()) {
             // 尸体朝向随机：每具倒向不同方向，避免全部同朝向呆板（主人 2026-08-21 定）
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;
