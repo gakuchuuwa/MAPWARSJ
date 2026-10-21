@@ -51,6 +51,7 @@ import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { clampCityTroops } from '../../config/CityConfig';
 import { roadRegistry } from '../../roads/RoadRegistry';
 import { isGeneralOnStage } from '../../data/generalOnStage';
+import { getGeneralCulture } from '../../data/GeneralCulture';
 import { shouldGeneralWaitInCityForFirstBattle } from '../../data/GeneralFirstBattles';
 import type { Army } from '../../legion/Army';
 
@@ -81,6 +82,18 @@ export const IsPostBattleResting = new Condition('IsPostBattleResting', (ctx) =>
 });
 
 /**
+ * 🔴 [2026-10-21 主人报「子受卡住不能动了」] 老家「算自己人」的势力：
+ * 百岁模式军团随武将换了势力（子受＝商，出身朝歌时朝歌已归周 → 出身势力＝周）。
+ * 老家后来回到**武将自己的势力**手里（妇好收复朝歌＝商），也算没丢；
+ * 旧口径只认出身势力 → 判「老家失守」去收复一座己方城，到了打不了、走了又折回，原地打转。
+ */
+function homeOwnerFactionOf(army: BTContext['army'], cityManager: BTContext['cityManager']): string {
+    const homeId = getArmyOriginCityId(army);
+    const owner = homeId ? cityManager.getCity(homeId)?.factionId : undefined;
+    return owner === army.getFactionId() ? owner : army.getHomeFactionId();
+}
+
+/**
  * 本城告急：正被攻城（仍我方，需回援）或已失守（需收复）。远征军团豁免（目标锁死不回家）。
  * 「正被攻城」取严格口径（isCityBeingSieged，真打起来才算；在途/迫近不算）。
  * 用于让「排队攻城干等」的军团在老家有事时立刻退出排队，回援/收复不受距离限制。
@@ -91,7 +104,7 @@ function homeNeedsHelp(ctx: BTContext): boolean {
     if (!homeId) return false;
     // 已失守 → 收复（判据统一走 isHomeCityLost，勿再内联手写）
     // 🔴 [2026-10-20] 老家判定看出身势力（百岁模式王离出长安是秦军，长安仍属唐 ≠ 失守）
-    if (isHomeCityLost(homeId, ctx.army.getHomeFactionId(), ctx.cityManager)) return true;
+    if (isHomeCityLost(homeId, homeOwnerFactionOf(ctx.army, ctx.cityManager), ctx.cityManager)) return true;
     return ctx.legionManager.isCityBeingSieged(homeId);                   // 仍我方且正被攻城 → 回援（在途/迫近不算）
 }
 
@@ -451,7 +464,7 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
 
     if (!shouldSkipHomeRecapture(ctx.army)) {
         const originCityId = getArmyOriginCityId(ctx.army) ?? '';
-        const recaptureId = resolveRecaptureTarget(ctx.army.getHomeFactionId(), originCityId, ctx.cityManager);
+        const recaptureId = resolveRecaptureTarget(homeOwnerFactionOf(ctx.army, ctx.cityManager), originCityId, ctx.cityManager);
 
         if (recaptureId && recaptureId !== lastDrawCityId) {
             const strategicId = getStrategicTargetId(ctx);
@@ -644,7 +657,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     }
 
     if (!shouldSkipHomeRecapture(ctx.army)) {
-        const recaptureId = resolveRecaptureTarget(ctx.army.getHomeFactionId(), originCityId, ctx.cityManager);
+        const recaptureId = resolveRecaptureTarget(homeOwnerFactionOf(ctx.army, ctx.cityManager), originCityId, ctx.cityManager);
         if (recaptureId && recaptureId !== lastDrawCityId && !excludeTargetIds.has(recaptureId)) {
             const recaptureCity = ctx.cityManager.getCity(recaptureId);
             if (!recaptureCity) {
@@ -729,6 +742,8 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
             avoidThroughCityId: lastDrawCityId,
             myTroops: ctx.army.getTroops(),   // 启用「打不打得过」闸门
             preferNearCityId: ctx.army.lastLostTargetCityId,   // 规则 3.6：继承原方向
+            // 🔴 [2026-10-21 主人令] 优先同建筑文化：武将文化，无将则出发据点风格
+            myBuildingStyle: getGeneralCulture(ctx.army.generalId) ?? ctx.cityManager.getCity(originCityId)?.buildingStyle,
         }
     );
     // 用完即清：只影响「目标失效」紧接着的这一次重抽，之后的选目标回到常规规则
@@ -991,7 +1006,7 @@ export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
 
     let homeId = getArmyOriginCityId(army);
     let home = homeId ? ctx.cityManager.getCity(homeId) : undefined;
-    let homeAlive = !!home && home.factionId === army.getHomeFactionId();
+    let homeAlive = !!home && home.factionId === homeOwnerFactionOf(army, ctx.cityManager);
 
     // 意图锁定：已决意撤退的军团，只要有己方据点就继续撤退，不看兵力
     if (army.isRetreatingHome) {
@@ -1098,7 +1113,7 @@ export const IsHomeStillMine = new Condition('IsHomeStillMine', (ctx) => {
     const homeId = getArmyOriginCityId(ctx.army);
     if (!homeId) return false;
     const home = ctx.cityManager.getCity(homeId);
-    return !!home && home.factionId === ctx.army.getHomeFactionId();
+    return !!home && home.factionId === homeOwnerFactionOf(ctx.army, ctx.cityManager);
 });
 
 /** 非远征军团（远征目标锁死，本城被攻打也不回援） */

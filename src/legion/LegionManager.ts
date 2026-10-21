@@ -817,6 +817,16 @@ export class LegionManager {
             const city = this.cityManager.getCity(entry.id);
             if (!city) continue;
             if (!city.factionId || city.factionId === factionId) continue;
+            // 🔴 [2026-10-21 主人报「子受卡住不能动了」] 百岁模式不打自己老家：军团随武将换了势力（子受＝商），
+            //    出身据点仍属出身势力（牧野后朝歌归周）时，这座城不算拦路敌城——否则一出城就被 ZOC 钉在城下反复攻自己老家。
+            if (
+                army &&
+                army.getHomeFactionId() !== army.getFactionId() &&
+                city.factionId === army.getHomeFactionId() &&
+                city.id === (army.homeCityId ?? army.getSourceCityId())
+            ) {
+                continue;
+            }
             if (army && (army as any).isFirstBattleHero && (army as any).firstBattleTargetCityId && city.id !== (army as any).firstBattleTargetCityId) {
                 continue;
             }
