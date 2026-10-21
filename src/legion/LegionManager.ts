@@ -364,7 +364,8 @@ export class LegionManager {
             const cityId = army.homeCityId ?? army.getSourceCityId();
             if (cityId) {
                 const city = this.cityManager.getCity(cityId);
-                if (city && city.factionId === army.getFactionId()) {
+                // 🔴 [2026-10-21] 百岁模式军团随武将换了势力时，出身城仍属出身势力（子受＝商、朝歌＝周）也要算「已出征」，否则同一武将会被再掷一次
+                if (city && (city.factionId === army.getFactionId() || city.factionId === army.getHomeFactionId())) {
                     const onStageGenerals = getCityAnchoredGenerals(city.id).filter((g) => isGeneralOnStage(g.generalId));
                     const allGeneralsUsed =
                         onStageGenerals.length > 0 && onStageGenerals.every((g) => activeGenIds.has(g.generalId));
