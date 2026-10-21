@@ -315,7 +315,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/CENTRAL/zhou_jifa.png": {
             "scale": 1.13,
             "offsetX": 0,
-            "offsetY": -5
+            "offsetY": -2
         },
         "/assets/BASHU/dangzhou_qiangduan.png": {
             "scale": 1.04,
@@ -8111,6 +8111,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/CENTRAL/bfe3_57.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/ORIE/xuliya_shoujiang.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {

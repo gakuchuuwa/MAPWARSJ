@@ -480,7 +480,7 @@ export class VectorRoadEditorOSM implements IEditor {
 
         try {
             const basePath = import.meta.env.BASE_URL || '/';
-            const res = await fetch(`${basePath}assets/roads_osm_test.geojson`);
+            const res = await fetch(`${basePath}data/roads_osm_test.geojson`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const geojson = await res.json();
             this.cachedGeoJSON = geojson;  // [V2-OSM-FIX] 缓存以便二次开启重用

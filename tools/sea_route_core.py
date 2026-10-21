@@ -1,7 +1,7 @@
 """
 海路寻路核心 —— 与 src/sea/SeaRouteEditor.ts 同一套算法（改一边必须改另一边）。
 
-  · 航线网：public/assets/sea_routes_combined.geojson，SNAP 0.05° 合点
+  · 航线网：public/data/sea_routes_combined.geojson，SNAP 0.05° 合点
   · 选路代价 = 真实公里 ×（远洋 marnet 1.5）+ 穿陆公里 × LAND_KM_COST
     （穿陆按 public/world/land-mask-ne10m.png 量；只加代价不删边 —— 窄海峡在掩膜上可能是陆）
   · 港口接驳（离城最近 PORT_POOL 个节点；接驳线水上部分 ≤ max(LINK_SEA_MAX_KM, 最近接驳点的 1.5 倍)）：
@@ -17,7 +17,7 @@ import math
 import numpy as np
 from PIL import Image
 
-COMBINED = 'public/assets/sea_routes_combined.geojson'
+COMBINED = 'public/data/sea_routes_combined.geojson'
 MASK = 'public/world/land-mask-ne10m.png'
 SNAP = 0.05
 OPEN_SEA_PENALTY = 1.5

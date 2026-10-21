@@ -29,7 +29,7 @@ from PIL import Image
 from skimage import measure
 
 SRC = 'public/world/world-base.png'
-OUT = 'public/assets/sea_routes_coastal.geojson'
+OUT = 'public/data/sea_routes_coastal.geojson'
 
 OFFSHORE_CELLS = 2      # 离岸格数（每格 ≈18km）→ 36km，古代贴岸航行的典型距离
 SIMPLIFY_TOL = 0.5      # Douglas-Peucker 容差（格）≈9km

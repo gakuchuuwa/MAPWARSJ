@@ -912,7 +912,7 @@
   <div class="all-cultures-grid" id="cultureGrid"></div>
 </div>
 
-<!-- 视图三：DE 建筑鉴赏（全量素材图鉴，数据来自 /assets/de_buildings_catalog.json）-->
+<!-- 视图三：DE 建筑鉴赏（全量素材图鉴，数据来自 /data/de_buildings_catalog.json）-->
 <div id="viewBuildings" style="display:none;">
 
   <!-- DE 建筑资产权威体系与实测统计看板 -->
@@ -1031,7 +1031,7 @@
 
   <!-- 🔴 [2026-09-16 主人「这个不要这样显示，或者不要显示，有必要显示吗，这么占地方」]
        「📚 素材总览看板」**已从本页移除显示**（它是一张 24 组、几十行目录名的卡片，太占地方）。
-       · **素材与数据一个都没删**：`public/assets/asset_inventory.json` + 人看的单子
+       · **素材与数据一个都没删**：`public/data/asset_inventory.json` + 人看的单子
          `scratch/out/asset_inventory.md`（`node scratch/build_asset_inventory.mjs` 生成）照旧，
          要看全量清单直接开那份 md / json。
        · 要恢复本页的看板：把 `assetInventoryBoard` 那块 DOM（de-board + #invGrid + #invSub）
@@ -3644,7 +3644,7 @@ refresh();
 /* ==========================================================================
  * 建筑鉴赏（2026-09-08）
  * 对标 legion-editor 的「兵种鉴赏」：全量素材图鉴 + 多维筛选 + 点击放大。
- * 数据源 /assets/de_buildings_catalog.json 由 scratch/build_de_buildings_catalog.mjs
+ * 数据源 /data/de_buildings_catalog.json 由 scratch/build_de_buildings_catalog.mjs
  * 扫描 public/SUCAI_BUILDING 生成；素材增删后重跑那个脚本即可。
  * 2471 张图不能一次性塞进 DOM —— 图片一律走 IntersectionObserver 懒加载，
  * 只有滚进视口才真正下载。
@@ -4204,9 +4204,9 @@ refresh();
      * 2026-09-12 那次「放到程序中，好好分类」把其余 8 个库（SUCAI 兵种 / ANIMAL / BATTLEFIELD /
      * FX / NATURE / RESOURCE / TERRAIN / TRADE，共 818 条）合并进了本页；按主人指令**在本页不再显示**
      * （主人原话：「不要删除素材，只是不要在这里显示」—— 数据与素材目录一个字节没动）。
-     * 本页现在只读 `/assets/de_buildings_catalog.json`，行结构与筛选器/大图弹窗不变。
+     * 本页现在只读 `/data/de_buildings_catalog.json`，行结构与筛选器/大图弹窗不变。
      * `library` / `libraryLabel` 字段保留（供「素材库」下拉开合，本页只有建筑这一库）。 */
-    fetch('/assets/de_buildings_catalog.json').then(function (r) {
+    fetch('/data/de_buildings_catalog.json').then(function (r) {
       if (!r.ok) { throw new Error('建筑清单 HTTP ' + r.status); }
       return r.json();
     })

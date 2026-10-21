@@ -3,7 +3,7 @@
  *
  * 🔴 [2026-09-30 主人令] 两河流域、印度河、尼罗河、阿姆河……古代最重要的灌溉农业带，气候分区图每格约 18km，
  *    十几到几十公里宽的河谷塞不进一格，原来整片按周围沙漠上色（巴比伦、帕塔拉像沙丘）。
- *    数据：战略地图同一份 Natural Earth 河流中心线（public/assets/ne_10m_rivers_lake_centerlines.geojson）。
+ *    数据：战略地图同一份 Natural Earth 河流中心线（public/data/ne_10m_rivers_lake_centerlines.geojson）。
  *    主线程本来就要加载解析它（画河流），在那里抽稀一次、发给各 Worker —— 旧做法每个 Worker 各自下载解析 6MB，
  *    实测首块瓦片慢 0.6 秒（scratch/terrain_ab/bench_firstscreen.mjs）。
  */

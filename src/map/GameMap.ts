@@ -575,7 +575,7 @@ export class GameMap {
     private riverDataPromise: Promise<any> | null = null;
     private riverSegmentsCache: Float32Array | null = null;
     private loadRiverData(): Promise<any> {
-        return this.riverDataPromise ??= fetch(`${import.meta.env.BASE_URL || '/'}assets/ne_10m_rivers_lake_centerlines.geojson`)
+        return this.riverDataPromise ??= fetch(`${import.meta.env.BASE_URL || '/'}data/ne_10m_rivers_lake_centerlines.geojson`)
             .then(res => {
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 return res.json();

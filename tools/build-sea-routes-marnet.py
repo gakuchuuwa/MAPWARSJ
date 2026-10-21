@@ -3,7 +3,7 @@
 
 🔴 [2026-08-25 主人定 C 方案：MARNET 打底保连通 + 沿岸网做古代航线] 这是第一步。
 
-为什么换掉原来的 public/assets/sea_routes.geojson：
+为什么换掉原来的 public/data/sea_routes.geojson：
   · 它是 **314 条现代渡轮 + 239 条商业航线**，途经苏伊士 90 个顶点、巴拿马 48 个 ——
     这两条运河在游戏年代都不存在；553 条里只有 30 条有名字，还都是 "22"/"55" 这种编号。
   · 更要命的是**图是碎的**：152 个连通分量，最大分量只占 34.8%。而这份数据不只是背景参考，
@@ -27,7 +27,7 @@ import os
 from collections import defaultdict
 
 SRC = 'scratch/searoute_eval/marnet.geojson'
-OUT = 'public/assets/sea_routes_marnet.geojson'
+OUT = 'public/data/sea_routes_marnet.geojson'
 SRC_URL = ('https://raw.githubusercontent.com/genthalili/searoute-py/main/'
            'searoute/data/marnet_searoute.geojson')
 

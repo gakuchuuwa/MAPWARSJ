@@ -420,7 +420,7 @@ export class VectorRoadEditor implements IEditor {
         if (this.radialNetworkLayer) return;
         try {
             const basePath = (import.meta as any).env?.BASE_URL || '/';
-            const res = await fetch(`${basePath}assets/radial_network.geojson`);
+            const res = await fetch(`${basePath}data/radial_network.geojson`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             this.radialNetworkData = await res.json();
         } catch (err) {
@@ -1284,8 +1284,8 @@ export class VectorRoadEditor implements IEditor {
 
         try {
             const basePath = import.meta.env.BASE_URL || '/';
-            const roadsUrl = `${basePath}assets/roads_filtered.geojson`;
-            const waterUrl = `${basePath}assets/ne_10m_rivers_lake_centerlines.geojson`;
+            const roadsUrl = `${basePath}data/roads_filtered.geojson`;
+            const waterUrl = `${basePath}data/ne_10m_rivers_lake_centerlines.geojson`;
 
             const resRoads = await fetch(roadsUrl);
             if (!resRoads.ok) throw new Error(`取 ${roadsUrl} 失败：HTTP ${resRoads.status}`);
@@ -1300,7 +1300,7 @@ export class VectorRoadEditor implements IEditor {
             // ⚓ [2026-08-28] 海路一并进图：陆路绕海湾/海峡绕远时，改走「陆路→港口→海路→港口→陆路」。
             //    用的就是海路编辑器那份 sea_routes_combined（marnet 远洋主干 + 沿岸航路 + 接驳边，
             //    已剔苏伊士/巴拿马/西北航道）。取不到不算致命 —— 退回纯陆路寻路。
-            const seaUrl = `${basePath}assets/sea_routes_combined.geojson`;
+            const seaUrl = `${basePath}data/sea_routes_combined.geojson`;
             let geojsonSea: any = null;
             try {
                 const resSea = await fetch(seaUrl);
