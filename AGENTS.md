@@ -7,6 +7,17 @@
 > 据点 · 势力 · 旗号 · 武将 · 精锐 ＝ `docs/AGENTS/一据点一整套-单一口径.md`；兵模绘制比例 ＝ `docs/AGENTS/unit-sprite-scale.md`。
 > 建筑风格判定 / 缺分支代理 / 城级城堡覆盖 ＝ `docs/AGENTS/建筑风格判定与代理规则.md`。
 
+## 🔴🔴 2026-10-21 · 玩家「告辞」＝换下一个人物接任务铁律（主人令）
+
+> 🔴 **主人原话（2026-10-21 逐字照录）**：
+> **「开局接任务的时候，有的据点兵马不足五千，此时告辞，然后应该换下一个人物接任务。」**
+
+1. **「告辞」不是关掉对话框了事**：它＝**不接这一位**，玩家要被立刻带去**下一位在场武将**（城中/野外的武将对话、首战对话的「告辞」全算；战场选边的「告辞」不算）。
+2. **唯一出口** `PlayerQuestSystem.leaveAndFindNextGeneral(city, generalId)`：① 这位置进 `declinedGenerals`（剧本链 `checkAndTriggerNextBattlefield` 不再把他当目标，`visitedGenerals` 也记一笔）；② **立刻**换人，不等下一拍 tick、也不看自动模式开关——剧本模式先让剧本链换下一位，剧本链没有下一位 / 非剧本模式 → `autoTravelToBestCity()`。
+3. **`declinedGenerals` 在接下任何任务（入伍/出征/复国/首战）、切模式/关自动、读档时清空** —— 告辞只是这一次不接，不是永远不见。
+4. **顺手修掉的同族卡死**：剧本模式下「告辞」后 `headingToEventGeneralId` 被 tick 写回 owner，`checkAndTriggerNextBattlefield` 之后每拍 `return true` 却一步不动（`docs/02-design/systems/历史进程框架.md` §16.2 第 36-附 条，实机复现）——现在告辞即换下一位，不再卡。
+5. **验收**：`npx tsc --noEmit`；`URL=http://localhost:5173/ node scratch/_probe_leave_next_general.mjs`（自动关着也换人、剧本模式换到剧本主角）；`URL=http://localhost:5173/ MODE=script node scratch/_probe_leave_diag.mjs`（告辞后不再原地不动）。完整口径：`docs/AGENTS/player-hero.md` §二·五「告辞 = 换下一个人物接任务」＋ `docs/AGENTS/player-rules-verbatim.md` 第 33 条。
+
 ## 🔴🔴🔴 2026-10-21 · 军团只看武将铁律（主人令，凌驾一切军团选取规则）
 
 > 🔴 **主人原话（2026-10-21 逐字照录）**：

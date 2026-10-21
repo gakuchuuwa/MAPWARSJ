@@ -22,7 +22,7 @@ import { ALL_BRANCHES_MAP, CULTURE_62_GROUPS, LAYER3_CUSTOM_GROUPS, resolveCityH
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
 import { applyLegionCultureComposition } from '../types/CultureFormations';
-import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
+import { markSpawnTierConsumed, setReservedGeneralIdsProvider } from '../legion/LegionSpawnTier';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { findPathFromPoint, prefetchEntrySea, battlefieldRoadNode, findPathToBattlefield, cutPathBeforeEnd, BATTLE_STAND_KM } from '../events/scriptMarchPath';
@@ -296,6 +296,11 @@ export class PlayerQuestSystem {
             if (c.factionId) this.initialFaction.set(c.id, c.factionId);
         }
         deps.hero.onArriveCity = (city) => this.onArrive(city);
+        // 🔴 [2026-10-21 主人令「不要让他出城，还要处理出了城的问题」] 进行中的首战预置敌将不许被据点掷出去领兵
+        setReservedGeneralIdsProvider(() => {
+            const id = this.quest?.kind === 'first_battle' ? this.quest.firstBattle?.enemyGeneralId : undefined;
+            return id ? new Set([id]) : new Set<string>();
+        });
         // 🔴 [2026-09-09 主人定] 在野外追上带兵的武将 → 直接谈随军（见 onMeetArmy）
         deps.hero.onMeetArmy = (army) => this.onMeetArmy(army);
         deps.hero.onHostLost = (lastId) => this.onHostLost(lastId);
@@ -309,8 +314,11 @@ export class PlayerQuestSystem {
             const auto = deps.hero.autoMode, plan = deps.hero.autoPlan;
             const turnedOffAuto = lastAuto && !auto;
             const toMelee = lastPlan === 'script' && plan !== 'script';
+            const planChanged = lastPlan !== plan;
             lastAuto = auto; lastPlan = plan;
             if (turnedOffAuto || toMelee) this.abortScriptJourney();
+            // 🔴 切玩法 = 「告辞过谁」这一轮作废（新玩法下重新按规矩找下一位）
+            else if (planChanged) this.declinedGenerals.clear();
         });
     }
 
@@ -325,6 +333,7 @@ export class PlayerQuestSystem {
         this.headingToEventGeneralId = null;
         this.pendingEventGeneralId = null;
         this.pendingEventOptions = [];
+        this.declinedGenerals.clear();   // 切模式/关自动 = 这一轮「告辞过谁」作废
         this.chaseCityId = null;
         const hero = this.deps.hero;
         hero.setTravelPointLabel(null);
@@ -458,7 +467,7 @@ export class PlayerQuestSystem {
                     text: narrativeText,
                     options: [
                         { label: ENLIST_OPTION_LABEL, accent: true, onPick: () => this.joinGeneralEvent(city, g, ev, null) },
-                        { label: "告辞", onPick: () => this.deps.closeDialogue() },
+                        { label: "告辞", onPick: () => this.leaveAndFindNextGeneral(city, g.generalId) },
                     ],
                 });
                 return;
@@ -473,6 +482,7 @@ export class PlayerQuestSystem {
         }
 
         // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」]
+        // 🔴 [2026-10-21 主人定「此时告辞，然后应该换下一个人物接任务」] → 告辞按钮走统一出口
         const availableTroops = Math.floor((city.troops || 0) * 0.9);
         if (availableTroops < GameConfig.LEGION.MIN_ARMY_SIZE) {
             this.deps.showDialogue({
@@ -480,7 +490,7 @@ export class PlayerQuestSystem {
                 portrait,
                 factionName,
                 text: `壮士远来。城中兵马不足五千，尚无力出征，请自便。`,
-                options: [{ label: '告辞', onPick: () => this.deps.closeDialogue() }],
+                options: [{ label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, g.generalId) }],
             });
             return;
         }
@@ -495,7 +505,7 @@ export class PlayerQuestSystem {
                     + `某欲举义复国，苦无勇士相助。壮士若肯同举义旗，事成之日，${originalName}上下必不相负！`,
                 options: [
                     { label: '⚔ 助其复国', accent: true, onPick: () => this.startRestoration(city, g, original) },
-                    { label: '告辞', onPick: () => this.deps.closeDialogue() },
+                    { label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, g.generalId) },
                 ],
             });
             return;
@@ -507,7 +517,7 @@ export class PlayerQuestSystem {
                 portrait,
                 factionName,
                 text: `壮士远来。四境暂无敌患，${factionName}无事相托，请自便。`,
-                options: [{ label: '告辞', onPick: () => this.deps.closeDialogue() }],
+                options: [{ label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, g.generalId) }],
             });
             return;
         }
@@ -520,9 +530,53 @@ export class PlayerQuestSystem {
                 + `某奉命出征，愿请壮士同行。`,
             options: [
                 { label: `⚔ 随军出征【${target.name}】`, accent: true, onPick: () => this.startCampaign(city, g, target) },
-                { label: '告辞', onPick: () => this.deps.closeDialogue() },
+                { label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, g.generalId) },
             ],
         });
+    }
+
+    // ── 「告辞」= 换下一个人物接任务 ──────────────────────────
+    /**
+     * 🔴🔴 [2026-10-21 主人令，逐字照录]
+     *   「**开局接任务的时候，有的据点兵马不足五千，此时告辞，然后应该换下一个人物接任务。**」
+     *
+     *   故「告辞」不是「关掉对话框了事」：它是**不接这一位**，玩家必须立刻被带去**下一位在场武将**。
+     *   落点两条：
+     *     ① 记下「这一位已告辞」（`declinedGenerals`）——剧本链不再把他当目标、自动寻将也不优先找他；
+     *     ② **立刻**换人（不等下一拍 tick，也不看自动模式开关）：剧本模式先让剧本链换下一位
+     *        （刚告辞的那位被跳过），剧本链没有下一位 / 非剧本模式 → 走自动寻将那条现成的选人链。
+     *
+     * @param city      会面所在的据点（野外会面时为他的本城；可空）
+     * @param generalId 刚告辞的那位武将（空 = 只关对话）
+     */
+    private leaveAndFindNextGeneral(city: City | null, generalId: string | null): void {
+        this.deps.closeDialogue();
+        if (generalId) {
+            this.declinedGenerals.add(generalId);
+            this.visitedGenerals.add(generalId);
+            if (city) this.rememberVisit(city, generalId);
+            // 这位武将那一仗还没打的记事也作废：人都告辞了，别让 resumePendingGeneralEvent 又把他找回来
+            if (this.pendingEventGeneralId === generalId) {
+                this.pendingEventGeneralId = null;
+                this.pendingEventOptions = this.pendingEventOptions.filter((id) => id !== generalId);
+            }
+            this.headingToEventGeneralId = null;
+            const name = getGeneralRecordByGeneralId(generalId)?.generalName ?? generalId;
+            gameLog('expedition', `[玩家] 告辞：${name} → 换下一位武将`);
+        }
+        this.findNextGeneralNow();
+    }
+
+    /** 「告辞」之后立刻换人：剧本模式先让剧本链挑下一位，挑不到（或非剧本）就走自动寻将。 */
+    private findNextGeneralNow(): void {
+        const hero = this.deps.hero;
+        if (hero.isAttached() || this.quest) return;
+        if (hero.autoPlan === 'script') {
+            // 剧本模式：剧本链的目标若是刚告辞的那位，checkAndTriggerNextBattlefield 会跳过并返回 false
+            this.headingToEventGeneralId = null;
+            if (this.checkAndTriggerNextBattlefield()) return;
+        }
+        this.autoTravelToBestCity();
     }
 
     /**
@@ -1045,6 +1099,8 @@ export class PlayerQuestSystem {
         continuation = false,
     ): void {
         this.deps.closeDialogue();
+        // 接下这一位 = 「告辞过谁」这一轮作废（告辞只是这一次不接，不是永远不见）
+        this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废（告辞只是这一次不接，不是永远不见）
         // 🔴 [2026-09-23 主人报障「第一事件结束后，军团就消失了，玩家原地不动，没有继续第二事件」]
         //    **谈定这一仗 = 「赶去与他会面」这件事作废**，标记必须在这里清掉。
         //    不清的后果（实机复现，非推测）：
@@ -1544,6 +1600,7 @@ export class PlayerQuestSystem {
 
     private startRestoration(city: City, g: { generalId: string; generalName: string; portrait: string }, original: string): void {
         this.deps.closeDialogue();
+        this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
         if (!isGeneralOnStage(g.generalId)) return;
         const firstTime = !isFirstBattleCompleted(g.generalId);
         markFirstBattleCompleted(g.generalId);
@@ -1583,6 +1640,7 @@ export class PlayerQuestSystem {
         target: City,
     ): void {
         this.deps.closeDialogue();
+        this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
         if (!isGeneralOnStage(g.generalId)) return;
         const firstTime = !isFirstBattleCompleted(g.generalId);
         markFirstBattleCompleted(g.generalId);
@@ -1652,7 +1710,7 @@ export class PlayerQuestSystem {
                     accent: true,
                     onPick: () => this.startFirstBattle(city, g, fb, existingArmy),
                 },
-                { label: '告辞', onPick: () => this.deps.closeDialogue() },
+                { label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, g.generalId) },
             ],
         });
     }
@@ -1664,6 +1722,7 @@ export class PlayerQuestSystem {
         existingArmy: Army | null,
     ): void {
         this.deps.closeDialogue();
+        this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
         if (!isGeneralOnStage(g.generalId)) return;
         markFirstBattleCompleted(g.generalId);
         this.headingToEventGeneralId = null;
@@ -1820,6 +1879,9 @@ export class PlayerQuestSystem {
             },
         };
 
+        // 🔴 [2026-10-21] 接任务时敌将若已带兵在外，先把那支军团撤掉，免得地图上同时有两个他
+        if (enemyGeneralId) this.recallEnemyGeneralFieldArmy(enemyGeneralId, false);
+
         this.deps.hero.joinFaction(myFactionId);
         this.deps.hero.attachTo(host);
         this.deps.ensureUnpaused();
@@ -1948,11 +2010,31 @@ export class PlayerQuestSystem {
         }
     }
 
+    /**
+     * 撤回已带兵在外的首战敌将：兵力归还出身据点（同势力才还），军团解散。
+     * force=false 时正在战斗的不动（等抵达战场那一刻再强制撤）；首战自己的敌军、玩家随军不碰。
+     */
+    private recallEnemyGeneralFieldArmy(generalId: string, force: boolean): void {
+        const lm = this.deps.legionManager;
+        for (const a of lm.getArmies()) {
+            if (a.isDestroyed || a.type !== 'legion' || a.generalId !== generalId) continue;
+            if (a.id === this.quest?.legionId || a.id === this.quest?.firstBattle?.enemyArmyId) continue;
+            const tag = a as Army & { isFirstBattleFieldEnemy?: boolean; isFirstBattleSiegeEnemy?: boolean };
+            if (tag.isFirstBattleFieldEnemy || tag.isFirstBattleSiegeEnemy) continue;
+            if (!force && a.getIsInCombat()) continue;
+            const home = this.deps.cityManager.getCity(a.homeCityId ?? a.getSourceCityId() ?? '');
+            if (home && home.factionId === a.getFactionId()) home.troops = (home.troops || 0) + a.getTroops();
+            a.disband();
+        }
+    }
+
     /** 野战首战：攻方抵达战场时才生成敌军，贴在攻方身边，接战即进战术模式 */
     private spawnFirstBattleFieldEnemy(q: PlayerQuest, host: Army): void {
         const fbState = q.firstBattle;
         if (!fbState) return;
         fbState.enemySpawnPending = false;
+        // 🔴 [2026-10-21] 接任务时他在战斗中没撤成的，到这里强制撤掉，保证只有首战这一个
+        if (fbState.enemyGeneralId) this.recallEnemyGeneralFieldArmy(fbState.enemyGeneralId, true);
         const hPos = host.getPosition();
         const spawnPos = { lat: hPos.lat, lng: hPos.lng + 0.03 };
         const enemyArmy = this.deps.legionManager.createLegion(
@@ -2291,6 +2373,10 @@ export class PlayerQuestSystem {
             return this.continueScriptCampaign(bf.id, owner, title);
         }
         if (owner && !this.deps.hero.isAttached()) {
+            // 🔴 [2026-10-21 主人令「告辞之后应该换下一个人物接任务」]
+            //    刚告辞过这一位 → 剧本链这次不找他（也让出位置给 tick 回落「换下一位武将」），
+            //    否则下一拍 travelToCity 会原路把他送回来，玩家就永远卡在「见他 → 告辞 → 又见他」里。
+            if (owner && this.declinedGenerals.has(owner)) return false;
             // 上次寻路失败还在冷却：不打断当前行程，先让玩家去找别的武将乱斗
             const now2 = Date.now();
             if (now2 < (this.bfRetryAfter.get(bf.id) ?? 0)) return false;
@@ -2803,8 +2889,11 @@ export class PlayerQuestSystem {
             }
             // 🔴 [2026-09-23] 剧本期不去找武将乱斗：军团此时不寻敌，起兵入伍只会原地停着；
             //    战场一时去不了（寻路冷却）就等冷却后再试。
+            // 🔴 [2026-10-21 主人令「告辞之后换下一个人物接任务」] **刚告辞过武将**时例外：
+            //    剧本链这次不找那位（见 checkAndTriggerNextBattlefield 的 declined 跳过），
+            //    这里就按「换下一位武将」去自动寻将 —— 否则剧本模式下玩家会一直杵在原地。
             if (!headingToBattlefield && !this.deps.hero.isTraveling()
-                && this.deps.hero.autoPlan !== 'script') {
+                && (this.deps.hero.autoPlan !== 'script' || this.declinedGenerals.size > 0)) {
                 this.autoTravelToBestCity();
             }
         }
@@ -3055,7 +3144,7 @@ export class PlayerQuestSystem {
                     text: narrativeText,
                     options: [
                         { label: ENLIST_OPTION_LABEL, accent: true, onPick: () => this.joinGeneralEvent(city, { generalId: gid, generalName, portrait: rec?.portrait ?? "" }, ev, army) },
-                        { label: "告辞", onPick: () => this.deps.closeDialogue() },
+                        { label: "告辞", onPick: () => this.leaveAndFindNextGeneral(city, gid) },
                     ],
                 });
                 return;
@@ -3079,7 +3168,7 @@ export class PlayerQuestSystem {
                 portrait,
                 factionName,
                 text: `壮士竟寻到军中来了。某所部兵马不足五千，尚无力远征，请自便。`,
-                options: [{ label: '告辞', onPick: () => this.deps.closeDialogue() }],
+                options: [{ label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, gid) }],
             });
             return;
         }
@@ -3094,7 +3183,7 @@ export class PlayerQuestSystem {
                 + `壮士若不嫌鞍马劳顿，便随某同去。`,
             options: [
                 { label: `⚔ 就此随军【${targetName}】`, accent: true, onPick: () => this.joinMarchingArmy(city, army, generalName) },
-                { label: '告辞', onPick: () => this.deps.closeDialogue() },
+                { label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, gid) },
             ],
         });
     }
@@ -3102,6 +3191,7 @@ export class PlayerQuestSystem {
     /** 野外会面后入伍：军团现成的，不起兵，其余与 startCampaign 同口径 */
     private joinMarchingArmy(city: City, army: Army, generalName: string): void {
         this.deps.closeDialogue();
+        this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
         if (!army.generalId || !isGeneralOnStage(army.generalId)) return;
         if (!army.isScriptArmy && army.getTroops() < GameConfig.LEGION.MIN_ARMY_SIZE) {
             this.deps.notify(`${generalName}所部兵马不足五千，无力出征`);
@@ -3349,6 +3439,12 @@ export class PlayerQuestSystem {
     private readonly visited = new Set<string>();
     /** 一据点多武将：记录已拜访过的武将，只有据点内全部在场武将都已拜访过，才将该据点计入 visited。 */
     private readonly visitedGenerals = new Set<string>();
+    /**
+     * 刚**告辞**过的武将（🔴 2026-10-21 主人令「告辞之后换下一个人物接任务」）：
+     *   剧本链（`checkAndTriggerNextBattlefield`）不再把他们当目标，免得下一拍又把玩家送回他跟前；
+     *   玩家**接下任何任务**（入伍/出征/复国/首战）即清空 —— 告辞只是这一次不接，不是永远不见。
+     */
+    private readonly declinedGenerals = new Set<string>();
     /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（66 类走完清空、重开一轮）。 */
     private readonly visitedStyles = new Set<string>();
     /** 🔴 [2026-10-07 主人令「由东向西」] 上一次轮到的那一类的经度（该类候选城经度中位数）；每轮开头置空。 */
@@ -3504,6 +3600,7 @@ export class PlayerQuestSystem {
     public clearForRestore(): void {
         this.cleanupFirstBattleState(this.quest);
         this.quest = null;
+        this.declinedGenerals.clear();      // 读档 = 这一轮「告辞过谁」作废
         clearCompletedFirstBattles();
         this.clearJourneyBriefing();
         this.briefedBattlefields.clear();   // 读档后重走的场次照常播报

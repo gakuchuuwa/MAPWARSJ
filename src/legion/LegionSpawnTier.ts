@@ -35,9 +35,23 @@ function getActiveLegionGeneralIds(): ReadonlySet<string> {
     return _activeGeneralIdsProvider ? _activeGeneralIdsProvider() : new Set<string>();
 }
 
-/** 排除已在外领兵的武将 + 尚未打完本城就地/防守首战、需留在城中等候玩家的武将 */
+let _reservedGeneralIdsProvider: (() => ReadonlySet<string>) | null = null;
+
+/** 🔴 [2026-10-21 主人令「玩家跟随姬发打牧野，子受还没到野战地点就出征打别人，观感上有两个子受」]
+ *  由 PlayerQuestSystem 注入：进行中的首战所预置的敌将，不许再被据点掷出去领兵（剧本里他就是那一场的敌将）。 */
+export function setReservedGeneralIdsProvider(provider: () => ReadonlySet<string>): void {
+    _reservedGeneralIdsProvider = provider;
+}
+
+/** 排除已在外领兵的武将 + 首战预占的敌将 + 尚未打完本城就地/防守首战、需留在城中等候玩家的武将 */
 function getExcludedGeneralIdsForSpawn(cityId?: string | null): ReadonlySet<string> {
-    const activeIds = getActiveLegionGeneralIds();
+    let activeIds = getActiveLegionGeneralIds();
+    const reserved = _reservedGeneralIdsProvider?.();
+    if (reserved && reserved.size > 0) {
+        const withReserved = new Set(activeIds);
+        for (const id of reserved) withReserved.add(id);
+        activeIds = withReserved;
+    }
     if (!cityId) return activeIds;
     const waiting = getCityAnchoredGenerals(cityId).filter((g) =>
         shouldGeneralWaitInCityForFirstBattle(g.generalId, cityId),
