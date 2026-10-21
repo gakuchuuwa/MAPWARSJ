@@ -600,6 +600,53 @@ const rampWorker = (v: number, a: number, b: number) => {
     return t * t * (3 - 2 * t);
 };
 
+/**
+ * 🔴 2026-10-21 主人令「这片区域需要美化」——战略地图**地表纹理**试点（只做中原，不铺任何道具）。
+ *
+ * 病根（读代码确认）：战略图的地表色 = 海拔色阶 + 气候/规则贴图（SANCAI_TERRAIN 缩到 128px 再拉大）
+ *   + 晕渲。平原坡度和曲率都接近 0 → reliefWeight ≈ 0（没有晕渲细节），
+ *   128px 贴图在 Z9 一屏（约 0.7°）里被放大成低频色块 → 整片平原就是一张平涂的绿纸。
+ *
+ * 做法：在**低起伏农耕地**上按**世界坐标**叠一层纯函数噪声（跨瓦片天然无缝、不随镜头跳动）：
+ *   ① 大块干湿摆动（约 0.5° 格）——同一天空下一片偏干草黄、一片偏湿润青绿，破掉「一块绿」；
+ *   ② 草土肌理（0.18° / 0.06° / 0.016° 三层平滑噪声）——只有斑驳、没有格子边；
+ *   ③ 少数休耕裸土斑（平滑阈值软边）。
+ * 🔴 2026-10-21 主人反馈「一堆马赛克」：原先用旋转方格取整给田块上色，方格边就是马赛克，
+ *   已整段删除，改为纯平滑值噪声；不再有任何「块边界」。
+ * 幅度控制在 ±10% 以内，压在 albedo 上（后面照旧乘 shadeFactor），不动海拔色阶、不动山区。
+ * 沙漠/干草原/沙地/坡地/高原台地一律不铺（用 aridity / sandiness / slopeGrad / 海拔门控）。
+ */
+const PLAINS_TEX_BOUNDS = { south: 30.0, north: 38.6, west: 109.8, east: 122.8 };
+/** 试点框边缘羽化宽度（度），避免出现生硬的矩形边界 */
+const PLAINS_TEX_FADE_DEG = 1.0;
+
+/** 整数格 → [0,1)，纯函数：同一个世界坐标永远同一个值（跨瓦片、跨缩放一致） */
+function worldHash(ix: number, iy: number): number {
+    let h = Math.imul(ix, 374761393) + Math.imul(iy, 668265263);
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+
+/** 值噪声（双线性 + smoothstep）；x/y 的单位是「格」，不是经纬度 */
+function worldNoise(x: number, y: number): number {
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const fx = x - ix, fy = y - iy;
+    const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy);
+    const a = worldHash(ix, iy), b = worldHash(ix + 1, iy);
+    const c = worldHash(ix, iy + 1), d = worldHash(ix + 1, iy + 1);
+    const ab = a + (b - a) * ux, cd = c + (d - c) * ux;
+    return ab + (cd - ab) * uy;
+}
+
+/** 中原试点框的权重（框内 1，框外 0，边缘 1° 平滑羽化） */
+function plainsPilotWeight(lat: number, lng: number): number {
+    const b = PLAINS_TEX_BOUNDS;
+    const d = Math.min(lng - b.west, b.east - lng, lat - b.south, b.north - lat);
+    if (d <= 0) return 0;
+    if (d >= PLAINS_TEX_FADE_DEG) return 1;
+    return rampWorker(d, 0, PLAINS_TEX_FADE_DEG);
+}
+
 /** 掩膜向外扩 R 像素（先横后竖两遍滑窗，O(n)） */
 /**
  * 🔴 [2026-10-21 主人令「在战略地图试做 7 层高地」] 照搬战术模式（Scene13GroundLayerGL）的 DE 台地做法：
@@ -960,6 +1007,9 @@ function renderHillshade(
     };
     // 离水 ≤4px 的陆地像素（海岸沙滩用）；只有带水体掩膜的瓦片才有海岸
     const nearWater = waterMask && matTapA ? dilateMask(waterMask, width, height, 4) : null;
+    // 逐像素经度（地表纹理试点用）：与 tileBounds 严格线性，相邻瓦片共用同一条边，跨瓦片连续
+    const rowLngStep = tileBounds ? (tileBounds.east - tileBounds.west) / width : 0;
+    const tileWestLng = tileBounds ? tileBounds.west : 0;
     if (params.useElevationColor) {
         // --- COLORED RENDERING PATH ---
         // 【2026-07-19 主人定：移除近岸晕染】原有 4 环扩散预计算每瓦片约 200 万次数组读取，
@@ -1264,6 +1314,47 @@ function renderHillshade(
                         ? (1 - rampWorker(absLat, 18, 24)) * Math.max(0, 1 - Math.abs(aridity - 0.55) / 0.35) * (0.25 + 0.25 * patch) : 0;
                     if (savanna > 0 && mix2(texPc1, 1 - patch, texPc2, patch, p)) {
                         r += (TX[0] - r) * savanna; g += (TX[1] - g) * savanna; b += (TX[2] - b) * savanna;
+                    }
+                }
+
+                // ⑧ 平原田地 / 草土肌理（2026-10-21 中原试点，见文件头 PLAINS_TEX_BOUNDS 注释）
+                //    只作用于低起伏农耕地：斑驳 + 干湿色相 + 田块明暗，幅度 ±10% 内。
+                const pilot = plainsPilotWeight(rowLat, tileWestLng + rowLngStep * (x + 0.5));
+                if (pilot > 0 && isLand && colorZ > 0 && colorZ < 700 && snowFade > 0.35) {
+                    const cropW = pilot
+                        * (1 - rampWorker(aridity, 0.42, 0.64))     // 干草原 / 荒漠不铺田
+                        * (1 - rampWorker(colorZ, 420, 700))       // 高原台地让给海拔色阶
+                        * (1 - rampWorker(slopeGrad, 0.030, 0.070))// 坡地让给晕渲
+                        * (1 - rampWorker(sandiness, 0.18, 0.50)); // 沙地不铺田
+                    if (cropW > 0.002) {
+                        const plng = tileWestLng + rowLngStep * (x + 0.5);
+                        // ① 大块干湿（≈0.5°格）：偏干→土黄，偏湿→青绿
+                        const nBig = worldNoise(plng * 2.1 + 13.7, rowLat * 2.1 + 5.3);
+                        const dry = (nBig - 0.5) * 2 * cropW;
+                        r += 18 * dry * 0.60;
+                        g += 12 * dry * 0.35;
+                        b -= 15 * dry * 0.55;
+                        // ② 草土肌理：四层**平滑**噪声（值噪声双线性，天然没有硬边/方块），
+                        //    ~0.18° 中斑 → ~0.06° 细斑 → ~0.016° 颗粒 → ~0.005° 细砂（1~2px）
+                        const nA = worldNoise(plng * 5.7 + 71.1, rowLat * 5.7 + 29.9);
+                        const nB = worldNoise(plng * 17.3 + 11.3, rowLat * 17.3 + 47.2);
+                        const nC = worldNoise(plng * 61.0 + 91.7, rowLat * 61.0 + 3.1);
+                        const nD = worldNoise(plng * 190.0 + 37.9, rowLat * 190.0 + 83.4);
+                        const mott = (nA - 0.5) * 0.50 + (nB - 0.5) * 0.28 + (nC - 0.5) * 0.14 + (nD - 0.5) * 0.08;
+                        const lum = 1 + mott * 0.22 * cropW;
+                        r *= lum; g *= lum; b *= lum;
+                        // ③ 色相随中斑轻微摆动（黄绿↔青绿），不加格子
+                        const hue = (nA - 0.5) * 2;
+                        r += 8 * hue * cropW;
+                        b -= 7 * hue * cropW;
+                        // ④ 少数地方是休耕/翻耕的裸土斑：用平滑阈值取软边，不是方块
+                        const bare = rampWorker(nA, 0.60, 0.86);
+                        if (bare > 0) {
+                            const bw = bare * 0.10 * cropW;
+                            r += (166 - r) * bw;
+                            g += (148 - g) * bw;
+                            b += (108 - b) * bw;
+                        }
                     }
                 }
 

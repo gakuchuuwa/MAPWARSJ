@@ -3,17 +3,22 @@
  * ------------------------------------------------------------------
  * 每次 npm run dev 启动时执行，除「被代码引用」的图外全部规范命名：
  *
- *   被引用                     → 原名不动（铁律）
- *   未引用 + 同文件夹内容重复   → __多余__{token}_{NN}.png   ← 主人审阅后手动删除的暂存标签
- *   未引用 + 仅跨文件夹内容重复 → __暂留__{token}_{NN}.png   ← 跨文化区保留观察
- *   未引用 + 独一无二           → __闲置__{token}_{NN}.png   ← 库存资源，随机池继续抽用
+ *   被引用                      → 原名不动（铁律）
+ *   未引用 + 全库有同图（任意夹） → __多余__{token}_{NN}.png   ← 可删的重复件（主人审阅后手动删）
+ *   未引用 + 全库独一无二         → __闲置__{token}_{NN}.png   ← 库存资源，随机池继续抽用
  *
- * 留活口铁律（主人 2026-08-04 定）：重复组若没有安全副本（无被引用正本、chongfu 也没有），
- *   每个文件夹内推选一份留守；其余同夹副本才标 __多余__。
+ * 🔴 [2026-10-21 主人令「把这个和多余合并。不在区别文件夹。」]
+ *   原 `__暂留__`（未引用 + 仅跨文件夹重复）已并入 `__多余__`：判定不再区分同夹/跨夹，
+ *   只要全库还有另一份同图就算重复件。`__暂留__` 从此不再产生，存量会在下次启动自动改掉。
+ *
+ * 留活口铁律（主人 2026-08-04 定，2026-10-21 随合并改为「全库留一份」）：
+ *   每个同图组在全库至少保住 1 份**非多余**兜底，绝不出现「整组都标多余、批量删就删绝版」：
+ *   · 组里有被引用的正本 → 正本就是兜底，其余未引用副本全标 __多余__
+ *   · 组里没人引用       → 全库推选 1 份留守（优先已叫 __闲置__ 的），其余标 __多余__
  *
  * 每次启动自动重归类（含存量迁移）：
- *   · __闲置__ 名但仅跨文件夹重复 → 改 __暂留__
- *   · __多余__ 名但同文件夹已无重复 → 改为 __暂留__ 或 __闲置__
+ *   · 旧 `__暂留__` 名 → 按上面的新口径改为 __多余__（或留守的 __闲置__）
+ *   · `__多余__` 名但全库已无同图 → 改回 __闲置__
  *
  * 铁律（AGENTS.md 立绘保护条款，绝对红线）：
  *   · 只 renameSync 同夹改名——没有任何删除/覆盖代码路径
@@ -123,6 +128,8 @@ function main() {
     const folderHashCount = new Map();
     /** @type {Set<string>} 同文件夹内已有被引用正本的 `folder\0sha256` */
     const referencedFolderSha = new Set();
+    /** @type {Set<string>} 全库有被引用正本的 sha256（新口径「全库留活口」用） */
+    const referencedSha = new Set();
     /** @type {{folder:string, file:string, sha:string}[]} 可改名候选（非只读夹） */
     const candidates = [];
     /** 全库（含 chongfu）所有 png 文件名：编号全库唯一用 */
@@ -154,7 +161,7 @@ function main() {
             const folderSha = `${folder}\0${sha}`;
             folderHashCount.set(folderSha, (folderHashCount.get(folderSha) ?? 0) + 1);
             allNamesGlobal.push(f);
-            if (isReferenced(folder, f)) referencedFolderSha.add(folderSha);
+            if (isReferenced(folder, f)) { referencedFolderSha.add(folderSha); referencedSha.add(sha); }
             if (!readonly) candidates.push({ folder, file: f, sha });
         }
     }
@@ -162,46 +169,41 @@ function main() {
     fs.writeFileSync(CACHE_PATH, JSON.stringify(nextCache), 'utf-8');
 
     // ── 3) 分类：期望前缀 vs 当前名 ──
-    /** @type {Map<string, {file:string, want:'多余'|'暂留'|'闲置'}[]>} folder → 改名任务 */
+    /** @type {Map<string, {file:string, want:'多余'|'闲置'}[]>} folder → 改名任务 */
     const planByFolder = new Map();
     let dupGroups = 0;
     for (const n of hashCount.values()) if (n >= 2) dupGroups++;
 
-    // ── 3.5) 同文件夹留活口 ──
-    // 每个文件夹的重复组至少保留一份；只有同夹的额外副本才标 __多余__。
-    // 留守图若还存在跨夹同图则标 __暂留__，否则标 __闲置__。
-    /** @type {Map<string, {folder:string, file:string}>} `folder\0sha` → 同文件夹留守者 */
-    const keeperByFolderSha = new Map();
+    // ── 3.5) 全库留活口（2026-10-21 主人令：__暂留__ 并入 __多余__、不再区分文件夹）──
+    // 新口径：未引用 + 全库有同图（同夹/跨夹都算）→ __多余__；未引用 + 全库唯一 → __闲置__。
+    // 每个同图组在全库保住 1 份非多余兜底：
+    //   · 组里有被引用正本 → 正本即兜底，其余未引用副本全标 __多余__
+    //   · 组里没人引用       → 全库推选 1 份留守（优先已叫 __闲置__ 的，其次文件名小者），其余标 __多余__
+    /** @type {Map<string, {folder:string, file:string}>} sha → 全库留守者 */
+    const keeperBySha = new Map();
     for (const c of candidates) {
         if (isReferenced(c.folder, c.file)) continue;
-        const folderSha = `${c.folder}\0${c.sha}`;
-        if ((folderHashCount.get(folderSha) ?? 0) < 2 || referencedFolderSha.has(folderSha)) continue;
-        const crossFolder = (hashFolders.get(c.sha)?.size ?? 0) >= 2;
-        const cur = keeperByFolderSha.get(folderSha);
-        const curPreferred = cur ? (crossFolder ? HOLD_RE.test(cur.file) : IDLE_RE.test(cur.file)) : false;
-        const cPreferred = crossFolder ? HOLD_RE.test(c.file) : IDLE_RE.test(c.file);
+        if ((hashCount.get(c.sha) ?? 0) < 2) continue;   // 全库唯一 → 闲置，不需要兜底
+        if (referencedSha.has(c.sha)) continue;          // 有被引用正本 → 正本兜底
+        const cur = keeperBySha.get(c.sha);
+        const curPreferred = cur ? IDLE_RE.test(cur.file) : false;
+        const cPreferred = IDLE_RE.test(c.file);
         const better = !cur
             || (cPreferred && !curPreferred)
             || (cPreferred === curPreferred && c.file.localeCompare(cur.file) < 0);
-        if (better) keeperByFolderSha.set(folderSha, { folder: c.folder, file: c.file });
+        if (better) keeperBySha.set(c.sha, { folder: c.folder, file: c.file });
     }
 
     for (const c of candidates) {
         if (isReferenced(c.folder, c.file)) continue; // 被引用 → 铁律不动
-        const folderSha = `${c.folder}\0${c.sha}`;
-        const sameFolderDuplicate = (folderHashCount.get(folderSha) ?? 0) >= 2;
-        const keeper = keeperByFolderSha.get(folderSha);
+        const duplicate = (hashCount.get(c.sha) ?? 0) >= 2;   // 同夹、跨夹一律算重复
+        const keeper = keeperBySha.get(c.sha);
         const isKeeper = !!keeper && keeper.folder === c.folder && keeper.file === c.file;
-        const hasReferencedKeeper = referencedFolderSha.has(folderSha);
-        const isSurplus = sameFolderDuplicate && (hasReferencedKeeper || !isKeeper);
-        const crossFolderDuplicate = (hashFolders.get(c.sha)?.size ?? 0) >= 2;
-        const want = isSurplus ? '多余' : crossFolderDuplicate ? '暂留' : '闲置';
+        const want = duplicate && !isKeeper ? '多余' : '闲置';
         const isIdleNamed = IDLE_RE.test(c.file);
-        const isHoldNamed = HOLD_RE.test(c.file);
         const isSurplusNamed = SURPLUS_RE.test(c.file);
-        // 已是正确前缀 → 不动
+        // 已是正确前缀 → 不动（旧 __暂留__ 名两个前缀都不匹配 → 会自动改掉）
         if (want === '多余' && isSurplusNamed) continue;
-        if (want === '暂留' && isHoldNamed) continue;
         if (want === '闲置' && isIdleNamed) continue;
         if (!planByFolder.has(c.folder)) planByFolder.set(c.folder, []);
         planByFolder.get(c.folder).push({ file: c.file, want });
@@ -247,14 +249,14 @@ function main() {
         }
     }
 
-    const planCounts = { 闲置: 0, 暂留: 0, 多余: 0 };
+    const planCounts = { 闲置: 0, 多余: 0 };
     for (const tasks of planByFolder.values()) {
         for (const task of tasks) planCounts[task.want]++;
     }
     const secs = ((Date.now() - t0) / 1000).toFixed(1);
     console.log(
         `[立绘分类改名] 重复组 ${dupGroups} | 待改 ${plan.length}` +
-        `（闲置 ${planCounts.闲置} / 暂留 ${planCounts.暂留} / 多余 ${planCounts.多余}）` +
+        `（闲置 ${planCounts.闲置} / 多余 ${planCounts.多余}）` +
         ` | 重新哈希 ${hashed} 张 | 耗时 ${secs}s${DRY ? '（--dry-run 未改盘）' : ''}`,
     );
     if (DRY || plan.length === 0) return;

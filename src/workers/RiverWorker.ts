@@ -23,6 +23,63 @@ function putTile(key: string, tile: WaterTileMask): void {
 
 const PAD = 32;
 
+/**
+ * 🔴 2026-10-21「江淮水岸」美化：ESRI 晕渲瓦片是 256px，判出来的水体是硬二值，
+ *   放到战略视距后湖岸/海岸就是一格一格的直角台阶。
+ *   这里直接读**本地地形瓦片**（512px，和底图同一张，只是不叠标签），按「偏蓝=水」逐子像素判定，
+ *   再 2×2 降采样成 0~1 的「水体覆盖率」：形状比 ESRI 细一倍，边缘天然带抗锯齿，
+ *   水里画什么、哪块是湖，都跟玩家看到的底图完全对齐。取不到就回落 ESRI 二值掩膜。
+ */
+const LOCAL_TERRAIN_BASE = '/9dixingtu/Google Terrain Maps without labels  roads and POI  512px';
+const coverageCache = new Map<string, Uint8Array | null>();
+
+/** 本地地形瓦片 → 256×256 水体覆盖率（0/64/128/192/256）；取不到返回 null */
+async function loadLocalWaterCoverage(x: number, y: number, z: number): Promise<Uint8Array | null> {
+    const key = `${z}/${x}/${y}`;
+    const cached = coverageCache.get(key);
+    if (cached !== undefined) return cached;
+    let out: Uint8Array | null = null;
+    try {
+        const url = encodeURI(`${LOCAL_TERRAIN_BASE}/${x}/${y}.jpg`);
+        const resp = await fetch(url, { signal: AbortSignal.timeout(6000) });
+        if (resp.ok) {
+            const bmp = await createImageBitmap(await resp.blob());
+            const canvas = new OffscreenCanvas(512, 512);
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            if (ctx) {
+                ctx.drawImage(bmp, 0, 0, 512, 512);
+                const px = ctx.getImageData(0, 0, 512, 512).data;
+                const cov = new Uint8Array(256 * 256);
+                for (let cy = 0; cy < 256; cy++) {
+                    for (let cx = 0; cx < 256; cx++) {
+                        let n = 0;
+                        for (let sy = 0; sy < 2; sy++) {
+                            const rowBase = ((cy * 2 + sy) * 512) * 4;
+                            for (let sx = 0; sx < 2; sx++) {
+                                const i = rowBase + (cx * 2 + sx) * 4;
+                                const r0 = px[i], g0 = px[i + 1], b0 = px[i + 2];
+                                if (b0 > g0 + 6 && b0 > 150 && r0 < 205) n++;
+                            }
+                        }
+                        cov[cy * 256 + cx] = n * 64;
+                    }
+                }
+                out = cov;
+            }
+            bmp.close();
+        }
+    } catch {
+        out = null;
+    }
+    coverageCache.set(key, out);
+    if (coverageCache.size > 220) {
+        const oldest = coverageCache.keys().next().value;
+        if (oldest !== undefined) coverageCache.delete(oldest);
+    }
+    return out;
+}
+
+
 /** 检查 tile 朝向 (dx, dy) 方向的外侧 32px 边缘带内是否存在陆地像素（mask === 0） */
 function borderHasLand(tile: WaterTileMask, dx: number, dy: number): boolean {
     const { width: w, height: h, mask } = tile;
@@ -70,7 +127,22 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
         mask[i] = w;
         if (w) hasWater = true;
     }
-    const tile: WaterTileMask = { id, width, height, x, y, z, mask };
+    // 🔴 有本地地形瓦片时，用它的 512px 覆盖率覆盖 ESRI 二值掩膜（形状与底图一致、边缘带抗锯齿）
+    let coverage: Uint8Array | null = null;
+    try {
+        coverage = await loadLocalWaterCoverage(x, y, z);
+    } catch {
+        coverage = null;
+    }
+    if (coverage) {
+        hasWater = false;
+        for (let i = 0; i < mask.length; i++) {
+            const w = coverage[i] >= 128 ? 1 : 0;
+            mask[i] = w;
+            if (w) hasWater = true;
+        }
+    }
+    const tile: WaterTileMask = { id, width, height, x, y, z, mask, coverage };
     putTile(keyOf(tile), tile);
     // 先等水深算好再画第一次：避免「先平色、后变深」的闪烁与新旧块混排
     const [texture, depthT] = await Promise.all([
