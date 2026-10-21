@@ -58,7 +58,8 @@ async function loadLocalWaterCoverage(x: number, y: number, z: number): Promise<
                             for (let sx = 0; sx < 2; sx++) {
                                 const i = rowBase + (cx * 2 + sx) * 4;
                                 const r0 = px[i], g0 = px[i + 1], b0 = px[i + 2];
-                                if (b0 > g0 + 6 && b0 > 150 && r0 < 205) n++;
+                                // 深海的本地底图偏暗（b≈120~150），不能卡 b>150，否则整块外海被判成陆地
+                                if (b0 > g0 + 6 && b0 > 90 && r0 < 205) n++;
                             }
                         }
                         cov[cy * 256 + cx] = n * 64;

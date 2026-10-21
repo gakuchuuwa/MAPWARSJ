@@ -616,9 +616,6 @@ const rampWorker = (v: number, a: number, b: number) => {
  * 幅度控制在 ±10% 以内，压在 albedo 上（后面照旧乘 shadeFactor），不动海拔色阶、不动山区。
  * 沙漠/干草原/沙地/坡地/高原台地一律不铺（用 aridity / sandiness / slopeGrad / 海拔门控）。
  */
-const PLAINS_TEX_BOUNDS = { south: 30.0, north: 38.6, west: 109.8, east: 122.8 };
-/** 试点框边缘羽化宽度（度），避免出现生硬的矩形边界 */
-const PLAINS_TEX_FADE_DEG = 1.0;
 
 /** 整数格 → [0,1)，纯函数：同一个世界坐标永远同一个值（跨瓦片、跨缩放一致） */
 function worldHash(ix: number, iy: number): number {
@@ -638,14 +635,6 @@ function worldNoise(x: number, y: number): number {
     return ab + (cd - ab) * uy;
 }
 
-/** 中原试点框的权重（框内 1，框外 0，边缘 1° 平滑羽化） */
-function plainsPilotWeight(lat: number, lng: number): number {
-    const b = PLAINS_TEX_BOUNDS;
-    const d = Math.min(lng - b.west, b.east - lng, lat - b.south, b.north - lat);
-    if (d <= 0) return 0;
-    if (d >= PLAINS_TEX_FADE_DEG) return 1;
-    return rampWorker(d, 0, PLAINS_TEX_FADE_DEG);
-}
 
 /** 掩膜向外扩 R 像素（先横后竖两遍滑窗，O(n)） */
 /**
@@ -1317,9 +1306,9 @@ function renderHillshade(
                     }
                 }
 
-                // ⑧ 平原田地 / 草土肌理（2026-10-21 中原试点，见文件头 PLAINS_TEX_BOUNDS 注释）
-                //    只作用于低起伏农耕地：斑驳 + 干湿色相 + 田块明暗，幅度 ±10% 内。
-                const pilot = plainsPilotWeight(rowLat, tileWestLng + rowLngStep * (x + 0.5));
+                // ⑧ 平原田地 / 草土肌理（2026-10-21 主人令：由中原试点铺到全图）
+                //    只作用于低起伏农耕地（干湿 / 沙地 / 坡度 / 海拔四道门控）：斑驳 + 干湿色相，幅度 ±10% 内。
+                const pilot = 1;
                 if (pilot > 0 && isLand && colorZ > 0 && colorZ < 700 && snowFade > 0.35) {
                     const cropW = pilot
                         * (1 - rampWorker(aridity, 0.42, 0.64))     // 干草原 / 荒漠不铺田
@@ -1340,8 +1329,8 @@ function renderHillshade(
                         const nB = worldNoise(plng * 17.3 + 11.3, rowLat * 17.3 + 47.2);
                         const nC = worldNoise(plng * 61.0 + 91.7, rowLat * 61.0 + 3.1);
                         const nD = worldNoise(plng * 190.0 + 37.9, rowLat * 190.0 + 83.4);
-                        const mott = (nA - 0.5) * 0.50 + (nB - 0.5) * 0.28 + (nC - 0.5) * 0.14 + (nD - 0.5) * 0.08;
-                        const lum = 1 + mott * 0.22 * cropW;
+                        const mott = (nA - 0.5) * 0.50 + (nB - 0.5) * 0.34 + (nC - 0.5) * 0.08 + (nD - 0.5) * 0.03;
+                        const lum = 1 + mott * 0.20 * cropW;
                         r *= lum; g *= lum; b *= lum;
                         // ③ 色相随中斑轻微摆动（黄绿↔青绿），不加格子
                         const hue = (nA - 0.5) * 2;
@@ -1350,7 +1339,7 @@ function renderHillshade(
                         // ④ 少数地方是休耕/翻耕的裸土斑：用平滑阈值取软边，不是方块
                         const bare = rampWorker(nA, 0.60, 0.86);
                         if (bare > 0) {
-                            const bw = bare * 0.10 * cropW;
+                            const bw = bare * 0.05 * cropW;
                             r += (166 - r) * bw;
                             g += (148 - g) * bw;
                             b += (108 - b) * bw;
