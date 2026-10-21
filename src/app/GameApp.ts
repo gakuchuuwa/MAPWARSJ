@@ -81,7 +81,8 @@ import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
 import { refreshEraFactionDisplays } from '../data/eraFactionDisplay';
 import { syncCentenarianGeneralOwners, resetCentenarianGeneralOwnersForYearJump } from '../events/centenarianGeneralOwnersSync';
-import { setScriptYearProvider, setCentenarianYearProvider, setGameModeProvider } from '../data/generalOnStage';
+import { setScriptYearProvider, setCentenarianYearProvider, setGameModeProvider, isGeneralOnStage } from '../data/generalOnStage';
+import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
@@ -964,7 +965,16 @@ export class GameApp {
         //    归属武将的城外（格拉尼库斯河战役 = 佩拉）；乱斗模式照旧在全世界随机挑一个据点。
         const scriptStart = findCurrentScriptEventCity(allCities);
         // 🔴 [2026-10-08 主人令「开局玩家出现的位置请随机」] 不再绑定剧本事件城：一律在全部据点里随机挑一个（scriptStart 只留给下面的出生距离判定）
-        const startCity = allCities[Math.floor(Math.random() * allCities.length)];
+        // 🔴 [2026-10-21 主人令「百岁模式开局必须在欧亚，因为美洲哪里都没武将」「能排除的都排除」]
+        //    百岁模式随机出生点：只在「有在场武将的据点」里挑（美洲/无将之地自然排除）；
+        //    一座都没有 → 退而排除美洲（经度 < -30°）；再不行才用全部据点。
+        const isCentenarianStart = (this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian';
+        const withGeneral = isCentenarianStart
+            ? allCities.filter((c) => getCityAnchoredGenerals(c.id).some((g) => isGeneralOnStage(g.generalId)))
+            : allCities;
+        const eurasia = isCentenarianStart ? allCities.filter((c) => c.longitude >= -30) : allCities;
+        const spawnCandidates = withGeneral.length > 0 ? withGeneral : (eurasia.length > 0 ? eurasia : allCities);
+        const startCity = spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
         let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
         const edges = roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;

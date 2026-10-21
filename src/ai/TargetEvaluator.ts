@@ -10,8 +10,8 @@
  *    朝老家方向的敌城同样是扩张目标）
  * 2. 沿推进方向优先（<2 万，锚点=老家，军团在前哨）：优先「路径经过军团所在城」的目标
  * 3. 排除绕回老家（≥2 万，锚点=前线城）：排除「路径中段经过老家」的目标
- * 4. 池内有「全图据点最多的势力」的城 → 必打（反雪球，主人 2026-08-05 定，防最强势力滚雪球）
- * 5. 否则池内均匀随机抽一座
+ * 4. 池内有同建筑文化风格且不绕远（≤最近×1.5）的城 → 只在这些里抽（主人 2026-10-21 定；反雪球已删）
+ * 5. 池内均匀随机抽一座
  * 6. 池空（锚点直连均无敌城）→ 回退「从锚点出发道路距离最近的敌城」取最近 N 随机
  */
 import { City } from '../types/core';
@@ -56,6 +56,8 @@ export interface TargetEvaluateOptions {
      * 刚打平的敌城 id：方向池优先避开「从锚点出发最短路径经过此城」的目标（筛空自动回落全池）。
      */
     avoidThroughCityId?: string;
+    /** 本军文化（武将文化，无将则出发据点建筑风格）：方向池里优先同 buildingStyle 的敌城 */
+    myBuildingStyle?: string;
 }
 
 export class TargetEvaluator {
@@ -162,25 +164,16 @@ export class TargetEvaluator {
             if (beatable.length > 0) pool = beatable;
         }
 
-        // 枪打出头鸟（反雪球）：候选池（方向池，军团挨着的 2-3 座可选城）里有全图据点最多的势力 → 必打它。
-        // [2026-08-05 GAKU 定] 确定性、无门槛：只有挨着的才打，不挨着的不打——方向池里没有领头城，
-        // 就不回头（原 anywhere 兜底已删），正常抽签。
-        const hunt = GameConfig.AI.LEADER_HUNT;
-        if (hunt?.ENABLED) {
-            const leader = TargetEvaluator.findLeaderFaction(cities);
-            if (leader && leader.factionId !== factionId) {
-                const factionById = new Map(cities.map((c) => [c.id, c.factionId]));
-                const isLeaderCity = (s: TargetScore) =>
-                    factionById.get(s.targetId) === leader.factionId;
-                // 方向池内最近的领先城（池按方向排列、未按距离排序，故取最小值而非 find）
-                const inPool = pool
-                    .filter(isLeaderCity)
-                    .reduce<TargetScore | null>(
-                        (best, s) => (!best || s.distanceKm < best.distanceKm ? s : best),
-                        null
-                    );
-                if (inPool) return inPool;
-            }
+        // 🔴 [2026-10-21 主人令] 优先攻打同建筑文化风格的据点：只在方向池（各条直连路最近的一座敌城）里挑，
+        //    且道路距离 ≤ 池内最近者 ×1.5（不绕远）；池里没有同文化的 → 照旧整池随机（各边没有就算了）。
+        //    （原「枪打出头鸟/反雪球」已按主人令删除。）
+        const myStyle = options?.myBuildingStyle;
+        if (myStyle && pool.length > 1) {
+            const styleById = new Map(cities.map((c) => [c.id, c.buildingStyle]));
+            const minKm = Math.min(...pool.map((s) => s.distanceKm));
+            const sameCulture = pool.filter((s) =>
+                styleById.get(s.targetId) === myStyle && s.distanceKm <= minKm * 1.5);
+            if (sameCulture.length > 0) pool = sameCulture;
         }
 
         // [2026-08-07 简化] 行军惯性已移除（见文件头注释）——方向池均匀随机。
@@ -235,41 +228,6 @@ export class TargetEvaluator {
         }
 
         return pool;
-    }
-
-    /**
-     * 当前据点最多的势力（排除无主/叛军 panjun）；**须严格多于次名**，平局一律返回 null。
-     *
-     * [2026-08-05] 平局守卫不可删：开局 922 座城 = 922 个势力、人人恰好 1 城，
-     * 没有平局判据时 `n > bestN` 会保留遍历到的首个势力（= cities 数组首城的 tang/长安），
-     * 于是长安在开局被所有邻近军团确定性合击——它并不领先，纯属取值假象。
-     * 实测见 scratch/verify_leader_tie.mts。
-     */
-    private static findLeaderFaction(cities: City[]): { factionId: string; count: number } | null {
-        const counts = new Map<string, number>();
-        for (const c of cities) {
-            if (!c.factionId || c.factionId === 'panjun') continue;
-            counts.set(c.factionId, (counts.get(c.factionId) ?? 0) + 1);
-        }
-        let bestId = '';
-        let bestN = 0;
-        let secondN = 0;
-        counts.forEach((n, f) => {
-            if (n > bestN) {
-                secondN = bestN;
-                bestN = n;
-                bestId = f;
-            } else if (n > secondN) {
-                secondN = n;
-            }
-        });
-        if (!bestId || bestN <= secondN) return null; // 并列第一 = 无人领先
-        // 🔴 [2026-08-12 主人批准] 必须**明显**领先才算出头鸟，不是多一座城就被全图围攻。
-        //    旧判据 bestN > secondN：开局阶段谁先打下第二座城，立刻被所有邻居确定性合击，
-        //    观感上是"莫名其妙的全图公敌"。合纵的前提是对方已经明显坐大，不是刚冒头。
-        const lead = GameConfig.AI.LEADER_HUNT?.MIN_LEAD_RATIO ?? 1;
-        if (bestN < secondN * lead) return null;
-        return { factionId: bestId, count: bestN };
     }
 
     private static collectReachableEnemies(
