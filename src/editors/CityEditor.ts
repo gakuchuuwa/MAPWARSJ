@@ -1471,10 +1471,10 @@ export class CityEditor implements IEditor {
 
     /**
      * 刷新 #ce-faction-status 显示当前输入是否对应有效 faction。
-     * 同时检查"沙盒模式陷阱"：
-     *   - 势力存在但不在 STARTING_CAPITALS → 沙盒模式下其所有城会被强制降为 panjun 灰旗
-     *   - 当前编辑的城和该势力的首都不匹配 → 这个城在沙盒模式不会显示此势力
-     * 详见 GameApp.ts loadCityData() 中的沙盒重置逻辑。
+     * 沙盒模式提示（🔴 2026-10-22 起一个势力可多据点，旧「非首府→panjun」已作废）：
+     *   - 势力没有 STARTING_CAPITALS → 没有开局首府锚点（城归属仍按 cities_v2.factionId）
+     *   - 当前编辑的城不是该势力首府 → 沙盒仍保留该势力（同一势力可拥有多个据点）
+     * 详见 GameAppCityLoader.ts 的 resolveBootFactionId()。
      */
     private updateFactionStatus(): void {
         const input = this.container?.querySelector('#ce-faction') as HTMLInputElement | null;
@@ -1498,12 +1498,12 @@ export class CityEditor implements IEditor {
         let html = `✓ <b style="color:#81C784">${f.name}</b> <span style="color:#666">(${f.id})</span>`;
         const warnings: string[] = [];
 
-        // [SANDBOX 陷阱 1] 势力是否注册了 STARTING_CAPITALS
+        // [SANDBOX 陷阱 1] 势力是否注册了 STARTING_CAPITALS（只影响「开局首府锚点」，不影响城归属）
         const factionCapital = STARTING_CAPITALS[f.id];
         if (!factionCapital) {
             warnings.push(
                 `<span style="color:#FF5252">⚠ 无 STARTING_CAPITALS 注册</span>` +
-                `<span style="color:#999">：沙盒模式此势力所有城会被强制降为 panjun 灰旗，需在 StartingCapitals.ts 注册</span>`
+                `<span style="color:#999">：该势力没有开局首府锚点；城归属仍按 cities_v2.factionId（🔴 2026-10-22 起一个势力可多据点，不再强制降 panjun）</span>`
             );
         } else {
             // [SANDBOX 陷阱 2] 当前编辑的城是不是此势力的首都？
@@ -1513,7 +1513,7 @@ export class CityEditor implements IEditor {
                 } else {
                     warnings.push(
                         `<span style="color:#FFB74D">ⓘ 沙盒提示</span>` +
-                        `<span style="color:#999">：${f.id} 的首都是 ${factionCapital}，此城不是首都；沙盒模式会被算作中立城</span>`
+                        `<span style="color:#999">：${f.id} 的首都是 ${factionCapital}，此城不是首都；🔴 2026-10-22 起同一势力可拥有多个据点，沙盒仍显示本势力</span>`
                     );
                 }
             }

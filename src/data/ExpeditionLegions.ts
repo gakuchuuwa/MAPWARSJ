@@ -62,6 +62,7 @@ import { CUMAN_EXPEDITION_ELITE_LEGIONS } from './CumanExpeditionLegions';
 import { SCYTHIANS_EXPEDITION_ELITE_LEGIONS } from './ScythiansExpeditionLegions';
 import { SRIVIJAYA_EXPEDITION_ELITE_LEGIONS } from './SriVijayaExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
+import { CITIES_V2 } from './cities_v2';
 import { getRawGeneralByGeneralId } from './FactionGenerals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
@@ -174,10 +175,18 @@ export function getGeneralEliteLegionName(generalId: string | null | undefined):
 }
 
 function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> {
+  // 🔴 [2026-10-22 主人新口径] 一个势力可以拥有多个据点：
+  //    同势力的**每个据点**都拿到该势力的精锐配置（无将守城也有番号），不再只管首府。
   const map: Record<string, EliteLegionConfig> = {};
+  for (const city of CITIES_V2) {
+    const elite = ALL_FACTION_ELITE_LEGIONS[city.factionId];
+    if (elite) map[city.id] = elite;
+  }
   for (const [factionId, cityId] of Object.entries(STARTING_CAPITALS)) {
-    const elite = ALL_FACTION_ELITE_LEGIONS[factionId];
-    if (elite) map[cityId] = elite;
+    if (cityId && !map[cityId]) {
+      const elite = ALL_FACTION_ELITE_LEGIONS[factionId];
+      if (elite) map[cityId] = elite;
+    }
   }
   return map;
 }
@@ -186,14 +195,19 @@ function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> 
 export const CITY_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = buildCityEliteLegionMap();
 
 function buildCityAnchorFactionMap(): Readonly<Record<string, string>> {
+  // 🔴 [2026-10-22 主人新口径] 一个势力可以拥有多个据点（旧「一城一势力」作废）：
+  //    每个据点都要有史料锚定势力，直接取 cities_v2.factionId；STARTING_CAPITALS 只作兜底。
   const map: Record<string, string> = {};
+  for (const city of CITIES_V2) {
+    if (city.factionId) map[city.id] = city.factionId;
+  }
   for (const [factionId, cityId] of Object.entries(STARTING_CAPITALS)) {
-    if (cityId) map[cityId] = factionId;
+    if (cityId && !map[cityId]) map[cityId] = factionId;
   }
   return map;
 }
 
-/** 据点 → 史料锚定势力（录入时 STARTING_CAPITALS 反查；旗号易主不改变） */
+/** 据点 → 史料锚定势力（cities_v2.factionId；旗号易主不改变） */
 export const CITY_ANCHOR_FACTION: Readonly<Record<string, string>> = buildCityAnchorFactionMap();
 
 /** 据点在史料录入中锚定的势力 id（无则该城不出将/精） */

@@ -5523,7 +5523,9 @@ function serverValidateEntities(): {
         }
     }
 
-    // 6.6. 据点完整性铁律：严禁叛军据点，正规势力不得占领多城、也不得为 0 据点
+    // 6.6. 据点完整性铁律（🔴 [2026-10-22 主人最新口径] 一个据点可多武将；一个武将＝一个势力＋一个军团＋一个精锐，可以重复；
+    //      **一个势力可以拥有多个据点**，「一城一势力」旧规作废）：
+    //      严禁叛军据点；正规势力必须有据点、不得为 0 据点。
     const citiesByFactionMap = new Map<string, typeof data.cities>();
     for (const c of data.cities) {
         if (c.factionId === 'panjun') {
@@ -5533,15 +5535,10 @@ function serverValidateEntities(): {
         if (!citiesByFactionMap.has(c.factionId)) citiesByFactionMap.set(c.factionId, []);
         citiesByFactionMap.get(c.factionId)!.push(c);
     }
-    for (const [fId, cityList] of citiesByFactionMap.entries()) {
-        if (cityList.length > 1) {
-            const fName = factionById.get(fId)?.name ?? fId;
-            const cNames = cityList.map(c => c.name).join('、');
-            issues.push({
-                level: 'error',
-                msg: `势力多据点冲突：势力 "${fName}" (${fId}) 占领了 ${cityList.length} 个据点（${cNames}），违反一城一势力铁律`,
-                factionId: fId,
-            });
+    for (const f of data.factions) {
+        if (skipFactions.has(f.id)) continue;
+        if (!citiesByFactionMap.has(f.id)) {
+            issues.push({ level: 'error', msg: `势力 "${f.name}" (${f.id}) 没有据点（正规势力不得为 0 据点）`, factionId: f.id });
         }
     }
 

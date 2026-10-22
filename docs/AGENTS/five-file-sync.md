@@ -36,10 +36,10 @@
 5. src/data/SandboxDisplayNames.ts       → SANDBOX_DISPLAY_NAMES
 ```
 
-> **⚠️ 首都映射铁律（2026-06-29 补充，防 AI 踩坑）：**
+> **⚠️ 首都映射铁律（2026-06-29 补充；🔴 2026-10-22 按新口径改写）：**
 > **凡是新建势力，必须在 `src/data/StartingCapitals.ts` 中写入首都映射（例如 `'taizhou': 'city_hailing',`）。**
-> **核心原因：** 沙盒模式下，游戏引擎（`loadGameAppCityData`）强依赖 `STARTING_CAPITALS` 判断据点归属。如果新建势力没有在此登记，引擎找不到其立足之地，就会把该据点强制降格分配给 `'panjun'`（叛军）。叛军没有旗号文字，会导致该势力在地图上只显示空旗（背景板如 7-1.png）。
-> **AI 犯错记录：** 曾漏写海陵城（taizhou）的首都映射，导致「泰」字大旗不显示，误判为 HMR 缓存问题。**此条红线绝对禁止再犯！手动改文件或用 FactionEditor 时，必须查验首都映射是否到位！**
+> **2026-10-22 新口径：一个势力可以拥有多个据点** —— 开局归属由 `GameAppCityLoader.resolveBootFactionId()` 决定：**非首府城保留 `cities_v2.factionId`，不再强制降为 `panjun`**（旧逻辑已删）。`STARTING_CAPITALS` 现在只负责「势力的开局首府锚点」（势力面板/精锐锚点/沙盒改旗兼容）。
+> **AI 犯错记录：** 曾漏写海陵城（taizhou）的首都映射，导致「泰」字大旗不显示，误判为 HMR 缓存问题。**手动改文件或用 FactionEditor 时，仍必须查验首都映射是否到位；另外 `factionFlagMap` / `SANDBOX_DISPLAY_NAMES` 缺失分别会导致旗面走默认、旗面没字（2026-10-22 补过 liulike）。**
 
 
 **不要手动写 5 处。** 用 FactionEditor 批量模式：

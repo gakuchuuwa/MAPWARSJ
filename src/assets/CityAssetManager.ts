@@ -873,6 +873,7 @@ export class CityAssetManager {
         'yilihanguo_d': '伊利',
 'asaibaijiang': '阿塞',
         'wulaertu': '亚美',
+        'liulike': '留里', // 🔴 [2026-10-22] 留里克（诺夫哥罗德/拉多加/白湖）——补五文件同步缺失项
 'wulaertu_guo': '乌图',
 'gelujiya': '格鲁',
 'bendou': '科穆',
