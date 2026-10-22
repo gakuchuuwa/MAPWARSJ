@@ -96,6 +96,8 @@ export interface StoryOption {
     label: string;
     /** 主选项：自动模式 3 秒后自动选它 */
     accent?: boolean;
+    /** 选它不算「这个故事块演过了」：以后条件满足还会再弹（例：看牙口选「改天再学」） */
+    keepOpen?: boolean;
     pick(api: StoryApi): void;
 }
 
@@ -362,7 +364,7 @@ export class StoryletEngine {
                 accent: o.accent,
                 onPick: () => {
                     this.app.playerHUD?.closeDialogue();
-                    beforePick?.();
+                    if (!o.keepOpen) beforePick?.();
                     o.pick(api);
                     this.refreshHold();
                 },
