@@ -115,7 +115,7 @@ import { render } from './scene13/Scene13Render';
 /**
  * 🔴 [2026-10-20 主人令「对方刚放的计优先用克它的计回应」] 六计相克表（对方刚放的计 → 我方回应：首选、备选），
  * 🔴 [2026-10-21 主人令「相克改为与界面提示一致」] 并换成「夺敌兵」后重定，与 CombatUI 每计提示里的「破某计」对齐：
- *   攻（猛攻增伤）→ 敌（回血＋减伤四成）｜混（驱散增益）
+ *   攻（猛攻增伤）→ 敌（回血两成＋减伤四成）｜混（驱散增益）
  *   敌（固守减伤）→ 败（折损前线，绕开护盾）｜混（驱散护盾）
  *   混（乱阵＋驱散）→ 胜（补生力军，不受乱阵影响）｜敌（回血固守撑过混乱）
  *   并（夺敌兵倒戈）→ 攻（猛攻压住摇摆的兵）｜混（扰乱）
@@ -447,7 +447,7 @@ export class Scene13WarLayer {
     private sideEliteTier: [number | null, number | null] = [null, null];
     /** 攻/守双方当前集气进度（0 ~ 100） */
     private skillGauge: [number, number] = [0, 0];
-    /** 攻/守双方每秒集气速率（基础 24 秒满槽 = 100/24 × 武将档位 × 精锐档位） */
+    /** 攻/守双方每秒集气速率（基础 45 秒满槽 = 100/45 × 武将档位 × 精锐档位） */
     private skillRatePerSec: [number, number] = [0, 0];
     /** 攻/守双方集气总倍率（用于 UI 展示） */
     private skillRateMult: [number, number] = [1, 1];
@@ -465,11 +465,11 @@ export class Scene13WarLayer {
     private queuedSkill: [TacticalSixSet | null, TacticalSixSet | null] = [null, null];
     /** 【攻】振己威持续倒计时（秒）：己方全场士兵攻速 ×1.30、移速 ×1.20、伤害 ×1.30 */
     private skillFrenzyTimer: [number, number] = [0, 0];
-    /** 【敌】固己防持续倒计时（秒）：释放瞬间满血 + 持续期间己方士兵受伤害 ×0.60 */
+    /** 【敌】固己防持续倒计时（秒）：释放瞬间回复 20% 最大生命 + 持续期间己方士兵受伤害 ×0.60 */
     private skillShieldTimer: [number, number] = [0, 0];
-    /** 【混】乱敌阵持续倒计时（秒）：该侧（受害方）接战前排士兵恐慌转身向后溃逃 */
+    /** 【混】乱敌阵持续倒计时（秒）：该侧（受害方）前线士兵陷入混乱——胡乱走动、不攻击、受近战 ×1.4 */
     private skillPanicTimer: [number, number] = [0, 0];
-    /** 【并】挫敌锐（攻城战破防）持续倒计时（秒）：该侧（受害方）守军与城墙/建筑受伤害 ×1.35 */
+    /** 【并】旧「挫敌锐（破防增伤 ×1.35）」遗留计时器：2026-10-21 起【并】改为「夺敌兵」，已无任何地方设置 >0（死字段，仅伤害式里的 ×1.35 仍留作兜底） */
     private skillVulnTimer: [number, number] = [0, 0];
     /** 双方武将技错开释放冷却（秒）：禁止双方同帧同时放技；同时满槽时攻方（0）先放，守方（1）隔 SKILL_CAST_GAP_SEC 再放 */
     private skillCastCooldown: number = 0;
@@ -624,26 +624,35 @@ export class Scene13WarLayer {
 
     public getScene13SkillState() {
         if (!this.active && !this.lingering) return null;
-        const buildSide = (f: 0 | 1) => ({
-            // 小队模式没有武将，不显示武将技栏
-            hasGeneral: !this.skirmish,
-            generalId: this.sideGeneralId[f],
-            isFamous: this.sideIsFamous[f],
-            eliteTier: this.sideEliteTier[f] !== null ? (`T${this.sideEliteTier[f]}`) : null,
-            rateMult: this.skillRateMult[f],
-            gauge: this.skillGauge[f],
-            ratePerSec: this.skillRatePerSec[f],
-            lastCastSkill: this.lastCastSkill[f],
-            lastCastSkillName: this.lastCastSkillName[f],
-            queuedSkill: this.queuedSkill[f],
-            autoNextSkill: this.resolveAutoNextSkill(f),
-            oppLastCast: this.lastCastSkill[1 - f],
-            frenzySec: Math.max(0, this.skillFrenzyTimer[f]),
-            shieldSec: Math.max(0, this.skillShieldTimer[f]),
-            panicSec: Math.max(0, this.skillPanicTimer[f]),
-            vulnSec: Math.max(0, this.skillVulnTimer[f]),
-            isSiege: this.battleType === 'siege',
-        });
+        const buildSide = (f: 0 | 1) => {
+            const autoNext = this.resolveAutoNextSkill(f);
+            // 对方「刚放、我还没回应」的那一计（= 自动选计真正会去克的目标）；已回应过就不再算新招
+            const oppNew = this.skillCastSeq[1 - f] > this.skillAnsweredSeq[f] ? this.lastCastSkill[1 - f] : null;
+            return {
+                // 小队模式没有武将，不显示武将技栏
+                hasGeneral: !this.skirmish,
+                generalId: this.sideGeneralId[f],
+                isFamous: this.sideIsFamous[f],
+                eliteTier: this.sideEliteTier[f] !== null ? (`T${this.sideEliteTier[f]}`) : null,
+                rateMult: this.skillRateMult[f],
+                gauge: this.skillGauge[f],
+                ratePerSec: this.skillRatePerSec[f],
+                lastCastSkill: this.lastCastSkill[f],
+                lastCastSkillName: this.lastCastSkillName[f],
+                queuedSkill: this.queuedSkill[f],
+                autoNextSkill: autoNext,
+                /** 自动下一计是否真的克了对方刚放的那一计（界面「拆招：破X」只在这为真时显示） */
+                autoNextCounters: oppNew ? SIX_COUNTER[oppNew].includes(autoNext) : false,
+                oppLastCast: this.lastCastSkill[1 - f],
+                /** 对方刚放、尚未被我回应的一计（null = 没有新招要拆） */
+                oppNewCast: oppNew,
+                frenzySec: Math.max(0, this.skillFrenzyTimer[f]),
+                shieldSec: Math.max(0, this.skillShieldTimer[f]),
+                panicSec: Math.max(0, this.skillPanicTimer[f]),
+                vulnSec: Math.max(0, this.skillVulnTimer[f]),
+                isSiege: this.battleType === 'siege',
+            };
+        };
         return {
             attacker: buildSide(0),
             defender: buildSide(1),
@@ -764,7 +773,6 @@ export class Scene13WarLayer {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
         const roleTag = f === 0 ? '攻击' : '防御';
         const gid = this.sideGeneralId[f];
-        const isFamous = this.sideIsFamous[f];
 
         // 挑选贴合该武将身份与攻守角色的四字技能名
         let pickedEntry = gid ? (() => {
@@ -781,10 +789,13 @@ export class Scene13WarLayer {
         })() : undefined;
 
         if (!pickedEntry) {
+            // 🔴 [2026-10-22 查六计时修] 名将的「本命六槽」并不覆盖全部六计（实测 552 位名将里 517 位没有敌战计），
+            //    旧逻辑 `isFamous ? !!e.ownerGeneralId : !e.ownerGeneralId` 会在兜底时随机挑**别的武将**的典故技名
+            //    （大字表演变成张冠李戴）。本命已在上面的签名槽里优先取过，兜底一律只用不在册通用技名。
             const candidates = TACTICAL_SKILL_ENTRIES_V1.filter(
                 (e) => (e.usageTag === roleTag || e.usageTag === '双行' || !e.usageTag)
                     && EFFECT_TO_SIX_SET[e.baseEffect] === six
-                    && (isFamous ? !!e.ownerGeneralId : !e.ownerGeneralId),
+                    && !e.ownerGeneralId,
             );
             const pool = candidates.length > 0
                 ? candidates
@@ -812,7 +823,7 @@ export class Scene13WarLayer {
 
         // ── 执行六计正交战场效果 ──
         if (six === 'shengzhan') {
-            // 1. 【胜】增己兵：立即从己方 9 个出兵口一次性涌出 +8% 初始总兵力的生力军参战
+            // 1. 【胜】增己兵：立即从本方全部非玩家精锐出兵口一次性涌出 +8% 初始总兵力的生力军参战
             const addTotalPop = Math.max(12, Math.round(this.initPool[f] * 0.08));
             this.spawnImmediateSkillReinforcements(f, addTotalPop);
         } else if (six === 'baizhan') {
@@ -829,14 +840,18 @@ export class Scene13WarLayer {
                 quotaPop -= Math.max(1, victim.pop || 1);
                 victim.hp = 0;
                 (victim as WarMan & { forceFlee?: boolean }).forceFlee = true;   // 退场方式＝溃逃，不留尸体（见 pushCorpse）
-                this.onManKilled(victim, victim);
+                // 🔴 [2026-10-22 查六计时修] 计策折损不是任何单位砍死的：旧写法传 victim 当 killer，
+                //    敌方对我方放【败】时反而给我方记功（playerKills++ / 每兵 addMerit(20)）。计划击杀一律不计单位功。
+                this.onManKilled(victim, null);
             }
             if (quotaPop > 0) this.drainSidePool(ef, quotaPop);
         } else if (six === 'gongzhan') {
             // 3. 【攻】猛攻：8 秒内己方全军攻速 ×1.30、移速 ×1.20、伤害 ×1.30
             this.skillFrenzyTimer[f] = 8.0;
         } else if (six === 'dizhan') {
-            // 4. 【敌】固守：己方全场存活士兵立即回复 20% 生命，且 8 秒内受到伤害降低 40%（×0.60）
+            // 4. 【敌】固己防：己方场上存活士兵立即回复 20% 最大生命，且 8 秒内受到伤害降低 40%（×0.60）
+            //    🔴 [2026-10-22 查六计] 界面提示原先写「满血恢复」，但代码自 2026-10-18 17:08 起就是 +20% 且后续未再改；
+            //       已把界面/旧注释同步成 20%（见 CombatUI SIX_LIST）。若主人要的是满血，改这一行即可。
             for (const m of this.men) {
                 if (m.f === f && m.hp > 0) {
                     const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
@@ -1164,14 +1179,15 @@ export class Scene13WarLayer {
     /**
      * 有人被打到 0 血的唯一出口：玩家落马 → 回本方边缘重整（不留尸、不算兵力）；
      * 其余照常留尸/溃逃，并给玩家（本人或受控编队）记功。
+     * `killer === null` = 计策折损（【败】等，不是任何单位砍死的）——不留计功，也绝不能记到受害者一方头上。
      */
-    private onManKilled(victim: WarMan, killer: WarMan): void {
+    private onManKilled(victim: WarMan, killer: WarMan | null): void {
         if (victim.hero) {
             this.heroDown(victim);
             return;
         }
         this.pushCorpse(victim);
-        if (this.playerSetup && killer.f === this.playerSetup.side
+        if (killer && this.playerSetup && killer.f === this.playerSetup.side
             && (killer.hero || this.playerCtlLanes.has(killer.lane))) {
             this.playerKills++;
             this.playerSetup.onKill(!!killer.hero);
@@ -5230,7 +5246,7 @@ export class Scene13WarLayer {
     private splash(m: WarMan, radius: number, shooter: WarType, dt: number, mult = 1): void {
         const span = Math.max(1, Math.ceil(radius / CELL_M));
         const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
-        const frenzyMul = this.skillFrenzyTimer[m.f] > 0 ? 1.30 : 1.0;
+        const frenzyMul = this.skillFrenzyTimer[m.f] > 0 ? 1.30 * 1.30 : 1.0;   // 与主伤害同口径：伤害×1.30 × 攻速×1.30（连续伤害模型里攻速也折进 DPS）
         for (let gx = cx - span; gx <= cx + span; gx++) {
             for (let gy = cy - span; gy <= cy + span; gy++) {
                 const a = this.gm.get(HKEY(gx, gy));
@@ -6088,7 +6104,9 @@ export class Scene13WarLayer {
         if (!(this.battleType === 'siege' && this.siegeWithWalls)) return;
         this.ensureGateInfo();
         for (const m of this.men) {
-            if (m.hp > 0 && m.outside1 && !this.insideRing(m.x, m.y)) { this.outsideWave1Alive = true; return; }
+            // 🔴 [2026-10-22 查六计时修] 只算**守方**（f===1）的城外第一波：被【并】策反后 f 变 0 的兵
+            //    仍带 outside1，旧判据不看阵营 ⇒ 会让 outsideWave1Alive 恒真，攻城第二段解不开拴绳。
+            if (m.f === 1 && m.hp > 0 && m.outside1 && !this.insideRing(m.x, m.y)) { this.outsideWave1Alive = true; return; }
         }
     }
     /** 本兵拴绳的横向轴；不拴返回 null */
