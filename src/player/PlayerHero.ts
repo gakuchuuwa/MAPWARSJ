@@ -23,6 +23,7 @@ import { gameLog } from '../utils/GameLogger';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getScriptEventStart } from '../events/scriptPeriod';
+import { HorseStable, type HorseStableSave } from './HorseStable';
 import {
     PLAYER_CITY_ARRIVE_DIST,
     PLAYER_DEFEAT_HOLD_MS,
@@ -75,6 +76,8 @@ export interface PlayerSaveState {
     /** 🔴 [2026-10-22] 故事块：已触发过的块 id、剧情标记 */
     storyDone?: string[];
     storyFlags?: string[];
+    /** 🔴 [2026-10-22] 马厩：自己的马、谱系 */
+    horses?: HorseStableSave;
 }
 
 /** Scene13 用的玩家布置（由 Scene13WarLayer.start 通过 window.game.playerHero 取） */
@@ -109,6 +112,9 @@ export interface PlayerHeroDeps {
     followCamera: () => void;
     /** 主角停止（到达/离队）→ 镜头释放，交给玩家自由移动 */
     releaseCamera: () => void;
+    /** 当前游戏年份、季（马厩算马龄、疲劳受伤用） */
+    getYear: () => number;
+    getSeason: () => number;
 }
 
 export class PlayerHeroArmy extends Army {
@@ -160,6 +166,8 @@ export class PlayerHero {
     /** 🔴 [2026-10-22] 故事块：已触发过的块 id（只触发一次的不再弹）、剧情标记（随存档保存） */
     public storyDone: string[] = [];
     public storyFlags: string[] = [];
+    /** 🔴 [2026-10-22] 马厩：自己的马（坐骑状态决定单骑行军快慢）、通灵马谱系 */
+    public readonly horses: HorseStable;
     /**
      * 自动模式走哪套玩法（🔴 2026-09-17 主人定「剧本和乱斗模式分开。因为我还无法确定要不要做剧本。
      *   现在的自动模式分为两种，一种是剧本模式，到了年份，玩家优先去战场。乱斗模式的话，玩家不去战场。」）
@@ -188,6 +196,12 @@ export class PlayerHero {
     public onHostLost: ((lastHostId: string) => void) | null = null;
 
     constructor(private deps: PlayerHeroDeps, startPos: { lat: number; lng: number }) {
+        this.horses = new HorseStable({
+            getYear: deps.getYear,
+            getSeason: deps.getSeason,
+            notify: (msg) => this.deps.notify(msg),
+            onChange: () => this.onHorsesChanged(),
+        });
         this.army = new PlayerHeroArmy(
             deps.map,
             startPos,
@@ -258,11 +272,25 @@ export class PlayerHero {
         this.army.preferredMoveClass = moveClassForHeroKey(this.heroKey);
         // 🔴 [2026-09-11 主人定]「平地慢一小点，山地快一小点」—— 只作用于玩家这一支，
         //    幅度见 PLAYER_PLAIN_SPEED_SCALE / PLAYER_MOUNTAIN_SPEED_SCALE 的头注。
+        // 🔴 [2026-10-22 马系统] 坐骑疲劳走得慢、没马可骑牵马步行更慢（海上不受影响）
+        const horse = this.horses?.speedFactor() ?? 1;
         this.army.terrainSpeedScale = {
-            plain: PLAYER_PLAIN_SPEED_SCALE,
-            mountain: PLAYER_MOUNTAIN_SPEED_SCALE,
+            plain: PLAYER_PLAIN_SPEED_SCALE * horse,
+            mountain: PLAYER_MOUNTAIN_SPEED_SCALE * horse,
             sea: PLAYER_SEA_SPEED_SCALE,
         };
+    }
+
+    /** 马厩变了：坐骑状态可能变 → 行军快慢跟着变（只在系数真变了时通知面板，换季每次都会调） */
+    private lastHorseKey = '';
+    private onHorsesChanged(): void {
+        if (!this.army) return;   // 构造期间（army 还没建）
+        this.syncMoveProfile();
+        const m = this.horses.getMount();
+        const key = `${this.horses.list().length}|${m?.id}|${m ? this.horses.statusOf(m) : ''}|${this.horses.speedFactor()}`;
+        if (key === this.lastHorseKey) return;
+        this.lastHorseKey = key;
+        this.emitChange();
     }
 
     public getPosition(): { lat: number; lng: number } { return this.army.getPosition(); }
@@ -1048,6 +1076,7 @@ export class PlayerHero {
             lng: p.lng,
             storyDone: [...this.storyDone],
             storyFlags: [...this.storyFlags],
+            horses: this.horses.toSave(),
         };
     }
 
@@ -1064,6 +1093,9 @@ export class PlayerHero {
         this.selectedShip = s.selectedShip ?? -1;
         this.storyDone = [...(s.storyDone ?? [])];
         this.storyFlags = [...(s.storyFlags ?? [])];
+        this.horses.restore(s.horses);
+        // 马系统之前的存档：梦醒只记了标记「初马」，读档时补上这匹马
+        if (this.horses.isEmpty() && this.storyFlags.includes('初马')) this.giveFirstHorse();
         if (s.factionId) this.joinFaction(s.factionId);
         else {
             this.factionId = null;
@@ -1074,6 +1106,12 @@ export class PlayerHero {
         }
         if (Number.isFinite(s.lat) && Number.isFinite(s.lng)) this.army.setPosition(s.lat, s.lng);
         this.emitChange();
+    }
+
+    /** 🔴 [2026-10-22] URT-01 梦醒：得到通灵马「初马」（谱系第 1 代；六岁母马） */
+    public giveFirstHorse(): void {
+        if (this.horses.getSpirit()) return;
+        this.horses.addHorse({ name: '初马', sex: 'mare', age: 6, origin: '凡湖岸边自己走来', spirit: true });
     }
 
     public static rankLabel(id: PlayerRank['id']): string {
