@@ -1044,6 +1044,8 @@ export class GameApp {
             getSeason: () => this.timeSystem.getSeason() as number,
         }, spawnPos);
         this.playerHero = hero;
+        // 🔴 [2026-10-22 通灵] 马厩里点「通灵」→ 故事块引擎读这匹马的记忆
+        hero.onReadHorseMemory = (horseId) => { this.story.readHorseMemory(horseId); };
         // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）
         let lastPlan = hero.autoPlan;
         // （`syncHistoricalOwners` 已提到上面「打完一场」回调之前定义 —— 那里也要重跑）

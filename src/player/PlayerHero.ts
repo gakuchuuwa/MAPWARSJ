@@ -192,6 +192,8 @@ export class PlayerHero {
     public onArriveCity: ((city: City) => void) | null = null;
     /** 追上带着武将的军团（不在城中时的会面入口） */
     public onMeetArmy: ((army: Army) => void) | null = null;
+    /** 🔴 [2026-10-22] 马厩里点「通灵」：读这匹马的记忆（StoryletEngine 接管） */
+    public onReadHorseMemory: ((horseId: string) => void) | null = null;
     /** 入伍军团覆灭/解散回调 */
     public onHostLost: ((lastHostId: string) => void) | null = null;
 
@@ -272,13 +274,22 @@ export class PlayerHero {
         this.army.preferredMoveClass = moveClassForHeroKey(this.heroKey);
         // 🔴 [2026-09-11 主人定]「平地慢一小点，山地快一小点」—— 只作用于玩家这一支，
         //    幅度见 PLAYER_PLAIN_SPEED_SCALE / PLAYER_MOUNTAIN_SPEED_SCALE 的头注。
-        // 🔴 [2026-10-22 马系统] 坐骑疲劳走得慢、没马可骑牵马步行更慢（海上不受影响）
-        const horse = this.horses?.speedFactor() ?? 1;
+        // 🔴 [2026-10-22 马系统] 坐骑疲劳走得慢、没马可骑牵马步行更慢（海上不受影响）；
+        //    故事跑腿另有快慢（例：赶着马群走不快）
+        const horse = (this.horses?.speedFactor() ?? 1) * this.storyPace;
         this.army.terrainSpeedScale = {
             plain: PLAYER_PLAIN_SPEED_SCALE * horse,
             mountain: PLAYER_MOUNTAIN_SPEED_SCALE * horse,
             sea: PLAYER_SEA_SPEED_SCALE,
         };
+    }
+
+    /** 故事跑腿的行军快慢系数（StoryletEngine 跑腿时设，走完回 1） */
+    private storyPace = 1;
+    public setStoryPace(f: number): void {
+        if (this.storyPace === f) return;
+        this.storyPace = f;
+        this.syncMoveProfile();
     }
 
     /** 马厩变了：坐骑状态可能变 → 行军快慢跟着变（只在系数真变了时通知面板，换季每次都会调） */
@@ -1106,6 +1117,19 @@ export class PlayerHero {
         }
         if (Number.isFinite(s.lat) && Number.isFinite(s.lng)) this.army.setPosition(s.lat, s.lng);
         this.emitChange();
+    }
+
+    /**
+     * 🔴 [2026-10-22 通灵] 通灵战役完全同步：把那一仗里的一种兵放进兵模收藏（已有就不重复）。
+     * 不强行换装；独行时外观照「骑兵优先」的老规矩自己挑（见 syncMoveProfile）。返回兵种中文名，已有返回 null。
+     */
+    public learnUnitFromMemory(unitKey: string, factionId: string): string | null {
+        if (this.learnedUnits.some((u) => u.unitKey === unitKey)) return null;
+        const name = WAR_TYPES[unitKey]?.name ?? unitKey;
+        this.learnedUnits.push({ unitKey, unitName: name, factionId, row: 0 });
+        this.syncMoveProfile();
+        this.emitChange();
+        return name;
     }
 
     /** 🔴 [2026-10-22] URT-01 梦醒：得到通灵马「初马」（谱系第 1 代；六岁母马） */
