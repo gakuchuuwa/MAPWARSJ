@@ -607,6 +607,25 @@ export interface Scene13WarInit {
     passMountainConfig?: PassMountainConfig;
     /** [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果） */
     battleBriefing?: string | null;
+    /**
+     * 🔴 [2026-10-22 主人令「动手做战术模式的小队模式，先用盗马贼这一仗做样板」]
+     * 小队模式：故事块触发的小仗（几十人）。传了它就不按军团编制排 10 队，
+     * 改为按这里列的小队出兵，1 个小兵＝1 个人；不传＝原来的军团战，一个像素不动。
+     */
+    skirmish?: Scene13SkirmishSpec | null;
+}
+
+/** 小队模式里的一支小队：兵种 + 人数（1 个小兵＝1 个人） */
+export interface Scene13SkirmishGroup {
+    key: string;
+    count: number;
+}
+
+export interface Scene13SkirmishSpec {
+    attacker: Scene13SkirmishGroup[];
+    defender: Scene13SkirmishGroup[];
+    /** 玩家本人在哪一方（0 攻 / 1 守）；不填＝玩家不上场。玩家不在军中也能上场 */
+    playerSide?: 0 | 1;
 }
 
 export interface PassMountainConfig {

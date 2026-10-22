@@ -1011,6 +1011,21 @@ export class PlayerHero {
         };
     }
 
+    /**
+     * 🔴 [2026-10-22 主人令] 小队模式（故事块小仗）用：玩家不在军中也能上场，只以本人身份打，不指挥部队。
+     */
+    public buildScene13SkirmishSetup(side: 0 | 1): Scene13PlayerSetup {
+        return {
+            side,
+            heroKey: this.heroKey,
+            heroName: this.name,
+            control: 'none',
+            unitKey: null,
+            onKill: () => this.addMerit(20),
+            onHeroDown: () => this.noteHeroDown(),
+        };
+    }
+
     // ── 存档 ──────────────────────────────────────────────
     public toSaveState(): PlayerSaveState {
         const p = this.army.getPosition();

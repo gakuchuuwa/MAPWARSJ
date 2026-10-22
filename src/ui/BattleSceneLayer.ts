@@ -29,6 +29,8 @@ export class BattleSceneLayer {
     private lingerUntil = 0;
     /** 本场 13 冻结着的战斗（BattleField 或 1v1 Battle）；退场时解冻，见 unfreezeScene13Battle */
     private frozenBattle: { scene13Frozen: boolean } | null = null;
+    /** 🔴 [2026-10-22] 小队模式：收场由判负回调负责，tick 不做「跟拍军团没仗了就退」的自愈判断 */
+    private manualEnd = false;
 
     public isLingering(): boolean {
         return this.lingerUntil > 0;
@@ -41,11 +43,12 @@ export class BattleSceneLayer {
      *  推翻 2026-08-09 的「进 13 不暂停」，理由：引擎给的 10~30 游戏秒装不下编队级演出
      *  （冲锋→接触→逐队阵亡），且大地图要快、战斗要慢的矛盾绑在一个时钟上无解。
      *  ⚠️ 用户自己按了暂停键的情况不接管（strategyPausedByScene=false），那是真暂停。 */
-    public enter(followUnitId?: string | null): void {
+    public enter(followUnitId?: string | null, opts?: { manualEnd?: boolean }): void {
         // 上一场淡出退场时面板还原是延后的（见 Scene13WarLayer.schedulePanelRestore）：新一场进场前必须先做掉
         (window as any).game?.scene13War?.flushPanelRestore?.();
         this.active = true;
         this.followUnitId = followUnitId ?? null;
+        this.manualEnd = opts?.manualEnd === true;
         // [2026-08-11 战败停留] 新战斗进场 → 取消残留的停留（上一场战败的 linger 不带到下一场）
         this.lingerUntil = 0;
         // 大战略暂停：仅在「本来没暂停」时接管，退场时原样还回去
@@ -103,6 +106,9 @@ export class BattleSceneLayer {
         // 普通战斗/地图渲染误入 13 模式——主人血训：13 与其他 zoom 完全隔离）。
         // [2026-08-11 战败停留] 战败后（无活跃战斗 + 演出已停）不立即 exit：
         // 保持 13 冻结画面 5 秒，让 tickFollowCamera 的延迟切换期间镜头留在战场。
+        // 🔴 [2026-10-22] 小队模式（故事块小仗）没有大地图上的战斗，收场由它自己的判负回调负责，
+        //    不能拿「跟拍军团还有没有仗」来判，否则一进场就被当成没仗打退出。
+        if (this.manualEnd) return;
         const game = (window as any).game;
         // 战斗结算可能先移除/切换当前跟拍军团；收尾必须继续认进场时保存的参战军团，
         // 否则 followedId 变空后会跳过残局待命与退场，战术场景永久停在最后一帧。
@@ -148,6 +154,7 @@ export class BattleSceneLayer {
         this.active = false;
         this.lingerUntil = 0;
         this.followUnitId = null;
+        this.manualEnd = false;
         // [2026-08-11 13 v2] 自愈/外部终结路径：演出层一并停（正常结束走 onRegionalBattleEnd 停）
         (window as any).game?.scene13War?.stop?.('场景自愈退出');
         // 🔴 [2026-08-12 修永久冻结] 退场必须把引擎的冻结还回去。

@@ -89,6 +89,7 @@ import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
 import { setCityStyleSessionSeed } from '../systems/cityWallShared';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
+import { startHorseThiefSkirmish } from '../story/horseThiefSkirmish';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -929,6 +930,11 @@ export class GameApp {
         const changedSet = new Set(changed);
         for (const factionId of changed) CityAssetManager.invalidateFlagTextCache(factionId);
         this.cityManager.getTerritorySystem().patchFactionFlagTexts(changedSet);
+    }
+
+    /** 🔴 [2026-10-22] 故事块样板「盗马贼」：战术模式小队模式的小仗（控制台 `game.startHorseThiefSkirmish()`） */
+    public startHorseThiefSkirmish(): boolean {
+        return startHorseThiefSkirmish(this);
     }
 
     /**
