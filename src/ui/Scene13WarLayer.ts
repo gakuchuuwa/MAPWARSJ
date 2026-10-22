@@ -119,8 +119,8 @@ import { render } from './scene13/Scene13Render';
  *   敌（固守减伤）→ 败（折损前线，绕开护盾）｜混（驱散护盾）
  *   混（乱阵＋驱散）→ 胜（补生力军，不受乱阵影响）｜敌（回血固守撑过混乱）
  *   并（夺敌兵倒戈）→ 攻（猛攻压住摇摆的兵）｜混（扰乱）
- *   胜（对方增兵 8%）→ 混（乱阵搅散新兵）｜败（折损抵消）
- *   败（我方折损 8%）→ 并（夺回兵力）｜胜（补回生力军）
+ *   胜（对方增兵 6%）→ 混（乱阵搅散新兵）｜败（折损抵消）
+ *   败（我方折损 6%）→ 并（夺回兵力）｜胜（补回生力军）
  * 武将放计的逻辑不变：看对方上一次放的是什么，优先用克它的计（须在本方当前形势的计池里、且不是我上一计）。
  */
 /**
@@ -128,6 +128,7 @@ import { render } from './scene13/Scene13Render';
  *   实测（真机三场）：正常交战每秒只折损对方总兵力约 0.16%~0.36%，【败】一下 8% ≈ 正常打 20~50 秒；
  *   旧【攻/敌/混】只有 8 秒、加成三到七成，折算仅 3~6 秒交战，差一个数量级。
  *   以【败】为尺把三计拉到同一量级：攻 输出 ×2.25 持续 20 秒（≈25 秒交战）、敌 满血＋减伤六成 20 秒、混 乱阵 15 秒且受伤翻倍。
+ *   🔴 [2026-10-22 主人定「败 6%」] 同批把即时三计收一档：败 8%→6%（劣势翻盘计，留一点翻盘感）、胜 8%→6%（主人令「胜也6%」，与败对称）、并 5%→3%（并＝敌减我增，净差约 6%）。
  */
 const SKILL_FRENZY_SEC = 20;        // 【攻】振己威持续
 const SKILL_FRENZY_DMG = 1.5;       // 【攻】伤害倍率
@@ -432,6 +433,12 @@ export class Scene13WarLayer {
      *    近战再接上就淡入。startLoop/stopLoop 本身带淡入淡出，且互相撤销，反复切也不会爆音。
      */
     private meleeContactCount = 0;
+    /**
+     * 🔴 [2026-10-22 主人令「交战的时候放技能，就好像战斗音效，交战的时候才播放一样」]
+     * 连续多少秒没有交战了（判据与战斗音景同一个数 meleeContactCount）；武将技集满后只在交战中才放。
+     * 与音景不同：不受播报静音影响（音景是为了不和语音重叠，放计没有这层顾虑）。
+     */
+    private engagedQuietSec = MELEE_QUIET_SEC;
     /** 连续多少秒没有近战接触了（喂给淡出判据） */
     private meleeQuietSec = 0;
     /** 音景此刻是否开着（只为省掉每帧重复调用，start/stop 本身幂等） */
@@ -688,7 +695,9 @@ export class Scene13WarLayer {
         // 严禁同时释放：按 [0(攻方), 1(守方)] 顺序检视，同时满槽时攻方优先释放；
         // 之后进入错开窗口（游戏秒 + 真实秒双闸），前一方 Cut-in 完整收尾后另一方才能放
         const wallNow = performance.now();
-        if (this.skillCastCooldown <= 0 && wallNow >= this.skillCastWallUntil) {
+        // 集满的计只在交战中放（与战斗音景同一判据，连续 MELEE_QUIET_SEC 秒没交战才算停）；没交战就攒着，不浪费
+        const engaged = this.engagedQuietSec < MELEE_QUIET_SEC;
+        if (engaged && this.skillCastCooldown <= 0 && wallNow >= this.skillCastWallUntil) {
             for (const f of [0, 1] as const) {
                 if (this.skillGauge[f] >= 100) {
                     this.skillGauge[f] = 0;
@@ -703,7 +712,7 @@ export class Scene13WarLayer {
         }
     }
 
-    /** 【胜】增己兵专用：立即从该侧 9 个出兵口一次性刷出全部 8% 增援士兵参战 */
+    /** 【胜】增己兵专用：立即从该侧 9 个出兵口一次性刷出全部 6% 增援士兵参战 */
     /** 本方在场士兵的重心（无人时取出兵口） */
     private sideCentroid(f: 0 | 1): [number, number] {
         let cx = 0, cy = 0, n = 0;
@@ -833,14 +842,14 @@ export class Scene13WarLayer {
 
         // ── 执行六计正交战场效果 ──
         if (six === 'shengzhan') {
-            // 1. 【胜】增己兵：立即从本方全部非玩家精锐出兵口一次性涌出 +8% 初始总兵力的生力军参战
-            const addTotalPop = Math.max(12, Math.round(this.initPool[f] * 0.08));
+            // 1. 【胜】增己兵：立即从本方全部非玩家精锐出兵口一次性涌出 +6% 初始总兵力的生力军参战
+            const addTotalPop = Math.max(12, Math.round(this.initPool[f] * 0.06));
             this.spawnImmediateSkillReinforcements(f, addTotalPop);
         } else if (six === 'baizhan') {
-            // 2. 【败】死战：折损敌方总兵力 8%（额度按总兵力算，体现在在场兵力上）
+            // 2. 【败】死战：折损敌方总兵力 6%（额度按总兵力算，体现在在场兵力上）
             // 🔴 [2026-10-21 主人令「所有的8%/5%是总兵力的，但体现是在场兵力；在场不够就从下一波继续」+「死前线的，逃跑退场不留尸」]
             //    先让离我方最近的前线敌兵溃逃退场（不留尸体），额度没用完再从敌方下一波（后备池）里扣。
-            let quotaPop = Math.max(1, Math.round(this.initPool[ef] * 0.08));
+            let quotaPop = Math.max(1, Math.round(this.initPool[ef] * 0.06));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
             const [fcx, fcy] = this.sideCentroid(f);
             enemyLiving.sort((m1, m2) => ((m1.x - fcx) ** 2 + (m1.y - fcy) ** 2) - ((m2.x - fcx) ** 2 + (m2.y - fcy) ** 2));
@@ -877,9 +886,9 @@ export class Scene13WarLayer {
             this.skillShieldTimer[ef] = 0;
             this.skillPanicTimer[ef] = SKILL_PANIC_SEC;
         } else if (six === 'bingzhan') {
-            // 6. 【并】夺敌兵（倒戈）：策反敌方总兵力 5%，体现在在场兵力上
+            // 6. 【并】夺敌兵（倒戈）：策反敌方总兵力 3%，体现在在场兵力上
             // 🔴 [2026-10-21 主人令「让敌方5%的在场兵力变为己方」替换原「挫敌锐」；额度按总兵力，在场不够就从下一波继续]
-            let quotaPop = Math.max(1, Math.round(this.initPool[ef] * 0.05));
+            let quotaPop = Math.max(1, Math.round(this.initPool[ef] * 0.03));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
             const [fcx, fcy] = this.sideCentroid(f);
             enemyLiving.sort((m1, m2) => ((m1.x - fcx) ** 2 + (m1.y - fcy) ** 2) - ((m2.x - fcx) ** 2 + (m2.y - fcy) ** 2));
@@ -1635,6 +1644,7 @@ export class Scene13WarLayer {
         this.deployT = DEPLOY_SECS;
         this.marching = true;    // 待命结束后进入列阵推进（见 MARCH_REL）
         this.meleeContactCount = 0;      // 每场重置：下一场重新等近战接上才起循环音景
+        this.engagedQuietSec = MELEE_QUIET_SEC;   // 每场重置：接战前不放武将技
         this.meleeQuietSec = 0;
         this.contactSfxOn = false;
         this.adv = [0, 0];
@@ -7639,6 +7649,8 @@ export class Scene13WarLayer {
             this.meleeContactCount = 0;
             this.meleeQuietSec = MELEE_QUIET_SEC;
         }
+        // 武将技交战判据：与音景同一个数，但不看播报（见 engagedQuietSec）
+        this.engagedQuietSec = this.meleeContactCount > 0 ? 0 : this.engagedQuietSec + dt;
         // 近战接触音景结账：本帧兵种循环已把 meleeContactCount 数完，这里决定淡入还是淡出。
         this.tickContactSfx(dt);
         if (!waitCollapse && (alive[0] <= 0 || (!centerRule && alive[1] <= 0) || centerDown || timeUp)) {
