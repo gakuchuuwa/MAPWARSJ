@@ -80,9 +80,11 @@ export const WAR_TYPES: Record<string, WarType> = {
     varangian_jarl: { name: '瓦良格首领', cls: 'cav', sz: 1, hp: 65, atk: 9, meleeArmor: 2, pierceArmor: 1, rng: 160, reload: 2, spd: 56, dmgType: 'pierce', bonus: { 1: 3, 39: -3 }, armorTags: [15, 8, 28, 19, 31, 38] },   // DE 本体数值，2026-10-05 补
     elite_varangian_jarl: { name: '瓦良格首领精锐', cls: 'cav', sz: 1, hp: 75, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 200, reload: 2, spd: 56, dmgType: 'pierce', bonus: { 1: 4, 39: -3 }, armorTags: [15, 8, 28, 19, 31, 38] },   // DE 本体数值，2026-10-05 补
     light_infantry: { name: '轻步兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 36, dmgType: 'melee', armorTags: [1, 31] },
-    // 🔴 [2026-09-05 玩家] 乱入者（借用关羽 DE 素材）。⚠️ 估值：本机 scratch 里没有该英雄的 dat 抽取数据，
+    // 🔴 [2026-09-05 玩家] 原为乱入者（借用关羽 DE 素材）。⚠️ 估值：本机 scratch 里没有该英雄的 dat 抽取数据，
     //    按 DE 英雄骑兵档估（血厚、攻高、装填快、骑速）；主人若从 DE 本体核出真值直接改这一行。
-    guanyu: { name: '乱入者', cls: 'cav', sz: 1, hp: 400, atk: 15, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2.0, spd: 60, dmgType: 'melee', bonus: { 1: 4, 8: 4 }, armorTags: [8, 31] },
+    // 🔴 [2026-10-22 主人「该修复的修复」] 玩家早已不用这个素材（2026-09-09 主人令「玩家任何时候都不许显示成关羽」，
+    //    见 PlayerConfig.heroKeyForRank），名字还挂着「乱入者」是旧账；按素材本身改名，与其他英雄同一写法
+    guanyu: { name: '英雄·关羽·巴蜀', cls: 'cav', sz: 1, hp: 400, atk: 15, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2.0, spd: 60, dmgType: 'melee', bonus: { 1: 4, 8: 4 }, armorTags: [8, 31] },
     heavy_infantry: { name: '重步兵', cls: 'melee', sz: 1, hp: 75, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', armorTags: [1, 31] },
     shield: { name: '欧洲近卫兵高级', cls: 'melee', sz: 1, hp: 70, atk: 14, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
     spear: { name: '青州兵', cls: 'melee', sz: 1, hp: 55, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 40, dmgType: 'melee', bonus: { 5: 25, 8: 22, 16: 16, 21: 1, 29: 1, 30: 18, 35: 7 }, armorTags: [27, 1, 31] },

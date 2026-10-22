@@ -469,8 +469,6 @@ export class Scene13WarLayer {
     private skillShieldTimer: [number, number] = [0, 0];
     /** 【混】乱敌阵持续倒计时（秒）：该侧（受害方）士兵陷入混乱——胡乱走动（守城站岗的原地发愣）、不攻击、受一切伤害 ×2 */
     private skillPanicTimer: [number, number] = [0, 0];
-    /** 【并】旧「挫敌锐（破防增伤 ×1.35）」遗留计时器：2026-10-21 起【并】改为「夺敌兵」，已无任何地方设置 >0（死字段，仅伤害式里的 ×1.35 仍留作兜底） */
-    private skillVulnTimer: [number, number] = [0, 0];
     /** 双方武将技错开释放冷却（秒）：禁止双方同帧同时放技；同时满槽时攻方（0）先放，守方（1）隔 SKILL_CAST_GAP_SEC 再放 */
     private skillCastCooldown: number = 0;
     /**
@@ -543,7 +541,6 @@ export class Scene13WarLayer {
             this.skillFrenzyTimer[f] = 0;
             this.skillShieldTimer[f] = 0;
             this.skillPanicTimer[f] = 0;
-            this.skillVulnTimer[f] = 0;
         }
         // 🔴 [2026-10-22] 小队模式没有武将：不集气、不放武将技
         if (init.skirmish) {
@@ -649,7 +646,6 @@ export class Scene13WarLayer {
                 frenzySec: Math.max(0, this.skillFrenzyTimer[f]),
                 shieldSec: Math.max(0, this.skillShieldTimer[f]),
                 panicSec: Math.max(0, this.skillPanicTimer[f]),
-                vulnSec: Math.max(0, this.skillVulnTimer[f]),
                 isSiege: this.battleType === 'siege',
             };
         };
@@ -665,7 +661,6 @@ export class Scene13WarLayer {
             if (this.skillFrenzyTimer[f] > 0) this.skillFrenzyTimer[f] = Math.max(0, this.skillFrenzyTimer[f] - dt);
             if (this.skillShieldTimer[f] > 0) this.skillShieldTimer[f] = Math.max(0, this.skillShieldTimer[f] - dt);
             if (this.skillPanicTimer[f] > 0) this.skillPanicTimer[f] = Math.max(0, this.skillPanicTimer[f] - dt);
-            if (this.skillVulnTimer[f] > 0) this.skillVulnTimer[f] = Math.max(0, this.skillVulnTimer[f] - dt);
         }
         if (this.skillCastCooldown > 0) {
             this.skillCastCooldown = Math.max(0, this.skillCastCooldown - dt);
@@ -865,7 +860,6 @@ export class Scene13WarLayer {
             //    （不离岗，免得城门没破就把守军乱出城外）。受伤倍率见 panicTakenMul。
             this.skillFrenzyTimer[ef] = 0;
             this.skillShieldTimer[ef] = 0;
-            this.skillVulnTimer[f] = 0;
             this.skillPanicTimer[ef] = 8.0;
         } else if (six === 'bingzhan') {
             // 6. 【并】夺敌兵（倒戈）：策反敌方总兵力 5%，体现在在场兵力上
@@ -1189,6 +1183,8 @@ export class Scene13WarLayer {
             return;
         }
         this.pushCorpse(victim);
+        // 🔴 [2026-10-22] 小队战：DE 阵亡声（骑兵马匹倒毙，其余步兵阵亡）
+        if (this.skirmish) audioManager.play(this.statsFor(victim.key, victim.f).cls === 'cav' ? 'death_horse' : 'death_infantry');
         if (killer && this.playerSetup && killer.f === this.playerSetup.side
             && (killer.hero || this.playerCtlLanes.has(killer.lane))) {
             this.playerKills++;
@@ -5021,6 +5017,25 @@ export class Scene13WarLayer {
         return pick;
     }
 
+    /**
+     * 城墙/城门的「保底被摧毁时间」：从第一次挨打算起，血量不低于按保底时间线性掉到 0 的那条线 ⇒ 人再多也快不过保底。
+     * 🔴 [2026-10-22 主人「现在城门有点好打，请略微加点难度。或者像建筑一样，设计一个时间点」]
+     *    原来城门一律 15 秒（木门、石门、加固门同一档），自爆兵（爆破手等）那条路还不吃保底。
+     *    现在城门按材质分：木栅/篱笆门 15 秒（不变）、石城门 25 秒、加固城门 30 秒；城墙照旧 10 秒；两条伤害路都吃。
+     *    （城内建筑的保底在 onDefBuildingHit，按占地 7~16 秒。）
+     */
+    private applyWallGateFloor(b: WarBuilding): void {
+        if (b.bld || b.hitAt === undefined) return;
+        let floorSec = 10;
+        if (b.key === 'STONE_GATE') {
+            floorSec = b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? 30
+                : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? 15
+                : 25;
+        }
+        const minHp = b.maxHp * (1 - (this.battleSec - b.hitAt) / floorSec);
+        if (b.hp < minHp) b.hp = minHp;
+    }
+
     /** 建筑挨打后的表现：血≤50% 换破损贴图；血≤0 倒塌成残骸并停火。 */
     private onDefBuildingHit(b: WarBuilding): void {
         const sp = b.sprite, name = b.bld!.name;
@@ -5123,8 +5138,7 @@ export class Scene13WarLayer {
         const dElev = towerElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         const towerSkillMul = (this.skillFrenzyTimer[1] > 0 ? 1.30 : 1.0) * this.panicTakenMul(foe)
-            * (this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0)
-            * (this.skillVulnTimer[foe.f] > 0 ? 1.35 : 1.0);
+            * (this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0);
         foe.atkNext++;
         foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul() * towerSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
@@ -5203,8 +5217,7 @@ export class Scene13WarLayer {
         const dElev = bldElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         const bldSkillMul = (this.skillFrenzyTimer[1] > 0 ? 1.30 : 1.0) * this.panicTakenMul(foe)
-            * (this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0)
-            * (this.skillVulnTimer[foe.f] > 0 ? 1.35 : 1.0);
+            * (this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0);
         foe.atkNext++;
         foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul() * bldSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);
@@ -5266,8 +5279,7 @@ export class Scene13WarLayer {
                     // 范围伤不挖「盲区空洞」：贴脸的敌人照样吃溅射（最小射程只管分配新目标，见 canKeepTarget 头注）。
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
                     const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) * mult * frenzyMul / shooter.reload;
-                    const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? 0.60 : 1.0) * this.panicTakenMul(o)
-                        * (this.skillVulnTimer[o.f] > 0 ? 1.35 : 1.0);
+                    const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? 0.60 : 1.0) * this.panicTakenMul(o);
                     o.atkNext++;
                     if (dps > 0) {
                         o.hurtBy = m;
@@ -5287,14 +5299,14 @@ export class Scene13WarLayer {
         //    破损档与 0 血破坏链（`onDefBuildingHit` + D25/D50/D75 + 解碰撞），不另写一份。
         //    倍率 `SUICIDE_BLD_MULT` 说明见常量定义处。
         if (SUICIDE_TYPES.has(m.key)) {
-            const bldVulnMul = this.skillVulnTimer[1 - m.f] > 0 ? 1.35 : 1.0;
             for (const b of [...this.wallGates, ...this.defBuildings]) {
                 if (b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
                 if ((b.x - m.x) ** 2 + (b.y - m.y) ** 2 > radius * radius) continue;
-                const bdps = dmgVs(shooter, WALL_GATE_STATS[b.key] ?? WALL_GATE_STATS.STONE_WALL) * mult * frenzyMul * bldVulnMul * SUICIDE_BLD_MULT / shooter.reload;
+                const bdps = dmgVs(shooter, WALL_GATE_STATS[b.key] ?? WALL_GATE_STATS.STONE_WALL) * mult * frenzyMul * SUICIDE_BLD_MULT / shooter.reload;
                 b.atkNext++;
                 if (b.hitAt === undefined) b.hitAt = this.battleSec;
                 b.hp -= bdps * this.sideBonus[m.f] * dt;
+                this.applyWallGateFloor(b);
                 if (b.destrAssets && b.maxHp > 0 && b.hp > 0 && !b.sprite.collapse) {
                     const ratio = b.hp / b.maxHp;
                     let stage = -1;
@@ -5947,6 +5959,18 @@ export class Scene13WarLayer {
             return { x: near.x + ringX, y: near.y + ringY };
         }
 
+        // ①½ 🔴 [2026-10-22 主人「我全程都是自动，为什么要让玩家先动，不跟着部队走？」]
+        //    小队模式里玩家本人没有自己的分队，原来视野里没敌人就直奔全图最近的敌人，比步兵快、一个人冲在最前。
+        //    现在视野里没敌人时，跟在本方士兵中间走（本方重心）；敌人进了视野再照 ① 打。本方没人（单骑追贼）照旧。
+        if (m.hero && this.skirmish) {
+            let sx = 0, sy = 0, n = 0;
+            for (const o of this.men) {
+                if (o === m || o.f !== m.f || o.hp <= 0 || o.hero) continue;
+                sx += o.x; sy += o.y; n++;
+            }
+            if (n > 0) return { x: sx / n + m.jx, y: sy / n + m.jy };
+        }
+
         // ② 攻城武器：走向第一档目标里离自己最近的那个
         if (m.siegeW && this.battleType === 'siege') {
             let g: WarBuilding | null = null, gd = Infinity;
@@ -6264,6 +6288,15 @@ export class Scene13WarLayer {
      * 且两者互相撤销：淡出途中又接上近战，会当场回到正常音量，不会先静音再重来。
      */
     private tickContactSfx(dt: number): void {
+        // 🔴 [2026-10-22 主人「开局小战役用的音效是我自己特质的大规模战场音效，这个不适用小战斗，你套DE的音效」]
+        //    小队模式（故事块小仗）不放这条大战场音景；只留 DE 原声（开战号角、放箭等事件音）
+        if (this.skirmish) {
+            if (this.contactSfxOn) {
+                this.contactSfxOn = false;
+                audioManager.stopSceneLoop('land_contact');
+            }
+            return;
+        }
         // 🔴 [2026-10-02 主人定]「战术模式下，有一个我自己做的战斗音效。请提高他的音量和播报一致，但是不要和播报重叠播放。」
         // 播报（战役播报、剧情解说或任何语音）进行中绝不播放战斗音效，彻底杜绝重叠播放
         if (this.battleBriefingSpeaking || audioManager.isSpeechDucking() || speechAnnouncer.isSpeaking()) {
@@ -7154,14 +7187,9 @@ export class Scene13WarLayer {
                     foe.atkNext++;
                     if (dps > 0) {
                         if (foe.hitAt === undefined) foe.hitAt = this.battleSec;
-                        const vulnMul = this.skillVulnTimer[foe.f] > 0 ? 1.35 : 1.0;
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * vulnMul * dt;
-                        // 城门/城墙同样设置基础被摧毁保底时间（城门 15s，石墙/垛墙/木栅 10s），防多台攻城槌重叠秒破
-                        if (!foe.bld && foe.hitAt !== undefined) {
-                            const wallFloorSec = foe.key === 'STONE_GATE' ? 15 : 10;
-                            const minWallHp = foe.maxHp * (1 - (this.battleSec - foe.hitAt) / wallFloorSec);
-                            if (foe.hp < minWallHp) foe.hp = minWallHp;
-                        }
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
+                        // 城门/城墙同样设置基础被摧毁保底时间，防多台攻城槌重叠秒破（见 applyWallGateFloor）
+                        this.applyWallGateFloor(foe);
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
                         //   城门无 destrAssets（走 destruction 动画）、木栅栏无 destrAssets（直接消失）→ 跳过。
@@ -7199,9 +7227,8 @@ export class Scene13WarLayer {
                             foe.hurtAt = this.battleSec;
                         }
                         const shieldMul = this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0;
-                        const vulnMul = this.skillVulnTimer[foe.f] > 0 ? 1.35 : 1.0;
                         const panicMul = 'sprite' in foe ? 1 : this.panicTakenMul(foe);
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * shieldMul * vulnMul * panicMul * dt
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * shieldMul * panicMul * dt
                             * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1)   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
                             * ('sprite' in foe ? 1 : this.passWallTaken(foe));
                         if (foe.hp <= 0 && !('sprite' in foe)) {
@@ -7230,6 +7257,8 @@ export class Scene13WarLayer {
                 }
                 if (isMeleeAttacking && !m.slashed && m.ph >= 3) {
                     m.slashed = true;
+                    // 🔴 [2026-10-22] 小队战：近战出手那一下放 DE 刀剑命中声（大战用主人自制的近战音景，不叠）
+                    if (this.skirmish) audioManager.play('melee_hit');
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
                     const contactX = m.x * 0.45 + foe.x * 0.55;
                     // 🔴 [2026-10-13 主人令「修」·刀光错位] 接触点的垂直基准必须与士兵/箭矢同一口径：

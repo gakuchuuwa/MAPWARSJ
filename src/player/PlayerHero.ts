@@ -185,7 +185,7 @@ export class PlayerHero {
      *   （9-17 曾定默认乱斗，已被本条取代。）
      */
     public autoPlan: PlayerAutoPlan = 'centenarian';
-    /** 玩家自定义名（改名功能写入；默认「乱入者」） */
+    /** 玩家自定义名（改名功能写入；默认「探马者」） */
     private playerName: string = PLAYER_HERO_NAME;
     private changeListeners = new Set<() => void>();
     /** 抵达据点回调（PlayerQuestSystem 接管对话） */
@@ -371,7 +371,7 @@ export class PlayerHero {
         if (after.id !== before.id) {
             this.syncLearnedUnits();  // 升阶 → 按配额补学本势力兵种（斥候1/探马2/先锋3）
             this.syncMoveProfile();   // 素材可能变 → 行军大类跟着变
-            this.deps.notify(`🎖️ 功勋 ${this.merit}，${PLAYER_HERO_NAME}晋升为【${after.name}】`);
+            this.deps.notify(`🎖️ 功勋 ${this.merit}，${this.name}晋升为【${after.name}】`);
             gameLog('expedition', `[玩家] 晋升 ${before.name} → ${after.name}（功勋 ${this.merit}）`);
             // 晋升：入伍中则同步军团第九环战力乘数 + 官阶名
             const host = this.getHostLegion();
@@ -593,7 +593,11 @@ export class PlayerHero {
             let pick: Pick | undefined;
             if (landRest.length > 0) {
                 // 1. 先随机获得三个兵种素材
-                pick = landRest[Math.floor(Math.random() * landRest.length)];
+                // 🔴 [2026-10-22 主人「玩家既然是牧马人…给玩家的奖励，开始都设为骑兵」]
+                //    本军团三排里有骑兵的，先从骑兵里给；骑兵收齐了（或这支军团没骑兵）再给步兵、远程
+                const cavRest = landRest.filter((p) => WAR_TYPES[p.key]?.cls === 'cav');
+                const from = cavRest.length > 0 ? cavRest : landRest;
+                pick = from[Math.floor(Math.random() * from.length)];
             } else if (shipRest.length > 0) {
                 // 2. 然后是获得舰队的
                 pick = shipRest[0];

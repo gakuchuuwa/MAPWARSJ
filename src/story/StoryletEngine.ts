@@ -20,6 +20,8 @@ import type { PlayerHero } from '../player/PlayerHero';
 import { seasonIndex } from '../player/HorseStable';
 import { HORSE_MEMORIES, memoryLabel, startMemoryBattle } from './horseMemories';
 import { getHorseLore } from './horseLore';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { getStoryCharacter } from './storyCharacters';
 
 /** 通灵失步后，等战术模式收场再弹「再进去一次」（毫秒） */
 const MEMORY_ASK_DELAY_MS = 2500;
@@ -117,6 +119,8 @@ export interface Storylet {
 
 /** 「在某据点一带」的判定半径：与项目「一个据点代表周围 40 公里」同口径 */
 const NEAR_CITY_KM = 40;
+/** 不换季时，隔多少游戏秒再查一次故事块（一季 15 游戏秒） */
+const RECHECK_GAME_SEC = 3;
 /** 跑腿到站判定（公里） */
 const ERRAND_ARRIVE_KM = 3;
 
@@ -136,6 +140,8 @@ export class StoryletEngine {
     private errand: ActiveErrand | null = null;
     /** 领路的提示只飘一次 */
     private leadNoticeShown = false;
+    /** 上次查故事块时的游戏秒 */
+    private lastCheckSec = -Infinity;
 
     constructor(
         private readonly app: GameApp,
@@ -165,8 +171,13 @@ export class StoryletEngine {
         const year = this.app.timeSystem.getYear();
         const season = this.app.timeSystem.getSeason() as number;
         const key = year * 4 + season;
-        if (key === this.lastSeasonKey) return;
+        // 🔴 [2026-10-22 主人「经常卡很久才动」] 原来只在换季那一帧查，上一件事办完要干等到下一季（最多 15 游戏秒）。
+        //    现在除了换季，每隔 RECHECK_GAME_SEC 游戏秒也查一次；带概率的故事块只在换季时掷，免得每几秒掷一次
+        const nowSec = this.app.timeSystem.getElapsedGameSeconds();
+        const seasonChanged = key !== this.lastSeasonKey;
+        if (!seasonChanged && nowSec - this.lastCheckSec < RECHECK_GAME_SEC) return;
         this.lastSeasonKey = key;
+        this.lastCheckSec = nowSec;
         const ctx = this.buildContext(year, season);
         this.updateHold(ctx);
         if (this.isBusy()) return;
@@ -178,7 +189,10 @@ export class StoryletEngine {
             // 只飘提示、不弹框：领路这一段不暂停游戏
             if (lead.notice && !this.leadNoticeShown) {
                 this.leadNoticeShown = true;
-                api.notify(lead.notice.split('{玩家}').join(hero.name));
+                const line = lead.notice.split('{玩家}').join(hero.name);
+                api.notify(line);
+                // 🔴 [2026-10-22 主人「没有语音介绍」] 醒来那句念出来（底部字幕条同步显示）
+                speechAnnouncer.announceStory(line.replace(/^\S*\s/u, ''), true);
             }
             if (hero.autoMode) {
                 this.startErrand(api, { stops: [lead.stop], onlyInAuto: true, onDone: () => {} });
@@ -188,6 +202,7 @@ export class StoryletEngine {
         for (const s of this.storylets) {
             if (!this.eligible(s, ctx)) continue;
             const chance = typeof s.chance === 'function' ? s.chance(ctx) : (s.chance ?? 1);
+            if (!seasonChanged && chance < 1) continue;
             if (Math.random() >= chance) continue;
             this.show(s);
             return;
@@ -352,10 +367,14 @@ export class StoryletEngine {
 
     private showOptions(api: StoryApi, speaker: string, text: string, options: StoryOption[], beforePick?: () => void): void {
         const hero = this.app.playerHero!;
+        // 🔴 [2026-10-22 主人「没有语音介绍」] 对话正文念出来；对话框里已有全文，不再开底部字幕条
+        speechAnnouncer.announceStory(text.split('{玩家}').join(hero.name), false);
+        // 🔴 [2026-10-22 主人「所有人物都没有立绘…我来画立绘」] 抬头按人物表显示名字、身份、立绘
+        const who = getStoryCharacter(speaker);
         this.app.playerHUD?.showDialogue({
-            speaker,
-            portrait: null,
-            factionName: '',
+            speaker: who?.name ?? speaker,
+            portrait: who?.portrait || null,
+            factionName: who?.role ?? '',
             text: text.split('{玩家}').join(hero.name),
             // 自动模式（直播挂机）3 秒后自动选主选项；玩家自己玩时等他选
             noAutoPick: !hero.autoMode,

@@ -466,6 +466,23 @@ export class SpeechAnnouncer {
   }
 
   /**
+   * 🔴 [2026-10-22 主人「没有语音介绍」] 探马故事块的旁白/对话：念出来，语速与行军解说同档。
+   *    banner＝要不要在底部字幕条再显示一遍（对话框里已有全文时传 false，免得两处同时显示）。
+   */
+  public announceStory(text: string, banner: boolean): void {
+    const line = text.trim();
+    if (!line) return;
+    this.speak(line, {
+      sTier: true,
+      banner: banner ? line : undefined,
+      bannerMultiline: true,
+      bannerSingleScreen: true,
+      rate: 0.92,
+      maxWaitMs: Math.min(180000, 4000 + line.length * 600),
+    });
+  }
+
+  /**
    * 🔴 [2026-10-02 主人定] 判断当前是否有 S 级播报（行军解说/重要背景）正在进行
    */
   public isSTierBusy(): boolean {
