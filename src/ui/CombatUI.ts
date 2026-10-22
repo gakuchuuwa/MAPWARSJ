@@ -2277,7 +2277,7 @@ export class CombatUI {
         headerRow.appendChild(tierBadge);
         headerRow.appendChild(statusSpan);
 
-        // 中部：六计双行印章字牌 [攻·振威][胜·增兵][敌·固防][混·乱阵][并·挫锐][败·减兵]
+        // 中部：六计双行印章字牌 [攻·振威][胜·增兵][敌·固防][混·乱阵][并·夺兵][败·减兵]
         const btnsWrap = document.createElement('div');
         btnsWrap.className = 's13-skill-btns';
         btnsWrap.style.cssText = `
@@ -2290,8 +2290,8 @@ export class CombatUI {
         const SIX_LIST: { key: TacticalSixSet; char: string; sub: string; tip: string }[] = [
             { key: 'gongzhan', char: '攻', sub: '振威', tip: '【攻】振己威（破【并】）：8秒内全军伤害+30%、攻速+30%、移速+20%\n点击钦定/取消下次释放' },
             { key: 'shengzhan', char: '胜', sub: '增兵', tip: '【胜】增己兵（破【混】）：立即征召8%初始兵力从出兵口涌入战场\n点击钦定/取消下次释放' },
-            { key: 'dizhan', char: '敌', sub: '固防', tip: '【敌】固己防（破【攻】）：场上全军满血恢复，且8秒内减伤40%\n点击钦定/取消下次释放' },
-            { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵（破【胜】）：令敌军前线混乱8秒（胡乱走动且无法攻击，受1.4倍近战重创）\n点击钦定/取消下次释放' },
+            { key: 'dizhan', char: '敌', sub: '固防', tip: '【敌】固己防（破【攻】）：场上全军立即回复20%生命，且8秒内减伤40%\n点击钦定/取消下次释放' },
+            { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵（破【胜】）：驱散敌方已生效的增益，令敌军前线混乱8秒（胡乱走动且无法攻击，受1.4倍近战重创）\n点击钦定/取消下次释放' },
             { key: 'bingzhan', char: '并', sub: '夺兵', tip: '【并】夺敌兵（破【败】）：策反敌方总兵力5%倒戈为己方（先取前线在场兵，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
             { key: 'baizhan', char: '败', sub: '减兵', tip: '【败】减敌兵（破【敌】）：折损敌方总兵力8%（先让前线敌兵溃逃退场，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
         ];
@@ -2436,9 +2436,7 @@ export class CombatUI {
             const sideKey: 'attacker' | 'defender' = visualSide === 'left'
                 ? (this.scene13SidesFlipped ? 'defender' : 'attacker')
                 : (this.scene13SidesFlipped ? 'attacker' : 'defender');
-            const oppKey: 'attacker' | 'defender' = sideKey === 'attacker' ? 'defender' : 'attacker';
             const s = state[sideKey];
-            const opp = state[oppKey];
             const bar = this.ensureScene13SkillBar(visualSide);
 
             if (!s || !s.hasGeneral) {
@@ -2450,7 +2448,8 @@ export class CombatUI {
             const isAtt = sideKey === 'attacker';
             const nextSix: TacticalSixSet = s.queuedSkill ?? s.autoNextSkill;
             const isManual = s.queuedSkill !== null;
-            const oppLast: TacticalSixSet | null = opp?.lastCastSkill ?? null;
+            // 「拆招」只认对方刚放、我还没回应的那一计；且只有自动下一计**真的克它**时才写“破”
+            const oppNew: TacticalSixSet | null = s.oppNewCast ?? null;
 
             const tierEl = bar.querySelector('.s13-skill-tier-badge') as HTMLSpanElement | null;
             if (tierEl) {
@@ -2466,9 +2465,13 @@ export class CombatUI {
                 if (isManual && s.queuedSkill) {
                     statusEl.textContent = `钦定：【${CHAR_OF[nextSix]}】${SUB_OF[nextSix]}`;
                     statusEl.style.color = '#ffd700';
-                } else if (oppLast) {
-                    statusEl.textContent = `拆招：破【${CHAR_OF[oppLast]}】➔【${CHAR_OF[nextSix]}】`;
+                } else if (oppNew && s.autoNextCounters) {
+                    statusEl.textContent = `拆招：破【${CHAR_OF[oppNew]}】➔【${CHAR_OF[nextSix]}】`;
                     statusEl.style.color = '#86efac';
+                } else if (oppNew) {
+                    // 对方有新招，但本方当前形势计池/上一计限制下选不到克它的计 —— 如实显示，不谎称“破”
+                    statusEl.textContent = `对方【${CHAR_OF[oppNew]}】➔【${CHAR_OF[nextSix]}】`;
+                    statusEl.style.color = '#e8d3a3';
                 } else {
                     statusEl.textContent = `首策：【${CHAR_OF[nextSix]}】${SUB_OF[nextSix]}`;
                     statusEl.style.color = '#e8d3a3';
@@ -2507,7 +2510,7 @@ export class CombatUI {
                 }
             }
 
-            const sig = `${sideKey}|${s.queuedSkill ?? ''}|${s.autoNextSkill}|${s.lastCastSkill ?? ''}|${oppLast ?? ''}`;
+            const sig = `${sideKey}|${s.queuedSkill ?? ''}|${s.autoNextSkill}|${s.lastCastSkill ?? ''}|${s.oppNewCast ?? ''}`;
             const btnsWrap = bar.querySelector('.s13-skill-btns') as HTMLDivElement | null;
             if (btnsWrap && btnsWrap.dataset.sig !== sig) {
                 btnsWrap.dataset.sig = sig;
