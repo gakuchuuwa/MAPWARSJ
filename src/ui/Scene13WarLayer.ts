@@ -1614,6 +1614,8 @@ export class Scene13WarLayer {
         this.attackerGeneralId = init.attackerGeneralId ?? null;
         this.skirmish = init.skirmish ?? null;
         this.troopsPerSprite = this.skirmish ? 1 : SPRITE_TROOPS;
+        // 🔴 [2026-10-22 主人「玩家剧情小战役，可以放大些到120%」] 小队模式人少，开场镜头放大到 120%（滚轮照样能缩放）
+        if (this.skirmish) this.tacticalZoom = 1.2;
 
         try {
             // 攻守各一侧：row 0 最靠中线（攻方在左、守方在右）

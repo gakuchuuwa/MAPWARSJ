@@ -6,22 +6,28 @@ import { rollSessionCityMirror } from '../../systems/city-marker/CityBuildingMir
 import type { City } from '../../types/core';
 import type { GameApp } from '../GameApp';
 
+/**
+ * 🔴 2026-10-22 主人新口径（一个势力可以拥有多个据点）：
+ *   非首府城**不再强制降为 panjun**，保留 cities_v2.factionId；
+ *   STARTING_CAPITALS 只用于「某城是某势力首府」的旧沙盒改旗兼容。
+ */
+export function resolveBootFactionId(city: { id: string; factionId: string }): string {
+    let factionId = city.factionId;
+    if (GameConfig.SYSTEM.SANDBOX_MODE) {
+        const isCapital = STARTING_CAPITALS[factionId] === city.id;
+        if (!isCapital) {
+            const ownerFaction = Object.keys(STARTING_CAPITALS).find(
+                (key) => STARTING_CAPITALS[key] === city.id
+            );
+            if (ownerFaction) factionId = ownerFaction;
+        }
+    }
+    return factionId;
+}
+
 export function loadGameAppCityData(app: GameApp): void {
     const cityData = CITIES.map((c) => {
-        let factionId = c.factionId;
-        if (GameConfig.SYSTEM.SANDBOX_MODE) {
-            const isCapital = STARTING_CAPITALS[factionId] === c.id;
-            if (!isCapital) {
-                const ownerFaction = Object.keys(STARTING_CAPITALS).find(
-                    (key) => STARTING_CAPITALS[key] === c.id
-                );
-                if (ownerFaction) {
-                    factionId = ownerFaction;
-                } else {
-                    factionId = 'panjun';
-                }
-            }
-        }
+        let factionId = resolveBootFactionId(c);
 
         return {
             id: c.id,
