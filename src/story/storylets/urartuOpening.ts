@@ -97,8 +97,10 @@ const EAST_HILLS = { lat: 38.46, lng: 43.53, label: '东边山里' } as const;
 
 /** 应征了（URT-05 选了应征）：开局段到此为止 */
 const URT_05_ENLISTED = 'URT-05-enlisted';
-/** 推说马病没去：来年春天再征一次，这次推不掉 */
+/** 推说马病没去：来年春天再征一次 */
 const URT_05_DECLINED = 'URT-05-declined';
+/** 再征也不去：开局段到此为止，放玩家自己走 */
+const URT_05_REFUSED = 'URT-05-refused';
 /** 征兵的功勋门槛（样板：500）；到前 798 年不论功勋都来征 */
 const MERIT_CONSCRIPTION = 500;
 const CONSCRIPTION_ANY_MERIT_YEAR = -798;
@@ -117,7 +119,7 @@ export function urartuOpeningHoldsPlayer(ctx: StoryContext): boolean {
         // 梦醒之前还在往岩壁走，不在图什帕一带也要留住
         && (ctx.nearCityId === URARTU_OPENING_CITY_ID || (ctx.year === -800 && !ctx.isDone('URT-01') && ctx.autoMode))
         // 看结果标记而不是「弹过没有」：小马还在找、仗还在打时也要留住
-        && !ctx.hasFlag(URT_05_ENLISTED)
+        && !ctx.hasFlag(URT_05_ENLISTED) && !ctx.hasFlag(URT_05_REFUSED)
         && (ctx.isDone('URT-01') || ctx.year === -800);
 }
 
@@ -151,6 +153,16 @@ const URT_01_AWAKEN: Storylet = {
                 api.setFlag('初马');
                 api.hero.giveFirstHorse();
                 api.notify('🐎 得到第一匹马「初马」（六岁母马，通灵马第 1 代）——摸到马，就能看见它记得的事');
+            },
+        },
+        {
+            // 通灵马是必选的（骨架：马的谱系必选），不理它它也跟着走
+            label: '不理它，接着走',
+            pick: (api) => {
+                api.setFlag('见过岩壁骑马人');
+                api.setFlag('初马');
+                api.hero.giveFirstHorse();
+                api.notify(`🐎 ${api.playerName}没理它，接着往前走。那匹马却一路跟了上来，赶也赶不走——就叫它「初马」吧`);
             },
         },
     ],
@@ -228,6 +240,10 @@ const URT_02_WATERING: Storylet = {
                 });
             },
         },
+        {
+            label: '推说不会赶马',
+            pick: (api) => api.notify('🐎 养马人家只好自己赶着马群去了'),
+        },
     ],
 };
 
@@ -276,6 +292,13 @@ const URT_03_LOST_FOAL: Storylet = {
         {
             label: '循着蹄印上山',
             pick: (api) => trackFoalOnFoot(api),
+        },
+        {
+            label: '不管了，让他们自己找',
+            pick: (api) => {
+                api.setFlag('URT-03-done');
+                api.notify('🐎 养马人家自己进山找了，两天后才把小马牵回来');
+            },
         },
     ],
 };
@@ -355,6 +378,13 @@ const URT_05B_CONSCRIPTION_AGAIN: Storylet = {
             accent: true,
             pick: (api) => answerConscription(api),
         },
+        {
+            label: '还是不去',
+            pick: (api) => {
+                api.setFlag(URT_05_REFUSED);
+                api.notify(`🐎 使者冷着脸走了。${api.playerName}在图什帕待不下去了，只能另找出路`);
+            },
+        },
     ],
 };
 
@@ -400,6 +430,11 @@ const URT_07_TEETH: Storylet = {
                 api.setFlag(LORE_TEETH);
                 api.notify('📖 马经：看牙口——门牙磨到哪儿，就知道马几岁。马厩里外来的马现在也看得出马龄了');
             },
+        },
+        {
+            label: '改天再学',
+            keepOpen: true,
+            pick: () => {},
         },
     ],
 };
@@ -457,6 +492,13 @@ const URT_06_HASANLU: Storylet = {
                 });
             },
         },
+        {
+            label: '推说马累了，留在大营',
+            pick: (api) => {
+                api.setFlag('URT-06-done');
+                api.notify(`🔥 ${api.playerName}没去。哈桑卢照样在这一年被攻破，烧成了废墟`);
+            },
+        },
     ],
 };
 
@@ -504,6 +546,10 @@ const URT_08_DAMASCUS_HORSE: Storylet = {
                 const h = buyArrowScarHorse(api);
                 api.notify(`🐎 买下了「${h.name}」。想看它记得的事，到马厩里对它点「通灵」`);
             },
+        },
+        {
+            label: '松开手，不买',
+            pick: (api) => api.notify('🐎 商队牵着那匹老战马走了'),
         },
     ],
 };
@@ -566,6 +612,13 @@ const URT_04_HORSE_THIEF: Storylet = {
                         api.notify(`🐎 寡不敌众，${api.playerName}和坐骑都受了伤，要养一季；${loseToThieves(api)}`);
                     }
                 });
+            },
+        },
+        {
+            label: '算了，不追',
+            pick: (api) => {
+                api.setFlag('URT-04-lost');
+                api.notify(`🐎 盗马贼进了山，${loseToThieves(api)}`);
             },
         },
     ],
