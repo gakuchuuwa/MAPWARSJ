@@ -1806,6 +1806,21 @@ export class CombatUI {
         }
         // 启用 13 专属布局并刷新
         this.applyScene13Layout(true);
+        // 🔴 [2026-10-22] 小队模式（故事块小仗）：没有武将、军团、精锐，不显示立绘、名牌、军团名
+        if (init.skirmish) {
+            for (const el of [this.leftPortraitFrame, this.rightPortraitFrame,
+                attackerNameTag, defenderNameTag, attackerLegionTag, defenderLegionTag]) {
+                if (el) el.style.display = 'none';
+            }
+            this.container.classList.remove('has-left-portrait', 'has-right-portrait');
+            this.attackerDisplayName = init.skirmish.attackerName || this.attackerDisplayName;
+            this.defenderDisplayName = init.skirmish.defenderName || this.defenderDisplayName;
+            this.currentAttackerLegionName = '';
+            this.currentDefenderLegionName = '';
+            this.currentAttackerEliteName = '';
+            this.currentDefenderEliteName = '';
+            this.defenderGarrisonLabel = '';
+        }
         this.updateStats();
     }
 
@@ -5929,7 +5944,8 @@ export class CombatUI {
         // [军事科技与军团/精锐] 只在 13 战斗模式且非剧本模式下显示（🔴 [2026-10-03 主人令] 剧本模式不用显示科技，双方军团名称与精锐番号也不用留，这一行都隐藏）
         if (this.leftTechBox && this.rightTechBox) {
             const is13 = (window as any).game?.scene13War?.isActive?.() === true;
-            const hideRow = isScriptPeriod();
+            // 小队模式（故事块小仗）也不显示科技、军团、精锐这一行
+            const hideRow = isScriptPeriod() || (window as any).game?.scene13War?.isSkirmish?.() === true;
             if (is13 && !hideRow) {
                 const sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? { attacker: [], defender: [] };
                 this.renderTechSide(

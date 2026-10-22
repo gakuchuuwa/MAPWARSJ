@@ -624,6 +624,9 @@ export interface Scene13SkirmishGroup {
 export interface Scene13SkirmishSpec {
     attacker: Scene13SkirmishGroup[];
     defender: Scene13SkirmishGroup[];
+    /** 双方在战斗面板上显示的名字（如「养马人家」「盗马贼」）；不填按势力名 */
+    attackerName?: string;
+    defenderName?: string;
     /** 玩家本人在哪一方（0 攻 / 1 守）；不填＝玩家不上场。玩家不在军中也能上场 */
     playerSide?: 0 | 1;
 }

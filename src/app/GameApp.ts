@@ -89,7 +89,9 @@ import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
 import { setCityStyleSessionSeed } from '../systems/cityWallShared';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
-import { startHorseThiefSkirmish } from '../story/horseThiefSkirmish';
+import { startHorseThiefSkirmish, type HorseThiefChase } from '../story/horseThiefSkirmish';
+import { StoryletEngine } from '../story/StoryletEngine';
+import { URARTU_OPENING_STORYLETS, URARTU_OPENING_CITY_ID, URARTU_OPENING_SPAWN, urartuOpeningHoldsPlayer } from '../story/storylets/urartuOpening';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -932,10 +934,13 @@ export class GameApp {
         this.cityManager.getTerritorySystem().patchFactionFlagTexts(changedSet);
     }
 
-    /** 🔴 [2026-10-22] 故事块样板「盗马贼」：战术模式小队模式的小仗（控制台 `game.startHorseThiefSkirmish()`） */
-    public startHorseThiefSkirmish(): boolean {
-        return startHorseThiefSkirmish(this);
+    /** 🔴 [2026-10-22] 故事块样板「盗马贼」：战术模式小队模式的小仗（控制台 `game.startHorseThiefSkirmish('solo')`） */
+    public startHorseThiefSkirmish(chase: HorseThiefChase = 'group'): boolean {
+        return startHorseThiefSkirmish(this, chase);
     }
+
+    /** 🔴 [2026-10-22] 故事块引擎（百岁模式每到换季检查一次；控制台 `game.story.trigger('URT-04')` 可直接弹） */
+    public readonly story = new StoryletEngine(this, URARTU_OPENING_STORYLETS, urartuOpeningHoldsPlayer);
 
     /**
      * 🔴 [2026-10-20 主人令「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代，
@@ -980,10 +985,17 @@ export class GameApp {
             : allCities;
         const eurasia = isCentenarianStart ? allCities.filter((c) => c.longitude >= -30) : allCities;
         const spawnCandidates = withGeneral.length > 0 ? withGeneral : (eurasia.length > 0 ? eurasia : allCities);
-        const startCity = spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
+        // 🔴 [2026-10-22 主人令「请你专业处理……是的话就执行」→ 探马开局 URT-01 梦醒]
+        //    百岁模式**新开局**（时间轴起点前 800 年）一律在凡湖岸醒来（图什帕西南的湖岸），
+        //    不再随机挑据点 —— 《探马》剧情从乌拉尔图开始（docs/探马/骨架.md、故事块样板_乌拉尔图开局.md）。
+        //    跳年、读档、剧本/乱斗模式照旧（读档会把位置覆盖回存档里的位置）。
+        const openingCity = isCentenarianStart && this.timeSystem.getYear() === GameConfig.TIME.TIMELINE_START_YEAR
+            ? this.cityManager.getCity(URARTU_OPENING_CITY_ID)
+            : undefined;
+        const startCity = openingCity ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
-        let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
-        const edges = roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
+        let spawnPos = openingCity ? { ...URARTU_OPENING_SPAWN } : { lat: startCity.latitude, lng: startCity.longitude };
+        const edges = !openingCity && roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
         // 优先连通的陆地道路，保证玩家落在合法陆地路网上
         const landEdges = edges?.filter((e) => !e.isSea && e.coordinates && e.coordinates.length > 1) ?? [];
         const candidateEdges = landEdges.length > 0 ? landEdges : (edges?.filter((e) => e.coordinates && e.coordinates.length > 1) ?? []);
@@ -1010,7 +1022,7 @@ export class GameApp {
             if (picked) {
                 spawnPos = { lat: picked[1], lng: picked[0] };
             }
-        } else {
+        } else if (!openingCity) {
             // 无连通边时城外安全微小偏移
             const angle = Math.random() * Math.PI * 2;
             spawnPos = {
@@ -1074,6 +1086,7 @@ export class GameApp {
             //    不另造第二条字幕。onDone 让调用方在**念完**后再推下一段。
             announceBriefing: (text, onDone) => speechAnnouncer.announceBriefing(text, onDone),
             kickLegionAi: (armyId) => this.aiController?.tickArmyById(armyId),
+            storyHold: () => this.story.holdsPlayer(),
             ensureUnpaused: () => {
                 if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);
             },

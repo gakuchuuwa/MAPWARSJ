@@ -862,12 +862,12 @@ export class PlayerHUD {
             btns.appendChild(b);
         }
         // [2026-09-05 玩家] 抵达据点后弹出任务对话框，3 秒后自动确认（自动点接任务选项）
-        const primary = p.options.find((o) => o.accent);
+        const primary = p.noAutoPick ? undefined : p.options.find((o) => o.accent);
         if (primary) {
             window.setTimeout(() => {
                 if (this.overlay) primary.onPick();
             }, 3000);
-        } else if (this.hero.autoMode) {
+        } else if (this.hero.autoMode && !p.noAutoPick) {
             // 🔴 [2026-10-21 主人报「卡住不动了」] 「兵马不足五千」这类只有「告辞」的对话没有主选项，
             //    自动模式下没人点就一直停着（对话还把游戏暂停了）→ 自动模式下 3 秒后自动「告辞」，换下一位武将。
             const leave = p.options.find((o) => o.label.includes('告辞')) ?? p.options[p.options.length - 1];

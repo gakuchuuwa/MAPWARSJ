@@ -146,6 +146,8 @@ export interface DialoguePayload {
     factionName: string;
     text: string;
     options: DialogueOption[];
+    /** 🔴 [2026-10-22] 不要「3 秒后自动选主选项」：故事块的抉择在非自动模式下要等玩家自己选 */
+    noAutoPick?: boolean;
 }
 
 /**
@@ -221,6 +223,11 @@ export interface PlayerQuestDeps {
     announceBriefing?: (text: string, onDone?: () => void, onStart?: () => void) => void;
     kickLegionAi: (armyId: string) => void;
     ensureUnpaused: () => void;
+    /**
+     * 🔴 [2026-10-22 探马开局] 故事块要玩家留在当地（例：乌拉尔图开局段留在图什帕一带）时为 true：
+     * 自动模式这时不去别处找武将、不赶战场。
+     */
+    storyHold?: () => boolean;
     feed?: {
         pushRestoration?(p: { factionId: string; cityName: string }): void;
         pushExpedition?(p: { legionName: string; generalId?: string | null; cityName: string; kind: 'depart' | 'success' }): void;
@@ -2865,7 +2872,8 @@ export class PlayerQuestSystem {
         //    —— 否则战场打完就永远停在那儿等一个不会来的"去找武将"。
         const scriptChain = this.deps.hero.autoPlan === 'script' && isScriptPeriod();
         const canAdvance = this.deps.hero.autoMode && !this.quest
-            && (!this.deps.hero.isAttached() || scriptChain);
+            && (!this.deps.hero.isAttached() || scriptChain)
+            && !this.deps.storyHold?.();
         if (canAdvance) {
             if (this.resumePendingGeneralEvent()) return;
         }

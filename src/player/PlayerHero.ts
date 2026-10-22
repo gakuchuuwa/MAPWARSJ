@@ -72,6 +72,9 @@ export interface PlayerSaveState {
     selectedUnit?: number;
     lat: number;
     lng: number;
+    /** 🔴 [2026-10-22] 故事块：已触发过的块 id、剧情标记 */
+    storyDone?: string[];
+    storyFlags?: string[];
 }
 
 /** Scene13 用的玩家布置（由 Scene13WarLayer.start 通过 window.game.playerHero 取） */
@@ -154,6 +157,9 @@ export class PlayerHero {
      *  🔴 [2026-10-05 主人令] 开局默认**关闭**（原 2026-09-09「开局默认自动」作废）：
      *     先选好乱斗还是剧本（autoPlan），再手动点「🤖 自动」，之后才按所选模式的逻辑自动运行。 */
     public autoMode = true;
+    /** 🔴 [2026-10-22] 故事块：已触发过的块 id（只触发一次的不再弹）、剧情标记（随存档保存） */
+    public storyDone: string[] = [];
+    public storyFlags: string[] = [];
     /**
      * 自动模式走哪套玩法（🔴 2026-09-17 主人定「剧本和乱斗模式分开。因为我还无法确定要不要做剧本。
      *   现在的自动模式分为两种，一种是剧本模式，到了年份，玩家优先去战场。乱斗模式的话，玩家不去战场。」）
@@ -1040,6 +1046,8 @@ export class PlayerHero {
             selectedShip: this.selectedShip,
             lat: p.lat,
             lng: p.lng,
+            storyDone: [...this.storyDone],
+            storyFlags: [...this.storyFlags],
         };
     }
 
@@ -1054,6 +1062,8 @@ export class PlayerHero {
         this.manualUnitPick = s.manualUnitPick ?? false;
         this.learnedShips = [...(s.learnedShips ?? [])];
         this.selectedShip = s.selectedShip ?? -1;
+        this.storyDone = [...(s.storyDone ?? [])];
+        this.storyFlags = [...(s.storyFlags ?? [])];
         if (s.factionId) this.joinFaction(s.factionId);
         else {
             this.factionId = null;

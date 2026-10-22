@@ -45,7 +45,7 @@ phase: production
 - 2025-10-31 — [TECHNICAL_ROADMAP_CN.md](00-meta/TECHNICAL_ROADMAP_CN.md)：**已废弃**（Phaser 方案），勿作开发依据。
 - 2025-10-31 — [更新日志.md](00-meta/更新日志.md)：版本更新记录。
 
-> **注意**：旧的规划文档已移至 `archive/old_plans/`
+> **注意**：`plans/` 已于 2026-10-22 清空；2026-05～09 的一次性施工单归档在 `archive/plans-2026-05_09/`（见其 `INDEX.md`）。`archive/old_plans/` 为空目录，勿引用。
 
 ### 01-overview · 顶层视图
 - 2025-10-31 — [游戏设计文档.md](01-overview/游戏设计文档.md)：极早期设计文档（战国地图战争游戏），**已由 PROJECT_PLAN.md 取代**，保留作背景资料。
@@ -62,6 +62,8 @@ phase: production
 
 **world/**
 - 2026-09-08 — [据点城墙与城门系统设计及防坑规范.md](据点城墙与城门系统设计及防坑规范.md)：**各级别据点（大·中·小·城寨·险要）城墙、城门、城墩与建筑渲染体系规范，含历史 5 大关键错误与矫正方案。**
+- 2026-09 — [道路网设计方案v3_最终实施计划.md](02-design/world/道路网设计方案v3_最终实施计划.md)：**路网设计依据**——Gabriel Graph 平面网状拓扑（已落地 `scripts/audit_radial_network.mjs`）；原 `plans/`，2026-10-22 移入。
+- 2026-09 — [据点视觉风格设计方案.md](02-design/world/据点视觉风格设计方案.md)：据点视觉体系（大/中/小城、关隘、渡口、古战场）；原 `plans/`，2026-10-22 移入。
 - 2026-06-16 — [REGION_PLAYABLE_AREA.md](02-design/world/REGION_PLAYABLE_AREA.md)：**14 文化区可玩陆地与据点比例测算**（界城环线 + 扣大漠/沙漠/无人区/雨林；脚本 `scratch/region_playable_area.mjs`）。
 - 2025-11-05 — [TILE_MAP_IMPLEMENTATION.md](02-design/world/TILE_MAP_IMPLEMENTATION.md)：瓦片地图渲染实现细节。
 - 2025-11-05 — [TILEMAP_USAGE.md](02-design/world/TILEMAP_USAGE.md)：编辑器与数据使用指南。
@@ -97,9 +99,11 @@ phase: production
 - 2025-10-31 — FINAL_REPORT.md：重构阶段最终报告
 - 2025-11-02 — 20251102PROJECT_OVERVIEW.md：世界设定、势力、城市与玩家系统的整体快照
 
-**old_plans/** - 旧的规划文档
-- 2025-10-31 — NEXT_STEPS.md：阶段性行动计划
-- 2025-10-31 — REFACTOR_PLAN.md：代码重构任务拆解
+**old_plans/** - 旧规划文档（**当前为空目录**，勿引用）
+- 2025-10-31 — NEXT_STEPS.md / REFACTOR_PLAN.md：原计划放这里，实际未找到文件
+
+**plans-2026-05_09/** - 2026-05～09 一次性施工单归档（41 份）
+- 2026-10-22 — [INDEX.md](archive/plans-2026-05_09/INDEX.md)：势力 / 据点 / 命名 / 编辑器施工单索引，含已删除清单与生效方案去向
 
 **daily_updates/** - 每日更新文档
 - 2025-11-20 — 20251120TechnicalDocumentation.md：技术文档
@@ -118,6 +122,6 @@ phase: production
 - **自动化场景**：准备 Claude 或其他 LLM 任务时，配合 04-ai-export 的流程与 FAQ。
 
 ## 维护约定
-- 新增文档时需补充 Front Matter，并在本索引与 `_meta/timeline.md` 中登记。
-- 如需归档旧文档，请移入 `99-archive/` 并更新时间线备注。
+- 新增文档时需补充 Front Matter，并在本索引登记（`_meta/timeline.md` 已不存在，勿引用；现状清单见 `_meta/inventory.md`）。
+- 如需归档旧文档，统一移入 `docs/archive/<批次>/` 并在本索引登记；一次性施工单按 [`plans/README.md`](../plans/README.md) 的规则处理（执行完一个月内归档）。
 - **所有 AI/协作者在读取旧文档（2026-05-24 前）时，应先确认该文档是否已被"历史大乱斗"设计取代。**
