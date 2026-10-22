@@ -545,6 +545,12 @@ export class Scene13WarLayer {
             this.skillPanicTimer[f] = 0;
             this.skillVulnTimer[f] = 0;
         }
+        // 🔴 [2026-10-22] 小队模式没有武将：不集气、不放武将技
+        if (init.skirmish) {
+            this.sideGeneralId = [null, null];
+            this.skillRatePerSec[0] = 0;
+            this.skillRatePerSec[1] = 0;
+        }
     }
 
     /**
@@ -613,10 +619,14 @@ export class Scene13WarLayer {
     }
 
     /** 供 CombatUI 实时读取战术模式双方的集气槽与六计状态 */
+    /** 🔴 [2026-10-22] 本场是不是小队模式（故事块小仗）；界面与布景据此隐藏军团战专属的东西 */
+    public isSkirmish(): boolean { return this.skirmish !== null; }
+
     public getScene13SkillState() {
         if (!this.active && !this.lingering) return null;
         const buildSide = (f: 0 | 1) => ({
-            hasGeneral: true,
+            // 小队模式没有武将，不显示武将技栏
+            hasGeneral: !this.skirmish,
             generalId: this.sideGeneralId[f],
             isFamous: this.sideIsFamous[f],
             eliteTier: this.sideEliteTier[f] !== null ? (`T${this.sideEliteTier[f]}`) : null,
@@ -1004,7 +1014,8 @@ export class Scene13WarLayer {
         if (!setup) return;
         const f = setup.side;
         const row0 = this.spawns.filter((s) => s.f === f && s.row === 0);
-        if (!row0.length) return;
+        // 小队模式允许玩家这一方只有他本人（「一个人先追」），没有出兵口也照样上场
+        if (!row0.length && !this.skirmish) return;
         const base = this.spawnBases[f] ?? { x: row0[0].x, y: row0[0].y };
 
         this.playerSetup = setup;
@@ -1083,6 +1094,13 @@ export class Scene13WarLayer {
                 row0[0],
             );
             anchorPort = centerPort ?? row0[0] ?? mySpawns[0];
+        }
+        if (!anchorPort) {
+            // 🔴 [2026-10-22] 小队模式里玩家单人上场：没有本队出兵口，就站在本方基座（lane −1：复活也回基座）
+            anchorPort = {
+                f, key: setup.heroKey, x: base.x, y: base.y,
+                pool: 0, pop: 1, spawned: 0, slotN: 0, lane: -1, row: 0, commander: false,
+            };
         }
 
         const inMarch = this.deployT > 0;
@@ -1333,7 +1351,8 @@ export class Scene13WarLayer {
         // 🔴 按人口加权：象/车 1 精灵 = 2 个兵额、炮 = 3。不加权的话象类文化的兵力会凭空缩水。
         const n = [0, 0];
         for (const sp of this.spawns) n[sp.f] += Math.max(0, sp.pool) * sp.pop;
-        for (const m of this.men) if (m.hp > 0) n[m.f] += m.pop;
+        // 小队模式：玩家本人算一个兵（与判胜负同口径）
+        for (const m of this.men) if (m.hp > 0) n[m.f] += (m.hero && this.skirmish) ? 1 : m.pop;
         return { attacker: Math.round(n[0] * this.troopsPerSprite), defender: Math.round(n[1] * this.troopsPerSprite) };
     }
 
@@ -1729,6 +1748,15 @@ export class Scene13WarLayer {
                     const uSide1 = { x: -uSide0.x, y: -uSide0.y };
                     this.advanceVec = [uFwd0, uFwd1];
                     this.sideVec = [uSide0, uSide1];
+                    // 🔴 [2026-10-22] 小队模式：几十人的小仗不必隔着整张图对冲，双方各站中点两侧 450px
+                    if (this.skirmish) {
+                        const mx = (attSX + defSX) / 2, my = (attSY + defSY) / 2;
+                        const SKIRMISH_HALF_GAP = 450;
+                        this.spawnBases = [
+                            { x: mx - uFwd0.x * SKIRMISH_HALF_GAP, y: my - uFwd0.y * SKIRMISH_HALF_GAP },
+                            { x: mx + uFwd0.x * SKIRMISH_HALF_GAP, y: my + uFwd0.y * SKIRMISH_HALF_GAP },
+                        ];
+                    }
                     // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
                     //    攻城战城池稳居正中心（世界中心 worldCX/CY），镜头默认居中对齐城池；野战才居中于两军中点
                     if (this.deCity || this.battleType === 'siege') {
@@ -2164,7 +2192,8 @@ export class Scene13WarLayer {
         }
         const alive = [0, 0];
         for (const s of this.spawns) alive[s.f] += Math.max(0, s.pool) * s.pop;
-        for (const m of this.men) if (m.hp > 0) alive[m.f] += m.pop;
+        // 小队模式：玩家本人也算一个兵（「一个人先追」时全靠他）
+        for (const m of this.men) if (m.hp > 0) alive[m.f] += (m.hero && this.skirmish) ? 1 : m.pop;
         const att = Math.max(1, alive[0]);
         const def = Math.max(1, alive[1] * homeDiscount);
         const attackerWins = att > def;
@@ -7496,7 +7525,8 @@ export class Scene13WarLayer {
         for (const s of this.spawns) alive[s.f] += Math.max(0, s.pool) * s.pop;
         // 🔴 [2026-10-16 主人令「攻方没兵力了，攻方应该算输呀，攻城武器和乱入者不算兵力」]
         //    攻城武器（siegeW）不计兵力；乱入者本人 pop=0 本就不计（见 setupPlayerUnits）。
-        for (const m of this.men) if (m.hp > 0 && !m.siegeW && !m.hero) alive[m.f] += m.pop;
+        //    🔴 [2026-10-22] 小队模式例外：玩家本人算一个兵（「一个人先追」时全靠他，他倒下就算输）。
+        for (const m of this.men) if (m.hp > 0 && !m.siegeW && (!m.hero || this.skirmish)) alive[m.f] += m.hero ? 1 : m.pop;
         {
             const laneAlive = new Map<number, number>();
             for (const s of this.spawns) laneAlive.set(s.lane, (laneAlive.get(s.lane) ?? 0) + Math.max(0, s.pool) * s.pop);

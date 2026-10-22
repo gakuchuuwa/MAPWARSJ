@@ -1063,6 +1063,8 @@ export function applySpawnBuildings(this: Scene13WarLayer): void {
 }
 
 export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
+    // 🔴 [2026-10-22] 小队模式（故事块小仗）没有营地：不铺营帐、不围拒马
+    if (this.isSkirmish()) return;
     // 玩家自带精锐是临时追加的战术出兵位，不属于军团九格编制；
     // 若把它计入这里，守城方会因 10 !== 9 提前返回，整座城墙都不生成。
     // 🔴 [2026-09-23] 主将队（第 10 口，前排再往前）不是编制建筑位：不计入，否则拒马挤在主将一口前、营地城墙因 10≠9 全不生成
