@@ -1,12 +1,18 @@
 /**
  * 🔴 [2026-10-22] 乌拉尔图开局的故事块（docs/探马/故事块样板_乌拉尔图开局.md）。
- * 已接上 URT-01「梦醒」、URT-02「赶马饮水」、URT-03「走失的小马」、URT-04「盗马贼」、URT-08「通灵·大马士革城下」；其余块按样板逐个往这里加。
+ * 已接上 URT-01「梦醒」、URT-02「赶马饮水」、URT-03「走失的小马」、URT-04「盗马贼」、URT-05「梅努阿王征兵」、URT-06「攻破哈桑卢」、
+ * URT-08「通灵·大马士革城下」、URT-11「升斥候」；其余块按样板逐个往这里加。
  *
- * 开局段（前 800 年）的顺序：春 梦醒 → 夏 赶马饮水 → 秋 盗马贼 → 冬 走失的小马，演完放玩家去找武将。
- * （样板原写 02→03→04；盗马贼只在秋天来，故把小马挪到盗马贼之后的冬天，一年四季各一件。）
+ * 开局段的顺序：前 800 年 春 梦醒 → 夏 赶马饮水 → 秋 盗马贼 → 冬 走失的小马 → 前 799 年春 梅努阿王征兵
+ * → 应征进图什帕见萨尔杜里，走他现成的入伍（首战）对话 → 入伍乌拉尔图军时升斥候。
+ * （样板原写 02→03→04；盗马贼只在秋天来，故把小马挪到盗马贼之后的冬天，一年四季各一件。
+ *   征兵样板原写前 796 年冬；开局四件事演完已是前 800 年冬，功勋也够了，空等三年没东西玩，故提到前 799 年春。）
+ * 「平民」一律按「还没投效势力」判（factionId 为空），不看官阶：没投效时功勋过 1000 官阶也会显示斥候。
  */
 import type { Storylet, StoryContext, StoryApi } from '../StoryletEngine';
 import { startHorseThiefSkirmish } from '../horseThiefSkirmish';
+import { HASANLU_YEAR, startHasanluSiege, startHasanluSupply } from '../hasanluSiege';
+import { startWhenFree } from '../storySkirmish';
 
 const MERIT_HORSE_THIEF = 300;
 
@@ -48,17 +54,28 @@ const CANAL = { lat: 38.43, lng: 43.45, label: '梅努阿渠' } as const;
 /** 东边山里：小马走失的山沟，图什帕以东约 14 公里 */
 const EAST_HILLS = { lat: 38.46, lng: 43.53, label: '东边山里' } as const;
 
+/** 应征了（URT-05 选了应征）：开局段到此为止 */
+const URT_05_ENLISTED = 'URT-05-enlisted';
+/** 推说马病没去：来年春天再征一次，这次推不掉 */
+const URT_05_DECLINED = 'URT-05-declined';
+/** 征兵的功勋门槛（样板：500）；到前 798 年不论功勋都来征 */
+const MERIT_CONSCRIPTION = 500;
+const CONSCRIPTION_ANY_MERIT_YEAR = -798;
+/** 萨尔杜里的军团在图什帕；他的势力 */
+const URARTU_FACTION_ID = 'wulaertu_guo';
+
 /**
- * 开局段留人：平民、没入伍、还在图什帕一带、开局四件事（到走失的小马）还没演完 → 自动模式不去别处找武将。
- * 前 800 年梦醒之前也算（开局第一帧就要留住，否则自动模式先动身走了）。
+ * 开局段留人：没投效、没入伍、还在图什帕一带、还没应征 → 自动模式不去别处找武将。
+ * 应征（URT-05）那一刻放行：玩家自己进城见萨尔杜里，之后走现成的入伍流程。
+ * 前 800 年梦醒之前也算（开局第一帧就要留住，否则自动模式先动身走了）；最晚留到前 797 年底。
  */
 export function urartuOpeningHoldsPlayer(ctx: StoryContext): boolean {
     return ctx.year <= OPENING_LAST_YEAR
-        && ctx.rank === 'civilian'
+        && ctx.factionId === null
         && !ctx.attached
         && ctx.nearCityId === URARTU_OPENING_CITY_ID
-        // 看结果标记而不是「弹过没有」：小马还在找、仗还在打时也要留住，办完才放行
-        && !ctx.hasFlag('URT-03-done')
+        // 看结果标记而不是「弹过没有」：小马还在找、仗还在打时也要留住
+        && !ctx.hasFlag(URT_05_ENLISTED)
         && (ctx.isDone('URT-01') || ctx.year === -800);
 }
 
@@ -110,7 +127,7 @@ const URT_02_WATERING: Storylet = {
     text: '图什帕城外的养马人家缺人手：「{玩家}，把马群赶到梅努阿渠饮水，太阳落山前赶回来。」',
     when: (ctx) => ctx.year >= -800 && ctx.year <= OPENING_LAST_YEAR
         && ctx.isDone('URT-01')
-        && ctx.rank === 'civilian'
+        && ctx.factionId === null
         && !ctx.attached
         && ctx.nearCityId === URARTU_OPENING_CITY_ID,
     options: [
@@ -184,7 +201,7 @@ const URT_03_LOST_FOAL: Storylet = {
     when: (ctx) => ctx.year >= -800 && ctx.year <= OPENING_LAST_YEAR
         && ctx.isDone('URT-02')
         && (ctx.hasFlag('URT-04-won') || ctx.hasFlag('URT-04-lost'))
-        && ctx.rank === 'civilian'
+        && ctx.factionId === null
         && !ctx.attached
         && ctx.nearCityId === URARTU_OPENING_CITY_ID,
     options: [
@@ -233,6 +250,149 @@ function trackFoalOnFoot(api: StoryApi): void {
         },
     });
 }
+
+/**
+ * 应征：放行开局段，让玩家进图什帕见萨尔杜里。城里的对话、入伍、首战全走现成流程
+ * （PlayerQuestSystem.onArrive：萨尔杜里有首战「凡湖击退亚述之战」，就是这一趟征兵要打的仗）。
+ */
+function answerConscription(api: StoryApi): void {
+    api.setFlag(URT_05_ENLISTED);
+    api.notify(`🛡️ ${api.playerName}应征了，牵上马进图什帕，去萨尔杜里将军帐下报到`);
+    api.hero.travelToCity(URARTU_OPENING_CITY_ID);
+}
+
+/**
+ * URT-05 梅努阿王征兵：走失的小马办完之后（开局段是前 799 年春），在图什帕一带，功勋 ≥ 500（到前 798 年不论功勋）。
+ * 应征 → 进城见萨尔杜里入伍；推说马病 → 留在图什帕再做一年平民，来年春天再征一次（URT-05B），这次推不掉。
+ * 使者说的是亚述来犯：入伍后要打的正是萨尔杜里的首战「凡湖击退亚述之战」，说法要对得上
+ * （样板原写「攻打曼纳的哈桑卢」，那是 URT-06，等做哈桑卢时再接）。
+ */
+const URT_05_CONSCRIPTION: Storylet = {
+    id: 'URT-05',
+    speaker: '梅努阿王的使者',
+    text: '王的使者到了：「亚述人又在南边集结，梅努阿王要各家出人出马，到萨尔杜里将军帐下听用。」'
+        + '养马人家都看着{玩家}——这几年城外的马，数他骑得最好。',
+    when: (ctx) => ctx.year >= -800 && ctx.year <= OPENING_LAST_YEAR
+        && ctx.hasFlag('URT-03-done')
+        && (ctx.merit >= MERIT_CONSCRIPTION || ctx.year >= CONSCRIPTION_ANY_MERIT_YEAR)
+        && ctx.factionId === null
+        && !ctx.attached
+        && ctx.nearCityId === URARTU_OPENING_CITY_ID,
+    options: [
+        {
+            label: '应征，牵马去萨尔杜里帐下',
+            accent: true,
+            pick: (api) => answerConscription(api),
+        },
+        {
+            label: '推说马病了，不去',
+            pick: (api) => {
+                api.setFlag(URT_05_DECLINED);
+                api.notify('🐎 推说马病了。使者记下了名字：「明年开春，各家还得出人。」');
+            },
+        },
+    ],
+};
+
+/** URT-05B 再征：推说马病之后的下一个春天，这次推不掉 */
+const URT_05B_CONSCRIPTION_AGAIN: Storylet = {
+    id: 'URT-05B',
+    speaker: '梅努阿王的使者',
+    text: '开春，使者又来了：「今年各家都得出人，马病了就换一匹。」这次推不掉了。',
+    when: (ctx) => ctx.hasFlag(URT_05_DECLINED)
+        && !ctx.hasFlag(URT_05_ENLISTED)
+        && ctx.season === 0
+        && ctx.factionId === null
+        && !ctx.attached
+        && ctx.nearCityId === URARTU_OPENING_CITY_ID,
+    options: [
+        {
+            label: '应征，牵马去萨尔杜里帐下',
+            accent: true,
+            pick: (api) => answerConscription(api),
+        },
+    ],
+};
+
+/**
+ * URT-11 升斥候：入伍乌拉尔图军之后的第一个换季。
+ * 样板原写「功勋到 1000 升斥候」；但主人 2026-09-07 定「已投效势力则保底斥候」（PlayerConfig.rankFor），
+ * 入伍那一刻官阶就是斥候了，所以这一块改在入伍时演：萨尔杜里交小旗，就是升斥候那一下。
+ */
+const URT_11_SCOUT_FLAG: Storylet = {
+    id: 'URT-11',
+    speaker: '萨尔杜里',
+    text: '萨尔杜里把一面小旗交给{玩家}：「你会骑马，也认得这一带的路。以后你走在大军前头。」',
+    when: (ctx) => ctx.factionId === URARTU_FACTION_ID
+        && ctx.attached
+        && ctx.rank !== 'civilian',
+    options: [
+        {
+            label: '接过小旗',
+            accent: true,
+            pick: (api) => {
+                api.setFlag('乌拉尔图斥候');
+                api.notify('🚩 官阶：斥候。走在大军前头，替大军探路');
+            },
+        },
+    ],
+};
+
+/** URT-06 攻破哈桑卢的赏 */
+const MERIT_HASANLU_TAKEN = 500;
+const MERIT_HASANLU_OTHERS_TOOK = 150;
+/** 两仗之间等上一场战术模式收场再问（毫秒） */
+const BETWEEN_BATTLES_ASK_MS = 2500;
+
+/**
+ * URT-06 攻破哈桑卢（锚点战役）：前 795–前 790 年，已入伍乌拉尔图军（授过小旗），在军中。
+ * 萨尔杜里分一支偏师随梅努阿王南下曼纳的哈桑卢（战略地图上的大军不动，这是分出去的一支）。
+ * 先送料：护运料队到城下（小队战）；送到 → 攻城多一架撞车、多一队人；坐骑连运三天料，累一季。
+ * 再攻城：在哈桑卢史实坐标打攻城战（hasanluSiege.ts，不加据点）。
+ * 天命锁：不论这一队打没打上去，哈桑卢都在这一年被攻破 —— 打上去功勋 +500，没打上去别的队破城，功勋 +150。
+ * 都学到马经传说条目「哈桑卢的金碗」。
+ */
+const URT_06_HASANLU: Storylet = {
+    id: 'URT-06',
+    speaker: '萨尔杜里',
+    text: '萨尔杜里分出一支人马，随梅努阿王南下曼纳的哈桑卢：「哈桑卢城墙又高又厚，城里人以为攻不下。'
+        + '三天之内，把造撞车的木料运到城下。」{玩家}走在运料队前头。',
+    when: (ctx) => ctx.factionId === URARTU_FACTION_ID
+        && ctx.attached
+        && ctx.isDone('URT-11')
+        && ctx.year >= HASANLU_YEAR && ctx.year <= HASANLU_YEAR + 5,
+    options: [
+        {
+            label: '护着运料队上路',
+            accent: true,
+            pick: (api) => {
+                startHasanluSupply(api.app, (arrived) => {
+                    api.hero.horses.tire(1);
+                    window.setTimeout(() => api.ask('哈桑卢城下', arrived
+                        ? '木料一根不少运到了城下，马夫们连夜造出两架撞车。坐骑连跑三天，累得直喘。'
+                        : '曼纳人冲出来烧了一半木料，只造出一架撞车。坐骑连跑三天，累得直喘。', [
+                        {
+                            label: '跟着撞车攻城',
+                            accent: true,
+                            pick: (a) => startWhenFree(() => startHasanluSiege(a.app, arrived, (won) => {
+                                a.setFlag('URT-06-done');
+                                a.setFlag('马经-哈桑卢的金碗');
+                                if (won) {
+                                    a.addMerit(MERIT_HASANLU_TAKEN);
+                                    a.notify(`🔥 哈桑卢城破，${a.playerName}这一队先登，功勋 +${MERIT_HASANLU_TAKEN}`);
+                                } else {
+                                    a.addMerit(MERIT_HASANLU_OTHERS_TOOK);
+                                    a.notify(`🔥 这一队没攻上去，梅努阿王的大军从另一面破了城。哈桑卢还是在这一年烧成了废墟；功勋 +${MERIT_HASANLU_OTHERS_TOOK}`);
+                                }
+                                a.notify('📖 马经（传说）：哈桑卢的金碗——城破那天宫殿烧塌，三个守兵抱着一只金碗死在了废墟里');
+                            })),
+                        },
+                    ]), BETWEEN_BATTLES_ASK_MS);
+                });
+            },
+        },
+    ],
+};
 
 /** 亚述围大马士革那一年 */
 const DAMASCUS_796_YEAR = -796;
@@ -301,7 +461,7 @@ const URT_04_HORSE_THIEF: Storylet = {
     chance: (ctx) => (ctx.hasFlag('URT-03-done') ? 0.3 : 1),
     when: (ctx) => ctx.year >= -800 && ctx.year <= -795
         && ctx.season === 2
-        && ctx.rank === 'civilian'
+        && ctx.factionId === null
         && !ctx.attached
         && ctx.nearCityId === URARTU_OPENING_CITY_ID,
     options: [
@@ -350,5 +510,9 @@ export const URARTU_OPENING_STORYLETS: readonly Storylet[] = [
     URT_02_WATERING,
     URT_04_HORSE_THIEF,
     URT_03_LOST_FOAL,
+    URT_05_CONSCRIPTION,
+    URT_05B_CONSCRIPTION_AGAIN,
+    URT_11_SCOUT_FLAG,
+    URT_06_HASANLU,
     URT_08_DAMASCUS_HORSE,
 ];

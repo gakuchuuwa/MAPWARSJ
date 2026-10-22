@@ -32,6 +32,8 @@ export interface StoryContext {
     merit: number;
     /** 是否随军（入伍） */
     attached: boolean;
+    /** 投效的势力（没投效为 null） */
+    factionId: string | null;
     /** 玩家所在的据点（40 公里内最近的一座）；不在任何据点附近为 null */
     nearCityId: string | null;
     /** 那座据点的名字（不在据点附近为 null） */
@@ -212,6 +214,7 @@ export class StoryletEngine {
             rank: hero.getRank().id,
             merit: hero.merit,
             attached: hero.isAttached(),
+            factionId: hero.factionId,
             nearCityId,
             nearCityName: nearCityId ? (this.app.cityManager?.getCity(nearCityId)?.name ?? null) : null,
             lat: pos.lat,
