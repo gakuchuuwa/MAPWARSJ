@@ -3230,6 +3230,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     liulike: [
         { generalId: 'gen_alexander_nef', generalName: '涅夫斯基', portrait: '/assets/SLAVIC/liulike_niefusiji.png' },
         { generalId: 'gen_rurik', generalName: '留里克', portrait: '', legionName: '封建时代瓦良格军团' },
+        { generalId: 'gen_sineus', generalName: '西涅乌斯', portrait: '', legionName: '封建时代瓦良格军团' },
     ],
 
 
@@ -7419,6 +7420,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'danmai_guthrum', generalName: '古思伦', portrait: '', legionName: '封建时代丹麦王国军团' },
+        { generalId: 'danmai_harald', generalName: '蓝牙哈拉尔', portrait: '', legionName: '封建时代丹麦王国军团', eliteName: '耶灵亲兵', eliteTier: 4 },
+        { generalId: 'danmai_godfred', generalName: '戈德弗雷德', portrait: '', legionName: '封建时代丹麦王国军团', eliteName: '海瑟比卫队', eliteTier: 4 },
 
 
 
@@ -13207,7 +13210,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    wulaertu: { generalId: 'wulaertu_ajishenti', generalName: '瓦尔丹', portrait: '/assets/ARMENIANS/wulaertu_ajishenti.png' },
+    wulaertu: [
+        { generalId: 'wulaertu_ajishenti', generalName: '瓦尔丹', portrait: '/assets/ARMENIANS/wulaertu_ajishenti.png' },
+        { generalId: 'wulaertu_ashot3', generalName: '阿硕特三世', portrait: '', legionName: '封建时代巴格拉图尼军团', eliteName: '纳哈拉尔骑', eliteTier: 3 },
+    ],
 
 
 
@@ -14834,7 +14840,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    maya: { generalId: 'gen_jasawchan', generalName: '亚斯纳昌', portrait: '/assets/MAYANS/gen_jasawchan.png' },
+    maya: [
+        { generalId: 'gen_jasawchan', generalName: '亚斯纳昌', portrait: '/assets/MAYANS/gen_jasawchan.png' },
+        { generalId: 'gen_pakal', generalName: '帕卡尔', portrait: '', legionName: '封建时代尤卡坦军团', eliteName: '帕伦克矛兵', eliteTier: 4 },
+    ],
 
 
 

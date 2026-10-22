@@ -35,6 +35,8 @@ export interface StoryContext {
     attached: boolean;
     /** 投效的势力（没投效为 null） */
     factionId: string | null;
+    /** 自动模式开着没有 */
+    autoMode: boolean;
     /** 马厩里有几匹马 */
     horseCount: number;
     /** 玩家所在的据点（40 公里内最近的一座）；不在任何据点附近为 null */
@@ -85,6 +87,8 @@ export interface StoryErrand {
     pace?: number;
     /** 要在第几个季末之前办完（1＝本季之内，即「太阳落山前」）；不填＝不限时 */
     deadlineSeasons?: number;
+    /** 只在自动模式里走（故事领路）：半路关了自动就停下，交还给玩家 */
+    onlyInAuto?: boolean;
     onDone(api: StoryApi, onTime: boolean): void;
 }
 
@@ -128,11 +132,15 @@ export class StoryletEngine {
     private lastSeasonKey: number | null = null;
     private holding = false;
     private errand: ActiveErrand | null = null;
+    /** 领路的提示只飘一次 */
+    private leadNoticeShown = false;
 
     constructor(
         private readonly app: GameApp,
         private readonly storylets: readonly Storylet[],
         private readonly holdPlayer?: (ctx: StoryContext) => boolean,
+        /** 故事要把玩家领到某处（例：开局醒来先走到岩壁）：返回要去的地方，没有就 null */
+        private readonly leadPlayer?: (ctx: StoryContext) => { stop: ErrandStop; notice?: string } | null,
     ) {}
 
     /** 故事要玩家留在当地：自动模式这时不去别处找武将 */
@@ -160,6 +168,21 @@ export class StoryletEngine {
         const ctx = this.buildContext(year, season);
         this.updateHold(ctx);
         if (this.isBusy()) return;
+        // 🔴 [2026-10-22 主人「怎么还是上来就接任务呀，我把自动都关了」] 领路只在自动模式：
+        //    自动关着时故事不替玩家走路，玩家自己走到那一带才弹故事块（醒来的提示照样飘一次）。
+        const lead = this.leadPlayer?.(ctx);
+        if (lead) {
+            const api = this.makeApi();
+            // 只飘提示、不弹框：领路这一段不暂停游戏
+            if (lead.notice && !this.leadNoticeShown) {
+                this.leadNoticeShown = true;
+                api.notify(lead.notice.split('{玩家}').join(hero.name));
+            }
+            if (hero.autoMode) {
+                this.startErrand(api, { stops: [lead.stop], onlyInAuto: true, onDone: () => {} });
+                return;
+            }
+        }
         for (const s of this.storylets) {
             if (!this.eligible(s, ctx)) continue;
             const chance = typeof s.chance === 'function' ? s.chance(ctx) : (s.chance ?? 1);
@@ -218,6 +241,7 @@ export class StoryletEngine {
             merit: hero.merit,
             attached: hero.isAttached(),
             factionId: hero.factionId,
+            autoMode: hero.autoMode,
             horseCount: hero.horses.list().length,
             nearCityId,
             nearCityName: nearCityId ? (this.app.cityManager?.getCity(nearCityId)?.name ?? null) : null,
@@ -370,6 +394,13 @@ export class StoryletEngine {
         const e = this.errand;
         const hero = this.app.playerHero;
         if (!e || !hero) return;
+        if (e.def.onlyInAuto && !hero.autoMode) {
+            this.errand = null;
+            hero.cancelTravel();
+            if (e.def.pace !== undefined) hero.setStoryPace(1);
+            this.refreshHold();
+            return;
+        }
         if (e.phase === 'busy') return;
         if (e.phase === 'stay') {
             if (this.app.timeSystem.getElapsedGameSeconds() >= e.stayUntil) this.nextStop(e);
@@ -410,5 +441,7 @@ export class StoryletEngine {
         const onTime = e.deadlineKey === null || this.nowSeasonKey() < e.deadlineKey;
         e.def.onDone(e.api, onTime);
         this.refreshHold();
+        // 跑完一趟不等下一季：下一帧就重新看有没有该弹的故事块（例：领路走到岩壁 → 马上梦醒）
+        this.lastSeasonKey = null;
     }
 }

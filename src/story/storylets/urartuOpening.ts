@@ -9,7 +9,7 @@
  *   征兵样板原写前 796 年冬；开局四件事演完已是前 800 年冬，功勋也够了，空等三年没东西玩，故提到前 799 年春。）
  * 「平民」一律按「还没投效势力」判（factionId 为空），不看官阶：没投效时功勋过 1000 官阶也会显示斥候。
  */
-import type { Storylet, StoryContext, StoryApi } from '../StoryletEngine';
+import type { Storylet, StoryContext, StoryApi, ErrandStop } from '../StoryletEngine';
 import { startHorseThiefSkirmish } from '../horseThiefSkirmish';
 import { HASANLU_YEAR, startHasanluSiege, startHasanluSupply } from '../hasanluSiege';
 import { startWhenFree } from '../storySkirmish';
@@ -38,11 +38,51 @@ function loseToThieves(api: StoryApi): string {
 export const URARTU_OPENING_CITY_ID = 'city_tushpa';
 
 /**
- * 百岁模式新开局的出生点：凡湖东南岸（今埃德雷米特一带），图什帕西南约 13 公里。
- * 放在城外（玩家到城判定 0.06° 之外），醒来时不会马上撞进城里的武将对话。
- * 凡湖海拔 1640 米，游戏的陆海判定（掩膜为水 且 海拔 < 0）不把它当海，出生点不会落进「海」里。
+ * 百岁模式新开局在哪儿醒来：三处随机一处，都离岩壁 60–80 公里，不在城边。
+ * 🔴 [2026-10-22 主人令「让玩家起始离任务点稍微远一点。有的时候我启动游戏还要干别的呢，你现在弄得上来就接任务」
+ *     ＋「梦醒可以在山洞，农村，田野呀」「非得在城边吗」]
+ *    原来出生在岩壁旁边，开局第一帧就弹梦醒对话、游戏暂停；现在醒来只飘一句提示（不弹框、不暂停），
+ *    故事领着玩家走到凡湖东南岸的岩壁（urartuOpeningLead），走到了才弹梦醒，开局有一段空当。
+ * 凡湖一带海拔一千五六百米，游戏的陆海判定（掩膜为水 且 海拔 < 0）不会把出生点当成海。
  */
-export const URARTU_OPENING_SPAWN = { lat: 38.42, lng: 43.26 } as const;
+export interface OpeningWakeSpot {
+    id: string;
+    lat: number;
+    lng: number;
+    /** 醒来那一刻飘的提示（`{玩家}` 换成称呼） */
+    notice: string;
+}
+export const URARTU_WAKE_SPOTS: readonly OpeningWakeSpot[] = [
+    { id: '山洞', lat: 38.9, lng: 42.83, notice: '{玩家}在凡湖北边山里的一个山洞里醒来，不记得自己是谁。洞外看得见湖，顺着山路往湖边走' },
+    { id: '农村', lat: 39.03, lng: 43.7, notice: '{玩家}在凡湖东北的一个村子里醒来，躺在别人家的草垛上，不记得自己是谁。村里人指了指南边的湖' },
+    { id: '田野', lat: 38.48, lng: 42.33, notice: '{玩家}在凡湖西岸的一片麦田里醒来，不记得自己是谁。顺着田埂往东，沿湖岸走' },
+];
+/** 醒来的地方记成剧情标记「醒在-山洞」等（随存档走） */
+export const WAKE_FLAG_PREFIX = '醒在-';
+export function pickUrartuWakeSpot(): OpeningWakeSpot {
+    return URARTU_WAKE_SPOTS[Math.floor(Math.random() * URARTU_WAKE_SPOTS.length)];
+}
+
+/** 刻着骑马人的岩壁：凡湖东南岸（今埃德雷米特一带），图什帕西南约 13 公里，梦醒（URT-01）在这里 */
+const ROCK = { lat: 38.42, lng: 43.26, label: '凡湖东南岸' } as const;
+/** 到了岩壁的判定（公里） */
+const ROCK_NEAR_KM = 5;
+
+function kmTo(ctx: StoryContext, p: { lat: number; lng: number }): number {
+    const cosLat = Math.cos((ctx.lat * Math.PI) / 180);
+    return Math.hypot((ctx.lat - p.lat) * 111.32, (ctx.lng - p.lng) * 111.32 * cosLat);
+}
+
+/**
+ * 开局领路：前 800 年还没梦醒、离岩壁还远 → 故事领着玩家走到岩壁（自动、手动模式都领）。
+ * 第一次领路时飘一句醒来的提示（醒在哪儿看剧情标记）。
+ */
+export function urartuOpeningLead(ctx: StoryContext): { stop: ErrandStop; notice?: string } | null {
+    if (ctx.year !== -800 || ctx.isDone('URT-01') || ctx.factionId !== null || ctx.attached) return null;
+    if (kmTo(ctx, ROCK) <= ROCK_NEAR_KM) return null;
+    const spot = URARTU_WAKE_SPOTS.find((s) => ctx.hasFlag(WAKE_FLAG_PREFIX + s.id));
+    return { stop: ROCK, notice: spot ? `🌅 ${spot.notice}` : undefined };
+}
 
 /** 开局段最晚到哪一年（前 797 年底）：过了这年不再把玩家留在图什帕 */
 const OPENING_LAST_YEAR = -797;
@@ -74,7 +114,8 @@ export function urartuOpeningHoldsPlayer(ctx: StoryContext): boolean {
     return ctx.year <= OPENING_LAST_YEAR
         && ctx.factionId === null
         && !ctx.attached
-        && ctx.nearCityId === URARTU_OPENING_CITY_ID
+        // 梦醒之前还在往岩壁走，不在图什帕一带也要留住
+        && (ctx.nearCityId === URARTU_OPENING_CITY_ID || (ctx.year === -800 && !ctx.isDone('URT-01') && ctx.autoMode))
         // 看结果标记而不是「弹过没有」：小马还在找、仗还在打时也要留住
         && !ctx.hasFlag(URT_05_ENLISTED)
         && (ctx.isDone('URT-01') || ctx.year === -800);
@@ -90,14 +131,16 @@ const COOL_DOWN_STAY_S = 5;
 const MERIT_FOAL_TRACKED = 200;
 const MERIT_FOAL_SPIRIT = 100;
 
-/** URT-01 梦醒：新开百岁模式，前 800 年春（赶不上就夏），在图什帕一带，必触发一次 */
+/**
+ * URT-01 梦醒：新开百岁模式，前 800 年，走到图什帕一带（40 公里内）必触发一次。
+ * 自动模式由故事领到岩壁；自动关着时不领路，玩家自己走过来才弹（三个醒来处都在 40 公里外）。
+ */
 const URT_01_AWAKEN: Storylet = {
     id: 'URT-01',
     speaker: '凡湖岸',
-    text: '{玩家}在湖岸醒来，不记得自己是谁。岩壁上刻着一个骑马的人，刻痕已经很旧。'
+    text: '{玩家}走到凡湖东南岸，湖边一面岩壁上刻着一个骑马的人，刻痕已经很旧。'
         + '一匹马走近，低头碰了碰他的手——他忽然看见了马记得的东西：这片湖叫凡湖，城叫图什帕，王叫梅努阿。',
     when: (ctx) => ctx.year === -800
-        && ctx.season <= 1
         && ctx.nearCityId === URARTU_OPENING_CITY_ID,
     options: [
         {

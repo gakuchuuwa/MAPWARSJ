@@ -146,6 +146,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'dangzhou_qiangduan': 'BASHU',   // 氐族｜强端｜据点 阴平
     'danluo_jintongjing': 'KOREA',   // 耽罗｜金通精｜据点 星主厅
     'danmai_abusalong': 'DANES',   // 丹麦｜阿布萨隆｜据点 哥本哈根
+    'danmai_harald': 'DANES',   // 丹麦｜蓝牙哈拉尔｜据点 耶灵（[2026-10-22] 新增据点耶灵）
+    'danmai_godfred': 'DANES',   // 丹麦｜戈德弗雷德｜据点 海瑟比（[2026-10-22] 新增据点海瑟比）
     'danyang_huanwen': 'JIANGNAN',   // 当涂｜桓温｜据点 姑孰
     'daozhou_yangzaixing': 'JIANGNAN',   // 道州｜杨再兴｜据点 麦岭关
     'dasaleiti_kleitos': 'THRACIAN',   // 达萨雷提｜克莱图斯｜据点 佩利昂
@@ -248,6 +250,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_alexander_great': 'MACEDONIAN',   // 马其顿｜亚历山大｜据点 佩拉
     'gen_alexander_nef': 'SLAVIC',   // 留里克｜涅夫斯基｜据点 诺夫哥罗德（[2026-10-22] 诺夫哥罗德恢复 SLAVIC）
     'gen_rurik': 'VARANGIANS',   // 留里克｜留里克｜据点 拉多加（[2026-10-22] 新增据点拉多加）
+    'gen_sineus': 'VARANGIANS',   // 留里克｜西涅乌斯｜据点 白湖（[2026-10-22] 新增据点白湖）
     'gen_alfonso_ix': 'SPANISH',   // 莱昂｜阿方索九世｜据点 萨拉曼卡
     'gen_alfonso_vi': 'GOTHS',   // 西哥特｜阿方索六世｜据点 托莱多
     'gen_alfred_great': 'SAXONS',   // 盎格鲁｜阿尔弗雷德｜据点 伦敦
@@ -595,6 +598,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_james_i_aragon': 'SPANISH',   // 阿拉贡｜海梅｜据点 萨拉戈萨
     'gen_jan_zizka': 'BOHEMIANS',   // 波西米亚｜扬杰斯卡｜据点 布拉格
     'gen_jasawchan': 'MAYANS',   // 玛雅｜亚斯纳昌｜据点 蒂卡尔
+    'gen_pakal': 'MAYANS',   // 玛雅｜帕卡尔｜据点 帕伦克（[2026-10-22] 新增据点帕伦克）
     'gen_joanofarc': 'FRANKS',   // 奥尔良公国｜贞德｜据点 兰斯
     'gen_joao_i': 'PORTUGUESE',   // 布拉干萨家｜若昂一世｜据点 布拉干萨
     'gen_john_fearless': 'BURGUNDIANS',   // 勃艮第公国｜无畏的约翰｜据点 蒙特罗
@@ -1238,6 +1242,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'wukexiya_madates': 'PERSIAN',   // 乌克西亚｜马达泰斯｜乌克西亚人：扎格罗斯山地部落，向波斯王纳贡，按波斯文化
     'wula_buzhantai': 'NORTHEAST',   // 乌拉｜布占泰｜据点 乌舍寨
     'wulaertu_ajishenti': 'ARMENIANS',   // 亚美尼亚｜瓦尔丹｜据点 埃里温
+    'wulaertu_ashot3': 'ARMENIANS',   // 亚美尼亚｜阿硕特三世｜据点 阿尼（[2026-10-22] 新增据点阿尼）
     'wulaertu_guo_saerdu': 'ARMENIANS',   // 乌拉尔图｜萨尔杜里｜据点 图什帕
     'wuli_d_celeng': 'MONGOL',   // 乌里｜策楞｜据点 扎布汗
     'wuliangha_subutai': 'MONGOL',   // 兀良哈｜速不台｜据点 薛灵哥

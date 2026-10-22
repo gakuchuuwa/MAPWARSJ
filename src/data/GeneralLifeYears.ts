@@ -467,6 +467,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     asaibaijiang_xuliewu: { birth: 1218, death: 1265, kaoju: '异说' },    // 旭烈兀
     gen_alexander_nef: { birth: 1221, death: 1263 },       // 涅夫斯基
     gen_rurik: { birth: 830, death: 879, debut: 862, kaoju: '推定' },   // 留里克（生卒为传统推定；862 据拉多加/诺夫哥罗德）
+    gen_sineus: { birth: 840, death: 864, debut: 862, kaoju: '推定' },  // 西涅乌斯（留里克之弟，862 据白湖；卒年 864 见《往年纪事》，生年为推定）
     mamuluke_baibaisi: { birth: 1223, death: 1277, kaoju: '异说' },       // 拜巴尔斯
     khon_basiba: { birth: 1235, death: 1280 },             // 八思巴
     merkit_boyan: { birth: 1236, death: 1295, kaoju: '推定' },            // 伯颜
@@ -903,6 +904,8 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     jiazini_mahamaode: { birth: 971, death: 1030 },  // 马哈茂德
     jibin_jianisejia: { birth: 78, death: 144, kaoju: '推定' },  // 迦腻色迦
     danmai_abusalong: { birth: 1128, death: 1201 },  // 阿布萨隆
+    danmai_harald: { birth: 935, death: 986, debut: 958, kaoju: '推定' },  // 蓝牙哈拉尔（生年推定；958 继位，986 死于与子斯韦恩之战）
+    danmai_godfred: { birth: 760, death: 810, debut: 790, kaoju: '推定' },  // 戈德弗雷德（生年推定；804 见于法兰克史料，810 被杀）
     ruidian_si_biergeyaer: { birth: 1210, death: 1266 },  // 比尔格雅尔
     kasidiliya_afangsuoshiyi: { birth: 1311, death: 1350 },  // 阿方索十一
     duluo_sangqiao: { birth: 1154, death: 1211 },  // 桑乔一世
@@ -1286,6 +1289,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     yilihanguo_yisimeier: { birth: 1305, death: 1335, kaoju: '推定' },  // 伊斯梅尔
     yilihanguo_d_hezan: { birth: 1271, death: 1304 },  // 合赞
     wulaertu_ajishenti: { birth: 400, death: 451, kaoju: '异说' },  // 瓦尔丹
+    wulaertu_ashot3: { birth: 920, death: 977, debut: 953, kaoju: '推定' },  // 阿硕特三世（生年推定；953–977 在位，961 迁都阿尼）
     gelujiya_tamaer: { birth: 1160, death: 1213 },  // 塔玛尔
     bendou_alikesai: { birth: 1182, death: 1222 },  // 阿历克塞
     keerjisi_bagelate: { birth: 960, death: 1014, kaoju: '异说' },  // 巴格拉特
@@ -1342,6 +1346,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_cuauhtemoc: { birth: 1496, death: 1525, kaoju: '异说' },  // 库奥特莫克
     gen_topa_inca: { birth: 1440, death: 1493, kaoju: '推定' },  // 图帕克
     gen_jasawchan: { birth: 682, death: 734, kaoju: '推定' },  // 亚斯纳昌
+    gen_pakal: { birth: 603, death: 683, debut: 615 },  // 帕卡尔大帝（帕伦克，615–683 在位）
     gen_lautaro: { birth: 1534, death: 1557 },  // 劳塔罗
     gen_saguamanchica: { birth: 1450, death: 1490, kaoju: '推定' },  // 萨瓜曼奇卡
     gen_arariboia: { birth: 1520, death: 1589, kaoju: '推定' },  // 阿拉里博亚

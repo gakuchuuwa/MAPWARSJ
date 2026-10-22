@@ -401,6 +401,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_liaocheng: -600,     // 春秋时为齐国聊城邑，《左传》称聊、摄二城为齐之西鄙（英文维基 Liaocheng；建立年代无确载，按春秋中期取约数）
     city_zhongshan: -414,     // 公元前414年中山武公迁都于顾（今河北定州），视为中山建国之始（英文维基 Zhongshan (state)；中文维基 中山国）
     city_ailiwen: -782,       // 公元前782年乌拉尔图王阿尔吉什提一世筑埃勒布尼要塞，为埃里温建城之始（英文维基 Yerevan、Erebuni Fortress）
+    city_ani: 961,            // 阿尼，961 年巴格拉图尼王朝阿硕特三世迁都于此，城因之而兴（约；此前为要塞/聚落，英文维基 Ani）
     city_tushpa: -900,        // 前9世纪为乌拉尔图都城（今凡城），公元前331年为亚历山大所取（英文维基 Tushpa）
     city_telabuzong: -756,    // 公元前756年米利都希腊殖民者建特拉佩祖斯（英文维基 Trabzon）
     city_amaxiya: -2000,      // 考古表明前2千纪赫梯人已在此定居，历经弗里吉亚、波斯，前4世纪末为本都王国都城（英文维基 Amasya）
