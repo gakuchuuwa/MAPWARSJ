@@ -10,8 +10,8 @@
  * 记忆不占游戏时间：战术模式期间战略地图本来就不走。
  */
 import type { GameApp } from '../app/GameApp';
-import { GameConfig } from '../config/GameConfig';
 import type { Scene13SkirmishSpec } from '../ui/scene13/Scene13Types';
+import { startStorySkirmish } from './storySkirmish';
 
 export type MemoryResult = 'desync' | 'sync' | 'full';
 
@@ -83,38 +83,21 @@ export function memoryLabel(m: HorseMemory): string {
  * onResult 在分出胜负时回调（之后战术模式照常收场）。
  */
 export function startMemoryBattle(app: GameApp, mem: HorseMemory, onResult: (r: MemoryResult) => void): boolean {
-    if (app.scene13War?.isActive?.() || app.battleScene?.isActive?.()) return false;
     const hero = app.playerHero;
     const downsBefore = hero?.heroDowns ?? 0;
-    const count = (side: 'attacker' | 'defender') => mem.spec[side].reduce((n, g) => n + g.count, 0);
-
-    app.scene13War.onDecision = (winner) => {
-        const won = winner === 'attacker';
-        const fell = (hero?.heroDowns ?? 0) > downsBefore;
-        onResult(!won ? 'desync' : fell ? 'sync' : 'full');
-        app.scene13War.beginLinger();
-        app.battleScene.beginLingerAfterDefeat(GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS);
-    };
-
-    app.scene13War.start({
+    // 亚述从北边压过来，守军从城里（南边）出来（startStorySkirmish 默认来向）
+    return startStorySkirmish(app, {
+        title: `通灵·${mem.title}`,
+        lat: mem.lat,
+        lng: mem.lng,
         attackerRegion: mem.region,
         defenderRegion: mem.region,
         attackerFactionId: mem.attackerFactionId,
         defenderFactionId: mem.defenderFactionId,
-        attackerTroops: count('attacker'),
-        defenderTroops: count('defender'),
-        centerLat: mem.lat,
-        centerLng: mem.lng,
-        // 亚述从北边压过来，守军从城里（南边）出来
-        attackerFromLat: mem.lat + 0.05,
-        attackerFromLng: mem.lng,
-        defenderFromLat: mem.lat - 0.05,
-        defenderFromLng: mem.lng,
-        battleType: 'field',
-        title: `通灵·${mem.title}`,
-        getYear: () => mem.year,
-        skirmish: mem.spec,
+        year: mem.year,
+        spec: mem.spec,
+    }, (won) => {
+        const fell = (hero?.heroDowns ?? 0) > downsBefore;
+        onResult(!won ? 'desync' : fell ? 'sync' : 'full');
     });
-    app.battleScene.enter(null, { manualEnd: true });
-    return true;
 }
