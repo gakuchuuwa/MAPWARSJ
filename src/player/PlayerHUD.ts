@@ -12,6 +12,7 @@ import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
 import { resolvePortraitSourceFacing } from '../config/portrait_defaults';
 import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
 import { isScriptPeriod } from '../events/scriptPeriod';
+import { toggleHorseStablePanel, horseBrief, horseStatusColor } from './HorseStablePanel';
 
 const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
 
@@ -446,6 +447,24 @@ export class PlayerHUD {
         facSpan.style.cssText = `color:${hero.factionId ? '#7cd4a0' : '#ba9e7b'}; font-weight:700; white-space:nowrap;`;
         facSpan.textContent = factionName;
         secLeft.appendChild(facSpan);
+
+        // 🔴 [2026-10-22 马系统] 坐骑小牌子：马名、马龄、状态；点开马厩
+        if (!hero.horses.isEmpty()) {
+            const mount = hero.horses.getMount();
+            const sepHorse = document.createElement('span');
+            sepHorse.className = 'player-hud-divider';
+            sepHorse.textContent = '|';
+            secLeft.appendChild(sepHorse);
+            const horseBtn = document.createElement('button');
+            horseBtn.type = 'button';
+            horseBtn.className = 'player-hud-pill-btn';
+            const color = mount ? horseStatusColor(hero.horses.statusOf(mount)) : horseStatusColor('injured');
+            horseBtn.style.cssText = `cursor:pointer; background:none; border:none; padding:0; font-family:inherit; font-size:11px; white-space:nowrap; color:${color};`;
+            horseBtn.textContent = mount ? `🐎 ${horseBrief(hero.horses, mount)}` : '🐎 牵马步行';
+            horseBtn.title = `马厩：${hero.horses.list().length} 匹（点开查看、换坐骑）`;
+            horseBtn.addEventListener('click', () => toggleHorseStablePanel(hero));
+            secLeft.appendChild(horseBtn);
+        }
 
         singleRow.appendChild(secLeft);
 

@@ -13,6 +13,7 @@
  */
 import type { GameApp } from '../app/GameApp';
 import type { PlayerRankId } from '../player/PlayerConfig';
+import type { PlayerHero } from '../player/PlayerHero';
 
 /** 触发条件判断时能看到的游戏状态 */
 export interface StoryContext {
@@ -32,6 +33,8 @@ export interface StoryContext {
 /** 选项结算时能做的事 */
 export interface StoryApi {
     app: GameApp;
+    /** 玩家本人（马厩 hero.horses 等） */
+    hero: PlayerHero;
     playerName: string;
     addMerit(n: number): void;
     notify(msg: string): void;
@@ -168,10 +171,15 @@ export class StoryletEngine {
         const playerName = hero.name;
         const api: StoryApi = {
             app: this.app,
+            hero,
             playerName,
             addMerit: (n) => hero.addMerit(n),
             notify: (msg) => hero.notifyPlayer(msg),
-            setFlag: (f) => { if (!hero.storyFlags.includes(f)) hero.storyFlags.push(f); },
+            setFlag: (f) => {
+                if (!hero.storyFlags.includes(f)) hero.storyFlags.push(f);
+                // 结果标记可能在选项之后才到（例：一仗打完才记胜负），留人判定跟着重算
+                this.updateHold(this.buildContext(this.app.timeSystem.getYear(), this.app.timeSystem.getSeason() as number));
+            },
         };
         this.app.playerHUD?.showDialogue({
             speaker: s.speaker,

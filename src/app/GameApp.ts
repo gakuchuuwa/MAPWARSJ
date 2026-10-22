@@ -956,6 +956,8 @@ export class GameApp {
         year = Math.max(TIMELINE_START_YEAR, Math.min(TIMELINE_END_YEAR, year));
         if (year === 0) year = 1;   // 没有公元 0 年
         resetCentenarianGeneralOwnersForYearJump(this.cityManager);
+        // 🔴 [2026-10-22 马系统] 跳年不是时间流逝：马的年龄、疲劳受伤剩余季数不变
+        this.playerHero?.horses.shiftYears(this.timeSystem.getYear(), year);
         // setYear → onYearChange：地图道路/河流、时间 HUD、武将在场与据点归属、时代名旗号
         this.timeSystem.setYear(year);
         // 暂停时主循环不跑 updateYear → 这里直接推：大中城降级、特殊建筑建成年代
@@ -1038,6 +1040,8 @@ export class GameApp {
             notify: (msg) => this.playerHUD?.notify(msg),
             followCamera: () => this.cameraFollowUI.followPlayer(),
             releaseCamera: () => this.cameraFollowUI.cancelFollow(),
+            getYear: () => this.timeSystem.getYear(),
+            getSeason: () => this.timeSystem.getSeason() as number,
         }, spawnPos);
         this.playerHero = hero;
         // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）
