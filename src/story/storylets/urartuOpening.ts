@@ -38,12 +38,12 @@ function loseToThieves(api: StoryApi): string {
 export const URARTU_OPENING_CITY_ID = 'city_tushpa';
 
 /**
- * 百岁模式新开局在哪儿醒来：三处随机一处，都离岩壁 60–80 公里，不在城边。
- * 🔴 [2026-10-22 主人令「让玩家起始离任务点稍微远一点。有的时候我启动游戏还要干别的呢，你现在弄得上来就接任务」
- *     ＋「梦醒可以在山洞，农村，田野呀」「非得在城边吗」]
- *    原来出生在岩壁旁边，开局第一帧就弹梦醒对话、游戏暂停；现在醒来只飘一句提示（不弹框、不暂停），
- *    故事领着玩家走到凡湖东南岸的岩壁（urartuOpeningLead），走到了才弹梦醒，开局有一段空当。
- * 凡湖一带海拔一千五六百米，游戏的陆海判定（掩膜为水 且 海拔 < 0）不会把出生点当成海。
+ * 百岁模式新开局在哪儿醒来：固定一处——图什帕以东山里的一个山洞，离城约 60 公里，不在城边。
+ * 🔴 [2026-10-22 主人令「让玩家起始离任务点稍微远一点」「梦醒可以在山洞，农村，田野呀」「非得在城边吗」
+ *     → 再令「玩家起始位置最好固定，不要上来就穿湖而过」]
+ *    醒来只飘一句提示（不弹框、不暂停），自动模式由故事领着从东边山里走到凡湖东南岸的岩壁（urartuOpeningLead），
+ *    走到了才弹梦醒。原来三处随机里北岸山洞、西岸麦田两处去岩壁要横穿凡湖
+ *    （凡湖海拔一千五六百米，游戏的陆海判定不把它当水，直线就从湖面上走过去了），所以只留东边陆路这一处。
  */
 export interface OpeningWakeSpot {
     id: string;
@@ -53,9 +53,7 @@ export interface OpeningWakeSpot {
     notice: string;
 }
 export const URARTU_WAKE_SPOTS: readonly OpeningWakeSpot[] = [
-    { id: '山洞', lat: 38.9, lng: 42.83, notice: '{玩家}在凡湖北边山里的一个山洞里醒来，不记得自己是谁。洞外看得见湖，顺着山路往湖边走' },
-    { id: '农村', lat: 39.03, lng: 43.7, notice: '{玩家}在凡湖东北的一个村子里醒来，躺在别人家的草垛上，不记得自己是谁。村里人指了指南边的湖' },
-    { id: '田野', lat: 38.48, lng: 42.33, notice: '{玩家}在凡湖西岸的一片麦田里醒来，不记得自己是谁。顺着田埂往东，沿湖岸走' },
+    { id: '山洞', lat: 38.47, lng: 44.05, notice: '{玩家}在图什帕以东山里的一个山洞里醒来，不记得自己是谁。顺着山谷往西走，远远看得见一片湖' },
 ];
 /** 醒来的地方记成剧情标记「醒在-山洞」等（随存档走） */
 export const WAKE_FLAG_PREFIX = '醒在-';
@@ -571,8 +569,9 @@ const URT_04_HORSE_THIEF: Storylet = {
     text: '夜里马厩有动静，几十个山民摸进来牵马，正往东边山里跑。{玩家}，追不追？',
     // 开局段的秋天必来（开局那年赶马误到秋天，就顺延到下一年秋天）；开局段演完以后每年秋天 30%
     chance: (ctx) => (ctx.hasFlag('URT-03-done') ? 0.3 : 1),
+    // 开局段（走失的小马之前）不等秋天，赶马饮水一办完就来；开局段以后只在秋天来
     when: (ctx) => ctx.year >= -800 && ctx.year <= -795
-        && ctx.season === 2
+        && (ctx.season === 2 || (!ctx.hasFlag('URT-03-done') && ctx.isDone('URT-02')))
         && ctx.factionId === null
         && !ctx.attached
         && ctx.nearCityId === URARTU_OPENING_CITY_ID,

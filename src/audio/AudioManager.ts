@@ -41,6 +41,10 @@ export type SoundKey =
     | 'elephant_die'
     | 'flamethrower_fire'
     | 'battle_horn'
+    // 🔴 [2026-10-22] 小队战（故事块小仗）用的 DE 原声：刀剑命中、步兵阵亡、马匹倒毙
+    | 'melee_hit'
+    | 'death_infantry'
+    | 'death_horse'
     | 'bgm_main';
 
 interface SoundDefinition {
@@ -219,6 +223,15 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     flamethrower_fire: sounds('battle', ['flamethrower_fire_1', 'flamethrower_fire_2', 'flamethrower_fire_3', 'flamethrower_fire_4', 'flamethrower_fire_5'], 0.65, 500),
     // DE 战术开战冲锋号角 Charge Horn (wem 450474346，-26.8 LUFS)
     battle_horn: sound('battle', 'battle_horn', 0.60, 3000),
+    // 🔴 [2026-10-22 主人「小战役…套DE的音效」「用逆向看看…不可能没有对应的标号」] DE 原声，按 dat 里的 Wwise 事件对上：
+    //    刀剑命中＝长剑兵/骑士攻击动画的帧音事件 542552093（dat 声音 619 mhit_longsword1）→ 12 个源 wem；
+    //    步兵阵亡＝死亡动画事件 2793609136（dat 声音 294 death1~6）→ 取前 6 个源；
+    //    马匹倒毙＝骑士死亡动画事件 190614743（dat 声音 410 hdeath）→ 比步兵多出的 5 个马声源。
+    //    对应关系与转换脚本：scratch/de_sfx_named/resolve_events.py。实测响度：刀剑 -26~-31 LUFS、阵亡 -28~-35、马 -25~-33。
+    //    音量按「单发比放箭略低」压：几十人对砍，冷却 150ms 防糊成一片。
+    melee_hit: sounds('battle', ['melee_hit_1', 'melee_hit_2', 'melee_hit_3', 'melee_hit_4', 'melee_hit_5', 'melee_hit_6', 'melee_hit_7', 'melee_hit_8', 'melee_hit_9', 'melee_hit_10', 'melee_hit_11', 'melee_hit_12'], 0.35, 150),
+    death_infantry: sounds('battle', ['death_infantry_1', 'death_infantry_2', 'death_infantry_3', 'death_infantry_4', 'death_infantry_5', 'death_infantry_6'], 0.4, 300),
+    death_horse: sounds('battle', ['death_horse_1', 'death_horse_2', 'death_horse_3', 'death_horse_4', 'death_horse_5'], 0.35, 400),
     bgm_main: { category: 'bgm', sources: ['/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 

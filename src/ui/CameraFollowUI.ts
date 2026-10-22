@@ -1000,7 +1000,7 @@ export class CameraFollowUI {
         if (this.isFollowingPlayer()) {
             const player = (window as any).game?.playerHero ?? this.playerHero;
             if (player) {
-                newHtml = this.formatFollowBannerText(player, player.name || '乱入者');
+                newHtml = this.formatFollowBannerText(player, player.name || '探马者');
             }
         } else if (this.getArmiesFn) {
             const army = this.getArmiesFn().find((a) => a.id === this.followedArmyId);

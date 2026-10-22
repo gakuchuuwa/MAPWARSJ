@@ -2454,7 +2454,7 @@ export class GlobalUnitRenderer {
                     const off = HeroSpriteDrawer.forwardOffset(dir, inColumn ? 0 : 96 * scale);
                     hx += off.x; hy += off.y;
                     HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? PLAYER_FALLBACK_HERO_KEY, { x: hx, y: hy }, heroState, dir, scale,
-                        hero?.factionId ?? null, hero?.name ?? '乱入者', Date.now());
+                        hero?.factionId ?? null, hero?.name ?? '探马者', Date.now());
                     unit.lastPosition = { lat: unitPos.lat, lng: unitPos.lng };
                     return;
                 }
@@ -2474,7 +2474,7 @@ export class GlobalUnitRenderer {
                     // 独行陆地形态：画单骑小人
                     const heroState: 'IDLE' | 'MOVE' | 'ATTACK' = unit.isMoving ? 'MOVE' : 'IDLE';
                     HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? PLAYER_FALLBACK_HERO_KEY, { x: centerPoint.x, y: centerPoint.y }, heroState, directionIndex, scale,
-                        hero?.factionId ?? null, hero?.name ?? '乱入者', Date.now());
+                        hero?.factionId ?? null, hero?.name ?? '探马者', Date.now());
                     unit.lastPosition = { lat: unitPos.lat, lng: unitPos.lng };
                     return;
                 }

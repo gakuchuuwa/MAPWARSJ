@@ -2501,9 +2501,6 @@ export class CombatUI {
                 } else if (s.panicSec > 0) {
                     pctEl.textContent = `🌀乱阵 ${Math.ceil(s.panicSec)}s`;
                     pctEl.style.color = '#c084fc';
-                } else if (s.vulnSec > 0) {
-                    pctEl.textContent = `⚡破防 ${Math.ceil(s.vulnSec)}s`;
-                    pctEl.style.color = '#f87171';
                 } else {
                     pctEl.textContent = `${Math.floor(s.gauge)}%`;
                     pctEl.style.color = isAtt ? '#ffd97d' : '#93e2ff';

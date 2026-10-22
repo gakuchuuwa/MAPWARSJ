@@ -996,7 +996,7 @@ export class GameApp {
             : undefined;
         const startCity = openingCity ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
-        // 🔴 [2026-10-22 主人令「梦醒可以在山洞，农村，田野呀」「非得在城边吗」] 醒来处三选一，离城六七十公里
+        // 🔴 [2026-10-22 主人令「梦醒可以在山洞，农村，田野呀」「非得在城边吗」] 醒来处固定在图什帕以东山洞（主人再令「起始位置最好固定，不要上来就穿湖而过」）
         const wakeSpot = openingCity ? pickUrartuWakeSpot() : null;
         let spawnPos = wakeSpot ? { lat: wakeSpot.lat, lng: wakeSpot.lng } : { lat: startCity.latitude, lng: startCity.longitude };
         const edges = !openingCity && roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
