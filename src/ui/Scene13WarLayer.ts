@@ -115,7 +115,7 @@ import { render } from './scene13/Scene13Render';
 /**
  * 🔴 [2026-10-20 主人令「对方刚放的计优先用克它的计回应」] 六计相克表（对方刚放的计 → 我方回应：首选、备选），
  * 🔴 [2026-10-21 主人令「相克改为与界面提示一致」] 并换成「夺敌兵」后重定，与 CombatUI 每计提示里的「破某计」对齐：
- *   攻（猛攻增伤）→ 敌（回血两成＋减伤四成）｜混（驱散增益）
+ *   攻（猛攻增伤）→ 敌（满血＋减伤六成）｜混（驱散增益）
  *   敌（固守减伤）→ 败（折损前线，绕开护盾）｜混（驱散护盾）
  *   混（乱阵＋驱散）→ 胜（补生力军，不受乱阵影响）｜敌（回血固守撑过混乱）
  *   并（夺敌兵倒戈）→ 攻（猛攻压住摇摆的兵）｜混（扰乱）
@@ -123,6 +123,21 @@ import { render } from './scene13/Scene13Render';
  *   败（我方折损 8%）→ 并（夺回兵力）｜胜（补回生力军）
  * 武将放计的逻辑不变：看对方上一次放的是什么，优先用克它的计（须在本方当前形势的计池里、且不是我上一计）。
  */
+/**
+ * 🔴 [2026-10-22 主人令「武将技能要有明显效果；减兵 8% 非常有效，其他的不是很平衡」] 六计持续类数值。
+ *   实测（真机三场）：正常交战每秒只折损对方总兵力约 0.16%~0.36%，【败】一下 8% ≈ 正常打 20~50 秒；
+ *   旧【攻/敌/混】只有 8 秒、加成三到七成，折算仅 3~6 秒交战，差一个数量级。
+ *   以【败】为尺把三计拉到同一量级：攻 输出 ×2.25 持续 20 秒（≈25 秒交战）、敌 满血＋减伤六成 20 秒、混 乱阵 15 秒且受伤翻倍。
+ */
+const SKILL_FRENZY_SEC = 20;        // 【攻】振己威持续
+const SKILL_FRENZY_DMG = 1.5;       // 【攻】伤害倍率
+const SKILL_FRENZY_ATKSPD = 1.5;    // 【攻】攻速倍率
+const SKILL_FRENZY_MOVE = 1.3;      // 【攻】移速倍率
+const SKILL_SHIELD_SEC = 20;        // 【敌】固己防持续（释放瞬间全军满血）
+const SKILL_SHIELD_TAKEN = 0.4;     // 【敌】受伤倍率（减伤六成）
+const SKILL_PANIC_SEC = 15;         // 【混】乱敌阵持续
+const SKILL_PANIC_TAKEN = 2;        // 【混】混乱中受伤倍率
+
 const SIX_COUNTER: Readonly<Record<TacticalSixSet, readonly TacticalSixSet[]>> = {
     gongzhan: ['dizhan', 'hunzhan'],
     dizhan: ['baizhan', 'hunzhan'],
@@ -463,9 +478,9 @@ export class Scene13WarLayer {
     private plannedSkill: [{ key: string; six: TacticalSixSet } | null, { key: string; six: TacticalSixSet } | null] = [null, null];
     /** 玩家手动预点亮（钦定）的下一计；null 表示自动见招拆招 */
     private queuedSkill: [TacticalSixSet | null, TacticalSixSet | null] = [null, null];
-    /** 【攻】振己威持续倒计时（秒）：己方全场士兵攻速 ×1.30、移速 ×1.20、伤害 ×1.30 */
+    /** 【攻】振己威持续倒计时（秒）：己方全场士兵伤害、攻速、移速加成（数值见 SKILL_FRENZY_*） */
     private skillFrenzyTimer: [number, number] = [0, 0];
-    /** 【敌】固己防持续倒计时（秒）：释放瞬间回复 20% 最大生命 + 持续期间己方士兵受伤害 ×0.60 */
+    /** 【敌】固己防持续倒计时（秒）：释放瞬间全军满血 + 持续期间己方士兵受伤减免（数值见 SKILL_SHIELD_*） */
     private skillShieldTimer: [number, number] = [0, 0];
     /** 【混】乱敌阵持续倒计时（秒）：该侧（受害方）士兵陷入混乱——胡乱走动（守城站岗的原地发愣）、不攻击、受一切伤害 ×2 */
     private skillPanicTimer: [number, number] = [0, 0];
@@ -841,26 +856,26 @@ export class Scene13WarLayer {
             }
             if (quotaPop > 0) this.drainSidePool(ef, quotaPop);
         } else if (six === 'gongzhan') {
-            // 3. 【攻】猛攻：8 秒内己方全军攻速 ×1.30、移速 ×1.20、伤害 ×1.30
-            this.skillFrenzyTimer[f] = 8.0;
+            // 3. 【攻】猛攻：20 秒内己方全军伤害 ×1.5、攻速 ×1.5、移速 ×1.3
+            this.skillFrenzyTimer[f] = SKILL_FRENZY_SEC;
         } else if (six === 'dizhan') {
-            // 4. 【敌】固己防：己方场上存活士兵立即回复 20% 最大生命，且 8 秒内受到伤害降低 40%（×0.60）
+            // 4. 【敌】固己防：己方场上存活士兵立即满血，且 20 秒内受到伤害降低六成（×0.4）
             //    🔴 [2026-10-22 查六计] 界面提示原先写「满血恢复」，但代码自 2026-10-18 17:08 起就是 +20% 且后续未再改；
             //       已把界面/旧注释同步成 20%（见 CombatUI SIX_LIST）。若主人要的是满血，改这一行即可。
             for (const m of this.men) {
                 if (m.f === f && m.hp > 0) {
                     const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
-                    if (m.hp < maxHp) m.hp = Math.min(maxHp, m.hp + maxHp * 0.20);
+                    if (m.hp < maxHp) m.hp = maxHp;
                 }
             }
-            this.skillShieldTimer[f] = 8.0;
+            this.skillShieldTimer[f] = SKILL_SHIELD_SEC;
         } else if (six === 'hunzhan') {
-            // 5. 【混】乱阵：当场驱散敌方正在生效的所有技能 Buff，并令敌军陷入混乱 8 秒（胡乱走动、期间不攻击，受一切伤害 ×2）
+            // 5. 【混】乱阵：当场驱散敌方正在生效的所有技能 Buff，并令敌军陷入混乱 15 秒（胡乱走动、期间不攻击，受一切伤害 ×2）
             // 🔴 [2026-10-22 主人令「混乱中的兵吃伤害双倍」「技能应该体现出明显的效果」] 守城站岗的兵同样混乱：原地发愣不还手、受伤翻倍
             //    （不离岗，免得城门没破就把守军乱出城外）。受伤倍率见 panicTakenMul。
             this.skillFrenzyTimer[ef] = 0;
             this.skillShieldTimer[ef] = 0;
-            this.skillPanicTimer[ef] = 8.0;
+            this.skillPanicTimer[ef] = SKILL_PANIC_SEC;
         } else if (six === 'bingzhan') {
             // 6. 【并】夺敌兵（倒戈）：策反敌方总兵力 5%，体现在在场兵力上
             // 🔴 [2026-10-21 主人令「让敌方5%的在场兵力变为己方」替换原「挫敌锐」；额度按总兵力，在场不够就从下一波继续]
@@ -1154,7 +1169,7 @@ export class Scene13WarLayer {
     private stepHeroInput(m: WarMan, dt: number): boolean {
         const inp = this.heroInput;
         if (!inp) return false;
-        const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
+        const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
         const spd = this.statsFor(m.key, m.f).spd * spdK;
         const dx = inp.dx;
         const dy = inp.dy;
@@ -5137,8 +5152,8 @@ export class Scene13WarLayer {
         const foeElev = this.elevationLevelAt(foe.x, foe.y);
         const dElev = towerElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
-        const towerSkillMul = (this.skillFrenzyTimer[1] > 0 ? 1.30 : 1.0) * this.panicTakenMul(foe)
-            * (this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0);
+        const towerSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
+            * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0);
         foe.atkNext++;
         foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul() * towerSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
@@ -5164,8 +5179,8 @@ export class Scene13WarLayer {
                 },
             });
         }
-        // 【攻】振己威：攻速 ×1.30（装填缩短），与士兵同口径
-        t.cd = t.reload / (this.skillFrenzyTimer[1] > 0 ? 1.30 : 1.0);
+        // 【攻】振己威：攻速加成（装填缩短），与士兵同口径
+        t.cd = t.reload / (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_ATKSPD : 1.0);
     }
 
     /**
@@ -5216,8 +5231,8 @@ export class Scene13WarLayer {
         const foeElev = this.elevationLevelAt(foe.x, foe.y);
         const dElev = bldElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
-        const bldSkillMul = (this.skillFrenzyTimer[1] > 0 ? 1.30 : 1.0) * this.panicTakenMul(foe)
-            * (this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0);
+        const bldSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
+            * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0);
         foe.atkNext++;
         foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul() * bldSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);
@@ -5242,8 +5257,8 @@ export class Scene13WarLayer {
                 },
             });
         }
-        // 【攻】振己威：攻速 ×1.30（装填缩短），与士兵同口径
-        b.cd = (b.reload ?? 2.2) / (this.skillFrenzyTimer[1] > 0 ? 1.30 : 1.0);
+        // 【攻】振己威：攻速加成（装填缩短），与士兵同口径
+        b.cd = (b.reload ?? 2.2) / (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_ATKSPD : 1.0);
     }
 
     /**
@@ -5256,7 +5271,7 @@ export class Scene13WarLayer {
      */
     /** 【混】乱阵受伤倍率：混乱中的兵（不含行军入场中、玩家本人、攻城器械）受一切伤害 ×2，其余 ×1 */
     private panicTakenMul(m: WarMan): number {
-        return (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW) ? 2 : 1;
+        return (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW) ? SKILL_PANIC_TAKEN : 1;
     }
 
     private attritionMul(): number {
@@ -5268,7 +5283,7 @@ export class Scene13WarLayer {
     private splash(m: WarMan, radius: number, shooter: WarType, dt: number, mult = 1): void {
         const span = Math.max(1, Math.ceil(radius / CELL_M));
         const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
-        const frenzyMul = this.skillFrenzyTimer[m.f] > 0 ? 1.30 * 1.30 : 1.0;   // 与主伤害同口径：伤害×1.30 × 攻速×1.30（连续伤害模型里攻速也折进 DPS）
+        const frenzyMul = this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_DMG * SKILL_FRENZY_ATKSPD : 1.0;   // 与主伤害同口径：伤害 × 攻速（连续伤害模型里攻速也折进 DPS）
         for (let gx = cx - span; gx <= cx + span; gx++) {
             for (let gy = cy - span; gy <= cy + span; gy++) {
                 const a = this.gm.get(HKEY(gx, gy));
@@ -5279,7 +5294,7 @@ export class Scene13WarLayer {
                     // 范围伤不挖「盲区空洞」：贴脸的敌人照样吃溅射（最小射程只管分配新目标，见 canKeepTarget 头注）。
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
                     const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) * mult * frenzyMul / shooter.reload;
-                    const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? 0.60 : 1.0) * this.panicTakenMul(o);
+                    const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.panicTakenMul(o);
                     o.atkNext++;
                     if (dps > 0) {
                         o.hurtBy = m;
@@ -6511,8 +6526,8 @@ export class Scene13WarLayer {
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
             // 地形细分减速（森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
-            const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
-            // 【混】乱阵：处于混乱期的敌军胡乱走动 8 秒（每隔 0.85~1.6 秒或受阻时随机换向，期间停止攻击，受一切伤害 ×2）；
+            const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
+            // 【混】乱阵：处于混乱期的敌军胡乱走动 15 秒（每隔 0.85~1.6 秒或受阻时随机换向，期间停止攻击，受一切伤害 ×2）；
             //    守城站岗的兵原地发愣、不还手、不离岗
             if (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW) {
                 m.st = 0;
@@ -7018,9 +7033,9 @@ export class Scene13WarLayer {
                 // 交战中同样走带确认与冷却锁的 steerManDir：贴身互推时目标方位每帧摆动，禁止贴图在两个朝向间高频跳变
                 this.steerManDir(m, foe.x - m.x, foe.y - m.y, dt);
                 m.lock = (m.lock ?? 0) - dt;
-                // 玩家本人出手更快（见 HERO_ATTACK_RATE）：装填缩短，攻击动画随之加快；【攻】振己威攻速 ×1.30
+                // 玩家本人出手更快（见 HERO_ATTACK_RATE）：装填缩短，攻击动画随之加快；【攻】振己威攻速加成
                 const heroRate = m.hero ? HERO_ATTACK_RATE : 1;
-                const frenzyAtkSpd = this.skillFrenzyTimer[m.f] > 0 ? 1.30 : 1.0;
+                const frenzyAtkSpd = this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_ATKSPD : 1.0;
                 const reloadTime = (stats.reload || 2.0) / (heroRate * frenzyAtkSpd);
                 if (m.lock <= 0) {
                     m.lock = reloadTime; m.ph = 0;
@@ -7178,8 +7193,8 @@ export class Scene13WarLayer {
                 const secondaryDamage = secondaryHitCount * dmgVs(HUSSITE_SECONDARY_SHOT, target);
                 // 🔴 [2026-10-15 DE 高地机制] 高打低 +25%（×1.25），低打高 -25%（×0.75）
                 const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
-                // 【攻】振己威：伤害 ×1.30 × 攻速 ×1.30
-                const frenzyDmgMul = this.skillFrenzyTimer[m.f] > 0 ? 1.30 * 1.30 : 1.0;
+                // 【攻】振己威：伤害 × 攻速（连续伤害模型里攻速也折进 DPS）
+                const frenzyDmgMul = this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_DMG * SKILL_FRENZY_ATKSPD : 1.0;
                 const dps = (primaryDamage + secondaryDamage) * heroRate * elevDmgMul * frenzyDmgMul / shooter.reload;
                 if ('sprite' in foe) {
                     // 🔴 [2026-09-18 主人定·增加所有攻城武器只对建筑破坏力]
@@ -7226,7 +7241,7 @@ export class Scene13WarLayer {
                             foe.hurtBy = m;
                             foe.hurtAt = this.battleSec;
                         }
-                        const shieldMul = this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0;
+                        const shieldMul = this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0;
                         const panicMul = 'sprite' in foe ? 1 : this.panicTakenMul(foe);
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * shieldMul * panicMul * dt
                             * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1)   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
