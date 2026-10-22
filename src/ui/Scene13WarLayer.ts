@@ -58,7 +58,7 @@ import type {
     WarBuilding, ArrowTower, CityBuildingEntry, WarSpawn, WarMan, WarArrow,
     ProjAsset, WarFallenFlag, SceneCloud, NatureMeta, NatureAsset, DecorSprite,
     AnimalAction, TacticalAnimal, WarSlash, WarSpark, WarFx, FxDir, FxAsset,
-    WarCorpse, WarFleer, WarBank, Scene13WarInit, PassMountainConfig,
+    WarCorpse, WarFleer, WarBank, Scene13WarInit, PassMountainConfig, Scene13SkirmishSpec,
 } from './scene13/Scene13Types';
 export type { TechBrief, Scene13WarInit, PassMountainConfig } from './scene13/Scene13Types';
 
@@ -396,6 +396,10 @@ export class Scene13WarLayer {
     private adv: [number, number] = [0, 0];
     /** 开局总兵力（精灵），攻/守各一 —— 补兵触发线按「剩余占比」缩放时当分母 */
     private initPool: [number, number] = [1, 1];
+    /** 🔴 [2026-10-22] 小队模式（故事块小仗）；null＝军团战 */
+    private skirmish: Scene13SkirmishSpec | null = null;
+    /** 1 个精灵代表几个兵：军团战＝SPRITE_TROOPS，小队模式＝1 */
+    private troopsPerSprite = SPRITE_TROOPS;
     /** 尸体保留累加器（攒够 1 留一具）：确定性均匀，不随机斑驳。见 CORPSE_KEEP */
     private corpseAcc = 0;
     /** 本场已打了多少秒（真实秒，开场列阵也算）。见 HARD_STOP_SEC / NO_KILL_SEC */
@@ -992,8 +996,11 @@ export class Scene13WarLayer {
         this.heroRespawnTimer = 0;
         this.playerKills = 0;
         const game = (window as any).game;
-        const setup: Scene13PlayerSetup | null =
-            game?.playerHero?.buildScene13Setup?.(init.followedOnDefenderSide === true) ?? null;
+        // 小队模式：玩家不在军中也能上场（故事块小仗多半发生在平民阶段）
+        const skirmishSide = this.skirmish?.playerSide;
+        const setup: Scene13PlayerSetup | null = skirmishSide !== undefined
+            ? game?.playerHero?.buildScene13SkirmishSetup?.(skirmishSide) ?? null
+            : game?.playerHero?.buildScene13Setup?.(init.followedOnDefenderSide === true) ?? null;
         if (!setup) return;
         const f = setup.side;
         const row0 = this.spawns.filter((s) => s.f === f && s.row === 0);
@@ -1327,7 +1334,7 @@ export class Scene13WarLayer {
         const n = [0, 0];
         for (const sp of this.spawns) n[sp.f] += Math.max(0, sp.pool) * sp.pop;
         for (const m of this.men) if (m.hp > 0) n[m.f] += m.pop;
-        return { attacker: Math.round(n[0] * SPRITE_TROOPS), defender: Math.round(n[1] * SPRITE_TROOPS) };
+        return { attacker: Math.round(n[0] * this.troopsPerSprite), defender: Math.round(n[1] * this.troopsPerSprite) };
     }
 
     /**
@@ -1336,8 +1343,8 @@ export class Scene13WarLayer {
      */
     public getInitialTroops(): { attacker: number; defender: number; total: number } | null {
         if (!this.active && !this.lingering) return null;
-        const a = Math.round(this.initPool[0] * SPRITE_TROOPS);
-        const d = Math.round(this.initPool[1] * SPRITE_TROOPS);
+        const a = Math.round(this.initPool[0] * this.troopsPerSprite);
+        const d = Math.round(this.initPool[1] * this.troopsPerSprite);
         return { attacker: a, defender: d, total: a + d };
     }
 
@@ -1586,6 +1593,8 @@ export class Scene13WarLayer {
         this.centerLat = init.centerLat;
         this.centerLng = init.centerLng;
         this.attackerGeneralId = init.attackerGeneralId ?? null;
+        this.skirmish = init.skirmish ?? null;
+        this.troopsPerSprite = this.skirmish ? 1 : SPRITE_TROOPS;
 
         try {
             // 攻守各一侧：row 0 最靠中线（攻方在左、守方在右）
@@ -1736,6 +1745,10 @@ export class Scene13WarLayer {
             }
 
             for (const side of sides) {
+                if (this.skirmish) {
+                    this.spawnSkirmishSide(side.f);
+                    continue;
+                }
                 const lanes = this.slotsOf(side.region, side.factionId, side.generalId, side.hasElite, side.f);
                 const n = lanes.length;
                 const mode = this.formationModeOf(side.region, side.factionId, side.generalId, side.f);
@@ -1823,7 +1836,8 @@ export class Scene13WarLayer {
             this.diagPush('laneCount', { attacker: laneCount[0], defender: laneCount[1] });
             // 🔴 [2026-10-20 主人令「没有武将的战术模式中，没有主将队，只保留9对编制」] 无将的一方 9 口也合法
             const laneOk = (n: number) => n === SIDE_LANES || n === SIDE_LANES - 1;
-            if (!laneOk(laneCount[0]) || !laneOk(laneCount[1])) {
+            // 小队模式不排军团编制，10 队铁律不适用
+            if (!this.skirmish && (!laneOk(laneCount[0]) || !laneOk(laneCount[1]))) {
                 console.warn(
                     `⚠️ [Scene13War] 编队数铁律被破坏：攻方 ${laneCount[0]} 口 / 守方 ${laneCount[1]} 口，`
                     + `应为 ${SIDE_LANES} 口（编制 9 + 主将队 1），无将的一方 ${SIDE_LANES - 1} 口。`,
@@ -2046,6 +2060,36 @@ export class Scene13WarLayer {
      * 🔴 [2026-09-09 主人定] 时代闸：古典军团只用古典器械，封建可用古典+封建，
      *    城堡再加城堡冷兵器与城堡时代热兵器，帝国全部冷热皆可。
      */
+    /**
+     * 🔴 [2026-10-22 主人令] 小队模式布阵：每支小队一个出兵口，沿本方横向一字排开、彼此拉开，
+     * 都在第一排（row 0），没有主将队；1 个精灵＝1 个人，人数就是 pool。
+     */
+    private spawnSkirmishSide(f: 0 | 1): void {
+        const groups = (f === 0 ? this.skirmish?.attacker : this.skirmish?.defender) ?? [];
+        const base = this.spawnBases[f];
+        const uSide = this.sideVec[f];
+        const SQUAD_GAP = 220;
+        groups.forEach((g, idx) => {
+            const key = g.key;
+            this.ensureType(key, f);
+            if (this.statsFor(key, f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
+            if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');
+            const sideOffset = (idx - (groups.length - 1) / 2) * SQUAD_GAP;
+            this.spawns.push({
+                f, key,
+                x: base.x + uSide.x * sideOffset,
+                y: base.y + uSide.y * sideOffset,
+                pool: Math.max(1, Math.round(g.count)),
+                pop: 1,
+                spawned: 0,
+                slotN: 0,
+                lane: this.spawns.length,
+                row: 0,
+                commander: false,
+            });
+        });
+    }
+
     private spawnSiegeWeapons(depth: number): void {
         const culture = this.sideCulture[0] as RegionType;
         // 🔴 [2026-10-13 主人令「请按符合历史修复」] 原注释写「美洲原住民不发攻城器械」——
@@ -2132,7 +2176,7 @@ export class Scene13WarLayer {
         this.diagFlush('forceByRatio');
         this.onDecision(
             attackerWins ? 'attacker' : 'defender',
-            { attacker: Math.round(alive[0] * SPRITE_TROOPS), defender: Math.round(alive[1] * SPRITE_TROOPS) },
+            { attacker: Math.round(alive[0] * this.troopsPerSprite), defender: Math.round(alive[1] * this.troopsPerSprite) },
         );
     }
 
@@ -7498,12 +7542,12 @@ export class Scene13WarLayer {
             // [2026-08-11 诊断] 主人报「兵没死光就结束」。这条日志证明是不是演出自己判的：
             // 若这条没打、场景却退了，说明是外部路径（自愈 exit / 引擎结算）提前收的场。
             // 🔴 用 console.warn 不用 gameLog：gameLog 要频道开启才打印，上一版诊断因此一条没出来
-            console.warn(`🏁 [Scene13War] 演出判负(${resultWinner})：攻方余 ${alive[0]} 守方余 ${alive[1]} 精灵（1精灵=${SPRITE_TROOPS}兵）`);
+            console.warn(`🏁 [Scene13War] 演出判负(${resultWinner})：攻方余 ${alive[0]} 守方余 ${alive[1]} 精灵（1精灵=${this.troopsPerSprite}兵）`);
             this.diagPush('decision', { winner: resultWinner, alive });
             this.diagFlush('decision');
             this.onDecision?.(
                 resultWinner,
-                { attacker: Math.round(alive[0] * SPRITE_TROOPS), defender: Math.round(alive[1] * SPRITE_TROOPS) },
+                { attacker: Math.round(alive[0] * this.troopsPerSprite), defender: Math.round(alive[1] * this.troopsPerSprite) },
             );
         }
         // 🔴 [2026-10-11 主人报「有的地图中，士兵不出现在出兵口，出兵口应该是营地的建筑」]
