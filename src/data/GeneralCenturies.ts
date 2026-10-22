@@ -675,6 +675,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     // ══════ SLAVIC（43 人，已标 0）══════
     'gen_albert_riga': 13,                               // 阿尔伯特 · baojian_qishi · 里加
     'gen_alexander_nef': 13,                             // 涅夫斯基 · liulike · 诺夫哥罗德
+    'gen_rurik': 9,                                      // 留里克 · liulike · 拉多加（862 据拉多加/诺夫哥罗德）
     'gen_algirdas': 14,                                  // 奥尔格尔德 · weijiebusike_gongguo · 维捷布斯克
     'gen_andrey_bogolyub': 12,                           // 安德烈 · fulajimier_gongguo · 弗拉基米尔
     'gen_aspurgus': 1,                                  // 阿斯普尔 · taolika · 赫尔松涅斯

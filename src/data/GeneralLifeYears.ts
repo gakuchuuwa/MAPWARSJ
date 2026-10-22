@@ -466,6 +466,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     yuan_d_hubilie: { birth: 1215, death: 1294 },          // 忽必烈
     asaibaijiang_xuliewu: { birth: 1218, death: 1265, kaoju: '异说' },    // 旭烈兀
     gen_alexander_nef: { birth: 1221, death: 1263 },       // 涅夫斯基
+    gen_rurik: { birth: 830, death: 879, debut: 862, kaoju: '推定' },   // 留里克（生卒为传统推定；862 据拉多加/诺夫哥罗德）
     mamuluke_baibaisi: { birth: 1223, death: 1277, kaoju: '异说' },       // 拜巴尔斯
     khon_basiba: { birth: 1235, death: 1280 },             // 八思巴
     merkit_boyan: { birth: 1236, death: 1295, kaoju: '推定' },            // 伯颜

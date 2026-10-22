@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-20T07:45:40.584Z",
+ "generatedAt": "2026-10-22T10:15:24.525Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -15614,6 +15614,20 @@
    "reliefM": 19,
    "cliffs": 0,
    "top": "Jungle Grass 89.6% · Jungle 8% · Rainforest 2.4%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_ladoga",
+   "file": "site_city_ladoga.json",
+   "bytes": 301777,
+   "koppen": "Dfc",
+   "theme": "PALAEARCTIC_EUROPE_TAIGA",
+   "water": "WorldCover",
+   "waterCells": 1155,
+   "waterPct": 8,
+   "reliefM": 35,
+   "cliffs": 0,
+   "top": "Dry Grass 81% · Water, Shallow 8% · Dead Forest 5% · Beach 2.9%",
    "verify": "ok"
   }
  ],

@@ -19,6 +19,7 @@ import type { PlayerRankId } from '../player/PlayerConfig';
 import type { PlayerHero } from '../player/PlayerHero';
 import { seasonIndex } from '../player/HorseStable';
 import { HORSE_MEMORIES, memoryLabel, startMemoryBattle } from './horseMemories';
+import { getHorseLore } from './horseLore';
 
 /** 通灵失步后，等战术模式收场再弹「再进去一次」（毫秒） */
 const MEMORY_ASK_DELAY_MS = 2500;
@@ -34,6 +35,8 @@ export interface StoryContext {
     attached: boolean;
     /** 投效的势力（没投效为 null） */
     factionId: string | null;
+    /** 马厩里有几匹马 */
+    horseCount: number;
     /** 玩家所在的据点（40 公里内最近的一座）；不在任何据点附近为 null */
     nearCityId: string | null;
     /** 那座据点的名字（不在据点附近为 null） */
@@ -215,6 +218,7 @@ export class StoryletEngine {
             merit: hero.merit,
             attached: hero.isAttached(),
             factionId: hero.factionId,
+            horseCount: hero.horses.list().length,
             nearCityId,
             nearCityName: nearCityId ? (this.app.cityManager?.getCity(nearCityId)?.name ?? null) : null,
             lat: pos.lat,
@@ -274,9 +278,10 @@ export class StoryletEngine {
                 }
                 const first = !horse.memoryBest;
                 hero.horses.recordMemory(horse, r);
-                api.setFlag(mem.lore.flag);
+                api.setFlag(mem.loreFlag);
                 const parts = [`👁 通灵·${memoryLabel(mem)}：${r === 'full' ? '完全同步' : '同步'}。`];
-                if (first) parts.push(`📖 马经：${mem.lore.text}。`);
+                const lore = getHorseLore(mem.loreFlag);
+                if (first && lore) parts.push(`📖 马经：${lore.text}。`);
                 if (r === 'full') {
                     const learned = hero.learnUnitFromMemory(mem.unit.key, mem.unit.factionId);
                     if (learned) parts.push(`🛡️ 兵模收藏多了一种：${learned}。`);

@@ -178,7 +178,7 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     ARAGON: 'MEDI',
     // ── [2026-09-16 主人定] 62 二级文明值（buildingStyle）→ 母体风格集前缀。
     //   62 文明值本身不是 DE 素材前缀（DE 只有 16 套母体素材），城墙/城镇必须回落到母体，
-    //   城堡则走 resolveCastleAsset 的「代表据点→势力→文化区→分支」四层。此处补 8 个
+    //   城堡则走 resolveCastleAsset 的「势力→文化区→分支」三层。此处补 8 个
     //   REGION_TO_DE_STYLE 里原本缺失的 62/62 文明 key（其余已在上方覆盖）。
     WEI: 'ASIA',        // 河朔（华夏）
     ROMA: 'MEDI',       // 罗马（地中海）

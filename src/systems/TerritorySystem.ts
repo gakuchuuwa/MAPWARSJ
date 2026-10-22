@@ -26,7 +26,7 @@ import { GridSystem } from '../systems/GridSystem';
 import { OrientationSystem } from '../core/OrientationSystem';
 // import { GameConfig } from '../config/GameConfig';
 import { getCityRegion, type RegionType } from './RegionSystem';
-import { resolveCastleAsset, REP_CITY_CASTLES } from '../config/deCastleAssets';
+import { resolveCastleAsset } from '../config/deCastleAssets';
 import { DE_SPRITE_ANCHOR, DE_SPRITE_BOX_W } from './battlefield/deSpriteSizes';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { roadRegistry } from '../roads/RoadRegistry';
@@ -1282,7 +1282,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
         )
     );
 
-    // [2026-09-14 主人定方案 A] 中城全城严格 3*3 网格 9 建筑：代表名城时专属城堡居中统领八方，周围 8 栋环卫
+    // [2026-09-14 主人定方案 A] 中城全城严格 3*3 网格 9 建筑：旧名册城时专属城堡居中统领八方，周围 8 栋环卫
     const step = baseSize * 0.30;
     const slots: Array<{ x: number; y: number; isCenter: boolean }> = [];
     for (let r = -1; r <= 1; r++) {
@@ -1700,7 +1700,6 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     // 🔴 [2026-10-19 主人令「小城中心改为城堡」] 日本、斯拉夫、波兰、立陶宛、白山黑水的小城城心放城堡
     const SMALL_CITY_CASTLE_STYLES = ['JAPAN', 'SLAVIC', 'POLES', 'LITHUANIANS', 'NORTHEAST'];
     const hasSmallCityCastle = !!city.buildingStyle && SMALL_CITY_CASTLE_STYLES.includes(city.buildingStyle);
-    const isRep52City = !!REP_CITY_CASTLES[city.id] && city.type !== 'pass';
     // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
     //    （原来只有日本/青藏文化区与代表名城名册里的城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
     // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
@@ -1720,7 +1719,7 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
         ? false
         : city.type === 'small_city'
             ? hasSmallCityCastle
-            : (isJapan || isTibet || isRep52City || city.type === 'big_city' || city.type === 'medium_city');
+        : (isJapan || isTibet || city.type === 'big_city' || city.type === 'medium_city');
 
     // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
     const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
@@ -2821,8 +2820,7 @@ export class TerritorySystem {
         // 🔴 [2026-10-13 主人令] 日本建筑风格的小城例外：**城心放一个城堡**（与 `cityStackParams` 同一口径）。
         const centerCastle = cityType === 'small_city'
             ? isJapan
-            : (isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city'
-                || (!!REP_CITY_CASTLES[bf.id] && cityType !== 'pass'));
+            : (isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city');
         const deStyle = resolveCityDeBuildingStyle(bf.id, cityType, region, bf.lat, bf.lng, undefined);
         // 🔴 [2026-10-05] 传 bf.id：逐城石墙例外（维也纳）
         useStoneWall = smallCityUsesStoneWall(deStyle, undefined, region, bf.id);

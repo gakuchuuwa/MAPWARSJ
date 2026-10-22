@@ -1063,14 +1063,15 @@ export function applySpawnBuildings(this: Scene13WarLayer): void {
 }
 
 export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
-    // 🔴 [2026-10-22] 小队模式（故事块小仗）没有营地：不铺营帐、不围拒马
-    if (this.isSkirmish()) return;
     // 玩家自带精锐是临时追加的战术出兵位，不属于军团九格编制；
     // 若把它计入这里，守城方会因 10 !== 9 提前返回，整座城墙都不生成。
     // 🔴 [2026-09-23] 主将队（第 10 口，前排再往前）不是编制建筑位：不计入，否则拒马挤在主将一口前、营地城墙因 10≠9 全不生成
     const side = this.spawns.filter((s) => s.f === f && !s.playerElite && !s.commander);
     // 🔴 [2026-10-11] 新战术模式攻城战守方：城池＝战略地图同款，整座摆在地图中心（不再走下面旧 13 的「右侧直墙＋九口建筑」）
+    //    小队模式的攻城战（故事块「攻破哈桑卢」）也要这座城，所以排在下面「小队模式不铺营地」之前。
     if (f === 1 && this.deCity) { buildDeCity.call(this); return; }
+    // 🔴 [2026-10-22] 小队模式（故事块小仗）没有营地：不铺营帐、不围拒马
+    if (this.isSkirmish()) return;
     // 攻击方（攻城/野战）、野战防守方，以及**攻城城寨(stockade)/漠北蒙古(MOBEI_MONGOL)守方**都在最前排营地前铺一道木桩拒马线。
     // 其余攻城守方（中城/大城/关隘）有城墙，不摆（主人 2026-09-03：城寨前面用拒马，不用篱笆）。
     const skipBarricade = this.battleType === 'siege' && f === 1 && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();

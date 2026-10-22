@@ -1,6 +1,6 @@
 /**
  * 🔴 [2026-10-22] 乌拉尔图开局的故事块（docs/探马/故事块样板_乌拉尔图开局.md）。
- * 已接上 URT-01「梦醒」、URT-02「赶马饮水」、URT-03「走失的小马」、URT-04「盗马贼」、URT-05「梅努阿王征兵」、URT-06「攻破哈桑卢」、
+ * 已接上 URT-01「梦醒」、URT-02「赶马饮水」、URT-03「走失的小马」、URT-04「盗马贼」、URT-05「梅努阿王征兵」、URT-06「攻破哈桑卢」、URT-07「看牙口」、
  * URT-08「通灵·大马士革城下」、URT-11「升斥候」；其余块按样板逐个往这里加。
  *
  * 开局段的顺序：前 800 年 春 梦醒 → 夏 赶马饮水 → 秋 盗马贼 → 冬 走失的小马 → 前 799 年春 梅努阿王征兵
@@ -13,6 +13,7 @@ import type { Storylet, StoryContext, StoryApi } from '../StoryletEngine';
 import { startHorseThiefSkirmish } from '../horseThiefSkirmish';
 import { HASANLU_YEAR, startHasanluSiege, startHasanluSupply } from '../hasanluSiege';
 import { startWhenFree } from '../storySkirmish';
+import { LORE_TEETH } from '../horseLore';
 
 const MERIT_HORSE_THIEF = 300;
 
@@ -338,6 +339,28 @@ const URT_11_SCOUT_FLAG: Storylet = {
     ],
 };
 
+/**
+ * URT-07 看牙口（收集）：马厩里有 3 匹以上的马，梦醒之后任何时候、任何地方，一次性。
+ * 学到马经「看牙口」：此后外来的马（买来、缴来）也能看出马龄（学会之前马厩里显示「？岁」）。
+ * 开局里通常是盗马贼缴到山地马之后的那一季。
+ */
+const URT_07_TEETH: Storylet = {
+    id: 'URT-07',
+    speaker: '老马夫',
+    text: '老马夫掰开一匹马的嘴，让{玩家}凑近看：「看门牙磨到哪儿，就知道它几岁。买马的人十个有九个被骗，就骗在这儿。」',
+    when: (ctx) => ctx.isDone('URT-01') && ctx.horseCount >= 3,
+    options: [
+        {
+            label: '跟着学',
+            accent: true,
+            pick: (api) => {
+                api.setFlag(LORE_TEETH);
+                api.notify('📖 马经：看牙口——门牙磨到哪儿，就知道马几岁。马厩里外来的马现在也看得出马龄了');
+            },
+        },
+    ],
+};
+
 /** URT-06 攻破哈桑卢的赏 */
 const MERIT_HASANLU_TAKEN = 500;
 const MERIT_HASANLU_OTHERS_TOOK = 150;
@@ -514,5 +537,6 @@ export const URARTU_OPENING_STORYLETS: readonly Storylet[] = [
     URT_05B_CONSCRIPTION_AGAIN,
     URT_11_SCOUT_FLAG,
     URT_06_HASANLU,
+    URT_07_TEETH,
     URT_08_DAMASCUS_HORSE,
 ];

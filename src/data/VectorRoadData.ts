@@ -23,6 +23,30 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
+                name: "诺夫哥罗德-拉多加",
+                type: "road",
+                id: "road_city_nuofugeerdede_city_ladoga_ladoga",
+                startConnection: "city_nuofugeerdede",
+                endConnection: "city_ladoga"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [31.27, 58.52],
+                    [31.28, 58.70],
+                    [31.32, 58.90],
+                    [31.40, 59.10],
+                    [31.55, 59.30],
+                    [31.75, 59.50],
+                    [32.00, 59.70],
+                    [32.20, 59.88],
+                    [32.2961, 59.9967]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
                 name: "特洛伊-格拉尼库斯",
                 type: "road",
                 id: "road_city_teluoyi_city_gelanikusi_1790100000000",

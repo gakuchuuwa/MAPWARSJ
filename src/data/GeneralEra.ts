@@ -252,6 +252,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_albrecht_bear': 'castle',
     'gen_alexander_great': 'antiquity',
     'gen_alexander_nef': 'castle',
+    'gen_rurik': 'feudal',
     'gen_alfonso_ix': 'castle',
     'gen_alfonso_vi': 'castle',
     'gen_alfred_great': 'feudal',
