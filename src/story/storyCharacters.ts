@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔴 [2026-10-22 主人「所有人物都没有立绘，你需要建立对话人物吗。我来画立绘。」]
  *
  * 故事块里说话的人物：对话框抬头的名字、身份，和立绘文件放在哪。
@@ -20,31 +20,35 @@ export interface StoryCharacter {
     look: string;
 }
 
-const STORY_PORTRAIT_DIR = '/assets/STORY/';
-
+// 🔴 [2026-10-23] 路径一律写**完整字面量**（如 '/assets/STORY/urt_envoy.png'），
+//    不许用「常量 + 拼接」的模板串。tools/rename_duplicate_idle_portraits.mjs
+//    （npm run dev 每次启动自动跑）与 tools/rename_idle_portraits.mjs 只把
+//    「代码里字面量出现的 .png 路径」算作被引用；含 `${` 的模板拼接会被它们跳过
+//    → 文件被当成闲置图改名成 `__闲置__STORY_NN.png`，对话框就套不上
+//    （2026-10-23 四张剧情立绘被改名就是这么来的）。
 export const STORY_CHARACTERS: Readonly<Record<string, StoryCharacter>> = {
     养马人家: {
         name: '塔胡',
         role: '图什帕城外的养马人家',
-        portrait: `${STORY_PORTRAIT_DIR}urt_herder_tahu.png`,
+        portrait: '/assets/STORY/urt_herder_tahu.png',
         look: '五十来岁的乌拉尔图养马人，羊毛长袍、皮护腿，手里拿着马鞭，脸被高原风吹得发红',
     },
     梅努阿王的使者: {
         name: '王的使者',
         role: '梅努阿王的使者',
-        portrait: `${STORY_PORTRAIT_DIR}urt_envoy.png`,
+        portrait: '/assets/STORY/urt_envoy.png',
         look: '乌拉尔图王宫派来的传令官，青铜头盔、彩色流苏长袍，手持刻着楔形文字的泥板',
     },
     老马夫: {
         name: '老马夫',
         role: '乌拉尔图军中的老马夫',
-        portrait: `${STORY_PORTRAIT_DIR}urt_old_groom.png`,
+        portrait: '/assets/STORY/urt_old_groom.png',
         look: '六十多岁、缺了几颗牙的老马夫，正掰开一匹马的嘴看牙口',
     },
     叙利亚商队: {
         name: '阿布迪',
         role: '从叙利亚来的商队首领',
-        portrait: `${STORY_PORTRAIT_DIR}syrian_trader_abdi.png`,
+        portrait: '/assets/STORY/syrian_trader_abdi.png',
         look: '阿拉姆人商队首领，缠头巾、条纹长袍、络腮胡，牵着一匹左腿有箭疤的老战马',
     },
     萨尔杜里: {
