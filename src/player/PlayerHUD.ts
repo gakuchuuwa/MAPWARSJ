@@ -460,7 +460,7 @@ export class PlayerHUD {
             horseBtn.className = 'player-hud-pill-btn';
             const color = mount ? horseStatusColor(hero.horses.statusOf(mount)) : horseStatusColor('injured');
             horseBtn.style.cssText = `cursor:pointer; background:none; border:none; padding:0; font-family:inherit; font-size:11px; white-space:nowrap; color:${color};`;
-            horseBtn.textContent = mount ? `🐎 ${horseBrief(hero.horses, mount)}` : '🐎 牵马步行';
+            horseBtn.textContent = mount ? `🐎 ${horseBrief(hero, mount)}` : '🐎 牵马步行';
             horseBtn.title = `马厩：${hero.horses.list().length} 匹（点开查看、换坐骑）`;
             horseBtn.addEventListener('click', () => toggleHorseStablePanel(hero));
             secLeft.appendChild(horseBtn);

@@ -1748,8 +1748,15 @@ export class Scene13WarLayer {
                     const uSide1 = { x: -uSide0.x, y: -uSide0.y };
                     this.advanceVec = [uFwd0, uFwd1];
                     this.sideVec = [uSide0, uSide1];
-                    // 🔴 [2026-10-22] 小队模式：几十人的小仗不必隔着整张图对冲，双方各站中点两侧 450px
-                    if (this.skirmish) {
+                    // 🔴 [2026-10-22] 小队模式：几十人的小仗不必隔着整张图对冲，双方各站中点两侧 450px；
+                    //    小队攻城战（故事块「攻破哈桑卢」）守方在城心，攻方从来向离城 700px 处出发
+                    if (this.skirmish && this.deCity) {
+                        const SKIRMISH_SIEGE_GAP = 700;
+                        this.spawnBases = [
+                            { x: this.worldCX - uFwd0.x * SKIRMISH_SIEGE_GAP, y: this.worldCY - uFwd0.y * SKIRMISH_SIEGE_GAP },
+                            { x: this.worldCX, y: this.worldCY },
+                        ];
+                    } else if (this.skirmish) {
                         const mx = (attSX + defSX) / 2, my = (attSY + defSY) / 2;
                         const SKIRMISH_HALF_GAP = 450;
                         this.spawnBases = [

@@ -8,8 +8,8 @@
  *   不加据点，也不改野战 —— 在哈桑卢的史实坐标打一场故事攻城战，战略地图上不新增任何东西。
  *   ① 哈桑卢就毁在这一仗，之后再没成过有名的城；为一场仗在千城地图上常驻一座据点（还得配势力、武将、精锐、旗号），不值；
  *   ② AGENTS.md：新增实体归主人管、不许擅自添加据点；首战规则第 4 条：城库没有对应据点时，战场坐标用史实地点；
- *   ③ 它是「攻破」，史实是攻城，改野战就不像了。战术模式本来就能在没有据点记录时自己补一座城（Scene13WarLayer）。
- * 城的样子：土丘上的石基城堡 → 按「要塞＋石墙＝险要」画险要，地形取多层台地（像一座土丘）。
+ *   ③ 它是「攻破」，史实是攻城，改野战就不像了。
+ * 城的样子：借同一地理单元最近的据点马拉盖的城池（见 HASANLU_LOOK_ANCHOR），画成有城墙的小城。
  *
  * 两仗都是小队模式（几十人），玩家在攻方：
  *   · 送料：护着运木料的马夫队到城下，曼纳人出城来烧料；
@@ -21,6 +21,12 @@ import { startStorySkirmish } from './storySkirmish';
 
 /** 哈桑卢土丘城堡的史实坐标 */
 const HASANLU = { lat: 37.004, lng: 45.458 } as const;
+/**
+ * 城的样子借马拉盖（82 公里外、同在乌尔米耶湖盆地、伊朗高原风格的小城）：
+ * 首战规则第 4 条「城库没有对应据点 → 锚定同一地理单元最近的据点，坐标仍用史实地点」。
+ * 战术模式没有据点记录就画不出城墙（2026-10-22 实测只剩一片空地）。
+ */
+const HASANLU_LOOK_ANCHOR = 'city_malagai';
 /** 攻破哈桑卢那一年 */
 export const HASANLU_YEAR = -795;
 const URARTU_FACTION_ID = 'wulaertu_guo';
@@ -71,7 +77,7 @@ export function startHasanluSiege(app: GameApp, suppliesArrived: boolean, onResu
         title: '攻破哈桑卢',
         lat: HASANLU.lat,
         lng: HASANLU.lng,
-        siege: { cityType: 'pass', passTerrain: 'mound' },
+        siege: { cityType: 'small_city', anchorCityId: HASANLU_LOOK_ANCHOR },
         spec: {
             attacker: [
                 { key: 'antiquity_spearman', count: suppliesArrived ? 20 : 14 },

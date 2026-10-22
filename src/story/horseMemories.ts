@@ -31,8 +31,8 @@ export interface HorseMemory {
     defenderFactionId: string | null;
     /** 小队编成；playerSide 恒为 0 */
     spec: Scene13SkirmishSpec;
-    /** 同步时学到的马经（剧情标记名 + 一句话） */
-    lore: { flag: string; text: string };
+    /** 同步时学到的马经（剧情标记名，条目在 horseLore.ts） */
+    loreFlag: string;
     /** 完全同步时放进兵模收藏的一种兵 */
     unit: { key: string; factionId: string };
 }
@@ -66,7 +66,7 @@ const DAMASCUS_796: HorseMemory = {
         defenderName: '大马士革',
         playerSide: 0,
     },
-    lore: { flag: '马经-亚述骑兵两人一组', text: '亚述骑兵两人一组：一人控缰持矛，一人放箭' },
+    loreFlag: '马经-亚述骑兵两人一组',
     unit: { key: 'antiquity_cavalry_archer', factionId: 'yashu' },
 };
 

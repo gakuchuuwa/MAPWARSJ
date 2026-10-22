@@ -1,11 +1,13 @@
 /**
  * 🔴 [2026-10-22 马系统] 马厩面板：玩家面板上点「🐎 坐骑」打开。
- * 列出自己的马（马龄、公母、状态、来历、通灵/坐骑标记，可换坐骑）与通灵马谱系。
+ * 列出自己的马（马龄、公母、状态、来历、通灵/坐骑标记，可换坐骑）、通灵马谱系、马经图鉴。
+ * 马龄：通灵马一脉是看着长大的，一直知道；外来的马（买来、缴来）学会马经「看牙口」（URT-07）之前只显示「？岁」。
  * 不暂停游戏；内容只在马的状态真变了时重建（避免每秒整块重建把按钮点空）。
  */
 import type { PlayerHero } from './PlayerHero';
 import { HorseStable, indexToYear, type Horse, type HorseStatus } from './HorseStable';
 import { HORSE_MEMORIES, memoryLabel } from '../story/horseMemories';
+import { HORSE_LORE, LORE_TEETH } from '../story/horseLore';
 
 const PANEL_ID = 'player-horse-stable-panel';
 const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
@@ -17,9 +19,15 @@ const STATUS_COLOR: Record<HorseStatus, string> = {
     foal: '#9fc3e8',
 };
 
+/** 马龄文字：通灵马一脉一直知道；外来的马要会看牙口才知道 */
+function ageText(hero: PlayerHero, h: Horse): string {
+    const known = h.generation > 0 || hero.storyFlags.includes(LORE_TEETH);
+    return known ? `${hero.horses.ageOf(h)}` : '？';
+}
+
 /** 面板上一行用的简述（也给玩家面板的小牌子用） */
-export function horseBrief(stable: HorseStable, h: Horse): string {
-    return `${h.name} ${stable.ageOf(h)}岁 ${HorseStable.statusLabel(stable.statusOf(h))}`;
+export function horseBrief(hero: PlayerHero, h: Horse): string {
+    return `${h.name} ${ageText(hero, h)}岁 ${HorseStable.statusLabel(hero.horses.statusOf(h))}`;
 }
 
 export function horseStatusColor(s: HorseStatus): string {
@@ -46,7 +54,7 @@ function openPanel(hero: PlayerHero): void {
 
     let lastKey = '';
     const render = () => {
-        const key = stateKey(stable);
+        const key = stateKey(hero);
         if (key === lastKey) return;
         lastKey = key;
         panel.innerHTML = '';
@@ -88,6 +96,8 @@ function openPanel(hero: PlayerHero): void {
             list.innerHTML = lines.map((l) => `<div>${l}</div>`).join('');
             panel.appendChild(list);
         }
+
+        panel.appendChild(loreSection(hero));
     };
     render();
     const timer = window.setInterval(() => {
@@ -109,7 +119,7 @@ function horseRow(hero: PlayerHero, h: Horse, rerender: () => void): HTMLElement
     info.style.cssText = 'flex:1 1 auto; min-width:0;';
     info.innerHTML = `
         <div style="font-size:14px;font-weight:700;">${h.name}
-            <span style="font-size:12px;color:#dfc28c;font-weight:400;">${HorseStable.sexLabel(h)} · ${stable.ageOf(h)} 岁</span>
+            <span style="font-size:12px;color:#dfc28c;font-weight:400;">${HorseStable.sexLabel(h)} · ${ageText(hero, h)} 岁</span>
             <span style="font-size:12px;color:${STATUS_COLOR[status]};">${HorseStable.statusLabel(status)}</span> ${tags}</div>
         <div style="font-size:11.5px;color:#ba9e7b;">${h.origin}${h.generation > 0 ? ` · 第 ${h.generation} 代` : ''}</div>
         ${memoryLine(h)}`;
@@ -146,8 +156,23 @@ function memoryLine(h: Horse): string {
     return `<div style="font-size:11.5px;color:#c9a8ff;">👁 记得：${memoryLabel(mem)} · ${result}</div>`;
 }
 
-function stateKey(stable: HorseStable): string {
+/** 马经图鉴：学到的显示全文，没学到的只显示「？？？」和在哪儿学 */
+function loreSection(hero: PlayerHero): HTMLElement {
+    const learned = HORSE_LORE.filter((l) => hero.storyFlags.includes(l.flag));
+    const box = document.createElement('div');
+    const rows = HORSE_LORE.map((l) => hero.storyFlags.includes(l.flag)
+        ? `<div style="padding:3px 0;"><span style="color:#ffd700;">【${l.kind}】${l.title}</span>　<span style="color:#dfc28c;">${l.text}</span></div>`
+        : `<div style="padding:3px 0;color:#7d6a52;">【${l.kind}】？？？<span style="font-size:11px;">（${l.hint}）</span></div>`);
+    box.innerHTML = `
+        <div style="margin-top:10px; font-size:13px; font-weight:900; color:#e8c77e;">📖 马经　${learned.length} / ${HORSE_LORE.length}</div>
+        <div style="font-size:12px; line-height:1.6;">${rows.join('')}</div>`;
+    return box;
+}
+
+function stateKey(hero: PlayerHero): string {
+    const stable = hero.horses;
     return [
+        hero.storyFlags.length,
         stable.getPedigree().length,
         ...stable.list().map((h) => `${h.id}:${stable.ageOf(h)}:${stable.statusOf(h)}:${stable.isMount(h)}:${stable.isSpirit(h)}:${h.memoryBest ?? ''}`),
     ].join('|');

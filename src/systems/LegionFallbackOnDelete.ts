@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 三级军团被删除后的**重新套军团**（🔴 2026-09-16 主人定；2026-10-16 主人收紧口径）。
  *
  * ── 规则（主人原话）────────────────────────────────────────────
@@ -71,7 +71,7 @@ export function isBaseFallbackLegion(name: string): boolean {
  * 拿它当键才需要别名表打补丁。实测改按 buildingStyle 后 633 家势力逐家算全部命中二级。
  */
 
-/** 势力的代表据点：城级最高（tier 小）的一座 */
+/** 势力的主据点：城级最高（tier 小）的一座 */
 function pickFactionCity(factionId: string): CityDataV2 | null {
     let best: CityDataV2 | null = null;
     for (const c of CITIES_V2) {
@@ -90,7 +90,7 @@ export function resolveFallbackForFaction(factionId: string, generalId?: string 
     if (!general) return { factionId, reason: '该势力没有配开局武将，判不了时代' };
     const era = GENERAL_ERA[general.generalId];
     if (!era) return { factionId, reason: `武将 ${general.generalName || general.generalId} 不在 GENERAL_ERA 表里` };
-    // 🔴 [2026-10-19 主人令「必须给每个武将单独添加一个文化属性，才能对应上军团」] 文化是武将自己的属性（GeneralCulture）；表里没有才退回「势力代表据点」的建筑风格
+    // 🔴 [2026-10-19 主人令「必须给每个武将单独添加一个文化属性，才能对应上军团」] 文化是武将自己的属性（GeneralCulture）；表里没有才退回「势力主据点」的建筑风格
     const city = pickFactionCity(factionId);
     const ownStyle = getGeneralCulture(general.generalId);
     let style: string | undefined = ownStyle;

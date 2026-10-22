@@ -108,7 +108,7 @@ function civOfStyleKey(key: string | undefined, era: GeneralEra): string | null 
 
 const _factionCivCache = new Map<string, Map<string, string | null>>();
 
-/** 势力所属文明：先看自己名下据点里数量最多的二级风格；一个都没有（只写了一级母体）就取离代表据点最近的二级据点的文明。 */
+/** 势力所属文明：先看自己名下据点里数量最多的二级风格；一个都没有（只写了一级母体）就取离该势力据点最近的二级据点的文明。 */
 function civOfFaction(factionId: string, era: GeneralEra): string | null {
     let byEra = _factionCivCache.get(factionId);
     if (!byEra) { byEra = new Map(); _factionCivCache.set(factionId, byEra); }

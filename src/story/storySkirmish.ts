@@ -22,8 +22,12 @@ export interface StorySkirmishOptions {
     year: number;
     /** 攻方从哪个方向来（度，相对战场；默认从北边来） */
     attackerFrom?: { dLat: number; dLng: number };
-    /** 攻城战：守方城的等级（画什么城）；险要可另给地形（mound＝多层台地，像土丘上的城堡） */
-    siege?: { cityType: CityType; passTerrain?: 'mound' | 'flat' | 'plateau' };
+    /**
+     * 攻城战：守方城画成什么样。
+     * anchorCityId＝借哪座现成据点的城池样子（城库没有这座城时，按首战规则第 4 条借同一地理单元最近的据点；
+     * 坐标仍用上面的史实 lat/lng）。不借的话战术模式补出来的城画不出城墙，只剩空地（2026-10-22 实测）。
+     */
+    siege?: { cityType: CityType; anchorCityId: string };
     spec: Scene13SkirmishSpec;
 }
 
@@ -54,7 +58,7 @@ export function startStorySkirmish(app: GameApp, o: StorySkirmishOptions, onResu
         defenderFromLng: o.lng - from.dLng,
         battleType: o.siege ? 'siege' : 'field',
         defenderCityType: o.siege?.cityType ?? null,
-        defenderPassTerrain: o.siege?.passTerrain ?? null,
+        defenderCityId: o.siege?.anchorCityId ?? null,
         defenderCityLat: o.siege ? o.lat : undefined,
         defenderCityLng: o.siege ? o.lng : undefined,
         title: o.title,
