@@ -31,6 +31,10 @@ export interface Horse {
     /** 到这一季（连续季序）之前疲劳 / 受伤 */
     tiredUntil: number;
     injuredUntil: number;
+    /** 这匹马记得的一场仗（通灵战役 id，见 src/story/horseMemories.ts）；没有就不填 */
+    memoryId?: string;
+    /** 通灵过的最好结果：sync 同步 / full 完全同步 */
+    memoryBest?: 'sync' | 'full';
 }
 
 export interface PedigreeEntry {
@@ -141,7 +145,7 @@ export class HorseStable {
 
     // ── 改动 ─────────────────────────────────────────────
     /** 得到一匹马。spirit＝它是通灵马（谱系起点），马厩里只能有一匹 */
-    public addHorse(spec: { name?: string; sex?: HorseSex; age: number; origin: string; spirit?: boolean }): Horse {
+    public addHorse(spec: { name?: string; sex?: HorseSex; age: number; origin: string; spirit?: boolean; memoryId?: string }): Horse {
         const year = this.deps.getYear();
         const spirit = spec.spirit === true && !this.spiritId;
         const h: Horse = {
@@ -154,6 +158,7 @@ export class HorseStable {
             foalAge: spirit ? randInt(SPIRIT_FOAL_AGE) : 0,
             foaled: false,
             origin: spec.origin,
+            memoryId: spec.memoryId,
             tiredUntil: 0,
             injuredUntil: 0,
         };
@@ -181,6 +186,13 @@ export class HorseStable {
     }
 
     /** 失去一匹普通马（被抢、卖掉）；通灵马不会失去。返回失去的那匹 */
+    /** 记下一次通灵的结果（只往好里记：完全同步 > 同步） */
+    public recordMemory(horse: Horse, result: 'sync' | 'full'): void {
+        if (horse.memoryBest === 'full') return;
+        horse.memoryBest = result;
+        this.deps.onChange();
+    }
+
     public loseCommonHorse(): Horse | null {
         const h = this.horses.find((x) => x.id !== this.spiritId);
         if (!h) return null;

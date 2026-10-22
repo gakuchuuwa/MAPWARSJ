@@ -5,6 +5,7 @@
  */
 import type { PlayerHero } from './PlayerHero';
 import { HorseStable, indexToYear, type Horse, type HorseStatus } from './HorseStable';
+import { HORSE_MEMORIES, memoryLabel } from '../story/horseMemories';
 
 const PANEL_ID = 'player-horse-stable-panel';
 const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
@@ -36,7 +37,7 @@ function openPanel(hero: PlayerHero): void {
     const panel = document.createElement('div');
     panel.id = PANEL_ID;
     panel.style.cssText = `
-        position:fixed; top:64px; left:16px; z-index:10050; width:min(440px, calc(100vw - 32px));
+        position:fixed; top:48px; left:50%; transform:translateX(-50%); z-index:10050; width:min(440px, calc(100vw - 32px));
         max-height:calc(100vh - 120px); overflow:auto; box-sizing:border-box; padding:12px 14px;
         font-family:${FONT}; color:#f5e6c8; background:rgba(20,16,12,0.95);
         border:1px solid rgba(212,175,55,0.6); border-radius:10px;
@@ -110,8 +111,22 @@ function horseRow(hero: PlayerHero, h: Horse, rerender: () => void): HTMLElement
         <div style="font-size:14px;font-weight:700;">${h.name}
             <span style="font-size:12px;color:#dfc28c;font-weight:400;">${HorseStable.sexLabel(h)} · ${stable.ageOf(h)} 岁</span>
             <span style="font-size:12px;color:${STATUS_COLOR[status]};">${HorseStable.statusLabel(status)}</span> ${tags}</div>
-        <div style="font-size:11.5px;color:#ba9e7b;">${h.origin}${h.generation > 0 ? ` · 第 ${h.generation} 代` : ''}</div>`;
+        <div style="font-size:11.5px;color:#ba9e7b;">${h.origin}${h.generation > 0 ? ` · 第 ${h.generation} 代` : ''}</div>
+        ${memoryLine(h)}`;
     row.appendChild(info);
+    const mem = h.memoryId ? HORSE_MEMORIES[h.memoryId] : undefined;
+    if (mem && h.memoryBest !== 'full' && hero.onReadHorseMemory) {
+        const read = document.createElement('button');
+        read.type = 'button';
+        read.textContent = '通灵';
+        read.title = `摸着${h.name}，看它记得的${memoryLabel(mem)}`;
+        read.style.cssText = 'flex:0 0 auto; cursor:pointer; padding:3px 10px; font-family:inherit; font-size:12px; color:#fffcee; background:rgba(70,48,110,0.85); border:1px solid rgba(212,175,55,0.55); border-radius:5px;';
+        read.addEventListener('click', () => {
+            document.getElementById(PANEL_ID)?.remove();
+            hero.onReadHorseMemory?.(h.id);
+        });
+        row.appendChild(read);
+    }
     if (!stable.isMount(h) && status !== 'foal') {
         const ride = document.createElement('button');
         ride.type = 'button';
@@ -123,10 +138,18 @@ function horseRow(hero: PlayerHero, h: Horse, rerender: () => void): HTMLElement
     return row;
 }
 
+/** 马记得的那一仗，和通灵过的结果 */
+function memoryLine(h: Horse): string {
+    const mem = h.memoryId ? HORSE_MEMORIES[h.memoryId] : undefined;
+    if (!mem) return '';
+    const result = h.memoryBest === 'full' ? '完全同步' : h.memoryBest === 'sync' ? '同步' : '还没通灵';
+    return `<div style="font-size:11.5px;color:#c9a8ff;">👁 记得：${memoryLabel(mem)} · ${result}</div>`;
+}
+
 function stateKey(stable: HorseStable): string {
     return [
         stable.getPedigree().length,
-        ...stable.list().map((h) => `${h.id}:${stable.ageOf(h)}:${stable.statusOf(h)}:${stable.isMount(h)}:${stable.isSpirit(h)}`),
+        ...stable.list().map((h) => `${h.id}:${stable.ageOf(h)}:${stable.statusOf(h)}:${stable.isMount(h)}:${stable.isSpirit(h)}:${h.memoryBest ?? ''}`),
     ].join('|');
 }
 
