@@ -91,7 +91,7 @@ import { setCityStyleSessionSeed } from '../systems/cityWallShared';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { startHorseThiefSkirmish, type HorseThiefChase } from '../story/horseThiefSkirmish';
 import { StoryletEngine } from '../story/StoryletEngine';
-import { URARTU_OPENING_STORYLETS, URARTU_OPENING_CITY_ID, URARTU_OPENING_SPAWN, urartuOpeningHoldsPlayer } from '../story/storylets/urartuOpening';
+import { URARTU_OPENING_STORYLETS, URARTU_OPENING_CITY_ID, pickUrartuWakeSpot, WAKE_FLAG_PREFIX, urartuOpeningHoldsPlayer, urartuOpeningLead } from '../story/storylets/urartuOpening';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -940,7 +940,7 @@ export class GameApp {
     }
 
     /** 🔴 [2026-10-22] 故事块引擎（百岁模式每到换季检查一次；控制台 `game.story.trigger('URT-04')` 可直接弹） */
-    public readonly story = new StoryletEngine(this, URARTU_OPENING_STORYLETS, urartuOpeningHoldsPlayer);
+    public readonly story = new StoryletEngine(this, URARTU_OPENING_STORYLETS, urartuOpeningHoldsPlayer, urartuOpeningLead);
 
     /**
      * 🔴 [2026-10-20 主人令「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代，
@@ -996,7 +996,9 @@ export class GameApp {
             : undefined;
         const startCity = openingCity ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
-        let spawnPos = openingCity ? { ...URARTU_OPENING_SPAWN } : { lat: startCity.latitude, lng: startCity.longitude };
+        // 🔴 [2026-10-22 主人令「梦醒可以在山洞，农村，田野呀」「非得在城边吗」] 醒来处三选一，离城六七十公里
+        const wakeSpot = openingCity ? pickUrartuWakeSpot() : null;
+        let spawnPos = wakeSpot ? { lat: wakeSpot.lat, lng: wakeSpot.lng } : { lat: startCity.latitude, lng: startCity.longitude };
         const edges = !openingCity && roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
         // 优先连通的陆地道路，保证玩家落在合法陆地路网上
         const landEdges = edges?.filter((e) => !e.isSea && e.coordinates && e.coordinates.length > 1) ?? [];
@@ -1044,6 +1046,7 @@ export class GameApp {
             getSeason: () => this.timeSystem.getSeason() as number,
         }, spawnPos);
         this.playerHero = hero;
+        if (wakeSpot) hero.storyFlags.push(WAKE_FLAG_PREFIX + wakeSpot.id);
         // 🔴 [2026-10-22 通灵] 马厩里点「通灵」→ 故事块引擎读这匹马的记忆
         hero.onReadHorseMemory = (horseId) => { this.story.readHorseMemory(horseId); };
         // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）

@@ -23,6 +23,115 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
+                name: "埃里温-阿尼",
+                type: "road",
+                id: "road_city_ailiwen_city_ani_ani",
+                startConnection: "city_ailiwen",
+                endConnection: "city_ani"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [44.51, 40.18],
+                    [44.30, 40.28],
+                    [44.05, 40.38],
+                    [43.80, 40.45],
+                    [43.572, 40.507]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "哥本哈根-耶灵",
+                type: "road",
+                id: "road_city_gebenhagen_city_jelling_jelling",
+                startConnection: "city_gebenhagen",
+                endConnection: "city_jelling"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.57, 55.68],
+                    [12.10, 55.62],
+                    [11.60, 55.55],
+                    [11.10, 55.52],
+                    [10.60, 55.55],
+                    [10.10, 55.62],
+                    [9.75, 55.70],
+                    [9.42, 55.756]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "汉堡-海瑟比",
+                type: "road",
+                id: "road_city_hamburg_city_hedeby_hedeby",
+                startConnection: "city_hamburg",
+                endConnection: "city_hedeby"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [9.99, 53.55],
+                    [9.92, 53.75],
+                    [9.85, 53.95],
+                    [9.78, 54.15],
+                    [9.70, 54.32],
+                    [9.565, 54.487]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "蒂卡尔-帕伦克",
+                type: "road",
+                id: "road_city_tikal_city_palenque_palenque",
+                startConnection: "city_tikal",
+                endConnection: "city_palenque"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-89.62, 17.22],
+                    [-90.10, 17.25],
+                    [-90.60, 17.30],
+                    [-91.10, 17.36],
+                    [-91.60, 17.42],
+                    [-92.046, 17.484]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "诺夫哥罗德-白湖",
+                type: "road",
+                id: "road_city_nuofugeerdede_city_baihu_baihu",
+                startConnection: "city_nuofugeerdede",
+                endConnection: "city_baihu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [31.27, 58.52],
+                    [31.90, 58.80],
+                    [32.60, 59.05],
+                    [33.40, 59.28],
+                    [34.30, 59.48],
+                    [35.30, 59.66],
+                    [36.35, 59.84],
+                    [37.20, 59.95],
+                    [37.79, 60.03]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
                 name: "诺夫哥罗德-拉多加",
                 type: "road",
                 id: "road_city_nuofugeerdede_city_ladoga_ladoga",

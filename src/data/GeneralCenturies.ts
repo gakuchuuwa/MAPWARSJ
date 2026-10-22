@@ -463,6 +463,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'sogdian_aokexiate': -4,                             // 奥克夏特斯 · sogdian · 索格底亚那岩山（公元前328年岩山之战守帅）
     'tiemuer_tiemuer': 14,                               // 帖木儿 · tiemuer · 撒马尔罕
     'wulaertu_ajishenti': 5,                             // 瓦尔丹 · wulaertu · 埃里温
+    'wulaertu_ashot3': 10,                               // 阿硕特三世 · wulaertu · 阿尼（953–977 在位）
     'xierwan_farukusha': 18,                             // 法鲁克沙 · xierwan · 巴库（1685-1719）
     'xisi_yakubusafaer': 9,                             // 雅库布 · xisi · 博斯特
     'yada_ahexiong': 5,                                 // 阿赫雄 · yada · 悉万斤
@@ -676,6 +677,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_albert_riga': 13,                               // 阿尔伯特 · baojian_qishi · 里加
     'gen_alexander_nef': 13,                             // 涅夫斯基 · liulike · 诺夫哥罗德
     'gen_rurik': 9,                                      // 留里克 · liulike · 拉多加（862 据拉多加/诺夫哥罗德）
+    'gen_sineus': 9,                                     // 西涅乌斯 · liulike · 白湖（862 据白湖）
     'gen_algirdas': 14,                                  // 奥尔格尔德 · weijiebusike_gongguo · 维捷布斯克
     'gen_andrey_bogolyub': 12,                           // 安德烈 · fulajimier_gongguo · 弗拉基米尔
     'gen_aspurgus': 1,                                  // 阿斯普尔 · taolika · 赫尔松涅斯
@@ -938,6 +940,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
 
     // ══════ GERMANIC（34 人，已标 0）══════
     'danmai_abusalong': 12,                              // 阿布萨隆 · danmai · 哥本哈根
+    'danmai_harald': 10,                                 // 蓝牙哈拉尔 · danmai · 耶灵（958–986）
+    'danmai_godfred': 9,                                 // 戈德弗雷德 · danmai · 海瑟比（卒 810）
     'gen_albrecht_bear': 12,                             // 阿尔布雷 · asikanani · 勃兰登堡
     'gen_alfred_great': 9,                              // 阿尔弗雷德 · anggelu · 伦敦
     'gen_ansgar': 9,                                    // 安斯加尔 · weixi · 不莱梅
@@ -1123,6 +1127,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xisi_safaer':                       12,    // 萨法尔 · xisi · 奇里乞亚亚美尼亚王国将领（12世纪）
     'aolisha_anatabamo':                 12,    // 阿纳塔跋摩 · aolisha · 东恒伽王朝国王建造太阳神庙（12世纪）
     'gen_jasawchan':                     8,     // 亚斯纳昌 · maya · 玛雅蒂卡尔第二十任君主打败卡拉克穆尔（682-734在位，8世纪）
+    'gen_pakal':                         7,     // 帕卡尔 · maya · 帕伦克大帝（603-683，7世纪）
     'gen_saguamanchica':                 15,    // 萨瓜曼奇卡 · muisca · 穆伊斯卡联合酋长（1470-1490在位）
     'gen_pachacuti':                     15,    // 帕查库提 · tawantinsuyu · 印加帝国缔造者（1438-1471在位）
     'pomeilaniya_bogislaw':              15,    // 博吉斯拉夫十世 · pomeilaniya · 波美拉尼亚公国统帅（1474-1523在位）
