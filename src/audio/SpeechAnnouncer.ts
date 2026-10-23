@@ -14,6 +14,9 @@ import { audioManager } from "./AudioManager";
 import { getGeneralNameForSpeech, prepareSpeechText } from "./GeneralSpeechNames";
 import { getTacticalSkillEntry } from "../data/TacticalSkillCatalog";
 import { edgeTtsClient, type EdgeVoice } from "./EdgeTtsClient";
+
+/** 探马故事旁白的音色（与战争播报的云健/云希分开） */
+const STORY_VOICE: EdgeVoice = "zh-CN-XiaoxiaoNeural";
 import { isGeneralOnStage } from "../data/generalOnStage";
 
 interface SpeakOptions {
@@ -35,6 +38,8 @@ interface SpeakOptions {
   rate?: number;
   /** 技能句已做人名校正，跳过全文 prepareSpeechText（防误替技能名/精锐名） */
   skipGlobalNameReplace?: boolean;
+  /** 直连微软时用哪个音色（不填＝当前战争播报男声云健/云希）；探马故事旁白用晓晓 */
+  voice?: EdgeVoice;
   /** TTS 真正开口时回调（技能 Cut-in 与念名同刻；引擎无 onstart 时在 speak 前兜底） */
   onStart?: () => void;
   /** 念完 / 被丢弃后回调（技能释放脉冲串行队列用） */
@@ -469,16 +474,19 @@ export class SpeechAnnouncer {
    * 🔴 [2026-10-22 主人「没有语音介绍」] 探马故事块的旁白/对话：念出来，语速与行军解说同档。
    *    banner＝要不要在底部字幕条再显示一遍（对话框里已有全文时传 false，免得两处同时显示）。
    */
-  public announceStory(text: string, banner: boolean): void {
+  public announceStory(text: string, banner: boolean, onDone?: () => void): void {
     const line = text.trim();
-    if (!line) return;
+    if (!line) { onDone?.(); return; }
     this.speak(line, {
       sTier: true,
       banner: banner ? line : undefined,
       bannerMultiline: true,
       bannerSingleScreen: true,
-      rate: 0.92,
+      rate: 0.95,
+      // 🔴 [2026-10-22 主人「故事旁白和战争旁白不该一个声音吧」] 故事旁白用晓晓（女声，讲故事的音色），与战争播报的云健分开
+      voice: STORY_VOICE,
       maxWaitMs: Math.min(180000, 4000 + line.length * 600),
+      onDone,
     });
   }
 
@@ -845,7 +853,7 @@ export class SpeechAnnouncer {
   ): void {
     if (edgeTtsClient.isTemporarilyDisabled()) { cb.fallback(); return; }
     edgeTtsClient
-      .synthesize(text, { voice: this.currentEdgeVoice(), rate: opts?.rate })
+      .synthesize(text, { voice: opts?.voice ?? this.currentEdgeVoice(), rate: opts?.rate })
       .then((blob) => {
         if (cb.isSettled()) return;
         const url = URL.createObjectURL(blob);
@@ -952,6 +960,13 @@ export class SpeechAnnouncer {
           candidates.push(fallback);
         }
         if (candidates.length === 0 && fallback) candidates.push(fallback);
+        // 🔴 [2026-10-22 主人「故事旁白和战争旁白不该一个声音吧」] 故事旁白连不上微软时，回落本机女声
+        //    （晓晓 / 慧慧 / 瑶瑶），不跟战争播报一样落到男声，离线时两种旁白也听得出来
+        if (opts?.voice === STORY_VOICE) {
+          const female = voicesNow.filter((v) => v.lang.toLowerCase().startsWith("zh")
+            && /Xiaoxiao|晓晓|Huihui|慧慧|Yaoyao|瑶瑶|Xiaoyi|晓伊/i.test(v.name));
+          candidates.unshift(...female.map((v) => ({ voice: v, pitchDown: false })));
+        }
 
         // [2026-07-27] 语音清单诊断改为每会话只打一次。
         // 原来每说一句话就遍历全部 324 个语音拼长串打印，一场战斗刷屏好几屏，
