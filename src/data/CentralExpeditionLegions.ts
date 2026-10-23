@@ -12,46 +12,28 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     qin: { name: '铁鹰锐士', tier: 1 },
     qi: { name: '齐之技击', tier: 2 },
   han: { name: '韩之劲弩', tier: 2 },        // 战国时期韩国凭精良弩机在阵地防御与远程打击独步天下的战术兵种，升入T2战术
-    xuguo: { name: '许都虎贲', tier: 2 },
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
     han_d: { name: '大汉材官', tier: 2 },
-  pizhou: { name: '陷阵营', tier: 2 },        // 下邳·高顺陷阵营
-    cao_d: { name: '虎豹骑', tier: 1 },
     ranwei_d: { name: '乞活军', tier: 2 },
     wuzhou_d: { name: '羽林军', tier: 2 },     // 洛阳·李多祚羽林军（武周）
   shang: { name: '虎贲多射', tier: 2 },       // 周武王牧野之战的核心三千虎贲突击队，打出改朝换代的史诗级战役高光，升入T2战术
   zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）
   // 夏后亲卫除名（夏代无信史）
-    yuan_cj_d: { name: '雪夜突骑', tier: 2 },
-  chanzhou: { name: '殿前诸班', tier: 1 },   // 濮阳·柴荣
-  sunqin: { name: '督标秦军', tier: 3 },   // 孙传庭最后的家底，自带极强的历史悲剧色彩和知名度，升入T3知名
   // 飞熊军除名（小说番号）
   // 韩卒击刹除名（无史载）
-    liang_d: { name: '睢阳卫士', tier: 2 },
   // 公行锐士除名
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
-    li_lx_d: { name: '陇右突骑', tier: 2 },
-    xiayang_d: { name: '西河突骑', tier: 3 },
   baibo: { name: '白波黄巾', tier: 3 },     // 东汉末年最著名的黄巾军余部，护驾汉献帝东归，历史知名度极高，升入T3知名
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
     tianxiong: { name: '魏博牙兵', tier: 2 },
   dixiang: { name: '猪突豨勇', tier: 3 },   // 王莽新朝特种部队，极度奇葩、辨识度极高的历史番号，升入T3知名
   // 朱龙骑除名（无此番号）
-    liguo: { name: '阏与突骑', tier: 2 },
   yiyang_d: { name: '申息锐师', tier: 3 },    // 春秋楚国最强底牌，老牌历史劲旅，升入T3知名
   // ── 2026-06-16 新增：11大名关 ──
-    hongnong_jun: { name: '黄龙水师', tier: 3 },
-    jingzhou_gs: { name: '安定突骑', tier: 3 },
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
-    ruo: { name: '秦之锐士', tier: 1 },
-    ruzhou: { name: '赤帻先锋', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 4 },
-    jiyuan: { name: '落雕卫', tier: 3 },
   // 金甲卫除名（生造）
-  huo: { name: '霍邑骁锐', tier: 4 },                 // 缺乏知名度支撑，降T3
-    mushi: { name: '大岘戟士', tier: 4 },
   // 齐莱锐士除名（无典）
-  yin: { name: '殷商多射', tier: 3 },          // 甲骨文实锤的最古老精锐，中华武力活化石，文化地位极高，不应沦为常规T4，提拔至T3知名。
   // 🔴 [2026-09-25 主人令「删除，删除干净」] 势力 `xia`（夏·窦建德）的番号「长枪义军」已随势力一并删除
   //    （621 虎牢关战役已全删、该势力一座据点都没有）。日后若重建那一仗，再按同一条规矩补番号。
   // 🔴 [2026-09-19 主人令「都给我删了」] `zheng`（郑·王世充）的番号「江淮劲卒」已随势力一并删除 ——
@@ -59,50 +41,18 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 蔡国劲卒除名（无此部队）
   shen: { name: '安康卫', tier: 4 },         // 安康·申国：都城卫军，避将名申伯
   // 汴河戍旅除名（无此编制）
-    yuzhou: { name: '义勇北伐军', tier: 3 },
-    xin: { name: '上党锐骑', tier: 2 },
-    beidi: { name: '北地羌骑', tier: 2 },
-    yingzhou_d: { name: '选锋军', tier: 2 },
   // 北门飞骑除名
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
-  lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
-  lai: { name: '齐关弩手', tier: 4 },           // 青石关·王师范屡败朱温（正史胜仗）（缺乏极其著名的战术高光，降T3）
-    yangshao: { name: '安刘北军', tier: 3 },
-    dongxian: { name: '马陵伏弩', tier: 2 },          // 齐国孙膑伏击庞涓的战术核心，古代“设伏聚歼”的战术巅峰，升入T2战术
-    mi: { name: '朐山弩手', tier: 4 },
-  yaozhou: { name: '耀州牙兵', tier: 4 },       // 金锁关·李茂贞岐军（缺乏极其著名的战术高光，降T3）
-    wazhai: { name: '骊山刑徒', tier: 3 },
-  huaiyang: { name: '细柳营', tier: 3 },     // 周亚夫细柳营，军纪严明之文化符号，提拔至T3知名
-    yao: { name: '屠各精骑', tier: 3 },
     kong_d: { name: '曲阜甲士', tier: 3 },
-    tongma: { name: '高密强弩', tier: 4 },
-  guide_d: { name: '酂侯亲卫', tier: 4 },   // 永城·萧何酂侯
-  tongzhou: { name: '匡国牙兵', tier: 4 },    // 长宁·后汉高祖镇守同州（缺乏进攻高光，降T3）
     hao_d: { name: '钟离护卫', tier: 3 },
-    suzhou_d: { name: '江北四镇', tier: 3 },
-    sima_d: { name: '宣王中军', tier: 3 },
-    bozhou_d: { name: '青州兵', tier: 2 },
-  mengcheng_d: { name: '山桑弓手', tier: 4 },
-  shangzhou: { name: '商州锐士', tier: 4 },
     bailian: { name: '白莲教众', tier: 4 },
-    xinping: { name: '邠宁铁骑', tier: 2 },
-  huai: { name: '淮西子弟', tier: 3 },                // 朱元璋开国初期的核心将帅班底，极具政治与军事符号意义，升入T3知名
-  dang_d: { name: '厅子都', tier: 2 },
-  qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
-    xiao_d: { name: '兰陵护卫', tier: 3 },
-  zhengzhou: { name: '白袍军', tier: 2 },        // 仅存在于北伐战役，随后覆灭，极度缺乏建制延续性，属于特定战役的巅峰高光，符合T2战术
     song: { name: '殿前捧日', tier: 1 },
     zhao: { name: '丛台绝剑', tier: 2 },
-    qing: { name: '泾原锐骑', tier: 2 },
-    luming: { name: '天雄军', tier: 2 },
-    long2: { name: '陇上暗桩', tier: 3 },
     chimei: { name: '赤眉军', tier: 2 },
-    wang_d: { name: '却月阵兵', tier: 2 },
     wudu: { name: '阴平先锋', tier: 2 },
     daxi_ming: { name: '大西老营', tier: 2 },
     pingnan: { name: '平南镇营', tier: 3 },
     li_s: { name: '大汉伏波', tier: 2 },
-    jibei: { name: '泰山兵', tier: 3 },
     yangguan: { name: '西凉锐骑', tier: 2 },
     yeli: { name: '擒生军', tier: 3 },
     qiangfang: { name: '羌方射士', tier: 4 },   // 羌邑·羌方首领 羌伯砺：羌邑·羌伯砺：羌方的弓射之士，武丁时期被商王征伐
