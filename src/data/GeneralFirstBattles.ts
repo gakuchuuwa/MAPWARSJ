@@ -3795,7 +3795,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 36.1379,
         targetLng: 100.7611,
         myTroops: 10000,
-        enemyFactionId: 'gar',
+        enemyFactionId: 'tubo',
         enemyFactionName: '吐蕃',
         enemyGeneralId: 'gar_lunqinling',
         enemyTroops: 20000,
@@ -4038,7 +4038,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.92,
         targetLng: 74.3,
         myTroops: 10000,
-        enemyFactionId: 'nandou',
+        enemyFactionId: 'xiaobolu',
         enemyFactionName: '小勃律国',
         enemyGeneralId: 'nandou_sushili',   // 🔴 [2026-10-20 首战规则] 747 小勃律王苏失利（原势力误填石氏）
         enemyTroops: 20000,

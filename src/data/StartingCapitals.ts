@@ -187,12 +187,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'donghui': 'city_deokwon',
 'gonggu': 'city_gugudao',
   'fuguo': 'city_mangkangzong',
-  'gongtang': 'city_jimai',
 
 'yada': 'city_xiwanjin',
 'juandu': 'city_paixiucheng',
   'sai': 'city_wosedecheng',
-  'yangtong': 'city_longmucuo',
 
 'zhancheng': 'city_dupan',
     'monong': 'city_bangdun',
@@ -323,7 +321,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'hantawadi': 'city_bago',
 'wuhu': 'city_zhenzhuhe',
 'ewenki': 'city_nibuchu',
-    'gar': 'city_sapi',
 'mino': 'city_fuwa',
 'ssangseong': 'city_cheollyeong',
     'ouyue': 'city_taizhou_zj',
@@ -388,7 +385,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'xibo_d': 'city_yili',
     'yarkand': 'city_yinai',
 'khoja': 'city_xiuxun',
-    'gaxa': 'city_yadong',
 'jinchuan_g': 'city_leweizhai',
 'shuntian': 'city_changhua_tw',
     'gurkha': 'city_kathmandu',
@@ -436,11 +432,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'ladakh': 'city_leh',
 'tsangpa': 'city_sangzhuzi',
 'ganden': 'city_heizong',
-    'bailan': 'city_kangyanchuan',
     'supi': 'city_payangyi',
-    'monpa': 'city_cuona',
-    'lopi': 'city_metuo',
-'spurgyal': 'city_jiamachikang',
 'khon': 'city_sajia',
     'lang_clan': 'city_pibo',
     'karmapa': 'city_chubusi',
@@ -491,7 +483,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'an': 'city_bukhara',
     'saman': 'city_amucheng',
 'hepan': 'city_hepancheng',
-'humi': 'city_hunduduo',
 
     // ── 2026-05-28 新增：马蒙(达尔甘城)、古兹根(法里亚布城)、傣(勐泐城)、泰沅(清坎城)、帕銮(素可泰)、罗斛(呵叻城) ──
 'mamon': 'city_dargan',
@@ -508,7 +499,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
 'anushidgin': 'city_khiva',
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
-'gandenpozhang': 'city_zhadunzong',
 
 
     // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐)、俚(珠崖) ──
@@ -544,7 +534,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // ── 2026-05-28 新增：白狼(巴塘宗/康区) ──
 'bailang': 'city_adunzi',
 
-'dulan': 'city_taijinaier',
 'duolu': 'city_beiluocheng',
 'zhuxie': 'city_dashicheng',
 'tiemuer': 'city_samaerhan',
@@ -567,17 +556,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'pisha': 'city_mazhatage',
     'yuchi': 'city_yutian2',
     'yumi': 'city_yumi',
-    'keliya': 'city_keliyashankou',
     'xiye': 'city_xiye',
-    'faqiang': 'city_saga',
 'you': 'city_juyongguan',
 'yun': 'city_lushi',
-    'jiantang': 'city_mufu',
-    'gongbu': 'city_nichi',
-    'niang': 'city_juemuzong',
     'galangdiba': 'city_galangzong',
-'ali': 'city_gadake',
-'pazhu': 'city_jiangzi',
     'cuanshi': 'city_weixian2',
 'dianguo': 'city_tuodongcheng',
 'xushouhui': 'city_qichun',
@@ -604,7 +586,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // -- 2026-05-31 原生小政权都城4势力 --
     'qiemo': 'city_qiemo',
     'weitou': 'city_weitoucheng',
-'dangchang': 'city_diezhou',
 
     // -- 2026-05-31 补齐遗漏势力 --
 'xichu': 'city_pengcheng',
@@ -616,7 +597,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'qifu_d': 'city_fuhan',
 'xiliao': 'city_suiye',
     'khoshut': 'city_dangxiong',
-    'nanjie': 'city_rituzong',
     'qiepantuo': 'city_humicheng',
     'eluoke': 'city_nuotuoluo',
     'kuye': 'city_baizhu',
@@ -625,7 +605,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'bulat': 'city_shilekahe',
     'buriat': 'city_chita',
     'xianhai': 'city_yangjigan',
-'nandou': 'city_nieduo',
 'sabeol': 'city_shangzhou',
 'yanda': 'city_huoguocheng',
   'mengtainiya': 'city_bucharest',
@@ -648,9 +627,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'lelang': 'city_xicheng',
     'huite': 'city_jinshan',
 'zubu': 'city_teerhunjuntai',
-    'kangba': 'city_litangzong',
-    'nvguo': 'city_mapangyongcuo',
-'jiashi': 'city_kajier',
     'jiashi_d': 'city_walanaxi',
 'jibin': 'city_baishawa',
 'babuer': 'city_gaofu',
@@ -671,14 +647,11 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'lulisitan': 'city_yilamu',
     'golpayegan_diqu': 'city_guerpayegan',
 'yangguan': 'city_yangguan',
-'qinghai': 'city_gasikou',
 'xihai_d': 'city_fusicheng',
 'maer_d': 'city_pengdi',
 'wugu_d': 'city_zhande',
     'adao_d': 'city_kungang',
     
-'xining': 'city_mahaitai',
-'kalun': 'city_gasinaoer',
     'guangping': 'city_donghai',
   'pangzha': 'city_atuoke',
 'najie': 'city_dinggucheng',

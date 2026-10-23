@@ -20,7 +20,6 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // ── 2026-06-16 新增：4座西南名关 ──
   // 权州戍兵除名（生造）
   fuguo: { name: '附国羌兵', tier: 4 },  // 芒康宗·隋附国羌人部落兵
-    dangchang: { name: '陇右铁骑', tier: 2 },
   // ── 2026-06-18：武陵/叙永/慈利/秀山/房陵/珙县/来凤精锐 ──
     wuling: { name: '五溪藤甲', tier: 3 },            // 三国藤甲兵文化符号（火烧藤甲），显著文化知名度，升T2
 };
