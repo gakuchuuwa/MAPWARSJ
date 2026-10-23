@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Culture Formations
  * 15 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
@@ -752,7 +752,7 @@ export const WEI_DYNASTY_GENERAL_IDS = new Set([
 ]);
 
 /** 曹魏势力 ID 集合 */
-export const WEI_DYNASTY_FACTION_IDS = new Set([
+export const WEI_DYNASTY_FACTION_IDS = new Set<string>([
     // 曹魏·谯县
     // 合肥·张辽
     // 武都·邓艾
