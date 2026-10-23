@@ -639,10 +639,10 @@ export const HAN_DYNASTY_GENERAL_IDS = new Set([
 
 /** 汉朝势力 ID 集合 */
 export const HAN_DYNASTY_FACTION_IDS = new Set([
-    'han', 'han_d', 'suzhou', 
-    'lanzhou', 'quli', 'xiyuduhu', 
+    'han', 'han_d', 
+    
     'you', 'shu', 
-    'cangsong', 'liu'
+    'liu'
 ]);
 
 /** 唐朝名将 ID 集合 */
@@ -676,10 +676,10 @@ export const TANG_DYNASTY_GENERAL_IDS = new Set([
 
 /** 唐朝势力 ID 集合 */
 export const TANG_DYNASTY_FACTION_IDS = new Set([
-    'tang', 'hepan', 'anxi', 'juandu', 'heyuan_d',
-    'shazhou', 'lingzhou', 
+    'tang', 'hepan', 'anxi', 'juandu', 
     
-    'jiashi', 'shanzhou', 'wei2'
+    
+    'jiashi', 'wei2'
 ]);
 
 /** 宋朝名将 ID 集合 */

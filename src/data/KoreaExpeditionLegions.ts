@@ -19,7 +19,6 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   xinluo: { name: '花郎道', tier: 3 },       // 金城·新罗花郎（§4 #3）
   baiji: { name: '百济五方兵', tier: 4 },        // 泗沘·百济五方兵制（缺乏极其著名的战术高光，降T3）
     goryeo: { name: '鹰扬军', tier: 3 },
-  luzhou: { name: '鸭绿水师', tier: 4 },       // 鸭绿府·渌州水师（§4 #）（常规番号，降T3）
     sambyeol: { name: '龟甲板屋船', tier: 0 },
     hai2: { name: '瀑池弩手', tier: 3 },
   joseon: { name: '义兴亲军卫', tier: 1 },       // 汉城·李成桂义兴亲军卫（§4 #9）

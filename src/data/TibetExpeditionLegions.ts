@@ -15,8 +15,6 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   shaodang: { name: '湟中义从羌', tier: 3 },  // 东汉经典羌族从军制度，兵种名号极具特色，升T2
     tubo: { name: '吐蕃大纛军', tier: 1 },
   gar: { name: '却杰军', tier: 1 },           // 萨毗城·论钦陵大破唐军的野战主力
-    tuyu_d: { name: '青海骢精骑', tier: 3 },
-    dafeichuan: { name: '退浑骑', tier: 3 },
   xiangxiong: { name: '象雄武士', tier: 3 },  // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   gar_kham: { name: '德格骁骑', tier: 4 },    // 德格·康巴朵康先锋骑（§12 #7）（缺乏极其著名的战术高光，降T3）
   guge: { name: '古格甲兵', tier: 3 },        // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
@@ -37,7 +35,6 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   karmapa: { name: '噶玛巴护教', tier: 4 },
     golog: { name: '果洛游骑', tier: 3 },
     xihai_d: { name: '伏俟王骑', tier: 3 },
-  heyuan_d: { name: '河源军', tier: 2 },        // 花石峡·黑齿常之夜袭吐蕃大营（战术突袭，T2）
   monpa: { name: '门巴勇士', tier: 4 },  // 错那·梅惹·洛珠嘉措归附达赖（缺乏极其著名的战术高光，降T3）
   lopi: { name: '珞巴武士', tier: 4 },
   humi: { name: '瓦罕弓骑', tier: 4 },
@@ -45,8 +42,6 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 康区长刀卒除名（无此兵种）
   bailang: { name: '白狼锐卒', tier: 3 }, // 汉代著名西南夷部落，因一首《白狼歌》文化名气极大，升入T3知名
   faqiang: { name: '发羌劲卒', tier: 4 },  // 萨噶·论钦陵征服发羌（缺乏极其著名的战术高光，降T3）
-  duomi: { name: '多弥山兵', tier: 4 },
-    xiutu: { name: '休屠王骑', tier: 3 },
   jiashi: { name: '迦湿弥罗卫', tier: 3 },  // 喀吉尔·王玄策借兵平乱（借兵辅助，T2）
   gongbu: { name: '工布长弓手', tier: 3 },
   kangba: { name: '康巴骁骑', tier: 3 },   // 康巴汉子尚武精神代名词，显著文化知名度，升T2
@@ -58,7 +53,6 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   kongsa: { name: '孔萨土兵', tier: 4 },         // 甘孜·孔萨益多瞻对之役（常规番号，降T3）
     gling: { name: '玉树藏兵', tier: 4 },
   khyungpo: { name: '藏北苏毗兵', tier: 2 },    // 琼波邦色率苏毗兵灭象雄，吐蕃统一史关键，升T2
-    guangwu: { name: '河西突骑', tier: 3 },
   galangdiba: { name: '波密民兵', tier: 4 },     // 噶朗宗·旺钦顿堆波密土王（常规番号，降T3）
   daca: { name: '八宿马队', tier: 4 },           // 八宿宗·达擦济咙活佛辖地
   gongtang: { name: '贡唐马队', tier: 4 },       // 吉麦·贡唐仓活佛辖地
@@ -71,7 +65,6 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     xianlingqiang: { name: '湟水勇士', tier: 3 },
     qifu_d: { name: '苑川突骑', tier: 3 },
     jinchuan_g: { name: '嘉绒碉锋', tier: 3 },
-    shanzhou: { name: '陇右骁骑', tier: 1 },
     tufa_d: { name: '南凉铁骑', tier: 4 },
     malla: { name: '纽瓦尔弓兵', tier: 4 },   // 巴德岗·贾亚·普拉卡什·马拉：巴德岗·贾亚·普拉卡什：加德满都谷地纽瓦尔人的弓兵，1768年抗廓尔喀
 };
