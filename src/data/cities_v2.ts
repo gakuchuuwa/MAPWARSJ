@@ -3752,6 +3752,18 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_zhanbo', name: '瞻波', factionId: 'anga', lat: 25.2425, lng: 86.9842, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 瞻波（Campā），鸯伽国都，恒河与瞻波河交汇处的商贸名城，十六雄国之一，后并入摩揭陀。定级依据：无确切人口史料 → 城寨。归属：势力「鸯伽」。' },
     { id: 'city_ayuta', name: '阿逾陀', factionId: 'shunga', lat: 26.8, lng: 82.2, type: 'stockade', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 阿逾陀（Ayodhyā），恒河平原古城，据达那提婆碑铭，巽伽王朝开国者普沙密多罗曾在此举行马祭；方位取该城约数，待主人核。定级依据：无确切人口史料 → 城寨。归属：势力「巽伽」。' },
     { id: 'city_kailaina', name: '凯莱奈', factionId: 'antigonid', lat: 38.06, lng: 30.16, type: 'stockade', troops: 10000, region: 'MACEDONIAN', buildingStyle: 'MACEDONIAN', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 凯莱奈（Celaenae），弗里吉亚古城，安提柯一世任弗里吉亚总督时的治所，后迁安提柯尼亚。定级依据：无确切人口史料 → 城寨。归属：势力「安提柯」（独眼安提柯，前317年帕拉塔克奈之役）。' },
+    { id: 'city_coimbra', name: '科英布拉', factionId: 'putaoya', lat: 40.21, lng: -8.43, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '科英布拉；葡萄牙王国旧都（1139—1255），12 世纪人口约 1 万 → 小城；风格按当地葡萄牙' },
+    { id: 'city_suceava', name: '苏恰瓦', factionId: 'moerdaweiya', lat: 47.65, lng: 26.26, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '苏恰瓦；摩尔达维亚公国都城（1388—1565），人口数千—1 万 → 小城' },
+    { id: 'city_skopje', name: '斯科普里', factionId: 'saierweiya', lat: 41.99, lng: 21.43, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC', note: '斯科普里；塞尔维亚帝国都城（1346 年杜尚加冕），中世纪人口数千—1 万 → 小城' },
+    { id: 'city_prilep', name: '普里莱普', factionId: 'saierweiya', lat: 41.35, lng: 21.55, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC', note: '普里莱普；武卡辛领地、塞尔维亚帝国重镇（马尔科城堡），人口数千 → 小城' },
+    { id: 'city_niani', name: '尼亚尼', factionId: 'manding', lat: 11.4, lng: -8.5, type: 'stockade', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', tier: 4, note: '尼亚尼；马里帝国都城（松迪亚塔），人口无载 → 城寨' },
+    { id: 'city_quito', name: '基多', factionId: 'inca', lat: -0.18, lng: -78.47, type: 'small_city', troops: 10000, region: 'ANDE', buildingStyle: 'INCA', note: '基多；印加帝国北部都城（阿塔瓦尔帕），人口数万 → 小城' },
+    { id: 'city_oristano', name: '奥里斯塔诺', factionId: 'sading', lat: 39.9, lng: 8.59, type: 'small_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '奥里斯塔诺；萨丁阿尔博雷亚判官国都城（埃莱奥诺拉），人口数千 → 小城' },
+    { id: 'city_jinju', name: '晋州', factionId: 'joseon', lat: 35.19, lng: 128.1, type: 'small_city', troops: 10000, region: 'JOSEON', buildingStyle: 'KOREA', note: '晋州；朝鲜庆尚道晋州牧，1592 年金时敏守晋州，人口数万 → 小城' },
+    { id: 'city_xindu', name: '信都', factionId: 'han_d', lat: 37.55, lng: 115.57, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', note: '信都；汉冀州治所（任光守信都拒王郎），人口数万 → 小城' },
+    { id: 'city_hangai', name: '杭爱山', factionId: 'kaerka', lat: 47, lng: 101, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', tier: 4, note: '杭爱山；喀尔喀三音诺颜部牧地，无城郭 → 城寨' },
+    { id: 'city_onon', name: '斡难河', factionId: 'zhadalan', lat: 49, lng: 112, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', tier: 4, note: '斡难河；札答兰部／蒙古乞颜部牧地，无城郭 → 城寨' },
+    { id: 'city_norwich', name: '诺里奇', factionId: 'danmai', lat: 52.63, lng: 1.3, type: 'small_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'SAXONS', note: '诺里奇；东盎格利亚最大城（古思伦丹麦维京统治），中世纪人口约 1 万 → 小城' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

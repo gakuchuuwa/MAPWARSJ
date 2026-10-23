@@ -10330,7 +10330,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'qingyi_fanchangsheng', factionId: 'chenghan', cityId: 'city_linqiong', generalName: '范长生', portrait: '/assets/BASHU/qingyi_fanchangsheng.png' },
+        { generalId: 'qingyi_fanchangsheng', factionId: 'chenghan', cityId: 'city_chengdu', generalName: '范长生', portrait: '/assets/BASHU/qingyi_fanchangsheng.png' },
 
 
 
@@ -18023,6 +18023,7 @@ if (import.meta.hot) {
 
 
 }
+
 
 
 

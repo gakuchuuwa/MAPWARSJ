@@ -114,3 +114,6 @@ juji/
 !/de-wiki.html
 start_server.bat
 .auto_deploy_state.json
+
+# CodeGraph 本地代码关系图（2026-10-23）
+.codegraph/

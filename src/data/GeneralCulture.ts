@@ -1084,7 +1084,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'qing_quduan': 'CENTRAL',   // 宋国｜曲端｜据点 合水
     'qinghai_yuezhongqi': 'BASHU',   // 蜀国｜岳钟琪｜据点 成都
     'qingqiang_jiangwei': 'BASHU',   // 蜀国｜姜维｜据点 剑门关
-    'qingyi_fanchangsheng': 'BASHU',   // 成汉｜范长生｜据点 临邛
+    'qingyi_fanchangsheng': 'BASHU',   // 成汉｜范长生｜据点 成都
     'qingyuan_bd_zhoudewei': 'WEI',   // 唐国｜周德威｜据点 晋阳
     'qiong_rengui': 'BASHU',   // 汉国｜任贵｜据点 邛都
     'qiuchi_yangnandang': 'BASHU',   // 仇池｜杨难当｜据点 上禄
