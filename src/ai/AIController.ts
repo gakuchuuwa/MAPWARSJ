@@ -151,6 +151,11 @@ export class AIController {
         if ((army as Army & { __scriptPinned?: boolean }).__scriptPinned) return;
         // 历史剧本期：非剧本军团不寻敌（见 isScriptPeriod）
         if (!army.isScriptArmy && this.isScriptPeriod()) return;
+        // 🔴 [2026-10-23 主人「主角军团会自己去打别的据点，既然是漏洞为什么不修复呢」]
+        //    百岁模式（探马主线）里玩家随军的那支军团＝主角军团：不跑行为树、不自己寻敌攻城，只按主线脚本行动。
+        //    被别人打上门照样还手（战斗不归这里管）。
+        const hero = (window as unknown as { game?: { playerHero?: { autoPlan?: string; getHostLegionId?(): string | null } } }).game?.playerHero;
+        if (hero && (hero.autoPlan ?? 'centenarian') === 'centenarian' && hero.getHostLegionId?.() === army.id) return;
 
         // 获取或创建上下文
         let context = this.armyContexts.get(army.id);
