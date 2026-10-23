@@ -19,16 +19,12 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     chu: { name: '荆州校刀手', tier: 3 },
     sunwu_d: { name: '解烦兵', tier: 2 },
   jinling: { name: '量沙军', tier: 2 },     // 南朝宋檀道济唱筹量沙，中国古代心理战与战术欺骗的极致代表，升入T2战术
-  zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=寿·寿州）
   yang_zhou: { name: '黑云长剑都', tier: 2 },   // 广陵·杨行密黑云长剑都（扬州）
   lu: { name: '逍遥津突将', tier: 2 },       // 合肥·张辽八百破十万（一次性战术突击队）
   min: { name: '闽国亲从', tier: 4 },        // 冶城·王审知闽国亲从
   quanzhou: { name: '清源军', tier: 4 },        // 刺桐·留从效清源军
 
     yue_d: { name: '巴陵楼船', tier: 2 },
-    xiangzhou: { name: '襄樊捍卫', tier: 3 },
-  zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
-  sizhou: { name: '克敌军', tier: 2 },       // 南宋因装备战术兵器克敌弓而建立的特种部队，属于战术兵器部队，下调至T2战术
     qian_d: { name: '嘉兴水师', tier: 3 },
     qi_d: { name: '鸳鸯阵兵', tier: 1 },
   jiujiang: { name: '蒙冲斗舰', tier: 2 },     // 东吴专门用于撞击的战术舰船，属于战术兵器兵种，而非宏大战略舰队，下调至T2战术
@@ -37,7 +33,6 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     mi_chu: { name: '左广右广', tier: 2 },
   heng: { name: '衡州义军', tier: 4 },         // 临烝·何腾蛟南明衡州抗清
     yezongliu: { name: '处州矿徒', tier: 4 },
-  jinan: { name: '神牌弩手', tier: 2 },   // 历下·铁铉固守济南（防御战术铁壁）
     wu: { name: '句吴利趾', tier: 1 },
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
     xushouhui: { name: '双刀水师', tier: 4 },         // 常规番号，降T3
@@ -66,7 +61,6 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   xie_cj_d: { name: '信州弩士', tier: 4 },      // 葛溪·谢枋得信州抗元（缺乏极其著名的战术高光，降T3）
     liu: { name: '九江裂骑', tier: 3 },
     chunshen: { name: '春申门客', tier: 4 },
-  jiaodong: { name: '即墨火牛阵', tier: 2 },  // 即墨·田单火牛阵大破燕军（一次性战术奇谋）
   guo: { name: '果州戍兵', tier: 4 },  // 南充·唐果州戍兵
   zi: { name: '资州戍兵', tier: 4 },  // 盘石·唐资州戍兵
   gouding: { name: '句町部兵', tier: 4 },  // 广南·西南夷句町国部兵

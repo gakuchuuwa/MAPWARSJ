@@ -124,7 +124,25 @@ for (const f of ['src/data/GeneralFirstBattles.ts', 'src/data/GeneralFirstExpedi
     put(f, t, `${fixed.length} 位武将并入 ${cityTo}，各带真实政权`);
   }
 }
+/** Windows 下频繁重写大文件偶发 UNKNOWN(-4094)：重试 + 临时文件改名 */
+function writeFileRetry(file, text) {
+  const sleep = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+  let lastErr;
+  for (let attempt = 1; attempt <= 10; attempt++) {
+    const tmp = `${file}.tmp${process.pid}`;
+    try {
+      fs.writeFileSync(tmp, text);
+      fs.renameSync(tmp, file);
+      return;
+    } catch (e) {
+      lastErr = e;
+      try { fs.unlinkSync(tmp); } catch { /* ignore */ }
+      sleep(150 * attempt);
+    }
+  }
+  throw lastErr;
+}
 for (const r of report) console.log(r);
 if (!report.length) console.log('没找到这个势力');
-if (WRITE) { for (const [f, t] of writes) fs.writeFileSync(path.join(ROOT, f), t); console.log(`✅ 已写入 ${writes.size} 个文件`); }
+if (WRITE) { for (const [f, t] of writes) writeFileRetry(path.join(ROOT, f), t); console.log(`✅ 已写入 ${writes.size} 个文件`); }
 else console.log('（预演，没写盘；确认后加 --write）');

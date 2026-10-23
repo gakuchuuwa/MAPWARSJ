@@ -607,7 +607,7 @@ export const QIN_DYNASTY_GENERAL_IDS = new Set([
 
 /** 秦朝势力 ID 集合 */
 export const QIN_DYNASTY_FACTION_IDS = new Set([
-    'qin', 'xin', 'ruo', 'baiyang', 'wazhai', 'shangzhou', 'nanyue'
+    'qin', 'baiyang', 'nanyue'
 ]);
 
 /** 汉朝名将 ID 集合（含西汉、东汉、蜀汉/季汉） */
@@ -639,9 +639,9 @@ export const HAN_DYNASTY_GENERAL_IDS = new Set([
 
 /** 汉朝势力 ID 集合 */
 export const HAN_DYNASTY_FACTION_IDS = new Set([
-    'han', 'han_d', 'suzhou', 'shuofang', 'li_lx_d',
-    'huaiyang', 'yangshao', 'lanzhou', 'quli', 'xiyuduhu', 'jiluo_d',
-    'lulin', 'you', 'jingzhou_gs', 'huizhou_d', 'shu', 'chu',
+    'han', 'han_d', 'suzhou', 'shuofang', 
+    'lanzhou', 'quli', 'xiyuduhu', 'jiluo_d',
+    'you', 'huizhou_d', 'shu', 'chu',
     'langzhou', 'jingmen', 'cangsong', 'qingqiang', 'dongsheng', 'liu'
 ]);
 
@@ -676,10 +676,10 @@ export const TANG_DYNASTY_GENERAL_IDS = new Set([
 
 /** 唐朝势力 ID 集合 */
 export const TANG_DYNASTY_FACTION_IDS = new Set([
-    'tang', 'liang_d', 'hepan', 'anxi', 'juandu', 'heyuan_d',
+    'tang', 'hepan', 'anxi', 'juandu', 'heyuan_d',
     'song2', 'gaoliang', 'shazhou', 'lingzhou', 
-    'yuan_cj_d', 'xinping', 
-    'dingxiang_d', 'jiashi', 'zhuoshi', 'qianzhou', 'shanzhou', 'weizhou', 'wei2'
+    
+    'dingxiang_d', 'jiashi', 'zhuoshi', 'shanzhou', 'weizhou', 'wei2'
 ]);
 
 /** 宋朝名将 ID 集合 */
@@ -707,10 +707,10 @@ export const SONG_DYNASTY_GENERAL_IDS = new Set([
 
 /** 宋朝势力 ID 集合 */
 export const SONG_DYNASTY_FACTION_IDS = new Set([
-    'sizhou', 'luoping', 'xiangzhou', 'zaoyang_d', 'fengzhou', 'hezhou',
-    'didao', 'zhai_han', 'huan', 'yingzhou_d', 'qing',
+    'luoping', 'hezhou',
+    
     'tingzhou_d', 'changshaguo', 'shenshi',
-    'yanchuan_d', 'song', 'yanzhou'
+    'song', 'yanzhou'
 ]);
 
 /** 大明名将 ID 集合 */
@@ -736,9 +736,9 @@ export const MING_DYNASTY_GENERAL_IDS = new Set([
 
 /** 大明势力 ID 集合 */
 export const MING_DYNASTY_FACTION_IDS = new Set([
-    'ming_d', 'pingnan', 'guizhou', 'dongshengwei', 'jinan',
-    'suzhou_d', 'huai', 'zu_d',
-    'qi_d', 'chizhou', 'luming', 'yansui'
+    'ming_d', 'pingnan', 'guizhou', 'dongshengwei', 
+    'zu_d',
+    'qi_d', 'chizhou', 'yansui'
 ]);
 
 /** 曹魏名将 ID 集合 */
@@ -753,11 +753,11 @@ export const WEI_DYNASTY_GENERAL_IDS = new Set([
 
 /** 曹魏势力 ID 集合 */
 export const WEI_DYNASTY_FACTION_IDS = new Set([
-    'cao_d',                    // 曹魏·谯县
+    // 曹魏·谯县
     'lu',                       // 合肥·张辽
     'wudu',                     // 武都·邓艾
-    'sima_d',                   // 获嘉·司马懿
-    'bozhou_d',                 // 聊城·于禁
+    // 获嘉·司马懿
+    // 聊城·于禁
     // 肥如·田豫
 ]);
 
