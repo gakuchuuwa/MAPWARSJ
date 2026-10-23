@@ -11,7 +11,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     ashina: { name: '金山突厥兵', tier: 3 },
     liao_d: { name: '皮室军', tier: 1 },
     menggu_d: { name: '怯薛宿卫', tier: 0 },
-  ogodei: { name: '探马赤军', tier: 1 },       // 也迷里·木华黎统帅的探马赤军
     yuan_d: { name: '秃鲁花军', tier: 3 },
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
 

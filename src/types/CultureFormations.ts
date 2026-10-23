@@ -893,19 +893,19 @@ export const PERSIAN_DYNASTY_GENERAL_IDS = new Set([
 /** 波斯文化势力 ID 集合 */
 export const PERSIAN_DYNASTY_FACTION_IDS = new Set([
     'aqimeinide',               // 阿契美尼德帝国（波斯波利斯）
-    'aba',                      // 萨珊波斯（尼沙布尔）
+    // 萨珊波斯（尼沙布尔）
     'safawei_d',                // 萨非波斯帝国（伊斯法罕）
-    'safawei',                  // 萨非帝国（加兹温）
-    'delan',                    // 苏伦家族（法拉）
+    // 萨非帝国（加兹温）
+    // 苏伦家族（法拉）
     'ansxi',                    // 安息帝国（尼萨）
     'midi',                     // 米底王国（哈马丹）
     'ailan',                    // 埃兰王国（苏萨）
-    'kalan',                    // 卡伦家族（图斯）
+    // 卡伦家族（图斯）
     'xisi',                     // 萨法尔王朝（博斯特）
     'saerbadaer',               // 萨尔巴达尔（白哈格）
-    'kumisi',                   // 库米斯（达姆甘）
-    'hali',                     // 哈利（萨拉赫斯）
-    'baha',                     // 巴哈尔兹（泰巴德）
+    // 库米斯（达姆甘）
+    // 哈利（萨拉赫斯）
+    // 巴哈尔兹（泰巴德）
 ]);
 
 /** 判断是否为波斯文化武将或势力 */

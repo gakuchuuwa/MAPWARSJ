@@ -15,7 +15,6 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
 
     // ── T2 特色之兵 ──
     sashan: { name: '萨瓦兰铁骑', tier: 2 },
-    hekaniya: { name: '赫卡尼亚骑', tier: 2 },        // 赫卡尼亚·兹拉卡塔：里海东南波斯骑兵
     safawei_d: { name: '红头军', tier: 2 },         // 伊斯法罕·萨法维：土库曼精锐骑兵（奇兹尔巴什）
     ansxi: { name: '帕提亚铁骑', tier: 2 },         // 尼萨·安息：铁甲重骑兵
     seljuq: { name: '古拉姆', tier: 2 },        // 木鹿·塞尔柱：突厥近卫
@@ -28,33 +27,14 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     //    战场生成优先用「武将自带精锐」，故这里的势力键一并删除。
 
     midi: { name: '米底骑射', tier: 3 },            // 哈马丹·米底：米底骑兵
-    muer: { name: '呼罗珊重骑', tier: 3 },          // 马尔夫鲁德·呼罗珊：大呼罗珊重骑
     huluo: { name: '古尔重骑', tier: 1 },           // 菲鲁兹库赫·古尔：古尔王朝重骑（塔拉因战役征服北印度的战略主力）
     jiazini: { name: '伽色尼亲兵', tier: 3 },       // 哥疾宁·伽色尼：突厥奴隶兵（马穆鲁克）
-    safawei: { name: '吉兰义军', tier: 3 },         // 加兹温·吉兰：里海南岸萨法维起源地
-    yilihanguo: { name: '阿杰姆卫队', tier: 3 },    // 赞詹·阿杰姆
-    ribale: { name: '雷伊卫军', tier: 3 },          // 雷伊·日巴勒
     saerbadaer: { name: '萨尔巴达尔', tier: 3 },    // 白哈格·萨尔巴达尔：波斯起义民兵
 
     // ── T4 存在之兵 ──
     ailan: { name: '埃兰战车', tier: 3 },           // 苏萨·埃兰：古国战车
-    aba: { name: '萨珊重装骑', tier: 1 },           // 尼沙布尔·阿巴尔
-    kalan: { name: '卡伦军', tier: 4 },             // 图斯·卡伦
-    kumisi: { name: '库米斯军', tier: 4 },          // 达姆甘·库米斯
     dulan_d: { name: '普什图骑', tier: 1 },       // 坎大哈·杜兰尼
-    babuer: { name: '阿富汗游骑', tier: 3 },        // 喀布尔·阿富汗
     fanyanna: { name: '梵衍那军', tier: 4 },        // 巴米扬·梵衍那
     xisi: { name: '萨法尔圣兵', tier: 2 },
-    delan: { name: '苏伦具装骑', tier: 1 },         // 法拉·德兰吉亚
-    guzgan: { name: '古兹根军', tier: 4 },          // 法里亚布·古兹根
-    baha: { name: '巴哈尔兹军', tier: 4 },          // 泰巴德·巴哈尔兹
-    hali: { name: '萨洛尔军', tier: 4 },            // 萨拉赫斯·萨洛尔
-    kerman_bam: { name: '萨法尔骑', tier: 2 },
-    asaibaijiang: { name: '伊儿汗怯薛', tier: 1 },
-    yisatisi: { name: '圣火卫', tier: 3 },
-    kuida: { name: '奎达精骑', tier: 3 },          // 奎达·恰卡尔：波兰山口骑军
-    zhalange: { name: '扎兰突骑', tier: 3 },        // 扎兰格·巴尔塞恩特斯：德兰吉亚绿洲突骑
-    shahelude: { name: '帕提亚重骑', tier: 1 },      // 沙赫鲁德·比斯塔姆：维斯塔姆帕提亚具装重骑
-    maikelan: { name: '麦克兰骆骑', tier: 3 },       // 特尔巴特·麦克兰：凯奇河谷骆驼轻骑,
     aqimeinide: { name: '长生军', tier: 2 },
 };

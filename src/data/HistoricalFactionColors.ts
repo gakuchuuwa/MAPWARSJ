@@ -73,7 +73,6 @@ const _FIXED: Record<string, string> = {
 
 
     // ── 草原精锐远征势力（2026-06-11；hex 全局唯一）──
-    ogodei: '#8A7050', // 窝阔台·探马赤（草原土黄）
     xiongnu: '#5A2838', // 匈奴·控弦之士（玄赤，史料尚色）
     tujue: '#4878A0', // 突厥·狼卫（狼青）
     shatuo: '#585868', // 沙陀·铁骑（铁灰）
@@ -215,7 +214,6 @@ const _FIXED: Record<string, string> = {
     'juandu': '#F0CC45', // 自动分配 (邻域相斥)
     'sai': '#818B48', // 自动分配 (邻域相斥)
     'shuizhen': '#27BB82', // 自动分配 (邻域相斥)
-    'muer': '#395589', // 穆尔加布·马尔夫鲁德
     'xiajiasi': '#827743', // 自动分配 (邻域相斥)
     'yue': '#624FA7', // 自动分配 (邻域相斥)
     'qiuchi': '#CA3197', // 自动分配 (邻域相斥)
@@ -293,7 +291,6 @@ const _FIXED: Record<string, string> = {
     tumed: '#B8A060', // 土默特·精骑（草原金）
     'hepan': '#F0CC43', // 自动分配 (邻域相斥)
     'mamon': '#A9C168', // 自动分配 (邻域相斥)
-    'guzgan': '#756ABD', // 自动分配 (邻域相斥)
     'dai': '#6E6BC1', // 自动分配 (邻域相斥)
     'taiyuan': '#AF3193', // 自动分配 (邻域相斥)
     'luohu': '#3F55CD', // 自动分配 (邻域相斥)
@@ -345,9 +342,7 @@ const _FIXED: Record<string, string> = {
     'buriat': '#9C4F36', // 自动分配 (邻域相斥)
     'xianhai': '#79823D', // 自动分配 (邻域相斥)
     jiazini: '#227A46', // 伽色尼·古拉姆（伊斯兰圣色绿）
-    jibin: '#8A7040', // 罽宾·贵霜战象（丝路金褐）
     fanyanna: '#3A5A78', // 梵衍那（青金石蓝）
-    maer_d: '#7A5C3A', // 马尔吉亚纳·沙漠绿洲褐
     wugu_d: '#4A6B3A', // 乌古斯·草原青绿
     adao_d: '#D4A52F', // 阿克苏道（清系明黄）
     kumoxi: '#587868', // 库莫奚·饶乐水松漠青
@@ -378,23 +373,10 @@ const _FIXED: Record<string, string> = {
     'tajikezu': '#854030',
     'jingpozu': '#6B3828',
     'xingwei': '#5A7A38',
-    'baha': '#5C4E3C',
-    'hali': '#8C6E40',
-    'kalan': '#4A2E58',
     'xisi': '#B56B28',
-    'delan': '#7A3A20',
     'dulan_d': '#6E4A30',
     'huluo': '#885028',
-    'aba': '#2E5B70',
-    'najie': '#9E7038',
-    'pangzha': '#B58A28',
     'saerbadaer': '#386B48',
-    'kumisi': '#884058',
-    'shahelude': '#7A3A50', // 沙赫鲁德·比斯塔姆（帕提亚复兴深绛）
-    'ribale': '#784028',
-    'safawei': '#1B5E83',
-    'yilihanguo': '#A83020',
-    'asaibaijiang': '#7B2E48',
     'yilihanguo_d': '#80283A',
     'wulaertu': '#8C5A28',
     'wulaertu_guo': '#5E4A3A', // 乌拉尔图·图什帕（青铜褐）
@@ -405,7 +387,6 @@ const _FIXED: Record<string, string> = {
     'bendou_d': '#245678',
     'heti': '#955020',
     'fulijiya': '#A06828',
-    'xiaofulijiya': '#9E6830', // 小弗里吉亚·达斯基利翁（赫勒斯滂古金褐）
     'kanan': '#6B0F3A',
     'feilisidin': '#1F9E8C', // 加沙·腓利斯丁（青绿/绿松石 —— 阿契美尼德驻军色系，主人给定） // 腓尼基·推罗（泰尔紫 Tyrian Purple；骨螺紫染料发源地，史料尚色固定。⚠️ 马其顿 #C9A227 不动）
     'ldiya': '#B88820',
@@ -418,12 +399,9 @@ const _FIXED: Record<string, string> = {
     // 该区原有 9 家已固定色（bendou/bendou_d/heti/fulijiya/ldiya/pajiama/bitiniya/baizhanting/luomu），
     // 其余 19 家此前走 FactionManager 随机池；按史地特征补齐，红/黄/蓝/紫/褐/青分散不扎堆。
     'abasi': '#1E2A3C', // 阿拔斯（黑旗革命，史料尚黑；避 wazhai 玄黑撞色取蓝黑）
-    'samaila': '#3D2B1E', // 萨迈拉（阿拔斯第二都，螺旋塔砖石棕黑）
-    'youfaladi': '#D4A017', // 幼发拉底·马穆鲁克（苏丹旗黄底狮徽）
     'jialedi': '#2B5FA8', // 迦勒底·新巴比伦（伊什塔尔门釉蓝）
     'sumeier': '#2D3A8C', // 苏美尔（乌鲁克·青金石深蓝）
     'yashu': '#7A2E3C', // 亚述（尼尼微·王室赭紫）
-    'guyashu': '#5C2230', // 阿舒尔（亚述城·阿舒尔神城，旧亚述本源；同族更暗，与新亚述区分）
     'nabatai': '#A8474F', // 纳巴泰（佩特拉玫瑰砂岩）
     'paermila': '#A6642F', // 帕尔米拉（沙漠绿洲石灰岩土橙；压暗以离开旗字阈值 128）
     'ayoubu': '#0E5230', // 阿尤布（萨拉丁·伊斯兰深绿）
@@ -431,11 +409,8 @@ const _FIXED: Record<string, string> = {
     'maidina': '#2A8A63', // 麦地那（先知清真寺绿穹顶）
     'gulaishi': '#332B22', // 古莱什·麦加（天房帷幕黑金）
     'dedan': '#C09A3A', // 德丹·泰马绿洲（北阿拉伯沙金）
-    'beileinisi': '#0E6C9A', // 贝雷尼斯（红海港埠水师海蓝）
-    'dibisi': '#7A5E14', // 上埃及·阿蒙军团（阿蒙神殿金）
     'xikesuosi': '#4A3560', // 喜克索斯（外族征服者·战车紫褐）
     'tuolemi': '#0F7B6C', // 托勒密（亚历山大港·希腊化绿松石）
-    'qiliqiya': '#8E2B2B', // 奇里乞亚（罗马行省驻军深红）
     'aiaoniya': '#1B6E78', // 爱奥尼亚·以弗所（爱琴海青）
     'jialatai': '#3C7A55', // 加拉太（凯尔特青绿）
 
@@ -460,7 +435,6 @@ const _FIXED: Record<string, string> = {
     'jiashi_d': '#96422E', // 迦尸·瓦拉纳西（恒河圣城赭红）
     'mojietuo': '#6E4420', // 摩揭陀·王舍城（恒河中游深赭）
     'boluo': '#A0521E', // 波罗帝国·高达城（佛教王朝袈裟橙褐）
-    'sumo': '#186A82', // 苏摩·耽摩栗底（孟加拉湾港埠海蓝）
     'kongque': '#22378C', // 孔雀帝国·华氏城（阿育王法轮深蓝）
     'zhuluo': '#C08A2E', // 朱罗王朝·坦贾武尔（印度教神庙金）
     'pandiya': '#C09A2E', // 潘地亚·马杜赖（泰米尔金）
@@ -477,7 +451,6 @@ const _FIXED: Record<string, string> = {
     'buni': '#7A2E6E', // 迦太基·迦太基（腓尼基紫，推罗紫渊源）
     'talike': '#C08040', // 塔里克·丹吉尔（撒哈拉橙褐）
     'maqidun': '#C9A227', // 马其顿·佩拉（亚历山大金）
-'hekaniya': '#A2653A', // 赫卡尼亚·兹拉卡塔（里海密林赭）
     'gaolu': '#2A4B8F', // 法兰西·巴黎（王室蓝 fleur-de-lis）
     'kaernute': '#3D5A3D', // 卡尔努特·沙特尔（高卢凯尔特绿）
     'xiongren': '#7A3A2E', // 匈人·沙隆（阿提拉·草原红褐）
@@ -568,12 +541,10 @@ const _FIXED: Record<string, string> = {
     'maerta_qishi': '#C51E31', // 圣约翰·马耳他（医院骑士白底红十字）
     'aosiruowen': '#A0282E', // 埃德萨·埃德萨（十字军红）
     'shengdian_qishi': '#B81E2E', // 圣殿骑士·阿卡（圣殿红底白十字）
-    'babuer': '#1D509C', // 阿富汗·喀布尔（莫卧儿蓝系，帖木儿后裔）
     'danmai': '#C0202E', // 丹麦·哥本哈根（红底白十字）
     'ruidian_si': '#1E63AC', // 瑞典·斯德哥尔摩（瑞典蓝金）
     'kasidiliya': '#C2102E', // 卡斯蒂利亚·马德里（金塔红旗）
     'teluoyi': '#8E6A3C', // 特洛伊·特洛伊（青铜）
-    'alabo': '#207A3C', // 阿拉伯·巴士拉（伊斯兰绿）
 
     // ── 2026-08-26 补远征精锐持有势力缺失固定色（§12.1 红线：有精锐必须有固定色）──
     'yinggelan': '#B4283C', // 英格兰·温彻斯特（圣乔治红十字 / 王室红地三狮）
@@ -585,9 +556,6 @@ const _FIXED: Record<string, string> = {
     'zhagewei': '#147A3D', // 扎格维·拉利贝拉（埃塞俄比亚正教圣绿）
     'adal': '#2E6E4E', // 阿达尔·塞拉（阿达尔伊斯兰青绿·红海/亚丁湾海港）
     'muwaxide': '#7A1F32',
-    'varendra': '#B26A1B',
-    'chatigangren': '#197C89',
-    'lumiliya': '#8B2438',
     'yilaka': '#D2A72C',
     'xingelana': '#E0A32E',
     'gualani': '#287A4B',
@@ -621,10 +589,7 @@ const _FIXED: Record<string, string> = {
     'nuowei': '#A92F36', // 挪威·博尔贡（挪威王国旗红）
     'keernuwaye': '#292929', // 康沃尔·坎佩尔（圣皮兰黑地白十字）
     'aodesuosi': '#356B82', // 奥德索斯·瓦尔纳（黑海港深蓝）
-    'yisatisi': '#B85C2D', // 伊萨提斯·亚兹德（琐罗亚斯德圣火橙）
     'wuer': '#315C8A', // 乌尔·乌尔城（王陵青金石蓝）
-    'pidisha': '#B77A38', // 毗底沙·桑奇（桑奇佛塔砂岩赭）
-    'jiaye': '#C58A2F', // 伽耶·菩提伽耶（佛教袈裟赭黄）
     'jienei': '#8A5B36', // 杰内·杰内城（班科土坯建筑土褐）
     'bulu': '#D18A26', // 补噜·阿托克（旁遮普锡克藏红）
     'mallabhum': '#9B4A2D',
@@ -636,7 +601,6 @@ const _FIXED: Record<string, string> = {
     'qutb_shahi': '#2D6A63',
     'minangkabau': '#8C5A2B',
     'tutul_xiu': '#3F6E45',
-    'kerman_bam': '#A35B2A',
     'odrysian_late': '#6B4A8E',
     'yiluokui': '#6A3A7E', // 易洛魁联盟·奥农多加（海华沙贝壳珠串紫）
     'qimu': '#C09640', // 奇穆·昌昌（奇穆海岸土坯城金）
@@ -646,14 +610,11 @@ const _FIXED: Record<string, string> = {
     'xinnidelan': '#D86428', // 新尼德兰·新阿姆斯特丹（荷兰奥兰治橙）
     'xinfalanxi': '#2A4A88', // 新法兰西·魁北克（法兰西王室蓝）
     'xinxibanya': '#B53828', // 新西班牙·阿卡普尔科（西班牙勃艮第十字绛红）
-    'yamaxun': '#4A2E5E', // 亚马逊·忒弥斯基拉（黑海女战士暗紫）
     'manzheboyi': '#9C3240', // 满者伯夷·特罗武兰（满者伯夷红白旗绯红）
     'zhelouqi': '#C07A1E', // 遮娄其·阿杰梅尔（拉其普特藏红琥珀）
     'suosuo': '#4A3626', // 索索·库姆比萨利赫（坎特铁匠部族乌褐）
     'antiaokegongguo': '#982026', // 安条克公国·拉塔基亚（诺曼十字军暗红）
     'saimien': '#3E7A44', // 塞米恩·塞米恩（塞米恩山地绿）
-    'aosimanbeiyiguo': '#9E2620', // 奥斯曼贝伊国·瑟于特（奥斯曼红）
-    'xiaaiji': '#6E7A8A', // 下埃及·佩鲁西姆（银盾银灰）
     'kaliya': '#C89A3A', // 卡里亚·哈利卡纳苏斯（摩索拉斯陵墓金）
     'adiyabeina': '#6E4A2E', // 阿迪亚贝纳·阿尔贝拉（亚述故地褐金）
     'aertai': '#5A6E7A', // 阿尔泰·也儿的石（阿尔泰山灰蓝）
@@ -667,7 +628,6 @@ const _FIXED: Record<string, string> = {
     'amaniyake': '#4A6E3E', // 阿马尼亚克·欧什（加斯科涅绿）
     'weiershigongguo': '#4E5A6E', // 威尔士公国·布伊尔斯（威尔士灰蓝）
     'tigelei': '#7A6E2E', // 提格雷·德布雷达莫（提格雷岩褐）
-    'luben': '#7A4E2E', // 鲁本·瓦卡（奇里乞亚山褐）
     'xiaoa': '#4A8A6E', // 肖阿·德布雷利巴诺斯（肖阿高原青）
     'miandian': '#8A6E20', // 缅甸·三塔关（缅甸黄金）
     'malai': '#2E7A6E', // 马来·淡马锡（马六甲海峡青）
@@ -678,38 +638,17 @@ const _FIXED: Record<string, string> = {
     'genji': '#989791', // 源氏·镰仓（白旗之银灰调；**纯白位已被全表 29 条浅色占满**，此色是实测最近的可用浅灰）
     'genji_iyo': '#108EE8', // 源氏·伊予·松山（忽那水军·海蓝；本文件原则「水师用海蓝」）
     'aswaka': '#799F88', // 阿斯瓦卡·马萨加（斯瓦特山谷·灰绿）
-    'aornos': '#7B6A52', // 奥诺斯岩·崖壁灰褐（与索格狄亚那岩的深灰褐分色）
     'julushi': '#8A6F4A', // 居鲁士城·粟特边塞土黄（与粟特红袍、索格狄亚那灰褐分色）
     'malli': '#EBAF5B', // 马利·马里斯（印度河畔·沙黄）
     // 🔴 [2026-10-20] 原「科塞亚」「乌克西亚」两个无城战役势力已删（武将改挂米底/埃兰），其专属色一并删除
     'dasaleiti': '#3E6B5A',
     'kapaduoxiya': '#8C6B4F',
-    'maermajika': '#B08A5A', // 马尔马里卡·马特鲁港（利比亚沙漠海岸·沙色）
-    'ameng': '#C2A25A',
-    'eerbulushi': '#6E6A5A', // 里海门
-    'aliya': '#8A6E4B', // 赫拉特
-    'xuliya': '#9A7B4F', // 叙利亚·塔普萨库斯（幼发拉底河谷·褐）
     'emesene': '#453A52', // 🔴 [2026-10-04 建埃梅萨] 埃梅塞尼·埃梅萨（今霍姆斯·玄武岩黑紫；亮度 64 < 阈值 128 ⇒ 白字）
 
 
     'sute': '#181868', // 粟特·诺塔卡（粟特绿洲土黄）
-    'xinde': '#1818A0', // 信德
-    'jiduoluoxiya': '#6E5A46', // 吉德罗西亚·普拉（荒漠褐）
     'aolitai': '#5F7A6A', // 奥里泰·兰巴基亚（海岸灰绿）
     'shiyuzu': '#4A6B8A', // 食鱼族·奥拉（海岸蓝灰）
-    'kamanniyaxingsheng': '#2828D0', // 卡曼尼亚行省（荒漠绿洲）
-    'keerman': '#289FD7', // 克尔曼·锡尔詹（山前旱原）
-    'zhageluosi': '#28B252', // 扎格罗斯·呼勒万（山岩灰）
-    'lulisitan': '#28CA28', // 卢里斯坦·伊拉姆（山前灰褐）
-    'golpayegan_diqu': '#28D05E', // 古尔帕耶甘地区（山间谷地）
-    'meisuobudamiya': '#7F6A3F', // 美索不达米亚·尼西比斯（两河平原·深土）      // 阿蒙·锡瓦绿洲（沙漠神庙·赭金） // 卡帕多细亚·提亚纳（安纳托利亚高原·土黄。无尚色记载 → 按史地特征取色） // 达萨雷提·佩利昂（伊利里亚山林·深松绿。无尚色记载 → 按史地特征取色）
-    'baihaliye': '#BA8518', // 拜哈里耶·绿洲（沙漠金赭）
-    'kuida': '#8B4513', // 奎达·波兰山口（高地褐）
-    'zhalange': '#7E5238', // 扎兰格·哈蒙湿地（红土赭褐）
-    'maikelan': '#8A7A4A', // 麦克兰·特尔巴特（荒漠沙黄）
-    'muertan': '#24903C', // 木尔坦·纳西尔丁（绿、金、橙。伊斯兰绿金）
-    'muxikani': '#CD5228', // 穆西卡尼·穆西卡诺斯（橙红、金、绿。朱砂橙红）
-    'xindu': '#9C1438', // 信度·巴赫拉姆汗（绿、金、红。深绯红）
     'chamorro': '#14AAB4', // 查莫罗·阿加尼亚（关岛·密克罗尼西亚热带海洋青蓝）
     'dalriada': '#2F7D5C', // 达尔里阿达·邓纳德（苏格兰西岸盖尔王国·海湾松绿）
     'scotland': '#1F4E9C', // 苏格兰·斯昆（圣安德鲁十字深蓝）

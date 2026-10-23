@@ -19,7 +19,6 @@ export const THRACIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     // ── T3 风土之兵 ──
     seleisi: { name: '保加利亚骑', tier: 3 },          // 普罗夫迪夫·色雷斯
     aodesuosi: { name: '奥德水军', tier: 4 },
-    lumiliya: { name: '阿肯骑兵', tier: 3 },
     odrysian_late: { name: '色雷斯骑', tier: 3 },
     // 🔴 [2026-09-25 主人批准新建佩利昂] 达萨雷提·克莱图斯：伊利里亚轻装山地步兵，文化知名、独具一格 → T3 风土之兵
     //    （英文维基 Siege of Pelium：伊利里亚人据山口高地与马其顿对峙；Illyrians 条目：以轻装步兵与山地战著称）

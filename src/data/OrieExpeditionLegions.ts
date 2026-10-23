@@ -19,14 +19,11 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     xibolai: { name: '基伯利姆', tier: 2 },        // 耶路撒冷·大卫：希伯来语 gibborim「勇士」，撒下载勇士团；避将名
     xikesuosi: { name: '喜克索战车', tier: 2 },    // 阿瓦里斯·萨利蒂：复合弓＋战车征服并统治下埃及百余年
     paermila: { name: '帕尔米拉骑', tier: 2 },     // 塔德莫尔·芝诺比娅：亲统重装弓骑（clibanarii）夺取埃及与小亚
-    dibisi: { name: '阿蒙神卫队', tier: 2 },         // 瓦塞特（上埃及·底比斯）·图特摩斯：以阿蒙神命名的新王国常备军团
     aosiruowen: { name: '埃德萨骑射', tier: 2 },     // 埃德萨·阿布加尔：奥斯若恩本地骑射
 
     // ── T3 风土之兵 ──
     nabatai: { name: '香路驼骑', tier: 3 },        // 佩特拉·阿雷塔斯：商道驼骑，沙漠机动兵种特色鲜明
     aiji: { name: '麦查伊军', tier: 3 },
-    maermajika: { name: '利比亚标枪', tier: 4 },   // 马特鲁港·帕拉伊托斯：利比亚标枪散兵（史载埃及军中的利比亚标枪）
-    ameng: { name: '绿洲弓手', tier: 4 },            // 锡瓦绿洲·阿曼阿托：沙漠绿洲弓手           // 孟菲斯·拉美西斯：麦查伊（Medjay）努比亚斥候，史载专名、兵种独特
     maidina: { name: '麦地那骑兵', tier: 3 },      // 麦地那·哈立德：其出征所本的早期穆斯林骑兵，文化符号显著
     emesene: { name: '阿尤布重骑', tier: 1 },      // 🔴 [2026-10-04 建埃梅萨] 埃梅萨（今霍姆斯）·希尔库赫：阿尤布重装骑兵（霍姆斯公国即其家族所开）
     sailiugu: { name: '塞琉古方阵', tier: 3 },     // 安提俄基亚·安条克：塞琉古银盾方阵，希腊化重步代表
@@ -34,9 +31,6 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     womaya: { name: '倭马亚卫', tier: 3 },         // 大马士革·穆阿维叶：其建都之地的哈里发近卫，文化辨识度高
 
     // ── T4 存在之兵 ──
-    youfaladi: { name: '阿纳特兵', tier: 4 },      // 阿纳特·叶海亚：幼发拉底中游戍堡守兵
-    beileinisi: { name: '贝雷水师', tier: 4 },     // 贝雷尼斯·托勒密二世：其所建红海港埠常规水师
     dedan: { name: '德丹驼兵', tier: 4 },          // 泰马·卡比里尔：北阿拉伯德丹／黎哈彦常规驼兵
     gulaishi: { name: '古莱驼兵', tier: 4 },       // 麦加·艾布苏富扬：古莱什部落常规驼兵
-    baihaliye: { name: '拜哈巡守', tier: 4 },      // 拜哈里耶·杰德孔苏：利比亚沙漠绿洲守卫
 };
