@@ -127,6 +127,7 @@
     "@typesafe-ai/sdk": "^0.6.0",
     "leaflet": "^1.9.4",
     "pinyin-pro": "^3.28.0",
-    "puppeteer-core": "^25.7.0"
+    "puppeteer-core": "^25.7.0",
+    "xstate": "^5.33.3"
   }
 }

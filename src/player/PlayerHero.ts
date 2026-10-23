@@ -530,16 +530,17 @@ export class PlayerHero {
      */
     public onJoinLegion(): void {
         const prevCount = this.learnedUnits.length;
-        this.syncLearnedUnits();
+        this.syncLearnedUnits(true);
         // 若刚刚在 syncLearnedUnits 里已学到新兵模并自动换上，无需二次随机挑选
         if (this.learnedUnits.length > prevCount) return;
 
         const keys = this.legionUnitKeys();
         if (!keys.length) return;
         // 之前已收齐本军团兵模时，若当前穿的并非本军团兵模，则随机换上一件本军团兵模
+        // 🔴 [2026-10-23 主人「加入新势力获取骑兵兵模的时候自动换……其他一律不自动换」] 只换成本军团的骑兵
         const owned = this.learnedUnits
             .map((u, i) => ({ u, i }))
-            .filter((x) => keys.includes(x.u.unitKey));
+            .filter((x) => keys.includes(x.u.unitKey) && WAR_TYPES[x.u.unitKey]?.cls === 'cav');
         if (!owned.length) return;
         const currentKey = this.getSelectedUnit()?.unitKey;
         if (currentKey && (keys.includes(currentKey) || currentKey === this.legionCommanderKey())) return;
@@ -561,7 +562,13 @@ export class PlayerHero {
      *    3. 元帅：最后获得英雄兵模（主将队），获得的时候立即换上英雄兵模，并保持在英雄兵模！
      * 规则全文见 docs/AGENTS/player-rules-verbatim.md 0-7。
      */
-    public syncLearnedUnits(): void {
+    /**
+     * 🔴 [2026-10-23 主人「现在加入时候有骑兵模式会先给玩家骑兵兵模……可是玩家升级后，会自动换上步兵兵模，这就不对了。
+     *    我觉得加入新势力获取骑兵兵模的时候自动换玩家兵模，无论是三排兵，还是英雄兵模。其他一律不自动换。」]
+     * `joining`＝这次是加入势力 / 入伍时调的：只有这时拿到的**骑兵**（三排或英雄）才自动换上；
+     * 升阶、降阶、退出势力时学到的兵模只收进面板，不换。
+     */
+    public syncLearnedUnits(joining = false): void {
         // 🔴 [2026-09-09 主人定「这种是玩家奖励，终身获取的」]
         //    已学兵种**永不回收**：军团战败、脱离势力、改投他家、掉阶，一律保留。
         //    配额只约束「本势力还能再学几个」，按**当前势力已学数**算，不看历史总数，
@@ -614,12 +621,14 @@ export class PlayerHero {
             } else {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
                 this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
-                // 🔴 [2026-10-03 主人定死] 获得的时候就换上新的，最后保持在英雄的兵模
-                // 🔴 [2026-10-04 主人令「把自动选择兵模删除，默认就是自动换」「现在玩家获得兵模，要自动换上」]
-                //    面板那个开关已删 → 无条件换上（拿到新的就穿新的，英雄兵模到手后便一直保持英雄形象）。
-                this.selectedUnit = this.learnedUnits.length - 1;
-                this.syncMoveProfile();
-                this.deps.notify(`🛡️ 换上新兵模【${name}】`);
+                // 🔴 [2026-10-23 主人「其他一律不自动换」] 只有入伍时拿到骑兵才换上（取代 2026-10-03/10-04「获得就换」）
+                if (joining && WAR_TYPES[pick.key]?.cls === 'cav') {
+                    this.selectedUnit = this.learnedUnits.length - 1;
+                    this.syncMoveProfile();
+                    this.deps.notify(`🛡️ 换上新兵模【${name}】`);
+                } else {
+                    this.deps.notify(`🛡️ 学到新兵模【${name}】（可在面板里自己换）`);
+                }
             }
         }
 
@@ -629,10 +638,10 @@ export class PlayerHero {
         //    补一条：即便没新学，只要当前穿的兵模不在本军团三排（也不在主将队），就换成已学的本军团三排之一。
         //    （restoreSaveState 只 joinFaction 不 attachTo，onJoinLegion 那套换装跑不到，必须落在这里才兜得住。）
         const currentKey = this.getSelectedUnit()?.unitKey;
-        if (currentKey && !landKeys.includes(currentKey) && currentKey !== cmdKey) {
+        if (joining && currentKey && !landKeys.includes(currentKey) && currentKey !== cmdKey) {
             const ownedIdx = this.learnedUnits
                 .map((u, i) => ({ u, i }))
-                .filter((x) => landKeys.includes(x.u.unitKey));
+                .filter((x) => landKeys.includes(x.u.unitKey) && WAR_TYPES[x.u.unitKey]?.cls === 'cav');
             if (ownedIdx.length) {
                 const pick = ownedIdx[Math.floor(Math.random() * ownedIdx.length)];
                 if (pick.i !== this.selectedUnit) {
@@ -688,7 +697,7 @@ export class PlayerHero {
     public joinFaction(factionId: string): void {
         this.factionId = factionId;
         this.army.setFactionId(factionId);
-        this.syncLearnedUnits();  // 入伙即斥候 → 立刻从该势力三排随机学一个
+        this.syncLearnedUnits(true);  // 入伙即斥候 → 立刻从该势力三排随机学一个（骑兵优先，拿到骑兵就换上）
         this.syncMoveProfile();   // 素材换成学到的兵 → 行军大类跟着变
         const r = this.army.getRenderer();
         if (r) r.factionId = factionId;
