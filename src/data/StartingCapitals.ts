@@ -184,21 +184,16 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'weijiebusike_gongguo': 'city_weijiebusike',
 
 'heishui': 'city_lahasusu',
-  'donghui': 'city_deokwon',
-'gonggu': 'city_gugudao',
   'fuguo': 'city_mangkangzong',
 
 'yada': 'city_xiwanjin',
 'juandu': 'city_paixiucheng',
   'sai': 'city_wosedecheng',
 
-'zhancheng': 'city_dupan',
-    'monong': 'city_bangdun',
     'shuizhen': 'city_sanpu',
     'eguo_biandi': 'city_salatuofu',
 'muer': 'city_malulude',
     'xiajiasi': 'city_wubusabo',
-'zhen': 'city_jeonju',
     'wei': 'city_hedong',
     'wuzhou_d': 'city_luoyang',
     'shang': 'city_anyang',
@@ -254,10 +249,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'tujue': 'city_otuken',
 
 'dayue': 'city_shenglong',
-    'yamato': 'city_asuka',
-'edo': 'city_edo',
-    'izumo': 'city_izumo',
-'satsuma': 'city_satsuma',
     'ryukyu': 'city_shuri',
     // 🔴 [2026-09-19 主人定「另立源氏/镰仓势力，要符合历史」]
     //    源氏的据点在**相模国**（源赖朝 1180 年入驻镰仓，相模国即其根据地）；
@@ -269,23 +260,14 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // 🔴 [2026-09-19 主人质问「sagami 也是空势力，你没改回去吗」] **归位**：
     //    把箱根关还给 sagami 时，漏了把本行锚定补回来（原被 `genji` 顶掉），
     //    于是 sagami 成了「有据点、无首都锚定」的半残势力（全图仅此 1 处，已补）。
-    'sagami': 'city_hakone',
 'genji': 'city_kamakura',
     'so': 'city_tsushima',
     'kakizaki': 'city_katsuyama',
     'fujiwara': 'city_yanaginogosho',
     'gaya': 'city_gimhae',
-    'aki': 'city_yoshida',
-    'echigo': 'city_kasugayama',
-'kai': 'city_tsutsujigasaki',
-'sanada_d': 'city_ueda',
     'chosokabe': 'city_okafu',
-'hashiba': 'city_himeji',
-    'shimotsuke': 'city_utsunomiya',
-    'aizu': 'city_tsuruga',
     'kaga_d': 'city_jianghu',
 'date_d': 'city_xiantai',
-    'higo_d': 'city_xiongben',
     // 🔴 [2026-09-19 主人令「村上武吉换成源义经」] 松山（伊予国）改归**源氏·伊予**，
     //    守将 = 源义经（1184 年一之谷后受任**伊予守**，伊予国即其守地，1185 年他在伊予忽那岛统水军）。
     'genji_iyo': 'city_songshan',
@@ -293,7 +275,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     //    村上武吉改驻其真本据**能岛城**（`city_noshima`），`iyo_d`（伊予）的锚定随城迁过去，
     //    不再是「0 据点的空势力」（这是本轮自查出来的另一处半残）。
     //    阵容保持原样未动：守将村上武吉、番号「伊予滩水军」T4。
-    'iyo_d': 'city_noshima',
     'otomo_d': 'city_funei',
     'suwa_d': 'city_gaodao',
 'iga_d': 'city_nabari',
@@ -312,7 +293,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'loulan': 'city_jingjue',
     'shache': 'city_shache',
 'qiuci': 'city_yiluolucheng',
-    'linyi': 'city_xianglin',
 
     'erzhu': 'city_xiurongchuan',
 
@@ -321,8 +301,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'hantawadi': 'city_bago',
 'wuhu': 'city_zhenzhuhe',
 'ewenki': 'city_nibuchu',
-'mino': 'city_fuwa',
-'ssangseong': 'city_cheollyeong',
     'ouyue': 'city_taizhou_zj',
 
     'gaoqi_d': 'city_jingzhou2',
@@ -402,8 +380,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'yilou': 'city_fenglin',
     'wuji': 'city_boduo',
 
-'huimo': 'city_wugucheng',
-    'mao_wenlong': 'city_pidao',
 
     'gaoche': 'city_junjishan',
 
@@ -444,11 +420,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'mon': 'city_thaton',
 'ming_zheng': 'city_tainan',
     'xiou': 'city_bushan',
-    'jing': 'city_hoalu',
-    'muong': 'city_hoabinh',
     'paiwan': 'city_mudan',
-'leloi': 'city_xidu',
-'nguyen_guangnan': 'city_fuchun',
 
     'she_ethnic': 'city_chimushan',
 
@@ -474,12 +446,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
 
 
-'nong2': 'city_guangyuan',
 
 'golog': 'city_niubiziliang',
 
     // ── 2026-05-28 新增：南部(根城)、萨曼(阿母城)、西域四政权 ──
-    'nanbu': 'city_genjo',
 'an': 'city_bukhara',
     'saman': 'city_amucheng',
 'hepan': 'city_hepancheng',
@@ -510,8 +480,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'suolun': 'city_bukui',
 
     // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
-    'osumi': 'city_akaogicheng',
-    'anmei': 'city_akakinagusuku',
 
     // ── 2026-05-28 新增：康区藏族土司/部落 ──
     'dalung': 'city_riwoche',
@@ -540,11 +508,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'kawusi': 'city_jizhake',
     'keerkezi': 'city_yierkeshentan',
     'yiduhu': 'city_gaochangcheng',
-'zhuqian': 'city_taizaifu',
-    'jibei2': 'city_guizhicheng',
-    'jinchuan': 'city_junfucheng',
-'totomi': 'city_hamamatsu',
-'owari': 'city_atsuta',
 'yiwu': 'city_hamiwei',
 'pulei': 'city_balikun',
     'duerbote': 'city_tuokexun',
@@ -564,15 +527,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'dianguo': 'city_tuodongcheng',
 'xushouhui': 'city_qichun',
     'danluo': 'city_xingzhuting',
-    'woju': 'city_hamhung',
-'jingcheng_d': 'city_longer',
-'chungju_d': 'city_guoyuancheng',
-'naju_d': 'city_geumseong',
-    'chen3': 'city_yuezhi',
     'hui': 'city_heseluo',
-    'xuantu': 'city_guoneicheng',
-'sambyeol': 'city_jindo',
-    'sheng_d': 'city_suncheon_k',
     'wure': 'city_niman',
 'houliao': 'city_xianping',
     'sunite': 'city_saihantala',
@@ -593,19 +548,15 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'chimei': 'city_ju',
 'ashide': 'city_heishacheng',
 'yanqi': 'city_yanqi',
-'hai2': 'city_haeju',
 'qifu_d': 'city_fuhan',
 'xiliao': 'city_suiye',
     'khoshut': 'city_dangxiong',
     'qiepantuo': 'city_humicheng',
     'eluoke': 'city_nuotuoluo',
     'kuye': 'city_baizhu',
-    'ayinu': 'city_bailao',
-'beihai': 'city_zonggu',
     'bulat': 'city_shilekahe',
     'buriat': 'city_chita',
     'xianhai': 'city_yangjigan',
-'sabeol': 'city_shangzhou',
 'yanda': 'city_huoguocheng',
   'mengtainiya': 'city_bucharest',
   'xierhe': 'city_qihe',
@@ -614,7 +565,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'konbaung': 'city_shwebo',
 'tianxiong': 'city_daming',
     'huangwang': 'city_xianxia',
-'taira': 'city_chijianguan',
 'yehe': 'city_bamiancheng',
 'ashina': 'city_naiman',
 'wula': 'city_wushecheng',
@@ -624,7 +574,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'gaochang': 'city_chiting',
 'chuyue': 'city_dushancheng',
     'baidi': 'city_jining',
-'lelang': 'city_xicheng',
     'huite': 'city_jinshan',
 'zubu': 'city_teerhunjuntai',
     'jiashi_d': 'city_walanaxi',
@@ -652,7 +601,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'wugu_d': 'city_zhande',
     'adao_d': 'city_kungang',
     
-    'guangping': 'city_donghai',
   'pangzha': 'city_atuoke',
 'najie': 'city_dinggucheng',
 'dulan_d': 'city_kandaha',
@@ -801,7 +749,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'bogengnidielan': 'city_lier',
     'gewennesi': 'city_hawadeng',
     'weiershigongguo': 'city_buyiersi',
-    'huanzhou': 'city_yian',
     'tigelei': 'city_debuleidamo',
     'luben': 'city_waka',
     'xiaoa': 'city_debuleilibanuosi',

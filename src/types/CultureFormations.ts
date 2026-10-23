@@ -798,10 +798,10 @@ export const SENGOKU_GENERAL_IDS = new Set([
 
 /** 日本战国势力 ID 集合 */
 export const SENGOKU_FACTION_IDS = new Set([
-    'owari', 'kai', 'echigo', 'edo', 'hashiba', 'date_d', 'sanada_d',
-    'sagami', 'chosokabe', 'satsuma', 'aki', 'jinchuan', 'totomi',
-    'mino', 'aizu', 'iga_d', 'kaga_d', 'otomo_d', 'suwa_d',
-    'shimotsuke', 'izumo', 'jibei2', 'kakizaki', 'so'
+    'date_d', 
+    'chosokabe', 
+    'iga_d', 'kaga_d', 'otomo_d', 'suwa_d',
+    'kakizaki', 'so'
 ]);
 
 /** 罗马帝国名将 ID 集合 */

@@ -220,8 +220,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-  { id: 'donghui', name: '东濊' },
-  { id: 'gonggu', name: '宫古' },
 
   { id: 'fuguo', name: '附国' },
   { id: 'fushi', name: '苻秦' },
@@ -243,9 +241,7 @@ export const FACTIONS: Faction[] = [
 
   { id: 'sai', name: '塞种' },
 
-    { id: 'zhancheng', name: '占城' },
 
-    { id: 'monong', name: '墨侬' },
     { id: 'shuizhen', name: '水真' },
        // 越嶲·焦璜邛都戍
 
@@ -257,7 +253,6 @@ export const FACTIONS: Faction[] = [
 
    // 穆尔加布/马尔夫鲁德（Murghab）
     { id: 'xiajiasi', name: '坚昆' },   // 旗号二字；唐称黠戛斯，同族
-    { id: 'zhen', name: '武珍' },
 
 
 
@@ -286,7 +281,6 @@ export const FACTIONS: Faction[] = [
     { id: 'yue', name: '越国' },
     { id: 'nanyue', name: '南越' },
                  // 赵佗@龙川（政权·国号）
-{ id: 'guangping', name: '广平' },     // 洞海城·阮文张象兵水师               // 广州@番禺（州府/广南核心）
     // ── 2026-06-19 新增：端州@肇庆（摧锋军；旗号端≠据点名肇庆）──
 
 
@@ -452,13 +446,9 @@ export const FACTIONS: Faction[] = [
 
     { id: 'dayue', name: '大越' },
 
-    { id: 'yamato', name: '大和' },
-    { id: 'edo', name: '武藏' },
 
 
 
-    { id: 'izumo', name: '出云' },
-    { id: 'satsuma', name: '萨摩' },
 
     { id: 'ryukyu', name: '琉球' },
     { id: 'so', name: '对马' },
@@ -475,15 +465,9 @@ export const FACTIONS: Faction[] = [
     //    镰仓（源赖朝）与本城（源义经）必须各有势力键，才能各挂各的守将。
     { id: 'genji_iyo', name: '源氏·伊予' },
     { id: 'gaya', name: '伽倻' },
-    { id: 'aki', name: '安艺' },
-    { id: 'echigo', name: '越后' },
-    { id: 'kai', name: '甲斐' },
 
     { id: 'chosokabe', name: '土佐' },
-    { id: 'hashiba', name: '播磨' },
 
-    { id: 'shimotsuke', name: '下野' },
-    { id: 'aizu', name: '会津' },
 
     { id: 'xingliao', name: '兴辽' },
 
@@ -497,7 +481,6 @@ export const FACTIONS: Faction[] = [
 
      // 高原栗 - 西秦(乞伏氏/陇西鲜卑)
    // 青海碧 - 吐谷浑
-    { id: 'linyi', name: '林邑' },
     // 紫檀 - 谯国桓氏(桓温/桓玄)
     // 草原灰绿 - 丁零翟魏(翟氏)       // 辽东褐 - 段部鲜卑(段氏)
 
@@ -794,8 +777,6 @@ export const FACTIONS: Faction[] = [
     // 深草绿 - 蒙兀室韦(大蒙古国前身/嘎仙洞/孛儿只斤氏)
 
     // ── 2026-05-26 新增：濊貊、毛文龙、满洲贵族世家 ──
-    { id: 'huimo', name: '濊貊' },
-    { id: 'mao_wenlong', name: '东江镇' },       // 明黄 - 毛文龙(明末/东江镇/皮岛)；势力名取军镇专名，不取人名
     // 紫檀 - 赫舍里氏
     // 赤红 - 瓜尔佳氏(苏完部/鳌拜/双阳)
 
@@ -912,13 +893,9 @@ export const FACTIONS: Faction[] = [
     // ── 第五类：百越余脉与南岛语系 ──
     { id: 'xiou', name: '西瓯' },
     // 大瑶山林越绿 - 瑶族(大瑶山)
-    { id: 'jing', name: '京族' },
-    { id: 'muong', name: '芒族' },
     { id: 'paiwan', name: '排湾' },
     // ── 第六类：岭南土司、安南权臣与海商门阀 ──
-    { id: 'leloi', name: '清化' },
                   // 黎利蓝山起义
-    { id: 'nguyen_guangnan', name: '顺化' },
 
 
 
@@ -1013,14 +990,12 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-28 新增：普氏(矩州/贵州贵阳彝族土司) ──
     // 普氏(矩州/今贵州贵阳/普里部彝族土司),
 
-    { id: 'nong2', name: '侬族' },
 
 
     // ── 2026-05-27 重制：药罗葛(娑陵/回纥汗族) ──
                    // 药罗葛氏(回纥汗族/娑陵/蒙古中部)
 
     // ── 2026-05-28 新增：南部(根城/日本陆奥)、萨曼(阿母城/中亚)、西域四政权 ──
-    { id: 'nanbu', name: '陆奥' },                         // 陆奥国(南部氏/根城), Mutsu
     { id: 'saman', name: '萨曼' },                         // 萨曼王朝(中亚/阿母城), Samanid Empire
     { id: 'hepan', name: '朅盘陀' },
 
@@ -1064,8 +1039,6 @@ export const FACTIONS: Faction[] = [
 
                            // 索伦(卜奎), Solon
 
-    { id: 'osumi', name: '大隅' },                            // 大隅国(赤尾木城/九州), Osumi
-    { id: 'anmei', name: '奄美' },
 
     // ── 2026-05-28 新增：康区藏族土司/部落势力 ──
     { id: 'dalung', name: '达隆' },                            // 达隆噶举/噶斯家族(类乌齐/康区大本营), Taklung
@@ -1107,13 +1080,8 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'yizhi', name: '一支' },
-    { id: 'zhuqian', name: '筑前' },
 
-    { id: 'jibei2', name: '备中' },
-    { id: 'jinchuan', name: '骏河' },
-    { id: 'totomi', name: '远江' },
 
-    { id: 'owari', name: '尾张' },
 
    // 河内郡望@获嘉
 
@@ -1200,25 +1168,17 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-19 新增：韶州@韶关（张镇孙·大庾岭义旅；旗号曲江≠据点名韶关）──
 
     { id: 'danluo', name: '耽罗' },
-    { id: 'woju', name: '沃沮' },
-    { id: 'chen3', name: '欢州' },   // 马韩月支国，辰王治所（三国志·魏书·乌丸鲜卑东夷传）
     // ── 2026-06-17 新增：朝鲜八道（镜城·笼耳 / 忠州·国原城 / 罗州·锦城）──
-    { id: 'jingcheng_d', name: '镜城' },
 
-    { id: 'chungju_d', name: '忠州' },
 
-    { id: 'naju_d', name: '罗州' },
 
 
     { id: 'hui', name: '濊族' },
     // ── 2026-06-11 国内城改挂玄菟郡（汉代辖境·高句县渊源）──
-    { id: 'xuantu', name: '玄菟' },
     // ── 2026-06-11 珍岛·三别抄（裴仲孙抗蒙）──
-    { id: 'sambyeol', name: '沃州' },
 
 
     // ── 2026-06-16 顺天·升州牧（高丽成宗；旗号升≠据点名顺天）──
-    { id: 'sheng_d', name: '升州' },
     // ── 2026-06-11 徒河·锦州卫·辽东铁骑（旗号锦≠据点名徒河）──
 
     { id: 'wure', name: '兀惹' },
@@ -1255,7 +1215,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'hai2', name: '海州' },
 
 
 
@@ -1266,9 +1225,7 @@ export const FACTIONS: Faction[] = [
     { id: 'eluoke', name: '鄂罗克' },                // 鄂罗克(库页岛东岸/诺托罗), Oroch
     { id: 'kuye', name: '库页' },                    // 库页(库页岛南部/白主), Gilyak/Kuye
     // ── 2026-06-11 新增：阿伊努（北海道）──
-    { id: 'ayinu', name: '虾夷' },                 // 阿伊努(北海道南端/白老), Ainu；旗号「虾夷」
     // ── 2026-06-11 新增：北海（宗谷界城·库页枢纽）──
-    { id: 'beihai', name: '北海道' },
                   // 北海(宗谷海峡界城)
     // ── 2026-06-11 新增：若敖（楚若敖氏/竟陵）、芈氏（楚王室/云梦）──
 
@@ -1285,7 +1242,6 @@ export const FACTIONS: Faction[] = [
     { id: 'xianhai', name: '咸海' },                  // 咸海(锡尔河入湖口/养吉干), Aral delta
     // ── 2026-06-11 新增：难兜（汉难兜国/唐孽多城）──
     // ── 2026-06-11 新增：沙伐（沙伐国/尚州）──
-    { id: 'sabeol', name: '沙伐' },
 
     // ── 2026-06-11 新增：日本精锐据点（间距实测合格）──
     { id: 'iga_d', name: '伊贺' },
@@ -1295,8 +1251,6 @@ export const FACTIONS: Faction[] = [
     { id: 'kaga_d', name: '一向宗' },   // 金泽·加贺一向一揆；一向宗门徒
     { id: 'date_d', name: '仙台' },
    // 仙台·陆前；伊达铁骑
-    { id: 'higo_d', name: '肥后' },   // 熊本·菊池党
-    { id: 'iyo_d', name: '伊予' },
     // 松山·河野水军
     { id: 'otomo_d', name: '大友' },  // 府内·丰后；大友水军
     // ── 2026-06-17 新增：诹访氏@高岛（信浓诹访；间距合规坐标）──
@@ -1362,7 +1316,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'taira', name: '长门' },
 
     { id: 'yehe', name: '叶赫' },
 
@@ -1390,7 +1343,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'lelang', name: '乐浪' },
     { id: 'huite', name: '辉特' },
     { id: 'zubu', name: '阻卜' },
 
@@ -1445,7 +1397,6 @@ export const FACTIONS: Faction[] = [
 
               // 姑衍山·匈奴祭天（撑犁=天）
                // 涿邪山·窦宪北征突骑
-  { id: 'sanada_d', name: '信浓' },
 
 
     { id: 'bailong', name: '白龙' },
@@ -1463,10 +1414,7 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'sagami', name: '相模' },
-    { id: 'mino', name: '美浓' },
 
-    { id: 'ssangseong', name: '和州' },
     // ── Phase 1 Missing Factions ──
     { id: 'kumoxi', name: '库莫奚' },
 
@@ -1654,7 +1602,6 @@ export const FACTIONS: Faction[] = [
     { id: 'bogengnidielan', name: '勃艮第尼德兰' },        // 里尔·勃艮第尼德兰（好人菲利普）
     { id: 'gewennesi', name: '格温内斯' },        // 哈瓦登·格温内斯（戴菲德）
     { id: 'weiershigongguo', name: '威尔士公国' },        // 布伊尔斯·威尔士公国（卢埃林）
-    { id: 'huanzhou', name: '驩州' },        // 义安·驩州（丁礼）
     { id: 'tigelei', name: '提格雷' },        // 德布雷达莫·提格雷（吉达扬）
     { id: 'luben', name: '鲁本' },        // 瓦卡·奇里乞亚亚美尼亚鲁本王朝（托罗斯二世）
     { id: 'xiaoa', name: '肖阿' },        // 德布雷利巴诺斯·肖阿（达格纳詹）
