@@ -641,8 +641,8 @@ export const HAN_DYNASTY_GENERAL_IDS = new Set([
 export const HAN_DYNASTY_FACTION_IDS = new Set([
     'han', 'han_d', 'suzhou', 'shuofang', 
     'lanzhou', 'quli', 'xiyuduhu', 'jiluo_d',
-    'you', 'shu', 'chu',
-    'jingmen', 'cangsong', 'dongsheng', 'liu'
+    'you', 'shu', 
+    'cangsong', 'dongsheng', 'liu'
 ]);
 
 /** 唐朝名将 ID 集合 */
@@ -707,9 +707,9 @@ export const SONG_DYNASTY_GENERAL_IDS = new Set([
 
 /** 宋朝势力 ID 集合 */
 export const SONG_DYNASTY_FACTION_IDS = new Set([
-    'luoping', 
     
-    'tingzhou_d', 'changshaguo', 'shenshi',
+    
+    
     'song', 'yanzhou'
 ]);
 
@@ -736,9 +736,9 @@ export const MING_DYNASTY_GENERAL_IDS = new Set([
 
 /** 大明势力 ID 集合 */
 export const MING_DYNASTY_FACTION_IDS = new Set([
-    'ming_d', 'guizhou', 'dongshengwei', 
+    'ming_d', 'dongshengwei', 
     'zu_d',
-    'qi_d', 'chizhou', 'yansui'
+    'yansui'
 ]);
 
 /** 曹魏名将 ID 集合 */
@@ -754,7 +754,7 @@ export const WEI_DYNASTY_GENERAL_IDS = new Set([
 /** 曹魏势力 ID 集合 */
 export const WEI_DYNASTY_FACTION_IDS = new Set([
     // 曹魏·谯县
-    'lu',                       // 合肥·张辽
+    // 合肥·张辽
     // 武都·邓艾
     // 获嘉·司马懿
     // 聊城·于禁

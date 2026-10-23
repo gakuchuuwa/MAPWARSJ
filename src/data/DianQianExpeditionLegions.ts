@@ -33,7 +33,5 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     ahaomu: { name: '阿豪姆舟师', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     jingpozu: { name: '景颇长刀兵', tier: 3 },
     xingwei: { name: '木邦象兵', tier: 4 },
-    wenling: { name: '福建水师', tier: 3 },
-    miaomin: { name: '苗疆义军', tier: 4 },
     mimo: { name: '靡莫射手', tier: 4 },   // 靡莫邑·靡莫大酋 苴兰：靡莫邑·苴兰：滇东靡莫诸部的射手，前278年庄蹻入滇所遇
 };
