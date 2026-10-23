@@ -9,7 +9,19 @@
   "width": 144,
   "height": 144,
   "objects": 2921,
-  "missingCount": 12
+  "missingCount": 0
+ },
+ {
+  "id": "acam1_2",
+  "campaign": "acam1",
+  "campaignName": "acam1",
+  "level": 2,
+  "name": "A1_Tariq2.aoe2scenario",
+  "file": "acam1_2.json",
+  "width": 168,
+  "height": 168,
+  "objects": 5936,
+  "missingCount": 0
  },
  {
   "id": "acam1_3",
@@ -21,7 +33,211 @@
   "width": 168,
   "height": 168,
   "objects": 5366,
-  "missingCount": 23
+  "missingCount": 0
+ },
+ {
+  "id": "acam1_4",
+  "campaign": "acam1",
+  "campaignName": "acam1",
+  "level": 4,
+  "name": "A1_Tariq4.aoe2scenario",
+  "file": "acam1_4.json",
+  "width": 144,
+  "height": 144,
+  "objects": 3677,
+  "missingCount": 3
+ },
+ {
+  "id": "acam1_5",
+  "campaign": "acam1",
+  "campaignName": "acam1",
+  "level": 5,
+  "name": "A1_Tariq5.aoe2scenario",
+  "file": "acam1_5.json",
+  "width": 144,
+  "height": 144,
+  "objects": 3182,
+  "missingCount": 4
+ },
+ {
+  "id": "acam2_1",
+  "campaign": "acam2",
+  "campaignName": "acam2",
+  "level": 1,
+  "name": "A2_Sundjata_1.aoe2scenario",
+  "file": "acam2_1.json",
+  "width": 144,
+  "height": 144,
+  "objects": 3009,
+  "missingCount": 8
+ },
+ {
+  "id": "acam2_2",
+  "campaign": "acam2",
+  "campaignName": "acam2",
+  "level": 2,
+  "name": "A2_Sundjata_2.aoe2scenario",
+  "file": "acam2_2.json",
+  "width": 168,
+  "height": 168,
+  "objects": 7099,
+  "missingCount": 18
+ },
+ {
+  "id": "acam2_3",
+  "campaign": "acam2",
+  "campaignName": "acam2",
+  "level": 3,
+  "name": "A2_Sundjata_3.aoe2scenario",
+  "file": "acam2_3.json",
+  "width": 168,
+  "height": 168,
+  "objects": 4864,
+  "missingCount": 2
+ },
+ {
+  "id": "acam2_4",
+  "campaign": "acam2",
+  "campaignName": "acam2",
+  "level": 4,
+  "name": "A2_Sundjata_4.aoe2scenario",
+  "file": "acam2_4.json",
+  "width": 168,
+  "height": 168,
+  "objects": 2815,
+  "missingCount": 0
+ },
+ {
+  "id": "acam2_5",
+  "campaign": "acam2",
+  "campaignName": "acam2",
+  "level": 5,
+  "name": "A2_Sundjata_5.aoe2scenario",
+  "file": "acam2_5.json",
+  "width": 144,
+  "height": 144,
+  "objects": 2475,
+  "missingCount": 0
+ },
+ {
+  "id": "acam3_1",
+  "campaign": "acam3",
+  "campaignName": "acam3",
+  "level": 1,
+  "name": "A3_Almeida_1.aoe2scenario",
+  "file": "acam3_1.json",
+  "width": 144,
+  "height": 144,
+  "objects": 6693,
+  "missingCount": 8
+ },
+ {
+  "id": "acam3_2",
+  "campaign": "acam3",
+  "campaignName": "acam3",
+  "level": 2,
+  "name": "A3_Almeida_2.aoe2scenario",
+  "file": "acam3_2.json",
+  "width": 144,
+  "height": 144,
+  "objects": 2634,
+  "missingCount": 1
+ },
+ {
+  "id": "acam3_3",
+  "campaign": "acam3",
+  "campaignName": "acam3",
+  "level": 3,
+  "name": "A3_Almeida_3.aoe2scenario",
+  "file": "acam3_3.json",
+  "width": 200,
+  "height": 200,
+  "objects": 4442,
+  "missingCount": 4
+ },
+ {
+  "id": "acam3_4",
+  "campaign": "acam3",
+  "campaignName": "acam3",
+  "level": 4,
+  "name": "A3_Almeida_4.aoe2scenario",
+  "file": "acam3_4.json",
+  "width": 144,
+  "height": 144,
+  "objects": 3589,
+  "missingCount": 5
+ },
+ {
+  "id": "acam3_5",
+  "campaign": "acam3",
+  "campaignName": "acam3",
+  "level": 5,
+  "name": "A3_Almeida_5.aoe2scenario",
+  "file": "acam3_5.json",
+  "width": 168,
+  "height": 168,
+  "objects": 5662,
+  "missingCount": 4
+ },
+ {
+  "id": "acam4_1",
+  "campaign": "acam4",
+  "campaignName": "acam4",
+  "level": 1,
+  "name": "A4_Yodit_1.aoe2scenario",
+  "file": "acam4_1.json",
+  "width": 168,
+  "height": 168,
+  "objects": 3575,
+  "missingCount": 1
+ },
+ {
+  "id": "acam4_2",
+  "campaign": "acam4",
+  "campaignName": "acam4",
+  "level": 2,
+  "name": "A4_Yodit_2.aoe2scenario",
+  "file": "acam4_2.json",
+  "width": 168,
+  "height": 168,
+  "objects": 2543,
+  "missingCount": 1
+ },
+ {
+  "id": "acam4_3",
+  "campaign": "acam4",
+  "campaignName": "acam4",
+  "level": 3,
+  "name": "A4_Yodit_3.aoe2scenario",
+  "file": "acam4_3.json",
+  "width": 200,
+  "height": 200,
+  "objects": 6110,
+  "missingCount": 9
+ },
+ {
+  "id": "acam4_4",
+  "campaign": "acam4",
+  "campaignName": "acam4",
+  "level": 4,
+  "name": "A4_Yodit_4.aoe2scenario",
+  "file": "acam4_4.json",
+  "width": 144,
+  "height": 144,
+  "objects": 3080,
+  "missingCount": 4
+ },
+ {
+  "id": "acam4_5",
+  "campaign": "acam4",
+  "campaignName": "acam4",
+  "level": 5,
+  "name": "A4_Yodit_5.aoe2scenario",
+  "file": "acam4_5.json",
+  "width": 200,
+  "height": 200,
+  "objects": 7892,
+  "missingCount": 1
  },
  {
   "id": "cam2_1",
@@ -33,6 +249,6 @@
   "width": 144,
   "height": 144,
   "objects": 7562,
-  "missingCount": 1
+  "missingCount": 0
  }
 ]

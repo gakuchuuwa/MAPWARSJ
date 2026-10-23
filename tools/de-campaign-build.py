@@ -238,7 +238,7 @@ def render_graphic(dat, gid, rot, radians, tint, depth=0):
 
     def self_layer():
         name = (g.file_name or "").strip()
-        if not name or name.lower() in ("x", "w", "none"):   # dat 里的占位名：这一层本来就没有图
+        if not name or len(name) <= 1 or name.lower() in ("w", "none"):   # dat 里的占位名（X/W/R/E/M/None）：这一层本来就没有图
             return []
         f = sld(name)
         if f is None:
@@ -307,7 +307,18 @@ def as_int(v, default):
         return default
 
 
-def build_level(dat, colors, sprites, scn_path, meta, out_id):
+def safe_attr(obj, name, default=None):
+    """老版本场景（1.36 等）没有的字段，AoE2ScenarioParser 会抛 UnsupportedAttributeError —— 一律当缺省。"""
+    try:
+        return getattr(obj, name)
+    except Exception:
+        return default
+
+
+def dump_scenario(scn_path):
+    """读场景 → 纯数据（地形 / 高度 / 图层 / 玩家 / 物件）。
+    ⚠️ AoE2ScenarioParser 在同一进程里连续读不同版本的场景会串版本（实测第 2 个起报 execute_on_load / architecture_set），
+       所以 main 里每关都开一个子进程跑本函数（--dump），主进程只管 dat 与精灵。"""
     s = load_scenario(scn_path)
     mm = s.map_manager
     W, H = mm.map_width, mm.map_height
@@ -315,17 +326,37 @@ def build_level(dat, colors, sprites, scn_path, meta, out_id):
     for t in mm.terrain:
         i = t.y * W + t.x
         terrain[i] = int(t.terrain_id); elev[i] = int(t.elevation)
-        lv = int(getattr(t, "layer", -1))
+        lv = safe_attr(t, "layer", -1)
+        lv = int(lv) if lv is not None else -1
         layer[i] = lv if lv >= 0 else -1
     players = s.player_manager.players
     pinfo = []
     for i in range(9):
         p = players[i] if i < len(players) else None
-        civ = civ_index(p.civilization) if p is not None else 0
-        arch_raw = getattr(p, "architecture_set", None) if p is not None else None
+        civ = civ_index(safe_attr(p, "civilization")) if p is not None else 0
+        arch_raw = safe_attr(p, "architecture_set") if p is not None else None
         arch = civ_index(arch_raw) if arch_raw is not None and not isinstance(arch_raw, (int, float)) else as_int(arch_raw, -1)
-        color = as_int(getattr(p, "color", i - 1), max(0, i - 1)) if p is not None else 0
+        color = as_int(safe_attr(p, "color", i - 1), max(0, i - 1)) if p is not None else 0
         pinfo.append({"civ": civ, "arch": arch, "color": color})
+    units = []
+    for pl, plist in enumerate(s.unit_manager.units):
+        for u in plist:
+            units.append({"pl": pl, "id": int(u.unit_const), "x": float(u.x), "y": float(u.y),
+                          "rot": float(u.rotation), "garrison": int(safe_attr(u, "garrisoned_in_id", -1) if safe_attr(u, "garrisoned_in_id", -1) is not None else -1)})
+    return {"W": W, "H": H, "terrain": terrain, "elev": elev, "layer": layer, "players": pinfo, "units": units}
+
+
+def build_level(dat, colors, sprites, scn_path, meta, out_id):
+    import subprocess
+    tmp = scn_path.with_suffix(".dump.json")
+    r = subprocess.run([sys.executable, __file__, "--dump", str(scn_path), str(tmp)], capture_output=True, text=True,
+                       encoding="utf-8", errors="replace")
+    if r.returncode != 0 or not tmp.exists():
+        last = (r.stderr or r.stdout).strip().splitlines()
+        raise RuntimeError(last[-1] if last else f"dump 失败 code={r.returncode}")
+    sd = json.loads(tmp.read_text(encoding="utf-8"))
+    W, H = sd["W"], sd["H"]
+    terrain, elev, layer, pinfo = sd["terrain"], sd["elev"], sd["layer"], sd["players"]
 
     objects, missing, skipped = [], {}, {}
     placed = set()   # (unit id, x, y)：场景里已存的物件，补附属件时去重
@@ -377,15 +408,14 @@ def build_level(dat, colors, sprites, scn_path, meta, out_id):
                         "id": uid, "unit": base.name, "player": pl, **({"annex": 1} if depth else {})})
 
     live = []
-    for pl, plist in enumerate(s.unit_manager.units):
-        for u in plist:
-            if int(getattr(u, "garrisoned_in_id", -1)) >= 0:
-                skipped["驻扎"] = skipped.get("驻扎", 0) + 1
-                continue
-            live.append((pl, u))
-            placed.add((int(u.unit_const), round(float(u.x), 2), round(float(u.y), 2)))
-    for pl, u in live:
-        emit(pl, int(u.unit_const), float(u.x), float(u.y), float(u.rotation))
+    for u in sd["units"]:
+        if u["garrison"] >= 0:
+            skipped["驻扎"] = skipped.get("驻扎", 0) + 1
+            continue
+        live.append(u)
+        placed.add((u["id"], round(u["x"], 2), round(u["y"], 2)))
+    for u in live:
+        emit(u["pl"], u["id"], u["x"], u["y"], u["rot"])
 
     out = {
         "header": {"campaign": meta, "size": W, "source": "AoE2 DE scenario (verbatim)"},
@@ -400,6 +430,9 @@ def main():
     args = sys.argv[1:]
     if not args:
         print(__doc__); sys.exit(1)
+    if args[0] == "--dump":
+        Path(args[2]).write_text(json.dumps(dump_scenario(Path(args[1]))), encoding="utf-8")
+        return
     OUT.mkdir(parents=True, exist_ok=True); SPR.mkdir(parents=True, exist_ok=True); WORK.mkdir(parents=True, exist_ok=True)
     jobs = []   # (stem, level_or_0)
     if args[0] == "--all":

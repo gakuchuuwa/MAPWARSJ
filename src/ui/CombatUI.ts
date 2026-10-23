@@ -4239,6 +4239,7 @@ export class CombatUI {
         this.container.classList.add('has-left-portrait');
         this.container.classList.add('has-right-portrait');
         this.playPortraitEntrance();
+        this.hidePortraitsInSkirmish();
     }
 
     public showRegional(
@@ -4363,6 +4364,7 @@ export class CombatUI {
             this.rightPortraitFrame.style.display = 'block';
             this.container.classList.add('has-right-portrait');
         }
+        this.hidePortraitsInSkirmish();
         if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = this.scene13LayoutOn ? 'none' : 'flex';
         if (!this.scene13LayoutOn) {
             this.centerPanel.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
@@ -4399,6 +4401,21 @@ export class CombatUI {
         this.leftPortraitFrame.style.opacity = '1';
         this.leftPortraitFrame.style.visibility = 'visible';
         this.container.classList.add('has-left-portrait');
+        this.hidePortraitsInSkirmish();
+    }
+
+    /**
+     * 🔴 [2026-10-22 主人截图「怎么有这些立绘显示？」] 故事块小仗（小队模式）没有武将：
+     *    开打时已隐藏立绘，但战后收场、跟拍切回时这几条路又把两边立绘亮出来（左边乌拉尔图武将、右边「未知势力」随机立绘）。
+     *    凡是亮立绘的地方最后都过这一道：小队战还在场上（含收场）就再藏起来。
+     */
+    private hidePortraitsInSkirmish(): void {
+        const war = (window as any).game?.scene13War;
+        if (!(war?.isActive?.() === true && war?.isSkirmish?.() === true)) return;
+        for (const el of [this.leftPortraitFrame, this.rightPortraitFrame]) {
+            if (el) el.style.display = 'none';
+        }
+        this.container.classList.remove('has-left-portrait', 'has-right-portrait');
     }
 
     public isRegionalVisible(): boolean {
