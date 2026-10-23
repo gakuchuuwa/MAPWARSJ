@@ -190,7 +190,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe3_43': 'KHITAN',   // 先零｜杨玉｜据点 允吾
     'bfe3_44': 'KHITAN',   // 乞伏｜靡忘｜据点 枹罕
     'bfe3_45': 'KHITAN',   // 汉国｜郑吉｜据点 轮台
-    'bfe3_46': 'FRANKS',   // 高卢罗曼｜维钦托利｜据点 里昂
+    'bfe3_46': 'BURGUNDIANS',   // 高卢罗曼｜维钦托利｜据点 第戎
     'bfe3_48': 'XIANBEI',   // 密西亚｜呼韩邪单于｜据点 光禄城
     'bfe3_50': 'BASHU',   // 夜郎｜头兰｜据点 且兰
     'bfe3_51': 'ROMA',   // 罗马帝国｜佩特罗尼乌斯｜据点 罗马城
@@ -204,7 +204,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe3_68': 'WEI',   // 幽州｜严纲｜据点 北京
     'bfe3_69': 'CENTRAL',   // 汉国｜华雄｜据点 洛阳
     'bfe3_7': 'CENTRAL',   // 唐国｜胡阳｜据点 长安
-    'bfe3_70': 'JIANGNAN',   // 杨吴｜刘繇｜据点 广陵
+    'bfe3_70': 'JIANGNAN',   // 杨吴｜刘繇｜据点 延陵
     'bfe3_71': 'CENTRAL',   // 商国｜袁绍｜据点 安阳
     'bfe3_73': 'PERSIAN',   // 安息帝国｜阿尔达班四世｜据点 尼萨
     'bfe3_74': 'XIANBEI',   // 大元｜轲比能｜据点 兴和城
@@ -281,7 +281,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'cuanshi_cuanlongyan': 'BASHU',   // 爨族｜爨龙颜｜据点 曲靖
     'da_yuan_kuokuotiemuer': 'MONGOL',   // 大元｜扩廓帖木儿｜据点 哈拉和林
     'daca_dacajilong': 'TIBET',   // 达擦｜达擦济咙｜据点 八宿宗
-    'dacheng_chenkai': 'JIANGNAN',   // 大成｜陈开｜据点 政和
+    'dacheng_chenkai': 'JIANGNAN',   // 大成｜陈开｜据点 金田村
     'dada_ming_dayanhan': 'XIANBEI',   // 鞑靼｜巴图蒙克｜据点 河套
     'dafeichuan_nuohebo': 'KHITAN',   // 吐谷浑｜诺曷钵｜据点 伏俟城
     'dai_d_shijingtang': 'WEI',   // 后晋｜石敬瑭｜据点 晋阳
@@ -330,8 +330,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'dingzhou_d_murongchui': 'WEI',   // 慕容｜慕容垂｜据点 中山
     'disidelusi_disidelusi': 'ROMA',   // 蒂斯德鲁斯｜蒂斯德鲁斯督造｜据点 杰姆
     'dixiang_wangmang': 'CENTRAL',   // 新国｜王莽｜据点 长安
-    'dizhou_wangyanzhang': 'WEI',   // 后梁｜王彦章｜据点 乐安
-    'don_vorontsov': 'SLAVIC',   // 伏尔加｜沃隆佐夫｜据点 察里津
+    'dizhou_wangyanzhang': 'CENTRAL',   // 后梁｜王彦章｜据点 曲阜
+    'don_vorontsov': 'SLAVIC',   // 伏尔加｜沃隆佐夫｜据点 圣彼得堡
     'dong_nangqianjiabo': 'TIBET',   // 隆庆｜囊谦｜据点 囊谦宗
     'dongdan_yelvbei': 'WEI',   // 大辽｜耶律倍｜据点 襄平
     'donghu_tuiyin': 'XIANBEI',   // 拓跋｜推寅｜据点 巴彦乌拉
@@ -350,7 +350,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'duluo_sangqiao': 'PORTUGUESE',   // 杜罗｜桑乔一世｜据点 波尔图
     'duolu_ashinahelu': 'CENTRAL_ASIA',   // 咄陆｜阿史那贺鲁｜据点 孛罗营
     'duomi_lunkongre': 'KHITAN',   // 吐蕃｜论恐热｜据点 乐都
-    'duonaobaojia_samuel': 'BULGARIANS',   // 多瑙保加｜萨穆伊尔｜据点 普雷斯拉夫
+    'duonaobaojia_samuel': 'THRACIAN',   // 多瑙保加｜萨穆伊尔｜据点 佩利昂
     'duonaobaojia_tzimiskes': 'BYZANTINE',   // 多瑙保加｜齐米斯基｜据点 君士坦丁堡
     'dzungar_galedanceling': 'CENTRAL_ASIA',   // 绰罗斯｜噶勒丹策凌｜据点 固尔札
     'echigo_shangshanqianxin': 'JAPAN',   // 上杉｜上杉谦信｜据点 春日山
@@ -405,10 +405,10 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_abgar': 'ORIE',   // 奥斯若恩｜阿布加尔｜据点 埃德萨
     'gen_abu_yahya': 'LATIN',   // 加泰罗尼亚｜阿布·叶海亚｜据点 巴塞罗那
     'gen_adityawarman': 'MALAY',   // 米南加保｜阿迪蒂亚｜据点 帕加鲁荣
-    'gen_afonso_henriques': 'PORTUGUESE',   // 葡萄牙｜阿方索一世｜据点 里斯本
+    'gen_afonso_henriques': 'PORTUGUESE',   // 葡萄牙｜阿方索一世｜据点 波尔图
     'gen_akechi_mitsuhide': 'JAPAN',   // 室町｜明智光秀｜据点 京都
     'gen_alain_i': 'BRITONS',   // 布列塔尼｜阿兰｜据点 雷恩
-    'gen_alaric': 'LATIN',   // 巴尔塔｜亚拉里克｜据点 科森扎
+    'gen_alaric': 'FRANKS',   // 巴尔塔｜亚拉里克｜据点 图卢兹
     'gen_albert_riga': 'GERMANIC',   // 宝剑骑士团｜阿尔伯特·冯·布克斯赫夫登｜据点 里加
     'gen_albrecht_bear': 'GERMANIC',   // 阿斯坎尼｜阿尔布雷｜据点 勃兰登堡
     'gen_alexander_great': 'MACEDONIAN',   // 马其顿｜亚历山大｜据点 佩拉
@@ -428,7 +428,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_artemisia': 'GREECE',   // 卡里亚｜阿尔特米西亚｜据点 哈利卡纳苏斯
     'gen_aspurgus': 'GREECE',   // 陶里卡｜阿斯普尔｜据点 潘提卡彭
     'gen_astrakhan_khan': 'CENTRAL_ASIA',   // 金帐｜阿斯特拉｜据点 萨莱
-    'gen_atahualpa': 'INCA',   // 印加｜阿塔瓦尔帕｜据点 库斯科
+    'gen_atahualpa': 'INCA',   // 印加｜阿塔瓦尔帕｜据点 昌昌
     'gen_ataulf': 'GOTHS',   // 塞普提曼尼亚｜阿陶尔夫｜据点 纳博讷
     'gen_baodewen_iv': 'FRANKS',   // 耶路撒冷王国｜鲍德温四世｜据点 阿卡
     'gen_barbarossa': 'BERBER',   // 巴巴里｜巴巴罗萨｜据点 阿尔及尔
@@ -480,7 +480,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_cuauhtemoc': 'AMERICA',   // 阿兹特克｜库奥特莫克｜据点 特诺奇提特兰
     'gen_cuchacique': 'INCA',   // 泰罗纳｜库查西克｜据点 特尤纳
     'gen_cunhambebe': 'TUPI',   // 塔莫约｜昆汉贝贝｜据点 卡布弗里乌
-    'gen_dafydd': 'CELTS',   // 格温内斯｜戴菲德｜据点 哈瓦登
+    'gen_dafydd': 'BRITONS',   // 格温内斯｜戴菲德｜据点 卡那封
     'gen_dagnajan': 'ETHIOPIANS',   // 肖阿｜达格纳詹｜据点 德布雷利巴诺斯
     'gen_dandolo': 'LATIN',   // 亚得里亚｜丹多洛｜据点 威尼斯
     'gen_daniel_galitsky': 'SLAVIC',   // 哈尔公国｜丹尼尔｜据点 加利奇
@@ -494,7 +494,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_dragut': 'BERBER',   // 的黎波里塔｜德拉古特｜据点 的黎波里
     'gen_edward_longshanks': 'BRITONS',   // 金雀花｜长腿爱德华｜据点 卡那封
     'gen_el_cid': 'SPANISH',   // 瓦伦西亚｜熙德｜据点 巴伦西亚
-    'gen_eleanor': 'SICILIANS',   // 萨丁｜埃莱奥诺拉｜据点 卡利亚里
+    'gen_eleanor': 'LATIN',   // 萨丁｜埃莱奥诺拉｜据点 比萨
     'gen_epaminondas': 'GREECE',   // 波奥蒂亚｜伊巴密浓达｜据点 底比斯
     'gen_eric_bloodaxe': 'DANES',   // 约维克｜埃里克｜据点 约克
     'gen_ezana': 'ETHIOPIANS',   // 埃塞俄比亚｜埃扎纳｜据点 阿克苏姆
@@ -539,7 +539,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_james_i_aragon': 'SPANISH',   // 阿拉贡｜海梅｜据点 萨拉戈萨
     'gen_jan_zizka': 'BOHEMIANS',   // 波西米亚｜扬杰斯卡｜据点 布拉格
     'gen_jasawchan': 'MAYANS',   // 玛雅｜亚斯纳昌｜据点 蒂卡尔
-    'gen_joanofarc': 'FRANKS',   // 奥尔良公国｜贞德｜据点 兰斯
+    'gen_joanofarc': 'FRANKS',   // 奥尔良公国｜贞德｜据点 香波堡
     'gen_joao_i': 'PORTUGUESE',   // 布拉干萨家｜若昂一世｜据点 里斯本
     'gen_jogaila': 'LITHUANIANS',   // 立陶宛｜雅盖沃｜据点 维尔纽斯
     'gen_john_comyn': 'CELTS',   // 苏格兰｜约翰·科明｜据点 斯昆
@@ -566,7 +566,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_li_xin': 'CENTRAL',   // 唐国｜李信｜据点 长安
     'gen_li_xiucheng': 'JIANGNAN',   // 刘宋｜李秀成｜据点 金陵
     'gen_liu_guoxuan': 'JIANGNAN',   // 明郑｜刘国轩｜据点 承天
-    'gen_llywelyn': 'CELTS',   // 威尔士公国｜卢埃林｜据点 布伊尔斯
+    'gen_llywelyn': 'BRITONS',   // 威尔士公国｜卢埃林｜据点 卡那封
     'gen_lobsang_danjin': 'TIBET',   // 和硕特｜罗卜藏丹津｜据点 当雄
     'gen_lorenzo_medici': 'LATIN',   // 托斯卡纳｜洛伦佐｜据点 佛罗伦萨
     'gen_louis_xi': 'FRANKS',   // 法兰西｜路易十一｜据点 巴黎
@@ -631,7 +631,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_roger_i': 'SICILIANS',   // 墨西公国｜罗杰｜据点 梅西纳
     'gen_romshlav': 'SLAVIC',   // 斯摩公国｜罗姆什拉夫｜据点 斯摩棱斯克
     'gen_rurik': 'VARANGIANS',   // 留里克｜留里克｜据点 拉多加
-    'gen_ryuzoji_takanobu': 'JAPAN',   // 南朝｜龙造寺隆信｜据点 熊本
+    'gen_ryuzoji_takanobu': 'JAPAN',   // 南朝｜龙造寺隆信｜据点 太宰府
     'gen_sadashivrao': 'MUGHAL',   // 德里苏丹国｜萨达希夫｜据点 德里
     'gen_saguamanchica': 'MUISCA',   // 穆伊斯卡｜萨瓜曼奇卡｜据点 巴卡塔
     'gen_sang_nila_utama': 'MALAY',   // 马来｜桑尼拉乌他马｜据点 淡马锡
@@ -647,14 +647,14 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_si_lunfa': 'BURMESE',   // 麓川｜思伦发｜据点 勐卯
     'gen_simeon_great': 'THRACIAN',   // 色雷斯｜西美昂｜据点 普罗夫迪夫
     'gen_sineus': 'VARANGIANS',   // 留里克｜西涅乌斯｜据点 白湖
-    'gen_stefan_dusan': 'SLAVIC',   // 塞尔维亚｜斯蒂芬杜尚｜据点 贝尔格莱德
+    'gen_stefan_dusan': 'SLAVIC',   // 塞尔维亚｜斯蒂芬杜尚｜据点 拉古萨
     'gen_stephen_great': 'SLAVIC',   // 摩尔达维亚｜斯蒂芬｜据点 雅西
     'gen_stortebeker': 'GERMANIC',   // 汉萨｜克劳斯｜据点 汉堡
     'gen_stuyvesant': 'SAXONS',   // 新尼德兰｜斯泰弗森特｜据点 新阿姆斯特丹
     'gen_suffolk': 'SAXONS',   // 英格兰｜萨福克伯爵｜据点 温彻斯特
     'gen_suleiman': 'TURKS',   // 奥斯曼｜苏莱曼｜据点 布尔萨
     'gen_sumanguru': 'AFRICA',   // 索索｜苏曼古鲁｜据点 库姆比萨利赫
-    'gen_sundjata': 'AFRICA',   // 曼丁哥｜松迪亚塔｜据点 廷巴克图
+    'gen_sundjata': 'AFRICA',   // 曼丁哥｜松迪亚塔｜据点 库姆比萨利赫
     'gen_swatopluk': 'BOHEMIANS',   // 摩拉维亚｜斯瓦托｜据点 奥尔穆茨
     'gen_tashfin': 'BERBER',   // 穆拉比特｜塔什芬｜据点 马拉喀什
     'gen_tassilo_iii': 'GERMANIC',   // 巴伐利亚｜塔西洛三世｜据点 雷根斯堡
@@ -682,7 +682,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_vlad_impaler': 'SLAVIC',   // 瓦拉几亚｜弗拉德三世｜据点 特尔戈维
     'gen_vladimir_andreyevich': 'SLAVIC',   // 谢尔公国｜勇者弗拉基｜据点 谢尔普霍夫
     'gen_vladimir_monomakh': 'SLAVIC',   // 佩列公国｜莫诺马赫｜据点 佩列斯拉夫
-    'gen_vukasin': 'SLAVIC',   // 塞尔维亚｜武卡辛｜据点 贝尔格莱德
+    'gen_vukasin': 'SLAVIC',   // 塞尔维亚｜武卡辛｜据点 拉古萨
     'gen_vyacheslav_tartu': 'LITHUANIANS',   // 楚德｜维切斯拉夫｜据点 尤里耶夫
     'gen_vyshnevetsky': 'SLAVIC',   // 第聂伯｜拜达｜据点 切尔卡瑟
     'gen_vytautas_great': 'LITHUANIANS',   // 涅曼｜维托夫特｜据点 格罗德诺
@@ -718,7 +718,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gualani_nicolas': 'TUPI',   // 瓜拉尼｜尼古拉斯｜据点 伊瓜苏
     'guangping_ruanwenzhang': 'VIETNAMESE',   // 越南｜阮文张｜据点 洞海城
     'guangwu_xinwuxian': 'KHITAN',   // 汉国｜辛武贤｜据点 令居
-    'guangxin_shixie': 'JIANGNAN',   // 汉国｜士燮｜据点 苍梧
+    'guangxin_shixie': 'VIETNAMESE',   // 汉国｜士燮｜据点 昇龙
     'guangzhou_liuyin': 'JIANGNAN',   // 南汉｜刘隐｜据点 番禺
     'guazhou_zhangshougui': 'KHITAN',   // 唐国｜张守珪｜据点 晋昌
     'guge_chizhaxichabade': 'TIBET',   // 古格｜扎西查巴｜据点 札布让
@@ -1035,11 +1035,11 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'nuoyan_d_sanyinnuoyan': 'MONGOL',   // 喀尔喀｜三音诺颜｜据点 赛音山达
     'nvguo_mojie': 'TIBET',   // 苏毗｜末羯｜据点 玛旁雍错
     'ogodei_chuoermahan': 'SASANIAN',   // 窝阔台｜绰儿马罕｜据点 大不里士
-    'oirat_ming_gaerdan': 'MONGOL',   // 卫拉特｜噶尔丹｜据点 科布多
+    'oirat_ming_gaerdan': 'CENTRAL_ASIA',   // 卫拉特｜噶尔丹｜据点 固尔札
     'ongut_alawusi': 'XIANBEI',   // 汪古｜阿剌兀思｜据点 净州塞
     'osman_mehmed_ii': 'BYZANTINE',   // 奥斯曼｜穆罕默德二世｜据点 君士坦丁堡
     'osumi_ganfujianxu': 'JAPAN',   // 岛津｜肝付兼续｜据点 赤尾木城
-    'otomo_d_lihuadaoxue': 'JAPAN',   // 大友｜立花道雪｜据点 府内
+    'otomo_d_lihuadaoxue': 'JAPAN',   // 大友｜立花道雪｜据点 太宰府
     'ouyang_ouyangwei': 'JIANGNAN',   // 宋国｜欧阳頠｜据点 番禺
     'ouyue_zouyao': 'JIANGNAN',   // 瓯越｜驺摇｜据点 临海
     'owari_zhitianxinchang': 'JAPAN',   // 织田｜织田信长｜据点 京都
@@ -1056,7 +1056,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'pelianci_hengli2': 'GERMANIC',   // 佩伦茨｜亨利二世｜据点 拉赫修院
     'pidisha_pidisha': 'PURU',   // 毗底沙｜毗底沙邑长｜据点 桑奇
     'pinghai_laihuer': 'WEI',   // 隋国｜来护儿｜据点 漂渝津
-    'pingnan_muying': 'BASHU',   // 大明｜沐英｜据点 腾越城
+    'pingnan_muying': 'BASHU',   // 大明｜沐英｜据点 滇池
     'pingyuan_yanzhenqing': 'WEI',   // 唐国｜颜真卿｜据点 平原城
     'pisha_weichisheng': 'WESTERN',   // 毗沙｜尉迟胜｜据点 于阗
     'pishan_daihu': 'WESTERN',   // 皮山｜代胡｜据点 固玛
@@ -1085,7 +1085,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'qing_quduan': 'CENTRAL',   // 宋国｜曲端｜据点 合水
     'qinghai_yuezhongqi': 'BASHU',   // 蜀国｜岳钟琪｜据点 成都
     'qingqiang_jiangwei': 'BASHU',   // 蜀国｜姜维｜据点 剑门关
-    'qingyi_fanchangsheng': 'BASHU',   // 成汉｜范长生｜据点 严道
+    'qingyi_fanchangsheng': 'BASHU',   // 成汉｜范长生｜据点 临邛
     'qingyuan_bd_zhoudewei': 'WEI',   // 唐国｜周德威｜据点 晋阳
     'qiong_rengui': 'BASHU',   // 汉国｜任贵｜据点 邛都
     'qiuchi_yangnandang': 'BASHU',   // 仇池｜杨难当｜据点 上禄
@@ -1107,7 +1107,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ruoqiang_quhulai': 'WESTERN',   // 婼羌｜去胡来｜据点 卡克里克
     'ruzhou_sunjian': 'JIANGNAN',   // 汉国｜孙坚｜据点 长沙
     'ryukyu_shangbazhi': 'JAPAN',   // 琉球｜尚巴志｜据点 首里
-    'sabeol_jinshimin': 'KOREA',   // 朝鲜｜金时敏｜据点 三白
+    'sabeol_jinshimin': 'KOREA',   // 朝鲜｜金时敏｜据点 顺天
     'saerbadaer_lazhake': 'PERSIAN',   // 萨尔巴达尔｜拉扎克｜据点 白哈格
     'safawei_aisimaier': 'PERSIAN',   // 吉兰｜艾斯迈尔｜据点 加兹温
     'safawei_d_abasi': 'PERSIAN',   // 萨法维｜阿拔斯｜据点 伊斯法罕
@@ -1227,7 +1227,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tiele_qibiheli': 'MONGOL',   // 高车｜契苾何力｜据点 瀚海
     'tiemuer_tiemuer': 'CENTRAL_ASIA',   // 图兰｜帖木儿｜据点 撒马尔罕
     'tingzhou_d_chenmin': 'JIANGNAN',   // 南唐｜陈敏｜据点 瑞金
-    'tongma_taishici': 'CENTRAL',   // 齐国｜太史慈｜据点 黔陬
+    'tongma_taishici': 'JIANGNAN',   // 齐国｜太史慈｜据点 豫章
     'tongzhou_liuzhiyuan': 'WEI',   // 唐国｜刘知远｜据点 晋阳
     'totomi_jiujingzhongci': 'JAPAN',   // 德川｜酒井忠次｜据点 浜松城
     'tsangpa_pengcuonanjie': 'TIBET',   // 藏巴汗｜彭措南杰｜据点 桑珠孜
