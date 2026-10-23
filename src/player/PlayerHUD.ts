@@ -521,7 +521,7 @@ export class PlayerHUD {
         // 📜/⚔️ 自动模式玩法
         const planSel = document.createElement('select');
         planSel.className = 'player-hud-select';
-        planSel.title = '百年模式（默认）：武将到登场年出现、满120岁（登场百年）消失，自由混战；乱斗模式：全部武将恒在场；剧本模式：按历史顺序奔赴战场';
+        planSel.title = '乱斗模式（默认）：全部武将恒在场；百年模式：武将到登场年出现、满120岁（登场百年）消失，自由混战；剧本模式：按历史顺序奔赴战场';
         planSel.disabled = false;
         planSel.style.cssText = `
             cursor:pointer; font-family:inherit; font-size:11px; font-weight:700;

@@ -102,7 +102,7 @@ export class MainlineDirector {
     /** 主线要玩家（不让自动模式去别处找武将、不赶战场） */
     public holdsPlayer(): boolean {
         const hero = this.app.playerHero;
-        if (!hero || (hero.autoPlan ?? 'centenarian') !== 'centenarian') return false;
+        if (!hero || (hero.autoPlan ?? 'melee') !== 'centenarian') return false;
         if (this.actor.getSnapshot().value !== 'idle') return true;
         const ev = this.nextEvent(hero);
         return !!ev && ev.holdsPlayer !== false && !hero.isAttached() && hero.factionId === null;
@@ -111,7 +111,7 @@ export class MainlineDirector {
     /** 每帧调用 */
     public tick(): void {
         const hero = this.app.playerHero;
-        if (!hero || (hero.autoPlan ?? 'centenarian') !== 'centenarian') return;
+        if (!hero || (hero.autoPlan ?? 'melee') !== 'centenarian') return;
         // 🔴 [2026-10-23 主人「主角军团会自己去打别的据点，既然是漏洞为什么不修复呢」] 主角军团不按自己的路走：
         //    行为树已不给它派仗（AIController.tickArmy），这里再每帧按住它入伍前就在走的那趟路，免得走到地方自己开打。
         const hostId = hero.getHostLegionId();
