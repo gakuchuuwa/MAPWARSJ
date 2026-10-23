@@ -38,4 +38,6 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     chen: { name: '百越甲兵', tier: 3 },
     liaozu: { name: '寮族兵', tier: 3 },
     shijun: { name: '使君乡兵', tier: 4 },   // 杜洞江·吴日庆：杜洞江·吴日庆：十二使君各据乡兵，968年为丁部领所平
+    daquyue: { name: '禁军铁甲', tier: 1 },   // 大瞿越｜统帅 丁部领｜T1 乘 1.4｜平定十二使君乱建立越南首个统一王朝主力
+    yuenan: { name: '游击铳象', tier: 1 },   // 越南｜统帅 阮惠｜T1 乘 1.4｜玉洄栋多战役突袭破二十万清军，光中大捷主力
 };

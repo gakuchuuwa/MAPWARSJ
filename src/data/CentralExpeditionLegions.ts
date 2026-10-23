@@ -56,4 +56,6 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     yuan_shao: { name: '大戟士', tier: 2 },
     hou_zhou: { name: '殿前军', tier: 2 },
     lvbu: { name: '陷阵营', tier: 2 },
+    hou_qin: { name: '关陇铁骑', tier: 1 },   // 后秦｜统帅 姚苌｜T1 乘 1.4｜屡破苻登前秦禁卫军，平定关陇奠定后秦基业
+    yiqu: { name: '义渠骑射', tier: 2 },   // 义渠｜统帅 义渠王｜T2 乘 1.3｜李信伐楚之战配合秦军，常年抗秦战术突出
 };
