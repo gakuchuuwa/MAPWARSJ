@@ -6507,5 +6507,71 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "奥里斯塔诺-迦太基",
+                type: "sea",
+                id: "sea_city_oristano_city_jiataji_1792767163286",
+                startConnection: "city_oristano",
+                endConnection: "city_jiataji"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [8.59, 39.9],
+                    [7.98426, 40.28064],
+                    [7.54593, 39.7413],
+                    [8.4301, 38.6096],
+                    [9.78007, 38.02673],
+                    [10.37303, 37.48209],
+                    [10.32, 36.85],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "奥里斯塔诺-巴塞罗那",
+                type: "sea",
+                id: "sea_city_oristano_city_barcelona_1792767174297",
+                startConnection: "city_oristano",
+                endConnection: "city_barcelona"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [8.59, 39.9],
+                    [7.98426, 40.28064],
+                    [6.62635, 40.91833],
+                    [5.05032, 40.68933],
+                    [3.45052, 40.81707],
+                    [2.98328, 41.05446],
+                    [2.17, 41.38],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "奥里斯塔诺-热那亚",
+                type: "sea",
+                id: "sea_city_oristano_city_genoa_1792767190662",
+                startConnection: "city_oristano",
+                endConnection: "city_genoa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [8.59, 39.9],
+                    [7.58333, 40.33333],
+                    [7.75, 41.5],
+                    [8.08333, 41.66667],
+                    [8.08333, 42.83333],
+                    [9, 43.91667],
+                    [8.94, 44.4],
+                ]
+            }
+        },
     ]
 };
