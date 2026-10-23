@@ -8547,7 +8547,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'nanzhao_duanqiuxian', generalName: '段酋迁', portrait: '' },
+        { generalId: 'nanzhao_duanqiuxian', generalName: '段酋迁', portrait: '/assets/BASHU/nanzhao_duanqiuxian.png' },
 
 
 
@@ -9176,7 +9176,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     miao_qing: [
         { generalId: 'miao_qing_yangwanzhe', generalName: '杨完者', portrait: '/assets/BASHU/miao_qing_yangwanzhe.png' },
-        { generalId: 'bfe3_50', generalName: '头兰', portrait: '', factionId: 'miao_qing', legionName: '古典时代巴蜀军团' },
+        { generalId: 'bfe3_50', generalName: '头兰', portrait: '/assets/BASHU/bfe3_50.png', factionId: 'miao_qing', legionName: '古典时代巴蜀军团' },
     ],
 
 
@@ -9438,7 +9438,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'yidou_qixin', generalName: '戚昕', portrait: '', legionName: '封建时代江淮军团' , eliteName: '南陈水师', eliteTier: 4 },   // 🔴 戚昕是南陈狼尾滩水军守将（原配「夷陵奇兵」是三国陆逊的）
+        { generalId: 'yidou_qixin', generalName: '戚昕', portrait: '/assets/JIANGNAN/yidou_qixin.png', legionName: '封建时代江淮军团' , eliteName: '南陈水师', eliteTier: 4 },   // 🔴 戚昕是南陈狼尾滩水军守将（原配「夷陵奇兵」是三国陆逊的）
 
 
 
@@ -9501,7 +9501,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_88', generalName: '苻融', portrait: '', legionName: '古典时代巴蜀军团' , eliteName: '前秦卫军', eliteTier: 3},
+        { generalId: 'bfe3_88', generalName: '苻融', portrait: '/assets/BASHU/bfe3_88.png', legionName: '古典时代巴蜀军团' , eliteName: '前秦卫军', eliteTier: 3},
 
 
 
@@ -9510,7 +9510,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：张浚＝南宋川陕宣抚处置使，1130 富平战后驻兴州（今略阳）；开封从未是他的驻地 → 放略阳（fushi，风格 BASHU）；仍挂本政权 song
-        { generalId: 'song_zhangjun', factionId: 'song', legionName: '城堡时代川峡军团', generalName: '张浚', portrait: '' },
+        { generalId: 'song_zhangjun', factionId: 'song', legionName: '城堡时代川峡军团', generalName: '张浚', portrait: '/assets/BASHU/song_zhangjun.png' },
     ],
 
 
@@ -9737,7 +9737,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     liangzhou: [
         { generalId: 'liangzhou_zhanggui', generalName: '张轨', portrait: '/assets/KHITAN/liangzhou_zhanggui.png' },
-        { generalId: 'bfe3_67', generalName: '王国', portrait: '', legionName: '古典时代凉州军团' },
+        { generalId: 'bfe3_67', generalName: '王国', portrait: '/assets/KHITAN/bfe3_67.png', legionName: '古典时代凉州军团' },
     ],
 
 
@@ -9886,7 +9886,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    hunxie: { generalId: 'hunxie_xuziwei', generalName: '浑邪王', portrait: '' },
+    hunxie: { generalId: 'hunxie_xuziwei', generalName: '浑邪王', portrait: '/assets/KHITAN/hunxie_xuziwei.png' },
 
 
 
@@ -9990,7 +9990,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'song_peiji', generalName: '裴济', portrait: '', factionId: 'song', legionName: '封建时代河西军团' },
+        { generalId: 'song_peiji', generalName: '裴济', portrait: '/assets/KHITAN/song_peiji.png', factionId: 'song', legionName: '封建时代河西军团' },
 
 
 
@@ -10080,7 +10080,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     jin: [
         { generalId: 'jin_xianzhen', generalName: '先轸', portrait: '/assets/CENTRAL/jin_xianzhen.png' , legionName: '先秦军团' },
-        { generalId: 'bfe2_xun_linfu', generalName: '荀林父', portrait: '', legionName: '古典时代华夏军团' },
+        { generalId: 'bfe2_xun_linfu', generalName: '荀林父', portrait: '/assets/CENTRAL/bfe2_xun_linfu.png', legionName: '古典时代华夏军团' },
     ],
 
 
@@ -10170,11 +10170,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     qi: [
-        { generalId: 'bfe3_90', generalName: '慕容超', portrait: '', legionName: '古典时代华夏军团' },
-        { generalId: 'bfe3_58', generalName: '张步', portrait: '', legionName: '古典时代华夏军团' },
-        { generalId: 'bfe2_bao_shuya', generalName: '鲍叔牙', portrait: '', legionName: '古典时代华夏军团' },
+        { generalId: 'bfe3_90', generalName: '慕容超', portrait: '/assets/CENTRAL/bfe3_90.png', legionName: '古典时代华夏军团' },
+        { generalId: 'bfe3_58', generalName: '张步', portrait: '/assets/CENTRAL/bfe3_58.png', legionName: '古典时代华夏军团' },
+        { generalId: 'bfe2_bao_shuya', generalName: '鲍叔牙', portrait: '/assets/CENTRAL/bfe2_bao_shuya.png', legionName: '古典时代华夏军团' },
         { generalId: 'qi_simarangju', generalName: '司马穰苴', portrait: '/assets/CENTRAL/qi_simarangju.png' , legionName: '先秦军团' },
-        { generalId: 'bfe2_qi_qinggong', generalName: '齐顷公', portrait: '', legionName: '古典时代华夏军团' },
+        { generalId: 'bfe2_qi_qinggong', generalName: '齐顷公', portrait: '/assets/CENTRAL/bfe2_qi_qinggong.png', legionName: '古典时代华夏军团' },
     ],
 
 
@@ -10473,7 +10473,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     xuguo: [
         { generalId: 'caoren', generalName: '曹仁', portrait: '/assets/CENTRAL/caoren.png' },
-        { generalId: 'bfe_wu_yuanji', generalName: '吴元济', portrait: '', factionId: 'tang', legionName: '封建时代中原军团' },
+        { generalId: 'bfe_wu_yuanji', generalName: '吴元济', portrait: '/assets/CENTRAL/bfe_wu_yuanji.png', factionId: 'tang', legionName: '封建时代中原军团' },
     ],
 
 
@@ -10514,7 +10514,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_huaiyi_chief', legionName: '古典时代华夏军团', generalName: '淮夷首领 嬴夷吾', portrait: '' , eliteName: '淮夷弓手', eliteTier: 4},
+        { generalId: 'bfe_huaiyi_chief', legionName: '古典时代华夏军团', generalName: '淮夷首领 嬴夷吾', portrait: '/assets/CENTRAL/bfe_huaiyi_chief.png' , eliteName: '淮夷弓手', eliteTier: 4},
 
 
 
@@ -10658,7 +10658,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'dang_d_pangshigu', generalName: '庞师古', portrait: '' },
+        { generalId: 'dang_d_pangshigu', generalName: '庞师古', portrait: '/assets/CENTRAL/dang_d_pangshigu.png' },
 
 
 
@@ -10691,7 +10691,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     zhuozhou: [
-        { generalId: 'bfe_yin_ziqi', generalName: '尹子奇', portrait: '', legionName: '封建时代河朔军团' },
+        { generalId: 'bfe_yin_ziqi', generalName: '尹子奇', portrait: '/assets/WEI/bfe_yin_ziqi.png', legionName: '封建时代河朔军团' },
 
 
 
@@ -10715,7 +10715,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_shi_chaoyi', generalName: '史朝义', portrait: '', legionName: '封建时代河朔军团' , eliteName: '范阳铁骑', eliteTier: 3},
+        { generalId: 'gen_shi_chaoyi', generalName: '史朝义', portrait: '/assets/WEI/gen_shi_chaoyi.png', legionName: '封建时代河朔军团' , eliteName: '范阳铁骑', eliteTier: 3},
 
 
 
@@ -10731,7 +10731,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'zhuozhou_anshouzhong', generalName: '安守忠', portrait: '' },
+        { generalId: 'zhuozhou_anshouzhong', generalName: '安守忠', portrait: '/assets/WEI/zhuozhou_anshouzhong.png' },
 
 
 
@@ -10747,7 +10747,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'zhuozhou_shisiming', generalName: '史思明', portrait: '' },
+        { generalId: 'zhuozhou_shisiming', generalName: '史思明', portrait: '/assets/WEI/zhuozhou_shisiming.png' },
 
 
 
@@ -10836,7 +10836,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     shizhao_d: [
-        { generalId: 'bfe3_85', generalName: '石琨', portrait: '', legionName: '古典时代太行军团' },
+        { generalId: 'bfe3_85', generalName: '石琨', portrait: '/assets/WEI/bfe3_85.png', legionName: '古典时代太行军团' },
 
 
 
@@ -11061,7 +11061,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     hejian: [
         { generalId: 'hejian_gongsunzan', generalName: '公孙瓒', portrait: '/assets/WEI/hejian_gongsunzan.png' }, // 文安·河间郡公孙瓒白马义从,
-        { generalId: 'bfe3_68', generalName: '严纲', portrait: '', legionName: '古典时代太行军团' },
+        { generalId: 'bfe3_68', generalName: '严纲', portrait: '/assets/WEI/bfe3_68.png', legionName: '古典时代太行军团' },
     ],
 
 
@@ -11134,7 +11134,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gaoqi_d_xiaogui', generalName: '萧轨', portrait: '' },
+        { generalId: 'gaoqi_d_xiaogui', generalName: '萧轨', portrait: '/assets/WEI/gaoqi_d_xiaogui.png' },
 
 
 
@@ -11198,7 +11198,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'erzhu_erzhuzhao', generalName: '尔朱兆', portrait: '' },
+        { generalId: 'erzhu_erzhuzhao', generalName: '尔朱兆', portrait: '/assets/WEI/erzhu_erzhuzhao.png' },
 
 
 
@@ -11247,9 +11247,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     ying: [
-        { generalId: 'bfe2_zi_chang', generalName: '子常', portrait: '', legionName: '古典时代吴越军团' },
-        { generalId: 'bfe2_ziyu', generalName: '子玉', portrait: '', legionName: '古典时代吴越军团' },
-        { generalId: 'bfe2_chu_zhuangwang', generalName: '楚庄王', portrait: '', legionName: '古典时代吴越军团' },
+        { generalId: 'bfe2_zi_chang', generalName: '子常', portrait: '/assets/JIANGNAN/bfe2_zi_chang.png', legionName: '古典时代吴越军团' },
+        { generalId: 'bfe2_ziyu', generalName: '子玉', portrait: '/assets/JIANGNAN/bfe2_ziyu.png', legionName: '古典时代吴越军团' },
+        { generalId: 'bfe2_chu_zhuangwang', generalName: '楚庄王', portrait: '/assets/JIANGNAN/bfe2_chu_zhuangwang.png', legionName: '古典时代吴越军团' },
 
 
 
@@ -11273,7 +11273,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_13', generalName: '项燕', portrait: '', legionName: '古典时代吴越军团' , eliteName: '楚甲士', eliteTier: 2},
+        { generalId: 'bfe3_13', generalName: '项燕', portrait: '/assets/JIANGNAN/bfe3_13.png', legionName: '古典时代吴越军团' , eliteName: '楚甲士', eliteTier: 2},
 
 
 
@@ -11338,9 +11338,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     zhao: [
-        { generalId: 'bfe_ren_guang', generalName: '任光', portrait: '', factionId: 'han_d', legionName: '古典时代华夏军团' },
-        { generalId: 'bfe_dou_jiande', generalName: '窦建德', portrait: '', factionId: 'zhao', legionName: '封建时代中原军团' },
-        { generalId: 'bfe3_18', generalName: '陈馀', portrait: '', legionName: '古典时代华夏军团' },
+        { generalId: 'bfe_ren_guang', generalName: '任光', portrait: '/assets/CENTRAL/bfe_ren_guang.png', factionId: 'han_d', legionName: '古典时代华夏军团' },
+        { generalId: 'bfe_dou_jiande', generalName: '窦建德', portrait: '/assets/CENTRAL/bfe_dou_jiande.png', factionId: 'zhao', legionName: '封建时代中原军团' },
+        { generalId: 'bfe3_18', generalName: '陈馀', portrait: '/assets/CENTRAL/bfe3_18.png', legionName: '古典时代华夏军团' },
 
 
 
@@ -11364,7 +11364,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'zhao_gerong', generalName: '葛荣', portrait: '', factionId: 'panjun', legionName: '起义军' },
+        { generalId: 'zhao_gerong', generalName: '葛荣', portrait: '/assets/CENTRAL/zhao_gerong.png', factionId: 'panjun', legionName: '起义军' },
 
 
 
@@ -11520,7 +11520,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_chen_youliang', generalName: '陈友谅', portrait: '', factionId: 'xushouhui', legionName: '起义军' },
+        { generalId: 'gen_chen_youliang', generalName: '陈友谅', portrait: '/assets/JIANGNAN/gen_chen_youliang.png', factionId: 'xushouhui', legionName: '起义军' },
 
 
 
@@ -11534,7 +11534,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     yue: [
         { generalId: 'yue_goujian', generalName: '勾践', portrait: '/assets/JIANGNAN/yue_goujian.png' , legionName: '先秦军团' },
-        { generalId: 'bfe_gao_zhihui', generalName: '高智慧', portrait: '', legionName: '封建时代江淮军团' },
+        { generalId: 'bfe_gao_zhihui', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', legionName: '封建时代江淮军团' },
     ],
 
 
@@ -11593,7 +11593,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     changshaguo: [
         { generalId: 'changshaguo_xinqiji', generalName: '辛弃疾', portrait: '/assets/JIANGNAN/changshaguo_xinqiji.png' },
         // 🔴 [2026-10-20 首战规则] 曾国藩＝湘军主帅（1855 湖口九江败于石达开）→ 长沙（JIANGNAN），挂清旗；帝国时代两江军团；立绘留空
-        { generalId: 'gen_zengguofan', generalName: '曾国藩', portrait: '', factionId: 'manzhou_d', legionName: '帝国时代两江军团' },
+        { generalId: 'gen_zengguofan', generalName: '曾国藩', portrait: '/assets/JIANGNAN/gen_zengguofan.png', factionId: 'manzhou_d', legionName: '帝国时代两江军团' },
     ],
 
 
@@ -11642,7 +11642,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'wu_fuchai', generalName: '夫差', portrait: '' , legionName: '古典时代吴越军团' },
+        { generalId: 'wu_fuchai', generalName: '夫差', portrait: '/assets/JIANGNAN/wu_fuchai.png' , legionName: '古典时代吴越军团' },
 
 
 
@@ -11674,7 +11674,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_70', generalName: '刘繇', portrait: '', legionName: '古典时代吴越军团', factionId: 'han_d' , eliteName: '大汉材官', eliteTier: 2 },
+        { generalId: 'bfe3_70', generalName: '刘繇', portrait: '/assets/JIANGNAN/bfe3_70.png', legionName: '古典时代吴越军团', factionId: 'han_d' , eliteName: '大汉材官', eliteTier: 2 },
 
 
 
@@ -11691,9 +11691,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     qian_d: [
-        { generalId: 'bfe_ajibaldo', generalName: '阿只拔都', portrait: '', legionName: '帝国时代两江军团' },
+        { generalId: 'bfe_ajibaldo', generalName: '阿只拔都', portrait: '/assets/JIANGNAN/bfe_ajibaldo.png', legionName: '帝国时代两江军团' },
         { generalId: 'qian_d_yudayou', generalName: '俞大猷', portrait: '/assets/JIANGNAN/qian_d_yudayou.png' },
-        { generalId: 'bfe_xu_hai', generalName: '徐海', portrait: '', factionId: 'qian_d', legionName: '帝国时代两江军团' },
+        { generalId: 'bfe_xu_hai', generalName: '徐海', portrait: '/assets/JIANGNAN/bfe_xu_hai.png', factionId: 'qian_d', legionName: '帝国时代两江军团' },
     ],
 
 
@@ -11832,7 +11832,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     hongzhou: [
         { generalId: 'hongzhou_zhuwenzheng', generalName: '朱文正', portrait: '/assets/JIANGNAN/hongzhou_zhuwenzheng.png' },
-        { generalId: 'bfe_zhu_chenhao', generalName: '宁王 朱宸濠', portrait: '', factionId: 'ming_d', legionName: '帝国时代两江军团' },
+        { generalId: 'bfe_zhu_chenhao', generalName: '宁王 朱宸濠', portrait: '/assets/JIANGNAN/bfe_zhu_chenhao.png', factionId: 'ming_d', legionName: '帝国时代两江军团' },
     ],
 
 
@@ -11984,7 +11984,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_69', generalName: '华雄', portrait: '', legionName: '古典时代凉州军团' , eliteName: '西凉铁骑', eliteTier: 3},
+        { generalId: 'bfe3_69', generalName: '华雄', portrait: '/assets/KHITAN/bfe3_69.png', legionName: '古典时代凉州军团' , eliteName: '西凉铁骑', eliteTier: 3},
 
 
 
@@ -12273,7 +12273,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_razadarit', generalName: '罗娑陀利', portrait: '', legionName: '城堡时代阿瓦军团' },
+        { generalId: 'gen_razadarit', generalName: '罗娑陀利', portrait: '/assets/BURMESE/gen_razadarit.png', legionName: '城堡时代阿瓦军团' },
 
 
 
@@ -12683,7 +12683,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'xisi_yakubusafaer', generalName: '雅库布', portrait: '', legionName: '封建时代德莱木军团' , eliteName: '萨法尔骑', eliteTier: 3},
+        { generalId: 'xisi_yakubusafaer', generalName: '雅库布', portrait: '/assets/PERSIAN/xisi_yakubusafaer.png', legionName: '封建时代德莱木军团' , eliteName: '萨法尔骑', eliteTier: 3},
 
 
 
@@ -12699,7 +12699,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'xisi_amr', generalName: '阿姆尔·本·莱斯', portrait: '' },
+        { generalId: 'xisi_amr', generalName: '阿姆尔·本·莱斯', portrait: '/assets/PERSIAN/xisi_amr.png' },
 
 
 
@@ -12788,7 +12788,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     song: [
-        { generalId: 'bfe_chen_dong', generalName: '陈东', portrait: '', legionName: '城堡时代中华军团' },
+        { generalId: 'bfe_chen_dong', generalName: '陈东', portrait: '/assets/CENTRAL/bfe_chen_dong.png', legionName: '城堡时代中华军团' },
 
 
 
@@ -12812,7 +12812,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'song_zhaoguangyi', generalName: '赵光义', portrait: '' },
+        { generalId: 'song_zhaoguangyi', generalName: '赵光义', portrait: '/assets/CENTRAL/song_zhaoguangyi.png' },
 
 
 
@@ -12828,7 +12828,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'song_renfu', generalName: '任福', portrait: '' },
+        { generalId: 'song_renfu', generalName: '任福', portrait: '/assets/CENTRAL/song_renfu.png' },
 
 
 
@@ -12893,7 +12893,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     minyue: [
         { generalId: 'minyue_wuzhu', generalName: '无诸', portrait: '/assets/JIANGNAN/minyue_wuzhu.png' },
-        { generalId: 'bfe3_22', generalName: '驺郢', portrait: '', legionName: '古典时代吴越军团' },
+        { generalId: 'bfe3_22', generalName: '驺郢', portrait: '/assets/JIANGNAN/bfe3_22.png', legionName: '古典时代吴越军团' },
     ],
 
 
@@ -13178,7 +13178,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'yilihanguo_kitbuqa', legionName: '城堡时代伊儿军团', generalName: '怯的不花', portrait: '' },
+        { generalId: 'yilihanguo_kitbuqa', legionName: '城堡时代伊儿军团', generalName: '怯的不花', portrait: '/assets/SASANIAN/yilihanguo_kitbuqa.png' },
 
 
 
@@ -13212,7 +13212,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     wulaertu: [
         { generalId: 'wulaertu_ajishenti', generalName: '瓦尔丹', portrait: '/assets/ARMENIANS/wulaertu_ajishenti.png' },
-        { generalId: 'wulaertu_ashot3', generalName: '阿硕特三世', portrait: '', legionName: '封建时代巴格拉图尼军团', eliteName: '纳哈拉尔骑', eliteTier: 3 },
+        { generalId: 'wulaertu_ashot3', generalName: '阿硕特三世', portrait: '/assets/ARMENIANS/wulaertu_ashot3.png', legionName: '封建时代巴格拉图尼军团', eliteName: '纳哈拉尔骑', eliteTier: 3 },
     ],
 
 
@@ -13343,11 +13343,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     osman: [
         // 🔴 [2026-10-20 首战规则] 卡拉·穆斯塔法帕夏＝奥斯曼大维齐尔（1683 维也纳战败被处死）→ 布尔萨（TURKS）；帝国时代土耳其军团；立绘留空
-        { generalId: 'gen_kara_mustafa', generalName: '卡拉·穆斯塔法', portrait: '', legionName: '帝国时代土耳其军团' },
+        { generalId: 'gen_kara_mustafa', generalName: '卡拉·穆斯塔法', portrait: '/assets/TURKS/gen_kara_mustafa.png', legionName: '帝国时代土耳其军团' },
         // 🔴 [2026-10-20 首战规则] 拉拉·穆斯塔法帕夏＝奥斯曼统帅（1565 马耳他大围攻）→ 布尔萨（TURKS）；帝国时代土耳其军团；立绘留空
-        { generalId: 'gen_mustafa_pasha', generalName: '穆斯塔法帕夏', portrait: '', legionName: '帝国时代土耳其军团' },
+        { generalId: 'gen_mustafa_pasha', generalName: '穆斯塔法帕夏', portrait: '/assets/TURKS/gen_mustafa_pasha.png', legionName: '帝国时代土耳其军团' },
         // 🔴 [2026-10-20 首战规则] 苏莱曼大帝＝奥斯曼苏丹（1566 锡盖特堡军营中病逝）→ 布尔萨（TURKS）；帝国时代土耳其军团；立绘留空
-        { generalId: 'gen_suleiman', generalName: '苏莱曼', portrait: '', legionName: '帝国时代苏丹亲兵军团' },
+        { generalId: 'gen_suleiman', generalName: '苏莱曼', portrait: '/assets/TURKS/gen_suleiman.png', legionName: '帝国时代苏丹亲兵军团' },
 
 
 
@@ -13359,7 +13359,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_bayezid_i', generalName: '巴耶济德一世', portrait: '', legionName: '城堡时代加齐突骑军团' },
+        { generalId: 'gen_bayezid_i', generalName: '巴耶济德一世', portrait: '/assets/TURKS/gen_bayezid_i.png', legionName: '城堡时代加齐突骑军团' },
 
 
 
@@ -13372,9 +13372,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     sailiugu: [
-        { generalId: 'bfe3_23', generalName: '塞隆', portrait: '', legionName: '古典时代近东军团' },
+        { generalId: 'bfe3_23', generalName: '塞隆', portrait: '/assets/ORIE/bfe3_23.png', legionName: '古典时代近东军团' },
         // 🔴 [2026-10-20 主人令] 塞琉古一世＝塞琉古帝国开国君主（前301 伊普苏斯破安提柯）→ 安提俄基亚（ORIE）；古典时代近东军团；立绘留空
-        { generalId: 'gen_seleucus_i', generalName: '塞琉古', portrait: '', legionName: '古典时代近东军团' , eliteName: '银盾兵', eliteTier: 1},
+        { generalId: 'gen_seleucus_i', generalName: '塞琉古', portrait: '/assets/ORIE/gen_seleucus_i.png', legionName: '古典时代近东军团' , eliteName: '银盾兵', eliteTier: 1},
 
 
 
@@ -13398,7 +13398,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_6', generalName: '安条克一世', portrait: '', legionName: '古典时代近东军团' , eliteName: '银盾兵', eliteTier: 1},
+        { generalId: 'bfe3_6', generalName: '安条克一世', portrait: '/assets/ORIE/bfe3_6.png', legionName: '古典时代近东军团' , eliteName: '银盾兵', eliteTier: 1},
 
 
 
@@ -13414,7 +13414,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'sailiugu_yaghi', legionName: '城堡时代撒拉森军团', generalName: '雅吉·西扬', portrait: '' },
+        { generalId: 'sailiugu_yaghi', legionName: '城堡时代撒拉森军团', generalName: '雅吉·西扬', portrait: '/assets/ORIE/sailiugu_yaghi.png' },
 
 
 
@@ -13431,7 +13431,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     womaya: [
-        { generalId: 'bfe2_rezin', generalName: '利汛', portrait: '', factionId: 'womaya', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_rezin', generalName: '利汛', portrait: '/assets/ORIE/bfe2_rezin.png', factionId: 'womaya', legionName: '古典时代近东军团' },
 
 
 
@@ -13455,7 +13455,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_toghtekin', generalName: '图格特金', portrait: '', legionName: '城堡时代撒拉森军团' , eliteName: '突厥古拉姆', eliteTier: 2},
+        { generalId: 'gen_toghtekin', generalName: '图格特金', portrait: '/assets/ORIE/gen_toghtekin.png', legionName: '城堡时代撒拉森军团' , eliteName: '突厥古拉姆', eliteTier: 2},
 
 
 
@@ -13517,7 +13517,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_1', generalName: '西底家', portrait: '', legionName: '古典时代近东军团' , eliteName: '犹大守军', eliteTier: 4},
+        { generalId: 'bfe3_1', generalName: '西底家', portrait: '/assets/ORIE/bfe3_1.png', legionName: '古典时代近东军团' , eliteName: '犹大守军', eliteTier: 4},
 
 
 
@@ -13533,7 +13533,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_aristobulus_ii', generalName: '阿里斯托布鲁斯二世', portrait: '', legionName: '古典时代近东军团' , eliteName: '哈斯蒙卫军', eliteTier: 4},
+        { generalId: 'gen_aristobulus_ii', generalName: '阿里斯托布鲁斯二世', portrait: '/assets/ORIE/gen_aristobulus_ii.png', legionName: '古典时代近东军团' , eliteName: '哈斯蒙卫军', eliteTier: 4},
 
 
 
@@ -13573,7 +13573,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'aosiruowen_baodewen', generalName: '耶路撒冷王 鲍德温', portrait: '', legionName: '城堡时代法兰西骑士军团' },
+        { generalId: 'aosiruowen_baodewen', generalName: '耶路撒冷王 鲍德温', portrait: '/assets/FRANKS/aosiruowen_baodewen.png', legionName: '城堡时代法兰西骑士军团' },
 
 
 
@@ -13589,7 +13589,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'yelusalengwg_amalric', legionName: '城堡时代法兰西骑士军团', generalName: '阿马尔里克', portrait: '' },
+        { generalId: 'yelusalengwg_amalric', legionName: '城堡时代法兰西骑士军团', generalName: '阿马尔里克', portrait: '/assets/FRANKS/yelusalengwg_amalric.png' },
 
 
 
@@ -13701,7 +13701,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'aiji_psamtik_iii', generalName: '普萨美提克三世', portrait: '', legionName: '古典时代近东军团' , eliteName: '希腊雇佣兵', eliteTier: 4 },   // 🔴 26 王朝法老军含希腊雇佣兵（原配「麦查伊军」是新王国前的努比亚兵）
+        { generalId: 'aiji_psamtik_iii', generalName: '普萨美提克三世', portrait: '/assets/ORIE/aiji_psamtik_iii.png', legionName: '古典时代近东军团' , eliteName: '希腊雇佣兵', eliteTier: 4 },   // 🔴 26 王朝法老军含希腊雇佣兵（原配「麦查伊军」是新王国前的努比亚兵）
 
 
 
@@ -13719,7 +13719,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     tuolemi: [
         { generalId: 'tuolemi_tuolemi', generalName: '托勒密一世', portrait: '/assets/ORIE/tuolemi_tuolemi.png' },
-        { generalId: 'bfe3_19', generalName: '斯科帕斯', portrait: '', legionName: '古典时代近东军团' },
+        { generalId: 'bfe3_19', generalName: '斯科帕斯', portrait: '/assets/ORIE/bfe3_19.png', legionName: '古典时代近东军团' },
     ],
 
 
@@ -13729,11 +13729,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     jialedi: [
-        { generalId: 'bfe2_yahdun_lim', generalName: '亚赫敦·林', portrait: '', factionId: 'jialedi', legionName: '古典时代近东军团' },
-        { generalId: 'bfe2_nidintu_bel', generalName: '尼丁图-贝尔', portrait: '', legionName: '古典时代近东军团' },
-        { generalId: 'bfe2_enlil_nadin_ahi', generalName: '恩利尔纳丁·阿基', portrait: '', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_yahdun_lim', generalName: '亚赫敦·林', portrait: '/assets/ORIE/bfe2_yahdun_lim.png', factionId: 'jialedi', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_nidintu_bel', generalName: '尼丁图-贝尔', portrait: '/assets/ORIE/bfe2_nidintu_bel.png', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_enlil_nadin_ahi', generalName: '恩利尔纳丁·阿基', portrait: '/assets/ORIE/bfe2_enlil_nadin_ahi.png', legionName: '古典时代近东军团' },
         { generalId: 'jialedi_nibujianisa', generalName: '尼布甲尼撒', portrait: '/assets/ORIE/jialedi_nibujianisa.png' },
-        { generalId: 'bfe2_nabonidus', generalName: '那波尼德', portrait: '', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_nabonidus', generalName: '那波尼德', portrait: '/assets/ORIE/bfe2_nabonidus.png', legionName: '古典时代近东军团' },
     ],
 
 
@@ -13774,7 +13774,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'abasi_mustasim', legionName: '城堡时代撒拉森军团', generalName: '穆斯塔西姆', portrait: '' },
+        { generalId: 'abasi_mustasim', legionName: '城堡时代撒拉森军团', generalName: '穆斯塔西姆', portrait: '/assets/ORIE/abasi_mustasim.png' },
 
 
 
@@ -13790,7 +13790,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'abasi_muwafake', generalName: '穆瓦法克', portrait: '' },
+        { generalId: 'abasi_muwafake', generalName: '穆瓦法克', portrait: '/assets/ORIE/abasi_muwafake.png' },
 
 
 
@@ -13847,10 +13847,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     yashu: [
-        { generalId: 'bfe2_sin_shar_ishkun', generalName: '辛·沙尔·伊什昆', portrait: '', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_sin_shar_ishkun', generalName: '辛·沙尔·伊什昆', portrait: '/assets/ORIE/bfe2_sin_shar_ishkun.png', legionName: '古典时代近东军团' },
         { generalId: 'bfe2_shalmaneser_iii', generalName: '沙尔马那塞尔三世', portrait: '/assets/ORIE/bfe2_shalmaneser_iii.png', legionName: '古典时代近东军团' },
         { generalId: 'yashu_saergong', generalName: '萨尔贡', portrait: '/assets/ORIE/yashu_saergong.png' },
-        { generalId: 'bfe2_esarhaddon', generalName: '以撒哈顿', portrait: '', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_esarhaddon', generalName: '以撒哈顿', portrait: '/assets/ORIE/bfe2_esarhaddon.png', legionName: '古典时代近东军团' },
     ],
 
 
@@ -13899,7 +13899,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'kesaiya_kashtiliash', generalName: '卡什提利亚什', portrait: '', legionName: '古典时代阿契美尼德军团', eliteName: '科塞亚山兵', eliteTier: 4 },
+        { generalId: 'kesaiya_kashtiliash', generalName: '卡什提利亚什', portrait: '/assets/PERSIAN/kesaiya_kashtiliash.png', legionName: '古典时代阿契美尼德军团', eliteName: '科塞亚山兵', eliteTier: 4 },
 
 
 
@@ -14083,7 +14083,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'sashan_beilusi', generalName: '卑路斯一世', portrait: '' },
+        { generalId: 'sashan_beilusi', generalName: '卑路斯一世', portrait: '/assets/SASANIAN/sashan_beilusi.png' },
 
 
 
@@ -14107,7 +14107,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'sashan_khosrow_ii', generalName: '霍斯劳二世', portrait: '', legionName: '封建时代霍拉桑军团' },
+        { generalId: 'sashan_khosrow_ii', generalName: '霍斯劳二世', portrait: '/assets/SASANIAN/sashan_khosrow_ii.png', legionName: '封建时代霍拉桑军团' },
 
 
 
@@ -14123,7 +14123,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'sashan_bahram_vi', generalName: '巴赫拉姆六世', portrait: '' },
+        { generalId: 'sashan_bahram_vi', generalName: '巴赫拉姆六世', portrait: '/assets/SASANIAN/sashan_bahram_vi.png' },
 
 
 
@@ -14203,7 +14203,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_sayf_al_dawla', generalName: '赛弗·道莱', portrait: '', legionName: '封建时代哈里发军团' , eliteName: '哈姆丹骑', eliteTier: 2},
+        { generalId: 'gen_sayf_al_dawla', generalName: '赛弗·道莱', portrait: '/assets/ORIE/gen_sayf_al_dawla.png', legionName: '封建时代哈里发军团' , eliteName: '哈姆丹骑', eliteTier: 2},
 
 
 
@@ -14244,8 +14244,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     ailan: [
-        { generalId: 'bfe2_mardonius', generalName: '马尔多尼乌斯', portrait: '', legionName: '古典时代阿契美尼德军团' },
-        { generalId: 'bfe2_xerxes_i', generalName: '薛西斯一世', portrait: '', legionName: '古典时代阿契美尼德军团' },
+        { generalId: 'bfe2_mardonius', generalName: '马尔多尼乌斯', portrait: '/assets/PERSIAN/bfe2_mardonius.png', legionName: '古典时代阿契美尼德军团' },
+        { generalId: 'bfe2_xerxes_i', generalName: '薛西斯一世', portrait: '/assets/PERSIAN/bfe2_xerxes_i.png', legionName: '古典时代阿契美尼德军团' },
 
 
 
@@ -14285,7 +14285,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_cambyses', generalName: '冈比西斯二世', portrait: '', factionId: 'aqimeinide' , eliteName: '不死军', eliteTier: 2 },
+        { generalId: 'gen_cambyses', generalName: '冈比西斯二世', portrait: '/assets/PERSIAN/gen_cambyses.png', factionId: 'aqimeinide' , eliteName: '不死军', eliteTier: 2 },
 
 
 
@@ -14309,7 +14309,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'wukexiya_madates', generalName: '马达泰斯', portrait: '', legionName: '古典时代阿契美尼德军团', eliteName: '乌克西亚弓', eliteTier: 3 },
+        { generalId: 'wukexiya_madates', generalName: '马达泰斯', portrait: '/assets/PERSIAN/wukexiya_madates.png', legionName: '古典时代阿契美尼德军团', eliteName: '乌克西亚弓', eliteTier: 3 },
 
 
 
@@ -14398,7 +14398,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     ansxi: [
-        { generalId: 'bfe_meherdates', generalName: '梅哈尔达特', portrait: '', legionName: '古典时代阿契美尼德军团' },
+        { generalId: 'bfe_meherdates', generalName: '梅哈尔达特', portrait: '/assets/PERSIAN/bfe_meherdates.png', legionName: '古典时代阿契美尼德军团' },
 
 
 
@@ -14422,7 +14422,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_73', generalName: '阿尔达班四世', portrait: '', legionName: '古典时代阿契美尼德军团' , eliteName: '安息铁骑', eliteTier: 3},
+        { generalId: 'bfe3_73', generalName: '阿尔达班四世', portrait: '/assets/PERSIAN/bfe3_73.png', legionName: '古典时代阿契美尼德军团' , eliteName: '安息铁骑', eliteTier: 3},
 
 
 
@@ -14456,9 +14456,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     deli: [
         // 🔴 [2026-10-20 首战规则] 萨达希夫·拉奥·巴乌＝马拉塔统帅（1761 第三次帕尼帕特战死）；库无马拉塔势力，借德里（报告）；帝国时代莫卧儿军团；立绘留空
-        { generalId: 'gen_sadashivrao', generalName: '萨达希夫', portrait: '', legionName: '帝国时代莫卧儿军团' },
+        { generalId: 'gen_sadashivrao', generalName: '萨达希夫', portrait: '/assets/MUGHAL/gen_sadashivrao.png', legionName: '帝国时代莫卧儿军团' },
         // 🔴 [2026-10-20 首战规则] 赫穆＝苏尔帝国将军（1556 第二次帕尼帕特战败被杀）；苏尔无独立势力，借德里（报告）；帝国时代莫卧儿军团；立绘留空
-        { generalId: 'gen_hemu', generalName: '赫穆', portrait: '', legionName: '帝国时代莫卧儿军团' },
+        { generalId: 'gen_hemu', generalName: '赫穆', portrait: '/assets/MUGHAL/gen_hemu.png', legionName: '帝国时代莫卧儿军团' },
 
 
 
@@ -14470,7 +14470,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_ibrahim_lodi', generalName: '易卜拉欣·洛迪', portrait: '', legionName: '帝国时代莫卧儿军团' },
+        { generalId: 'gen_ibrahim_lodi', generalName: '易卜拉欣·洛迪', portrait: '/assets/MUGHAL/gen_ibrahim_lodi.png', legionName: '帝国时代莫卧儿军团' },
 
 
 
@@ -14501,7 +14501,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     kongque: [
-        { generalId: 'bfe2_dhanananda', generalName: '达那难陀', portrait: '', legionName: '古典时代贵霜军团' },
+        { generalId: 'bfe2_dhanananda', generalName: '达那难陀', portrait: '/assets/PURU/bfe2_dhanananda.png', legionName: '古典时代贵霜军团' },
 
 
 
@@ -14525,7 +14525,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'kongque_aluonashun', generalName: '阿罗那顺', portrait: '', legionName: '封建时代沙希军团' , eliteName: '中天竺象兵', eliteTier: 4 },   // 🔴 648 年中天竺的象兵（原配「孔雀战象」是前 3 世纪孔雀王朝的）
+        { generalId: 'kongque_aluonashun', generalName: '阿罗那顺', portrait: '/assets/PURU/kongque_aluonashun.png', legionName: '封建时代沙希军团' , eliteName: '中天竺象兵', eliteTier: 4 },   // 🔴 648 年中天竺的象兵（原配「孔雀战象」是前 3 世纪孔雀王朝的）
 
 
 
@@ -14597,7 +14597,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'boluo_vijaya', generalName: '毗阇耶', portrait: '', legionName: '古典时代高陀军团' },
+        { generalId: 'boluo_vijaya', generalName: '毗阇耶', portrait: '/assets/BENGALIS/boluo_vijaya.png', legionName: '古典时代高陀军团' },
 
 
 
@@ -14606,7 +14606,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：设赏迦＝高达（孟加拉）国王、戒日王死敌，根据地孟加拉，不是戒日王都曲女城 → 放高达城（boluo，风格 BENGALIS）；仍挂本政权 jieri
-        { generalId: 'gen_shashanka', generalName: '设赏迦', portrait: '', factionId: 'boluo', },
+        { generalId: 'gen_shashanka', generalName: '设赏迦', portrait: '/assets/BENGALIS/gen_shashanka.png', factionId: 'boluo', },
     ],
 
 
@@ -14632,7 +14632,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     zhuluo: [
-        { generalId: 'bfe3_25', generalName: '埃拉拉', portrait: '', legionName: '古典时代泰米尔军团' },
+        { generalId: 'bfe3_25', generalName: '埃拉拉', portrait: '/assets/INDIA/bfe3_25.png', legionName: '古典时代泰米尔军团' },
 
 
 
@@ -14656,7 +14656,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'zhuluo_lajindela', generalName: '拉金德拉一世', portrait: '', legionName: '封建时代朱罗军团' },
+        { generalId: 'zhuluo_lajindela', generalName: '拉金德拉一世', portrait: '/assets/INDIA/zhuluo_lajindela.png', legionName: '封建时代朱罗军团' },
 
 
 
@@ -14720,7 +14720,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'maidina_ali', generalName: '阿里', portrait: '' },
+        { generalId: 'maidina_ali', generalName: '阿里', portrait: '/assets/ORIE/maidina_ali.png' },
 
 
 
