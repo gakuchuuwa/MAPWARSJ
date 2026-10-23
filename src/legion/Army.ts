@@ -1458,9 +1458,8 @@ export class Army implements IBattleUnit {
      * 只影响显示，`getFactionId()`（AI/归属/攻防判定）不变。
      */
     public getDisplayFactionId(): string {
-        // 乱斗：武将替城主打仗，旗号就是军团自己的势力（2026-10-23 主人「城被占，城里武将归占领者」）
-        if (getGameMode() === 'melee') return this._factionId;
-        return getGeneralOwnFactionId(this._generalId) ?? this._factionId;
+        // 🔴 [2026-10-24 主人「城被占武将归占领者，依然生效」] 所有模式：武将替城主打仗，旗号＝军团自己的势力
+        return this._factionId;
     }
 
     /** 把显示势力同步给渲染器（旗面/染色都读 renderer.factionId） */
@@ -1480,6 +1479,9 @@ export class Army implements IBattleUnit {
      * 剧本 / 乱斗 / 编辑器不动。
      */
     private syncGeneralFaction(): void {
+        // 🔴 [2026-10-24 主人「城被占武将归占领者，依然生效」] 百岁也一样：军团势力＝派它出来的城的主人，不再跟武将自己的政权走
+        return;
+        // eslint-disable-next-line no-unreachable
         if (getGameMode() !== 'centenarian' || this._baseFactionId === undefined) return;
         const want = getGeneralOwnFactionId(this._generalId) ?? this._baseFactionId;
         if (want === this._factionId) return;
