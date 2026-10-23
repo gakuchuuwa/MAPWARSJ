@@ -1101,7 +1101,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    baerta: { generalId: 'gen_alaric', cityId: 'city_toulouse', legionName: '古典时代高卢军团', generalName: '亚拉里克', portrait: '/assets/LATIN/gen_alaric.png' },
+    baerta: { generalId: 'gen_alaric', cityId: 'city_kesenza', legionName: '古典时代伊特鲁里亚军团', generalName: '亚拉里克', portrait: '/assets/LATIN/gen_alaric.png' },
 
 
 
@@ -1957,7 +1957,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_abu_yahya', cityId: 'city_barcelona', generalName: '阿布·叶海亚', portrait: '/assets/LATIN/gen_abu_yahya.png', factionId: 'muwaxide', legionName: '城堡时代意大利城邦军团' },
+        { generalId: 'gen_abu_yahya', cityId: 'city_labate', generalName: '阿布·叶海亚', portrait: '/assets/LATIN/gen_abu_yahya.png', factionId: 'muwaxide', legionName: '城堡时代摩尔军团' },
 
 
 
@@ -6130,7 +6130,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'bozhou_d_yujin', factionId: 'wei', cityId: 'city_liaocheng', legionName: '古典时代华夏军团', generalName: '于禁', portrait: '/assets/CENTRAL/bozhou_d_yujin.png' },
+        { generalId: 'bozhou_d_yujin', factionId: 'wei', cityId: 'city_luoyang', legionName: '古典时代华夏军团', generalName: '于禁', portrait: '/assets/CENTRAL/bozhou_d_yujin.png' },
 
 
 
@@ -6729,7 +6729,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_beishacheng', legionName: '封建时代河朔军团', generalName: '程名振', portrait: '/assets/WEI/jilizhou_chengmingzhen.png' },
+        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_changan', legionName: '封建时代中原军团', generalName: '程名振', portrait: '/assets/WEI/jilizhou_chengmingzhen.png' },
 
 
 
@@ -8708,7 +8708,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'danmai_guthrum', cityId: 'city_hedeby', generalName: '古思伦', portrait: '/assets/DANES/danmai_guthrum.png', legionName: '封建时代丹麦王国军团' },
+        { generalId: 'danmai_guthrum', cityId: 'city_gebenhagen', generalName: '古思伦', portrait: '/assets/DANES/danmai_guthrum.png', legionName: '封建时代丹麦王国军团' },
         { generalId: 'danmai_harald', cityId: 'city_jelling', generalName: '蓝牙哈拉尔', portrait: '/assets/DANES/danmai_harald.png', legionName: '封建时代丹麦王国军团', eliteName: '耶灵亲兵', eliteTier: 4 },
         { generalId: 'danmai_godfred', cityId: 'city_hedeby', generalName: '戈德弗雷德', portrait: '/assets/DANES/danmai_godfred.png', legionName: '封建时代丹麦王国军团', eliteName: '海瑟比卫队', eliteTier: 4 },
 
