@@ -12,8 +12,6 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   huimo: { name: '濊貊长矛手', tier: 4 }, // 乌骨城·高延寿濊貊
   bohai: { name: '渤海猛贲', tier: 1 },       // 建立并维持“海东盛国”渤海国两百余年的核心主力，符合T1战略主力
     dajin: { name: '合扎猛安', tier: 0 },
-  yizhou: { name: '七水部铁骑', tier: 1 },      // 蒺藜山·完颜娄室统率的七水部嫡系主力
-  qidan: { name: '属珊锐骑', tier: 3 },     // 辽国述律平太后亲卫，名号独特，但非战略野战军，降为T3知名。
     manzhou: { name: '白甲兵', tier: 1 },
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
     aisin_d: { name: '巴牙喇军', tier: 1 },
@@ -49,6 +47,5 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   nanai: { name: '赫哲快桨船', tier: 3 },         // 著名的“鱼皮部落”赫哲族，极具民族特色，升入T3知名
     dongping: { name: '东平镇营', tier: 4 },
     elunchunzu: { name: '鄂伦春猎骑', tier: 3 },
-    yingzhou_ying_d: { name: '黄龙兵', tier: 1 },
     ayinu_ezo: { name: '毒木箭手', tier: 3 },  // 莫约罗·柯沙玛因：阿伊努独立猎人附子毒矢神射勇士
 };

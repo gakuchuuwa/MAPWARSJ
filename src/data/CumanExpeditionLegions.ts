@@ -25,7 +25,6 @@ export const CUMAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     mangshi: { name: '土库曼骑', tier: 3 },         // 曼格什拉克·土库曼
     kumanni: { name: '库曼骑', tier: 3 },           // 密尔科夫·吉尔根汗
     kuman_oleshky: { name: '库曼弓骑', tier: 1 },   // 奥列什基·忽炭汗：库曼弓骑
-    qincha_saksin: { name: '斡勒轻骑', tier: 2 },   // 萨克辛·巴奇曼：斡勒不儿里克轻骑
     xikuman: { name: '库曼旧部', tier: 3 },         // 保留：库曼旧部记录，不删
     qincha: { name: '钦察骑射', tier: 2 },          // 保留：钦察旧记录，不删（巴奇曼旧部）
 

@@ -607,7 +607,7 @@ export const QIN_DYNASTY_GENERAL_IDS = new Set([
 
 /** 秦朝势力 ID 集合 */
 export const QIN_DYNASTY_FACTION_IDS = new Set([
-    'qin', 'baiyang', 'nanyue'
+    'qin', 'nanyue'
 ]);
 
 /** 汉朝名将 ID 集合（含西汉、东汉、蜀汉/季汉） */
@@ -639,10 +639,10 @@ export const HAN_DYNASTY_GENERAL_IDS = new Set([
 
 /** 汉朝势力 ID 集合 */
 export const HAN_DYNASTY_FACTION_IDS = new Set([
-    'han', 'han_d', 'suzhou', 'shuofang', 
-    'lanzhou', 'quli', 'xiyuduhu', 'jiluo_d',
+    'han', 'han_d', 'suzhou', 
+    'lanzhou', 'quli', 'xiyuduhu', 
     'you', 'shu', 
-    'cangsong', 'dongsheng', 'liu'
+    'cangsong', 'liu'
 ]);
 
 /** 唐朝名将 ID 集合 */
@@ -679,7 +679,7 @@ export const TANG_DYNASTY_FACTION_IDS = new Set([
     'tang', 'hepan', 'anxi', 'juandu', 'heyuan_d',
     'shazhou', 'lingzhou', 
     
-    'dingxiang_d', 'jiashi', 'shanzhou', 'wei2'
+    'jiashi', 'shanzhou', 'wei2'
 ]);
 
 /** 宋朝名将 ID 集合 */
@@ -736,8 +736,8 @@ export const MING_DYNASTY_GENERAL_IDS = new Set([
 
 /** 大明势力 ID 集合 */
 export const MING_DYNASTY_FACTION_IDS = new Set([
-    'ming_d', 'dongshengwei', 
-    'zu_d',
+    'ming_d', 
+    
     'yansui'
 ]);
 

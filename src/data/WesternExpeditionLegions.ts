@@ -10,11 +10,9 @@
 export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     bailong: { name: '白龙堆卫营', tier: 4 },
   kepantuo: { name: '公主堡铁卫', tier: 3 }, // 公主堡汉日天种王传奇，名号极具传奇色彩，升T2
-  zhasaketu: { name: '札萨克图骑', tier: 4 }, // 扎布汗·策旺扎布
   huite: { name: '辉特部骑', tier: 4 }, // 额尔齐斯·阿睦尔撒纳叛清大军（缺乏极其著名的战术高光，降T3）
   tuoming: { name: '回民团练', tier: 4 },  // 达坂城·妥明清真王
   keerkezi: { name: '柯尔克孜骑', tier: 3 }, // 柯尔克孜族英雄玛纳斯史诗，显著文化知名度，升T2
-  wulianghai: { name: '乌梁海巡骑', tier: 4 }, // 布尔根·车凌乌巴什
   qiuci: { name: '龟兹精兵', tier: 3 },   // 丝路第一大国龟兹，鸠摩罗什故国，显著文化知名度，升T2
   yuchi: { name: '于阗精兵', tier: 2 },       // 尉迟王族抗击黑汗四十载，独立坚守的特色王牌，升T2
   yiduhu: { name: '西州回鹘', tier: 3 },      // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
