@@ -148,6 +148,8 @@ export interface DialoguePayload {
     options: DialogueOption[];
     /** 🔴 [2026-10-22] 不要「3 秒后自动选主选项」：故事块的抉择在非自动模式下要等玩家自己选 */
     noAutoPick?: boolean;
+    /** 🔴 [2026-10-22 主人「选择框的时间有点短，我还没看清楚呢」] 自动选主选项前等多久（毫秒）；不填＝3 秒 */
+    autoPickMs?: number;
 }
 
 /**

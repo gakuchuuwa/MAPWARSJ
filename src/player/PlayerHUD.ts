@@ -881,11 +881,24 @@ export class PlayerHUD {
             btns.appendChild(b);
         }
         // [2026-09-05 玩家] 抵达据点后弹出任务对话框，3 秒后自动确认（自动点接任务选项）
+        // 🔴 [2026-10-22 主人「选择框的时间有点短，我还没看清楚呢」] 等多久可由调用方定（故事块按正文长短给），
+        //    主选项按钮上显示倒计时，让人知道还剩几秒
+        const autoMs = p.autoPickMs ?? 3000;
         const primary = p.noAutoPick ? undefined : p.options.find((o) => o.accent);
         if (primary) {
+            const shown = overlay;
+            const btn = [...btns.querySelectorAll('button')][p.options.indexOf(primary)] as HTMLButtonElement | undefined;
+            const endAt = Date.now() + autoMs;
+            const tickLabel = () => {
+                if (this.overlay !== shown || !btn) return;
+                const left = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+                btn.textContent = `${primary.label}（${left}）`;
+                if (left > 0) window.setTimeout(tickLabel, 250);
+            };
+            tickLabel();
             window.setTimeout(() => {
-                if (this.overlay) primary.onPick();
-            }, 3000);
+                if (this.overlay === shown) primary.onPick();
+            }, autoMs);
         } else if (this.hero.autoMode && !p.noAutoPick) {
             // 🔴 [2026-10-21 主人报「卡住不动了」] 「兵马不足五千」这类只有「告辞」的对话没有主选项，
             //    自动模式下没人点就一直停着（对话还把游戏暂停了）→ 自动模式下 3 秒后自动「告辞」，换下一位武将。

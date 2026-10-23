@@ -396,8 +396,11 @@ export class StoryletEngine {
             portrait: who?.portrait || null,
             factionName: who?.role ?? '',
             text: text.split('{玩家}').join(hero.name),
-            // 自动模式（直播挂机）3 秒后自动选主选项；玩家自己玩时等他选
+            // 自动模式（直播挂机）倒计时后自动选主选项；玩家自己玩时等他选
+            // 🔴 [2026-10-22 主人「选择框的时间有点短，我还没看清楚呢，就结束了」] 原来固定 3 秒；
+            //    现在按正文长短给（每字 0.2 秒 + 3 秒），最少 10 秒、最多 20 秒
             noAutoPick: !hero.autoMode,
+            autoPickMs: Math.max(10000, Math.min(20000, 3000 + line.length * 200)),
             options: options.map((o) => ({
                 label: o.label,
                 accent: o.accent,
