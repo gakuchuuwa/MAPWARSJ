@@ -49,30 +49,22 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yingzhou: { name: '南汉禁兵', tier: 4 },            // 常规番号，降T3
     daozhou: { name: '道州弩手', tier: 4 },
   guangping: { name: '象兵水师', tier: 4 },     // 洞海城·阮文张象兵舟船协同（常规番号，降T3）
-shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军汛堡（缺乏极其著名的战术高光，降T3）
   chendiaoyan: { name: '畲汉义军', tier: 4 },   // 龙溪·陈吊眼攻破漳州（常规番号，降T3）
-    buyi_d: { name: '盘江布依兵', tier: 4 },
   paiwan: { name: '牡丹社勇士', tier: 3 },      // 牡丹社事件中的原住民武装，属于地方抗击，缺乏正规的战术大捷，属于风土特色，降为T3知名。
-    miao_qing: { name: '黑旗苗獠', tier: 3 },
   geng: { name: '靖南藩兵', tier: 4 },         // 延平·耿精忠三藩起兵（缺乏极其著名的战术高光，降T3）
-    tian_sizhou: { name: '思州土兵', tier: 4 },
   liren: { name: '儋耳黎兵', tier: 3 },         // 海南岛黎族武装代表，极具风土民族辨识度，升入T3知名
   luodian: { name: '水西彝兵', tier: 3 },      // 贵州水西土司（安氏/奢香）武装，长达千年的西南实力派代表，升入T3知名
   luoping: { name: '摧锋军', tier: 2 },       // 南宋最精锐水陆两栖部队（李宝唐岛之战主力），维持半壁江山的战术尖刀，升入T2战术
-  xinggu: { name: '爨氏部曲', tier: 3 },       // 统治云南数百年爨氏家族的文化象征，西南历史丰碑，升入T3知名
     nong2: { name: '侬峒狼兵', tier: 3 },
     cen_d: { name: '泗城狼兵', tier: 3 },
-  miao: { name: '水西苗兵', tier: 4 },           // 可乐城·水西土司苗兵（缺乏极其著名的战术高光，降T3）
   muong: { name: '芒峒刀牌手', tier: 4 },         // 和平·申从岳芒族刀牌手
   panyao: { name: '瑶人弩手', tier: 4 },          // 临贺·盘瑶山地弩手
   chen2: { name: '桂阳戍卒', tier: 4 },           // 桂阳·赵范桂阳戍卒
-  qian: { name: '矩州戍卒', tier: 4 },            // 顺元·宋景阳入矩州戍,
     minyue: { name: '闽越甲卒', tier: 4 },            // 缺乏知名度支撑，降T3
     funan: { name: '扶南大舶', tier: 3 },
     lancang: { name: '澜沧象兵', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     liuzhou: { name: '柳州狼兵', tier: 3 },           // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名,
     chen: { name: '百越甲兵', tier: 3 },
-    shuizu: { name: '水族藤甲', tier: 3 },
     wuxi: { name: '武陵弓蛮', tier: 3 },
     liaozu: { name: '寮族兵', tier: 3 },
     shijun: { name: '使君乡兵', tier: 4 },   // 杜洞江·吴日庆：杜洞江·吴日庆：十二使君各据乡兵，968年为丁部领所平

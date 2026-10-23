@@ -20,30 +20,20 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     chenla: { name: '弩炮战象', tier: 1 },          // 吴哥·阇耶跋摩：战象背装弩炮（DE 弩炮战象）
   luchuan: { name: '麓川夷象', tier: 3 }, // 明朝三征麓川时思氏仰仗的核心象阵，极具历史话题度和风土特色，升入T3知名
     dianguo: { name: '青铜殳', tier: 3 },
-    mu_lijiang: { name: '丽江土兵', tier: 3 },
-  mingzheng: { name: '明正土兵', tier: 4 },           // 打箭炉·坚赞德昌从征金川   // 打箭炉·明正土司兵（常规番号，降T3）
 
   // 仲家兵除名（无此编制）
-  hani_d: { name: '思陀甸兵', tier: 4 },      // 思陀·遮比归附从征安南（缺乏极其著名的战术高光，降T3）
   cuanshi: { name: '爨族部兵', tier: 3 },      // 统治云南四百年的爨氏文化象征，西南历史的丰碑，升入T3知名
     suke: { name: '素可泰兵', tier: 3 },
   ailao: { name: '哀牢山营', tier: 4 },       // 永昌·类牢反叛连破数城（缺乏极其著名的战术高光，降T3）
-    yueyi: { name: '牦牛戍锋', tier: 3 },
-  jingdong: { name: '景东象卫', tier: 4 },     // 银生城·陶洪屡退麓川（缺乏极其著名的战术高光，降T3）
   luohu: { name: '罗斛步卒', tier: 4 },        // 呵叻城·敢木丁驻守
-    kunming_yi: { name: '会川藤甲兵', tier: 3 },
     taiyuan: { name: '清坎陷象', tier: 2 },
-  baiman: { name: '白蛮甲士', tier: 4 },       // 威楚·高升泰平杨义贞复大理（缺乏极其著名的战术高光，降T3）
   dai: { name: '车里战象', tier: 4 },          // 勐泐城·刀应勐傣兵助明御缅（缺乏极其著名的战术高光，降T3）
   ava: { name: '王都卫军', tier: 4 },
     mon: { name: '孟族战象', tier: 4 },
     ahaomu: { name: '阿豪姆舟师', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
-    wazu: { name: '阿佤猎兵', tier: 3 },              // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
     jingpozu: { name: '景颇长刀兵', tier: 3 },
     xingwei: { name: '木邦象兵', tier: 4 },
-    dangzhou: { name: '阴平氐兵', tier: 2 },
     wenling: { name: '福建水师', tier: 3 },
     miaomin: { name: '苗疆义军', tier: 4 },
-    dongzu: { name: '侗家义军', tier: 4 },
     mimo: { name: '靡莫射手', tier: 4 },   // 靡莫邑·靡莫大酋 苴兰：靡莫邑·苴兰：滇东靡莫诸部的射手，前278年庄蹻入滇所遇
 };

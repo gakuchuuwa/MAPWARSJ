@@ -61,8 +61,6 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   xie_cj_d: { name: '信州弩士', tier: 4 },      // 葛溪·谢枋得信州抗元（缺乏极其著名的战术高光，降T3）
     liu: { name: '九江裂骑', tier: 3 },
     chunshen: { name: '春申门客', tier: 4 },
-  guo: { name: '果州戍兵', tier: 4 },  // 南充·唐果州戍兵
-  zi: { name: '资州戍兵', tier: 4 },  // 盘石·唐资州戍兵
   gouding: { name: '句町部兵', tier: 4 },  // 广南·西南夷句町国部兵
 qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐军（常规番号，降T3）
     shuntian: { name: '天地会义军', tier: 3 },         // 反清复明的终极化身，江南华南名气最大的民间秘密武装，升入T3知名
@@ -78,7 +76,6 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
     ming_zheng: { name: '郑氏铁人军', tier: 2 },
     dayu: { name: '南赣标军', tier: 3 },
     sui: { name: '骁果军', tier: 2 },
-    zizhou: { name: '忠武八都', tier: 2 },
     taiping: { name: '石敢当', tier: 1 },
     jiang_s: { name: '零陵蒙冲', tier: 3 },
     longwu: { name: '建宁义旅', tier: 4 },
