@@ -22,17 +22,14 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     ming_d: { name: '明军三大营', tier: 1 },
 
   // ── §1 中原表·地理偏北（用户指定）──
-  lingzhou: { name: '朔方突骑', tier: 1 },  // 回乐·仆固怀恩朔方突骑
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
     you: { name: '上谷突骑', tier: 1 },
   // 飞虎军除名（李克用置，平型关时代错位）
   // 恒山军除名（泛称无固定番号）
-  dongdan: { name: '东丹卫兵', tier: 4 },       // 敖东城·耶律倍东丹国（缺乏极其著名的战术高光，降T3）
   
   // ── 2026-06-18 自东北文件迁回
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 毛文龙在皮岛建立的敌后抗金武装，牵制后金大量兵力，悲剧色彩和知名度极高，升入T3知名
     yang_aner: { name: '天顺红袄', tier: 2 },
-  jianzhou_nvzhen: { name: '建州女真卫', tier: 2 }, // 仅为后金初期的特定前身武装，缺乏长久建制延续性（真正的T1战略主力为后期的满洲八旗），降入T2战术
     // 武川镇·宇文泰：边镇骑射出身「武川铁骑」；不可代称六镇总称。档 T3（风土，不抬）
     yuwen: { name: '武川铁骑', tier: 3 },
     ssangseong: { name: '和宁戍骑', tier: 4 },

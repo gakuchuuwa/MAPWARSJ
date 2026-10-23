@@ -232,9 +232,7 @@ export const FACTIONS: Faction[] = [
   { id: 'yada', name: '嚈哒' },
 
 
-  { id: 'quli', name: '渠犁' },
 
-  { id: 'guazhou', name: '瓜州' },
 
   { id: 'guishuang', name: '贵霜' },
 
@@ -255,7 +253,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'nifuhe', name: '尼夫' },
      // 旗号二字（全称尼夫赫）
     { id: 'muer', name: '呼罗珊' },
 
@@ -321,7 +318,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'liangzhou', name: '凉州' },
 
 
     { id: 'juqu_d', name: '沮渠' },
@@ -356,18 +352,15 @@ export const FACTIONS: Faction[] = [
 
     { id: 'tang', name: '唐国' },
     { id: 'min', name: '闽国' },
-    { id: 'shazhou', name: '沙州' },
     { id: 'shatuo', name: '沙陀' },
 
 
     { id: 'bohai', name: '渤海' },
-    { id: 'jurchen', name: '女真' },
     { id: 'dangxiang', name: '大夏' },
 
 
     { id: 'menggu_d', name: '蒙古' },
 
-    { id: 'manzhou', name: '爱新觉罗' },
 
 
     { id: 'manzhou_d', name: '大清' },
@@ -441,7 +434,6 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 日本重置：京都改挂室町（足利旗）──
     { id: 'ashikaga', name: '室町' },
 
-    { id: 'suzhou', name: '肃州' },
 
 
 
@@ -506,7 +498,6 @@ export const FACTIONS: Faction[] = [
     { id: 'qifu_d', name: '乞伏' },
 
      // 高原栗 - 西秦(乞伏氏/陇西鲜卑)
-    { id: 'tuyu_d', name: '廓州' },
    // 青海碧 - 吐谷浑
     { id: 'linyi', name: '林邑' },
     // 紫檀 - 谯国桓氏(桓温/桓玄)
@@ -554,7 +545,6 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11：狄道（古临洮/陇西；旗号狄，据点临洮）──
 
     // ── 2026-06-11 新增：西凉（马腾/韩遂军阀/金城皋兰）──
-    { id: 'lanzhou', name: '兰州' },
 
     // ── 2026-06-11 精锐部队缺口批次 ──
     { id: 'gaoqi_d', name: '北齐' },           // 旗号高齐@渤海蓨城（高欢故里）；代表北齐，避免旗号重名
@@ -572,7 +562,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'aisin_d', name: '满洲' },
         // 旗号爱新；≠大清(manzhou_d)
     { id: 'sunwu_d', name: '孙吴' },
 
@@ -606,7 +595,6 @@ export const FACTIONS: Faction[] = [
     // 火砖红 - 李希烈淮西叛镇(蔡州)
     // 深红 - 魏博节度使田氏(魏州)
     // ── 2026-05-26 五代十国势力 ──
-    { id: 'dongdan', name: '东丹' },
     { id: 'dali', name: '大理' },
 
 
@@ -676,7 +664,6 @@ export const FACTIONS: Faction[] = [
 
              // 西蒙古碳灰 - 明代瓦剌部(科布多)，旗号与草原 wala 区分
     // 塞外土褐 - 乌梁海(唐努山)
-    { id: 'jianzhou_nvzhen', name: '建州' },         // 建州深绿 - 建州女真(苏子河)
     { id: 'haixi_nvzhen', name: '海西' },
 
             // 海西绿 - 海西女真扈伦四部(乌拉)
@@ -685,21 +672,17 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'jilimi', name: '吉里' },                // 暗苔绿 - 吉里迷/尼夫赫人(库页岛/黑龙江口)
-    { id: 'hezhe', name: '赫哲' },
 
 
                    // 河口青 - 赫哲/那乃人(黑龙江下游/库页岛)
     { id: 'luchuan', name: '麓川' },
-    { id: 'chijin', name: '赤斤' },
                           // 赤金堡·旗号赤（赤斤蒙古卫）
     // 巴音布拉格·汉张掖郡居延县；旗号延
     { id: 'xihai_d', name: '吐谷浑' },
                           // 伏俟城·隋西海郡治；旗号西海
-    { id: 'heyuan_d', name: '河源' },                          // 花石峡·隋河源郡积石镇；旗号河源
     { id: 'guiyi', name: '归义' },
 
 
-    { id: 'dafeichuan', name: '退浑' },
 
 
     // 第六类：周边国家政权
@@ -803,7 +786,6 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 新增：肃慎系势力（挹娄、勿吉、靺鞨）──
     { id: 'yilou', name: '挹娄' },
     { id: 'wuji', name: '勿吉' },
-    { id: 'mohe', name: '完颜' },
 
 
 
@@ -1066,7 +1048,6 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-28 新增：黑龙江流域民族/家族 ──
     // 黑水靺鞨(黑龙江/伯力), Heishui Mohe
-    { id: 'nanai', name: '那乃' },                         // 那乃(黑龙江/瓦伦), Nanai
     { id: 'feiyaka', name: '费雅喀' },                     // 费雅喀(黑龙江/奇集), Feiyaka
     // 尼夫赫(黑龙江/努托), Nivkh
 
@@ -1077,7 +1058,6 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
     { id: 'gandenpozhang', name: '冈底斯' },
                 // 甘丹颇章(扎敦宗/旧仲巴), Ganden Phodrang
-    { id: 'dawoer', name: '嫩江' },
                          // 达斡尔(莫尔根), Daur
                     // 广南国(洞海城), Guangnan
 
@@ -1125,7 +1105,6 @@ export const FACTIONS: Faction[] = [
     // 后突(黑沙城/阴山北麓), Later Turkic,
     { id: 'duolu', name: '咄陆' },
     { id: 'zhuxie', name: '朱邪' },
-    { id: 'hunxie', name: '浑邪' },
     { id: 'tiemuer', name: '图兰' },
 
     { id: 'kawusi', name: '卡乌斯' },
@@ -1156,11 +1135,8 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'lushui', name: '卢水' },
 
 
-    { id: 'yingli', name: '应理' },
-    { id: 'guangwu', name: '广武' },
 
     { id: 'yiwu', name: '伊吾' },
 
@@ -1209,7 +1185,6 @@ export const FACTIONS: Faction[] = [
     { id: 'jiantang', name: '建塘' },
     { id: 'gongbu', name: '工布' },
     { id: 'niang', name: '琼结' },
-    { id: 'ganzhou', name: '甘州' },
 
     { id: 'galangdiba', name: '波密' },
     { id: 'ali', name: '阿里' },
@@ -1226,7 +1201,6 @@ export const FACTIONS: Faction[] = [
        // 滇国（拓东城）；旗号「滇」
 
                           // 黄连·旗号客（客家民族）
-    { id: 'ningkou', name: '居延' },
 
 
 
@@ -1254,7 +1228,6 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'hui', name: '濊族' },
-    { id: 'luzhou', name: '渌州' },
     // ── 2026-06-11 国内城改挂玄菟郡（汉代辖境·高句县渊源）──
     { id: 'xuantu', name: '玄菟' },
     // ── 2026-06-11 珍岛·三别抄（裴仲孙抗蒙）──
@@ -1268,9 +1241,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wure', name: '兀惹' },
     { id: 'houliao', name: '东辽' },
 
-    { id: 'dazhen', name: '大真' },
 
-    { id: 'jilin', name: '吉林' },
 
     { id: 'sunite', name: '苏尼特' },
     { id: 'dayuzi', name: '玉兹' },
@@ -1308,8 +1279,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'wei2', name: '韦州' },
-    { id: 'lingzhou', name: '灵州' },
     { id: 'qiepantuo', name: '护密' },
     // ── 2026-06-11 新增：库页岛民族（鄂罗克/库页）──
     { id: 'eluoke', name: '鄂罗克' },                // 鄂罗克(库页岛东岸/诺托罗), Oroch
@@ -1325,12 +1294,9 @@ export const FACTIONS: Faction[] = [
     { id: 'ewenki', name: '鄂温克' },
   // 鄂温克(尼布楚/石勒喀河上游), Ewenki
     // ── 2026-06-11 新增：东平（州郡·黑龙江下游）──
-    { id: 'dongping', name: '东平' },
                 // 东平(乌苏里江下游/尼满), 州名旗号
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
-    { id: 'maomingan', name: '额尔古纳' },
              // 茂明安(尼布楚), 蒙古部族
-    { id: 'aola', name: '敖拉' },                    // 敖拉(雅克萨), 达斡尔敖拉氏
     { id: 'bulat', name: '布拉特' },                 // 布拉特(石勒喀河), Buryat/布拉特部
     { id: 'buriat', name: '布里亚特' },              // 布里亚特(赤塔), Buryat
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
@@ -1421,9 +1387,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yehe', name: '叶赫' },
 
     
-    { id: 'xiutu', name: '休屠' },
 
-    { id: 'nuergan', name: '奴儿干' }, // ── 2026-06-19：奴儿干城·康旺；旗面都卫 ──
     { id: 'wula', name: '乌拉' },
 
 
@@ -1447,7 +1411,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'duomi', name: '多弥' },
     { id: 'lelang', name: '乐浪' },
     { id: 'huite', name: '辉特' },
     { id: 'zubu', name: '阻卜' },
@@ -1513,7 +1476,6 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'xingxingxia', name: '伊州' },
 
     { id: 'yangguan', name: '西凉' },
 
@@ -1543,7 +1505,6 @@ export const FACTIONS: Faction[] = [
     { id: 'wuyue', name: '吴越' },
 
 
-    { id: 'xiyuduhu', name: '西域都护' },
 
 
 
@@ -1564,17 +1525,12 @@ export const FACTIONS: Faction[] = [
     { id: 'jingpozu', name: '景颇' },
 
 
-    { id: 'shanzhou', name: '鄯州' },
 
 
 
 
 
-    { id: 'weiyuan', name: '亹源' },
-    { id: 'xiazhou', name: '夏州' },
-    { id: 'yanzhou', name: '盐州' },
 
-    { id: 'cangsong', name: '苍松' },
 
 
     { id: 'xingwei', name: '兴威' },

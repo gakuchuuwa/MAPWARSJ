@@ -29,7 +29,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   wensu: { name: '温宿锐卒', tier: 4 },      // 三重城·温宿国
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
   // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
-    quli: { name: '轮台屯骑', tier: 3 },
   yarkand: { name: '英吉沙骑兵', tier: 4 },
     gaochang: { name: '高昌铁骑', tier: 3 },          // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     yiwu: { name: '关西卫骑', tier: 4 },
