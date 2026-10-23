@@ -68,5 +68,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     aertai: { name: '乃蛮残骑', tier: 3 },          // 也儿的石·屈出律：乃蛮残部骑兵,
     hongirad: { name: '弘吉剌护卫', tier: 4 },
     xueyantuo: { name: '薛延陀鹰师', tier: 3 },
-    liang_shuofang: { name: '八万御营', tier: 2 },   // 大梁｜统帅 萧铣｜T2 乘 1.3｜席卷荆襄岭南建立大梁，峡江阻击李孝恭
+    liang_shuofang: { name: '八万御营', tier: 2 },   // 大梁（隋末国号梁：萧铣主系@江陵 city_ying，梁师都同国号并入@长泽）｜统帅 萧铣（已补 gen_xiao_xian）｜T2 乘 1.3｜萧铣荆襄梁军，峡江阻击李孝恭
 };

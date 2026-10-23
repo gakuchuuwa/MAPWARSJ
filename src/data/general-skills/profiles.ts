@@ -1,4 +1,4 @@
-/**
+﻿/**
 
  * 武将技 · 将领装配档案（从 GeneralSkills.ts 拆出，2026-07-13）
 
@@ -1775,6 +1775,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     guazhou_zhangshougui: { generalId: 'guazhou_zhangshougui', tier: 'famous', tacticalSkillId: 'ts_253', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_519', atkBalanceSkillId: 'ts_020', atkDisadvantageSkillId: 'ts_484', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_745', defDisadvantageSkillId: 'ts_098', aptitude: 'create' , attackStyle: 'defense'},
+
+
+
+    gen_xiao_xian: { generalId: 'gen_xiao_xian', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_298', atkAdvantageSkillId: 'ts_525', atkBalanceSkillId: 'ts_034', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_757', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage' , attackStyle: 'defense'},
+
 
 
 
@@ -3741,3 +3746,4 @@ if (import.meta.hot) {
     });
 
 }
+
