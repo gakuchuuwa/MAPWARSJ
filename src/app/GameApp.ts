@@ -94,6 +94,8 @@ import { StoryletEngine } from '../story/StoryletEngine';
 import { URARTU_OPENING_STORYLETS } from '../story/storylets/urartuOpening';
 import { MainlineDirector } from '../mainline/MainlineDirector';
 import { ViewerLive } from '../live/ViewerLive';
+import { syncMeleeRandomOwners } from '../events/meleeRandomOwners';
+import { setCityOwnerProvider } from '../data/FactionGenerals';
 import { ViewerLivePanel } from '../live/ViewerLivePanel';
 import { URARTU_MAINLINE, URARTU_MAINLINE_CITY_ID } from '../mainline/urartuMainline';
 import {
@@ -346,21 +348,23 @@ export class GameApp {
             this.cityManager.bindViewportCitySync();
             // 🔴 [2026-10-02 主人定「不要确定随机，要每局随机」] 开局生成每局随机种子，注入据点样式哈希
             setCityStyleSessionSeed(String(Math.floor(Math.random() * 0x7fffffff)));
-            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'centenarian') === 'script');
+            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'melee') === 'script');
             // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
-            //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
+            //    玩家对象晚于此处创建 → 取不到时按默认的乱斗模式算（非剧本期）。
             this.scriptCityVisibility = new ScriptCityVisibility(
                 () => this.cityManager.getCities(),
-                () => (this.playerHero?.autoPlan ?? 'centenarian') === 'script',
+                () => (this.playerHero?.autoPlan ?? 'melee') === 'script',
             );
             // 🔴 [2026-10-16 主人定] 剧本模式武将严格按「登场年～卒年」出现：年份 = 当前这一场历史事件的年份
             setScriptYearProvider(() => this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
             // 🔴 [2026-10-20 主人令「百岁模式出城的军团真归秦；乱斗模式一个据点一个武将一个势力，多武将不并存」]
-            //    数据层按模式分流（FactionGenerals / Army），玩家对象晚于此处创建 → 取不到按默认百岁模式算。
-            setGameModeProvider(() => this.playerHero?.autoPlan ?? 'centenarian');
-            // 🔴 [2026-10-18 主人定] 百岁模式（默认）：武将按「登场年～百岁（生年+100）」出现，年份 = 当前游戏日历年份
+            //    数据层按模式分流（FactionGenerals / Army），玩家对象晚于此处创建 → 取不到按默认乱斗模式算。
+            setGameModeProvider(() => this.playerHero?.autoPlan ?? 'melee');
+            // 乱斗出将先挑和城主同政权的武将：数据层要知道据点现在归谁
+            setCityOwnerProvider((cityId) => this.cityManager?.getCity(cityId)?.factionId ?? null);
+            // 🔴 [2026-10-18 主人定] 百岁模式：武将按「登场年～百岁（生年+100）」出现，年份 = 当前游戏日历年份
             setCentenarianYearProvider(() =>
-                (this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian'
+                (this.playerHero?.autoPlan ?? 'melee') === 'centenarian'
                     ? (this.timeSystem?.getYear() ?? null)
                     : null,
             );
@@ -418,7 +422,7 @@ export class GameApp {
             //    剧本模式取当前事件年份、百岁模式取日历年份、乱斗与编辑器模式为 null（不按年代拦）。
             setWonderGateYearProvider(() => {
                 if (this.cityManager?.getIsEditorMode()) return null;
-                const mode = this.playerHero?.autoPlan ?? 'centenarian';
+                const mode = this.playerHero?.autoPlan ?? 'melee';
                 if (mode === 'script') return this.scriptCityVisibility?.getCurrentEvent()?.year ?? null;
                 if (mode === 'centenarian') return this.timeSystem?.getYear() ?? null;
                 return null;
@@ -689,10 +693,10 @@ export class GameApp {
 
             const legionManager = this.historicalEventManager.getLegionManager();
             wireGeneralSkillCombat(this, legionManager);
-            // 🔴 [2026-09-23 主人定] 剧本模式 = 整个世界的历史剧本期（`PlayerHero.autoPlan === 'script'`，默认）：
+            // 🔴 [2026-09-23 主人定] 剧本模式 = 整个世界的历史剧本期（`PlayerHero.autoPlan === 'script'`）：
             //    「其他军团不能随机产生」「军团在历史剧本期间不能随意寻敌，剧本都结束后自动切换到乱斗模式」。
-            //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
-            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'centenarian') === 'script';
+            //    玩家对象晚于此处创建 → 取不到时按默认的乱斗模式算（非剧本期）。
+            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'melee') === 'script';
             this.aiController = new AIController(
                 legionManager,
                 this.cityManager,
@@ -899,7 +903,7 @@ export class GameApp {
     private syncScriptOwners(): void {
         syncScriptHistoricalOwners(
             this.cityManager,
-            (this.playerHero?.autoPlan ?? 'centenarian') === 'script',
+            (this.playerHero?.autoPlan ?? 'melee') === 'script',
             this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
         );
     }
@@ -909,7 +913,7 @@ export class GameApp {
      * 剧本模式按当前事件年份、百岁模式按当前日历年份：未到建城年的大城/中城降为小城（small_city），到年或乱斗模式恢复原城级。
      */
     private syncCityFoundedTypes(): void {
-        const mode = this.playerHero?.autoPlan ?? 'centenarian';
+        const mode = this.playerHero?.autoPlan ?? 'melee';
         const year = mode === 'script'
             ? (this.scriptCityVisibility?.getCurrentEvent()?.year ?? null)
             : mode === 'centenarian'
@@ -925,10 +929,12 @@ export class GameApp {
      */
     private syncEraFactionDisplays(): void {
         if (!this.cityManager) return;
-        const mode = this.playerHero?.autoPlan ?? 'centenarian';
+        const mode = this.playerHero?.autoPlan ?? 'melee';
         // 🔴 [2026-10-20 主人令「据点和势力没有关系了」「真实的历史不应该是B吗」] 百岁模式据点归当年在场武将的势力
         //    （开局、跨年、切模式与时代名同一批时机；先定归属再算名字）
         syncCentenarianGeneralOwners(this.cityManager, mode === 'centenarian');
+        // 🔴 [2026-10-23 主人「据点每局归哪个势力不要固定，请随机。但要保证每个势力都有据点」] 切进乱斗那一刻抽一次
+        syncMeleeRandomOwners(this.cityManager, mode === 'melee');
         const year = mode === 'centenarian' ? (this.timeSystem?.getYear() ?? null) : null;
         const changed = refreshEraFactionDisplays(year);
         if (changed.length === 0) return;
@@ -958,7 +964,7 @@ export class GameApp {
      * 武将登场、时代名旗号、大中城降级、特殊建筑建成年代全部按新年份重算。返回实际跳到的年份。
      */
     public jumpToYear(input: number): number | null {
-        if ((this.playerHero?.autoPlan ?? 'centenarian') !== 'centenarian') return null;
+        if ((this.playerHero?.autoPlan ?? 'melee') !== 'centenarian') return null;
         if (!Number.isFinite(input)) return null;
         const { TIMELINE_START_YEAR, TIMELINE_END_YEAR } = GameConfig.TIME;
         let year = Math.round(input);
@@ -983,14 +989,14 @@ export class GameApp {
     private setupPlayer(legionManager: LegionManager): void {
         const allCities = this.cityManager.getCities();
         if (allCities.length === 0) return;
-        // 🔴 [2026-09-23 主人定「把玩家拉到附近」] 剧本模式（开局默认）：出生在当前这一场历史事件
+        // 🔴 [2026-09-23 主人定「把玩家拉到附近」] 剧本模式：出生在当前这一场历史事件
         //    归属武将的城外（格拉尼库斯河战役 = 佩拉）；乱斗模式照旧在全世界随机挑一个据点。
         const scriptStart = findCurrentScriptEventCity(allCities);
         // 🔴 [2026-10-08 主人令「开局玩家出现的位置请随机」] 不再绑定剧本事件城：一律在全部据点里随机挑一个（scriptStart 只留给下面的出生距离判定）
         // 🔴 [2026-10-21 主人令「百岁模式开局必须在欧亚，因为美洲哪里都没武将」「能排除的都排除」]
         //    百岁模式随机出生点：只在「有在场武将的据点」里挑（美洲/无将之地自然排除）；
         //    一座都没有 → 退而排除美洲（经度 < -30°）；再不行才用全部据点。
-        const isCentenarianStart = (this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian';
+        const isCentenarianStart = (this.playerHero?.autoPlan ?? 'melee') === 'centenarian';
         const withGeneral = isCentenarianStart
             ? allCities.filter((c) => getCityAnchoredGenerals(c.id).some((g) => isGeneralOnStage(g.generalId)))
             : allCities;

@@ -17413,8 +17413,11 @@ export function getCityGeneralsResolved(cityId: string | null | undefined): Fact
     let refs = _cityGeneralIndex.get(cityId) ?? [];
     const melee = getGameMode() === 'melee';
     if (melee) {
-        const native = refs.filter((r) => !r.general.factionId || r.general.factionId === r.blockFactionId);
-        if (native.length) refs = native;
+        // 🔴 [2026-10-23 主人「城被占，城里武将归占领者」「据点每局归哪个势力…随机」]
+        //    乱斗：城里武将都替城主出兵；先挑和城主同一政权的那位（长安这局归汉 → 先出霍去病），没有再按名将挑
+        const owner = _cityOwnerProvider?.(cityId) ?? null;
+        const same = owner ? refs.filter((r) => (r.general.factionId ?? r.blockFactionId) === owner) : [];
+        if (same.length) refs = same;
     }
     const resolved = refs.map((r, idx) => {
         const g = r.general;
@@ -17448,6 +17451,10 @@ export function getCityGeneral(
     }
     return resolved.find((g) => isGeneralOnStage(g.generalId)) ?? resolved[0] ?? null;
 }
+
+/** 据点现在归谁（运行时由 GameApp 注入；离线脚本不注入＝不按城主挑） */
+let _cityOwnerProvider: ((cityId: string) => string | null) | null = null;
+export function setCityOwnerProvider(fn: (cityId: string) => string | null): void { _cityOwnerProvider = fn; }
 
 /** HMR 热更新 FACTION_GENERALS 后重建 cityId 索引 */
 export function invalidateCityGeneralIndex(): void { _cityGeneralIndex = null; }

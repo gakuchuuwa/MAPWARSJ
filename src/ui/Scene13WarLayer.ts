@@ -53,6 +53,7 @@ import { getGeneralProfile } from '../data/GeneralSkills';
 import { getFactionGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
 import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig } from '../data/ExpeditionLegions';
 import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
+import { getGameMode } from '../data/generalOnStage';
 
 import type {
     WarBuilding, ArrowTower, CityBuildingEntry, WarSpawn, WarMan, WarArrow,
@@ -468,6 +469,8 @@ export class Scene13WarLayer {
      * 只影响显示，战斗判定仍按 `sideFaction`。
      */
     private displayFaction(side: 0 | 1): string {
+        // 乱斗：武将替城主打仗，旗号用战场势力（2026-10-23 主人「城被占，城里武将归占领者」）
+        if (getGameMode() === 'melee') return this.sideFaction[side];
         return getGeneralOwnFactionId(this.sideGeneralId[side]) ?? this.sideFaction[side];
     }
     /** 攻/守双方是否为名将（名将 ×1.25 / 普将 ×1.00） */

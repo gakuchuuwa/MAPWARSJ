@@ -181,7 +181,7 @@ export class StoryletEngine {
     public tick(): void {
         const hero = this.app.playerHero;
         if (!hero) return;
-        if ((hero.autoPlan ?? 'centenarian') !== 'centenarian') return;
+        if ((hero.autoPlan ?? 'melee') !== 'centenarian') return;
         this.tickErrand();
         const year = this.app.timeSystem.getYear();
         const season = this.app.timeSystem.getSeason() as number;

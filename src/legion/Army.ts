@@ -1458,6 +1458,8 @@ export class Army implements IBattleUnit {
      * 只影响显示，`getFactionId()`（AI/归属/攻防判定）不变。
      */
     public getDisplayFactionId(): string {
+        // 乱斗：武将替城主打仗，旗号就是军团自己的势力（2026-10-23 主人「城被占，城里武将归占领者」）
+        if (getGameMode() === 'melee') return this._factionId;
         return getGeneralOwnFactionId(this._generalId) ?? this._factionId;
     }
 
@@ -1474,12 +1476,11 @@ export class Army implements IBattleUnit {
     /**
      * 🔴 [2026-10-20 主人令「不能让同势力的人乱打，不能白起打王龁」「百岁模式，出城的军团是真归秦了」]
      * 百岁模式：军团**真实势力**＝武将自己的势力（没有就回出身势力）→ 敌我、占城归属都按它。
-     * 🔴 [2026-10-23 主人「军团跟着武将走的，你搞清楚」] 乱斗模式同样：军团真实势力＝武将自己的势力（没有就回出身势力）。
-     * 剧本 / 编辑器不动。
+     * 🔴 [2026-10-23 主人「城被占，城里武将归占领者」] 乱斗不跟武将走：军团势力＝派它出来的那座城的主人（出身势力）。
+     * 剧本 / 乱斗 / 编辑器不动。
      */
     private syncGeneralFaction(): void {
-        const mode = getGameMode();
-        if ((mode !== 'centenarian' && mode !== 'melee') || this._baseFactionId === undefined) return;
+        if (getGameMode() !== 'centenarian' || this._baseFactionId === undefined) return;
         const want = getGeneralOwnFactionId(this._generalId) ?? this._baseFactionId;
         if (want === this._factionId) return;
         this._factionId = want;
