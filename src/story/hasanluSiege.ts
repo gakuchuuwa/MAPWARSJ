@@ -43,7 +43,7 @@ const BASE: Omit<StorySkirmishOptions, 'title' | 'spec' | 'siege' | 'lat' | 'lng
     attackerFrom: FROM_NORTH,
 };
 
-/** 送料：城北几公里的路上，马夫 6、民兵 6、长矛兵 4 护着木料；曼纳人轻骑 4、投石兵 6、民兵 4 出城来烧 */
+/** 送料：城北几公里的路上，马夫 6、民兵 6、长矛兵 4、斥候 2 护着木料；曼纳人斥候 2、轻骑 4、投石兵 6、民兵 4 出城来烧 */
 export function startHasanluSupply(app: GameApp, onResult: (won: boolean) => void): boolean {
     return startStorySkirmish(app, {
         ...BASE,
@@ -55,8 +55,11 @@ export function startHasanluSupply(app: GameApp, onResult: (won: boolean) => voi
                 { key: 'villager', count: 6 },
                 { key: 'militia', count: 6 },
                 { key: 'antiquity_spearman', count: 4 },
+                // 🔴 [2026-10-23 主人令「攻守都要有些初级兵」] 前头探路的斥候
+                { key: 'antiquity_scout_cavalry', count: 2 },
             ],
             defender: [
+                { key: 'antiquity_scout_cavalry', count: 2 },
                 { key: 'antiquity_light_cavalry', count: 4 },
                 { key: 'slinger', count: 6 },
                 { key: 'militia', count: 4 },
@@ -69,7 +72,7 @@ export function startHasanluSupply(app: GameApp, onResult: (won: boolean) => voi
 }
 
 /**
- * 攻城：乌拉尔图长矛兵 14（木料齐了 20）、弓手 8、撞车 1（木料齐了 2）；曼纳长矛兵 12、弓手 10 守城。
+ * 攻城：乌拉尔图长矛兵 14（木料齐了 20）、弓手 8、撞车 1（木料齐了 2）、民兵 6、斥候 3；曼纳民兵 8、长矛兵 12、弓手 10 守城。
  */
 export function startHasanluSiege(app: GameApp, suppliesArrived: boolean, onResult: (won: boolean) => void): boolean {
     return startStorySkirmish(app, {
@@ -83,8 +86,12 @@ export function startHasanluSiege(app: GameApp, suppliesArrived: boolean, onResu
                 { key: 'antiquity_spearman', count: suppliesArrived ? 20 : 14 },
                 { key: 'archer', count: 8 },
                 { key: 'antiquity_battering_ram', count: suppliesArrived ? 2 : 1 },
+                // 🔴 [2026-10-23 主人令「攻守都要有些初级兵」] 征来的民兵、绕城的斥候
+                { key: 'militia', count: 6 },
+                { key: 'antiquity_scout_cavalry', count: 3 },
             ],
             defender: [
+                { key: 'militia', count: 8 },
                 { key: 'antiquity_spearman', count: 12 },
                 { key: 'archer', count: 10 },
             ],

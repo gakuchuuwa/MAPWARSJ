@@ -21,7 +21,6 @@ import { seasonIndex } from '../player/HorseStable';
 import { HORSE_MEMORIES, memoryLabel, startMemoryBattle } from './horseMemories';
 import { getHorseLore } from './horseLore';
 import { storyNarrator } from './storyNarrator';
-import { getStoryCharacter } from './storyCharacters';
 
 /** 旁白念之前去掉开头的表情符号（🐎、📖 这类，念出来是乱码） */
 function stripLeadingSymbols(s: string): string {
@@ -128,6 +127,14 @@ const NEAR_CITY_KM = 40;
 const RECHECK_GAME_SEC = 3;
 /** 跑腿到站判定（公里） */
 const ERRAND_ARRIVE_KM = 3;
+/**
+ * 🔴 [2026-10-23 主人「玩家都到了，第一句话还没结束呢，能不能让话和路差不多？」]
+ * 跑腿赶路时旁白还在念：按「剩下的路 ÷ 剩下的话」把脚步放慢，让人和话差不多同时到；
+ * 只放慢不加快（话短就照常走完，后半段不说话）；最慢放到原速的 PACE_MIN。到站时话还没念完，原地等念完再办事。
+ */
+const PACE_MIN = 0.25;
+/** 量一次实际走速的间隔（真实毫秒） */
+const PACE_SAMPLE_MS = 500;
 
 interface ActiveErrand {
     def: StoryErrand;
@@ -137,6 +144,9 @@ interface ActiveErrand {
     phase: 'travel' | 'busy' | 'stay';
     stayUntil: number;
     deadlineKey: number | null;
+    /** 按旁白放慢脚步：上次量走速的位置、时刻与当时的放慢系数 */
+    probe: { lat: number; lng: number; t: number; mult: number } | null;
+    talkMult: number;
 }
 
 export class StoryletEngine {
@@ -374,43 +384,17 @@ export class StoryletEngine {
     private showOptions(api: StoryApi, speaker: string, text: string, options: StoryOption[], beforePick?: () => void): void {
         const hero = this.app.playerHero!;
         const line = text.split('{玩家}').join(hero.name);
-        // 🔴 [2026-10-22 主人同意「以旁白为主，只有要玩家拿主意的地方才弹对话框」]
-        //    只有一个选项＝不用玩家拿主意：不弹框、不暂停，旁白念出来（说话人立绘显示在左下角），念完照这个选项办
-        if (options.length === 1) {
-            const only = options[0];
-            if (!only.keepOpen) beforePick?.();   // 先记「演过了」，免得念的工夫里又被弹一次
-            storyNarrator.say(speaker, line, {
-                onDone: () => {
-                    only.pick(api);
-                    this.refreshHold();
-                },
-            });
-            return;
-        }
-        // 要玩家拿主意：弹对话框；正文照样念出来（对话框里已有全文，不再开底部字幕条）
-        storyNarrator.say(null, line, { banner: false });
-        // 🔴 [2026-10-22 主人「所有人物都没有立绘…我来画立绘」] 抬头按人物表显示名字、身份、立绘
-        const who = getStoryCharacter(speaker);
-        this.app.playerHUD?.showDialogue({
-            speaker: who?.name ?? speaker,
-            portrait: who?.portrait || null,
-            factionName: who?.role ?? '',
-            text: text.split('{玩家}').join(hero.name),
-            // 自动模式（直播挂机）倒计时后自动选主选项；玩家自己玩时等他选
-            // 🔴 [2026-10-22 主人「选择框的时间有点短，我还没看清楚呢，就结束了」] 原来固定 3 秒；
-            //    现在按正文长短给（每字 0.2 秒 + 3 秒），最少 10 秒、最多 20 秒
-            noAutoPick: !hero.autoMode,
-            autoPickMs: Math.max(10000, Math.min(20000, 3000 + line.length * 200)),
-            options: options.map((o) => ({
-                label: o.label,
-                accent: o.accent,
-                onPick: () => {
-                    this.app.playerHUD?.closeDialogue();
-                    if (!o.keepOpen) beforePick?.();
-                    o.pick(api);
-                    this.refreshHold();
-                },
-            })),
+        // 🔴 [2026-10-23 主人「这个有必要做选择吗？能不能简单点，做的还不如剧本模式呢」「怎么不做成统一的模式呀」]
+        //    故事一律跟剧本模式一个样：旁白念出来 + 底部字幕（说话人立绘显示在左下角），不弹选择框、不等玩家点；
+        //    念完照主选项（accent，没有就第一个）往下走。旧的「不理它 / 推说不去」这类分支都不再走到。
+        const chosen = options.find((o) => o.accent) ?? options[0];
+        if (!chosen) return;
+        if (!chosen.keepOpen) beforePick?.();   // 先记「演过了」，免得念的工夫里又被弹一次
+        storyNarrator.say(speaker, line, {
+            onDone: () => {
+                chosen.pick(api);
+                this.refreshHold();
+            },
         });
     }
 
@@ -431,6 +415,8 @@ export class StoryletEngine {
             phase: 'travel',
             stayUntil: 0,
             deadlineKey: def.deadlineSeasons ? this.nowSeasonKey() + def.deadlineSeasons : null,
+            probe: null,
+            talkMult: 1,
         };
     }
 
@@ -441,7 +427,7 @@ export class StoryletEngine {
         if (e.def.onlyInAuto && !hero.autoMode) {
             this.errand = null;
             hero.cancelTravel();
-            if (e.def.pace !== undefined) hero.setStoryPace(1);
+            hero.setStoryPace(1);
             this.refreshHold();
             return;
         }
@@ -456,6 +442,9 @@ export class StoryletEngine {
         const km = Math.hypot((stop.lat - p.lat) * 111.32, (stop.lng - p.lng) * 111.32 * cosLat);
         if (km <= ERRAND_ARRIVE_KM) {
             hero.cancelTravel();
+            // 到了话还没念完：原地等这几句念完再办事，免得新的话叠在旧话上
+            if (storyNarrator.isBusy()) return;
+            this.setTalkMult(e, hero, 1);
             e.phase = 'busy';
             const next = (stay?: number) => {
                 if (this.errand !== e) return;
@@ -474,14 +463,46 @@ export class StoryletEngine {
         if (!hero.isTraveling() && !hero.travelToPoint({ lat: stop.lat, lng: stop.lng }, stop.label)) {
             hero.army.setPosition(stop.lat, stop.lng);
         }
+        this.matchPaceToTalk(e, hero, p, km);
+    }
+
+    /** 旁白还在念时，按剩下的路和剩下的话放慢脚步（见 PACE_MIN 头注） */
+    private matchPaceToTalk(e: ActiveErrand, hero: PlayerHero, p: { lat: number; lng: number }, kmLeft: number): void {
+        const talkMs = storyNarrator.remainingMs();
+        const now = performance.now();
+        if (talkMs <= 0 || !hero.isTraveling()) {
+            e.probe = null;
+            this.setTalkMult(e, hero, 1);
+            return;
+        }
+        const pr = e.probe;
+        if (!pr) { e.probe = { lat: p.lat, lng: p.lng, t: now, mult: e.talkMult }; return; }
+        if (now - pr.t < PACE_SAMPLE_MS) return;
+        const cosLat = Math.cos((p.lat * Math.PI) / 180);
+        const moved = Math.hypot((p.lat - pr.lat) * 111.32, (p.lng - pr.lng) * 111.32 * cosLat);
+        const dtSec = (now - pr.t) / 1000;
+        e.probe = { lat: p.lat, lng: p.lng, t: now, mult: e.talkMult };
+        if (moved < 0.01) return;   // 暂停或卡住，这一回不算
+        // 不放慢时每真实秒能走多少公里
+        const freeKmPerSec = moved / dtSec / Math.max(0.05, pr.mult);
+        const wantKmPerSec = kmLeft / (talkMs / 1000);
+        const target = Math.max(PACE_MIN, Math.min(1, wantKmPerSec / freeKmPerSec));
+        this.setTalkMult(e, hero, e.talkMult * 0.5 + target * 0.5);
+    }
+
+    private setTalkMult(e: ActiveErrand, hero: PlayerHero, mult: number): void {
+        if (Math.abs(mult - e.talkMult) < 0.02 && mult !== 1) return;
+        e.talkMult = mult;
+        hero.setStoryPace((e.def.pace ?? 1) * mult);
     }
 
     private nextStop(e: ActiveErrand): void {
         e.stop += 1;
         e.phase = 'travel';
+        e.probe = null;
         if (e.stop < e.def.stops.length) return;
         this.errand = null;
-        if (e.def.pace !== undefined) this.app.playerHero?.setStoryPace(1);
+        this.app.playerHero?.setStoryPace(1);
         const onTime = e.deadlineKey === null || this.nowSeasonKey() < e.deadlineKey;
         e.def.onDone(e.api, onTime);
         this.refreshHold();

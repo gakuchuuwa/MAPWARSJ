@@ -18,11 +18,20 @@ interface Line {
 }
 
 const CARD_ID = 'story-narration-card';
+/**
+ * 估算念一个字要多少毫秒（故事旁白语速 0.95，中文约每秒 4 字）；给跑腿按旁白长短放慢脚步用（StoryletEngine）。
+ * 只是估算：念得快了玩家照样走到，念得慢了到站会等这句念完再办事。
+ */
+const MS_PER_CHAR = 250;
+const estimateMs = (text: string): number => 800 + text.length * MS_PER_CHAR;
 const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
 
 class StoryNarrator {
     private queue: Line[] = [];
     private playing = false;
+    /** 正在念的这句：开口时刻与估算时长 */
+    private currentStart = 0;
+    private currentEstMs = 0;
 
     /** 念一句；speaker 是人物表的键（如 '萨尔杜里'），旁白传 null */
     public say(speaker: string | null, text: string, opts: { banner?: boolean; onDone?: () => void } = {}): void {
@@ -30,6 +39,14 @@ class StoryNarrator {
         if (!line) { opts.onDone?.(); return; }
         this.queue.push({ speaker, text: line, banner: opts.banner ?? true, onDone: opts.onDone });
         if (!this.playing) this.next();
+    }
+
+    /** 估算还要念多久（毫秒）：这句剩下的 ＋ 排着的；没在念＝0 */
+    public remainingMs(): number {
+        if (!this.isBusy()) return 0;
+        let ms = this.playing ? Math.max(0, this.currentStart + this.currentEstMs - performance.now()) : 0;
+        for (const l of this.queue) ms += estimateMs(l.text);
+        return ms;
     }
 
     /** 还有没有在念 / 排着的 */
@@ -41,6 +58,8 @@ class StoryNarrator {
         const line = this.queue.shift();
         if (!line) { this.playing = false; this.hideCard(); return; }
         this.playing = true;
+        this.currentStart = performance.now();
+        this.currentEstMs = estimateMs(line.text);
         this.showCard(line.speaker);
         let done = false;
         const finish = () => {
