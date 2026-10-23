@@ -11,7 +11,6 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     lanzhou: { name: '湟中胡骑', tier: 3 },
     dangxiang: { name: '铁鹞子', tier: 2 },
   // 步跋子已迁环洲（huan@方渠）
-    weiming: { name: '嵬名游骑', tier: 4 },
     guiyi: { name: '归义射雕手', tier: 2 },
     liangzhou: { name: '凉州大马', tier: 3 },
   hunxie: { name: '肩水胡骑', tier: 4 },          // 肩水金关·匈奴浑邪部（原甘州铁骑，归甘）（缺乏极其著名的战术高光，降T3）
@@ -20,16 +19,11 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     chijin: { name: '赤金营', tier: 4 },
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang
     ningkou: { name: '汉连弩卫', tier: 2 },
-  shuofang: { name: '期门郎骑', tier: 3 },      // 汉武帝期门军（近卫），知名度高，降为T3知名。
     ganzhou: { name: '觻得精骑', tier: 2 },
-    baiyang: { name: '长城烽火卫', tier: 3 },
   // 静塞军：北宋专名骑军，唐河之役破辽铁林 → T2；恢复专名（勿加「骑」字凑新）
   wei2: { name: '静塞军', tier: 2 },
     guazhou: { name: '墨离疑锋', tier: 3 },
   shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）
-    kang: { name: '鹰扬骁骑', tier: 4 },
-    woye: { name: '沃野镇兵', tier: 3 },
-    chile: { name: '两池军', tier: 3 },
     weiyuan: { name: '永安营兵', tier: 3 },
     xiazhou: { name: '平夏部骑', tier: 3 },
     yanzhou: { name: '步跋子', tier: 3 },
@@ -37,7 +31,6 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     suzhou: { name: '轻勇骑', tier: 0 },
     xiyuduhu: { name: '西域都护军', tier: 1 },
     anxi: { name: '安西陌刀军', tier: 2 },
-    jiluo_d: { name: '北征突骑', tier: 1 },
     pulei: { name: '蒲类落雕骑', tier: 3 },
     hepan: { name: '葱岭守捉兵', tier: 3 },
     fushi: { name: '氐秦锐士', tier: 3 },
