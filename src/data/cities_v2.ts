@@ -205,7 +205,7 @@ export const T0_CAPITALS: CityDataV2[] = [
     {
         id: 'city_nanjing',
         name: '金陵',
-        factionId: 'jinling',
+        factionId: 'liusong',
         lat: 32.0500, lng: 118.7700,
         type: 'big_city',
         region: 'JIANGNAN',
@@ -396,11 +396,11 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
 
 
-    { id: 'city_hefei', name: '合肥', factionId: 'lu', lat: 31.82, lng: 117.23, type: 'medium_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, tier: 1, note: '庐州府治；江淮要冲' },
+    { id: 'city_hefei', name: '合肥', factionId: 'yangwu', lat: 31.82, lng: 117.23, type: 'medium_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, tier: 1, note: '庐州府治；江淮要冲' },
     {
         id: 'city_yangzhou',
         name: '广陵',
-        factionId: 'yang_zhou',
+        factionId: 'yangwu',
         lat: 32.3930, lng: 119.4200,
         type: 'big_city',
         region: 'JIANGNAN',
@@ -418,12 +418,12 @@ buildingStyle: 'CENTRAL', troops: 10000,
         region: 'BASHU',
         buildingStyle: 'BASHU',
         troops: 10000, note: '涪州治所；《华阳国志》涪陵劲卒' },
-    { id: 'city_yiling', name: '夷陵', factionId: 'yidou', lat: 30.7, lng: 111.28, type: 'small_city', region: 'JIANGNAN',
+    { id: 'city_yiling', name: '夷陵', factionId: 'sunwu_d', lat: 30.7, lng: 111.28, type: 'small_city', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '夷陵；宜都小城',
     },
 
-    { id: 'city_ying', name: '江陵', factionId: 'chu', lat: 30.35, lng: 112.18, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_ying', name: '江陵', factionId: 'chuguo', lat: 30.35, lng: 112.18, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
 
@@ -434,7 +434,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
     {
         id: 'city_chaisang',
         name: '柴桑',
-        factionId: 'jiujiang',
+        factionId: 'sunwu_d',
         lat: 29.6802,
         lng: 115.9964,
         type: 'small_city',
@@ -442,7 +442,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
         
         note: '柴桑；柴桑小城', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
-    { id: 'city_changsha', name: '长沙', factionId: 'changshaguo', lat: 28.19, lng: 112.97, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_changsha', name: '长沙', factionId: 'machu', lat: 28.19, lng: 112.97, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     {
@@ -457,9 +457,9 @@ buildingStyle: 'JIANGNAN', troops: 10000,
         note: '延陵；大周小城',
     },
     { id: 'city_gusu', name: '姑苏', factionId: 'wu', lat: 31.3, lng: 120.62, type: 'big_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
-    { id: 'city_jiaxing', name: '嘉兴', factionId: 'qian_d', lat: 30.75, lng: 120.76, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_jiaxing', name: '嘉兴', factionId: 'wuyue', lat: 30.75, lng: 120.76, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
-    { id: 'city_shanxian', name: '剡城', factionId: 'qiufu', lat: 29.556746, lng: 120.822144, type: 'small_city', region: 'JIANGNAN',
+    { id: 'city_shanxian', name: '剡城', factionId: 'tang', lat: 29.556746, lng: 120.822144, type: 'small_city', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000, mirror: true,
         note: '剡城；剡中小城',
     },
@@ -643,7 +643,7 @@ buildingStyle: 'BASHU', troops: 10000,
         note: '黄龙府；夫余治所/重镇',
     },
     
-    { id: 'city_wuling', name: '常德', factionId: 'zhongxiang', lat: 29.03, lng: 111.69, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_wuling', name: '常德', factionId: 'song', lat: 29.03, lng: 111.69, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
 
@@ -669,7 +669,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
         tier: 2,
         note: '大散关；凤州关隘',
     },
-    { id: 'city_dusong', name: '独松关', factionId: 'shenshi', lat: 30.566952, lng: 119.679565, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true },
+    { id: 'city_dusong', name: '独松关', factionId: 'song', lat: 30.566952, lng: 119.679565, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true },
 
 //镜像
     { id: 'city_xianxia', name: '仙霞关', factionId: 'huangwang', lat: 28.35, lng: 118.51, type: 'pass', region: 'JIANGNAN',
@@ -680,14 +680,14 @@ buildingStyle: 'JIANGNAN', troops: 10000, tier: 2,
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '金华；鲁监小城',
     },
-    { id: 'city_quzhou', name: '信安', factionId: 'gumie', lat: 28.96, lng: 118.87, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_quzhou', name: '信安', factionId: 'tang', lat: 28.96, lng: 118.87, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     { id: 'city_raozhou', name: '鄱阳', factionId: 'linshihong', lat: 28.99, lng: 116.66, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：南康（江西）：汉地州郡
-    { id: 'city_qianzhou', name: '南康', factionId: 'dayu', lat: 25.8509, lng: 114.93, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_qianzhou', name: '南康', factionId: 'ming_d', lat: 25.8509, lng: 114.93, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     {
@@ -786,7 +786,7 @@ buildingStyle: 'WEI', troops: 10000, mirror: true,
     // ── 辽东幽州走廊关隘 ──
     { id: 'city_shanhaiguan', name: '山海关', factionId: 'ming_d', lat: 40, lng: 119.8, type: 'pass', troops: 10000, region: 'MING', buildingStyle: 'WEI' },
 
-    { id: 'city_wushengguan', name: '武胜关', factionId: 'yiyang_d', lat: 31.83, lng: 114.01, type: 'pass', region: 'JIANGNAN',
+    { id: 'city_wushengguan', name: '武胜关', factionId: 'song', lat: 31.83, lng: 114.01, type: 'pass', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', 
         note: '武胜关；义阳关隘', troops: 10000 },
     // ── 齐鲁关隘 ──
@@ -830,12 +830,12 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_gaoque', name: '高阙塞', factionId: 'baiyang', lat: 41.195202, lng: 107.166138, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI', mirror: true },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-18 主人令「岭南算江南」→ JIANGNAN：横浦关（广东南雄）：秦五岭关隘
-    { id: 'city_hengpuguan', name: '横浦关', factionId: 'shixing', lat: 25.32, lng: 114.26, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_hengpuguan', name: '横浦关', factionId: 'nanyue', lat: 25.32, lng: 114.26, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     {
         id: 'city_yangshanguan',
         name: '阳山关',
-        factionId: 'paiyao',
+        factionId: 'nanyue',
         lat: 24.78, lng: 112.65,
         type: 'pass',
         region: 'JIANGNAN',
@@ -848,7 +848,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     {
         id: 'city_huangxiguan',
         name: '湟溪关',
-        factionId: 'yingzhou',
+        factionId: 'nanhan',
         lat: 24.16, lng: 113.38,
         type: 'pass',
         region: 'JIANGNAN',
@@ -884,7 +884,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     {
         id: 'city_dangyang',
         name: '当阳',
-        factionId: 'jingmen',
+        factionId: 'shu',
         lat: 30.82, lng: 111.79,
         type: 'small_city',
         region: 'JIANGNAN',
@@ -1320,7 +1320,7 @@ buildingStyle: 'JAPAN', troops: 10000,
         troops: 10000,
         note: '朝歌；殷国小城',
     },
-    { id: 'city_liuxian', name: '六安', factionId: 'liu', lat: 31.74, lng: 116.5, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_liuxian', name: '六安', factionId: 'han_d', lat: 31.74, lng: 116.5, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     
@@ -1362,7 +1362,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
     },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：高凉（广东）：汉地郡治
-    { id: 'city_gaoliang', name: '高凉', factionId: 'xian_d', lat: 21.9, lng: 110.8, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_gaoliang', name: '高凉', factionId: 'liren', lat: 21.9, lng: 110.8, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     { id: 'city_beishacheng', name: '卑沙城', factionId: 'gaogouli', lat: 39.444692, lng: 121.959229, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
@@ -1439,13 +1439,13 @@ buildingStyle: 'MONGOL', troops: 10000,
     // 第五类：元末起义政权
     
     {
-        id: 'city_xinhui', name: '厓山', factionId: 'luoping',
+        id: 'city_xinhui', name: '厓山', factionId: 'song',
         lat: 22.53, lng: 113.04, type: 'stockade', troops: 10000, tier: 4,
         
         note: '厓山；海口防线关隘要塞', region: 'JIANGNAN',
         // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：厓山（广东新会）：宋末海战处，汉地
         buildingStyle: 'JIANGNAN' },
-    { id: 'city_ninghai', name: '白峤', factionId: 'hu_d', lat: 29.2757, lng: 121.4182, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_ninghai', name: '白峤', factionId: 'ming_d', lat: 29.2757, lng: 121.4182, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     {
@@ -1455,20 +1455,20 @@ buildingStyle: 'MONGOL', troops: 10000,
         note: '政和；大成小城', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
     {
-        id: 'city_zhangzhou', name: '龙溪', factionId: 'chendiaoyan',
+        id: 'city_zhangzhou', name: '龙溪', factionId: 'tang',
         lat: 24.51, lng: 117.65, type: 'stockade', troops: 10000,
         
         note: '龙溪；陈吊小城', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
-    { id: 'city_tingzhou', name: '黄连', factionId: 'kejia', lat: 26.26, lng: 116.65, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_tingzhou', name: '黄连', factionId: 'tang', lat: 26.26, lng: 116.65, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：瑞金（江西）：宋瑞金监，客家大本营
-    { id: 'city_ruijin', name: '瑞金', factionId: 'tingzhou_d', lat: 25.9262, lng: 116.0458, type: 'stockade', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '宋瑞金监，客家大本营' },
+    { id: 'city_ruijin', name: '瑞金', factionId: 'nantang', lat: 25.9262, lng: 116.0458, type: 'stockade', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '宋瑞金监，客家大本营' },
 
     // ── 2026-05-25 明朝势力新增城市 ──
     // 第二类：元末群雄
-    { id: 'city_qingyuan_zj', name: '宁波', factionId: 'fang_guozhen', lat: 29.87, lng: 121.54, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_qingyuan_zj', name: '宁波', factionId: 'ming_d', lat: 29.87, lng: 121.54, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     {
@@ -1477,7 +1477,7 @@ buildingStyle: 'MONGOL', troops: 10000,
         
         note: '临海；瓯越小城', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
-    { id: 'city_wenzhou', name: '永嘉', factionId: 'wenzhou', lat: 28, lng: 120.7, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_wenzhou', name: '永嘉', factionId: 'fangguozhen', lat: 28, lng: 120.7, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     // 第三类：农民起义
@@ -1489,13 +1489,13 @@ buildingStyle: 'MONGOL', troops: 10000,
         note: '沙戍堡；铲平关隘', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
     {
-        id: 'city_yanping', name: '延平', factionId: 'geng',
+        id: 'city_yanping', name: '延平', factionId: 'longwu',
         lat: 26.670, lng: 118.210, type: 'small_city', troops: 10000, tier: 4,
         
         note: '延平；靖南小城', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
     { id: 'city_jianning', name: '建宁', factionId: 'longwu', lat: 27.12, lng: 118.26, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
-    { id: 'city_chuzhou_zj', name: '丽水', factionId: 'yezongliu', lat: 28.46, lng: 119.91, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_chuzhou_zj', name: '丽水', factionId: 'tang', lat: 28.46, lng: 119.91, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     {
         id: 'city_wenan', name: '文安', factionId: 'you',
@@ -1573,17 +1573,17 @@ buildingStyle: 'TIBET', troops: 10000,
 
  // 镜像
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：肇庆（广东）：汉地州郡
-    { id: 'city_zhaoqing', name: '肇庆', factionId: 'duanzhou_d', lat: 23.05, lng: 112.45, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_zhaoqing', name: '肇庆', factionId: 'song', lat: 23.05, lng: 112.45, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     {
-        id: 'city_haiyang', name: '海阳', factionId: 'chaozhou_d',
+        id: 'city_haiyang', name: '海阳', factionId: 'tang',
         lat: 23.6697, lng: 116.6394, type: 'small_city', troops: 10000, region: 'JIANGNAN',
         // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：海阳（广东潮州）：汉地郡治
         buildingStyle: 'JIANGNAN', note: '海阳；马发潮州义勇' },
     { id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian', lat: 24.08, lng: 120.56, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
-    { id: 'city_pinglong', name: '平陇', factionId: 'miaomin', lat: 28.304379, lng: 109.671021, type: 'stockade', region: 'JIANGNAN',
+    { id: 'city_pinglong', name: '平陇', factionId: 'panjun', lat: 28.304379, lng: 109.671021, type: 'stockade', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '平陇；苗民关隘',
     },
@@ -1614,7 +1614,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
 
 
     // 第三类：大明国/小刀会
-    { id: 'city_shanghai', name: '上海', factionId: 'chunshen', lat: 31.23, lng: 121.47, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_shanghai', name: '上海', factionId: 'tang', lat: 31.23, lng: 121.47, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     // ── 洋州@兴势山（王平·兴势之战/无当飞军T1）──
@@ -1853,7 +1853,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── 第四类：岭南帝国、安南正统与海岛王国 ──
     // ── 第五类：百越余脉与南岛语系 ──
     {
-        id: 'city_lingqu', name: '始安', factionId: 'xinjiang',
+        id: 'city_lingqu', name: '始安', factionId: 'ming_d',
         lat: 25.27, lng: 110.29, type: 'medium_city', region: 'JIANGNAN',
         // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：始安（广西桂林）：零陵/始安郡治，秦凿灵渠处
         buildingStyle: 'JIANGNAN', troops: 10000, tier: 1,
@@ -1865,14 +1865,14 @@ buildingStyle: 'JIANGNAN', troops: 10000,
         note: '花山；骆越小城',
     },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：海门（广西合浦）：合浦郡治，汉地海疆
-    { id: 'city_hepu', name: '海门', factionId: 'li_s', lat: 21.663, lng: 109.207, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_hepu', name: '海门', factionId: 'han_d', lat: 21.663, lng: 109.207, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
 
 
 
 
-    { id: 'city_haikang', name: '海康', factionId: 'leizhou', lat: 20.9100, lng: 110.0800, type: 'small_city', troops: 10000, 
+    { id: 'city_haikang', name: '海康', factionId: 'tang', lat: 20.9100, lng: 110.0800, type: 'small_city', troops: 10000, 
         note: '海康；雷州小城', region: 'JIANGNAN',
         // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：海康（广东雷州）：合州/雷州治，汉地
         buildingStyle: 'JIANGNAN' },
@@ -1929,7 +1929,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
     { id: 'city_fuzhou_fugu', name: '府谷', factionId: 'song', lat: 39.0278, lng: 111.0583, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
     {
-        id: 'city_wanling', name: '宛陵', factionId: 'shanyue',
+        id: 'city_wanling', name: '宛陵', factionId: 'nanqi',
         lat: 30.9333, lng: 118.75, type: 'stockade', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN', troops: 10000, tier: 4,
         note: '宛陵城；山越小城',
@@ -1941,7 +1941,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
         note: '敕木山；畲族关隘',
     },
     {
-        id: 'city_qingjingsi', name: '刺桐', factionId: 'quanzhou',
+        id: 'city_qingjingsi', name: '刺桐', factionId: 'song',
         lat: 24.90, lng: 118.5833, type: 'big_city', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN', troops: 10000, tier: 1,
         note: '刺桐；泉州治所/重镇',
@@ -1979,7 +1979,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
 
 // ── 大夏(西夏)都城：兴庆府 ──
-{ id: 'city_yongan', name: '永安', factionId: 'jingjiang', lat: 24.066563, lng: 110.626831, type: 'small_city', troops: 10000, 
+{ id: 'city_yongan', name: '永安', factionId: 'taiping', lat: 24.066563, lng: 110.626831, type: 'small_city', troops: 10000, 
         note: '永安；靖江小城', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
     { id: 'city_xinzheng', name: '新郑', factionId: 'han', lat: 34.4, lng: 113.74, type: 'small_city', region: 'CENTRAL',
@@ -2057,11 +2057,11 @@ buildingStyle: 'WEI', troops: 10000, tier: 2,
 
 
     // ── 2026-05-27 新增：汪(黟县) ──
-    { id: 'city_yixian', name: '黟寨', factionId: 'wang_s', lat: 29.93, lng: 117.94, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_yixian', name: '黟寨', factionId: 'tang', lat: 29.93, lng: 117.94, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     // ── 2026-05-27 新增：向(来凤)、覃(慈利)、冉(秀山)、储(潜山) ──
-    { id: 'city_laifeng', name: '散毛关', factionId: 'xiang_d', lat: 29.49, lng: 109.41, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true },
+    { id: 'city_laifeng', name: '散毛关', factionId: 'ming_d', lat: 29.49, lng: 109.41, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true },
 
 
 
@@ -2069,11 +2069,11 @@ buildingStyle: 'WEI', troops: 10000, tier: 2,
 
     { id: 'city_xiushan', name: '秀山', factionId: 'ming_d', lat: 28.379316, lng: 109.061279, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
-    { id: 'city_qianshan', name: '潜山', factionId: 'chu_d', lat: 30.616642, lng: 116.485291, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '唐舒州同安郡；陆康庐江太守守城' },
+    { id: 'city_qianshan', name: '潜山', factionId: 'han_d', lat: 30.616642, lng: 116.485291, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '唐舒州同安郡；陆康庐江太守守城' },
 
     // ── 2026-05-27 新增：青衣(雅州) ──
     // ── 2026-05-27 新增：五溪(八面山) ──
-    { id: 'city_bamian', name: '八面山', factionId: 'wuxi', lat: 28.83, lng: 109.28, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_bamian', name: '八面山', factionId: 'wuling', lat: 28.83, lng: 109.28, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
 
@@ -2154,7 +2154,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     {
         id: 'city_guyanguan',
         name: '古严关',
-        factionId: 'guizhou',
+        factionId: 'ming_d',
         lat: 25.68, lng: 110.62,
         type: 'pass',
         region: 'JIANGNAN',
@@ -2173,10 +2173,10 @@ buildingStyle: 'CENTRAL', troops: 10000,
         troops: 10000, note: '盘瑶聚居瑶人弩手',
         tier: 4 },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：麦岭关（广西）：汉地关隘
-    { id: 'city_mailingguan', name: '麦岭关', factionId: 'daozhou', lat: 25.02, lng: 111.23, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true },
+    { id: 'city_mailingguan', name: '麦岭关', factionId: 'song', lat: 25.02, lng: 111.23, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true },
 
 
-    { id: 'city_yongzhou_hn', name: '泉陵', factionId: 'jiang_s', lat: 26.231835, lng: 111.588135, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_yongzhou_hn', name: '泉陵', factionId: 'tang', lat: 26.231835, lng: 111.588135, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     // ── 2026-05-28 新增：黎(崖州) ──
@@ -2757,8 +2757,8 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
 
     // ── 2026-06-11 精锐部队缺口：新建据点 ──
-    { id: 'city_jingling', name: '竟陵', factionId: 'ruochu', lat: 30.662000, lng: 113.166000, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '楚若敖氏旧地；若敖六卒（《左传》）' },
-    { id: 'city_yunmeng', name: '云梦', factionId: 'mi_chu', lat: 31.02, lng: 113.75, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_jingling', name: '竟陵', factionId: 'chuguo', lat: 30.662000, lng: 113.166000, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '楚若敖氏旧地；若敖六卒（《左传》）' },
+    { id: 'city_yunmeng', name: '云梦', factionId: 'chuguo', lat: 31.02, lng: 113.75, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     { id: 'city_daming', name: '大名', factionId: 'tianxiong', lat: 36.5138, lng: 115.3043, type: 'medium_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' },
 
@@ -2766,8 +2766,8 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
     { id: 'city_bijie', name: '毕节', factionId: 'luodian', lat: 27.302000, lng: 105.285000, type: 'stockade', region: 'BASHU', buildingStyle: 'BASHU', troops: 10000, note: '水西安氏土司治所；罗罗兵（奢香/安邦彦）' },
     { id: 'city_tianyang', name: '田阳', factionId: 'zhuang_d', lat: 23.720000, lng: 106.650000, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地' },
-    { id: 'city_hailing', name: '海陵', factionId: 'taizhou', lat: 32.550000, lng: 120.000000, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '唐/杨吴海陵镇，后升泰州；李昪为制置使时所治发迹之地' },
-    { id: 'city_jingkou', name: '濡须口', factionId: 'wuwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, mirror: true, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
+    { id: 'city_hailing', name: '海陵', factionId: 'nantang', lat: 32.550000, lng: 120.000000, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '唐/杨吴海陵镇，后升泰州；李昪为制置使时所治发迹之地' },
+    { id: 'city_jingkou', name: '濡须口', factionId: 'sunwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, mirror: true, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.22, lng: 115.04, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
     { id: 'city_ningyuan', name: '宁远城', factionId: 'zu_d', lat: 40.618, lng: 120.72, type: 'pass', troops: 10000, region: 'XIANBEI', buildingStyle: 'XIANBEI', mirror: true },
@@ -2913,11 +2913,11 @@ buildingStyle: 'BASHU', troops: 10000, tier: 2,
     { id: 'city_huichuan', name: '会川', factionId: 'nanzhao', lat: 26.6545, lng: 102.2454, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
 
-    { id: 'city_chenzhou2', name: '沅陵', factionId: 'chenzhou_d', lat: 28.227028, lng: 110.291748, type: 'small_city', region: 'JIANGNAN',
+    { id: 'city_chenzhou2', name: '沅陵', factionId: 'tang', lat: 28.227028, lng: 110.291748, type: 'small_city', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '沅陵；辰州小城',
     },
-    { id: 'city_yuanzhou', name: '芷江', factionId: 'qianzhong', lat: 27.566688, lng: 109.909973, type: 'small_city', region: 'JIANGNAN',
+    { id: 'city_yuanzhou', name: '芷江', factionId: 'manzhou_d', lat: 27.566688, lng: 109.909973, type: 'small_city', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '芷江；沅州小城',
     },
@@ -2946,7 +2946,7 @@ buildingStyle: 'BASHU', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 BASHU：宛温（云南）：汉宛温县，南中之地
     { id: 'city_wanwen', name: '宛温', factionId: 'shu', lat: 25.09, lng: 104.89, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
-    { id: 'city_cangwu', name: '苍梧', factionId: 'guangxin', lat: 23.47, lng: 111.31, type: 'medium_city', region: 'JIANGNAN',
+    { id: 'city_cangwu', name: '苍梧', factionId: 'han_d', lat: 23.47, lng: 111.31, type: 'medium_city', region: 'JIANGNAN',
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：苍梧（广西梧州）：苍梧郡治，汉地
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '苍梧；广信小城',
@@ -2954,7 +2954,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
     {
         id: 'city_panyu',
         name: '番禺',
-        factionId: 'guangzhou',
+        factionId: 'nanhan',
         lat: 23.120000,
         lng: 113.260000,
         type: 'big_city',
@@ -2968,11 +2968,11 @@ buildingStyle: 'JIANGNAN', troops: 10000,
     { id: 'city_longchuan', name: '龙川', factionId: 'nanyue', lat: 24.1, lng: 115.26, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     { id: 'city_kuaiji', name: '会稽', factionId: 'yue', lat: 29.987000, lng: 120.582000, type: 'medium_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '越国都城；lat 南微调 0.01° 与临安间距≥50km' },
-    { id: 'city_luling', name: '庐陵', factionId: 'ouyang', lat: 27.1133, lng: 114.9806, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '吉州治庐陵；欧阳頠世居，梁庐陵蛮兵' },
-    { id: 'city_hongzhou', name: '豫章', factionId: 'hongzhou', lat: 28.68, lng: 115.88, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_luling', name: '庐陵', factionId: 'song', lat: 27.1133, lng: 114.9806, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '吉州治庐陵；欧阳頠世居，梁庐陵蛮兵' },
+    { id: 'city_hongzhou', name: '豫章', factionId: 'tang', lat: 28.68, lng: 115.88, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
-    { id: 'city_qingliuguan', name: '清流关', factionId: 'chuzhou_d', lat: 32.280000, lng: 118.250000, type: 'pass', region: 'JIANGNAN',
+    { id: 'city_qingliuguan', name: '清流关', factionId: 'nantang', lat: 32.280000, lng: 118.250000, type: 'pass', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000, mirror: true,
         note: '清流关；滁州关隘',
     },
@@ -2980,18 +2980,18 @@ buildingStyle: 'JIANGNAN', troops: 10000, mirror: true,
     { id: 'city_bianliang', name: '开封', factionId: 'song', lat: 34.8, lng: 114.31, type: 'big_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', note: '北宋东京汴梁，17世纪前人口破百万（北宋盛期~100万），升 big_city' },
 
     { id: 'city_shangluo', name: '商邑', factionId: 'qin', lat: 33.87, lng: 109.94, type: 'small_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, note: '商鞅商於封地商邑' },
-    { id: 'city_shicheng', name: '郊郢', factionId: 'ying', lat: 31.16, lng: 112.58, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_shicheng', name: '郊郢', factionId: 'chuguo', lat: 31.16, lng: 112.58, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
-    { id: 'city_baling', name: '巴陵', factionId: 'yue_d', lat: 29.35, lng: 113.13, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
-
-
+    { id: 'city_baling', name: '巴陵', factionId: 'sunwu_d', lat: 29.35, lng: 113.13, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
-    { id: 'city_linzheng', name: '临烝', factionId: 'heng', lat: 26.89, lng: 112.6, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '岭南/南方环线共用锚点；文化南方' },
+
+
+    { id: 'city_linzheng', name: '临烝', factionId: 'tang', lat: 26.89, lng: 112.6, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '岭南/南方环线共用锚点；文化南方' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：桂阳（湖南郴州）：桂阳郡治，汉地
-    { id: 'city_guiyang', name: '桂阳', factionId: 'chen2', lat: 25.78, lng: 113, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '赵范守桂阳降刘备' },
+    { id: 'city_guiyang', name: '桂阳', factionId: 'shu', lat: 25.78, lng: 113, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '赵范守桂阳降刘备' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：韶关（广东曲江）：汉地关城
-    { id: 'city_qujiang', name: '韶关', factionId: 'shaozhou', lat: 24.8, lng: 113.59, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '韶州治；粤北关隘门户（梅岭古道咽喉）；张镇孙南宋末抗元，殉国大庾岭（1278）' },
+    { id: 'city_qujiang', name: '韶关', factionId: 'tang', lat: 24.8, lng: 113.59, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '韶州治；粤北关隘门户（梅岭古道咽喉）；张镇孙南宋末抗元，殉国大庾岭（1278）' },
     { id: 'city_bodao', name: '珙县', factionId: 'ming_d', lat: 28.76, lng: 104.62, type: 'stockade', region: 'BASHU', buildingStyle: 'BASHU', troops: 10000, note: '僰人悬棺故地；阿大僰人起事（僰道旧称，避旗号防重）' },
     { id: 'city_nanpu', name: '南浦', factionId: 'song', lat: 30.82, lng: 108.38, type: 'small_city', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
@@ -3000,16 +3000,16 @@ buildingStyle: 'BASHU', troops: 10000,
     { id: 'city_baidicheng2', name: '白帝城', factionId: 'chengjia', lat: 31.0430, lng: 109.5700, type: 'pass', region: 'BASHU', buildingStyle: 'BASHU', troops: 10000, note: '夔门·白帝城；刘备白毦兵永安托孤' },
     { id: 'city_qichun', name: '蕲春', factionId: 'xushouhui', lat: 30.23, lng: 115.45, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
-    { id: 'city_wancheng', name: '皖口', factionId: 'wan', lat: 30.51, lng: 117.04, type: 'pass', region: 'JIANGNAN',
+    { id: 'city_wancheng', name: '皖口', factionId: 'song', lat: 30.51, lng: 117.04, type: 'pass', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '皖口；刘源安庆',
     },
 
-    { id: 'city_jiuzi', name: '姑孰', factionId: 'danyang', lat: 31.55, lng: 118.47, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_jiuzi', name: '姑孰', factionId: 'dongjin', lat: 31.55, lng: 118.47, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
 
-    { id: 'city_datong2', name: '大通', factionId: 'chizhou', lat: 30.8188, lng: 117.7762, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_datong2', name: '大通', factionId: 'ming_d', lat: 30.8188, lng: 117.7762, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     // ── 2026-05-30 新增：哈拉和林(蒙古帝国首都) ──
@@ -3143,11 +3143,11 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '巴米扬；梵衍那小城
 buildingStyle: 'XIANBEI', troops: 10000,
         note: '达尔罕；科尔沁小城',
     },
-    { id: 'city_yiyang', name: '葛溪', factionId: 'xie_cj_d', lat: 28.3524, lng: 117.4466, type: 'small_city', region: 'JIANGNAN',
+    { id: 'city_yiyang', name: '葛溪', factionId: 'song', lat: 28.3524, lng: 117.4466, type: 'small_city', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '葛溪；信州小城',
     },
-    { id: 'city_linchuan', name: '临川', factionId: 'fu2', lat: 27.9779, lng: 116.3562, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '抚州治临川；陈周迪据守，临川郡兵' },
+    { id: 'city_linchuan', name: '临川', factionId: 'song', lat: 27.9779, lng: 116.3562, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '抚州治临川；陈周迪据守，临川郡兵' },
     { id: 'city_binzhou2', name: '新平', factionId: 'tang', lat: 35.03, lng: 108.08, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' },
 
 
@@ -3237,7 +3237,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     // ── 2026-06-11 新增：琉球/台湾据点（叛军旗）──
     { id: 'city_mengjia', name: '艋舺', factionId: 'ketagalan', lat: 25.03, lng: 121.50, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, note: '清代台北府淡水厅南境要地，万华故称艋舺；定级依据§6.2：艋舺非关隘/要塞/堡垒（淡水河内河港市，"一府二鹿三艋舺"），按城市判级；1875年约1.8万人（臺北府淡水縣大加蚋堡艋舺）→ 小城' },
-    { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'haikou', lat: 25.75, lng: 123.5, type: 'stockade', troops: 20000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'ming_d', lat: 25.75, lng: 123.5, type: 'stockade', troops: 20000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
 
@@ -3277,7 +3277,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_meng', name: '蒙格', factionId: 'bulu', lat: 32.64744, lng: 73.50914, type: 'stockade', region: 'PURU', buildingStyle: 'PURU', troops: 10000, note: '杰赫勒姆河（古称海达斯佩斯河）南岸蒙格村；公元前326年亚历山大与补噜王会战地点' },
     { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.57, lng: 95.7, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'BURMESE', note: '旧称莫索波；雍笈牙起兵并建立贡榜王朝之地' },
 
-    { id: 'city_hengyu', name: '横屿', factionId: 'qi_d', lat: 26.77, lng: 119.7, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_hengyu', name: '横屿', factionId: 'ming_d', lat: 26.77, lng: 119.7, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
     { id: 'city_luobo', name: '罗博', factionId: 'panjun', lat: 25.4112, lng: 106.7377, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
@@ -3295,7 +3295,7 @@ buildingStyle: 'BASHU', troops: 10000,
     // ── 2026-06-12 新增：夏顿@廷布 ──
     { id: 'city_tingbu', name: '廷布', factionId: 'xiadun', lat: 27.472, lng: 89.639, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET' },
 
-    { id: 'city_huangchuan', name: '弋阳', factionId: 'huang_d', lat: 32.131, lng: 115.051, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_huangchuan', name: '弋阳', factionId: 'wei', lat: 32.131, lng: 115.051, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     { id: 'city_yongqiu', name: '雍丘', factionId: 'dongjin', lat: 34.55, lng: 114.78, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' },
 
@@ -3304,7 +3304,7 @@ buildingStyle: 'BASHU', troops: 10000,
     { id: 'city_yongcheng', name: '永城', factionId: 'han_d', lat: 33.93, lng: 116.37, type: 'small_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, note: '归德府辖；芒砀山/汉高潜居；走廊东翼' },
     { id: 'city_kunyang', name: '昆阳', factionId: 'han_d', lat: 33.22, lng: 113.22, type: 'small_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, note: '昆阳故城（叶县北）；绿林—刘秀昆阳之战' },
     { id: 'city_yucheng', name: '虞城', factionId: 'hou_liang', lat: 34.7758, lng: 116.0678, type: 'small_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, note: '汉砀郡属/虞国故地；豫东商丘东翼' },
-    { id: 'city_bengbu', name: '钟离', factionId: 'hao_d', lat: 32.92, lng: 117.38, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_bengbu', name: '钟离', factionId: 'ming_d', lat: 32.92, lng: 117.38, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
 
 
@@ -3352,13 +3352,13 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', troops: 10000, region: 'SONG', buildingStyle: 'KOREA' },
 
-    { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_penghu', name: '澎湖', factionId: 'manzhou_d', lat: 23.5, lng: 119.5, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     { id: 'city_fengtian', name: '奉天', factionId: 'tang', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, note: '李晟神策军收复长安' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：它乾城：东汉西域都护治所，塔里木
     { id: 'city_taqian', name: '它乾城', factionId: 'xiyuduhu', lat: 41.875, lng: 83.59, type: 'pass', troops: 10000, region: 'KHITAN', buildingStyle: 'KHITAN', mirror: true },
 
-    { id: 'city_shaozhou', name: '邵州', factionId: 'shaozhou_d', lat: 27.24, lng: 111.47, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_shaozhou', name: '邵州', factionId: 'machu', lat: 27.24, lng: 111.47, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     { id: 'city_zizhou_d', name: '梓州', factionId: 'qianshu', lat: 31.0788, lng: 105.0925, type: 'small_city', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
@@ -3384,7 +3384,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_sandou', name: '三都', factionId: 'panjun', lat: 25.98, lng: 107.87, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
-    { id: 'city_tanzhong', name: '潭中', factionId: 'liuzhou', lat: 24.28, lng: 109.41, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_tanzhong', name: '潭中', factionId: 'tang', lat: 24.28, lng: 109.41, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
     { id: 'city_yunyang', name: '郧阳', factionId: 'ming_d', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 10000, region: 'MING', buildingStyle: 'CENTRAL' },
     { id: 'city_zhongshan', name: '中山', factionId: 'murong', lat: 38.4708, lng: 115.0626, type: 'medium_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
     { id: 'city_ledou', name: '乐都', factionId: 'shanzhou', lat: 36.49, lng: 102.37, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', mirror: true },

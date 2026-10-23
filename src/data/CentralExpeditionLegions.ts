@@ -28,7 +28,6 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     tianxiong: { name: '魏博牙兵', tier: 2 },
   dixiang: { name: '猪突豨勇', tier: 3 },   // 王莽新朝特种部队，极度奇葩、辨识度极高的历史番号，升入T3知名
   // 朱龙骑除名（无此番号）
-  yiyang_d: { name: '申息锐师', tier: 3 },    // 春秋楚国最强底牌，老牌历史劲旅，升入T3知名
   // ── 2026-06-16 新增：11大名关 ──
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
   yun: { name: '陆浑戎骑', tier: 4 },
@@ -44,13 +43,11 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 北门飞骑除名
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
     kong_d: { name: '曲阜甲士', tier: 3 },
-    hao_d: { name: '钟离护卫', tier: 3 },
     bailian: { name: '白莲教众', tier: 4 },
     song: { name: '殿前捧日', tier: 1 },
     zhao: { name: '丛台绝剑', tier: 2 },
     chimei: { name: '赤眉军', tier: 2 },
     daxi_ming: { name: '大西老营', tier: 2 },
-    li_s: { name: '大汉伏波', tier: 2 },
     yangguan: { name: '西凉锐骑', tier: 2 },
     yeli: { name: '擒生军', tier: 3 },
     qiangfang: { name: '羌方射士', tier: 4 },   // 羌邑·羌方首领 羌伯砺：羌邑·羌伯砺：羌方的弓射之士，武丁时期被商王征伐
