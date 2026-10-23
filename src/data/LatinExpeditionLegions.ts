@@ -54,7 +54,6 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     keernuwaye: { name: '布列塔尼骑', tier: 4 },
     kaernute: { name: '卡尔努特兵', tier: 4 },   // 沙特尔·科图阿图斯：高卢卡尔努特部族战团，公元前52年塞纳布姆起义,
     fulandesi: { name: '阿图瓦枪兵', tier: 2 },
-    aoerlianggongguo: { name: '圣女旗队', tier: 2 },   // 兰斯·贞德：圣女白旗所部，1429解围奥尔良
     bogendigongguo: { name: '勃艮第重骑', tier: 3 },   // 蒙特罗·无畏的约翰：勃艮第重装骑士
     amaniyake: { name: '加斯科涅骑', tier: 3 },   // 欧什·贝尔纳·德·阿马尼亚克：阿马尼亚克伯爵所统领的西南加斯科涅重装骑士
 };

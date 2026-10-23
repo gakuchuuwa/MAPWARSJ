@@ -19,7 +19,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   // ── [2026-08-26 全面检查旗号] 实际旗号 = 本表登记优先，未登记则取势力名前两字
   //    （见 CityAssetManager.getProcessedFlagText）。全量比对 957 个有城势力：
   //    未登记 4 个（本轮新增的大西洋航线势力）+ 撞车 3 组，一并收口，现全部唯一。
-  fodejiao: '佛得',  // [2026-08-26] 佛得角
+  fodejiao: '葡佛',  // [2026-08-26] 佛得角
   tupinijin: '葡属',  // 葡属巴西（圣维森特）
   taino: '古巴',  // 西属古巴（哈瓦那）
     taino_d: '泰诺',  // 泰诺（古巴东部亚拉）
@@ -29,13 +29,13 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
   ayinu_ezo: '阿伊',   // 🔴 [2026-09-12] 原「虾夷」与 ayinu(虾夷)撞旗 → 按势力名「阿伊努」取前两字「阿伊」
 
-  boootiya: '波奥',
+  boootiya: '底比',
   kelite: '威共',  // 威尼斯共和国（干地亚要塞）
   leangongguo: '莱昂',
   xixiliwangguo: '西西',
 
   yipilusi: '伊庇',
-  lagoniya: '拉哥',
+  lagoniya: '斯巴',
 'maqidun': '马其',
   lagusa: '拉古',
 
@@ -53,14 +53,14 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'buni': '布匿',
   aguelabu: '阿格',
   telibolisi: '的黎',
-'jileinaijia': '基雷',
+'jileinaijia': '昔兰',
   talike: '马格',
 
   maixiya: '麦西',
   nidelan: '尼德',
 'pomeilaniya': '波美',
   tuosikana: '托斯',
-  talanduo: '大希',
+  talanduo: '塔兰',
   safuyi: '萨伏',
   jiatailuoniya: '加泰',
   nasier: '纳斯',
@@ -86,7 +86,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   kaernute: '卡尔',
   bulietani: '布列',
 'fulandesi': '阿图',
-  xila: '阿提',
+  xila: '雅典',
   putaoya: '葡萄',
   feiniqi: '腓尼',
 'saierweiya': '拉什',
@@ -129,10 +129,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'mazhaer': '匈牙',
   falanji: '弗兰',
   shiwaben: '施瓦',
-  asikanani: '阿斯',
+  asikanani: '勃兰',
 'wende': '萨克',
   bafaliya: '巴伐',
-  huohengsuolun: '霍亨',
+  huohengsuolun: '勃普',
   ruishi: '瑞士',
   damolaweiya: '摩拉',
   luoma_diguo: '罗马',
@@ -602,7 +602,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wulaertu': '亚美',
 'wulaertu_guo': '乌图',
 'gelujiya': '格鲁',
-'bendou': '科穆',
+'bendou': '特拉',
     'keerjisi': '金羊',
     'bendou_d': '本都',
     'saipulusi': '塞浦',
@@ -677,7 +677,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhelouqi': '遮娄',
     'suosuo': '索索',
     'antiaokegongguo': '赞吉',  // 赞吉王朝（拉塔基亚）
-    'aoerlianggongguo': '奥尔',
     'saimien': '塞米',
     'aosimanbeiyiguo': '贝伊',
     'xiaaiji': '下埃',
@@ -692,7 +691,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'alaokaniya': '阿劳',
     'bogendigongguo': '勃公',
     'amaniyake': '阿马',
-    'gewennesi': '格温',
     'weiershigongguo': '威尔',
     'tigelei': '提格',
     'luben': '鲁本',
@@ -721,7 +719,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'aolisha': '奥萨',
     'kanata': '卡纳',
     'adile': '阿迪',
-    'foluolida': '佛罗',
+    'foluolida': '西佛',
     'yilisi': '埃利',
     'nuowei': '挪威',
     'keernuwaye': '康沃',

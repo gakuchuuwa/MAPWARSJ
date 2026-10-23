@@ -12902,7 +12902,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 47.616,
         targetLng: 1.517,
         myTroops: 18000,
-        enemyFactionId: 'aoerlianggongguo',
+        enemyFactionId: 'gaolu',
         enemyFactionName: '奥尔良公国',
         enemyGeneralId: 'gen_joanofarc',
         enemyTroops: 12000,

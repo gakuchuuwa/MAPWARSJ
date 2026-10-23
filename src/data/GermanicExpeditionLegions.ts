@@ -47,7 +47,6 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     shiwaben: { name: '士瓦本剑士', tier: 4 },          // 奥格斯堡·乌尔里希
     bulabante: { name: '沃林根骑士', tier: 3 },   // 布鲁塞尔·约翰一世：1288沃林根战役主力骑士,
     tuomengde: { name: '达尔战斧卫', tier: 3 },
-    gewennesi: { name: '斯诺登战团', tier: 3 },   // 哈瓦登·戴菲德：1282夜袭哈瓦登城堡点燃抗英终战，斯诺登要塞山地战团
     weiershigongguo: { name: '红龙卫队', tier: 2 }, // 布伊尔斯·卢埃林：威尔士公国大公亲王卫队，高举红龙战旗，1282欧温桥之战
     dalriada: { name: '盖尔战船队', tier: 4 },   // 邓纳德·达尔里阿达王 费尔古斯·麦克·埃赫达赫：邓纳德·达尔里阿达：盖尔人以海湾桨船征发的"船队"兵役（Sluaged），736年邓哈芬之役
     scotland: { name: '苏格兰枪阵', tier: 3 },   // 斯昆·约翰·科明：斯昆·科明：苏格兰长枪圆阵（schiltron）步兵，1298年福尔柯克之役
