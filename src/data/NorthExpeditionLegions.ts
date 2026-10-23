@@ -76,4 +76,9 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     cai: { name: '汲桑所与', tier: 2 },
     xiongding: { name: '鲜卑燕骑', tier: 3 },
     pinghai: { name: '征东舟师', tier: 2 },
+    hou_jin: { name: '晋阳牙兵', tier: 4 },
+    hou_zhao: { name: '黑槊龙骧', tier: 2 },
+    da_yan: { name: '曳落河', tier: 2 },
+    hou_liang: { name: '铁枪军', tier: 3 },
+    han_zhao: { name: '五部匈奴', tier: 4 },
 };

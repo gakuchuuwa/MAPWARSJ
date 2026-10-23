@@ -60,4 +60,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     gonggu: { name: '宫古岛卒', tier: 4 },
     kai: { name: '武田赤备', tier: 2 },
     ouchi: { name: '周防铁炮众', tier: 4 },   // 山口·陶晴贤：山口·陶晴贤：大内氏周防国的足轻铁炮队，1555年严岛之战
+    uesugi: { name: '毘沙門衆', tier: 3 },
+    takeda: { name: '武田赤备', tier: 2 },
+    oda: { name: '织田马廻众', tier: 1 },
 };

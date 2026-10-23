@@ -4594,5 +4594,189 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代马其顿军团",
         legionType: "sub",
     },
+    "hou_han": {
+        legionName: "封建时代中原军团",
+        legionType: "sub",
+    },
+    "yuan_shao": {
+        legionName: "古典时代华夏军团",
+        legionType: "sub",
+    },
+    "hou_jin": {
+        legionName: "封建时代河朔军团",
+        legionType: "sub",
+    },
+    "hou_zhao": {
+        legionName: "古典时代太行军团",
+        legionType: "sub",
+    },
+    "da_yan": {
+        legionName: "封建时代河朔军团",
+        legionType: "sub",
+    },
+    "hou_liang": {
+        legionName: "封建时代中原军团",
+        legionType: "sub",
+    },
+    "han_zhao": {
+        legionName: "古典时代太行军团",
+        legionType: "sub",
+    },
+    "dongjin": {
+        legionName: "古典时代吴越军团",
+        legionType: "sub",
+    },
+    "nan_liang": {
+        legionName: "封建时代江淮军团",
+        legionType: "sub",
+    },
+    "hou_qin": {
+        legionName: "古典时代华夏军团",
+        legionType: "sub",
+    },
+    "yiqu": {
+        legionName: "古典时代华夏军团",
+        legionType: "sub",
+    },
+    "hou_zhou": {
+        legionName: "封建时代中原军团",
+        legionType: "sub",
+    },
+    "lvbu": {
+        legionName: "古典时代华夏军团",
+        legionType: "sub",
+    },
+    "chengjia": {
+        legionName: "古典时代巴蜀军团",
+        legionType: "sub",
+    },
+    "qianshu": {
+        legionName: "封建时代剑南军团",
+        legionType: "sub",
+    },
+    "chuguo": {
+        legionName: "先秦军团",
+        legionType: "sub",
+    },
+    "liusong": {
+        legionName: "古典时代吴越军团",
+        legionType: "sub",
+    },
+    "nanqi": {
+        legionName: "封建时代江淮军团",
+        legionType: "sub",
+    },
+    "yangwu": {
+        legionName: "封建时代江淮军团",
+        legionType: "sub",
+    },
+    "nantang": {
+        legionName: "封建时代江淮军团",
+        legionType: "sub",
+    },
+    "machu": {
+        legionName: "封建时代江淮军团",
+        legionType: "sub",
+    },
+    "nanhan": {
+        legionName: "封建时代江淮军团",
+        legionType: "sub",
+    },
+    "fangguozhen": {
+        legionName: "城堡时代江南军团",
+        legionType: "sub",
+    },
+    "liang_shuofang": {
+        legionName: "封建时代契丹军团",
+        legionType: "sub",
+    },
+    "qianliang": {
+        legionName: "古典时代凉州军团",
+        legionType: "sub",
+    },
+    "dangchang_guo": {
+        legionName: "封建时代吐蕃军团",
+        legionType: "sub",
+    },
+    "sanada": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "tokugawa": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "amago": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "shimazu": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "mori": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "uesugi": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "takeda": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "toyotomi": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "utsunomiya": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "ryuzoji": {
+        legionName: "城堡时代幕府军团",
+        legionType: "sub",
+    },
+    "nanchou": {
+        legionName: "城堡时代幕府军团",
+        legionType: "sub",
+    },
+    "nanbu_shi": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "shoni": {
+        legionName: "城堡时代幕府军团",
+        legionType: "sub",
+    },
+    "heishi": {
+        legionName: "城堡时代幕府军团",
+        legionType: "sub",
+    },
+    "imagawa": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "oda": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "hojo": {
+        legionName: "帝国时代武家军团",
+        legionType: "sub",
+    },
+    "mahan": {
+        legionName: "古典时代高句丽军团",
+        legionType: "sub",
+    },
+    "daquyue": {
+        legionName: "封建时代瞿越军团",
+        legionType: "sub",
+    },
+    "yuenan": {
+        legionName: "帝国时代安南军团",
+        legionType: "sub",
+    },
 };
 
