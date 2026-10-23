@@ -28,11 +28,9 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 恒山军除名（泛称无固定番号）
   
   // ── 2026-06-18 自东北文件迁回
-  mao_wenlong: { name: '东江劲旅', tier: 3 }, // 毛文龙在皮岛建立的敌后抗金武装，牵制后金大量兵力，悲剧色彩和知名度极高，升入T3知名
     yang_aner: { name: '天顺红袄', tier: 2 },
     // 武川镇·宇文泰：边镇骑射出身「武川铁骑」；不可代称六镇总称。档 T3（风土，不抬）
     yuwen: { name: '武川铁骑', tier: 3 },
-    ssangseong: { name: '和宁戍骑', tier: 4 },
     hou_jin: { name: '晋阳牙兵', tier: 4 },
     hou_zhao: { name: '黑槊龙骧', tier: 2 },
     da_yan: { name: '曳落河', tier: 2 },

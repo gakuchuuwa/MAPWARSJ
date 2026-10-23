@@ -9,23 +9,11 @@
 export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   // ── 元寇 ──
   so: { name: '弘安御敌', tier: 2 },           // 对马·金石城·宗氏抗元（1281 弘安役首当锋；≠太宰府警固）
-    zhuqian: { name: '警固番役', tier: 3 },
 
   // ── 室町—战国—江户（辞典映射表）──
   ashikaga: { name: '奉公众', tier: 3 },         // 室町幕府直辖军，更多是身份象征和常规卫队，缺乏战略级大捷，降为T3知名。
-    edo: { name: '旗本武士', tier: 1 },
-    satsuma: { name: '萨摩隼人', tier: 2 },
     iga_d: { name: '伊贺众', tier: 3 },
-    hashiba: { name: '黄母衣众', tier: 3 },
-  jinchuan: { name: '骏河弓取', tier: 3 },      // 骏河·今川义元（无重大战略级胜利，T2）
-    owari: { name: '织田马廻众', tier: 1 },
-    totomi: { name: '三河武士', tier: 2 },
-  echigo: { name: '毘沙門衆', tier: 3 },         // 上杉谦信亲卫队，属于“顶级近卫”，降回T2
-  aki: { name: '村上水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷（毛利氏水军主力）
   chosokabe: { name: '一领具足', tier: 2 },     // 日本战国长宗我部氏著名的半农半兵战术体制，极高集结速度，升入T2战术
-  aizu: { name: '会津藩士', tier: 3 },         // 戊辰战争中旧幕府武士最悲壮顽强的抵抗力量代表，升入T3知名
-  izumo: { name: '新宫党', tier: 4 },          // 月山富田·尼子氏最强武装（原 T3）（缺乏极其著名的战术高光，降T3）
-  shimotsuke: { name: '宇都宫弓取', tier: 4 },        // 宇都宫·下野宇都宫氏武士团（原纪清两党）
   // 🔴 [2026-09-19 主人定] 源氏（镰仓）的番号。奥州武士是奥州藤原氏（平泉）的兵，与一之谷无关。
     genji: { name: '镰仓御家人', tier: 2 },
   // 🔴 [2026-09-19 主人令「全面检查」时自查出的回归] **奥州武士被我误删了** ——
@@ -36,29 +24,14 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   //    随城走会让人以为源氏带的是水军；义经在伊予统率的是**忽那水军**。
   genji_iyo: { name: '忽那水军', tier: 3 },     // 日本历史上极为著名的剽悍代名词与地区武装符号，升入T3知名
   kakizaki: { name: '安藤氏兵', tier: 4 },     // 胜山馆·安藤氏虾夷管领（原虾夷探题）
-  nanbu: { name: '南部铁骑', tier: 4 },        // 根城·南部氏骑兵（原 T3）（缺乏极其著名的战术高光，降T3）
-  osumi: { name: '九州防人', tier: 3 },         // 《万叶集》防人歌的载体，日本古代防备唐朝与新罗的极其著名的文化戍边符号，升入T3知名
   // 奄美岛勇除名（名称现代，无史载）
-  anmei: { name: '奄美岛兵', tier: 4 }, // 赤木名城·与湾大亲奄美
-  ayinu: { name: '阿伊努猎兵', tier: 3 },       // 虾夷/阿伊努人独特的狩猎与战斗文化代表，极具民族辨识度，升入T3知名
   // 2026-10-18 清理：ayinu_ezo 归 NORTHEAST 区，唯一权威见 NortheastExpeditionLegions.ts（原条目重复，靠展开顺序静默覆盖，故清出）
-    beihai: { name: '雪国斥候', tier: 4 },
-  yamato: { name: '千早众', tier: 2 },       // 千早城·楠木正成笼城（特定战役防御高光，T2）
-    sanada_d: { name: '真田赤备', tier: 2 },
   // ── 2026-06-17 令制国补点（古代据点名 + 精锐）──
   kaga_d: { name: '一向宗门徒', tier: 3 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）
     date_d: { name: '青叶骑铁', tier: 3 },
-  higo_d: { name: '菊池党', tier: 3 },       // 九州豪强武士代名词，文化知名度高，但非战略主力，降为T3知名。
-    iyo_d: { name: '伊予滩水军', tier: 4 },
   otomo_d: { name: '大友水军', tier: 3 },   // 无极高战术高光（逊于村上水军），属于常规地方水军，降回T3
   suwa_d: { name: '诹访神党', tier: 3 },     // 信浓国诹访大社的信仰武士集团，极具宗教与地域特色，升入T3知名
-  jibei2: { name: '备中众', tier: 4 },         // 鬼之城·宇喜多氏
-    taira: { name: '平家水军', tier: 3 },
-  sagami: { name: '风魔党', tier: 3 },         // 箱根关·北条氏专属特种风魔忍者
-    mino: { name: '大谷部众', tier: 4 },
   yizhi: { name: '原之辻戍卒', tier: 4 },       // 原之辻·壹岐国元寇戍卒（《元史》《高丽史》壹岐守备）
-    gonggu: { name: '宫古岛卒', tier: 4 },
-    kai: { name: '武田赤备', tier: 2 },
     ouchi: { name: '周防铁炮众', tier: 4 },   // 山口·陶晴贤：山口·陶晴贤：大内氏周防国的足轻铁炮队，1555年严岛之战
     uesugi: { name: '毘沙門衆', tier: 3 },
     takeda: { name: '武田赤备', tier: 2 },

@@ -11,36 +11,26 @@
 export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   zhuang_d: { name: '广西俍兵', tier: 3 },     // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名
     dayue: { name: '白藤江射手', tier: 0 },
-  jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领统一十二使君的禁卫军
-    huanzhou: { name: '驩州水军', tier: 3 },         // 义安·丁礼：驩州南越王水军
-    leloi: { name: '蓝山义军', tier: 1 },
-    nguyen_guangnan: { name: '富春禁卫', tier: 3 },
   // guangnanguo → 洞海城归 panjun
   ryukyu: { name: '那霸水师', tier: 3 },       // 琉球王国武装代表，东亚海上贸易网络重要文化符号，升入T3知名
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占
-    zhancheng: { name: '占城象兵', tier: 4 },
   // 铲平军除名（非正式官军番号）
     nanyue: { name: '南越象军', tier: 3 },
   nongzhigao: { name: '侬峒劲卒', tier: 4 },    // 晋兴·侬智高侬峒兵（《宋史·蛮夷传》）（缺乏极其著名的战术高光，降T3）
   yelang: { name: '夜郎锐卒', tier: 3 },        // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   dacheng: { name: '永安戍卒', tier: 4 },       // 永安·明永安千户所戍卒（原大成水师）
-  linyi: { name: '林邑象兵', tier: 4 },          // 象林·林邑国
   xiou: { name: '西瓯戍兵', tier: 4 },           // 布山·西瓯
   luoyue: { name: '骆越部卒', tier: 4 },         // 花山·骆越
-  monong: { name: '墨侬部卒', tier: 4 },       // 邦敦·阿侬率余部抗宋（缺乏极其著名的战术高光，降T3）
   shuizhen: { name: '水真戍卒', tier: 4 },     // 三菩·区大任驻守
   ketagalan: { name: '凯达格兰兵', tier: 3 }, // 台湾平埔族原住民代表，极具海岛南岛语族历史文化辨识度，升入T3知名
   // 湘军道营除名（无此编制）
   basha_d: { name: '湄公象卫', tier: 4 },     // 上丁·刀更孟象兵（缺乏极其著名的战术高光，降T3）
   dengmaoqi: { name: '铲平义军', tier: 4 },
-  guangping: { name: '象兵水师', tier: 4 },     // 洞海城·阮文张象兵舟船协同（常规番号，降T3）
   paiwan: { name: '牡丹社勇士', tier: 3 },      // 牡丹社事件中的原住民武装，属于地方抗击，缺乏正规的战术大捷，属于风土特色，降为T3知名。
   liren: { name: '儋耳黎兵', tier: 3 },         // 海南岛黎族武装代表，极具风土民族辨识度，升入T3知名
   luodian: { name: '水西彝兵', tier: 3 },      // 贵州水西土司（安氏/奢香）武装，长达千年的西南实力派代表，升入T3知名
-    nong2: { name: '侬峒狼兵', tier: 3 },
     cen_d: { name: '泗城狼兵', tier: 3 },
-  muong: { name: '芒峒刀牌手', tier: 4 },         // 和平·申从岳芒族刀牌手
   panyao: { name: '瑶人弩手', tier: 4 },          // 临贺·盘瑶山地弩手
     minyue: { name: '闽越甲卒', tier: 4 },            // 缺乏知名度支撑，降T3
     funan: { name: '扶南大舶', tier: 3 },

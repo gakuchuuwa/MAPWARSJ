@@ -8,7 +8,6 @@
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-  huimo: { name: '濊貊长矛手', tier: 4 }, // 乌骨城·高延寿濊貊
   bohai: { name: '渤海猛贲', tier: 1 },       // 建立并维持“海东盛国”渤海国两百余年的核心主力，符合T1战略主力
     dajin: { name: '合扎猛安', tier: 0 },
     manzhou_d: { name: '满洲八旗', tier: 0 },
