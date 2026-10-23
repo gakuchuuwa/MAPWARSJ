@@ -16648,39 +16648,7 @@ export type FactionGeneralEntry = FactionGeneral | readonly FactionGeneral[];
 
 
 
-export function getFactionGenerals(factionId: string): FactionGeneral[] {
 
-
-
-
-
-
-
-    const entry = (FACTION_GENERALS as Record<string, FactionGeneralEntry | undefined>)[factionId];
-
-
-
-
-
-
-
-    if (!entry) return [];
-
-
-
-
-
-
-
-    return Array.isArray(entry) ? [...entry] : [entry as FactionGeneral];
-
-
-
-
-
-
-
-}
 
 
 
@@ -16728,246 +16696,55 @@ export function getFactionGenerals(factionId: string): FactionGeneral[] {
 
 
 
-export function getFactionGeneralsResolved(factionId: string): FactionGeneral[] {
-
-
-
-
-
-
-
-    let list = getFactionGenerals(factionId);
-
-
-
-
-
-
-
-    // 🔴 [2026-10-20 主人令「乱斗模式的话，一个据点一个武将一个势力，多武将不并存」]
-
-
-
-
-
-
-
-    //    乱斗：只留一位 —— 优先本势力的武将（不带别家 factionId），名将优先（见下方排序）；
-
-
-
-
-
-
-
-    //    据点只有带别家势力的武将（如长子只有白起）→ 照样用他；军团势力跟着武将走（2026-10-23 主人「军团跟着武将走的」，见 Army.syncGeneralFaction）。
-
-
-
-
-
-
-
-    const melee = getGameMode() === 'melee';
-
-
-
-
-
-
-
-    if (!list.length) return [];
-
-
-
-
-
-
-
-    if (melee) {
-
-
-
-
-
-
-
-        const native = list.filter((g) => !g.factionId || g.factionId === factionId);
-
-
-
-
-
-
-
-        if (native.length) list = native;
-
-
-
-
-
-
-
+// 🔴 [2026-10-23 主人令] 「某势力有哪些武将」按**武将自己的 factionId** 算（没写 factionId 的算他名单所在势力）；
+//    名将优先、同一 generalId 只算一次。归并后并进唐名单的刘知远算后汉的将，新建后汉也能查到自己的将。
+let _factionGeneralIndex: Map<string, CityGeneralRef[]> | null = null;
+
+function buildFactionGeneralIndex(): Map<string, CityGeneralRef[]> {
+    const map = new Map<string, CityGeneralRef[]>();
+    for (const [blockFactionId, entry] of Object.entries(FACTION_GENERALS as Record<string, FactionGeneralEntry>)) {
+        const list: FactionGeneral[] = Array.isArray(entry) ? [...entry] : [entry as FactionGeneral];
+        for (const general of list) {
+            const fid = general.factionId ?? blockFactionId;
+            const arr = map.get(fid) ?? [];
+            if (!arr.some((r) => r.general.generalId === general.generalId)) arr.push({ general, blockFactionId });
+            map.set(fid, arr);
+        }
     }
+    return map;
+}
 
-
-
-
-
-
-
-    const resolved = list.map((g, idx) => {
-
-
-
-
-
-
-
+function resolveGeneralRefs(refs: CityGeneralRef[]): FactionGeneral[] {
+    const resolved = refs.map((r, idx) => {
+        const g = r.general;
         const portrait = _generalPortraitOverrides[g.generalId] ?? g.portrait;
-
-
-
-
-
-
-
         const isFamous = getGeneralProfile(g.generalId)?.tier === 'famous';
-
-
-
-
-
-
-
         return {
-
-
-
-
-
-
-
             item: {
-
-
-
-
-
-
-
                 ...g,
-
-
-
-
-
-
-
                 generalName: stageGeneralName(g.generalId, g.generalName),
-
-
-
-
-
-
-
-                portrait: resolveGeneralPortraitPath(portrait, { factionId, generalId: g.generalId }),
-
-
-
-
-
-
-
+                portrait: resolveGeneralPortraitPath(portrait, { factionId: r.blockFactionId, generalId: g.generalId }),
             },
-
-
-
-
-
-
-
             isFamous,
-
-
-
-
-
-
-
             idx,
-
-
-
-
-
-
-
         };
-
-
-
-
-
-
-
     });
+    resolved.sort((a, b) => (a.isFamous !== b.isFamous ? (a.isFamous ? -1 : 1) : a.idx - b.idx));
+    return resolved.map((r) => r.item);
+}
 
+/** 该势力的全部武将（按武将自己的 factionId；同一 generalId 只算一次）。归并后势力与名单块不必一一对应。 */
+export function getFactionGenerals(factionId: string): FactionGeneral[] {
+    if (!factionId) return [];
+    if (!_factionGeneralIndex) _factionGeneralIndex = buildFactionGeneralIndex();
+    return (_factionGeneralIndex.get(factionId) ?? []).map((r) => r.general);
+}
 
-
-
-
-
-
-    resolved.sort((a, b) => {
-
-
-
-
-
-
-
-        if (a.isFamous !== b.isFamous) return a.isFamous ? -1 : 1;
-
-
-
-
-
-
-
-        return a.idx - b.idx;
-
-
-
-
-
-
-
-    });
-
-
-
-
-
-
-
-    const out = resolved.map((r) => r.item);
-
-
-
-
-
-
-
-    return melee ? out.slice(0, 1) : out;
-
-
-
-
-
-
-
+/** 该势力的全部武将（已解析阶段姓名/立绘，名将排前） */
+export function getFactionGeneralsResolved(factionId: string): FactionGeneral[] {
+    if (!factionId) return [];
+    if (!_factionGeneralIndex) _factionGeneralIndex = buildFactionGeneralIndex();
+    return resolveGeneralRefs(_factionGeneralIndex.get(factionId) ?? []);
 }
 
 
@@ -18234,6 +18011,7 @@ if (import.meta.hot) {
 
         _generalIdIndex = null;   // 表变了，反向索引作废，下次查询重建
         _cityGeneralIndex = null; // 表变了，cityId 索引同样作废
+        _factionGeneralIndex = null; // 势力索引同样作废
 
 
 
