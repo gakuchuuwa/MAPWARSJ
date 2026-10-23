@@ -112,6 +112,11 @@ export class MainlineDirector {
     public tick(): void {
         const hero = this.app.playerHero;
         if (!hero || (hero.autoPlan ?? 'centenarian') !== 'centenarian') return;
+        // 🔴 [2026-10-23 主人「主角军团会自己去打别的据点，既然是漏洞为什么不修复呢」] 主角军团不按自己的路走：
+        //    行为树已不给它派仗（AIController.tickArmy），这里再每帧按住它入伍前就在走的那趟路，免得走到地方自己开打。
+        const hostId = hero.getHostLegionId();
+        const host = hostId ? this.app.legionManager?.getLegionById(hostId) : null;
+        if (host && !host.isDestroyed && !host.isScriptArmy) host.setMarchHold(true);
         this.actor.send({ type: 'TICK' });
     }
 
