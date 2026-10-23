@@ -25,11 +25,9 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T4 存在之兵 ──
     yilisi: { name: '埃利斯战车', tier: 4 },
-    xiaofulijiya: { name: '希腊雇佣兵', tier: 2 },
     jileinaijia: { name: '昔兰尼骑兵', tier: 4 },
 
     // ── 2026-09 古典希腊 DE 英雄 ──
-    xiaaiji: { name: '马其顿方阵', tier: 1 },          // 佩鲁西姆·佩尔狄卡斯：马其顿方阵步兵
     // 🔴 [2026-09-19 主人令「都给我删了」] 卡帕多细亚（`kapaduoxiya`）与其番号「卡帕多骑队」已删除 ——
     //    它只服务前321「赫勒斯滂战役」，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
     maqidun: { name: '伙伴骑兵', tier: 0 },

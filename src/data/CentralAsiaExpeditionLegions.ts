@@ -29,9 +29,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     dayuzi: { name: '讹答剌卫队', tier: 4 },
     zhaowu: { name: '忽毡勇士', tier: 4 },
     yada: { name: '嚈哒重骑', tier: 2 },
-    jibin: { name: '迦毕试梵骑', tier: 2 },
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
-    maer_d: { name: '骆驼突骑', tier: 3 },
     wugu_d: { name: '乌古斯弓骑', tier: 3 },
     mamon: { name: '呼罗珊之剑', tier: 2 },
     shi_clan: { name: '柘枝胡骑', tier: 4 },
@@ -39,22 +37,12 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   xianhai: { name: '咸海骁锐', tier: 4 },        // 养吉干·花剌子模北境
   jie: { name: '柘羯勇士', tier: 3 },            // 粟特城邦极其著名的职业重装雇佣兵/死士，文化辨识度极高，升入T3知名
   // —— 2026-06-20 新增：旁遮普·阿托克 ——
-  pangzha: { name: '卡尔萨武士', tier: 1 },      // 阿托克·戈宾德辛格创立卡尔萨，兰季特辛格旁遮普帝国核心武力
   // —— 2026-06-20 新增：那竭国·顶骨城 ——
-    najie: { name: '那竭方阵兵', tier: 3 },
   // ── 2026-06-20 新增：杜兰尼·呼罗珊·阿巴尔 ──
-    aliya: { name: '赫拉特骑手', tier: 3 },
 
   sute: { name: '粟特铁骑', tier: 3 },   // 诺塔卡（粟特南部要地）
-  xinde: { name: '信德水师', tier: 3 },
-  jiduoluoxiya: { name: '马克兰弓手', tier: 3 },
   aolitai: { name: '奥里泰标枪', tier: 3 },
   shiyuzu: { name: '食鱼族毒弓', tier: 3 },   // 奥拉·食鱼族：欣戈尔河口海岸毒箭投石
-  kamanniyaxingsheng: { name: '卡曼尼亚骑', tier: 3 },
-  keerman: { name: '山前戍卒', tier: 4 },
-  zhageluosi: { name: '扎格罗斯兵', tier: 4 },
-  lulisitan: { name: '卢里斯坦弓', tier: 4 },
-  golpayegan_diqu: { name: '驿站戍卒', tier: 3 },
     kala: { name: '古拉姆近卫', tier: 3 },
     wulaertu: { name: '复合弓手', tier: 3 },  // 埃里温·瓦尔丹：亚美尼亚步弓手（DE Composite Bowman 复合弓）
     wulaertu_guo: { name: '乌拉尔图卫', tier: 3 },
