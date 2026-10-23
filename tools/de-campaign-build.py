@@ -40,6 +40,7 @@ DAT = DE_ROOT / "dat" / "empires2_x2_p1.dat"
 OUT = Path("public/de-maps/campaign")
 SPR = OUT / "sprites"
 WORK = Path("scratch/de_campaign")
+BUILD_VERSION = 2   # 2 = 补建筑附属件 + 建筑地基地形（农田等）
 
 # DE 玩家色顺序（scenario player.color 0..7）
 PLAYER_COLOR_FILES = ["blue", "red", "green", "yellow", "teal", "purple", "grey", "orange"]
@@ -315,11 +316,70 @@ def safe_attr(obj, name, default=None):
         return default
 
 
+def dump_scenario_raw(scn_path):
+    """兜底：AoE2ScenarioParser 解不了触发器段（如 Kotyan 2/3 的 trigger_data）时，
+    场景文件里地图与物件段在触发器段之前 —— 只读到 Units 段为止，直接取原始字段（同一份文件数据，不猜）。"""
+    import AoE2ScenarioParser.scenarios.aoe2_scenario as m
+    from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
+    from AoE2ScenarioParser.helper.incremental_generator import IncrementalGenerator
+    ig = IncrementalGenerator.from_file(str(scn_path))
+    sv = m._get_file_version(ig); var = m._get_scenario_variant(ig)
+    sc = AoE2DEScenario("DE", sv, source_location=str(scn_path), name="x", variant=var)
+    with contextlib.redirect_stdout(io.StringIO()):
+        sc._load_structure(); m._initialise_version_dependencies(sc.game_version, sc.scenario_version)
+        sc._load_header_section(ig)
+        sc._decompressed_file_data = m._decompress_bytes(ig.get_remaining_bytes())
+        dg = IncrementalGenerator(name="d", file_content=sc._decompressed_file_data)
+        for name in sc.structure.keys():
+            if name == "FileHeader":
+                continue
+            if name == "Triggers":
+                break
+            sc._create_and_load_section(name, dg)
+    S = sc.sections
+    rv = lambda sec, k: S[sec].retriever_map[k].data
+    W, H = int(rv("Map", "map_width")), int(rv("Map", "map_height"))
+    td = rv("Map", "terrain_data")
+    terrain = [int(t.retriever_map["terrain_id"].data) for t in td]
+    elev = [int(t.retriever_map["elevation"].data) for t in td]
+    layer = [(int(t.retriever_map["layer"].data) if "layer" in t.retriever_map and int(t.retriever_map["layer"].data) >= 0 else -1) for t in td]
+    from AoE2ScenarioParser.datasets.object_support import CivilizationOld, Civilization
+    by_value = {str(mem.value): mname for mname, mem in Civilization.__members__.items()}
+    def civ_of(v):
+        if isinstance(v, (int, float)):
+            return int(v)
+        nm = by_value.get(str(v))
+        try:
+            return int(CivilizationOld[nm].value) if nm else 0
+        except Exception:
+            return 0
+    p1 = rv("DataHeader", "player_data_1")
+    p3 = rv("Units", "player_data_3")
+    pinfo = [{"civ": 0, "arch": -1, "color": -1}]
+    for i in range(1, 9):
+        a = p1[i - 1].retriever_map
+        civ = civ_of(a["civilization"].data)
+        arch = civ_of(a["architecture_set"].data) if "architecture_set" in a else -1
+        color = int(p3[i - 1].retriever_map["color"].data) if i - 1 < len(p3) else i - 1
+        pinfo.append({"civ": civ, "arch": arch, "color": color})
+    units = []
+    for pl, pu in enumerate(rv("Units", "players_units")):
+        for u in pu.retriever_map["units"].data:
+            r = u.retriever_map
+            units.append({"pl": pl, "id": int(r["unit_const"].data), "x": float(r["x"].data), "y": float(r["y"].data),
+                          "rot": float(r["rotation"].data), "garrison": int(r["garrisoned_in_id"].data)})
+    return {"W": W, "H": H, "terrain": terrain, "elev": elev, "layer": layer, "players": pinfo, "units": units,
+            "partial": True}
+
+
 def dump_scenario(scn_path):
     """读场景 → 纯数据（地形 / 高度 / 图层 / 玩家 / 物件）。
     ⚠️ AoE2ScenarioParser 在同一进程里连续读不同版本的场景会串版本（实测第 2 个起报 execute_on_load / architecture_set），
        所以 main 里每关都开一个子进程跑本函数（--dump），主进程只管 dat 与精灵。"""
-    s = load_scenario(scn_path)
+    try:
+        s = load_scenario(scn_path)
+    except Exception:
+        return dump_scenario_raw(scn_path)
     mm = s.map_manager
     W, H = mm.map_width, mm.map_height
     terrain = [0] * (W * H); elev = [0] * (W * H); layer = [-1] * (W * H)
@@ -379,6 +439,15 @@ def build_level(dat, colors, sprites, scn_path, meta, out_id):
                     ax_, ay_ = x + a.misplacement_x, y + a.misplacement_y
                     if (a.unit_id, round(ax_, 2), round(ay_, 2)) not in placed:
                         emit(pl, a.unit_id, ax_, ay_, 0.0, depth + 1)
+        # DE 建筑地基（dat building.foundation_terrain_id）：游戏载入时把建筑占地格换成这块地形
+        #（农田 = 7 Farm 地形、民居/城镇中心等 = 27 Foundation）—— 农田的样子就是这块地形本身。
+        if base.type == 80 and base.building.foundation_terrain_id >= 0:
+            sx_, sy_ = base.collision_size_x, base.collision_size_y
+            for cy in range(math.ceil(y - sy_ - 0.5), math.floor(y + sy_ - 0.5) + 1):
+                for cx in range(math.ceil(x - sx_ - 0.5), math.floor(x + sx_ - 0.5) + 1):
+                    if 0 <= cx < W and 0 <= cy < H:
+                        terrain[cy * W + cx] = int(base.building.foundation_terrain_id)
+                        layer[cy * W + cx] = -1
         gid = base.standing_graphic[0]
         if gid < 0:
             skipped[f"{base.name}(无图)"] = skipped.get(f"{base.name}(无图)", 0) + 1
@@ -465,6 +534,8 @@ def main():
             todo = [(1, path.name, path.name, path.read_bytes())]
         for lvl, name, fname, blob in todo:
             out_id = f"{path.stem}_{lvl}"
+            if index.get(out_id, {}).get("v") == BUILD_VERSION and (OUT / f"{out_id}.json").exists():
+                continue   # 已按当前版本导出过（中断后重跑可续做）
             scn = WORK / path.stem / fname
             scn.parent.mkdir(parents=True, exist_ok=True)
             scn.write_bytes(blob)
@@ -476,6 +547,7 @@ def main():
                 continue
             index[out_id] = {k: v for k, v in e.items() if k not in ("missing", "skipped")}
             index[out_id]["missingCount"] = sum(e["missing"].values())
+            index[out_id]["v"] = BUILD_VERSION
             print(f"  ✔ {out_id} {name} {e['width']}x{e['height']} 物件 {e['objects']}"
                   f"  缺图 {sum(e['missing'].values())} {list(e['missing'].items())[:5]}  跳过 {e['skipped']}", flush=True)
             spr_file.write_text(json.dumps(sprites, ensure_ascii=False), encoding="utf-8")
