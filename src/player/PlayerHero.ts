@@ -243,15 +243,7 @@ export class PlayerHero {
     public get heroKey(): string {
         // 🔴 [2026-09-07 主人定「学到的兵种给玩家套用」] 优先用面板选中的本势力已学兵种；
         //    还没学到（平民/刚入伙那一瞬）才回落到官阶兜底素材（白身=古典斥候骑兵）。
-        const key = this.getSelectedUnit()?.unitKey ?? heroKeyForRank(this.getRank().id);
-        // 🔴 [2026-10-23 主人「玩家出来不是就是骑马的样子吗，到底有必要拿马吗，还是该起初兵模」]
-        //    探马开局（醒在山洞）还没得到马：画成步行的民兵；凡湖岸牵上初马后马厩有马，回到骑马的样子。
-        //    只管探马开局这一段（有「醒在-」标记），别的玩法不受影响。
-        if (this.horses?.list().length === 0 && WAR_TYPES[key]?.cls === 'cav'
-            && this.storyFlags.some((f) => f.startsWith('醒在-'))) {
-            return 'militia';
-        }
-        return key;
+        return this.getSelectedUnit()?.unitKey ?? heroKeyForRank(this.getRank().id);
     }
     public rename(newName: string): void {
         const trimmed = newName.trim();
