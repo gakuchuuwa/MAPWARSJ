@@ -25,7 +25,9 @@ const URT_11_SCOUT_FLAG: Storylet = {
     id: 'URT-11',
     speaker: '萨尔杜里',
     text: '萨尔杜里把一面小旗交给{玩家}：「你会骑马，也认得这一带的路。以后你走在大军前头。」',
-    when: (ctx) => ctx.factionId === URARTU_FACTION_ID
+    // 🔴 [2026-10-23] 照逐年稿：公元前789年升斥候（原来入伍就升）
+    when: (ctx) => ctx.year >= -789
+        && ctx.factionId === URARTU_FACTION_ID
         && ctx.attached
         && ctx.rank !== 'civilian',
     options: [

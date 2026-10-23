@@ -3,9 +3,10 @@
  * 底稿：docs/探马/逐年_01_前800至前740.md（前 800 梦醒、前 799–前 797 平民放牧饮马找马、被征入军）。
  * 做法：.claude/skills/tanma-mainline/SKILL.md（点 → 路 → 文案）。
  *
- * 点：这一段全在**图什帕**一个点上——梦醒的湖岸、梅努阿渠、养马人家、东边山里都在图什帕 40 公里之内，
- *     按「一个据点代表周围 40 公里」记到图什帕，不另立点，所以这一段没有路，只有到点后的旁白和小仗。
- * 事件顺序：前 800 年 春 梦醒 → 夏 赶马饮水 → 秋 盗马贼（小仗）→ 冬 走失的小马 → 前 799 年春 梅努阿王征兵。
+ * 点：这一段全在**图什帕**一个点上——梦醒的湖岸、梅努阿渠、养马人家、东边山里都在图什帕 50 公里之内，
+ *     按「一个据点代表周围 50 公里」记到图什帕，不另立点，所以这一段没有路，只有到点后的旁白和小仗。
+ * 事件顺序（2026-10-23 照逐年稿改，原先压在一年里是 AI 自作主张）：公元前800年春 梦醒 → 前799年夏 赶马饮水
+ *   → 前798年秋 盗马贼（小仗）→ 前797年冬 走失的小马 → 前796年冬 梅努阿王征兵。
  * 征兵之后玩家进图什帕见萨尔杜里，走现成的入伍（首战）流程；入伍以后的几段（升斥候、看牙口、攻破哈桑卢、
  * 大马士革商队）还在旧故事块里，下一轮再改。
  */
@@ -20,9 +21,6 @@ const MERIT_WATERING = 150;
 const MERIT_HORSE_THIEF = 300;
 const MERIT_FOAL_SPIRIT = 100;
 const MERIT_FOAL_TRACKED = 200;
-/** 征兵的功勋门槛；到前 798 年不论功勋都来征 */
-const MERIT_CONSCRIPTION = 500;
-const CONSCRIPTION_ANY_MERIT_YEAR = -798;
 
 /** 盗马贼打赢：缴获一到两匹山地马（四到九岁） */
 function captureMountainHorses(api: MainlineApi): void {
@@ -66,7 +64,7 @@ export const URARTU_MAINLINE: readonly MainlineEvent[] = [
         id: 'URT-02',
         title: '赶马饮水',
         kind: 'small',
-        year: -800,
+        year: -799,
         season: 1,
         cityId: URARTU_MAINLINE_CITY_ID,
         lines: [
@@ -85,7 +83,7 @@ export const URARTU_MAINLINE: readonly MainlineEvent[] = [
         id: 'URT-04',
         title: '盗马贼',
         kind: 'small',
-        year: -800,
+        year: -798,
         season: 2,
         cityId: URARTU_MAINLINE_CITY_ID,
         lines: [
@@ -111,7 +109,7 @@ export const URARTU_MAINLINE: readonly MainlineEvent[] = [
         id: 'URT-03',
         title: '走失的小马',
         kind: 'small',
-        year: -800,
+        year: -797,
         season: 3,
         cityId: URARTU_MAINLINE_CITY_ID,
         lines: [
@@ -142,12 +140,11 @@ export const URARTU_MAINLINE: readonly MainlineEvent[] = [
         id: 'URT-05',
         title: '梅努阿王征兵',
         kind: 'small',
-        year: -799,
-        season: 0,
+        year: -796,
+        season: 3,
         cityId: URARTU_MAINLINE_CITY_ID,
-        when: (api) => api.hero.merit >= MERIT_CONSCRIPTION || api.app.timeSystem.getYear() >= CONSCRIPTION_ANY_MERIT_YEAR,
         lines: [
-            { speaker: '梅努阿王的使者', text: '公元前799年春，梅努阿王的使者来到图什帕城外，传令各家出人出马，到萨尔杜里将军帐下听用，抵御南边集结的亚述人。' },
+            { speaker: '梅努阿王的使者', text: '公元前796年冬，梅努阿王的使者来到图什帕城外，传令各家出人出马，到萨尔杜里将军帐下听用，抵御南边集结的亚述人。' },
             '养马人家都推举{玩家}，城外的马数{玩家}骑得最好；{玩家}跟养马人家道了别，牵上马进了图什帕，去萨尔杜里帐下报到。',
         ],
         run: (api, done) => {

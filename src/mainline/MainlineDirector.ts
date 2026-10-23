@@ -4,7 +4,7 @@
  *
  * 世界照百岁模式走；主线是一串按年排的事件（`MainlineEvent`），一件做完才轮到下一件：
  *   ① 年份（和季）到了、条件满足 → 这件事开始；
- *   ② 玩家不在这件事的点（据点，代表周围 40 公里）上 → 沿路网独自走过去，
+ *   ② 玩家不在这件事的点（据点，代表周围 50 公里）上 → 沿路网独自走过去，
  *      路上照剧本那套念 `briefing`（PlayerQuestSystem.startSoloJourney：挂点、一路一句、到点没念完就停下听完）；
  *   ③ 到了点、路上的话念完 → 念这件事的旁白 `lines`（每句至少挂 10 秒），再办这件事（`run`：小仗、给马、入伍…）；
  *   ④ 办完记进 `PlayerHero.storyDone`（随存档走），轮到下一件。
@@ -16,6 +16,7 @@ import { MAINLINE_MIN_LINE_MS } from '../player/PlayerQuestSystem';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 import { getStoryCharacter } from '../story/storyCharacters';
 import { getEuclideanDistance } from '../core/DistanceUtils';
+import { assign, createActor, fromCallback, setup } from 'xstate';
 
 /** 一句旁白；speaker＝说话人表的键（有立绘就挂在左下角武将立绘框里），纯旁白不填 */
 export interface MainlineLine {
@@ -45,7 +46,7 @@ export interface MainlineEvent {
     year: number;
     /** 0 春 1 夏 2 秋 3 冬；不填＝这一年哪一季都行 */
     season?: number;
-    /** 点：这件事发生在哪个据点（据点代表周围 40 公里） */
+    /** 点：这件事发生在哪个据点（据点代表周围 50 公里） */
     cityId: string;
     /** 去这个点的路上念的旁白：一路一句，段落之间空一行，第 2 段起段首写【据点名】；不填＝安静走 */
     briefing?: string;
@@ -59,8 +60,8 @@ export interface MainlineEvent {
     holdsPlayer?: boolean;
 }
 
-/** 在点上：离据点这么近就算到了（与「一个据点代表周围 40 公里」同口径） */
-const AT_POINT_KM = 40;
+/** 在点上：离据点这么近就算到了（与「一个据点代表周围 50 公里」同口径，主人 2026-10-23 定） */
+const AT_POINT_KM = 50;
 /** 走过去时，离据点这么近就算走到（再近的路网不一定到得了） */
 const ARRIVE_KM = 5;
 /** 每句旁白最少停多久：保底 10 秒，长句 2 秒＋每字 0.25 秒（主人 2026-10-23「起码一句话要保持在10秒以上吧」） */
@@ -68,23 +69,41 @@ const readMs = (text: string): number => Math.max(MAINLINE_MIN_LINE_MS, 2000 + t
 /** 最后一句说完，立绘再留多久 */
 const LINGER_MS = 1500;
 
+type FlowContext = { ev: MainlineEvent | null };
+type FlowEvent = { type: 'TICK' } | { type: 'SAID' } | { type: 'DONE' };
+
+/**
+ * 🔴 [2026-10-23 主人「好的，确定好了，没有问题再装，XState」] 流程写成 XState 状态图，不再用手写标记拼：
+ *
+ *   idle ──(到年份、条件满足、人在点上)──────────────▶ waitTalk
+ *   idle ──(到年份、条件满足、人不在点上；开始赶路)──▶ travel
+ *   travel ──(走到点)──▶ waitTalk        travel ──(半路被打断)──▶ idle（下一拍重新出发）
+ *   waitTalk ──(路上的话念完、没在打仗)──▶ narrate
+ *   narrate ──(到点旁白念完 SAID)──▶ act
+ *   act ──(这件事办完 DONE；记进 storyDone)──▶ idle（轮到下一件）
+ *
+ * 每帧送一个 TICK，条件都写在 guards 里；改流程先改这张图。
+ */
 export class MainlineDirector {
-    /** 'idle' 等着 / 'travel' 赶路 / 'wait' 到了等路上的话念完 / 'run' 正在念或正在办 */
-    private phase: 'idle' | 'travel' | 'wait' | 'run' = 'idle';
-    private currentId: string | null = null;
     private speaking = false;
     private lingerTimer = 0;
+    /** 路网到不了这一站：当已到（免得卡死） */
+    private journeyFailed = false;
+    private readonly actor;
 
     constructor(
         private readonly app: GameApp,
         private readonly events: readonly MainlineEvent[],
-    ) {}
+    ) {
+        this.actor = createActor(this.buildFlow());
+        this.actor.start();
+    }
 
     /** 主线要玩家（不让自动模式去别处找武将、不赶战场） */
     public holdsPlayer(): boolean {
         const hero = this.app.playerHero;
         if (!hero || (hero.autoPlan ?? 'centenarian') !== 'centenarian') return false;
-        if (this.phase !== 'idle') return true;
+        if (this.actor.getSnapshot().value !== 'idle') return true;
         const ev = this.nextEvent(hero);
         return !!ev && ev.holdsPlayer !== false && !hero.isAttached() && hero.factionId === null;
     }
@@ -93,52 +112,111 @@ export class MainlineDirector {
     public tick(): void {
         const hero = this.app.playerHero;
         if (!hero || (hero.autoPlan ?? 'centenarian') !== 'centenarian') return;
-        if (this.phase === 'run') return;
-        const ev = this.currentId ? this.events.find((e) => e.id === this.currentId) : this.nextEvent(hero);
-        if (!ev) return;
-        const api = this.makeApi(hero);
+        this.actor.send({ type: 'TICK' });
+    }
 
-        if (this.phase === 'idle') {
-            if (this.isBusy() || !this.reached(ev) || (ev.when && !ev.when(api))) return;
-            this.currentId = ev.id;
-            if (this.kmTo(hero, ev.cityId) <= AT_POINT_KM) { this.phase = 'wait'; return; }
-            const city = this.app.cityManager.getCity(ev.cityId);
-            if (!city) { this.phase = 'wait'; return; }
-            hero.cancelChase();
-            const ok = this.app.playerQuests?.startSoloJourney(ev.title, { lat: city.latitude, lng: city.longitude }, ev.briefing ?? '');
-            this.phase = ok ? 'travel' : 'wait';
-            return;
-        }
-        if (this.phase === 'travel') {
-            const arrived = this.kmTo(hero, ev.cityId) <= ARRIVE_KM
-                || (!hero.isTraveling() && this.kmTo(hero, ev.cityId) <= AT_POINT_KM);
-            if (!arrived) {
-                // 半路被打断（关了自动、被拦下）：不在路上了就重新出发
-                if (!hero.isTraveling()) { this.app.playerQuests?.endSoloJourney(); this.phase = 'idle'; this.currentId = null; }
-                return;
-            }
-            hero.cancelTravel();
-            this.phase = 'wait';
-            return;
-        }
-        // wait：路上的话没念完就在点上听完（主人 2026-10-23「到了点话没念完，就在点上停下听完再办事」）
-        if (this.app.playerQuests?.isJourneyBriefingBusy() || this.isBusy()) return;
-        this.app.playerQuests?.endSoloJourney();
-        this.phase = 'run';
-        api.say(ev.lines, () => {
-            const finish = () => {
-                if (!hero.storyDone.includes(ev.id)) hero.storyDone.push(ev.id);
-                this.phase = 'idle';
-                this.currentId = null;
-            };
-            if (ev.run) ev.run(api, finish);
-            else finish();
+    /** 当前走到哪一步（排查用：控制台 game.mainline.state()） */
+    public state(): { step: string; event: string | null } {
+        const snap = this.actor.getSnapshot();
+        return { step: String(snap.value), event: snap.context.ev?.id ?? null };
+    }
+
+    // ── 状态图 ─────────────────────────────────────────
+    private buildFlow() {
+        const d = this;
+        const heroOf = () => d.app.playerHero!;
+        return setup({
+            types: { context: {} as FlowContext, events: {} as FlowEvent },
+            guards: {
+                readyAtPoint: () => { const ev = d.readyEvent(); return !!ev && d.kmTo(heroOf(), ev.cityId) <= AT_POINT_KM; },
+                ready: () => d.readyEvent() !== null,
+                arrived: ({ context }) => !!context.ev && d.arrived(context.ev),
+                travelLost: ({ context }) => !heroOf().isTraveling() && !(context.ev && d.arrived(context.ev)),
+                talkDone: () => !d.app.playerQuests?.isJourneyBriefingBusy() && !d.isBusy(),
+            },
+            actions: {
+                pick: assign({ ev: () => d.readyEvent() }),
+                clear: assign({ ev: () => null }),
+                startJourney: ({ context }) => {
+                    const ev = context.ev;
+                    const city = ev ? d.app.cityManager.getCity(ev.cityId) : undefined;
+                    heroOf().cancelChase();
+                    d.journeyFailed = !ev || !city
+                        || !d.app.playerQuests?.startSoloJourney(ev.title, { lat: city.latitude, lng: city.longitude }, ev.briefing ?? '');
+                },
+                stopTravel: () => { heroOf().cancelTravel(); d.journeyFailed = false; },
+                endJourney: () => { d.app.playerQuests?.endSoloJourney(); },
+                markDone: ({ context }) => {
+                    const hero = heroOf();
+                    if (context.ev && !hero.storyDone.includes(context.ev.id)) hero.storyDone.push(context.ev.id);
+                },
+            },
+            actors: {
+                narrate: fromCallback<FlowEvent, { ev: MainlineEvent }>(({ sendBack, input }) => {
+                    d.say(heroOf(), input.ev.lines, () => sendBack({ type: 'SAID' }));
+                }),
+                act: fromCallback<FlowEvent, { ev: MainlineEvent }>(({ sendBack, input }) => {
+                    const done = () => sendBack({ type: 'DONE' });
+                    if (input.ev.run) input.ev.run(d.makeApi(heroOf()), done);
+                    else done();
+                }),
+            },
+        }).createMachine({
+            id: 'tanmaMainline',
+            initial: 'idle',
+            context: { ev: null },
+            states: {
+                idle: {
+                    on: {
+                        TICK: [
+                            { guard: 'readyAtPoint', target: 'waitTalk', actions: 'pick' },
+                            { guard: 'ready', target: 'travel', actions: ['pick', 'startJourney'] },
+                        ],
+                    },
+                },
+                travel: {
+                    on: {
+                        TICK: [
+                            { guard: 'arrived', target: 'waitTalk', actions: 'stopTravel' },
+                            { guard: 'travelLost', target: 'idle', actions: ['endJourney', 'clear'] },
+                        ],
+                    },
+                },
+                // 路上的话没念完就在点上听完（主人 2026-10-23「到了点话没念完，就在点上停下听完再办事」）
+                waitTalk: {
+                    on: { TICK: { guard: 'talkDone', target: 'narrate', actions: 'endJourney' } },
+                },
+                narrate: {
+                    invoke: { src: 'narrate', input: ({ context }) => ({ ev: context.ev! }) },
+                    on: { SAID: 'act' },
+                },
+                act: {
+                    invoke: { src: 'act', input: ({ context }) => ({ ev: context.ev! }) },
+                    on: { DONE: { target: 'idle', actions: ['markDone', 'clear'] } },
+                },
+            },
         });
     }
 
     // ── 内部 ───────────────────────────────────────────
     private nextEvent(hero: PlayerHero): MainlineEvent | null {
         return this.events.find((e) => !hero.storyDone.includes(e.id)) ?? null;
+    }
+
+    /** 下一件事现在能开始吗：年份到了、条件满足、手上没别的事 */
+    private readyEvent(): MainlineEvent | null {
+        const hero = this.app.playerHero;
+        if (!hero || this.isBusy()) return null;
+        const ev = this.nextEvent(hero);
+        if (!ev || !this.reached(ev)) return null;
+        if (ev.when && !ev.when(this.makeApi(hero))) return null;
+        return ev;
+    }
+
+    private arrived(ev: MainlineEvent): boolean {
+        const hero = this.app.playerHero!;
+        const km = this.kmTo(hero, ev.cityId);
+        return this.journeyFailed || km <= ARRIVE_KM || (!hero.isTraveling() && km <= AT_POINT_KM);
     }
 
     private reached(ev: MainlineEvent): boolean {
