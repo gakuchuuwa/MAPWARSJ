@@ -222,14 +222,14 @@ export interface PlayerQuestDeps {
      * 不走上方那个 toast（那是到达/入伍/报错的操作提示，两者不能混）。
      * `onDone` 在念完时回调，调用方据此推下一段。
      */
-    announceBriefing?: (text: string, onDone?: () => void, onStart?: () => void) => void;
+    announceBriefing?: (text: string, onDone?: () => void, onStart?: () => void, minBannerMs?: number) => void;
     kickLegionAi: (armyId: string) => void;
     ensureUnpaused: () => void;
     /**
-     * 🔴 [2026-10-22 探马开局] 故事块要玩家留在当地（例：乌拉尔图开局段留在图什帕一带）时为 true：
-     * 自动模式这时不去别处找武将、不赶战场。
+     * 🔴 [2026-10-23 探马主线] 主线要玩家（例：乌拉尔图开局段留在图什帕）时为 true：
+     * 自动模式这时不去别处找武将、不赶战场（`src/mainline/MainlineDirector.ts`）。
      */
-    storyHold?: () => boolean;
+    mainlineHold?: () => boolean;
     feed?: {
         pushRestoration?(p: { factionId: string; cityName: string }): void;
         pushExpedition?(p: { legionName: string; generalId?: string | null; cityName: string; kind: 'depart' | 'success' }): void;
@@ -284,6 +284,8 @@ const HOST_MOVE_EPS_DEG = 0.008;
  *   主人看着就是「军团不在安卡拉停驻」。拉开之后：一路走到城下，上一句还没念完才停。
  */
 const BRIEFING_ANCHOR_NEAR_KM = 15;
+/** 🔴 [2026-10-23 主人「起码一句话要保持在10秒以上吧」] 探马主线的旁白字幕每句至少挂多久 */
+export const MAINLINE_MIN_LINE_MS = 10000;
 const BRIEFING_HOLD_NEAR_KM = 2.5;
 /**
  * 🔴 [2026-09-30 主人定「**如果是战场不用等播报完，请直接开战，开战过程中可以播报**」]
@@ -2572,7 +2574,8 @@ export class PlayerQuestSystem {
                     if (si < sentences.length) {
                         const sentence = sentences[si];
                         si++;
-                        speak(sentence, () => { speakNextSentence(); }, si === 1 ? () => { tSpeak = Date.now(); } : undefined);
+                        speak(sentence, () => { speakNextSentence(); }, si === 1 ? () => { tSpeak = Date.now(); } : undefined,
+                            this.soloJourney ? MAINLINE_MIN_LINE_MS : undefined);
                         return;
                     }
                     // 这一段念完 → 定格这一段的口型数据，再走段级推进
@@ -2632,7 +2635,7 @@ export class PlayerQuestSystem {
         //    `updateSegmentBriefing` 每帧问一次 `hostIsMoving()`，军团一迈步就开口。
         //    （拿不到军团时不压着，直接念，免得把播报闷死。）
         {
-            const host = this.quest ? this.deps.legionManager.getLegionById(this.quest.legionId) : null;
+            const host = this.journeyMover();
             const p = host && !host.isDestroyed ? host.getPosition() : null;
             this.hostMoveSample = p ? { lat: p.lat, lng: p.lng, t: performance.now() } : null;
             this.hostMovingCache = { ok: false, t: 0 };   // 强制下一次重判：有基准 → 能判出「还没动」
@@ -2669,8 +2672,7 @@ export class PlayerQuestSystem {
         //    这里只负责「走到段起点 → 念这一段」，**不再为了念稿把军团按停**。
         if (!this.briefingBounds.length || this.briefingCancelled) return;
         if (this.briefingBoundCursor >= this.briefingBounds.length) return;
-        const q = this.quest;
-        const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        const host = this.journeyMover();
         if (!host || host.isDestroyed) return;
         const b = this.briefingBounds[this.briefingBoundCursor];
         const dKm = getEuclideanDistance(host.getPosition(), { lat: b.lat, lng: b.lng }) * 111;
@@ -2709,6 +2711,45 @@ export class PlayerQuestSystem {
     }
 
     /**
+     * 🔴 [2026-10-23 主人「同意合并：百岁模式当世界，剧本作为跑在里面的主线」] 探马主线：玩家独自赶路。
+     * 行军旁白这一整套（挂点、一路一句、到点没念完就停下听完）原来只跟「玩家随军的那支军团」；
+     * 玩家还是平民、一个人走主线的路时，改跟玩家本人（`journeyMover`）。
+     */
+    private soloJourney: { title: string } | null = null;
+
+    /** 行军旁白跟着谁走：随军时＝那支军团；独自赶主线的路时＝玩家本人 */
+    private journeyMover(): Army | null {
+        if (this.quest) return this.deps.legionManager.getLegionById(this.quest.legionId) ?? null;
+        return this.soloJourney ? this.deps.hero.army : null;
+    }
+
+    /**
+     * 主线让玩家独自走一条路：沿路网去 `dest`，路上照剧本那套念 `text`
+     * （段落之间空一行；第 2 段起段首写【据点名】，走到那座据点附近才念那一段）。
+     * 返回 false＝路网到不了。
+     */
+    public startSoloJourney(title: string, dest: { lat: number; lng: number }, text: string): boolean {
+        this.clearJourneyBriefing();
+        this.soloJourney = { title };
+        if (!this.deps.hero.travelToPoint(dest, title)) { this.soloJourney = null; return false; }
+        this.briefedBattlefields.delete(`event:${title}`);
+        this.startJourneyBriefing(null, title, undefined, this.scriptSegmentStarts({ title, briefing: text }, text), text);
+        return true;
+    }
+
+    /** 独自赶的这条路走完了（或作废）：收起这一趟的旁白状态（正在念的那句照念完） */
+    public endSoloJourney(): void {
+        if (!this.soloJourney) return;
+        this.soloJourney = null;
+        this.releaseBriefingHold();
+    }
+
+    /** 行军旁白还在念（主线到点后等它念完再办事） */
+    public isJourneyBriefingBusy(): boolean {
+        return this.briefingBusy || this.briefingPending !== null;
+    }
+
+    /**
      * 🔴 [2026-09-25 主人「军团移动的时候才播报」「移动后再播报」]
      *   **军团这一会儿到底在不在走** —— 判据是本帧位置与上一次采样位置的位移
      *   （≥ `HOST_MOVE_EPS_DEG` ≈ 0.9 公里才算走）。站着不动（抵达、开打、原地待命）位移为 0 → 不算在走。
@@ -2725,7 +2766,7 @@ export class PlayerQuestSystem {
         // 🔴 [2026-10-01 主人报障「军团先移动，播报才有声音，可以同步吗」]
         //    先问军团自己是不是在行军（有路、未抵达、不在休整/交战）—— 一迈步当帧就答「在走」，
         //    不再等「位移 ≥0.9 公里 + 每 1.2 秒才重采一次」那几秒；位移判据只留作兜底。
-        const marchingHost = this.quest ? this.deps.legionManager.getLegionById(this.quest.legionId) : null;
+        const marchingHost = this.journeyMover();
         if (marchingHost && !marchingHost.isDestroyed && marchingHost.isMarching()) {
             const p0 = marchingHost.getPosition();
             this.hostMoveSample = { lat: p0.lat, lng: p0.lng, t: performance.now() };
@@ -2736,8 +2777,7 @@ export class PlayerQuestSystem {
         //    若这里答「没走」，`stillHeading()` 就会把正在念的这一段掐掉 —— 那就是自己把自己等死。
         const now = performance.now();
         if (now - this.hostMovingCache.t < 1200) return this.hostMovingCache.ok;
-        const q = this.quest;
-        const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        const host = this.journeyMover();
         if (!host || host.isDestroyed) {
             this.hostMovingCache = { ok: true, t: now };
             return true;
@@ -2875,7 +2915,7 @@ export class PlayerQuestSystem {
         const scriptChain = this.deps.hero.autoPlan === 'script' && isScriptPeriod();
         const canAdvance = this.deps.hero.autoMode && !this.quest
             && (!this.deps.hero.isAttached() || scriptChain)
-            && !this.deps.storyHold?.();
+            && !this.deps.mainlineHold?.();
         if (canAdvance) {
             if (this.resumePendingGeneralEvent()) return;
         }
@@ -2916,7 +2956,11 @@ export class PlayerQuestSystem {
             }
         }
         const q = this.quest;
-        if (!q) return;
+        if (!q) {
+            // 🔴 [2026-10-23 探马主线] 玩家独自赶主线的路：同一套挂点旁白，跟着玩家本人走
+            if (this.soloJourney) this.updateSegmentBriefing();
+            return;
+        }
 
         // 🔴 [2026-09-25 主人「一段一条播报」] 行军途中每帧看一眼：走到下一段的起点，就念这一段的旁白
         this.updateSegmentBriefing();
@@ -3050,8 +3094,7 @@ export class PlayerQuestSystem {
      *   ⚠️ 只认「本场军团真在战斗」（`Army.getIsInCombat`），战斗一结束就恢复原判据。
      */
     private hostInBattle(): boolean {
-        const q = this.quest;
-        const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        const host = this.journeyMover();
         return !!host && !host.isDestroyed && host.getIsInCombat?.() === true;
     }
 
@@ -3063,8 +3106,7 @@ export class PlayerQuestSystem {
         this.briefingHoldIdx = -1;
         if (!this.briefingHold) return;
         this.briefingHold = false;
-        const q = this.quest;
-        const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        const host = this.journeyMover();
         if (host && !host.isDestroyed) host.setMarchHold(false);
     }
 
@@ -3078,8 +3120,7 @@ export class PlayerQuestSystem {
      *   于是**永远走不到开战圈**（主人报障：抵达底比斯后停驻、不直接开战）。
      */
     private settleBriefingHold(): void {
-        const q = this.quest;
-        const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        const host = this.journeyMover();
         if (!host || host.isDestroyed) { this.briefingHold = false; this.briefingHoldArmed = false; return; }
         // 🔴 [2026-09-26 主人报障「卡这不动了」] **只等「当前这一句」**，不等排队的那一句：
         //    否则军团会站在原地把「当前段 + 排队的下一段」一起听完（实测能站二三十秒，看着就是卡死）。

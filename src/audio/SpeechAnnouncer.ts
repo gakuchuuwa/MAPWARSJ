@@ -33,6 +33,8 @@ interface SpeakOptions {
   bannerMultiline?: boolean;
   /** 🔴 [2026-09-27] 整句只占一屏（赶路播报＝一路一句，不许切片轮播） */
   bannerSingleScreen?: boolean;
+  /** 🔴 [2026-10-23 主人「起码一句话要保持在10秒以上吧」] 字幕从亮起算至少挂这么久（念完早了也等够再收） */
+  bannerMinMs?: number;
   /**
    * 🔴 [2026-09-16 主人报障「没读完就下一段」] 长段解说的**兜底等待上限**（ms）。
    * 不传时沿用 15s —— 那是给「某某灭国」这类短句设的；
@@ -461,7 +463,7 @@ export class SpeechAnnouncer {
    *    所以走 sTier（略慢语速、期间不被常规播报打断），字幕用 multiline 长段排版。
    *    `onDone` 在**念完**时回调 —— 调用方据此推下一段，别用定时器瞎猜时长。
    */
-  public announceBriefing(text: string, onDone?: () => void, onStart?: () => void): void {
+  public announceBriefing(text: string, onDone?: () => void, onStart?: () => void, minBannerMs?: number): void {
     const line = text.trim();
     if (!line) { onDone?.(); return; }
     this.speak(line, {
@@ -470,6 +472,7 @@ export class SpeechAnnouncer {
       banner: line,
       bannerMultiline: true,
       bannerSingleScreen: true,   // 一路一句＝一路一屏：不切片、不轮播
+      bannerMinMs: minBannerMs,
       rate: 0.92,
       // 按字数估读完时间再留五成余量，封顶 3 分钟防某段异常长时卡住整条链
       maxWaitMs: Math.min(180000, 4000 + line.length * 600),
@@ -908,13 +911,15 @@ export class SpeechAnnouncer {
     //    语音要等语音表就绪（50~450ms）+ 云端合成（~600ms），字幕早亮近一秒，观众看着就是不同步。
     //    仍保底：1.5s 内没能开口（语音引擎不可用/静音环境）也把字幕亮出来，画面不缺信息。
     let bannerShown = false;
+    let bannerShownAt = 0;
     let bannerFallbackTimer = 0;
     const showBanner = (): void => {
       if (bannerShown || !opts?.banner) return;
       bannerShown = true;
+      bannerShownAt = Date.now();
       window.clearTimeout(bannerFallbackTimer);
       // 停留要盖住整段语音：短句仍是 9s，长段按估算时长走（settle 时会提前收）
-      const hold = Math.min(opts.maxWaitMs ?? 9000, Math.max(9000, 1500 + opts.banner.length * 400));
+      const hold = Math.max(opts.bannerMinMs ?? 0, Math.min(opts.maxWaitMs ?? 9000, Math.max(9000, 1500 + opts.banner.length * 400)));
       SubtitleBanner.show(opts.banner, hold, opts.bannerMultiline === true, opts.bannerSingleScreen === true);
     };
     if (opts?.banner) bannerFallbackTimer = window.setTimeout(showBanner, 1500);
@@ -1030,7 +1035,8 @@ export class SpeechAnnouncer {
             //    调用方随即念下一段并 show 出新字幕 —— 1.2s 后这个定时器照样触发，
             //    收掉的是**下一段**刚显示的字幕，于是每段只闪一下。
             //    用播报序号挡掉：已被新一句取代就不许再收字幕。
-              window.setTimeout(() => { if (isCurrent()) SubtitleBanner.hide(); }, 1200);
+              const minLeft = opts.bannerMinMs ? opts.bannerMinMs - (Date.now() - bannerShownAt) : 0;
+              window.setTimeout(() => { if (isCurrent()) SubtitleBanner.hide(); }, Math.max(1200, minLeft));
             }
             opts?.onDone?.();
             this.endSpeechDuckSessionIfIdle();

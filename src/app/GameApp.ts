@@ -91,7 +91,9 @@ import { setCityStyleSessionSeed } from '../systems/cityWallShared';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { startHorseThiefSkirmish, type HorseThiefChase } from '../story/horseThiefSkirmish';
 import { StoryletEngine } from '../story/StoryletEngine';
-import { URARTU_OPENING_STORYLETS, URARTU_OPENING_CITY_ID, pickUrartuWakeSpot, WAKE_FLAG_PREFIX, urartuOpeningHoldsPlayer, urartuOpeningLead } from '../story/storylets/urartuOpening';
+import { URARTU_OPENING_STORYLETS } from '../story/storylets/urartuOpening';
+import { MainlineDirector } from '../mainline/MainlineDirector';
+import { URARTU_MAINLINE, URARTU_MAINLINE_CITY_ID } from '../mainline/urartuMainline';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -939,8 +941,10 @@ export class GameApp {
         return startHorseThiefSkirmish(this, chase);
     }
 
-    /** 🔴 [2026-10-22] 故事块引擎（百岁模式每到换季检查一次；控制台 `game.story.trigger('URT-04')` 可直接弹） */
-    public readonly story = new StoryletEngine(this, URARTU_OPENING_STORYLETS, urartuOpeningHoldsPlayer, urartuOpeningLead);
+    /** 🔴 [2026-10-22] 旧故事块引擎：只剩入伍以后那几块还没改写成主线（2026-10-23 起平民那一段归 mainline） */
+    public readonly story = new StoryletEngine(this, URARTU_OPENING_STORYLETS);
+    /** 🔴 [2026-10-23 主人「百岁模式当世界，剧本作为跑在里面的主线」] 探马主线运行器（.claude/skills/tanma-mainline） */
+    public readonly mainline = new MainlineDirector(this, URARTU_MAINLINE);
 
     /**
      * 🔴 [2026-10-20 主人令「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代，
@@ -992,20 +996,21 @@ export class GameApp {
         //    不再随机挑据点 —— 《探马》剧情从乌拉尔图开始（docs/探马/骨架.md、故事块样板_乌拉尔图开局.md）。
         //    跳年、读档、剧本/乱斗模式照旧（读档会把位置覆盖回存档里的位置）。
         const openingCity = isCentenarianStart && this.timeSystem.getYear() === GameConfig.TIME.TIMELINE_START_YEAR
-            ? this.cityManager.getCity(URARTU_OPENING_CITY_ID)
+            ? this.cityManager.getCity(URARTU_MAINLINE_CITY_ID)
             : undefined;
         const startCity = openingCity ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
-        // 🔴 [2026-10-22 主人令「梦醒可以在山洞，农村，田野呀」「非得在城边吗」] 醒来处固定在图什帕以东山洞（主人再令「起始位置最好固定，不要上来就穿湖而过」）
-        const wakeSpot = openingCity ? pickUrartuWakeSpot() : null;
-        let spawnPos = wakeSpot ? { lat: wakeSpot.lat, lng: wakeSpot.lng } : { lat: startCity.latitude, lng: startCity.longitude };
-        const edges = !openingCity && roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
+        // 🔴 [2026-10-23 主人「点也是据点……每一个点都代表周围至少40KM的范围」] 原来醒在图什帕以东的山洞
+        //    （离图什帕约 59 公里，那里没有据点）——按主线规则点只能是据点，改为在图什帕城外的路上醒来，
+        //    路固定取第一条（主人 2026-10-22「起始位置最好固定」）。
+        let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
+        const edges = roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
         // 优先连通的陆地道路，保证玩家落在合法陆地路网上
         const landEdges = edges?.filter((e) => !e.isSea && e.coordinates && e.coordinates.length > 1) ?? [];
         const candidateEdges = landEdges.length > 0 ? landEdges : (edges?.filter((e) => e.coordinates && e.coordinates.length > 1) ?? []);
 
         if (candidateEdges.length > 0) {
-            const edge = candidateEdges[Math.floor(Math.random() * candidateEdges.length)];
+            const edge = openingCity ? candidateEdges[0] : candidateEdges[Math.floor(Math.random() * candidateEdges.length)];
             // 沿道路挑一个离开据点一定距离的节点（>= 判定到达阈值，保证在城外）
             // 🔴 [2026-09-24 主人「玩家上来就接任务了，你能不能把玩家拉的远一点呀」]
             //    剧本模式出生在归属武将城外约 0.6°（≈65 公里）的路上，要先走一段才见到他；
@@ -1026,7 +1031,7 @@ export class GameApp {
             if (picked) {
                 spawnPos = { lat: picked[1], lng: picked[0] };
             }
-        } else if (!openingCity) {
+        } else {
             // 无连通边时城外安全微小偏移
             const angle = Math.random() * Math.PI * 2;
             spawnPos = {
@@ -1046,7 +1051,6 @@ export class GameApp {
             getSeason: () => this.timeSystem.getSeason() as number,
         }, spawnPos);
         this.playerHero = hero;
-        if (wakeSpot) hero.storyFlags.push(WAKE_FLAG_PREFIX + wakeSpot.id);
         // 🔴 [2026-10-22 通灵] 马厩里点「通灵」→ 故事块引擎读这匹马的记忆
         hero.onReadHorseMemory = (horseId) => { this.story.readHorseMemory(horseId); };
         // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）
@@ -1093,9 +1097,9 @@ export class GameApp {
             // 🔴 [2026-09-16 主人定]「播报出来，字幕显示在下面」：
             //    走现成的 SpeechAnnouncer —— 它一并管语音与底部字幕条（SubtitleBanner），
             //    不另造第二条字幕。onDone 让调用方在**念完**后再推下一段。
-            announceBriefing: (text, onDone) => speechAnnouncer.announceBriefing(text, onDone),
+            announceBriefing: (text, onDone, onStart, minBannerMs) => speechAnnouncer.announceBriefing(text, onDone, onStart, minBannerMs),
             kickLegionAi: (armyId) => this.aiController?.tickArmyById(armyId),
-            storyHold: () => this.story.holdsPlayer(),
+            mainlineHold: () => this.mainline.holdsPlayer(),
             ensureUnpaused: () => {
                 if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);
             },
