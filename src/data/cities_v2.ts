@@ -3452,7 +3452,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_ajiemier', name: '阿杰梅尔', factionId: 'zhelouqi', lat: 26.45, lng: 74.64, type: 'medium_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', note: '乔汉(遮娄其)王朝都城，普里特维抗古尔' },
     { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', note: '加纳古都，苏曼古鲁攻占后为索索都城' },
     { id: 'city_latajiya', name: '拉塔基亚', factionId: 'antiaokegongguo', lat: 35.52, lng: 35.79, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '安条克公国港口（今叙利亚拉塔基亚），博希蒙德1098年建公国。🔴 [2026-10-18 按据点] 据点本身是古叙利亚港市拉塔基亚（塞琉古 Laodicea，罗马/拜占庭/阿拉伯/奥斯曼层），实体建筑以中东石构为主；十字军是一段外来政权，不据此定风格；博希蒙德是武将与据点错配，待改武将。' },
-    { id: 'city_lansi', name: '兰斯', factionId: 'aoerlianggongguo', lat: 49.26, lng: 4.03, type: 'medium_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '法兰西加冕城，1429年贞德护查理七世于此加冕' },
+    { id: 'city_lansi', name: '兰斯', factionId: 'gaolu', lat: 49.26, lng: 4.03, type: 'medium_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '法兰西加冕城，1429年贞德护查理七世于此加冕' },
     // 🔴 [2026-10-18 按史] 卡那封城堡为爱德华一世铁环城堡群之首，实建为英格兰/萨伏伊规制石堡 → BRITONS；不取凯尔特。
     { id: 'city_kanafeng', name: '卡那封', factionId: 'yinggelan', lat: 53.14, lng: -4.27, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地；实建为英格兰/萨伏伊规制石堡，故 BRITONS。' },
     { id: 'city_meierfei', name: '梅尔菲', factionId: 'xixiliwangguo', lat: 40.99, lng: 15.65, type: 'pass', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '诺曼阿普利亚公爵首府，吉斯卡尔南意大利征服起点' },
@@ -3502,7 +3502,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_hagatna', name: '阿加尼亚', factionId: 'chamorro', lat: 13.4757, lng: 144.7500, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', stockadeShape: 'square', stockadeFence: 'DARK', note: '阿加尼亚（Hagåtña），关岛西岸阿加尼亚河口聚落，查莫罗人的首要村落与统治中心，1521 年麦哲伦抵达时的查莫罗主邑，后为西班牙殖民首府。查莫罗语 Guåhan（关岛）本义「我们所有的」。定级依据§6.2：非关隘/要塞/堡垒（拉特石柱 Latte 是屋基非城防，无石头城墙）→ 城市；查英文维基与当地语种维基均未见阿加尼亚城居人口数字，算不出来 → 按「查不到的一律城寨」落城寨(stockade)。围栏取原木尖桩（查莫罗传统木栅/茅屋聚落）。文化：东南亚（太平洋南岛系，借 SEAS 素材）。坐标取阿加尼亚 13.4757,144.7500。归属：势力「查莫罗」（此处原住民族、民族发源核心，按§「以民族命名」），旗号「查」。' },
     { id: 'city_lier', name: '里尔', factionId: 'bogendigongguo', lat: 50.63, lng: 3.06, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '好人菲利普1454年野鸡宴会誓师东征之地' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：哈瓦登：威尔士东北，凯尔特
-    { id: 'city_hawadeng', name: '哈瓦登', factionId: 'gewennesi', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '戴菲德1282年突袭英军城堡点燃威尔士抗英终战' },
+    { id: 'city_hawadeng', name: '哈瓦登', factionId: 'weiershigongguo', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '戴菲德1282年突袭英军城堡点燃威尔士抗英终战' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：布伊尔斯：威尔士中部，凯尔特
     { id: 'city_buyiersi', name: '布伊尔斯', factionId: 'weiershigongguo', lat: 52.15, lng: -3.40, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '卢埃林1282年欧温桥之战阵亡殉难地' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1」] 原「ASIA」只给一级、二级靠 region 推 → 归 VIETNAMESE：义安（Nghe An）：越南中部；AGENTS 归位原则「越南归东南亚」，一级随 VIETNAMESE = SEAS

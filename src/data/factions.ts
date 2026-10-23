@@ -10,13 +10,13 @@ export type { Faction };
 export const FACTIONS: Faction[] = [
   { id: 'ayinu_ezo', name: '阿伊努' },
 
-  { id: 'boootiya', name: '波奥蒂亚' },
+  { id: 'boootiya', name: '底比斯' },
   { id: 'kelite', name: '威尼斯共和国' },  // 干地亚要塞·威尼斯海外领地
   { id: 'leangongguo', name: '莱昂' },
   { id: 'xixiliwangguo', name: '西西里' },
 
   { id: 'yipilusi', name: '伊庇鲁斯' },
-  { id: 'lagoniya', name: '拉哥尼亚' },  // 别名：斯巴达本土（Laconia，斯巴达城邦所在地）
+  { id: 'lagoniya', name: '斯巴达' },  // 别名：斯巴达本土（Laconia，斯巴达城邦所在地）
   { id: 'maqidun', name: '马其顿' },
   { id: 'hekaniya', name: '赫卡尼亚' },  // 里海东南，兹拉卡塔为其首府
 
@@ -49,7 +49,7 @@ export const FACTIONS: Faction[] = [
   { id: 'buni', name: '布匿' },
   { id: 'aguelabu', name: '阿格拉布' },
   { id: 'telibolisi', name: '的黎波里塔' },
-  { id: 'jileinaijia', name: '基雷奈加' },
+  { id: 'jileinaijia', name: '昔兰尼' },
 
   { id: 'talike', name: '马格里布' },  // 丹吉尔·塔里克（DE柏柏尔领袖，711征服伊比利亚）；势力名不取人名，按地区名
 
@@ -57,7 +57,7 @@ export const FACTIONS: Faction[] = [
   { id: 'nidelan', name: '尼德兰' },
   { id: 'pomeilaniya', name: '波美拉尼亚' },  // 什切青·格里芬王朝（西波美拉尼亚公国）
   { id: 'tuosikana', name: '托斯卡纳' },
-  { id: 'talanduo', name: '大希腊' },  // 别名：南意大利希腊殖民城邦（Magna Graecia），首邑塔兰托
+  { id: 'talanduo', name: '塔兰托' },  // 别名：南意大利希腊殖民城邦（Magna Graecia），首邑塔兰托
   { id: 'safuyi', name: '萨伏伊' },
   { id: 'jiatailuoniya', name: '加泰罗尼亚' },
   { id: 'nasier', name: '纳斯尔' },
@@ -75,7 +75,7 @@ export const FACTIONS: Faction[] = [
   { id: 'alagong', name: '阿拉贡' },
 
   { id: 'feiniqi', name: '腓尼基' },
-  { id: 'xila', name: '阿提卡' },  // 别名：雅典所在地区（Attica，雅典城邦本土）
+  { id: 'xila', name: '雅典' },  // 别名：雅典所在地区（Attica，雅典城邦本土）
   { id: 'fulandesi', name: '阿图瓦' },
 
 
@@ -107,10 +107,10 @@ export const FACTIONS: Faction[] = [
   { id: 'mazhaer', name: '匈牙利' },
   { id: 'falanji', name: '法兰克' },
   { id: 'shiwaben', name: '施瓦本' },
-  { id: 'asikanani', name: '阿斯坎尼' },
+  { id: 'asikanani', name: '勃兰登堡藩侯国' },
   { id: 'wende', name: '萨克森' },
   { id: 'bafaliya', name: '巴伐利亚' },
-  { id: 'huohengsuolun', name: '霍亨索伦' },
+  { id: 'huohengsuolun', name: '勃兰登堡-普鲁士' },
   { id: 'ruishi', name: '瑞士' },
   { id: 'damolaweiya', name: '大摩拉维亚' },
 
@@ -1412,7 +1412,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wulaertu_guo', name: '乌拉尔图' },
   // 图什帕·乌拉尔图王国（公元前高加索古国）
     { id: 'gelujiya', name: '格鲁吉亚' },
-    { id: 'bendou', name: '科穆宁' },
+    { id: 'bendou', name: '特拉布宗' },
 
     { id: 'keerjisi', name: '科尔基斯' },
     { id: 'saipulusi', name: '塞浦路斯' },
@@ -1477,7 +1477,7 @@ export const FACTIONS: Faction[] = [
     { id: 'salai', name: '萨莱诺盖' }, // 埃迪古所建诺盖汗国以萨莱楚克为都（原名与据点名相同，违 §266）
     { id: 'mangshi', name: '土库曼' }, // 曼格什拉克为乌古斯／土库曼牧地，恰格里贝格出自其中（原名与据点名相同，违 §266）,
     { id: 'aztec', name: '阿兹特克' },        // 特诺奇提特兰·阿兹特克帝国
-    { id: 'fodejiao', name: '佛得角' },  // 别名：Cabo Verde，葡属西非外海群岛，首府里贝拉格兰德
+    { id: 'fodejiao', name: '葡属佛得角' },  // 别名：Cabo Verde，葡属西非外海群岛，首府里贝拉格兰德
   { id: 'tupinijin', name: '葡属巴西' },  // 圣维森特·1532 葡属巴西首座永久拓殖镇
   { id: 'taino', name: '西属古巴' },  // 哈瓦那·1519 贝拉斯克斯西属古巴殖民首府
   { id: 'taino_d', name: '泰诺' },     // 亚拉·古巴东部泰诺人村落（哈土依；区别于西班牙殖民的西属古巴）
@@ -1502,7 +1502,6 @@ export const FACTIONS: Faction[] = [
     { id: 'zhelouqi', name: '遮娄其' },        // 阿杰梅尔·乔汉(遮娄其)王朝（普里特维）
     { id: 'suosuo', name: '索索' },        // 库姆比萨利赫·索索帝国（苏曼古鲁）
     { id: 'antiaokegongguo', name: '赞吉王朝' },        // 拉塔基亚·努尔丁赞吉王朝叙利亚海岸
-    { id: 'aoerlianggongguo', name: '奥尔良公国' },        // 兰斯·奥尔良公国（贞德）
     { id: 'saimien', name: '塞米恩' },        // 塞米恩·塞米恩王国（尤迪特）
     { id: 'aosimanbeiyiguo', name: '奥斯曼贝伊国' },        // 瑟于特·奥斯曼贝伊国（奥斯曼一世）
     { id: 'xiaaiji', name: '下埃及' },        // 佩鲁西姆·尼罗河三角洲下埃及（佩尔狄卡斯）
@@ -1517,7 +1516,6 @@ export const FACTIONS: Faction[] = [
     { id: 'alaokaniya', name: '阿劳卡尼亚' },        // 彼得罗阿·阿劳卡尼亚马普切（瓜科尔达）
     { id: 'bogendigongguo', name: '勃艮第公国' },        // 蒙特罗·勃艮第公国（无畏的约翰）
     { id: 'amaniyake', name: '阿马尼亚克' },        // 欧什·阿马尼亚克伯爵领（贝尔纳·德·阿马尼亚克）
-    { id: 'gewennesi', name: '格温内斯' },        // 哈瓦登·格温内斯（戴菲德）
     { id: 'weiershigongguo', name: '威尔士公国' },        // 布伊尔斯·威尔士公国（卢埃林）
     { id: 'tigelei', name: '提格雷' },        // 德布雷达莫·提格雷（吉达扬）
     { id: 'luben', name: '鲁本' },        // 瓦卡·奇里乞亚亚美尼亚鲁本王朝（托罗斯二世）
@@ -1548,7 +1546,7 @@ export const FACTIONS: Faction[] = [
     { id: 'aolisha', name: '奥里萨' },
     { id: 'kanata', name: '卡纳塔' },
     { id: 'adile', name: '阿迪勒' },
-    { id: 'foluolida', name: '佛罗里达' },
+    { id: 'foluolida', name: '西属佛罗里达' },
     { id: 'yilisi', name: '埃利斯' },
     { id: 'nuowei', name: '挪威' },
     { id: 'keernuwaye', name: '康沃尔' },

@@ -651,7 +651,6 @@ const _FIXED: Record<string, string> = {
     'zhelouqi': '#C07A1E', // 遮娄其·阿杰梅尔（拉其普特藏红琥珀）
     'suosuo': '#4A3626', // 索索·库姆比萨利赫（坎特铁匠部族乌褐）
     'antiaokegongguo': '#982026', // 安条克公国·拉塔基亚（诺曼十字军暗红）
-    'aoerlianggongguo': '#2A5E9E', // 奥尔良公国·兰斯（法兰西王室蓝）
     'saimien': '#3E7A44', // 塞米恩·塞米恩（塞米恩山地绿）
     'aosimanbeiyiguo': '#9E2620', // 奥斯曼贝伊国·瑟于特（奥斯曼红）
     'xiaaiji': '#6E7A8A', // 下埃及·佩鲁西姆（银盾银灰）
@@ -666,7 +665,6 @@ const _FIXED: Record<string, string> = {
     'alaokaniya': '#5E4A6E', // 阿劳卡尼亚·彼得罗阿（阿劳卡尼亚紫）
     'bogendigongguo': '#6E1B2E', // 勃艮第公国·蒙特罗（深酒红）
     'amaniyake': '#4A6E3E', // 阿马尼亚克·欧什（加斯科涅绿）
-    'gewennesi': '#3E5A4E', // 格温内斯·哈瓦登（格温内斯绿）
     'weiershigongguo': '#4E5A6E', // 威尔士公国·布伊尔斯（威尔士灰蓝）
     'tigelei': '#7A6E2E', // 提格雷·德布雷达莫（提格雷岩褐）
     'luben': '#7A4E2E', // 鲁本·瓦卡（奇里乞亚山褐）

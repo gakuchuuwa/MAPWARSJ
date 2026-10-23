@@ -905,10 +905,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代盖尔军团",
         legionType: "sub",
     },
-    "gewennesi": {
-        legionName: "城堡时代盖尔军团",
-        legionType: "sub",
-    },
     "weiershigongguo": {
         legionName: "城堡时代盖尔军团",
         legionType: "sub",
@@ -1357,10 +1353,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "zhelouqi": {
         legionName: "城堡时代维查耶那加尔军团",
-        legionType: "sub",
-    },
-    "aoerlianggongguo": {
-        legionName: "城堡时代法兰西骑士军团",
         legionType: "sub",
     },
     "xiaaiji": {
