@@ -16,7 +16,7 @@
  */
 import { CITIES_V2 } from '../data/cities_v2';
 import { getCityAnchorFactionId } from '../data/ExpeditionLegions';
-import { getFactionGenerals } from '../data/FactionGenerals';
+import { getCityGeneralsResolved } from '../data/FactionGenerals';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralDebutYear } from '../data/GeneralLifeYears';
 import { getGeneralProfile } from '../data/general-skills/profiles';
@@ -28,7 +28,7 @@ const MELEE_OWNER = new Map(CITIES_V2.map((c) => [c.id, c.factionId]));
 function localLeadGeneral(cityId: string): { generalId: string; factionId: string } | null {
     const anchor = getCityAnchorFactionId(cityId);
     if (!anchor) return null;
-    const onStage = getFactionGenerals(anchor).filter((g) => isGeneralOnStage(g.generalId));
+    const onStage = getCityGeneralsResolved(cityId).filter((g) => isGeneralOnStage(g.generalId));
     if (onStage.length === 0) return null;
     const famous = (id: string) => getGeneralProfile(id)?.tier === 'famous';
     onStage.sort((a, b) => {
