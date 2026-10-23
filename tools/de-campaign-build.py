@@ -1,4 +1,4 @@
-"""
+﻿"""
 AoE2 DE 战役关卡 → 原图预览数据（地形 + 全部物件，物件精灵直接从 DE 的 SLD 解出，不做任何替换/自绘）。
 
 流程（全部取 DE 本体数据，不猜、不代用）：
@@ -40,7 +40,7 @@ DAT = DE_ROOT / "dat" / "empires2_x2_p1.dat"
 OUT = Path("public/de-maps/campaign")
 SPR = OUT / "sprites"
 WORK = Path("scratch/de_campaign")
-BUILD_VERSION = 2   # 2 = 补建筑附属件 + 建筑地基地形（农田等）
+BUILD_VERSION = 3   # 2 = 补建筑附属件 + 建筑地基地形（农田等）；3 = 帧号按 SLD 帧数取模 + 空帧取下一张有图帧
 
 # DE 玩家色顺序（scenario player.color 0..7）
 PLAYER_COLOR_FILES = ["blue", "red", "green", "yellow", "teal", "purple", "grey", "orange"]
@@ -245,9 +245,21 @@ def render_graphic(dat, gid, rot, radians, tint, depth=0):
         if f is None:
             missing.append(name)
             return []
-        fr = f.frame(frame_index(g, rot, radians))
+        idx = frame_index(g, rot, radians)
+        nf = len(f.frames)
+        if nf and idx >= nf:
+            idx %= nf          # dat 的角度数比 SLD 实际帧多（如默认悬崖 25 向/24 帧）：引擎按帧数取模
+        F = max(1, g.frame_count)
+        if nf and F > 1 and "main" not in f.frames[idx][6]:
+            # 动画此刻是空帧（如海豚潜在水下）：取同一段动画里下一张有图的帧
+            start = idx - idx % F
+            for k in list(range(idx + 1, min(nf, start + F))) + list(range(start, idx)):
+                if "main" in f.frames[k][6]:
+                    idx = k
+                    break
+        fr = f.frame(idx)
         if fr is None:
-            missing.append(f"{name}#{frame_index(g, rot, radians)}")
+            missing.append(f"{name}#{idx}")
             return []
         r = frame_to_rgba(fr, tint)
         return [(r[0], r[1], r[2], 0, 0)] if r else []
@@ -490,9 +502,23 @@ def build_level(dat, colors, sprites, scn_path, meta, out_id):
         "header": {"campaign": meta, "size": W, "source": "AoE2 DE scenario (verbatim)"},
         "width": W, "height": H, "terrain": terrain, "layer": layer, "elev": elev, "objects": objects,
     }
-    (OUT / f"{out_id}.json").write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
+    write_atomic(OUT / f"{out_id}.json", json.dumps(out, ensure_ascii=False))
     return {"id": out_id, **meta, "file": f"{out_id}.json", "width": W, "height": H,
             "objects": len(objects), "missing": missing, "skipped": skipped}
+
+
+def write_atomic(path, text):
+    """先写临时文件再替换；Windows 上文件偶尔被开发服务器/杀软短暂占用（Errno 22/13），重试几次。"""
+    import time
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    for i in range(20):
+        try:
+            tmp.write_text(text, encoding="utf-8")
+            os.replace(tmp, path)
+            return
+        except OSError:
+            time.sleep(0.5 * (i + 1))
+    raise
 
 
 def main():
@@ -550,11 +576,12 @@ def main():
             index[out_id]["v"] = BUILD_VERSION
             print(f"  ✔ {out_id} {name} {e['width']}x{e['height']} 物件 {e['objects']}"
                   f"  缺图 {sum(e['missing'].values())} {list(e['missing'].items())[:5]}  跳过 {e['skipped']}", flush=True)
-            spr_file.write_text(json.dumps(sprites, ensure_ascii=False), encoding="utf-8")
-            idx_file.write_text(json.dumps(sorted(index.values(), key=lambda x: (x["campaign"], x["level"])),
-                                           ensure_ascii=False, indent=1), encoding="utf-8")
+            write_atomic(spr_file, json.dumps(sprites, ensure_ascii=False))
+            write_atomic(idx_file, json.dumps(sorted(index.values(), key=lambda x: (x["campaign"], x["level"])), ensure_ascii=False, indent=1))
             _sld_cache.clear()
 
 
 if __name__ == "__main__":
     main()
+
+

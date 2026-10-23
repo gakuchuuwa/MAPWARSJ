@@ -9,7 +9,8 @@
   "width": 144,
   "height": 144,
   "objects": 2921,
-  "missingCount": 0
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam1_2",
@@ -21,7 +22,8 @@
   "width": 168,
   "height": 168,
   "objects": 5936,
-  "missingCount": 0
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam1_3",
@@ -33,7 +35,8 @@
   "width": 168,
   "height": 168,
   "objects": 5366,
-  "missingCount": 0
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam1_4",
@@ -45,7 +48,8 @@
   "width": 144,
   "height": 144,
   "objects": 3677,
-  "missingCount": 3
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam1_5",
@@ -57,7 +61,8 @@
   "width": 144,
   "height": 144,
   "objects": 3182,
-  "missingCount": 4
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam2_1",
@@ -68,8 +73,9 @@
   "file": "acam2_1.json",
   "width": 144,
   "height": 144,
-  "objects": 3009,
-  "missingCount": 8
+  "objects": 3010,
+  "missingCount": 3,
+  "v": 3
  },
  {
   "id": "acam2_2",
@@ -81,7 +87,8 @@
   "width": 168,
   "height": 168,
   "objects": 7099,
-  "missingCount": 18
+  "missingCount": 12,
+  "v": 3
  },
  {
   "id": "acam2_3",
@@ -93,7 +100,8 @@
   "width": 168,
   "height": 168,
   "objects": 4864,
-  "missingCount": 2
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam2_4",
@@ -105,7 +113,8 @@
   "width": 168,
   "height": 168,
   "objects": 2815,
-  "missingCount": 0
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam2_5",
@@ -117,7 +126,8 @@
   "width": 144,
   "height": 144,
   "objects": 2475,
-  "missingCount": 0
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam3_1",
@@ -128,8 +138,9 @@
   "file": "acam3_1.json",
   "width": 144,
   "height": 144,
-  "objects": 6693,
-  "missingCount": 8
+  "objects": 6694,
+  "missingCount": 6,
+  "v": 3
  },
  {
   "id": "acam3_2",
@@ -141,7 +152,8 @@
   "width": 144,
   "height": 144,
   "objects": 2634,
-  "missingCount": 1
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam3_3",
@@ -153,7 +165,8 @@
   "width": 200,
   "height": 200,
   "objects": 4442,
-  "missingCount": 4
+  "missingCount": 2,
+  "v": 3
  },
  {
   "id": "acam3_4",
@@ -165,7 +178,8 @@
   "width": 144,
   "height": 144,
   "objects": 3589,
-  "missingCount": 5
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam3_5",
@@ -177,7 +191,8 @@
   "width": 168,
   "height": 168,
   "objects": 5662,
-  "missingCount": 4
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam4_1",
@@ -189,7 +204,8 @@
   "width": 168,
   "height": 168,
   "objects": 3575,
-  "missingCount": 1
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam4_2",
@@ -201,7 +217,8 @@
   "width": 168,
   "height": 168,
   "objects": 2543,
-  "missingCount": 1
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "acam4_3",
@@ -213,7 +230,8 @@
   "width": 200,
   "height": 200,
   "objects": 6110,
-  "missingCount": 9
+  "missingCount": 7,
+  "v": 3
  },
  {
   "id": "acam4_4",
@@ -225,7 +243,8 @@
   "width": 144,
   "height": 144,
   "objects": 3080,
-  "missingCount": 4
+  "missingCount": 3,
+  "v": 3
  },
  {
   "id": "acam4_5",
@@ -237,7 +256,8 @@
   "width": 200,
   "height": 200,
   "objects": 7892,
-  "missingCount": 1
+  "missingCount": 0,
+  "v": 3
  },
  {
   "id": "cam2_1",
@@ -249,6 +269,436 @@
   "width": 144,
   "height": 144,
   "objects": 7562,
-  "missingCount": 0
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam2_2",
+  "campaign": "cam2",
+  "campaignName": "cam2",
+  "level": 2,
+  "name": "2_Joan_2.aoe2scenario",
+  "file": "cam2_2.json",
+  "width": 200,
+  "height": 200,
+  "objects": 10910,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam2_3",
+  "campaign": "cam2",
+  "campaignName": "cam2",
+  "level": 3,
+  "name": "2_Joan_3.aoe2scenario",
+  "file": "cam2_3.json",
+  "width": 168,
+  "height": 168,
+  "objects": 6013,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam2_4",
+  "campaign": "cam2",
+  "campaignName": "cam2",
+  "level": 4,
+  "name": "2_Joan_4.aoe2scenario",
+  "file": "cam2_4.json",
+  "width": 144,
+  "height": 144,
+  "objects": 4423,
+  "missingCount": 1,
+  "v": 3
+ },
+ {
+  "id": "cam2_5",
+  "campaign": "cam2",
+  "campaignName": "cam2",
+  "level": 5,
+  "name": "2_Joan_5.aoe2scenario",
+  "file": "cam2_5.json",
+  "width": 200,
+  "height": 200,
+  "objects": 8925,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam2_6",
+  "campaign": "cam2",
+  "campaignName": "cam2",
+  "level": 6,
+  "name": "2_Joan_6.aoe2scenario",
+  "file": "cam2_6.json",
+  "width": 144,
+  "height": 144,
+  "objects": 5406,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam3_1",
+  "campaign": "cam3",
+  "campaignName": "cam3",
+  "level": 1,
+  "name": "3_Saladin_1.aoe2scenario",
+  "file": "cam3_1.json",
+  "width": 144,
+  "height": 144,
+  "objects": 2929,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam3_2",
+  "campaign": "cam3",
+  "campaignName": "cam3",
+  "level": 2,
+  "name": "3_Saladin_2.aoe2scenario",
+  "file": "cam3_2.json",
+  "width": 200,
+  "height": 200,
+  "objects": 4643,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam3_3",
+  "campaign": "cam3",
+  "campaignName": "cam3",
+  "level": 3,
+  "name": "3_Saladin_3.aoe2scenario",
+  "file": "cam3_3.json",
+  "width": 120,
+  "height": 120,
+  "objects": 2258,
+  "missingCount": 3,
+  "v": 3
+ },
+ {
+  "id": "cam3_4",
+  "campaign": "cam3",
+  "campaignName": "cam3",
+  "level": 4,
+  "name": "3_Saladin_4.aoe2scenario",
+  "file": "cam3_4.json",
+  "width": 168,
+  "height": 168,
+  "objects": 3666,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam3_5",
+  "campaign": "cam3",
+  "campaignName": "cam3",
+  "level": 5,
+  "name": "3_Saladin_5.aoe2scenario",
+  "file": "cam3_5.json",
+  "width": 220,
+  "height": 220,
+  "objects": 5561,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam3_6",
+  "campaign": "cam3",
+  "campaignName": "cam3",
+  "level": 6,
+  "name": "3_Saladin_6.aoe2scenario",
+  "file": "cam3_6.json",
+  "width": 200,
+  "height": 200,
+  "objects": 3701,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam4_1",
+  "campaign": "cam4",
+  "campaignName": "cam4",
+  "level": 1,
+  "name": "4_Genghis_1.aoe2scenario",
+  "file": "cam4_1.json",
+  "width": 168,
+  "height": 168,
+  "objects": 3540,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam4_2",
+  "campaign": "cam4",
+  "campaignName": "cam4",
+  "level": 2,
+  "name": "4_Genghis_2.aoe2scenario",
+  "file": "cam4_2.json",
+  "width": 144,
+  "height": 144,
+  "objects": 3490,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam4_3",
+  "campaign": "cam4",
+  "campaignName": "cam4",
+  "level": 3,
+  "name": "4_Genghis_3.aoe2scenario",
+  "file": "cam4_3.json",
+  "width": 200,
+  "height": 200,
+  "objects": 8363,
+  "missingCount": 3,
+  "v": 3
+ },
+ {
+  "id": "cam4_4",
+  "campaign": "cam4",
+  "campaignName": "cam4",
+  "level": 4,
+  "name": "4_Genghis_4.aoe2scenario",
+  "file": "cam4_4.json",
+  "width": 220,
+  "height": 220,
+  "objects": 9290,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam4_5",
+  "campaign": "cam4",
+  "campaignName": "cam4",
+  "level": 5,
+  "name": "4_Genghis_5.aoe2scenario",
+  "file": "cam4_5.json",
+  "width": 144,
+  "height": 144,
+  "objects": 4047,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam4_6",
+  "campaign": "cam4",
+  "campaignName": "cam4",
+  "level": 6,
+  "name": "4_Genghis_6.aoe2scenario",
+  "file": "cam4_6.json",
+  "width": 144,
+  "height": 144,
+  "objects": 4489,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam5_1",
+  "campaign": "cam5",
+  "campaignName": "cam5",
+  "level": 1,
+  "name": "5_Barbarossa_1.aoe2scenario",
+  "file": "cam5_1.json",
+  "width": 200,
+  "height": 200,
+  "objects": 14086,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam5_2",
+  "campaign": "cam5",
+  "campaignName": "cam5",
+  "level": 2,
+  "name": "5_Barbarossa_2.aoe2scenario",
+  "file": "cam5_2.json",
+  "width": 168,
+  "height": 168,
+  "objects": 7400,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam5_3",
+  "campaign": "cam5",
+  "campaignName": "cam5",
+  "level": 3,
+  "name": "5_Barbarossa_3.aoe2scenario",
+  "file": "cam5_3.json",
+  "width": 200,
+  "height": 200,
+  "objects": 6733,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam5_4",
+  "campaign": "cam5",
+  "campaignName": "cam5",
+  "level": 4,
+  "name": "5_Barbarossa_4.aoe2scenario",
+  "file": "cam5_4.json",
+  "width": 168,
+  "height": 168,
+  "objects": 4307,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam5_5",
+  "campaign": "cam5",
+  "campaignName": "cam5",
+  "level": 5,
+  "name": "5_Barbarossa_5.aoe2scenario",
+  "file": "cam5_5.json",
+  "width": 220,
+  "height": 220,
+  "objects": 7588,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "cam5_6",
+  "campaign": "cam5",
+  "campaignName": "cam5",
+  "level": 6,
+  "name": "5_Barbarossa_6.aoe2scenario",
+  "file": "cam5_6.json",
+  "width": 168,
+  "height": 168,
+  "objects": 4958,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "coop10_1",
+  "campaign": "coop10",
+  "campaignName": "coop10",
+  "level": 1,
+  "name": "F1_Alaric_1 CO-OP.aoe2scenario",
+  "file": "coop10_1.json",
+  "width": 144,
+  "height": 144,
+  "objects": 5420,
+  "missingCount": 1,
+  "v": 3
+ },
+ {
+  "id": "coop10_2",
+  "campaign": "coop10",
+  "campaignName": "coop10",
+  "level": 2,
+  "name": "F1_Alaric_2 CO-OP.aoe2scenario",
+  "file": "coop10_2.json",
+  "width": 200,
+  "height": 200,
+  "objects": 7524,
+  "missingCount": 3,
+  "v": 3
+ },
+ {
+  "id": "coop10_3",
+  "campaign": "coop10",
+  "campaignName": "coop10",
+  "level": 3,
+  "name": "F1_Alaric_3 CO-OP.aoe2scenario",
+  "file": "coop10_3.json",
+  "width": 200,
+  "height": 200,
+  "objects": 9926,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "coop10_4",
+  "campaign": "coop10",
+  "campaignName": "coop10",
+  "level": 4,
+  "name": "F1_Alaric_4 CO-OP.aoe2scenario",
+  "file": "coop10_4.json",
+  "width": 200,
+  "height": 200,
+  "objects": 8889,
+  "missingCount": 1,
+  "v": 3
+ },
+ {
+  "id": "coop10_5",
+  "campaign": "coop10",
+  "campaignName": "coop10",
+  "level": 5,
+  "name": "F1_Alaric_5 CO-OP.aoe2scenario",
+  "file": "coop10_5.json",
+  "width": 200,
+  "height": 200,
+  "objects": 8191,
+  "missingCount": 1,
+  "v": 3
+ },
+ {
+  "id": "coop17_1",
+  "campaign": "coop17",
+  "campaignName": "coop17",
+  "level": 1,
+  "name": "A1_Tariq1 (CO-OP).aoe2scenario",
+  "file": "coop17_1.json",
+  "width": 144,
+  "height": 144,
+  "objects": 2933,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "coop17_2",
+  "campaign": "coop17",
+  "campaignName": "coop17",
+  "level": 2,
+  "name": "A1_Tariq2 (CO-OP).aoe2scenario",
+  "file": "coop17_2.json",
+  "width": 168,
+  "height": 168,
+  "objects": 6423,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "coop17_3",
+  "campaign": "coop17",
+  "campaignName": "coop17",
+  "level": 3,
+  "name": "A1_Tariq3 (CO-OP).aoe2scenario",
+  "file": "coop17_3.json",
+  "width": 168,
+  "height": 168,
+  "objects": 5344,
+  "missingCount": 1,
+  "v": 3
+ },
+ {
+  "id": "coop17_4",
+  "campaign": "coop17",
+  "campaignName": "coop17",
+  "level": 4,
+  "name": "A1_Tariq4 (CO-OP).aoe2scenario",
+  "file": "coop17_4.json",
+  "width": 144,
+  "height": 144,
+  "objects": 3669,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "coop17_5",
+  "campaign": "coop17",
+  "campaignName": "coop17",
+  "level": 5,
+  "name": "A1_Tariq5 (CO-OP).aoe2scenario",
+  "file": "coop17_5.json",
+  "width": 144,
+  "height": 144,
+  "objects": 3624,
+  "missingCount": 0,
+  "v": 3
  }
 ]
