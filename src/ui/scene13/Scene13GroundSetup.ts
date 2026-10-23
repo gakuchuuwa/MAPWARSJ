@@ -133,7 +133,10 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         // 🔴 [2026-10-13 / 2026-10-19] 据点真实图（header.skeleton）通常保留真实水体；
         //    但 DE 标准河流占比仅约 3.5%（海面占比约 23.5%），若内陆据点（海拔 > 10m 或 waterKind === 'river'）
         //    因现代水库蓄水或大漫滩导致水面占比 > 12%，则将其像海一样的宽阔水面重塑为城侧 3.5 格标准自然河道（relocateTemplateWater）。
-        const oriented = await this.adaptMapDataSeaOrientation(rawMapData);
+        // 🔴 [2026-10-23 主人令「把 DE 剧情地图提取一个，在 _siege_preview 里预览」]
+        //    header.verbatim＝原样 DE 地图（tools/de-campaign-to-site.mjs 导出的战役关卡）：不校正海向、不搬水，一格不改。
+        const verbatim = !!rawMapData?.header?.verbatim;
+        const oriented = verbatim ? rawMapData : await this.adaptMapDataSeaOrientation(rawMapData);
         const skelHmin = rawMapData?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
         const isInlandReservoirFlood = !!(rawMapData?.header?.skeleton)
             && (skelHmin > 10 || this.environmentPlan?.waterKind === 'river')
@@ -141,7 +144,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         if (isInlandReservoirFlood && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
             this.environmentPlan.waterKind = 'river';
         }
-        const mapData = (rawMapData?.header?.skeleton && !isInlandReservoirFlood)
+        const mapData = (verbatim || (rawMapData?.header?.skeleton && !isInlandReservoirFlood))
             ? oriented
             : this.relocateTemplateWater(oriented);
         // 🔴 [2026-10-21 主人令「请全部和DE保持一致」]

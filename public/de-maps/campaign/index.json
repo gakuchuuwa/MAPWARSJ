@@ -1,0 +1,12 @@
+[
+  {
+    "id": "cam2_1",
+    "campaign": "cam2",
+    "level": 1,
+    "name": "2_Joan_1.aoe2scenario",
+    "file": "cam2_1.json",
+    "width": 144,
+    "height": 144,
+    "objects": 6971
+  }
+]

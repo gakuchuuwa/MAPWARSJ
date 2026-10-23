@@ -24,7 +24,8 @@ const SEC_MS_GEC_VERSION = '1-150.0.7871.129';
 const DISABLE_MS = 300000;
 const OUTPUT_FORMAT = 'audio-24khz-48kbitrate-mono-mp3';
 
-export type EdgeVoice = 'zh-CN-YunjianNeural' | 'zh-CN-YunxiNeural';
+// 🔴 [2026-10-22 主人「故事旁白和战争旁白不该一个声音吧」] 加晓晓：探马故事旁白专用（战争播报仍是云健/云希）
+export type EdgeVoice = 'zh-CN-YunjianNeural' | 'zh-CN-YunxiNeural' | 'zh-CN-XiaoxiaoNeural';
 
 export interface EdgeTtsOptions {
     voice?: EdgeVoice;

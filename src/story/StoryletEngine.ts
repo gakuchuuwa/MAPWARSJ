@@ -20,8 +20,13 @@ import type { PlayerHero } from '../player/PlayerHero';
 import { seasonIndex } from '../player/HorseStable';
 import { HORSE_MEMORIES, memoryLabel, startMemoryBattle } from './horseMemories';
 import { getHorseLore } from './horseLore';
-import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { storyNarrator } from './storyNarrator';
 import { getStoryCharacter } from './storyCharacters';
+
+/** 旁白念之前去掉开头的表情符号（🐎、📖 这类，念出来是乱码） */
+function stripLeadingSymbols(s: string): string {
+    return s.replace(/^[^\p{L}\p{N}]+/u, '');
+}
 
 /** 通灵失步后，等战术模式收场再弹「再进去一次」（毫秒） */
 const MEMORY_ASK_DELAY_MS = 2500;
@@ -189,10 +194,8 @@ export class StoryletEngine {
             // 只飘提示、不弹框：领路这一段不暂停游戏
             if (lead.notice && !this.leadNoticeShown) {
                 this.leadNoticeShown = true;
-                const line = lead.notice.split('{玩家}').join(hero.name);
-                api.notify(line);
-                // 🔴 [2026-10-22 主人「没有语音介绍」] 醒来那句念出来（底部字幕条同步显示）
-                speechAnnouncer.announceStory(line.replace(/^\S*\s/u, ''), true);
+                // 🔴 [2026-10-22 主人「没有语音介绍」] 醒来那句：故事旁白念出来，底部字幕同步显示（不弹框、不暂停）
+                api.notify(lead.notice.split('{玩家}').join(hero.name));
             }
             if (hero.autoMode) {
                 this.startErrand(api, { stops: [lead.stop], onlyInAuto: true, onDone: () => {} });
@@ -240,6 +243,8 @@ export class StoryletEngine {
 
     private isBusy(): boolean {
         return this.errand !== null
+            // 旁白还在念（上一件事的交代没念完）就不弹下一件，节奏一件一件来
+            || storyNarrator.isBusy()
             || this.app.scene13War?.isActive?.() === true
             || this.app.battleScene?.isActive?.() === true
             || !!document.getElementById('player-dialogue-overlay');
@@ -352,7 +357,8 @@ export class StoryletEngine {
             hero,
             playerName: hero.name,
             addMerit: (n) => hero.addMerit(n),
-            notify: (msg) => hero.notifyPlayer(msg),
+            // 🔴 [2026-10-22 主人同意「以旁白为主」] 故事里交代结果，一律旁白念出来 + 底部字幕，不再飘提示框
+            notify: (msg) => storyNarrator.say(null, stripLeadingSymbols(msg)),
             setFlag: (f) => {
                 if (!hero.storyFlags.includes(f)) hero.storyFlags.push(f);
                 // 结果标记可能在选项之后才到（例：一仗打完才记胜负），留人判定跟着重算
@@ -367,8 +373,22 @@ export class StoryletEngine {
 
     private showOptions(api: StoryApi, speaker: string, text: string, options: StoryOption[], beforePick?: () => void): void {
         const hero = this.app.playerHero!;
-        // 🔴 [2026-10-22 主人「没有语音介绍」] 对话正文念出来；对话框里已有全文，不再开底部字幕条
-        speechAnnouncer.announceStory(text.split('{玩家}').join(hero.name), false);
+        const line = text.split('{玩家}').join(hero.name);
+        // 🔴 [2026-10-22 主人同意「以旁白为主，只有要玩家拿主意的地方才弹对话框」]
+        //    只有一个选项＝不用玩家拿主意：不弹框、不暂停，旁白念出来（说话人立绘显示在左下角），念完照这个选项办
+        if (options.length === 1) {
+            const only = options[0];
+            if (!only.keepOpen) beforePick?.();   // 先记「演过了」，免得念的工夫里又被弹一次
+            storyNarrator.say(speaker, line, {
+                onDone: () => {
+                    only.pick(api);
+                    this.refreshHold();
+                },
+            });
+            return;
+        }
+        // 要玩家拿主意：弹对话框；正文照样念出来（对话框里已有全文，不再开底部字幕条）
+        storyNarrator.say(null, line, { banner: false });
         // 🔴 [2026-10-22 主人「所有人物都没有立绘…我来画立绘」] 抬头按人物表显示名字、身份、立绘
         const who = getStoryCharacter(speaker);
         this.app.playerHUD?.showDialogue({
