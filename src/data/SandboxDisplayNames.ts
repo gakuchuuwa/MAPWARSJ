@@ -203,14 +203,12 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
   donghui: '东濊',
 'gonggu': '宫古',
   fuguo: '附',
-  gongtang: '贡唐',
 
 'yada': '厌抵',
 'guishuang': '贵霜',
 'juandu': '捐毒',
   sai: '塞',
   'sijitai': '斯基',
-  yangtong: '羊同',
 
 'zhancheng': '占城',
     'monong': '墨侬',
@@ -384,7 +382,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'khoshut': '和硕',
     'yarkand': '叶尔',
 'khoja': '和卓',
-    'gaxa': '噶厦',
 'jinchuan_g': '金川',
 'shuntian': '天地',
 'bailian': '白莲',
@@ -439,11 +436,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'ladakh': '玛域',
 'tsangpa': '藏巴',
 'ganden': '甘丹',
-    'bailan': '白兰',
 'supi': '苏毗',
-    'monpa': '门巴',
-    'lopi': '珞巴',
-'spurgyal': '悉补',
 'khon': '昆',
     'lang_clan': '朗',
     'karmapa': '噶玛',
@@ -517,7 +510,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'saman': '萨曼',
   'sanfoqi': '三佛',
 'hepan': '喝槃',
-'humi': '瓦罕',
 
     // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──
 'mamon': '马朝',
@@ -530,8 +522,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'feiyaka': '费雅',
 
 'anushidgin': '阿努',
-    'nanjie': '南杰',
-'gandenpozhang': '冈底',
 
     
 
@@ -569,7 +559,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
 'duolu': '咄陆',
-'dulan': '都兰',
 'zhuxie': '朱邪',
 'tiemuer': '图兰',
 'kawusi': '卡乌',
@@ -593,15 +582,8 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'you': '幽',
 'pisha': '毗沙',
     'yumi': '扜弥',
-    'keliya': '克雅',
     'xiye': '西夜',
-    'faqiang': '发羌',
-    'jiantang': '建塘',
-    'gongbu': '工布',
-    'niang': '娘',
     'galangdiba': '波密',
-'ali': '阿里',
-'pazhu': '年楚',
     'cuanshi': '爨',
 'dianguo': '滇',
     'danluo': '耽罗',
@@ -639,7 +621,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     // ── 2026-05-31 新增：原生小政权都城4势力 ──
     'qiemo': '且末',
     'weitou': '尉头',
-'dangchang': '叠',
 
     // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
 'xichu': '楚',
@@ -659,12 +640,10 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'buriat': '布里',
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
     'xianhai': '咸海',
-'nandou': '难兜',
 'yanda': '白匈',
 'anxi': '安西',
 'konbaung': '贡榜',
 'tianxiong': '魏博',
-    'gar': '噶尔',
     'yun': '允',
     'huangwang': '黄',
     'basha_d': '巴沙',
@@ -681,9 +660,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'lelang': '乐浪',
     'huite': '辉特',
 'zubu': '阻卜',
-    'kangba': '康巴',
-    'nvguo': '女',
-    'jiashi': '迦湿',
     'jiashi_d': '迦尸',
 'wuhu': '乌护',
 'sanada_d': '信浓',
@@ -694,9 +670,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'bailong': '白龙',
     'kepantuo': '渴盘',
 'yangguan': '西凉',
-'qinghai': '青海',
-'xining': '西宁',
-'kalun': '柴达',
     'sagami': '相模',
 'mino': '美浓',
 'ssangseong': '和',

@@ -679,7 +679,7 @@ export const TANG_DYNASTY_FACTION_IDS = new Set([
     'tang', 'hepan', 'anxi', 'juandu', 
     
     
-    'jiashi', 'wei2'
+    'wei2'
 ]);
 
 /** 宋朝名将 ID 集合 */
