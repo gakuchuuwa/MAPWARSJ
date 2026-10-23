@@ -18,4 +18,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     pulei: { name: '蒲类落雕骑', tier: 3 },
     hepan: { name: '葱岭守捉兵', tier: 3 },
     fushi: { name: '氐秦锐士', tier: 3 },
+    qianliang: { name: '凉州大马', tier: 1 },   // 前凉｜统帅 张轨｜T1 乘 1.4｜西域诸国震服，数次长途出击大破汉赵、后赵
 };

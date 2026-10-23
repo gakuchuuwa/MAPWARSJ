@@ -22,4 +22,6 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   fuguo: { name: '附国羌兵', tier: 4 },  // 芒康宗·隋附国羌人部落兵
   // ── 2026-06-18：武陵/叙永/慈利/秀山/房陵/珙县/来凤精锐 ──
     wuling: { name: '五溪藤甲', tier: 3 },            // 三国藤甲兵文化符号（火烧藤甲），显著文化知名度，升T2
+    chengjia: { name: '白帝舟师', tier: 3 },   // 成家｜统帅 公孙述｜T3 乘 1.2｜凭三峡险阻抗衡东汉多年，西南割据水军代表
+    qianshu: { name: '龙武军', tier: 2 },   // 前蜀｜统帅 王建｜T2 乘 1.3｜五代西川牙兵精锐，击败田令孜平定两川
 };
