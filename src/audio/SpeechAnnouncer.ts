@@ -776,6 +776,15 @@ export class SpeechAnnouncer {
     return true;
   }
 
+  /**
+   * 🔴 [2026-10-23 直播观众放计] 「感谢某某，蓝方放猛攻」——排进技能播报队列，跟大字 Cut-in 同一道闸，不与武将技抢话。
+   */
+  public announceViewerSkill(viewerName: string, sideName: string, skillName: string): void {
+    if (!this.enabled) return;
+    this.skillSpeakQueue.push({ text: `感谢${viewerName}，${sideName}放${skillName}`, skipGlobalNameReplace: true });
+    this.drainSkillQueue();
+  }
+
   /** 清空技能播报队列（新战斗开打时，旧残留不再念） */
   private clearSkillQueue(): void {
     this.skillQueueGen++;

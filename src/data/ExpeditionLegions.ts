@@ -149,7 +149,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
  * 按 generalId 查询该武将的专属精锐配置（「一个武将一支精锐」）：
  * 1. 优先读 `FactionGeneral.eliteName` / `eliteTier`；
  * 2. 次读 `GENERAL_ELITE_LEGIONS[generalId]`；
- * 3. 回落到该武将所属势力的 `ALL_FACTION_ELITE_LEGIONS[factionId]`。
+ * 3. 回落到该武将自己的势力（自带 factionId 优先，没有才用所在据点的势力）的 `ALL_FACTION_ELITE_LEGIONS`。
  */
 export function getGeneralEliteConfig(generalId: string | null | undefined): EliteLegionConfig | null {
   if (!generalId) return null;
@@ -163,8 +163,11 @@ export function getGeneralEliteConfig(generalId: string | null | undefined): Eli
   }
   const direct = GENERAL_ELITE_LEGIONS[generalId];
   if (direct) return direct;
-  if (hit?.factionId) {
-    return ALL_FACTION_ELITE_LEGIONS[hit.factionId] ?? null;
+  // 🔴 [2026-10-23 主人「一个武将，一个势力，一个精锐，一个军团，一个旗号」] 回落按**武将自己的势力**
+  //    （挂在别家据点上的武将，如长安的霍去病＝汉），没有自带势力才用他所在据点的势力
+  const ownFaction = hit?.general.factionId ?? hit?.factionId;
+  if (ownFaction) {
+    return ALL_FACTION_ELITE_LEGIONS[ownFaction] ?? null;
   }
   return null;
 }

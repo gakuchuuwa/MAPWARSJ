@@ -16752,7 +16752,7 @@ export function getFactionGeneralsResolved(factionId: string): FactionGeneral[] 
 
 
 
-    //    据点只有带别家势力的武将（如长子只有白起）→ 照样用他，乱斗里军团势力不随武将变，仍是据点势力。
+    //    据点只有带别家势力的武将（如长子只有白起）→ 照样用他；军团势力跟着武将走（2026-10-23 主人「军团跟着武将走的」，见 Army.syncGeneralFaction）。
 
 
 

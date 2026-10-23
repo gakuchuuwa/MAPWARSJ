@@ -648,6 +648,28 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-22] 本场是不是小队模式（故事块小仗）；界面与布景据此隐藏军团战专属的东西 */
     public isSkirmish(): boolean { return this.skirmish !== null; }
 
+    /**
+     * 🔴 [2026-10-23 主人「技能槽保持原定不动。既然观众花钱了，就可以直接释放。想放多少次放多少次」]
+     * 直播观众替某一方放计：不走技能槽（槽照旧自己集气、自己放），只守「两计不许同时放」那道闸。
+     *   'cast'＝放出去了；'wait'＝上一计的大字还没播完，稍后再试；'closed'＝这一仗没在打（没开打/布阵中/已分胜负）。
+     */
+    public castViewerSkill(side: 0 | 1, six: TacticalSixSet, viewerName: string): 'cast' | 'wait' | 'closed' {
+        if (!this.active || this.over || this.deployT > 0) return 'closed';
+        const wallNow = performance.now();
+        if (this.skillCastCooldown > 0 || wallNow < this.skillCastWallUntil) return 'wait';
+        this.skillCastCooldown = Scene13WarLayer.SKILL_CAST_GAP_SEC;
+        this.skillCastWallUntil = wallNow + Scene13WarLayer.SKILL_CAST_GAP_SEC * 1000;
+        this.viewerCaster = viewerName;
+        try { this.triggerScene13Skill(side, six); } finally { this.viewerCaster = null; }
+        return 'cast';
+    }
+    /** 正在替哪位观众放计（大字上带他的名字） */
+    private viewerCaster: string | null = null;
+    /** 这一方刚放的那一计叫什么（直播播报用） */
+    public lastSkillNameOf(side: 0 | 1): string { return this.lastCastSkillName[side] ?? ''; }
+    /** 这一方现在显示的势力名（直播面板用） */
+    public sideDisplayFactionId(side: 0 | 1): string { return this.displayFaction(side); }
+
     public getScene13SkillState() {
         if (!this.active && !this.lingering) return null;
         const buildSide = (f: 0 | 1) => {
@@ -845,11 +867,13 @@ export class Scene13WarLayer {
             bingzhan: f === 0 ? '策反倒戈' : '离间反戈',
             baizhan: f === 0 ? '雷霆万钧' : '背水一战',
         };
-        const displayName = pickedEntry?.displayName ?? fallbackNames[six];
+        const skillName = pickedEntry?.displayName ?? fallbackNames[six];
+        // 观众放的计：大字写成「某某 · 计名」
+        const displayName = this.viewerCaster ? `${this.viewerCaster} · ${skillName}` : skillName;
         const skillId = pickedEntry?.id ?? `tac13_${six}`;
 
         this.lastCastSkill[f] = six;
-        this.lastCastSkillName[f] = displayName;
+        this.lastCastSkillName[f] = skillName;
         // 计落在哪一方：攻/胜/固己防作用在本方，乱阵/死战/倒戈作用在敌方（在执行效果前取，倒戈后敌兵就换边了）
         const [camX, camY] = this.sideFrontCentroid(six === 'hunzhan' || six === 'baizhan' || six === 'bingzhan' ? ef : f);
         const hm = this.heroMan;
