@@ -31,7 +31,7 @@ function captureMountainHorses(api: StoryApi): string {
 /** 盗马贼打输：丢一匹普通马（通灵马不会丢）；返回提示 */
 function loseToThieves(api: StoryApi): string {
     const lost = api.hero.horses.loseCommonHorse();
-    return lost ? `丢了一匹马「${lost.name}」` : '没能追回被盗的马';
+    return lost ? `丢了一匹马「${lost.name}」，养马人家心疼了好几天` : '被盗的马一匹也没追回来，养马人家心疼了好几天';
 }
 
 /** 开局据点：图什帕（乌拉尔图王都） */
@@ -198,7 +198,7 @@ const URT_02_WATERING: Storylet = {
                     stops: [
                         {
                             ...CANAL,
-                            onArrive: (a, next) => a.ask('梅努阿渠', '马群一路小跑过来，浑身是汗，挤着要往水里去。', [
+                            onArrive: (a, next) => a.ask('梅努阿渠', '马群一路小跑到了梅努阿渠，一匹匹浑身是汗，挤着要往水里去。{玩家}想起老马夫的叮嘱，先把马拦住。', [
                                 {
                                     label: '先牵着遛一遛，汗落了再喝',
                                     accent: true,
@@ -206,7 +206,7 @@ const URT_02_WATERING: Storylet = {
                                         const mount = b.hero.horses.getMount();
                                         delayed = !mount || b.hero.horses.statusOf(mount) !== 'ok';
                                         b.setFlag('马经-饮水');
-                                        b.notify('📖 马经：远路回来不能马上饮，先遛马、汗落了再喝');
+                                        b.notify('📖 这一条记进了马经：远路回来的马不能马上饮水，要先牵着遛一遛，等身上的汗落了再让它喝');
                                         next(COOL_DOWN_STAY_S);
                                     },
                                 },
@@ -228,7 +228,7 @@ const URT_02_WATERING: Storylet = {
                     onDone: (a, onTime) => {
                         if (onTime && !delayed) {
                             a.addMerit(MERIT_WATERING);
-                            a.notify(`🐎 日落前把马群赶回来了，功勋 +${MERIT_WATERING}`);
+                            a.notify(`🐎 太阳落山之前，${a.playerName}把马群一匹不少地赶回了养马人家，塔胡连声道谢；功勋 +${MERIT_WATERING}`);
                         } else {
                             a.addMerit(MERIT_WATERING_LATE);
                             a.hero.horses.tire(1);
@@ -269,7 +269,7 @@ const URT_03_LOST_FOAL: Storylet = {
             pick: (api) => {
                 const spirit = api.hero.horses.getSpirit();
                 if (!spirit || api.hero.horses.statusOf(spirit) === 'injured') {
-                    api.notify('🐎 初马的伤还没好，通不了灵，只能自己循着蹄印上山');
+                    api.notify('🐎 初马腿上的伤还没好，摸着它的脖子什么也看不见，通不了灵，只能自己循着蹄印上山去找');
                     trackFoalOnFoot(api);
                     return;
                 }
@@ -303,7 +303,7 @@ const URT_03_LOST_FOAL: Storylet = {
 
 /** URT-03 选「循着蹄印上山」（或初马通不了灵）：跑一趟东边山里再回来 */
 function trackFoalOnFoot(api: StoryApi): void {
-    api.notify('🐎 循着蹄印，往东边山里去');
+    api.notify('🐎 地上留着一串小小的蹄印，一直通到东边山里；山路难走，这一趟怕是要走上一整天');
     api.startErrand({
         stops: [EAST_HILLS, HERDERS],
         onDone: (a) => {
@@ -322,7 +322,7 @@ function trackFoalOnFoot(api: StoryApi): void {
  */
 function answerConscription(api: StoryApi): void {
     api.setFlag(URT_05_ENLISTED);
-    api.notify(`🛡️ ${api.playerName}应征了，牵上马进图什帕，去萨尔杜里将军帐下报到`);
+    api.notify(`🛡️ ${api.playerName}应了征，回去跟养马人家道了别，牵上马进图什帕，去萨尔杜里将军帐下报到`);
     api.hero.travelToCity(URARTU_OPENING_CITY_ID);
 }
 
@@ -404,7 +404,7 @@ const URT_11_SCOUT_FLAG: Storylet = {
             accent: true,
             pick: (api) => {
                 api.setFlag('乌拉尔图斥候');
-                api.notify('🚩 官阶：斥候。走在大军前头，替大军探路');
+                api.notify(`🚩 ${api.playerName}接过小旗，官阶升为斥候：从今往后走在大军前头，替梅努阿王的大军探路、找水、看敌情`);
             },
         },
     ],
@@ -478,7 +478,7 @@ const URT_06_HASANLU: Storylet = {
                                 a.setFlag('马经-哈桑卢的金碗');
                                 if (won) {
                                     a.addMerit(MERIT_HASANLU_TAKEN);
-                                    a.notify(`🔥 哈桑卢城破，${a.playerName}这一队先登，功勋 +${MERIT_HASANLU_TAKEN}`);
+                                    a.notify(`🔥 撞车撞开了城门，${a.playerName}这一队头一个冲进哈桑卢，城里的宫殿烧了起来；功勋 +${MERIT_HASANLU_TAKEN}`);
                                 } else {
                                     a.addMerit(MERIT_HASANLU_OTHERS_TOOK);
                                     a.notify(`🔥 这一队没攻上去，梅努阿王的大军从另一面破了城。哈桑卢还是在这一年烧成了废墟；功勋 +${MERIT_HASANLU_OTHERS_TOOK}`);
@@ -585,7 +585,7 @@ const URT_04_HORSE_THIEF: Storylet = {
                         api.addMerit(MERIT_HORSE_THIEF);
                         const got = captureMountainHorses(api);
                         api.setFlag('URT-04-won');
-                        api.notify(`🐎 追回了被盗的马，还缴获了山地马${got}，功勋 +${MERIT_HORSE_THIEF}`);
+                        api.notify(`🐎 盗马贼丢下马跑进了山里，被盗的马全追回来了，还缴获了山地马${got}；功勋 +${MERIT_HORSE_THIEF}`);
                     } else {
                         api.setFlag('URT-04-lost');
                         api.notify(`🐎 盗马贼跑进了山里，${loseToThieves(api)}`);
