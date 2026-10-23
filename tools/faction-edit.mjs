@@ -83,16 +83,17 @@ for (const f of ['src/data/GeneralFirstBattles.ts', 'src/data/GeneralFirstExpedi
   const missing = [];
   let fixed = [];
 
-  const arrM = new RegExp(`^    ${from}:\\s*\\[`, 'm').exec(t);
-  const objM = arrM ? null : new RegExp(`^    ${from}:\\s*\\{.*$`, 'm').exec(t);
+  const arrM = new RegExp(`^(\\s*)${from}:\\s*\\[`, 'm').exec(t);
+  const objM = arrM ? null : new RegExp(`^(\\s*)${from}:\\s*\\{.*$`, 'm').exec(t);
   if (arrM) {
-    const start = arrM.index; let i = arrM.index + arrM[0].length, depth = 1;
+    const blockStart = arrM.index;
+    let i = arrM.index + arrM[0].length, depth = 1;
     while (depth > 0 && i < t.length) { if (t[i] === '[') depth++; else if (t[i] === ']') depth--; i++; }
     const bodyStart = arrM.index + arrM[0].length; const body = t.slice(bodyStart, i - 1);
     let end = i; while (t[end] === ',' || t[end] === ' ') end++; if (t[end] === '\r') end++; if (t[end] === '\n') end++;
     const objs = body.split('\n').filter((l) => /generalId:/.test(l));
     fixed = objs.map((l) => '        ' + fixLine(l).trim());
-    t = t.slice(0, start) + t.slice(end);
+    t = t.slice(0, blockStart) + t.slice(end);
   } else if (objM) {
     const line = objM[0];
     const start = objM.index;
@@ -102,18 +103,20 @@ for (const f of ['src/data/GeneralFirstBattles.ts', 'src/data/GeneralFirstExpedi
   }
   if (missing.length) { console.log(`❌ 这些武将没定政权，请补进方案 generals：${missing.join('、')}`); process.exit(2); }
   if (fixed.length || arrM || objM) {
-    const destArr = new RegExp(`^    ${cityTo}:\\s*\\[`, 'm').exec(t);
-    const destObj = destArr ? null : new RegExp(`^    ${cityTo}:\\s*\\{.*$`, 'm').exec(t);
+    const destArr = new RegExp(`^(\\s*)${cityTo}:\\s*\\[`, 'm').exec(t);
+    const destObj = destArr ? null : new RegExp(`^(\\s*)${cityTo}:\\s*\\{.*$`, 'm').exec(t);
     if (destArr) {
+      const indent = destArr[1];
       let j = destArr.index + destArr[0].length, d2 = 1;
       while (d2 > 0 && j < t.length) { if (t[j] === '[') d2++; else if (t[j] === ']') d2--; j++; }
       const insertAt = j - 1;
-      t = t.slice(0, insertAt) + '\n' + fixed.join('\n') + '\n    ' + t.slice(insertAt);
+      t = t.slice(0, insertAt) + '\n' + fixed.join('\n') + '\n' + indent + t.slice(insertAt);
     } else if (destObj) {
-      // 单条 → 数组：`cityTo: { ... },` 变成 `cityTo: [\n        { ... },\n <fixed>\n    ],`
+      // 单条 → 数组：保留原缩进
+      const indent = destObj[1];
       const line = destObj[0];
       const objText = line.slice(line.indexOf('{'), line.lastIndexOf('}') + 1);
-      const repl = `${cityTo}: [\n        ${objText},\n${fixed.join('\n')}\n    ],`;
+      const repl = `${indent}${cityTo}: [\n${indent}    ${objText},\n${fixed.join('\n')}\n${indent}],`;
       t = t.slice(0, destObj.index) + t.slice(destObj.index).replace(line, repl);
     } else {
       console.log(`❌ ${cityTo} 在武将名单里没有块，请先建好该势力（须为数组或单条写法）`); process.exit(3);

@@ -8,7 +8,6 @@
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-    jilizhou: { name: '卑沙山城卫', tier: 4 },
   nuergan: { name: '奴儿干卫军', tier: 3 }, // 大明王朝设立的奴儿干都司卫军，中国古代经略远东的极致地标与文化符号，升入T3知名
   huimo: { name: '濊貊长矛手', tier: 4 }, // 乌骨城·高延寿濊貊
   bohai: { name: '渤海猛贲', tier: 1 },       // 建立并维持“海东盛国”渤海国两百余年的核心主力，符合T1战略主力
@@ -51,6 +50,5 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
     dongping: { name: '东平镇营', tier: 4 },
     elunchunzu: { name: '鄂伦春猎骑', tier: 3 },
     yingzhou_ying_d: { name: '黄龙兵', tier: 1 },
-    wangyan: { name: '八字军', tier: 2 },
     ayinu_ezo: { name: '毒木箭手', tier: 3 },  // 莫约罗·柯沙玛因：阿伊努独立猎人附子毒矢神射勇士
 };

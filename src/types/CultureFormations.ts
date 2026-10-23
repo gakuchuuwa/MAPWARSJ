@@ -639,7 +639,7 @@ export const HAN_DYNASTY_GENERAL_IDS = new Set([
 
 /** 汉朝势力 ID 集合 */
 export const HAN_DYNASTY_FACTION_IDS = new Set([
-    'han', 'han_d', 'xianyu', 'suzhou', 'shuofang', 'li_lx_d',
+    'han', 'han_d', 'suzhou', 'shuofang', 'li_lx_d',
     'huaiyang', 'yangshao', 'lanzhou', 'quli', 'xiyuduhu', 'jiluo_d',
     'lulin', 'you', 'jingzhou_gs', 'huizhou_d', 'shu', 'chu',
     'langzhou', 'jingmen', 'cangsong', 'qingqiang', 'dongsheng', 'liu'
@@ -676,9 +676,9 @@ export const TANG_DYNASTY_GENERAL_IDS = new Set([
 
 /** 唐朝势力 ID 集合 */
 export const TANG_DYNASTY_FACTION_IDS = new Set([
-    'tang', 'liang_d', 'bing', 'hepan', 'anxi', 'juandu', 'heyuan_d',
-    'song2', 'gaoliang', 'shazhou', 'lingzhou', 'zhongshan', 'liwang',
-    'yuan_cj_d', 'xinping', 'pingyuan', 'loufan', 'weihaiwei',
+    'tang', 'liang_d', 'hepan', 'anxi', 'juandu', 'heyuan_d',
+    'song2', 'gaoliang', 'shazhou', 'lingzhou', 
+    'yuan_cj_d', 'xinping', 
     'dingxiang_d', 'jiashi', 'zhuoshi', 'qianzhou', 'shanzhou', 'weizhou', 'wei2'
 ]);
 
@@ -709,7 +709,7 @@ export const SONG_DYNASTY_GENERAL_IDS = new Set([
 export const SONG_DYNASTY_FACTION_IDS = new Set([
     'sizhou', 'luoping', 'xiangzhou', 'zaoyang_d', 'fengzhou', 'hezhou',
     'didao', 'zhai_han', 'huan', 'yingzhou_d', 'qing',
-    'changshan', 'heng1', 'tingzhou_d', 'changshaguo', 'shenshi',
+    'tingzhou_d', 'changshaguo', 'shenshi',
     'yanchuan_d', 'song', 'yanzhou'
 ]);
 
@@ -737,8 +737,8 @@ export const MING_DYNASTY_GENERAL_IDS = new Set([
 /** 大明势力 ID 集合 */
 export const MING_DYNASTY_FACTION_IDS = new Set([
     'ming_d', 'pingnan', 'guizhou', 'dongshengwei', 'jinan',
-    'suzhou_d', 'huai', 'shanrong', 'yi', 'jinzhou', 'zu_d',
-    'xuan', 'linyu', 'qi_d', 'chizhou', 'luming', 'yansui'
+    'suzhou_d', 'huai', 'zu_d',
+    'qi_d', 'chizhou', 'luming', 'yansui'
 ]);
 
 /** 曹魏名将 ID 集合 */
@@ -758,7 +758,7 @@ export const WEI_DYNASTY_FACTION_IDS = new Set([
     'wudu',                     // 武都·邓艾
     'sima_d',                   // 获嘉·司马懿
     'bozhou_d',                 // 聊城·于禁
-    'guzhu',                    // 肥如·田豫
+    // 肥如·田豫
 ]);
 
 /** 判断是否为曹魏武将或势力 */
