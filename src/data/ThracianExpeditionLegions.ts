@@ -15,16 +15,13 @@ export const THRACIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
 
     // ── T2 特色之兵 ──
     baojialiya: { name: '查雷维茨卫', tier: 2 },          // 特尔诺沃·阿森一世：查雷维茨要塞沙皇禁卫
-    saierdika: { name: '普利斯卡军', tier: 2 },          // 索非亚·克鲁姆：811 普利斯卡歼灭拜占庭军
 
     // ── T3 风土之兵 ──
     seleisi: { name: '保加利亚骑', tier: 3 },          // 普罗夫迪夫·色雷斯
     aodesuosi: { name: '奥德水军', tier: 4 },
-    duonaobaojia: { name: '不朽军', tier: 1 },
     lumiliya: { name: '阿肯骑兵', tier: 3 },
     odrysian_late: { name: '色雷斯骑', tier: 3 },
     // 🔴 [2026-09-25 主人批准新建佩利昂] 达萨雷提·克莱图斯：伊利里亚轻装山地步兵，文化知名、独具一格 → T3 风土之兵
     //    （英文维基 Siege of Pelium：伊利里亚人据山口高地与马其顿对峙；Illyrians 条目：以轻装步兵与山地战著称）
     dasaleiti: { name: '伊利里亚兵', tier: 3 },
-    duobuluojia: { name: '猪倌义军', tier: 2 },          // 德鲁斯塔尔·伊瓦伊洛：猪倌起义军，连破金帐汗国与拜占庭
 };

@@ -2206,16 +2206,16 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     { id: 'city_thebes', name: '底比斯', factionId: 'boootiya', lat: 38.32, lng: 23.31, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' },
-    { id: 'city_rhodes', name: '罗得城', factionId: 'luodesi', lat: 36.44, lng: 28.22, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'FRANKS', note: '🔴 [2026-10-18 按史] 医院骑士团 1309–1522 年总部；实建为骑士团城墙、大团长宫殿、骑士街与哥特式医院大厅，故 FRANKS。' },
+    { id: 'city_rhodes', name: '罗得城', factionId: 'maerta_qishi', lat: 36.44, lng: 28.22, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'FRANKS', note: '🔴 [2026-10-18 按史] 医院骑士团 1309–1522 年总部；实建为骑士团城墙、大团长宫殿、骑士街与哥特式医院大厅，故 FRANKS。' },
     // 🔴 [2026-10-18 按史] 干地亚（伊拉克利翁）为威尼斯克里特首府，实建为威尼斯环城棱堡与库勒斯古堡 → LATIN；不取拜占庭。
     { id: 'city_knossos', name: '干地亚要塞', factionId: 'kelite', lat: 35.33, lng: 25.13, type: 'pass', troops: 10000, region: 'EAST', buildingStyle: 'LATIN', note: '克里特岛诺索斯·干地亚海防要塞；🔴 [2026-10-18 按史] 威尼斯统治期建成环城棱堡、库勒斯古堡（Rocca a Mare）与拉丁街区，实建为 LATIN。' },
 
     { id: 'city_salamanca', name: '萨拉曼卡', factionId: 'leangongguo', lat: 40.96, lng: -5.66, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' },
 
-    { id: 'city_verona', name: '维罗纳', factionId: 'bohepingyuan', lat: 45.43, lng: 10.99, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
+    { id: 'city_verona', name: '维罗纳', factionId: 'kelite', lat: 45.43, lng: 10.99, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
     { id: 'city_palermo', name: '巴勒莫', factionId: 'xixiliwangguo', lat: 38.11, lng: 13.36, type: 'medium_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS' },
 
-    { id: 'city_bremen', name: '不莱梅', factionId: 'weixi', lat: 53.07, lng: 8.8, type: 'small_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
+    { id: 'city_bremen', name: '不莱梅', factionId: 'hansa', lat: 53.07, lng: 8.8, type: 'small_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
 
         { id: 'city_anbulajiya', name: '安布拉基亚', factionId: 'yipilusi', lat: 39.16, lng: 20.98, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '伊庇鲁斯王国古都·皮洛士大帝王都·希腊西方锁钥' },
 { id: 'city_sparta', name: '斯巴达', factionId: 'lagoniya', lat: 37.07, lng: 22.42, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'SPARTANS', note: '定级依据§6.2：斯巴达非关隘/要塞/堡垒，按城市判级；全邦国4–5万为拉科尼亚口径，城内为无城墙散村远低于此 → 小城' },
@@ -2230,25 +2230,25 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_ragusa', name: '拉古萨', factionId: 'lagusa', lat: 42.65, lng: 18.09, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' },
 
-    { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_yota', lat: 57.7, lng: 11.97, type: 'small_city', troops: 10000, region: 'SWEDISH', buildingStyle: 'GERMANIC' },
+    { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_si', lat: 57.7, lng: 11.97, type: 'small_city', troops: 10000, region: 'SWEDISH', buildingStyle: 'GERMANIC' },
     { id: 'city_rostock', name: '罗斯托克', factionId: 'meikelunbao', lat: 54.09, lng: 12.13, type: 'stockade', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' },
     { id: 'city_bruges', name: '布鲁日', factionId: 'didi', lat: 51.21, lng: 3.22, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'BURGUNDIANS', note: '🔴 [2026-10-22 按史] 佛兰德伯国 1384 年随玛格丽特·德·当皮埃尔联姻归勃艮第（腓力二世／好人菲利普），布鲁日是勃艮第宫廷驻地；勃艮第分支「城堡时代勃艮第公国军团」描述点名布鲁日钟楼、根特圣巴夫大教堂；项目同口径已把同属勃艮第尼德兰的里尔算 BURGUNDIANS → 原 GERMANIC 改 BURGUNDIANS。' },
     { id: 'city_bulusaier', name: '布鲁塞尔', factionId: 'bulabante', lat: 50.8465, lng: 4.3518, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'BURGUNDIANS', note: '布拉班特公国城市，布鲁塞尔市政厅（1402-1480，布拉班特哥特式）所在。🔴 [2026-10-22 按史] 布拉班特公国 1430 年由勃艮第的菲利普三世继承（勃艮第尼德兰）；勃艮第分支「帝国时代弗兰德斯军团」描述点名布鲁塞尔大广场行会建筑群；项目同口径已把里尔算 BURGUNDIANS → 原 GERMANIC 改 BURGUNDIANS。' },
 
-    { id: 'city_pisa', name: '比萨', factionId: 'anuo', lat: 43.72, lng: 10.4, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
-    { id: 'city_seville', name: '塞维利亚', factionId: 'guadaer', lat: 37.38, lng: -5.98, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' },
-    { id: 'city_valencia', name: '巴伦西亚', factionId: 'balunxiya', lat: 39.47, lng: -0.37, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' },
-    { id: 'city_messina', name: '梅西纳', factionId: 'moxina', lat: 38.19, lng: 15.55, type: 'small_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '定级依据§6.2：墨西拿非关隘/要塞/堡垒，按城市判级；城内1277年≥3万、16世纪末5万，17世纪前未过10万 → 小城' },
-    { id: 'city_cagliari', name: '卡利亚里', factionId: 'sading', lat: 39.22, lng: 9.12, type: 'small_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '定级依据§6.2：卡利亚里非关隘/要塞/堡垒，按城市判级；城区1485年约5000、1578年约1万、1603年约7900（fuochi×4–6） → 小城' },
+    { id: 'city_pisa', name: '比萨', factionId: 'tuosikana', lat: 43.72, lng: 10.4, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
+    { id: 'city_seville', name: '塞维利亚', factionId: 'kasidiliya', lat: 37.38, lng: -5.98, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' },
+    { id: 'city_valencia', name: '巴伦西亚', factionId: 'alagong', lat: 39.47, lng: -0.37, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' },
+    { id: 'city_messina', name: '梅西纳', factionId: 'xixiliwangguo', lat: 38.19, lng: 15.55, type: 'small_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '定级依据§6.2：墨西拿非关隘/要塞/堡垒，按城市判级；城内1277年≥3万、16世纪末5万，17世纪前未过10万 → 小城' },
+    { id: 'city_cagliari', name: '卡利亚里', factionId: 'alagong', lat: 39.22, lng: 9.12, type: 'small_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '定级依据§6.2：卡利亚里非关隘/要塞/堡垒，按城市判级；城区1485年约5000、1578年约1万、1603年约7900（fuochi×4–6） → 小城' },
     { id: 'city_feisi', name: '非斯', factionId: 'yidelisi', lat: 34.03, lng: -5, type: 'medium_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
-    { id: 'city_cherkasy', name: '切尔卡瑟', factionId: 'qiekase', lat: 49.44, lng: 32.06, type: 'stockade', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'SLAVIC' },
-    { id: 'city_sofia', name: '索非亚', factionId: 'saierdika', lat: 42.7, lng: 23.32, type: 'stockade', troops: 10000, region: 'BULGARIANS', buildingStyle: 'BULGARIANS', note: '前335 为色雷斯塞迪人聚落，非史载大军扎营驻军之地（阿里安 I.1–6 只记渡多瑙河后回师行军）⇒ 按终点铁律不能当终点，但并了会超 500 硬闸，故保留为切点；人口无史料、推算不出 ⇒ 按 §6.2 兜底落城寨；名字按「一处一名、取知名度最大者」保留「索非亚」。' },
+    { id: 'city_cherkasy', name: '切尔卡瑟', factionId: 'gesake', lat: 49.44, lng: 32.06, type: 'stockade', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'SLAVIC' },
+    { id: 'city_sofia', name: '索非亚', factionId: 'baojialiya', lat: 42.7, lng: 23.32, type: 'stockade', troops: 10000, region: 'BULGARIANS', buildingStyle: 'BULGARIANS', note: '前335 为色雷斯塞迪人聚落，非史载大军扎营驻军之地（阿里安 I.1–6 只记渡多瑙河后回师行军）⇒ 按终点铁律不能当终点，但并了会超 500 硬闸，故保留为切点；人口无史料、推算不出 ⇒ 按 §6.2 兜底落城寨；名字按「一处一名、取知名度最大者」保留「索非亚」。' },
     { id: 'city_sarajevo', name: '萨拉热窝', factionId: 'bosiniya', lat: 43.85, lng: 18.41, type: 'stockade', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC' },
     { id: 'city_gradeci', name: '格拉代茨', factionId: 'keluodiya', lat: 45.81, lng: 15.97, type: 'stockade', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'SLAVIC' },
 
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER' },
 
-    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'PORTUGUESE', note: '定级依据§6.2：休达非关隘/要塞/堡垒，按城市判级；1415年城区约3.5万（未区分墙内外，宜降1.5–3.5万），4世纪末约1万 → 小城。🔴 [2026-10-18 按史] 休达 1415 年起为葡萄牙王属地，皇家城墙（Murallas Reales）与通海护城河为葡/西伊比利亚火炮棱堡；实建为 PORTUGUESE，不取柏柏尔。' },
+    { id: 'city_xiuta', name: '休达', factionId: 'putaoya', lat: 35.89, lng: -5.31, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'PORTUGUESE', note: '定级依据§6.2：休达非关隘/要塞/堡垒，按城市判级；1415年城区约3.5万（未区分墙内外，宜降1.5–3.5万），4世纪末约1万 → 小城。🔴 [2026-10-18 按史] 休达 1415 年起为葡萄牙王属地，皇家城墙（Murallas Reales）与通海护城河为葡/西伊比利亚火炮棱堡；实建为 PORTUGUESE，不取柏柏尔。' },
 
 
 
@@ -2272,35 +2272,35 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_oxford', name: '牛津', factionId: 'maixiya', lat: 51.75, lng: -1.25, type: 'small_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'SAXONS' },
     { id: 'city_hague', name: '海牙', factionId: 'nidelan', lat: 52.07, lng: 4.3, type: 'small_city', troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC' },
-    { id: 'city_gdansk', name: '格但斯克', factionId: 'boumeilaniyan', lat: 54.35, lng: 18.64, type: 'stockade', troops: 10000, region: 'POLES', buildingStyle: 'POLES' },
+    { id: 'city_gdansk', name: '格但斯克', factionId: 'bolan', lat: 54.35, lng: 18.64, type: 'stockade', troops: 10000, region: 'POLES', buildingStyle: 'POLES' },
     { id: 'city_shiqieqing', name: '什切青', factionId: 'pomeilaniya', lat: 53.43, lng: 14.55, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '波美拉尼亚公国首府，格里芬王朝驻地' },
-    { id: 'city_toulouse', name: '图卢兹', factionId: 'langgeduoke', lat: 43.6, lng: 1.44, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' },
-    { id: 'city_nantes', name: '南特', factionId: 'aermolika', lat: 47.21, lng: -1.55, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' },
+    { id: 'city_toulouse', name: '图卢兹', factionId: 'gaolu', lat: 43.6, lng: 1.44, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' },
+    { id: 'city_nantes', name: '南特', factionId: 'bulietani', lat: 47.21, lng: -1.55, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' },
     { id: 'city_florence', name: '佛罗伦萨', factionId: 'tuosikana', lat: 43.76, lng: 11.25, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
-    { id: 'city_venice', name: '威尼斯', factionId: 'yadelaiya', lat: 45.44, lng: 12.31, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
+    { id: 'city_venice', name: '威尼斯', factionId: 'kelite', lat: 45.44, lng: 12.31, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
         { id: 'city_talanduo', name: '塔兰托', factionId: 'talanduo', lat: 40.47, lng: 17.24, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '大希腊第一古都·塔兰托湾港口·斯巴达海外移民古都' },
-{ id: 'city_naples', name: '那不勒斯', factionId: 'kanpaniya', lat: 40.85, lng: 14.26, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
+{ id: 'city_naples', name: '那不勒斯', factionId: 'xixiliwangguo', lat: 40.85, lng: 14.26, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
     { id: 'city_barcelona', name: '巴塞罗那', factionId: 'jiatailuoniya', lat: 41.38, lng: 2.17, type: 'medium_city', troops: 10000, region: 'LATIN_FEUDAL', buildingStyle: 'LATIN' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：格拉纳达：西班牙安达卢斯
     { id: 'city_granada', name: '格拉纳达', factionId: 'nasier', lat: 37.17, lng: -3.6, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'SPANISH' },
-    { id: 'city_genoa', name: '热那亚', factionId: 'liguliya', lat: 44.4, lng: 8.94, type: 'medium_city', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'LATIN' },
+    { id: 'city_genoa', name: '热那亚', factionId: 'kelimiya', lat: 44.4, lng: 8.94, type: 'medium_city', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'LATIN' },
         { id: 'city_teernuowo', name: '特尔诺沃', factionId: 'baojialiya', lat: 43.08, lng: 25.65, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'BULGARIANS', note: '保加利亚第二帝国都城·沙皇之城·查雷维茨要塞' },
 { id: 'city_plovdiv', name: '普罗夫迪夫', factionId: 'seleisi', lat: 42.14, lng: 24.74, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '定级依据§6.2：普罗夫迪夫非关隘/要塞/堡垒，按城市判级；奥斯曼税册1472年约3400、1595年约5000–7000（hane×5） → 小城' },
 
-    { id: 'city_brest', name: '布列斯特', factionId: 'bolisiya', lat: 52.09, lng: 23.68, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '定级依据§6.2：布列斯特非关隘/要塞/堡垒，按城市判级；1530年代约833户5000人、1566年清册1091户约6000–6500人，未达1万 → 城寨' },
-    { id: 'city_zhytomyr', name: '日托米尔', factionId: 'zhituo', lat: 50.25, lng: 28.65, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC' },
+    { id: 'city_brest', name: '布列斯特', factionId: 'litaowan', lat: 52.09, lng: 23.68, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '定级依据§6.2：布列斯特非关隘/要塞/堡垒，按城市判级；1530年代约833户5000人、1566年清册1091户约6000–6500人，未达1万 → 城寨' },
+    { id: 'city_zhytomyr', name: '日托米尔', factionId: 'jialixiya', lat: 50.25, lng: 28.65, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC' },
 
     { id: 'city_heidelberg', name: '海德堡', factionId: 'pufaerci', lat: 49.4, lng: 8.68, type: 'pass', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' },
     { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'medium_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' },
     { id: 'city_utrecht', name: '乌特勒支', factionId: 'batawei', lat: 52.09, lng: 5.12, type: 'small_city', troops: 10000, region: 'GERMANIC', buildingStyle: 'GERMANIC' },
     { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 10000, region: 'VIKINGS', buildingStyle: 'DANES' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：卡莱尔：苏格兰—英格兰边境（region=SCOTLAND），苏格兰王国故地
-    { id: 'city_carlisle', name: '卡莱尔', factionId: 'kanbuliya', lat: 54.89, lng: -2.93, type: 'stockade', troops: 10000, region: 'SCOTLAND', buildingStyle: 'CELTS', note: '定级依据§6.2：卡莱尔非关隘/要塞/堡垒，按城市判级；1377年人头税678纳税人约1400–1500人、1597年约1780–2000，未达1万 → 城寨' },
-        { id: 'city_dijon', name: '第戎', factionId: 'bogendi', lat: 47.32, lng: 5.04, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS' },
+    { id: 'city_carlisle', name: '卡莱尔', factionId: 'scotland', lat: 54.89, lng: -2.93, type: 'stockade', troops: 10000, region: 'SCOTLAND', buildingStyle: 'CELTS', note: '定级依据§6.2：卡莱尔非关隘/要塞/堡垒，按城市判级；1377年人头税678纳税人约1400–1500人、1597年约1780–2000，未达1万 → 城寨' },
+        { id: 'city_dijon', name: '第戎', factionId: 'bogendigongguo', lat: 47.32, lng: 5.04, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS' },
 
 
     { id: 'city_shangbeili', name: '尚贝里', factionId: 'safuyi', lat: 45.57, lng: 5.92, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN', note: '萨伏伊公国法定第一王都·阿尔卑斯山地锁钥·绿伯爵阿梅迪奥六世都城' },
-{ id: 'city_lyon', name: '里昂', factionId: 'gaolu_luoma', lat: 45.76, lng: 4.83, type: 'medium_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
+{ id: 'city_lyon', name: '里昂', factionId: 'luoma_diguo', lat: 45.76, lng: 4.83, type: 'medium_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
 
     { id: 'city_bordeaux', name: '波尔多', factionId: 'aquidan', lat: 44.83, lng: -0.57, type: 'small_city', troops: 10000, region: 'BRITONS', buildingStyle: 'FRANKS' },
     { id: 'city_avignon', name: '阿维尼翁', factionId: 'puluowangsi', lat: 43.94, lng: 4.8, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' },
@@ -2310,12 +2310,12 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_toledo', name: '托莱多', factionId: 'xigete', lat: 39.86, lng: -4.02, type: 'medium_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '🔴 [2026-10-05 主人令「建筑风格必须当地」] 托莱多是**西哥特王国都城**（554–711，托莱多公会议所在地，西哥特王冠还愿物出土地），也是 62 类「哥特」的据点（城堡 GOTH_CASTLE_AGE3）→ 挂 GOTHS（一级 WEST）。旧值 CASTILE／MEDI（卡斯蒂利亚—西班牙）是后来的政权。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：科尔多瓦：西班牙安达卢斯
-    { id: 'city_cordoba', name: '科尔多瓦', factionId: 'andaluoxiya', lat: 37.88, lng: -4.77, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'SPANISH', note: '后伍麦叶鼎盛约20–30万，未达大城50万门槛，降 medium_city' },
+    { id: 'city_cordoba', name: '科尔多瓦', factionId: 'womaya', lat: 37.88, lng: -4.77, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'SPANISH', note: '后伍麦叶鼎盛约20–30万，未达大城50万门槛，降 medium_city' },
     { id: 'city_zaragoza', name: '萨拉戈萨', factionId: 'alagong', lat: 41.65, lng: -0.88, type: 'small_city', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH' },
-    { id: 'city_eger', name: '维雷茨基', factionId: 'shaiyue', lat: 48.77, lng: 23.17, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'SLAVIC', note: '定级依据§6.2：埃格尔非关隘/要塞/堡垒，按城市判级；1494-95年dicalis税册全城区约3500人（墙内2000、河谷聚落群6575为下限），未达1万 → 城寨' },
+    { id: 'city_eger', name: '维雷茨基', factionId: 'mazhaer', lat: 48.77, lng: 23.17, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'SLAVIC', note: '定级依据§6.2：埃格尔非关隘/要塞/堡垒，按城市判级；1494-95年dicalis税册全城区约3500人（墙内2000、河谷聚落群6575为下限），未达1万 → 城寨' },
 
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：都柏林：爱尔兰，凯尔特（region=CELTS_FEUDAL）
-    { id: 'city_dublin', name: '都柏林', factionId: 'gaer', lat: 53.34, lng: -6.26, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS' },
+    { id: 'city_dublin', name: '都柏林', factionId: 'dalriada', lat: 53.34, lng: -6.26, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：卡舍尔：爱尔兰凯尔特王城（region=CELTS_FEUDAL）
     { id: 'city_kasheer', name: '卡舍尔', factionId: 'mangsite', lat: 52.5202, lng: -7.8907, type: 'stockade', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS', note: '定级依据§6.2：17世纪前城居人口无可靠数字（城墙约12ha；1640年守军+居民300人），人口不足一万 → 按规则判城寨' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」只给一级、二级靠 region(BRITONS) 推
@@ -2329,15 +2329,15 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_calais', name: '加莱', factionId: 'fulandesi', lat: 50.95, lng: 1.85, type: 'stockade', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', mirror: true, note: '定级依据§6.2：加莱非纯军事要塞（有城内市镇人口），按城市判级；约1300年城内约7000、1346年约7000–8000，未达1万 → 城寨' },
 
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'stockade', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'BRITONS' },
-    { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xilagu', lat: 37.07, lng: 15.28, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'SICILIANS' },
-    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'mengtainiya', lat: 44.43, lng: 26.1, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '15世纪成为瓦拉几亚王侯驻地' },
+    { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xixiliwangguo', lat: 37.07, lng: 15.28, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'SICILIANS' },
+    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'walajiyia', lat: 44.43, lng: 26.1, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '15世纪成为瓦拉几亚王侯驻地' },
     { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC' },
 
 
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：爱丁堡：苏格兰，凯尔特／皮克特故地
     { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'CELTS' },
-    { id: 'city_wupusala', name: '乌普萨拉', factionId: 'nuosi', lat: 59.85, lng: 17.63, type: 'small_city', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '旧乌普萨拉（Gamla Uppsala）为瑞典维京时代（约 5–11 世纪）皇家土冢、石船墓葬与祭祀中心。🔴 [2026-10-22 按史] 62 分支表（维京）＋维京「古典时代北欧日耳曼军团」描述（乌普萨拉老城、旧乌普萨拉皇家土冢、石船墓葬）均指维京；瓦良格分支 4 支军团全部为诺夫哥罗德／拉多加（罗斯）→ 原 VARANGIANS 改 VIKINGS（2026-10-07 曾按「瓦良格人多出自乌普兰」归瓦良格，现按 62 表与军团描述改回）。' },
-    { id: 'city_lundun', name: '伦敦', factionId: 'anggelu', lat: 51.5, lng: -0.12, type: 'medium_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'SAXONS' },
+    { id: 'city_wupusala', name: '乌普萨拉', factionId: 'ruidian_si', lat: 59.85, lng: 17.63, type: 'small_city', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '旧乌普萨拉（Gamla Uppsala）为瑞典维京时代（约 5–11 世纪）皇家土冢、石船墓葬与祭祀中心。🔴 [2026-10-22 按史] 62 分支表（维京）＋维京「古典时代北欧日耳曼军团」描述（乌普萨拉老城、旧乌普萨拉皇家土冢、石船墓葬）均指维京；瓦良格分支 4 支军团全部为诺夫哥罗德／拉多加（罗斯）→ 原 VARANGIANS 改 VIKINGS（2026-10-07 曾按「瓦良格人多出自乌普兰」归瓦良格，现按 62 表与军团描述改回）。' },
+    { id: 'city_lundun', name: '伦敦', factionId: 'yinggelan', lat: 51.5, lng: -0.12, type: 'medium_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'SAXONS' },
 
 
     { id: 'city_winchester', name: '温彻斯特', factionId: 'yinggelan', lat: 51.06, lng: -1.31, type: 'small_city', troops: 10000, region: 'BRITONS', buildingStyle: 'SAXONS' },
@@ -2353,31 +2353,31 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '哈布斯堡治所；中世约2–2.5万、1600约5万，未达约10万中城门槛，降 small_city' },
     { id: 'city_bulage', name: '布拉格', factionId: 'boximiya', lat: 50.07, lng: 14.43, type: 'medium_city', troops: 10000, region: 'BOHEMIANS', buildingStyle: 'BOHEMIANS' },
     { id: 'city_budapeisi', name: '布达佩斯', factionId: 'mazhaer', lat: 47.49, lng: 19.04, type: 'medium_city', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR' },
-    { id: 'city_huneiduolala', name: '胡内多阿拉', factionId: 'xiongyati', lat: 45.749, lng: 22.888, type: 'stockade', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR', note: '定级依据§6.2：胡内多阿拉非关隘/要塞/堡垒，按城市判级；1512年oppidum仅196户约900人，17世纪约1100–1250，人口不足一万 → 按规则判城寨' },
+    { id: 'city_huneiduolala', name: '胡内多阿拉', factionId: 'mazhaer', lat: 45.749, lng: 22.888, type: 'stockade', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR', note: '定级依据§6.2：胡内多阿拉非关隘/要塞/堡垒，按城市判级；1512年oppidum仅196户约900人，17世纪约1100–1250，人口不足一万 → 按规则判城寨' },
     { id: 'city_saigede', name: '塞格德', factionId: 'xiongren', lat: 46.25, lng: 20.15, type: 'stockade', troops: 10000, region: 'HUNS', buildingStyle: 'HUNS', note: '蒂萨河营地·阿提拉王庭（匈人帝国大本营）' },
     { id: 'city_kelong', name: '科隆', factionId: 'falanji', lat: 50.93, lng: 6.95, type: 'medium_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
-    { id: 'city_lahexiuyuan', name: '拉赫修院', factionId: 'pelianci', lat: 50.402359, lng: 7.252187, type: 'stockade', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC', note: '1093年拉赫的亨利二世在拉赫湖畔创建的本笃会修院；中世纪称拉赫修院，19世纪始称玛丽亚拉赫；定级依据§6.2：修士约40人（12世纪本笃会），非城居万人级，人口不足一万 → 按规则判城寨' },
-    { id: 'city_yachen', name: '亚琛', factionId: 'jialuolin', lat: 50.77, lng: 6.08, type: 'small_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
-    { id: 'city_meiyinci', name: '美因茨', factionId: 'rierman', lat: 50, lng: 8.27, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' },
+    { id: 'city_lahexiuyuan', name: '拉赫修院', factionId: 'wende', lat: 50.402359, lng: 7.252187, type: 'stockade', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC', note: '1093年拉赫的亨利二世在拉赫湖畔创建的本笃会修院；中世纪称拉赫修院，19世纪始称玛丽亚拉赫；定级依据§6.2：修士约40人（12世纪本笃会），非城居万人级，人口不足一万 → 按规则判城寨' },
+    { id: 'city_yachen', name: '亚琛', factionId: 'falanji', lat: 50.77, lng: 6.08, type: 'small_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
+    { id: 'city_meiyinci', name: '美因茨', factionId: 'falanji', lat: 50, lng: 8.27, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' },
     { id: 'city_aogesibao', name: '奥格斯堡', factionId: 'shiwaben', lat: 48.37, lng: 10.89, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' },
     { id: 'city_bolandengbao', name: '勃兰登堡', factionId: 'asikanani', lat: 52.41, lng: 12.55, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' },
     { id: 'city_magedebao', name: '马格德堡', factionId: 'wende', lat: 52.13, lng: 11.61, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' },
     { id: 'city_leigensibao', name: '雷根斯堡', factionId: 'bafaliya', lat: 49.01, lng: 12.09, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' },
     { id: 'city_niulunbao', name: '纽伦堡', factionId: 'huohengsuolun', lat: 49.45, lng: 11.07, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' },
-    { id: 'city_teerier', name: '特里尔', factionId: 'mozeer', lat: 49.75, lng: 6.64, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'LATIN' },
+    { id: 'city_teerier', name: '特里尔', factionId: 'luoma_diguo', lat: 49.75, lng: 6.64, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'LATIN' },
     { id: 'city_basaier', name: '巴塞尔', factionId: 'ruishi', lat: 47.55, lng: 7.58, type: 'small_city', troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC' },
-    { id: 'city_sitelasibao', name: '斯特拉斯堡', factionId: 'aersasi', lat: 48.57, lng: 7.75, type: 'small_city', troops: 10000, region: 'GERMANIC', buildingStyle: 'GERMANIC' },
-    { id: 'city_aoermuci', name: '奥尔穆茨', factionId: 'molaweiya', lat: 49.59, lng: 17.25, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'BOHEMIANS' },
+    { id: 'city_sitelasibao', name: '斯特拉斯堡', factionId: 'luoma_diguo', lat: 48.57, lng: 7.75, type: 'small_city', troops: 10000, region: 'GERMANIC', buildingStyle: 'GERMANIC' },
+    { id: 'city_aoermuci', name: '奥尔穆茨', factionId: 'boximiya', lat: 49.59, lng: 17.25, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'BOHEMIANS' },
     { id: 'city_buernuo', name: '布尔诺', factionId: 'damolaweiya', lat: 49.19, lng: 16.6, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'BOHEMIANS', note: '定级依据§6.2：布尔诺非关隘/要塞/堡垒，按城市判级；1389年berní rejstřík城墙内999栋房约8400人，未达1万 → 城寨（与同区奥尔穆茨同为城寨，口径一致）' },
 
     { id: 'city_jifu', name: '基辅', factionId: 'luosi', lat: 50.45, lng: 30.52, type: 'medium_city', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', mirror: true },
-    { id: 'city_nuofugeerdede', name: '诺夫哥罗德', factionId: 'liulike', lat: 58.52, lng: 31.27, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '商业共和国；14–15C盛期约2.5–4万，未达约10万，降 small_city。🔴 [2026-10-22] 瓦良格文化改由新增的拉多加（旧拉多加）承载，本条恢复 SLAVIC（本城现存建筑层为俄罗斯／斯拉夫：圣索菲亚 1045–1052、克里姆林 15 世纪）。' },
-    { id: 'city_ladoga', name: '拉多加', factionId: 'liulike', lat: 59.9967, lng: 32.2961, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'VARANGIANS', note: '旧拉多加（Staraya Ladoga／Aldeigjuborg）：8–10 世纪瓦良格人（诺斯）在伊尔门湖—沃尔霍夫河商路的第一座据点，862 年留里克据拉多加（《往年纪事》一说）；现存 12 世纪石教堂与土垒遗址。🔴 [2026-10-22 按史新增] 瓦良格分支 4 支军团均以诺夫哥罗德／拉多加为名（古典楚德林莽：伊尔门湖／拉多加；封建瓦良格：拉多加堡、旧诺夫哥罗德；城堡诺夫哥罗德：大诺夫哥罗德、圣索菲亚、德捷茨；帝国北境长斧：大诺夫哥罗德、阿尔汉格尔斯克），故拉多加为 VARANGIANS 据点；配武将留里克（封建 × VARANGIANS ＝ 封建时代瓦良格军团）；离圣彼得堡 110.6km、诺夫哥罗德约 173km（>40km）。' },
-    { id: 'city_baihu', name: '白湖', factionId: 'liulike', lat: 60.03, lng: 37.79, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'VARANGIANS', note: '白湖（别洛焦尔斯克／Beloozero）：862 年留里克之弟西涅乌斯（Sineus）据白湖（《往年纪事》）；9 世纪瓦良格人自伊尔门湖经姆斯塔河—伏尔加河商路的据点，后为白湖公国，今别洛焦尔斯克存 15 世纪俄罗斯石城。🔴 [2026-10-22 按史新增·据点含草原/营地层] 与拉多加同为瓦良格分支据点（城寨＝营地层，不是「只算城」）；配武将西涅乌斯（封建 × VARANGIANS ＝ 封建时代瓦良格军团）；离最近城基日岛 265.2km、拉多加约 305km（>40km）。' },
+    { id: 'city_nuofugeerdede', name: '诺夫哥罗德', factionId: 'luosi', lat: 58.52, lng: 31.27, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '商业共和国；14–15C盛期约2.5–4万，未达约10万，降 small_city。🔴 [2026-10-22] 瓦良格文化改由新增的拉多加（旧拉多加）承载，本条恢复 SLAVIC（本城现存建筑层为俄罗斯／斯拉夫：圣索菲亚 1045–1052、克里姆林 15 世纪）。' },
+    { id: 'city_ladoga', name: '拉多加', factionId: 'luosi', lat: 59.9967, lng: 32.2961, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'VARANGIANS', note: '旧拉多加（Staraya Ladoga／Aldeigjuborg）：8–10 世纪瓦良格人（诺斯）在伊尔门湖—沃尔霍夫河商路的第一座据点，862 年留里克据拉多加（《往年纪事》一说）；现存 12 世纪石教堂与土垒遗址。🔴 [2026-10-22 按史新增] 瓦良格分支 4 支军团均以诺夫哥罗德／拉多加为名（古典楚德林莽：伊尔门湖／拉多加；封建瓦良格：拉多加堡、旧诺夫哥罗德；城堡诺夫哥罗德：大诺夫哥罗德、圣索菲亚、德捷茨；帝国北境长斧：大诺夫哥罗德、阿尔汉格尔斯克），故拉多加为 VARANGIANS 据点；配武将留里克（封建 × VARANGIANS ＝ 封建时代瓦良格军团）；离圣彼得堡 110.6km、诺夫哥罗德约 173km（>40km）。' },
+    { id: 'city_baihu', name: '白湖', factionId: 'luosi', lat: 60.03, lng: 37.79, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'VARANGIANS', note: '白湖（别洛焦尔斯克／Beloozero）：862 年留里克之弟西涅乌斯（Sineus）据白湖（《往年纪事》）；9 世纪瓦良格人自伊尔门湖经姆斯塔河—伏尔加河商路的据点，后为白湖公国，今别洛焦尔斯克存 15 世纪俄罗斯石城。🔴 [2026-10-22 按史新增·据点含草原/营地层] 与拉多加同为瓦良格分支据点（城寨＝营地层，不是「只算城」）；配武将西涅乌斯（封建 × VARANGIANS ＝ 封建时代瓦良格军团）；离最近城基日岛 265.2km、拉多加约 305km（>40km）。' },
     { id: 'city_mosike', name: '莫斯科', factionId: 'mosike_gongguo', lat: 55.75, lng: 37.61, type: 'medium_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' },
     { id: 'city_shengpidebao', name: '圣彼得堡', factionId: 'eluosi_diguo', lat: 59.9387, lng: 30.3162, type: 'medium_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '彼得大帝1703年建于涅瓦河口，1712-1918俄罗斯帝国首都，俄罗斯帝国波罗的海出海口与海军基地；北方战争波尔塔瓦大捷背景下营建' },
-    { id: 'city_xieerpuhuofu', name: '谢尔普霍夫', factionId: 'xieerpuhuofu_gongguo', lat: 54.92, lng: 37.41, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '定级依据§6.2：谢尔普霍夫非纯军事要塞（1552年有пoсад 623户），按城市判级；1552年约3000人、1646年>1500、1678年约2500，未达1万 → 城寨' },
-    { id: 'city_fulajimier', name: '弗拉基米尔', factionId: 'fulajimier_gongguo', lat: 56.12, lng: 40.4, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' },
+    { id: 'city_xieerpuhuofu', name: '谢尔普霍夫', factionId: 'mosike_gongguo', lat: 54.92, lng: 37.41, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC', note: '定级依据§6.2：谢尔普霍夫非纯军事要塞（1552年有пoсад 623户），按城市判级；1552年约3000人、1646年>1500、1678年约2500，未达1万 → 城寨' },
+    { id: 'city_fulajimier', name: '弗拉基米尔', factionId: 'suzidaer', lat: 56.12, lng: 40.4, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' },
     { id: 'city_simolengsike', name: '斯摩棱斯克', factionId: 'daniebo', lat: 54.78, lng: 32.04, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' },
     { id: 'city_qiernigeweifu', name: '切尔尼戈夫', factionId: 'qiernigeweifu_gongguo', lat: 51.49, lng: 31.28, type: 'small_city', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC' },
     { id: 'city_jialiqi', name: '加利奇', factionId: 'jialixiya', lat: 49.12, lng: 24.72, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' },
@@ -2387,21 +2387,21 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_salai', name: '萨莱', factionId: 'jinzhang', lat: 48.15, lng: 47.15, type: 'big_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CENTRAL_ASIA', note: '金帐汗国都城（新萨莱）；盛期人口高估约60万，约40万门槛从宽升 big_city' },
     { id: 'city_kashan', name: '喀山', factionId: 'baojiaer', lat: 55.79, lng: 49.11, type: 'medium_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CENTRAL_ASIA' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「EAST」推出的二级与史实不符 → 归 BYZANTINE：赫尔松涅斯（克里米亚）：拜占庭海防要塞（961 年福卡斯收复克里特前的黑海基地）
-    { id: 'city_heersongniesi', name: '赫尔松涅斯', factionId: 'taolika', lat: 44.61, lng: 33.49, type: 'small_city', troops: 10000, region: 'SCYTHIANS', buildingStyle: 'BYZANTINE' },
+    { id: 'city_heersongniesi', name: '赫尔松涅斯', factionId: 'bosi_puluosi', lat: 44.61, lng: 33.49, type: 'small_city', troops: 10000, region: 'SCYTHIANS', buildingStyle: 'BYZANTINE' },
     { id: 'city_pantika', name: '潘提卡彭', factionId: 'bosi_puluosi', lat: 45.36, lng: 36.47, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '希腊化博斯普鲁斯王国千年古都·刻赤海峡锁钥·琉孔一世都城' },
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」只是一级母体、取不到 62 类 → 归 LATIN：卡法（费奥多西亚）：热那亚黑海殖民地，用意大利（LATIN）城堡
 { id: 'city_kafa', name: '卡法', factionId: 'kelimiya', lat: 45.03, lng: 35.38, type: 'small_city', troops: 10000, region: 'EAST', buildingStyle: 'LATIN', mirror: true, note: '定级依据§6.2：卡法非关隘/要塞/堡垒，按城市判级；热那亚时期约7000–1万（Balard 约1万），奥斯曼1542年3043户约1.5万 → 小城。🔴 [2026-10-18 按史] 卡法为热那亚黑海殖民地（Gazaria），实建为热那亚石砌方塔、机械射击孔与齿状胸墙；故 LATIN。' },
 
-    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'eguo_biandi', lat: 51.53, lng: 46.03, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1590 年俄国边堡；建筑风格按当地俄罗斯（SLAVIC）；势力=俄国边地，武将扎谢金，精锐萨拉托夫骑' },
+    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'eluosi_diguo', lat: 51.53, lng: 46.03, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1590 年俄国边堡；建筑风格按当地俄罗斯（SLAVIC）；势力=俄国边地，武将扎谢金，精锐萨拉托夫骑' },
     { id: 'city_weierniwusi', name: '维尔纽斯', factionId: 'litaowan', lat: 54.68, lng: 25.27, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS' },
 
     { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'medium_city', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'POLES' },
 
     // ── 2026-08-04 新增：波兹南（大波兰公国治所；普热梅斯二世故都）──
-    { id: 'city_poznan', name: '波兹南', factionId: 'dabolan', lat: 52.4064, lng: 16.9252, type: 'small_city', troops: 10000, region: 'POLES', buildingStyle: 'POLES' },
+    { id: 'city_poznan', name: '波兹南', factionId: 'bolan', lat: 52.4064, lng: 16.9252, type: 'small_city', troops: 10000, region: 'POLES', buildingStyle: 'POLES' },
 
-    { id: 'city_kelakefu', name: '克拉科夫', factionId: 'piyasite', lat: 50.06, lng: 19.94, type: 'medium_city', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'POLES', note: '🔴 [2026-10-05 主人令「建筑风格必须当地」] 克拉科夫是**波兰王国旧都**（1320–1596 加冕与安葬地，瓦维尔主教座堂与城堡），是 62 类「波兰」的据点（城堡 POLE_CASTLE_AGE3）→ 挂 POLES（一级 SLAV）；旧值 SLAV（基辅罗斯／莫斯科系）与本地不符。' },
-    { id: 'city_liweifu', name: '利沃夫', factionId: 'hongluseniya', lat: 49.84, lng: 24.03, type: 'small_city', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '红鲁塞尼亚主城，1387年雅德维加亲征从匈牙利收复' },
+    { id: 'city_kelakefu', name: '克拉科夫', factionId: 'bolan', lat: 50.06, lng: 19.94, type: 'medium_city', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'POLES', note: '🔴 [2026-10-05 主人令「建筑风格必须当地」] 克拉科夫是**波兰王国旧都**（1320–1596 加冕与安葬地，瓦维尔主教座堂与城堡），是 62 类「波兰」的据点（城堡 POLE_CASTLE_AGE3）→ 挂 POLES（一级 SLAV）；旧值 SLAV（基辅罗斯／莫斯科系）与本地不符。' },
+    { id: 'city_liweifu', name: '利沃夫', factionId: 'bolan', lat: 49.84, lng: 24.03, type: 'small_city', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '红鲁塞尼亚主城，1387年雅德维加亲征从匈牙利收复' },
     { id: 'city_liga', name: '里加', factionId: 'baojian_qishi', lat: 56.95, lng: 24.1, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'GERMANIC', note: '定级依据§6.2：里加非关隘/要塞/堡垒，按城市判级；16世纪中叶城墙内约1万–1.5万（1558年约1.2万，Dunsdorfs 谓可达1.6万）>1万 → 小城。🔴 [2026-10-18 按史] 里加为 1201 年阿尔伯特主教所建利沃尼亚宝剑骑士团首府、汉萨同盟重镇；实体建筑是红砖哥特式大教堂、圣彼得尖塔、黑头宫与日耳曼十字军石堡，故取 GERMANIC（项目条顿键），不取立陶宛木堡。' },
     { id: 'city_teweier', name: '特维尔', factionId: 'teweier_gongguo', lat: 56.86, lng: 35.9, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' },
     { id: 'city_xianuofugeerdede', name: '下诺城', factionId: 'suzidaer', lat: 56.32, lng: 44, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' },
@@ -2409,23 +2409,23 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yaxi', name: '雅西', factionId: 'moerdaweiya', lat: 47.16, lng: 27.58, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC' },
     { id: 'city_teergewishite', name: '特尔戈维', factionId: 'walajiyia', lat: 44.86, lng: 25.46, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '特尔戈维什泰；瓦拉几亚长期王都' },
     { id: 'city_kenisibao', name: '柯尼斯堡', factionId: 'tiaodun_qishi', lat: 54.71, lng: 20.51, type: 'pass', troops: 10000, region: 'TEUTONS', buildingStyle: 'GERMANIC' },
-    { id: 'city_talin', name: '塔林', factionId: 'liwoniya', lat: 59.43, lng: 24.75, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'GERMANIC', note: '🔴 [2026-10-18 按史] 塔林（列瓦尔/Reval）1219 年丹麦王瓦尔德马二世建石堡，后由条顿骑士团改建为托姆比亚城堡与环城石砌要塞，是北欧—日耳曼汉萨石城；故取 GERMANIC（项目条顿键），不取立陶宛。' },
-    { id: 'city_youliyefu', name: '尤里耶夫', factionId: 'chude', lat: 58.37, lng: 26.72, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '🔴 [2026-10-05 主人令「相邻据点同风格」] 尤里耶夫（今塔尔图）原住民是**爱沙尼亚人**（芬-乌戈尔系，与拉脱维亚、立陶宛同属波罗的海族群），不是东斯拉夫；距塔林 163km、里加 220km，三城连成一片波罗的海风格 → 挂 LITHUANIANS（一级 SLAV）；波罗的海／罗斯的界线落在它与普斯科夫之间。' },
-    { id: 'city_jiridao', name: '基日岛', factionId: 'kaleiliya', lat: 62.0667, lng: 35.225, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '定级依据§6.2：教堂院4–7户约20–40人（1601/1678基日教区档案），人口不足一万 → 按规则判城寨' },
-    { id: 'city_akeman', name: '阿克曼', factionId: 'deniesite', lat: 46.19, lng: 30.34, type: 'stockade', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'SLAVIC', note: '定级依据§6.2：阿克曼非纯军事要塞（有城内集市人口），按城市判级；奥斯曼税册1525年约1300、1570年约3900–5000（含郊区）、1574年4664，未达1万 → 城寨' },
+    { id: 'city_talin', name: '塔林', factionId: 'baojian_qishi', lat: 59.43, lng: 24.75, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'GERMANIC', note: '🔴 [2026-10-18 按史] 塔林（列瓦尔/Reval）1219 年丹麦王瓦尔德马二世建石堡，后由条顿骑士团改建为托姆比亚城堡与环城石砌要塞，是北欧—日耳曼汉萨石城；故取 GERMANIC（项目条顿键），不取立陶宛。' },
+    { id: 'city_youliyefu', name: '尤里耶夫', factionId: 'luosi', lat: 58.37, lng: 26.72, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '🔴 [2026-10-05 主人令「相邻据点同风格」] 尤里耶夫（今塔尔图）原住民是**爱沙尼亚人**（芬-乌戈尔系，与拉脱维亚、立陶宛同属波罗的海族群），不是东斯拉夫；距塔林 163km、里加 220km，三城连成一片波罗的海风格 → 挂 LITHUANIANS（一级 SLAV）；波罗的海／罗斯的界线落在它与普斯科夫之间。' },
+    { id: 'city_jiridao', name: '基日岛', factionId: 'luosi', lat: 62.0667, lng: 35.225, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '定级依据§6.2：教堂院4–7户约20–40人（1601/1678基日教区档案），人口不足一万 → 按规则判城寨' },
+    { id: 'city_akeman', name: '阿克曼', factionId: 'osman', lat: 46.19, lng: 30.34, type: 'stockade', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'SLAVIC', note: '定级依据§6.2：阿克曼非纯军事要塞（有城内集市人口），按城市判级；奥斯曼税册1525年约1300、1570年约3900–5000（含郊区）、1574年4664，未达1万 → 城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「GREEK」推出的二级与史实不符 → 归 ATHENIANS：塔纳伊斯（亚速海）：希腊殖民城，一级希腊素材
     { id: 'city_asu', name: '塔纳伊斯', factionId: 'sijitai', lat: 47.23, lng: 39.70, type: 'small_city', troops: 10000, region: 'SCYTHIANS', buildingStyle: 'GREECE', note: '古代塔纳伊斯（Tanais），顿河入海口草原与希腊贸易要津；大斯基泰王国阿泰阿斯王庭商埠，大草原北方贸易市集与军事要冲' },
-    { id: 'city_geluodenuo', name: '格罗德诺', factionId: 'nieman', lat: 53.68, lng: 23.83, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '定级依据§6.2：格罗德诺非关隘/要塞/堡垒，按城市判级；1558-60年王室清册实数716栋房屋约3600–4300人，未达1万 → 城寨' },
-    { id: 'city_chalijin', name: '察里津', factionId: 'fuerjia', lat: 48.7, lng: 44.51, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1589 年俄国伏尔加河木堡，军事哨所；按石墙规则判城寨；势力=伏尔加，武将沃隆佐夫，精锐俄国边骑 T4' },
-    { id: 'city_samala', name: '萨马拉', factionId: 'nuogai', lat: 53.2, lng: 50.15, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1586 年俄国萨马拉河边堡；按石墙规则判城寨；势力=喀山军区，武将沃特霍夫斯基，精锐俄国射手 T3' },
-    { id: 'city_wufa', name: '乌法', factionId: 'bashekeer', lat: 54.73, lng: 55.96, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1574 年俄国在巴什基尔地区建的要塞，俄式木堡；按石墙规则判城寨；势力=乌拉尔，武将纳吉，精锐边地步营 T4' },
-    { id: 'city_bieergeleide', name: '别尔哥罗德', factionId: 'beisilafu', lat: 50.6, lng: 36.58, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC' },
+    { id: 'city_geluodenuo', name: '格罗德诺', factionId: 'litaowan', lat: 53.68, lng: 23.83, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '定级依据§6.2：格罗德诺非关隘/要塞/堡垒，按城市判级；1558-60年王室清册实数716栋房屋约3600–4300人，未达1万 → 城寨' },
+    { id: 'city_chalijin', name: '察里津', factionId: 'eluosi_diguo', lat: 48.7, lng: 44.51, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1589 年俄国伏尔加河木堡，军事哨所；按石墙规则判城寨；势力=伏尔加，武将沃隆佐夫，精锐俄国边骑 T4' },
+    { id: 'city_samala', name: '萨马拉', factionId: 'eluosi_diguo', lat: 53.2, lng: 50.15, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1586 年俄国萨马拉河边堡；按石墙规则判城寨；势力=喀山军区，武将沃特霍夫斯基，精锐俄国射手 T3' },
+    { id: 'city_wufa', name: '乌法', factionId: 'eluosi_diguo', lat: 54.73, lng: 55.96, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1574 年俄国在巴什基尔地区建的要塞，俄式木堡；按石墙规则判城寨；势力=乌拉尔，武将纳吉，精锐边地步营 T4' },
+    { id: 'city_bieergeleide', name: '别尔哥罗德', factionId: 'eluosi_diguo', lat: 50.6, lng: 36.58, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC' },
     // ── 2026-08-04 新增：哈尔科夫（1654哥萨克要塞；斯洛博达乌克兰·哈尔科夫团治所）──
-    { id: 'city_haerkefu', name: '哈尔科夫', factionId: 'siluoboda', lat: 49.9935, lng: 36.2304, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '乌克兰哈尔科夫；1654年哥萨克筑要塞于哈尔科夫河与洛潘河交汇；1659–1765为斯洛博达乌克兰哈尔科夫团治所；团校多涅茨等抗克里米亚鞑靼' },
+    { id: 'city_haerkefu', name: '哈尔科夫', factionId: 'eluosi_diguo', lat: 49.9935, lng: 36.2304, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '乌克兰哈尔科夫；1654年哥萨克筑要塞于哈尔科夫河与洛潘河交汇；1659–1765为斯洛博达乌克兰哈尔科夫团治所；团校多涅茨等抗克里米亚鞑靼' },
     // ── 2026-08-04 新增：沃罗涅日（1586南疆要塞，守穆拉夫小道防鞑靼）──
-    { id: 'city_woluonerizh', name: '沃罗涅日', factionId: 'yedi', lat: 51.6608, lng: 39.2003, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '俄国沃罗涅日；1586年费奥多尔一世诏建要塞于沃罗涅日河畔，督军萨布罗夫主持；守穆拉夫小道，防克里米亚/诺盖鞑靼；后入别尔哥罗德防线；彼得一世顿河舰队造船基地' },
+    { id: 'city_woluonerizh', name: '沃罗涅日', factionId: 'eluosi_diguo', lat: 51.6608, lng: 39.2003, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '俄国沃罗涅日；1586年费奥多尔一世诏建要塞于沃罗涅日河畔，督军萨布罗夫主持；守穆拉夫小道，防克里米亚/诺盖鞑靼；后入别尔哥罗德防线；彼得一世顿河舰队造船基地' },
     { id: 'city_peilieyasilafu', name: '佩列斯拉夫', factionId: 'peilieya_gongguo', lat: 50.07, lng: 31.45, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAVIC' },
-    { id: 'city_weijiebusike', name: '维捷布斯克', factionId: 'weijiebusike_gongguo', lat: 55.19, lng: 30.2, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '定级依据§6.2：维捷布斯克非关隘/要塞/堡垒，按城市判级；17世纪前无房屋/居民数据（白俄两部百科明文），最早1641年990栋房约5000人，未达1万 → 城寨' },
+    { id: 'city_weijiebusike', name: '维捷布斯克', factionId: 'litaowan', lat: 55.19, lng: 30.2, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '定级依据§6.2：维捷布斯克非关隘/要塞/堡垒，按城市判级；17世纪前无房屋/居民数据（白俄两部百科明文），最早1641年990栋房约5000人，未达1万 → 城寨' },
 
     ...T0_CAPITALS,
     ...T1_MEDIUM_CITIES,
@@ -3228,7 +3228,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_yakesa', name: '雅克萨', factionId: 'suolun', lat: 53.39056, lng: 124.0775, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '黑龙江与额木尔河汇口，达斡尔敖拉氏故地（《朔方备乘》）' },
     { id: 'city_geerbiqi', name: '格尔必齐', factionId: 'manzhou_d', lat: 53.33, lng: 121.45, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
 
-    { id: 'city_shilekahe', name: '石勒喀堡', factionId: 'bulat', lat: 51.7321, lng: 115.8151, type: 'pass', region: 'STEPPE_FEUDAL', buildingStyle: 'SLAVIC', troops: 10000, note: '石勒喀河岸要塞城；近尼布楚而分立；布拉特。🔴 [2026-10-18 按据点] 石勒喀堡为俄罗斯哥萨克 Ostrog（木石边疆要塞），故 SLAVIC；孛端察儿/布拉特是武将与据点错配，待改武将。' },
+    { id: 'city_shilekahe', name: '石勒喀堡', factionId: 'eluosi_diguo', lat: 51.7321, lng: 115.8151, type: 'pass', region: 'STEPPE_FEUDAL', buildingStyle: 'SLAVIC', troops: 10000, note: '石勒喀河岸要塞城；近尼布楚而分立；布拉特。🔴 [2026-10-18 按据点] 石勒喀堡为俄罗斯哥萨克 Ostrog（木石边疆要塞），故 SLAVIC；孛端察儿/布拉特是武将与据点错配，待改武将。' },
     { id: 'city_chita', name: '赤塔', factionId: 'buriat', lat: 52.0333, lng: 113.5017, type: 'stockade', region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', troops: 10000, note: '布里亚特酋长统林中射手世居赤塔' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CUMAN：养吉干：锡尔河入咸海处要塞，花剌子模/钦察故地，归库曼 CUMAN
     { id: 'city_yangjigan', name: '养吉干', factionId: 'xianhai', lat: 45.6, lng: 62, type: 'pass', region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '中亚环线锚点；锡尔河入咸海处要塞，花剌子模东北边境' },
@@ -3442,7 +3442,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_sifaerde', name: '斯法尔德', factionId: 'ldiya', lat: 38.48, lng: 28.03, type: 'small_city', troops: 10000, region: 'GREECE', buildingStyle: 'GREECE', note: '萨迪斯（Sardis）：吕底亚王国首都与阿契美尼德波斯小亚细亚首府，波斯御道终点；拥有三重巨石城墙与高耸卫城城堡，常住人口2-5万；依2026-10-01铁律定为小城（原误标城寨stockade）' },
     { id: 'city_peierjiameng', name: '佩尔加蒙', factionId: 'pajiama', lat: 39.12, lng: 27.18, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「EAST」推出的二级与史实不符 → 归 BYZANTINE：尼凯亚：拜占庭尼西亚帝国都城
-    { id: 'city_nixiya', name: '尼凯亚', factionId: 'bitiniya', lat: 40.43, lng: 29.72, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'BYZANTINE' },
+    { id: 'city_nixiya', name: '尼凯亚', factionId: 'baizanting', lat: 40.43, lng: 29.72, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'BYZANTINE' },
     { id: 'city_junshitandingbao', name: '君士坦丁堡', factionId: 'baizanting', lat: 41.01, lng: 28.97, type: 'big_city', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE' },
     { id: 'city_yikeniwumu', name: '伊科尼乌姆', factionId: 'luomu', lat: 37.8744, lng: 32.4931, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'TURKS', note: '罗姆苏丹国首都（科尼亚），古典吕考尼亚核心大城，人口数万；依2026-10-01铁律定为小城。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.87,32.48 偏离科尼亚城 1.25 公里，按英文维基百科 Konya 坐标改为 37.8744,32.4931。🔴 [2026-10-22 按史] 科尼亚为罗姆苏丹国首都（1097–1243），塞尔柱建筑阿拉丁清真寺（1221）、卡拉泰经学院（1251）；TURKS 分支「封建时代突厥骑射军团」描述点名科尼亚、锡瓦斯；原 ORIE（萨拉森生土要塞，黎凡特—埃及代理）不符 → 改 TURKS。' },
     { id: 'city_tiyana', name: '提亚纳', factionId: 'kapaduoxiya', lat: 37.848, lng: 34.611, type: 'small_city', troops: 8000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'ORIE', note: '卡帕多细亚重镇，安基拉南下奇里乞亚门古道必经之城。公元前333年亚历山大穿越卡帕多细亚、任命萨比克塔斯为卡帕多细亚总督（阿里安《远征记》II.4），本城归马其顿。坐标取英文维基 Tyana 条 37.84806,34.61111。🔴 [2026-09-25 主人令「可以请添加」] 新建，使第 7 场的线改走 安基拉→提亚纳→奇里乞亚门→塔尔苏斯。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
@@ -3454,13 +3454,13 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_latajiya', name: '拉塔基亚', factionId: 'antiaokegongguo', lat: 35.52, lng: 35.79, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '安条克公国港口（今叙利亚拉塔基亚），博希蒙德1098年建公国。🔴 [2026-10-18 按据点] 据点本身是古叙利亚港市拉塔基亚（塞琉古 Laodicea，罗马/拜占庭/阿拉伯/奥斯曼层），实体建筑以中东石构为主；十字军是一段外来政权，不据此定风格；博希蒙德是武将与据点错配，待改武将。' },
     { id: 'city_lansi', name: '兰斯', factionId: 'aoerlianggongguo', lat: 49.26, lng: 4.03, type: 'medium_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '法兰西加冕城，1429年贞德护查理七世于此加冕' },
     // 🔴 [2026-10-18 按史] 卡那封城堡为爱德华一世铁环城堡群之首，实建为英格兰/萨伏伊规制石堡 → BRITONS；不取凯尔特。
-    { id: 'city_kanafeng', name: '卡那封', factionId: 'jinquehua', lat: 53.14, lng: -4.27, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地；实建为英格兰/萨伏伊规制石堡，故 BRITONS。' },
-    { id: 'city_meierfei', name: '梅尔菲', factionId: 'apuliya', lat: 40.99, lng: 15.65, type: 'pass', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '诺曼阿普利亚公爵首府，吉斯卡尔南意大利征服起点' },
+    { id: 'city_kanafeng', name: '卡那封', factionId: 'yinggelan', lat: 53.14, lng: -4.27, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地；实建为英格兰/萨伏伊规制石堡，故 BRITONS。' },
+    { id: 'city_meierfei', name: '梅尔菲', factionId: 'xixiliwangguo', lat: 40.99, lng: 15.65, type: 'pass', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '诺曼阿普利亚公爵首府，吉斯卡尔南意大利征服起点' },
     { id: 'city_saimien', name: '塞米恩', factionId: 'saimien', lat: 13.3, lng: 38.2, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '塞米恩山脉贝塔以色列王国故地，传说尤迪特由此摧毁阿克苏姆' },
     { id: 'city_seyute', name: '瑟于特', factionId: 'aosimanbeiyiguo', lat: 40.03, lng: 30.18, type: 'small_city', troops: 10000, region: 'OTTOMAN', buildingStyle: 'TURKS', note: '奥斯曼贝伊国第一都城，奥斯曼一世加齐圣战起源地' },
-    { id: 'city_anfeibolisi', name: '安菲波利斯', factionId: 'aiduoniya', lat: 40.82, lng: 23.85, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', note: '色雷斯海岸希腊殖民城，巴西达斯424年攻克、422年战死守城' },
-    { id: 'city_yanghe', name: '羊河', factionId: 'qiesuonisuosi', lat: 40.332, lng: 26.6, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', stockadeShape: 'rect', stockadeFence: 'ARCHAIC', note: '羊河（伊哥斯波塔米）海战战场，吕山德405年全歼雅典舰队。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 40.36,26.61 偏离 3.23 公里，按英文维基百科 Aegospotami 坐标改为 40.332,26.6。' },
-    { id: 'city_gelanikusi', name: '格拉尼库斯', factionId: 'mixiya', lat: 40.32, lng: 27.28, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '格拉尼库斯河会战战场，帕曼纽334年统左翼大破波斯' },
+    { id: 'city_anfeibolisi', name: '安菲波利斯', factionId: 'lagoniya', lat: 40.82, lng: 23.85, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', note: '色雷斯海岸希腊殖民城，巴西达斯424年攻克、422年战死守城' },
+    { id: 'city_yanghe', name: '羊河', factionId: 'lagoniya', lat: 40.332, lng: 26.6, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', stockadeShape: 'rect', stockadeFence: 'ARCHAIC', note: '羊河（伊哥斯波塔米）海战战场，吕山德405年全歼雅典舰队。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 40.36,26.61 偏离 3.23 公里，按英文维基百科 Aegospotami 坐标改为 40.332,26.6。' },
+    { id: 'city_gelanikusi', name: '格拉尼库斯', factionId: 'aqimeinide', lat: 40.32, lng: 27.28, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '格拉尼库斯河会战战场，帕曼纽334年统左翼大破波斯' },
     // 🔴 [2026-09-12 主人定] 战场**不再是据点**（主人：「把战场独立出来，不做为据点，就叫战场。
     //   一个地名而已。类似奇观」）→ 原先这里的 `city_yisusi`、`city_gelanikusihe` 两行
     //   已迁到 **`src/data/Battlefields.ts`**（`bf_yisusi` / `bf_gelanikusihe`），
@@ -3469,21 +3469,21 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_peiluximu', name: '佩鲁西姆', factionId: 'xiaaiji', lat: 31.04, lng: 32.55, type: 'pass', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '埃及东方门户要塞，佩尔狄卡斯321年征埃及军至此处、尼罗河畔被弑' },
     { id: 'city_matelugang', name: '马特鲁港', factionId: 'maermajika', lat: 31.35, lng: 27.23, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', stockadeShape: 'trapezoid', stockadeFence: 'ARCHAIC', note: '古名帕拉伊托尼乌姆（Paraetonium），埃及西北沿海港。🔴 [2026-09-25 主人令「请添加」] 为第三片第 3 段「埃及接收与加冕走廊」补：亚历山大自亚历山大城西行至此，再南下沙海往锡瓦（阿里安《远征记》III.3）。坐标按史料位置取 31.35,27.23。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
     { id: 'city_halikanasu', name: '哈利卡纳苏斯', factionId: 'kaliya', lat: 37.03, lng: 27.43, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '卡里亚都城（摩索拉斯陵墓所在），阿尔特米西亚女王萨拉米斯海战率五舰助波斯 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
-    { id: 'city_kelazuomeinai', name: '克拉佐美奈', factionId: 'bosidiguo', lat: 38.36, lng: 26.77, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '爱奥尼亚十二城之一（斯米尔纳湾南岸海港城邦：主城在陆上、另有离岸小岛城区以堤道连陆，腹地为 Chora；英文维基 Klazomenai 明载 one of the twelve Ionian cities）。🔴 [2026-10-02 主人令「克拉佐美奈请符合历史」] 定级依据（按 2026-10-01 定级铁律逐条对）：① 它是**城邦**，不是关隘/要塞/堡垒 → **不归险要**（原写 pass 属误判：有石墙是希腊城邦常态，不足以当险要）；② 人口无载 → 按现行规则兜底取城寨（石墙不改变人口定级）。史事：公元前497年波斯于伊奥尼亚起义后夺回此城（希罗多德 V.123）；前 412–411 年伯罗奔尼撒战争期间为雅典与斯巴达反复争夺（修昔底德 VIII 卷）；公元前387年《大王和约》划归波斯。' },
-    { id: 'city_tiluo', name: '提洛', factionId: 'jikelazes', lat: 37.39, lng: 25.27, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', note: '爱琴海阿波罗圣地岛，达提斯490年主祭阿波罗、焚香300他连得并归还神像' },
+    { id: 'city_kelazuomeinai', name: '克拉佐美奈', factionId: 'aqimeinide', lat: 38.36, lng: 26.77, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '爱奥尼亚十二城之一（斯米尔纳湾南岸海港城邦：主城在陆上、另有离岸小岛城区以堤道连陆，腹地为 Chora；英文维基 Klazomenai 明载 one of the twelve Ionian cities）。🔴 [2026-10-02 主人令「克拉佐美奈请符合历史」] 定级依据（按 2026-10-01 定级铁律逐条对）：① 它是**城邦**，不是关隘/要塞/堡垒 → **不归险要**（原写 pass 属误判：有石墙是希腊城邦常态，不足以当险要）；② 人口无载 → 按现行规则兜底取城寨（石墙不改变人口定级）。史事：公元前497年波斯于伊奥尼亚起义后夺回此城（希罗多德 V.123）；前 412–411 年伯罗奔尼撒战争期间为雅典与斯巴达反复争夺（修昔底德 VIII 卷）；公元前387年《大王和约》划归波斯。' },
+    { id: 'city_tiluo', name: '提洛', factionId: 'xila', lat: 37.39, lng: 25.27, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', note: '爱琴海阿波罗圣地岛，达提斯490年主祭阿波罗、焚香300他连得并归还神像' },
     // 🔴 [2026-09-18 主人定「每个据点都必须是一级 16 之一 + 二级 62+3 之一」]
     //    本据点原先**没有 buildingStyle 字段**（region=ORIE、troops=20000 —— 早前走快速新建建成），
     //    编辑器里一级那一格因此是空的。补写 'ORIE'：一级 = 中东（ORIE），二级 = 中东·萨拉森（ORIE，同键）。
     { id: 'city_aerbeila', name: '阿尔贝拉', factionId: 'adiyabeina', lat: 36.19, lng: 44.01, type: 'medium_city', troops: 20000, region: 'ORIE', buildingStyle: 'ORIE' },
 
-    { id: 'city_kalisituosi', name: '卡里斯托斯', factionId: 'youbeiya', lat: 38.01, lng: 24.42, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '优卑亚岛南端的希腊城邦（卡里斯托斯，今 Karystos）。🔴 [2026-10-02 主人令「同一条尺下它也是城邦＋石墙，请修复」] 定级依据（与克拉佐美奈同一把尺，按 2026-10-01 定级铁律逐条对）：① 它是**城邦**，不是关隘/要塞/堡垒 → **不归险要**（原写 pass 属误判：有石墙是希腊城邦常态，不足以当险要）；② 人口无载 → 按现行规则兜底取城寨（石墙不改变人口定级）。史事：公元前490年波斯达提斯远征时围城、蹂躏其地迫其就范（希罗多德 VI.99）；公元前470年代被雅典用兵压入提洛同盟（修昔底德 I.98）。' },
-    { id: 'city_antiwali', name: '安提瓦里', factionId: 'zeta', lat: 42.10, lng: 19.10, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN', note: '今黑山巴尔港，柏朗嘉宾1248–1252任该地大主教并卒于此' },
-    { id: 'city_aolinsuosi', name: '奥林索斯', factionId: 'haerjijiji', lat: 40.29, lng: 23.35, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '卡尔基季基同盟首府，腓力二世348年攻克并夷平' },
-    { id: 'city_kawunas', name: '卡乌纳斯', factionId: 'telakaigongguo', lat: 54.90, lng: 23.91, type: 'pass', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '立陶宛第二城，科斯图提斯1362年在此抵御条顿骑士团' },
-    { id: 'city_delusitaer', name: '德鲁斯塔尔', factionId: 'duobuluojia', lat: 44.12, lng: 27.26, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '多瑙河畔多布罗加要塞，伊瓦伊洛1278年在此击败金帐汗国' },
+    { id: 'city_kalisituosi', name: '卡里斯托斯', factionId: 'aqimeinide', lat: 38.01, lng: 24.42, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '优卑亚岛南端的希腊城邦（卡里斯托斯，今 Karystos）。🔴 [2026-10-02 主人令「同一条尺下它也是城邦＋石墙，请修复」] 定级依据（与克拉佐美奈同一把尺，按 2026-10-01 定级铁律逐条对）：① 它是**城邦**，不是关隘/要塞/堡垒 → **不归险要**（原写 pass 属误判：有石墙是希腊城邦常态，不足以当险要）；② 人口无载 → 按现行规则兜底取城寨（石墙不改变人口定级）。史事：公元前490年波斯达提斯远征时围城、蹂躏其地迫其就范（希罗多德 VI.99）；公元前470年代被雅典用兵压入提洛同盟（修昔底德 I.98）。' },
+    { id: 'city_antiwali', name: '安提瓦里', factionId: 'saierweiya', lat: 42.10, lng: 19.10, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN', note: '今黑山巴尔港，柏朗嘉宾1248–1252任该地大主教并卒于此' },
+    { id: 'city_aolinsuosi', name: '奥林索斯', factionId: 'maqidun', lat: 40.29, lng: 23.35, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '卡尔基季基同盟首府，腓力二世348年攻克并夷平' },
+    { id: 'city_kawunas', name: '卡乌纳斯', factionId: 'litaowan', lat: 54.90, lng: 23.91, type: 'pass', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '立陶宛第二城，科斯图提斯1362年在此抵御条顿骑士团' },
+    { id: 'city_delusitaer', name: '德鲁斯塔尔', factionId: 'baojialiya', lat: 44.12, lng: 27.26, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '多瑙河畔多布罗加要塞，伊瓦伊洛1278年在此击败金帐汗国' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：也儿的石：额尔齐斯河上游乃蛮故地（屈出律退守处），归鞑靼（中亚草原）
     { id: 'city_yeerdishi', name: '也儿的石', factionId: 'aertai', lat: 47.85, lng: 85.60, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', note: '额尔齐斯河上游乃蛮故地，屈出律1204年退守重整残部' },
-    { id: 'city_mierkefu', name: '密尔科夫', factionId: 'kumanni', lat: 45.65, lng: 27.05, type: 'pass', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '喀尔巴阡东麓库曼主教区要塞；吉尔根汗驻此，精锐库曼骑' },
+    { id: 'city_mierkefu', name: '密尔科夫', factionId: 'kuman_oleshky', lat: 45.65, lng: 27.05, type: 'pass', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '喀尔巴阡东麓库曼主教区要塞；吉尔根汗驻此，精锐库曼骑' },
     { id: 'city_oleshky', name: '奥列什基', factionId: 'kuman_oleshky', lat: 46.61, lng: 32.72, type: 'stockade', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '第聂伯河口木栅商埠；库曼忽炭汗驻牧，精锐库曼弓骑 T1', mirror: true },
     { id: 'city_saksin', name: '萨克辛', factionId: 'kuman_oleshky', lat: 46.72, lng: 47.92, type: 'pass', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '伏尔加三角洲夯土砖石要塞，水陆咽喉；钦察巴奇曼驻此，精锐斡勒轻骑 T2', mirror: true },
     { id: 'city_ahexikesi', name: '阿赫西克特', factionId: 'feierganna', lat: 40.89, lng: 71.34, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', note: '费尔干纳旧都，忽都鲁（巴布尔之母）长期坐镇筹粮守城' },
@@ -3493,14 +3493,14 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_bideluoa', name: '彼得罗阿', factionId: 'alaokaniya', lat: -35.03, lng: -71.55, type: 'pass', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '马塔基托河畔要塞，瓜科尔达随劳塔罗北伐战死殉难地' },
     { id: 'city_mengteluo', name: '蒙特罗', factionId: 'bogendigongguo', lat: 48.39, lng: 2.95, type: 'pass', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '塞纳河畔蒙特罗要塞，无畏的约翰1419年在此被刺' },
     { id: 'city_oushi', name: '欧什', factionId: 'amaniyake', lat: 43.65, lng: 0.58, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '阿马尼亚克伯爵领首府，贝尔纳·德·阿马尼亚克驻地' },
-    { id: 'city_geluosite', name: '格洛斯特', factionId: 'geluositeboguo', lat: 51.86, lng: -2.24, type: 'small_city', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '格洛斯特伯国首府，吉尔伯特·德·克莱尔驻地' },
-    { id: 'city_kesenza', name: '科森扎', factionId: 'baerta', lat: 39.30, lng: 16.25, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'LATIN', note: '亚拉里克410年病逝葬布森托河底之地' },
-    { id: 'city_nabone', name: '纳博讷', factionId: 'saiputimanniya', lat: 43.18, lng: 3.00, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '阿陶尔夫414年娶加拉·普拉西狄亚建宫廷之地' },
+    { id: 'city_geluosite', name: '格洛斯特', factionId: 'yinggelan', lat: 51.86, lng: -2.24, type: 'small_city', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '格洛斯特伯国首府，吉尔伯特·德·克莱尔驻地' },
+    { id: 'city_kesenza', name: '科森扎', factionId: 'xigete', lat: 39.30, lng: 16.25, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'LATIN', note: '亚拉里克410年病逝葬布森托河底之地' },
+    { id: 'city_nabone', name: '纳博讷', factionId: 'xigete', lat: 43.18, lng: 3.00, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '阿陶尔夫414年娶加拉·普拉西狄亚建宫廷之地' },
     // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 太平洋新增据点（全库此前无马里亚纳/查莫罗任何记录）
     // 🔴 [2026-10-13 主人令「查不到的一律城寨」] 定级：非险要（拉特石柱是屋基、无石头城墙）→ 城市档；
     //    阿加尼亚**单邑城居人口史料查不到**，不许拿全岛 4–10 万去推一个村落 ⇒ 按「算不出来一律按城寨」落 **城寨(stockade)**。
     { id: 'city_hagatna', name: '阿加尼亚', factionId: 'chamorro', lat: 13.4757, lng: 144.7500, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', stockadeShape: 'square', stockadeFence: 'DARK', note: '阿加尼亚（Hagåtña），关岛西岸阿加尼亚河口聚落，查莫罗人的首要村落与统治中心，1521 年麦哲伦抵达时的查莫罗主邑，后为西班牙殖民首府。查莫罗语 Guåhan（关岛）本义「我们所有的」。定级依据§6.2：非关隘/要塞/堡垒（拉特石柱 Latte 是屋基非城防，无石头城墙）→ 城市；查英文维基与当地语种维基均未见阿加尼亚城居人口数字，算不出来 → 按「查不到的一律城寨」落城寨(stockade)。围栏取原木尖桩（查莫罗传统木栅/茅屋聚落）。文化：东南亚（太平洋南岛系，借 SEAS 素材）。坐标取阿加尼亚 13.4757,144.7500。归属：势力「查莫罗」（此处原住民族、民族发源核心，按§「以民族命名」），旗号「查」。' },
-    { id: 'city_lier', name: '里尔', factionId: 'bogengnidielan', lat: 50.63, lng: 3.06, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '好人菲利普1454年野鸡宴会誓师东征之地' },
+    { id: 'city_lier', name: '里尔', factionId: 'bogendigongguo', lat: 50.63, lng: 3.06, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '好人菲利普1454年野鸡宴会誓师东征之地' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：哈瓦登：威尔士东北，凯尔特
     { id: 'city_hawadeng', name: '哈瓦登', factionId: 'gewennesi', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '戴菲德1282年突袭英军城堡点燃威尔士抗英终战' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：布伊尔斯：威尔士中部，凯尔特
@@ -3558,7 +3558,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── 2026-08-04 新增：埃德萨（奥斯若恩国都；十字军埃德萨伯国首府）──
     { id: 'city_aidesa', name: '埃德萨', factionId: 'aosiruowen', lat: 37.15, lng: 38.7825, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '今土耳其乌尔法（Şanlıurfa）；塞琉古建城名埃德萨，奥斯若恩王国国都；叙利亚基督教中心；1098–1144十字军埃德萨伯国首府；与尼尼微—阿勒颇走廊十字路口。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.1674,38.7955 偏离 2.25 公里，按英文维基百科 Edessa 坐标改为 37.15,38.7825。🔴 [2026-10-18 按据点] 据点本身是奥斯若恩/叙利亚古城埃德萨，实体建筑主体为罗马—拜占庭—叙利亚石构；十字军伯国是一段外来政权，不据此定风格；鲍德温是武将与据点错配，待改武将。' },
     { id: 'city_daerban', name: '打耳班', factionId: 'kesa', lat: 42.06, lng: 48.3, type: 'pass', troops: 10000, region: 'KHAZARS', buildingStyle: 'PERSIAN' },
-    { id: 'city_miletus', name: '米利都', factionId: 'yiaoniya', lat: 37.5303, lng: 27.2783, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '伊奥尼亚第一城、爱琴海东岸大港，公元前334年米利都围城战的目标城（英文维基百科 Siege of Miletus 信息框坐标 37°31′49″N 27°16′42″E，即今土耳其艾登省迪迪姆）。定级依据§6.2：英文维基百科 Miletus 信息框未给人口（只给遗址面积 90 公顷），公元前334年人口无可靠数字 → 按规则兜底城寨。' },
+    { id: 'city_miletus', name: '米利都', factionId: 'aiaoniya', lat: 37.5303, lng: 27.2783, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '伊奥尼亚第一城、爱琴海东岸大港，公元前334年米利都围城战的目标城（英文维基百科 Siege of Miletus 信息框坐标 37°31′49″N 27°16′42″E，即今土耳其艾登省迪迪姆）。定级依据§6.2：英文维基百科 Miletus 信息框未给人口（只给遗址面积 90 公顷），公元前334年人口无可靠数字 → 按规则兜底城寨。' },
     { id: 'city_yifusuo', name: '以弗所', factionId: 'aiaoniya', lat: 37.94, lng: 27.34, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' },
     { id: 'city_ankala', name: '安卡拉', factionId: 'jialatai', lat: 39.9289, lng: 32.8547, type: 'small_city', troops: 10000, region: 'HITTITES', buildingStyle: 'ORIE', note: '🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 39.93,32.87 偏离安卡拉城 1.31 公里，按英文维基百科 Ankara 坐标改为 39.9289,32.8547。' },
     { id: 'city_buersa', name: '布尔萨', factionId: 'osman', lat: 40.18, lng: 29.06, type: 'big_city', troops: 10000, region: 'OTTOMAN', buildingStyle: 'TURKS', note: '奥斯曼帝国第一都城（1326–1363）；苏丹亲兵耶尼切里军团大本营' },
@@ -3585,19 +3585,19 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_baku', name: '巴库', factionId: 'xierwan', lat: 40.4, lng: 49.9, type: 'pass', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'ORIE', note: '希尔万要塞/拜火教圣地；18世纪前常住人口仅约1万，19世纪石油时代后爆发增长' },
     { id: 'city_xiemianjieer', name: '谢缅杰尔', factionId: 'xiemian', lat: 43, lng: 47.4, type: 'small_city', troops: 10000, region: 'KHAZARS', buildingStyle: 'CENTRAL_ASIA', note: '可萨汗国早期首都；10世纪被罗斯大公斯维亚托斯拉夫摧毁后彻底废弃淹没' },
         { id: 'city_yidier', name: '伊蒂尔', factionId: 'yidier', lat: 46, lng: 48, type: 'medium_city', troops: 10000, region: 'KHAZARS', buildingStyle: 'CENTRAL_ASIA', note: '可萨汗国鼎盛期首都，伏尔加河三角洲，丝路草原枢纽' },
-    { id: 'city_saerkeer', name: '萨尔克尔', factionId: 'xiadunhe', lat: 47.705, lng: 42.27306, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '定级依据§6.2：城内守军300+平民约1000人（要塞仅2.6ha；君士坦丁七世《帝国治理论》），人口不足一万 → 按规则判城寨' },
-    { id: 'city_weishen', name: '维申斯卡亚', factionId: 'dunhe', lat: 49.63, lng: 41.74, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '顿河哥萨克重镇，肖洛霍夫《静静的顿河》的故乡；真·顿河军府切尔卡斯克/新切尔卡斯克因距塔纳伊斯<50km 放不下' },
+    { id: 'city_saerkeer', name: '萨尔克尔', factionId: 'luosi', lat: 47.705, lng: 42.27306, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAVIC', note: '定级依据§6.2：城内守军300+平民约1000人（要塞仅2.6ha；君士坦丁七世《帝国治理论》），人口不足一万 → 按规则判城寨' },
+    { id: 'city_weishen', name: '维申斯卡亚', factionId: 'gesake', lat: 49.63, lng: 41.74, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '顿河哥萨克重镇，肖洛霍夫《静静的顿河》的故乡；真·顿河军府切尔卡斯克/新切尔卡斯克因距塔纳伊斯<50km 放不下' },
     { id: 'city_salaichuke', name: '萨莱楚克', factionId: 'salai', lat: 47.5, lng: 51.7, type: 'medium_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CENTRAL_ASIA', note: '金帐汗国乌拉尔河渡口大城，草原丝路伏尔加-中亚段枢纽' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 TURKS：曼格什拉克：里海东岸乌古斯—塞尔柱草原，归突厥 TURKS
     { id: 'city_mangshilake', name: '曼格什拉克', factionId: 'mangshi', lat: 44, lng: 52, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'CENTRAL_ASIA', note: '里海东岸曼格什拉克半岛，乌古斯/塞尔柱草原商路门户' },
-    { id: 'city_kefu', name: '科孚', factionId: 'kejila', lat: 39.62, lng: 19.92, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'LATIN', note: '古科基拉城邦都城（前8世纪-公元前229年独立）。🔴 [2026-10-18 按史] 旧城核心为威尼斯旧堡（Palaio Frourio）与新堡（Neo Frourio）、圣马可飞狮与意式柱廊，实建为意大利/威尼斯系海防城，故 LATIN。' },
+    { id: 'city_kefu', name: '科孚', factionId: 'kelite', lat: 39.62, lng: 19.92, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'LATIN', note: '古科基拉城邦都城（前8世纪-公元前229年独立）。🔴 [2026-10-18 按史] 旧城核心为威尼斯旧堡（Palaio Frourio）与新堡（Neo Frourio）、圣马可飞狮与意式柱廊，实建为意大利/威尼斯系海防城，故 LATIN。' },
     { id: 'city_malta', name: '马耳他', factionId: 'maerta_qishi', lat: 35.9, lng: 14.44, type: 'pass', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'LATIN', note: '医院骑士团堡垒岛驻地（1530起），1565马耳他大围攻圣埃尔莫堡血战' },
     { id: 'city_gebenhagen', name: '哥本哈根', factionId: 'danmai', lat: 55.68, lng: 12.57, type: 'small_city', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'DANES', note: '哥本哈根；丹麦，阿布萨隆 1167 建城' },
     { id: 'city_jelling', name: '耶灵', factionId: 'danmai', lat: 55.756, lng: 9.42, type: 'stockade', troops: 10000, region: 'DANES', buildingStyle: 'DANES', note: '耶灵（Jelling）：10 世纪丹麦王室（老戈姆、蓝牙哈拉尔）的王家领地，双土冢、耶灵石碑与木构教堂；蓝牙哈拉尔在耶灵石碑上宣示统一丹麦/挪威（UNESCO 世界遗产「耶灵石冢」）。🔴 [2026-10-22 按史新增·据点为王室驻地/营地层] 配武将蓝牙哈拉尔（封建 × DANES＝封建时代丹麦王国军团）、精锐耶灵亲兵 T4；离哥本哈根 197.5km（>40km）。' },
     { id: 'city_hedeby', name: '海瑟比', factionId: 'danmai', lat: 54.487, lng: 9.565, type: 'stockade', troops: 10000, region: 'DANES', buildingStyle: 'DANES', note: '海瑟比（Hedeby／Haithabu，古诺斯 Heiðabýr；法兰克史料 Sliesthorp）：8–11 世纪维京商埠，丹麦王戈德弗雷德 808 年毁雷里克后迁商于此、修丹尼维尔克；半圆土垒与码头遗址（UNESCO 世界遗产「海瑟比与丹尼维尔克」）。🔴 [2026-10-22 按史新增·据点为商埠/营地层] 配武将戈德弗雷德（封建 × DANES＝封建时代丹麦王国军团）、精锐海瑟比卫队 T4；离汉堡 107.8km（>40km），离耶灵约 141km。' },
     { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'medium_city', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'GERMANIC' },
     { id: 'city_madeli', name: '马德里', factionId: 'kasidiliya', lat: 40.41, lng: -3.7, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' },
-    { id: 'city_boertu', name: '波尔图', factionId: 'duluo', lat: 41.15, lng: -8.62, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '波尔图；杜罗河口，葡萄牙国名发源地。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土城市，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。' },
+    { id: 'city_boertu', name: '波尔图', factionId: 'putaoya', lat: 41.15, lng: -8.62, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '波尔图；杜罗河口，葡萄牙国名发源地。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土城市，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。' },
     { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.9575, lng: 26.2389, type: 'small_city', troops: 10000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'ORIE', note: '🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 39.95,26.23 偏离特洛伊遗址 1.13 公里，按英文维基百科 Troy 坐标改为 39.9575,26.2389。' },
 
     { id: 'city_bashila', name: '巴士拉', factionId: 'alabo', lat: 30.50, lng: 47.78, type: 'medium_city', troops: 10000, region: 'WEST_ASIA', buildingStyle: 'ORIE', note: '巴士拉；阿拉伯帝国 636 年军事营地' },
@@ -3627,14 +3627,14 @@ buildingStyle: 'TIBET', troops: 10000,
     //  1565-67 葡军自圣维森特北上逐走法国「南极法兰西」，正式建里约城。
     { id: 'city_ribeira', name: '里贝拉', factionId: 'fodejiao', lat: 14.92, lng: -23.60, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '佛得角首府里贝拉格兰德（今 Cidade Velha），1462 建，横渡大西洋的西非大迂回起点。🔴 [2026-10-05 主人裁定「保持葡式／伊比利亚」] 佛得角群岛在葡人抵达前是**无人荒岛**，无土著文化可迁就，城址、街区与石堡全由葡萄牙王室与定居者一手建立 → 风格挂葡萄牙（PORTUGUESE／一级 MEDI），与里斯本、安格拉同一族。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 PORTUGUESE：萨尔瓦多（巴西巴伊亚）：葡萄牙殖民地
-    { id: 'city_salvador', name: '萨尔瓦多', factionId: 'baiyiya', lat: -12.97, lng: -38.51, type: 'medium_city', troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '巴伊亚都督府治所，1549-1763 葡属巴西首府，蔗糖与黄金出口枢纽' },
+    { id: 'city_salvador', name: '萨尔瓦多', factionId: 'tupinijin', lat: -12.97, lng: -38.51, type: 'medium_city', troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '巴伊亚都督府治所，1549-1763 葡属巴西首府，蔗糖与黄金出口枢纽' },
     // 🔴 [2026-10-18 按史] 圣维森特 1532 年葡萄牙首座永久拓殖城镇：石木防御要塞屋、总督府、小教堂、葡式石砌磨坊 → PORTUGUESE；不因驻将本地而降为 TUPI。
     { id: 'city_saovicente', name: '圣维森特', factionId: 'tupinijin', lat: -23.96, lng: -46.39, type: 'stockade', troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '1532 葡萄牙在巴西的第一个殖民村镇；1565 葡军自此北上反击南极法兰西' },
     // ── [2026-08-26] 跨大西洋航线据点：让美洲接入旧大陆，并给特诺奇提特兰补出海口 ──
     //  依据：西班牙「珍宝船队」(Flota de Indias) 与葡萄牙大西洋航线的历史必经节点。
     //  去程借东北信风走加那利，东返借西风带走亚速尔 —— 两条不同航线，各设一个中继。
     // 🔴 [2026-10-18 按史] 韦拉克鲁斯真实建成的实体是西班牙圣胡安德乌卢阿珊瑚石星形棱堡、防御石墙与西属美洲殖民巴洛克建筑群 → SPANISH；不因驻将奇科马卡特为托托纳克人而降为 AMERICA。
-    { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'tuotuonake', lat: 19.19, lng: -96.14, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km' },
+    { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'xinxibanya', lat: 19.19, lng: -96.14, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km' },
     // 🔴 [2026-10-18 按史] 哈瓦那真实建成的实体是莫罗城堡、皇家军队城堡、拉卡瓦尼亚堡与西班牙殖民街区，西欧文艺复兴转古典主义砖石海防要塞城 → SPANISH；不因驻将哈土依为泰诺人而降为 AMERICA。
     // 🔴 [2026-10-20 主人令「武将文化一定要符合建筑风格，不然套的军团都是错的」] 古巴东部泰诺人村落「亚拉」：给泰诺反抗领袖哈土依一个建筑风格对口（TUPI 热带美洲原住民茅草村落）的据点
     { id: 'city_yala', name: '亚拉', factionId: 'taino_d', lat: 20.35, lng: -76.85, type: 'stockade', troops: 3000, region: 'AMERICA', buildingStyle: 'TUPI', note: '古巴东部泰诺人村落（Yara 一带，1510 年代西班牙征服古巴时泰诺反抗活动区；哈土依 1512 被西班牙烧死）' },
@@ -3647,7 +3647,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_aksum', name: '阿克苏姆', factionId: 'ethiopia', lat: 14.13, lng: 38.72, type: 'medium_city', troops: 10000, region: 'AFRICA_ANTIQUITY', buildingStyle: 'ETHIOPIANS' },
 
     { id: 'city_malacca', name: '马六甲', factionId: 'malacca', lat: 2.19, lng: 102.25, type: 'medium_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '满剌加苏丹国都城，马六甲海峡咽喉' },
-        { id: 'city_xibo', name: '希波', factionId: 'xiluoma', lat: 36.90, lng: 7.76, type: 'medium_city', troops: 10000, region: 'BERBER', buildingStyle: 'ROMA', note: '汪达尔王国第一代都城希波（Hippo Regius），盖萨里克立国之基，圣奥古斯丁主教之城。🔴 [2026-10-18 按据点] 据点本身是罗马阿非利加行省石城：奥古斯丁大教堂、公共浴场、罗马广场与港城石构，故 ROMA；盖萨里克是武将与据点错配，待改武将。' },
+        { id: 'city_xibo', name: '希波', factionId: 'luoma_diguo', lat: 36.90, lng: 7.76, type: 'medium_city', troops: 10000, region: 'BERBER', buildingStyle: 'ROMA', note: '汪达尔王国第一代都城希波（Hippo Regius），盖萨里克立国之基，圣奥古斯丁主教之城。🔴 [2026-10-18 按据点] 据点本身是罗马阿非利加行省石城：奥古斯丁大教堂、公共浴场、罗马广场与港城石构，故 ROMA；盖萨里克是武将与据点错配，待改武将。' },
     { id: 'city_sanfoqi', name: '巨港', factionId: 'sanfoqi', lat: -2.99, lng: 104.75, type: 'big_city', troops: 10000, region: 'SRIVIJAYA', buildingStyle: 'MALAY', note: '室利佛逝都城巨港（Palembang），扼守马六甲海峡之海上佛教贸易霸权' },
     { id: 'city_kalasan', name: '卡拉桑', factionId: 'medang', lat: -7.756, lng: 110.445, type: 'stockade', troops: 10000, region: 'JAVANESE', buildingStyle: 'MALAY', note: '马打蓝王国赛伦德拉王朝佛寺圣地（778年建，爪哇中部日惹普兰巴南平原）；定级依据§6.2：无人口数字（778年铭文为授村建寺，僧舍仅6间），人口不足一万 → 按规则判城寨' },
     { id: 'city_deernate', name: '德尔纳特', factionId: 'ternate', lat: 0.7852, lng: 127.3832, type: 'small_city', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', note: '特尔纳特苏丹国都城(维基作德那第)，世界香料之源丁香群岛核心，加马拉火山岛；巴布拉苏丹1570-1583在此亲统水军攻陷葡属卡斯特拉要塞，驱逐殖民者称霸东部印尼群岛' },
@@ -3669,13 +3669,13 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_bijiabuer', name: '比贾布尔', factionId: 'adile', lat: 16.830, lng: 75.736, type: 'medium_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '比贾布尔苏丹国都，戈尔贡巴兹' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：圣奥古斯丁（佛罗里达）：西班牙殖民地
     { id: 'city_shengaogusiding', name: '圣奥古斯丁', factionId: 'foluolida', lat: 29.897, lng: -81.313, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西班牙1565年建的美洲最古欧洲殖民城；定级依据§6.2：17世纪中叶城内500–600人、世纪末>1400人，人口不足一万 → 按规则判城寨' },
-    { id: 'city_deerfei', name: '德尔斐', factionId: 'fujisi', lat: 38.482, lng: 22.501, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '阿波罗神谕圣地；定级依据§6.2：城居人口无可靠数字（学界定性小城邦），人口不足一万 → 按规则判城寨' },
+    { id: 'city_deerfei', name: '德尔斐', factionId: 'xila', lat: 38.482, lng: 22.501, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '阿波罗神谕圣地；定级依据§6.2：城居人口无可靠数字（学界定性小城邦），人口不足一万 → 按规则判城寨' },
     { id: 'city_aolinpiya', name: '奥林匹亚', factionId: 'yilisi', lat: 37.639, lng: 21.631, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '古代奥运圣地；定级依据§6.2：圣地无常住城市（仅祭司官吏工匠），人口不足一万 → 按规则判城寨' },
     { id: 'city_boergong', name: '博尔贡', factionId: 'nuowei', lat: 61.047, lng: 7.812, type: 'stockade', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '挪威松恩峡湾木板教堂；定级依据§6.2：中世纪人口无数字（木板教堂所在村落仅教堂+数座农庄），人口不足一万 → 按规则判城寨' },
     { id: 'city_kanpeier', name: '坎佩尔', factionId: 'keernuwaye', lat: 47.995, lng: -4.103, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'BRITONS', note: '布列塔尼首府，圣科朗坦大教堂' },
     { id: 'city_waerna', name: '瓦尔纳', factionId: 'aodesuosi', lat: 43.214, lng: 27.915, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '古奥德索斯城，黑海港；定级依据§6.2：城内2100–2300人（1515/1530）、5200–5500人（1597奥斯曼税册），未达1万但属城市→小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：杰姆（突尼斯）：罗马阿非利加行省，罗马古典
-    { id: 'city_jiemu', name: '杰姆', factionId: 'disidelusi', lat: 35.296, lng: 10.706, type: 'pass', troops: 10000, region: 'CARTHAGE', buildingStyle: 'ROMA', note: '杰姆圆形竞技斗兽要塞城（古罗马蒂斯德鲁斯），蒂斯德鲁斯军团驻防' },
+    { id: 'city_jiemu', name: '杰姆', factionId: 'luoma_diguo', lat: 35.296, lng: 10.706, type: 'pass', troops: 10000, region: 'CARTHAGE', buildingStyle: 'ROMA', note: '杰姆圆形竞技斗兽要塞城（古罗马蒂斯德鲁斯），蒂斯德鲁斯军团驻防' },
     { id: 'city_yazide', name: '亚兹德', factionId: 'yisatisi', lat: 31.897, lng: 54.356, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN' },
 
     { id: 'city_wuer', name: '乌尔城', factionId: 'wuer', lat: 30.962, lng: 46.103, type: 'small_city', troops: 10000, region: 'BABYLON', buildingStyle: 'ORIE', note: '苏美尔月神城，乌尔第三王朝首都' },
@@ -3683,27 +3683,27 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_putijiaye', name: '菩提伽耶', factionId: 'jiaye', lat: 24.696, lng: 84.991, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU' },
 
     { id: 'city_jienei', name: '杰内城', factionId: 'jienei', lat: 13.905, lng: -4.555, type: 'small_city', troops: 10000, region: 'GHANA', buildingStyle: 'AFRICA', note: '马里帝国名城，杰内大清真寺' },
-    { id: 'city_agesi', name: '库尔泰亚', factionId: 'kuertaiya', lat: 45.353, lng: 24.635, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC' },
+    { id: 'city_agesi', name: '库尔泰亚', factionId: 'walajiyia', lat: 45.353, lng: 24.635, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC' },
 
-    { id: 'city_puleisilafu', name: '普雷斯拉夫', factionId: 'duonaobaojia', lat: 43.142315, lng: 26.813148, type: 'small_city', troops: 10000, region: 'BULGARIANS', buildingStyle: 'BULGARIANS', note: '893—971年第一保加利亚帝国都城，沙皇西美昂一世黄金时代的政治与文学中心，圆形金教堂所在地' },
+    { id: 'city_puleisilafu', name: '普雷斯拉夫', factionId: 'baojialiya', lat: 43.142315, lng: 26.813148, type: 'small_city', troops: 10000, region: 'BULGARIANS', buildingStyle: 'BULGARIANS', note: '893—971年第一保加利亚帝国都城，沙皇西美昂一世黄金时代的政治与文学中心，圆形金教堂所在地' },
     { id: 'city_aidiernei', name: '埃迪尔内', factionId: 'lumiliya', lat: 41.6781, lng: 26.5591, type: 'small_city', troops: 10000, region: 'OTTOMAN', buildingStyle: 'TURKS', note: '古称阿德里安堡，奥斯曼帝国迁都君士坦丁堡前的都城；塞利姆二世命米马尔·希南于1568—1575年营建塞利米耶清真寺。🔴 [2026-10-05 主人令「建筑风格必须当地」] 埃迪尔内是**奥斯曼帝国都城（1363–1453）**，与布尔萨（奥斯曼第一都城）同类 → 挂 TURKS（一级 CEAS）；旧值 ORIE 与本地不符。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「EAST」只是一级母体、取不到 62 类 → 归 BYZANTINE：色雷斯鲁西翁（Rousion）：1206 年保加利亚破拉丁帝国处，该地在拜占庭/拉丁帝国核心区
-    { id: 'city_luxiweng', name: '鲁西翁', factionId: 'jialiboli', lat: 40.88, lng: 26.63, type: 'small_city', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE', note: '色雷斯要塞鲁西翁(Rousion)；1206年保加利亚沙皇卡洛扬率库曼骑兵于此大破拉丁帝国军（鲁西翁之战）' },
+    { id: 'city_luxiweng', name: '鲁西翁', factionId: 'baojialiya', lat: 40.88, lng: 26.63, type: 'small_city', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE', note: '色雷斯要塞鲁西翁(Rousion)；1206年保加利亚沙皇卡洛扬率库曼骑兵于此大破拉丁帝国军（鲁西翁之战）' },
     { id: 'city_suojiamosuo', name: '索加莫索', factionId: 'yilaka', lat: 5.715, lng: -72.933, type: 'stockade', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '古称苏阿莫斯/苏加穆西，穆伊斯卡伊拉卡最高祭司驻地与太阳崇拜中心；太阳神庙于1537年被西班牙士兵焚毁；定级依据§6.2：圣地非常住城（超地方政治体400–700人，朝圣者定期聚集不常住；Fajardo 2016），人口不足一万 → 按规则判城寨' },
     { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'gualani', lat: -25.695, lng: -54.437, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'TUPI', note: '伊瓜苏河大瀑布，名称源自图皮—瓜拉尼语“大水”；瓜拉尼人传统地域，卡韦萨·德·巴卡1542年到达并记载；1626年附近建立圣玛利亚伊瓜苏聚落，原址尚未可靠定位；定级依据§6.2：该点无城市人口（长屋村类比600–1000人，低置信），人口不足一万 → 按规则判城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：巴拿马城：西班牙殖民地
     { id: 'city_banama', name: '巴拿马', factionId: 'xingelana', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：圣多明各：西班牙美洲第一城
-    { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xiyindu', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫' },
+    { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xinxibanya', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：卡塔赫纳（哥伦比亚）：西班牙殖民地
-    { id: 'city_katachena', name: '卡塔赫纳', factionId: 'jialebi', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队' },
+    { id: 'city_katachena', name: '卡塔赫纳', factionId: 'xingelana', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队' },
     { id: 'city_lalibeila', name: '拉利贝拉', factionId: 'zhagewei', lat: 12.033689, lng: 39.043350, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '古称罗哈，扎格维王朝国王拉利贝拉营建“新耶路撒冷”的中世纪宗教中心；贝特·阿曼努埃尔等十一座岩石教堂所在地；定级依据§6.2：中世纪城居人口无可靠数字（现代镇区8484/17367），人口不足一万 → 按规则判城寨' },
     { id: 'city_zeila', name: '塞拉', factionId: 'adal', lat: 11.3533, lng: 43.4731, type: 'small_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'AFRICA', note: '泽拉/塞拉(Zeila)，阿达尔苏丹国早期首都与亚丁湾第一出口海港，红海-索马里贸易枢纽；格拉尼(艾哈迈德·格拉尼)1520年代由此起兵圣战，席卷埃塞俄比亚高原大部' },
     { id: 'city_dasijiliweng', name: '达斯基利翁', factionId: 'xiaofulijiya', lat: 40.1322, lng: 28.0504, type: 'pass', troops: 10000, region: 'ACHAEMENIDS', buildingStyle: 'PERSIAN', note: '阿契美尼德波斯赫勒斯滂-弗里吉亚总督要塞，阿尔西提斯总督治所' },
     { id: 'city_bishnupur', name: '比什努普尔', factionId: 'mallabhum', lat: 23.075, lng: 87.317, type: 'small_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'BENGALIS', note: '定级依据§6.2：17世纪王都推断5000–20000（1901年官方19090；城墙7英里设防王都），未达中城10万门槛 → 小城' },
     { id: 'city_baba_vida', name: '巴巴维达', factionId: 'vidin_tsardom', lat: 43.993056, lng: 22.886667, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'BULGARIANS', note: '维丁多瑙河畔中世纪要塞，维丁国都防御核心' },
     { id: 'city_fasil_fort', name: '法西尔堡', factionId: 'gondarine', lat: 12.6075, lng: 37.469, type: 'pass', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'ETHIOPIANS', note: '贡德尔皇城法西尔盖比，法西里德创建的埃塞俄比亚皇都要塞' },
-    { id: 'city_chambord', name: '香波堡', factionId: 'valois_angouleme', lat: 47.616, lng: 1.517, type: 'pass', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'FRANKS' },
+    { id: 'city_chambord', name: '香波堡', factionId: 'gaolu', lat: 47.616, lng: 1.517, type: 'pass', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'FRANKS' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「EAST」推出的二级与史实不符 → 归 GEORGIANS：阿哈尔齐赫：格鲁吉亚南部
     { id: 'city_akhaltsikhe', name: '阿哈尔齐赫', factionId: 'samtskhe', lat: 41.642, lng: 42.975, type: 'pass', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'GEORGIANS', note: '萨姆茨赫治所，拉巴提城堡所在地' },
@@ -3713,11 +3713,11 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_pagaruyung', name: '帕加鲁荣', factionId: 'minangkabau', lat: -0.471, lng: 100.621, type: 'small_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '米南加保王国王宫所在，尖顶大屋建筑中心；定级依据§6.2：1684年城内约8000人（VOC使节Thomas Dias记录），未达1万但属城市→小城' },
     { id: 'city_uxmal', name: '乌斯马尔', factionId: 'tutul_xiu', lat: 20.359, lng: -89.771, type: 'pass', troops: 10000, region: 'MAYANS', buildingStyle: 'MAYANS', note: '乌斯马尔玛雅阶梯金字塔要塞城，查克王驻防' },
     { id: 'city_bam_citadel', name: '巴姆', factionId: 'kerman_bam', lat: 29.116, lng: 58.368, type: 'pass', troops: 10000, region: 'SASANIAN', buildingStyle: 'PERSIAN', note: '克尔曼东缘丝路绿洲要塞，巴姆城堡所在地' },
-    { id: 'city_bedzin', name: '本津堡', factionId: 'lesser_poland', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '小波兰西境王家石堡，卡齐米日三世鹰巢防线节点' },
-    { id: 'city_braganca', name: '布拉干萨', factionId: 'braganza_house', lat: 41.8042, lng: -6.7492, type: 'pass', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土边城，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。' },
-    { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'trastamara', lat: 41.309, lng: -4.9085, type: 'pass', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH', note: '麦地那德尔坎波王家要塞，特拉斯塔马拉王朝扩建' },
+    { id: 'city_bedzin', name: '本津堡', factionId: 'bolan', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '小波兰西境王家石堡，卡齐米日三世鹰巢防线节点' },
+    { id: 'city_braganca', name: '布拉干萨', factionId: 'putaoya', lat: 41.8042, lng: -6.7492, type: 'pass', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土边城，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。' },
+    { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'kasidiliya', lat: 41.309, lng: -4.9085, type: 'pass', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH', note: '麦地那德尔坎波王家要塞，特拉斯塔马拉王朝扩建' },
     { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'odrysian_late', lat: 42.618056, lng: 25.305556, type: 'pass', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '塞乌特斯三世营建的奥德里西亚王都与设防城' },
-    { id: 'city_chimarros', name: '希马鲁塔', factionId: 'naxos_ancient', lat: 36.965, lng: 25.53, type: 'pass', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型' },
+    { id: 'city_chimarros', name: '希马鲁塔', factionId: 'xila', lat: 36.965, lng: 25.53, type: 'pass', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型' },
     { id: 'city_themiskyra', name: '忒弥斯基拉', factionId: 'yamaxun', lat: 41.2, lng: 36.98, type: 'stockade', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '特尔莫冬河口（今土耳其特尔梅），古希腊传统中亚马逊人的都城；赫拉克勒斯第九件功业「夺希波吕忒腰带」即远征此地。希罗多德四·110-117 记亚马逊人自此漂至塔奈斯河口，与斯基泰青年合流成萨尔马提亚人' },
     // 🔴 [2026-09-12 主人「加沙用什么看历史」] 亚历山大剧本第四章「加沙围城战」的攻城载体。
     //    定级依据 §6.2：加沙非关隘/要塞/堡垒 → 按城市；城内军民数万 >1 万 → 小城（腓利斯丁五城之一）。
@@ -3725,12 +3725,12 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_jiasa', name: '加沙', factionId: 'feilisidin', lat: 31.5017, lng: 34.4668, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '腓利斯丁五城之一、通往埃及的门户要塞城；公元前332年9–10月亚历山大堆土山、挖地道、四次总攻破城，守将巴提斯被处决。定级依据§6.2：非关隘/要塞/堡垒→城市；人口>1万→小城' },
     // 🔴 [2026-09-30 主人令「添加据点：佩利纳（Pelina，色萨利）39.5295,21.8958」]
     //    来由：佩利昂与底比斯之间库里没有任何据点，路网只能绕经佩拉，两头路重叠；阿里安《远征记》I.7 原文点名的停留地正是佩利纳。
-    { id: 'city_pelina', name: '佩利纳', factionId: 'hesitiya', lat: 39.57, lng: 21.93, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '佩利纳（Pelinna/Pelina），色萨利古镇，位于斯廷法亚与帕拉瓦亚山脊以南、进入维奥蒂亚的必经道上。史料：阿里安《远征记》I.7 —— 前335 亚历山大自佩利昂「经埃奥达亚、埃利米奥提斯，沿斯廷法亚、帕拉瓦亚的山脊，第七天到达色萨利的佩利纳，再走六天进入维奥蒂亚」，是史书点名的停留地，故选为本段路终点。坐标取英文维基 Pelinna 39.5757,21.9265。归属：佩利纳是色萨利古镇，按「以州郡治所／所属州区命名」定为**赫斯提亚**（古色萨利四区之一赫斯提亚提斯 Histiaeotis，佩利纳为其核心重镇），旗号「赫斯」；前335 色萨利受马其顿节制，剧本期旗号归属另登记为马其顿。人口推算约1万–2万（石砌城墙、双层卫城、皮尼奥斯河北岸台地）⇒ 小城。定级依据§6.2：非关隘/要塞/堡垒（不是险要），人口查不到史料 ⇒ 按「算不出来一律按小城和城寨」落小城(small_city)。建筑风格：希腊古典(GREEK)。' },
+    { id: 'city_pelina', name: '佩利纳', factionId: 'maqidun', lat: 39.57, lng: 21.93, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '佩利纳（Pelinna/Pelina），色萨利古镇，位于斯廷法亚与帕拉瓦亚山脊以南、进入维奥蒂亚的必经道上。史料：阿里安《远征记》I.7 —— 前335 亚历山大自佩利昂「经埃奥达亚、埃利米奥提斯，沿斯廷法亚、帕拉瓦亚的山脊，第七天到达色萨利的佩利纳，再走六天进入维奥蒂亚」，是史书点名的停留地，故选为本段路终点。坐标取英文维基 Pelinna 39.5757,21.9265。归属：佩利纳是色萨利古镇，按「以州郡治所／所属州区命名」定为**赫斯提亚**（古色萨利四区之一赫斯提亚提斯 Histiaeotis，佩利纳为其核心重镇），旗号「赫斯」；前335 色萨利受马其顿节制，剧本期旗号归属另登记为马其顿。人口推算约1万–2万（石砌城墙、双层卫城、皮尼奥斯河北岸台地）⇒ 小城。定级依据§6.2：非关隘/要塞/堡垒（不是险要），人口查不到史料 ⇒ 按「算不出来一律按小城和城寨」落小城(small_city)。建筑风格：希腊古典(GREEK)。' },
 
     // 🔴 [2026-09-30 主人令「添加据点：兹拉卡塔 36.84,54.43」] 赫卡尼亚首府、阿契美尼德二十大行省之一赫卡尼亚的行政首府与王家驻地。
     { id: 'city_zilakata', name: '兹拉卡塔', factionId: 'hekaniya', lat: 36.84, lng: 54.43, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '兹拉卡塔（Zadracarta），希腊化时期称谓（阿里安《远征记》III.23–25），后称戈尔甘（Gorgan／Hyrcania Metropolis），伊斯兰时期为朱尔詹（Jurjan）。阿契美尼德帝国及后继者治下赫卡尼亚行省首府与王家驻地，大流士三世死后阿尔塔巴佐斯率部退守此城；亚历山大入城后授阿尔塔巴佐斯为巴克特里亚总督。定级依据§6.2：非关隘/要塞/堡垒（不是险要）；地处里海东南沼泽森林与荒原边缘，阿契美尼德及希腊化早期城内固定居民推算约1万–3万 ⇒ 小城(small_city)。文化：波斯(PERSIAN)。' },
     { id: 'city_peiliang', name: '佩利昂', factionId: 'dasaleiti', lat: 40.7306, lng: 20.8625, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '伊利里亚达萨雷提部与达达尼王国设防首府（今阿尔巴尼亚兹韦兹代），阿里安称其为「该地区防御最坚固之城」；公元前335年克莱图斯与陶兰提王格劳基亚斯联军数万人据守抗马其顿，城内守军逾万，依2026-10-01铁律定为小城（原误标城寨stockade）' },
-    { id: 'city_peierge', name: '阿斯彭杜斯', factionId: 'panfeiliya', lat: 36.9389, lng: 31.1722, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '阿斯彭杜斯（Aspendos），潘菲利亚大城，今土耳其安塔利亚省 Belkıs；阿里安《远征记》I.27：前334 亚历山大在此索取人质与赋税并留下驻军 —— 史料明载大军驻军，故立为本段路的终点；佩尔格只是沿途经过，降为途经点。坐标取英文维基 Aspendos 36.9389,31.1722。（本据点沿用原佩尔格的内部 id city_peierge，避免连带改动路网与事件引用。）定级依据§6.2：非关隘/要塞/堡垒（不是险要），人口查不到史料 ⇒ 按「算不出来一律按小城和城寨」落小城(small_city)。建筑风格：希腊古典(GREEK)。' },
+    { id: 'city_peierge', name: '阿斯彭杜斯', factionId: 'aqimeinide', lat: 36.9389, lng: 31.1722, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '阿斯彭杜斯（Aspendos），潘菲利亚大城，今土耳其安塔利亚省 Belkıs；阿里安《远征记》I.27：前334 亚历山大在此索取人质与赋税并留下驻军 —— 史料明载大军驻军，故立为本段路的终点；佩尔格只是沿途经过，降为途经点。坐标取英文维基 Aspendos 36.9389,31.1722。（本据点沿用原佩尔格的内部 id city_peierge，避免连带改动路网与事件引用。）定级依据§6.2：非关隘/要塞/堡垒（不是险要），人口查不到史料 ⇒ 按「算不出来一律按小城和城寨」落小城(small_city)。建筑风格：希腊古典(GREEK)。' },
     { id: 'city_baihaliye', name: '拜哈里耶', factionId: 'baihaliye', lat: 28.35, lng: 28.86, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', stockadeShape: 'rect', stockadeFence: 'FENCE', note: '🔴 [2026-09-28 主人批准新建] 埃及西部沙漠绿洲拜哈里耶(Bahariya)，利比亚沙漠商路要冲与葡萄酒名产地；亚历山大自锡瓦神庙东归孟菲斯经此，建有亚历山大神庙。定级依据（2026-09-28 主人定规）：非关隘险要，按城市定级；沙漠绿洲农业聚落，查无过万史料人口数字，算不出来一律按城寨 → 城寨(stockade)。建筑风格：东方/古埃及(ORIE)。' },
     { id: 'city_kuida', name: '奎达', factionId: 'kuida', lat: 30.58, lng: 67.01, type: 'stockade', troops: 10000, region: 'PASHTUN', buildingStyle: 'PERSIAN', note: '🔴 [2026-09-28 主人批准新建] 古称沙尔(Shal/Kot)，扼波兰山口咽喉之高地要塞；连接印度河平原与俾路支/阿拉霍西亚高原之战略要冲。定级依据§6.2：属险要/关隘/要塞，但泥石山堡无石头城墙（2026-09-30 新口径：险要须有石头城墙才 PASS）→ 落城寨(stockade)。建筑风格：波斯/普什图高地土石堡垒(PERSIAN)。' },
     { id: 'city_zhalange', name: '扎兰格', factionId: 'zhalange', lat: 30.96, lng: 61.86, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '🔴 [2026-09-28 主人批准新建] 古德兰吉亚(Drangiana/Zaranka)首府与锡斯坦历史名都，赫尔曼德河尾闾哈蒙湿地都会；公元前330年冬亚历山大远征驻军于此。定级依据（2026-09-28 主人定规）：非关隘险要，按城市定级；古代行省首府设防大都会，常住人口过万（约2-3万） → 小城(small_city)。建筑风格：波斯(PERSIAN)。' },
@@ -3758,7 +3758,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_prilep', name: '普里莱普', factionId: 'saierweiya', lat: 41.35, lng: 21.55, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC', note: '普里莱普；武卡辛领地、塞尔维亚帝国重镇（马尔科城堡），人口数千 → 小城' },
     { id: 'city_niani', name: '尼亚尼', factionId: 'manding', lat: 11.4, lng: -8.5, type: 'stockade', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', tier: 4, note: '尼亚尼；马里帝国都城（松迪亚塔），人口无载 → 城寨' },
     { id: 'city_quito', name: '基多', factionId: 'inca', lat: -0.18, lng: -78.47, type: 'small_city', troops: 10000, region: 'ANDE', buildingStyle: 'INCA', note: '基多；印加帝国北部都城（阿塔瓦尔帕），人口数万 → 小城' },
-    { id: 'city_oristano', name: '奥里斯塔诺', factionId: 'sading', lat: 39.9, lng: 8.59, type: 'small_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '奥里斯塔诺；萨丁阿尔博雷亚判官国都城（埃莱奥诺拉），人口数千 → 小城' },
+    { id: 'city_oristano', name: '奥里斯塔诺', factionId: 'alagong', lat: 39.9, lng: 8.59, type: 'small_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '奥里斯塔诺；萨丁阿尔博雷亚判官国都城（埃莱奥诺拉），人口数千 → 小城' },
     { id: 'city_jinju', name: '晋州', factionId: 'joseon', lat: 35.19, lng: 128.1, type: 'small_city', troops: 10000, region: 'JOSEON', buildingStyle: 'KOREA', note: '晋州；朝鲜庆尚道晋州牧，1592 年金时敏守晋州，人口数万 → 小城' },
     { id: 'city_xindu', name: '信都', factionId: 'han_d', lat: 37.55, lng: 115.57, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', note: '信都；汉冀州治所（任光守信都拒王郎），人口数万 → 小城' },
     { id: 'city_hangai', name: '杭爱山', factionId: 'kaerka', lat: 47, lng: 101, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', tier: 4, note: '杭爱山；喀尔喀三音诺颜部牧地，无城郭 → 城寨' },

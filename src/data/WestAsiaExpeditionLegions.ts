@@ -32,8 +32,6 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     saipulusi: { name: '塞浦路斯骑', tier: 2 },        // 尼科西亚·居伊：塞浦路斯王国十字军重装铁骑
     bendou_d: { name: '本都铁骑', tier: 2 },       // 阿马西亚·密特里达梯：本都旧都，其骑兵泽拉之战击破罗马军
     kaliya: { name: '卡里亚水师', tier: 2 },       // 哈利卡纳苏斯·阿尔特米西亚：卡里亚女王萨拉米斯海战五舰助波斯
-    yiaoniya: { name: '米利都水师', tier: 3 },       // 米利都·伊奥尼亚：公元前494年拉德海战伊奥尼亚舰队主力，米利都以海军著称（史载其舰队为诸邦之冠）
-    bosidiguo: { name: '波斯骑军', tier: 1 },       // 克拉佐美奈·阿尔塔弗涅斯：波斯骑兵主力，以弗所会战全歼雅典远征军
 
     // ── T3 风土之兵：文化知名度或兵种特色，无可考大捷 ──
     sumeier: { name: '苏美尔方阵', tier: 3 },
@@ -46,7 +44,6 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     // 撤换原「亚述战车」以免与尼尼微新亚述（yashu·T1）番号重复
 
     // ── T4 存在之兵：史籍可考的常规建制／地方戍兵 ──
-    bitiniya: { name: '比提尼卫', tier: 4 },       // 尼凯亚·狄奥多尔：尼凯亚位于比提尼亚故地，常规卫队
     fulijiya: { name: '弗里吉卫', tier: 4 },       // 戈尔迪乌姆·迈达斯：弗里吉亚常规卫队
     // 2026-10-18 清理：ribale 归 PERSIAN 区，唯一权威见 PersianExpeditionLegions.ts（原条目重复，靠展开顺序静默覆盖，故清出）
     wuer: { name: '乌尔重步', tier: 3 },

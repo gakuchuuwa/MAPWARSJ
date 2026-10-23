@@ -816,9 +816,9 @@ export const ROMAN_DYNASTY_GENERAL_IDS = new Set([
 /** 罗马帝国/罗曼势力 ID 集合 */
 export const ROMAN_DYNASTY_FACTION_IDS = new Set([
     'luoma_diguo',  // 罗马帝国
-    'gaolu_luoma',  // 高卢罗曼
-    'mozeer',       // 摩泽尔（君士坦丁）
-    'aersasi',      // 阿尔萨斯（尤里安）
+    // 高卢罗曼
+    // 摩泽尔（君士坦丁）
+    // 阿尔萨斯（尤里安）
 ]);
 
 
@@ -927,10 +927,10 @@ export const POLISH_DYNASTY_GENERAL_IDS = new Set([
 /** 波兰文化势力 ID 集合 */
 export const POLISH_DYNASTY_FACTION_IDS = new Set([
     'bolan',                // 波兰王国（华沙）
-    'piyasite',             // 皮雅斯特王朝（克拉科夫）
-    'dabolan',              // 大波兰（波兹南）
+    // 皮雅斯特王朝（克拉科夫）
+    // 大波兰（波兹南）
     'litaowan',             // 立陶宛大公国（维尔纽斯）
-    'nieman',               // 涅曼公国（格罗德诺）
+    // 涅曼公国（格罗德诺）
 ]);
 
 /** 判断是否为波兰文化武将或势力 */
@@ -953,7 +953,7 @@ export const TEUTONIC_DYNASTY_FACTION_IDS = new Set([
     'tiaodun_qishi',            // 条顿骑士团（柯尼斯堡）
     'shengdian_qishi',          // 圣殿骑士团（阿卡）
     'baojian_qishi',            // 宝剑骑士团（里加）
-    'liwoniya',                 // 利沃尼亚骑士团（塔林）
+    // 利沃尼亚骑士团（塔林）
 ]);
 
 /** 判断是否为条顿骑士团/十字军武将或势力 */
@@ -1003,7 +1003,7 @@ export const BERBER_DYNASTY_FACTION_IDS = new Set([
     'aguelabu',             // 阿格拉布王朝（凯鲁万）
     'babali',               // 巴巴里海岸（阿尔及尔）
     'telibolisi',           // 的黎波里塔尼亚（的黎波里）
-    'zhibuluotuo',          // 休达/直布罗陀
+    // 休达/直布罗陀
 ]);
 
 /** 判断是否为柏柏尔/北非武将或势力 */

@@ -11,17 +11,13 @@ export const FACTIONS: Faction[] = [
   { id: 'ayinu_ezo', name: '阿伊努' },
 
   { id: 'boootiya', name: '波奥蒂亚' },
-  { id: 'luodesi', name: '多德卡尼斯' },
   { id: 'kelite', name: '威尼斯共和国' },  // 干地亚要塞·威尼斯海外领地
   { id: 'leangongguo', name: '莱昂' },
-  { id: 'bohepingyuan', name: '威尼托' },
   { id: 'xixiliwangguo', name: '西西里' },
-  { id: 'weixi', name: '威悉' },
 
   { id: 'yipilusi', name: '伊庇鲁斯' },
   { id: 'lagoniya', name: '拉哥尼亚' },  // 别名：斯巴达本土（Laconia，斯巴达城邦所在地）
   { id: 'maqidun', name: '马其顿' },
-  { id: 'hesitiya', name: '赫斯提亚' },  // 古色萨利四区之一赫斯提亚提斯（Histiaeotis），佩利纳为其重镇
   { id: 'hekaniya', name: '赫卡尼亚' },  // 里海东南，兹拉卡塔为其首府
 
 
@@ -34,23 +30,14 @@ export const FACTIONS: Faction[] = [
 
   { id: 'lagusa', name: '达尔马提亚' },
 
-  { id: 'ruidian_yota', name: '约塔' },
   { id: 'meikelunbao', name: '文德' },
   { id: 'didi', name: '佛兰德' },
-  { id: 'anuo', name: '阿诺' },
-  { id: 'guadaer', name: '瓜达尔' },
-  { id: 'balunxiya', name: '瓦伦西亚' },
-  { id: 'moxina', name: '墨西公国' },
-  { id: 'sading', name: '萨丁' },
   { id: 'yidelisi', name: '伊德里斯王朝' },
-  { id: 'qiekase', name: '第聂伯' },
   { id: 'baojialiya', name: '保加利亚' },
-  { id: 'saierdika', name: '塞尔迪卡' },
   { id: 'bosiniya', name: '波斯尼亚' },
 
   { id: 'mulabite', name: '穆拉比特' },
 
-  { id: 'zhibuluotuo', name: '直布罗陀' },
 
 
 
@@ -68,54 +55,37 @@ export const FACTIONS: Faction[] = [
 
   { id: 'maixiya', name: '麦西亚' },
   { id: 'nidelan', name: '尼德兰' },
-  { id: 'boumeilaniyan', name: '卡舒比' },
   { id: 'pomeilaniya', name: '波美拉尼亚' },  // 什切青·格里芬王朝（西波美拉尼亚公国）
-  { id: 'langgeduoke', name: '朗格多克' },
-  { id: 'aermolika', name: '阿尔摩里卡' },
   { id: 'tuosikana', name: '托斯卡纳' },
-  { id: 'yadelaiya', name: '亚得里亚' },
   { id: 'talanduo', name: '大希腊' },  // 别名：南意大利希腊殖民城邦（Magna Graecia），首邑塔兰托
   { id: 'safuyi', name: '萨伏伊' },
-  { id: 'kanpaniya', name: '坎帕尼亚' },
   { id: 'jiatailuoniya', name: '加泰罗尼亚' },
   { id: 'nasier', name: '纳斯尔' },
-  { id: 'liguliya', name: '利古里亚' },
   { id: 'seleisi', name: '色雷斯' },  // 别名：Thrace（注意 id 拼音像塞琉西，其实是色雷斯）
-  { id: 'bolisiya', name: '波利西亚' },
-  { id: 'zhituo', name: '沃伦' },
 
   { id: 'pufaerci', name: '普法尔茨' },
   { id: 'hansa', name: '汉萨' },
   { id: 'batawei', name: '巴塔维' },
   { id: 'weijing_york', name: '约维克' },
-  { id: 'kanbuliya', name: '坎布里亚' },  // 别名：威尔士凯尔特系（Cumbria/Cymru）
-  { id: 'gaolu_luoma', name: '高卢罗曼' },
   { id: 'aquidan', name: '阿奎丹' },
   { id: 'puluowangsi', name: '普罗旺斯' },
   { id: 'lunbadi', name: '伦巴第' },
   { id: 'donggete', name: '东哥特' },
   { id: 'xigete', name: '西哥特' },
-  { id: 'andaluoxiya', name: '安达卢西亚' },
   { id: 'alagong', name: '阿拉贡' },
-  { id: 'shaiyue', name: '喀尔巴阡' },
 
-  { id: 'nuosi', name: '诺斯' },
   { id: 'feiniqi', name: '腓尼基' },
   { id: 'xila', name: '阿提卡' },  // 别名：雅典所在地区（Attica，雅典城邦本土）
-  { id: 'xilagu', name: '西西里东' },
   { id: 'fulandesi', name: '阿图瓦' },
 
-  { id: 'bogendi', name: '勃艮第' },
 
   { id: 'bulabante', name: '布拉班特' },
   { id: 'gaolu', name: '法兰西' },  // 别名：高卢（Gaul）
   { id: 'kaernute', name: '卡尔努特' },
-  { id: 'anggelu', name: '盎格鲁' },
 
 
   { id: 'yinggelan', name: '英格兰' },
   { id: 'piketai', name: '皮克特' },  // 别名：苏格兰凯尔特系（Picts）
-  { id: 'gaer', name: '盖尔' },  // 别名：爱尔兰凯尔特系（Gaels）
   { id: 'mangsite', name: '芒斯特' },  // 爱尔兰南部王国，卡舍尔为其传统首都
   { id: 'tuomengde', name: '托蒙德' },
 
@@ -131,34 +101,22 @@ export const FACTIONS: Faction[] = [
   { id: 'xiongren', name: '匈人' },  // 塞格德·阿提拉（欧洲匈人，蒂萨河营地）
   { id: 'putaoya', name: '葡萄牙' },
   { id: 'puxiangyindu', name: '葡属印度' },
-  { id: 'xiyindu', name: '西印度' },
-  { id: 'jialebi', name: '加勒比' },
 
   { id: 'habusibao', name: '哈布斯堡' },
   { id: 'boximiya', name: '波西米亚' },
   { id: 'mazhaer', name: '匈牙利' },
-  { id: 'xiongyati', name: '匈雅提' },
   { id: 'falanji', name: '法兰克' },
-  { id: 'jialuolin', name: '加洛林' },
-  { id: 'rierman', name: '莱茵兰' },
-  { id: 'pelianci', name: '佩伦茨' },
   { id: 'shiwaben', name: '施瓦本' },
   { id: 'asikanani', name: '阿斯坎尼' },
   { id: 'wende', name: '萨克森' },
   { id: 'bafaliya', name: '巴伐利亚' },
   { id: 'huohengsuolun', name: '霍亨索伦' },
-  { id: 'mozeer', name: '摩泽尔' },
   { id: 'ruishi', name: '瑞士' },
-  { id: 'aersasi', name: '阿尔萨斯' },
-  { id: 'molaweiya', name: '摩拉维亚' },
   { id: 'damolaweiya', name: '大摩拉维亚' },
 
   { id: 'luosi', name: '罗斯' },
-  { id: 'liulike', name: '留里克' },
   { id: 'mosike_gongguo', name: '莫斯公国' },
   { id: 'eluosi_diguo', name: '俄罗斯帝国' },
-  { id: 'xieerpuhuofu_gongguo', name: '谢尔公国' },
-  { id: 'fulajimier_gongguo', name: '克利亚济马' },
   { id: 'daniebo', name: '斯摩公国' },
   { id: 'qiernigeweifu_gongguo', name: '杰斯纳' },
   { id: 'jialixiya', name: '哈尔公国' },
@@ -168,28 +126,21 @@ export const FACTIONS: Faction[] = [
   { id: 'jinzhang', name: '金帐' },
   { id: 'baojiaer', name: '保加尔' },
   { id: 'baizanting', name: '拜占庭' },
-  { id: 'taolika', name: '陶里卡' },
   { id: 'bosi_puluosi', name: '博斯普鲁斯' },
   { id: 'kelimiya', name: '热那亚共和国' },  // 卡法·热那亚黑海殖民地（Gazaria）
 
   { id: 'keluodiya', name: '克罗地亚' },
-  { id: 'mengtainiya', name: '蒙泰尼亚' },
   { id: 'litaowan', name: '立陶宛' },
   { id: 'bolan', name: '波兰' },
 
   // ── 2026-08-04 新增：大波兰（波兹南，大波兰公国/王国核心）──
-  { id: 'dabolan', name: '波兰亚' },
 
-  { id: 'piyasite', name: '皮雅斯特' },
-  { id: 'hongluseniya', name: '红鲁塞尼亚' },
   { id: 'baojian_qishi', name: '宝剑骑士团' },
   { id: 'teweier_gongguo', name: '特维公国' },
   { id: 'suzidaer', name: '苏兹达尔' },
   { id: 'gesake', name: '哥萨克' },
   // ── 2026-08-04 新增：斯洛博达（哈尔科夫，斯洛博达乌克兰·哈尔科夫团治所）──
-  { id: 'siluoboda', name: '斯洛博达' },
   // ── 2026-08-04 新增：野地（沃罗涅日，狄野南疆要塞）──
-  { id: 'yedi', name: '野地' },
   { id: 'moerdaweiya', name: '摩尔达维亚' },
   { id: 'walajiyia', name: '瓦拉几亚' },
   { id: 'tiaodun_qishi', name: '条顿骑士' },
@@ -200,21 +151,10 @@ export const FACTIONS: Faction[] = [
   { id: 'danmai', name: '丹麦' },
   { id: 'ruidian_si', name: '瑞典' },
   { id: 'kasidiliya', name: '卡斯蒂利亚' },
-  { id: 'duluo', name: '杜罗' },
   { id: 'teluoyi', name: '达尔达尼亚' },
 
   { id: 'alabo', name: '阿拉伯' },
-  { id: 'liwoniya', name: '利沃尼亚' },
-  { id: 'chude', name: '楚德' },
-  { id: 'kaleiliya', name: '卡累利阿' },
-  { id: 'deniesite', name: '德涅斯特' },
-  { id: 'nieman', name: '涅曼' },
-  { id: 'fuerjia', name: '伏尔加' },
-  { id: 'nuogai', name: '喀山军区' },
-  { id: 'bashekeer', name: '乌拉尔' },
-  { id: 'beisilafu', name: '塞维里亚' },
   { id: 'peilieya_gongguo', name: '佩列公国' },
-  { id: 'weijiebusike_gongguo', name: '维捷公国' },
 
   { id: 'heishui', name: '靺鞨' },
 
@@ -1236,7 +1176,6 @@ export const FACTIONS: Faction[] = [
                 // 东平(乌苏里江下游/尼满), 州名旗号
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
              // 茂明安(尼布楚), 蒙古部族
-    { id: 'bulat', name: '布拉特' },                 // 布拉特(石勒喀河), Buryat/布拉特部
     { id: 'buriat', name: '布里亚特' },              // 布里亚特(赤塔), Buryat
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
     { id: 'xianhai', name: '咸海' },                  // 咸海(锡尔河入湖口/养吉干), Aral delta
@@ -1483,7 +1422,6 @@ export const FACTIONS: Faction[] = [
 
     { id: 'ldiya', name: '吕底亚' },
     { id: 'pajiama', name: '帕加马' },
-    { id: 'bitiniya', name: '比提尼亚' },  // 别名：色雷斯人在小亚建立的王国（Bithynia）
       { id: 'luomu', name: '罗姆' },
     { id: 'sailiugu', name: '塞琉古' },
     { id: 'womaya', name: '倭马亚' },
@@ -1515,7 +1453,6 @@ export const FACTIONS: Faction[] = [
     { id: 'aosiruowen', name: '奥斯若恩' },
     { id: 'kesa', name: '可萨' },
     { id: 'aiaoniya', name: '爱奥尼亚' },
-    { id: 'yiaoniya', name: '伊奥尼亚' },        // 米利都·伊奥尼亚第一城（公元前334年米利都围城战守将赫格西斯特）
     { id: 'jialatai', name: '加拉太' },
     { id: 'guyashu', name: '阿舒尔' },
 
@@ -1539,12 +1476,9 @@ export const FACTIONS: Faction[] = [
     { id: 'yidier', name: '伊蒂尔汗国' },
     { id: 'salai', name: '萨莱诺盖' }, // 埃迪古所建诺盖汗国以萨莱楚克为都（原名与据点名相同，违 §266）
     { id: 'mangshi', name: '土库曼' }, // 曼格什拉克为乌古斯／土库曼牧地，恰格里贝格出自其中（原名与据点名相同，违 §266）,
-    { id: 'kejila', name: '科基拉' },
     { id: 'aztec', name: '阿兹特克' },        // 特诺奇提特兰·阿兹特克帝国
     { id: 'fodejiao', name: '佛得角' },  // 别名：Cabo Verde，葡属西非外海群岛，首府里贝拉格兰德
-  { id: 'baiyiya', name: '巴伊亚' },  // 别名：Bahia，葡属巴西都督府，治所萨尔瓦多
   { id: 'tupinijin', name: '葡属巴西' },  // 圣维森特·1532 葡属巴西首座永久拓殖镇
-  { id: 'tuotuonake', name: '西属墨西哥' },  // 韦拉克鲁斯·1519 科尔特斯西属墨西哥桥头堡
   { id: 'taino', name: '西属古巴' },  // 哈瓦那·1519 贝拉斯克斯西属古巴殖民首府
   { id: 'taino_d', name: '泰诺' },     // 亚拉·古巴东部泰诺人村落（哈土依；区别于西班牙殖民的西属古巴）
   { id: 'guanche', name: '关切人' },  // 别名：加那利群岛原住民（Guanches），柏柏尔系
@@ -1569,26 +1503,13 @@ export const FACTIONS: Faction[] = [
     { id: 'suosuo', name: '索索' },        // 库姆比萨利赫·索索帝国（苏曼古鲁）
     { id: 'antiaokegongguo', name: '赞吉王朝' },        // 拉塔基亚·努尔丁赞吉王朝叙利亚海岸
     { id: 'aoerlianggongguo', name: '奥尔良公国' },        // 兰斯·奥尔良公国（贞德）
-    { id: 'jinquehua', name: '金雀花' },        // 卡那封·金雀花王朝（长腿爱德华）
-    { id: 'apuliya', name: '阿普利亚' },        // 梅尔菲·阿普利亚公爵国（吉斯卡尔）
     { id: 'saimien', name: '塞米恩' },        // 塞米恩·塞米恩王国（尤迪特）
     { id: 'aosimanbeiyiguo', name: '奥斯曼贝伊国' },        // 瑟于特·奥斯曼贝伊国（奥斯曼一世）
-    { id: 'aiduoniya', name: '埃多尼亚' },        // 安菲波利斯·斯特里蒙河色雷斯埃多尼部落区（巴西达斯）
-    { id: 'qiesuonisuosi', name: '切索尼索斯' },        // 羊河·色雷斯切索尼索斯半岛（吕山德）
-    { id: 'mixiya', name: '密西亚' },        // 格拉尼库斯·小亚密西亚地区（帕曼纽）
     { id: 'xiaaiji', name: '下埃及' },        // 佩鲁西姆·尼罗河三角洲下埃及（佩尔狄卡斯）
     { id: 'kaliya', name: '卡里亚' },        // 哈利卡纳苏斯·卡里亚王国（阿尔特米西亚）
-    { id: 'bosidiguo', name: '波斯帝国' },        // 克拉佐美奈·阿契美尼德波斯帝国（老阿尔塔弗涅斯）
-    { id: 'jikelazes', name: '基克拉泽斯' },        // 提洛·爱琴海基克拉泽斯群岛（达提斯）
     { id: 'adiyabeina', name: '阿迪亚贝纳' },
         // 阿尔贝拉·亚述故地阿迪亚贝纳王国（克雷图斯）
-    { id: 'youbeiya', name: '优卑亚' },        // 卡里斯托斯·优卑亚岛（达提斯）
-    { id: 'zeta', name: '泽塔' },        // 安提瓦里·中世纪泽塔公国（柏朗嘉宾）
-    { id: 'haerjijiji', name: '哈尔基季基' },        // 奥林索斯·哈尔基季基半岛（腓力二世）
-    { id: 'telakaigongguo', name: '特拉凯公国' },        // 卡乌纳斯·特拉凯公国（科斯图提斯）
-    { id: 'duobuluojia', name: '多布罗加' },        // 德鲁斯塔尔·多布罗加地区（伊瓦伊洛）
     { id: 'aertai', name: '阿尔泰' },        // 也儿的石·阿尔泰乃蛮故地（屈出律）
-    { id: 'kumanni', name: '库曼尼亚' },        // 卡尔卡河·库曼尼亚（忽炭汗）
     { id: 'feierganna', name: '费尔干纳' },        // 阿赫西克特·费尔干纳（忽都鲁）
     { id: 'qibucha', name: '奇布查' },        // 洪萨·穆伊斯卡奇布查人（帕坎奇克）
     { id: 'tamoyue', name: '塔莫约' },        // 卡布弗里乌·塔莫约联盟（昆汉贝贝）
@@ -1596,10 +1517,6 @@ export const FACTIONS: Faction[] = [
     { id: 'alaokaniya', name: '阿劳卡尼亚' },        // 彼得罗阿·阿劳卡尼亚马普切（瓜科尔达）
     { id: 'bogendigongguo', name: '勃艮第公国' },        // 蒙特罗·勃艮第公国（无畏的约翰）
     { id: 'amaniyake', name: '阿马尼亚克' },        // 欧什·阿马尼亚克伯爵领（贝尔纳·德·阿马尼亚克）
-    { id: 'geluositeboguo', name: '格洛斯特伯国' },        // 格洛斯特·格洛斯特伯国（吉尔伯特）
-    { id: 'baerta', name: '巴尔塔' },        // 科森扎·西哥特巴尔塔王朝（亚拉里克）
-    { id: 'saiputimanniya', name: '塞普提曼尼亚' },        // 纳博讷·塞普提曼尼亚（阿陶尔夫）
-    { id: 'bogengnidielan', name: '勃艮第尼德兰' },        // 里尔·勃艮第尼德兰（好人菲利普）
     { id: 'gewennesi', name: '格温内斯' },        // 哈瓦登·格温内斯（戴菲德）
     { id: 'weiershigongguo', name: '威尔士公国' },        // 布伊尔斯·威尔士公国（卢埃林）
     { id: 'tigelei', name: '提格雷' },        // 德布雷达莫·提格雷（吉达扬）
@@ -1632,12 +1549,10 @@ export const FACTIONS: Faction[] = [
     { id: 'kanata', name: '卡纳塔' },
     { id: 'adile', name: '阿迪勒' },
     { id: 'foluolida', name: '佛罗里达' },
-    { id: 'fujisi', name: '福基斯' },
     { id: 'yilisi', name: '埃利斯' },
     { id: 'nuowei', name: '挪威' },
     { id: 'keernuwaye', name: '康沃尔' },
     { id: 'aodesuosi', name: '奥德索斯' },
-    { id: 'disidelusi', name: '蒂斯德鲁斯' },
     { id: 'yisatisi', name: '伊萨提斯' },
 
     { id: 'wuer', name: '乌尔' },
@@ -1645,25 +1560,20 @@ export const FACTIONS: Faction[] = [
     { id: 'jiaye', name: '伽耶' },
 
     { id: 'jienei', name: '杰内' },
-    { id: 'kuertaiya', name: '巴萨拉布王朝' },
 
     { id: 'muwaxide', name: '穆瓦希德' },
   { id: 'varendra', name: '伐连陀' },
   { id: 'chatigangren', name: '查蒂冈人' },
-    { id: 'duonaobaojia', name: '多瑙保加' },
     { id: 'lumiliya', name: '鲁米利亚' },
     { id: 'yilaka', name: '伊拉卡' },
     { id: 'xingelana', name: '新格拉纳达' },
     { id: 'gualani', name: '瓜拉尼' },
-    { id: 'xiadunhe', name: '下顿河' },
-    { id: 'dunhe', name: '顿河' },
 
         { id: 'bulu', name: '补噜' },  // 保拉瓦（Porus/补噜王，印度河畔，与亚历山大大战于希达斯皮斯河）,
     { id: 'xiaofulijiya', name: '小弗里吉亚' },
     { id: 'mallabhum', name: '末罗王国' },
     { id: 'vidin_tsardom', name: '维丁国' },
     { id: 'gondarine', name: '贡德尔朝' },
-    { id: 'valois_angouleme', name: '瓦卢瓦' },
 
     { id: 'samtskhe', name: '萨姆茨赫' },
     { id: 'tomara_gwalior', name: '托摩罗' },
@@ -1674,14 +1584,8 @@ export const FACTIONS: Faction[] = [
     { id: 'minangkabau', name: '米南加保' },
     { id: 'tutul_xiu', name: '休族' },
     { id: 'kerman_bam', name: '克尔曼' },
-    { id: 'lesser_poland', name: '小波兰' },
-    { id: 'braganza_house', name: '布拉干萨家' },
-    { id: 'trastamara', name: '特拉斯塔' },
     { id: 'odrysian_late', name: '奥德里西亚' },
-    { id: 'jialiboli', name: '加里波利' },  // 鲁西翁·加里波利（奥斯曼加里波利桑贾克辖境含 Keşan 一带，鲁西翁在其中）
-    { id: 'naxos_ancient', name: '纳克索斯' },
     { id: 'sijitai', name: '斯基泰' },
-    { id: 'xiluoma', name: '西罗马' },  // 希波·博尼法提乌斯西罗马阿非利加守军
     { id: 'yamaxun', name: '亚马逊' },
     { id: 'aswaka', name: '阿斯瓦卡' },  // 斯瓦特·马萨加（阿萨卡诺伊王族）· 公元前327年「马萨加战役」守方
     { id: 'malli', name: '马利' },  // 摩罗婆·马里斯（木尔坦卫城）· 公元前325年「马里斯战役」守方
@@ -1716,7 +1620,6 @@ export const FACTIONS: Faction[] = [
     { id: 'lulisitan', name: '卢里斯坦' },   // 伊拉姆（西麓走廊）势力
     { id: 'golpayegan_diqu', name: '古尔帕耶甘地区' },   // 古尔帕耶甘（几何驿站）势力
     { id: 'meisuobudamiya', name: '美索不达米亚' },   // 尼西比斯势力               // 锡瓦绿洲（阿蒙神庙）势力   // 🔴 [2026-09-25] 提亚纳据点专用势力；前333 卡帕多细亚为波斯行省，此为其史地身份
-    { id: 'panfeiliya', name: '潘菲利亚' },
     { id: 'baihaliye', name: '拜哈里耶' },
     { id: 'kuida', name: '奎达' },
     { id: 'zhalange', name: '扎兰格' },
@@ -1724,7 +1627,6 @@ export const FACTIONS: Faction[] = [
     { id: 'muertan', name: '木尔坦' },
     { id: 'muxikani', name: '穆西卡尼' },
     { id: 'xindu', name: '信度' },
-    { id: 'eguo_biandi', name: '俄国边地' },        // 2026-10-19：萨拉托夫（1590 俄国边堡）
     { id: 'kuman_oleshky', name: '库曼' },           // 2026-10-19：奥列什基（第聂伯河口库曼商埠）
   // ── 🔴 [2026-10-20 主人令「看武将，以武将来定义势力」] 起义占位首战改挂真实政权 ──
   { id: 'dalriada', name: '达尔里阿达' },  // 邓纳德
