@@ -219,12 +219,10 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'zhancheng': '占城',
     'monong': '墨侬',
     'shuizhen': '水真',
-'yueyi': '嶲',
     'wala': '瓦剌',
 'wuliangha': '兀良',
     'dingling': '丁零',
 'nifuhe': '尼夫',
-'nanzhong': '南中',
 'muer': '呼',
     'xiajiasi': '坚昆',
 'zhen': '武珍',
@@ -248,7 +246,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'han': '韩',
 'han_d': '汉',
     'shu': '蜀',
-'dian': '白',
 'liangzhou': '凉',
 'juqu_d': '沮渠',
 'tufa_d': '秃发',
@@ -275,7 +272,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'manzhou_d': '清',
 'ming_d': '明',
 'liao_d': '辽',
-'dangzhou': '氐',
     'dingxiang_d': '定襄',
     'xie_cj_d': '信',
 'yue_d': '岳',
@@ -287,14 +283,10 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'sushen': '肃慎',
 'chile': '敕勒',
 'rouran': '柔然',
-'baishui': '景谷',
     'baiji': '百济',
 'tubo': '吐蕃',
     'tujue': '突厥',
 'tiele': '铁勒',
-    'guo': '果',
-    'zi': '资',
-'song2': '松',
 
     'jingmen': '荆门',
 'huige': '回纥',
@@ -337,7 +329,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'donghu': '东胡',
     'luoyue': '骆越',
     'ba': '巴',
-    'hezhou': '合',
 'qifu_d': '乞伏',
 'tuyu_d': '廓',
     'linyi': '林邑',
@@ -358,7 +349,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'lu': '庐',
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
-'tujia_d': '土家',
     'zhuang_d': '壮',
 'xibo_d': '锡伯',
     'jinling': '南',
@@ -441,7 +431,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'dashun': '大顺',
 'daxi_ming': '大西',
 'chenghan': '成汉',
-    'shuixi': '水西',
     'yang_zhou': '扬',
 'longwu': '隆武',
     'lujian': '婺',
@@ -452,7 +441,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'khoja': '和卓',
     'gaxa': '噶厦',
 'jinchuan_g': '金川',
-'agui': '儹拉',
     'geng': '靖南',
 'shuntian': '天地',
 'bailian': '白莲',
@@ -466,9 +454,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     // ── 2026-05-25 晚清／近代势力（21个）──
 'taiping': '太平',
     'dacheng': '大成',
-'pingnan': '平南',
-    'qianhui': '回军',
-'miao_qing': '苗军',
     'tuoming': '清真',
     'ashikaga': '室町',
     // ── 2026-05-26 新增：大金、大元 ──
@@ -533,14 +518,8 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'dongxu': '东吁',
     'meitai': '梅',
     'hantawadi': '汉达',
-'baiman': '白蛮',
-'kunming_yi': '昆明',
-    'miao': '苗',
     'pyu': '骠',
     'mon': '孟',
-    'yang_bozhou': '播',
-'tian_sizhou': '㵲',
-'mu_lijiang': '丽江',
 'ming_zheng': '明郑',
     'xiou': '西瓯',
     'jing': '京',
@@ -550,8 +529,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'nguyen_guangnan': '阮',
 
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
-    'cong': '賨',
-'langzhou': '阆',
     'shanyue': '丹阳',
     'she_ethnic': '畲',
 
@@ -561,8 +538,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     // ── 2026-05-27 新增：汪、向、覃、冉、储 ──
 'wang_s': '黟',
 'xiang_d': '来凤',
-'tan_d': '澧',
-'ran_d': '酉阳',
     'chu_d': '舒',
 'hu_d': '三门',
 
@@ -575,12 +550,10 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'seljuq': '塞尔',
 
     // ── 2026-05-27 新增：青衣、五溪、姑蔑 ──
-'qingyi': '青衣',
 'wuxi': '武陵',
 'gumie': '衢',
 
     // ── 2026-05-27 新增：生苗 ──
-    'shengmiao': '生苗',
 
     // ── 2026-05-27 新增：且兰 ──
 
@@ -589,7 +562,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 
     // ── 2026-05-27 新增：白马、蒯、庸、申、叟 ──
 'shen': '申',
-    'sou': '叟',
 
     // ── 2026-05-27 新增：烧当 ──
     'shaodang': '烧当',
@@ -614,10 +586,8 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'tumed': '土默',
 
     
-'she': '永宁',
 
     
-    'liao': '僚',
 
 'nong2': '侬',
 
@@ -666,7 +636,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'dalung': '达隆',
     'gar_kham': '德司',
     'kongsa': '孔萨',
-    'mingzheng': '明正',
 
     // ── 2026-05-28 新增：波密(博窝) ──
 
@@ -674,7 +643,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'daca': '达擦',
 
     // ── 2026-05-28 新增：景东(银生城/云南) ──
-    'jingdong': '景东',
 
     // ── 2026-05-28 新增：霍尔(索宗/那曲) ──
     'hor': '霍尔',
@@ -702,13 +670,11 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'totomi': '远江',
 'owari': '尾张',
 'kang': '宥',
-'wudu': '阶',
 'woye': '沃野',
     'shuofang': '朔方',
 'lushui': '卢水',
     'yingli': '应理',
 'guangwu': '广武',
-    'huizhou_d': '徽',
 'yiwu': '伊吾',
 'pulei': '蒲类',
     'duerbote': '杜尔',
@@ -733,13 +699,10 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'galangdiba': '波密',
 'ali': '阿里',
 'pazhu': '年楚',
-'qiong': '邛',
-'zhuoshi': '卓',
     'chenzhou_d': '辰',
     'qianzhong': '沅',
     'cuanshi': '爨',
 'dianguo': '滇',
-    'xinggu': '兴古',
     'guangxin': '广信',
 'kejia': '宁化',
     'tingzhou_d': '汀',
@@ -754,9 +717,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'shixing': '石兴',
     'shaozhou': '曲江',
     'yidou': '宜都',
-    'boren': '僰',
-'wanzhou': '万',
-    'kui': '夔',
     'danluo': '耽罗',
     'woju': '沃沮',
 'jingcheng_d': '镜',
@@ -789,10 +749,8 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 
     // ── 2026-05-31 新增：民族起源地6势力 ──
     'xiangxiong': '象雄',
-'qingqiang': '冉駹',
 'zhaowu': '昭武',
 'ganzhou': '甘',
-'gaoliang': '潘',
     'ruoqiang': '婼羌',
 
     // ── 2026-05-31 新增：原生小政权都城4势力 ──
@@ -804,7 +762,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'xichu': '楚',
 'yunzhong': '索头',
 'chunshen': '春申',
-    'qian': '矩',
     'wan': '安庆',
 'hai2': '海',
     'fu2': '抚',
@@ -841,25 +798,18 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'hao_d': '濠',
     'gar': '噶尔',
     'yun': '允',
-    'lizhou_d': '剑',
-    'zuo_d': '笮',
-    'zangke': '牂牁',
     'huangwang': '黄',
 'shenshi': '苕溪',
     'guizhou': '桂',
 'daozhou': '道',
 'dayu': '庾',
     'yingzhou': '英',
-'buyi_d': '布依',
-    'hani_d': '哈尼',
     'basha_d': '巴沙',
     'chuzhou_d': '滁',
 'taira': '长门',
-    'wuman': '乌蛮',
 'yehe': '叶赫',
     
 'xiutu': '休屠',
-    'dongzu': '侗',
 'wula': '乌拉',
 'mengwu': '蒙兀',
 'pugu': '仆骨',
@@ -871,7 +821,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'baiyang': '白羊',
     'baidi': '白狄',
     'duomi': '多弥',
-    'wumeng': '溪',
 'lelang': '乐浪',
     'huite': '辉特',
 'zubu': '阻卜',
@@ -898,7 +847,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'mino': '美浓',
 'ssangseong': '和',
 'wenzhou': '温',
-    'fu_zhou': '涪',
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
 'maer_d': '马吉',
 'wugu_d': '乌古',
@@ -931,21 +879,17 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'wuyue': '吴越',
 'xiyuduhu': '都护',
   shaozhou_d: '邵',
-'zizhou': '梓',
 'yuezhi': '月氏',
   'minyue': '闽越',
 'funan': '扶南',
   'lancang': '澜沧',
   'ahaomu': '阿萨',
 'elunchunzu': '鄂伦',
-  'wazu': '佤',
 'tajikezu': '塔吉',
 'jingpozu': '景颇',
-'shuizu': '水',
   'liuzhou': '柳',
 
 'shanzhou': '鄯',
-'weizhou': '维',
 'dongsheng': '云中',
 'weiyuan': '亹源',
 'xiazhou': '夏',
