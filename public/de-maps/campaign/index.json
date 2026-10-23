@@ -1,12 +1,38 @@
 [
-  {
-    "id": "cam2_1",
-    "campaign": "cam2",
-    "level": 1,
-    "name": "2_Joan_1.aoe2scenario",
-    "file": "cam2_1.json",
-    "width": 144,
-    "height": 144,
-    "objects": 6971
-  }
+ {
+  "id": "acam1_1",
+  "campaign": "acam1",
+  "campaignName": "acam1",
+  "level": 1,
+  "name": "A1_Tariq1.aoe2scenario",
+  "file": "acam1_1.json",
+  "width": 144,
+  "height": 144,
+  "objects": 2921,
+  "missingCount": 12
+ },
+ {
+  "id": "acam1_3",
+  "campaign": "acam1",
+  "campaignName": "acam1",
+  "level": 3,
+  "name": "A1_Tariq3.aoe2scenario",
+  "file": "acam1_3.json",
+  "width": 168,
+  "height": 168,
+  "objects": 5366,
+  "missingCount": 23
+ },
+ {
+  "id": "cam2_1",
+  "campaign": "cam2",
+  "campaignName": "cam2",
+  "level": 1,
+  "name": "2_Joan_1.aoe2scenario",
+  "file": "cam2_1.json",
+  "width": 144,
+  "height": 144,
+  "objects": 7562,
+  "missingCount": 1
+ }
 ]
