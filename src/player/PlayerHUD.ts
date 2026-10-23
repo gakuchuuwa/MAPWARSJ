@@ -890,12 +890,14 @@ export class PlayerHUD {
             const btn = [...btns.querySelectorAll('button')][p.options.indexOf(primary)] as HTMLButtonElement | undefined;
             const endAt = Date.now() + autoMs;
             const tickLabel = () => {
-                if (this.overlay !== shown || !btn) return;
+                // 按钮不在页面上了（对话框已关）就停
+                if (!btn || !btn.isConnected) return;
                 const left = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
                 btn.textContent = `${primary.label}（${left}）`;
                 if (left > 0) window.setTimeout(tickLabel, 250);
             };
-            tickLabel();
+            // 等对话框挂进页面后再开始写倒计时（下面才 appendChild）
+            window.setTimeout(tickLabel, 0);
             window.setTimeout(() => {
                 if (this.overlay === shown) primary.onPick();
             }, autoMs);
