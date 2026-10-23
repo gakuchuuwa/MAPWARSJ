@@ -44,7 +44,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   baidi: { name: '阴山徒兵', tier: 3 },          // 集宁·白狄：阴山一带狄人徒兵，避将名/族名叠字
   shiwei: { name: '室韦猎骑', tier: 4 },         // 俱轮泊·室韦都督府部众
   sunite: { name: '苏尼特骑', tier: 4 },         // 赛汉塔拉·苏尼特旗武装
-  bulat: { name: '布拉特猎兵', tier: 3 },      // 布里亚特（布拉特）人，西伯利亚极具辨识度的民族武装符号，升入T3知名
   // ── 2026-06-19 新增：漠北/漠南要塞精锐 ──
     murong: { name: '龙城甲骑', tier: 2 },
     chuyue: { name: '处月骑兵', tier: 3 },

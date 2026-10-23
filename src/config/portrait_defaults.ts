@@ -405,7 +405,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'xiaobolu': _tuboPortraitPool,
     // 草原 61 势力
     'ashide': _caoyuanPortraitPool,
-    'bulat': _caoyuanPortraitPool,
     'chagatai': _caoyuanPortraitPool,
     'cheshihou': _xiyuPortraitPool,
     'choros': _caoyuanPortraitPool,
