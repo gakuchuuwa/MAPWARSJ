@@ -8,7 +8,6 @@
  * - 依据 史料/古代精锐部队.md §6 #1–3、#5–12、#14–19
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-    wuzhou: { name: '百金之士', tier: 2 },
     ashina: { name: '金山突厥兵', tier: 3 },
     liao_d: { name: '皮室军', tier: 1 },
   yel: { name: '斡鲁朵军', tier: 1 },         // 大辽帝国压制北宋两百年的最核心禁卫常备军制度，升入T1战略

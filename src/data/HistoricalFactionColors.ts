@@ -117,10 +117,8 @@ const _FIXED: Record<string, string> = {
     ryukyu: '#C87840', // 琉球那霸水师（珊瑚橙；无尚赤）
 
     // ── 东北精锐远征势力（2026-06-11；hex 全局唯一）──
-    'bing': '#F0CC42', // 并州·晋阳（苍狼玄铁，配并州狼骑）
     bohai: '#533A82', // 渤海·神贲禁卫（渤海尚紫）
 
-    jinzhou: '#7A1419', // 锦州（李成梁·明系深绛）
     manzhou: '#D4A529', // 满洲（努尔哈赤·清系明黄）
     aisin_d: '#D4A52A', // 爱新（皇太极·清系明黄）
     aola: '#285870', // 敖拉·黑龙江水师（北国深青）
@@ -216,7 +214,6 @@ const _FIXED: Record<string, string> = {
     sunwu_d: '#C43A2C', // 孙吴·解烦兵（武昌；三国志孙吴红）
     qian_d: '#5888A8', // 钱·游奕军（吴越水蓝）
     heng: '#6A7858', // 衡州（临烝；无远征番号）
-    wangyan: '#5A7068', // 太行·八字军（飞狐寨青灰）
     qi_d: '#7A141B', // 戚（戚继光·明系深绛）
     tianxiong: '#6A4838', // 魏博·牙兵（大名河朔褐）
 
@@ -226,19 +223,14 @@ const _FIXED: Record<string, string> = {
     han: '#3A7858', // 韩（战国韩·木德尚青）
     xuguo: '#A04040', // 许国（姜姓炎帝后裔·火德尚赤）
     gongsun_d: '#E8E4D8', // 辽东·铁骑（白马白）
-    shizhao_d: '#3A2820', // 石赵·黑槊龙骧（羯族玄褐）
     yunzhong: '#242221', // 云中（拓跋力微·北魏黑）
     murong: '#887040', // 慕容·龙城甲骑（尚黄龙）
     yingzhou_ying_d: '#887041', // 营州（慕容皝·黄龙金褐）
     gaoqi_d: '#322C30', // 高齐·百保鲜卑 T0（蓨城；北齐承水德尚黑）
     yin: '#A08038', // 殷·朝歌（汉初司马卬殷国）
-    hejian: '#756048', // 莫州·文安
     qu_d: '#5A4030', // 麴氏·先登营（界桥）
     chile: '#5A7060', // 敕勒·两池军（阴山青灰）
-    zhuozhou: '#482838', // 涿州·曳落河（范阳暗绛）
     'lingzhou': '#F0CC50', // 灵·朔方突骑（灵州青灰）
-    'zhongshan': '#F0CC51', // 恒州·常山兵（真定水蓝）
-    qingyuan_bd: '#708898', // 清苑·神臂营（保定弩阵灰蓝）
     // tuoba/erzhu/yuwen/shatuo 见上方尚色/草原表
 
     // ── 河西精锐远征势力（2026-06-11；§7 全 10 + 野利·擒生军）──
@@ -309,14 +301,6 @@ const _FIXED: Record<string, string> = {
     jingjiang: '#488A6E', // 靖江（靖江府卫）
     xinjiang: '#3A6E58', // 静江·弩手（始安碧绿）
     you: '#C41E29', // 幽州（耿弇·汉系赤红）
-    'heng1': '#DC4865', // 恒岳（恒山青蓝，恒山军@雁门关）
-    yi: '#7A141D', // 易州（于谦·明系深绛）
-    'changshan': '#DC4864', // 常山·倒马关卒（白马银灰）
-    xianyu: '#C41E1F', // 鲜虞（韩信·汉系赤红）
-    linhu: '#8B6B3A', // 林胡（草原赭黄，林胡骑）
-    lingqiu: '#B83A3D', // 灵丘（赵武灵王·赵红）
-    linyu: '#7A141E', // 临榆（吴三桂·明系深绛）
-    'loufan': '#F0CC56', // 楼烦（塞北土棕，楼烦兵）
     hongnong_jun: '#B83031', // 弘农（杨素·隋系火德尚赤）
     ruo: '#1C1C1B', // 武关（近秦玄黑，仅末位微差）
     ruzhou: '#C43A2E', // 汝州（孙坚·吴红）
@@ -369,7 +353,6 @@ const _FIXED: Record<string, string> = {
     pugu: '#932A22', // 仆骨（暗红；避 hani_d #A93226）
     bayegu: '#3A5A8A', // 拔野古（蓝突厥蓝）
     ketagalan: '#D35400', // 凯达格兰（赤土）
-    shanrong: '#7A1420', // 山戎（蓝玉·明系深绛）
     suke: '#F1C40F', // 素可泰（佛金）
     gaochang: '#E67E22', // 高昌·麴氏铁骑（沙黄）
     chuyue: '#3A4A7A', // 处月（突厥深蓝）
@@ -408,15 +391,12 @@ const _FIXED: Record<string, string> = {
     'zhen': '#518A36', // 自动分配 (邻域相斥)
     'dongshengwei': '#7A1422', // 东胜卫（王越·明系深绛）
     'dongsheng': '#C41E33', // 东胜（魏尚·汉系赤红）
-    'dizhou': '#75A837', // 自动分配 (邻域相斥)
     'qian': '#C06C93', // 自动分配 (邻域相斥)
     'wan': '#CD73A6', // 自动分配 (邻域相斥)
-    'weihaiwei': '#F0CC57', // 自动分配 (邻域相斥)
     'yue': '#624FA7', // 自动分配 (邻域相斥)
     'dian': '#B8BC79', // 自动分配 (邻域相斥)
     'qiuchi': '#CA3197', // 自动分配 (邻域相斥)
     'jie': '#734786', // 自动分配 (邻域相斥)
-    'dai_d': '#6045B9', // 自动分配 (邻域相斥)
     'wang_d': '#B2C058', // 自动分配 (邻域相斥)
     'li_lx_d': '#C41E26', // 陇西李氏（李广·汉系赤红）
     'xie_cj_d': '#B1BD5F', // 自动分配 (邻域相斥)
@@ -441,7 +421,6 @@ const _FIXED: Record<string, string> = {
     'donghu': '#4372B4', // 自动分配 (邻域相斥)
     'luoyue': '#A09537', // 自动分配 (邻域相斥)
     'linyi': '#8356B1', // 自动分配 (邻域相斥)
-    'pingyuan': '#F0CC55', // 自动分配 (邻域相斥)
     'yao': '#6D9625', // 自动分配 (邻域相斥)
     'tongma': '#C43A31', // 铜马（太史慈·吴红）
     'tongzhou': '#6B5A4A', // 同州（沙苑同褐）
@@ -451,7 +430,6 @@ const _FIXED: Record<string, string> = {
     'liu': '#397F36', // 自动分配 (邻域相斥)
     'ouyue': '#4DCE49', // 自动分配 (邻域相斥)
     'xibo_d': '#3A5A7A', // 锡伯（草原蓝）
-    'liangshidu': '#528644', // 自动分配 (邻域相斥)
     'linshihong': '#1E9B91', // 自动分配 (邻域相斥)
     'xijue': '#6A5848', // 西爵（草原褐）
     'tujishi': '#714988', // 自动分配 (邻域相斥)
@@ -462,7 +440,6 @@ const _FIXED: Record<string, string> = {
     'nongzhigao': '#9ABE5C', // 自动分配 (邻域相斥)
     'fangla': '#777AD3', // 自动分配 (邻域相斥)
     'zhongxiang': '#C43A30', // 钟相（甘宁·吴红）
-    'liwang': '#F0CC52', // 自动分配 (邻域相斥)
     'dongxia': '#CEC6BC', // 东夏·女真尚白
     'kereyid': '#5350B3', // 自动分配 (邻域相斥)
     'tatar': '#3A5A7B', // 塔塔尔（草原蓝）
@@ -536,7 +513,6 @@ const _FIXED: Record<string, string> = {
     'xiou': '#455DD4', // 自动分配 (邻域相斥)
     'muong': '#29957A', // 自动分配 (邻域相斥)
     'cong': '#73BF63', // 自动分配 (邻域相斥)
-    'zhe_d': '#862989', // 自动分配 (邻域相斥)
     'she_ethnic': '#5CCF6F', // 自动分配 (邻域相斥)
     'weili': '#464686', // 自动分配 (邻域相斥)
     'pishan': '#247DC1', // 自动分配 (邻域相斥)
@@ -603,10 +579,8 @@ const _FIXED: Record<string, string> = {
     'keerkezi': '#85423B', // 自动分配 (邻域相斥)
     'yangshao': '#C41E2F', // 仰韶（周勃·汉系赤红）
     'yel': '#302E29', // 耶律（耶律休哥·辽系铁黑）
-    'guzhu': '#B6CA5F', // 自动分配 (邻域相斥)
     'yizhi': '#A8B764', // 自动分配 (邻域相斥)
     'jibei2': '#3E7543', // 自动分配 (邻域相斥)
-    'xuan': '#7A1424', // 宣（徐达·明系深绛）
     'yangshe': '#4A4CC0', // 自动分配 (邻域相斥)
     'sima_d': '#FFFFFE', // 司马氏（司马懿·晋系金德尚白）
     'kang': '#DC4859', // 自动分配 (邻域相斥)
@@ -725,10 +699,8 @@ const _FIXED: Record<string, string> = {
     chungju_d: '#304152',
     naju_d: '#354657',
     jingcheng_d: '#3A4B5C',
-    jilizhou: '#3F5061',
     nuergan: '#445566',
     ewenki: '#495A6B',
-    wuzhou: '#B83A3B', // 武州（李牧·赵红）
     bailong: '#5D6E7F',
     kepantuo: '#627384',
     xingxingxia: '#677889',
@@ -748,15 +720,12 @@ const _FIXED: Record<string, string> = {
     sizhou: '#DC4851', // 宋系近色（韩世忠）
     jinan: '#B2C3D4',
     wenzhou: '#B7C8D9',
-    pinghai: '#B83032', // 平海（来护儿·隋系火德尚赤）
     'qianzhou': '#F0CC61', // 乾州·神策军
     'xiyuduhu': '#C41E24', // 西域都护（班超·汉系赤红）
     'luming': '#7A1426', // 卢明（卢象升·明系深绛）
-    'yansui': '#7A1427', // 延绥（王威·明系深绛）
     'weiyuan': '#D4A52E', // 威远（年羹尧·清系明黄）
     'xiazhou': '#D6D2CB', // 夏州（李继迁·夏系党项白）
     'cangsong': '#2E7D38', // 苍松（马超·蜀绿）
-    'dingzhou': '#887043', // 定州（慕容垂·黄龙金褐）
     'qianqin': '#3A6A5A',
     'aiji': '#D09B2C',
     'xibolai': '#245580',
@@ -769,12 +738,9 @@ const _FIXED: Record<string, string> = {
     'taizhou': '#3A7888',
     'shaozhou_d': '#4A7854',
     'zizhou': '#3B6E4A',
-    'cangzhou': '#385A70',
     'minyue': '#1E6852',
     'shuizu': '#2E506B',
     'liuzhou': '#487A58',
-    'shizhou': '#8A6030',
-    'yingzhou_d2': '#4A5869',
     'yuezhi': '#D8A840',
     'funan': '#C26E28',
     'lancang': '#E09A18',
@@ -1237,7 +1203,7 @@ const _FIXED: Record<string, string> = {
     yuan_shao: '#8E5A3C', // 袁绍
     hou_jin: '#3E7C6B', // 后晋
     hou_zhao: '#6B4F86', // 后赵
-    da_yan: '#4A6B8A', // 大燕
+    da_yan: '#5A4B8A', // 大燕
     hou_liang: '#C98A2E', // 后梁
     han_zhao: '#7A3E9D', // 汉赵
     dongjin: '#4E7A5C', // 东晋
@@ -1253,12 +1219,12 @@ const _FIXED: Record<string, string> = {
     nanqi: '#4F7A5A', // 南齐
     yangwu: '#2E7D6B', // 杨吴
     nantang: '#4A7FA5', // 南唐
-    machu: '#A0522D', // 马楚
+    machu: '#B06030', // 马楚
     nanhan: '#1F6F5C', // 南汉
     fangguozhen: '#5C7A3F', // 方国珍
     liang_shuofang: '#9C5A32', // 大梁
     qianliang: '#B0894E', // 前凉
-    dangchang_guo: '#7B9629', // 宕昌
+    dangchang_guo: '#7B9630', // 宕昌
     sanada: '#A6566B', // 真田
     tokugawa: '#2B4A73', // 德川
     amago: '#556B3C', // 尼子
