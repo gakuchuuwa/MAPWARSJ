@@ -225,11 +225,6 @@ export interface PlayerQuestDeps {
     announceBriefing?: (text: string, onDone?: () => void, onStart?: () => void, minBannerMs?: number) => void;
     kickLegionAi: (armyId: string) => void;
     ensureUnpaused: () => void;
-    /**
-     * 🔴 [2026-10-23 探马主线] 主线要玩家（例：乌拉尔图开局段留在图什帕）时为 true：
-     * 自动模式这时不去别处找武将、不赶战场（`src/mainline/MainlineDirector.ts`）。
-     */
-    mainlineHold?: () => boolean;
     feed?: {
         pushRestoration?(p: { factionId: string; cityName: string }): void;
         pushExpedition?(p: { legionName: string; generalId?: string | null; cityName: string; kind: 'depart' | 'success' }): void;
@@ -2914,8 +2909,7 @@ export class PlayerQuestSystem {
         //    —— 否则战场打完就永远停在那儿等一个不会来的"去找武将"。
         const scriptChain = this.deps.hero.autoPlan === 'script' && isScriptPeriod();
         const canAdvance = this.deps.hero.autoMode && !this.quest
-            && (!this.deps.hero.isAttached() || scriptChain)
-            && !this.deps.mainlineHold?.();
+            && (!this.deps.hero.isAttached() || scriptChain);
         if (canAdvance) {
             if (this.resumePendingGeneralEvent()) return;
         }

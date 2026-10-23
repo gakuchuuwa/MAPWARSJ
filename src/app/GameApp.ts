@@ -89,15 +89,10 @@ import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
 import { setCityStyleSessionSeed } from '../systems/cityWallShared';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
-import { startHorseThiefSkirmish, type HorseThiefChase } from '../story/horseThiefSkirmish';
-import { StoryletEngine } from '../story/StoryletEngine';
-import { URARTU_OPENING_STORYLETS } from '../story/storylets/urartuOpening';
-import { MainlineDirector } from '../mainline/MainlineDirector';
 import { ViewerLive } from '../live/ViewerLive';
 import { syncMeleeRandomOwners } from '../events/meleeRandomOwners';
 import { setCityOwnerProvider } from '../data/FactionGenerals';
 import { ViewerLivePanel } from '../live/ViewerLivePanel';
-import { URARTU_MAINLINE, URARTU_MAINLINE_CITY_ID } from '../mainline/urartuMainline';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -348,23 +343,23 @@ export class GameApp {
             this.cityManager.bindViewportCitySync();
             // 🔴 [2026-10-02 主人定「不要确定随机，要每局随机」] 开局生成每局随机种子，注入据点样式哈希
             setCityStyleSessionSeed(String(Math.floor(Math.random() * 0x7fffffff)));
-            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'melee') === 'script');
+            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'centenarian') === 'script');
             // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
             //    玩家对象晚于此处创建 → 取不到时按默认的乱斗模式算（非剧本期）。
             this.scriptCityVisibility = new ScriptCityVisibility(
                 () => this.cityManager.getCities(),
-                () => (this.playerHero?.autoPlan ?? 'melee') === 'script',
+                () => (this.playerHero?.autoPlan ?? 'centenarian') === 'script',
             );
             // 🔴 [2026-10-16 主人定] 剧本模式武将严格按「登场年～卒年」出现：年份 = 当前这一场历史事件的年份
             setScriptYearProvider(() => this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
             // 🔴 [2026-10-20 主人令「百岁模式出城的军团真归秦；乱斗模式一个据点一个武将一个势力，多武将不并存」]
-            //    数据层按模式分流（FactionGenerals / Army），玩家对象晚于此处创建 → 取不到按默认乱斗模式算。
-            setGameModeProvider(() => this.playerHero?.autoPlan ?? 'melee');
+            //    数据层按模式分流（FactionGenerals / Army），玩家对象晚于此处创建 → 取不到按默认百岁模式算。
+            setGameModeProvider(() => this.playerHero?.autoPlan ?? 'centenarian');
             // 乱斗出将先挑和城主同政权的武将：数据层要知道据点现在归谁
             setCityOwnerProvider((cityId) => this.cityManager?.getCity(cityId)?.factionId ?? null);
             // 🔴 [2026-10-18 主人定] 百岁模式：武将按「登场年～百岁（生年+100）」出现，年份 = 当前游戏日历年份
             setCentenarianYearProvider(() =>
-                (this.playerHero?.autoPlan ?? 'melee') === 'centenarian'
+                (this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian'
                     ? (this.timeSystem?.getYear() ?? null)
                     : null,
             );
@@ -422,7 +417,7 @@ export class GameApp {
             //    剧本模式取当前事件年份、百岁模式取日历年份、乱斗与编辑器模式为 null（不按年代拦）。
             setWonderGateYearProvider(() => {
                 if (this.cityManager?.getIsEditorMode()) return null;
-                const mode = this.playerHero?.autoPlan ?? 'melee';
+                const mode = this.playerHero?.autoPlan ?? 'centenarian';
                 if (mode === 'script') return this.scriptCityVisibility?.getCurrentEvent()?.year ?? null;
                 if (mode === 'centenarian') return this.timeSystem?.getYear() ?? null;
                 return null;
@@ -696,7 +691,7 @@ export class GameApp {
             // 🔴 [2026-09-23 主人定] 剧本模式 = 整个世界的历史剧本期（`PlayerHero.autoPlan === 'script'`）：
             //    「其他军团不能随机产生」「军团在历史剧本期间不能随意寻敌，剧本都结束后自动切换到乱斗模式」。
             //    玩家对象晚于此处创建 → 取不到时按默认的乱斗模式算（非剧本期）。
-            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'melee') === 'script';
+            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'centenarian') === 'script';
             this.aiController = new AIController(
                 legionManager,
                 this.cityManager,
@@ -903,7 +898,7 @@ export class GameApp {
     private syncScriptOwners(): void {
         syncScriptHistoricalOwners(
             this.cityManager,
-            (this.playerHero?.autoPlan ?? 'melee') === 'script',
+            (this.playerHero?.autoPlan ?? 'centenarian') === 'script',
             this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
         );
     }
@@ -913,7 +908,7 @@ export class GameApp {
      * 剧本模式按当前事件年份、百岁模式按当前日历年份：未到建城年的大城/中城降为小城（small_city），到年或乱斗模式恢复原城级。
      */
     private syncCityFoundedTypes(): void {
-        const mode = this.playerHero?.autoPlan ?? 'melee';
+        const mode = this.playerHero?.autoPlan ?? 'centenarian';
         const year = mode === 'script'
             ? (this.scriptCityVisibility?.getCurrentEvent()?.year ?? null)
             : mode === 'centenarian'
@@ -929,7 +924,7 @@ export class GameApp {
      */
     private syncEraFactionDisplays(): void {
         if (!this.cityManager) return;
-        const mode = this.playerHero?.autoPlan ?? 'melee';
+        const mode = this.playerHero?.autoPlan ?? 'centenarian';
         // 🔴 [2026-10-20 主人令「据点和势力没有关系了」「真实的历史不应该是B吗」] 百岁模式据点归当年在场武将的势力
         //    （开局、跨年、切模式与时代名同一批时机；先定归属再算名字）
         syncCentenarianGeneralOwners(this.cityManager, mode === 'centenarian');
@@ -944,15 +939,6 @@ export class GameApp {
         this.cityManager.getTerritorySystem().patchFactionFlagTexts(changedSet);
     }
 
-    /** 🔴 [2026-10-22] 故事块样板「盗马贼」：战术模式小队模式的小仗（控制台 `game.startHorseThiefSkirmish('solo')`） */
-    public startHorseThiefSkirmish(chase: HorseThiefChase = 'group'): boolean {
-        return startHorseThiefSkirmish(this, chase);
-    }
-
-    /** 🔴 [2026-10-22] 旧故事块引擎：只剩入伍以后那几块还没改写成主线（2026-10-23 起平民那一段归 mainline） */
-    public readonly story = new StoryletEngine(this, URARTU_OPENING_STORYLETS);
-    /** 🔴 [2026-10-23 主人「百岁模式当世界，剧本作为跑在里面的主线」] 探马主线运行器（.claude/skills/tanma-mainline） */
-    public readonly mainline = new MainlineDirector(this, URARTU_MAINLINE);
     /** 🔴 [2026-10-23] 直播观众互动：观众发字替一方放计（F9 测试面板；控制台 `game.live.onChat('某某', '攻', true)`） */
     public readonly live = new ViewerLive(this);
     private readonly livePanel = new ViewerLivePanel(this.live);
@@ -964,7 +950,7 @@ export class GameApp {
      * 武将登场、时代名旗号、大中城降级、特殊建筑建成年代全部按新年份重算。返回实际跳到的年份。
      */
     public jumpToYear(input: number): number | null {
-        if ((this.playerHero?.autoPlan ?? 'melee') !== 'centenarian') return null;
+        if ((this.playerHero?.autoPlan ?? 'centenarian') !== 'centenarian') return null;
         if (!Number.isFinite(input)) return null;
         const { TIMELINE_START_YEAR, TIMELINE_END_YEAR } = GameConfig.TIME;
         let year = Math.round(input);
@@ -996,24 +982,15 @@ export class GameApp {
         // 🔴 [2026-10-21 主人令「百岁模式开局必须在欧亚，因为美洲哪里都没武将」「能排除的都排除」]
         //    百岁模式随机出生点：只在「有在场武将的据点」里挑（美洲/无将之地自然排除）；
         //    一座都没有 → 退而排除美洲（经度 < -30°）；再不行才用全部据点。
-        const isCentenarianStart = (this.playerHero?.autoPlan ?? 'melee') === 'centenarian';
+        const isCentenarianStart = (this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian';
         const withGeneral = isCentenarianStart
             ? allCities.filter((c) => getCityAnchoredGenerals(c.id).some((g) => isGeneralOnStage(g.generalId)))
             : allCities;
         const eurasia = isCentenarianStart ? allCities.filter((c) => c.longitude >= -30) : allCities;
         const spawnCandidates = withGeneral.length > 0 ? withGeneral : (eurasia.length > 0 ? eurasia : allCities);
-        // 🔴 [2026-10-22 主人令「请你专业处理……是的话就执行」→ 探马开局 URT-01 梦醒]
-        //    百岁模式**新开局**（时间轴起点前 800 年）一律在凡湖岸醒来（图什帕西南的湖岸），
-        //    不再随机挑据点 —— 《探马》剧情从乌拉尔图开始（docs/探马/骨架.md、故事块样板_乌拉尔图开局.md）。
-        //    跳年、读档、剧本/乱斗模式照旧（读档会把位置覆盖回存档里的位置）。
-        const openingCity = isCentenarianStart && this.timeSystem.getYear() === GameConfig.TIME.TIMELINE_START_YEAR
-            ? this.cityManager.getCity(URARTU_MAINLINE_CITY_ID)
-            : undefined;
-        const startCity = openingCity ?? spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
+        // 🔴 [2026-10-24 主人「不要设定情节，都删除」] 开局随机挑一座有武将在场的据点（探马开局的图什帕醒来已删）
+        const startCity = spawnCandidates[Math.floor(Math.random() * spawnCandidates.length)];
 
-        // 🔴 [2026-10-23 主人「点也是据点……每一个点都代表周围至少40KM的范围」] 原来醒在图什帕以东的山洞
-        //    （离图什帕约 59 公里，那里没有据点）——按主线规则点只能是据点，改为在图什帕城外的路上醒来，
-        //    路固定取第一条（主人 2026-10-22「起始位置最好固定」）。
         let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
         const edges = roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
         // 优先连通的陆地道路，保证玩家落在合法陆地路网上
@@ -1021,7 +998,7 @@ export class GameApp {
         const candidateEdges = landEdges.length > 0 ? landEdges : (edges?.filter((e) => e.coordinates && e.coordinates.length > 1) ?? []);
 
         if (candidateEdges.length > 0) {
-            const edge = openingCity ? candidateEdges[0] : candidateEdges[Math.floor(Math.random() * candidateEdges.length)];
+            const edge = candidateEdges[Math.floor(Math.random() * candidateEdges.length)];
             // 沿道路挑一个离开据点一定距离的节点（>= 判定到达阈值，保证在城外）
             // 🔴 [2026-09-24 主人「玩家上来就接任务了，你能不能把玩家拉的远一点呀」]
             //    剧本模式出生在归属武将城外约 0.6°（≈65 公里）的路上，要先走一段才见到他；
@@ -1062,8 +1039,6 @@ export class GameApp {
             getSeason: () => this.timeSystem.getSeason() as number,
         }, spawnPos);
         this.playerHero = hero;
-        // 🔴 [2026-10-22 通灵] 马厩里点「通灵」→ 故事块引擎读这匹马的记忆
-        hero.onReadHorseMemory = (horseId) => { this.story.readHorseMemory(horseId); };
         // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）
         let lastPlan = hero.autoPlan;
         // （`syncHistoricalOwners` 已提到上面「打完一场」回调之前定义 —— 那里也要重跑）
@@ -1110,7 +1085,6 @@ export class GameApp {
             //    不另造第二条字幕。onDone 让调用方在**念完**后再推下一段。
             announceBriefing: (text, onDone, onStart, minBannerMs) => speechAnnouncer.announceBriefing(text, onDone, onStart, minBannerMs),
             kickLegionAi: (armyId) => this.aiController?.tickArmyById(armyId),
-            mainlineHold: () => this.mainline.holdsPlayer(),
             ensureUnpaused: () => {
                 if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);
             },

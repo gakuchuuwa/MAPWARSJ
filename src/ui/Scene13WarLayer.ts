@@ -469,9 +469,8 @@ export class Scene13WarLayer {
      * 只影响显示，战斗判定仍按 `sideFaction`。
      */
     private displayFaction(side: 0 | 1): string {
-        // 乱斗：武将替城主打仗，旗号用战场势力（2026-10-23 主人「城被占，城里武将归占领者」）
-        if (getGameMode() === 'melee') return this.sideFaction[side];
-        return getGeneralOwnFactionId(this.sideGeneralId[side]) ?? this.sideFaction[side];
+        // 🔴 [2026-10-24 主人「城被占武将归占领者，依然生效」] 所有模式：旗号用战场势力（城主）
+        return this.sideFaction[side];
     }
     /** 攻/守双方是否为名将（名将 ×1.25 / 普将 ×1.00） */
     private sideIsFamous: [boolean, boolean] = [false, false];

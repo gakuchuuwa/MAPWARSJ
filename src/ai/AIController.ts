@@ -155,7 +155,7 @@ export class AIController {
         //    百岁模式（探马主线）里玩家随军的那支军团＝主角军团：不跑行为树、不自己寻敌攻城，只按主线脚本行动。
         //    被别人打上门照样还手（战斗不归这里管）。
         const hero = (window as unknown as { game?: { playerHero?: { autoPlan?: string; getHostLegionId?(): string | null } } }).game?.playerHero;
-        if (hero && (hero.autoPlan ?? 'melee') === 'centenarian' && hero.getHostLegionId?.() === army.id) return;
+        if (hero && (hero.autoPlan ?? 'centenarian') === 'centenarian' && hero.getHostLegionId?.() === army.id) return;
 
         // 获取或创建上下文
         let context = this.armyContexts.get(army.id);
