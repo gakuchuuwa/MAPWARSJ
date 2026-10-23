@@ -1844,5 +1844,44 @@
   "objects": 13447,
   "missingCount": 6,
   "v": 3
+ },
+ {
+  "id": "fcam7_11",
+  "campaign": "fcam7",
+  "campaignName": "fcam7",
+  "level": 11,
+  "name": "F7_3_York (865).aoe2scenario",
+  "file": "fcam7_11.json",
+  "width": 480,
+  "height": 480,
+  "objects": 32171,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "fcam7_12",
+  "campaign": "fcam7",
+  "campaignName": "fcam7",
+  "level": 12,
+  "name": "F7_4_Honfoglalas (895).aoe2scenario",
+  "file": "fcam7_12.json",
+  "width": 220,
+  "height": 220,
+  "objects": 12792,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "fcam7_13",
+  "campaign": "fcam7",
+  "campaignName": "fcam7",
+  "level": 13,
+  "name": "F7_5_Kurikara (1183).aoe2scenario",
+  "file": "fcam7_13.json",
+  "width": 200,
+  "height": 200,
+  "objects": 9285,
+  "missingCount": 3,
+  "v": 3
  }
 ]

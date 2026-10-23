@@ -278,6 +278,13 @@ export class Scene13WarLayer {
     groundLayerGL: Scene13GroundLayerGL | null = null;
     useGroundGL = false;
     private userInteractingTimer = 0;
+    /**
+     * 🔴 [2026-10-23 主人「防守方第二波在城里呆着不动的时候，镜头可以跟随释放技能区域，然后9秒拉回」]
+     * 玩家守城、待在城里没敌人打时，谁放了计，镜头就去那一计落下的地方看 9 秒，再回到玩家身上。
+     */
+    private skillCamTimer = 0;
+    private skillCamX = 0;
+    private skillCamY = 0;
     /** 八方向行军前进单位向量（两军对冲） */
     advanceVec: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 1, y: 0 }, { x: -1, y: 0 }];
     /** 八方向行军侧翼单位向量 */
@@ -713,6 +720,13 @@ export class Scene13WarLayer {
     }
 
     /** 【胜】增己兵专用：立即从该侧 9 个出兵口一次性刷出全部 6% 增援士兵参战 */
+    /** 某方正在交手的士兵重心（没人交手取全体重心）：计策落下的地方，给镜头看 */
+    private sideFrontCentroid(f: 0 | 1): [number, number] {
+        let cx = 0, cy = 0, n = 0;
+        for (const m of this.men) if (m.f === f && m.hp > 0 && !m.siegeW && m.foe) { cx += m.x; cy += m.y; n++; }
+        return n > 0 ? [cx / n, cy / n] : this.sideCentroid(f);
+    }
+
     /** 本方在场士兵的重心（无人时取出兵口） */
     private sideCentroid(f: 0 | 1): [number, number] {
         let cx = 0, cy = 0, n = 0;
@@ -836,6 +850,15 @@ export class Scene13WarLayer {
 
         this.lastCastSkill[f] = six;
         this.lastCastSkillName[f] = displayName;
+        // 计落在哪一方：攻/胜/固己防作用在本方，乱阵/死战/倒戈作用在敌方（在执行效果前取，倒戈后敌兵就换边了）
+        const [camX, camY] = this.sideFrontCentroid(six === 'hunzhan' || six === 'baizhan' || six === 'bingzhan' ? ef : f);
+        const hm = this.heroMan;
+        if (this.useGroundGL && hm && hm.hp > 0 && hm.f === 1 && !hm.foe
+            && this.battleType === 'siege' && !!this.deCity && this.insideRing(hm.x, hm.y)) {
+            this.skillCamTimer = 9;
+            this.skillCamX = camX;
+            this.skillCamY = camY;
+        }
         // 见招拆招计数：我放了一计（对方据此回应）；我这一计同时算回应了对方此前所有的计
         this.skillCastSeq[f]++;
         this.skillAnsweredSeq[f] = this.skillCastSeq[ef];
@@ -1530,7 +1553,7 @@ export class Scene13WarLayer {
         // start 后素材加载期 pending>0 → tick 不 render，会把上一场最后一帧（含尸体）亮出来。
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.tacticalZoom = 1.0;
-        this.tacticalPanX = 0; this.tacticalPanY = 0;
+        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0;
         this.useGroundGL = false;
         if (this.glCanvas) this.glCanvas.style.display = 'none';
         this.clearDeCity();
@@ -2463,7 +2486,7 @@ export class Scene13WarLayer {
          *    所以那边另加了「演出已停不许盖」的守卫，两处配合才真正修好。 */
         this.restoreStrategyMap();
         this.tacticalZoom = 1.0;
-        this.tacticalPanX = 0; this.tacticalPanY = 0;
+        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0;
         this.deferredAssetLoads = [];
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);
@@ -2476,6 +2499,9 @@ export class Scene13WarLayer {
         // 🔴 [2026-08-26 主人定] 战后还原战斗面板布局与大地图面板
         const game = (window as any).game;
         game?.combatUI?.applyScene13Layout?.(false);
+        // 🔴 [2026-10-23 主人截图「武将立绘是错误的」] 故事块小仗不挂战略地图的战场，没人替它收战斗面板：
+        //    打完回到战略地图，左边乌拉尔图随机立绘、右边「未知势力」随机立绘一直挂着。小仗收场时一并收起。
+        if (this.skirmish) game?.combatUI?.hide?.();
         // 🔴 [2026-10-03 主人「战术模式结束后切战略是硬切」] 画布淡出时（!keepFrame）面板延后到淡出过半再还原，
         //    不与画布消失同一帧弹出；保留残局帧（keepFrame）的路径照旧立即还原。
         if (keepFrame) this.restorePanels(); else this.schedulePanelRestore(450);
@@ -5987,13 +6013,18 @@ export class Scene13WarLayer {
         // ①½ 🔴 [2026-10-22 主人「我全程都是自动，为什么要让玩家先动，不跟着部队走？」]
         //    小队模式里玩家本人没有自己的分队，原来视野里没敌人就直奔全图最近的敌人，比步兵快、一个人冲在最前。
         //    现在视野里没敌人时，跟在本方士兵中间走（本方重心）；敌人进了视野再照 ① 打。本方没人（单骑追贼）照旧。
-        if (m.hero && this.skirmish) {
-            let sx = 0, sy = 0, n = 0;
+        // 🔴 [2026-10-23 主人「为什么正常战争，玩家不跟着队伍走，总是擅自杀出去」「擅自冲锋更不好」]
+        //    正常战争同样适用：玩家跟着自己那一队（同兵种出兵口那队）的士兵走，那队没人了跟本方全体；
+        //    本队在城里待命，玩家也一起待着。只有本方一个人都不剩时才落到下面自己找敌人。
+        if (m.hero && this.playerCmd === 'attack') {
+            let sx = 0, sy = 0, n = 0, ax = 0, ay = 0, an = 0;
             for (const o of this.men) {
                 if (o === m || o.f !== m.f || o.hp <= 0 || o.hero) continue;
-                sx += o.x; sy += o.y; n++;
+                ax += o.x; ay += o.y; an++;
+                if (m.lane >= 0 && o.lane === m.lane) { sx += o.x; sy += o.y; n++; }
             }
             if (n > 0) return { x: sx / n + m.jx, y: sy / n + m.jy };
+            if (an > 0) return { x: ax / an + m.jx, y: ay / an + m.jy };
         }
 
         // ② 攻城武器：走向第一档目标里离自己最近的那个
@@ -7573,7 +7604,13 @@ export class Scene13WarLayer {
                 this.userInteractingTimer -= dt;
             } else {
                 let targetFocusX = 0, targetFocusY = 0, count = 0;
-                if (this.heroMan) {
+                if (this.skillCamTimer > 0) {
+                    // 守城待在城里时：先看放计的地方 9 秒，再回玩家（见 triggerScene13Skill）
+                    this.skillCamTimer -= dt;
+                    targetFocusX = this.skillCamX;
+                    targetFocusY = this.skillCamY;
+                    count = 1;
+                } else if (this.heroMan) {
                     // 跟随乱入者本人（阵亡复活倒计时的 10 秒里镜头留在他倒下的地方，复活后跟到本方后方重生点）
                     targetFocusX = this.heroMan.x;
                     targetFocusY = this.heroMan.y;

@@ -51,13 +51,17 @@ const DAMASCUS_796: HorseMemory = {
     attackerFactionId: 'yashu',
     defenderFactionId: null,
     spec: {
-        // 亚述：战车 4、骑射手 8、持矛轻骑 8（两人一组）；亚兰：长矛兵 14、弓手 8、战车 2
+        // 亚述：战车 4、骑射手 8、持矛轻骑 8（两人一组）、斥候 4、长矛兵 6；亚兰：民兵 8、长矛兵 14、弓手 8、战车 2
         attacker: [
             { key: 'war_chariot', count: 4 },
             { key: 'antiquity_cavalry_archer', count: 8 },
             { key: 'antiquity_light_cavalry', count: 8 },
+            // 🔴 [2026-10-23 主人令「攻守都要有些初级兵」] 亚述军里的斥候与随军步卒
+            { key: 'antiquity_scout_cavalry', count: 4 },
+            { key: 'antiquity_spearman', count: 6 },
         ],
         defender: [
+            { key: 'militia', count: 8 },
             { key: 'antiquity_spearman', count: 14 },
             { key: 'archer', count: 8 },
             { key: 'war_chariot', count: 2 },

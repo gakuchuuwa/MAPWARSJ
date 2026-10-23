@@ -16,18 +16,21 @@ const TUSHPA_ID = 'city_tushpa';
 export type HorseThiefChase = 'group' | 'solo';
 
 const SQUADS: Record<HorseThiefChase, Scene13SkirmishSpec> = {
-    // 强弱相当、玩家本人能左右胜负：养马人家 武装民兵 12 + 村民 8；山民盗马贼 武装民兵 14 + 投石兵 6
+    // 强弱相当、玩家本人能左右胜负：养马人家 武装民兵 10 + 村民 6 + 骑马的古典斥候 4；
+    // 山民盗马贼 武装民兵 10 + 古典长矛兵 4 + 投石兵 6
+    // 🔴 [2026-10-23 主人令「小仗不要只让玩家是骑兵，攻守都要有些初级兵」]
     group: {
-        attacker: [{ key: 'militia', count: 12 }, { key: 'villager', count: 8 }],
-        defender: [{ key: 'militia', count: 14 }, { key: 'slinger', count: 6 }],
+        attacker: [{ key: 'militia', count: 10 }, { key: 'villager', count: 6 }, { key: 'antiquity_scout_cavalry', count: 4 }],
+        defender: [{ key: 'militia', count: 10 }, { key: 'antiquity_spearman', count: 4 }, { key: 'slinger', count: 6 }],
         attackerName: '养马人家',
         defenderName: '盗马贼',
         playerSide: 0,
     },
-    // 单骑先追：只追上落在后面的六个人；玩家倒下就算输（小队模式里玩家本人算一个兵）
+    // 先追：玩家带两个骑马的斥候先追，只追上落在后面的几个人；玩家倒下就算输（小队模式里玩家本人算一个兵）
+    // 🔴 [2026-10-23 主人令「小仗不要只让玩家是骑兵，攻守都要有些初级兵」] 不再只有玩家一个人
     solo: {
-        attacker: [],
-        defender: [{ key: 'militia', count: 4 }, { key: 'slinger', count: 2 }],
+        attacker: [{ key: 'antiquity_scout_cavalry', count: 2 }],
+        defender: [{ key: 'militia', count: 4 }, { key: 'antiquity_spearman', count: 2 }, { key: 'slinger', count: 2 }],
         attackerName: '单骑追贼',
         defenderName: '盗马贼',
         playerSide: 0,

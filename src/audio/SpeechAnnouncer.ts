@@ -15,8 +15,13 @@ import { getGeneralNameForSpeech, prepareSpeechText } from "./GeneralSpeechNames
 import { getTacticalSkillEntry } from "../data/TacticalSkillCatalog";
 import { edgeTtsClient, type EdgeVoice } from "./EdgeTtsClient";
 
-/** 探马故事旁白的音色（与战争播报的云健/云希分开） */
-const STORY_VOICE: EdgeVoice = "zh-CN-XiaoxiaoNeural";
+/**
+ * 🔴 [2026-10-23 主人「游戏播报还是没有换声音吗？…实在不行，用云溪呀」] 探马故事旁白改用云希。
+ * 实测（2026-10-23）：直连微软对云健/云希/晓晓三个音色全部连不上（ws error），游戏实际靠浏览器自带的语音念：
+ * 主人的 Edge 自带「云健/云希 Online (Natural)」（战争播报就是这么念出来的），而晓晓那条回落到本机慧慧（难听）。
+ * 故事旁白取战争播报没在用的那个男声：战争是云健（默认）→ 故事用云希；主人把战争切成云希 → 故事用云健。
+ */
+const STORY_VOICE_MARK = "story";
 import { isGeneralOnStage } from "../data/generalOnStage";
 
 interface SpeakOptions {
@@ -38,8 +43,10 @@ interface SpeakOptions {
   rate?: number;
   /** 技能句已做人名校正，跳过全文 prepareSpeechText（防误替技能名/精锐名） */
   skipGlobalNameReplace?: boolean;
-  /** 直连微软时用哪个音色（不填＝当前战争播报男声云健/云希）；探马故事旁白用晓晓 */
+  /** 直连微软时用哪个音色（不填＝当前战争播报男声云健/云希） */
   voice?: EdgeVoice;
+  /** "story"＝探马故事旁白：回落浏览器语音时也挑战争播报没在用的那个男声 */
+  voiceRole?: "story";
   /** TTS 真正开口时回调（技能 Cut-in 与念名同刻；引擎无 onstart 时在 speak 前兜底） */
   onStart?: () => void;
   /** 念完 / 被丢弃后回调（技能释放脉冲串行队列用） */
@@ -483,8 +490,9 @@ export class SpeechAnnouncer {
       bannerMultiline: true,
       bannerSingleScreen: true,
       rate: 0.95,
-      // 🔴 [2026-10-22 主人「故事旁白和战争旁白不该一个声音吧」] 故事旁白用晓晓（女声，讲故事的音色），与战争播报的云健分开
-      voice: STORY_VOICE,
+      // 🔴 [2026-10-22 主人「故事旁白和战争旁白不该一个声音吧」] 故事旁白与战争播报分开（2026-10-23 起用云希，见 STORY_VOICE_MARK）
+      voice: this.storyEdgeVoice(),
+      voiceRole: STORY_VOICE_MARK,
       maxWaitMs: Math.min(180000, 4000 + line.length * 600),
       onDone,
     });
@@ -830,6 +838,11 @@ export class SpeechAnnouncer {
   /** 两句技能亮相的最短间隔（毫秒）= CombatUI 里 skill-cut-in 动画时长，保证双方大字不同刻、不叠 */
   private static readonly SKILL_CUTIN_GAP_MS = 3000;
 
+  /** 故事旁白的音色：战争播报没在用的那个男声 */
+  private storyEdgeVoice(): EdgeVoice {
+    return this.preferredVoice === "Yunxi" ? "zh-CN-YunjianNeural" : "zh-CN-YunxiNeural";
+  }
+
   /** 当前男声偏好对应的 Neural 音色名（云健/云希直连用） */
   private currentEdgeVoice(): EdgeVoice {
     return this.preferredVoice === "Yunxi" ? "zh-CN-YunxiNeural" : "zh-CN-YunjianNeural";
@@ -960,12 +973,16 @@ export class SpeechAnnouncer {
           candidates.push(fallback);
         }
         if (candidates.length === 0 && fallback) candidates.push(fallback);
-        // 🔴 [2026-10-22 主人「故事旁白和战争旁白不该一个声音吧」] 故事旁白连不上微软时，回落本机女声
-        //    （晓晓 / 慧慧 / 瑶瑶），不跟战争播报一样落到男声，离线时两种旁白也听得出来
-        if (opts?.voice === STORY_VOICE) {
-          const female = voicesNow.filter((v) => v.lang.toLowerCase().startsWith("zh")
-            && /Xiaoxiao|晓晓|Huihui|慧慧|Yaoyao|瑶瑶|Xiaoyi|晓伊/i.test(v.name));
-          candidates.unshift(...female.map((v) => ({ voice: v, pitchDown: false })));
+        // 🔴 [2026-10-23 主人「用云溪呀」] 故事旁白：把战争播报没在用的那个男声（默认云希）排到最前。
+        //    按有效名找（Edge 在线语音的 name 偶发是 "undefined"，要看 voiceURI），找不到就照战争播报的男声排序念。
+        if (opts?.voiceRole === STORY_VOICE_MARK) {
+          const want = this.preferredVoice === "Yunxi" ? ["云健", "Yunjian"] : ["云希", "Yunxi"];
+          const story = candidates.filter((c) => want.some((k) => this.voiceNameMatches(this.getVoiceEffectiveName(c.voice), k)));
+          if (story.length > 0) {
+            const rest = candidates.filter((c) => !story.includes(c));
+            candidates.length = 0;
+            candidates.push(...story, ...rest);
+          }
         }
 
         // [2026-07-27] 语音清单诊断改为每会话只打一次。
