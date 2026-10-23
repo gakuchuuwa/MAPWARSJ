@@ -234,7 +234,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'boren_ada': 'BASHU',   // 大明｜阿大｜据点 珙县
     'borjigin_tuolei': 'MONGOL',   // 蒙古｜拖雷｜据点 曲雕阿兰
     'bosi_puluosi_liukong': 'GREECE',   // 博斯普鲁斯｜琉孔一世｜据点 潘提卡彭
-    'bozhou_d_yujin': 'CENTRAL',   // 魏国｜于禁｜据点 聊城
+    'bozhou_d_yujin': 'CENTRAL',   // 魏国｜于禁｜据点 洛阳
     'bulabante_yuehanyishi': 'BURGUNDIANS',   // 布拉班特｜约翰一世｜据点 布鲁塞尔
     'bulat_beiduanchaer': 'MONGOL',   // 布拉特｜孛端察儿｜据点 不儿罕山
     'buriat_tumenjiergale': 'MONGOL',   // 布里亚特｜吉尔嘎勒｜据点 赤塔
@@ -299,7 +299,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'danluo_jintongjing': 'KOREA',   // 耽罗｜金通精｜据点 星主厅
     'danmai_abusalong': 'DANES',   // 丹麦｜阿布萨隆｜据点 哥本哈根
     'danmai_godfred': 'DANES',   // 丹麦｜戈德弗雷德｜据点 海瑟比
-    'danmai_guthrum': 'DANES',   // 丹麦｜古思伦｜据点 海瑟比
+    'danmai_guthrum': 'DANES',   // 丹麦｜古思伦｜据点 哥本哈根
     'danmai_harald': 'DANES',   // 丹麦｜蓝牙哈拉尔｜据点 耶灵
     'danyang_huanwen': 'JIANGNAN',   // 东晋｜桓温｜据点 姑孰
     'daozhou_yangzaixing': 'JIANGNAN',   // 宋国｜杨再兴｜据点 麦岭关
@@ -402,12 +402,12 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'geluolu_chisipijia': 'CENTRAL_ASIA',   // 葛逻禄｜炽俟毗伽｜据点 弓月城
     'gen_abd_al_rahman_iii': 'SPANISH',   // 安达卢西亚｜阿卜杜拉｜据点 科尔多瓦
     'gen_abgar': 'ORIE',   // 奥斯若恩｜阿布加尔｜据点 埃德萨
-    'gen_abu_yahya': 'LATIN',   // 加泰罗尼亚｜阿布·叶海亚｜据点 巴塞罗那
+    'gen_abu_yahya': 'BERBER',   // 加泰罗尼亚｜阿布·叶海亚｜据点 拉巴特
     'gen_adityawarman': 'MALAY',   // 米南加保｜阿迪蒂亚｜据点 帕加鲁荣
     'gen_afonso_henriques': 'PORTUGUESE',   // 葡萄牙｜阿方索一世｜据点 波尔图
     'gen_akechi_mitsuhide': 'JAPAN',   // 室町｜明智光秀｜据点 京都
     'gen_alain_i': 'BRITONS',   // 布列塔尼｜阿兰｜据点 雷恩
-    'gen_alaric': 'FRANKS',   // 巴尔塔｜亚拉里克｜据点 图卢兹
+    'gen_alaric': 'LATIN',   // 巴尔塔｜亚拉里克｜据点 科森扎
     'gen_albert_riga': 'GERMANIC',   // 宝剑骑士团｜阿尔伯特·冯·布克斯赫夫登｜据点 里加
     'gen_albrecht_bear': 'GERMANIC',   // 阿斯坎尼｜阿尔布雷｜据点 勃兰登堡
     'gen_alexander_great': 'MACEDONIAN',   // 马其顿｜亚历山大｜据点 佩拉
@@ -815,7 +815,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'jieri_jieriwang': 'INDIA',   // 戒日帝国｜哈尔沙｜据点 曲女城
     'jilimi_takuna': 'NORTHEAST',   // 吉里｜塔库纳｜据点 囊哈儿
     'jilin_fujun': 'NORTHEAST',   // 大清｜富俊｜据点 宽城屯
-    'jilizhou_chengmingzhen': 'WEI',   // 高句丽｜程名振｜据点 卑沙城
+    'jilizhou_chengmingzhen': 'CENTRAL',   // 高句丽｜程名振｜据点 长安
     'jiluo_d_douxian': 'CENTRAL',   // 汉国｜窦宪｜据点 洛阳
     'jin_xianzhen': 'CENTRAL',   // 晋国｜先轸｜据点 曲沃
     'jinan_tiexuan': 'CENTRAL',   // 大明｜铁铉｜据点 历下
