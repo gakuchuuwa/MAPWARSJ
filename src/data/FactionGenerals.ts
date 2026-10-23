@@ -4079,7 +4079,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'song_zhangjun', cityId: 'city_tianshui', factionId: 'song', legionName: '城堡时代中华军团', generalName: '张浚', portrait: '/assets/BASHU/song_zhangjun.png' },
+        { generalId: 'song_zhangjun', cityId: 'city_lueyang', factionId: 'song', legionName: '城堡时代川峡军团', generalName: '张浚', portrait: '/assets/BASHU/song_zhangjun.png' },
     ],
 
 
@@ -18026,6 +18026,7 @@ if (import.meta.hot) {
 
 
 }
+
 
 
 

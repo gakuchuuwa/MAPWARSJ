@@ -1180,7 +1180,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'song_peiji': 'KHITAN',   // 唐国｜裴济｜据点 回乐
     'song_renfu': 'CENTRAL',   // 宋国｜任福｜据点 合水
     'song_wangbing': 'WEI',   // 唐国｜王禀｜据点 晋阳
-    'song_zhangjun': 'CENTRAL',   // 秦国｜张浚｜据点 天水
+    'song_zhangjun': 'BASHU',   // 秦国｜张浚｜据点 略阳
     'song_zhaoguangyi': 'CENTRAL',   // 宋国｜赵光义｜据点 开封
     'song_zhaokuangyin': 'CENTRAL',   // 宋国｜赵匡胤｜据点 开封
     'song2_houjunji': 'BASHU',   // 唐国｜侯君集｜据点 嘉诚
