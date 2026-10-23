@@ -22,10 +22,15 @@ const report = [];
 const put = (f, text, note) => { writes.set(f, text); report.push(`${f}：${note}`); };
 
 const ID = `['"]?${from}['"]?`;
-// ① 单行表项：整行删除
-for (const f of ['src/data/factions.ts', 'src/assets/CityAssetManager.ts', 'src/data/SandboxDisplayNames.ts', 'src/data/StartingCapitals.ts',
+// ① 单行表项：整行删除（含全部 *ExpeditionLegions.ts 精锐表）
+const SINGLE_LINE_FILES = ['src/data/factions.ts', 'src/assets/CityAssetManager.ts', 'src/data/SandboxDisplayNames.ts', 'src/data/StartingCapitals.ts',
   'src/config/portrait_defaults.ts', 'src/data/HistoricalFactionColors.ts', 'src/data/NorthExpeditionLegions.ts',
-  'src/data/SteppeExpeditionLegions.ts', 'src/data/PersianExpeditionLegions.ts', 'src/data/ExpeditionLegions.ts']) {
+  'src/data/SteppeExpeditionLegions.ts', 'src/data/PersianExpeditionLegions.ts', 'src/data/ExpeditionLegions.ts'];
+// [2026-10-23 扩展] 精锐番号分散在 34 个 *ExpeditionLegions.ts，全部纳入删除范围
+for (const f of fs.readdirSync(path.join(ROOT, 'src/data'))) {
+  if (/ExpeditionLegions\.ts$/.test(f) && !SINGLE_LINE_FILES.includes(`src/data/${f}`)) SINGLE_LINE_FILES.push(`src/data/${f}`);
+}
+for (const f of SINGLE_LINE_FILES) {
   if (!fs.existsSync(path.join(ROOT, f))) continue;
   const lines = read(f).split('\n'); let n = 0;
   const re = f.endsWith('factions.ts') ? new RegExp(`^\\s*\\{\\s*id:\\s*'${from}'`) : new RegExp(`^\\s*${ID}\\s*:.*,\\s*(//.*)?\\r?$`);
@@ -63,33 +68,57 @@ for (const f of ['src/data/GeneralFirstBattles.ts', 'src/data/GeneralFirstExpedi
   if (n) put(f, t.replace(re, `$1'${refTo}'`), `${n} 处引用改指 ${refTo}`);
 }
 // ⑥ 武将名单：旧势力那一块 → 逐个武将带上真实政权，并入 cityTo 那一块
+//    [2026-10-23 扩展] FACTION_GENERALS 两种写法都要支持：数组 `id: [ ... ]` 与单条 `id: { ... }`
 {
   const f = 'src/data/FactionGenerals.ts'; let t = read(f);
-  const m = new RegExp(`^    ${from}:\\s*\\[`, 'm').exec(t);
-  if (m) {
-    const start = m.index; let i = m.index + m[0].length, depth = 1;
+
+  const fixLine = (l) => {
+    const gid = /generalId:\s*'([^']+)'/.exec(l)[1];
+    const own = /factionId:\s*'([^']+)'/.exec(l);
+    if (own && own[1] !== from) return l;
+    const want = plan.generals?.[gid];
+    if (!want) { missing.push(gid); return l; }
+    return own ? l.replace(/factionId:\s*'[^']+'/, `factionId: '${want}'`) : l.replace(/generalId:\s*'[^']+',?/, (x) => `${x.endsWith(',') ? x : x + ','} factionId: '${want}',`);
+  };
+  const missing = [];
+  let fixed = [];
+
+  const arrM = new RegExp(`^    ${from}:\\s*\\[`, 'm').exec(t);
+  const objM = arrM ? null : new RegExp(`^    ${from}:\\s*\\{.*$`, 'm').exec(t);
+  if (arrM) {
+    const start = arrM.index; let i = arrM.index + arrM[0].length, depth = 1;
     while (depth > 0 && i < t.length) { if (t[i] === '[') depth++; else if (t[i] === ']') depth--; i++; }
-    const bodyStart = m.index + m[0].length; const body = t.slice(bodyStart, i - 1);
+    const bodyStart = arrM.index + arrM[0].length; const body = t.slice(bodyStart, i - 1);
     let end = i; while (t[end] === ',' || t[end] === ' ') end++; if (t[end] === '\r') end++; if (t[end] === '\n') end++;
     const objs = body.split('\n').filter((l) => /generalId:/.test(l));
-    const missing = [];
-    const fixed = objs.map((l) => {
-      const gid = /generalId:\s*'([^']+)'/.exec(l)[1];
-      const own = /factionId:\s*'([^']+)'/.exec(l);
-      if (own && own[1] !== from) return l;
-      const want = plan.generals?.[gid];
-      if (!want) { missing.push(gid); return l; }
-      return own ? l.replace(/factionId:\s*'[^']+'/, `factionId: '${want}'`) : l.replace(/generalId:\s*'[^']+',?/, (x) => `${x.endsWith(',') ? x : x + ','} factionId: '${want}',`);
-    });
-    if (missing.length) { console.log(`❌ 这些武将没定政权，请补进方案 generals：${missing.join('、')}`); process.exit(2); }
+    fixed = objs.map((l) => '        ' + fixLine(l).trim());
     t = t.slice(0, start) + t.slice(end);
-    const dest = new RegExp(`^    ${cityTo}:\\s*\\[`, 'm').exec(t);
-    if (!dest) { console.log(`❌ ${cityTo} 在武将名单里不是数组写法，请手动并入`); process.exit(3); }
-    let j = dest.index + dest[0].length, d2 = 1;
-    while (d2 > 0 && j < t.length) { if (t[j] === '[') d2++; else if (t[j] === ']') d2--; j++; }
-    const insertAt = j - 1;
-    t = t.slice(0, insertAt) + '\n' + fixed.join('\n') + '\n    ' + t.slice(insertAt);
-    put(f, t, `${objs.length} 位武将并入 ${cityTo}，各带真实政权`);
+  } else if (objM) {
+    const line = objM[0];
+    const start = objM.index;
+    const inner = line.slice(line.indexOf('{') + 1, line.lastIndexOf('}'));
+    fixed = ['        { ' + fixLine(inner).trim() + ' },'];
+    t = t.slice(0, start) + t.slice(start + line.length).replace(/^\r?\n/, '');
+  }
+  if (missing.length) { console.log(`❌ 这些武将没定政权，请补进方案 generals：${missing.join('、')}`); process.exit(2); }
+  if (fixed.length || arrM || objM) {
+    const destArr = new RegExp(`^    ${cityTo}:\\s*\\[`, 'm').exec(t);
+    const destObj = destArr ? null : new RegExp(`^    ${cityTo}:\\s*\\{.*$`, 'm').exec(t);
+    if (destArr) {
+      let j = destArr.index + destArr[0].length, d2 = 1;
+      while (d2 > 0 && j < t.length) { if (t[j] === '[') d2++; else if (t[j] === ']') d2--; j++; }
+      const insertAt = j - 1;
+      t = t.slice(0, insertAt) + '\n' + fixed.join('\n') + '\n    ' + t.slice(insertAt);
+    } else if (destObj) {
+      // 单条 → 数组：`cityTo: { ... },` 变成 `cityTo: [\n        { ... },\n <fixed>\n    ],`
+      const line = destObj[0];
+      const objText = line.slice(line.indexOf('{'), line.lastIndexOf('}') + 1);
+      const repl = `${cityTo}: [\n        ${objText},\n${fixed.join('\n')}\n    ],`;
+      t = t.slice(0, destObj.index) + t.slice(destObj.index).replace(line, repl);
+    } else {
+      console.log(`❌ ${cityTo} 在武将名单里没有块，请先建好该势力（须为数组或单条写法）`); process.exit(3);
+    }
+    put(f, t, `${fixed.length} 位武将并入 ${cityTo}，各带真实政权`);
   }
 }
 for (const r of report) console.log(r);
