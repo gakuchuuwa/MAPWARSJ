@@ -88,4 +88,8 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
     taiping: { name: '石敢当', tier: 1 },
     jiang_s: { name: '零陵蒙冲', tier: 3 },
     longwu: { name: '建宁义旅', tier: 4 },
+    dongjin: { name: '北府兵', tier: 1 },
+    nan_liang: { name: '白袍军', tier: 2 },
+    chuguo: { name: '楚甲士', tier: 2 },
+    yangwu: { name: '黑云都', tier: 2 },
 };

@@ -109,4 +109,8 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     qiangfang: { name: '羌方射士', tier: 4 },   // 羌邑·羌方首领 羌伯砺：羌邑·羌伯砺：羌方的弓射之士，武丁时期被商王征伐
     huaiyi: { name: '淮夷舟师', tier: 4 },   // 淮浦·淮夷首领 嬴夷吾：淮浦·嬴夷吾：淮夷依淮河水网的舟师，周宣王南征所遇
     xizhou: { name: '陇右轻骑', tier: 4 },   // 平襄·隗嚣将 牛邯：平襄·牛邯：隗嚣据陇右的边郡良家子骑兵，建武八年被光武帝所破
+    hou_han: { name: '河东牙兵', tier: 4 },
+    yuan_shao: { name: '大戟士', tier: 2 },
+    hou_zhou: { name: '殿前军', tier: 2 },
+    lvbu: { name: '陷阵营', tier: 2 },
 };

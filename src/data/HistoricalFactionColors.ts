@@ -1233,6 +1233,52 @@ const _FIXED: Record<string, string> = {
     'anga': '#7C9A3E', // 鸯伽·瞻波（恒河下游稻绿）
     'shunga': '#9E2A6B', // 巽伽王朝·阿逾陀（孔雀后继绛紫）
     'antigonid': '#7B1E3A', // 安提柯·凯莱奈（弗里吉亚酒红）
+    hou_han: '#B5523B', // 后汉
+    yuan_shao: '#8E5A3C', // 袁绍
+    hou_jin: '#3E7C6B', // 后晋
+    hou_zhao: '#6B4F86', // 后赵
+    da_yan: '#4A6B8A', // 大燕
+    hou_liang: '#C98A2E', // 后梁
+    han_zhao: '#7A3E9D', // 汉赵
+    dongjin: '#4E7A5C', // 东晋
+    nan_liang: '#B07A2E', // 南梁
+    hou_qin: '#7A4A6A', // 后秦
+    yiqu: '#8C5A2E', // 义渠
+    hou_zhou: '#8A5A2A', // 后周
+    lvbu: '#5A4A8A', // 吕布
+    chengjia: '#6D5B43', // 成家
+    qianshu: '#B5651D', // 前蜀
+    chuguo: '#8C2F39', // 楚国
+    liusong: '#3B5B7A', // 刘宋
+    nanqi: '#4F7A5A', // 南齐
+    yangwu: '#2E7D6B', // 杨吴
+    nantang: '#4A7FA5', // 南唐
+    machu: '#A0522D', // 马楚
+    nanhan: '#1F6F5C', // 南汉
+    fangguozhen: '#5C7A3F', // 方国珍
+    liang_shuofang: '#9C5A32', // 大梁
+    qianliang: '#B0894E', // 前凉
+    dangchang_guo: '#7B9629', // 宕昌
+    sanada: '#A6566B', // 真田
+    tokugawa: '#2B4A73', // 德川
+    amago: '#556B3C', // 尼子
+    shimazu: '#2D5E6E', // 岛津
+    mori: '#2F7A57', // 毛利
+    uesugi: '#3F7193', // 上杉
+    takeda: '#7A2E33', // 武田
+    toyotomi: '#BF5B2A', // 丰臣
+    utsunomiya: '#6E5A82', // 宇都宫
+    ryuzoji: '#7D5B3E', // 龙造寺
+    nanchou: '#574A8E', // 南朝
+    nanbu_shi: '#5B4A6B', // 南部
+    shoni: '#3E7A6B', // 少弐
+    heishi: '#9C3A3A', // 平氏
+    imagawa: '#C2483C', // 今川
+    oda: '#A8842C', // 织田
+    hojo: '#6B3F8C', // 北条
+    mahan: '#8B5A2B', // 马韩
+    daquyue: '#A93F55', // 大瞿越
+    yuenan: '#8E3B5C', // 越南
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
