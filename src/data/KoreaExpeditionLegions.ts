@@ -22,5 +22,5 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   gaya: { name: '金官伽倻兵', tier: 3 },         // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     xingliao: { name: '龙湾戍军', tier: 4 },
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收,
-    mahan: { name: '弁韩步卒', tier: 4 },   // 马韩｜统帅 伯济王｜T4 乘 1.1｜三国志明载之城郭步卒，抵御乐浪带方常规建制
+    mahan: { name: '弁韩步卒', tier: 4 },   // 马韩｜统帅 箕准（马韩王）｜T4 乘 1.1｜三韩步卒，守乐浪带方之南（主人原表「伯济王」即百济王，百济另有百济五方兵，故改挂箕准）
 };

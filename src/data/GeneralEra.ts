@@ -16,6 +16,7 @@
 export type GeneralEra = 'antiquity' | 'feudal' | 'castle' | 'imperial';
 
 export const GENERAL_ERA: Record<string, GeneralEra> = {
+    'gen_xiao_xian': 'feudal',   // 萧铣 583—621，617 江陵称帝（封建）
     // 🔴 [2026-10-19 补入] 原先缺时代的 5 位，按 GeneralCenturies 成名世纪：16 世纪＝帝国（1500 起）、8 世纪＝封建
     'nogai_votkhovsky': 'imperial',
     'bashkir_nagoy': 'imperial',

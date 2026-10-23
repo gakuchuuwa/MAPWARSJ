@@ -39,5 +39,5 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     liaozu: { name: '寮族兵', tier: 3 },
     shijun: { name: '使君乡兵', tier: 4 },   // 杜洞江·吴日庆：杜洞江·吴日庆：十二使君各据乡兵，968年为丁部领所平
     daquyue: { name: '禁军铁甲', tier: 1 },   // 大瞿越｜统帅 丁部领｜T1 乘 1.4｜平定十二使君乱建立越南首个统一王朝主力
-    yuenan: { name: '游击铳象', tier: 1 },   // 越南｜统帅 阮惠｜T1 乘 1.4｜玉洄栋多战役突袭破二十万清军，光中大捷主力
+    yuenan: { name: '游击铳象', tier: 1 },   // 越南（阮朝）｜统帅 阮福映｜T1 乘 1.4｜阮朝象铳亲兵：阮福映 1792—1802 反攻西山、收复富春与升龙统一越南（主人原表「阮惠」属西山朝，与阮朝敌对、库内无西山势力，故换统帅阮福映）
 };
