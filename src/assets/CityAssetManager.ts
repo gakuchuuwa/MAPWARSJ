@@ -11,6 +11,7 @@ import {
 } from './RebelFlagConstants';
 import { getAllFactionFlagTemplatePaths, getFactionFlagTemplatePath } from '../data/FactionTier';
 import { getFactionEmblemKey } from '../data/FactionEmblems';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 import { appendBootPlaceholderFlagRulesByFaction, setFactionFlagStyleRule, setRebelFlagStyleRule } from './FlagStyleInjector';
 import { notifyFactionFlagReady as dispatchFactionFlagReady } from './factionFlagNotify';
 import { gameLog } from '../utils/GameLogger';
@@ -24,18 +25,21 @@ import { gameLog } from '../utils/GameLogger';
  * ══ 两套系统，禁止混用 ══
  *
  * 【A · 正规势力色系统】FactionManager + HistoricalFactionColors
- *   每个 factionId（≠ panjun）有唯一 hex 势力色，三处共用同一值：
+ *   每个正规 factionId（≠ panjun 起义、≠ panshu 叛军）有唯一 hex 势力色，三处共用同一值：
  *     · 势力色 / 领土色块  → getFactionColor()
  *     · 旗帜色             → chromaKey(模板旗, colorHex) → `.flag-faction-{id}`
  *     · 军队色             → FactionTintSystem 读同一 hex 染兵种贴图
  *   固定色表优先，其余每局随机；邻邦 assignSpatialColors 避撞色。
  *
- * 【B · 叛军旗面系统】RebelFlagConstants + processedRebelFlags（与 A 无关）
- *   panjun（势力名「起义」）**没有势力色、不染色、无领土色、军队不染色**；
- *   旗号按主人 2026-10-20 令只写**单字繁体「義」**（`SANDBOX_DISPLAY_NAMES['panjun']`）。
- *   每座叛军城仅随机绑定 S10QZ 7–58 共 52 张**原素材旗面**之一（chromaKey 时 color=null）。
- *   据点 CSS：`.flag-rebel-{index}`；index = getProcessedRebelFlagIndex(cityId)。
- *   52 面素材本身已带各色图案，不是「随机 hex 染同一模板」。
+ * 【B · 叛军/起义随机旗面系统】RebelFlagConstants + processedRebelFlags（与 A 无关）
+ *   `panjun`（势力名「起义」）与 `panshu`（势力名「叛军」，无主状态）**都没有势力色、不染色、
+ *   无领土色、军队不染色**；据点 CSS 都走 `.flag-rebel-{index}`（index = getProcessedRebelFlagIndex(cityId)），
+ *   即每座城随机绑定 S10QZ 7–58 共 52 张**原素材旗面**之一（chromaKey 时 color=null，
+ *   素材本身已带各色图案，不是「随机 hex 染同一模板」）。
+ *   🔴 [2026-10-24 主人令「叛军是旗帜上没有字」「起义军旗帜用该势力自己的旗号」]
+ *     · `panshu` 叛军＝**无字旗**：`factionFlagMap` 值登记 'RANDOM'，见 `isBlankRebelFlagFaction()`；
+ *       旗号文字一律不生成（连「叛军」二字都不许画），军团/战场旗面也用同一套随机原素材。
+ *     · `panjun` 起义＝有字（`SANDBOX_DISPLAY_NAMES['panjun']`），是历史起义政权，不是叛军。
  *   改叛军逻辑勿读 FactionManager；改势力色勿动 processedRebelFlags。
  *
  * 【性能】chromaKey 逐个 + idle 让步；禁止 Promise.all 并行 chromaKey。
@@ -720,6 +724,25 @@ export class CityAssetManager {
     private static followPriorityFactionId: string | null = null;
     private static readonly _PANJUN_ID = 'pan' + 'jun';
 
+    /**
+     * 🔴 [2026-10-24 主人令「叛军是旗帜上没有字、不能出征」「应该是只有旗帜，没有字」]
+     *
+     * `factionFlagMap` 的**值**登记为 'RANDOM' 的势力（现只有 `panshu`「叛军」）＝**无字叛军旗**：
+     *   · 据点旗面：`.flag-rebel-{index}`（S10QZ 7–58 随机原素材，见 TerritoryFlagClass）；
+     *   · 旗号文字：`getProcessedFlagText / getProcessedFlagTextSync` 一律返回 null ——
+     *     旧实现落到 `factionManager.getFactionName('panshu')` 拿到「叛军」，把这两个字画到旗上，
+     *     就是主人 2026-10-24 报的「旗上写着叛军」；
+     *   · 旗面不染势力色：军团旗 / 战场旗的旗面（`getProcessedFlag`）也用随机叛军原素材，
+     *     不生成 `.flag-faction-panshu` 的染色旗。
+     *
+     * ⚠️ 与 `panjun`（势力名「起义」，历史起义政权、有旗号文字、可出征）是两回事，勿混用。
+     */
+    public static isBlankRebelFlagFaction(factionId: string | null | undefined): boolean {
+        if (!factionId) return false;
+        // 两处登记同一件事：数据语义（RebelFaction.ts）＋ 旗面素材登记（factionFlagMap 的 'RANDOM'）
+        return isBlankRebelFaction(factionId) || this.factionFlagMap[factionId] === 'RANDOM';
+    }
+
     public static setTerritoryWorkActive(active: boolean): void {
         CityAssetManager.territoryWorkActive = active;
     }
@@ -830,7 +853,8 @@ export class CityAssetManager {
     }
 
     private static needsFactionTint(factionId: string): boolean {
-        if (!factionId || factionId === this._PANJUN_ID) return false;
+        // 🔴 [2026-10-24] 无字叛军旗（panshu）与 panjun 起义一样不染势力色（旗面用随机叛军原素材）
+        if (!factionId || factionId === this._PANJUN_ID || this.isBlankRebelFlagFaction(factionId)) return false;
         return (
             !this.processedFlagCache.has(factionId) ||
             this.placeholderFactionIds.has(factionId)
@@ -1064,6 +1088,8 @@ export class CityAssetManager {
         const placeholderByFaction = new Map<string, string>();
         for (const factionId of unique) {
             if (factionId === _PANJUN) continue;
+            // 🔴 [2026-10-24] 叛军（panshu）无字旗：没有 `.flag-faction-panshu` 可占位，别写这条残留 CSS
+            if (this.isBlankRebelFlagFaction(factionId)) continue;
             const templatePath = getFactionFlagTemplatePath(factionId);
             const tpl =
                 this.chromaNeutralTemplateByPath.get(templatePath) ??
@@ -1303,7 +1329,8 @@ export class CityAssetManager {
 
     /** 势力旗号染色完成（或已缓存）时回调；占城后轻量 patch 用 */
     public static whenFactionFlagReady(factionId: string, cb: () => void): void {
-        if (!factionId || factionId === 'panjun') return;
+        // 🔴 [2026-10-24] panshu 叛军＝无字旗、无势力色，没有「染色完成」这一步
+        if (!factionId || factionId === 'panjun' || this.isBlankRebelFlagFaction(factionId)) return;
         if (this.processedFlagCache.has(factionId) && !this.placeholderFactionIds.has(factionId)) {
             cb();
             return;
@@ -1349,6 +1376,8 @@ export class CityAssetManager {
                 await this.processPanjunFlags(isBackground);
                 return;
             }
+            // 🔴 [2026-10-24] panshu 叛军无字旗：旗面走随机叛军原素材（见 getProcessedFlag），不染势力色
+            if (this.isBlankRebelFlagFaction(factionId)) return;
             await this.processStandardFaction(factionId);
         };
 
@@ -1371,7 +1400,8 @@ export class CityAssetManager {
 
     /** 确保势力旗号 CSS 已就绪（占城等新 faction 时按需补载，绝不阻塞主线程） */
     public static async ensureFactionFlag(factionId: string): Promise<void> {
-        if (!factionId || factionId === 'panjun') return;
+        // 🔴 [2026-10-24] panshu 叛军＝无字旗、无势力色：没有 `.flag-faction-panshu` 可补
+        if (!factionId || factionId === 'panjun' || this.isBlankRebelFlagFaction(factionId)) return;
 
         // 如果已经处理完染色（且不是占位），直接应用并返回
         if (this.processedFlagCache.has(factionId) && !this.placeholderFactionIds.has(factionId)) {
@@ -1424,6 +1454,13 @@ export class CityAssetManager {
      * Get processed flag data URL for a faction.
      */
     public static getProcessedFlag(factionId: string): string {
+        // 🔴 [2026-10-24 主人「叛军是旗帜上没有字」] 无字叛军旗（panshu）：**不染势力色**，
+        //   军团旗 / 战场旗的旗面直接用随机叛军原素材，与据点旗同一套（S10QZ 7–58）。
+        //   素材还没载入时退回「已抠绿未染色」的模板，绝不落回 A 系统（会给叛军一个随机势力色）。
+        if (this.isBlankRebelFlagFaction(factionId)) {
+            if (this.processedRebelFlags.length > 0) return this.processedRebelFlags[0];
+            return this.chromaNeutralTemplateByPath.get(this.templateFlagPath) || this.templateFlagPath;
+        }
         const cached = this.processedFlagCache.get(factionId);
         if (cached) return cached;
         const templatePath = getFactionFlagTemplatePath(factionId);
@@ -1618,6 +1655,10 @@ export class CityAssetManager {
         factionId: string,
         buildingStyle?: string,
     ): { factionId: string; variantKey: string; text: string; fill: string; stroke: string; emblemPath?: string } {
+        // 🔴 [2026-10-24] 无字叛军旗（panshu）：**任何调用者都拿不到文字**（防空规格兜底，见 getProcessedFlagText）
+        if (this.isBlankRebelFlagFaction(factionId)) {
+            return { factionId, variantKey: `blank_${factionId}`, text: '', fill: '', stroke: '' };
+        }
         // 🔴 [2026-10-20 主人定] 百岁模式：该势力没有在世武将时，旗号改用「当时代的军团名」
         //   （如日本古典时代 = 大和、15XX 德川在世 = 武藏）；下面的「只画前两字」规则照旧。
         //   🔴 [2026-10-20 主人令「凉州的话，旗帜只用一个凉字就行」] 个别时代名单独定了旗号文字的，
@@ -1673,6 +1714,8 @@ export class CityAssetManager {
 
     /** 真正生成并入缓存（同步编码，供队列按帧预算调用） */
     private static buildFlagTextSync(factionId: string, buildingStyle?: string): string | null {
+        // 🔴 [2026-10-24] 无字叛军旗（panshu）：不生成、不入缓存、永远返回 null
+        if (this.isBlankRebelFlagFaction(factionId)) return null;
         const spec = this.resolveFlagTextSpec(factionId, buildingStyle);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;
@@ -1690,9 +1733,11 @@ export class CityAssetManager {
      *   · 本帧生成预算用完、已排队 → **保留**已有文字，等补齐，别抹（抹了会闪）
      */
     public static getProcessedFlagText(factionId: string, buildingStyle?: string): string | null {
-        // 🔴 [2026-10-20 主人令「旗号，用一个字，繁体的义」] panjun（起义）也要写字：单字繁体「義」
+        // 🔴 [2026-10-20 主人令「旗号，用一个字，繁体的义」] panjun（起义）也要写字（现为「起义」二字）
         //    （原「[USER-REQUEST] Hide flag text for panjun」按主人最新令作废）
-        if (!factionId) return null;
+        // 🔴 [2026-10-24 主人「叛军是旗帜上没有字」] panshu（叛军）**永远不写字**：
+        //    值登记 'RANDOM' 的势力直接返回 null，连「叛军」二字都不许画到旗上。
+        if (!factionId || this.isBlankRebelFlagFaction(factionId)) return null;
 
         const spec = this.resolveFlagTextSpec(factionId, buildingStyle);
         const cached = this.processedFlagCache.get(spec.variantKey);
@@ -1722,7 +1767,8 @@ export class CityAssetManager {
      *    军团旗改走这里——同步编码、立即返回并写缓存（据点旗排队命中缓存即可，不重复生成）。
      */
     public static getProcessedFlagTextSync(factionId: string, buildingStyle?: string): string | null {
-        if (!factionId) return null;
+        // 🔴 [2026-10-24] 无字叛军旗（panshu）：军团旗 / 战场旗也不许写字（同 getProcessedFlagText）
+        if (!factionId || this.isBlankRebelFlagFaction(factionId)) return null;
         const spec = this.resolveFlagTextSpec(factionId, buildingStyle);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;

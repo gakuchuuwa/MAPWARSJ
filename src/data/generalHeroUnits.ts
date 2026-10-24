@@ -6,7 +6,7 @@
  *
  * 10 队 = 编制 9 队（骑兵 / 步兵 / 远程三排，比例规则不变）+ **主将队 1 队**。
  *   · 位置：前排正中再往前 —— 全阵的矛头（亚历山大亲率伙伴骑兵冲在最前，维基百科 Battle of the Granicus「亲统右翼」）；
- *   · 兵种：主将有专属英雄素材就用它；没有 → 用本军团前排的兵种（主将亲兵出自前锋）。
+ *   · 兵种：主将有专属英雄素材（指定兵模）就用它；没有 → 用本军团配置的英雄主队；再没有 → 用本军团前排的兵种（主将亲兵出自前锋）。
  *   · 兵力：与其余 9 队一起平分全军兵力，军团总兵力不变。
  * 编制数据（各层军团表）一个字不改；第 10 队在展开编制时追加。据点城防不带主将，仍是 9 队。
  * 🔴 剧本模式：每个主角武将的主将队兵种在事件编辑器里**必选**（事件字段 commanderUnit），按素材样貌选、不看兵名。
@@ -109,15 +109,18 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
 };
 
 /**
- * 主将队用哪个兵种：剧本事件里选定的 > 军团显式配置的英雄主队（commanderUnit） > 专属英雄兜底 > 本军团前排兵种。
+ * 主将队用哪个兵种：剧本事件里选定的 > 武将专属英雄（指定兵模） > 军团显式配置的英雄主队（commanderUnit） > 本军团前排兵种。
+ * 🔴 [2026-10-24 主人令「陆逊首战的敌对武将是刘备，但是刘备的主将队武将却是诸葛亮的兵模，请优先使用指定兵模」]
+ *    武将有自己的专属英雄兵模（GENERAL_HERO_UNITS）时优先用它，不许被军团默认主队兵模压掉
+ *    （例：古典时代巴蜀军团默认 hero_zhugeliang，刘备出阵仍该用 hero_liubei）。
  * 🔴 [2026-10-18 主人令「你把英雄的军团套上他本人的兵模不就可以了。也就不需要英雄随机池了」]
- *    每支军团自身已配置符合历史的英雄主队兵模（commanderUnit），直接按军团英雄出阵，不再走 248 英雄随机池。
+ *    军团 commanderUnit 只给**没有专属英雄的武将**兜底，不再走 248 英雄随机池。
  */
 export function commanderUnitOf(generalId: string | null | undefined, expandedSlots: readonly string[], ctx?: { factionId?: string | null; seedKey?: string; legionCommanderUnit?: string | null }): string | null {
     const picked = generalId ? getScriptCommanderUnit(generalId) : null;
-    const legionCmd = ctx?.legionCommanderUnit ? ctx.legionCommanderUnit : null;
     const hero = generalId ? GENERAL_HERO_UNITS[generalId] : undefined;
-    return picked ?? legionCmd ?? hero ?? expandedSlots[0] ?? null;
+    const legionCmd = ctx?.legionCommanderUnit ? ctx.legionCommanderUnit : null;
+    return picked ?? hero ?? legionCmd ?? expandedSlots[0] ?? null;
 }
 
 /** 编制 9 队展开后追加主将队 → 10 队；不是 9 队的（异常/旧数据）原样返回 */

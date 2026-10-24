@@ -548,9 +548,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/BASHU/shu_liubei.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -12
+            "scale": 0.89,
+            "offsetX": -1,
+            "offsetY": -11
         },
         "/assets/liuhan/__闲置__liuhan_16.png": {
             "scale": 1.14,

@@ -150,11 +150,12 @@ export class CityManager {
         this.applyStrategicMapView(this.map.getLeafletMap().getZoom());
     }
 
-    /** 叛军 52 面旗加载完成后，刷新已渲染 panjun 据点的 flag-rebel-* class */
+    /** 叛军 52 面旗加载完成后，刷新已渲染 panjun 起义 / panshu 叛军据点的 flag-rebel-* class */
     public refreshPanjunRebelFlagMarkers(): void {
         CityAssetManager.resetRebelFlagAssignments();
         for (const city of this.cities) {
-            if (city.factionId !== 'panjun') continue;
+            // 🔴 [2026-10-24] panshu 叛军也走 `.flag-rebel-*`（无字旗），补满 52 面后同样要换上各自的旗
+            if (city.factionId !== 'panjun' && !CityAssetManager.isBlankRebelFlagFaction(city.factionId)) continue;
             if (!this.territorySystem.hasCityMarker(city.id)) continue;
             this.territorySystem.patchCityMarkerFaction(city);
         }

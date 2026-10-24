@@ -668,12 +668,12 @@ export const T2_STRATEGIC: CityDataV2[] = [
         tier: 2,
         note: '大散关；凤州关隘',
     },
-    { id: 'city_dusong', name: '独松关', factionId: 'song', lat: 30.566952, lng: 119.679565, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true },
+    { id: 'city_dusong', name: '独松关', factionId: 'song', lat: 30.566952, lng: 119.679565, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true, note: '定级依据§6.2：南宋临安北门户关隘，石砌关墙/关门遗址 → 险要' },
 
 //镜像
     { id: 'city_xianxia', name: '仙霞关', factionId: 'huangwang', lat: 28.35, lng: 118.51, type: 'pass', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000, tier: 2,
-        note: '仙霞关；黄王关隘',
+        note: '仙霞关；黄王关隘；定级依据§6.2：仙霞岭关隘，四道石砌关门与关墙 → 险要',
     },
     { id: 'city_wuzhou', name: '金华', factionId: 'lujian', lat: 29.08, lng: 119.65, type: 'small_city', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000,
@@ -718,7 +718,7 @@ buildingStyle: 'CENTRAL', troops: 10000, mirror: true,
         note: '虎牢关；郑州关隘',
     },
     // ── 洛阳周边防御关隘群 ──
-    { id: 'city_guangchengguan', name: '广成关', factionId: 'han_d', lat: 34.139089, lng: 112.887268, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', mirror: true },
+    { id: 'city_guangchengguan', name: '广成关', factionId: 'han_d', lat: 34.139089, lng: 112.887268, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', mirror: true, note: '定级依据§6.2：洛阳八关之一（东汉中平元年置，扼宛洛道），关隘＋夯土关城（故址今河南汝州崆峒山西侧）→ 险要' },
 
 
     
@@ -733,7 +733,7 @@ buildingStyle: 'CENTRAL', troops: 10000, mirror: true,
 
 
 
-    { id: 'city_pingxingguan', name: '平型关', factionId: 'zhao', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', mirror: true },
+    { id: 'city_pingxingguan', name: '平型关', factionId: 'zhao', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', mirror: true, note: '定级依据§6.2：明长城平型关关城，砖石城墙 → 险要' },
 
 
     { id: 'city_lingshiguan', name: '灵石关', factionId: 'sui', lat: 36.844462, lng: 111.796875, type: 'pass', region: 'NORTH',
@@ -741,7 +741,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         note: '灵石关；宋老生霍邑',
     },
         // ── 关中盆地防御要塞群 ──
-    { id: 'city_wuguan', name: '武关', factionId: 'qin', lat: 33.6, lng: 110.62, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', mirror: true },
+    { id: 'city_wuguan', name: '武关', factionId: 'qin', lat: 33.6, lng: 110.62, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', mirror: true, note: '定级依据§6.2：秦楚界关武关，关城夯土/石墙遗迹 → 险要' },
 
 
 
@@ -780,16 +780,16 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_feihu', name: '飞狐', factionId: 'song', lat: 39.3487, lng: 114.6986, type: 'stockade', troops: 10000, region: 'WEI', buildingStyle: 'WEI' },
     { id: 'city_zijingguan', name: '紫荆关', factionId: 'ming_d', lat: 39.472238, lng: 115.265808, type: 'pass', region: 'SONG',
 buildingStyle: 'WEI', troops: 10000, mirror: true,
-        note: '紫荆关；易州关隘',
+        note: '紫荆关；易州关隘；定级依据§6.2：明长城内三关之一紫荆关，砖石关城 → 险要',
     },
     // ── 辽东幽州走廊关隘 ──
     { id: 'city_shanhaiguan', name: '山海关', factionId: 'ming_d', lat: 40, lng: 119.8, type: 'pass', troops: 10000, region: 'MING', buildingStyle: 'WEI' },
 
     { id: 'city_wushengguan', name: '武胜关', factionId: 'song', lat: 31.83, lng: 114.01, type: 'pass', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', 
-        note: '武胜关；义阳关隘', troops: 10000 },
+        note: '武胜关；义阳关隘；定级依据§6.2：义阳三关之一武胜关，石砌关墙 → 险要', troops: 10000 },
     // ── 齐鲁关隘 ──
-    { id: 'city_mulingguan', name: '大岘关', factionId: 'qi', lat: 36.275259, lng: 118.660583, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', mirror: true },
+    { id: 'city_mulingguan', name: '大岘关', factionId: 'qi', lat: 36.275259, lng: 118.660583, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', mirror: true, note: '定级依据§6.2：齐长城穆陵关（大岘）关隘，石砌/夯土墙 → 险要' },
 
 
 
@@ -826,7 +826,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-18 主人令「岭南算江南」→ JIANGNAN：清远（广东）
     { id: 'city_qingyuan', name: '清远', factionId: 'chen', lat: 23.68, lng: 113.06, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
-    { id: 'city_gaoque', name: '高阙塞', factionId: 'qin', lat: 41.195202, lng: 107.166138, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI', mirror: true },
+    { id: 'city_gaoque', name: '高阙塞', factionId: 'qin', lat: 41.195202, lng: 107.166138, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI', mirror: true, note: '定级依据§6.2：赵/秦长城高阙塞，石砌/夯土墙 → 险要' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-18 主人令「岭南算江南」→ JIANGNAN：横浦关（广东南雄）：秦五岭关隘
     { id: 'city_hengpuguan', name: '横浦关', factionId: 'nanyue', lat: 25.32, lng: 114.26, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
@@ -849,13 +849,12 @@ buildingStyle: 'CENTRAL', troops: 10000,
         name: '湟溪关',
         factionId: 'nanhan',
         lat: 24.16, lng: 113.38,
-        type: 'pass',
+        type: 'stockade',
         region: 'JIANGNAN',
         // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-18 主人令「岭南算江南」→ JIANGNAN：湟溪关（广东）：秦五岭关隘
         buildingStyle: 'JIANGNAN',
         troops: 10000,
-        tier: 2,
-        note: '湟溪关；南岭入粤要隘，南汉开国之君刘龑驻防',
+        note: '湟溪关；南岭入粤要隘（南汉刘龑驻防）。定级依据§6.2：关隘性质但未查得石砖夯土关墙实证 → 按规则不列险要，落城寨'
     },
     { id: 'city_yinzhou', name: '绥德', factionId: 'wei', lat: 37.5119, lng: 110.2396, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
@@ -940,7 +939,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_xingxingxia', name: '五峰燧', factionId: 'tang', lat: 41.611382, lng: 95.267944, type: 'stockade', troops: 20000, region: 'HEXI', buildingStyle: 'KHITAN', note: '🔴 [2026-10-18 按史] 五峰燧为汉唐—明代河西走廊夯土板筑夹芦苇红柳的烽燧军台；与嘉峪关同属河西，项目无 HEXI 独立分支，用 KHITAN（标签「河西（边墙要塞）」）作河西边墙代理，键名旧、非辽式。' },
 
     // 赤亭 — 叛军 (吐鲁番绿洲)
-    { id: 'city_chiting', name: '赤亭关', factionId: 'gaochang', lat: 42.85, lng: 91.5, type: 'pass', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
+    { id: 'city_chiting', name: '赤亭关', factionId: 'gaochang', lat: 42.85, lng: 91.5, type: 'pass', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', note: '定级依据§6.2：唐西州赤亭守捉/赤亭城（今鄯善七克台古城），关隘＋夯土城墙遗址 → 险要' },
 
 
     {
@@ -963,10 +962,10 @@ buildingStyle: 'CENTRAL', troops: 10000,
 buildingStyle: 'WESTERN', troops: 10000,
         note: '英吉沙尔；叶尔羌小城',
     },
-    { id: 'city_yumenguan', name: '玉门关', factionId: 'guiyi', lat: 40.35, lng: 93.86, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' },
+    { id: 'city_yumenguan', name: '玉门关', factionId: 'guiyi', lat: 40.35, lng: 93.86, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '定级依据§6.2：汉玉门关（小方盘城），夯土城墙 → 险要' },
 
 
-    { id: 'city_yangguan', name: '阳关', factionId: 'yangguan', lat: 39.92, lng: 94.06, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', mirror: true },
+    { id: 'city_yangguan', name: '阳关', factionId: 'yangguan', lat: 39.92, lng: 94.06, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', mirror: true, note: '定级依据§6.2：汉阳关（敦煌西南，与玉门关合称「二关」），关隘＋关城堡垒（夯土），约 900 年毁，今存阳关遗址/烽燧 → 险要' },
 
 
 
@@ -1000,7 +999,7 @@ buildingStyle: 'WESTERN', troops: 10000,
 
 
     // ── 太行陉关隘 ──
-    { id: 'city_tianjinguan', name: '天井关', factionId: 'murong', lat: 35.27, lng: 112.93, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', mirror: true },
+    { id: 'city_tianjinguan', name: '天井关', factionId: 'murong', lat: 35.27, lng: 112.93, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', mirror: true, note: '定级依据§6.2：太行天井关，石砌关墙 → 险要' },
 
 
 
@@ -1362,7 +1361,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：高凉（广东）：汉地郡治
     { id: 'city_gaoliang', name: '高凉', factionId: 'liren', lat: 21.9, lng: 110.8, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
-    { id: 'city_beishacheng', name: '卑沙城', factionId: 'gaogouli', lat: 39.444692, lng: 121.959229, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
+    { id: 'city_beishacheng', name: '卑沙城', factionId: 'gaogouli', lat: 39.444692, lng: 121.959229, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'KOREA', note: '卑沙城（大黑山山城）；高句丽石砌山城，石墙 → 险要。🔴 [2026-10-24 按史] 建筑风格 WEI→KOREA：卑沙城是高句丽山城，非河朔；KOREA＝朝鲜/高句丽文化（同国内城、平壤）。' },
 
 
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
@@ -1958,7 +1957,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
 export const RESTORED_CITIES: CityDataV2[] = [
 
 
-{ id: 'city_ningwuguan', name: '宁武关', factionId: 'tang', lat: 39.05, lng: 112.24, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
+{ id: 'city_ningwuguan', name: '宁武关', factionId: 'tang', lat: 39.05, lng: 112.24, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', note: '定级依据§6.2：明长城宁武关，砖石城墙 → 险要' },
 
 
 { id: 'city_yanmenguan', name: '雁门关', factionId: 'song', lat: 39.19, lng: 112.87, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', mirror: true },
@@ -2049,7 +2048,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     // ── 新增关隘（2026-05-26） ──
     { id: 'city_gubeikou', name: '古北口', factionId: 'yan', lat: 40.69, lng: 117.16, type: 'pass', region: 'NORTH',
 buildingStyle: 'WEI', troops: 10000, tier: 2,
-        note: '古北口；燕国关隘',
+        note: '古北口；燕国关隘；定级依据§6.2：明长城古北口关城，砖石城墙 → 险要',
     },
     { id: 'city_shimenguan', name: '石门关', factionId: 'ming_d', lat: 28.079264, lng: 104.254761, type: 'pass', region: 'BASHU', buildingStyle: 'BASHU', troops: 10000, note: '岭南环线西北锚点；文化川蜀（入蜀要道）' },
 
@@ -2159,7 +2158,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         buildingStyle: 'JIANGNAN',
         troops: 10000,
         tier: 4,
-        note: '古严关；桂州关隘',
+        note: '古严关；桂州关隘；定级依据§6.2：桂州古严关，石砌关墙遗址 → 险要',
     },
     {
         id: 'city_hezhou',
@@ -2460,7 +2459,7 @@ buildingStyle: 'JAPAN', troops: 10000, tier: 4,
     },
     { id: 'city_amucheng', name: '阿母城', factionId: 'saman', lat: 39.0833, lng: 63.5786, type: 'small_city', region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '阿姆河要冲；萨曼王朝域内重镇' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：石头城（塔什库尔干）：朅盘陀/色勒库尔，葱岭
-    { id: 'city_hepancheng', name: '石头城', factionId: 'hepan', lat: 37.7725, lng: 75.2264, type: 'pass', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' },
+    { id: 'city_hepancheng', name: '石头城', factionId: 'hepan', lat: 37.7725, lng: 75.2264, type: 'pass', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN', note: '定级依据§6.2：朅盘陀石头城，石砌城垣 → 险要' },
 
 
     { id: 'city_humicheng', name: '护密', factionId: 'qiepantuo', lat: 36.7266, lng: 71.6133, type: 'stockade', region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', troops: 10000, tier: 4, note: '青藏/中亚环线共用锚点' },
@@ -3024,9 +3023,9 @@ buildingStyle: 'JIANGNAN', troops: 10000,
 
     { id: 'city_xingzhuting', name: '星主厅', factionId: 'danluo', lat: 33.5131, lng: 126.5215, type: 'stockade', region: 'GORYEO', buildingStyle: 'KOREA', troops: 10000, note: '南方/日本/朝鲜环线共用锚点；文化朝鲜（济州）' },
     { id: 'city_deokwon', name: '德源', factionId: 'hui', lat: 39.54, lng: 127.24, type: 'pass', region: 'GOJOSEON', buildingStyle: 'KOREA', troops: 10000, note: '朝鲜德源郡旧地；咸兴—平壤道关隘；≠黑龙江双城' },
-    { id: 'city_yuezhi', name: '大木岳', factionId: 'mahan', lat: 36.8353, lng: 127.0417, type: 'pass', region: 'GOJOSEON',
+    { id: 'city_yuezhi', name: '大木岳', factionId: 'mahan', lat: 36.8353, lng: 127.0417, type: 'stockade', region: 'GOJOSEON',
 buildingStyle: 'KOREA', troops: 10000,
-        note: '大木岳；欢州关隘',
+        note: '大木岳；欢州关隘。定级依据§6.2：关隘性质但未查得石砖夯土关墙实证 → 按规则不列险要，落城寨',
     },
     { id: 'city_heseluo', name: '何瑟罗', factionId: 'hui', lat: 37.75, lng: 128.89, type: 'stockade', region: 'GOJOSEON', buildingStyle: 'KOREA', troops: 10000, note: '不耐侯濊族君长驻何瑟罗' },
     { id: 'city_wushecheng', name: '乌舍寨', factionId: 'wula', lat: 45.821125, lng: 128.161011, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
@@ -3097,10 +3096,10 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
 
-    { id: 'city_dashicheng', name: '大石堡', factionId: 'shatuo', lat: 41.28, lng: 79.22, type: 'pass', region: 'WESTERN_FEUDAL',
+    { id: 'city_dashicheng', name: '大石堡', factionId: 'shatuo', lat: 41.28, lng: 79.22, type: 'stockade', region: 'WESTERN_FEUDAL',
 buildingStyle: 'WESTERN', troops: 10000,
         // 🔴 [2026-10-24] 原属「朱邪」；朱邪氏＝沙陀酋长家族（朱邪赤心即李国昌，李克用之父），朱邪势力已并入沙陀 → 关隘随归沙陀。
-        note: '大石城；朱邪关隘（2026-10-24 朱邪部并入沙陀，关隘随归沙陀）',
+        note: '大石城；朱邪关隘（2026-10-24 朱邪部并入沙陀，关隘随归沙陀）。定级依据§6.2：未查得石砖夯土墙实证 → 按规则不列险要，落城寨',
     },
     { id: 'city_weitoucheng', name: '阿合奇', factionId: 'weitou', lat: 40.3, lng: 79.05, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '尉头国王城驻军' },
     { id: 'city_wosedecheng', name: '握瑟德', factionId: 'sai', lat: 39.77, lng: 78.56, type: 'stockade', region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', troops: 10000, note: '塞种部落骑射武装' },
@@ -3165,9 +3164,9 @@ buildingStyle: 'JIANGNAN', troops: 10000,
 buildingStyle: 'CENTRAL', troops: 10000,
         note: '方渠；环州小城',
     },
-    { id: 'city_jingsai', name: '静塞', factionId: 'tang', lat: 37.448637, lng: 106.674500, type: 'pass', region: 'HEXI',
+    { id: 'city_jingsai', name: '静塞', factionId: 'tang', lat: 37.448637, lng: 106.674500, type: 'stockade', region: 'HEXI',
 buildingStyle: 'KHITAN', troops: 10000, mirror: true,
-        note: '静塞；静塞关隘',
+        note: '静塞；静塞关隘。定级依据§6.2：关隘性质但未查得石砖夯土关墙实证 → 按规则不列险要，落城寨',
     },//镜像
     { id: 'city_lingzhou', name: '回乐', factionId: 'tang', lat: 37.998341, lng: 106.295471, type: 'small_city', region: 'HEXI',
 buildingStyle: 'KHITAN', troops: 10000,
@@ -3236,7 +3235,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_yakesa', name: '雅克萨', factionId: 'suolun', lat: 53.39056, lng: 124.0775, type: 'stockade', region: 'MANCHU', buildingStyle: 'NORTHEAST', troops: 10000, note: '黑龙江与额木尔河汇口，达斡尔敖拉氏故地（《朔方备乘》）' },
     { id: 'city_geerbiqi', name: '格尔必齐', factionId: 'manzhou_d', lat: 53.33, lng: 121.45, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
 
-    { id: 'city_shilekahe', name: '石勒喀堡', factionId: 'eluosi_diguo', lat: 51.7321, lng: 115.8151, type: 'pass', region: 'STEPPE_FEUDAL', buildingStyle: 'SLAVIC', troops: 10000, note: '石勒喀河岸要塞城；近尼布楚而分立；布拉特。🔴 [2026-10-18 按据点] 石勒喀堡为俄罗斯哥萨克 Ostrog（木石边疆要塞），故 SLAVIC；孛端察儿/布拉特是武将与据点错配，待改武将。' },
+    { id: 'city_shilekahe', name: '石勒喀堡', factionId: 'eluosi_diguo', lat: 51.7321, lng: 115.8151, type: 'stockade', region: 'STEPPE_FEUDAL', buildingStyle: 'SLAVIC', troops: 10000, note: '石勒喀河岸要塞城；俄罗斯哥萨克 Ostrog（木/土边疆要塞），栅栏墙按规则算城、无石砖夯土城墙 → 城寨；人口无考 → 城寨' },
     { id: 'city_chita', name: '赤塔', factionId: 'buriat', lat: 52.0333, lng: 113.5017, type: 'stockade', region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', troops: 10000, note: '布里亚特酋长统林中射手世居赤塔' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CUMAN：养吉干：锡尔河入咸海处要塞，花剌子模/钦察故地，归库曼 CUMAN
     { id: 'city_yangjigan', name: '养吉干', factionId: 'xianhai', lat: 45.6, lng: 62, type: 'pass', region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '中亚环线锚点；锡尔河入咸海处要塞，花剌子模东北边境' },
@@ -3285,7 +3284,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_meng', name: '蒙格', factionId: 'bulu', lat: 32.64744, lng: 73.50914, type: 'stockade', region: 'PURU', buildingStyle: 'PURU', troops: 10000, note: '杰赫勒姆河（古称海达斯佩斯河）南岸蒙格村；公元前326年亚历山大与补噜王会战地点' },
     { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.57, lng: 95.7, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'BURMESE', note: '旧称莫索波；雍笈牙起兵并建立贡榜王朝之地' },
 
-    { id: 'city_hengyu', name: '横屿', factionId: 'ming_d', lat: 26.77, lng: 119.7, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_hengyu', name: '横屿', factionId: 'ming_d', lat: 26.77, lng: 119.7, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '横屿；海岛倭寇木寨（戚继光 1562 年横屿之战），木栅/土寨无石砖夯土城墙、亦非关隘要塞 → 按规则算城；人口无考 → 城寨' },
 
 
     { id: 'city_luobo', name: '罗博', factionId: 'panjun', lat: 25.4112, lng: 106.7377, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
@@ -3400,7 +3399,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     { id: 'city_xuecheng', name: '薛寨', factionId: 'tang', lat: 31.43, lng: 103.16, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
-    { id: 'city_zhangguojuncheng', name: '彰国军城', factionId: 'shatuo', lat: 39.5761, lng: 113.1894, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
+    { id: 'city_zhangguojuncheng', name: '彰国军城', factionId: 'shatuo', lat: 39.5761, lng: 113.1894, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', note: '彰国军城（辽应州彰国军）；定级依据§6.2：军城/州治，有夯土城墙但性质是城（非关隘/要塞/堡垒），按城市判级；辽应州统三县、城居推算过万 → 小城' },
 
     { id: 'city_yunzhongcheng', name: '君子津', factionId: 'han_d', lat: 40.2732, lng: 111.1404, type: 'stockade', troops: 10000, region: 'CENTRAL', buildingStyle: 'XIANBEI' },
 
@@ -3474,7 +3473,7 @@ buildingStyle: 'TIBET', troops: 10000,
     //   已迁到 **`src/data/Battlefields.ts`**（`bf_yisusi` / `bf_gelanikusihe`），
     //   由 `src/map/BattlefieldLayer.ts` 独立图层渲染。
     //   ⚠️ 因此「格拉尼库斯河 ↔ 格拉尼库斯」10.6km 这种「过近」问题**整类消失**（战场不再占据点名额）。
-    { id: 'city_peiluximu', name: '佩鲁西姆', factionId: 'aiji', lat: 31.04, lng: 32.55, type: 'pass', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '埃及东方门户要塞，佩尔狄卡斯321年征埃及军至此处、尼罗河畔被弑' },
+    { id: 'city_peiluximu', name: '佩鲁西姆', factionId: 'aiji', lat: 31.04, lng: 32.55, type: 'pass', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '埃及东方门户要塞，佩尔狄卡斯321年征埃及军至此处、尼罗河畔被弑；定级依据§6.2：埃及东部门户要塞佩鲁西姆，泥砖/石城墙 → 险要' },
     { id: 'city_matelugang', name: '马特鲁港', factionId: 'tuolemi', lat: 31.35, lng: 27.23, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', stockadeShape: 'trapezoid', stockadeFence: 'ARCHAIC', note: '古名帕拉伊托尼乌姆（Paraetonium），埃及西北沿海港。🔴 [2026-09-25 主人令「请添加」] 为第三片第 3 段「埃及接收与加冕走廊」补：亚历山大自亚历山大城西行至此，再南下沙海往锡瓦（阿里安《远征记》III.3）。坐标按史料位置取 31.35,27.23。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
     { id: 'city_halikanasu', name: '哈利卡纳苏斯', factionId: 'kaliya', lat: 37.03, lng: 27.43, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '卡里亚都城（摩索拉斯陵墓所在），阿尔特米西亚女王萨拉米斯海战率五舰助波斯 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
     { id: 'city_kelazuomeinai', name: '克拉佐美奈', factionId: 'aqimeinide', lat: 38.36, lng: 26.77, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '爱奥尼亚十二城之一（斯米尔纳湾南岸海港城邦：主城在陆上、另有离岸小岛城区以堤道连陆，腹地为 Chora；英文维基 Klazomenai 明载 one of the twelve Ionian cities）。🔴 [2026-10-02 主人令「克拉佐美奈请符合历史」] 定级依据（按 2026-10-01 定级铁律逐条对）：① 它是**城邦**，不是关隘/要塞/堡垒 → **不归险要**（原写 pass 属误判：有石墙是希腊城邦常态，不足以当险要）；② 人口无载 → 按现行规则兜底取城寨（石墙不改变人口定级）。史事：公元前497年波斯于伊奥尼亚起义后夺回此城（希罗多德 V.123）；前 412–411 年伯罗奔尼撒战争期间为雅典与斯巴达反复争夺（修昔底德 VIII 卷）；公元前387年《大王和约》划归波斯。' },
@@ -3499,7 +3498,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_kabufoliwu', name: '卡布弗里乌', factionId: 'tamoyue', lat: -22.88, lng: -42.03, type: 'stockade', troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '塔莫约联盟领地，昆汉贝贝率众抗葡萄牙' },
     { id: 'city_kelipuli', name: '科利普利', factionId: 'naweierbuta', lat: -37.95, lng: -72.43, type: 'stockade', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '纳韦尔布塔山东南麓要冲，加尔瓦里诺断腕巡回动员部族血誓之地' },
     { id: 'city_bideluoa', name: '彼得罗阿', factionId: 'mapuche', lat: -35.03, lng: -71.55, type: 'pass', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '马塔基托河畔要塞，瓜科尔达随劳塔罗北伐战死殉难地' },
-    { id: 'city_mengteluo', name: '蒙特罗', factionId: 'bogendigongguo', lat: 48.39, lng: 2.95, type: 'pass', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '塞纳河畔蒙特罗要塞，无畏的约翰1419年在此被刺' },
+    { id: 'city_mengteluo', name: '蒙特罗', factionId: 'bogendigongguo', lat: 48.39, lng: 2.95, type: 'pass', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '塞纳河畔蒙特罗要塞，无畏的约翰1419年在此被刺；定级依据§6.2：塞纳河畔蒙特罗要塞，石砌城堡 → 险要' },
     { id: 'city_oushi', name: '欧什', factionId: 'amaniyake', lat: 43.65, lng: 0.58, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '阿马尼亚克伯爵领首府，贝尔纳·德·阿马尼亚克驻地' },
     { id: 'city_geluosite', name: '格洛斯特', factionId: 'yinggelan', lat: 51.86, lng: -2.24, type: 'small_city', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '格洛斯特伯国首府，吉尔伯特·德·克莱尔驻地' },
     { id: 'city_kesenza', name: '科森扎', factionId: 'xigete', lat: 39.30, lng: 16.25, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'LATIN', note: '亚拉里克410年病逝葬布森托河底之地' },
@@ -3510,9 +3509,9 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_hagatna', name: '阿加尼亚', factionId: 'chamorro', lat: 13.4757, lng: 144.7500, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', stockadeShape: 'square', stockadeFence: 'DARK', note: '阿加尼亚（Hagåtña），关岛西岸阿加尼亚河口聚落，查莫罗人的首要村落与统治中心，1521 年麦哲伦抵达时的查莫罗主邑，后为西班牙殖民首府。查莫罗语 Guåhan（关岛）本义「我们所有的」。定级依据§6.2：非关隘/要塞/堡垒（拉特石柱 Latte 是屋基非城防，无石头城墙）→ 城市；查英文维基与当地语种维基均未见阿加尼亚城居人口数字，算不出来 → 按「查不到的一律城寨」落城寨(stockade)。围栏取原木尖桩（查莫罗传统木栅/茅屋聚落）。文化：东南亚（太平洋南岛系，借 SEAS 素材）。坐标取阿加尼亚 13.4757,144.7500。归属：势力「查莫罗」（此处原住民族、民族发源核心，按§「以民族命名」），旗号「查」。' },
     { id: 'city_lier', name: '里尔', factionId: 'bogendigongguo', lat: 50.63, lng: 3.06, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '好人菲利普1454年野鸡宴会誓师东征之地' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：哈瓦登：威尔士东北，凯尔特
-    { id: 'city_hawadeng', name: '哈瓦登', factionId: 'weiershigongguo', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '戴菲德1282年突袭英军城堡点燃威尔士抗英终战' },
+    { id: 'city_hawadeng', name: '哈瓦登', factionId: 'weiershigongguo', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '戴菲德1282年突袭英军城堡点燃威尔士抗英终战；定级依据§6.2：威尔士哈瓦登城堡，石墙 → 险要' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：布伊尔斯：威尔士中部，凯尔特
-    { id: 'city_buyiersi', name: '布伊尔斯', factionId: 'weiershigongguo', lat: 52.15, lng: -3.40, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '卢埃林1282年欧温桥之战阵亡殉难地' },
+    { id: 'city_buyiersi', name: '布伊尔斯', factionId: 'weiershigongguo', lat: 52.15, lng: -3.40, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '卢埃林1282年欧温桥之战阵亡殉难地；定级依据§6.2：威尔士布伊尔斯城堡，石墙（今存土垒） → 险要' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1」] 原「ASIA」只给一级、二级靠 region 推 → 归 VIETNAMESE：义安（Nghe An）：越南中部；AGENTS 归位原则「越南归东南亚」，一级随 VIETNAMESE = SEAS
     { id: 'city_yian', name: '义安', factionId: 'daquyue', lat: 18.67, lng: 105.68, type: 'small_city', troops: 10000, region: 'VIETNAMESE', buildingStyle: 'VIETNAMESE', note: '丁礼受封南越王坐镇驩州抗击林邑之地' },
     { id: 'city_debuleidamo', name: '德布雷达莫', factionId: 'ethiopia', lat: 14.37, lng: 39.27, type: 'pass', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '提格雷悬崖修道要塞，吉达扬避难与反击阵地' },
@@ -3583,7 +3582,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
         { id: 'city_wangshecheng', name: '王舍城', factionId: 'mojietuo', lat: 25.03, lng: 85.42, type: 'medium_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '摩揭陀王国古都（频毗娑罗/阿阇世王），佛陀弘法地' },
     { id: 'city_gaodacheng', name: '高达城', factionId: 'boluo', lat: 24.88, lng: 88.13, type: 'big_city', troops: 10000, region: 'BENGALIS', buildingStyle: 'BENGALIS', note: '波罗帝国首都（达磨波罗），印度最后一个佛教大帝国' },
-    { id: 'city_suomapuli', name: '索玛普利', factionId: 'boluo', lat: 25.031111, lng: 88.976944, type: 'pass', troops: 10000, region: 'BENGALIS', buildingStyle: 'BENGALIS', note: '索玛普利大寺要塞小城（Somapura Mahavihara）；提婆波罗时期波罗王朝全盛要冲，今巴哈尔布尔遗址' },
+    { id: 'city_suomapuli', name: '索玛普利', factionId: 'boluo', lat: 25.031111, lng: 88.976944, type: 'stockade', troops: 10000, region: 'BENGALIS', buildingStyle: 'BENGALIS', note: '索玛普利大寺（Somapura Mahavihara，今巴哈尔布尔遗址）；定级依据§6.2：砖围墙为寺院围垣、非军事要塞，按城市判级；人口无考 → 城寨' },
     { id: 'city_jidagang', name: '吉大港', factionId: 'gurjara', lat: 22.335, lng: 91.8325, type: 'small_city', troops: 10000, region: 'BENGALIS', buildingStyle: 'BENGALIS', note: '古称查蒂格拉姆、查蒂冈；孟加拉湾古港，1666年乌梅德汗统军攻取后改称伊斯兰堡并任首任守将。🔴 [2026-10-05 主人令「建筑风格必须当地」] 吉大港在**孟加拉**（孟加拉苏丹国／莫卧儿孟加拉省门户港）→ 挂孟加拉 BENGALIS（一级 INDI）；旧值 INDIA 是南印度达罗毗荼，与本地不符。' },
         { id: 'city_danmoledi', name: '耽摩栗底', factionId: 'shunga', lat: 22.28, lng: 87.92, type: 'small_city', troops: 10000, region: 'BENGALIS', buildingStyle: 'BENGALIS', note: '古代孟加拉湾第一大港，海上丝路起点，法显回国出发港。🔴 [2026-10-05 主人令「建筑风格必须当地」] 耽摩栗底在**孟加拉**（恒河三角洲西缘）→ 挂孟加拉 BENGALIS（一级 INDI）；旧值 INDIA 是南印度达罗毗荼，与本地不符。' },
     { id: 'city_beileinisi', name: '贝雷尼斯', factionId: 'tuolemi', lat: 23.91, lng: 35.48, type: 'small_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '托勒密/罗马时期埃及红海第一大港，通往印度商路起点' },
@@ -3721,11 +3720,11 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_pagaruyung', name: '帕加鲁荣', factionId: 'minangkabau', lat: -0.471, lng: 100.621, type: 'small_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '米南加保王国王宫所在，尖顶大屋建筑中心；定级依据§6.2：1684年城内约8000人（VOC使节Thomas Dias记录），未达1万但属城市→小城' },
     { id: 'city_uxmal', name: '乌斯马尔', factionId: 'tutul_xiu', lat: 20.359, lng: -89.771, type: 'pass', troops: 10000, region: 'MAYANS', buildingStyle: 'MAYANS', note: '乌斯马尔玛雅阶梯金字塔要塞城，查克王驻防' },
     { id: 'city_bam_citadel', name: '巴姆', factionId: 'xisi', lat: 29.116, lng: 58.368, type: 'pass', troops: 10000, region: 'SASANIAN', buildingStyle: 'PERSIAN', note: '克尔曼东缘丝路绿洲要塞，巴姆城堡所在地' },
-    { id: 'city_bedzin', name: '本津堡', factionId: 'bolan', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '小波兰西境王家石堡，卡齐米日三世鹰巢防线节点' },
-    { id: 'city_braganca', name: '布拉干萨', factionId: 'putaoya', lat: 41.8042, lng: -6.7492, type: 'pass', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土边城，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。' },
+    { id: 'city_bedzin', name: '本津堡', factionId: 'bolan', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '小波兰西境王家石堡，卡齐米日三世鹰巢防线节点；定级依据§6.2：波兰本津王家石堡 → 险要' },
+    { id: 'city_braganca', name: '布拉干萨', factionId: 'putaoya', lat: 41.8042, lng: -6.7492, type: 'pass', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土边城，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。；定级依据§6.2：葡萄牙布拉干萨城堡，石墙 → 险要' },
     { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'kasidiliya', lat: 41.309, lng: -4.9085, type: 'pass', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH', note: '麦地那德尔坎波王家要塞，特拉斯塔马拉王朝扩建' },
     { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'odrysian_late', lat: 42.618056, lng: 25.305556, type: 'pass', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '塞乌特斯三世营建的奥德里西亚王都与设防城' },
-    { id: 'city_chimarros', name: '希马鲁塔', factionId: 'xila', lat: 36.965, lng: 25.53, type: 'pass', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型' },
+    { id: 'city_chimarros', name: '希马鲁塔', factionId: 'xila', lat: 36.965, lng: 25.53, type: 'pass', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型；定级依据§6.2：纳克索斯希马鲁塔石砌设防塔楼 → 险要' },
     { id: 'city_themiskyra', name: '忒弥斯基拉', factionId: 'bendou_d', lat: 41.2, lng: 36.98, type: 'stockade', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '特尔莫冬河口（今土耳其特尔梅），古希腊传统中亚马逊人的都城；赫拉克勒斯第九件功业「夺希波吕忒腰带」即远征此地。希罗多德四·110-117 记亚马逊人自此漂至塔奈斯河口，与斯基泰青年合流成萨尔马提亚人' },
     // 🔴 [2026-09-12 主人「加沙用什么看历史」] 亚历山大剧本第四章「加沙围城战」的攻城载体。
     //    定级依据 §6.2：加沙非关隘/要塞/堡垒 → 按城市；城内军民数万 >1 万 → 小城（腓利斯丁五城之一）。

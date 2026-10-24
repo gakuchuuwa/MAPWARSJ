@@ -7,6 +7,7 @@ import { getCityImage, getRegion, REGION_ORDER, REGION_LABELS } from '../systems
 import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 import { calculateDistance } from '../map/TileMapConfig';
 import { FactionEditor, chineseToId, disambiguateCityId } from './FactionEditor';
 import { pinyin } from 'pinyin-pro'; // [NEW] 拼音转换库
@@ -852,9 +853,11 @@ export class CityEditor implements IEditor {
             `<br><span style="color:#999">如真实地理上无法兼容，应删除名气较小的那个；不要硬拉坐标。</span>`;
     }
 
-    /** 玩家可见旗号（1–2 字）；panjun → 叛军 */
+    /** 玩家可见旗号（1–2 字）；叛军（panshu）无字旗 → 显示「无字」 */
     private getFlagLabel(factionId: string): string {
-        if (factionId === 'panjun') return '叛军';
+        // 🔴 [2026-10-24 主人「叛军是旗帜上没有字」「叛军和起义军完全是两回事」]
+        //   panshu 叛军＝无字旗（没有旗号）；panjun 起义＝有旗号（SANDBOX_DISPLAY_NAMES 里的「起义」）。
+        if (isBlankRebelFaction(factionId)) return '（无字）';
         return SANDBOX_DISPLAY_NAMES[factionId] || factionId;
     }
 
@@ -1278,7 +1281,7 @@ export class CityEditor implements IEditor {
     /**
      * 反向查找：哪些势力把此 cityId 作为 STARTING_CAPITALS（沙盒模式起始首都）。
      * 如果列表非空，意味着删除/重命名这个城会让那些势力**没有出生点**，
-     * 进入沙盒会被自动降级为 panjun 灰旗。
+     * 进入沙盒会被自动降级为 panshu 无字旗叛军（2026-10-24 起：panjun 是起义军，不再是无主灰旗）。
      */
     private getFactionsByStartingCity(cityId: string): string[] {
         const result: string[] = [];
@@ -1312,7 +1315,7 @@ export class CityEditor implements IEditor {
                 `此据点是 ${affectedFactions.length} 个势力的 STARTING_CAPITALS（沙盒起始首都）:\n` +
                 affectedFactions.map(f => `  • ${f}`).join('\n') +
                 `\n\n删除后这些势力进入沙盒模式会失去出生点，\n` +
-                `所有城市会被强制降为 panjun（灰旗叛军）。\n\n` +
+                `所有城市会被强制降为 panshu（无字旗叛军）。\n\n` +
                 `如果你执意删除，必须同时在 GameApp.ts 的\n` +
                 `STARTING_CAPITALS 里给这些势力换一个 cityId。`;
         }
@@ -1529,7 +1532,8 @@ export class CityEditor implements IEditor {
 
         // [SANDBOX 陷阱 4] sandboxDisplayNames 缺失 → 旗帜上没有"短名"文字
         // 注: 代码层有 fallback 到 factionManager.getFactionName，所以不是 fatal
-        if (!(f.id in SANDBOX_DISPLAY_NAMES)) {
+        // 🔴 [2026-10-24] 叛军（panshu）本来就无字旗、不该有短名，不报这条噪音
+        if (!(f.id in SANDBOX_DISPLAY_NAMES) && !isBlankRebelFaction(f.id)) {
             warnings.push(
                 `<span style="color:#FFB74D">ⓘ 无 sandboxDisplayNames 短名</span>` +
                 `<span style="color:#999">：旗帜文字会用势力全名 fallback；如需精简显示请在 SandboxDisplayNames.ts 加 1-2 字</span>`

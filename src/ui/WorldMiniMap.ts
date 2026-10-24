@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { GridSystem } from '../systems/GridSystem';
 import { HISTORICAL_FACTION_COLORS } from '../data/HistoricalFactionColors';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 import { CityType } from '../types/core';
 import { ESRI_SHADED_RELIEF_URL, buildWaterMask } from '../world/land-sea/WaterMask';
 
@@ -385,11 +386,11 @@ export class WorldMiniMap {
             this.cityHexes = this.computeCityHexes(marks);
         }
 
-        // 按势力分组收集据点，跳过 panjun
+        // 按势力分组收集据点，跳过 panjun 起义 / panshu 叛军（两者都没有势力色）
         const factionCities = new Map<string, string[]>();
         const factionColorMap = new Map<string, string>();
         for (const m of marks) {
-            if (!m.factionId || m.factionId === 'panjun' || !this.cityHexes.has(m.id)) continue;
+            if (!m.factionId || m.factionId === 'panjun' || isBlankRebelFaction(m.factionId) || !this.cityHexes.has(m.id)) continue;
             let list = factionCities.get(m.factionId);
             if (!list) {
                 list = [];

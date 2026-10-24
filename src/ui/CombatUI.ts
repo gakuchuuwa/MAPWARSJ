@@ -3952,9 +3952,12 @@ export class CombatUI {
     }
 
     private resolveFactionLabel(factionId: string | null): string {
-        if (!factionId || factionId === 'panjun') return '叛军';
+        // 🔴 [2026-10-24 主人「叛军和起义军完全是两回事」] panjun 是**起义**（历史起义政权），
+        //   势力名就叫「起义」；旧代码把它一律写成「叛军」是错的。叛军是 panshu（势力名本来就是「叛军」），
+        //   走下面 getFactionName 拿真名即可。
         const fm = (window as any).game?.factionManager;
-        return fm?.getFactionName(factionId) ?? factionId;
+        const name = factionId ? fm?.getFactionName(factionId) : '';
+        return name || (factionId ? factionId : '叛军');
     }
 
     private updateFactionDisplay(): void {

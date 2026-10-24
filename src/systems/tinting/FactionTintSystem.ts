@@ -3,11 +3,12 @@
  *
  * 兵种贴图染色 — **仅正规势力**；颜色与 FactionManager（旗帜、领土）同一 hex 来源。
  *
- * 叛军 panjun 不在此系统：无势力色、军队保持 NPC 原色（见 NO_TINT_FACTION_IDS）。
- * 叛军视觉差异仅来自据点随机旗面（CityAssetManager.getProcessedRebelFlagIndex）。
+ * 起义（panjun）与叛军（panshu）都不在此系统：无势力色、军队保持 NPC 原色（见 NO_TINT_FACTION_IDS）。
+ * 叛军（panshu）视觉差异仅来自据点随机旗面（CityAssetManager.getProcessedRebelFlagIndex）。
  */
 
 import type { FactionManager } from '../../core/FactionManager';
+import { isBlankRebelFaction } from '../../data/RebelFaction';
 
 /**
  * 染色颜色接口
@@ -19,8 +20,16 @@ export interface TintColor {
     intensity: number;  // 0-1 染色强度
 }
 
-/** 叛军：无势力 hex，旗面用 52 面随机素材，军队贴图不染色 */
+/** 起义（panjun）：无势力 hex，旗面用 52 面随机素材，军队贴图不染色 */
 const NO_TINT_FACTION_IDS = new Set(['panjun']);
+
+/**
+ * 🔴 [2026-10-24 主人「叛军是旗帜上没有字」] 叛军（panshu）＝无主状态，同样不染军队色；
+ *   否则攻打叛军城时守军会被染成 panshu 那套随机「势力色」（见 AGENTS.md §4.5）。
+ */
+function isNoTintFaction(factionId: string | null | undefined): boolean {
+    return !!factionId && (NO_TINT_FACTION_IDS.has(factionId) || isBlankRebelFaction(factionId));
+}
 
 /**
  * 势力染色系统
@@ -40,7 +49,7 @@ export class FactionTintSystem {
         this.hexCache.clear();
 
         for (const faction of fm.getFactions()) {
-            if (NO_TINT_FACTION_IDS.has(faction.id)) continue;
+            if (isNoTintFaction(faction.id)) continue;
             this.cacheTintForFaction(faction.id, fm.getFactionColor(faction.id));
         }
     }
@@ -62,7 +71,7 @@ export class FactionTintSystem {
      * 获取势力的染色颜色
      */
     public static getTintColor(factionId: string): TintColor | null {
-        if (!factionId || NO_TINT_FACTION_IDS.has(factionId)) return null;
+        if (!factionId || isNoTintFaction(factionId)) return null;
 
         const fm = this.resolveFactionManager();
         if (!fm) return null;
@@ -76,7 +85,7 @@ export class FactionTintSystem {
 
     /** 当前势力色 HEX（供精灵缓存键） */
     public static getTintHex(factionId: string): string | null {
-        if (!factionId || NO_TINT_FACTION_IDS.has(factionId)) return null;
+        if (!factionId || isNoTintFaction(factionId)) return null;
         const fm = this.resolveFactionManager();
         return fm ? fm.getFactionColor(factionId) : null;
     }

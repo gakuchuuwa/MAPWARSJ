@@ -8,6 +8,7 @@ import { LegionManager } from '../legion/LegionManager';
 import { SiegeManager } from '../combat/SiegeManager';
 import { GameConfig } from '../config/GameConfig';
 import { isNearCity } from '../core/DistanceUtils';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 
 export type RestorationReport = {
@@ -60,7 +61,8 @@ export class RebellionSystem {
     /** 以 CityManager 开局快照为准（须与 loadGameAppCityData 沙盒改旗一致，不能用裸 CITIES） */
     private initializeCaches(): void {
         this.cityManager.getCities().forEach((city) => {
-            if (!city.factionId || city.factionId === 'panjun') return;
+            // 🔴 [2026-10-24] 叛军（panshu）＝无主状态，不算任何势力的开局据点（原口径只排除 panjun）
+            if (!city.factionId || city.factionId === 'panjun' || isBlankRebelFaction(city.factionId)) return;
 
             const region = getCityRegion(city);
             this.initialFactionMap.set(city.id, city.factionId);
@@ -80,7 +82,9 @@ export class RebellionSystem {
     private pickLargestFaction(cities: City[]): { factionId: string; count: number } | null {
         const factionCityCount = new Map<string, number>();
         cities.forEach((city) => {
-            if (!city.factionId || city.factionId === 'panjun') return;
+            // 🔴 [2026-10-24] 叛军（panshu）无主状态不算「最大势力」（原口径只排除 panjun）；
+            //   否则乱斗开局 170+ 座无将据点会让复国机制一直认叛军为最大势力、真正的大势力永远轮不到。
+            if (!city.factionId || city.factionId === 'panjun' || isBlankRebelFaction(city.factionId)) return;
             factionCityCount.set(city.factionId, (factionCityCount.get(city.factionId) ?? 0) + 1);
         });
         if (factionCityCount.size === 0) return null;

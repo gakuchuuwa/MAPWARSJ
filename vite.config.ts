@@ -5531,8 +5531,13 @@ function serverValidateEntities(): {
     const cityById = new Map(data.cities.map(c => [c.id, c]));
     const factionById = new Map(data.factions.map(f => [f.id, f]));
     const factionSet = new Set(data.factions.map(f => f.id));
-    // 纯历史剧本野战守方势力（山地/游牧部落联军，无城市据点）：不参与沙盒争霸，豁免首府/旗号检查
-    const skipFactions = new Set(['panjun', 'kesaiya', 'wukexiya']);
+    // 不参与「正规势力」检查的占位势力：
+    //   · panjun＝起义占位势力（历史起义首领的政权，旗下有真实据点/武将，合法数据）
+    //   · panshu＝叛军占位势力（🔴 2026-10-24 主人「叛军是旗帜上没有字、不能出征」；游戏机制里的无主状态，
+    //     乱斗开局给「无将据点」兜底，**不是正规政权**，永远没有首府/旗号/势力色/武将/精锐，也不该报错——
+    //     2026-10-24 主人「这个不算错，总是提示错误，看着麻烦」⇒ 校验整类跳过）
+    //   · kesaiya / wukexiya＝纯历史剧本野战守方势力（无城市据点，不参与沙盒争霸）
+    const skipFactions = new Set(['panjun', 'panshu', 'kesaiya', 'wukexiya']);
     const validAttackStyles = new Set(['attack', 'defense', 'balanced']);
 
     // P-01 影子字段审计：只按 FactionGenerals 在册名册检查，孤儿 profile 不参与。

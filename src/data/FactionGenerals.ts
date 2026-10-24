@@ -488,10 +488,10 @@ export interface FactionGeneral {
 
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // ── 2026-10-24 环非洲新将（普将：皆为一隅镇守/城邦之主，无战略级胜绩；立绘留空）──
-    kilwa: { generalId: 'kilwa_suleiman', generalName: '苏莱曼·本·哈桑', cityId: 'city_kilwa', portrait: '' },
-    mombasa: { generalId: 'mombasa_yusuf', generalName: '优素福·本·哈桑', cityId: 'city_mombasa', portrait: '' },
-    mogadishu: { generalId: 'mogadishu_abubakr', generalName: '阿布·伯克尔', cityId: 'city_mogadishu', portrait: '' },
-    zuraid: { generalId: 'zuraid_yasir', generalName: '亚西尔·本·比拉勒', cityId: 'city_aden', portrait: '' },
+    kilwa: { generalId: 'kilwa_suleiman', generalName: '苏莱曼·本·哈桑', cityId: 'city_kilwa', portrait: '/assets/AFRICA/kilwa_sulaimanbenhasang.png' },
+    mombasa: { generalId: 'mombasa_yusuf', generalName: '优素福·本·哈桑', cityId: 'city_mombasa', portrait: '/assets/AFRICA/mombasa_yousufubenhasang.png' },
+    mogadishu: { generalId: 'mogadishu_abubakr', generalName: '阿布·伯克尔', cityId: 'city_mogadishu', portrait: '/assets/AFRICA/mogadishu_abubokeer.png' },
+    zuraid: { generalId: 'zuraid_yasir', generalName: '亚西尔·本·比拉勒', cityId: 'city_aden', portrait: '/assets/ORIE/zuraid_yaxierbenbilale.png' },
 
 
 
@@ -1694,7 +1694,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     nidelan: [
         { generalId: 'gen_william_silent', cityId: 'city_hague', generalName: '威廉奥兰治', portrait: '/assets/GERMANIC/nidelan_weilian.png' },
-        { generalId: 'capetown_riebeeck', generalName: '扬·范·里贝克', cityId: 'city_cape_town', factionId: 'nidelan', eliteName: '开普守军', eliteTier: 4, portrait: '' },
+        { generalId: 'capetown_riebeeck', generalName: '扬·范·里贝克', cityId: 'city_cape_town', factionId: 'nidelan', eliteName: '开普守军', eliteTier: 4, portrait: '/assets/GERMANIC/nidelan_yangfanlibeike.png' },
     ],
 
 
@@ -2856,8 +2856,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'mozambique_ataide', generalName: '阿泰德', cityId: 'city_mozambique', factionId: 'putaoya', eliteName: '莫桑比克兵', eliteTier: 4, portrait: '' },
-        { generalId: 'luanda_novais', generalName: '诺瓦伊斯', cityId: 'city_luanda', factionId: 'putaoya', eliteName: '黑战军', eliteTier: 4, portrait: '' },
+        { generalId: 'mozambique_ataide', generalName: '阿泰德', cityId: 'city_mozambique', factionId: 'putaoya', eliteName: '莫桑比克兵', eliteTier: 4, portrait: '/assets/PORTUGUESE/putaoya_ataide.png' },
+        { generalId: 'luanda_novais', generalName: '诺瓦伊斯', cityId: 'city_luanda', factionId: 'putaoya', eliteName: '黑战军', eliteTier: 4, portrait: '/assets/PORTUGUESE/putaoya_nuowayisi.png' },
     ],
 
 
@@ -3926,6 +3926,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+
     ],
 
 
@@ -4849,6 +4850,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'zhuozhou_anshouzhong', factionId: 'da_yan', cityId: 'city_changan', legionName: '封建时代中原军团', generalName: '安守忠', portrait: '/assets/WEI/zhuozhou_anshouzhong.png' },
         { generalId: 'tujue_xielikehan', factionId: 'tujue', cityId: 'city_eyangling', legionName: '封建时代契丹军团', generalName: '颉利可汗', portrait: '/assets/MONGOL/tujue_xielikehan.png' },
         { generalId: 'beidi_yaochang', eliteName: '关陇铁骑', eliteTier: 1, factionId: 'hou_qin', cityId: 'city_changan', legionName: '古典时代华夏军团', generalName: '姚苌', portrait: '/assets/CENTRAL/beidi_yaochang.png' },
+
     ],
 
 
@@ -6114,6 +6116,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+
     
         { generalId: 'chu_d_lukang', factionId: 'han_d', cityId: 'city_qianshan', legionName: '古典时代吴越军团', generalName: '陆康', portrait: '/assets/JIANGNAN/wan_lukang.png' },
 
@@ -6262,6 +6265,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'xiyuduhu_banchao', factionId: 'han_d', cityId: 'city_taqian', legionName: '古典时代凉州军团', generalName: '班超', portrait: '/assets/KHITAN/xiyuduhu_banchao.png' },
+
 
 
 
@@ -9139,7 +9143,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     
         { generalId: 'gen_ferdinand_ii', legionName: '帝国时代西班牙方阵军团', factionId: 'kasidiliya', cityId: 'city_la_mota', generalName: '斐迪南二世', portrait: '/assets/SPANISH/trastamara_feidinanershi.png' },
         // 🔴 [2026-10-24 中城补将·镇守] 佩德罗·贝拉尔德＝西班牙炮兵上尉，1808-05-02 马德里起义中死守蒙莱昂炮兵营、战死（《五月二日》）；马德里（SPANISH）、势力西班牙；帝国×西班牙＝帝国时代西班牙方阵军团；普将（守土殉城，无胜绩）；立绘留空
-        { generalId: 'xibanya_beilaerde', generalName: '佩德罗·贝拉尔德', factionId: 'xibanya', cityId: 'city_madeli', portrait: '', eliteName: '蒙莱昂炮兵', eliteTier: 3, legionName: '帝国时代西班牙方阵军团' },
+        { generalId: 'xibanya_beilaerde', generalName: '佩德罗·贝拉尔德', factionId: 'xibanya', cityId: 'city_madeli', portrait: '/assets/SPANISH/kasidiliya_peideluobeilaerde.png', eliteName: '蒙莱昂炮兵', eliteTier: 3, legionName: '帝国时代西班牙方阵军团' },
 
 
 
@@ -12477,6 +12481,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+
     
         { generalId: 'wangyan_wangyan', factionId: 'song', cityId: 'city_jinzhou_shanxi', legionName: '城堡时代中华军团', generalName: '王彦', portrait: '/assets/WEI/wangyan_wangyan.png' },
 
@@ -12515,6 +12520,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'heng1_yangye', factionId: 'song', cityId: 'city_yanmenguan', legionName: '封建时代河朔军团', generalName: '杨业', portrait: '/assets/WEI/heng1_yangye.png' },
+
 
 
 
@@ -15340,12 +15346,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     manding: [
         { generalId: 'gen_sundjata', eliteName: '飞刀女兵', eliteTier: 3, cityId: 'city_niani', generalName: '松迪亚塔', portrait: '/assets/AFRICA/manding_songdiyata.png' },
         // 🔴 [2026-10-24 中城补将·镇守] 法尔巴·穆萨＝马里帝国廷巴克图太守（1353 年伊本·白图泰到廷巴克图时见到的守臣，见《伊本·白图泰游记》、英文维基 History of Timbuktu）；「法尔巴」为马里官称，按规矩只留本名「穆萨」；守土之臣、无胜绩 → 普将；城堡×非洲＝城堡时代马里军团；立绘留空
-        { generalId: 'manding_musa', generalName: '穆萨', cityId: 'city_timbuktu', portrait: '', eliteName: '法拉里卫队', eliteTier: 4 },
+        { generalId: 'manding_musa', generalName: '穆萨', cityId: 'city_timbuktu', portrait: '/assets/AFRICA/manding_musa.png', eliteName: '法拉里卫队', eliteTier: 4 },
     ],
 
     // 🔴 [2026-10-24 中城补将] 明彬＝阿拉干王（1531—1554）；妙乌（BURMESE）守城：1535 逐退葡萄牙火枪队、1547 开闸水淹东吁围军，筑石墙深壕、创孟加拉湾水师；帝国×缅甸＝帝国时代缅甸军团；名将；立绘留空
     arakan: [
-        { generalId: 'arakan_mingbin', generalName: '明彬', cityId: 'city_miaowu', portrait: '', eliteName: '阿拉干水师', eliteTier: 2 },
+        { generalId: 'arakan_mingbin', generalName: '明彬', cityId: 'city_miaowu', portrait: '/assets/BURMESE/arakan_mingbin.png', eliteName: '阿拉干水师', eliteTier: 2 },
     ],
 
 
@@ -16526,7 +16532,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    antigonid: { generalId: 'bfe_antigonus', cityId: 'city_kailaina', generalName: '安提柯一世', portrait: '' , legionName: '古典时代马其顿军团', eliteName: '伙伴骑兵', eliteTier: 1},
+    antigonid: { generalId: 'bfe_antigonus', cityId: 'city_kailaina', generalName: '安提柯一世', portrait: '/assets/MACEDONIAN/bfe_antigonus.png' , legionName: '古典时代马其顿军团', eliteName: '伙伴骑兵', eliteTier: 1},
 
 
 
