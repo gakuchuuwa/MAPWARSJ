@@ -1778,6 +1778,17 @@ export class PlayerQuestSystem {
         const targetPos = targetCity
             ? { lat: targetCity.latitude, lng: targetCity.longitude }
             : { lat: fb.targetLat, lng: fb.targetLng };
+        // 🔴 [2026-10-24 主人问「战场和出发点太远的怎么办」] 战场离出发据点超过 FIRST_BATTLE_FAR_DEG（≈300km）：
+        //    不走几千公里，视为该将早已率军进驻前线——军团改从离战场最近的己方据点起兵（没有己方据点就取最近的据点）。
+        //    守城战（目标=被守据点）直接就地。
+        const FIRST_BATTLE_FAR_DEG = 2.7;
+        if (getEuclideanDistance(host.getPosition(), targetPos) > FIRST_BATTLE_FAR_DEG) {
+            const nearTarget = [...this.deps.cityManager.getCities()]
+                .map((c) => ({ c, d: getEuclideanDistance({ lat: c.latitude, lng: c.longitude }, targetPos) }))
+                .sort((a, b) => a.d - b.d);
+            const stage = (nearTarget.find((x) => x.c.factionId === myFactionId && x.d <= FIRST_BATTLE_FAR_DEG) ?? nearTarget[0])?.c;
+            if (stage) host.setPosition(stage.latitude, stage.longitude);
+        }
         const isOnTheSpot = getEuclideanDistance(host.getPosition(), targetPos) <= 0.12;
 
         const enemyFactionId = fb.enemyFactionId !== myFactionId ? fb.enemyFactionId : 'panjun';

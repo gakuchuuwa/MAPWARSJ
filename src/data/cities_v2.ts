@@ -2255,17 +2255,17 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：丹吉尔：摩洛哥，柏柏尔—马格里布（与非斯/马拉喀什同口径）
-    { id: 'city_danjier', name: '丹吉尔', factionId: 'talike', lat: 35.74, lng: -5.87, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER', note: '塔里克驻守地，711渡直布罗陀征服伊比利亚' },
+    { id: 'city_danjier', name: '丹吉尔', factionId: 'mulabite', lat: 35.74, lng: -5.87, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER', note: '塔里克驻守地，711渡直布罗陀征服伊比利亚' },
 
     { id: 'city_teleimusen', name: '特莱姆森', factionId: 'zhayan', lat: 34.88, lng: -1.32, type: 'small_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER' },
-    { id: 'city_aerjier', name: '阿尔及尔', factionId: 'babali', lat: 36.75, lng: 3.05, type: 'medium_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER' },
+    { id: 'city_aerjier', name: '阿尔及尔', factionId: 'osman', lat: 36.75, lng: 3.05, type: 'medium_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER' },
     { id: 'city_bujiaya', name: '布佳亚', factionId: 'hamade', lat: 36.75, lng: 5.08, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：迦太基：腓尼基—罗马，DE 无布匿分支，取地中海的罗马/意大利古典石堡
     { id: 'city_jiataji', name: '迦太基', factionId: 'buni', lat: 36.85, lng: 10.32, type: 'big_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'BERBER', mirror: true },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：凯鲁万：突尼斯，柏柏尔／阿格拉布王朝都城（region=BERBER）
     { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：的黎波里：利比亚，柏柏尔—马格里布东部
-    { id: 'city_deliboli', name: '的黎波里', factionId: 'telibolisi', lat: 32.88, lng: 13.19, type: 'stockade', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER', note: '定级依据§6.2：的黎波里非关隘/要塞/堡垒，按城市判级；17世纪前人口无可靠数字（英/意/西/葡维基与Treccani均无），按规则兜底落城寨' },
+    { id: 'city_deliboli', name: '的黎波里', factionId: 'osman', lat: 32.88, lng: 13.19, type: 'stockade', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER', note: '定级依据§6.2：的黎波里非关隘/要塞/堡垒，按城市判级；17世纪前人口无可靠数字（英/意/西/葡维基与Treccani均无），按规则兜底落城寨' },
     { id: 'city_banjiaxi', name: '班加西', factionId: 'jileinaijia', lat: 32.11, lng: 20.06, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' },
 
     { id: 'city_labate', name: '拉巴特', factionId: 'muwaxide', lat: 34.024, lng: -6.822, type: 'pass', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER', note: '拉巴特＝阿拉伯语 Ribat（边防要塞）；阿尔摩哈德哈里发雅各布·曼苏尔所建 Ribat al-Fath 胜利之堡，对伊比利亚圣战的集结要塞，乌达亚堡' },
@@ -2347,7 +2347,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_luoma', name: '罗马城', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 10000, region: 'IMPERIAL_ROME', buildingStyle: 'ROMA' },
     { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', note: '定级依据§6.2：雅典非关隘/要塞/堡垒，按城市判级；城墙内+比雷埃夫斯 12–18万（公元前431年，古典人口学通行算法）>10万 → 中城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：加的斯：西班牙
-    { id: 'city_jiadisi', name: '加的斯', factionId: 'feiniqi', lat: 36.52, lng: -6.28, type: 'small_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'BERBER' },
+    { id: 'city_jiadisi', name: '加的斯', factionId: 'buni', lat: 36.52, lng: -6.28, type: 'small_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'BERBER' },
     { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '🔴 [2026-10-05 主人令「建筑风格必须是当地的，和殖民者、武将没关系」] 里斯本是**葡萄牙王国首都**（1147 年阿方索一世自摩尔人手中收复，葡萄牙本土），风格挂葡萄牙（PORTUGUESE／一级 MEDI）—— 它同时是 62 类「葡萄牙」的据点（城堡 PORT_CASTLE_AGE3）。旧值 LATIN_CASTLE（意大利）与本地不符。' },
 
     { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '哈布斯堡治所；中世约2–2.5万、1600约5万，未达约10万中城门槛，降 small_city' },
@@ -3487,10 +3487,10 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_oleshky', name: '奥列什基', factionId: 'kuman_oleshky', lat: 46.61, lng: 32.72, type: 'stockade', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '第聂伯河口木栅商埠；库曼忽炭汗驻牧，精锐库曼弓骑 T1', mirror: true },
     { id: 'city_saksin', name: '萨克辛', factionId: 'kuman_oleshky', lat: 46.72, lng: 47.92, type: 'pass', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '伏尔加三角洲夯土砖石要塞，水陆咽喉；钦察巴奇曼驻此，精锐斡勒轻骑 T2', mirror: true },
     { id: 'city_ahexikesi', name: '阿赫西克特', factionId: 'feierganna', lat: 40.89, lng: 71.34, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', note: '费尔干纳旧都，忽都鲁（巴布尔之母）长期坐镇筹粮守城' },
-    { id: 'city_hongsa', name: '洪萨', factionId: 'qibucha', lat: 5.53, lng: -73.36, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '穆伊斯卡联盟萨奎首府（今通哈），帕坎奇克所在' },
+    { id: 'city_hongsa', name: '洪萨', factionId: 'muisca', lat: 5.53, lng: -73.36, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '穆伊斯卡联盟萨奎首府（今通哈），帕坎奇克所在' },
     { id: 'city_kabufoliwu', name: '卡布弗里乌', factionId: 'tamoyue', lat: -22.88, lng: -42.03, type: 'stockade', troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '塔莫约联盟领地，昆汉贝贝率众抗葡萄牙' },
     { id: 'city_kelipuli', name: '科利普利', factionId: 'naweierbuta', lat: -37.95, lng: -72.43, type: 'stockade', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '纳韦尔布塔山东南麓要冲，加尔瓦里诺断腕巡回动员部族血誓之地' },
-    { id: 'city_bideluoa', name: '彼得罗阿', factionId: 'alaokaniya', lat: -35.03, lng: -71.55, type: 'pass', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '马塔基托河畔要塞，瓜科尔达随劳塔罗北伐战死殉难地' },
+    { id: 'city_bideluoa', name: '彼得罗阿', factionId: 'mapuche', lat: -35.03, lng: -71.55, type: 'pass', troops: 10000, region: 'MAPUCHE', buildingStyle: 'MAPUCHE', note: '马塔基托河畔要塞，瓜科尔达随劳塔罗北伐战死殉难地' },
     { id: 'city_mengteluo', name: '蒙特罗', factionId: 'bogendigongguo', lat: 48.39, lng: 2.95, type: 'pass', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '塞纳河畔蒙特罗要塞，无畏的约翰1419年在此被刺' },
     { id: 'city_oushi', name: '欧什', factionId: 'amaniyake', lat: 43.65, lng: 0.58, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '阿马尼亚克伯爵领首府，贝尔纳·德·阿马尼亚克驻地' },
     { id: 'city_geluosite', name: '格洛斯特', factionId: 'yinggelan', lat: 51.86, lng: -2.24, type: 'small_city', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '格洛斯特伯国首府，吉尔伯特·德·克莱尔驻地' },
@@ -3507,9 +3507,9 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_buyiersi', name: '布伊尔斯', factionId: 'weiershigongguo', lat: 52.15, lng: -3.40, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '卢埃林1282年欧温桥之战阵亡殉难地' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1」] 原「ASIA」只给一级、二级靠 region 推 → 归 VIETNAMESE：义安（Nghe An）：越南中部；AGENTS 归位原则「越南归东南亚」，一级随 VIETNAMESE = SEAS
     { id: 'city_yian', name: '义安', factionId: 'daquyue', lat: 18.67, lng: 105.68, type: 'small_city', troops: 10000, region: 'VIETNAMESE', buildingStyle: 'VIETNAMESE', note: '丁礼受封南越王坐镇驩州抗击林邑之地' },
-    { id: 'city_debuleidamo', name: '德布雷达莫', factionId: 'tigelei', lat: 14.37, lng: 39.27, type: 'pass', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '提格雷悬崖修道要塞，吉达扬避难与反击阵地' },
+    { id: 'city_debuleidamo', name: '德布雷达莫', factionId: 'ethiopia', lat: 14.37, lng: 39.27, type: 'pass', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '提格雷悬崖修道要塞，吉达扬避难与反击阵地' },
     { id: 'city_waka', name: '瓦卡', factionId: 'wulaertu', lat: 37.81, lng: 35.91, type: 'pass', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'ORIE', note: '陶鲁斯山岩顶城堡，托罗斯二世复国第一城' },
-    { id: 'city_debuleilibanuosi', name: '德布雷利巴诺斯', factionId: 'xiaoa', lat: 9.71, lng: 38.85, type: 'pass', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '肖阿高原皇家修道据点，达格纳詹南征经略之地' },
+    { id: 'city_debuleilibanuosi', name: '德布雷利巴诺斯', factionId: 'ethiopia', lat: 9.71, lng: 38.85, type: 'pass', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '肖阿高原皇家修道据点，达格纳詹南征经略之地' },
     { id: 'city_santaguan', name: '三塔关', factionId: 'miandian', lat: 14.35, lng: 98.43, type: 'pass', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '缅甸-暹罗边境三塔关，耸立三座缅式佛塔要塞，大元帅摩诃·悉都镇守' },
     { id: 'city_danmaxi', name: '淡马锡', factionId: 'malai', lat: 1.29, lng: 103.85, type: 'small_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '新加坡拉王国防御土垒（福康宁一带），扼马六甲海峡东口；定级依据§6.2：淡马锡非关隘/要塞/堡垒（海峡贸易港市，元《岛夷志略》"单马锡"），按城市判级；14世纪峰值约1万人（Miksic 估算）→ 小城' },
     { id: 'city_jinqi', name: '金奇', factionId: 'taimier', lat: 12.25, lng: 79.42, type: 'pass', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '泰米尔纳德三山连堡，东方特洛伊，马拉塔与莫卧儿反复争夺' },
@@ -3702,13 +3702,13 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_dasijiliweng', name: '达斯基利翁', factionId: 'aqimeinide', lat: 40.1322, lng: 28.0504, type: 'pass', troops: 10000, region: 'ACHAEMENIDS', buildingStyle: 'PERSIAN', note: '阿契美尼德波斯赫勒斯滂-弗里吉亚总督要塞，阿尔西提斯总督治所' },
     { id: 'city_bishnupur', name: '比什努普尔', factionId: 'mallabhum', lat: 23.075, lng: 87.317, type: 'small_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'BENGALIS', note: '定级依据§6.2：17世纪王都推断5000–20000（1901年官方19090；城墙7英里设防王都），未达中城10万门槛 → 小城' },
     { id: 'city_baba_vida', name: '巴巴维达', factionId: 'vidin_tsardom', lat: 43.993056, lng: 22.886667, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'BULGARIANS', note: '维丁多瑙河畔中世纪要塞，维丁国都防御核心' },
-    { id: 'city_fasil_fort', name: '法西尔堡', factionId: 'gondarine', lat: 12.6075, lng: 37.469, type: 'pass', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'ETHIOPIANS', note: '贡德尔皇城法西尔盖比，法西里德创建的埃塞俄比亚皇都要塞' },
+    { id: 'city_fasil_fort', name: '法西尔堡', factionId: 'ethiopia', lat: 12.6075, lng: 37.469, type: 'pass', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'ETHIOPIANS', note: '贡德尔皇城法西尔盖比，法西里德创建的埃塞俄比亚皇都要塞' },
     { id: 'city_chambord', name: '香波堡', factionId: 'gaolu', lat: 47.616, lng: 1.517, type: 'pass', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'FRANKS' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「EAST」推出的二级与史实不符 → 归 GEORGIANS：阿哈尔齐赫：格鲁吉亚南部
     { id: 'city_akhaltsikhe', name: '阿哈尔齐赫', factionId: 'samtskhe', lat: 41.642, lng: 42.975, type: 'pass', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'GEORGIANS', note: '萨姆茨赫治所，拉巴提城堡所在地' },
     { id: 'city_gwalior_fort', name: '瓜廖尔堡', factionId: 'tomara_gwalior', lat: 26.231, lng: 78.169, type: 'pass', troops: 10000, region: 'MUGHAL', buildingStyle: 'MUGHAL', note: '托摩罗王朝都城要塞，曼辛格扩建宫堡' },
-    { id: 'city_machu_picchu', name: '马丘比丘', factionId: 'tawantinsuyu', lat: -13.1631, lng: -72.545, type: 'pass', troops: 10000, region: 'ANDE', buildingStyle: 'INCA', note: '帕查库提时期营建的印加王家山城' },
+    { id: 'city_machu_picchu', name: '马丘比丘', factionId: 'inca', lat: -13.1631, lng: -72.545, type: 'pass', troops: 10000, region: 'ANDE', buildingStyle: 'INCA', note: '帕查库提时期营建的印加王家山城' },
     { id: 'city_golconda', name: '戈尔康达', factionId: 'qutb_shahi', lat: 17.3833, lng: 78.4011, type: 'pass', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '库特布沙希王朝都城与德干高原堡垒' },
     { id: 'city_pagaruyung', name: '帕加鲁荣', factionId: 'minangkabau', lat: -0.471, lng: 100.621, type: 'small_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '米南加保王国王宫所在，尖顶大屋建筑中心；定级依据§6.2：1684年城内约8000人（VOC使节Thomas Dias记录），未达1万但属城市→小城' },
     { id: 'city_uxmal', name: '乌斯马尔', factionId: 'tutul_xiu', lat: 20.359, lng: -89.771, type: 'pass', troops: 10000, region: 'MAYANS', buildingStyle: 'MAYANS', note: '乌斯马尔玛雅阶梯金字塔要塞城，查克王驻防' },

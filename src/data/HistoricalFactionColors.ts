@@ -449,14 +449,12 @@ const _FIXED: Record<string, string> = {
     'luoma_diguo': '#5B2D8E', // 罗马帝国·罗马城（帝王紫，Tyrian purple）
     'xila': '#2E6DA4', // 雅典·雅典城（爱琴海蓝白）
     'buni': '#7A2E6E', // 迦太基·迦太基（腓尼基紫，推罗紫渊源）
-    'talike': '#C08040', // 塔里克·丹吉尔（撒哈拉橙褐）
     'maqidun': '#C9A227', // 马其顿·佩拉（亚历山大金）
     'gaolu': '#2A4B8F', // 法兰西·巴黎（王室蓝 fleur-de-lis）
     'kaernute': '#3D5A3D', // 卡尔努特·沙特尔（高卢凯尔特绿）
     'xiongren': '#7A3A2E', // 匈人·沙隆（阿提拉·草原红褐）
     'putaoya': '#284B9E', // 葡萄牙·里斯本（王国蓝盾）
     'mulabite': '#A03028', // 穆拉比特·马拉喀什（马拉喀什红城）
-    'babali': '#8B2E2E', // 巴巴里·阿尔及尔（巴巴罗萨暗红）
     'boootiya': '#5E2A84', // 底比斯·底比斯（底比斯圣队紫）
     'kelite': '#8A3A2A', // 克里特·诺索斯（米诺斯陶红）
     'yipilusi': '#8B1E28', // 伊庇鲁斯·战神深绯红
@@ -465,7 +463,6 @@ const _FIXED: Record<string, string> = {
     'zhayan': '#3A6EA8', // 扎亚尼德·特莱姆森（北非白蓝）
     'hamade': '#B0893C', // 哈马德·布佳亚（北非沙金）
     'aguelabu': '#1E7FB8', // 阿格拉布·凯鲁万（突尼斯蓝门）
-    'telibolisi': '#2E8B57', // 的黎波里·的黎波里（利比亚绿）
     'jileinaijia': '#3A7A4A', // 昔兰尼加·班加西（昔兰尼绿）
     'tuosikana': '#C84040', // 佛罗伦萨·佛罗伦萨（百合红）
     'safuyi': '#1E6B38', // 萨伏伊·绿伯爵森林绿
@@ -478,7 +475,6 @@ const _FIXED: Record<string, string> = {
     'donggete': '#B9850A', // 东哥特·拉文纳（哥特金马赛克）
     'xigete': '#3A3A42', // 西哥特·托莱多（托莱多铁黑）
     'alagong': '#D4A020', // 萨拉戈萨·萨拉戈萨（阿拉贡金）
-    'feiniqi': '#8A3A7E', // 腓尼基·加的斯（腓尼基紫红）
     'bulabante': '#2A2A2E', // 布拉班特·布鲁塞尔（黑底金狮纹章，取黑底）
     'fulandesi': '#B8912E', // 佛兰德斯·加莱（佛兰德斯金）
     'bulietani': '#4A4A55', // 布列塔尼·雷恩（布列塔尼深灰蓝）
@@ -594,10 +590,8 @@ const _FIXED: Record<string, string> = {
     'bulu': '#D18A26', // 补噜·阿托克（旁遮普锡克藏红）
     'mallabhum': '#9B4A2D',
     'vidin_tsardom': '#7B2D38',
-    'gondarine': '#B57A32',
     'samtskhe': '#6A3E75',
     'tomara_gwalior': '#C47A2A',
-    'tawantinsuyu': '#7A3B58',
     'qutb_shahi': '#2D6A63',
     'minangkabau': '#8C5A2B',
     'tutul_xiu': '#3F6E45',
@@ -620,15 +614,11 @@ const _FIXED: Record<string, string> = {
     'aertai': '#5A6E7A', // 阿尔泰·也儿的石（阿尔泰山灰蓝）
     'kuman_oleshky': '#4F6E8A', // 库曼·奥列什基（第聂伯河口）
     'feierganna': '#8C6E3A', // 费尔干纳·阿赫西克特（费尔干纳谷黄褐）
-    'qibucha': '#8A6E3A', // 奇布查·洪萨（穆伊斯卡黄金褐）
     'tamoyue': '#6E4A3A', // 塔莫约·卡布弗里乌（乌鲁库胭脂木褐）
     'naweierbuta': '#3E6E5A', // 纳韦尔布塔·科利普利（纳韦尔布塔山绿）
-    'alaokaniya': '#5E4A6E', // 阿劳卡尼亚·彼得罗阿（阿劳卡尼亚紫）
     'bogendigongguo': '#6E1B2E', // 勃艮第公国·蒙特罗（深酒红）
     'amaniyake': '#4A6E3E', // 阿马尼亚克·欧什（加斯科涅绿）
     'weiershigongguo': '#4E5A6E', // 威尔士公国·布伊尔斯（威尔士灰蓝）
-    'tigelei': '#7A6E2E', // 提格雷·德布雷达莫（提格雷岩褐）
-    'xiaoa': '#4A8A6E', // 肖阿·德布雷利巴诺斯（肖阿高原青）
     'miandian': '#8A6E20', // 缅甸·三塔关（缅甸黄金）
     'malai': '#2E7A6E', // 马来·淡马锡（马六甲海峡青）
     'taimier': '#A06030', // 泰米尔·金奇（泰米尔赭）

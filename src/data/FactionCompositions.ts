@@ -640,10 +640,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代马里军团",
         legionType: "sub",
     },
-    "tigelei": {
-        legionName: "城堡时代埃塞俄比亚军团",
-        legionType: "sub",
-    },
     "zhagewei": {
         legionName: "城堡时代埃塞俄比亚军团",
         legionType: "sub",
@@ -795,10 +791,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "kanan": {
         legionName: "古典时代近东军团",
-        legionType: "sub",
-    },
-    "tawantinsuyu": {
-        legionName: "城堡时代印加军团",
         legionType: "sub",
     },
     "feilisidin": {
@@ -1299,10 +1291,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代爱奥尼亚军团",
         legionType: "sub",
     },
-    "qibucha": {
-        legionName: "帝国时代格查武士军团",
-        legionType: "sub",
-    },
     "tamoyue": {
         legionName: "帝国时代塔莫约军团",
         legionType: "sub",
@@ -1335,14 +1323,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代摩尔军团",
         legionType: "sub",
     },
-    "babali": {
-        legionName: "帝国时代巴巴里军团",
-        legionType: "sub",
-    },
-    "telibolisi": {
-        legionName: "帝国时代巴巴里军团",
-        legionType: "sub",
-    },
     "jileinaijia": {
         legionName: "古典时代爱奥尼亚军团",
         legionType: "sub",
@@ -1373,10 +1353,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "puluowangsi": {
         legionName: "城堡时代法兰西骑士军团",
-        legionType: "sub",
-    },
-    "feiniqi": {
-        legionName: "古典时代迦太基军团",
         legionType: "sub",
     },
     "fulandesi": {
@@ -1884,10 +1860,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代恒河军团",
         legionType: "sub",
     },
-    "gondarine": {
-        legionName: "帝国时代阿姆哈拉军团",
-        legionType: "sub",
-    },
     "samtskhe": {
         legionName: "城堡时代格鲁吉亚军团",
         legionType: "sub",
@@ -1977,23 +1949,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代蒙兀儿军团",
         legionType: "region",
     },
-    "alaokaniya": {
-        legionName: "帝国时代阿劳卡尼亚军团",
-        legionType: "region",
-    },
-    "xiaoa": {
-        legionName: "封建时代拉利贝拉军团",
-        legionType: "region",
-    },
     "hamade": {
         legionName: "封建时代柏柏尔军团",
         legionType: "region",
     },
     "aguelabu": {
-        legionName: "封建时代柏柏尔军团",
-        legionType: "region",
-    },
-    "talike": {
         legionName: "封建时代柏柏尔军团",
         legionType: "region",
     },
