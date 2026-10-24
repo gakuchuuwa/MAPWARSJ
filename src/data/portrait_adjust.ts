@@ -1855,7 +1855,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/TIBET/tubo_songzanganbu.png": {
             "scale": 1.09,
             "offsetX": 7,
-            "offsetY": 9
+            "offsetY": 5
         },
         "/assets/TIBET/yangtong_chisongdezan.png": {
             "scale": 0.87,
@@ -4276,11 +4276,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.85,
             "offsetX": 0,
             "offsetY": 21
-        },
-        "/assets/MONGOL/xiajiasi_are.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": -7
         },
         "/assets/TIBET/shaodang_mitang.png": {
             "scale": 1.07,
@@ -8211,6 +8206,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": 1
+        },
+        "/assets/MONGOL/__闲置__MONGOL_01.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/MONGOL/xiajiasi_are.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/BASHU/song_zhangjun.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/CENTRAL/bfe_niu_han.png": {
+            "scale": 1.15,
+            "offsetX": -1,
+            "offsetY": -10
         }
     },
     "folderGuides": {

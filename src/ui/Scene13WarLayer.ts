@@ -284,8 +284,10 @@ export class Scene13WarLayer {
      * 玩家守城、待在城里没敌人打时，谁放了计，镜头就去那一计落下的地方看 9 秒，再回到玩家身上。
      */
     private skillCamTimer = 0;
-    /** 🔴 [2026-10-24 主人定] 复活后镜头先留在倒下处（剩余保底秒数），玩家再次交战 / 快走出画面 / 超时才跟回玩家 */
-    private heroCamHold = 0;
+    /** 🔴 [2026-10-25 主人「玩家复活后，先不要移动到玩家身上。等玩家交战后再跟随玩家」] 复活后镜头留在倒下处，只有再次交战才跟回玩家 */
+    private heroCamHold = false;
+    /** 🔴 [2026-10-25 主人「复活后玩家进过画面、再要走出画面时，镜头跟上他」] 停留期间玩家是否已进过画面 */
+    private heroCamSeen = false;
     private skillCamX = 0;
     private skillCamY = 0;
     /** 八方向行军前进单位向量（两军对冲） */
@@ -1310,7 +1312,8 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-21 主人报「乱入者复活后有的时候不动」] 阵亡前点的地面令没走到就死了 → 复活后还挂着：
         //    目标点已被上面重置成复活点，而「走到才清」比的是旧点地位置 ⇒ 永远清不掉、原地站死。复活一律作废。
         this.heroClickOrder = null;
-        this.heroCamHold = 10;
+        this.heroCamHold = true;
+        this.heroCamSeen = false;
         if (!this.men.includes(m)) {
             this.men.push(m);
         }
@@ -1562,6 +1565,8 @@ export class Scene13WarLayer {
         this.diagEvents = [];
         this.diagSent = false;
         this.laneReassignStat = { total: 0, behind: 0, behindNoGate: 0, flipped: 0 };
+        this.backStat = { regroup: 0, aim: 0, home: 0, remnant: 0, guard: 0, march: 0, backMax: 0, standbyLaneSec: 0, samples: 0 };
+        this.backStatAt = 0;
         this.diagPush('start', {
             att: init.attackerTroops, def: init.defenderTroops,
             attR: init.attackerRegion, defR: init.defenderRegion,
@@ -2459,6 +2464,12 @@ export class Scene13WarLayer {
      *  total = 改派到敌队的次数；behind = 实际选中「身后 >LANE_BEHIND_FREE」的次数；
      *  behindNoGate = 不加方向闸时会选中身后的次数；flipped = 方向闸改变了选择的次数。随 diagPost 落盘。 */
     private laneReassignStat = { total: 0, behind: 0, behindNoGate: 0, flipped: 0 };
+    /** [诊断 2026-10-25] 「往后走」按来源分账（每秒采样一次，只统计不改行为，见 sampleBackwardIntent）：
+     *  regroup = 跟本队锚点槽位（归队）、aim = 走队级目标/敌军重心/全图兜底、home = 攻城守方回城/回城外阵位、
+     *  remnant = 残兵全图找敌、guard = 守方回原位警戒、march = 列阵推进的槽位落在身后；
+     *  samples = 采样次数、backMax = 本局见过最远的「倒走」距离(px)、standbyLaneSec = 无队级目标的队·秒。 */
+    private backStat = { regroup: 0, aim: 0, home: 0, remnant: 0, guard: 0, march: 0, backMax: 0, standbyLaneSec: 0, samples: 0 };
+    private backStatAt = 0;
     private diagAssetsReady = false;
 
     private diagPush(ev: string, data?: unknown): void {
@@ -2507,12 +2518,50 @@ export class Scene13WarLayer {
             // PerformanceMonitor 已逐帧记着主循环分项，这里一并落盘才能定位到具体子系统。
             host: (window as any).perfMonitor?.getSnapshot?.() ?? null,
             laneReassign: this.laneReassignStat,
+            backStat: this.backStat,
             events: this.diagEvents,
         });
         try {
             fetch('/api/scene13-probe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body })
                 .catch(() => { /* 诊断失败绝不影响演出 */ });
         } catch { /* 同上 */ }
+    }
+
+    /**
+     * [诊断 2026-10-25] 每秒给「正在被命令往本方后方向走」的兵记一次账，并按来源分类。
+     * 只统计、不改任何行为。用途：主人 2026-10-25 报「有的兵掉头回来找其他军队、不继续进攻」，
+     * 光数「改派到身后的次数」分不出是哪条规则在拖兵 —— 这里直接在**当下这一帧的移动目标**上判方向，
+     * 于是归队 / 队级目标在身后 / 守方回城 / 残兵找敌 / 列阵槽位 各自成账，谁大就治谁。
+     * 判据：目标点在本方推进轴的反方向超过 BACK_MIN，且离身 ≥ 30px（排除贴脸与原地站桩）。
+     */
+    private sampleBackwardIntent(laneLeaders: Map<number, WarMan>): void {
+        const BACK_MIN = 150;
+        const st = this.backStat;
+        st.samples++;
+        // 无队级目标 = 原地待命的队（列阵推进阶段不算，那时本来就按槽位走）
+        if (!this.marching) {
+            const seen = new Set<number>();
+            for (const m of this.men) {
+                if (m.hp <= 0 || m.lane < 0 || seen.has(m.lane)) continue;
+                seen.add(m.lane);
+                if (!this.laneTargets.has(m.lane)) st.standbyLaneSec++;
+            }
+        }
+        for (const m of this.men) {
+            if (m.hp <= 0 || m.siegeW || m.lane < 0) continue;
+            const dx = m.tx - m.x, dy = m.ty - m.y;
+            if (dx * dx + dy * dy < 30 * 30) continue;          // 原地站 / 目标贴脸：不算「在走」
+            const uF = this.advanceVec[m.f];
+            const back = -(dx * uF.x + dy * uF.y);               // >0 = 目标在本方后方
+            if (back < BACK_MIN) continue;
+            if (back > st.backMax) st.backMax = Math.round(back);
+            if (m.guardPost) st.guard++;                                   // 攻城守方回原位警戒（城门未破）
+            else if (this.remnantLanes.has(m.lane)) st.remnant++;          // 残兵队全图找敌
+            else if (m.march) st.march++;                                  // 列阵推进的槽位落在身后
+            else if (this.battleType === 'siege' && m.f === 1) st.home++;  // 守方回城 / 回城外阵位
+            else if (laneLeaders.has(m.lane)) st.regroup++;                // 有锚点 ⇒ 归队槽位在身后
+            else st.aim++;                                                 // 走队级目标 / 敌军重心 / 全图兜底
+        }
     }
 
     public stop(reason = 'unknown', keepFrame = false): void {
@@ -2603,7 +2652,8 @@ export class Scene13WarLayer {
         this.heroInput = null;
         this.heroMan = null;
         this.heroRespawnTimer = 0;
-        this.heroCamHold = 0;
+        this.heroCamHold = false;
+        this.heroCamSeen = false;
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         this.useGroundGL = false;
@@ -7465,7 +7515,13 @@ export class Scene13WarLayer {
                 //    两帧一循环的碎步（+4px/-0.25px…），就是主人 2026-10-03 报的「士兵不停颤抖」，
                 //    见 LANE_TRACK_EPS 头注与 scratch/_probe_tremble_trace.mjs 的逐帧轨迹。
                 const slot = isGuard ? null : this.laneSlotTarget(m, laneLeaders);
-                const trackSlot = !!slot || m.march || isGuard;
+                // 🔴 [2026-10-25 主人报「玩家有的时候会一步一步往前蹭」] 玩家本人在「自动」下跟本方部队走时，
+                //    移动目标（本方队伍重心）每帧都在动，却套了给固定目标用的 8px 到达死区 ⇒ 攒够 8px 才迈一步、
+                //    走两帧又停 = 一步一步蹭。归队队员早就不能用这个死区（见上面 LANE_TRACK_EPS 注释），
+                //    玩家本人同样并进「活动目标」口径：连续跟随，位移仍按 min(step, d) 夹住，不会冲过头。
+                //    只影响玩家本人无敌人时的走位；其他兵种的 8px 死区、追击与出手判定一律不动。
+                const heroTrackMoving = m.hero === true && !isGuard && this.playerCmd === 'attack';
+                const trackSlot = !!slot || m.march || isGuard || heroTrackMoving;
                 const step = (m.hero && (slot || m.march) && this.spawns[m.lane] ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd) : stats.spd) * spdK * this.uphillSpeedK(m.x, m.y, dx, dy) * dt;
                 const arriveAt = trackSlot ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
                 if (stats.spd > 0 && d > arriveAt) {
@@ -7508,6 +7564,11 @@ export class Scene13WarLayer {
             }
         }
 
+        // [诊断 2026-10-25] 每秒给「往后走」记一次账（只统计、不改行为，见 sampleBackwardIntent）
+        if (this.battleSec - this.backStatAt >= 1) {
+            this.backStatAt = this.battleSec;
+            this.sampleBackwardIntent(laneLeaders);
+        }
         // 围殴计数结转：本帧数到的攻击者数留给下一帧用（同帧边遍历边结算，只能数到一半）
         for (const m of this.men) { m.atkers = m.atkNext; m.atkNext = 0; }
         for (const b of this.wallGates) { b.atkers = b.atkNext; b.atkNext = 0; }
@@ -7685,14 +7746,18 @@ export class Scene13WarLayer {
                     targetFocusX = this.skillCamX;
                     targetFocusY = this.skillCamY;
                     count = 1;
-                } else if (this.heroMan && this.heroCamHold > 0) {
-                    // 复活后镜头不动，留在倒下处；再次交战 / 玩家快走出画面 / 保底 10 秒到 ⇒ 解除，跟回玩家
-                    this.heroCamHold -= dt;
+                } else if (this.heroMan && this.heroCamHold) {
+                    // 复活后镜头不动，留在倒下处；玩家再次交战，或进过画面后又要走出画面 ⇒ 解除，跟回玩家
+                    //（复活点常在画面外，所以「出画面」只在进过画面之后才算，免得一复活就拉过去）
                     const hm = this.heroMan;
-                    const sx = (hm.x - this.worldCX) * this.tacticalZoom + this.tacticalPanX;
-                    const sy = (hm.y - this.worldCY) * this.tacticalZoom + this.tacticalPanY;
-                    const outOfView = Math.abs(sx) > this.canvas.width * 0.4 || Math.abs(sy) > this.canvas.height * 0.4;
-                    if (hm.foe || outOfView) this.heroCamHold = 0;
+                    if (hm.hp > 0) {
+                        const sx = Math.abs((hm.x - this.worldCX) * this.tacticalZoom + this.tacticalPanX);
+                        const sy = Math.abs((hm.y - this.worldCY) * this.tacticalZoom + this.tacticalPanY);
+                        const w = this.canvas.width, h = this.canvas.height;
+                        if (sx < w * 0.35 && sy < h * 0.35) this.heroCamSeen = true;
+                        const leaving = this.heroCamSeen && (sx > w * 0.4 || sy > h * 0.4);
+                        if (hm.foe || leaving) this.heroCamHold = false;
+                    }
                 } else if (this.heroMan) {
                     // 跟随乱入者本人（阵亡复活倒计时的 10 秒里镜头留在他倒下的地方，复活后留到再次交战再跟）
                     targetFocusX = this.heroMan.x;
