@@ -8003,7 +8003,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/MACEDONIAN/gen_parmenion.png": {
-            "scale": 0.98,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -8136,6 +8136,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/ORIE/gen_seleucus_i.png": {
+            "scale": 1.1,
+            "offsetX": 8,
+            "offsetY": 7
         }
     },
     "folderGuides": {
