@@ -8141,6 +8141,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 8,
             "offsetY": 7
+        },
+        "/assets/CENTRAL/tang_limi.png": {
+            "scale": 1.41,
+            "offsetX": -11,
+            "offsetY": 15
         }
     },
     "folderGuides": {

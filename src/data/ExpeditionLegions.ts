@@ -143,6 +143,33 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   yamaxun_faernake: { name: '本都重装骑', tier: 3 },
   gen_astrakhan_khan: { name: '阿斯特拉骑', tier: 3 },
   oirat_ming_gaerdan: { name: '准噶尔驼炮', tier: 1 },
+
+  // ── 2026-10-24 主人令「武将应该都有精锐」：起义／边疆起事首领（`panjun`）原先没有势力精锐表可继承，
+  //    「一个武将一支精锐」逐位补齐。番号取该将本部的名号／族兵／成名战，3–5 字、全局不重名；
+  //    分级严格对照精锐五级制 v3（T1 战略／T2 战术尖刀·硬战大捷／T3 文化符号·兵种特色／T4 常规建制·地方部曲）。 ──
+  zhao_gerong: { name: '六镇义军', tier: 1 },               // 葛荣：六镇降户骨干，席卷河北数十万众，奠定北齐武力底色（T1 战略）
+  zhongxiang_zhongxiang: { name: '洞庭车船', tier: 2 },      // 钟相：依阻洞庭湖，车船水战突击，屡破南宋官军水师（T2 战术）
+  yang_bozhou_yangyinglong: { name: '播州苗兵', tier: 2 },  // 杨应龙：盘踞险隘屡挫明军，硬抗万历三大征主力（T2 战术）
+  she_shechongming: { name: '永宁夷兵', tier: 2 },          // 奢崇明：奢安之乱主力，陷重镇围成都，野战数次击溃明军（T2 战术）
+  haikou_wangzhi: { name: '五峰水师', tier: 2 },            // 汪直：掌东南海权，多桅大舶与火器，正面击溃明军水师（T2 战术）
+  bfe_ajibaldo: { name: '铜甲倭兵', tier: 2 },               // 阿只拔都：全员铜甲，荒山之战突击凶悍，李成桂苦战方破（T2 战术）
+  chendiaoyan_chendiaoyan: { name: '漳州畲军', tier: 3 },   // 陈吊眼：元初闽南畲汉骨干，山林游击独具特色（T3 知名）
+  yezongliu_yezongliu: { name: '处州矿兵', tier: 3 },       // 叶宗留：明正统矿徒结党，火器与坑道战术，转战浙闽赣（T3 知名）
+  tan_d_qinhou: { name: '慈利蛮兵', tier: 3 },              // 覃垕：元末明初湘西土家劲卒，扼守天险绝壁（T3 知名）
+  boren_ada: { name: '都掌蛮兵', tier: 3 },                 // 阿大：万历都掌僰人精锐，据守九丝山悬崖，死斗至灭亡（T3 知名）
+  sou_gaodingyuan: { name: '越嶲叟兵', tier: 3 },           // 高定元：三国南中夷兵主力，山地攀爬与步战特色（T3 知名）
+  bfe_xu_hai: { name: '明山倭兵', tier: 3 },                 // 徐海：嘉靖大倭寇主力，纵横江浙（T3 知名）
+  qianzhong_wubayue: { name: '平陇苗兵', tier: 3 },         // 吴八月：乾嘉苗变中坚，平陇营寨防守战法突出（T3 知名）
+  qianhui_baiyanhu: { name: '陕回骑兵', tier: 3 },           // 白彦虎：同治陕甘回民起事核心，长途奔袭与骑战辨识度高（T3 知名）
+  dongzu_wumian: { name: '五开侗兵', tier: 3 },              // 吴勉：洪武黎平侗民起事，称铲平王（T3 知名）
+  shengmiao_baoli: { name: '古州苗兵', tier: 4 },            // 包利：雍正古州地方苗民武装，建制可考（T4 存在）
+  buyi_d_weichaoyuan: { name: '南笼布依', tier: 4 },         // 韦朝元：嘉庆南笼布依族起事部众，地方民变武装（T4 存在）
+  shuizu_panxinjian: { name: '荔波水军', tier: 4 },          // 潘新简：咸丰黔桂水族起事武装，见方志与清廷剿抚档案（T4 存在）
+  miaomin_shiliudeng: { name: '松桃苗兵', tier: 4 },         // 石柳邓：乾嘉松桃地方苗众武装，建制明确（T4 存在）
+  wumeng_azi: { name: '越州夷兵', tier: 4 },                // 阿资：明初越州彝族土兵，洪武年间为沐春击破斩杀（T4 存在）
+  qiufu_qiufu: { name: '罗平义军', tier: 4 },              // 裘甫：唐末浙东农民武装，建元罗平据剡县（T4 存在）
+  qiong_rengui: { name: '邛都夷兵', tier: 4 },              // 任贵：东汉建武邛都夷兵，杀越巂太守（T4 存在）
+  tingzhou_d_chenmin: { name: '广陵部曲', tier: 4 },         // 陈敏：西晋末江南宗族部曲与乡勇，建制可考（T4 存在）
 };
 
 /**
