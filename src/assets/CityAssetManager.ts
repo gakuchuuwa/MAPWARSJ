@@ -346,7 +346,7 @@ export class CityAssetManager {
 'pisha': '毗沙',
         'yumi': '扜弥',
         'xiye': '西夜',
-'panjun': 'RANDOM',
+// 'panjun': 'RANDOM',   // 🔴 [2026-10-24 主人令] 起义军旗帜用该势力自己的旗号，不再随机无字旗（随机无字旗留给叛军 panshu）
 'you': '幽',
         'galangdiba': '波密',
         'cuanshi': '爨',

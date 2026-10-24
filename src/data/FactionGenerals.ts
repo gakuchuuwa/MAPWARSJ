@@ -2959,7 +2959,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'xiongyati_yannuoshi', factionId: 'mazhaer', cityId: 'city_huneiduolala', generalName: '匈雅提亚诺什', portrait: '/assets/MAGYAR/xiongyati_yannuoshi.png' },
+        { generalId: 'xiongyati_yannuoshi', factionId: 'mazhaer', cityId: 'city_belgrade', generalName: '匈雅提亚诺什', portrait: '/assets/MAGYAR/xiongyati_yannuoshi.png' },
 
 
 
@@ -5222,7 +5222,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'qi_d_qijiguang', factionId: 'ming_d', cityId: 'city_qingyuan_zj', legionName: '帝国时代两江军团', generalName: '戚继光', portrait: '/assets/JIANGNAN/qi_d_qijiguang.png' },
+        { generalId: 'qi_d_qijiguang', factionId: 'ming_d', cityId: 'city_taizhou_zj', legionName: '帝国时代两江军团', generalName: '戚继光', portrait: '/assets/JIANGNAN/qi_d_qijiguang.png' },
 
 
 
@@ -5965,7 +5965,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_36', cityId: 'city_changan', generalName: '李广利', portrait: '/assets/CENTRAL/bfe3_36.png', legionName: '古典时代华夏军团' , eliteName: '属国胡骑', eliteTier: 3},
+        { generalId: 'bfe3_36', cityId: 'city_changan', generalName: '李广利', portrait: '/assets/CENTRAL/bfe3_36.png', legionName: '古典时代华夏军团', eliteName: '属国胡骑', eliteTier: 3 },   // 🔴 [2026-10-24 主人纠错] 李广利＝汉将（中原/华夏文化），奥什（贰师城）是西域文化，同文化硬约束第一 → 不能放奥什，回长安；出征地只能在同文化前提下才作依据
 
 
 
@@ -6054,7 +6054,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'lulin_liuxiu', factionId: 'han_d', cityId: 'city_luoyang', generalName: '刘秀', portrait: '/assets/CENTRAL/lulin_liuxiu.png' },
+        { generalId: 'lulin_liuxiu', factionId: 'han_d', cityId: 'city_kunyang', generalName: '刘秀', portrait: '/assets/CENTRAL/lulin_liuxiu.png' },
 
 
 
@@ -6342,7 +6342,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'bozhou_d_yujin', factionId: 'wei', cityId: 'city_luoyang', legionName: '古典时代华夏军团', generalName: '于禁', portrait: '/assets/CENTRAL/bozhou_d_yujin.png' },
+        { generalId: 'bozhou_d_yujin', factionId: 'wei', cityId: 'city_xiangyang', legionName: '古典时代华夏军团', generalName: '于禁', portrait: '/assets/CENTRAL/bozhou_d_yujin.png' },
 
 
 
@@ -8908,7 +8908,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'xiliao_yelvdashi', cityId: 'city_suiye', generalName: '耶律大石', portrait: '/assets/CENTRAL_ASIA/xiliao_yelvdashi.png' },
+        { generalId: 'xiliao_yelvdashi', cityId: 'city_emil', generalName: '耶律大石', portrait: '/assets/CENTRAL_ASIA/xiliao_yelvdashi.png' },
 
 
 
@@ -9377,7 +9377,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    dayuan: { generalId: 'dayuan_wugua', cityId: 'city_guishancheng', generalName: '毋寡', portrait: '/assets/WESTERN/dayuan_wugua.png' },
+    dayuan: { generalId: 'dayuan_wugua', cityId: 'city_aoshen', generalName: '毋寡', portrait: '/assets/WESTERN/dayuan_wugua.png' },
 
 
 
@@ -12723,7 +12723,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'yanchuan_d_yuefei', factionId: 'song', cityId: 'city_wuchang', generalName: '岳飞', portrait: '/assets/CENTRAL/yanchuan_d_yuefei.png' , legionName: '城堡时代江南军团' },
+        { generalId: 'yanchuan_d_yuefei', factionId: 'song', cityId: 'city_yancheng2', generalName: '岳飞', portrait: '/assets/CENTRAL/yanchuan_d_yuefei.png' , legionName: '城堡时代中原军团' },
 
 
 

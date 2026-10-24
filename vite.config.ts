@@ -5610,52 +5610,28 @@ function serverValidateEntities(): {
         if (!cityById.has(cId)) issues.push({ level: 'error', msg: `StartingCapitals: ${fId} → ${cId} (据点不存在)`, factionId: fId });
     }
 
-    // 6.5. 🔴 [2026-10-24 主人令]「首都城原主 ≠ 势力」**从硬伤降为情报**：
-    //      `STARTING_CAPITALS` 只是旧「一势力一据点」时期的**登记表**（编辑器提示/参考用），
-    //      不作开局依据——乱斗开局分城走 `src/events/meleeRandomOwners.ts`（每城从「原主＋挂在这座城的
-    //      武将政权」随机，保底每家至少一座），剧本走 `scriptHistoricalOwners / HISTORICAL_EVENT_SCRIPT`。
-    //      同一座城做过多个朝代都城是史实（金陵=东晋/南梁/南齐/南唐，长安=后秦/唐，开封=后周/宋，
-    //      成都=前蜀/蜀，熊本=龙造寺/南朝，安阳=袁绍/商），一张表只能登记一个原主，必然对不上。
-    //      ⇒ 只作情报，**不报 error**；只有「首府指向不存在的城」（上面第 6 条）才算硬伤。
-    //      同口径独立审计：`npm run faction:sync-audit`（scratch/audit_faction_capital_sync.mjs）。
-    for (const [fId, cId] of Object.entries(data.capitals)) {
-        const city = cityById.get(cId);
-        if (city && city.factionId !== fId) {
-            const actualFaction = factionById.get(city.factionId)?.name ?? city.factionId;
-            const myFaction = factionById.get(fId)?.name ?? fId;
-            issues.push({
-                level: 'info',
-                msg: `情报（史实，非错误）：势力 "${myFaction}" (${fId}) 首府登记为 "${city.name}" (${cId})，该城当前归属 "${actualFaction}" (${city.factionId})；开局不读此表，同城多朝属史实`,
-                factionId: fId,
-            });
-        }
-    }
+    // 6.5. 🔴 [2026-10-24 主人令「不是错误，为什么要显示呢」]「首都城原主 ≠ 势力」**不进编辑器校验**：
+    //      `STARTING_CAPITALS` 只是旧「一势力一据点」时期的**登记表**（编辑器提示/参考用），不作开局依据——
+    //      乱斗开局分城走 `src/events/meleeRandomOwners.ts`（每城从「原主＋挂在这座城的武将政权」随机，保底每家至少一座），
+    //      剧本走 `scriptHistoricalOwners / HISTORICAL_EVENT_SCRIPT`。同一座城做过多个朝代都城是史实
+    //      （金陵=东晋/南梁/南齐/南唐，长安=后秦/唐，开封=后周/宋，成都=前蜀/蜀，安阳=袁绍/商），
+    //      一张表只能登记一个原主，必然对不上 ⇒ **既不报 error，也不列 info**（校验页只列要处理的问题）。
+    //      需要看这份史实对照时跑专用审计：`npm run faction:sync-audit`（scratch/audit_faction_capital_sync.mjs）。
+    //      只有「首府指向不存在的城」（上面第 6 条）才算硬伤。
 
     // 6.6. 据点完整性（🔴 [2026-10-22 主人最新口径] 一个据点可多武将；一个武将＝一个势力＋一个军团＋一个精锐，可以重复；
     //      **一个势力可以拥有多个据点**，「一城一势力」旧规作废）：
     //      **正规势力必须有据点、不得为 0 据点**。
     //      🔴 [2026-10-24 主人：「叛军和起义军是两回事。叛军是游戏项目中的一种设定。」]
     //      `panjun` 自 2026-10-20 起是**起义占位势力**（势力名「起义」、旗号「義」、军团「帝国时代起义军团」），
-    //      它的据点（平陇/偏刀水/雷公山/甲定/罗博/三都）是石柳邓、白彦虎、吴勉、包利、韦朝元、潘新简等
-    //      起义首领的基地，属正常数据 ⇒ **只作情报，不报 error**。旧 9 月口径「绝不允许 panjun」是把
-    //      「数据没补完的兜底叛军」和「起义军」混为一谈（起义军不是叛军），已作废。
+    //      名下据点（平陇/偏刀水/雷公山/甲定/罗博/三都）是石柳邓、白彦虎、吴勉、包利、韦朝元、潘新简等
+    //      起义首领的基地，属正常数据 ⇒ **既不报 error，也不列 info**（2026-10-24 主人「不是错误，为什么要显示呢」）。
+    //      旧 9 月口径「绝不允许 panjun」是把「数据没补完的兜底叛军」和「起义军」混为一谈（起义军不是叛军），已作废。
     const citiesByFactionMap = new Map<string, typeof data.cities>();
-    const panjunCities: typeof data.cities = [];
     for (const c of data.cities) {
-        if (c.factionId === 'panjun') {
-            panjunCities.push(c);
-            continue;
-        }
+        if (c.factionId === 'panjun') continue;   // 起义占位势力：允许持有据点，不参与「0 据点」检查
         if (!citiesByFactionMap.has(c.factionId)) citiesByFactionMap.set(c.factionId, []);
         citiesByFactionMap.get(c.factionId)!.push(c);
-    }
-    if (panjunCities.length) {
-        issues.push({
-            level: 'info',
-            // [FIX 2026-10-24] 带上 factionId：否则前端从消息里猜 `(city_pinglong)` 当势力 id，点「点击编辑」打不开
-            factionId: 'panjun',
-            msg: `情报（起义占位势力，非错误）：panjun「起义」名下 ${panjunCities.length} 座据点——${panjunCities.map(c => `${c.name}(${c.id})`).join('、')}；起义据点允许（叛军≠起义军）`,
-        });
     }
     for (const f of data.factions) {
         if (skipFactions.has(f.id)) continue;

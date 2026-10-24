@@ -73,6 +73,7 @@ FORBIDDEN = [
     ('city_hamburg', 'city_calais'),       # v8 补出来的线：汉堡—加莱无汉萨直航，改汉堡—伦敦（钢院）
     ('city_xibo', 'city_cagliari'),        # v8 补出来的线：希波—撒丁岛无史实直航，改希波—迦太基
     ('city_donghai', 'city_yazhou'),       # v8 补出来的线：洞海—珠崖抢近邻，改洞海—阇槃（占城）
+    ('city_telde', 'city_ribeira'),        # 特尔德—里贝拉（加那利—佛得角）让位给里斯本—佛得角这条主航段
 ]
 
 FORCE_KEEP = [
@@ -100,6 +101,11 @@ FORCE_ADD = [
     ('city_hamburg', 'city_lundun'),         # 汉堡—伦敦：汉萨同盟「钢院」商站（Stalhof）
     ('city_xibo', 'city_jiataji'),           # 希波—迦太基：迦太基故港（Hippo Regius）
     ('city_donghai', 'city_dupan'),          # 洞海—阇槃：越南中岸—占城沿海航路
+    # ── 环球两段（2026-10-24 主人问「能环球吗」）──
+    ('city_ribeira', 'city_guoa'),           # 好望角线：佛得角—果阿，达伽马 1497–99 卡布拉尔/达伽马航线（约 19500km，绕非洲，穿陆 0）
+    ('city_sanjulian', 'city_lima'),         # 麦哲伦海峡线：圣胡利安港—利马（卡亚俄），麦哲伦 1520 过海峡后沿智利北上（约 6900km，穿陆 0）
+    ('city_lisiben', 'city_ribeira'),         # 里斯本—佛得角：葡往几内亚/巴西/印度的出航段（1462 起），好望角线起点
+    ('city_madula', 'city_puli'),            # 潘地亚—羯陵伽（马杜赖—普里）海岸航路：把印度西岸—信德一圈接回主网，环球才成环（约 2800km）
     ('city_sanjulian', 'city_saovicente'),   # 麦哲伦 1520 沿巴西海岸南下（里约→拉普拉塔→圣胡利安越冬）
     ('city_sanjulian', 'city_guanabara'),    # 同上：里约（瓜纳巴拉）停泊后南下
 ]
@@ -245,7 +251,7 @@ def evict(endpoint, protect):
     return True
 
 
-protect = force_keep_set
+protect = force_keep_set | {frozenset(p) for p in FORCE_ADD}
 # 2a 史实长线优先占位
 for e in kept:
     if frozenset((e['a'], e['b'])) in force_keep_set:

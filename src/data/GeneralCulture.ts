@@ -941,7 +941,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'lu_zhangliao': 'JIANGNAN',   // 杨吴｜张辽｜据点 合肥
     'luchuan_sirenfa': 'BURMESE',   // 麓川｜思任发｜据点 勐卯
     'lujian_zhanghuangyan': 'JIANGNAN',   // 鲁监｜张煌言｜据点 宁波
-    'lulin_liuxiu': 'CENTRAL',   // 汉国｜刘秀｜据点 洛阳
+    'lulin_liuxiu': 'CENTRAL',   // 汉国｜刘秀｜据点 昆阳（2026-10-24 按防御战迁）
     'lulisitan_shoujiang': 'SASANIAN',   // 卢里斯坦｜舒特鲁克｜据点 伊拉姆
     'lumiliya_lalashahin': 'TURKS',   // 鲁米利亚｜拉拉沙欣｜据点 埃迪尔内
     'luming_luxiangsheng': 'CENTRAL',   // 大明｜卢象升｜据点 郧阳
@@ -1386,7 +1386,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yamaxun_faernake': 'ORIE',   // 亚马逊｜法尔纳克｜据点 忒弥斯基拉
     'yamaxun_xibolvte': 'ORIE',   // 亚马逊｜希波吕忒｜据点 忒弥斯基拉
     'yan_leyi': 'CENTRAL',   // 燕国｜乐毅｜据点 临淄
-    'yanchuan_d_yuefei': 'JIANGNAN',   // 宋国｜岳飞｜据点 武昌
+    'yanchuan_d_yuefei': 'CENTRAL',   // 宋国｜岳飞｜据点 武昌
     'yanda_touluoman': 'CENTRAL_ASIA',   // 阿尔洪｜头罗曼｜据点 德拉普萨卡
     'yang_aner_yangan': 'WEI',   // 天顺｜杨安｜据点 蓬莱
     'yang_bozhou_yangyinglong': 'BASHU',   // 大明｜杨应龙｜据点 海龙屯

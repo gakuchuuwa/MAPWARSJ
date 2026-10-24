@@ -2331,7 +2331,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'stockade', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'BRITONS' },
     { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xixiliwangguo', lat: 37.07, lng: 15.28, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'SICILIANS' },
     { id: 'city_bucharest', name: '布加勒斯特', factionId: 'walajiyia', lat: 44.43, lng: 26.1, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '15世纪成为瓦拉几亚王侯驻地' },
-    { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC' },
+    { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'MAGYAR', note: '🔴 [2026-10-24 按史] 建筑风格 SLAVIC→MAGYAR：1456 年贝尔格莱德（Nándorfehérvár）为**匈牙利王国**南部重镇，匈雅提·亚诺什在此守城大破奥斯曼（诺贝当年正午钟由来）；索科洛维奇桥头堡等奥斯曼—巴尔干石堡亦并存，取最著名那段（匈牙利守城）为 MAGYAR。' },
 
 
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：爱丁堡：苏格兰，凯尔特／皮克特故地
