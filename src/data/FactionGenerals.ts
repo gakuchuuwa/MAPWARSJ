@@ -16732,7 +16732,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ryuzoji: [],
     nanchou: [
         { generalId: 'higo_d_juchiwuguang', factionId: 'nanchou', cityId: 'city_xiongben', generalName: '菊池武光', portrait: '/assets/JAPAN/higo_d_juchiwuguang.png' },
-        { generalId: 'gen_ryuzoji_takanobu', eliteName: '四天王侍', eliteTier: 2, factionId: 'ryuzoji', cityId: 'city_taizaifu', generalName: '龙造寺隆信', portrait: '/assets/JAPAN/gen_ryuzoji_takanobu.png', legionName: '城堡时代幕府军团' },
 
     
         { generalId: 'yamato_nanmuzhengcheng', eliteName: '楠木党', eliteTier: 2, factionId: 'nanchou', cityId: 'city_asuka', generalName: '楠木正成', portrait: '/assets/JAPAN/yamato_nanmuzhengcheng.png' },
