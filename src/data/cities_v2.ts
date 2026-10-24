@@ -3259,7 +3259,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── 2026-06-20 新增：锡斯坦·博斯特 ──
     { id: 'city_bosite', name: '博斯特', factionId: 'xisi', lat: 31.5833, lng: 64.36, type: 'stockade', troops: 10000, region: 'PERSIAN_CASTLE', buildingStyle: 'PERSIAN' },
     // ── 2026-06-20 新增：德兰吉亚·法拉 ──
-    { id: 'city_fala', name: '法拉', factionId: 'ansxi', lat: 32.3700, lng: 62.1100, type: 'pass', region: 'PERSIAN', buildingStyle: 'PERSIAN', troops: 10000, note: '古德兰吉亚省法拉河畔要塞；苏伦家族世袭领地，帕提亚东境战略枢纽' },
+    { id: 'city_fala', name: '法拉', factionId: 'ansxi', lat: 32.3700, lng: 62.1100, type: 'pass', region: 'PERSIAN', buildingStyle: 'PERSIAN', troops: 10000, note: '古德兰吉亚省法拉河畔要塞，帕提亚东境战略枢纽。🔴 [2026-10-24 主人令「苏伦留法拉，备注改推断并补出处」] 苏伦家族领地为**推断**：英文维基百科 House of Suren 记该家族 probable landowners in Sakastan（阿拉霍西亚与德兰吉亚之间）、appear to have governed Sistan；苏伦本人无常驻可考，法拉仅作其家族东境根据地的示意点。' },
     // ── 2026-06-20 新增：杜兰尼·坎大哈 ──
     { id: 'city_kandaha', name: '坎大哈', factionId: 'dulan_d', lat: 31.6289, lng: 65.7372, type: 'small_city', troops: 10000, region: 'PASHTUN', buildingStyle: 'PERSIAN' },
 

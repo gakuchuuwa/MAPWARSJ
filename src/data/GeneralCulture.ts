@@ -354,7 +354,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'dzungar_galedanceling': 'CENTRAL_ASIA',   // 绰罗斯｜噶勒丹策凌｜据点 固尔札
     'echigo_shangshanqianxin': 'JAPAN',   // 上杉｜上杉谦信｜据点 春日山
     'edo_dechuanjiakang': 'JAPAN',   // 德川｜德川家康｜据点 江户城
-    'eerbulushi_beisusi': 'CENTRAL_ASIA',   // 厄尔布尔士｜贝苏斯｜据点 蓝氏城
+    'eerbulushi_beisusi': 'CENTRAL_ASIA',   // 巴克特里亚｜贝苏斯｜据点 蓝氏城
     'eguo_zasekin': 'SLAVIC',   // 俄国边地｜扎谢金｜据点 萨拉托夫
     'elunchunzu_gaishan': 'NORTHEAST',   // 鄂伦春｜盖山｜据点 呼玛
     'eluoke_amuhaer': 'NORTHEAST',   // 鄂罗克｜阿穆哈尔｜据点 诺托罗
@@ -622,7 +622,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_qutlugh': 'WESTERN',   // 费尔干纳｜忽都鲁｜据点 阿赫西克特
     'gen_rajaram': 'INDIA',   // 泰米尔｜拉贾拉姆｜据点 金奇
     'gen_ramiro_ii': 'SPANISH',   // 莱昂｜拉米罗二世｜据点 萨拉曼卡
-    'gen_raymond_iv': 'FRANKS',   // 普罗旺斯｜雷蒙四世｜据点 阿维尼翁
+    'gen_raymond_iv': 'FRANKS',   // 朗格多克｜雷蒙四世｜据点 图卢兹
     'gen_raymond_v': 'FRANKS',   // 朗格多克｜雷蒙五世｜据点 图卢兹
     'gen_razadarit': 'BURMESE',   // 孟族｜罗娑陀利｜据点 直通
     'gen_robert_guiscard': 'SICILIANS',   // 阿普利亚｜吉斯卡尔｜据点 梅尔菲
@@ -676,7 +676,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_valdivia': 'SPANISH',   // 西班牙｜瓦尔迪维亚｜据点 利马
     'gen_vasili_iii': 'SLAVIC',   // 莫斯公国｜瓦西里三世｜据点 莫斯科
     'gen_velazquez': 'SPANISH',   // 西属古巴｜贝拉斯克斯｜据点 哈瓦那
-    'gen_vernon': 'SAXONS',   // 英格兰｜弗农｜据点 温彻斯特
+    'gen_vernon': 'SAXONS',   // 英格兰｜弗农｜据点 新阿姆斯特丹
     'gen_villaret': 'FRANKS',   // 多德卡尼斯｜维拉雷｜据点 罗得城
     'gen_vlad_impaler': 'SLAVIC',   // 瓦拉几亚｜弗拉德三世｜据点 特尔戈维
     'gen_vladimir_andreyevich': 'SLAVIC',   // 谢尔公国｜勇者弗拉基｜据点 谢尔普霍夫

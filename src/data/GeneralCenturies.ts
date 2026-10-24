@@ -420,7 +420,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
   'kapaduoxiya_sabiktas': -4,
   'maermajika_paraetos': -4,                      // 帕拉伊托斯 · maermajika · 马特鲁港
   'ameng_jisi': -4,                                    // 阿曼阿托 · ameng · 锡瓦绿洲
-  'eerbulushi_beisusi': -4,                            // 贝苏斯 · eerbulushi · 里海门
+  'eerbulushi_beisusi': -4,                            // 贝苏斯 · eerbulushi · 蓝氏城（高加米拉会战）
   'aliya_satibazanishi': -4,                           // 萨提巴扎尼斯 · aliya · 赫拉特
   'xuliya_shoujiang': -4,                              // 马泽乌斯 · xuliya · 塔普萨库斯
   'meisuobudamiya_shoujiang': -4,                      // 萨宾 · meisuobudamiya · 尼西比斯
@@ -608,7 +608,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_lorenzo_medici': 15,                            // 洛伦佐 · tuosikana · 佛罗伦萨
     'gen_magas': -3,                                     // 马加斯 · jileinaijia · 班加西
     'gen_muhammad_i': 13,                                // 穆罕默德 · nasier · 格拉纳达
-    'gen_raymond_iv': 11,                                // 雷蒙四世 · puluowangsi · 阿维尼翁
+    'gen_raymond_iv': 11,                                // 雷蒙四世 · gaolu · 图卢兹
     'gen_raymond_v': 12,                                 // 雷蒙五世 · langgeduoke · 图卢兹
     'gen_robert_ii': 11,                                 // 罗贝尔二世 · fulandesi · 加莱
     'gen_roger_i': 11,                                   // 罗杰 · moxina · 梅西纳

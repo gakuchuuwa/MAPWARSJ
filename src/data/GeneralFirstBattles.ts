@@ -834,25 +834,30 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #36 贝苏斯 (-370 ~ -329) — 公元前330年里海门阻击战（本城就地开战）
+    // #36 贝苏斯 (-370 ~ -329) — 公元前331年高加米拉会战（巴克特里亚左翼）
+    // 🔴 [2026-10-24 主人令「贝苏斯守里海门核对后改为阿里奥巴尔扎内斯或换战役」] 原「里海门阻击战」是错战：
+    //    前330年冬死守隘口的是波西斯总督阿里奥巴赞斯（波斯门，Persian Gate，近波斯波利斯），不是贝苏斯；
+    //    里海门（Caspian Gates）只是大流士被贝苏斯一党擒拿处。贝苏斯本人当时在巴克特里亚，未守该门。
+    //    按史换战役：贝苏斯参加了前331年高加米拉会战，为波斯左翼提供巴克特里亚、索格底亚那、印度与塞种兵
+    //    （英文维基百科 Bessus：took part in the Battle of Gaugamela … supplied Bactrians, Sogdians, Indians, Saka）。
+    //    战场取 Battlefields.ts 的 bf_gaojiamila（36.56,43.444）；野战不锚城，免得打到 35km 外的尼尼微。
     eerbulushi_beisusi: {
         generalId: 'eerbulushi_beisusi',
-        battleName: '里海门阻击战',
-        battleYear: -330,
-        battleType: 'siege',
+        battleName: '高加米拉会战',
+        battleYear: -331,
+        battleType: 'field',
         role: 'defender',
-        targetName: '里海门',
-        targetCityId: 'city_lihaimen',
-        targetLat: 35.25,
-        targetLng: 52.34,
+        targetName: '高加米拉平原',
+        targetLat: 36.56,
+        targetLng: 43.444,
         myTroops: 30000,
         enemyFactionId: 'maqidun',
         enemyFactionName: '马其顿',
-        enemyGeneralId: 'gen_parmenion',
-        enemyTroops: 35000,
+        enemyGeneralId: 'gen_alexander_great',
+        enemyTroops: 40000,
         introLines: [
-            { speaker: 'general', text: '我已继承万王之王冠冕，东方各行省尽皆归心！马其顿大军逼近里海门，壮士，随我扼守天险，重振波斯！' },
-            { speaker: 'player', text: '愿随贝苏斯扼守里海门，就地痛击来犯之敌！' },
+            { speaker: 'general', text: '大流士王集波斯、巴克特里亚、索格底亚那与塞种之众于高加米拉，某率巴克特里亚铁骑当左翼！马其顿方阵已压上，壮士，随我纵骑冲阵，护住王旗！' },
+            { speaker: 'player', text: '愿随贝苏斯总督决战高加米拉，破马其顿军！' },
         ],
     },
 
@@ -6265,9 +6270,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '阿德里安堡近郊',
-        targetCityId: 'city_deli',
-        targetLat: 28.61,
-        targetLng: 77.23,
+        // 🔴 [2026-10-24 主人令「锚点错了攻城战照样打错地方」] 原 targetCityId=city_deli（德里）、坐标也抄成德里；
+        //    阿德里安堡＝埃迪尔内（city_aidiernei，41.6781,26.5591），按史改锚。
+        targetCityId: 'city_aidiernei',
+        targetLat: 41.6781,
+        targetLng: 26.5591,
         myTroops: 30000,
         enemyFactionId: 'falanji',
         enemyFactionName: '拉丁帝国',
@@ -9060,9 +9067,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '锦州松山乳峰山',
-        targetCityId: 'city_songshan',
-        targetLat: 33.8185,
-        targetLng: 132.7505,
+        // 🔴 [2026-10-24 主人令] 松山堡在锦州（41.05,121.1），原 city_songshan 是伊予松山（日本 33.8185,132.7505）；
+        //    改锚 nearest 徒河（41.12,121.14，距松山堡 8km）。
+        targetCityId: 'city_tuhe',
+        targetLat: 41.05,
+        targetLng: 121.1,
         myTroops: 70000,
         enemyFactionId: 'ming_d',
         enemyFactionName: '明朝',
@@ -9970,7 +9979,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '色萨利克兰农平原',
-        targetCityId: 'city_thebes',
+        // 🔴 [2026-10-24 主人令] 克兰农（39.52,22.2）nearest 佩利纳 24km；原锚底比斯偏 165km。
+        targetCityId: 'city_pelina',
         targetLat: 39.52,
         targetLng: 22.2,
         myTroops: 45000,
@@ -13778,7 +13788,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'siege',
         role: 'defender',
         targetName: '松山乳峰山',
-        targetCityId: 'city_songshan',
+        // 🔴 [2026-10-24 主人令] 松山堡在锦州（41.05,121.1）；原锚 city_songshan 是伊予松山（日本），改锚 nearest 徒河（距松山堡 8km）。
+        targetCityId: 'city_tuhe',
         targetLat: 41.05,
         targetLng: 121.1,
         myTroops: 100000,
@@ -13818,7 +13829,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '塔胡达',
-        targetCityId: 'city_kailuwan',
+        // 🔴 [2026-10-24 主人令] 塔胡达（35.5,6.5）50km 内无据点；野战不锚 189km 外的布佳亚，按史实坐标打。
+
         targetLat: 35.5,
         targetLng: 6.5,
         myTroops: 50000,
@@ -13918,7 +13930,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '莫哈奇原野',
-        targetCityId: 'city_budapeisi',
+        // 🔴 [2026-10-24 主人令] 莫哈奇（45.87,18.66）50km 内无据点；野战不锚 123km 外的塞格德，按史实坐标打。
+
         targetLat: 45.87,
         targetLng: 18.66,
         myTroops: 50000,
@@ -13938,7 +13951,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '尼科堡',
-        targetCityId: 'city_sofia',
+        // 🔴 [2026-10-24 主人令] 尼科堡（43.7,24.9）50km 内无据点；野战不锚 92km 外的特尔诺沃，按史实坐标打。
+
         targetLat: 43.7,
         targetLng: 24.9,
         myTroops: 30000,
@@ -13978,7 +13992,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'defender',
         targetName: '莫哈奇原野',
-        targetCityId: 'city_budapeisi',
+        // 🔴 [2026-10-24 主人令] 莫哈奇（45.87,18.66）50km 内无据点；野战不锚 123km 外的塞格德，按史实坐标打。
+
         targetLat: 45.87,
         targetLng: 18.66,
         myTroops: 30000,
@@ -13998,7 +14013,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'siege',
         role: 'defender',
         targetName: '阿莱西亚城',
-        targetCityId: 'city_lyon',
+        // 🔴 [2026-10-24 主人令] 阿莱西亚（47.54,4.5）城库无对应据点；nearest 第戎 47km（原锚里昂偏 200km）。
+        targetCityId: 'city_dijon',
         targetLat: 47.54,
         targetLng: 4.5,
         myTroops: 80000,
@@ -14038,7 +14054,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'siege',
         role: 'attacker',
         targetName: '帕尔米拉城',
-        targetCityId: 'city_damasikusi',
+        // 🔴 [2026-10-24 主人令] 城库有 city_tademoer（塔德莫尔＝帕尔米拉，34.55,38.27）；原锚大马士革偏 214km。
+        targetCityId: 'city_tademoer',
         targetLat: 34.55,
         targetLng: 38.27,
         myTroops: 30000,
@@ -14058,7 +14075,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '格伦瓦德原野',
-        targetCityId: 'city_huasha',
+        // 🔴 [2026-10-24 主人令] 格伦瓦德（53.49,20.09）nearest 格但斯克仍 135km；野战不锚城，按史实坐标打。
+
         targetLat: 53.49,
         targetLng: 20.09,
         myTroops: 39000,
@@ -14158,7 +14176,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '浚稽山',
-        targetCityId: 'city_junjishan',
+        // 🔴 [2026-10-24 主人令] 本方史实坐标（46,104）50km 内无据点；野战不锚 179km 外的浚稽山城，按史实坐标打。
+
         targetLat: 46,
         targetLng: 104,
         myTroops: 80000,
@@ -14198,7 +14217,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'defender',
         targetName: '城父',
-        targetCityId: 'city_hulaoguan',
+        // 🔴 [2026-10-24 主人令] 城父（33.5,115.8）在谯县附近 42km；原锚虎牢关偏 283km，改锚 nearest 谯县。
+        targetCityId: 'city_qiaojun',
         targetLat: 33.5,
         targetLng: 115.8,
         myTroops: 40000,
@@ -14218,7 +14238,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'siege',
         role: 'attacker',
         targetName: '尼沙普尔城',
-        targetCityId: 'city_bosite',
+        // 🔴 [2026-10-24 主人令] 城库有 city_nishabuer（尼沙布尔，36.2133,58.7958）；原锚博斯特偏 726km。
+        targetCityId: 'city_nishabuer',
         targetLat: 36.2,
         targetLng: 58.8,
         myTroops: 20000,
@@ -14238,7 +14259,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '弗里吉亚原野',
-        targetCityId: 'city_antiejiya',
+        // 🔴 [2026-10-24 主人令] 弗里吉亚原野（39,31）nearest 戈尔迪乌姆仍 111km；野战不锚城，按史实坐标打。
+
         targetLat: 39,
         targetLng: 31,
         myTroops: 25000,
@@ -14318,7 +14340,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '城父',
-        targetCityId: 'city_hulaoguan',
+        // 🔴 [2026-10-24 主人令] 城父（33.5,115.8）在谯县附近 42km；原锚虎牢关偏 283km，改锚 nearest 谯县。
+        targetCityId: 'city_qiaojun',
         targetLat: 33.5,
         targetLng: 115.8,
         myTroops: 100000,

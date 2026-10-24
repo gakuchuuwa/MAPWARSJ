@@ -1891,7 +1891,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    puluowangsi: { generalId: 'gen_raymond_iv', cityId: 'city_avignon', generalName: '雷蒙四世', portrait: '/assets/FRANKS/gen_raymond_iv.png' },
+    // 🔴 [2026-10-24 主人令] 雷蒙四世＝图卢兹伯爵（首府图卢兹）；改挂 city_toulouse、势力归法兰西（factionId: gaolu）。
+    //    军团按 GENERAL_CULTURE=FRANKS × GENERAL_ERA=castle 解析，仍是「城堡时代法兰西骑士军团」，无需写 legionName。
+    puluowangsi: { generalId: 'gen_raymond_iv', factionId: 'gaolu', cityId: 'city_toulouse', generalName: '雷蒙四世', portrait: '/assets/FRANKS/gen_raymond_iv.png' },
 
 
 
@@ -2356,8 +2358,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     yinggelan: [
-        // 🔴 [2026-10-20 首战规则] 弗农＝英国海军上将（1741 卡塔赫纳围攻指挥官）→ 温彻斯特（SAXONS）；帝国时代萨克森军团；立绘留空
-        { generalId: 'gen_vernon', cityId: 'city_winchester', generalName: '弗农', portrait: '/assets/SAXONS/gen_vernon.png', legionName: '帝国时代萨克森军团' },
+        // 🔴 [2026-10-24 主人令] 弗农＝英国海军上将（1741 卡塔赫纳围攻指挥官）；城库无牙买加/皇家港，
+        //    按「无合适据点取离战场最近的同风格城」改挂新阿姆斯特丹（SAXONS，3375km；比温彻斯特 8420km 近）；军团不变。
+        { generalId: 'gen_vernon', cityId: 'city_newamsterdam', generalName: '弗农', portrait: '/assets/SAXONS/gen_vernon.png', legionName: '帝国时代萨克森军团' },
 
 
 
@@ -14665,6 +14668,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
+        // 🔴 [2026-10-24 主人令] 苏伦留法拉：家族领地为「推断」（House of Suren 可能在 Sakastan/阿拉霍西亚—德兰吉亚之间有地并治锡斯坦），
+        //    苏伦本人无常驻可考；详见 city_fala 的 note。
         { generalId: 'delan_sulun', factionId: 'ansxi', cityId: 'city_fala', generalName: '苏伦', portrait: '/assets/PERSIAN/delan_sulun.png' },
 
 
