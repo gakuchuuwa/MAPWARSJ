@@ -8131,6 +8131,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.27,
             "offsetX": 0,
             "offsetY": -21
+        },
+        "/assets/SLAVIC/gen_vasili_iii.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {

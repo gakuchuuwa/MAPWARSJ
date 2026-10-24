@@ -228,6 +228,9 @@ export function getEraCityDisplayFlagText(
 export function refreshEraFactionDisplays(year: number | null): string[] {
     const next = new Map<string, EraNameDef>();
     const era = (year != null && Number.isFinite(year)) ? getEraByYear(year) : null;
+    /** 时代是否变了：据点级时代名可能变而势力级名字不变（有些分支相邻时代同名），
+     *  换时代时一律把有覆盖的势力报为 changed，让据点旗号也重刷一遍（2026-10-24 据点级口径）。 */
+    const eraChanged = activeEra !== era;
     activeEra = era;
     if (era) {
         for (const [factionId, info] of FACTION_CITY) {
@@ -239,7 +242,9 @@ export function refreshEraFactionDisplays(year: number | null): string[] {
     const changed: string[] = [];
     for (const [factionId, entry] of next) {
         const prev = overrides.get(factionId);
-        if (!prev || prev.name !== entry.name || (prev.flagText ?? null) !== (entry.flagText ?? null)) changed.push(factionId);
+        if (eraChanged || !prev || prev.name !== entry.name || (prev.flagText ?? null) !== (entry.flagText ?? null)) {
+            changed.push(factionId);
+        }
     }
     for (const factionId of overrides.keys()) {
         if (!next.has(factionId)) changed.push(factionId);

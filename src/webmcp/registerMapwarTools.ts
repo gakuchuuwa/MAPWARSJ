@@ -1,4 +1,5 @@
 import type { GameApp } from '../app/GameApp';
+import { getEraCityDisplayName } from '../data/eraFactionDisplay';
 
 interface WebMcpToolDefinition {
     name: string;
@@ -94,20 +95,30 @@ function createTools(app: GameApp): WebMcpToolDefinition[] {
                 }
 
                 const matches = app.cityManager.getCities()
-                    .map((city) => ({ city, factionName: app.cityManager.getFactionName(city.factionId) }))
-                    .filter(({ city, factionName }) =>
+                    .map((city) => {
+                        // 🔴 [2026-10-24 主人令「函谷关是吴越，错误」「潼关是太行，错误」]
+                        //   百岁模式里该据点的势力名按**本据点建筑文化**取时代名（与地图旗号同一口径）；
+                        //   势力级旧名（按势力首城风格）另列 `factionNameRaw`，便于核对。
+                        const factionNameRaw = app.cityManager.getFactionName(city.factionId);
+                        const eraCityName = getEraCityDisplayName(city.factionId, city.buildingStyle);
+                        const factionName = eraCityName ?? factionNameRaw;
+                        return { city, factionName, factionNameRaw };
+                    })
+                    .filter(({ city, factionName, factionNameRaw }) =>
                         city.id.toLocaleLowerCase('zh-CN').includes(query)
                         || city.name.toLocaleLowerCase('zh-CN').includes(query)
                         || city.factionId.toLocaleLowerCase('zh-CN').includes(query)
                         || factionName.toLocaleLowerCase('zh-CN').includes(query)
+                        || factionNameRaw.toLocaleLowerCase('zh-CN').includes(query)
                     )
                     .slice(0, rawLimit as number)
-                    .map(({ city, factionName }) => ({
+                    .map(({ city, factionName, factionNameRaw }) => ({
                         cityId: city.id,
                         cityName: city.name,
                         cityType: city.type,
                         factionId: city.factionId,
                         factionName,
+                        factionNameRaw,
                         troops: city.troops,
                         latitude: city.latitude,
                         longitude: city.longitude,
