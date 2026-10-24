@@ -4418,45 +4418,6 @@ export class CombatUI {
         this.container.classList.remove('has-left-portrait', 'has-right-portrait');
     }
 
-    /**
-     * 🔴 [2026-10-23 主人「这个立绘怎么和别的立绘人物对不上呀。而且不能用F2调整位置」]
-     * 探马故事旁白的说话人立绘：不再自己另画一张卡，直接用左下角这套武将立绘框（同样的框、名牌、F2 校正）。
-     * 打仗时面板归战斗，不抢。
-     */
-    private storyPortraitOn = false;
-    public showStoryPortrait(path: string, name: string, role: string): void {
-        if (this.isVisible || !this.leftPortraitFrame) return;
-        this.storyPortraitOn = true;
-        this.setPortrait(this.leftPortrait, undefined, undefined, null, path, 'attacker');
-        if (this.leftGeneralNameTag) {
-            this.leftGeneralNameTag.textContent = name;
-            this.leftGeneralNameTag.style.display = 'block';
-            delete this.leftGeneralNameTag.dataset.generalId;
-        }
-        if (this.leftFamousBadge) this.leftFamousBadge.style.display = 'none';
-        if (this.leftLegionTag) {
-            this.leftLegionTag.textContent = role;
-            this.leftLegionTag.style.display = role ? 'block' : 'none';
-        }
-        this.leftPortraitFrame.style.display = 'block';
-        this.leftPortraitFrame.style.opacity = '1';
-        this.leftPortraitFrame.style.visibility = 'visible';
-        this.container.classList.add('has-left-portrait');
-    }
-
-    /** 故事旁白念完：收起说话人立绘（F2 正在调就先留着），有跟随军团就换回它的武将 */
-    public hideStoryPortrait(): void {
-        if (!this.storyPortraitOn || this.correctorOpen || this.isVisible) return;
-        this.storyPortraitOn = false;
-        if (this.leftLegionTag) this.leftLegionTag.style.display = 'none';
-        if (this.followedArmy && !this.followedArmy.isDestroyed && (this.followedArmy.getTroops?.() ?? 0) > 0) {
-            this.showFollowedGeneral(this.followedArmy);
-        } else {
-            if (this.leftPortraitFrame) this.leftPortraitFrame.style.display = 'none';
-            this.container.classList.remove('has-left-portrait');
-        }
-    }
-
     public isRegionalVisible(): boolean {
         return this.isVisible && this.currentRegionalUnits !== null;
     }
@@ -4852,8 +4813,7 @@ export class CombatUI {
         document.addEventListener('keydown', (e) => {
             // F2 在战斗界面可见时开关校正面板
             if (e.key === 'F2') {
-                // 🔴 [2026-10-23] 故事旁白的说话人立绘也能 F2 调
-                if (!this.isVisible && !this.storyPortraitOn) return;
+                if (!this.isVisible) return;
                 e.preventDefault();
                 if (this.correctorOpen) this.closeCorrector();
                 else this.openCorrector();

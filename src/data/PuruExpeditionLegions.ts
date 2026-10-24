@@ -12,7 +12,6 @@ export const PURU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     taimier: { name: '马拉塔骑', tier: 3 },  // 金奇·拉贾拉姆：马拉塔轻骑
     adile: { name: '比贾炮队', tier: 3 },
     bulu: { name: '保拉瓦战象', tier: 3 },  // 补噜·波鲁斯：希达斯皮斯之战抗亚历山大的印度战象军,
-    jiaye: { name: '金刚座卫', tier: 3 },
     // 🔴 [2026-09-19 主人令「全面检查」时自查出的缺口] 亚历山大印度战役的两个守方势力此前都没有番号：
     //    阿斯瓦卡（前327 马萨加战役守方）/ 马利（前325 马里斯战役守方），战斗中取不到精锐环。
     //    史料：阿里安《亚历山大远征记》卷四 23-27、狄奥多罗斯 17.84（**阿萨凯诺斯人**据斯瓦特河谷
@@ -23,9 +22,5 @@ export const PURU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     // 🔴 [2026-09-24 §二之二 授权] 前326 奥诺斯岩围城战守方此前没有番号。史料：阿里安《亚历山大远征记》
     //    卷四 28-30、狄奥多罗斯 17.85、库尔提乌斯 8.11（Pir Sar 崖顶岩堡，守军以滚石死守、夜遁弃岩）。
     //    史书未载该岩守军番号 → 按史地合理推定。定级 T4「存在之兵」：崖顶守军与卫城守军，构筑地方建制守备力量。
-    aornos: { name: '绝壁守兵', tier: 4 },
     malli: { name: '马利城兵', tier: 4 },
-    muertan: { name: '突厥马穆军', tier: 3 },
-    muxikani: { name: '信德象兵', tier: 3 },
-    xindu: { name: '信德长弓手', tier: 2 },
 };

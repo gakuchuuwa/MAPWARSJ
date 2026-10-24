@@ -7,7 +7,6 @@
  */
 export const AFRICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     manding: { name: '飞刀女兵', tier: 3 },
-    eerbulushi: { name: '山隘弓手', tier: 4 },
     ethiopia: { name: '弯刀勇士', tier: 3 },
     zhagewei: { name: '阿高武士', tier: 4 },
     kushi: { name: '努比亚弓手', tier: 3 },
@@ -15,7 +14,4 @@ export const AFRICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     suosuo: { name: '索索骑兵', tier: 3 },  // 库姆比萨利赫·苏曼古鲁：索索骑兵
     saimien: { name: '塞米恩战士', tier: 3 },  // 塞米恩·尤迪特：塞米恩贝塔以色列战士
     adal: { name: '阿达尔火枪', tier: 2 },   // 塞拉·格拉尼：奥斯曼援助重装火绳枪+精钢弯刀圣战突击主力
-    gondarine: { name: '皇城卫队', tier: 4 },
-    tigelei: { name: '提格雷长矛', tier: 3 },  // 德布雷达莫·吉达扬：提格雷崖堡长矛守军
-    xiaoa: { name: '肖阿象军', tier: 3 },  // 德布雷利巴诺斯·达格纳詹：肖阿高原象军
 };

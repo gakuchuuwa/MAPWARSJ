@@ -6,7 +6,6 @@
  */
 import type { PlayerHero } from './PlayerHero';
 import { HorseStable, indexToYear, type Horse, type HorseStatus } from './HorseStable';
-import { HORSE_MEMORIES, memoryLabel } from '../story/horseMemories';
 import { HORSE_LORE, LORE_TEETH } from '../story/horseLore';
 
 const PANEL_ID = 'player-horse-stable-panel';
@@ -122,21 +121,8 @@ function horseRow(hero: PlayerHero, h: Horse, rerender: () => void): HTMLElement
             <span style="font-size:12px;color:#dfc28c;font-weight:400;">${HorseStable.sexLabel(h)} · ${ageText(hero, h)} 岁</span>
             <span style="font-size:12px;color:${STATUS_COLOR[status]};">${HorseStable.statusLabel(status)}</span> ${tags}</div>
         <div style="font-size:11.5px;color:#ba9e7b;">${h.origin}${h.generation > 0 ? ` · 第 ${h.generation} 代` : ''}</div>
-        ${memoryLine(h)}`;
+        `;
     row.appendChild(info);
-    const mem = h.memoryId ? HORSE_MEMORIES[h.memoryId] : undefined;
-    if (mem && h.memoryBest !== 'full' && hero.onReadHorseMemory) {
-        const read = document.createElement('button');
-        read.type = 'button';
-        read.textContent = '通灵';
-        read.title = `摸着${h.name}，看它记得的${memoryLabel(mem)}`;
-        read.style.cssText = 'flex:0 0 auto; cursor:pointer; padding:3px 10px; font-family:inherit; font-size:12px; color:#fffcee; background:rgba(70,48,110,0.85); border:1px solid rgba(212,175,55,0.55); border-radius:5px;';
-        read.addEventListener('click', () => {
-            document.getElementById(PANEL_ID)?.remove();
-            hero.onReadHorseMemory?.(h.id);
-        });
-        row.appendChild(read);
-    }
     if (!stable.isMount(h) && status !== 'foal') {
         const ride = document.createElement('button');
         ride.type = 'button';
@@ -149,12 +135,6 @@ function horseRow(hero: PlayerHero, h: Horse, rerender: () => void): HTMLElement
 }
 
 /** 马记得的那一仗，和通灵过的结果 */
-function memoryLine(h: Horse): string {
-    const mem = h.memoryId ? HORSE_MEMORIES[h.memoryId] : undefined;
-    if (!mem) return '';
-    const result = h.memoryBest === 'full' ? '完全同步' : h.memoryBest === 'sync' ? '同步' : '还没通灵';
-    return `<div style="font-size:11.5px;color:#c9a8ff;">👁 记得：${memoryLabel(mem)} · ${result}</div>`;
-}
 
 /** 马经图鉴：学到的显示全文，没学到的只显示「？？？」和在哪儿学 */
 function loreSection(hero: PlayerHero): HTMLElement {

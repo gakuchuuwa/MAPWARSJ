@@ -14,14 +14,10 @@ export const INDIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     kongque: { name: '孔雀战象', tier: 2 },      // 华氏城·旃陀罗笈多：孔雀帝国统一印度的战象军团
     mojietuo: { name: '摩揭陀象军', tier: 3 },   // 王舍城·频毗娑罗：摩揭陀王国象军
     boluo: { name: '拉塔战车', tier: 3 },        // 高达城·达磨波罗：孟加拉战车（DE Ratha 双栖）
-    sumo: { name: '耽摩水师', tier: 4 },         // 耽摩栗底·苏摩：孟加拉湾海上丝路港口水师
     gurjara: { name: '飞轮掷手', tier: 3 },    // 帕坦·迷企罗·波阇：瞿折罗飞轮掷手（DE Chakram Thrower，投掷飞轮的步兵）
     zhelouqi: { name: '拉其普特骑', tier: 2 },  // 阿杰梅尔·普里特维：拉其普特骑兵（塔拉因之战）
     suomunate: { name: '湿婆卫士', tier: 4 },   // 索姆纳特·库马拉帕拉：印度教湿婆神庙守军（编）
     aolisha: { name: '奥里萨战象', tier: 3 },
-    pidisha: { name: '毗底沙戍卒', tier: 4 },
-    varendra: { name: '波罗象军', tier: 3 },
-    chatigangren: { name: '纳瓦拉舰队', tier: 1 },
     sengjialuo: { name: '僧伽罗象军', tier: 1 },   // 阿努拉德·杜图伽摩尼：重装战象主力，公元前161年击败埃拉兰统一全岛
     puxiangyindu: { name: '果阿火枪兵', tier: 1 },   // 果阿·阿尔布克尔克：葡属印度大航海正规远征主力，火绳枪+重甲横跨印度洋护卫商船要塞（1510-1961）
     tomara_gwalior: { name: '拉其普特', tier: 3 },
