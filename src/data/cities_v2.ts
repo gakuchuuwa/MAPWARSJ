@@ -570,7 +570,8 @@ buildingStyle: 'BASHU', troops: 10000,
     { id: 'city_liaoyang', name: '襄平', factionId: 'gongsun_d', lat: 41.27, lng: 123.17, type: 'medium_city', troops: 20000, region: 'WEI', buildingStyle: 'WEI' },
 
 
-    { id: 'city_chaoyang', name: '朝阳', factionId: 'murong', lat: 41.57, lng: 120.45, type: 'medium_city', troops: 10000, region: 'NORTHEAST', buildingStyle: 'XIANBEI' },
+    // 🔴 [2026-10-25 主人令「朝阳改为河朔文化、与程名振就不冲突了，都改为河朔」] 朝阳＝唐营州（河北道），按当地最著名本地政权取河朔（WEI）
+    { id: 'city_chaoyang', name: '朝阳', factionId: 'murong', lat: 41.57, lng: 120.45, type: 'medium_city', troops: 10000, region: 'NORTHEAST', buildingStyle: 'WEI' },
 
 
 
@@ -796,7 +797,7 @@ buildingStyle: 'JIANGNAN',
 
     { id: 'city_qingshiguan', name: '青石关', factionId: 'tang', lat: 36.246502, lng: 117.715759, type: 'pass', region: 'CENTRAL',
 buildingStyle: 'CENTRAL', troops: 10000,
-        note: '青石关；莱州关隘',
+        note: '青石关；齐长城关隘，在莱芜（齐鲁古道，北邻临淄、南通鲁国）；原注「莱州关隘」与坐标不符，按史正之',
     },
     {
         id: 'city_diaoyucheng',
@@ -2193,7 +2194,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_huashixia', name: '花石峡', factionId: 'tang', lat: 35.196235, lng: 98.907166, type: 'stockade', region: 'HEXI', buildingStyle: 'KHITAN', troops: 10000, mirror: true, note: '黑齿常之河源军大破吐蕃' },
 
     // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
-    { id: 'city_wendeng', name: '文登', factionId: 'tang', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', buildingStyle: 'WEI', troops: 10000, note: '苏定方东征神灭军' } ];
+    { id: 'city_wendeng', name: '文登', factionId: 'tang', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', buildingStyle: 'WEI', troops: 10000, note: '苏定方神丘道行军伐百济，自城山济海（《玉海·卷一八一》引《通鉴》；原注「神灭军」按史正之）' } ];
 
 // ============================================================
 // 汇总导出
@@ -2776,7 +2777,11 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_jingkou', name: '濡须口', factionId: 'sunwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, mirror: true, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.22, lng: 115.04, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
-    { id: 'city_ningyuan', name: '宁远城', factionId: 'ming_d', lat: 40.618, lng: 120.72, type: 'pass', troops: 10000, region: 'XIANBEI', buildingStyle: 'XIANBEI', mirror: true },
+    // 🔴 [2026-10-25 按史修正、主人问「洪承畴的军团为什么漠南」查出] 宁远城（今辽宁兴城）＝明宁远卫：
+    //    明代关宁防线核心，1622 袁崇焕重筑砖城、架红夷大炮，宁远/宁锦大捷皆此城；本地最著名建筑层＝明式砖城。
+    //    辽西走廊同一线 山海关／徒河（锦州）／襄平（辽阳）皆「河朔 WEI」；`XIANBEI`（漠南＝阴山—锡林郭勒—河套的塞外王帐石堡）不含辽西，
+    //    原值系旧批量套用、非史实 → buildingStyle／region 一律 WEI。洪承畴、袁崇焕的文化与军团随之归位。
+    { id: 'city_ningyuan', name: '宁远城', factionId: 'ming_d', lat: 40.618, lng: 120.72, type: 'pass', troops: 10000, region: 'WEI', buildingStyle: 'WEI', mirror: true },
 
 
     { id: 'city_salhu', name: '萨尔浒', factionId: 'manzhou_d', lat: 41.841, lng: 124.046, type: 'pass', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },

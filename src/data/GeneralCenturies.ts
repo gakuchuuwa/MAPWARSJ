@@ -31,6 +31,11 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'tianjing_wangliang': 1,  // 王梁 · han_d · 天井关
     'zijing_hanqing': 15,  // 韩青 · ming_d · 紫荆关
     'ningwu_zhouyuji': 17,  // 周遇吉 · ming_d · 宁武关
+    // 🔴 [2026-10-25 补、与 GeneralEra 同步] 明末 4 将原先没有成名世纪（era 被默认成城堡时代）
+    'gen_qiu_luan': 16,  // 仇鸾 · ming_d · 大同（1550 庚戌之变率勤王军御俺答于北京）
+    'gen_yang_hao': 17,  // 杨镐 · ming_d · 襄平/辽阳（1619 萨尔浒四路丧师）
+    'gen_hong_chengchou': 17,  // 洪承畴 · ming_d · 宁远城（1641 松锦之战督师十三万）
+    'gen_wang_qiaonian': 17,  // 汪乔年 · ming_d · 长安（1642 襄城之战殉国）
     'tang_guoyuanzhen': 8,  // 郭元振 · tang · 赤亭关
     'putaoya_afonso': 15,  // 阿方索 · putaoya · 布拉干萨
     'montereau_pressy': 15,  // 让·德·普雷西 · bogendigongguo · 蒙特罗

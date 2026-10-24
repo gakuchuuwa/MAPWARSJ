@@ -148,21 +148,21 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     shuofang_sujian: { birth: -150, death: -110, kaoju: '推定' },
     mixiya_arsames: { birth: -380, death: -334, kaoju: '推定' },
     bfe2_pollis: { birth: -410, death: -376, kaoju: '推定' },
-    bfe3_86: { birth: 250, death: 300, kaoju: '推定' },
+    bfe3_86: { birth: 320, death: 366, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 克诺多马尔：357 被俘，流放中卒（原 250–300 误）
     bfe_su_ding: { birth: -30, death: 40, kaoju: '推定' },
     bfe_sonom: { birth: 1740, death: 1776, kaoju: '推定' },
     bfe3_43: { birth: -80, death: -40, kaoju: '推定' },
     bfe3_44: { birth: -80, death: -40, kaoju: '推定' },
-    bfe_ajibaldo: { birth: 1500, death: 1555, kaoju: '推定' },
+    bfe_ajibaldo: { birth: 1330, death: 1380, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 阿只拔都：1380 荒山之战倭寇首领，战死（原 1500–1555 误）
     bfe2_dhanananda: { birth: -350, death: -321, kaoju: '推定' },
-    bfe3_27: { birth: -230, death: -180, kaoju: '推定' },
+    bfe3_27: { birth: -230, death: -149, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 婆苏密多罗：约前185–149 在位（原 -180 误）
     bfe_rasul_khan: { birth: 1480, death: 1510, kaoju: '推定' },
-    bfe3_25: { birth: -250, death: -200, kaoju: '推定' },
+    bfe3_25: { birth: -250, death: -161, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 埃拉拉：前205–161 在位，前161 战死（原 -200 误）
     bfe_cleombrotus: { birth: -520, death: -470, kaoju: '推定' },
     bfe2_pharnabazus: { birth: -440, death: -370, kaoju: '推定' },
     bfe2_theagenes: { birth: -380, death: -338, kaoju: '推定' },
     bfe2_antiphilus: { birth: -380, death: -322, kaoju: '推定' },
-    bfe3_19: { birth: -280, death: -220, kaoju: '推定' },
+    bfe3_19: { birth: -280, death: -196, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 斯科帕斯：前196 卒（原 -220 误）
     bfe3_23: { birth: -230, death: -160, kaoju: '推定' },
     bfe3_4: { birth: -280, death: -220, kaoju: '推定' },
     bfe_smolensk_voivode: { birth: 1450, death: 1520, kaoju: '推定' },
@@ -174,7 +174,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe_chen_dong: { birth: 1500, death: 1556, kaoju: '推定' },
     bfe3_16: { birth: -250, death: -210, kaoju: '推定' },
     bfe3_22: { birth: -220, death: -135, kaoju: '推定' },
-    bfe3_68: { birth: -180, death: -191, kaoju: '推定' },
+    bfe3_68: { birth: 150, death: 191, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 严纲：191 年界桥战死（原误作公元前 -191）
     bfe3_75: { birth: 200, death: 233, kaoju: '推定' },
     bfe3_80: { birth: 260, death: 303, kaoju: '推定' },
     bfe3_83: { birth: 300, death: 361, kaoju: '推定' },
@@ -192,7 +192,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe3_76: { birth: 185, death: 249, kaoju: '推定' },
     bfe_xu_hai: { birth: 1500, death: 1556, kaoju: '推定' },
     bfe_zhu_chenhao: { birth: 1476, death: 1521, kaoju: '推定' },
-    bfe_guangde: { birth: -60, death: -20, kaoju: '推定' },
+    bfe_guangde: { birth: -20, death: 60, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 广德：于阗王，1世纪中期（原 -60~-20 误）
     bfe3_45: { birth: -100, death: -49, kaoju: '推定' },
     bfe3_50: { birth: -150, death: -111, kaoju: '推定' },
     bfe3_2: { birth: -360, death: -316, kaoju: '推定' },
@@ -201,22 +201,22 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe2_cleon: { birth: -470, death: -422, kaoju: '推定' },
     bfe2_conon: { birth: -440, death: -389, kaoju: '推定' },
     bfe2_cleombrotus_i: { birth: -410, death: -371, kaoju: '推定' },
-    bfe_callias: { birth: -520, death: -480, kaoju: '推定' },
-    bfe_bomilcar: { birth: -270, death: -210, kaoju: '推定' },
-    bfe_gaius_livius: { birth: -280, death: -220, kaoju: '推定' },
-    bfe3_51: { birth: 20, death: 60, kaoju: '推定' },
-    bfe3_63: { birth: 200, death: 250, kaoju: '推定' },
-    bfe_isaac_komnenos: { birth: 1007, death: 1060, kaoju: '推定' },
+    bfe_callias: { birth: -400, death: -330, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 卡利斯（卡尔基斯）：前4世纪中期人（原 -520~-480 误）
+    bfe_bomilcar: { birth: -330, death: -308, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 波米尔卡：迦太基将领，前308 死（原 -270~-210 误）
+    bfe_gaius_livius: { birth: -260, death: -170, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 盖乌斯·李维乌斯：前190 欧里梅敦罗马统帅（原 -280~-220 误）
+    bfe3_51: { birth: -75, death: -20, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 盖乌斯·佩特罗尼乌斯：前25–前21 任埃及总督（原 20–60 误）
+    bfe3_63: { birth: -5, death: 69, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 霍尔多尼乌斯：69 年罗马日耳曼总督，同年死（原 200–250 误）
+    bfe_isaac_komnenos: { birth: 1155, death: 1196, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 伊萨克·科穆宁（塞浦路斯）：1184–1191 在位，1196 卒（原 1007–1060 误）
     bfe2_esarhaddon: { birth: -700, death: -669, kaoju: '推定' },
     bfe2_shalmaneser_iii: { birth: -880, death: -824, kaoju: '推定' },
     bfe2_sin_shar_ishkun: { birth: -660, death: -612, kaoju: '推定' },
     bfe2_nabonidus: { birth: -600, death: -539, kaoju: '推定' },
-    bfe2_enlil_nadin_ahi: { birth: -1130, death: -1100, kaoju: '推定' },
-    bfe2_nidintu_bel: { birth: -740, death: -700, kaoju: '推定' },
-    bfe2_yahdun_lim: { birth: -1850, death: -1798, kaoju: '推定' },
+    bfe2_enlil_nadin_ahi: { birth: -1190, death: -1155, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 恩利尔纳丁·阿基：加喜特末王，约前1157–1155 在位（原 -1130~-1100 误）
+    bfe2_nidintu_bel: { birth: -560, death: -521, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 尼丁图-贝尔：前522–521 巴比伦反叛之王，前521 被大流士处死
+    bfe2_yahdun_lim: { birth: -1850, death: -1794, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 亚赫敦·林：马里王，约前1794 卒（原 -1798 误）
     bfe2_rezin: { birth: -790, death: -732, kaoju: '推定' },
     bfe_meherdates: { birth: 20, death: 49, kaoju: '推定' },
-    bfe_achish: { birth: -1080, death: -1030, kaoju: '推定' },
+    bfe_achish: { birth: -1080, death: -1000, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 亚吉：迦特王，大卫同时代人（原卒 -1030 误）
     bfe_nikephoros_ii: { birth: 912, death: 969, kaoju: '推定' },
     bfe2_pang_juan: { birth: -380, death: -342, kaoju: '推定' },
     bfe3_18: { birth: -280, death: -204, kaoju: '推定' },
@@ -230,7 +230,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe_gao_zhihui: { birth: 540, death: 590, kaoju: '推定' },
     gen_jogaila: { birth: 1348, death: 1434 },           // 雅盖沃（立陶宛大公/波兰国王）
     xisi_yakubusafaer: { birth: 840, death: 879, kaoju: '推定' }, // 雅库布（萨法尔王朝开国）
-    gen_li_xin: { birth: -300, death: -250, kaoju: '推定' }, // 李信（秦将）
+    gen_li_xin: { birth: -300, death: -220, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 李信：前225 城父之战时在世（原卒 -250 误）
     gen_seleucus_i: { birth: -358, death: -281 },          // 塞琉古一世
     gen_lajos_ii: { birth: 1506, death: 1526 },           // 拉约什二世（匈牙利国王）
     gen_li_xiucheng: { birth: 1823, death: 1864 },         // 李秀成（太平天国忠王）
@@ -695,7 +695,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_jan_zizka: { birth: 1360, death: 1424 },  // 扬杰斯卡
     mazhaer_majiashi: { birth: 1443, death: 1490 },  // 马加什一世
     xiongyati_yannuoshi: { birth: 1406, death: 1456 },  // 匈雅提亚诺什
-    pelianci_hengli2: { birth: 1166, death: 1197, kaoju: '推定' },  // 亨利二世
+    pelianci_hengli2: { birth: 973, death: 1024, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 亨利二世（神圣罗马皇帝）：973–1024（原 1166–1197 误）
     gen_ulrich_augsburg: { birth: 890, death: 973 },  // 乌尔里希
     gen_albrecht_bear: { birth: 1100, death: 1170 },  // 阿尔布雷
     gen_gero_margrave: { birth: 900, death: 965 },  // 杰罗
@@ -974,7 +974,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     guge_chizhaxichabade: { birth: 1025, death: 1085, kaoju: '推定' },  // 扎西查巴
     pazhu_redangunsangpa: { birth: 1395, death: 1455, kaoju: '推定' },  // 热丹衮桑帕
     ali_gandancaiwang: { birth: 1640, death: 1695, kaoju: '推定' },  // 甘丹才旺
-    nandou_sushili: { birth: 680, death: 738, kaoju: '推定' },  // 苏失利
+    nandou_sushili: { birth: 680, death: 750, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 苏失利：747 被俘入长安，卒于唐（原 738 误）
     bailan_pabala: { birth: 1439, death: 1487 },  // 帕巴拉
     jiantang_sangjiejia: { birth: 1620, death: 1682, kaoju: '异说' },  // 桑杰嘉措
     kongsa_kongsayiduo: { birth: 1730, death: 1790, kaoju: '异说' },  // 孔萨益多
@@ -1378,7 +1378,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_panangkaran: { birth: 746, death: 803, kaoju: '推定' },  // 帕南卡兰
     ternate_babula: { birth: 1528, death: 1583, kaoju: '推定' },  // 巴布拉
     sulu_paduka: { birth: 1350, death: 1417, kaoju: '推定' },  // 巴杜卡
-    xishudongyin_lijiasipi: { birth: 1502, death: 1565, kaoju: '异说' },  // 莱加斯皮
+    xishudongyin_lijiasipi: { birth: 1502, death: 1572, kaoju: '异说' },  // 🔴 [2026-10-25 按史] 莱加斯皮：卒 1572（原 1565 误）
     gen_mihirabhoja: { birth: 836, death: 885, kaoju: '异说' },  // 迷企罗波阇
     suomunate_kumalapala: { birth: 1143, death: 1173, kaoju: '异说' },  // 库马拉帕拉
     sengjialuo_dutugamo: { birth: -161, death: -137, kaoju: '推定' },  // 杜图伽摩尼
@@ -1464,7 +1464,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     eerbulushi_beisusi: { birth: -370, death: -329, kaoju: '推定' },  // 贝苏斯
     aliya_satibazanishi: { birth: -375, death: -328, kaoju: '推定' },  // 萨提巴扎尼斯
     xuliya_shoujiang: { birth: -380, death: -318, kaoju: '推定' },  // 马泽乌斯
-    emesene_xierkuhe: { birth: 1100, death: 1146, kaoju: '推定' },  // 希尔库赫
+    emesene_xierkuhe: { birth: 1105, death: 1169, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 希尔库赫：卒 1169（原 1146 误）
     sute_spitamenes: { birth: -370, death: -328, kaoju: '推定' },  // 斯皮塔米尼斯
     xinde_patalawang: { birth: -360, death: -300, kaoju: '推定' },  // 涅阿库斯
     jiduoluoxiya_xibiertiwusi: { birth: -370, death: -319, kaoju: '推定' },  // 西比尔提乌斯

@@ -110,6 +110,12 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_ashina_duzhi: { generalId: 'bfe_ashina_duzhi', generalName: '阿史那都支', factionId: 'tujue', note: '史有其人：西突厥十姓可汗，679–680 裴行俭以计擒于碎叶；《资治通鉴》卷二〇二。' },
     bfe_achaemenes: { generalId: 'bfe_achaemenes', generalName: '阿凯门尼斯', factionId: 'aqimeinide', note: '史有其人：薛西斯之弟、波斯舰队统帅，前480 阿特米西乌姆（优卑亚）海战；希罗多德 7–8 卷。' },
     bfe_huyan_wang: { generalId: 'bfe_huyan_wang', generalName: '呼衍王', factionId: 'huyan', note: '史有其人：东汉北匈奴呼衍王，73 年窦固破之于蒲类海（《后汉书·窦固传》）；库中「呼衍蒲奴」为混拼。' },
+    bfe_ukita_hideie: { generalId: 'bfe_ukita_hideie', generalName: '宇喜多秀家', factionId: 'toyotomi', note: '史有其人：丰臣五大老之一，1592 第一次晋州、1593 幸州之战朝鲜侵攻军总大将（秀吉在名护屋）。' },
+    bfe_todo_takakage: { generalId: 'bfe_todo_takakage', generalName: '藤堂高虎', factionId: 'toyotomi', note: '史有其人：丰臣水军将领，1597 鸣梁海战日本水军统率（来岛通总为前锋、战死）；秀吉在名护屋。' },
+    bfe_sogo_kazumasa: { generalId: 'bfe_sogo_kazumasa', generalName: '十河存保', factionId: 'toyotomi', note: '史有其人：三好氏一族，1582 中富川之战阿波方主将（本阵胜瑞城），对长宗我部元亲（《长宗我部记》）。' },
+    bfe_ashina_yoshihiro: { generalId: 'bfe_ashina_yoshihiro', generalName: '芦名义广', factionId: 'toyotomi', note: '史有其人：芦名氏当主，1589 摺上原之战主将（佐竹义重支援），为伊达政宗所破。' },
+    bfe_wanggao: { generalId: 'bfe_wanggao', generalName: '王杲', factionId: 'manzhou_d', note: '史有其人：建州右卫首领，1574 古勒寨之战为李成梁所破，次年俘获处死（《明史·李成梁传》）；努尔哈赤时年 15。' },
+    bfe_aulax: { generalId: 'bfe_aulax', generalName: '奥拉克斯', factionId: 'ayoubu', note: '史有其人：969 年安条克守将 Aulax（哈姆丹王朝），城破降拜占庭（Siege of Antioch 968–969）；赛弗·道莱 967 已死。' },
 };
 
 /** 按 id 取战场人物（查不到返回 null） */

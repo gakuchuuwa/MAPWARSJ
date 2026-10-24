@@ -14,7 +14,7 @@ import { BATTLEFIELD_CHARACTERS } from '../data/BattlefieldCharacters';
 import { PORTRAIT_CANONICAL_MAP } from '../config/portrait_canonical';
 import { getCityRegion, REGION_ORDER } from '../systems/RegionSystem';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
-import { getCultureLegionName } from '../types/CultureFormations';
+import { getCultureLegionName, getLegionNameOfGeneral } from '../types/CultureFormations';
 import {
     BASE16_STYLES,
     BASE16_NAMES,
@@ -57,6 +57,8 @@ interface GeneralBrief {
     ownLegionName?: string;
     ownEliteName?: string;
     ownEliteTier?: number;
+    /** 游戏实际采用的军团（走唯一入口 getLegionNameOfGeneral：条目 → 时代×据点文化 → 势力兜底） */
+    resolvedLegion?: string;
 }
 
 interface FactionRow {
@@ -568,7 +570,7 @@ let generalsAtCityMap = new Map<string, GeneralBrief[]>();
 /** generalId → FactionGenerals 里那一条原始条目（取 legionName / eliteName 这类逐将字段） */
 let rawGeneralEntryMap = new Map<string, Record<string, any>>();
 
-function buildGeneralBrief(g: { generalId: string; generalName: string; portrait: string; cityId?: string }, cityMap: Map<string, { name: string }>): GeneralBrief {
+function buildGeneralBrief(g: { generalId: string; generalName: string; portrait: string; cityId?: string; factionId?: string }, cityMap: Map<string, { name: string }>, factionId: string): GeneralBrief {
     const p = entityData!.profiles[g.generalId];
     const era = (entityData!.eras?.[g.generalId] || GENERAL_ERA[g.generalId]) as GeneralEra | undefined;
     const raw = rawGeneralEntryMap.get(g.generalId);
@@ -585,6 +587,7 @@ function buildGeneralBrief(g: { generalId: string; generalName: string; portrait
         ownLegionName: raw?.legionName,
         ownEliteName: raw?.eliteName,
         ownEliteTier: raw?.eliteTier,
+        resolvedLegion: getLegionNameOfGeneral(factionId, g.generalId),
     };
 }
 
@@ -606,7 +609,7 @@ function buildRows(): void {
     const generalsByFaction = new Map<string, GeneralBrief[]>();
     generalsAtCityMap = new Map();
     for (const g of entityData.allGenerals ?? []) {
-        const brief = buildGeneralBrief(g, cityMap);
+        const brief = buildGeneralBrief(g, cityMap, g.factionId);
         (generalsByFaction.get(g.factionId) ?? generalsByFaction.set(g.factionId, []).get(g.factionId)!).push(brief);
         if (g.cityId) (generalsAtCityMap.get(g.cityId) ?? generalsAtCityMap.set(g.cityId, []).get(g.cityId)!).push(brief);
     }
@@ -644,7 +647,7 @@ function buildRows(): void {
 
         // 该势力全部武将（第一位＝原来 `generals[f.id]` 那位；接口没给 allGenerals 时退回单将）
         const allGenerals = generalsByFaction.get(f.id)
-            ?? (gen ? [buildGeneralBrief({ ...gen, cityId: undefined }, cityMap)] : []);
+            ?? (gen ? [buildGeneralBrief({ ...gen, cityId: undefined }, cityMap, f.id)] : []);
 
         return {
             id: f.id,
@@ -859,7 +862,7 @@ function renderTable(): void {
             <td>${r.strategicSkillId ? formatSkill(r.strategicSkillId) : '—'}</td>
             <td>${r.eliteName ? `<span class="cell-ok">${r.eliteName}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${r.eliteTier != null ? `T${r.eliteTier}` : ''}</td>
-            <td>${r.legionName ? `<span class="cell-ok">${r.legionName}</span>` : '<span class="cell-miss">✗</span>'}</td>
+            <td title="武将实际军团：${dg?.resolvedLegion ?? '—'}｜势力编制（无将守城兜底）：${r.legionName ?? '—'}">${dg?.resolvedLegion ? `<span class="cell-ok">${dg.resolvedLegion}</span>` : (r.legionName ? `<span class="cell-ok">${r.legionName}</span>` : '<span class="cell-miss">✗</span>')}</td>
             <td>${renderBar(r.completeness)}</td>
         </tr>`;
     }).join('');
@@ -1212,7 +1215,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
         const hitIdx = hitGeneral ? row!.allGenerals.findIndex(g => g.id === hitGeneral.id) + 1 : 0;
         const hitHintHtml = hitGeneral && hitGeneral.id !== row!.generalId
             ? `<div class="bm-edit-hint">🔎 搜索命中的是「${hitGeneral.name}」——该势力第 ${hitIdx}/${row!.allGenerals.length} 位武将。<br>
-                据点 ${hitGeneral.cityName ?? '—'}｜${hitGeneral.eraLabel ?? '无时代'}｜精锐 ${hitGeneral.ownEliteName ? `${hitGeneral.ownEliteName} T${hitGeneral.ownEliteTier ?? '?'}` : '（条目没写，跟势力）'}｜军团 ${hitGeneral.ownLegionName ?? '（条目没写，按时代×据点文化）'}<br>
+                据点 ${hitGeneral.cityName ?? '—'}｜${hitGeneral.eraLabel ?? '无时代'}｜精锐 ${hitGeneral.ownEliteName ? `${hitGeneral.ownEliteName} T${hitGeneral.ownEliteTier ?? '?'}` : '（条目没写，跟势力）'}｜军团 ${hitGeneral.resolvedLegion ?? hitGeneral.ownLegionName ?? '—'}<br>
                 本页每位势力只编辑<b>第一位</b>武将「${row!.generalName ?? '—'}」；逐个武将的编辑还没做，下面这些字段改了不会落到「${hitGeneral.name}」头上。</div>`
             : '';
         els.panelContent.innerHTML = `

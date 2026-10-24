@@ -4462,7 +4462,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：宇文述＝隋左卫大将军，驻隋都大兴（长安）；汉东（随州）只是杨坚封地，与他无涉 → 放长安（tang，风格 CENTRAL）；仍挂本政权 sui
         { generalId: 'sui_yuwenshu', cityId: 'city_changan', legionName: '封建时代中原军团', factionId: 'sui', generalName: '宇文述', portrait: '/assets/CENTRAL/sui_yuwenshu.png' , eliteName: '隋军府兵', eliteTier: 4 },
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：汪乔年＝明陕西总督，总督衙门驻西安（长安）；1642 襄城之败是出潼关救援 → 放长安（tang，风格 CENTRAL）；仍挂本政权 ming_d
-        { generalId: 'gen_wang_qiaonian', cityId: 'city_changan', factionId: 'ming_d', legionName: '城堡时代中华军团', generalName: '汪乔年', portrait: '/assets/CENTRAL/gen_wang_qiaonian.png', },
+        { generalId: 'gen_wang_qiaonian', cityId: 'city_changan', factionId: 'ming_d', generalName: '汪乔年', portrait: '/assets/CENTRAL/gen_wang_qiaonian.png' },
     
         { generalId: 'tongzhou_liuzhiyuan', cityId: 'city_taiyuan', factionId: 'hou_han', generalName: '刘知远', portrait: '/assets/WEI/tongzhou_liuzhiyuan.png', legionName: '封建时代河朔军团' },
         { generalId: 'xin_liuchong', cityId: 'city_taiyuan', factionId: 'hou_han', generalName: '刘崇', portrait: '/assets/WEI/xin_liuchong.png', legionName: '封建时代河朔军团' },
@@ -4917,9 +4917,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-20 首战规则] 杨镐＝明辽东经略（1619 萨尔浒四路丧师）→ 北京（WEI）；城堡时代燕云军团；立绘留空
 
 
-        // 🔴 [2026-10-20 首战规则] 洪承畴＝明蓟辽总督（1642 松锦被俘降清）→ 北京（WEI）；城堡时代燕云军团；立绘留空
-
-        { generalId: 'gen_hong_chengchou', factionId: 'ming_d', cityId: 'city_ningyuan', generalName: '洪承畴', portrait: '/assets/WEI/gen_hong_chengchou.png', legionName: '城堡时代漠南蒙古军团' },
+        // 🔴 [2026-10-20 首战规则／2026-10-25 校正] 洪承畴＝明蓟辽总督（1639 起督蓟辽、1640 进驻宁远，1642 松锦被俘降清）
+        //    → 宁远城（WEI 河朔，据点已按史改正）；成名 1641 松锦＝17 世纪＝帝国时代，军团走「时代×据点文化」自动＝帝国时代燕晋军团；立绘留空
+        { generalId: 'gen_hong_chengchou', factionId: 'ming_d', cityId: 'city_ningyuan', generalName: '洪承畴', portrait: '/assets/WEI/gen_hong_chengchou.png' },
 
 
 
@@ -5273,7 +5273,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'zu_d_yuanchonghuan', factionId: 'ming_d', cityId: 'city_ningyuan', legionName: '帝国时代察哈尔军团', generalName: '袁崇焕', portrait: '/assets/XIANBEI/zu_d_yuanchonghuan.png' },
+        { generalId: 'zu_d_yuanchonghuan', factionId: 'ming_d', cityId: 'city_ningyuan', generalName: '袁崇焕', portrait: '/assets/XIANBEI/zu_d_yuanchonghuan.png' },
 
 
 
@@ -7035,7 +7035,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_changan', legionName: '封建时代中原军团', generalName: '程名振', portrait: '/assets/WEI/jilizhou_chengmingzhen.png', eliteName: '右骁卫', eliteTier: 4  },   // 按史：程名振拜右骁卫将军，南衙十六卫驻京师（《旧唐书·卷八三·程务挺传附》）
+        // 🔴 [2026-10-25 主人令「程名振史实该放营州（营州都督兼东夷都护），朝阳改为河朔文化」] 据点 长安→朝阳（唐营州，治柳城）；文化随据点＝河朔，军团按「封建×河朔」自动取，不再手写中原军团
+        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_chaoyang', generalName: '程名振', portrait: '/assets/WEI/jilizhou_chengmingzhen.png', eliteName: '营州都督府', eliteTier: 4  },   // 按史：程名振任营州都督兼东夷都护，镇营州（《旧唐书·卷八三·程务挺传附》）
 
 
 
@@ -11257,7 +11258,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     gongsun_d: [
         { generalId: 'gongsun_d_gongsundu', cityId: 'city_liaoyang', generalName: '公孙度', portrait: '/assets/WEI/gongsun_d_gongsundu.png' },
-        { generalId: 'gen_yang_hao', factionId: 'ming_d', cityId: 'city_liaoyang', generalName: '杨镐', portrait: '/assets/WEI/gen_yang_hao.png', legionName: '城堡时代燕云军团' },
+        { generalId: 'gen_yang_hao', factionId: 'ming_d', cityId: 'city_liaoyang', generalName: '杨镐', portrait: '/assets/WEI/gen_yang_hao.png' },
         { generalId: 'liao_d_xiaopaiya', factionId: 'liao_d', cityId: 'city_liaoyang', legionName: '封建时代河朔军团', generalName: '萧排押', portrait: '/assets/XIANBEI/liao_d_xiaopaiya.png' },
     ],
 
@@ -11307,7 +11308,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_qiu_luan', factionId: 'ming_d', cityId: 'city_datong', generalName: '仇鸾', portrait: '/assets/WEI/gen_qiu_luan.png', legionName: '城堡时代燕云军团' },
+        { generalId: 'gen_qiu_luan', factionId: 'ming_d', cityId: 'city_datong', generalName: '仇鸾', portrait: '/assets/WEI/gen_qiu_luan.png' },
         { generalId: 'liao_d_handewei', factionId: 'liao_d', cityId: 'city_datong', legionName: '封建时代河朔军团', generalName: '韩德威', portrait: '/assets/XIANBEI/liao_d_handewei.png' },
     ],
 

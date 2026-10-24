@@ -467,10 +467,13 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_mustafa_pasha': 'imperial',
     'gen_laudonniere': 'imperial',
     'gen_suleiman': 'imperial',
-    'gen_qiu_luan': 'castle',
-    'gen_yang_hao': 'castle',
-    'gen_hong_chengchou': 'castle',
-    'gen_wang_qiaonian': 'castle',
+    // 🔴 [2026-10-25 校正「成名世纪→时代」] 这 4 位明将属 2026-10-20 首战批次，原按「明＝城堡」默认写成 castle，
+    //    但明帝国时代＝1500–1914：仇鸾成名 1550 庚戌之变（16 世纪）、杨镐 1619 萨尔浒、洪承畴 1641 松锦、汪乔年 1642 襄城（皆 17 世纪）
+    //    → 一律 imperial（同时代 吴三桂／李成梁／袁崇焕 已都是 imperial）。军团随「时代×据点文化」自动改。
+    'gen_qiu_luan': 'imperial',
+    'gen_yang_hao': 'imperial',
+    'gen_hong_chengchou': 'imperial',
+    'gen_wang_qiaonian': 'imperial',
     'gen_nikan': 'castle',
     'gen_wang_ji': 'castle',
     'gen_vasili_iii': 'imperial',

@@ -422,7 +422,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    jilizhou_chengmingzhen: { generalId: 'jilizhou_chengmingzhen', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_352', atkBalanceSkillId: 'ts_275', atkDisadvantageSkillId: 'ts_727', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage' , attackStyle: 'attack'},
+    jilizhou_chengmingzhen: { generalId: 'jilizhou_chengmingzhen', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_352', atkBalanceSkillId: 'ts_275', atkDisadvantageSkillId: 'ts_727', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-25 主人令按标准修复] 普将→名将：平壤道行军总管，攻沙卑城、破独山阵以少击众「称为名将」（《旧唐书·卷八三·程务挺传附》）
 
 
 
@@ -879,7 +879,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    xingxingxia_guoxiaoke: { generalId: 'xingxingxia_guoxiaoke', tier: 'ordinary', tacticalSkillId: 'ts_366', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_398', atkBalanceSkillId: 'ts_167', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_712', aptitude: 'create', attackStyle: 'attack' },
+    xingxingxia_guoxiaoke: { generalId: 'xingxingxia_guoxiaoke', tier: 'famous', tacticalSkillId: 'ts_366', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_398', atkBalanceSkillId: 'ts_167', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_712', aptitude: 'create', attackStyle: 'attack' },   // 🔴 [2026-10-25 主人令按标准修复] 普将→名将：安西都护，夜袭焉耆虏其王、昆丘道副大总管平龟兹（《旧唐书·卷八三·郭孝恪传》）
 
 
 
@@ -2053,7 +2053,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    lai_wangshifan: { generalId: 'lai_wangshifan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_504', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_704', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage' , attackStyle: 'defense'},
+    lai_wangshifan: { generalId: 'lai_wangshifan', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_504', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_704', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage' , attackStyle: 'defense'},   // 🔴 [2026-10-25 主人令按标准修复] 普将→名将：平卢节度使，刘鄩袭取兖州、石楼破朱友宁俘斩万计（《资治通鉴·卷二六四》）
 
 
 
@@ -2889,7 +2889,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    tiele_qibiheli: { generalId: 'tiele_qibiheli', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_362', atkBalanceSkillId: 'ts_332', atkDisadvantageSkillId: 'ts_733', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_743', defDisadvantageSkillId: 'ts_376', aptitude: 'create' , attackStyle: 'attack'},
+    tiele_qibiheli: { generalId: 'tiele_qibiheli', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_362', atkBalanceSkillId: 'ts_332', atkDisadvantageSkillId: 'ts_733', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_743', defDisadvantageSkillId: 'ts_376', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-25 主人令按标准修复] 普将→名将：突沦川夜袭、鸭绿水斩首三万、两任辽东道行军大总管（《旧唐书·卷一〇九·契苾何力传》）
 
     yada_ahexiong: { generalId: 'yada_ahexiong', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_372', atkBalanceSkillId: 'ts_393', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_745', defDisadvantageSkillId: 'ts_016', aptitude: 'create' , attackStyle: 'defense'},
 

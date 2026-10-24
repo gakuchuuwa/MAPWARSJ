@@ -8241,6 +8241,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.26,
             "offsetX": 14,
             "offsetY": -39
+        },
+        "/assets/XIANBEI/shuofang_sujian.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 11
         }
     },
     "folderGuides": {
