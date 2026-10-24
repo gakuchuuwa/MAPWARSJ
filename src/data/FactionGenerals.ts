@@ -1891,9 +1891,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    // 🔴 [2026-10-24 主人令] 雷蒙四世＝图卢兹伯爵（首府图卢兹）；改挂 city_toulouse、势力归法兰西（factionId: gaolu）。
-    //    军团按 GENERAL_CULTURE=FRANKS × GENERAL_ERA=castle 解析，仍是「城堡时代法兰西骑士军团」，无需写 legionName。
-    puluowangsi: { generalId: 'gen_raymond_iv', factionId: 'gaolu', cityId: 'city_toulouse', generalName: '雷蒙四世', portrait: '/assets/FRANKS/gen_raymond_iv.png' },
+    puluowangsi: [
+        // 🔴 [2026-10-24 主人令] 雷蒙四世＝图卢兹伯爵（首府图卢兹）；势力归法兰西（factionId: gaolu），存于此块仅历史原因。
+        //    军团按 GENERAL_CULTURE=FRANKS × GENERAL_ERA=castle 解析，仍是「城堡时代法兰西骑士军团」，无需写 legionName。
+        { generalId: 'gen_raymond_iv', factionId: 'gaolu', cityId: 'city_toulouse', generalName: '雷蒙四世', portrait: '/assets/FRANKS/gen_raymond_iv.png' },
+        // 🔴 [2026-10-24 修复「普罗旺斯 无武将」] 普罗旺斯伯国自己的将：雷蒙·贝朗热四世（1198–1245，普罗旺斯伯爵 1209–1245，
+        //    都艾克斯 Aix）。按史：普罗旺斯伯国是真实政权（势力清理 plan-A 定 keep）；他镇守/治理普罗旺斯 → 势力＝普罗旺斯；
+        //    城库无艾克斯，按「同文化的最近据点，远也照取」取普罗旺斯境内 FRANKS 的阿维尼翁（约 70km）。
+        //    普将（无战役级大捷，以联姻外交与伯国治理著称）；精锐番号「普罗旺斯骑」T3；立绘留空（AI 不配图）。
+        { generalId: 'gen_raymond_berenguer_iv', factionId: 'puluowangsi', cityId: 'city_avignon', generalName: '雷蒙·贝朗热四世', portrait: '', eliteName: '普罗旺斯骑', eliteTier: 3 },
+    ],
 
 
 
@@ -2698,7 +2705,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_julian_apostate', factionId: 'luoma_diguo', cityId: 'city_luoma', legionName: '古典时代罗马军团', generalName: '尤里安', portrait: '/assets/GERMANIC/aersasi_youlian.png' },
+        { generalId: 'gen_julian_apostate', factionId: 'luoma_diguo', cityId: 'city_lyon', legionName: '古典时代罗马军团', generalName: '尤里安', portrait: '/assets/GERMANIC/aersasi_youlian.png' },
 
 
 
@@ -16518,11 +16525,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     // 🔴 [2026-10-20 主人批准] 驻地型新增：保定（张柔）/嘉峪关（冯胜）/常德（钟相）/延恩（苏建）/格拉尼库斯（阿萨米斯）/沙陀（朱邪赤心）
     shatuo: [
-        { generalId: 'zhuxie_zhuxiechixin', cityId: 'city_guanglu', generalName: '朱邪赤心', portrait: '/assets/XIANBEI/zhuxie_zhuxiechixin.png', legionName: '封建时代契丹军团' },
+        // 🔴 [2026-10-24] 朱邪势力并入沙陀后，把原势力精锐番号「朱邪部兵」T3 落到本人条目（他 820 年生，早于李克用「鸦儿军」，不该借沙陀势力精锐）
+        { generalId: 'zhuxie_zhuxiechixin', cityId: 'city_guanglu', generalName: '朱邪赤心', portrait: '/assets/XIANBEI/zhuxie_zhuxiechixin.png', legionName: '封建时代契丹军团', eliteName: '朱邪部兵', eliteTier: 3 },
     
         { generalId: 'yingzhou_d2_licunxu', factionId: 'shatuo', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李存勖', portrait: '/assets/WEI/yingzhou_d2_licunxu.png' },
 
-    ],    hou_han: [],
+    ],
+    hou_han: [],
     yuan_shao: [
         { generalId: 'qu_d_quyi', factionId: 'yuan_shao', cityId: 'city_jieqiao', generalName: '麴义', portrait: '/assets/CENTRAL/qu_d_quyi.png' },
 

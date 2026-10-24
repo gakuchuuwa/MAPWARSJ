@@ -2292,7 +2292,11 @@ function renderValidation(): void {
     const findCityByFactionId = (fid: string) => entityData?.cities.find(c => c.factionId === fid);
 
     const issueHtml = (i: typeof issues[0], icon: string) => {
-        const fid = i.factionId ?? i.msg.match(/\((\w+)\)/)?.[1] ?? null;
+        // 🔴 [FIX 2026-10-24 程序问题] 情报行不靠消息里的括号猜势力 id —— 会从「平陇(city_pinglong)」里
+        //    猜出 city_pinglong 当成势力 id，点「点击编辑」打开一个不存在的势力。情报只认服务端明确给的 factionId。
+        const fid = i.factionId
+            ?? (i.level === 'info' ? null : i.msg.match(/\((\w+)\)/)?.[1])
+            ?? null;
         if (fid && isOrphanFaction(i)) {
             return `<div class="issue issue-${i.level}">${icon} ${i.msg} `
                 + `<button class="bm-btn bm-btn-warn" data-orphan-fid="${fid}" style="margin-left:6px;padding:2px 8px;font-size:11px">🔧 一键清扫</button>`

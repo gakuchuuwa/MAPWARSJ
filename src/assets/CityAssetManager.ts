@@ -331,7 +331,6 @@ export class CityAssetManager {
 'bailang': '白狼',
 
 'duolu': '咄陆',
-'zhuxie': '朱邪',
 'tiemuer': '图兰',
 'kawusi': '卡乌',
         'keerkezi': '柯尔',

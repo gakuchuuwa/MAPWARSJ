@@ -35,6 +35,27 @@ RETIRE = {
     'city_thebes': '维奥蒂亚内陆城（距海约 30km），无军港；出海口是奥利斯',
 }
 
+# ── [v8 2026-10-24 主人「按历史吧，历史是港口就给港口」] 城库里有、历史上是海港/河海港、
+#    却没海路的据点，补开港（每个补 2–3 条海路，由补孤港/贪心自动连就近港）。
+NEW_PORTS = {
+    'city_hamburg':      '汉堡：汉萨同盟北海大港（易北河口）',
+    'city_gdansk':       '格但斯克：汉萨同盟波罗的海大港（维斯瓦河口）',
+    'city_shiqieqing':   '什切青：汉萨同盟波罗的海港（奥得河口）',
+    'city_tuile':        '推罗：腓尼基/罗马地中海大港',
+    'city_latajiya':     '拉塔基亚：叙利亚海岸古港（塞琉古 Laodicea）',
+    'city_jiasa':        '加沙：地中海东岸古港（迈乌马斯港）',
+    'city_peiluximu':    '佩鲁西姆：尼罗河三角洲东支海口（埃及地中海门户）',
+    'city_xibo':         '希波：努米底亚/罗马北非港（Hippo Regius）',
+    'city_bujiaya':      '布佳亚：柏柏尔/哈夫斯北非港（Béjaïa）',
+    'city_matelugang':   '马特鲁港：埃及地中海港（Marsa Matruh）',
+    'city_daerban':      '打耳班：里海西岸港（杰尔宾特，里海—伏尔加商路）',
+    'city_xiemianjieer': '谢缅杰尔：里海西岸港（可萨汗国 Semender）',
+    'city_hangzhou':     '杭州：宋元市舶司海港（钱塘江口）',
+    'city_kamakura':     '镰仓：13 世纪日本宋元贸易港（相模湾）',
+    'city_haeju':        '瀑池：朝鲜西海岸港（海州）',
+    'city_donghai':      '洞海城：越南中海岸港（洞海）',
+}
+
 # 史实核查判否/存疑 + v1 补出来的假线
 FORBIDDEN = [
     ('city_lundun', 'city_newamsterdam'),   # 存疑：荷兰时代主线是阿姆斯特丹—新阿姆斯特丹
@@ -49,6 +70,9 @@ FORBIDDEN = [
     ('city_peierjiameng', 'city_yanghe'),        # v1 假线：穿陆 125km
     ('city_madula', 'city_anulade'),       # 老线：穿陆 202km（马杜赖是内陆，港口是科尔凯）
     ('city_sanfoqi', 'city_kalasan'),      # 老线：穿陆 125km（巨港是穆西河河港）
+    ('city_hamburg', 'city_calais'),       # v8 补出来的线：汉堡—加莱无汉萨直航，改汉堡—伦敦（钢院）
+    ('city_xibo', 'city_cagliari'),        # v8 补出来的线：希波—撒丁岛无史实直航，改希波—迦太基
+    ('city_donghai', 'city_yazhou'),       # v8 补出来的线：洞海—珠崖抢近邻，改洞海—阇槃（占城）
 ]
 
 FORCE_KEEP = [
@@ -73,6 +97,9 @@ FORCE_ADD = [
     ('city_veracruz', 'city_katachena'),     # 西属美洲：韦拉克鲁斯—卡塔赫纳（宝藏船队）
     ('city_nuergan', 'city_baizhu'),         # 阿穆尔河口—萨哈林（明代奴儿干—苦夷航路）
     ('city_ayutthaya', 'city_malacca'),      # 大城—马六甲（15–16 世纪暹罗香料航路）
+    ('city_hamburg', 'city_lundun'),         # 汉堡—伦敦：汉萨同盟「钢院」商站（Stalhof）
+    ('city_xibo', 'city_jiataji'),           # 希波—迦太基：迦太基故港（Hippo Regius）
+    ('city_donghai', 'city_dupan'),          # 洞海—阇槃：越南中岸—占城沿海航路
     ('city_sanjulian', 'city_saovicente'),   # 麦哲伦 1520 沿巴西海岸南下（里约→拉普拉塔→圣胡利安越冬）
     ('city_sanjulian', 'city_guanabara'),    # 同上：里约（瓜纳巴拉）停泊后南下
 ]
@@ -81,7 +108,7 @@ FORCE_ADD = [
 RIVER_PORTS = {
     'city_ayutthaya', 'city_hanseong', 'city_shenglong', 'city_salaichuke', 'city_yidier',
     'city_bashila', 'city_nuergan', 'city_nanghar', 'city_boergong', 'city_antiejiya',
-    'city_luoma', 'city_taizhou_zj', 'city_wendeng', 'city_madula', 'city_sanfoqi',
+    'city_luoma', 'city_taizhou_zj', 'city_wendeng', 'city_madula', 'city_sanfoqi', 'city_hamburg', 'city_hangzhou',
 }
 LAND_LIMIT_RIVER = 140.0
 LAND_LIMIT = 40.0
@@ -154,8 +181,8 @@ def nearest_candidates(portlist, top=10, cutoff=12000.0):
 
 
 all_ports = sorted({e['a'] for e in old_edges} | {e['b'] for e in old_edges})
-ports = [p for p in all_ports if p not in RETIRE]
-print(f'港口 {len(all_ports)} → 退港 {len(RETIRE)} 后 {len(ports)}')
+ports = sorted(set([p for p in all_ports if p not in RETIRE]) | set(NEW_PORTS))
+print(f'原有港口 {len(all_ports)} → 退港 {len(RETIRE)}、补开港 {len(NEW_PORTS)} 后 {len(ports)}')
 
 forbidden = {frozenset(p) for p in FORBIDDEN}
 kept, removed = [], []

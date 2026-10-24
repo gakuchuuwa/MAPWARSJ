@@ -671,6 +671,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_prettenberg': 'imperial',
     'gen_przemysl_ii': 'castle',
     'gen_raymond_iv': 'castle',
+    'gen_raymond_berenguer_iv': 'castle',   // 雷蒙·贝朗热四世（1198–1245 普罗旺斯伯爵）
     'gen_raymond_v': 'castle',
     'gen_robert_ii': 'castle',
     'gen_roger_i': 'castle',

@@ -2058,10 +2058,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代安西军团",
         legionType: "region",
     },
-    "zhuxie": {
-        legionName: "封建时代安西军团",
-        legionType: "region",
-    },
     "kala": {
         legionName: "封建时代安西军团",
         legionType: "region",

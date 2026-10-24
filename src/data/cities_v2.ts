@@ -2300,7 +2300,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     { id: 'city_shangbeili', name: '尚贝里', factionId: 'safuyi', lat: 45.57, lng: 5.92, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN', note: '萨伏伊公国法定第一王都·阿尔卑斯山地锁钥·绿伯爵阿梅迪奥六世都城' },
-{ id: 'city_lyon', name: '里昂', factionId: 'luoma_diguo', lat: 45.76, lng: 4.83, type: 'medium_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
+    { id: 'city_lyon', name: '里昂', factionId: 'luoma_diguo', lat: 45.76, lng: 4.83, type: 'medium_city', troops: 10000, region: 'ROMA', buildingStyle: 'ROMA', note: '🔴 [2026-10-24 按史] 建筑风格 FRANKS→ROMA：里昂＝卢格杜努姆（Lugdunum），罗马帝国高卢首府（罗马剧场、高卢罗马博物馆、克劳狄出生地），本地最著名一段是罗马城邑；尤里安（罗马皇帝，长期驻高卢）迁此补空。' },
 
     { id: 'city_bordeaux', name: '波尔多', factionId: 'aquidan', lat: 44.83, lng: -0.57, type: 'small_city', troops: 10000, region: 'BRITONS', buildingStyle: 'FRANKS' },
     { id: 'city_avignon', name: '阿维尼翁', factionId: 'puluowangsi', lat: 43.94, lng: 4.8, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' },
@@ -3090,9 +3090,10 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
 
-    { id: 'city_dashicheng', name: '大石堡', factionId: 'zhuxie', lat: 41.28, lng: 79.22, type: 'pass', region: 'WESTERN_FEUDAL',
+    { id: 'city_dashicheng', name: '大石堡', factionId: 'shatuo', lat: 41.28, lng: 79.22, type: 'pass', region: 'WESTERN_FEUDAL',
 buildingStyle: 'WESTERN', troops: 10000,
-        note: '大石城；朱邪关隘',
+        // 🔴 [2026-10-24] 原属「朱邪」；朱邪氏＝沙陀酋长家族（朱邪赤心即李国昌，李克用之父），朱邪势力已并入沙陀 → 关隘随归沙陀。
+        note: '大石城；朱邪关隘（2026-10-24 朱邪部并入沙陀，关隘随归沙陀）',
     },
     { id: 'city_weitoucheng', name: '阿合奇', factionId: 'weitou', lat: 40.3, lng: 79.05, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '尉头国王城驻军' },
     { id: 'city_wosedecheng', name: '握瑟德', factionId: 'sai', lat: 39.77, lng: 78.56, type: 'stockade', region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', troops: 10000, note: '塞种部落骑射武装' },

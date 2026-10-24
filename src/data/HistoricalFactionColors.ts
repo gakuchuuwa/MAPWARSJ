@@ -307,7 +307,6 @@ const _FIXED: Record<string, string> = {
     'dong': '#7E6040', // 董氏（土金，囊谦加波）
     'bailang': '#70C867', // 自动分配 (邻域相斥)
     'duolu': '#3C5A7C', // 咄陆（草原蓝）
-    'zhuxie': '#2FA09E', // 自动分配 (邻域相斥)
     'kawusi': '#C4808E', // 自动分配 (邻域相斥)
     'keerkezi': '#85423B', // 自动分配 (邻域相斥)
     'yizhi': '#A8B764', // 自动分配 (邻域相斥)
@@ -480,6 +479,7 @@ const _FIXED: Record<string, string> = {
     'bulietani': '#4A4A55', // 布列塔尼·雷恩（布列塔尼深灰蓝）
     'leangongguo': '#6A3D9E', // 莱昂·萨拉曼卡（莱昂狮旗紫）
     'xixiliwangguo': '#D4880B', // 西西里王国·巴勒莫（诺曼金）
+    'aboerleiya': '#A63A32', // 阿尔博雷亚·奥里斯塔诺（判官国纹章银底红树，取树红）
     // 日耳曼
     'falanji': '#1E4E79', // 法兰克·科隆（法兰克深蓝）
     'tiaodun_qishi': '#2E2E32', // 条顿骑士·柯尼斯堡（白底黑十字）

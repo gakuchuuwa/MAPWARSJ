@@ -462,7 +462,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
 'duolu': '咄陆',
-'zhuxie': '朱邪',
 'tiemuer': '图兰',
 'kawusi': '卡乌',
     'keerkezi': '柯尔',

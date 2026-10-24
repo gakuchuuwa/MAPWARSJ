@@ -996,7 +996,8 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
     // 后突(黑沙城/阴山北麓), Later Turkic,
     { id: 'duolu', name: '咄陆' },
-    { id: 'zhuxie', name: '朱邪' },
+    // 🔴 [2026-10-24] 原「朱邪」势力并入「沙陀」：朱邪氏＝沙陀酋长家族（朱邪赤心即李国昌，李克用之父），
+    //    前后相承、彼此不打 → 并成一家；其据点大石堡随归沙陀（见 cities_v2）。
     { id: 'tiemuer', name: '图兰' },
 
     { id: 'kawusi', name: '卡乌斯' },

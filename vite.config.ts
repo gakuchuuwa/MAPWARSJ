@@ -4622,11 +4622,15 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         if (key) factionColors[key] = m[3];
     }
 
-    // generals: { [factionId]: { generalId, generalName, portrait } }
-    // 🔴 [2026-10-20 修「势力无武将」误报] 旧正则要求 generalId/generalName/portrait **紧邻同序**、
-    //    且数组写法要求 `[` 后紧跟 `{`；一旦条目里多出 factionId/legionName/eliteName 字段，
-    //    或数组 `[` 后先写一行注释，就整条匹配不到 → 页面误报「势力无武将」（马其顿/法兰西/英格兰/
-    //    匈牙利 等 15 个势力被误报）。改为「先框定对象体、再在体内取字段」，并且允许数组内注释。
+    // generals: { [factionId]: { generalId, generalName, portrait } } / allGenerals: 全部武将
+    // 🔴 [FIX 2026-10-24 主人问「阿尔博雷亚／苻秦／袁绍 无武将，是程序问题还是项目问题」——是程序问题]
+    //   病灶 1：归属只按**名单块键**算。但游戏侧 `FactionGenerals.buildFactionGeneralIndex` 是按
+    //      **武将自己的 `factionId`** 算（2026-10-23 主人令「某势力有哪些武将按武将自己的 factionId 算」），
+    //      所以挂在他家名单块里的将（阿尔博雷亚·埃莱奥诺拉、苻秦·王猛/苻融、后汉·刘知远/刘崇…）被漏报「无武将」。
+    //   病灶 2：旧正则遇到空数组块（`hou_han: []`）会跨到**下一块**的 `]`，把下一块首将吞给空块
+    //      （袁绍的麴义被算成后汉的 → 后汉"有将"、袁绍反被报"无武将"）。
+    //   改法：先框定 FACTION_GENERALS 对象范围，再逐个顶层键用括号配对取整条（findObjectEntryEnd，
+    //      支持对象/数组/多行/注释），逐条按 `factionId ?? 块键` 归属；`generals` 仍只存每势力首位。
     const generals: Record<string, { generalId: string; generalName: string; portrait: string }> = {};
     const pickGeneral = (body: string) => {
         const gi = body.match(/generalId:\s*'([^']+)'/);
@@ -4635,31 +4639,41 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         const po = body.match(/portrait:\s*'([^']*)'/);
         return { generalId: gi[1], generalName: gn ? gn[1] : '', portrait: po ? po[1] : '' };
     };
-    // 单条写法：`    键: { … }`（字段顺序/数量不限）
-    for (const m of fgText.matchAll(/^\s{4}(\w+):\s*\{([^}]*)\}/gm)) {
-        if (generals[m[1]]) continue;
-        const g = pickGeneral(m[2]);
-        if (g) generals[m[1]] = g;
-    }
-    // 多将数组写法：`    键: [ … ]`（取第一个对象＝守将；允许 [ 后先写注释）
-    for (const m of fgText.matchAll(/^\s{4}(\w+):\s*\[\s*([\s\S]*?)\n\s{4}\]/gm)) {
-        if (generals[m[1]]) continue;
-        const g = pickGeneral(m[2]);
-        if (g) generals[m[1]] = g;
-    }
-
-    // 🔴 [2026-09-16 修「立绘调校面板缺多将势力的非首位武将」] allGenerals：**所有**武将
-    //    （单将 + 多将数组的每一个对象），供 portrait-tuner 列出全部武将；
-    //    `generals` 仍只存每势力首位（守将），batch-manager 等只认首位的地方不受影响。
+    // 🔴 [2026-09-16 修「立绘调校面板缺多将势力的非首位武将」] allGenerals：**所有**武将，供 portrait-tuner 用。
     const allGenerals: Array<{ generalId: string; generalName: string; portrait: string; factionId: string }> = [];
-    for (const m of fgText.matchAll(/(\w+):\s*\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']*)'/g)) {
-        allGenerals.push({ generalId: m[2], generalName: m[3], portrait: m[4], factionId: m[1] });
-    }
-    for (const m of fgText.matchAll(/^\s{4}(\w+):\s*\[\s*([\s\S]*?)\n\s{4}\]/gm)) {
-        const fId = m[1];
-        for (const g of m[2].matchAll(/\{\s*([\s\S]*?)\}/g)) {
-            const gg = pickGeneral(g[1]);
-            if (gg) allGenerals.push({ generalId: gg.generalId, generalName: gg.generalName, portrait: gg.portrait, factionId: fId });
+    {
+        const fgKwIdx = fgText.indexOf('FACTION_GENERALS');
+        const openIdx = fgKwIdx === -1 ? -1 : fgText.indexOf('= {', fgKwIdx);
+        let rangeEnd = -1;
+        if (openIdx !== -1) {
+            let depth = 0;
+            for (let i = openIdx + 2; i < fgText.length; i++) {
+                if (fgText[i] === '{') depth++;
+                else if (fgText[i] === '}') { depth--; if (depth === 0) { rangeEnd = i; break; } }
+            }
+        }
+        const collectFactionBlock = (blockKey: string, blockText: string): void => {
+            for (const gm of blockText.matchAll(/\{([^{}]*)\}/g)) {
+                const body = gm[1];
+                if (!body.includes('generalId:')) continue;
+                const g = pickGeneral(body);
+                if (!g) continue;
+                // 武将自己的 factionId 才是势力归属（没写＝名单块所属势力）
+                const explicitFid = body.match(/factionId:\s*'([^']+)'/)?.[1];
+                const fid = explicitFid || blockKey;
+                allGenerals.push({ generalId: g.generalId, generalName: g.generalName, portrait: g.portrait, factionId: fid });
+                if (!generals[fid]) generals[fid] = g;
+            }
+        };
+        if (openIdx !== -1) {
+            const keyRe = /^ {4}(\w+):/gm;
+            keyRe.lastIndex = openIdx + 2;
+            let km: RegExpExecArray | null;
+            while ((km = keyRe.exec(fgText)) !== null) {
+                if (rangeEnd !== -1 && km.index > rangeEnd) break;
+                const entryEnd = findObjectEntryEnd(fgText, km.index);
+                collectFactionBlock(km[1], fgText.slice(km.index, entryEnd));
+            }
         }
     }
 
@@ -5638,6 +5652,8 @@ function serverValidateEntities(): {
     if (panjunCities.length) {
         issues.push({
             level: 'info',
+            // [FIX 2026-10-24] 带上 factionId：否则前端从消息里猜 `(city_pinglong)` 当势力 id，点「点击编辑」打不开
+            factionId: 'panjun',
             msg: `情报（起义占位势力，非错误）：panjun「起义」名下 ${panjunCities.length} 座据点——${panjunCities.map(c => `${c.name}(${c.id})`).join('、')}；起义据点允许（叛军≠起义军）`,
         });
     }

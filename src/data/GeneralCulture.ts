@@ -627,6 +627,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_rajaram': 'INDIA',   // 泰米尔｜拉贾拉姆｜据点 金奇
     'gen_ramiro_ii': 'SPANISH',   // 莱昂｜拉米罗二世｜据点 萨拉曼卡
     'gen_raymond_iv': 'FRANKS',   // 朗格多克｜雷蒙四世｜据点 图卢兹
+    'gen_raymond_berenguer_iv': 'FRANKS',   // 普罗旺斯｜雷蒙·贝朗热四世｜据点 阿维尼翁
     'gen_raymond_v': 'FRANKS',   // 朗格多克｜雷蒙五世｜据点 图卢兹
     'gen_razadarit': 'BURMESE',   // 孟族｜罗娑陀利｜据点 直通
     'gen_robert_guiscard': 'SICILIANS',   // 阿普利亚｜吉斯卡尔｜据点 梅尔菲

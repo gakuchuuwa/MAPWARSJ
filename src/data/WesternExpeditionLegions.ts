@@ -23,7 +23,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   shache: { name: '莎车左右骑', tier: 4 },   // 渠莎·汉代西域强国（缺乏极其著名的战术高光，降T3）
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
   loulan: { name: '精绝都护营', tier: 3 },      // 精绝古国尼雅遗址，神秘古国文化IP显著，升T2
-  zhuxie: { name: '朱邪部兵', tier: 3 },      // 沙陀朱邪部，后唐后晋后汉三朝开国根基，升T2
+  // 🔴 [2026-10-24] 原「朱邪」势力并入沙陀；精锐番号「朱邪部兵」T3 已落到朱邪赤心本人条目（FactionGenerals），此处势力级条目删除。
   // 重复行已删
     juandu: { name: '安西都护军', tier: 3 },
   wensu: { name: '温宿锐卒', tier: 4 },      // 三重城·温宿国

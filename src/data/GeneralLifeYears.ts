@@ -664,6 +664,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_eric_bloodaxe: { birth: 885, death: 954, kaoju: '推定' },  // 埃里克
     gen_william_wallace: { birth: 1270, death: 1305 },  // 华莱士
     gen_raymond_iv: { birth: 1042, death: 1105, kaoju: '异说' },  // 雷蒙四世
+    gen_raymond_berenguer_iv: { birth: 1198, death: 1245 },  // 雷蒙·贝朗热四世（普罗旺斯伯爵）
     lunbadi_alboin: { birth: 530, death: 572, kaoju: '异说' },  // 阿尔博因
     gen_abd_al_rahman_iii: { birth: 891, death: 961, kaoju: '异说' },  // 阿卜杜拉
     gen_james_i_aragon: { birth: 1208, death: 1276 },  // 海梅

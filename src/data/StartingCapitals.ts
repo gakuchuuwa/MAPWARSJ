@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 沙盒模式：势力 id → 首都 cityId（1 势力 = 1 据点）。
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
@@ -59,6 +59,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'donggete': 'city_ravenna',
   'xigete': 'city_toledo',
   'alagong': 'city_zaragoza',
+  // 🔴 [2026-10-24 补登记] 撒丁阿尔博雷亚判官国（主人授权新建；埃莱奥诺拉都奥里斯塔诺）
+  'aboerleiya': 'city_oristano',
 
   'xila': 'city_yadian',
 'fulandesi': 'city_calais',
@@ -436,7 +438,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'bailang': 'city_adunzi',
 
 'duolu': 'city_beiluocheng',
-'zhuxie': 'city_dashicheng',
 'tiemuer': 'city_samaerhan',
 'kawusi': 'city_jizhake',
     'keerkezi': 'city_yierkeshentan',
