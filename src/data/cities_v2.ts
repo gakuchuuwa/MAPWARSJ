@@ -1,4 +1,4 @@
-/**
+﻿/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -218,7 +218,7 @@ export const T0_CAPITALS: CityDataV2[] = [
 
 
     
-    { id: 'city_taiyuan', name: '晋阳', factionId: 'tang', lat: 37.87, lng: 112.55, type: 'big_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
+    { id: 'city_taiyuan', name: '晋阳', factionId: 'hou_han', lat: 37.87, lng: 112.55, type: 'big_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
     { id: 'city_xiangyang', name: '襄阳', factionId: 'song', lat: 32.01, lng: 112.12, type: 'medium_city', troops: 10000, region: 'SONG', buildingStyle: 'CENTRAL' },
 
@@ -3780,5 +3780,6 @@ buildingStyle: 'TIBET', troops: 10000,
 // region: 'CENTRAL',         // 北方
 // region: 'CENTRAL',       // 中原
 // region: 'JIANGNAN',      // 南方
+
 
 
