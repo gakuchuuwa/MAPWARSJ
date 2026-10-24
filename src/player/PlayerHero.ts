@@ -527,32 +527,12 @@ export class PlayerHero {
 
     /**
      * 🔴 [2026-09-09 主人定]「加入哪个军团，就变成此军团三排兵模的其中一种」。
-     * 入伍时调用：先按官阶配额从**该军团**三排里补学，再自动换上该军团的兵模。
-     * 🔴 [2026-10-04 主人令]「把自动选择兵模删除，默认就是自动换」—— 面板开关已删，这里恒定自动换。
+     * 入伍时调用：按官阶配额从**该军团**三排里补学（三排每张都自动换上；同文化三排重叠、
+     * 一张新卡都学不到时也要换成本军团三排之一），全部逻辑在 `syncLearnedUnits(true)` 一处。
+     * 🔴 [2026-10-24 主人令] 三排：加入势力 / 升探马 / 升先锋 每给一张立即换上。
      */
     public onJoinLegion(): void {
-        const prevCount = this.learnedUnits.length;
         this.syncLearnedUnits(true);
-        // 若刚刚在 syncLearnedUnits 里已学到新兵模并自动换上，无需二次随机挑选
-        if (this.learnedUnits.length > prevCount) return;
-
-        const keys = this.legionUnitKeys();
-        if (!keys.length) return;
-        // 之前已收齐本军团兵模时，若当前穿的并非本军团兵模，则随机换上一件本军团兵模
-        // 🔴 [2026-10-23 主人「加入新势力获取骑兵兵模的时候自动换……其他一律不自动换」] 只换成本军团的骑兵
-        const owned = this.learnedUnits
-            .map((u, i) => ({ u, i }))
-            .filter((x) => keys.includes(x.u.unitKey) && WAR_TYPES[x.u.unitKey]?.cls === 'cav');
-        if (!owned.length) return;
-        const currentKey = this.getSelectedUnit()?.unitKey;
-        if (currentKey && (keys.includes(currentKey) || currentKey === this.legionCommanderKey())) return;
-
-        const pick = owned[Math.floor(Math.random() * owned.length)];
-        if (pick.i === this.selectedUnit) return;
-        this.selectedUnit = pick.i;
-        this.syncMoveProfile();
-        this.deps.notify(`🛡️ 换上本军团兵模【${pick.u.unitName}】`);
-        this.emitChange();
     }
 
     /**
@@ -565,10 +545,12 @@ export class PlayerHero {
      * 规则全文见 docs/AGENTS/player-rules-verbatim.md 0-7。
      */
     /**
-     * 🔴 [2026-10-23 主人「现在加入时候有骑兵模式会先给玩家骑兵兵模……可是玩家升级后，会自动换上步兵兵模，这就不对了。
-     *    我觉得加入新势力获取骑兵兵模的时候自动换玩家兵模，无论是三排兵，还是英雄兵模。其他一律不自动换。」]
-     * `joining`＝这次是加入势力 / 入伍时调的：只有这时拿到的**骑兵**（三排或英雄）才自动换上；
-     * 升阶、降阶、退出势力时学到的兵模只收进面板，不换。
+     * 🔴 [2026-10-24 主人令（取代 2026-10-23「只有入伍骑兵才换」）]
+     *    「乱斗模式，探马者加入势力后，兵模没有给……加入势力给一个本势力中三排兵模之一，自动换上。
+     *      升为探马再给本势力中三排兵模之一，自动换上。升为先锋再给本势力中三排兵模之一，自动换上。」
+     * 所以三排陆地兵模：**入伍、升探马、升先锋，每学到一张立刻换上**（见下面 land 分支）。
+     * `joining` 只用于「这次没学到新卡（同文化三排重叠）时，也换成本军团三排之一」的兜底。
+     * 舰队/英雄本（将军/元帅档）仍按 2026-10-23 口径：入伍时若为骑兵类才换，其余只收藏。
      */
     public syncLearnedUnits(joining = false): void {
         // 🔴 [2026-09-09 主人定「这种是玩家奖励，终身获取的」]
@@ -623,8 +605,17 @@ export class PlayerHero {
             } else {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
                 this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
-                // 🔴 [2026-10-23 主人「其他一律不自动换」] 只有入伍时拿到骑兵才换上（取代 2026-10-03/10-04「获得就换」）
-                if (joining && WAR_TYPES[pick.key]?.cls === 'cav') {
+                // 🔴 [2026-10-24 主人令「加入势力给一个本势力中三排兵模之一，自动换上；升为探马再给…自动换上；
+                //    升为先锋再给…自动换上」] 三排陆地兵模：入伍与升阶（斥候/探马/先锋）每学到一张**立刻换上**。
+                //    取代 2026-10-23「只有入伍拿到的骑兵才换」——那条会让 174 个无骑兵三排的势力入伍后
+                //    模型不变（看起来就是「兵模没有给」），升阶也一直不换。
+                if (pick.row >= 0 && pick.row <= 2) {
+                    // 三排（斥候/探马/先锋档）：入伍、升阶每学到一张立刻换上
+                    this.selectedUnit = this.learnedUnits.length - 1;
+                    this.syncMoveProfile();
+                    this.deps.notify(`🛡️ 换上新兵模【${name}】`);
+                } else if (joining && WAR_TYPES[pick.key]?.cls === 'cav') {
+                    // 英雄（主将队）档：保留 2026-10-23 口径——入伍时若是骑兵类才换上
                     this.selectedUnit = this.learnedUnits.length - 1;
                     this.syncMoveProfile();
                     this.deps.notify(`🛡️ 换上新兵模【${name}】`);
@@ -639,17 +630,22 @@ export class PlayerHero {
         //    会让 got() ≥ want ⇒ 一个都不新学、不自动换装，旧势力的兵模（火枪手）残留。
         //    补一条：即便没新学，只要当前穿的兵模不在本军团三排（也不在主将队），就换成已学的本军团三排之一。
         //    （restoreSaveState 只 joinFaction 不 attachTo，onJoinLegion 那套换装跑不到，必须落在这里才兜得住。）
-        const currentKey = this.getSelectedUnit()?.unitKey;
-        if (joining && currentKey && !landKeys.includes(currentKey) && currentKey !== cmdKey) {
-            const ownedIdx = this.learnedUnits
-                .map((u, i) => ({ u, i }))
-                .filter((x) => landKeys.includes(x.u.unitKey) && WAR_TYPES[x.u.unitKey]?.cls === 'cav');
-            if (ownedIdx.length) {
-                const pick = ownedIdx[Math.floor(Math.random() * ownedIdx.length)];
-                if (pick.i !== this.selectedUnit) {
-                    this.selectedUnit = pick.i;
-                    this.syncMoveProfile();
-                    this.deps.notify(`🛡️ 换上本军团兵模【${pick.u.unitName}】`);
+        // 🔴 [2026-10-24 主人「加入势力给一个本势力中三排兵模之一，自动换上」] 兜底不再限骑兵：
+        //    同文化势力三排重叠时一张新卡都学不到，也要换成本势力三排之一，否则看起来仍是「兵模没有给」。
+        if (joining) {
+            const currentKey = this.getSelectedUnit()?.unitKey;
+            const inLegion = !!currentKey && (landKeys.includes(currentKey) || currentKey === cmdKey);
+            if (!inLegion) {
+                const ownedIdx = this.learnedUnits
+                    .map((u, i) => ({ u, i }))
+                    .filter((x) => landKeys.includes(x.u.unitKey));
+                if (ownedIdx.length) {
+                    const pick = ownedIdx[Math.floor(Math.random() * ownedIdx.length)];
+                    if (pick.i !== this.selectedUnit) {
+                        this.selectedUnit = pick.i;
+                        this.syncMoveProfile();
+                        this.deps.notify(`🛡️ 换上本军团兵模【${pick.u.unitName}】`);
+                    }
                 }
             }
         }

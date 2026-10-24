@@ -101,7 +101,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   bosi_puluosi: '博普',
 'kelimiya': '热亚',  // 热那亚共和国（卡法）
 'keluodiya': '克罗',
-  qincha: '钦察',
 'litaowan': '立陶',
 'bolan': '波兰',
 'baojian_qishi': '宝剑',
@@ -144,7 +143,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   'sijitai': '斯基',
 
     'shuizhen': '水真',
-    'wala': '瓦剌',
     'xiajiasi': '坚昆',
     'shang': '商',
     'zhou': '周',

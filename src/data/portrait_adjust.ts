@@ -6845,7 +6845,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/PERSIAN/dulan_d_aihamaide.png": {
             "scale": 0.87,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -7
         },
         "/assets/LATIN/__闲置__LATIN_18.png": {
             "scale": 0.97,
@@ -8146,6 +8146,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.41,
             "offsetX": -11,
             "offsetY": 15
+        },
+        "/assets/BURMESE/gen_nanda_bayin.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/MUGHAL/gen_sadashivrao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -20
         }
     },
     "folderGuides": {
