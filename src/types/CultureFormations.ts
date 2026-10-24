@@ -1001,8 +1001,8 @@ export const BERBER_DYNASTY_FACTION_IDS = new Set([
     'zhayan',               // 扎扬王朝（特莱姆森）
     'hamade',               // 哈马德王朝（布佳亚）
     'aguelabu',             // 阿格拉布王朝（凯鲁万）
-    'babali',               // 巴巴里海岸（阿尔及尔）
-    'telibolisi',           // 的黎波里塔尼亚（的黎波里）
+    // 巴巴里海岸（阿尔及尔）
+    // 的黎波里塔尼亚（的黎波里）
     // 休达/直布罗陀
 ]);
 

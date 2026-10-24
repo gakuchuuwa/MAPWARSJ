@@ -36,7 +36,6 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     xixiliwangguo: { name: '萨金特卫兵', tier: 3 },          // 巴勒莫·腓特烈二世：诺曼军士步兵（DE Serjeant）
     // 格拉纳达·穆罕默德：纳斯里摩尔骑兵风土 → T3（禁造「阿兰布拉卫」）
     nasier: { name: '摩尔骑', tier: 3 },
-    feiniqi: { name: '迦太基圣队', tier: 3 },          // 加的斯·哈米尔卡
     leangongguo: { name: '莱昂骑士', tier: 4 },          // 萨拉曼卡·阿方索九世
     // 萨拉戈萨·海梅一世：阿尔莫加瓦（Almogávares）突袭轻装 → T2
     alagong: { name: '阿尔莫加瓦', tier: 2 },

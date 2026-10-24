@@ -43,14 +43,11 @@ export const FACTIONS: Faction[] = [
 
 
   { id: 'zhayan', name: '扎扬' },
-  { id: 'babali', name: '巴巴里' },
   { id: 'hamade', name: '哈马德王朝' },
-  { id: 'buni', name: '布匿' },
+  { id: 'buni', name: '迦太基' },
   { id: 'aguelabu', name: '阿格拉布' },
-  { id: 'telibolisi', name: '的黎波里塔' },
   { id: 'jileinaijia', name: '昔兰尼' },
 
-  { id: 'talike', name: '马格里布' },  // 丹吉尔·塔里克（DE柏柏尔领袖，711征服伊比利亚）；势力名不取人名，按地区名
 
   { id: 'maixiya', name: '麦西亚' },
   { id: 'nidelan', name: '尼德兰' },
@@ -73,7 +70,6 @@ export const FACTIONS: Faction[] = [
   { id: 'xigete', name: '西哥特' },
   { id: 'alagong', name: '阿拉贡' },
 
-  { id: 'feiniqi', name: '腓尼基' },
   { id: 'xila', name: '雅典' },  // 别名：雅典所在地区（Attica，雅典城邦本土）
   { id: 'fulandesi', name: '阿图瓦' },
 
@@ -1479,20 +1475,16 @@ export const FACTIONS: Faction[] = [
         // 阿尔贝拉·亚述故地阿迪亚贝纳王国（克雷图斯）
     { id: 'aertai', name: '阿尔泰' },        // 也儿的石·阿尔泰乃蛮故地（屈出律）
     { id: 'feierganna', name: '费尔干纳' },        // 阿赫西克特·费尔干纳（忽都鲁）
-    { id: 'qibucha', name: '奇布查' },        // 洪萨·穆伊斯卡奇布查人（帕坎奇克）
     { id: 'tamoyue', name: '塔莫约' },        // 卡布弗里乌·塔莫约联盟（昆汉贝贝）
     { id: 'naweierbuta', name: '纳韦尔布塔' },        // 科利普利·纳韦尔布塔山脉马普切（加尔瓦里诺）
-    { id: 'alaokaniya', name: '阿劳卡尼亚' },        // 彼得罗阿·阿劳卡尼亚马普切（瓜科尔达）
     { id: 'bogendigongguo', name: '勃艮第公国' },        // 蒙特罗·勃艮第公国（无畏的约翰）
     { id: 'amaniyake', name: '阿马尼亚克' },        // 欧什·阿马尼亚克伯爵领（贝尔纳·德·阿马尼亚克）
     { id: 'weiershigongguo', name: '威尔士公国' },        // 布伊尔斯·威尔士公国（卢埃林）
-    { id: 'tigelei', name: '提格雷' },        // 德布雷达莫·提格雷（吉达扬）
-    { id: 'xiaoa', name: '肖阿' },        // 德布雷利巴诺斯·肖阿（达格纳詹）
     { id: 'miandian', name: '缅甸' },        // 三塔关·缅甸（摩诃·悉都）
     { id: 'malai', name: '马来' },        // 淡马锡·马来（桑尼拉乌他马）
     { id: 'taimier', name: '马拉塔' },        // 金奇·泰米尔（拉贾拉姆）
     { id: 'xibanya', name: '西班牙' },         // 利马·西班牙征服者（殖民势力）
-    { id: 'manding', name: '曼丁哥' },
+    { id: 'manding', name: '马里' },
         // 廷巴克图·曼丁哥人（马里帝国主体民族）
     { id: 'ethiopia', name: '埃塞俄比亚' },
    // 阿克苏姆·埃塞俄比亚
@@ -1532,11 +1524,9 @@ export const FACTIONS: Faction[] = [
         { id: 'bulu', name: '波鲁斯' },  // 保拉瓦（Porus/补噜王，印度河畔，与亚历山大大战于希达斯皮斯河）,
     { id: 'mallabhum', name: '末罗王国' },
     { id: 'vidin_tsardom', name: '维丁国' },
-    { id: 'gondarine', name: '贡德尔朝' },
 
     { id: 'samtskhe', name: '萨姆茨赫' },
     { id: 'tomara_gwalior', name: '托摩罗' },
-    { id: 'tawantinsuyu', name: '塔万廷苏尤' },
     { id: 'kanan', name: '推罗' },   // 推罗（腓尼基母城）· 2026-09-12 主人批；亚历山大剧本第三章「推罗战役」守方
     { id: 'feilisidin', name: '非利士' },   // 加沙（腓利斯丁五城之一）· 主人「加沙用什么看历史」；第四章「加沙围城战」守方
     { id: 'qutb_shahi', name: '库特布朝' },

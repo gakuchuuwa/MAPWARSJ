@@ -907,16 +907,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    feierganna: { generalId: 'gen_qutlugh', cityId: 'city_ahexikesi', generalName: '忽都鲁', portrait: '/assets/WESTERN/gen_qutlugh.png' },
-
-
-
-
-
-
-
-    qibucha: { generalId: 'gen_pacanchiq', cityId: 'city_hongsa', generalName: '帕坎奇克', portrait: '/assets/MUISCA/gen_pacanchiq.png' },
-
+    feierganna: { generalId: 'gen_qutlugh', cityId: 'city_ahexikesi', generalName: '忽都鲁', portrait: '/assets/WESTERN/gen_qutlugh.png' },
 
 
 
@@ -931,16 +922,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    naweierbuta: { generalId: 'gen_galvarino', cityId: 'city_kelipuli', generalName: '加尔瓦里诺', portrait: '/assets/MAPUCHE/gen_galvarino.png' , legionName: '帝国时代安第斯游击军团' },
-
-
-
-
-
-
-
-    alaokaniya: { generalId: 'gen_guacolda', cityId: 'city_bideluoa', generalName: '瓜科尔达', portrait: '/assets/MAPUCHE/gen_guacolda.png' },
-
+    naweierbuta: { generalId: 'gen_galvarino', cityId: 'city_kelipuli', generalName: '加尔瓦里诺', portrait: '/assets/MAPUCHE/gen_galvarino.png' , legionName: '帝国时代安第斯游击军团' },
 
 
 
@@ -1015,22 +997,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    ],
-
-
-
-
-
-
-    tigelei: { generalId: 'gen_gidajan', cityId: 'city_debuleidamo', generalName: '吉达扬', portrait: '/assets/ETHIOPIANS/gen_gidajan.png' },
-
-
-
-
-
-
-    xiaoa: { generalId: 'gen_dagnajan', cityId: 'city_debuleilibanuosi', generalName: '达格纳詹', portrait: '/assets/ETHIOPIANS/gen_dagnajan.png' },
-
+    ],
 
 
 
@@ -1470,7 +1437,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'malin_abulhasan', cityId: 'city_feisi', generalName: '阿布·哈桑·阿里', portrait: '/assets/BERBER/malin_abulhasan.png', factionId: 'talike', legionName: '城堡时代摩尔军团' },
+        { generalId: 'malin_abulhasan', cityId: 'city_feisi', generalName: '阿布·哈桑·阿里', portrait: '/assets/BERBER/malin_abulhasan.png', factionId: 'mulabite', legionName: '城堡时代摩尔军团' },
 
 
 
@@ -1594,6 +1561,24 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    
+        { generalId: 'talike_talike', factionId: 'womaya', cityId: 'city_danjier', legionName: '封建时代柏柏尔军团', generalName: '塔里克', portrait: '/assets/BERBER/talike_talike.png' },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     ],
 
 
@@ -1604,17 +1589,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     zhayan: [
         { generalId: 'gen_yaghmurasen', cityId: 'city_teleimusen', generalName: '亚格姆拉森', portrait: '/assets/BERBER/zhayan_yalimoluo.png' },
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：库赛拉＝奥雷巴柏柏尔王，阿尔塔瓦王国（今特莱姆森一带）；丹吉尔从未是他的驻地 → 放特莱姆森（zhayan，风格 BERBER）；仍挂本政权 talike
-        { generalId: 'gen_kusaila', cityId: 'city_kailuwan', factionId: 'talike', legionName: '封建时代柏柏尔军团', generalName: '库赛拉', portrait: '/assets/BERBER/gen_kusaila.png', },
-    ],
-
-
-
-
-
-
-
-    babali: { generalId: 'gen_barbarossa', cityId: 'city_aerjier', generalName: '巴巴罗萨', portrait: '/assets/BERBER/babali_babaluosa.png' },
-
+        { generalId: 'gen_kusaila', cityId: 'city_kailuwan', factionId: 'mulabite', legionName: '封建时代柏柏尔军团', generalName: '库赛拉', portrait: '/assets/BERBER/gen_kusaila.png', },
+    ],
 
 
 
@@ -1662,47 +1638,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    ],
+    
+        { generalId: 'gen_hamilcar', factionId: 'buni', cityId: 'city_jiadisi', generalName: '哈米尔卡', portrait: '/assets/BERBER/gen_hamilcar.png' },
 
-
-
-
-
-
-
-    aguelabu: { generalId: 'gen_uqba', cityId: 'city_kailuwan', generalName: '奥克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png' },
-
-
-
-
-
-
-
-    telibolisi: [
-
-
-
-
-
-
-
-        { generalId: 'gen_dragut', cityId: 'city_deliboli', generalName: '德拉古特', portrait: '/assets/BERBER/telibolisi_delagute.png' },
-
-
-
-
-
-
-
-        // 🔴 [2026-10-20 主人令「这些据点违规了……请删除。据点中有武将的话，请放到相同风格的临近据点」] 原据点 city_marmarica 已删 → 迁的黎波里（同建筑风格最近），仍挂本政权 libya
-
-
-
-
-
-
-
-        { generalId: 'bfe_libyan_chief', cityId: 'city_deliboli', legionName: '古典时代迦太基军团', generalName: '利比亚诸部盟主 阿迪尔', portrait: '/assets/BERBER/bfe_libyan_chief.png' , eliteName: '利比亚部兵', eliteTier: 4},
 
 
 
@@ -1718,39 +1656,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    jileinaijia: { generalId: 'gen_magas', cityId: 'city_banjiaxi', generalName: '马加斯', portrait: '/assets/GREECE/gen_magas.png' },
+    aguelabu: { generalId: 'gen_uqba', cityId: 'city_kailuwan', generalName: '奥克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png' },
 
 
 
 
 
 
-
-    talike: [
-
-
-
-
-
-
-
-        { generalId: 'talike_talike', cityId: 'city_danjier', generalName: '塔里克', portrait: '/assets/BERBER/talike_talike.png' },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ],
-
+    jileinaijia: { generalId: 'gen_magas', cityId: 'city_banjiaxi', generalName: '马加斯', portrait: '/assets/GREECE/gen_magas.png' },
 
 
 
@@ -2181,15 +2094,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    ],
-
-
-
-
-
-
-    feiniqi: { generalId: 'gen_hamilcar', cityId: 'city_jiadisi', generalName: '哈米尔卡', portrait: '/assets/BERBER/gen_hamilcar.png' },
-
+    ],
 
 
 
@@ -13457,6 +13362,27 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    
+        { generalId: 'gen_barbarossa', factionId: 'osman', cityId: 'city_aerjier', generalName: '巴巴罗萨', portrait: '/assets/BERBER/babali_babaluosa.png' },
+
+
+
+
+
+
+
+
+    
+        { generalId: 'gen_dragut', factionId: 'osman', cityId: 'city_deliboli', generalName: '德拉古特', portrait: '/assets/BERBER/telibolisi_delagute.png' },
+        { generalId: 'bfe_libyan_chief', factionId: 'osman', cityId: 'city_deliboli', legionName: '古典时代迦太基军团', generalName: '利比亚诸部盟主 阿迪尔', portrait: '/assets/BERBER/bfe_libyan_chief.png' , eliteName: '利比亚部兵', eliteTier: 4},
+
+
+
+
+
+
+
+
     ],
 
 
@@ -15230,6 +15156,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    
+        { generalId: 'gen_pachacuti', factionId: 'inca', cityId: 'city_machu_picchu', generalName: '帕查库提', portrait: '/assets/INCA/gen_pachacuti.png' },
+
+
+
+
+
+
+
+
     ],
 
 
@@ -15249,7 +15185,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    mapuche: { generalId: 'gen_lautaro', cityId: 'city_tucapel', generalName: '劳塔罗', portrait: '/assets/MAPUCHE/gen_lautaro.png', legionName: '帝国时代安第斯游击军团' },
+    mapuche: [
 
 
 
@@ -15257,7 +15193,45 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    muisca: { generalId: 'gen_saguamanchica', cityId: 'city_bacata', generalName: '萨瓜曼奇卡', portrait: '/assets/MUISCA/gen_saguamanchica.png' },
+
+        { generalId: 'gen_lautaro', cityId: 'city_tucapel', generalName: '劳塔罗', portrait: '/assets/MAPUCHE/gen_lautaro.png', legionName: '帝国时代安第斯游击军团' },
+        { generalId: 'gen_guacolda', factionId: 'mapuche', cityId: 'city_bideluoa', generalName: '瓜科尔达', portrait: '/assets/MAPUCHE/gen_guacolda.png' },
+
+
+
+
+
+
+
+
+    ],
+
+
+
+
+
+
+
+    muisca: [
+
+
+
+
+
+
+
+
+        { generalId: 'gen_saguamanchica', cityId: 'city_bacata', generalName: '萨瓜曼奇卡', portrait: '/assets/MUISCA/gen_saguamanchica.png' },
+        { generalId: 'gen_pacanchiq', legionName: '帝国时代格查武士军团', factionId: 'muisca', cityId: 'city_hongsa', generalName: '帕坎奇克', portrait: '/assets/MUISCA/gen_pacanchiq.png' },
+
+
+
+
+
+
+
+
+    ],
 
 
 
@@ -15345,7 +15319,46 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    ethiopia: { generalId: 'gen_ezana', cityId: 'city_aksum', generalName: '埃扎纳', portrait: '/assets/ETHIOPIANS/gen_ezana.png' },
+    ethiopia: [
+
+
+
+
+
+
+
+
+        { generalId: 'gen_ezana', cityId: 'city_aksum', generalName: '埃扎纳', portrait: '/assets/ETHIOPIANS/gen_ezana.png' },
+        { generalId: 'gen_gidajan', legionName: '城堡时代埃塞俄比亚军团', factionId: 'ethiopia', cityId: 'city_debuleidamo', generalName: '吉达扬', portrait: '/assets/ETHIOPIANS/gen_gidajan.png' },
+
+
+
+
+
+
+
+
+    
+        { generalId: 'gen_dagnajan', legionName: '封建时代拉利贝拉军团', factionId: 'ethiopia', cityId: 'city_debuleilibanuosi', generalName: '达格纳詹', portrait: '/assets/ETHIOPIANS/gen_dagnajan.png' },
+
+
+
+
+
+
+
+
+    
+        { generalId: 'gen_fasilides', legionName: '帝国时代阿姆哈拉军团', factionId: 'ethiopia', cityId: 'city_fasil_fort', generalName: '法西里德', portrait: '/assets/ETHIOPIANS/gen_fasilides.png' },
+
+
+
+
+
+
+
+
+    ],
 
 
 
@@ -16014,15 +16027,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    vidin_tsardom: { generalId: 'gen_ivan_sratsimir', cityId: 'city_baba_vida', generalName: '伊凡斯拉齐', portrait: '/assets/BULGARIANS/gen_ivan_sratsimir.png' },
-
-
-
-
-
-
-
-    gondarine: { generalId: 'gen_fasilides', cityId: 'city_fasil_fort', generalName: '法西里德', portrait: '/assets/ETHIOPIANS/gen_fasilides.png' },
+    vidin_tsardom: { generalId: 'gen_ivan_sratsimir', cityId: 'city_baba_vida', generalName: '伊凡斯拉齐', portrait: '/assets/BULGARIANS/gen_ivan_sratsimir.png' },
 
 
 
@@ -16037,16 +16042,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    tomara_gwalior: { generalId: 'gen_man_singh_tomar', cityId: 'city_gwalior_fort', generalName: '曼辛格', portrait: '/assets/MUGHAL/gen_man_singh_tomar.png' },
-
-
-
-
-
-
-
-    tawantinsuyu: { generalId: 'gen_pachacuti', cityId: 'city_machu_picchu', generalName: '帕查库提', portrait: '/assets/INCA/gen_pachacuti.png' },
-
+    tomara_gwalior: { generalId: 'gen_man_singh_tomar', cityId: 'city_gwalior_fort', generalName: '曼辛格', portrait: '/assets/MUGHAL/gen_man_singh_tomar.png' },
 
 
 
@@ -18282,6 +18278,7 @@ if (import.meta.hot) {
 
 
 }
+
 
 
 

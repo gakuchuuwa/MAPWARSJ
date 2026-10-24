@@ -14,10 +14,7 @@ export const ANDE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     xibanya: { name: '征服者', tier: 1 },        // 利马·皮萨罗：西班牙火枪骑兵（征服印加）
     aimala: { name: '艾马拉战士', tier: 4 },
     yilaka: { name: '圭查武士', tier: 3 },
-    tawantinsuyu: { name: '印加禁卫', tier: 3 },
-    qibucha: { name: '奇布查勇士', tier: 3 },   // 洪萨·帕坎奇克：穆伊斯卡奇布查战士
     tamoyue: { name: '塔莫约勇士', tier: 3 },   // 卡布弗里乌·昆汉贝贝：塔莫约联盟战士
     naweierbuta: { name: '断腕勇士', tier: 3 },   // 科利普利·加尔瓦里诺：断腕复仇的马普切战士
-    alaokaniya: { name: '战巫女卫', tier: 3 },   // 彼得罗阿·瓜科尔达：阿劳卡尼亚战巫女卫队
     chanka: { name: '昌卡石斧手', tier: 3 },   // 安达瓦伊拉斯·昌卡部族盟主 阿斯塔瓦兰卡：安达瓦伊拉斯·阿斯塔瓦兰卡：昌卡战士持石斧与投石索，1438年围攻库斯科
 };
