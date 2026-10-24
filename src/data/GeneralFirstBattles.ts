@@ -8839,27 +8839,9 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #399 岛津家久 (1547 ~ 1587) — 公元1584年冲田畷之战
-    satsuma_daojinjiajiu: {
-        generalId: 'satsuma_daojinjiajiu',
-        battleName: '冲田畷之战',
-        battleYear: 1584,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '肥前岛原冲田畷沼泽',
-        targetCityId: 'city_xiongben',
-        targetLat: 32.81,
-        targetLng: 130.71,
-        myTroops: 10000,
-        enemyFactionId: 'nanchou',
-        enemyFactionName: '龙造寺氏',
-        enemyGeneralId: 'gen_ryuzoji_takanobu',
-        enemyTroops: 20000,
-        introLines: [
-            { speaker: 'general', text: '肥前巨熊引三万众据沼泽狭道前逼！某以钓野伏之策诱敌入伏，萨摩示现流铁炮死士，随家久伏兵齐出阵斩龙造寺隆信！' },
-            { speaker: 'player', text: '愿随岛津家久将军共赴冲田畷之战，大破龙造寺氏敌军！' },
-        ],
-    },
+    // 🔴 [2026-10-24 主人令「龙造寺已经删除，删干净」] 原 #399 岛津家久「冲田畷之战（1584）」——
+    //    该仗守方主帅是龙造寺隆信；「龙造寺」势力无自有据点、已整家删除（见 factions.ts 2026-10-24 记录），
+    //    敌将不存在 → 该首战一并删除，避免运行时把敌将错挂成南朝「菊池武光」（1319~1373，年份不符）。
 
     // #400 金时敏 (1554 ~ 1592) — 公元1592年第一次晋州城攻防战
     sabeol_jinshimin: {
@@ -9194,6 +9176,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     },
 
     // #415 尼古拉斯 (1600 ~ 1660) — 公元1641年姆博罗雷战役
+    // 🔴 [2026-10-24 按史修正] 尼古拉斯＝Nicolás Ñeenguirú（Concepción 大酋长），1641-03-11 率耶稣会传教区
+    //    瓜拉尼民兵在 Cerro Mbororé（乌拉圭河西岸，今阿根廷米西奥内斯省 Panambí，-27.72472,-54.91556）击退圣保罗 bandeira。
+    //    史实兵力：瓜拉尼 4000–4200（300 支火枪＋1 门炮）vs 葡方 450 bandeirante＋2700 图皮辅助（约 3150）；
+    //    葡方主将 Manuel Pires（副将 Jerónimo Pedroso de Barros）。城库无姆博罗雷据点，targetCityId 仅作最近据点锚定
+    //    （伊瓜苏约 231 km），targetLat/Lng 按史实战场填，不抄据点坐标。
     gualani_nicolas: {
         generalId: 'gualani_nicolas',
         battleName: '姆博罗雷战役',
@@ -9202,16 +9189,16 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         role: 'defender',
         targetName: '乌拉圭河姆博罗雷',
         targetCityId: 'city_yiguasu',
-        targetLat: -25.695,
-        targetLng: -54.437,
-        myTroops: 10000,
+        targetLat: -27.72472,
+        targetLng: -54.91556,
+        myTroops: 4200,
         enemyFactionId: 'putaoya',
-        enemyFactionName: '巴西殖民侵略军',
+        enemyFactionName: '葡萄牙',
         enemyGeneralId: 'bfe_portuguese_officer',
-        enemyTroops: 15000,
+        enemyTroops: 3150,
         introLines: [
             { speaker: 'general', text: '圣保罗奴隶贩子乘木筏企图焚毁教区掳掠族人！耶稣会铳剑已发，瓜拉尼的勇士们，拉紧长弓架舟封江，随我斩杀捕奴强盗！' },
-            { speaker: 'player', text: '愿随尼古拉斯将军共守姆博罗雷战役，大破巴西殖民侵略军敌军！' },
+            { speaker: 'player', text: '愿随尼古拉斯将军共守姆博罗雷战役，大破葡萄牙敌军！' },
         ],
     },
 
@@ -13181,26 +13168,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
             { speaker: 'player', text: '愿随尼堪将军于衡阳大捷决战，击破李定国！' },
         ],
     },
-    gen_ryuzoji_takanobu: {
-        generalId: 'gen_ryuzoji_takanobu',
-        battleName: '冲田畷之战',
-        battleYear: 1584,
-        battleType: 'field',
-        role: 'defender',
-        targetName: '肥前岛原冲田畷沼泽',
-        targetCityId: 'city_xiongben',
-        targetLat: 32.81,
-        targetLng: 130.71,
-        myTroops: 20000,
-        enemyFactionId: 'shimazu',
-        enemyFactionName: '萨摩',
-        enemyGeneralId: 'satsuma_daojinjiajiu',
-        enemyTroops: 10000,
-        introLines: [
-            { speaker: 'general', text: '萨摩岛津家久引军来犯肥前岛原冲田畷沼泽，龙造寺隆信今率众迎战！壮士，随本将列阵，一战破敌！' },
-            { speaker: 'player', text: '愿随龙造寺隆信将军于冲田畷之战决战，击破岛津家久！' },
-        ],
-    },
+    // 🔴 [2026-10-24 主人令「龙造寺已经删除，删干净」] 原龙造寺隆信本人的首战（冲田畷之战 1584，守方）：
+    //    龙造寺势力无自有据点，整家删除 → 本人武将与首战一并删除（见 factions.ts 2026-10-24 记录）。
     gen_beg_arslan: {
         generalId: 'gen_beg_arslan',
         battleName: '红盐池夜袭之战',
@@ -13795,7 +13764,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 100000,
         enemyFactionId: 'manzhou_d',
         enemyFactionName: '大清',
-        enemyGeneralId: 'gen_huangtaiji',
+        enemyGeneralId: 'aisin_d_huangtaiji',   // [FIX 2026-10-24] 原写 gen_huangtaiji（全库无此人）→ 据点在册实为 aisin_d_huangtaiji（大清·赫图阿拉）
         enemyTroops: 70000,
         introLines: [
             { speaker: 'general', text: '皇太极举国来围松锦，洪承畴受命督师，十三万大军岂能坐困！壮士，随本督凭垒死守、待机破围！' },

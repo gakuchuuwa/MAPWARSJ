@@ -198,7 +198,9 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     bfe_shaah_sultan: { generalId: 'bfe_shaah_sultan', generalName: '阿达利', factionId: 'xiaoa', portrait: '', note: '史无载，拟名：1529 年欣比拉库雷之役肖阿苏丹姓名未传。' },
     bfe_phagmo_depsi: { generalId: 'bfe_phagmo_depsi', generalName: '札巴坚赞', factionId: 'lang_clan', portrait: '', note: '史无载，拟名：1618 年羊卓之战帕竹第司姓名未确载。' },
     bfe_tsangpa_general: { generalId: 'bfe_tsangpa_general', generalName: '丹增', factionId: 'tsangpa', portrait: '', note: '史无载，拟名：1639 年普纳卡之战藏巴军主将姓名未载。' },
-    bfe_portuguese_officer: { generalId: 'bfe_portuguese_officer', generalName: '迪奥戈·苏亚雷斯', factionId: 'putaoya', portrait: '', note: '史无载，拟名：1641 年姆博罗雷之战葡萄牙军官姓名未传。' },
+    // 🔴 [2026-10-24 按史修正] 史有其人，不是拟名：1641 姆博罗雷之战的圣保罗 bandeira 主将 Manuel Pires（曼努埃尔·皮雷斯），
+    //    副将 Jerónimo Pedroso de Barros（西语维基 Batalla de Mbororé）。生卒无载、仅此战出场、不占城，故仍登记为战场人物。
+    bfe_portuguese_officer: { generalId: 'bfe_portuguese_officer', generalName: '曼努埃尔·皮雷斯', factionId: 'putaoya', portrait: '', note: '史有其人：1641 年姆博罗雷之战圣保罗 bandeira 主将 Manuel Pires（副将 Jerónimo Pedroso de Barros）；生卒无载，仅此战出场。' },
     bfe_azov_pasha: { generalId: 'bfe_azov_pasha', generalName: '侯赛因帕夏', factionId: 'osman', portrait: '', note: '史无载，拟名：1641 年阿速夫围城奥斯曼统帅姓名未确载。' },
     bfe_tayson_general: { generalId: 'bfe_tayson_general', generalName: '阮文宝', factionId: 'dayue', portrait: '', note: '史无载，拟名：1801 年归仁守将姓名未载。' },
     bfe_multan_governor: { generalId: 'bfe_multan_governor', generalName: '穆扎法尔汗', factionId: 'dulan_d', portrait: '', note: '史无载，拟名：1818 年木尔坦杜兰尼总督姓名未载。' },

@@ -343,6 +343,12 @@ export function getLegionEliteConfig(army: LegionEliteLookup): EliteLegionConfig
   if (army.generalId) {
     const genElite = getGeneralEliteConfig(army.generalId);
     if (genElite) return genElite;
+    // 🔴 [2026-10-24 修「精锐跨势力外溢」（AGENTS 二-4：别国武将精锐不许随城错配）]
+    //    有将却查不到专属精锐（典型：首战拟名／战场人物不在将领档）→ 精锐随**本军势力**取；
+    //    不再按 homeCityId/sourceCityId 的据点兜底，否则攻方会顶替被攻城（守方）的精锐
+    //    （实例：葡萄牙攻伊瓜苏，攻方卡片显示守方的「传教区军」）。
+    const ownFactionElite = ALL_FACTION_ELITE_LEGIONS[army.getFactionId()];
+    return ownFactionElite ?? null;
   }
   const cityId = army.homeCityId ?? army.getSourceCityId();
   return getCityEliteConfig(cityId);

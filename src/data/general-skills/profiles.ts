@@ -1,4 +1,4 @@
-﻿/**
+/**
 
  * 武将技 · 将领装配档案（从 GeneralSkills.ts 拆出，2026-07-13）
 
@@ -3161,7 +3161,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_laudonniere: { generalId: 'gen_laudonniere', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 劳多尼耶，普将
     gen_suleiman: { generalId: 'gen_suleiman', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_039', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 苏莱曼大帝
     gen_akechi_mitsuhide: { generalId: 'gen_akechi_mitsuhide', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_039', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse', attackStyle: 'defense' },   // 明智光秀
-    gen_ryuzoji_takanobu: { generalId: 'gen_ryuzoji_takanobu', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_039', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 龙造寺隆信
     gen_nanda_bayin: { generalId: 'gen_nanda_bayin', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_039', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse', attackStyle: 'defense' },   // 莽应里
     gen_ishida_mitsunari: { generalId: 'gen_ishida_mitsunari', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_039', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 石田三成
     gen_chogtu_khan: { generalId: 'gen_chogtu_khan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 却图汗，普将

@@ -689,7 +689,6 @@ const _FIXED: Record<string, string> = {
     takeda: '#7A2E33', // 武田
     toyotomi: '#BF5B2A', // 丰臣
     utsunomiya: '#6E5A82', // 宇都宫
-    ryuzoji: '#7D5B3E', // 龙造寺
     nanchou: '#574A8E', // 南朝
     nanbu_shi: '#5B4A6B', // 南部
     shoni: '#3E7A6B', // 少弐

@@ -246,7 +246,6 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_kangxi: { birth: 1654, death: 1722 },             // 康熙帝
     gen_charles_xii: { birth: 1682, death: 1718 },        // 查理十二（瑞典国王）
     gen_akechi_mitsuhide: { birth: 1528, death: 1582 },   // 明智光秀
-    gen_ryuzoji_takanobu: { birth: 1529, death: 1584 },   // 龙造寺隆信
     gen_nanda_bayin: { birth: 1535, death: 1600, kaoju: '推定' }, // 莽应里（东吁王）
     gen_ishida_mitsunari: { birth: 1560, death: 1600 },    // 石田三成
     gen_hemu: { birth: 1501, death: 1556, kaoju: '推定' }, // 赫穆（苏尔帝国将军）

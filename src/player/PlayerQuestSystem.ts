@@ -13,7 +13,7 @@ import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCity } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
-import { getCityEliteLegionName } from '../data/ExpeditionLegions';
+import { getCityEliteLegionName, getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { getFactionGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
@@ -1775,9 +1775,14 @@ export class PlayerQuestSystem {
         host.expeditionTargetCityId = null;
 
         const targetCity = fb.targetCityId ? this.deps.cityManager.getCity(fb.targetCityId) : undefined;
-        const targetPos = targetCity
-            ? { lat: targetCity.latitude, lng: targetCity.longitude }
-            : { lat: fb.targetLat, lng: fb.targetLng };
+        // 🔴 [2026-10-24 按 AGENTS 四-4「战场地点按史」] 野战一律按 targetLat/Lng 的史实坐标打；
+        //    targetCityId 只当「最近据点锚定」（奖励据点 / 出征衔接 / 行路），不再拿据点坐标顶替战场坐标。
+        //    攻城战仍按城坐标（要打到城本身）。
+        const targetPos = effectiveBattleType === 'field'
+            ? { lat: fb.targetLat, lng: fb.targetLng }
+            : (targetCity
+                ? { lat: targetCity.latitude, lng: targetCity.longitude }
+                : { lat: fb.targetLat, lng: fb.targetLng });
         // 🔴 [2026-10-24 主人问「战场和出发点太远的怎么办」] 战场离出发据点超过 FIRST_BATTLE_FAR_DEG（≈300km）：
         //    不走几千公里，视为该将早已率军进驻前线——军团改从离战场最近的己方据点起兵（300km 内没有就直接摆到战场）。
         //    守城战：一律就地，军团直接放进被守的城。
@@ -1845,6 +1850,10 @@ export class PlayerQuestSystem {
             if (enemyArmy) {
                 enemyArmy.setTroops(enemyTroops);
                 enemyArmy.isElite = true;
+                // 🔴 [2026-10-24 修「攻方卡片挂守方精锐」] 首战敌军由拟名／战场人物挂帅，没有武将精锐档案；
+                //    若按出身城兜底会拿被围城（守方）的精锐。与战场事件军团同一口径：番号按**本军势力**挂 eliteOverride。
+                const enemyElite = getExpeditionEliteConfig(enemyFactionId);
+                if (enemyElite) enemyArmy.eliteOverride = enemyElite;
                 if (enemyGeneralId) {
                     enemyArmy.generalId = enemyGeneralId;
                 }
@@ -2079,6 +2088,11 @@ export class PlayerQuestSystem {
         if (!enemyArmy) return;
         enemyArmy.setTroops(fbState.enemyTroops);
         enemyArmy.isElite = true;
+        // 🔴 [2026-10-24 修「攻方卡片挂守方精锐」] 首战敌军由拟名／战场人物挂帅，没有武将精锐档案；
+        //    若按出身城兜底会拿被攻城（守方）的精锐（例：葡萄牙攻伊瓜苏，攻方卡片显示「传教区军」）。
+        //    与战场事件军团同一口径：番号按**本军势力**挂 eliteOverride，精锐不随被攻的城。
+        const enemyElite = getExpeditionEliteConfig(fbState.enemyFactionId);
+        if (enemyElite) enemyArmy.eliteOverride = enemyElite;
         if (fbState.enemyGeneralId) enemyArmy.generalId = fbState.enemyGeneralId;
         if (fbState.enemyPortrait) enemyArmy.portraitPath = fbState.enemyPortrait;
         enemyArmy.setPosition(spawnPos.lat, spawnPos.lng);

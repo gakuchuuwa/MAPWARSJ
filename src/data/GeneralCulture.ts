@@ -122,6 +122,9 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_nikephoros_ii': 'BYZANTINE',   // 拜占庭｜尼基弗鲁斯二世｜据点 君士坦丁堡
     'bfe_niu_han': 'CENTRAL',   // 秦国｜隗嚣将 牛邯｜据点 天水
     'bfe_pisa_king': 'GREECE',   // 埃利斯｜皮萨王 潘塔琉斯｜据点 奥林匹亚
+    // 🔴 [2026-10-24 按史] 1641 姆博罗雷之战葡方主将 Manuel Pires（曼努埃尔·皮雷斯）：无据点战场人物，
+    //    文化按葡萄牙（军团＝帝国时代 × 葡萄牙，不再落到势力编制兜底）。
+    'bfe_portuguese_officer': 'PORTUGUESE',
     'bfe_prasenajit': 'INDIA',   // 拘萨罗｜拘萨罗王 波斯匿｜据点 舍卫城
     'bfe_prince_chao': 'CENTRAL',   // 武周｜王子朝｜据点 洛阳
     'bfe_pushyamitra': 'PURU',   // 巽伽｜巽伽王 普沙密多罗｜据点 华氏城
@@ -631,7 +634,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_roger_i': 'SICILIANS',   // 墨西公国｜罗杰｜据点 梅西纳
     'gen_romshlav': 'SLAVIC',   // 斯摩公国｜罗姆什拉夫｜据点 斯摩棱斯克
     'gen_rurik': 'VARANGIANS',   // 留里克｜留里克｜据点 拉多加
-    'gen_ryuzoji_takanobu': 'JAPAN',   // 南朝｜龙造寺隆信｜据点 太宰府
     'gen_sadashivrao': 'MUGHAL',   // 德里苏丹国｜萨达希夫｜据点 德里
     'gen_saguamanchica': 'MUISCA',   // 穆伊斯卡｜萨瓜曼奇卡｜据点 巴卡塔
     'gen_sang_nila_utama': 'MALAY',   // 马来｜桑尼拉乌他马｜据点 淡马锡

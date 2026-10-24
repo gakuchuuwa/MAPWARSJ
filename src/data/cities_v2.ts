@@ -1567,7 +1567,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
  // 镜像
-    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_g', lat: 31, lng: 102.4, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
+    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_g', lat: 31, lng: 102.4, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU', note: '🔴 [2026-10-24 复核] 风格保留 BASHU：美诺寨属大小金川（清 属四川，金川之役阿桂驻地），嘉绒藏区碉楼与川西汉式混居，项目以「巴蜀」承四川；驻将阿桂＝帝国时代四川军团即此链。' },
 
 
 
@@ -2571,7 +2571,7 @@ buildingStyle: 'TIBET', troops: 10000,
     },
     { id: 'city_dajianlu', name: '打箭炉', factionId: 'manzhou_d', lat: 30.0500, lng: 101.9600, type: 'stockade', region: 'SONG',
 buildingStyle: 'BASHU', troops: 10000, tier: 4,
-        note: '打箭炉；明正小城；定级依据§6.2：打箭炉非关隘（茶马互市商镇、清代厅治，1730筑城垣），按城市判级；人口查无可靠估计，落最小城档 → 城寨',
+        note: '打箭炉；明正小城；定级依据§6.2：打箭炉非关隘（茶马互市商镇、清代厅治，1730筑城垣），按城市判级；人口查无可靠估计，落最小城档 → 城寨。🔴 [2026-10-24 复核] 风格保留 BASHU：打箭炉（康定）明清属四川雅州府打箭炉厅，茶马互市汉藏混居，项目以「巴蜀」承四川（川峡/四川军团，坚赞德昌＝城堡时代川峡军团即此链）；藏式部分并入巴蜀代理，不另改青藏。',
     },
     // ── 2026-05-28 新增：波密(博窝/西藏) ──
     // ── 2026-05-28 新增：达擦(八宿宗/达察呼图克图/家族) ──
@@ -3639,7 +3639,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-10-20 主人令「武将文化一定要符合建筑风格，不然套的军团都是错的」] 古巴东部泰诺人村落「亚拉」：给泰诺反抗领袖哈土依一个建筑风格对口（TUPI 热带美洲原住民茅草村落）的据点
     { id: 'city_yala', name: '亚拉', factionId: 'taino_d', lat: 20.35, lng: -76.85, type: 'stockade', troops: 3000, region: 'AMERICA', buildingStyle: 'TUPI', note: '古巴东部泰诺人村落（Yara 一带，1510 年代西班牙征服古巴时泰诺反抗活动区；哈土依 1512 被西班牙烧死）' },
     { id: 'city_havana', name: '哈瓦那', factionId: 'taino', lat: 23.13, lng: -82.38, type: 'medium_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人' },
-    { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'small_city', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'AFRICA', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系' },
+    { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'small_city', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'BERBER', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系。🔴 [2026-10-24 按史] 建筑风格 AFRICA→BERBER：关切人（Guanches）是**柏柏尔人**的一支（语言属柏柏尔语族），加那利石屋—土堡与柏柏尔卡斯巴同系；AFRICA（西非马里泥土城）不符。无将驻守。' },
     { id: 'city_angra', name: '安格拉', factionId: 'yasuer', lat: 38.66, lng: -27.22, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌' },
     { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 10000, region: 'INCA', buildingStyle: 'SPANISH', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府。🔴 [2026-10-18 主人令] 建筑风格按建城者定为 SPANISH；旧「风格必须当地」令作废。' },
     { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'medium_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA' },

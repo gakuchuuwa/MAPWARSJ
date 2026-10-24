@@ -15968,6 +15968,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    // 🔴 [2026-10-24 按史] 尼古拉斯＝Nicolás Ñeenguirú，Concepción（伊比蒂拉库阿，今阿根廷 Concepción de la Sierra）
+    //    耶稣会传教区大酋长、1641 姆博罗雷守方统帅（生卒无载，活动可考 1639–1641）。游戏无 Concepción 据点，
+    //    按「离事发地最近的同文化据点」取伊瓜苏（TUPI，约 231 km）——伊瓜苏不是他镇守过的城。
     gualani: { generalId: 'gualani_nicolas', cityId: 'city_yiguasu', generalName: '尼古拉斯', portrait: '/assets/TUPI/gualani_nicolas.png' },
 
 

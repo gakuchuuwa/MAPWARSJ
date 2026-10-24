@@ -963,15 +963,27 @@ export class Army implements IBattleUnit {
         const onWaterNow = LandSeaSystem.isSeaAtMajority(this.position.lat, this.position.lng);
         const onWaterNext = LandSeaSystem.isSeaAtMajority(nextLat, nextLng);
         if (onWaterNow && !onWaterNext && LandSeaSystem.probeLandSea(nextLat, nextLng) !== 'pending') {
-            // 船队抵岸：改为陆军登陆，踏上 (nextLat, nextLng) 陆地并立即切换为陆军形态继续进发
-            this.position.lat = nextLat;
-            this.position.lng = nextLng;
-            this.lastDirection = targetHeading;
-            this.isOnSea = false;
-            this.seaFlipDist = 0;
-            this.seaFlipElapsed = 0;
-            this.applySeaOrLandSpeed(true, this.position, deltaTime);
-            return;
+            // 🔴 [2026-10-24 主人定「海上碰到一小点陆地就会变成陆军……除非了一大块陆地可以更换，
+            //     如果只是海边过一下，没必要吧」] 走的是**海路**（路点 sea 标记）时，这里不再当刻登陆：
+            //   海路边端点吸附在港口城坐标上（城在陆地），船在中途港、沿岸转弯时本来就会擦到岸边——
+            //   一下判陆就把整支舰队翻成陆军，下一帧又翻回舰队（实测 0.1 秒级闪烁）。
+            //   海路段内保持海军形态；真·大块陆地由 updateTerrainSpeed 的「脚下中心点连续判陆 ≥22km/3 秒」兜底上岸。
+            //   只有**不沿海路**（脱路直行、最后一段直奔战场/内陆城市）才保留 2026-10-11 的登陆闸门，
+            //   防「船开进内陆」的旧病复发。海路中途（含经过中途港/沿岸岬角、以及最后一段贴岸）一律不换形态；
+            //   到港上岸仍走 updateTerrainSpeed 原有的到站迟滞（≈3 秒，见 SiegeManager 到港注释）。
+            //   ⚠️ 奔敌城的最后一段由 LegionMarchPath.trimPathFromEnd 插了一个不带 sea 标记的收尾点，
+            //      `destination.sea` 不是 true ⇒ 走的就是本闸（与 2026-10-11 行为一致，非新改动）。
+            if (this.destination?.sea !== true) {
+                // 船队抵岸：改为陆军登陆，踏上 (nextLat, nextLng) 陆地并立即切换为陆军形态继续进发
+                this.position.lat = nextLat;
+                this.position.lng = nextLng;
+                this.lastDirection = targetHeading;
+                this.isOnSea = false;
+                this.seaFlipDist = 0;
+                this.seaFlipElapsed = 0;
+                this.applySeaOrLandSpeed(true, this.position, deltaTime);
+                return;
+            }
         }
         this.position.lat = nextLat;
         this.position.lng = nextLng;
@@ -1087,20 +1099,65 @@ export class Army implements IBattleUnit {
         //        · **海路标记**：只有「**前方连续海路**加起来够长（≥ SEA_FLIP_CONFIRM_DEG ≈22 公里）」才认它 → 当刻登船；
         //          几公里的短海路标记**直接不认**，形态不动（岸边来回切就此消失）；
         //        · **陆路标记**：照旧当刻上岸（绝不在陆路上变舰队）。
+        // 🔴 [2026-10-24 主人定「如果是海上，碰到一小点陆地就会变成陆军……除非了一大块陆地可以更换，
+        //     如果只是海边过一下，没必要吧」] **上岸**也补上与登船对称的距离闸：
+        //   旧写法在「海路标记」分支里另有一条 `onConfirmedLand` 一票否决 —— 用 isSeaAtMajority 九宫格
+        //   （半径 0.05°≈5.5km）判「确认陆地」，船离岸 5km 就被判成陆；而海路边端点又吸附在**港口城坐标**上
+        //   （城在陆地上，实测 172 个港城点 94.2% 判陆），于是航线每经过一个中途港都当帧变陆军、
+        //   下一帧又当帧变回舰队（0.1 秒级海陆来回闪）。它与本段「一段之内恒定」「上岸只发生在港口」自相矛盾。
+        //   现在改为：海路段内形态恒定；只有**脚下中心点**确实压在大块陆地上
+        //   （连续累计 ≥ SEA_FLIP_CONFIRM_DEG ≈22 公里 或 ≥ SEA_FLIP_CONFIRM_SEC 3 秒）才上岸 ——
+        //   「海边过一下」不再换形态。登船判据不变（前方连续海路够长 + 脚下不是陆地）。
+        //   ⚠️ 陆路标记（legSea === false）仍照 2026-09-24 定案当刻上岸，那是真的离开水路上了岸。
         const legSea = this.currentLegSea();
         this.prevLegSea = legSea;
-        if (legSea === true || legSea === false) {
-            const onConfirmedLand = !LandSeaSystem.isSeaAtMajority(pos.lat, pos.lng)
-                && LandSeaSystem.probeLandSea(pos.lat, pos.lng) !== 'pending';
-            const acceptedSea = legSea === true && !onConfirmedLand && this.seaStretchAheadDeg() >= Army.SEA_FLIP_CONFIRM_DEG;
-            if (legSea === false || onConfirmedLand || acceptedSea) {
-                this.isOnSea = legSea === true && !onConfirmedLand;
+        if (legSea === false) {
+            // 陆路标记：整段锁死陆军形态（绝不在陆路上变舰队）。
+            this.isOnSea = false;
+            this.seaFlipDist = 0;
+            this.seaFlipElapsed = 0;
+            this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
+            return;
+        }
+        if (legSea === true) {
+            const centerLand = LandSeaSystem.probeLandSea(pos.lat, pos.lng) === 'land';
+            if (this.isOnSea) {
+                // 已是舰队：只有「连续压在大块陆地上」才上岸，掠过港口/岸线不动形态。
+                if (centerLand) {
+                    this.seaFlipDist += step;
+                    // 时间闸只作「原地不动」的兜底：船贴岸转弯时会低速蠕行
+                    // （advanceNaval 的 turnLimitedAdvance），若时间项照常累计，3 秒在海上速度下
+                    // ≈66km，会远早于 22km 距离闸满足 → 又出现一次短促海→陆→海（底比斯-特洛伊）。
+                    // 有位移的帧只认距离闸；真原地不动（被按住/驻留/blocked）才走 3 秒兜底。
+                    if (step <= 1e-9) {
+                        this.seaFlipElapsed += Math.max(0, deltaTime);
+                    } else {
+                        this.seaFlipElapsed = 0;
+                    }
+                    if (
+                        this.seaFlipDist >= Army.SEA_FLIP_CONFIRM_DEG
+                        || this.seaFlipElapsed >= Army.SEA_FLIP_CONFIRM_SEC
+                    ) {
+                        this.isOnSea = false;
+                        this.seaFlipDist = 0;
+                        this.seaFlipElapsed = 0;
+                    }
+                } else {
+                    this.seaFlipDist = 0;
+                    this.seaFlipElapsed = 0;
+                }
+                this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
+                return;
+            }
+            // 尚未登船（港口岸上/刚离港）：前方连续海路够长且脚下不是陆地 → 当刻登船。
+            if (!centerLand && this.seaStretchAheadDeg() >= Army.SEA_FLIP_CONFIRM_DEG) {
+                this.isOnSea = true;
                 this.seaFlipDist = 0;
                 this.seaFlipElapsed = 0;
                 this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
                 return;
             }
-            // 海路标记太短（岸边那段）→ 不认，落到下面的掩膜判定（带迟滞）
+            // 海路标记太短（岸边那段）/ 脚下还是陆地 → 落到下面的掩膜判定（带迟滞）
         }
 
         const rawSea = LandSeaSystem.isSeaAtMajority(pos.lat, pos.lng);

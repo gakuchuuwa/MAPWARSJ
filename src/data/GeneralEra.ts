@@ -357,6 +357,9 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe3_43': 'antiquity',
     'bfe3_44': 'antiquity',
     'bfe_ajibaldo': 'imperial',
+    // 🔴 [2026-10-24 按史] 首战拟名／战场人物也要有时代，否则军团名落到势力编制兜底（1641 会显示「城堡时代」）。
+    //    bfe_portuguese_officer ＝ 1641 姆博罗雷之战葡方主将 Manuel Pires（曼努埃尔·皮雷斯）→ 帝国时代。
+    'bfe_portuguese_officer': 'imperial',
     'bfe2_dhanananda': 'antiquity',
     'bfe3_27': 'antiquity',
     'bfe_rasul_khan': 'imperial',
@@ -453,7 +456,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_kangxi': 'imperial',
     'gen_charles_xii': 'imperial',
     'gen_akechi_mitsuhide': 'castle',
-    'gen_ryuzoji_takanobu': 'castle',
     'gen_nanda_bayin': 'imperial',
     'gen_ishida_mitsunari': 'imperial',
     'gen_hemu': 'imperial',
