@@ -42,7 +42,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ansxi_aershake': 'PERSIAN',   // 安息帝国｜阿尔沙克｜据点 尼萨
     'anushidgin_yile': 'CENTRAL_ASIA',   // 伊勒巴斯｜伊勒｜据点 希瓦
     'anxi_guoxin': 'WESTERN',   // 安西｜郭昕｜据点 拨换城
-    'aodesuosi_aodesuosi': 'THRACIAN',   // 奥德索斯｜奥德索斯首领｜据点 瓦尔纳
     'aola_menglielun': 'NORTHEAST',   // 达斡尔｜孟烈伦｜据点 雅克萨
     'aolisha_anatabamo': 'INDIA',   // 奥里萨｜阿纳塔跋摩｜据点 普里
     'aolitai_shouling': 'INDIA',   // 奥里泰｜拉托尼斯｜据点 兰巴基亚
@@ -183,12 +182,10 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe3_27': 'PURU',   // 巽伽｜婆苏密多罗｜据点 华氏城
     'bfe3_28': 'JIANGNAN',   // 杨吴｜刘濞｜据点 广陵
     'bfe3_31': 'KOREA',   // 高句丽｜卫右渠｜据点 平壤
-    'bfe3_32': 'XIANBEI',   // 鞑靼｜白羊王｜据点 河套
     'bfe3_34': 'XIANBEI',   // 匈奴｜儿单于｜据点 头曼城
     'bfe3_35': 'CENTRAL',   // 唐国｜公孙敖｜据点 长安
     'bfe3_36': 'CENTRAL',   // 汉国｜李广利｜据点 长安
     'bfe3_38': 'XIANBEI',   // 匈奴｜且鞮侯单于｜据点 头曼城
-    'bfe3_39': 'KHITAN',   // 汉国｜开陵侯｜据点 轮台
     'bfe3_4': 'ROMA',   // 罗马帝国｜拉维利乌斯｜据点 罗马城
     'bfe3_43': 'KHITAN',   // 先零｜杨玉｜据点 允吾
     'bfe3_44': 'KHITAN',   // 乞伏｜靡忘｜据点 枹罕
@@ -789,7 +786,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'huizhou_zhugeliang': 'CENTRAL',   // 蜀国｜诸葛亮｜据点 南郑
     'huluo_jiyasiding': 'PERSIAN',   // 古尔｜吉亚斯丁｜据点 菲鲁兹库赫
     'humi_zhentan': 'TIBET',   // 护密｜真檀｜据点 昏度多
-    'hunxie_xuziwei': 'KHITAN',   // 汉国｜浑邪王｜据点 肩水金关
     'huo_songlaosheng': 'CENTRAL',   // 隋国｜宋老生｜据点 灵石关
     'huyan_peicen': 'CENTRAL_ASIA',   // 呼衍｜呼衍蒲奴｜据点 淖毛湖
     'iga_d_baididanbo': 'JAPAN',   // 伊贺｜百地丹波｜据点 名张
@@ -815,7 +811,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'jibin_jianisejia': 'PURU',   // 罽宾｜迦腻色迦｜据点 白沙瓦
     'jiduoluoxiya_xibiertiwusi': 'PERSIAN',   // 吉德罗西亚｜西比尔提乌斯｜据点 普拉
     'jie_sijinti': 'CENTRAL_ASIA',   // 羯族｜斯谨提｜据点 羯霜那
-    'jienei_jienei': 'AFRICA',   // 杰内｜杰内领主｜据点 杰内城
     'jieri_jieriwang': 'INDIA',   // 戒日帝国｜哈尔沙｜据点 曲女城
     'jilimi_takuna': 'NORTHEAST',   // 吉里｜塔库纳｜据点 囊哈儿
     'jilin_fujun': 'NORTHEAST',   // 大清｜富俊｜据点 宽城屯
@@ -1057,7 +1052,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'panyao_pandaxiao': 'JIANGNAN',   // 盘瑶｜盘大孝｜据点 临贺
     'pazhu_redangunsangpa': 'TIBET',   // 帕竹朗｜热丹衮桑帕｜据点 江孜
     'pelianci_hengli2': 'GERMANIC',   // 佩伦茨｜亨利二世｜据点 拉赫修院
-    'pidisha_pidisha': 'PURU',   // 毗底沙｜毗底沙邑长｜据点 桑奇
     'pinghai_laihuer': 'WEI',   // 隋国｜来护儿｜据点 漂渝津
     'pingnan_muying': 'BASHU',   // 大明｜沐英｜据点 滇池
     'pingyuan_yanzhenqing': 'WEI',   // 唐国｜颜真卿｜据点 平原城

@@ -1163,7 +1163,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
 
 
     { id: 'city_luhun', name: '涿邪山', factionId: 'han_d', lat: 43.58829, lng: 104.661255, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MONGOL' },
-    { id: 'city_chilechuan', name: '九原', factionId: 'qin', lat: 40.591029, lng: 110.044556, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI' },
+    { id: 'city_chilechuan', name: '九原', factionId: 'qin', lat: 40.591029, lng: 110.044556, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'WEI', note: '🔴 [2026-10-24 按史] 建筑风格 XIANBEI→WEI：九原是**秦九原郡／汉五原郡**治所（河套北岸汉式边郡城，夯土城郭＋高台），不是漠南营寨；同增山口径取 WEI（河朔）为最近代理，非精确。蒙恬北河防线经此，但其本人居上郡，故武将待核。' },
 
     { id: 'city_lanshi', name: '蓝氏城', factionId: 'guishuang', lat: 36.71248, lng: 67.08252, type: 'medium_city', troops: 10000, region: 'KUSHAN', buildingStyle: 'CENTRAL_ASIA' },
 

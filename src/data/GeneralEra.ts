@@ -46,7 +46,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'ansxi_aershake': 'antiquity',
     'anushidgin_yile': 'castle',
     'anxi_guoxin': 'feudal',
-    'aodesuosi_aodesuosi': 'antiquity',
     'aola_menglielun': 'imperial',
     'aolisha_anatabamo': 'castle',
     'aosiruowen_baodewen': 'castle',
@@ -387,7 +386,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe3_85': 'antiquity',
     'bfe3_87': 'antiquity',
     'bfe3_90': 'antiquity',
-    'bfe3_39': 'antiquity',
     'bfe2_zi_chang': 'antiquity',
     'bfe2_gongzi_ang': 'antiquity',
     'bfe_dou_jiande': 'feudal',
@@ -808,7 +806,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'huizhou_zhugeliang': 'antiquity',
     'huluo_jiyasiding': 'castle',
     'humi_zhentan': 'feudal',
-    'hunxie_xuziwei': 'antiquity',
     'huo_songlaosheng': 'feudal',
     'huyan_peicen': 'antiquity',
     'iga_d_baididanbo': 'imperial',
@@ -830,7 +827,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'jibei_wangkuang': 'antiquity',
     'jibin_jianisejia': 'antiquity',
     'jie_sijinti': 'feudal',
-    'jienei_jienei': 'feudal',
     'jieri_jieriwang': 'feudal',
     'jilimi_takuna': 'castle',
     'jilin_fujun': 'imperial',
@@ -1066,7 +1062,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'panyao_pandaxiao': 'castle',
     'pazhu_redangunsangpa': 'castle',
     'pelianci_hengli2': 'castle',
-    'pidisha_pidisha': 'antiquity',
     'pinghai_laihuer': 'feudal',
     'pingnan_muying': 'castle',
     'pingyuan_yanzhenqing': 'feudal',
@@ -1498,7 +1493,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe3_34': 'antiquity',   // 名将双身份：儿单于
     'bfe3_38': 'antiquity',   // 名将双身份：且鞮侯单于
     'bfe3_64': 'antiquity',   // 名将双身份：北单于
-    'bfe3_32': 'antiquity',   // 名将双身份：白羊王
     'bfe3_48': 'antiquity',   // 名将双身份：呼韩邪单于
     'bfe3_69': 'antiquity',   // 名将双身份：华雄
     'bfe3_70': 'antiquity',   // 名将双身份：刘繇

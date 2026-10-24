@@ -212,7 +212,7 @@ export class RecruitmentSystem {
      */
     private recruitSeasonGarrison(cities: ReturnType<CityManager['getCities']>): void {
         for (const city of cities) {
-            if (!city.factionId || city.factionId === '' || city.factionId === 'panjun') continue;
+            if (!city.factionId || city.factionId === '' || city.factionId === 'panjun' || city.factionId === 'panshu') continue;
             // 🔴 [2026-09-12 主人定] 战场已独立出据点体系（`src/data/Battlefields.ts`）→
             //    据点一律是驻军据点、一律参与每季募兵。（原「战场不补驻军」的特判已撤销。）
 
@@ -319,7 +319,7 @@ export class RecruitmentSystem {
         const candidates: SpawnCandidate[] = [];
 
         for (const city of cities) {
-            if (!city.factionId || city.factionId === 'panjun') continue;
+            if (!city.factionId || city.factionId === 'panjun' || city.factionId === 'panshu') continue;
             if (!spawnTypes.includes(city.type)) continue;
             if (this.cityHasActiveLegion(city.id)) continue;
             if (this.isCityGarrisonCommitted(city.id)) continue;

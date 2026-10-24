@@ -72,8 +72,8 @@ export function rollMeleeOwners(): { owners: Map<string, string>; unplaced: stri
         const list = [...set];
         owners.set(cityId, list[Math.floor(Math.random() * list.length)]);
     }
-    // 🔴 [2026-10-24 主人「叛军绝对不能是义。叛军是旗帜上没有字」] 暂不把无将据点并进 panjun（panjun 旗号显示「义」＝起义，不是叛军）；
-    // 叛军的无字旗要用单独的「无字」势力 id 实现，下一步再做。
+    // 🔴 [2026-10-24 主人「叛军是旗帜上没有字、不能出征」] 无将据点＝叛军 panshu（无字旗、不征兵、不出征），不是义军 panjun
+    for (const c of CITIES_V2) if (!owners.has(c.id)) owners.set(c.id, 'panshu');
     return { owners, unplaced };
 }
 

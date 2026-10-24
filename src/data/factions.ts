@@ -1042,6 +1042,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'zhuerqi', name: '主儿乞' },
     { id: 'panjun', name: '起义' },
+  // 🔴 [2026-10-24 主人令「叛军是旗帜上没有字、不能出征」] 叛军不是义军：无字旗（随机叛军旗面）、不征兵、不出征；乱斗开局给「无将据点」兜底
+  { id: 'panshu', name: '叛军' },
 
           // 倒马关·常山郡
 

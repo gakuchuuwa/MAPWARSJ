@@ -231,7 +231,7 @@ export class GameApp {
             CityAssetManager.bindFactionManager(this.factionManager);
 
             const _PANJUN_ID = 'pan' + 'jun';
-            const activeFactions = [...new Set([...CITIES.map(c => c.factionId), _PANJUN_ID])];
+            const activeFactions = [...new Set([...CITIES.map(c => c.factionId), _PANJUN_ID, 'panshu'])];
             const flagCities = CITIES.map((c) => ({
                 lat: c.lat,
                 lng: c.lng,

@@ -176,7 +176,6 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe3_85: { birth: 300, death: 350, kaoju: '推定' },
     bfe3_87: { birth: 300, death: 380, kaoju: '推定' },
     bfe3_90: { birth: 385, death: 410, kaoju: '推定' },
-    bfe3_39: { birth: -100, death: -60, kaoju: '推定' },
     bfe2_zi_chang: { birth: -560, death: -500, kaoju: '推定' },
     bfe2_gongzi_ang: { birth: -390, death: -330, kaoju: '推定' },
     bfe_dou_jiande: { birth: 573, death: 621, kaoju: '推定' },
@@ -1093,7 +1092,6 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     chile_hulvjin: { birth: 488, death: 567 },  // 斛律金
     chijin_qiewangshijia: { birth: 1395, death: 1446, kaoju: '推定' },  // 且旺失加
     yeli_yeliwangrong: { birth: 995, death: 1043, kaoju: '推定' },  // 野利旺荣
-    hunxie_xuziwei: { birth: -155, death: -95, kaoju: '推定' },  // 徐自为
     guazhou_zhangshougui: { birth: 684, death: 740 },  // 张守珪
     kang_liangshidou: { birth: 570, death: 628 },  // 梁师都
     yingli_jilasiyi: { birth: 1020, death: 1075, kaoju: '推定' },  // 籍辣思义
@@ -1393,12 +1391,9 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     yilisi_yifeituosi: { birth: -800, death: -750, kaoju: '推定' },  // 伊菲托斯
     nuowei_halaer: { birth: 850, death: 933, kaoju: '推定' },  // 哈拉尔
     keernuwaye_geladelong: { birth: 450, death: 510, kaoju: '推定' },  // 格拉德隆
-    aodesuosi_aodesuosi: { birth: -400, death: -335, kaoju: '推定' },  // 奥德索斯首领
     disidelusi_disidelusi: { birth: 150, death: 215, kaoju: '推定' },  // 蒂斯德鲁斯督造
     yisatisi_falukezhade: { birth: 625, death: 685, kaoju: '推定' },  // 法鲁克扎德
-    pidisha_pidisha: { birth: -200, death: -140, kaoju: '推定' },  // 毗底沙邑长
     jiaye_punafamo: { birth: 415, death: 475, kaoju: '推定' },  // 普那伐摩
-    jienei_jienei: { birth: 950, death: 1020, kaoju: '推定' },  // 杰内领主
     gen_basarab_i: { birth: 1270, death: 1352 },  // 巴萨拉布
     muwaxide_yakubu: { birth: 1160, death: 1199, kaoju: '推定' },  // 雅库布
     varendra_devapala: { birth: 788, death: 850, kaoju: '推定' },  // 提婆波罗
@@ -1510,7 +1505,6 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe3_34: { birth: -120, death: -96, kaoju: '推定' },  // 儿单于
     bfe3_38: { birth: -130, death: -96, kaoju: '推定' },  // 且鞮侯单于
     bfe3_64: { birth: 40, death: 89, kaoju: '推定' },  // 北单于
-    bfe3_32: { birth: -220, death: -127, kaoju: '推定' },  // 白羊王
     bfe3_48: { birth: -100, death: -31, kaoju: '推定' },  // 呼韩邪单于
     bfe3_69: { birth: 155, death: 191, kaoju: '推定' },  // 华雄
     bfe3_70: { birth: 157, death: 198, kaoju: '推定' },  // 刘繇
