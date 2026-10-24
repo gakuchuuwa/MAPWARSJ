@@ -16,7 +16,7 @@ import { getGeneralCulture } from '../src/data/GeneralCulture';
 import { FACTION_COMPOSITIONS } from '../src/data/FactionCompositions';
 import { LEVEL_2_CIV_62_LEGIONS } from '../src/data/level2Civ62Legions';
 import { LEVEL_3_LEGIONS } from '../src/data/level3CustomLegions';
-import { getFactionLegionComposition } from '../src/types/CultureFormations';
+import { getFactionLegionComposition, getLegionNameOfGeneral } from '../src/types/CultureFormations';
 import { getGeneralEraSubtagLegion } from '../src/data/GeneralEraSubtags';
 
 const L2 = LEVEL_2_CIV_62_LEGIONS as any[];
@@ -32,7 +32,7 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
         total++;
         const era = (GENERAL_ERA as any)[g.generalId];
         const culture = getGeneralCulture(g.generalId);
-        const legion = getGeneralOwnLegionName(g.generalId) ?? (FACTION_COMPOSITIONS as any)[fid]?.legionName;
+        const legion = getLegionNameOfGeneral(fid, g.generalId) ?? getGeneralOwnLegionName(g.generalId) ?? (FACTION_COMPOSITIONS as any)[fid]?.legionName;
         const who = `${fid}｜${fname(fid)}｜${g.generalName}`;
         if (!era) { problems.push(`${who}｜缺时代`); continue; }
         if (!culture) { problems.push(`${who}｜缺文化`); continue; }

@@ -20,6 +20,26 @@ import { animalDeOf } from './Scene13Animals';
 import { gunpowderTrailSprite } from './Scene13SpriteCache';
 import { loopRate } from './Scene13UnitTables';
 import { syncDeCityGround } from './Scene13CityLayout';
+import type { WarBank } from './Scene13Types';
+
+/** 该动作的「整组（8 向）都到齐」判定：倒戈兵的本方染色素材是分批到的，整组齐了才换色，免得一队人花斑 */
+function wholeSpriteSet(arr?: CanvasImageSource[]): arr is CanvasImageSource[] {
+    if (!arr || arr.length < 8) return false;
+    for (let d = 0; d < 8; d++) if (!arr[d]) return false;
+    return true;
+}
+
+/**
+ * 取某个动作某一向的帧图（[2026-10-24] 倒戈兵兜底，见 render 里的长说明）：
+ * 本方整组齐 → 本方；否则对面整组齐 → 对面（同兵种两方素材完全一样、只差染色）；都没齐 → 沿用旧算法，本方这一向优先。
+ */
+function spriteFrameOf(b: WarBank | undefined, set: string, f: number, dir: number): CanvasImageSource | undefined {
+    const mine = b?.sets[set]?.[f];
+    const other = b?.sets[set]?.[1 - f];
+    if (wholeSpriteSet(mine)) return mine[dir];
+    if (wholeSpriteSet(other)) return other[dir];
+    return mine?.[dir] ?? other?.[dir];
+}
 
 export function render(this: Scene13WarLayer): void {
     const ctx = this.ctx, cv = this.canvas;
@@ -264,22 +284,27 @@ export function render(this: Scene13WarLayer): void {
         const _tu0 = performance.now();
         const b = this.bank[v.key];
         if (!b) continue;
-        // 🔴 [2026-10-24 主人报障「并战计夺兵，施展后背叛的兵不显示」] 兵模按「兵种 × 阵营」分别染色加载，
-        //    倒戈兵保留敌方兵种；我方那套帧集是倒戈时才补载的（见 Scene13WarLayer.triggerScene13Skill），
-        //    加载完之前本方阵营取不到这张图，直接 `continue` 会让整队倒戈兵凭空消失。
-        //    同兵种两方素材完全一样、只差染色 ⇒ 本方缺帧时先借用对面那一份顶上，染色到位后自然换回。
-        const img = b.sets[v.set]?.[v.f]?.[v.dir] ?? b.sets[v.set]?.[1 - v.f]?.[v.dir];
+        // 🔴 [2026-10-24 主人报障「并战计夺兵，施展后背叛的兵不显示」]
+        //    ① 兵模按「兵种 × 阵营」分别染色加载；倒戈兵保留敌方兵种，我方那套帧集是倒戈时才补载的
+        //       （见 Scene13WarLayer.triggerScene13Skill）——同兵种两方素材完全一样、只差染色，
+        //       所以本方没齐时先借对面那一份顶上，染色到位后自然换回（取图见 spriteFrameOf）。
+        //    ② 所选动作两边都还没这一向（idle/melee 是开战后异步补的，倒戈兵刚落地正站桩用的就是 idle）
+        //       ⇒ 退回**最先就绪的 move 帧**，宁可姿态差一下，也绝不让兵模整队隐形。
+        //       ⚠ 帧数 / dyn 帧框必须跟着实际用的动作一起换（不同动作的帧数与 hotspot 不同，混用会切错帧框）。
+        let drawSet = v.set;
+        let img = spriteFrameOf(b, drawSet, v.f, v.dir);
+        if (!img) { drawSet = 'move'; img = spriteFrameOf(b, drawSet, v.f, v.dir); }
         if (!img) continue;
         const wt = WAR_TYPES[v.key];
         // [2026-08-15 全帧修复] 各动作帧数不同（S10DB=8，AoE2=30~60），
         // 帧宽按该动作实际帧数算、帧号按「每秒 8 相位」换算，循环节奏与原 8 帧素材一致。
-        const n = b.frames[v.set] ?? 8;
-        const fr = v.set === 'die'
+        const n = b.frames[drawSet] ?? 8;
+        const fr = drawSet === 'die'
             ? Math.min(n - 1, Math.floor(v.fr / DEATH_ANIM * n))   // 死亡：DEATH_ANIM 内播完 n 帧，冻结末帧
-            : (v.set === 'move' || v.set === 'idle' || v.st === 0)
-                ? Math.floor(v.fr * n * loopRate(b, v.set) / 8) % n // 移动/待命/走路：循环
+            : (drawSet === 'move' || drawSet === 'idle' || v.st === 0)
+                ? Math.floor(v.fr * n * loopRate(b, drawSet) / 8) % n // 移动/待命/走路：循环
                 : Math.min(n - 1, Math.floor(v.fr * n / 8));       // 攻击/近战/冲锋：播满停末帧（ph=8 不再溢出回第一帧）
-        const dm = b.dyn?.[v.set]?.[v.dir];
+        const dm = b.dyn?.[drawSet]?.[v.dir];
         // 🔴 DE 素材 meta 未就绪：跳过本帧，S10DB 正方形假设（fh=84）会切错 DE 非正方形 strip（144px 等）
         if (!dm && b.isDE) continue;
         if (v.a < 1) ctx.globalAlpha = v.a;

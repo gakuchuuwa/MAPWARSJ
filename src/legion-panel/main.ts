@@ -91,7 +91,7 @@ const STYLE_LABELS: Record<string, string> = {
     SASANIAN: '波斯', PERSIAN: '阿契美尼德',
     ATHENIANS: '雅典', SPARTANS: '斯巴达', MACEDONIAN: '马其顿',
     THRACIAN: '色雷斯',
-    TIBET: '青藏', WESTERN: '西域', XIANBEI: '漠南鲜卑', GREECE: '希腊',
+    TIBET: '青藏', WESTERN: '西域', XIANBEI: '漠南', GREECE: '希腊',
 };
 
 const cn = (id: string) => (WAR_TYPES as Record<string, { name?: string }>)[id]?.name ?? id;

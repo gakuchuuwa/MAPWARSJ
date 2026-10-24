@@ -57,7 +57,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //   ＝ 与二级【古典时代赫梯军团】（奥斯曼·古典·安纳托利亚）同名同史，重复，已删。
     //   HITTITES 文化区指针与弗里吉亚／吕底亚／卡帕多西亚三家势力指针仍写「古典时代赫梯军团」，
     //   取数顺序 一级→二级→三级，现在自然落到留下来的那支二级军团。
-    // 🔴 [2026-10-05 主人定「按地区划分，删除古典鲜卑。删除」] —— 已删「古典时代鲜卑军团」。
+    // 🔴 [2026-10-05 主人定「按地区划分，删除古典鲜卑。删除」] —— 已删「古典时代漠南军团」。
     //    原先挂它的 12 个势力已按主人令改套「古典时代羌族军团」；
     //    其文化区 `NORTHEAST`（7 座）默认军团一并改指「古典时代羌族军团」。
     // 🔴 [2026-10-05 主人令「删掉 封建时代柔然军团，武将归到封建漠北」] —— 已删「封建时代柔然军团」。
@@ -131,8 +131,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '帝国时代苏丹亲兵军团',
         formationMode: 'echelon',
         slots: [
-            { type: 'janissary', count: 4 },
-            { type: 'elite_guardsman', count: 3 },
+            { type: 'elite_guardsman', count: 4 },
+            { type: 'janissary', count: 3 },
             { type: 'cav_archer_heavy', count: 2 },
         ],
         regions: ['OTTOMAN'],

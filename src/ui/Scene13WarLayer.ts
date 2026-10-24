@@ -3511,7 +3511,10 @@ export class Scene13WarLayer {
                 for (let d = 0; d < 8; d++) {
                     const url = urls[d % urls.length];
                     if (!url) continue;
-                    const blocking = slot === 'move' || slot === 'atk';
+                    // 🔴 [2026-10-24] 开场那轮只为 move/atk 冻画面（见下面长注释）；**开战之后**才补载的
+                    //    兵种（并战·夺兵倒戈来的敌方兵种就是这种）全套都按优先加载：本场的 deferred 补载
+                    //    队列可能有几百帧，排在队尾的话倒戈兵站桩用的 idle 帧十几秒都不到位 —— 人一直画不出来。
+                    const blocking = slot === 'move' || slot === 'atk' || this.assetsReadyOnce;
                     const inc = blocking ? 1 : 0;
                     /**
                      * 🔴 [2026-08-26 按标准「游戏合理」修·进场冻 7 秒] 只有**开场立刻要用**的

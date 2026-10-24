@@ -2834,16 +2834,16 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代土耳其军团', civ: '土耳其', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
-        formationMode: 'balance_yoke',
+        formationMode: 'echelon',
         shipId: 'ELITE_CANNON_GALLEON',
         commanderUnit: 'hero_mustafapasha',
         // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」自造规则无效。
         //    4 档＝苏丹亲兵精锐（主人令「4 档放城堡精锐」）；3 档恢复具装枪骑兵高级。
         //    苏丹亲兵基础档改放新建三级军团「帝国时代苏丹亲兵军团」3 档。
         slots: [
-            { type: 'elite_janissary', count: 4 },
+            { type: 'elite_guardsman', count: 4 },
+            { type: 'elite_janissary', count: 3 },
             { type: 'cav_archer_heavy', count: 2 },
-            { type: 'elite_guardsman', count: 3 },
         ],
     },
 
@@ -4490,13 +4490,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代鲁米利亚军团', civ: '色雷斯', age: 'imperial', deStyle: 'THRACIAN', region: 'THRACIAN' as RegionType,
         buildingStyle: 'THRACIAN',
         castleId: 'THRACIAN_CASTLE_AGE3', castleName: '色雷斯 罗多彼山蛮族巨石堡',
-        formationMode: 'balance_yoke',
+        formationMode: 'echelon',
         shipId: 'GALLEON',
         commanderUnit: 'hero_thracian_chieftain',
         slots: [
-            { type: 'janissary', count: 4 },
+            { type: 'halberdier', count: 4 },
+            { type: 'janissary', count: 3 },
             { type: 'cav_archer_heavy', count: 2 },
-            { type: 'halberdier', count: 3 },
         ],
     },
 
@@ -4647,12 +4647,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 漠南　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 漠南 · 古典时代 · 古典时代鲜卑军团　（本次新建）────────────────
+    // ── 漠南 · 古典时代 · 古典时代漠南军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑射为主
     //    描述正文（主人原文，一字未改）：（盛乐、平城；盛乐厚重夯土环形城垣、阴山山口条石防御营卡；鲜卑反曲硬木复合弓、双刃精铁短矛、鸣镝长程骑射骚扰与高机动马群迂回大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代鲜卑军团', civ: '漠南鲜卑', age: 'antiquity', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
+        name: '古典时代漠南军团', civ: '漠南', age: 'antiquity', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
         buildingStyle: 'XIANBEI',
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'crescent',
@@ -4669,7 +4669,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（上京临潢府、中京大定府；临潢府汉城皇城双重石土城堞、巴林左旗舍利八角密檐实心砖塔；人马具装“铁林”全套铁铠、冷锻长刺矛与重型骨朵、诱敌深入长途包抄骑兵大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代契丹军团', civ: '漠南鲜卑', age: 'feudal', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
+        name: '封建时代契丹军团', civ: '漠南', age: 'feudal', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
         buildingStyle: 'XIANBEI',
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'fish_scale',
@@ -4686,7 +4686,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（应昌、开平；开平卫城残存方石台基城垣、达里诺尔湖畔石木深壕野战寨堡；重型反曲角弓抛射、大马士革锋刃长柄弯刀、草原残部背水结车垒阻击突击大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代漠南蒙古军团', civ: '漠南鲜卑', age: 'castle', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
+        name: '城堡时代漠南蒙古军团', civ: '漠南', age: 'castle', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
         buildingStyle: 'XIANBEI',
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'fish_scale',
@@ -4703,7 +4703,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（达里诺尔、土默川；阴山古道土石扼守关垒、达延汗移动汗帐木石护卫营台；精钢柳叶鳞甲骑兵、破甲骨镞强弓、大航海早期六万户平原大会战与应州铁骑包合大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代察哈尔军团', civ: '漠南鲜卑', age: 'imperial', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
+        name: '帝国时代察哈尔军团', civ: '漠南', age: 'imperial', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
         buildingStyle: 'XIANBEI',
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'triangle',

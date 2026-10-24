@@ -1894,7 +1894,7 @@ export class CombatUI {
 
     /**
      * [2026-09-19 主人定] 将军团名称拆分为「时代」与「军团本体」两行
-     * 如「古典时代鲜卑军团」-> 行1「古典时代」，行2「鲜卑军团」
+     * 如「古典时代漠南军团」-> 行1「古典时代」，行2「鲜卑军团」
      */
     private splitLegionEraAndName(rawName: string): [string, string] {
         if (!rawName) return ['', ''];

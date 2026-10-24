@@ -18,7 +18,7 @@ import {
     markLegionAnnihilationFeed,
     resolveAnnihilationCityName,
 } from '../LegionAnnihilationFeed';
-import { markCityGeneralDefeatedInField } from '../FieldDefeatRecord';
+import { markCityGeneralDefeatedInField, FIELD_YIELD_GAME_MODES } from '../FieldDefeatRecord';
 import { getCityGeneralsRaw } from '../../data/FactionGenerals';
 import { getGameMode } from '../../data/generalOnStage';
 import type { CityManager } from '../../world/CityManager';
@@ -376,7 +376,9 @@ function startFieldBattleBetween(
         // 🔴 [2026-10-24 主人令「上一次战斗，野战中刚刚打败了这个据点的武将」]
         //    野战刚打掉据点武将 → 记在该据点上，供攻方随后抵达该据点时判「不战而下」。
         //    只记败方参战军团里**带着该据点锚定武将**的那些：那才是「被打掉武将的据点」。
-        if (winnerFactionId && getGameMode() === 'melee') {
+        //    🔴 [2026-10-24 下午 主人「你觉得百岁模式也该是这样」] 乱斗 ＋ 百岁都记（剧本不记）。
+        const fieldDefeatMode = getGameMode();
+        if (winnerFactionId && !!fieldDefeatMode && FIELD_YIELD_GAME_MODES.has(fieldDefeatMode)) {
             for (const defeated of deps.getArmies()) {
                 if (defeated.getFactionId() === winnerFactionId) continue;
                 if (!fieldBattleField.hasParticipant(defeated.id)) continue;

@@ -257,11 +257,14 @@ export const LAYER3_CUSTOM_GROUPS: readonly CultureGroup[] = [
     //    漠北蒙古从此只有**二级 `MONGOL` 一格**。
     // 🔴 [2026-10-05 主人定「三级新建一个漠南鲜卑。漠南鲜卑。漠南鲜卑。跟青藏，西域一个意思」]
     //    三级专属定制风格（与青藏 TIBET／西域 WESTERN 同一性质：DE 里没有对应可玩文明，由本工程自建）。
+    // 🔴 [2026-10-24 主人正名「没有鲜卑文化，是漠南文化。文化都是泛称，哪有专指呀」]
+    //    66 文化全是**泛称地域／文化圈**，不是单一民族；XIANBEI 这一格＝**漠南**（阴山—锡林郭勒—河套），
+    //    匈奴、鲜卑、乌桓、白狄、奚、汪古、沙陀等漠南诸部都归这条文化，不再按民族细分。
     {
-        group: '⛺ 漠南鲜卑与塞外王帐',
+        group: '⛺ 漠南与塞外王帐',
         deStyle: 'ASIA',
         branches: [
-            { key: 'XIANBEI', deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '⛺ 漠南鲜卑（塞外王帐石堡）' },
+            { key: 'XIANBEI', deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '⛺ 漠南（塞外王帐石堡）' },
         ],
     },
     // 🔴 [2026-10-05 主人令「建立一个三级建筑风格，希腊」]

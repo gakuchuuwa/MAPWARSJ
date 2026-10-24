@@ -269,7 +269,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "helian": {
-        legionName: "古典时代鲜卑军团",
+        legionName: "古典时代漠南军团",
         legionType: "sub",
     },
     "xueyantuo": {
@@ -301,7 +301,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xiongnu": {
-        legionName: "古典时代鲜卑军团",
+        legionName: "古典时代漠南军团",
         legionType: "sub",
     },
     "cheshihou": {
@@ -317,7 +317,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "baidi": {
-        legionName: "古典时代鲜卑军团",
+        legionName: "古典时代漠南军团",
         legionType: "sub",
     },
     "yada": {
@@ -802,7 +802,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "wuhuan": {
-        legionName: "古典时代鲜卑军团",
+        legionName: "古典时代漠南军团",
         legionType: "region",
     },
     "fuyu": {
@@ -810,7 +810,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "murong": {
-        legionName: "古典时代鲜卑军团",
+        legionName: "古典时代漠南军团",
         legionType: "region",
     },
     "yilou": {
@@ -1008,6 +1008,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xixiliwangguo": {
+        legionName: "城堡时代诺曼军团",
+        legionType: "sub",
+    },
+    // 🔴 [2026-10-24 主人授权新增] 撒丁阿尔博雷亚判官国：同文化（SICILIANS）× 城堡时代
+    "aboerleiya": {
         legionName: "城堡时代诺曼军团",
         legionType: "sub",
     },

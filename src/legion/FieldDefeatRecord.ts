@@ -3,12 +3,17 @@
  *
  * 🔴 [2026-10-24 主人令]
  *   主人原话：「刚才的逻辑有个前提，就是上一次战斗，野战中刚刚打败了这个据点的武将。」
- *   · 野战结束时记：败方参战军团带着**该据点锚定的武将**（`homeCityId ?? sourceCityId` 且
- *     `isGeneralAnchoredAtCity`）→ 在据点记「胜方势力」；
+ *   · 野战结束时记：败方参战军团带着**该据点锚定的武将**（`homeCityId ?? sourceCityId`，
+ *     且该武将条目的 `cityId` 就是这座据点）→ 在据点记「胜方势力」；
  *   · 攻城开战前判：攻方势力＝记录的胜方势力、守方这一仗无将出场、攻方兵力 ≥ 守军 5 倍、
- *     据点不是关隘、乱斗模式 → 不战而下（守军置 1000，播报「开城归附」）；
+ *     据点不是关隘、**乱斗或百岁模式** → 不战而下（守军置 1000，播报「开城归附」）；
  *   · **只供该据点的下一场攻城用**：这场攻城一开（不论哪一方来、也不论中不中），取过一次即失效
  *     —— 对应「上一仗」这个前提。
+ *
+ * 🔴 [2026-10-24 下午 主人「你觉得百岁模式也该是这样」] 百岁模式同样适用：
+ *   百岁的空城本来就多（将未登场/已退场），若只按「无将」免战会白送；带上
+ *   「刚被打掉武将」这个野战前提，只在「野战决胜后乘胜拔城」这一种情形生效，不会滥发。
+ *   剧本模式仍不适用（史实战役必须打，且首战攻城另有闸门）。
  *
  * 纯运行时记录：不进存档、不占 City / Army 字段（与 `DefeatCooldown` 同一做法）。
  */
@@ -16,6 +21,9 @@ export interface CityFieldDefeatRecord {
     /** 这场野战的胜方势力：只有它能受降（第三方跑来不算白捡） */
     winnerFactionId: string;
 }
+
+/** 生效模式：乱斗 ＋ 百岁（剧本不适用；编辑器/离线未注入模式＝null 也不适用） */
+export const FIELD_YIELD_GAME_MODES: ReadonlySet<string> = new Set(['melee', 'centenarian']);
 
 const records = new Map<string, CityFieldDefeatRecord>();
 
@@ -59,18 +67,19 @@ export interface FieldYieldCheckInput {
     defenderTroops: number;
     /** 据点类型（'pass' 关隘不适用） */
     cityType: string;
-    /** getGameMode()：只乱斗模式生效 */
+    /** getGameMode()：乱斗／百岁模式生效（见 FIELD_YIELD_GAME_MODES） */
     gameMode: string | null;
     /** 剧本首战攻城禁止跳过战斗 */
     isFirstBattleSiege: boolean;
 }
 
 /**
- * 乱斗「野战余威受降」判定：
- * 该据点刚在野战中被这个势力打掉武将 + 守方这一仗无将 + 攻方兵力 ≥ 守军 5 倍 + 非关隘 + 乱斗模式。
+ * 「野战余威受降」判定：
+ * 该据点刚在野战中被这个势力打掉武将 + 守方这一仗无将 + 攻方兵力 ≥ 守军 5 倍 + 非关隘 + 乱斗/百岁模式。
  */
 export function canYieldCityFromFieldDefeat(input: FieldYieldCheckInput): boolean {
-    return input.gameMode === 'melee'
+    return !!input.gameMode
+        && FIELD_YIELD_GAME_MODES.has(input.gameMode)
         && !input.isFirstBattleSiege
         && input.cityType !== 'pass'
         && !!input.fieldDefeatWinnerFactionId

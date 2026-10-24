@@ -34,6 +34,8 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 佛罗伦萨：Bande Nere 黑带军团（乔凡尼·德·美第奇）→ T4
     tuosikana: { name: '黑带军团', tier: 4 },          // 佛罗伦萨·洛伦佐侧：乔凡尼·德·美第奇 Bande Nere
     xixiliwangguo: { name: '萨金特卫兵', tier: 3 },          // 巴勒莫·腓特烈二世：诺曼军士步兵（DE Serjeant）
+    // 🔴 [2026-10-24 主人授权新增] 撒丁阿尔博雷亚判官国·埃莱奥诺拉：她条目的专属精锐「岛屿佣兵」T4 同番号
+    aboerleiya: { name: '岛屿佣兵', tier: 4 },
     // 格拉纳达·穆罕默德：纳斯里摩尔骑兵风土 → T3（禁造「阿兰布拉卫」）
     nasier: { name: '摩尔骑', tier: 3 },
     leangongguo: { name: '莱昂骑士', tier: 4 },          // 萨拉曼卡·阿方索九世

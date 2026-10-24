@@ -860,7 +860,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     },
     { id: 'city_yinzhou', name: '绥德', factionId: 'wei', lat: 37.5119, lng: 110.2396, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
-    { id: 'city_dongshengzhou', name: '增山', factionId: 'ming_d', lat: 39.810643, lng: 109.959412, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'XIANBEI', note: '定级依据§6.2：增山非关隘（西汉西河郡36县之一），按城市判级；故城位置未定、人口查无可靠估计，落最小城档 → 城寨' },
+    { id: 'city_dongshengzhou', name: '增山', factionId: 'ming_d', lat: 39.810643, lng: 109.959412, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'WEI', note: '定级依据§6.2：增山非关隘（西汉西河郡36县之一），按城市判级；故城位置未定、人口查无可靠估计，落最小城档 → 城寨。🔴 [2026-10-24 按史] 建筑风格 XIANBEI→WEI：增山是**西汉西河郡县城**（并州，汉式夯土城郭＋高台阙楼），不是鲜卑营寨；WEI＝河朔（中原高台阙楼）为最近代理，非精确；无将驻守，不影响武将链。' },
 
 
 
@@ -1518,7 +1518,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
     { id: 'city_chijin', name: '赤金堡', factionId: 'ming_d', lat: 40.000221, lng: 97.437744, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', mirror: true, note: '🔴 [2026-10-18 按史] 赤金堡为明代西北卫所夯土外包砖实心关堡；与嘉峪关同属河西，项目无 HEXI/MING 独立分支，用 KHITAN（标签「河西（边墙要塞）」）作河西边墙代理，键名旧、非辽式。' },
 
-    { id: 'city_dafeichuan', name: '大非川', factionId: 'xihai_d', lat: 36.1379, lng: 100.7611, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' },
+    { id: 'city_dafeichuan', name: '大非川', factionId: 'xihai_d', lat: 36.1379, lng: 100.7611, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', note: '🔴 [2026-10-24 主人授权 按史] 建筑风格 KHITAN（河西边墙）→TIBET（青藏藏式）：大非川在青海共和（青藏高原东缘、吐谷浑故地），670 年唐蕃大非川之战吐蕃论钦陵大破薛仁贵于此，本地建筑属青藏系；原 KHITAN 会把吐蕃名将带成河西军团。' },
 
 
 
@@ -2265,7 +2265,7 @@ export const CITIES_V2: CityDataV2[] = [
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：凯鲁万：突尼斯，柏柏尔／阿格拉布王朝都城（region=BERBER）
     { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：的黎波里：利比亚，柏柏尔—马格里布东部
-    { id: 'city_deliboli', name: '的黎波里', factionId: 'osman', lat: 32.88, lng: 13.19, type: 'stockade', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER', note: '定级依据§6.2：的黎波里非关隘/要塞/堡垒，按城市判级；17世纪前人口无可靠数字（英/意/西/葡维基与Treccani均无），按规则兜底落城寨' },
+    { id: 'city_deliboli', name: '的黎波里', factionId: 'osman', lat: 32.88, lng: 13.19, type: 'stockade', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER', note: '定级依据§6.2：的黎波里非关隘/要塞/堡垒，按城市判级；17世纪前人口无可靠数字（英/意/西/葡维基与Treccani均无），按规则兜底落城寨。🔴 [2026-10-24 主人定「按建议改」] 风格保留 BERBER：的黎波里老城属马格里布柏柏尔—阿拉伯卡斯巴系，驻将德拉古特/利比亚部阿迪尔都是巴巴里系（帝国时代巴巴里军团），改 ORIE 反而错；旧审核提 ORIE 不取。' },
     { id: 'city_banjiaxi', name: '班加西', factionId: 'jileinaijia', lat: 32.11, lng: 20.06, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' },
 
     { id: 'city_labate', name: '拉巴特', factionId: 'muwaxide', lat: 34.024, lng: -6.822, type: 'pass', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER', note: '拉巴特＝阿拉伯语 Ribat（边防要塞）；阿尔摩哈德哈里发雅各布·曼苏尔所建 Ribat al-Fath 胜利之堡，对伊比利亚圣战的集结要塞，乌达亚堡' },
@@ -2306,7 +2306,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_avignon', name: '阿维尼翁', factionId: 'puluowangsi', lat: 43.94, lng: 4.8, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：米兰：意大利，用意大利古典石堡
     { id: 'city_milan', name: '米兰', factionId: 'lunbadi', lat: 45.46, lng: 9.19, type: 'medium_city', troops: 10000, region: 'LOMBARDS', buildingStyle: 'LATIN', note: '伦巴第王国早期重镇与中世纪铁王冠要邑' },
-    { id: 'city_ravenna', name: '拉文纳', factionId: 'donggete', lat: 44.41, lng: 12.2, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS' },
+    { id: 'city_ravenna', name: '拉文纳', factionId: 'donggete', lat: 44.41, lng: 12.2, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '🔴 [2026-10-24 主人定「按建议改」] 风格保留 GOTHS：拉文纳虽以早期基督教/拜占庭马赛克（圣维塔莱等）著称，但 493–540 年为东哥特王国都城（狄奥多里克宫廷、阿里乌斯洗礼堂），本地政权段成立；旧审核提 MEDI 不取。改 BYZANTINE 会把狄奥多里克/奥多亚克/霍诺留三将带成非哥特文化，故维持。' },
 
     { id: 'city_toledo', name: '托莱多', factionId: 'xigete', lat: 39.86, lng: -4.02, type: 'medium_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '🔴 [2026-10-05 主人令「建筑风格必须当地」] 托莱多是**西哥特王国都城**（554–711，托莱多公会议所在地，西哥特王冠还愿物出土地），也是 62 类「哥特」的据点（城堡 GOTH_CASTLE_AGE3）→ 挂 GOTHS（一级 WEST）。旧值 CASTILE／MEDI（卡斯蒂利亚—西班牙）是后来的政权。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：科尔多瓦：西班牙安达卢斯
@@ -2607,7 +2607,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_litangzong', name: '理塘宗', factionId: 'ganden', lat: 30.0000, lng: 100.2700, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '康巴骁骑招抚理塘' },
 
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
-    { id: 'city_heishacheng', name: '黑沙牙帐', factionId: 'ashide', lat: 43.5, lng: 96.6, type: 'stockade', troops: 10000, region: 'TURKS', buildingStyle: 'CENTRAL_ASIA' },
+    { id: 'city_heishacheng', name: '黑沙牙帐', factionId: 'ashide', lat: 43.5, lng: 96.6, type: 'stockade', troops: 10000, region: 'TURKS', buildingStyle: 'MONGOL', note: '🔴 [2026-10-24 按史] 建筑风格 CENTRAL_ASIA→MONGOL：黑沙牙帐是蒙古高原—阿尔泰间的游牧王帐（突厥阿史德部牙帐），建筑形态是塞外王帐石堡，不是中亚定居城（赫拉特式）；与同属突厥的燕然山（MONGOL）同口径 → 阿史德颉利（封建）军团随之为「封建时代突厥军团」。' },
 
 
     { id: 'city_beiluocheng', name: '孛罗营', factionId: 'duolu', lat: 44.9, lng: 82.07, type: 'stockade', region: 'TURKS',
@@ -2809,7 +2809,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
 
     { id: 'city_bayanwula', name: '巴彦乌拉', factionId: 'tuoba', lat: 44.53, lng: 117.6, type: 'stockade', region: 'NORTHEAST', buildingStyle: 'XIANBEI', troops: 10000, note: '东胡王恃强凌冒顿终为所灭' },
-    { id: 'city_halagaitu2', name: '哈拉盖图', factionId: 'manzhou_d', lat: 45.780925, lng: 119.245605, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'XIANBEI' },
+    { id: 'city_halagaitu2', name: '哈拉盖图', factionId: 'manzhou_d', lat: 45.780925, lng: 119.245605, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', note: '🔴 [2026-10-24 按史] 建筑风格 XIANBEI→MONGOL：哈拉盖图在锡林郭勒草原（蒙古语地名，漠北—漠南蒙古牧地），XIANBEI（鲜卑/拓跋系地名如大同）不符；改蒙古王帐石堡。' },
 
     { id: 'city_kuoyitian', name: '阔亦田', factionId: 'zhadalan', lat: 47.135705, lng: 115.290527, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL' },
 
@@ -3544,7 +3544,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_anate', name: '阿纳特', factionId: 'abasi', lat: 34.47, lng: 41.96, type: 'pass', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE' },
     { id: 'city_hamadan', name: '哈马丹', factionId: 'midi', lat: 34.8, lng: 48.51, type: 'medium_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '古称埃克巴塔那，米底王国都城与阿契美尼德帝国夏都' },
-    { id: 'city_adana', name: '阿达纳', factionId: 'luoma_diguo', lat: 37.0, lng: 35.3213, type: 'small_city', troops: 10000, region: 'HITTITES', buildingStyle: 'ORIE', note: '定级依据§6.2：1572年城内1023纳税户约5100人（Adana Mufassal Tahrir），未达中城10万门槛 → 小城。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.06,35.77 偏离阿达纳城 40.4 公里（落在杰伊汉一带），按英文维基百科 Adana 坐标改为 37.0,35.3213。' },
+    { id: 'city_adana', name: '阿达纳', factionId: 'luoma_diguo', lat: 37.0, lng: 35.3213, type: 'small_city', troops: 10000, region: 'HITTITES', buildingStyle: 'ORIE', note: '定级依据§6.2：1572年城内1023纳税户约5100人（Adana Mufassal Tahrir），未达中城10万门槛 → 小城。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.06,35.77 偏离阿达纳城 40.4 公里（落在杰伊汉一带），按英文维基百科 Adana 坐标改为 37.0,35.3213。🔴 [2026-10-24 主人定「按建议改」] 风格保留 ORIE：阿达纳 1517 年后长期为奥斯曼城市（Ulu Cami 1541、近东生土—砖石城），旧审核提的「奇里乞亚亚美尼亚」只是 1080–1375 一段，不取；故不改为 EAST，驻将庞培留原地。' },
     { id: 'city_bosibolisi', name: '波斯波利斯', factionId: 'aqimeinide', lat: 29.93, lng: 52.89, type: 'small_city', troops: 20000, region: 'PERSIAN', buildingStyle: 'PERSIAN' },
 
 
@@ -3758,7 +3758,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_prilep', name: '普里莱普', factionId: 'saierweiya', lat: 41.35, lng: 21.55, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC', note: '普里莱普；武卡辛领地、塞尔维亚帝国重镇（马尔科城堡），人口数千 → 小城' },
     { id: 'city_niani', name: '尼亚尼', factionId: 'manding', lat: 11.4, lng: -8.5, type: 'stockade', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', tier: 4, note: '尼亚尼；马里帝国都城（松迪亚塔），人口无载 → 城寨' },
     { id: 'city_quito', name: '基多', factionId: 'inca', lat: -0.18, lng: -78.47, type: 'small_city', troops: 10000, region: 'ANDE', buildingStyle: 'INCA', note: '基多；印加帝国北部都城（阿塔瓦尔帕），人口数万 → 小城' },
-    { id: 'city_oristano', name: '奥里斯塔诺', factionId: 'alagong', lat: 39.9, lng: 8.59, type: 'small_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '奥里斯塔诺；萨丁阿尔博雷亚判官国都城（埃莱奥诺拉），人口数千 → 小城' },
+    { id: 'city_oristano', name: '奥里斯塔诺', factionId: 'aboerleiya', lat: 39.9, lng: 8.59, type: 'small_city', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '奥里斯塔诺；萨丁阿尔博雷亚判官国都城（埃莱奥诺拉），人口数千 → 小城。🔴 [2026-10-24 主人授权] 势力 alagong→aboerleiya：阿尔博雷亚判官国是真实政权，原并进阿拉贡是错并。' },
     { id: 'city_jinju', name: '晋州', factionId: 'joseon', lat: 35.19, lng: 128.1, type: 'small_city', troops: 10000, region: 'JOSEON', buildingStyle: 'KOREA', note: '晋州；朝鲜庆尚道晋州牧，1592 年金时敏守晋州，人口数万 → 小城' },
     { id: 'city_xindu', name: '信都', factionId: 'han_d', lat: 37.55, lng: 115.57, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', note: '信都；汉冀州治所（任光守信都拒王郎），人口数万 → 小城' },
     { id: 'city_hangai', name: '杭爱山', factionId: 'kaerka', lat: 47, lng: 101, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', tier: 4, note: '杭爱山；喀尔喀三音诺颜部牧地，无城郭 → 城寨' },

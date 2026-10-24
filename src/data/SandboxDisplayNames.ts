@@ -25,7 +25,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     taino_d: '泰诺',  // 泰诺（古巴东部亚拉）
   guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
   yasuer: '亚速',  // [2026-08-26] 葡属亚速尔群岛，首府安格拉
-  chamorro: '查',  // 查莫罗（关岛·阿加尼亚）
+  chamorro: '查莫',  // 查莫罗（关岛·阿加尼亚）；[2026-10-24] 音译名不截一字
 
   ayinu_ezo: '阿伊',   // 🔴 [2026-09-12] 原「虾夷」与 ayinu(虾夷)撞旗 → 按势力名「阿伊努」取前两字「阿伊」
 
@@ -42,10 +42,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'meikelunbao': '文德',
   didi: '佛兰',
   yidelisi: '伊德',
-  baojialiya: '保',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+  baojialiya: '保',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'bosiniya': '波黑',  // 🔴 [2026-09-12] 原「波斯」与 boluosi(波斯帝国·已删，与阿契美尼德重复)撞旗 → 取中文标准简称「波黑」
 
-  mulabite: '穆',
+  mulabite: '穆拉',  // [2026-10-24 主人令「哪些单字合适就用单字」] 音译名无通行单字简称，不截一字
 
   zhayan: '扎扬',
   hamade: '哈马',
@@ -73,22 +73,23 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'donggete': '东哥',
   xigete: '西哥',
   alagong: '阿拉',
+  aboerleiya: '阿尔',   // 阿尔博雷亚（撒丁判官国）
 
   mangsite: '芒斯',
 'tuomengde': '托蒙',
   piketai: '皮克',
-  yinggelan: '英',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+  yinggelan: '英',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'bulabante': '班特',
-  gaolu: '法',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+  gaolu: '法',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   kaernute: '卡尔',
   bulietani: '布列',
 'fulandesi': '阿图',
   xila: '雅典',
-  putaoya: '葡',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+  putaoya: '葡',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'saierweiya': '拉什',
 'luosi': '罗斯',
   mosike_gongguo: '莫斯',
-  eluosi_diguo: '俄',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+  eluosi_diguo: '俄',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   daniebo: '斯摩',
   qiernigeweifu_gongguo: '切尔',
   jialixiya: '哈尔',
@@ -100,8 +101,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'baizanting': '拜占',
   bosi_puluosi: '博普',
 'kelimiya': '热亚',  // 热那亚共和国（卡法）
-'keluodiya': '克',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
-'litaowan': '立',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+'keluodiya': '克',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
+'litaowan': '立',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'bolan': '波兰',
 'baojian_qishi': '宝剑',
   teweier_gongguo: '特维',
@@ -120,7 +121,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   peilieya_gongguo: '佩列',
   habusibao: '哈布',
   boximiya: '波西',
-'mazhaer': '匈',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+'mazhaer': '匈',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   falanji: '弗兰',
   shiwaben: '施瓦',
   asikanani: '勃兰',
@@ -534,7 +535,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'wula': '乌拉',
 'bayegu': '拔野',
     'ketagalan': '凯达',
-'suke': '素',
+'suke': '素可',  // [2026-10-24 主人令「哪些单字合适就用单字」] 音译名无通行单字简称，不截一字
 'gaochang': '麴',
 'chuyue': '处月',
     'baidi': '白狄',
@@ -575,7 +576,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yilihanguo_d': '伊利',
     'wulaertu': '亚美',
 'wulaertu_guo': '乌图',
-'gelujiya': '格',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+'gelujiya': '格',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'bendou': '特拉',
     'keerjisi': '金羊',
     'bendou_d': '本都',
@@ -658,7 +659,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'miandian': '缅甸',
     'malai': '马来',
     'taimier': '马拉',
-    'xibanya': '西',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+    'xibanya': '西',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
 'manding': '马里',
 'ethiopia': '埃塞',
 'zhagewei': '扎维',
@@ -700,7 +701,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qutb_shahi': '库特',
     'minangkabau': '米南',
     'tutul_xiu': '休',
-    'odrysian_late': '奥',
+    'odrysian_late': '塞乌',  // [2026-10-24] 原一字「奥」；「奥德」已被 aodesuosi 占用 → 取其王都塞乌托波利（塞乌特斯三世所建）之「塞乌」
     'aswaka': '斯瓦', // 🔴 [2026-09-19 主人指出审计警告] 原登记「阿斯」与 asikanani(阿斯坎尼) 撞车；「阿瓦」又撞 ava(阿瓦王国) → 取其所居**斯瓦特**河谷之「斯瓦」
     'julushi': '居鲁', // 居鲁士城（公元前329年居鲁士城围攻守方）：势力名前两字，全库不撞
     'malli': '马利',
@@ -718,7 +719,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'aolitai': '奥里',
     'shiyuzu': '食鱼',
   dalriada: '达里',  // 达尔里阿达
-  scotland: '苏',  // 苏格兰；[2026-10-24] 改用通行简称单字
+  scotland: '苏',  // 苏格兰；  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   chanka: '昌卡',  // 昌卡
   ouchi: '大内',  // 大内
   cueva: '库埃',  // 库埃瓦

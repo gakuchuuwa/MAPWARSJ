@@ -146,6 +146,7 @@ export const FACTIONS: Faction[] = [
   { id: 'danmai', name: '丹麦' },
   { id: 'ruidian_si', name: '瑞典' },
   { id: 'kasidiliya', name: '卡斯蒂利亚' },
+  { id: 'aboerleiya', name: '阿尔博雷亚' },   // 🔴 [2026-10-24 主人授权] 撒丁阿尔博雷亚判官国（Giudicato d'Arborea，埃莱奥诺拉）；原并进阿拉贡是错并
   { id: 'teluoyi', name: '特洛伊' },
 
   { id: 'peilieya_gongguo', name: '佩列公国' },

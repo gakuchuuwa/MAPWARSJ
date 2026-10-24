@@ -51,7 +51,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aqimeinide_aertabazanuosi': 'PERSIAN',   // 阿契美尼德｜阿里奥巴赞斯｜据点 波斯波利斯
     'aqimeinide_daliushi': 'PERSIAN',   // 阿契美尼德｜大流士一世｜据点 波斯波利斯
     'asaibaijiang_xuliewu': 'SASANIAN',   // 阿塞拜疆｜旭烈兀｜据点 马拉盖
-    'ashide_ashidejieli': 'CENTRAL_ASIA',   // 阿史德｜阿史德颉利｜据点 黑沙牙帐
+    'ashide_ashidejieli': 'MONGOL',   // 阿史德｜阿史德颉利｜据点 黑沙牙帐（2026-10-24 城风格 CENTRAL_ASIA→MONGOL）
     'ashikaga_zulizunshi': 'JAPAN',   // 室町｜足利尊氏｜据点 京都
     'ashina_ashinayandou': 'CENTRAL_ASIA',   // 阿史那｜阿史那燕都｜据点 金微山
     'aswaka_cleophis': 'PURU',   // 阿斯瓦卡｜克莱奥菲斯｜据点 马萨加
@@ -190,7 +190,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe3_43': 'KHITAN',   // 先零｜杨玉｜据点 允吾
     'bfe3_44': 'KHITAN',   // 乞伏｜靡忘｜据点 枹罕
     'bfe3_45': 'KHITAN',   // 汉国｜郑吉｜据点 轮台
-    'bfe3_46': 'BURGUNDIANS',   // 高卢罗曼｜维钦托利｜据点 第戎
+    'bfe3_46': 'FRANKS',   // 高卢｜维钦托利｜据点 巴黎（2026-10-24 高卢＝法兰克文化的古典时代：古典时代高卢军团）
     'bfe3_48': 'XIANBEI',   // 密西亚｜呼韩邪单于｜据点 光禄城
     'bfe3_50': 'BASHU',   // 夜郎｜头兰｜据点 且兰
     'bfe3_51': 'ROMA',   // 罗马帝国｜佩特罗尼乌斯｜据点 罗马城
@@ -355,7 +355,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'dzungar_galedanceling': 'CENTRAL_ASIA',   // 绰罗斯｜噶勒丹策凌｜据点 固尔札
     'echigo_shangshanqianxin': 'JAPAN',   // 上杉｜上杉谦信｜据点 春日山
     'edo_dechuanjiakang': 'JAPAN',   // 德川｜德川家康｜据点 江户城
-    'eerbulushi_beisusi': 'CENTRAL_ASIA',   // 巴克特里亚｜贝苏斯｜据点 蓝氏城
+    'eerbulushi_beisusi': 'PERSIAN',   // 巴克特里亚｜贝苏斯｜据点 波斯波利斯（2026-10-24 由蓝氏城 CENTRAL_ASIA 迁出）
     'eguo_zasekin': 'SLAVIC',   // 俄国边地｜扎谢金｜据点 萨拉托夫
     'elunchunzu_gaishan': 'NORTHEAST',   // 鄂伦春｜盖山｜据点 呼玛
     'eluoke_amuhaer': 'NORTHEAST',   // 鄂罗克｜阿穆哈尔｜据点 诺托罗
@@ -364,7 +364,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'erzhu_erzhurong': 'WEI',   // 尔朱｜尔朱荣｜据点 秀容川
     'erzhu_erzhuzhao': 'WEI',   // 尔朱｜尔朱兆｜据点 秀容川
     'ewenki_gentemuer': 'NORTHEAST',   // 鄂温克｜根特木尔｜据点 尼布楚
-    'falanji_baodewen': 'BYZANTINE',   // 法兰克｜拉丁皇帝 鲍德温｜据点 君士坦丁堡
+    'falanji_baodewen': 'FRANKS',   // 法兰克｜拉丁皇帝 鲍德温｜据点 巴黎（2026-10-24 由君士坦丁堡 BYZANTINE 迁出）
     'falanji_kalman': 'GERMANIC',   // 巴伐利亚｜卡洛曼｜据点 雷根斯堡
     'fang_guozhen_fangguozhen': 'JIANGNAN',   // 大明｜卢镗｜据点 宁波
     'fangla_fangla': 'JIANGNAN',   // 圣公｜方腊｜据点 帮源洞
@@ -396,7 +396,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gaoqi_d_gaohuan': 'WEI',   // 北齐｜高欢｜据点 晋阳
     'gaoqi_d_xiaogui': 'CENTRAL',   // 北齐｜萧轨｜据点 安阳
     'gar_kham_dengbazeren': 'TIBET',   // 德司｜登巴泽仁｜据点 德格
-    'gar_lunqinling': 'KHITAN',   // 吐蕃｜论钦陵｜据点 大非川
+    'gar_lunqinling': 'TIBET',   // 吐蕃｜论钦陵｜据点 大非川（2026-10-24 大非川风格改 TIBET）
     'gaxa_zhashi': 'TIBET',   // 甘丹｜扎什端珠布｜据点 卓木
     'gaya_jinshoulu': 'KOREA',   // 伽倻｜金首露｜据点 金海
     'gelujiya_tamaer': 'GEORGIANS',   // 格鲁吉亚｜塔玛尔｜据点 第比利斯
@@ -424,7 +424,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_arariboia': 'TUPI',   // 图皮｜阿拉里博亚｜据点 瓜纳巴拉
     'gen_aristides': 'ATHENIANS',   // 基克拉泽斯｜阿里斯提德｜据点 雅典
     'gen_aristobulus_ii': 'ORIE',   // 希伯来｜阿里斯托布鲁斯二世｜据点 耶路撒冷
-    'gen_artaphernes': 'GREECE',   // 波斯帝国｜阿尔塔弗涅斯｜据点 斯法尔德
+    'gen_artaphernes': 'PERSIAN',   // 波斯帝国｜阿尔塔弗涅斯｜据点 波斯波利斯（2026-10-24 由斯法尔德 GREECE 迁出）
     'gen_artemisia': 'GREECE',   // 卡里亚｜阿尔特米西亚｜据点 哈利卡纳苏斯
     'gen_aspurgus': 'GREECE',   // 陶里卡｜阿斯普尔｜据点 潘提卡彭
     'gen_astrakhan_khan': 'CENTRAL_ASIA',   // 金帐｜阿斯特拉｜据点 萨莱
@@ -443,7 +443,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_bir_hambir': 'BENGALIS',   // 末罗王国｜比尔汉比尔｜据点 比什努普尔
     'gen_black_prince': 'FRANKS',   // 阿奎丹｜黑太子｜据点 波尔多
     'gen_bohdan_khmelnitsky': 'SLAVIC',   // 哥萨克｜赫梅利｜据点 塞契
-    'gen_bohemond': 'GREECE',   // 西西里｜博希蒙德｜据点 塔兰托
+    'gen_bohemond': 'SICILIANS',   // 西西里｜博希蒙德｜据点 巴勒莫（2026-10-24 由塔兰托 GREECE 迁入诺曼本家）
     'gen_boleslaw_brave': 'POLES',   // 皮雅斯特｜勇者波列｜据点 波兹南
     'gen_bolusi': 'PURU',   // 补噜｜波鲁斯｜据点 蒙格
     'gen_bonifatius': 'ROMA',   // 西罗马｜博尼法提乌斯｜据点 希波
@@ -484,7 +484,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_dagnajan': 'ETHIOPIANS',   // 肖阿｜达格纳詹｜据点 德布雷利巴诺斯
     'gen_dandolo': 'LATIN',   // 亚得里亚｜丹多洛｜据点 威尼斯
     'gen_daniel_galitsky': 'SLAVIC',   // 哈尔公国｜丹尼尔｜据点 加利奇
-    'gen_datis': 'GREECE',   // 优卑亚｜达提斯｜据点 斯法尔德
+    'gen_datis': 'PERSIAN',   // 优卑亚｜达提斯｜据点 波斯波利斯（2026-10-24 由斯法尔德 GREECE 迁出）
     'gen_daumantas': 'SLAVIC',   // 伟利卡亚｜道曼塔斯｜据点 普斯科夫
     'gen_dinhle': 'VIETNAMESE',   // 大瞿越｜丁礼｜据点 义安
     'gen_dmitry_donskoy': 'SLAVIC',   // 莫斯公国｜顿斯科伊｜据点 莫斯科
@@ -545,7 +545,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_john_comyn': 'CELTS',   // 苏格兰｜约翰·科明｜据点 斯昆
     'gen_john_fearless': 'BURGUNDIANS',   // 勃艮第公国｜无畏的约翰｜据点 第戎
     'gen_juan_i_castile': 'GOTHS',   // 卡斯蒂利亚｜胡安一世｜据点 托莱多
-    'gen_julian_apostate': 'FRANKS',   // 阿尔萨斯｜尤里安｜据点 巴黎
+    'gen_julian_apostate': 'ROMA',   // 阿尔萨斯｜尤里安｜据点 罗马城（2026-10-24 由巴黎 FRANKS 迁回罗马）
     'gen_julius_caesar': 'ROMA',   // 罗马帝国｜恺撒｜据点 罗马城
     'gen_kaernute_kotuatousi': 'FRANKS',   // 卡尔努特｜科图阿图斯｜据点 沙特尔
     'gen_kangxi': 'NORTHEAST',   // 满清｜康熙｜据点 沈阳（2026-10-24 按「同文化／同民族起源地」由北京 WEI 改沈阳 NORTHEAST）
@@ -1252,7 +1252,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tushetu_tuxietuhan': 'MONGOL',   // 喀尔喀｜衮布｜据点 库伦
     'tuva_qinggunzabu': 'MONGOL',   // 喀尔喀｜青滚杂卜｜据点 唐努
     'tuyu_d_kualv': 'KHITAN',   // 吐谷浑｜夸吕｜据点 伏俟城
-    'varendra_devapala': 'PURU',   // 伐连陀｜提婆波罗｜据点 华氏城
+    'varendra_devapala': 'BENGALIS',   // 伐连陀｜提婆波罗｜据点 高达城（2026-10-24 由华氏城 PURU 迁入波罗首都）
     'wala_yexian': 'MONGOL',   // 卫拉特｜也先｜据点 科布多
     'waluo': 'ROMA',   // 罗马帝国｜瓦罗｜据点 罗马城
     'wan_liuyuan': 'JIANGNAN',   // 宋国｜刘源｜据点 皖口
@@ -1365,7 +1365,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiongyati_yannuoshi': 'MAGYAR',   // 匈雅提｜匈雅提亚诺什｜据点 胡内多阿拉
     'xiou_yixusong': 'JIANGNAN',   // 西瓯｜译吁宋｜据点 布山
     'xiqin_wanyanchenheshang': 'CENTRAL',   // 大金｜完颜陈和尚｜据点 真宁
-    'xishudongyin_lijiasipi': 'MALAY',   // 阿拉贡｜莱加斯皮｜据点 马尼拉
+    'xishudongyin_lijiasipi': 'SPANISH',   // 阿拉贡｜莱加斯皮｜据点 塞维利亚（2026-10-24 由马尼拉 MALAY 迁回民族起源地）
     'xisi_amr': 'PERSIAN',   // 锡斯坦｜阿姆尔·本·莱斯｜据点 博斯特
     'xisi_safaer': 'PERSIAN',   // 锡斯坦｜萨法尔｜据点 博斯特
     'xisi_yakubusafaer': 'PERSIAN',   // 锡斯坦｜雅库布｜据点 博斯特

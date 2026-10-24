@@ -25,7 +25,7 @@ export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
     '白山黑水': { antiquity: ['hero_girgenkhan', 'hero_kotyankhan'], feudal: ['hero_girgenkhan', 'hero_kotyankhan'], castle: ['hero_girgenkhan', 'hero_kotyankhan'], imperial: ['hero_girgenkhan', 'hero_kotyankhan'] },
     '高丽': { antiquity: ['elite_war_wagon', 'hero_sunquan'], feudal: ['elite_war_wagon', 'hero_sunquan'], castle: ['elite_war_wagon', 'hero_sunquan'], imperial: ['elite_war_wagon', 'hero_sunquan'] },
     '日本': { antiquity: ['hero_sunce', 'hero_sunjian'], feudal: ['hero_sunce', 'hero_sunjian'], castle: ['hero_sunce', 'hero_sunjian'], imperial: ['hero_sunce', 'hero_sunjian'] },
-    '漠南鲜卑': { antiquity: ['hero_kotyankhan', 'hero_kushluk'], feudal: ['hero_kotyankhan', 'hero_kushluk'], castle: ['hero_kotyankhan', 'hero_kushluk'], imperial: ['hero_kotyankhan', 'hero_kushluk'] },
+    '漠南': { antiquity: ['hero_kotyankhan', 'hero_kushluk'], feudal: ['hero_kotyankhan', 'hero_kushluk'], castle: ['hero_kotyankhan', 'hero_kushluk'], imperial: ['hero_kotyankhan', 'hero_kushluk'] },
     '漠北蒙古': { antiquity: ['hero_subotai', 'hero_kushluk'], feudal: ['hero_subotai', 'hero_kushluk'], castle: ['hero_subotai', 'hero_kushluk'], imperial: ['hero_subotai', 'hero_kushluk'] },
     '条顿': { antiquity: ['hero_ulrichvonjungingen', 'hero_johnthefearless'], feudal: ['hero_ulrichvonjungingen', 'hero_johnthefearless'], castle: ['hero_ulrichvonjungingen', 'hero_johnthefearless'], imperial: ['hero_ulrichvonjungingen', 'hero_johnthefearless'] },
     '法兰克': { antiquity: ['hero_bernardarmagnac', 'hero_joanofarc', 'hero_joanthemaid'], feudal: ['hero_bernardarmagnac', 'hero_joanofarc', 'hero_joanthemaid'], castle: ['hero_bernardarmagnac', 'hero_joanofarc', 'hero_joanthemaid'], imperial: ['hero_bernardarmagnac', 'hero_joanofarc', 'hero_joanthemaid'] },
@@ -96,7 +96,7 @@ const STYLE_KEY_TO_CIV: Readonly<Record<string, string>> = {
     BERBER: '柏柏尔', AFRICA: '马里', ETHIOPIANS: '埃塞俄比亚', SASANIAN: '波斯',
     SAXONS: '撒克逊', VARANGIANS: '瓦良格', DANES: '丹麦',
     ATHENIANS: '雅典', SPARTANS: '斯巴达', MACEDONIAN: '马其顿', THRACIAN: '色雷斯',
-    TIBET: '青藏', WESTERN: '西域', MOBEI_MONGOL: '漠北蒙古', YURT: '漠北蒙古', XIANBEI: '漠南鲜卑', GREECE: '希腊',
+    TIBET: '青藏', WESTERN: '西域', MOBEI_MONGOL: '漠北蒙古', YURT: '漠北蒙古', XIANBEI: '漠南', GREECE: '希腊',
 };
 
 /** 据点风格键 → 文明；PERSIAN 一键两用：古典 = 阿契美尼德，其后 = 波斯。 */
