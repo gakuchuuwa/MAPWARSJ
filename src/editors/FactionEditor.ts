@@ -306,16 +306,13 @@ export class FactionEditor {
         const factionMatch = trimmed.match(/(?:势力|民族|政权|家族|郡名|州名)[,，:：]\s*([^,，:：]+)/);
         if (!factionMatch) return { ok: false, reason: '缺少 "势力/民族/政权/家族/郡名/州名：XXX" 前缀' };
         const factionName = factionMatch[1].trim();
-        const prefix = trimmed.match(/^(势力|民族|政权|家族|郡名|州名)/)?.[1] || '';
 
         const cityMatch = trimmed.match(/据点[,，:：]\s*([^,，:：]+)/);
         if (!cityMatch) return { ok: false, reason: '缺少 "据点：XXX"' };
         const cityName = cityMatch[1].trim();
 
-        // [AGENTS.md §四 规则 4] 郡名/州名前缀时, 势力名不许等于据点名
-        if ((prefix === '郡名' || prefix === '州名') && factionName === cityName) {
-            return { ok: false, reason: `郡名/州名前缀的势力名 "${factionName}" 不能等于据点名 (违反 1 势力 1 据点)` };
-        }
+        // 🔴 [2026-10-24 主人令]「势力名不能和据点名重复」已删除，改为「势力名必须是史实政权名」；
+        //    城邦政权与据点同名合法（雅典、斯巴达、迦太基…）⇒ 不再拦「郡名/州名前缀势力名 == 据点名」。
 
         // [2026-05-30] 删除模式下坐标可选 — 找坐标太麻烦 (用户公理)
         const coordMatch = trimmed.match(/坐标[,，:：]\s*([\d.\-]+)\s*[,，]\s*([\d.\-]+)/);

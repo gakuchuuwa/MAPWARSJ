@@ -4250,7 +4250,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_shahismail',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
-            { type: 'champion', count: 3 },
+            { type: 'elite_guardsman', count: 3 },
             { type: 'qizilbash_warrior', count: 2 },
         ],
     },

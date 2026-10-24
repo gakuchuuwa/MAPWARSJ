@@ -583,12 +583,12 @@ export class PlayerHero {
 
             let pick: Pick | undefined;
             if (landRest.length > 0) {
-                // 1. 先随机获得三个兵种素材
-                // 🔴 [2026-10-22 主人「玩家既然是牧马人…给玩家的奖励，开始都设为骑兵」]
-                //    本军团三排里有骑兵的，先从骑兵里给；骑兵收齐了（或这支军团没骑兵）再给步兵、远程
-                const cavRest = landRest.filter((p) => WAR_TYPES[p.key]?.cls === 'cav');
-                const from = cavRest.length > 0 ? cavRest : landRest;
-                pick = from[Math.floor(Math.random() * from.length)];
+                // 1. 先获得三个兵种素材
+                // 🔴 [2026-10-24 主人令「探马者奖励兵模前三的顺序改为：先奖励后排，再奖励中排，先锋奖励前排」]
+                //    三排固定顺序：斥候拿**后排**（row 2）→ 探马拿**中排**（row 1）→ 先锋拿**前排**（row 0）。
+                //    取代 2026-10-22「开始都先给骑兵」的随机偏好（那条对这三档不再生效）。
+                const byRowDesc = [...landRest].sort((a, b) => b.row - a.row);
+                pick = byRowDesc[0];
             } else if (shipRest.length > 0) {
                 // 2. 然后是获得舰队的
                 pick = shipRest[0];

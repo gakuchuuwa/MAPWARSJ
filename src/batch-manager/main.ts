@@ -893,10 +893,8 @@ function checkNameDuplicates(cityName: string, factionName: string, generalName:
     check(factionName, '势力', 'name', '势力');
     check(generalName, '武将', 'generalName', '武将', true);
     check(eliteName, '精锐', 'eliteName', '精锐');
-    // 跨类型：势力名 vs 已有据点名
-    check(factionName, '势力', 'cityName', '据点');
-    // 跨类型：据点名 vs 已有势力名
-    check(cityName, '据点', 'name', '势力');
+    // 🔴 [2026-10-24 主人令]「势力名不能和据点名重复」已删除 → 不再做「势力名 ↔ 据点名」跨类型同名提示；
+    //    城邦政权与据点同名合法（雅典、斯巴达、迦太基…）。
     return warnings;
 }
 
