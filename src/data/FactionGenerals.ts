@@ -884,7 +884,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_girgen', legionName: '城堡时代博亚尔重骑军团', cityId: 'city_mierkefu', generalName: '吉尔根汗', portrait: '/assets/SLAVIC/gen_girgen.png', factionId: 'kuman_oleshky' , eliteName: '库曼弓骑', eliteTier: 1 },
+        { generalId: 'gen_girgen', legionName: '城堡时代库曼军团', cityId: 'city_mierkefu', generalName: '吉尔根汗', portrait: '/assets/SLAVIC/gen_girgen.png', factionId: 'kuman_oleshky' , eliteName: '库曼弓骑', eliteTier: 1 },
 
 
 
@@ -5288,7 +5288,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_kangxi', factionId: 'manzhou_d', cityId: 'city_beijing', generalName: '康熙', portrait: '/assets/NORTHEAST/gen_kangxi.png', legionName: '帝国时代燕晋军团' },
+        { generalId: 'gen_kangxi', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '康熙', portrait: '/assets/NORTHEAST/gen_kangxi.png', legionName: '帝国时代八旗军团' },
         { generalId: 'ying_caojingzong', factionId: 'nan_liang', cityId: 'city_bengbu', legionName: '封建时代江淮军团', generalName: '曹景宗', portrait: '/assets/JIANGNAN/ying_caojingzong.png' },
         { generalId: 'yuan_d_tuotuo', factionId: 'yuan_d', cityId: 'city_beijing', legionName: '城堡时代燕云军团', generalName: '脱脱', portrait: '/assets/XIANBEI/yuan_d_tuotuo.png' },
         { generalId: 'dajin_wanyanchengyu', factionId: 'dajin', cityId: 'city_xuanhua', legionName: '城堡时代燕云军团', generalName: '完颜承裕', portrait: '/assets/NORTHEAST/dajin_wanyanchengyu.png' },
@@ -13324,7 +13324,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'osman_mehmed_ii', cityId: 'city_junshitandingbao', generalName: '穆罕默德二世', portrait: '/assets/TURKS/osman_mehmed_ii.png' , legionName: '城堡时代拜占庭军团' },
+        { generalId: 'osman_mehmed_ii', cityId: 'city_aidiernei', generalName: '穆罕默德二世', portrait: '/assets/TURKS/osman_mehmed_ii.png' , legionName: '城堡时代加齐突骑军团' },
 
 
 
@@ -13337,7 +13337,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_mehmed_giray', factionId: 'osman', cityId: 'city_akeman', legionName: '帝国时代俄罗斯军团', generalName: '迈赫迈德', portrait: '/assets/SLAVIC/deniesite_muhanmodegeli.png' },
+        { generalId: 'gen_mehmed_giray', factionId: 'osman', cityId: 'city_akeman', legionName: '帝国时代土耳其军团', generalName: '迈赫迈德', portrait: '/assets/SLAVIC/deniesite_muhanmodegeli.png' },
 
 
 

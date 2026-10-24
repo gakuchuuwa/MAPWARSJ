@@ -2920,7 +2920,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/BASHU/nanzhao_geluofeng.png": {
             "scale": 1.02,
             "offsetX": 0,
-            "offsetY": -17
+            "offsetY": -16
         },
         "/assets/BASHU/dian_cuanchongdao.png": {
             "scale": 0.85,
@@ -3028,9 +3028,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/BASHU/hani_d_zhebi.png": {
-            "scale": 0.88,
+            "scale": 0.8,
             "offsetX": 0,
-            "offsetY": -8
+            "offsetY": -33
         },
         "/assets/XIANBEI/zu_d_yuanchonghuan.png": {
             "scale": 1.03,
@@ -8156,6 +8156,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -20
+        },
+        "/assets/WEI/gen_wang_ji.png": {
+            "scale": 1.32,
+            "offsetX": 0,
+            "offsetY": 15
         }
     },
     "folderGuides": {

@@ -513,7 +513,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_gidajan': 'ETHIOPIANS',   // 提格雷｜吉达扬｜据点 德布雷达莫
     'gen_gilbert': 'BRITONS',   // 格洛斯特伯国｜吉尔伯特｜据点 格洛斯特
     'gen_gilles_de_rais': 'FRANKS',   // 阿尔摩里卡｜吉尔德雷斯｜据点 南特
-    'gen_girgen': 'SLAVIC',   // 库曼尼亚｜吉尔根汗｜据点 密尔科夫
+    'gen_girgen': 'CUMAN',   // 库曼尼亚｜吉尔根汗｜据点 密尔科夫（库曼主教区要塞；2026-10-24 随据点风格 SLAVIC→CUMAN 同步）
     'gen_grigory_donets': 'SLAVIC',   // 斯洛博达｜多涅茨｜据点 哈尔科夫
     'gen_guacolda': 'MAPUCHE',   // 阿劳卡尼亚｜瓜科尔达｜据点 彼得罗阿
     'gen_haci_giray': 'CUMAN',   // 库曼｜哈吉格莱｜据点 奥列什基
@@ -547,7 +547,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_julian_apostate': 'FRANKS',   // 阿尔萨斯｜尤里安｜据点 巴黎
     'gen_julius_caesar': 'ROMA',   // 罗马帝国｜恺撒｜据点 罗马城
     'gen_kaernute_kotuatousi': 'FRANKS',   // 卡尔努特｜科图阿图斯｜据点 沙特尔
-    'gen_kangxi': 'WEI',   // 大明｜康熙｜据点 北京
+    'gen_kangxi': 'NORTHEAST',   // 满清｜康熙｜据点 沈阳（2026-10-24 按「同文化／同民族起源地」由北京 WEI 改沈阳 NORTHEAST）
     'gen_kara_mustafa': 'TURKS',   // 奥斯曼｜卡拉·穆斯塔法｜据点 布尔萨
     'gen_karasakal': 'CENTRAL_ASIA',   // 保加尔｜卡拉萨卡尔｜据点 喀山
     'gen_kestutis': 'LITHUANIANS',   // 特拉凯公国｜科斯图提斯｜据点 卡乌纳斯
@@ -579,7 +579,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_maximilian': 'GERMANIC',   // 哈布斯堡｜马克西米｜据点 维也纳
     'gen_maximilian_sforza': 'LATIN',   // 伦巴第｜马克西米利安·斯福尔扎｜据点 米兰
     'gen_medinaceli': 'SPANISH',   // 西班牙｜梅迪纳科利｜据点 利马
-    'gen_mehmed_giray': 'SLAVIC',   // 德涅斯特｜迈赫迈德｜据点 阿克曼
+    'gen_mehmed_giray': 'TURKS',   // 德涅斯特｜迈赫迈德｜据点 阿克曼（阿克曼＝奥斯曼阿克曼桑贾克、突厥系；2026-10-24 随据点建筑风格 SLAVIC→TURKS 同步）
     'gen_mihirabhoja': 'INDIA',   // 瞿折罗｜迷企罗波阇｜据点 曲女城
     'gen_mikhail_tatarinov': 'SLAVIC',   // 顿河｜塔塔里诺夫｜据点 维申斯卡亚
     'gen_mikhail_tver': 'SLAVIC',   // 特维公国｜米哈伊尔｜据点 特维尔
@@ -1036,7 +1036,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ogodei_chuoermahan': 'SASANIAN',   // 窝阔台｜绰儿马罕｜据点 大不里士
     'oirat_ming_gaerdan': 'CENTRAL_ASIA',   // 卫拉特｜噶尔丹｜据点 固尔札
     'ongut_alawusi': 'XIANBEI',   // 汪古｜阿剌兀思｜据点 净州塞
-    'osman_mehmed_ii': 'BYZANTINE',   // 奥斯曼｜穆罕默德二世｜据点 君士坦丁堡
+    'osman_mehmed_ii': 'TURKS',   // 奥斯曼｜穆罕默德二世｜据点 埃迪尔内（2026-10-24 主人「据点建筑文化必须和武将文化相同」：君士坦丁堡＝拜占庭建筑，不能放奥斯曼苏丹 → 埃迪尔内 TURKS，1363–1453 奥斯曼都城、他出生地）
     'osumi_ganfujianxu': 'JAPAN',   // 岛津｜肝付兼续｜据点 赤尾木城
     'otomo_d_lihuadaoxue': 'JAPAN',   // 大友｜立花道雪｜据点 太宰府
     'ouyang_ouyangwei': 'JIANGNAN',   // 宋国｜欧阳頠｜据点 番禺

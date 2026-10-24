@@ -284,6 +284,8 @@ export class Scene13WarLayer {
      * 玩家守城、待在城里没敌人打时，谁放了计，镜头就去那一计落下的地方看 9 秒，再回到玩家身上。
      */
     private skillCamTimer = 0;
+    /** 🔴 [2026-10-24 主人定] 复活后镜头先留在倒下处（剩余保底秒数），玩家再次交战 / 快走出画面 / 超时才跟回玩家 */
+    private heroCamHold = 0;
     private skillCamX = 0;
     private skillCamY = 0;
     /** 八方向行军前进单位向量（两军对冲） */
@@ -1298,6 +1300,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-21 主人报「乱入者复活后有的时候不动」] 阵亡前点的地面令没走到就死了 → 复活后还挂着：
         //    目标点已被上面重置成复活点，而「走到才清」比的是旧点地位置 ⇒ 永远清不掉、原地站死。复活一律作废。
         this.heroClickOrder = null;
+        this.heroCamHold = 10;
         if (!this.men.includes(m)) {
             this.men.push(m);
         }
@@ -2582,6 +2585,7 @@ export class Scene13WarLayer {
         this.heroInput = null;
         this.heroMan = null;
         this.heroRespawnTimer = 0;
+        this.heroCamHold = 0;
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         this.useGroundGL = false;
@@ -7636,8 +7640,16 @@ export class Scene13WarLayer {
                     targetFocusX = this.skillCamX;
                     targetFocusY = this.skillCamY;
                     count = 1;
+                } else if (this.heroMan && this.heroCamHold > 0) {
+                    // 复活后镜头不动，留在倒下处；再次交战 / 玩家快走出画面 / 保底 10 秒到 ⇒ 解除，跟回玩家
+                    this.heroCamHold -= dt;
+                    const hm = this.heroMan;
+                    const sx = (hm.x - this.worldCX) * this.tacticalZoom + this.tacticalPanX;
+                    const sy = (hm.y - this.worldCY) * this.tacticalZoom + this.tacticalPanY;
+                    const outOfView = Math.abs(sx) > this.canvas.width * 0.4 || Math.abs(sy) > this.canvas.height * 0.4;
+                    if (hm.foe || outOfView) this.heroCamHold = 0;
                 } else if (this.heroMan) {
-                    // 跟随乱入者本人（阵亡复活倒计时的 10 秒里镜头留在他倒下的地方，复活后跟到本方后方重生点）
+                    // 跟随乱入者本人（阵亡复活倒计时的 10 秒里镜头留在他倒下的地方，复活后留到再次交战再跟）
                     targetFocusX = this.heroMan.x;
                     targetFocusY = this.heroMan.y;
                     count = 1;
