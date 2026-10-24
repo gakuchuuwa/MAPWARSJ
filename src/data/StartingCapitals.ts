@@ -724,7 +724,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'takeda': 'city_tsutsujigasaki',
 'toyotomi': 'city_himeji',
 'utsunomiya': 'city_utsunomiya',
-'ryuzoji': 'city_xiongben',
 'nanchou': 'city_asuka',
 'nanbu_shi': 'city_genjo',
 'shoni': 'city_taizaifu',

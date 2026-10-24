@@ -1194,7 +1194,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'heavy_rocket_cart', 'heavy_rocket_cart', 'mounted_trebuchet', 'mounted_trebuchet', 'scorpion', 'scorpion'],
     },
-    '古典时代漠南军团': {
+    '古典时代漠南游牧军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_onager', 'antiquity_siege_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
@@ -1540,7 +1540,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
  *
  * 病根（实测 scratch/probe_qifu_siege.mts）：TIBET 的**一级底座是 PURU（普鲁素材）**，
  *   于是攻城武器落进母体配置「**普鲁军团_feudal**」，而那一条里写着 2× 高棉弩炮战象。
- *   乞伏（qifu_d，枹罕 region=TIBET，军团「古典时代漠南军团」不在专项表里，主帅乞伏炽磐成名于封建）
+ *   乞伏（qifu_d，枹罕 region=TIBET，军团「古典时代漠南游牧军团」不在专项表里，主帅乞伏炽磐成名于封建）
  *   就是这条链：TIBET → 普鲁军团 → _feudal → 大象。
  *
  * 判据与 2026-08-24 删西域大象完全同一条（见 Scene13WarLayer 里

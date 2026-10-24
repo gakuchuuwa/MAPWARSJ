@@ -43,7 +43,6 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     mori: { name: '焙烙水军', tier: 1 },   // 毛利｜统帅 村上武吉｜T1 乘 1.4｜严岛合战、木津川口打破织田水军，称霸濑户
     toyotomi: { name: '黄母衣众', tier: 1 },   // 丰臣｜统帅 丰臣秀吉｜T1 乘 1.4｜贱岳合战与九州四国征伐直属亲卫，统日本主力
     utsunomiya: { name: '纪清两党', tier: 2 },   // 宇都宫｜统帅 宇都宫公纲｜T2 乘 1.3｜坂东武者骁勇代表，楠木正成赞其战阵勇烈
-    ryuzoji: { name: '四天王侍', tier: 2 },   // 龙造寺｜统帅 龙造寺隆信｜T2 乘 1.3｜筑前合战与今山之战核心冲阵尖刀
     nanchou: { name: '楠木党', tier: 2 },   // 南朝｜统帅 楠木正成｜T2 乘 1.3｜千早城防卫战击退幕府大军，游击战术典范
     nanbu_shi: { name: '糠部产马', tier: 3 },   // 南部｜统帅 南部信直｜T3 乘 1.2｜陆奥名产战马与精锐轻骑，兵种特色独步奥羽
     shoni: { name: '筑紫郎党', tier: 1 },   // 少弐｜统帅 少弐经资｜T1 乘 1.4｜弘安之役筑紫防线抗击蒙元主力，护国功勋

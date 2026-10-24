@@ -623,7 +623,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'takeda': _ribenPortraitPool,
     'toyotomi': _ribenPortraitPool,
     'utsunomiya': _ribenPortraitPool,
-    'ryuzoji': _ribenPortraitPool,
     'nanchou': _ribenPortraitPool,
     'nanbu_shi': _ribenPortraitPool,
     'shoni': _ribenPortraitPool,

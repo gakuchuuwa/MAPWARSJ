@@ -10,6 +10,7 @@ import {
     PANJUN_REBEL_FLAG_ID_MIN,
 } from './RebelFlagConstants';
 import { getAllFactionFlagTemplatePaths, getFactionFlagTemplatePath } from '../data/FactionTier';
+import { getFactionEmblemKey } from '../data/FactionEmblems';
 import { appendBootPlaceholderFlagRulesByFaction, setFactionFlagStyleRule, setRebelFlagStyleRule } from './FlagStyleInjector';
 import { notifyFactionFlagReady as dispatchFactionFlagReady } from './factionFlagNotify';
 import { gameLog } from '../utils/GameLogger';
@@ -616,7 +617,6 @@ export class CityAssetManager {
 'takeda': '武田',
 'toyotomi': '丰臣',
 'utsunomiya': '宇都',
-'ryuzoji': '龙造',
 'nanchou': '南朝',
 'nanbu_shi': '南部',
 'shoni': '少弐',
@@ -1610,7 +1610,7 @@ export class CityAssetManager {
     private static resolveFlagTextSpec(
         factionId: string,
         buildingStyle?: string,
-    ): { factionId: string; variantKey: string; text: string; fill: string; stroke: string } {
+    ): { factionId: string; variantKey: string; text: string; fill: string; stroke: string; emblemPath?: string } {
         // 🔴 [2026-10-20 主人定] 百岁模式：该势力没有在世武将时，旗号改用「当时代的军团名」
         //   （如日本古典时代 = 大和、15XX 德川在世 = 武藏）；下面的「只画前两字」规则照旧。
         //   🔴 [2026-10-20 主人令「凉州的话，旗帜只用一个凉字就行」] 个别时代名单独定了旗号文字的，
@@ -1620,6 +1620,22 @@ export class CityAssetManager {
         //   旧口径按势力首城风格取，才会让中原的函谷关/潼关顶出「吴越」「太行」。
         const cityName = getEraCityDisplayName(factionId, buildingStyle);
         const eraName = cityName ?? getEraFactionDisplayName(factionId);
+
+        // 🔴 [2026-10-24 试水] 乱斗/剧本下，登记了纹章图案的势力不画汉字，直接贴烘焙好的 4×6 图案雪碧图；
+        //   百岁模式有「时代名旗号」覆盖（eraName != null）时仍画文字，保持原口径。
+        //   表见 src/data/FactionEmblems.ts（删条目即回退汉字；生成/查缓存/军团旗共用本 spec）。
+        const emblemKey = getFactionEmblemKey(factionId);
+        if (emblemKey && eraName == null) {
+            const useWhiteEmblem = this.resolveFlagTextIsDark(factionId);
+            return {
+                factionId,
+                variantKey: `emblem_${factionId}_${useWhiteEmblem ? 'w' : 'b'}`,
+                text: '',
+                fill: '',
+                stroke: '',
+                emblemPath: `/emblem-flags/${emblemKey}_${useWhiteEmblem ? 'w' : 'b'}.png`,
+            };
+        }
         const eraFlagText = cityName != null
             ? getEraCityDisplayFlagText(factionId, buildingStyle)
             : getEraFactionDisplayFlagText(factionId);
@@ -1653,7 +1669,7 @@ export class CityAssetManager {
         const spec = this.resolveFlagTextSpec(factionId, buildingStyle);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;
-        const textImgUrl = DynamicFlagTextGenerator.generate(spec.text, spec.fill, spec.stroke);
+        const textImgUrl = spec.emblemPath ?? DynamicFlagTextGenerator.generate(spec.text, spec.fill, spec.stroke);
         this.processedFlagCache.set(spec.variantKey, textImgUrl);
         this.registerFlagTextVariant(spec.factionId, spec.variantKey);
         return textImgUrl;
@@ -1674,6 +1690,13 @@ export class CityAssetManager {
         const spec = this.resolveFlagTextSpec(factionId, buildingStyle);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;
+
+        // 图案旗号是现成 PNG 路径，不走 canvas 队列（无生成成本）
+        if (spec.emblemPath) {
+            this.processedFlagCache.set(spec.variantKey, spec.emblemPath);
+            this.registerFlagTextVariant(spec.factionId, spec.variantKey);
+            return spec.emblemPath;
+        }
 
         // 绘制与旗面加载回调只入队；不在调用栈中同步编码 PNG。
         // 🔴 [2026-09-11 主人「刷新快点」] **插到队首**：刚被请求的势力 = 玩家此刻视口里新出现的旗，
@@ -1696,6 +1719,11 @@ export class CityAssetManager {
         const spec = this.resolveFlagTextSpec(factionId, buildingStyle);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;
+        if (spec.emblemPath) {
+            this.processedFlagCache.set(spec.variantKey, spec.emblemPath);
+            this.registerFlagTextVariant(spec.factionId, spec.variantKey);
+            return spec.emblemPath;
+        }
         const url = DynamicFlagTextGenerator.generate(spec.text, spec.fill, spec.stroke);
         this.processedFlagCache.set(spec.variantKey, url);
         this.registerFlagTextVariant(spec.factionId, spec.variantKey);

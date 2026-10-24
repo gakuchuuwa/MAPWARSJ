@@ -4647,12 +4647,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 漠南　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 漠南 · 古典时代 · 古典时代漠南军团　（本次新建）────────────────
+    // ── 漠南 · 古典时代 · 古典时代漠南游牧军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑射为主
     //    描述正文（主人原文，一字未改）：（盛乐、平城；盛乐厚重夯土环形城垣、阴山山口条石防御营卡；鲜卑反曲硬木复合弓、双刃精铁短矛、鸣镝长程骑射骚扰与高机动马群迂回大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代漠南军团', civ: '漠南', age: 'antiquity', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
+        name: '古典时代漠南游牧军团', civ: '漠南', age: 'antiquity', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
         buildingStyle: 'XIANBEI',
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'crescent',

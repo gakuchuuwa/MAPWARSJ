@@ -6678,7 +6678,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/TUPI/gualani_nicolas.png": {
-            "scale": 1.13,
+            "scale": 1.15,
             "offsetX": 0,
             "offsetY": -11
         },
@@ -8171,6 +8171,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.28,
             "offsetX": 33,
             "offsetY": 34
+        },
+        "/assets/BERBER/wangdaer_gaisalike.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 43
         }
     },
     "folderGuides": {

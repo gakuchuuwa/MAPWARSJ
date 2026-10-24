@@ -1606,7 +1606,6 @@ export const FACTIONS: Faction[] = [
   { id: 'takeda', name: '武田' },
   { id: 'toyotomi', name: '丰臣' },
   { id: 'utsunomiya', name: '宇都宫' },
-  { id: 'ryuzoji', name: '龙造寺' },
   { id: 'nanchou', name: '南朝' },
   { id: 'nanbu_shi', name: '南部' },
   { id: 'shoni', name: '少弐' },

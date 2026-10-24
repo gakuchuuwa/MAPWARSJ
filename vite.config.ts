@@ -2723,6 +2723,10 @@ function serverReplaceArrayBlock(text: string, keyword: string, keyName: string,
 function findObjectKeyIdx(text: string, fromIdx: number, targetKey: string): number {
     const quoted = text.indexOf(`'${targetKey}':`, fromIdx);
     if (quoted !== -1) return quoted;
+    // [FIX 2026-10-24] 有些表用双引号写 key（FactionCompositions.ts 的 "ryuzoji": {...}）；
+    //   旧逻辑只认单引号/裸 key，删势力时这些条目永远漏删 → 成孤儿。
+    const dquoted = text.indexOf(`"${targetKey}":`, fromIdx);
+    if (dquoted !== -1) return dquoted;
     // 不带引号: 必须是真正的 key (前面是换行/空白/{/逗号, 后面是可选空白+冒号)
     let from = fromIdx;
     while (true) {
@@ -2793,7 +2797,10 @@ function serverReplaceObjectLine(text: string, keyword: string, targetKey: strin
 function serverRemoveObjectKey(text: string, keyword: string, targetKey: string): string {
     const kwIdx = text.indexOf(keyword);
     if (kwIdx === -1) throw new Error(`文件中找不到关键字 "${keyword}"`);
-    const keyIdx = findObjectKeyIdx(text, kwIdx, targetKey);
+    // [FIX 2026-10-24] 有的表条目写在私有底表里、关键字（export const XXX = ..._FIXED）在其后
+    //   （HistoricalFactionColors.ts）→ 关键字后找不到时退回全文找，否则永远漏删。
+    let keyIdx = findObjectKeyIdx(text, kwIdx, targetKey);
+    if (keyIdx === -1) keyIdx = findObjectKeyIdx(text, 0, targetKey);
     if (keyIdx === -1) return text;
     let lineStart = keyIdx;
     while (lineStart > 0 && text[lineStart - 1] !== '\n') lineStart--;
@@ -2890,10 +2897,61 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
     let roadsText = fs.readFileSync(roadsPath, 'utf-8');
     let factionGeneralsText = fs.readFileSync(factionGeneralsPath, 'utf-8');
     let generalSkillsText = fs.readFileSync(generalSkillsPath, 'utf-8');
+    // 🔴 [FIX 2026-10-24 主人「龙造寺已经删除，可能是没有删除干净。应该是程序问题，请修复」]
+    //   删势力连带以前只清 factions / StartingCapitals / 旗号 / 武将 / 档案 / 精锐，
+    //   这几张登记表会留下孤儿（编辑器看不见、运行时按旧 id 兜底）：
+    //     势力色 · 军团编制 · 立绘池 · 旗号图案（键＝factionId）
+    //     武将时代 · 文化 · 生卒 · 本人首战块 · 战场人物块（键＝generalId）
+    const factionColorsPath = path.resolve(__dirname, 'src/data/HistoricalFactionColors.ts');
+    const compositionsPath = path.resolve(__dirname, 'src/data/FactionCompositions.ts');
+    const portraitPoolsPath = path.resolve(__dirname, 'src/config/portrait_defaults.ts');
+    const factionEmblemsPath = path.resolve(__dirname, 'src/data/FactionEmblems.ts');
+    const generalCulturePath = path.resolve(__dirname, 'src/data/GeneralCulture.ts');
+    const generalEraPath = path.resolve(__dirname, 'src/data/GeneralEra.ts');
+    const generalLifeYearsPath = path.resolve(__dirname, 'src/data/GeneralLifeYears.ts');
+    const firstBattlesPath = path.resolve(__dirname, 'src/data/GeneralFirstBattles.ts');
+    const battlefieldCharsPath = path.resolve(__dirname, 'src/data/BattlefieldCharacters.ts');
+    const readIfExists = (fp: string): string => (fs.existsSync(fp) ? fs.readFileSync(fp, 'utf-8') : '');
+    let factionColorsText = readIfExists(factionColorsPath);
+    let compositionsText = readIfExists(compositionsPath);
+    let portraitPoolsText = readIfExists(portraitPoolsPath);
+    let factionEmblemsText = readIfExists(factionEmblemsPath);
+    let generalCultureText = readIfExists(generalCulturePath);
+    let generalEraText = readIfExists(generalEraPath);
+    let generalLifeYearsText = readIfExists(generalLifeYearsPath);
+    let firstBattlesText = readIfExists(firstBattlesPath);
+    let battlefieldCharsText = readIfExists(battlefieldCharsPath);
     // 精锐区文件按需读取/累积修改: file 绝对路径 → 最新文本
     const eliteEdits = new Map<string, string>();
 
     const results: DeleteResult[] = [];
+    // 只有真删过条目的附带文件才回写（没命中的不动，免得无谓触碰别的并行修改）
+    const dirtyAttached = new Set<string>();
+
+    /** 从对象表里删一个 key；文件/表/键任一不存在 = 无事可做，不算失败。 */
+    const removeKeyFrom = (
+        label: string,
+        varName: string,
+        getText: () => string,
+        setText: (t: string) => void,
+        key: string,
+        target: string,
+    ): void => {
+        const text = getText();
+        if (!text) return;
+        const kwIdx = text.indexOf(varName);
+        if (kwIdx === -1) return;
+        // 有的表先写私有底表、最后才 `export const XXX = ..._FIXED`（HistoricalFactionColors.ts），
+        //   条目在关键字**前面** → 先按关键字往后找，找不到再退回全文找。
+        if (findObjectKeyIdx(text, kwIdx, key) === -1 && findObjectKeyIdx(text, 0, key) === -1) return;
+        try {
+            setText(serverRemoveObjectKey(text, varName, key));
+            dirtyAttached.add(label);
+            results.push({ target, file: label, ok: true });
+        } catch (e: any) {
+            results.push({ target, file: label, ok: false, error: e.message });
+        }
+    };
 
     for (const t of targets) {
         const fId = t.factionId;
@@ -2922,24 +2980,40 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
                 try { sdnText = serverDeleteObjectLine(sdnText, 'SANDBOX_DISPLAY_NAMES', fId); results.push({ target: tag, file: 'SandboxDisplayNames.ts', ok: true }); }
                 catch (e: any) { results.push({ target: tag, file: 'SandboxDisplayNames.ts', ok: false, error: e.message }); }
             }
+            // [FIX 2026-10-24] 势力级登记表：势力色 / 军团编制 / 立绘池 / 旗号图案
+            removeKeyFrom('HistoricalFactionColors.ts', 'HISTORICAL_FACTION_COLORS', () => factionColorsText, (t) => { factionColorsText = t; }, fId, tag);
+            removeKeyFrom('FactionCompositions.ts', 'FACTION_COMPOSITIONS', () => compositionsText, (t) => { compositionsText = t; }, fId, tag);
+            removeKeyFrom('portrait_defaults.ts', 'FACTION_PORTRAIT_POOLS', () => portraitPoolsText, (t) => { portraitPoolsText = t; }, fId, tag);
+            removeKeyFrom('FactionEmblems.ts', 'FACTION_EMBLEM', () => factionEmblemsText, (t) => { factionEmblemsText = t; }, fId, tag);
 
             // [FIX 2026-07-01] FactionGenerals.ts (武将记录, key=factionId)
-            //   先取出 generalId, 再删本记录 + GeneralSkills 档案 (档案 key=generalId, 非 factionId)
+            //   [FIX 2026-10-24] 一个势力可挂多位武将（数组形式），旧代码正则只取第 1 位 →
+            //   其余武将的档案/文化/时代/生卒/首战全成孤儿。改为取出势力块内**全部** generalId，
+            //   逐位清：GENERAL_PROFILES / GeneralCulture / GeneralEra / GeneralLifeYears / 本人首战块 / 战场人物块。
             const fgKwIdx = factionGeneralsText.indexOf('FACTION_GENERALS');
             if (fgKwIdx !== -1 && findObjectKeyIdx(factionGeneralsText, fgKwIdx, fId) !== -1) {
-                const gMatch = factionGeneralsText.match(new RegExp(`${fId}:\\s*\\{[^}]*generalId:\\s*'([^']+)'`));
-                const generalId = gMatch ? gMatch[1] : null;
+                const fgKeyIdx = findObjectKeyIdx(factionGeneralsText, fgKwIdx, fId);
+                const fgBlockEnd = findObjectEntryEnd(factionGeneralsText, fgKeyIdx);
+                const fgBlockText = factionGeneralsText.slice(fgKeyIdx, fgBlockEnd);
+                const generalIds = [...fgBlockText.matchAll(/generalId:\s*'([^']+)'/g)].map((m) => m[1]);
                 try {
                     factionGeneralsText = serverDeleteObjectLine(factionGeneralsText, 'FACTION_GENERALS', fId);
                     results.push({ target: tag, file: 'FactionGenerals.ts', ok: true });
                 } catch (e: any) { results.push({ target: tag, file: 'FactionGenerals.ts', ok: false, error: e.message }); }
-                // GeneralSkills.ts (GENERAL_PROFILES, key=generalId)
-                const gsKwIdx = generalSkillsText.indexOf('GENERAL_PROFILES');
-                if (generalId && gsKwIdx !== -1 && findObjectKeyIdx(generalSkillsText, gsKwIdx, generalId) !== -1) {
-                    try {
-                        generalSkillsText = serverDeleteObjectLine(generalSkillsText, 'GENERAL_PROFILES', generalId);
-                        results.push({ target: tag, file: 'general-skills/profiles.ts', ok: true });
-                    } catch (e: any) { results.push({ target: tag, file: 'general-skills/profiles.ts', ok: false, error: e.message }); }
+                for (const generalId of generalIds) {
+                    removeKeyFrom('general-skills/profiles.ts', 'GENERAL_PROFILES', () => generalSkillsText, (t) => { generalSkillsText = t; }, generalId, tag);
+                    removeKeyFrom('GeneralCulture.ts', 'GENERAL_CULTURE', () => generalCultureText, (t) => { generalCultureText = t; }, generalId, tag);
+                    removeKeyFrom('GeneralEra.ts', 'GENERAL_ERA', () => generalEraText, (t) => { generalEraText = t; }, generalId, tag);
+                    removeKeyFrom('GeneralLifeYears.ts', 'GENERAL_LIFE_YEARS', () => generalLifeYearsText, (t) => { generalLifeYearsText = t; }, generalId, tag);
+                    removeKeyFrom('GeneralFirstBattles.ts', 'GENERAL_FIRST_BATTLES', () => firstBattlesText, (t) => { firstBattlesText = t; }, generalId, tag);
+                    removeKeyFrom('BattlefieldCharacters.ts', 'BATTLEFIELD_CHARACTERS', () => battlefieldCharsText, (t) => { battlefieldCharsText = t; }, generalId, tag);
+                }
+                // 被删武将若还是**别将首战**的敌将（enemyGeneralId），那场首战会错挂别人的将；
+                //   自动删别将首战属于删内容，交人工确认 → 这里只报警、不自动动。
+                const stillReferenced = generalIds.filter((gid) => new RegExp(`enemyGeneralId:\\s*'${gid}'`).test(firstBattlesText));
+                if (stillReferenced.length) {
+                    console.log(`[BatchDelete] ⚠ ${fId} 的武将仍被他将首战引用：${stillReferenced.join(', ')}（未自动删，需人工处理）`);
+                    results.push({ target: tag, file: `GeneralFirstBattles.ts（⚠ 他将首战仍引用：${stillReferenced.join('、')}，未自动删，需人工处理）`, ok: true });
                 }
             }
 
@@ -2991,7 +3065,20 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
             fs.writeFileSync(factionGeneralsPath, factionGeneralsText, 'utf-8');
             fs.writeFileSync(generalSkillsPath, generalSkillsText, 'utf-8');
             for (const [efp, etext] of eliteEdits) fs.writeFileSync(efp, etext, 'utf-8');
-            console.log(`[BatchDelete] ✅ 写入完成 (含 FactionGenerals/GeneralSkills + ${eliteEdits.size} 精锐文件)`);
+            // [FIX 2026-10-24] 附带登记表：只在真删过条目时回写
+            const writeAttached = (label: string, fp: string, text: string): void => {
+                if (text && dirtyAttached.has(label)) fs.writeFileSync(fp, text, 'utf-8');
+            };
+            writeAttached('HistoricalFactionColors.ts', factionColorsPath, factionColorsText);
+            writeAttached('FactionCompositions.ts', compositionsPath, compositionsText);
+            writeAttached('portrait_defaults.ts', portraitPoolsPath, portraitPoolsText);
+            writeAttached('FactionEmblems.ts', factionEmblemsPath, factionEmblemsText);
+            writeAttached('GeneralCulture.ts', generalCulturePath, generalCultureText);
+            writeAttached('GeneralEra.ts', generalEraPath, generalEraText);
+            writeAttached('GeneralLifeYears.ts', generalLifeYearsPath, generalLifeYearsText);
+            writeAttached('GeneralFirstBattles.ts', firstBattlesPath, firstBattlesText);
+            writeAttached('BattlefieldCharacters.ts', battlefieldCharsPath, battlefieldCharsText);
+            console.log(`[BatchDelete] ✅ 写入完成 (含 FactionGenerals/GeneralSkills + ${eliteEdits.size} 精锐文件 + ${dirtyAttached.size} 附带表)`);
         } catch (err: any) {
             console.log(`[BatchDelete] ❌ 写入失败: ${err.message}`);
             for (const r of results) r.ok = false;
@@ -5509,31 +5596,50 @@ function serverValidateEntities(): {
         if (!cityById.has(cId)) issues.push({ level: 'error', msg: `StartingCapitals: ${fId} → ${cId} (据点不存在)`, factionId: fId });
     }
 
-    // 6.5. StartingCapitals 首府据点实际归属 (cities_v2 factionId) 必须一致
+    // 6.5. 🔴 [2026-10-24 主人令]「首都城原主 ≠ 势力」**从硬伤降为情报**：
+    //      `STARTING_CAPITALS` 只是旧「一势力一据点」时期的**登记表**（编辑器提示/参考用），
+    //      不作开局依据——乱斗开局分城走 `src/events/meleeRandomOwners.ts`（每城从「原主＋挂在这座城的
+    //      武将政权」随机，保底每家至少一座），剧本走 `scriptHistoricalOwners / HISTORICAL_EVENT_SCRIPT`。
+    //      同一座城做过多个朝代都城是史实（金陵=东晋/南梁/南齐/南唐，长安=后秦/唐，开封=后周/宋，
+    //      成都=前蜀/蜀，熊本=龙造寺/南朝，安阳=袁绍/商），一张表只能登记一个原主，必然对不上。
+    //      ⇒ 只作情报，**不报 error**；只有「首府指向不存在的城」（上面第 6 条）才算硬伤。
+    //      同口径独立审计：`npm run faction:sync-audit`（scratch/audit_faction_capital_sync.mjs）。
     for (const [fId, cId] of Object.entries(data.capitals)) {
         const city = cityById.get(cId);
         if (city && city.factionId !== fId) {
             const actualFaction = factionById.get(city.factionId)?.name ?? city.factionId;
             const myFaction = factionById.get(fId)?.name ?? fId;
             issues.push({
-                level: 'error',
-                msg: `首府归属冲突：势力 "${myFaction}" (${fId}) 首府是 "${city.name}" (${cId})，但据点实际归属于 "${actualFaction}" (${city.factionId})`,
+                level: 'info',
+                msg: `情报（史实，非错误）：势力 "${myFaction}" (${fId}) 首府登记为 "${city.name}" (${cId})，该城当前归属 "${actualFaction}" (${city.factionId})；开局不读此表，同城多朝属史实`,
                 factionId: fId,
             });
         }
     }
 
-    // 6.6. 据点完整性铁律（🔴 [2026-10-22 主人最新口径] 一个据点可多武将；一个武将＝一个势力＋一个军团＋一个精锐，可以重复；
+    // 6.6. 据点完整性（🔴 [2026-10-22 主人最新口径] 一个据点可多武将；一个武将＝一个势力＋一个军团＋一个精锐，可以重复；
     //      **一个势力可以拥有多个据点**，「一城一势力」旧规作废）：
-    //      严禁叛军据点；正规势力必须有据点、不得为 0 据点。
+    //      **正规势力必须有据点、不得为 0 据点**。
+    //      🔴 [2026-10-24 主人：「叛军和起义军是两回事。叛军是游戏项目中的一种设定。」]
+    //      `panjun` 自 2026-10-20 起是**起义占位势力**（势力名「起义」、旗号「義」、军团「帝国时代起义军团」），
+    //      它的据点（平陇/偏刀水/雷公山/甲定/罗博/三都）是石柳邓、白彦虎、吴勉、包利、韦朝元、潘新简等
+    //      起义首领的基地，属正常数据 ⇒ **只作情报，不报 error**。旧 9 月口径「绝不允许 panjun」是把
+    //      「数据没补完的兜底叛军」和「起义军」混为一谈（起义军不是叛军），已作废。
     const citiesByFactionMap = new Map<string, typeof data.cities>();
+    const panjunCities: typeof data.cities = [];
     for (const c of data.cities) {
         if (c.factionId === 'panjun') {
-            issues.push({ level: 'error', msg: `据点 "${c.name}" (${c.id}) 归属于叛军 panjun（严禁任何叛军据点）` });
+            panjunCities.push(c);
             continue;
         }
         if (!citiesByFactionMap.has(c.factionId)) citiesByFactionMap.set(c.factionId, []);
         citiesByFactionMap.get(c.factionId)!.push(c);
+    }
+    if (panjunCities.length) {
+        issues.push({
+            level: 'info',
+            msg: `情报（起义占位势力，非错误）：panjun「起义」名下 ${panjunCities.length} 座据点——${panjunCities.map(c => `${c.name}(${c.id})`).join('、')}；起义据点允许（叛军≠起义军）`,
+        });
     }
     for (const f of data.factions) {
         if (skipFactions.has(f.id)) continue;

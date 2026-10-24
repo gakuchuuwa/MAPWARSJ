@@ -474,7 +474,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 巴黎
-    'gen_constantine_great': 'LATIN',   // 摩泽尔｜君士坦丁｜据点 特里尔
+    'gen_constantine_great': 'ROMA',   // 摩泽尔｜君士坦丁｜据点 特里尔（2026-10-24 城风格改罗马系）
     'gen_constantine_xi': 'BYZANTINE',   // 拜占庭｜君士坦丁十一世｜据点 君士坦丁堡
     'gen_cortes': 'SPANISH',   // 西属墨西哥｜科尔特斯｜据点 韦拉克鲁斯
     'gen_cuauhtemoc': 'AMERICA',   // 阿兹特克｜库奥特莫克｜据点 特诺奇提特兰
@@ -645,7 +645,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_shashanka': 'BENGALIS',   // 波罗帝国｜设赏迦｜据点 高达城
     'gen_shi_chaoyi': 'CENTRAL',   // 武周｜史朝义｜据点 洛阳
     'gen_si_lunfa': 'BURMESE',   // 麓川｜思伦发｜据点 勐卯
-    'gen_simeon_great': 'THRACIAN',   // 色雷斯｜西美昂｜据点 普罗夫迪夫
+    'gen_simeon_great': 'BULGARIANS',   // 保加利亚｜西美昂｜据点 普雷斯拉夫（2026-10-24 按史迁回其首都，原普罗夫迪夫为色雷斯文化）
     'gen_sineus': 'VARANGIANS',   // 留里克｜西涅乌斯｜据点 白湖
     'gen_stefan_dusan': 'SLAVIC',   // 塞尔维亚｜斯蒂芬杜尚｜据点 斯科普里
     'gen_stephen_great': 'SLAVIC',   // 摩尔达维亚｜斯蒂芬｜据点 苏恰瓦
@@ -1332,7 +1332,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xibolai_majiabi': 'ORIE',   // 希伯来｜犹大马加比｜据点 耶路撒冷
     'xichu_xiangyu': 'CENTRAL',   // 西楚｜项羽｜据点 彭城
     'xie_xiefangde': 'JIANGNAN',   // 宋国｜谢枋得｜据点 葛溪
-    'xiemian_xiemianwang': 'CENTRAL_ASIA',   // 萨维尔｜齐贝尔｜据点 谢缅杰尔
+    'xiemian_xiemianwang': 'CUMAN',   // 萨维尔｜齐贝尔｜据点 谢缅杰尔（2026-10-24 城风格改可萨系）
     'xierhe_saerjue': 'CENTRAL_ASIA',   // 锡尔河｜塞尔柱｜据点 哲德
     'xierwan_farukusha': 'ORIE',   // 希尔万王国｜法鲁克沙｜据点 巴库
     'xigete_roderic': 'GOTHS',   // 西哥特｜罗德里克｜据点 托莱多
@@ -1410,7 +1410,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yezongliu_yezongliu': 'JIANGNAN',   // 唐国｜叶宗留｜据点 丽水
     'yi_yuqian': 'WEI',   // 大明｜于谦｜据点 北京
     'yiaoniya_hegesistratus': 'GREECE',   // 伊奥尼亚｜赫格西斯特｜据点 米利都
-    'yidier_yidiewang': 'CENTRAL_ASIA',   // 伊蒂尔汗国｜约瑟夫｜据点 伊蒂尔
+    'yidier_yidiewang': 'CUMAN',   // 伊蒂尔汗国｜约瑟夫｜据点 伊蒂尔（2026-10-24 城风格改可萨系）
     'yidou_luxun': 'JIANGNAN',   // 孙吴｜陆逊｜据点 夷陵
     'yidou_qixin': 'JIANGNAN',   // 孙吴｜戚昕｜据点 夷陵
     'yiduhu_baershu': 'WESTERN',   // 亦都护｜巴尔术｜据点 高昌

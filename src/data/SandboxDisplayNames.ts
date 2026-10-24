@@ -767,7 +767,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'takeda': '武田',
 'toyotomi': '丰臣',
 'utsunomiya': '宇都',
-'ryuzoji': '龙造',
 'nanchou': '南朝',
 'nanbu_shi': '南部',
 'shoni': '少弐',

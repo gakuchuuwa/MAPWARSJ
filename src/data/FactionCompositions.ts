@@ -269,7 +269,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "helian": {
-        legionName: "古典时代漠南军团",
+        legionName: "古典时代漠南游牧军团",
         legionType: "sub",
     },
     "xueyantuo": {
@@ -301,7 +301,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xiongnu": {
-        legionName: "古典时代漠南军团",
+        legionName: "古典时代漠南游牧军团",
         legionType: "sub",
     },
     "cheshihou": {
@@ -317,7 +317,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "baidi": {
-        legionName: "古典时代漠南军团",
+        legionName: "古典时代漠南游牧军团",
         legionType: "sub",
     },
     "yada": {
@@ -802,7 +802,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "wuhuan": {
-        legionName: "古典时代漠南军团",
+        legionName: "古典时代漠南游牧军团",
         legionType: "region",
     },
     "fuyu": {
@@ -810,7 +810,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "murong": {
-        legionName: "古典时代漠南军团",
+        legionName: "古典时代漠南游牧军团",
         legionType: "region",
     },
     "yilou": {
@@ -2440,10 +2440,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "utsunomiya": {
         legionName: "帝国时代武家军团",
-        legionType: "sub",
-    },
-    "ryuzoji": {
-        legionName: "城堡时代幕府军团",
         legionType: "sub",
     },
     "nanchou": {
