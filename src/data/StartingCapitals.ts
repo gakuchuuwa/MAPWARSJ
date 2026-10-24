@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 沙盒模式：势力 id → 首都 cityId（1 势力 = 1 据点）。
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
@@ -689,7 +689,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'anga': 'city_zhanbo',
   'shunga': 'city_ayuta',
   'antigonid': 'city_kailaina',
-'hou_han': 'city_bianliang',
+'hou_han': 'city_taiyuan',
 'yuan_shao': 'city_anyang',
 'hou_jin': 'city_daixian',
 'hou_zhao': 'city_xingtai',
@@ -748,3 +748,4 @@ if (import.meta.hot) {
         console.log(`[HMR] StartingCapitals → ${Object.keys(newModule.STARTING_CAPITALS).length} 条首都映射已热更新`);
     });
 }
+
