@@ -4604,7 +4604,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_wangtong',
         slots: [
-            { type: 'liao_dao', count: 3 },
+            { type: 'elite_liao_dao', count: 3 },
             { type: 'recurve_bowman', count: 4 },
             { type: 'hei_kuang_heavy', count: 2 },
         ],

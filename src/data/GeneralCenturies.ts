@@ -34,6 +34,10 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'tang_guoyuanzhen': 8,  // 郭元振 · tang · 赤亭关
     'putaoya_afonso': 15,  // 阿方索 · putaoya · 布拉干萨
     'montereau_pressy': 15,  // 让·德·普雷西 · bogendigongguo · 蒙特罗
+    'guyan_jiaolian': 17,  // 焦琏 · longwu · 古严关
+    'yumen_suoban': 2,  // 索班 · han_d · 玉门关
+    'yangguan_lixi': -2,  // 李息 · han_d · 阳关
+    'wusheng_dongxian': 12,  // 董先 · song · 武胜关
 
 
     // ══════ STEPPE（103 人，已标 0）══════

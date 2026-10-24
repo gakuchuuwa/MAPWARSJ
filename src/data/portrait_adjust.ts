@@ -4278,7 +4278,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/MONGOL/xiajiasi_are.png": {
-            "scale": 1.08,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -8196,6 +8196,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/CENTRAL_ASIA/xiliao_uthman.png": {
+            "scale": 1.19,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/PURU/bfe3_27.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/MONGOL/huihu_wusa.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 1
         }
     },
     "folderGuides": {

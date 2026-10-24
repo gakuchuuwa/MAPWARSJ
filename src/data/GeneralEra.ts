@@ -1536,6 +1536,10 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'tang_guoyuanzhen': 'feudal',   // 郭元振｜赤亭关·唐（700 赤亭大捷）
     'putaoya_afonso': 'castle',   // 阿方索｜布拉干萨·葡萄牙（15 世纪）
     'montereau_pressy': 'castle',   // 让·德·普雷西｜蒙特罗·勃艮第（1419）
+    'guyan_jiaolian': 'imperial',   // 焦琏｜古严关·南明
+    'yumen_suoban': 'antiquity',   // 索班｜玉门关·东汉
+    'yangguan_lixi': 'antiquity',   // 李息｜阳关·西汉
+    'wusheng_dongxian': 'feudal',   // 董先｜武胜关·南宋
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

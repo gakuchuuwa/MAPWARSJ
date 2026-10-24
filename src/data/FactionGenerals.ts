@@ -4608,7 +4608,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'weizhou_weigao', factionId: 'tang', cityId: 'city_chengdu', legionName: '封建时代剑南军团', generalName: '韦皋', portrait: '/assets/BASHU/weizhou_weigao.png' },
+        { generalId: 'weizhou_weigao', factionId: 'tang', cityId: 'city_shimenguan', legionName: '封建时代剑南军团', eliteName: '剑南西川军', eliteTier: 1, generalName: '韦皋', portrait: '/assets/BASHU/weizhou_weigao.png' },
 
 
 
@@ -5060,7 +5060,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'wumeng_azi', factionId: 'wumeng', cityId: 'city_weixian2', legionName: '城堡时代川峡军团', generalName: '阿资', portrait: '/assets/BASHU/wumeng_azi.png' },
+        { generalId: 'wumeng_azi', factionId: 'wumeng', cityId: 'city_shimenguan', legionName: '城堡时代川峡军团', generalName: '阿资', portrait: '/assets/BASHU/wumeng_azi.png' },
 
 
 
@@ -5231,7 +5231,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'haikou_wangzhi', factionId: 'haikou', cityId: 'city_qingyuan_zj', generalName: '汪直', portrait: '/assets/JIANGNAN/haikou_wangzhi.png' },
+        { generalId: 'haikou_wangzhi', factionId: 'haikou', cityId: 'city_yuanzhishi', generalName: '汪直', portrait: '/assets/JIANGNAN/haikou_wangzhi.png' },
 
 
 
@@ -6302,10 +6302,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bfe3_18', factionId: 'zhao', cityId: 'city_jingxingguan', generalName: '陈馀', portrait: '/assets/CENTRAL/bfe3_18.png', legionName: '古典时代太行军团' },
-        { generalId: 'zhao_gerong', cityId: 'city_zhongshan', generalName: '葛荣', portrait: '/assets/CENTRAL/zhao_gerong.png', factionId: 'liuzhen', legionName: '起义军' },
+        { generalId: 'zhao_gerong', cityId: 'city_hejian', generalName: '葛荣', portrait: '/assets/CENTRAL/zhao_gerong.png', factionId: 'liuzhen', legionName: '起义军' },
         { generalId: 'wei_wuqi', factionId: 'wei', cityId: 'city_xiayangdu', generalName: '吴起', portrait: '/assets/WEI/wei_wuqi.png' , legionName: '先秦军团' },
         // 🔴 [2026-10-24 险要补将·镇守] 王梁＝东汉野王令，与河内太守缪逵「北守天井关」（《后汉书·王梁传》）；普将；精锐「野王戍卒」T4
         { generalId: 'tianjing_wangliang', generalName: '王梁', factionId: 'han_d', cityId: 'city_tianjinguan', portrait: '', eliteName: '野王戍卒', eliteTier: 4 },
+        // 🔴 [2026-10-25 险要补将·镇守] 索班＝东汉西域长史，延光二年领兵出玉门关、镇守伊吾；普将；精锐「伊吾戍卒」T4
+        { generalId: 'yumen_suoban', generalName: '索班', factionId: 'han_d', cityId: 'city_yumenguan', portrait: '', eliteName: '伊吾戍卒', eliteTier: 4 },
+        // 🔴 [2026-10-25 险要补将·镇守] 李息＝汉武帝元鼎六年与徐自为营筑阳关、玉门关，屯兵镇守丝路南道；普将；精锐「阳关戍卒」T4
+        { generalId: 'yangguan_lixi', generalName: '李息', factionId: 'han_d', cityId: 'city_yangguan', portrait: '', eliteName: '阳关戍卒', eliteTier: 4 },
     ],
 
 
@@ -10370,6 +10374,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         // 🔴 [2026-10-24 险要补将·镇守] 郑彩＝南明隆武朝守仙霞关，1646 年清军入闽时驻守；普将；精锐「郑氏水师」T3
         { generalId: 'xianxia_zhengcai', generalName: '郑彩', factionId: 'longwu', cityId: 'city_xianxia', portrait: '', eliteName: '郑氏水师', eliteTier: 3 },
+        // 🔴 [2026-10-25 险要补将·镇守] 焦琏＝南明桂林守将，古严关为桂林北门户，属其防御战区；普将；精锐「桂林守军」T4
+        { generalId: 'guyan_jiaolian', generalName: '焦琏', factionId: 'longwu', cityId: 'city_guyanguan', portrait: '', eliteName: '桂林守军', eliteTier: 4 },
     ],
 
 
@@ -12398,7 +12404,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'wuyue_qianliu', cityId: 'city_hangzhou', generalName: '钱镠', portrait: '/assets/JIANGNAN/wuyue_qianliu.png' },
         { generalId: 'bfe_ajibaldo', factionId: 'haikou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JIANGNAN/bfe_ajibaldo.png' },
         { generalId: 'qian_d_yudayou', factionId: 'ming_d', cityId: 'city_qingyuan_zj', legionName: '帝国时代两江军团', generalName: '俞大猷', portrait: '/assets/JIANGNAN/qian_d_yudayou.png' },
-        { generalId: 'bfe_xu_hai', cityId: 'city_jiaxing', generalName: '徐海', portrait: '/assets/JIANGNAN/bfe_xu_hai.png', factionId: 'haikou' },
+        { generalId: 'bfe_xu_hai', cityId: 'city_satsuma', generalName: '徐海', portrait: '/assets/JIANGNAN/bfe_xu_hai.png', factionId: 'haikou' },
 
 
 
@@ -13062,6 +13068,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'shang_weiwuji', factionId: 'wei', cityId: 'city_bianliang', generalName: '魏无忌', portrait: '/assets/CENTRAL/shang_weiwuji.png' , legionName: '古典时代华夏军团' },
         // 🔴 [2026-10-24 险要补将·镇守] 张濡＝南宋独松关守将，德祐元年（1275）元军破关被执（《独松关之战》）；普将；精锐「独松戍卒」T4
         { generalId: 'dusong_zhangru', generalName: '张濡', factionId: 'song', cityId: 'city_dusong', portrait: '', eliteName: '独松戍卒', eliteTier: 4 },
+        // 🔴 [2026-10-25 险要补将·镇守] 董先＝岳飞部将，绍兴年间屯守义阳三关（武胜关为三关之一）；普将；精锐「义阳戍卒」T4
+        { generalId: 'wusheng_dongxian', generalName: '董先', factionId: 'song', cityId: 'city_wushengguan', portrait: '', eliteName: '义阳戍卒', eliteTier: 4 },
     ],
 
 
@@ -16682,7 +16690,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'yin_yuejin', factionId: 'wei', cityId: 'city_hefei', legionName: '古典时代吴越军团', generalName: '乐进', portrait: '/assets/CENTRAL/yin_yuejin.png' },
     ],
     nantang: [
-        { generalId: 'tingzhou_d_chenmin', factionId: 'song', cityId: 'city_zhangzhou', legionName: '古典时代吴越军团', generalName: '陈敏', portrait: '/assets/JIANGNAN/tingzhou_d_chenmin.png' },
+        { generalId: 'tingzhou_d_chenmin', factionId: 'song', cityId: 'city_ruijin', legionName: '古典时代吴越军团', generalName: '陈敏', portrait: '/assets/JIANGNAN/tingzhou_d_chenmin.png' },
 
     
         { generalId: 'li_bian', factionId: 'nantang', cityId: 'city_hailing', generalName: '李昪', portrait: '/assets/JIANGNAN/taizhou_libian.png' },

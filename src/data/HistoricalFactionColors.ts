@@ -740,7 +740,7 @@ export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Objec
     liuzhen: '#8E2F2F',
     kilwa: '#C79A3B', // 2026-10-24 环非洲新势力
     mombasa: '#2E8B57', // 2026-10-24 环非洲新势力
-    mogadishu: '#B8860B', // 2026-10-24 环非洲新势力
+    mogadishu: '#1F7A6B', // 2026-10-24 环非洲新势力
     zuraid: '#6A5ACD', // 2026-10-24 环非洲新势力
  ..._FIXED });
 

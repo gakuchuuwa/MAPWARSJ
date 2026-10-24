@@ -96,7 +96,7 @@ import {
     BATTLEFIELD_BASE_URL, ANIMAL_BASE_URL,
     SIDE_CAP, TRIGGER, SPRITE_TROOPS, CORPSE_KEEP, FLEE_SPD, FLEE_DUR, FLAG_EVERY,
     FLAG_SCALE, FLAG_FALL, FLAG_POLE_RATIO, FLAG_POLE_LIFT, BATCH_COOLDOWN, FADE_IN,
-    DEPLOY_SECS, DEPLOY_FADE, ARRIVE_EPS, MARCH_REL, LANE_REGROUP_SEC, LANE_TRACK_EPS,
+    DEPLOY_SECS, DEPLOY_FADE, ARRIVE_EPS, MARCH_REL, LANE_REGROUP_SEC, LANE_TRACK_EPS, LANE_BEHIND_FREE, LANE_BEHIND_PEN,
     LANE_W, MARCH_R, SPREAD_CAP, SEP_DIST,
     SEP_SMOOTH, SEP_SPD, SEP_FIGHT, LEASH_LAT, CELL_S, STUCK_IDLE_SEC, NET_STUCK_WINDOW,
     SLIDE_RATE, SLIDE_W, KEEP_TARGET_HP, KITE_RETREAT_DIST, KITE_SAFE, KITE_RETREAT_CAP,
@@ -1561,6 +1561,7 @@ export class Scene13WarLayer {
         this.perfFrames = 0;
         this.diagEvents = [];
         this.diagSent = false;
+        this.laneReassignStat = { total: 0, behind: 0, behindNoGate: 0, flipped: 0 };
         this.diagPush('start', {
             att: init.attackerTroops, def: init.defenderTroops,
             attR: init.attackerRegion, defR: init.defenderRegion,
@@ -2454,6 +2455,10 @@ export class Scene13WarLayer {
     visPool: Array<{ kind: 'unit' | 'environment'; y: number; sortY?: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; z: number; zid: number; sprite: DecorSprite | null }> = [];
     private diagEvents: Array<[number, string, unknown]> = [];
     private diagSent = false;
+    /** [诊断 2026-10-25] 队级目标改派（updateLaneTargets 第二遍）统计：
+     *  total = 改派到敌队的次数；behind = 实际选中「身后 >LANE_BEHIND_FREE」的次数；
+     *  behindNoGate = 不加方向闸时会选中身后的次数；flipped = 方向闸改变了选择的次数。随 diagPost 落盘。 */
+    private laneReassignStat = { total: 0, behind: 0, behindNoGate: 0, flipped: 0 };
     private diagAssetsReady = false;
 
     private diagPush(ev: string, data?: unknown): void {
@@ -2501,6 +2506,7 @@ export class Scene13WarLayer {
             // 而探针反算实测 fps 中位 47、p10 仅 17.7 —— 说明卡顿几乎全在 13 之外。
             // PerformanceMonitor 已逐帧记着主循环分项，这里一并落盘才能定位到具体子系统。
             host: (window as any).perfMonitor?.getSnapshot?.() ?? null,
+            laneReassign: this.laneReassignStat,
             events: this.diagEvents,
         });
         try {
@@ -4516,6 +4522,7 @@ export class Scene13WarLayer {
             if (this.laneTargets.has(lane)) continue;
             const uF = this.advanceVec[info.f], uS = this.sideVec[info.f];
             let bestELane: number | undefined, bestEScore = Infinity, bestERawDist = Infinity;
+            let noGateELane: number | undefined, noGateScore = Infinity;
             let fallbackCityELane: number | undefined, fallbackCityDist = Infinity, fallbackRawDist = Infinity;
             for (const [eLane, eInfo] of laneInfo) {
                 if (eInfo.f === info.f || !canReachLane(info, eInfo)) continue;
@@ -4535,19 +4542,41 @@ export class Scene13WarLayer {
                 const weightedDist = Math.hypot(fwd, side * 1.35);
                 const loadPenalty = rawDist < 260 ? claims * 110 : claims * 150;
                 const outsideBonus = (this.battleType === 'siege' && info.f === 0 && !eInfo.guard && eInfo.inside < eInfo.n) ? -350 : 0;
-                const score = (this.battleType === 'siege' && info.f === 1)
+                const defSiege = this.battleType === 'siege' && info.f === 1;
+                const baseScore = defSiege
                     ? weightedDist * 0.65 + cityDist * 0.75 + loadPenalty
                     : weightedDist + loadPenalty + outsideBonus;
+                // 🔴 [2026-10-25 主人批「方向闸」] weightedDist 用 hypot 丢了前后号：身后 300px 与前方 300px 同分 ⇒
+                //    原目标打光后整队掉头去打身后的敌队。身后超出 LANE_BEHIND_FREE 的部分按 LANE_BEHIND_PEN 倍加罚
+                //    （只罚不禁：两军打穿后真敌人多在「身后」，全禁会落进原地待命）。攻城战守方往回打是回师救城，不罚。
+                const behindPen = defSiege ? 0 : Math.max(0, -fwd - LANE_BEHIND_FREE) * LANE_BEHIND_PEN;
+                const score = baseScore + behindPen;
+                if (baseScore < noGateScore) {
+                    noGateScore = baseScore;
+                    noGateELane = eLane;
+                }
                 if (score < bestEScore) {
                     bestEScore = score;
                     bestELane = eLane;
                     bestERawDist = rawDist;
                 }
             }
+            const isBehind = (eLane: number | undefined): boolean => {
+                const e = eLane !== undefined ? laneInfo.get(eLane) : undefined;
+                return !!e && -((e.x - info.x) * uF.x + (e.y - info.y) * uF.y) > LANE_BEHIND_FREE;
+            };
+            const noteReassign = (): void => {
+                const st = this.laneReassignStat;
+                st.total++;
+                if (isBehind(bestELane)) st.behind++;
+                if (isBehind(noGateELane)) st.behindNoGate++;
+                if (noGateELane !== bestELane) st.flipped++;
+            };
 
             if (this.battleType === 'siege' && info.f === 0) {
                 const bestEInfo = bestELane !== undefined ? laneInfo.get(bestELane) : undefined;
                 if (bestELane !== undefined && bestEInfo && (bestERawDist <= 520 || (!bestEInfo.guard && bestEInfo.inside < bestEInfo.n))) {
+                    noteReassign();
                     this.laneTargets.set(lane, { targetLane: bestELane, x: bestEInfo.x, y: bestEInfo.y });
                     laneClaims.set(bestELane, (laneClaims.get(bestELane) ?? 0) + 1);
                     continue;
@@ -4576,6 +4605,7 @@ export class Scene13WarLayer {
 
             if (bestELane !== undefined) {
                 const eInfo = laneInfo.get(bestELane)!;
+                noteReassign();
                 this.laneTargets.set(lane, { targetLane: bestELane, x: eInfo.x, y: eInfo.y });
                 laneClaims.set(bestELane, (laneClaims.get(bestELane) ?? 0) + 1);
             } else if (this.battleType === 'siege' && info.f === 1 && fallbackCityELane !== undefined && fallbackRawDist > 280) {

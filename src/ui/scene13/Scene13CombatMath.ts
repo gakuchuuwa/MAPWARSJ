@@ -122,6 +122,10 @@ export const ARRIVE_EPS = 8;
 export const MARCH_REL = 360;
 export const LANE_REGROUP_SEC = 1.0;
 export const LANE_TRACK_EPS = 1;
+/** 队级目标改派的方向闸（见 updateLaneTargets 第二遍）：敌队在本队身后 ≤ 此距离（px，沿进军方向）不罚，贴背后照样回头 */
+export const LANE_BEHIND_FREE = 200;
+/** 身后超出 LANE_BEHIND_FREE 的每 1px 折算多少分（打分单位 = px） */
+export const LANE_BEHIND_PEN = 1.5;
 export const LANE_W = 6;
 export const MARCH_R = 450;
 export const CHARGE_CYCLE = 8;

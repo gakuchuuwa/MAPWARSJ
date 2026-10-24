@@ -1366,6 +1366,10 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     tang_guoyuanzhen: { birth: 656, death: 713 },  // 郭元振（656～713）
     putaoya_afonso: { birth: 1370, death: 1461 },  // 布拉干萨公爵阿方索（1370～1461）
     montereau_pressy: { birth: 1350, death: 1420, kaoju: '推定' },  // 让·德·普雷西（生卒无考，推定）
+    guyan_jiaolian: { birth: 1600, death: 1660, kaoju: '推定' },  // 焦琏（南明桂林守将，生卒无考，推定）
+    yumen_suoban: { birth: 80, death: 120, kaoju: '推定' },  // 索班（东汉西域长史，生卒无考，推定）
+    yangguan_lixi: { birth: -160, death: -100, kaoju: '推定' },  // 李息（汉武帝将，生卒无考，推定）
+    wusheng_dongxian: { birth: 1090, death: 1156, kaoju: '推定' },  // 董先（岳飞部将，生卒无考，推定）
     gen_ezana: { birth: 320, death: 360, kaoju: '推定' },  // 埃扎纳
     zhagewei_gebulei: { birth: 1162, death: 1205, kaoju: '推定' },  // 拉利贝拉
     adal_ghazi: { birth: 1506, death: 1542, kaoju: '异说' },  // 格拉尼
