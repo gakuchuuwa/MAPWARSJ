@@ -5290,9 +5290,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'gen_kangxi', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '康熙', portrait: '/assets/NORTHEAST/gen_kangxi.png', legionName: '帝国时代八旗军团' },
         { generalId: 'ying_caojingzong', factionId: 'nan_liang', cityId: 'city_bengbu', legionName: '封建时代江淮军团', generalName: '曹景宗', portrait: '/assets/JIANGNAN/ying_caojingzong.png' },
-        { generalId: 'yuan_d_tuotuo', factionId: 'yuan_d', cityId: 'city_beijing', legionName: '城堡时代燕云军团', generalName: '脱脱', portrait: '/assets/XIANBEI/yuan_d_tuotuo.png' },
-        { generalId: 'dajin_wanyanchengyu', factionId: 'dajin', cityId: 'city_xuanhua', legionName: '城堡时代燕云军团', generalName: '完颜承裕', portrait: '/assets/NORTHEAST/dajin_wanyanchengyu.png' },
-        { generalId: 'dajin_wanyanheda', factionId: 'dajin', cityId: 'city_tongguan', legionName: '城堡时代中华军团', generalName: '完颜合达', portrait: '/assets/NORTHEAST/dajin_wanyanheda.png' },
+        { generalId: 'yuan_d_tuotuo', factionId: 'yuan_d', cityId: 'city_merkit', legionName: '城堡时代蒙古军团', generalName: '脱脱', portrait: '/assets/XIANBEI/yuan_d_tuotuo.png' },
+        { generalId: 'dajin_wanyanchengyu', factionId: 'dajin', cityId: 'city_huining', legionName: '城堡时代大金军团', generalName: '完颜承裕', portrait: '/assets/NORTHEAST/dajin_wanyanchengyu.png' },
+        { generalId: 'dajin_wanyanheda', factionId: 'dajin', cityId: 'city_huining', legionName: '城堡时代大金军团', generalName: '完颜合达', portrait: '/assets/NORTHEAST/dajin_wanyanheda.png' },
     ],
 
 
@@ -5736,7 +5736,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'ogodei_chuoermahan', factionId: 'menggu_d', cityId: 'city_dabulishi', legionName: '城堡时代伊儿军团', generalName: '绰儿马罕', portrait: '/assets/CENTRAL_ASIA/ogodei_chuoermahan.png' },
+        { generalId: 'ogodei_chuoermahan', factionId: 'menggu_d', cityId: 'city_karakorum', legionName: '城堡时代蒙古军团', generalName: '绰儿马罕', portrait: '/assets/CENTRAL_ASIA/ogodei_chuoermahan.png' },
 
 
 
@@ -11826,7 +11826,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'oirat_ming_gaerdan', cityId: 'city_yili', generalName: '噶尔丹', portrait: '/assets/MONGOL/oirat_ming_gaerdan.png', legionName: '帝国时代乌兹别克军团' },
+        { generalId: 'oirat_ming_gaerdan', cityId: 'city_kobdo', generalName: '噶尔丹', portrait: '/assets/MONGOL/oirat_ming_gaerdan.png', legionName: '帝国时代喀尔喀军团' },
 
 
 

@@ -587,6 +587,42 @@ export class LegionPhalanxDrawer {
     }
 
     /**
+     * 无攻击/受击动作的兵种借用别的动作贴图时，帧框跟着「贴图真实所属动作」走。
+     *
+     * 🔴 [2026-10-24 主人报「诸葛亮战斗兵模在战略地图显示有问题，移动和攻击状态」]
+     *   DE 原素材里诸葛亮、布塞法洛斯等**没有 attack 动作**，UnitAssets 把 ATTACK/DAMAGE
+     *   指向 move_*.png / idle_*.png。draw() 按 animState 查 `dyn[ATTACK]`，查不到就退回
+     *   S10DB 方形帧（frames = round(图宽/图高)、frameW = 图宽/frames、无 hotspot）：
+     *     诸葛亮 move_0.png 840×48，真实 30 帧×28px，被当成 18 帧×46.67px ——
+     *     每片切出 1.67 个人形 → 攻击时重影/分身；hotspot 对齐丢失 → 脚底下陷约 1/3 体高。
+     *   这里按配置里第一个 URL 的文件名前缀判定来源动作，把来源动作的帧框别名给该槽位。
+     *
+     * 只处理攻击类槽位（ATTACK/DAMAGE/SHOOT/CHARGE）：
+     *   MOVE/IDLE/DEATH 的借用各有各的分支（如 pickDeathFrame 会把 animState 一起退回 IDLE），
+     *   不在这里动，避免影响本来正常的动作。
+     */
+    private static aliasBorrowedCombatActionDyn(config: any, cacheEntry: any): void {
+        const dynMap = cacheEntry?.dyn as Record<string, any> | undefined;
+        if (!dynMap) return;
+        const actionOf = (url: unknown): string | null => {
+            if (typeof url !== 'string') return null;
+            const action = url.substring(url.lastIndexOf('/') + 1).split('_')[0];
+            return action === 'idle' || action === 'move' || action === 'attack' || action === 'death' ? action : null;
+        };
+        const slotOfAction: Record<string, string> = { idle: 'IDLE', move: 'MOVE', attack: 'ATTACK', death: 'DEATH' };
+        for (const slot of ['ATTACK', 'DAMAGE', 'SHOOT', 'CHARGE'] as const) {
+            const action = actionOf(config?.[slot]?.[0]);
+            if (!action || action === 'attack') continue;   // 贴图本来就是 attack → 帧框本来就对
+            const sourceDyn = dynMap[slotOfAction[action]];
+            if (!sourceDyn) continue;                       // 来源动作也没帧框 → 维持原有兜底
+            dynMap[slot] = sourceDyn;
+            // 记下借用关系：draw() 里「借用 move 当攻击」要按 move 的整轮时长播（见帧循环处）。
+            cacheEntry.dynSrcAction ??= {};
+            cacheEntry.dynSrcAction[slot] = action;
+        }
+    }
+
+    /**
      * DE 动态帧框元数据取向：**唯一入口**，所有读 `_meta.json` 的 dirs 都必须走这里。
      * 16 向素材（dirs16:true，如全部战船）在 UnitAssets 里按偶数向采样成 8 向（陆军/旗），
      * 所以游戏的 direction k 对应元数据键 2k；8 向素材原样。
@@ -764,7 +800,10 @@ export class LegionPhalanxDrawer {
             if (typeof _firstUrl === 'string' && _firstUrl.includes('/SUCAI/')) {
                 const _dir = _firstUrl.substring(0, _firstUrl.lastIndexOf('/') + 1);
                 const dyn = await LegionPhalanxDrawer.loadDynMeta(_dir);
-                if (dyn) (cacheEntry as any).dyn = dyn;
+                if (dyn) {
+                    (cacheEntry as any).dyn = dyn;
+                    LegionPhalanxDrawer.aliasBorrowedCombatActionDyn(config, cacheEntry);
+                }
             }
             const jobs = [
                 loadBatch(config.MOVE, cacheEntry.MOVE),
@@ -1692,8 +1731,12 @@ export class LegionPhalanxDrawer {
                     //   DE 全帧素材（30~60 帧）按固定值播 → 移动慢 5 倍、攻击慢 2 倍。
                     //   改为对齐 zoom13 已定稿节奏 + AoE2 DE 原生（DAT frame_duration 实测 walk≈30ms / attack≈37ms）：
                     //   DE 素材按帧数动态算（移动整轮 1s / 攻击整轮 1.5s）；S10DB 8 帧素材保持原速不动。
+                    // 🔴 [2026-10-24] 借用 move 图当攻击动作的英雄（DE 无攻击动作，如诸葛亮）：
+                    //   帧框已按 move 动作对齐，整轮也要按 move 的 1s 播 —— 否则同一个行走循环被拉成 1.5s（慢放）。
+                    const attackBorrowsMove = animState === 'ATTACK'
+                        && (currentSet as any).dynSrcAction?.ATTACK === 'move';
                     const frameMs = dynEntry
-                        ? (animState === 'ATTACK' ? 1500 / spriteTotalFrames : 1000 / spriteTotalFrames)
+                        ? ((animState === 'ATTACK' && !attackBorrowsMove ? 1500 : 1000) / spriteTotalFrames)
                         : (animState === 'ATTACK' ? 75 : 150);
                     currentFrameIndex = Math.floor((tick / frameMs) + stagger) % spriteTotalFrames;
                 } else {

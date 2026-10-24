@@ -122,6 +122,23 @@ const ERA_DISPLAY_OVERRIDES: Readonly<Record<string, EraNameDef>> = {
     'VIETNAMESE|feudal': { name: '静海' },      // 封建时代瞿越军团（原丁黎军团）
     // 🔴 [2026-10-20 主人令「不以朝代为名，可以用发羌吗，旗号羌？」] 青藏·古典：势力名随军团名＝发羌，旗面只写一个「羌」
     'TIBET|antiquity': { flagText: '羌' },      // 古典时代发羌军团（原象雄军团）→ 发羌；旗面只写「羌」
+    // 🔴 [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词（英格／俄罗／西班）→ 只有中文有通行国名简称的才改单字；
+    //   没有通行简称的（拜占庭、斯巴达、马其顿等）不自造截字，照旧。
+    'BRITONS|castle': { flagText: '英' },       // 英格兰
+    'FRANKS|castle': { flagText: '法' },        // 法兰西骑士
+    'FRANKS|imperial': { flagText: '法' },      // 法兰西
+    'SLAVIC|imperial': { flagText: '俄' },      // 俄罗斯
+    'SPANISH|imperial': { flagText: '西' },     // 西班牙方阵
+    'PORTUGUESE|castle': { flagText: '葡' },    // 葡萄牙王国
+    'PORTUGUESE|imperial': { flagText: '葡' },  // 葡萄牙
+    'MAGYAR|castle': { flagText: '匈' },        // 匈牙利王国
+    'BULGARIANS|feudal': { flagText: '保' },    // 保加利亚
+    'BULGARIANS|imperial': { flagText: '保' },  // 保加利亚
+    'GEORGIANS|castle': { flagText: '格' },     // 格鲁吉亚
+    'LITHUANIANS|feudal': { flagText: '立' },   // 立陶宛部族
+    'LITHUANIANS|castle': { flagText: '立' },   // 立陶宛大公国
+    'LITHUANIANS|imperial': { flagText: '立' }, // 立陶宛
+    'CELTS|imperial': { flagText: '苏' },       // 苏格兰高地
 };
 
 /** (建筑风格 × 时代) → 时代名（含可选旗号文字）；一局只算一遍（建筑文化 66 × 时代 4） */

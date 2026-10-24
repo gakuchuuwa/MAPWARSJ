@@ -15,9 +15,11 @@ import { BATTLEFIELDS } from '../data/Battlefields';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { getUnitEliteTier } from '../systems/CultureCombat';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
-import {generalHasStrategicEffect, getGeneralStrategicMagnitude, emitFollowedGeneralStrategicMapFx, pickRandomStrategicSkill, setStrategicSkillOverride, getEffectiveStrategicSkillId} from './GeneralSkillCombat';
+import {generalHasStrategicEffect, getGeneralStrategicMagnitude, emitFollowedGeneralStrategicMapFx, pickRandomStrategicSkill, setStrategicSkillOverride, getEffectiveStrategicSkillId, scaleIntimidateChance} from './GeneralSkillCombat';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
+import { getGameMode } from '../data/generalOnStage';
+import { getCityFieldDefeat, consumeCityFieldDefeat, canYieldCityFromFieldDefeat } from '../legion/FieldDefeatRecord';
 
 const siegeLog = (...args: unknown[]) => gameLog('siege', ...args);
 import { LegionType, getDefaultLegionTypeForFaction } from '../types/UnitTypes';
@@ -1325,14 +1327,80 @@ export class SiegeManager {
             emitFollowedGeneralStrategicMapFx(army, 'pre_battle_intimidate', pos.lat, pos.lng, 'pulse');
         }
 
+        // ── 乱斗·野战余威：刚被野战打掉武将的据点 → 守方无将 + 兵力悬殊 → 不战而下（确定性受降）──
+        // 🔴 [2026-10-24 主人令] 前提：上一仗是野战，打掉了这个据点的武将（记录见 FieldDefeatRecord）。
+        //    只乱斗模式、只城池/城寨（关隘险要照打）；守方这一仗只要有一个将出场就必须打。
+        //    记录只供该据点的下一场攻城用：这场攻城一开（不论哪方来）就取走，用掉即失效。
+        const fieldDefeat = getCityFieldDefeat(targetCity.id);
+        if (fieldDefeat) {
+            const defenderHasGeneral = defenderUnits.some((u) => !!u.generalId);
+            // 兵力按**这一仗双方实际参战单位**算（城驻军 + 附近守方援军／主攻军 + 附近攻方援军）
+            const myTroops = attackerUnits.reduce((sum, u) => sum + (u.troops || 0), 0);
+            const enemyTroops = defenderUnits.reduce((sum, u) => sum + (u.troops || 0), 0);
+            if (canYieldCityFromFieldDefeat({
+                fieldDefeatWinnerFactionId: fieldDefeat.winnerFactionId,
+                attackerFactionId: army.getFactionId(),
+                defenderHasGeneral,
+                attackerTroops: myTroops,
+                defenderTroops: enemyTroops,
+                cityType: targetCity.type,
+                gameMode: getGameMode(),
+                isFirstBattleSiege,
+            })) {
+                consumeCityFieldDefeat(targetCity.id);
+                siegeLog(
+                    `[野战余威] ${army.name} 兵临【${targetCity.name}】：该据点武将刚在野战中被击败、`
+                    + `守军 ${enemyTroops} ≤ 攻方 ${myTroops} 的 1/5、无将镇守 → 不战而下`
+                );
+
+                // 清协同军团战斗态（已调过 setCombatState(true) 的附近攻守军团）
+                nearbyDefenderLegions.forEach((l) => l.clearExternalCombatState());
+                nearbyAttackerLegions.forEach((l) => l.clearExternalCombatState());
+                army.setCombatState(false);
+
+                // 守方这一仗是否出了将/精（对齐正常胜后军情口径）
+                const defenderHadNamedForce = defenderUnits.some(
+                    (u) => !!u.generalId || getUnitEliteTier(u) !== null
+                );
+                // 城防临时加成（守将/精锐）只属这一仗，受降后清掉，免得旧守方精锐番号残留
+                clearSiegeGarrisonBoost(targetCity as typeof targetCity & SiegeGarrisonBoostFields);
+                this.cityManager.updateCity(targetCity.id, {
+                    factionId: army.getFactionId(),
+                    troops: 1000,
+                }, {
+                    captorLegionName: army.name || '军团',
+                    captorLegionId: army.id,
+                    captorGeneralId: army.generalId,
+                    defenderHadNamedForce,
+                    noBattleSurrender: true,
+                });
+                this.activeSieges.delete(targetCity.id);
+                army.clearExternalCombatState();
+                army.setVisible(true);
+                army.setSpeedMultiplier(1.0);
+                army.ignoreCityCollision = false;
+                army.ignoreUnitCollision = false;
+
+                this.resolveChain(siegeData, targetCity, army);
+                onSiegeComplete?.();
+                // 与正常胜利路径对齐：处理排队等候的第三方军团
+                this.processSiegeThirdPartyWaiters(targetCity.id, army.getFactionId());
+                return;
+            }
+        }
+
         // ── 威慑·不战而屈：兵力优势时概率跳过战斗直接占城（剧情首战攻城禁止跳过战斗！）──
         if (!isFirstBattleSiege && generalHasStrategicEffect(army, 'intimidate_instant_win')) {
             const myTroops = army.getTroops();
             const enemyTroops = targetCity.troops;
             if (myTroops > enemyTroops) {
-                const chance = getGeneralStrategicMagnitude(army, 'intimidate_instant_win', 0.05);
+                // 🔴 [2026-10-24 主人定] 5% 定值太低（实际观感约千分之五）：改按兵力比放大 ——
+                //    每 1 倍兵力 5%（基础幅度仍读 catalog 的 magnitude），封顶 25%：越悬殊越望风而降。
+                const base = getGeneralStrategicMagnitude(army, 'intimidate_instant_win', 0.05);
+                const ratio = myTroops / Math.max(1, enemyTroops);
+                const chance = scaleIntimidateChance(base, ratio);
                 if (Math.random() < chance) {
-                    siegeLog(`[威慑] 不战而屈触发！${army.name} 不战而胜，占【${targetCity.name}】`);
+                    siegeLog(`[威慑] 不战而屈触发！${army.name} 不战而胜，占【${targetCity.name}】（兵力比 ${ratio.toFixed(2)}，概率 ${(chance * 100).toFixed(1)}%）`);
                     const pos = army.getPosition();
                     emitFollowedGeneralStrategicMapFx(army, 'intimidate_instant_win', pos.lat, pos.lng, 'pulse');
 
@@ -1345,6 +1413,8 @@ export class SiegeManager {
                     const defenderHadNamedForce = defenderUnits.some(
                         (u) => !!u.generalId || getUnitEliteTier(u) !== null
                     );
+                    // 城防临时加成（守将/精锐）只属这一仗，不战占城后清掉，免得旧守方精锐番号残留
+                    clearSiegeGarrisonBoost(targetCity as typeof targetCity & SiegeGarrisonBoostFields);
                     this.cityManager.updateCity(targetCity.id, {
                         factionId: army.getFactionId(),
                         troops: 1000,
@@ -1391,6 +1461,10 @@ export class SiegeManager {
             onSiegeComplete?.();
             throw err;
         }
+
+        // 🔴 [2026-10-24] 野战余威记录只供该据点的下一场攻城用：这场攻城真开起来了 → 记录作废
+        //    （不战而下分支在上面已自行消费；没开战就抛异常时记录留着，下一场仍可判）
+        consumeCityFieldDefeat(targetCity.id);
 
         // [语音播报] 跟随军团攻城：开战后一刻触发，势=攻守初始兵力比（与 BattleField assignSituationalSkills 同公式）。
         // 城池「兵临」、关隘「攻打」；守方有将续「势前缀…赵国[名将]武将，守方八字」，无将只一句。

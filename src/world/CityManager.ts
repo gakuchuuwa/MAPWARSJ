@@ -32,6 +32,9 @@ export interface CityUpdateOptions {
     attackerJu?: string;
     /** 守方武将 id → 攻占播报守方句（无=无将，不续守方句） */
     defenderGeneralId?: string;
+    /** 🔴 [2026-10-24 主人令] 不战而下／开城归附（野战刚打掉该据点武将 + 守方无将 + 兵力悬殊）：
+     *  播报用「开城归附」而非「攻占」 */
+    noBattleSurrender?: boolean;
 }
 
 export interface CityCapturedEvent {
@@ -51,6 +54,8 @@ export interface CityCapturedEvent {
     attackerJu?: string;
     /** 守方武将 id（攻占播报守方句） */
     defenderGeneralId?: string;
+    /** 不战而下／开城归附（见 CityUpdateOptions） */
+    noBattleSurrender?: boolean;
 }
 
 export class CityManager {
@@ -565,6 +570,7 @@ export class CityManager {
                             attackerSkillId: options?.attackerSkillId,
                             attackerJu: options?.attackerJu,
                             defenderGeneralId: options?.defenderGeneralId,
+                            noBattleSurrender: options?.noBattleSurrender,
                         });
                     }
                 }

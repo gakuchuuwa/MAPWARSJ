@@ -1410,6 +1410,18 @@ export function getGeneralStrategicMagnitude(
     return skill.magnitude;
 }
 
+/** 「不战而屈」概率上限（2026-10-24 主人定：兵力比 × 5%，封顶 25%） */
+export const INTIMIDATE_CHANCE_CAP = 0.25;
+
+/**
+ * 「不战而屈」触发概率：基础幅度（catalog magnitude=0.05）× 兵力比，封顶 25%。
+ * 🔴 [2026-10-24 主人定] 原为固定 5%，实际观感约千分之五；改按兵力比放大——越悬殊越望风而降。
+ * 例：2 倍=10%、3 倍=15%、5 倍及以上=25%。
+ */
+export function scaleIntimidateChance(base: number, troopRatio: number): number {
+    return Math.min(INTIMIDATE_CHANCE_CAP, base * troopRatio);
+}
+
 /** str_11 长驱深入：远征军团默认享有；非远征时仅挂 str_11 的将触发。二者不叠乘。 */
 export function getLongDriveDeepBypassChance(
     army: Pick<Army, 'expeditionTargetCityId' | 'id'> & IBattleUnit,

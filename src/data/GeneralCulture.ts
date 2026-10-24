@@ -8,6 +8,7 @@
  *   挪将后重跑本脚本（「武将的文化必须和据点建筑风格相符」）。
  */
 import type { BuildingStyle } from './cities_v2';
+import { getGeneralCityCulture } from './generalCultureResolve';
 
 export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aba_shapuer': 'SASANIAN',   // 阿巴尔沙赫｜沙普尔｜据点 尼沙布尔
@@ -286,8 +287,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'dai_d_shijingtang': 'WEI',   // 后晋｜石敬瑭｜据点 晋阳
     'dai_daoyingmeng': 'BURMESE',   // 傣族｜刀应勐｜据点 勐泐城
     'dajin_wanyanaguda': 'NORTHEAST',   // 大金｜完颜阿骨打｜据点 会宁府
-    'dajin_wanyanchengyu': 'WEI',   // 大明｜完颜承裕｜据点 宣化
-    'dajin_wanyanheda': 'CENTRAL',   // 大明｜完颜合达｜据点 潼关
+    'dajin_wanyanchengyu': 'NORTHEAST',   // 大金｜完颜承裕｜据点 会宁府（金上京；2026-10-24 由宣化 WEI 迁回）
+    'dajin_wanyanheda': 'NORTHEAST',   // 大金｜完颜合达｜据点 会宁府（金上京；2026-10-24 由潼关 CENTRAL 迁回）
     'dali_duansiping': 'BASHU',   // 大理｜段思平｜据点 羊苴咩
     'daliushi_iii': 'PERSIAN',   // 阿契美尼德｜大流士三世｜据点 波斯波利斯
     'dalung_sangjiwen': 'TIBET',   // 达隆｜桑吉温｜据点 类乌齐
@@ -1033,8 +1034,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'nuowei_halaer': 'VIKINGS',   // 挪威｜哈拉尔｜据点 博尔贡
     'nuoyan_d_sanyinnuoyan': 'MONGOL',   // 喀尔喀｜三音诺颜｜据点 杭爱山
     'nvguo_mojie': 'TIBET',   // 苏毗｜末羯｜据点 玛旁雍错
-    'ogodei_chuoermahan': 'SASANIAN',   // 窝阔台｜绰儿马罕｜据点 大不里士
-    'oirat_ming_gaerdan': 'CENTRAL_ASIA',   // 卫拉特｜噶尔丹｜据点 固尔札
+    'ogodei_chuoermahan': 'MONGOL',   // 蒙古｜绰儿马罕｜据点 哈拉和林（蒙古帝国旧都；2026-10-24 由大不里士 SASANIAN 迁出）
+    'oirat_ming_gaerdan': 'MONGOL',   // 卫拉特｜噶尔丹｜据点 科布多（卫拉特牧地；2026-10-24 由固尔札 CENTRAL_ASIA 迁入）
     'ongut_alawusi': 'XIANBEI',   // 汪古｜阿剌兀思｜据点 净州塞
     'osman_mehmed_ii': 'TURKS',   // 奥斯曼｜穆罕默德二世｜据点 埃迪尔内（2026-10-24 主人「据点建筑文化必须和武将文化相同」：君士坦丁堡＝拜占庭建筑，不能放奥斯曼苏丹 → 埃迪尔内 TURKS，1363–1453 奥斯曼都城、他出生地）
     'osumi_ganfujianxu': 'JAPAN',   // 岛津｜肝付兼续｜据点 赤尾木城
@@ -1443,7 +1444,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yuan_d_daulashah': 'XIANBEI',   // 大元｜倒剌沙｜据点 上都
     'yuan_d_hubilie': 'XIANBEI',   // 大元｜忽必烈｜据点 上都
     'yuan_d_manzihaiya': 'JIANGNAN',   // 东晋｜蛮子海牙｜据点 姑孰
-    'yuan_d_tuotuo': 'WEI',   // 大明｜脱脱｜据点 北京
+    'yuan_d_tuotuo': 'MONGOL',   // 蒙古｜脱脱｜据点 买卖城（蔑儿乞色楞格渊源；2026-10-24 由北京 WEI 迁出）
     'yuchi_weichiyao': 'WESTERN',   // 尉迟｜尉迟曜｜据点 于阗
     'yue_d_lusu': 'JIANGNAN',   // 孙吴｜鲁肃｜据点 巴陵
     'yue_goujian': 'JIANGNAN',   // 越国｜勾践｜据点 会稽
@@ -1495,7 +1496,13 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zuo_d_wufu': 'BASHU',   // 唐国｜吴复｜据点 清溪关
 };
 
-/** 武将的建筑文化；表里没有返回 undefined */
+/**
+ * 武将的建筑文化。
+ * 🔴 [2026-10-24 主人「一个据点一个文化，武将和据点要同文化」] **以据点建筑风格为准**（唯一真相）：
+ *   先取武将所在据点的 `buildingStyle`；没据点/取不到才回落到本表（无据点武将兜底）。
+ *   这样新增武将只写 `cityId`，文化自动对齐，不需要手改本表、也不需要人工检查。
+ */
 export function getGeneralCulture(generalId: string | null | undefined): BuildingStyle | undefined {
-    return generalId ? GENERAL_CULTURE[generalId] : undefined;
+    if (!generalId) return undefined;
+    return getGeneralCityCulture(generalId) ?? GENERAL_CULTURE[generalId];
 }

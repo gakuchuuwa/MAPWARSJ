@@ -42,7 +42,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'meikelunbao': '文德',
   didi: '佛兰',
   yidelisi: '伊德',
-  baojialiya: '保加',
+  baojialiya: '保',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
 'bosiniya': '波黑',  // 🔴 [2026-09-12] 原「波斯」与 boluosi(波斯帝国·已删，与阿契美尼德重复)撞旗 → 取中文标准简称「波黑」
 
   mulabite: '穆',
@@ -77,18 +77,18 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   mangsite: '芒斯',
 'tuomengde': '托蒙',
   piketai: '皮克',
-  yinggelan: '英格',
+  yinggelan: '英',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
 'bulabante': '班特',
-  gaolu: '法兰',
+  gaolu: '法',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
   kaernute: '卡尔',
   bulietani: '布列',
 'fulandesi': '阿图',
   xila: '雅典',
-  putaoya: '葡萄',
+  putaoya: '葡',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
 'saierweiya': '拉什',
 'luosi': '罗斯',
   mosike_gongguo: '莫斯',
-  eluosi_diguo: '俄罗',
+  eluosi_diguo: '俄',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
   daniebo: '斯摩',
   qiernigeweifu_gongguo: '切尔',
   jialixiya: '哈尔',
@@ -100,8 +100,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'baizanting': '拜占',
   bosi_puluosi: '博普',
 'kelimiya': '热亚',  // 热那亚共和国（卡法）
-'keluodiya': '克罗',
-'litaowan': '立陶',
+'keluodiya': '克',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
+'litaowan': '立',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
 'bolan': '波兰',
 'baojian_qishi': '宝剑',
   teweier_gongguo: '特维',
@@ -120,7 +120,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   peilieya_gongguo: '佩列',
   habusibao: '哈布',
   boximiya: '波西',
-'mazhaer': '匈牙',
+'mazhaer': '匈',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
   falanji: '弗兰',
   shiwaben: '施瓦',
   asikanani: '勃兰',
@@ -575,7 +575,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yilihanguo_d': '伊利',
     'wulaertu': '亚美',
 'wulaertu_guo': '乌图',
-'gelujiya': '格鲁',
+'gelujiya': '格',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
 'bendou': '特拉',
     'keerjisi': '金羊',
     'bendou_d': '本都',
@@ -658,7 +658,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'miandian': '缅甸',
     'malai': '马来',
     'taimier': '马拉',
-    'xibanya': '西班',
+    'xibanya': '西',  // [2026-10-24 主人令「一定要符合历史」] 西方音译名截前两字是半个词，改用中文通行的国名简称单字
 'manding': '马里',
 'ethiopia': '埃塞',
 'zhagewei': '扎维',
@@ -718,7 +718,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'aolitai': '奥里',
     'shiyuzu': '食鱼',
   dalriada: '达里',  // 达尔里阿达
-  scotland: '苏格',  // 苏格兰
+  scotland: '苏',  // 苏格兰；[2026-10-24] 改用通行简称单字
   chanka: '昌卡',  // 昌卡
   ouchi: '大内',  // 大内
   cueva: '库埃',  // 库埃瓦

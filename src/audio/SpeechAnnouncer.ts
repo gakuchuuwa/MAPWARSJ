@@ -570,6 +570,33 @@ export class SpeechAnnouncer {
   }
 
   /**
+   * 不战而下／开城归附（仅跟随军团）。乱斗模式：野战刚打掉该据点武将、守方这一仗无将出场、
+   * 攻方兵力 ≥ 守军 5 倍 → 不开战术战，直接受降。
+   * 🔴 [2026-10-24 主人令] 新增一档，不沿用「攻占」；守方无将，故不续守方武将句，
+   * 但守方势力照样冠名（四.6「播报战败方必须冠势力名」）。
+   */
+  public announceCityYield(opts: {
+    attackerFactionId: string;
+    cityName: string;
+    defenderFactionId?: string | null;
+    regionLabel?: string | null;
+  }): void {
+    if (!this.enabled) return;
+    this.clearSkillQueue();
+    const att = getFactionNameForSpeech(opts.attackerFactionId);
+    const def = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
+    const text = def
+      ? `${att}军，兵临城下，${def}开城归附`
+      : `${att}军，兵临城下，开城归附`;
+    console.log("[Speech] 不战而下:", text);
+    if (opts.regionLabel) {
+      this.speak(text, { sTier: true, rate: 0.92 });
+    } else {
+      this.speak(text);
+    }
+  }
+
+  /**
    * 野战开战（仅跟随军团那场）。跟随军团念在前 + 它这一仗的势词；
    * 任一方无将则降级用「势力名+军」顶替将名（与攻城开战、野战结束一致），
    * 不再因无将静默——否则正常野战（普通军团多无将）开战几乎从不播报。

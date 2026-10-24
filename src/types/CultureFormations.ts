@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Culture Formations
  * 15 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
@@ -39,6 +39,9 @@ import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { withCommander } from '../data/generalHeroUnits';
 import { getLegionEliteLegionName, getExpeditionEliteLegionName } from '../data/ExpeditionLegions';
+import { GENERAL_ERA } from '../data/GeneralEra';
+import { getGeneralCulture } from '../data/GeneralCulture';
+import { getGeneralEraSubtagLegion } from '../data/GeneralEraSubtags';
 
 /** 军队编辑器可选阵型（2026-08-20 七大经典阵型，均 9 人）：
  *  square       方阵   = 3+3+3（前3/中3/后3，九宫等边·攻守均衡）
@@ -1056,9 +1059,47 @@ export function getFactionLegionComposition(
  *   武将自己的军团 → 势力挂的军团；这支军团已不存在（被删了、改名了、名字写错了）→ 武将自己按
  *   「他的时代 × 所在据点建筑文化」重新找二级军团（规则同 LegionFallbackOnDelete）。找不到才返回原名。
  */
+/**
+ * 该建筑文化 × 该时代那一格的二级军团名（264 格里的唯一一支）。
+ * 该文化缺这一时代（HUNS/MUISCA/MAPUCHE/TUPI 共 7 格）→ 取同文化**最近时代**兜底。
+ */
+function findLegionNameByCultureAndEra(buildingStyle: string, age: string): string | null {
+    const candidates = LEVEL_2_CIV_62_LEGIONS.filter((l) => String(l.buildingStyle) === String(buildingStyle));
+    if (candidates.length === 0) return null;
+    const exact = candidates.find((l) => l.age === age);
+    if (exact) return resolveRenamedLegion(exact.name);
+    const targetIdx = DEFENSE_AGE_ORDER.indexOf(age as DefenseEraAge);
+    let best = candidates[0];
+    let bestDist = Math.abs(DEFENSE_AGE_ORDER.indexOf(best.age as DefenseEraAge) - targetIdx);
+    for (const c of candidates) {
+        const d = Math.abs(DEFENSE_AGE_ORDER.indexOf(c.age as DefenseEraAge) - targetIdx);
+        if (d < bestDist) { best = c; bestDist = d; }
+    }
+    return resolveRenamedLegion(best.name);
+}
+
+/**
+ * 武将此刻该用的军团名。
+ * 🔴 [2026-10-24 主人「军团分四个时代+66个文化。所有武将配哪个军团，先看武将是哪个时代，再看武将是哪个据点」]
+ *   规则链：① 条目手写 `legionName`（三级军团/时代特例/海外军团）→ ② 细分时代（古典·先秦 17 位）→
+ *   ③ 势力编制指向的三级军团（起义军等）→ ④ **时代 × 据点文化**的 264 格之一（自动，不需要写 legionName）→
+ *   ⑤ 势力编制兜底（无将该格缺失时）。据点文化由 `getGeneralCulture`（＝据点 buildingStyle）给。
+ */
 export function getLegionNameOfGeneral(factionId: string, generalId?: string | null): string | undefined {
-    const named = getGeneralOwnLegionName(generalId) ?? FACTION_COMPOSITIONS[factionId]?.legionName;
-    if (!named || getLegionCompositionByName(named)) return named;
+    const named = getGeneralOwnLegionName(generalId);
+    if (named && getLegionCompositionByName(named)) return named;
+    const subtagLegion = getGeneralEraSubtagLegion(generalId);
+    if (subtagLegion) return subtagLegion;
+    const factionLegion = FACTION_COMPOSITIONS[factionId]?.legionName;
+    // 势力编制本身是三级军团（起义军 / 苏丹亲兵 / 西班牙征服 / 葡萄牙风琴 / 安第斯游击）→ 保留
+    if (factionLegion && LEVEL_3_LEGION_MAP.has(factionLegion)) return factionLegion;
+    const era = generalId ? GENERAL_ERA[generalId] : undefined;
+    const style = generalId ? getGeneralCulture(generalId) : undefined;
+    if (era && style) {
+        const grid = findLegionNameByCultureAndEra(String(style), era);
+        if (grid && getLegionCompositionByName(grid)) return grid;
+    }
+    if (!named) return factionLegion;
     const found = resolveFallbackForFaction(factionId, generalId);
     return 'newLegionName' in found ? found.newLegionName : named;
 }

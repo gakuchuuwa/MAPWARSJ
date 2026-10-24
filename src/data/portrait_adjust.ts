@@ -8161,6 +8161,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.32,
             "offsetX": 0,
             "offsetY": 15
+        },
+        "/assets/TURKS/gen_kara_mustafa.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/MAGYAR/gen_lajos_ii.png": {
+            "scale": 1.28,
+            "offsetX": 33,
+            "offsetY": 34
         }
     },
     "folderGuides": {

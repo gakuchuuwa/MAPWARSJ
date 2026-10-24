@@ -33,7 +33,7 @@ import { resolveEnvironmentClimate, type Scene13ClimatePlan, type Scene13Climate
 import { resolveTimeOfDay, isNightBattle, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
 import { selectLegionTechs, applyTechsToStats, normalizeTechCulture66 } from '../systems/MilitaryTechState';
 import type { MilitaryTech, TechCulture } from '../data/MilitaryTechs';
-import { GENERAL_CULTURE } from '../data/GeneralCulture';
+import { getGeneralCulture } from '../data/GeneralCulture';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
@@ -808,11 +808,15 @@ export class Scene13WarLayer {
             const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f] ?? { x: this.worldCX, y: this.worldCY };
             const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
             const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
+            // 🔴 [2026-10-24] 【并】夺兵从敌方后备池策反的兵**保留敌方兵种**（见 triggerScene13Skill），
+            //    本方的这套兵模从没加载过 ⇒ 渲染取不到图，整队隐形。入列前现补我方阵营素材。
+            const manKey = keys && keys.length ? keys[(idx - 1) % keys.length] : s.key;
+            this.ensureType(manKey, f);
             this.men.push({
-                f: s.f, key: keys && keys.length ? keys[(idx - 1) % keys.length] : s.key, jx, jy,
+                f: s.f, key: manKey, jx, jy,
                 zid: this.manSeq++,
                 x: spawnX, y: spawnY, tx: spawnX, ty: spawnY,
-                hp: this.statsFor(keys && keys.length ? keys[(idx - 1) % keys.length] : s.key, s.f).hp,
+                hp: this.statsFor(manKey, s.f).hp,
                 dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                 ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.15,
                 fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
@@ -945,9 +949,15 @@ export class Scene13WarLayer {
             enemyLiving.sort((m1, m2) => ((m1.x - fcx) ** 2 + (m1.y - fcy) ** 2) - ((m2.x - fcx) ** 2 + (m2.y - fcy) ** 2));
             const myLanes = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
             const converted: WarMan[] = [];
+            // 🔴 [2026-10-24 主人报障「并战计是夺兵，施展后背叛的兵不显示」] 兵模是「兵种 × 阵营」分别染色加载的
+            //    （见 ensureType）；倒戈兵**保留敌方兵种**，而我方从没出过这个兵种 ⇒ 我方阵营那一套帧集从未加载，
+            //    渲染层取不到图就 `if (!img) continue` 整队跳过 —— 面板兵力 +3%、画面上却一个都看不见。
+            //    就地补载倒戈兵种的我方阵营素材（同兵种只补一次），等染色到位前有半秒渐显兜着。
+            const needSprite = new Set<string>();
             for (const m of enemyLiving) {
                 if (quotaPop <= 0) break;
                 quotaPop -= Math.max(1, m.pop || 1);
+                if (m.key && !needSprite.has(m.key)) { needSprite.add(m.key); this.ensureType(m.key, f); }
                 // 就地倒戈：换成我方阵营，归到离它最近的我方出兵口队列，清掉所有对阵关系
                 m.f = f;
                 const nl = myLanes.reduce<typeof myLanes[number] | null>((best, sp) =>
@@ -1470,14 +1480,16 @@ export class Scene13WarLayer {
             if (cityStyle) return normalizeTechCulture66(String(cityStyle));
         }
         const gid = this.sideGeneralId[side];
-        if (gid && GENERAL_CULTURE[gid]) {
-            return normalizeTechCulture66(GENERAL_CULTURE[gid]);
+        const gidStyle = getGeneralCulture(gid);
+        if (gidStyle) {
+            return normalizeTechCulture66(String(gidStyle));
         }
         const fid = this.sideFaction[side];
         if (fid) {
             const facGen = getFactionGeneral(fid)?.generalId;
-            if (facGen && GENERAL_CULTURE[facGen]) {
-                return normalizeTechCulture66(GENERAL_CULTURE[facGen]);
+            const facStyle = getGeneralCulture(facGen);
+            if (facStyle) {
+                return normalizeTechCulture66(String(facStyle));
             }
             const city = (CITIES_V2 as any[]).find((c) => c.factionId === fid);
             if (city?.buildingStyle) {

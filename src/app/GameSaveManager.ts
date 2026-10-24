@@ -19,6 +19,7 @@ import type { GameApp } from './GameApp';
 import { Army } from '../legion/Army';
 import { SpatialRegistry } from '../world/SpatialRegistry';
 import { gameLog } from '../utils/GameLogger';
+import { clearAllFieldDefeats } from '../legion/FieldDefeatRecord';
 import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { CameraFollowUI, type HistoricalStreakRecord } from '../ui/CameraFollowUI';
 import type { PlayerSaveState } from '../player/PlayerHero';
@@ -235,6 +236,9 @@ export class GameSaveManager {
             lm.addArmy(army, true); // force：读档不受军团上限拦截
             armyHit++;
         }
+
+        // 4.5 读档：旧局面的「野战刚打掉据点武将」记录作废（不进存档，也不能带进恢复后的世界）
+        clearAllFieldDefeats();
 
         // 5. 关键：世界已由存档恢复，禁掉「开局首次出兵」。
         //    否则之后一开播，runInitialSpawn 会 ① 从各无军据点批量补刷军团，

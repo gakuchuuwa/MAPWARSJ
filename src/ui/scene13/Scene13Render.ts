@@ -264,7 +264,11 @@ export function render(this: Scene13WarLayer): void {
         const _tu0 = performance.now();
         const b = this.bank[v.key];
         if (!b) continue;
-        const img = b.sets[v.set]?.[v.f]?.[v.dir];
+        // 🔴 [2026-10-24 主人报障「并战计夺兵，施展后背叛的兵不显示」] 兵模按「兵种 × 阵营」分别染色加载，
+        //    倒戈兵保留敌方兵种；我方那套帧集是倒戈时才补载的（见 Scene13WarLayer.triggerScene13Skill），
+        //    加载完之前本方阵营取不到这张图，直接 `continue` 会让整队倒戈兵凭空消失。
+        //    同兵种两方素材完全一样、只差染色 ⇒ 本方缺帧时先借用对面那一份顶上，染色到位后自然换回。
+        const img = b.sets[v.set]?.[v.f]?.[v.dir] ?? b.sets[v.set]?.[1 - v.f]?.[v.dir];
         if (!img) continue;
         const wt = WAR_TYPES[v.key];
         // [2026-08-15 全帧修复] 各动作帧数不同（S10DB=8，AoE2=30~60），

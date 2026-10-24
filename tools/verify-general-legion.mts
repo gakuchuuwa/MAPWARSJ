@@ -12,7 +12,7 @@
 import { FACTION_GENERALS, getGeneralOwnLegionName } from '../src/data/FactionGenerals';
 import { FACTIONS } from '../src/data/factions';
 import { GENERAL_ERA } from '../src/data/GeneralEra';
-import { GENERAL_CULTURE } from '../src/data/GeneralCulture';
+import { getGeneralCulture } from '../src/data/GeneralCulture';
 import { FACTION_COMPOSITIONS } from '../src/data/FactionCompositions';
 import { LEVEL_2_CIV_62_LEGIONS } from '../src/data/level2Civ62Legions';
 import { LEVEL_3_LEGIONS } from '../src/data/level3CustomLegions';
@@ -31,7 +31,7 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
     for (const g of (Array.isArray(entry) ? entry : [entry]) as any[]) {
         total++;
         const era = (GENERAL_ERA as any)[g.generalId];
-        const culture = (GENERAL_CULTURE as any)[g.generalId];
+        const culture = getGeneralCulture(g.generalId);
         const legion = getGeneralOwnLegionName(g.generalId) ?? (FACTION_COMPOSITIONS as any)[fid]?.legionName;
         const who = `${fid}｜${fname(fid)}｜${g.generalName}`;
         if (!era) { problems.push(`${who}｜缺时代`); continue; }

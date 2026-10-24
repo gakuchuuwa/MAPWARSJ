@@ -91,6 +91,7 @@ import { setCityStyleSessionSeed } from '../systems/cityWallShared';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { ViewerLive } from '../live/ViewerLive';
 import { syncMeleeRandomOwners } from '../events/meleeRandomOwners';
+import { clearAllFieldDefeats } from '../legion/FieldDefeatRecord';
 import { setCityOwnerProvider } from '../data/FactionGenerals';
 import { ViewerLivePanel } from '../live/ViewerLivePanel';
 import { SocialStreamBridge } from '../live/SocialStreamBridge';
@@ -590,16 +591,26 @@ export class GameApp {
                     if (byFollowed) {
                         const regionKey = isCenter ? this.cityManager.getCity(event.cityId)?.region : undefined;
                         const regionLabel = regionKey ? (REGION_LABELS[regionKey as RegionType] ?? '') : undefined;
-                        const capJu = (event.attackerJu as CaptureJu) ?? 'balance';
-                        speechAnnouncer.announceCityCapture({
-                            attackerFactionId: event.newFactionId,
-                            cityName: event.cityName,
-                            ju: capJu,
-                            attackerSkillId: event.attackerSkillId,
-                            defenderFactionId: event.previousFactionId,
-                            defenderGeneralId: event.defenderGeneralId,
-                            regionLabel,
-                        });
+                        if (event.noBattleSurrender) {
+                            // 🔴 [2026-10-24 主人令] 不战而下另起一档播报，不沿用「攻占」
+                            speechAnnouncer.announceCityYield({
+                                attackerFactionId: event.newFactionId,
+                                cityName: event.cityName,
+                                defenderFactionId: event.previousFactionId,
+                                regionLabel,
+                            });
+                        } else {
+                            const capJu = (event.attackerJu as CaptureJu) ?? 'balance';
+                            speechAnnouncer.announceCityCapture({
+                                attackerFactionId: event.newFactionId,
+                                cityName: event.cityName,
+                                ju: capJu,
+                                attackerSkillId: event.attackerSkillId,
+                                defenderFactionId: event.previousFactionId,
+                                defenderGeneralId: event.defenderGeneralId,
+                                regionLabel,
+                            });
+                        }
                     }
 
                     if (!event.captorLegionName) return;
@@ -1066,6 +1077,8 @@ export class GameApp {
         hero.onChange(() => {
             if (hero.autoPlan === lastPlan) return;
             lastPlan = hero.autoPlan;
+            // 切玩法模式：旧局面的「野战刚打掉据点武将」战功不能带进新玩法
+            clearAllFieldDefeats();
             syncBuildingStyles();
             this.syncEraFactionDisplays();
             this.syncScriptOwners();

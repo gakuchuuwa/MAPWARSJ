@@ -18,6 +18,9 @@ import {
     markLegionAnnihilationFeed,
     resolveAnnihilationCityName,
 } from '../LegionAnnihilationFeed';
+import { markCityGeneralDefeatedInField } from '../FieldDefeatRecord';
+import { getCityGeneralsRaw } from '../../data/FactionGenerals';
+import { getGameMode } from '../../data/generalOnStage';
 import type { CityManager } from '../../world/CityManager';
 import type { SpatialRegistry } from '../../world/SpatialRegistry';
 
@@ -370,6 +373,22 @@ function startFieldBattleBetween(
     // 接管本场首发军团的覆没语音（legionToFieldAdapter 标 'field' 已抑制通用覆没）；
     // 跟随军团覆没时即使本方获胜也按败句播（win 须本方胜且跟随存活）。
     fieldBattleField.onBattleComplete = (winnerFactionId: string) => {
+        // 🔴 [2026-10-24 主人令「上一次战斗，野战中刚刚打败了这个据点的武将」]
+        //    野战刚打掉据点武将 → 记在该据点上，供攻方随后抵达该据点时判「不战而下」。
+        //    只记败方参战军团里**带着该据点锚定武将**的那些：那才是「被打掉武将的据点」。
+        if (winnerFactionId && getGameMode() === 'melee') {
+            for (const defeated of deps.getArmies()) {
+                if (defeated.getFactionId() === winnerFactionId) continue;
+                if (!fieldBattleField.hasParticipant(defeated.id)) continue;
+                const generalId = defeated.generalId;
+                if (!generalId) continue;
+                const cityId = defeated.homeCityId ?? defeated.getSourceCityId();
+                // 直接用「武将条目的 cityId」判锚定（不经过乱斗的城主同势力过滤 + 只留一位），
+                // 军团外出期间城被第三方占了也不会漏记。
+                if (!cityId || !getCityGeneralsRaw(cityId).some((g) => g.generalId === generalId)) continue;
+                markCityGeneralDefeatedInField(cityId, winnerFactionId);
+            }
+        }
         const endFollowedId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
         if (!endFollowedId) return;
         const endOnAtt = attLegions.some((l) => l.id === endFollowedId);
