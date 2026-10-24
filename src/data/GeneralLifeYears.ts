@@ -491,6 +491,8 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_henry_v: { birth: 1386, death: 1422 },             // 亨利五世
     yi_yuqian: { birth: 1398, death: 1457 },               // 于谦
     ming_yanghong: { birth: 1381, death: 1451 },           // 杨洪（宣府总兵）
+    hou_zhou_guowei: { birth: 904, death: 954 },           // 郭威（后周太祖）
+    song_lijilong: { birth: 950, death: 1005 },            // 李继隆（北宋）
     gen_charles_vii: { birth: 1403, death: 1461 },         // 查理七世
     // 卒时仅 19 岁：按「生年 + 20」会被整段掐掉（1432 > 1431）→ 显式登场年＝1429 解奥尔良之围（17 岁）
     gen_joanofarc: { birth: 1412, death: 1431, debut: 1429 },  // 圣女贞德（生年取传统 1412）

@@ -4910,6 +4910,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'yi_yuqian', factionId: 'ming_d', cityId: 'city_beijing', generalName: '于谦', portrait: '/assets/WEI/yi_yuqian.png' },
         // 🔴 [2026-10-24 主人授权新增] 杨洪（1381–1451）＝明宣府镇总兵，正统年间镇守宣府，土木堡之变后独守宣府城（也先挟英宗至城下，洪闭门不纳）；宣化空缺（完颜承裕迁回会宁府）→ 按史补驻将。立绘留空
         { generalId: 'ming_yanghong', factionId: 'ming_d', cityId: 'city_xuanhua', generalName: '杨洪', portrait: '', eliteName: '宣府铁骑', eliteTier: 3 },
+        // 🔴 [2026-10-24 主人令「执行」] 郭威（904–954）＝后周太祖，后汉末以枢密使领邺都留守（邺都＝安阳），951 澶州兵变受拥立；库里原无此人。立绘留空
+        { generalId: 'hou_zhou_guowei', factionId: 'hou_zhou', cityId: 'city_anyang', generalName: '郭威', portrait: '', eliteName: '后周禁军', eliteTier: 2 },
+        // 🔴 [2026-10-24 主人令「执行」] 李继隆（950–1005）＝北宋名将，1004 澶州之战率静塞军守澶州（濮阳＝澶州）；库里原无此人。立绘留空
+        { generalId: 'song_lijilong', factionId: 'song', cityId: 'city_puyang', generalName: '李继隆', portrait: '', eliteName: '静塞军', eliteTier: 2 },
 
 
 
@@ -16581,7 +16585,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     hou_zhou: [
-        { generalId: 'chanzhou_chairong', factionId: 'hou_zhou', cityId: 'city_bianliang', generalName: '柴荣', portrait: '/assets/CENTRAL/chanzhou_chairong.png' },
+        { generalId: 'chanzhou_chairong', factionId: 'hou_zhou', cityId: 'city_puyang', generalName: '柴荣', portrait: '/assets/CENTRAL/chanzhou_chairong.png' },
 
     ],
     lvbu: [

@@ -1412,6 +1412,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yezongliu_yezongliu': 'JIANGNAN',   // 唐国｜叶宗留｜据点 丽水
     'yi_yuqian': 'WEI',   // 大明｜于谦｜据点 北京
     'ming_yanghong': 'WEI',   // 大明｜杨洪｜据点 宣化（2026-10-24 主人授权补将）
+    'hou_zhou_guowei': 'CENTRAL',   // 后周｜郭威｜据点 安阳（邺都；2026-10-24 补）
+    'song_lijilong': 'CENTRAL',     // 宋｜李继隆｜据点 濮阳（澶州；2026-10-24 补）
     'yiaoniya_hegesistratus': 'GREECE',   // 伊奥尼亚｜赫格西斯特｜据点 米利都
     'yidier_yidiewang': 'CUMAN',   // 伊蒂尔汗国｜约瑟夫｜据点 伊蒂尔（2026-10-24 城风格改可萨系）
     'yidou_luxun': 'JIANGNAN',   // 孙吴｜陆逊｜据点 夷陵

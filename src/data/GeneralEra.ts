@@ -1380,6 +1380,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yezongliu_yezongliu': 'castle',
     'yi_yuqian': 'castle',
     'ming_yanghong': 'castle',   // 杨洪（1381–1451）明前期，同于谦按城堡时代
+    'hou_zhou_guowei': 'feudal',   // 郭威（904–954）五代，同柴荣按封建时代
+    'song_lijilong': 'feudal',     // 李继隆（950–1005）北宋前期，同赵匡胤按封建时代
     'yidier_yidiewang': 'feudal',
     'yidou_luxun': 'antiquity',
     'yiduhu_baershu': 'castle',

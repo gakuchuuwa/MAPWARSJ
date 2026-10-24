@@ -17,16 +17,20 @@ import type { CityManager } from '../world/CityManager';
 
 const ORIGINAL_OWNER = new Map(CITIES_V2.map((c) => [c.id, c.factionId]));
 
-/** 据点 → 候选势力（原主 ＋ 挂在这里的武将的政权） */
+/**
+ * 🔴 [2026-10-24 主人「据点和势力没有关系…据点只和武将有关系，同文化，势力看武将。没有武将要什么势力呀」]
+ * 据点 → 候选势力＝**只取挂在这座据点的武将政权**（不再把 cities_v2 的历史 factionId 当势力）；
+ * 没有武将的据点＝**叛军**（panjun：无字旗、不出征），由 rollMeleeOwners 兜底指派。
+ */
 function buildCandidates(): Map<string, Set<string>> {
     const cand = new Map<string, Set<string>>();
-    for (const c of CITIES_V2) if (c.factionId) cand.set(c.id, new Set([c.factionId]));
     for (const [blockFaction, entry] of Object.entries(FACTION_GENERALS)) {
         const list: readonly FactionGeneral[] = Array.isArray(entry) ? entry : [entry as FactionGeneral];
         for (const g of list) {
             if (!g.cityId) continue;
-            const set = cand.get(g.cityId);
-            if (set) set.add(g.factionId ?? blockFaction);
+            const set = cand.get(g.cityId) ?? new Set<string>();
+            set.add(g.factionId ?? blockFaction);
+            cand.set(g.cityId, set);
         }
     }
     return cand;
@@ -68,6 +72,8 @@ export function rollMeleeOwners(): { owners: Map<string, string>; unplaced: stri
         const list = [...set];
         owners.set(cityId, list[Math.floor(Math.random() * list.length)]);
     }
+    // 无武将据点＝叛军（panjun：无字旗、不出征）
+    for (const c of CITIES_V2) if (!owners.has(c.id)) owners.set(c.id, 'panjun');
     return { owners, unplaced };
 }
 
