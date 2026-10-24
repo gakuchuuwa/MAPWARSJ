@@ -174,6 +174,9 @@ function hasOnStageGeneral(factionId: string): boolean {
 /** 当前生效的时代名覆盖：factionId → 名字（含可选旗号文字；空 = 关闭） */
 let overrides = new Map<string, EraNameDef>();
 
+/** 百岁模式当前时代（`refreshEraFactionDisplays` 写入；null = 未启用 / 非百岁模式），供据点级时代名用 */
+let activeEra: DefenseEraAge | null = null;
+
 /** 该势力此刻显示的时代名（没有覆盖 → null，照旧用原势力名） */
 export function getEraFactionDisplayName(factionId: string | null | undefined): string | null {
     if (!factionId) return null;
@@ -187,14 +190,46 @@ export function getEraFactionDisplayFlagText(factionId: string | null | undefine
 }
 
 /**
+ * 🔴 [2026-10-24 主人令「函谷关是吴越，错误」「潼关是太行，错误」]
+ * **据点旗号的时代名必须按据点自己的建筑文化取**，不能按「该势力在库里第一座城」的风格取。
+ *
+ * 旧实现（`FACTION_CITY`）只看势力→首城：隋国首城＝汉东（江南）→ 函谷关（中原）被套成「吴越」；
+ * 大明首城＝北京（河朔）→ 潼关（中原）被套成「太行」。而**同一势力可同时拥有分处不同建筑文化的据点**
+ * （据点代表一片地区，见 AGENTS §二.2），所以时代名只能按**据点**判：
+ *   · 闸门与势力级口径完全一致 —— 该势力此刻没有在场武将（`overrides` 里有它）才换名；
+ *   · 名字/旗号取 `本据点 buildingStyle × 当前时代` 的军团名（函谷关、潼关＝中原 → 古典「华夏」，旗号「华」）。
+ *
+ * 返回 null = 照旧用势力原名（非百岁模式 / 该势力有在场武将 / 本据点风格解不出军团）。
+ */
+export function getEraCityDisplayName(
+    factionId: string | null | undefined,
+    buildingStyle: string | null | undefined,
+): string | null {
+    if (!factionId || !buildingStyle || !activeEra) return null;
+    if (!overrides.has(factionId)) return null;
+    return eraNameOfStyleAndEra(buildingStyle, activeEra)?.name ?? null;
+}
+
+/** 据点级旗号文字（主人单独定过的优先，如中原四时代统一「华」）；口径同 `getEraCityDisplayName` */
+export function getEraCityDisplayFlagText(
+    factionId: string | null | undefined,
+    buildingStyle: string | null | undefined,
+): string | null {
+    if (!factionId || !buildingStyle || !activeEra) return null;
+    if (!overrides.has(factionId)) return null;
+    return eraNameOfStyleAndEra(buildingStyle, activeEra)?.flagText ?? null;
+}
+
+/**
  * 重算时代名覆盖表。
  * @param year 当前年份；**null = 关闭**（剧本模式 / 乱斗模式 / 编辑器按原样）
  * @returns 名字有变化的势力 id（调用方据此刷新这些势力的旗号；开局/跨时代时会很多，跨年一般十几个）
  */
 export function refreshEraFactionDisplays(year: number | null): string[] {
     const next = new Map<string, EraNameDef>();
-    if (year != null && Number.isFinite(year)) {
-        const era = getEraByYear(year);
+    const era = (year != null && Number.isFinite(year)) ? getEraByYear(year) : null;
+    activeEra = era;
+    if (era) {
         for (const [factionId, info] of FACTION_CITY) {
             if (hasOnStageGeneral(factionId)) continue;
             const entry = eraNameOfStyleAndEra(info.buildingStyle, era);

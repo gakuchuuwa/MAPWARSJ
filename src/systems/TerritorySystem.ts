@@ -2895,8 +2895,13 @@ export class TerritorySystem {
 
         // Assets (Using CSS Classes for better performance instead of inline Base64)
         const flagClass = resolveCityFlagClass(city);
-        
-        const flagText = CityAssetManager.getProcessedFlagText(city.factionId);
+
+        // 🔴 [2026-10-24 主人令「函谷关是吴越，错误」「潼关是太行，错误」]
+        //   百岁模式的旗号时代名按**本据点建筑文化**取（同一势力的中原/江南据点各用各的时代名），
+        //   所以旗号文字要带上据点的 buildingStyle；这个值同时写进旗面元素的 data 属性，
+        //   跨时代重刷（patchFactionFlagTexts）时不用回头查 CityManager 也能算对。
+        const cityBuildingStyle = (city as City & { buildingStyle?: string }).buildingStyle ?? city.region;
+        const flagText = CityAssetManager.getProcessedFlagText(city.factionId, cityBuildingStyle);
         const flagPole = CityAssetManager.getProcessedPole() || '';
 
         // 🔴 [2026-09-12 主人定] 战场已独立出据点体系（`src/data/Battlefields.ts`）→ 据点一律有势力、一律插旗。
@@ -2927,7 +2932,7 @@ export class TerritorySystem {
         // [PERFORMANCE FIX] 移除 inline data:image 渲染，改为注入到 style 的 class
 
         const flagBodyHtml = `
-                     <div class="city-flag-body ${flagClass}" style="
+                     <div class="city-flag-body ${flagClass}" data-building-style="${cityBuildingStyle ?? ''}" style="
                          position: absolute;
                          top: ${15 + poleHeight * 0.1}px;
                          left: 50%;
@@ -3152,18 +3157,19 @@ export class TerritorySystem {
     }
 
     private getEffectiveFlagTextUrl(city: City): string | null {
-        return CityAssetManager.getProcessedFlagText(city.factionId);
+        const style = (city as City & { buildingStyle?: string }).buildingStyle ?? city.region;
+        return CityAssetManager.getProcessedFlagText(city.factionId, style);
     }
 
-    private patchFlagTextOverlay(flagBody: HTMLElement, factionId: string): void {
+    private patchFlagTextOverlay(flagBody: HTMLElement, factionId: string, buildingStyle?: string): void {
         const flagScale = 1.4;
-        const textUrl = CityAssetManager.getProcessedFlagText(factionId);
+        const textUrl = CityAssetManager.getProcessedFlagText(factionId, buildingStyle);
         let overlay = flagBody.querySelector<HTMLElement>('.city-flag-text-overlay');
 
         if (!textUrl) {
             // [2026-09-05] 「排队中」不等于「没有文字」：分帧生成时会短暂返回 null，
             // 这时抹掉已有文字会让旗号一闪一闪。等空闲补齐后 patchFactionFlagText 会再来一次。
-            if (CityAssetManager.isFlagTextPending(factionId)) return;
+            if (CityAssetManager.isFlagTextPending(factionId, buildingStyle)) return;
             overlay?.remove();
             return;
         }
@@ -3222,7 +3228,7 @@ export class TerritorySystem {
         ));
         flagBody.classList.add('city-flag-body', nextClass);
 
-        this.patchFlagTextOverlay(flagBody, city.factionId);
+        this.patchFlagTextOverlay(flagBody, city.factionId, (city as City & { buildingStyle?: string }).buildingStyle ?? city.region);
         this.updateCityLabel(city);
         return true;
     }
@@ -3252,7 +3258,8 @@ export class TerritorySystem {
             for (const el of root.querySelectorAll<HTMLElement>('.city-flag-body')) {
                 const m = /flag-faction-([A-Za-z_0-9]+)/.exec(el.className);
                 if (!m || !factionIds.has(m[1])) continue;
-                this.patchFlagTextOverlay(el, m[1]);
+                // 🔴 [2026-10-24] 据点旗号的时代名按本据点建筑文化取（见 renderSingleCity 写下的 data 属性）
+                this.patchFlagTextOverlay(el, m[1], el.dataset.buildingStyle || undefined);
                 break;
             }
         }

@@ -93,6 +93,7 @@ import { ViewerLive } from '../live/ViewerLive';
 import { syncMeleeRandomOwners } from '../events/meleeRandomOwners';
 import { setCityOwnerProvider } from '../data/FactionGenerals';
 import { ViewerLivePanel } from '../live/ViewerLivePanel';
+import { SocialStreamBridge } from '../live/SocialStreamBridge';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -941,7 +942,9 @@ export class GameApp {
 
     /** 🔴 [2026-10-23] 直播观众互动：观众发字替一方放计（F9 测试面板；控制台 `game.live.onChat('某某', '攻', true)`） */
     public readonly live = new ViewerLive(this);
-    private readonly livePanel = new ViewerLivePanel(this.live);
+    /** 🔴 [2026-10-24] 直播间聊天 / 打赏：经 Social Stream Ninja 进来（YouTube / Twitch / TikTok / Ko-fi） */
+    private readonly liveLink = new SocialStreamBridge(this.live);
+    private readonly livePanel = new ViewerLivePanel(this.live, this.liveLink);
 
     /**
      * 🔴 [2026-10-20 主人令「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代，

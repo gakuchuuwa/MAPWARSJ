@@ -1779,15 +1779,23 @@ export class PlayerQuestSystem {
             ? { lat: targetCity.latitude, lng: targetCity.longitude }
             : { lat: fb.targetLat, lng: fb.targetLng };
         // 🔴 [2026-10-24 主人问「战场和出发点太远的怎么办」] 战场离出发据点超过 FIRST_BATTLE_FAR_DEG（≈300km）：
-        //    不走几千公里，视为该将早已率军进驻前线——军团改从离战场最近的己方据点起兵（没有己方据点就取最近的据点）。
-        //    守城战（目标=被守据点）直接就地。
-        const FIRST_BATTLE_FAR_DEG = 2.7;
-        if (getEuclideanDistance(host.getPosition(), targetPos) > FIRST_BATTLE_FAR_DEG) {
-            const nearTarget = [...this.deps.cityManager.getCities()]
-                .map((c) => ({ c, d: getEuclideanDistance({ lat: c.latitude, lng: c.longitude }, targetPos) }))
-                .sort((a, b) => a.d - b.d);
-            const stage = (nearTarget.find((x) => x.c.factionId === myFactionId && x.d <= FIRST_BATTLE_FAR_DEG) ?? nearTarget[0])?.c;
+        //    不走几千公里，视为该将早已率军进驻前线——军团改从离战场最近的己方据点起兵（300km 内没有就直接摆到战场）。
+        //    守城战：一律就地，军团直接放进被守的城。
+        const FIRST_BATTLE_FAR_KM = 300;
+        const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) =>
+            Math.hypot((a.lat - b.lat) * 111.32, (a.lng - b.lng) * 111.32 * Math.cos(((a.lat + b.lat) / 2) * Math.PI / 180));
+        if (fb.battleType === 'siege' && role === 'defender') {
+            const defended = targetCity ?? city;
+            host.setPosition(defended.latitude, defended.longitude);
+        } else if (km(host.getPosition(), targetPos) > FIRST_BATTLE_FAR_KM) {
+            // 优先离战场最近的己方据点（不含战场城本身），留一段短途行军；没有就直接摆到战场
+            const stage = this.deps.cityManager.getCities()
+                .filter((c) => c.id !== targetCity?.id && c.factionId === myFactionId)
+                .map((c) => ({ c, d: km({ lat: c.latitude, lng: c.longitude }, targetPos) }))
+                .filter((x) => x.d <= FIRST_BATTLE_FAR_KM)
+                .sort((a, b) => a.d - b.d)[0]?.c;
             if (stage) host.setPosition(stage.latitude, stage.longitude);
+            else host.setPosition(targetPos.lat, targetPos.lng);
         }
         const isOnTheSpot = getEuclideanDistance(host.getPosition(), targetPos) <= 0.12;
 

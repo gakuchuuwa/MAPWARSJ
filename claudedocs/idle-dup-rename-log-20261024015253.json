@@ -1,0 +1,32 @@
+[
+  {
+    "folder": "JIANGNAN",
+    "from": "bfe2_chu_zhuangwang.png",
+    "to": "__闲置__JIANGNAN_32.png"
+  },
+  {
+    "folder": "SASANIAN",
+    "from": "bfe_tahir_king.png",
+    "to": "__闲置__SASANIAN_01.png"
+  },
+  {
+    "folder": "STORY",
+    "from": "syrian_trader_abdi.png",
+    "to": "__闲置__STORY_01.png"
+  },
+  {
+    "folder": "STORY",
+    "from": "urt_envoy.png",
+    "to": "__闲置__STORY_02.png"
+  },
+  {
+    "folder": "STORY",
+    "from": "urt_herder_tahu.png",
+    "to": "__闲置__STORY_03.png"
+  },
+  {
+    "folder": "STORY",
+    "from": "urt_old_groom.png",
+    "to": "__闲置__STORY_04.png"
+  }
+]

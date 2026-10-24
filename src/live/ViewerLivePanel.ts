@@ -3,8 +3,10 @@
  *   · 打仗时右侧常显：玩法一句话、两边各多少人站队、排队名单、最近几条记录——给直播间观众看。
  *   · 按 F9 展开测试区：输入观众名，点「站攻方 / 站守方」、点六个字放计、勾「付费」——本地模拟弹幕，
  *     不用开直播就能试整套玩法。以后接上直播平台，消息走同一个 `ViewerLive.onChat`。
+ *   · [2026-10-24] 接上直播间（SocialStreamBridge）后不打仗也常显；F9 里填 SSN 会话 ID、看连接状态、模拟打赏。
  */
 import type { ViewerLive } from './ViewerLive';
+import type { SocialStreamBridge } from './SocialStreamBridge';
 
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
@@ -16,7 +18,7 @@ export class ViewerLivePanel {
     private dev: HTMLDivElement;
     private devOpen = false;
 
-    constructor(private readonly live: ViewerLive) {
+    constructor(private readonly live: ViewerLive, private readonly link: SocialStreamBridge) {
         this.root = document.createElement('div');
         this.root.id = PANEL_ID;
         this.root.style.cssText = `
@@ -43,15 +45,29 @@ export class ViewerLivePanel {
 
     private render(): void {
         const s = this.live.snapshot();
-        this.root.style.display = s.on || this.devOpen ? 'block' : 'none';
+        // 接上直播间后不打仗也常显（打赏随时会来，要让观众看见感谢和规矩）
+        const linked = s.platform === '直播间已连接';
+        this.root.style.display = s.on || linked || this.devOpen ? 'block' : 'none';
         if (this.root.style.display === 'none') return;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
-        const queue = s.queue.slice(0, 5).map((q, i) => `<div>${i + 1}. ${esc(q)}</div>`).join('') || '<div style="color:#a99">（没有人排队）</div>';
+        const price = `打赏 <b>$${s.price / 100}</b> 放一计`;
+        const platform = s.platform && this.devOpen ? `<div style="color:#8fd3ff;font-size:12px;">${esc(s.platform)}</div>` : '';
         const log = s.log.slice(-4).map((l) => `<div style="color:#cdbb95">${esc(l)}</div>`).join('');
-        this.body.innerHTML = `
+        if (!s.on) {
+            this.body.innerHTML = `${platform}
+                <div style="color:#ffd700;font-weight:900;font-size:14px;">发弹幕参战</div>
+                <div>下一场战术战开打时：发 <b>1</b> 站攻方、<b>2</b> 站守方</div>
+                <div>再发 <b>攻 胜 敌 混 并 败</b> 替本方放计</div>
+                <div>每天第一次免费，之后${price}</div>
+                <div style="margin-top:6px;">${log}</div>`;
+            return;
+        }
+        const queue = s.queue.slice(0, 5).map((q, i) => `<div>${i + 1}. ${esc(q)}</div>`).join('') || '<div style="color:#a99">（没有人排队）</div>';
+        this.body.innerHTML = `${platform}
             <div style="color:#ffd700;font-weight:900;font-size:14px;">发弹幕参战</div>
             <div>发 <b>1</b> 站 ${esc(s.names[0])}，发 <b>2</b> 站 ${esc(s.names[1])}</div>
-            <div>再发 <b>攻 胜 敌 混 并 败</b> 替本方放计，第一次免费</div>
+            <div>再发 <b>攻 胜 敌 混 并 败</b> 替本方放计（也可一条发「1攻」）</div>
+            <div>第一次免费，之后${price}</div>
             <div style="margin-top:6px;">${esc(s.names[0])} <b>${s.counts[0]}</b> 人　｜　${esc(s.names[1])} <b>${s.counts[1]}</b> 人</div>
             <div style="margin-top:6px;color:#ffd700;">排队</div>${queue}
             <div style="margin-top:6px;">${log}</div>`;
@@ -68,7 +84,7 @@ export class ViewerLivePanel {
         paidWrap.style.cssText = 'display:block;margin-bottom:6px;';
         const paid = document.createElement('input');
         paid.type = 'checkbox';
-        paidWrap.append(paid, document.createTextNode(' 这条是付费的'));
+        paidWrap.append(paid, document.createTextNode(' 这条带了一次的钱'));
         const row = (items: string[], onClick: (w: string) => void) => {
             const r = document.createElement('div');
             r.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;';
@@ -82,8 +98,25 @@ export class ViewerLivePanel {
             return r;
         };
         const send = (w: string) => { this.live.onChat(name.value, w, paid.checked); this.render(); };
-        this.dev.append(label, name, paidWrap,
+        // 直播间：Social Stream Ninja 会话 ID（扩展弹窗里那串），回车生效，清空＝断开
+        const ssnLabel = document.createElement('div');
+        ssnLabel.textContent = 'SSN 会话 ID（回车生效）';
+        ssnLabel.style.cssText = 'color:#8fd3ff;margin-bottom:2px;';
+        const ssn = document.createElement('input');
+        ssn.type = 'password';
+        ssn.value = this.link.getSession();
+        ssn.style.cssText = name.style.cssText;
+        ssn.addEventListener('keydown', (e) => {
+            e.stopPropagation();
+            if (e.key === 'Enter') { this.link.setSession(ssn.value); this.render(); }
+        });
+        this.dev.append(ssnLabel, ssn, label, name, paidWrap,
             row(['1 站攻方', '2 站守方'], (w) => send(w[0])),
-            row([...WORDS], send));
+            row([...WORDS], send),
+            // 模拟打赏：按昵称当观众 id，跟上面发字的是同一个人
+            row(['打赏$1', '打赏$10'], (w) => {
+                this.live.onPayment(name.value.trim() || '观众', name.value, w.includes('10') ? 1000 : 100, `测试${w}`);
+                this.render();
+            }));
     }
 }

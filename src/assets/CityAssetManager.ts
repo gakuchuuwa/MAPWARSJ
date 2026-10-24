@@ -1,6 +1,6 @@
 import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
-import { getEraFactionDisplayName, getEraFactionDisplayFlagText } from '../data/eraFactionDisplay';
+import { getEraFactionDisplayName, getEraFactionDisplayFlagText, getEraCityDisplayName, getEraCityDisplayFlagText } from '../data/eraFactionDisplay';
 import { FLAG_TEXT_WHITE_STYLE_FACTIONS, FLAG_TEXT_BLACK_STYLE_FACTIONS, HISTORICAL_FACTION_COLORS, FLAG_TEXT_LUM_THRESHOLD } from '../data/HistoricalFactionColors';
 import type { FactionManager } from '../world/FactionManager';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
@@ -642,6 +642,12 @@ export class CityAssetManager {
 
     // Cache for processed images (Blob URLs / Data URLs)
     private static processedFlagCache: Map<string, string> = new Map();
+    /**
+     * 🔴 [2026-10-24] 旗号文字按**据点建筑文化**取时代名后的变体登记（factionId → 该势力生成过的文字缓存键）。
+     * 原实现一个势力只有一个文字变体（`dynamic_text_${factionId}_w|b`），现在同一势力不同建筑文化的据点
+     * 各有一套（`dynamic_text_${factionId}@${buildingStyle}_w|b`）；换时代/换色失效时要连同这些一起清。
+     */
+    private static flagTextVariantKeys: Map<string, Set<string>> = new Map();
     // Cache for rebel flags (multiple random flags)
     private static processedRebelFlags: string[] = [];
     /** 旗帜中心区域平均亮度缓存 (0-255). 用于黑/白字自适应选择. */
@@ -682,6 +688,12 @@ export class CityAssetManager {
         this.processedFlagCache.delete(`dynamic_text_${factionId}`);
         this.processedFlagCache.delete(`dynamic_text_${factionId}_w`);
         this.processedFlagCache.delete(`dynamic_text_${factionId}_b`);
+        // 🔴 [2026-10-24] 据点级时代名变体（同一势力不同建筑风格各一套）一并清掉
+        const variants = this.flagTextVariantKeys.get(factionId);
+        if (variants) {
+            for (const key of variants) this.processedFlagCache.delete(key);
+            this.flagTextVariantKeys.delete(factionId);
+        }
     }
     private static flagsLoaded = false;
     /** 叛军 S10QZ 7–58 是否已全部 chromaKey（见 PANJUN_REBEL_FLAG_* 常量） */
@@ -1469,14 +1481,28 @@ export class CityAssetManager {
     private static flagTextQueue = new Set<string>();
     private static flagTextDrainScheduled = false;
 
+    /**
+     * 🔴 [2026-10-24] 排队键＝势力＋据点建筑文化：同一势力分处中原/江南/河朔的据点各有各的时代名，
+     * 文字要分别生成（不传建筑文化＝势力级旧口径，军团旗等非据点场景用）。
+     */
+    private static flagTextQueueKey(factionId: string, buildingStyle?: string): string {
+        return buildingStyle ? `${factionId}\u0000${buildingStyle}` : factionId;
+    }
+
+    private static parseFlagTextQueueKey(key: string): { factionId: string; buildingStyle?: string } {
+        const sep = key.indexOf('\u0000');
+        if (sep < 0) return { factionId: key };
+        return { factionId: key.slice(0, sep), buildingStyle: key.slice(sep + 1) };
+    }
+
     private static isTacticalSceneActive(): boolean {
         const game = (window as any).game;
         return game?.battleScene?.isActive?.() === true || game?.scene13War?.isActive?.() === true;
     }
 
-    /** 这个势力的旗号文字是不是「排队中」（而不是「本来就没有」）——调用方据此决定要不要抹掉已有文字 */
-    public static isFlagTextPending(factionId: string): boolean {
-        return this.flagTextQueue.has(factionId);
+    /** 这个势力（可指定据点建筑文化）的旗号文字是不是「排队中」（而不是「本来就没有」）——调用方据此决定要不要抹掉已有文字 */
+    public static isFlagTextPending(factionId: string, buildingStyle?: string): boolean {
+        return this.flagTextQueue.has(this.flagTextQueueKey(factionId, buildingStyle));
     }
 
     /**
@@ -1536,13 +1562,14 @@ export class CityAssetManager {
             do {
                 const next = this.flagTextQueue.values().next();
                 if (next.done) break;
-                const factionId = next.value;
-                this.flagTextQueue.delete(factionId);
+                const queueKey = next.value;
+                this.flagTextQueue.delete(queueKey);
+                const { factionId, buildingStyle } = this.parseFlagTextQueueKey(queueKey);
                 try {
-                    this.buildFlagTextSync(factionId);
+                    this.buildFlagTextSync(factionId, buildingStyle);
                     generated.push(factionId);
                 } catch (error) {
-                    console.warn('[CityAssetManager] 旗号文字生成失败:', factionId, error);
+                    console.warn('[CityAssetManager] 旗号文字生成失败:', queueKey, error);
                 }
             } while (canContinue());
             // 🔴 [2026-10-20] 一轮生成的那几张**一次扫完**再 patch：百岁模式换时代时一次会有上千家排队，
@@ -1574,14 +1601,33 @@ export class CityAssetManager {
         }
     }
 
+    /** 登记某势力的文字变体键（换时代/变色失效时一并清） */
+    private static registerFlagTextVariant(factionId: string, variantKey: string): void {
+        let keys = this.flagTextVariantKeys.get(factionId);
+        if (!keys) {
+            keys = new Set();
+            this.flagTextVariantKeys.set(factionId, keys);
+        }
+        keys.add(variantKey);
+    }
+
     /** 旗号文字的渲染参数（文字内容 + 配色 + 缓存键），生成与查缓存共用一份，避免两处算歪 */
-    private static resolveFlagTextSpec(factionId: string): { variantKey: string; text: string; fill: string; stroke: string } {
+    private static resolveFlagTextSpec(
+        factionId: string,
+        buildingStyle?: string,
+    ): { factionId: string; variantKey: string; text: string; fill: string; stroke: string } {
         // 🔴 [2026-10-20 主人定] 百岁模式：该势力没有在世武将时，旗号改用「当时代的军团名」
         //   （如日本古典时代 = 大和、15XX 德川在世 = 武藏）；下面的「只画前两字」规则照旧。
         //   🔴 [2026-10-20 主人令「凉州的话，旗帜只用一个凉字就行」] 个别时代名单独定了旗号文字的，
         //   优先用那一份（凉州 → 只写「凉」）。
-        const eraName = getEraFactionDisplayName(factionId);
-        const eraFlagText = getEraFactionDisplayFlagText(factionId);
+        //   🔴 [2026-10-24 主人令「函谷关是吴越，错误」「潼关是太行，错误」] 有据点建筑文化的场景（据点旗）
+        //   必须按**本据点**的建筑文化取时代名 —— 同一势力可同时拥有中原/江南/河朔的据点，
+        //   旧口径按势力首城风格取，才会让中原的函谷关/潼关顶出「吴越」「太行」。
+        const cityName = getEraCityDisplayName(factionId, buildingStyle);
+        const eraName = cityName ?? getEraFactionDisplayName(factionId);
+        const eraFlagText = cityName != null
+            ? getEraCityDisplayFlagText(factionId, buildingStyle)
+            : getEraFactionDisplayFlagText(factionId);
         let textToRender = eraName != null ? (eraFlagText ?? eraName) : SANDBOX_DISPLAY_NAMES[factionId];
 
         if (!textToRender) {
@@ -1597,8 +1643,10 @@ export class CityAssetManager {
 
         // §10.2.1：浅旗黑字白边，深旗白字黑边
         const useWhiteText = this.resolveFlagTextIsDark(factionId);
+        const styleSuffix = buildingStyle ? `@${buildingStyle}` : '';
         return {
-            variantKey: `dynamic_text_${factionId}_${useWhiteText ? 'w' : 'b'}`,
+            factionId,
+            variantKey: `dynamic_text_${factionId}${styleSuffix}_${useWhiteText ? 'w' : 'b'}`,
             text: textToRender,
             fill: useWhiteText ? '#f8f8f4' : '#111111',
             stroke: useWhiteText ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)',
@@ -1606,12 +1654,13 @@ export class CityAssetManager {
     }
 
     /** 真正生成并入缓存（同步编码，供队列按帧预算调用） */
-    private static buildFlagTextSync(factionId: string): string | null {
-        const spec = this.resolveFlagTextSpec(factionId);
+    private static buildFlagTextSync(factionId: string, buildingStyle?: string): string | null {
+        const spec = this.resolveFlagTextSpec(factionId, buildingStyle);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;
         const textImgUrl = DynamicFlagTextGenerator.generate(spec.text, spec.fill, spec.stroke);
         this.processedFlagCache.set(spec.variantKey, textImgUrl);
+        this.registerFlagTextVariant(spec.factionId, spec.variantKey);
         return textImgUrl;
     }
 
@@ -1622,20 +1671,21 @@ export class CityAssetManager {
      *   · 势力 id 为空（无名势力）→ 该抹掉已有文字
      *   · 本帧生成预算用完、已排队 → **保留**已有文字，等补齐，别抹（抹了会闪）
      */
-    public static getProcessedFlagText(factionId: string): string | null {
+    public static getProcessedFlagText(factionId: string, buildingStyle?: string): string | null {
         // 🔴 [2026-10-20 主人令「旗号，用一个字，繁体的义」] panjun（起义）也要写字：单字繁体「義」
         //    （原「[USER-REQUEST] Hide flag text for panjun」按主人最新令作废）
         if (!factionId) return null;
 
-        const spec = this.resolveFlagTextSpec(factionId);
+        const spec = this.resolveFlagTextSpec(factionId, buildingStyle);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;
 
         // 绘制与旗面加载回调只入队；不在调用栈中同步编码 PNG。
         // 🔴 [2026-09-11 主人「刷新快点」] **插到队首**：刚被请求的势力 = 玩家此刻视口里新出现的旗，
         //   必须排在旧积压（已离开视口的区域）前面，否则要等前面积压全部清完才轮得到它。
-        if (this.flagTextQueue.has(factionId)) this.flagTextQueue.delete(factionId);
-        this.flagTextQueue = new Set([factionId, ...this.flagTextQueue]);
+        const queueKey = this.flagTextQueueKey(factionId, buildingStyle);
+        if (this.flagTextQueue.has(queueKey)) this.flagTextQueue.delete(queueKey);
+        this.flagTextQueue = new Set([queueKey, ...this.flagTextQueue]);
         this.flagTextBurstUntil = performance.now() + 1500;   // 有新旗子 → 开追赶期
         this.scheduleFlagTextDrain();
         return null;
@@ -1646,13 +1696,14 @@ export class CityAssetManager {
      *    排队按插入顺序清、1087 个据点旗排在前面，军团旗要等十几秒才轮得到。
      *    军团旗改走这里——同步编码、立即返回并写缓存（据点旗排队命中缓存即可，不重复生成）。
      */
-    public static getProcessedFlagTextSync(factionId: string): string | null {
+    public static getProcessedFlagTextSync(factionId: string, buildingStyle?: string): string | null {
         if (!factionId) return null;
-        const spec = this.resolveFlagTextSpec(factionId);
+        const spec = this.resolveFlagTextSpec(factionId, buildingStyle);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;
         const url = DynamicFlagTextGenerator.generate(spec.text, spec.fill, spec.stroke);
         this.processedFlagCache.set(spec.variantKey, url);
+        this.registerFlagTextVariant(spec.factionId, spec.variantKey);
         return url;
     }
 
