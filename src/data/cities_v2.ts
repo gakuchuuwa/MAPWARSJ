@@ -269,11 +269,11 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         name: '盘石',
         factionId: 'shu',
         lat: 29.78, lng: 104.85,
-        type: 'medium_city',
+        type: 'small_city',
         region: 'BASHU',
         buildingStyle: 'BASHU',
         troops: 10000,
-        note: '盘石；资州小城',
+        note: '盘石；资州小城；定级依据§6.2：盘石非关隘/要塞/堡垒（唐资州治盘石县），按城市判级；《旧唐书·地理志》资州天宝户29,635、口104,775为八县合计（非城居），城居推算1–3万，未到中城10万 → 小城。按史＋依据：https://zh.wikisource.org/wiki/舊唐書/卷41',
     },
 
     // ── 崤函古道沿线 (洛阳→长安 的中城) ──
@@ -538,12 +538,11 @@ buildingStyle: 'WESTERN', tier: 1,
         name: '敦煌',
         factionId: 'guiyi',
         lat: 40.14, lng: 94.66,
-        type: 'medium_city',
+        type: 'small_city',
         region: 'KHITAN',
         buildingStyle: 'KHITAN',
         troops: 10000,
-        tier: 1,
-        note: '敦煌；沙州小城',
+        note: '敦煌；沙州小城；定级依据§6.2：敦煌非关隘/要塞/堡垒（唐沙州治敦煌县），按城市判级；《旧唐书·地理志》沙州旧领二县户4,265、口16,250（全州，非城居），城居过万未达10万 → 小城。按史＋依据：https://zh.wikisource.org/wiki/舊唐書/卷40',
     },
     { id: 'city_lanzhou', name: '皋兰', factionId: 'han_d', lat: 36.062422, lng: 103.765869, type: 'medium_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' },
 
@@ -1297,12 +1296,11 @@ buildingStyle: 'JAPAN', troops: 10000,
         name: '濮阳',
         factionId: 'hou_zhou',
         lat: 35.7621, lng: 115.0291,
-        type: 'medium_city',
+        type: 'small_city',
         region: 'CENTRAL',
         buildingStyle: 'CENTRAL',
         troops: 10000,
-        tier: 1,
-        note: '濮阳；澶州小城',
+        note: '濮阳；澶州小城；定级依据§6.2：濮阳非关隘/要塞/堡垒（宋开德府/澶州治濮阳县），按城市判级；《宋史·地理志》开德府崇宁户31,878、口82,826（七县合计，非城居），城居过万未达10万 → 小城。按史＋依据：https://zh.wikisource.org/wiki/宋史/卷086',
     },
     { id: 'city_xucheng', name: '符离', factionId: 'ming_d', lat: 33.65, lng: 116.97, type: 'small_city', troops: 10000, region: 'MING', buildingStyle: 'CENTRAL' },
 
@@ -1587,9 +1585,9 @@ buildingStyle: 'TIBET', troops: 10000,
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '平陇；苗民关隘',
     },
-    { id: 'city_kathmandu', name: '加德满都', factionId: 'gurkha', lat: 27.715138, lng: 85.185242, type: 'medium_city', region: 'TIBET_IMPERIAL',
-buildingStyle: 'TIBET', troops: 10000, tier: 1,
-        note: '加德满都；廓喀小城',
+    { id: 'city_kathmandu', name: '加德满都', factionId: 'gurkha', lat: 27.715138, lng: 85.185242, type: 'small_city', region: 'TIBET_IMPERIAL',
+buildingStyle: 'TIBET', troops: 10000,
+        note: '加德满都；廓喀小城；定级依据§6.2：加德满都非关隘/要塞/堡垒（马拉王朝 Kantipur 谷地王都），按城市判级；17世纪前城居无可靠数字，按谷地王都推算过万、未达10万 → 小城。按史＋依据：https://en.wikipedia.org/wiki/Kathmandu',
     },
     {
         id: 'city_turkestan', name: '亚西', factionId: 'kazakh',
@@ -2202,6 +2200,15 @@ buildingStyle: 'TIBET', troops: 10000,
 // 汇总导出
 // ============================================================
 export const CITIES_V2: CityDataV2[] = [
+    // ── 2026-10-24 主人「添加据点」：环非洲 7 港（本地文化判定，见 docs/02-design/海路网-单一口径-2026-10-24.md）──
+    { id: 'city_kilwa', name: '基尔瓦', factionId: 'kilwa', lat: -8.96, lng: 39.5128, type: 'small_city', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'AFRICA', note: '基尔瓦基西瓦尼（Kilwa Kisiwani，斯瓦希里语「基尔瓦岛」）：基尔瓦苏丹国都城（约957–1513），13–15世纪斯瓦希里海岸霸主；鼎盛逾万人（>1万＝小城）。珊瑚石大清真寺（11世纪始建、13世纪16穹顶）、Husuni Kubwa 宫、Gereza 堡，UNESCO 世界遗产（1979）。按史＋依据：https://whc.unesco.org/en/list/144/ 、https://en.wikipedia.org/wiki/Kilwa_Kisiwani 、https://en.wikipedia.org/wiki/Kilwa_Sultanate' },
+    { id: 'city_mombasa', name: '蒙巴萨', factionId: 'mombasa', lat: -4.05, lng: 39.6667, type: 'stockade', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'AFRICA', note: '蒙巴萨（Mombasa；斯瓦希里语 Mvita，汉籍「慢八撒」）：斯瓦希里城邦，1502年前属基尔瓦苏丹国、后为独立蒙巴萨苏丹国；Mnara 清真寺约1300年、Mandhry 清真寺1570年。中世纪人口无学术估算，按「算不出一律城寨」定级。按史＋依据：https://en.wikipedia.org/wiki/Mombasa 、https://en.wikipedia.org/wiki/List_of_rulers_of_Mombasa' },
+    { id: 'city_mogadishu', name: '摩加迪沙', factionId: 'mogadishu', lat: 2.0392, lng: 45.3419, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'AFRICA', note: '摩加迪沙（Mogadishu；索马里语 Muqdisho，旧称 Xamar 哈马，汉籍「木骨都束」）：摩加迪沙苏丹国都城（10–16世纪）。伊本·白图泰 1331 年记其为「极大的城」，有环城石墙、圆柱宣礼塔、Almnara 塔；人口无学术估算 → 城寨。按史＋依据：https://en.wikipedia.org/wiki/Sultanate_of_Mogadishu 、https://en.wikipedia.org/wiki/Mogadishu' },
+    { id: 'city_mozambique', name: '莫桑比克', factionId: 'putaoya', lat: -15.03, lng: 40.74, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '莫桑比克岛（Ilha de Moçambique；斯瓦希里 Msumbiji）：1507 年特里斯唐·达·库尼亚取岛设商站，1507–1898 为**葡属东非首府**；北半部珊瑚石「石城」Cidade de Pedra（圣塞巴斯蒂昂堡 1558–1620，撒哈拉以南非洲现存最完整古堡）、医院、教堂群为葡属石构，故建筑风格取葡萄牙（殖民新建/长期统治城按实际建成层）；守将＝葡属东非镇守将。岛域仅95.7公顷、史无人口估算 → 城寨。按史＋依据：https://whc.unesco.org/en/list/599/ 、https://en.wikipedia.org/wiki/Island_of_Mozambique 、https://en.wikipedia.org/wiki/Fort_S%C3%A3o_Sebasti%C3%A3o_(Mozambique)' },
+    { id: 'city_luanda', name: '罗安达', factionId: 'putaoya', lat: -8.8383, lng: 13.2344, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '罗安达（Luanda）：1576年1月25日保罗·迪亚士·德·诺瓦伊斯建城（São Paulo da Assunção de Loanda），**葡属安哥拉首府**（1576–1621 都城），1576 年前只有姆本杜 axiluanda 渔村、城的建筑层是葡萄牙石构（圣米格尔堡 1576、主教座堂 1679），故建筑风格取葡萄牙（与果阿/萨尔瓦多同例：殖民新建城按实际建成层）；守将＝葡属安哥拉镇守将。17世纪人口无可靠统计（税册1781年9755）→ 城寨。按史＋依据：https://en.wikipedia.org/wiki/Luanda 、https://en.wikipedia.org/wiki/Portuguese_Angola 、https://en.wikipedia.org/wiki/Angolan_Wars' },
+    { id: 'city_cape_town', name: '开普敦', factionId: 'nidelan', lat: -33.9253, lng: 18.4239, type: 'small_city', troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC', note: '开普敦（Cape Town／Kaapstad，科伊语 ǁHui!gaeb「云聚之处」）：1652年4月6日荷属东印度公司建补给站，**荷属开普殖民地首府**；好望堡（1666–79）与 Cape Dutch 石构/砖构为本地实际建成层，按殖民新建城取荷兰（日耳曼）风格；守将＝开普殖民地指挥官。1652年约90人、1754年12,239人（>1万＝小城）。按史＋依据：https://en.wikipedia.org/wiki/History_of_Cape_Town 、https://en.wikipedia.org/wiki/Cape_Colony' },
+    { id: 'city_aden', name: '亚丁', factionId: 'zuraid', lat: 12.7855, lng: 45.0187, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '亚丁（Aden／عدن，古称 Eudaemon「幸福之城」，汉籍唐「三兰」、明「阿丹」）：祖拉伊德王朝（Banū Zuraiʿ，1083–1174）都城；拉苏里德时期约8万人口（>1万、<10万＝小城）。塔维拉蓄水池（希米亚尔 275 年始凿）、阿班清真寺、希拉堡；伊本·赫尔敦记「也门最坚固之城，多数以石筑」。按史＋依据：https://en.wikipedia.org/wiki/Aden 、https://en.wikipedia.org/wiki/Zurayid_dynasty' },
+
     { id: 'city_moyoro', name: '莫约罗', factionId: 'ayinu_ezo', lat: 44.02, lng: 144.27, type: 'stockade', troops: 10000, region: 'AINU', buildingStyle: 'JAPAN', note: '北海道东部阿伊努民族与鄂霍次克文化起源遗址莫约罗' },
 
 
@@ -2622,9 +2629,9 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
     { id: 'city_wutucheng', name: '迪化城', factionId: 'cheshihou', lat: 43.735353, lng: 87.574768, type: 'small_city', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' },
 
 
-    { id: 'city_gaochangcheng', name: '高昌', factionId: 'yiduhu', lat: 42.8533, lng: 89.53, type: 'medium_city', region: 'WESTERN_CASTLE',
-buildingStyle: 'WESTERN', troops: 10000, mirror: true, tier: 1,
-        note: '高昌；亦都护小城',
+    { id: 'city_gaochangcheng', name: '高昌', factionId: 'yiduhu', lat: 42.8533, lng: 89.53, type: 'small_city', region: 'WESTERN_CASTLE',
+buildingStyle: 'WESTERN', troops: 10000, mirror: true,
+        note: '高昌；亦都护小城；定级依据§6.2：高昌非关隘/要塞/堡垒（高昌国都/唐西州治），按城市判级；《旧唐书·地理志》西州天宝领五县户9,016、口49,476（全州，非城居），城居过万未达10万 → 小城。按史＋依据：https://zh.wikisource.org/wiki/舊唐書/卷40',
     },
 
 
@@ -2852,9 +2859,9 @@ buildingStyle: 'TIBET', troops: 10000,
         
         note: '萨迦；萨迦昆小城', region: 'TIBET_CASTLE',
         buildingStyle: 'TIBET' },
-    { id: 'city_sangzhuzi', name: '桑珠孜', factionId: 'tsangpa', lat: 29.303155, lng: 88.862915, type: 'medium_city', region: 'TIBET_IMPERIAL',
+    { id: 'city_sangzhuzi', name: '桑珠孜', factionId: 'tsangpa', lat: 29.303155, lng: 88.862915, type: 'small_city', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
-        note: '桑珠孜；藏巴汗小城',
+        note: '桑珠孜；藏巴汗小城；定级依据§6.2：桑珠孜非关隘/要塞/堡垒（藏巴汗王城宗堡），按城市判级；17世纪前城居无可靠数字，按王城/宗堡聚落推算过万、未达10万 → 小城。按史＋依据：https://en.wikipedia.org/wiki/Shigatse',
     },
 
     { id: 'city_jiamachikang', name: '甲玛赤康', factionId: 'tubo', lat: 29.74, lng: 91.7, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET' },
@@ -2946,10 +2953,10 @@ buildingStyle: 'BASHU', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 BASHU：宛温（云南）：汉宛温县，南中之地
     { id: 'city_wanwen', name: '宛温', factionId: 'shu', lat: 25.09, lng: 104.89, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
-    { id: 'city_cangwu', name: '苍梧', factionId: 'han_d', lat: 23.47, lng: 111.31, type: 'medium_city', region: 'JIANGNAN',
+    { id: 'city_cangwu', name: '苍梧', factionId: 'han_d', lat: 23.47, lng: 111.31, type: 'small_city', region: 'JIANGNAN',
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：苍梧（广西梧州）：苍梧郡治，汉地
 buildingStyle: 'JIANGNAN', troops: 10000,
-        note: '苍梧；广信小城',
+        note: '苍梧；广信小城；定级依据§6.2：苍梧非关隘/要塞/堡垒（苍梧郡治广信，汉交州治所），按城市判级；唐《旧唐书·地理志》梧州旧领四县户3,084、口5,423，天宝领三县户5,000（全州户口，非城居），远未到中城10万 → 小城。按史＋依据：https://zh.wikisource.org/wiki/舊唐書/卷41',
     },
     {
         id: 'city_panyu',
@@ -3453,7 +3460,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_ajiemier', name: '阿杰梅尔', factionId: 'zhelouqi', lat: 26.45, lng: 74.64, type: 'medium_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', note: '乔汉(遮娄其)王朝都城，普里特维抗古尔' },
     { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', note: '加纳古都，苏曼古鲁攻占后为索索都城' },
     { id: 'city_latajiya', name: '拉塔基亚', factionId: 'antiaokegongguo', lat: 35.52, lng: 35.79, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '安条克公国港口（今叙利亚拉塔基亚），博希蒙德1098年建公国。🔴 [2026-10-18 按据点] 据点本身是古叙利亚港市拉塔基亚（塞琉古 Laodicea，罗马/拜占庭/阿拉伯/奥斯曼层），实体建筑以中东石构为主；十字军是一段外来政权，不据此定风格；博希蒙德是武将与据点错配，待改武将。' },
-    { id: 'city_lansi', name: '兰斯', factionId: 'gaolu', lat: 49.26, lng: 4.03, type: 'medium_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '法兰西加冕城，1429年贞德护查理七世于此加冕' },
+    { id: 'city_lansi', name: '兰斯', factionId: 'gaolu', lat: 49.26, lng: 4.03, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '法兰西加冕城，1429年贞德护查理七世于此加冕；定级依据§6.2：兰斯非关隘/要塞/堡垒（主教城、加冕城），按城市判级；罗马盛期3–5万（de Planhol《An Historical Geography of France》p.47；另有「或至10万」之不确说），1793年32,334，17世纪前未达10万 → 小城。按史＋依据：https://en.wikipedia.org/wiki/Reims' },
     // 🔴 [2026-10-18 按史] 卡那封城堡为爱德华一世铁环城堡群之首，实建为英格兰/萨伏伊规制石堡 → BRITONS；不取凯尔特。
     { id: 'city_kanafeng', name: '卡那封', factionId: 'yinggelan', lat: 53.14, lng: -4.27, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地；实建为英格兰/萨伏伊规制石堡，故 BRITONS。' },
     { id: 'city_meierfei', name: '梅尔菲', factionId: 'xixiliwangguo', lat: 40.99, lng: 15.65, type: 'pass', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '诺曼阿普利亚公爵首府，吉斯卡尔南意大利征服起点' },
@@ -3597,7 +3604,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_jelling', name: '耶灵', factionId: 'danmai', lat: 55.756, lng: 9.42, type: 'stockade', troops: 10000, region: 'DANES', buildingStyle: 'DANES', note: '耶灵（Jelling）：10 世纪丹麦王室（老戈姆、蓝牙哈拉尔）的王家领地，双土冢、耶灵石碑与木构教堂；蓝牙哈拉尔在耶灵石碑上宣示统一丹麦/挪威（UNESCO 世界遗产「耶灵石冢」）。🔴 [2026-10-22 按史新增·据点为王室驻地/营地层] 配武将蓝牙哈拉尔（封建 × DANES＝封建时代丹麦王国军团）、精锐耶灵亲兵 T4；离哥本哈根 197.5km（>40km）。' },
     { id: 'city_hedeby', name: '海瑟比', factionId: 'danmai', lat: 54.487, lng: 9.565, type: 'stockade', troops: 10000, region: 'DANES', buildingStyle: 'DANES', note: '海瑟比（Hedeby／Haithabu，古诺斯 Heiðabýr；法兰克史料 Sliesthorp）：8–11 世纪维京商埠，丹麦王戈德弗雷德 808 年毁雷里克后迁商于此、修丹尼维尔克；半圆土垒与码头遗址（UNESCO 世界遗产「海瑟比与丹尼维尔克」）。🔴 [2026-10-22 按史新增·据点为商埠/营地层] 配武将戈德弗雷德（封建 × DANES＝封建时代丹麦王国军团）、精锐海瑟比卫队 T4；离汉堡 107.8km（>40km），离耶灵约 141km。' },
     { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'medium_city', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'GERMANIC' },
-    { id: 'city_madeli', name: '马德里', factionId: 'kasidiliya', lat: 40.41, lng: -3.7, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' },
+    { id: 'city_madeli', name: '马德里', factionId: 'kasidiliya', lat: 40.41, lng: -3.7, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH', note: '定级依据§6.2：马德里非关隘/要塞/堡垒（中世纪城镇，非纯军事要塞），按城市判级；16世纪末8.5–9.5万（Carbajo Isla《La población de la Villa de Madrid desde el siglo XVI》，Revista de Demografía Histórica III, 1984；Modernalia 转录），属「10万左右、边缘模糊」→ 中城。按史＋依据：https://www.modernalia.es/items/show/1401' },
     { id: 'city_boertu', name: '波尔图', factionId: 'putaoya', lat: 41.15, lng: -8.62, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '波尔图；杜罗河口，葡萄牙国名发源地。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土城市，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。' },
     { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.9575, lng: 26.2389, type: 'small_city', troops: 10000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'ORIE', note: '🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 39.95,26.23 偏离特洛伊遗址 1.13 公里，按英文维基百科 Troy 坐标改为 39.9575,26.2389。' },
 
@@ -3643,7 +3650,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'small_city', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'BERBER', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系。🔴 [2026-10-24 按史] 建筑风格 AFRICA→BERBER：关切人（Guanches）是**柏柏尔人**的一支（语言属柏柏尔语族），加那利石屋—土堡与柏柏尔卡斯巴同系；AFRICA（西非马里泥土城）不符。无将驻守。' },
     { id: 'city_angra', name: '安格拉', factionId: 'yasuer', lat: 38.66, lng: -27.22, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌' },
     { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 10000, region: 'INCA', buildingStyle: 'SPANISH', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府。🔴 [2026-10-18 主人令] 建筑风格按建城者定为 SPANISH；旧「风格必须当地」令作废。' },
-    { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'medium_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA' },
+    { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'medium_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', note: '定级依据§6.2：廷巴克图非关隘/要塞/堡垒（撒哈拉南缘泥砖商贸城，无石墙），按城市判级；中世纪盛期人口峰值约10万（英文维基 Timbuktu 引 World History Encyclopedia），按「约10万也算中城」→ 中城。按史＋依据：https://en.wikipedia.org/wiki/Timbuktu' },
 
     { id: 'city_aksum', name: '阿克苏姆', factionId: 'ethiopia', lat: 14.13, lng: 38.72, type: 'medium_city', troops: 10000, region: 'AFRICA_ANTIQUITY', buildingStyle: 'ETHIOPIANS' },
 

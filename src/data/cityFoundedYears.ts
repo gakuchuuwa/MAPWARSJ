@@ -31,6 +31,14 @@
  *    不看名字、也不再逐座问主人 —— 口径全文见 `docs/AGENTS/一据点一整套-单一口径.md` §六。
  */
 export const CITY_FOUNDED_YEAR: Record<string, number> = {
+    city_kilwa: 800,  // 9世纪碳十四测年 AD800 起（设拉子王朝传统纪年 957）
+    city_mombasa: 900,  // 肯尼亚教科书定约900年；al-Idrisi 1151 已记该城
+    city_mogadishu: 900,  // 摩加迪沙苏丹国建于10世纪；最早钱币923–24年
+    city_mozambique: 1300,  // 陶片证明不晚于14世纪
+    city_luanda: 1576,  // 保罗·迪亚士·德·诺瓦伊斯 1576-01-25 建城
+    city_cape_town: 1652,  // 荷属东印度公司 1652-04-06 建补给站
+    city_aden: -700,  // 前8–7世纪为 Awsan 王国属地；前1世纪已见希腊记载
+
     // ── 希腊化城市（亚历山大及其继承者所建）──
     city_yalishanda: -331,      // 亚历山大城，公元前331年亚历山大所建（学界共识）
     city_seuthopolis: -330,     // 塞乌托波利斯，约公元前330年塞乌特斯三世营建（奥德里西亚王都）

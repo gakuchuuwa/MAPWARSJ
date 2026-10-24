@@ -51,6 +51,13 @@ export class CityAssetManager {
     // [PUBLIC] CityEditor 等 UI 模块需要在编辑时实时检测某 faction 是否登记了 flag 映射，
     // 因此从 private 改为 public。仅作只读引用，请勿在外部修改其内容。
     public static readonly factionFlagMap: { [key: string]: string } = {
+    'putaoya': '葡',   // 2026-10-24 补：葡萄牙（罗安达/莫桑比克等海外据点用）
+    'nidelan': '尼德',  // 2026-10-24 补：尼德兰（开普敦等海外据点用）
+    'kilwa': '基',
+    'mombasa': '蒙',
+    'mogadishu': '摩',
+    'zuraid': '祖',
+
 'maqidun': '马其',
         'taino_d': '泰诺',
 'gaogouli': '高句',

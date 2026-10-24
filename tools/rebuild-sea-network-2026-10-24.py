@@ -54,6 +54,14 @@ NEW_PORTS = {
     'city_kamakura':     '镰仓：13 世纪日本宋元贸易港（相模湾）',
     'city_haeju':        '瀑池：朝鲜西海岸港（海州）',
     'city_donghai':      '洞海城：越南中海岸港（洞海）',
+    # ── 2026-10-24 环非洲 7 港（好望角沿岸接力，见 docs 第六节「环球」）──
+    'city_kilwa':        '基尔瓦：基尔瓦苏丹国都城（斯瓦希里海岸霸主）',
+    'city_mombasa':      '蒙巴萨：蒙巴萨苏丹国都城（斯瓦希里城邦）',
+    'city_mogadishu':    '摩加迪沙：摩加迪沙苏丹国都城（索马里城邦）',
+    'city_mozambique':   '莫桑比克：斯瓦希里商港（后葡属东非首府）',
+    'city_luanda':       '罗安达：姆本杜海岸（1576 葡建城，葡属安哥拉首府）',
+    'city_cape_town':    '开普敦：科伊科伊半岛（1652 荷建补给站）',
+    'city_aden':         '亚丁：祖拉伊德王朝都城（红海—印度洋转口港）',
 }
 
 # 史实核查判否/存疑 + v1 补出来的假线
@@ -102,9 +110,19 @@ FORCE_ADD = [
     ('city_hamburg', 'city_lundun'),         # 汉堡—伦敦：汉萨同盟「钢院」商站（Stalhof）
     ('city_xibo', 'city_jiataji'),           # 希波—迦太基：迦太基故港（Hippo Regius）
     ('city_donghai', 'city_dupan'),          # 洞海—阇槃：越南中岸—占城沿海航路
+    # ── 环非洲 7 港：好望角沿岸接力（2026-10-24 主人「请添加」；各段皆为沿岸最近港）──
+    ('city_ribeira', 'city_luanda'),           # 佛得角—罗安达 4843km
+    ('city_luanda', 'city_cape_town'),         # 罗安达—开普敦 2839km
+    ('city_cape_town', 'city_mozambique'),     # 开普敦—莫桑比克 3070km
+    ('city_mozambique', 'city_kilwa'),         # 莫桑比克—基尔瓦 688km
+    ('city_kilwa', 'city_mombasa'),            # 基尔瓦—蒙巴萨 547km
+    ('city_mombasa', 'city_mogadishu'),        # 蒙巴萨—摩加迪沙 924km
+    ('city_mogadishu', 'city_aden'),           # 摩加迪沙—亚丁 1196km
+    ('city_aden', 'city_zeila'),               # 亚丁—泽拉 233km（红海—亚丁湾并入印度洋）
+    ('city_aden', 'city_guoa'),                # 亚丁—果阿 3118km（印度洋主航路）
     # ── 环球（2026-10-24 主人问「能环球吗」）──
-#    好望角线（佛得角—果阿 19540km）已试过又撤：它比「欧亚陆路混行」长（游戏寻路会选海→陆→海→陆，
-#    6 次形态切换），军团不会绕好望角；要真环球得先在非洲沿岸补史实港口，把长线拆成沿岸段。
+#    好望角线（佛得角—果阿 19540km 直航）仍禁：它比「欧亚陆路混行」长；2026-10-24 改为在非洲沿岸
+#    补 7 座史实港口（罗安达/开普敦/莫桑比克/基尔瓦/蒙巴萨/摩加迪沙/亚丁），拆成沿岸接力段，环球才可走。
     ('city_sanjulian', 'city_lima'),         # 麦哲伦海峡线：圣胡利安港—利马（卡亚俄），麦哲伦 1520 过海峡后沿智利北上（约 6900km，穿陆 0）
     ('city_lisiben', 'city_ribeira'),         # 里斯本—佛得角：葡往几内亚/巴西/印度的出航段（1462 起），好望角线起点
     ('city_madula', 'city_puli'),            # 潘地亚—羯陵伽（马杜赖—普里）海岸航路：把印度西岸—信德一圈接回主网，环球才成环（约 2800km）

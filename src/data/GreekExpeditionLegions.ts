@@ -31,6 +31,6 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 🔴 [2026-09-19 主人令「都给我删了」] 卡帕多细亚（`kapaduoxiya`）与其番号「卡帕多骑队」已删除 ——
     //    它只服务前321「赫勒斯滂战役」，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
     maqidun: { name: '伙伴骑兵', tier: 0 },
-    pisa: { name: '皮萨僭主卫', tier: 4 },   // 皮萨提斯·皮萨王 潘塔琉斯：皮萨提斯·潘塔琉斯：皮萨僭主的卫队，与伊利斯争夺奥林匹亚
+    pisa: { name: '皮萨僭主卫', tier: 4 },   // 皮萨提斯·潘塔琉斯：皮萨提斯·潘塔琉斯：皮萨僭主的卫队，与伊利斯争夺奥林匹亚
     antigonid: { name: '安提柯卫队', tier: 3 },   // 凯莱奈·安提柯一世：凯莱奈·安提柯：独眼安提柯的马其顿老兵与亚洲诸军，前317年帕拉塔克奈之役
 };

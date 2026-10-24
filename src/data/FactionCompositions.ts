@@ -29,6 +29,23 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    "kilwa": {
+        legionName: "城堡时代马里军团",
+        legionType: "sub",
+    },
+    "mombasa": {
+        legionName: "帝国时代桑海军团",
+        legionType: "sub",
+    },
+    "mogadishu": {
+        legionName: "城堡时代马里军团",
+        legionType: "sub",
+    },
+    "zuraid": {
+        legionName: "城堡时代撒拉森军团",
+        legionType: "sub",
+    },
+
     // 🔴 [2026-10-20 主人令「起义军，一律算到三级起义军团」] 起义（panjun）占位势力统一挂三级起义军团
     "panjun": {
         legionName: "起义军",

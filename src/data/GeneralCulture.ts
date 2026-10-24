@@ -11,6 +11,15 @@ import type { BuildingStyle } from './cities_v2';
 import { getGeneralCityCulture } from './generalCultureResolve';
 
 export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
+    'mozambique_ataide': 'PORTUGUESE',
+    'luanda_novais': 'PORTUGUESE',
+    'capetown_riebeeck': 'GERMANIC',
+
+    'kilwa_suleiman': 'AFRICA',
+    'mombasa_yusuf': 'AFRICA',
+    'mogadishu_abubakr': 'AFRICA',
+    'zuraid_yasir': 'ORIE',
+
     'aba_shapuer': 'SASANIAN',   // 阿巴尔沙赫｜沙普尔｜据点 尼沙布尔
     'abasi_mansuer': 'ORIE',   // 阿拔斯｜曼苏尔｜据点 巴格达
     'abasi_mustasim': 'ORIE',   // 阿拔斯｜穆斯塔西姆｜据点 巴格达
@@ -34,7 +43,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aki_maoliyuanjiu': 'JAPAN',   // 毛利｜毛利元就｜据点 吉田郡山
     'alabo_qiyade': 'ORIE',   // 阿拉伯｜齐亚德｜据点 巴士拉
     'ali_gandancaiwang': 'TIBET',   // 古格｜甘丹才旺｜据点 噶大克
-    'aliya_muhammad_tahir': 'SASANIAN',   // 阿利亚｜穆罕默德·本·塔希尔｜据点 尼沙布尔
+    'aliya_muhammad_tahir': 'SASANIAN',   // 阿利亚｜穆罕默德·塔希尔｜据点 尼沙布尔
     'aliya_satibazanishi': 'PERSIAN',   // 阿利亚｜萨提巴扎尼斯｜据点 赫拉特
     'ameng_jisi': 'ORIE',   // 阿蒙｜阿曼阿托｜据点 锡瓦绿洲
     'an_xibanni': 'CENTRAL_ASIA',   // 乌兹别克｜昔班尼｜据点 布哈拉
@@ -46,7 +55,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aolisha_anatabamo': 'INDIA',   // 奥里萨｜阿纳塔跋摩｜据点 普里
     'aolitai_shouling': 'INDIA',   // 奥里泰｜拉托尼斯｜据点 兰巴基亚
     'aornos_aphrikes': 'PURU',   // 奥诺斯｜阿夫里凯斯｜据点 奥诺斯岩
-    'aosiruowen_baodewen': 'FRANKS',   // 耶路撒冷王国｜耶路撒冷王 鲍德温｜据点 阿卡
+    'aosiruowen_baodewen': 'FRANKS',   // 耶路撒冷王国｜鲍德温一世｜据点 阿卡
     'aqimeinide_aertabazanuosi': 'PERSIAN',   // 阿契美尼德｜阿里奥巴赞斯｜据点 波斯波利斯
     'aqimeinide_daliushi': 'PERSIAN',   // 阿契美尼德｜大流士一世｜据点 波斯波利斯
     'asaibaijiang_xuliewu': 'SASANIAN',   // 阿塞拜疆｜旭烈兀｜据点 马拉盖
@@ -71,7 +80,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bailong_suomai': 'WESTERN',   // 白龙｜索劢｜据点 三陇沙
     'baiman_gaoshengtai': 'BASHU',   // 大理｜高升泰｜据点 羊苴咩
     'baishui_yanghuai': 'BASHU',   // 蜀国｜杨怀｜据点 白水关
-    'baiyang_mengtian': 'XIANBEI',   // 秦国｜蒙恬｜据点 高阙塞
+    'baiyang_mengtian': 'CENTRAL',   // 秦国｜蒙恬｜据点 高阙塞
     'baizanting_alexios_v': 'BYZANTINE',   // 拜占庭｜阿莱克修斯五世｜据点 君士坦丁堡
     'baizanting_isaac_ii': 'BYZANTINE',   // 拜占庭｜伊萨克二世｜据点 君士坦丁堡
     'baizanting_nikephoros_i': 'BYZANTINE',   // 拜占庭｜尼基弗鲁斯一世｜据点 君士坦丁堡
@@ -88,59 +97,54 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'beileinisi_tuolemiershi': 'ORIE',   // 红海港｜托勒密二世｜据点 贝雷尼斯
     'bendou_alikesai': 'BYZANTINE',   // 科穆宁｜阿历克塞｜据点 特拉布宗
     'bendou_d_mitelidati': 'ORIE',   // 本都｜密特里达梯｜据点 阿马西亚
-    'bfe_achish': 'ORIE',   // 腓利斯丁｜迦特王 亚吉｜据点 加沙
+    'bfe_achish': 'ORIE',   // 腓利斯丁｜亚吉｜据点 加沙
     'bfe_ajibaldo': 'JIANGNAN',   // 吴越｜阿只拔都｜据点 嘉兴
-    'bfe_albert_lombard': 'LATIN',   // 伦巴第｜阿尔伯特·比安德拉泰｜据点 米兰
-    'bfe_anga_king': 'PURU',   // 鸯伽｜鸯伽王 达摩婆罗｜据点 瞻波
+    'bfe_albert_lombard': 'LATIN',   // 伦巴第｜比安德拉泰｜据点 米兰
+    'bfe_anga_king': 'PURU',   // 鸯伽｜达摩婆罗｜据点 瞻波
     'bfe_antigonus': 'MACEDONIAN',   // 安提柯｜安提柯一世｜据点 凯莱奈
-    'bfe_arakan_general': 'BURMESE',   // 阿拉干｜阿拉干守将 阿萨杜拉｜据点 妙乌
-    'bfe_bomilcar': 'BERBER',   // 布匿｜迦太基将 波米尔卡｜据点 迦太基
-    'bfe_callias': 'GREECE',   // 波奥蒂亚｜卡尔基斯僭主 卡利斯｜据点 底比斯
-    'bfe_chanca_chief': 'INCA',   // 昌卡｜昌卡部族盟主 阿斯塔瓦兰卡｜据点 安达瓦伊拉斯
+    'bfe_bomilcar': 'BERBER',   // 布匿｜波米尔卡｜据点 迦太基
+    'bfe_callias': 'GREECE',   // 波奥蒂亚｜卡利斯｜据点 底比斯
+    'bfe_chanca_chief': 'INCA',   // 昌卡｜阿斯塔瓦兰卡｜据点 安达瓦伊拉斯
     'bfe_chen_dong': 'CENTRAL',   // 宋国｜陈东｜据点 开封
-    'bfe_cimmerian_king': 'CUMAN',   // 库曼｜辛梅里安王 图格达梅｜据点 奥列什基
-    'bfe_cleombrotus': 'SPARTANS',   // 拉哥尼亚｜斯巴达将 克里奥姆布罗图斯｜据点 斯巴达
+    'bfe_cimmerian_king': 'CUMAN',   // 库曼｜图格达梅｜据点 奥列什基
+    'bfe_cleombrotus': 'SPARTANS',   // 拉哥尼亚｜克里奥姆布罗图斯｜据点 斯巴达
     'bfe_coyett': 'JIANGNAN',   // 荷兰东印度公司｜揆一｜据点 承天
-    'bfe_dalriada_king': 'CELTS',   // 达尔里阿达｜达尔里阿达王 费尔古斯·麦克·埃赫达赫｜据点 邓纳德
-    'bfe_darien_chief': 'MUISCA',   // 库埃瓦｜达连酋长 库纳｜据点 科马格雷
-    'bfe_dian_chief': 'BASHU',   // 滇国｜靡莫大酋 苴兰｜据点 滇池
+    'bfe_dalriada_king': 'CELTS',   // 达尔里阿达｜费尔古斯｜据点 邓纳德
+    'bfe_dian_chief': 'BASHU',   // 滇国｜苴兰｜据点 滇池
     'bfe_dou_jiande': 'CENTRAL',   // 赵国｜窦建德｜据点 邯郸
-    'bfe_gaius_livius': 'ROMA',   // 罗马帝国｜罗马舰队司令 盖乌斯·李维乌斯｜据点 罗马城
+    'bfe_gaius_livius': 'ROMA',   // 罗马帝国｜盖乌斯·李维乌斯｜据点 罗马城
     'bfe_gao_zhihui': 'JIANGNAN',   // 越国｜高智慧｜据点 会稽
-    'bfe_guangde': 'WESTERN',   // 尉迟｜于阗王 广德｜据点 于阗
-    'bfe_huaiyi_chief': 'CENTRAL',   // 申国｜淮夷首领 嬴夷吾｜据点 淮安
+    'bfe_guangde': 'WESTERN',   // 尉迟｜广德｜据点 于阗
     'bfe_isaac_komnenos': 'BYZANTINE',   // 拜占庭｜伊萨克·科穆宁｜据点 君士坦丁堡
-    'bfe_jaya_prakash': 'TIBET',   // 廓喀｜贾亚·普拉卡什·马拉｜据点 加德满都
-    'bfe_kalinga_king': 'INDIA',   // 羯陵伽｜羯陵伽王 婆摩｜据点 丹塔普拉
-    'bfe_li_song': 'CENTRAL',   // 唐国｜更始将 李松｜据点 长安
-    'bfe_libyan_chief': 'BERBER',   // 的黎波里塔｜利比亚诸部盟主 阿迪尔｜据点 的黎波里
+    'bfe_jaya_prakash': 'TIBET',   // 廓喀｜贾亚·普拉卡什｜据点 加德满都
+    'bfe_kalinga_king': 'INDIA',   // 羯陵伽｜婆摩｜据点 丹塔普拉
+    'bfe_li_song': 'CENTRAL',   // 唐国｜李松｜据点 长安
     'bfe_ma_heluo': 'CENTRAL',   // 唐国｜马何罗｜据点 长安
     'bfe_meherdates': 'PERSIAN',   // 安息帝国｜梅哈尔达特｜据点 尼萨
-    'bfe_muzaffar_shah': 'GURJARAS',   // 古吉拉特｜穆扎法尔·沙阿三世｜据点 艾哈迈达巴德
+    'bfe_muzaffar_shah': 'GURJARAS',   // 古吉拉特｜穆扎法尔三世｜据点 艾哈迈达巴德
     'bfe_ngo_nhat_khanh': 'VIETNAMESE',   // 大瞿越｜吴日庆｜据点 华闾
     'bfe_nikephoros_ii': 'BYZANTINE',   // 拜占庭｜尼基弗鲁斯二世｜据点 君士坦丁堡
-    'bfe_niu_han': 'CENTRAL',   // 秦国｜隗嚣将 牛邯｜据点 天水
-    'bfe_pisa_king': 'GREECE',   // 埃利斯｜皮萨王 潘塔琉斯｜据点 奥林匹亚
+    'bfe_niu_han': 'CENTRAL',   // 秦国｜牛邯｜据点 天水
+    'bfe_pisa_king': 'GREECE',   // 埃利斯｜潘塔琉斯｜据点 奥林匹亚
     // 🔴 [2026-10-24 按史] 1641 姆博罗雷之战葡方主将 Manuel Pires（曼努埃尔·皮雷斯）：无据点战场人物，
     //    文化按葡萄牙（军团＝帝国时代 × 葡萄牙，不再落到势力编制兜底）。
     'bfe_portuguese_officer': 'PORTUGUESE',
-    'bfe_prasenajit': 'INDIA',   // 拘萨罗｜拘萨罗王 波斯匿｜据点 舍卫城
+    'bfe_prasenajit': 'INDIA',   // 拘萨罗｜波斯匿｜据点 舍卫城
     'bfe_prince_chao': 'CENTRAL',   // 武周｜王子朝｜据点 洛阳
-    'bfe_pushyamitra': 'PURU',   // 巽伽｜巽伽王 普沙密多罗｜据点 华氏城
-    'bfe_qiang_bo': 'TIBET',   // 烧当｜羌方首领 羌伯砺｜据点 玛曲
+    'bfe_pushyamitra': 'PURU',   // 巽伽｜普沙密多罗｜据点 华氏城
     'bfe_rajah_sulayman': 'MALAY',   // 马尼拉土邦｜拉者苏莱曼三世｜据点 马尼拉
-    'bfe_rasul_khan': 'PORTUGUESE',   // 阿迪勒｜果阿守将 拉苏尔汗｜据点 果阿
+    'bfe_rasul_khan': 'PORTUGUESE',   // 阿迪勒｜拉苏尔汗｜据点 果阿
     'bfe_ren_guang': 'WEI',   // 冉魏｜任光｜据点 信都
     'bfe_sigismund': 'GERMANIC',   // 巴伐利亚｜西吉斯蒙德｜据点 雷根斯堡
     'bfe_smolensk_voivode': 'SLAVIC',   // 斯摩公国｜尤里·格列博维奇｜据点 斯摩棱斯克
     'bfe_sonom': 'TIBET',   // 金川｜索诺木｜据点 勒乌围
-    'bfe_su_ding': 'VIETNAMESE',   // 大越｜交趾太守 苏定｜据点 昇龙
+    'bfe_su_ding': 'VIETNAMESE',   // 大越｜苏定｜据点 昇龙
     'bfe_sue_harutaka': 'JAPAN',   // 大内｜陶晴贤｜据点 山口
     'bfe_sun_ru': 'JIANGNAN',   // 杨吴｜孙儒｜据点 广陵
     'bfe_wu_yuanji': 'CENTRAL',   // 魏国｜吴元济｜据点 悬瓠
     'bfe_xu_hai': 'JIANGNAN',   // 吴越｜徐海｜据点 嘉兴
     'bfe_yin_ziqi': 'WEI',   // 大燕｜尹子奇｜据点 范阳
-    'bfe_zhu_chenhao': 'JIANGNAN',   // 唐国｜宁王 朱宸濠｜据点 豫章
+    'bfe_zhu_chenhao': 'JIANGNAN',   // 唐国｜朱宸濠｜据点 豫章
     'bfe2_antiphilus': 'ATHENIANS',   // 阿提卡｜安提菲卢斯｜据点 雅典
     'bfe2_bao_shuya': 'CENTRAL',   // 齐国｜鲍叔牙｜据点 临淄
     'bfe2_cleombrotus_i': 'SPARTANS',   // 拉哥尼亚｜克勒翁布罗图斯一世｜据点 斯巴达
@@ -364,7 +368,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'erzhu_erzhurong': 'WEI',   // 尔朱｜尔朱荣｜据点 秀容川
     'erzhu_erzhuzhao': 'WEI',   // 尔朱｜尔朱兆｜据点 秀容川
     'ewenki_gentemuer': 'NORTHEAST',   // 鄂温克｜根特木尔｜据点 尼布楚
-    'falanji_baodewen': 'FRANKS',   // 法兰克｜拉丁皇帝 鲍德温｜据点 巴黎（2026-10-24 由君士坦丁堡 BYZANTINE 迁出）
+    'falanji_baodewen': 'FRANKS',   // 法兰克｜鲍德温九世｜据点 巴黎（2026-10-24 由君士坦丁堡 BYZANTINE 迁出）
     'falanji_kalman': 'GERMANIC',   // 巴伐利亚｜卡洛曼｜据点 雷根斯堡
     'fang_guozhen_fangguozhen': 'JIANGNAN',   // 大明｜卢镗｜据点 宁波
     'fangla_fangla': 'JIANGNAN',   // 圣公｜方腊｜据点 帮源洞
@@ -409,7 +413,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_akechi_mitsuhide': 'JAPAN',   // 室町｜明智光秀｜据点 京都
     'gen_alain_i': 'BRITONS',   // 布列塔尼｜阿兰｜据点 雷恩
     'gen_alaric': 'LATIN',   // 巴尔塔｜亚拉里克｜据点 科森扎
-    'gen_albert_riga': 'GERMANIC',   // 宝剑骑士团｜阿尔伯特·冯·布克斯赫夫登｜据点 里加
+    'gen_albert_riga': 'GERMANIC',   // 宝剑骑士团｜布克斯赫夫登｜据点 里加
     'gen_albrecht_bear': 'GERMANIC',   // 阿斯坎尼｜阿尔布雷｜据点 勃兰登堡
     'gen_alexander_great': 'MACEDONIAN',   // 马其顿｜亚历山大｜据点 佩拉
     'gen_alexander_nef': 'SLAVIC',   // 留里克｜涅夫斯基｜据点 诺夫哥罗德
@@ -437,7 +441,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_batu': 'CENTRAL_ASIA',   // 金帐｜拔都｜据点 萨莱
     'gen_bayezid_i': 'TURKS',   // 奥斯曼｜巴耶济德一世｜据点 布尔萨
     'gen_beg_arslan': 'XIANBEI',   // 鞑靼｜癿加思兰｜据点 河套
-    'gen_bentejui': 'AFRICA',   // 关切人｜本特胡伊｜据点 特尔德
+    'gen_bentejui': 'BERBER',   // 关切人｜本特胡伊｜据点 特尔德
     'gen_bernard_armagnac': 'FRANKS',   // 阿马尼亚克｜贝尔纳七世｜据点 欧什
     'gen_binnya_dala': 'BURMESE',   // 汉达瓦底｜彬尼亚达拉｜据点 勃固
     'gen_bir_hambir': 'BENGALIS',   // 末罗王国｜比尔汉比尔｜据点 比什努普尔
@@ -578,7 +582,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_man_singh_tomar': 'MUGHAL',   // 托摩罗｜曼辛格｜据点 瓜廖尔堡
     'gen_martim_afonso': 'PORTUGUESE',   // 葡属巴西｜马丁·阿方索｜据点 圣维森特
     'gen_maximilian': 'GERMANIC',   // 哈布斯堡｜马克西米｜据点 维也纳
-    'gen_maximilian_sforza': 'LATIN',   // 伦巴第｜马克西米利安·斯福尔扎｜据点 米兰
+    'gen_maximilian_sforza': 'LATIN',   // 伦巴第｜斯福尔扎｜据点 米兰
     'gen_medinaceli': 'SPANISH',   // 西班牙｜梅迪纳科利｜据点 利马
     'gen_mehmed_giray': 'TURKS',   // 德涅斯特｜迈赫迈德｜据点 阿克曼（阿克曼＝奥斯曼阿克曼桑贾克、突厥系；2026-10-24 随据点建筑风格 SLAVIC→TURKS 同步）
     'gen_mihirabhoja': 'INDIA',   // 瞿折罗｜迷企罗波阇｜据点 曲女城
@@ -1164,7 +1168,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'shule_aersilan': 'WESTERN',   // 疏勒｜阿尔斯兰｜据点 盘橐
     'shuntian_linshuangwen': 'JIANGNAN',   // 天地会｜林爽文｜据点 彰化
     'shuofang_sujian': 'XIANBEI',   // 汉国｜苏建｜据点 延恩
-    'shuofang_weiqing': 'CENTRAL',   // 唐国｜卫青｜据点 长安
+    'shuofang_weiqing': 'WEI',   // 唐国｜卫青｜据点 长安
     'siam_nalixuan': 'KHMER',   // 暹罗｜纳黎萱｜据点 阿瑜陀耶
     'sijitai_ateas': 'GREECE',   // 斯基泰｜阿泰阿斯｜据点 塔纳伊斯
     'sijitai_satraces': 'GREECE',   // 斯基泰｜萨特拉克斯｜据点 塔纳伊斯
@@ -1454,7 +1458,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yumi_anguo': 'WESTERN',   // 扜弥｜安国｜据点 阿赫雅尔
     'yun_wuli': 'CENTRAL',   // 允戎｜吾离｜据点 陆浑关
     'yunzhong_tuobaliwei': 'XIANBEI',   // 拓跋｜拓跋力微｜据点 盛乐
-    'yuwen_yuwentai': 'CENTRAL',   // 宇文｜宇文泰｜据点 长安
+    'yuwen_yuwentai': 'XIANBEI',   // 宇文｜宇文泰｜据点 长安
     'yuwen_yuwenxian': 'CENTRAL',   // 宇文｜宇文宪｜据点 长安
     'yuzhou_zuti': 'CENTRAL',   // 东晋｜祖逖｜据点 雍丘
     'zangke_xielongyu': 'BASHU',   // 唐国｜谢龙羽｜据点 胜境关

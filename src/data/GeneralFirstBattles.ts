@@ -4060,7 +4060,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'aqimeinide',
         enemyFactionName: '塔希尔王朝',
-        enemyGeneralId: 'aliya_muhammad_tahir',   // 🔴 [2026-10-20 首战规则] 867 希拉特守方是塔希尔王朝穆罕默德·本·塔希尔
+        enemyGeneralId: 'aliya_muhammad_tahir',   // 🔴 [2026-10-20 首战规则] 867 希拉特守方是塔希尔王朝穆罕默德·塔希尔
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '塔希尔总督苛政害民，阿拔斯走狗何足挂齿！锡斯坦铜匠之子举义旗，勇士，持战斧随萨法尔纵马奔驰，收复赫拉特！' },
@@ -7270,26 +7270,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     },
 
     // #374 达维拉 (1500 ~ 1560) — 公元1514年征服达连之战
-    xingelana_dawila: {
-        generalId: 'xingelana_dawila',
-        battleName: '征服达连之战',
-        battleYear: 1514,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '达连丛林峡谷',
-        targetCityId: 'city_banama',
-        targetLat: 9.0056,
-        targetLng: -79.4858,
-        myTroops: 10000,
-        enemyFactionId: 'cueva',
-        enemyFactionName: '库埃瓦',
-        enemyGeneralId: 'bfe_darien_chief',
-        enemyTroops: 20000,
-        introLines: [
-            { speaker: 'general', text: '密林毒箭阻不住卡斯蒂利亚军团的铁甲！总督令旗已挥，战犬开道火绳枪齐发，勇敢的拓荒士卒，随老帅开辟新大陆总督区！' },
-            { speaker: 'player', text: '愿随达维拉将军共赴征服达连之战，大破库埃瓦敌军！' },
-        ],
-    },
 
     // #375 巴赫拉姆汗 (1501 ~ 1561) — 公元1556年第二次帕尼帕特战役
     xindu_bahelamuhan: {
@@ -8034,26 +8014,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     },
 
     // #414 乌梅德汗 (1600 ~ 1660) — 公元1666年收复吉大港之战（本城就地开战）
-    chatigangren_wumeide: {
-        generalId: 'chatigangren_wumeide',
-        battleName: '收复吉大港之战',
-        battleYear: 1666,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '吉大港',
-        targetCityId: 'city_jidagang',
-        targetLat: 22.335,
-        targetLng: 91.8325,
-        myTroops: 30000,
-        enemyFactionId: 'arakan',
-        enemyFactionName: '阿拉干',
-        enemyGeneralId: 'bfe_arakan_general',
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '阿拉干海盗盘踞吉大港掠卖孟加拉生民！莫卧儿红衣水军战舰遮海蔽日，勇士，随沙伊斯塔汗总督舰队并进，荡平海寇重夺海港！' },
-            { speaker: 'player', text: '愿随乌梅德汗将军共赴收复吉大港之战，大破阿拉干敌军！' },
-        ],
-    },
 
     // #415 尼古拉斯 (1600 ~ 1660) — 公元1641年姆博罗雷战役
     // 🔴 [2026-10-24 按史修正] 尼古拉斯＝Nicolás Ñeenguirú（Concepción 大酋长），1641-03-11 率耶稣会传教区
@@ -8511,26 +8471,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     },
 
     // #440 妇好 (-1220 ~ -1200) — 公元前1215年妇好伐羌之战
-    shang_fuhao: {
-        generalId: 'shang_fuhao',
-        battleName: '妇好伐羌之战',
-        battleYear: -1215,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '商西羌方之野',
-        targetCityId: 'city_linfen',
-        targetLat: 36.088,
-        targetLng: 111.519,
-        myTroops: 13000,
-        enemyFactionId: 'shaodang',
-        enemyFactionName: '羌方',
-        enemyGeneralId: 'bfe_qiang_bo',
-        enemyTroops: 20000,
-        introLines: [
-            { speaker: 'general', text: '西境羌方屡犯大邑商边鄙，商王武丁卜辞命妾统率一万三千虎贲西征！壮士，持青铜龙纹大钺随妇好设伏合围，一举荡平羌方！' },
-            { speaker: 'player', text: '愿随妇好将军共赴妇好伐羌之战，大破羌方！' },
-        ],
-    },
 
     // #441 舒特鲁克·纳洪特 (-1185 ~ -1155) — 公元前1158年攻陷巴比伦之战
     ailan_shuteluke: {
@@ -8764,26 +8704,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     },
 
     // #441 申伯 — 公元前821年宣王南征谢邑封国战
-    shen_shenbo: {
-        generalId: 'shen_shenbo',
-        battleName: '宣王南征谢邑封国战',
-        battleYear: -821,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '南阳谢邑',
-        targetCityId: 'city_jinzhou_shanxi',
-        targetLat: 32.68,
-        targetLng: 109.02,
-        myTroops: 20000,
-        enemyFactionId: 'shen',
-        enemyFactionName: '淮夷',
-        enemyGeneralId: 'bfe_huaiyi_chief',
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '天子命某南下筑邑作藩屏，以遏荆蛮淮夷寇边！申伯金戈铁车已列汉水之阳，壮士，操弧矢随某伐服顽寇，绥靖南疆！' },
-            { speaker: 'player', text: '愿随申伯将军共赴宣王南征谢邑封国战，大破淮夷敌军！' },
-        ],
-    },
 
     // #442 伊菲托斯 — 公元前776年奥林匹亚立约圣战
     yilisi_yifeituosi: {
@@ -8876,26 +8796,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     // #446 庐戢黎 — 公元前611年庸楚决战白石之战
 
     // #447 杰德孔苏 — 公元前600年绿洲击退柏柏尔之战
-    baihaliye_djedkhonsu: {
-        generalId: 'baihaliye_djedkhonsu',
-        battleName: '绿洲击退柏柏尔之战',
-        battleYear: -600,
-        battleType: 'siege',
-        role: 'defender',
-        targetName: '拜哈里耶',
-        targetCityId: 'city_baihaliye',
-        targetLat: 28.35,
-        targetLng: 28.86,
-        myTroops: 10000,
-        enemyFactionId: 'osman',
-        enemyFactionName: '利比亚诸部',
-        enemyGeneralId: 'bfe_libyan_chief',
-        enemyTroops: 15000,
-        introLines: [
-            { speaker: 'general', text: '沙漠深处的强盗乘骆驼来袭，妄图断我泉脉毁我神殿！阿蒙神注视着信徒，勇士，挽满猎弓随总督将沙匪尽数埋葬！' },
-            { speaker: 'player', text: '愿随杰德孔苏将军共守绿洲击退柏柏尔之战，大破利比亚诸部敌军！' },
-        ],
-    },
 
     // #448 羊舌职 — 公元前589年鞍之战
     yangshe_yangshezhi: {

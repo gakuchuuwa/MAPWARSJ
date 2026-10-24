@@ -6,6 +6,11 @@
  * - 番号取正史具名，禁止泛称堆砌
  */
 export const AFRICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
+    // ── 2026-10-24 环非洲新港（皆史无具名番号，只能 T4 存在之兵）──
+    kilwa: { name: '基尔瓦卫队', tier: 4 },      // 基尔瓦苏丹石堡守军/船队（无专名）
+    mombasa: { name: '蒙巴萨弓手', tier: 4 },    // 1528 守军 600 弓手＋8 炮、1632 穆松戈罗弓手
+    mogadishu: { name: '摩加迪沙军', tier: 4 },  // 苏丹维齐尔/军事指挥官统带，1507 守城动员骑兵步兵战船
+
     manding: { name: '飞刀女兵', tier: 3 },
     ethiopia: { name: '弯刀勇士', tier: 3 },
     zhagewei: { name: '阿高武士', tier: 4 },

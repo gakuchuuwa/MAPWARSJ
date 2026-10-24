@@ -810,7 +810,6 @@ export const SENGOKU_FACTION_IDS = new Set([
 /** 罗马帝国名将 ID 集合 */
 export const ROMAN_DYNASTY_GENERAL_IDS = new Set([
     'gen_julius_caesar',       // 恺撒
-    'gen_scipio',              // 大西庇阿
     'gen_constantine_great',   // 君士坦丁
     'gen_julian_apostate',     // 尤里安
     'gen_clovis_i',            // 克洛维
@@ -877,7 +876,6 @@ export function isRomanDynasty(factionId?: string | null, generalId?: string | n
 /** 波斯文化名将 ID 集合（阿契美尼德/萨珊/安息/萨非/米底/萨法尔等） */
 export const PERSIAN_DYNASTY_GENERAL_IDS = new Set([
     'aqimeinide_daliushi',      // 大流士一世（波斯波利斯·阿契美尼德帝国）
-    'bosi_bolisi_daliushi',     // 大流士（别名）
     'aba_shapuer',              // 沙普尔大帝（尼沙布尔·萨珊波斯帝国）
     'safawei_d_abasi',          // 阿拔斯大帝（伊斯法罕·萨非波斯帝国）
     'safawei_aisimaier',        // 艾斯迈尔/伊斯玛仪一世（加兹温·萨非波斯帝国）

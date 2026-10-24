@@ -16,6 +16,15 @@
 export type GeneralEra = 'antiquity' | 'feudal' | 'castle' | 'imperial';
 
 export const GENERAL_ERA: Record<string, GeneralEra> = {
+    'mozambique_ataide': 'imperial',
+    'luanda_novais': 'imperial',
+    'capetown_riebeeck': 'imperial',
+
+    'kilwa_suleiman': 'castle',
+    'mombasa_yusuf': 'imperial',
+    'mogadishu_abubakr': 'castle',
+    'zuraid_yasir': 'castle',
+
     'gen_xiao_xian': 'feudal',   // 萧铣 583—621，617 江陵称帝（封建）
     // 🔴 [2026-10-19 补入] 原先缺时代的 5 位，按 GeneralCenturies 成名世纪：16 世纪＝帝国（1500 起）、8 世纪＝封建
     'nogai_votkhovsky': 'imperial',
@@ -422,11 +431,9 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe2_rezin': 'antiquity',
     'bfe_meherdates': 'antiquity',
     'bfe_achish': 'antiquity',
-    'bfe_tahir_king': 'feudal',
     'bfe_nikephoros_ii': 'feudal',
     'bfe2_pang_juan': 'antiquity',
     'bfe3_18': 'antiquity',
-    'bfe2_chu_zhuangwang': 'antiquity',
     'bfe2_qi_qinggong': 'antiquity',
     'bfe2_bao_shuya': 'antiquity',
     'bfe2_ziyu': 'antiquity',
@@ -1499,30 +1506,28 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe3_20': 'antiquity',   // 名将双身份：卫满
     'bfe3_31': 'antiquity',   // 名将双身份：卫右渠
     'bfe3_74': 'antiquity',   // 名将双身份：轲比能
-    'bfe_dalriada_king': 'feudal',   // 达尔里阿达王 费尔古斯·麦克·埃赫达赫｜达尔里阿达
+    'bfe_dalriada_king': 'feudal',   // 费尔古斯｜达尔里阿达
     'gen_john_comyn': 'castle',   // 约翰·科明｜苏格兰
     'bfe_sigismund': 'castle',   // 西吉斯蒙德｜神圣罗马帝国
-    'bfe_chanca_chief': 'castle',   // 昌卡部族盟主 阿斯塔瓦兰卡｜昌卡
+    'bfe_chanca_chief': 'castle',   // 阿斯塔瓦兰卡｜昌卡
     'bfe_sue_harutaka': 'imperial',   // 陶晴贤｜大内
-    'bfe_darien_chief': 'imperial',   // 达连酋长 库纳｜库埃瓦
     'bfe_rajah_sulayman': 'imperial',   // 拉者苏莱曼三世｜马尼拉土邦
-    'bfe_muzaffar_shah': 'imperial',   // 穆扎法尔·沙阿三世｜古吉拉特
-    'bfe_arakan_general': 'imperial',   // 阿拉干守将 阿萨杜拉｜阿拉干
+    'bfe_muzaffar_shah': 'imperial',   // 穆扎法尔三世｜古吉拉特
     'bfe_coyett': 'imperial',   // 揆一｜荷兰东印度公司
-    'bfe_jaya_prakash': 'imperial',   // 贾亚·普拉卡什·马拉｜马拉
-    'bfe_qiang_bo': 'antiquity',   // 羌方首领 羌伯砺｜羌方
-    'bfe_huaiyi_chief': 'antiquity',   // 淮夷首领 嬴夷吾｜淮夷
-    'bfe_pisa_king': 'antiquity',   // 皮萨王 潘塔琉斯｜皮萨
-    'bfe_cimmerian_king': 'antiquity',   // 辛梅里安王 图格达梅｜辛梅里安
-    'bfe_libyan_chief': 'antiquity',   // 利比亚诸部盟主 阿迪尔｜利比亚
-    'bfe_prasenajit': 'antiquity',   // 拘萨罗王 波斯匿｜拘萨罗
-    'bfe_kalinga_king': 'antiquity',   // 羯陵伽王 婆摩｜羯陵伽
-    'bfe_anga_king': 'antiquity',   // 鸯伽王 达摩婆罗｜鸯伽
-    'bfe_pushyamitra': 'antiquity',   // 巽伽王 普沙密多罗｜巽伽
+    'bfe_jaya_prakash': 'imperial',   // 贾亚·普拉卡什｜马拉
+    'bfe_pisa_king': 'antiquity',   // 潘塔琉斯｜皮萨
+    'bfe_cimmerian_king': 'antiquity',   // 图格达梅｜辛梅里安
+    'bfe_prasenajit': 'antiquity',   // 波斯匿｜拘萨罗
+    'bfe_kalinga_king': 'antiquity',   // 婆摩｜羯陵伽
+    'bfe_anga_king': 'antiquity',   // 达摩婆罗｜鸯伽
+    'bfe_pushyamitra': 'antiquity',   // 普沙密多罗｜巽伽
     'bfe_antigonus': 'antiquity',   // 安提柯一世｜安提柯
-    'bfe_dian_chief': 'antiquity',   // 靡莫大酋 苴兰｜靡莫
-    'bfe_niu_han': 'antiquity',   // 隗嚣将 牛邯｜西州
+    'bfe_dian_chief': 'antiquity',   // 苴兰｜靡莫
+    'bfe_niu_han': 'antiquity',   // 牛邯｜西州
     'bfe_ngo_nhat_khanh': 'feudal',   // 吴日庆｜十二使君
+    'xibanya_beilaerde': 'imperial',   // 佩德罗·贝拉尔德｜马德里·西班牙（1808）
+    'manding_musa': 'castle',   // 穆萨（廷巴克图太守）｜廷巴克图·马里（1353）
+    'arakan_mingbin': 'imperial',   // 明彬｜妙乌·阿拉干
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

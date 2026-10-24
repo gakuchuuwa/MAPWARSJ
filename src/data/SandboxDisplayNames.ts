@@ -16,6 +16,11 @@
  *     禁止自造截字（后百）、地名代国号（兰）、姓代国号（甄）、后缀国/族/人（黎国）。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+    'kilwa': '基',
+    'mombasa': '蒙',
+    'mogadishu': '摩',
+    'zuraid': '祖',
+
   // ── [2026-08-26 全面检查旗号] 实际旗号 = 本表登记优先，未登记则取势力名前两字
   //    （见 CityAssetManager.getProcessedFlagText）。全量比对 957 个有城势力：
   //    未登记 4 个（本轮新增的大西洋航线势力）+ 撞车 3 组，一并收口，现全部唯一。

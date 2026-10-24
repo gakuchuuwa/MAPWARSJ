@@ -8,6 +8,12 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
+    // ── 2026-10-24 环非洲新势力（据点：基尔瓦/蒙巴萨/摩加迪沙/莫桑比克/罗安达/开普敦/亚丁）──
+    { id: 'kilwa', name: '基尔瓦苏丹国' },      // 基尔瓦·斯瓦希里海岸霸主（约957–1513）
+    { id: 'mombasa', name: '蒙巴萨苏丹国' },    // 蒙巴萨·斯瓦希里城邦（1502 后脱离基尔瓦）
+    { id: 'mogadishu', name: '摩加迪沙苏丹国' },// 摩加迪沙·索马里城邦（10–16世纪）
+    { id: 'zuraid', name: '祖拉伊德' },         // 亚丁·祖拉伊德王朝（都城亚丁，1083–1174）
+
   { id: 'ayinu_ezo', name: '阿伊努' },
 
   { id: 'boootiya', name: '底比斯' },

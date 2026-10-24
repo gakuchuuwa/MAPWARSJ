@@ -28,5 +28,5 @@ export const CUMAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T4 存在之兵 ──
     xiemian: { name: '萨维尔军', tier: 4 },         // 谢缅杰尔·萨维尔
-    cimmerian: { name: '辛梅里弓骑', tier: 4 },   // 辛梅里孔·辛梅里安王 图格达梅：辛梅里孔·图格达梅：辛梅里安的骑射游牧骑兵，前七世纪入侵小亚
+    cimmerian: { name: '辛梅里弓骑', tier: 4 },   // 辛梅里孔·图格达梅：辛梅里孔·图格达梅：辛梅里安的骑射游牧骑兵，前七世纪入侵小亚
 };

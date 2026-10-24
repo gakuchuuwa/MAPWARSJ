@@ -14,6 +14,19 @@
  * 校验：node scripts/audit_general_centuries.cjs
  */
 export const GENERAL_CENTURIES: Record<string, number> = {
+    'mozambique_ataide': 17,  // 阿泰德 · putaoya · 莫桑比克（1607/08 守城退荷兰）
+    'luanda_novais': 16,      // 诺瓦伊斯 · putaoya · 罗安达（1576 建城、1586 守御）
+    'capetown_riebeeck': 17,  // 扬·范·里贝克 · nidelan · 开普敦（1652 建城）
+
+    'kilwa_suleiman': 12,  // 苏莱曼·本·哈桑 · kilwa · 基尔瓦
+    'mombasa_yusuf': 17,  // 优素福·本·哈桑 · mombasa · 蒙巴萨
+    'mogadishu_abubakr': 14,  // 阿布·伯克尔 · mogadishu · 摩加迪沙
+    'zuraid_yasir': 12,  // 亚西尔·本·比拉勒 · zuraid · 亚丁
+
+    'xibanya_beilaerde': 19,  // 佩德罗·贝拉尔德 · xibanya · 马德里（1808 五月二日守蒙莱昂）
+    'manding_musa': 14,  // 穆萨 · manding · 廷巴克图（1353 太守）
+    'arakan_mingbin': 16,  // 明彬 · arakan · 妙乌
+
 
     // ══════ STEPPE（103 人，已标 0）══════
     'ashide_ashidejieli': 7,                            // 阿史德颉利 · ashide · 黑沙城
@@ -737,7 +750,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'dayuan_wugua': -2,                                  // 毋寡 · dayuan · 贵山城
     'dayuzi_yinalechihei': 13,                           // 亦纳勒赤黑 · dayuzi · 讹答剌
     'duerbote_duerbote_taiji': 17,                       // 博贝 · duerbote · 托克逊
-    'gaochang_quwentai': 7,                             // 麴文泰 · gaochang · 赤亭关
     'juandu_peixingjian': 7,                            // 裴行俭 · juandu · 排修城
     'kala_satuke': 10,                                   // 萨图克 · kala · 奥什
     'kangju_chebishi': 8,                               // 车鼻施 · kangju · 康卡
