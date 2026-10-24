@@ -1435,7 +1435,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "nasier": {
-        legionName: "城堡时代卡斯蒂利亚军团",
+        legionName: "城堡时代撒拉森军团",
         legionType: "sub",
     },
     "pufaerci": {

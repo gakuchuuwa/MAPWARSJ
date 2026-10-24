@@ -1786,7 +1786,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_muhammad_xii', cityId: 'city_granada', generalName: '穆罕默德十二世', portrait: '/assets/SPANISH/gen_muhammad_xii.png', legionName: '城堡时代卡斯蒂利亚军团' },
+        { generalId: 'gen_muhammad_xii', cityId: 'city_granada', generalName: '穆罕默德十二世', portrait: '/assets/SPANISH/gen_muhammad_xii.png' },
 
 
 
@@ -13544,8 +13544,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_abd_al_rahman_iii', legionName: '封建时代摩尔游骑军团', factionId: 'womaya', cityId: 'city_cordoba', generalName: '阿卜杜拉', portrait: '/assets/SPANISH/gen_abd_al_rahman_iii.png' },
-        { generalId: 'womaya_abdrahman', legionName: '封建时代摩尔游骑军团', cityId: 'city_cordoba', factionId: 'womaya', generalName: '阿卜杜勒·拉赫曼', portrait: '/assets/SPANISH/womaya_abdrahman.png' },
+        { generalId: 'gen_abd_al_rahman_iii', factionId: 'womaya', cityId: 'city_cordoba', generalName: '阿卜杜拉', portrait: '/assets/SPANISH/gen_abd_al_rahman_iii.png' },
+        { generalId: 'womaya_abdrahman', cityId: 'city_cordoba', factionId: 'womaya', generalName: '阿卜杜勒·拉赫曼', portrait: '/assets/SPANISH/womaya_abdrahman.png' },
 
 
 

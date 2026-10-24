@@ -2288,7 +2288,7 @@ export const CITIES_V2: CityDataV2[] = [
 { id: 'city_naples', name: '那不勒斯', factionId: 'xixiliwangguo', lat: 40.85, lng: 14.26, type: 'medium_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN' },
     { id: 'city_barcelona', name: '巴塞罗那', factionId: 'jiatailuoniya', lat: 41.38, lng: 2.17, type: 'medium_city', troops: 10000, region: 'LATIN_FEUDAL', buildingStyle: 'LATIN' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：格拉纳达：西班牙安达卢斯
-    { id: 'city_granada', name: '格拉纳达', factionId: 'nasier', lat: 37.17, lng: -3.6, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'SPANISH' },
+    { id: 'city_granada', name: '格拉纳达', factionId: 'nasier', lat: 37.17, lng: -3.6, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'ORIE' },
     { id: 'city_genoa', name: '热那亚', factionId: 'kelimiya', lat: 44.4, lng: 8.94, type: 'medium_city', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'LATIN' },
         { id: 'city_teernuowo', name: '特尔诺沃', factionId: 'baojialiya', lat: 43.08, lng: 25.65, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'BULGARIANS', note: '保加利亚第二帝国都城·沙皇之城·查雷维茨要塞' },
 { id: 'city_plovdiv', name: '普罗夫迪夫', factionId: 'seleisi', lat: 42.14, lng: 24.74, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '定级依据§6.2：普罗夫迪夫非关隘/要塞/堡垒，按城市判级；奥斯曼税册1472年约3400、1595年约5000–7000（hane×5） → 小城' },
@@ -2316,7 +2316,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_toledo', name: '托莱多', factionId: 'xigete', lat: 39.86, lng: -4.02, type: 'medium_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '🔴 [2026-10-05 主人令「建筑风格必须当地」] 托莱多是**西哥特王国都城**（554–711，托莱多公会议所在地，西哥特王冠还愿物出土地），也是 62 类「哥特」的据点（城堡 GOTH_CASTLE_AGE3）→ 挂 GOTHS（一级 WEST）。旧值 CASTILE／MEDI（卡斯蒂利亚—西班牙）是后来的政权。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：科尔多瓦：西班牙安达卢斯
-    { id: 'city_cordoba', name: '科尔多瓦', factionId: 'womaya', lat: 37.88, lng: -4.77, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'SPANISH', note: '后伍麦叶鼎盛约20–30万，未达大城50万门槛，降 medium_city' },
+    { id: 'city_cordoba', name: '科尔多瓦', factionId: 'womaya', lat: 37.88, lng: -4.77, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '【建筑风格按史】后伍麦叶哈里发国都城（929–1031），大清真寺为伊斯兰建筑层；66 无「安达卢斯」分支，取 ORIE 萨拉森，不取卡斯蒂利亚 SPANISH（1236 收复之后）；后伍麦叶鼎盛约20–30万，未达大城50万门槛，降 medium_city' },
     { id: 'city_zaragoza', name: '萨拉戈萨', factionId: 'alagong', lat: 41.65, lng: -0.88, type: 'small_city', troops: 10000, region: 'ARAGON', buildingStyle: 'SPANISH' },
     { id: 'city_eger', name: '维雷茨基', factionId: 'mazhaer', lat: 48.77, lng: 23.17, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'SLAVIC', note: '定级依据§6.2：埃格尔非关隘/要塞/堡垒，按城市判级；1494-95年dicalis税册全城区约3500人（墙内2000、河谷聚落群6575为下限），未达1万 → 城寨' },
 

@@ -405,7 +405,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gaya_jinshoulu': 'KOREA',   // 伽倻｜金首露｜据点 金海
     'gelujiya_tamaer': 'GEORGIANS',   // 格鲁吉亚｜塔玛尔｜据点 第比利斯
     'geluolu_chisipijia': 'CENTRAL_ASIA',   // 葛逻禄｜炽俟毗伽｜据点 弓月城
-    'gen_abd_al_rahman_iii': 'SPANISH',   // 安达卢西亚｜阿卜杜拉｜据点 科尔多瓦
+    'gen_abd_al_rahman_iii': 'ORIE',   // 安达卢西亚｜阿卜杜拉｜据点 科尔多瓦
     'gen_abgar': 'ORIE',   // 奥斯若恩｜阿布加尔｜据点 埃德萨
     'gen_abu_yahya': 'BERBER',   // 加泰罗尼亚｜阿布·叶海亚｜据点 拉巴特
     'gen_adityawarman': 'MALAY',   // 米南加保｜阿迪蒂亚｜据点 帕加鲁荣
@@ -595,8 +595,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_mojmir_i': 'BOHEMIANS',   // 大摩拉维亚｜莫伊米尔｜据点 布尔诺
     'gen_morosini': 'LATIN',   // 威尼斯共和国｜莫罗西尼｜据点 干地亚要塞
     'gen_mstislav': 'SLAVIC',   // 杰斯纳｜姆斯蒂｜据点 切尔尼戈夫
-    'gen_muhammad_i': 'SPANISH',   // 纳斯尔｜穆罕默德｜据点 格拉纳达
-    'gen_muhammad_xii': 'SPANISH',   // 纳斯尔｜穆罕默德十二世｜据点 格拉纳达
+    'gen_muhammad_i': 'ORIE',   // 纳斯尔｜穆罕默德｜据点 格拉纳达
+    'gen_muhammad_xii': 'ORIE',   // 纳斯尔｜穆罕默德十二世｜据点 格拉纳达
     'gen_mustafa_pasha': 'TURKS',   // 奥斯曼｜穆斯塔法帕夏｜据点 布尔萨
     'gen_nanda_bayin': 'BURMESE',   // 东吁｜莽应里｜据点 勃固
     'gen_nikan': 'NORTHEAST',   // 大清｜尼堪｜据点 沈阳
@@ -1277,7 +1277,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'wensu_guyi': 'WESTERN',   // 温宿｜姑翼｜据点 大乌什
     'wenzhou_zhangcong': 'JIANGNAN',   // 方国珍｜方国珍｜据点 永嘉
     'woju_yinguan': 'KOREA',   // 高丽｜尹瓘｜据点 咸兴
-    'womaya_abdrahman': 'SPANISH',   // 安达卢西亚｜阿卜杜勒·拉赫曼｜据点 科尔多瓦
+    'womaya_abdrahman': 'ORIE',   // 安达卢西亚｜阿卜杜勒·拉赫曼｜据点 科尔多瓦
     'womaya_muaweiye': 'ORIE',   // 倭马亚｜穆阿维叶｜据点 大马士革
     'womaya_muslim': 'SASANIAN',   // 塞尔柱｜穆斯林·本·赛义德｜据点 木鹿
     'womaya_yahya': 'GOTHS',   // 西哥特｜叶海亚·卡迪尔｜据点 托莱多

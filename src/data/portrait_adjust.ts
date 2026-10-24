@@ -8181,6 +8181,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": -31,
             "offsetY": 42
+        },
+        "/assets/DANES/danmai_guthrum.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/BERBER/malin_abulhasan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 30
         }
     },
     "folderGuides": {
