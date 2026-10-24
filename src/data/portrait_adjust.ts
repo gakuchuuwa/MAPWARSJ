@@ -8053,9 +8053,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -1
         },
         "/assets/CENTRAL_ASIA/sute_sipitaminisi.png": {
-            "scale": 1.05,
+            "scale": 1.07,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -5
         },
         "/assets/BURGUNDIANS/gen_john_fearless.png": {
             "scale": 1.02,
@@ -8191,6 +8191,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 30
+        },
+        "/assets/SASANIAN/womaya_muslim.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": -3
         }
     },
     "folderGuides": {

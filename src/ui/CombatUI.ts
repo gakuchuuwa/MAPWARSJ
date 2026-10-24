@@ -7,6 +7,7 @@ import type { Scene13WarInit } from './Scene13WarLayer';
 import {SPRITE_PATHS} from '../config/GameConfig';
 import {
     BATTLE_PORTRAIT_FALLBACK,
+    getCityCulturePortraitPath,
     getCombatPortraitPath,
     getRandomRegionPortraitPath,
     normalizePortraitWebPath,
@@ -1682,12 +1683,22 @@ export class CombatUI {
         );
         const isDuplicateGen = !!(init.attackerGeneralId && init.defenderGeneralId && init.attackerGeneralId === init.defenderGeneralId);
         const resolvedDefGeneralId = isDuplicateGen ? undefined : (init.defenderGeneralId || undefined);
+        // 🔴 [2026-10-25 主人令「凡是没有武将的据点，看据点的文化，然后随机从该文化的文件夹里选立绘」]
+        //    战术模式这条路径没有传守方单位（unit 为 undefined），原先无将据点的守军会落到势力/叛军池、
+        //    甚至中原兜底（实测科马格雷 MUISCA 城显示中原武将）。这里直接取守方据点，按它自己的
+        //    66 文化夹随机一张当防守立绘；有武将且有其专图时仍走前面的 ②b（专图优先）。
+        const defCityObj = init.defenderCityId
+            ? (window as any).game?.cityManager?.getCity?.(init.defenderCityId)
+            : null;
+        const defenderCityPortrait = defCityObj
+            ? getCityCulturePortraitPath(defCityObj, { exclude: attackerPortrait.src || undefined })
+            : undefined;
         this.setPortrait(
             defenderPortrait,
             undefined,
             resolvedDefGeneralId,
             init.defenderFactionId || undefined,
-            undefined,
+            defenderCityPortrait,
             'defender',
             attackerPortrait.src || undefined,
         );
@@ -1783,7 +1794,7 @@ export class CombatUI {
             || (init.attackerFactionId ? getExpeditionEliteLegionName(init.attackerFactionId) : '') || '';
         this.currentDefenderLegionName = defLegionName || '';
         // 🔴 [2026-10-21 主人令] 精锐跟着武将走（一将一精锐）：守城无在场武将 → 不显示精锐，改显示「XX据点驻军」
-        const defCityObj = init.defenderCityId ? (window as any).game?.cityManager?.getCity?.(init.defenderCityId) : null;
+        //     defCityObj 已在上面取防守立绘时解析过，这里直接复用。
         this.defenderGarrisonLabel = (!resolvedDefGeneralId && init.defenderCityId)
             ? `${defCityObj?.name || init.defenderCityId}驻军` : '';
         this.currentDefenderEliteName = this.defenderGarrisonLabel ? '' : ((init.defenderEliteName && init.defenderEliteName.trim())

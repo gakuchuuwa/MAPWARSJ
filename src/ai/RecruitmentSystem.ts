@@ -10,7 +10,7 @@
  *      家城失守仍强制回师（行为树 resolveRecaptureTarget，游戏原生行为，所有文化无豁免；
  *      例外：远征军团（shouldSkipHomeRecapture）不回师）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
- *      每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）；16 母体地理与历史文化大区
+ *      每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）；16 套 DE 建筑素材家族（不是文化层，文化只有 66）
  *      （BASE16_CULTURES）轮流出兵，从上一季停下的大区开始逐个尝试，在该大区随机一座合格据点出兵
  *      （候选表已被 sortSpawnCandidates 按名将与兵力排序）。
  *      注意：这一步会被 trySpawnLegions 的「同屏保底」抢先——同屏军团 < 2 支时先在镜头内刷。

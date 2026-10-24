@@ -33,7 +33,6 @@ const TIER6_UPRISING = new Set([
     'tuoming', 'qiufu',
     'tongma',
     'chendiaoyan', 'zhongxiang'
-    , 'haikou'
     , 'liuzhen'
 ]);
 

@@ -3,6 +3,7 @@ import { IBattleUnit, UnitType } from './CombatSystem';
 import { gameLog } from '../utils/GameLogger';
 import {
     ensureFactionPortraitPath,
+    getCityCulturePortraitPath,
     getFactionCultureRegion,
     resolveGeneralPortraitPath,
     resolvePortraitAssetPath,
@@ -59,7 +60,7 @@ export class BattleUnitFactory {
         // 可移动单位 (军团、玩家、土匪)
         const isMobile = !isCity;
 
-        // 立绘：军团固定 portraitPath；城防临时将优先，否则按占城势力从政权夹随机（如 新国→liuhan）
+        // 立绘：军团固定 portraitPath；城防临时将优先，无将据点按据点自己的 66 文化夹随机
         let legionPortraitPath: string | undefined;
         let cityPortraitPath: string | undefined;
         if (isLegion) {
@@ -87,9 +88,21 @@ export class BattleUnitFactory {
                     region: cityRegion,
                 })
                 : undefined;
+            // 🔴 [2026-10-25 主人令「凡是没有武将的据点，看据点的文化，然后随机从该文化的文件夹里选立绘」]
+            //    本场没有城防将、本城也没有锚定武将 ⇒ 守军立绘只按据点自己的 66 文化（buildingStyle）取夹随机，
+            //    不再按占城势力/叛军池抽（旧链会把 MUISCA 城抽成中原武将）。
+            const cityHasGeneral = !!readSiegeGarrisonGeneralId(entity) || !!anchoredGeneral;
+            const cityCulturePortrait = cityHasGeneral
+                ? undefined
+                : getCityCulturePortraitPath({
+                    id: entity.id,
+                    buildingStyle: (entity as { buildingStyle?: string }).buildingStyle,
+                    region: entity.region,
+                });
             const rawPortrait =
                 siegePortrait ??
                 anchoredPortrait ??
+                cityCulturePortrait ??
                 ensureFactionPortraitPath(ownerFactionId, { region: cityRegion });
             cityPortraitPath = resolvePortraitAssetPath(rawPortrait, {
                 factionId: ownerFactionId,

@@ -29,29 +29,29 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
-    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（起义军＝三级帝国时代起义军团；其余沿用原时代军团）
+    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（起义军＝三级「起义军」；其余沿用原时代军团）
     "qiufu": {
-        legionName: "帝国时代起义军团",
+        legionName: "起义军",
         legionType: "sub",
     },
     "chendiaoyan": {
-        legionName: "帝国时代起义军团",
+        legionName: "起义军",
         legionType: "sub",
     },
     "yezongliu": {
-        legionName: "帝国时代起义军团",
+        legionName: "起义军",
         legionType: "sub",
     },
     "qianhui": {
-        legionName: "帝国时代起义军团",
+        legionName: "起义军",
         legionType: "sub",
     },
     "miaomin": {
-        legionName: "帝国时代起义军团",
+        legionName: "起义军",
         legionType: "sub",
     },
     "zhongxiang": {
-        legionName: "帝国时代起义军团",
+        legionName: "起义军",
         legionType: "sub",
     },
     "yang_bozhou": {
@@ -99,11 +99,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "haikou": {
-        legionName: "帝国时代起义军团",
+        legionName: "帝国时代两江军团",
         legionType: "sub",
     },
     "liuzhen": {
-        legionName: "帝国时代起义军团",
+        legionName: "起义军",
         legionType: "sub",
     },
     "kilwa": {

@@ -78,6 +78,24 @@ export function resolveUnitCultureRegion(unit: IBattleUnit): RegionType {
     return getRegion(pos.lat, pos.lng);
 }
 
+/**
+ * 解析一座据点自己的 66 文化键（62 二级 + 4 三级）。
+ *
+ * 🔴 [2026-10-25 主人令「凡是没有武将的据点，看据点的文化，然后随机从该文化的文件夹里选立绘」]
+ *    无将据点的守军立绘按据点自己的 `buildingStyle`（66 选 1）取夹，这里就是那一个文化键。
+ *    只认据点自身数据：buildingStyle → cityId 查 cities_v2 → region 归一；与势力、旗号、占城者无关。
+ */
+export function resolveCityCulture66(
+    city: { id?: string; buildingStyle?: string; region?: string } | null | undefined,
+): string {
+    if (!city) return 'CENTRAL';
+    const style = city.buildingStyle?.trim();
+    if (style) return toCulture66(style);
+    const stored = city.id ? CITY_V2_BY_ID.get(city.id) : undefined;
+    if (stored?.buildingStyle) return toCulture66(stored.buildingStyle);
+    return toCulture66(city.region ?? stored?.region ?? null);
+}
+
 /** 解析单位（军团或据点守军）所属的 66 文化键（62 二级 + 4 三级） */
 export function resolveUnitCulture66(unit: IBattleUnit): string {
     const entity = unit.getEntity?.();

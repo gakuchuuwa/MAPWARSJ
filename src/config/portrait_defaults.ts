@@ -6,6 +6,12 @@
  * ③ **14+1 文化圈**：每圈仅 **一个** 夹 `public/assets/{RegionType}/`；+1 叛军 `panjun/`。禁止两夹并池。
  * ④ 政权专夹（litang/、yingqin/ 等）与文化区夹分离；映射表指向区夹的条目不算政权专夹。
  *
+ * ⑤ **无武将据点 / 无专图武将**（2026-10-25 主人令）：
+ *    · 无武将据点的守军：按据点自己的 **66 文化**（`buildingStyle`）夹随机（`getCityCulturePortraitPath`）；
+ *    · 无专图武将：按他据点（`cityId`）的 66 文化夹兜底（`resolveGeneralPortraitPath` 的 `cityId`），
+ *      同一武将仍按 `generalId` 定死一张。
+ *    有专图 / 有武将的仍走 ①→②→③。
+ *
  * 禁止：portraits/、avg/、REGION_FIELD_PORTRAIT。
  * 同夹禁重复：npm run portrait:folder-audit
  *
@@ -15,9 +21,11 @@
 import type { IBattleUnit } from '../core/CombatSystem';
 import { CITIES_V2 } from '../data/cities_v2';
 import {
+    resolveCityCulture66,
     resolveUnitCultureRegion,
     type CultureCombatRole,
-} from '../systems/CultureCombat';
+} from '../systems/CultureRegion';
+import { CULTURE_62_GROUPS, LAYER3_CUSTOM_GROUPS } from '../systems/CultureHierarchy';
 import { getCityRegion, REGION_ORDER, type RegionType } from '../systems/RegionSystem';
 import _allPortraitPaths from 'virtual:portrait-manifest';
 
@@ -180,6 +188,28 @@ export const PANJUN_CULTURE_FOLDER = '/assets/panjun/';
 export const REGION_PORTRAIT_POOLS: Record<RegionType, string[]> = Object.fromEntries(
     REGION_ORDER.map((r) => [r, collectRegionPortraitPool(r)]),
 ) as Record<RegionType, string[]>;
+
+// ── 66 文化立绘夹（62 二级 + 4 三级；夹名＝文化键，与 public/assets/{key}/ 一一对应）──
+// 🔴 [2026-10-25 主人令「凡是没有武将的据点，看据点的文化，然后随机从该文化的文件夹里选立绘」]
+//    上面那张表按旧 15/18 文化区（RegionType）分池，而 SOUTHAM_IMPERIAL、MANCHU、JURCHEN 这类
+//    文化区根本没有物理立绘夹 → 无将据点的守军抽签落到 CENTRAL / panjun 池，
+//    实测科马格雷（MUISCA 建筑、无武将）的守军立绘被抽成中原武将。故按 66 文化夹另建一张池。
+/** 66 文化键（62 二级 + 4 三级；顺序同 CultureHierarchy） */
+export const CULTURE66_KEYS: readonly string[] = (() => {
+    const keys = [
+        ...CULTURE_62_GROUPS.flatMap((g) => g.branches.map((b) => b.key)),
+        ...LAYER3_CUSTOM_GROUPS.flatMap((g) => g.branches.map((b) => b.key)),
+    ];
+    return [...new Set(keys)];
+})();
+
+/** 66 文化 → 该文化唯一物理立绘夹 `/assets/{CULTURE66}/` 的 PNG 清单 */
+export const CULTURE66_PORTRAIT_POOLS: Record<string, string[]> = Object.fromEntries(
+    CULTURE66_KEYS.map((key) => [
+        key,
+        _allPortraitPaths.filter((p) => p.toLowerCase().startsWith(`/assets/${key.toLowerCase()}/`)),
+    ]),
+);
 
 // Windows 大小写不敏感：统一转小写存储，查找时也转小写
 const KNOWN_PORTRAIT_PATHS = new Set(
@@ -725,13 +755,31 @@ function pickFactionThenCulturePath(
 /** 无专图武将的回落立绘：generalId → 首次定下的那张（见 resolveGeneralPortraitPath） */
 const _generalFallbackPortraits = new Map<string, string>();
 
+/** 武将无专图时的兜底池：按他据点（cityId → buildingStyle）的 66 文化夹取（2026-10-25 主人令） */
+function getGeneralCulturePool(cityId: string | null | undefined): string[] | undefined {
+    if (!cityId) return undefined;
+    const pool = CULTURE66_PORTRAIT_POOLS[resolveCityCulture66({ id: cityId })];
+    return pool?.length ? pool : undefined;
+}
+
 /**
- * 武将立绘：专图已登记则直接使用；文化池尚未刷新时也先尝试明确绑定的专图，
- * 实际加载失败再由 CombatUI 的 onerror 走文化兜底。
+ * 武将立绘：专图已登记则直接使用；无专图（或专图文件已不在）时**按武将据点的 66 文化夹兜底**。
+ *
+ * 🔴 [2026-10-25 主人令「把『无专图武将』也一并按据点文化夹兜底」]
+ *    武将文化＝他据点的 `buildingStyle`（66 之一），所以无专图时从 `/assets/{该文化}/` 随机取一张，
+ *    不再落到旧文化区池（SOUTHAM_IMPERIAL / MANCHU 这类没有实体夹的会掉到中原）或 panjun 池。
+ *    仍按 generalId 定死一张（哈希 + 首次结果缓存），同一武将不会每场换脸。
  */
 export function resolveGeneralPortraitPath(
     dedicatedPath: string | undefined,
-    options?: { factionId?: string; region?: RegionType; exclude?: string; generalId?: string },
+    options?: {
+        factionId?: string;
+        region?: RegionType;
+        exclude?: string;
+        generalId?: string;
+        /** 武将据点 cityId（无专图时按该据点的 66 文化夹兜底；2026-10-25 主人令） */
+        cityId?: string | null;
+    },
 ): string {
     const cultureRegion = (options?.region
         ?? (options?.factionId ? getFactionCultureRegion(options.factionId) : undefined)
@@ -748,10 +796,24 @@ export function resolveGeneralPortraitPath(
     //    现按 generalId 定死：同一武将同一池永远取同一张（哈希定位），且首次结果记住，
     //    之后不论哪个入口、带什么 region/势力上下文来取，都还是这一张（图被删了才重取）。
     const generalId = options?.generalId;
-    if (!generalId) return pickFactionThenCulturePath(options?.factionId, cultureRegion, options?.exclude);
+    const culturePool = getGeneralCulturePool(options?.cityId);
+    if (!generalId) {
+        const fromCulture = culturePool ? pickExisting(culturePool, options?.exclude) : undefined;
+        if (fromCulture) return normalizePortraitWebPath(fromCulture);
+        return pickFactionThenCulturePath(options?.factionId, cultureRegion, options?.exclude);
+    }
     const cached = _generalFallbackPortraits.get(generalId);
     const cachedValid = !!cached && (cached === BATTLE_PORTRAIT_FALLBACK || portraitAssetExists(cached));
     if (cachedValid && !(options?.exclude && portraitUrlsEqual(cached!, options.exclude))) return cached!;
+    // 🔴 [2026-10-25 主人令] 无专图武将：据点 66 文化夹优先
+    if (culturePool) {
+        const fromCulture = pickExisting(culturePool, options?.exclude, generalId);
+        if (fromCulture) {
+            const normalized = normalizePortraitWebPath(fromCulture);
+            if (!cachedValid) _generalFallbackPortraits.set(generalId, normalized);
+            return normalized;
+        }
+    }
     const picked = pickFactionThenCulturePath(options?.factionId, cultureRegion, options?.exclude, generalId);
     if (!cachedValid) _generalFallbackPortraits.set(generalId, picked);
     return picked;
@@ -808,6 +870,24 @@ export function portraitUrlsEqual(a: string, b: string): boolean {
     const aName = a.split('/').pop() || a;
     const bName = b.split('/').pop() || b;
     return aName === bName;
+}
+
+/**
+ * 无武将据点的守军立绘：只看**据点自己的 66 文化**，从该文化夹随机抽一张。
+ *
+ * 🔴 [2026-10-25 主人令「凡是没有武将的据点，看据点的文化，然后随机从该文化的文件夹里选立绘」]
+ *    文化由 `resolveCityCulture66` 取（据点 `buildingStyle`，66 选 1），与占城势力、旗号无关；
+ *    66 个文化各有一个物理夹，夹为空（理论上不会有）才返回 undefined 交给调用方走旧回落链。
+ *    有武将的据点**不走这里**，仍是三级规则（专图 → 政权夹 → 文化区夹）。
+ */
+export function getCityCulturePortraitPath(
+    city: { id?: string; buildingStyle?: string; region?: string } | null | undefined,
+    options?: { exclude?: string },
+): string | undefined {
+    const culture = resolveCityCulture66(city);
+    const pool = CULTURE66_PORTRAIT_POOLS[culture];
+    if (!pool?.length) return undefined;
+    return pickExisting(pool, options?.exclude);
 }
 
 /** 文化区 / 势力立绘池随机一张（无 unit 时的全局缺省） */
@@ -919,6 +999,15 @@ export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): 
 
     if (unit.portraitPath?.trim() && !(excludePath && portraitUrlsEqual(unit.portraitPath, excludePath))) {
         return resolvePortraitAssetPath(unit.portraitPath, resolveOpts);
+    }
+    // 🔴 [2026-10-25 主人令] 据点守军（unitType='city'）：按据点自己的 66 文化夹随机取一张，
+    //    不再按势力/文化区池乱抽（旧链会落到 CENTRAL/panjun）。有将时前面已命中，不会走到这里。
+    if (unit.unitType === 'city') {
+        const cityCulturePortrait = getCityCulturePortraitPath(
+            unit.getEntity?.() as { id?: string; buildingStyle?: string; region?: string } | undefined,
+            { exclude: excludePath },
+        );
+        if (cityCulturePortrait) return cityCulturePortrait;
     }
     return pickFactionThenCulturePath(unit.factionId, region, excludePath);
 }

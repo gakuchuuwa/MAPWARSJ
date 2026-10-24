@@ -98,7 +98,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bendou_alikesai': 'BYZANTINE',   // 科穆宁｜阿历克塞｜据点 特拉布宗
     'bendou_d_mitelidati': 'ORIE',   // 本都｜密特里达梯｜据点 阿马西亚
     'bfe_achish': 'ORIE',   // 腓利斯丁｜亚吉｜据点 加沙
-    'bfe_ajibaldo': 'JIANGNAN',   // 吴越｜阿只拔都｜据点 嘉兴
+    'bfe_ajibaldo': 'JAPAN',      // 日本｜阿只拔都｜据点 对马·金石馆（倭寇）
     'bfe_albert_lombard': 'LATIN',   // 伦巴第｜比安德拉泰｜据点 米兰
     'bfe_anga_king': 'PURU',   // 鸯伽｜达摩婆罗｜据点 瞻波
     'bfe_antigonus': 'MACEDONIAN',   // 安提柯｜安提柯一世｜据点 凯莱奈
@@ -1227,7 +1227,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tianxiong_tianchengsi': 'CENTRAL',   // 魏博｜田承嗣｜据点 大名
     'tiele_qibiheli': 'MONGOL',   // 高车｜契苾何力｜据点 瀚海
     'tiemuer_tiemuer': 'CENTRAL_ASIA',   // 图兰｜帖木儿｜据点 撒马尔罕
-    'tingzhou_d_chenmin': 'JIANGNAN',   // 南唐｜陈敏｜据点 瑞金
+    'tingzhou_d_chenmin': 'JIANGNAN',   // 南唐｜陈敏｜据点 龙溪（漳州，南宋左翼军统制）
     'tongma_taishici': 'JIANGNAN',   // 齐国｜太史慈｜据点 豫章
     'tongzhou_liuzhiyuan': 'WEI',   // 唐国｜刘知远｜据点 晋阳
     'totomi_jiujingzhongci': 'JAPAN',   // 德川｜酒井忠次｜据点 浜松城
@@ -1301,7 +1301,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'wulianghai_chelingwubashen': 'MONGOL',   // 杜尔伯特｜车凌乌巴什｜据点 布尔根
     'wuling_xiangdancheng': 'JIANGNAN',   // 五溪｜相单程｜据点 壶头山
     'wuman_gaipin': 'BASHU',   // 爨族｜盖聘｜据点 乌蒙山
-    'wumeng_azi': 'BASHU',   // 大明｜阿资｜据点 石门关
+    'wumeng_azi': 'BASHU',   // 大明｜阿资｜据点 曲靖（越州）
     'wure_wuzhaodu': 'NORTHEAST',   // 兀惹｜乌昭度｜据点 尼满
     'wusun_liejiaomi': 'CENTRAL_ASIA',   // 乌孙｜猎骄靡｜据点 赤谷城
     'wuwu_d_lvmeng': 'JIANGNAN',   // 孙吴｜吕蒙｜据点 濡须口
@@ -1470,7 +1470,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zhalange_barsaentes': 'PERSIAN',   // 扎兰格｜巴尔塞恩特斯｜据点 扎兰格
     'zhancheng_zhimin': 'VIETNAMESE',   // 占婆｜制旻｜据点 阇槃
     'zhangshicheng_zhangshicheng': 'JIANGNAN',   // 大周｜张士诚｜据点 姑苏
-    'zhao_gerong': 'WEI',   // 汉国｜葛荣｜据点 乐成
+    'zhao_gerong': 'WEI',   // 汉国｜葛荣｜据点 中山（定州）
     'zhao_lianpo': 'CENTRAL',   // 赵国｜廉颇｜据点 邯郸
     'zhaowu_timuermieli': 'WESTERN',   // 昭武｜帖木儿灭里｜据点 忽毡
     'zhasaketu_zhasakesubadi': 'MONGOL',   // 喀尔喀｜素巴第｜据点 乌城

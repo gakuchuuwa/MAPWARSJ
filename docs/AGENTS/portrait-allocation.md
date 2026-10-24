@@ -36,11 +36,11 @@
 |---|---|---|---|
 | **① 文化区** | **每个据点势力**（无专属政权夹、或无将的普通军团/守军） | 势力首都 `cities_v2.region` → 15 文化区之一 → 从该区 **文化夹随机池** 抽一张 | `REGION_PORTRAIT_POOLS`、`getFactionCultureRegion` |
 | **② 政权专属夹** | **有独立素材夹的政权**（如秦→`qin/`、唐→`litang/`、武周→`wuzhou/`） | 从该 **政权夹** 随机抽；映射在 `FACTION_PORTRAIT_POOLS` | `FACTION_PORTRAIT_POOLS[factionId]` |
-| **③ 专属人物** | **FactionGenerals 里的名将** | **先** 磁盘上该将 **专图**（`portrait` 路径）→ **无图则** 该将所属 **政权夹随机** → **再无则** 该势力 **文化区夹随机** | `getFactionGeneral` → `resolvePortraitAssetPath(general.portrait, { factionId })` |
+| **③ 专属人物** | **FactionGenerals 里的名将** | **先** 磁盘上该将 **专图**（`portrait` 路径）→ **无图则按他据点的 66 文化夹随机**（2026-10-25 主人令，见 13.7／13.8，不再走旧文化区池） | `getGeneralRecordByGeneralId` → `resolveGeneralPortraitPath(dedicated, { factionId, generalId, cityId })` |
 
 **② 与 ① 的关系**：势力若在 `FACTION_PORTRAIT_POOLS` 有映射，**优先用政权夹**（② 覆盖 ①）；未映射的势力才纯走文化区池（①）。
 
-**③ 与 ②① 的关系**：名将 **永远先试专图文件名**（如 `jinling_tandaoji.png`）；专图未补齐时 **不得** 跨区乱抽，只在 **本政权夹 → 本文化夹** 内随机兜底。
+**③ 与 ②① 的关系**：名将 **永远先试专图文件名**（如 `jinling_tandaoji.png`）；专图未补齐时 **不得** 跨区乱抽，**按他据点（`cityId` → `buildingStyle`）的 66 文化夹**随机兜底。
 
 ### 13.2 素材目录约定
 
@@ -56,7 +56,7 @@
 | 场景 | 行为 |
 |---|---|
 | 普通军团创建 | `getRandomFactionPortrait`：② 政权池 → ① 文化池 |
-| 守军 / 无 portraitPath 单位 | `getCombatPortraitPath`：同上 |
+| 守军 / 无 portraitPath 单位 | `getCombatPortraitPath`：无将据点先按据点 66 文化夹随机（见 13.7），否则同上 |
 | ≥4 万挂将军团 | `LegionManager` 设 `army.portraitPath = getFactionGeneral(...).portrait`（已 resolve） |
 | 战斗 UI 显示 | `CombatUI.setPortrait`：场次自选 → 军团固定 path → generalId → 文化随机 |
 
@@ -97,4 +97,38 @@ npm run portrait:folder-dedupe  # 同夹去重（主人确认后）
 | 路径与池一致审计 | `FactionGenerals.portrait` 的目录宜与 `FACTION_PORTRAIT_POOLS` / 文化夹一致，减少 fallback 跳层 | 数据 hygiene，非玩法 bug |
 
 **禁止**把上表当成「设计有问题要重做三级规则」——三级结构 **不动**，上表仅为锦上添花。
+
+### 13.7 无武将据点守军：按据点自己的 66 文化夹随机（2026-10-25 主人定）
+
+> **主人原话**：「这个防守立绘不对，请这样设计，凡是没有武将的据点，看据点的文化，然后随机从该文化的文件夹里选立绘。」
+
+- **判定「没有武将」**：本场没有城防将（`_siegeGarrisonGeneralId`）、本城也没有按 `cityId` 挂的武将
+  （`getCityAnchoredGeneral` 为空）。
+- **取图**：只看**据点自己的 66 文化**（`cities_v2.buildingStyle`，62 二级 + 4 三级），
+  从该文化唯一物理夹 `public/assets/{CULTURE66}/` **随机一张**；与占城势力、旗号、叛军无关。
+- **有武将的据点不适用**：仍是 ① 文化区 → ② 政权夹 → ③ 人物专图（专图优先）。
+- **代码**：`getCityCulturePortraitPath` / `CULTURE66_PORTRAIT_POOLS`（`src/config/portrait_defaults.ts`）
+  ＋ 战略地图战斗城防分支 `BattleUnitFactory.createAdapter`
+  ＋ 战术模式 `CombatUI.syncScene13WarStart`（该路径原本不传单位，现按 `defenderCityId` 取据点）。
+- **两侧不同脸**：抽取时排除对侧立绘（`exclude`），避免攻守同一张图。
+- **为什么改**：旧池按 `RegionType`（15/18 区）分夹，而 `SOUTHAM_IMPERIAL`、`MANCHU`、`JURCHEN`
+  这类文化区没有物理立绘夹 ⇒ 无将据点会落到 CENTRAL / panjun 池；实测科马格雷
+  （建筑 MUISCA、无武将）的守军立绘抽成了中原武将。66 文化夹全部物理存在，按文化取夹不会再跨文化。
+
+### 13.8 无专图武将：按武将据点的 66 文化夹兜底（2026-10-25 主人定）
+
+> **主人原话**：「把『无专图武将』也一并按据点文化夹兜底。」
+
+- **对象**：`FactionGenerals.portrait` 留空、或填了但**磁盘上文件已不在**（被删/改名/挪走）的据点武将。
+- **取图**：按**武将据点**（`cityId` → `cities_v2.buildingStyle`，66 文化之一）的唯一物理夹
+  `public/assets/{CULTURE66}/` 随机一张；**不再**落到旧文化区池（`SOUTHAM_IMPERIAL`/`MANCHU`
+  这类没有实体夹的会掉中原）或 panjun 池。
+- **有专图的武将不适用**：专图存在时永远用专图（本改动不替换任何现有专图）。
+- **同一武将固定一张**：仍按 `generalId` 哈希定位 + 首次结果缓存（`_generalFallbackPortraits`），
+  同一武将不会每场/每个入口换脸。
+- **代码**：`resolveGeneralPortraitPath` 的 `cityId` 选项（`src/config/portrait_defaults.ts`）
+  ＋ `FactionGenerals` 三处解析（`getGeneralRecordByGeneralId`、`getCityGeneralsResolved`、
+  `resolveGeneralRefs`）传 `cityId`。
+- **验收**：`npx tsx --import ./scratch/_portrait_manifest_real.mjs scratch/audit_general_portrait_culture.mts`
+  —— 有专图的一律仍用专图、无专图的全部落在自身文化夹、同一武将固定一张。
 
