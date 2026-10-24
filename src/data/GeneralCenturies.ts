@@ -512,6 +512,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'yang_aner_yangan': 4,                              // 杨安 · yang_aner · 蓬莱
     'yangshe_yangshezhi': -6,                            // 羊舌职 · yangshe · 铜鞮
     'yi_yuqian': 15,                                     // 于谦 · yi · 紫荆关
+    'ming_yanghong': 15,                                 // 杨洪 · ming · 宣化（2026-10-24 补）
     'yingzhou_d2_licunxu': 10,                           // 李存勖 · yingzhou_d2 · 彰国军城
     'you_gengyan': 1,                                   // 耿弇 · you · 居庸关
     'yunzhong_tuobaliwei': 3,                           // 拓跋力微 · yunzhong · 盛乐

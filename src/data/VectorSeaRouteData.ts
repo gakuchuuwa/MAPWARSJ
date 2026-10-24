@@ -255,6 +255,56 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
+                name: "雅典-诺索斯",
+                type: "sea",
+                id: "sea_city_yadian_city_knossos_1788082742241",
+                startConnection: "city_yadian",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.72, 37.98],
+                    [23.6425, 37.8192],
+                    [23.689073, 37.634567],
+                    [23.96792, 37.062701],
+                    [23.999544, 36.989186],
+                    [24.022388, 36.936081],
+                    [24.102526, 36.822355],
+                    [24.342178, 36.482254],
+                    [24.375194, 36.435401],
+                    [24.603968, 36.110738],
+                    [24.980878, 35.57585000000001],
+                    [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚历山大-诺索斯",
+                type: "sea",
+                id: "sea_city_yalishanda_city_knossos_1788082853199",
+                startConnection: "city_yalishanda",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [29.8925, 31.1975],
+                    [29.45505, 31.78833],
+                    [28.59571, 32.64027],
+                    [28.07367, 33.28798],
+                    [27.29755, 34.25095],
+                    [26.3941, 35.3719],
+                    [25.82673, 35.71936],
+                    [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
                 name: "君士坦丁堡-瓦尔纳",
                 type: "sea",
                 id: "sea_city_junshitandingbao_city_waerna_1788229242071",
@@ -1377,28 +1427,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "雅典-希马鲁塔",
-                type: "sea",
-                id: "sea_city_yadian_city_chimarros_1788082977011",
-                startConnection: "city_yadian",
-                endConnection: "city_chimarros"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [23.72, 37.98],
-                    [23.88591, 37.61615],
-                    [24.23668, 37.27952],
-                    [24.45763, 37.27678],
-                    [24.7035, 37.1926],
-                    [25.09028, 36.88354],
-                    [25.53, 36.965],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "海牙-加莱",
                 type: "sea",
                 id: "sea_city_hague_city_calais_1788229572617",
@@ -1849,25 +1877,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "诺索斯-罗得城",
-                type: "sea",
-                id: "sea_city_knossos_city_rhodes_1788082752159",
-                startConnection: "city_knossos",
-                endConnection: "city_rhodes"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [25.13, 35.33],
-                    [25.82673, 35.71936],
-                    [27.2, 36.2],
-                    [28.22, 36.44],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "那不勒斯-梅西纳",
                 type: "sea",
                 id: "sea_city_naples_city_messina_1787581955270",
@@ -1927,6 +1936,26 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [14.00515, 40.37553],
                     [13.74365, 39.48094],
                     [13.55399, 38.8321],
+                    [13.36, 38.11],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "迦太基-巴勒莫",
+                type: "sea",
+                id: "sea_city_jiataji_city_palermo_1788228315671",
+                startConnection: "city_jiataji",
+                endConnection: "city_palermo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [10.32, 36.85],
+                    [10.37303, 37.48209],
+                    [11.76629, 37.92976],
+                    [12.74353, 38.24357],
                     [13.36, 38.11],
                 ]
             }
@@ -2249,26 +2278,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [125.77423, 35.75097],
                     [126.47186, 36.018],
                     [126.94977, 36.25535],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "斯巴达-诺索斯",
-                type: "sea",
-                id: "sea_city_sparta_city_knossos_1788229010225",
-                startConnection: "city_sparta",
-                endConnection: "city_knossos"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [22.42, 37.07],
-                    [21.93546, 36.48611],
-                    [22.83815, 36.09734],
-                    [24.32334, 35.67641],
-                    [25.13, 35.33],
                 ]
             }
         },
@@ -2611,27 +2620,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [139.74422, 41.25918],
                     [138.91667, 41.16667],
                     [140.0994, 41.8008],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "迦太基-马耳他",
-                type: "sea",
-                id: "sea_city_jiataji_city_malta_1788228309931",
-                startConnection: "city_jiataji",
-                endConnection: "city_malta"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [10.32, 36.85],
-                    [10.37303, 37.48209],
-                    [11.69922, 37.14785],
-                    [12.93129, 36.52734],
-                    [13.90701, 36.03593],
-                    [14.44, 35.9],
                 ]
             }
         },
@@ -3731,33 +3719,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "班加西-亚历山大",
-                type: "sea",
-                id: "sea_city_banjiaxi_city_yalishanda_1788082934548",
-                startConnection: "city_banjiaxi",
-                endConnection: "city_yalishanda"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [20.06, 32.11],
-                    [19.41667, 32.5],
-                    [20.5, 33.25],
-                    [21.16667, 33.41667],
-                    [22.66667, 33.41667],
-                    [24.0, 32.75],
-                    [25.33333, 32.41667],
-                    [26.83333, 32.08333],
-                    [27.66667, 31.91667],
-                    [28.83333, 31.58333],
-                    [29.45505, 31.78833],
-                    [29.8925, 31.1975],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "亚拉-圣多明各",
                 type: "sea",
                 id: "sea_city_yala_city_shengduomingge_1792484957049",
@@ -4095,6 +4056,50 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [115.6, -9.1],
                     [110.58077, -8.35592],
                     [110.445, -7.756],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "班加西-干地亚要塞",
+                type: "sea",
+                id: "sea_city_banjiaxi_city_knossos_20261024",
+                startConnection: "city_banjiaxi",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [20.06, 32.11],
+                    [19.9, 32.5],
+                    [22, 33.3],
+                    [22.62772, 34.24159],
+                    [23.21438, 35.40741],
+                    [23.33997, 35.76326],
+                    [24.32334, 35.67641],
+                    [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "班加西-马耳他",
+                type: "sea",
+                id: "sea_city_malta_city_banjiaxi_1788228984837",
+                startConnection: "city_banjiaxi",
+                endConnection: "city_malta"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [20.06, 32.11],
+                    [19.37171, 32.40892],
+                    [19.48165, 34.23144],
+                    [17.67975, 34.8979],
+                    [14.7, 36],
+                    [14.44, 35.9],
                 ]
             }
         },
@@ -4478,29 +4483,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "班加西-干地亚要塞",
-                type: "sea",
-                id: "sea_city_banjiaxi_city_knossos_20261024",
-                startConnection: "city_banjiaxi",
-                endConnection: "city_knossos"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [20.06, 32.11],
-                    [19.9, 32.5],
-                    [22, 33.3],
-                    [22.62772, 34.24159],
-                    [23.21438, 35.40741],
-                    [23.33997, 35.76326],
-                    [24.32334, 35.67641],
-                    [25.13, 35.33],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "巴士拉-奥拉",
                 type: "sea",
                 id: "sea_city_bashila_city_aola_20261024",
@@ -4785,19 +4767,20 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "梅西纳-巴勒莫",
+                name: "梅西纳-马耳他",
                 type: "sea",
-                id: "sea_city_messina_city_palermo_20261024",
+                id: "sea_city_messina_city_malta_20261024",
                 startConnection: "city_messina",
-                endConnection: "city_palermo"
+                endConnection: "city_malta"
             },
             geometry: {
                 type: "LineString",
                 coordinates: [
                     [15.55, 38.19],
-                    [14.94698, 38.80788],
-                    [13.83333, 38.58333],
-                    [13.36, 38.11],
+                    [15.58333, 37.5],
+                    [15.33333, 36.25],
+                    [14.91667, 36.16667],
+                    [14.44, 35.9],
                 ]
             }
         },
@@ -4963,6 +4946,25 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [27.12524, 59.95226],
                     [24.7, 59.8],
                     [24.75, 59.43],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "斯巴达-雅典",
+                type: "sea",
+                id: "sea_city_sparta_city_yadian_20261024",
+                startConnection: "city_sparta",
+                endConnection: "city_yadian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.42, 37.07],
+                    [23.87079, 36.91416],
+                    [23.7233, 37.63137],
+                    [23.72, 37.98],
                 ]
             }
         },

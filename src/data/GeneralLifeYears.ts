@@ -490,6 +490,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_frederick_i_nuremberg: { birth: 1371, death: 1440 }, // 腓特烈一世（勃兰登堡选侯）
     gen_henry_v: { birth: 1386, death: 1422 },             // 亨利五世
     yi_yuqian: { birth: 1398, death: 1457 },               // 于谦
+    ming_yanghong: { birth: 1381, death: 1451 },           // 杨洪（宣府总兵）
     gen_charles_vii: { birth: 1403, death: 1461 },         // 查理七世
     // 卒时仅 19 岁：按「生年 + 20」会被整段掐掉（1432 > 1431）→ 显式登场年＝1429 解奥尔良之围（17 岁）
     gen_joanofarc: { birth: 1412, death: 1431, debut: 1429 },  // 圣女贞德（生年取传统 1412）

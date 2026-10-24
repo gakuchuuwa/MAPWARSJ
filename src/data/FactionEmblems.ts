@@ -2,13 +2,16 @@
  * 旗号图案（纹章/徽记）试水表 —— 2026-10-24 主人「要不改一下试试，不行再次换回来」
  *
  * 只给**非东亚汉字圈**势力登记图案：旗面不再画「托勒」「塞琉」这种两字截断音译。
+ * 日本另走家纹（kamon）旗：战国武士本就用家纹指物旗（2026-10-24 主人「日本的呢」）。
  * 图案两种来源，统一烘成 `public/emblem-flags/{KEY}_{w|b}.png`（4帧×6朝向雪碧图）：
  *   · ICON：game-icons.net 现成单色图标（CC BY 3.0，署名见 docs/02-design/旗号图案-图标素材来源.md）
  *   · HAND：手绘粗线条符号（`scratch/_emblem_symbols.py`，自绘无版权问题）
+ *   · KAMON：日本家纹手绘（`scratch/_kamon_symbols.py`，按各家史实家纹，自绘无版权问题）
  * 烘焙：`scratch/_bake_emblem_sprites.py`。
  *
  * 回退：删掉本表条目 = 该势力立刻回汉字旗号；整表清空 = 全部回汉字。
- * 汉字文化圈（中国各朝/日本/朝鲜/越南/吐蕃/契丹/女真…）**不登记**，照旧用旗号汉字。
+ * 汉字文化圈（中国各朝/朝鲜/越南/吐蕃/契丹/女真…）**不登记**，照旧用旗号汉字；
+ * 日本各家登记家纹（上杉/大友/宇都宫/龙造寺/南部/少弐/松前/对马/伊贺/一向宗/琉球 家纹难画或史实吃不准，仍用汉字）。
  * ⚠ 试水版符号按文化圈分派、同圈共用（旗面色不同仍可分辨）；定稿前不得当正式旗号数据。
  */
 export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
@@ -164,6 +167,28 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     mapuche: 'STAR7',
     tupi: 'FEATHER',
     tupinijin: 'FEATHER',
+    // ── 日本（家纹旗）──
+    oda: 'MOKKO',            // 织田木瓜
+    toyotomi: 'KIRI',        // 丰臣五七桐
+    tokugawa: 'AOI',         // 德川三叶葵
+    takeda: 'TAKEDA_BISHI',  // 武田菱
+    sanada: 'ROKUMONSEN',    // 真田六文钱
+    shimazu: 'SHIMAZU_CROSS',// 岛津丸十字
+    hojo: 'MITSUUROKO',      // 北条三鳞
+    mori: 'ICHIMONJI',       // 毛利一文字三星
+    ashikaga: 'HIKIRYO',     // 足利二つ引两
+    imagawa: 'HIKIRYO',      // 今川二つ引两
+    ouchi: 'OOUCHI_BISHI',   // 大内菱
+    amago: 'YOTSUME',        // 尼子四目结
+    chosokabe: 'KATABAMI',   // 长宗我部片喰
+    genji: 'SASARINDO',      // 源氏笹龙胆
+    genji_iyo: 'SASARINDO',  // 源氏·伊予同纹
+    heishi: 'AGEHACHO',      // 平氏扬羽蝶
+    nanchou: 'KIKU',         // 南朝菊纹
+    date_d: 'SASA',          // 伊达仙台笹
+    suwa_d: 'KAJI',          // 诹访梶叶
+    fujiwara: 'FUJI',        // 奥州藤原下藤
+
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

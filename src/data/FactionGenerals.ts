@@ -4908,6 +4908,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'yi_yuqian', factionId: 'ming_d', cityId: 'city_beijing', generalName: '于谦', portrait: '/assets/WEI/yi_yuqian.png' },
+        // 🔴 [2026-10-24 主人授权新增] 杨洪（1381–1451）＝明宣府镇总兵，正统年间镇守宣府，土木堡之变后独守宣府城（也先挟英宗至城下，洪闭门不纳）；宣化空缺（完颜承裕迁回会宁府）→ 按史补驻将。立绘留空
+        { generalId: 'ming_yanghong', factionId: 'ming_d', cityId: 'city_xuanhua', generalName: '杨洪', portrait: '', eliteName: '宣府铁骑', eliteTier: 3 },
 
 
 

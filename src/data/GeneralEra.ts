@@ -1379,6 +1379,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yeren_nvzhen_boke': 'imperial',
     'yezongliu_yezongliu': 'castle',
     'yi_yuqian': 'castle',
+    'ming_yanghong': 'castle',   // 杨洪（1381–1451）明前期，同于谦按城堡时代
     'yidier_yidiewang': 'feudal',
     'yidou_luxun': 'antiquity',
     'yiduhu_baershu': 'castle',
