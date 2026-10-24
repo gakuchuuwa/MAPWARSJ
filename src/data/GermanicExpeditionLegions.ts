@@ -14,34 +14,25 @@ import type { EliteLegionConfig } from './ExpeditionLegions';
 export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
 
     // ── T1 功勋之兵 ──
-    jialuolin: { name: '加洛林亲兵', tier: 1 },          // 亚琛·查理大帝：scara 御林亲兵，征西欧
     yinggelan: { name: '英格兰长弓', tier: 1 },          // 温彻斯特·亨利五世：阿金库尔1415长弓兵以少胜多
-    jinquehua: { name: '威尔士长弓', tier: 3 },          // 卡那封·长腿爱德华：威尔士长弓兵
-    geluositeboguo: { name: '格洛斯特弓', tier: 3 },          // 格洛斯特·吉尔伯特：格洛斯特伯国长弓手
 
     // ── T2 特色之兵 ──
     falanji: { name: '图尔甲士', tier: 2 },          // 科隆·查理马特：732图尔战役
     boximiya: { name: '胡斯战车阵', tier: 2 },          // 布拉格·扬杰斯卡：战车阵
     mazhaer: { name: '黑军侍卫', tier: 2 },          // 布达佩斯·马加什一世：黑军车堡火器大阵
-    xiongyati: { name: '匈雅提卫队', tier: 3 },
     didi: { name: '金马刺兵', tier: 2 },          // 布鲁日·威廉一世：1302金马刺行会步兵
     piketai: { name: '靛蓝皮克特', tier: 2 },          // 爱丁堡·奥恩格斯（涂菘蓝战士，DE 靛蓝突袭者）
-    aersasi: { name: '莱茵重步兵', tier: 2 },          // 斯特拉斯堡·尤里安：357大捷
     ruishi: { name: '邦联长矛', tier: 2 },          // 巴塞尔·温克尔里德：森帕赫长枪方阵；避据点「巴塞尔」、旗号「瑞士」叠字
 
     // ── T3 风土之兵 ──
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）
     hansa: { name: '商船护军', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫；避势力「汉萨」叠字
     batawei: { name: '巴达维辅', tier: 3 },          // 乌特勒支·西维利斯：巴达维辅助军/之乱
-    xiluoma: { name: '布切拉里骑', tier: 1 },      // 希波·博尼法提乌斯：罗马阿非利加布切拉里近卫重骑
 
     // ── T4 存在之兵 ──
     habusibao: { name: '帝国禁卫', tier: 4 },          // 维也纳·马克西米
-    weixi: { name: '不莱梅步兵', tier: 4 },          // 不莱梅·安斯加尔；避势力「威悉」叠字
     maixiya: { name: '奥法盾墙', tier: 4 },          // 牛津·奥法；避势力「麦西亚」叠字
-    gaer: { name: '芬尼亚勇士', tier: 4 },          // 都柏林·多姆纳尔
     mangsite: { name: '达尔卡伊斯', tier: 1 },      // 卡舍尔·布赖恩博鲁：本源部族，克朗塔夫主力
-    boumeilaniyan: { name: '奥布奇战锤', tier: 3 },  // 格但斯克·卡西米尔四世：波兰步兵战锤（DE Obuch 破甲）
     pomeilaniya: { name: '格里芬兵团', tier: 4 },  // 什切青·博吉斯拉夫：波美拉尼亚格里芬王朝
     bafaliya: { name: '塔西洛兵团', tier: 4 },          // 雷根斯堡·塔西洛；避势力「巴伐利亚」叠字
     // 纽伦堡·霍亨索伦伯：家族专名可考 → T3（禁造「法兰克重骑」）
@@ -51,17 +42,11 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     asikanani: { name: '边境巡骑', tier: 3 },
     // 马格德堡·杰罗：萨克森东扩边疆 → T4
     wende: { name: '文德战团', tier: 4 },
-    molaweiya: { name: '斯瓦托兵团', tier: 3 },          // 奥尔穆茨·斯瓦托普卢克；避势力「摩拉维亚」叠字
     damolaweiya: { name: '布尔诺营', tier: 4 },          // 布尔诺·莫伊米尔；避「摩拉」截字叠势力
     meikelunbao: { name: '梅克伦兵团', tier: 4 },
-    kanbuliya: { name: '长弓游击兵', tier: 3 },          // 卡莱尔·华莱士
     shiwaben: { name: '士瓦本剑士', tier: 4 },          // 奥格斯堡·乌尔里希
-    rierman: { name: '莱茵选侯军', tier: 3 },          // 美因茨·奥托；避据点「美因茨」叠字,
-    pelianci: { name: '拉赫骑士', tier: 4 },
     bulabante: { name: '沃林根骑士', tier: 3 },   // 布鲁塞尔·约翰一世：1288沃林根战役主力骑士,
     tuomengde: { name: '达尔战斧卫', tier: 3 },
-    anggelu: { name: '撒克逊盾墙', tier: 2 },
-    gewennesi: { name: '斯诺登战团', tier: 3 },   // 哈瓦登·戴菲德：1282夜袭哈瓦登城堡点燃抗英终战，斯诺登要塞山地战团
     weiershigongguo: { name: '红龙卫队', tier: 2 }, // 布伊尔斯·卢埃林：威尔士公国大公亲王卫队，高举红龙战旗，1282欧温桥之战
     dalriada: { name: '盖尔战船队', tier: 4 },   // 邓纳德·达尔里阿达王 费尔古斯·麦克·埃赫达赫：邓纳德·达尔里阿达：盖尔人以海湾桨船征发的"船队"兵役（Sluaged），736年邓哈芬之役
     scotland: { name: '苏格兰枪阵', tier: 3 },   // 斯昆·约翰·科明：斯昆·科明：苏格兰长枪圆阵（schiltron）步兵，1298年福尔柯克之役

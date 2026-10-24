@@ -18,33 +18,19 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     yipilusi: { name: '摩罗西亚骑', tier: 2 },          // 安布拉基亚·皮洛士：伊庇鲁斯摩罗西亚战象铁骑
     lagoniya: { name: '斯巴达重装', tier: 2 },          // 斯巴达·列奥尼达：普拉提亚
     boootiya: { name: '底比斯圣队', tier: 2 },          // 底比斯·伊巴密浓达：留克特拉
-    luodesi: { name: '医院骑士', tier: 2 },          // 罗得城·德米特里：1522 守岛
 
     // ── T3 风土之兵 ──
-    kejila: { name: '西波塔舰', tier: 3 },          // 科孚·舒伦堡：前 433 西波塔海战；避势力「科基拉」叠字
     talanduo: { name: '塔兰丁骑', tier: 3 },            // 塔兰托·阿契塔
     kelite: { name: '干地亚血卫', tier: 1 },          // 干地亚·莫罗西尼：1669 威尼斯干地亚血战守军
 
     // ── T4 存在之兵 ──
-    xilagu: { name: '希腊重步兵', tier: 4 },          // 锡拉库萨·阿加索克利
-    fujisi: { name: '福基斯重步', tier: 4 },
     yilisi: { name: '埃利斯战车', tier: 4 },
-    xiaofulijiya: { name: '希腊雇佣兵', tier: 2 },
     jileinaijia: { name: '昔兰尼骑兵', tier: 4 },
 
     // ── 2026-09 古典希腊 DE 英雄 ──
-    aiduoniya: { name: '斯巴达重步', tier: 1 },          // 安菲波利斯·巴西达斯：斯巴达重步兵，422 阵亡守城
-    qiesuonisuosi: { name: '斯巴达舰队', tier: 1 },          // 羊河·吕山德：斯巴达海军舰队，405 全歼雅典海军
-    mixiya: { name: '帖撒利骑', tier: 2 },          // 格拉尼库斯·帕曼纽：帖撒利重骑兵，左翼破阵
-    xiaaiji: { name: '马其顿方阵', tier: 1 },          // 佩鲁西姆·佩尔狄卡斯：马其顿方阵步兵
-    jikelazes: { name: '雅典重步', tier: 2 },          // 提洛·阿里斯提德：雅典重步兵，主持提洛同盟贡赋评估
-    youbeiya: { name: '波斯远征军', tier: 1 },          // 卡里斯托斯·达提斯：前490马拉松远征波斯水陆大军
-    haerjijiji: { name: '萨里沙枪阵', tier: 1 },          // 奥林索斯·腓力二世：萨里沙超长矛马其顿方阵
     // 🔴 [2026-09-19 主人令「都给我删了」] 卡帕多细亚（`kapaduoxiya`）与其番号「卡帕多骑队」已删除 ——
     //    它只服务前321「赫勒斯滂战役」，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
     maqidun: { name: '伙伴骑兵', tier: 0 },
-    panfeiliya: { name: '佩尔格方阵', tier: 3 },
-    hesitiya: { name: '色萨利铁骑', tier: 1 },
     pisa: { name: '皮萨僭主卫', tier: 4 },   // 皮萨提斯·皮萨王 潘塔琉斯：皮萨提斯·潘塔琉斯：皮萨僭主的卫队，与伊利斯争夺奥林匹亚
     antigonid: { name: '安提柯卫队', tier: 3 },   // 凯莱奈·安提柯一世：凯莱奈·安提柯：独眼安提柯的马其顿老兵与亚洲诸军，前317年帕拉塔克奈之役
 };

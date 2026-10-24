@@ -127,3 +127,6 @@ public/SUCAI/EXPLOSION_DEMO_SHIPS
 # ④ 根目录的二进制，与构建无关。
 ak_sof.bin
 tessdata
+
+# CodeGraph 本地代码关系图（2026-10-23）
+.codegraph/

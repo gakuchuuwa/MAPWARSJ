@@ -15,13 +15,6 @@ import { getGeneralNameForSpeech, prepareSpeechText } from "./GeneralSpeechNames
 import { getTacticalSkillEntry } from "../data/TacticalSkillCatalog";
 import { edgeTtsClient, type EdgeVoice } from "./EdgeTtsClient";
 
-/**
- * 🔴 [2026-10-23 主人「游戏播报还是没有换声音吗？…实在不行，用云溪呀」] 探马故事旁白改用云希。
- * 实测（2026-10-23）：直连微软对云健/云希/晓晓三个音色全部连不上（ws error），游戏实际靠浏览器自带的语音念：
- * 主人的 Edge 自带「云健/云希 Online (Natural)」（战争播报就是这么念出来的），而晓晓那条回落到本机慧慧（难听）。
- * 故事旁白取战争播报没在用的那个男声：战争是云健（默认）→ 故事用云希；主人把战争切成云希 → 故事用云健。
- */
-const STORY_VOICE_MARK = "story";
 import { isGeneralOnStage } from "../data/generalOnStage";
 
 interface SpeakOptions {
@@ -47,8 +40,6 @@ interface SpeakOptions {
   skipGlobalNameReplace?: boolean;
   /** 直连微软时用哪个音色（不填＝当前战争播报男声云健/云希） */
   voice?: EdgeVoice;
-  /** "story"＝探马故事旁白：回落浏览器语音时也挑战争播报没在用的那个男声 */
-  voiceRole?: "story";
   /** TTS 真正开口时回调（技能 Cut-in 与念名同刻；引擎无 onstart 时在 speak 前兜底） */
   onStart?: () => void;
   /** 念完 / 被丢弃后回调（技能释放脉冲串行队列用） */
@@ -481,27 +472,6 @@ export class SpeechAnnouncer {
   }
 
   /**
-   * 🔴 [2026-10-22 主人「没有语音介绍」] 探马故事块的旁白/对话：念出来，语速与行军解说同档。
-   *    banner＝要不要在底部字幕条再显示一遍（对话框里已有全文时传 false，免得两处同时显示）。
-   */
-  public announceStory(text: string, banner: boolean, onDone?: () => void): void {
-    const line = text.trim();
-    if (!line) { onDone?.(); return; }
-    this.speak(line, {
-      sTier: true,
-      banner: banner ? line : undefined,
-      bannerMultiline: true,
-      bannerSingleScreen: true,
-      rate: 0.95,
-      // 🔴 [2026-10-22 主人「故事旁白和战争旁白不该一个声音吧」] 故事旁白与战争播报分开（2026-10-23 起用云希，见 STORY_VOICE_MARK）
-      voice: this.storyEdgeVoice(),
-      voiceRole: STORY_VOICE_MARK,
-      maxWaitMs: Math.min(180000, 4000 + line.length * 600),
-      onDone,
-    });
-  }
-
-  /**
    * 🔴 [2026-10-02 主人定] 判断当前是否有 S 级播报（行军解说/重要背景）正在进行
    */
   public isSTierBusy(): boolean {
@@ -850,11 +820,6 @@ export class SpeechAnnouncer {
   /** 两句技能亮相的最短间隔（毫秒）= CombatUI 里 skill-cut-in 动画时长，保证双方大字不同刻、不叠 */
   private static readonly SKILL_CUTIN_GAP_MS = 3000;
 
-  /** 故事旁白的音色：战争播报没在用的那个男声 */
-  private storyEdgeVoice(): EdgeVoice {
-    return this.preferredVoice === "Yunxi" ? "zh-CN-YunjianNeural" : "zh-CN-YunxiNeural";
-  }
-
   /** 当前男声偏好对应的 Neural 音色名（云健/云希直连用） */
   private currentEdgeVoice(): EdgeVoice {
     return this.preferredVoice === "Yunxi" ? "zh-CN-YunxiNeural" : "zh-CN-YunjianNeural";
@@ -987,17 +952,6 @@ export class SpeechAnnouncer {
           candidates.push(fallback);
         }
         if (candidates.length === 0 && fallback) candidates.push(fallback);
-        // 🔴 [2026-10-23 主人「用云溪呀」] 故事旁白：把战争播报没在用的那个男声（默认云希）排到最前。
-        //    按有效名找（Edge 在线语音的 name 偶发是 "undefined"，要看 voiceURI），找不到就照战争播报的男声排序念。
-        if (opts?.voiceRole === STORY_VOICE_MARK) {
-          const want = this.preferredVoice === "Yunxi" ? ["云健", "Yunjian"] : ["云希", "Yunxi"];
-          const story = candidates.filter((c) => want.some((k) => this.voiceNameMatches(this.getVoiceEffectiveName(c.voice), k)));
-          if (story.length > 0) {
-            const rest = candidates.filter((c) => !story.includes(c));
-            candidates.length = 0;
-            candidates.push(...story, ...rest);
-          }
-        }
 
         // [2026-07-27] 语音清单诊断改为每会话只打一次。
         // 原来每说一句话就遍历全部 324 个语音拼长串打印，一场战斗刷屏好几屏，

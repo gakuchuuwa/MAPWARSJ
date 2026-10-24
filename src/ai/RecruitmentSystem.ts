@@ -63,7 +63,7 @@ export class RecruitmentSystem {
     private static readonly LABEL_UPDATES_PER_FRAME = 20;
 
     /**
-     * 🔴 [2026-09-23 主人定] 历史剧本期闸门（`PlayerHero.autoPlan === 'script'`，默认）。
+     * 🔴 [2026-09-23 主人定] 历史剧本期闸门（`PlayerHero.autoPlan === 'script'`）。
      * 主人原话：「既然是历史剧本，就不能出现不符合历史的事情，这个总功能中包括其他军团不能随机产生。」
      * （原面板「🚫 不出军团」勾选已并入剧本模式。）
      *

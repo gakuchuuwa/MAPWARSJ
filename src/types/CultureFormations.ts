@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Culture Formations
  * 15 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
@@ -607,7 +607,7 @@ export const QIN_DYNASTY_GENERAL_IDS = new Set([
 
 /** 秦朝势力 ID 集合 */
 export const QIN_DYNASTY_FACTION_IDS = new Set([
-    'qin', 'xin', 'ruo', 'baiyang', 'wazhai', 'shangzhou', 'nanyue'
+    'qin', 'nanyue'
 ]);
 
 /** 汉朝名将 ID 集合（含西汉、东汉、蜀汉/季汉） */
@@ -639,10 +639,10 @@ export const HAN_DYNASTY_GENERAL_IDS = new Set([
 
 /** 汉朝势力 ID 集合 */
 export const HAN_DYNASTY_FACTION_IDS = new Set([
-    'han', 'han_d', 'xianyu', 'suzhou', 'shuofang', 'li_lx_d',
-    'huaiyang', 'yangshao', 'lanzhou', 'quli', 'xiyuduhu', 'jiluo_d',
-    'lulin', 'you', 'jingzhou_gs', 'huizhou_d', 'shu', 'chu',
-    'langzhou', 'jingmen', 'cangsong', 'qingqiang', 'dongsheng', 'liu'
+    'han', 'han_d', 
+    
+    'you', 'shu', 
+    'liu'
 ]);
 
 /** 唐朝名将 ID 集合 */
@@ -676,10 +676,10 @@ export const TANG_DYNASTY_GENERAL_IDS = new Set([
 
 /** 唐朝势力 ID 集合 */
 export const TANG_DYNASTY_FACTION_IDS = new Set([
-    'tang', 'liang_d', 'bing', 'hepan', 'anxi', 'juandu', 'heyuan_d',
-    'song2', 'gaoliang', 'shazhou', 'lingzhou', 'zhongshan', 'liwang',
-    'yuan_cj_d', 'xinping', 'pingyuan', 'loufan', 'weihaiwei',
-    'dingxiang_d', 'jiashi', 'zhuoshi', 'qianzhou', 'shanzhou', 'weizhou', 'wei2'
+    'tang', 'hepan', 'anxi', 'juandu', 
+    
+    
+    'wei2'
 ]);
 
 /** 宋朝名将 ID 集合 */
@@ -707,10 +707,10 @@ export const SONG_DYNASTY_GENERAL_IDS = new Set([
 
 /** 宋朝势力 ID 集合 */
 export const SONG_DYNASTY_FACTION_IDS = new Set([
-    'sizhou', 'luoping', 'xiangzhou', 'zaoyang_d', 'fengzhou', 'hezhou',
-    'didao', 'zhai_han', 'huan', 'yingzhou_d', 'qing',
-    'changshan', 'heng1', 'tingzhou_d', 'changshaguo', 'shenshi',
-    'yanchuan_d', 'song', 'yanzhou'
+    
+    
+    
+    'song', 'yanzhou'
 ]);
 
 /** 大明名将 ID 集合 */
@@ -736,9 +736,9 @@ export const MING_DYNASTY_GENERAL_IDS = new Set([
 
 /** 大明势力 ID 集合 */
 export const MING_DYNASTY_FACTION_IDS = new Set([
-    'ming_d', 'pingnan', 'guizhou', 'dongshengwei', 'jinan',
-    'suzhou_d', 'huai', 'shanrong', 'yi', 'jinzhou', 'zu_d',
-    'xuan', 'linyu', 'qi_d', 'chizhou', 'luming', 'yansui'
+    'ming_d', 
+    
+    'yansui'
 ]);
 
 /** 曹魏名将 ID 集合 */
@@ -752,13 +752,13 @@ export const WEI_DYNASTY_GENERAL_IDS = new Set([
 ]);
 
 /** 曹魏势力 ID 集合 */
-export const WEI_DYNASTY_FACTION_IDS = new Set([
-    'cao_d',                    // 曹魏·谯县
-    'lu',                       // 合肥·张辽
-    'wudu',                     // 武都·邓艾
-    'sima_d',                   // 获嘉·司马懿
-    'bozhou_d',                 // 聊城·于禁
-    'guzhu',                    // 肥如·田豫
+export const WEI_DYNASTY_FACTION_IDS = new Set<string>([
+    // 曹魏·谯县
+    // 合肥·张辽
+    // 武都·邓艾
+    // 获嘉·司马懿
+    // 聊城·于禁
+    // 肥如·田豫
 ]);
 
 /** 判断是否为曹魏武将或势力 */
@@ -798,10 +798,10 @@ export const SENGOKU_GENERAL_IDS = new Set([
 
 /** 日本战国势力 ID 集合 */
 export const SENGOKU_FACTION_IDS = new Set([
-    'owari', 'kai', 'echigo', 'edo', 'hashiba', 'date_d', 'sanada_d',
-    'sagami', 'chosokabe', 'satsuma', 'aki', 'jinchuan', 'totomi',
-    'mino', 'aizu', 'iga_d', 'kaga_d', 'otomo_d', 'suwa_d',
-    'shimotsuke', 'izumo', 'jibei2', 'kakizaki', 'so'
+    'date_d', 
+    'chosokabe', 
+    'iga_d', 'kaga_d', 'otomo_d', 'suwa_d',
+    'kakizaki', 'so'
 ]);
 
 /** 罗马帝国名将 ID 集合 */
@@ -816,9 +816,9 @@ export const ROMAN_DYNASTY_GENERAL_IDS = new Set([
 /** 罗马帝国/罗曼势力 ID 集合 */
 export const ROMAN_DYNASTY_FACTION_IDS = new Set([
     'luoma_diguo',  // 罗马帝国
-    'gaolu_luoma',  // 高卢罗曼
-    'mozeer',       // 摩泽尔（君士坦丁）
-    'aersasi',      // 阿尔萨斯（尤里安）
+    // 高卢罗曼
+    // 摩泽尔（君士坦丁）
+    // 阿尔萨斯（尤里安）
 ]);
 
 
@@ -893,19 +893,19 @@ export const PERSIAN_DYNASTY_GENERAL_IDS = new Set([
 /** 波斯文化势力 ID 集合 */
 export const PERSIAN_DYNASTY_FACTION_IDS = new Set([
     'aqimeinide',               // 阿契美尼德帝国（波斯波利斯）
-    'aba',                      // 萨珊波斯（尼沙布尔）
+    // 萨珊波斯（尼沙布尔）
     'safawei_d',                // 萨非波斯帝国（伊斯法罕）
-    'safawei',                  // 萨非帝国（加兹温）
-    'delan',                    // 苏伦家族（法拉）
+    // 萨非帝国（加兹温）
+    // 苏伦家族（法拉）
     'ansxi',                    // 安息帝国（尼萨）
     'midi',                     // 米底王国（哈马丹）
     'ailan',                    // 埃兰王国（苏萨）
-    'kalan',                    // 卡伦家族（图斯）
+    // 卡伦家族（图斯）
     'xisi',                     // 萨法尔王朝（博斯特）
     'saerbadaer',               // 萨尔巴达尔（白哈格）
-    'kumisi',                   // 库米斯（达姆甘）
-    'hali',                     // 哈利（萨拉赫斯）
-    'baha',                     // 巴哈尔兹（泰巴德）
+    // 库米斯（达姆甘）
+    // 哈利（萨拉赫斯）
+    // 巴哈尔兹（泰巴德）
 ]);
 
 /** 判断是否为波斯文化武将或势力 */
@@ -927,10 +927,10 @@ export const POLISH_DYNASTY_GENERAL_IDS = new Set([
 /** 波兰文化势力 ID 集合 */
 export const POLISH_DYNASTY_FACTION_IDS = new Set([
     'bolan',                // 波兰王国（华沙）
-    'piyasite',             // 皮雅斯特王朝（克拉科夫）
-    'dabolan',              // 大波兰（波兹南）
+    // 皮雅斯特王朝（克拉科夫）
+    // 大波兰（波兹南）
     'litaowan',             // 立陶宛大公国（维尔纽斯）
-    'nieman',               // 涅曼公国（格罗德诺）
+    // 涅曼公国（格罗德诺）
 ]);
 
 /** 判断是否为波兰文化武将或势力 */
@@ -953,7 +953,7 @@ export const TEUTONIC_DYNASTY_FACTION_IDS = new Set([
     'tiaodun_qishi',            // 条顿骑士团（柯尼斯堡）
     'shengdian_qishi',          // 圣殿骑士团（阿卡）
     'baojian_qishi',            // 宝剑骑士团（里加）
-    'liwoniya',                 // 利沃尼亚骑士团（塔林）
+    // 利沃尼亚骑士团（塔林）
 ]);
 
 /** 判断是否为条顿骑士团/十字军武将或势力 */
@@ -1001,9 +1001,9 @@ export const BERBER_DYNASTY_FACTION_IDS = new Set([
     'zhayan',               // 扎扬王朝（特莱姆森）
     'hamade',               // 哈马德王朝（布佳亚）
     'aguelabu',             // 阿格拉布王朝（凯鲁万）
-    'babali',               // 巴巴里海岸（阿尔及尔）
-    'telibolisi',           // 的黎波里塔尼亚（的黎波里）
-    'zhibuluotuo',          // 休达/直布罗陀
+    // 巴巴里海岸（阿尔及尔）
+    // 的黎波里塔尼亚（的黎波里）
+    // 休达/直布罗陀
 ]);
 
 /** 判断是否为柏柏尔/北非武将或势力 */
