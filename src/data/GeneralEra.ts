@@ -1528,6 +1528,14 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xibanya_beilaerde': 'imperial',   // 佩德罗·贝拉尔德｜马德里·西班牙（1808）
     'manding_musa': 'castle',   // 穆萨（廷巴克图太守）｜廷巴克图·马里（1353）
     'arakan_mingbin': 'imperial',   // 明彬｜妙乌·阿拉干
+    'dusong_zhangru': 'castle',   // 张濡｜独松关·南宋（1275）
+    'xianxia_zhengcai': 'imperial',   // 郑彩｜仙霞关·隆武（1646）
+    'tianjing_wangliang': 'antiquity',   // 王梁｜天井关·东汉
+    'zijing_hanqing': 'castle',   // 韩青｜紫荆关·明（1449）
+    'ningwu_zhouyuji': 'imperial',   // 周遇吉｜宁武关·明（1644）
+    'tang_guoyuanzhen': 'feudal',   // 郭元振｜赤亭关·唐（700 赤亭大捷）
+    'putaoya_afonso': 'castle',   // 阿方索｜布拉干萨·葡萄牙（15 世纪）
+    'montereau_pressy': 'castle',   // 让·德·普雷西｜蒙特罗·勃艮第（1419）
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

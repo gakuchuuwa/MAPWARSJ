@@ -290,6 +290,26 @@ const _factionCultureRegionCache = new Map<string, RegionType | undefined>();
 
 /** 势力专属立绘池（factionId → 图片路径数组） */
 const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
+    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（立绘池沿用归并前映射）
+    'qiufu': _jiangnanPortraitPool,
+    'chendiaoyan': _guangzhouPortraitPool,
+    'yezongliu': _jiangnanPortraitPool,
+    'qianhui': _shuguoPortraitPool,
+    'miaomin': _lingnanPortraitPool,
+    'zhongxiang': _shuguoPortraitPool,
+    'yang_bozhou': _shuguoPortraitPool,
+    'she': _shuguoPortraitPool,
+    'tan_d': _shuguoPortraitPool,
+    'wumeng': _shuguoPortraitPool,
+    'boren': _shuguoPortraitPool,
+    'sou': _shuguoPortraitPool,
+    'qiong': _dianmianPortraitPool,
+    'dongzu': _lingnanPortraitPool,
+    'shengmiao': _lingnanPortraitPool,
+    'buyi_d': _lingnanPortraitPool,
+    'shuizu': _lingnanPortraitPool,
+    'haikou': _jiangnanPortraitPool,
+    'liuzhen': _zhongyuanPortraitPool,
     'qin': _qinPortraitPool,
     'wuzhou_d': _wuzhouPortraitPool,
     'tang': _litangPortraitPool,

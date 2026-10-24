@@ -1580,7 +1580,7 @@ buildingStyle: 'TIBET', troops: 10000,
         buildingStyle: 'JIANGNAN', note: '海阳；马发潮州义勇' },
     { id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian', lat: 24.08, lng: 120.56, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
-    { id: 'city_pinglong', name: '平陇', factionId: 'panjun', lat: 28.304379, lng: 109.671021, type: 'stockade', region: 'JIANGNAN',
+    { id: 'city_pinglong', name: '平陇', factionId: 'miaomin', lat: 28.304379, lng: 109.671021, type: 'stockade', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '平陇；苗民关隘',
     },
@@ -1624,7 +1624,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
     // 第七类：陕甘回军
     // 第八类：号军/江汉政权
     
-    { id: 'city_piandaoshui', name: '偏刀水', factionId: 'panjun', lat: 27.921633, lng: 107.685242, type: 'stockade', region: 'BASHU',
+    { id: 'city_piandaoshui', name: '偏刀水', factionId: 'qianhui', lat: 27.921633, lng: 107.685242, type: 'stockade', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
         note: '偏刀水；回军小城',
     },
@@ -1812,7 +1812,7 @@ buildingStyle: 'TIBET', troops: 10000,
 buildingStyle: 'BASHU', troops: 10000,
         note: '乌蒙山；乌蛮关隘，东爨乌蛮首领盖聘镇守',
     },
-    { id: 'city_leigong', name: '雷公山', factionId: 'panjun', lat: 26.573781, lng: 108.091736, type: 'stockade', region: 'BASHU',
+    { id: 'city_leigong', name: '雷公山', factionId: 'dongzu', lat: 26.573781, lng: 108.091736, type: 'stockade', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
         note: '雷公山；侗族关隘',
     },
@@ -2076,7 +2076,7 @@ buildingStyle: 'WEI', troops: 10000, tier: 2,
 
 
     // ── 2026-05-27 新增：生苗(甲定) ──
-    { id: 'city_jiading', name: '甲定', factionId: 'panjun', lat: 26.485279, lng: 107.523193, type: 'stockade', region: 'BASHU',
+    { id: 'city_jiading', name: '甲定', factionId: 'shengmiao', lat: 26.485279, lng: 107.523193, type: 'stockade', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
         note: '甲定；生苗小城；定级依据§6.2：甲定为苗寨聚落（明1631入青岩司，非关隘；境内清道光营盘另属遗址），按城市判级；清代人口查无可靠估计，落最小城档 → 城寨',
     },
@@ -2200,9 +2200,9 @@ buildingStyle: 'TIBET', troops: 10000,
 // ============================================================
 export const CITIES_V2: CityDataV2[] = [
     // ── 2026-10-24 主人「添加据点」：环非洲 7 港（本地文化判定，见 docs/02-design/海路网-单一口径-2026-10-24.md）──
-    { id: 'city_kilwa', name: '基尔瓦', factionId: 'kilwa', lat: -8.96, lng: 39.5128, type: 'small_city', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'AFRICA', note: '基尔瓦基西瓦尼（Kilwa Kisiwani，斯瓦希里语「基尔瓦岛」）：基尔瓦苏丹国都城（约957–1513），13–15世纪斯瓦希里海岸霸主；鼎盛逾万人（>1万＝小城）。珊瑚石大清真寺（11世纪始建、13世纪16穹顶）、Husuni Kubwa 宫、Gereza 堡，UNESCO 世界遗产（1979）。按史＋依据：https://whc.unesco.org/en/list/144/ 、https://en.wikipedia.org/wiki/Kilwa_Kisiwani 、https://en.wikipedia.org/wiki/Kilwa_Sultanate' },
-    { id: 'city_mombasa', name: '蒙巴萨', factionId: 'mombasa', lat: -4.05, lng: 39.6667, type: 'stockade', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'AFRICA', note: '蒙巴萨（Mombasa；斯瓦希里语 Mvita，汉籍「慢八撒」）：斯瓦希里城邦，1502年前属基尔瓦苏丹国、后为独立蒙巴萨苏丹国；Mnara 清真寺约1300年、Mandhry 清真寺1570年。中世纪人口无学术估算，按「算不出一律城寨」定级。按史＋依据：https://en.wikipedia.org/wiki/Mombasa 、https://en.wikipedia.org/wiki/List_of_rulers_of_Mombasa' },
-    { id: 'city_mogadishu', name: '摩加迪沙', factionId: 'mogadishu', lat: 2.0392, lng: 45.3419, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'AFRICA', note: '摩加迪沙（Mogadishu；索马里语 Muqdisho，旧称 Xamar 哈马，汉籍「木骨都束」）：摩加迪沙苏丹国都城（10–16世纪）。伊本·白图泰 1331 年记其为「极大的城」，有环城石墙、圆柱宣礼塔、Almnara 塔；人口无学术估算 → 城寨。按史＋依据：https://en.wikipedia.org/wiki/Sultanate_of_Mogadishu 、https://en.wikipedia.org/wiki/Mogadishu' },
+    { id: 'city_kilwa', name: '基尔瓦', factionId: 'kilwa', lat: -8.96, lng: 39.5128, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；基尔瓦基西瓦尼（Kilwa Kisiwani，斯瓦希里语「基尔瓦岛」）：基尔瓦苏丹国都城（约957–1513），13–15世纪斯瓦希里海岸霸主；鼎盛逾万人（>1万＝小城）。珊瑚石大清真寺（11世纪始建、13世纪16穹顶）、Husuni Kubwa 宫、Gereza 堡，UNESCO 世界遗产（1979）。按史＋依据：https://whc.unesco.org/en/list/144/ 、https://en.wikipedia.org/wiki/Kilwa_Kisiwani 、https://en.wikipedia.org/wiki/Kilwa_Sultanate' },
+    { id: 'city_mombasa', name: '蒙巴萨', factionId: 'mombasa', lat: -4.05, lng: 39.6667, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；蒙巴萨（Mombasa；斯瓦希里语 Mvita，汉籍「慢八撒」）：斯瓦希里城邦，1502年前属基尔瓦苏丹国、后为独立蒙巴萨苏丹国；Mnara 清真寺约1300年、Mandhry 清真寺1570年。中世纪人口无学术估算，按「算不出一律城寨」定级。按史＋依据：https://en.wikipedia.org/wiki/Mombasa 、https://en.wikipedia.org/wiki/List_of_rulers_of_Mombasa' },
+    { id: 'city_mogadishu', name: '摩加迪沙', factionId: 'mogadishu', lat: 2.0392, lng: 45.3419, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；摩加迪沙（Mogadishu；索马里语 Muqdisho，旧称 Xamar 哈马，汉籍「木骨都束」）：摩加迪沙苏丹国都城（10–16世纪）。伊本·白图泰 1331 年记其为「极大的城」，有环城石墙、圆柱宣礼塔、Almnara 塔；人口无学术估算 → 城寨。按史＋依据：https://en.wikipedia.org/wiki/Sultanate_of_Mogadishu 、https://en.wikipedia.org/wiki/Mogadishu' },
     { id: 'city_mozambique', name: '莫桑比克', factionId: 'putaoya', lat: -15.03, lng: 40.74, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '莫桑比克岛（Ilha de Moçambique；斯瓦希里 Msumbiji）：1507 年特里斯唐·达·库尼亚取岛设商站，1507–1898 为**葡属东非首府**；北半部珊瑚石「石城」Cidade de Pedra（圣塞巴斯蒂昂堡 1558–1620，撒哈拉以南非洲现存最完整古堡）、医院、教堂群为葡属石构，故建筑风格取葡萄牙（殖民新建/长期统治城按实际建成层）；守将＝葡属东非镇守将。岛域仅95.7公顷、史无人口估算 → 城寨。按史＋依据：https://whc.unesco.org/en/list/599/ 、https://en.wikipedia.org/wiki/Island_of_Mozambique 、https://en.wikipedia.org/wiki/Fort_S%C3%A3o_Sebasti%C3%A3o_(Mozambique)' },
     { id: 'city_luanda', name: '罗安达', factionId: 'putaoya', lat: -8.8383, lng: 13.2344, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '罗安达（Luanda）：1576年1月25日保罗·迪亚士·德·诺瓦伊斯建城（São Paulo da Assunção de Loanda），**葡属安哥拉首府**（1576–1621 都城），1576 年前只有姆本杜 axiluanda 渔村、城的建筑层是葡萄牙石构（圣米格尔堡 1576、主教座堂 1679），故建筑风格取葡萄牙（与果阿/萨尔瓦多同例：殖民新建城按实际建成层）；守将＝葡属安哥拉镇守将。17世纪人口无可靠统计（税册1781年9755）→ 城寨。按史＋依据：https://en.wikipedia.org/wiki/Luanda 、https://en.wikipedia.org/wiki/Portuguese_Angola 、https://en.wikipedia.org/wiki/Angolan_Wars' },
     { id: 'city_cape_town', name: '开普敦', factionId: 'nidelan', lat: -33.9253, lng: 18.4239, type: 'small_city', troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC', note: '开普敦（Cape Town／Kaapstad，科伊语 ǁHui!gaeb「云聚之处」）：1652年4月6日荷属东印度公司建补给站，**荷属开普殖民地首府**；好望堡（1666–79）与 Cape Dutch 石构/砖构为本地实际建成层，按殖民新建城取荷兰（日耳曼）风格；守将＝开普殖民地指挥官。1652年约90人、1754年12,239人（>1万＝小城）。按史＋依据：https://en.wikipedia.org/wiki/History_of_Cape_Town 、https://en.wikipedia.org/wiki/Cape_Colony' },
@@ -3287,7 +3287,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_hengyu', name: '横屿', factionId: 'ming_d', lat: 26.77, lng: 119.7, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', note: '横屿；海岛倭寇木寨（戚继光 1562 年横屿之战），木栅/土寨无石砖夯土城墙、亦非关隘要塞 → 按规则算城；人口无考 → 城寨' },
 
 
-    { id: 'city_luobo', name: '罗博', factionId: 'panjun', lat: 25.4112, lng: 106.7377, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
+    { id: 'city_luobo', name: '罗博', factionId: 'buyi_d', lat: 25.4112, lng: 106.7377, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
     { id: 'city_situo', name: '思陀', factionId: 'ming_d', lat: 23.2243, lng: 102.8485, type: 'stockade', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
@@ -3389,7 +3389,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_mizhina', name: '密支那', factionId: 'jingpozu', lat: 25.38, lng: 97.4, type: 'small_city', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE' },
 
-    { id: 'city_sandou', name: '三都', factionId: 'panjun', lat: 25.98, lng: 107.87, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
+    { id: 'city_sandou', name: '三都', factionId: 'shuizu', lat: 25.98, lng: 107.87, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
     { id: 'city_tanzhong', name: '潭中', factionId: 'tang', lat: 24.28, lng: 109.41, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
     { id: 'city_yunyang', name: '郧阳', factionId: 'ming_d', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 10000, region: 'MING', buildingStyle: 'CENTRAL' },
@@ -3669,7 +3669,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── [2026-08-28] 奇观周边补据点（19座，对应原野外奇观）──
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「SEAS」推出的二级与史实不符 → 归 KHMER：万象：澜沧（寮）王国都城，同圈
     { id: 'city_wanxiang', name: '万象', factionId: 'liaozu', lat: 17.976, lng: 102.636, type: 'small_city', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'KHMER', note: '澜沧王国后期首都，塔銮所在地' },
-    { id: 'city_mailuoe', name: '麦罗埃', factionId: 'kushi', lat: 16.938, lng: 33.750, type: 'small_city', troops: 10000, region: 'KUSH', buildingStyle: 'AFRICA', note: '库施王国都城，黑金字塔群' },
+    { id: 'city_mailuoe', name: '麦罗埃', factionId: 'kushi', lat: 16.938, lng: 33.750, type: 'small_city', troops: 10000, region: 'KUSH', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】麦罗埃属努比亚/库施，66 文化无库施分支，取最近东非分支埃塞俄比亚（代理，非精确）；库施王国都城，黑金字塔群' },
     { id: 'city_diyawanake', name: '蒂亚瓦纳科', factionId: 'aimala', lat: -16.554, lng: -68.673, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'INCA', note: '前印加蒂亚瓦纳科文明中心；定级依据§6.2：城内1万–3万（Parsons 1968等主流；Kolata 11.5万为离群高值），未达中城10万门槛 → 小城' },
     { id: 'city_puli', name: '普里', factionId: 'aolisha', lat: 19.810, lng: 85.831, type: 'small_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', note: '印度教圣城，贾格纳特神庙；定级依据§6.2：城内常住17世纪推断1万–3万（1901年官方49334），未达中城10万门槛 → 小城' },
     { id: 'city_hengbi', name: '亨比', factionId: 'kanata', lat: 15.335, lng: 76.460, type: 'big_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '毗奢耶那伽罗帝国都城，14-16世纪世界最大城市之一' },
@@ -3705,7 +3705,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：卡塔赫纳（哥伦比亚）：西班牙殖民地
     { id: 'city_katachena', name: '卡塔赫纳', factionId: 'xingelana', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队' },
     { id: 'city_lalibeila', name: '拉利贝拉', factionId: 'zhagewei', lat: 12.033689, lng: 39.043350, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '古称罗哈，扎格维王朝国王拉利贝拉营建“新耶路撒冷”的中世纪宗教中心；贝特·阿曼努埃尔等十一座岩石教堂所在地；定级依据§6.2：中世纪城居人口无可靠数字（现代镇区8484/17367），人口不足一万 → 按规则判城寨' },
-    { id: 'city_zeila', name: '塞拉', factionId: 'adal', lat: 11.3533, lng: 43.4731, type: 'small_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'AFRICA', note: '泽拉/塞拉(Zeila)，阿达尔苏丹国早期首都与亚丁湾第一出口海港，红海-索马里贸易枢纽；格拉尼(艾哈迈德·格拉尼)1520年代由此起兵圣战，席卷埃塞俄比亚高原大部' },
+    { id: 'city_zeila', name: '塞拉', factionId: 'adal', lat: 11.3533, lng: 43.4731, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】阿达尔/泽拉属东非索马里，66 文化无斯瓦希里/索马里分支，取最近东非分支埃塞俄比亚（代理，非精确）；泽拉/塞拉(Zeila)，阿达尔苏丹国早期首都与亚丁湾第一出口海港，红海-索马里贸易枢纽；格拉尼(艾哈迈德·格拉尼)1520年代由此起兵圣战，席卷埃塞俄比亚高原大部' },
     { id: 'city_dasijiliweng', name: '达斯基利翁', factionId: 'aqimeinide', lat: 40.1322, lng: 28.0504, type: 'pass', troops: 10000, region: 'ACHAEMENIDS', buildingStyle: 'PERSIAN', note: '阿契美尼德波斯赫勒斯滂-弗里吉亚总督要塞，阿尔西提斯总督治所' },
     { id: 'city_bishnupur', name: '比什努普尔', factionId: 'mallabhum', lat: 23.075, lng: 87.317, type: 'small_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'BENGALIS', note: '定级依据§6.2：17世纪王都推断5000–20000（1901年官方19090；城墙7英里设防王都），未达中城10万门槛 → 小城' },
     { id: 'city_baba_vida', name: '巴巴维达', factionId: 'vidin_tsardom', lat: 43.993056, lng: 22.886667, type: 'pass', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'BULGARIANS', note: '维丁多瑙河畔中世纪要塞，维丁国都防御核心' },

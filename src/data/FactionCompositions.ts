@@ -29,16 +29,93 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（起义军＝三级帝国时代起义军团；其余沿用原时代军团）
+    "qiufu": {
+        legionName: "帝国时代起义军团",
+        legionType: "sub",
+    },
+    "chendiaoyan": {
+        legionName: "帝国时代起义军团",
+        legionType: "sub",
+    },
+    "yezongliu": {
+        legionName: "帝国时代起义军团",
+        legionType: "sub",
+    },
+    "qianhui": {
+        legionName: "帝国时代起义军团",
+        legionType: "sub",
+    },
+    "miaomin": {
+        legionName: "帝国时代起义军团",
+        legionType: "sub",
+    },
+    "zhongxiang": {
+        legionName: "帝国时代起义军团",
+        legionType: "sub",
+    },
+    "yang_bozhou": {
+        legionName: "帝国时代四川军团",
+        legionType: "sub",
+    },
+    "she": {
+        legionName: "帝国时代四川军团",
+        legionType: "sub",
+    },
+    "tan_d": {
+        legionName: "城堡时代川峡军团",
+        legionType: "sub",
+    },
+    "wumeng": {
+        legionName: "城堡时代川峡军团",
+        legionType: "sub",
+    },
+    "boren": {
+        legionName: "帝国时代四川军团",
+        legionType: "sub",
+    },
+    "sou": {
+        legionName: "古典时代巴蜀军团",
+        legionType: "sub",
+    },
+    "qiong": {
+        legionName: "古典时代巴蜀军团",
+        legionType: "sub",
+    },
+    "dongzu": {
+        legionName: "城堡时代川峡军团",
+        legionType: "sub",
+    },
+    "shengmiao": {
+        legionName: "帝国时代四川军团",
+        legionType: "region",
+    },
+    "buyi_d": {
+        legionName: "帝国时代四川军团",
+        legionType: "region",
+    },
+    "shuizu": {
+        legionName: "帝国时代四川军团",
+        legionType: "region",
+    },
+    "haikou": {
+        legionName: "帝国时代起义军团",
+        legionType: "sub",
+    },
+    "liuzhen": {
+        legionName: "帝国时代起义军团",
+        legionType: "sub",
+    },
     "kilwa": {
-        legionName: "城堡时代马里军团",
+        legionName: "城堡时代埃塞俄比亚军团",
         legionType: "sub",
     },
     "mombasa": {
-        legionName: "帝国时代桑海军团",
+        legionName: "帝国时代阿姆哈拉军团",
         legionType: "sub",
     },
     "mogadishu": {
-        legionName: "城堡时代马里军团",
+        legionName: "城堡时代埃塞俄比亚军团",
         legionType: "sub",
     },
     "zuraid": {
@@ -119,7 +196,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "kushi": {
-        legionName: "古典时代杰内军团",
+        legionName: "古典时代阿克苏姆军团",
         legionType: "sub",
     },
     "didi": {
@@ -1135,7 +1212,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "adal": {
-        legionName: "帝国时代桑海军团",
+        legionName: "帝国时代阿姆哈拉军团",
         legionType: "sub",
     },
     "tianxiong": {

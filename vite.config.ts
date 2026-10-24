@@ -4631,7 +4631,7 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
     //      （袁绍的麴义被算成后汉的 → 后汉"有将"、袁绍反被报"无武将"）。
     //   改法：先框定 FACTION_GENERALS 对象范围，再逐个顶层键用括号配对取整条（findObjectEntryEnd，
     //      支持对象/数组/多行/注释），逐条按 `factionId ?? 块键` 归属；`generals` 仍只存每势力首位。
-    const generals: Record<string, { generalId: string; generalName: string; portrait: string }> = {};
+    const generals: Record<string, { generalId: string; generalName: string; portrait: string; cityId?: string }> = {};
     const pickGeneral = (body: string) => {
         const gi = body.match(/generalId:\s*'([^']+)'/);
         if (!gi) return null;
@@ -4640,7 +4640,11 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         return { generalId: gi[1], generalName: gn ? gn[1] : '', portrait: po ? po[1] : '' };
     };
     // 🔴 [2026-09-16 修「立绘调校面板缺多将势力的非首位武将」] allGenerals：**所有**武将，供 portrait-tuner 用。
-    const allGenerals: Array<{ generalId: string; generalName: string; portrait: string; factionId: string }> = [];
+    // 🔴 [2026-10-24] 补 cityId：`6.6 据点完整性` 判「势力有没有据点」要看武将挂的据点
+    //    （主人 2026-10-24「据点和势力没有关系…据点只和武将有关系，势力看武将」——
+    //     cities_v2.factionId 是**原主**，不等于势力；起义/土司/海寇这类「武将自带政权」的势力，
+    //     名下据点只能从武将自己的 cityId 算，否则会被误报「0 据点」）。
+    const allGenerals: Array<{ generalId: string; generalName: string; portrait: string; factionId: string; cityId: string }> = [];
     {
         const fgKwIdx = fgText.indexOf('FACTION_GENERALS');
         const openIdx = fgKwIdx === -1 ? -1 : fgText.indexOf('= {', fgKwIdx);
@@ -4661,8 +4665,9 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
                 // 武将自己的 factionId 才是势力归属（没写＝名单块所属势力）
                 const explicitFid = body.match(/factionId:\s*'([^']+)'/)?.[1];
                 const fid = explicitFid || blockKey;
-                allGenerals.push({ generalId: g.generalId, generalName: g.generalName, portrait: g.portrait, factionId: fid });
-                if (!generals[fid]) generals[fid] = g;
+                const gCityId = body.match(/cityId:\s*'([^']+)'/)?.[1] ?? '';
+                allGenerals.push({ generalId: g.generalId, generalName: g.generalName, portrait: g.portrait, factionId: fid, cityId: gCityId });
+                if (!generals[fid]) generals[fid] = { ...g, cityId: gCityId };
             }
         };
         if (openIdx !== -1) {
@@ -5638,9 +5643,15 @@ function serverValidateEntities(): {
         if (!citiesByFactionMap.has(c.factionId)) citiesByFactionMap.set(c.factionId, []);
         citiesByFactionMap.get(c.factionId)!.push(c);
     }
+    // 🔴 [2026-10-24 主人「据点和势力没有关系…据点只和武将有关系，势力看武将」]
+    //    武将自带政权（起义/土司/海寇等）的「据点」＝他挂的 cityId；cities_v2.factionId 只是**原主**，
+    //    所以两种都算「有据点」，不能只按 cities_v2 判（否则这些势力会被误报 0 据点）。
+    const factionsWithGeneralCity = new Set(
+        data.allGenerals.filter((g) => !!g.cityId).map((g) => g.factionId),
+    );
     for (const f of data.factions) {
         if (skipFactions.has(f.id)) continue;
-        if (!citiesByFactionMap.has(f.id)) {
+        if (!citiesByFactionMap.has(f.id) && !factionsWithGeneralCity.has(f.id)) {
             issues.push({ level: 'error', msg: `势力 "${f.name}" (${f.id}) 没有据点（正规势力不得为 0 据点）`, factionId: f.id });
         }
     }

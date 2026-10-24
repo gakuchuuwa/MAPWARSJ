@@ -8176,6 +8176,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 43
+        },
+        "/assets/LATIN/lunbadi_desiderius.png": {
+            "scale": 1.18,
+            "offsetX": -31,
+            "offsetY": 42
         }
     },
     "folderGuides": {

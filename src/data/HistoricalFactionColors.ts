@@ -718,6 +718,26 @@ function assertUniqueFixedColors(map: Record<string, string>): void {
 assertUniqueFixedColors(_FIXED);
 
 export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Object.freeze({
+    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（沿用归并前原色）
+    qiufu: '#8B56AB',
+    chendiaoyan: '#AC2A72',
+    yezongliu: '#2195A0',
+    qianhui: '#A9B527',
+    miaomin: '#36B9C7',
+    zhongxiang: '#C43A30',
+    yang_bozhou: '#6876B7',
+    she: '#C36DA6',
+    tan_d: '#982F63',
+    wumeng: '#2A2624',
+    boren: '#4A6858',
+    sou: '#7F66B9',
+    qiong: '#79DE51',
+    dongzu: '#148F77',
+    shengmiao: '#CF684F',
+    buyi_d: '#1F618D',
+    shuizu: '#2E506B',
+    haikou: '#5888A8',
+    liuzhen: '#8E2F2F',
     kilwa: '#C79A3B', // 2026-10-24 环非洲新势力
     mombasa: '#2E8B57', // 2026-10-24 环非洲新势力
     mogadishu: '#B8860B', // 2026-10-24 环非洲新势力

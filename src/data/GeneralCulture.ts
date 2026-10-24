@@ -15,16 +15,16 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'luanda_novais': 'PORTUGUESE',
     'capetown_riebeeck': 'GERMANIC',
 
-    'kilwa_suleiman': 'AFRICA',
-    'mombasa_yusuf': 'AFRICA',
-    'mogadishu_abubakr': 'AFRICA',
+    'kilwa_suleiman': 'ETHIOPIANS',
+    'mombasa_yusuf': 'ETHIOPIANS',
+    'mogadishu_abubakr': 'ETHIOPIANS',
     'zuraid_yasir': 'ORIE',
 
     'aba_shapuer': 'SASANIAN',   // 阿巴尔沙赫｜沙普尔｜据点 尼沙布尔
     'abasi_mansuer': 'ORIE',   // 阿拔斯｜曼苏尔｜据点 巴格达
     'abasi_mustasim': 'ORIE',   // 阿拔斯｜穆斯塔西姆｜据点 巴格达
     'abasi_muwafake': 'ORIE',   // 阿拔斯｜穆瓦法克｜据点 巴格达
-    'adal_ghazi': 'AFRICA',   // 阿达尔｜格拉尼｜据点 塞拉
+    'adal_ghazi': 'ETHIOPIANS',   // 阿达尔｜格拉尼｜据点 塞拉
     'adao_d_mafushou': 'WESTERN',   // 阿克苏道｜马福寿｜据点 昆岗
     'adile_adilesha': 'INDIA',   // 阿迪勒｜阿迪勒沙｜据点 比贾布尔
     'agui': 'BASHU',   // 金川｜阿桂｜据点 美诺寨
@@ -484,7 +484,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_cuauhtemoc': 'AMERICA',   // 阿兹特克｜库奥特莫克｜据点 特诺奇提特兰
     'gen_cuchacique': 'INCA',   // 泰罗纳｜库查西克｜据点 特尤纳
     'gen_cunhambebe': 'TUPI',   // 塔莫约｜昆汉贝贝｜据点 卡布弗里乌
-    'gen_dafydd': 'BRITONS',   // 格温内斯｜戴菲德｜据点 卡那封
+    'gen_dafydd': 'CELTS',   // 格温内斯｜戴菲德｜据点 卡那封
     'gen_dagnajan': 'ETHIOPIANS',   // 肖阿｜达格纳詹｜据点 德布雷利巴诺斯
     'gen_dandolo': 'LATIN',   // 亚得里亚｜丹多洛｜据点 威尼斯
     'gen_daniel_galitsky': 'SLAVIC',   // 哈尔公国｜丹尼尔｜据点 加利奇
@@ -570,7 +570,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_li_xin': 'CENTRAL',   // 唐国｜李信｜据点 长安
     'gen_li_xiucheng': 'JIANGNAN',   // 刘宋｜李秀成｜据点 金陵
     'gen_liu_guoxuan': 'JIANGNAN',   // 明郑｜刘国轩｜据点 承天
-    'gen_llywelyn': 'BRITONS',   // 威尔士公国｜卢埃林｜据点 卡那封
+    'gen_llywelyn': 'CELTS',   // 威尔士公国｜卢埃林｜据点 卡那封
     'gen_lobsang_danjin': 'TIBET',   // 和硕特｜罗卜藏丹津｜据点 当雄
     'gen_lorenzo_medici': 'LATIN',   // 托斯卡纳｜洛伦佐｜据点 佛罗伦萨
     'gen_louis_xi': 'FRANKS',   // 法兰西｜路易十一｜据点 巴黎
@@ -894,7 +894,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'kumo_xiwanghuilibao': 'XIANBEI',   // 库莫奚｜回离保｜据点 马盂山
     'kumoxi_ahuihui': 'XIANBEI',   // 库莫奚｜阿会毁｜据点 饶乐水
     'kunming_yi_lucheng': 'BASHU',   // 南诏｜卤承｜据点 会川
-    'kushi_amanilunnasi': 'AFRICA',   // 库施｜阿玛尼伦纳斯｜据点 麦罗埃
+    'kushi_amanilunnasi': 'ETHIOPIANS',   // 库施｜阿玛尼伦纳斯｜据点 麦罗埃
     'kuye_kuye_qichayi': 'NORTHEAST',   // 库页｜齐查伊｜据点 白主
     'ladakh_senggelangjie': 'TIBET',   // 玛域｜僧格朗杰｜据点 列城
     'lai_wangshifan': 'CENTRAL',   // 唐国｜王师范｜据点 青石关

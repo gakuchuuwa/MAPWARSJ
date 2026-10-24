@@ -1048,6 +1048,27 @@ export const FACTIONS: Faction[] = [
 
     { id: 'zhuerqi', name: '主儿乞' },
     { id: 'panjun', name: '起义' },
+    // 🔴 [2026-10-24 主人令「起义军的旗号是势力简称」] 恢复「归并州郡名势力」时被并进 panjun 的各家政权
+    //     （原条目见 git ebbe6eeee：这些政权本来就在库，2026-10-23 归并时被当州/族名势力删掉；不是新造）
+    { id: 'qiufu', name: '剡中' },
+    { id: 'chendiaoyan', name: '陈吊' },
+    { id: 'yezongliu', name: '处州' },
+    { id: 'qianhui', name: '回军' },
+    { id: 'miaomin', name: '苗民' },
+    { id: 'zhongxiang', name: '鼎州' },
+    { id: 'yang_bozhou', name: '播州杨氏' },
+    { id: 'she', name: '奢安' },
+    { id: 'tan_d', name: '土家' },
+    { id: 'wumeng', name: '越州蛮' },
+    { id: 'boren', name: '都掌蛮' },
+    { id: 'sou', name: '越嶲夷' },
+    { id: 'qiong', name: '邛谷' },
+    { id: 'dongzu', name: '侗族' },
+    { id: 'shengmiao', name: '生苗' },
+    { id: 'buyi_d', name: '布依' },
+    { id: 'shuizu', name: '水族' },
+    { id: 'haikou', name: '海寇' },
+    { id: 'liuzhen', name: '六镇' },
   // 🔴 [2026-10-24 主人令「叛军是旗帜上没有字、不能出征」] 叛军不是义军：无字旗（随机叛军旗面）、不征兵、不出征；乱斗开局给「无将据点」兜底
   { id: 'panshu', name: '叛军' },
 

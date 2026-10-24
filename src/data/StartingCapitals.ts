@@ -3,6 +3,26 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（登记用，不作开局依据）
+    'qiufu': 'city_shanxian',
+    'chendiaoyan': 'city_zhangzhou',
+    'yezongliu': 'city_chuzhou_zj',
+    'qianhui': 'city_piandaoshui',
+    'miaomin': 'city_pinglong',
+    'zhongxiang': 'city_wuling',
+    'yang_bozhou': 'city_hailongtun',
+    'she': 'city_yongning2',
+    'tan_d': 'city_cili',
+    'wumeng': 'city_shimenguan',
+    'boren': 'city_bodao',
+    'sou': 'city_leshan',
+    'qiong': 'city_jianchang',
+    'dongzu': 'city_leigong',
+    'shengmiao': 'city_jiading',
+    'buyi_d': 'city_luobo',
+    'shuizu': 'city_sandou',
+    'haikou': 'city_qingyuan_zj',
+    'liuzhen': 'city_hejian',
     kilwa: 'city_kilwa',
     mombasa: 'city_mombasa',
     mogadishu: 'city_mogadishu',

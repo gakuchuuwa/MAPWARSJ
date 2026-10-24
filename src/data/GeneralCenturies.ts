@@ -26,6 +26,14 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xibanya_beilaerde': 19,  // 佩德罗·贝拉尔德 · xibanya · 马德里（1808 五月二日守蒙莱昂）
     'manding_musa': 14,  // 穆萨 · manding · 廷巴克图（1353 太守）
     'arakan_mingbin': 16,  // 明彬 · arakan · 妙乌
+    'dusong_zhangru': 13,  // 张濡 · song · 独松关
+    'xianxia_zhengcai': 17,  // 郑彩 · longwu · 仙霞关
+    'tianjing_wangliang': 1,  // 王梁 · han_d · 天井关
+    'zijing_hanqing': 15,  // 韩青 · ming_d · 紫荆关
+    'ningwu_zhouyuji': 17,  // 周遇吉 · ming_d · 宁武关
+    'tang_guoyuanzhen': 8,  // 郭元振 · tang · 赤亭关
+    'putaoya_afonso': 15,  // 阿方索 · putaoya · 布拉干萨
+    'montereau_pressy': 15,  // 让·德·普雷西 · bogendigongguo · 蒙特罗
 
 
     // ══════ STEPPE（103 人，已标 0）══════

@@ -1358,6 +1358,14 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     xibanya_beilaerde: { birth: 1779, death: 1808 },  // 佩德罗·贝拉尔德（1779-10-19～1808-05-02 蒙莱昂战死）
     manding_musa: { birth: 1300, death: 1370, kaoju: '推定' },  // 廷巴克图太守穆萨（1353 在任，生卒无考，推定）
     arakan_mingbin: { birth: 1493, death: 1554 },  // 明彬（1493～1554-01-11）
+    dusong_zhangru: { birth: 1240, death: 1300, kaoju: '推定' },  // 张濡（南宋独松关守将，生卒无考，推定）
+    xianxia_zhengcai: { birth: 1600, death: 1660, kaoju: '推定' },  // 郑彩（生卒无考，推定）
+    tianjing_wangliang: { birth: -10, death: 38, kaoju: '推定' },  // 王梁（东汉初，生年无考，卒 38 年）
+    zijing_hanqing: { birth: 1400, death: 1450, kaoju: '推定' },  // 韩青（1449 紫荆关殉国，生年无考，推定）
+    ningwu_zhouyuji: { birth: 1590, death: 1644, kaoju: '推定' },  // 周遇吉（1644 宁武关殉国，生年无考，推定）
+    tang_guoyuanzhen: { birth: 656, death: 713 },  // 郭元振（656～713）
+    putaoya_afonso: { birth: 1370, death: 1461 },  // 布拉干萨公爵阿方索（1370～1461）
+    montereau_pressy: { birth: 1350, death: 1420, kaoju: '推定' },  // 让·德·普雷西（生卒无考，推定）
     gen_ezana: { birth: 320, death: 360, kaoju: '推定' },  // 埃扎纳
     zhagewei_gebulei: { birth: 1162, death: 1205, kaoju: '推定' },  // 拉利贝拉
     adal_ghazi: { birth: 1506, death: 1542, kaoju: '异说' },  // 格拉尼
