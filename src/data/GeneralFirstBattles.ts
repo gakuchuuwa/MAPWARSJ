@@ -102,7 +102,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 50000,
         enemyFactionId: 'wulaertu_guo',
         enemyFactionName: '乌拉尔图',
-        enemyGeneralId: 'wulaertu_guo_saerdu',
+        enemyGeneralId: 'bfe_rusa_i',   // 🔴 [2026-10-25 按史] 前714 乌拉尔图王为鲁萨一世（前735–714），原填萨尔杜里一世（前828 卒）
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '北方乌拉尔图王鲁萨一世屡窥我亚述北境。我大军即将翻越扎格罗斯山脉直捣图什帕，勇士可愿同行？' },
@@ -392,7 +392,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'aqimeinide',
         enemyFactionName: '波斯帝国',
-        enemyGeneralId: 'gen_datis',
+        enemyGeneralId: 'bfe_achaemenes',   // 🔴 [2026-10-25 按史] 前480 优卑亚（阿特米西乌姆）波斯舰队统帅＝阿凯门尼斯（达提斯前490 已死）
         enemyTroops: 45000,
         introLines: [
             { speaker: 'general', text: '波斯大军压境，希腊存亡在此一举！我雅典全军已经整装待发，准备迎头痛击波斯入侵之师，你可愿随我保卫自由之邦？' },
@@ -684,7 +684,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'maqidun',
         enemyFactionName: '马其顿',
-        enemyGeneralId: 'gen_alexander_great',
+        enemyGeneralId: 'bfe_erigius',   // 🔴 [2026-10-25 按史] 前330 讨萨提巴扎尼斯＝埃里吉乌斯阵斩之（亚历山大未亲临）
         enemyTroops: 22000,
         introLines: [
             { speaker: 'general', text: '西方的侵略者踏入了我们的故土阿里亚！我已经举兵反正，游牧的勇士们，随我出城与马其顿人决一死战！' },
@@ -706,7 +706,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'maqidun',
         enemyFactionName: '马其顿',
-        enemyGeneralId: 'gen_alexander_great',
+        enemyGeneralId: 'bfe_mendenus',   // 🔴 [2026-10-25 按史] 前329 波利提美图斯河之战马其顿方＝门德努斯偏师（亚历山大不在场）
         enemyTroops: 15000,
         introLines: [
             { speaker: 'general', text: '亚历山大的偏师已被诱入泽拉夫尚河谷，粟特与塞种弓骑已经合围！壮士，上马放箭，彻底全歼敌军！' },
@@ -911,7 +911,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'yan',
         enemyFactionName: '燕国',
-        enemyGeneralId: 'yan_leyi',
+        enemyGeneralId: 'bfe_qijie',   // 🔴 [2026-10-25 按史] 前279 即墨之战燕军主将＝骑劫（乐毅已降赵），田单火牛阵所破
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '燕军残暴辱我祖先，齐人之怒已如烈火！千头火牛今夜出城，壮士执刃随牛角杀出，光复齐国七十城！' },
@@ -933,7 +933,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 60000,
         enemyFactionId: 'qi',
         enemyFactionName: '齐国',
-        enemyGeneralId: 'jiaodong_tiandan',
+        enemyGeneralId: 'bfe_chuzi',   // 🔴 [2026-10-25 按史] 前284 济西之战齐军主将＝触子（田单时为临淄市掾）
         enemyTroops: 80000,
         introLines: [
             { speaker: 'general', text: '齐湣王骄暴，五国伐齐义旗已举！齐国精锐主力正屯于济西，壮士，随燕军建功立业，一战洗雪先王之耻！' },
@@ -977,7 +977,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 50000,
         enemyFactionId: 'yan',
         enemyFactionName: '燕国',
-        enemyGeneralId: 'yan_leyi',
+        enemyGeneralId: 'bfe_lifu',   // 🔴 [2026-10-25 按史] 前251 鄗之战燕军主将＝栗腹（乐毅前279 已降赵）
         enemyTroops: 80000,
         introLines: [
             { speaker: 'general', text: '燕国趁我长平之痛来犯我北疆，真欺赵国无人耶！老夫引兵反击，壮士，提刀随我迎击栗腹，直捣燕都！' },
@@ -1067,7 +1067,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'sailiugu',
         enemyFactionName: '塞琉古',
-        enemyGeneralId: 'sailiugu_antiaoke',
+        enemyGeneralId: 'bfe_andragoras',   // 🔴 [2026-10-25 按史] 前238 帕提亚立国的对手＝塞琉古叛将安德拉戈拉斯（安条克三世时年 3 岁）
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '塞琉古的总督四面受敌，草原帕尼部重见天日正在今朝！草原的好男儿，抄起弓马，随我夺回帕提亚！' },
@@ -1113,7 +1113,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 100000,
         enemyFactionId: 'xiongnu',
         enemyFactionName: '匈奴',
-        enemyGeneralId: 'xiongnu_maodun',
+        enemyGeneralId: 'bfe_touman',   // 🔴 [2026-10-25 按史] 前215 蒙恬所逐匈奴单于＝头曼（冒顿前209 才杀父自立）
         enemyTroops: 80000,
         introLines: [
             { speaker: 'general', text: '始皇帝令我提甲士三十万北逐戎狄！高阙塞前烽燧已燃，壮士，随我上马收复河南地，叫胡人不敢南下！' },
@@ -1157,7 +1157,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 60000,
         enemyFactionId: 'xichu',
         enemyFactionName: '楚国',
-        enemyGeneralId: 'xichu_xiangyu',
+        enemyGeneralId: 'bfe_xiangliang',   // 🔴 [2026-10-25 按史] 前208 定陶之战章邯所袭杀者＝项梁（项羽在雍丘）
         enemyTroops: 45000,
         introLines: [
             { speaker: 'general', text: '项梁屡胜骄狂，其军早已懈怠！我军夜衔枚出城突袭，壮士随我陷阵，一战阵斩项梁，复我大秦威名！' },
@@ -1223,7 +1223,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'qin',
         enemyFactionName: '雍国',
-        enemyGeneralId: 'wazhai_zhanghan',
+        enemyGeneralId: 'bfe_zhangping',   // 🔴 [2026-10-25 按史] 前205 好畤/景陵所破＝章平（章邯正困守废丘）
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '三秦负隅顽抗，章平聚众阻绝崤函！汉王令老夫攻拔渑池，壮士，执紧盾矛随我登城陷阵，斩将夺旗！' },
@@ -1537,7 +1537,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 15000,
         enemyFactionId: 'luoma_diguo',
         enemyFactionName: '罗马共和国',
-        enemyGeneralId: 'gen_julius_caesar',
+        enemyGeneralId: 'bfe_crassus',   // 🔴 [2026-10-25 按史] 前53 卡莱之战罗马统帅＝克拉苏（恺撒在高卢）
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '罗马统帅克拉苏狂妄自大，七个军团深陷荒漠！安息的游牧勇士，背负强弓换乘骆驼，用箭雨把他们埋葬在黄沙中！' },
@@ -1693,7 +1693,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'huyan',
         enemyFactionName: '北匈奴',
-        enemyGeneralId: 'huyan_peicen',
+        enemyGeneralId: 'bfe_huyan_wang',   // 🔴 [2026-10-25 按史] 73 蒲类海对手是北匈奴呼衍王（库中「呼衍蒲奴」为混拼）
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '天子命我兵出酒泉重定西域！匈奴呼衍王尚在天山下负隅顽抗，壮士，随我铁骑奔袭蒲类海，一举逐走匈奴！' },
@@ -1715,7 +1715,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'qiuci',
         enemyFactionName: '龟兹贵霜联军',
-        enemyGeneralId: 'qiuci_baiba',
+        enemyGeneralId: 'bfe_shulezhong',   // 🔴 [2026-10-25 按史] 91 疏勒平叛对手＝疏勒叛王忠（白霸是班超后立的龟兹王）
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '大丈夫无他志略，犹当效傅介子、张骞立功异域！贵霜龟兹引兵拒险，壮士，随某以夷制夷，扬汉节于绝域！' },
@@ -1895,7 +1895,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'wei',
         enemyFactionName: '曹操军',
-        enemyGeneralId: 'cao_d_caocao',
+        enemyGeneralId: 'bfe_zhanghe',   // 🔴 [2026-10-25 按史] 215 巴西宕渠之战＝张飞破张郃（曹操在汉中/邺）
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '张郃欺我蜀中无人，竟敢引兵掳掠巴西！燕人张翼德在此，精选轻骑万余循山道截其前后，壮士随俺痛饮杀贼！' },
@@ -2203,7 +2203,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 45000,
         enemyFactionId: 'wei',
         enemyFactionName: '曹魏',
-        enemyGeneralId: 'wudu_dengai',
+        enemyGeneralId: 'bfe_wangjing',   // 🔴 [2026-10-25 按史] 255 洮西之战＝姜维破雍州刺史王经（邓艾在洛阳）
         enemyTroops: 55000,
         introLines: [
             { speaker: 'general', text: '继丞相遗志九伐中原！王经雍州主力正屯洮西，我已定合围之计，壮士，随我提汉家三尺剑，全歼魏军于洮水！' },
@@ -2291,7 +2291,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'tang',
         enemyFactionName: '后赵',
-        enemyGeneralId: 'cai_lishuo',
+        enemyGeneralId: 'bfe_taobao',   // 🔴 [2026-10-25 按史] 320 蓬陂坞与祖逖相持的是后赵桃豹（石勒在襄国）
         enemyTroops: 45000,
         introLines: [
             { speaker: 'general', text: '祖某中流击楫，誓清中原！胡将桃豹屯兵西台久窥我雍丘，壮士，随某出运奇米诱敌之计，全线出击荡涤羯胡！' },
@@ -2335,7 +2335,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 50000,
         enemyFactionId: 'dongjin',
         enemyFactionName: '西晋',
-        enemyGeneralId: 'yuzhou_zuti',
+        enemyGeneralId: 'bfe_wangyan',   // 🔴 [2026-10-25 按史] 311 宁平城行台元帅＝太尉王衍（祖逖不在该军）
         enemyTroops: 80000,
         introLines: [
             { speaker: 'general', text: '晋军十余万拥丧自洛阳南逃，王衍清谈误国死期已至！铁骑儿郎与壮士，随某引精骑合围宁平城，尽歼晋室残军！' },
@@ -2403,7 +2403,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'tang',
         enemyFactionName: '后赵',
-        enemyGeneralId: 'bfe3_85',
+        enemyGeneralId: 'bfe_zhanghedu',   // 🔴 [2026-10-25 按史] 350 苍亭之战＝张贺度（石琨在邯郸另路）
         enemyTroops: 60000,
         introLines: [
             { speaker: 'general', text: '羯胡暴虐荼毒中原，今日某立魏国当为汉家雪恨！石祗倾国来攻，壮士，持双刃矛随我驰骋沙场，首战必荡尽胡虏！' },
@@ -2603,7 +2603,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'murong',
         enemyFactionName: '后燕',
-        enemyGeneralId: 'dingzhou_d_murongchui',
+        enemyGeneralId: 'bfe_murongbao',   // 🔴 [2026-10-25 按史] 395 参合陂燕军主帅＝太子慕容宝（慕容垂在中山患病）
         enemyTroops: 70000,
         introLines: [
             { speaker: 'general', text: '慕容宝骄狂南还，大军渡黑水毫无防备！北风大起飞沙走石，魏军铁骑与壮士，随孤自山后掩杀，全歼燕军精锐！' },
@@ -2803,7 +2803,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 10000,
         enemyFactionId: 'tuoba',
         enemyFactionName: '北魏',
-        enemyGeneralId: 'erzhu_erzhurong',
+        enemyGeneralId: 'bfe_yangyu',   // 🔴 [2026-10-25 按史] 529 守荥阳＝东南道大都督杨昱（尔朱荣在晋阳/洛阳一线）
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '白袍军孤军深入转战千里，杨昱坚守荥阳负隅顽抗，元天穆大军在后。壮士，随某擂鼓攻城，一战定中原！' },
@@ -3114,7 +3114,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'yiduhu',
         enemyFactionName: '高昌国',
-        enemyGeneralId: 'yiduhu_quwentai',   // 🔴 [2026-10-20 首战规则] 640 高昌守国者是麴文泰
+        enemyGeneralId: 'bfe_quzhisheng',   // 🔴 [2026-10-25 按史] 640 唐军围高昌城时守方＝麴智盛（麴文泰已病死）
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '麴氏阻遏西域商路藐视天威！大军涉流沙数千里飞越葱岭，抛石机巢车已立，壮士，随某破城扬大唐威烈！' },
@@ -3202,7 +3202,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'womaya',
         enemyFactionName: '拜占庭帝国',
-        enemyGeneralId: 'womaya_muaweiye',
+        enemyGeneralId: 'bfe_vahan',   // 🔴 [2026-10-25 按史] 636 雅穆克拜占庭主帅＝瓦汉（穆阿维叶是阿拉伯一方）
         enemyTroops: 60000,
         introLines: [
             { speaker: 'general', text: '拜占庭军团重铠罗列兵力数倍于我，然狂风与风沙正助真主之剑！勇士，提利刃随安拉之剑撕裂拜占庭方阵！' },
@@ -3305,11 +3305,13 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     // #166 薛仁贵 (614 ~ 683) — 公元662年天山三箭定天山之战
 
     // #167 松赞干布 (617 ~ 650) — 公元638年松州之战
+    // 🔴 [2026-10-25 主人令「首战＝最知名的战争，游戏里套用的第一站，不是一生第一仗」] 松州之战＝唐蕃第一次战役、松赞干布最知名之战；629 年平叛不算首战。
+    // 🔴 [2026-10-25 按史修正] 敌将原填李世民（未离长安、不在场）→ 唐当弥道行军大总管侯君集；阔水道先锋牛进达九月夜袭松州城下吐蕃营、斩千余级，松赞干布引兵退、遣使谢罪复请婚（《旧唐书·吐蕃传》《资治通鉴》卷一九五）。兵力：史载吐蕃二十余万（含夸大，按规则缩放为八万）、唐步骑五万照史。
     tubo_songzanganbu: {
         generalId: 'tubo_songzanganbu',
         battleName: '松州之战',
         battleYear: 638,
-        battleType: 'field',
+        battleType: 'siege',
         role: 'attacker',
         targetName: '松州嘉诚',
         targetCityId: 'city_songzhou',
@@ -3318,18 +3320,18 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 80000,
         enemyFactionId: 'tang',
         enemyFactionName: '唐朝',
-        enemyGeneralId: 'tang_lishimin',
-        enemyTroops: 40000,
+        enemyGeneralId: 'song2_houjunji',   // 🔴 [2026-10-25 按史] 638 松州，唐当弥道行军大总管侯君集（牛进达为阔水道先锋，夜袭破营）
+        enemyTroops: 50000,
         introLines: [
-            { speaker: 'general', text: '赞普统高原勇士南下松州，欲借刀兵求通大唐秦晋之好！雪域的勇士，敲响铜鼓挺起长矛，随孤陷阵耀威！' },
-            { speaker: 'player', text: '愿随松赞干布将军共赴松州之战，大破唐朝敌军！' },
+            { speaker: 'general', text: '唐主不肯许婚，使者又言吐谷浑从中离间！赞普已统高原勇士南下松州，以兵逼婚——雪域的勇士，敲响铜鼓挺起长矛，随孤围城耀威！' },
+            { speaker: 'player', text: '愿随赞普兵临松州，逼唐许婚！' },
         ],
     },
 
     // #168 裴行俭 (619 ~ 682) — 公元680年平定西突厥阿史那匐念之战
     juandu_peixingjian: {
         generalId: 'juandu_peixingjian',
-        battleName: '平定西突厥阿史那匐念之战',
+        battleName: '平定西突厥阿史那都支之战',
         battleYear: 680,
         battleType: 'field',
         role: 'attacker',
@@ -3340,7 +3342,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'xijue',
         enemyFactionName: '西突厥',
-        enemyGeneralId: 'xijue_ashina_funian',   // 🔴 [2026-10-20 首战规则] 680 西突厥十姓可汗阿史那匐念（原势力误填西辽）
+        enemyGeneralId: 'bfe_ashina_duzhi',   // 🔴 [2026-10-25 按史] 679–680 裴行俭碎叶擒的是西突厥十姓可汗阿史那都支
         enemyTroops: 50000,
         introLines: [
             { speaker: 'general', text: '兵者诡道也，老夫施反间断其羽翼，虚造伪装直逼其营！壮士，佩刀随某长驱直入碎叶川，不战而屈人之兵！' },
@@ -3430,7 +3432,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'wuzhou_d',
         enemyFactionName: '武周',
-        enemyGeneralId: 'wuzhou_d_wuzetian',
+        enemyGeneralId: 'bfe_likaigu',   // 🔴 [2026-10-25 按史] 698 天门岭追击大祚荣＝武周李楷固（武则天在洛阳）
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '武周契丹追兵紧追不舍，靺鞨遗民退无可退！借天门岭隘道设伏，勇士，随我擂鼓下石，立震国之基业！' },
@@ -3744,7 +3746,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'womaya',
         enemyFactionName: '阿卜杜拉',
-        enemyGeneralId: 'gen_abd_al_rahman_iii',
+        enemyGeneralId: 'bfe_abdullah_ali',   // 🔴 [2026-10-25 按史] 754 尼西比斯＝阿卜杜拉·本·阿里（原填 891–961 的拉赫曼三世，差一个半世纪）
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '叔父阿卜杜拉勾结叙利亚残党图谋篡夺大统！阿布·穆斯林大军已出，勇士，随真主哈里发扫除阿卜杜拉党羽巩固王权！' },
@@ -4259,7 +4261,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'hou_zhou',
         enemyFactionName: '后唐',
-        enemyGeneralId: 'chanzhou_chairong',
+        enemyGeneralId: 'yingzhou_d2_licunxu',   // 🔴 [2026-10-25 按史] 923 德胜口是王彦章攻后唐李存勖的德胜南北城；原填柴荣（921 年生，此年两岁，后周世宗在二十多年后）
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '晋贼造浮桥锁大河扼我咽喉，铁枪王彦章受命三天必破贼寨！手持六十斤铁枪，壮士，随某驾战舟斩断浮桥生擒敌将！' },
@@ -4281,7 +4283,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'baizanting',
         enemyFactionName: '拜占庭帝国',
-        enemyGeneralId: 'baizanting_romanosi',   // 🔴 [2026-10-20 首战规则] 917 阿海洛拜占庭主帅罗曼努斯一世（原势力误填奥多西亚）
+        enemyGeneralId: 'bfe_leo_phokas',   // 🔴 [2026-10-25 按史] 917 阿海洛斯拜占庭野战军＝老利奥·福卡斯（罗曼努斯在舰队）
         enemyTroops: 62000,
         introLines: [
             { speaker: 'general', text: '拜占庭帝国倾举国军团妄图覆灭保加利亚！我伏兵已潜藏于高岗丘陵，勇士们，随沙皇全线反击，将敌人赶入黑海！' },
@@ -4303,7 +4305,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'qianshu',
         enemyFactionName: '高丽',
-        enemyGeneralId: 'zizhou_wangjian',
+        enemyGeneralId: 'bfe_wanggeon',   // 🔴 [2026-10-25 按史] 927 公山曹洞岘＝高丽太祖王建（库里 zizhou_wangjian 是前蜀王建，同名不同人）
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '王建贼党妄称正统，孤提后百济精兵奇袭新罗王都！公山峡谷伏兵已毕，勇士，随孤合围王建，射杀其大将申崇谦！' },
@@ -4391,7 +4393,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 15000,
         enemyFactionId: 'shiwaben',
         enemyFactionName: '马扎尔游牧同盟',
-        enemyGeneralId: 'gen_ulrich_augsburg',
+        enemyGeneralId: 'bfe_bulcsu',   // 🔴 [2026-10-25 按史] 955 莱希河马扎尔军主将＝布尔丘（乌尔里希是奥托一方的奥格斯堡主教）
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '匈牙利骑兵掳掠德意志数十年，今日暴雨淋湿其弓弦！神圣圣矛在孤王手中，日耳曼勇士们，重铠长矛冲锋，全歼蛮骑！' },
@@ -4479,7 +4481,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'nantang',
         enemyFactionName: '南唐',
-        enemyGeneralId: 'chuzhou_d_huangfuhui',
+        enemyGeneralId: 'bfe_liurenshan',   // 🔴 [2026-10-25 按史] 957 守寿春＝刘仁赡（皇甫晖 956 已死）
         enemyTroops: 50000,
         introLines: [
             { speaker: 'general', text: '周世宗御驾亲征淮南，南唐重兵屯驻寿春负隅顽抗！某殿前都虞候身先士卒破城擒皇甫晖，壮士，随某陷阵立大功！' },
@@ -4771,7 +4773,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 50000,
         enemyFactionId: 'song',
         enemyFactionName: '北宋',
-        enemyGeneralId: 'zhai_han_diqing',
+        enemyGeneralId: 'bfe_liuping',   // 🔴 [2026-10-25 按史] 1040 三川口宋军主将＝刘平（狄青时为延州小校）
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '赵宋朝廷斥我僭号视我为寇，今日孤统十万铁鹞子横绝延州！三川口雪谷已围刘平石元孙，党项儿郎随孤生擒宋帅！' },
@@ -4881,7 +4883,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'nongzhigao',
         enemyFactionName: '北宋',
-        enemyGeneralId: 'nongzhigao_huangshimi',
+        enemyGeneralId: 'bfe_chengong',   // 🔴 [2026-10-25 按史] 1052 守邕州＝知州陈珙（黄师宓是侬智高自己的谋主）
         enemyTroops: 15000,
         introLines: [
             { speaker: 'general', text: '交趾欺凌朝廷不顾，广源壮汉岂受任人宰割之辱！某统五千壮汉开山斩木破邕州，壮士，举战旗随我斩知州建大南国！' },
@@ -5065,7 +5067,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 35000,
         enemyFactionId: 'shule',
         enemyFactionName: '加兹尼王朝',
-        enemyGeneralId: 'shule_aersilan',
+        enemyGeneralId: 'bfe_arslan_shah',   // 🔴 [2026-10-25 按史] 1117 沙赫拉巴德＝伽色尼苏丹阿尔斯兰沙（疏勒阿尔斯兰是另一人）
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '加兹尼不尊塞尔柱苏丹之命，朕亲率铁甲战骑长驱翻越雪山！骁勇的信士，随大苏丹踏平其阵线，重整东方秩序！' },
@@ -5289,7 +5291,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'pomeilaniya',
         enemyFactionName: '波美拉尼亚公国',
-        enemyGeneralId: 'pomeilaniya_bogislaw',
+        enemyGeneralId: 'bfe_bogislaw_i',   // 🔴 [2026-10-25 按史] 1184 亚斯蒙德＝波美拉尼亚公爵博吉斯拉夫一世（1454 那位是另一人）
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '斯拉夫异教舰队突袭我丹麦海疆！主教一手执十字架一手执长剑，勇士们，迎着波涛扬帆撞击，彻底征服波罗的海！' },
@@ -5511,7 +5513,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 50000,
         enemyFactionId: 'huluo',
         enemyFactionName: '古尔王朝',
-        enemyGeneralId: 'huluo_jiyasiding',
+        enemyGeneralId: 'bfe_muhammad_ghur',   // 🔴 [2026-10-25 按史] 1191 第一次塔兰＝穆罕默德·古尔（吉亚斯丁在古尔/呼罗珊）
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '突厥突厥贼寇越山犯我祖土！拉其普特王公战象森严阔剑如雪，骁勇的战士，随普里特维拉吉决死冲锋，重创古尔蛮兵！' },
@@ -5581,7 +5583,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'zhaowu',
         enemyFactionName: '察合台蒙古军',
-        enemyGeneralId: 'zhaowu_timuermieli',
+        enemyGeneralId: 'bfe_chagatai',   // 🔴 [2026-10-25 按史] 1221 攻乌奇＝察合台、窝阔台所部（帖木儿灭里是花剌子模守将）
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '蒙古蛮骑席卷花剌子模兵锋指印度！木尔坦坚垒粮饷充盈，真主庇佑信徒，勇士，随老夫据险开弓，教鞑靼铁骑折戟！' },
@@ -5717,7 +5719,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 35000,
         enemyFactionId: 'song',
         enemyFactionName: '蒙古仆从军',
-        enemyGeneralId: 'xiangzhou_lvwenhuan',
+        enemyGeneralId: 'bfe_youxian',   // 🔴 [2026-10-25 按史] 1239 襄阳守将＝游显（吕文焕 1225 年生，此年 14 岁）
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '襄汉乃东南门户，重镇陷敌天下痛心！孟某调集精锐水陆并进，断其浮桥焚其粮草，壮士，持长槊随某夺回襄阳重镇！' },
@@ -5897,7 +5899,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'yuan_d',
         enemyFactionName: '大元',
-        enemyGeneralId: 'yuan_d_hubilie',
+        enemyGeneralId: 'bfe_umar',   // 🔴 [2026-10-25 按史] 1288 白藤江元水军＝乌马儿（忽必烈在大都）
         enemyTroops: 50000,
         introLines: [
             { speaker: 'general', text: '元寇三度犯我南陲！江底已密布裹铁巨桩，待潮退敌船倾覆，大越子民与壮士，随兴道王鸣金合围，生擒元将扬威白藤江！' },
@@ -6107,7 +6109,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'tiaodun_qishi',
         enemyFactionName: '条顿骑士团',
-        enemyGeneralId: 'gen_ulrich_jungingen',
+        enemyGeneralId: 'bfe_kniprode',   // 🔴 [2026-10-25 按史] 1370 鲁道条顿主帅＝大团长克尼普罗德（容金根 1360 才生）
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '条顿十字魔军年年犯我边境屠戮祭司！今日风雪连天短兵相接，异教高贵好男儿，举起阔剑随大公血战冰原，斩杀大骑士长！' },
@@ -6909,7 +6911,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'osman',
         enemyFactionName: '奥斯曼帝国',
-        enemyGeneralId: 'osman_mehmed_ii',
+        enemyGeneralId: 'bfe_suleiman_pasha',   // 🔴 [2026-10-25 按史] 1475 瓦斯卢伊奥斯曼军＝哈德姆·苏莱曼帕夏（穆罕默德二世未亲征）
         enemyTroops: 90000,
         introLines: [
             { speaker: 'general', text: '突厥大军十万之众压境，浓雾大作沼泽陷足！战角自山谷四方响起，摩尔达维亚勇士，随大公万箭齐发将侵略者埋入泥潭！' },
@@ -6953,7 +6955,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'habusibao',
         enemyFactionName: '哈布斯堡神圣罗马',
-        enemyGeneralId: 'gen_maximilian',
+        enemyGeneralId: 'bfe_frederick_iii',   // 🔴 [2026-10-25 按史] 1485 维也纳守方＝皇帝腓特烈三世（马克西米连在尼德兰）
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '哈布斯堡皇帝夺我匈牙利圣冠，黑军佣兵今日必雪此耻！重装火枪步兵包围多瑙坚城，勇士，随渡鸦之王踏入维也纳皇宫！' },
@@ -7085,7 +7087,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'tumed',
         enemyFactionName: '右翼蒙古部族',
-        enemyGeneralId: 'tumed_andahan',
+        enemyGeneralId: 'bfe_yibula',   // 🔴 [2026-10-25 按史] 1510 达兰特哩衮右翼首领＝太师亦不剌（俺答 1507 年生，此年 3 岁）
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '黄金家族的血脉绝不容异姓逆臣僭越！达延汗亲统左翼察哈尔万户南下，控弦的蒙古儿郎，随孤马踏连营重统六万户草原！' },
@@ -7107,7 +7109,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'xibanya',
         enemyFactionName: '神圣同盟联军',
-        enemyGeneralId: 'xibanya_pisaluo',
+        enemyGeneralId: 'bfe_doria',   // 🔴 [2026-10-25 按史] 1538 普雷韦扎神圣同盟舰队＝安德烈亚·多里亚（皮萨罗在秘鲁）
         enemyTroops: 60000,
         introLines: [
             { speaker: 'general', text: '基督教联合舰队巨舰如林，然各怀鬼胎！加莱桨帆船借风破浪，真主的红胡子在此，勇士们，点燃火炮随我撕碎多利亚的铁索！' },
@@ -7419,7 +7421,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 70000,
         enemyFactionId: 'siam',
         enemyFactionName: '阿瑜陀耶暹罗王国',
-        enemyGeneralId: 'siam_nalixuan',
+        enemyGeneralId: 'bfe_mahathammaracha',   // 🔴 [2026-10-25 按史] 1569 阿瑜陀耶守方＝玛欣他拉提拉（纳黎萱时年 14、在缅方）
         enemyTroops: 50000,
         introLines: [
             { speaker: 'general', text: '暹罗白象王抗拒天威拒纳盟贡！缅甸水陆大象与火器大军掘壕围城十月，勇士，持战斧随勃印曩大王踏平坚城，混一中南半岛！' },
@@ -7441,7 +7443,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'hantawadi',
         enemyFactionName: '白古王国',
-        enemyGeneralId: 'hantawadi_mangyinglong',
+        enemyGeneralId: 'bfe_takayutpi',   // 🔴 [2026-10-25 按史] 1538 勃固守方＝多迦逾毕（莽应龙是东吁一方主将）
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '孟族古都据守海湾天险，老王虽坚其众已乱！葡萄牙火枪手与东吁战象并力攻城，勇士们，执盾随国王踏平护城壕，立东吁霸业！' },
@@ -7463,7 +7465,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'oda',
         enemyFactionName: '织田氏',
-        enemyGeneralId: 'owari_zhitianxinchang',
+        enemyGeneralId: 'bfe_oda_nobuhide',   // 🔴 [2026-10-25 按史] 1548 小豆坂织田方主将＝织田信秀（信长时年 14，不宜作主将）
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '尾张弹正忠欲争三河，此地乃西进海道关节点！雪斋禅师与今川精骑已占高冈，东海道第一弓取在此，壮士，跨鞍随我扫灭织田！' },
@@ -7799,7 +7801,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 35000,
         enemyFactionId: 'dongxu',
         enemyFactionName: '缅甸东吁王国',
-        enemyGeneralId: 'gen_nanda_bayin',
+        enemyGeneralId: 'bfe_mingyiswa',   // 🔴 [2026-10-25 按史] 1593 廊沙拉缅军＝王储明耶苏瓦（莽应里留守勃固）
         enemyTroops: 50000,
         introLines: [
             { speaker: 'general', text: '缅甸大军渡河犯我阿瑜陀耶！黑王子战象突入敌重围，在此狭路相逢决死象战，勇士，持长战矛随国王诛杀缅甸王储！' },
@@ -7983,7 +7985,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'bolan',
         enemyFactionName: '波兰立陶宛联邦',
-        enemyGeneralId: 'bolan_suobiesiji',
+        enemyGeneralId: 'bfe_potocki',   // 🔴 [2026-10-25 按史] 1648 黄水波军＝盖特曼斯特凡·波托茨基（索别斯基时年 19）
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '波兰贵族将我们乌克兰哥萨克视作农奴！鞑靼盟骑已断其后路，黄水河谷泥泞深陷，塞契的勇士们，拔出弯刀随盖特曼求自由！' },
@@ -8190,7 +8192,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'manzhou_d',
         enemyFactionName: '清朝',
-        enemyGeneralId: 'gen_kangxi',
+        enemyGeneralId: 'bfe_fuquan',   // 🔴 [2026-10-25 按史] 1690 乌兰布通清军＝抚远大将军福全（康熙病返博洛和屯）
         enemyTroops: 60000,
         introLines: [
             { speaker: 'general', text: '清帝发重兵压准噶尔境！某以万头骆驼缚木成城结驼城火枪阵，火炮齐射据山坚守，卫拉特蒙古勇士，随博硕克图汗血战待击！' },
@@ -8258,7 +8260,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'dzungar',
         enemyFactionName: '准噶尔西藏守军',
-        enemyGeneralId: 'dzungar_galedanceling',
+        enemyGeneralId: 'bfe_tsering_dondub',   // 🔴 [2026-10-25 按史] 1720 西藏准噶尔守军＝大策凌敦多布（噶勒丹策凌 1727 才继位）
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '准噶尔寇乱西藏戕害达赖！某为前锋提绿营穿雪山峡谷夺三桥踏平巴塘，壮士，持火绳枪随威信公长驱入拉萨，扬大清龙旗！' },
@@ -8705,28 +8707,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
 
     // #441 申伯 — 公元前821年宣王南征谢邑封国战
 
-    // #442 伊菲托斯 — 公元前776年奥林匹亚立约圣战
-    yilisi_yifeituosi: {
-        generalId: 'yilisi_yifeituosi',
-        battleName: '奥林匹亚立约圣战',
-        battleYear: -776,
-        battleType: 'siege',
-        role: 'defender',
-        targetName: '奥林匹亚',
-        targetCityId: 'city_aolinpiya',
-        targetLat: 37.639,
-        targetLng: 21.631,
-        myTroops: 10000,
-        enemyFactionId: 'yilisi',
-        enemyFactionName: '皮萨',
-        enemyGeneralId: 'bfe_pisa_king',
-        enemyTroops: 12000,
-        introLines: [
-            { speaker: 'general', text: '战乱荼毒伯罗奔尼撒，神谕严令休战以修竞技！皮萨蛮悍欲毁神域圣火，埃利斯勇士，随我列阵卫护阿波罗神坛！' },
-            { speaker: 'player', text: '愿随伊菲托斯将军共守奥林匹亚立约圣战，大破皮萨敌军！' },
-        ],
-    },
-
     // #443 迈达斯 — 公元前696年抵抗辛梅里安入侵之战
     fulijiya_maidasi: {
         generalId: 'fulijiya_maidasi',
@@ -8816,52 +8796,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '齐侯狂妄逐我晋使、侮我正卿！中原霸权岂容挑衅，羊舌氏铁车已越长城，壮士，随郤克韩厥整旅奋战，大破齐师！' },
             { speaker: 'player', text: '愿随羊舌职将军共赴鞍之战，大破齐国敌军！' },
-        ],
-    },
-
-    // #449 吾离 — 公元前638年允戎抗晋迁陆浑之战
-    yun_wuli: {
-        generalId: 'yun_wuli',
-        battleName: '允戎抗晋迁陆浑之战',
-        battleYear: -638,
-        battleType: 'siege',
-        role: 'defender',
-        targetName: '陆浑关',
-        targetCityId: 'city_lushi',
-        targetLat: 34.05,
-        targetLng: 111.05,
-        myTroops: 15000,
-        enemyFactionId: 'jin',
-        enemyFactionName: '晋国',
-        enemyGeneralId: 'jin_xianzhen',
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '秦晋擅伐迫我瓜畴戎族迁徙！陆浑关山川险固，虽寄人篱下亦断不受屈！戎狄的好男儿，抄起劲弓胡刀随某据关痛击！' },
-            { speaker: 'player', text: '愿随吾离将军共守允戎抗晋迁陆浑之战，大破晋国敌军！' },
-        ],
-    },
-
-    // #450 白狄子 — 公元前627年箕之战破晋之役
-    baidi_baidizi: {
-        generalId: 'baidi_baidizi',
-        battleName: '箕之战破晋之役',
-        battleYear: -627,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '蒲县箕地',
-        // 🔴 [2026-10-20 修正] 原 targetCityId 填集宁（内蒙古 41.03/113.1），箕在晋地蒲县（36.41/111.10）
-        //    → 锚定最近的晋国城曲沃（狄伐晋、晋迎击于箕，战场在晋地）
-        targetCityId: 'city_quwo',
-        targetLat: 36.41,
-        targetLng: 111.10,
-        myTroops: 20000,
-        enemyFactionId: 'jin',
-        enemyFactionName: '晋国',
-        enemyGeneralId: 'jin_xianzhen',
-        enemyTroops: 30000,
-        introLines: [
-            { speaker: 'general', text: '晋侯乘殽之战虚耗国力，敢犯我西北草原！白狄骑射百发百中，勇士们，策马随头领呼啸下山截击，教晋师大夫殒命！' },
-            { speaker: 'player', text: '愿随白狄子将军共赴箕之战破晋之役，大破晋国敌军！' },
         ],
     },
 
@@ -9026,28 +8960,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #459 阿里斯塔 — 公元前498年撒狄攻坚战
-    aiaoniya_alisita: {
-        generalId: 'aiaoniya_alisita',
-        battleName: '撒狄攻坚战',
-        battleYear: -498,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '斯法尔德城下',
-        targetCityId: 'city_sifaerde',
-        targetLat: 38.48,
-        targetLng: 28.03,
-        myTroops: 25000,
-        enemyFactionId: 'aqimeinide',
-        enemyFactionName: '波斯阿契美尼德帝国',
-        enemyGeneralId: 'aqimeinide_daliushi',
-        enemyTroops: 30000,
-        introLines: [
-            { speaker: 'general', text: '波斯奴役爱奥尼亚已极！雅典战舰已助阵，怒火必焚敌总督驻地！自由的希腊勇士，操重盾长矛随某攻入撒狄坚垒！' },
-            { speaker: 'player', text: '愿随阿里斯塔将军共赴撒狄攻坚战，大破波斯阿契美尼德帝国敌军！' },
-        ],
-    },
-
     // #460 勾践 — 公元前478年笠泽之战
     yue_goujian: {
         generalId: 'yue_goujian',
@@ -9093,50 +9005,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '狭窄海峡混战成一团，希腊三列桨船撞角凶猛！卡里亚战舰进退自如，勇士们，握紧战斧听我号令，冲撞截杀斩断重围！' },
             { speaker: 'player', text: '愿随阿尔特米西亚将军共赴萨拉米斯海战，大破希腊同盟舰队敌军！' },
-        ],
-    },
-
-    // #462 阿尔西提斯 — 公元前334年格拉尼库斯渡河阻击战
-    xiaofulijiya_aerxitis: {
-        generalId: 'xiaofulijiya_aerxitis',
-        battleName: '格拉尼库斯渡河阻击战',
-        battleYear: -334,
-        battleType: 'field',
-        role: 'defender',
-        targetName: '达斯基利翁格拉尼库斯河',
-        targetCityId: 'city_dasijiliweng',
-        targetLat: 40.1322,
-        targetLng: 28.0504,
-        myTroops: 30000,
-        enemyFactionId: 'maqidun',
-        enemyFactionName: '马其顿王国',
-        enemyGeneralId: 'gen_alexander_great',
-        enemyTroops: 35000,
-        introLines: [
-            { speaker: 'general', text: '亚历山大蛮骑欲渡格拉尼库斯河！某与诸总督合兵背水据岸，波斯铁骑长矛森森，壮士，随某趁敌半渡出击，斩其统帅！' },
-            { speaker: 'player', text: '愿随阿尔西提斯将军共守格拉尼库斯渡河阻击战，大破马其顿王国敌军！' },
-        ],
-    },
-
-    // #463 马尼亚 — 公元前399年达尔达尼亚保卫战
-    teluoyi_maniya: {
-        generalId: 'teluoyi_maniya',
-        battleName: '达尔达尼亚保卫战',
-        battleYear: -399,
-        battleType: 'siege',
-        role: 'defender',
-        targetName: '特洛伊古堡',
-        targetCityId: 'city_teluoyi',
-        targetLat: 39.9575,
-        targetLng: 26.2389,
-        myTroops: 12000,
-        enemyFactionId: 'lagoniya',
-        enemyFactionName: '斯巴达',
-        enemyGeneralId: 'bfe_cleombrotus',
-        enemyTroops: 20000,
-        introLines: [
-            { speaker: 'general', text: '夫君虽逝，妾身统领达尔达尼亚城堡未尝一失！希腊雇佣兵登梯而来，忠诚的甲士与壮士，随女总督推石发弩誓卫古堡！' },
-            { speaker: 'player', text: '愿随马尼亚将军共守达尔达尼亚保卫战，大破斯巴达敌军！' },
         ],
     },
 
@@ -9205,28 +9073,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '变法十年大秦锐士所向无敌！某已设盟会伏兵诈擒公子卬，魏师无主军心自乱，壮士，随商君纵马掩杀，全复西河故土！' },
             { speaker: 'player', text: '愿随商鞅将军共赴西河之战诈擒公子卬，大破魏国敌军！' },
-        ],
-    },
-
-    // #468 阿曼阿托 — 公元前524年锡瓦沙漠伏击波斯残军战
-    ameng_jisi: {
-        generalId: 'ameng_jisi',
-        battleName: '锡瓦沙漠伏击波斯残军战',
-        battleYear: -524,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '锡瓦沙漠腹地',
-        targetCityId: 'city_xiwa',
-        targetLat: 29.2,
-        targetLng: 25.52,
-        myTroops: 10000,
-        enemyFactionId: 'aqimeinide',
-        enemyFactionName: '波斯阿契美尼德帝国',
-        enemyGeneralId: 'gen_cambyses',   // 🔴 [2026-10-20 首战规则] 前524 在位的是冈比西斯二世（前530–522），大流士前522才即位
-        enemyTroops: 20000,
-        introLines: [
-            { speaker: 'general', text: '冈比西斯狂妄狂徒遣五万兵欲焚阿蒙神庙！大漠狂沙遮天蔽日，沙漠勇士，拔出弯刀随神官乘沙暴掩杀，尽歼狂徒！' },
-            { speaker: 'player', text: '愿随阿曼阿托将军共赴锡瓦沙漠伏击波斯残军战，大破波斯阿契美尼德帝国敌军！' },
         ],
     },
 
@@ -9359,28 +9205,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '亚历山大筑高陵堆巨炮欲平加沙！黑人勇士与阿拉伯雇佣军誓死不降，狂风吹不倒铁血统帅，壮士随某出死力守御孤城！' },
             { speaker: 'player', text: '愿随巴提斯将军共守加沙围城战，大破马其顿王国敌军！' },
-        ],
-    },
-
-    // #475 西比尔提乌斯 — 公元前317年帕拉塔克奈战役
-    jiduoluoxiya_xibiertiwusi: {
-        generalId: 'jiduoluoxiya_xibiertiwusi',
-        battleName: '帕拉塔克奈战役',
-        battleYear: -317,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '伊斯法罕帕拉塔克奈',
-        targetCityId: 'city_yisifahan',
-        targetLat: 32.65,
-        targetLng: 51.66,
-        myTroops: 25000,
-        enemyFactionId: 'antigonid',
-        enemyFactionName: '安提柯',
-        enemyGeneralId: 'bfe_antigonus',
-        enemyTroops: 30000,
-        introLines: [
-            { speaker: 'general', text: '继业者争霸东方，安提柯大旗所指！某统东方行省轻骑战象列阵两翼，吉德罗西亚勇士，随总督长驱包抄，夺取帝国霸权！' },
-            { speaker: 'player', text: '愿随西比尔提乌斯将军共赴帕拉塔克奈战役，大破安提柯敌军！' },
         ],
     },
 
@@ -9586,28 +9410,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #487 塞乌特斯 — 公元前323年色雷斯起义反击战
-    gen_seuthes_iii: {
-        generalId: 'gen_seuthes_iii',
-        battleName: '色雷斯起义反击战',
-        battleYear: -323,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '塞乌托波利斯山谷',
-        targetCityId: 'city_seuthopolis',
-        targetLat: 42.6181,
-        targetLng: 25.3056,
-        myTroops: 20000,
-        enemyFactionId: 'maqidun',
-        enemyFactionName: '马其顿继业者军',
-        enemyGeneralId: 'gen_alexander_great',
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '亚历山大暴卒，马其顿枷锁当砸碎于今日！利西马科斯妄想吞并色雷斯，奥德里西亚的群狼，随国王持逆刃刀全线冲杀！' },
-            { speaker: 'player', text: '愿随塞乌特斯将军共赴色雷斯起义反击战，大破马其顿继业者军敌军！' },
-        ],
-    },
-
     // #488 克莱图斯 — 公元前335年佩利昂围城突围战
     dasaleiti_kleitos: {
         generalId: 'dasaleiti_kleitos',
@@ -9808,28 +9610,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #498 暴鸢 — 公元前293年伊阙之战
-    han_baoyuan: {
-        generalId: 'han_baoyuan',
-        battleName: '伊阙之战',
-        battleYear: -293,
-        battleType: 'field',
-        role: 'defender',
-        targetName: '洛阳伊阙山峡',
-        targetCityId: 'city_luoyang',
-        targetLat: 34.62,
-        targetLng: 112.45,
-        myTroops: 50000,
-        enemyFactionId: 'qin',
-        enemyFactionName: '秦国',
-        enemyGeneralId: 'qin_simacuo',
-        enemyTroops: 60000,
-        introLines: [
-            { speaker: 'general', text: '秦将白起引锐士扼伊阙两山！韩魏联兵二十四万却各怀异心，老夫率韩军扼阻正面，壮士，持劲弩随某坚守峡口，拒强秦之锋！' },
-            { speaker: 'player', text: '愿随暴鸢将军共守伊阙之战，大破秦国敌军！' },
-        ],
-    },
-
     // #499 马加斯 — 公元前274年基雷奈加抗托勒密进军战
     gen_magas: {
         generalId: 'gen_magas',
@@ -9896,28 +9676,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #502 萧何 — 公元前205年保守关中运粮定蜀之战
-    guide_d_xiaohe: {
-        generalId: 'guide_d_xiaohe',
-        battleName: '保守关中运粮定蜀之战',
-        battleYear: -205,
-        battleType: 'field',
-        role: 'defender',
-        targetName: '关中栎阳仓储枢纽',
-        targetCityId: 'city_yongcheng',
-        targetLat: 33.93,
-        targetLng: 116.37,
-        myTroops: 30000,
-        enemyFactionId: 'xichu',
-        enemyFactionName: '西楚三秦残余',
-        enemyGeneralId: 'xichu_xiangyu',
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '汉王在前线屡挫于彭城荥阳，关中乃天下根本！某安抚百姓征集兵饷，漕运连绵不绝，义士，随某整肃关中锐卒，誓援前线！' },
-            { speaker: 'player', text: '愿随萧何将军共守保守关中运粮定蜀之战，大破西楚三秦残余敌军！' },
-        ],
-    },
-
     // #503 译吁宋 — 公元前218年越人夜袭斩屠睢之战
     xiou_yixusong: {
         generalId: 'xiou_yixusong',
@@ -9937,28 +9695,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '秦帝驱屠睢五十万甲士凿山南下，残我山林！越人入穴隐匿夜出合击，断其粮道，百越勇士，持毒矢长刀随首领夜斩屠睢！' },
             { speaker: 'player', text: '愿随译吁宋将军共赴越人夜袭斩屠睢之战，大破秦国敌军！' },
-        ],
-    },
-
-    // #504 无诸 — 公元前202年助汉击楚收复闽越战
-    minyue_wuzhu: {
-        generalId: 'minyue_wuzhu',
-        battleName: '助汉击楚收复闽越战',
-        battleYear: -202,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '福州崇安故邑',
-        targetCityId: 'city_chongan',
-        targetLat: 27.76,
-        targetLng: 118.02,
-        myTroops: 20000,
-        enemyFactionId: 'xichu',
-        enemyFactionName: '西楚残部',
-        enemyGeneralId: 'xichu_xiangyu',
-        enemyTroops: 15000,
-        introLines: [
-            { speaker: 'general', text: '始皇废我王号，楚汉争霸天下分明！某率闽越子弟从汉王平定中原，今日拔剑除楚寇，东越勇士，随无诸克复闽中家园！' },
-            { speaker: 'player', text: '愿随无诸将军共赴助汉击楚收复闽越战，大破西楚残部敌军！' },
         ],
     },
 
@@ -10003,28 +9739,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '闽越贪婪连兵犯我东瓯疆界！东海王顺天奉汉，瓯海舟师与山地劲旅在此，勇士，持短兵随某借潮水设伏，尽诛犯界顽敌！' },
             { speaker: 'player', text: '愿随驺摇将军共守灭东瓯破闽越诸峰之战，大破闽越国敌军！' },
-        ],
-    },
-
-    // #507 范目 — 公元前206年从高祖定三秦前锋战
-    bandun_fanmu: {
-        generalId: 'bandun_fanmu',
-        battleName: '从高祖定三秦前锋战',
-        battleYear: -206,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '关中废丘城郊',
-        targetCityId: 'city_hanchang',
-        targetLat: 31.86,
-        targetLng: 106.75,
-        myTroops: 15000,
-        enemyFactionId: 'xichu',
-        enemyFactionName: '雍国',
-        enemyGeneralId: 'xichu_xiangyu',
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '汉王出汉中暗度陈仓，賨人劲勇天下无双！某统板楯七姓子弟陷阵歌舞前趋，壮士，操木弩白羽随范将军踏破雍军坚阵！' },
-            { speaker: 'player', text: '愿随范目将军共赴从高祖定三秦前锋战，大破雍国敌军！' },
         ],
     },
 
@@ -10288,28 +10002,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #528 郅支 — 公元前48年坚昆乌孙河谷争霸战
-    xijue_ganyanshou: {
-        generalId: 'xijue_ganyanshou',
-        battleName: '坚昆乌孙河谷争霸战',
-        battleYear: -48,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '坚昆乌布萨泊北原',
-        targetCityId: 'city_wubusabo',
-        targetLat: 49.9762,
-        targetLng: 92.0929,
-        myTroops: 30000,
-        enemyFactionId: 'xiongnu',
-        enemyFactionName: '呼韩邪匈奴',
-        enemyGeneralId: 'bfe3_48',
-        enemyTroops: 35000,
-        introLines: [
-            { speaker: 'general', text: '呼韩邪称臣纳贡作汉家家奴，辱没长生天！郅支单于横扫坚昆乌孙万里立国，不屈的草原儿郎，跨烈马随单于长矛踏平呼韩邪！' },
-            { speaker: 'player', text: '愿随郅支将军共赴坚昆乌孙河谷争霸战，大破呼韩邪匈奴敌军！' },
-        ],
-    },
-
     // #529 尉犁泛 — 公元前60年尉犁抗西域都护平定战
     weili_weilifan: {
         generalId: 'weili_weilifan',
@@ -10338,28 +10030,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
 
     // #532 子合 — 公元前50年葱岭古道截击莎车之战
 
-    // #533 毋波 — 公元前26年平定牂柯灭头兰立功战
-    gouding_wubo: {
-        generalId: 'gouding_wubo',
-        battleName: '平定牂柯灭头兰立功战',
-        battleYear: -26,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '广南句町山谷',
-        targetCityId: 'city_guangnan',
-        targetLat: 23.7553,
-        targetLng: 105.3864,
-        myTroops: 15000,
-        enemyFactionId: 'yelang',
-        enemyFactionName: '夜郎',
-        enemyGeneralId: 'bfe3_50',
-        enemyTroops: 20000,
-        introLines: [
-            { speaker: 'general', text: '夜郎王兴背盟反汉残虐西南！句町王毋波从汉太守调兵讨伐，长牌长矛深林列阵，壮士，随某疾进伏击斩杀夜郎军，定西南夷！' },
-            { speaker: 'player', text: '愿随毋波将军共赴平定牂柯灭头兰立功战，大破夜郎军！' },
-        ],
-    },
-
     // #534 阿玛尼伦纳斯 — 公元前24年突袭罗马阿斯旺之战
     kushi_amanilunnasi: {
         generalId: 'kushi_amanilunnasi',
@@ -10382,11 +10052,12 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #535 王莽 — 公元前23年昆阳之战
+    // #535 王莽 — 公元23年昆阳之战
+    // 🔴 [2026-10-25 按史修正] 昆阳之战在公元 23 年（新莽地皇四年、更始元年），原填 -23（公元前 23 年）晚算 46 年，王莽、刘秀都还没起兵。
     dixiang_wangmang: {
         generalId: 'dixiang_wangmang',
         battleName: '昆阳之战',
-        battleYear: -23,
+        battleYear: 23,
         battleType: 'field',
         role: 'attacker',
         targetName: '昆阳城外',
@@ -10457,28 +10128,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     },
 
     // #542 阿斯普尔 — 公元20年博斯普鲁斯自立击斯基泰
-
-    // #543 公孙述 — 公元26年白帝城击退荆州任光战
-    kui_gongsunshu: {
-        generalId: 'kui_gongsunshu',
-        battleName: '白帝城击退荆州任光战',
-        battleYear: 26,
-        battleType: 'siege',
-        role: 'defender',
-        targetName: '白帝城瞿塘峡口',
-        targetCityId: 'city_baidicheng2',
-        targetLat: 31.043,
-        targetLng: 109.57,
-        myTroops: 35000,
-        enemyFactionId: 'han_d',
-        enemyFactionName: '东汉光武军',
-        enemyGeneralId: 'bfe_ren_guang',
-        enemyTroops: 30000,
-        introLines: [
-            { speaker: 'general', text: '白龙现于府邸，天下未定蜀帝当立！峡江险阻天赐白帝铁城，楼船巨舰锁死瞿塘，巴蜀甲士与壮士，随某据天险全歼来犯之敌！' },
-            { speaker: 'player', text: '愿随公孙述将军共守白帝城击退荆州任光战，大破东汉光武军敌军！' },
-        ],
-    },
 
     // #544 任贵 — 公元42年邛都反汉自立袭越巂战
 
@@ -11281,7 +10930,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'dzungar',
         enemyFactionName: '绰罗斯',
-        enemyGeneralId: 'dzungar_galedanceling',
+        enemyGeneralId: 'bfe_xiaoceling',   // 🔴 [2026-10-25 按史] 1731 和通泊前线指挥＝小策零敦多布（噶勒丹策凌在后方定策）
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '绰罗斯噶勒丹策凌引军来犯科布多和通泊湖畔，傅尔丹今率众迎战！壮士，随本将列阵，一战破敌！' },
@@ -12025,7 +11674,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 60000,
         enemyFactionId: 'manzhou_d',
         enemyFactionName: '大清',
-        enemyGeneralId: 'gen_zengguofan',
+        enemyGeneralId: 'bfe_zengguoquan',   // 🔴 [2026-10-25 按史] 1862 雨花台被围的湘军主帅＝曾国荃（曾国藩坐镇安庆）
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '湘军扎营雨花台，围我天京！本忠王亲率太平军十三王救驾，此战当破湘军营、解天京之围！壮士，随我冲阵！' },
@@ -12211,7 +11860,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 39000,
         enemyFactionId: 'tiaodun_qishi',
         enemyFactionName: '条顿骑士团',
-        enemyGeneralId: 'gen_ulrich_augsburg',
+        enemyGeneralId: 'gen_ulrich_jungingen',   // 🔴 [2026-10-25 按史] 1410 格伦瓦德条顿大团长＝乌尔里希·冯·容金根（原填奥格斯堡主教乌尔里希，卒 973，不在场）
         enemyTroops: 27000,
         introLines: [
             { speaker: 'general', text: '条顿骑士团欺我立陶宛与波兰久矣，今日两国联军会猎格伦瓦德！壮士，随朕冲阵，踏破骑士团铁甲！' },
@@ -12338,26 +11987,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '李信轻兵深入，三日三夜不顿舍！我楚军示弱诱之，今当追而击之！壮士，随本将反攻，破秦军！' },
             { speaker: 'player', text: '愿随项燕将军反击秦军，破李信！' },
-        ],
-    },
-    gen_toghtekin: {
-        generalId: 'gen_toghtekin',
-        battleName: '1101年十字军之役',
-        battleYear: 1101,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '赫拉克利亚原野',
-        targetCityId: 'city_amaxiya',
-        targetLat: 40.6,
-        targetLng: 35.5,
-        myTroops: 25000,
-        enemyFactionId: 'lunbadi',
-        enemyFactionName: '伦巴第',
-        enemyGeneralId: 'bfe_albert_lombard',
-        enemyTroops: 20000,
-        introLines: [
-            { speaker: 'general', text: '三路十字军自乱阵脚，本阿塔贝格与大马士革之众已会猎于此！壮士，随我合击，叫这些法兰克人有来无回！' },
-            { speaker: 'player', text: '愿随图格特金合击十字军，击破伦巴第人！' },
         ],
     },
     gen_sayf_al_dawla: {

@@ -51,7 +51,7 @@ import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { getGeneralProfile } from '../data/GeneralSkills';
 import { getFactionGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
-import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig } from '../data/ExpeditionLegions';
+import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig, getGeneralEliteConfig } from '../data/ExpeditionLegions';
 import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 import { getGameMode } from '../data/generalOnStage';
 
@@ -97,6 +97,7 @@ import {
     SIDE_CAP, TRIGGER, SPRITE_TROOPS, CORPSE_KEEP, FLEE_SPD, FLEE_DUR, FLAG_EVERY,
     FLAG_SCALE, FLAG_FALL, FLAG_POLE_RATIO, FLAG_POLE_LIFT, BATCH_COOLDOWN, FADE_IN,
     DEPLOY_SECS, DEPLOY_FADE, ARRIVE_EPS, MARCH_REL, LANE_REGROUP_SEC, LANE_TRACK_EPS, LANE_BEHIND_FREE, LANE_BEHIND_PEN,
+    LANE_REGROUP_MAX_BACK, LANE_REGROUP_MAX_DIST,
     LANE_W, MARCH_R, SPREAD_CAP, SEP_DIST,
     SEP_SMOOTH, SEP_SPD, SEP_FIGHT, LEASH_LAT, CELL_S, STUCK_IDLE_SEC, NET_STUCK_WINDOW,
     SLIDE_RATE, SLIDE_W, KEEP_TARGET_HP, KITE_RETREAT_DIST, KITE_SAFE, KITE_RETREAT_CAP,
@@ -528,8 +529,15 @@ export class Scene13WarLayer {
         this.skillCastCooldown = 0;
         this.skillCastWallUntil = 0;
 
-        const resolveEliteTier = (eliteName: string | null | undefined, factionId: string | null | undefined, cityId: string | null | undefined, isDef: boolean): number | null => {
+        const resolveEliteTier = (eliteName: string | null | undefined, factionId: string | null | undefined, cityId: string | null | undefined, isDef: boolean, generalId: string | null): number | null => {
             const cleanName = eliteName?.trim();
+            // 🔴 [2026-10-25 主人令「按标准修改」] 武将专属精锐（条目上的 eliteName/eliteTier）优先按该武将配置定档：
+            //    这类番号（例：定襄道行军、河源军）不在势力/据点精锐表里，按名字查不到就会错落到势力精锐档
+            //    （唐势力＝玄甲军 T0），把武将自己的精锐档抬高——档位必须和战斗面板/环7 同源，故先查武将配置。
+            if (generalId) {
+                const gCfg = getGeneralEliteConfig(generalId);
+                if (gCfg && (!cleanName || gCfg.name === cleanName)) return gCfg.tier;
+            }
             if (cleanName) {
                 for (const cfg of Object.values(CITY_ELITE_LEGIONS)) {
                     if (cfg.name === cleanName) return cfg.tier;
@@ -557,6 +565,7 @@ export class Scene13WarLayer {
                 isDef ? init.defenderFactionId : init.attackerFactionId,
                 isDef ? init.defenderCityId : null,
                 isDef,
+                gid,
             );
             this.sideEliteTier[f] = tier;
             const profile = gid ? getGeneralProfile(gid) : null;
@@ -6266,10 +6275,12 @@ export class Scene13WarLayer {
      * 🔴 [2026-10-03 主人令「我们现在的战术模式是分10个分队……每一队战斗的时候就分散，
      *    移动的时候就回归队形」] 本方法是**全文件唯一的槽位换算处** —— 脱战走位、4 秒换目标、
      *    走位朝向三处都调它，不许各写一份（同一个算法两份副本必定漂移）。
-     * 判据三条，缺一不可：
+     * 判据五条，缺一不可：
      *   ① 本队有领队、且不是自己 —— 领队走自己的 aimAt（寻敌/巡逻）领队前行，不被拖；
      *   ② 自己「无敌人」已满 LANE_REGROUP_SEC —— 挡住索敌 0.2s 节流那批假空窗（见该常数）；
      *   ③ 玩家本人例外：点地面下的那道令没走完就不归队（见 heroOrderPending）。
+     *   ④ [2026-10-25 主人令「只优化归队」] 槽位落在自己身后 >LANE_REGROUP_MAX_BACK ⇒ 就地等，不许往回走；
+     *   ⑤ [2026-10-25 同上] 槽位离自己 >LANE_REGROUP_MAX_DIST ⇒ 不回去，交给前方索敌兜底。
      */
     private laneSlotTarget(m: WarMan, leaders: Map<number, WarMan>): [number, number] | null {
         // 攻城战（真有城墙那种）不归队：主人 2026-08-23 定「攻城战不再列阵行军，城墙坍塌后直接各自索敌接战」。
@@ -6294,6 +6305,17 @@ export class Scene13WarLayer {
         const dSide = m.slotY - leader.slotY;
         const sx = leader.x - uFwd.x * dDep + uSide.x * dSide;
         const sy = leader.y - uFwd.y * dDep + uSide.y * dSide;
+        // 🔴 [2026-10-25 主人令「只优化归队」] 归队只做**近距离对齐**，不许把人往后拖：
+        //   ① 槽位落在自己身后超过 LANE_REGROUP_MAX_BACK ⇒ 目标点收回自己脚下（就地等）。
+        //      要归也只许原地等/往前靠，绝不掉头往回走 —— 实测本局最远倒走 2474px，
+        //      就是「锚点（本队出生槽位最靠中心的活兵）落在后面 ⇒ 全队槽位都在后面 ⇒ 整队往回走」。
+        //   ② 槽位离自己超过 LANE_REGROUP_MAX_DIST ⇒ 不回去，返回 null 交给前方索敌兜底。
+        //   ⚠️ 2026-10-03 那套「跟活动锚点必须连续跟随、不能用 8px 死区」的防颤抖算法一个字不动
+        //      （返回的仍是同一套槽位坐标，只是方向/距离加了闸，见 LANE_TRACK_EPS 头注）。
+        if (-((sx - m.x) * uFwd.x + (sy - m.y) * uFwd.y) > LANE_REGROUP_MAX_BACK) {
+            return this.fieldBound(m.x, m.y);
+        }
+        if ((sx - m.x) ** 2 + (sy - m.y) ** 2 > LANE_REGROUP_MAX_DIST ** 2) return null;
         return this.fieldBound(sx, sy);
     }
 

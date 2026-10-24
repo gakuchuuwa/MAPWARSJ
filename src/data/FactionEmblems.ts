@@ -128,6 +128,37 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     wulaertu: 'ARMENIA_LION',   // 亚美尼亚·狮
     bendou: 'TREBIZOND_EAGLE',   // 特拉布宗·鹰
     ldiya: 'LYDIA_LION_HEAD',   // 吕底亚·狮首
+    // ── 2026-10-25 第五批新增史实纹章（14 种）────────────────────────────────
+    sanfoqi: 'SRIVIJAYA_SHIP',   // 三佛齐·双帆海船
+    medang: 'CANDI_TOWER',   // 马打蓝·坎蒂塔
+    malacca: 'MALACCA_BANDS',   // 满剌加·条纹新月
+    qimu: 'CHIMU_MOON',   // 奇穆·月
+    muisca: 'MUISCA_RAFT',   // 穆伊斯卡·金筏
+    manding: 'MALI_LION',   // 马里·狮与战鼓
+    kapaduoxiya: 'CAPPADOCIA_LION',   // 卡帕多细亚·狮
+    fulijiya: 'PHRYGIAN_CAP',   // 弗里吉亚·弗里吉亚帽
+    yipilusi: 'EPIRUS_EAGLE',   // 伊庇鲁斯·双头鹰持剑
+    pajiama: 'ASCLEPIUS_STAFF',   // 帕加马·蛇杖
+    bendou_d: 'PONTUS_STAR_CRESCENT',   // 本都·星月
+    fulandesi: 'ARTOIS_TOWER_LILY',   // 阿图瓦·塔与百合
+    puluowangsi: 'PROVENCE_BARS',   // 普罗旺斯·条纹
+    suzidaer: 'SUZDAL_FALCON',   // 苏兹达尔·猎鹰
+    // ── 2026-10-25 第六批新增史实纹章（10 种）────────────────────────────────
+    sailiugu: 'SELEUCID_ANCHOR',   // 塞琉古·船锚
+    tuolemi: 'PTOLEMAIC_EAGLE',   // 托勒密·鹰踏闪电
+    ansxi: 'PARTHIAN_ARCHER',   // 安息帝国·弓与箭袋
+    kanata: 'VARAHA_BOAR',   // 维查耶纳伽尔·野猪（Varaha）
+    pandiya: 'PANDAYA_FISH',   // 潘地亚·双鱼
+    sengjialuo: 'SINHALA_LION',   // 僧伽罗·狮持剑
+    abasi: 'ABBASID_STANDARD',   // 阿拔斯·黑旗
+    muwaxide: 'ALMOHAD_LATTICE',   // 穆瓦希德·格纹
+    taimier: 'MARATHA_PENNANT',   // 马拉塔·三角旗
+    aswaka: 'ASVAKA_HORSE',   // 阿斯瓦卡·马
+    // ── 2026-10-25 第七批（最后一批）新增史实纹章（4 种）──────────────────────
+    maidina: 'RASHIDUN_EAGLE',   // 拉希顿·黑鹰旗（Uqab）
+    shunga: 'TRIRATNA',   // 巽伽·三宝（triratna）
+    boluo: 'DHARMA_WHEEL12',   // 波罗帝国·十二辐法轮
+    ahaomu: 'AHOM_ELEPHANT',   // 阿豪姆·象
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

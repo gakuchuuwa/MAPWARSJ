@@ -497,11 +497,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -55
         },
-        "/assets/NORTHEAST/aisin_d_huangtaiji.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": 1
-        },
         "/assets/MONGOL/pugu_ashinaguduolu.png": {
             "scale": 1.15,
             "offsetX": 0,
@@ -7553,7 +7548,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -26
         },
         "/assets/INCA/gen_minchancaman.png": {
-            "scale": 1.11,
+            "scale": 1.13,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -8226,6 +8221,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.15,
             "offsetX": -1,
             "offsetY": -10
+        },
+        "/assets/WEI/gen_hong_chengchou.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_47.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/NORTHEAST/aisin_d_huangtaiji.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/INCA/bfe_chanca_chief.png": {
+            "scale": 1.26,
+            "offsetX": 14,
+            "offsetY": -39
         }
     },
     "folderGuides": {

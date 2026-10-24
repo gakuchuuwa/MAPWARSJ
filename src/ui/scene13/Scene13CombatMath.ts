@@ -122,6 +122,11 @@ export const ARRIVE_EPS = 8;
 export const MARCH_REL = 360;
 export const LANE_REGROUP_SEC = 1.0;
 export const LANE_TRACK_EPS = 1;
+/** 🔴 [2026-10-25 主人令「只优化归队」] 归队槽位落在自己身后超过此距离（px，沿进军方向）⇒ 就地等，
+ *  不许被拖回去（实测有 2474px 的整队回拉）。近距对齐照旧。 */
+export const LANE_REGROUP_MAX_BACK = 150;
+/** 🔴 [2026-10-25 同上] 归队槽位离自己超过此距离（px）⇒ 不回去，交给前方索敌兜底 */
+export const LANE_REGROUP_MAX_DIST = 800;
 /** 队级目标改派的方向闸（见 updateLaneTargets 第二遍）：敌队在本队身后 ≤ 此距离（px，沿进军方向）不罚，贴背后照样回头 */
 export const LANE_BEHIND_FREE = 200;
 /** 身后超出 LANE_BEHIND_FREE 的每 1px 折算多少分（打分单位 = px） */

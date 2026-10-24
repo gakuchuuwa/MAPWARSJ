@@ -359,7 +359,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     longswordsman: {name:"重装剑士",cls:"melee",sz:1,hp:60,atk:9,meleeArmor:1,pierceArmor:1,rng:0,reload:2,spd:45,dmgType:"melee",bonus:{29:6,21:3},armorTags:[1,31]},
     champi_warrior: { name: '蔷琵勇士',cls:"melee",sz:1,hp:55,atk:9,meleeArmor:0,pierceArmor:3,rng:0,reload:2,spd: 44,dmgType:"melee",bonus:{29:1,21:2,20:3},armorTags:[1,31]},
     champi_runner: { name: '蔷琵飞毛腿',cls:"melee",sz:1,hp:40,atk:5,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd: 44,dmgType:"melee",bonus:{29:1,20:2},armorTags:[1,31]},
-    champi_scout: { name: '蔷琵斥候',cls:"melee",sz:1,hp:35,atk:3,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd: 40,dmgType:"melee",bonus:{29:3,8:1,30:1,20:2},armorTags:[1,31]},
+    champi_scout: { name: '蔷琵斥候',cls:"melee",sz:1,hp:35,atk:3,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd: 44,dmgType:"melee",bonus:{29:3,8:1,30:1,20:2},armorTags:[1,31]},
     jian_swordman_unshielded: {name:"华夏双手步兵",cls:"melee",sz:1,hp:70,atk:11,meleeArmor:0,pierceArmor:2,rng:0,reload:2.0,spd: 38,dmgType:"melee",bonus:{21:2,15:4},armorTags:[1,19,29,31]},
     cavalier: {name:"骑士高级",cls:"cav",sz:1,hp:120,atk:12,meleeArmor:2,pierceArmor:2,rng:0,reload:1.8,spd: 56,dmgType:"melee",armorTags:[8,31]},
     flamethrower: { name: '华夏喷火车特殊',cls:"ranged",sz:1,aoe:true,hp:160,atk:4,meleeArmor:2,pierceArmor:2,rng:200,reload:0.25,spd: 24,dmgType:"melee",bonus:{11:4,13:10},armorTags:[20,31]},

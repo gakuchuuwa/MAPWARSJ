@@ -42,6 +42,23 @@ export const ERA_ORDER: Record<GeneralEra, number> = {
     imperial: 4,
 };
 
+/** 一位武将的展示用摘要（一个势力可挂多位武将，页面按「势力」一行显示，但搜索/展示要看全） */
+interface GeneralBrief {
+    id: string;
+    name: string;
+    portrait: string;
+    cityId?: string;
+    cityName?: string;
+    tier?: string;
+    era?: GeneralEra;
+    eraLabel?: string;
+    tacticalSkillId?: string;
+    /** 武将自己的条目字段（FactionGenerals 里写的 legionName / eliteName / eliteTier；没有＝跟势力/据点兜底） */
+    ownLegionName?: string;
+    ownEliteName?: string;
+    ownEliteTier?: number;
+}
+
 interface FactionRow {
     id: string;
     name: string;
@@ -81,6 +98,12 @@ interface FactionRow {
     cityBuildingStyle?: string;
     legionName?: string;
     completeness: number;
+    /**
+     * 🔴 [2026-10-25 主人报「batch-manager 搜不到洪承畴」] 一个势力可挂多位武将，
+     *   而 `entityData.generals` 只给每势力**第一位**（大明第一位＝汪乔年，洪承畴排第 9 位就搜不到）。
+     *   这里存该势力**全部**武将，供搜索与「武将」列显示用；第 0 位＝原来那一位。
+     */
+    allGenerals: GeneralBrief[];
 }
 
 interface EntityData {
@@ -94,6 +117,8 @@ interface EntityData {
     flags: Record<string, string>;
     capitals: Record<string, string>;
     generals: Record<string, { generalId: string; generalName: string; portrait: string }>;
+    /** 全部武将（一人一条；generals 只给每势力首位。2026-10-25 加：搜索/显示要覆盖全部武将） */
+    allGenerals?: Array<{ generalId: string; generalName: string; portrait: string; factionId: string; cityId?: string }>;
     profiles: Record<string, {
         tier: string; tacticalSkillId: string; strategicSkillId?: string;
         advantageSkillId?: string; balanceSkillId?: string; disadvantageSkillId?: string;
@@ -167,6 +192,8 @@ let filterMode: 'all' | 'incomplete' | 'no-general' | 'no-portrait' | 'no-elite'
 let sortCol = 'id';
 let sortAsc = true;
 let editingFactionId: string | null = null;
+/** 搜索命中的武将（点行时记下，编辑面板顶部提示「本页只编辑该势力第一位武将」） */
+let searchHitGeneralId: string | null = null;
 
 const app = document.getElementById('app')!;
 app.innerHTML = `
@@ -188,7 +215,7 @@ app.innerHTML = `
   <button type="button" id="bm-view-cities" class="bm-btn">🏙️ 据点编辑（全部据点）</button>
 </div>
 <div class="bm-toolbar" id="bm-toolbar-entities">
-  <input id="bm-search" class="bm-input" type="search" placeholder="搜索 ID / 名称 / 旗号 / 时代…" />
+  <input id="bm-search" class="bm-input" type="search" placeholder="搜索 ID / 名称 / 旗号 / 时代 / 武将…" />
   <select id="bm-filter" class="bm-select">
     <option value="all">全部</option>
     <option value="era-antiquity">古典时代</option>
@@ -218,7 +245,7 @@ app.innerHTML = `
 
 <!-- 🔴 [2026-09-11 主人需求] 据点编辑视图：全部据点列出 + 编辑属性（含建筑风格下拉） -->
 <div class="bm-toolbar" id="bm-toolbar-cities" style="display:none">
-  <input id="bm-city-search" class="bm-input" type="search" placeholder="搜索 据点名 / ID / 势力 / 备注…" />
+  <input id="bm-city-search" class="bm-input" type="search" placeholder="搜索 据点名 / ID / 势力 / 武将 / 备注…" />
   <select id="bm-city-type" class="bm-select">
     <option value="all">全部等级</option>
     <option value="big_city">大城 big_city</option>
@@ -332,6 +359,13 @@ function injectStyles(): void {
       .bm-table tr.selected td { background:#2a2418; }
       .bm-table .cell-ok { color:#7cb87c; }
       .bm-table .cell-miss { color:#b87c7c; }
+      /* 🔴 [2026-10-25] 一势力多将：武将列要能放下「搜索命中的那位＋据点」，其余截断、全量看 title */
+      .bm-table td.cell-general { max-width:380px; }
+      .bm-table .bm-gen-more { color:#a89f8f; font-size:11px; }
+      .bm-edit-hint {
+        margin:0 0 10px; padding:8px 10px; border-radius:6px; line-height:1.6;
+        background:#2a2214; border:1px solid #6a5a2a; color:#e8d8a8; font-size:12px;
+      }
       .bm-table .cell-id { color:#8ab4c4; font-family:monospace; }
       .bm-table .cell-flag { font-size:15px; font-weight:bold; }
       .bm-table .cell-region { font-size:10px; color:#a89f8f; font-family:monospace; }
@@ -529,6 +563,31 @@ async function loadData(): Promise<void> {
     updateStats();
 }
 
+/** 据点 id → 该据点挂的武将（按武将自己的 cityId）。据点编辑视图搜索武将名要用。 */
+let generalsAtCityMap = new Map<string, GeneralBrief[]>();
+/** generalId → FactionGenerals 里那一条原始条目（取 legionName / eliteName 这类逐将字段） */
+let rawGeneralEntryMap = new Map<string, Record<string, any>>();
+
+function buildGeneralBrief(g: { generalId: string; generalName: string; portrait: string; cityId?: string }, cityMap: Map<string, { name: string }>): GeneralBrief {
+    const p = entityData!.profiles[g.generalId];
+    const era = (entityData!.eras?.[g.generalId] || GENERAL_ERA[g.generalId]) as GeneralEra | undefined;
+    const raw = rawGeneralEntryMap.get(g.generalId);
+    return {
+        id: g.generalId,
+        name: g.generalName,
+        portrait: g.portrait,
+        cityId: g.cityId,
+        cityName: g.cityId ? cityMap.get(g.cityId)?.name : undefined,
+        tier: p?.tier,
+        era,
+        eraLabel: (getGeneralEraSubtagLabel(g.generalId) ?? (era ? ERA_LABELS[era] : undefined)) || undefined,
+        tacticalSkillId: p?.tacticalSkillId,
+        ownLegionName: raw?.legionName,
+        ownEliteName: raw?.eliteName,
+        ownEliteTier: raw?.eliteTier,
+    };
+}
+
 function buildRows(): void {
     if (!entityData) return;
     const capitalReverse = new Map<string, string>();
@@ -536,6 +595,21 @@ function buildRows(): void {
         capitalReverse.set(fId, cId);
     }
     const cityMap = new Map(entityData.cities.map(c => [c.id, c]));
+
+    // 🔴 [2026-10-25 主人报「搜不到洪承畴」] 一个势力可挂多位武将：按势力、按据点各建一份全将索引
+    rawGeneralEntryMap = new Map();
+    for (const raw of Object.values(FACTION_GENERALS as Record<string, any>)) {
+        for (const g of (Array.isArray(raw) ? raw : [raw]) as any[]) {
+            if (g?.generalId) rawGeneralEntryMap.set(g.generalId, g);
+        }
+    }
+    const generalsByFaction = new Map<string, GeneralBrief[]>();
+    generalsAtCityMap = new Map();
+    for (const g of entityData.allGenerals ?? []) {
+        const brief = buildGeneralBrief(g, cityMap);
+        (generalsByFaction.get(g.factionId) ?? generalsByFaction.set(g.factionId, []).get(g.factionId)!).push(brief);
+        if (g.cityId) (generalsAtCityMap.get(g.cityId) ?? generalsAtCityMap.set(g.cityId, []).get(g.cityId)!).push(brief);
+    }
 
     rows = entityData.factions.map(f => {
         const cId = capitalReverse.get(f.id);
@@ -567,6 +641,10 @@ function buildRows(): void {
             : undefined;
         // 🔴 [2026-10-16 主人令] 打了细分标签的（如「古典 · 先秦」）优先显示细分，没打标签的只显示四时代
         const eraLabel = (gen ? getGeneralEraSubtagLabel(gen.generalId) : null) ?? (era ? ERA_LABELS[era] : undefined);
+
+        // 该势力全部武将（第一位＝原来 `generals[f.id]` 那位；接口没给 allGenerals 时退回单将）
+        const allGenerals = generalsByFaction.get(f.id)
+            ?? (gen ? [buildGeneralBrief({ ...gen, cityId: undefined }, cityMap)] : []);
 
         return {
             id: f.id,
@@ -608,6 +686,7 @@ function buildRows(): void {
                 : undefined,
             legionName,
             completeness,
+            allGenerals,
         };
     });
 }
@@ -649,7 +728,9 @@ function applyFilter(): void {
     filteredRows = rows.filter(r => {
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
-            const haystack = `${r.id} ${r.name} ${r.flagText ?? ''} ${r.cityName ?? ''} ${r.generalName ?? ''} ${r.eraLabel ?? ''} ${r.eliteName ?? ''}`.toLowerCase();
+            // 🔴 [2026-10-25 主人报「搜不到洪承畴」] 武将名/ID 要覆盖该势力**全部**武将（原来只搜每势力第一位）
+            const allGenHay = r.allGenerals.map(g => `${g.name} ${g.id} ${g.cityName ?? ''}`).join(' ');
+            const haystack = `${r.id} ${r.name} ${r.flagText ?? ''} ${r.cityName ?? ''} ${r.generalName ?? ''} ${allGenHay} ${r.eraLabel ?? ''} ${r.eliteName ?? ''}`.toLowerCase();
             if (!haystack.includes(q)) return false;
         }
         switch (filterMode) {
@@ -746,9 +827,24 @@ function renderTable(): void {
         return `<th${cls}${w} data-col="${c.key}">${c.label}${arrow}</th>`;
     }).join('');
 
+    // 🔴 [2026-10-25 主人报「搜不到洪承畴」] 搜索命中哪位武将，武将列/时代/战术技就显示那位
+    //   （势力行只存 `generals` 的第一位，不这样切，搜到了也看不到他本人的时代与技能）
+    const q = searchQuery.trim().toLowerCase();
     const tbody = filteredRows.map(r => {
         const selected = r.id === editingFactionId ? ' class="selected"' : '';
-        return `<tr${selected} data-fid="${r.id}">
+        const hits = q
+            ? r.allGenerals.filter(g => `${g.name} ${g.id} ${g.cityName ?? ''}`.toLowerCase().includes(q))
+            : [];
+        const dg: GeneralBrief | undefined = hits[0] ?? r.allGenerals[0];
+        const shownGens = hits.length ? hits : (dg ? [dg] : []);
+        const genTip = r.allGenerals.map(g => (g.cityName ? `${g.name}（${g.cityName}）` : g.name)).join('、');
+        const genCell = shownGens.length
+            ? `<span class="cell-ok" title="${genTip}">${shownGens.map(g => (hits.length && g.cityName ? `${g.name}<span class="cell-region" style="font-size:11px">（${g.cityName}）</span>` : g.name)).join('、')}</span>`
+                + (r.allGenerals.length > shownGens.length
+                    ? `<span class="bm-gen-more" title="${genTip}"> +${r.allGenerals.length - shownGens.length}</span>`
+                    : '')
+            : '<span class="cell-miss">✗</span>';
+        return `<tr${selected} data-fid="${r.id}"${hits.length && hits[0].id !== r.allGenerals[0]?.id ? ` data-hit-gen="${hits[0].id}"` : ''}>
             <td><button class="bm-copy-btn" data-copy-fid="${r.id}" title="复制为快速录入格式">📋</button></td>
             <td class="cell-id">${r.id}</td>
             <td>${r.name}</td>
@@ -757,9 +853,9 @@ function renderTable(): void {
             <td>${r.cityName ?? '<span class="cell-miss">✗</span>'}</td>
             <td>${r.lat != null ? r.lat.toFixed(1) : ''}</td>
             <td>${r.lng != null ? r.lng.toFixed(1) : ''}</td>
-            <td>${r.generalName ? `<span class="cell-ok">${r.generalName}</span>` : '<span class="cell-miss">✗</span>'}</td>
-            <td class="cell-era">${r.era ? `<span class="badge-era badge-era-${r.era}">${r.eraLabel}</span>` : (r.generalName ? '<span class="cell-miss">✗</span>' : '—')}</td>
-            <td>${r.tacticalSkillId ? formatSkill(r.tacticalSkillId) : (r.generalName ? '<span class="cell-miss">✗</span>' : '')}</td>
+            <td class="cell-general">${genCell}</td>
+            <td class="cell-era">${dg?.era ? `<span class="badge-era badge-era-${dg.era}">${dg.eraLabel}</span>` : (dg ? '<span class="cell-miss">✗</span>' : '—')}</td>
+            <td>${dg?.tacticalSkillId ? formatSkill(dg.tacticalSkillId) : (dg ? '<span class="cell-miss">✗</span>' : '')}</td>
             <td>${r.strategicSkillId ? formatSkill(r.strategicSkillId) : '—'}</td>
             <td>${r.eliteName ? `<span class="cell-ok">${r.eliteName}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${r.eliteTier != null ? `T${r.eliteTier}` : ''}</td>
@@ -784,6 +880,7 @@ function renderTable(): void {
         tr.addEventListener('click', (e) => {
             if ((e.target as HTMLElement).closest('.bm-copy-btn')) return;
             editingFactionId = (tr as HTMLElement).dataset.fid!;
+            searchHitGeneralId = (tr as HTMLElement).dataset.hitGen ?? null;
             openEditPanel(editingFactionId);
             renderTable();
         });
@@ -1109,9 +1206,19 @@ async function openEditPanel(factionId: string | null): Promise<void> {
         const curBranchKey = hStyle.branchKey ?? '';
         const isCustom = LAYER3_CUSTOM_GROUPS.some(g => g.branches.some(b => b.key === curBranchKey));
         const eliteRegionCur = row!.eliteRegion ?? '';
+        // 🔴 [2026-10-25 主人报「搜不到洪承畴」] 搜索命中的可能不是该势力第一位武将；
+        //    本页保存链路只写第一位，这里必须明示，免得把「洪承畴」的数据看成面板里那位。
+        const hitGeneral = searchHitGeneralId ? row!.allGenerals.find(g => g.id === searchHitGeneralId) : undefined;
+        const hitIdx = hitGeneral ? row!.allGenerals.findIndex(g => g.id === hitGeneral.id) + 1 : 0;
+        const hitHintHtml = hitGeneral && hitGeneral.id !== row!.generalId
+            ? `<div class="bm-edit-hint">🔎 搜索命中的是「${hitGeneral.name}」——该势力第 ${hitIdx}/${row!.allGenerals.length} 位武将。<br>
+                据点 ${hitGeneral.cityName ?? '—'}｜${hitGeneral.eraLabel ?? '无时代'}｜精锐 ${hitGeneral.ownEliteName ? `${hitGeneral.ownEliteName} T${hitGeneral.ownEliteTier ?? '?'}` : '（条目没写，跟势力）'}｜军团 ${hitGeneral.ownLegionName ?? '（条目没写，按时代×据点文化）'}<br>
+                本页每位势力只编辑<b>第一位</b>武将「${row!.generalName ?? '—'}」；逐个武将的编辑还没做，下面这些字段改了不会落到「${hitGeneral.name}」头上。</div>`
+            : '';
         els.panelContent.innerHTML = `
         <form class="bm-form" id="bm-edit-form">
           <h3>编辑: ${row!.name}</h3>
+          ${hitHintHtml}
           <div style="margin-bottom:12px;padding:8px;border:1px dashed #5a5040;border-radius:6px;background:#1a1710">
             <label style="font-size:12px;color:#aa9970;margin-bottom:4px;display:block">粘贴快速格式，自动填入下方表单：</label>
             <div style="display:flex;gap:6px">
@@ -2583,7 +2690,10 @@ function filterCities(): Array<EntityData['cities'][number] & { hierarchy: CityB
         const flag = entityData?.flags?.[c.factionId] ?? '';
         const genName = entityData?.generals?.[c.factionId]?.generalName ?? '';
         const eliteName = entityData?.elites?.[c.factionId]?.name ?? '';
-        return `${c.name} ${c.id} ${c.factionId} ${fName} ${flag} ${genName} ${eliteName} ${c.region ?? ''} ${c.buildingStyle ?? ''} ${c.hierarchy.base16} ${c.hierarchy.base16Name} ${c.hierarchy.branchKey ?? ''} ${c.hierarchy.branchName ?? ''} ${c.note ?? ''}`
+        // 🔴 [2026-10-25 主人报「搜不到洪承畴」] 据点搜索要覆盖**挂在这座据点上的武将**
+        //   （原来只搜「据点原主势力的第一位武将」，洪承畴这类非首位武将怎么搜都搜不出）
+        const cityGenHay = (generalsAtCityMap.get(c.id) ?? []).map(g => `${g.name} ${g.id}`).join(' ');
+        return `${c.name} ${c.id} ${c.factionId} ${fName} ${flag} ${genName} ${cityGenHay} ${eliteName} ${c.region ?? ''} ${c.buildingStyle ?? ''} ${c.hierarchy.base16} ${c.hierarchy.base16Name} ${c.hierarchy.branchKey ?? ''} ${c.hierarchy.branchName ?? ''} ${c.note ?? ''}`
             .toLowerCase().includes(q);
     });
 }
@@ -2604,6 +2714,14 @@ function renderCityTable(): void {
         const branchHtml = h.branchName
             ? `<span style="color:#f5e6c8;font-weight:600">${h.branchName}</span> <span class="cell-region" style="font-size:10px;color:#8fa3bb">(${h.branchKey})</span>`
             : '<span style="color:#64748b">—</span>';
+        // 🔴 [2026-10-25 主人报「搜不到洪承畴」] 据点表加「武将」列：显示**挂在这座据点上的武将**
+        //   （据点只和武将有关系，与据点原主势力无关；宁远城＝洪承畴、袁崇焕）
+        const cityGens = generalsAtCityMap.get(c.id) ?? [];
+        const cityGenTip = cityGens.map(g => `${g.name}（${g.id}）`).join('、');
+        const cityGenCell = cityGens.length
+            ? `<span class="cell-ok" title="${cityGenTip}">${cityGens.slice(0, 3).map(g => g.name).join('、')}</span>`
+                + (cityGens.length > 3 ? `<span class="bm-gen-more" title="${cityGenTip}"> +${cityGens.length - 3}</span>` : '')
+            : '<span class="cell-miss">✗</span>';
         return `<tr${sel} data-cid="${c.id}">
             <td><b>${c.name}</b></td>
             <td class="cell-id">${c.id}</td>
@@ -2612,6 +2730,7 @@ function renderCityTable(): void {
             <td>${branchHtml}</td>
             <td class="cell-region">${gameStyle ? `<span style="color:#8fd6a0;font-weight:600">${gameStyle}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${fName ? `${fName} <span class="cell-region">(${c.factionId})</span>` : c.factionId}</td>
+            <td class="cell-general">${cityGenCell}</td>
             <td>${c.troops ?? ''}</td>
             <td class="cell-region">${c.lat?.toFixed(2)}, ${c.lng?.toFixed(2)}</td>
             <td class="cell-region" title="${(c.note ?? '').replace(/"/g, '&quot;')}">${note}</td>
@@ -2620,7 +2739,7 @@ function renderCityTable(): void {
 
     els.cityTableWrap.innerHTML = `<table class="bm-table"><thead><tr>
         <th>据点</th><th>ID</th><th>等级</th><th>16母体风格</th><th>细分文明/定制 (62+3)</th><th>游戏实际采用建筑风格</th>
-        <th>势力</th><th>兵力</th><th>坐标</th><th>备注</th>
+        <th>势力</th><th>武将</th><th>兵力</th><th>坐标</th><th>备注</th>
     </tr></thead><tbody>${tbody}</tbody></table>`;
 
     els.cityTableWrap.querySelectorAll('tr[data-cid]').forEach(tr => {
