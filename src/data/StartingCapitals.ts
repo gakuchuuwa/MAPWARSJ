@@ -44,6 +44,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'kelite': 'city_knossos',
   'leangongguo': 'city_salamanca',
   'xixiliwangguo': 'city_palermo',
+    'gepids': 'city_budapeisi',   // 蒂萨河/潘诺尼亚（今布达佩斯一带）
+    'kalbids': 'city_palermo',
 
   'yipilusi': 'city_anbulajiya',
   'lagoniya': 'city_sparta',

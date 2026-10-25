@@ -808,6 +808,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yuenan': '越南',
 'jiaohuangguo': '教皇',
 'yalan': '亚兰',
+    gepids: '革皮',
+    kalbids: '卡比',
 };
 
 // @ts-ignore

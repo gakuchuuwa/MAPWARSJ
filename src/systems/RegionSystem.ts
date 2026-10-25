@@ -2216,7 +2216,7 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
 //
 // ⚠️ 此处的"中心" ≠ big_city
 //    - 区中心是 "文化-政治意义的核心"
-//    - big_city 是 "累计国都年 ≥ 92 或人口 ≥ 50万"
+//    - big_city 按城居人口判（2026-10-25 标准：≥40 万，含 40–50 万边缘；见 AGENTS.md §五.1）
 //    - 二者独立: 例: 姑臧 是 HEXI 中心, 但等级 medium_city
 //                    临淄 可为 medium_city, 但不是 NORTH 中心 (北京才是)
 //

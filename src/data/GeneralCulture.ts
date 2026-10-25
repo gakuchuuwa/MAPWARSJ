@@ -1499,6 +1499,42 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zu_d_yuanchonghuan': 'WEI',   // 大明｜袁崇焕｜据点 宁远城（2026-10-25 宁远城按史改 WEI 河朔，随据点同步）
     'zubu_mogusi': 'MONGOL',   // 阻卜｜磨古斯｜据点 特尔浑
     'zuo_d_wufu': 'BASHU',   // 唐国｜吴复｜据点 清溪关
+    'bfe_sinan_pasha': 'TURKS',   // 首战敌将｜据点 city_aidiernei
+    'bfe_qutlugh_khwaja': 'CENTRAL_ASIA',   // 首战敌将｜据点 city_almaliq
+    'khoshut_lhasang': 'TIBET',   // 首战敌将｜据点 city_luoxie
+    'yuan_nahachu': 'XIANBEI',   // 首战敌将｜据点 city_yingchang
+    'baiji_shenjian': 'KOREA',   // 首战敌将｜据点 city_jeonju
+    'dayan_cuiqianyou': 'CENTRAL',   // 首战敌将｜据点 city_luoyang
+    'ethiopia_lebnadengel': 'ETHIOPIANS',   // 首战敌将｜据点 city_fasil_fort
+    'houhan_lishouzhen': 'CENTRAL',   // 首战敌将｜据点 city_tongguan
+    'dulan_azimuhan': 'PURU',   // 首战敌将｜据点 city_baishawa
+    'buni_mathos': 'BERBER',   // 首战敌将｜据点 city_jiataji
+    'tang_qikerang': 'CENTRAL',   // 首战敌将｜据点 city_tongguan
+    'xiongnu_hunxiewang': 'KHITAN',   // 首战敌将｜据点 city_wuwei
+    'khon_wangzun': 'TIBET',   // 首战敌将｜据点 city_sajia
+    'ansxi_surena': 'PERSIAN',   // 首战敌将｜据点 city_nisa
+    'litaowan_algirdas': 'LITHUANIANS',   // 首战敌将｜据点 city_weierniwusi
+    'dulan_muzaffarkhan': 'PURU',   // 首战敌将｜据点 city_malisi
+    'qin_hengyi': 'CENTRAL',   // 首战敌将｜据点 city_changan
+    'dajin_wanyaneke': 'NORTHEAST',   // 首战敌将｜据点 city_huining
+    'kuman_tugorkan': 'CUMAN',   // 首战敌将｜据点 city_oleshky
+    'baizanting_diaofeilusi': 'BYZANTINE',   // 首战敌将｜据点 city_junshitandingbao
+    'zhelouqi_puliteweilajie': 'INDIA',   // 首战敌将｜据点 city_ajiemier
+    'baojian_herman': 'GERMANIC',   // 首战敌将｜据点 city_liga
+    'qi_tianji': 'CENTRAL',   // 首战敌将｜据点 city_linzi
+    'yuenan_ruanguangzuan': 'VIETNAMESE',   // 首战敌将｜据点 city_hoalu
+    'osman_kapadan': 'TURKS',   // 首战敌将｜据点 city_buersa
+    'bfe_andronikos_komnenos': 'BYZANTINE',   // 首战敌将｜据点 city_junshitandingbao
+    'tujue_abo_dagan': 'XIANBEI',   // 首战敌将｜据点 city_toumancheng
+    'xiongnu_yizhixie': 'XIANBEI',   // 首战敌将｜据点 city_toumancheng
+    'luosi_svyatopolk': 'SLAVIC',   // 首战敌将｜据点 city_jifu
+    'shu_masu': 'BASHU',   // 首战敌将｜据点 city_chengdu
+    'dajin_wanyan_zhongde': 'CENTRAL',   // 首战敌将｜据点 city_cai
+    'halapeng_yiba': 'MALAY',   // 孟族｜伊巴｜据点 清坎寨
+    'yuan_shidielibisi': 'KOREA',   // 大元｜石迭里必思｜据点 星主厅（耽罗）
+    'muwaxide_axatafu': 'SPANISH',   // 穆瓦希德｜阿夏塔夫｜据点 塞维利亚
+    'gepids_cunimund': 'MAGYAR',   // 革皮德｜库尼蒙德｜据点 布达佩斯（潘诺尼亚）
+    'kalbids_ibnhawwas': 'SICILIANS',   // 卡尔比德｜伊本·哈瓦斯｜据点 巴勒莫
 };
 
 /**
@@ -1510,4 +1546,4 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
 export function getGeneralCulture(generalId: string | null | undefined): BuildingStyle | undefined {
     if (!generalId) return undefined;
     return getGeneralCityCulture(generalId) ?? GENERAL_CULTURE[generalId];
-}
+}

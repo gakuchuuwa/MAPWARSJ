@@ -21,6 +21,8 @@
  *   · 全场目标：YouTube 只给点赞总数、订阅总数，认不出是谁点的——所以做成大家共享的目标：
  *     每满一档点赞（档位随在线人数），最近 PRESENT_MS 内说过话的每个人 +1 令；订阅数每涨 1，在场每人 +2 令。
  *   · 军令放的计排在付费的后面；钱和军令都够时先花军令（钱留着）。
+ *   · 防刷：点赞 / 订阅只认超过历史最高的那部分（取消再点、退订再订不重复发）；TikTok 关注一人一天只奖一次。
+ *   · 作废退回的令不受上限：那是他自己花出去的。
  */
 import type { GameApp } from '../app/GameApp';
 import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
@@ -33,7 +35,7 @@ export const ORDERS_PER_CAST = 3;
 /** 一个人最多攒多少军令（防止攒一大堆一次放完） */
 export const ORDER_CAP = 10;
 /** 同一个人两条弹幕之间至少隔多久才再算军令（毫秒） */
-const CHAT_COOLDOWN_MS = 20_000;
+export const CHAT_COOLDOWN_MS = 20_000;
 /** 说过话多久内算「在场」（毫秒）：全场目标奖励只发给在场的人 */
 const PRESENT_MS = 10 * 60_000;
 /** 订阅每涨 1，在场每人加多少令 */
@@ -67,14 +69,21 @@ interface QueuedCast {
     paid: boolean;
 }
 
-/** 一位观众的军令账户；seen / lastText / lastAt 只在内存，刷新页面就没了 */
+/** 一位观众的军令账户；seen / lastText / lastAt / lastEarn 只在内存，刷新页面就没了 */
 interface OrderAcct {
     name: string;
     n: number;
     seen: number;
     lastText: string;
     lastAt: number;
+    /** 最近一次自己挣到令的时刻（面板「军令」一行按它排，全场奖励不算） */
+    lastEarn: number;
+    /** 今天关注奖励领过了（TikTok） */
+    followed: boolean;
 }
+
+/** 语音里的令数：「加两令」比「加二令」顺 */
+const CN_NUM = ['零', '一', '两', '三', '四', '五', '六'];
 
 /** 多久试一次放排队的计（毫秒） */
 const TICK_MS = 250;
@@ -94,9 +103,9 @@ export class ViewerLive {
     private day = '';
     /** 最近几条记录（面板显示） */
     private log: string[] = [];
-    /** 全场目标：点赞 / 订阅总数的基线（-1＝还没收到过，第一次只记基线不发奖） */
-    private likeBase = -1;
-    private subBase = -1;
+    /** 全场目标：点赞 / 订阅总数的历史最高（-1＝还没收到过，第一次只记下不发奖） */
+    private likeMax = -1;
+    private subMax = -1;
     private likeProg = 0;
     private likeTotal = 0;
     private subTotal = 0;
@@ -164,14 +173,15 @@ export class ViewerLive {
         if (Number.isFinite(n) && n >= 0) this.viewers = Math.floor(n);
     }
 
-    /** 直播当前的点赞总数。第一次只记基线；之后涨多少算多少，满一档全场发令 */
+    /** 直播当前的点赞总数。第一次只记下；之后超过历史最高多少算多少，满一档全场发令 */
     public onLikeTotal(total: number): void {
         if (!Number.isFinite(total) || total < 0) return;
-        const first = this.likeBase < 0;
-        const d = total - this.likeBase;
-        this.likeBase = total;
         this.likeTotal = total;
-        if (!first && d > 0) this.addLikes(d);
+        if (this.likeMax < 0) { this.likeMax = total; return; }
+        if (total <= this.likeMax) return;
+        const d = total - this.likeMax;
+        this.likeMax = total;
+        this.addLikes(d);
     }
 
     /** 直接加几个赞（TikTok 的 liked 事件，一条＝一份） */
@@ -180,23 +190,38 @@ export class ViewerLive {
         this.addLikes(d);
     }
 
-    /** 频道当前的订阅总数。第一次只记基线；涨了就感谢并全场发令 */
+    /**
+     * 频道当前的订阅总数。第一次只记下；超过历史最高就感谢并全场发令。
+     * 1000 以上 YouTube 会四舍五入（一跳 10 个），所以不报「几位」，只报涨到多少。
+     */
     public onSubTotal(total: number): void {
         if (!Number.isFinite(total) || total < 0) return;
-        const first = this.subBase < 0;
-        const d = total - this.subBase;
-        this.subBase = total;
         this.subTotal = total;
-        if (first || d <= 0) return;
+        if (this.subMax < 0) { this.subMax = total; return; }
+        if (total <= this.subMax) return;
+        const d = total - this.subMax;
+        this.subMax = total;
         const each = Math.min(d, GOAL_BONUS_MAX) * SUB_BONUS;
         const k = this.grantPresent(each);
-        this.note(`感谢 ${d} 位新入营的将士！在场 ${k} 人各 +${each} 令`);
+        this.note(`订阅涨到 ${total}！感谢新入营的将士，在场 ${k} 人各 +${each} 令`);
+        speechAnnouncer.announceViewerThanks(`感谢新入营的将士，在场每人加${CN_NUM[each] ?? each}令`);
     }
 
-    /** 某观众关注了主播（TikTok 的 followed 事件）：个人直接 +SUB_BONUS 令 */
+    /** 换了一场直播（视频 ID 变了）：点赞 / 订阅重新记起，免得拿上一场的最高值卡住这一场 */
+    public resetGoals(): void {
+        this.likeMax = -1;
+        this.subMax = -1;
+        this.likeProg = 0;
+        this.likeTotal = 0;
+    }
+
+    /** 某观众关注了主播（TikTok 的 followed 事件）：个人 +SUB_BONUS 令，一人一天一次（防取关再关注） */
     public onFollow(uid: string, viewer: string): void {
         const name = viewer.trim() || '观众';
-        this.acct(uid, name).seen = Date.now();
+        const a = this.acct(uid, name);
+        a.seen = Date.now();
+        if (a.followed) return;
+        a.followed = true;
         this.addOrders(uid, name, SUB_BONUS);
         this.note(`感谢 ${name} 入营！+${SUB_BONUS} 令`);
     }
@@ -208,8 +233,15 @@ export class ViewerLive {
         on: boolean; names: [string, string]; counts: [number, number];
         queue: string[]; log: string[]; price: number; platform: string;
         goal: { likes: number; likeProg: number; likeStep: number; subs: number; viewers: number; present: number };
+        /** 最近自己挣到令的几个人和他们现有的令（让观众看见自己那条弹幕算上了） */
+        top: { name: string; n: number }[];
         yt: string;
     } {
+        const top = [...this.orders.values()]
+            .filter((a) => a.lastEarn > 0)
+            .sort((x, y) => y.lastEarn - x.lastEarn)
+            .slice(0, 6)
+            .map((a) => ({ name: a.name, n: a.n }));
         let a = 0, d = 0;
         for (const s of this.sides.values()) { if (s === 0) a++; else d++; }
         return {
@@ -224,6 +256,7 @@ export class ViewerLive {
                 likes: this.likeTotal, likeProg: this.likeProg, likeStep: this.likeStep(),
                 subs: this.subTotal, viewers: this.viewers, present: this.presentIds().length,
             },
+            top,
             yt: this.ytStatus,
         };
     }
@@ -254,7 +287,7 @@ export class ViewerLive {
         this.rollDay();
         let a = this.orders.get(id);
         if (!a) {
-            a = { name, n: 0, seen: 0, lastText: '', lastAt: 0 };
+            a = { name, n: 0, seen: 0, lastText: '', lastAt: 0, lastEarn: 0, followed: false };
             this.orders.set(id, a);
         }
         a.name = name;
@@ -268,45 +301,52 @@ export class ViewerLive {
         if (first) this.addOrders(id, name, 1);
     }
 
-    /** 打仗时的有效弹幕 +1 令：隔够冷却、跟上一条不同、去掉空白标点表情后至少两个字 */
+    /**
+     * 打仗时的有效弹幕 +1 令：隔够冷却、跟上一条不同、去掉空白标点表情后至少两个字。
+     * 表情：Unicode 表情（含肤色、❤️ 后面的变体符、组合表情的连接符）和 YouTube 纯文字模式下的 `:face-blue-smiling:` 都去掉。
+     */
     private earnByChat(id: string, name: string, text: string): void {
         if (!this.battleOn()) return;
         const a = this.acct(id, name);
         const now = Date.now();
-        const core = text.replace(/[\s\p{P}\p{S}]/gu, '');
+        const core = text.replace(/:[\w-]+:/g, '').replace(/[\s\p{P}\p{S}\p{M}\p{C}]/gu, '');
         if (core.length < 2 || core === a.lastText || now - a.lastAt < CHAT_COOLDOWN_MS) return;
         a.lastText = core;
         a.lastAt = now;
         this.addOrders(id, name, 1);
     }
 
-    /** 给一个人加军令（封顶）；刚攒够一计的数就提示，并把他之前没放成的那一计放出去 */
-    private addOrders(id: string, name: string, n: number): void {
+    /**
+     * 给一个人加军令（封顶；已经超过上限的——作废退回的——不往下砍）；把他之前没放成的那一计放出去。
+     * bulk＝全场奖励：不逐人刷「攒够」记录、不逐人存档（由调用方存一次），也不算他自己挣的。
+     */
+    private addOrders(id: string, name: string, n: number, bulk = false): void {
         const a = this.acct(id, name);
         const before = a.n;
-        a.n = Math.min(ORDER_CAP, a.n + n);
-        if (before < ORDERS_PER_CAST && a.n >= ORDERS_PER_CAST) {
-            this.note(`${name} 攒够 ${ORDERS_PER_CAST} 令，可以放计了`);
+        a.n = Math.max(a.n, Math.min(ORDER_CAP, a.n + n));
+        if (!bulk) {
+            a.lastEarn = Date.now();
+            if (before < ORDERS_PER_CAST && a.n >= ORDERS_PER_CAST) {
+                this.note(`${name} 攒够 ${ORDERS_PER_CAST} 令，可以放计了`);
+            }
+            this.save();
         }
-        this.save();
         this.fulfillWanted(id, name);
     }
 
-    /** 最近说过话的人（在场） */
-    private presentIds(): string[] {
+    /** 最近说过话的人（在场）：[观众 id, 昵称] */
+    private presentIds(): [string, string][] {
         const cut = Date.now() - PRESENT_MS;
-        const ids: string[] = [];
-        for (const [id, a] of this.orders) if (a.seen > cut) ids.push(id);
+        const ids: [string, string][] = [];
+        for (const [id, a] of this.orders) if (a.seen > cut) ids.push([id, a.name]);
         return ids;
     }
 
-    /** 全场每个在场的人各 +n 令；返回在场人数 */
+    /** 全场每个在场的人各 +n 令；返回在场人数。名单先抄下来——发令途中跨了零点会清空账户表 */
     private grantPresent(n: number): number {
         const ids = this.presentIds();
-        for (const id of ids) {
-            const a = this.orders.get(id)!;
-            this.addOrders(id, a.name, n);
-        }
+        for (const [id, name] of ids) this.addOrders(id, name, n, true);
+        this.save();
         return ids.length;
     }
 
@@ -408,8 +448,7 @@ export class ViewerLive {
         if (q.paid) {
             this.credit(q.uid, q.viewer, PRICE_PER_CAST);   // 钱退回余额
         } else {
-            const a = this.acct(q.uid, q.viewer);            // 军令退回
-            a.n = Math.min(ORDER_CAP, a.n + ORDERS_PER_CAST);
+            this.acct(q.uid, q.viewer).n += ORDERS_PER_CAST; // 军令原数退回，不受上限
         }
         this.note(`${q.viewer} 的计没轮到，这一仗结束了${q.paid ? '（钱已退回，下一仗还能放）' : '（军令已退回）'}`);
         this.report({ viewer: q.viewer, side: q.side, six: q.six, paid: q.paid, outcome: 'void' });
@@ -437,12 +476,14 @@ export class ViewerLive {
             if (!raw) return;
             const s = JSON.parse(raw) as {
                 day?: string; wallets?: Record<string, { name: string; cents: number }>;
-                orders?: Record<string, { name: string; n: number }>;
+                orders?: Record<string, { name: string; n: number; f?: 1 }>;
             };
             for (const [id, w] of Object.entries(s.wallets ?? {})) if (w.cents > 0) this.wallets.set(id, w);
             if (s.day === this.day) {
                 for (const [id, o] of Object.entries(s.orders ?? {})) {
-                    if (o.n > 0) this.orders.set(id, { name: o.name, n: Math.min(ORDER_CAP, o.n), seen: 0, lastText: '', lastAt: 0 });
+                    if (o.n > 0 || o.f) {
+                        this.orders.set(id, { name: o.name, n: Math.max(0, o.n), seen: 0, lastText: '', lastAt: 0, lastEarn: 0, followed: !!o.f });
+                    }
                 }
             }
         } catch { /* 隐私模式 / 坏数据：当作没有 */ }
@@ -453,7 +494,9 @@ export class ViewerLive {
             localStorage.setItem(STORE_KEY, JSON.stringify({
                 day: this.day,
                 wallets: Object.fromEntries([...this.wallets].filter(([, w]) => w.cents > 0)),
-                orders: Object.fromEntries([...this.orders].filter(([, a]) => a.n > 0).map(([id, a]) => [id, { name: a.name, n: a.n }])),
+                orders: Object.fromEntries([...this.orders]
+                    .filter(([, a]) => a.n > 0 || a.followed)
+                    .map(([id, a]) => [id, a.followed ? { name: a.name, n: a.n, f: 1 } : { name: a.name, n: a.n }])),
             }));
         } catch { /* 隐私模式 */ }
     }

@@ -73,6 +73,8 @@ export const FACTIONS: Faction[] = [
   { id: 'aquidan', name: '阿奎丹' },
   { id: 'puluowangsi', name: '普罗旺斯' },
   { id: 'lunbadi', name: '伦巴第' },
+  { id: 'gepids', name: '革皮德' },   // 🔴 [2026-10-25 按史] 5–6 世纪蒂萨河—特兰西瓦尼亚的日耳曼部落王国（567 为伦巴第与阿瓦尔所灭）
+  { id: 'kalbids', name: '卡尔比德' },   // 🔴 [2026-10-25 按史] 948–1053 西西里埃米尔王朝（巴勒莫），1072 为诺曼所灭
   { id: 'donggete', name: '东哥特' },
   { id: 'xigete', name: '西哥特' },
   { id: 'alagong', name: '阿拉贡' },

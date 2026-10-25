@@ -1610,6 +1610,42 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     feilisidin_geliya: { birth: -1050, death: -1000, kaoju: '推定' },  // 歌利亚：非利士迦特猛将（撒上17）
     haikou_maohaifeng: { birth: 1520, death: 1558, kaoju: '推定' },  // 毛海峰（王滶）：王直养子，1558 岑港败死
     handong_liuheita: { birth: 580, death: 623, kaoju: '推定' },  // 刘黑闼：隋末河北群雄，623 被俘杀
+    bfe_sinan_pasha: { birth: 1545, death: 1605, kaoju: '推定' },
+    bfe_qutlugh_khwaja: { birth: 1260, death: 1303, kaoju: '推定' },
+    khoshut_lhasang: { birth: 1650, death: 1717, kaoju: '推定' },
+    yuan_nahachu: { birth: 1320, death: 1388, kaoju: '推定' },
+    baiji_shenjian: { birth: 910, death: 936, kaoju: '推定' },
+    dayan_cuiqianyou: { birth: 700, death: 760, kaoju: '推定' },
+    ethiopia_lebnadengel: { birth: 1496, death: 1540, kaoju: '推定' },
+    houhan_lishouzhen: { birth: 890, death: 949, kaoju: '推定' },
+    dulan_azimuhan: { birth: 1770, death: 1823, kaoju: '推定' },
+    buni_mathos: { birth: -290, death: -237, kaoju: '推定' },
+    tang_qikerang: { birth: 840, death: 885, kaoju: '推定' },
+    xiongnu_hunxiewang: { birth: -160, death: -115, kaoju: '推定' },
+    khon_wangzun: { birth: 1300, death: 1354, kaoju: '推定' },
+    ansxi_surena: { birth: -85, death: -52, kaoju: '推定' },
+    litaowan_algirdas: { birth: 1296, death: 1377, kaoju: '推定' },
+    dulan_muzaffarkhan: { birth: 1760, death: 1818, kaoju: '推定' },
+    qin_hengyi: { birth: -310, death: -227, kaoju: '推定' },
+    dajin_wanyaneke: { birth: 1180, death: 1232, kaoju: '推定' },
+    kuman_tugorkan: { birth: 1030, death: 1096, kaoju: '推定' },
+    baizanting_diaofeilusi: { birth: 813, death: 842 },
+    zhelouqi_puliteweilajie: { birth: 1166, death: 1192 },
+    baojian_herman: { birth: 1170, death: 1248, kaoju: '推定' },
+    qi_tianji: { birth: -385, death: -315, kaoju: '推定' },
+    yuenan_ruanguangzuan: { birth: 1783, death: 1802 },
+    osman_kapadan: { birth: 1660, death: 1730, kaoju: '推定' },
+    bfe_andronikos_komnenos: { birth: 1118, death: 1185, kaoju: '推定' },
+    tujue_abo_dagan: { birth: 690, death: 745, kaoju: '推定' },
+    xiongnu_yizhixie: { birth: -170, death: -114, kaoju: '推定' },
+    luosi_svyatopolk: { birth: 980, death: 1019, kaoju: '推定' },
+    shu_masu: { birth: 190, death: 228, kaoju: '推定' },
+    dajin_wanyan_zhongde: { birth: 1190, death: 1234, kaoju: '推定' },
+    halapeng_yiba: { birth: 1240, death: 1298, kaoju: '推定' },
+    yuan_shidielibisi: { birth: 1330, death: 1374, kaoju: '推定' },
+    muwaxide_axatafu: { birth: 1190, death: 1248, kaoju: '推定' },
+    gepids_cunimund: { birth: 490, death: 567, kaoju: '推定' },
+    kalbids_ibnhawwas: { birth: 1010, death: 1068, kaoju: '推定' },
 };
 
 /** 生年（未收录返回 null） */
@@ -1648,4 +1684,4 @@ export function getGeneralDebutYear(generalId: string | null | undefined): numbe
     const y = generalId ? GENERAL_LIFE_YEARS[generalId] : undefined;
     if (!y) return null;
     return y.debut ?? debutYearOf(y.birth, y.death);
-}
+}

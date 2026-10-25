@@ -2,7 +2,7 @@
  * 🔴 [2026-10-19 主人定「现在大城据点和中城据点都有建城年。剧本和百岁模式中，如果建城年不到，就是小城。」]
  *
  * 规则：
- *   · 全库 205 座大城（`big_city`，38 座）与中城（`medium_city`，167 座）在 `CITY_FOUNDED_YEAR` 中均已登记建城年；
+ *   · 全库所有大城（`big_city`）与中城（`medium_city`）在 `CITY_FOUNDED_YEAR` 中均已登记建城年；
  *   · 在 **剧本模式（`script`）** 与 **百岁模式（`centenarian`）** 下：
  *       若当前年份 < 该据点的建城年（`CITY_FOUNDED_YEAR[cityId]`），该据点降为 **小城（`small_city`）**；
  *       一旦当前年份 ≥ 建城年，恢复为其原本的大城／中城等级；

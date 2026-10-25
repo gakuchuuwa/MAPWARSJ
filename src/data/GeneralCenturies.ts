@@ -1277,6 +1277,42 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'feilisidin_geliya': -11,   // 2026-10-25 按首战 -1025 年补
     'haikou_maohaifeng': 16,   // 2026-10-25 按岑港 1558 年补
     'handong_liuheita': 7,   // 2026-10-25 按 622 洺水年补
+    'bfe_sinan_pasha': 16,
+    'bfe_qutlugh_khwaja': 13,
+    'khoshut_lhasang': 17,
+    'yuan_nahachu': 14,
+    'baiji_shenjian': 10,
+    'dayan_cuiqianyou': 8,
+    'ethiopia_lebnadengel': 16,
+    'houhan_lishouzhen': 10,
+    'dulan_azimuhan': 19,
+    'buni_mathos': -3,
+    'tang_qikerang': 9,
+    'xiongnu_hunxiewang': -2,
+    'khon_wangzun': 14,
+    'ansxi_surena': -1,
+    'litaowan_algirdas': 14,
+    'dulan_muzaffarkhan': 19,
+    'qin_hengyi': -3,
+    'dajin_wanyaneke': 13,
+    'kuman_tugorkan': 11,
+    'baizanting_diaofeilusi': 9,
+    'zhelouqi_puliteweilajie': 12,
+    'baojian_herman': 13,
+    'qi_tianji': -4,
+    'yuenan_ruanguangzuan': 18,
+    'osman_kapadan': 18,
+    'bfe_andronikos_komnenos': 12,
+    'tujue_abo_dagan': 8,
+    'xiongnu_yizhixie': -2,
+    'luosi_svyatopolk': 11,
+    'shu_masu': 3,
+    'dajin_wanyan_zhongde': 13,
+    'halapeng_yiba': 13,
+    'yuan_shidielibisi': 14,
+    'muwaxide_axatafu': 13,
+    'gepids_cunimund': 6,
+    'kalbids_ibnhawwas': 11,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */
@@ -1284,4 +1320,4 @@ export function getGeneralCentury(generalId: string | null | undefined): number 
     if (!generalId) return null;
     const c = GENERAL_CENTURIES[generalId];
     return c === undefined || c === 0 ? null : c;
-}
+}

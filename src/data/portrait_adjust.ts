@@ -4532,7 +4532,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -31
         },
-        "/assets/VIETNAMESE/muong_shencongyue.png": {
+        "/assets/VIETNAMESE/__闲置__VIETNAMESE_01.png": {
             "scale": 0.87,
             "offsetX": 0,
             "offsetY": -20

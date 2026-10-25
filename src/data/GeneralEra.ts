@@ -1605,9 +1605,44 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'feilisidin_geliya': 'antiquity',   // 歌利亚（2026-10-25 按史补）
     'haikou_maohaifeng': 'imperial',   // 毛海峰（王滶，2026-10-25 按史补）
     'handong_liuheita': 'feudal',   // 刘黑闼（2026-10-25 按史补）
+    'bfe_sinan_pasha': 'imperial',   // 2026-10-25 首战敌将（随势力时代）
+    'bfe_qutlugh_khwaja': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'khoshut_lhasang': 'imperial',   // 2026-10-25 首战敌将（随势力时代）
+    'yuan_nahachu': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'baiji_shenjian': 'feudal',   // 2026-10-25 首战敌将（随势力时代）
+    'dayan_cuiqianyou': 'feudal',   // 2026-10-25 首战敌将（随势力时代）
+    'ethiopia_lebnadengel': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'houhan_lishouzhen': 'feudal',   // 2026-10-25 首战敌将（随势力时代）
+    'dulan_azimuhan': 'imperial',   // 2026-10-25 首战敌将（随势力时代）
+    'buni_mathos': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
+    'tang_qikerang': 'feudal',   // 2026-10-25 首战敌将（随势力时代）
+    'xiongnu_hunxiewang': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
+    'khon_wangzun': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'ansxi_surena': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
+    'litaowan_algirdas': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'dulan_muzaffarkhan': 'imperial',   // 2026-10-25 首战敌将（随势力时代）
+    'qin_hengyi': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
+    'dajin_wanyaneke': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'kuman_tugorkan': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'baizanting_diaofeilusi': 'feudal',   // 2026-10-25 首战敌将（随势力时代）
+    'zhelouqi_puliteweilajie': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'baojian_herman': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'qi_tianji': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
+    'yuenan_ruanguangzuan': 'imperial',   // 2026-10-25 首战敌将（随势力时代）
+    'osman_kapadan': 'imperial',   // 2026-10-25 首战敌将（随势力时代）
+    'bfe_andronikos_komnenos': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'tujue_abo_dagan': 'feudal',   // 2026-10-25 首战敌将（随势力时代）
+    'xiongnu_yizhixie': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
+    'luosi_svyatopolk': 'feudal',   // 2026-10-25 首战敌将（随势力时代）
+    'shu_masu': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
+    'dajin_wanyan_zhongde': 'castle',   // 2026-10-25 首战敌将（随势力时代）
+    'halapeng_yiba': 'castle',   // 首战敌将（孟族）
+    'yuan_shidielibisi': 'castle',
+    'muwaxide_axatafu': 'castle',
+    'gepids_cunimund': 'feudal',
+    'kalbids_ibnhawwas': 'castle',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {
     return GENERAL_ERA[generalId];
-}
-
+}

@@ -782,6 +782,15 @@ export class SpeechAnnouncer {
     this.drainSkillQueue();
   }
 
+  /**
+   * 🔴 [2026-10-25 直播免费模式] 直播间的感谢（订阅涨了等）——跟观众放计同一条队列，不与武将技抢话。
+   */
+  public announceViewerThanks(text: string): void {
+    if (!this.enabled) return;
+    this.skillSpeakQueue.push({ text, skipGlobalNameReplace: true });
+    this.drainSkillQueue();
+  }
+
   /** 清空技能播报队列（新战斗开打时，旧残留不再念） */
   private clearSkillQueue(): void {
     this.skillQueueGen++;

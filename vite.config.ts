@@ -249,6 +249,10 @@ export default defineConfig({
         include: ['leaflet', 'pinyin-pro'],
     },
     server: {
+        // 忽略 DE 战役导出的 1.5 万张静态精灵与拆包目录，避免 chokidar 扫描塞死 Vite 事件循环
+        watch: {
+            ignored: ['**/public/de-maps/**', '**/scratch/de_campaign/**'],
+        },
         // 所有文件均由 Vite 监听；F2 写盘期间由 suppress-portrait-dev-hmr 插件短暂拦截全页刷新
         // [PERF] Warm up the most expensive modules on dev server start
         // so the browser's first request hits a ready cache.

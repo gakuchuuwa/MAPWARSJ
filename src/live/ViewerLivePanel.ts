@@ -4,8 +4,9 @@
  *   · 按 F9 展开测试区：输入观众名，点「站攻方 / 站守方」、点六个字放计、勾「付费」——本地模拟弹幕，
  *     不用开直播就能试整套玩法。以后接上直播平台，消息走同一个 `ViewerLive.onChat`。
  *   · [2026-10-24] 接上直播间（SocialStreamBridge）后不打仗也常显；F9 里填 SSN 会话 ID、看连接状态、模拟打赏。
+ *   · [2026-10-25] 免费模式（军令）：显示规矩、全场点赞 / 订阅目标、最近挣到令的几个人；F9 填 YouTube 接口，模拟点赞 / 订阅。
  */
-import type { ViewerLive } from './ViewerLive';
+import { type ViewerLive, ORDERS_PER_CAST, CHAT_COOLDOWN_MS } from './ViewerLive';
 import type { SocialStreamBridge } from './SocialStreamBridge';
 
 const PANEL_ID = 'viewer-live-panel';
@@ -56,6 +57,11 @@ export class ViewerLivePanel {
             <div>点赞 <b>${g.likeProg}/${g.likeStep}</b> → 在场每人 +1 令　｜　订阅 <b>${g.subs}</b>（涨 1 全场 +2 令）</div>
             <div style="height:6px;background:#3a2a16;border-radius:3px;overflow:hidden;margin:2px 0;"><div style="height:6px;width:${Math.min(100, Math.round(g.likeProg / g.likeStep * 100))}%;background:#d4af37;"></div></div>
             <div style="color:#a99;font-size:12px;">在线 ${g.viewers || '—'} 人　在场 ${g.present} 人</div>`;
+        // 最近挣到令的人：让观众看见自己那条弹幕算上了；够一计的标金色
+        const top = s.top.length
+            ? `<div style="margin-top:6px;color:#ffd700;">军令</div><div>${s.top.map((t) =>
+                `<span style="${t.n >= ORDERS_PER_CAST ?'color:#ffd700;' : ''}white-space:nowrap;">${esc(t.name)} <b>${t.n}</b></span>`).join('　')}</div>`
+            : '';
         const platform = this.devOpen
             ? `<div style="color:#8fd3ff;font-size:12px;">${esc(s.platform)}${s.yt ? '　｜　' + esc(s.yt) : ''}</div>` : '';
         const log = s.log.slice(-4).map((l) => `<div style="color:#cdbb95">${esc(l)}</div>`).join('');
@@ -64,8 +70,8 @@ export class ViewerLivePanel {
                 <div style="color:#ffd700;font-weight:900;font-size:14px;">发弹幕参战</div>
                 <div>下一场战术战开打时：发 <b>1</b> 站攻方、<b>2</b> 站守方</div>
                 <div>再发 <b>攻 胜 敌 混 并 败</b> 替本方放计</div>
-                <div>发弹幕、点赞、订阅攒<b>军令</b>，<b>3 令</b>放一计；${price}</div>
-                ${goal}
+                <div>开战后站队、发弹幕攒<b>军令</b>，点赞、订阅随时加令；<b>${ORDERS_PER_CAST} 令</b>放一计；${price}</div>
+                ${goal}${top}
                 <div style="margin-top:6px;">${log}</div>`;
             return;
         }
@@ -74,9 +80,9 @@ export class ViewerLivePanel {
             <div style="color:#ffd700;font-weight:900;font-size:14px;">发弹幕参战</div>
             <div>发 <b>1</b> 站 ${esc(s.names[0])}，发 <b>2</b> 站 ${esc(s.names[1])}</div>
             <div>再发 <b>攻 胜 敌 混 并 败</b> 替本方放计（也可一条发「1攻」）</div>
-            <div>站队 +1 令，每 20 秒发一条有效弹幕 +1 令，<b>3 令</b>放一计；${price}</div>
+            <div>站队 +1 令，每 ${CHAT_COOLDOWN_MS / 1000} 秒发一条有效弹幕 +1 令，<b>${ORDERS_PER_CAST} 令</b>放一计；${price}</div>
             <div style="margin-top:6px;">${esc(s.names[0])} <b>${s.counts[0]}</b> 人　｜　${esc(s.names[1])} <b>${s.counts[1]}</b> 人</div>
-            ${goal}
+            ${goal}${top}
             <div style="margin-top:6px;color:#ffd700;">排队</div>${queue}
             <div style="margin-top:6px;">${log}</div>`;
     }
@@ -133,7 +139,10 @@ export class ViewerLivePanel {
         ytVideo.style.cssText = name.style.cssText;
         const applyYt = (e: KeyboardEvent) => {
             e.stopPropagation();
-            if (e.key === 'Enter') { this.link.yt.set(ytKey.value, ytVideo.value); ytVideo.value = this.link.yt.getVideo(); this.render(); }
+            if (e.key !== 'Enter') return;
+            // 认出了就把整条网址换成视频 ID 给人看；认不出就留着原文，状态行报错
+            if (this.link.yt.set(ytKey.value, ytVideo.value)) ytVideo.value = this.link.yt.getVideo();
+            this.render();
         };
         ytKey.addEventListener('keydown', applyYt);
         ytVideo.addEventListener('keydown', applyYt);

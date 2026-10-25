@@ -112,7 +112,7 @@ export class SocialStreamBridge {
         if (m.event === 'viewer_update') {
             const n = Number(m.meta);
             // YouTube 接口给的人数更准，已经在报时不让 SSN 的覆盖
-            if (!this.live.ytStatus.includes('正常')) this.live.onViewers(n);
+            if (!this.yt.ok) this.live.onViewers(n);
             return;
         }
         if (!m.chatname || m.bot) return;

@@ -28,6 +28,8 @@ export class YouTubeStats {
     private channelId = '';
     private videoTimer = 0;
     private channelTimer = 0;
+    /** 最近一次查视频成功、而且这场直播还没结束（Bridge 据此决定在线人数听谁的） */
+    public ok = false;
 
     constructor(private readonly live: ViewerLive) {
         try {
@@ -40,21 +42,27 @@ export class YouTubeStats {
     public getKey(): string { return this.key; }
     public getVideo(): string { return this.video; }
 
-    /** F9 面板填好后调用；任一项为空＝停止轮询 */
-    public set(key: string, videoInput: string): void {
+    /** F9 面板填好后调用；任一项为空＝停止轮询。网址认不出就不动现有设置，返回 false */
+    public set(key: string, videoInput: string): boolean {
+        const video = parseVideoId(videoInput);
+        if (videoInput.trim() && !video) { this.live.ytStatus = '认不出这个直播网址'; return false; }
+        // 换了一场直播：点赞 / 订阅重新记起
+        if (video !== this.video) this.live.resetGoals();
         this.key = key.trim();
-        this.video = parseVideoId(videoInput);
+        this.video = video;
         this.channelId = '';
         try {
             localStorage.setItem(KEY_KEY, this.key);
             localStorage.setItem(VIDEO_KEY, this.video);
         } catch { /* 隐私模式 */ }
         this.restart();
+        return true;
     }
 
     private restart(): void {
         window.clearInterval(this.videoTimer);
         window.clearInterval(this.channelTimer);
+        this.ok = false;
         if (!this.key || !this.video) { this.live.ytStatus = ''; return; }
         this.live.ytStatus = '点赞接口连接中';
         void this.pollVideo();
@@ -67,11 +75,13 @@ export class YouTubeStats {
             const r = await fetch(`${API}/${path}&key=${encodeURIComponent(this.key)}`);
             if (!r.ok) {
                 const body = await r.json().catch(() => null);
+                this.ok = false;
                 this.live.ytStatus = `点赞接口出错 ${r.status}${body?.error?.message ? '：' + String(body.error.message).slice(0, 60) : ''}`;
                 return null;
             }
             return await r.json();
         } catch {
+            this.ok = false;
             this.live.ytStatus = '点赞接口连不上（网络）';
             return null;
         }
@@ -81,7 +91,14 @@ export class YouTubeStats {
         const j = await this.get(`videos?part=snippet,statistics,liveStreamingDetails&id=${encodeURIComponent(this.video)}`);
         if (!j) return;
         const item = j.items?.[0];
-        if (!item) { this.live.ytStatus = '点赞接口：找不到这个视频 ID'; return; }
+        if (!item) { this.ok = false; this.live.ytStatus = '点赞接口：找不到这个视频 ID'; return; }
+        // 每场直播的视频 ID 都不一样：忘了换网址时，旧那场的点赞再也不会涨，要明说
+        if (item.liveStreamingDetails?.actualEndTime) {
+            this.ok = false;
+            this.live.ytStatus = '点赞接口：这场直播已结束，请填本场直播网址';
+            return;
+        }
+        this.ok = true;
         this.live.ytStatus = '点赞接口正常';
         if (!this.channelId && item.snippet?.channelId) {
             this.channelId = item.snippet.channelId;
