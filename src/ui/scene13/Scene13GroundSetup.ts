@@ -17,6 +17,7 @@ import { animalNativeAt, animalDeOf } from './Scene13Animals';
 import { applyDeCityToGround } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { setCachedViennaMapData } from './Scene13SpriteCache';
+import { loadDeCampaignMapForGround, populateDeCampaignObjects } from './Scene13DeCampaignLoader';
 
 /**
  * M3 WebGL 地面层接入：在 realGeography 开关开启时初始化底层 WebGL 视口，
@@ -52,6 +53,13 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
     };
     const getMapData = async () => {
         if ((window as any).__M3_TEST_MAPDATA__) return (window as any).__M3_TEST_MAPDATA__;
+        if (this.deCampaignMapId) {
+            try {
+                return await loadDeCampaignMapForGround(this.deCampaignMapId);
+            } catch (err) {
+                console.warn('[Scene13WarLayer] DE 战役地图加载失败:', err);
+            }
+        }
         const load = async (file: string) => {
             try {
                 const res = await fetch(MAPDATA_DIR + file);
@@ -133,7 +141,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         // 🔴 [2026-10-13 / 2026-10-19] 据点真实图（header.skeleton）通常保留真实水体；
         //    但 DE 标准河流占比仅约 3.5%（海面占比约 23.5%），若内陆据点（海拔 > 10m 或 waterKind === 'river'）
         //    因现代水库蓄水或大漫滩导致水面占比 > 12%，则将其像海一样的宽阔水面重塑为城侧 3.5 格标准自然河道（relocateTemplateWater）。
-        const oriented = await this.adaptMapDataSeaOrientation(rawMapData);
+        const oriented = rawMapData?.isDeCampaign ? rawMapData : await this.adaptMapDataSeaOrientation(rawMapData);
         const skelHmin = rawMapData?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
         const isInlandReservoirFlood = !!(rawMapData?.header?.skeleton)
             && (skelHmin > 10 || this.environmentPlan?.waterKind === 'river')
@@ -141,7 +149,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         if (isInlandReservoirFlood && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
             this.environmentPlan.waterKind = 'river';
         }
-        const mapData = (rawMapData?.header?.skeleton && !isInlandReservoirFlood)
+        const mapData = (rawMapData?.isDeCampaign || (rawMapData?.header?.skeleton && !isInlandReservoirFlood))
             ? oriented
             : this.relocateTemplateWater(oriented);
         // 🔴 [2026-10-21 主人令「请全部和DE保持一致」]
@@ -181,6 +189,11 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
 
             // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 删去「保障所有出兵口与初始士兵不落入水体」
             const data = transposeMapData(mapData);
+            if (data && data.isDeCampaign) {
+                populateDeCampaignObjects(this, data.rawDeObjects || [], data.width, glLayer, VW, VH);
+                releaseGround();
+                return;
+            }
             if (data && data.objects) {
                 // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 给每栋建筑 / 城门 / 塔 / 墙脚下清出一块干燥平地（地基），
                 //    并拿掉落在地基上的树木与建筑冲突物。

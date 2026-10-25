@@ -1058,6 +1058,7 @@ export function syncDeCityGround(this: Scene13WarLayer): void {
 }
 
 export function applySpawnBuildings(this: Scene13WarLayer): void {
+    if (this.deCampaignMapId) return;
     const sides: Array<0 | 1> = [0, 1];
     for (const f of sides) applyBuildingsForSide.call(this, f);
 }

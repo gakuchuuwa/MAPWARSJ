@@ -613,6 +613,8 @@ export interface Scene13WarInit {
      * 改为按这里列的小队出兵，1 个小兵＝1 个人；不传＝原来的军团战，一个像素不动。
      */
     skirmish?: Scene13SkirmishSpec | null;
+    /** DE 剧情地图 ID（如 cam1_1 等 236 张战役地图），传入时启用方式二：加载 DE 原始地形与关隘城墙/城门/箭塔/城堡/建筑 */
+    deCampaignMapId?: string | null;
 }
 
 /** 小队模式里的一支小队：兵种 + 人数（1 个小兵＝1 个人） */

@@ -349,7 +349,7 @@ function mkProgram(gl: WebGLRenderingContext): WebGLProgram {
 }
 
 export function transposeMapData(d: any): any {
-  if (!d || !d.width || !d.height) return d;
+  if (!d || !d.width || !d.height || d.noTranspose) return d;
   const w = d.width, h = d.height;
   const transposeArray = (arr: any) => {
     if (!arr || !arr.length) return arr;
@@ -479,7 +479,7 @@ export class Scene13GroundLayerGL {
     this.canvas = canvas;
     this.data = data;
     this.N = data.width;
-    this.offX = (this.N - 1) * dx;
+    this.offX = TAC_MAP_HALF_W;
     this.origElev = new Uint8Array(this.N * this.N);
 
     // 🔴 [2026-10-12 REA逆向 + 真实地理 DEM 耦合：DE 原版有机山丘扩散算法 (_base_elevation_generate_14135e990)]
@@ -532,20 +532,20 @@ export class Scene13GroundLayerGL {
       // 1. 中央区域保持 0 级平地，高地丘陵只在外围（距离中心 >= 22 格）生成
       for (let y = 0; y < N; y++) {
         for (let x = 0; x < N; x++) {
-          if (Math.hypot(x - cx, y - cy) < 22) {
+          if (!data.isDeCampaign && Math.hypot(x - cx, y - cy) < 22) {
             elev[y * N + x] = 0;
           }
         }
       }
 
       // 2. 真实地理导向的 DE 原野有机山丘（平原少丘缓坡，山地沿真实 DEM 山脊波前扩散）
-      const clumps = ridgeSeeds.length > 24
+      const clumps = data.isDeCampaign ? 0 : (ridgeSeeds.length > 24
         ? 12
         : ridgeSeeds.length > 6
           ? 8
           : reliefRatio < 0.08
             ? 5
-            : 7;
+            : 7);
       const qClumps: Array<Array<[number, number]>> = [];
       const clumpTargetH: number[] = [];
       const clumpMaxTiles: number[] = [];
@@ -604,7 +604,7 @@ export class Scene13GroundLayerGL {
       for (let pass = 0; pass < 4; pass++) {
         for (let y = 1; y < N - 1; y++) {
           for (let x = 1; x < N - 1; x++) {
-            if (Math.hypot(x - cx, y - cy) < 20) {
+            if (!data.isDeCampaign && Math.hypot(x - cx, y - cy) < 20) {
               elev[y * N + x] = 0;
               continue;
             }
@@ -959,7 +959,7 @@ export class Scene13GroundLayerGL {
     const V_SIZE = N + 1;
     const TRI_A = [0, 1, 2, 0, 2, 3];
     const TRI_B = [0, 1, 3, 1, 2, 3];
-    const centerY = (N - 1) * dy;
+    const centerY = TAC_MAP_HALF_H;
 
     const verts: number[] = [];
 

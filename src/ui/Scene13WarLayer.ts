@@ -112,6 +112,7 @@ import { animalDeOf, stepTacticalAnimals } from './scene13/Scene13Animals';
 import { relocateTemplateWater, adaptMapDataSeaOrientation } from './scene13/Scene13MapWaterAdapter';
 import { applySpawnBuildings } from './scene13/Scene13CityLayout';
 import { requestGroundLayerGL } from './scene13/Scene13GroundSetup';
+import { ensureDeCampaignSpriteMeta, getDeCampaignSpriteMetaSync } from './scene13/Scene13DeCampaignLoader';
 import { render } from './scene13/Scene13Render';
 
 /**
@@ -279,6 +280,8 @@ export class Scene13WarLayer {
     deCityGround: HTMLDivElement | null = null;
     groundLayerGL: Scene13GroundLayerGL | null = null;
     useGroundGL = false;
+    /** DE 剧情地图 ID（方式二：使用 DE 原有地形与关隘城墙/城门/箭塔/城堡/建筑） */
+    deCampaignMapId: string | null = null;
     private userInteractingTimer = 0;
     /**
      * 🔴 [2026-10-23 主人「防守方第二波在城里呆着不动的时候，镜头可以跟随释放技能区域，然后9秒拉回」]
@@ -1687,6 +1690,7 @@ export class Scene13WarLayer {
             Math.pow(kDef, SCENE13_HP_SHARE),
         ];
         this.battleType = init.battleType ?? 'field';
+        this.deCampaignMapId = init.deCampaignMapId ?? null;
         this.defenderCityType = init.defenderCityType ?? null;
         this.defenderCityId = init.defenderCityId ?? null;
         this.defenderPassShape = init.defenderPassShape ?? null;
@@ -1705,7 +1709,7 @@ export class Scene13WarLayer {
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
         // 🔴 [2026-09-03 主人定] 城寨(stockade)与野战一致：守方不待命，直接开战。
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
-        this.siegeWithWalls = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
+        this.siegeWithWalls = !this.deCampaignMapId && this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
         this.wallBreachRatios = new WeakMap();   // 🔴 [2026-10-20 主人令] 城墙破损档每场重新随机
         this.wallOrigAsset = new WeakMap();
         this.pendingWallFalls = [];
@@ -1783,7 +1787,7 @@ export class Scene13WarLayer {
                 //    逐类（建筑）/逐件（墙·门·垛·箭塔）定宽；尺寸来自构建期常量表 `DE_SPRITE_BOX_W`，**同步可取**。
                 //    必须是同步的：异步会让城池件表晚于「出兵口布阵」就绪 ⇒ 八方向出兵整支落到旧 13 回退阵型
                 //    （实测八个方向基座恒为 512,450）。战略地图那条路不传原生表，一个像素不动。
-                this.deCity = city
+                this.deCity = (city && !this.deCampaignMapId)
                     ? strategicCityHtmlNative(city,
                         this.defenderPassLayoutShape && this.defenderPassLayoutShape !== 'square'
                             ? { passShape: this.defenderPassLayoutShape }
@@ -3161,6 +3165,23 @@ export class Scene13WarLayer {
         this.natureCache[asset] = na;
         // 🔴 [2026-08-22] BUILDINGANIM: 前缀 = 多帧动画素材（城门倒塌 50 帧 / 城墙破损档）——
         //    加载 frames.png 整条 strip 而非 preview.png 单帧，drawDecorSprite 按 frame 切片。
+        if (asset.startsWith('DECAMP:')) {
+            const spKey = asset.slice('DECAMP:'.length);
+            const applyMeta = (m: { w: number; h: number; ax: number; ay: number } | undefined) => {
+                if (!m) return;
+                na.meta = { box_w: m.w, box_h: m.h, anchor_x: m.ax, anchor_y: m.ay, frames: 1 };
+            };
+            const syncM = getDeCampaignSpriteMetaSync(spKey);
+            if (syncM) applyMeta(syncM);
+            else void ensureDeCampaignSpriteMeta().then((all) => applyMeta(all[spKey]));
+            const im = new Image();
+            im.onload = () => {
+                if (!na.meta) na.meta = { box_w: im.naturalWidth, box_h: im.naturalHeight, anchor_x: Math.round(im.naturalWidth / 2), anchor_y: Math.round(im.naturalHeight / 2), frames: 1 };
+                na.img = im;
+            };
+            im.src = `/de-maps/campaign/sprites/${spKey}.png`;
+            return;
+        }
         const isAnim = asset.startsWith('BUILDINGANIM:');
         const isBuilding = asset.startsWith('BUILDING:') || isAnim;
         const isBattlefield = asset.startsWith('BATTLEFIELD:');
@@ -3370,7 +3391,7 @@ export class Scene13WarLayer {
         // scale 未设置 = 原尺寸原路径（其余装饰逐像素不变）；设置时尺寸与锚点等比缩放，脚点仍落在 (s.x, drawY)
         const k = s.scale ?? 1;
         let bld: WarBuilding | undefined;
-        if (this.battleType === 'siege' && !s.collapse && !s.destroyed && !s.asset.includes('_RUBBLE')) {
+        if ((this.battleType === 'siege' || !!this.deCampaignMapId) && !s.collapse && !s.destroyed && !s.asset.includes('_RUBBLE')) {
             for (const b of this.defBuildings) if (b.sprite === s) { bld = b; break; }
             if (!bld) for (const b of this.wallGates) if ((b.key === 'STONE_GATE' || b.key === 'WOOD_WALL') && b.sprite === s) { bld = b; break; }
         }
@@ -4824,13 +4845,13 @@ export class Scene13WarLayer {
         //    2) 若目标建筑尚在射程外（正在进攻行军途中）：
         //       · 远程攻城武器（投石车/弩炮/手推炮/火箭车，rng > 65）：视野内一旦出现阻拦敌军（manChosen），立即停步在安全射程外轰击敌军，绝不盲目冲入敌阵！
         //       · 近战攻城武器（冲车/攻城象，rng <= 65）：若正前方近身（reach + 18px 内）有敌兵阻拦，先撞击开路；否则继续朝城门/建筑推进。
-        if (this.battleType === 'siege' && m.f === 0 && (m as { siegeW?: boolean }).siegeW) {
+        if ((this.battleType === 'siege' || !!this.deCampaignMapId) && m.f === 0 && (m as { siegeW?: boolean }).siegeW) {
             const mKey = (m as { key?: string }).key ?? '';
             const st = this.statsFor(mKey, m.f as 0 | 1);
             const rng = st.rng ?? 0;
             const reach = Math.max(rng, 65) + this.radiusOf(mKey);
             const reach2 = reach * reach;
-            const bw = rng <= 65 && this.siegeWithWalls ? this.blockedWall(m as Partial<WarMan>) : null;
+            const bw = rng <= 65 && (this.siegeWithWalls || this.wallGates.length > 0) ? this.blockedWall(m as Partial<WarMan>) : null;
             if (bw && bw.f !== m.f) {
                 if (reserve) bw.claims++;
                 return bw;
@@ -4866,11 +4887,11 @@ export class Scene13WarLayer {
         }
         // 🔴 [2026-10-14 主人定「士兵攻击顺序：士兵，城门，建筑包括箭塔」「所有都是只打近的」「士兵只认城门，不砍墙」]
         //    攻方士兵（含乱入者）：视野内走得到的兵 → 城墙完整且人在城外时打最近的城门 → 否则打最近的建筑（含箭塔）。
-        if (this.battleType === 'siege' && m.f === 0) {
+        if ((this.battleType === 'siege' || !!this.deCampaignMapId) && m.f === 0) {
             const mKey = wm.key ?? '';
             const mRng = mKey ? (this.statsFor(mKey, 0).rng ?? 0) : 0;
             const mReach = Math.max(mRng, 65) + (mKey ? this.radiusOf(mKey) : 8);
-            const bg = this.siegeWithWalls ? this.blockedWall(m as Partial<WarMan>) : null;
+            const bg = (this.siegeWithWalls || this.wallGates.length > 0) ? this.blockedWall(m as Partial<WarMan>) : null;
             // 🔴 [2026-10-20 主人令「普通远程兵不打墙、城门和建筑，带攻城加成的远程兵照打」]
             //    DE 护甲算法下普通弓弩打石墙（远防 10）/城门（远防 6）每发只扣 1 点，等于白射。
             //    「带攻城加成」= DE 加成表里对建筑护甲类（11 全建筑 / 13 石质防御 / 21 标准建筑 / 22 城墙城门）有正加成。
@@ -5072,7 +5093,7 @@ export class Scene13WarLayer {
         if (!this.wallOrigAsset.has(b)) this.wallOrigAsset.set(b, b.sprite.asset);
         b.sprite.obstruction = undefined;
         b.sprite.obstructionDisabled = true;
-        if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
+        if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; if (sp.asset.startsWith('DECAMP:')) sp.destroyed = true; }
         // 🔴 [2026-10-15] 墙/门/垛塌都走这里 → 只在这一处播倒塌音，避免重复播放（城门带塌的那一段传 quiet，不重复播）
         if (!quiet) audioManager.play('wall_collapse');
         // 🔴 [2026-10-20 主人令「城门坍塌，同时也坍塌一段城墙」] 必须在下面改贴图之前调：要按城门原贴图判墙线走向
@@ -5241,6 +5262,7 @@ export class Scene13WarLayer {
             for (const t of this.arrowTowers) if (t.sprite === sp) t.down = true;
             sp.obstruction = undefined;
             sp.obstructionDisabled = true;
+            if (Array.isArray((sp as any).annexSprites)) for (const ax of (sp as any).annexSprites) { ax.destroyed = true; ax.obstruction = undefined; ax.obstructionDisabled = true; }
             audioManager.play('building_collapse');
             this.collapseToRubble(sp, name);
             if (!sp.collapse && !sp.asset.includes('_RUBBLE')) sp.destroyed = true;
@@ -5251,8 +5273,8 @@ export class Scene13WarLayer {
     }
 
     /** 记录一座守城建筑（供 30 秒随机三形态 + 未坍塌射箭用）。name = 素材名（如 ASIA_HOUSE_AGE3 / CHIN_CASTLE_AGE3）。 */
-    trackCityBuilding(sp: DecorSprite, kind?: string): void {
-        const name = sp.asset.slice('BUILDING:'.length);
+    trackCityBuilding(sp: DecorSprite, kind?: string, customName?: string): void {
+        const name = customName || (sp.asset.startsWith('BUILDING:') ? sp.asset.slice('BUILDING:'.length) : sp.asset.replace(/^DECAMP:/, ''));
         // 🔴 [2026-10-15 主人令「九建筑和箭塔一样的攻击效果和特效」] 射程/装填/攻击力与城墙内侧箭塔同档
         //    （瞭望 320/2.2/5、警戒 360/2.0/6、高级 400/1.8/7），不再用窗台冷箭（240/3.2/3）。
         const towerProfile = (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade')
@@ -5283,7 +5305,7 @@ export class Scene13WarLayer {
      *    塔在 30 秒随机切成破损/残骸（或保持完整继续射）后才停止射击。
      */
     private stepArrowTowers(dt: number): void {
-        if (this.battleType !== 'siege') return;
+        if (this.battleType !== 'siege' && !this.deCampaignMapId) return;
         for (const t of this.arrowTowers) this.stepTowerShoot(t, dt);
         for (const c of this.castleTowers) this.stepTowerShoot(c, dt);
         // 🔴 [2026-09-16 主人定「战术模式中防守方所有没有坍塌的建筑都可以射箭」]：
