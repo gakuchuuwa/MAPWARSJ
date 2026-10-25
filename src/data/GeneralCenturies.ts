@@ -832,7 +832,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     // ══════ WESTERN（42 人，已标 0）══════
     'adao_d_mafushou': 19,                               // 马福寿 · adao_d · 昆岗
     'bailong_suomai': 4,                                // 索劢 · bailong · 三陇沙
-    'chagatai_genggong': 1,                             // 耿恭 · chagatai · 务涂城
+    'chagatai_genggong': 1,                             // 耿恭 · han_d · 玉门关
+    'chagatai_gouju': 1,                                // 姑句 · chagatai · 务涂城（元始中＝1 世纪）
     'dayuan_wugua': -2,                                  // 毋寡 · dayuan · 贵山城
     'dayuzi_yinalechihei': 13,                           // 亦纳勒赤黑 · dayuzi · 讹答剌
     'duerbote_duerbote_taiji': 17,                       // 博贝 · duerbote · 托克逊
@@ -936,7 +937,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'liangzhou_zhanggui': 4,                            // 张轨 · liangzhou · 姑臧
     'ningkou_liling': -1,                                // 李陵 · ningkou · 遮虏障
     'pugu_puguhuaien': 8,                               // 仆固怀恩 · lingzhou · 回乐
-    'pulei_dougu': 1,                                   // 窦固 · han_d · 洛阳
+    'pulei_dougu': 1,                                   // 窦固 · han_d · 敦煌
     'shazhou_zhangyichao': 9,                           // 张议潮 · shazhou · 敦煌
     'shuofang_weiqing': -2,                              // 卫青 · shuofang · 延恩
     'suzhou_huoqubing': -2,                              // 霍去病 · suzhou · 嘉峪关

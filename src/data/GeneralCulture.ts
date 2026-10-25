@@ -252,7 +252,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'cao_d_caocao': 'CENTRAL',   // 魏国｜曹操｜据点 许昌
     'caoren': 'CENTRAL',   // 宋国｜曹仁｜据点 襄阳
     'cen_d_cenmeng': 'JIANGNAN',   // 岑氏｜岑猛｜据点 田阳
-    'chagatai_genggong': 'WESTERN',   // 车师｜耿恭｜据点 务涂城
+    'chagatai_genggong': 'KHITAN',   // 汉国｜耿恭｜据点 玉门关（汉玉门都尉治，属敦煌郡；西出阳关/玉门入西域）
+    'chagatai_gouju': 'WESTERN',   // 车师｜姑句（车师后王）｜据点 务涂城
     'chahar_yantiemuer': 'WEI',   // 大元｜燕帖木儿｜据点 北京
     'champa_jaya_indravarman_iv': 'KHMER',   // 占婆｜阇耶因陀罗跋摩四世｜据点 美山
     'champa_zhipenge': 'KHMER',   // 占婆｜制蓬峨｜据点 美山
@@ -1133,7 +1134,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'porbazhyn_mouyu': 'CENTRAL',   // 回鹘｜牟羽可汗｜据点 博尔巴任
     'pugu_ashinaguduolu': 'MONGOL',   // 突厥｜骨咄禄｜据点 燕然山
     'pugu_puguhuaien': 'KHITAN',   // 唐国｜仆固怀恩｜据点 回乐
-    'pulei_dougu': 'CENTRAL',   // 汉国｜窦固｜据点 洛阳（汉都；窦固是汉显亲侯、奉车都尉）
+    'pulei_dougu': 'KHITAN',   // 汉国｜窦固｜据点 敦煌（河西；屯凉州、出酒泉塞、出敦煌昆仑塞）
     'puxiangyindu_albukeerke': 'PORTUGUESE',   // 葡属印度｜阿尔布克尔克｜据点 果阿
     'pyu_moluo': 'BURMESE',   // 骠族｜摩罗惹｜据点 室利差罗
     'qi_d_qijiguang': 'JIANGNAN',   // 大明｜戚继光｜据点 宁波

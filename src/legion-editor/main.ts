@@ -4603,6 +4603,14 @@ function computeLegionNameViolations(): string[] {
         }
     }
 
+    // 🔴 [2026-10-26 主人令「把二三级军团缺攻城配置也加进校验报错」]
+    //    攻城武器发放表按军团名查；二级/三级军团在表里没有自己的条目（多半是军团改名后表里漏改），
+    //    攻城时就会悄悄退回一级母体配置 —— 报错。
+    const noSiege = [...LEVEL_2_CIV_62_NAMES, ...LEVEL_3_LEGION_NAMES].filter((n) => !LEGION_78_SIEGE_MAP[n]);
+    if (noSiege.length > 0) {
+        violations.push(`【攻城配置】${noSiege.length} 支二级/三级军团在攻城武器发放表里没有配置（攻城时会退回母体配置）：${noSiege.join('、')}`);
+    }
+
     // 🔴 [2026-09-14 主人定 / 2026-10-18 修正] 军团套用检查：
     //    二级军团按「武将时代＋据点建筑文化」对应（符合历史，不用硬套）：
     //    仅当全图存在对应 (buildingStyle + age) 且未挂三级军团的势力、该二级军团却无人套用时报错；
@@ -4771,7 +4779,7 @@ function openLegionViolationsModal(violations: string[]): void {
         <button type="button" class="le-btn le-btn-sm" id="le-viol-close">✕</button>
       </div>
       <div class="le-modal-body" style="grid-template-columns:1fr;gap:8px;max-height:70vh;">
-        <div style="font-size:12px;color:#a89f8f;margin-bottom:4px;">① 一个军团只能有一种编制（同名同编）；② 战斗兵模（步兵、骑兵、远程、攻城、船只）都要被军团套用；③ 所有军团必须都被武将套用；④ 一个军团只能一排象兵或一排战车（不能同时出现）。以下违规请查看：</div>
+        <div style="font-size:12px;color:#a89f8f;margin-bottom:4px;">① 一个军团只能有一种编制（同名同编）；② 战斗兵模（步兵、骑兵、远程、攻城、船只）都要被军团套用；③ 所有军团必须都被武将套用；④ 一个军团只能一排象兵或一排战车（不能同时出现）；⑤ 二级、三级军团都要在攻城武器发放表里有自己的配置。以下违规请查看：</div>
         ${violations.map(v => `<div style="background:#2a1616;border:1px solid #5a2a2a;border-radius:4px;padding:8px 10px;font-size:12px;color:#ffd0c0;">${v}</div>`).join('')}
         <button type="button" class="le-btn le-btn-primary" id="le-auto-fix" style="width:100%;font-size:13px;padding:9px;margin-top:4px;">🛠 一键修复（同名不同编：后来的自动改名）</button>
       </div>

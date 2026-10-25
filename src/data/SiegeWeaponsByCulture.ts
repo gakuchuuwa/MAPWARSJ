@@ -1218,6 +1218,13 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
+    '帝国时代图皮军团': {
+        age: 'imperial',
+        // 🔴 [2026-10-26 主人令「按各自文明和时代补上攻城武器配置」] 原无条目，攻城误走安第斯母体（攻城冲车＋重型投石机）。
+        //    图皮人（16 世纪巴西沿海）史上没有攻城器械，攻葡萄牙据点靠焚烧木栅、围困；按「每支 9 件、必带破门器械」规则，
+        //    取美洲文明 DE 科技树里有的器械中**低一档**的一套：包铁冲车＋轻型投石机＋蝎子弩＋攻城塔，弱于母体与安第斯游击军团。
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
+    },
     '帝国时代苏丹亲兵军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'mangonel', 'mangonel', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],

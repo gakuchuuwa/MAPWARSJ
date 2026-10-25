@@ -2533,8 +2533,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/XIANBEI/murong_murongke.png": {
-            "scale": 0.87,
-            "offsetX": 0,
+            "scale": 0.85,
+            "offsetX": 3,
             "offsetY": 10
         },
         "/assets/NORTHEAST/yeren_nvzhen_boke.png": {
@@ -8271,6 +8271,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": 13,
             "offsetY": 14
+        },
+        "/assets/JIANGNAN/bfe3_16.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/WEI/gen_zhang_rou.png": {
+            "scale": 1.14,
+            "offsetX": 1,
+            "offsetY": 0
+        },
+        "/assets/WEI/bfe_qijie.png": {
+            "scale": 1.1,
+            "offsetX": -1,
+            "offsetY": -13
         }
     },
     "folderGuides": {

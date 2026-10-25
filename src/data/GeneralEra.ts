@@ -124,6 +124,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'cao_d_caocao': 'antiquity',
     'cen_d_cenmeng': 'imperial',
     'chagatai_genggong': 'antiquity',
+    'chagatai_gouju': 'antiquity',
     'chahar_yantiemuer': 'castle',
     'champa_zhipenge': 'castle',
     'changshaguo_xinqiji': 'castle',

@@ -4421,7 +4421,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_ibrahimlodi',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
         slots: [
-            { type: 'antiquity_light_cavalry', count: 3 },
+            { type: 'lancer', count: 3 },
             { type: 'xianbei_raider', count: 2 },
             { type: 'antiquity_cavalry_archer', count: 4 },
         ],

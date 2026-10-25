@@ -6508,11 +6508,15 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'xiyuduhu_banchao', factionId: 'han_d', cityId: 'city_taqian', legionName: '古典时代凉州军团', generalName: '班超', portrait: '/assets/KHITAN/xiyuduhu_banchao.png' },
-        // 🔴 [2026-10-26 主人令「窦固是汉，是中原，怎么能放西域呢？河西也行呀，你查历史了吗」]
-        //    窦固＝汉显亲侯、奉车都尉（扶风平陵人，《后汉书·窦融列传》附传）：黄门侍郎→奉车都尉→卫尉，京官皆在洛阳；
-        //    显亲侯封地在汉阳郡（陇右），军事活动在河西/西域（永平十六年出酒泉、十七年出敦煌昆仑塞）。
-        //    故归**汉国**、据点放**汉都洛阳**（中原 CENTRAL）；首战天山蒲类海在巴里坤（远距，按规则直奔战场接任务）。
-        { generalId: 'pulei_dougu', factionId: 'han_d', cityId: 'city_luoyang', generalName: '窦固', portrait: '/assets/WESTERN/pulei_dougu.png' },
+        // 🔴 [2026-10-26 主人令「窦固是汉，是中原，怎么能放西域呢？河西也行呀」→「两人可以放到河西吗？」]
+        //    窦固＝汉显亲侯、奉车都尉（扶风平陵人，《后汉书·窦融列传》附传）：屯凉州、永平十六年出酒泉塞、
+        //    十七年出敦煌昆仑塞（击车师）——河西是他实打实的屯驻与出征集合地，故归汉国、据点放**敦煌**（河西 KHITAN，通西域门户）。
+        { generalId: 'pulei_dougu', factionId: 'han_d', cityId: 'city_dunhuang', generalName: '窦固', portrait: '/assets/WESTERN/pulei_dougu.png' },
+        // 🔴 [2026-10-26 主人令「耿恭是东汉戊己校尉（汉将）…现在挂车师不对…要改」→「两人可以放到河西吗？」]
+        //    耿恭＝东汉戊己校尉（《后汉书·耿恭传》），永平十七年屯车师后部金满城、守疏勒城拒匈奴；建初元年血战突围，
+        //    「三月至玉门」（玉门关属敦煌郡，河西）。他屯的汉式屯城（今奇台石城子一带）无独立据点 →
+        //    按 §2.1「无合适据点取离事发地最近的相同建筑风格据点」锚**玉门关**（河西 KHITAN，比敦煌更近；亦是他生还入关之地）。
+        { generalId: 'chagatai_genggong', factionId: 'han_d', cityId: 'city_yumenguan', generalName: '耿恭', portrait: '/assets/WESTERN/chagatai_genggong.png', eliteName: '戊己屯军', eliteTier: 2 },
 
 
 
@@ -8777,7 +8781,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    chagatai: { generalId: 'chagatai_genggong', cityId: 'city_bieshibali', generalName: '耿恭', portrait: '/assets/WESTERN/chagatai_genggong.png' },
+    // 🔴 [2026-10-26 主人令「车师势力本该挂车师王（如车师后王姑句，库内缺，属新增武将＝③档）…要改」]
+    //    姑句＝车师后王（《汉书·卷96下·西域传》：元始中，车师后王姑句以道当为拄置、亡降匈奴），王治务涂谷＝务涂城；
+    //    四闸：亲统决断无载／史载实胜无／格局分量小国之王／对阵有名无 → 普将。立绘留空。
+    chagatai: { generalId: 'chagatai_gouju', factionId: 'chagatai', cityId: 'city_bieshibali', generalName: '姑句', portrait: '' },
 
 
 
@@ -17073,7 +17080,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     nanhan: [
-        { generalId: 'yingzhou_liuyan', eliteName: '象军', eliteTier: 2, factionId: 'nanhan', cityId: 'city_panyu', generalName: '刘龑', portrait: '/assets/JIANGNAN/yingzhou_liuyan.png' },
+        { generalId: 'yingzhou_liuyan', eliteName: '南汉牙兵', eliteTier: 2, factionId: 'nanhan', cityId: 'city_panyu', generalName: '刘龑', portrait: '/assets/JIANGNAN/yingzhou_liuyan.png' },
 
     
         { generalId: 'guangzhou_liuyin', factionId: 'nanhan', cityId: 'city_panyu', generalName: '刘隐', portrait: '/assets/JIANGNAN/guangzhou_liuyin.png' },

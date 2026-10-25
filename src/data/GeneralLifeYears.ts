@@ -98,6 +98,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     you_gengyan: { birth: 3, death: 58 },                  // 耿弇
     xiyuduhu_banchao: { birth: 32, death: 102 },           // 班超
     chagatai_genggong: { birth: 35, death: 90, kaoju: '推定' },           // 耿恭
+    chagatai_gouju: { birth: -45, death: 10, kaoju: '推定' },             // 姑句（车师后王；元始中亡降匈奴，生卒无考，按在位年代推定）
     jiluo_d_douxian: { birth: 50, death: 92, kaoju: '推定' },             // 窦宪
     woye_huangfugui: { birth: 104, death: 174 },           // 皇甫规
     jingzhou_gs_huangfusong: { birth: 135, death: 195, kaoju: '推定' },   // 皇甫嵩

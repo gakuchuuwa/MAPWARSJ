@@ -46,6 +46,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     shanshan: { name: '楼兰弓手', tier: 3 },
     tajikezu: { name: '帕米尔山民', tier: 4 },
     khoja: { name: '白山派卫兵', tier: 4 },
-    chagatai: { name: '戊己屯军', tier: 2 },
+    chagatai: { name: '车师弓骑', tier: 4 },   // 车师（车师后部王城务涂城）｜统帅 姑句｜T4 真实存在：车师城郭之国以弓骑、步卒为兵（《汉书·西域传》车师后国胜兵 1,890）
     kokand: { name: '浩罕骑兵', tier: 4 },
 };

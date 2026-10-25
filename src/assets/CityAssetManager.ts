@@ -981,11 +981,25 @@ export class CityAssetManager {
         const map = (window as any).game?.map?.getLeafletMap?.() as
             | { getBounds: () => { contains: (p: [number, number]) => boolean } }
             | undefined;
-        if (!map || this.bootCityList.length === 0) return [];
+        if (!map) return [];
         const bounds = map.getBounds();
         const seen = new Set<string>();
         const ids: string[] = [];
-        for (const city of this.bootCityList) {
+        // 🔴 [2026-10-26 主人报「这个旗帜没有色。陈吊」]
+        //    原来只遍历 `bootCityList`（**开局快照**的 lat/lng/势力）：乱斗开局后城易手、或势力后占的城，
+        //    新势力永远不在这张表里 → 视口内也不会触发 onDemand 染色，旗面长期停在「已抠绿未染色」的
+        //    中性占位（看上去就是没有颜色，字色也按浅旗判成黑字）。
+        //    改为**每次用 CityManager 当前城归属**收集；拿不到时再退回启动快照。
+        const cm = (window as any).game?.cityManager as
+            | { getCities?: () => Array<{ latitude?: number; longitude?: number; factionId?: string }> }
+            | undefined;
+        const liveCities = cm?.getCities?.() ?? [];
+        const pool: Array<{ lat: number; lng: number; factionId: string }> = liveCities.length
+            ? liveCities
+                  .filter((c) => typeof c.latitude === 'number' && typeof c.longitude === 'number' && !!c.factionId)
+                  .map((c) => ({ lat: c.latitude as number, lng: c.longitude as number, factionId: c.factionId as string }))
+            : this.bootCityList;
+        for (const city of pool) {
             if (!bounds.contains([city.lat, city.lng])) continue;
             if (seen.has(city.factionId)) continue;
             seen.add(city.factionId);

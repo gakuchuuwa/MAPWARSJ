@@ -4467,7 +4467,8 @@ export class Scene13WarLayer {
      * 🔴 [2026-10-15 主人令「让每一队有一个统一的攻击目标」「把每个受到攻击的目标只限制最多被4队攻击，其他的可以去攻击其他目标，实在没有目标打，可以原地待命」]
      * 每帧维护每支分队（50 人）唯一的「队级攻击目标（Lane Target）」：
      *   1. 每个目标（敌方分队 targetLane 或守城建筑/城门 targetBld）最多只允许 MAX_LANE_ATTACKERS = 4 支分队同时锁定攻击；
-     *   2. 超出 4 队的分队自动分流去攻击其他未满 4 队的目标；若所有可打目标均已满 4 队，则不分配目标（整队原地待命警戒）；
+     *   2. 超出 4 队的分队自动分流去攻击其他未满 4 队的目标；若所有可打目标均已满 4 队，则不分配队级目标；
+     *      [2026-10-26 主人令] 野战未分到目标的队伍沿进军方向继续前进（含自动跟随的玩家），不再原地等待；
      *   3. 攻城战第二波起守军在九建筑出兵口刷新，城门被摧毁前原地待命，城门被摧毁后集体发动反攻。
      */
     private isInsideAttackerCamp(x: number, y: number): boolean {
@@ -4620,7 +4621,7 @@ export class Scene13WarLayer {
             }
         }
 
-        // 第二遍：为尚无目标的分队分配未满 4 队的新目标；若所有可打目标均已满 4 队，则不设目标（原地待命，守方远在城外时回城寻敌）
+        // 第二遍：为尚无目标的分队分配未满 4 队的新目标；若所有可打目标均已满 4 队，则不设队级目标（野战继续前进，攻城守方远在城外时回城寻敌）
         if (this.battleType === 'siege' && this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         for (const [lane, info] of laneInfo) {
             if (this.laneTargets.has(lane)) continue;
@@ -6751,7 +6752,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-21 主人报「战术模式中，乱入者复活后不动了」] 攻方乱入者同样适用：复活时本队常已全灭（没有锚点、
             //    laneTargets 也没有这一队）⇒ 原先落进 laneStandby 原地站死在出兵口。现攻守两方「自动」下都自己找敌人打。
             const heroHunt = m.hero === true && this.playerCmd === 'attack';
-            // 🔴 [2026-10-15 主人定] 每个目标最多 4 队攻击；超出 4 队且场上已无其他可打目标的分队，原地列阵待命
+            // 🔴 [2026-10-15 → 2026-10-26] 每个目标最多 4 队攻击；超出 4 队且场上已无其他可打目标的分队不设队级目标，野战仍继续前进
             const laneStandby = !heroHunt && !this.marching && !m.march && m.lane >= 0 && !this.heroOrderPending(m) && !m.siegeW && !isGuard
                 && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane);
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
@@ -6956,10 +6957,11 @@ export class Scene13WarLayer {
                     //    改前这里会掉进 aimAt，每 0.5 秒把玩家点的点改掉一次（见 heroOrderPending）。
                     //    什么都不做 = 目标点保持玩家点下的那一个。
                 } else if (laneStandby) {
-                    // 🔴 [2026-10-15 主人定] 场上所有目标均已满 4 队攻击，本队无目标可打时原地列阵待命；
+                    // 🔴 [2026-10-26 主人令「残兵直接前进，包括玩家」] 4 队集火上限只限制队级目标分配，不再把没分到目标的野战分队钉在原地；
+                    //    沿本方进军方向继续前进，视野内接敌仍走上面的正常索敌/攻击；玩家自动跟随本队，手动「待命」由 holdCmd 拦截、不受影响。
                     // 🔴 [2026-10-16 主人令「守方却打到攻方营地，应该是回城需要敌人呀，不要再营地等着打乱入者」]
                     //    攻城战守方在无目标待命时，若已远离本队城防位置，领队带全队回城寻敌驻守，绝不在外场或攻方营地原地干等
-                    const slot = this.laneSlotTarget(m, laneLeaders);
+                    const slot = this.battleType === 'siege' ? this.laneSlotTarget(m, laneLeaders) : null;
                     if (slot) {
                         [m.tx, m.ty] = slot;
                     } else if (this.battleType === 'siege' && m.f === 1) {
@@ -6972,8 +6974,8 @@ export class Scene13WarLayer {
                             m.ty = m.y;
                         }
                     } else {
-                        m.tx = m.x;
-                        m.ty = m.y;
+                        const u = this.advanceVec[m.f];
+                        [m.tx, m.ty] = this.fieldBound(m.x + u.x * MARCH_R, m.y + u.y * MARCH_R);
                     }
                 } else {
                     const slot = this.laneSlotTarget(m, laneLeaders);
@@ -7118,8 +7120,15 @@ export class Scene13WarLayer {
                         if (isGuard) {
                             m.tx = m.x; m.ty = m.y;
                         } else if (laneStandby) {
-                            const slot = this.laneSlotTarget(m, laneLeaders);
-                            if (slot) { [m.tx, m.ty] = slot; } else { m.tx = m.x; m.ty = m.y; }
+                            const slot = this.battleType === 'siege' ? this.laneSlotTarget(m, laneLeaders) : null;
+                            if (slot) {
+                                [m.tx, m.ty] = slot;
+                            } else if (this.battleType !== 'siege') {
+                                const u = this.advanceVec[m.f];
+                                [m.tx, m.ty] = this.fieldBound(m.x + u.x * MARCH_R, m.y + u.y * MARCH_R);
+                            } else {
+                                m.tx = m.x; m.ty = m.y;
+                            }
                         } else {
                             const slot = this.laneSlotTarget(m, laneLeaders);
                             if (slot) {

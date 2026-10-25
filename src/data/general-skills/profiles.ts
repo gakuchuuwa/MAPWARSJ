@@ -767,6 +767,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     chagatai_genggong: { generalId: 'chagatai_genggong', tier: 'ordinary', tacticalSkillId: 'ts_135', advantageSkillId: 'ts_012', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_368', atkAdvantageSkillId: 'ts_135', atkBalanceSkillId: 'ts_368', atkDisadvantageSkillId: 'ts_100', defAdvantageSkillId: 'ts_783', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_386', aptitude: 'reverse', attackStyle: 'defense' },
+    // 姑句（车师后王，普将；史无战功记载 → 通用技）
+    chagatai_gouju: { generalId: 'chagatai_gouju', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_393', atkDisadvantageSkillId: 'ts_689', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_736', aptitude: 'create', attackStyle: 'attack' },
 
 
 
