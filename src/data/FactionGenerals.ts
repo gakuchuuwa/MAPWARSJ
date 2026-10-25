@@ -6454,8 +6454,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_zhanghe', factionId: 'wei', cityId: 'city_anyang', generalName: '张郃', portrait: '/assets/CENTRAL/bfe_zhanghe.png', eliteName: '河北突骑', eliteTier: 2 },
-        { generalId: 'bfe_wangjing', factionId: 'wei', cityId: 'city_lintao', generalName: '王经', portrait: '/assets/CENTRAL/bfe_wangjing.png', eliteName: '雍州戍兵', eliteTier: 4 },
+        // 🔴 [2026-10-25 主人令「张郃、王经、强端（三国魏）、王衍（西晋）、项梁（秦末楚），请修复」]
+        //    与战国魏／春秋晋／战国楚同名的势力编制指针是三级「先秦军团」，这三家后世武将不跟先秦指针，
+        //    按格位（势力时代 × 据点文化）手写古典军团 —— 与曹操／曹爽／司马懿／于禁／邓艾同口径。
+        { generalId: 'bfe_zhanghe', factionId: 'wei', cityId: 'city_anyang', legionName: '古典时代华夏军团', generalName: '张郃', portrait: '/assets/CENTRAL/bfe_zhanghe.png', eliteName: '河北突骑', eliteTier: 2 },
+        { generalId: 'bfe_wangjing', factionId: 'wei', cityId: 'city_lintao', legionName: '古典时代华夏军团', generalName: '王经', portrait: '/assets/CENTRAL/bfe_wangjing.png', eliteName: '雍州戍兵', eliteTier: 4 },
     ],
 
 
@@ -10876,7 +10879,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'qiuchi_yangnandang', cityId: 'city_qiuchi', generalName: '杨难当', portrait: '/assets/BASHU/qiuchi_yangnandang.png' },
-        { generalId: 'dangzhou_qiangduan', factionId: 'wei', cityId: 'city_dangchang', generalName: '强端', portrait: '/assets/BASHU/dangzhou_qiangduan.png', eliteName: '阴平氐兵', eliteTier: 4  },   // 按史：阴平氐强端斩吴兰传其首（《三国志·卷一·武帝纪》）
+        // 🔴 [2026-10-25 主人令] 三国魏非先秦武将：不跟「先秦军团」指针，按格位（阴平 BASHU × 古典）取巴蜀军团
+        { generalId: 'dangzhou_qiangduan', factionId: 'wei', cityId: 'city_dangchang', legionName: '古典时代巴蜀军团', generalName: '强端', portrait: '/assets/BASHU/dangzhou_qiangduan.png', eliteName: '阴平氐兵', eliteTier: 4  },   // 按史：阴平氐强端斩吴兰传其首（《三国志·卷一·武帝纪》）
 
 
 
@@ -11088,7 +11092,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_wangyan', factionId: 'jin', cityId: 'city_luoyang', generalName: '王衍', portrait: '/assets/CENTRAL/bfe_wangyan.png', eliteName: '晋廷禁军', eliteTier: 4 },
+        // 🔴 [2026-10-25 主人令] 西晋（与春秋晋同势力）非先秦武将：不跟「先秦军团」指针，按格位取古典军团
+        { generalId: 'bfe_wangyan', factionId: 'jin', cityId: 'city_luoyang', legionName: '古典时代华夏军团', generalName: '王衍', portrait: '/assets/CENTRAL/bfe_wangyan.png', eliteName: '晋廷禁军', eliteTier: 4 },
     ],
 
 
@@ -16800,7 +16805,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe2_zi_chang', factionId: 'chuguo', cityId: 'city_ying', generalName: '子常', portrait: '/assets/JIANGNAN/bfe2_zi_chang.png', legionName: '古典时代吴越军团' },
         { generalId: 'bfe2_ziyu', factionId: 'chuguo', cityId: 'city_ying', generalName: '子玉', portrait: '/assets/JIANGNAN/bfe2_ziyu.png', legionName: '古典时代吴越军团' },
 
-        { generalId: 'bfe_xiangliang', factionId: 'chuguo', cityId: 'city_pengcheng', generalName: '项梁', portrait: '/assets/CENTRAL/bfe_xiangliang.png', eliteName: '江东子弟', eliteTier: 0 },
+        // 🔴 [2026-10-25 主人令] 秦末楚（与战国楚同势力）非先秦武将：不跟「先秦军团」指针，按格位取古典军团
+        { generalId: 'bfe_xiangliang', factionId: 'chuguo', cityId: 'city_pengcheng', legionName: '古典时代华夏军团', generalName: '项梁', portrait: '/assets/CENTRAL/bfe_xiangliang.png', eliteName: '江东子弟', eliteTier: 0 },
     ],
     liusong: [
         { generalId: 'gen_li_jinglong', factionId: 'ming_d', cityId: 'city_nanjing', generalName: '李景隆', portrait: '/assets/JIANGNAN/gen_li_jinglong.png', },
