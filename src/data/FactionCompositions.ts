@@ -1534,8 +1534,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "wende": {
-    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府马格德堡改萨克森文化（SAXONS）→ 封建档＝封建时代萨克森军团
-        legionName: "封建时代萨克森军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府马格德堡改萨克森文化（SAXONS）→ 封建档＝封建时代奥斯特法伦军团
+        legionName: "封建时代奥斯特法伦军团",
         legionType: "sub",
     },
     "bafaliya": {

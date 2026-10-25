@@ -23,10 +23,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'shuizu': 'city_sandou',
     'haikou': 'city_yuanzhishi',
     'liuzhen': 'city_hejian',
-    kilwa: 'city_kilwa',
-    mombasa: 'city_mombasa',
-    mogadishu: 'city_mogadishu',
-    zuraid: 'city_aden',
+    'kilwa': 'city_kilwa',
+    'mombasa': 'city_mombasa',
+    'mogadishu': 'city_mogadishu',
+    'zuraid': 'city_aden',
 
   // ── [2026-08-26] 大西洋航线七势力（1 势力 = 1 据点）──
   'taino': 'city_havana',

@@ -1424,12 +1424,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'scout_cavalry', count: 2 },
         ],
     },
-    // ── 萨克森 · 封建时代 · 封建时代萨克森军团　（本次新建）────────────────
+    // ── 萨克森 · 封建时代 · 封建时代奥斯特法伦军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（奎德林堡、马格德堡；奎德林堡圣塞尔瓦蒂乌斯双唱诗席石堂、早期马格德堡水陆堡垒；莱希菲尔德破阵锁甲重骑兵、东部边区开拓戍边大阵、神罗萨克森王朝铁血中坚）
     //    英雄队（第 10 队·主将队）：hero_tostig / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代萨克森军团', civ: '撒克逊', age: 'feudal', deStyle: 'WEST', region: 'SAXONS' as RegionType,
+        name: '封建时代奥斯特法伦军团', civ: '撒克逊', age: 'feudal', deStyle: 'WEST', region: 'SAXONS' as RegionType,
         buildingStyle: 'SAXONS',
         castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
         formationMode: 'echelon',
@@ -1441,12 +1441,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'varangian_guard', count: 2 },
         ],
     },
-    // ── 萨克森 · 城堡时代 · 城堡时代萨克森边区军团　（本次新建）────────────────
+    // ── 萨克森 · 城堡时代 · 城堡时代易北河军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（迈森、德累斯顿；迈森阿尔布莱希茨山崖石筑宫堡、早生期哥特式修道院要塞；全套镀黑精钢板甲、易北河重装枪骑兵卫队、七大选帝侯亲卫铁骑）
     //    英雄队（第 10 队·主将队）：hero_tostig / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代萨克森边区军团', civ: '撒克逊', age: 'castle', deStyle: 'WEST', region: 'SAXONS' as RegionType,
+        name: '城堡时代易北河军团', civ: '撒克逊', age: 'castle', deStyle: 'WEST', region: 'SAXONS' as RegionType,
         buildingStyle: 'SAXONS',
         castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
         formationMode: 'echelon',
@@ -2252,12 +2252,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'konnik', count: 2 },
         ],
     },
-    // ── 保加利亚 · 帝国时代 · 帝国时代保加利亚军团　（本次新建）────────────────
+    // ── 保加利亚 · 帝国时代 · 帝国时代里拉军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：轻步兵为主
     //    描述正文（主人原文，一字未改）：（里拉山脉、巴尔干山谷；里拉修道院早期石造要塞钟楼、隐秘黑白斑驳拱廊藏身所；巴尔干双手重砍刀、高山隘口冷锻倒钩短矛伏击、大航海早期深山孤守信仰海杜克游侠铁卫）
     //    英雄队（第 10 队·主将队）：hero_ivaylo / hero_ivaylofoot / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代保加利亚军团', civ: '保加利亚', age: 'imperial', deStyle: 'SLAV', region: 'BULGARIANS' as RegionType,
+        name: '帝国时代里拉军团', civ: '保加利亚', age: 'imperial', deStyle: 'SLAV', region: 'BULGARIANS' as RegionType,
         buildingStyle: 'BULGARIANS',
         castleId: 'BULG_CASTLE_AGE3', castleName: '保加利亚 普雷斯拉夫圆顶城堡',
         formationMode: 'echelon',
