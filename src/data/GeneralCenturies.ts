@@ -656,6 +656,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'lunbadi_alboin': 6,                                 // 阿尔博因 · lunbadi · 米兰
     'gen_tashfin': 11,                                   // 塔什芬 · mulabite · 马拉喀什
     'gen_theodoric_great': 5,                           // 狄奥多里克 · donggete · 拉文纳
+    'donggete_berig': 1,                     // 贝里格 · donggete · 维斯比
     'gen_ugolino': 13,                                   // 乌戈里诺 · anuo · 比萨
     'gen_uqba': 7,                                      // 奥克巴 · aguelabu · 凯鲁万
     'gen_basil_ii': 10,                                  // 巴西尔二世 · baizanting · 君士坦丁堡
@@ -717,6 +718,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     // ══════ SLAVIC（43 人，已标 0）══════
     'gen_albert_riga': 13,                               // 阿尔伯特 · baojian_qishi · 里加
     'gen_alexander_nef': 13,                             // 涅夫斯基 · liulike · 诺夫哥罗德
+    'luosi_dmitry_aleksandrovich': 13,       // 德米特里·亚历山德罗维奇 · luosi · 拉多加
+    'xinbuli_boiorix': -2,                   // 波伊奥里克斯 · xinbuli · 耶灵
+    'danmai_christian_iv': 16,               // 克里斯蒂安四世 · danmai · 哥本哈根
     'gen_rurik': 9,                                      // 留里克 · liulike · 拉多加（862 据拉多加/诺夫哥罗德）
     'gen_sineus': 9,                                     // 西涅乌斯 · liulike · 白湖（862 据白湖）
     'gen_algirdas': 14,                                  // 奥尔格尔德 · weijiebusike_gongguo · 维捷布斯克
@@ -1176,6 +1180,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xibanya_pisaluo':                   16,    // 皮萨罗 · xibanya · 西班牙征服印加帝国（1532年成名）
     'xibanya_aerwa': 16,                     // 阿尔瓦公爵 · xibanya · 布鲁塞尔（米尔贝格 1547）
     'wende_johnfriedrich': 16,               // 约翰·腓特烈 · wende · 马格德堡
+    'wende_hengist': 5,                      // 亨吉斯特 · wende · 马格德堡
+    'wende_heinrich_loewe': 12,              // 狮子亨利 · wende · 不伦瑞克
     'gen_cuauhtemoc':                    16,    // 库奥特莫克 · aztec · 阿兹特克抵抗西班牙末代君主（1520-1521成名）
     'gen_lautaro':                       16,    // 劳塔罗 · mapuche · 马普切抗西班牙反殖民统帅（1553年图卡佩尔战役）
     'gen_arariboia':                     16,    // 阿拉里博亚 · tupi · 图皮南巴部落酋长（16世纪）
@@ -1332,4 +1338,4 @@ export function getGeneralCentury(generalId: string | null | undefined): number 
     if (!generalId) return null;
     const c = GENERAL_CENTURIES[generalId];
     return c === undefined || c === 0 ? null : c;
-}
+}

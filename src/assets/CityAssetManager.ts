@@ -482,6 +482,7 @@ export class CityAssetManager {
 'wuhu': '乌护',
         'jiazini': '伽色',
 'danmai': '丹麦',
+        'xinbuli': '辛布',
 'ruidian_si': '瑞典',
 'kasidiliya': '卡斯',
 'teluoyi': '特洛',

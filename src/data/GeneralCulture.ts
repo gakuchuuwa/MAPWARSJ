@@ -419,6 +419,9 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_albrecht_bear': 'GERMANIC',   // 阿斯坎尼｜阿尔布雷｜据点 勃兰登堡
     'gen_alexander_great': 'MACEDONIAN',   // 马其顿｜亚历山大｜据点 佩拉
     'gen_alexander_nef': 'SLAVIC',   // 留里克｜涅夫斯基｜据点 诺夫哥罗德
+    'luosi_dmitry_aleksandrovich': 'SLAVIC',   // 罗斯｜德米特里·亚历山德罗维奇｜据点 诺夫哥罗德
+    'xinbuli_boiorix': 'DANES',   // 辛布里｜波伊奥里克斯｜据点 耶灵
+    'danmai_christian_iv': 'DANES',   // 丹麦｜克里斯蒂安四世｜据点 哥本哈根
     'gen_alfonso_ix': 'SPANISH',   // 莱昂｜阿方索九世｜据点 萨拉曼卡
     'gen_alfonso_vi': 'GOTHS',   // 西哥特｜阿方索六世｜据点 托莱多
     'gen_alfred_great': 'BRITONS',   // 盎格鲁｜阿尔弗雷德｜据点 温彻斯特
@@ -668,6 +671,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_tassilo_iii': 'GERMANIC',   // 巴伐利亚｜塔西洛三世｜据点 雷根斯堡
     'gen_themistocles': 'ATHENIANS',   // 阿提卡｜地米斯托｜据点 雅典
     'gen_theodoric_great': 'GOTHS',   // 东哥特｜狄奥多里克｜据点 拉文纳
+    'donggete_berig': 'VIKINGS',   // 东哥特｜贝里格｜据点 维斯比（哥特兰）
     'gen_thoros': 'ARMENIANS',   // 鲁本｜托罗斯二世｜据点 瓦卡（奇里乞亚亚美尼亚，2026-10-25 据点文化改 ARMENIANS）
     'gen_tibirica': 'TUPI',   // 图皮｜蒂巴里萨｜据点 瓜纳巴拉
     'gen_toghtekin': 'ORIE',   // 倭马亚｜图格特金｜据点 大马士革
@@ -1336,6 +1340,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xibanya_pisaluo': 'SPANISH',   // 西班牙｜皮萨罗｜据点 利马
     'xibanya_aerwa': 'BURGUNDIANS',   // 西班牙｜阿尔瓦公爵｜据点 布鲁塞尔（西属尼德兰）
     'wende_johnfriedrich': 'SAXONS',   // 萨克森｜约翰·腓特烈｜据点 马格德堡
+    'wende_hengist': 'SAXONS',   // 萨克森｜亨吉斯特｜据点 马格德堡
+    'wende_heinrich_loewe': 'SAXONS',   // 萨克森｜狮子亨利｜据点 不伦瑞克
     'xibo_d_tubote': 'CENTRAL_ASIA',   // 锡伯｜图伯特｜据点 固尔札
     'xibolai_dawei': 'ORIE',   // 希伯来｜大卫｜据点 耶路撒冷
     'xibolai_majiabi': 'ORIE',   // 希伯来｜犹大马加比｜据点 耶路撒冷
@@ -1555,4 +1561,4 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
 export function getGeneralCulture(generalId: string | null | undefined): BuildingStyle | undefined {
     if (!generalId) return undefined;
     return getGeneralCityCulture(generalId) ?? GENERAL_CULTURE[generalId];
-}
+}

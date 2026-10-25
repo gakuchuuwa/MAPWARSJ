@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将时代表（generalId → 四时代）——**只作兜底/原值**（游戏内取时代走 `FactionEra.getGeneralEra()`：势力年段 × 该将首战年/登场年）。
  *
  * 由 GENERAL_CENTURIES（成名世纪=辉煌年代）派生，不做生卒/寿命。
@@ -265,6 +265,9 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_albrecht_bear': 'castle',
     'gen_alexander_great': 'antiquity',
     'gen_alexander_nef': 'castle',
+    'luosi_dmitry_aleksandrovich': 'castle',
+    'xinbuli_boiorix': 'antiquity',
+    'danmai_christian_iv': 'imperial',
     'gen_rurik': 'feudal',
     'gen_sineus': 'feudal',
     'gen_alfonso_ix': 'castle',
@@ -707,6 +710,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_cambyses': 'antiquity',           // 冈比西斯二世（据点 苏萨）
     'wu_fuchai': 'antiquity',              // 夫差（据点 姑苏）
     'gen_theodoric_great': 'antiquity',
+    'donggete_berig': 'antiquity',
     'gen_tibirica': 'imperial',
     'gen_tome_sousa': 'imperial',
     'gen_cortes': 'imperial',
@@ -1319,6 +1323,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xibanya_pisaluo': 'imperial',
     'xibanya_aerwa': 'imperial',
     'wende_johnfriedrich': 'imperial',
+    'wende_hengist': 'antiquity',
+    'wende_heinrich_loewe': 'castle',
     'xibo_d_tubote': 'imperial',
     'xibolai_dawei': 'antiquity',
     'xichu_xiangyu': 'antiquity',
@@ -1658,4 +1664,4 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {
     return GENERAL_ERA[generalId];
-}
+}

@@ -153,6 +153,8 @@ export const FACTIONS: Faction[] = [
   { id: 'shengdian_qishi', name: '圣殿骑士团' },
   { id: 'maerta_qishi', name: '圣约翰' },
   { id: 'danmai', name: '丹麦' },
+    // 🔴 [2026-10-25 主人令「存在就建」] 辛布里（金布里，Cimbri）｜日德兰；前 113–前 101 辛布里战争
+    { id: 'xinbuli', name: '辛布里' },
   { id: 'ruidian_si', name: '瑞典' },
   { id: 'kasidiliya', name: '卡斯蒂利亚' },
   { id: 'aboerleiya', name: '阿尔博雷亚' },   // 🔴 [2026-10-24 主人授权] 撒丁阿尔博雷亚判官国（Giudicato d'Arborea，埃莱奥诺拉）；原并进阿拉贡是错并

@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-25T11:12:53.459Z",
+ "generatedAt": "2026-10-25T11:51:33.921Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -15992,6 +15992,34 @@
    "reliefM": 45,
    "cliffs": 0,
    "top": "Grass 2 81.1% · Forest 6.3% · Water, Shallow 5.6% · Beach 3.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_weishibi",
+   "file": "site_city_weishibi.json",
+   "bytes": 238429,
+   "koppen": "Dfb",
+   "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 6509,
+   "waterPct": 45.2,
+   "reliefM": 92,
+   "cliffs": 0,
+   "top": "Grass 2 47.2% · Water, Shallow 45.2% · Forest 4.2% · Pine Forest 1.9%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_bulunruike",
+   "file": "site_city_bulunruike.json",
+   "bytes": 335952,
+   "koppen": "Cfb",
+   "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 9,
+   "waterPct": 0.1,
+   "reliefM": 22,
+   "cliffs": 0,
+   "top": "Grass 2 91.5% · Forest 5% · Pine Forest 2.2% · Forest, Bush 0.5%",
    "verify": "ok"
   }
  ],

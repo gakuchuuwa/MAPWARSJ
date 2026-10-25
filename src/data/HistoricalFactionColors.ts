@@ -549,6 +549,7 @@ const _FIXED: Record<string, string> = {
     'aosiruowen': '#A0282E', // 埃德萨·埃德萨（十字军红）
     'shengdian_qishi': '#B81E2E', // 圣殿骑士·阿卡（圣殿红底白十字）
     'danmai': '#C0202E', // 丹麦·哥本哈根（红底白十字）
+    'xinbuli': '#8D6E3A', // 辛布里（日德兰；与丹麦红区分）
     'ruidian_si': '#1E63AC', // 瑞典·斯德哥尔摩（瑞典蓝金）
     'kasidiliya': '#C2102E', // 卡斯蒂利亚·马德里（金塔红旗）
     'teluoyi': '#8E6A3C', // 特洛伊·特洛伊（青铜）

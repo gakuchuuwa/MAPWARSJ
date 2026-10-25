@@ -29,6 +29,7 @@ export interface DeCampaignSpriteMeta {
     unit?: number;
     name?: string;
     graphic?: number;
+    frames5?: string[];
 }
 
 let spriteMetaPromise: Promise<Record<string, DeCampaignSpriteMeta>> | null = null;
@@ -430,18 +431,60 @@ export function populateDeCampaignObjects(
         return dAtk < 720 && dAtk + 180 < dDef;
     };
 
-    // 预扫描城门立柱附属件 (GATE_POST_IDS) 与城镇中心附属件 (TC_ANNEX_IDS)，以便挂到主件上同步坍塌
+    // 预扫描城门主体/立柱附属件 (GATE_MAIN_IDS / GATE_POST_IDS)、城镇中心附属件 (TC_ANNEX_IDS) 与城墙连通格网，
+    // 以便城门挂载门柱、城墙按邻格连通性自动选取 DE 5 向精灵
+    //（0 = 沿 tx 轴 ↗↙，1 = 沿 ty 轴 ↘↖，2 = 交汇/转角方柱，3 = 沿 (1,1) 对角 —，4 = 沿 (1,-1) 对角 |；
+    //  方向由这 5 帧的 SLD 影子层实测：影子长轴分别为 -18°、+25°、正方形、+5°、+85°）。
     const gatePosts: Array<{ ob: any; pos: { x: number; y: number }; used: boolean }> = [];
     const tcAnnexes: Array<{ ob: any; pos: { x: number; y: number }; sp: DecorSprite }> = [];
+    const wgTileSet = new Set<string>();
+    const towerTileSet = new Set<string>();
 
     for (const ob of rawObjects) {
         if (!ob || !ob.name) continue;
         const uid: number = ob.id;
+        const gx = Math.floor(ob.x);
+        const gy = Math.floor(ob.y);
         if (GATE_POST_IDS.has(uid)) {
             markDeCampaignSpriteHighPriority(ob.name);
             gatePosts.push({ ob, pos: toScreen(ob.x, ob.y), used: false });
+            wgTileSet.add(`${gx},${gy}`);
+        } else if (GATE_MAIN_IDS.has(uid)) {
+            // 城门主体：与城墙同属一圈墙线，贴着城门的墙件要按「朝城门延伸」选直墙帧，不能当孤墙
+            wgTileSet.add(`${gx},${gy}`);
+        } else if (WALL_IDS.has(uid)) {
+            wgTileSet.add(`${gx},${gy}`);
+        } else if (TOWER_IDS.has(uid)) {
+            towerTileSet.add(`${gx},${gy}`);
         }
     }
+
+    // 🔴 [2026-10-25 主人令「这个城墙没有摆放对朝向，请修复」]
+    //    DE 剧本里存的城墙 rotation 只是编辑器放置时留下的角度（实测同一段直墙里 5 个角度值混着出现，
+    //    与邻格连通性无关），不能再按 rotation 取帧——原来按 round(rot)%5 取帧，144°/216°/288° 三档
+    //    全取错（144° 取成 3、216° 取成 4、288° 取成 0），整圈墙才变成「一块块各朝各的」。
+    //    改按邻格连通性取帧（与 DE 运行时同一口径）：只连一组方向 → 该方向的直墙帧；
+    //    连两组以上方向（转角/丁字/十字）或孤立单节 → 方柱帧。城门主体/门柱算墙线的一节。
+    const resolveWallAngleIdx = (gx: number, gy: number): number => {
+        const has = (s: Set<string>, x: number, y: number) => s.has(`${x},${y}`);
+        const dirs = [
+            has(wgTileSet, gx - 1, gy) || has(wgTileSet, gx + 1, gy),               // 0：沿 tx 轴
+            has(wgTileSet, gx, gy - 1) || has(wgTileSet, gx, gy + 1),               // 1：沿 ty 轴
+            has(wgTileSet, gx - 1, gy - 1) || has(wgTileSet, gx + 1, gy + 1),       // 3：沿 (1,1) 对角
+            has(wgTileSet, gx + 1, gy - 1) || has(wgTileSet, gx - 1, gy + 1),       // 4：沿 (1,-1) 对角
+        ];
+        const frameOf = [0, 1, 3, 4];
+        let hit = 0, only = -1;
+        for (let i = 0; i < dirs.length; i++) if (dirs[i]) { hit++; only = i; }
+        if (hit === 1) return frameOf[only];
+        // 孤立单节：若夹在箭塔之间（周围无直接墙/门柱邻格），按箭塔轴向取直墙帧
+        if (hit === 0) {
+            const tx = has(towerTileSet, gx - 1, gy) || has(towerTileSet, gx + 1, gy);
+            const ty = has(towerTileSet, gx, gy - 1) || has(towerTileSet, gx, gy + 1);
+            if (tx !== ty) return tx ? 0 : 1;
+        }
+        return 2;   // 转角 / 丁字 / 十字 / 孤立单节 → 方柱
+    };
 
     for (const ob of rawObjects) {
         if (!ob || !ob.name) continue;
@@ -575,10 +618,17 @@ export function populateDeCampaignObjects(
             continue;
         }
 
-        // 3. 城墙 / 木栅栏 / 海墙 / 拒马：注册进 wallGates (f = 1)
+        // 3. 城墙 / 木栅栏 / 海墙 / 拒马：注册进 wallGates (f = 1)，并按邻格连通性自动选取 DE 5 向精灵
         if (WALL_IDS.has(uid)) {
-            markDeCampaignSpriteHighPriority(spriteKey);
-            layer.ensureNatureAsset(assetKey);
+            const meta = getDeCampaignSpriteMetaSync(spriteKey);
+            let wallSpriteKey = spriteKey;
+            if (meta?.frames5 && meta.frames5.length === 5) {
+                const angleIdx = resolveWallAngleIdx(Math.floor(ob.x), Math.floor(ob.y));
+                wallSpriteKey = meta.frames5[angleIdx] || spriteKey;
+            }
+            const wallAssetKey = `DECAMP:${wallSpriteKey}`;
+            markDeCampaignSpriteHighPriority(wallSpriteKey);
+            layer.ensureNatureAsset(wallAssetKey);
             const isWood = uid === 72 || uid === 119 || uid === 1062 || uid === 1090 || (uid >= 1218 && uid <= 1220);
             const isFortified = uid === 155 || uid === 370 || uid === 788;
             const wKey: 'WOOD_WALL' | 'STONE_WALL' | 'FORTIFIED_WALL' = isWood
@@ -588,7 +638,7 @@ export function populateDeCampaignObjects(
                     : 'STONE_WALL';
             const st = WALL_GATE_STATS[wKey];
             const wallSp: DecorSprite = {
-                asset: assetKey,
+                asset: wallAssetKey,
                 frame: 0,
                 x: pos.x,
                 y: pos.y,

@@ -620,7 +620,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'cuanshi': [{ from: -9999, era: 'antiquity' }, { from: 715, era: 'feudal' }], // 爨族｜按现存名将成名年推定：–∞起古典 → 715起封建
     'da_yan': [{ from: -9999, era: 'antiquity' }, { from: 720, era: 'feudal' }], // 大燕｜按现存名将成名年推定：–∞起古典 → 720起封建
     'dali': [{ from: -9999, era: 'feudal' }, { from: 1065, era: 'castle' }], // 大理｜按现存名将成名年推定：–∞起封建 → 1065起城堡
-    'danmai': [{ from: -9999, era: 'feudal' }, { from: 1184, era: 'castle' }], // 丹麦｜按现存名将成名年推定：–∞起封建 → 1184起城堡
+    'danmai': [{ from: -9999, era: 'feudal' }, { from: 1184, era: 'castle' }, { from: 1500, era: 'imperial' }], // 丹麦｜–∞起封建 → 1184起城堡 → 1500起帝国
+    'xinbuli': [{ from: -9999, era: 'antiquity' }], // 辛布里（金布里）｜前 113–前 101 辛布里战争
     'daquyue': [{ from: -9999, era: 'feudal' }, { from: 1405, era: 'castle' }], // 大瞿越｜按现存名将成名年推定：–∞起封建 → 1405起城堡
     'deli': [{ from: -9999, era: 'castle' }, { from: 1526, era: 'imperial' }], // 德里苏丹国｜按现存名将成名年推定：–∞起城堡 → 1526起帝国
     'dulan_d': [{ from: -9999, era: 'feudal' }, { from: 1500, era: 'castle' }, { from: 1761, era: 'imperial' }], // 杜兰尼｜按现存名将成名年推定：–∞起封建 → 1500起城堡 → 1761起帝国
@@ -666,7 +667,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'suomunate': [{ from: -9999, era: 'feudal' }, { from: 1163, era: 'castle' }], // 索兰基｜按现存名将成名年推定：–∞起封建 → 1163起城堡
     'talasike': [{ from: -9999, era: 'castle' }, { from: 1505, era: 'imperial' }], // 塔拉斯科｜按现存名将成名年推定：–∞起城堡 → 1505起帝国
     'tubo': [{ from: -9999, era: 'antiquity' }, { from: 530, era: 'feudal' }, { from: 1050, era: 'castle' }], // 吐蕃｜按现存名将成名年推定：–∞起古典 → 530起封建 → 1050起城堡
-    'wende': [{ from: -9999, era: 'feudal' }, { from: 993, era: 'castle' }, { from: 1500, era: 'imperial' }], // 萨克森｜–∞起封建 → 993起城堡 → 1500起帝国（萨克森选侯国·约翰·腓特烈 1547 米尔贝格）
+    'wende': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 993, era: 'castle' }, { from: 1500, era: 'imperial' }], // 萨克森｜–∞起古典（罗马时期撒克逊人）→ 476起封建 → 993起城堡 → 1500起帝国
     'wulaertu': [{ from: -9999, era: 'antiquity' }, { from: 953, era: 'feudal' }, { from: 1140, era: 'castle' }], // 亚美尼亚｜按现存名将成名年推定：–∞起古典 → 953起封建 → 1140起城堡
     'xigete': [{ from: -9999, era: 'antiquity' }, { from: 708, era: 'feudal' }, { from: 1085, era: 'castle' }], // 西哥特｜按现存名将成名年推定：–∞起古典 → 708起封建 → 1085起城堡
     'xijue': [{ from: -9999, era: 'antiquity' }, { from: 660, era: 'feudal' }], // 十箭｜按现存名将成名年推定：–∞起古典 → 660起封建

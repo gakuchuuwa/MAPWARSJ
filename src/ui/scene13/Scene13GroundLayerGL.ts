@@ -263,45 +263,73 @@ void main() {
     float frostBand = smoothstep(0.38, 0.48, wPerturb) * (1.0 - smoothstep(0.48, 0.58, wPerturb));
     waterCol = mix(waterCol, vec3(0.92, 0.96, 1.0), frostBand * 0.40);
   } else {
-    // 液态水体：以气候水体贴图 uWaterTex 本色为基底（碧绿河水/浑浊沼泽/蔚蓝海面各司其职）
-    vec2 wuv1 = fract(vGUV * 0.22 + vec2(uTime * 0.028, uTime * 0.014));
-    vec2 wuv2 = fract(vGUV * 0.27 + vec2(-uTime * 0.019, uTime * 0.022));
+    // 液态水体：借鉴 AoE2 DE water_def.json 水体着色管线
+    // 1. 严格按等轴测 2:1 像素比例 (96×48 / 512) 采样水体贴图，彻底消除横向 2× 拉伸与放大模糊
+    vec2 baseWaterUV = (vGUV * vec2(96.0, 48.0)) / 512.0;
+    vec2 isoP = vGUV * vec2(1.0, 0.5);
     // 🔴 [2026-10-21 主人令「淡水一种，海水一种」] 护城河格（field.b 标记）改采淡水色贴图 uMoatWaterTex；其余水格用本图主水色 uWaterTex
     float moatMark = smoothstep(0.02, 0.09, field.b);
+
+    // 2. DE 三层法线波浪扰动（normal0 主涌 + normal1 交叉次波 + normal_detail 微波，彻底取代旧版 sin*cos 圆斑点阵）
+    float phaseWarp = n1 * 0.90 + n2 * 0.48;
+    float p0 = dot(isoP, vec2(3.1, 5.2)) + phaseWarp + uTime * 1.25;
+    float p1 = dot(isoP, vec2(4.4, -3.9)) - phaseWarp * 0.82 - uTime * 0.95;
+    float p2 = dot(isoP, vec2(-6.2, 7.4)) + nMicro1 * 0.85 + uTime * 1.75;
+    vec2 waveGrad = vec2(3.1, 5.2) * cos(p0) * 0.46
+                  + vec2(4.4, -3.9) * cos(p1) * 0.34
+                  + vec2(-6.2, 7.4) * cos(p2) * 0.20
+                  + vec2(nMicro1, nMicro2) * 1.25;
+    float waveAmp = mix(0.030, 0.052, isDeepWater) * (1.0 - moatMark * 0.35);
+    vec3 waterNormal = normalize(vec3(-waveGrad.x * waveAmp, -waveGrad.y * waveAmp, 1.0));
+
+    // 3. 双层对向流动水纹采样（叠加法线微扰动，呈现自然流动的细密水波）
+    vec2 wuv1 = fract(baseWaterUV * 0.96 + vec2(uTime * 0.016, uTime * 0.008) + waterNormal.xy * 0.055);
+    vec2 wuv2 = fract(baseWaterUV * 1.24 + vec2(-uTime * 0.011, uTime * 0.013) - waterNormal.xy * 0.045);
     vec3 wave1 = mix(texture2D(uWaterTex, wuv1).rgb, texture2D(uMoatWaterTex, wuv1).rgb, moatMark);
     vec3 wave2 = mix(texture2D(uWaterTex, wuv2).rgb, texture2D(uMoatWaterTex, wuv2).rgb, moatMark);
     vec3 rawWater = (wave1 + wave2) * 0.5;
     float luma = dot(rawWater, vec3(0.299, 0.587, 0.114));
-    float liftScale = luma < 0.26 ? 1.48 : 1.12;
-    vec3 shallowBody = clamp(rawWater * (liftScale * 1.12) + vec3(0.04, 0.08, 0.08), 0.0, 1.0);
-    vec3 deepBody = clamp(rawWater * (liftScale * 0.92), 0.0, 1.0);
+    float liftScale = luma < 0.26 ? 1.44 : 1.10;
+    vec3 shallowBody = clamp(rawWater * (liftScale * 1.10) + vec3(0.03, 0.07, 0.07), 0.0, 1.0);
+    vec3 deepBody = clamp(rawWater * (liftScale * 0.90), 0.0, 1.0);
     vec3 waterBody = mix(shallowBody, deepBody, isDeepWater);
 
-    // 水体通透度层次（DE 风格：近岸浅滩清澈见底，透出水下沙床；向外海逐渐深沉）
-    vec3 shallowTintedBed = mix(riverbedCol, shallowBody, 0.35);
+    // 4. 浅滩水下河床折射与通透度层次（DE 风格：近岸浅滩清澈见底并随水波微折射沙床，向外海逐渐深沉）
+    vec2 refractUV = fract(texUV + waterNormal.xy * (0.042 * (1.0 - waterDepthMix)));
+    vec3 refractedBed = texture2D(uSandTex, refractUV).rgb * vec3(0.85, 0.81, 0.72);
+    vec3 shallowTintedBed = mix(refractedBed, shallowBody, 0.36);
     waterCol = mix(shallowTintedBed, waterBody, waterDepthMix);
 
-    // 水面微澜高光（阳光波光粼粼）
-    vec2 ripUV = vGUV * 0.6;
-    float rip1 = sin(ripUV.x * 2.5 + ripUV.y * 1.2 + uTime * 2.0);
-    float rip2 = cos(ripUV.x * 1.5 - ripUV.y * 2.8 - uTime * 1.6);
-    float shimmer = pow(clamp(rip1 * rip2 * 0.5 + 0.5, 0.0, 1.0), 5.0) * (1.0 - isDeepWater * 0.4);
-    waterCol += vec3(0.12, 0.16, 0.20) * shimmer;
+    // 5. DE water_def.json 阳光漫反射明暗、天光菲涅尔反射与狭长波峰高光（sun_direction = [0.7, -0.68, 0.45]）
+    vec3 sunDir = normalize(vec3(0.70, -0.68, 0.45));
+    vec3 viewDir = normalize(vec3(0.0, -0.50, 0.866));
+    vec3 halfVec = normalize(sunDir + viewDir);
+    float ndotl = clamp(dot(waterNormal, sunDir), 0.0, 1.0);
+    waterCol *= (0.91 + 0.18 * ndotl);
+
+    float fresnel = pow(1.0 - clamp(dot(waterNormal, viewDir), 0.0, 1.0), 3.0);
+    waterCol = mix(waterCol, vec3(0.65, 0.79, 0.87), fresnel * 0.18);
+
+    float ndoth = clamp(dot(waterNormal, halfVec), 0.0, 1.0);
+    float specSheen = pow(ndoth, 28.0) * 0.10;
+    float specGlint = pow(ndoth, 92.0) * smoothstep(0.08, 0.62, nMicro2) * 0.32;
+    float shimmer = (specSheen + specGlint) * (1.0 - isDeepWater * 0.30);
+    waterCol += vec3(0.95, 0.97, 1.0) * shimmer;
 
     // 🔴 [2026-10-21 主人报「护城河水有点蓝，有浅色的水吗」] 护城河格在 field.b 里写了个很小的标记（0.12，远低于森林阈值，水格本无森林），
     //    只在护城河上把水色往浅青绿（DE 浅滩 Shallows 的清透感）调淡；河、湖、海不带标记，不受影响。
-    waterCol = mix(waterCol, vec3(0.58, 0.76, 0.72) + vec3(0.12, 0.16, 0.20) * shimmer, moatMark * 0.55);
+    waterCol = mix(waterCol, vec3(0.58, 0.76, 0.72) + vec3(0.90, 0.95, 1.0) * shimmer, moatMark * 0.55);
 
-    // 岸边动态拍岸涌浪与碎浪泡沫（DE 标志性动态浪花，随潮汐向沙滩推涌）
-    float waveTide = sin(uTime * 1.6 + (vGUV.x * 0.4 + vGUV.y * 0.8) * 0.15) * 0.025;
+    // 6. 岸边动态拍岸涌浪与碎浪泡沫（DE 标志性动态浪花，随潮汐向沙滩推涌，带颗粒泡沫消散）
+    float waveTide = sin(uTime * 1.45 + (isoP.x * 0.8 + isoP.y * 1.4) * 0.35 + n1 * 0.8) * 0.020;
     float waveFront = 0.435 + waveTide;
     float surgeDist = abs(wPerturb - waveFront);
-    float waveSurge = smoothstep(0.035, 0.005, surgeDist);
-    float foamNoise = snoise(vGUV * 2.2 + vec2(uTime * 0.3, -uTime * 0.15));
-    float shoreFoam = waveSurge * clamp(0.65 + 0.55 * foamNoise, 0.0, 1.2);
-    float shoreLine = smoothstep(0.42, 0.45, wPerturb) * (1.0 - smoothstep(0.45, 0.48, wPerturb)) * (0.35 + 0.25 * foamNoise);
+    float waveSurge = smoothstep(0.030, 0.004, surgeDist);
+    float foamNoise = snoise(isoP * 3.6 + vec2(uTime * 0.25, -uTime * 0.14)) * 0.65 + nMicro2 * 0.35;
+    float shoreFoam = waveSurge * smoothstep(-0.15, 0.55, foamNoise);
+    float shoreLine = smoothstep(0.42, 0.45, wPerturb) * (1.0 - smoothstep(0.45, 0.48, wPerturb)) * clamp(0.32 + 0.30 * foamNoise, 0.0, 0.75);
     float totalFoam = clamp(shoreFoam + shoreLine, 0.0, 1.0);
-    waterCol = mix(waterCol, vec3(0.96, 0.98, 1.0), totalFoam * 0.85);
+    waterCol = mix(waterCol, vec3(0.95, 0.98, 1.0), totalFoam * 0.80);
   }
   
   // ── DE 高地斜坡立体边坡肌理与坡脚体积暗部（不画 fract 等高线圈，仅对斜坡面赋予自然边坡立体感） ──

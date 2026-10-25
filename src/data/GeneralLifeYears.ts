@@ -141,6 +141,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     xiongren_atila: { birth: 406, death: 453, kaoju: '异说' },            // 阿提拉
     hao_d_weirui: { birth: 442, death: 520 },              // 韦睿
     gen_theodoric_great: { birth: 454, death: 526 },       // 狄奥多里克大帝
+    donggete_berig: { birth: 40, death: 120, kaoju: '推定' },  // 贝里格（Jordanes 记 哥特迁徙王；约 1–2 世纪，传说成分）
     gen_clovis_i: { birth: 466, death: 511 },              // 克洛维
     gen_zhang_rou: { birth: 1190, death: 1268, kaoju: '推定' },
     gen_feng_sheng: { birth: 1330, death: 1395, kaoju: '推定' },
@@ -468,6 +469,9 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     yuan_d_hubilie: { birth: 1215, death: 1294 },          // 忽必烈
     asaibaijiang_xuliewu: { birth: 1218, death: 1265, kaoju: '异说' },    // 旭烈兀
     gen_alexander_nef: { birth: 1221, death: 1263 },       // 涅夫斯基
+    luosi_dmitry_aleksandrovich: { birth: 1250, death: 1294 },  // 德米特里·亚历山德罗维奇（诺夫哥罗德王公）
+    xinbuli_boiorix: { birth: -160, death: -101, kaoju: '推定' },  // 波伊奥里克斯（辛布里王）
+    danmai_christian_iv: { birth: 1577, death: 1648 },  // 克里斯蒂安四世
     gen_rurik: { birth: 830, death: 879, debut: 862, kaoju: '推定' },   // 留里克（生卒为传统推定；862 据拉多加/诺夫哥罗德）
     gen_sineus: { birth: 840, death: 864, debut: 862, kaoju: '推定' },  // 西涅乌斯（留里克之弟，862 据白湖；卒年 864 见《往年纪事》，生年为推定）
     mamuluke_baibaisi: { birth: 1223, death: 1277, kaoju: '异说' },       // 拜巴尔斯
@@ -506,6 +510,8 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     xibanya_pisaluo: { birth: 1478, death: 1541, kaoju: '异说' },         // 皮萨罗
     xibanya_aerwa: { birth: 1507, death: 1582 },  // 阿尔瓦公爵（费尔南多·阿尔瓦雷斯·德·托莱多）
     wende_johnfriedrich: { birth: 1503, death: 1554 },  // 萨克森选侯 约翰·腓特烈
+    wende_hengist: { birth: 400, death: 488, kaoju: '推定' },  // 亨吉斯特（半史，生卒无考）
+    wende_heinrich_loewe: { birth: 1129, death: 1195 },  // 狮子亨利
     babuer_babuer: { birth: 1483, death: 1530 },           // 巴布尔
     aki_maoliyuanjiu: { birth: 1497, death: 1571 },        // 毛利元就
     xindu_bahelamuhan: { birth: 1501, death: 1561, kaoju: '推定' },       // 巴赫拉姆汗（拜拉姆·汗）
@@ -1697,4 +1703,4 @@ export function getGeneralDebutYear(generalId: string | null | undefined): numbe
     const y = generalId ? GENERAL_LIFE_YEARS[generalId] : undefined;
     if (!y) return null;
     return y.debut ?? debutYearOf(y.birth, y.death);
-}
+}

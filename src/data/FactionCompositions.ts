@@ -1018,7 +1018,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xigete": {
-        legionName: "城堡时代克里米亚军团",
+        legionName: "城堡时代伊比利亚军团",
         legionType: "sub",
     },
     "donggete": {
@@ -1028,6 +1028,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "sashan": {
         legionName: "古典时代萨珊军团",
         legionType: "sub",
+    },
+    "xinbuli": {
+        legionName: "古典时代日德兰军团",
+        legionType: "region",
     },
     "danmai": {
         legionName: "城堡时代丹麦骑士军团",

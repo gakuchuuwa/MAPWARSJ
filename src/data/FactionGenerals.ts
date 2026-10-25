@@ -1999,6 +1999,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     donggete: [
         { generalId: 'gen_theodoric_great', cityId: 'city_ravenna', generalName: '狄奥多里克', portrait: '/assets/GOTHS/gen_theodoric_great.png' },
+        // 🔴 [2026-10-25 主人定「B」] 贝里格（Berig，Jordanes《哥特史》记 率哥特人自 Scandza 迁出的王；约 1–2 世纪，史源转述、传说成分）｜势力 东哥特（donggete 时代＝古典）｜据点 维斯比（哥特兰）｜普将（无实胜、无对阵）｜精锐「哥特战团」T4｜立绘留空
+        { generalId: 'donggete_berig', factionId: 'donggete', cityId: 'city_weishibi', generalName: '贝里格', portrait: '', eliteName: '哥特战团', eliteTier: 4 },
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：奥多亚克＝意大利王，都拉文纳，493 年在拉文纳被围杀；美因茨与他无关 → 放拉文纳（donggete，风格 GOTHS）；仍挂本政权 rierman
         // 🔴 [2026-10-24 主人口径「据点、武将、势力、精锐、军团都是一个文化」] 武将文化=GOTHS（拉文纳风格）× 时代 antiquity → 古典时代西哥特军团；不再继承法兰克势力编制
         { generalId: 'rierman_odoacer', cityId: 'city_ravenna', legionName: '古典时代西哥特军团', factionId: 'falanji', generalName: '奥多亚克', portrait: '/assets/GOTHS/rierman_odoacer.png', eliteName: '日耳曼佣兵', eliteTier: 4 },
@@ -2042,7 +2044,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 主人令「先定据点建筑风格，再放相同风格的武将」] 叶海亚＝托莱多泰法王（1085 托莱多陷落）→ 托莱多（GOTHS 西哥特风格）；势力仍挂倭马亚（factionId）；军团＝城堡时代克里米亚军团（GOTHS×城堡）；立绘留空
+        // 🔴 [2026-10-20 主人令「先定据点建筑风格，再放相同风格的武将」] 叶海亚＝托莱多泰法王（1085 托莱多陷落）→ 托莱多（GOTHS 西哥特风格）；势力仍挂倭马亚（factionId）；军团＝城堡时代伊比利亚军团（GOTHS×城堡）；立绘留空
 
 
 
@@ -2050,7 +2052,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'womaya_yahya', cityId: 'city_toledo', generalName: '叶海亚·卡迪尔', portrait: '/assets/GOTHS/womaya_yahya.png', factionId: 'womaya', legionName: '城堡时代克里米亚军团' },
+        { generalId: 'womaya_yahya', cityId: 'city_toledo', generalName: '叶海亚·卡迪尔', portrait: '/assets/GOTHS/womaya_yahya.png', factionId: 'womaya', legionName: '城堡时代伊比利亚军团' },
 
 
 
@@ -3129,7 +3131,15 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    xinbuli: [
+        // 🔴 [2026-10-25 主人令「存在就建」] 波伊奥里克斯（Boiorix，辛布里王，前 101 韦尔切利战死；辛布里战争）｜势力 辛布里｜据点 耶灵（日德兰中部，辛布里起源最近同文化据点）｜普将（存疑）｜精锐「辛布里战团」T4｜立绘留空
+        { generalId: 'xinbuli_boiorix', factionId: 'xinbuli', cityId: 'city_jelling', generalName: '波伊奥里克斯', portrait: '', eliteName: '辛布里战团', eliteTier: 4 },
+    ],
     wende: [
+        // 🔴 [2026-10-25 主人令「存在就建」] 亨吉斯特（449 率撒克逊人入不列颠、肯特王；比德《英吉利教会史》《盎格鲁-撒克逊编年史》记载，半史）｜势力 萨克森｜据点 马格德堡（撒克逊核心，同文化据点）｜普将（存疑）｜精锐「撒克逊战团」T4｜立绘留空
+        { generalId: 'wende_hengist', factionId: 'wende', cityId: 'city_magedebao', generalName: '亨吉斯特', portrait: '', eliteName: '撒克逊战团', eliteTier: 4 },
+        // 🔴 [2026-10-25 主人令「存在就建」] 狮子亨利（Heinrich der Löwe，1129–1195，萨克森+巴伐利亚公爵）｜势力 萨克森｜据点 不伦瑞克（其居城/都城）｜普将（有胜有败、存疑）｜精锐「萨克森骑士」T4｜立绘留空
+        { generalId: 'wende_heinrich_loewe', factionId: 'wende', cityId: 'city_bulunruike', generalName: '狮子亨利', portrait: '', eliteName: '萨克森骑士', eliteTier: 4 },
         // 🔴 [2026-10-25 主人令「有知名度高的将领先加」] 萨克森选侯 约翰·腓特烈（1503–1554，施马尔卡尔登联盟领袖，1547 米尔贝格被俘）；势力 萨克森；据点 马格德堡（维滕贝格不在城库，取最近同文化据点）；普将；精锐「萨克森卫队」T4；立绘留空
         { generalId: 'wende_johnfriedrich', factionId: 'wende', cityId: 'city_magedebao', generalName: '约翰·腓特烈', portrait: '', eliteName: '萨克森卫队', eliteTier: 4 },
 
@@ -3238,6 +3248,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     luosi: [
+        // 🔴 [2026-10-25 按史] 德米特里·亚历山德罗维奇（1250–1294，涅夫斯基之子，诺夫哥罗德王公 1276–1292）｜势力 罗斯｜据点 诺夫哥罗德（其王公驻地，SLAVIC 文化）｜普将｜精锐「诺夫战团」T4｜立绘留空
+        { generalId: 'luosi_dmitry_aleksandrovich', factionId: 'luosi', cityId: 'city_nuofugeerdede', generalName: '德米特里·亚历山德罗维奇', portrait: '', eliteName: '诺夫战团', eliteTier: 4 },
         { generalId: 'luosi_svyatopolk', factionId: 'luosi', cityId: 'city_jifu', generalName: '斯维亚托波尔克', portrait: '/assets/SLAVIC/luosi_svyatopolk.png' },   // 🔴 [2026-10-25 按史] 首战敌将；基辅大公约980-1019，1019 阿尔塔河败死；据点基辅（SLAVIC）；用势力精锐瓦兰吉卫队
 
 
@@ -9139,6 +9151,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     danmai: [
+        // 🔴 [2026-10-25 主人令「存在就建」] 克里斯蒂安四世（1577–1648，丹麦-挪威国王）｜势力 丹麦｜据点 哥本哈根（丹麦首都）｜普将（卡尔马战争胜、三十年战争败，存疑）｜精锐「丹麦火枪兵」T4｜立绘留空
+        { generalId: 'danmai_christian_iv', factionId: 'danmai', cityId: 'city_gebenhagen', generalName: '克里斯蒂安四世', portrait: '', eliteName: '丹麦火枪兵', eliteTier: 4 },
 
 
 
@@ -9220,7 +9234,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'kasidiliya_afangsuoshiyi', cityId: 'city_toledo', legionName: '城堡时代克里米亚军团', generalName: '阿方索十一', portrait: '/assets/SPANISH/kasidiliya_afangsuoshiyi.png' },
+        { generalId: 'kasidiliya_afangsuoshiyi', cityId: 'city_toledo', legionName: '城堡时代伊比利亚军团', generalName: '阿方索十一', portrait: '/assets/SPANISH/kasidiliya_afangsuoshiyi.png' },
 
 
 
@@ -9228,7 +9242,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_juan_i_castile', cityId: 'city_toledo', generalName: '胡安一世', portrait: '/assets/SPANISH/gen_juan_i_castile.png', legionName: '城堡时代克里米亚军团' },
+        { generalId: 'gen_juan_i_castile', cityId: 'city_toledo', generalName: '胡安一世', portrait: '/assets/SPANISH/gen_juan_i_castile.png', legionName: '城堡时代伊比利亚军团' },
 
 
 
@@ -9244,7 +9258,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'kasidiliya_afangsuoba', cityId: 'city_toledo', legionName: '城堡时代克里米亚军团', generalName: '阿方索八世', portrait: '/assets/SPANISH/kasidiliya_afangsuoba.png' },
+        { generalId: 'kasidiliya_afangsuoba', cityId: 'city_toledo', legionName: '城堡时代伊比利亚军团', generalName: '阿方索八世', portrait: '/assets/SPANISH/kasidiliya_afangsuoba.png' },
 
 
 

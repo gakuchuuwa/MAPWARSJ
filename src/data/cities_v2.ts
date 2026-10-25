@@ -2346,6 +2346,8 @@ export const CITIES_V2: CityDataV2[] = [
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：爱丁堡：苏格兰，凯尔特／皮克特故地
     { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'CELTS' , note: '推算：城居 1.2 万（爱丁堡，1500 年前后 1 万上下）→ 小城' },
     { id: 'city_wupusala', name: '乌普萨拉', factionId: 'ruidian_si', lat: 59.85, lng: 17.63, type: 'stockade', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '旧乌普萨拉（Gamla Uppsala）为瑞典维京时代（约 5–11 世纪）皇家土冢、石船墓葬与祭祀中心。🔴 [2026-10-22 按史] 62 分支表（维京）＋维京「古典时代北欧日耳曼军团」描述（乌普萨拉老城、旧乌普萨拉皇家土冢、石船墓葬）均指维京；瓦良格分支 4 支军团全部为诺夫哥罗德／拉多加（罗斯）→ 原 VARANGIANS 改 VIKINGS（2026-10-07 曾按「瓦良格人多出自乌普兰」归瓦良格，现按 62 表与军团描述改回）。；推算：城居 0.5 万（旧乌普萨拉，维京时代宗教中心 0.5 万）→ 城寨' },
+    // 🔴 [2026-10-25 主人定「B」] 维斯比/哥特兰＝哥特人起源地 Scandza；离最近据点斯德哥尔摩约 190km（>50km）故新建；文化按当地政权＝北欧日耳曼 → VIKINGS
+    { id: 'city_weishibi', name: '维斯比', factionId: 'donggete', lat: 57.64, lng: 18.29, type: 'stockade', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '维斯比（哥特兰）：铁器时代聚落无石墙、城居不足 1 万 → 城寨；哥特人起源地 Scandza（Jordanes）传说所在' },
     { id: 'city_lundun', name: '伦敦', factionId: 'yinggelan', lat: 51.5, lng: -0.12, type: 'big_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'BRITONS', note: '英格兰王国都城；定级按史 Chandler：1600 年 20 万、1650 年 40 万、1700 年 57.5 万（含 17 世纪口径）→ 大城（2026-10-25）' },
 
 
@@ -2371,6 +2373,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_aogesibao', name: '奥格斯堡', factionId: 'shiwaben', lat: 48.37, lng: 10.89, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' , note: '推算：城居 3 万（奥格斯堡，1500 年前后约 3 万）→ 小城' },
     { id: 'city_bolandengbao', name: '勃兰登堡', factionId: 'asikanani', lat: 52.41, lng: 12.55, type: 'stockade', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' , note: '推算：城居 0.4 万（勃兰登堡，中世纪小城 0.4 万）→ 城寨' },
     { id: 'city_magedebao', name: '马格德堡', factionId: 'wende', lat: 52.13, lng: 11.61, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'SAXONS' , note: '推算：城居 1.5 万（马格德堡，中世纪 1–2 万）→ 小城' },
+    // 🔴 [2026-10-25 主人令「存在就建」] 不伦瑞克＝狮亨利都城（萨克森公国）；离最近据点马格德堡 75km（>50km）故新建；文化按当地政权＝萨克森 → SAXONS
+    { id: 'city_bulunruike', name: '不伦瑞克', factionId: 'wende', lat: 52.27, lng: 10.52, type: 'small_city', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'SAXONS', note: '不伦瑞克（Braunschweig）：狮亨利居城/萨克森公国都城；12 世纪建城、13 世纪石墙，城居不足 1 万 → 小城' },
     { id: 'city_leigensibao', name: '雷根斯堡', factionId: 'bafaliya', lat: 49.01, lng: 12.09, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' , note: '推算：城居 1.5 万（雷根斯堡，中世纪 1–2 万）→ 小城' },
     { id: 'city_niulunbao', name: '纽伦堡', factionId: 'huohengsuolun', lat: 49.45, lng: 11.07, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' , note: '推算：城居 2.5 万（纽伦堡，1500 年前后 2–3 万）→ 小城' },
     { id: 'city_teerier', name: '特里尔', factionId: 'luoma_diguo', lat: 49.75, lng: 6.64, type: 'small_city', troops: 10000, region: 'ROMA', buildingStyle: 'ROMA', note: '🔴 [2026-10-24 按史] 建筑风格 LATIN→ROMA：特里尔＝奥古斯塔·特雷维罗鲁姆（Augusta Treverorum），罗马帝国西部都城（黑门 Porta Nigra、罗马浴场、君士坦丁巴西利卡），最著名一段是罗马城邑；同罗马行省城杰姆/希波同口径。驻将君士坦丁（古典）军团随之变古典时代罗马军团。；推算：城居 2 万（都城/首府，同期同类都城 2 万）→ 小城' },

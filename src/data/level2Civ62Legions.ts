@@ -1273,7 +1273,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'VIKI_CASTLE_AGE3', castleName: '维京 斯堪的纳维亚环形堡垒',
         formationMode: 'echelon',
         shipId: 'LONGBOAT',
-        commanderUnit: 'hero_halldor',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_alaric',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'skirmisher', count: 4 },
             { type: 'spearman', count: 3 },
@@ -1369,12 +1369,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'light_cavalry', count: 2 },
         ],
     },
-    // ── 哥特 · 城堡时代 · 城堡时代克里米亚军团　（本次新建）────────────────
+    // ── 哥特 · 城堡时代 · 城堡时代伊比利亚军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵、远程（重弩）为主
     //    描述正文（主人原文，一字未改）：（曼古普卡勒崖城；克里米亚喀斯特悬崖城堡主楼、绝壁洞穴修道院防御网；依山雕凿石堡连环重弩防御、高耸石壁双手斩马重斧、孤守抗击异教围攻死士）
     //    英雄队（第 10 队·主将队）：hero_alaric / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代克里米亚军团', civ: '哥特', age: 'castle', deStyle: 'WEST', region: 'GOTHS' as RegionType,
+        name: '城堡时代伊比利亚军团', civ: '哥特', age: 'castle', deStyle: 'WEST', region: 'GOTHS' as RegionType,
         buildingStyle: 'GOTHS',
         castleId: 'GOTH_CASTLE_AGE3', castleName: '哥特 早期蛮族石砌据点',
         formationMode: 'fish_scale',
@@ -1383,23 +1383,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'huskarl', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
-            { type: 'cavalier', count: 2 },
-        ],
-    },
-    // ── 哥特 · 帝国时代 · 帝国时代黑海哥特军团　（本次新建）────────────────
-    //    评级：（未标评级）｜核心兵种：远程、重步兵为主
-    //    描述正文（主人原文，一字未改）：（奇福特卡勒、南部黑海山谷；克里米亚岩石要塞高塔、古哥特语雕凿石碑；黑海冷兵器山地强弓死士、重装长戟高地伏击卫队、大航海早期孤傲要塞最后遗族）
-    //    英雄队（第 10 队·主将队）：hero_alaric / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '帝国时代黑海哥特军团', civ: '哥特', age: 'imperial', deStyle: 'WEST', region: 'GOTHS' as RegionType,
-        buildingStyle: 'GOTHS',
-        castleId: 'GOTH_CASTLE_AGE3', castleName: '哥特 早期蛮族石砌据点',
-        formationMode: 'echelon',
-        shipId: 'DROMON',
-        commanderUnit: 'hero_ataulf',
-        slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'elite_huskarl', count: 3 },
             { type: 'cavalier', count: 2 },
         ],
     },
@@ -1479,23 +1462,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 诺夫哥罗德　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第二批·西欧与北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 诺夫哥罗德 · 古典时代 · 古典时代楚德林莽军团　（本次新建）────────────────
-    //    评级：（未标评级）｜核心兵种：步兵、远程（标枪）为主
-    //    描述正文（主人原文，一字未改）：（伊尔门湖区、拉多加湖沼；原木桩木屋营寨、巨石萨满祭坛；雪橇机动穿插、冷锻猎熊重矛、针叶林浸毒标枪伏击方阵）
-    //    英雄队（第 10 队·主将队）：hero_harald / hero_halldor　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '古典时代楚德林莽军团', civ: '瓦良格', age: 'antiquity', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
-        buildingStyle: 'VARANGIANS',
-        castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
-        formationMode: 'echelon',
-        shipId: 'MONOREME',
-        commanderUnit: 'hero_ulf',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
-        slots: [
-            { type: 'skirmisher', count: 4 },
-            { type: 'norse_warrior', count: 3 },
-            { type: 'antiquity_scout_cavalry', count: 2 },
-        ],
-    },
     // ── 诺夫哥罗德 · 封建时代 · 封建时代瓦良格军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵、骑兵为主
     //    描述正文（主人原文，一字未改）：（拉多加堡、旧诺夫哥罗德；木石混合环形要塞城郭、沃尔霍夫河商贸关垒；瓦良格北欧重装阔剑、交叠彩绘圆盾、罗斯商路重装亲卫步骑护卫队（Druzhina））
@@ -1504,47 +1470,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代瓦良格军团', civ: '瓦良格', age: 'feudal', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
         buildingStyle: 'VARANGIANS',
         castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
-        formationMode: 'echelon',
-        shipId: 'LONGBOAT',
-        commanderUnit: 'hero_harald',
-        slots: [
-            { type: 'throwing_axeman', count: 4 },
-            { type: 'elite_varangian_guard', count: 3 },
-            { type: 'antiquity_light_cavalry', count: 2 },
-        ],
-    },
-    // ── 诺夫哥罗德 · 城堡时代 · 城堡时代诺夫哥罗德军团　（本次新建）────────────────
-    //    评级：【精锐】｜核心兵种：重骑兵、重步兵为主
-    //    描述正文（主人原文，一字未改）：（大诺夫哥罗德；圣索菲亚大教堂青铜大门、德捷茨白石要塞城垣；亚历山大·涅夫斯基东斯拉夫面具鳞甲骑兵、重型长矛刺猬拒马大阵、冰上之战破铁十字死士）
-    //    英雄队（第 10 队·主将队）：hero_harald / hero_halldor　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '城堡时代诺夫哥罗德军团', civ: '瓦良格', age: 'castle', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
-        buildingStyle: 'VARANGIANS',
-        castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
-        formationMode: 'balance_yoke',
-        shipId: 'ELITE_LONGBOAT',
-        commanderUnit: 'hero_alexandernevski',
-        slots: [
-            { type: 'throwing_axeman', count: 4 },
-            { type: 'elite_varangian_jarl', count: 2 },
-            { type: 'varangian_guard', count: 3 },
-        ],
-    },
-    // ── 诺夫哥罗德 · 帝国时代 · 帝国时代北境长斧军团　（本次新建）────────────────
-    //    评级：（未标评级）｜核心兵种：重步兵为主
-    //    描述正文（主人原文，一字未改）：（大诺夫哥罗德、阿尔汉格尔斯克；大诺夫哥罗德贸易货栈钟楼、早期北德维纳河出海口木石堡垒；双手重型长柄月牙破甲战斧（Bardiche）、北境雪地重装皮甲猎手、征服乌拉尔冻土冷兵器先锋卫队）
-    //    英雄队（第 10 队·主将队）：hero_harald / hero_halldor　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '帝国时代北境长斧军团', civ: '瓦良格', age: 'imperial', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
-        buildingStyle: 'VARANGIANS',
-        castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
         formationMode: 'crescent',
-        shipId: 'CATAPULT_GALLEON',
+        shipId: 'LONGBOAT',
         commanderUnit: 'hero_harald',
         slots: [
             { type: 'elite_varangian_guard', count: 3 },
             { type: 'varangian_jarl', count: 2 },
-            { type: 'recurve_bowman', count: 4 },
+            { type: 'elite_varangian_jarl', count: 4 },
         ],
     },
 
@@ -1561,7 +1493,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
         shipId: 'LONGBOAT',
-        commanderUnit: 'hero_ulf',
+        commanderUnit: 'hero_ataulf',
         slots: [
             { type: 'skirmisher', count: 4 },
             { type: 'spearman', count: 3 },
@@ -1611,8 +1543,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
-        shipId: 'CATAPULT_GALLEON',
-        commanderUnit: 'hero_ulf',
+        shipId: 'GALLEON',
+        commanderUnit: 'hero_henryv',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'champion', count: 3 },
@@ -2696,14 +2628,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代匈人军团', civ: '匈人', age: 'antiquity', deStyle: 'CEAS', region: 'HUNS' as RegionType,
         buildingStyle: 'HUNS',
         castleId: 'HUNS_CASTLE_AGE3', castleName: '匈奴/匈人 简易木石混合要塞',
-        formationMode: 'fish_scale',
+        formationMode: 'balance_yoke',
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_bledathehun',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_attila（主将队须为古典时代的英雄或精英兵）
         // 🔴 [2026-10-16 主人令] 匈人只有古典一档：4 档＝城堡精锐【匈奴答剌罕骑兵精锐】；无封建军团，普通档不另放。
         slots: [
-            { type: 'antiquity_heavy_cavalry_archer', count: 3 },
             { type: 'elite_tarkan', count: 4 },
-            { type: 'antiquity_scout_cavalry', count: 2 },
+            { type: 'tarkan', count: 2 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 3 },
         ],
     },
 
@@ -2770,45 +2702,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 安纳托利亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 安纳托利亚 · 古典时代 · 古典时代赫梯军团　（本次新建）────────────────
-    //    评级：【高级】｜核心兵种：战车为主
-    //    描述正文（主人原文，一字未改）：（哈图沙；哈图沙双层巨石城墙狮子门、斯芬克斯门要塞、亚兹勒卡亚岩壁浮雕神庙；三人青铜双轮重战车冲击、早期冷锻铁刃剑短矛、巨石卫城干砌地下暗道突袭大阵）
-    //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '古典时代赫梯军团', civ: '土耳其', age: 'antiquity', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
-        buildingStyle: 'TURKS',
-        castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
-        formationMode: 'crane_wing',
-        shipId: 'BIREME',
-        commanderUnit: 'hero_tsarkonstantin',
-        // 🔴 [2026-10-16 主人令「象兵、战车只能安排在 2 档」＋「删除，别惹麻烦」] 战车不再上阵（不排 2 档，直接删）；
-        //    空出的前排 3 档用非城堡精锐的古典长矛兵补位。
-        //    🔴 [2026-10-16 主人令「换掉无素材的那个」] 后排 4 档「欧洲古典剑士特殊」在 SPRITE_PATHS 里没有素材
-        //    （全库 3 个古典步兵缺素材之一，上阵渲染兜底）→ 换同属近东古典、有素材的【波斯持盾兵特殊】。
-        //    军团改名：赫梯战车军团 → 古典时代赫梯军团。
-        slots: [
-            { type: 'elite_war_chariot', count: 2 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
-            { type: 'sickle_warrior', count: 3 },
-        ],
-    },
-    // ── 安纳托利亚 · 封建时代 · 封建时代突厥骑射军团　（本次新建）────────────────
-    //    评级：（未标评级）｜核心兵种：骑射为主
-    //    描述正文（主人原文，一字未改）：（科尼亚、锡瓦斯；科尼亚因杰米纳雷学校精雕石门、苏丹哈尼石砌大驿站防御堡垒；双曲复合角弓高速环形回旋射击、轻型柳叶锁子甲、诱敌深入曼古歹伏击骑兵大阵）
-    //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '封建时代突厥骑射军团', civ: '土耳其', age: 'feudal', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
-        buildingStyle: 'TURKS',
-        castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
-        formationMode: 'crescent',
-        shipId: 'GALLEY',
-        commanderUnit: 'hero_qutlugh',
-        slots: [
-            { type: 'eastern_swordsman', count: 3 },
-            { type: 'cav_archer', count: 2 },
-            { type: 'laminated_bowman', count: 4 },
-        ],
-    },
     // ── 安纳托利亚 · 城堡时代 · 城堡时代加齐突骑军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：轻骑兵、步兵为主
     //    描述正文（主人原文，一字未改）：（布尔萨、埃迪尔内；布尔萨大清真寺二十小穹顶大殿、乌卢清真寺石造泉池中庭；大马士革钢重型弯刀（Kilij）、锥形精钢尖顶头盔、山地奔袭破阵步骑突击大阵）

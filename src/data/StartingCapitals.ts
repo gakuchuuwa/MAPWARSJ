@@ -149,6 +149,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yelusalengwg': 'city_ake',
   'maerta_qishi': 'city_malta',
   'danmai': 'city_gebenhagen',
+    'xinbuli': 'city_jelling',
 'ruidian_si': 'city_sidedegelmo',
 'kasidiliya': 'city_madeli',
 'teluoyi': 'city_teluoyi',
