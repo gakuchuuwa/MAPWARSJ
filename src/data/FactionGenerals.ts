@@ -2389,7 +2389,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yinggelan: [
         // 🔴 [2026-10-24 主人令] 弗农＝英国海军上将（1741 卡塔赫纳围攻指挥官）；城库无牙买加/皇家港，
         //    按「无合适据点取离战场最近的同风格城」改挂新阿姆斯特丹（SAXONS，3375km；比温彻斯特 8420km 近）；军团不变。
-        { generalId: 'gen_vernon', cityId: 'city_newamsterdam', generalName: '弗农', portrait: '/assets/SAXONS/gen_vernon.png', legionName: '帝国时代萨克森军团' },
+        { generalId: 'gen_vernon', cityId: 'city_newamsterdam', generalName: '弗农', portrait: '/assets/SAXONS/gen_vernon.png' },
 
 
 
@@ -2405,7 +2405,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_suffolk', cityId: 'city_winchester', generalName: '萨福克伯爵', portrait: '/assets/SAXONS/gen_suffolk.png', legionName: '城堡时代萨克森选侯国军团' },
+        { generalId: 'gen_suffolk', cityId: 'city_winchester', generalName: '萨福克伯爵', portrait: '/assets/SAXONS/gen_suffolk.png' },
 
 
 
@@ -2421,7 +2421,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'yinggelan_warenne', cityId: 'city_lundun', legionName: '城堡时代萨克森选侯国军团', generalName: '约翰·德·瓦伦', portrait: '/assets/SAXONS/yinggelan_warenne.png' },
+        { generalId: 'yinggelan_warenne', cityId: 'city_lundun', generalName: '约翰·德·瓦伦', portrait: '/assets/SAXONS/yinggelan_warenne.png' },
 
 
 
@@ -2430,7 +2430,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_alfred_great', legionName: '封建时代奥托铁卫军团', factionId: 'yinggelan', cityId: 'city_winchester', generalName: '阿尔弗雷德', portrait: '/assets/SAXONS/gen_alfred_great.png' },
+        { generalId: 'gen_alfred_great', factionId: 'yinggelan', cityId: 'city_winchester', generalName: '阿尔弗雷德', portrait: '/assets/SAXONS/gen_alfred_great.png' },
 
 
 
@@ -3070,7 +3070,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'bfe3_86', cityId: 'city_meiyinci', generalName: '克诺多马尔', portrait: '/assets/GERMANIC/bfe3_86.png', factionId: 'falanji', legionName: '古典时代条顿军团' },
-        { generalId: 'gen_otto_great', legionName: '封建时代东法兰克军团', factionId: 'falanji', cityId: 'city_magedebao', generalName: '奥托一世', portrait: '/assets/GERMANIC/rierman_aotuoyishi.png' },
+        { generalId: 'gen_otto_great', factionId: 'falanji', cityId: 'city_magedebao', generalName: '奥托一世', portrait: '/assets/GERMANIC/rierman_aotuoyishi.png' },
 
 
 
@@ -9135,7 +9135,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'danmai_guthrum', eliteName: '丹斧兵', eliteTier: 3, cityId: 'city_norwich', generalName: '古思伦', portrait: '/assets/DANES/danmai_guthrum.png', legionName: '封建时代奥托铁卫军团' },
+        { generalId: 'danmai_guthrum', eliteName: '丹斧兵', eliteTier: 3, cityId: 'city_norwich', generalName: '古思伦', portrait: '/assets/DANES/danmai_guthrum.png' },
         { generalId: 'danmai_harald', cityId: 'city_jelling', generalName: '蓝牙哈拉尔', portrait: '/assets/DANES/danmai_harald.png', legionName: '封建时代丹麦王国军团', eliteName: '耶灵亲兵', eliteTier: 4 },
         { generalId: 'danmai_godfred', cityId: 'city_hedeby', generalName: '戈德弗雷德', portrait: '/assets/DANES/danmai_godfred.png', legionName: '封建时代丹麦王国军团', eliteName: '海瑟比卫队', eliteTier: 4 },
 
@@ -9156,9 +9156,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ruidian_si: [
         { generalId: 'ruidian_si_biergeyaer', cityId: 'city_sidedegelmo', generalName: '比尔格雅尔', portrait: '/assets/GERMANIC/ruidian_si_biergeyaer.png' },
         // 🔴 [2026-10-20 首战规则] 查理十二＝瑞典国王（1709 波尔塔瓦败于彼得一世）→ 斯德哥尔摩（GERMANIC）；帝国时代德意志佣兵军团；立绘留空
-        { generalId: 'gen_charles_xii', cityId: 'city_sidedegelmo', generalName: '查理十二', portrait: '/assets/GERMANIC/gen_charles_xii.png', legionName: '帝国时代德意志佣兵军团' },
+        { generalId: 'gen_charles_xii', cityId: 'city_sidedegelmo', generalName: '查理十二', portrait: '/assets/GERMANIC/gen_charles_xii.png' },
     
-        { generalId: 'gen_charles_ix', legionName: '帝国时代德意志佣兵军团', factionId: 'ruidian_si', cityId: 'city_sidedegelmo', generalName: '卡尔九世', portrait: '/assets/GERMANIC/ruidian_yota_kaerjiushi.png' },
+        { generalId: 'gen_charles_ix', factionId: 'ruidian_si', cityId: 'city_sidedegelmo', generalName: '卡尔九世', portrait: '/assets/GERMANIC/ruidian_yota_kaerjiushi.png' },
 
 
 
@@ -12864,7 +12864,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'yanchuan_d_yuefei', factionId: 'song', cityId: 'city_yancheng2', generalName: '岳飞', portrait: '/assets/CENTRAL/yanchuan_d_yuefei.png' , legionName: '城堡时代中原军团' },
+        // 🔴 [2026-10-25 主人令「把岳飞的军团制定为三级军团，岳家军，记住不要动我的三级军团」]
+        //    岳飞单挂三级军团「岳家军」（编制、阵型、父级、战船一概不动）；其余三级军团同样一律不动。
+        { generalId: 'yanchuan_d_yuefei', factionId: 'song', cityId: 'city_yancheng2', generalName: '岳飞', portrait: '/assets/CENTRAL/yanchuan_d_yuefei.png' , legionName: '岳家军' },
 
 
 

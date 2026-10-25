@@ -1169,12 +1169,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'cavalier', count: 2 },
         ],
     },
-    // ── 不列颠 · 帝国时代 · 帝国时代都铎卫队军团　（本次新建）────────────────
+    // ── 不列颠 · 帝国时代 · 帝国时代不列颠军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵、远程为主
     //    描述正文（主人原文，一字未改）：（伦敦、朴次茅斯；汉普顿宫红砖都铎建筑群、格林威治宫旧殿；皇家重装双手长戟卫士（Yeomen）、都铎玫瑰金线战袍、早期大航海英格兰长弓与火绳枪长戟混合方阵）
     //    英雄队（第 10 队·主将队）：hero_edwardlongshanks / hero_gilbertdeclare / hero_friartuck　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代都铎卫队军团', civ: '不列颠', age: 'imperial', deStyle: 'WEST', region: 'BRITONS' as RegionType,
+        name: '帝国时代不列颠军团', civ: '不列颠', age: 'imperial', deStyle: 'WEST', region: 'BRITONS' as RegionType,
         buildingStyle: 'BRITONS',
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'fish_scale',

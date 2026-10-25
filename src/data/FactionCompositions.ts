@@ -963,7 +963,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "yinggelan": {
-        legionName: "城堡时代萨克森选侯国军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府温彻斯特改不列颠文化（BRITONS）；帝国段 → 帝国时代不列颠军团
+        legionName: "帝国时代不列颠军团",
         legionType: "sub",
     },
     "tuomengde": {
@@ -1025,11 +1026,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 🔴 [2026-10-05 主人令「去找合适的套用上」] 三支新二级军团的势力：
     //    撒克逊 → 麦西亚（奥法）、盎格鲁（阿尔弗雷德，见上）；丹麦 → 丹麦（见上）；瓦良格 → 瑞典（瓦良格卫队主要出自瑞典人）
     "maixiya": {
-        legionName: "封建时代奥托铁卫军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府牛津改不列颠文化（BRITONS）→ 封建档＝盎格鲁撒克逊军团
+        legionName: "封建时代盎格鲁撒克逊军团",
         legionType: "sub",
     },
     "ruidian_si": {
-        legionName: "城堡时代德意志骑士军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府斯德哥尔摩改北欧文化（VIKINGS）；帝国段 → 达拉纳长矛军团
+        legionName: "帝国时代达拉纳长矛军团",
         legionType: "sub",
     },
     "xiongren": {
@@ -1394,7 +1397,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     // 🔴 [2026-10-18 按史] 美洲欧洲殖民城按其建城者/驻将挂欧洲军团，不再挂特诺奇/塔莫约等土著军团。
     //    新阿姆斯特丹（荷兰）无 DUTCH 三级军团，按建城者低地日耳曼落 SAXONS 帝国时代萨克森军团。
     "xinnidelan": {
-        legionName: "帝国时代萨克森军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府新阿姆斯特丹改日耳曼文化（GERMANIC）；帝国段 → 德意志佣兵军团
+        legionName: "帝国时代德意志佣兵军团",
         legionType: "sub",
     },
     //    魁北克（新法兰西）无帝国时代法国殖民军团，按 FRANKS 帝国时代落重装骑兵军团。
@@ -1525,7 +1529,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "wende": {
-        legionName: "封建时代东法兰克军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府马格德堡改萨克森文化（SAXONS）→ 封建档＝奥托铁卫军团
+        legionName: "封建时代奥托铁卫军团",
         legionType: "sub",
     },
     "bafaliya": {

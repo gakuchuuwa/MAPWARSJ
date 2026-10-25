@@ -449,7 +449,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 一件 onager → warwolf_trebuchet（战狼号：爱德华一世 1304 年围斯特灵）
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'warwolf_trebuchet', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代都铎卫队军团': {
+    '帝国时代不列颠军团': {
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },

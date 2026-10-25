@@ -2277,7 +2277,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_labate', name: '拉巴特', factionId: 'muwaxide', lat: 34.024, lng: -6.822, type: 'pass', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER', note: '拉巴特＝阿拉伯语 Ribat（边防要塞）；阿尔摩哈德哈里发雅各布·曼苏尔所建 Ribat al-Fath 胜利之堡，对伊比利亚圣战的集结要塞，乌达亚堡' },
 
-    { id: 'city_oxford', name: '牛津', factionId: 'maixiya', lat: 51.75, lng: -1.25, type: 'stockade', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'SAXONS' , note: '推算：城居 0.5 万（牛津，1300 年前后约 0.5 万）→ 城寨' },
+    { id: 'city_oxford', name: '牛津', factionId: 'maixiya', lat: 51.75, lng: -1.25, type: 'stockade', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'BRITONS' , note: '推算：城居 0.5 万（牛津，1300 年前后约 0.5 万）→ 城寨' },
     { id: 'city_hague', name: '海牙', factionId: 'nidelan', lat: 52.07, lng: 4.3, type: 'stockade', troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'GERMANIC' , note: '推算：城居 0.3 万（海牙，中世纪村镇 0.3 万）→ 城寨' },
     { id: 'city_gdansk', name: '格但斯克', factionId: 'bolan', lat: 54.35, lng: 18.64, type: 'stockade', troops: 10000, region: 'POLES', buildingStyle: 'POLES' },
     { id: 'city_shiqieqing', name: '什切青', factionId: 'pomeilaniya', lat: 53.43, lng: 14.55, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '波美拉尼亚公国首府，格里芬王朝驻地；推算：城居 1 万（什切青，中世纪波美拉尼亚首府 1 万上下）→ 小城' },
@@ -2344,10 +2344,10 @@ export const CITIES_V2: CityDataV2[] = [
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：爱丁堡：苏格兰，凯尔特／皮克特故地
     { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'CELTS' , note: '推算：城居 1.2 万（爱丁堡，1500 年前后 1 万上下）→ 小城' },
     { id: 'city_wupusala', name: '乌普萨拉', factionId: 'ruidian_si', lat: 59.85, lng: 17.63, type: 'stockade', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '旧乌普萨拉（Gamla Uppsala）为瑞典维京时代（约 5–11 世纪）皇家土冢、石船墓葬与祭祀中心。🔴 [2026-10-22 按史] 62 分支表（维京）＋维京「古典时代北欧日耳曼军团」描述（乌普萨拉老城、旧乌普萨拉皇家土冢、石船墓葬）均指维京；瓦良格分支 4 支军团全部为诺夫哥罗德／拉多加（罗斯）→ 原 VARANGIANS 改 VIKINGS（2026-10-07 曾按「瓦良格人多出自乌普兰」归瓦良格，现按 62 表与军团描述改回）。；推算：城居 0.5 万（旧乌普萨拉，维京时代宗教中心 0.5 万）→ 城寨' },
-    { id: 'city_lundun', name: '伦敦', factionId: 'yinggelan', lat: 51.5, lng: -0.12, type: 'big_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'SAXONS', note: '英格兰王国都城；定级按史 Chandler：1600 年 20 万、1650 年 40 万、1700 年 57.5 万（含 17 世纪口径）→ 大城（2026-10-25）' },
+    { id: 'city_lundun', name: '伦敦', factionId: 'yinggelan', lat: 51.5, lng: -0.12, type: 'big_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'BRITONS', note: '英格兰王国都城；定级按史 Chandler：1600 年 20 万、1650 年 40 万、1700 年 57.5 万（含 17 世纪口径）→ 大城（2026-10-25）' },
 
 
-    { id: 'city_winchester', name: '温彻斯特', factionId: 'yinggelan', lat: 51.06, lng: -1.31, type: 'stockade', troops: 10000, region: 'BRITONS', buildingStyle: 'SAXONS' , note: '推算：城居 0.5 万（温彻斯特，1300 年前后约 0.5 万）→ 城寨' },
+    { id: 'city_winchester', name: '温彻斯特', factionId: 'yinggelan', lat: 51.06, lng: -1.31, type: 'stockade', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS' , note: '推算：城居 0.5 万（温彻斯特，1300 年前后约 0.5 万）→ 城寨' },
     { id: 'city_bali', name: '巴黎', factionId: 'gaolu', lat: 48.85, lng: 2.35, type: 'big_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '法兰西王国都城巴黎，百年战争决战要津，查理七世敕令骑兵大本营；按 2026-10-25 标准：城居 40–51 万 → 大城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「WEST」推出的二级与史实不符 → 归 FRANKS：沙特尔（法国）：法兰克，改前误挂意大利(LATIN)
     { id: 'city_shatteer', name: '沙特尔', factionId: 'kaernute', lat: 48.448, lng: 1.488, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'FRANKS', note: '卡尔努特人首府，沙特尔圣母主教座堂；推算：城居 1 万（沙特尔，中世纪主教城 1 万上下）→ 小城' },
@@ -2368,7 +2368,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_meiyinci', name: '美因茨', factionId: 'falanji', lat: 50, lng: 8.27, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' , note: '推算：城居 1.5 万（美因茨，中世纪 1–2 万）→ 小城' },
     { id: 'city_aogesibao', name: '奥格斯堡', factionId: 'shiwaben', lat: 48.37, lng: 10.89, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' , note: '推算：城居 3 万（奥格斯堡，1500 年前后约 3 万）→ 小城' },
     { id: 'city_bolandengbao', name: '勃兰登堡', factionId: 'asikanani', lat: 52.41, lng: 12.55, type: 'stockade', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' , note: '推算：城居 0.4 万（勃兰登堡，中世纪小城 0.4 万）→ 城寨' },
-    { id: 'city_magedebao', name: '马格德堡', factionId: 'wende', lat: 52.13, lng: 11.61, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' , note: '推算：城居 1.5 万（马格德堡，中世纪 1–2 万）→ 小城' },
+    { id: 'city_magedebao', name: '马格德堡', factionId: 'wende', lat: 52.13, lng: 11.61, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'SAXONS' , note: '推算：城居 1.5 万（马格德堡，中世纪 1–2 万）→ 小城' },
     { id: 'city_leigensibao', name: '雷根斯堡', factionId: 'bafaliya', lat: 49.01, lng: 12.09, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'GERMANIC' , note: '推算：城居 1.5 万（雷根斯堡，中世纪 1–2 万）→ 小城' },
     { id: 'city_niulunbao', name: '纽伦堡', factionId: 'huohengsuolun', lat: 49.45, lng: 11.07, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC' , note: '推算：城居 2.5 万（纽伦堡，1500 年前后 2–3 万）→ 小城' },
     { id: 'city_teerier', name: '特里尔', factionId: 'luoma_diguo', lat: 49.75, lng: 6.64, type: 'small_city', troops: 10000, region: 'ROMA', buildingStyle: 'ROMA', note: '🔴 [2026-10-24 按史] 建筑风格 LATIN→ROMA：特里尔＝奥古斯塔·特雷维罗鲁姆（Augusta Treverorum），罗马帝国西部都城（黑门 Porta Nigra、罗马浴场、君士坦丁巴西利卡），最著名一段是罗马城邑；同罗马行省城杰姆/希波同口径。驻将君士坦丁（古典）军团随之变古典时代罗马军团。；推算：城居 2 万（都城/首府，同期同类都城 2 万）→ 小城' },
@@ -3605,7 +3605,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_gebenhagen', name: '哥本哈根', factionId: 'danmai', lat: 55.68, lng: 12.57, type: 'stockade', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'DANES', note: '哥本哈根；丹麦，阿布萨隆 1167 建城；推算：城居 0.5 万（哥本哈根，1167 建城 0.5 万）→ 城寨' },
     { id: 'city_jelling', name: '耶灵', factionId: 'danmai', lat: 55.756, lng: 9.42, type: 'stockade', troops: 10000, region: 'DANES', buildingStyle: 'DANES', note: '耶灵（Jelling）：10 世纪丹麦王室（老戈姆、蓝牙哈拉尔）的王家领地，双土冢、耶灵石碑与木构教堂；蓝牙哈拉尔在耶灵石碑上宣示统一丹麦/挪威（UNESCO 世界遗产「耶灵石冢」）。🔴 [2026-10-22 按史新增·据点为王室驻地/营地层] 配武将蓝牙哈拉尔（封建 × DANES＝封建时代丹麦王国军团）、精锐耶灵亲兵 T4；离哥本哈根 197.5km（>40km）。' },
     { id: 'city_hedeby', name: '海瑟比', factionId: 'danmai', lat: 54.487, lng: 9.565, type: 'stockade', troops: 10000, region: 'DANES', buildingStyle: 'DANES', note: '海瑟比（Hedeby／Haithabu，古诺斯 Heiðabýr；法兰克史料 Sliesthorp）：8–11 世纪维京商埠，丹麦王戈德弗雷德 808 年毁雷里克后迁商于此、修丹尼维尔克；半圆土垒与码头遗址（UNESCO 世界遗产「海瑟比与丹尼维尔克」）。🔴 [2026-10-22 按史新增·据点为商埠/营地层] 配武将戈德弗雷德（封建 × DANES＝封建时代丹麦王国军团）、精锐海瑟比卫队 T4；离汉堡 107.8km（>40km），离耶灵约 141km。' },
-    { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'small_city', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'GERMANIC' , note: '按 2026-10-25 标准：城居 4–6 → 小城' },
+    { id: 'city_sidedegelmo', name: '斯德哥尔摩', factionId: 'ruidian_si', lat: 59.32, lng: 18.06, type: 'small_city', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'VIKINGS' , note: '按 2026-10-25 标准：城居 4–6 → 小城' },
     { id: 'city_madeli', name: '马德里', factionId: 'kasidiliya', lat: 40.41, lng: -3.7, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH', note: '定级依据§6.2：马德里非关隘/要塞/堡垒（中世纪城镇，非纯军事要塞），按城市判级；16世纪末8.5–9.5万（Carbajo Isla《La población de la Villa de Madrid desde el siglo XVI》，Revista de Demografía Histórica III, 1984；Modernalia 转录），属「10万左右、边缘模糊」→ 中城。按史＋依据：https://www.modernalia.es/items/show/1401；按 2026-10-25 标准：城居 4.9–13 → 中城' },
     { id: 'city_boertu', name: '波尔图', factionId: 'putaoya', lat: 41.15, lng: -8.62, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '波尔图；杜罗河口，葡萄牙国名发源地。🔴 [2026-10-05 主人令「建筑风格必须当地」] 葡萄牙本土城市，风格挂葡萄牙（PORTUGUESE／一级 MEDI），旧值 LATIN_CASTLE（意大利）不符。；推算：城居 1.5 万（波尔图，中世纪 1–2 万）→ 小城' },
     { id: 'city_teluoyi', name: '特洛伊', factionId: 'teluoyi', lat: 39.9575, lng: 26.2389, type: 'stockade', troops: 10000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'ORIE', note: '🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 39.95,26.23 偏离特洛伊遗址 1.13 公里，按英文维基百科 Troy 坐标改为 39.9575,26.2389。；推算：城居 0.5 万（特洛伊（Hisarlık）遗址，青铜时代小城 0.5 万）→ 城寨' },
@@ -3623,7 +3623,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_chanchan', name: '昌昌', factionId: 'qimu', lat: -8.11, lng: -79.07, type: 'medium_city', troops: 10000, region: 'CHIMU', buildingStyle: 'INCA', note: '奇穆王国都城，前哥伦布时期美洲最大土坯城；按 2026-10-25 标准：城居 6–10 → 中城' },
     { id: 'city_tzintzuntzan', name: '钦聪灿', factionId: 'talasike', lat: 19.63, lng: -101.58, type: 'small_city', troops: 10000, region: 'TARASCAN', buildingStyle: 'AMERICA', note: '塔拉斯科(普雷佩查)王国都城，「蜂鸟之地」；按 2026-10-25 标准：城居 2.5–4 → 小城' },
     // 🔴 [2026-10-18 主人令] 新阿姆斯特丹按建城者（荷兰西印度公司）定 SAXONS（低地日耳曼/北海砖木要塞）；旧注释「归 BRITONS」作废。
-    { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'xinnidelan', lat: 40.71, lng: -74.01, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SAXONS', note: '荷兰西印度公司1626年建城，新尼德兰首府；1664年英夺改称纽约；推算：城居 0.5 万（新阿姆斯特丹，1626 建 0.5 万）→ 城寨' },
+    { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'xinnidelan', lat: 40.71, lng: -74.01, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'GERMANIC', note: '荷兰西印度公司1626年建城，新尼德兰首府；1664年英夺改称纽约；推算：城居 0.5 万（新阿姆斯特丹，1626 建 0.5 万）→ 城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「WEST」推出的二级与史实不符 → 归 FRANKS：魁北克：法兰西殖民地（新法兰西）
     { id: 'city_quebec', name: '魁北克', factionId: 'xinfalanxi', lat: 46.81, lng: -71.21, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'FRANKS', note: '尚普兰1608年建城，新法兰西首府，法属北美毛皮贸易枢纽；推算：城居 0.5 万（魁北克，1608 建 0.5 万）→ 城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：阿卡普尔科：西班牙殖民地（马尼拉大帆船港）
@@ -3773,7 +3773,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_xindu', name: '信都', factionId: 'han_d', lat: 37.55, lng: 115.57, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI', note: '信都；汉冀州治所（任光守信都拒王郎），人口数万 → 小城；推算：城居 3 万（汉冀州治信都，人口数万 → 3 万）→ 小城' },
     { id: 'city_hangai', name: '杭爱山', factionId: 'kaerka', lat: 47, lng: 101, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', tier: 4, note: '杭爱山；喀尔喀三音诺颜部牧地，无城郭 → 城寨' },
     { id: 'city_onon', name: '斡难河', factionId: 'zhadalan', lat: 49, lng: 112, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', tier: 4, note: '斡难河；札答兰部／蒙古乞颜部牧地，无城郭 → 城寨' },
-    { id: 'city_norwich', name: '诺里奇', factionId: 'danmai', lat: 52.63, lng: 1.3, type: 'small_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'SAXONS', note: '诺里奇；东盎格利亚最大城（古思伦丹麦维京统治），中世纪人口约 1 万 → 小城；推算：城居 1 万（诺里奇，中世纪约 1 万）→ 小城' },
+    { id: 'city_norwich', name: '诺里奇', factionId: 'danmai', lat: 52.63, lng: 1.3, type: 'small_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'BRITONS', note: '诺里奇；东盎格利亚最大城（古思伦丹麦维京统治），中世纪人口约 1 万 → 小城；推算：城居 1 万（诺里奇，中世纪约 1 万）→ 小城' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本
