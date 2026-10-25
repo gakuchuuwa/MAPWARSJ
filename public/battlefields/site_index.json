@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-25T08:52:28.251Z",
+ "generatedAt": "2026-10-25T11:12:53.459Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -15978,6 +15978,20 @@
    "reliefM": 59,
    "cliffs": 0,
    "top": "Grass 2 74.6% · Water, Shallow 12.8% · Forest 5% · Beach 4.5%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_yinfeineisi",
+   "file": "site_city_yinfeineisi.json",
+   "bytes": 364002,
+   "koppen": "Cfb",
+   "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 800,
+   "waterPct": 5.6,
+   "reliefM": 45,
+   "cliffs": 0,
+   "top": "Grass 2 81.1% · Forest 6.3% · Water, Shallow 5.6% · Beach 3.2%",
    "verify": "ok"
   }
  ],

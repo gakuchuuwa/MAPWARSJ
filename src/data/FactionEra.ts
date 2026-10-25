@@ -426,7 +426,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'samtskhe': [{ from: -9999, era: 'castle' }], // 萨姆茨赫
     'sanada': [{ from: -9999, era: 'imperial' }], // 真田
     'sanfoqi': [{ from: -9999, era: 'feudal' }], // 三佛齐
-    'scotland': [{ from: -9999, era: 'castle' }], // 苏格兰
+    'scotland': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 苏格兰｜–∞起城堡 → 1500起帝国（高地时代/詹姆斯党起义） // 苏格兰
     'shache': [{ from: -9999, era: 'antiquity' }], // 莎车
     'shang': [{ from: -9999, era: 'antiquity' }], // 商国
     'shanshan': [{ from: -9999, era: 'antiquity' }], // 鄯善

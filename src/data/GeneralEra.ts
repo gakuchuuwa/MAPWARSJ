@@ -739,6 +739,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_willem_juliette': 'castle',
     'gen_william_silent': 'imperial',
     'gen_william_wallace': 'castle',
+    'scotland_johngraham': 'imperial',
+    'scotland_hughmackay': 'imperial',
     'gen_winkelried': 'castle',
     'gen_yaghmurasen': 'castle',
     'gen_yaqub_saffar': 'feudal',

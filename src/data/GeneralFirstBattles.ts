@@ -10896,6 +10896,26 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
+    scotland_johngraham: {
+        generalId: 'scotland_johngraham',
+        battleName: '基利克兰基战役',
+        battleYear: 1689,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '基利克兰基',
+        targetCityId: 'city_yinfeineisi',
+        targetLat: 56.77,
+        targetLng: -4.37,
+        myTroops: 2400,
+        enemyFactionId: 'scotland',
+        enemyFactionName: '苏格兰',
+        enemyGeneralId: 'scotland_hughmackay',
+        enemyTroops: 2000,
+        introLines: [
+            { speaker: 'general', text: '麦凯的政府军堵在山口，等的就是我去仰攻。今夜翻过山脊直扑他营盘，高地人一冲进去，火枪再装填已来不及。' },
+            { speaker: 'player', text: '愿随邓迪子爵夜袭基利克兰基，冲垮政府军！' },
+        ],
+    },
     xibanya_aerwa: {
         generalId: 'xibanya_aerwa',
         battleName: '米尔贝格战役',

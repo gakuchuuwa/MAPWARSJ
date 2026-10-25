@@ -16588,6 +16588,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     scotland: [
+        // 🔴 [2026-10-25 主人令「存在就建」] 邓迪子爵 约翰·格雷厄姆（Bonnie Dundee，1648–1689，詹姆斯党高地起义领袖，1689 基利克兰基以少胜多、本人阵亡）｜势力 苏格兰｜据点 因弗内斯（高地起兵/集结）｜名将｜精锐「高地战团」T2｜立绘留空
+        { generalId: 'scotland_johngraham', factionId: 'scotland', cityId: 'city_yinfeineisi', generalName: '约翰·格雷厄姆', portrait: '', eliteName: '高地战团', eliteTier: 2 },
+        // 🔴 [2026-10-25] 休·麦凯（1640–1692，苏格兰政府军司令；基利克兰基 1689 为邓迪之敌；史实内战、同属苏格兰势力）｜据点 爱丁堡（政府军基地）｜普将｜精锐「龙骑兵团」T4｜立绘留空
+        { generalId: 'scotland_hughmackay', factionId: 'scotland', cityId: 'city_aidingbao', generalName: '休·麦凯', portrait: '', eliteName: '龙骑兵团', eliteTier: 4 },
 
 
 

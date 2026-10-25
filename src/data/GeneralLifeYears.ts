@@ -670,6 +670,8 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_civilis: { birth: 25, death: 80, kaoju: '推定' },  // 西维利斯
     gen_eric_bloodaxe: { birth: 885, death: 954, kaoju: '推定' },  // 埃里克
     gen_william_wallace: { birth: 1270, death: 1305 },  // 华莱士
+    scotland_johngraham: { birth: 1648, death: 1689 },  // 约翰·格雷厄姆（邓迪子爵）
+    scotland_hughmackay: { birth: 1640, death: 1692 },  // 休·麦凯
     gen_raymond_iv: { birth: 1042, death: 1105, kaoju: '异说' },  // 雷蒙四世
     gen_raymond_berenguer_iv: { birth: 1198, death: 1245 },  // 雷蒙·贝朗热四世（普罗旺斯伯爵）
     lunbadi_alboin: { birth: 530, death: 572, kaoju: '异说' },  // 阿尔博因

@@ -1251,8 +1251,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'CELTS',
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
         formationMode: 'echelon',
-        shipId: 'HEAVY_DEMO_SHIP',
-        commanderUnit: 'hero_llywelynapgruffydd',
+        shipId: 'GALLEON',
+        commanderUnit: 'hero_williamwallace',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'two_handed_swordsman', count: 3 },

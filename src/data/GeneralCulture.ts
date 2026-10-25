@@ -702,6 +702,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_willem_juliette': 'BURGUNDIANS',   // 佛兰德｜威廉一世｜据点 布鲁日
     'gen_william_silent': 'GERMANIC',   // 尼德兰｜威廉奥兰治｜据点 海牙
     'gen_william_wallace': 'CELTS',   // 坎布里亚｜华莱士｜据点 卡莱尔
+    'scotland_johngraham': 'CELTS',   // 苏格兰｜约翰·格雷厄姆｜据点 因弗内斯
+    'scotland_hughmackay': 'CELTS',   // 苏格兰｜休·麦凯｜据点 爱丁堡
     'gen_winkelried': 'GERMANIC',   // 瑞士｜温克尔里德｜据点 巴塞尔
     'gen_xiao_xian': 'JIANGNAN',   // 大梁｜萧铣｜据点 江陵
     'gen_yaghmurasen': 'BERBER',   // 扎扬｜亚格姆拉森｜据点 特莱姆森
