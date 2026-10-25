@@ -235,7 +235,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 32.5425,
         targetLng: 44.4211,
         myTroops: 60000,
-        enemyFactionId: 'jialedi',
+        enemyFactionId: 'jialedi',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '迦勒底',
         enemyGeneralId: 'wuer_boshasha',
         enemyTroops: 40000,
@@ -257,7 +257,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 38.48,
         targetLng: 28.03,
         myTroops: 40000,
-        enemyFactionId: 'ailan',
+        enemyFactionId: 'aqimeinide',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '波斯',
         enemyGeneralId: 'ailan_julushi',
         enemyTroops: 50000,
@@ -333,25 +333,26 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #16 阿尔塔弗涅斯 (-530 ~ -485) — 公元前494年米利都围城战
+    // #16 阿尔塔弗涅斯 (-530 ~ -485) — 公元前498年撒狄之战（原写米利都围城：前494 米利都守将史无确名）
     gen_artaphernes: {
         generalId: 'gen_artaphernes',
-        battleName: '米利都围城战',
-        battleYear: -494,
+        // 🔴 [2026-10-25 按史修复「米利都 -494 守将无名」] 改选同一次伊奥尼亚起义的撒狄之战（前498）：阿尔塔弗涅斯以吕底亚总督守撒狄卫城，伊奥尼亚起义军主将＝阿里斯塔戈拉斯（阿里斯塔，库中已有）；依据希罗多德 5.99–102。
+        battleName: '撒狄之战',
+        battleYear: -498,
         battleType: 'siege',
-        role: 'attacker',
-        targetName: '米利都',
-        targetCityId: 'city_miletus',
-        targetLat: 37.5303,
-        targetLng: 27.2783,
-        myTroops: 40000,
+        role: 'defender',
+        targetName: '撒狄卫城',
+        targetCityId: 'city_sifaerde',
+        targetLat: 38.48,
+        targetLng: 28.03,
+        myTroops: 20000,
         enemyFactionId: 'aiaoniya',
         enemyFactionName: '伊奥尼亚',
-        enemyGeneralId: 'yiaoniya_hegesistratus',
-        enemyTroops: 18000,
+        enemyGeneralId: 'aiaoniya_alisita',
+        enemyTroops: 25000,
         introLines: [
-            { speaker: 'general', text: '伊奥尼亚诸邦起兵皆以米利都为首脑！我已调集波斯小亚细亚全部兵力直扑米利都，只要攻克此城便可一举平定沿海，你可愿同行？' },
-            { speaker: 'player', text: '愿随阿尔塔弗涅斯总督挥师南下，攻破米利都坚城！' },
+            { speaker: 'general', text: '阿里斯塔戈拉斯蛊惑伊奥尼亚诸邦叛我大王，雅典战舰助其攻我撒狄！外城火起，卫城尚在我手——壮士，随本总督死守石墙，待波斯援军合围叛军！' },
+            { speaker: 'player', text: '愿随阿尔塔弗涅斯总督死守撒狄卫城，击退伊奥尼亚叛军！' },
         ],
     },
 
@@ -367,7 +368,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 38.32,
         targetLng: 23.31,
         myTroops: 38000,
-        enemyFactionId: 'aqimeinide',
+        enemyFactionId: 'aqimeinide',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '波斯帝国',
         enemyGeneralId: 'bfe2_mardonius',
         enemyTroops: 50000,
@@ -752,7 +753,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 31.0417,
         targetLng: 32.545,
         myTroops: 35000,
-        enemyFactionId: 'aiji',
+        enemyFactionId: 'maqidun',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '帝国摄政军',
         enemyGeneralId: 'gen_perdiccas',
         enemyTroops: 40000,
@@ -842,7 +843,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 25.61,
         targetLng: 85.13,
         myTroops: 60000,
-        enemyFactionId: 'mojietuo',
+        enemyFactionId: 'mojietuo',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '难陀王朝',
         enemyGeneralId: 'bfe2_dhanananda',
         enemyTroops: 80000,
@@ -1154,7 +1155,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.200716,
         targetLng: 115.471802,
         myTroops: 60000,
-        enemyFactionId: 'xichu',
+        enemyFactionId: 'chuguo',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '楚国',
         enemyGeneralId: 'bfe_xiangliang',   // 🔴 [2026-10-25 按史] 前208 定陶之战章邯所袭杀者＝项梁（项羽在雍丘）
         enemyTroops: 45000,
@@ -1374,7 +1375,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 31.55,
         targetLng: 74.35,
         myTroops: 35000,
-        enemyFactionId: 'mojietuo',
+        enemyFactionId: 'shunga',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '巽伽王朝',
         enemyGeneralId: 'bfe3_27',
         enemyTroops: 40000,
@@ -1556,7 +1557,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 41.875,
         targetLng: 83.59,
         myTroops: 40000,
-        enemyFactionId: 'xiongnu',
+        enemyFactionId: 'xiongnu',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '北匈奴',
         enemyGeneralId: 'xijue_ganyanshou',
         enemyTroops: 30000,
@@ -1580,7 +1581,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 21.663,
         targetLng: 109.207,
         myTroops: 30000,
-        enemyFactionId: 'xiou',
+        enemyFactionId: 'luoyue',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '徵侧',
         enemyGeneralId: 'luoyue_zhengce',
         enemyTroops: 35000,
@@ -1602,7 +1603,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 33.22,
         targetLng: 113.22,
         myTroops: 20000,
-        enemyFactionId: 'han_d',
+        enemyFactionId: 'dixiang',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '新朝',
         enemyGeneralId: 'bfe3_56',
         enemyTroops: 100000,
@@ -1700,25 +1701,25 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #87 班超 (32 ~ 102) — 公元91年龟兹平定之战（本城就地开战）
+    // #87 班超 (32 ~ 102) — 公元86年损中破疏勒叛王忠（原写91年它乾：敌将忠卒于90，年代不合）
     xiyuduhu_banchao: {
         generalId: 'xiyuduhu_banchao',
         battleName: '疏勒平叛之战',
-        battleYear: 91,
+        battleYear: 86,
         battleType: 'field',
         role: 'defender',
-        targetName: '它乾城',
-        targetCityId: 'city_taqian',
-        targetLat: 41.875,
-        targetLng: 83.59,
+        targetName: '损中',
+        targetCityId: 'city_shule',
+        targetLat: 39.47,
+        targetLng: 75.98,
         myTroops: 25000,
-        enemyFactionId: 'qiuci',
-        enemyFactionName: '龟兹贵霜联军',
-        enemyGeneralId: 'bfe_shulezhong',   // 🔴 [2026-10-25 按史] 91 疏勒平叛对手＝疏勒叛王忠（白霸是班超后立的龟兹王）
-        enemyTroops: 35000,
+        enemyFactionId: 'shule',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
+        enemyFactionName: '疏勒',
+        enemyGeneralId: 'bfe_shulezhong',   // 🔴 [2026-10-25 按史] 疏勒叛王忠；《后汉书·班超传》元和三年（86）忠借康居兵据损中，超伏兵斩之
+        enemyTroops: 30000,
         introLines: [
-            { speaker: 'general', text: '大丈夫无他志略，犹当效傅介子、张骞立功异域！贵霜龟兹引兵拒险，壮士，随某以夷制夷，扬汉节于绝域！' },
-            { speaker: 'player', text: '愿随班都护于它乾城下就地迎战，彻底折服龟兹与西域诸国！' },
+            { speaker: 'general', text: '疏勒王忠叛汉，借康居之兵据守损中，欲断我西域南道！大丈夫无他志略，犹当效傅介子、张骞立功异域——壮士，随某以夷制夷，斩忠以定疏勒！' },
+            { speaker: 'player', text: '愿随班都护进击损中，平疏勒之叛、扬汉节于绝域！' },
         ],
     },
 
@@ -1826,7 +1827,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 34.139089,
         targetLng: 112.887268,
         myTroops: 30000,
-        enemyFactionId: 'wuzhou_d',
+        enemyFactionId: 'han_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '董卓军',
         enemyGeneralId: 'bfe3_69',
         enemyTroops: 45000,
@@ -1936,7 +1937,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 31.82,
         targetLng: 117.23,
         myTroops: 20000,
-        enemyFactionId: 'nanqi',
+        enemyFactionId: 'sunwu_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '东吴',
         enemyGeneralId: 'sunwu_d_sunquan',
         enemyTroops: 100000,
@@ -1958,7 +1959,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.89,
         targetLng: 118.89,
         myTroops: 25000,
-        enemyFactionId: 'tuoba',
+        enemyFactionId: 'xianbei',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '鲜卑',
         enemyGeneralId: 'bfe3_74',
         enemyTroops: 40000,
@@ -2002,7 +2003,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 30.9333,
         targetLng: 118.75,
         myTroops: 25000,
-        enemyFactionId: 'dongjin',
+        enemyFactionId: 'han_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '刘繇军',
         enemyGeneralId: 'bfe3_70',
         enemyTroops: 40000,
@@ -2288,7 +2289,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 34.55,
         targetLng: 114.78,
         myTroops: 30000,
-        enemyFactionId: 'tang',
+        enemyFactionId: 'hou_zhao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '后赵',
         enemyGeneralId: 'bfe_taobao',   // 🔴 [2026-10-25 按史] 320 蓬陂坞与祖逖相持的是后赵桃豹（石勒在襄国）
         enemyTroops: 45000,
@@ -2332,7 +2333,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 32.75,
         targetLng: 114.98,
         myTroops: 50000,
-        enemyFactionId: 'dongjin',
+        enemyFactionId: 'jin',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '西晋',
         enemyGeneralId: 'bfe_wangyan',   // 🔴 [2026-10-25 按史] 311 宁平城行台元帅＝太尉王衍（祖逖不在该军）
         enemyTroops: 80000,
@@ -2354,7 +2355,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 41.57,
         targetLng: 120.45,
         myTroops: 40000,
-        enemyFactionId: 'tang',
+        enemyFactionId: 'hou_zhao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '后赵',
         enemyGeneralId: 'shizhao_d_shihu',
         enemyTroops: 70000,
@@ -2376,7 +2377,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 30.57,
         targetLng: 104.07,
         myTroops: 30000,
-        enemyFactionId: 'chenghan',
+        enemyFactionId: 'chenghan',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '成汉',
         enemyGeneralId: 'bfe3_83',
         enemyTroops: 45000,
@@ -2400,7 +2401,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 37.22,
         targetLng: 115.04,
         myTroops: 30000,
-        enemyFactionId: 'tang',
+        enemyFactionId: 'hou_zhao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '后赵',
         enemyGeneralId: 'bfe_zhanghedu',   // 🔴 [2026-10-25 按史] 350 苍亭之战＝张贺度（石琨在邯郸另路）
         enemyTroops: 60000,
@@ -2534,7 +2535,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 36.88,
         targetLng: 118.43,
         myTroops: 60000,
-        enemyFactionId: 'murong',
+        enemyFactionId: 'murong',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '南燕',
         enemyGeneralId: 'bfe3_90',
         enemyTroops: 50000,
@@ -2600,7 +2601,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 40.08,
         targetLng: 113.3,
         myTroops: 40000,
-        enemyFactionId: 'murong',
+        enemyFactionId: 'da_yan',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '后燕',
         enemyGeneralId: 'bfe_murongbao',   // 🔴 [2026-10-25 按史] 395 参合陂燕军主帅＝太子慕容宝（慕容垂在中山患病）
         enemyTroops: 70000,
@@ -2666,7 +2667,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 46.25,
         targetLng: 20.15,
         myTroops: 70000,
-        enemyFactionId: 'luoma_diguo',
+        enemyFactionId: 'baizanting',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '东罗马帝国',
         enemyGeneralId: 'bfe3_92',
         enemyTroops: 60000,
@@ -2756,7 +2757,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 32.05,
         targetLng: 118.77,
         myTroops: 50000,
-        enemyFactionId: 'liusong',
+        enemyFactionId: 'nanqi',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '南齐朝廷军',
         enemyGeneralId: 'nanqi_xiaobaojuan',   // 🔴 [2026-10-20 首战规则] 建康守方是东昏侯萧宝卷
         enemyTroops: 60000,
@@ -2954,7 +2955,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 25.8509,
         targetLng: 114.93,
         myTroops: 20000,
-        enemyFactionId: 'ming_d',
+        enemyFactionId: 'nan_liang',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '侯景',
         enemyGeneralId: 'dayu_liqianshi',   // 🔴 [2026-10-20 首战规则] 551 守方主将是李迁仕
         enemyTroops: 30000,
@@ -3000,7 +3001,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 30.7,
         targetLng: 111.28,
         myTroops: 40000,
-        enemyFactionId: 'sunwu_d',
+        enemyFactionId: 'chen',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '南陈',
         enemyGeneralId: 'yidou_qixin',   // 🔴 [2026-10-20 首战规则] 589 狼尾滩陈军守将戚昕
         enemyTroops: 30000,
@@ -3111,7 +3112,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 42.8533,
         targetLng: 89.53,
         myTroops: 40000,
-        enemyFactionId: 'yiduhu',
+        enemyFactionId: 'gaochang',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '高昌国',
         enemyGeneralId: 'bfe_quzhisheng',   // 🔴 [2026-10-25 按史] 640 唐军围高昌城时守方＝麴智盛（麴文泰已病死）
         enemyTroops: 25000,
@@ -3199,7 +3200,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 33.5131,
         targetLng: 36.3094,
         myTroops: 30000,
-        enemyFactionId: 'womaya',
+        enemyFactionId: 'baizanting',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '拜占庭帝国',
         enemyGeneralId: 'bfe_vahan',   // 🔴 [2026-10-25 按史] 636 雅穆克拜占庭主帅＝瓦汉（穆阿维叶是阿拉伯一方）
         enemyTroops: 60000,
@@ -3339,7 +3340,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 42.8,
         targetLng: 75.2667,
         myTroops: 40000,
-        enemyFactionId: 'xijue',
+        enemyFactionId: 'xijue',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '西突厥',
         enemyGeneralId: 'bfe_ashina_duzhi',   // 🔴 [2026-10-25 按史] 679–680 裴行俭碎叶擒的是西突厥十姓可汗阿史那都支
         enemyTroops: 50000,
@@ -3743,7 +3744,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 37.07,
         targetLng: 41.22,
         myTroops: 30000,
-        enemyFactionId: 'womaya',
+        enemyFactionId: 'abasi',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '阿卜杜拉',
         enemyGeneralId: 'bfe_abdullah_ali',   // 🔴 [2026-10-25 按史] 754 尼西比斯＝阿卜杜拉·本·阿里（原填 891–961 的拉赫曼三世，差一个半世纪）
         enemyTroops: 40000,
@@ -4236,7 +4237,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 114.5,
         // 🔴 [2026-10-20 兵力规则] 柏乡晋军约 3.5 万，按「守方≤攻方×2」与梁军 7 万配平
         myTroops: 35000,
-        enemyFactionId: 'song',
+        enemyFactionId: 'hou_liang',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '后梁',
         enemyGeneralId: 'liang_d_wangjingren',   // 🔴 [2026-10-20 首战规则] 911 柏乡后梁主帅王景仁（原势力误填石赵）
         enemyTroops: 70000,
@@ -4258,7 +4259,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.7621,
         targetLng: 115.0291,
         myTroops: 20000,
-        enemyFactionId: 'hou_zhou',
+        enemyFactionId: 'shatuo',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '后唐',
         enemyGeneralId: 'yingzhou_d2_licunxu',   // 🔴 [2026-10-25 按史] 923 德胜口是王彦章攻后唐李存勖的德胜南北城；原填柴荣（921 年生，此年两岁，后周世宗在二十多年后）
         enemyTroops: 35000,
@@ -4302,7 +4303,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.808912,
         targetLng: 129.210205,
         myTroops: 30000,
-        enemyFactionId: 'qianshu',
+        enemyFactionId: 'goryeo',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '高丽',
         enemyGeneralId: 'bfe_wanggeon',   // 🔴 [2026-10-25 按史] 927 公山曹洞岘＝高丽太祖王建（库里 zizhou_wangjian 是前蜀王建，同名不同人）
         enemyTroops: 25000,
@@ -4390,7 +4391,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 48.37,
         targetLng: 10.89,
         myTroops: 15000,
-        enemyFactionId: 'shiwaben',
+        enemyFactionId: 'mazhaer',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '马扎尔游牧同盟',
         enemyGeneralId: 'bfe_bulcsu',   // 🔴 [2026-10-25 按史] 955 莱希河马扎尔军主将＝布尔丘（乌尔里希是奥托一方的奥格斯堡主教）
         enemyTroops: 30000,
@@ -4412,7 +4413,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 36.148974,
         targetLng: 113.008118,
         myTroops: 30000,
-        enemyFactionId: 'tang',   // 🔴 [2026-10-20 按史] 北汉不在库，刘崇挂晋阳所在的并州（原写上党 xin 不对）
+        enemyFactionId: 'hou_han',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '北汉契丹联军',
         enemyGeneralId: 'xin_liuchong',   // 🔴 [2026-10-20 首战规则] 954 高平之战北汉主刘崇
         enemyTroops: 45000,
@@ -4880,7 +4881,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 22.81,
         targetLng: 108.31,
         myTroops: 20000,
-        enemyFactionId: 'nongzhigao',
+        enemyFactionId: 'song',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '北宋',
         enemyGeneralId: 'bfe_chengong',   // 🔴 [2026-10-25 按史] 1052 守邕州＝知州陈珙（黄师宓是侬智高自己的谋主）
         enemyTroops: 15000,
@@ -5064,7 +5065,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 33.55,
         targetLng: 68.42,
         myTroops: 35000,
-        enemyFactionId: 'shule',
+        enemyFactionId: 'jiazini',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '加兹尼王朝',
         enemyGeneralId: 'bfe_arslan_shah',   // 🔴 [2026-10-25 按史] 1117 沙赫拉巴德＝伽色尼苏丹阿尔斯兰沙（疏勒阿尔斯兰是另一人）
         enemyTroops: 40000,
@@ -5376,7 +5377,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.18,
         targetLng: 33.38,
         myTroops: 15000,
-        enemyFactionId: 'bendou',
+        enemyFactionId: 'baizanting',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '塞浦路斯',
         enemyGeneralId: 'bfe_isaac_komnenos',
         enemyTroops: 18000,
@@ -5532,7 +5533,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.6525,
         targetLng: 66.9714,
         myTroops: 50000,
-        enemyFactionId: 'tiemuer',
+        enemyFactionId: 'xiliao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '西喀喇汗国',
         enemyGeneralId: 'xiliao_uthman',   // 🔴 [2026-10-20 首战规则] 1212 撒马尔罕西喀喇汗末王奥斯曼
         enemyTroops: 40000,
@@ -5580,7 +5581,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 29.24,
         targetLng: 71.05,
         myTroops: 25000,
-        enemyFactionId: 'zhaowu',
+        enemyFactionId: 'menggu_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '察合台蒙古军',
         enemyGeneralId: 'bfe_chagatai',   // 🔴 [2026-10-25 按史] 1221 攻乌奇＝察合台、窝阔台所部（帖木儿灭里是花剌子模守将）
         enemyTroops: 30000,
@@ -5716,7 +5717,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 32.01,
         targetLng: 112.12,
         myTroops: 35000,
-        enemyFactionId: 'song',
+        enemyFactionId: 'menggu_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '蒙古仆从军',
         enemyGeneralId: 'bfe_youxian',   // 🔴 [2026-10-25 按史] 1239 襄阳守将＝游显（吕文焕 1225 年生，此年 14 岁）
         enemyTroops: 40000,
@@ -5896,7 +5897,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 21.03,
         targetLng: 105.85,
         myTroops: 40000,
-        enemyFactionId: 'yuan_d',
+        enemyFactionId: 'yuan_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '大元',
         enemyGeneralId: 'bfe_umar',   // 🔴 [2026-10-25 按史] 1288 白藤江元水军＝乌马儿（忽必烈在大都）
         enemyTroops: 50000,
@@ -6556,7 +6557,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.48,
         targetLng: 115.98,
         myTroops: 40000,
-        enemyFactionId: 'liusong',
+        enemyFactionId: 'ming_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '建文朝廷军',
         enemyGeneralId: 'gen_li_jinglong',
         enemyTroops: 80000,
@@ -7062,7 +7063,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 28.99,
         targetLng: 116.66,
         myTroops: 35000,
-        enemyFactionId: 'tang',
+        enemyFactionId: 'ming_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '宁王',
         enemyGeneralId: 'bfe_zhu_chenhao',
         enemyTroops: 70000,
@@ -7084,7 +7085,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.810643,
         targetLng: 109.959412,
         myTroops: 40000,
-        enemyFactionId: 'tumed',
+        enemyFactionId: 'menggu_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '右翼蒙古部族',
         enemyGeneralId: 'bfe_yibula',   // 🔴 [2026-10-25 按史] 1510 达兰特哩衮右翼首领＝太师亦不剌（俺答 1507 年生，此年 3 岁）
         enemyTroops: 35000,
@@ -7106,7 +7107,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.16,
         targetLng: 20.98,
         myTroops: 30000,
-        enemyFactionId: 'xibanya',
+        enemyFactionId: 'kelimiya',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '神圣同盟联军',
         enemyGeneralId: 'bfe_doria',   // 🔴 [2026-10-25 按史] 1538 普雷韦扎神圣同盟舰队＝安德烈亚·多里亚（皮萨罗在秘鲁）
         enemyTroops: 60000,
@@ -7538,25 +7539,26 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #388 戚继光 (1528 ~ 1588) — 公元1561年台州花街大捷
+    // #388 戚继光 (1528 ~ 1588) — 公元1558年岑港之战（原写台州花街：当役倭寇首领史无确名，按主人令「没名字不能算经典战役」换掉）
     qi_d_qijiguang: {
         generalId: 'qi_d_qijiguang',
-        battleName: '台州花街大捷',
-        battleYear: 1561,
-        battleType: 'field',
+        // 🔴 [2026-10-25 按史换战役] 台州花街 1561 倭寇首领史无确名（陈东 1556 已死），不当首战；改选 1558 岑港之战——王直伏诛后其养子王滶（本名毛海峰）据舟山岑港，俞大猷与参将戚继光攻灭之（《明史纪事本末》卷55、《倭变事略》）。
+        battleName: '岑港之战',
+        battleYear: 1558,
+        battleType: 'siege',
         role: 'attacker',
-        targetName: '台州花街村',
-        targetCityId: 'city_taizhou_zj',
-        targetLat: 28.66,
-        targetLng: 121.42,
-        myTroops: 12000,
+        targetName: '舟山岑港',
+        targetCityId: 'city_qingyuan_zj',
+        targetLat: 30.07,
+        targetLng: 122.0,
+        myTroops: 30000,
         enemyFactionId: 'haikou',
-        enemyFactionName: '日本倭寇联军',
-        enemyGeneralId: 'bfe_chen_dong',
-        enemyTroops: 20000,
+        enemyFactionName: '海寇',
+        enemyGeneralId: 'haikou_maohaifeng',
+        enemyTroops: 8000,
         introLines: [
-            { speaker: 'general', text: '倭贼犯我海疆掳掠生民，狼筅鸳鸯阵正是其克星！杀贼报国立功立名全在此时，壮士，随戚家军长枪火铳齐进，不破倭寇誓不还！' },
-            { speaker: 'player', text: '愿随戚继光将军共赴台州花街大捷，大破日本倭寇联军敌军！' },
+            { speaker: 'general', text: '王直伏诛，其养子王滶（毛海峰）仍据舟山岑港，扬言为父报仇，屡败官军！总督命我与俞大猷合兵进剿——壮士，随我水陆并进，拔此海寇巢穴！' },
+            { speaker: 'player', text: '愿随戚继光将军攻破岑港，剿灭王滶海寇！' },
         ],
     },
 
@@ -8569,25 +8571,26 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #445 大卫王 (-1010 ~ -970) — 公元前995年利乏音谷破非利士之战
+    // #445 大卫王 (-1010 ~ -970) — 公元前1025年以拉谷之战（原写利乏音谷：该役史无确名敌将）
     xibolai_dawei: {
         generalId: 'xibolai_dawei',
-        battleName: '利乏音谷之战',
-        battleYear: -995,
+        // 🔴 [2026-10-25 按史修复「利乏音谷敌将不明」] 利乏音谷（撒下5）未载非利士主将姓名；改选大卫最知名之战——以拉谷对歌利亚（撒上17），敌将歌利亚有本名、在场。
+        battleName: '以拉谷之战',
+        battleYear: -1025,
         battleType: 'field',
         role: 'defender',
-        targetName: '耶路撒冷利乏音谷',
+        targetName: '以拉谷',
         targetCityId: 'city_yelusaleng',
-        targetLat: 31.768,
-        targetLng: 35.214,
+        targetLat: 31.69,
+        targetLng: 34.96,
         myTroops: 30000,
         enemyFactionId: 'feilisidin',
         enemyFactionName: '非利士五城同盟',
-        enemyGeneralId: 'bfe_achish',
-        enemyTroops: 35000,
+        enemyGeneralId: 'feilisidin_geliya',
+        enemyTroops: 30000,
         introLines: [
-            { speaker: 'general', text: '非利士大军闻我受膏作以色列王，倾巢出动陈兵利乏音谷欲扼杀锡安！桑树梢头风声已起，以色列的勇士，随大卫如破水之势击溃敌军！' },
-            { speaker: 'player', text: '愿随大卫将军共守利乏音谷之战，大破非利士五城同盟！' },
+            { speaker: 'general', text: '非利士大军压向以拉谷，那巨人歌利亚日日索战，以色列营中无人敢应！我奉万军之耶和华的名出战——壮士，随我过谷，斩此狂徒！' },
+            { speaker: 'player', text: '愿随大卫迎战歌利亚，击破非利士军！' },
         ],
     },
 
@@ -9483,7 +9486,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 26.89,
         targetLng: 112.6,
         myTroops: 50000,
-        enemyFactionId: 'ming_d',
+        enemyFactionId: 'longwu',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '桂州',
         enemyGeneralId: 'guizhou_lidingguo',
         enemyTroops: 40000,
@@ -10585,6 +10588,102 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
             { speaker: 'player', text: '愿随夏王进兵虎牢，击破唐军！' },
         ],
     },
+    // #FB-唐 郭孝恪 (644) — 焉耆之战（夜袭焉耆城，虏其王龙突骑支；《旧唐书·卷八三》步骑三千出银山道）
+    xingxingxia_guoxiaoke: {
+        generalId: 'xingxingxia_guoxiaoke',
+        battleName: '焉耆之战',
+        battleYear: 644,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '焉耆城',
+        targetCityId: 'city_yanqi',
+        targetLat: 42.06,
+        targetLng: 86.56,
+        myTroops: 3000,          // 《旧唐书·郭孝恪传》步骑三千
+        enemyFactionId: 'yanqi',
+        enemyFactionName: '焉耆',
+        enemyGeneralId: 'yanqi_longtuqizhi',
+        enemyTroops: 6000,       // 获首虏七千级为战果，按守方≤攻方×2 取上限
+        introLines: [
+            { speaker: 'general', text: '焉耆王龙突骑支背我归了西突厥，朝贡断绝，天山南路只当他自家门户。某今领西州道行军总管，率步骑三千出银山道——今夜浮水登城，先取此王！' },
+            { speaker: 'player', text: '愿随郭都护出银山道，夜袭焉耆！' },
+            { speaker: 'general', text: '焉耆城四面皆水，恃险不设斥候，正是天赐之隙。其弟栗婆准愿作乡导，路熟可以疾行。' },
+            { speaker: 'player', text: '谨受命，倍道兼行！' },
+        ],
+    },
+
+    // #FB-唐 契苾何力 (635) — 突沦川夜袭（自选骁骑千余袭破吐谷浑牙帐；《旧唐书·卷一〇九》）
+    tiele_qibiheli: {
+        generalId: 'tiele_qibiheli',
+        battleName: '突沦川夜袭',
+        battleYear: 635,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '突沦川',
+        targetCityId: 'city_jingjue',   // 库内无突沦川；精绝为最近据点（约 277km），仅登记锚点
+        targetLat: 38.15,
+        targetLng: 85.53,
+        myTroops: 3000,
+        enemyFactionId: 'xihai_d',
+        enemyFactionName: '吐谷浑',
+        enemyGeneralId: 'xihai_d_fuyun',
+        enemyTroops: 6000,
+        introLines: [
+            { speaker: 'general', text: '吐谷浑可汗伏允的牙帐就扎在突沦川，他若奔了于阗，大碛里再寻他便如捞针。某自选骁骑千余，今夜直入突沦川，踹他的牙帐！' },
+            { speaker: 'player', text: '愿随将军直捣突沦川！' },
+            { speaker: 'general', text: '虏无城郭，逐水草而居，不乘其聚居掩取，一朝云散便白费马力。碛中无水，刺马血也要饮——尔曹可敢随某？' },
+            { speaker: 'player', text: '敢！千骑已备，只待号令！' },
+        ],
+    },
+
+    // #FB-唐 程名振 (645) — 沙卑城之战（平壤道舟师袭辽南，夜至西门先登；敌将史失其名）
+    jilizhou_chengmingzhen: {
+        generalId: 'jilizhou_chengmingzhen',
+        battleName: '沙卑城之战',
+        battleYear: 645,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '卑沙城',
+        targetCityId: 'city_beishacheng',
+        targetLat: 39.444692,
+        targetLng: 121.959229,
+        myTroops: 20000,
+        enemyFactionId: 'gaogouli',
+        enemyFactionName: '高句丽',
+        // 🔴 enemyGeneralId 缺：两《唐书》《通鉴》《三国史记》皆不载卑沙城守将姓名（史实缺口，不拟名）
+        enemyTroops: 8000,       // 获男女八千口
+        introLines: [
+            { speaker: 'general', text: '高句丽卑沙城四面悬绝，只有西门可上，他仗着这份险要便不设备。张总管舟师已自东莱渡海，某今夜引兵直抵西门——' },
+            { speaker: 'player', text: '愿随程总管夜取卑沙城！' },
+            { speaker: 'general', text: '营州儿郎惯走辽东山险，待月黑衔枚而上，先登者记首功；独山那边的高丽阵列，也一并撞碎他。' },
+            { speaker: 'player', text: '得令！先登者赏！' },
+        ],
+    },
+
+    // #FB-唐 王师范 (903) — 石楼之战（登莱兵＋淮南七千合击汴军，青州将张士枭斩朱友宁；《通鉴·卷二六四》）
+    lai_wangshifan: {
+        generalId: 'lai_wangshifan',
+        battleName: '石楼之战',
+        battleYear: 903,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '石楼',
+        targetCityId: 'city_linzi',   // 库内无石楼据点；临淄最近（约 31km），坐标按石楼史实值
+        targetLat: 36.62,
+        targetLng: 118.55,
+        myTroops: 20000,
+        enemyFactionId: 'hou_liang',
+        enemyFactionName: '后梁',
+        enemyGeneralId: 'liang_d_zhuyouning',
+        enemyTroops: 30000,
+        introLines: [
+            { speaker: 'general', text: '朱友宁屠了博昌，又拔临淄，兵锋已抵青州城下。某已帅登、莱两军扎成两栅，就钉在石楼等他来啃！' },
+            { speaker: 'player', text: '愿随王节度使死守石楼！' },
+            { speaker: 'general', text: '淮南王茂章的七千步骑已到，汴军远来疲敝；等他啃钝了两栅，两镇并力一出，米河边上再分胜负！' },
+            { speaker: 'player', text: '末将听令，两栅已固！' },
+        ],
+    },
+
 };
 
 export function getGeneralFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {

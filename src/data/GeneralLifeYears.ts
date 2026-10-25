@@ -339,6 +339,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     song_wangbing: { birth: 1080, death: 1126, kaoju: '推定' },     // 王禀（太原殉国）
     dang_d_pangshigu: { birth: 850, death: 897, kaoju: '推定' },     // 庞师古（清口战死）
     liang_d_wangjingren: { birth: 860, death: 920, kaoju: '推定' },  // 王景仁（后梁将）
+liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁（后梁宗室将；903 石楼阵亡）
     xisi_amr: { birth: 830, death: 902, kaoju: '推定' },            // 阿姆尔·本·莱斯（萨法尔埃米尔）
     baizanting_romanosi: { birth: 870, death: 948 },                // 罗曼努斯一世（拜占庭皇帝）
     danmai_guthrum: { birth: 840, death: 890, kaoju: '推定' },        // 古思伦（丹麦维京首领）
@@ -834,7 +835,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     wala_yexian: { birth: 1407, death: 1454 },  // 也先
     chenli_d_zuoxianwang: { birth: 1320, death: 1364, kaoju: '推定' },  // 张必先
     nuoyan_d_sanyinnuoyan: { birth: 1567, death: 1627, kaoju: '推定' },  // 三音诺颜
-    wuli_d_celeng: { birth: 1675, death: 1750, kaoju: '推定' },  // 策楞
+    wuli_d_celeng: { birth: 1675, death: 1750, kaoju: '推定' },  // 策棱
     yel_yelvxiuge: { birth: 930, death: 998, kaoju: '推定' },  // 耶律休哥
     kumoxi_ahuihui: { birth: 680, death: 735, kaoju: '推定' },  // 阿会毁
     kumo_xiwanghuilibao: { birth: 1075, death: 1123, kaoju: '推定' },  // 回离保
@@ -987,7 +988,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     jingdong_taohong: { birth: 1320, death: 1382, kaoju: '推定' },  // 陶洪
     luohu_ganmuding: { birth: 1280, death: 1340, kaoju: '异说' },  // 敢木丁
     ailao_leilao: { birth: 35, death: 85, kaoju: '推定' },  // 类牢
-    mingzheng_jianzandechang: { birth: 1390, death: 1450, kaoju: '推定' },  // 坚赞德昌
+    mingzheng_jianzandechang: { birth: 1725, death: 1785, kaoju: '推定' },  // 坚参德昌（清 明正土司，乾隆十年袭职；《清史稿·卷五一二·土司传》）
     hani_d_zhebi: { birth: 1610, death: 1665, kaoju: '推定' },  // 遮比
     dali_duansiping: { birth: 893, death: 944 },  // 段思平
     dongxu_mangruiti: { birth: 1516, death: 1550 },  // 莽瑞体
@@ -1237,6 +1238,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     zhuoshi_gaopian: { birth: 821, death: 887 },  // 高骈
     xingliao_dayanlin: { birth: 975, death: 1030, kaoju: '推定' },  // 大延琳
     xihai_d_fulianchou: { birth: 455, death: 529, kaoju: '异说' },  // 伏连筹
+xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷浑可汗；635 年兵败身死）
     guzgan_abuhalisi: { birth: 930, death: 995, kaoju: '推定' },  // 阿布哈里斯
     kawusi_haidaer: { birth: 1715, death: 1775, kaoju: '推定' },  // 海达尔
     xianhai_shamalike: { birth: 995, death: 1044, kaoju: '推定' },  // 沙马利克
@@ -1456,7 +1458,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     kesaiya_kashtiliash: { birth: -360, death: -320, kaoju: '推定' },  // 卡什提利亚什（前324年亚历山大征科塞亚之战守帅）
     wukexiya_madates: { birth: -370, death: -324, kaoju: '推定' },  // 马达泰斯
     dasaleiti_kleitos: { birth: -365, death: -325, kaoju: '推定' },  // 克莱图斯
-    hesitiya_yiasong: { birth: -380, death: -324, kaoju: '推定' },  // 伊阿宋
+    hesitiya_yiasong: { birth: -400, death: -370, kaoju: '推定' },  // 伊阿宋（斐赖僭主、色萨利 tagus；前 370 遇刺，Xen. Hell. 6.4.30）
     hekaniya_artabazos: { birth: -389, death: -325, kaoju: '推定' },  // 阿尔塔巴佐斯
     kapaduoxiya_sabiktas: { birth: -375, death: -322, kaoju: '推定' },  // 萨比克塔斯
     maermajika_paraetos: { birth: -370, death: -325, kaoju: '推定' },  // 帕拉伊托斯
@@ -1548,6 +1550,66 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe_dian_chief: { birth: -330, death: -270, kaoju: '推定' },  // 苴兰
     bfe_niu_han: { birth: -5, death: 45, kaoju: '推定' },  // 牛邯
     bfe_ngo_nhat_khanh: { birth: 925, death: 971, kaoju: '推定' },  // 吴日庆
+    bfe_rusa_i: { birth: -760, death: -714, kaoju: '推定' },  // 鲁萨一世：前714 乌拉尔图王（前735–714 在位），萨尔贡二世第八次远征
+    bfe_qijie: { birth: -330, death: -279, kaoju: '推定' },  // 骑劫：前279 即墨之战燕军主将，代乐毅；田单火牛阵所破
+    bfe_chuzi: { birth: -340, death: -284, kaoju: '推定' },  // 触子：前284 济西之战齐军主将
+    bfe_lifu: { birth: -300, death: -251, kaoju: '推定' },  // 栗腹：前251 鄗之战燕军主将，为廉颇所擒
+    bfe_touman: { birth: -260, death: -209, kaoju: '推定' },  // 头曼：前215 蒙恬所逐匈奴单于；前209 为冒顿所杀
+    bfe_xiangliang: { birth: -260, death: -208, kaoju: '推定' },  // 项梁：秦末楚军主帅，前208 定陶为章邯所袭杀
+    bfe_crassus: { birth: -115, death: -53, kaoju: '推定' },  // 克拉苏：罗马前三头，前53 卡莱之战统帅，兵败被杀
+    bfe_zhanghe: { birth: 167, death: 231, kaoju: '推定' },  // 张郃：曹魏名将，215 巴西宕渠之战为张飞所破
+    bfe_andragoras: { birth: -300, death: -238, kaoju: '推定' },  // 安德拉戈拉斯：塞琉古所署帕提亚总督，前238 为阿尔沙克一世所败
+    bfe_mendenus: { birth: -380, death: -329, kaoju: '推定' },  // 门德努斯：前329 波利提美图斯河之战马其顿偏师主将
+    bfe_erigius: { birth: -380, death: -325, kaoju: '推定' },  // 埃里吉乌斯：前330 讨萨提巴扎尼斯、阵前斩之
+    bfe_shulezhong: { birth: 30, death: 90, kaoju: '推定' },  // 忠：东汉疏勒叛王，为班超所平
+    bfe_zhangping: { birth: -260, death: -205, kaoju: '推定' },  // 章平：雍王章邯之弟，前205 好畤、景陵为周勃曹参所破
+    bfe_wangjing: { birth: 200, death: 260, kaoju: '推定' },  // 王经：曹魏雍州刺史，255 洮西为姜维所破
+    bfe_wangyan: { birth: 256, death: 311, kaoju: '推定' },  // 王衍：西晋太尉，311 宁平城行台元帅，为石勒所执
+    bfe_zhanghedu: { birth: 300, death: 351, kaoju: '推定' },  // 张贺度：后赵将领，350 苍亭之战为冉闵所破
+    bfe_murongbao: { birth: 355, death: 398, kaoju: '推定' },  // 慕容宝：后燕太子，395 参合陂之战主帅，为拓跋珪所破
+    bfe_yangyu: { birth: 470, death: 529, kaoju: '推定' },  // 杨昱：北魏东南道大都督，529 守荥阳，城破被陈庆之执获
+    bfe_vahan: { birth: 600, death: 636, kaoju: '推定' },  // 瓦汉：拜占庭亚美尼亚籍统帅，636 雅穆克战役主帅
+    bfe_likaigu: { birth: 630, death: 700, kaoju: '推定' },  // 李楷固：武周玉钤卫大将军，698 天门岭追击大祚荣而大败
+    bfe_abdullah_ali: { birth: 712, death: 764, kaoju: '推定' },  // 阿卜杜拉：阿拔斯宗室，754 尼西比斯争位兵败被擒
+    bfe_leo_phokas: { birth: 870, death: 920, kaoju: '推定' },  // 利奥·福卡斯：拜占庭野战军统帅，917 阿海洛斯之战败于西美昂
+    bfe_bulcsu: { birth: 900, death: 955, kaoju: '推定' },  // 布尔丘：马扎尔 harka，955 莱希河之战马扎尔军主将，被处死
+    bfe_liurenshan: { birth: 900, death: 957, kaoju: '推定' },  // 刘仁赡：南唐寿州守将，957 后周攻寿春，坚守不下
+    bfe_chengong: { birth: 1000, death: 1052, kaoju: '推定' },  // 陈珙：北宋知邕州，1052 侬智高破邕州时被执
+    bfe_muhammad_ghur: { birth: 1149, death: 1206, kaoju: '推定' },  // 穆罕默德·古尔：古尔苏丹，1191 第一次塔兰战役主帅（第二次塔兰胜）
+    bfe_youxian: { birth: 1200, death: 1263, kaoju: '推定' },  // 游显：蒙古所署襄阳副达鲁花赤，1239 京襄之战为宋军所擒
+    bfe_umar: { birth: 1230, death: 1288, kaoju: '推定' },  // 乌马儿：元朝水军统帅，1288 白藤江之战被俘
+    bfe_chagatai: { birth: 1183, death: 1242, kaoju: '推定' },  // 察合台：蒙古宗王，1221 与窝阔台共攻乌奇
+    bfe_kniprode: { birth: 1310, death: 1382, kaoju: '推定' },  // 克尼普罗德：条顿大团长（1352–1382 在任），1370 鲁道战役主帅
+    bfe_suleiman_pasha: { birth: 1400, death: 1479, kaoju: '推定' },  // 苏莱曼帕夏：鲁米利亚贝伊莱尔贝伊，1475 瓦斯卢伊战役奥斯曼军统帅
+    bfe_frederick_iii: { birth: 1415, death: 1493, kaoju: '推定' },  // 腓特烈三世：神圣罗马皇帝（1452–1493 在位），1485 维也纳围城守方
+    bfe_yibula: { birth: 1450, death: 1533, kaoju: '推定' },  // 亦不剌：蒙古右翼太师，1510 达兰特哩衮之战为达延汗所败、逃青海
+    bfe_doria: { birth: 1466, death: 1560, kaoju: '推定' },  // 多里亚：热那亚海军名将，1538 普雷韦扎海战神圣同盟舰队统帅
+    bfe_takayutpi: { birth: 1500, death: 1540, kaoju: '推定' },  // 多迦逾毕：汉达瓦底（白古）末王，1538–39 东吁攻勃固时守方
+    bfe_mingyiswa: { birth: 1550, death: 1593, kaoju: '推定' },  // 明耶苏瓦：东吁王储（莽应里之子），1593 廊沙拉之战主帅，阵亡
+    bfe_potocki: { birth: 1620, death: 1648, kaoju: '推定' },  // 波托茨基：波兰盖特曼，1648 黄水战役波军统帅，兵败被俘
+    bfe_fuquan: { birth: 1653, death: 1703, kaoju: '推定' },  // 福全：清抚远大将军（裕亲王），1690 乌兰布通之战清军主帅
+    bfe_tsering_dondub: { birth: 1660, death: 1730, kaoju: '推定' },  // 策凌敦多布：准噶尔名将，1720 清军入藏时准噶尔守军统帅
+    bfe_zengguoquan: { birth: 1824, death: 1890, kaoju: '推定' },  // 曾国荃：湘军统帅，1862 雨花台之战被李秀成围攻的守方主帅
+    bfe_xiaoceling: { birth: 1700, death: 1750, kaoju: '推定' },  // 策零敦多布：准噶尔将领，1731 和通泊之战前线指挥
+    bfe_mahathammaracha: { birth: 1500, death: 1590, kaoju: '推定' },  // 玛欣他拉：阿瑜陀耶王（1569–1590 在位），1569 城破时守方
+    bfe_quzhisheng: { birth: 620, death: 660, kaoju: '推定' },  // 麴智盛：高昌末王，640 唐军围高昌城时守方（麴文泰已病死）
+    bfe_arslan_shah: { birth: 1090, death: 1118, kaoju: '推定' },  // 阿尔斯兰沙：伽色尼苏丹（1116–1117 在位），1117 沙赫拉巴德之战败于桑贾尔
+    bfe_bogislaw_i: { birth: 1125, death: 1187, kaoju: '推定' },  // 博吉斯拉夫：波美拉尼亚公爵（1156–1187 在位），1184 亚斯蒙德海战守方
+    bfe_wanggeon: { birth: 877, death: 943, kaoju: '推定' },  // 王建：高丽太祖（877–943），927 公山之战为甄萱所败，后统一后三国
+    bfe_oda_nobuhide: { birth: 1511, death: 1551, kaoju: '推定' },  // 织田信秀：织田信长之父，1548 小豆坂之战织田方主将
+    bfe_liuping: { birth: 980, death: 1041, kaoju: '推定' },  // 刘平：鄜延路副都部署，1040 三川口宋军主将
+    bfe_taobao: { birth: 280, death: 340, kaoju: '推定' },  // 桃豹：后赵将领，320 与祖逖争蓬陂坞（东西二台）
+    bfe_ashina_duzhi: { birth: 620, death: 680, kaoju: '推定' },  // 阿史那都支：西突厥十姓可汗，679–680 裴行俭以计擒于碎叶
+    bfe_achaemenes: { birth: -520, death: -460, kaoju: '推定' },  // 阿凯门尼斯：薛西斯之弟、波斯舰队统帅，前480 阿特米西乌姆海战
+    bfe_huyan_wang: { birth: 1, death: 90, kaoju: '推定' },  // 呼衍王：东汉北匈奴呼衍王，73 年窦固破之于蒲类海
+    bfe_ukita_hideie: { birth: 1573, death: 1655, kaoju: '推定' },  // 宇喜多秀家：丰臣五大老之一，1592 晋州、1593 幸州朝鲜侵攻军总大将
+    bfe_todo_takakage: { birth: 1556, death: 1630, kaoju: '推定' },  // 藤堂高虎：丰臣水军将领，1597 鸣梁海战日本水军统率
+    bfe_sogo_kazumasa: { birth: 1554, death: 1587, kaoju: '推定' },  // 十河存保：三好氏一族，1582 中富川之战阿波方主将
+    bfe_ashina_yoshihiro: { birth: 1565, death: 1614, kaoju: '推定' },  // 芦名义广：芦名氏当主，1589 摺上原之战主将
+    bfe_wanggao: { birth: 1520, death: 1575, kaoju: '推定' },  // 王杲：建州右卫首领，1574 古勒寨之战为李成梁所破
+    bfe_aulax: { birth: 930, death: 970, kaoju: '推定' },  // 奥拉克斯：969 年安条克守将（哈姆丹王朝），城破降拜占庭
+    feilisidin_geliya: { birth: -1050, death: -1000, kaoju: '推定' },  // 歌利亚：非利士迦特猛将（撒上17）
+    haikou_maohaifeng: { birth: 1520, death: 1558, kaoju: '推定' },  // 毛海峰（王滶）：王直养子，1558 岑港败死
 };
 
 /** 生年（未收录返回 null） */

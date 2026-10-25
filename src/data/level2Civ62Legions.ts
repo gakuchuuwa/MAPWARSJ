@@ -4819,10 +4819,19 @@ if (goryeoLegion) {
     LEVEL_2_CIV_62_MAP.set('城堡时代朝鲜军团', goryeoLegion);
 }
 // 兼容简写别名（如不含“时代”二字的旧名）
-LEVEL_2_CIV_62_MAP.set('古典华夏中原军团', LEVEL_2_CIV_62_MAP.get('古典时代华夏军团')!);
-LEVEL_2_CIV_62_MAP.set('古典华夏巴蜀军团', LEVEL_2_CIV_62_MAP.get('古典时代巴蜀军团')!);
-LEVEL_2_CIV_62_MAP.set('古典华夏江南军团', LEVEL_2_CIV_62_MAP.get('古典时代吴越军团')!);
-LEVEL_2_CIV_62_MAP.set('古典华夏河朔军团', LEVEL_2_CIV_62_MAP.get('古典时代魏晋军团')!);
+// 🔴 [2026-10-25 修] 原这里直接 `LEVEL_2_CIV_62_MAP.get('古典时代魏晋军团')!` —— 该军团 2026-10-24 已按二级命名口径
+//    改名为「古典时代太行军团」，get 返回 undefined，`.set(别名, undefined)` 让 MAP 里出现一个 undefined 值；
+//    之后 `getLegionNameByStyle()` 遍历这个 MAP 读 `l2.region` 就抛错，军团编辑器的启动校验 / 选势力面板全部半途中断。
+//    改为「目标存在才登记别名」，以后再改名也不会把 MAP 弄脏。
+const registerLegionAlias = (alias: string, target: string): void => {
+    const hit = LEVEL_2_CIV_62_MAP.get(target);
+    if (hit) LEVEL_2_CIV_62_MAP.set(alias, hit);
+    else console.warn(`[legion] 简写别名「${alias}」的目标「${target}」不存在，已跳过登记`);
+};
+registerLegionAlias('古典华夏中原军团', '古典时代华夏军团');
+registerLegionAlias('古典华夏巴蜀军团', '古典时代巴蜀军团');
+registerLegionAlias('古典华夏江南军团', '古典时代吴越军团');
+registerLegionAlias('古典华夏河朔军团', '古典时代太行军团');
 
 /**
  * 军团名是否属于「**二级：文明 × 时代（62 文明专属军团）**」——

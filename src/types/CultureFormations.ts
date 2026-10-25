@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Culture Formations
  * 15 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
@@ -39,7 +39,7 @@ import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { withCommander } from '../data/generalHeroUnits';
 import { getLegionEliteLegionName, getExpeditionEliteLegionName } from '../data/ExpeditionLegions';
-import { GENERAL_ERA } from '../data/GeneralEra';
+import { getGeneralEra } from '../data/FactionEra';
 import { getGeneralCulture } from '../data/GeneralCulture';
 import { getGeneralEraSubtagLegion } from '../data/GeneralEraSubtags';
 
@@ -1091,7 +1091,7 @@ export function getLegionNameOfGeneral(factionId: string, generalId?: string | n
     const factionLegion = FACTION_COMPOSITIONS[factionId]?.legionName;
     // 势力编制本身是三级军团（起义军 / 苏丹亲兵 / 西班牙征服 / 葡萄牙风琴 / 安第斯游击）→ 保留
     if (factionLegion && LEVEL_3_LEGION_MAP.has(factionLegion)) return factionLegion;
-    const era = generalId ? GENERAL_ERA[generalId] : undefined;
+    const era = generalId ? getGeneralEra(generalId, factionId) : undefined;
     const style = generalId ? getGeneralCulture(generalId) : undefined;
     if (era && style) {
         const grid = findLegionNameByCultureAndEra(String(style), era);
@@ -2607,3 +2607,5 @@ export { getArmyMaxTroops } from '../systems/CultureTroopCaps';
 export function getLegionTypeForCulture(culture: RegionType): LegionType {
     return getCultureMovementClass(culture) === 'CAVALRY' ? 'cavalry' : 'mixed';
 }
+
+

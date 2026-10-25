@@ -37,7 +37,7 @@ import {
 import { CompositionSlot, getDefaultScaleForUnitType } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
 import { FACTION_GENERALS, getFactionGeneral } from '../data/FactionGenerals';
-import { GENERAL_ERA } from '../data/GeneralEra';
+import { getGeneralEra } from '../data/FactionEra';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
 import { DE_UNIT_SOURCE_TYPE, DE_SOURCE_TYPE_LABEL, DE_SOURCE_TYPE_ORDER, type DeSourceType } from '../data/deUnitSourceTypes';
@@ -1342,6 +1342,16 @@ interface FactionLegionRow {
     row2Type: string;
     row3Type: string;
     commanderUnit?: string;
+    /**
+     * 🔴 [2026-10-25 主人报「legion-editor 也搜不到洪承畴」] 一位武将可以合成一行：
+     *   一个势力可挂多位武将，原来只认每势力「守将」一位 → 洪承畴等非首位武将全搜不到、
+     *   他们自己的军团（时代 × 据点文化）也进不了编辑界面。
+     *   武将行的军团＝他条目/时代×据点文化解出的那一支；这类行只能编辑该军团编制（②），
+     *   不能「武将换军团 / 另存 / 改名」——那三个写的是势力表。
+     */
+    isGeneralRow?: boolean;
+    /** 武将行上用：他的时代（帝王时代…） */
+    eraLabel?: string;
 }
 
 /** 编辑器内存态：势力表本身**只存指针**（2026-09-14 副本已删），
@@ -1374,6 +1384,25 @@ let localCustomCompositions: Record<string, EditableLegion> = buildLocalComposit
 let allRows: FactionLegionRow[] = [];
 let filteredRows: FactionLegionRow[] = [];
 let selectedFactionId: string | null = null;
+
+// 🔴 [2026-10-25 主人报「legion-editor 也搜不到洪承畴」] 武将 → 军团 索引：
+//    一个势力可挂多位武将，原来搜索只认每势力「守将」一位，其余 860+ 位武将搜不到；
+//    且武将的军团＝「时代 × 据点文化」（264 格），很多格子没有任何势力行在用（610 行只覆盖 154 支军团），
+//    所以搜到武将后要能直接把他那一支军团拉进编辑面板。
+interface GeneralLegionHit {
+    generalId: string;
+    generalName: string;
+    factionId: string;
+    factionName: string;
+    eraLabel: string;
+    /** 合成行：点它会选中这位武将的军团 */
+    row: FactionLegionRow;
+}
+let generalLegionHits: GeneralLegionHit[] = [];
+let generalLegionIndexBuilt = false;
+/** 当前是否处于「武将行」模式（面板只编辑军团编制，隐藏势力相关的 ①③/改名/选军团） */
+let generalModeActive = false;
+let selectedGeneralId: string | null = null;
 let currentEditingLegion: EditableLegion | null = null;
 let clipboardLegion: EditableLegion | null = null;
 // 3-layer selection state is declared below
@@ -1682,6 +1711,9 @@ function injectStyles(): void {
       .le-table tr { cursor:pointer; }
       .le-table tr:hover td { background:#1e1c18; }
       .le-table tr.selected td { background:#2a2416 !important; border-bottom-color:#4a3c20; }
+      /* 🔴 [2026-10-25] 搜索命中的「武将行」（一行＝一位武将，军团＝时代×据点文化） */
+      .le-table tr.is-general-row td { background:rgba(26,42,56,0.55); border-bottom-color:#243a4a; }
+      .le-table tr.is-general-row:hover td { background:#1d2c38; }
 
       .cell-flag {
         display:inline-block; width:22px; height:22px; line-height:22px;
@@ -2078,6 +2110,11 @@ function applyFilter(): void {
         return true;
     });
 
+    // 🔴 [2026-10-25 主人报「legion-editor 也搜不到洪承畴」] 补「武将行」：
+    //    一个势力可挂多位武将，上面只按势力「守将」搜；这里把全库武将逐位搜一遍，
+    //    命中就出一行（武将名 + 他的军团），点开直接编辑那一支军团。
+    if (q) filteredRows = [...generalHitRowsForQuery(q), ...filteredRows];
+
     sortRows();
 
     els.stats.innerHTML = `当前显示: <b>${filteredRows.length}</b>`;
@@ -2133,12 +2170,17 @@ function renderTable(): void {
         ${filteredRows.map(r => {
           const rowLegionName = effectiveLegionName(r);
           const hasConflict = conflictLegions.has(rowLegionName);
+          // 🔴 [2026-10-25] 武将行（一行＝一位武将）：高亮/点击都按「武将」而不是「势力」
+          const isGenRow = !!r.isGeneralRow;
+          const selected = isGenRow ? r.generalId === selectedGeneralId : r.factionId === selectedFactionId;
           return `
-          <tr data-fid="${r.factionId}" class="${r.factionId === selectedFactionId ? 'selected' : ''} ${hasConflict ? 'has-conflict' : ''}" style="${hasConflict ? 'background:rgba(120,20,20,0.18);' : ''}">
+          <tr data-fid="${r.factionId}"${isGenRow ? ` data-gid="${r.generalId ?? ''}"` : ''} class="${selected ? 'selected' : ''} ${hasConflict ? 'has-conflict' : ''} ${isGenRow ? 'is-general-row' : ''}" style="${hasConflict ? 'background:rgba(120,20,20,0.18);' : ''}">
             <td><span class="cell-flag" style="background:${r.flagColor}">${r.flagText}</span></td>
             <td>
-              <b style="font-size:13px;color:#f5e6c8;">${r.generalName || r.factionName}</b>
-              ${r.generalName ? `<div style="font-size:10px;color:#9a9080;">${r.factionName}${r.eliteName ? ` · ${r.eliteName}` : ''}</div>` : ''}
+              <b style="font-size:13px;color:#f5e6c8;">${isGenRow ? `⚔ ${r.generalName ?? r.factionName}` : (r.generalName || r.factionName)}</b>
+              ${isGenRow
+                  ? `<div style="font-size:10px;color:#9a9080;">${r.factionName}${r.capitalCityName ? ` · ${r.capitalCityName}` : ''}${r.eraLabel ? ` · ${r.eraLabel}` : ''} · 武将行</div>`
+                  : (r.generalName ? `<div style="font-size:10px;color:#9a9080;">${r.factionName}${r.eliteName ? ` · ${r.eliteName}` : ''}</div>` : '')}
             </td>
             <td>${r.capitalCityName}</td>
             <td><span style="color:#e0c888;font-size:11px;font-weight:bold;">${r.regionLabel}</span></td>
@@ -2179,6 +2221,8 @@ function renderTable(): void {
 
     els.tableWrap.querySelectorAll('tr[data-fid]').forEach(tr => {
         tr.addEventListener('click', () => {
+            const gid = (tr as HTMLElement).dataset.gid;
+            if (gid) { selectGeneralLegion(gid); return; }
             const fid = (tr as HTMLElement).dataset.fid!;
             selectFaction(fid);
         });
@@ -2202,7 +2246,163 @@ function getFormationModeLabel(mode: FormationMode): string {
 // 5. 势力军团编辑面板 (Right Panel)
 // ============================================================
 
+/**
+ * 🔴 [2026-10-25 主人报「legion-editor 也搜不到洪承畴」]
+ * 建「武将 → 军团」索引：一位武将一行，军团 = 他条目的 legionName → 时代 × 据点文化（唯一入口 getLegionNameOfGeneral）。
+ * 只为搜索/选中用，不改任何数据。
+ */
+function buildGeneralLegionIndex(): void {
+    if (generalLegionIndexBuilt) return;
+    const factionById = new Map<string, any>((FACTIONS as any[]).map((f: any) => [f.id, f]));
+    const cityById = new Map<string, any>((CITIES_V2 as any[]).map((c: any) => [c.id, c]));
+    const out: GeneralLegionHit[] = [];
+    const seen = new Set<string>();
+    for (const [blockFid, entry] of Object.entries(FACTION_GENERALS as any)) {
+        for (const g of (Array.isArray(entry) ? entry : [entry]) as any[]) {
+            if (!g?.generalId || seen.has(g.generalId)) continue;
+            seen.add(g.generalId);
+            const factionId = g.factionId || blockFid;
+            const faction = factionById.get(factionId);
+            if (!faction) continue;
+            const city: any = g.cityId ? cityById.get(g.cityId) : undefined;
+            const region: RegionType = city
+                ? getCityRegion({ latitude: city.lat, longitude: city.lng, region: city.region })
+                : 'CENTRAL';
+            const legionName = getLegionNameOfGeneral(factionId, g.generalId);
+            const comp = legionName ? getLegionCompositionByName(legionName) : null;
+            const slots = (comp?.slots ?? []).map(s => ({ ...s }));
+            const era = getGeneralEra(g.generalId, factionId) as UnitAge | undefined;
+            const factionElite = getExpeditionEliteConfig(factionId);
+            const hitRow = {
+                factionId,
+                factionName: faction.name,
+                flagText: SANDBOX_DISPLAY_NAMES[factionId] || String(faction.name).slice(0, 2),
+                flagColor: HISTORICAL_FACTION_COLORS[factionId] || '#8a2020',
+                capitalCityId: g.cityId,
+                capitalCityName: city?.name || '未知',
+                region,
+                regionLabel: REGION_LABELS[region] ?? region,
+                generalId: g.generalId,
+                generalName: g.generalName,
+                buildingStyle: city?.buildingStyle,
+                eliteName: g.eliteName || factionElite?.name,
+                eliteTier: g.eliteTier ?? factionElite?.tier,
+                legionName,
+                formationMode: comp?.formationMode ?? 'square',
+                slots,
+                row1Type: slots[0]?.type || 'swordsman',
+                row2Type: slots.length > 2 ? slots[1]?.type : slots[0]?.type,
+                row3Type: slots[slots.length - 1]?.type || 'archer',
+                commanderUnit: comp?.commanderUnit,
+                isGeneralRow: true,
+                eraLabel: era ? AGE_LABEL[era] : '',
+            } as FactionLegionRow;
+            out.push({
+                generalId: g.generalId,
+                generalName: g.generalName || g.generalId,
+                factionId,
+                factionName: faction.name,
+                eraLabel: (era ? AGE_LABEL[era] : '') || '',
+                row: hitRow,
+            });
+        }
+    }
+    generalLegionHits = out;
+    generalLegionIndexBuilt = true;
+}
+
+/** 搜索命中的武将 → 合成行（该势力「守将」已由普通势力行覆盖，不重复出）。
+ *  只按「武将名 / ID / 他的据点 / 他的军团」匹配；势力名不参与——势力名已由普通势力行给出，
+ *  否则搜「大明」会把 47 位明将全列出来。 */
+function generalHitRowsForQuery(q: string): FactionLegionRow[] {
+    if (!q) return [];
+    const out: FactionLegionRow[] = [];
+    for (const hit of generalLegionHits) {
+        const hay = `${hit.generalName} ${hit.generalId} ${hit.row.capitalCityName ?? ''} ${hit.row.legionName ?? ''}`.toLowerCase();
+        if (!hay.includes(q)) continue;
+        const ownerRow = allRows.find(r => r.factionId === hit.factionId);
+        if (ownerRow?.generalId === hit.generalId) continue;
+        out.push(hit.row);
+    }
+    return out;
+}
+
+function findGeneralHit(generalId: string): GeneralLegionHit | undefined {
+    return generalLegionHits.find(h => h.generalId === generalId);
+}
+
+/** 当前该渲染哪一行：武将行模式优先，否则按选中势力 */
+function currentSelectedRow(): FactionLegionRow | undefined {
+    if (generalModeActive && selectedGeneralId) return findGeneralHit(selectedGeneralId)?.row;
+    return selectedFactionId ? allRows.find(r => r.factionId === selectedFactionId) : undefined;
+}
+
+/**
+ * 点「武将行」＝把这位武将的军团拉进面板编辑。
+ * 军团 = 时代 × 据点文化自动定，所以不提供「武将换军团 / 另存 / 改名」，只提供「② 保存军团编制」。
+ */
+function selectGeneralLegion(generalId: string): void {
+    const hit = findGeneralHit(generalId);
+    if (!hit) return;
+    generalModeActive = true;
+    selectedGeneralId = generalId;
+    selectedFactionId = hit.factionId;
+    const row = hit.row;
+    const comp = row.legionName ? getLegionCompositionByName(row.legionName) : null;
+    currentEditingLegion = {
+        legionName: row.legionName || getCultureLegionName(row.region),
+        legionType: isBase16CultureLegion(row.legionName || '') ? 'region' : 'sub',
+        formationMode: comp?.formationMode ?? row.formationMode,
+        navalFormation: 'auto',
+        slots: (comp?.slots ?? row.slots).map(s => ({ ...s })),
+        commanderUnit: comp?.commanderUnit ?? row.commanderUnit,
+    };
+    selectedLayerKey = '';
+    selectedLayerTab = resolveCurrentLayer(row);
+    renderTable();
+    if (mainView === 'naval') renderNavalPanel(row);
+    else if (mainView === 'strategic') renderStrategicPanel(row);
+    else renderEditPanel(row);
+}
+
+/** 保存/刷新后重新选中（武将行模式保留武将选中） */
+function reselectCurrentRow(): void {
+    if (generalModeActive && selectedGeneralId) selectGeneralLegion(selectedGeneralId);
+    else if (selectedFactionId) selectFaction(selectedFactionId);
+}
+
+/**
+ * 武将行模式下把面板裁成「只编辑这支军团的编制」：
+ *   隐藏 ① 保存武将换军团 / ③ 另存新军团 / 选军团 / 军团层级 / 军团名称（这些写势力表或改名，对武将无意义），
+ *   顶部加一条说明，保留三排兵种、阵型、英雄主队、预览与 ② 保存军团编制。
+ */
+function applyGeneralModePanel(): void {
+    const hideSectionOf = (id: string): void => {
+        const el = document.getElementById(id);
+        const section = el?.closest('.le-form-section') as HTMLElement | null;
+        if (section) section.style.display = 'none';
+    };
+    hideSectionOf('le-btn-apply-faction');
+    hideSectionOf('le-btn-revert-culture');
+    hideSectionOf('le-btn-save-as');
+    hideSectionOf('le-legion-name-input');
+    els.panelContent.querySelectorAll('.le-wizard-step').forEach(step => {
+        const no = (step.querySelector('.le-step-no')?.textContent ?? '').trim();
+        if (no === '选军团' || no === '第三步') (step as HTMLElement).style.display = 'none';
+    });
+    const hit = selectedGeneralId ? findGeneralHit(selectedGeneralId) : undefined;
+    if (!hit) return;
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#16202a;border:1px solid #2f4a5e;border-radius:6px;padding:9px 12px;margin-bottom:12px;font-size:12px;line-height:1.6;color:#bcd8e8;';
+    banner.innerHTML = `⚔ 武将行：<b style="color:#f5e6c8;">${hit.generalName}</b>（${hit.factionName} · ${hit.row.capitalCityName ?? '未知'}${hit.eraLabel ? ` · ${hit.eraLabel}` : ''}）
+      —— 他的军团＝<b style="color:#f5d78e;">${hit.row.legionName ?? '（无）'}</b>，由「时代 × 据点文化」自动确定。<br/>
+      这里只改这支军团的编制（下方 <b>② 保存军团编制</b>）；换军团请改他的据点或时代（武将行不提供换军团/另存/改名）。`;
+    els.panelContent.insertBefore(banner, els.panelContent.firstChild);
+}
+
 function selectFaction(factionId: string): void {
+    generalModeActive = false;
+    selectedGeneralId = null;
     selectedFactionId = factionId;
     const row = allRows.find(r => r.factionId === factionId);
     if (!row) return;
@@ -3781,6 +3981,9 @@ function renderEditPanel(row: FactionLegionRow): void {
     `;
 
     els.panelContent.innerHTML = html;
+    // 🔴 [2026-10-25] 武将行模式：把势力专属的三段（① 换军团 / ③ 另存 / 改名 / 选军团 / 军团层级）收起，
+    //    只留三排兵种、阵型、英雄主队、预览与 ② 保存军团编制。每次重渲染都要重做一遍（卡片点击会重渲染面板）。
+    if (generalModeActive) applyGeneralModePanel();
     // 🔴 [2026-09-16 主人「给这里的势力添加一个一键复制势力武将军团等信息」]
     //    把当前选中势力的一整块信息拼成纯文本丢进剪贴板：武将 / 势力 / 据点 / 文化区 /
     //    精锐番号 / 军团名与层级 / 阵型 / 三排兵种与人数 / 战舰 / 战力。
@@ -4022,7 +4225,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
             buildRows();
             applyFilter();
             renderTable();
-            if (selectedFactionId) selectFaction(selectedFactionId);
+            reselectCurrentRow();
             showToast(`✅ 【${legionName}】编制已保存（写入 ${json.file}）`);
         } catch (e: any) {
             showToast('❌ 保存失败：' + (e?.message || e), true);
@@ -4238,6 +4441,8 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
 
 /** 某势力的实际军团名（自定义优先；否则文化区默认军团名） */
 function effectiveLegionName(row: FactionLegionRow): string {
+    // 武将行：军团就是他自己那一支（时代 × 据点文化），不吃势力指针
+    if (row.isGeneralRow && row.legionName?.trim()) return row.legionName.trim();
     const custom = localCustomCompositions[row.factionId];
     const n = custom?.legionName?.trim();
     if (n) return n;
@@ -4386,7 +4591,8 @@ function computeLegionNameViolations(): string[] {
         const n = effectiveLegionName(r);
         if (n) legionUsers.set(n, (legionUsers.get(n) ?? 0) + 1);
         if (n && !LEVEL_3_LEGION_NAMES.has(n) && r.buildingStyle && r.generalId) {
-            const gEra = GENERAL_ERA[r.generalId];
+            // 🔴 [2026-10-25 时代归势力] 传势力 id 让 FactionEra 按势力年段算，别用成名年各算的旧值
+            const gEra = getGeneralEra(r.generalId, r.factionId);
             if (gEra) activeStyleAges.add(`${r.buildingStyle}|${gEra}`);
         }
     }
@@ -4906,7 +5112,7 @@ function switchMainView(view: MainView): void {
         }
     } else {
         renderTable();
-        const row = allRows.find(r => r.factionId === selectedFactionId);
+        const row = currentSelectedRow();
         if (row) {
             if (isNaval) renderNavalPanel(row);
             else if (isStrategic) renderStrategicPanel(row);
@@ -6541,7 +6747,7 @@ async function saveCultureComposition(culture: RegionType, legion: EditableLegio
         buildRows();
         applyFilter();
         renderTable();
-        if (selectedFactionId) selectFaction(selectedFactionId);
+        reselectCurrentRow();
     } catch (e: any) {
         showToast('❌ 保存失败：' + (e?.message || e), true);
     }
@@ -6653,7 +6859,7 @@ els.btnReload.addEventListener('click', () => {
     buildRows();
     applyFilter();
     renderTable();
-    if (selectedFactionId) selectFaction(selectedFactionId);
+    reselectCurrentRow();
     showToast('🔄 已重新载入势力军团数据');
 });
 
@@ -6676,6 +6882,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 // 启动执行
+buildGeneralLegionIndex();
 buildRows();
 applyFilter();
 renderTable();
@@ -6688,3 +6895,6 @@ reportLegionNameViolations(true);
 if (filteredRows.length > 0) {
     selectFaction(filteredRows[0].factionId);
 }
+
+
+

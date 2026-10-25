@@ -5275,7 +5275,14 @@ function serverSkillEditorList() {
         }
     }
     const gidInfo = new Map<string, { name: string; tier: string }>();
-    for (const g of Object.values(data.generals)) {
+    // 🔴 [2026-10-25 主人报「程序里搜不到洪承畴」同类] 一个势力可挂多位武将：
+    //    `data.generals` 只给每势力**第一位**（629 位），而全库 1500+ 位 —— 技能管理页的武将下拉/六槽面板
+    //    因此搜不到洪承畴、于谦等非首位武将。改为优先走 `allGenerals`（一人一条），缺才退回旧表。
+    const allGenList: Array<{ generalId: string; generalName: string }> =
+        (data.allGenerals as any[] | undefined)?.length
+            ? (data.allGenerals as any[]).map(g => ({ generalId: g.generalId, generalName: g.generalName }))
+            : Object.values(data.generals).map(g => ({ generalId: g.generalId, generalName: g.generalName }));
+    for (const g of allGenList) {
         gidInfo.set(g.generalId, { name: g.generalName, tier: data.profiles[g.generalId]?.tier ?? '?' });
     }
     const sitTable = seReadTagTable(text, 'SKILL_SITUATION_TAG');

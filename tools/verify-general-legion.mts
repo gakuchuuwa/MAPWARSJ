@@ -1,5 +1,5 @@
-/**
- * 武将 ↔ 军团 对应校验：每位武将必须有 时代（GENERAL_ERA）+ 文化（GENERAL_CULTURE），
+﻿/**
+ * 武将 ↔ 军团 对应校验：每位武将必须有 时代（势力时代 FACTION_ERA，按武将自己的势力）+ 文化（GENERAL_CULTURE），
  * 且他的军团（武将自己的 → 势力挂的）＝ 二级军团表里「该文化 × 该时代」那一支。
  * 🔴 [2026-10-19 主人令]「一个武将要有一个对应的军团」「必须给每个武将单独添加一个文化属性，才能对应上军团」
  *
@@ -11,7 +11,7 @@
  */
 import { FACTION_GENERALS, getGeneralOwnLegionName } from '../src/data/FactionGenerals';
 import { FACTIONS } from '../src/data/factions';
-import { GENERAL_ERA } from '../src/data/GeneralEra';
+import { getGeneralEra } from '../src/data/FactionEra';
 import { getGeneralCulture } from '../src/data/GeneralCulture';
 import { FACTION_COMPOSITIONS } from '../src/data/FactionCompositions';
 import { LEVEL_2_CIV_62_LEGIONS } from '../src/data/level2Civ62Legions';
@@ -30,15 +30,16 @@ let total = 0, ok = 0, uprisingOk = 0, thirdKept = 0;
 for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
     for (const g of (Array.isArray(entry) ? entry : [entry]) as any[]) {
         total++;
-        const era = (GENERAL_ERA as any)[g.generalId];
+        const gfid = g.factionId ?? fid;
+        const era = getGeneralEra(g.generalId, gfid);
         const culture = getGeneralCulture(g.generalId);
-        const legion = getLegionNameOfGeneral(fid, g.generalId) ?? getGeneralOwnLegionName(g.generalId) ?? (FACTION_COMPOSITIONS as any)[fid]?.legionName;
-        const who = `${fid}｜${fname(fid)}｜${g.generalName}`;
+        const legion = getLegionNameOfGeneral(gfid, g.generalId) ?? getGeneralOwnLegionName(g.generalId) ?? (FACTION_COMPOSITIONS as any)[gfid]?.legionName;
+        const who = `${gfid}｜${fname(gfid)}｜${g.generalName}`;
         if (!era) { problems.push(`${who}｜缺时代`); continue; }
         if (!culture) { problems.push(`${who}｜缺文化`); continue; }
         const want = byKey.get(`${culture}|${era}`);
         if (!want) { problems.push(`${who}｜${culture}×${era} 没有二级军团`); continue; }
-        if (legion === UPRISING_LEGION && (FACTION_COMPOSITIONS as any)[fid]?.legionName === UPRISING_LEGION) {
+        if (legion === UPRISING_LEGION && (FACTION_COMPOSITIONS as any)[gfid]?.legionName === UPRISING_LEGION) {
             uprisingOk++;   // 起义军：军团口径按铁律，不按文化×时代
             continue;
         }
@@ -47,7 +48,7 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
         const subLegion = getGeneralEraSubtagLegion(g.generalId);
         if (subLegion) {
             if (legion !== subLegion) { problems.push(`${who}｜先秦标签武将现「${legion}」应「${subLegion}」`); continue; }
-            if (!getFactionLegionComposition(fid, g.generalId)) { problems.push(`${who}｜「${legion}」取不到编制`); continue; }
+            if (!getFactionLegionComposition(gfid, g.generalId)) { problems.push(`${who}｜「${legion}」取不到编制`); continue; }
             ok++;
             continue;
         }
@@ -58,10 +59,11 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
             continue;
         }
         if (legion !== want) { problems.push(`${who}｜现「${legion}」应「${want}」（${culture}×${era}）`); continue; }
-        if (!getFactionLegionComposition(fid, g.generalId)) { problems.push(`${who}｜「${legion}」取不到编制`); continue; }
+        if (!getFactionLegionComposition(gfid, g.generalId)) { problems.push(`${who}｜「${legion}」取不到编制`); continue; }
         ok++;
     }
 }
 console.log({ 武将总数: total, 对应上: ok, 起义军合规: uprisingOk, 三级保留: thirdKept, 有问题: problems.length });
 for (const p of problems) console.log('  ', p);
 process.exit(problems.length ? 1 : 0);
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 三级军团被删除后的**重新套军团**（🔴 2026-09-16 主人定；2026-10-16 主人收紧口径）。
  *
  * ── 规则（主人原话）────────────────────────────────────────────
@@ -20,7 +20,8 @@
  */
 import { CITIES_V2, type CityDataV2 } from '../data/cities_v2';
 import { resolveCityDeBuildingStyle } from './cityDeStyle';
-import { GENERAL_ERA, type GeneralEra } from '../data/GeneralEra';
+import type { GeneralEra } from '../data/GeneralEra';
+import { getGeneralEra } from '../data/FactionEra';
 import { LEVEL_2_CIV_62_LEGIONS } from '../data/level2Civ62Legions';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { FACTION_GENERALS, getFactionGeneral, getFactionGenerals } from '../data/FactionGenerals';
@@ -88,7 +89,7 @@ export function resolveFallbackForFaction(factionId: string, generalId?: string 
         ? (getFactionGenerals(factionId).find((g) => g.generalId === generalId) ?? null)
         : getFactionGeneral(factionId);
     if (!general) return { factionId, reason: '该势力没有配开局武将，判不了时代' };
-    const era = GENERAL_ERA[general.generalId];
+    const era = getGeneralEra(general.generalId, factionId);
     if (!era) return { factionId, reason: `武将 ${general.generalName || general.generalId} 不在 GENERAL_ERA 表里` };
     // 🔴 [2026-10-19 主人令「必须给每个武将单独添加一个文化属性，才能对应上军团」] 文化是武将自己的属性（GeneralCulture）；表里没有才退回「势力主据点」的建筑风格
     const city = pickFactionCity(factionId);
@@ -185,3 +186,5 @@ export async function applyFallbackPlan(plan: FallbackPlan): Promise<{ ok: numbe
     }
     return { ok, failed };
 }
+
+

@@ -910,6 +910,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'li_lx_d_liguang': 'WEI',   // 大明｜李广｜据点 无终
     'li_s_mayuan': 'JIANGNAN',   // 汉国｜马援｜据点 海门
     'liang_d_wangjingren': 'CENTRAL',   // 宋国｜王景仁｜据点 商丘
+    'liang_d_zhuyouning': 'CENTRAL',   // 后梁｜朱友宁｜据点 开封
     'liang_d_zhangxun': 'CENTRAL',   // 宋国｜张巡｜据点 商丘
     'liangshidu_longjia': 'WEI',   // 魏国｜龙贾｜据点 绥德
     'liangzhou_zhanggui': 'KHITAN',   // 前凉｜张轨｜据点 姑臧
@@ -1296,7 +1297,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'wulaertu_ajishenti': 'ARMENIANS',   // 亚美尼亚｜瓦尔丹｜据点 埃里温
     'wulaertu_ashot3': 'ARMENIANS',   // 亚美尼亚｜阿硕特三世｜据点 阿尼
     'wulaertu_guo_saerdu': 'ARMENIANS',   // 乌拉尔图｜萨尔杜里｜据点 图什帕
-    'wuli_d_celeng': 'MONGOL',   // 大清｜策楞｜据点 扎布汗
+    'wuli_d_celeng': 'MONGOL',   // 大清｜策棱｜据点 扎布汗
     'wuliangha_subutai': 'MONGOL',   // 蒙古｜速不台｜据点 薛灵哥
     'wulianghai_chelingwubashen': 'MONGOL',   // 杜尔伯特｜车凌乌巴什｜据点 布尔根
     'wuling_xiangdancheng': 'JIANGNAN',   // 五溪｜相单程｜据点 壶头山
@@ -1338,6 +1339,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xierwan_farukusha': 'ORIE',   // 希尔万王国｜法鲁克沙｜据点 巴库
     'xigete_roderic': 'GOTHS',   // 西哥特｜罗德里克｜据点 托莱多
     'xihai_d_fulianchou': 'KHITAN',   // 吐谷浑｜伏连筹｜据点 伏俟城
+    'xihai_d_fuyun': 'KHITAN',   // 吐谷浑｜伏允｜据点 伏俟城
     'xijue_ashina_funian': 'CENTRAL_ASIA',   // 十箭｜阿史那匐念｜据点 郅支城
     'xijue_ganyanshou': 'CENTRAL_ASIA',   // 十箭｜郅支｜据点 郅支城
     'xike_lanjite': 'INDIA',   // 锡克帝国｜兰季特辛格｜据点 拉合尔

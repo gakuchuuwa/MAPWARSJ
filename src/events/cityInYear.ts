@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 某一年这座据点存不存在（剧本期唯一判据）：地图显示、编辑器、出发地选城、会面地一律用它。
  *
  * 🔴 [2026-09-24 主人「历史上哪年有了哪个据点，就显示哪个据点，历史上哪年发生了什么事件，就进行什么事件。
@@ -13,7 +13,8 @@
  */
 import { CITY_FOUNDED_YEAR } from '../data/cityFoundedYears';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
-import { getGeneralEra, type GeneralEra } from '../data/GeneralEra';
+import type { GeneralEra } from '../data/GeneralEra';
+import { getGeneralEra } from '../data/FactionEra';
 
 export const ERA_ORDER: GeneralEra[] = ['antiquity', 'feudal', 'castle', 'imperial'];
 export const ERA_NAME: Record<GeneralEra, string> = {
@@ -52,3 +53,4 @@ export function cityAbsentReason(cityId: string, year: number): string | null {
 export function cityExistsInYear(cityId: string, year: number): boolean {
     return cityAbsentReason(cityId, year) === null;
 }
+

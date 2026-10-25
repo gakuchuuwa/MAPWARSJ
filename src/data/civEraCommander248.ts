@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 248 类主将兵模表：62 个二级文明 × 4 个时代，每格一到多个兵模（英雄 / 精锐 / 高级）。
  * 🔴 [2026-10-05 主人令] 62 个文明按文化与样子分配英雄兵模，不分时代；战车、战象可当英雄兵模用（高丽战车、孟加拉战车、波斯战象精锐、桑纳亚战象高级等，热兵器的不用）；不用别的精锐 / 高级兵种。
  *    吕布与孙权的攻击都是弩，不放进同一个文明；日本用马上枪（孙策），不用马上刀（关羽）。
@@ -9,7 +9,8 @@
  *    · 游戏里有同名英雄的武将，直接用同名英雄（见 generalHeroUnits.ts 的 GENERAL_HERO_UNITS，例：曹操用曹操）；没有的才查本表。
  *    · 同一格有多个兵模时，每局从随机池里随机挑：本局开始时抽一个随机种子，同一局内同一武将始终是同一个，下一局重新抽。
  */
-import { GENERAL_ERA, type GeneralEra } from './GeneralEra';
+import type { GeneralEra } from './GeneralEra';
+import { getGeneralEra } from './FactionEra';
 import { getFactionIdOfGeneral, getFactionGeneral } from './FactionGenerals';
 import { CITIES_V2 } from './cities_v2';
 
@@ -171,7 +172,7 @@ function eraGlobalPool(era: GeneralEra): string[] {
  */
 export function resolveCivEraCommander(generalId: string | null | undefined): string | null {
     if (!generalId) return null;
-    const era: GeneralEra = GENERAL_ERA[generalId] ?? 'castle';
+    const era: GeneralEra = getGeneralEra(generalId) ?? 'castle';
     const factionId = getFactionIdOfGeneral(generalId);
     const civ = factionId ? civOfFaction(factionId, era) : null;
     const row = civ ? CIV_ERA_COMMANDER_248[civ] : undefined;
@@ -189,7 +190,7 @@ export function resolveCivEraCommander(generalId: string | null | undefined): st
  */
 export function resolveFactionCommander(factionId: string | null | undefined, seedKey: string): string | null {
     const gid = factionId ? getFactionGeneral(factionId)?.generalId : null;
-    const era: GeneralEra = (gid ? GENERAL_ERA[gid] : undefined) ?? 'castle';
+    const era: GeneralEra = (gid ? getGeneralEra(gid, factionId) : undefined) ?? 'castle';
     const civ = factionId ? civOfFaction(factionId, era) : null;
     const row = civ ? CIV_ERA_COMMANDER_248[civ] : undefined;
     const own = row?.[era];
@@ -197,3 +198,6 @@ export function resolveFactionCommander(factionId: string | null | undefined, se
     if (cell.length === 0) return null;
     return cell[stableHash((factionId ?? '') + ':' + SESSION_SEED) % cell.length];   // 无武将：键 = 势力 id + 本局种子
 }
+
+
+

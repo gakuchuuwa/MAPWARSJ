@@ -124,7 +124,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'wala_yexian': 15,                                   // 也先 · wala · 博尔巴任
     'wugu_d_tugelile': 11,                               // 图格里勒 · wugu_d · 毡的
     'wuhuan_tadun': 3,                                  // 蹋顿 · wuhuan · 白狼山
-    'wuli_d_celeng': 18,                                 // 策楞 · wuli_d · 扎布汗
+    'wuli_d_celeng': 18,                                 // 策棱 · wuli_d · 扎布汗
     'wuliangha_subutai': 13,                             // 速不台 · wuliangha · 薛灵哥
     'wulianghai_chelingwubashen': 18,                    // 车凌乌巴什 · wulianghai · 布尔根
     'wuxi_shamoke': 3,                                  // 沙摩柯 · wuxi · 八面山
@@ -305,6 +305,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xianlingqiang_dianling': 2,                        // 滇零 · xianlingqiang · 允吾
     'xiaobolu_meijinmang': 8,                           // 没谨忙 · xiaobolu · 菩提城
     'xihai_d_fulianchou': 6,                            // 伏连筹 · xihai_d · 伏俟城
+    'xihai_d_fuyun': 7,                            // 伏允 · xihai_d · 伏俟城
     'xining_yangyingju': 18,                             // 杨应琚 · xining · 马海台
     'xiutu_jinridi': -1,                                 // 金日磾 · xiutu · 大斗拔谷
     'yangtong_chisongdezan': 8,                         // 赤松德赞 · yangtong · 龙木错
@@ -509,6 +510,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'dingxiang_d_lijing': 7,                            // 李靖 · dingxiang_d · 恶阳岭
     'dingzhou_d_murongchui': 4,                         // 慕容垂 · dingzhou · 中山
     'dizhou_wangyanzhang': 10,                           // 王彦章 · dizhou · 乐安
+    'liang_d_zhuyouning': 10,                       // 朱友宁 · liang_d · 开封
     'erzhu_erzhurong': 6,                               // 尔朱荣 · erzhu · 秀容川
     'gaoqi_d_gaohuan': 6,                               // 高欢 · gaoqi_d · 蓨城
     'gongsun_d_gongsundu': 2,                           // 公孙度 · gongsun_d · 襄平
@@ -685,7 +687,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'kunming_yi_lucheng': 1,                            // 卤承 · kunming_yi · 会川
     'luchuan_sirenfa': 15,                               // 思任发 · luchuan · 勐卯
     'luohu_ganmuding': 14,                               // 敢木丁 · luohu · 呵叻城
-    'mingzheng_jianzandechang': 15,                      // 坚赞德昌 · mingzheng · 打箭炉
+    'mingzheng_jianzandechang': 18,                      // 坚参德昌 · mingzheng · 打箭炉（清 乾隆朝）
     'mojietuo_pinbisuoluo': -6,                          // 频毗娑罗 · mojietuo · 王舍城
     'mon_monuhe': 11,                                    // 摩奴诃 · mon · 直通城
     'mowoer_akeba': 16,                                  // 阿克巴 · mowoer · 阿格拉
@@ -1210,6 +1212,66 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'zhou_jifu':                         -9,    // 吉甫 · zhou · 岐山（西周太师尹吉甫，前823年自岐周统周六师北伐猃狁）
     'yin_yuejin':                         3,    // 乐进 · yin · 朝歌（建安十年攻拔朝歌斩严敬）
     'xibolai_majiabi':                   -2,    // 犹大马加比 · xibolai · 耶路撒冷（前164年率义军收复耶路撒冷）
+    'bfe_rusa_i': -8,   // 2026-10-25 按首战 -714 年补
+    'bfe_qijie': -3,   // 2026-10-25 按首战 -279 年补
+    'bfe_chuzi': -3,   // 2026-10-25 按首战 -284 年补
+    'bfe_lifu': -3,   // 2026-10-25 按首战 -251 年补
+    'bfe_touman': -3,   // 2026-10-25 按首战 -215 年补
+    'bfe_xiangliang': -3,   // 2026-10-25 按首战 -208 年补
+    'bfe_crassus': -1,   // 2026-10-25 按首战 -53 年补
+    'bfe_zhanghe': 3,   // 2026-10-25 按首战 215 年补
+    'bfe_andragoras': -3,   // 2026-10-25 按首战 -238 年补
+    'bfe_mendenus': -4,   // 2026-10-25 按首战 -329 年补
+    'bfe_erigius': -4,   // 2026-10-25 按首战 -328 年补
+    'bfe_shulezhong': 1,   // 2026-10-25 按首战 91 年补
+    'bfe_zhangping': -3,   // 2026-10-25 按首战 -205 年补
+    'bfe_wangjing': 3,   // 2026-10-25 按首战 255 年补
+    'bfe_wangyan': 4,   // 2026-10-25 按首战 311 年补
+    'bfe_zhanghedu': 4,   // 2026-10-25 按首战 350 年补
+    'bfe_murongbao': 4,   // 2026-10-25 按首战 395 年补
+    'bfe_yangyu': 6,   // 2026-10-25 按首战 529 年补
+    'bfe_vahan': 7,   // 2026-10-25 按首战 636 年补
+    'bfe_likaigu': 7,   // 2026-10-25 按首战 698 年补
+    'bfe_abdullah_ali': 8,   // 2026-10-25 按首战 754 年补
+    'bfe_leo_phokas': 10,   // 2026-10-25 按首战 917 年补
+    'bfe_bulcsu': 10,   // 2026-10-25 按首战 955 年补
+    'bfe_liurenshan': 10,   // 2026-10-25 按首战 957 年补
+    'bfe_chengong': 11,   // 2026-10-25 按首战 1052 年补
+    'bfe_muhammad_ghur': 12,   // 2026-10-25 按首战 1191 年补
+    'bfe_youxian': 13,   // 2026-10-25 按首战 1239 年补
+    'bfe_umar': 13,   // 2026-10-25 按首战 1288 年补
+    'bfe_chagatai': 13,   // 2026-10-25 按首战 1221 年补
+    'bfe_kniprode': 14,   // 2026-10-25 按首战 1370 年补
+    'bfe_suleiman_pasha': 15,   // 2026-10-25 按首战 1475 年补
+    'bfe_frederick_iii': 15,   // 2026-10-25 按首战 1485 年补
+    'bfe_yibula': 16,   // 2026-10-25 按首战 1510 年补
+    'bfe_doria': 16,   // 2026-10-25 按首战 1538 年补
+    'bfe_takayutpi': 16,   // 2026-10-25 按首战 1538 年补
+    'bfe_mingyiswa': 16,   // 2026-10-25 按首战 1593 年补
+    'bfe_potocki': 17,   // 2026-10-25 按首战 1648 年补
+    'bfe_fuquan': 17,   // 2026-10-25 按首战 1690 年补
+    'bfe_tsering_dondub': 18,   // 2026-10-25 按首战 1720 年补
+    'bfe_zengguoquan': 19,   // 2026-10-25 按首战 1862 年补
+    'bfe_xiaoceling': 18,   // 2026-10-25 按首战 1731 年补
+    'bfe_mahathammaracha': 16,   // 2026-10-25 按首战 1569 年补
+    'bfe_quzhisheng': 7,   // 2026-10-25 按首战 640 年补
+    'bfe_arslan_shah': 12,   // 2026-10-25 按首战 1117 年补
+    'bfe_bogislaw_i': 12,   // 2026-10-25 按首战 1184 年补
+    'bfe_wanggeon': 10,   // 2026-10-25 按首战 927 年补
+    'bfe_oda_nobuhide': 16,   // 2026-10-25 按首战 1548 年补
+    'bfe_liuping': 11,   // 2026-10-25 按首战 1040 年补
+    'bfe_taobao': 4,   // 2026-10-25 按首战 320 年补
+    'bfe_ashina_duzhi': 7,   // 2026-10-25 按首战 680 年补
+    'bfe_achaemenes': -5,   // 2026-10-25 按首战 -480 年补
+    'bfe_huyan_wang': 1,   // 2026-10-25 按首战 73 年补
+    'bfe_ukita_hideie': 16,   // 2026-10-25 按首战 1592 年补
+    'bfe_todo_takakage': 16,   // 2026-10-25 按首战 1597 年补
+    'bfe_sogo_kazumasa': 16,   // 2026-10-25 按首战 1582 年补
+    'bfe_ashina_yoshihiro': 16,   // 2026-10-25 按首战 1589 年补
+    'bfe_wanggao': 16,   // 2026-10-25 按首战 1574 年补
+    'bfe_aulax': 10,   // 2026-10-25 按首战 969 年补
+    'feilisidin_geliya': -11,   // 2026-10-25 按首战 -1025 年补
+    'haikou_maohaifeng': 16,   // 2026-10-25 按岑港 1558 年补
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

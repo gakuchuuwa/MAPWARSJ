@@ -1,5 +1,5 @@
-/**
- * 武将时代表（generalId → 四时代）。
+﻿/**
+ * 武将时代表（generalId → 四时代）——**只作兜底/原值**（游戏内取时代走 `FactionEra.getGeneralEra()`：势力年段 × 该将首战年/登场年）。
  *
  * 由 GENERAL_CENTURIES（成名世纪=辉煌年代）派生，不做生卒/寿命。
  * 世纪→时代（🔴 2026-10-16 主人定真边界）：**古典 ≤476 ｜ 封建 476–1050 ｜ 城堡 1050–1500 ｜ 帝国 1500–1914**；公元前=古典。
@@ -385,7 +385,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe3_57': 'antiquity',
     'bfe3_67': 'antiquity',
     'bfe_yin_ziqi': 'feudal',
-    'bfe_chen_dong': 'castle',
+    'bfe_chen_dong': 'imperial',
     'bfe3_16': 'antiquity',
     'bfe3_22': 'antiquity',
     'bfe3_68': 'antiquity',
@@ -555,6 +555,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'song_wangbing': 'castle',
     'dang_d_pangshigu': 'feudal',
     'liang_d_wangjingren': 'feudal',
+    'liang_d_zhuyouning': 'feudal',
     'xisi_amr': 'feudal',
     'baizanting_romanosi': 'feudal',
     'danmai_guthrum': 'feudal',
@@ -1013,7 +1014,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'min_wangshenzhi': 'feudal',
     'ming_d_zhudi': 'castle',
     'ming_zheng_zhengchenggong': 'imperial',
-    'mingzheng_jianzandechang': 'castle',
+    'mingzheng_jianzandechang': 'imperial',
     'mino_dagujiji': 'imperial',
     'minyue_wuzhu': 'antiquity',
     'mohe_wanyanzonghan': 'castle',
@@ -1319,6 +1320,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xierhe_saerjue': 'feudal',
     'xierwan_farukusha': 'imperial',
     'xihai_d_fulianchou': 'feudal',
+    'xihai_d_fuyun': 'feudal',
     'xijue_ganyanshou': 'antiquity',
     'xike_lanjite': 'imperial',
     'xikesuosi_salidi': 'antiquity',
@@ -1543,8 +1545,69 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yumen_suoban': 'antiquity',   // 索班｜玉门关·东汉
     'yangguan_lixi': 'antiquity',   // 李息｜阳关·西汉
     'wusheng_dongxian': 'feudal',   // 董先｜武胜关·南宋
+    'bfe_rusa_i': 'antiquity',   // 鲁萨一世（2026-10-25 按史补）
+    'bfe_qijie': 'antiquity',   // 骑劫（2026-10-25 按史补）
+    'bfe_chuzi': 'antiquity',   // 触子（2026-10-25 按史补）
+    'bfe_lifu': 'antiquity',   // 栗腹（2026-10-25 按史补）
+    'bfe_touman': 'antiquity',   // 头曼（2026-10-25 按史补）
+    'bfe_xiangliang': 'antiquity',   // 项梁（2026-10-25 按史补）
+    'bfe_crassus': 'antiquity',   // 克拉苏（2026-10-25 按史补）
+    'bfe_zhanghe': 'antiquity',   // 张郃（2026-10-25 按史补）
+    'bfe_andragoras': 'antiquity',   // 安德拉戈拉斯（2026-10-25 按史补）
+    'bfe_mendenus': 'antiquity',   // 门德努斯（2026-10-25 按史补）
+    'bfe_erigius': 'antiquity',   // 埃里吉乌斯（2026-10-25 按史补）
+    'bfe_shulezhong': 'antiquity',   // 忠（2026-10-25 按史补）
+    'bfe_zhangping': 'antiquity',   // 章平（2026-10-25 按史补）
+    'bfe_wangjing': 'antiquity',   // 王经（2026-10-25 按史补）
+    'bfe_wangyan': 'antiquity',   // 王衍（2026-10-25 按史补）
+    'bfe_zhanghedu': 'antiquity',   // 张贺度（2026-10-25 按史补）
+    'bfe_murongbao': 'antiquity',   // 慕容宝（2026-10-25 按史补）
+    'bfe_yangyu': 'antiquity',   // 杨昱（2026-10-25 按史补）
+    'bfe_vahan': 'feudal',   // 瓦汉（2026-10-25 按史补）
+    'bfe_likaigu': 'feudal',   // 李楷固（2026-10-25 按史补）
+    'bfe_abdullah_ali': 'feudal',   // 阿卜杜拉（2026-10-25 按史补）
+    'bfe_leo_phokas': 'feudal',   // 利奥·福卡斯（2026-10-25 按史补）
+    'bfe_bulcsu': 'feudal',   // 布尔丘（2026-10-25 按史补）
+    'bfe_liurenshan': 'feudal',   // 刘仁赡（2026-10-25 按史补）
+    'bfe_chengong': 'feudal',   // 陈珙（2026-10-25 按史补）
+    'bfe_muhammad_ghur': 'castle',   // 穆罕默德·古尔（2026-10-25 按史补）
+    'bfe_youxian': 'castle',   // 游显（2026-10-25 按史补）
+    'bfe_umar': 'castle',   // 乌马儿（2026-10-25 按史补）
+    'bfe_chagatai': 'castle',   // 察合台（2026-10-25 按史补）
+    'bfe_kniprode': 'castle',   // 克尼普罗德（2026-10-25 按史补）
+    'bfe_suleiman_pasha': 'castle',   // 苏莱曼帕夏（2026-10-25 按史补）
+    'bfe_frederick_iii': 'castle',   // 腓特烈三世（2026-10-25 按史补）
+    'bfe_yibula': 'imperial',   // 亦不剌（2026-10-25 按史补）
+    'bfe_doria': 'imperial',   // 多里亚（2026-10-25 按史补）
+    'bfe_takayutpi': 'imperial',   // 多迦逾毕（2026-10-25 按史补）
+    'bfe_mingyiswa': 'imperial',   // 明耶苏瓦（2026-10-25 按史补）
+    'bfe_potocki': 'imperial',   // 波托茨基（2026-10-25 按史补）
+    'bfe_fuquan': 'imperial',   // 福全（2026-10-25 按史补）
+    'bfe_tsering_dondub': 'imperial',   // 策凌敦多布（2026-10-25 按史补）
+    'bfe_zengguoquan': 'imperial',   // 曾国荃（2026-10-25 按史补）
+    'bfe_xiaoceling': 'imperial',   // 策零敦多布（2026-10-25 按史补）
+    'bfe_mahathammaracha': 'imperial',   // 玛欣他拉（2026-10-25 按史补）
+    'bfe_quzhisheng': 'feudal',   // 麴智盛（2026-10-25 按史补）
+    'bfe_arslan_shah': 'castle',   // 阿尔斯兰沙（2026-10-25 按史补）
+    'bfe_bogislaw_i': 'castle',   // 博吉斯拉夫（2026-10-25 按史补）
+    'bfe_wanggeon': 'feudal',   // 王建（2026-10-25 按史补）
+    'bfe_oda_nobuhide': 'imperial',   // 织田信秀（2026-10-25 按史补）
+    'bfe_liuping': 'feudal',   // 刘平（2026-10-25 按史补）
+    'bfe_taobao': 'antiquity',   // 桃豹（2026-10-25 按史补）
+    'bfe_ashina_duzhi': 'feudal',   // 阿史那都支（2026-10-25 按史补）
+    'bfe_achaemenes': 'antiquity',   // 阿凯门尼斯（2026-10-25 按史补）
+    'bfe_huyan_wang': 'antiquity',   // 呼衍王（2026-10-25 按史补）
+    'bfe_ukita_hideie': 'imperial',   // 宇喜多秀家（2026-10-25 按史补）
+    'bfe_todo_takakage': 'imperial',   // 藤堂高虎（2026-10-25 按史补）
+    'bfe_sogo_kazumasa': 'imperial',   // 十河存保（2026-10-25 按史补）
+    'bfe_ashina_yoshihiro': 'imperial',   // 芦名义广（2026-10-25 按史补）
+    'bfe_wanggao': 'imperial',   // 王杲（2026-10-25 按史补）
+    'bfe_aulax': 'feudal',   // 奥拉克斯（2026-10-25 按史补）
+    'feilisidin_geliya': 'antiquity',   // 歌利亚（2026-10-25 按史补）
+    'haikou_maohaifeng': 'imperial',   // 毛海峰（王滶，2026-10-25 按史补）
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {
     return GENERAL_ERA[generalId];
 }
+

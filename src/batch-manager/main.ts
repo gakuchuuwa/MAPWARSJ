@@ -7,7 +7,8 @@
 
 import { pinyin } from 'pinyin-pro';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
-import { GENERAL_ERA, type GeneralEra } from '../data/GeneralEra';
+import type { GeneralEra } from '../data/GeneralEra';
+import { getGeneralEra } from '../data/FactionEra';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { BATTLEFIELD_CHARACTERS } from '../data/BattlefieldCharacters';
@@ -572,7 +573,9 @@ let rawGeneralEntryMap = new Map<string, Record<string, any>>();
 
 function buildGeneralBrief(g: { generalId: string; generalName: string; portrait: string; cityId?: string; factionId?: string }, cityMap: Map<string, { name: string }>, factionId: string): GeneralBrief {
     const p = entityData!.profiles[g.generalId];
-    const era = (entityData!.eras?.[g.generalId] || GENERAL_ERA[g.generalId]) as GeneralEra | undefined;
+    // 🔴 [2026-10-25 主人令「时代归势力」] 时代先走 FactionEra.getGeneralEra（势力年段 × 首战/登场年），
+    //    实体接口里那张 `eras` 是 GENERAL_ERA 原值，只作旧数据兜底（不然明朝将领还显示成名年各算的旧时代）。
+    const era = (getGeneralEra(g.generalId, factionId) ?? entityData!.eras?.[g.generalId]) as GeneralEra | undefined;
     const raw = rawGeneralEntryMap.get(g.generalId);
     return {
         id: g.generalId,
@@ -640,7 +643,7 @@ function buildRows(): void {
         completeness = Math.round(completeness / 6 * 100);
 
         const era = gen
-            ? ((entityData!.eras?.[gen.generalId] || GENERAL_ERA[gen.generalId]) as GeneralEra | undefined)
+            ? ((getGeneralEra(gen.generalId, f.id) ?? entityData!.eras?.[gen.generalId]) as GeneralEra | undefined)
             : undefined;
         // 🔴 [2026-10-16 主人令] 打了细分标签的（如「古典 · 先秦」）优先显示细分，没打标签的只显示四时代
         const eraLabel = (gen ? getGeneralEraSubtagLabel(gen.generalId) : null) ?? (era ? ERA_LABELS[era] : undefined);
@@ -2986,3 +2989,6 @@ boot().catch(err => {
     console.error(err);
     app.innerHTML = `<div style="padding:40px;color:#ff9a8a">启动失败: ${err}</div>`;
 });
+
+
+

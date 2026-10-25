@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 攻城战前 30 秒的攻城武器发放（13 战术层用；引擎八环不读这里）。
  *
  * 🔴 [2026-09-18 主人定死 · 全军团攻城武器终极铁律]
@@ -29,7 +29,7 @@ import type { RegionType } from '../systems/RegionSystem';
 import { CULTURE_LEGION_NAMES } from '../types/CultureFormations';
 import { LEVEL_2_CIV_62_LEGIONS } from './level2Civ62Legions';
 import { LEVEL_3_LEGIONS } from './level3CustomLegions';
-import { GENERAL_ERA } from './GeneralEra';
+import { getGeneralEra } from './FactionEra';
 import { GENERAL_CENTURIES } from './GeneralCenturies';
 
 export type SiegeAge = 'antiquity' | 'feudal' | 'castle' | 'imperial';
@@ -168,7 +168,7 @@ export function legionSiegeAge(culture: RegionType | string): SiegeAge {
  * 武将判定时代：以该武将最辉煌的年代判定（成名世纪/成名年代），无法判断以30岁为主。
  */
 export function generalSiegeAge(generalId: string): SiegeAge | null {
-    const era = (GENERAL_ERA as Record<string, SiegeAge>)[generalId];
+    const era = getGeneralEra(generalId) as SiegeAge | undefined;
     if (era) return era;
     const century = (GENERAL_CENTURIES as Record<string, number>)[generalId];
     if (century != null) {
@@ -1612,3 +1612,5 @@ export function getSiegeWeaponsForCulture(
     // 终极兜底：东亚军团古典配置
     return [...LEGION_78_SIEGE_MAP['东亚军团_antiquity'].weapons];
 }
+
+
