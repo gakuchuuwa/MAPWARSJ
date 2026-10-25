@@ -320,6 +320,8 @@ export class ViewerLive {
         yt: string;
         /** 离上一条直播间消息过了多少秒；-1＝还没收到过 */
         lastChatAgo: number;
+        /** 排队的人（面板只列名字，付费的标出来） */
+        queueBrief: { name: string; paid: boolean }[];
     } {
         const top = [...this.orders.values()]
             .filter((a) => a.lastEarn > 0)
@@ -332,7 +334,7 @@ export class ViewerLive {
             on: this.battleOn(),
             names: [this.sideName(0), this.sideName(1)],
             counts: [a, d],
-            queue: this.queue.map((q) => `${q.viewer}（${this.sideName(q.side)}）${q.paid ? '付费' : '军令'}`),
+            queue: this.queue.map((q) => `${q.viewer} ${this.sideName(q.side)} ${q.paid ? '付费' : '军令'}`),
             log: [...this.log],
             price: PRICE_PER_CAST,
             platform: this.platformStatus,
@@ -343,6 +345,7 @@ export class ViewerLive {
             top,
             yt: this.ytStatus,
             lastChatAgo: this.lastChatAt > 0 ? Math.floor((Date.now() - this.lastChatAt) / 1000) : -1,
+            queueBrief: this.queue.map((q) => ({ name: q.viewer, paid: q.paid })),
         };
     }
 
@@ -355,11 +358,15 @@ export class ViewerLive {
         return this.war()?.isActive?.() === true;
     }
 
+    /** 这一方叫什么：「攻方大秦」，没有势力名就「攻方」（界面文字不用括号，主人 2026-09-07 定） */
     private sideName(side: 0 | 1): string {
-        const war = this.war();
-        const fid = war?.sideDisplayFactionId?.(side);
-        const name = fid ? this.app.cityManager?.getFactionName(fid) : '';
-        return `${name || (side === 0 ? '攻方' : '守方')}${side === 0 ? '（攻）' : '（守）'}`;
+        return `${side === 0 ? '攻方' : '守方'}${this.sideFaction(side)}`;
+    }
+
+    /** 这一方的势力名，没有就空串（语音只念势力名） */
+    private sideFaction(side: 0 | 1): string {
+        const fid = this.war()?.sideDisplayFactionId?.(side);
+        return (fid ? this.app.cityManager?.getFactionName(fid) : '') || '';
     }
 
     private note(msg: string): string {
@@ -518,7 +525,7 @@ export class ViewerLive {
         } else {
             this.queue.push(item);
         }
-        return this.note(`${name} 替${this.sideName(side)}点了【${word}】${paid ? '（付费）' : '（军令）'}，排第 ${this.queue.indexOf(item) + 1}`);
+        return this.note(`${name} 替${this.sideName(side)}点了【${word}】，${paid ? '付费' : '花军令'}，排第 ${this.queue.indexOf(item) + 1}`);
     }
 
     private credit(id: string, name: string, cents: number) {
@@ -546,7 +553,7 @@ export class ViewerLive {
         this.queue.shift();
         if (!head.paid) this.lastFreeCastAt = Date.now();
         const skillName = this.war()!.lastSkillNameOf(head.side);
-        speechAnnouncer.announceViewerSkill(head.viewer, this.sideName(head.side).replace(/（.）$/, ''), skillName, { onlyIfIdle: !head.paid });
+        speechAnnouncer.announceViewerSkill(head.viewer, this.sideFaction(head.side) || this.sideName(head.side), skillName, { onlyIfIdle: !head.paid });
         this.note(`${head.viewer} 替${this.sideName(head.side)}放了【${skillName}】`);
         this.report({ viewer: head.viewer, side: head.side, six: head.six, paid: head.paid, outcome: 'cast', skillName });
         // 他排着时又点的那一计，现在接着排
@@ -568,7 +575,7 @@ export class ViewerLive {
         } else {
             this.acct(q.uid, q.viewer).n += ORDERS_PER_CAST; // 军令原数退回，不受上限
         }
-        this.note(`${q.viewer} 的计没轮到，这一仗结束了${q.paid ? '（钱已退回，下一仗还能放）' : '（军令已退回）'}`);
+        this.note(`${q.viewer} 的计没轮到，这一仗结束了，${q.paid ? '钱已退回，下一仗还能放' : '军令已退回'}`);
         this.report({ viewer: q.viewer, side: q.side, six: q.six, paid: q.paid, outcome: 'void' });
     }
 

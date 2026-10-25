@@ -82,7 +82,7 @@ export class YouTubeStats {
             return await r.json();
         } catch {
             this.ok = false;
-            this.live.ytStatus = '点赞接口连不上（网络）';
+            this.live.ytStatus = '点赞接口连不上，检查网络';
             return null;
         }
     }
