@@ -8,7 +8,7 @@
  *
  * ── 落地口径 ────────────────────────────────────────────────
  * ① 谁要重套：`FACTION_COMPOSITIONS` 里 `legionName` 正是被删那支的势力（一家一条）。
- * ② 武将时代：该势力的开局名将（`getFactionGeneral`）→ `GENERAL_ERA`（古典 / 封建 / 城堡 / 帝国）。
+ * ② 武将时代：该势力的开局名将（`getFactionGeneral`）→ 势力时代（`getGeneralEra`，`GENERAL_ERA` 只兜底；古典 / 封建 / 城堡 / 帝国）。
  * ③ 据点风格：该势力名下据点里**城级最高**的一座（`tier` 最小，缺省当 9；并列取表中先出现的），
  *    取它的 `buildingStyle`。据点建筑风格共 66 种，1128 座据点**每座都写了**，一座不缺。
  * ④ 二级命中：`LEVEL_2_CIV_62_LEGIONS` 里 **`buildingStyle` === 据点建筑风格** 且 `age === 武将时代`。
@@ -90,7 +90,7 @@ export function resolveFallbackForFaction(factionId: string, generalId?: string 
         : getFactionGeneral(factionId);
     if (!general) return { factionId, reason: '该势力没有配开局武将，判不了时代' };
     const era = getGeneralEra(general.generalId, factionId);
-    if (!era) return { factionId, reason: `武将 ${general.generalName || general.generalId} 不在 GENERAL_ERA 表里` };
+    if (!era) return { factionId, reason: `武将 ${general.generalName || general.generalId} 势力时代与 GENERAL_ERA 都解不出时代` };
     // 🔴 [2026-10-19 主人令「必须给每个武将单独添加一个文化属性，才能对应上军团」] 文化是武将自己的属性（GeneralCulture）；表里没有才退回「势力主据点」的建筑风格
     const city = pickFactionCity(factionId);
     const ownStyle = getGeneralCulture(general.generalId);

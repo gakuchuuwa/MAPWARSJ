@@ -1291,7 +1291,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     shahelude_weisitamu: { birth: 550, death: 596, kaoju: '推定' },  // 维斯塔姆
     ribale_faheerdaolai: { birth: 952, death: 997 },  // 法赫尔道莱
     safawei_aisimaier: { birth: 1487, death: 1524 },  // 艾斯迈尔
-    yilihanguo_yisimeier: { birth: 1305, death: 1335, kaoju: '推定' },  // 伊斯梅尔
+    yilihanguo_yisimeier: { birth: 1487, death: 1524 },  // 伊斯梅尔一世（萨法维沙阿，1501 建萨法维王朝，1510 梅尔夫破昔班尼）
     yilihanguo_d_hezan: { birth: 1271, death: 1304 },  // 合赞
     wulaertu_ajishenti: { birth: 400, death: 451, kaoju: '异说' },  // 瓦尔丹
     wulaertu_ashot3: { birth: 920, death: 977, debut: 953, kaoju: '推定' },  // 阿硕特三世（生年推定；953–977 在位，961 迁都阿尼）

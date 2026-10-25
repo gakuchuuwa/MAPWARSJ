@@ -102,8 +102,8 @@
     "tactical:triclass": "tsx tools/tactical-triclass-audit.ts",
     "general:ecology-audit": "tsx tools/general-profile-ecology-audit.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "era:audit": "node scripts/audit_general_centuries.cjs",
-    "era:todo": "node scripts/audit_general_centuries.cjs --todo",
+    "era:audit": "npx tsx --import ./tools/sim-preload.mjs scripts/audit_general_centuries.mts",
+    "era:todo": "npx tsx --import ./tools/sim-preload.mjs scripts/audit_general_centuries.mts --todo",
     "age:audit": "node tools/age_rules_audit.mjs",
     "legion:ghost-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_ghost_legions.mts",
     "city:style-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_city_base16_style.mts",
@@ -131,3 +131,4 @@
     "xstate": "^5.33.3"
   }
 }
+

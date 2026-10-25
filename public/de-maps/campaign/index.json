@@ -1,5 +1,18 @@
 [
  {
+  "id": "0_E3_Scenario_1",
+  "campaign": "0_E3_Scenario",
+  "campaignName": "0_E3_Scenario",
+  "level": 1,
+  "name": "0_E3_Scenario.aoe2scenario",
+  "file": "0_E3_Scenario_1.json",
+  "width": 120,
+  "height": 120,
+  "objects": 4013,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
   "id": "acam1_1",
   "campaign": "acam1",
   "campaignName": "acam1",
@@ -1222,6 +1235,19 @@
   "v": 3
  },
  {
+  "id": "eecam2_4",
+  "campaign": "eecam2",
+  "campaignName": "eecam2",
+  "level": 4,
+  "name": "EE2_Jadwiga_4.aoe2scenario",
+  "file": "eecam2_4.json",
+  "width": 144,
+  "height": 144,
+  "objects": 6928,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
   "id": "eecam2_5",
   "campaign": "eecam2",
   "campaignName": "eecam2",
@@ -2171,6 +2197,19 @@
   "v": 3
  },
  {
+  "id": "kcam1_5",
+  "campaign": "kcam1",
+  "campaignName": "kcam1",
+  "level": 5,
+  "name": "K1_Tamerlane_5.aoe2scenario",
+  "file": "kcam1_5.json",
+  "width": 144,
+  "height": 144,
+  "objects": 2954,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
   "id": "kcam1_6",
   "campaign": "kcam1",
   "campaignName": "kcam1",
@@ -2977,6 +3016,19 @@
   "v": 3
  },
  {
+  "id": "xcam3_3",
+  "campaign": "xcam3",
+  "campaignName": "xcam3",
+  "level": 3,
+  "name": "C3_Montezuma_3.aoe2scenario",
+  "file": "xcam3_3.json",
+  "width": 144,
+  "height": 144,
+  "objects": 7067,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
   "id": "xcam3_4",
   "campaign": "xcam3",
   "campaignName": "xcam3",
@@ -2987,6 +3039,32 @@
   "height": 200,
   "objects": 4438,
   "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "xcam3_5",
+  "campaign": "xcam3",
+  "campaignName": "xcam3",
+  "level": 5,
+  "name": "C3_Montezuma_5.aoe2scenario",
+  "file": "xcam3_5.json",
+  "width": 168,
+  "height": 168,
+  "objects": 7057,
+  "missingCount": 0,
+  "v": 3
+ },
+ {
+  "id": "xcam3_6",
+  "campaign": "xcam3",
+  "campaignName": "xcam3",
+  "level": 6,
+  "name": "C3_Montezuma_6.aoe2scenario",
+  "file": "xcam3_6.json",
+  "width": 200,
+  "height": 200,
+  "objects": 4250,
+  "missingCount": 1,
   "v": 3
  }
 ]

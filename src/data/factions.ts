@@ -234,6 +234,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'yan', name: '燕国' },
     { id: 'zhao', name: '赵国' },
+    { id: 'douxia', name: '夏' },   // 2026-10-25 按史补：窦建德国号夏（原被误挂赵国）
 
 
 
@@ -601,6 +602,7 @@ export const FACTIONS: Faction[] = [
                           // 赤金堡·旗号赤（赤斤蒙古卫）
     // 巴音布拉格·汉张掖郡居延县；旗号延
     { id: 'xihai_d', name: '吐谷浑' },
+    { id: 'mari_ancient', name: '马里' },   // 2026-10-25 按史补：幼发拉底马里王国（Yahdun-Lim）
                           // 伏俟城·隋西海郡治；旗号西海
     { id: 'guiyi', name: '归义' },
 

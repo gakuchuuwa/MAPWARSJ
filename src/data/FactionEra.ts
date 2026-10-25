@@ -50,6 +50,9 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'gaolu': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'castle' }, { from: 1500, era: 'imperial' }], // 法兰西（别名高卢）｜古典＝高卢战团（维钦托利）；476–1500＝城堡时代法兰西骑士军团；1500 后＝帝国法兰西军团
     'menggu_d': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 蒙古｜蒙古（含 10 世纪孛端察儿—元—北元）＝城堡时代漠南蒙古军团；1500 后（达延汗—喀尔喀/卫拉特）→ 帝国时代漠南蒙古军团
     // ══════ 二、单时代势力（整段一个时代）══════
+    'kilwa': [{ from: -9999, era: 'castle' }], // 基尔瓦苏丹国｜斯瓦希里海岸（约 957–1513），苏莱曼·本·哈桑
+    'mogadishu': [{ from: -9999, era: 'castle' }], // 摩加迪沙苏丹国｜索马里城邦（10–16 世纪），阿布·伯克尔
+    'zuraid': [{ from: -9999, era: 'castle' }], // 祖拉伊德｜亚丁王朝（1083–1174），亚西尔·本·比拉勒
     'aboerleiya': [{ from: -9999, era: 'castle' }], // 阿尔博雷亚
     'adal': [{ from: -9999, era: 'imperial' }], // 阿达尔
     'adao_d': [{ from: -9999, era: 'imperial' }], // 阿克苏道
@@ -210,6 +213,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'han': [{ from: -9999, era: 'antiquity' }], // 韩国
     'han_d': [{ from: -9999, era: 'antiquity' }], // 汉国
     'handong': [{ from: -9999, era: 'feudal' }], // 汉东（刘黑闼）
+    'douxia': [{ from: -9999, era: 'feudal' }], // 夏（窦建德）
+    'mari_ancient': [{ from: -9999, era: 'antiquity' }], // 幼发拉底马里
     'han_zhao': [{ from: -9999, era: 'antiquity' }], // 汉赵
     'hantawadi': [{ from: -9999, era: 'imperial' }], // 汉达瓦底
     'heishi': [{ from: -9999, era: 'castle' }], // 平氏

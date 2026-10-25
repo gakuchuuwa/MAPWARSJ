@@ -50,15 +50,22 @@ export class ViewerLivePanel {
         this.root.style.display = s.on || linked || this.devOpen ? 'block' : 'none';
         if (this.root.style.display === 'none') return;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
-        const price = `打赏 <b>$${s.price / 100}</b> 放一计`;
-        const platform = s.platform && this.devOpen ? `<div style="color:#8fd3ff;font-size:12px;">${esc(s.platform)}</div>` : '';
+        const price = `打赏 <b>$${s.price / 100}</b> 马上放一计`;
+        const g = s.goal;
+        const goal = `<div style="margin-top:6px;color:#ffd700;">全场目标</div>
+            <div>点赞 <b>${g.likeProg}/${g.likeStep}</b> → 在场每人 +1 令　｜　订阅 <b>${g.subs}</b>（涨 1 全场 +2 令）</div>
+            <div style="height:6px;background:#3a2a16;border-radius:3px;overflow:hidden;margin:2px 0;"><div style="height:6px;width:${Math.min(100, Math.round(g.likeProg / g.likeStep * 100))}%;background:#d4af37;"></div></div>
+            <div style="color:#a99;font-size:12px;">在线 ${g.viewers || '—'} 人　在场 ${g.present} 人</div>`;
+        const platform = this.devOpen
+            ? `<div style="color:#8fd3ff;font-size:12px;">${esc(s.platform)}${s.yt ? '　｜　' + esc(s.yt) : ''}</div>` : '';
         const log = s.log.slice(-4).map((l) => `<div style="color:#cdbb95">${esc(l)}</div>`).join('');
         if (!s.on) {
             this.body.innerHTML = `${platform}
                 <div style="color:#ffd700;font-weight:900;font-size:14px;">发弹幕参战</div>
                 <div>下一场战术战开打时：发 <b>1</b> 站攻方、<b>2</b> 站守方</div>
                 <div>再发 <b>攻 胜 敌 混 并 败</b> 替本方放计</div>
-                <div>每天第一次免费，之后${price}</div>
+                <div>发弹幕、点赞、订阅攒<b>军令</b>，<b>3 令</b>放一计；${price}</div>
+                ${goal}
                 <div style="margin-top:6px;">${log}</div>`;
             return;
         }
@@ -67,8 +74,9 @@ export class ViewerLivePanel {
             <div style="color:#ffd700;font-weight:900;font-size:14px;">发弹幕参战</div>
             <div>发 <b>1</b> 站 ${esc(s.names[0])}，发 <b>2</b> 站 ${esc(s.names[1])}</div>
             <div>再发 <b>攻 胜 敌 混 并 败</b> 替本方放计（也可一条发「1攻」）</div>
-            <div>第一次免费，之后${price}</div>
+            <div>站队 +1 令，每 20 秒发一条有效弹幕 +1 令，<b>3 令</b>放一计；${price}</div>
             <div style="margin-top:6px;">${esc(s.names[0])} <b>${s.counts[0]}</b> 人　｜　${esc(s.names[1])} <b>${s.counts[1]}</b> 人</div>
+            ${goal}
             <div style="margin-top:6px;color:#ffd700;">排队</div>${queue}
             <div style="margin-top:6px;">${log}</div>`;
     }
@@ -110,12 +118,43 @@ export class ViewerLivePanel {
             e.stopPropagation();
             if (e.key === 'Enter') { this.link.setSession(ssn.value); this.render(); }
         });
-        this.dev.append(ssnLabel, ssn, label, name, paidWrap,
+        // YouTube 点赞 / 订阅接口：API 密钥 + 直播视频 ID（可粘贴整条网址），回车生效，任一项清空＝停止
+        const ytLabel = document.createElement('div');
+        ytLabel.textContent = 'YouTube 接口密钥 / 直播视频（回车生效）';
+        ytLabel.style.cssText = ssnLabel.style.cssText;
+        const ytKey = document.createElement('input');
+        ytKey.type = 'password';
+        ytKey.value = this.link.yt.getKey();
+        ytKey.placeholder = 'API 密钥';
+        ytKey.style.cssText = name.style.cssText;
+        const ytVideo = document.createElement('input');
+        ytVideo.value = this.link.yt.getVideo();
+        ytVideo.placeholder = '直播网址或 11 位视频 ID';
+        ytVideo.style.cssText = name.style.cssText;
+        const applyYt = (e: KeyboardEvent) => {
+            e.stopPropagation();
+            if (e.key === 'Enter') { this.link.yt.set(ytKey.value, ytVideo.value); ytVideo.value = this.link.yt.getVideo(); this.render(); }
+        };
+        ytKey.addEventListener('keydown', applyYt);
+        ytVideo.addEventListener('keydown', applyYt);
+        this.dev.append(ssnLabel, ssn, ytLabel, ytKey, ytVideo, label, name, paidWrap,
             row(['1 站攻方', '2 站守方'], (w) => send(w[0])),
             row([...WORDS], send),
             // 模拟打赏：按昵称当观众 id，跟上面发字的是同一个人
             row(['打赏$1', '打赏$10'], (w) => {
                 this.live.onPayment(name.value.trim() || '观众', name.value, w.includes('10') ? 1000 : 100, `测试${w}`);
+                this.render();
+            }),
+            // 模拟全场目标：点赞（TikTok 式一条一份）、订阅 +1、在线人数
+            row(['点赞+1', '点赞+10', '订阅+1', '在线50人'], (w) => {
+                if (w === '点赞+1') this.live.onLikes(1);
+                else if (w === '点赞+10') this.live.onLikes(10);
+                else if (w === '订阅+1') {
+                    const cur = this.live.snapshot().goal.subs;
+                    this.live.onSubTotal(cur);       // 还没基线时先记下，下一句才算涨
+                    this.live.onSubTotal(cur + 1);
+                }
+                else this.live.onViewers(50);
                 this.render();
             }));
     }

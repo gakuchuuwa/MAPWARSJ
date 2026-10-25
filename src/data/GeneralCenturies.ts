@@ -504,7 +504,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'yada_ahexiong': 5,                                 // 阿赫雄 · yada · 悉万斤
     'yanda_touluoman': 5,                               // 头罗曼 · yanda · 阿缓城
     'yilihanguo_d_hezan': 13,                            // 合赞 · yilihanguo_d · 大不里士
-    'yilihanguo_yisimeier': 14,                          // 伊斯梅尔 · yilihanguo · 赞詹
+    'yilihanguo_yisimeier': 16,                          // 伊斯梅尔 · yilihanguo · 赞詹
 
     // ══════ NORTH（48 人，已标 0）══════
     'bing_liji': 7,                                     // 李勣 · bing · 晋阳

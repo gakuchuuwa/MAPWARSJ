@@ -761,6 +761,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'mahan': 'city_yuezhi',
 'daquyue': 'city_hoalu',
 'yuenan': 'city_fuchun',
+'handong': 'city_handan',   // 刘黑闼汉东王都洺州（今邯郸永年）
+'douxia': 'city_handan',   // 窦建德夏（都洺州一带）
+'mari_ancient': 'city_anate',   // 幼发拉底马里（阿纳特）
 'jiaohuangguo': 'city_luoma',
 'yalan': 'city_damasikusi',
 };

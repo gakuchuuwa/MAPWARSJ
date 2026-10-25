@@ -2572,6 +2572,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代安南军团",
         legionType: "sub",
     },
+    "douxia": {
+        legionName: "封建时代中原军团",
+        legionType: "sub",
+    },
+    "mari_ancient": {
+        legionName: "古典时代近东军团",
+        legionType: "sub",
+    },
+    "handong": {
+        legionName: "封建时代中原军团",
+        legionType: "sub",
+    },
+    "sesali": {
+        legionName: "古典时代爱奥尼亚军团",
+        legionType: "sub",
+    },
     "jiaohuangguo": {
         legionName: "城堡时代教廷军团",
         legionType: "sub",

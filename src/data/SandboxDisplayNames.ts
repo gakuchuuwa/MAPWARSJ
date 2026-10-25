@@ -18,6 +18,8 @@
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kilwa': '基',
     'handong': '汉东', // 刘黑闼汉东王
+    'douxia': '夏', // 窦建德·夏
+    'mari_ancient': '马里', // 幼发拉底马里王国
     'mombasa': '蒙',
     'mogadishu': '摩',
     'zuraid': '祖',
@@ -687,7 +689,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'malai': '马来',
     'taimier': '马拉',
     'xibanya': '西',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
-'manding': '马里',
+'manding': '曼丁',
 'ethiopia': '埃塞',
 'zhagewei': '扎维',
     'adal': '阿达',

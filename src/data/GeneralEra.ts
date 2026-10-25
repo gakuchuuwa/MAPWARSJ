@@ -1394,7 +1394,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yiduhu_baershu': 'castle',
     'yilaka_tundama': 'imperial',
     'yilihanguo_d_hezan': 'castle',
-    'yilihanguo_yisimeier': 'castle',
+    'yilihanguo_yisimeier': 'imperial',
     'yilisi_yifeituosi': 'antiquity',
     'yilou_naoya': 'antiquity',
     'yin_dixin': 'antiquity',

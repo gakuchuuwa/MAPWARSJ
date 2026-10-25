@@ -1495,7 +1495,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'duonaobaojia_tzimiskes', factionId: 'baojialiya', cityId: 'city_junshitandingbao', legionName: '封建时代拜占庭军区军团', generalName: '齐米斯基', portrait: '/assets/BULGARIANS/duonaobaojia_tzimiskes.png' },
+        { generalId: 'duonaobaojia_tzimiskes', factionId: 'baizanting', cityId: 'city_junshitandingbao', legionName: '封建时代拜占庭军区军团', generalName: '齐米斯基', portrait: '/assets/BULGARIANS/duonaobaojia_tzimiskes.png' },
         { generalId: 'duonaobaojia_samuel', factionId: 'baojialiya', cityId: 'city_sofia', legionName: '封建时代保加利亚军团', generalName: '萨穆伊尔', portrait: '/assets/BULGARIANS/duonaobaojia_samuel.png' },
 
 
@@ -1909,7 +1909,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     puluowangsi: [
         // 🔴 [2026-10-24 主人令] 雷蒙四世＝图卢兹伯爵（首府图卢兹）；势力归法兰西（factionId: gaolu），存于此块仅历史原因。
-        //    军团按 GENERAL_CULTURE=FRANKS × GENERAL_ERA=castle 解析，仍是「城堡时代法兰西骑士军团」，无需写 legionName。
+        //    军团按「势力时代（法兰克=feudal）× 据点文化（FRANKS）」解析，仍是「封建时代法兰克军团」，无需写 legionName。
         { generalId: 'gen_raymond_iv', factionId: 'gaolu', cityId: 'city_toulouse', generalName: '雷蒙四世', portrait: '/assets/FRANKS/gen_raymond_iv.png' },
         // 🔴 [2026-10-24 修复「普罗旺斯 无武将」] 普罗旺斯伯国自己的将：雷蒙·贝朗热四世（1198–1245，普罗旺斯伯爵 1209–1245，
         //    都艾克斯 Aix）。按史：普罗旺斯伯国是真实政权（势力清理 plan-A 定 keep）；他镇守/治理普罗旺斯 → 势力＝普罗旺斯；
@@ -5534,7 +5534,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'tang_limi', factionId: 'tang', cityId: 'city_chengdu', generalName: '李宓', portrait: '/assets/CENTRAL/tang_limi.png', legionName: '封建时代剑南军团', eliteName: '剑南兵', eliteTier: 4 },
-        { generalId: 'daxi_ming_zhangxianzhong', factionId: 'daxi_ming', cityId: 'city_chengdu', legionName: '帝国时代四川军团', generalName: '张献忠', portrait: '/assets/BASHU/daxi_ming_zhangxianzhong.png' },
+        { generalId: 'daxi_ming_zhangxianzhong', factionId: 'daxi_ming', cityId: 'city_chengdu', generalName: '张献忠', portrait: '/assets/BASHU/daxi_ming_zhangxianzhong.png' },
     ],
 
 
@@ -7972,7 +7972,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'chenli_d_zuoxianwang', factionId: 'xushouhui', cityId: 'city_wuchang', legionName: '城堡时代江南军团', generalName: '张必先', portrait: '/assets/MONGOL/chenli_d_zuoxianwang.png' },
+        { generalId: 'chenli_d_zuoxianwang', factionId: 'xushouhui', cityId: 'city_wuchang', generalName: '张必先', portrait: '/assets/MONGOL/chenli_d_zuoxianwang.png' },
 
 
 
@@ -11471,7 +11471,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     zhao: [
-        { generalId: 'bfe_dou_jiande', cityId: 'city_handan', generalName: '窦建德', portrait: '/assets/CENTRAL/bfe_dou_jiande.png', factionId: 'zhao', legionName: '封建时代中原军团' },
+        { generalId: 'bfe_dou_jiande', cityId: 'city_handan', generalName: '窦建德', portrait: '/assets/CENTRAL/bfe_dou_jiande.png', factionId: 'douxia', legionName: '封建时代中原军团' },
         { generalId: 'handong_liuheita', factionId: 'handong', cityId: 'city_handan', generalName: '刘黑闼', portrait: '', eliteName: '汉东锐卒', eliteTier: 4 },   // 2026-10-25 按史补：汉东王，622 洺水败于李世民，623 被俘杀
 
 
@@ -11668,7 +11668,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     yue: [
         { generalId: 'yue_goujian', cityId: 'city_kuaiji', generalName: '勾践', portrait: '/assets/JIANGNAN/yue_goujian.png' , legionName: '先秦军团' },
-        { generalId: 'bfe_gao_zhihui', cityId: 'city_kuaiji', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', legionName: '封建时代江淮军团' },
+        { generalId: 'bfe_gao_zhihui', factionId: 'sui', cityId: 'city_kuaiji', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', legionName: '封建时代江淮军团' },   // 2026-10-25 按史：隋越州反隋（同势力内战），原误挂越国
     ],
 
 
@@ -13872,7 +13872,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'dibisi_tahaerka', cityId: 'city_mengfeisi', generalName: '塔哈尔卡', portrait: '/assets/ORIE/dibisi_tahaerka.png', factionId: 'aiji' },
-        { generalId: 'dibisi_tutemosi', cityId: 'city_wasaite', generalName: '图特摩斯', portrait: '/assets/ORIE/dibisi_tutemosi.png', factionId: 'aiji' },
+        { generalId: 'dibisi_tutemosi', cityId: 'city_wasaite', generalName: '图特摩斯三世', portrait: '/assets/ORIE/dibisi_tutemosi.png', factionId: 'aiji' },
 
 
 
@@ -13929,7 +13929,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     jialedi: [
-        { generalId: 'bfe2_yahdun_lim', cityId: 'city_babilun', generalName: '亚赫敦·林', portrait: '/assets/ORIE/bfe2_yahdun_lim.png', factionId: 'jialedi', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_yahdun_lim', cityId: 'city_anate', generalName: '亚赫敦·林', portrait: '/assets/ORIE/bfe2_yahdun_lim.png', factionId: 'mari_ancient', legionName: '古典时代近东军团' },
         { generalId: 'bfe2_nidintu_bel', cityId: 'city_babilun', generalName: '尼丁图-贝尔', portrait: '/assets/ORIE/bfe2_nidintu_bel.png', legionName: '古典时代近东军团' },
         { generalId: 'bfe2_enlil_nadin_ahi', cityId: 'city_babilun', generalName: '恩利尔纳丁·阿基', portrait: '/assets/ORIE/bfe2_enlil_nadin_ahi.png', legionName: '古典时代近东军团' },
         { generalId: 'jialedi_nibujianisa', cityId: 'city_wuluke', generalName: '尼布甲尼撒', portrait: '/assets/ORIE/jialedi_nibujianisa.png' },
@@ -14034,7 +14034,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'xikesuosi_samutike', cityId: 'city_awalisi', generalName: '萨姆提克', portrait: '/assets/ORIE/xikesuosi_samutike.png' },
+        { generalId: 'xikesuosi_samutike', factionId: 'aiji', cityId: 'city_mengfeisi', generalName: '萨姆提克', portrait: '/assets/ORIE/xikesuosi_samutike.png' },
 
 
 
@@ -14498,7 +14498,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'safawei_d_abasi', cityId: 'city_yisifahan', generalName: '阿拔斯', portrait: '/assets/PERSIAN/safawei_d_abasi.png' },
-        { generalId: 'yilihanguo_yisimeier', factionId: 'safawei_d', cityId: 'city_zanzhan', generalName: '伊斯梅尔', portrait: '/assets/PERSIAN/yilihanguo_yisimeier.png', legionName: '城堡时代伊儿军团' },
+        { generalId: 'yilihanguo_yisimeier', factionId: 'safawei_d', cityId: 'city_zanzhan', generalName: '伊斯梅尔', portrait: '/assets/PERSIAN/yilihanguo_yisimeier.png' },   // 按史订正（2026-10-25）：即萨法维沙阿伊斯梅尔一世（1487–1524），原条生卒 1305–1335 与「城堡时代伊儿军团」皆误，已删手写军团走势力时代×据点文化,
         { generalId: 'yilihanguo_kitbuqa', factionId: 'safawei_d', cityId: 'city_zanzhan', legionName: '城堡时代伊儿军团', generalName: '怯的不花', portrait: '/assets/SASANIAN/yilihanguo_kitbuqa.png' },
 
 
@@ -15681,7 +15681,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：毗摩一世＝索兰基（Chaulukya）王，都阿尼尔瓦达＝今帕坦；索姆纳特只是 1026 年被劫之地 → 放帕坦（gurjara，风格 GURJARAS）；仍挂本政权 suomunate
         { generalId: 'suomunate_bhima_i', cityId: 'city_patan', factionId: 'suomunate', generalName: '毗摩一世', portrait: '/assets/GURJARAS/suomunate_bhima_i.png', },
     
-        { generalId: 'chatigangren_wumeide', legionName: '帝国时代恒河军团', factionId: 'gurjara', cityId: 'city_jidagang', generalName: '乌梅德汗', portrait: '/assets/BENGALIS/chatigangren_wumeide.png' },
+        { generalId: 'chatigangren_wumeide', legionName: '帝国时代恒河军团', factionId: 'mowoer', cityId: 'city_jidagang', generalName: '乌梅德汗', portrait: '/assets/BENGALIS/chatigangren_wumeide.png' },
 
 
 
@@ -16811,7 +16811,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     qianliang: [
         { generalId: 'liangzhou_zhanggui', eliteName: '凉州大马', eliteTier: 1, factionId: 'qianliang', cityId: 'city_wuwei', generalName: '张轨', portrait: '/assets/KHITAN/liangzhou_zhanggui.png' },
-        { generalId: 'bfe3_67', factionId: 'qianliang', cityId: 'city_wuwei', generalName: '王国', portrait: '/assets/KHITAN/bfe3_67.png', legionName: '古典时代凉州军团' },
+        { generalId: 'bfe3_67', factionId: 'han_d', cityId: 'city_wuwei', generalName: '王国', portrait: '/assets/KHITAN/bfe3_67.png', legionName: '古典时代凉州军团' },
 
     ],
     dangchang_guo: [
