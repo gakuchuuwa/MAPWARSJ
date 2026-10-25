@@ -176,6 +176,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'gaogouli': 'city_pyongyang',
     'xinluo': 'city_jincheng_silla',
     'ashikaga': 'city_kyoto',
+    'yamato': 'city_kyoto',   // 大和朝廷（平安京；与室町同城登记，仅编辑器参考）
 'zhao': 'city_handan',
 'song': 'city_bianliang',
 'han': 'city_xinzheng',

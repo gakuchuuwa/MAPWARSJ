@@ -1382,6 +1382,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xushouhui_zhaopusheng': 'JIANGNAN',   // 天完｜赵普胜｜据点 蕲春
     'yada_ahexiong': 'CENTRAL_ASIA',   // 嚈哒｜阿赫雄｜据点 悉万斤
     'yamato_nanmuzhengcheng': 'JAPAN',   // 南朝｜楠木正成｜据点 千早城
+    'yamato_sakanouenotamuramaro': 'JAPAN',   // 大和｜坂上田村麻吕｜据点 京都
     'yamaxun_faernake': 'ORIE',   // 亚马逊｜法尔纳克｜据点 忒弥斯基拉
     'yamaxun_xibolvte': 'ORIE',   // 亚马逊｜希波吕忒｜据点 忒弥斯基拉
     'yan_leyi': 'CENTRAL',   // 燕国｜乐毅｜据点 临淄

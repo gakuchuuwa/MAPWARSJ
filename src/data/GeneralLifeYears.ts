@@ -475,6 +475,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     merkit_boyan: { birth: 1236, death: 1295, kaoju: '推定' },            // 伯颜
     shenshi_wentianxiang: { birth: 1236, death: 1283 },    // 文天祥
     yamato_nanmuzhengcheng: { birth: 1294, death: 1336 },  // 楠木正成
+    yamato_sakanouenotamuramaro: { birth: 758, death: 811 },  // 坂上田村麻吕（征夷大将军）
     ashikaga_zulizunshi: { birth: 1305, death: 1358 },     // 足利尊氏
     zhangshicheng_zhangshicheng: { birth: 1321, death: 1367 }, // 张士诚
     huai_zhuyuanzhang: { birth: 1328, death: 1398 },       // 朱元璋

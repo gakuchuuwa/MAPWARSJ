@@ -5933,6 +5933,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    yamato: [
+        // 🔴 [2026-10-25 主人令「加一个最知名的就可以了」] 平安时代最知名者＝坂上田村麻吕（征夷大将军，758–811）；
+        //    势力 大和（大和朝廷，封建时代）；据点 京都＝平安京（JAPAN 文化）；立绘按铁律留空；精锐「征夷军」T2。
+        { generalId: 'yamato_sakanouenotamuramaro', factionId: 'yamato', cityId: 'city_kyoto', generalName: '坂上田村麻吕', portrait: '', eliteName: '征夷军', eliteTier: 2 },
+    ],
     ashikaga: [
         { generalId: 'ashikaga_zulizunshi', cityId: 'city_kyoto', generalName: '足利尊氏', portrait: '/assets/JAPAN/ashikaga_zulizunshi.png' },
         // 🔴 [2026-10-20 首战规则] 明智光秀＝织田家臣（1582 本能寺之变后山崎败死）；库无明智势力，借室町（京都，报告）；城堡时代幕府军团；立绘留空

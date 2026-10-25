@@ -1359,6 +1359,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xushouhui_zhaopusheng': 'castle',
     'yada_ahexiong': 'antiquity',
     'yamato_nanmuzhengcheng': 'castle',
+    'yamato_sakanouenotamuramaro': 'feudal',
     'yamaxun_xibolvte': 'antiquity',
     'yan_leyi': 'antiquity',
     'yanchuan_d_yuefei': 'castle',

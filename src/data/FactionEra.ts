@@ -94,6 +94,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'arakan': [{ from: -9999, era: 'imperial' }], // 阿拉干
     'ashide': [{ from: -9999, era: 'feudal' }], // 阿史德
     'ashikaga': [{ from: -9999, era: 'castle' }], // 室町
+    'yamato': [{ from: -9999, era: 'feudal' }], // 大和（大和朝廷·平安时代；坂上田村麻吕 758–811）
     'ashina': [{ from: -9999, era: 'feudal' }], // 阿史那
     'asikanani': [{ from: -9999, era: 'castle' }], // 勃兰登堡藩侯国
     'aswaka': [{ from: -9999, era: 'antiquity' }], // 阿斯瓦卡

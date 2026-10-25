@@ -52,7 +52,6 @@
     "road:snap-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_road_snap_pruning.mts",
     "city:wall-anchor-audit": "npx tsx scratch/audit_city_wall_anchors.mts",
     "legion:formation-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_formation_row_counts.mts",
-    "legion:culture-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_culture_legion_pairing.mts",
     "expedition:audit": "npx tsx scratch/audit_expedition_regions.mjs",
     "expedition:triple-check": "npx tsx scratch/audit_expedition_triple_names.mjs",
     "expedition:coverage": "npx tsx scratch/audit_expedition_coverage.mjs",
@@ -131,4 +130,3 @@
     "xstate": "^5.33.3"
   }
 }
-

@@ -36,6 +36,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     //      戒日/瞿折罗→封建戒日，乔汉→城堡古吉拉特，锡克→帝国旁遮普，僧伽罗→古典泰米尔，奥里泰/食鱼族→古典贵霜。
     // 🔴 [2026-10-24] 恢复被并进旧占位势力 panjun 的各家政权（该占位势力已于 2026-10-25 按主人令删除；
     //    起义军＝三级「起义军」；其余沿用原时代军团）
+    // 🔴 [2026-10-25 主人令「加一个最知名的就可以了」] 大和（大和朝廷·封建时代）｜主将坂上田村麻吕（京都 JAPAN × 封建）＝封建时代平安军团
+    "yamato": {
+        legionName: "封建时代平安军团",
+        legionType: "region",
+    },
     "qiufu": {
         legionName: "起义军",
         legionType: "sub",

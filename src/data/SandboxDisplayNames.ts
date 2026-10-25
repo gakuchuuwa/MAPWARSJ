@@ -319,6 +319,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'dacheng': '大成',
     'tuoming': '清真',
     'ashikaga': '室町',
+    'yamato': '大和',   // 大和朝廷（平安）
     // ── 2026-05-26 新增：大金、大元 ──
 'dajin': '金',
 'yuan_d': '元',

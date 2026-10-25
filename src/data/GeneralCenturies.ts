@@ -972,6 +972,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'taira_pingzhisheng': 12,                            // 平知盛 · taira · 赤间关
     'totomi_jiujingzhongci': 16,                         // 酒井忠次 · totomi · 浜松城
     'yamato_nanmuzhengcheng': 14,                        // 楠木正成 · yamato · 千早城
+    'yamato_sakanouenotamuramaro': 8,                    // 坂上田村麻吕 · yamato · 京都
     'yizhi_beigou': 3,                                  // 难升米 · yizhi · 原之辻
     'zhuqian_shaoerzineng': 13,                          // 少贰资能 · zhuqian · 太宰府
 

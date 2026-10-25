@@ -261,6 +261,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     yamato_nanmuzhengcheng: { generalId: 'yamato_nanmuzhengcheng', tier: 'famous', tacticalSkillId: 'ts_345', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_504', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_413', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_822', aptitude: 'reverse' , attackStyle: 'defense'},
+    yamato_sakanouenotamuramaro: { generalId: 'yamato_sakanouenotamuramaro', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_001', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_185', defBalanceSkillId: 'ts_653', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
 
 
 

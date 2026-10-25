@@ -126,6 +126,7 @@ export class CityAssetManager {
 
 
         'ashikaga': '室町',
+        'yamato': '大和',
 
 
         'min': '闽',
