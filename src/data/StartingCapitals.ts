@@ -101,7 +101,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'mangsite': 'city_kasheer',
 'tuomengde': 'city_limerick',
   'bulietani': 'city_rennes',
-'saierweiya': 'city_belgrade',
+  // 🔴 [2026-10-25 按史修正首府登记] 塞尔维亚 1346 年杜尚加冕于**斯科普里**（塞尔维亚帝国都城）；贝尔格莱德 1319–1404 属匈牙利，
+  //    杜尚在世时不在塞手中（贝尔格莱德仍是塞尔维亚城市，cities_v2.factionId 不变；1456 匈牙利守城那段建筑风格仍 MAGYAR）。
+  //    原登记 city_belgrade 是旧「一势力一据点」时期的值，会让「势力时代×首府文化」被判成 城堡×MAGYAR（匈牙利王国军团）。
+  'saierweiya': 'city_skopje',
 
   'luoma_diguo': 'city_luoma',
   'putaoya': 'city_lisiben',

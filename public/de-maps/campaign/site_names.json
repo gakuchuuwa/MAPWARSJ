@@ -1,0 +1,1982 @@
+[
+ {
+  "id": "0_E3_Scenario_1",
+  "scenario": "0_E3_Scenario",
+  "name": "乔卢拉",
+  "type": "中城",
+  "basis": "按样貌",
+  "history": "中美洲大城，雄鹰战士",
+  "size": 120
+ },
+ {
+  "id": "acam1_1",
+  "scenario": "A1_Tariq1",
+  "name": "科尔多瓦",
+  "type": "大城",
+  "basis": "史实",
+  "history": "瓜达莱特河之战后围攻科尔多瓦 711",
+  "size": 144
+ },
+ {
+  "id": "acam1_2",
+  "scenario": "A1_Tariq2",
+  "name": "托莱多",
+  "type": "大城",
+  "basis": "史实",
+  "history": "攻取西哥特都城托莱多 712",
+  "size": 168
+ },
+ {
+  "id": "acam1_3",
+  "scenario": "A1_Tariq3",
+  "name": "萨拉戈萨",
+  "type": "大城",
+  "basis": "史实",
+  "history": "攻取萨拉戈萨 714",
+  "size": 168
+ },
+ {
+  "id": "acam1_4",
+  "scenario": "A1_Tariq4",
+  "name": "龙塞斯瓦列斯山口",
+  "type": "险要",
+  "basis": "推定",
+  "history": "732 冬越比利牛斯山",
+  "size": 144
+ },
+ {
+  "id": "acam1_5",
+  "scenario": "A1_Tariq5",
+  "name": "加龙河",
+  "type": "战场",
+  "basis": "史实",
+  "history": "加龙河之战 732",
+  "size": 144
+ },
+ {
+  "id": "acam2_1",
+  "scenario": "A2_Sundjata_1",
+  "name": "梅马",
+  "type": "中城",
+  "basis": "推定",
+  "history": "松迪亚塔流亡梅马",
+  "size": 144
+ },
+ {
+  "id": "acam2_2",
+  "scenario": "A2_Sundjata_2",
+  "name": "尼亚尼",
+  "type": "小城",
+  "basis": "推定",
+  "history": "松迪亚塔回曼丁起兵",
+  "size": 168
+ },
+ {
+  "id": "acam2_3",
+  "scenario": "A2_Sundjata_3",
+  "name": "杰内",
+  "type": "中城",
+  "basis": "史实",
+  "history": "焚毁杰内市场",
+  "size": 168
+ },
+ {
+  "id": "acam2_4",
+  "scenario": "A2_Sundjata_4",
+  "name": "基里纳",
+  "type": "战场",
+  "basis": "史实",
+  "history": "基里纳之战 1235",
+  "size": 168
+ },
+ {
+  "id": "acam2_5",
+  "scenario": "A2_Sundjata_5",
+  "name": "昆比萨利赫",
+  "type": "大城",
+  "basis": "史实",
+  "history": "围攻昆比萨利赫 1240",
+  "size": 144
+ },
+ {
+  "id": "acam3_1",
+  "scenario": "A3_Almeida_1",
+  "name": "托罗",
+  "type": "战场",
+  "basis": "史实",
+  "history": "托罗之战 1476",
+  "size": 144
+ },
+ {
+  "id": "acam3_2",
+  "scenario": "A3_Almeida_2",
+  "name": "格拉西奥萨",
+  "type": "城寨",
+  "basis": "史实",
+  "history": "格拉西奥萨要塞之围 1489",
+  "size": 144
+ },
+ {
+  "id": "acam3_3",
+  "scenario": "A3_Almeida_3",
+  "name": "蒙巴萨",
+  "type": "中城",
+  "basis": "史实",
+  "history": "蒙巴萨之战 1505",
+  "size": 200
+ },
+ {
+  "id": "acam3_4",
+  "scenario": "A3_Almeida_4",
+  "name": "坎纳诺尔",
+  "type": "小城",
+  "basis": "史实",
+  "history": "坎纳诺尔之围 1507",
+  "size": 144
+ },
+ {
+  "id": "acam3_5",
+  "scenario": "A3_Almeida_5",
+  "name": "第乌",
+  "type": "中城",
+  "basis": "史实",
+  "history": "第乌之战 1509",
+  "size": 168
+ },
+ {
+  "id": "acam4_1",
+  "scenario": "A4_Yodit_1",
+  "name": "耶哈",
+  "type": "小城",
+  "basis": "推定",
+  "history": "尤迪特出逃阿克苏姆一带",
+  "size": 168
+ },
+ {
+  "id": "acam4_2",
+  "scenario": "A4_Yodit_2",
+  "name": "拉斯塔",
+  "type": "小城",
+  "basis": "推定",
+  "history": "尤迪特结盟叙利亚王子",
+  "size": 168
+ },
+ {
+  "id": "acam4_3",
+  "scenario": "A4_Yodit_3",
+  "name": "贝格姆德尔",
+  "type": "中城",
+  "basis": "推定",
+  "history": "击败阿克苏姆王及贝格姆德尔盟军",
+  "size": 200
+ },
+ {
+  "id": "acam4_4",
+  "scenario": "A4_Yodit_4",
+  "name": "马萨瓦",
+  "type": "中城",
+  "basis": "史实",
+  "history": "夺取石碑与马萨瓦城",
+  "size": 144
+ },
+ {
+  "id": "acam4_5",
+  "scenario": "A4_Yodit_5",
+  "name": "阿克苏姆",
+  "type": "大城",
+  "basis": "推定",
+  "history": "尤迪特攻灭阿克苏姆",
+  "size": 200
+ },
+ {
+  "id": "cam2_1",
+  "scenario": "2_Joan_1",
+  "name": "希农",
+  "type": "小城",
+  "basis": "史实",
+  "history": "贞德自沃库勒尔赴希农城堡 1429",
+  "size": 144
+ },
+ {
+  "id": "cam2_2",
+  "scenario": "2_Joan_2",
+  "name": "奥尔良",
+  "type": "大城",
+  "basis": "史实",
+  "history": "解奥尔良之围 1429",
+  "size": 200
+ },
+ {
+  "id": "cam2_3",
+  "scenario": "2_Joan_3",
+  "name": "博让西",
+  "type": "中城",
+  "basis": "推定",
+  "history": "卢瓦尔河战役 1429",
+  "size": 168
+ },
+ {
+  "id": "cam2_4",
+  "scenario": "2_Joan_4",
+  "name": "兰斯",
+  "type": "大城",
+  "basis": "史实",
+  "history": "进军兰斯加冕 1429",
+  "size": 144
+ },
+ {
+  "id": "cam2_5",
+  "scenario": "2_Joan_5",
+  "name": "巴黎",
+  "type": "大城",
+  "basis": "史实",
+  "history": "围攻巴黎 1429",
+  "size": 200
+ },
+ {
+  "id": "cam2_6",
+  "scenario": "2_Joan_6",
+  "name": "卡斯蒂永",
+  "type": "战场",
+  "basis": "史实",
+  "history": "卡斯蒂永之战 1453",
+  "size": 144
+ },
+ {
+  "id": "cam3_1",
+  "scenario": "3_Saladin_1",
+  "name": "开罗",
+  "type": "大城",
+  "basis": "史实",
+  "history": "吉萨-开罗-福斯塔特一带 1169",
+  "size": 144
+ },
+ {
+  "id": "cam3_2",
+  "scenario": "3_Saladin_2",
+  "name": "亚喀巴",
+  "type": "小城",
+  "basis": "史实",
+  "history": "十字军袭扰红海 1182",
+  "size": 200
+ },
+ {
+  "id": "cam3_3",
+  "scenario": "3_Saladin_3",
+  "name": "哈丁",
+  "type": "战场",
+  "basis": "史实",
+  "history": "哈丁之战 1187",
+  "size": 120
+ },
+ {
+  "id": "cam3_4",
+  "scenario": "3_Saladin_4",
+  "name": "耶路撒冷",
+  "type": "大城",
+  "basis": "史实",
+  "history": "耶路撒冷之围 1187",
+  "size": 168
+ },
+ {
+  "id": "cam3_5",
+  "scenario": "3_Saladin_5",
+  "name": "提尔",
+  "type": "中城",
+  "basis": "推定",
+  "history": "哈丁后横扫十字军城市 1187-1189",
+  "size": 220
+ },
+ {
+  "id": "cam3_6",
+  "scenario": "3_Saladin_6",
+  "name": "阿卡",
+  "type": "大城",
+  "basis": "史实",
+  "history": "阿卡之围 1189-1191",
+  "size": 200
+ },
+ {
+  "id": "cam4_1",
+  "scenario": "4_Genghis_1",
+  "name": "斡难河源",
+  "type": "城寨",
+  "basis": "推定",
+  "history": "统一蒙古诸部 1206",
+  "size": 168
+ },
+ {
+  "id": "cam4_2",
+  "scenario": "4_Genghis_2",
+  "name": "虎思斡耳朵",
+  "type": "中城",
+  "basis": "推定",
+  "history": "灭西辽 1218",
+  "size": 144
+ },
+ {
+  "id": "cam4_3",
+  "scenario": "4_Genghis_3",
+  "name": "居庸关",
+  "type": "险要",
+  "basis": "推定",
+  "history": "蒙古攻金入长城",
+  "size": 200
+ },
+ {
+  "id": "cam4_4",
+  "scenario": "4_Genghis_4",
+  "name": "讹答剌",
+  "type": "中城",
+  "basis": "推定",
+  "history": "西征花剌子模 1219",
+  "size": 220
+ },
+ {
+  "id": "cam4_5",
+  "scenario": "4_Genghis_5",
+  "name": "莱格尼察",
+  "type": "战场",
+  "basis": "史实",
+  "history": "莱格尼察之战 1241",
+  "size": 144
+ },
+ {
+  "id": "cam4_6",
+  "scenario": "4_Genghis_6",
+  "name": "莫希",
+  "type": "战场",
+  "basis": "史实",
+  "history": "莫希之战 1241",
+  "size": 144
+ },
+ {
+  "id": "cam5_1",
+  "scenario": "5_Barbarossa_1",
+  "name": "亚琛",
+  "type": "大城",
+  "basis": "推定",
+  "history": "巴巴罗萨即位时德意志分裂（象征图）",
+  "size": 200
+ },
+ {
+  "id": "cam5_2",
+  "scenario": "5_Barbarossa_2",
+  "name": "吕贝克",
+  "type": "中城",
+  "basis": "推定",
+  "history": "狮子亨利东进",
+  "size": 168
+ },
+ {
+  "id": "cam5_3",
+  "scenario": "5_Barbarossa_3",
+  "name": "克雷马",
+  "type": "小城",
+  "basis": "史实",
+  "history": "克雷马之围 1159-1160",
+  "size": 200
+ },
+ {
+  "id": "cam5_4",
+  "scenario": "5_Barbarossa_4",
+  "name": "莱尼亚诺",
+  "type": "战场",
+  "basis": "推定",
+  "history": "第五次意大利远征 1176",
+  "size": 168
+ },
+ {
+  "id": "cam5_5",
+  "scenario": "5_Barbarossa_5",
+  "name": "以哥念",
+  "type": "中城",
+  "basis": "推定",
+  "history": "第三次十字军东征途经安纳托利亚 1190",
+  "size": 220
+ },
+ {
+  "id": "cam5_6",
+  "scenario": "5_Barbarossa_6",
+  "name": "塞琉西亚",
+  "type": "小城",
+  "basis": "推定",
+  "history": "巴巴罗萨溺亡格克苏河后",
+  "size": 168
+ },
+ {
+  "id": "coop10_1",
+  "scenario": "F1_Alaric_1 CO-OP",
+  "sameStyleAs": "fcam1_1"
+ },
+ {
+  "id": "coop10_2",
+  "scenario": "F1_Alaric_2 CO-OP",
+  "sameStyleAs": "fcam1_2"
+ },
+ {
+  "id": "coop10_3",
+  "scenario": "F1_Alaric_3 CO-OP",
+  "sameStyleAs": "fcam1_3"
+ },
+ {
+  "id": "coop10_4",
+  "scenario": "F1_Alaric_4 CO-OP",
+  "sameStyleAs": "fcam1_4"
+ },
+ {
+  "id": "coop10_5",
+  "scenario": "F1_Alaric_5 CO-OP",
+  "sameStyleAs": "fcam1_5"
+ },
+ {
+  "id": "coop17_1",
+  "scenario": "A1_Tariq1 (CO-OP)",
+  "sameStyleAs": "acam1_1"
+ },
+ {
+  "id": "coop17_2",
+  "scenario": "A1_Tariq2 (CO-OP)",
+  "sameStyleAs": "acam1_2"
+ },
+ {
+  "id": "coop17_3",
+  "scenario": "A1_Tariq3 (CO-OP)",
+  "sameStyleAs": "acam1_3"
+ },
+ {
+  "id": "coop17_4",
+  "scenario": "A1_Tariq4 (CO-OP)",
+  "sameStyleAs": "acam1_4"
+ },
+ {
+  "id": "coop17_5",
+  "scenario": "A1_Tariq5 (CO-OP)",
+  "sameStyleAs": "acam1_5"
+ },
+ {
+  "id": "coop22_1",
+  "scenario": "R2_Suryavarman I_1 CO-OP",
+  "sameStyleAs": "rcam2_1"
+ },
+ {
+  "id": "coop22_2",
+  "scenario": "R2_Suryavarman I_2 CO-OP",
+  "name": "磅斯外圣剑寺",
+  "type": "中城",
+  "basis": "推定",
+  "history": "苏利耶跋摩一世平叛（联机版另一样式）",
+  "size": 168
+ },
+ {
+  "id": "coop22_3",
+  "scenario": "R2_Suryavarman I_3 CO-OP",
+  "sameStyleAs": "rcam2_3"
+ },
+ {
+  "id": "coop22_4",
+  "scenario": "R2_Suryavarman I_4 CO-OP",
+  "sameStyleAs": "rcam2_4"
+ },
+ {
+  "id": "coop22_5",
+  "scenario": "R2_Suryavarman I_5 CO-OP",
+  "sameStyleAs": "rcam2_5"
+ },
+ {
+  "id": "coop25_1",
+  "scenario": "K1_Tamerlane_1 (CO-OP)",
+  "sameStyleAs": "kcam1_1"
+ },
+ {
+  "id": "coop25_2",
+  "scenario": "K1_Tamerlane_2 (CO-OP)",
+  "sameStyleAs": "kcam1_2"
+ },
+ {
+  "id": "coop25_3",
+  "scenario": "K1_Tamerlane_3 (CO-OP)",
+  "sameStyleAs": "kcam1_3"
+ },
+ {
+  "id": "coop25_4",
+  "scenario": "K1_Tamerlane_4 (CO-OP)",
+  "sameStyleAs": "kcam1_4"
+ },
+ {
+  "id": "coop25_5",
+  "scenario": "K1_Tamerlane_5 (CO-OP)",
+  "sameStyleAs": "kcam1_5"
+ },
+ {
+  "id": "coop25_6",
+  "scenario": "K1_Tamerlane_6 (CO-OP)",
+  "sameStyleAs": "kcam1_6"
+ },
+ {
+  "id": "coop3_1",
+  "scenario": "3_Saladin_1 CO-OP",
+  "sameStyleAs": "cam3_1"
+ },
+ {
+  "id": "coop3_2",
+  "scenario": "3_Saladin_2 CO-OP",
+  "sameStyleAs": "cam3_2"
+ },
+ {
+  "id": "coop3_3",
+  "scenario": "3_Saladin_3 CO-OP",
+  "sameStyleAs": "cam3_3"
+ },
+ {
+  "id": "coop3_4",
+  "scenario": "3_Saladin_4 CO-OP",
+  "sameStyleAs": "cam3_4"
+ },
+ {
+  "id": "coop3_5",
+  "scenario": "3_Saladin_5 CO-OP",
+  "sameStyleAs": "cam3_5"
+ },
+ {
+  "id": "coop3_6",
+  "scenario": "3_Saladin_6 CO-OP",
+  "sameStyleAs": "cam3_6"
+ },
+ {
+  "id": "coop6_1",
+  "scenario": "C1_Attila_1 CO-OP",
+  "sameStyleAs": "xcam1_1"
+ },
+ {
+  "id": "coop6_2",
+  "scenario": "C1_Attila_2 CO-OP",
+  "sameStyleAs": "xcam1_2"
+ },
+ {
+  "id": "coop6_3",
+  "scenario": "C1_Attila_3 CO-OP",
+  "sameStyleAs": "xcam1_3"
+ },
+ {
+  "id": "coop6_4",
+  "scenario": "C1_Attila_4 CO-OP",
+  "sameStyleAs": "xcam1_4"
+ },
+ {
+  "id": "coop6_5",
+  "scenario": "C1_Attila_5 CO-OP",
+  "sameStyleAs": "xcam1_5"
+ },
+ {
+  "id": "coop6_6",
+  "scenario": "C1_Attila_6 CO-OP",
+  "name": "帕维亚",
+  "type": "中城",
+  "basis": "推定",
+  "history": "阿提拉入侵意大利 452（联机版另一样式）",
+  "size": 240
+ },
+ {
+  "id": "coop9_1",
+  "scenario": "C4_1_Tours CO-OP",
+  "sameStyleAs": "fcam7_1"
+ },
+ {
+  "id": "coop9_2",
+  "scenario": "C4_3_Hastings CO-OP",
+  "sameStyleAs": "fcam7_3"
+ },
+ {
+  "id": "coop9_3",
+  "scenario": "F7_4_Honfoglalas (895) CO-OP",
+  "name": "阿尔帕尔",
+  "type": "小城",
+  "basis": "推定",
+  "history": "马扎尔人入主喀尔巴阡盆地（联机版另一样式）",
+  "size": 240
+ },
+ {
+  "id": "coop9_4",
+  "scenario": "F7_5_Kurikara (1183) CO-OP",
+  "sameStyleAs": "fcam7_13"
+ },
+ {
+  "id": "coop9_5",
+  "scenario": "F7_7_Bapheus (1302) CO-OP",
+  "sameStyleAs": "fcam7_15"
+ },
+ {
+  "id": "dcam0_1",
+  "scenario": "0_June_Event_Scenario",
+  "name": "弗拉基米尔",
+  "type": "中城",
+  "basis": "按样貌",
+  "history": "六月活动关：钦察、怯薛、波雅尔",
+  "size": 120
+ },
+ {
+  "id": "dcam0_2",
+  "scenario": "0_September_Event_Scenario",
+  "sameStyleAs": "cam5_1"
+ },
+ {
+  "id": "dcam0_3",
+  "scenario": "Mangudai Madness",
+  "name": "哈拉和林",
+  "type": "中城",
+  "basis": "按样貌",
+  "history": "蒙古营帐、可汗、奇观",
+  "size": 120
+ },
+ {
+  "id": "dcam0_4",
+  "scenario": "The Siege",
+  "name": "热那亚",
+  "type": "大城",
+  "basis": "按样貌",
+  "history": "临海大城，热那亚弩手、雇佣兵、高架水渠",
+  "size": 240
+ },
+ {
+  "id": "eecam1_1",
+  "scenario": "EE1_Algirdas_1",
+  "name": "克列瓦",
+  "type": "小城",
+  "basis": "推定",
+  "history": "废黜尧努蒂斯 1345",
+  "size": 200
+ },
+ {
+  "id": "eecam1_2",
+  "scenario": "EE1_Algirdas_2",
+  "name": "考纳斯",
+  "type": "小城",
+  "basis": "推定",
+  "history": "与条顿骑士团争夺，考纳斯城堡被毁 1362",
+  "size": 240
+ },
+ {
+  "id": "eecam1_3",
+  "scenario": "EE1_Algirdas_3",
+  "name": "蓝水河",
+  "type": "战场",
+  "basis": "史实",
+  "history": "蓝水河之战 1362",
+  "size": 220
+ },
+ {
+  "id": "eecam1_4",
+  "scenario": "EE1_Algirdas_4",
+  "name": "莫斯科",
+  "type": "大城",
+  "basis": "史实",
+  "history": "立陶宛围攻莫斯科 1368",
+  "size": 200
+ },
+ {
+  "id": "eecam1_5",
+  "scenario": "EE1_Algirdas_5",
+  "name": "特拉凯",
+  "type": "中城",
+  "basis": "推定",
+  "history": "立陶宛内战 1381",
+  "size": 220
+ },
+ {
+  "id": "eecam2_1",
+  "scenario": "EE2_Jadwiga_1",
+  "name": "克拉科夫",
+  "type": "大城",
+  "basis": "史实",
+  "history": "雅德维加加冕 1384",
+  "size": 144
+ },
+ {
+  "id": "eecam2_2",
+  "scenario": "EE2_Jadwiga_2",
+  "name": "加利奇",
+  "type": "中城",
+  "basis": "史实",
+  "history": "攻取加利奇 1387",
+  "size": 144
+ },
+ {
+  "id": "eecam2_3",
+  "scenario": "EE2_Jadwiga_3",
+  "name": "格罗德诺",
+  "type": "中城",
+  "basis": "推定",
+  "history": "立陶宛内战 1389-1392",
+  "size": 200
+ },
+ {
+  "id": "eecam2_4",
+  "scenario": "EE2_Jadwiga_4",
+  "name": "维尔纽斯",
+  "type": "大城",
+  "basis": "史实",
+  "history": "维尔纽斯之围 1390",
+  "size": 144
+ },
+ {
+  "id": "eecam2_5",
+  "scenario": "EE2_Jadwiga_5",
+  "name": "沃尔斯克拉河",
+  "type": "战场",
+  "basis": "史实",
+  "history": "沃尔斯克拉河之战 1399",
+  "size": 200
+ },
+ {
+  "id": "eecam2_6",
+  "scenario": "EE2_Jadwiga_6",
+  "name": "马尔堡",
+  "type": "大城",
+  "basis": "推定",
+  "history": "格伦瓦尔德战后围攻马尔堡 1410",
+  "size": 200
+ },
+ {
+  "id": "eecam3_1",
+  "scenario": "EE3_Zizka_1",
+  "name": "克鲁姆洛夫",
+  "type": "中城",
+  "basis": "推定",
+  "history": "与罗森伯格家族争斗",
+  "size": 144
+ },
+ {
+  "id": "eecam3_2",
+  "scenario": "EE3_Zizka_2",
+  "name": "格伦瓦尔德",
+  "type": "战场",
+  "basis": "史实",
+  "history": "格伦瓦尔德之战 1410",
+  "size": 168
+ },
+ {
+  "id": "eecam3_3",
+  "scenario": "EE3_Zizka_3",
+  "name": "塔博尔",
+  "type": "中城",
+  "basis": "史实",
+  "history": "执掌塔博尔守军 1420",
+  "size": 168
+ },
+ {
+  "id": "eecam3_4",
+  "scenario": "EE3_Zizka_4",
+  "name": "布拉格",
+  "type": "大城",
+  "basis": "史实",
+  "history": "保卫布拉格、维特科夫山之战 1420",
+  "size": 144
+ },
+ {
+  "id": "eecam3_5",
+  "scenario": "EE3_Zizka_5",
+  "name": "库特纳霍拉",
+  "type": "中城",
+  "basis": "史实",
+  "history": "库特纳霍拉之战 1421",
+  "size": 144
+ },
+ {
+  "id": "eecam3_6",
+  "scenario": "EE3_Zizka_6",
+  "name": "赫拉德茨克拉洛韦",
+  "type": "中城",
+  "basis": "推定",
+  "history": "塔博尔派与圣杯派内战 1423",
+  "size": 200
+ },
+ {
+  "id": "fcam1_1",
+  "scenario": "F1_Alaric_1",
+  "name": "冷河",
+  "type": "战场",
+  "basis": "史实",
+  "history": "冷河之战 394",
+  "size": 144
+ },
+ {
+  "id": "fcam1_2",
+  "scenario": "F1_Alaric_2",
+  "name": "科林斯",
+  "type": "中城",
+  "basis": "推定",
+  "history": "阿拉里克入侵希腊 396",
+  "size": 200
+ },
+ {
+  "id": "fcam1_3",
+  "scenario": "F1_Alaric_3",
+  "name": "拉韦纳",
+  "type": "大城",
+  "basis": "推定",
+  "history": "第二次入侵意大利 408",
+  "size": 200
+ },
+ {
+  "id": "fcam1_4",
+  "scenario": "F1_Alaric_4",
+  "name": "罗马",
+  "type": "大城",
+  "basis": "史实",
+  "history": "洗劫罗马 410",
+  "size": 200
+ },
+ {
+  "id": "fcam1_5",
+  "scenario": "F1_Alaric_5",
+  "name": "纳博讷",
+  "type": "中城",
+  "basis": "推定",
+  "history": "阿陶尔夫征服南高卢 413",
+  "size": 200
+ },
+ {
+  "id": "fcam2_1",
+  "scenario": "F2_Dracula1",
+  "name": "特尔戈维什泰",
+  "type": "中城",
+  "basis": "推定",
+  "history": "夺瓦拉几亚王位 1448",
+  "size": 120
+ },
+ {
+  "id": "fcam2_2",
+  "scenario": "F2_Dracula2",
+  "name": "特尔戈尔",
+  "type": "小城",
+  "basis": "推定",
+  "history": "重返瓦拉几亚击杀弗拉迪斯拉夫二世 1456",
+  "size": 200
+ },
+ {
+  "id": "fcam2_3",
+  "scenario": "F2_Dracula3",
+  "name": "久尔久",
+  "type": "小城",
+  "basis": "推定",
+  "history": "袭扰保加利亚与多瑙河沿岸 1461",
+  "size": 200
+ },
+ {
+  "id": "fcam2_4",
+  "scenario": "F2_Dracula4",
+  "name": "波埃纳里",
+  "type": "险要",
+  "basis": "推定",
+  "history": "穆罕默德二世入侵瓦拉几亚 1462",
+  "size": 168
+ },
+ {
+  "id": "fcam2_5",
+  "scenario": "F2_Dracula5",
+  "name": "布加勒斯特",
+  "type": "中城",
+  "basis": "推定",
+  "history": "重返瓦拉几亚 1476",
+  "size": 120
+ },
+ {
+  "id": "fcam3_1",
+  "scenario": "F3_Bari1",
+  "name": "马泰拉",
+  "type": "小城",
+  "basis": "推定",
+  "history": "路易二世征巴里埃米尔国 867-871",
+  "size": 168
+ },
+ {
+  "id": "fcam3_2",
+  "scenario": "F3_Bari2",
+  "name": "阿斯科利",
+  "type": "小城",
+  "basis": "推定",
+  "history": "梅卢斯起义 1009-1011",
+  "size": 168
+ },
+ {
+  "id": "fcam3_3",
+  "scenario": "F3_Bari3",
+  "name": "坎尼",
+  "type": "战场",
+  "basis": "史实",
+  "history": "第二次坎尼之战 1018",
+  "size": 120
+ },
+ {
+  "id": "fcam3_4",
+  "scenario": "F3_Bari4",
+  "name": "特罗亚",
+  "type": "小城",
+  "basis": "史实",
+  "history": "守特罗亚要塞 1022",
+  "size": 168
+ },
+ {
+  "id": "fcam3_5",
+  "scenario": "F3_Bari5",
+  "name": "巴里",
+  "type": "大城",
+  "basis": "史实",
+  "history": "巴里之围 1068-1071",
+  "size": 168
+ },
+ {
+  "id": "fcam4_1",
+  "scenario": "F4_Sforza_1",
+  "name": "布雷西亚",
+  "type": "中城",
+  "basis": "史实",
+  "history": "布雷西亚叛乱 1426",
+  "size": 144
+ },
+ {
+  "id": "fcam4_2",
+  "scenario": "F4_Sforza_2",
+  "name": "安科纳",
+  "type": "中城",
+  "basis": "推定",
+  "history": "斯福尔扎经营马尔凯",
+  "size": 144
+ },
+ {
+  "id": "fcam4_3",
+  "scenario": "F4_Sforza_3",
+  "name": "滕诺",
+  "type": "险要",
+  "basis": "史实",
+  "history": "与皮奇尼诺争夺伦巴第，滕诺",
+  "size": 144
+ },
+ {
+  "id": "fcam4_4",
+  "scenario": "F4_Sforza_4",
+  "name": "皮亚琴察",
+  "type": "中城",
+  "basis": "史实",
+  "history": "皮亚琴察与卡拉瓦乔 1447-1448",
+  "size": 144
+ },
+ {
+  "id": "fcam4_5",
+  "scenario": "F4_Sforza_5",
+  "name": "米兰",
+  "type": "大城",
+  "basis": "史实",
+  "history": "米兰之围 1450",
+  "size": 168
+ },
+ {
+  "id": "fcam5_1",
+  "scenario": "F5_Pachacuti_1",
+  "name": "库斯科",
+  "type": "大城",
+  "basis": "推定",
+  "history": "维拉科查即位 1410",
+  "size": 168
+ },
+ {
+  "id": "fcam5_2",
+  "scenario": "F5_Pachacuti_2",
+  "name": "亚瓦尔潘帕",
+  "type": "战场",
+  "basis": "史实",
+  "history": "昌卡战争，血之原",
+  "size": 168
+ },
+ {
+  "id": "fcam5_3",
+  "scenario": "F5_Pachacuti_3",
+  "name": "卡基亚哈基哈瓦纳",
+  "type": "城寨",
+  "basis": "推定",
+  "history": "帕查库特克与兄乌尔科之争 1438",
+  "size": 144
+ },
+ {
+  "id": "fcam5_4",
+  "scenario": "F5_Pachacuti_4",
+  "name": "安达韦拉斯",
+  "type": "中城",
+  "basis": "推定",
+  "history": "昌卡人降服 1440年代",
+  "size": 200
+ },
+ {
+  "id": "fcam5_5",
+  "scenario": "F5_Pachacuti_5",
+  "name": "昌昌",
+  "type": "大城",
+  "basis": "史实",
+  "history": "征服奇穆",
+  "size": 168
+ },
+ {
+  "id": "fcam6_1",
+  "scenario": "F6_Prithviraj_1",
+  "name": "古达普拉",
+  "type": "小城",
+  "basis": "推定",
+  "history": "与堂兄纳加周那之争",
+  "size": 168
+ },
+ {
+  "id": "fcam6_2",
+  "scenario": "F6_Prithviraj_2",
+  "name": "安希尔瓦拉",
+  "type": "大城",
+  "basis": "推定",
+  "history": "远征古吉拉特",
+  "size": 168
+ },
+ {
+  "id": "fcam6_3",
+  "scenario": "F6_Prithviraj_3",
+  "name": "卡瑙季",
+  "type": "大城",
+  "basis": "史实",
+  "history": "与桑约吉塔私奔",
+  "size": 144
+ },
+ {
+  "id": "fcam6_4",
+  "scenario": "F6_Prithviraj_4",
+  "name": "塔拉因",
+  "type": "战场",
+  "basis": "史实",
+  "history": "第一次塔拉因之战 1191",
+  "size": 120
+ },
+ {
+  "id": "fcam6_5",
+  "scenario": "F6_Prithviraj_5",
+  "name": "阿杰梅尔",
+  "type": "大城",
+  "basis": "推定",
+  "history": "乔汉王朝终局 1192",
+  "size": 168
+ },
+ {
+  "id": "fcam7_1",
+  "scenario": "C4_1_Tours",
+  "name": "图尔",
+  "type": "战场",
+  "basis": "史实",
+  "history": "图尔之战 732",
+  "size": 168
+ },
+ {
+  "id": "fcam7_2",
+  "scenario": "C4_2_Vinlandsaga",
+  "name": "文兰",
+  "type": "城寨",
+  "basis": "史实",
+  "history": "维京人至文兰",
+  "size": 220
+ },
+ {
+  "id": "fcam7_3",
+  "scenario": "C4_3_Hastings",
+  "name": "黑斯廷斯",
+  "type": "战场",
+  "basis": "史实",
+  "history": "黑斯廷斯之战 1066",
+  "size": 220
+ },
+ {
+  "id": "fcam7_4",
+  "scenario": "C4_4_Manzikert",
+  "name": "曼齐刻尔特",
+  "type": "战场",
+  "basis": "史实",
+  "history": "曼齐刻尔特之战 1071",
+  "size": 168
+ },
+ {
+  "id": "fcam7_5",
+  "scenario": "C4_5_Agincourt",
+  "name": "阿金库尔",
+  "type": "战场",
+  "basis": "史实",
+  "history": "阿金库尔之战 1415",
+  "size": 144
+ },
+ {
+  "id": "fcam7_6",
+  "scenario": "C4_6_Lepanto",
+  "name": "勒班陀",
+  "type": "战场",
+  "basis": "史实",
+  "history": "勒班陀海战 1571",
+  "size": 144
+ },
+ {
+  "id": "fcam7_7",
+  "scenario": "C4_7_Japan",
+  "name": "京都",
+  "type": "大城",
+  "basis": "史实",
+  "history": "本能寺之变 1582",
+  "size": 200
+ },
+ {
+  "id": "fcam7_8",
+  "scenario": "C4_8_Noryang",
+  "name": "露梁",
+  "type": "战场",
+  "basis": "史实",
+  "history": "露梁海战 1598",
+  "size": 200
+ },
+ {
+  "id": "fcam7_9",
+  "scenario": "F7_1_Bukhara (557)",
+  "name": "布哈拉",
+  "type": "大城",
+  "basis": "史实",
+  "history": "布哈拉 557",
+  "size": 200
+ },
+ {
+  "id": "fcam7_10",
+  "scenario": "F7_2_Dos Pilas (648)",
+  "name": "多斯皮拉斯",
+  "type": "中城",
+  "basis": "史实",
+  "history": "多斯皮拉斯 648",
+  "size": 220
+ },
+ {
+  "id": "fcam7_11",
+  "scenario": "F7_3_York (865)",
+  "name": "约克",
+  "type": "大城",
+  "basis": "史实",
+  "history": "维京大军攻约克 865",
+  "size": 480
+ },
+ {
+  "id": "fcam7_12",
+  "scenario": "F7_4_Honfoglalas (895)",
+  "name": "维列茨克山口",
+  "type": "险要",
+  "basis": "推定",
+  "history": "马扎尔人入主喀尔巴阡盆地 895",
+  "size": 220
+ },
+ {
+  "id": "fcam7_13",
+  "scenario": "F7_5_Kurikara (1183)",
+  "name": "俱利伽罗",
+  "type": "险要",
+  "basis": "史实",
+  "history": "俱利伽罗峠之战 1183",
+  "size": 200
+ },
+ {
+  "id": "fcam7_14",
+  "scenario": "F7_6_Cyprus (1191)",
+  "name": "利马索尔",
+  "type": "中城",
+  "basis": "推定",
+  "history": "狮心王攻塞浦路斯 1191",
+  "size": 168
+ },
+ {
+  "id": "fcam7_15",
+  "scenario": "F7_7_Bapheus (1302)",
+  "name": "巴菲乌斯",
+  "type": "战场",
+  "basis": "史实",
+  "history": "巴菲乌斯之战 1302",
+  "size": 220
+ },
+ {
+  "id": "fcam7_16",
+  "scenario": "F7_8_Poyang (1363)",
+  "name": "洪都",
+  "type": "大城",
+  "basis": "推定",
+  "history": "鄱阳湖之战 1363，洪都之围",
+  "size": 200
+ },
+ {
+  "id": "incam1_1",
+  "scenario": "IN1_Babur_1",
+  "name": "撒马尔罕",
+  "type": "大城",
+  "basis": "史实",
+  "history": "撒马尔罕之围 1497",
+  "size": 168
+ },
+ {
+  "id": "incam1_2",
+  "scenario": "IN1_Babur_2",
+  "name": "喀布尔",
+  "type": "大城",
+  "basis": "史实",
+  "history": "离费尔干纳，据赫拉特与喀布尔",
+  "size": 168
+ },
+ {
+  "id": "incam1_3",
+  "scenario": "IN1_Babur_3",
+  "name": "开伯尔山口",
+  "type": "险要",
+  "basis": "推定",
+  "history": "兴都库什战役 1504-1507",
+  "size": 200
+ },
+ {
+  "id": "incam1_4",
+  "scenario": "IN1_Babur_4",
+  "name": "帕尼帕特",
+  "type": "战场",
+  "basis": "史实",
+  "history": "第一次帕尼帕特之战 1526",
+  "size": 144
+ },
+ {
+  "id": "incam1_5",
+  "scenario": "IN1_Babur_5",
+  "name": "坎瓦",
+  "type": "战场",
+  "basis": "史实",
+  "history": "坎瓦之战 1527",
+  "size": 200
+ },
+ {
+  "id": "incam2_1",
+  "scenario": "IN2_Rajendra_1",
+  "name": "曼亚凯塔",
+  "type": "大城",
+  "basis": "推定",
+  "history": "对遮娄其王朝战争",
+  "size": 168
+ },
+ {
+  "id": "incam2_2",
+  "scenario": "IN2_Rajendra_2",
+  "name": "阿努拉德普勒",
+  "type": "大城",
+  "basis": "史实",
+  "history": "征服斯里兰卡 1017",
+  "size": 200
+ },
+ {
+  "id": "incam2_3",
+  "scenario": "IN2_Rajendra_3",
+  "name": "坦贾武尔",
+  "type": "大城",
+  "basis": "推定",
+  "history": "朱罗王朝扩张与巩固 1018-1021",
+  "size": 240
+ },
+ {
+  "id": "incam2_4",
+  "scenario": "IN2_Rajendra_4",
+  "name": "达达布克蒂",
+  "type": "中城",
+  "basis": "推定",
+  "history": "朱罗北征恒河",
+  "size": 200
+ },
+ {
+  "id": "incam2_5",
+  "scenario": "IN2_Rajendra_5",
+  "name": "吉打",
+  "type": "中城",
+  "basis": "史实",
+  "history": "朱罗-高棉联合进攻室利佛逝",
+  "size": 240
+ },
+ {
+  "id": "incam3_1",
+  "scenario": "IN3_Devapala_1",
+  "name": "普拉格久提沙",
+  "type": "中城",
+  "basis": "史实",
+  "history": "进攻普拉格久提沙（阿萨姆）",
+  "size": 144
+ },
+ {
+  "id": "incam3_2",
+  "scenario": "IN3_Devapala_2",
+  "name": "华氏城",
+  "type": "大城",
+  "basis": "推定",
+  "history": "三方争夺曲女城",
+  "size": 144
+ },
+ {
+  "id": "incam3_3",
+  "scenario": "IN3_Devapala_3",
+  "name": "乌贾因",
+  "type": "中城",
+  "basis": "推定",
+  "history": "挫败胡纳人",
+  "size": 168
+ },
+ {
+  "id": "incam3_4",
+  "scenario": "IN3_Devapala_4",
+  "name": "马杜赖",
+  "type": "大城",
+  "basis": "推定",
+  "history": "南征潘地亚王朝",
+  "size": 144
+ },
+ {
+  "id": "incam3_5",
+  "scenario": "IN3_Devapala_5",
+  "name": "那烂陀",
+  "type": "中城",
+  "basis": "推定",
+  "history": "波罗王朝弘佛",
+  "size": 168
+ },
+ {
+  "id": "kcam1_1",
+  "scenario": "K1_Tamerlane_1",
+  "name": "渴石",
+  "type": "中城",
+  "basis": "推定",
+  "history": "帖木儿崛起统治河中",
+  "size": 144
+ },
+ {
+  "id": "kcam1_2",
+  "scenario": "K1_Tamerlane_2",
+  "name": "伊斯法罕",
+  "type": "大城",
+  "basis": "推定",
+  "history": "征服波斯",
+  "size": 168
+ },
+ {
+  "id": "kcam1_3",
+  "scenario": "K1_Tamerlane_3",
+  "name": "萨莱",
+  "type": "大城",
+  "basis": "推定",
+  "history": "与脱脱迷失之战",
+  "size": 168
+ },
+ {
+  "id": "kcam1_4",
+  "scenario": "K1_Tamerlane_4",
+  "name": "德里",
+  "type": "大城",
+  "basis": "史实",
+  "history": "征服印度，洗劫德里 1398",
+  "size": 144
+ },
+ {
+  "id": "kcam1_5",
+  "scenario": "K1_Tamerlane_5",
+  "name": "大马士革",
+  "type": "大城",
+  "basis": "推定",
+  "history": "黎凡特战役 1400",
+  "size": 144
+ },
+ {
+  "id": "kcam1_6",
+  "scenario": "K1_Tamerlane_6",
+  "name": "士麦那",
+  "type": "中城",
+  "basis": "史实",
+  "history": "安卡拉之战与士麦那之围 1402",
+  "size": 168
+ },
+ {
+  "id": "kcam2_1",
+  "scenario": "K2_Ivaylo_1",
+  "name": "普雷斯拉夫",
+  "type": "中城",
+  "basis": "推定",
+  "history": "伊瓦伊洛起义第一年 1277",
+  "size": 168
+ },
+ {
+  "id": "kcam2_2",
+  "scenario": "K2_Ivaylo_2",
+  "name": "特尔诺沃",
+  "type": "大城",
+  "basis": "推定",
+  "history": "与玛丽亚结盟登基",
+  "size": 144
+ },
+ {
+  "id": "kcam2_3",
+  "scenario": "K2_Ivaylo_3",
+  "name": "德拉斯塔",
+  "type": "中城",
+  "basis": "推定",
+  "history": "抵御那海汗袭扰",
+  "size": 144
+ },
+ {
+  "id": "kcam2_4",
+  "scenario": "K2_Ivaylo_4",
+  "name": "德维纳",
+  "type": "战场",
+  "basis": "史实",
+  "history": "德维纳之战 1279",
+  "size": 144
+ },
+ {
+  "id": "kcam2_5",
+  "scenario": "K2_Ivaylo_5",
+  "name": "伊萨克恰",
+  "type": "中城",
+  "basis": "推定",
+  "history": "投奔那海汗",
+  "size": 200
+ },
+ {
+  "id": "kcam3_1",
+  "scenario": "K3_Kotyan_1",
+  "name": "基辅",
+  "type": "大城",
+  "basis": "推定",
+  "history": "联合基辅罗斯抗蒙 1222",
+  "size": 220
+ },
+ {
+  "id": "kcam3_2",
+  "scenario": "K3_Kotyan_2",
+  "name": "卡尔卡河",
+  "type": "战场",
+  "basis": "史实",
+  "history": "卡尔卡河之战 1223",
+  "size": 220
+ },
+ {
+  "id": "kcam3_3",
+  "scenario": "K3_Kotyan_3",
+  "name": "米尔科夫",
+  "type": "城寨",
+  "basis": "推定",
+  "history": "四万帐库曼人迁往匈牙利",
+  "size": 200
+ },
+ {
+  "id": "kcam3_4",
+  "scenario": "K3_Kotyan_4",
+  "name": "佩斯",
+  "type": "中城",
+  "basis": "推定",
+  "history": "忽滩遇刺后库曼人劫掠匈牙利",
+  "size": 200
+ },
+ {
+  "id": "kcam3_5",
+  "scenario": "K3_Kotyan_5",
+  "name": "维丁",
+  "type": "中城",
+  "basis": "推定",
+  "history": "库曼人移居保加利亚",
+  "size": 240
+ },
+ {
+  "id": "rcam1_1",
+  "scenario": "R1_GajahMada_1",
+  "name": "谏义里",
+  "type": "中城",
+  "basis": "推定",
+  "history": "蒙古侵爪哇，满者伯夷建国 1293",
+  "size": 200
+ },
+ {
+  "id": "rcam1_2",
+  "scenario": "R1_GajahMada_2",
+  "name": "满者伯夷",
+  "type": "大城",
+  "basis": "史实",
+  "history": "库蒂叛乱 1319",
+  "size": 168
+ },
+ {
+  "id": "rcam1_3",
+  "scenario": "R1_GajahMada_3",
+  "name": "贝杜卢",
+  "type": "中城",
+  "basis": "推定",
+  "history": "征服巴厘",
+  "size": 200
+ },
+ {
+  "id": "rcam1_4",
+  "scenario": "R1_GajahMada_4",
+  "name": "栋布",
+  "type": "小城",
+  "basis": "推定",
+  "history": "征服东部群岛",
+  "size": 168
+ },
+ {
+  "id": "rcam1_5",
+  "scenario": "R1_GajahMada_5",
+  "name": "布巴特",
+  "type": "战场",
+  "basis": "史实",
+  "history": "布巴特之战 1357",
+  "size": 200
+ },
+ {
+  "id": "rcam2_1",
+  "scenario": "R2_Suryavarman I_1",
+  "name": "吴哥",
+  "type": "大城",
+  "basis": "史实",
+  "history": "夺取吴哥王位",
+  "size": 120
+ },
+ {
+  "id": "rcam2_2",
+  "scenario": "R2_Suryavarman I_2",
+  "name": "柏威夏",
+  "type": "险要",
+  "basis": "推定",
+  "history": "平定贾亚维拉跋摩叛乱",
+  "size": 168
+ },
+ {
+  "id": "rcam2_3",
+  "scenario": "R2_Suryavarman I_3",
+  "name": "罗斛",
+  "type": "小城",
+  "basis": "推定",
+  "history": "护送大战车出使",
+  "size": 120
+ },
+ {
+  "id": "rcam2_4",
+  "scenario": "R2_Suryavarman I_4",
+  "name": "单马令",
+  "type": "中城",
+  "basis": "推定",
+  "history": "朱罗-高棉进攻室利佛逝",
+  "size": 168
+ },
+ {
+  "id": "rcam2_5",
+  "scenario": "R2_Suryavarman I_5",
+  "name": "披迈",
+  "type": "中城",
+  "basis": "推定",
+  "history": "苏利耶跋摩一世晚年",
+  "size": 168
+ },
+ {
+  "id": "rcam3_1",
+  "scenario": "R3_Bayinnaung_1",
+  "name": "勃固",
+  "type": "大城",
+  "basis": "史实",
+  "history": "东吁-勃固战争",
+  "size": 144
+ },
+ {
+  "id": "rcam3_2",
+  "scenario": "R3_Bayinnaung_2",
+  "name": "阿瓦",
+  "type": "大城",
+  "basis": "史实",
+  "history": "东吁-阿瓦战争",
+  "size": 144
+ },
+ {
+  "id": "rcam3_3",
+  "scenario": "R3_Bayinnaung_3",
+  "name": "东吁",
+  "type": "中城",
+  "basis": "史实",
+  "history": "莽应龙继位 1550",
+  "size": 144
+ },
+ {
+  "id": "rcam3_4",
+  "scenario": "R3_Bayinnaung_4",
+  "name": "阿瑜陀耶",
+  "type": "大城",
+  "basis": "推定",
+  "history": "缅暹战争及兰纳、澜沧",
+  "size": 144
+ },
+ {
+  "id": "rcam3_5",
+  "scenario": "R3_Bayinnaung_5",
+  "name": "妙乌",
+  "type": "大城",
+  "basis": "史实",
+  "history": "远征阿拉干",
+  "size": 168
+ },
+ {
+  "id": "rcam4_1",
+  "scenario": "R4_LeLoi_1",
+  "name": "蓝山",
+  "type": "城寨",
+  "basis": "史实",
+  "history": "蓝山起义 1418",
+  "size": 200
+ },
+ {
+  "id": "rcam4_2",
+  "scenario": "R4_LeLoi_2",
+  "name": "至灵山",
+  "type": "险要",
+  "basis": "推定",
+  "history": "山中要塞抗明",
+  "size": 200
+ },
+ {
+  "id": "rcam4_3",
+  "scenario": "R4_LeLoi_3",
+  "name": "卒洞",
+  "type": "战场",
+  "basis": "推定",
+  "history": "东关城外之战 1426",
+  "size": 144
+ },
+ {
+  "id": "rcam4_4",
+  "scenario": "R4_LeLoi_4",
+  "name": "茶麟",
+  "type": "小城",
+  "basis": "推定",
+  "history": "南下经蔡班与明军坚城",
+  "size": 144
+ },
+ {
+  "id": "rcam4_5",
+  "scenario": "R4_LeLoi_5",
+  "name": "乂安",
+  "type": "中城",
+  "basis": "史实",
+  "history": "攻乂安",
+  "size": 240
+ },
+ {
+  "id": "rcam4_6",
+  "scenario": "R4_LeLoi_6",
+  "name": "东关",
+  "type": "大城",
+  "basis": "史实",
+  "history": "围攻东都（东关）王通 1427",
+  "size": 144
+ },
+ {
+  "id": "wecam1_1",
+  "scenario": "WE1_Edward_1",
+  "name": "凯尼尔沃思",
+  "type": "小城",
+  "basis": "史实",
+  "history": "伊夫舍姆之战与凯尼尔沃思之围 1265-1266",
+  "size": 200
+ },
+ {
+  "id": "wecam1_2",
+  "scenario": "WE1_Edward_2",
+  "name": "卡昆",
+  "type": "小城",
+  "basis": "推定",
+  "history": "爱德华十字军 1271",
+  "size": 200
+ },
+ {
+  "id": "wecam1_3",
+  "scenario": "WE1_Edward_3",
+  "name": "康威",
+  "type": "小城",
+  "basis": "推定",
+  "history": "征服威尔士 1283",
+  "size": 168
+ },
+ {
+  "id": "wecam1_4",
+  "scenario": "WE1_Edward_4",
+  "name": "贝里克",
+  "type": "中城",
+  "basis": "史实",
+  "history": "攻取贝里克与邓巴之战 1296",
+  "size": 168
+ },
+ {
+  "id": "wecam1_5",
+  "scenario": "WE1_Edward_5",
+  "name": "斯特灵",
+  "type": "中城",
+  "basis": "史实",
+  "history": "斯特灵之围 1304",
+  "size": 168
+ },
+ {
+  "id": "wecam2_1",
+  "scenario": "WE2_GrandDukes_1",
+  "name": "奥泰",
+  "type": "战场",
+  "basis": "史实",
+  "history": "奥泰之战 1408",
+  "size": 168
+ },
+ {
+  "id": "wecam2_2",
+  "scenario": "WE2_GrandDukes_2",
+  "name": "布尔日",
+  "type": "大城",
+  "basis": "推定",
+  "history": "勃艮第派与阿马尼亚克派之争",
+  "size": 220
+ },
+ {
+  "id": "wecam2_3",
+  "scenario": "WE2_GrandDukes_3",
+  "name": "蓬图瓦兹",
+  "type": "中城",
+  "basis": "推定",
+  "history": "无畏的约翰夺巴黎 1418",
+  "size": 200
+ },
+ {
+  "id": "wecam2_4",
+  "scenario": "WE2_GrandDukes_4",
+  "name": "布鲁日",
+  "type": "大城",
+  "basis": "推定",
+  "history": "勃艮第扩张低地",
+  "size": 200
+ },
+ {
+  "id": "wecam2_5",
+  "scenario": "WE2_GrandDukes_5",
+  "name": "布劳沃斯港",
+  "type": "战场",
+  "basis": "史实",
+  "history": "布劳沃斯港之战 1426",
+  "size": 220
+ },
+ {
+  "id": "wecam2_6",
+  "scenario": "WE2_GrandDukes_6",
+  "name": "贡比涅",
+  "type": "中城",
+  "basis": "史实",
+  "history": "贡比涅俘获贞德 1430",
+  "size": 220
+ },
+ {
+  "id": "wecam3_1",
+  "scenario": "WE3_Hautevilles_1",
+  "name": "梅尔菲",
+  "type": "中城",
+  "basis": "推定",
+  "history": "诺曼人征服南意大利",
+  "size": 255
+ },
+ {
+  "id": "wecam3_2",
+  "scenario": "WE3_Hautevilles_2",
+  "name": "巴勒莫",
+  "type": "大城",
+  "basis": "推定",
+  "history": "诺曼人征服西西里 1072",
+  "size": 255
+ },
+ {
+  "id": "wecam3_3",
+  "scenario": "WE3_Hautevilles_3",
+  "name": "都拉佐",
+  "type": "大城",
+  "basis": "推定",
+  "history": "拜占庭-诺曼战争 1081",
+  "size": 255
+ },
+ {
+  "id": "wecam3_4",
+  "scenario": "WE3_Hautevilles_4",
+  "name": "安条克",
+  "type": "大城",
+  "basis": "史实",
+  "history": "第二次安条克之围 1098",
+  "size": 200
+ },
+ {
+  "id": "wecam3_5",
+  "scenario": "WE3_Hautevilles_5",
+  "name": "那不勒斯",
+  "type": "大城",
+  "basis": "推定",
+  "history": "罗杰二世统一南意大利",
+  "size": 255
+ },
+ {
+  "id": "xcam1_1",
+  "scenario": "C1_Attila_1",
+  "name": "阿提拉王庭",
+  "type": "城寨",
+  "basis": "推定",
+  "history": "阿提拉与布列达共治 434-445",
+  "size": 144
+ },
+ {
+  "id": "xcam1_2",
+  "scenario": "C1_Attila_2",
+  "name": "奈苏斯",
+  "type": "中城",
+  "basis": "推定",
+  "history": "匈人入侵巴尔干 443",
+  "size": 168
+ },
+ {
+  "id": "xcam1_3",
+  "scenario": "C1_Attila_3",
+  "name": "君士坦丁堡",
+  "type": "大城",
+  "basis": "史实",
+  "history": "第三次巴尔干战役 447",
+  "size": 144
+ },
+ {
+  "id": "xcam1_4",
+  "scenario": "C1_Attila_4",
+  "name": "梅斯",
+  "type": "中城",
+  "basis": "推定",
+  "history": "阿提拉入侵高卢 451",
+  "size": 168
+ },
+ {
+  "id": "xcam1_5",
+  "scenario": "C1_Attila_5",
+  "name": "卡塔隆平原",
+  "type": "战场",
+  "basis": "史实",
+  "history": "卡塔隆平原之战 451",
+  "size": 200
+ },
+ {
+  "id": "xcam1_6",
+  "scenario": "C1_Attila_6",
+  "name": "阿奎莱亚",
+  "type": "大城",
+  "basis": "推定",
+  "history": "阿提拉入侵意大利 452",
+  "size": 220
+ },
+ {
+  "id": "xcam2_1",
+  "scenario": "C2_ElCid_1",
+  "name": "戈尔佩赫拉",
+  "type": "战场",
+  "basis": "史实",
+  "history": "戈尔佩赫拉之战 1072",
+  "size": 120
+ },
+ {
+  "id": "xcam2_2",
+  "scenario": "C2_ElCid_2",
+  "name": "马德里",
+  "type": "小城",
+  "basis": "推定",
+  "history": "莱昂攻取托莱多 1085",
+  "size": 168
+ },
+ {
+  "id": "xcam2_3",
+  "scenario": "C2_ElCid_3",
+  "name": "阿尔梅纳尔",
+  "type": "战场",
+  "basis": "史实",
+  "history": "阿尔梅纳尔之战 1082",
+  "size": 144
+ },
+ {
+  "id": "xcam2_4",
+  "scenario": "C2_ElCid_4",
+  "name": "阿莱多",
+  "type": "小城",
+  "basis": "推定",
+  "history": "穆拉比特王朝前两次远征 1086-1089",
+  "size": 168
+ },
+ {
+  "id": "xcam2_5",
+  "scenario": "C2_ElCid_5",
+  "name": "瓦伦西亚",
+  "type": "大城",
+  "basis": "史实",
+  "history": "熙德成为瓦伦西亚之主 1094",
+  "size": 144
+ },
+ {
+  "id": "xcam2_6",
+  "scenario": "C2_ElCid_6",
+  "name": "夸尔特",
+  "type": "战场",
+  "basis": "推定",
+  "history": "穆拉比特屡攻瓦伦西亚 1094-1102",
+  "size": 144
+ },
+ {
+  "id": "xcam3_1",
+  "scenario": "C3_Montezuma_1",
+  "name": "特拉斯卡拉",
+  "type": "中城",
+  "basis": "推定",
+  "history": "血之统治",
+  "size": 144
+ },
+ {
+  "id": "xcam3_2",
+  "scenario": "C3_Montezuma_2",
+  "name": "特斯科科",
+  "type": "中城",
+  "basis": "推定",
+  "history": "三城同盟",
+  "size": 200
+ },
+ {
+  "id": "xcam3_3",
+  "scenario": "C3_Montezuma_3",
+  "name": "森特拉",
+  "type": "战场",
+  "basis": "史实",
+  "history": "森特拉之战 1519",
+  "size": 144
+ },
+ {
+  "id": "xcam3_4",
+  "scenario": "C3_Montezuma_4",
+  "name": "特拉特洛尔科",
+  "type": "大城",
+  "basis": "推定",
+  "history": "悲痛之夜 1520",
+  "size": 200
+ },
+ {
+  "id": "xcam3_5",
+  "scenario": "C3_Montezuma_5",
+  "name": "奥通巴",
+  "type": "战场",
+  "basis": "史实",
+  "history": "奥通巴之战 1520",
+  "size": 168
+ },
+ {
+  "id": "xcam3_6",
+  "scenario": "C3_Montezuma_6",
+  "name": "特诺奇蒂特兰",
+  "type": "大城",
+  "basis": "史实",
+  "history": "特诺奇蒂特兰之围 1521",
+  "size": 200
+ }
+]

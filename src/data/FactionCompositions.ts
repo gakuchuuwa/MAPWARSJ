@@ -242,12 +242,22 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "dianguo": {
         legionName: "古典时代巴蜀军团",
     },
+    // 🔴 [2026-10-25 主人令] 大明（1368–1644）＝帝国时代（FACTION_ERA `ming_d` 全段帝国）｜首府北京 WEI 河朔
+    //    → 帝国时代燕晋军团（京营/神机营/三眼铳）。原挂「城堡时代燕云军团」比势力时代早一档。
     "ming_d": {
-        legionName: "城堡时代燕云军团",
-        legionType: "region",
+        legionName: "帝国时代燕晋军团",
+        legionType: "sub",
     },
+    // 🔴 [2026-10-25 主人令] 格皮德（5–6 世纪＝封建段）｜首府布达佩斯＝马扎尔 MAGYAR 建筑（2026-10-24 按史定）
+    //    → 封建时代马扎尔军团。原无条目、回落文化区默认「城堡时代匈牙利王国军团」，比势力时代晚一档。
+    "gepids": {
+        legionName: "封建时代马扎尔军团",
+        legionType: "sub",
+    },
+    // 🔴 [2026-10-25 主人令] 匈牙利｜拉约什二世 1526 莫哈奇＝帝国段（FACTION_ERA `mazhaer` 1526 起帝国）｜布达佩斯 MAGYAR
+    //    → 帝国时代骠骑先锋军团（骠骑＝胡萨尔轻骑）。原挂「城堡时代匈牙利王国军团」早一档。
     "mazhaer": {
-        legionName: "城堡时代匈牙利王国军团",
+        legionName: "帝国时代骠骑先锋军团",
         legionType: "sub",
     },
     "keluodiya": {
@@ -450,9 +460,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代凉州军团",
         legionType: "region",
     },
+    // 🔴 [2026-10-25 主人令] 大夏·西夏（982–1227）＝城堡时代（FACTION_ERA `dangxiang` 全段城堡）｜首府兴庆府 KHITAN 河西
+    //    → 城堡时代大夏军团（铁鹞子冷锻重甲/山讹）。原挂「封建时代河西军团」早一档。
     "dangxiang": {
-        legionName: "封建时代河西军团",
-        legionType: "region",
+        legionName: "城堡时代大夏军团",
+        legionType: "sub",
     },
     "tubo": {
         legionName: "封建时代吐蕃军团",
@@ -822,8 +834,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代察合台军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-25 主人令] 库曼｜主将图戈尔坎落势力古典段（FACTION_ERA `kuman_oleshky` 1200 前＝古典）｜首府奥列什基 CUMAN
+    //    → 古典时代萨尔马提亚军团（库曼文化古典档＝萨尔马提亚—阿兰草原重骑）。原挂「城堡时代库曼军团」晚一档。
     "kuman_oleshky": {
-        legionName: "城堡时代库曼军团",
+        legionName: "古典时代萨尔马提亚军团",
         legionType: "sub",
     },
     "aertai": {
@@ -871,13 +885,17 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代德莱木军团",
         legionType: "region",
     },
+    // 🔴 [2026-10-25 主人令] 萨维尔（5–8 世纪＝封建段）｜首府谢缅杰尔 CUMAN → 封建时代可萨军团（可萨汗国草原）
+    //    原挂「封建时代河中军团」是河中（CENTRAL_ASIA）文化，文化错。
     "xiemian": {
-        legionName: "封建时代河中军团",
-        legionType: "region",
+        legionName: "封建时代可萨军团",
+        legionType: "sub",
     },
+    // 🔴 [2026-10-25 主人令] 伊蒂尔汗国＝可萨（7–10 世纪＝封建段）｜首府伊蒂尔 CUMAN → 封建时代可萨军团。
+    //    原挂「封建时代河中军团」文化错。
     "yidier": {
-        legionName: "封建时代河中军团",
-        legionType: "region",
+        legionName: "封建时代可萨军团",
+        legionType: "sub",
     },
     "aqimeinide": {
         legionName: "古典时代阿契美尼德军团",
@@ -1037,8 +1055,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代古贾拉铁骑军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-25 主人令] 亚美尼亚｜托罗斯二世（1145–1169，奇里乞亚亚美尼亚）落城堡段（FACTION_ERA `wulaertu` 1140 起城堡）
+    //    ｜首府埃里温 ARMENIANS → 城堡时代奇里乞亚军团（亚美尼亚文化的城堡档＝奇里乞亚王国）。
+    //    原挂「古典时代大亚美尼亚军团」早两档。
     "wulaertu": {
-        legionName: "古典时代大亚美尼亚军团",
+        legionName: "城堡时代奇里乞亚军团",
         legionType: "sub",
     },
     "ashikaga": {
@@ -1138,8 +1159,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代塔莫约军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-25 主人令] 卡斯蒂利亚｜莱加斯皮 1565 落帝国段（FACTION_ERA `kasidiliya` 1491 起帝国）｜首府马德里 SPANISH
+    //    → 帝国时代西班牙方阵军团（特西奥方阵）。原挂「城堡时代卡斯蒂利亚军团」早一档。
     "kasidiliya": {
-        legionName: "城堡时代卡斯蒂利亚军团",
+        legionName: "帝国时代西班牙方阵军团",
         legionType: "sub",
     },
     // 🔴 [2026-10-18 主人令「放宽」] 换挂帝国时代西班牙征服军团（皮萨罗·利马 INCA；军团建筑文化仍 SPANISH，已放宽）
@@ -1159,8 +1182,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代阿劳卡尼亚军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-25 主人令] 宋（960–1279）＝城堡时代（FACTION_ERA `song` 全段城堡，北宋南宋同一支宋军）｜首府开封 CENTRAL 中原
+    //    → 城堡时代中华军团（神臂弓/步人甲/斩马刀）。原挂「封建时代中原军团」早一档。
     "song": {
-        legionName: "封建时代中原军团",
+        legionName: "城堡时代中华军团",
         legionType: "sub",
     },
     "wusun": {
@@ -1402,8 +1427,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代科罗曼德尔军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-25 主人令] 莱昂｜拉米罗二世（931–951）落封建段（FACTION_ERA `leangongguo` 1191 前＝封建）｜首府萨拉曼卡 SPANISH
+    //    → 封建时代摩尔游骑军团（封建档伊比利亚＝赫内特轻骑）。原挂「城堡时代卡斯蒂利亚军团」晚一档。
     "leangongguo": {
-        legionName: "城堡时代卡斯蒂利亚军团",
+        legionName: "封建时代摩尔游骑军团",
         legionType: "sub",
     },
     "lagusa": {
@@ -1474,6 +1501,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代盎格鲁撒克逊军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-25 主人令·连锁修正] 塞尔维亚｜杜尚（1331–1355，都斯科普里）＝城堡段｜首府 **斯科普里**（1346 加冕地）SLAVIC
+    //    → 城堡时代博亚尔重骑军团（原有正确值，本次保留）。曾误按旧首府登记 city_belgrade（MAGYAR，1456 匈牙利守城那段建筑）
+    //    被判成「城堡时代匈牙利王国军团」；已按史把 STARTING_CAPITALS 的首府寄存器改成斯科普里（贝尔格莱德仍属塞尔维亚）。
     "saierweiya": {
         legionName: "城堡时代博亚尔重骑军团",
         legionType: "sub",
