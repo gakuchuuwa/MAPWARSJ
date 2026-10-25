@@ -42,6 +42,8 @@ export class BattlefieldLayer {
     private markers: Map<string, L.Marker> = new Map();
     private markerFoughtState: Map<string, boolean> = new Map();
     private initialized = false;
+    /** 标牌避让的 rAF 去重旗标（同一帧里重绘 + 缩放各叫一次也只排一次） */
+    private labelLayoutScheduled = false;
     /**
      * 🔴 [2026-09-19 主人定] 战场攻城战要套**据点样式**（大中小城寨），
      * 而据点那套组装住在 `TerritorySystem` 里 → 由 `GameMap.attachTerritorySystem()` 注入。
@@ -91,6 +93,8 @@ export class BattlefieldLayer {
         const zoom = this.map.getZoom();
         const scale = Math.max(0, 1.0 + (zoom - 9) * 0.5);
         this.map.getPane('battlefieldPane')?.style.setProperty('--battlefield-scale', String(scale));
+        // 标牌跟着 scale 变大变小 ⇒ 压不压字的几何变了，重新排一次
+        this.scheduleLabelLayout();
     }
 
     /**
@@ -188,6 +192,9 @@ export class BattlefieldLayer {
             this.markers.set(id, marker);
             this.markerFoughtState.set(id, fought);
         }
+
+        // 🔴 [2026-10-26 主人令「战略地图上，所有战场的名字不要重叠」] 标牌重新落位
+        this.scheduleLabelLayout();
     }
 
     private createBattlefieldMarker(bf: BattlefieldData, fought: boolean, fadeIn = false, morphFadeIn = false): L.Marker {
@@ -297,9 +304,80 @@ export class BattlefieldLayer {
             if (!this.map.hasLayer(this.layerGroup)) {
                 this.map.addLayer(this.layerGroup);
             }
+            // 图层重新上屏后标牌 DOM 才回来，重新排一遍
+            this.scheduleLabelLayout();
         } else {
             if (this.map.hasLayer(this.layerGroup)) {
                 this.map.removeLayer(this.layerGroup);
+            }
+        }
+    }
+
+    /** 标牌避让排一次（同一帧多次调用合并成一次 rAF） */
+    private scheduleLabelLayout(): void {
+        if (this.labelLayoutScheduled) return;
+        this.labelLayoutScheduled = true;
+        requestAnimationFrame(() => {
+            this.labelLayoutScheduled = false;
+            if (!this.map.getPane('battlefieldPane')) return;
+            this.relayoutLabels();
+        });
+    }
+
+    /**
+     * 🔴 [2026-10-26 主人令「战略地图上，所有战场的名字不要重叠」] 战场地名标牌**互不压字**。
+     *
+     * 做法：先把所有标牌复位到默认位（标记正下方居中）→ 一次性量出各自**屏幕矩形**（已含
+     * `--battlefield-scale` 的缩放）→ 按 `BATTLEFIELDS` 顺序逐个落位：
+     *   默认位空着就原位；被已落位的标牌压住就依次试「下一行 → 上一行 → 右一列 → 左一列 → 外圈」
+     *   这些候选位，取第一个不压任何已落位标牌的；全被占（现实中不会）才退回默认位。
+     * 位移量按**屏幕像素**算，再除以 `--battlefield-scale` 写进标牌自己的 transform ——
+     *   标牌在 `scale(var(--battlefield-scale))` 的容器里，除回来才是想要的屏幕位移。
+     *
+     * 触发：战场重绘（新出现 / 打完改名字与形态）、缩放结束（scale 变）、图层重新显示。
+     * 平移不触发：所有标牌跟着地图一起移，相对位置不变。
+     * ⚠️ 这里只管「战场标牌之间」不压字；战场与据点城名之间不归这里（城名在 labelsPane）。
+     */
+    private relayoutLabels(): void {
+        const pane = this.map.getPane('battlefieldPane');
+        const scale = Math.max(0.01, parseFloat(pane?.style.getPropertyValue('--battlefield-scale') || '') || 1);
+        interface LabelBox { el: HTMLElement; w: number; h: number; x: number; y: number }
+        const boxes: LabelBox[] = [];
+        for (const marker of this.markers.values()) {
+            const el = marker.getElement()?.querySelector<HTMLElement>('.bf-label');
+            if (!el) continue;
+            el.style.transform = 'translateX(-50%)';   // 默认位（与 HTML 里写死的那个 transform 一致）
+            boxes.push({ el, w: 0, h: 0, x: 0, y: 0 });
+        }
+        // 量默认位矩形（读 rect 会强制一次布局刷新；只在重绘/缩放时跑，81 个标牌量一次可接受）
+        for (const b of boxes) {
+            const r = b.el.getBoundingClientRect();
+            b.w = r.width; b.h = r.height; b.x = r.left; b.y = r.top;
+        }
+        const GAP = 2;
+        const placed: LabelBox[] = [];
+        const blocked = (x: number, y: number, w: number, h: number): boolean =>
+            placed.some((p) => x < p.x + p.w + GAP && x + w + GAP > p.x && y < p.y + p.h + GAP && y + h + GAP > p.y);
+        for (const b of boxes) {
+            if (b.w < 1 || b.h < 1) continue;   // 没上屏的（pane 隐藏等）跳过
+            const row = b.h + GAP * 2;
+            const col = b.w + GAP * 2;
+            const cands: Array<[number, number]> = [[0, 0]];
+            for (let ring = 1; ring <= 6; ring++) {
+                cands.push(
+                    [0, ring * row], [0, -ring * row],
+                    [ring * col, 0], [-ring * col, 0],
+                    [ring * col, ring * row], [-ring * col, ring * row],
+                    [ring * col, -ring * row], [-ring * col, -ring * row],
+                );
+            }
+            let dx = 0, dy = 0, found = false;
+            for (const [cx, cy] of cands) {
+                if (!blocked(b.x + cx, b.y + cy, b.w, b.h)) { dx = cx; dy = cy; found = true; break; }
+            }
+            placed.push({ el: b.el, w: b.w, h: b.h, x: b.x + dx, y: b.y + dy });
+            if (found && (dx !== 0 || dy !== 0)) {
+                b.el.style.transform = `translate(calc(-50% + ${(dx / scale).toFixed(1)}px), ${(dy / scale).toFixed(1)}px)`;
             }
         }
     }

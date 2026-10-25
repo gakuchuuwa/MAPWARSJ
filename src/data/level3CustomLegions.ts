@@ -141,6 +141,21 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         commanderUnit: 'hero_osman',
         buildingStyle: 'TURKS',
     },
+    // 🔴 [2026-10-26 主人令「图皮至少要两个军团，建立一个三级帝国图皮军团」] 图皮第二支军团（帝国），父级二级「帝国时代塔莫约军团」
+    {
+        name: '帝国时代图皮军团',
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'elite_ibirapema_warrior', count: 3 },
+            { type: 'blackwood_archer', count: 4 },
+            { type: 'elite_champi_warrior', count: 2 },
+        ],
+        regions: ['TUPI'],
+        parentLegion: '帝国时代塔莫约军团',
+        shipId: 'CANOE',
+        commanderUnit: 'hero_arariboiamelee',
+        buildingStyle: 'TUPI',
+    },
     {
         name: '起义军',
         formationMode: 'fish_scale',

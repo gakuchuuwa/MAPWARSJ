@@ -488,7 +488,6 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     ante_boz: { birth: 350, death: 376, kaoju: '推定' },  // 博兹
     suweihui_requiarius: { birth: 430, death: 500, kaoju: '推定' },  // 雷基亚尔
     baizanting_nikephoros_phokas: { birth: 912, death: 969 },  // 尼基弗鲁斯·福卡斯
-    baizanting_constantine_xi: { birth: 1405, death: 1453 },  // 君士坦丁十一世
     yibiluliya_pharnavaz: { birth: -360, death: -280, kaoju: '推定' },  // 法尔纳瓦兹一世
     gelujiya_erekle_ii: { birth: 1720, death: 1798 },  // 埃雷克莱二世
     litaowan_ostrogski: { birth: 1460, death: 1530 },  // 奥斯特罗格斯基
@@ -525,6 +524,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     bfe_purnavarman: { birth: 375, death: 434, kaoju: '推定' },  // 普尔纳跋摩
     maya_siyaj_kak: { birth: 340, death: 410, kaoju: '推定' },  // 西亚赫·卡克
     bfe_apokaukos: { birth: 940, death: 1000, kaoju: '推定' },  // 巴希尔·阿波卡夫科斯
+    baizanting_thomas: { birth: 1409, death: 1465 },  // 托马·巴列奥略
     bfe_maroboduus: { birth: -30, death: 37, kaoju: '推定' },  // 马罗博杜斯
     yili_bato: { birth: -30, death: 9, kaoju: '推定' },  // 巴托
     daqiya_burebista: { birth: -100, death: -44, kaoju: '推定' },  // 布雷比斯塔

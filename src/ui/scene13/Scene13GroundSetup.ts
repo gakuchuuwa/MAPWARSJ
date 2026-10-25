@@ -213,6 +213,18 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 for (const sp of this.spawns) if (sp.f === 1 && !sp.commander) foundations.push({ x: sp.x, y: sp.y, r: 4 });
                 for (const sp of siegeBuildings) foundations.push({ x: sp.x, y: sp.y, r: 2.5 });
                 for (const fd of foundations) glLayer.carveFoundation(fd.x, fd.y, VW, VH, fd.r);
+                if (!this.deCity) {
+                    const fieldProtect = [...foundations];
+                    for (const sp of this.spawns) {
+                        if (!sp.commander) fieldProtect.push({ x: sp.x, y: sp.y, r: 2.8 });
+                    }
+                    const seedStr = `${this.environmentPlan?.seed || 'field'}_${Math.round((this.centerLat ?? 30) * 100)}_${Math.round((this.centerLng ?? 110) * 100)}`;
+                    const elevM = this.environmentPlan?.elevationM ?? 0;
+                    const slopeDeg = this.environmentPlan?.slopeDeg ?? 0;
+                    const elevBand = this.environmentPlan?.elevationBand;
+                    const isHighland = elevBand === 'mountain' || elevBand === 'alpine' || elevBand === 'high_alpine' || elevBand === 'snow' || elevM >= 450 || slopeDeg >= 2.0;
+                    glLayer.generateFieldBattleTerrain(VW, VH, seedStr, fieldProtect, isHighland);
+                }
                 glLayer.flushFoundation();
                 const onFoundation = (x: number, y: number): boolean => {
                     const c = glLayer.screenToCell(x, y, VW, VH);
@@ -486,6 +498,13 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 }
             }
             applyDeCityToGround.call(this);
+            if (!this.deCity) {
+                for (const sp of this.decorSprites) {
+                    if (!sp.asset.startsWith('BUILDING') && sp.asset !== '' && !sp.asset.startsWith('ANIMAL:')) {
+                        sp.lift = glLayer.elevationLiftAt(sp.x, sp.y, VW, VH);
+                    }
+                }
+            }
             spawnBattlefieldRelics.call(this, glLayer, VW, VH);
             // 🔴 [2026-10-21 主人报「拒马立在河里」] 兜底清扫：不管拒马/木栅残骸是哪条支路摆进来的
             //    （营地拒马圈 / 攻城残骸），只要脚下是水（密度 ≥0.18 的湿岸也算）就一律移除。

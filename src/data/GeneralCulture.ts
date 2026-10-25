@@ -438,7 +438,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ante_boz': 'SLAVIC',   // 安特｜博兹｜据点 基辅
     'suweihui_requiarius': 'PORTUGUESE',   // 苏维汇｜雷基亚尔｜据点 波尔图
     'baizanting_nikephoros_phokas': 'TURKS',   // 拜占庭｜福卡斯｜据点 伊科尼乌姆
-    'baizanting_constantine_xi': 'SPARTANS',   // 拜占庭｜君士坦丁十一世｜据点 斯巴达
     'yibiluliya_pharnavaz': 'GEORGIANS',   // 伊比利亚｜法尔纳瓦兹一世｜据点 第比利斯
     'gelujiya_erekle_ii': 'GEORGIANS',   // 格鲁吉亚｜埃雷克莱二世｜据点 第比利斯
     'litaowan_ostrogski': 'LITHUANIANS',   // 立陶宛｜奥斯特罗格斯基｜据点 维尔纽斯
@@ -475,6 +474,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_purnavarman': 'MALAY',   // 塔鲁玛迦拉｜普尔纳跋摩｜据点 巽他普拉
     'maya_siyaj_kak': 'MAYANS',   // 玛雅｜西亚赫·卡克｜据点 蒂卡尔
     'bfe_apokaukos': 'SPARTANS',   // 拜占庭｜巴希尔｜据点 斯巴达
+    'baizanting_thomas': 'SPARTANS',   // 拜占庭｜托马·巴列奥略｜据点 斯巴达
     'bfe_maroboduus': 'BOHEMIANS',   // 苏维汇｜马罗博杜斯｜据点 布拉格
     'yili_bato': 'MAGYAR',   // 伊利里亚｜巴托｜据点 布达佩斯
     'daqiya_burebista': 'BULGARIANS',   // 达契亚｜布雷比斯塔｜据点 索非亚

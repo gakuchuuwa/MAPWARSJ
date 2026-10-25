@@ -3600,7 +3600,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MESO_CASTLE_AGE3', castleName: '中美洲/阿兹特克 特诺奇蒂特兰金字塔',
         formationMode: 'fish_scale',
         shipId: 'CANOE',
-        commanderUnit: 'hero_arariboiamelee',
+        commanderUnit: 'hero_cunhambebe',
         slots: [
             { type: 'elite_eagle_warrior', count: 3 },
             { type: 'iroquois_warrior', count: 4 },
@@ -3714,13 +3714,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代塔莫约军团', civ: '图皮', age: 'imperial', deStyle: 'ANDE', region: 'TUPI' as RegionType,
         buildingStyle: 'TUPI',
         castleId: 'TUPI_CASTLE_AGE3', castleName: '图皮 亚马逊雨林木栅重垒',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         shipId: 'CANOE',
-        commanderUnit: 'hero_arariboiamelee',
+        commanderUnit: 'hero_arariboiaranged',
         slots: [
-            { type: 'ibirapema_warrior', count: 3 },
-            { type: 'blackwood_archer', count: 4 },
             { type: 'elite_champi_warrior', count: 2 },
+            { type: 'ibirapema_warrior', count: 3 },
+            { type: 'elite_blackwood_archer', count: 4 },
         ],
     },
 
@@ -4167,7 +4167,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
-            { type: 'light_cavalry', count: 2 },
+            { type: 'companion_cavalry', count: 2 },
         ],
     },
     // ── 马其顿 · 城堡时代 · 城堡时代瓦尔达尔军团　（2026-10-25 恢复：杜尚 为带名将）────────────────

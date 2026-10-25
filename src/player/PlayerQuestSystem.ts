@@ -17,7 +17,6 @@ import { getCityEliteLegionName, getExpeditionEliteConfig } from '../data/Expedi
 import { getFactionGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
-import { comparePlayerGeneralsByPriority } from '../data/generalSelection';
 import { ALL_BRANCHES_MAP, CULTURE_62_GROUPS, LAYER3_CUSTOM_GROUPS, resolveCityHierarchy } from '../systems/CultureHierarchy';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
@@ -3544,14 +3543,6 @@ export class PlayerQuestSystem {
         return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
     }
 
-    /** 遍历据点，找城中武将在（未率军在外）的。
-     *  🔴 [2026-09-15 主人定]「玩家找武将，改为**兵多、名将**。去掉其他的条件。」
-     *     判据只剩两条，攻防风格（双行/擅攻）**完全不参与**。顺序是：
-     *       ① 先用 comparePlayerGeneralsByPriority 排出最优档（🔴 [2026-10-05 主人令]
-     *          「优先名将，然后是兵力数」→ **名将→兵最多**）；
-     *       ② **只在与第一名完全同档的候选里**，按面板开关决定随机还是就近。
-     *     绝不能反过来先按距离分圈再挑将——那样近处没名将时就会选到次优的，
-     *     等于把「必须」降成了「优先」。 */
     /** 这位武将此刻带着的军团（在外行军中）；没带兵就返回 null = 人在城里 */
     private armyOfGeneral(generalId: string): Army | null {
         // 🔴 [2026-09-23 修「第一场打完不续第二场」] 排除战场一次性军团（isScriptArmy）：
@@ -3601,15 +3592,8 @@ export class PlayerQuestSystem {
      */
     private headingToEventGeneralId: string | null = null;
 
-    private effectiveCityTroopsForPick(c: City): number {
-        const g = this.pickCityGeneralForPlayer(c.id, { requireInCity: false, preferUnvisited: true });
-        const pendingFb = g ? this.hasPendingFirstBattle(g.generalId) : null;
-        return pendingFb ? Math.max(c.troops || 0, pendingFb.myTroops) : (c.troops || 0);
-    }
-
     private pickAutoCity(): City | null {
         const candidates: City[] = [];
-        const onStageFallback: City[] = [];
         for (const c of this.deps.cityManager.getCities()) {
             if (!c.factionId) continue;
             const g = this.pickCityGeneralForPlayer(c.id, { requireInCity: false, preferUnvisited: true });
@@ -3620,6 +3604,9 @@ export class PlayerQuestSystem {
             //    原来这里 `if (away) continue`，于是玩家赶到城里扑空、当场换目标，反复空跑。
             // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 武将已率军在外看该军团可否继续出征（≥5000且非撤退），在城中看城防 90% ≥ 5000；
             //    若该武将尚未触发首次历史战役，则首次找他必按历史配备兵力出征。
+            // 🔴 [2026-10-26 主人令「不要设计兵最多了，改为兵5000以上随机，正好5000是出征标准」]
+            //    能出征（上面这条 5000 标准）就入池，**兵力不再参与任何排名**；原「1 万门槛」「兵最多」「500 兵分档」全删。
+            //    理由（主人原话）：「兵最多总是出麻烦，文化不同，兵也不同」。
             const pendingFb = this.hasPendingFirstBattle(g.generalId);
             const army = this.armyOfGeneral(g.generalId);
             const canSortie = pendingFb
@@ -3628,47 +3615,24 @@ export class PlayerQuestSystem {
                     ? (!army.isRetreatingHome && army.getTroops() >= GameConfig.LEGION.MIN_ARMY_SIZE)
                     : (Math.floor((c.troops || 0) * 0.9) >= GameConfig.LEGION.MIN_ARMY_SIZE);
             if (!canSortie) continue;
-            onStageFallback.push(c);
-            const effTroops = this.effectiveCityTroopsForPick(c);
-            // 🔴 [2026-09-11 主人定] 不要选 1 万人以下的（兵力不足 1 万的据点直接排除；若武将已率军在外，看军团+城防）
-            if (effTroops < 10000 && (!army || army.getTroops() + effTroops < 10000)) continue;
             candidates.push(c);
         }
-        const activeCandidates = candidates.length > 0 ? candidates : onStageFallback;
-        if (!activeCandidates.length) return null;
+        if (!candidates.length) return null;
 
         // 🔴 [2026-10-05 主人令]「加上 62+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」：
         //    先按 66 类建筑风格分组，按 pickStyle62Pool 的轮换规则（每轮先最近一类，之后由东向西）取一类，只在这一类的城里挑。
         const me = this.deps.hero.getPosition();
-        const pool = this.pickStyle62Pool(activeCandidates, me);
+        const pool = this.pickStyle62Pool(candidates, me);
         if (!pool.length) return null;
 
-        // ① [2026-09-15 主人定]「兵多、名将，去掉其他的条件」→ 玩家专用两条判据比较器。
-        //    ⚠️ 不再用 compareGeneralsByPriority（那套含双行/擅攻，仍归军团出征用）。
-        const sorted = [...pool].sort((a, b) => comparePlayerGeneralsByPriority(
-            { troops: this.effectiveCityTroopsForPick(a), cityId: a.id, generalId: this.pickCityGeneralForPlayer(a.id)?.generalId },
-            { troops: this.effectiveCityTroopsForPick(b), cityId: b.id, generalId: this.pickCityGeneralForPlayer(b.id)?.generalId },
-        ));
-        const best = sorted[0];
-        if (!best) return null;
-
-        // ② 取出与第一名同档的那一批（🔴 [2026-09-15 方案A 主人定]）：
-        //    不要用 troops 绝对数值判定同档，改为梯队容差：
-        //    驻军差在 500 人以内、或同属 10000+ 满编档（差值在 1000 内）即视为同档；
-        //    欧洲 10,180 兵与华夏 10,220 兵同属第一梯队名将城，欧洲名将城不会被淘汰。
-        const bestGen = this.pickCityGeneralForPlayer(best.id);
-        const bestIsFamous = (getGeneralProfile(bestGen?.generalId || '')?.tier === 'famous');
-        const bestTroops = this.effectiveCityTroopsForPick(best);
-        const tied = sorted.filter((c) => {
+        // ① 🔴 [2026-10-05 主人令「优先名将」] 本类里有名将城 → 只在名将城里挑；没有 → 整类都可挑。
+        const isFamousCity = (c: City): boolean => {
             const g = this.pickCityGeneralForPlayer(c.id);
-            const p = g ? getGeneralProfile(g.generalId) : null;
-            const isFamous = p?.tier === 'famous';
-            if (isFamous !== bestIsFamous) return false;
-            const cTroops = this.effectiveCityTroopsForPick(c);
-            const diff = bestTroops - cTroops;
-            return diff <= 500 || (bestTroops >= 10000 && cTroops >= 10000 && diff <= 1000);
-        });
-        if (tied.length === 1) return best;
+            return !!g && getGeneralProfile(g.generalId)?.tier === 'famous';
+        };
+        const famous = pool.filter(isFamousCity);
+        const tied = famous.length ? famous : pool;
+        const best = tied[0];
 
         // ③-0 🔴 [2026-10-05 主人令「既然已经按建筑地区轮换了，就不要远游了」] **「远游」签已删除**：
         //    原先每 VOYAGE_EVERY 次寻将放一次不看距离的均匀抽签（为的是能摸到美洲），

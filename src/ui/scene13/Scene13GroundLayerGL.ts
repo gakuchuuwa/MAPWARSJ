@@ -317,6 +317,15 @@ void main() {
     float shimmer = (specSheen + specGlint) * (1.0 - isDeepWater * 0.30);
     waterCol += vec3(0.95, 0.97, 1.0) * shimmer;
 
+    // 战术近景可读性：沿用三层波浪相位拉出细长的流向波峰，不新增噪声采样。
+    // 弱波谷托住水体积，狭波峰给天光反光；浅水更柔和，避免水面糊成均匀蓝色贴片。
+    float waveBands = sin(p0) * 0.58 + sin(p1) * 0.30 + sin(p2) * 0.12;
+    float rippleCrest = smoothstep(0.58, 0.94, waveBands);
+    float rippleTrough = smoothstep(0.24, 0.84, -waveBands);
+    float rippleVisibility = mix(0.62, 1.0, isDeepWater);
+    waterCol *= 1.0 + (rippleCrest * 0.10 - rippleTrough * 0.045) * rippleVisibility;
+    waterCol += vec3(0.55, 0.75, 0.82) * rippleCrest * 0.08 * rippleVisibility;
+
     // 🔴 [2026-10-21 主人报「护城河水有点蓝，有浅色的水吗」] 护城河格在 field.b 里写了个很小的标记（0.12，远低于森林阈值，水格本无森林），
     //    只在护城河上把水色往浅青绿（DE 浅滩 Shallows 的清透感）调淡；河、湖、海不带标记，不受影响。
     waterCol = mix(waterCol, vec3(0.58, 0.76, 0.72) + vec3(0.90, 0.95, 1.0) * shimmer, moatMark * 0.55);
@@ -325,12 +334,12 @@ void main() {
     float waveTide = sin(uTime * 1.45 + (isoP.x * 0.8 + isoP.y * 1.4) * 0.35 + n1 * 0.8) * 0.020;
     float waveFront = 0.435 + waveTide;
     float surgeDist = abs(wPerturb - waveFront);
-    float waveSurge = smoothstep(0.030, 0.004, surgeDist);
+    float waveSurge = 1.0 - smoothstep(0.004, 0.030, surgeDist);
     float foamNoise = snoise(isoP * 3.6 + vec2(uTime * 0.25, -uTime * 0.14)) * 0.65 + nMicro2 * 0.35;
     float shoreFoam = waveSurge * smoothstep(-0.15, 0.55, foamNoise);
     float shoreLine = smoothstep(0.42, 0.45, wPerturb) * (1.0 - smoothstep(0.45, 0.48, wPerturb)) * clamp(0.32 + 0.30 * foamNoise, 0.0, 0.75);
     float totalFoam = clamp(shoreFoam + shoreLine, 0.0, 1.0);
-    waterCol = mix(waterCol, vec3(0.95, 0.98, 1.0), totalFoam * 0.80);
+    waterCol = mix(waterCol, vec3(0.95, 0.98, 1.0), totalFoam * 0.68);
   }
   
   // ── DE 高地斜坡立体边坡肌理与坡脚体积暗部（不画 fract 等高线圈，仅对斜坡面赋予自然边坡立体感） ──
@@ -893,15 +902,15 @@ export class Scene13GroundLayerGL {
         if (slopeMag > 0.022) {
           rawIsSlope[idx] = 1;
           if (slopeTowardSun > 0.01) {
-            light = 1.0 + Math.min(0.28, slopeTowardSun * 0.65);
+            light = 1.0 + Math.min(0.34, slopeTowardSun * 0.78);
           } else if (slopeTowardSun < -0.01) {
-            light = 1.0 + Math.max(-0.31, slopeTowardSun * 0.72);
+            light = 1.0 + Math.max(-0.36, slopeTowardSun * 0.84);
           } else {
-            light = 1.0 - Math.min(0.10, crossSlope * 0.22);
+            light = 1.0 - Math.min(0.14, crossSlope * 0.28);
           }
         }
-        const elevBoost = Math.min(0.07, hC * 0.022);
-        rawLight[idx] = Math.max(0.67, Math.min(1.30, light + elevBoost));
+        const elevBoost = Math.min(0.10, hC * 0.025);
+        rawLight[idx] = Math.max(0.62, Math.min(1.35, light + elevBoost));
       }
     }
 
@@ -2846,6 +2855,417 @@ export class Scene13GroundLayerGL {
     this.elevDirty = true;
 
     return { centerLevel, villageLevel, fenceLevel };
+  }
+
+  /**
+   * 🔴 [2026-10-26 主人令「战术模式中，野战战场上高地、山坡多一些、陡一些、提升高地高度」]
+   * 野战战场（无城池）专属多层阶梯高地与陡坡生成器：
+   * 1. 仅保护双方营帐地基（foundations）与河湖水体为 0 级平地，中央交战区、南北两翼与外围林地全面开放高地生成；
+   * 2. 交战核心区与近侧两翼（距中心 3.5~16.5 格，100% 默认视野内）布置 8 处战术高地与山梁（基座 3~4 级，大台地叠置 4~6 级峰顶，「高地上叠高地」）；
+   * 3. 外围战场与森林团块（10~12 处）生成 3~6 级连绵平顶山梁，树林与岩石稳立高地之上；
+   * 4. 采用 1 格 1 级紧凑阶梯陡坡 + 平顶台地棱线角点锁定（isFlatCorner），斜坡折角仅做极轻量柔化（0.78/0.22），确保山坡陡峭、立体折面鲜明。
+   */
+  public generateFieldBattleTerrain(
+    W: number,
+    H: number,
+    seedStr: string,
+    foundations: ReadonlyArray<{ x: number; y: number; r: number }>,
+    isHighland = false
+  ): void {
+    this.applySeedNoiseOffset(seedStr);
+
+    let seed = 2166136261 >>> 0;
+    for (let i = 0; i < seedStr.length; i++) {
+      seed = Math.imul(seed ^ seedStr.charCodeAt(i), 16777619) >>> 0;
+    }
+    const rnd = (): number => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return (seed >>> 0) / 4294967296;
+    };
+
+    const N = this.N;
+    const V = N + 1;
+    const cx = N * 0.5, cy = N * 0.5;
+    const tileElev = new Int8Array(N * N);
+
+    // 转换双方营帐/出兵点地基到网格坐标，仅保护营帐落脚点平地
+    const cellFoundations: Array<{ gx: number; gy: number; r: number }> = [];
+    for (const fd of foundations) {
+      const c = this.screenToCell(fd.x, fd.y, W, H);
+      if (c) cellFoundations.push({ gx: c.gx, gy: c.gy, r: Math.max(2.6, fd.r + 0.6) });
+    }
+    const inProtect = (gx: number, gy: number): boolean => {
+      for (const f of cellFoundations) {
+        if (Math.hypot(gx - f.gx, gy - f.gy) < f.r) return true;
+      }
+      return false;
+    };
+    const isWet = (gx: number, gy: number): boolean =>
+      gx >= 0 && gx < N && gy >= 0 && gy < N && (this.smoothWater[gy * N + gx] ?? 0) >= 0.16;
+
+    const D4: ReadonlyArray<[number, number]> = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    const D8: ReadonlyArray<[number, number]> = [
+      [-1, 0], [1, 0], [0, -1], [0, 1],
+      [-1, -1], [1, -1], [-1, 1], [1, 1],
+    ];
+
+    const growCohesiveClump = (
+      seedX: number,
+      seedY: number,
+      targetTiles: number,
+      axisAngle: number,
+      aniso: number
+    ): Set<number> => {
+      const clump = new Set<number>();
+      if (seedX < 3 || seedX >= N - 3 || seedY < 3 || seedY >= N - 3) return clump;
+      if (inProtect(seedX, seedY) || isWet(seedX, seedY)) return clump;
+
+      const visited = new Uint8Array(N * N);
+      const startIdx = seedY * N + seedX;
+      clump.add(startIdx);
+      visited[startIdx] = 1;
+
+      const cosA = Math.cos(axisAngle), sinA = Math.sin(axisAngle);
+      const count5x5 = (x: number, y: number): number => {
+        let cnt = 0;
+        for (let dy = -2; dy <= 2; dy++) {
+          const ny = y + dy;
+          if (ny < 0 || ny >= N) continue;
+          const row = ny * N;
+          for (let dx = -2; dx <= 2; dx++) {
+            const nx = x + dx;
+            if (nx < 0 || nx >= N) continue;
+            if (clump.has(row + nx)) cnt++;
+          }
+        }
+        return cnt;
+      };
+
+      const frontier: Array<{ x: number; y: number; cost: number }> = [];
+      const pushNbrs = (cx0: number, cy0: number) => {
+        for (const [dx, dy] of D4) {
+          const nx = cx0 + dx, ny = cy0 + dy;
+          if (nx < 3 || nx >= N - 3 || ny < 3 || ny >= N - 3) continue;
+          if (inProtect(nx, ny) || isWet(nx, ny)) continue;
+          const nIdx = ny * N + nx;
+          if (visited[nIdx]) continue;
+          visited[nIdx] = 1;
+          const bVar4 = count5x5(nx, ny);
+          const rx = nx - seedX, ry = ny - seedY;
+          const crossAxis = Math.abs(-rx * sinA + ry * cosA);
+          const cost = (250 - 15 * bVar4) + Math.floor(rnd() * 90) + Math.floor(crossAxis * aniso * 8);
+          frontier.push({ x: nx, y: ny, cost });
+        }
+      };
+
+      pushNbrs(seedX, seedY);
+      while (frontier.length > 0 && clump.size < targetTiles) {
+        let bestIdx = 0;
+        let bestCost = frontier[0].cost;
+        for (let i = 1; i < frontier.length; i++) {
+          if (frontier[i].cost < bestCost) {
+            bestCost = frontier[i].cost;
+            bestIdx = i;
+          }
+        }
+        const pick = frontier[bestIdx];
+        frontier[bestIdx] = frontier[frontier.length - 1];
+        frontier.pop();
+        if (count5x5(pick.x, pick.y) > 0) {
+          clump.add(pick.y * N + pick.x);
+          pushNbrs(pick.x, pick.y);
+        }
+      }
+
+      const toAdd: number[] = [];
+      for (let y = 3; y < N - 3; y++) {
+        for (let x = 3; x < N - 3; x++) {
+          const idx = y * N + x;
+          if (clump.has(idx) || inProtect(x, y) || isWet(x, y)) continue;
+          if (count5x5(x, y) >= 13) toAdd.push(idx);
+        }
+      }
+      for (const idx of toAdd) clump.add(idx);
+      return clump;
+    };
+
+    // 将团块转为陡坡平顶高台，并在大团块核心自动叠置二级主峰（高地上叠高地）
+    const applySteepMultiTierPlateau = (region: Set<number>, basePeakH: number, summitH: number) => {
+      const dist = new Map<number, number>();
+      let q: number[] = [];
+      for (const idx of region) {
+        const x = idx % N, y = (idx - x) / N;
+        let isEdge = false;
+        for (const [dx, dy] of D8) {
+          const nx = x + dx, ny = y + dy;
+          if (nx < 0 || nx >= N || ny < 0 || ny >= N || !region.has(ny * N + nx)) {
+            isEdge = true;
+            break;
+          }
+        }
+        if (isEdge) {
+          dist.set(idx, 1);
+          q.push(idx);
+        }
+      }
+      let maxD = 1;
+      while (q.length > 0) {
+        const nextQ: number[] = [];
+        for (const idx of q) {
+          const curD = dist.get(idx)!;
+          if (curD > maxD) maxD = curD;
+          const x = idx % N, y = (idx - x) / N;
+          for (const [dx, dy] of D4) {
+            const nx = x + dx, ny = y + dy;
+            if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+            const nbr = ny * N + nx;
+            if (region.has(nbr) && !dist.has(nbr)) {
+              dist.set(nbr, curD + 1);
+              nextQ.push(nbr);
+            }
+          }
+        }
+        q = nextQ;
+      }
+      for (const idx of region) {
+        const d = dist.get(idx) ?? 1;
+        // 外圈 1 格即升 1~2 级陡坡，快速抵达平顶基座；核心区（d >= 4）再拔起二级峰顶
+        let h = Math.min(basePeakH, Math.round(d * 1.25));
+        if (summitH > basePeakH && maxD >= 5 && d >= 4) {
+          h = Math.min(summitH, basePeakH + (d - 3));
+        }
+        if (h > tileElev[idx]) tileElev[idx] = h;
+      }
+    };
+
+    // 收集森林与原图高点种子
+    const prioritySeeds: Array<{ x: number; y: number }> = [];
+    const treeTileMask = new Uint8Array(N * N);
+    const sf = this.smoothForest;
+    if (sf) {
+      for (let y = 4; y < N - 4; y++) {
+        for (let x = 4; x < N - 4; x++) {
+          if (inProtect(x, y) || isWet(x, y)) continue;
+          if (sf[y * N + x] >= 0.16) {
+            treeTileMask[y * N + x] = 1;
+            if (x % 4 === 0 && y % 4 === 0) {
+              if (!prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 11)) {
+                prioritySeeds.push({ x, y });
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const placedSeeds: Array<{ x: number; y: number }> = [];
+    const maxCap = isHighland ? 6 : 5;
+
+    // ── 第一层：中央交战区与近侧两翼战术高地（8 处，距地图中心 3.5~16.5 格，100% 默认视野内直接可见）──
+    const nearTotal = 8;
+    const baseAng = rnd() * Math.PI * 2;
+    for (let k = 0; k < nearTotal; k++) {
+      const isInnerClashHill = k < 2; // 前 2 处直接落在交战核心区附近（距中心 3.5~7.5 格）
+      const targetAng = baseAng + (k * Math.PI * 2) / nearTotal + (rnd() - 0.5) * 0.45;
+      let seedX = 0, seedY = 0, found = false;
+
+      for (let attempt = 0; attempt < 45; attempt++) {
+        const ang = targetAng + (rnd() - 0.5) * 0.55;
+        const rad = isInnerClashHill ? (3.5 + rnd() * 4.2) : (8.2 + rnd() * 8.0);
+        const sx = Math.round(cx + Math.cos(ang) * rad);
+        const sy = Math.round(cy + Math.sin(ang) * rad);
+        if (sx < 6 || sx >= N - 6 || sy < 6 || sy >= N - 6) continue;
+        const minGap = isInnerClashHill ? 8.5 : 9.5;
+        const tooClose = placedSeeds.some(s => Math.hypot(s.x - sx, s.y - sy) < minGap);
+        if (!tooClose && !inProtect(sx, sy) && !isWet(sx, sy)) {
+          seedX = sx;
+          seedY = sy;
+          found = true;
+          break;
+        }
+      }
+      if (!found) continue;
+
+      const basePeakH = isInnerClashHill ? 3 : (isHighland || rnd() < 0.75 ? 4 : 3);
+      const summitH = isInnerClashHill ? (isHighland ? 4 : 3) : Math.min(maxCap, basePeakH + (rnd() < 0.75 ? 2 : 1));
+      const clumpTiles = isInnerClashHill
+        ? (34 + Math.floor(rnd() * 26))
+        : (68 + Math.floor(rnd() * 56));
+      const tangentAng = Math.atan2(seedY - cy, seedX - cx) + Math.PI * 0.5 + (rnd() - 0.5) * 0.7;
+      const region = growCohesiveClump(seedX, seedY, clumpTiles, tangentAng, 0.45 + rnd() * 0.75);
+      if (region.size < 16) continue;
+
+      placedSeeds.push({ x: seedX, y: seedY });
+      applySteepMultiTierPlateau(region, basePeakH, summitH);
+    }
+
+    // ── 第二层：中远景与森林山梁高地（11 处，层峦叠嶂 3~6 级）──
+    const outerTotal = 11;
+    for (let c = 0; c < outerTotal; c++) {
+      let seedX = 0, seedY = 0, found = false;
+      if (c < prioritySeeds.length) {
+        const ps = prioritySeeds[c];
+        const tooClose = placedSeeds.some(s => Math.hypot(s.x - ps.x, s.y - ps.y) < 11);
+        if (!tooClose && !inProtect(ps.x, ps.y) && !isWet(ps.x, ps.y)) {
+          seedX = ps.x;
+          seedY = ps.y;
+          found = true;
+        }
+      }
+      if (!found) {
+        for (let attempt = 0; attempt < 80; attempt++) {
+          const sx = 6 + Math.floor(rnd() * (N - 12));
+          const sy = 6 + Math.floor(rnd() * (N - 12));
+          const tooClose = placedSeeds.some(s => Math.hypot(s.x - sx, s.y - sy) < 12);
+          if (!tooClose && !inProtect(sx, sy) && !isWet(sx, sy) && tileElev[sy * N + sx] === 0) {
+            seedX = sx;
+            seedY = sy;
+            found = true;
+            break;
+          }
+        }
+      }
+      if (!found) continue;
+
+      const basePeakH = isHighland ? 4 : (rnd() < 0.72 ? 4 : 3);
+      const summitH = Math.min(maxCap, basePeakH + (rnd() < 0.70 ? 2 : 1));
+      const clumpTiles = 85 + Math.floor(rnd() * 90);
+      const region = growCohesiveClump(seedX, seedY, clumpTiles, rnd() * Math.PI, 0.40 + rnd() * 0.95);
+      if (region.size < 22) continue;
+
+      placedSeeds.push({ x: seedX, y: seedY });
+      applySteepMultiTierPlateau(region, basePeakH, summitH);
+    }
+
+    // ── 第三层：外围剩余树林保底起丘（2~3 级），保证林木立于山坡丘陵上 ──
+    for (let y = 4; y < N - 4; y += 3) {
+      for (let x = 4; x < N - 4; x += 3) {
+        const idx = y * N + x;
+        if (!treeTileMask[idx] || tileElev[idx] > 0 || inProtect(x, y) || isWet(x, y)) continue;
+        const region = growCohesiveClump(x, y, 44 + Math.floor(rnd() * 38), rnd() * Math.PI, 0.35 + rnd() * 0.5);
+        if (region.size >= 14) {
+          applySteepMultiTierPlateau(region, 3, 3);
+        }
+      }
+    }
+
+    // DE clean_elevation：填平 1 格窄沟、削去 1 格刀刃尖脊，并施加 8 邻域 <= 1 最大陡坡约束
+    for (let pass = 0; pass < 2; pass++) {
+      for (let y = 2; y < N - 2; y++) {
+        for (let x = 2; x < N - 2; x++) {
+          if (inProtect(x, y) || isWet(x, y)) continue;
+          const idx = y * N + x;
+          const h = tileElev[idx];
+          const hN = tileElev[(y - 1) * N + x], hS = tileElev[(y + 1) * N + x];
+          const hW = tileElev[y * N + (x - 1)], hE = tileElev[y * N + (x + 1)];
+          if ((hN > h && hS > h) || (hW > h && hE > h)) {
+            tileElev[idx] = Math.min(maxCap, h + 1);
+          }
+        }
+      }
+      for (let y = 2; y < N - 2; y++) {
+        for (let x = 2; x < N - 2; x++) {
+          const idx = y * N + x;
+          const h = tileElev[idx];
+          if (h <= 0) continue;
+          const hN = tileElev[(y - 1) * N + x], hS = tileElev[(y + 1) * N + x];
+          const hW = tileElev[y * N + (x - 1)], hE = tileElev[y * N + (x + 1)];
+          if ((hN < h && hS < h) || (hW < h && hE < h)) {
+            tileElev[idx] = h - 1;
+          }
+        }
+      }
+    }
+
+    for (let pass = 0; pass < 6; pass++) {
+      let changed = false;
+      for (let y = 1; y < N - 1; y++) {
+        for (let x = 1; x < N - 1; x++) {
+          if (inProtect(x, y) || isWet(x, y)) {
+            if (tileElev[y * N + x] !== 0) {
+              tileElev[y * N + x] = 0;
+              changed = true;
+            }
+            continue;
+          }
+          const cur = tileElev[y * N + x];
+          if (cur <= 0) continue;
+          for (const [dx, dy] of D8) {
+            const nbrH = tileElev[(y + dy) * N + (x + dx)];
+            if (cur - nbrH > 1) {
+              tileElev[y * N + x] = nbrH + 1;
+              changed = true;
+              break;
+            }
+          }
+        }
+      }
+      if (!changed) break;
+    }
+
+    // 转换至角点网格：锁定平顶台地与平地角点，斜坡折角仅做极轻量柔化（0.78 / 0.22），让山坡保持硬朗陡峭感
+    const hillCorners = new Float32Array(V * V);
+    const isFlatCorner = new Uint8Array(V * V);
+    for (let gy = 0; gy <= N; gy++) {
+      for (let gx = 0; gx <= N; gx++) {
+        if (inProtect(gx, gy)) {
+          isFlatCorner[gy * V + gx] = 1;
+          continue;
+        }
+        if (
+          (gx > 0 && gy > 0 && isWet(gx - 1, gy - 1)) ||
+          (gx < N && gy > 0 && isWet(gx, gy - 1)) ||
+          (gx > 0 && gy < N && isWet(gx - 1, gy)) ||
+          (gx < N && gy < N && isWet(gx, gy))
+        ) {
+          isFlatCorner[gy * V + gx] = 1;
+          continue;
+        }
+
+        let sum = 0, count = 0, minT = 99, maxT = -99;
+        const sampleT = (tx: number, ty: number) => {
+          const v = tileElev[ty * N + tx];
+          sum += v;
+          count++;
+          if (v < minT) minT = v;
+          if (v > maxT) maxT = v;
+        };
+        if (gx > 0 && gy > 0) sampleT(gx - 1, gy - 1);
+        if (gx < N && gy > 0) sampleT(gx, gy - 1);
+        if (gx > 0 && gy < N) sampleT(gx - 1, gy);
+        if (gx < N && gy < N) sampleT(gx, gy);
+
+        hillCorners[gy * V + gx] = count > 0 ? sum / count : 0;
+        if (minT === maxT) {
+          isFlatCorner[gy * V + gx] = 1;
+        }
+      }
+    }
+
+    const prev = new Float32Array(hillCorners);
+    for (let gy = 1; gy < N; gy++) {
+      for (let gx = 1; gx < N; gx++) {
+        const idx = gy * V + gx;
+        if (isFlatCorner[idx]) continue;
+        const self = prev[idx];
+        const avg4 = 0.25 * (
+          prev[(gy - 1) * V + gx] +
+          prev[(gy + 1) * V + gx] +
+          prev[gy * V + (gx - 1)] +
+          prev[gy * V + (gx + 1)]
+        );
+        hillCorners[idx] = self * 0.78 + avg4 * 0.22;
+      }
+    }
+
+    this.cornerElev.set(hillCorners);
+    if (this.data?.elev && this.data.elev.length === N * N) {
+      for (let i = 0; i < N * N; i++) {
+        this.data.elev[i] = tileElev[i];
+      }
+    }
+    this.updateCornerLight();
+    this.elevDirty = true;
   }
 
   /** 按屏幕逻辑坐标取地面高程级（未乘 DE_ELEV_H） */

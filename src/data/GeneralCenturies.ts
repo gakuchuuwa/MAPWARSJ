@@ -737,7 +737,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'ante_boz': 4,                          // 博兹 · ante · 基辅
     'suweihui_requiarius': 5,                // 雷基亚尔 · suweihui · 波尔图
     'baizanting_nikephoros_phokas': 10,      // 福卡斯 · baizanting · 伊科尼乌姆
-    'baizanting_constantine_xi': 15,         // 君士坦丁十一世 · baizanting · 斯巴达
     'yibiluliya_pharnavaz': -3,              // 法尔纳瓦兹一世 · yibiluliya · 第比利斯
     'gelujiya_erekle_ii': 18,                // 埃雷克莱二世 · gelujiya · 第比利斯
     'litaowan_ostrogski': 15,                // 奥斯特罗格斯基 · litaowan · 维尔纽斯
@@ -774,6 +773,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_purnavarman': 5,                     // 普尔纳跋摩 · taluma · 巽他普拉
     'maya_siyaj_kak': 4,                      // 西亚赫·卡克 · maya · 蒂卡尔
     'bfe_apokaukos': 10,                      // 巴希尔 · baizanting · 斯巴达
+    'baizanting_thomas': 15,                   // 托马·巴列奥略 · baizanting · 斯巴达
     'bfe_maroboduus': -1,                    // 马罗博杜斯 · suweihui · 布拉格
     'yili_bato': -1,                         // 巴托 · yili · 布达佩斯
     'daqiya_burebista': -1,                  // 布雷比斯塔 · daqiya · 索非亚

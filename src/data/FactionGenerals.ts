@@ -3776,6 +3776,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     baizanting: [
+        // 🔴 [2026-10-25 补B] 托马·巴列奥略（1409–1465，摩里亚专制君；君士坦丁十一世之弟，守摩里亚）｜势力 拜占庭｜据点 斯巴达（SPARTANS 文化，摩里亚）｜普将｜精锐「摩里亚守军」T4｜立绘留空
+        { generalId: 'baizanting_thomas', factionId: 'baizanting', cityId: 'city_sparta', generalName: '托马·巴列奥略', portrait: '', eliteName: '摩里亚守军', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 巴希尔·阿波卡夫科斯（10 世纪末拜占庭摩里亚军区长官；997 年保加利亚沙皇撒慕尔南侵时坐镇斯巴达组织防务）｜势力 拜占庭｜据点 斯巴达（SPARTANS 文化，拉科尼亚）｜普将｜精锐「拉科尼亚守军」T4｜立绘留空
         { generalId: 'bfe_apokaukos', factionId: 'baizanting', cityId: 'city_sparta', generalName: '巴希尔·阿波卡夫科斯', portrait: '', eliteName: '拉科尼亚守军', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 乔治·马尼亚克（？–1043，拜占庭名将；1038–1040 西西里远征军最高统帅，罗梅塔与特罗伊纳大破阿拉伯军、收复墨西拿与叙拉古等十三城）｜势力 拜占庭｜据点 锡拉库萨（SICILIANS 文化）｜普将（存疑）｜精锐「西西里远征」T4｜立绘留空
@@ -3789,7 +3791,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 尼基弗鲁斯·福卡斯（912–969，拜占庭名将；961 收复克里特、965 奇里乞亚、969 安条克；卡帕多西亚家族）｜势力 拜占庭｜据点 伊科尼乌姆（TURKS 文化，安纳托利亚军区）｜名将｜精锐「拜占庭铁甲」T1｜立绘留空｜首战待补
         { generalId: 'baizanting_nikephoros_phokas', factionId: 'baizanting', cityId: 'city_yikeniwumu', generalName: '尼基弗鲁斯·福卡斯', portrait: '', eliteName: '拜占庭铁甲', eliteTier: 1 },
         // 🔴 [2026-10-25 补B] 君士坦丁十一世（1405–1453，摩里亚专制君、末代拜占庭皇帝）｜势力 拜占庭｜据点 斯巴达（SPARTANS 文化，摩里亚）｜普将（实败）｜精锐「摩里亚重甲」T4｜立绘留空
-        { generalId: 'baizanting_constantine_xi', factionId: 'baizanting', cityId: 'city_sparta', generalName: '君士坦丁十一世', portrait: '', eliteName: '摩里亚重甲', eliteTier: 4 },
         // 🔴 [2026-10-25 补A] 贝利撒留（505–565，拜占庭名将；达拉 530 胜波斯、533 灭汪达尔、536 收复罗马）｜势力 拜占庭｜据点 罗马城（ROMA 文化，拉丁姆）｜名将｜精锐「拜占庭重骑」T1｜立绘留空｜首战待补
         { generalId: 'baizanting_belisarius', factionId: 'baizanting', cityId: 'city_luoma', generalName: '贝利撒留', portrait: '', eliteName: '拜占庭重骑', eliteTier: 1 },
         { generalId: 'baizanting_diaofeilusi', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '狄奥斐卢斯', portrait: '/assets/BYZANTINE/baizanting_diaofeilusi.png' },   // 🔴 [2026-10-25 按史] 首战敌将；拜占庭皇帝 813-842，838 阿莫里乌姆失陷；据点君士坦丁堡（BYZANTINE）；用势力精锐铁甲圣骑
@@ -15655,7 +15656,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_tibirica', cityId: 'city_guanabara', generalName: '蒂巴里萨', portrait: '/assets/TUPI/gen_tibirica.png', legionName: '帝国时代塔莫约军团' },
+        { generalId: 'gen_tibirica', cityId: 'city_guanabara', generalName: '蒂巴里萨', portrait: '/assets/TUPI/gen_tibirica.png', legionName: '帝国时代图皮军团' },
 
 
 
