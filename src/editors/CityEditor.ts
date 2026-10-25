@@ -856,7 +856,7 @@ export class CityEditor implements IEditor {
     /** 玩家可见旗号（1–2 字）；叛军（panshu）无字旗 → 显示「无字」 */
     private getFlagLabel(factionId: string): string {
         // 🔴 [2026-10-24 主人「叛军是旗帜上没有字」「叛军和起义军完全是两回事」]
-        //   panshu 叛军＝无字旗（没有旗号）；panjun 起义＝有旗号（SANDBOX_DISPLAY_NAMES 里的「起义」）。
+        //   叛军（panshu，特殊势力）＝无字旗（没有旗号）；历史起义首领的政权各自有自己的旗号（正常势力）。
         if (isBlankRebelFaction(factionId)) return '（无字）';
         return SANDBOX_DISPLAY_NAMES[factionId] || factionId;
     }
@@ -1281,7 +1281,7 @@ export class CityEditor implements IEditor {
     /**
      * 反向查找：哪些势力把此 cityId 作为 STARTING_CAPITALS（沙盒模式起始首都）。
      * 如果列表非空，意味着删除/重命名这个城会让那些势力**没有出生点**，
-     * 进入沙盒会被自动降级为 panshu 无字旗叛军（2026-10-24 起：panjun 是起义军，不再是无主灰旗）。
+     * 进入沙盒会被自动降级为 panshu 无字旗叛军（2026-10-24 起：无主据点一律归叛军，不再有无主灰旗）。
      */
     private getFactionsByStartingCity(cityId: string): string[] {
         const result: string[] = [];
@@ -1474,7 +1474,7 @@ export class CityEditor implements IEditor {
 
     /**
      * 刷新 #ce-faction-status 显示当前输入是否对应有效 faction。
-     * 沙盒模式提示（🔴 2026-10-22 起一个势力可多据点，旧「非首府→panjun」已作废）：
+     * 沙盒模式提示（🔴 2026-10-22 起一个势力可多据点，旧「非首府→叛军」已作废）：
      *   - 势力没有 STARTING_CAPITALS → 没有开局首府锚点（城归属仍按 cities_v2.factionId）
      *   - 当前编辑的城不是该势力首府 → 沙盒仍保留该势力（同一势力可拥有多个据点）
      * 详见 GameAppCityLoader.ts 的 resolveBootFactionId()。
@@ -1506,7 +1506,7 @@ export class CityEditor implements IEditor {
         if (!factionCapital) {
             warnings.push(
                 `<span style="color:#FF5252">⚠ 无 STARTING_CAPITALS 注册</span>` +
-                `<span style="color:#999">：该势力没有开局首府锚点；城归属仍按 cities_v2.factionId（🔴 2026-10-22 起一个势力可多据点，不再强制降 panjun）</span>`
+                `<span style="color:#999">：该势力没有开局首府锚点；城归属仍按 cities_v2.factionId（🔴 2026-10-22 起一个势力可多据点，不再强制降为叛军）</span>`
             );
         } else {
             // [SANDBOX 陷阱 2] 当前编辑的城是不是此势力的首都？

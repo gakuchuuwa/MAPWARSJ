@@ -507,7 +507,7 @@ export class LegionManager {
             }
             if (army.isDestroyed) return;
 
-            // 行军 ZOC：进入非己方据点（含叛军 panjun）控制范围必须先停攻，不可绕路穿过
+            // 行军 ZOC：进入非己方据点（含叛军 panshu）控制范围必须先停攻，不可绕路穿过
             if (
                 !army.getIsInCombat() &&
                 !army.isIdle() &&

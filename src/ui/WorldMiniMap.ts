@@ -386,7 +386,7 @@ export class WorldMiniMap {
             this.cityHexes = this.computeCityHexes(marks);
         }
 
-        // 按势力分组收集据点，跳过 panjun 起义 / panshu 叛军（两者都没有势力色）
+        // 按势力分组收集据点，跳过叛军 panshu（无势力色；旧 panjun 占位势力已于 2026-10-25 删除）
         const factionCities = new Map<string, string[]>();
         const factionColorMap = new Map<string, string>();
         for (const m of marks) {

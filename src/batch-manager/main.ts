@@ -8,7 +8,8 @@
 import { pinyin } from 'pinyin-pro';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import type { GeneralEra } from '../data/GeneralEra';
-import { getGeneralEra } from '../data/FactionEra';
+import { FACTION_ERA, getGeneralEra } from '../data/FactionEra';
+import { FACTIONS } from '../data/factions';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { BATTLEFIELD_CHARACTERS } from '../data/BattlefieldCharacters';
@@ -796,12 +797,15 @@ function updateStats(): void {
             else noEra++;
         }
     }
+    // 🔴 [2026-10-25 主人令] 势力级「缺时代」＝FACTIONS 里没在 FACTION_ERA 登记的正规势力（panshu 叛军豁免）
+    const noFactionEra = rows.filter((r) => !factionHasEra(r.id)).length;
     els.stats.innerHTML =
         `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺武将技 ${noSkill} | <span style="color:#e06060">缺立绘 ${noPortrait}</span> | 缺精锐 ${noElite} | 缺军团 ${noLegion} | 显示 ${filteredRows.length}`
         + `<br><span style="color:#c8a868">名将 ${famous} | 普将 ${ordinary}</span>`
         + `<span style="margin-left:12px;color:#8ab4c4">T0:<b>${t[0]}</b> T1:<b>${t[1]}</b> T2:<b>${t[2]}</b> T3:<b>${t[3]}</b> T4:<b>${t[4]}</b></span>`
         + `<span style="margin-left:12px;color:#e5c158">古典:<b>${eraCounts.antiquity}</b></span> <span style="color:#78c878">封建:<b>${eraCounts.feudal}</b></span> <span style="color:#8ab4f8">城堡:<b>${eraCounts.castle}</b></span> <span style="color:#f08080">帝王:<b>${eraCounts.imperial}</b></span>`
-        + (noEra > 0 ? ` <span style="color:#b87c7c">缺时代:<b>${noEra}</b></span>` : '');
+        + (noEra > 0 ? ` <span style="color:#b87c7c">缺时代:<b>${noEra}</b></span>` : '')
+        + (noFactionEra > 0 ? ` <span style="color:#b87c7c">缺势力时代:<b>${noFactionEra}</b></span>` : '');
 }
 
 // ── Table Rendering ──
@@ -2246,12 +2250,47 @@ function factionHasMissingPortrait(fid: string): boolean {
     return (Array.isArray(raw) ? raw : [raw]).some((g: any) => g && !(g.portrait ?? '').trim());
 }
 
+/** 四时代年段（全局定义，2026-10-25 主人令） */
+const ERA_BANDS_TEXT = '古典＝起始–476｜封建＝476–1050｜城堡＝1050–1500｜帝国＝1500–1914';
+
+/** 该势力在 FACTION_ERA 里登记了吗（panshu 叛军＝特殊势力，不挂时代） */
+function factionHasEra(factionId: string): boolean {
+    if (factionId === 'panshu') return true;   // 豁免
+    const segs = (FACTION_ERA as Record<string, readonly { from: number }[] | undefined>)[factionId];
+    return !!segs && segs.length > 0;
+}
+
+/**
+ * 🔴 [2026-10-25 主人令「应该给游戏中每一个势力挂一个时代」「包括以后要新增的势力，也要有」]
+ * 每个正规势力必须在 FACTION_ERA 登记时代；段起点必须递增。panshu（叛军）是特殊势力，豁免。
+ */
+function collectFactionEraIssues(): ValidationIssue[] {
+    const out: ValidationIssue[] = [];
+    for (const f of FACTIONS as Array<{ id: string; name: string }>) {
+        if (f.id === 'panshu') continue;
+        const segs = (FACTION_ERA as Record<string, readonly { from: number; era: string }[] | undefined>)[f.id];
+        if (!segs || segs.length === 0) {
+            out.push({ level: 'error', factionId: f.id, msg: `势力「${f.name}」（${f.id}）没有挂时代：请在 src/data/FactionEra.ts 登记（${ERA_BANDS_TEXT}）` });
+            continue;
+        }
+        for (let i = 1; i < segs.length; i++) {
+            if (!(segs[i].from > segs[i - 1].from)) {
+                out.push({ level: 'error', factionId: f.id, msg: `势力「${f.name}」的时代段起点未递增：${segs.map((s) => s.from).join(' → ')}` });
+                break;
+            }
+        }
+    }
+    return out;
+}
+
 async function runValidation(): Promise<void> {
     try {
         const res = await fetch('/api/validate-entities');
         const data = await res.json();
         // 服务端每个势力只查第一位武将的立绘（会漏同势力其余武将）⇒ 这两类改由下面的全库检查统一报，去掉服务端的，免得重复
         issues = (data.issues ?? []).filter((i: ValidationIssue) => !/武将 ".*" 立绘(路径为空|不存在)/.test(i.msg));
+        // 🔴 [2026-10-25 主人令「应该给游戏中每一个势力挂一个时代」「包括以后要新增的势力，也要有」]
+        issues = [...issues, ...collectFactionEraIssues()];
         // 全库武将缺立绘 / 立绘文件丢失（据点武将 ＋ 战场人物，逐个报错）
         try { issues = [...issues, ...(await collectAllGeneralPortraitIssues())]; } catch (e: any) { issues.push({ level: 'warn', msg: `全库武将立绘检查没跑成：${e?.message ?? e}` }); }
         // 剧本人物立绘（战场武将没有立绘、文件丢了、同一张脸挂两个人……）并入同一份校验结果

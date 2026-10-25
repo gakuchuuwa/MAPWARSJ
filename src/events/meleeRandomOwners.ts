@@ -20,7 +20,7 @@ const ORIGINAL_OWNER = new Map(CITIES_V2.map((c) => [c.id, c.factionId]));
 /**
  * 🔴 [2026-10-24 主人「据点和势力没有关系…据点只和武将有关系，同文化，势力看武将。没有武将要什么势力呀」]
  * 据点 → 候选势力＝**只取挂在这座据点的武将政权**（不再把 cities_v2 的历史 factionId 当势力）；
- * 没有武将的据点＝**叛军**（panjun：无字旗、不出征），由 rollMeleeOwners 兜底指派。
+ * 没有武将的据点＝**叛军**（panshu：无字旗、不出征），由 rollMeleeOwners 兜底指派。
  */
 function buildCandidates(): Map<string, Set<string>> {
     const cand = new Map<string, Set<string>>();
@@ -72,7 +72,8 @@ export function rollMeleeOwners(): { owners: Map<string, string>; unplaced: stri
         const list = [...set];
         owners.set(cityId, list[Math.floor(Math.random() * list.length)]);
     }
-    // 🔴 [2026-10-24 主人「叛军是旗帜上没有字、不能出征」] 无将据点＝叛军 panshu（无字旗、不征兵、不出征），不是义军 panjun
+    // 🔴 [2026-10-24 主人「叛军是旗帜上没有字、不能出征」] 无将据点＝叛军 panshu（无字旗、不征兵、不出征）；
+    //    「义军」是历史起义首领各自的独立正常势力（旧 panjun 占位势力已于 2026-10-25 删除），两者不是一回事
     for (const c of CITIES_V2) if (!owners.has(c.id)) owners.set(c.id, 'panshu');
     return { owners, unplaced };
 }

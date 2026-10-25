@@ -8,7 +8,7 @@
  * - **无专属色** → 按史地特征取色（水师用海蓝、忍者用墨紫、铁骑用铁褐、草原用土黄等），
  *   远征区段内 **红/黄/蓝/紫/褐/青均匀分布**，避免扎堆同色（尤其不可因避黑红而全改绿）。
  *
- * 【仅正规势力】panjun 叛军不在此表；叛军无 hex 势力色，见 RebelFlagConstants / CityAssetManager。
+ * 【仅正规势力】叛军（panshu，特殊势力）不在此表；叛军无 hex 势力色，见 RebelFlagConstants / CityAssetManager。
  */
 
 const _FIXED: Record<string, string> = {
@@ -727,7 +727,7 @@ function assertUniqueFixedColors(map: Record<string, string>): void {
 assertUniqueFixedColors(_FIXED);
 
 export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Object.freeze({
-    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（沿用归并前原色）
+    // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（沿用归并前原色）
     qiufu: '#8B56AB',
     chendiaoyan: '#AC2A72',
     yezongliu: '#2195A0',

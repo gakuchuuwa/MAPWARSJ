@@ -25,7 +25,8 @@ export class LegionFlagDrawer {
     private static FRAME_ROWS = 8; // Directions
 
     private static getDefaultFlagFallback(): HTMLImageElement | null {
-        return this.factionFlags.get('qin') ?? this.factionFlags.get('panjun') ?? null;
+        // 兜底旗＝叛军无字旗（panshu）；旧 panjun 占位势力已于 2026-10-25 删除，不再作为势力兜底
+        return this.factionFlags.get('qin') ?? this.factionFlags.get('panshu') ?? null;
     }
 
     /** 据点旗号染色完成 → 军队画布旗同步重载（与 CityAssetManager 同源） */
@@ -147,13 +148,13 @@ export class LegionFlagDrawer {
 
             // Warm up cache for default fallback flags
             const qinUrl = CityAssetManager.getProcessedFlag('qin');
-            const panjunUrl = CityAssetManager.getProcessedFlag('panjun');
+            const rebelFallbackUrl = CityAssetManager.getProcessedFlag('panshu');
             
             const qinImg = await loadImg(qinUrl);
-            const panjunImg = await loadImg(panjunUrl);
+            const rebelFallbackImg = await loadImg(rebelFallbackUrl);
             
             this.factionFlags.set('qin', qinImg);
-            this.factionFlags.set('panjun', panjunImg);
+            this.factionFlags.set('panshu', rebelFallbackImg);
 
             const qinTextUrl = CityAssetManager.getProcessedFlagText('qin');
             if (qinTextUrl) {
@@ -206,7 +207,7 @@ export class LegionFlagDrawer {
         ctx: CanvasRenderingContext2D,
         center: { x: number, y: number },
         scale: number,
-        factionId: string = 'panjun',
+        factionId: string = 'panshu',
         /**
          * [2026-08-12] 旗杆高度系数。**默认 1 = 原行为，大地图一个像素不变。**
          * 只缩杆、不缩旗面（粗细随高度按图片宽高比自动缩，不需要第二个参数）。
@@ -251,7 +252,7 @@ export class LegionFlagDrawer {
         _direction: number, // 0-7 (废弃, 用城市统一方向)
         scale: number,
         tick: number,
-        factionId: string = 'panjun',
+        factionId: string = 'panshu',
         year: number = -999, // [NEW] Year parameter for conditional text
         /**
          * [2026-08-12] 旗杆高度系数，**只影响旗面贴在哪个高度，不改旗面自身大小**。
@@ -379,7 +380,7 @@ export class LegionFlagDrawer {
         direction: number, // 0-7
         scale: number,
         tick: number,
-        factionId: string = 'panjun',
+        factionId: string = 'panshu',
         year: number = -999, // [NEW] Pass through
         generalId?: string   // [NEW] Optional General ID
     ): void {

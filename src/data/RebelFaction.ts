@@ -9,8 +9,8 @@
  *   · 没有势力色 / 领土色块 / 边界线 / 军队染色；
  *   · 不能征兵、不能出征；只用来兜底「没有武将的据点」（乱斗开局，`events/meleeRandomOwners.ts`）。
  *
- * ⚠️ 与 `panjun`（势力名「起义」）严格分开：`panjun` 是历史上的起义政权 —— 正常势力、
- *    有旗号文字（`SANDBOX_DISPLAY_NAMES['panjun']`）、可出征。别把两者合并（2026-10-24 主人令）。
+ * ⚠️ 旧占位势力 `panjun`（势力名「起义」）已于 2026-10-25 删除（主人令「删除起义势力，哪有历史上哪有这个势力呀」）。
+ *    历史起义首领的政权是**各自独立的正常势力**、可出征；别把「叛军」与「义军」混为一谈（2026-10-24 主人令）。
  *
  * 用法：需要判断「这是不是叛军」时一律调 `isBlankRebelFaction()`，不许在各处再写 `=== 'panshu'`。
  * 旗面相关的「无字旗」判定另外还认 `CityAssetManager.factionFlagMap` 里登记的 'RANDOM'
@@ -20,7 +20,7 @@
 /** 叛军：游戏机制里的无主状态（不是正规势力） */
 export const BLANK_REBEL_FACTION_ID = 'panshu';
 
-/** 是不是叛军（panshu）—— 无字旗、无势力色、不出征的那种，不是起义（panjun） */
+/** 是不是叛军（panshu）—— 无字旗、无势力色、不出征的那种（不是历史起义政权） */
 export function isBlankRebelFaction(factionId: string | null | undefined): boolean {
     return factionId === BLANK_REBEL_FACTION_ID;
 }

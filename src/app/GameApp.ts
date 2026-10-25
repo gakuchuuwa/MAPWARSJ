@@ -230,8 +230,9 @@ export class GameApp {
             FactionTintSystem.bindFactionManager(this.factionManager);
             CityAssetManager.bindFactionManager(this.factionManager);
 
-            const _PANJUN_ID = 'pan' + 'jun';
-            const activeFactions = [...new Set([...CITIES.map(c => c.factionId), _PANJUN_ID, 'panshu'])];
+            // 🔴 [2026-10-25 主人令「删除起义势力」] 起义占位势力 panjun 已删除，不再进 activeFactions；
+            //    特殊势力只有叛军 panshu（无字旗、不能出征、兜底「没有武将的据点」）。
+            const activeFactions = [...new Set([...CITIES.map(c => c.factionId), 'panshu'])];
             const flagCities = CITIES.map((c) => ({
                 lat: c.lat,
                 lng: c.lng,
@@ -641,7 +642,7 @@ export class GameApp {
                 });
 
                 Army.setAnnihilationReporter((army, info) => {
-                    // [语音播报] 跟随军团全军覆没 (移至最前，防止 panjun 被 return)
+                    // [语音播报] 跟随军团全军覆没 (移至最前，防止叛军（panshu）被 return)
                     const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
                     // 野战阵亡('field')/攻城失败('siege_attacker')语音由专句接管，此处跳过通用覆没语音
                     // 援军('siege') — 不管是攻城还是守城援军 — 统一走野战结束句

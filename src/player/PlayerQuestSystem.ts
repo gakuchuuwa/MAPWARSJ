@@ -1804,20 +1804,19 @@ export class PlayerQuestSystem {
         }
         const isOnTheSpot = getEuclideanDistance(host.getPosition(), targetPos) <= 0.12;
 
-        const enemyFactionId = fb.enemyFactionId !== myFactionId ? fb.enemyFactionId : 'panjun';
+        // 🔴 [2026-10-25 主人令「删除起义势力」] 首战敌势力与本方相同（史实内战）时的兜底改用「叛军」`panshu`
+        //    （特殊势力、无字旗），不再用已删除的起义占位势力 `panjun`。
+        const enemyFactionId = fb.enemyFactionId !== myFactionId ? fb.enemyFactionId : 'panshu';
         const existingEnemyGen =
             (fb.enemyGeneralId ? getGeneralRecordByGeneralId(fb.enemyGeneralId) : null) ??
-            (enemyFactionId !== 'panjun' ? getFactionGeneral(enemyFactionId) : null);
+            (enemyFactionId !== 'panshu' ? getFactionGeneral(enemyFactionId) : null);
         const enemyGeneralId = existingEnemyGen?.generalId;
         const enemyDisplayName = existingEnemyGen?.generalName ?? `${fb.enemyFactionName}军`;
-        // 🔴 [2026-10-20 主人令「叛军用起义军团，势力也用起义吧」] 起义（panjun）出兵的军团名一律叫
-        //    **起义军团**：不按敌势力泛称拼「XX军／XX部」，也不回落到文化军团名。
-        const enemyLegionName =
-            enemyFactionId === 'panjun'
-                ? '起义军团'
-                : existingEnemyGen
-                  ? `${enemyDisplayName}部`
-                  : enemyDisplayName;
+        // 兜底势力 `panshu` 没有武将/军团，军团名按敌将或敌势力泛称拼，不再叫「起义军团」
+        // （旧「叛军用起义军团」口径已由 2026-10-24「叛军和起义军完全是两回事」＋ 2026-10-25 删起义势力作废）。
+        const enemyLegionName = existingEnemyGen
+            ? `${enemyDisplayName}部`
+            : enemyDisplayName;
 
         let enemyArmyId: string | undefined;
         if (effectiveBattleType === 'field') {

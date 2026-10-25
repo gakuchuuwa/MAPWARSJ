@@ -2584,7 +2584,7 @@ export class GlobalUnitRenderer {
                     ctx,
                     flagAt,
                     scale * (unit.previewScale ?? 1),   // 🔴 [2026-10-13 主人令] 海上军团不再额外乘 0.85，船与陆军同一基准（1.0）
-                    unit.factionId || 'panjun',
+                    unit.factionId || 'panshu',
                     flagPoleRatio,
                 );
             }
@@ -2753,7 +2753,7 @@ export class GlobalUnitRenderer {
                     directionIndex,
                     scale * (unit.previewScale ?? 1),   // 🔴 [2026-10-13 主人令] 海上军团不再额外乘 0.85，船与陆军同一基准（1.0）
                     Date.now(),
-                    unit.factionId || 'panjun',
+                    unit.factionId || 'panshu',
                     currentYear, // [NEW] Pass year
                     flagPoleRatio,
                 );
@@ -3532,7 +3532,7 @@ export class GlobalUnitRenderer {
                     return { lat: ll.lat, lng: ll.lng };
                 },
                 'mixed',
-                city.factionId || 'panjun',
+                city.factionId || 'panshu',
                 cultureSlots,
                 'mixed',
                 false,

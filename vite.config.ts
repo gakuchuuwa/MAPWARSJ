@@ -5548,12 +5548,12 @@ function serverValidateEntities(): {
     const factionById = new Map(data.factions.map(f => [f.id, f]));
     const factionSet = new Set(data.factions.map(f => f.id));
     // 不参与「正规势力」检查的占位势力：
-    //   · panjun＝起义占位势力（历史起义首领的政权，旗下有真实据点/武将，合法数据）
     //   · panshu＝叛军占位势力（🔴 2026-10-24 主人「叛军是旗帜上没有字、不能出征」；游戏机制里的无主状态，
     //     乱斗开局给「无将据点」兜底，**不是正规政权**，永远没有首府/旗号/势力色/武将/精锐，也不该报错——
     //     2026-10-24 主人「这个不算错，总是提示错误，看着麻烦」⇒ 校验整类跳过）
     //   · kesaiya / wukexiya＝纯历史剧本野战守方势力（无城市据点，不参与沙盒争霸）
-    const skipFactions = new Set(['panjun', 'panshu', 'kesaiya', 'wukexiya']);
+    //   🔴 [2026-10-25 主人令「删除起义势力，哪有历史上哪有这个势力呀」] 原 panjun（「起义」占位势力）已删除，不再跳过任何起义占位。
+    const skipFactions = new Set(['panshu', 'kesaiya', 'wukexiya']);
     const validAttackStyles = new Set(['attack', 'defense', 'balanced']);
 
     // P-01 影子字段审计：只按 FactionGenerals 在册名册检查，孤儿 profile 不参与。
@@ -5644,13 +5644,11 @@ function serverValidateEntities(): {
     //      **一个势力可以拥有多个据点**，「一城一势力」旧规作废）：
     //      **正规势力必须有据点、不得为 0 据点**。
     //      🔴 [2026-10-24 主人：「叛军和起义军是两回事。叛军是游戏项目中的一种设定。」]
-    //      `panjun` 自 2026-10-20 起是**起义占位势力**（势力名「起义」、旗号「義」、军团「帝国时代起义军团」），
-    //      名下据点（平陇/偏刀水/雷公山/甲定/罗博/三都）是石柳邓、白彦虎、吴勉、包利、韦朝元、潘新简等
-    //      起义首领的基地，属正常数据 ⇒ **既不报 error，也不列 info**（2026-10-24 主人「不是错误，为什么要显示呢」）。
-    //      旧 9 月口径「绝不允许 panjun」是把「数据没补完的兜底叛军」和「起义军」混为一谈（起义军不是叛军），已作废。
+    //      🔴 [2026-10-25 主人令「删除起义势力，哪有历史上哪有这个势力呀」]「起义」占位势力 panjun 已删除：
+    //      原挂在它名下的石柳邓、白彦虎、吴勉、包利、韦朝元、潘新简等起义首领各归自己的政权势力
+    //      （qianhui/dongzu/shengmiao/buyi_d/shuizu/miaomin…），不再有「起义」这一家 ⇒ 无需任何 panjun 例外。
     const citiesByFactionMap = new Map<string, typeof data.cities>();
     for (const c of data.cities) {
-        if (c.factionId === 'panjun') continue;   // 起义占位势力：允许持有据点，不参与「0 据点」检查
         if (!citiesByFactionMap.has(c.factionId)) citiesByFactionMap.set(c.factionId, []);
         citiesByFactionMap.get(c.factionId)!.push(c);
     }

@@ -7,7 +7,9 @@ import { StreamModeToggle } from './StreamModeToggle';
 
 const SEASON_NAMES = ['春', '夏', '秋', '冬'] as const;
 
-const NON_ELIMINABLE_FACTIONS = new Set(['', 'panjun', 'neutral']);
+// 🔴 [2026-10-25 主人令「删除起义势力」] 原 panjun（起义占位）已删除；特殊势力只剩 panshu（叛军＝无主状态，
+//    没有正规政权、不该判「被消灭」），故由 panshu 顶替旧 panjun 的位置。
+const NON_ELIMINABLE_FACTIONS = new Set(['', 'panshu', 'neutral']);
 
 function formatFeedTime(year: number, season: number): string {
     const seasonLabel = SEASON_NAMES[season] ?? SEASON_NAMES[0];

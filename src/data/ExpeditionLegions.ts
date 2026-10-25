@@ -144,7 +144,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_astrakhan_khan: { name: '阿斯特拉骑', tier: 3 },
   oirat_ming_gaerdan: { name: '准噶尔驼炮', tier: 1 },
 
-  // ── 2026-10-24 主人令「武将应该都有精锐」：起义／边疆起事首领（`panjun`）原先没有势力精锐表可继承，
+  // ── 2026-10-24 主人令「武将应该都有精锐」：起义／边疆起事首领（各家独立势力；旧 panjun 占位势力已于 2026-10-25 删除）原先没有势力精锐表可继承，
   //    「一个武将一支精锐」逐位补齐。番号取该将本部的名号／族兵／成名战，3–5 字、全局不重名；
   //    分级严格对照精锐五级制 v3（T1 战略／T2 战术尖刀·硬战大捷／T3 文化符号·兵种特色／T4 常规建制·地方部曲）。 ──
   zhao_gerong: { name: '六镇义军', tier: 1 },               // 葛荣：六镇降户骨干，席卷河北数十万众，奠定北齐武力底色（T1 战略）
@@ -359,7 +359,7 @@ export function getLegionEliteLegionName(army: LegionEliteLookup): string | null
   return getLegionEliteConfig(army)?.name ?? null;
 }
 
-/** 远征解锁：跟拍军团须从有番号的据点出身（非 panjun） */
+/** 远征解锁：跟拍军团须从有番号的据点出身（非叛军 panshu） */
 export function canLegionLaunchExpedition(army: LegionEliteLookup): boolean {
   return army.getFactionId() !== 'panjun' && getLegionEliteLegionName(army) != null;
 }

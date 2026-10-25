@@ -10711,7 +10711,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    // guangnanguo → 洞海城改为 panjun
+    // 🔴 [2026-10-25] 原注「guangnanguo → 洞海城改为 panjun」已作废：panjun 占位势力按主人令删除，
+    //    洞海城及各家起义首领均归各自真实政权（越南／乾会／侗族…）。
+
 
 
 
@@ -16976,26 +16978,24 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'guangping_ruanwenzhang', factionId: 'yuenan', cityId: 'city_donghai', generalName: '阮文张', portrait: '/assets/VIETNAMESE/guangping_ruanwenzhang.png' },
 
     ],
-    panjun: [
+    qianhui: [
         { generalId: 'qianhui_baiyanhu', factionId: 'qianhui', cityId: 'city_xingqing', generalName: '白彦虎', portrait: '/assets/BASHU/qianhui_baiyanhu.png', legionName: '起义军' },
-
-    
-        { generalId: 'dongzu_wumian', factionId: 'dongzu', cityId: 'city_leigong', generalName: '吴勉', portrait: '/assets/BASHU/dongzu_wumian.png' },
-
-    
-        { generalId: 'shengmiao_baoli', factionId: 'shengmiao', cityId: 'city_jiading', generalName: '包利', portrait: '/assets/BASHU/shengmiao_baoli.png' },
-
-    
-        { generalId: 'buyi_d_weichaoyuan', factionId: 'buyi_d', cityId: 'city_luobo', generalName: '韦朝元', portrait: '/assets/BASHU/buyi_d_weichaoyuan.png' },
-
-    
-        { generalId: 'shuizu_panxinjian', factionId: 'shuizu', cityId: 'city_sandou', generalName: '潘新简', portrait: '/assets/BASHU/shuizu_panxinjian.png' },
-
-    
-        { generalId: 'miaomin_shiliudeng', factionId: 'miaomin', cityId: 'city_pinglong', generalName: '石柳邓', portrait: '/assets/JIANGNAN/miaomin_shiliudeng.png', legionName: '起义军' },
-
     ],
-    gepids: [
+    dongzu: [
+        { generalId: 'dongzu_wumian', factionId: 'dongzu', cityId: 'city_leigong', generalName: '吴勉', portrait: '/assets/BASHU/dongzu_wumian.png' },
+    ],
+    shengmiao: [
+        { generalId: 'shengmiao_baoli', factionId: 'shengmiao', cityId: 'city_jiading', generalName: '包利', portrait: '/assets/BASHU/shengmiao_baoli.png' },
+    ],
+    buyi_d: [
+        { generalId: 'buyi_d_weichaoyuan', factionId: 'buyi_d', cityId: 'city_luobo', generalName: '韦朝元', portrait: '/assets/BASHU/buyi_d_weichaoyuan.png' },
+    ],
+    shuizu: [
+        { generalId: 'shuizu_panxinjian', factionId: 'shuizu', cityId: 'city_sandou', generalName: '潘新简', portrait: '/assets/BASHU/shuizu_panxinjian.png' },
+    ],
+    miaomin: [
+        { generalId: 'miaomin_shiliudeng', factionId: 'miaomin', cityId: 'city_pinglong', generalName: '石柳邓', portrait: '/assets/JIANGNAN/miaomin_shiliudeng.png', legionName: '起义军' },
+    ],    gepids: [
         { generalId: 'gepids_cunimund', factionId: 'gepids', cityId: 'city_budapeisi', generalName: '库尼蒙德', portrait: '/assets/MAGYAR/gepids_cunimund.png' },   // 🔴 [2026-10-25 按史] 革皮德末王，567 为伦巴第阿尔博因与阿瓦尔所败身死（Paul the Deacon《伦巴第史》I.27）
     ],
     kalbids: [

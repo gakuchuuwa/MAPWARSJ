@@ -29,7 +29,8 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
-    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（起义军＝三级「起义军」；其余沿用原时代军团）
+    // 🔴 [2026-10-24] 恢复被并进旧占位势力 panjun 的各家政权（该占位势力已于 2026-10-25 按主人令删除；
+    //    起义军＝三级「起义军」；其余沿用原时代军团）
     "qiufu": {
         legionName: "起义军",
         legionType: "sub",
@@ -123,11 +124,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
 
-    // 🔴 [2026-10-20 主人令「起义军，一律算到三级起义军团」] 起义（panjun）占位势力统一挂三级起义军团
-    "panjun": {
-        legionName: "起义军",
-        legionType: "sub",
-    },
+    // 🔴 [2026-10-25 主人令「删除起义势力，哪有历史上哪有这个势力呀」] 原「起义（panjun）占位势力」条目已删除；
+    //    起义首领各自是独立势力（太平天国/大顺/大西…），军团照旧挂三级「起义军」。
     "dashun": {
         legionName: "起义军",
         legionType: "sub",

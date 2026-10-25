@@ -288,7 +288,8 @@ export class HistoricalEventManager {
                         attackerTroops: sd.attackerTroops,
                         attackerSourceCityId: sd.attackerSourceCityId ?? sd.attackerCityId,
                         attackerLegionName: sd.attackerLegionName,
-                        defenderFactionId: getFactionIdOfGeneral(sd.defenderGeneralId) ?? 'panjun',
+                        // 找不到守将势力 → 兜底「叛军」panshu（特殊势力、无字旗）；起义占位势力 panjun 已于 2026-10-25 删除
+                        defenderFactionId: getFactionIdOfGeneral(sd.defenderGeneralId) ?? 'panshu',
                         defenderGeneralId: sd.defenderGeneralId,
                         defenderTroops: sd.defenderTroops ?? 10000,
                         defenderSourceCityId: bf.id,

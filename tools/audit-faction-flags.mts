@@ -36,7 +36,7 @@ console.log('旗号唯一性（与渲染同口径：登记优先 → 势力名 �
 
 const byFlag = new Map<string, string[]>();
 for (const f of used) {
-    if (f === 'panjun') continue;   // 叛军不显示旗号
+    if (f === 'panshu') continue;   // 叛军（panshu，无字旗）不显示旗号
     const g = flagOf(f);
     byFlag.set(g, [...(byFlag.get(g) ?? []), names.get(f) ?? f]);
 }
@@ -51,7 +51,7 @@ if (tooLong.length) bad(`这些登记旗号超过 2 字：${tooLong.map(([f, g])
 else ok('登记旗号均为 1–2 字');
 
 // 登记了却没有城的势力：不是错，但提示一下（可能是删城遗留）
-const ghost = [...flags.keys()].filter((f) => !used.includes(f) && f !== 'panjun');
+const ghost = [...flags.keys()].filter((f) => !used.includes(f) && f !== 'panshu');
 if (ghost.length) console.log(`  ⚪ ${ghost.length} 条登记的势力当前没有城（删城遗留，无害）`);
 
 if (fail) { console.log(`\n🔴 ${fail} 项不符`); process.exit(1); }

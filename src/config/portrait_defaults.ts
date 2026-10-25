@@ -3,7 +3,7 @@
  *
  * ① **武将**：专属立绘（文件存在）→ 政权专夹 → 据点/出兵文化区夹。
  * ② **政权**（军团随机、无将城防等）：政权专夹 → 文化区夹。
- * ③ **14+1 文化圈**：每圈仅 **一个** 夹 `public/assets/{RegionType}/`；+1 叛军 `panjun/`。禁止两夹并池。
+ * ③ **14+1 文化圈**：每圈仅 **一个** 夹 `public/assets/{RegionType}/`；+1 叛军素材夹 `panjun/`（夹名沿用，不是势力）。禁止两夹并池。
  * ④ 政权专夹（litang/、yingqin/ 等）与文化区夹分离；映射表指向区夹的条目不算政权专夹。
  *
  * ⑤ **无武将据点 / 无专图武将**（2026-10-25 主人令）：
@@ -181,7 +181,7 @@ export function cultureCircleFolderPrefix(region: RegionType): string {
     return `/assets/${region}/`;
 }
 
-/** +1 叛军文化圈（独立于 14 区） */
+/** +1 叛军素材夹（夹名 `panjun`，独立于 14 区；只是素材夹名，不是势力） */
 export const PANJUN_CULTURE_FOLDER = '/assets/panjun/';
 
 /** 14 文化区随机池：每区仅 `public/assets/{RegionType}/*.png` */
@@ -320,7 +320,7 @@ const _factionCultureRegionCache = new Map<string, RegionType | undefined>();
 
 /** 势力专属立绘池（factionId → 图片路径数组） */
 const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
-    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（立绘池沿用归并前映射）
+    // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（立绘池沿用归并前映射）
     'qiufu': _jiangnanPortraitPool,
     'chendiaoyan': _guangzhouPortraitPool,
     'yezongliu': _jiangnanPortraitPool,
@@ -636,7 +636,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'qincha': _zhongyaPortraitPool,
     'xianhai': _zhongyaPortraitPool,
     'yettishar': _zhongyaPortraitPool,
-    'panjun': _panjunPortraitPool,
     'hou_han': _zhongyuanPortraitPool,
     'yuan_shao': _zhongyuanPortraitPool,
     'hou_jin': _zhongyuanPortraitPool,

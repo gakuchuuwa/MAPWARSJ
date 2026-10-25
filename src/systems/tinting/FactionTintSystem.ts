@@ -3,7 +3,7 @@
  *
  * 兵种贴图染色 — **仅正规势力**；颜色与 FactionManager（旗帜、领土）同一 hex 来源。
  *
- * 起义（panjun）与叛军（panshu）都不在此系统：无势力色、军队保持 NPC 原色（见 NO_TINT_FACTION_IDS）。
+ * 叛军（panshu，特殊势力）不在此系统：无势力色、军队保持 NPC 原色（见 NO_TINT_FACTION_IDS）。
  * 叛军（panshu）视觉差异仅来自据点随机旗面（CityAssetManager.getProcessedRebelFlagIndex）。
  */
 
@@ -20,7 +20,7 @@ export interface TintColor {
     intensity: number;  // 0-1 染色强度
 }
 
-/** 起义（panjun）：无势力 hex，旗面用 52 面随机素材，军队贴图不染色 */
+/** 旧 panjun 占位势力（2026-10-25 已删除）的防御性排除；叛军 panshu 的排除见 isBlankRebelFaction */
 const NO_TINT_FACTION_IDS = new Set(['panjun']);
 
 /**

@@ -42,7 +42,8 @@ export class FollowResupplySystem {
         if (army.isRetreatingHome) return; // 撤退中的残兵不抽沿途城兵
 
         const factionId = army.getFactionId();
-        if (!factionId || factionId === 'neutral' || factionId === 'panjun') return;
+        // 🔴 [2026-10-25 主人令「删除起义势力」] panjun 已删除；叛军 panshu 是特殊势力（无主状态），同样不进补给逻辑。
+        if (!factionId || factionId === 'neutral' || factionId === 'panjun' || factionId === 'panshu') return;
 
         const armyMax = getLegionTroopCap(army);
         if (army.getTroops() >= armyMax) return;

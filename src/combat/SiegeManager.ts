@@ -526,7 +526,8 @@ export class SiegeManager {
         const defGeneral = siegeData.defenderGeneralId
             ? getGeneralRecordByGeneralId(siegeData.defenderGeneralId)
             : null;
-        const defenderFactionId = getFactionIdOfGeneral(siegeData.defenderGeneralId) ?? 'panjun';
+        // 找不到守将势力 → 兜底「叛军」panshu（特殊势力、无字旗）；起义占位势力 panjun 已于 2026-10-25 删除
+        const defenderFactionId = getFactionIdOfGeneral(siegeData.defenderGeneralId) ?? 'panshu';
         void defGeneral;
         return {
             id: bf.id,

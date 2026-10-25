@@ -952,7 +952,7 @@ export class RoadRegistry {
 
     /**
      * 路上逐城排查：从 start 到 end 的城市链上，返回第一个非己方据点。
-     * 仅与 army 同 factionId 的据点可穿过（含 panjun / 敌方 / 他势力，一律须先打）。
+     * 仅与 army 同 factionId 的据点可穿过（含叛军 panshu / 敌方 / 他势力，一律须先打）。
      */
     public resolveFirstHostileCityOnPath(
         factionId: string,

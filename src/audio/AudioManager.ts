@@ -271,7 +271,6 @@ function clamp01(value: number): number {
 }
 
 const BGM_FALLBACK_MAP: Record<string, string> = {
-    panjun: 'CENTRAL',
     avg: 'CENTRAL',
     inbox: 'CENTRAL',
     portraits: 'CENTRAL',

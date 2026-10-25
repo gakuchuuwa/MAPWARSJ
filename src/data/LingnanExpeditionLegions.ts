@@ -11,7 +11,7 @@
 export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   zhuang_d: { name: '广西俍兵', tier: 3 },     // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名
     dayue: { name: '圣翊勇义军', tier: 0 },   // 🔴 [2026-10-25 按史] 陈朝兴道王陈国峻本部「圣翊勇义军」（《大越史记全书》卷五「阮蒯领圣翊勇义军与贼战，擒平章奥鲁赤」）；原「白藤江射手」是战役名＋兵种，史无此军号
-  // guangnanguo → 洞海城归 panjun
+  // guangnanguo → 洞海城原归旧占位势力（该占位势力 2026-10-25 已删除）
   ryukyu: { name: '那霸水师', tier: 3 },       // 琉球王国武装代表，东亚海上贸易网络重要文化符号，升入T3知名
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占

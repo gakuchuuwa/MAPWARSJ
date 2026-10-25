@@ -18,10 +18,10 @@ import { getEraFactionDisplayName } from '../data/eraFactionDisplay';
 
 /**
  * ═══════════════════════════════════════════════════════════════════
- * 【正规势力色系统】— 与叛军旗面系统无关，勿混用 panjun 逻辑
+ * 【正规势力色系统】— 与叛军旗面系统无关，勿混用叛军逻辑
  * ═══════════════════════════════════════════════════════════════════
  *
- * 每个正规 factionId（非 panjun）在开局 assignSpatialColors 后得到唯一 hex：
+ * 每个正规 factionId（非叛军 panshu）在开局 assignSpatialColors 后得到唯一 hex：
  *   · 势力色 / 领土色  → FactionManager.getFactionColor()
  *   · 旗帜色           → 同上，CityAssetManager chromaKey 模板旗时染色
  *   · 军队色           → 同上，FactionTintSystem 读同一 hex 染兵种贴图
@@ -29,8 +29,9 @@ import { getEraFactionDisplayName } from '../data/eraFactionDisplay';
  * 来源：HistoricalFactionColors 固定色优先，其余每局 HSL 随机 + 邻邦避撞色。
  * factions.ts 不写 color 字段。
  *
- * 叛军 panjun 不在此系统内：无 getFactionColor、无领土色块、无军队染色。
+ * 叛军（panshu，特殊势力）不在此系统内：无 getFactionColor、无领土色块、无军队染色。
  * 叛军仅见 CityAssetManager + RebelFlagConstants（52 面随机旗素材）。
+ * （旧占位势力 panjun「起义」已于 2026-10-25 删除，不在任何势力表内。）
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -59,7 +60,7 @@ export class FactionManager {
     /**
      * 势力色来源：HistoricalFactionColors 固定色优先；其余每局随机 HSL。
      * 同一 hex 供旗帜染色、军队染色、领土色块读取；factions.ts 不含显示色。
-     * 不含 panjun（叛军走 RebelFlagConstants + getProcessedRebelFlagIndex，无势力色）。
+     * 不含叛军（panshu 走 RebelFlagConstants + getProcessedRebelFlagIndex，无势力色）。
      */
     public addFaction(faction: Faction): void {
         this.factions.set(faction.id, { ...faction, color: '#999999' });

@@ -3963,9 +3963,9 @@ export class CombatUI {
     }
 
     private resolveFactionLabel(factionId: string | null): string {
-        // 🔴 [2026-10-24 主人「叛军和起义军完全是两回事」] panjun 是**起义**（历史起义政权），
-        //   势力名就叫「起义」；旧代码把它一律写成「叛军」是错的。叛军是 panshu（势力名本来就是「叛军」），
-        //   走下面 getFactionName 拿真名即可。
+        // 🔴 [2026-10-24 主人「叛军和起义军完全是两回事」] 势力名一律取真实登记名：
+        //   叛军 panshu 取「叛军」；旧代码曾把查不到的势力一律写成「叛军」，是错的。
+        //   （旧 panjun「起义」占位势力已于 2026-10-25 删除，不存在「起义」这个势力。）
         const fm = (window as any).game?.factionManager;
         const name = factionId ? fm?.getFactionName(factionId) : '';
         return name || (factionId ? factionId : '叛军');
@@ -6983,7 +6983,7 @@ export class CombatUI {
             setSrc(portraits[factionId]);
             return;
         }
-        // ⑥ 文化区军队/守军 + panjun
+        // ⑥ 文化区军队/守军（含叛军 panshu）
         if (unit) {
             setSrc(getCombatPortraitPath(unit, excludePath));
             return;

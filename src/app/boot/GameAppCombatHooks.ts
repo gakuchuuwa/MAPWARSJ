@@ -38,7 +38,7 @@ function battleSceneTarget(unit: { id: string; getPosition(): { lat: number; lng
  *      ① **城池易主后必错**：cities_v2 里 829 势力各恰好一座城，getFactionCultureRegion
  *         查的是该势力**老家那座城**的 region。中原势力打下草原城之后守这座草原城，
  *         科技按中原算。攻城占九成战斗，这个错在整局里持续发生。
- *      ② **叛军城 100% 判成草原**：panjun 在 cities_v2 中无城 → 返回 undefined →
+ *      ② **叛军城 100% 判成草原**：叛军（panshu）在 cities_v2 中无城 → 返回 undefined →
  *         直接吃下游的 `?? 'STEPPE'` 兜底。叛军守江南城也按草原科技算。
  *
  *    走 getCityRegion 而不是直接读 entity.region：它带坐标兜底（region 缺失/未知值时

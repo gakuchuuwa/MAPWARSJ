@@ -134,14 +134,14 @@ export class ExpeditionUI {
 
     /**
      * 远征目标：全图据点最多的敌对势力（枪打出头鸟）。
-     * 排除本势力 + panjun；多个并列全取，交给 farthestCandidate 选最远。
+     * 排除本势力 + 叛军 panshu；多个并列全取，交给 farthestCandidate 选最远。
      */
     private listCandidates(army: ExpeditionArmy): { city: ExpeditionCity; region: RegionType }[] {
         if (!this.cityManager) return [];
         const myFaction = army.getFactionId();
         const allCities = this.cityManager.getCities();
 
-        // 统计各势力据点数量（排除本势力 + panjun）
+        // 统计各势力据点数量（排除本势力 + 叛军 panshu）
         const countByFaction = new Map<string, number>();
         for (const c of allCities) {
             if (c.factionId === myFaction || c.factionId === 'panjun') continue;

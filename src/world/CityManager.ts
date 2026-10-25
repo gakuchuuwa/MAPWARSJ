@@ -150,7 +150,7 @@ export class CityManager {
         this.applyStrategicMapView(this.map.getLeafletMap().getZoom());
     }
 
-    /** 叛军 52 面旗加载完成后，刷新已渲染 panjun 起义 / panshu 叛军据点的 flag-rebel-* class */
+    /** 叛军 52 面旗加载完成后，刷新已渲染 panshu 叛军据点的 flag-rebel-* class */
     public refreshPanjunRebelFlagMarkers(): void {
         CityAssetManager.resetRebelFlagAssignments();
         for (const city of this.cities) {

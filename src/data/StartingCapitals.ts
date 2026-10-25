@@ -3,7 +3,7 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
-    // 🔴 [2026-10-24] 恢复被并进 panjun 的各家政权（登记用，不作开局依据）
+    // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（登记用，不作开局依据）
     'qiufu': 'city_shanxian',
     'chendiaoyan': 'city_zhangzhou',
     'yezongliu': 'city_chuzhou_zj',
@@ -699,10 +699,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'minangkabau': 'city_pagaruyung',
     'tutul_xiu': 'city_uxmal',
     'odrysian_late': 'city_seuthopolis',
-    // 🔴 [2026-09-12] 新增势力必须登记首都，否则沙盒兜底会把它降格成 panjun（见 five-file-sync.md 首都映射铁律）
+    // 🔴 [2026-09-12] 新增势力必须登记首都，否则沙盒兜底会把它降格成叛军 panshu（见 five-file-sync.md 首都映射铁律）
     // 🔴 [2026-09-23 主人令「先添加据点」] 迦南重新有据点了：推罗（`city_tuile`）。
     //    按上面那条铁律，这里必须登记首都映射 —— 不登记，引擎找不到迦南的立足之地，
-    //    会把推罗降格成 panjun。迦南的四件套现成：势力 kanan / 守将阿泽米尔 / 精锐推罗水师。
+    //    会把推罗降格成叛军 panshu。迦南的四件套现成：势力 kanan / 守将阿泽米尔 / 精锐推罗水师。
     //    （2026-09-19 曾一度「迦南不再有据点、只在战场上出现」，2026-09-23 主人令改回。）
     'kanan': 'city_tuile',
     'feilisidin': 'city_jiasa',
