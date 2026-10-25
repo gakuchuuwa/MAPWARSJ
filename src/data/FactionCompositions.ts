@@ -166,7 +166,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "kelite": {
-        legionName: "帝国时代意大利雇佣军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 势力时代段按主将成名年＝城堡 → 意大利城邦军团
+        legionName: "城堡时代意大利城邦军团",
         legionType: "sub",
     },
     "sailiugu": {
@@ -741,7 +742,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "guanche": {
-        legionName: "城堡时代马里军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 柏柏尔文化城堡档＝摩尔军团
+        legionName: "城堡时代摩尔军团",
         legionType: "sub",
     },
     "zhagewei": {
@@ -765,7 +767,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "kelimiya": {
-        legionName: "城堡时代意大利城邦军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 主将＝帝国段 → 意大利雇佣军团
+        legionName: "帝国时代意大利雇佣军团",
         legionType: "sub",
     },
     "menggu_d": {
@@ -1034,7 +1037,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "ethiopia": {
-        legionName: "古典时代阿克苏姆军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 城堡段 × 埃塞俄比亚文化＝埃塞俄比亚军团
+        legionName: "城堡时代埃塞俄比亚军团",
         legionType: "sub",
     },
     "yidelisi": {
@@ -1073,7 +1077,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "goryeo": {
-        legionName: "封建时代新罗军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 高丽（918–1392）＝城堡时代高丽军团
+        legionName: "城堡时代高丽军团",
         legionType: "sub",
     },
     "joseon": {
@@ -1336,7 +1341,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "panyao": {
-        legionName: "城堡时代江南军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 帝国段 × 江南文化＝两江军团
+        legionName: "帝国时代两江军团",
         legionType: "sub",
     },
     // 🔴 [2026-10-05 主人令「该是什么就是什么」] 这 4 家原先没登记军团、走文化区保底挂错了，按时代＋族归位：
@@ -1643,7 +1649,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "ashide": {
-        legionName: "封建时代河中军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 突厥阿史德部·漠南文化封建档＝突厥军团
+        legionName: "封建时代突厥军团",
         legionType: "sub",
     },
     "duolu": {
@@ -1911,7 +1918,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "suomunate": {
-        legionName: "城堡时代古吉拉特军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 瞿折罗文化封建档＝古贾拉铁骑军团
+        legionName: "封建时代古贾拉铁骑军团",
         legionType: "sub",
     },
     "puxiangyindu": {
@@ -2053,7 +2061,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "liren": {
-        legionName: "帝国时代两江军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 封建段 × 江南文化＝江淮军团
+        legionName: "封建时代江淮军团",
         legionType: "region",
     },
     "zhuang_d": {
@@ -2421,7 +2430,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "hou_han": {
-        legionName: "封建时代中原军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府建筑=河朔文化，封建档＝河朔军团
+        legionName: "封建时代河朔军团",
         legionType: "sub",
     },
     "yuan_shao": {
@@ -2441,7 +2451,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "hou_liang": {
-        legionName: "封建时代中原军团",
+    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府建筑=河朔文化，封建档＝河朔军团
+        legionName: "封建时代河朔军团",
         legionType: "sub",
     },
     "han_zhao": {
