@@ -1906,7 +1906,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #86 窦固 (25 ~ 88) — 公元73年天山蒲类海之战（本城就地开战）
+    // #86 窦固 (25 ~ 88) — 公元73年天山蒲类海之战（战场在巴里坤；窦固据点＝汉都洛阳，>300km → 按 2026-10-25 规则直接去战场接任务）
     pulei_dougu: {
         generalId: 'pulei_dougu',
         battleName: '天山蒲类海之战',

@@ -268,11 +268,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower', 'heavy_rocket_cart', 'heavy_rocket_cart'],
     },
-    '古典时代魏晋军团': {
+    '古典时代太行军团': {   // 🔴 [2026-10-26] 键名随军团改名（原「古典时代魏晋军团」，2026-10-24 二级改名后此处漏改，攻城误走母体配置）
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代北朝军团': {
+    '封建时代河朔军团': {   // 🔴 [2026-10-26] 键名随军团改名（原「封建时代北朝军团」）
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -288,11 +288,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_battering_ram', 'antiquity_battering_ram', 'antiquity_battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代南朝军团': {
+    '封建时代江淮军团': {   // 🔴 [2026-10-26] 键名随军团改名（原「封建时代南朝军团」）
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代南宋军团': {
+    '城堡时代江南军团': {   // 🔴 [2026-10-26] 键名随军团改名（原「城堡时代南宋军团」）
         age: 'castle',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -986,7 +986,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代丁黎军团': {
+    '封建时代瞿越军团': {   // 🔴 [2026-10-26] 键名随军团改名（原「封建时代丁黎军团」）
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },

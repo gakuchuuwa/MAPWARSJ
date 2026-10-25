@@ -1133,7 +1133,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'porbazhyn_mouyu': 'CENTRAL',   // 回鹘｜牟羽可汗｜据点 博尔巴任
     'pugu_ashinaguduolu': 'MONGOL',   // 突厥｜骨咄禄｜据点 燕然山
     'pugu_puguhuaien': 'KHITAN',   // 唐国｜仆固怀恩｜据点 回乐
-    'pulei_dougu': 'WESTERN',   // 蒲类｜窦固｜据点 巴里坤
+    'pulei_dougu': 'CENTRAL',   // 汉国｜窦固｜据点 洛阳（汉都；窦固是汉显亲侯、奉车都尉）
     'puxiangyindu_albukeerke': 'PORTUGUESE',   // 葡属印度｜阿尔布克尔克｜据点 果阿
     'pyu_moluo': 'BURMESE',   // 骠族｜摩罗惹｜据点 室利差罗
     'qi_d_qijiguang': 'JIANGNAN',   // 大明｜戚继光｜据点 宁波

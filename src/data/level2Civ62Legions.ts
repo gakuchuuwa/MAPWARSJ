@@ -35,7 +35,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'ROMA',
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'fish_scale',
-        shipId: 'TRIREME',
+        // 🔴 [2026-10-26 主人令「未被套用的船只套给符合历史的军团」] TRIREME → ONAGER_SHIP（中型投石舰）：
+        //    onager 本是罗马扭力抛石机的名字；凯撒《高卢战记》4.25 登陆不列颠时令战舰以投射器（tormenta）压制岸上，
+        //    阿格里帕在瑙洛库斯、亚克兴之战亦以舰载投石器作战。三列桨舰仍由古典时代东罗马军团使用。
+        shipId: 'ONAGER_SHIP',
         commanderUnit: 'hero_aristides',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝罗马城堡兵【百夫长精锐】。
         slots: [
@@ -75,7 +78,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'rhodian_slinger', count: 4 },
             { type: 'elite_hippeus', count: 3 },
-            { type: 'lysander_raider', count: 2 },
+            { type: 'polemarch', count: 2 },
         ],
     },
     {
@@ -913,7 +916,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_alaric',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_johnthefearless（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'antiquity_skirmisher', count: 4 },
-            { type: 'antiquity_spearman', count: 3 },
+            { type: 'maceman', count: 3 },
             { type: 'raider', count: 2 },
         ],
     },
@@ -1914,7 +1917,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'MAGYAR',
         castleId: 'MAGY_CASTLE_AGE3', castleName: '马扎尔 布达佩斯多瑙河石堡',
         formationMode: 'fish_scale',
-        shipId: 'DEMO_RAFT',
+        // 🔴 [2026-10-26 主人令「未被套用的船只套给符合历史的军团」] DEMO_RAFT → ELITE_LEMBOS（希腊旗舰伦博斯重装）：
+        //    伦博斯（lembus）与其后身利伯尼亚快船源出伊利里亚—亚得里亚海域，罗马潘诺尼亚舰队（Classis Pannonica）
+        //    在多瑙河巡防即以此类快船为主力，正合本军团「多瑙河浅滩巡逻水陆大阵」。爆破筏仍有 30 余支军团使用。
+        shipId: 'ELITE_LEMBOS',
         commanderUnit: 'hero_belisarius',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_attila（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'antiquity_light_cavalry', count: 3 },
@@ -2368,8 +2374,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_henryv',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
-            { type: 'champion', count: 3 },
-            { type: 'cavalier', count: 2 },
+            { type: 'serjeant', count: 3 },
+            { type: 'paladin', count: 2 },
         ],
     },
 
@@ -2720,7 +2726,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_war_chariot', count: 2 },
             { type: 'antiquity_scout_cavalry', count: 3 },
-            { type: 'antiquity_skirmisher', count: 4 },
+            { type: 'sickle_warrior', count: 4 },
         ],
     },
     // ── 安纳托利亚 · 封建时代 · 封建时代突厥骑射军团　（本次新建）────────────────
@@ -3620,8 +3626,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_topayupanqui',
         slots: [
             { type: 'slinger', count: 4 },
-            { type: 'champi_warrior', count: 3 },
-            { type: 'elite_kamayuk', count: 2 },
+            { type: 'elite_kamayuk', count: 3 },
+            { type: 'champi_runner', count: 2 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════
@@ -4113,7 +4119,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'hippeus', count: 3 },
             { type: 'recurve_bowman', count: 4 },
-            { type: 'light_cavalry', count: 2 },
+            { type: 'lysander_raider', count: 2 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════

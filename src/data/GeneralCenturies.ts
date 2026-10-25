@@ -936,7 +936,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'liangzhou_zhanggui': 4,                            // 张轨 · liangzhou · 姑臧
     'ningkou_liling': -1,                                // 李陵 · ningkou · 遮虏障
     'pugu_puguhuaien': 8,                               // 仆固怀恩 · lingzhou · 回乐
-    'pulei_dougu': 1,                                   // 窦固 · pulei · 巴里坤
+    'pulei_dougu': 1,                                   // 窦固 · han_d · 洛阳
     'shazhou_zhangyichao': 9,                           // 张议潮 · shazhou · 敦煌
     'shuofang_weiqing': -2,                              // 卫青 · shuofang · 延恩
     'suzhou_huoqubing': -2,                              // 霍去病 · suzhou · 嘉峪关

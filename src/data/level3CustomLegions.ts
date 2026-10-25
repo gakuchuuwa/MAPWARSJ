@@ -148,7 +148,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'elite_ibirapema_warrior', count: 3 },
             { type: 'blackwood_archer', count: 4 },
-            { type: 'elite_champi_warrior', count: 2 },
+            { type: 'champi_scout', count: 2 },
         ],
         regions: ['TUPI'],
         parentLegion: '帝国时代塔莫约军团',

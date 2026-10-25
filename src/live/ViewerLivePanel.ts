@@ -2,7 +2,7 @@
  * 🔴 [2026-10-23] 直播观众互动的屏幕面板（`ViewerLive`）。
  *   · [2026-10-26 主人定] 双态融合展示：
  *       1) 战略地图平时：贴在屏幕正下方中央（`bottom: 6px`），位于左下纪年面板与右下小地图之间；
- *       2) 战术模式（Scene13）：直接并入顶部玩家指挥面板（`#player-scene13-bar`）内作为第二行，与上方玩家面板融为一体。
+ *       2) 战术模式（Scene13）：直接并入顶部玩家指挥面板（`#player-scene13-bar`）右侧同一行内，与上方玩家面板合为单行扁平顶栏。
  *   · 按 F9 展开测试区：输入观众名，点「站攻方 / 站守方」、点六个字放计、勾「付费」——本地模拟弹幕，
  *     不用开直播就能试整套玩法。以后接上直播平台，消息走同一个 `ViewerLive.onChat`。
  *   · [2026-10-24] 接上直播间（SocialStreamBridge）后不打仗也常显；F9 里填 SSN 会话 ID、看连接状态、模拟打赏。
@@ -14,8 +14,10 @@ import type { SocialStreamBridge } from './SocialStreamBridge';
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
 const WORDS = ['攻', '胜', '敌', '混', '并', '败'] as const;
-/** 横条字号（px，按 1920 宽的窗口设计）：标题 / 口令 / 说明 / 动态记录 */
+/** 战略地图底部横条字号（px，按 1920 宽的窗口设计） */
 const FS = { title: 16, main: 15, sub: 13.5, small: 12.5 } as const;
+/** 战术模式顶栏同行内嵌字号（与 #player-scene13-bar 13px 对齐） */
+const FS_S13 = { title: 13.5, main: 13, sub: 12, small: 12 } as const;
 /**
  * 面板按 1920 宽设计；战略地图底部独立展示时按窗口宽度等比缩放。
  */
@@ -66,18 +68,18 @@ export class ViewerLivePanel {
         this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; width:360px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
     }
 
-    /** 战术模式（Scene13）：无缝融进顶部 `#player-scene13-bar` 内部作为第二行 */
+    /** 战术模式（Scene13）：无缝并入顶部 `#player-scene13-bar` 右侧同一行内 */
     private applyScene13MergedStyle(): void {
         this.root.style.cssText = `
-            flex:0 0 100%; width:100%; box-sizing:border-box; display:block;
-            margin-top:2px; padding-top:5px;
-            border-top:1px solid rgba(212,175,55,0.35);
-            color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.3;
-            text-align:center; pointer-events:auto; user-select:none;`;
-        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; width:360px; margin:8px auto 0; padding-top:8px; border-top:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
+            position:relative; display:inline-flex; align-items:center; flex-shrink:0;
+            margin-left:2px; padding-left:10px;
+            border-left:1px solid rgba(212,175,55,0.45);
+            color:#f5e6c8; font-family:${FONT}; font-size:${FS_S13.sub}px; line-height:1.2;
+            pointer-events:auto; user-select:none;`;
+        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:360px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
     }
 
-    /** 根据当前是否在战术模式（`#player-scene13-bar` 是否显示），自动在「顶部玩家面板内融合」与「战略地图底部居中」之间切换 */
+    /** 根据当前是否在战术模式（`#player-scene13-bar` 是否显示），自动在「顶部玩家面板同行融合」与「战略地图底部居中」之间切换 */
     private updatePosition(): void {
         if (this.root.style.display === 'none') return;
         const s13Bar = document.getElementById('player-scene13-bar');
@@ -86,7 +88,6 @@ export class ViewerLivePanel {
         if (s13Active && s13Bar) {
             if (!this.inScene13Bar || this.root.parentElement !== s13Bar) {
                 this.inScene13Bar = true;
-                // 在顶部面板内：body 在上、dev 在下（按 F9 往下展开）
                 this.root.append(this.body, this.dev);
                 this.applyScene13MergedStyle();
                 s13Bar.appendChild(this.root);
@@ -96,7 +97,6 @@ export class ViewerLivePanel {
 
         if (this.inScene13Bar || this.root.parentElement !== document.body) {
             this.inScene13Bar = false;
-            // 在底部独立条内：dev 在上、body 在下（按 F9 往上展开）
             this.root.append(this.dev, this.body);
             this.applyStrategicBottomStyle();
             this.root.style.display = 'block';
@@ -125,9 +125,11 @@ export class ViewerLivePanel {
             this.root.style.display = 'none';
             return;
         }
-        this.root.style.display = 'block';
+        this.root.style.display = this.inScene13Bar ? 'inline-flex' : 'block';
         this.updatePosition();
+        this.root.style.display = this.inScene13Bar ? 'inline-flex' : 'block';
 
+        const f = this.inScene13Bar ? FS_S13 : FS;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
         const b = (t: string) => `<b style="color:#ffd700;">${t}</b>`;
         const sep = `<span style="color:rgba(212,175,55,0.45);margin:0 2px;">｜</span>`;
@@ -137,21 +139,23 @@ export class ViewerLivePanel {
         const port = location.port && location.port !== '5173'
             ? `<br><span style="color:#ff8a7a;">⚠ 游戏开在 ${esc(location.port)} 端口，存的会话 ID、观众余额都在 5173 那边：先关掉多开的游戏</span>`
             : '';
-        const platform = this.devOpen
+        const platform = this.devOpen && !this.inScene13Bar
             ? `<div style="font-size:13px;color:#8fd3ff;margin-bottom:4px;text-align:center;">${esc(s.platform || '没接直播间')}${s.platform ? '　' + chat : ''}${s.yt ? '<br>' + esc(s.yt) : ''}${port}</div>`
             : '';
 
-        // ── 第一行：核心参战口令（单行横向大字） ──
-        const titleBadge = `<span style="font-size:${FS.title}px;color:#ffd700;font-weight:900;letter-spacing:1.5px;text-shadow:0 1px 3px rgba(0,0,0,0.9);">📢 发弹幕参战</span>`;
+        // ── 第一行：核心参战口令（单行横向） ──
+        const titleBadge = `<span style="font-size:${f.title}px;color:#ffd700;font-weight:900;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,0.9);">📢 发弹幕参战</span>`;
         const sideCmd = !s.on
-            ? `<span style="font-size:${FS.main}px;">开战后发 ${b('1')} 站攻方 · ${b('2')} 站守方</span>`
-            : `<span style="font-size:${FS.main}px;">${b('1')} ${esc(s.names[0])} <span style="font-size:${FS.sub}px;color:#dfc28c;">(${b(String(s.counts[0]))}人)</span> · ${b('2')} ${esc(s.names[1])} <span style="font-size:${FS.sub}px;color:#dfc28c;">(${b(String(s.counts[1]))}人)</span></span>`;
-        const castCmd = `<span style="font-size:${FS.main}px;">${b('攻 胜 敌 混 并 败')} 放计</span>`;
-        const earnCmd = `<span style="font-size:${FS.sub}px;color:#e0cfa9;">（站队/发弹幕攒军令，${b(`${ORDERS_PER_CAST} 令`)}放一计）</span>`;
+            ? `<span style="font-size:${f.main}px;">开战发 ${b('1')} 攻方 · ${b('2')} 守方</span>`
+            : `<span style="font-size:${f.main}px;">${b('1')} ${esc(s.names[0])}<span style="font-size:${f.sub}px;color:#dfc28c;">(${b(String(s.counts[0]))})</span> · ${b('2')} ${esc(s.names[1])}<span style="font-size:${f.sub}px;color:#dfc28c;">(${b(String(s.counts[1]))})</span></span>`;
+        const castCmd = `<span style="font-size:${f.main}px;">${b('攻胜敌混并败')} 放计</span>`;
+        const earnCmd = this.inScene13Bar
+            ? `<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}令`)}/计)</span>`
+            : `<span style="font-size:${f.sub}px;color:#e0cfa9;">（站队/发弹幕攒军令，${b(`${ORDERS_PER_CAST} 令`)}放一计）</span>`;
 
-        const mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;">${titleBadge}${sep}${sideCmd}${sep}${castCmd} ${earnCmd}</div>`;
+        const mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${sideCmd}${sep}${castCmd} ${earnCmd}</div>`;
 
-        // ── 第二行：动态辅助信息（打赏 / 点赞目标 / 军令榜 / 排队 / 最近放计日志，有内容才显） ──
+        // ── 动态辅助信息（打赏 / 点赞目标 / 军令榜 / 排队 / 最近放计日志，有内容才显） ──
         const subItems: string[] = [];
         if (this.tip) {
             subItems.push(`<span>打赏 ${b(`$${s.price / 100}`)} 马上放一计 · ${esc(this.tip)} <span style="color:#cdbb95;">(留YouTube名)</span></span>`);
@@ -179,7 +183,9 @@ export class ViewerLivePanel {
         }
 
         const subRow = subItems.length
-            ? `<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(212,175,55,0.25);font-size:${FS.small}px;">${subItems.join(sep)}</div>`
+            ? (this.inScene13Bar
+                ? `<div style="position:absolute;top:calc(100% + 6px);right:0;display:flex;align-items:center;gap:8px;padding:3px 10px;background:rgba(20,16,12,0.92);border:1px solid rgba(212,175,55,0.5);border-radius:6px;font-size:${f.small}px;white-space:nowrap;pointer-events:none;">${subItems.join(sep)}</div>`
+                : `<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(212,175,55,0.25);font-size:${f.small}px;">${subItems.join(sep)}</div>`)
             : '';
 
         this.body.innerHTML = platform + mainRow + subRow;

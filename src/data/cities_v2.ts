@@ -2800,9 +2800,17 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
 
 
-    { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.8, lng: 93.5, type: 'pass', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', mirror: true },
+    // 🔴 [2026-10-26 主人问「哈密卫，是城市，还是险要？」] 判「城」不是险要：
+    //    哈密卫＝明代哈密卫治所、忠顺王府所在（永乐四年立卫、封忠顺王，《明史·卷329·西域传》），
+    //    回回/畏兀儿/哈剌灰 三部聚居的绿洲居民城（王府、坊市、城郭俱在），史书不称关塞、名字也不带关/隘/渡/堡/戍/镇/哨卡
+    //    → 按 AGENTS §五.1 不判 PASS；城居人口无直接史料，按③「按城郭判」（有夯土城郭）→ 小城。
+    { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.8, lng: 93.5, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', mirror: true , note: '哈密卫＝明哈密卫治所/忠顺王府（永乐四年立卫，《明史·卷329·西域传》），回回、畏兀儿、哈剌灰三部绿洲居民城，非关塞 → 城；人口无直接史料，按 2026-10-25 §5.1③ 城郭判（夯土城郭）→ 小城' },
 
-    { id: 'city_bieshibali', name: '务涂城', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'pass', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN', mirror: true , note: '按 2026-10-25 标准：车师后部王城务涂（城郭）→ 险要' },
+    // 🔴 [2026-10-26 主人令「请修复据点类型。务涂城也改一并复核」] 判「城」不是险要：
+    //    务涂城＝车师后部王城务涂谷（《汉书·卷96下·西域传》「车师后国，王治务涂谷……户五百九十五，口四千七百七十四」），
+    //    王城有城郭、有王治、居民聚落，不是「为守一条通道而设、本身不是居民城」的军事设施，名字也不带关/隘/渡/堡/戍/镇/哨卡 → 不判 PASS；
+    //    城居人口无直接城居史料（国户口为全境，非城居）→ 按 §5.1③ 城郭判（有城郭）→ 小城。
+    { id: 'city_bieshibali', name: '务涂城', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'small_city', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN', mirror: true , note: '务涂城＝车师后部王城务涂谷（《汉书·卷96下·西域传》车师后国「王治务涂谷」，户595/口4,774为他国全境），王城城郭、非关塞 → 性质＝城；城居人口无直接城居史料 → 按 2026-10-25 §5.1③ 城郭判（有城郭）→ 小城' },
 
 
 

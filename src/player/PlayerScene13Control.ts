@@ -145,10 +145,10 @@ export class PlayerScene13Control {
         bar.id = 'player-scene13-bar';
         bar.style.cssText = `
             position:fixed; top:0; left:50%; transform:translateX(-50%); z-index:10055; display:none;
-            flex-wrap:wrap; justify-content:center; align-items:center; row-gap:4px; column-gap:10px; width:max-content; max-width:96vw;
-            padding:7px 14px; font-family:${FONT}; font-size:13px; color:#f5e6c8;
+            flex-wrap:nowrap; justify-content:center; align-items:center; gap:8px; width:max-content; max-width:96vw;
+            padding:5px 12px; font-family:${FONT}; font-size:13px; color:#f5e6c8;
             background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
-            border:1px solid rgba(212,175,55,0.6); border-radius:10px; pointer-events:auto; user-select:none;
+            border:1px solid rgba(212,175,55,0.6); border-radius:0 0 10px 10px; pointer-events:auto; user-select:none;
             box-shadow:0 2px 12px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,215,0,0.25); white-space:nowrap;`;
         const info = document.createElement('span');
         bar.appendChild(info);
@@ -294,10 +294,11 @@ export class PlayerScene13Control {
                 : (respawnSec > 0
                     ? `<span style="color:#ff6b6b; font-weight:900;">阵亡（${respawnSec}秒后复活）</span>`
                     : '<span style="color:#ff8585; font-weight:900;">阵亡复活中</span>');
+            this.info.title = `统率权限：${ctl}`;
             this.info.innerHTML =
                 `<b style="color:#ffd27a;">${this.hero.name}</b> · ${rank.name} · `
                 + `${hpText} · `
-                + `本场斩 <b>${st.kills}</b> · 功勋 ${this.hero.merit} · ${ctl}`;
+                + `斩 <b>${st.kills}</b> · 功勋 ${this.hero.merit}`;
             const on = 'rgba(212,175,55,0.35)';
             const off = 'rgba(255,255,255,0.06)';
             if (this.btnAttack) {
@@ -310,7 +311,7 @@ export class PlayerScene13Control {
                 this.btnHold.style.background = st.command === 'hold' ? on : off;
                 this.btnHold.disabled = false;
             }
-            if (this.hint) this.hint.style.display = 'inline';
+            if (this.hint) this.hint.style.display = 'none';
         } else {
             this.info.innerHTML =
                 `<b style="color:#ffd27a;">${this.hero.name}</b> · 观战中`;

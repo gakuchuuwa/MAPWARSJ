@@ -6508,6 +6508,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'xiyuduhu_banchao', factionId: 'han_d', cityId: 'city_taqian', legionName: '古典时代凉州军团', generalName: '班超', portrait: '/assets/KHITAN/xiyuduhu_banchao.png' },
+        // 🔴 [2026-10-26 主人令「窦固是汉，是中原，怎么能放西域呢？河西也行呀，你查历史了吗」]
+        //    窦固＝汉显亲侯、奉车都尉（扶风平陵人，《后汉书·窦融列传》附传）：黄门侍郎→奉车都尉→卫尉，京官皆在洛阳；
+        //    显亲侯封地在汉阳郡（陇右），军事活动在河西/西域（永平十六年出酒泉、十七年出敦煌昆仑塞）。
+        //    故归**汉国**、据点放**汉都洛阳**（中原 CENTRAL）；首战天山蒲类海在巴里坤（远距，按规则直奔战场接任务）。
+        { generalId: 'pulei_dougu', factionId: 'han_d', cityId: 'city_luoyang', generalName: '窦固', portrait: '/assets/WESTERN/pulei_dougu.png' },
 
 
 
@@ -8849,7 +8854,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    pulei: { generalId: 'pulei_dougu', cityId: 'city_balikun', generalName: '窦固', portrait: '/assets/WESTERN/pulei_dougu.png' },
+    // 🔴 [2026-10-26] 蒲类(pulei)势力不再挂武将：窦固是汉将（汉国），已归回汉国·洛阳，
+    //    见 han_d 名单（附依据）。蒲类国（巴里坤）本身在位国王史无实名，不拟名、不设武将；
+    //    巴里坤保留 cities_v2 原主 pulei（乱斗开局按「无将据点＝叛军」兜底）。
 
 
 

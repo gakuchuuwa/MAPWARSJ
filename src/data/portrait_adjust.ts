@@ -8261,6 +8261,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 15,
             "offsetY": 22
+        },
+        "/assets/XIANBEI/bfe_huyan_wang.png": {
+            "scale": 1.04,
+            "offsetX": 5,
+            "offsetY": 5
+        },
+        "/assets/WESTERN/tang_guoyuanzhen.png": {
+            "scale": 1.2,
+            "offsetX": 13,
+            "offsetY": 14
         }
     },
     "folderGuides": {
