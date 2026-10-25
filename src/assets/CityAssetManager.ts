@@ -63,6 +63,7 @@ export class CityAssetManager {
         'gepids': '革皮',
         'kalbids': '卡比',
         'jiaohuangguo': '教皇',
+        'ghana_diguo': '加纳',
         'yalan': '亚兰',
     //    本表是旧旗号登记表：一势力一条，值＝SANDBOX_DISPLAY_NAMES 的旗号；补齐缺登记/对齐旧值。
         'aertai': '阿勒',

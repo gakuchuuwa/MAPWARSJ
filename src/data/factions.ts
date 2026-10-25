@@ -1508,6 +1508,7 @@ export const FACTIONS: Faction[] = [
     { id: 'manzheboyi', name: '满者伯夷' },        // 特罗武兰·满者伯夷王朝（加查马达）
     { id: 'zhelouqi', name: '乔汉' },        // 阿杰梅尔·乔汉(遮娄其)王朝（普里特维）
     { id: 'suosuo', name: '索索' },        // 库姆比萨利赫·索索帝国（苏曼古鲁）
+    { id: 'ghana_diguo', name: '加纳帝国' },        // 库姆比萨利赫·瓦加杜加纳帝国（通卡·马宁；al-Bakri 1067/68 记其王）
     { id: 'antiaokegongguo', name: '赞吉王朝' },        // 拉塔基亚·努尔丁赞吉王朝叙利亚海岸
     { id: 'saimien', name: '塞米恩' },        // 塞米恩·塞米恩王国（尤迪特）
     { id: 'kaliya', name: '卡里亚' },        // 哈利卡纳苏斯·卡里亚王国（阿尔特米西亚）

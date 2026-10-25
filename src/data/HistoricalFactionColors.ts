@@ -14,6 +14,7 @@
 const _FIXED: Record<string, string> = {
     // ── 2026-10-25 按史补势力 ──
     jiaohuangguo: '#D9C07A', // 教皇国（教廷金）
+    ghana_diguo: '#A9842B', // 加纳帝国（瓦加杜金）
     yalan: '#6E4A6B', // 亚兰·大马士革（紫）
     // ── 红·尚赤 / 火德 / 复明 / 起义 ──
     han_d: '#C41E1E', // 汉（赤旗黑字，史料固定；见 FLAG_TEXT_BLACK_STYLE_FACTIONS）

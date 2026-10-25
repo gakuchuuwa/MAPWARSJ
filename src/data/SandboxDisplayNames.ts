@@ -808,6 +808,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'daquyue': '瞿越',
 'yuenan': '越南',
 'jiaohuangguo': '教皇',
+'ghana_diguo': '加纳',
 'yalan': '亚兰',
     gepids: '革皮',
     kalbids: '卡比',

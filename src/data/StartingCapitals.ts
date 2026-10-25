@@ -687,6 +687,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'aodesuosi': 'city_waerna',
     'wuer': 'city_wuer',
     'jienei': 'city_jienei',
+    'ghana_diguo': 'city_kumubi',
 'muwaxide': 'city_labate',
     'yilaka': 'city_suojiamosuo',
     'xingelana': 'city_banama',

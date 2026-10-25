@@ -1118,6 +1118,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代加纳军团",
         legionType: "sub",
     },
+    "ghana_diguo": {
+        // 🔴 [2026-10-25 主人令「加纳有据点无开局武将，新增加纳帝国势力＋武将，要文化相同」] 库姆比萨利赫（AFRICA）→ 封建时代加纳军团
+        legionName: "封建时代加纳军团",
+        legionType: "sub",
+    },
     "malacca": {
         legionName: "城堡时代爪哇军团",
         legionType: "sub",

@@ -569,6 +569,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_gajah_mada: { birth: 1290, death: 1364 },  // 加查马达
     gen_prithviraj: { birth: 1166, death: 1192 },  // 普里特维
     gen_sumanguru: { birth: 1170, death: 1235, kaoju: '推定' },  // 苏曼古鲁
+    ghana_tongka_manin: { birth: 1030, death: 1100, kaoju: '推定' },  // 通卡·马宁（加纳帝国末代有载君主；al-Bakri 1067/68 在位，生卒史无载、推定）
     gen_bohemond: { birth: 1054, death: 1111 },  // 博希蒙德
     gen_shi_chaoyi: { birth: 725, death: 763, kaoju: '推定' },  // 史朝义（卒年763自缢于广阳，生年史无载，推定）
     gen_sayf_al_dawla: { birth: 916, death: 967 },  // 赛弗·道莱（哈姆丹王朝阿勒颇埃米尔）

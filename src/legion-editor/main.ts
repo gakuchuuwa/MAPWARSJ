@@ -4584,8 +4584,11 @@ function computeLegionNameViolations(): string[] {
     //    二级军团按「武将时代＋据点建筑文化」对应（符合历史，不用硬套）：
     //    仅当全图存在对应 (buildingStyle + age) 且未挂三级军团的势力、该二级军团却无人套用时报错；
     //    全图物理上无该时代对应建筑风格据点的跨时代延伸二级军团允许空置。
-    //    三级军团仍要求必须有势力套用。
+    //    🔴 [2026-10-25 主人令「全面修复」] 三级军团不能只数「势力编制指针」——带将部队的军团是跟着武将走的
+    //    （唯一入口 getLegionNameOfGeneral：势力时代 × 据点文化），像「岳家军」只有岳飞一位武将在用、没有任何
+    //    势力指针指它，旧口径就误报「没有任何势力套用」。这里同时数**武将实际使用**。
     const legionUsers = new Map<string, number>();
+    const generalUsers = new Map<string, number>();
     const activeStyleAges = new Set<string>();
     for (const r of allRows) {
         const n = effectiveLegionName(r);
@@ -4596,18 +4599,27 @@ function computeLegionNameViolations(): string[] {
             if (gEra) activeStyleAges.add(`${r.buildingStyle}|${gEra}`);
         }
     }
+    // 武将实际使用（一位武将一行；军团＝他的势力时代 × 据点文化）
+    for (const [blockFid, entry] of Object.entries(FACTION_GENERALS as Record<string, unknown>)) {
+        const list = (Array.isArray(entry) ? entry : [entry]) as Array<{ generalId?: string; factionId?: string }>;
+        for (const g of list) {
+            if (!g?.generalId) continue;
+            const n = getLegionNameOfGeneral(g.factionId ?? blockFid, g.generalId);
+            if (n) generalUsers.set(n, (generalUsers.get(n) ?? 0) + 1);
+        }
+    }
     const unusedL2 = LEVEL_2_CIV_62_LEGIONS
-        .filter(l => !legionUsers.has(l.name) && activeStyleAges.has(`${l.buildingStyle}|${l.age}`))
+        .filter(l => !legionUsers.has(l.name) && !generalUsers.has(l.name) && activeStyleAges.has(`${l.buildingStyle}|${l.age}`))
         .map(l => l.name);
     if (unusedL2.length > 0) {
         violations.push(
             `【二级军团】${unusedL2.length} 支有对应（时代+建筑文化）势力却未套用：${unusedL2.join('、')}`,
         );
     }
-    const unusedL3 = [...LEVEL_3_LEGION_NAMES].filter(n => !legionUsers.has(n));
+    const unusedL3 = [...LEVEL_3_LEGION_NAMES].filter(n => !legionUsers.has(n) && !generalUsers.has(n));
     if (unusedL3.length > 0) {
         violations.push(
-            `【三级军团】${unusedL3.length} 支没有任何势力套用：${unusedL3.join('、')}`,
+            `【三级军团】${unusedL3.length} 支没有任何武将/势力套用：${unusedL3.join('、')}`,
         );
     }
 
@@ -4620,7 +4632,7 @@ function computeLegionNameViolations(): string[] {
         if (r.generalName) nameHasGeneral.set(n, true);
     }
     for (const [name, has] of nameHasGeneral.entries()) {
-        if (!has) violations.push(`【${name}】没有被武将套用（所有军团必须都被武将套用）`);
+        if (!has && !generalUsers.has(name)) violations.push(`【${name}】没有被武将套用（所有军团必须都被武将套用）`);
     }
 
     // 🔴 [2026-09-11 主人定] 象兵/战车检查：一个军团只能一排象兵或一排战车，同时出现象兵+战车也要报错。

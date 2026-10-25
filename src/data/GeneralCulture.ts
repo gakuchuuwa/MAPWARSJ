@@ -658,6 +658,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_suffolk': 'BRITONS',   // 英格兰｜萨福克伯爵｜据点 温彻斯特
     'gen_suleiman': 'TURKS',   // 奥斯曼｜苏莱曼｜据点 布尔萨
     'gen_sumanguru': 'AFRICA',   // 索索｜苏曼古鲁｜据点 库姆比萨利赫
+    'ghana_tongka_manin': 'AFRICA',   // 加纳帝国｜通卡·马宁｜据点 库姆比萨利赫
     'gen_sundjata': 'AFRICA',   // 曼丁哥｜松迪亚塔｜据点 尼亚尼
     'gen_swatopluk': 'BOHEMIANS',   // 摩拉维亚｜斯瓦托｜据点 奥尔穆茨
     'gen_tashfin': 'BERBER',   // 穆拉比特｜塔什芬｜据点 马拉喀什
