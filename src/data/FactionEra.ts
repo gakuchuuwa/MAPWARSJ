@@ -32,7 +32,7 @@ export interface FactionEraSegment {
 
 export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>> = {
     // ══════ 一、手裁：整段一个时代 / 长命政权按史分年段 ══════
-    'jiaohuangguo': [{ from: 756, era: 'castle' }, { from: 1500, era: 'imperial' }], // 教皇国｜756 丕平献土—1500＝城堡时代教廷军团；1500 后＝帝国时代教廷近卫军团
+    'jiaohuangguo': [{ from: 756, era: 'castle' }, { from: 1500, era: 'imperial' }], // 教皇国｜756 丕平献土—1500＝城堡时代罗马教廷军团；1500 后＝帝国时代意大利军团
     'yalan': [{ from: -9999, era: 'antiquity' }], // 亚兰（大马士革王国）｜前 10 世纪–前 732＝古典时代近东军团
     // 🔴 [2026-10-25 补齐·主人令「每个势力都要有时代」] 这三家只有据点、没有武将，此前漏登记：
     'aodesuosi': [{ from: -9999, era: 'antiquity' }], // 奥德索斯｜瓦尔纳旧称，希腊殖民城邦（前 6 世纪起）＝古典；势指针＝古典时代色雷斯军团

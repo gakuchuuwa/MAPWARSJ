@@ -11,10 +11,11 @@
  */
 import { FACTIONS } from '../data/factions';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { planFallbackForDeletedLegion, applyFallbackPlan, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
 import {
-    CULTURE_LEGION_NAMES,
     getLegionCompositionByName,
+    getLegionNameOfGeneral,
     patchLegionComposition,
     dropLegionFromMemory,
     renameLegionInMemory,
@@ -24,9 +25,6 @@ import {
 import { LEVEL_2_CIV_62_LEGIONS } from '../data/level2Civ62Legions';
 import { LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
 import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
-import { STARTING_CAPITALS } from '../data/StartingCapitals';
-import { CITIES_V2 } from '../data/cities_v2';
-import { getCityRegion, type RegionType } from '../systems/RegionSystem';
 import { WAR_TYPES } from '../data/WarTypes';
 import {
     DE_UNITS_CATALOG, CATEGORY_LABEL, SUBCATEGORY_LABEL,
@@ -95,7 +93,6 @@ const STYLE_LABELS: Record<string, string> = {
 };
 
 const cn = (id: string) => (WAR_TYPES as Record<string, { name?: string }>)[id]?.name ?? id;
-const cityMap = new Map(CITIES_V2.map(c => [c.id, c]));
 
 /**
  * 建筑文化（buildingStyle）下拉项 —— 只有两级，标签口径与左表「建筑风格」列一致（STYLE_LABELS）。
@@ -125,21 +122,24 @@ function styleSelectHtml(current: string): string {
         + group(`其它建筑文化（${otherStyles.length}）`, otherStyles);
 }
 
+/**
+ * 🔴 [2026-10-25 主人令「全面修复」] 这列改成**武将实际使用数**。
+ *   旧口径数的是「势力编制指针」（`FACTION_COMPOSITIONS[fid].legionName`，没写的势力取首府文化默认军团）：
+ *   一家势力只指一支军团 → 同一个文化其余 3 个时代的军团永远是 0 家，看着像「没人用」，
+ *   其实带将部队早按「势力时代 × 据点文化」自动取（`getLegionNameOfGeneral`），
+ *   势力指针只在「该格没有军团」时兜底。
+ *   现在一个势力有几名武将在这个军团里，就记几 —— 这才是真实在用。
+ */
 function countUsers(): Map<string, number> {
     const m = new Map<string, number>();
-    for (const f of FACTIONS) {
-        const cap = cityMap.get((STARTING_CAPITALS as Record<string, string>)[f.id]);
-        const rg: RegionType = cap
-            ? getCityRegion({ latitude: cap.lat, longitude: cap.lng, region: cap.region })
-            : ('CENTRAL' as RegionType);
-        // 🔴 [2026-10-20 修] 面板里刚改过名的军团，势力表/文化区指针还是**旧名**（要等 HMR），
-        //    这里必须同样走 resolveRenamedLegion 换算 —— 否则「使用势力」会把这些家算到旧名头上，
-        //    新名那一行显示「无」（主人报「封建时代江淮军团 使用势力：无，这个时期没有武将吗」）。
-        const ptr = resolveRenamedLegion(
-            ((FACTION_COMPOSITIONS as Record<string, { legionName?: string }>)[f.id]?.legionName ?? '').trim(),
-        );
-        const name = ptr || resolveRenamedLegion((CULTURE_LEGION_NAMES as Record<string, string>)[rg] ?? '');
-        if (name) m.set(name, (m.get(name) ?? 0) + 1);
+    for (const [blockFid, entry] of Object.entries(FACTION_GENERALS as Record<string, unknown>)) {
+        const list = (Array.isArray(entry) ? entry : [entry]) as Array<{ generalId?: string; factionId?: string }>;
+        for (const g of list) {
+            if (!g?.generalId) continue;
+            const name = resolveRenamedLegion(getLegionNameOfGeneral(g.factionId ?? blockFid, g.generalId) ?? '');
+            if (!name) continue;
+            m.set(name, (m.get(name) ?? 0) + 1);
+        }
     }
     return m;
 }
@@ -203,7 +203,7 @@ function currentRow(): LegionRow | undefined {
         ?? rows.find((r) => r.name === selected);
 }
 /** 🔴 [2026-09-16 主人「加一个势力排序」] 按「用它的势力家数」排：none=表原顺序（一→二→三级）/ desc=多在前 / asc=少在前。
- *  点「势力」表头循环切换。无人套用的军团要找出来，点两下切到 asc 就全在最上面。 */
+ *  点「在用武将」表头循环切换。没人用的军团要找出来，点两下切到 asc 就全在最上面。 */
 let sortByUsers: 'none' | 'desc' | 'asc' = 'none';
 let sortByStyle: 'none' | 'asc' | 'desc' = 'none';
 /** 🔴 [2026-10-16 主人「给军团名添加一个排序」] 按军团名排：none=表原顺序（一→二→三→四级）/ asc=拼音升序 / desc=拼音降序。
@@ -582,7 +582,7 @@ function visible(): LegionRow[] {
             || rows.indexOf(a) - rows.indexOf(b));
     } else if (sortByUsers !== 'none') {
         const dir = sortByUsers === 'desc' ? -1 : 1;
-        // 家数相同的保持原来的层级顺序，别让同数的军团每次重绘都换位置
+        // 人数相同的保持原来的层级顺序，别让同数的军团每次重绘都换位置
         out.sort((a, b) => (a.users - b.users) * dir || rows.indexOf(a) - rows.indexOf(b));
     } else if (sortByStyle !== 'none') {
         const dir = sortByStyle === 'asc' ? 1 : -1;
@@ -624,7 +624,7 @@ function formatLegionInfoText(r: LegionRow, useDraft = false): string {
             return `${rowLabels[i]}：${cn(t ?? '—')} ×${c}`;
         }),
         `舰队：${shipLabel(rShip)}`,
-        `使用势力：${r.users ? `${r.users} 家` : '无'}`,
+        `在用武将：${r.users ? `${r.users} 位` : '无'}`,
         ...(r.layer === '四级' && rSource ? [`史料出处：${rSource}`] : []),
     ];
     return lines.join('\n');
@@ -698,9 +698,9 @@ function render(): void {
               <th style="padding:7px 10px;">中坚</th>
               <th style="padding:7px 10px;">后排</th>
               <th style="padding:7px 10px;">舰队</th>
-              <th id="lp-sort-users" title="点击按势力家数排序（多在前 / 少在前 / 原顺序）"
+              <th id="lp-sort-users" title="点击按在用武将数排序（多在前 / 少在前 / 原顺序）"
                   style="padding:7px 10px;cursor:pointer;user-select:none;${sortByUsers !== 'none' ? 'color:#f6e05e;' : ''}">
-                势力${sortByUsers === 'desc' ? ' ▼' : sortByUsers === 'asc' ? ' ▲' : ' ⇅'}</th>
+                在用武将${sortByUsers === 'desc' ? ' ▼' : sortByUsers === 'asc' ? ' ▲' : ' ⇅'}</th>
               <th style="padding:7px 10px;width:54px;">复制</th>
             </tr>
           </thead>
@@ -746,7 +746,7 @@ function render(): void {
                     ${rShip ? `<canvas class="le-unit-thumb" data-uid="${esc(shipUnitId(rShip))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
                     <span>${esc(shipLabel(rShip))}</span>
                   </div></td>
-                <td style="padding:6px 10px;color:${r.users ? '#8a8378' : '#e07a7a'};">${r.users || '无'}</td>
+                <td style="padding:6px 10px;color:${r.users ? '#8a8378' : '#e07a7a'};"${r.users ? '' : ` title="${r.layer === '二级' ? '这一格＝某建筑文化 × 某时代，目前没有任何武将（跨时代空格，规则允许空置，不是缺将）' : r.layer === '一级' ? '一级 16 母体只作素材底座，武将不直接使用' : r.layer === '四级' ? '四级剧本军团只在对应剧本事件里用' : '目前没有武将挂这支军团'}"`}>${r.users || '无'}</td>
                 <td style="padding:4px 10px;">
                   <button type="button" class="lp-copy-row" data-name="${esc(r.name)}" data-layer="${r.layer}" title="复制【${esc(r.name)}】的军团信息"
                     style="padding:3px 8px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:3px;font-size:12px;cursor:pointer;white-space:nowrap;">📋 复制</button>
@@ -763,7 +763,7 @@ function render(): void {
             <div>
               <div style="font-size:16px;color:#f6e05e;">${esc(sel.name)}</div>
               <div style="font-size:12px;color:#8a8378;margin:4px 0 14px;">
-                ${sel.layer}军团 · ${sel.users ? `${sel.users} 家势力在用` : '当前无势力使用'}
+                ${sel.layer}军团 · ${sel.users ? `${sel.users} 位武将在用` : '当前没有武将在用'}
               </div>
             </div>
             <button id="lp-copy-sel" type="button" title="复制【${esc(sel.name)}】的军团信息"
@@ -875,7 +875,7 @@ function render(): void {
           </button>
           ${sel.layer === '三级' ? `
             <button id="lp-delete" style="width:100%;padding:7px;margin-top:18px;background:#3a1a1a;border:1px solid #7a3a3a;color:#e0a0a0;border-radius:4px;font-size:12px;cursor:pointer;">
-              🗑 删除这支军团${sel.users ? `（${sel.users} 家势力会回落到文化区军团）` : ''}
+              🗑 删除这支军团${sel.users ? `（${sel.users} 位武将在用，删除后按格位重套）` : ''}
             </button>` : `
             <div style="font-size:11px;color:#6a6358;margin-top:18px;line-height:1.7;">
               ${sel.layer === '四级' ? '四级剧本军团不可删除（被战场事件引用）。' : `${sel.layer}军团不可删除（一级 16 母体是底座，二级 62 文明是定数）。`}
