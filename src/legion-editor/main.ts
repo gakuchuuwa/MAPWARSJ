@@ -31,6 +31,7 @@ import {
     getDefaultSlotsForMode,
     convertSlotsToMode,
     getCultureLegionName,
+    getLegionNameOfGeneral,
     getBase16FormationConfig,
 } from '../types/CultureFormations';
 import { CompositionSlot, getDefaultScaleForUnitType } from '../types/LegionComposition';

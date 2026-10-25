@@ -6557,7 +6557,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -12,
             "offsetY": 5
         },
-        "/assets/PURU/pidisha_pidisha.png": {
+        "/assets/PURU/__闲置__PURU_01.png": {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": -13
@@ -6577,7 +6577,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 25
         },
-        "/assets/AFRICA/jienei_jienei.png": {
+        "/assets/AFRICA/__闲置__AFRICA_04.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 27
@@ -6907,7 +6907,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -17,
             "offsetY": 53
         },
-        "/assets/THRACIAN/aodesuosi_aodesuosi.png": {
+        "/assets/THRACIAN/__闲置__THRACIAN_01.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 13
@@ -7134,11 +7134,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/AFRICA/__闲置__AFRICA_02.png": {
             "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 0
-        },
-        "/assets/AFRICA/__闲置__AFRICA_04.png": {
-            "scale": 1,
             "offsetX": 0,
             "offsetY": 0
         },
