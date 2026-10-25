@@ -149,9 +149,10 @@ export class ViewerLivePanel {
         this.dev.append(ssnLabel, ssn, ytLabel, ytKey, ytVideo, label, name, paidWrap,
             row(['1 站攻方', '2 站守方'], (w) => send(w[0])),
             row([...WORDS], send),
-            // 模拟打赏：按昵称当观众 id，跟上面发字的是同一个人
-            row(['打赏$1', '打赏$10'], (w) => {
-                this.live.onPayment(name.value.trim() || '观众', name.value, w.includes('10') ? 1000 : 100, `测试${w}`);
+            // 模拟打赏：按昵称当观众 id，跟上面发字的是同一个人；「站外$1」模拟 Ko-fi：只给名字，按名字找人
+            row(['打赏$1', '打赏$10', '站外$1'], (w) => {
+                if (w === '站外$1') this.live.onExternalPayment(name.value, 100, '测试站外打赏', '');
+                else this.live.onPayment(name.value.trim() || '观众', name.value, w.includes('10') ? 1000 : 100, `测试${w}`);
                 this.render();
             }),
             // 模拟全场目标：点赞（TikTok 式一条一份）、订阅 +1、在线人数

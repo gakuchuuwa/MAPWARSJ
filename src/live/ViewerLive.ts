@@ -23,6 +23,13 @@
  *   · 军令放的计排在付费的后面；钱和军令都够时先花军令（钱留着）。
  *   · 防刷：点赞 / 订阅只认超过历史最高的那部分（取消再点、退订再订不重复发）；TikTok 关注一人一天只奖一次。
  *   · 作废退回的令不受上限：那是他自己花出去的。
+ *
+ * 🔴 [2026-10-25 主人「我不懂，还是你来定吧。我只希望项目可以有人看，慢慢的有钱挣就行」] 免费计限量（我定的）：
+ *   · 为什么：武将 45 秒集满一计；免费军令下，一个积极观众约每分钟一计，十个人就是武将的四倍——胜负变成比人数、
+ *     大字刷屏分不清谁放的、每句「感谢某某」都让战斗音效停（主人 10-02 定「播报时不放战斗音效」）。
+ *   · 免费计（花军令）全场每 FREE_CAST_GAP_MS 最多放一计；每人同时只排一计，排着时又点的那一计等前一计放完自动接上。
+ *   · 付费计不受这两条限，只守战术模式「两计不许同时放」那道闸——花钱的就是能马上放，这才值得花钱。
+ *   · 语音：付费计每次都念「感谢某某」；免费计只在语音空闲时念，不排队（排起来会越拖越晚，还一直压着战斗音效）。
  */
 import type { GameApp } from '../app/GameApp';
 import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
@@ -36,6 +43,8 @@ export const ORDERS_PER_CAST = 3;
 export const ORDER_CAP = 10;
 /** 同一个人两条弹幕之间至少隔多久才再算军令（毫秒） */
 export const CHAT_COOLDOWN_MS = 20_000;
+/** 免费计（花军令放的）全场至少隔多久放一计（毫秒）；付费计不受这个限 */
+export const FREE_CAST_GAP_MS = 10_000;
 /** 说过话多久内算「在场」（毫秒）：全场目标奖励只发给在场的人 */
 const PRESENT_MS = 10 * 60_000;
 /** 订阅每涨 1，在场每人加多少令 */
@@ -48,6 +57,46 @@ const SIX_BY_WORD: Record<string, TacticalSixSet> = {
     攻: 'gongzhan', 胜: 'shengzhan', 敌: 'dizhan', 混: 'hunzhan', 并: 'bingzhan', 败: 'baizhan',
     攻战: 'gongzhan', 胜战: 'shengzhan', 敌战: 'dizhan', 混战: 'hunzhan', 并战: 'bingzhan', 败战: 'baizhan',
 };
+
+/** 港台观众打繁体「勝 敵 並 敗」也认；输入法全角的「１」「２」由 NFKC 折成半角 */
+const TRAD_TO_SIMP: Record<string, string> = { 勝: '胜', 敵: '敌', 並: '并', 併: '并', 敗: '败', 戰: '战' };
+function normalizeCommand(text: string): string {
+    return text.normalize('NFKC').trim().replace(/[勝敵並併敗戰]/g, (c) => TRAD_TO_SIMP[c]);
+}
+
+/** 这条字是不是站队 / 放计的口令（站外打赏留言只认口令，闲聊不攒令） */
+function isCommand(word: string): boolean {
+    const combo = word.match(/^([12])\s*(\S+)$/);
+    return word === '1' || word === '2' || !!SIX_BY_WORD[word] || (!!combo && !!SIX_BY_WORD[combo[2]]);
+}
+
+/** 昵称上屏、进语音最多几个字：大字和语音都短，长英文名也不至于念半天 */
+const NAME_MAX = 6;
+
+/**
+ * 昵称上屏、进语音前的清洗：昵称会被放成大字、被语音念出来，等于主播替他广播。
+ * 去掉网址和 5 位以上的连串数字（广告、QQ、微信号最常见的样子），再截到 NAME_MAX 个字。
+ */
+export function cleanViewerName(raw: string): string {
+    const s = raw.normalize('NFKC')
+        .replace(/(?:https?:\/\/|www\.)\S+/gi, '')
+        .replace(/\S+\.(?:com|net|org|cn|io|me|gg|tv|top|xyz)\b\S*/gi, '')
+        .replace(/\d{5,}/g, '')
+        .replace(/\p{C}/gu, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    const chars = Array.from(s);
+    if (chars.length === 0) return '观众';
+    return chars.length > NAME_MAX ? `${chars.slice(0, NAME_MAX).join('')}…` : s;
+}
+
+/** 站外打赏按名字认人用：不截断，只去大小写、多余空白和开头的 @ */
+function nameKey(raw: string): string {
+    return raw.normalize('NFKC').trim().replace(/^@/, '').replace(/\s+/g, ' ').toLowerCase();
+}
+
+/** 站外打赏一时认不出是谁：钱先挂在「pay:名字」这个户头上，等同名的人来发弹幕时认领 */
+const PENDING_PREFIX = 'pay:';
 
 export interface ViewerCastResult {
     viewer: string;
@@ -98,7 +147,11 @@ export class ViewerLive {
     private wallets = new Map<string, { name: string; cents: number }>();
     /** 钱 / 军令不够没放成的那一计：攒够就替他放 */
     private wanted = new Map<string, string>();
+    /** 今天在直播间说过话的人：名字 → 观众 id（站外打赏按名字找人；同名可能不止一个） */
+    private nameIndex = new Map<string, Set<string>>();
     private queue: QueuedCast[] = [];
+    /** 上一次放出免费计的时刻（Date.now）；一仗打完归零 */
+    private lastFreeCastAt = 0;
     private wasActive = false;
     private day = '';
     /** 最近几条记录（面板显示） */
@@ -116,6 +169,8 @@ export class ViewerLive {
     public platformStatus = '';
     /** YouTube 点赞 / 订阅接口状态（面板显示）；空＝没配 */
     public ytStatus = '';
+    /** 最近一次从直播间收到消息的时刻（Bridge 写）；F9 里看弹幕还通不通——SSN 连着不等于聊天窗口还开着 */
+    public lastChatAt = 0;
 
     constructor(private readonly app: GameApp) {
         this.load();
@@ -129,10 +184,14 @@ export class ViewerLive {
      * 返回给观众看的一句回应（面板记录用）。
      */
     public onChat(viewer: string, text: string, paid = false, uid?: string): string {
-        const name = viewer.trim() || '观众';
-        const id = uid || name;
-        let word = text.trim();
-        this.acct(id, name).seen = Date.now();
+        const name = cleanViewerName(viewer);
+        const id = uid || viewer.trim() || '观众';
+        let word = normalizeCommand(text);
+        // 站外打赏的临时户头不算「在场」，也不进名字索引（它本身就是按名字等人认领的）
+        if (!id.startsWith(PENDING_PREFIX)) {
+            this.acct(id, name).seen = Date.now();
+            this.linkName(id, name, viewer);
+        }
         if (paid) this.credit(id, name, PRICE_PER_CAST);
         // 「1攻」「2 败」：一条消息里先站队再放计
         const combo = word.match(/^([12])\s*(\S+)$/);
@@ -161,11 +220,34 @@ export class ViewerLive {
      */
     public onPayment(uid: string, viewer: string, cents: number, what: string): void {
         if (!(cents > 0)) return;
-        const name = viewer.trim() || '观众';
+        const name = cleanViewerName(viewer);
         const w = this.credit(uid, name, cents);
-        this.acct(uid, name).seen = Date.now();
+        if (!uid.startsWith(PENDING_PREFIX)) this.acct(uid, name).seen = Date.now();
         this.note(`感谢 ${name} 的${what}！可放 ${Math.floor(w.cents / PRICE_PER_CAST)} 计`);
         this.fulfillWanted(uid, name);
+    }
+
+    /**
+     * 站外打赏（Ko-fi / Stripe 等经 SSN webhook 进来）：那边只有打赏者自己填的名字，跟 YouTube 聊天里的观众 id 对不上，
+     * 直接按 webhook 的 id 记账，钱就落进一个没人能用的户头。所以按名字找人：
+     *   · 今天在直播间说过话、名字相同的只有一位 → 直接记给他，留言里带的口令（如「1攻」）也替他执行；
+     *   · 找不到或同名不止一位 → 先挂在「pay:名字」户头上，等这个名字的人来发弹幕时认领。
+     * 别人故意改成同名能冒领——为一两美元这么做的可能很小，先这样；要更稳得让打赏者留言里写一个暗号。
+     */
+    public onExternalPayment(payer: string, cents: number, what: string, message: string): void {
+        if (!(cents > 0)) return;
+        const ids = [...(this.nameIndex.get(nameKey(payer)) ?? [])];
+        const word = normalizeCommand(message);
+        if (ids.length === 1) {
+            this.onPayment(ids[0], payer, cents, what);
+            if (word) this.onChat(payer, word, false, ids[0]);
+            return;
+        }
+        const pid = PENDING_PREFIX + nameKey(payer);
+        this.onPayment(pid, payer, cents, what);
+        this.note(`${cleanViewerName(payer)}：在直播间用同一个名字发一条弹幕，这笔就记到你名下`);
+        // 口令照样认（打仗时留言「1攻」能直接放）；闲聊留言不给这个临时户头攒令
+        if (isCommand(word)) this.onChat(payer, word, false, pid);
     }
 
     /** 直播间在线人数（YouTube 接口 / SSN 的 viewer_update）；决定点赞一档多少个 */
@@ -192,7 +274,7 @@ export class ViewerLive {
 
     /**
      * 频道当前的订阅总数。第一次只记下；超过历史最高就感谢并全场发令。
-     * 1000 以上 YouTube 会四舍五入（一跳 10 个），所以不报「几位」，只报涨到多少。
+     * YouTube 接口的订阅数只保留三位有效数字（1000 以上一跳 10 个），所以不报「几位」，只报涨到多少。
      */
     public onSubTotal(total: number): void {
         if (!Number.isFinite(total) || total < 0) return;
@@ -217,7 +299,7 @@ export class ViewerLive {
 
     /** 某观众关注了主播（TikTok 的 followed 事件）：个人 +SUB_BONUS 令，一人一天一次（防取关再关注） */
     public onFollow(uid: string, viewer: string): void {
-        const name = viewer.trim() || '观众';
+        const name = cleanViewerName(viewer);
         const a = this.acct(uid, name);
         a.seen = Date.now();
         if (a.followed) return;
@@ -236,6 +318,8 @@ export class ViewerLive {
         /** 最近自己挣到令的几个人和他们现有的令（让观众看见自己那条弹幕算上了） */
         top: { name: string; n: number }[];
         yt: string;
+        /** 离上一条直播间消息过了多少秒；-1＝还没收到过 */
+        lastChatAgo: number;
     } {
         const top = [...this.orders.values()]
             .filter((a) => a.lastEarn > 0)
@@ -258,6 +342,7 @@ export class ViewerLive {
             },
             top,
             yt: this.ytStatus,
+            lastChatAgo: this.lastChatAt > 0 ? Math.floor((Date.now() - this.lastChatAt) / 1000) : -1,
         };
     }
 
@@ -292,6 +377,21 @@ export class ViewerLive {
         }
         a.name = name;
         return a;
+    }
+
+    /** 记下「这个名字今天是这位观众」，并认领挂在这个名字上的站外打赏 */
+    private linkName(id: string, name: string, raw: string): void {
+        const key = nameKey(raw);
+        if (!key) return;
+        const set = this.nameIndex.get(key) ?? new Set<string>();
+        set.add(id);
+        this.nameIndex.set(key, set);
+        const pid = PENDING_PREFIX + key;
+        const pending = this.wallets.get(pid);
+        if (!pending || pending.cents <= 0) return;
+        this.wallets.delete(pid);
+        const w = this.credit(id, name, pending.cents);
+        this.note(`${name} 的站外打赏到账！可放 ${Math.floor(w.cents / PRICE_PER_CAST)} 计`);
     }
 
     /** 站队：这一仗第一次站队 +1 令 */
@@ -375,23 +475,35 @@ export class ViewerLive {
         this.request(id, name, word);
     }
 
+    /** 现在能不能替他排一计：军令够、而且他没有免费计在排；或者钱够（付费不受「每人只排一计」限） */
     private canAfford(id: string): boolean {
-        return (this.orders.get(id)?.n ?? 0) >= ORDERS_PER_CAST || (this.wallets.get(id)?.cents ?? 0) >= PRICE_PER_CAST;
+        const freeOk = (this.orders.get(id)?.n ?? 0) >= ORDERS_PER_CAST && !this.hasFreeQueued(id);
+        return freeOk || (this.wallets.get(id)?.cents ?? 0) >= PRICE_PER_CAST;
     }
 
-    /** 观众要放一计：先花军令，不够再扣余额；都不够就记下等他攒够 */
+    private hasFreeQueued(id: string): boolean {
+        return this.queue.some((q) => q.uid === id && !q.paid);
+    }
+
+    /**
+     * 观众要放一计：先花军令（他没有免费计在排时），不行再扣余额；都不行就记下，攒够 / 前一计放完再替他排。
+     */
     private request(id: string, name: string, word: string): string {
         const side = this.sides.get(id);
         if (side === undefined) return this.note(`${name}：先发 1 或 2 站队，再放计`);
         const a = this.acct(id, name);
+        const queuedFree = this.hasFreeQueued(id);
         let paid: boolean;
-        if (a.n >= ORDERS_PER_CAST) {
+        if (a.n >= ORDERS_PER_CAST && !queuedFree) {
             a.n -= ORDERS_PER_CAST;
             paid = false;
         } else {
             const w = this.wallets.get(id);
             if (!w || w.cents < PRICE_PER_CAST) {
                 this.wanted.set(id, word);
+                if (queuedFree && a.n >= ORDERS_PER_CAST) {
+                    return this.note(`${name}：已有一计在排队，放完接着替你放【${word}】`);
+                }
                 return this.note(`${name}：军令 ${a.n}/${ORDERS_PER_CAST}，多发弹幕攒令，或打赏 $${PRICE_PER_CAST / 100} 马上替你放【${word}】`);
             }
             w.cents -= PRICE_PER_CAST;
@@ -426,19 +538,25 @@ export class ViewerLive {
         this.wasActive = active;
         if (!active || this.queue.length === 0) return;
         const head = this.queue[0];
-        const r = this.war()!.castViewerSkill(head.side, head.six, head.viewer);
+        // 免费计全场限速（付费的都排在免费的前面，排头是免费的就说明眼下没有付费计在等）
+        if (!head.paid && Date.now() - this.lastFreeCastAt < FREE_CAST_GAP_MS) return;
+        const r = this.war()!.castViewerSkill(head.side, head.six, head.viewer, head.paid);
         // 布阵中（还没开打）也算「等一下」；真正打完由 endBattle 统一作废
         if (r === 'wait' || r === 'closed') return;
         this.queue.shift();
+        if (!head.paid) this.lastFreeCastAt = Date.now();
         const skillName = this.war()!.lastSkillNameOf(head.side);
-        speechAnnouncer.announceViewerSkill(head.viewer, this.sideName(head.side).replace(/（.）$/, ''), skillName);
+        speechAnnouncer.announceViewerSkill(head.viewer, this.sideName(head.side).replace(/（.）$/, ''), skillName, { onlyIfIdle: !head.paid });
         this.note(`${head.viewer} 替${this.sideName(head.side)}放了【${skillName}】`);
         this.report({ viewer: head.viewer, side: head.side, six: head.six, paid: head.paid, outcome: 'cast', skillName });
+        // 他排着时又点的那一计，现在接着排
+        this.fulfillWanted(head.uid, head.viewer);
     }
 
     private endBattle(): void {
         for (const q of this.queue) this.voidCast(q);
         this.queue = [];
+        this.lastFreeCastAt = 0;
         this.sides.clear();
         this.wanted.clear();
         this.save();
@@ -466,7 +584,7 @@ export class ViewerLive {
 
     private rollDay(): void {
         const t = this.today();
-        if (this.day !== t) { this.day = t; this.orders.clear(); }
+        if (this.day !== t) { this.day = t; this.orders.clear(); this.nameIndex.clear(); }
     }
 
     private load(): void {

@@ -1641,6 +1641,10 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'muwaxide_axatafu': 'castle',
     'gepids_cunimund': 'feudal',
     'kalbids_ibnhawwas': 'castle',
+    'zhanger': 'antiquity',   // 张耳（2026-10-25 新增，普将）
+    'gaogouli_liuli': 'feudal',   // 琉璃明王
+    'otomo_sorin': 'imperial',   // 大友宗麟
+    'ming_shenyourong': 'imperial',   // 沈有容
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

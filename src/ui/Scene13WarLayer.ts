@@ -667,19 +667,20 @@ export class Scene13WarLayer {
      * 🔴 [2026-10-23 主人「技能槽保持原定不动。既然观众花钱了，就可以直接释放。想放多少次放多少次」]
      * 直播观众替某一方放计：不走技能槽（槽照旧自己集气、自己放），只守「两计不许同时放」那道闸。
      *   'cast'＝放出去了；'wait'＝上一计的大字还没播完，稍后再试；'closed'＝这一仗没在打（没开打/布阵中/已分胜负）。
+     * paid＝这一计是观众花钱放的（大字另有打赏标记）。
      */
-    public castViewerSkill(side: 0 | 1, six: TacticalSixSet, viewerName: string): 'cast' | 'wait' | 'closed' {
+    public castViewerSkill(side: 0 | 1, six: TacticalSixSet, viewerName: string, paid = false): 'cast' | 'wait' | 'closed' {
         if (!this.active || this.over || this.deployT > 0) return 'closed';
         const wallNow = performance.now();
         if (this.skillCastCooldown > 0 || wallNow < this.skillCastWallUntil) return 'wait';
         this.skillCastCooldown = Scene13WarLayer.SKILL_CAST_GAP_SEC;
         this.skillCastWallUntil = wallNow + Scene13WarLayer.SKILL_CAST_GAP_SEC * 1000;
-        this.viewerCaster = viewerName;
+        this.viewerCaster = { name: viewerName, paid };
         try { this.triggerScene13Skill(side, six); } finally { this.viewerCaster = null; }
         return 'cast';
     }
     /** 正在替哪位观众放计（大字上带他的名字） */
-    private viewerCaster: string | null = null;
+    private viewerCaster: { name: string; paid: boolean } | null = null;
     /** 这一方刚放的那一计叫什么（直播播报用） */
     public lastSkillNameOf(side: 0 | 1): string { return this.lastCastSkillName[side] ?? ''; }
     /** 这一方现在显示的势力名（直播面板用） */
@@ -887,8 +888,8 @@ export class Scene13WarLayer {
             baizhan: f === 0 ? '雷霆万钧' : '背水一战',
         };
         const skillName = pickedEntry?.displayName ?? fallbackNames[six];
-        // 观众放的计：大字写成「某某 · 计名」
-        const displayName = this.viewerCaster ? `${this.viewerCaster} · ${skillName}` : skillName;
+        // 观众放的计：名字单独一行交给 CombatUI（原先拼成「某某 · 计名」一行，长名字会被屏幕边切掉）
+        const viewer = this.viewerCaster;
         const skillId = pickedEntry?.id ?? `tac13_${six}`;
 
         this.lastCastSkill[f] = six;
@@ -992,7 +993,7 @@ export class Scene13WarLayer {
 
         // 通知 CombatUI 播放立绘脉冲缩放与技能名 Cut-in 动画
         const sideKey: 'attacker' | 'defender' = f === 0 ? 'attacker' : 'defender';
-        (window as any).game?.combatUI?.onScene13SkillCast?.(sideKey, six, displayName, gid ?? undefined, skillId);
+        (window as any).game?.combatUI?.onScene13SkillCast?.(sideKey, six, skillName, gid ?? undefined, skillId, viewer ?? undefined);
     }
 
     // ── [2026-09-05 玩家] 战术模式玩家布置（玩家本体 + 受控编队 + 指令） ──

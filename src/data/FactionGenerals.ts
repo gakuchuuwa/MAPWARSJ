@@ -5362,6 +5362,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'zijing_hanqing', generalName: '韩青', factionId: 'ming_d', cityId: 'city_zijingguan', portrait: '/assets/WEI/ming_d_hanqing.png', eliteName: '紫荆守军', eliteTier: 4 },
         // 🔴 [2026-10-24 险要补将·镇守] 周遇吉＝明山西总兵，1644 年守宁武关抗李自成，城破殉国（局部殉城，未改大局）；普将；精锐「宁武守军」T4
         { generalId: 'ningwu_zhouyuji', generalName: '周遇吉', factionId: 'ming_d', cityId: 'city_ningwuguan', portrait: '/assets/WEI/ming_d_zhouyuji.png', eliteName: '宁武守军', eliteTier: 4 },
+        { generalId: 'ming_shenyourong', factionId: 'ming_d', cityId: 'city_penghu', generalName: '沈有容', portrait: '', eliteName: '澎湖水师', eliteTier: 4 },   // 🔴 [2026-10-25 新增] 1604 守澎湖、谕退荷兰韦麻郎（镇守/防御战）；普将；据点澎湖 JIANGNAN 文化
     ],
 
 
@@ -5836,7 +5837,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bohai_dazuorong', cityId: 'city_ningan', generalName: '大祚荣', portrait: '/assets/NORTHEAST/bohai_dazuorong.png' },
+        { generalId: 'bohai_dazuorong', cityId: 'city_aodongcheng', generalName: '大祚荣', portrait: '/assets/NORTHEAST/bohai_dazuorong.png' },
 
 
 
@@ -6755,7 +6756,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    otomo_d: { generalId: 'otomo_d_lihuadaoxue', cityId: 'city_taizaifu', generalName: '立花道雪', portrait: '/assets/JAPAN/otomo_d_lihuadaoxue.png' },
+    otomo_d: [
+        { generalId: 'otomo_d_lihuadaoxue', cityId: 'city_taizaifu', generalName: '立花道雪', portrait: '/assets/JAPAN/otomo_d_lihuadaoxue.png' },
+        { generalId: 'otomo_sorin', factionId: 'otomo_d', cityId: 'city_funei', generalName: '大友宗麟', portrait: '', eliteName: '大友水军', eliteTier: 3 },   // 🔴 [2026-10-25 新增] 大友义镇/宗麟，丰后府内馆为本据（居住/镇守）；普将
+    ],
 
 
 
@@ -7111,6 +7115,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        { generalId: 'gaogouli_liuli', factionId: 'gaogouli', cityId: 'city_guoneicheng', generalName: '琉璃明王', portrait: '', eliteName: '国内城戍卒', eliteTier: 4 },   // 🔴 [2026-10-25 新增] 类利，高句丽第二代王；公元 3 年迁都国内城（居住/镇守）；普将
     ],
 
 
@@ -11498,7 +11503,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     zhao: [
-        { generalId: 'bfe_dou_jiande', cityId: 'city_handan', generalName: '窦建德', portrait: '/assets/CENTRAL/bfe_dou_jiande.png', factionId: 'douxia', legionName: '封建时代中原军团' },
+        { generalId: 'bfe_dou_jiande', cityId: 'city_handan', generalName: '窦建德', portrait: '/assets/CENTRAL/bfe_dou_jiande.png', factionId: 'douxia', legionName: '封建时代中原军团', eliteName: '河北戍卒', eliteTier: 4 },   // 🔴 [2026-10-25] 补精锐：夏军为河北州郡戍兵（T4 存在之兵）
         { generalId: 'handong_liuheita', factionId: 'handong', cityId: 'city_handan', generalName: '刘黑闼', portrait: '', eliteName: '汉东锐卒', eliteTier: 4 },   // 2026-10-25 按史补：汉东王，622 洺水败于李世民，623 被俘杀
 
 
@@ -11560,6 +11565,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        { generalId: 'zhanger', factionId: 'zhao', cityId: 'city_liyang', generalName: '张耳', portrait: '', eliteName: '丛台绝剑', eliteTier: 2 },   // 🔴 [2026-10-25 新增] 前207 守巨鹿数月（项羽救赵解围）；赵相→常山王；普将；据点巨鹿 WEI 文化
     ],
 
 
@@ -13961,7 +13967,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     jialedi: [
-        { generalId: 'bfe2_yahdun_lim', cityId: 'city_anate', generalName: '亚赫敦·林', portrait: '/assets/ORIE/bfe2_yahdun_lim.png', factionId: 'mari_ancient', legionName: '古典时代近东军团' },
+        { generalId: 'bfe2_yahdun_lim', cityId: 'city_anate', generalName: '亚赫敦·林', portrait: '/assets/ORIE/bfe2_yahdun_lim.png', factionId: 'mari_ancient', legionName: '古典时代近东军团', eliteName: '马里戍卒', eliteTier: 4 },   // 🔴 [2026-10-25] 补精锐：马里城邦戍兵（T4 存在之兵）
         { generalId: 'bfe2_nidintu_bel', cityId: 'city_babilun', generalName: '尼丁图-贝尔', portrait: '/assets/ORIE/bfe2_nidintu_bel.png', legionName: '古典时代近东军团' },
         { generalId: 'bfe2_enlil_nadin_ahi', cityId: 'city_babilun', generalName: '恩利尔纳丁·阿基', portrait: '/assets/ORIE/bfe2_enlil_nadin_ahi.png', legionName: '古典时代近东军团' },
         { generalId: 'jialedi_nibujianisa', cityId: 'city_wuluke', generalName: '尼布甲尼撒', portrait: '/assets/ORIE/jialedi_nibujianisa.png' },

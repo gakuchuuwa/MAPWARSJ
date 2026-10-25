@@ -2670,7 +2670,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
     { id: 'city_jiluoshan', name: '稽落山', factionId: 'bayegu', lat: 44.97439, lng: 99.113159, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MONGOL' },
 
-    { id: 'city_aodongcheng', name: '敖东城', factionId: 'liao_d', lat: 43.37, lng: 128.22, type: 'small_city', region: 'KHITAN', buildingStyle: 'NORTHEAST', troops: 10000, note: '东丹国都城敖东城' },
+    { id: 'city_aodongcheng', name: '敖东城', factionId: 'liao_d', lat: 43.37, lng: 128.22, type: 'small_city', region: 'KHITAN', buildingStyle: 'NORTHEAST', troops: 10000, note: '渤海旧国（东牟山）都城敖东城；大祚荣 698 年于此建国，后大钦茂迁上京龙泉府' },
     { id: 'city_longtanshancheng', name: '龙潭山', factionId: 'dongxia', lat: 43.834536, lng: 126.589966, type: 'pass', region: 'JURCHEN', buildingStyle: 'NORTHEAST', troops: 10000, note: '东夏国蒲鲜万奴翼境要地' },
     { id: 'city_bamiancheng', name: '八面关', factionId: 'yehe', lat: 43.189189, lng: 124.354248, type: 'pass', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
 

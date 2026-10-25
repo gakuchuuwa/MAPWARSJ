@@ -1646,6 +1646,10 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     muwaxide_axatafu: { birth: 1190, death: 1248, kaoju: '推定' },
     gepids_cunimund: { birth: 490, death: 567, kaoju: '推定' },
     kalbids_ibnhawwas: { birth: 1010, death: 1068, kaoju: '推定' },
+    zhanger: { birth: -270, death: -202, kaoju: '推定' },   // 张耳（约前 270–前 202）
+    gaogouli_liuli: { birth: -50, death: 18, kaoju: '推定' },   // 类利/琉璃明王（约前 50–18），前 19 即位，3 年迁都国内城
+    otomo_sorin: { birth: 1530, death: 1587 },   // 大友宗麟
+    ming_shenyourong: { birth: 1550, death: 1627 },   // 沈有容
 };
 
 /** 生年（未收录返回 null） */

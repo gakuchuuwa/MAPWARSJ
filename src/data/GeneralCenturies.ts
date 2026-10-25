@@ -1313,6 +1313,10 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'muwaxide_axatafu': 13,
     'gepids_cunimund': 6,
     'kalbids_ibnhawwas': 11,
+    'zhanger': -3,   // 张耳（前 3 世纪：前 207 巨鹿）
+    'gaogouli_liuli': 1,   // 琉璃明王（1 世纪：3 年迁都国内城）
+    'otomo_sorin': 16,   // 大友宗麟（16 世纪）
+    'ming_shenyourong': 17,   // 沈有容（17 世纪：1604 澎湖）
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

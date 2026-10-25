@@ -12,6 +12,10 @@
  *
  * 消息字段出处：SSN api.md「Content Object Structure」——chatname / chatmessage / type / userid / id /
  * hasDonation（带单位的金额字串，如 "$5.00"）/ donoValue（折合美元，有就以它为准）。
+ *
+ * 🔴 [2026-10-25] 站外打赏（Ko-fi / Stripe / Buy Me a Coffee / Fourthwall 的 webhook）：SSN api.md「Inbound Donation Webhooks」
+ * 说这类消息 type 是平台名、带 meta.webhookId、chatname 是打赏者在那边填的名字——跟他在 YouTube 聊天里的身份是两个户头，
+ * 交给 `ViewerLive.onExternalPayment` 按名字找人。
  */
 import type { ViewerLive } from './ViewerLive';
 import { YouTubeStats } from './YouTubeStats';
@@ -20,6 +24,8 @@ const SESSION_KEY = 'mapwar-ssn-session';
 const SERVER = 'wss://io.socialstream.ninja/join';
 /** 断了多久重连 */
 const RETRY_MS = 5000;
+/** 站外打赏平台（SSN webhook 的 type）；正常还会带 meta.webhookId，两样任一就算 */
+const WEBHOOK_TYPES = new Set(['kofi', 'stripe', 'bmac', 'fourthwall']);
 
 interface SsnMessage {
     chatname?: string;
@@ -116,6 +122,7 @@ export class SocialStreamBridge {
             return;
         }
         if (!m.chatname || m.bot) return;
+        this.live.lastChatAt = Date.now();
         const hook = typeof m.meta === 'object' ? m.meta.webhookId : undefined;
         const key = hook ?? (m.id !== undefined ? `${m.type}:${m.id}` : '');
         if (key) {
@@ -130,7 +137,13 @@ export class SocialStreamBridge {
         if (m.event && !m.hasDonation) return;
         const text = plainText(m.chatmessage ?? '');
         if (m.hasDonation) {
-            this.live.onPayment(uid, m.chatname, donationCents(m, this.live.pricePerCast()), `打赏 ${m.hasDonation}`);
+            const cents = donationCents(m, this.live.pricePerCast());
+            // 站外打赏只有对方填的名字：按名字找直播间里的人，留言里的口令也由那边替他执行
+            if (hook || WEBHOOK_TYPES.has(m.type ?? '')) {
+                this.live.onExternalPayment(m.chatname, cents, `打赏 ${m.hasDonation}`, text);
+                return;
+            }
+            this.live.onPayment(uid, m.chatname, cents, `打赏 ${m.hasDonation}`);
         }
         if (text) this.live.onChat(m.chatname, text, false, uid);
     }

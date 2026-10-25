@@ -2,7 +2,7 @@
  * 🔴 [2026-10-25] YouTube 点赞 / 订阅 / 在线人数轮询。
  * SSN 只转发聊天，不给点赞数；订阅也不进聊天。这几样走 YouTube Data API v3（浏览器直连，googleapis 允许跨域）：
  *   · videos.list（snippet,statistics,liveStreamingDetails）→ 点赞数、频道 ID、在线人数，1 配额点
- *   · channels.list（statistics）→ 订阅数（1000 以内准确，之后 YouTube 自己四舍五入；频道隐藏订阅数则没有），1 配额点
+ *   · channels.list（statistics）→ 订阅数（接口只保留三位有效数字，1000 以上一跳 10 个；频道隐藏订阅数则没有），1 配额点
  * 视频每 30 秒、频道每 60 秒各查一次：一天约 4320 点，免费额度每天 10000。
  * 密钥与直播视频 ID 在 F9 面板填，存 localStorage；密钥只存本机，记得在 Google Cloud 把它限定为只能调 YouTube Data API。
  * 谁点的赞、谁订阅的，YouTube 不告诉我们，所以结果只喂给 `ViewerLive` 的全场目标。
