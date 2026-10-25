@@ -2039,6 +2039,28 @@
       "type": "政权",
       "auditStatus": "ok",
       "note": "达契亚(布雷比斯塔 前 82–44)；2026-10-25 为古典时代巴尔干军团新立"
+    },
+    {
+      "id": "qiajia",
+      "flag": "恺加",
+      "facName": "恺加",
+      "cityId": "city_kamanniya",
+      "cityName": "卡曼尼亚",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "恺加王朝(1796 起，阿迦·穆罕默德)；2026-10-25 为帝国时代赞德军团敌将新立"
+    },
+    {
+      "id": "liangxixili",
+      "flag": "两西",
+      "facName": "两西西里",
+      "cityId": "city_palermo",
+      "cityName": "巴勒莫",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "两西西里王国(1816–1861，兰迪)；2026-10-25 为帝国时代西西里军团敌将新立"
     }
   ]
 }

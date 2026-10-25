@@ -153,6 +153,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mengjiala': [{ from: -9999, era: 'castle' }], // 孟加拉苏丹国（1342 起）
     'yili': [{ from: -9999, era: 'antiquity' }], // 伊利里亚（巴托起义，前 6 年）
     'daqiya': [{ from: -9999, era: 'antiquity' }], // 达契亚（布雷比斯塔）
+    'qiajia': [{ from: -9999, era: 'imperial' }], // 恺加王朝（1796 起）
+    'liangxixili': [{ from: -9999, era: 'imperial' }], // 两西西里王国（1816–1861）
     'cheshihou': [{ from: -9999, era: 'antiquity' }], // 乌垒
     'chimei': [{ from: -9999, era: 'antiquity' }], // 赤眉
     'choros': [{ from: -9999, era: 'castle' }], // 萨吾尔

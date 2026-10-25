@@ -49,6 +49,17 @@ import {
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event' | 'first_battle';
 
 /**
+ * 🔴 [2026-10-25 主人令「不新增出发点，攻城战就去攻打的城，野战就去战场，防守战就原地」]
+ * 远距首战（武将本城→战场 >300km）的接任务地点 —— **不新增任何地图实体**：
+ *   · 攻城战攻方＝去被攻的那座城（targetCityId）；
+ *   · 野战（不论攻守）＝去战场坐标（targetLat/targetLng）；
+ *   · 守城战守方＝原地（返回 null，走旧的城中对话）。
+ */
+type FirstBattleFrontSpot =
+    | { kind: 'city'; cityId: string; label: string }
+    | { kind: 'point'; lat: number; lng: number; label: string };
+
+/**
  * 🔴 [2026-10-05 主人令]「加上 62+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
  *   66 类正名 = 二级 62 文明 + 三级 4 自建（与据点编辑器同一份数据）；
  *   别名键（NORTH / STEPPE / WEST_ASIA / OTTOMAN / RUSSIAN / YURT）按**对象同一性**折回正名，不另抄字典。
@@ -339,6 +350,7 @@ export class PlayerQuestSystem {
         }
         this.armyMarchPoint = null;
         this.headingToEventGeneralId = null;
+        this.pendingFrontGeneralId = null;
         this.pendingEventGeneralId = null;
         this.pendingEventOptions = [];
         this.declinedGenerals.clear();   // 切模式/关自动 = 这一轮「告辞过谁」作废
@@ -426,9 +438,42 @@ export class PlayerQuestSystem {
         this.headingToEventGeneralId = null;
         const hero = this.deps.hero;
         if (hero.isAttached()) return;
+        // 🔴 [2026-10-25 主人令「攻城战就去攻打的城」] 远距首战：玩家自己走到了被攻的城（接任务点）
+        //    → 先弹这位名将的首战，不让该城的守将抢先。
+        if (this.pendingFrontGeneralId) {
+            const frontGid = this.pendingFrontGeneralId;
+            const spot = this.firstBattleFrontSpot(frontGid);
+            if (spot && spot.kind === 'city' && spot.cityId === city.id) {
+                this.onArriveFirstBattleFront(frontGid);
+                return;
+            }
+            this.pendingFrontGeneralId = null;
+        }
         const g = this.generalInCity(city.id);
         if (!g) {
             const anchored = this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
+            // 🔴 [2026-10-25 主人令「不去武将所在点」] 他的首战场离本城 >300km：他已率军赴前线，
+            //    本城只指路（去被攻的城／去战场），不在这儿触发首战、也不追他的军团。
+            if (anchored && this.firstBattleFrontSpot(anchored.generalId)) {
+                const fb = this.hasPendingFirstBattle(anchored.generalId);
+                if (fb) {
+                    const rec = getGeneralRecordByGeneralId(anchored.generalId);
+                    const portrait = resolveGeneralPortraitPath(rec?.portrait ?? '', {
+                        factionId: this.initialFaction.get(city.id) ?? city.factionId,
+                        region: getCityRegion(city),
+                    });
+                    const factionName = this.deps.cityManager.getFactionName(city.factionId);
+                    this.rememberVisit(city, anchored.generalId);
+                    this.showFirstBattleFrontRedirect(
+                        city,
+                        { generalId: anchored.generalId, generalName: anchored.generalName, portrait: rec?.portrait ?? '' },
+                        portrait,
+                        factionName,
+                        fb,
+                    );
+                    return;
+                }
+            }
             // 🔴 [2026-09-09 主人定] 扑空不再换人：他既然带兵出去了，就追出去找他。
             //    （赶路途中武将出征是常态，原来在这里直接放弃，玩家就一直在空跑。）
             const army = anchored ? this.armyOfGeneral(anchored.generalId) : null;
@@ -485,6 +530,12 @@ export class PlayerQuestSystem {
         // 武将首次会面·历史首战：第一次找到武将时触发真实历史场景对话，配备历史兵力直奔战场
         const fb = this.hasPendingFirstBattle(g.generalId);
         if (fb) {
+            // 🔴 [2026-10-25 主人令「不去武将所在点」] 首战场离本城 >300km → 他已在打仗的地方，
+            //    本城不再原地触发，只把玩家指过去（攻城战＝被攻的城；野战＝战场）。
+            if (this.firstBattleFrontSpot(g.generalId)) {
+                this.showFirstBattleFrontRedirect(city, g, portrait, factionName, fb);
+                return;
+            }
             this.showFirstBattleDialogue(city, g, portrait, factionName, fb, null);
             return;
         }
@@ -1691,6 +1742,130 @@ export class PlayerQuestSystem {
         return getGeneralFirstBattle(generalId);
     }
 
+    /**
+     * 🔴 [2026-10-25 主人令「不新增出发点，攻城战就去攻打的城，野战就去战场，防守战就原地」]
+     * **远距首战的接任务地点**（只判 >300km 的；300km 以内照旧去武将本城接、短线行军过去）：
+     *   · 守城战（siege/defender）→ null（原地，他本就在城里守）；
+     *   · 攻城战攻方 → 被攻的那座城（targetCityId）；
+     *   · 野战（攻守都算）→ 战场坐标（targetLat/targetLng）。
+     * 这样玩家不必先跑去武将本城（跑完再被瞬移到战场），而是直接去打仗的地方接任务。
+     */
+    private firstBattleFrontSpot(generalId: string | null | undefined): FirstBattleFrontSpot | null {
+        if (!generalId) return null;
+        const fb = this.hasPendingFirstBattle(generalId);
+        if (!fb) return null;
+        const role = fb.role ?? 'attacker';
+        if (fb.battleType === 'siege' && role === 'defender') return null;   // 防守战：原地
+        const home = this.generalHomeCity(generalId);
+        if (!home) return null;
+        const targetCity = fb.targetCityId ? this.deps.cityManager.getCity(fb.targetCityId) : null;
+        // 攻城战「打的那座城」＝目标城；野战＝史实战场坐标
+        const targetPos = fb.battleType === 'field'
+            ? { lat: fb.targetLat, lng: fb.targetLng }
+            : (targetCity
+                ? { lat: targetCity.latitude, lng: targetCity.longitude }
+                : { lat: fb.targetLat, lng: fb.targetLng });
+        const distanceKm = PlayerQuestSystem.distKm(
+            { lat: home.latitude, lng: home.longitude }, targetPos);
+        if (distanceKm <= PlayerQuestSystem.FIRST_BATTLE_FAR_KM) return null;
+        if (fb.battleType === 'field') {
+            return { kind: 'point', lat: fb.targetLat, lng: fb.targetLng, label: fb.targetName };
+        }
+        return targetCity ? { kind: 'city', cityId: targetCity.id, label: targetCity.name } : null;
+    }
+
+    /** 这位武将的本城（City 对象） */
+    private generalHomeCity(generalId: string): City | null {
+        const id = this.generalCityId(generalId);
+        return id ? (this.deps.cityManager.getCity(id) ?? null) : null;
+    }
+
+    private frontGeneralName(generalId: string): string {
+        return getGeneralRecordByGeneralId(generalId)?.generalName ?? '将军';
+    }
+
+    /**
+     * 玩家走到「野战战场」这个点（不是据点）：在这儿接该将首战。
+     * 🔴 [2026-10-25 主人令] 野战就去战场 —— 军团就地就位，不再把玩家瞬移回本城。
+     */
+    private onArriveFirstBattleFront(generalId: string): void {
+        this.pendingFrontGeneralId = null;
+        if (this.deps.hero.isAttached() || this.quest) return;
+        const fb = this.hasPendingFirstBattle(generalId);
+        const home = this.generalHomeCity(generalId);
+        if (!fb || !home) return;
+        const rec = getGeneralRecordByGeneralId(generalId);
+        const portrait = resolveGeneralPortraitPath(rec?.portrait ?? '', {
+            factionId: this.initialFaction.get(home.id) ?? home.factionId,
+            region: getCityRegion(home),
+        });
+        const factionName = this.deps.cityManager.getFactionName(home.factionId);
+        this.showFirstBattleDialogue(
+            home,
+            { generalId, generalName: rec?.generalName ?? '将军', portrait: rec?.portrait ?? '' },
+            portrait,
+            factionName,
+            fb,
+            null,
+            { metAtFront: true },
+        );
+    }
+
+    /**
+     * 武将已率军赴前线：在他的本城只**指路**（去被攻的城／去战场），不在原地接首战。
+     * 否则玩家跑到本城接任务，又会被旧逻辑把整支军团瞬移到战场。
+     */
+    private showFirstBattleFrontRedirect(
+        city: City,
+        g: { generalId: string; generalName: string; portrait: string },
+        portrait: string | null,
+        factionName: string,
+        fb: GeneralFirstBattle,
+    ): void {
+        const spot = this.firstBattleFrontSpot(g.generalId);
+        if (!spot) {
+            this.showFirstBattleDialogue(city, g, portrait, factionName, fb, null);
+            return;
+        }
+        this.deps.showDialogue({
+            speaker: g.generalName,
+            portrait,
+            factionName,
+            text: `某已传令三军向【${spot.label}】集结，${fb.battleName}在即。壮士先往【${spot.label}】与某会合，同赴此战。`,
+            options: [
+                {
+                    label: `⚔ 前往【${spot.label}】会合`,
+                    accent: true,
+                    onPick: () => this.travelToFirstBattleFront(g.generalId),
+                },
+                { label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, g.generalId) },
+            ],
+        });
+    }
+
+    /** 玩家出发去远距首战的接任务点（攻城＝被攻的城；野战＝战场坐标） */
+    private travelToFirstBattleFront(generalId: string): void {
+        this.deps.closeDialogue();
+        const hero = this.deps.hero;
+        if (hero.isAttached() || this.quest) return;
+        const spot = this.firstBattleFrontSpot(generalId);
+        if (!spot) return;
+        this.pendingFrontGeneralId = generalId;
+        const ok = spot.kind === 'city'
+            ? hero.travelToCity(spot.cityId, false, { allowNoGeneral: true })
+            : hero.travelToPoint(
+                { lat: spot.lat, lng: spot.lng },
+                spot.label,
+                () => this.onArriveFirstBattleFront(generalId),
+            );
+        if (ok) {
+            this.deps.notify(`🎯 ${this.frontGeneralName(generalId)}已率军至【${spot.label}】，前往会合`, 6000);
+            this.emitChange();
+            return;
+        }
+        this.pendingFrontGeneralId = null;
+    }
+
     private showFirstBattleDialogue(
         city: City,
         g: { generalId: string; generalName: string; portrait: string },
@@ -1698,6 +1873,7 @@ export class PlayerQuestSystem {
         factionName: string,
         fb: GeneralFirstBattle,
         existingArmy: Army | null,
+        opts?: { metAtFront?: boolean },
     ): void {
         const generalLines = fb.introLines.filter((l) => l.speaker === 'general').map((l) => l.text);
         const playerLine = fb.introLines.find((l) => l.speaker === 'player')?.text;
@@ -1716,7 +1892,7 @@ export class PlayerQuestSystem {
                 {
                     label: confirmLabel,
                     accent: true,
-                    onPick: () => this.startFirstBattle(city, g, fb, existingArmy),
+                    onPick: () => this.startFirstBattle(city, g, fb, existingArmy, opts),
                 },
                 { label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, g.generalId) },
             ],
@@ -1728,9 +1904,12 @@ export class PlayerQuestSystem {
         g: { generalId: string; generalName: string; portrait: string },
         fb: GeneralFirstBattle,
         existingArmy: Army | null,
+        opts?: { metAtFront?: boolean },
     ): void {
         this.deps.closeDialogue();
         this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
+        this.pendingFrontGeneralId = null;
+        const metAtFront = !!opts?.metAtFront;
         if (!isGeneralOnStage(g.generalId)) return;
         markFirstBattleCompleted(g.generalId);
         this.headingToEventGeneralId = null;
@@ -1738,6 +1917,10 @@ export class PlayerQuestSystem {
         const myFactionId = existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
         const myTroops = Math.max(1, fb.myTroops);
         const enemyTroops = Math.max(1, fb.enemyTroops);
+
+        // 🔴 [2026-10-25 主人令「攻城战就去攻打的城，野战就去战场」] 会面在前线时，这位武将若已带兵在别处，
+        //    先把那支撤掉（兵力还他本城），免得起兵后地图上同时有两个同一个人。
+        if (metAtFront && !existingArmy) this.recallEnemyGeneralFieldArmy(g.generalId, true);
 
         let host: Army | null = existingArmy && !existingArmy.isDestroyed ? existingArmy : null;
         if (host) {
@@ -1783,21 +1966,24 @@ export class PlayerQuestSystem {
             : (targetCity
                 ? { lat: targetCity.latitude, lng: targetCity.longitude }
                 : { lat: fb.targetLat, lng: fb.targetLng });
-        // 🔴 [2026-10-24 主人问「战场和出发点太远的怎么办」] 战场离出发据点超过 FIRST_BATTLE_FAR_DEG（≈300km）：
+        // 🔴 [2026-10-24 主人问「战场和出发点太远的怎么办」] 战场离出发据点超过 300km：
         //    不走几千公里，视为该将早已率军进驻前线——军团改从离战场最近的己方据点起兵（300km 内没有就直接摆到战场）。
         //    守城战：一律就地，军团直接放进被守的城。
-        const FIRST_BATTLE_FAR_KM = 300;
+        // 🔴 [2026-10-25 主人令「不新增出发点，攻城战就去攻打的城，野战就去战场，防守战就原地」]
+        //    metAtFront = 玩家已经自己走到了接任务点（被攻的城／战场）：军团就位在这里，不再把玩家瞬移过去。
         const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) =>
             Math.hypot((a.lat - b.lat) * 111.32, (a.lng - b.lng) * 111.32 * Math.cos(((a.lat + b.lat) / 2) * Math.PI / 180));
         if (fb.battleType === 'siege' && role === 'defender') {
             const defended = targetCity ?? city;
             host.setPosition(defended.latitude, defended.longitude);
-        } else if (km(host.getPosition(), targetPos) > FIRST_BATTLE_FAR_KM) {
+        } else if (metAtFront) {
+            host.setPosition(targetPos.lat, targetPos.lng);
+        } else if (km(host.getPosition(), targetPos) > PlayerQuestSystem.FIRST_BATTLE_FAR_KM) {
             // 优先离战场最近的己方据点（不含战场城本身），留一段短途行军；没有就直接摆到战场
             const stage = this.deps.cityManager.getCities()
                 .filter((c) => c.id !== targetCity?.id && c.factionId === myFactionId)
                 .map((c) => ({ c, d: km({ lat: c.latitude, lng: c.longitude }, targetPos) }))
-                .filter((x) => x.d <= FIRST_BATTLE_FAR_KM)
+                .filter((x) => x.d <= PlayerQuestSystem.FIRST_BATTLE_FAR_KM)
                 .sort((a, b) => a.d - b.d)[0]?.c;
             if (stage) host.setPosition(stage.latitude, stage.longitude);
             else host.setPosition(targetPos.lat, targetPos.lng);
@@ -2958,14 +3144,19 @@ export class PlayerQuestSystem {
             if (!headingToBattlefield && this.deps.hero.autoPlan !== 'script' && this.deps.hero.isTraveling()) {
                 const targetCityId = this.deps.hero.getTravelCityId();
                 const chaseArmyId = this.deps.hero.getChaseArmyId();
-                const targetHasOnStage = chaseArmyId
-                    ? (() => {
-                        const gid = this.deps.legionManager.getLegionById(chaseArmyId)?.generalId;
-                        return !!gid && isGeneralOnStage(gid);
-                    })()
-                    : targetCityId
-                        ? getCityAnchoredGenerals(targetCityId).some((g) => isGeneralOnStage(g.generalId))
-                        : true;
+                // 🔴 [2026-10-25] 正去远距首战的接任务城（被攻的城）时，那城本来就可能没有在场武将，
+                //    不许按「目标城无将」把行程掐掉。
+                const frontSpot = this.pendingFrontGeneralId ? this.firstBattleFrontSpot(this.pendingFrontGeneralId) : null;
+                const headingFrontCity = frontSpot?.kind === 'city' && frontSpot.cityId === targetCityId;
+                const targetHasOnStage = headingFrontCity
+                    || (chaseArmyId
+                        ? (() => {
+                            const gid = this.deps.legionManager.getLegionById(chaseArmyId)?.generalId;
+                            return !!gid && isGeneralOnStage(gid);
+                        })()
+                        : targetCityId
+                            ? getCityAnchoredGenerals(targetCityId).some((g) => isGeneralOnStage(g.generalId))
+                            : true);
                 if (!targetHasOnStage) {
                     this.deps.hero.cancelChase();
                     this.deps.hero.cancelTravel();
@@ -3035,6 +3226,31 @@ export class PlayerQuestSystem {
         if (!city) return;
         const g = this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
         this.rememberVisit(city, g?.generalId);
+        // 🔴 [2026-10-25 主人令「不去武将所在点」] 这位名将的首战场离他本城 >300km：
+        //    直接去**接任务点**（攻城战＝被攻的城；野战＝战场坐标），不跑他本城、也不追他的军团。
+        if (g) {
+            const front = this.firstBattleFrontSpot(g.generalId);
+            if (front) {
+                this.chaseCityId = null;
+                this.pendingFrontGeneralId = g.generalId;
+                const ok = front.kind === 'city'
+                    ? this.deps.hero.travelToCity(front.cityId, false, { allowNoGeneral: true })
+                    : this.deps.hero.travelToPoint(
+                        { lat: front.lat, lng: front.lng },
+                        front.label,
+                        () => this.onArriveFirstBattleFront(g.generalId),
+                    );
+                if (ok) {
+                    this.deps.notify(`🎯 ${g.generalName}已率军至【${front.label}】，前往会合`, 6000);
+                    return;
+                }
+                // 走不到接任务点（无路可达）→ 退回他本城：本城只指路、不会原地触发首战，
+                // 也**不去追他的军团**（那条路会走回旧的首战瞬移逻辑）。
+                this.pendingFrontGeneralId = null;
+                this.deps.hero.travelToCity(city.id, false, { allowNoGeneral: true });
+                return;
+            }
+        }
         const inCityGen = this.generalInCity(city.id);
         const army = (!inCityGen && g) ? this.armyOfGeneral(g.generalId) : null;
         if (army) {
@@ -3051,6 +3267,11 @@ export class PlayerQuestSystem {
 
     /** 追击中的那位武将的**本城**（会面后谈事仍以这座城的势力/目标为准） */
     private chaseCityId: string | null = null;
+    /**
+     * 🔴 [2026-10-25 主人令] 玩家正去「远距首战接任务点」途中 —— 那位的 generalId；
+     * 抵达触发点（被攻的城／战场坐标）时据此弹出**他的**首战，而不是该地别人的对话。
+     */
+    private pendingFrontGeneralId: string | null = null;
     /**
      * 战场寻路失败的冷却表：bfId -> 在此时间戳之前不再重试。
      * tick 每 400ms 跑一次，若不记冷却，无路可达的战场会每秒 2.5 次
@@ -3511,6 +3732,12 @@ export class PlayerQuestSystem {
         return ranked[Math.floor(Math.random() * ranked.length)]?.c ?? best;
     }
 
+    /**
+     * 🔴 [2026-10-25 主人令「300呀」] 远距首战分界线（km）：武将本城→战场超过 300km，
+     * 玩家就改去**接任务点**（攻城战＝被攻的城；野战＝战场），不再先跑去武将本城。
+     * 与 2026-10-24「战场和出发点太远」那条旧摆位阈值同一条线。
+     */
+    private static readonly FIRST_BATTLE_FAR_KM = 300;
     /** 「最近 K 座里随机」的 K。摸到多少位与 K 无关（那是排除已访问决定的），K 只管每趟路程：
      *  实测 K=1→436km、3→519km、5→554km、8→649km。取 5 是在「路程短」和「别太可预测」之间。 */
     private static readonly NEAR_K = 5;
@@ -3686,6 +3913,7 @@ export class PlayerQuestSystem {
         this.cleanupFirstBattleState(this.quest);
         this.quest = null;
         this.declinedGenerals.clear();      // 读档 = 这一轮「告辞过谁」作废
+        this.pendingFrontGeneralId = null;
         clearCompletedFirstBattles();
         this.clearJourneyBriefing();
         this.briefedBattlefields.clear();   // 读档后重走的场次照常播报

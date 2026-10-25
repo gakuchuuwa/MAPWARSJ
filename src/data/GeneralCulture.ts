@@ -448,6 +448,17 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'mengjiala_shamsuddin': 'BENGALIS',   // 孟加拉｜沙姆斯丁｜据点 戈尔冈
     'habusibao_eugene': 'HUNS',   // 哈布斯堡｜欧根亲王｜据点 塞格德
     'gesake_khmelnytsky': 'CUMAN',   // 哥萨克｜赫梅利尼茨基｜据点 谢缅杰尔
+    'bfe_vetilius': 'ROMA',   // 罗马帝国｜维特里乌斯｜据点 罗马城
+    'bfe_chelyadnin': 'SLAVIC',   // 莫斯公国｜切利亚德宁｜据点 莫斯科
+    'bfe_mustafa_ii': 'TURKS',   // 奥斯曼｜穆斯塔法二世｜据点 埃迪尔内
+    'bfe_perozes': 'SASANIAN',   // 萨珊｜佩罗泽斯｜据点 呼勒万
+    'bfe_mansfeld': 'BOHEMIANS',   // 波西米亚｜曼斯菲尔德｜据点 布拉格
+    'bfe_sonni_baru': 'AFRICA',   // 桑海｜桑尼·巴鲁｜据点 廷巴克图
+    'bfe_agha_mohammad': 'PERSIAN',   // 恺加｜阿迦·穆罕默德汗｜据点 卡曼尼亚
+    'bfe_landi': 'SICILIANS',   // 两西西里｜兰迪｜据点 巴勒莫
+    'bfe_kehaya_mustafa': 'SPARTANS',   // 奥斯曼｜穆斯塔法｜据点 斯巴达
+    'xilawangguo_petros': 'SPARTANS',   // 希腊王国｜彼得罗斯｜据点 斯巴达
+    'bfe_abdulaziz_crete': 'BERBER',   // 阿格拉布｜阿卜杜勒·阿齐兹｜据点 凯鲁万
     'yili_bato': 'MAGYAR',   // 伊利里亚｜巴托｜据点 布达佩斯
     'daqiya_burebista': 'BULGARIANS',   // 达契亚｜布雷比斯塔｜据点 索非亚
     'danmai_christian_iv': 'DANES',   // 丹麦｜克里斯蒂安四世｜据点 哥本哈根

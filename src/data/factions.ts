@@ -142,6 +142,10 @@ export const FACTIONS: Faction[] = [
     { id: 'yili', name: '伊利里亚' },
     // 🔴 [2026-10-25 补B] 达契亚（布雷比斯塔 前 82–44）
     { id: 'daqiya', name: '达契亚' },
+    // 🔴 [2026-10-25 补B] 恺加（阿迦·穆罕默德 1796 建）
+    { id: 'qiajia', name: '恺加' },
+    // 🔴 [2026-10-25 补B] 两西西里（兰迪 1860）
+    { id: 'liangxixili', name: '两西西里' },
   { id: 'mazhaer', name: '匈牙利' },
   { id: 'falanji', name: '法兰克' },
   { id: 'shiwaben', name: '施瓦本' },

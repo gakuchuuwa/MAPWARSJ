@@ -63,6 +63,232 @@ export interface GeneralFirstBattle {
 }
 
 export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>> = {
+    // 🔴 [2026-10-25 补B] 尼基弗鲁斯·福卡斯 — 961 干地亚之战（收复克里特；敌帅阿卜杜勒·阿齐兹）
+    baizanting_nikephoros_phokas: {
+        generalId: 'baizanting_nikephoros_phokas',
+        battleName: '干地亚之战',
+        battleYear: 961,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '干地亚',
+        targetLat: 35.34,
+        targetLng: 25.13,
+        myTroops: 20000,
+        enemyFactionId: 'aguelabu',
+        enemyFactionName: '阿格拉布',
+        enemyGeneralId: 'bfe_abdulaziz_crete',
+        enemyTroops: 8000,
+        introLines: [
+            { speaker: 'general', text: '克里特埃米尔阿卜杜勒·阿齐兹据干地亚顽抗，其埃米尔国出自凯鲁万阿格拉布。我拜占庭大军已登陆克里特，你可愿随我拔除此岛、收复失地？' },
+            { speaker: 'player', text: '愿随福卡斯登陆克里特，击破阿卜杜勒·阿齐兹，收复干地亚！' },
+        ],
+    },
+
+    // 🔴 [2026-10-25 补B] 科洛科特罗尼斯 — 1821 瓦尔泰齐之战（守村击退凯哈亚·穆斯塔法；敌帅穆斯塔法）
+    xilawangguo_kolokotronis: {
+        generalId: 'xilawangguo_kolokotronis',
+        battleName: '瓦尔泰齐之战',
+        battleYear: 1821,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '瓦尔泰齐',
+        targetLat: 37.5,
+        targetLng: 22.35,
+        myTroops: 2500,
+        enemyFactionId: 'osman',
+        enemyFactionName: '奥斯曼',
+        enemyGeneralId: 'bfe_kehaya_mustafa',
+        enemyTroops: 5000,
+        introLines: [
+            { speaker: 'general', text: '胡尔希德帕夏的副帅凯哈亚·穆斯塔法率五千奥斯曼与阿尔巴尼亚军从特里波利察出击，三路围攻瓦尔泰齐。我希腊军已在村外山地设防，你可愿随我据险迎敌？' },
+            { speaker: 'player', text: '愿随科洛科特罗尼斯死守瓦尔泰齐，击退穆斯塔法！' },
+        ],
+    },
+
+    // 🔴 [2026-10-25 补B] 加里波第 — 1860 卡拉塔菲米之战（千人远征首捷；敌帅兰迪）
+    yidali_wangguo_garibaldi: {
+        generalId: 'yidali_wangguo_garibaldi',
+        battleName: '卡拉塔菲米之战',
+        battleYear: 1860,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '卡拉塔菲米',
+        targetLat: 37.9,
+        targetLng: 12.85,
+        myTroops: 1000,
+        enemyFactionId: 'liangxixili',
+        enemyFactionName: '两西西里',
+        enemyGeneralId: 'bfe_landi',
+        enemyTroops: 2000,
+        introLines: [
+            { speaker: 'general', text: '兰迪率两西西里军据守卡拉塔菲米高地。我红衫军只有千人，但西西里人已望风来投，你可愿随我仰攻破敌？' },
+            { speaker: 'player', text: '愿随加里波第强攻卡拉塔菲米，击溃兰迪的两西西里军！' },
+        ],
+    },
+
+    // 🔴 [2026-10-25 补B] 华伦斯坦 — 1626 德绍桥之战（敌帅曼斯菲尔德）
+    boximiya_wallenstein: {
+        generalId: 'boximiya_wallenstein',
+        battleName: '德绍桥之战',
+        battleYear: 1626,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '德绍桥',
+        targetLat: 51.83,
+        targetLng: 12.24,
+        myTroops: 20000,
+        enemyFactionId: 'boximiya',
+        enemyFactionName: '波西米亚',
+        enemyGeneralId: 'bfe_mansfeld',
+        enemyTroops: 12000,
+        introLines: [
+            { speaker: 'general', text: '曼斯菲尔德率新教雇佣军据守易北河德绍桥，企图切断我军补给。我帝国军已在桥头展开，你可愿随我强攻夺桥？' },
+            { speaker: 'player', text: '愿随华伦斯坦强攻德绍桥，击破曼斯菲尔德！' },
+        ],
+    },
+    // 🔴 [2026-10-25 补B] 阿斯基亚·穆罕默德 — 1493 安法奥之战（敌帅桑尼·巴鲁）
+    songhai_askia_muhammad: {
+        generalId: 'songhai_askia_muhammad',
+        battleName: '安法奥之战',
+        battleYear: 1493,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '安法奥',
+        targetLat: 16.27,
+        targetLng: 0.05,
+        myTroops: 20000,
+        enemyFactionId: 'songhai',
+        enemyFactionName: '桑海',
+        enemyGeneralId: 'bfe_sonni_baru',
+        enemyTroops: 15000,
+        introLines: [
+            { speaker: 'general', text: '桑尼·巴鲁继位后失尽军心，我已联合诸部起兵。今日在安法奥平原决战，你可愿随我推翻旧主、另立新朝？' },
+            { speaker: 'player', text: '愿随阿斯基亚·穆罕默德决战安法奥，开创桑海新朝！' },
+        ],
+    },
+    // 🔴 [2026-10-25 补B] 埃雷克莱二世 — 1795 克尔察尼西之战（敌帅阿迦·穆罕默德汗）
+    gelujiya_erekle_ii: {
+        generalId: 'gelujiya_erekle_ii',
+        battleName: '克尔察尼西之战',
+        battleYear: 1795,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '克尔察尼西',
+        targetLat: 41.6,
+        targetLng: 44.8,
+        myTroops: 20000,
+        enemyFactionId: 'qiajia',
+        enemyFactionName: '恺加',
+        enemyGeneralId: 'bfe_agha_mohammad',
+        enemyTroops: 35000,
+        introLines: [
+            { speaker: 'general', text: '阿迦·穆罕默德汗率波斯大军进逼第比利斯，已抵克尔察尼西。我格鲁吉亚军已列阵御敌，你可愿随我保卫都城？' },
+            { speaker: 'player', text: '愿随埃雷克莱二世死守克尔察尼西，挡住阿迦·穆罕默德汗！' },
+        ],
+    },
+
+    // 🔴 [2026-10-25 补B] 贝利撒留 — 530 达拉之战（守城击退萨珊；敌帅佩罗泽斯）
+    baizanting_belisarius: {
+        generalId: 'baizanting_belisarius',
+        battleName: '达拉之战',
+        battleYear: 530,
+        battleType: 'siege',
+        role: 'defender',
+        targetName: '达拉',
+        targetLat: 37.18,
+        targetLng: 40.56,
+        myTroops: 25000,
+        enemyFactionId: 'sashan',
+        enemyFactionName: '萨珊',
+        enemyGeneralId: 'bfe_perozes',
+        enemyTroops: 40000,
+        introLines: [
+            { speaker: 'general', text: '萨珊大将佩罗泽斯率四万波斯军进围达拉，城墙已受投石猛攻。我拜占庭守军二万五千已在城头列阵，你可愿随我死守此塞？' },
+            { speaker: 'player', text: '愿随贝利撒留死守达拉，把佩罗泽斯的波斯军挡在城墙之下！' },
+        ],
+    },
+    // 🔴 [2026-10-25 补B] 维里亚图斯 — 前 147 卢西塔尼亚伏击（灭罗马军杀维特里乌斯）
+    luxitaniya_viriathus: {
+        generalId: 'luxitaniya_viriathus',
+        battleName: '卢西塔尼亚伏击战',
+        battleYear: -147,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '卢西塔尼亚',
+        targetLat: 40.0,
+        targetLng: -6.0,
+        myTroops: 10000,
+        enemyFactionId: 'luoma_diguo',
+        enemyFactionName: '罗马',
+        enemyGeneralId: 'bfe_vetilius',
+        enemyTroops: 9000,
+        introLines: [
+            { speaker: 'general', text: '罗马将维特里乌斯率军深入卢西塔尼亚，正沿谷道推进。我已在山隘两侧布下伏兵，你可愿随我合围，全歼这支罗马军？' },
+            { speaker: 'player', text: '愿随维里亚图斯伏击维特里乌斯，让罗马人记住卢西塔尼亚的山谷！' },
+        ],
+    },
+    // 🔴 [2026-10-25 补B] 奥斯特罗格斯基 — 1514 奥尔沙会战（大胜莫斯科；敌帅切利亚德宁）
+    litaowan_ostrogski: {
+        generalId: 'litaowan_ostrogski',
+        battleName: '奥尔沙会战',
+        battleYear: 1514,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '奥尔沙',
+        targetLat: 54.5,
+        targetLng: 30.4,
+        myTroops: 30000,
+        enemyFactionId: 'mosike_gongguo',
+        enemyFactionName: '莫斯公国',
+        enemyGeneralId: 'bfe_chelyadnin',
+        enemyTroops: 35000,
+        introLines: [
+            { speaker: 'general', text: '莫斯科统帅切利亚德宁率大军渡第聂伯河而来，企图夺回斯摩棱斯克。我军已在奥尔沙对岸列阵，你可愿随我半渡而击？' },
+            { speaker: 'player', text: '愿随奥斯特罗格斯基在奥尔沙大破莫斯科军！' },
+        ],
+    },
+    // 🔴 [2026-10-25 补B] 欧根亲王 — 1697 曾塔会战（大败奥斯曼；敌苏丹穆斯塔法二世）
+    habusibao_eugene: {
+        generalId: 'habusibao_eugene',
+        battleName: '曾塔会战',
+        battleYear: 1697,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '曾塔',
+        targetLat: 45.38,
+        targetLng: 20.25,
+        myTroops: 50000,
+        enemyFactionId: 'osman',
+        enemyFactionName: '奥斯曼',
+        enemyGeneralId: 'bfe_mustafa_ii',
+        enemyTroops: 80000,
+        introLines: [
+            { speaker: 'general', text: '苏丹穆斯塔法二世率八万奥斯曼军围攻曾塔，正渡蒂萨河。我军五万已在其侧翼展开，你可愿随我趁其半渡突袭，一举击溃奥斯曼主力？' },
+            { speaker: 'player', text: '愿随欧根亲王在曾塔大破穆斯塔法二世！' },
+        ],
+    },
+
+    // 🔴 [2026-10-25 补B] 赫梅利尼茨基 — 1648 黄水之战（哥萨克起义首捷；敌帅波托茨基）
+    gesake_khmelnytsky: {
+        generalId: 'gesake_khmelnytsky',
+        battleName: '黄水之战',
+        battleYear: 1648,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '黄水',
+        targetLat: 48.35,
+        targetLng: 33.5,
+        myTroops: 5000,
+        enemyFactionId: 'bolan',
+        enemyFactionName: '波兰',
+        enemyGeneralId: 'bfe_potocki',
+        enemyTroops: 4000,
+        introLines: [
+            { speaker: 'general', text: '波兰军已进至黄水河畔，波托茨基麾下翼骑与雇佣步兵正渡河而来。我哥萨克全军已在河湾列阵，你可愿随我迎击，断其归路？' },
+            { speaker: 'player', text: '愿随赫梅利尼茨基迎战波托茨基，在黄水河畔大破波兰军！' },
+        ],
+    },
+
     // #1 吉甫 (-852 ~ -775) — 周宣王五年（前823年）太原北伐猃狁之战
 
     // #2 提格拉特 (-795 ~ -727) — 公元前732年大马士革围城战
@@ -7864,7 +8090,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleName: '浑河血战援辽之战',
         battleYear: 1621,
         battleType: 'field',
-        role: 'defender',
+        // 🔴 [2026-10-25 主人令「秦良玉从石柱带兵跑 1899 公里去沈阳救援，这是攻方，跑出城的都是攻方……努尔哈赤才是防守」]
+        role: 'attacker',
         targetName: '沈阳浑河两岸',
         targetCityId: 'city_shenyang',
         targetLat: 41.80203,
@@ -7873,10 +8100,10 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyFactionId: 'manzhou_d',
         enemyFactionName: '后金',
         enemyGeneralId: 'manzhou_nuerhachi',
-        enemyTroops: 40000,
+        enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '辽左陷落沈阳垂危，白杆兵万里勤王岂惜一死！长矛钩镰勾连结阵抗建州重骑，土家壮士，随某佩刀死战，报国显千秋忠烈！' },
-            { speaker: 'player', text: '愿随秦良玉将军共守浑河血战援辽之战，大破后金敌军！' },
+            { speaker: 'player', text: '愿随秦良玉将军共赴浑河血战援辽之战，大破后金敌军！' },
         ],
     },
 

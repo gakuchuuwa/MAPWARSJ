@@ -498,6 +498,17 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     mengjiala_shamsuddin: { birth: 1300, death: 1358, kaoju: '推定' },  // 沙姆斯丁
     habusibao_eugene: { birth: 1663, death: 1736 },  // 欧根亲王
     gesake_khmelnytsky: { birth: 1595, death: 1657 },  // 赫梅利尼茨基
+    bfe_vetilius: { birth: -200, death: -147, kaoju: '推定' },  // 维特里乌斯
+    bfe_chelyadnin: { birth: 1450, death: 1514, kaoju: '推定' },  // 切利亚德宁
+    bfe_mustafa_ii: { birth: 1664, death: 1703 },  // 穆斯塔法二世
+    bfe_perozes: { birth: 500, death: 530, kaoju: '推定' },  // 佩罗泽斯
+    bfe_mansfeld: { birth: 1580, death: 1626 },  // 曼斯菲尔德
+    bfe_sonni_baru: { birth: 1450, death: 1500, kaoju: '推定' },  // 桑尼·巴鲁
+    bfe_agha_mohammad: { birth: 1742, death: 1797 },  // 阿迦·穆罕默德汗
+    bfe_landi: { birth: 1800, death: 1870, kaoju: '推定' },  // 兰迪
+    bfe_kehaya_mustafa: { birth: 1770, death: 1830, kaoju: '推定' },  // 穆斯塔法（凯哈亚）
+    xilawangguo_petros: { birth: 1765, death: 1848 },  // 彼得罗斯·马夫罗米哈利斯
+    bfe_abdulaziz_crete: { birth: 900, death: 961, kaoju: '推定' },  // 阿卜杜勒·阿齐兹（克里特埃米尔）
     yili_bato: { birth: -30, death: 9, kaoju: '推定' },  // 巴托
     daqiya_burebista: { birth: -100, death: -44, kaoju: '推定' },  // 布雷比斯塔
     danmai_christian_iv: { birth: 1577, death: 1648 },  // 克里斯蒂安四世

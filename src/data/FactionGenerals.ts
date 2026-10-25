@@ -1684,7 +1684,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    aguelabu: { generalId: 'gen_uqba', cityId: 'city_kailuwan', generalName: '奥克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png' },
+    aguelabu: [
+        
+{ generalId: 'gen_uqba', cityId: 'city_kailuwan', generalName: '奥克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png' }
+,
+        // 🔴 [2026-10-25 补B] 阿卜杜勒·阿齐兹（克里特埃米尔，961 干地亚陷落时在位；克里特埃米尔国出自阿格拉布，据凯鲁万）｜势力 阿格拉布｜据点 凯鲁万（BERBER 文化）｜普将｜精锐「克里特军」T4｜立绘留空
+        { generalId: 'bfe_abdulaziz_crete', factionId: 'aguelabu', cityId: 'city_kailuwan', generalName: '阿卜杜勒·阿齐兹', portrait: '', eliteName: '克里特军', eliteTier: 4 },
+    ],
 
 
 
@@ -2578,6 +2584,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     luoma_diguo: [
+        // 🔴 [2026-10-25 补B] 维特里乌斯（Vetilius，前 2 世纪罗马将领；前 147 被维里亚图斯伏击杀）｜势力 罗马帝国｜据点 罗马城（ROMA 文化）｜普将（实败）｜精锐「罗马军团兵」T4｜立绘留空
+        { generalId: 'bfe_vetilius', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '维特里乌斯', portrait: '', eliteName: '罗马军团兵', eliteTier: 4 },
         { generalId: 'bfe3_4', cityId: 'city_luoma', generalName: '拉维利乌斯', portrait: '/assets/ROMA/bfe3_4.png', legionName: '古典时代罗马军团' },
         { generalId: 'bfe3_63', cityId: 'city_luoma', generalName: '霍尔多尼乌斯', portrait: '/assets/ROMA/bfe3_63.png', legionName: '古典时代罗马军团' },
         { generalId: 'bfe3_51', cityId: 'city_luoma', generalName: '佩特罗尼乌斯', portrait: '/assets/ROMA/bfe3_51.png', legionName: '古典时代罗马军团' },
@@ -2924,6 +2932,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     boximiya: [
+        // 🔴 [2026-10-25 补B] 曼斯菲尔德（1580–1626，新教雇佣军统帅；1626 德绍桥败于华伦斯坦）｜势力 波西米亚｜据点 布拉格（BOHEMIANS 文化）｜普将｜精锐「新教雇佣兵」T4｜立绘留空
+        { generalId: 'bfe_mansfeld', factionId: 'boximiya', cityId: 'city_bulage', generalName: '曼斯菲尔德', portrait: '', eliteName: '新教雇佣兵', eliteTier: 4 },
         // 🔴 [2026-10-25 补A] 华伦斯坦（1583–1634，三十年战争帝国军统帅；1626 德绍桥胜）｜势力 波西米亚｜据点 布拉格（BOHEMIANS 文化）｜名将｜精锐「华伦斯坦军」T1｜立绘留空｜首战待补
         { generalId: 'boximiya_wallenstein', factionId: 'boximiya', cityId: 'city_bulage', generalName: '华伦斯坦', portrait: '', eliteName: '华伦斯坦军', eliteTier: 1 },
 
@@ -3166,6 +3176,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'mayapan_hunac_ceel', factionId: 'mayapan', cityId: 'city_uxmal', generalName: '胡纳克·塞尔', portrait: '', eliteName: '玛雅潘劲卒', eliteTier: 4 },
     ],
     songhai: [
+        // 🔴 [2026-10-25 补B] 桑尼·巴鲁（Sonni Baru，桑海末代桑尼；1493 安法奥败于阿斯基亚）｜势力 桑海｜据点 廷巴克图（AFRICA 文化）｜普将｜精锐「桑海王军」T4｜立绘留空
+        { generalId: 'bfe_sonni_baru', factionId: 'songhai', cityId: 'city_timbuktu', generalName: '桑尼·巴鲁', portrait: '', eliteName: '桑海王军', eliteTier: 4 },
         // 🔴 [2026-10-25 补A] 阿斯基亚·穆罕默德（1443–1538，桑海帝国开创者；1493 篡位、征服马里）｜势力 桑海｜据点 廷巴克图（AFRICA 文化）｜名将｜精锐「桑海骑兵」T1｜立绘留空｜首战待补
         { generalId: 'songhai_askia_muhammad', factionId: 'songhai', cityId: 'city_timbuktu', generalName: '阿斯基亚·穆罕默德', portrait: '', eliteName: '桑海骑兵', eliteTier: 1 },
     ],
@@ -3208,6 +3220,22 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     daqiya: [
         // 🔴 [2026-10-25 补B] 布雷比斯塔（前 82–44 达契亚王，统一达契亚部落）｜势力 达契亚｜据点 索非亚（BULGARIANS 文化，巴尔干）｜普将｜精锐「达契亚弯刀」T4｜立绘留空
         { generalId: 'daqiya_burebista', factionId: 'daqiya', cityId: 'city_sofia', generalName: '布雷比斯塔', portrait: '', eliteName: '达契亚弯刀', eliteTier: 4 },
+    ],
+    qiajia: [
+        // 🔴 [2026-10-25 补B] 阿迦·穆罕默德汗（1742–1797，恺加王朝建立者；1795 克尔察尼西大破格鲁吉亚）｜势力 恺加｜据点 卡曼尼亚（PERSIAN 文化）｜名将｜精锐「恺加骑兵」T1｜立绘留空｜首战待补
+        { generalId: 'bfe_agha_mohammad', factionId: 'qiajia', cityId: 'city_kamanniya', generalName: '阿迦·穆罕默德汗', portrait: '', eliteName: '恺加骑兵', eliteTier: 1 },
+    ],
+    liangxixili: [
+        // 🔴 [2026-10-25 补B] 兰迪（Landi，两西西里将军；1860 卡拉塔菲米 败于加里波第）｜势力 两西西里｜据点 巴勒莫（SICILIANS 文化）｜普将｜精锐「西西里线列」T4｜立绘留空
+        { generalId: 'bfe_landi', factionId: 'liangxixili', cityId: 'city_palermo', generalName: '兰迪', portrait: '', eliteName: '西西里线列', eliteTier: 4 },
+    ],
+    osman_morae: [
+        // 🔴 [2026-10-25 补B] 穆斯塔法（凯哈亚·穆斯塔法贝伊，摩里亚总督胡尔希德帕夏副帅；1821 瓦尔泰齐率 5000 奥斯曼-阿尔巴尼亚军进攻，败于科洛科特罗尼斯）｜势力 奥斯曼｜据点 斯巴达（SPARTANS 文化，摩里亚）｜普将｜精锐「奥斯曼精兵」T4｜立绘留空
+        { generalId: 'bfe_kehaya_mustafa', factionId: 'osman', cityId: 'city_sparta', generalName: '穆斯塔法', portrait: '', eliteName: '奥斯曼精兵', eliteTier: 4 },
+    ],
+    xilawangguo_mani: [
+        // 🔴 [2026-10-25 补B] 彼得罗斯·马夫罗米哈利斯（1765–1848，马尼 贝伊、希腊独立战争领袖）｜势力 希腊王国｜据点 斯巴达（SPARTANS 文化，摩里亚/马尼）｜普将｜精锐「马尼山兵」T4｜立绘留空
+        { generalId: 'xilawangguo_petros', factionId: 'xilawangguo', cityId: 'city_sparta', generalName: '彼得罗斯·马夫罗米哈利斯', portrait: '', eliteName: '马尼山兵', eliteTier: 4 },
     ],
     wende: [
         // 🔴 [2026-10-25 主人令「存在就建」] 亨吉斯特（449 率撒克逊人入不列颠、肯特王；比德《英吉利教会史》《盎格鲁-撒克逊编年史》记载，半史）｜势力 萨克森｜据点 马格德堡（撒克逊核心，同文化据点）｜普将（存疑）｜精锐「撒克逊战团」T4｜立绘留空
@@ -3423,6 +3451,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     mosike_gongguo: [
+        // 🔴 [2026-10-25 补B] 切利亚德宁（Ivan Chelyadnin，1514 奥尔沙会战莫斯科军统帅，被俘）｜势力 莫斯公国｜据点 莫斯科（SLAVIC 文化）｜普将（实败）｜精锐「莫斯科军」T4｜立绘留空
+        { generalId: 'bfe_chelyadnin', factionId: 'mosike_gongguo', cityId: 'city_mosike', generalName: '切利亚德宁', portrait: '', eliteName: '莫斯科军', eliteTier: 4 },
 
 
 
@@ -13618,6 +13648,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     osman: [
+        // 🔴 [2026-10-25 补B] 穆斯塔法二世（1664–1703，奥斯曼苏丹；1697 曾塔惨败）｜势力 奥斯曼｜据点 埃迪尔内（TURKS 文化）｜普将（实败）｜精锐「近卫军」T4｜立绘留空
+        { generalId: 'bfe_mustafa_ii', factionId: 'osman', cityId: 'city_aidiernei', generalName: '穆斯塔法二世', portrait: '', eliteName: '近卫军', eliteTier: 4 },
         { generalId: 'bfe_sinan_pasha', factionId: 'osman', cityId: 'city_aidiernei', generalName: '锡南帕夏', portrait: '/assets/TURKS/bfe_sinan_pasha.png' },   // 🔴 [2026-10-25 按史] 首战敌将；奥斯曼大维齐尔，1605 苏菲安败后身死；据点埃迪尔内（TURKS）；用势力精锐苏丹亲兵
         { generalId: 'osman_kapadan', factionId: 'osman', cityId: 'city_buersa', generalName: '卡帕丹帕夏', portrait: '/assets/TURKS/osman_kapadan.png' },   // 🔴 [2026-10-25 按史] 首战敌将；奥斯曼舰队统帅 Canım Hoca Mehmed Pasha，1716 围科孚败退；1715 再取摩里亚有功，四闸可过判名将；据点布尔萨（TURKS）；用势力精锐苏丹亲兵
         // 🔴 [2026-10-20 首战规则] 卡拉·穆斯塔法帕夏＝奥斯曼大维齐尔（1683 维也纳战败被处死）→ 布尔萨（TURKS）；帝国时代土耳其军团；立绘留空
@@ -14549,6 +14581,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     sashan: [
+        // 🔴 [2026-10-25 补B] 佩罗泽斯（Perozes，萨珊将领；530 达拉之战战死）｜势力 萨珊｜据点 呼勒万（SASANIAN 文化）｜普将（实败）｜精锐「萨珊铁甲」T4｜立绘留空
+        { generalId: 'bfe_perozes', factionId: 'sashan', cityId: 'city_hulewan', generalName: '佩罗泽斯', portrait: '', eliteName: '萨珊铁甲', eliteTier: 4 },
 
 
 

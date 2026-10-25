@@ -220,7 +220,7 @@ export class HillshadeLayer extends L.GridLayer {
      *    预取侧的版本号落后（v3 vs v6）就再也判不出「这块已经算好了」，每次切 zoom 都白发一轮请求。
      */
     private tileCacheKey(z: number, x: number, y: number, isRelief: boolean, isValley: boolean): string {
-        return `${z}/${x}/${y}:${isRelief ? 'relief_snow_v13' : 'std_v5'}:${isValley ? 'valley_nile_v1' : 'v0'}${isRelief && this.terraceExp ? ':terrace7_v1' : ''}`;
+        return `${z}/${x}/${y}:${isRelief ? 'relief_snow_v14' : 'std_v6'}:${isValley ? 'valley_nile_v1' : 'v0'}${isRelief && this.terraceExp ? ':terrace7_v1' : ''}`;
     }
 
     /** LRU 读：命中则移到队尾标记为最近使用 */

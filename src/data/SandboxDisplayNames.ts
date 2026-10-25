@@ -147,6 +147,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'mengjiala': '孟加',
     'yili': '伊里',
     'daqiya': '达契',
+    'qiajia': '恺加',
+    'liangxixili': '两西',
 'mazhaer': '匈',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   falanji: '弗兰',
   shiwaben: '施瓦',

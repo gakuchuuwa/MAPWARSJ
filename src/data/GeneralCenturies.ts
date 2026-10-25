@@ -747,6 +747,17 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'mengjiala_shamsuddin': 14,              // 沙姆斯丁 · mengjiala · 戈尔冈
     'habusibao_eugene': 17,                  // 欧根亲王 · habusibao · 塞格德
     'gesake_khmelnytsky': 17,                // 赫梅利尼茨基 · gesake · 谢缅杰尔
+    'bfe_vetilius': -2,                      // 维特里乌斯 · luoma_diguo · 罗马城
+    'bfe_chelyadnin': 16,                    // 切利亚德宁 · mosike_gongguo · 莫斯科
+    'bfe_mustafa_ii': 17,                    // 穆斯塔法二世 · osman · 埃迪尔内
+    'bfe_perozes': 6,                        // 佩罗泽斯 · sashan · 呼勒万
+    'bfe_mansfeld': 17,                      // 曼斯菲尔德 · boximiya · 布拉格
+    'bfe_sonni_baru': 15,                    // 桑尼·巴鲁 · songhai · 廷巴克图
+    'bfe_agha_mohammad': 18,                 // 阿迦·穆罕默德汗 · qiajia · 卡曼尼亚
+    'bfe_landi': 19,                         // 兰迪 · liangxixili · 巴勒莫
+    'bfe_kehaya_mustafa': 19,                // 穆斯塔法 · osman · 斯巴达
+    'xilawangguo_petros': 19,                // 彼得罗斯 · xilawangguo · 斯巴达
+    'bfe_abdulaziz_crete': 10,               // 阿卜杜勒·阿齐兹 · aguelabu · 凯鲁万
     'yili_bato': -1,                         // 巴托 · yili · 布达佩斯
     'daqiya_burebista': -1,                  // 布雷比斯塔 · daqiya · 索非亚
     'danmai_christian_iv': 16,               // 克里斯蒂安四世 · danmai · 哥本哈根

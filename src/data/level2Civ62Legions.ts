@@ -1444,57 +1444,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 诺夫哥罗德　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第二批·西欧与北欧）
-    // ── 诺夫哥罗德 · 古典时代 · 古典时代楚德林莽军团　（本次新建）────────────────
-    //    评级：（未标评级）｜核心兵种：步兵、远程（标枪）为主
-    //    描述正文（主人原文，一字未改）：（伊尔门湖区、拉多加湖沼；原木桩木屋营寨、巨石萨满祭坛；雪橇机动穿插、冷锻猎熊重矛、针叶林浸毒标枪伏击方阵）
-    //    英雄队（第 10 队·主将队）：hero_harald / hero_halldor　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '古典时代楚德林莽军团', civ: '瓦良格', age: 'antiquity', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
-        buildingStyle: 'VARANGIANS',
-        castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
-        formationMode: 'echelon',
-        shipId: 'MONOREME',
-        commanderUnit: 'hero_ulf',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
-        slots: [
-            { type: 'skirmisher', count: 4 },
-            { type: 'norse_warrior', count: 3 },
-            { type: 'antiquity_scout_cavalry', count: 2 },
-        ],
-    },
-    // ── 诺夫哥罗德 · 城堡时代 · 城堡时代诺夫哥罗德军团　（本次新建）────────────────
-    //    评级：【精锐】｜核心兵种：重骑兵、重步兵为主
-    //    描述正文（主人原文，一字未改）：（大诺夫哥罗德；圣索菲亚大教堂青铜大门、德捷茨白石要塞城垣；亚历山大·涅夫斯基东斯拉夫面具鳞甲骑兵、重型长矛刺猬拒马大阵、冰上之战破铁十字死士）
-    //    英雄队（第 10 队·主将队）：hero_harald / hero_halldor　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '城堡时代诺夫哥罗德军团', civ: '瓦良格', age: 'castle', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
-        buildingStyle: 'VARANGIANS',
-        castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
-        formationMode: 'balance_yoke',
-        shipId: 'ELITE_LONGBOAT',
-        commanderUnit: 'hero_alexandernevski',
-        slots: [
-            { type: 'throwing_axeman', count: 4 },
-            { type: 'elite_varangian_jarl', count: 2 },
-            { type: 'varangian_guard', count: 3 },
-        ],
-    },
-    // ── 诺夫哥罗德 · 帝国时代 · 帝国时代北境长斧军团　（本次新建）────────────────
-    //    评级：（未标评级）｜核心兵种：重步兵为主
-    //    描述正文（主人原文，一字未改）：（大诺夫哥罗德、阿尔汉格尔斯克；大诺夫哥罗德贸易货栈钟楼、早期北德维纳河出海口木石堡垒；双手重型长柄月牙破甲战斧（Bardiche）、北境雪地重装皮甲猎手、征服乌拉尔冻土冷兵器先锋卫队）
-    //    英雄队（第 10 队·主将队）：hero_harald / hero_halldor　— 按 248 主将表取，不进三排兵种编制
-    {
-        name: '帝国时代北境长斧军团', civ: '瓦良格', age: 'imperial', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
-        buildingStyle: 'VARANGIANS',
-        castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
-        formationMode: 'crescent',
-        shipId: 'CATAPULT_GALLEON',
-        commanderUnit: 'hero_harald',
-        slots: [
-            { type: 'elite_varangian_guard', count: 3 },
-            { type: 'varangian_jarl', count: 2 },
-            { type: 'recurve_bowman', count: 4 },
-        ],
-    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 诺夫哥罗德 · 封建时代 · 封建时代瓦良格军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵、骑兵为主
@@ -2336,6 +2285,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_serjeant', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
+            { type: 'cavalier', count: 2 },
+        ],
+    },
+    // ── 西西里 · 帝国时代 · 帝国时代西西里军团　（2026-10-25 恢复：兰迪 为带名将）────────────────
+    {
+        name: '帝国时代西西里军团', civ: '西西里', age: 'imperial', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
+        buildingStyle: 'SICILIANS',
+        castleId: 'SICI_CASTLE_AGE3', castleName: '西西里 诺曼巴勒莫王宫堡',
+        formationMode: 'echelon',
+        shipId: 'GALLEON',
+        commanderUnit: 'hero_henryv',
+        slots: [
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'champion', count: 3 },
             { type: 'cavalier', count: 2 },
         ],
     },
@@ -3992,6 +3955,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'crossbowman', count: 4 },
             { type: 'crusader_knight', count: 2 },
+        ],
+    },
+    // ── 斯巴达 · 帝国时代 · 帝国时代曼尼军团　（2026-10-25 恢复：穆斯塔法 为带名将）────────────────
+    {
+        name: '帝国时代曼尼军团', civ: '斯巴达', age: 'imperial', deStyle: 'GREEK', region: 'SPARTANS' as RegionType,
+        buildingStyle: 'SPARTANS',
+        castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
+        formationMode: 'echelon',
+        shipId: 'GALLEON',
+        commanderUnit: 'hero_henryv',
+        slots: [
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'champion', count: 3 },
+            { type: 'cavalier', count: 2 },
         ],
     },
 

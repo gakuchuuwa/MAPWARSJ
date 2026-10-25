@@ -128,6 +128,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'mengjiala': 'city_geergang',
     'yili': 'city_budapeisi',
     'daqiya': 'city_sofia',
+    'qiajia': 'city_kamanniya',
+    'liangxixili': 'city_palermo',
 'mazhaer': 'city_budapeisi',
   'falanji': 'city_kelong',
   'shiwaben': 'city_aogesibao',
