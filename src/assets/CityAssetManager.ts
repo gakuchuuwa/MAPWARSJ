@@ -686,6 +686,7 @@ export class CityAssetManager {
 'fangguozhen': '浙东',
 'liang_shuofang': '大梁',
 'qianliang': '前凉',
+'liangzhou': '凉',
 'dangchang_guo': '宕昌',
 'sanada': '真田',
 'tokugawa': '德川',

@@ -4471,20 +4471,43 @@ const COMBAT_CATEGORIES: UnitCategory[] = ['infantry', 'cavalry', 'ranged', 'sie
  * 战斗兵模套用统计（2026-10-19 主人令）：返回总数、各类数量、没被任何军团套用的兵模。
  * 套用来源：全部独立军团的三排兵种、二级军团硬表、势力实际编成、攻城武器发放表、舰队船型。
  */
-function computeCombatUnitCoverage(): { total: number; summary: string; unused: DeUnitDef[] } {
-    const used = new Set<string>();
-    for (const entry of getAllDistinctLegions().values()) for (const s of entry.slots) used.add(s.type);
+/**
+ * 兵模 → 套用它的军团名（含攻城武器发放表、舰队船型）。
+ * 🔴 [2026-10-26 主人报障「检查兵种没有被套用的功能有问题」] 自动检查与选兵弹窗「已套用/未套用」**共用这一份**：
+ *    原先弹窗只数 getAllDistinctLegions 的三排兵种，漏了二级硬表、三级军团、势力编成、攻城发放表、船型，
+ *    于是弹窗里标「未套用」的兵模，自动检查却说已套用，两边对不上。
+ */
+function collectUnitUsage(): Map<string, string[]> {
+    const usage = new Map<string, string[]>();
+    // 🔴 [2026-10-26 主人令「套用也包含了错误的剧本四级军团和一级军团，这不能算，只有二级和三级才算」]
+    //    一级 16 母体只是素材底座、四级剧本军团已无剧本可用 —— 只有二级、三级军团里的兵模算「套用」。
+    //    势力副本、攻城发放表也只认挂在二级/三级军团名下的那些。
+    const l23 = new Set<string>([...LEVEL_2_CIV_62_NAMES, ...LEVEL_3_LEGION_NAMES]);
+    const add = (id: string | undefined | null, label: string) => {
+        if (!id || !l23.has(label)) return;
+        const list = usage.get(id);
+        if (!list) usage.set(id, [label]);
+        else if (!list.includes(label)) list.push(label);
+    };
+    for (const entry of getAllDistinctLegions().values()) {
+        for (const s of entry.slots) add(s.type, entry.name);
+    }
     // 二级军团的权威硬表：势力存过自己的副本时，getAllDistinctLegions 会优先显示副本，硬表里的兵种会被遮住，这里补上
     for (const l2 of LEVEL_2_CIV_62_LEGIONS) {
-        for (const s of l2.slots) used.add(s.type);
-        if (l2.shipId) used.add(String(l2.shipId).toLowerCase());
+        for (const s of l2.slots) add(s.type, l2.name);
+        if (l2.shipId) add(String(l2.shipId).toLowerCase(), l2.name);
     }
     for (const l3 of LEVEL_3_LEGIONS) {
-        for (const s of l3.slots) used.add(s.type);
-        if ((l3 as any).shipId) used.add(String((l3 as any).shipId).toLowerCase());
+        for (const s of l3.slots) add(s.type, l3.name);
+        if ((l3 as any).shipId) add(String((l3 as any).shipId).toLowerCase(), l3.name);
     }
-    for (const r of allRows) for (const s of r.slots) used.add(s.type);
-    for (const v of Object.values(LEGION_78_SIEGE_MAP)) for (const w of v.weapons) used.add(w);
+    for (const r of allRows) for (const s of r.slots) add(s.type, effectiveLegionName(r));
+    for (const [key, v] of Object.entries(LEGION_78_SIEGE_MAP)) for (const w of v.weapons) add(w, key);
+    return usage;
+}
+
+function computeCombatUnitCoverage(): { total: number; summary: string; unused: DeUnitDef[] } {
+    const used = collectUnitUsage();
     const combat = DE_UNITS_CATALOG.filter((u) => COMBAT_CATEGORIES.includes(u.category));
     const summary = COMBAT_CATEGORIES.map((c) => `${CATEGORY_LABEL[c]} ${combat.filter((u) => u.category === c).length}`).join('、');
     return { total: combat.length, summary, unused: combat.filter((u) => !used.has(u.id)) };
@@ -4829,34 +4852,10 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
         return true;
     };
 
-    // 预计算全部军团的兵种/英雄使用情况
-    const distinctMap = getAllDistinctLegions();
-    const usageMap = new Map<string, string[]>();
-    for (const d of distinctMap.values()) {
-        if (isCommander) {
-            if (d.commanderUnit) {
-                if (!usageMap.has(d.commanderUnit)) usageMap.set(d.commanderUnit, []);
-                if (!usageMap.get(d.commanderUnit)!.includes(d.name)) usageMap.get(d.commanderUnit)!.push(d.name);
-            }
-            for (const s of d.slots) {
-                if (s.type) {
-                    if (!usageMap.has(s.type)) usageMap.set(s.type, []);
-                    if (!usageMap.get(s.type)!.includes(d.name)) usageMap.get(s.type)!.push(d.name);
-                }
-            }
-        } else {
-            for (const s of d.slots) {
-                if (s.type) {
-                    if (!usageMap.has(s.type)) usageMap.set(s.type, []);
-                    if (!usageMap.get(s.type)!.includes(d.name)) usageMap.get(s.type)!.push(d.name);
-                }
-            }
-            if (d.commanderUnit) {
-                if (!usageMap.has(d.commanderUnit)) usageMap.set(d.commanderUnit, []);
-                if (!usageMap.get(d.commanderUnit)!.includes(d.name)) usageMap.get(d.commanderUnit)!.push(d.name);
-            }
-        }
-    }
+    // 预计算全部军团的兵种使用情况（与自动检查同一份口径）
+    const usageMap = collectUnitUsage();
+    // 🔴 [2026-10-26 主人令「不检查套用的英雄，检查除英雄所有」] 英雄不参与已套用/未套用：不计数、不标状态、不进筛选
+    const isChecked = (u: { category: UnitCategory }) => u.category !== 'hero';
 
     const closeModal = () => {
         window.removeEventListener('keydown', handleKey);
@@ -4880,19 +4879,21 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             return u.category === currentTab;
         }).filter(u => currentSub === 'all' || getUnitSubcategory(u.id) === currentSub);
 
-        const appliedTotal = candidateUnits.filter(u => (usageMap.get(u.id)?.length ?? 0) > 0).length;
-        const unappliedTotal = candidateUnits.length - appliedTotal;
+        const checkedUnits = candidateUnits.filter(isChecked);
+        const appliedTotal = checkedUnits.filter(u => (usageMap.get(u.id)?.length ?? 0) > 0).length;
+        const unappliedTotal = checkedUnits.length - appliedTotal;
 
         const units = candidateUnits.filter(u => {
             const used = usageMap.get(u.id) ?? [];
             const isApplied = used.length > 0;
+            if (unitStatusFilter !== 'all' && !isChecked(u)) return false;
             if (unitStatusFilter === 'applied' && !isApplied) return false;
             if (unitStatusFilter === 'unapplied' && isApplied) return false;
 
             if (!q) return true;
             if (u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q)) return true;
-            if (isApplied && (q === '已套用' || q === '已用' || q === 'applied')) return true;
-            if (!isApplied && (q === '未套用' || q === '闲置' || q === '空闲' || q === 'unapplied')) return true;
+            if (isChecked(u) && isApplied && (q === '已套用' || q === '已用' || q === 'applied')) return true;
+            if (isChecked(u) && !isApplied && (q === '未套用' || q === '闲置' || q === '空闲' || q === 'unapplied')) return true;
             if (used.some(leg => leg.toLowerCase().includes(q))) return true;
             return false;
         }).sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') || a.id.localeCompare(b.id));
@@ -4935,7 +4936,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
               <option value="5" ${unitThumbDir === 5 ? 'selected' : ''}>西 (5)</option>
               <option value="4" ${unitThumbDir === 4 ? 'selected' : ''}>西南 (4)</option>
             </select>
-            <div style="display:inline-flex;gap:3px;align-items:center;margin-left:4px;">
+            <div style="display:${isCommander ? 'none' : 'inline-flex'};gap:3px;align-items:center;margin-left:4px;">
               <button type="button" data-status="all" class="le-pk-status-btn" style="background:${unitStatusFilter === 'all' ? '#4a3e2c' : '#1e1c18'};border:1px solid ${unitStatusFilter === 'all' ? '#c8a84b' : '#363024'};color:${unitStatusFilter === 'all' ? '#f5e6c8' : '#8a8378'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;">全部 (${candidateUnits.length})</button>
               <button type="button" data-status="applied" class="le-pk-status-btn" style="background:${unitStatusFilter === 'applied' ? '#183620' : '#1e1c18'};border:1px solid ${unitStatusFilter === 'applied' ? '#38a169' : '#363024'};color:${unitStatusFilter === 'applied' ? '#7ee787' : '#8a8378'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;">✓ 已套用 (${appliedTotal})</button>
               <button type="button" data-status="unapplied" class="le-pk-status-btn" style="background:${unitStatusFilter === 'unapplied' ? '#352417' : '#1e1c18'};border:1px solid ${unitStatusFilter === 'unapplied' ? '#c05621' : '#363024'};color:${unitStatusFilter === 'unapplied' ? '#fbd38d' : '#8a8378'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;">⚪ 未套用 (${unappliedTotal})</button>
@@ -4949,17 +4950,19 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
               const tierText = getUnitTier(u) === 'elite' ? ' · ⭐精锐' : '';
               const used = usageMap.get(u.id) ?? [];
               const isApplied = used.length > 0;
-              const roleTxt = isCommander ? '作为主将' : '作为编制';
-              const usedTooltip = isApplied
-                  ? `【${u.name}】${roleTxt}已套用于 ${used.length} 支军团：\n` + used.map((l, i) => `  ${i + 1}. ${l}`).join('\n')
+              const checked = isChecked(u);
+              const usedTooltip = !checked
+                  ? `【${u.name}】英雄不做套用检查`
+                  : isApplied
+                  ? `【${u.name}】已套用于 ${used.length} 支军团：\n` + used.map((l, i) => `  ${i + 1}. ${l}`).join('\n')
                   : `【${u.name}】当前未在任何军团中套用（闲置）`;
               return `
-              <div class="le-unit-card" data-uid="${u.id}" title="${esc(usedTooltip)}" style="${isApplied ? 'background:#162218;border-color:#2d5a38;' : ''}">
+              <div class="le-unit-card" data-uid="${u.id}" title="${esc(usedTooltip)}" style="${checked && isApplied ? 'background:#162218;border-color:#2d5a38;' : ''}">
                 <canvas class="le-unit-thumb" data-uid="${u.id}" width="64" height="64"></canvas>
                 <div class="le-unit-card-text" style="min-width:0;flex:1;">
                   <div class="le-unit-card-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</div>
                   <div class="le-unit-card-cat">${CATEGORY_LABEL[u.category]}${subText}${tierText}</div>
-                  ${isApplied ? `
+                  ${!checked ? '' : isApplied ? `
                     <div style="font-size:10px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(usedTooltip)}">
                       <span style="display:inline-block;padding:0 4px;border-radius:2px;background:#183620;border:1px solid #2d6639;color:#7ee787;font-weight:bold;font-size:9px;">✓ 已套用${used.length > 1 ? ` (${used.length})` : ''}</span>
                       <span style="color:#9ae6b4;font-size:10px;margin-left:2px;">${esc(used[0])}</span>

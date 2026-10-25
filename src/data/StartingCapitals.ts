@@ -771,6 +771,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'fangguozhen': 'city_wenzhou',
 'liang_shuofang': 'city_changze',
 'qianliang': 'city_wuwei',
+'liangzhou': 'city_wuwei',   // 凉州（汉末凉州之乱）治姑臧；与「前凉」同城不同政权（据点代表一片地区）
 'dangchang_guo': 'city_diezhou',
 'sanada': 'city_ueda',
 'tokugawa': 'city_edo',

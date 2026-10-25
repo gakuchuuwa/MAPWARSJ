@@ -8256,6 +8256,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 11,
             "offsetY": 24
+        },
+        "/assets/KHITAN/bfe3_67.png": {
+            "scale": 1.14,
+            "offsetX": 15,
+            "offsetY": 22
         }
     },
     "folderGuides": {

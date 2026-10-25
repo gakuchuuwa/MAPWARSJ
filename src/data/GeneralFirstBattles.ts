@@ -1988,8 +1988,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.327451,
         targetLng: 107.358398,
         myTroops: 40000,
-        enemyFactionId: 'han_d',   // 🔴 [2026-10-25 按史] 敌将势力对齐
-        enemyFactionName: '王国',
+        enemyFactionId: 'liangzhou',   // 🔴 [2026-10-26 按史] 王国＝汉末凉州之乱叛首，归新势力「凉州」（不再与皇甫嵩同为汉国 → 首战不再走「同势力→叛军」占位）
+        enemyFactionName: '凉州',
         enemyGeneralId: 'bfe3_67',
         enemyTroops: 50000,
         introLines: [

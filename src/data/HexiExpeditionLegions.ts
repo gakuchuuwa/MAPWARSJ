@@ -19,4 +19,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     hepan: { name: '葱岭守捉兵', tier: 3 },
     fushi: { name: '氐秦锐士', tier: 3 },
     qianliang: { name: '凉州大马', tier: 1 },   // 前凉｜统帅 张轨｜T1 乘 1.4｜西域诸国震服，数次长途出击大破汉赵、后赵
+    liangzhou: { name: '凉州羌骑', tier: 4 },   // 凉州（汉末凉州之乱）｜统帅 王国｜T4 真实存在：凉州叛军以羌胡骑兵为骨干（《后汉书·董卓列传》 湟中义从、凉州羌胡）
 };

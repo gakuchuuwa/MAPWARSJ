@@ -35,6 +35,7 @@ import { applyLegionCultureComposition, getCultureMovementClass, isCultureCavalr
 import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { getGeneralOwnFactionId } from '../data/FactionGenerals';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 import { getGameMode } from '../data/generalOnStage';
 import { isDeployHeld } from './DeployGate';
 import { getArmyCulturePlainSpeedMultiplier, getArmyCultureSeaSpeedMultiplier, isArmyCultureMountainMarchImmune } from './march/MarchAttritionSystem';
@@ -1515,7 +1516,13 @@ export class Army implements IBattleUnit {
      * 只影响显示，`getFactionId()`（AI/归属/攻防判定）不变。
      */
     public getDisplayFactionId(): string {
-        // 🔴 [2026-10-24 主人「城被占武将归占领者，依然生效」] 所有模式：武将替城主打仗，旗号＝军团自己的势力
+        // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」]
+        //    叛军 panshu 是「没有武将的据点」的兜底无主状态（无字旗、不能出征），**带武将的部队绝不能显示成叛军**。
+        //    首战「敌势力＝本方势力（史实内战／缺对应政权）」时，引擎拿 panshu 当占位势力让两军能互相开打；
+        //    显示层一律回到武将自己的势力（只影响旗面/染色/播报，`getFactionId()` 的 AI/归属/攻防判定不变）。
+        if (isBlankRebelFaction(this._factionId) && this._generalId) {
+            return getGeneralOwnFactionId(this._generalId) ?? this._factionId;
+        }
         return this._factionId;
     }
 

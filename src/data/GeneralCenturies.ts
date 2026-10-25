@@ -1388,6 +1388,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gaogouli_liuli': 1,   // 琉璃明王（1 世纪：3 年迁都国内城）
     'otomo_sorin': 16,   // 大友宗麟（16 世纪）
     'ming_shenyourong': 17,   // 沈有容（17 世纪：1604 澎湖）
+    'bfe3_67': 2,   // 王国 · liangzhou · 姑臧（2 世纪：188 围陈仓，成名于凉州之乱）
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

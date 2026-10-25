@@ -589,6 +589,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yang_aner': [{ from: -9999, era: 'antiquity' }], // 天顺
     'yang_bozhou': [{ from: -9999, era: 'imperial' }], // 播州杨氏
     'yangguan': [{ from: -9999, era: 'antiquity' }], // 西凉
+    'liangzhou': [{ from: -9999, era: 'antiquity' }], // 凉州（汉末凉州之乱）
     'yangwu': [{ from: -9999, era: 'feudal' }], // 杨吴
     'yanqi': [{ from: -9999, era: 'feudal' }], // 焉耆
     'yarkand': [{ from: -9999, era: 'imperial' }], // 叶尔羌

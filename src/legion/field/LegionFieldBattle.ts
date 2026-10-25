@@ -272,6 +272,11 @@ function startFieldBattleBetween(
     let defFaction = defenderPrimary.getFactionId();
     if (!attFaction || !defFaction || attFaction === defFaction) return;
 
+    // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 播报里的势力名取**显示势力**：
+    //    首战「同势力→无字叛军 panshu 占位」时不许播成「叛军」，要播武将自己的势力（判定仍用 getFactionId）。
+    const displayFactionOf = (l: Army): string =>
+        (l as unknown as { getDisplayFactionId?: () => string }).getDisplayFactionId?.() ?? l.getFactionId();
+
     const exclude = new Set<string>([army.id, otherArmy.id]);
     let attLegions = firstBattleHero
         ? [attackerPrimary]
@@ -360,11 +365,11 @@ function startFieldBattleBetween(
             const followerR = onAtt ? flR : (1 / Math.max(flR, 0.001));
             const fieldJu: CaptureJu = followerR > 1.5 ? 'advantage' : followerR < 0.67 ? 'disadvantage' : 'balance';
             speechAnnouncer.announceFieldBattle({
-                followerFactionId: onAtt ? attFaction : defFaction,
+                followerFactionId: onAtt ? displayFactionOf(attackerPrimary) : displayFactionOf(defenderPrimary),
                 ju: fieldJu,
                 followerGeneralId: fLegions[idx]?.generalId ?? null,
                 followerSkillId: fUnits[idx]?.battleOverriddenSkillId ?? null,
-                enemyFactionId: onAtt ? defFaction : attFaction,
+                enemyFactionId: onAtt ? displayFactionOf(defenderPrimary) : displayFactionOf(attackerPrimary),
                 enemyGeneralId: enemyPrimary?.generalId ?? null,
             });
         }
@@ -407,10 +412,10 @@ function startFieldBattleBetween(
         const endJu: CaptureJu = endFollowerR > 1.5 ? 'advantage' : endFollowerR < 0.67 ? 'disadvantage' : 'balance';
         speechAnnouncer.announceFieldBattleEnd({
             win: winnerFactionId === endFollowerFaction && !!follower && !follower.isDestroyed,
-            followerFactionId: endFollowerFaction,
+            followerFactionId: displayFactionOf(follower),
             ju: endJu,
             followerSkillId: endUnits[endIdx]?.battleOverriddenSkillId ?? null,
-            enemyFactionId: endOnAtt ? defFaction : attFaction,
+            enemyFactionId: endOnAtt ? displayFactionOf(defenderPrimary) : displayFactionOf(attackerPrimary),
             enemyGeneralId: endEnemyPrimary?.generalId ?? null,
         });
     };

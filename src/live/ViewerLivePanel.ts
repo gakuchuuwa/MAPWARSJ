@@ -1,8 +1,8 @@
 /**
  * 🔴 [2026-10-23] 直播观众互动的屏幕面板（`ViewerLive`）。
- *   · [2026-10-26 主人定「放上面不好看，要不放下面吧」] 移至屏幕正下方中央，横条化展示：
- *       战略地图平时贴在屏幕底边正中（`bottom: 6px`）；
- *       进入战斗时自动抬升到下方技能栏 / 战况条正上方居中，与底部的「攻 胜 敌 混 并 败」技能槽上下呼应。
+ *   · [2026-10-26 主人定] 双态融合展示：
+ *       1) 战略地图平时：贴在屏幕正下方中央（`bottom: 6px`），位于左下纪年面板与右下小地图之间；
+ *       2) 战术模式（Scene13）：直接并入顶部玩家指挥面板（`#player-scene13-bar`）内作为第二行，与上方玩家面板融为一体。
  *   · 按 F9 展开测试区：输入观众名，点「站攻方 / 站守方」、点六个字放计、勾「付费」——本地模拟弹幕，
  *     不用开直播就能试整套玩法。以后接上直播平台，消息走同一个 `ViewerLive.onChat`。
  *   · [2026-10-24] 接上直播间（SocialStreamBridge）后不打仗也常显；F9 里填 SSN 会话 ID、看连接状态、模拟打赏。
@@ -14,10 +14,10 @@ import type { SocialStreamBridge } from './SocialStreamBridge';
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
 const WORDS = ['攻', '胜', '敌', '混', '并', '败'] as const;
-/** 底部横条字号（px，按 1920 宽的窗口设计）：标题 / 口令 / 说明 / 动态记录 */
-const FS = { title: 18, main: 16, sub: 14, small: 13 } as const;
+/** 横条字号（px，按 1920 宽的窗口设计）：标题 / 口令 / 说明 / 动态记录 */
+const FS = { title: 16, main: 15, sub: 13.5, small: 12.5 } as const;
 /**
- * 面板按 1920 宽设计；窗口更宽时整面板从底部中心等比放大（transform-origin: bottom center），在推流画面里占的比例不变。
+ * 面板按 1920 宽设计；战略地图底部独立展示时按窗口宽度等比缩放。
  */
 const DESIGN_WIDTH = 1920;
 /** F9 填的「打赏方式」（如 ko-fi.com/某某），存 localStorage */
@@ -29,25 +29,16 @@ export class ViewerLivePanel {
     private dev: HTMLDivElement;
     private devOpen = false;
     private tip = '';
+    private inScene13Bar = false;
 
     constructor(private readonly live: ViewerLive, private readonly link: SocialStreamBridge) {
         try { this.tip = localStorage.getItem(TIP_KEY) ?? ''; } catch { /* 隐私模式 */ }
         this.root = document.createElement('div');
         this.root.id = PANEL_ID;
-        this.root.style.cssText = `
-            position:fixed; left:50%; bottom:6px; top:auto; transform:translateX(-50%); transform-origin:bottom center;
-            z-index:10054; width:max-content; max-width:94vw; display:none;
-            background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
-            border:1px solid rgba(212,175,55,0.65); border-radius:8px;
-            padding:6px 16px; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
-            box-shadow:0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22);
-            pointer-events:auto; user-select:none;
-            transition:bottom 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);`;
         this.body = document.createElement('div');
         this.dev = document.createElement('div');
-        this.dev.style.cssText = 'display:none; width:360px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;';
         this.buildDev();
-        // dev 在上、body 在下：面板贴屏幕底边时，按 F9 向上展开测试区，不往下超出屏幕
+        this.applyStrategicBottomStyle();
         this.root.append(this.dev, this.body);
         document.body.appendChild(this.root);
 
@@ -62,18 +53,59 @@ export class ViewerLivePanel {
         window.setInterval(() => this.render(), 300);
     }
 
-    /** 贴屏幕正下方居中；进入战斗时自动抬升到底部技能槽 / 血槽正上方 */
+    /** 战略地图模式：独立挂在屏幕正下方居中 */
+    private applyStrategicBottomStyle(): void {
+        this.root.style.cssText = `
+            position:fixed; left:50%; bottom:6px; top:auto; transform:translateX(-50%); transform-origin:bottom center;
+            z-index:10054; width:max-content; max-width:94vw; display:none;
+            background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
+            border:1px solid rgba(212,175,55,0.65); border-radius:8px;
+            padding:6px 16px; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
+            box-shadow:0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22);
+            pointer-events:auto; user-select:none;`;
+        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; width:360px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
+    }
+
+    /** 战术模式（Scene13）：无缝融进顶部 `#player-scene13-bar` 内部作为第二行 */
+    private applyScene13MergedStyle(): void {
+        this.root.style.cssText = `
+            flex:0 0 100%; width:100%; box-sizing:border-box; display:block;
+            margin-top:2px; padding-top:5px;
+            border-top:1px solid rgba(212,175,55,0.35);
+            color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.3;
+            text-align:center; pointer-events:auto; user-select:none;`;
+        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; width:360px; margin:8px auto 0; padding-top:8px; border-top:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
+    }
+
+    /** 根据当前是否在战术模式（`#player-scene13-bar` 是否显示），自动在「顶部玩家面板内融合」与「战略地图底部居中」之间切换 */
     private updatePosition(): void {
         if (this.root.style.display === 'none') return;
-        let bottomPx = 6;
-        const skillBar = document.getElementById('scene13-skill-bar-left') || document.getElementById('scene13-skill-bar-right');
-        const combatCenter = document.querySelector<HTMLElement>('.combat-center');
-        if (skillBar && skillBar.style.display !== 'none' && skillBar.offsetHeight > 0) {
-            const top = skillBar.getBoundingClientRect().top;
-            if (top > 0 && top < window.innerHeight) {
-                bottomPx = Math.max(6, Math.round(window.innerHeight - top + 6));
+        const s13Bar = document.getElementById('player-scene13-bar');
+        const s13Active = !!(s13Bar && s13Bar.style.display !== 'none');
+
+        if (s13Active && s13Bar) {
+            if (!this.inScene13Bar || this.root.parentElement !== s13Bar) {
+                this.inScene13Bar = true;
+                // 在顶部面板内：body 在上、dev 在下（按 F9 往下展开）
+                this.root.append(this.body, this.dev);
+                this.applyScene13MergedStyle();
+                s13Bar.appendChild(this.root);
             }
-        } else if (combatCenter && combatCenter.style.display !== 'none' && combatCenter.offsetHeight > 0) {
+            return;
+        }
+
+        if (this.inScene13Bar || this.root.parentElement !== document.body) {
+            this.inScene13Bar = false;
+            // 在底部独立条内：dev 在上、body 在下（按 F9 往上展开）
+            this.root.append(this.dev, this.body);
+            this.applyStrategicBottomStyle();
+            this.root.style.display = 'block';
+            document.body.appendChild(this.root);
+        }
+
+        let bottomPx = 6;
+        const combatCenter = document.querySelector<HTMLElement>('.combat-center');
+        if (combatCenter && combatCenter.style.display !== 'none' && combatCenter.offsetHeight > 0) {
             const top = combatCenter.getBoundingClientRect().top;
             if (top > 0 && top < window.innerHeight) {
                 bottomPx = Math.max(6, Math.round(window.innerHeight - top + 6));
@@ -88,8 +120,12 @@ export class ViewerLivePanel {
         const s = this.live.snapshot();
         // 接上直播间后不打仗也常显（打赏随时会来，要让观众看见感谢和规矩）
         const linked = s.platform === '直播间已连接';
-        this.root.style.display = s.on || linked || this.devOpen ? 'block' : 'none';
-        if (this.root.style.display === 'none') return;
+        const show = s.on || linked || this.devOpen;
+        if (!show) {
+            this.root.style.display = 'none';
+            return;
+        }
+        this.root.style.display = 'block';
         this.updatePosition();
 
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));

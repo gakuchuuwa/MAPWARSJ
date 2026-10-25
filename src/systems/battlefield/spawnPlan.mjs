@@ -2,7 +2,7 @@
  * 出兵点计算（纯模块）—— 规则见 docs/02-design/战术模式-DE地图与玩法设计.md 第八节（主人 2026-10-10 定）
  *
  * 设计值（现行＝2026-10-25，历次主人令见下方常量注释）：
- *   SPAWN_GAP_PX                    = 4800  双方相对来处时基地相距的**屏幕距离**（px）⇒ 每边离中心 2400
+ *   SPAWN_GAP_PX                    = 7200  双方相对来处时基地相距的**屏幕距离上限**（px）；每边按来向取图内最远（东西 3600、斜向≈3030、南北≈2500，见 spawnRadiusFor）
  *   CENTER_BAND_DIST_FROM_CENTER_PX =  864  守方改到"中心一带"时离中心的屏幕距离（＝同比例 0.36 倍）
  * 🔴 为什么按屏幕距离、不再按格半径（本次改动的原因）：
  *   等轴投影 1 格 = 32×16 px（横竖 2:1），旧口径「格半径 1/3」在屏幕上横竖差一倍 ——
@@ -26,17 +26,40 @@ export const VERSION_SPAWN = 1;
  * → **4800**（2026-10-25 主人令「战术模式中，野战的时候，双军营地离得有点近，请拉远写」）。
  * 🔴 [2026-10-11 主人报] 实测：基座相距 1400 时，两军**士兵重心**只隔 803px ——
  *    因为双方各有一个「向前排」偏移，两军前排实际只隔约 450px，画面里看着几乎贴在一起。
- * 🔴 [2026-10-25 上限核算] 不得再大：120×120 格、每格 96×48 ⇒ 地图**南北半幅只有 2856 px**，
- *    而九口营帐最后一排还要沿进军方向再退 ROW_DEPTH＝280 ⇒ 每边 2400 时最外一排营帐离图边只剩 152~200 px；
- *    再大（≈每边 2576 以上）南北向对进的营帐就出图，`slide()` 还会把基座偷偷沿弧滑开、八个方向距离不再等长。
- *    （东西向半幅 5712 px 宽得多，不是瓶颈；瓶颈恒在南北向。）改这里前先跑 `scratch/_probe_spawn_gap_20261025.mjs`。
+ * 🔴 [2026-10-25 上限核算] 120×120 格、每格 96×48 ⇒ 地图**南北半幅只有 2856 px**，营帐最后一排还要再退 ROW_DEPTH＝280，
+ *    南北向每边最多约 2500；东西向半幅 5712 px 宽得多。所以 2026-10-26 起不再八向等长，改按方向取（见下）。
+ *    改这里前先跑 `scratch/_probe_spawn_gap_20261025.mjs`。
  *    ⚠️ 攻城战不走这个值（攻方基座＝城半径＋…，见 Scene13WarLayer），只有野战受影响。
  */
-export const SPAWN_GAP_PX = 4800;
-/** 出生点离中心的屏幕距离（px，八方向统一）＝ 对进间距的一半（2400） */
+/**
+ * 🔴 [2026-10-26 主人令「请把野战中两军的营地拉远些，现在一个屏幕都能看见，太近了」]
+ *    八方向统一 2400 时，南北向已顶到图边，但**东西向**半幅 5712 px、还空着一大半 ——
+ *    主人截图正是东西对进：最远缩放（0.45）下一屏横向能看约 5690 世界 px，4800 的两营一屏全收。
+ *    改为**按来向取距离**（与攻城战 `spawnRingSafeRadius` 同一做法，DE 场景也是贴着自家图边扎营）：
+ *    每个方向取「营地盒仍在单位活动界内」的最远半径，再封顶 SPAWN_DIST_FROM_CENTER_PX。
+ *    结果（每边）：东西 3600（两营相距 7200，一屏装不下）、斜向 ≈3030、南北 ≈2500（南北一屏本就只看约 3200）。
+ *    代价：东西向对进行军路程比南北长，属主人要的「拉远」。核算：`node scratch/_probe_spawn_gap_20261025.mjs`。
+ */
+export const SPAWN_GAP_PX = 7200;
+/** 出生点离中心的屏幕距离**上限**（px）＝ 对进间距上限的一半；实际按方向再被图边收紧，见 spawnRadiusFor */
 export const SPAWN_DIST_FROM_CENTER_PX = SPAWN_GAP_PX / 2;
-/** 双方同向/相邻时守方改到「中心一带」的距离（px）＝ 0.36 倍（旧 0.12 ÷ 0.3333）＝ 864 */
-export const CENTER_BAND_DIST_FROM_CENTER_PX = SPAWN_DIST_FROM_CENTER_PX * 0.36;
+/** 双方同向/相邻时守方改到「中心一带」的距离（px）＝ 864（原 2400×0.36，不随本次拉远而变） */
+export const CENTER_BAND_DIST_FROM_CENTER_PX = 864;
+/** 地图半幅（与 Scene13GroundLayerGL 的 TAC_MAP_HALF_W/H 同式：(120-1)×96/2、(120-1)×48/2） */
+const MAP_HALF_W = 5712, MAP_HALF_H = 2856;
+/** 营地盒：沿进军方向 ±ROW_DEPTH(280)、横向 ±620（九口最宽阵面）；活动界余量 UNIT_PX/2=32，再留 40 */
+const CAMP_DEPTH = 280, CAMP_LAT = 620, EDGE = 32 + 40;
+/** 该方向能退到的最远半径（营地盒整块留在单位活动界内），封顶 SPAWN_DIST_FROM_CENTER_PX */
+export function spawnRadiusFor(idx) {
+  const [ux, uy] = unitOf(idx);
+  const ax = Math.abs(ux), ay = Math.abs(uy);
+  const ex = ax * CAMP_DEPTH + ay * CAMP_LAT;
+  const ey = ay * CAMP_DEPTH + ax * CAMP_LAT;
+  let r = SPAWN_DIST_FROM_CENTER_PX;
+  if (ax > 1e-6) r = Math.min(r, (MAP_HALF_W - EDGE - ex) / ax);
+  if (ay > 1e-6) r = Math.min(r, (MAP_HALF_H - EDGE - ey) / ay);
+  return Math.max(0, Math.floor(r));
+}
 /** 格 ⇄ 屏幕系数：与 `Scene13GroundLayerGL.cellToScreen` 同一式（`dx = 32, dy = 16`） */
 const DX = 32, DY = 16;
 /** 🔴 主人 2026-10-11 令：**新战术模式先只做陆战——水、树林、建筑一律可通行，不许设计不可通行区域**。
@@ -99,11 +122,13 @@ export function planSpawns(o) {
   let D = null;
   if (o.defenderFrom) D = bearing8(o.center.lat, o.center.lng, o.defenderFrom.lat, o.defenderFrom.lng);
   const R = SPAWN_DIST_FROM_CENTER_PX;
-  /** 沿弧线滑到最近可走陆地：先在该方向的弧上试，再左右各扩，最后整圈（半径一律按**屏幕 px**） */
+  /** 沿弧线滑到最近可走陆地：先在该方向的弧上试，再左右各扩，最后整圈（半径一律按**屏幕 px**）。
+   *  radius 省略 ＝ 按各自方向的最远半径（spawnRadiusFor）；中心一带的固定半径照传。 */
   function slide(idx, radius) {
     for (const spread of [0, 1, -1, 2, -2, 3, -3, 4]) {
       const k = (idx + spread + 8) % 8;
-      for (const rr of [radius, radius * 0.85, radius * 0.7, radius * 0.55]) {
+      const base = radius ?? spawnRadiusFor(k);
+      for (const rr of [base, base * 0.85, base * 0.7, base * 0.55]) {
         const [ux, uy] = unitOf(k);
         const p = cellFromOffset(ux * rr, uy * rr, c);
         if (walk(p.x, p.y)) return { x: p.x, y: p.y, idx: k, slid: spread !== 0 };
@@ -115,13 +140,13 @@ export function planSpawns(o) {
     }
     return { x: c, y: c, idx, slid: true };
   }
-  const a = slide(A.idx, R);
+  const a = slide(A.idx);
   if (a.slid) notes.push(`攻方方向 ${A.dir} 不可走（水/悬崖）⇒ 沿弧滑到 ${DIRS8[a.idx]}`);
   let def, atCenter = false;
   if (isSiege) { atCenter = true; def = { x: c, y: c, idx: (A.idx + 4) % 8 }; notes.push('攻城战 ⇒ 守方在中心'); }
   else if (!D) {
     const oppIdx = (a.idx + 4) % 8;
-    const s = slide(oppIdx, R);
+    const s = slide(oppIdx);
     def = { x: s.x, y: s.y, idx: s.idx };
     notes.push(`野战无守方来处 ⇒ 守方在对向 ${DIRS8[def.idx]} 扎营`);
   } else if (adjacent(A.idx, D.idx)) {
@@ -131,7 +156,7 @@ export function planSpawns(o) {
     def = { x: s.x, y: s.y, idx: s.idx };
     notes.push(`双方同向或相邻（攻 ${A.dir} / 守 ${D.dir}）⇒ 守方改到中心背攻方一侧固守`);
   } else {
-    const s = slide(D.idx, R);
+    const s = slide(D.idx);
     def = { x: s.x, y: s.y, idx: s.idx };
     if (s.slid) notes.push(`守方方向 ${D.dir} 不可走 ⇒ 沿弧滑到 ${DIRS8[s.idx]}`);
   }

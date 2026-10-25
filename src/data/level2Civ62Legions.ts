@@ -2714,13 +2714,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代安纳托利亚军团', civ: '土耳其', age: 'antiquity', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
-        formationMode: 'crescent',
+        formationMode: 'triangle',
         shipId: 'GALLEY',
         commanderUnit: 'hero_qutlugh',
         slots: [
-            { type: 'eastern_swordsman', count: 3 },
-            { type: 'cav_archer', count: 2 },
-            { type: 'laminated_bowman', count: 4 },
+            { type: 'elite_war_chariot', count: 2 },
+            { type: 'antiquity_scout_cavalry', count: 3 },
+            { type: 'antiquity_skirmisher', count: 4 },
         ],
     },
     // ── 安纳托利亚 · 封建时代 · 封建时代突厥骑射军团　（本次新建）────────────────
@@ -4038,7 +4038,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'ghulam', count: 3 },
             { type: 'laminated_bowman', count: 4 },
-            { type: 'savar', count: 2 },
+            { type: 'imperial_cavalry', count: 2 },
         ],
     },
     // ── 法尔斯 · 帝国时代 · 帝国时代赞德军团　（本次新建）────────────────
@@ -4094,7 +4094,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CATAPULT_SHIP',
         commanderUnit: 'hero_constablerichemont',
         slots: [
-            { type: 'serjeant', count: 3 },
+            { type: 'strategos', count: 3 },
             { type: 'genoese_crossbowman', count: 4 },
             { type: 'frankish_paladin', count: 2 },
         ],
@@ -4109,9 +4109,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_belisarius',
+        commanderUnit: 'hero_leonidas',
         slots: [
-            { type: 'heavy_pikeman', count: 3 },
+            { type: 'hippeus', count: 3 },
             { type: 'recurve_bowman', count: 4 },
             { type: 'light_cavalry', count: 2 },
         ],
@@ -4165,7 +4165,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         commanderUnit: 'hero_belisarius',
         slots: [
-            { type: 'heavy_pikeman', count: 3 },
+            { type: 'phalangite', count: 3 },
             { type: 'recurve_bowman', count: 4 },
             { type: 'companion_cavalry', count: 2 },
         ],
@@ -4214,10 +4214,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'THRACE_CASTLE_AGE3', castleName: '色雷斯 阿德里安堡要塞',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_belisarius',
+        commanderUnit: 'hero_thracian_chieftain',
         slots: [
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'recurve_bowman', count: 4 },
+            { type: 'rhomphaia_warrior', count: 3 },
+            { type: 'elite_peltast', count: 4 },
             { type: 'light_cavalry', count: 2 },
         ],
     },
@@ -4485,7 +4485,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
-            { type: 'light_cavalry', count: 2 },
+            { type: 'greek_noble_cavalry', count: 2 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════

@@ -11,6 +11,7 @@ import { BattleField } from './BattleField';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
 import {getGeneralRecordByGeneralId, getFactionIdOfGeneral} from '../data/FactionGenerals';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { getUnitEliteTier } from '../systems/CultureCombat';
@@ -1477,14 +1478,19 @@ export class SiegeManager {
                 ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
             const siegeDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
             const attJu: CaptureJu = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
+            // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 播报的守方势力名取显示势力：
+            //    首战同势力时守方城被占位成 panshu（无字叛军），有守将就播他的势力，不许播「叛军」。
+            const defFactionForSpeech = (isBlankRebelFaction(targetCity.factionId) && siegeDefGeneralId)
+                ? (getFactionIdOfGeneral(siegeDefGeneralId) ?? targetCity.factionId)
+                : targetCity.factionId;
             speechAnnouncer.announceSiegeStart({
-                attackerFactionId: army.getFactionId(),
+                attackerFactionId: army.getDisplayFactionId(),
                 attackerGeneralId: army.generalId,
                 ju: attJu,
                 attackerSkillId: siegeAtkUnit?.battleOverriddenSkillId ?? null,
                 cityName: targetCity.name,
                 isPass: targetCity.type === 'pass',
-                defenderFactionId: targetCity.factionId,
+                defenderFactionId: defFactionForSpeech,
                 defenderGeneralId: siegeDefGeneralId,
             });
         }

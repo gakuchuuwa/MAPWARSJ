@@ -145,7 +145,8 @@ export class PlayerScene13Control {
         bar.id = 'player-scene13-bar';
         bar.style.cssText = `
             position:fixed; top:0; left:50%; transform:translateX(-50%); z-index:10055; display:none;
-            align-items:center; gap:10px; padding:8px 14px; font-family:${FONT}; font-size:13px; color:#f5e6c8;
+            flex-wrap:wrap; justify-content:center; align-items:center; row-gap:4px; column-gap:10px; width:max-content; max-width:96vw;
+            padding:7px 14px; font-family:${FONT}; font-size:13px; color:#f5e6c8;
             background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
             border:1px solid rgba(212,175,55,0.6); border-radius:10px; pointer-events:auto; user-select:none;
             box-shadow:0 2px 12px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,215,0,0.25); white-space:nowrap;`;

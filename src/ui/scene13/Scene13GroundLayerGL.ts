@@ -317,14 +317,16 @@ void main() {
     float shimmer = (specSheen + specGlint) * (1.0 - isDeepWater * 0.30);
     waterCol += vec3(0.95, 0.97, 1.0) * shimmer;
 
-    // 战术近景可读性：沿用三层波浪相位拉出细长的流向波峰，不新增噪声采样。
-    // 弱波谷托住水体积，狭波峰给天光反光；浅水更柔和，避免水面糊成均匀蓝色贴片。
-    float waveBands = sin(p0) * 0.58 + sin(p1) * 0.30 + sin(p2) * 0.12;
-    float rippleCrest = smoothstep(0.58, 0.94, waveBands);
-    float rippleTrough = smoothstep(0.24, 0.84, -waveBands);
+    // 战术近景可读性：沿用既有波浪扰动拉出细而疏的流向波峰，不新增噪声采样。
+    // 波峰只取很窄的一段并限制亮度；浅水更柔和，避免大块亮斑或水面发光。
+    float ripplePhase0 = dot(isoP, vec2(11.6, 19.4)) + phaseWarp * 1.4 + uTime * 1.10;
+    float ripplePhase1 = dot(isoP, vec2(15.2, -11.8)) - phaseWarp + uTime * 0.85;
+    float waveBands = sin(ripplePhase0) * 0.68 + sin(ripplePhase1) * 0.32;
+    float rippleCrest = smoothstep(0.74, 0.96, waveBands);
+    float rippleTrough = smoothstep(0.45, 0.90, -waveBands);
     float rippleVisibility = mix(0.62, 1.0, isDeepWater);
-    waterCol *= 1.0 + (rippleCrest * 0.10 - rippleTrough * 0.045) * rippleVisibility;
-    waterCol += vec3(0.55, 0.75, 0.82) * rippleCrest * 0.08 * rippleVisibility;
+    waterCol *= 1.0 + (rippleCrest * 0.06 - rippleTrough * 0.025) * rippleVisibility;
+    waterCol += vec3(0.55, 0.75, 0.82) * rippleCrest * 0.055 * rippleVisibility;
 
     // 🔴 [2026-10-21 主人报「护城河水有点蓝，有浅色的水吗」] 护城河格在 field.b 里写了个很小的标记（0.12，远低于森林阈值，水格本无森林），
     //    只在护城河上把水色往浅青绿（DE 浅滩 Shallows 的清透感）调淡；河、湖、海不带标记，不受影响。

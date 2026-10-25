@@ -1,4 +1,5 @@
-import {FACTION_GENERALS, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
+import {FACTION_GENERALS, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 import { FACTIONS } from '../data/factions';
 import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
@@ -499,6 +500,9 @@ export class CombatUI {
     private defenderDisplayName = '';
     private attackerFactionId: string | null = null;
     private defenderFactionId: string | null = null;
+    /** 显示用势力：无字叛军 panshu 占位（首战同势力时为了让两军开打）→ 回到武将自己的势力；只影响界面文字/势力名，不改攻防判定 */
+    private attackerDisplayFactionId: string | null = null;
+    private defenderDisplayFactionId: string | null = null;
     /** ZOOM 13 展示侧：true 时守方（跟随军团）在左、攻方在右；战斗语义仍保持攻/守不变。 */
     private scene13SidesFlipped = false;
     private leftMultBadge: HTMLSpanElement | null = null;
@@ -1664,6 +1668,9 @@ export class CombatUI {
         this.applyBattleBarOrientation();
         this.attackerFactionId = init.attackerFactionId ?? null;
         this.defenderFactionId = init.defenderFactionId ?? null;
+        // 🔴 [2026-10-26] 显示势力：首战同势力占位 panshu → 回到武将自己的势力（界面不许出现「武将 + 叛军」）
+        this.attackerDisplayFactionId = this.displayFactionId(init.attackerFactionId, init.attackerGeneralId);
+        this.defenderDisplayFactionId = this.displayFactionId(init.defenderFactionId, init.defenderGeneralId);
 
         // 立绘与武将数据填充
         const attackerPortrait = this.sideElement('attacker', this.leftPortrait, this.rightPortrait);
@@ -1753,8 +1760,10 @@ export class CombatUI {
         this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${formattedTitle}</span>`;
 
         // 势力名与军团名显示
-        const attFactionName = (window as any).game?.cityManager?.getFactionName?.(init.attackerFactionId) ?? '攻方';
-        const defFactionName = (window as any).game?.cityManager?.getFactionName?.(init.defenderFactionId) ?? '守方';
+        // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 势力名一律取**显示势力**：
+        //    首战同势力时引擎用 panshu 占位，界面回到武将自己的势力，绝不显示「叛军 + 武将」。
+        const attFactionName = (window as any).game?.cityManager?.getFactionName?.(this.attackerDisplayFactionId ?? init.attackerFactionId) ?? '攻方';
+        const defFactionName = (window as any).game?.cityManager?.getFactionName?.(this.defenderDisplayFactionId ?? init.defenderFactionId) ?? '守方';
         this.attackerDisplayName = attFactionName;
         this.defenderDisplayName = defFactionName;
 
@@ -3973,8 +3982,8 @@ export class CombatUI {
     }
 
     private updateFactionDisplay(): void {
-        this.applyFactionName(this.attackerFactionId, this.sideElement('attacker', this.leftFactionNameSpan, this.rightFactionNameSpan));
-        this.applyFactionName(this.defenderFactionId, this.sideElement('defender', this.leftFactionNameSpan, this.rightFactionNameSpan));
+        this.applyFactionName(this.attackerDisplayFactionId ?? this.attackerFactionId, this.sideElement('attacker', this.leftFactionNameSpan, this.rightFactionNameSpan));
+        this.applyFactionName(this.defenderDisplayFactionId ?? this.defenderFactionId, this.sideElement('defender', this.leftFactionNameSpan, this.rightFactionNameSpan));
     }
 
     /** 战斗 HUD 叠在深色地图上：势力名一律浅色字，不用旗面色（浅旗会变黑字看不见） */
@@ -4204,7 +4213,11 @@ export class CombatUI {
             this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
         }, 600);
         // ③ 「XX 勝」弹出
-        const name = (window as any).game?.cityManager?.getFactionName?.(winnerFactionId) ?? '';
+        // 🔴 [2026-10-26] 胜方势力名取显示势力：首战同势力占位 panshu 时不许弹出「叛军 勝」。
+        const winnerDisplayFactionId = winnerFactionId === this.attackerFactionId
+            ? (this.attackerDisplayFactionId ?? winnerFactionId)
+            : (this.defenderDisplayFactionId ?? winnerFactionId);
+        const name = (window as any).game?.cityManager?.getFactionName?.(winnerDisplayFactionId) ?? '';
         if (name && name !== '未知势力') {
             this.battleTitle.style.background = 'none';
             this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${name} 勝</span>`;
@@ -4243,6 +4256,8 @@ export class CombatUI {
         this.resetBattleOverlays();
         this.attackerFactionId = battle.attacker.factionId;
         this.defenderFactionId = battle.defender.factionId;
+        this.attackerDisplayFactionId = this.displayFactionId(battle.attacker.factionId, battle.attacker.generalId);
+        this.defenderDisplayFactionId = this.displayFactionId(battle.defender.factionId, battle.defender.generalId);
         this.updateMultiplierBadges(battle.attacker, battle.defender);
         this.updateSkillBadges(battle.attacker, battle.defender);
         this.updateInfo(battle.attacker, battle.defender, '正在交战', '');
@@ -4334,6 +4349,8 @@ export class CombatUI {
 
         this.attackerFactionId = attacker.factionId;
         this.defenderFactionId = defender.factionId;
+        this.attackerDisplayFactionId = this.displayFactionId(attacker.factionId, attacker.generalId);
+        this.defenderDisplayFactionId = this.displayFactionId(defender.factionId, defender.generalId);
         this.currentBattleKey = this.buildPortraitConfigKey(displayTitle, attacker, defender);
 
         this.updateMultiplierBadges(attacker, defender);
@@ -5704,6 +5721,8 @@ export class CombatUI {
         this.regionalSafetyDeadline = 0;
         this.attackerFactionId = null;
         this.defenderFactionId = null;
+        this.attackerDisplayFactionId = null;
+        this.defenderDisplayFactionId = null;
         this.scene13SidesFlipped = false;
         this.applyBattleBarOrientation();
         this.resetBattleOverlays();
@@ -5896,6 +5915,8 @@ export class CombatUI {
         };
         this.attackerFactionId = att.factionId;
         this.defenderFactionId = def.factionId;
+        this.attackerDisplayFactionId = this.displayFactionId(att.factionId, att.generalId);
+        this.defenderDisplayFactionId = this.displayFactionId(def.factionId, def.generalId);
         
         this.updateInfoDirect(mapName(att), mapName(def), title, year, undefined, def);
         
@@ -6794,6 +6815,12 @@ export class CombatUI {
 
         if (!factionId) return '';
 
+        // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 无字叛军（panshu）只给「没有武将的据点」兜底：
+        //    带武将的部队一律显示武将自己的势力（首战「同势力→panshu 占位」由此不再露出「叛军」）。
+        if (isBlankRebelFaction(factionId) && generalId) {
+            factionId = getFactionIdOfGeneral(generalId) ?? factionId;
+        }
+
         const dynamicName = (window as any).game?.cityManager?.getFactionName?.(factionId)
             ?? (window as any).game?.factionManager?.getFactionName?.(factionId);
         if (dynamicName && typeof dynamicName === 'string') return dynamicName;
@@ -6801,6 +6828,20 @@ export class CombatUI {
         const staticFaction = FACTIONS.find((f) => f.id === factionId);
         if (staticFaction?.name) return staticFaction.name;
 
+        return factionId;
+    }
+
+    /**
+     * 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」]
+     * 显示用势力：叛军 panshu 是「没有武将的据点」的兜底无主状态（无字旗、不能出征），
+     * 带武将的部队绝不能显示成叛军。首战「敌势力＝本方势力（史实内战／缺对应政权）」时，
+     * 引擎拿 panshu 当占位势力让两军能互相开打 —— 显示层回到武将自己的势力。
+     */
+    private displayFactionId(factionId: string | null | undefined, generalId?: string | null): string | null {
+        if (!factionId) return factionId ?? null;
+        if (isBlankRebelFaction(factionId) && generalId) {
+            return getFactionIdOfGeneral(generalId) ?? factionId;
+        }
         return factionId;
     }
 

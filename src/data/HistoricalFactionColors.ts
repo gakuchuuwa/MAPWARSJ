@@ -713,6 +713,7 @@ const _FIXED: Record<string, string> = {
     fangguozhen: '#5C7A3F', // 方国珍
     liang_shuofang: '#9C5A32', // 大梁
     qianliang: '#B0894E', // 前凉
+    liangzhou: '#7A4E2A', // 凉州（汉末凉州之乱：羌胡铁骑，河湟深褐）
     dangchang_guo: '#7B9630', // 宕昌
     sanada: '#A6566B', // 真田
     tokugawa: '#2B4A73', // 德川

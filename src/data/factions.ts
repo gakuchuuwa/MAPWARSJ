@@ -1682,6 +1682,9 @@ export const FACTIONS: Faction[] = [
   { id: 'fangguozhen', name: '方国珍' },
   { id: 'liang_shuofang', name: '大梁' },
   { id: 'qianliang', name: '前凉' },
+  // 🔴 [2026-10-26 主人令] 汉末凉州之乱（边章、韩遂、王国、马腾一脉，中平元年起兵、188 围陈仓）——
+  //    与「前凉」（张轨 301 年开国）不是一回事，故单列；依据《后汉书·董卓列传》《资治通鉴·汉纪》.
+  { id: 'liangzhou', name: '凉州' },
   { id: 'dangchang_guo', name: '宕昌' },
   { id: 'sanada', name: '真田' },
   { id: 'tokugawa', name: '德川' },

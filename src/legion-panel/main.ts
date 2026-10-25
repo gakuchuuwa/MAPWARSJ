@@ -364,48 +364,26 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
         return arr;
     })();
 
-    // 预计算全部军团的兵种/英雄/战船使用情况（支持识别哪些英雄/兵种已被军团套用）
-    const allRows = rows.length ? rows : buildRows();
+    // 预计算二级、三级军团的兵种/战船使用情况
+    // 🔴 [2026-10-26 主人令「套用也包含了错误的剧本四级军团和一级军团，这不能算，只有二级和三级才算」]
+    //    一级 16 母体只是素材底座、四级剧本军团已无剧本可用，都不计入「已套用」。
+    // 🔴 [2026-10-26 主人令「不检查套用的英雄，检查除英雄所有」] 英雄不参与已套用/未套用（见下方 isChecked）。
+    const allRows = (rows.length ? rows : buildRows()).filter(r => r.layer === '二级' || r.layer === '三级');
     const usageMap = new Map<string, string[]>();
+    const addUse = (id: string, legion: string): void => {
+        const list = usageMap.get(id);
+        if (!list) usageMap.set(id, [legion]);
+        else if (!list.includes(legion)) list.push(legion);
+    };
     for (const r of allRows) {
         const curDraft = (draft && r.name === selected) ? draft : null;
-        if (kind === 'hero') {
-            const cmdr = curDraft ? curDraft.commanderUnit : r.commanderUnit;
-            if (cmdr) {
-                if (!usageMap.has(cmdr)) usageMap.set(cmdr, []);
-                if (!usageMap.get(cmdr)!.includes(r.name)) usageMap.get(cmdr)!.push(r.name);
-            }
-            const types = curDraft ? curDraft.types : r.slots.map(s => s.type);
-            for (const t of types) {
-                if (t) {
-                    if (!usageMap.has(t)) usageMap.set(t, []);
-                    if (!usageMap.get(t)!.includes(r.name)) usageMap.get(t)!.push(r.name);
-                }
-            }
-        } else if (kind === 'ship') {
-            const ship = curDraft ? curDraft.shipId : r.shipId;
-            if (ship) {
-                const sid = shipUnitId(ship);
-                for (const k of [sid, ship, ship.toUpperCase()]) {
-                    if (!usageMap.has(k)) usageMap.set(k, []);
-                    if (!usageMap.get(k)!.includes(r.name)) usageMap.get(k)!.push(r.name);
-                }
-            }
-        } else {
-            const types = curDraft ? curDraft.types : r.slots.map(s => s.type);
-            for (const t of types) {
-                if (t) {
-                    if (!usageMap.has(t)) usageMap.set(t, []);
-                    if (!usageMap.get(t)!.includes(r.name)) usageMap.get(t)!.push(r.name);
-                }
-            }
-            const cmdr = curDraft ? curDraft.commanderUnit : r.commanderUnit;
-            if (cmdr) {
-                if (!usageMap.has(cmdr)) usageMap.set(cmdr, []);
-                if (!usageMap.get(cmdr)!.includes(r.name)) usageMap.get(cmdr)!.push(r.name);
-            }
-        }
+        // 兵种与战船一起数：选兵弹窗切到「船只」分类时也要看得到哪些船已被军团套用
+        const ship = curDraft ? curDraft.shipId : r.shipId;
+        if (ship) for (const k of [shipUnitId(ship), ship, ship.toUpperCase()]) addUse(k, r.name);
+        const types = curDraft ? curDraft.types : r.slots.map(s => s.type);
+        for (const t of types) if (t) addUse(t, r.name);
     }
+    const isChecked = (u: { category: string }): boolean => u.category !== 'hero';
 
     const paint = (): void => {
         hideThumbZoom();
@@ -423,20 +401,22 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
             if (pickerCat !== 'all' && u.category !== pickerCat) return false;
             return true;
         });
-        const appliedTotal = candidateUnits.filter(u => (usageMap.get(u.id)?.length ?? 0) > 0).length;
-        const unappliedTotal = candidateUnits.length - appliedTotal;
+        const checkedUnits = candidateUnits.filter(isChecked);
+        const appliedTotal = checkedUnits.filter(u => (usageMap.get(u.id)?.length ?? 0) > 0).length;
+        const unappliedTotal = checkedUnits.length - appliedTotal;
 
         // 🔴 保持分类顺序：不要在最外层全局按名字排序，否则会把冷兵器等搞到最前面
         const list = candidateUnits.filter(u => {
             const used = usageMap.get(u.id) ?? [];
             const isApplied = used.length > 0;
+            if (pickerStatusFilter !== 'all' && !isChecked(u)) return false;
             if (pickerStatusFilter === 'applied' && !isApplied) return false;
             if (pickerStatusFilter === 'unapplied' && isApplied) return false;
 
             if (!kw) return true;
             if (u.name.includes(kw) || u.id.toLowerCase().includes(kwLower) || subLabelOf(u.id).includes(kw)) return true;
-            if (isApplied && (kw === '已套用' || kw === '已用' || kwLower === 'applied')) return true;
-            if (!isApplied && (kw === '未套用' || kw === '闲置' || kw === '空闲' || kwLower === 'unapplied')) return true;
+            if (isChecked(u) && isApplied && (kw === '已套用' || kw === '已用' || kwLower === 'applied')) return true;
+            if (isChecked(u) && !isApplied && (kw === '未套用' || kw === '闲置' || kw === '空闲' || kwLower === 'unapplied')) return true;
             if (used.some(leg => leg.includes(kw))) return true;
             return false;
         });
@@ -468,7 +448,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
                 border:1px solid ${pickerCat === c ? '#8a6038' : '#4a5568'};color:#e8e0d0;border-radius:4px;padding:5px 9px;cursor:pointer;font-size:12px;">
                 ${esc(label)}</button>`;
             }).join('')}
-            <div style="display:inline-flex;gap:3px;align-items:center;">
+            <div style="display:${kind === 'hero' ? 'none' : 'inline-flex'};gap:3px;align-items:center;">
               <button type="button" data-status="all" class="lp-pk-status-btn" style="background:${pickerStatusFilter === 'all' ? '#4a3e2c' : '#1e1c18'};border:1px solid ${pickerStatusFilter === 'all' ? '#c8a84b' : '#363024'};color:${pickerStatusFilter === 'all' ? '#f5e6c8' : '#8a8378'};border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;">全部 (${candidateUnits.length})</button>
               <button type="button" data-status="applied" class="lp-pk-status-btn" style="background:${pickerStatusFilter === 'applied' ? '#183620' : '#1e1c18'};border:1px solid ${pickerStatusFilter === 'applied' ? '#38a169' : '#363024'};color:${pickerStatusFilter === 'applied' ? '#7ee787' : '#8a8378'};border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;">✓ 已套用 (${appliedTotal})</button>
               <button type="button" data-status="unapplied" class="lp-pk-status-btn" style="background:${pickerStatusFilter === 'unapplied' ? '#352417' : '#1e1c18'};border:1px solid ${pickerStatusFilter === 'unapplied' ? '#c05621' : '#363024'};color:${pickerStatusFilter === 'unapplied' ? '#fbd38d' : '#8a8378'};border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;">⚪ 未套用 (${unappliedTotal})</button>
@@ -485,12 +465,14 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
                 ${us.map(u => {
                   const isCur = u.id === currentType();
                   const used = usageMap.get(u.id) ?? [];
-                  const isApplied = used.length > 0;
+                  const checked = isChecked(u);
+                  const isApplied = checked && used.length > 0;
                   const borderCol = isCur ? '#c8a84b' : (isApplied ? '#2d5a38' : '#363024');
                   const bgCol = isCur ? '#3a2f1e' : (isApplied ? '#162218' : '#201d18');
-                  const roleTxt = kind === 'hero' ? '作为主将' : '作为编制';
-                  const usedTooltip = isApplied
-                      ? `【${u.name}】${roleTxt}已套用于 ${used.length} 支军团：\n` + used.map((l, i) => `  ${i + 1}. ${l}`).join('\n')
+                  const usedTooltip = !checked
+                      ? `【${u.name}】英雄不做套用检查`
+                      : isApplied
+                      ? `【${u.name}】已套用于 ${used.length} 支军团：\n` + used.map((l, i) => `  ${i + 1}. ${l}`).join('\n')
                       : `【${u.name}】当前未在任何军团中套用（闲置）`;
                   return `
                   <div class="lp-pk-card" data-uid="${esc(u.id)}" title="${esc(usedTooltip)}" style="display:flex;gap:8px;align-items:center;
@@ -502,7 +484,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
                     <div style="min-width:0;flex:1;">
                       <div style="color:#e8e0d0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(u.name)}">${esc(u.name)}</div>
                       <div style="color:#8a8378;font-size:10px;margin-top:1px;">${esc(subLabelOf(u.id))}</div>
-                      ${isApplied ? `
+                      ${!checked ? '' : isApplied ? `
                         <div style="font-size:10px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(usedTooltip)}">
                           <span style="display:inline-block;padding:0 4px;border-radius:2px;background:#183620;border:1px solid #2d6639;color:#7ee787;font-weight:bold;font-size:9px;">✓ 已套用${used.length > 1 ? ` (${used.length})` : ''}</span>
                           <span style="color:#9ae6b4;font-size:10px;margin-left:2px;">${esc(used[0])}</span>

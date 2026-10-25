@@ -92,7 +92,8 @@ import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { ViewerLive } from '../live/ViewerLive';
 import { syncMeleeRandomOwners } from '../events/meleeRandomOwners';
 import { clearAllFieldDefeats } from '../legion/FieldDefeatRecord';
-import { setCityOwnerProvider } from '../data/FactionGenerals';
+import { setCityOwnerProvider, getFactionIdOfGeneral } from '../data/FactionGenerals';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 import { ViewerLivePanel } from '../live/ViewerLivePanel';
 import { SocialStreamBridge } from '../live/SocialStreamBridge';
 import {
@@ -602,12 +603,17 @@ export class GameApp {
                             });
                         } else {
                             const capJu = (event.attackerJu as CaptureJu) ?? 'balance';
+                            // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 攻占播报的守方势力名取显示势力：
+                            //    首战同势力时被攻城被占位成 panshu（无字叛军），有守将就播他的势力，不许播「叛军」。
+                            const defFactionForSpeech = (isBlankRebelFaction(event.previousFactionId) && event.defenderGeneralId)
+                                ? (getFactionIdOfGeneral(event.defenderGeneralId) ?? event.previousFactionId)
+                                : event.previousFactionId;
                             speechAnnouncer.announceCityCapture({
                                 attackerFactionId: event.newFactionId,
                                 cityName: event.cityName,
                                 ju: capJu,
                                 attackerSkillId: event.attackerSkillId,
-                                defenderFactionId: event.previousFactionId,
+                                defenderFactionId: defFactionForSpeech,
                                 defenderGeneralId: event.defenderGeneralId,
                                 regionLabel,
                             });
