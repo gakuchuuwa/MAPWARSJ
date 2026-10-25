@@ -231,6 +231,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bing_liji': 'WEI',   // 唐国｜李勣｜据点 晋阳
     'bitiniya_diaoduoer': 'BYZANTINE',   // 比提尼亚｜狄奥多尔｜据点 尼凯亚
     'bogendi_chali': 'BURGUNDIANS',   // 勃艮第｜大胆查理｜据点 第戎
+    'bogendi_gundioc': 'BURGUNDIANS',   // 勃艮第王国｜贡迪奥克｜据点 日内瓦
     'bohai_dayinzhuan': 'NORTHEAST',   // 渤海｜大諲撰｜据点 龙泉府
     'bohai_dazuorong': 'NORTHEAST',   // 渤海｜大祚荣｜据点 龙泉府
     'bolan_suobiesiji': 'POLES',   // 波兰｜索别斯基｜据点 华沙

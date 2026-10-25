@@ -1519,6 +1519,8 @@ export const FACTIONS: Faction[] = [
     { id: 'tamoyue', name: '塔莫约' },        // 卡布弗里乌·塔莫约联盟（昆汉贝贝）
     { id: 'naweierbuta', name: '纳韦尔布塔' },        // 科利普利·纳韦尔布塔山脉马普切（加尔瓦里诺）
     { id: 'bogendigongguo', name: '勃艮第公国' },        // 蒙特罗·勃艮第公国（无畏的约翰）
+    // 🔴 [2026-10-25 主人令「为某文化某时代立点」] 勃艮第王国（勃艮第人王国 411–534，古典 411–476；443–461 都城内梅/日内瓦）
+    { id: 'bogendi_wangguo', name: '勃艮第王国' },
     { id: 'amaniyake', name: '阿马尼亚克' },        // 欧什·阿马尼亚克伯爵领（贝尔纳·德·阿马尼亚克）
     { id: 'weiershigongguo', name: '威尔士公国' },        // 布伊尔斯·威尔士公国（卢埃林）
     { id: 'miandian', name: '缅甸' },        // 三塔关·缅甸（摩诃·悉都）

@@ -116,6 +116,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'bendou': [{ from: -9999, era: 'castle' }], // 特拉布宗
     'bendou_d': [{ from: -9999, era: 'antiquity' }], // 本都
     'bogendigongguo': [{ from: -9999, era: 'castle' }], // 勃艮第公国
+    'bogendi_wangguo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 勃艮第王国（411–534：古典 411–476 → 封建 476–534）
     'bohai': [{ from: -9999, era: 'feudal' }], // 渤海
     'boootiya': [{ from: -9999, era: 'antiquity' }], // 底比斯
     'boren': [{ from: -9999, era: 'imperial' }], // 都掌蛮

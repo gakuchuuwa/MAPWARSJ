@@ -653,6 +653,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'tamoyue': 'city_kabufoliwu',
     'naweierbuta': 'city_kelipuli',
     'bogendigongguo': 'city_mengteluo',
+    'bogendi_wangguo': 'city_geneva',
     'amaniyake': 'city_oushi',
     'weiershigongguo': 'city_buyiersi',
     'miandian': 'city_santaguan',

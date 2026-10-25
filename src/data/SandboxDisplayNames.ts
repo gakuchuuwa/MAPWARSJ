@@ -684,6 +684,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tamoyue': '塔莫',
     'naweierbuta': '纳韦',
     'bogendigongguo': '勃公',
+    'bogendi_wangguo': '勃王',   // 勃艮第王国（古典）
     'amaniyake': '阿马',
     'weiershigongguo': '威尔',
     'miandian': '缅甸',

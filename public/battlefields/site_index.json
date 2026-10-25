@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-25T03:36:22.768Z",
+ "generatedAt": "2026-10-25T08:52:28.251Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -15964,6 +15964,20 @@
    "reliefM": 512,
    "cliffs": 0,
    "top": "Desert 80.1% · Water, Shallow 10.6% · Palm Desert 5.8% · Forest, Birch 2.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_geneva",
+   "file": "site_city_geneva.json",
+   "bytes": 307907,
+   "koppen": "Cfb",
+   "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 1844,
+   "waterPct": 12.8,
+   "reliefM": 59,
+   "cliffs": 0,
+   "top": "Grass 2 74.6% · Water, Shallow 12.8% · Forest 5% · Beach 4.5%",
    "verify": "ok"
   }
  ],

@@ -626,6 +626,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'talanduo_aqita': -4,                                // 阿契塔 · talanduo · 塔兰托
     'gen_charles_i_naples': 13,                          // 卡洛 · kanpaniya · 那不勒斯
     'bogendi_chali': 15,                                 // 大胆查理 · bogendi · 第戎
+    'bogendi_gundioc': 5,                    // 贡迪奥克 · bogendi_wangguo · 日内瓦
     'bulabante_yuehanyishi': 13,                         // 约翰一世 · bulabante · 布鲁塞尔
     'gen_charles_vii': 15,                               // 查理七世 · gaolu · 巴黎
     'gen_clovis_i': 5,                                  // 克洛维 · gaolu_luoma · 里昂

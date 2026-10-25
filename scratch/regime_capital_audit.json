@@ -2,8 +2,8 @@
   "updated": "2026-06-07",
   "step": 2,
   "rule": "优先级2·政权：首都=原生政权首都(可考)；旗号=史籍正式国号(禁自造截字/国族人后缀/地名姓顶替)",
-  "total": 75,
-  "ok": 26,
+  "total": 76,
+  "ok": 27,
   "fix": 1,
   "review": 48,
   "entries": [
@@ -1841,6 +1841,17 @@
       "type": "政权",
       "auditStatus": "ok",
       "note": "马韩月支国(韩半岛小政权)；≠月氏民族(yuezhi@蓝氏城)；三国志·魏书·乌丸鲜卑东夷传"
+    },
+    {
+      "id": "bogendi_wangguo",
+      "flag": "勃王",
+      "facName": "勃艮第王国",
+      "cityId": "city_geneva",
+      "cityName": "日内瓦",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "勃艮第人王国(411–534)，443–461 都城内梅/日内瓦；2026-10-25 为古典时代勃艮第军团新立"
     }
   ]
 }

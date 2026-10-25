@@ -968,6 +968,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代勃艮第公国军团",
         legionType: "sub",
     },
+    "bogendi_wangguo": {
+        legionName: "古典时代勃艮第军团",
+        legionType: "region",
+    },
     "aquidan": {
         legionName: "城堡时代法兰西骑士军团",
         legionType: "sub",

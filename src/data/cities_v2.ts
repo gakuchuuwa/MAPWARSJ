@@ -2304,6 +2304,8 @@ export const CITIES_V2: CityDataV2[] = [
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：卡莱尔：苏格兰—英格兰边境（region=SCOTLAND），苏格兰王国故地
     { id: 'city_carlisle', name: '卡莱尔', factionId: 'scotland', lat: 54.89, lng: -2.93, type: 'stockade', troops: 10000, region: 'SCOTLAND', buildingStyle: 'CELTS', note: '定级依据§6.2：卡莱尔非关隘/要塞/堡垒，按城市判级；1377年人头税678纳税人约1400–1500人、1597年约1780–2000，未达1万 → 城寨' },
         { id: 'city_dijon', name: '第戎', factionId: 'bogendigongguo', lat: 47.32, lng: 5.04, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS' , note: '推算：城居 1.2 万（第戎，中世纪 1 万上下）→ 小城' },
+    // 🔴 [2026-10-25 主人令「为某文化某时代补点」] 日内瓦＝勃艮第王国 443–461 年都城（443 年勃艮第人经埃提乌斯安置于萨伏依，都城内梅/日内瓦；461 后迁里昂）；离最近据点尚贝里 73km（>50km）故新建；建筑文化按该时代当地本地政权判＝勃艮第（BURGUNDIANS），不按后世最著名的加尔文日内瓦
+    { id: 'city_geneva', name: '日内瓦', factionId: 'bogendi_wangguo', lat: 46.2044, lng: 6.1432, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '日内瓦（Genava）：勃艮第王国（411–534）443–461 年都城；按 §五.1 罗马石墙内小城，推算城居 0.5–1 万 → 小城' },
 
 
     { id: 'city_shangbeili', name: '尚贝里', factionId: 'safuyi', lat: 45.57, lng: 5.92, type: 'small_city', troops: 10000, region: 'ITALIANS', buildingStyle: 'LATIN', note: '萨伏伊公国法定第一王都·阿尔卑斯山地锁钥·绿伯爵阿梅迪奥六世都城；推算：城居 1 万（萨伏伊王都尚贝里，同期 1 万上下）→ 小城' },

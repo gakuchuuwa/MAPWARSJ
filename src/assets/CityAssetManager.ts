@@ -72,6 +72,7 @@ export class CityAssetManager {
         'aolitai': '奥里',
         'aswaka': '斯瓦',
         'bogendigongguo': '勃公',
+        'bogendi_wangguo': '勃王',
         'bulu': '波鲁',
         'feierganna': '费尔',
         'genji_iyo': '源氏',

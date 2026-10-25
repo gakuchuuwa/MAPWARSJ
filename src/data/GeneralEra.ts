@@ -104,6 +104,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bing_liji': 'feudal',
     'bitiniya_diaoduoer': 'castle',
     'bogendi_chali': 'castle',
+    'bogendi_gundioc': 'antiquity',
     'bohai_dazuorong': 'feudal',
     'bolan_suobiesiji': 'imperial',
     'boluo_vijaya': 'antiquity',

@@ -940,6 +940,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    bogendi_wangguo: [
+        // 🔴 [2026-10-25 主人令「为某文化某时代立点」] 勃艮第王国（古典）｜贡迪奥克（436–473，451 沙隆之战率勃艮第军与埃提乌斯联军抗阿提拉）；据点 日内瓦＝王国 443–461 年都城；普将；立绘留空；精锐「勃艮第斧兵」T4
+        { generalId: 'bogendi_gundioc', factionId: 'bogendi_wangguo', cityId: 'city_geneva', generalName: '贡迪奥克', portrait: '', eliteName: '勃艮第斧兵', eliteTier: 4 },
+    ],
     bogendigongguo: [
 
 

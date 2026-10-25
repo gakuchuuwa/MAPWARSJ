@@ -628,6 +628,7 @@ const _FIXED: Record<string, string> = {
     'tamoyue': '#6E4A3A', // 塔莫约·卡布弗里乌（乌鲁库胭脂木褐）
     'naweierbuta': '#3E6E5A', // 纳韦尔布塔·科利普利（纳韦尔布塔山绿）
     'bogendigongguo': '#6E1B2E', // 勃艮第公国·蒙特罗（深酒红）
+    'bogendi_wangguo': '#7A3E5C', // 勃艮第王国（古典；与公国深酒红区分）
     'amaniyake': '#4A6E3E', // 阿马尼亚克·欧什（加斯科涅绿）
     'weiershigongguo': '#4E5A6E', // 威尔士公国·布伊尔斯（威尔士灰蓝）
     'miandian': '#8A6E20', // 缅甸·三塔关（缅甸黄金）

@@ -685,6 +685,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_city_syracuse: { birth: -361, death: -289 },  // 阿加索克利
     gen_robert_ii: { birth: 1065, death: 1111, kaoju: '异说' },  // 罗贝尔二世
     bogendi_chali: { birth: 1433, death: 1477 },  // 大胆查理
+    bogendi_gundioc: { birth: 415, death: 473, kaoju: '推定' },  // 贡迪奥克（勃艮第王国早期国王；436 继父位，生年推定）
     bulabante_yuehanyishi: { birth: 1252, death: 1294 },  // 约翰一世
     gen_kaernute_kotuatousi: { birth: -85, death: -52, kaoju: '推定' },  // 科图阿图斯
     gen_onuist_i: { birth: 690, death: 761, kaoju: '推定' },  // 奥恩格斯
