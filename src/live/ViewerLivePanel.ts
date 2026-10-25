@@ -8,6 +8,7 @@
  *   · [2026-10-25 主人「你来定，只希望有人看、慢慢有钱挣」] 面板是给推流画面里的观众看的：
  *       1080p 推流放在网页播放器里只剩原尺寸四成多，原先 13px 的字到观众那边只有五六个像素，看不清怎么参加。
  *       字放大（FS），只留口令和最要紧的几句；细则（每 20 秒一令、订阅加几令）放进 YouTube 置顶留言。
+ *       窗口比 1920 宽时整面板等比放大（DESIGN_WIDTH）：主人 4K 屏 150% 缩放，浏览器里 2560 宽。
  *       打赏一行只在 F9 填了「打赏方式」后才显示——没有付钱的地方就别写「打赏」。
  *       点赞 / 订阅目标只在接了 YouTube 接口（或真有数）时才显示，免得一直挂着「点赞 0/10」。
  *       F9 状态行加「最近弹幕几秒前」：SSN 连着不等于 YouTube 聊天窗口还开着，弹幕断了要看得出来。
@@ -18,8 +19,13 @@ import type { SocialStreamBridge } from './SocialStreamBridge';
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
 const WORDS = ['攻', '胜', '敌', '混', '并', '败'] as const;
-/** 面板字号（px）：标题 / 口令 / 说明 / 记录 */
+/** 面板字号（px，按 1920 宽的窗口设计）：标题 / 口令 / 说明 / 记录 */
 const FS = { title: 26, main: 22, sub: 17, small: 15 } as const;
+/**
+ * 面板按 1920 宽设计；窗口更宽时整面板等比放大，在推流画面里占的比例不变。
+ * 主人的屏是 4K、Windows 缩放 150%，浏览器里窗口 2560 宽：不放大的话，推到观众那边的字还要再小四分之一。
+ */
+const DESIGN_WIDTH = 1920;
 /** F9 填的「打赏方式」（如 ko-fi.com/某某），存 localStorage */
 const TIP_KEY = 'mapwar-live-tip';
 
@@ -62,6 +68,8 @@ export class ViewerLivePanel {
         const linked = s.platform === '直播间已连接';
         this.root.style.display = s.on || linked || this.devOpen ? 'block' : 'none';
         if (this.root.style.display === 'none') return;
+        // zoom 连 top / right 一起放大，面板仍在右上角同样的相对位置
+        this.root.style.setProperty('zoom', String(Math.round(Math.max(1, window.innerWidth / DESIGN_WIDTH) * 100) / 100));
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
         const b = (t: string) => `<b style="color:#ffd700;">${t}</b>`;
         const line = (size: number, html: string, extra = '') => `<div style="font-size:${size}px;${extra}">${html}</div>`;
@@ -86,16 +94,17 @@ export class ViewerLivePanel {
         const showGoal = !!s.yt || g.likes > 0 || g.subs > 0;
         const pct = Math.min(100, Math.round(g.likeProg / g.likeStep * 100));
         const goal = showGoal
-            ? line(FS.sub, `点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 满了全军擂鼓${g.subs > 0 ? `　订阅 ${b(String(g.subs))}` : ''}`, 'margin-top:8px;')
+            ? line(FS.sub, `点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 满了全军擂鼓${g.subs > 0 ? `　订阅 ${b(String(g.subs))}` : ''}`, 'margin-top:6px;')
                 + `<div style="height:8px;background:#3a2a16;border-radius:4px;overflow:hidden;margin-top:3px;"><div style="height:8px;width:${pct}%;background:#d4af37;"></div></div>`
             : '';
         // 最近挣到令的人：让观众看见自己那条弹幕算上了；够一计的标金色
+        // 面板别占太多战场：军令只列 3 人（一行），记录只留 2 条
         const top = s.top.length
-            ? line(FS.small, `军令　${s.top.slice(0, 5).map((t) =>
-                `<span style="white-space:nowrap;${t.n >= ORDERS_PER_CAST ? 'color:#ffd700;' : ''}">${esc(t.name)} <b>${t.n}</b></span>`).join('　')}`, 'margin-top:8px;')
+            ? line(FS.small, `军令　${s.top.slice(0, 3).map((t) =>
+                `<span style="white-space:nowrap;${t.n >= ORDERS_PER_CAST ? 'color:#ffd700;' : ''}">${esc(t.name)} <b>${t.n}</b></span>`).join('　')}`, 'margin-top:6px;')
             : '';
-        const log = s.log.slice(-3).map((l) => `<div>${esc(l)}</div>`).join('');
-        const logBox = log ? `<div style="margin-top:8px;font-size:${FS.small}px;color:#cdbb95;line-height:1.4;">${log}</div>` : '';
+        const log = s.log.slice(-2).map((l) => `<div>${esc(l)}</div>`).join('');
+        const logBox = log ? `<div style="margin-top:6px;font-size:${FS.small}px;color:#cdbb95;line-height:1.4;">${log}</div>` : '';
 
         if (!s.on) {
             this.body.innerHTML = platform + title
@@ -106,7 +115,7 @@ export class ViewerLivePanel {
         const q = s.queueBrief;
         const queue = q.length
             ? line(FS.small, `<span style="color:#ffd700;">排队</span>　${q.slice(0, 3).map((x) =>
-                `${esc(x.name)}${x.paid ? '<span style="color:#ffd700;">·赏</span>' : ''}`).join('　')}${q.length > 3 ? `　等 ${q.length} 人` : ''}`, 'margin-top:8px;')
+                `${esc(x.name)}${x.paid ? '<span style="color:#ffd700;">·赏</span>' : ''}`).join('　')}${q.length > 3 ? `　等 ${q.length} 人` : ''}`, 'margin-top:6px;')
             : '';
         this.body.innerHTML = platform + title
             + line(FS.main, `${b('1')} ${esc(s.names[0])}　${b('2')} ${esc(s.names[1])}`)
