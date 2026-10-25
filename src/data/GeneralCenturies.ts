@@ -627,6 +627,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_charles_i_naples': 13,                          // 卡洛 · kanpaniya · 那不勒斯
     'bogendi_chali': 15,                                 // 大胆查理 · bogendi · 第戎
     'bogendi_gundioc': 5,                    // 贡迪奥克 · bogendi_wangguo · 日内瓦
+    'bogendi_rudolf_i': 9,                    // 鲁道夫一世 · bogendi_wangguo · 日内瓦
     'bulabante_yuehanyishi': 13,                         // 约翰一世 · bulabante · 布鲁塞尔
     'gen_charles_vii': 15,                               // 查理七世 · gaolu · 巴黎
     'gen_clovis_i': 5,                                  // 克洛维 · gaolu_luoma · 里昂
@@ -1003,6 +1004,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_offa_mercia': 8,                               // 奥法 · maixiya · 牛津
     'gen_olaf_skotkonung': 10,                           // 奥拉夫 · nuosi · 乌普萨拉
     'gen_onuist_i': 8,                                  // 奥恩格斯 · piketai · 爱丁堡
+    'piketai_calgacus': 1,                    // 卡尔加库斯 · piketai · 斯昆
     'gen_otto_great': 10,                                // 奥托一世 · rierman · 美因茨
     'pelianci_hengli2': 11,
     'gen_stortebeker': 14,                               // 克劳斯 · hansa · 汉堡
@@ -1170,6 +1172,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_kaernute_kotuatousi':           1,     // 科图阿图斯 · kaernute · 高卢卡努特部落抗罗马首领（公元1世纪）
     'bolan_suobiesiji':                  17,    // 扬三世·索别斯基 · bolan · 维也纳之战翼骑兵冲锋（1683年解围）
     'xibanya_pisaluo':                   16,    // 皮萨罗 · xibanya · 西班牙征服印加帝国（1532年成名）
+    'xibanya_aerwa': 16,                     // 阿尔瓦公爵 · xibanya · 布鲁塞尔（米尔贝格 1547）
+    'wende_johnfriedrich': 16,               // 约翰·腓特烈 · wende · 马格德堡
     'gen_cuauhtemoc':                    16,    // 库奥特莫克 · aztec · 阿兹特克抵抗西班牙末代君主（1520-1521成名）
     'gen_lautaro':                       16,    // 劳塔罗 · mapuche · 马普切抗西班牙反殖民统帅（1553年图卡佩尔战役）
     'gen_arariboia':                     16,    // 阿拉里博亚 · tupi · 图皮南巴部落酋长（16世纪）

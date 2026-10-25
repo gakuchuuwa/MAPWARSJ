@@ -209,7 +209,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "didi": {
-        legionName: "城堡时代勃艮第公国军团",
+        legionName: "城堡时代尼德兰军团",
         legionType: "sub",
     },
     "shuizhen": {
@@ -965,11 +965,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "bogendigongguo": {
-        legionName: "城堡时代勃艮第公国军团",
+        legionName: "城堡时代尼德兰军团",
         legionType: "sub",
     },
     "bogendi_wangguo": {
-        legionName: "古典时代勃艮第军团",
+        legionName: "古典时代萨波迪亚军团",
         legionType: "region",
     },
     "aquidan": {
@@ -1513,7 +1513,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "bulabante": {
-        legionName: "城堡时代勃艮第公国军团",
+        legionName: "城堡时代尼德兰军团",
         legionType: "sub",
     },
     "piketai": {

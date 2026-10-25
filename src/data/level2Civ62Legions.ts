@@ -1046,12 +1046,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 勃艮第　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第二批·西欧与北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 勃艮第 · 古典时代 · 古典时代勃艮第军团　（本次新建）────────────────
+    // ── 勃艮第 · 古典时代 · 古典时代萨波迪亚军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（日内瓦、沃尔姆斯；莱芒湖木石防线、沃尔姆斯王宫石基；重装维京式双刃斧、破阵长标枪、莱茵河谷原始部落拓荒大阵）
     //    英雄队（第 10 队·主将队）：hero_johnthefearless / hero_philipthegood　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代勃艮第军团', civ: '勃艮第', age: 'antiquity', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
+        name: '古典时代萨波迪亚军团', civ: '勃艮第', age: 'antiquity', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
         buildingStyle: 'BURGUNDIANS',
         castleId: 'BURG_CASTLE_AGE3', castleName: '勃艮第 第戎公爵宫圆锥塔',
         formationMode: 'echelon',
@@ -1063,29 +1063,29 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'scout_cavalry', count: 2 },
         ],
     },
-    // ── 勃艮第 · 封建时代 · 封建时代阿尔勒军团　（本次新建）────────────────
+    // ── 勃艮第 · 封建时代 · 封建时代勃艮第军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑兵为主
     //    描述正文（主人原文，一字未改）：（第戎、阿尔勒；克吕尼修道院三期大殿基址、罗曼式回廊拱券；法兰克锁甲封建骑兵、修道庄园卫戍队、罗讷河谷要塞防线）
-    //    英雄队（第 10 队·主将队）：hero_johnthefearless / hero_philipthegood　— 按 248 主将表取，不进三排兵种编制
+    //    英雄队（第 10 队·主将队）：hero_charlemagne（2026-10-25 换：原 15 世纪人，封建档穿越）　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代阿尔勒军团', civ: '勃艮第', age: 'feudal', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
+        name: '封建时代勃艮第军团', civ: '勃艮第', age: 'feudal', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
         buildingStyle: 'BURGUNDIANS',
         castleId: 'BURG_CASTLE_AGE3', castleName: '勃艮第 第戎公爵宫圆锥塔',
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_johnthefearless',
+        commanderUnit: 'hero_charlemagne',
         slots: [
             { type: 'longswordsman', count: 3 },
             { type: 'crossbowman', count: 4 },
             { type: 'knight', count: 2 },
         ],
     },
-    // ── 勃艮第 · 城堡时代 · 城堡时代勃艮第公国军团　（本次新建）────────────────
+    // ── 勃艮第 · 城堡时代 · 城堡时代尼德兰军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（布鲁日、第戎、根特；布鲁日钟楼、根特圣巴夫大教堂；欧洲全套镀金雕花重型全身板甲、长柄战斧（Bec de Corbin）、奢华重装骑兵卫队）
     //    英雄队（第 10 队·主将队）：hero_johnthefearless / hero_philipthegood　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代勃艮第公国军团', civ: '勃艮第', age: 'castle', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
+        name: '城堡时代尼德兰军团', civ: '勃艮第', age: 'castle', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
         buildingStyle: 'BURGUNDIANS',
         castleId: 'BURG_CASTLE_AGE3', castleName: '勃艮第 第戎公爵宫圆锥塔',
         formationMode: 'fish_scale',
@@ -1200,7 +1200,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
         formationMode: 'triangle',
         shipId: 'MONOREME',
-        commanderUnit: 'hero_aethelfrith',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_dafyddapgruffydd（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_kingarthur',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_dafyddapgruffydd（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'war_dog', count: 2 },
             { type: 'elite_woad_raider', count: 3 },

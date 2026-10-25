@@ -10896,6 +10896,26 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
+    xibanya_aerwa: {
+        generalId: 'xibanya_aerwa',
+        battleName: '米尔贝格战役',
+        battleYear: 1547,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '米尔贝格',
+        targetCityId: 'city_bolandengbao',
+        targetLat: 51.43,
+        targetLng: 13.22,
+        myTroops: 25000,
+        enemyFactionId: 'wende',
+        enemyFactionName: '萨克森',
+        enemyGeneralId: 'wende_johnfriedrich',
+        enemyTroops: 12000,
+        introLines: [
+            { speaker: 'general', text: '萨克森选侯把营盘扎在易北河对岸，自以为水阔难渡。今我以西班牙老兵为前锋，趁晨雾抢渡、直冲其营，只要拿下选侯本人，诸路新教诸侯便各自散了。' },
+            { speaker: 'player', text: '愿随阿尔瓦公爵抢渡易北河，生擒萨克森选侯！' },
+        ],
+    },
     yamato_nanmuzhengcheng: {
         generalId: 'yamato_nanmuzhengcheng',
         battleName: '凑川之战',

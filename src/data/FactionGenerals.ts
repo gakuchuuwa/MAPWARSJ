@@ -943,6 +943,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     bogendi_wangguo: [
         // 🔴 [2026-10-25 主人令「为某文化某时代立点」] 勃艮第王国（古典）｜贡迪奥克（436–473，451 沙隆之战率勃艮第军与埃提乌斯联军抗阿提拉）；据点 日内瓦＝王国 443–461 年都城；普将；立绘留空；精锐「勃艮第斧兵」T4
         { generalId: 'bogendi_gundioc', factionId: 'bogendi_wangguo', cityId: 'city_geneva', generalName: '贡迪奥克', portrait: '', eliteName: '勃艮第斧兵', eliteTier: 4 },
+        // 🔴 [2026-10-25 主人令「存在就建」] 勃艮第王国（封建）｜鲁道夫一世（888–912，上勃艮第王国开国者，888 圣莫里斯加冕）；据点 日内瓦＝上勃艮第王国核心；普将（实胜缺决定性大捷）；立绘留空；精锐「汝拉骑队」T4
+        { generalId: 'bogendi_rudolf_i', factionId: 'bogendi_wangguo', cityId: 'city_geneva', generalName: '鲁道夫一世', portrait: '', eliteName: '汝拉骑队', eliteTier: 4 },
     ],
     bogendigongguo: [
 
@@ -1425,7 +1427,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    didi: { generalId: 'gen_willem_juliette', cityId: 'city_bruges', generalName: '威廉一世', portrait: '/assets/GERMANIC/didi_weilianyishi.png', legionName: '城堡时代勃艮第公国军团' },
+    didi: { generalId: 'gen_willem_juliette', cityId: 'city_bruges', generalName: '威廉一世', portrait: '/assets/GERMANIC/didi_weilianyishi.png', legionName: '城堡时代尼德兰军团' },
 
 
 
@@ -2292,7 +2294,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    bulabante: { generalId: 'bulabante_yuehanyishi', cityId: 'city_bulusaier', generalName: '约翰一世', portrait: '/assets/GERMANIC/bulabante_yuehanyishi.png', legionName: '城堡时代勃艮第公国军团' },
+    bulabante: { generalId: 'bulabante_yuehanyishi', cityId: 'city_bulusaier', generalName: '约翰一世', portrait: '/assets/GERMANIC/bulabante_yuehanyishi.png', legionName: '城堡时代尼德兰军团' },
 
 
 
@@ -2475,7 +2477,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    piketai: { generalId: 'gen_onuist_i', cityId: 'city_aidingbao', generalName: '奥恩格斯', portrait: '/assets/CELTS/gen_onuist_i.png' },
+    piketai: [
+        { generalId: 'gen_onuist_i', cityId: 'city_aidingbao', generalName: '奥恩格斯', portrait: '/assets/CELTS/gen_onuist_i.png' },
+        // 🔴 [2026-10-25 主人令「存在就建」] 卡尔加库斯（Calgacus，83/84 蒙斯格劳庇乌斯战役，喀里多尼亚抗罗马联军领袖，塔西佗《阿古利可拉传》）；势力 皮克特；据点 斯昆（皮克特/阿尔巴王都，距喀里多尼亚核心 73km，同文化最近）；普将（战败，实胜闸不过）；精锐「皮克特战团」T4；立绘留空
+        { generalId: 'piketai_calgacus', factionId: 'piketai', cityId: 'city_scone', generalName: '卡尔加库斯', portrait: '', eliteName: '皮克特战团', eliteTier: 4 },
+    ],
 
 
 
@@ -3124,6 +3130,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     wende: [
+        // 🔴 [2026-10-25 主人令「有知名度高的将领先加」] 萨克森选侯 约翰·腓特烈（1503–1554，施马尔卡尔登联盟领袖，1547 米尔贝格被俘）；势力 萨克森；据点 马格德堡（维滕贝格不在城库，取最近同文化据点）；普将；精锐「萨克森卫队」T4；立绘留空
+        { generalId: 'wende_johnfriedrich', factionId: 'wende', cityId: 'city_magedebao', generalName: '约翰·腓特烈', portrait: '', eliteName: '萨克森卫队', eliteTier: 4 },
 
 
 
@@ -15479,6 +15487,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     xibanya: [
+        // 🔴 [2026-10-25 主人令「有知名度高的将领先加」] 阿尔瓦公爵（1507–1582，西属尼德兰总督 1567–1573，驻布鲁塞尔）；势力 西班牙；据点 布鲁塞尔（BURGUNDIANS，西属尼德兰总督府）；名将；精锐「尼德兰枪兵」T2；立绘留空
+        { generalId: 'xibanya_aerwa', factionId: 'xibanya', cityId: 'city_bulusaier', generalName: '阿尔瓦公爵', portrait: '', eliteName: '尼德兰枪兵', eliteTier: 2, legionName: '帝国时代弗兰德斯军团' },   // 🔴 [2026-10-25] 西班牙势力指针＝三级海外军团（西班牙征服），欧洲本土须手写二级军团长：布鲁塞尔＝BURGUNDIANS×帝国
 
 
 

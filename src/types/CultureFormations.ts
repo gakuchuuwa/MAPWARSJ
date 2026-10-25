@@ -1661,7 +1661,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     LITHUANIANS: "城堡时代立陶宛大公国军团",
     POLES: "城堡时代波兰王国军团",
     BOHEMIANS: "城堡时代胡斯军团",
-    BURGUNDIANS: "城堡时代勃艮第公国军团",
+    BURGUNDIANS: "城堡时代尼德兰军团",
     SPANISH: '帝国时代西班牙方阵军团',
     PORTUGUESE: '帝国时代葡萄牙军团',
     ETHIOPIANS: '封建时代拉利贝拉军团',

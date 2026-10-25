@@ -112,7 +112,7 @@ import { animalDeOf, stepTacticalAnimals } from './scene13/Scene13Animals';
 import { relocateTemplateWater, adaptMapDataSeaOrientation } from './scene13/Scene13MapWaterAdapter';
 import { applySpawnBuildings } from './scene13/Scene13CityLayout';
 import { requestGroundLayerGL } from './scene13/Scene13GroundSetup';
-import { ensureDeCampaignSpriteMeta, getDeCampaignSpriteMetaSync } from './scene13/Scene13DeCampaignLoader';
+import { ensureDeCampaignSpriteMeta, getDeCampaignSpriteMetaSync, loadDeCampaignSpriteQueued } from './scene13/Scene13DeCampaignLoader';
 import { render } from './scene13/Scene13Render';
 
 /**
@@ -1356,7 +1356,8 @@ export class Scene13WarLayer {
     private clampTacticalPan(): void {
         const cv = this.canvas;
         if (!cv) { this.tacticalPanX = 0; this.tacticalPanY = 0; return; }
-        const mapW = TAC_MAP_HALF_W * 2, mapH = TAC_MAP_HALF_H * 2;
+        const nGrid = this.groundLayerGL?.data?.width ?? 120;
+        const mapW = Math.max(TAC_MAP_HALF_W * 2, nGrid * 96), mapH = Math.max(TAC_MAP_HALF_H * 2, nGrid * 48);
         const limX = Math.max(0, (mapW * this.tacticalZoom - cv.width) / 2);
         const limY = Math.max(0, (mapH * this.tacticalZoom - cv.height) / 2);
         this.tacticalPanX = Math.max(-limX, Math.min(limX, this.tacticalPanX));
@@ -1412,7 +1413,7 @@ export class Scene13WarLayer {
             e.stopPropagation();   // 捕获阶段拦下，底下的 Leaflet 战略地图不许跟着缩放
             const zoomDelta = -e.deltaY * 0.0015;
             const nextZoom = this.tacticalZoom * Math.exp(zoomDelta);
-            const minZoom = this.useGroundGL ? 0.45 : 1.0;
+            const minZoom = this.deCampaignMapId ? 0.15 : (this.useGroundGL ? 0.45 : 1.0);
             this.tacticalZoom = Math.max(minZoom, Math.min(2.5, nextZoom));
             this.userInteractingTimer = 9.0;
             this.clampTacticalPan();
@@ -3174,12 +3175,11 @@ export class Scene13WarLayer {
             const syncM = getDeCampaignSpriteMetaSync(spKey);
             if (syncM) applyMeta(syncM);
             else void ensureDeCampaignSpriteMeta().then((all) => applyMeta(all[spKey]));
-            const im = new Image();
-            im.onload = () => {
+            loadDeCampaignSpriteQueued(spKey, (im) => {
+                if (!im) return;
                 if (!na.meta) na.meta = { box_w: im.naturalWidth, box_h: im.naturalHeight, anchor_x: Math.round(im.naturalWidth / 2), anchor_y: Math.round(im.naturalHeight / 2), frames: 1 };
                 na.img = im;
-            };
-            im.src = `/de-maps/campaign/sprites/${spKey}.png`;
+            });
             return;
         }
         const isAnim = asset.startsWith('BUILDINGANIM:');
@@ -5388,6 +5388,7 @@ export class Scene13WarLayer {
         // 城堡已在 castleTowers 独立射击（旧版城池才有），跳过；新版城池里城堡只登记为普通建筑，照常射
         // 🔴 [2026-10-14 主人令「九建筑都会射箭」] 原来凡是城堡一律跳过 ⇒ 新版城池的中心城堡一箭不射
         if (b.name.includes('CASTLE') && this.castleTowers.some((c) => c.sprite === b.sprite)) return;
+        if (this.arrowTowers.some((t) => t.sprite === b.sprite)) return;
         // 坍塌即停火：已销毁、正在倒塌、或已切成 RUBBLE 残骸，立即停止射击
         if (b.sprite.destroyed || b.sprite.collapse || b.sprite.asset.includes('_RUBBLE')) return;
         // 建筑贴图未就绪不射

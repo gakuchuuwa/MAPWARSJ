@@ -232,6 +232,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bitiniya_diaoduoer': 'BYZANTINE',   // 比提尼亚｜狄奥多尔｜据点 尼凯亚
     'bogendi_chali': 'BURGUNDIANS',   // 勃艮第｜大胆查理｜据点 第戎
     'bogendi_gundioc': 'BURGUNDIANS',   // 勃艮第王国｜贡迪奥克｜据点 日内瓦
+    'bogendi_rudolf_i': 'BURGUNDIANS',   // 勃艮第王国｜鲁道夫一世｜据点 日内瓦
     'bohai_dayinzhuan': 'NORTHEAST',   // 渤海｜大諲撰｜据点 龙泉府
     'bohai_dazuorong': 'NORTHEAST',   // 渤海｜大祚荣｜据点 龙泉府
     'bolan_suobiesiji': 'POLES',   // 波兰｜索别斯基｜据点 华沙
@@ -609,6 +610,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_olaf_skotkonung': 'VIKINGS',   // 诺斯｜奥拉夫｜据点 乌普萨拉
     'gen_onas_khan': 'CENTRAL_ASIA',   // 萨莱诺盖｜欧拿斯｜据点 萨莱楚克
     'gen_onuist_i': 'CELTS',   // 皮克特｜奥恩格斯｜据点 爱丁堡
+    'piketai_calgacus': 'CELTS',   // 皮克特｜卡尔加库斯｜据点 斯昆
     'gen_osman_i': 'TURKS',   // 奥斯曼贝伊国｜奥斯曼一世｜据点 瑟于特
     'gen_otto_great': 'SAXONS',   // 莱茵兰｜奥托一世｜据点 马格德堡
     'gen_pacanchiq': 'MUISCA',   // 奇布查｜帕坎奇克｜据点 洪萨
@@ -1330,6 +1332,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiayang_d_dengyu': 'CENTRAL',   // 汉国｜邓禹｜据点 洛阳
     'xiazhou_lijiqian': 'KHITAN',   // 大夏｜李继迁｜据点 统万城
     'xibanya_pisaluo': 'SPANISH',   // 西班牙｜皮萨罗｜据点 利马
+    'xibanya_aerwa': 'BURGUNDIANS',   // 西班牙｜阿尔瓦公爵｜据点 布鲁塞尔（西属尼德兰）
+    'wende_johnfriedrich': 'SAXONS',   // 萨克森｜约翰·腓特烈｜据点 马格德堡
     'xibo_d_tubote': 'CENTRAL_ASIA',   // 锡伯｜图伯特｜据点 固尔札
     'xibolai_dawei': 'ORIE',   // 希伯来｜大卫｜据点 耶路撒冷
     'xibolai_majiabi': 'ORIE',   // 希伯来｜犹大马加比｜据点 耶路撒冷

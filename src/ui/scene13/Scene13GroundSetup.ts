@@ -184,13 +184,24 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
             cv.style.backgroundImage = `url(/SUCAI_TERRAIN/${baseTerrain}.png)`;
             cv.style.backgroundRepeat = 'repeat';
             cv.style.backgroundPosition = 'center center';
-            if (this.entryFadePending) this.applyInitialEntryStyle(cv);
+            if (this.entryFadePending) {
+                this.applyInitialEntryStyle(cv);
+            } else {
+                cv.style.transition = '';
+                cv.style.opacity = '1';
+                cv.style.transform = 'scale(1)';
+                cv.style.filter = 'brightness(1) blur(0px)';
+            }
             cv.style.display = 'block';
 
             // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 删去「保障所有出兵口与初始士兵不落入水体」
             const data = transposeMapData(mapData);
             if (data && data.isDeCampaign) {
-                populateDeCampaignObjects(this, data.rawDeObjects || [], data.width, glLayer, VW, VH);
+                try {
+                    populateDeCampaignObjects(this, data.rawDeObjects || [], data.width, glLayer, VW, VH);
+                } catch (deObjErr) {
+                    console.error('[Scene13WarLayer] DE 战役物件落盘异常:', deObjErr);
+                }
                 releaseGround();
                 return;
             }

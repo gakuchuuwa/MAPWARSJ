@@ -388,7 +388,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'pajiama': [{ from: -9999, era: 'antiquity' }], // 帕加马
     'pandiya': [{ from: -9999, era: 'castle' }], // 潘地亚
     'peilieya_gongguo': [{ from: -9999, era: 'castle' }], // 佩列公国
-    'piketai': [{ from: -9999, era: 'feudal' }], // 皮克特
+    'piketai': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 皮克特｜–∞起古典（罗马时期喀里多尼亚/皮克特）→ 476起封建（皮克特王国） // 皮克特
     'pisha': [{ from: -9999, era: 'feudal' }], // 毗沙
     'pishan': [{ from: -9999, era: 'antiquity' }], // 皮山
     'pomeilaniya': [{ from: -9999, era: 'castle' }], // 波美拉尼亚
@@ -666,7 +666,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'suomunate': [{ from: -9999, era: 'feudal' }, { from: 1163, era: 'castle' }], // 索兰基｜按现存名将成名年推定：–∞起封建 → 1163起城堡
     'talasike': [{ from: -9999, era: 'castle' }, { from: 1505, era: 'imperial' }], // 塔拉斯科｜按现存名将成名年推定：–∞起城堡 → 1505起帝国
     'tubo': [{ from: -9999, era: 'antiquity' }, { from: 530, era: 'feudal' }, { from: 1050, era: 'castle' }], // 吐蕃｜按现存名将成名年推定：–∞起古典 → 530起封建 → 1050起城堡
-    'wende': [{ from: -9999, era: 'feudal' }, { from: 993, era: 'castle' }], // 萨克森｜按现存名将成名年推定：–∞起封建 → 993起城堡
+    'wende': [{ from: -9999, era: 'feudal' }, { from: 993, era: 'castle' }, { from: 1500, era: 'imperial' }], // 萨克森｜–∞起封建 → 993起城堡 → 1500起帝国（萨克森选侯国·约翰·腓特烈 1547 米尔贝格）
     'wulaertu': [{ from: -9999, era: 'antiquity' }, { from: 953, era: 'feudal' }, { from: 1140, era: 'castle' }], // 亚美尼亚｜按现存名将成名年推定：–∞起古典 → 953起封建 → 1140起城堡
     'xigete': [{ from: -9999, era: 'antiquity' }, { from: 708, era: 'feudal' }, { from: 1085, era: 'castle' }], // 西哥特｜按现存名将成名年推定：–∞起古典 → 708起封建 → 1085起城堡
     'xijue': [{ from: -9999, era: 'antiquity' }, { from: 660, era: 'feudal' }], // 十箭｜按现存名将成名年推定：–∞起古典 → 660起封建

@@ -420,15 +420,15 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         // 🔴 [2026-10-19 主人令] 9 件攻城武器里，把 2 件「手推攻城火炮」换成法兰克两位炮兵英雄（同样是火炮样子）：
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'petard', 'onager', 'onager', 'hero_jeanbureau', 'hero_jeandelorrain'],
     },
-    '古典时代勃艮第军团': {
+    '古典时代萨波迪亚军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代阿尔勒军团': {
+    '封建时代勃艮第军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代勃艮第公国军团': {
+    '城堡时代尼德兰军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },

@@ -51,6 +51,9 @@ export const DE_BLD_TABLE: Record<string, Array<[number, number, number]>> = {
     UNIVERSITY: [[2100, 2, 9], [2100, 2, 9], [2100, 2, 9], [2100, 3, 10]],
     MONASTERY: [[2100, 0, 7], [2100, 1, 8], [2100, 2, 9], [2100, 3, 10]],
     TOWER: [[850, 1, 7], [850, 1, 7], [1500, 2, 8], [2250, 3, 9]],
+    GUARD_TOWER: [[850, 1, 7], [850, 1, 7], [1500, 2, 8], [2250, 3, 9]],
+    KEEP: [[850, 1, 7], [850, 1, 7], [1500, 2, 8], [2250, 3, 9]],
+    BOMBARD_TOWER: [[2220, 3, 9], [2220, 3, 9], [2220, 3, 9], [2220, 3, 9]],
     OUTPOST: [[500, 0, 0], [500, 0, 0], [500, 0, 0], [500, 0, 0]],
     CASTLE: [[4800, 8, 11], [4800, 8, 11], [4800, 8, 11], [4800, 8, 11]],
     WONDER: [[4800, 3, 10], [4800, 3, 10], [4800, 3, 10], [4800, 3, 10]],
@@ -65,9 +68,10 @@ export function deBuildingStats(name: string, forceKind?: string): WarType {
         if (name.includes(k)) { kind = k; break; }
     }
     const dark = name.startsWith('DARK_') || name.startsWith('HUT_') || name === 'SETTLEMENT';
-    const [hp, melee, pierce] = DE_BLD_TABLE[kind][dark && !forceKind ? 0 : age];
+    const rows = DE_BLD_TABLE[kind] ?? DE_BLD_TABLE.HOUSE;
+    const [hp, melee, pierce] = rows[dark && !forceKind ? 0 : age] ?? rows[1];
     const armorTags = kind === 'CASTLE' ? [11, 21, 26]
-        : kind === 'TOWER' ? [11, 13, 21]
+        : (kind === 'TOWER' || kind === 'GUARD_TOWER' || kind === 'KEEP' || kind === 'BOMBARD_TOWER') ? [11, 13, 21]
             : kind === 'WONDER' ? [11]
                 : [11, 21];
     return { name, cls: 'melee', sz: 1, hp, atk: 0, meleeArmor: melee, pierceArmor: pierce, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags };

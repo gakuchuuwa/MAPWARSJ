@@ -7,16 +7,16 @@
  *      高程光影与 DE 原始物件 100% 像素级对齐（1:1 原生 96×48 比例）。
  *   2. 方式二（主人定「所有的建筑归属为防守方」）：
  *      将 DE 地图里预设好的城墙、木栅栏、城门、箭塔、火炮塔、城堡、城镇中心、兵营、靶场、马厩、
- *      攻城武器厂、铁匠铺、市场、修道院、大学、奇观、民居、蒙古包、行军帐、哨站、桥梁、树木、岩石
+ *      攻城武器厂、铁匠铺、市场、修道院、大学、奇观、民居、蒙古包、行军帐、哨站、桥梁、树木、岩石、悬崖
  *      按精确坐标与朝向原样搬进 `Scene13WarLayer`：
  *        - 城墙 / 木栅栏 / 城门 → `wallGates`（f = 1，带碰撞阻挡与破墙/破门坍塌链）
- *        - 箭塔 / 火炮塔 / 哨塔 → `arrowTowers` + `defBuildings`（f = 1，自动索敌射箭）
+ *        - 箭塔 / 火炮塔 / 哨塔 → `arrowTowers` + `cityBuildings` + `defBuildings`（f = 1，自动索敌射箭）
  *        - 城堡 → `castleTowers` + `cityBuildings` + `defBuildings`（f = 1，多箭齐发 + 重点打击目标）
  *        - 其余建筑 → 守方（f = 1，`trackCityBuilding`）或攻方营区内的营帐（f = 0，`registerDefBuilding`）
  *        - 桥梁 → 地面层装饰（`z: -5`，无碰撞阻挡、不可摧毁）
  */
 
-import { Scene13GroundLayerGL, resolveNatureSprite } from './Scene13GroundLayerGL';
+import type { Scene13GroundLayerGL } from './Scene13GroundLayerGL';
 import { WALL_GATE_STATS } from './Scene13UnitTables';
 import type { DecorSprite } from './Scene13Types';
 import type { Scene13WarLayer } from '../Scene13WarLayer';
@@ -26,7 +26,9 @@ export interface DeCampaignSpriteMeta {
     h: number;
     ax: number;
     ay: number;
-    layer?: string;
+    unit?: number;
+    name?: string;
+    graphic?: number;
 }
 
 let spriteMetaPromise: Promise<Record<string, DeCampaignSpriteMeta>> | null = null;
@@ -55,12 +57,68 @@ export function getDeCampaignSpriteMetaSync(key: string): DeCampaignSpriteMeta |
     return spriteMetaCache ? spriteMetaCache[key] : undefined;
 }
 
+// ── 精灵图片优先级并发池（建筑/城墙/城门/箭塔优先加载，避免几百棵树同时并发占满浏览器连接池） ──
+interface SpriteLoadJob {
+    spKey: string;
+    highPriority: boolean;
+    onDone: (img: HTMLImageElement | null) => void;
+}
+const highQueue: SpriteLoadJob[] = [];
+const lowQueue: SpriteLoadJob[] = [];
+const highPriorityKeys = new Set<string>();
+let activeLoads = 0;
+const MAX_CONCURRENT_SPRITE_LOADS = 18;
+
+export function markDeCampaignSpriteHighPriority(spKey: string): void {
+    highPriorityKeys.add(spKey);
+}
+
+function pumpSpriteQueue(): void {
+    while (activeLoads < MAX_CONCURRENT_SPRITE_LOADS && (highQueue.length > 0 || lowQueue.length > 0)) {
+        const job = highQueue.length > 0 ? highQueue.shift()! : lowQueue.shift()!;
+        activeLoads++;
+        const im = new Image();
+        const finish = (ok: boolean) => {
+            activeLoads--;
+            job.onDone(ok ? im : null);
+            pumpSpriteQueue();
+        };
+        im.onload = () => finish(true);
+        im.onerror = () => finish(false);
+        im.src = `/de-maps/campaign/sprites/${job.spKey}.png`;
+    }
+}
+
+export function loadDeCampaignSpriteQueued(spKey: string, onDone: (img: HTMLImageElement | null) => void): void {
+    const high = highPriorityKeys.has(spKey);
+    const job: SpriteLoadJob = { spKey, highPriority: high, onDone };
+    if (high) highQueue.push(job);
+    else lowQueue.push(job);
+    pumpSpriteQueue();
+}
+
+/**
+ * 归一化关卡 ID（兼容大小写与常见手误，如 `0_El_Scenario_1` → `0_E3_Scenario_1`）
+ */
+export async function resolveCanonicalDeMapId(rawId: string): Promise<string> {
+    const clean = rawId.trim().replace(/\.json$/i, '');
+    if (clean.toLowerCase() === '0_el_scenario_1') return '0_E3_Scenario_1';
+    try {
+        const idx: Array<{ id: string }> = await fetch('/de-maps/campaign/index.json').then((r) => (r.ok ? r.json() : []));
+        const exact = idx.find((e) => e.id === clean);
+        if (exact) return exact.id;
+        const ci = idx.find((e) => e.id.toLowerCase() === clean.toLowerCase());
+        if (ci) return ci.id;
+    } catch {}
+    return clean;
+}
+
 /**
  * 加载 `/de-maps/campaign/${deMapId}.json` 并将其从 DE 菱形网格 (tx, ty) 转换为
  * `Scene13GroundLayerGL` 直接消费的屏幕正交网格 (gx, gy)，标记 `noTranspose: true, isDeCampaign: true`。
  */
 export async function loadDeCampaignMapForGround(deMapId: string): Promise<any> {
-    const cleanId = deMapId.replace(/\.json$/i, '');
+    const cleanId = await resolveCanonicalDeMapId(deMapId);
     const [raw] = await Promise.all([
         fetch(`/de-maps/campaign/${cleanId}.json`).then((r) => {
             if (!r.ok) throw new Error(`加载 DE 战役地图失败: ${cleanId}`);
@@ -160,13 +218,43 @@ export async function loadDeCampaignMapForGround(deMapId: string): Promise<any> 
     };
 }
 
+/**
+ * 依据 `empires2_x2_p1.dat` 严格导出的移动单位/士兵/村民/战船/攻城车/动物/鱼群 ID 集合：
+ * 战术模式中两军由 `Scene13WarLayer` 动态生成并推演，场景中预设的静态兵人/村民/船只/鱼群一律剔除，不作为静态贴图摆在地上。
+ */
+const SKIP_MOBILE_UNIT_IDS = new Set([
+    1, 4, 5, 6, 7, 8, 11, 13, 17, 21, 24, 25, 26, 35, 36, 38, 39, 40, 41, 42, 46, 48, 52, 53, 61, 65, 69,
+    73, 74, 75, 77, 83, 89, 93, 96, 111, 118, 121, 125, 126, 128, 139, 156, 160, 161, 167, 168, 169, 171,
+    172, 177, 178, 180, 185, 188, 193, 195, 197, 199, 204, 205, 207, 223, 232, 239, 250, 262, 275, 279,
+    280, 281, 282, 283, 286, 291, 293, 299, 305, 329, 330, 331, 358, 359, 361, 420, 422, 424, 425, 427,
+    430, 432, 434, 437, 439, 440, 441, 442, 448, 449, 450, 451, 453, 455, 456, 457, 458, 459, 473, 474,
+    486, 492, 493, 501, 527, 528, 529, 530, 531, 532, 534, 539, 542, 545, 546, 547, 548, 550, 553, 554,
+    555, 556, 557, 558, 559, 560, 561, 567, 569, 588, 594, 629, 632, 634, 636, 638, 639, 640, 642, 644,
+    646, 648, 650, 652, 678, 680, 683, 686, 691, 692, 694, 698, 700, 702, 703, 704, 705, 706, 707, 725,
+    726, 729, 731, 733, 749, 751, 752, 753, 755, 757, 763, 765, 771, 773, 775, 777, 778, 779, 781, 783,
+    812, 814, 815, 816, 822, 824, 831, 833, 835, 838, 840, 842, 844, 845, 846, 849, 866, 868, 869, 871,
+    873, 875, 876, 878, 879, 882, 884, 892, 893, 894, 897, 917, 925, 927, 929, 930, 931, 932, 936, 943,
+    944, 1001, 1004, 1007, 1009, 1010, 1012, 1013, 1015, 1016, 1018, 1019, 1023, 1026, 1028, 1029, 1031,
+    1034, 1035, 1036, 1037, 1039, 1040, 1056, 1060, 1070, 1072, 1074, 1080, 1103, 1104, 1105, 1106, 1109,
+    1120, 1123, 1125, 1126, 1128, 1129, 1131, 1132, 1134, 1135, 1137, 1139, 1141, 1142, 1155, 1157, 1158,
+    1160, 1162, 1163, 1164, 1165, 1166, 1178, 1180, 1181, 1183, 1184, 1186, 1225, 1227, 1228, 1230, 1231,
+    1233, 1234, 1236, 1237, 1239, 1241, 1243, 1245, 1247, 1252, 1254, 1255, 1258, 1260, 1262, 1263, 1265,
+    1266, 1267, 1268, 1269, 1271, 1273, 1275, 1276, 1281, 1292, 1295, 1298, 1299, 1301, 1303, 1304, 1305,
+    1338, 1356, 1370, 1372, 1374, 1572, 1574, 1596, 1598, 1600, 1602, 1655, 1658, 1669, 1671, 1673, 1675,
+    1677, 1679, 1681, 1683, 1685, 1687, 1701, 1703, 1704, 1707, 1709, 1713, 1715, 1718, 1721, 1723, 1725,
+    1727, 1730, 1731, 1732, 1735, 1737, 1738, 1741, 1743, 1744, 1746, 1747, 1749, 1750, 1751, 1753, 1755,
+    1759, 1763, 1764, 1766, 1768, 1769, 1790, 1792, 1793, 1795, 1800, 1803, 1904, 1907, 1948, 1963, 2026,
+    2089, 2550, 2552, 2564, 2579, 2586, 2587, 2589, 2591, 2593, 2594, 2595, 2625, 2626, 2627, 2628, 2700,
+    2703, 2704, 2705, 2706,
+]);
+
 const WALL_IDS = new Set([
     72, 117, 119, 155, 231, 370, 788, 1062, 1090, 1218, 1219, 1220, 1396, 1397, 1398, 1399,
 ]);
 
 const GATE_MAIN_IDS = new Set([
     63, 64, 78, 85, 88, 487, 490, 659, 667, 668, 789, 793, 797, 801,
-    1379, 1383, 1387, 1391, 1579, 1583, 1587,
+    1176, 1379, 1383, 1387, 1391, 1579, 1583, 1587,
 ]);
 
 const GATE_POST_IDS = new Set([
@@ -193,26 +281,34 @@ const BRIDGE_IDS = new Set([
 ]);
 
 const TC_MAIN_IDS = new Set([109, 142, 481, 482, 483, 597, 2556, 2560]);
-const TC_ANNEX_IDS = new Set([618, 619, 620, 621]);
+const TC_ANNEX_IDS = new Set([618, 619, 620, 621, 1890]);
 
 const RUBBLE_OR_DECOR_SKIP_OBSTRUCTION = new Set([
-    143, 144, 145, 146, 147, 148, 154, 192, 863, 864, 865,
-    1182, 1183, 1184, 1185, 1493, 1494, 1495,
+    143, 144, 145, 146, 147, 148, 154, 192, 241, 301, 306,
+    334, 335, 336, 337, 338, 339, 340, 341, 345, 389, 396,
+    710, 711, 723, 728, 758, 818, 820, 859, 863, 864, 865,
+    1033, 1091, 1175, 1351, 1352, 1353, 1354, 1355, 1358, 1359,
+    1360, 1362, 1364, 1365, 1366, 1497, 1498, 2031, 2536,
 ]);
 
-/** 根据 DE 精灵名前缀与建筑类别映射我方坍塌动画族名（确保打爆后播放对应尺寸与风格的 DE 坍塌动画与残骸） */
-function resolveDestrFamilyName(spriteKey: string, kind: string, fallbackStyle: string): string {
-    const m = /^b_([a-z]+)_/i.exec(spriteKey || '');
-    const rawPrefix = m ? m[1].toUpperCase() : '';
+/** 根据建筑类别与守方默认风格映射我方坍塌动画族名（确保打爆后播放对应尺寸与风格的 DE 坍塌动画与残骸） */
+function resolveDestrFamilyName(unitCode: string, kind: string, fallbackStyle: string): string {
     const validStyles = new Set(['WEST', 'EAST', 'ASIA', 'ORIE', 'MESO', 'MEDI', 'SLAV', 'AFRI', 'INDI', 'SEAS', 'CEAS']);
-    const style = validStyles.has(rawPrefix) ? rawPrefix : (validStyles.has(fallbackStyle) ? fallbackStyle : 'WEST');
+    const style = validStyles.has(fallbackStyle) ? fallbackStyle : 'WEST';
+    const up = (unitCode || '').toUpperCase();
 
-    if (spriteKey.includes('yurt')) return 'YURT_E';
-    if (spriteKey.includes('hut')) return 'HUT_A';
-    if (spriteKey.includes('tent')) return 'GREEK_WAR_TENT';
+    if (up.includes('YURT')) return 'YURT_E';
+    if (up.includes('AHUT') || up.includes('HUT')) return 'HUT_A';
+    if (up.includes('TENT')) return 'GREEK_WAR_TENT';
     switch (kind) {
         case 'CASTLE': return `${style}_CASTLE`;
-        case 'TOWER': return `${style}_TOWER_AGE3`;
+        case 'KEEP':
+        case 'BOMBARD_TOWER':
+            return `${style}_TOWER_AGE4`;
+        case 'GUARD_TOWER':
+            return `${style}_TOWER_AGE3`;
+        case 'TOWER':
+            return `${style}_TOWER_AGE2`;
         case 'OUTPOST': return 'OUTPOST';
         case 'TOWN_CENTER': return `${style}_TOWN_CENTER_AGE3`;
         case 'BARRACKS': return `${style}_BARRACKS_AGE3`;
@@ -232,61 +328,58 @@ function resolveDestrFamilyName(spriteKey: string, kind: string, fallbackStyle: 
 }
 
 /** 识别普通可攻击建筑的类别与默认占地半径（格） */
-function classifyDeBuilding(uid: number, name: string, spriteKey: string): { kind: string; footprint: number; shootCapable: boolean } | null {
-    const up = (name || '').toUpperCase();
-    const sp = (spriteKey || '').toLowerCase();
+function classifyDeBuilding(uid: number, unitCode: string): { kind: string; footprint: number; shootCapable: boolean } | null {
+    const up = (unitCode || '').toUpperCase();
 
-    if (TC_MAIN_IDS.has(uid) || up.startsWith('TWNC') || sp.includes('town_center')) {
+    if (TC_MAIN_IDS.has(uid) || up === 'RTWC' || up.startsWith('TWNC') || up.startsWith('SETTL')) {
         return { kind: 'TOWN_CENTER', footprint: 1.8, shootCapable: true };
     }
-    if (uid === 12 || uid === 498 || up.startsWith('BRKS') || sp.includes('barracks')) {
+    if (uid === 12 || uid === 498 || up.startsWith('BARRACKS') || up.startsWith('BRKS')) {
         return { kind: 'BARRACKS', footprint: 1.4, shootCapable: true };
     }
-    if (uid === 87 || up.startsWith('ARRG') || sp.includes('archery_range')) {
+    if (uid === 87 || up.startsWith('ARRG')) {
         return { kind: 'ARCHERY_RANGE', footprint: 1.4, shootCapable: true };
     }
-    if (uid === 101 || up.startsWith('STBL') || sp.includes('stable')) {
+    if (uid === 101 || up.startsWith('STBL')) {
         return { kind: 'STABLE', footprint: 1.4, shootCapable: true };
     }
-    if (uid === 49 || up.startsWith('ulp') || up.startsWith('SGWS') || sp.includes('siege_workshop')) {
+    if (uid === 49 || up === 'SIWS' || up.startsWith('SGWS')) {
         return { kind: 'SIEGE_WORKSHOP', footprint: 1.4, shootCapable: true };
     }
-    if (uid === 103 || up.startsWith('BLAC') || sp.includes('blacksmith')) {
+    if (uid === 103 || up.startsWith('BLAC')) {
         return { kind: 'BLACKSMITH', footprint: 1.3, shootCapable: true };
     }
-    if (uid === 84 || uid === 110 || uid === 45 || uid === 805 || uid === 1189 || uid === 1754 ||
-        up.startsWith('MRKT') || up.startsWith('DOCK') || sp.includes('market') || sp.includes('dock') || sp.includes('trade_workshop') || sp.includes('caravanserai')) {
+    if (uid === 84 || uid === 110 || uid === 45 || uid === 805 || uid === 1021 || uid === 1189 || uid === 1754 ||
+        up.startsWith('MRKT') || up.startsWith('DOCK') || up === 'SDOC' || up === 'HARBOR' || up === 'CARAVANSERAI' || up === 'FEITO' || up === 'TDWS') {
         return { kind: 'MARKET', footprint: 1.5, shootCapable: true };
     }
-    if (uid === 104 || uid === 31 || uid === 445 || uid === 655 || uid === 872 || uid === 1216 || uid === 1264 || uid === 1712 ||
-        up.startsWith('MNST') || sp.includes('monastery') || sp.includes('church') || sp.includes('mosque') || sp.includes('pagoda') || sp.includes('temple') || sp.includes('shrine') || sp.includes('cathedral')) {
+    if (uid === 104 || uid === 31 || uid === 445 || uid === 655 || uid === 872 || uid === 1191 || uid === 1201 || uid === 1202 || uid === 1203 ||
+        uid === 1216 || uid === 1264 || uid === 1562 || uid === 1563 || uid === 1567 || uid === 1712 || uid === 1778 ||
+        up.startsWith('CRCH') || up.startsWith('MNST') || up === 'CATH' || up === 'MSQUE' || up === 'QCAT' ||
+        up.startsWith('PAGODA') || up.startsWith('SHRINE') || up.startsWith('STUPA') || up === 'SASTUPA' || up === 'REKHADEUL') {
         return { kind: 'MONASTERY', footprint: 1.4, shootCapable: true };
     }
-    if (uid === 209 || uid === 599 || up.startsWith('UNIV') || sp.includes('university')) {
+    if (uid === 209 || uid === 599 || up.startsWith('UNIV') || up === 'SPECR') {
         return { kind: 'UNIVERSITY', footprint: 1.5, shootCapable: true };
     }
     if (uid === 276 || uid === 251 || uid === 263 || uid === 689 || uid === 690 || uid === 696 || uid === 899 || uid === 1369 || uid === 1622 ||
-        up.startsWith('WOND') || sp.includes('wonder') || sp.includes('pyramid') || sp.includes('amphitheatre') || sp.includes('colosseum') || sp.includes('monument') || sp.includes('palace')) {
+        up.startsWith('WNDR') || up.startsWith('WOND') || up === 'AMPHI' || up === 'COLOSS' || up === 'HPYR' || up === 'HDOR' || up === 'HGPR' || up === 'ARCHCON') {
         return { kind: 'WONDER', footprint: 2.0, shootCapable: true };
     }
-    if (uid === 68 || uid === 130 || uid === 562 || uid === 584 || uid === 1081 || uid === 1711 || uid === 1734 ||
-        up.startsWith('MILL') || sp.includes('mill') || sp.includes('lumber_camp') || sp.includes('mining_camp') || sp.includes('folwark') || sp.includes('pasture')) {
+    if (uid === 68 || uid === 130 || uid === 562 || uid === 584 || uid === 1081 || uid === 1089 || uid === 1711 || uid === 1734 ||
+        up.startsWith('MILL') || up === 'SMIL' || up === 'MINE' || up === 'STORAGE' || up === 'GRANARY' || up.startsWith('FOLWARK')) {
         return { kind: 'MILL', footprint: 1.1, shootCapable: true };
     }
-    if (uid === 598 || up.startsWith('OUTP') || sp.includes('outpost')) {
+    if (uid === 598 || up === 'WCTWX' || up.startsWith('OUTP')) {
         return { kind: 'OUTPOST', footprint: 0.9, shootCapable: false };
     }
     if (uid === 70 || uid === 191 || uid === 463 || uid === 464 ||
         (uid >= 624 && uid <= 626) || (uid >= 712 && uid <= 719) ||
         (uid >= 1082 && uid <= 1088) || (uid >= 1097 && uid <= 1101) ||
         (uid >= 1196 && uid <= 1200) || (uid >= 1832 && uid <= 1835) ||
-        up.startsWith('HOUS') || up.startsWith('YURT') || sp.includes('house') || sp.includes('yurt') || sp.includes('hut') || sp.includes('tent') || sp.includes('pavilion')) {
-        const isCampTent = sp.includes('tent') || sp.includes('yurt') || sp.includes('hut');
+        up.startsWith('HOUS') || up.startsWith('YURT') || up.startsWith('AHUT') || up.startsWith('TENT') || up.startsWith('ARMTENT') || up.startsWith('PAV')) {
+        const isCampTent = up.includes('TENT') || up.startsWith('YURT') || up.startsWith('AHUT');
         return { kind: 'HOUSE', footprint: 1.0, shootCapable: !isCampTent };
-    }
-    // 兜底：凡是 b_ 开头且不是废墟/桥梁/墙门的建筑精灵，一律归入可攻击建筑
-    if (sp.startsWith('b_') && !sp.includes('rubble') && !sp.includes('wall') && !sp.includes('gate') && !sp.includes('bridge')) {
-        return { kind: 'HOUSE', footprint: 1.1, shootCapable: true };
     }
     return null;
 }
@@ -342,31 +435,36 @@ export function populateDeCampaignObjects(
     const tcAnnexes: Array<{ ob: any; pos: { x: number; y: number }; sp: DecorSprite }> = [];
 
     for (const ob of rawObjects) {
-        if (!ob || !ob.sprite) continue;
-        const uid: number = ob.unit;
+        if (!ob || !ob.name) continue;
+        const uid: number = ob.id;
         if (GATE_POST_IDS.has(uid)) {
+            markDeCampaignSpriteHighPriority(ob.name);
             gatePosts.push({ ob, pos: toScreen(ob.x, ob.y), used: false });
         }
     }
 
     for (const ob of rawObjects) {
-        if (!ob || !ob.sprite) continue;
-        const uid: number = ob.unit;
-        const name: string = ob.name || '';
-        const spriteKey: string = ob.sprite;
-        const pos = toScreen(ob.x, ob.y);
+        if (!ob || !ob.name) continue;
+        const spriteKey: string = ob.name;
+        const uid: number = ob.id;
+        const unitCode: string = ob.unit || '';
+
+        // 跳过场景预设的移动士兵/村民/船只/攻城车/动物/鱼群
+        if (SKIP_MOBILE_UNIT_IDS.has(uid) || unitCode.endsWith('_D')) continue;
 
         // 城门立柱由城门主件统一挂载进 extraSprites，此处不单独重复落盘
         if (GATE_POST_IDS.has(uid)) continue;
 
+        const pos = toScreen(ob.x, ob.y);
         const assetKey = `DECAMP:${spriteKey}`;
 
         // 1. 桥梁：地面层装饰（z = -5，无阻挡、不可摧毁）
-        if (BRIDGE_IDS.has(uid) || spriteKey.includes('bridge')) {
+        if (BRIDGE_IDS.has(uid) || unitCode.startsWith('BG') || unitCode.startsWith('Bridge')) {
+            markDeCampaignSpriteHighPriority(spriteKey);
             layer.ensureNatureAsset(assetKey);
             layer.decorSprites.push({
                 asset: assetKey,
-                frame: ob.frame ?? 0,
+                frame: 0,
                 x: pos.x,
                 y: pos.y,
                 flip: false,
@@ -381,13 +479,14 @@ export function populateDeCampaignObjects(
         }
 
         // 2. 城门主件：注册进 wallGates (STONE_GATE, f = 1)，附带两侧门柱与 6 点跨度碰撞体
-        if ((GATE_MAIN_IDS.has(uid) || spriteKey.includes('gate')) && !ob.annex) {
+        if (GATE_MAIN_IDS.has(uid) && !ob.annex) {
+            markDeCampaignSpriteHighPriority(spriteKey);
             layer.ensureNatureAsset(assetKey);
-            const isWoodGate = spriteKey.includes('palisade') || spriteKey.includes('fence');
+            const isWoodGate = (uid >= 789 && uid <= 803) || unitCode.startsWith('PGT');
             const st = isWoodGate ? WALL_GATE_STATS.WOOD_WALL : WALL_GATE_STATS.STONE_GATE;
             const mainSp: DecorSprite = {
                 asset: assetKey,
-                frame: ob.frame ?? 0,
+                frame: 0,
                 x: pos.x,
                 y: pos.y,
                 flip: false,
@@ -406,11 +505,11 @@ export function populateDeCampaignObjects(
                 if (gp.used) continue;
                 if (Math.hypot(gp.pos.x - pos.x, gp.pos.y - pos.y) <= 260) {
                     gp.used = true;
-                    const postAsset = `DECAMP:${gp.ob.sprite}`;
+                    const postAsset = `DECAMP:${gp.ob.name}`;
                     layer.ensureNatureAsset(postAsset);
                     const postSp: DecorSprite = {
                         asset: postAsset,
-                        frame: gp.ob.frame ?? 0,
+                        frame: 0,
                         x: gp.pos.x,
                         y: gp.pos.y,
                         flip: false,
@@ -427,7 +526,7 @@ export function populateDeCampaignObjects(
             }
 
             // 沿城门轴向铺 6 点隐形碰撞体封死城门跨度
-            const isNE = spriteKey.includes('_ne') || uid === 63 || uid === 64 || uid === 85 || uid === 659 || uid === 667 ||
+            const isNE = uid === 63 || uid === 64 || uid === 85 || uid === 659 || uid === 667 ||
                 uid === 789 || uid === 797 || uid === 1379 || uid === 1387 || uid === 1579;
             const dSign = isNE ? -1 : 1;
             for (let step = -3; step <= 3; step++) {
@@ -476,11 +575,12 @@ export function populateDeCampaignObjects(
             continue;
         }
 
-        // 3. 城墙 / 木栅栏 / 海墙：注册进 wallGates (f = 1)
-        if (WALL_IDS.has(uid) || (spriteKey.includes('wall') && !spriteKey.includes('rubble'))) {
+        // 3. 城墙 / 木栅栏 / 海墙 / 拒马：注册进 wallGates (f = 1)
+        if (WALL_IDS.has(uid)) {
+            markDeCampaignSpriteHighPriority(spriteKey);
             layer.ensureNatureAsset(assetKey);
-            const isWood = uid === 72 || uid === 119 || spriteKey.includes('palisade') || spriteKey.includes('fence');
-            const isFortified = uid === 155 || uid === 370 || spriteKey.includes('fortified');
+            const isWood = uid === 72 || uid === 119 || uid === 1062 || uid === 1090 || (uid >= 1218 && uid <= 1220);
+            const isFortified = uid === 155 || uid === 370 || uid === 788;
             const wKey: 'WOOD_WALL' | 'STONE_WALL' | 'FORTIFIED_WALL' = isWood
                 ? 'WOOD_WALL'
                 : isFortified
@@ -489,7 +589,7 @@ export function populateDeCampaignObjects(
             const st = WALL_GATE_STATS[wKey];
             const wallSp: DecorSprite = {
                 asset: assetKey,
-                frame: ob.frame ?? 0,
+                frame: 0,
                 x: pos.x,
                 y: pos.y,
                 flip: false,
@@ -528,18 +628,19 @@ export function populateDeCampaignObjects(
             continue;
         }
 
-        // 4. 箭塔 / 火炮塔 / 哨塔：注册进 arrowTowers + defBuildings (f = 1)
-        if (TOWER_IDS.has(uid) || (spriteKey.includes('tower') && !spriteKey.includes('siege_tower') && !spriteKey.includes('bell_tower'))) {
+        // 4. 箭塔 / 火炮塔 / 哨塔 / 顿존：注册进 arrowTowers + trackCityBuilding (f = 1)
+        if (TOWER_IDS.has(uid)) {
+            markDeCampaignSpriteHighPriority(spriteKey);
             layer.ensureNatureAsset(assetKey);
             const towerSp: DecorSprite = {
                 asset: assetKey,
-                frame: ob.frame ?? 0,
+                frame: 0,
                 x: pos.x,
                 y: pos.y,
                 flip: false,
                 layer: 'world',
                 z: 1,
-                obstruction: { x: 1.0, y: 1.0 },
+                obstruction: { x: 0.95, y: 0.95 },
                 obstructionContactSec: 0,
                 obstructionTouched: false,
                 obstructionDisabled: false,
@@ -547,8 +648,7 @@ export function populateDeCampaignObjects(
             layer.decorSprites.push(towerSp);
 
             const towerKind = uid === 236 ? 'BOMBARD_TOWER' : uid === 235 ? 'KEEP' : uid === 234 ? 'GUARD_TOWER' : 'TOWER';
-            const famName = resolveDestrFamilyName(spriteKey, 'TOWER', defStyle);
-            layer.ensureDestrAssetsFor(famName);
+            const famName = resolveDestrFamilyName(unitCode, towerKind, defStyle);
             const towerProfile = uid === 236
                 ? { range: 400, reload: 3.0, atk: 12 }
                 : uid === 235
@@ -568,30 +668,33 @@ export function populateDeCampaignObjects(
                 down: false,
             };
             layer.arrowTowers.push(towerObj);
-            layer.registerDefBuilding(towerSp, famName, towerObj, towerKind, 1);
+            layer.trackCityBuilding(towerSp, 'TOWER', famName);
+            const lastDef = layer.defBuildings[layer.defBuildings.length - 1];
+            if (lastDef && lastDef.sprite === towerSp && lastDef.bld) {
+                lastDef.bld.tower = towerObj;
+            }
             continue;
         }
 
         // 5. 城堡 / 堡垒：注册进 castleTowers + trackCityBuilding (f = 1)
-        if (CASTLE_IDS.has(uid) || spriteKey.includes('castle') || spriteKey.includes('krepost') || spriteKey.includes('donjon')) {
+        if (CASTLE_IDS.has(uid)) {
+            markDeCampaignSpriteHighPriority(spriteKey);
             layer.ensureNatureAsset(assetKey);
             const castleSp: DecorSprite = {
                 asset: assetKey,
-                frame: ob.frame ?? 0,
+                frame: 0,
                 x: pos.x,
                 y: pos.y,
                 flip: false,
                 layer: 'world',
                 z: 2,
-                obstruction: { x: 2.0, y: 2.0 },
                 obstructionContactSec: 0,
                 obstructionTouched: false,
-                obstructionDisabled: false,
+                obstructionDisabled: true,
             };
             layer.decorSprites.push(castleSp);
 
-            const famName = resolveDestrFamilyName(spriteKey, 'CASTLE', defStyle);
-            layer.ensureDestrAssetsFor(famName);
+            const famName = resolveDestrFamilyName(unitCode, 'CASTLE', defStyle);
             layer.castleTowers.push({
                 sprite: castleSp,
                 x: pos.x,
@@ -607,12 +710,13 @@ export function populateDeCampaignObjects(
             continue;
         }
 
-        // 6. 城镇中心附属件 (618..621)：先落盘为世界精灵，随后绑定到最近的城镇中心主件上同步坍塌
+        // 6. 城镇中心附属件 (618..621, 1890)：先落盘为世界精灵，随后绑定到最近的城镇中心主件上同步坍塌
         if (TC_ANNEX_IDS.has(uid) || ob.annex) {
+            markDeCampaignSpriteHighPriority(spriteKey);
             layer.ensureNatureAsset(assetKey);
             const annexSp: DecorSprite = {
                 asset: assetKey,
-                frame: ob.frame ?? 0,
+                frame: 0,
                 x: pos.x,
                 y: pos.y,
                 flip: false,
@@ -628,73 +732,50 @@ export function populateDeCampaignObjects(
         }
 
         // 7. 其它城内/营地建筑（城镇中心、兵营、靶场、马厩、攻城厂、市场、修道院、大学、奇观、民居、蒙古包、军帐、哨站）
-        const bldInfo = classifyDeBuilding(uid, name, spriteKey);
+        const bldInfo = classifyDeBuilding(uid, unitCode);
         if (bldInfo) {
+            markDeCampaignSpriteHighPriority(spriteKey);
             layer.ensureNatureAsset(assetKey);
             const bldSp: DecorSprite = {
                 asset: assetKey,
-                frame: ob.frame ?? 0,
+                frame: 0,
                 x: pos.x,
                 y: pos.y,
                 flip: false,
                 layer: 'world',
                 z: bldInfo.kind === 'WONDER' ? 2 : 1,
-                obstruction: { x: bldInfo.footprint, y: bldInfo.footprint },
                 obstructionContactSec: 0,
                 obstructionTouched: false,
-                obstructionDisabled: false,
+                obstructionDisabled: true,
             };
             layer.decorSprites.push(bldSp);
 
-            const famName = resolveDestrFamilyName(spriteKey, bldInfo.kind, defStyle);
-            layer.ensureDestrAssetsFor(famName);
+            const famName = resolveDestrFamilyName(unitCode, bldInfo.kind, defStyle);
 
             if (isInsideAttackerCamp(pos.x, pos.y)) {
                 layer.registerDefBuilding(bldSp, famName, undefined, bldInfo.kind, 0);
+                layer.ensureDestrAssetsFor(famName);
             } else if (bldInfo.shootCapable) {
                 layer.trackCityBuilding(bldSp, bldInfo.kind, famName);
             } else {
                 layer.registerDefBuilding(bldSp, famName, undefined, bldInfo.kind, 1);
+                layer.ensureDestrAssetsFor(famName);
             }
             continue;
         }
 
-        // 8. 树木 / 岩石 / 自然点缀 / 废墟道具
-        const nat = resolveNatureSprite(name);
-        if (nat) {
-            const [type, dir] = nat;
-            if (type === 'NATURE') {
-                const natAsset = dir;
-                layer.ensureNatureAsset(natAsset);
-                const isTree = !dir.startsWith('GRASS') && !dir.startsWith('PLANT') && !dir.startsWith('FLOWER') &&
-                    !dir.startsWith('FERN') && !dir.startsWith('UNDERBRUSH') && !dir.startsWith('WEED') && !dir.startsWith('REEDS');
-                layer.decorSprites.push({
-                    asset: natAsset,
-                    frame: ob.frame ?? 0,
-                    x: pos.x,
-                    y: pos.y,
-                    flip: false,
-                    layer: 'world',
-                    z: isTree ? 0 : -5,
-                    indestructible: true,
-                    obstruction: isTree ? { x: 0.45, y: 0.45 } : undefined,
-                    obstructionContactSec: 0,
-                    obstructionTouched: false,
-                    obstructionDisabled: !isTree,
-                });
-                continue;
-            }
+        // 8. 其余场景物件（树木、岩石、悬崖、金矿、石矿、灌木、草花、旗帜、雕像、火炬、废墟、路牌等）
+        // 直接使用 DE 原版提取的 DECAMP 精灵按精确锚点与朝向渲染
+        if (unitCode.startsWith('FLAG') || unitCode.startsWith('TORCH') || unitCode.includes('Statue') || unitCode.includes('STATUE') || unitCode.includes('RUIN') || unitCode.includes('PAIFANG')) {
+            markDeCampaignSpriteHighPriority(spriteKey);
         }
-
-        // 其余场景道具（旗帜、雕像、火炬、路牌、废墟、帐篷饰物等）直接使用 DECAMP 精灵渲染
         layer.ensureNatureAsset(assetKey);
         const isGroundFlat = RUBBLE_OR_DECOR_SKIP_OBSTRUCTION.has(uid) ||
-            spriteKey.includes('rubble') || spriteKey.includes('rug') || spriteKey.includes('crater') ||
-            spriteKey.includes('skeleton') || spriteKey.includes('grave') || spriteKey.includes('plant') ||
-            spriteKey.includes('grass') || spriteKey.includes('flower') || spriteKey.includes('bush');
+            unitCode.includes('RUBL') || unitCode.includes('Grass') || unitCode.includes('PLANT') ||
+            unitCode.includes('Plan ') || unitCode.includes('Plant');
         layer.decorSprites.push({
             asset: assetKey,
-            frame: ob.frame ?? 0,
+            frame: 0,
             x: pos.x,
             y: pos.y,
             flip: false,
@@ -707,14 +788,14 @@ export function populateDeCampaignObjects(
         });
     }
 
-    // 将未配对的城门立柱作为普通装饰落盘，避免缺失门柱画面
+    // 将未配对的城门立柱作为普通城墙阻挡落盘，避免缺失门柱画面
     for (const gp of gatePosts) {
         if (gp.used) continue;
-        const postAsset = `DECAMP:${gp.ob.sprite}`;
+        const postAsset = `DECAMP:${gp.ob.name}`;
         layer.ensureNatureAsset(postAsset);
         layer.decorSprites.push({
             asset: postAsset,
-            frame: gp.ob.frame ?? 0,
+            frame: 0,
             x: gp.pos.x,
             y: gp.pos.y,
             flip: false,
@@ -729,7 +810,7 @@ export function populateDeCampaignObjects(
 
     // 将城镇中心附属件绑定到最近的城镇中心主件上，主件坍塌时同步隐藏附属件
     if (tcAnnexes.length > 0) {
-        const tcBuildings = layer.defBuildings.filter((b) => b.key === 'TOWN_CENTER' || b.bld?.name?.includes('TOWN_CENTER'));
+        const tcBuildings = layer.defBuildings.filter((b) => b.key.includes('TOWN_CENTER') || b.bld?.name?.includes('TOWN_CENTER'));
         for (const ax of tcAnnexes) {
             let bestTc: any = null;
             let bestDist = 260;
