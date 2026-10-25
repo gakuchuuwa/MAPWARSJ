@@ -2572,5 +2572,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代安南军团",
         legionType: "sub",
     },
+    "jiaohuangguo": {
+        legionName: "城堡时代教廷军团",
+        legionType: "sub",
+    },
+    "yalan": {
+        legionName: "古典时代近东军团",
+        legionType: "sub",
+    },
 };
 

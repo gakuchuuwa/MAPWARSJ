@@ -32,5 +32,6 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     //    它只服务前321「赫勒斯滂战役」，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
     maqidun: { name: '伙伴骑兵', tier: 0 },
     pisa: { name: '皮萨僭主卫', tier: 4 },   // 皮萨提斯·潘塔琉斯：皮萨提斯·潘塔琉斯：皮萨僭主的卫队，与伊利斯争夺奥林匹亚
-    antigonid: { name: '安提柯卫队', tier: 3 },   // 凯莱奈·安提柯一世：凯莱奈·安提柯：独眼安提柯的马其顿老兵与亚洲诸军，前317年帕拉塔克奈之役
+    antigonid: { name: '安提柯卫队', tier: 3 },
+    sesali: { name: '色萨利骑', tier: 3 },   // 佩利纳·伊阿宋：帖撒利（色萨利）名骑，前 4 世纪希腊最佳骑兵之一（Xen. Hell. VI.1.19）
 };

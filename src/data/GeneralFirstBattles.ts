@@ -10636,30 +10636,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #FB-唐 程名振 (645) — 沙卑城之战（平壤道舟师袭辽南，夜至西门先登；敌将史失其名）
-    jilizhou_chengmingzhen: {
-        generalId: 'jilizhou_chengmingzhen',
-        battleName: '沙卑城之战',
-        battleYear: 645,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '卑沙城',
-        targetCityId: 'city_beishacheng',
-        targetLat: 39.444692,
-        targetLng: 121.959229,
-        myTroops: 20000,
-        enemyFactionId: 'gaogouli',
-        enemyFactionName: '高句丽',
-        // 🔴 enemyGeneralId 缺：两《唐书》《通鉴》《三国史记》皆不载卑沙城守将姓名（史实缺口，不拟名）
-        enemyTroops: 8000,       // 获男女八千口
-        introLines: [
-            { speaker: 'general', text: '高句丽卑沙城四面悬绝，只有西门可上，他仗着这份险要便不设备。张总管舟师已自东莱渡海，某今夜引兵直抵西门——' },
-            { speaker: 'player', text: '愿随程总管夜取卑沙城！' },
-            { speaker: 'general', text: '营州儿郎惯走辽东山险，待月黑衔枚而上，先登者记首功；独山那边的高丽阵列，也一并撞碎他。' },
-            { speaker: 'player', text: '得令！先登者赏！' },
-        ],
-    },
-
     // #FB-唐 王师范 (903) — 石楼之战（登莱兵＋淮南七千合击汴军，青州将张士枭斩朱友宁；《通鉴·卷二六四》）
     lai_wangshifan: {
         generalId: 'lai_wangshifan',
@@ -10684,6 +10660,29 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
+
+    // #FB-唐 程名振 (645) — 622 洺水之战（原写沙卑城 645：守将史失其名，按四闸「对阵有名」换锚洺水；2026-10-25）
+    jilizhou_chengmingzhen: {
+        generalId: 'jilizhou_chengmingzhen',
+        // 🔴 [2026-10-25 按《MAPWAR 武将分级标准》四闸] ④对阵有名：沙卑城守将史失其名→不能作代表战役；改锚 622 洺水之战——程名振随李世民征刘黑闼，受命领千余袭其粮道、尽毁舟车粮草（《旧唐书·程名振传》），敌帅刘黑闼有名。
+        battleName: '洺水之战',
+        battleYear: 622,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '洺水',
+        targetCityId: 'city_handan',
+        targetLat: 36.68,
+        targetLng: 114.85,
+        myTroops: 30000,
+        enemyFactionId: 'handong',
+        enemyFactionName: '汉东',
+        enemyGeneralId: 'handong_liuheita',
+        enemyTroops: 50000,
+        introLines: [
+            { speaker: 'general', text: '刘黑闼复据洺州，与秦王隔洺水对垒，靠冀、贝、沧、瀛水陆运粮。我本河北人，路熟——今夜领千余骑去，烧尽他的舟车粮草，看他还拿什么撑！' },
+            { speaker: 'player', text: '愿随程总管夜袭刘军粮道，断其粮草！' },
+        ],
+    },
 };
 
 export function getGeneralFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {

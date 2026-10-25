@@ -105,7 +105,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_bomilcar': 'BERBER',   // 布匿｜波米尔卡｜据点 迦太基
     'bfe_callias': 'GREECE',   // 波奥蒂亚｜卡利斯｜据点 底比斯
     'bfe_chanca_chief': 'INCA',   // 昌卡｜阿斯塔瓦兰卡｜据点 安达瓦伊拉斯
-    'bfe_chen_dong': 'CENTRAL',   // 宋国｜陈东｜据点 开封
+    'bfe_chen_dong': 'JIANGNAN',   // 海寇｜陈东｜据点 上海（2026-10-25 按史：明嘉靖倭寇陈东盘踞柘林/松江府；原误挂开封·CENTRAL）
     'bfe_cimmerian_king': 'CUMAN',   // 库曼｜图格达梅｜据点 奥列什基
     'bfe_cleombrotus': 'SPARTANS',   // 拉哥尼亚｜克里奥姆布罗图斯｜据点 斯巴达
     'bfe_coyett': 'JIANGNAN',   // 荷兰东印度公司｜揆一｜据点 承天
@@ -291,7 +291,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'dai_d_shijingtang': 'WEI',   // 后晋｜石敬瑭｜据点 晋阳
     'dai_daoyingmeng': 'BURMESE',   // 傣族｜刀应勐｜据点 勐泐城
     'dajin_wanyanaguda': 'NORTHEAST',   // 大金｜完颜阿骨打｜据点 会宁府
-    'dajin_wanyanchengyu': 'NORTHEAST',   // 大金｜完颜承裕｜据点 会宁府（金上京；2026-10-24 由宣化 WEI 迁回）
+    'dajin_wanyanchengyu': 'CENTRAL',   // 大金｜完颜承裕｜据点 天水（秦州；2026-10-25 由会宁府迁入，通远军巩州无据点取最近同文化）
     'dajin_wanyanheda': 'NORTHEAST',   // 大金｜完颜合达｜据点 会宁府（金上京；2026-10-24 由潼关 CENTRAL 迁回）
     'dali_duansiping': 'BASHU',   // 大理｜段思平｜据点 羊苴咩
     'daliushi_iii': 'PERSIAN',   // 阿契美尼德｜大流士三世｜据点 波斯波利斯
@@ -405,7 +405,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gaya_jinshoulu': 'KOREA',   // 伽倻｜金首露｜据点 金海
     'gelujiya_tamaer': 'GEORGIANS',   // 格鲁吉亚｜塔玛尔｜据点 第比利斯
     'geluolu_chisipijia': 'CENTRAL_ASIA',   // 葛逻禄｜炽俟毗伽｜据点 弓月城
-    'gen_abd_al_rahman_iii': 'ORIE',   // 安达卢西亚｜阿卜杜拉｜据点 科尔多瓦
+    'gen_abd_al_rahman_iii': 'ORIE',   // 安达卢西亚｜拉赫曼三世（阿卜杜拉·拉赫曼三世）｜据点 科尔多瓦
     'gen_abgar': 'ORIE',   // 奥斯若恩｜阿布加尔｜据点 埃德萨
     'gen_abu_yahya': 'BERBER',   // 加泰罗尼亚｜阿布·叶海亚｜据点 拉巴特
     'gen_adityawarman': 'MALAY',   // 米南加保｜阿迪蒂亚｜据点 帕加鲁荣
@@ -754,7 +754,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'heishui_nishuli': 'NORTHEAST',   // 靺鞨｜倪属利稽｜据点 拉哈苏苏
     'hejian_gongsunzan': 'WEI',   // 幽州｜公孙瓒｜据点 北京
     'hekaniya_artabazos': 'PERSIAN',   // 赫卡尼亚｜阿尔塔巴佐斯｜据点 兹拉卡塔
-    'helian_helianbobo': 'XIANBEI',   // 赫连｜赫连勃勃｜据点 统万城
+    'helian_helianbobo': 'XIANBEI',   // 赫连｜赫连勃勃｜据点 统万城（2026-10-25 统万城改漠南，兜底同步）
     'heng_hetengjiao': 'JIANGNAN',   // 唐国｜何腾蛟｜据点 临烝
     'heng1_yangye': 'WEI',   // 宋国｜杨业｜据点 雁门关
     'hepan_gaoxianzhi': 'WESTERN',   // 朅盘陀｜高仙芝｜据点 伊逻卢
@@ -853,7 +853,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'kamanniya_zongdu': 'PERSIAN',   // 卡曼尼亚行省｜阿斯普兰斯｜据点 卡曼尼亚
     'kanan_azemier': 'ORIE',   // 迦南｜阿泽米尔｜据点 推罗
     'kanata_lamalaya': 'INDIA',   // 卡纳塔｜拉玛拉亚｜据点 亨比
-    'kang_liangshidou': 'XIANBEI',   // 大梁｜梁师都｜据点 统万城
+    'kang_liangshidou': 'XIANBEI',   // 大梁｜梁师都｜据点 统万城（2026-10-25 统万城改漠南，兜底同步）
     'kangba_suonuomugunbu': 'TIBET',   // 甘丹｜索诺木衮布｜据点 理塘宗
     'kangju_chebishi': 'WESTERN',   // 康居｜车鼻施｜据点 康卡
     'kapaduoxiya_sabiktas': 'ORIE',   // 卡帕多细亚｜萨比克塔斯｜据点 提亚纳
@@ -1008,7 +1008,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'mu_lijiang_muzeng': 'BASHU',   // 大明｜木增｜据点 大研
     'muer_mujier': 'PERSIAN',   // 呼罗珊｜穆吉尔｜据点 马尔夫鲁德
     'muertan_naxierding': 'PURU',   // 木尔坦｜纳西尔丁｜据点 乌奇
-    'muong_shencongyue': 'VIETNAMESE',   // 大越｜申从岳｜据点 和平
     'murong_murongke': 'XIANBEI',   // 慕容｜慕容恪｜据点 棘城
     'mushi_muchong': 'CENTRAL',   // 齐国｜公孙五楼｜据点 临淄
     'muwaxide_yakubu': 'BERBER',   // 穆瓦希德｜雅库布·曼苏尔｜据点 拉巴特
@@ -1269,7 +1268,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'wei2_hunjian': 'CENTRAL',   // 唐国｜浑瑊｜据点 奉天
     'weihaiwei_sudingfang': 'WEI',   // 唐国｜苏定方｜据点 文登
     'weili_weilifan': 'WESTERN',   // 尉犁｜尉犁泛｜据点 库尔勒
-    'weiming_weiminglinggong': 'XIANBEI',   // 汉国｜嵬名山｜据点 鸡鹿塞
+    'weiming_weiminglinggong': 'KHITAN',   // 汉国｜嵬名山｜据点 鸡鹿塞
     'weitou_douti': 'WESTERN',   // 尉头｜兜题｜据点 盘橐
     'weiwuer_yusubu': 'WESTERN',   // 维吾尔｜玉素布｜据点 玉尔滚
     'weiyuan_d_niangengyao': 'KHITAN',   // 大清｜年羹尧｜据点 青唐城
@@ -1327,7 +1326,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiaobolu_meijinmang': 'TIBET',   // 勃律｜没谨忙｜据点 孽多
     'xiaofulijiya_aerxitis': 'PERSIAN',   // 小弗里吉亚｜阿尔西提斯｜据点 达斯基利翁
     'xiayang_d_dengyu': 'CENTRAL',   // 汉国｜邓禹｜据点 洛阳
-    'xiazhou_lijiqian': 'XIANBEI',   // 大夏｜李继迁｜据点 统万城
+    'xiazhou_lijiqian': 'KHITAN',   // 大夏｜李继迁｜据点 统万城
     'xibanya_pisaluo': 'SPANISH',   // 西班牙｜皮萨罗｜据点 利马
     'xibo_d_tubote': 'CENTRAL_ASIA',   // 锡伯｜图伯特｜据点 固尔札
     'xibolai_dawei': 'ORIE',   // 希伯来｜大卫｜据点 耶路撒冷
@@ -1407,7 +1406,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yehe_jintaiji': 'NORTHEAST',   // 叶赫｜金台吉｜据点 八面关
     'yel_yelvxiuge': 'XIANBEI',   // 大辽｜耶律休哥｜据点 降圣
     'yelang_duotong': 'BASHU',   // 夜郎｜多同｜据点 普定
-    'yeli_yeliwangrong': 'XIANBEI',   // 大夏｜野利旺荣｜据点 克夷门
+    'yeli_yeliwangrong': 'KHITAN',   // 大夏｜野利旺荣｜据点 克夷门
     'yelusalengwg_amalric': 'ORIE',   // 耶路撒冷王国｜阿马尔里克｜据点 耶路撒冷
     'yeren_nvzhen_boke': 'NORTHEAST',   // 萨哈连｜博克｜据点 瑷珲
     'yezongliu_yezongliu': 'JIANGNAN',   // 唐国｜叶宗留｜据点 丽水
@@ -1496,7 +1495,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zhuqian_shaoerzineng': 'JAPAN',   // 少弐｜少贰资能｜据点 太宰府
     'zhuxie_zhuxiechixin': 'XIANBEI',   // 沙陀｜朱邪赤心｜据点 光禄城
     'zi_changhong': 'CENTRAL',   // 蜀国｜苌弘｜据点 洛阳
-    'zizhou_wangjian': 'BASHU',   // 前蜀｜王建｜据点 成都
+    'zizhou_wangjian': 'BASHU',   // 前蜀｜王建（前蜀高祖）｜据点 成都
     'zu_d_yuanchonghuan': 'WEI',   // 大明｜袁崇焕｜据点 宁远城（2026-10-25 宁远城按史改 WEI 河朔，随据点同步）
     'zubu_mogusi': 'MONGOL',   // 阻卜｜磨古斯｜据点 特尔浑
     'zuo_d_wufu': 'BASHU',   // 唐国｜吴复｜据点 清溪关

@@ -1009,7 +1009,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     qiong_rengui: { birth: -10, death: 55, kaoju: '推定' },  // 任贵
     daozhou_yangzaixing: { birth: 1104, death: 1140, kaoju: '推定' },  // 杨再兴
     guangping_ruanwenzhang: { birth: 1753, death: 1811, kaoju: '异说' },  // 阮文张
-    duanzhou_d_caojin: { birth: 1492, death: 1522, kaoju: '推定' },  // 曹觐
+    duanzhou_d_caojin: { birth: 1015, death: 1052, kaoju: '推定' },   // 曹觐：宋端州知州，皇祐四年（1052）侬智高之乱殉难（《宋史》/肇庆方志）；生年无载，按殉难时约四十岁推定。原 1492–1522 系误推  // 曹觐
     monong_anong: { birth: 1000, death: 1055, kaoju: '推定' },  // 阿侬
     basha_d_daogengmeng: { birth: 1745, death: 1798, kaoju: '推定' },  // 刀更孟
     leizhou_limao: { birth: 610, death: 675, kaoju: '推定' },  // 李茂
@@ -1152,7 +1152,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     zhe_d_zheyuqing: { birth: 958, death: 995, kaoju: '异说' },  // 折御卿
     ying_caojingzong: { birth: 457, death: 508 },  // 曹景宗
     kejia_wentianxiang: { birth: 1235, death: 1280, kaoju: '推定' },  // 黄凤
-    tingzhou_d_chenmin: { birth: 260, death: 307, kaoju: '推定' },  // 陈敏
+    tingzhou_d_chenmin: { birth: 1110, death: 1170, kaoju: '推定' },   // 陈敏：南宋殿前司「破敌军」统制、汀漳州巡检（《宋史·卷四〇二》），活跃绍兴—乾道；生卒无载，推定。原 260–307 是西晋陈敏的生卒  // 陈敏
     fu2_zhoudi: { birth: 515, death: 565, kaoju: '推定' },  // 周迪
     ouyang_ouyangwei: { birth: 498, death: 563 },  // 欧阳頠
     chu_d_lukang: { birth: 126, death: 195 },  // 陆康
@@ -1195,7 +1195,6 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     cen_d_cenmeng: { birth: 1489, death: 1526, kaoju: '推定' },  // 岑猛
     miao_amishi: { birth: 1405, death: 1460, kaoju: '推定' },  // 阿迷氏
     jiang_s_huanggai: { birth: 154, death: 215, kaoju: '推定' },  // 黄盖
-    muong_shencongyue: { birth: 1010, death: 1065, kaoju: '推定' },  // 申从岳
     panyao_pandaxiao: { birth: 1315, death: 1375, kaoju: '推定' },  // 盘大孝
     chen2_zhaofan: { birth: 165, death: 225, kaoju: '推定' },  // 赵范
     qian_songjingyang: { birth: 905, death: 965, kaoju: '推定' },  // 宋景阳
@@ -1610,6 +1609,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     bfe_aulax: { birth: 930, death: 970, kaoju: '推定' },  // 奥拉克斯：969 年安条克守将（哈姆丹王朝），城破降拜占庭
     feilisidin_geliya: { birth: -1050, death: -1000, kaoju: '推定' },  // 歌利亚：非利士迦特猛将（撒上17）
     haikou_maohaifeng: { birth: 1520, death: 1558, kaoju: '推定' },  // 毛海峰（王滶）：王直养子，1558 岑港败死
+    handong_liuheita: { birth: 580, death: 623, kaoju: '推定' },  // 刘黑闼：隋末河北群雄，623 被俘杀
 };
 
 /** 生年（未收录返回 null） */

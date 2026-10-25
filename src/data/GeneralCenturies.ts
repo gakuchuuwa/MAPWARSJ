@@ -14,6 +14,11 @@
  * 校验：node scripts/audit_general_centuries.cjs
  */
 export const GENERAL_CENTURIES: Record<string, number> = {
+    // ── 2026-10-25 归位/新增势力补世纪 ──
+    'aliya_muhammad_tahir': 9,   // 穆罕默德·塔希尔 · 阿拔斯呼罗珊总督（820–873）
+    'luoma_diguo_leo_ix': 11,     // 利奥九世 · 教皇（1049–1054，奇维塔泰之战）
+    'bfe2_rezin': -8,             // 利汛 · 亚兰（大马士革）王（前 8 世纪，前 732 亡）
+    'bfe3_46': -1,                // 维钦托利 · 高卢联军首领（前 82–前 46）
     'mozambique_ataide': 17,  // 阿泰德 · putaoya · 莫桑比克（1607/08 守城退荷兰）
     'luanda_novais': 16,      // 诺瓦伊斯 · putaoya · 罗安达（1576 建城、1586 守御）
     'capetown_riebeeck': 17,  // 扬·范·里贝克 · nidelan · 开普敦（1652 建城）
@@ -355,7 +360,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'sui_yangjian': 6,                                  // 杨坚 · sui · 汉东
     'sunwu_d_sunquan': 3,                               // 孙权 · sunwu_d · 武昌
     'taiping_shidakai': 19,                              // 石达开 · taiping · 金田村
-    'tingzhou_d_chenmin': 4,                            // 陈敏 · tingzhou_d · 瑞金
+    'tingzhou_d_chenmin': 12,                            // 陈敏 · tingzhou_d · 瑞金
     'wan_liuyuan': 12,                                   // 刘源 · wan · 皖口
     'wang_s_wanghua': 7,                                // 汪华 · wang_s · 黟城
     'wenzhou_zhangcong': 14,                             // 方国珍 · wenzhou · 永嘉
@@ -388,7 +393,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'daozhou_yangzaixing': 12,                           // 杨再兴 · daozhou · 麦岭关
     'dayue_chenguojun': 13,                              // 陈国峻 · dayue · 昇龙
     'dengmaoqi_dengmaoqi': 15,                           // 邓茂七 · dengmaoqi · 沙戍堡
-    'duanzhou_d_caojin': 16,                             // 曹觐 · duanzhou_d · 肇庆
+    'duanzhou_d_caojin': 11,                             // 曹觐 · duanzhou_d · 肇庆
     'funan_fanman': 3,                                  // 范蔓 · funan · 毗耶陀
     'geng_gengjingzhong': 17,                            // 耿精忠 · geng · 延平
     'gouding_wubo': -1,                                  // 毋波 · gouding · 广南
@@ -413,7 +418,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'miao_qing_yangwanzhe': 14,                          // 杨完者 · miao_qing · 且兰城
     'minyue_wuzhu': -2,                                  // 无诸 · minyue · 崇安
     'monong_anong': 11,                                  // 阿侬 · monong · 邦敦
-    'muong_shencongyue': 11,                             // 申从岳 · muong · 和平
     'nanyue_zhaotuo': -3,                                // 赵佗 · nanyue · 龙川
     'nguyen_guangnan_ruanfuying': 18,                    // 阮福映 · nguyen_guangnan · 富春
     'nong2_nongzhigao': 11,                              // 侬智高 · nong2 · 广源
@@ -1272,6 +1276,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_aulax': 10,   // 2026-10-25 按首战 969 年补
     'feilisidin_geliya': -11,   // 2026-10-25 按首战 -1025 年补
     'haikou_maohaifeng': 16,   // 2026-10-25 按岑港 1558 年补
+    'handong_liuheita': 7,   // 2026-10-25 按 622 洺水年补
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

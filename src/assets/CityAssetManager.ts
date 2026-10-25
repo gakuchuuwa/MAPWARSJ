@@ -55,6 +55,9 @@ export class CityAssetManager {
     // [PUBLIC] CityEditor 等 UI 模块需要在编辑时实时检测某 faction 是否登记了 flag 映射，
     // 因此从 private 改为 public。仅作只读引用，请勿在外部修改其内容。
     public static readonly factionFlagMap: { [key: string]: string } = {
+        'sesali': '色萨',
+        'jiaohuangguo': '教皇',
+        'yalan': '亚兰',
     //    本表是旧旗号登记表：一势力一条，值＝SANDBOX_DISPLAY_NAMES 的旗号；补齐缺登记/对齐旧值。
         'aertai': '阿勒',
         'amaniyake': '阿马',

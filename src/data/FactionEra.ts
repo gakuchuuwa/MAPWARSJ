@@ -7,7 +7,7 @@
  *      一朝一军的势力（宋＝宋军、大明＝明军、西夏＝铁鹞子、高丽＝三别班、辽＝皮室）整段只有一个时代。
  *    · 武将落在哪一段：取该将**首战年（最知名那一战）**，无首战年取登场年（生年+20，不晚于卒年）；两者皆无 → 保留 GeneralEra 原值。
  *    · 段界依据见各条注释（"按史 + 依据"）；未手裁的势力按该势力现存名将的成名年推定，只约束新增武将，不改现有武将。
- *    · 势力误挂的个别武将（战场人物/错挂政权）登记在 GENERAL_ERA_KEEP，保留其本时代，待修归属（清单见 docs/AGENTS/势力时代-2026-10-25.md）。
+ *    · 势力误挂的个别武将（战场人物/错挂政权）
  *
  * 改后武将的军团仍由 getLegionNameOfGeneral 按「时代 × 据点文化」自动取；唯一入口 getGeneralEra()。
  * 校验：scratch/_probe_faction_era_changes.mts（逐将打印旧→新时代，须全为修对）。
@@ -25,13 +25,15 @@ export interface FactionEraSegment {
 
 export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>> = {
     // ══════ 一、手裁：整段一个时代 / 长命政权按史分年段 ══════
+    'jiaohuangguo': [{ from: 756, era: 'castle' }, { from: 1500, era: 'imperial' }], // 教皇国｜756 丕平献土—1500＝城堡时代教廷军团；1500 后＝帝国时代教廷近卫军团
+    'yalan': [{ from: -9999, era: 'antiquity' }], // 亚兰（大马士革王国）｜前 10 世纪–前 732＝古典时代近东军团
     'song': [{ from: -9999, era: 'castle' }], // 宋国｜宋（960–1279）＝城堡时代中华军团（神臂弓/步人甲/斩马刀），北宋南宋同一支宋军
     'ming_d': [{ from: -9999, era: 'imperial' }], // 大明｜大明（1368–1644）＝帝国时代中国军团（京营/神机/三眼铳），明初明末同为明军
     'dangxiang': [{ from: -9999, era: 'castle' }], // 大夏｜大夏·西夏（982–1227）＝城堡时代大夏军团（铁鹞子冷锻重甲/山讹）
     'goryeo': [{ from: -9999, era: 'castle' }], // 高丽｜高丽（918–1392）＝城堡时代高丽军团（三别抄/别武班）
     'liao_d': [{ from: -9999, era: 'feudal' }], // 大辽｜大辽（907–1125）＝封建时代契丹军团（皮室具装铁骑/铁林军）
     'manzhou_d': [{ from: -9999, era: 'imperial' }], // 大清｜大清（1616–1912，含建州女真）＝帝国时代八旗军团
-    'xixiliwangguo': [{ from: -9999, era: 'castle' }], // 西西里｜西西里王国（1071–1282）＝城堡时代诺曼军团
+    'xixiliwangguo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'castle' }], // 西西里｜古典＝叙拉古城邦（阿加索克利）；476 后＝城堡时代诺曼军团
     'abasi': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 阿拔斯｜阿拔斯（750–1258）：封建＝哈里发军团（四大哈里发—阿拔斯黄金时代）；1050 塞尔柱入主巴格达 → 城堡时代撒拉森军团
     'womaya': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 倭马亚｜倭马亚（661–1031）：封建＝哈里发军团；1050 后泰法/穆拉比特 → 城堡时代撒拉森军团
     'sashan': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 萨珊｜萨珊（224–476）：古典时代萨珊军团；476 后（卑路斯一世起）→ 封建时代霍拉桑军团
@@ -45,7 +47,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mazhaer': [{ from: -9999, era: 'feudal' }, { from: 1000, era: 'castle' }, { from: 1526, era: 'imperial' }], // 匈牙利｜阿尔帕德（–1000）＝封建时代马扎尔骑射军团；1000 圣斯蒂芬受洗—1526 → 城堡时代匈牙利王国军团；1526 莫哈奇之战后 → 帝国时代匈牙利军团
     'yinggelan': [{ from: -9999, era: 'feudal' }, { from: 1066, era: 'castle' }, { from: 1485, era: 'imperial' }], // 英格兰｜盎格鲁-撒克逊（–1066）＝封建时代盎格鲁撒克逊军团；1066 诺曼征服—1485 → 城堡时代英格兰军团；1485 都铎 → 帝国时代英格兰军团
     'falanji': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 1100, era: 'castle' }], // 法兰克｜晚期古典（–476）＝古典军团；墨洛温—加洛林（476–1100）＝封建时代法兰克军团；1100 后卡佩骑士 → 城堡时代法兰西骑士军团
-    'gaolu': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 法兰西｜法兰西（卡佩—瓦卢瓦，1000–1500）＝城堡时代法兰西骑士军团；1500 后瓦卢瓦—波旁 → 帝国时代法兰西军团
+    'gaolu': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'castle' }, { from: 1500, era: 'imperial' }], // 法兰西（别名高卢）｜古典＝高卢战团（维钦托利）；476–1500＝城堡时代法兰西骑士军团；1500 后＝帝国法兰西军团
     'menggu_d': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 蒙古｜蒙古（含 10 世纪孛端察儿—元—北元）＝城堡时代漠南蒙古军团；1500 后（达延汗—喀尔喀/卫拉特）→ 帝国时代漠南蒙古军团
     // ══════ 二、单时代势力（整段一个时代）══════
     'aboerleiya': [{ from: -9999, era: 'castle' }], // 阿尔博雷亚
@@ -207,6 +209,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'hamade': [{ from: -9999, era: 'feudal' }], // 哈马德王朝
     'han': [{ from: -9999, era: 'antiquity' }], // 韩国
     'han_d': [{ from: -9999, era: 'antiquity' }], // 汉国
+    'handong': [{ from: -9999, era: 'feudal' }], // 汉东（刘黑闼）
     'han_zhao': [{ from: -9999, era: 'antiquity' }], // 汉赵
     'hantawadi': [{ from: -9999, era: 'imperial' }], // 汉达瓦底
     'heishi': [{ from: -9999, era: 'castle' }], // 平氏
@@ -316,7 +319,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mangsite': [{ from: -9999, era: 'feudal' }], // 芒斯特
     'manzheboyi': [{ from: -9999, era: 'castle' }], // 满者伯夷
     'mapuche': [{ from: -9999, era: 'imperial' }], // 马普切
-    'maqidun': [{ from: -9999, era: 'antiquity' }], // 马其顿
+    'maqidun': [{ from: -9999, era: 'antiquity' }],
+    'sesali': [{ from: -9999, era: 'antiquity' }], // 色萨利（古典）
     'maya': [{ from: -9999, era: 'feudal' }], // 玛雅
     'maynila': [{ from: -9999, era: 'imperial' }], // 马尼拉土邦
     'medang': [{ from: -9999, era: 'feudal' }], // 马打蓝
@@ -655,20 +659,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'zhuluo': [{ from: -9999, era: 'antiquity' }, { from: 993, era: 'feudal' }], // 朱罗｜按现存名将成名年推定：–∞起古典 → 993起封建
 };
 
-/** 势力误挂/战场人物的时代保留表（不参与势力时代重算；待修归属，清单见 docs/AGENTS/势力时代-2026-10-25.md） */
-export const GENERAL_ERA_KEEP: Readonly<Record<string, GeneralEra>> = {
-    'aliya_muhammad_tahir': 'feudal', // 塔希尔（阿拔斯霍拉桑总督，误挂 aqimeinide）
-    'bfe2_rezin': 'antiquity', // 利汛（前 8 世纪阿拉姆，误挂 womaya）
-    'bfe3_46': 'antiquity', // 维钦托利（高卢，误挂 gaolu=法兰西）
-    'gen_city_syracuse': 'antiquity', // 阿加索克利（叙拉古，误挂 xixiliwangguo）
-    'gen_clovis_i': 'feudal', // 克洛维（法兰克王，误挂 luoma_diguo）
-    'golpayegan_yicheng': 'antiquity', // 尼扎姆（萨珊 6 世纪，误挂 seljuq 古典）
-    'hali_gedaerzi': 'antiquity', // 戈达尔兹（帕提亚/萨珊，误挂 seljuq 古典）
-    'keerman_xierzhan_shoujiang': 'antiquity', // 霍斯劳（萨珊 6 世纪，误挂 seljuq 古典）
-    'luoma_diguo_leo_ix': 'castle', // 利奥九世（教皇，误挂 luoma_diguo）
-    'ribale_faheerdaolai': 'feudal', // 法赫尔道莱（白益王朝 10 世纪，误挂 seljuq）
-    'tingzhou_d_chenmin': 'antiquity', // 陈敏（晋，误挂 song）
-};
+
 
 /** 势力在指定年份所属的时代（段内取最近一段的起点） */
 export function getFactionEraAt(factionId: string | null | undefined, year: number | null | undefined): GeneralEra | undefined {
@@ -712,8 +703,6 @@ const GENERAL_FACTION: Readonly<Map<string, string>> = (() => {
 /** 武将的时代：势力时代（按成名年落段）→ 保留表 → GeneralEra 原值兜底 */
 export function getGeneralEra(generalId: string | null | undefined, factionIdHint?: string | null): GeneralEra | undefined {
     if (!generalId) return undefined;
-    const keep = GENERAL_ERA_KEEP[generalId];
-    if (keep) return keep;
     const fid = GENERAL_FACTION.get(generalId) ?? factionIdHint;
     const era = getFactionEraAt(fid, getGeneralEraYear(generalId));
     if (era) return era;

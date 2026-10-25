@@ -48,6 +48,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'yipilusi': 'city_anbulajiya',
   'lagoniya': 'city_sparta',
 'maqidun': 'city_salonica',
+    'sesali': 'city_pelina',
   'lagusa': 'city_ragusa',
 
 'meikelunbao': 'city_rostock',
@@ -760,6 +761,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'mahan': 'city_yuezhi',
 'daquyue': 'city_hoalu',
 'yuenan': 'city_fuchun',
+'jiaohuangguo': 'city_luoma',
+'yalan': 'city_damasikusi',
 };
 
 // @ts-ignore

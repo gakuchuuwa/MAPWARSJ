@@ -207,7 +207,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'dongxian_sunbin': 'antiquity',
     'dongxu_mangruiti': 'imperial',
     'dongzu_wumian': 'castle',
-    'duanzhou_d_caojin': 'imperial',
+    'duanzhou_d_caojin': 'castle',
     'duerbote_duerbote_taiji': 'imperial',
     'dulan_d_aihamaide': 'imperial',
     'dulan_dashibatuer': 'imperial',
@@ -1027,7 +1027,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'muer_mujier': 'castle',
     // 木尔坦·纳西尔丁（Nasir al-Din Qabacha，乌奇＋木尔坦统治者 1206–1228，1228 败亡）→ 城堡。把握：高
     'muertan_naxierding': 'castle',
-    'muong_shencongyue': 'castle',
     'murong_murongke': 'antiquity',
     'mushi_muchong': 'antiquity',
     'muwaxide_yakubu': 'castle',
@@ -1222,7 +1221,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'tianxiong_tianchengsi': 'feudal',
     'tiele_qibiheli': 'feudal',
     'tiemuer_tiemuer': 'castle',
-    'tingzhou_d_chenmin': 'antiquity',
+    'tingzhou_d_chenmin': 'castle',
     'tongma_taishici': 'antiquity',
     'tongzhou_liuzhiyuan': 'feudal',
     'totomi_jiujingzhongci': 'imperial',
@@ -1605,6 +1604,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_aulax': 'feudal',   // 奥拉克斯（2026-10-25 按史补）
     'feilisidin_geliya': 'antiquity',   // 歌利亚（2026-10-25 按史补）
     'haikou_maohaifeng': 'imperial',   // 毛海峰（王滶，2026-10-25 按史补）
+    'handong_liuheita': 'feudal',   // 刘黑闼（2026-10-25 按史补）
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

@@ -15,5 +15,4 @@ export const BERBER_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     // ── [2026-08-26] 大西洋航线：加那利关切人 ──
     guanche: { name: '关切投石兵', tier: 3 },   // 特尔德·本特胡伊：无金属武器，以投石与火硬木矛抗西班牙火器，兵种特色独树一帜
     muwaxide: { name: '穆瓦骑兵', tier: 1 },
-    libya: { name: '梅什维什卫', tier: 4 },   // 马尔马里卡·利比亚诸部盟主 阿迪尔：马尔马里卡·阿迪尔：利比亚梅什维什部的战士，常犯埃及西境
 };

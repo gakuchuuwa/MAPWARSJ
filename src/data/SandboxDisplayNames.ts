@@ -17,6 +17,7 @@
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kilwa': '基',
+    'handong': '汉东', // 刘黑闼汉东王
     'mombasa': '蒙',
     'mogadishu': '摩',
     'zuraid': '祖',
@@ -42,6 +43,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   yipilusi: '伊庇',
   lagoniya: '斯巴',
 'maqidun': '马其',
+  sesali: '色萨',
   lagusa: '拉古',
 
 'meikelunbao': '文德',
@@ -802,6 +804,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'mahan': '马韩',
 'daquyue': '瞿越',
 'yuenan': '越南',
+'jiaohuangguo': '教皇',
+'yalan': '亚兰',
 };
 
 // @ts-ignore

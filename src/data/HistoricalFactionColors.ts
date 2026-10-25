@@ -12,6 +12,9 @@
  */
 
 const _FIXED: Record<string, string> = {
+    // ── 2026-10-25 按史补势力 ──
+    jiaohuangguo: '#D9C07A', // 教皇国（教廷金）
+    yalan: '#6E4A6B', // 亚兰·大马士革（紫）
     // ── 红·尚赤 / 火德 / 复明 / 起义 ──
     han_d: '#C41E1E', // 汉（赤旗黑字，史料固定；见 FLAG_TEXT_BLACK_STYLE_FACTIONS）
     shu: '#2E7D32', // 蜀（绿）
@@ -142,6 +145,7 @@ const _FIXED: Record<string, string> = {
 
     // ── 北方精锐远征势力（2026-06-11；§2 全 12 + §1 偏北）──
     zhao: '#B83A3A', // 赵·赵边骑（三晋尚赤）
+    handong: '#7B3F00', // 汉东·刘黑闼（河北黑旗）
     yan: '#286888', // 燕·幽州突骑（水德蓝青）
     han: '#3A7858', // 韩（战国韩·木德尚青）
     gongsun_d: '#E8E4D8', // 辽东·铁骑（白马白）
@@ -448,7 +452,8 @@ const _FIXED: Record<string, string> = {
     'luoma_diguo': '#5B2D8E', // 罗马帝国·罗马城（帝王紫，Tyrian purple）
     'xila': '#2E6DA4', // 雅典·雅典城（爱琴海蓝白）
     'buni': '#7A2E6E', // 迦太基·迦太基（腓尼基紫，推罗紫渊源）
-    'maqidun': '#C9A227', // 马其顿·佩拉（亚历山大金）
+    'maqidun': '#C9A227',
+    sesali: '#6E7F4A', // 色萨利·佩利纳（帖撒利名骑；2026-10-25 新增） // 马其顿·佩拉（亚历山大金）
     'gaolu': '#2A4B8F', // 法兰西·巴黎（王室蓝 fleur-de-lis）
     'kaernute': '#3D5A3D', // 卡尔努特·沙特尔（高卢凯尔特绿）
     'xiongren': '#7A3A2E', // 匈人·沙隆（阿提拉·草原红褐）

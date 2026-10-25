@@ -24,6 +24,7 @@ export const FACTIONS: Faction[] = [
   { id: 'yipilusi', name: '伊庇鲁斯' },
   { id: 'lagoniya', name: '斯巴达' },  // 别名：斯巴达本土（Laconia，斯巴达城邦所在地）
   { id: 'maqidun', name: '马其顿' },
+  { id: 'sesali', name: '色萨利' },   // 🔴 [2026-10-25 按史] 前 352 年前色萨利为独立 tagus 同盟（伊阿宋/吕科弗隆），不与马其顿同政权
 
 
 
@@ -240,6 +241,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wei', name: '魏国' },
     { id: 'han', name: '韩国' },
     { id: 'han_d', name: '汉国' },
+    { id: 'handong', name: '汉东' },   // 2026-10-25 按史补：刘黑闼汉东王（622 洺水之战敌将）
 
 
     { id: 'shu', name: '蜀国' },
@@ -1646,6 +1648,9 @@ export const FACTIONS: Faction[] = [
   { id: 'mahan', name: '马韩' },
   { id: 'daquyue', name: '大瞿越' },
   { id: 'yuenan', name: '越南' },
+  // ── 2026-10-25 按史补：首战敌将所属政权（原势力表缺此二政权）──
+  { id: 'jiaohuangguo', name: '教皇国' },   // 756–1870 罗马主教国；利奥九世（1053 奇维塔泰之战）
+  { id: 'yalan', name: '亚兰' },            // 亚兰·大马士革王国（前 10 世纪–前 732）；利汛
 ];
 
 // @ts-ignore

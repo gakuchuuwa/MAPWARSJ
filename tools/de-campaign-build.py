@@ -329,40 +329,25 @@ def safe_attr(obj, name, default=None):
 
 
 def dump_scenario_raw(scn_path):
-    """兜底：AoE2ScenarioParser 解不了触发器段（如 Kotyan 2/3）或未收录新版本号（如 DE 1.59）时，
-    场景文件里地图与物件段在触发器段之前 —— 直接读 DataHeader + Map + Units 段原始二进制（同一份文件数据，不猜）。"""
+    """兜底：AoE2ScenarioParser 解不了触发器段（如 Kotyan 2/3）或未收录版本号（如 1.5\\x00 / 1.59）时，
+    场景文件里地图与物件段在触发器段之前 —— 只读到 Units 段为止，直接取原始字段（同一份文件数据，不猜）。"""
     import AoE2ScenarioParser.scenarios.aoe2_scenario as m
     from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
     from AoE2ScenarioParser.helper.incremental_generator import IncrementalGenerator
     ig0 = IncrementalGenerator.from_file(str(scn_path))
-    sv = m._get_file_version(ig0); var = m._get_scenario_variant(ig0)
+    raw_sv = m._get_file_version(ig0); var = m._get_scenario_variant(ig0)
+    sv = raw_sv.rstrip("\x00 ")
+    if sv == "1.5":
+        sv = "1.49"   # DE 1.50 文件头写 "1.5\0"，Map/Units 段与 1.49/1.51 完全一致
+    add_u159 = False
+    if sv in ("1.59", "1.60"):
+        sv = "1.58"   # DE 1.59 在 1.58 基础上仅 UnitStruct 的 garrisoned_in_id 后多 1 字节 u8
+        add_u159 = True
     ig = IncrementalGenerator.from_file(str(scn_path))
-    try:
-        sc = AoE2DEScenario("DE", sv, source_location=str(scn_path), name="x", variant=var)
-        with contextlib.redirect_stdout(io.StringIO()):
-            sc._load_structure(); m._initialise_version_dependencies(sc.game_version, sc.scenario_version)
-            sc._load_header_section(ig)
-            sc._decompressed_file_data = m._decompress_bytes(ig.get_remaining_bytes())
-            dg = IncrementalGenerator(name="d", file_content=sc._decompressed_file_data)
-            for name in sc.structure.keys():
-                if name == "FileHeader":
-                    continue
-                if name == "Triggers":
-                    break
-                sc._create_and_load_section(name, dg)
-        S = sc.sections
-        rv = lambda sec, k: S[sec].retriever_map[k].data
-        W, H = int(rv("Map", "map_width")), int(rv("Map", "map_height"))
-        td = rv("Map", "terrain_data")
-        terrain = [int(t.retriever_map["terrain_id"].data) for t in td]
-        elev = [int(t.retriever_map["elevation"].data) for t in td]
-        layer = [(int(t.retriever_map["layer"].data) if "layer" in t.retriever_map and int(t.retriever_map["layer"].data) >= 0 else -1) for t in td]
-    except Exception:
-        # DE 1.56+（如 1.59 Jadwiga 4）：DataHeader 同 1.55；Map 段以 0xdeadf00d 标记起头，每格 7 字节 <BB3sh；随后紧接 Units 段（UnitStruct 在 garrisoned_in_id 后多 1 字节 u8）
-        ig = IncrementalGenerator.from_file(str(scn_path))
-        sc = AoE2DEScenario("DE", "1.55", source_location=str(scn_path), name="x", variant=var)
-        with contextlib.redirect_stdout(io.StringIO()):
-            sc._load_structure(); m._initialise_version_dependencies(sc.game_version, sc.scenario_version)
+    sc = AoE2DEScenario("DE", sv, source_location=str(scn_path), name="x", variant=var)
+    with contextlib.redirect_stdout(io.StringIO()):
+        sc._load_structure(); m._initialise_version_dependencies(sc.game_version, sc.scenario_version)
+        if add_u159:
             ustruct = sc.structure["Units"]["structs"]["PlayerUnitsStruct"]["structs"]["UnitStruct"]["retrievers"]
             new_u = {}
             for k, v in ustruct.items():
@@ -370,22 +355,22 @@ def dump_scenario_raw(scn_path):
                 if k == "garrisoned_in_id":
                     new_u["unknown_159"] = {"type": "u8", "default": 255}
             sc.structure["Units"]["structs"]["PlayerUnitsStruct"]["structs"]["UnitStruct"]["retrievers"] = new_u
-            sc._load_header_section(ig)
-            buf = m._decompress_bytes(ig.get_remaining_bytes())
-            dg0 = IncrementalGenerator(name="d0", file_content=buf)
-            sc._create_and_load_section("DataHeader", dg0)
-            idx = buf.find(b"\x0d\xf0\xad\xde")
-            assert idx >= 0, "Map 0xdeadf00d marker not found"
-            _, _, W, H = struct.unpack_from("<4sBii", buf, idx + 4)
-            tpos = idx + 17
-            terrain = [0] * (W * H); elev = [0] * (W * H); layer = [-1] * (W * H)
-            for i in range(W * H):
-                tid, el, _, ly = struct.unpack_from("<BB3sh", buf, tpos + i * 7)
-                terrain[i] = tid; elev[i] = el; layer[i] = ly if ly >= 0 else -1
-            dg_u = IncrementalGenerator(name="du", file_content=buf[tpos + W * H * 7:])
-            sc._create_and_load_section("Units", dg_u)
-        S = sc.sections
-        rv = lambda sec, k: S[sec].retriever_map[k].data
+        sc._load_header_section(ig)
+        sc._decompressed_file_data = m._decompress_bytes(ig.get_remaining_bytes())
+        dg = IncrementalGenerator(name="d", file_content=sc._decompressed_file_data)
+        for name in sc.structure.keys():
+            if name == "FileHeader":
+                continue
+            if name == "Triggers":
+                break
+            sc._create_and_load_section(name, dg)
+    S = sc.sections
+    rv = lambda sec, k: S[sec].retriever_map[k].data
+    W, H = int(rv("Map", "map_width")), int(rv("Map", "map_height"))
+    td = rv("Map", "terrain_data")
+    terrain = [int(t.retriever_map["terrain_id"].data) for t in td]
+    elev = [int(t.retriever_map["elevation"].data) for t in td]
+    layer = [(int(t.retriever_map["layer"].data) if "layer" in t.retriever_map and int(t.retriever_map["layer"].data) >= 0 else -1) for t in td]
     from AoE2ScenarioParser.datasets.object_support import CivilizationOld, Civilization
     by_value = {str(mem.value): mname for mname, mem in Civilization.__members__.items()}
     def civ_of(v):
