@@ -112,6 +112,13 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
   'habusibao': 'city_weiyeena',
   'boximiya': 'city_bulage',
+    'yidali_wangguo': 'city_luoma',
+    'luxitaniya': 'city_lisiben',
+    'tuoerkete': 'city_tenochtitlan',
+    'yadian_gongguo': 'city_yadian',
+    'mayapan': 'city_uxmal',
+    'songhai': 'city_timbuktu',
+    'shahi': 'city_baishawa',
 'mazhaer': 'city_budapeisi',
   'falanji': 'city_kelong',
   'shiwaben': 'city_aogesibao',

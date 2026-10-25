@@ -110,6 +110,20 @@ export const FACTIONS: Faction[] = [
 
   { id: 'habusibao', name: '哈布斯堡' },
   { id: 'boximiya', name: '波西米亚' },
+    // 🔴 [2026-10-25 补A] 意大利王国（1861–1946）｜加里波第；帝国时代意大利军团的执政者
+    { id: 'yidali_wangguo', name: '意大利王国' },
+    // 🔴 [2026-10-25 补A] 卢西塔尼亚（维里亚图斯 抗罗马）
+    { id: 'luxitaniya', name: '卢西塔尼亚' },
+    // 🔴 [2026-10-25 补A] 托尔特克（托皮尔岑 传说）
+    { id: 'tuoerkete', name: '托尔特克' },
+    // 🔴 [2026-10-25 补A] 雅典公国（1204–1458，奥托·德·拉罗什）
+    { id: 'yadian_gongguo', name: '雅典公国' },
+    // 🔴 [2026-10-25 补A] 玛雅潘（胡纳克·塞尔 1283）
+    { id: 'mayapan', name: '玛雅潘' },
+    // 🔴 [2026-10-25 补A] 桑海（阿斯基亚·穆罕默德 1464）
+    { id: 'songhai', name: '桑海' },
+    // 🔴 [2026-10-25 补A] 印度教沙希（贾亚帕拉 964–1001）
+    { id: 'shahi', name: '沙希' },
   { id: 'mazhaer', name: '匈牙利' },
   { id: 'falanji', name: '法兰克' },
   { id: 'shiwaben', name: '施瓦本' },

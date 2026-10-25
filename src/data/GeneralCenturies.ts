@@ -721,6 +721,17 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'luosi_dmitry_aleksandrovich': 13,       // 德米特里·亚历山德罗维奇 · luosi · 拉多加
     'xinbuli_boiorix': -2,                   // 波伊奥里克斯 · xinbuli · 耶灵
     'awaer_bayan': 6,                        // 巴彦 · awaer · 塞格德
+    'baizanting_belisarius': 6,              // 贝利撒留 · baizanting · 罗马城
+    'chenla_jayavarman_ii': 9,               // 阇耶跋摩二世 · chenla · 吴哥
+    'chenla_bhavavarman': 6,                 // 拔婆跋摩一世 · chenla · 三菩
+    'boximiya_wallenstein': 17,              // 华伦斯坦 · boximiya · 布拉格
+    'yidali_wangguo_garibaldi': 19,          // 加里波第 · yidali_wangguo · 罗马城
+    'luxitaniya_viriathus': -2,              // 维里亚图斯 · luxitaniya · 里斯本
+    'tuoerkete_topiltzin': 10,               // 托皮尔岑 · tuoerkete · 特诺奇提特兰
+    'yadian_gongguo_otto': 13,               // 奥托·德·拉罗什 · yadian_gongguo · 雅典
+    'mayapan_hunac_ceel': 13,                // 胡纳克·塞尔 · mayapan · 乌斯马尔
+    'songhai_askia_muhammad': 15,            // 阿斯基亚·穆罕默德 · songhai · 廷巴克图
+    'shahi_jayapala': 10,                    // 贾亚帕拉 · shahi · 白沙瓦
     'danmai_christian_iv': 16,               // 克里斯蒂安四世 · danmai · 哥本哈根
     'gen_rurik': 9,                                      // 留里克 · liulike · 拉多加（862 据拉多加/诺夫哥罗德）
     'gen_sineus': 9,                                     // 西涅乌斯 · liulike · 白湖（862 据白湖）

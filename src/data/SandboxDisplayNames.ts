@@ -131,6 +131,13 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   peilieya_gongguo: '佩列',
   habusibao: '哈布',
   boximiya: '波西',
+    'yidali_wangguo': '意大',   // 意大利王国
+    'luxitaniya': '卢西',
+    'tuoerkete': '托尔',
+    'yadian_gongguo': '雅公',
+    'mayapan': '玛潘',
+    'songhai': '桑海',
+    'shahi': '沙希',
 'mazhaer': '匈',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   falanji: '弗兰',
   shiwaben: '施瓦',

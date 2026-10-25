@@ -122,7 +122,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'boren': [{ from: -9999, era: 'imperial' }], // 都掌蛮
     'bosi_puluosi': [{ from: -9999, era: 'antiquity' }], // 博斯普鲁斯
     'bosiniya': [{ from: -9999, era: 'castle' }], // 波斯尼亚
-    'boximiya': [{ from: -9999, era: 'castle' }], // 波西米亚
+    'boximiya': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 波西米亚｜城堡 → 1500 起帝国
     'bulabante': [{ from: -9999, era: 'castle' }], // 布拉班特
     'bulu': [{ from: -9999, era: 'antiquity' }], // 波鲁斯
     'buni': [{ from: -9999, era: 'antiquity' }], // 迦太基
@@ -136,7 +136,14 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'chendiaoyan': [{ from: -9999, era: 'castle' }], // 陈吊
     'chenghan': [{ from: -9999, era: 'antiquity' }], // 成汉
     'chengjia': [{ from: -9999, era: 'antiquity' }], // 成家
-    'chenla': [{ from: -9999, era: 'castle' }], // 真腊
+    'chenla': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 真腊｜封建（阇耶跋摩二世 802）→ 城堡（吴哥王朝）
+    'yidali_wangguo': [{ from: -9999, era: 'imperial' }], // 意大利王国（1861–1946）
+    'luxitaniya': [{ from: -9999, era: 'antiquity' }], // 卢西塔尼亚（前 2 世纪）
+    'tuoerkete': [{ from: -9999, era: 'feudal' }], // 托尔特克（约 900–1150）
+    'yadian_gongguo': [{ from: -9999, era: 'castle' }], // 雅典公国（1204–1458）
+    'mayapan': [{ from: -9999, era: 'castle' }], // 玛雅潘联盟
+    'songhai': [{ from: -9999, era: 'imperial' }], // 桑海帝国（1464 起）
+    'shahi': [{ from: -9999, era: 'feudal' }], // 印度教沙希（850–1026）
     'cheshihou': [{ from: -9999, era: 'antiquity' }], // 乌垒
     'chimei': [{ from: -9999, era: 'antiquity' }], // 赤眉
     'choros': [{ from: -9999, era: 'castle' }], // 萨吾尔

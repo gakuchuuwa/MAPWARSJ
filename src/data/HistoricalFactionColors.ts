@@ -503,6 +503,13 @@ const _FIXED: Record<string, string> = {
     'tuomengde': '#1D5A3A', // 托蒙德·利默里克（爱尔兰深林绿）
     'habusibao': '#8B6A1A', // 哈布斯堡·维也纳（哈布斯堡金黑）
     'boximiya': '#C8A227', // 波西米亚·布拉格（波西米亚金）
+    'yidali_wangguo': '#2F6B4F', // 意大利王国（萨伏依绿）
+    'luxitaniya': '#6B3F2A', // 卢西塔尼亚（山地棕）
+    'tuoerkete': '#7A3B5C', // 托尔特克（高原紫）
+    'yadian_gongguo': '#5C6B2E', // 雅典公国
+    'mayapan': '#4A2E5C', // 玛雅潘
+    'songhai': '#8B5A2B', // 桑海
+    'shahi': '#2E5C6B', // 印度教沙希
     'mazhaer': '#D0D0D8', // 匈牙利·布达佩斯（阿尔帕德银白）
     'meikelunbao': '#2E5E8C', // 梅克伦堡·罗斯托克（梅克伦堡蓝红）
     'didi': '#8A7A3A', // 佛兰德·布鲁日（佛兰德斯金黑）

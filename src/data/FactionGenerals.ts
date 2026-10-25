@@ -2920,6 +2920,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     boximiya: [
+        // 🔴 [2026-10-25 补A] 华伦斯坦（1583–1634，三十年战争帝国军统帅；1626 德绍桥胜）｜势力 波西米亚｜据点 布拉格（BOHEMIANS 文化）｜名将｜精锐「华伦斯坦军」T1｜立绘留空｜首战待补
+        { generalId: 'boximiya_wallenstein', factionId: 'boximiya', cityId: 'city_bulage', generalName: '华伦斯坦', portrait: '', eliteName: '华伦斯坦军', eliteTier: 1 },
 
 
 
@@ -3138,6 +3140,34 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     awaer: [
         // 🔴 [2026-10-25 主人令「按区域代表补四时代」] 巴彦（阿瓦尔可汗，562–602，攻西尔米乌姆、626 围君士坦丁堡）｜势力 阿瓦尔｜据点 塞格德（潘诺尼亚，匈人文化城）｜普将（有胜有败，存疑）｜精锐「阿瓦尔骑队」T4｜立绘留空
         { generalId: 'awaer_bayan', factionId: 'awaer', cityId: 'city_saigede', generalName: '巴彦', portrait: '', eliteName: '阿瓦尔骑队', eliteTier: 4 },
+    ],
+    yidali_wangguo: [
+        // 🔴 [2026-10-25 补A] 加里波第（1807–1882，意大利统一名将；1860 千人远征、1862/1867 攻罗马）｜势力 意大利王国｜据点 罗马城（ROMA 文化）｜名将｜精锐「红衫军」T1｜立绘留空｜首战待补
+        { generalId: 'yidali_wangguo_garibaldi', factionId: 'yidali_wangguo', cityId: 'city_luoma', generalName: '加里波第', portrait: '', eliteName: '红衫军', eliteTier: 1 },
+    ],
+    luxitaniya: [
+        // 🔴 [2026-10-25 补A] 维里亚图斯（约前 180–前 139，卢西塔尼亚抗罗马名将；前 147–前 139 伊比利亚战争）｜势力 卢西塔尼亚｜据点 里斯本（PORTUGUESE 文化）｜名将｜精锐「卢西塔标枪」T1｜立绘留空｜首战待补
+        { generalId: 'luxitaniya_viriathus', factionId: 'luxitaniya', cityId: 'city_lisiben', generalName: '维里亚图斯', portrait: '', eliteName: '卢西塔标枪', eliteTier: 1 },
+    ],
+    tuoerkete: [
+        // 🔴 [2026-10-25 补A] 托皮尔岑（约 900–947，托尔特克首领，传说人物非神；图拉 建 托尔特克 国家）｜势力 托尔特克｜据点 特诺奇提特兰（AMERICA 文化）｜普将（④闸敌将无实名）｜精锐「托尔特克矛」T4｜立绘留空
+        { generalId: 'tuoerkete_topiltzin', factionId: 'tuoerkete', cityId: 'city_tenochtitlan', generalName: '托皮尔岑', portrait: '', eliteName: '托尔特克矛', eliteTier: 4 },
+    ],
+    yadian_gongguo: [
+        // 🔴 [2026-10-25 补A] 奥托·德·拉罗什（约 1170–1234，雅典公国开国公爵）｜势力 雅典公国｜据点 雅典（ATHENIANS 文化）｜普将（实胜存疑）｜精锐「雅典骑士」T4｜立绘留空
+        { generalId: 'yadian_gongguo_otto', factionId: 'yadian_gongguo', cityId: 'city_yadian', generalName: '奥托·德·拉罗什', portrait: '', eliteName: '雅典骑士', eliteTier: 4 },
+    ],
+    mayapan: [
+        // 🔴 [2026-10-25 补A] 胡纳克·塞尔（约 1220–1300，玛雅潘霸主，1283 攻陷奇琴伊察；传说有名字、非神）｜势力 玛雅潘｜据点 乌斯马尔（MAYANS 文化）｜普将（④闸敌将无实名）｜精锐「玛雅潘劲卒」T4｜立绘留空
+        { generalId: 'mayapan_hunac_ceel', factionId: 'mayapan', cityId: 'city_uxmal', generalName: '胡纳克·塞尔', portrait: '', eliteName: '玛雅潘劲卒', eliteTier: 4 },
+    ],
+    songhai: [
+        // 🔴 [2026-10-25 补A] 阿斯基亚·穆罕默德（1443–1538，桑海帝国开创者；1493 篡位、征服马里）｜势力 桑海｜据点 廷巴克图（AFRICA 文化）｜名将｜精锐「桑海骑兵」T1｜立绘留空｜首战待补
+        { generalId: 'songhai_askia_muhammad', factionId: 'songhai', cityId: 'city_timbuktu', generalName: '阿斯基亚·穆罕默德', portrait: '', eliteName: '桑海骑兵', eliteTier: 1 },
+    ],
+    shahi: [
+        // 🔴 [2026-10-25 补A] 贾亚帕拉（约 940–1002，印度教沙希王；1001 白沙瓦败于伽色尼）｜势力 沙希｜据点 白沙瓦（PURU 文化）｜普将（实胜缺）｜精锐「沙希战象」T4｜立绘留空
+        { generalId: 'shahi_jayapala', factionId: 'shahi', cityId: 'city_baishawa', generalName: '贾亚帕拉', portrait: '', eliteName: '沙希战象', eliteTier: 4 },
     ],
     wende: [
         // 🔴 [2026-10-25 主人令「存在就建」] 亨吉斯特（449 率撒克逊人入不列颠、肯特王；比德《英吉利教会史》《盎格鲁-撒克逊编年史》记载，半史）｜势力 萨克森｜据点 马格德堡（撒克逊核心，同文化据点）｜普将（存疑）｜精锐「撒克逊战团」T4｜立绘留空
@@ -3648,6 +3678,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     baizanting: [
+        // 🔴 [2026-10-25 补A] 贝利撒留（505–565，拜占庭名将；达拉 530 胜波斯、533 灭汪达尔、536 收复罗马）｜势力 拜占庭｜据点 罗马城（ROMA 文化，拉丁姆）｜名将｜精锐「拜占庭重骑」T1｜立绘留空｜首战待补
+        { generalId: 'baizanting_belisarius', factionId: 'baizanting', cityId: 'city_luoma', generalName: '贝利撒留', portrait: '', eliteName: '拜占庭重骑', eliteTier: 1 },
         { generalId: 'baizanting_diaofeilusi', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '狄奥斐卢斯', portrait: '/assets/BYZANTINE/baizanting_diaofeilusi.png' },   // 🔴 [2026-10-25 按史] 首战敌将；拜占庭皇帝 813-842，838 阿莫里乌姆失陷；据点君士坦丁堡（BYZANTINE）；用势力精锐铁甲圣骑
         { generalId: 'bfe_andronikos_komnenos', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '安德洛尼卡·科穆宁', portrait: '/assets/BYZANTINE/bfe_andronikos_komnenos.png' },   // 🔴 [2026-10-25 按史] 首战敌将；拜占庭将领、后为皇帝（1183-1185）；1152 围马米斯特拉败退；据点君士坦丁堡（BYZANTINE）；用势力精锐铁甲圣骑
         { generalId: 'bfe_isaac_komnenos', cityId: 'city_junshitandingbao', generalName: '伊萨克·科穆宁', portrait: '/assets/BYZANTINE/bfe_isaac_komnenos.png', legionName: '城堡时代拜占庭军团' },
@@ -6771,7 +6803,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    chenla: { generalId: 'chenla_duyebamo', cityId: 'city_angkor', generalName: '阇耶跋摩', portrait: '/assets/KHMER/chenla_duyebamo.png' },
+    chenla: [
+        { generalId: 'chenla_duyebamo', cityId: 'city_angkor', generalName: '阇耶跋摩', portrait: '/assets/KHMER/chenla_duyebamo.png' },
+        // 🔴 [2026-10-25 补A] 拔婆跋摩一世（约 550–600，真腊开国王；碑铭可考）｜势力 真腊｜据点 三菩（KHMER 文化）｜普将（④闸敌将无实名）｜精锐「真腊战象」T4｜立绘留空
+        { generalId: 'chenla_bhavavarman', factionId: 'chenla', cityId: 'city_sanpu', generalName: '拔婆跋摩一世', portrait: '', eliteName: '真腊战象', eliteTier: 4 },
+    ],
 
 
 

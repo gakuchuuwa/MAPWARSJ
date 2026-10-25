@@ -472,6 +472,17 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     luosi_dmitry_aleksandrovich: { birth: 1250, death: 1294 },  // 德米特里·亚历山德罗维奇（诺夫哥罗德王公）
     xinbuli_boiorix: { birth: -160, death: -101, kaoju: '推定' },  // 波伊奥里克斯（辛布里王）
     awaer_bayan: { birth: 562, death: 602, kaoju: '推定' },  // 巴彦（阿瓦尔可汗）
+    baizanting_belisarius: { birth: 505, death: 565, kaoju: '推定' },  // 贝利撒留
+    chenla_jayavarman_ii: { birth: 770, death: 850, kaoju: '推定' },  // 阇耶跋摩二世
+    chenla_bhavavarman: { birth: 550, death: 600, kaoju: '推定' },  // 拔婆跋摩一世
+    boximiya_wallenstein: { birth: 1583, death: 1634 },  // 华伦斯坦
+    yidali_wangguo_garibaldi: { birth: 1807, death: 1882 },  // 加里波第
+    luxitaniya_viriathus: { birth: -180, death: -139, kaoju: '推定' },  // 维里亚图斯
+    tuoerkete_topiltzin: { birth: 900, death: 947, kaoju: '推定' },  // 托皮尔岑
+    yadian_gongguo_otto: { birth: 1170, death: 1234, kaoju: '推定' },  // 奥托·德·拉罗什
+    mayapan_hunac_ceel: { birth: 1220, death: 1300, kaoju: '推定' },  // 胡纳克·塞尔
+    songhai_askia_muhammad: { birth: 1443, death: 1538 },  // 阿斯基亚·穆罕默德
+    shahi_jayapala: { birth: 940, death: 1002, kaoju: '推定' },  // 贾亚帕拉
     danmai_christian_iv: { birth: 1577, death: 1648 },  // 克里斯蒂安四世
     gen_rurik: { birth: 830, death: 879, debut: 862, kaoju: '推定' },   // 留里克（生卒为传统推定；862 据拉多加/诺夫哥罗德）
     gen_sineus: { birth: 840, death: 864, debut: 862, kaoju: '推定' },  // 西涅乌斯（留里克之弟，862 据白湖；卒年 864 见《往年纪事》，生年为推定）

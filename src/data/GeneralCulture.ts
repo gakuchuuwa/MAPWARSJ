@@ -422,6 +422,17 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'luosi_dmitry_aleksandrovich': 'SLAVIC',   // 罗斯｜德米特里·亚历山德罗维奇｜据点 诺夫哥罗德
     'xinbuli_boiorix': 'DANES',   // 辛布里｜波伊奥里克斯｜据点 耶灵
     'awaer_bayan': 'HUNS',   // 阿瓦尔｜巴彦｜据点 塞格德
+    'baizanting_belisarius': 'ROMA',   // 拜占庭｜贝利撒留｜据点 罗马城
+    'chenla_jayavarman_ii': 'KHMER',   // 真腊｜阇耶跋摩二世｜据点 吴哥
+    'chenla_bhavavarman': 'KHMER',   // 真腊｜拔婆跋摩一世｜据点 三菩
+    'boximiya_wallenstein': 'BOHEMIANS',   // 波西米亚｜华伦斯坦｜据点 布拉格
+    'yidali_wangguo_garibaldi': 'ROMA',   // 意大利王国｜加里波第｜据点 罗马城
+    'luxitaniya_viriathus': 'PORTUGUESE',   // 卢西塔尼亚｜维里亚图斯｜据点 里斯本
+    'tuoerkete_topiltzin': 'AMERICA',   // 托尔特克｜托皮尔岑｜据点 特诺奇提特兰
+    'yadian_gongguo_otto': 'ATHENIANS',   // 雅典公国｜奥托·德·拉罗什｜据点 雅典
+    'mayapan_hunac_ceel': 'MAYANS',   // 玛雅潘｜胡纳克·塞尔｜据点 乌斯马尔
+    'songhai_askia_muhammad': 'AFRICA',   // 桑海｜阿斯基亚·穆罕默德｜据点 廷巴克图
+    'shahi_jayapala': 'PURU',   // 沙希｜贾亚帕拉｜据点 白沙瓦
     'danmai_christian_iv': 'DANES',   // 丹麦｜克里斯蒂安四世｜据点 哥本哈根
     'gen_alfonso_ix': 'SPANISH',   // 莱昂｜阿方索九世｜据点 萨拉曼卡
     'gen_alfonso_vi': 'GOTHS',   // 西哥特｜阿方索六世｜据点 托莱多

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 旗号图案（纹章/徽记）试水表 —— 2026-10-24 主人「要不改一下试试，不行再次换回来」
  *
  * 只给**非东亚汉字圈**势力登记图案：旗面不再画「托勒」「塞琉」这种两字截断音译。
@@ -21,7 +21,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     //    新增纹章一律先有素材（{KEY}_{w|b}.png）与史实依据，再在这里加一行；不许两家共用一个 KEY。
     luoma_diguo: 'EAGLE',   // 罗马帝国·军团鹰
     baizanting: 'BYZ_CROSS',   // 拜占庭·十字
-    lagoniya: 'SPARTAN_HELM',   // 斯巴达·头盔
     xila: 'OWL',   // 雅典·猫头鹰
     maqidun: 'SUN',   // 马其顿·维吉纳太阳
     gaolu: 'FLEUR',   // 法兰西·鸢尾
@@ -32,12 +31,7 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     osman: 'CRESCENT',   // 奥斯曼·新月
     kongque: 'CARTWHEEL',   // 孔雀帝国·法轮
     zhuluo: 'TIGER',   // 朱罗·虎
-    pagan: 'PAGODA',   // 蒲甘·佛塔
-    buni: 'SAILBOAT',   // 迦太基·帆船
-    danmai: 'DRAKKAR',   // 丹麦·龙船
     menggu_d: 'TAMGA',   // 蒙古·塔木加
-    wuer: 'ZIGGURAT',   // 乌尔第三王朝·塔庙
-    aiji: 'ANKH',   // 古埃及·安卡
     kushi: 'PYRAMID',   // 库施·金字塔
     aqimeinide: 'WINGED_SUN',   // 阿契美尼德·翼日盘
     sashan: 'HERALDIC_SUN',   // 萨珊·日盘
@@ -120,7 +114,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     deli: 'DELHI_BANNER',   // 德里苏丹国·垂旗新月
     maya: 'MAYA_JAGUAR',   // 玛雅·美洲豹
     chenla: 'KHMER_TOWERS',   // 真腊·吴哥三塔
-    champa: 'CHAMPA_LINGAM',   // 占婆·林伽
     tuosikana: 'TUSCANY_BALLS',   // 托斯卡纳·美第奇六球
     lunbadi: 'LOMBARD_CROWN',   // 伦巴第·铁冠
     amaniyake: 'ARMAGNAC_LION',   // 阿马尼亚克·狮
@@ -137,12 +130,10 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     manding: 'MALI_LION',   // 马里·狮与战鼓
     kapaduoxiya: 'CAPPADOCIA_LION',   // 卡帕多细亚·狮
     fulijiya: 'PHRYGIAN_CAP',   // 弗里吉亚·弗里吉亚帽
-    yipilusi: 'EPIRUS_EAGLE',   // 伊庇鲁斯·双头鹰持剑
     pajiama: 'ASCLEPIUS_STAFF',   // 帕加马·蛇杖
     bendou_d: 'PONTUS_STAR_CRESCENT',   // 本都·星月
     fulandesi: 'ARTOIS_TOWER_LILY',   // 阿图瓦·塔与百合
     puluowangsi: 'PROVENCE_BARS',   // 普罗旺斯·条纹
-    suzidaer: 'SUZDAL_FALCON',   // 苏兹达尔·猎鹰
     // ── 2026-10-25 第六批新增史实纹章（10 种）────────────────────────────────
     sailiugu: 'SELEUCID_ANCHOR',   // 塞琉古·船锚
     tuolemi: 'PTOLEMAIC_EAGLE',   // 托勒密·鹰踏闪电

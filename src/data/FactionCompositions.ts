@@ -1164,6 +1164,34 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代诺曼军团",
         legionType: "sub",
     },
+    "yadian_gongguo": {
+        legionName: "城堡时代雅典公国军团",
+        legionType: "region",
+    },
+    "mayapan": {
+        legionName: "城堡时代玛雅潘军团",
+        legionType: "region",
+    },
+    "songhai": {
+        legionName: "帝国时代桑海军团",
+        legionType: "region",
+    },
+    "shahi": {
+        legionName: "封建时代沙希军团",
+        legionType: "region",
+    },
+    "luxitaniya": {
+        legionName: "古典时代卢西塔尼亚军团",
+        legionType: "region",
+    },
+    "tuoerkete": {
+        legionName: "封建时代托尔特克军团",
+        legionType: "region",
+    },
+    "yidali_wangguo": {
+        legionName: "帝国时代意大利军团",
+        legionType: "region",
+    },
     "boximiya": {
         legionName: "城堡时代胡斯军团",
         legionType: "sub",

@@ -1874,6 +1874,72 @@
       "type": "政权",
       "auditStatus": "ok",
       "note": "阿瓦尔汗国(567–822)，潘诺尼亚；2026-10-25 为封建时代潘诺尼亚军团新立"
+    },
+    {
+      "id": "luxitaniya",
+      "flag": "卢西",
+      "facName": "卢西塔尼亚",
+      "cityId": "city_lisiben",
+      "cityName": "里斯本",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "卢西塔尼亚(维里亚图斯抗罗马，前 2 世纪)；2026-10-25 为古典时代卢西塔尼亚军团新立"
+    },
+    {
+      "id": "tuoerkete",
+      "flag": "托尔",
+      "facName": "托尔特克",
+      "cityId": "city_tenochtitlan",
+      "cityName": "特诺奇提特兰",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "托尔特克(约 900–1150，托皮尔岑传说)；2026-10-25 为封建时代托尔特克军团新立"
+    },
+    {
+      "id": "yadian_gongguo",
+      "flag": "雅公",
+      "facName": "雅典公国",
+      "cityId": "city_yadian",
+      "cityName": "雅典",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "雅典公国(1204–1458)；2026-10-25 为城堡时代雅典公国军团新立"
+    },
+    {
+      "id": "mayapan",
+      "flag": "玛潘",
+      "facName": "玛雅潘",
+      "cityId": "city_uxmal",
+      "cityName": "乌斯马尔",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "玛雅潘联盟(胡纳克·塞尔 1283)；2026-10-25 为城堡时代玛雅潘军团新立"
+    },
+    {
+      "id": "songhai",
+      "flag": "桑海",
+      "facName": "桑海",
+      "cityId": "city_timbuktu",
+      "cityName": "廷巴克图",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "桑海帝国(1464 起)；2026-10-25 为帝国时代桑海军团新立"
+    },
+    {
+      "id": "shahi",
+      "flag": "沙希",
+      "facName": "沙希",
+      "cityId": "city_baishawa",
+      "cityName": "白沙瓦",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "印度教沙希(850–1026)；2026-10-25 为封建时代沙希军团新立"
     }
   ]
 }

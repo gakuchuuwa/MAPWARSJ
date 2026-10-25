@@ -535,15 +535,11 @@ export function populateDeCampaignObjects(
         }
     }
     const keptCaps = new Set<string>();
-    const hasKeptCapNear = (gx: number, gy: number): boolean => {
-        for (let dy = -1; dy <= 1; dy++) {
-            for (let dx = -1; dx <= 1; dx++) {
-                if (dx === 0 && dy === 0) continue;
-                if (keptCaps.has(`${gx + dx},${gy + dy}`)) return true;
-            }
-        }
-        return false;
-    };
+    // 🔴 [2026-10-25 主人令「C段和B的垛城垛应该挨着吧」] 只禁「正着挨」（边相邻，两件垛墙排成一条线），
+    //    斜着相邻（45° 弯的两侧各一件垛墙）是 DE 的样子，要保留——弯两侧的垛墙本来就该挨着。
+    const hasKeptCapNear = (gx: number, gy: number): boolean =>
+        keptCaps.has(`${gx + 1},${gy}`) || keptCaps.has(`${gx - 1},${gy}`) ||
+        keptCaps.has(`${gx},${gy + 1}`) || keptCaps.has(`${gx},${gy - 1}`);
     for (const pass of [0, 1] as const) {
         for (const key of wallTileKeys) {
             const info = wallTileInfo.get(key)!;
