@@ -470,6 +470,11 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_karaiskakis': 'ATHENIANS',   // 希腊王国｜卡拉伊斯卡基斯｜据点 雅典
     'bfe_kontoskeles': 'GREECE',   // 拜占庭｜孔托斯克莱斯｜据点 底比斯
     'bfe_ypsilantis': 'BYZANTINE',   // 奥斯曼｜科贾·穆萨帕夏｜据点 君士坦丁堡
+    'bfe_maniakes': 'SICILIANS',   // 拜占庭｜马尼亚克｜据点 锡拉库萨
+    'bfe_rhetogenes': 'SPANISH',   // 阿雷瓦西｜雷图格诺斯｜据点 努曼提亚
+    'bfe_purnavarman': 'MALAY',   // 塔鲁玛迦拉｜普尔纳跋摩｜据点 巽他普拉
+    'maya_siyaj_kak': 'MAYANS',   // 玛雅｜西亚赫·卡克｜据点 蒂卡尔
+    'bfe_apokaukos': 'SPARTANS',   // 拜占庭｜巴希尔｜据点 斯巴达
     'bfe_maroboduus': 'BOHEMIANS',   // 苏维汇｜马罗博杜斯｜据点 布拉格
     'yili_bato': 'MAGYAR',   // 伊利里亚｜巴托｜据点 布达佩斯
     'daqiya_burebista': 'BULGARIANS',   // 达契亚｜布雷比斯塔｜据点 索非亚
@@ -822,7 +827,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'hepan_gaoxianzhi': 'WESTERN',   // 朅盘陀｜高仙芝｜据点 伊逻卢
     'hesitiya_yiasong': 'GREECE',   // 赫斯提亚｜伊阿宋｜据点 佩利纳
     'heti_alialate': 'ORIE',   // 赫梯｜阿里阿拉特｜据点 提亚纳
-    'heti_muwatali': 'ORIE',   // 赫梯｜穆瓦塔利｜据点 哈图沙
+    'heti_muwatali': 'TURKS',   // 赫梯｜穆瓦塔利｜据点 哈图沙
     'heyuan_d_heichichangzhi': 'KHITAN',   // 唐国｜黑齿常之｜据点 花石峡
     'hezhe_shaerhuda': 'NORTHEAST',   // 大清｜沙尔虎达｜据点 乌云
     'hezhou_wangjian': 'BASHU',   // 宋国｜王坚｜据点 钓鱼城
@@ -1430,7 +1435,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiongding_murongyong': 'CENTRAL',   // 慕容｜慕容永｜据点 长子
     'xiongnu_maodun': 'XIANBEI',   // 匈奴｜冒顿｜据点 头曼城
     'xiongren_atila': 'HUNS',   // 匈人｜阿提拉｜据点 塞格德
-    'xiongyati_yannuoshi': 'MAGYAR',   // 匈雅提｜匈雅提亚诺什｜据点 胡内多阿拉
+    'xiongyati_yannuoshi': 'HUNS',   // 匈雅提｜匈雅提亚诺什｜据点 胡内多阿拉
     'xiou_yixusong': 'JIANGNAN',   // 西瓯｜译吁宋｜据点 布山
     'xiqin_wanyanchenheshang': 'CENTRAL',   // 大金｜完颜陈和尚｜据点 真宁
     'xishudongyin_lijiasipi': 'SPANISH',   // 阿拉贡｜莱加斯皮｜据点 塞维利亚（2026-10-24 由马尼拉 MALAY 迁回民族起源地）

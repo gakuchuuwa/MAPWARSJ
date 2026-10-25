@@ -37,7 +37,7 @@ export class PlayerHUD {
     private title: HTMLDivElement | null = null;
     private minimizeBtn: HTMLButtonElement | null = null;
     private drawerBtn: HTMLButtonElement | null = null;
-    private minimized = true; // 默认划入上方收起
+    private minimized = false; // [2026-10-26 主人令「上面的玩家面板不要隐藏了」] 顶部玩家面板常驻展开，不再收起隐藏
     private lastPanelFactionId: string | null | undefined = undefined;
     private panelsWereInScene13 = false;
     /** 轮播相位翻转计时（见 scheduleNextCyclePhase；dispose 时清） */
@@ -130,7 +130,7 @@ export class PlayerHUD {
     private createPanel(): void {
         const panel = document.createElement('div');
         panel.id = 'player-hero-panel';
-        panel.classList.add('is-collapsed');
+        // 顶部玩家面板常驻展开，不加 is-collapsed
         panel.style.cssText = `
             position:fixed; left:var(--army-panel-w, clamp(280px, 19vw, 360px)); right:var(--feed-panel-w, clamp(280px, 19vw, 360px)); top:0; z-index:10003;
             width:auto; padding:4px 10px; box-sizing:border-box;
@@ -141,7 +141,7 @@ export class PlayerHUD {
             box-shadow:0 8px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,235,170,0.12);
             pointer-events:auto; user-select:none;
             transition:transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            transform:translateY(-100%);
+            transform:translateY(0);
         `;
 
         const body = document.createElement('div');
@@ -153,6 +153,7 @@ export class PlayerHUD {
         drawerBtn.id = 'player-panel-drawer-btn';
         drawerBtn.type = 'button';
         drawerBtn.className = 'player-panel-drawer-btn';
+        drawerBtn.style.display = 'none';
         drawerBtn.innerHTML = `👤 ${this.hero.name} <span class="drawer-arrow">▼</span>`;
         drawerBtn.title = '展开玩家面板';
         drawerBtn.addEventListener('click', () => this.toggleMinimize());
@@ -189,7 +190,8 @@ export class PlayerHUD {
      * [2026-09-09 主人需求] 开播即最小化：直播中玩家面板不占画面。
      * 幂等，状态没变直接返回（refresh 每秒跑一次，不做无谓 DOM 写）。
      */
-    public setMinimized(minimized: boolean): void {
+    public setMinimized(_minimized: boolean): void {
+        const minimized = false; // 顶部玩家面板常显不隐藏
         if (this.minimized === minimized) return;
         this.minimized = minimized;
         if (this.panel) {
@@ -721,7 +723,7 @@ export class PlayerHUD {
         minBtn.type = 'button';
         minBtn.textContent = this.minimized ? '▼' : '▲';
         minBtn.title = this.minimized ? '展开' : '收起';
-        minBtn.style.cssText = 'cursor:pointer; background:transparent; border:none; color:#dfc28c; font-size:12px; font-weight:900; line-height:1; padding:2px 4px; margin-left:1px; transition:color 0.2s;';
+        minBtn.style.cssText = 'display:none;';
         minBtn.addEventListener('mouseenter', () => { minBtn.style.color = '#fffcee'; });
         minBtn.addEventListener('mouseleave', () => { minBtn.style.color = '#dfc28c'; });
         minBtn.addEventListener('click', () => this.toggleMinimize());

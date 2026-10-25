@@ -1,17 +1,12 @@
 /**
  * 🔴 [2026-10-23] 直播观众互动的屏幕面板（`ViewerLive`）。
- *   · 打仗时右侧常显：玩法一句话、两边各多少人站队、排队名单、最近几条记录——给直播间观众看。
+ *   · [2026-10-26 主人定「放上面不好看，要不放下面吧」] 移至屏幕正下方中央，横条化展示：
+ *       战略地图平时贴在屏幕底边正中（`bottom: 6px`）；
+ *       进入战斗时自动抬升到下方技能栏 / 战况条正上方居中，与底部的「攻 胜 敌 混 并 败」技能槽上下呼应。
  *   · 按 F9 展开测试区：输入观众名，点「站攻方 / 站守方」、点六个字放计、勾「付费」——本地模拟弹幕，
  *     不用开直播就能试整套玩法。以后接上直播平台，消息走同一个 `ViewerLive.onChat`。
  *   · [2026-10-24] 接上直播间（SocialStreamBridge）后不打仗也常显；F9 里填 SSN 会话 ID、看连接状态、模拟打赏。
  *   · [2026-10-25] 免费模式（军令）：显示规矩、全场点赞 / 订阅目标、最近挣到令的几个人；F9 填 YouTube 接口，模拟点赞 / 订阅。
- *   · [2026-10-25 主人「你来定，只希望有人看、慢慢有钱挣」] 面板是给推流画面里的观众看的：
- *       1080p 推流放在网页播放器里只剩原尺寸四成多，原先 13px 的字到观众那边只有五六个像素，看不清怎么参加。
- *       字放大（FS），只留口令和最要紧的几句；细则（每 20 秒一令、订阅加几令）放进 YouTube 置顶留言。
- *       窗口比 1920 宽时整面板等比放大（DESIGN_WIDTH）：主人 4K 屏 150% 缩放，浏览器里 2560 宽。
- *       打赏一行只在 F9 填了「打赏方式」后才显示——没有付钱的地方就别写「打赏」。
- *       点赞 / 订阅目标只在接了 YouTube 接口（或真有数）时才显示，免得一直挂着「点赞 0/10」。
- *       F9 状态行加「最近弹幕几秒前」：SSN 连着不等于 YouTube 聊天窗口还开着，弹幕断了要看得出来。
  */
 import { type ViewerLive, ORDERS_PER_CAST } from './ViewerLive';
 import type { SocialStreamBridge } from './SocialStreamBridge';
@@ -19,11 +14,10 @@ import type { SocialStreamBridge } from './SocialStreamBridge';
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
 const WORDS = ['攻', '胜', '敌', '混', '并', '败'] as const;
-/** 面板字号（px，按 1920 宽的窗口设计）：标题 / 口令 / 说明 / 记录 */
-const FS = { title: 26, main: 22, sub: 17, small: 15 } as const;
+/** 底部横条字号（px，按 1920 宽的窗口设计）：标题 / 口令 / 说明 / 动态记录 */
+const FS = { title: 18, main: 16, sub: 14, small: 13 } as const;
 /**
- * 面板按 1920 宽设计；窗口更宽时整面板等比放大，在推流画面里占的比例不变。
- * 主人的屏是 4K、Windows 缩放 150%，浏览器里窗口 2560 宽：不放大的话，推到观众那边的字还要再小四分之一。
+ * 面板按 1920 宽设计；窗口更宽时整面板从底部中心等比放大（transform-origin: bottom center），在推流画面里占的比例不变。
  */
 const DESIGN_WIDTH = 1920;
 /** F9 填的「打赏方式」（如 ko-fi.com/某某），存 localStorage */
@@ -41,15 +35,20 @@ export class ViewerLivePanel {
         this.root = document.createElement('div');
         this.root.id = PANEL_ID;
         this.root.style.cssText = `
-            position:fixed; right:16px; top:140px; z-index:10030; width:360px; display:none;
-            background:rgba(16,12,9,0.85); border:1px solid rgba(212,175,55,0.55); border-radius:10px;
-            padding:12px 14px; color:#f3e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.45;
-            box-shadow:0 8px 24px rgba(0,0,0,0.6);`;
+            position:fixed; left:50%; bottom:6px; top:auto; transform:translateX(-50%); transform-origin:bottom center;
+            z-index:10054; width:max-content; max-width:94vw; display:none;
+            background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
+            border:1px solid rgba(212,175,55,0.65); border-radius:8px;
+            padding:6px 16px; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
+            box-shadow:0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22);
+            pointer-events:auto; user-select:none;
+            transition:bottom 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);`;
         this.body = document.createElement('div');
         this.dev = document.createElement('div');
-        this.dev.style.cssText = 'display:none; margin-top:8px; padding-top:8px; border-top:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5;';
+        this.dev.style.cssText = 'display:none; width:360px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;';
         this.buildDev();
-        this.root.append(this.body, this.dev);
+        // dev 在上、body 在下：面板贴屏幕底边时，按 F9 向上展开测试区，不往下超出屏幕
+        this.root.append(this.dev, this.body);
         document.body.appendChild(this.root);
 
         window.addEventListener('keydown', (e) => {
@@ -59,7 +58,30 @@ export class ViewerLivePanel {
             this.dev.style.display = this.devOpen ? 'block' : 'none';
             this.render();
         });
+        window.addEventListener('resize', () => this.updatePosition());
         window.setInterval(() => this.render(), 300);
+    }
+
+    /** 贴屏幕正下方居中；进入战斗时自动抬升到底部技能槽 / 血槽正上方 */
+    private updatePosition(): void {
+        if (this.root.style.display === 'none') return;
+        let bottomPx = 6;
+        const skillBar = document.getElementById('scene13-skill-bar-left') || document.getElementById('scene13-skill-bar-right');
+        const combatCenter = document.querySelector<HTMLElement>('.combat-center');
+        if (skillBar && skillBar.style.display !== 'none' && skillBar.offsetHeight > 0) {
+            const top = skillBar.getBoundingClientRect().top;
+            if (top > 0 && top < window.innerHeight) {
+                bottomPx = Math.max(6, Math.round(window.innerHeight - top + 6));
+            }
+        } else if (combatCenter && combatCenter.style.display !== 'none' && combatCenter.offsetHeight > 0) {
+            const top = combatCenter.getBoundingClientRect().top;
+            if (top > 0 && top < window.innerHeight) {
+                bottomPx = Math.max(6, Math.round(window.innerHeight - top + 6));
+            }
+        }
+        const scale = Math.round(Math.max(1, window.innerWidth / DESIGN_WIDTH) * 100) / 100;
+        this.root.style.bottom = `${bottomPx}px`;
+        this.root.style.transform = `translateX(-50%) scale(${scale})`;
     }
 
     private render(): void {
@@ -68,60 +90,63 @@ export class ViewerLivePanel {
         const linked = s.platform === '直播间已连接';
         this.root.style.display = s.on || linked || this.devOpen ? 'block' : 'none';
         if (this.root.style.display === 'none') return;
-        // zoom 连 top / right 一起放大，面板仍在右上角同样的相对位置
-        this.root.style.setProperty('zoom', String(Math.round(Math.max(1, window.innerWidth / DESIGN_WIDTH) * 100) / 100));
+        this.updatePosition();
+
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
         const b = (t: string) => `<b style="color:#ffd700;">${t}</b>`;
-        const line = (size: number, html: string, extra = '') => `<div style="font-size:${size}px;${extra}">${html}</div>`;
+        const sep = `<span style="color:rgba(212,175,55,0.45);margin:0 2px;">｜</span>`;
 
         // F9 才看得到的状态（主播自己看）
         const chat = s.lastChatAgo < 0 ? '还没收到弹幕' : `最近弹幕 ${s.lastChatAgo} 秒前`;
-        // 浏览器按「网址＋端口」分开存东西：5173 被占、Vite 换到 5174 时，存的会话 ID、观众余额都读不到（不是丢了，在 5173 那边）
         const port = location.port && location.port !== '5173'
             ? `<br><span style="color:#ff8a7a;">⚠ 游戏开在 ${esc(location.port)} 端口，存的会话 ID、观众余额都在 5173 那边：先关掉多开的游戏</span>`
             : '';
         const platform = this.devOpen
-            ? line(13, `${esc(s.platform || '没接直播间')}${s.platform ? '　' + chat : ''}${s.yt ? '<br>' + esc(s.yt) : ''}${port}`, 'color:#8fd3ff;margin-bottom:4px;')
+            ? `<div style="font-size:13px;color:#8fd3ff;margin-bottom:4px;text-align:center;">${esc(s.platform || '没接直播间')}${s.platform ? '　' + chat : ''}${s.yt ? '<br>' + esc(s.yt) : ''}${port}</div>`
             : '';
-        const title = line(FS.title, '发弹幕参战', 'color:#ffd700;font-weight:900;letter-spacing:2px;');
-        const words = line(FS.main, `${b('攻 胜 敌 混 并 败')} 放计`);
-        const earn = line(FS.sub, `站队、发弹幕攒军令，${b(`${ORDERS_PER_CAST} 令`)}放一计`);
-        const tip = this.tip
-            ? line(FS.sub, `打赏 ${b(`$${s.price / 100}`)} 马上放一计　${esc(this.tip)}`, 'margin-top:4px;')
-                + line(FS.small, '打赏时留名用你的 YouTube 名字', 'color:#cdbb95;')
-            : '';
+
+        // ── 第一行：核心参战口令（单行横向大字） ──
+        const titleBadge = `<span style="font-size:${FS.title}px;color:#ffd700;font-weight:900;letter-spacing:1.5px;text-shadow:0 1px 3px rgba(0,0,0,0.9);">📢 发弹幕参战</span>`;
+        const sideCmd = !s.on
+            ? `<span style="font-size:${FS.main}px;">开战后发 ${b('1')} 站攻方 · ${b('2')} 站守方</span>`
+            : `<span style="font-size:${FS.main}px;">${b('1')} ${esc(s.names[0])} <span style="font-size:${FS.sub}px;color:#dfc28c;">(${b(String(s.counts[0]))}人)</span> · ${b('2')} ${esc(s.names[1])} <span style="font-size:${FS.sub}px;color:#dfc28c;">(${b(String(s.counts[1]))}人)</span></span>`;
+        const castCmd = `<span style="font-size:${FS.main}px;">${b('攻 胜 敌 混 并 败')} 放计</span>`;
+        const earnCmd = `<span style="font-size:${FS.sub}px;color:#e0cfa9;">（站队/发弹幕攒军令，${b(`${ORDERS_PER_CAST} 令`)}放一计）</span>`;
+
+        const mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;">${titleBadge}${sep}${sideCmd}${sep}${castCmd} ${earnCmd}</div>`;
+
+        // ── 第二行：动态辅助信息（打赏 / 点赞目标 / 军令榜 / 排队 / 最近放计日志，有内容才显） ──
+        const subItems: string[] = [];
+        if (this.tip) {
+            subItems.push(`<span>打赏 ${b(`$${s.price / 100}`)} 马上放一计 · ${esc(this.tip)} <span style="color:#cdbb95;">(留YouTube名)</span></span>`);
+        }
         const g = s.goal;
         const showGoal = !!s.yt || g.likes > 0 || g.subs > 0;
-        const pct = Math.min(100, Math.round(g.likeProg / g.likeStep * 100));
-        const goal = showGoal
-            ? line(FS.sub, `点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 满了全军擂鼓${g.subs > 0 ? `　订阅 ${b(String(g.subs))}` : ''}`, 'margin-top:6px;')
-                + `<div style="height:8px;background:#3a2a16;border-radius:4px;overflow:hidden;margin-top:3px;"><div style="height:8px;width:${pct}%;background:#d4af37;"></div></div>`
-            : '';
-        // 最近挣到令的人：让观众看见自己那条弹幕算上了；够一计的标金色
-        // 面板别占太多战场：军令只列 3 人（一行），记录只留 2 条
-        const top = s.top.length
-            ? line(FS.small, `军令　${s.top.slice(0, 3).map((t) =>
-                `<span style="white-space:nowrap;${t.n >= ORDERS_PER_CAST ? 'color:#ffd700;' : ''}">${esc(t.name)} <b>${t.n}</b></span>`).join('　')}`, 'margin-top:6px;')
-            : '';
-        const log = s.log.slice(-2).map((l) => `<div>${esc(l)}</div>`).join('');
-        const logBox = log ? `<div style="margin-top:6px;font-size:${FS.small}px;color:#cdbb95;line-height:1.4;">${log}</div>` : '';
-
-        if (!s.on) {
-            this.body.innerHTML = platform + title
-                + line(FS.main, `开战后发 ${b('1')} 站攻方　${b('2')} 站守方`)
-                + words + earn + tip + goal + top + logBox;
-            return;
+        if (showGoal) {
+            const pct = Math.min(100, Math.round(g.likeProg / g.likeStep * 100));
+            subItems.push(
+                `<span style="display:inline-flex;align-items:center;gap:5px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 满全军擂鼓${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''}`
+                + `<span style="display:inline-block;width:60px;height:6px;background:#3a2a16;border-radius:3px;overflow:hidden;"><span style="display:block;height:6px;width:${pct}%;background:#d4af37;"></span></span></span>`
+            );
         }
-        const q = s.queueBrief;
-        const queue = q.length
-            ? line(FS.small, `<span style="color:#ffd700;">排队</span>　${q.slice(0, 3).map((x) =>
-                `${esc(x.name)}${x.paid ? '<span style="color:#ffd700;">·赏</span>' : ''}`).join('　')}${q.length > 3 ? `　等 ${q.length} 人` : ''}`, 'margin-top:6px;')
+        if (s.top.length) {
+            subItems.push(`<span>军令：${s.top.slice(0, 3).map((t) =>
+                `<span style="white-space:nowrap;${t.n >= ORDERS_PER_CAST ? 'color:#ffd700;' : ''}">${esc(t.name)} <b>${t.n}</b></span>`).join('　')}</span>`);
+        }
+        if (s.on && s.queueBrief.length) {
+            const q = s.queueBrief;
+            subItems.push(`<span><span style="color:#ffd700;">排队：</span>${q.slice(0, 3).map((x) =>
+                `${esc(x.name)}${x.paid ? '<span style="color:#ffd700;">·赏</span>' : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
+        }
+        if (s.log.length) {
+            subItems.push(`<span style="color:#cdbb95;">${s.log.slice(-2).map(esc).join(' ｜ ')}</span>`);
+        }
+
+        const subRow = subItems.length
+            ? `<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(212,175,55,0.25);font-size:${FS.small}px;">${subItems.join(sep)}</div>`
             : '';
-        this.body.innerHTML = platform + title
-            + line(FS.main, `${b('1')} ${esc(s.names[0])}　${b('2')} ${esc(s.names[1])}`)
-            + words + earn + tip
-            + line(FS.sub, `${esc(s.names[0])} ${b(String(s.counts[0]))} 人　｜　${esc(s.names[1])} ${b(String(s.counts[1]))} 人`, 'margin-top:6px;')
-            + goal + top + queue + logBox;
+
+        this.body.innerHTML = platform + mainRow + subRow;
     }
 
     private buildDev(): void {

@@ -63,6 +63,14 @@ export const CHASE_RING = 45;
 export const STALL_GUARD_ENFORCE = false;
 
 export const MELEE_QUIET_SEC = 2.5;
+/**
+ * 🔴 [2026-10-25 主人令「战术模式中，降低武将释放技能的次数」] 战术模式武将技集气槽**基准满槽秒数**
+ * （普将 × 无精锐 = 集气倍率 ×1.00 时）：原 **45 秒** → 现 **90 秒**（释放频率减半）。
+ * 实际满槽秒数 = 本值 ÷ 集气倍率（名将 ×1.25、精锐 T0–T4 ×1.5~1.1，见 `Scene13WarLayer.initScene13SkillSystem`）。
+ * ⚠️ 只影响「武将技」自身的集气节奏；直播观众花钱放计（`castViewerSkill`）不走集气槽，不受此值影响。
+ * ⚠️ UI 集气倍率换算也读这个常量（`CombatUI.renderScene13SkillBars`），改这里一处即可。
+ */
+export const SCENE13_SKILL_FILL_SEC = 90;
 export const NO_KILL_SEC = 60;
 export const HARD_STOP_SEC = 600;
 /** 🔴 [2026-10-12 主人令] 一场战斗最长 5 分钟，到点未分胜负攻方输 */

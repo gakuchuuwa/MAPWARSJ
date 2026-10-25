@@ -1168,6 +1168,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代西西里军团",
         legionType: "region",
     },
+    "taluma": {
+        legionName: "古典时代巽他军团",
+        legionType: "region",
+    },
+    "arevaci": {
+        legionName: "古典时代凯尔特伊比利亚军团",
+        legionType: "region",
+    },
     "qiajia": {
         legionName: "帝国时代赞德军团",
         legionType: "region",

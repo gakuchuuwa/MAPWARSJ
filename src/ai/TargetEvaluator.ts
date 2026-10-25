@@ -8,10 +8,10 @@
  * 目标选择（A/B 相同）：
  * 1. 候选池 = 锚点每条直连路的最近 1 座敌城（方向池；无回头路检查——打下的城即变己方，
  *    朝老家方向的敌城同样是扩张目标）
- * 2. 沿推进方向优先（<2 万，锚点=老家，军团在前哨）：优先「路径经过军团所在城」的目标
- * 3. 排除绕回老家（≥2 万，锚点=前线城）：排除「路径中段经过老家」的目标
- * 4. 方向池内有叛军据点（panshu 无主状态）→ 只在这些叛军据点里抽（主人 2026-10-25 令「周围有叛军据点，优先攻击」；
- *    优先于下一条的同文化优先——新令压旧令。历史起义首领各自是独立正常势力，不是叛军，不在此列）
+ * 2. 方向池内有打得动的叛军据点（panshu 无主状态）→ 只在这些叛军据点里抽（主人 2026-10-25 令「周围有叛军据点，优先攻击」；
+ *    压过后面所有筛选——新令压旧令，后面各条只在叛军池内部生效。历史起义首领各自是独立正常势力，不是叛军，不在此列）
+ * 3. 沿推进方向优先（<2 万，锚点=老家，军团在前哨）：优先「路径经过军团所在城」的目标
+ * 4. 排除绕回老家（≥2 万，锚点=前线城）：排除「路径中段经过老家」的目标
  * 5. 池内有同建筑文化风格且不绕远（≤最近×1.5）的城 → 只在这些里抽（主人 2026-10-21 定；反雪球已删）
  * 6. 池内均匀随机抽一座
  * 7. 池空（锚点直连均无敌城）→ 回退「从锚点出发道路距离最近的敌城」取最近 N 随机
@@ -100,6 +100,27 @@ export class TargetEvaluator {
             pool = reachable.slice(0, Math.min(poolSize, reachable.length));
         }
 
+        // 🔴 [2026-10-25 主人令「给武将寻敌添加一个逻辑，周围有叛军据点，优先攻击」]
+        //    方向池 = 锚点每条直连路方向上最近的那座敌城，正是军团「周围」正在考虑的据点。
+        //    池里只要有打得动的叛军据点（panshu 无主状态，见 data/RebelFaction 单一真源）→ 只打叛军；
+        //    池里没有 → 照旧整池抽签（不改变原行为，也不去远处找叛军）。
+        //    · 必须放在下面各条方向筛选（换路/沿推进方向/不绕老家/继承原方向）之前：
+        //      那几条都是「子集非空就收窄」，放后面会先把叛军城筛掉，优先攻击就落空（新令压旧令）。
+        //      它们仍在叛军池内部生效，筛空自然回落叛军池。
+        //    · 自带「打不打得过」闸门（同下方口径）：啃不动的叛军城不算，不会为打叛军送死。
+        //    · 历史起义首领各自是独立正常势力（旧 panjun 占位势力已于 2026-10-25 删除），**不是**叛军，不在此列。
+        if (pool.length > 1) {
+            const cap = options?.myTroops && options.myTroops > 0
+                ? options.myTroops * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO
+                : Infinity;
+            const cityById = new Map(cities.map((c) => [c.id, c]));
+            const rebelPool = pool.filter((s) => {
+                const c = cityById.get(s.targetId);
+                return isBlankRebelFaction(c?.factionId) && (c?.troops ?? 0) <= cap;
+            });
+            if (rebelPool.length > 0) pool = rebelPool;
+        }
+
         // 刚打平某城：优先避开最短路径仍需穿过该城的方向（换一条路进攻）
         const avoidCityId = options?.avoidThroughCityId;
         if (avoidCityId && pool.length > 1) {
@@ -165,19 +186,6 @@ export class TargetEvaluator {
             const troopsById = new Map(cities.map((c) => [c.id, c.troops ?? 0]));
             const beatable = pool.filter((s) => (troopsById.get(s.targetId) ?? 0) <= cap);
             if (beatable.length > 0) pool = beatable;
-        }
-
-        // 🔴 [2026-10-25 主人令「给武将寻敌添加一个逻辑，周围有叛军据点，优先攻击」]
-        //    方向池 = 锚点每条直连路方向上最近的那座敌城，正是军团「周围」正在考虑的据点。
-        //    池里只要有叛军据点（panshu 无主状态，见 data/RebelFaction 单一真源）→ 只打叛军；
-        //    池里没有叛军 → 照旧整池抽签（不改变原行为，也不去远处找叛军）。
-        //    · 压在下面「同建筑文化优先」之上（新令压旧令）；同文化优先仍在叛军池内部生效。
-        //    · 已先过上面「打不打得过」闸门：啃不动的叛军城不进池，不会为打叛军送死。
-        //    · 历史起义首领各自是独立正常势力（旧 panjun 占位势力已于 2026-10-25 删除），**不是**叛军，不在此列。
-        if (pool.length > 1) {
-            const factionById = new Map(cities.map((c) => [c.id, c.factionId]));
-            const rebelPool = pool.filter((s) => isBlankRebelFaction(factionById.get(s.targetId)));
-            if (rebelPool.length > 0) pool = rebelPool;
         }
 
         // 🔴 [2026-10-21 主人令] 优先攻打同建筑文化风格的据点：只在方向池（各条直连路最近的一座敌城）里挑，

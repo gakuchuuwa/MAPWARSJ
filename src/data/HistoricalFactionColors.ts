@@ -521,6 +521,8 @@ const _FIXED: Record<string, string> = {
     'daqiya': '#3E2E6B', // 达契亚
     'qiajia': '#5C3E2E', // 恺加
     'liangxixili': '#6B2E2E', // 两西西里
+    'arevaci': '#7A4A3E', // 阿雷瓦西
+    'taluma': '#2E5A3E', // 塔鲁玛迦拉
     'mazhaer': '#D0D0D8', // 匈牙利·布达佩斯（阿尔帕德银白）
     'meikelunbao': '#2E5E8C', // 梅克伦堡·罗斯托克（梅克伦堡蓝红）
     'didi': '#8A7A3A', // 佛兰德·布鲁日（佛兰德斯金黑）

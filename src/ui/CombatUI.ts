@@ -3,6 +3,7 @@ import { FACTIONS } from '../data/factions';
 import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
+import { SCENE13_SKILL_FILL_SEC } from './scene13/Scene13CombatMath';
 import type { Scene13WarInit } from './Scene13WarLayer';
 import {SPRITE_PATHS} from '../config/GameConfig';
 import {
@@ -2466,7 +2467,7 @@ export class CombatUI {
             if (tierEl) {
                 const genLabel = s.isFamous ? '名将' : '普将';
                 const eliteLabel = s.eliteTier ? `·${s.eliteTier}` : '';
-                const multVal = typeof s.rateMult === 'number' ? s.rateMult : (s.ratePerSec / (100 / 45));
+                const multVal = typeof s.rateMult === 'number' ? s.rateMult : (s.ratePerSec / (100 / SCENE13_SKILL_FILL_SEC));
                 tierEl.textContent = `${genLabel}${eliteLabel} ×${multVal.toFixed(2).replace(/\.?0+$/, '')}`;
                 tierEl.title = `集气倍率：${genLabel}(×${s.isFamous ? '1.25' : '1.0'})${s.eliteTier ? ` × 精锐${s.eliteTier}` : ''} = ×${multVal.toFixed(2)}（每秒 +${s.ratePerSec.toFixed(1)}%）`;
             }

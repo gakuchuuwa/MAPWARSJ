@@ -769,6 +769,11 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_karaiskakis': 19,                   // 卡拉伊斯卡基斯 · xilawangguo · 雅典
     'bfe_kontoskeles': 8,                     // 孔托斯克莱斯 · baizanting · 底比斯
     'bfe_ypsilantis': 19,                      // 科贾·穆萨帕夏 · osman · 君士坦丁堡
+    'bfe_maniakes': 11,                       // 马尼亚克 · baizanting · 锡拉库萨
+    'bfe_rhetogenes': -2,                    // 雷图格诺斯 · arevaci · 努曼提亚
+    'bfe_purnavarman': 5,                     // 普尔纳跋摩 · taluma · 巽他普拉
+    'maya_siyaj_kak': 4,                      // 西亚赫·卡克 · maya · 蒂卡尔
+    'bfe_apokaukos': 10,                      // 巴希尔 · baizanting · 斯巴达
     'bfe_maroboduus': -1,                    // 马罗博杜斯 · suweihui · 布拉格
     'yili_bato': -1,                         // 巴托 · yili · 布达佩斯
     'daqiya_burebista': -1,                  // 布雷比斯塔 · daqiya · 索非亚

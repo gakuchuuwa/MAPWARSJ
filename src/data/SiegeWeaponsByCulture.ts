@@ -822,6 +822,34 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['battering_ram', 'battering_ram', 'catapult', 'catapult', 'ballista', 'ballista'],
     },
+    '封建时代西西里埃米尔军团': {
+        age: 'feudal',
+        weapons: ['battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'heavy_scorpion', 'heavy_scorpion'],
+    },
+    '古典时代凯尔特伊比利亚军团': {
+        age: 'antiquity',
+        weapons: ['battering_ram', 'battering_ram', 'catapult', 'catapult', 'ballista', 'ballista'],
+    },
+    '城堡时代匈牙利军团': {
+        age: 'castle',
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
+    },
+    '古典时代巽他军团': {
+        age: 'antiquity',
+        weapons: ['battering_ram', 'battering_ram', 'catapult', 'catapult', 'ballista', 'ballista'],
+    },
+    '古典时代安纳托利亚军团': {
+        age: 'antiquity',
+        weapons: ['battering_ram', 'battering_ram', 'catapult', 'catapult', 'ballista', 'ballista'],
+    },
+    '古典时代佩滕军团': {
+        age: 'antiquity',
+        weapons: ['battering_ram', 'battering_ram', 'catapult', 'catapult', 'ballista', 'ballista'],
+    },
+    '封建时代拉科尼亚军团': {
+        age: 'feudal',
+        weapons: ['battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'heavy_scorpion', 'heavy_scorpion'],
+    },
     '城堡时代加齐突骑军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'mangonel', 'mangonel', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],

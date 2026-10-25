@@ -102,6 +102,7 @@ import {
     SEP_SMOOTH, SEP_SPD, SEP_FIGHT, LEASH_LAT, CELL_S, STUCK_IDLE_SEC, NET_STUCK_WINDOW,
     SLIDE_RATE, SLIDE_W, KEEP_TARGET_HP, KITE_RETREAT_DIST, KITE_SAFE, KITE_RETREAT_CAP,
     ATTRITION_START_SEC, ATTRITION_RAMP_SEC, ATTRITION_CAP, HKEY, CELL_M, CELL_R,
+    SCENE13_SKILL_FILL_SEC,
     gangMul, PIKE_BRACE_ENABLED, PIKE_BRACE_FRONT_DEG, PIKE_BRACE_TAKEN,
     isPikeBraceType, isCavalryType, attackArcDeg, inFrontArc,
     FLANK_ENABLED, flankMulOf,
@@ -488,7 +489,7 @@ export class Scene13WarLayer {
     private sideEliteTier: [number | null, number | null] = [null, null];
     /** 攻/守双方当前集气进度（0 ~ 100） */
     private skillGauge: [number, number] = [0, 0];
-    /** 攻/守双方每秒集气速率（基础 45 秒满槽 = 100/45 × 武将档位 × 精锐档位） */
+    /** 攻/守双方每秒集气速率（基准 90 秒满槽 = 100/SCENE13_SKILL_FILL_SEC × 武将档位 × 精锐档位） */
     private skillRatePerSec: [number, number] = [0, 0];
     /** 攻/守双方集气总倍率（用于 UI 展示） */
     private skillRateMult: [number, number] = [1, 1];
@@ -560,7 +561,9 @@ export class Scene13WarLayer {
         };
 
         const ELITE_RATE_MULTS: Record<number, number> = { 0: 1.5, 1: 1.4, 2: 1.3, 3: 1.2, 4: 1.1 };
-        const BASE_RATE = 100 / 45; // 普将+无精锐基准 45 秒满槽（整体放缓武将技释放频率）
+        // 🔴 [2026-10-25 主人令「战术模式中，降低武将释放技能的次数」] 基准 45 秒 → **90 秒**满槽（频率减半），
+        //    再乘名将/精锐倍率；直播观众花钱放计不走这里（见 castViewerSkill）。
+        const BASE_RATE = 100 / SCENE13_SKILL_FILL_SEC; // 普将+无精锐基准 90 秒满槽
 
         for (const f of [0, 1] as const) {
             const gid = this.sideGeneralId[f];

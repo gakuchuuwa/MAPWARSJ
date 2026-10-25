@@ -2309,6 +2309,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 西西里　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
+    // ── 西西里 · 封建时代 · 封建时代西西里埃米尔军团　（2026-10-25 恢复：马尼亚克 为带名将）────────────────
+    {
+        name: '封建时代西西里埃米尔军团', civ: '西西里', age: 'feudal', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
+        buildingStyle: 'SICILIANS',
+        castleId: 'SICI_CASTLE_AGE3', castleName: '西西里 诺曼巴勒莫王宫堡',
+        formationMode: 'echelon',
+        shipId: 'GALLEY',
+        commanderUnit: 'hero_belisarius',
+        slots: [
+            { type: 'elite_skirmisher', count: 4 },
+            { type: 'spearman', count: 3 },
+            { type: 'light_cavalry', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 西西里 · 古典时代 · 古典时代叙拉古军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵、远程（弩机）为主
@@ -2361,6 +2375,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 安达卢斯　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
+    // ── 安达卢斯 · 古典时代 · 古典时代凯尔特伊比利亚军团　（2026-10-25 恢复：雷图格诺斯 为带名将）────────────────
+    {
+        name: '古典时代凯尔特伊比利亚军团', civ: '西班牙', age: 'antiquity', deStyle: 'MEDI', region: 'SPANISH' as RegionType,
+        buildingStyle: 'SPANISH',
+        castleId: 'SPAN_CASTLE_AGE3', castleName: '西班牙 塞戈维亚阿尔卡萨堡',
+        formationMode: 'fish_scale',
+        shipId: 'GALLEY',
+        commanderUnit: 'hero_alaric',
+        slots: [
+            { type: 'spearman', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'shock_cavalry', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 安达卢斯 · 封建时代 · 封建时代摩尔游骑军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：轻骑兵、骑射为主
@@ -2553,6 +2581,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 匈人　四时代二级军团（古典）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
+    // ── 匈人 · 城堡时代 · 城堡时代匈牙利军团　（2026-10-25 恢复：匈雅提 为带名将，据点由贝尔格莱德改塞格德·匈人文化区）────────────────
+    {
+        name: '城堡时代匈牙利军团', civ: '匈人', age: 'castle', deStyle: 'CEAS', region: 'HUNS' as RegionType,
+        buildingStyle: 'HUNS',
+        castleId: 'HUNS_CASTLE_AGE3', castleName: '匈人 蒂萨河草原土垒营堡',
+        formationMode: 'fish_scale',
+        shipId: 'WAR_GALLEY',
+        commanderUnit: 'hero_attila',
+        slots: [
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'crossbowman', count: 4 },
+            { type: 'crusader_knight', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 匈人 · 封建时代 · 封建时代潘诺尼亚军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑射、步骑混编
@@ -2667,6 +2709,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 安纳托利亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
+    // ── 安纳托利亚 · 古典时代 · 古典时代安纳托利亚军团　（2026-10-25 恢复：穆瓦塔利 为带名将，哈图沙按区域文化判安纳托利亚）────────────────
+    {
+        name: '古典时代安纳托利亚军团', civ: '土耳其', age: 'antiquity', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        buildingStyle: 'TURKS',
+        castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
+        formationMode: 'crescent',
+        shipId: 'GALLEY',
+        commanderUnit: 'hero_qutlugh',
+        slots: [
+            { type: 'eastern_swordsman', count: 3 },
+            { type: 'cav_archer', count: 2 },
+            { type: 'laminated_bowman', count: 4 },
+        ],
+    },
     // ── 安纳托利亚 · 封建时代 · 封建时代突厥骑射军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑射为主
     //    描述正文（主人原文，一字未改）：（科尼亚、锡瓦斯；科尼亚因杰米纳雷学校精雕石门、苏丹哈尼石砌大驿站防御堡垒；双曲复合角弓高速环形回旋射击、轻型柳叶锁子甲、诱敌深入曼古歹伏击骑兵大阵）
@@ -3373,6 +3429,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 南洋　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第五批·孟加拉＋古吉拉特＋旁遮普＋吴哥＋缅甸＋安南＋南洋）
     // ═══════════════════════════════════════════════════════════════════
+    // ── 南洋 · 古典时代 · 古典时代巽他军团　（2026-10-25 恢复：普尔纳跋摩 为带名将）────────────────
+    {
+        name: '古典时代巽他军团', civ: '马来', age: 'antiquity', deStyle: 'SEAS', region: 'MALAY' as RegionType,
+        buildingStyle: 'MALAY',
+        castleId: 'MALA_CASTLE_AGE3', castleName: '马来 马六甲海峡水上海堡',
+        formationMode: 'crane_wing',
+        shipId: 'FIRE_GALLEY',
+        commanderUnit: 'hero_suryavarmani',
+        slots: [
+            { type: 'battle_elephant', count: 2 },
+            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'karambit_warrior', count: 3 },
+        ],
+    },
     // ── 南洋 · 封建时代 · 封建时代三佛齐军团　（三级升二级）────────────────
     //    评级：【高级】｜核心兵种：步兵、远程为主
     //    描述正文（主人原文，一字未改）：（巨港、占碑；穆阿拉占碑红砖大佛塔群、苏门答腊木石防御仓储要塞；双刃阔身马来剑、涂毒吹管与硬木短弓、热带雨林关隘设伏与轻装步兵包抄突击大阵）
@@ -3428,6 +3498,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 玛雅　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
+    // ── 玛雅 · 古典时代 · 古典时代佩滕军团　（2026-10-25 恢复：西亚赫·卡克 为带名将）────────────────
+    {
+        name: '古典时代佩滕军团', civ: '玛雅', age: 'antiquity', deStyle: 'MESO', region: 'MAYANS' as RegionType,
+        buildingStyle: 'MAYANS',
+        castleId: 'MAYA_CASTLE_AGE3', castleName: '玛雅 蒂卡尔石砌神庙要塞',
+        formationMode: 'fish_scale',
+        shipId: 'CANOE',
+        commanderUnit: 'hero_cuauhtemoc',
+        slots: [
+            { type: 'eagle_warrior', count: 3 },
+            { type: 'plumed_archer', count: 4 },
+            { type: 'eagle_scout', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 玛雅 · 封建时代 · 封建时代尤卡坦军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵为主
@@ -4018,6 +4102,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 斯巴达　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
+    // ── 斯巴达 · 封建时代 · 封建时代拉科尼亚军团　（2026-10-25 恢复：巴希尔 为带名将）────────────────
+    {
+        name: '封建时代拉科尼亚军团', civ: '斯巴达', age: 'feudal', deStyle: 'GREEK', region: 'SPARTANS' as RegionType,
+        buildingStyle: 'SPARTANS',
+        castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
+        formationMode: 'fish_scale',
+        shipId: 'DROMON',
+        commanderUnit: 'hero_belisarius',
+        slots: [
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'recurve_bowman', count: 4 },
+            { type: 'light_cavalry', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 斯巴达 · 古典时代 · 古典时代斯巴达军团　（同名已在二级（重复→替换保留））────────────────
     //    评级：【精锐】｜核心兵种：重步兵为主

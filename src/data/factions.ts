@@ -146,6 +146,10 @@ export const FACTIONS: Faction[] = [
     { id: 'qiajia', name: '恺加' },
     // 🔴 [2026-10-25 补B] 两西西里（兰迪 1860）
     { id: 'liangxixili', name: '两西西里' },
+    // 🔴 [2026-10-25 补B] 阿雷瓦西（凯尔特伊比利亚部落，努曼提亚）
+    { id: 'arevaci', name: '阿雷瓦西' },
+    // 🔴 [2026-10-25 补B] 塔鲁玛迦拉（西爪哇，5 世纪梵文碑铭）
+    { id: 'taluma', name: '塔鲁玛迦拉' },
   { id: 'mazhaer', name: '匈牙利' },
   { id: 'falanji', name: '法兰克' },
   { id: 'shiwaben', name: '施瓦本' },

@@ -520,6 +520,11 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     bfe_karaiskakis: { birth: 1782, death: 1827 },  // 卡拉伊斯卡基斯
     bfe_kontoskeles: { birth: 690, death: 727, kaoju: '推定' },  // 孔托斯克莱斯
     bfe_ypsilantis: { birth: 1792, death: 1828 },  // 科贾·穆萨帕夏
+    bfe_maniakes: { birth: 998, death: 1043, kaoju: '推定' },  // 马尼亚克
+    bfe_rhetogenes: { birth: -190, death: -133, kaoju: '推定' },  // 雷图格诺斯
+    bfe_purnavarman: { birth: 375, death: 434, kaoju: '推定' },  // 普尔纳跋摩
+    maya_siyaj_kak: { birth: 340, death: 410, kaoju: '推定' },  // 西亚赫·卡克
+    bfe_apokaukos: { birth: 940, death: 1000, kaoju: '推定' },  // 巴希尔·阿波卡夫科斯
     bfe_maroboduus: { birth: -30, death: 37, kaoju: '推定' },  // 马罗博杜斯
     yili_bato: { birth: -30, death: 9, kaoju: '推定' },  // 巴托
     daqiya_burebista: { birth: -100, death: -44, kaoju: '推定' },  // 布雷比斯塔

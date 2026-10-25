@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-25T11:51:33.921Z",
+ "generatedAt": "2026-10-25T15:05:17.151Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16020,6 +16020,34 @@
    "reliefM": 22,
    "cliffs": 0,
    "top": "Grass 2 91.5% · Forest 5% · Pine Forest 2.2% · Forest, Bush 0.5%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_numantia",
+   "file": "site_city_numantia.json",
+   "bytes": 304038,
+   "koppen": "Csb",
+   "theme": "PALAEARCTIC_EUROPE_MEDITERRANEAN",
+   "water": "WorldCover",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 64,
+   "cliffs": 0,
+   "top": "Grass 3 89.6% · Forest, Mediterranean 6% · Pine Forest 2.2% · Forest, Bush 1%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_sundapura",
+   "file": "site_city_sundapura.json",
+   "bytes": 354245,
+   "koppen": "Af",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 13,
+   "waterPct": 0.1,
+   "reliefM": 20,
+   "cliffs": 0,
+   "top": "Dry Grass 89.3% · Forest, Lush Bamboo 6.9% · Bamboo 2.2% · Forest, Bush 1.3%",
    "verify": "ok"
   }
  ],

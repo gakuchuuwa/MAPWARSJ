@@ -8246,6 +8246,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 23
+        },
+        "/assets/KHITAN/han_d_lixi.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/KHITAN/__闲置__KHITAN_02.png": {
+            "scale": 1.24,
+            "offsetX": 11,
+            "offsetY": 24
         }
     },
     "folderGuides": {

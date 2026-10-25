@@ -155,6 +155,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'daqiya': [{ from: -9999, era: 'antiquity' }], // 达契亚（布雷比斯塔）
     'qiajia': [{ from: -9999, era: 'imperial' }], // 恺加王朝（1796 起）
     'liangxixili': [{ from: -9999, era: 'imperial' }], // 两西西里王国（1816–1861）
+    'arevaci': [{ from: -9999, era: 'antiquity' }], // 阿雷瓦西（凯尔特伊比利亚部落，努曼提亚）
+    'taluma': [{ from: -9999, era: 'antiquity' }], // 塔鲁玛迦拉（西爪哇，5 世纪）
     'cheshihou': [{ from: -9999, era: 'antiquity' }], // 乌垒
     'chimei': [{ from: -9999, era: 'antiquity' }], // 赤眉
     'choros': [{ from: -9999, era: 'castle' }], // 萨吾尔
@@ -358,7 +360,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mapuche': [{ from: -9999, era: 'imperial' }], // 马普切
     'maqidun': [{ from: -9999, era: 'antiquity' }],
     'sesali': [{ from: -9999, era: 'antiquity' }], // 色萨利（古典）
-    'maya': [{ from: -9999, era: 'feudal' }], // 玛雅
+    'maya': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }], // 玛雅｜按史分段：古典期 → 476 起封建
     'maynila': [{ from: -9999, era: 'imperial' }], // 马尼拉土邦
     'medang': [{ from: -9999, era: 'feudal' }], // 马打蓝
     'meikelunbao': [{ from: -9999, era: 'castle' }], // 文德

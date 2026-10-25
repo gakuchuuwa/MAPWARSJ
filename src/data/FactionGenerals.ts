@@ -3035,7 +3035,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'xiongyati_yannuoshi', factionId: 'mazhaer', cityId: 'city_belgrade', generalName: '匈雅提亚诺什', portrait: '/assets/MAGYAR/xiongyati_yannuoshi.png' },
+        { generalId: 'xiongyati_yannuoshi', factionId: 'mazhaer', cityId: 'city_saigede', generalName: '匈雅提亚诺什', portrait: '/assets/MAGYAR/xiongyati_yannuoshi.png' },
 
 
 
@@ -3254,6 +3254,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xilawangguo_mani: [
         // 🔴 [2026-10-25 补B] 彼得罗斯·马夫罗米哈利斯（1765–1848，马尼 贝伊、希腊独立战争领袖）｜势力 希腊王国｜据点 斯巴达（SPARTANS 文化，摩里亚/马尼）｜普将｜精锐「马尼山兵」T4｜立绘留空
         { generalId: 'xilawangguo_petros', factionId: 'xilawangguo', cityId: 'city_sparta', generalName: '彼得罗斯·马夫罗米哈利斯', portrait: '', eliteName: '马尼山兵', eliteTier: 4 },
+    ],
+    arevaci: [
+        // 🔴 [2026-10-25 补B] 雷图格诺斯（？–前133，凯尔特伊比利亚阿雷瓦西人统帅；努曼提亚守城抗罗马二十年，前133 城破殉城）｜势力 阿雷瓦西｜据点 努曼提亚（SPANISH 文化，梅塞塔高原）｜普将｜精锐「努曼提亚兵」T4｜立绘留空
+        { generalId: 'bfe_rhetogenes', factionId: 'arevaci', cityId: 'city_numantia', generalName: '雷图格诺斯', portrait: '', eliteName: '努曼提亚兵', eliteTier: 4 },
+    ],
+    taluma: [
+        // 🔴 [2026-10-25 补B] 普尔纳跋摩（395–434 在位，塔鲁玛迦拉极盛期君主；图古、芝阿鲁腾梵文碑铭记其身披重甲统战象水陆大军、攻破摧毁敌国 21 座设防城）｜势力 塔鲁玛迦拉｜据点 巽他普拉（MALAY 文化，西爪哇）｜普将｜精锐「巽他战象」T4｜立绘留空
+        { generalId: 'bfe_purnavarman', factionId: 'taluma', cityId: 'city_sundapura', generalName: '普尔纳跋摩', portrait: '', eliteName: '巽他战象', eliteTier: 4 },
     ],
     wende: [
         // 🔴 [2026-10-25 主人令「存在就建」] 亨吉斯特（449 率撒克逊人入不列颠、肯特王；比德《英吉利教会史》《盎格鲁-撒克逊编年史》记载，半史）｜势力 萨克森｜据点 马格德堡（撒克逊核心，同文化据点）｜普将（存疑）｜精锐「撒克逊战团」T4｜立绘留空
@@ -3768,6 +3776,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     baizanting: [
+        // 🔴 [2026-10-25 补B] 巴希尔·阿波卡夫科斯（10 世纪末拜占庭摩里亚军区长官；997 年保加利亚沙皇撒慕尔南侵时坐镇斯巴达组织防务）｜势力 拜占庭｜据点 斯巴达（SPARTANS 文化，拉科尼亚）｜普将｜精锐「拉科尼亚守军」T4｜立绘留空
+        { generalId: 'bfe_apokaukos', factionId: 'baizanting', cityId: 'city_sparta', generalName: '巴希尔·阿波卡夫科斯', portrait: '', eliteName: '拉科尼亚守军', eliteTier: 4 },
+        // 🔴 [2026-10-25 补B] 乔治·马尼亚克（？–1043，拜占庭名将；1038–1040 西西里远征军最高统帅，罗梅塔与特罗伊纳大破阿拉伯军、收复墨西拿与叙拉古等十三城）｜势力 拜占庭｜据点 锡拉库萨（SICILIANS 文化）｜普将（存疑）｜精锐「西西里远征」T4｜立绘留空
+        { generalId: 'bfe_maniakes', factionId: 'baizanting', cityId: 'city_syracuse', generalName: '马尼亚克', portrait: '', eliteName: '西西里远征', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 阿加利阿诺斯·孔托斯克莱斯（？–727，拜占庭希腊军区统帅；726–727 联合爱琴海水手起义、率舰队北上进攻君士坦丁堡）｜势力 拜占庭｜据点 底比斯（GREECE 文化，希腊军区首府）｜普将（实败）｜精锐「希腊军区兵」T4｜立绘留空
         { generalId: 'bfe_kontoskeles', factionId: 'baizanting', cityId: 'city_thebes', generalName: '孔托斯克莱斯', portrait: '', eliteName: '希腊军区兵', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 维塔利安（？–520，东罗马色雷斯联邦军统帅；513–515 三次率色雷斯军进逼君士坦丁堡）｜势力 拜占庭｜据点 普罗夫迪夫（THRACIAN 文化，色雷斯）｜普将（实败）｜精锐「色雷斯军」T4｜立绘留空
@@ -15553,6 +15565,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     maya: [
+        // 🔴 [2026-10-25 补B] 西亚赫·卡克（Siya(j) K'ak'，378–402 活跃，玛雅古典期早期最高军事统帅 Kaloomte'；蒂卡尔第 31 号石碑载 378-01-16 攻克蒂卡尔、击杀美洲虎爪一世，并征服瓦夏克吞等）｜势力 玛雅｜据点 蒂卡尔（MAYANS 文化，佩滕）｜普将（存疑）｜精锐「蒂卡尔军」T4｜立绘留空
+        { generalId: 'maya_siyaj_kak', factionId: 'maya', cityId: 'city_tikal', generalName: '西亚赫·卡克', portrait: '', eliteName: '蒂卡尔军', eliteTier: 4 },
         { generalId: 'gen_jasawchan', cityId: 'city_tikal', generalName: '亚斯纳昌', portrait: '/assets/MAYANS/gen_jasawchan.png' },
         { generalId: 'gen_pakal', cityId: 'city_palenque', generalName: '帕卡尔', portrait: '/assets/MAYANS/gen_pakal.png', legionName: '封建时代尤卡坦军团', eliteName: '帕伦克矛兵', eliteTier: 4 },
     ],
