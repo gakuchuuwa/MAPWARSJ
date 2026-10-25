@@ -503,13 +503,22 @@ const _FIXED: Record<string, string> = {
     'tuomengde': '#1D5A3A', // 托蒙德·利默里克（爱尔兰深林绿）
     'habusibao': '#8B6A1A', // 哈布斯堡·维也纳（哈布斯堡金黑）
     'boximiya': '#C8A227', // 波西米亚·布拉格（波西米亚金）
-    'yidali_wangguo': '#2F6B4F', // 意大利王国（萨伏依绿）
-    'luxitaniya': '#6B3F2A', // 卢西塔尼亚（山地棕）
-    'tuoerkete': '#7A3B5C', // 托尔特克（高原紫）
-    'yadian_gongguo': '#5C6B2E', // 雅典公国
-    'mayapan': '#4A2E5C', // 玛雅潘
-    'songhai': '#8B5A2B', // 桑海
-    'shahi': '#2E5C6B', // 印度教沙希
+    'yidali_wangguo': '#9C4A2B', // 意大利王国（萨伏依绿）
+    'luxitaniya': '#7B4A2E', // 卢西塔尼亚（山地棕）
+    'tuoerkete': '#8A3B2B', // 托尔特克（高原紫）
+    'yadian_gongguo': '#5A4A2E', // 雅典公国
+    'mayapan': '#6B4A5C', // 玛雅潘
+    'songhai': '#7A5C3E', // 桑海
+    'shahi': '#5C3E7A', // 印度教沙希
+    'xisa': '#6B2E4A', // 西萨特拉普
+    'xilawangguo': '#2E4A6B', // 希腊王国
+    'ante': '#4A5C2E', // 安特
+    'suweihui': '#5C4A2E', // 苏维汇
+    'yibiluliya': '#2E4A5C', // 伊比利亚
+    'yicha': '#4A2E5C', // 伊察
+    'mengjiala': '#3E5C2E', // 孟加拉
+    'yili': '#6B2E3E', // 伊利里亚
+    'daqiya': '#3E2E6B', // 达契亚
     'mazhaer': '#D0D0D8', // 匈牙利·布达佩斯（阿尔帕德银白）
     'meikelunbao': '#2E5E8C', // 梅克伦堡·罗斯托克（梅克伦堡蓝红）
     'didi': '#8A7A3A', // 佛兰德·布鲁日（佛兰德斯金黑）

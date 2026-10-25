@@ -483,6 +483,23 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     mayapan_hunac_ceel: { birth: 1220, death: 1300, kaoju: '推定' },  // 胡纳克·塞尔
     songhai_askia_muhammad: { birth: 1443, death: 1538 },  // 阿斯基亚·穆罕默德
     shahi_jayapala: { birth: 940, death: 1002, kaoju: '推定' },  // 贾亚帕拉
+    xisa_chastana: { birth: 60, death: 130, kaoju: '推定' },  // 查斯塔纳
+    xilawangguo_kolokotronis: { birth: 1770, death: 1843 },  // 科洛科特罗尼斯
+    ante_boz: { birth: 350, death: 376, kaoju: '推定' },  // 博兹
+    suweihui_requiarius: { birth: 430, death: 500, kaoju: '推定' },  // 雷基亚尔
+    baizanting_nikephoros_phokas: { birth: 912, death: 969 },  // 尼基弗鲁斯·福卡斯
+    baizanting_constantine_xi: { birth: 1405, death: 1453 },  // 君士坦丁十一世
+    yibiluliya_pharnavaz: { birth: -360, death: -280, kaoju: '推定' },  // 法尔纳瓦兹一世
+    gelujiya_erekle_ii: { birth: 1720, death: 1798 },  // 埃雷克莱二世
+    litaowan_ostrogski: { birth: 1460, death: 1530 },  // 奥斯特罗格斯基
+    wulaertu_davit_bek: { birth: 1650, death: 1730, kaoju: '推定' },  // 达维德·贝克
+    baojialiya_levski: { birth: 1837, death: 1873 },  // 列夫斯基
+    yicha_canek: { birth: 1540, death: 1600, kaoju: '推定' },  // 卡内克
+    mengjiala_shamsuddin: { birth: 1300, death: 1358, kaoju: '推定' },  // 沙姆斯丁
+    habusibao_eugene: { birth: 1663, death: 1736 },  // 欧根亲王
+    gesake_khmelnytsky: { birth: 1595, death: 1657 },  // 赫梅利尼茨基
+    yili_bato: { birth: -30, death: 9, kaoju: '推定' },  // 巴托
+    daqiya_burebista: { birth: -100, death: -44, kaoju: '推定' },  // 布雷比斯塔
     danmai_christian_iv: { birth: 1577, death: 1648 },  // 克里斯蒂安四世
     gen_rurik: { birth: 830, death: 879, debut: 862, kaoju: '推定' },   // 留里克（生卒为传统推定；862 据拉多加/诺夫哥罗德）
     gen_sineus: { birth: 840, death: 864, debut: 862, kaoju: '推定' },  // 西涅乌斯（留里克之弟，862 据白湖；卒年 864 见《往年纪事》，生年为推定）

@@ -136,6 +136,7 @@ uniform sampler2D uDryTex;
 uniform float uMapSize;
 uniform float uTime;
 uniform float uIsIce;
+uniform float uCivLight;
 uniform vec2 uNoiseOff;
 
 // 2D Simplex Noise (Ashima Arts)
@@ -346,10 +347,56 @@ void main() {
     landCol *= (1.0 - footAO * 0.11);
   }
 
-  // 最终合成与 DE 原生高程坡度光照
+  // 最终合成与高程坡度光照（uCivLight > 0.5 时启用文明6风格冷暖斜阳 + 地表微浮雕 + 河岸立体光 + 流动云影）
   vec3 finalCol = mix(landCol, waterCol, isWater);
-  finalCol *= vLight;
-  gl_FragColor = vec4(finalCol, 1.0);
+  if (uCivLight > 0.5) {
+    // ① 文明6标志性手绘暖铜色温与色彩饱和度提振（即使在平地上也立刻呈现浓郁暖阳质感）
+    float baseLuma = dot(finalCol, vec3(0.299, 0.587, 0.114));
+    finalCol = mix(vec3(baseLuma), finalCol, 1.28);
+    // 陆地暖金琥珀色偏 vs 水体翡翠宝石色偏
+    vec3 landGrade = vec3(1.12, 1.03, 0.86);
+    vec3 waterGrade = vec3(0.92, 1.06, 1.12);
+    finalCol *= mix(landGrade, waterGrade, isWater);
+
+    // ② 全图宏观斜阳方向场 + 地表微浮雕（左上迎光暖金提亮、右下背光幽蓝深邃 + 团块起伏微法线）
+    vec2 normPos = (vGUV / max(1.0, uMapSize)) - vec2(0.5);
+    // 左上 (-0.5, -0.5) 为太阳方向：sunSweep 在左上为正 (+0.5)，右下为负 (-0.5)
+    float sunSweep = -(normPos.x * 0.65 + normPos.y * 0.75);
+    float macroHill = (tn1 * 0.55 + tn2 * 0.45) * 0.14;
+    float texLuma = mix(mix(lumaGrass, lumaDry, dryMix), lumaDirt, dirtMix);
+    float microBump = ((texLuma - 0.46) * 0.75 + nMicro1 * 0.55) * (1.0 - isWater * 0.80);
+    // 林缘背光阴影：树林边缘投下柔和冷色林荫
+    float forestShadow = smoothstep(0.14, 0.42, fPerturb) * (1.0 - isWater) * 0.12;
+
+    // ③ 向阳暖金 / 背阴冷蓝双色温光照（Golden-Hour Sunlight & Cool Sky Ambient）
+    float sunDelta = (vLight - 1.0) * 1.45 + sunSweep * 0.22 + macroHill + microBump * 0.11 - forestShadow;
+    float sunPos = clamp(sunDelta, 0.0, 0.55);
+    float sunNeg = clamp(-sunDelta, 0.0, 0.55);
+    vec3 warmSunTint = vec3(1.24, 1.08, 0.82);   // 浓郁鎏金斜阳
+    vec3 coolSkyTint = vec3(0.70, 0.83, 1.10);   // 幽谷冷蓝天光
+    vec3 lightTint = mix(vec3(1.0), warmSunTint, sunPos * 1.85);
+    lightTint = mix(lightTint, coolSkyTint, sunNeg * 1.95);
+    float scalarLight = clamp(1.0 + sunDelta * 0.95, 0.58, 1.42);
+    finalCol = finalCol * scalarLight * lightTint;
+
+    // ④ 鲜明的大尺度流动云影 + 丁达尔斜阳光束（Drifting Cloud Shadows & Diagonal God-Rays）
+    vec2 isoWorld = vGUV * vec2(1.0, 0.5);
+    vec2 cloudUV = isoWorld * 0.065 + vec2(-uTime * 0.032, -uTime * 0.015) + uNoiseOff * 0.12;
+    float cNoise1 = snoise(cloudUV);
+    float cNoise2 = snoise(cloudUV * 2.1 + vec2(17.3, 41.8) + vec2(-uTime * 0.020, uTime * 0.010));
+    float cloudField = cNoise1 * 0.65 + cNoise2 * 0.35;
+    // 云影区（明显压暗 24% 并染上冷蓝天光阴影，肉眼清晰可见云影在大地上流动）
+    float cloudShadow = smoothstep(0.08, 0.52, cloudField);
+    // 云隙丁达尔斜阳光束（沿 135° 斜向条带洒落暖金光斑，提亮 15%）
+    float rayWave = sin((isoWorld.x * 0.55 - isoWorld.y * 0.85) * 0.22 + uTime * 0.35 + n1 * 1.2) * 0.5 + 0.5;
+    float cloudSunbeam = smoothstep(0.05, 0.50, -cloudField) * (0.55 + 0.45 * rayWave);
+    vec3 cloudMul = mix(vec3(1.0), vec3(0.72, 0.80, 0.96), cloudShadow * 0.92);
+    cloudMul = mix(cloudMul, vec3(1.18, 1.10, 0.92), cloudSunbeam * 0.88);
+    finalCol *= cloudMul;
+  } else {
+    finalCol *= vLight;
+  }
+  gl_FragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);
 }`;
 
 function mkProgram(gl: WebGLRenderingContext): WebGLProgram {
@@ -481,6 +528,12 @@ export class Scene13GroundLayerGL {
   private dirtTex: WebGLTexture | null = null;
   private dryTex: WebGLTexture | null = null;
   public isIce = false;
+  public static civLightEnabled = false;
+  public civLight = Scene13GroundLayerGL.civLightEnabled;
+  public setCivLight(on: boolean): void {
+    this.civLight = on;
+    Scene13GroundLayerGL.civLightEnabled = on;
+  }
 
   public readonly smoothWater: Float32Array;
   public readonly smoothForest: Float32Array;
@@ -667,6 +720,7 @@ export class Scene13GroundLayerGL {
       uMapSize: U('uMapSize'),
       uTime: U('uTime'),
       uIsIce: U('uIsIce'),
+      uCivLight: U('uCivLight'),
       uNoiseOff: U('uNoiseOff'),
       uFieldTex: U('uFieldTex'),
       uGrassTex: U('uGrassTex'),
@@ -915,6 +969,7 @@ export class Scene13GroundLayerGL {
     gl.uniform1f(this.loc.uMapSize as WebGLUniformLocation, this.N);
     gl.uniform1f(this.loc.uTime as WebGLUniformLocation, performance.now() * 0.001);
     gl.uniform1f(this.loc.uIsIce as WebGLUniformLocation, this.isIce ? 1.0 : 0.0);
+    gl.uniform1f(this.loc.uCivLight as WebGLUniformLocation, this.civLight ? 1.0 : 0.0);
     gl.uniform2f(this.loc.uNoiseOff as WebGLUniformLocation, this.noiseOff[0], this.noiseOff[1]);
 
     if (this.fieldTex) {

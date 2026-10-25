@@ -144,6 +144,15 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mayapan': [{ from: -9999, era: 'castle' }], // 玛雅潘联盟
     'songhai': [{ from: -9999, era: 'imperial' }], // 桑海帝国（1464 起）
     'shahi': [{ from: -9999, era: 'feudal' }], // 印度教沙希（850–1026）
+    'xisa': [{ from: -9999, era: 'antiquity' }], // 西萨特拉普（1–2 世纪）
+    'xilawangguo': [{ from: -9999, era: 'imperial' }], // 希腊王国（1832 起）
+    'ante': [{ from: -9999, era: 'antiquity' }], // 安特（4 世纪）
+    'suweihui': [{ from: -9999, era: 'feudal' }], // 苏维汇王国（409–585）
+    'yibiluliya': [{ from: -9999, era: 'antiquity' }], // 伊比利亚王国（前 3 世纪起）
+    'yicha': [{ from: -9999, era: 'imperial' }], // 伊察（16 世纪）
+    'mengjiala': [{ from: -9999, era: 'castle' }], // 孟加拉苏丹国（1342 起）
+    'yili': [{ from: -9999, era: 'antiquity' }], // 伊利里亚（巴托起义，前 6 年）
+    'daqiya': [{ from: -9999, era: 'antiquity' }], // 达契亚（布雷比斯塔）
     'cheshihou': [{ from: -9999, era: 'antiquity' }], // 乌垒
     'chimei': [{ from: -9999, era: 'antiquity' }], // 赤眉
     'choros': [{ from: -9999, era: 'castle' }], // 萨吾尔
@@ -210,7 +219,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'gaoqi_d': [{ from: -9999, era: 'feudal' }], // 北齐
     'gar_kham': [{ from: -9999, era: 'imperial' }], // 德司
     'gaya': [{ from: -9999, era: 'antiquity' }], // 伽倻
-    'gelujiya': [{ from: -9999, era: 'castle' }], // 格鲁吉亚
+    'gelujiya': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 格鲁吉亚｜城堡 → 1500 起帝国
     'geluolu': [{ from: -9999, era: 'feudal' }], // 葛逻禄
     'genji': [{ from: -9999, era: 'castle' }], // 源氏
     'genji_iyo': [{ from: -9999, era: 'castle' }], // 源氏·伊予
@@ -227,7 +236,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'gujarat': [{ from: -9999, era: 'imperial' }], // 古吉拉特苏丹国
     'gulaishi': [{ from: -9999, era: 'feudal' }], // 古莱什部落
     'gurkha': [{ from: -9999, era: 'imperial' }], // 廓喀
-    'habusibao': [{ from: -9999, era: 'castle' }], // 哈布斯堡
+    'habusibao': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 哈布斯堡｜城堡 → 1500 起帝国
     'haikou': [{ from: -9999, era: 'imperial' }], // 海寇
     'haixi_nvzhen': [{ from: -9999, era: 'imperial' }], // 海西
     'hamade': [{ from: -9999, era: 'feudal' }], // 哈马德王朝
@@ -620,7 +629,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ayoubu': [{ from: -9999, era: 'feudal' }, { from: 1187, era: 'castle' }], // 阿尤布｜按现存名将成名年推定：–∞起封建 → 1187起城堡
     'bafaliya': [{ from: -9999, era: 'feudal' }, { from: 1388, era: 'castle' }], // 巴伐利亚｜按现存名将成名年推定：–∞起封建 → 1388起城堡
     'baojiaer': [{ from: -9999, era: 'castle' }, { from: 1720, era: 'imperial' }], // 保加尔｜按现存名将成名年推定：–∞起城堡 → 1720起帝国
-    'baojialiya': [{ from: -9999, era: 'feudal' }, { from: 1190, era: 'castle' }], // 保加利亚｜按现存名将成名年推定：–∞起封建 → 1190起城堡
+    'baojialiya': [{ from: -9999, era: 'feudal' }, { from: 1190, era: 'castle' }, { from: 1500, era: 'imperial' }], // 保加利亚｜封建→1190 城堡→1500 帝国
     'baojian_qishi': [{ from: -9999, era: 'castle' }, { from: 1470, era: 'imperial' }], // 宝剑骑士团｜按现存名将成名年推定：–∞起城堡 → 1470起帝国
     'boluo': [{ from: -9999, era: 'antiquity' }, { from: 618, era: 'feudal' }], // 波罗帝国｜按现存名将成名年推定：–∞起古典 → 618起封建
     'bulietani': [{ from: -9999, era: 'feudal' }, { from: 1425, era: 'castle' }], // 布列塔尼｜按现存名将成名年推定：–∞起封建 → 1425起城堡
@@ -676,7 +685,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'talasike': [{ from: -9999, era: 'castle' }, { from: 1505, era: 'imperial' }], // 塔拉斯科｜按现存名将成名年推定：–∞起城堡 → 1505起帝国
     'tubo': [{ from: -9999, era: 'antiquity' }, { from: 530, era: 'feudal' }, { from: 1050, era: 'castle' }], // 吐蕃｜按现存名将成名年推定：–∞起古典 → 530起封建 → 1050起城堡
     'wende': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }, { from: 993, era: 'castle' }, { from: 1500, era: 'imperial' }], // 萨克森｜–∞起古典（罗马时期撒克逊人）→ 476起封建 → 993起城堡 → 1500起帝国
-    'wulaertu': [{ from: -9999, era: 'antiquity' }, { from: 953, era: 'feudal' }, { from: 1140, era: 'castle' }], // 亚美尼亚｜按现存名将成名年推定：–∞起古典 → 953起封建 → 1140起城堡
+    'wulaertu': [{ from: -9999, era: 'antiquity' }, { from: 953, era: 'feudal' }, { from: 1140, era: 'castle' }, { from: 1500, era: 'imperial' }], // 亚美尼亚｜古典→953 封建→1140 城堡→1500 帝国
     'xigete': [{ from: -9999, era: 'antiquity' }, { from: 708, era: 'feudal' }, { from: 1085, era: 'castle' }], // 西哥特｜按现存名将成名年推定：–∞起古典 → 708起封建 → 1085起城堡
     'xijue': [{ from: -9999, era: 'antiquity' }, { from: 660, era: 'feudal' }], // 十箭｜按现存名将成名年推定：–∞起古典 → 660起封建
     'xinxibanya': [{ from: -9999, era: 'castle' }, { from: 1505, era: 'imperial' }], // 新西班牙｜按现存名将成名年推定：–∞起城堡 → 1505起帝国

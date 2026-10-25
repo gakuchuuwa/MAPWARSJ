@@ -13,6 +13,13 @@ interface RiverWorkerResponse {
     id: number;
     data: Uint8ClampedArray;
     waves?: Float32Array | null;
+    ripples?: Float32Array | null;
+}
+
+interface WaterTileCacheEntry {
+    imgData: ImageData;
+    waves: Float32Array | null;
+    ripples: Float32Array | null;
 }
 
 const WATER_TILE_CACHE_MAX = 240;
@@ -24,7 +31,7 @@ export class RiverOverlayLayer extends L.GridLayer {
     private msgIdCounter: number = 0;
     private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, completed: boolean, cacheKey: string }> = new Map();
     /** LRU 缓存已算好的水面瓦片像素与浪花点，平移/缩放回看瞬时上屏 */
-    private tileCache: Map<string, { imgData: ImageData; waves: Float32Array | null }> = new Map();
+    private tileCache: Map<string, WaterTileCacheEntry> = new Map();
 
     constructor(options?: L.GridLayerOptions) {
         super({
@@ -55,7 +62,7 @@ export class RiverOverlayLayer extends L.GridLayer {
         this.esriUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}';
     }
 
-    private cachePut(key: string, entry: { imgData: ImageData; waves: Float32Array | null }): void {
+    private cachePut(key: string, entry: WaterTileCacheEntry): void {
         this.tileCache.delete(key);
         this.tileCache.set(key, entry);
         while (this.tileCache.size > WATER_TILE_CACHE_MAX) {
@@ -66,20 +73,21 @@ export class RiverOverlayLayer extends L.GridLayer {
     }
 
     private handleWorkerMessage(e: MessageEvent<RiverWorkerResponse>) {
-        const { id, data, waves } = e.data;
+        const { id, data, waves, ripples } = e.data;
         const task = this.pendingTiles.get(id);
 
         if (task) {
             const { ctx, tile, done, cacheKey } = task;
-            if (waves && waves.length > 0) {
-                (tile as any)._coastalWaves = waves;
-            }
+            const activeWaves = waves && waves.length > 0 ? waves : null;
+            const activeRipples = ripples && ripples.length > 0 ? ripples : null;
+            (tile as any)._coastalWaves = activeWaves;
+            (tile as any)._seaRipples = activeRipples;
 
             // Create ImageData
             // [FIX] Cast to any to avoid strict "ArrayBufferLike vs ArrayBuffer" TS error
             const imgData = new ImageData(data as any, 256, 256);
             ctx.putImageData(imgData, 0, 0);
-            this.cachePut(cacheKey, { imgData, waves: waves && waves.length > 0 ? waves : null });
+            this.cachePut(cacheKey, { imgData, waves: activeWaves, ripples: activeRipples });
 
             // Mark done
             if (!task.completed) {
@@ -89,17 +97,27 @@ export class RiverOverlayLayer extends L.GridLayer {
         }
     }
 
-    
-
-    /** 获取当前加载到 DOM 中的所有带海岸浪潮数据的瓦片 */
-    public getActiveWaveTiles(): Array<{ tile: HTMLElement; waves: Float32Array; coords: L.Coords }> {
-        const res: Array<{ tile: HTMLElement; waves: Float32Array; coords: L.Coords }> = [];
+    /** 获取当前加载到 DOM 中、带海岸浪潮或开阔水面细纹的瓦片。 */
+    public getActiveWaveTiles(): Array<{
+        tile: HTMLElement;
+        waves: Float32Array | null;
+        ripples: Float32Array | null;
+        coords: L.Coords;
+    }> {
+        const res: Array<{
+            tile: HTMLElement;
+            waves: Float32Array | null;
+            ripples: Float32Array | null;
+            coords: L.Coords;
+        }> = [];
         const tiles = (this as any)._tiles;
         if (!tiles) return res;
         for (const key in tiles) {
             const el = tiles[key]?.el as any;
-            if (el && el._coastalWaves && el._coastalWaves.length > 0) {
-                res.push({ tile: el, waves: el._coastalWaves, coords: tiles[key].coords });
+            const waves = el?._coastalWaves as Float32Array | null | undefined;
+            const ripples = el?._seaRipples as Float32Array | null | undefined;
+            if (el && ((waves && waves.length > 0) || (ripples && ripples.length > 0))) {
+                res.push({ tile: el, waves: waves ?? null, ripples: ripples ?? null, coords: tiles[key].coords });
             }
         }
         return res;
@@ -222,9 +240,8 @@ export class RiverOverlayLayer extends L.GridLayer {
             this.tileCache.delete(cacheKey);
             this.tileCache.set(cacheKey, cached);
             ctx.putImageData(cached.imgData, 0, 0);
-            if (cached.waves) {
-                (tile as any)._coastalWaves = cached.waves;
-            }
+            (tile as any)._coastalWaves = cached.waves;
+            (tile as any)._seaRipples = cached.ripples;
             const reqId = this.msgIdCounter++;
             this.pendingTiles.set(reqId, { ctx, tile, done, completed: true, cacheKey });
             this.worker.postMessage({ rebindId: reqId, x: coords.x, y: coords.y, z: coords.z });

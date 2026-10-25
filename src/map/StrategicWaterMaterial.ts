@@ -83,6 +83,8 @@ export interface WaterTileMask {
 export interface StrategicWaterResult {
     data: Uint8ClampedArray;
     waves: Float32Array;
+    /** 开阔水面的固定地理坐标细纹：x、y、随机相位、长度、方向。 */
+    ripples: Float32Array;
 }
 
 /** 邻接瓦片只提供真实水域掩膜，不改变海陆判定。 */
@@ -344,5 +346,36 @@ export function renderStrategicWater(
             }
         }
     }
-    return { data: out, waves: new Float32Array(wavePoints) };
+
+    // 开阔水面细纹按世界坐标取样，跨瓦片连续，也不会随屏幕拖动打滑。
+    // 离岸 20px 内不取，保留浅滩与近岸碎浪自己的层次；内陆窄河不会进入这里。
+    const ripplePoints: number[] = [];
+    const RIPPLE_GRID = 18;
+    const hash = (gx: number, gy: number, salt: number): number => {
+        const v = Math.sin(gx * 127.1 + gy * 311.7 + salt * 74.7) * 43758.5453;
+        return v - Math.floor(v);
+    };
+    const worldX0 = tile.x * w, worldY0 = tile.y * h;
+    for (let wy = Math.ceil(worldY0 / RIPPLE_GRID) * RIPPLE_GRID; wy < worldY0 + h; wy += RIPPLE_GRID) {
+        const sy = wy - worldY0;
+        for (let wx = Math.ceil(worldX0 / RIPPLE_GRID) * RIPPLE_GRID; wx < worldX0 + w; wx += RIPPLE_GRID) {
+            const sx = wx - worldX0;
+            const i = (sy + pad) * pw + sx + pad;
+            const dist = distance[i];
+            if (dist < 20 || cov[i] < 0.92) continue;
+            const gx = Math.floor(wx / RIPPLE_GRID), gy = Math.floor(wy / RIPPLE_GRID);
+            const keep = hash(gx, gy, 0);
+            if (keep > 0.56) continue;
+            const phase = hash(gx, gy, 1);
+            const jx = hash(gx, gy, 2), jy = hash(gx, gy, 3);
+            const length = 6 + hash(gx, gy, 4) * 9;
+            const angle = -0.20 + (hash(gx, gy, 5) - 0.5) * 0.38;
+            ripplePoints.push(sx + (jx - 0.5) * 9, sy + (jy - 0.5) * 9, phase, length, angle);
+        }
+    }
+    return {
+        data: out,
+        waves: new Float32Array(wavePoints),
+        ripples: new Float32Array(ripplePoints),
+    };
 }

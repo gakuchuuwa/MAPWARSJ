@@ -3,16 +3,16 @@ import { perfDoctor } from '../debug/PerfDoctor';
 import type { RiverOverlayLayer } from './RiverOverlayLayer';
 
 /**
- * CoastalWaveLayer - 战略地图海岸线动态海浪/潮汐层
+ * CoastalWaveLayer - 战略地图开阔水面细纹与海岸潮汐层
  *
- * 功能：
- * 1. 浅滩过渡上的动态点睛：在陆地边缘碧绿环礁与浅滩水面，增加极微弱、半透明的白色泛浪与潮汐微动；
- * 2. 真实推涌动态：两组交错呼吸波浪，沿着水陆法线向陆地方向自然涌动后轻柔消散；
- * 3. 性能极其轻量：全视口单 Canvas，仅在 zoom 7~12 显示，开销 < 0.2ms，低功耗高帧率。
+ * 1. 开阔水面：地理坐标固定的细碎波峰缓慢推进，深色波谷托住低亮波光，不随屏幕拖动打滑；
+ * 2. 近岸：两组交错呼吸波浪沿水陆法线向岸推涌，曲线碎沫而非连续白边；
+ * 3. 全视口单 Canvas、30fps、波纹按亮度分批描边，避免每朵浪单独 stroke 的开销。
  */
 const PANE = 'coastalWavePane';
 const MIN_ZOOM = 7;
 const MAX_ZOOM = 12;
+const FRAME_MS = 1000 / 30;
 
 export class CoastalWaveLayer extends L.Layer {
     private map: L.Map | null = null;
@@ -21,6 +21,7 @@ export class CoastalWaveLayer extends L.Layer {
     private ctx = this.canvas.getContext('2d');
     private rafId: number | null = null;
     private visible = true;
+    private lastRenderAt = -Infinity;
 
     constructor(riverLayer: RiverOverlayLayer) {
         super();
@@ -87,13 +88,14 @@ export class CoastalWaveLayer extends L.Layer {
 
     private tick = (now: number): void => {
         this.rafId = requestAnimationFrame(this.tick);
-        if (!this.map || !this.ctx || !this.visible) return;
+        if (!this.map || !this.ctx || !this.visible || now - this.lastRenderAt < FRAME_MS) return;
+        this.lastRenderAt = now;
 
         const _t0 = performance.now();
         try {
             this.render(now);
         } finally {
-            perfDoctor.note('CoastalWaveLayer.tick(海岸微浪潮汐)', performance.now() - _t0, 'src/map/CoastalWaveLayer.ts:tick');
+            perfDoctor.note('CoastalWaveLayer.tick(海面细纹与海岸潮汐)', performance.now() - _t0, 'src/map/CoastalWaveLayer.ts:tick');
         }
     };
 
@@ -124,7 +126,7 @@ export class CoastalWaveLayer extends L.Layer {
         const ch = this.canvas.height;
 
         for (let ti = 0; ti < activeTiles.length; ti++) {
-            const { waves, coords } = activeTiles[ti];
+            const { waves, ripples, coords } = activeTiles[ti];
             const tilePt = map.latLngToContainerPoint(map.unproject(L.point(coords.x * 256, coords.y * 256), coords.z));
             const tx = tilePt.x - canvasPt.x;
             const ty = tilePt.y - canvasPt.y;
@@ -132,6 +134,8 @@ export class CoastalWaveLayer extends L.Layer {
             // 视口粗裁剪
             if (tx > cw || tx + 256 < 0 || ty > ch || ty + 256 < 0) continue;
 
+            if (ripples) this.drawSeaRipples(g, ripples, tx, ty, t, cw, ch);
+            if (!waves) continue;
             const len = waves.length;
             for (let i = 0; i < len; i += 6) {
                 const px = waves[i];
@@ -151,12 +155,56 @@ export class CoastalWaveLayer extends L.Layer {
 
                 const angle = Math.atan2(ny, nx) + Math.PI / 2;
 
-                // 潮浪 1
                 this.drawWaveCrest(g, sx, sy, nx, ny, phase1, angle);
-                // 潮浪 2
                 this.drawWaveCrest(g, sx, sy, nx, ny, phase2, angle);
             }
         }
+    }
+
+    /** 开阔海面：细波峰有慢速推进与呼吸，但不整片闪烁、不盖成白色网格。 */
+    private drawSeaRipples(
+        g: CanvasRenderingContext2D,
+        ripples: Float32Array,
+        tx: number, ty: number, t: number,
+        cw: number, ch: number,
+    ): void {
+        // 四档亮度共用 Path2D：每块瓦片最多 8 次 stroke，而不是每根波纹两次。
+        const paths = [new Path2D(), new Path2D(), new Path2D(), new Path2D()];
+        for (let i = 0; i < ripples.length; i += 5) {
+            const px = ripples[i], py = ripples[i + 1];
+            const sx = tx + px, sy = ty + py;
+            if (sx < -20 || sx > cw + 20 || sy < -20 || sy > ch + 20) continue;
+
+            const phase = (t * 0.16 + ripples[i + 2]) % 1;
+            const crest = Math.sin(phase * Math.PI);
+            if (crest < 0.18) continue;
+            const bucket = Math.min(3, Math.floor(crest * 4));
+            const angle = ripples[i + 4];
+            const dx = Math.cos(angle), dy = Math.sin(angle);
+            const nx = -dy, ny = dx;
+            const travel = (phase - 0.5) * 4.0;
+            const wx = sx - nx * travel, wy = sy - ny * travel;
+            const half = ripples[i + 3] * (0.38 + crest * 0.12);
+            const lift = 0.35 + crest * 0.45;
+            const path = paths[bucket];
+            path.moveTo(wx - dx * half, wy - dy * half);
+            path.quadraticCurveTo(wx + nx * lift, wy + ny * lift, wx + dx * half, wy + dy * half);
+        }
+
+        g.save();
+        g.lineCap = 'round';
+        g.lineJoin = 'round';
+        for (let bucket = 0; bucket < paths.length; bucket++) {
+            const strength = (bucket + 1) / paths.length;
+            // 稍宽的深蓝波谷托住细亮波峰，海面有体积感但不靠高曝白光。
+            g.strokeStyle = `rgba(8, 45, 72, ${(0.040 * strength).toFixed(3)})`;
+            g.lineWidth = 1.65;
+            g.stroke(paths[bucket]);
+            g.strokeStyle = `rgba(183, 221, 227, ${(0.18 * strength).toFixed(3)})`;
+            g.lineWidth = 0.72;
+            g.stroke(paths[bucket]);
+        }
+        g.restore();
     }
 
     private drawWaveCrest(
@@ -165,19 +213,28 @@ export class CoastalWaveLayer extends L.Layer {
         nx: number, ny: number,
         phase: number, angle: number,
     ): void {
-        // 向岸微推 (仅 2.0 像素)
-        const travel = (1 - phase) * 2.0;
+        // 向岸微推，末段随碎沫淡化。
+        const travel = (1 - phase) * 2.8;
         const wx = sx - nx * travel;
         const wy = sy - ny * travel;
 
-        // 极轻微的微沫泛白呼吸（峰值仅 0.16）
         const crest = Math.sin(phase * Math.PI);
-        const alpha = Math.pow(crest, 3.0) * 0.16;
+        const alpha = Math.pow(crest, 3.0) * 0.20;
         if (alpha < 0.015) return;
 
-        g.fillStyle = `rgba(255, 255, 255, ${alpha.toFixed(3)})`;
+        const dx = Math.cos(angle), dy = Math.sin(angle);
+        const half = 1.8 + phase * 1.2;
+        g.save();
+        g.lineCap = 'round';
         g.beginPath();
-        g.ellipse(wx, wy, 1.5 + phase * 0.5, 0.60, angle, 0, Math.PI * 2);
-        g.fill();
+        g.moveTo(wx - dx * half, wy - dy * half);
+        g.quadraticCurveTo(wx + nx * 0.45, wy + ny * 0.45, wx + dx * half, wy + dy * half);
+        g.strokeStyle = `rgba(22, 93, 111, ${(alpha * 0.45).toFixed(3)})`;
+        g.lineWidth = 1.5;
+        g.stroke();
+        g.strokeStyle = `rgba(244, 252, 250, ${alpha.toFixed(3)})`;
+        g.lineWidth = 0.65;
+        g.stroke();
+        g.restore();
     }
 }

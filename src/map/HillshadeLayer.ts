@@ -44,6 +44,8 @@ interface HillshadeOptions extends L.GridLayerOptions {
     valleyReliefExp?: boolean;
     /** 7 层高地试验（DE 台地光照，浮雕瓦片 Zoom7–12），默认关 */
     terraceExp?: boolean;
+    /** 文明6风格光影试验，默认开 */
+    civ6LightExp?: boolean;
 }
 
 const WORKER_POOL_SIZE = 3;
@@ -64,6 +66,7 @@ export class HillshadeLayer extends L.GridLayer {
     private experimentalRelief: boolean = true;
     private valleyReliefExp: boolean = true;
     private terraceExp: boolean = false;
+    private civ6LightExp: boolean = false;
     private modeVersion: number = 0;
 
     private workers: Worker[] = [];
@@ -116,6 +119,7 @@ export class HillshadeLayer extends L.GridLayer {
         this.experimentalRelief = options?.experimentalRelief ?? true;
         this.valleyReliefExp = options?.valleyReliefExp ?? true;
         this.terraceExp = options?.terraceExp ?? false;
+        this.civ6LightExp = options?.civ6LightExp ?? false;
         perfDoctor.registerCache({
             name: 'HillshadeLayer:DE materials(战略地表)',
             where: 'src/map/StrategicTerrainMaterial.ts:textures',
@@ -365,6 +369,14 @@ export class HillshadeLayer extends L.GridLayer {
         this.redraw();
     }
 
+    public setCiv6LightExp(enabled: boolean): void {
+        if (this.civ6LightExp === enabled) return;
+        this.civ6LightExp = enabled;
+        this.modeVersion++;
+        this.clearTileCache();
+        this.redraw();
+    }
+
     createTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
         const tile = L.DomUtil.create('canvas', 'leaflet-tile') as HTMLCanvasElement;
         tile.style.pointerEvents = 'none';
@@ -487,6 +499,7 @@ export class HillshadeLayer extends L.GridLayer {
             experimentalRelief: isExpTile,
             valleyReliefExp: isValleyTile,
             terraceExp: isExpTile && this.terraceExp,
+            civ6LightExp: this.civ6LightExp,
             modeVersion: this.modeVersion
         };
 

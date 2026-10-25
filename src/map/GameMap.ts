@@ -473,11 +473,79 @@ export class GameMap {
         catch { return false; }
     })();
 
+    // ☀️ 文明6风格光影（试验）：默认关，只有存过 'true' 才开
+    private isCiv6LightExpEnabled = (() => {
+        try { return localStorage.getItem('mapwar.civ6LightExp.enabled') === 'true'; }
+        catch { return false; }
+    })();
+
     public setTerraceExp(enabled: boolean): void {
         this.isTerraceExpEnabled = enabled;
         try { localStorage.setItem('mapwar.terrace7.enabled', String(enabled)); }
         catch { /* 存储不可用时仍正常切换当前画面。 */ }
         this.hillshadeLayer?.setTerraceExp(enabled);
+    }
+
+    public setCiv6LightExp(enabled: boolean): void {
+        this.isCiv6LightExpEnabled = enabled;
+        try {
+            localStorage.setItem('mapwar.civ6LightExp.enabled', String(enabled));
+            localStorage.setItem('mapwar_civ_light', enabled ? '1' : '0');
+        } catch { /* ignore */ }
+        this.hillshadeLayer?.setCiv6LightExp(enabled);
+        this.syncCiv6MapAtmosphere(enabled);
+        try {
+            const g = (window as any).game;
+            if (g?.scene13?.groundLayerGL) g.scene13.groundLayerGL.setCivLight(enabled);
+        } catch { /* ignore */ }
+    }
+
+    private syncCiv6MapAtmosphere(enabled: boolean): void {
+        const tilePane = this.map?.getPane?.('tilePane');
+        if (tilePane) {
+            tilePane.style.filter = enabled
+                ? 'sepia(16%) saturate(132%) contrast(114%) brightness(103%)'
+                : 'sepia(8%) saturate(104%) contrast(104%) brightness(98%)';
+        }
+        const container = this.map?.getContainer?.();
+        if (!container) return;
+        let overlay = document.getElementById('civ6-map-atmosphere') as HTMLDivElement | null;
+        if (!enabled) {
+            if (overlay) overlay.style.display = 'none';
+            return;
+        }
+        if (!overlay) {
+            if (!document.getElementById('civ6-map-atmo-style')) {
+                const st = document.createElement('style');
+                st.id = 'civ6-map-atmo-style';
+                st.textContent = `
+                    @keyframes civ6CloudDrift {
+                        0%   { background-position: 0px 0px, 0px 0px, 0% 0%; }
+                        50%  { background-position: 420px 180px, -260px 220px, 0% 0%; }
+                        100% { background-position: 840px 360px, -520px 440px, 0% 0%; }
+                    }
+                `;
+                document.head.appendChild(st);
+            }
+            overlay = document.createElement('div');
+            overlay.id = 'civ6-map-atmosphere';
+            overlay.style.cssText = [
+                'position:absolute',
+                'inset:0',
+                'pointer-events:none',
+                'z-index:350',
+                'mix-blend-mode:soft-light',
+                'background-image:' + [
+                    'radial-gradient(ellipse 72% 62% at 12% 10%, rgba(255,210,108,0.82) 0%, rgba(255,186,82,0.40) 40%, rgba(255,180,80,0.0) 74%)',
+                    'repeating-linear-gradient(132deg, rgba(255,232,166,0.28) 0px, rgba(255,232,166,0.0) 95px, rgba(14,34,72,0.26) 195px, rgba(255,232,166,0.28) 320px)',
+                    'radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 44%, rgba(10,24,52,0.60) 100%)'
+                ].join(','),
+                'background-size: 100% 100%, 920px 920px, 100% 100%',
+                'animation: civ6CloudDrift 36s linear infinite',
+            ].join(';');
+            container.appendChild(overlay);
+        }
+        overlay.style.display = 'block';
     }
 
     public setValleyReliefExp(enabled: boolean): void {
@@ -515,6 +583,7 @@ export class GameMap {
                     experimentalRelief: this.isExperimentalReliefEnabled,
                     valleyReliefExp: this.isValleyReliefExpEnabled,
                     terraceExp: this.isTerraceExpEnabled,
+                    civ6LightExp: this.isCiv6LightExpEnabled,
                 });
                 // 沙漠河流绿带要河流线段：已加载就直接给，没加载就触发一次（加载完会自动转交）
                 if (this.riverSegmentsCache) this.hillshadeLayer.setRiverSegments(this.riverSegmentsCache);
@@ -771,6 +840,11 @@ export class GameMap {
                         <b>⛰️ 7层高地（试验）</b>
                     </label>
 
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#d97706;margin-top:2px;margin-bottom:8px;" title="开启文明6风格暖金斜阳、幽谷冷蓝天光与动态流动云影">
+                        <input type="checkbox" id="chk-civ6-light"${this.isCiv6LightExpEnabled ? ' checked' : ''}> 
+                        <b>☀️ 文明6光影（试验）</b>
+                    </label>
+
                     <hr style="margin:8px 0;width:100%;border:0;border-top:1px solid #eee;">
 
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#0066cc;margin-top:8px;">
@@ -912,7 +986,7 @@ export class GameMap {
                 if (!panelContent) return;
                 const inputs: Record<string, string | boolean> = {};
                 panelContent.querySelectorAll<HTMLInputElement>('input[id]').forEach((input) => {
-                    if (input.id === 'chk-terrain-relief-experiment' || input.id === 'chk-valley-relief-experiment') return;
+                    if (input.id === 'chk-terrain-relief-experiment' || input.id === 'chk-valley-relief-experiment' || input.id === 'chk-civ6-light') return;
                     inputs[input.id] = input.type === 'checkbox' ? input.checked : input.value;
                 });
                 try {
@@ -1143,6 +1217,14 @@ export class GameMap {
                 });
             }
 
+            // ☀️ 文明6光影（试验）开关（向阳山脊鎏金暖阳 + 背阴峡谷冷蓝天光 + 斜阳云影）
+            const chkCiv6Light = document.getElementById('chk-civ6-light') as HTMLInputElement;
+            if (chkCiv6Light) {
+                chkCiv6Light.addEventListener('change', (e: any) => {
+                    this.setCiv6LightExp(e.target.checked);
+                });
+            }
+
             // Sliders
             const rngZ = document.getElementById('rng-z') as HTMLInputElement;
             const rngO = document.getElementById('rng-o') as HTMLInputElement;
@@ -1190,10 +1272,7 @@ export class GameMap {
 
 
             // 🔴 [2026-10-01 主人定] 滤镜是设定好的，无用，删除面板调节，固定应用设定滤镜
-            const tilePane = this.map.getPane('tilePane');
-            if (tilePane) {
-                tilePane.style.filter = 'sepia(8%) saturate(104%) contrast(104%) brightness(98%)';
-            }
+            this.syncCiv6MapAtmosphere(this.isCiv6LightExpEnabled);
 
             // Faction Color Toggle
             const chkFaction = document.getElementById('chk-faction') as HTMLInputElement;

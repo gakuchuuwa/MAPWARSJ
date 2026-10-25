@@ -433,6 +433,23 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'mayapan_hunac_ceel': 'MAYANS',   // 玛雅潘｜胡纳克·塞尔｜据点 乌斯马尔
     'songhai_askia_muhammad': 'AFRICA',   // 桑海｜阿斯基亚·穆罕默德｜据点 廷巴克图
     'shahi_jayapala': 'PURU',   // 沙希｜贾亚帕拉｜据点 白沙瓦
+    'xisa_chastana': 'GURJARAS',   // 西萨特拉普｜查斯塔纳｜据点 帕坦
+    'xilawangguo_kolokotronis': 'GREECE',   // 希腊王国｜科洛科特罗尼斯｜据点 底比斯
+    'ante_boz': 'SLAVIC',   // 安特｜博兹｜据点 基辅
+    'suweihui_requiarius': 'PORTUGUESE',   // 苏维汇｜雷基亚尔｜据点 波尔图
+    'baizanting_nikephoros_phokas': 'TURKS',   // 拜占庭｜福卡斯｜据点 伊科尼乌姆
+    'baizanting_constantine_xi': 'SPARTANS',   // 拜占庭｜君士坦丁十一世｜据点 斯巴达
+    'yibiluliya_pharnavaz': 'GEORGIANS',   // 伊比利亚｜法尔纳瓦兹一世｜据点 第比利斯
+    'gelujiya_erekle_ii': 'GEORGIANS',   // 格鲁吉亚｜埃雷克莱二世｜据点 第比利斯
+    'litaowan_ostrogski': 'LITHUANIANS',   // 立陶宛｜奥斯特罗格斯基｜据点 维尔纽斯
+    'wulaertu_davit_bek': 'ARMENIANS',   // 亚美尼亚｜达维德·贝克｜据点 埃里温
+    'baojialiya_levski': 'BULGARIANS',   // 保加利亚｜列夫斯基｜据点 索非亚
+    'yicha_canek': 'MAYANS',   // 伊察｜卡内克｜据点 蒂卡尔
+    'mengjiala_shamsuddin': 'BENGALIS',   // 孟加拉｜沙姆斯丁｜据点 戈尔冈
+    'habusibao_eugene': 'HUNS',   // 哈布斯堡｜欧根亲王｜据点 塞格德
+    'gesake_khmelnytsky': 'CUMAN',   // 哥萨克｜赫梅利尼茨基｜据点 谢缅杰尔
+    'yili_bato': 'MAGYAR',   // 伊利里亚｜巴托｜据点 布达佩斯
+    'daqiya_burebista': 'BULGARIANS',   // 达契亚｜布雷比斯塔｜据点 索非亚
     'danmai_christian_iv': 'DANES',   // 丹麦｜克里斯蒂安四世｜据点 哥本哈根
     'gen_alfonso_ix': 'SPANISH',   // 莱昂｜阿方索九世｜据点 萨拉曼卡
     'gen_alfonso_vi': 'GOTHS',   // 西哥特｜阿方索六世｜据点 托莱多

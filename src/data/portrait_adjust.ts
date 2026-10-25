@@ -8241,6 +8241,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 11
+        },
+        "/assets/MONGOL/menggu_d_mongke.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 23
         }
     },
     "folderGuides": {

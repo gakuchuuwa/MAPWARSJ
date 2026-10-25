@@ -732,6 +732,23 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'mayapan_hunac_ceel': 13,                // 胡纳克·塞尔 · mayapan · 乌斯马尔
     'songhai_askia_muhammad': 15,            // 阿斯基亚·穆罕默德 · songhai · 廷巴克图
     'shahi_jayapala': 10,                    // 贾亚帕拉 · shahi · 白沙瓦
+    'xisa_chastana': 2,                      // 查斯塔纳 · xisa · 帕坦
+    'xilawangguo_kolokotronis': 19,          // 科洛科特罗尼斯 · xilawangguo · 底比斯
+    'ante_boz': 4,                          // 博兹 · ante · 基辅
+    'suweihui_requiarius': 5,                // 雷基亚尔 · suweihui · 波尔图
+    'baizanting_nikephoros_phokas': 10,      // 福卡斯 · baizanting · 伊科尼乌姆
+    'baizanting_constantine_xi': 15,         // 君士坦丁十一世 · baizanting · 斯巴达
+    'yibiluliya_pharnavaz': -3,              // 法尔纳瓦兹一世 · yibiluliya · 第比利斯
+    'gelujiya_erekle_ii': 18,                // 埃雷克莱二世 · gelujiya · 第比利斯
+    'litaowan_ostrogski': 15,                // 奥斯特罗格斯基 · litaowan · 维尔纽斯
+    'wulaertu_davit_bek': 17,                // 达维德·贝克 · wulaertu · 埃里温
+    'baojialiya_levski': 19,                 // 列夫斯基 · baojialiya · 索非亚
+    'yicha_canek': 16,                       // 卡内克 · yicha · 蒂卡尔
+    'mengjiala_shamsuddin': 14,              // 沙姆斯丁 · mengjiala · 戈尔冈
+    'habusibao_eugene': 17,                  // 欧根亲王 · habusibao · 塞格德
+    'gesake_khmelnytsky': 17,                // 赫梅利尼茨基 · gesake · 谢缅杰尔
+    'yili_bato': -1,                         // 巴托 · yili · 布达佩斯
+    'daqiya_burebista': -1,                  // 布雷比斯塔 · daqiya · 索非亚
     'danmai_christian_iv': 16,               // 克里斯蒂安四世 · danmai · 哥本哈根
     'gen_rurik': 9,                                      // 留里克 · liulike · 拉多加（862 据拉多加/诺夫哥罗德）
     'gen_sineus': 9,                                     // 西涅乌斯 · liulike · 白湖（862 据白湖）

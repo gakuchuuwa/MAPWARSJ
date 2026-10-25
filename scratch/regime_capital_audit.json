@@ -1940,6 +1940,105 @@
       "type": "政权",
       "auditStatus": "ok",
       "note": "印度教沙希(850–1026)；2026-10-25 为封建时代沙希军团新立"
+    },
+    {
+      "id": "xisa",
+      "flag": "西萨",
+      "facName": "西萨特拉普",
+      "cityId": "city_patan",
+      "cityName": "帕坦",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "西萨特拉普(查斯塔纳，1–2 世纪)；2026-10-25 为古典时代萨卡军团新立"
+    },
+    {
+      "id": "xilawangguo",
+      "flag": "希腊",
+      "facName": "希腊王国",
+      "cityId": "city_thebes",
+      "cityName": "底比斯",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "希腊王国(1832 起，科洛科特罗尼斯)；2026-10-25 为帝国时代爱琴要塞军团新立"
+    },
+    {
+      "id": "ante",
+      "flag": "安特",
+      "facName": "安特",
+      "cityId": "city_jifu",
+      "cityName": "基辅",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "安特(4 世纪，博兹)；2026-10-25 为古典时代安特军团新立"
+    },
+    {
+      "id": "suweihui",
+      "flag": "苏维",
+      "facName": "苏维汇",
+      "cityId": "city_boertu",
+      "cityName": "波尔图",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "苏维汇王国(409–585，雷基亚尔)；2026-10-25 为封建时代苏维汇铁骑军团新立"
+    },
+    {
+      "id": "yibiluliya",
+      "flag": "伊比",
+      "facName": "伊比利亚",
+      "cityId": "city_dibilisi",
+      "cityName": "第比利斯",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "伊比利亚王国(前 3 世纪，法尔纳瓦兹一世)；2026-10-25 为古典时代高加索伊比利亚军团新立"
+    },
+    {
+      "id": "yicha",
+      "flag": "伊察",
+      "facName": "伊察",
+      "cityId": "city_tikal",
+      "cityName": "蒂卡尔",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "伊察(16 世纪，卡内克)；2026-10-25 为帝国时代玛雅军团新立"
+    },
+    {
+      "id": "mengjiala",
+      "flag": "孟加",
+      "facName": "孟加拉",
+      "cityId": "city_geergang",
+      "cityName": "戈尔冈",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "孟加拉苏丹国(1342，沙姆斯丁)；2026-10-25 为城堡时代孟加拉军团新立"
+    },
+    {
+      "id": "yili",
+      "flag": "伊里",
+      "facName": "伊利里亚",
+      "cityId": "city_budapeisi",
+      "cityName": "布达佩斯",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "伊利里亚(巴托起义，前 6 年)；2026-10-25 为古典时代潘诺尼亚巡境军团新立"
+    },
+    {
+      "id": "daqiya",
+      "flag": "达契",
+      "facName": "达契亚",
+      "cityId": "city_sofia",
+      "cityName": "索非亚",
+      "priority": 2,
+      "type": "政权",
+      "auditStatus": "ok",
+      "note": "达契亚(布雷比斯塔 前 82–44)；2026-10-25 为古典时代巴尔干军团新立"
     }
   ]
 }

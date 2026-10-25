@@ -1474,6 +1474,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     baojialiya: [
+        // 🔴 [2026-10-25 补B] 瓦西尔·列夫斯基（1837–1873，保加利亚民族起义领袖）｜势力 保加利亚｜据点 索非亚（BULGARIANS 文化）｜普将｜精锐「保加利亚军」T4｜立绘留空
+        { generalId: 'baojialiya_levski', factionId: 'baojialiya', cityId: 'city_sofia', generalName: '列夫斯基', portrait: '', eliteName: '保加利亚军', eliteTier: 4 },
 
 
 
@@ -2909,6 +2911,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     habusibao: [
+        // 🔴 [2026-10-25 补B] 欧根亲王（1663–1736，哈布斯堡名将；1697 曾塔大捷）｜势力 哈布斯堡｜据点 塞格德（HUNS 文化，多瑙河）｜名将｜精锐「帝国胸甲骑」T1｜立绘留空｜首战待补
+        { generalId: 'habusibao_eugene', factionId: 'habusibao', cityId: 'city_saigede', generalName: '欧根亲王', portrait: '', eliteName: '帝国胸甲骑', eliteTier: 1 },
         { generalId: 'gen_maximilian', cityId: 'city_weiyeena', generalName: '马克西米', portrait: '/assets/GERMANIC/habusibao_makeximi.png' },
         { generalId: 'bfe_frederick_iii', factionId: 'habusibao', cityId: 'city_weiyeena', generalName: '腓特烈三世', portrait: '/assets/GERMANIC/bfe_frederick_iii.png', eliteName: '帝国骑士', eliteTier: 4 },
     ],
@@ -3168,6 +3172,42 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     shahi: [
         // 🔴 [2026-10-25 补A] 贾亚帕拉（约 940–1002，印度教沙希王；1001 白沙瓦败于伽色尼）｜势力 沙希｜据点 白沙瓦（PURU 文化）｜普将（实胜缺）｜精锐「沙希战象」T4｜立绘留空
         { generalId: 'shahi_jayapala', factionId: 'shahi', cityId: 'city_baishawa', generalName: '贾亚帕拉', portrait: '', eliteName: '沙希战象', eliteTier: 4 },
+    ],
+    xisa: [
+        // 🔴 [2026-10-25 补A] 查斯塔纳（约 78–130，西萨特拉普王；抗沙卡、护佛法，铭文可考）｜势力 西萨特拉普｜据点 帕坦（GURJARAS 文化）｜普将（实胜不明）｜精锐「萨卡骑兵」T4｜立绘留空
+        { generalId: 'xisa_chastana', factionId: 'xisa', cityId: 'city_patan', generalName: '查斯塔纳', portrait: '', eliteName: '萨卡骑兵', eliteTier: 4 },
+    ],
+    xilawangguo: [
+        // 🔴 [2026-10-25 补A] 科洛科特罗尼斯（1770–1843，希腊独立战争名将；1821 瓦尔特齐、1822 收复科林斯）｜势力 希腊王国｜据点 底比斯（GREECE 文化，爱琴海区域同文化最近据点）｜名将｜精锐「希腊起义军」T1｜立绘留空｜首战待补
+        { generalId: 'xilawangguo_kolokotronis', factionId: 'xilawangguo', cityId: 'city_thebes', generalName: '科洛科特罗尼斯', portrait: '', eliteName: '希腊起义军', eliteTier: 1 },
+    ],
+    ante: [
+        // 🔴 [2026-10-25 补B] 博兹（约 350–376，安特首领，376 战哥特王维尼塔里乌斯，有实名）｜势力 安特｜据点 基辅（SLAVIC 文化，第聂伯）｜普将｜精锐「安特战斧」T4｜立绘留空
+        { generalId: 'ante_boz', factionId: 'ante', cityId: 'city_jifu', generalName: '博兹', portrait: '', eliteName: '安特战斧', eliteTier: 4 },
+    ],
+    suweihui: [
+        // 🔴 [2026-10-25 补B] 雷基亚尔（5 世纪苏维汇王，与西哥特争伊比利亚，有实名）｜势力 苏维汇｜据点 波尔图（PORTUGUESE 文化，加利西亚）｜普将｜精锐「苏维汇重骑」T4｜立绘留空
+        { generalId: 'suweihui_requiarius', factionId: 'suweihui', cityId: 'city_boertu', generalName: '雷基亚尔', portrait: '', eliteName: '苏维汇重骑', eliteTier: 4 },
+    ],
+    yibiluliya: [
+        // 🔴 [2026-10-25 补B] 法尔纳瓦兹一世（前 3 世纪伊比利亚王，格鲁吉亚史上首个王朝）｜势力 伊比利亚｜据点 第比利斯（GEORGIANS 文化，卡特利）｜普将｜精锐「伊比利亚矛兵」T4｜立绘留空
+        { generalId: 'yibiluliya_pharnavaz', factionId: 'yibiluliya', cityId: 'city_dibilisi', generalName: '法尔纳瓦兹一世', portrait: '', eliteName: '伊比利亚矛兵', eliteTier: 4 },
+    ],
+    yicha: [
+        // 🔴 [2026-10-25 补B] 卡内克（16 世纪伊察王，有实名；佩滕伊察）｜势力 伊察｜据点 蒂卡尔（MAYANS 文化，佩滕）｜普将｜精锐「伊察弓手」T4｜立绘留空
+        { generalId: 'yicha_canek', factionId: 'yicha', cityId: 'city_tikal', generalName: '卡内克', portrait: '', eliteName: '伊察弓手', eliteTier: 4 },
+    ],
+    mengjiala: [
+        // 🔴 [2026-10-25 补B] 沙姆斯丁（伊利亚斯·沙，1342–1358 孟加拉苏丹）｜势力 孟加拉｜据点 戈尔冈（BENGALIS 文化）｜普将｜精锐「孟加拉战象」T4｜立绘留空
+        { generalId: 'mengjiala_shamsuddin', factionId: 'mengjiala', cityId: 'city_geergang', generalName: '沙姆斯丁', portrait: '', eliteName: '孟加拉战象', eliteTier: 4 },
+    ],
+    yili: [
+        // 🔴 [2026-10-25 补B] 巴托（Bato，前 6–9 年 伊利里亚/潘诺尼亚大起义领袖，有实名）｜势力 伊利里亚｜据点 布达佩斯（MAGYAR 文化，潘诺尼亚）｜普将｜精锐「伊利里亚军」T4｜立绘留空
+        { generalId: 'yili_bato', factionId: 'yili', cityId: 'city_budapeisi', generalName: '巴托', portrait: '', eliteName: '伊利里亚军', eliteTier: 4 },
+    ],
+    daqiya: [
+        // 🔴 [2026-10-25 补B] 布雷比斯塔（前 82–44 达契亚王，统一达契亚部落）｜势力 达契亚｜据点 索非亚（BULGARIANS 文化，巴尔干）｜普将｜精锐「达契亚弯刀」T4｜立绘留空
+        { generalId: 'daqiya_burebista', factionId: 'daqiya', cityId: 'city_sofia', generalName: '布雷比斯塔', portrait: '', eliteName: '达契亚弯刀', eliteTier: 4 },
     ],
     wende: [
         // 🔴 [2026-10-25 主人令「存在就建」] 亨吉斯特（449 率撒克逊人入不列颠、肯特王；比德《英吉利教会史》《盎格鲁-撒克逊编年史》记载，半史）｜势力 萨克森｜据点 马格德堡（撒克逊核心，同文化据点）｜普将（存疑）｜精锐「撒克逊战团」T4｜立绘留空
@@ -3678,6 +3718,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     baizanting: [
+        // 🔴 [2026-10-25 补B] 尼基弗鲁斯·福卡斯（912–969，拜占庭名将；961 收复克里特、965 奇里乞亚、969 安条克；卡帕多西亚家族）｜势力 拜占庭｜据点 伊科尼乌姆（TURKS 文化，安纳托利亚军区）｜名将｜精锐「拜占庭铁甲」T1｜立绘留空｜首战待补
+        { generalId: 'baizanting_nikephoros_phokas', factionId: 'baizanting', cityId: 'city_yikeniwumu', generalName: '尼基弗鲁斯·福卡斯', portrait: '', eliteName: '拜占庭铁甲', eliteTier: 1 },
+        // 🔴 [2026-10-25 补B] 君士坦丁十一世（1405–1453，摩里亚专制君、末代拜占庭皇帝）｜势力 拜占庭｜据点 斯巴达（SPARTANS 文化，摩里亚）｜普将（实败）｜精锐「摩里亚重甲」T4｜立绘留空
+        { generalId: 'baizanting_constantine_xi', factionId: 'baizanting', cityId: 'city_sparta', generalName: '君士坦丁十一世', portrait: '', eliteName: '摩里亚重甲', eliteTier: 4 },
         // 🔴 [2026-10-25 补A] 贝利撒留（505–565，拜占庭名将；达拉 530 胜波斯、533 灭汪达尔、536 收复罗马）｜势力 拜占庭｜据点 罗马城（ROMA 文化，拉丁姆）｜名将｜精锐「拜占庭重骑」T1｜立绘留空｜首战待补
         { generalId: 'baizanting_belisarius', factionId: 'baizanting', cityId: 'city_luoma', generalName: '贝利撒留', portrait: '', eliteName: '拜占庭重骑', eliteTier: 1 },
         { generalId: 'baizanting_diaofeilusi', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '狄奥斐卢斯', portrait: '/assets/BYZANTINE/baizanting_diaofeilusi.png' },   // 🔴 [2026-10-25 按史] 首战敌将；拜占庭皇帝 813-842，838 阿莫里乌姆失陷；据点君士坦丁堡（BYZANTINE）；用势力精锐铁甲圣骑
@@ -3883,6 +3927,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     litaowan: [
+        // 🔴 [2026-10-25 补B] 康斯坦丁·奥斯特罗格斯基（1460–1530，立陶宛名将；1514 奥尔沙大胜莫斯科）｜势力 立陶宛｜据点 维尔纽斯（LITHUANIANS 文化）｜名将｜精锐「立陶宛重骑」T1｜立绘留空｜首战待补
+        { generalId: 'litaowan_ostrogski', factionId: 'litaowan', cityId: 'city_weierniwusi', generalName: '奥斯特罗格斯基', portrait: '', eliteName: '立陶宛重骑', eliteTier: 1 },
         { generalId: 'litaowan_algirdas', factionId: 'litaowan', cityId: 'city_weierniwusi', generalName: '阿尔吉尔达斯', portrait: '/assets/LITHUANIANS/litaowan_algirdas.png' },   // 🔴 [2026-10-25 按史] 首战敌将；立陶宛大公，1362 蓝水河大破金帐三王；四闸齐备判名将；据点维尔纽斯（LITHUANIANS）；用势力精锐列提斯骑兵
 
 
@@ -4100,6 +4146,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     gesake: [
+        // 🔴 [2026-10-25 补B] 赫梅利尼茨基（1595–1657，哥萨克名将；1648 黄水、科尔逊大胜波兰）｜势力 哥萨克｜据点 谢缅杰尔（CUMAN 文化，钦察草原）｜名将｜精锐「哥萨克骑兵」T1｜立绘留空｜首战待补
+        { generalId: 'gesake_khmelnytsky', factionId: 'gesake', cityId: 'city_xiemianjieer', generalName: '赫梅利尼茨基', portrait: '', eliteName: '哥萨克骑兵', eliteTier: 1 },
 
 
 
@@ -13409,6 +13457,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     wulaertu: [
+        // 🔴 [2026-10-25 补B] 达维德·贝克（17 世纪休尼克起义领袖，有实名）｜势力 亚美尼亚｜据点 埃里温（ARMENIANS 文化）｜普将｜精锐「休尼克山兵」T4｜立绘留空
+        { generalId: 'wulaertu_davit_bek', factionId: 'wulaertu', cityId: 'city_ailiwen', generalName: '达维德·贝克', portrait: '', eliteName: '休尼克山兵', eliteTier: 4 },
         { generalId: 'wulaertu_ajishenti', cityId: 'city_ailiwen', generalName: '瓦尔丹', portrait: '/assets/ARMENIANS/wulaertu_ajishenti.png' },
         { generalId: 'wulaertu_ashot3', cityId: 'city_ani', generalName: '阿硕特三世', portrait: '/assets/ARMENIANS/wulaertu_ashot3.png', legionName: '封建时代巴格拉图尼军团', eliteName: '纳哈拉尔骑', eliteTier: 3 },
     
@@ -13439,7 +13489,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    gelujiya: { generalId: 'gelujiya_tamaer', cityId: 'city_dibilisi', generalName: '塔玛尔', portrait: '/assets/GEORGIANS/gelujiya_tamaer.png' },
+    gelujiya: [
+        
+{ generalId: 'gelujiya_tamaer', cityId: 'city_dibilisi', generalName: '塔玛尔', portrait: '/assets/GEORGIANS/gelujiya_tamaer.png' },
+        // 🔴 [2026-10-25 补B] 埃雷克莱二世（1720–1798，格鲁吉亚王、名将；抗波斯/奥斯曼）｜势力 格鲁吉亚｜据点 第比利斯（GEORGIANS 文化）｜名将｜精锐「格鲁吉亚近卫」T1｜立绘留空｜首战待补
+        { generalId: 'gelujiya_erekle_ii', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '埃雷克莱二世', portrait: '', eliteName: '格鲁吉亚近卫', eliteTier: 1 },
+    ],
 
 
 

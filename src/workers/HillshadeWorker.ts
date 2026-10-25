@@ -221,6 +221,8 @@ export interface HillshadeRequest {
     valleyReliefExp?: boolean;
     /** 7 层高地试验（DE 台地光照），只在浮雕瓦片上生效 */
     terraceExp?: boolean;
+    /** 文明6风格暖金斜阳+冷蓝幽谷+高饱和色温试验 */
+    civ6LightExp?: boolean;
     modeVersion?: number;
 }
 
@@ -1572,6 +1574,34 @@ function renderHillshade(
                     outR += (138 - outR) * skyW * 0.38;
                     outG += (166 - outG) * skyW * 0.48;
                     outB += (202 - outB) * skyW * 0.72;
+                }
+
+                // ☀️ 文明6风格光影（试验）：向阳山脊鎏金暖阳 + 背阴峡谷冷蓝天光 + 地貌色彩饱和度提振 + 浅海翡翠金辉
+                if (req.civ6LightExp) {
+                    if (!isWater && zC > 0) {
+                        if (shadeFactor >= 1.0) {
+                            const sunW = Math.min(1.0, (shadeFactor - 1.0) * 2.6);
+                            outR = outR * (1.06 + sunW * 0.26) + sunW * 14.0;
+                            outG = outG * (1.02 + sunW * 0.09) + sunW * 5.0;
+                            outB = outB * (0.91 - sunW * 0.16);
+                        } else {
+                            const shW = Math.min(1.0, (1.0 - shadeFactor) * 2.2);
+                            outR = outR * (1.0 - shW * 0.22) + 58.0 * shW * 0.28;
+                            outG = outG * (1.0 - shW * 0.10) + 108.0 * shW * 0.30;
+                            outB = outB * (1.0 + shW * 0.08) + 188.0 * shW * 0.42;
+                        }
+                        // 适度提升地貌色彩饱和度与暖金阳光通透感（类似文明6手绘暖金地图质感）
+                        const luma = outR * 0.299 + outG * 0.587 + outB * 0.114;
+                        outR = luma + (outR - luma) * 1.24;
+                        outG = luma + (outG - luma) * 1.20;
+                        outB = luma + (outB - luma) * 1.15;
+                    } else if (isWater) {
+                        // 近岸浅海翡翠绿松石光泽 + 深海浓郁宝石蓝
+                        const shallowW = Math.max(0.0, Math.min(1.0, (colorZ + 140.0) / 140.0));
+                        outR = outR * (0.92 + shallowW * 0.12);
+                        outG = outG * (0.98 + shallowW * 0.22) + shallowW * 12.0;
+                        outB = outB * (1.06 + shallowW * 0.10) + shallowW * 8.0;
+                    }
                 }
 
                 output[idx] = Math.min(255, Math.max(0, outR));

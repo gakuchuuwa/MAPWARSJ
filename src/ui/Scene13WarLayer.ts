@@ -292,6 +292,8 @@ export class Scene13WarLayer {
     private heroCamHold = false;
     /** 🔴 [2026-10-25 主人「复活后玩家进过画面、再要走出画面时，镜头跟上他」] 停留期间玩家是否已进过画面 */
     private heroCamSeen = false;
+    /** 🔴 [2026-10-25 主人「玩家阵亡，镜头就跟随主将队其中一员，这个也死了就继续另一员」] 玩家倒下/复活停留期间镜头盯着的本方主将队兵 */
+    private camWatchMan: WarMan | null = null;
     private skillCamX = 0;
     private skillCamY = 0;
     /** 八方向行军前进单位向量（两军对冲） */
@@ -1331,6 +1333,23 @@ export class Scene13WarLayer {
             this.men.push(m);
         }
         this.diagPush('heroRespawn', { sec: +this.battleSec.toFixed(1) });
+    }
+
+    /** 玩家倒下期间镜头盯的主将队兵：盯着的还活着就不换；死了换离镜头中心最近的另一员（正在交战的优先）。没有了返回 null */
+    private pickCamWatchMan(f: number): WarMan | null {
+        const cur = this.camWatchMan;
+        if (cur && cur.hp > 0 && this.men.includes(cur)) return cur;
+        const cx = this.worldCX - this.tacticalPanX / this.tacticalZoom;
+        const cy = this.worldCY - this.tacticalPanY / this.tacticalZoom;
+        let best: WarMan | null = null, bestD = Infinity, bestFight = false;
+        for (const m of this.men) {
+            if (m.hp <= 0 || m.f !== f || m.hero || !this.spawns[m.lane]?.commander) continue;
+            const fight = !!m.foe;
+            const d = Math.hypot(m.x - cx, m.y - cy);
+            if ((fight && !bestFight) || (fight === bestFight && d < bestD)) { best = m; bestD = d; bestFight = fight; }
+        }
+        this.camWatchMan = best;
+        return best;
     }
 
     /** [2026-08-19 主人需求] 13 战斗退出按钮（点击后按当前兵力比自动结算战果，走 onDecision 通道） */
@@ -2669,6 +2688,7 @@ export class Scene13WarLayer {
         this.heroRespawnTimer = 0;
         this.heroCamHold = false;
         this.heroCamSeen = false;
+        this.camWatchMan = null;
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         this.useGroundGL = false;
@@ -7792,8 +7812,9 @@ export class Scene13WarLayer {
                     targetFocusX = this.skillCamX;
                     targetFocusY = this.skillCamY;
                     count = 1;
-                } else if (this.heroMan && this.heroCamHold) {
-                    // 复活后镜头不动，留在倒下处；玩家再次交战，或进过画面后又要走出画面 ⇒ 解除，跟回玩家
+                } else if (this.heroMan && (this.heroCamHold || this.heroMan.hp <= 0)) {
+                    // 玩家倒下（复活倒计时）及复活后停留期：镜头跟本方主将队一员，这员死了换另一员；
+                    // 玩家再次交战，或复活后进过画面又要走出画面 ⇒ 解除，跟回玩家
                     //（复活点常在画面外，所以「出画面」只在进过画面之后才算，免得一复活就拉过去）
                     const hm = this.heroMan;
                     if (hm.hp > 0) {
@@ -7804,8 +7825,16 @@ export class Scene13WarLayer {
                         const leaving = this.heroCamSeen && (sx > w * 0.4 || sy > h * 0.4);
                         if (hm.foe || leaving) this.heroCamHold = false;
                     }
+                    if (this.heroCamHold || hm.hp <= 0) {
+                        // 主将队全灭 ⇒ 镜头原地不动
+                        const wm = this.pickCamWatchMan(hm.f);
+                        if (wm) { targetFocusX = wm.x; targetFocusY = wm.y; count = 1; }
+                    } else {
+                        this.camWatchMan = null;
+                    }
                 } else if (this.heroMan) {
-                    // 跟随乱入者本人（阵亡复活倒计时的 10 秒里镜头留在他倒下的地方，复活后留到再次交战再跟）
+                    // 跟随乱入者本人
+                    this.camWatchMan = null;
                     targetFocusX = this.heroMan.x;
                     targetFocusY = this.heroMan.y;
                     count = 1;
