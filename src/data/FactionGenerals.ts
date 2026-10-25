@@ -14119,7 +14119,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    mamuluke: { generalId: 'mamuluke_baibaisi', cityId: 'city_ayinzhaluete', generalName: '拜巴尔斯', portrait: '/assets/ORIE/mamuluke_baibaisi.png' },
+    mamuluke: { generalId: 'mamuluke_baibaisi', cityId: 'city_damasikusi', generalName: '拜巴尔斯', portrait: '/assets/ORIE/mamuluke_baibaisi.png' },
 
 
 
@@ -16699,7 +16699,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'houhan_lishouzhen', factionId: 'hou_han', cityId: 'city_tongguan', generalName: '李守贞', portrait: '/assets/CENTRAL/houhan_lishouzhen.png' },   // 🔴 [2026-10-25 按史] 首战敌将；后汉叛将；948-949 为后汉内战，双方同属后汉，块内敌势力记 hou_han；据点潼关（CENTRAL，距河中 35km）；用势力精锐河东牙兵
     ],
     yuan_shao: [
-        { generalId: 'qu_d_quyi', factionId: 'yuan_shao', cityId: 'city_jieqiao', generalName: '麴义', portrait: '/assets/CENTRAL/qu_d_quyi.png' },
+        { generalId: 'qu_d_quyi', factionId: 'yuan_shao', cityId: 'city_daming', generalName: '麴义', portrait: '/assets/CENTRAL/qu_d_quyi.png' },
 
     ],
     hou_jin: [

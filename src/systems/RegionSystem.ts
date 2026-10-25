@@ -2386,7 +2386,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     GORYEO:          ['city_kaesong'],
     JOSEON:          ['city_hanseong'],
     DALI:            ['city_dali_city', 'city_tonghai'],
-    MAMLUKS:         ['city_alepo', 'city_ayinzhaluete'],
+    MAMLUKS:         ['city_alepo', 'city_damasikusi'],
     CRUSADERS:       ['city_ake', 'city_aidesa'],
     RUS:             ['city_nuofugeerdede', 'city_mosike'],
     KARA_KHITAN:     ['city_suiye'],

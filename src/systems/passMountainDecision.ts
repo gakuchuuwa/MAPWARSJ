@@ -18,7 +18,6 @@ export const EXCLUDED_PASS_IDS = new Set<string>([
     // 江防 / 渡口 / 水网桥梁
     'city_jingkou',      // 濡须口（长江要津水战渡口）
     'city_wancheng',     // 皖口（长江渡口）
-    'city_jieqiao',      // 界桥（漳水平原桥梁）
     'city_longwan',      // 龙湾（采石矶江防）
     'city_mingliang',    // 鸣梁（海峡水战）
     'city_duluohe',      // 推河堡（平原河流要塞）

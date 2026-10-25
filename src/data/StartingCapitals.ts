@@ -584,7 +584,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'womaya': 'city_damasikusi',
     'xibolai': 'city_yelusaleng',
     'aiji': 'city_mengfeisi',
-    'mamuluke': 'city_ayinzhaluete',
+    'mamuluke': 'city_damasikusi',
 'tuolemi': 'city_yalishanda',
     'jialedi': 'city_babilun',
     'paermila': 'city_tademoer',
