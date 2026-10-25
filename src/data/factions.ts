@@ -604,7 +604,7 @@ export const FACTIONS: Faction[] = [
                           // 赤金堡·旗号赤（赤斤蒙古卫）
     // 巴音布拉格·汉张掖郡居延县；旗号延
     { id: 'xihai_d', name: '吐谷浑' },
-    { id: 'mari_ancient', name: '马里' },   // 2026-10-25 按史补：幼发拉底马里王国（Yahdun-Lim）
+    { id: 'mari_ancient', name: '马里王国' },   // 2026-10-25 按史补：幼发拉底马里王国（Yahdun-Lim）；🔴 与西非马里帝国（manding，名「马里」）重名 → 按政权名作「马里王国」以别之（旗号仍「马里」）
                           // 伏俟城·隋西海郡治；旗号西海
     { id: 'guiyi', name: '归义' },
 

@@ -7329,7 +7329,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     dajin: [
         { generalId: 'dajin_wanyaneke', factionId: 'dajin', cityId: 'city_huining', generalName: '完颜讹可', portrait: '' },   // 🔴 [2026-10-25 按史] 首战敌将；金将，1217-1219 攻枣阳不克；据点会宁府（NORTHEAST）；用势力精锐合扎猛安
-        { generalId: 'dajin_wanyan_zhongde', factionId: 'dajin', cityId: 'city_cai', generalName: '完颜仲德', portrait: '' },   // 🔴 [2026-10-25 按史] 首战敌将；金尚书右丞、蔡州守将，1234 城破死节；据点 city_cai（蔡州，主人另建，CENTRAL）；用势力精锐合扎猛安（金初建制，金末已废，暂按 lead 口径用势力精锐）
+        { generalId: 'dajin_wanyan_zhongde', factionId: 'dajin', cityId: 'city_xuanhu', generalName: '完颜仲德', portrait: '' },   // 🔴 [2026-10-25 按史] 首战敌将；金尚书右丞、蔡州守将，1234 城破死节；🔴 蔡州＝悬瓠（汝南/汝阳，今河南汝南）同一城，唐—金称蔡州、南北朝称悬瓠，城库只立 city_xuanhu（CENTRAL），不另建蔡州点 → 据点 city_xuanhu；用势力精锐合扎猛安（金初建制，金末已废，暂按 lead 口径用势力精锐）
 
 
 

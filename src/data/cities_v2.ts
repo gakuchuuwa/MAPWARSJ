@@ -1407,7 +1407,7 @@ buildingStyle: 'BASHU', troops: 10000,
     { id: 'city_urgench', name: '玉龙杰赤', factionId: 'huarazim', lat: 42.24, lng: 59.63, type: 'medium_city', troops: 10000, region: 'CENTRAL_ASIA_CASTLE', buildingStyle: 'CENTRAL_ASIA', mirror: true },
 
 
-    { id: 'city_merv', name: '木鹿', factionId: 'seljuq', lat: 37.616410, lng: 62.234802, type: 'big_city', region: 'SELJUQ', buildingStyle: 'SASANIAN', troops: 10000, note: '大塞尔柱帝国东部都城马鲁/梅尔夫；苏丹桑贾尔王陵与突厥铁骑大本营' },
+    { id: 'city_merv', name: '木鹿', factionId: 'seljuq', lat: 37.616410, lng: 62.234802, type: 'medium_city', region: 'SELJUQ', buildingStyle: 'SASANIAN', troops: 10000, note: '大塞尔柱帝国东部都城马鲁/梅尔夫；苏丹桑贾尔王陵与突厥铁骑大本营；按 2026-10-25 标准：城居 15–20 万 <40 万 → 中城' },
     { id: 'city_pagan', name: '蒲甘', factionId: 'pagan', lat: 21.207449, lng: 94.894409, type: 'medium_city', troops: 10000, tier: 1, region: 'BURMESE', buildingStyle: 'BURMESE', note: '蒲甘王朝都，万塔之城' },
         // 第二类：四大汗国
     { id: 'city_almaliq', name: '弓月城', factionId: 'geluolu', lat: 43.979013, lng: 79.648132, type: 'small_city', region: 'TURKS',
@@ -1534,7 +1534,7 @@ buildingStyle: 'MONGOL', troops: 10000,
         //    东南亚四家（高棉/缅甸/越南/马来）中唯有高棉与其地理、历史同源。
         //    一级不变：REGION_TO_DE_STYLE.KHMER = 'SEAS'（东南亚母体），建筑素材照旧。
         buildingStyle: 'KHMER' },
-    { id: 'city_angkor', name: '吴哥', factionId: 'chenla', lat: 13.41, lng: 103.87, type: 'big_city', troops: 10000, region: 'KHMER', buildingStyle: 'KHMER', note: '真腊/吴哥王朝都城；盛期大吴哥人口量级常估≥50万，升 big_city' },
+    { id: 'city_angkor', name: '吴哥', factionId: 'chenla', lat: 13.41, lng: 103.87, type: 'medium_city', troops: 10000, region: 'KHMER', buildingStyle: 'KHMER', note: '真腊/吴哥王朝都城；按 2026-10-25 标准：城居 14–15 万（大吴哥城内；75–100 万是整个遗址区，不取）<40 万 → 中城' },
 
     // ── 2026-05-25 明清之际新城市 ──
     { id: 'city_shenyang', name: '沈阳', factionId: 'manzhou_d', lat: 41.80203, lng: 123.43689, type: 'medium_city', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
@@ -1988,7 +1988,6 @@ buildingStyle: 'CENTRAL', troops: 10000,
 buildingStyle: 'CENTRAL', troops: 10000,
         note: '许昌；许国都，曹魏五都之一；按 2026-10-25 标准：城居 3–5 → 小城',
     },
-    { id: 'city_cai', name: '蔡州', factionId: 'dajin', lat: 33.0, lng: 114.36, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL', note: '🔴 [2026-10-25 按史补] 蔡州（汝南，今河南汝南县，33.00N/114.36E）：金末哀宗迁都于蔡（1233–1234），天兴三年城破于此，为张柔·蔡州之战战场。人口无确载、按路治重镇估 >1 万 → 小城；中原文化（汝南属中原）。距许昌约 130km、超 50km，按「攻城战缺据点可补」立点。' },
     { id: 'city_dongkang', name: '东康', factionId: 'sushen', lat: 44.427920, lng: 131.388245, type: 'stockade', region: 'MOHE',
 buildingStyle: 'NORTHEAST', troops: 10000,
         note: '东康；肃慎小城',
@@ -2269,7 +2268,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_aerjier', name: '阿尔及尔', factionId: 'osman', lat: 36.75, lng: 3.05, type: 'medium_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER' },
     { id: 'city_bujiaya', name: '布佳亚', factionId: 'hamade', lat: 36.75, lng: 5.08, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：迦太基：腓尼基—罗马，DE 无布匿分支，取地中海的罗马/意大利古典石堡
-    { id: 'city_jiataji', name: '迦太基', factionId: 'buni', lat: 36.85, lng: 10.32, type: 'big_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'BERBER', mirror: true },
+    { id: 'city_jiataji', name: '迦太基', factionId: 'buni', lat: 36.85, lng: 10.32, type: 'medium_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'BERBER', mirror: true , note: '按 2026-10-25 标准：城居 10–20 万（一说 50 万来源不可靠） <40 万 → 中城' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：凯鲁万：突尼斯，柏柏尔／阿格拉布王朝都城（region=BERBER）
     { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：的黎波里：利比亚，柏柏尔—马格里布东部
@@ -3460,7 +3459,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_yikeniwumu', name: '伊科尼乌姆', factionId: 'luomu', lat: 37.8744, lng: 32.4931, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'TURKS', note: '罗姆苏丹国首都（科尼亚），古典吕考尼亚核心大城，人口数万；依2026-10-01铁律定为小城。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.87,32.48 偏离科尼亚城 1.25 公里，按英文维基百科 Konya 坐标改为 37.8744,32.4931。🔴 [2026-10-22 按史] 科尼亚为罗姆苏丹国首都（1097–1243），塞尔柱建筑阿拉丁清真寺（1221）、卡拉泰经学院（1251）；TURKS 分支「封建时代突厥骑射军团」描述点名科尼亚、锡瓦斯；原 ORIE（萨拉森生土要塞，黎凡特—埃及代理）不符 → 改 TURKS。' },
     { id: 'city_tiyana', name: '提亚纳', factionId: 'kapaduoxiya', lat: 37.848, lng: 34.611, type: 'small_city', troops: 8000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'ORIE', note: '卡帕多细亚重镇，安基拉南下奇里乞亚门古道必经之城。公元前333年亚历山大穿越卡帕多细亚、任命萨比克塔斯为卡帕多细亚总督（阿里安《远征记》II.4），本城归马其顿。坐标取英文维基 Tyana 条 37.84806,34.61111。🔴 [2026-09-25 主人令「可以请添加」] 新建，使第 7 场的线改走 安基拉→提亚纳→奇里乞亚门→塔尔苏斯。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
         { id: 'city_nikexiya', name: '尼科西亚', factionId: 'saipulusi', lat: 35.18, lng: 33.38, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'FRANKS', note: '塞浦路斯王国都城·东地中海海岛要塞·居伊·德·吕西尼昂开国王都。🔴 [2026-10-18 按史] 吕西尼昂法兰克王朝近三百年都城，实建为圣索菲亚哥特主教座堂、王宫石堡与威尼斯增筑的星形棱堡，故 FRANKS。' },
-{ id: 'city_antiejiya', name: '安提俄基亚', factionId: 'sailiugu', lat: 36.2, lng: 36.16, type: 'big_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', mirror: true },
+{ id: 'city_antiejiya', name: '安提俄基亚', factionId: 'sailiugu', lat: 36.2, lng: 36.16, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', mirror: true , note: '按 2026-10-25 标准：城居 15–25 万 <40 万 → 中城' },
     { id: 'city_teluowulan', name: '特罗武兰', factionId: 'manzheboyi', lat: -7.55, lng: 112.37, type: 'medium_city', troops: 10000, region: 'SEASIA_CASTLE', buildingStyle: 'MALAY', note: '满者伯夷王朝都城（东爪哇莫佐克托），加查马达帕拉帕誓言统一努山达拉' },
     { id: 'city_ajiemier', name: '阿杰梅尔', factionId: 'zhelouqi', lat: 26.45, lng: 74.64, type: 'medium_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', note: '乔汉(遮娄其)王朝都城，普里特维抗古尔' },
     { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', note: '加纳古都，苏曼古鲁攻占后为索索都城' },
@@ -3545,7 +3544,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_mengfeisi', name: '孟菲斯', factionId: 'aiji', lat: 29.85, lng: 31.25, type: 'small_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE' },
     { id: 'city_xiwa', name: '锡瓦绿洲', factionId: 'aiji', lat: 29.2, lng: 25.52, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', stockadeShape: 'octagon', stockadeFence: 'FENCE', note: '锡瓦绿洲，阿蒙神庙神谕所在。🔴 [2026-09-25 主人令「请添加」] 为第三片第 3 段补：前331 亚历山大亲率小队穿越沙漠来此，祭司称他为「阿蒙之子」，他随后回孟菲斯（阿里安 III.4；普鲁塔克《亚历山大传》27）。坐标取绿洲城镇 29.2,25.52。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
     { id: 'city_wasaite', name: '瓦塞特', factionId: 'aiji', lat: 25.7, lng: 32.64, type: 'medium_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '古埃及新王国都城（底比斯/卢克索），百门之都，卡纳克神庙与帝王谷所在地，极盛期常住人口数十万；依2026-10-01铁律定为中城' },
-    { id: 'city_yalishanda', name: '亚历山大', factionId: 'tuolemi', lat: 31.1975, lng: 29.8925, type: 'big_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', mirror: true, note: '🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 31.2,29.91 偏离亚历山大城 1.69 公里，按英文维基百科 Alexandria 坐标改为 31.1975,29.8925。' },
+    { id: 'city_yalishanda', name: '亚历山大', factionId: 'tuolemi', lat: 31.1975, lng: 29.8925, type: 'medium_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', mirror: true, note: '🔴 [2026-09-24 主人令「据点坐标错误请修正」] 坐标按英文维基百科 Alexandria 改为 31.1975,29.8925。按 2026-10-25 标准：城居 20–30 万（一说 50 万）<40 万 → 中城' },
     { id: 'city_babilun', name: '巴比伦', factionId: 'jialedi', lat: 32.5425, lng: 44.4211, type: 'medium_city', troops: 10000, region: 'BABYLON', buildingStyle: 'ORIE', note: '新巴比伦王都。定级按史：Chandler 前 600 年 10 万 / Modelski 20 万（前 562 年 20 万）→ 中城（2026-10-25）。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 坐标按英文维基百科 Babylon 改为 32.5425,44.4211。' },
     { id: 'city_tademoer', name: '塔德莫尔', factionId: 'paermila', lat: 34.55, lng: 38.27, type: 'medium_city', troops: 10000, region: 'ORIE_ANTIQUITY', buildingStyle: 'ORIE', note: '帕尔米拉帝国都城（塔德莫尔），丝路贸易大都会与绿洲列柱名城，人口峰值逾十万；依2026-10-01铁律定为中城' },
     { id: 'city_bageda', name: '巴格达', factionId: 'abasi', lat: 33.33, lng: 44.37, type: 'big_city', troops: 10000, region: 'WEST_ASIA', buildingStyle: 'ORIE' },

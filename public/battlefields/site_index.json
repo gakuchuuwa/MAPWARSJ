@@ -15965,20 +15965,6 @@
    "cliffs": 0,
    "top": "Desert 80.1% · Water, Shallow 10.6% · Palm Desert 5.8% · Forest, Birch 2.2%",
    "verify": "ok"
-  },
-  {
-   "id": "city_cai",
-   "file": "site_city_cai.json",
-   "bytes": 341985,
-   "koppen": "Cwa",
-   "theme": "PALAEARCTIC_ASIA_TEMPERATE",
-   "water": "WorldCover",
-   "waterCells": 289,
-   "waterPct": 2,
-   "reliefM": 31,
-   "cliffs": 0,
-   "top": "Dry Grass 84.5% · Forest, Autumn 5.9% · Beach 3% · Bamboo 2.2%",
-   "verify": "ok"
   }
  ],
  "failures": []

@@ -11763,7 +11763,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'siege',
         role: 'attacker',
         targetName: '蔡州',
-        targetCityId: 'city_cai',
+        targetCityId: 'city_xuanhu',   // 🔴 [2026-10-25] 蔡州＝悬瓠（汝南）同一城，城库只立 city_xuanhu → 锚悬瓠；targetName 仍写史称「蔡州」
         targetLat: 33,
         targetLng: 114.36,
         myTroops: 20000,

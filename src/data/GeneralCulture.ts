@@ -1529,7 +1529,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiongnu_yizhixie': 'XIANBEI',   // 首战敌将｜据点 city_toumancheng
     'luosi_svyatopolk': 'SLAVIC',   // 首战敌将｜据点 city_jifu
     'shu_masu': 'BASHU',   // 首战敌将｜据点 city_chengdu
-    'dajin_wanyan_zhongde': 'CENTRAL',   // 首战敌将｜据点 city_cai
+    'dajin_wanyan_zhongde': 'CENTRAL',   // 首战敌将｜据点 city_xuanhu（蔡州＝悬瓠同一城）
     'halapeng_yiba': 'MALAY',   // 孟族｜伊巴｜据点 清坎寨
     'yuan_shidielibisi': 'KOREA',   // 大元｜石迭里必思｜据点 星主厅（耽罗）
     'muwaxide_axatafu': 'SPANISH',   // 穆瓦希德｜阿夏塔夫｜据点 塞维利亚
