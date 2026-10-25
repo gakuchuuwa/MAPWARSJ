@@ -1576,26 +1576,16 @@ function renderHillshade(
                     outB += (202 - outB) * skyW * 0.72;
                 }
 
-                // 大陆最终制图润色：轻柔收敛坡面明暗，保留山脊与谷地结构；湿润低地微降黄暖、补青绿。
-                // 只复用既有坡度/气候/雪线数据，不新增采样；沙漠、高山雪线与所有水体保持原有色彩。
+                // 地形图以山川地貌为主：只增强既有坡面光影，不改地表色相。
+                // 平原保持安静；丘陵、山地与高原按真实坡度/海拔渐进加强，山脊、谷地和山脉走向更清楚。
                 if (isLand) {
-                    const slopeSoftT = Math.max(0, Math.min(1, (slopeGrad - 0.04) / 0.31));
-                    const reliefSoftness = 0.05 + 0.07 * slopeSoftT;
-                    outR = r + (outR - r) * (1 - reliefSoftness);
-                    outG = g + (outG - g) * (1 - reliefSoftness);
-                    outB = b + (outB - b) * (1 - reliefSoftness);
-
-                    if (humidity > 0.50 && colorZ < 1400 && sandiness < 0.42 && snowFade > 0) {
-                        const wetLowland = Math.max(0, Math.min(1, (humidity - 0.50) / 0.38))
-                            * (1 - Math.max(0, Math.min(1, (colorZ - 450) / 950)))
-                            * (1 - Math.max(0, Math.min(1, (sandiness - 0.12) / 0.30)))
-                            * snowFade;
-                        const tropical = 1 - Math.max(0, Math.min(1, (absLat - 23) / 25));
-                        const wetTone = wetLowland * (0.45 + 0.55 * tropical);
-                        outR *= 1 - 0.065 * wetTone;
-                        outG *= 1 + 0.018 * wetTone;
-                        outB *= 1 + 0.045 * wetTone;
-                    }
+                    const slopeRelief = Math.max(0, Math.min(1, (slopeGrad - 0.025) / 0.275));
+                    const elevRelief = Math.max(0, Math.min(1, (colorZ - 250) / 1750));
+                    const reliefWeight = Math.max(slopeRelief, elevRelief * 0.55);
+                    const reliefGain = 1 + 0.14 * reliefWeight;
+                    outR = r + (outR - r) * reliefGain;
+                    outG = g + (outG - g) * reliefGain;
+                    outB = b + (outB - b) * reliefGain;
                 }
 
                 // ☀️ 文明6风格光影（试验）：向阳山脊鎏金暖阳 + 背阴峡谷冷蓝天光 + 地貌色彩饱和度提振 + 浅海翡翠金辉

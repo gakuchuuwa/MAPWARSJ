@@ -509,6 +509,18 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     bfe_kehaya_mustafa: { birth: 1770, death: 1830, kaoju: '推定' },  // 穆斯塔法（凯哈亚）
     xilawangguo_petros: { birth: 1765, death: 1848 },  // 彼得罗斯·马夫罗米哈利斯
     bfe_abdulaziz_crete: { birth: 900, death: 961, kaoju: '推定' },  // 阿卜杜勒·阿齐兹（克里特埃米尔）
+    eluosi_diguo_apraksin: { birth: 1659, death: 1728 },  // 阿普拉克辛
+    bfe_peter_delyan: { birth: 1000, death: 1041, kaoju: '推定' },  // 彼得·德良
+    bfe_gotse_delchev: { birth: 1872, death: 1903 },  // 戈采·代尔切夫
+    bfe_vitalian: { birth: 460, death: 520, kaoju: '推定' },  // 维塔利安
+    bfe_alexios_branas: { birth: 1130, death: 1187, kaoju: '推定' },  // 布拉纳斯
+    bfe_dimitriev: { birth: 1859, death: 1918 },  // 卡拉·费兹
+    bfe_taycanamo: { birth: 850, death: 950, kaoju: '推定' },  // 塔卡伊纳莫（传说）
+    bfe_gouras: { birth: 1791, death: 1826 },  // 古拉斯
+    bfe_karaiskakis: { birth: 1782, death: 1827 },  // 卡拉伊斯卡基斯
+    bfe_kontoskeles: { birth: 690, death: 727, kaoju: '推定' },  // 孔托斯克莱斯
+    bfe_ypsilantis: { birth: 1792, death: 1828 },  // 科贾·穆萨帕夏
+    bfe_maroboduus: { birth: -30, death: 37, kaoju: '推定' },  // 马罗博杜斯
     yili_bato: { birth: -30, death: 9, kaoju: '推定' },  // 巴托
     daqiya_burebista: { birth: -100, death: -44, kaoju: '推定' },  // 布雷比斯塔
     danmai_christian_iv: { birth: 1577, death: 1648 },  // 克里斯蒂安四世

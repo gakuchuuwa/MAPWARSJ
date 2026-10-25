@@ -418,7 +418,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_albert_riga': 'GERMANIC',   // 宝剑骑士团｜布克斯赫夫登｜据点 里加
     'gen_albrecht_bear': 'GERMANIC',   // 阿斯坎尼｜阿尔布雷｜据点 勃兰登堡
     'gen_alexander_great': 'MACEDONIAN',   // 马其顿｜亚历山大｜据点 佩拉
-    'gen_alexander_nef': 'SLAVIC',   // 留里克｜涅夫斯基｜据点 诺夫哥罗德
+    'gen_alexander_nef': 'VARANGIANS',   // 留里克｜涅夫斯基｜据点 诺夫哥罗德
     'luosi_dmitry_aleksandrovich': 'SLAVIC',   // 罗斯｜德米特里·亚历山德罗维奇｜据点 诺夫哥罗德
     'xinbuli_boiorix': 'DANES',   // 辛布里｜波伊奥里克斯｜据点 耶灵
     'awaer_bayan': 'HUNS',   // 阿瓦尔｜巴彦｜据点 塞格德
@@ -459,6 +459,18 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_kehaya_mustafa': 'SPARTANS',   // 奥斯曼｜穆斯塔法｜据点 斯巴达
     'xilawangguo_petros': 'SPARTANS',   // 希腊王国｜彼得罗斯｜据点 斯巴达
     'bfe_abdulaziz_crete': 'BERBER',   // 阿格拉布｜阿卜杜勒·阿齐兹｜据点 凯鲁万
+    'eluosi_diguo_apraksin': 'VARANGIANS',   // 俄罗斯帝国｜阿普拉克辛｜据点 拉多加
+    'bfe_peter_delyan': 'MACEDONIAN',   // 保加利亚｜彼得·德良｜据点 斯科普里
+    'bfe_gotse_delchev': 'MACEDONIAN',   // 保加利亚｜戈采·代尔切夫｜据点 斯科普里
+    'bfe_vitalian': 'THRACIAN',   // 拜占庭｜维塔利安｜据点 普罗夫迪夫
+    'bfe_alexios_branas': 'THRACIAN',   // 拜占庭｜布拉纳斯｜据点 普罗夫迪夫
+    'bfe_dimitriev': 'THRACIAN',   // 奥斯曼｜卡拉·费兹｜据点 普罗夫迪夫
+    'bfe_taycanamo': 'INCA',   // 奇穆｜塔卡伊纳莫｜据点 昌昌
+    'bfe_gouras': 'ATHENIANS',   // 希腊王国｜古拉斯｜据点 雅典
+    'bfe_karaiskakis': 'ATHENIANS',   // 希腊王国｜卡拉伊斯卡基斯｜据点 雅典
+    'bfe_kontoskeles': 'GREECE',   // 拜占庭｜孔托斯克莱斯｜据点 底比斯
+    'bfe_ypsilantis': 'BYZANTINE',   // 奥斯曼｜科贾·穆萨帕夏｜据点 君士坦丁堡
+    'bfe_maroboduus': 'BOHEMIANS',   // 苏维汇｜马罗博杜斯｜据点 布拉格
     'yili_bato': 'MAGYAR',   // 伊利里亚｜巴托｜据点 布达佩斯
     'daqiya_burebista': 'BULGARIANS',   // 达契亚｜布雷比斯塔｜据点 索非亚
     'danmai_christian_iv': 'DANES',   // 丹麦｜克里斯蒂安四世｜据点 哥本哈根
@@ -697,7 +709,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_si_lunfa': 'BURMESE',   // 麓川｜思伦发｜据点 勐卯
     'gen_simeon_great': 'BULGARIANS',   // 保加利亚｜西美昂｜据点 普雷斯拉夫（2026-10-24 按史迁回其首都，原普罗夫迪夫为色雷斯文化）
     'gen_sineus': 'VARANGIANS',   // 留里克｜西涅乌斯｜据点 白湖
-    'gen_stefan_dusan': 'SLAVIC',   // 塞尔维亚｜斯蒂芬杜尚｜据点 斯科普里
+    'gen_stefan_dusan': 'MACEDONIAN',   // 塞尔维亚｜斯蒂芬杜尚｜据点 斯科普里
     'gen_stephen_great': 'SLAVIC',   // 摩尔达维亚｜斯蒂芬｜据点 苏恰瓦
     'gen_stortebeker': 'GERMANIC',   // 汉萨｜克劳斯｜据点 汉堡
     'gen_stuyvesant': 'GERMANIC',   // 新尼德兰｜斯泰弗森特｜据点 新阿姆斯特丹

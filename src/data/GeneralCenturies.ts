@@ -758,6 +758,18 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_kehaya_mustafa': 19,                // 穆斯塔法 · osman · 斯巴达
     'xilawangguo_petros': 19,                // 彼得罗斯 · xilawangguo · 斯巴达
     'bfe_abdulaziz_crete': 10,               // 阿卜杜勒·阿齐兹 · aguelabu · 凯鲁万
+    'eluosi_diguo_apraksin': 17,             // 阿普拉克辛 · eluosi_diguo · 拉多加
+    'bfe_peter_delyan': 11,                  // 彼得·德良 · baojialiya · 斯科普里
+    'bfe_gotse_delchev': 19,                 // 戈采·代尔切夫 · baojialiya · 斯科普里
+    'bfe_vitalian': 6,                        // 维塔利安 · baizanting · 普罗夫迪夫
+    'bfe_alexios_branas': 12,                // 布拉纳斯 · baizanting · 普罗夫迪夫
+    'bfe_dimitriev': 19,                    // 卡拉·费兹 · osman · 普罗夫迪夫
+    'bfe_taycanamo': 9,                       // 塔卡伊纳莫 · qimu · 昌昌
+    'bfe_gouras': 19,                         // 古拉斯 · xilawangguo · 雅典
+    'bfe_karaiskakis': 19,                   // 卡拉伊斯卡基斯 · xilawangguo · 雅典
+    'bfe_kontoskeles': 8,                     // 孔托斯克莱斯 · baizanting · 底比斯
+    'bfe_ypsilantis': 19,                      // 科贾·穆萨帕夏 · osman · 君士坦丁堡
+    'bfe_maroboduus': -1,                    // 马罗博杜斯 · suweihui · 布拉格
     'yili_bato': -1,                         // 巴托 · yili · 布达佩斯
     'daqiya_burebista': -1,                  // 布雷比斯塔 · daqiya · 索非亚
     'danmai_christian_iv': 16,               // 克里斯蒂安四世 · danmai · 哥本哈根

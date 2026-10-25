@@ -1444,6 +1444,34 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 诺夫哥罗德　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第二批·西欧与北欧）
+    // ── 诺夫哥罗德 · 城堡时代 · 城堡时代诺夫哥罗德军团　（2026-10-25 恢复：涅夫斯基 为带名将）────────────────
+    {
+        name: '城堡时代诺夫哥罗德军团', civ: '瓦良格', age: 'castle', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
+        buildingStyle: 'VARANGIANS',
+        castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
+        formationMode: 'balance_yoke',
+        shipId: 'ELITE_LONGBOAT',
+        commanderUnit: 'hero_alexandernevski',
+        slots: [
+            { type: 'throwing_axeman', count: 4 },
+            { type: 'elite_varangian_jarl', count: 2 },
+            { type: 'varangian_guard', count: 3 },
+        ],
+    },
+    // ── 诺夫哥罗德 · 帝国时代 · 帝国时代北境长斧军团　（2026-10-25 恢复：阿普拉克辛 为带名将）────────────────
+    {
+        name: '帝国时代北境长斧军团', civ: '瓦良格', age: 'imperial', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
+        buildingStyle: 'VARANGIANS',
+        castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
+        formationMode: 'crescent',
+        shipId: 'CATAPULT_GALLEON',
+        commanderUnit: 'hero_harald',
+        slots: [
+            { type: 'elite_varangian_guard', count: 3 },
+            { type: 'varangian_jarl', count: 2 },
+            { type: 'recurve_bowman', count: 4 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 诺夫哥罗德 · 封建时代 · 封建时代瓦良格军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵、骑兵为主
@@ -1538,6 +1566,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 拜占庭　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
+    // ── 拜占庭 · 帝国时代 · 帝国时代东正教军团　（2026-10-25 恢复：科贾·穆萨帕夏 为带名将）────────────────
+    {
+        name: '帝国时代东正教军团', civ: '拜占庭', age: 'imperial', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
+        buildingStyle: 'BYZANTINE',
+        castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡石砌要塞',
+        formationMode: 'echelon',
+        shipId: 'GALLEON',
+        commanderUnit: 'hero_basileus',
+        slots: [
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'cavalier', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 拜占庭 · 古典时代 · 古典时代东罗马军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵为主
@@ -1792,6 +1834,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 波希米亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
+    // ── 波希米亚 · 古典时代 · 古典时代马科曼尼军团　（2026-10-25 恢复：马罗博杜斯 为带名将）────────────────
+    {
+        name: '古典时代马科曼尼军团', civ: '波希米亚', age: 'antiquity', deStyle: 'GERMANIC', region: 'BOHEMIANS' as RegionType,
+        buildingStyle: 'BOHEMIANS',
+        castleId: 'BOHE_CASTLE_AGE3', castleName: '波希米亚 布拉格石砌要塞',
+        formationMode: 'fish_scale',
+        shipId: 'DEMO_RAFT',
+        commanderUnit: 'hero_alaric',
+        slots: [
+            { type: 'elite_skirmisher', count: 3 },
+            { type: 'bowman', count: 4 },
+            { type: 'light_cavalry', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 波希米亚 · 封建时代 · 封建时代波希米亚军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重骑兵为主
@@ -3470,6 +3526,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 印加　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
+    // ── 印加 · 封建时代 · 封建时代奇穆军团　（2026-10-25 恢复：塔卡伊纳莫 为带名将）────────────────
+    {
+        name: '封建时代奇穆军团', civ: '印加', age: 'feudal', deStyle: 'ANDE', region: 'INCA' as RegionType,
+        buildingStyle: 'INCA',
+        castleId: 'INCA_CASTLE_AGE3', castleName: '印加 库斯科萨克萨瓦曼巨石堡',
+        formationMode: 'echelon',
+        shipId: 'CANOE',
+        commanderUnit: 'hero_topayupanqui',
+        slots: [
+            { type: 'slinger', count: 4 },
+            { type: 'champi_warrior', count: 3 },
+            { type: 'elite_kamayuk', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 印加 · 城堡时代 · 城堡时代印加军团　（同名已在二级（重复→替换保留））────────────────
     //    评级：【精锐】｜核心兵种：重步兵、远程（标枪）为主
@@ -3908,6 +3978,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 雅典　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
+    // ── 雅典 · 帝国时代 · 帝国时代希腊轻骑军团　（2026-10-25 恢复：古拉斯 为带名将）────────────────
+    {
+        name: '帝国时代希腊轻骑军团', civ: '雅典', age: 'imperial', deStyle: 'GREEK', region: 'ATHENIANS' as RegionType,
+        buildingStyle: 'ATHENIANS',
+        castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
+        formationMode: 'echelon',
+        shipId: 'GALLEON',
+        commanderUnit: 'hero_henryv',
+        slots: [
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'champion', count: 3 },
+            { type: 'light_cavalry', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 雅典 · 古典时代 · 古典时代雅典军团　（同名已在二级（重复→替换保留））────────────────
     //    评级：【精锐】｜核心兵种：重步兵、远程（轻盾标枪）为主
@@ -3974,6 +4058,48 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 马其顿　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
+    // ── 马其顿 · 封建时代 · 封建时代拜占庭马其顿军团　（2026-10-25 恢复：彼得·德良 为带名将）────────────────
+    {
+        name: '封建时代拜占庭马其顿军团', civ: '马其顿', age: 'feudal', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
+        buildingStyle: 'MACEDONIAN',
+        castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
+        formationMode: 'fish_scale',
+        shipId: 'DROMON',
+        commanderUnit: 'hero_belisarius',
+        slots: [
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'recurve_bowman', count: 4 },
+            { type: 'light_cavalry', count: 2 },
+        ],
+    },
+    // ── 马其顿 · 城堡时代 · 城堡时代瓦尔达尔军团　（2026-10-25 恢复：杜尚 为带名将）────────────────
+    {
+        name: '城堡时代瓦尔达尔军团', civ: '马其顿', age: 'castle', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
+        buildingStyle: 'MACEDONIAN',
+        castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
+        formationMode: 'fish_scale',
+        shipId: 'WAR_GALLEY',
+        commanderUnit: 'hero_henryv',
+        slots: [
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'crossbowman', count: 4 },
+            { type: 'crusader_knight', count: 2 },
+        ],
+    },
+    // ── 马其顿 · 帝国时代 · 帝国时代马其顿军团　（2026-10-25 恢复：戈采·代尔切夫 为带名将）────────────────
+    {
+        name: '帝国时代马其顿军团', civ: '马其顿', age: 'imperial', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
+        buildingStyle: 'MACEDONIAN',
+        castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
+        formationMode: 'echelon',
+        shipId: 'GALLEON',
+        commanderUnit: 'hero_mustafapasha',
+        slots: [
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'champion', count: 3 },
+            { type: 'cavalier', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 马其顿 · 古典时代 · 古典时代马其顿军团　（同名已在二级（重复→替换保留））────────────────
     //    评级：【精锐】｜核心兵种：长枪步兵、重骑兵为主
@@ -3983,6 +4109,48 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 色雷斯　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
+    // ── 色雷斯 · 封建时代 · 封建时代阿德里安堡军团　（2026-10-25 恢复：维塔利安 为带名将）────────────────
+    {
+        name: '封建时代阿德里安堡军团', civ: '色雷斯', age: 'feudal', deStyle: 'GREEK', region: 'THRACIAN' as RegionType,
+        buildingStyle: 'THRACIAN',
+        castleId: 'THRACE_CASTLE_AGE3', castleName: '色雷斯 阿德里安堡要塞',
+        formationMode: 'fish_scale',
+        shipId: 'DROMON',
+        commanderUnit: 'hero_belisarius',
+        slots: [
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'recurve_bowman', count: 4 },
+            { type: 'light_cavalry', count: 2 },
+        ],
+    },
+    // ── 色雷斯 · 城堡时代 · 城堡时代罗多彼军团　（2026-10-25 恢复：布拉纳斯 为带名将）────────────────
+    {
+        name: '城堡时代罗多彼军团', civ: '色雷斯', age: 'castle', deStyle: 'GREEK', region: 'THRACIAN' as RegionType,
+        buildingStyle: 'THRACIAN',
+        castleId: 'THRACE_CASTLE_AGE3', castleName: '色雷斯 阿德里安堡要塞',
+        formationMode: 'fish_scale',
+        shipId: 'WAR_GALLEY',
+        commanderUnit: 'hero_henryv',
+        slots: [
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'crossbowman', count: 4 },
+            { type: 'crusader_knight', count: 2 },
+        ],
+    },
+    // ── 色雷斯 · 帝国时代 · 帝国时代鲁米利亚军团　（2026-10-25 恢复：卡拉·费兹 为带名将）────────────────
+    {
+        name: '帝国时代鲁米利亚军团', civ: '色雷斯', age: 'imperial', deStyle: 'GREEK', region: 'THRACIAN' as RegionType,
+        buildingStyle: 'THRACIAN',
+        castleId: 'THRACE_CASTLE_AGE3', castleName: '色雷斯 阿德里安堡要塞',
+        formationMode: 'echelon',
+        shipId: 'GALLEON',
+        commanderUnit: 'hero_mustafapasha',
+        slots: [
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'champion', count: 3 },
+            { type: 'cavalier', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 色雷斯 · 古典时代 · 古典时代色雷斯军团　（同名已在二级（重复→替换保留））────────────────
     //    评级：【精锐】｜核心兵种：轻步兵、远程（标枪）为主
@@ -4208,6 +4376,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 爱奥尼亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
+    // ── 爱奥尼亚 · 封建时代 · 封建时代爱琴军团　（2026-10-25 恢复：阿加利阿诺斯 为带名将）────────────────
+    {
+        name: '封建时代爱琴军团', civ: '希腊', age: 'feudal', deStyle: 'GREEK', region: 'GREECE' as RegionType,
+        buildingStyle: 'GREECE',
+        castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
+        formationMode: 'fish_scale',
+        shipId: 'DROMON',
+        commanderUnit: 'hero_belisarius',
+        slots: [
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'recurve_bowman', count: 4 },
+            { type: 'light_cavalry', count: 2 },
+        ],
+    },
     // ═══════════════════════════════════════════════════════════════════
     // ── 爱奥尼亚 · 古典时代 · 古典时代爱奥尼亚军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重步兵、骑兵为主

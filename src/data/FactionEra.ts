@@ -147,7 +147,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xisa': [{ from: -9999, era: 'antiquity' }], // 西萨特拉普（1–2 世纪）
     'xilawangguo': [{ from: -9999, era: 'imperial' }], // 希腊王国（1832 起）
     'ante': [{ from: -9999, era: 'antiquity' }], // 安特（4 世纪）
-    'suweihui': [{ from: -9999, era: 'feudal' }], // 苏维汇王国（409–585）
+    'suweihui': [{ from: -9999, era: 'antiquity' }, { from: 409, era: 'feudal' }], // 苏维汇｜按史分段：部落期古典 → 409 起王国封建
     'yibiluliya': [{ from: -9999, era: 'antiquity' }], // 伊比利亚王国（前 3 世纪起）
     'yicha': [{ from: -9999, era: 'imperial' }], // 伊察（16 世纪）
     'mengjiala': [{ from: -9999, era: 'castle' }], // 孟加拉苏丹国（1342 起）
@@ -424,7 +424,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'qiepantuo': [{ from: -9999, era: 'feudal' }], // 护密
     'qiernigeweifu_gongguo': [{ from: -9999, era: 'feudal' }], // 杰斯纳
     'qifu_d': [{ from: -9999, era: 'antiquity' }], // 乞伏
-    'qimu': [{ from: -9999, era: 'castle' }], // 奇穆
+    'qimu': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 奇穆｜按史分段：900–1050 封建 → 1050 起城堡
     'qin': [{ from: -9999, era: 'antiquity' }], // 秦国
     'qiong': [{ from: -9999, era: 'antiquity' }], // 邛谷
     'qiuchi': [{ from: -9999, era: 'antiquity' }], // 仇池

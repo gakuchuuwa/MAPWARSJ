@@ -1780,10 +1780,6 @@ export class PlayerQuestSystem {
         return id ? (this.deps.cityManager.getCity(id) ?? null) : null;
     }
 
-    private frontGeneralName(generalId: string): string {
-        return getGeneralRecordByGeneralId(generalId)?.generalName ?? '将军';
-    }
-
     /**
      * 玩家走到「野战战场」这个点（不是据点）：在这儿接该将首战。
      * 🔴 [2026-10-25 主人令] 野战就去战场 —— 军团就地就位，不再把玩家瞬移回本城。
@@ -1859,7 +1855,6 @@ export class PlayerQuestSystem {
                 () => this.onArriveFirstBattleFront(generalId),
             );
         if (ok) {
-            this.deps.notify(`🎯 ${this.frontGeneralName(generalId)}已率军至【${spot.label}】，前往会合`, 6000);
             this.emitChange();
             return;
         }
@@ -3241,7 +3236,6 @@ export class PlayerQuestSystem {
                         () => this.onArriveFirstBattleFront(g.generalId),
                     );
                 if (ok) {
-                    this.deps.notify(`🎯 ${g.generalName}已率军至【${front.label}】，前往会合`, 6000);
                     return;
                 }
                 // 走不到接任务点（无路可达）→ 退回他本城：本城只指路、不会原地触发首战，
