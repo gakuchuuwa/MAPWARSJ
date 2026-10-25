@@ -103,6 +103,8 @@ export const FACTIONS: Faction[] = [
 
   { id: 'luoma_diguo', name: '罗马帝国' },
   { id: 'xiongren', name: '匈人' },  // 塞格德·阿提拉（欧洲匈人，蒂萨河营地）
+    // 🔴 [2026-10-25 主人令「按区域代表补四时代」] 阿瓦尔汗国（567–822，潘诺尼亚；封建时代潘诺尼亚军团的执政者）
+    { id: 'awaer', name: '阿瓦尔' },
   { id: 'putaoya', name: '葡萄牙' },
   { id: 'puxiangyindu', name: '葡属印度' },
 

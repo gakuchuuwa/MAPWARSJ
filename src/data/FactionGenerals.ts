@@ -3135,6 +3135,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 主人令「存在就建」] 波伊奥里克斯（Boiorix，辛布里王，前 101 韦尔切利战死；辛布里战争）｜势力 辛布里｜据点 耶灵（日德兰中部，辛布里起源最近同文化据点）｜普将（存疑）｜精锐「辛布里战团」T4｜立绘留空
         { generalId: 'xinbuli_boiorix', factionId: 'xinbuli', cityId: 'city_jelling', generalName: '波伊奥里克斯', portrait: '', eliteName: '辛布里战团', eliteTier: 4 },
     ],
+    awaer: [
+        // 🔴 [2026-10-25 主人令「按区域代表补四时代」] 巴彦（阿瓦尔可汗，562–602，攻西尔米乌姆、626 围君士坦丁堡）｜势力 阿瓦尔｜据点 塞格德（潘诺尼亚，匈人文化城）｜普将（有胜有败，存疑）｜精锐「阿瓦尔骑队」T4｜立绘留空
+        { generalId: 'awaer_bayan', factionId: 'awaer', cityId: 'city_saigede', generalName: '巴彦', portrait: '', eliteName: '阿瓦尔骑队', eliteTier: 4 },
+    ],
     wende: [
         // 🔴 [2026-10-25 主人令「存在就建」] 亨吉斯特（449 率撒克逊人入不列颠、肯特王；比德《英吉利教会史》《盎格鲁-撒克逊编年史》记载，半史）｜势力 萨克森｜据点 马格德堡（撒克逊核心，同文化据点）｜普将（存疑）｜精锐「撒克逊战团」T4｜立绘留空
         { generalId: 'wende_hengist', factionId: 'wende', cityId: 'city_magedebao', generalName: '亨吉斯特', portrait: '', eliteName: '撒克逊战团', eliteTier: 4 },

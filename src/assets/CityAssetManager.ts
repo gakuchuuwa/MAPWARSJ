@@ -607,6 +607,7 @@ export class CityAssetManager {
         'bulabante': '班特',
         'kaernute': '卡尔',
         'xiongren': '匈人',
+        'awaer': '瓦尔',
     'liaozu': '寮',
     'kushi': '库施',
     'aimala': '艾马',

@@ -142,6 +142,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   damolaweiya: '摩拉',
   luoma_diguo: '罗马',
   xiongren: '匈人',
+    'awaer': '瓦尔',   // 阿瓦尔
 
   heishui: '黑水',
 'fushi': '苻',

@@ -463,6 +463,7 @@ const _FIXED: Record<string, string> = {
     'gaolu': '#2A4B8F', // 法兰西·巴黎（王室蓝 fleur-de-lis）
     'kaernute': '#3D5A3D', // 卡尔努特·沙特尔（高卢凯尔特绿）
     'xiongren': '#7A3A2E', // 匈人·沙隆（阿提拉·草原红褐）
+    'awaer': '#5E7B4F', // 阿瓦尔（潘诺尼亚；草原绿）
     'putaoya': '#284B9E', // 葡萄牙·里斯本（王国蓝盾）
     'mulabite': '#A03028', // 穆拉比特·马拉喀什（马拉喀什红城）
     'boootiya': '#5E2A84', // 底比斯·底比斯（底比斯圣队紫）

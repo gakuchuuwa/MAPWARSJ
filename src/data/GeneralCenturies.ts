@@ -720,6 +720,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_alexander_nef': 13,                             // 涅夫斯基 · liulike · 诺夫哥罗德
     'luosi_dmitry_aleksandrovich': 13,       // 德米特里·亚历山德罗维奇 · luosi · 拉多加
     'xinbuli_boiorix': -2,                   // 波伊奥里克斯 · xinbuli · 耶灵
+    'awaer_bayan': 6,                        // 巴彦 · awaer · 塞格德
     'danmai_christian_iv': 16,               // 克里斯蒂安四世 · danmai · 哥本哈根
     'gen_rurik': 9,                                      // 留里克 · liulike · 拉多加（862 据拉多加/诺夫哥罗德）
     'gen_sineus': 9,                                     // 西涅乌斯 · liulike · 白湖（862 据白湖）

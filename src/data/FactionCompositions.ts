@@ -1053,6 +1053,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代达拉纳长矛军团",
         legionType: "sub",
     },
+    "awaer": {
+        legionName: "封建时代潘诺尼亚军团",
+        legionType: "region",
+    },
     "xiongren": {
         legionName: "古典时代匈人军团",
         legionType: "sub",

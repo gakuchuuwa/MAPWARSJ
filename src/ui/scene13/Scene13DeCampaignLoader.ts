@@ -39,7 +39,7 @@ let spriteMetaCache: Record<string, DeCampaignSpriteMeta> | null = null;
 export function ensureDeCampaignSpriteMeta(): Promise<Record<string, DeCampaignSpriteMeta>> {
     if (spriteMetaCache) return Promise.resolve(spriteMetaCache);
     if (!spriteMetaPromise) {
-        spriteMetaPromise = fetch('/de-maps/campaign/sprites.json')
+        spriteMetaPromise = fetch('/de-maps/campaign/sprites.json?v=2')
             .then((r) => (r.ok ? r.json() : {}))
             .then((json) => {
                 spriteMetaCache = json || {};
@@ -431,60 +431,136 @@ export function populateDeCampaignObjects(
         return dAtk < 720 && dAtk + 180 < dDef;
     };
 
-    // 预扫描城门主体/立柱附属件 (GATE_MAIN_IDS / GATE_POST_IDS)、城镇中心附属件 (TC_ANNEX_IDS) 与城墙连通格网，
-    // 以便城门挂载门柱、城墙按邻格连通性自动选取 DE 5 向精灵
-    //（0 = 沿 tx 轴 ↗↙，1 = 沿 ty 轴 ↘↖，2 = 交汇/转角方柱，3 = 沿 (1,1) 对角 —，4 = 沿 (1,-1) 对角 |；
+    // 预扫描城门立柱附属件 (GATE_POST_IDS)、城镇中心附属件 (TC_ANNEX_IDS)、城墙连通格网，
+    // 以及「墙走到这里就收头」的建筑格（城门主体/门柱/箭塔/城堡），
+    // 城墙按邻格连通性自动选取 DE 5 向精灵
+    //（0 = 沿 tx 轴 ↗↙，1 = 沿 ty 轴 ↘↖，2 = 方柱（垛墙），3 = 沿 (1,1) 对角 —，4 = 沿 (1,-1) 对角 |；
     //  方向由这 5 帧的 SLD 影子层实测：影子长轴分别为 -18°、+25°、正方形、+5°、+85°）。
+    // 🔴 城门主体/门柱/箭塔/城堡不进墙线格网：它们是独立建筑，墙走到跟前就收头；
+    //    把门柱当「墙邻格」会让贴门的墙件被判成转角，生成一个被城门塔压住、只露出一条竖棱的方柱（主人报的「竖梯」）。
     const gatePosts: Array<{ ob: any; pos: { x: number; y: number }; used: boolean }> = [];
     const tcAnnexes: Array<{ ob: any; pos: { x: number; y: number }; sp: DecorSprite }> = [];
     const wgTileSet = new Set<string>();
-    const towerTileSet = new Set<string>();
+    const wallAttachTileSet = new Set<string>();
 
     for (const ob of rawObjects) {
         if (!ob || !ob.name) continue;
         const uid: number = ob.id;
-        const gx = Math.floor(ob.x);
-        const gy = Math.floor(ob.y);
+        const tileKey = `${Math.floor(ob.x)},${Math.floor(ob.y)}`;
         if (GATE_POST_IDS.has(uid)) {
             markDeCampaignSpriteHighPriority(ob.name);
             gatePosts.push({ ob, pos: toScreen(ob.x, ob.y), used: false });
-            wgTileSet.add(`${gx},${gy}`);
-        } else if (GATE_MAIN_IDS.has(uid)) {
-            // 城门主体：与城墙同属一圈墙线，贴着城门的墙件要按「朝城门延伸」选直墙帧，不能当孤墙
-            wgTileSet.add(`${gx},${gy}`);
-        } else if (WALL_IDS.has(uid)) {
-            wgTileSet.add(`${gx},${gy}`);
-        } else if (TOWER_IDS.has(uid)) {
-            towerTileSet.add(`${gx},${gy}`);
+            wallAttachTileSet.add(tileKey);
+            continue;
+        }
+        if (WALL_IDS.has(uid)) {
+            wgTileSet.add(tileKey);
+        } else if (GATE_MAIN_IDS.has(uid) || TOWER_IDS.has(uid) || CASTLE_IDS.has(uid)) {
+            wallAttachTileSet.add(tileKey);
         }
     }
 
-    // 🔴 [2026-10-25 主人令「这个城墙没有摆放对朝向，请修复」]
-    //    DE 剧本里存的城墙 rotation 只是编辑器放置时留下的角度（实测同一段直墙里 5 个角度值混着出现，
-    //    与邻格连通性无关），不能再按 rotation 取帧——原来按 round(rot)%5 取帧，144°/216°/288° 三档
-    //    全取错（144° 取成 3、216° 取成 4、288° 取成 0），整圈墙才变成「一块块各朝各的」。
-    //    改按邻格连通性取帧（与 DE 运行时同一口径）：只连一组方向 → 该方向的直墙帧；
-    //    连两组以上方向（转角/丁字/十字）或孤立单节 → 方柱帧。城门主体/门柱算墙线的一节。
-    const resolveWallAngleIdx = (gx: number, gy: number): number => {
-        const has = (s: Set<string>, x: number, y: number) => s.has(`${x},${y}`);
-        const dirs = [
-            has(wgTileSet, gx - 1, gy) || has(wgTileSet, gx + 1, gy),               // 0：沿 tx 轴
-            has(wgTileSet, gx, gy - 1) || has(wgTileSet, gx, gy + 1),               // 1：沿 ty 轴
-            has(wgTileSet, gx - 1, gy - 1) || has(wgTileSet, gx + 1, gy + 1),       // 3：沿 (1,1) 对角
-            has(wgTileSet, gx + 1, gy - 1) || has(wgTileSet, gx - 1, gy + 1),       // 4：沿 (1,-1) 对角
-        ];
-        const frameOf = [0, 1, 3, 4];
-        let hit = 0, only = -1;
-        for (let i = 0; i < dirs.length; i++) if (dirs[i]) { hit++; only = i; }
-        if (hit === 1) return frameOf[only];
-        // 孤立单节：若夹在箭塔之间（周围无直接墙/门柱邻格），按箭塔轴向取直墙帧
-        if (hit === 0) {
-            const tx = has(towerTileSet, gx - 1, gy) || has(towerTileSet, gx + 1, gy);
-            const ty = has(towerTileSet, gx, gy - 1) || has(towerTileSet, gx, gy + 1);
-            if (tx !== ty) return tx ? 0 : 1;
+    // 🔴 [2026-10-25 主人令「这个城墙没有摆放对朝向，请修复」「两边要用垛墙，垛墙和垛墙不能挨着，你看看 DE 是怎么计算这块的」「这里没有城垛呀」]
+    //    DE 剧本里存的城墙 rotation 只是编辑器放置时留下的角度（实测：同一段直墙里 5 个角度值混着出现，与邻格怎么连无关），
+    //    不能按 rotation 取帧——原导出按 round(rot)%5 取帧，144°/216°/288° 三档全取错（144°→3、216°→4、288°→0），
+    //    整圈墙才「一块块各朝各的」。DE 运行时是按邻格连通性自动选帧的，照它算：
+    //    ① 先认「整条对穿的直墙」（±x / ±y / 两条斜线）：有对穿就用该方向的直墙帧——直墙优先，
+    //       免得旁边一条擦着角的墙把直墙格误判成方柱（两件垛墙挨着就是这么来的）。
+    //    ② 没有对穿时数连通方向：连两个以上不同方向（转角/丁字/十字）→ 方柱帧（垛墙）；孤立单节也是方柱。
+    //    ③ 只连一个方向 = 墙端头 → 也落垛墙（DE 的墙两头是方柱收头）；但墙端头顶着城门/箭塔/城堡时改直墙，
+    //       因为那里由建筑本身收头，再叠一个垛墙会跟城门塔挤成两件。
+    //    ④ 斜邻格只有在「对面的斜邻格也接着」时才算一条墙线（两条斜墙成一条线）；单纯擦着角的不算。
+    type WallTileKind = 'straight' | 'corner' | 'end' | 'solo';
+    const resolveWallTile = (gx: number, gy: number): { idx: number; kind: WallTileKind } => {
+        const has = (x: number, y: number) => wgTileSet.has(`${x},${y}`);
+        const xp = has(gx + 1, gy), xm = has(gx - 1, gy);
+        const yp = has(gx, gy + 1), ym = has(gx, gy - 1);
+        const dp = has(gx + 1, gy + 1), dm = has(gx - 1, gy - 1);
+        const vp = has(gx + 1, gy - 1), vm = has(gx - 1, gy + 1);
+        const xPair = xp && xm, yPair = yp && ym, dPair = dp && dm, vPair = vp && vm;
+        if ((xPair ? 1 : 0) + (yPair ? 1 : 0) + (dPair ? 1 : 0) + (vPair ? 1 : 0) >= 2) return { idx: 2, kind: 'corner' };   // 十字交汇
+        if (xPair) return { idx: 0, kind: 'straight' };
+        if (yPair) return { idx: 1, kind: 'straight' };
+        if (dPair) return { idx: 3, kind: 'straight' };
+        if (vPair) return { idx: 4, kind: 'straight' };
+        const dConn = (dp && has(gx + 2, gy + 2)) || (dm && has(gx - 2, gy - 2));
+        const vConn = (vp && has(gx + 2, gy - 2)) || (vm && has(gx - 2, gy + 2));
+        const dirs: number[] = [];
+        if (xp || xm) dirs.push(0);
+        if (yp || ym) dirs.push(1);
+        if (dConn) dirs.push(3);
+        if (vConn) dirs.push(4);
+        if (dirs.length === 1) return { idx: 2, kind: 'end' };        // 墙端头：方柱收头
+        if (dirs.length === 0) {
+            if (dp || dm) return { idx: 3, kind: 'straight' };       // 斜墙线的一节（含只有两格长的斜墙端头）
+            if (vp || vm) return { idx: 4, kind: 'straight' };
+            return { idx: 2, kind: 'solo' };                          // 孤立单节
         }
-        return 2;   // 转角 / 丁字 / 十字 / 孤立单节 → 方柱
+        return { idx: 2, kind: 'corner' };                            // 转角 / 丁字 → 方柱（垛墙）
     };
+
+    // 预先把每格城墙的帧号算好，再做两轮收尾：
+    //   ① 墙端头顶着城门/箭塔/城堡 → 改直墙（由建筑收头）；
+    //   ② 「两件垛墙挨着」必须消掉（主人令）：转角垛墙优先保留，端头垛墙让位，降成直墙帧。
+    const wallTileInfo = new Map<string, { idx: number; kind: WallTileKind }>();
+    const wallTileKeys = [...wgTileSet];
+    for (const key of wallTileKeys) {
+        const [gx, gy] = key.split(',').map(Number);
+        wallTileInfo.set(key, resolveWallTile(gx, gy));
+    }
+    const straightFallback = (gx: number, gy: number): number => {
+        const has = (x: number, y: number) => wgTileSet.has(`${x},${y}`);
+        if (has(gx - 1, gy) || has(gx + 1, gy)) return 0;
+        if (has(gx, gy - 1) || has(gx, gy + 1)) return 1;
+        if (has(gx - 1, gy - 1) || has(gx + 1, gy + 1)) return 3;
+        if (has(gx + 1, gy - 1) || has(gx - 1, gy + 1)) return 4;
+        return 2;
+    };
+    const touchesAttachTile = (gx: number, gy: number): boolean => {
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dy === 0) continue;
+                if (wallAttachTileSet.has(`${gx + dx},${gy + dy}`)) return true;
+            }
+        }
+        return false;
+    };
+    for (const key of wallTileKeys) {
+        const info = wallTileInfo.get(key)!;
+        if (info.kind !== 'end') continue;
+        const [gx, gy] = key.split(',').map(Number);
+        if (touchesAttachTile(gx, gy)) {
+            info.idx = straightFallback(gx, gy);
+            info.kind = 'straight';
+        }
+    }
+    const keptCaps = new Set<string>();
+    const hasKeptCapNear = (gx: number, gy: number): boolean => {
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dy === 0) continue;
+                if (keptCaps.has(`${gx + dx},${gy + dy}`)) return true;
+            }
+        }
+        return false;
+    };
+    for (const pass of [0, 1] as const) {
+        for (const key of wallTileKeys) {
+            const info = wallTileInfo.get(key)!;
+            if (info.idx !== 2) continue;
+            if (pass === 0 && info.kind !== 'corner' && info.kind !== 'solo') continue;   // 第一轮：转角/孤立先占位
+            if (pass === 1 && info.kind === 'corner') continue;                            // 第二轮：端头让位
+            const [gx, gy] = key.split(',').map(Number);
+            if (hasKeptCapNear(gx, gy)) {
+                info.idx = straightFallback(gx, gy);
+                info.kind = 'straight';
+            } else {
+                keptCaps.add(key);
+            }
+        }
+    }
+    const wallAngleByIdx = new Map<string, number>();
+    for (const [key, info] of wallTileInfo) wallAngleByIdx.set(key, info.idx);
 
     for (const ob of rawObjects) {
         if (!ob || !ob.name) continue;
@@ -623,8 +699,8 @@ export function populateDeCampaignObjects(
             const meta = getDeCampaignSpriteMetaSync(spriteKey);
             let wallSpriteKey = spriteKey;
             if (meta?.frames5 && meta.frames5.length === 5) {
-                const angleIdx = resolveWallAngleIdx(Math.floor(ob.x), Math.floor(ob.y));
-                wallSpriteKey = meta.frames5[angleIdx] || spriteKey;
+                const angleIdx = wallAngleByIdx.get(`${Math.floor(ob.x)},${Math.floor(ob.y)}`);
+                if (angleIdx !== undefined) wallSpriteKey = meta.frames5[angleIdx] || spriteKey;
             }
             const wallAssetKey = `DECAMP:${wallSpriteKey}`;
             markDeCampaignSpriteHighPriority(wallSpriteKey);
@@ -881,4 +957,31 @@ export function populateDeCampaignObjects(
     // 重置城门/城墙索引缓存，使 ensureGateInfo() 与 blockedWall() 立即感知新注册的 DE 城墙与城门
     (layer as any).gateSpriteSet = null;
     (layer as any).ringBox = undefined;
+
+    // 若当前地图中心 (worldCX, worldCY) 视野内没有城墙/城门（例如 acam2_4 地图正中心是宽阔河面，城墙与城门在北岸/西岸城池），
+    // 自动将初始镜头对准离中心最近的主城门或石墙，确保打开即见城防与城墙
+    if (layer.wallGates.length > 0 && layer.tacticalPanX === 0 && layer.tacticalPanY === 0) {
+        const hasWallNearCenter = layer.wallGates.some(
+            (w) => Math.abs(w.x - worldCX) < 720 && Math.abs(w.y - worldCY) < 420
+        );
+        if (!hasWallNearCenter) {
+            const gates = layer.wallGates.filter((w) => w.key === 'STONE_GATE');
+            const stoneWalls = layer.wallGates.filter((w) => w.key === 'STONE_WALL' || w.key === 'FORTIFIED_WALL');
+            const pool = gates.length > 0 ? gates : (stoneWalls.length > 0 ? stoneWalls : layer.wallGates);
+            let best = pool[0];
+            let bestD = Math.hypot(best.x - worldCX, best.y - worldCY);
+            for (const w of pool) {
+                const d = Math.hypot(w.x - worldCX, w.y - worldCY);
+                if (d < bestD) {
+                    bestD = d;
+                    best = w;
+                }
+            }
+            if (best) {
+                const z = layer.tacticalZoom || 1;
+                layer.tacticalPanX = (worldCX - best.x) * z;
+                layer.tacticalPanY = (worldCY - best.y) * z;
+            }
+        }
+    }
 }

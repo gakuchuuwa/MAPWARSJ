@@ -558,6 +558,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xinnidelan': [{ from: -9999, era: 'imperial' }], // 新尼德兰
     'xiongnu': [{ from: -9999, era: 'antiquity' }], // 匈奴
     'xiongren': [{ from: -9999, era: 'antiquity' }], // 匈人
+    'awaer': [{ from: -9999, era: 'feudal' }], // 阿瓦尔汗国（567–822，潘诺尼亚）
     'xiou': [{ from: -9999, era: 'antiquity' }], // 西瓯
     'xiye': [{ from: -9999, era: 'antiquity' }], // 西夜
     'xueyantuo': [{ from: -9999, era: 'feudal' }], // 薛延陀

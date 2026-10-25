@@ -471,6 +471,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_alexander_nef: { birth: 1221, death: 1263 },       // 涅夫斯基
     luosi_dmitry_aleksandrovich: { birth: 1250, death: 1294 },  // 德米特里·亚历山德罗维奇（诺夫哥罗德王公）
     xinbuli_boiorix: { birth: -160, death: -101, kaoju: '推定' },  // 波伊奥里克斯（辛布里王）
+    awaer_bayan: { birth: 562, death: 602, kaoju: '推定' },  // 巴彦（阿瓦尔可汗）
     danmai_christian_iv: { birth: 1577, death: 1648 },  // 克里斯蒂安四世
     gen_rurik: { birth: 830, death: 879, debut: 862, kaoju: '推定' },   // 留里克（生卒为传统推定；862 据拉多加/诺夫哥罗德）
     gen_sineus: { birth: 840, death: 864, debut: 862, kaoju: '推定' },  // 西涅乌斯（留里克之弟，862 据白湖；卒年 864 见《往年纪事》，生年为推定）
