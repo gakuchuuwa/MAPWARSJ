@@ -112,45 +112,6 @@ export const IsWaitingSiege = new Condition('IsWaitingSiege', (ctx) => {
     return true;
 });
 
-/**
- * 已删除的远征模式。
- */
-function resolveExpeditionStateRemoved(_ctx: BTContext): null {
-    return null;
-        gameLog(
-            'expedition',
-            `🐎 [远征] ${legionName} 远征${target ? `【${target.name}】功成` : '目标已不存在'}，回归据点军团模式`
-        );
-        if (target) {
-            (window as unknown as {
-                game?: { brawlFeedPanel?: { pushExpedition(p: { legionName: string; generalId?: string | null; cityName: string; kind: 'depart' | 'success' }): void } };
-            }).game?.brawlFeedPanel?.pushExpedition({
-                legionName,
-                generalId: army.generalId,
-                cityName: target.name,
-                kind: 'success',
-            });
-            commitExpeditionEliteLegionName(army);
-        } else {
-            restoreExpeditionLegionName(army);
-        }
-        return 'done';
-    }
-
-    // ⚠ 出发点失守也不取消远征（会让军团在目标和老家之间来回徘徊）。禁止加回失守取消分支。
-
-    // 远征锁定：每 tick 幂等重设战略目标（setStrategicTarget 只写黑板 targetCityId/targetPosition，无副作用）。
-    // 关键：不能再用「目标 id 未变就跳过」的旧守卫——野战/攻城/休整会把军团挪到新位置、并可能清空黑板目标；
-    // 若战后仍奔同一城（如弓庐水战后仍去狼居胥山，id 未变），旧守卫会跳过重设 → 军团失去有效移动目标、
-    // 留着打断前的陈旧路径卡在战场原地不动（祷余山因占应昌推进路点、目标改为阔亦田而侥幸绕过守卫）。
-    // 幂等重设后，恢复行军时必按军团「当前位置」重新锁定→重新寻路，两场野战一致，绝不卡死。
-    setStrategicTarget(ctx, expeditionId, {
-        lat: target.latitude,
-        lng: target.longitude,
-    });
-    return 'locked';
-}
-
 /** 从 LegionManager 按 id 取现役军团（无 getArmy API 时线性扫） */
 function findArmyById(ctx: BTContext, armyId: string): Army | null {
     const armies: Army[] | undefined = ctx.legionManager?.getArmies?.();
@@ -269,7 +230,7 @@ function pickNearbyEnemyLegion(
 
         // 「打不打得过」闸门（2026-08-12）：修前只判死没死/同不同阵营/距离，
         // 5 千残兵会去追 3 万大军 —— 追击的前提本来就是我打得过。
-        // 只挡**主动挑衅**；被动接敌、收复、远征都不走这条路径，不受影响。
+        // 只挡**主动挑衅**；被动接敌、收复不走这条路径，不受影响。
         if (other.getTroops() > myTroops * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO) {
             btLog(
                 ctx,
@@ -496,7 +457,7 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     }
 
     // 关键：已锁定据点时 EnsureTarget 不会再进 FindTarget，同屏新刷敌军团会被无视。
-    // 非收复/非远征的攻城途中，若寻敌半径内出现可打敌军团 → 挂起城目标并立刻改追（城 id 保留，勿 stopMovement 空窗卡死）。
+    // 非收复的攻城途中，若寻敌半径内出现可打敌军团 → 挂起城目标并立刻改追（城 id 保留，勿 stopMovement 空窗卡死）。
     const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx), city);
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();
@@ -594,21 +555,12 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         !ctx.army.scriptMarchExempt &&
         (ctx.army.getTroops() < GameConfig.LEGION.DISBAND_TROOP_THRESHOLD || !ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))
     ) {
-        if (ctx.army.expeditionTargetCityId) {
-            ctx.army.weakCheckAfterBattle = true;
-        }
         ctx.army.weakCheckAfterBattle = true;
         return BTStatus.FAILURE;
     }
 
-    // 远征模式：目标只有一个，不进方向池抽签、不回师
-    const expedition = resolveExpeditionState(ctx);
-    if (expedition === 'locked') return BTStatus.SUCCESS;
-
     // 🔴 [2026-09-11 主人定「不交战」] 剧本行军豁免军团**不自行寻找目标**：
     //    它的去向由剧本导演（`HistoricalEventManager`）决定，不许行为树给它抽签攻城/追击。
-    //    ⚠️ 上面已先处理远征锁，所以这里只拦「自主寻敌」这一条——
-    //    不拦剧本用 `expeditionTargetCityId` 驱动的逐段行军（那走的是 HasTarget→MoveToTarget，不经这里）。
     if (ctx.army.scriptMarchExempt) return BTStatus.FAILURE;
 
     const myFaction = ctx.army.getFactionId();
@@ -932,11 +884,11 @@ export const TriggerSiege = new Action('TriggerSiege', (ctx) => {
 export const Idle = new Action('Idle', () => BTStatus.SUCCESS);
 
 // =====================
-// 残兵撤退（据点军团兵力跌破阈值 → 回出发城解散、兵力并入驻军；远征军团不受此限）
+// 残兵撤退（军团兵力跌破阈值 → 回出发城解散、兵力并入驻军）
 // =====================
 
 /**
- * 战后残兵 < 阈值、非远征、出发城仍属己方 → 该撤回解散；已锁定撤退意图的军团途中补兵不掉头。
+ * 战后残兵 < 阈值、出发城仍属己方 → 该撤回解散；已锁定撤退意图的军团途中补兵不掉头。
  *
  * 🔴 [2026-09-03 主人定] 「5000 人以下回城」只认**战后**，行军中不算。
  *    兵力阈值仅在 Army.weakCheckAfterBattle 为 true（刚打完一仗）时判一次，判完就关闸；
@@ -998,12 +950,6 @@ export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
     army.weakCheckAfterBattle = false;
 
     if (!noOnStageGeneral && army.getTroops() >= GameConfig.LEGION.DISBAND_TROOP_THRESHOLD) return false;
-
-    // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 兵力不足 5000 时，即使原为远征军也解除远征锁并撤回/就地并入驻军
-    if (army.expeditionTargetCityId) {
-        restoreExpeditionLegionName(army);
-        army.expeditionTargetCityId = null;
-    }
 
     const fb = findFallbackFriendlyCity();
     // 若此刻已在某座己方据点旁（如刚攻下该城后兵力不足 5000），直接就地并入该城驻军，不再跨图乱跑
@@ -1081,12 +1027,6 @@ export const IsHomeStillMine = new Condition('IsHomeStillMine', (ctx) => {
     return !!home && home.factionId === homeOwnerFactionOf(ctx.army, ctx.cityManager);
 });
 
-/** 非远征军团（远征目标锁死，本城被攻打也不回援） */
-export const IsNotExpeditionLegion = new Condition(
-    'IsNotExpeditionLegion',
-    (ctx) => !shouldSkipHomeRecapture(ctx.army),
-);
-
 /** 本城守城战进行中：加入守城；敌军尚在途/排队则原地待命，均不解散 */
 export const DefendHome = new Action('DefendHome', (ctx) => {
     const army = ctx.army;
@@ -1163,11 +1103,10 @@ const retreatWeakLegion = new Sequence('RetreatWeakLegion', [
     ]),
 ]);
 
-// 回援本城（不限兵力）：本城正被攻城（真打起来）且仍属己方（未沦陷）、非远征 →
+// 回援本城（不限兵力）：本城正被攻城（真打起来）且仍属己方（未沦陷）→
 // 抵家则以援军身份中途加入守城，未抵家则星夜回援。敌军仅在途/迫近不触发。
 // 比「等城破再回攻」更早救援；城一旦失守则由 attackSequence 内的收复逻辑接手。
 const reinforceHome = new Sequence('ReinforceHome', [
-    IsNotExpeditionLegion,
     IsHomeUnderAttack,
     IsHomeStillMine,
     new Selector('ReinforceOrMarchHome', [

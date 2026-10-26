@@ -1,6 +1,6 @@
 import { GameConfig } from '../../config/GameConfig';
 import { PerformanceMonitor } from '../../debug/PerformanceMonitor';
-import { getEuclideanDistance, distanceAlongPolyline, dedupeLatLngPath, nearestPointOnPolyline } from '../../core/DistanceUtils';
+import { getEuclideanDistance, dedupeLatLngPath, nearestPointOnPolyline } from '../../core/DistanceUtils';
 import { roadRegistry } from '../../roads/RoadRegistry';
 import { City, LatLng } from '../../types/core';
 import { gameLog } from '../../utils/GameLogger';
@@ -70,7 +70,6 @@ function resolveMarchTarget(
     startCityId: string | undefined,
     targetCityId: string,
     marchPath: { lat: number; lng: number }[],
-    currentPos: LatLng,
 ): string {
     let marchTargetId = targetCityId;
     let checkedPolyline = false;
@@ -202,7 +201,6 @@ export function moveLegionToCity(
             nearestStartCityId ?? undefined,
             targetCityId,
             pathPreviewForResume,
-            currentPos,
         );
         if (tryResumeRoadMarch(deps, army, targetCityId, hopForResume, currentPos)) {
             notePathfinding();
@@ -284,7 +282,6 @@ export function moveLegionToCity(
             candidateStartId,
             targetCityId,
             pathPreview ?? [],
-            currentPos,
         );
         const candidatePath = candidateMarchTargetId === targetCityId
             ? pathPreview

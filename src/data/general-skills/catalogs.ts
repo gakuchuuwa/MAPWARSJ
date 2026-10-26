@@ -91,9 +91,9 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_10: { id: 'str_10', grid: 'S⑩', displayName: '如履平地', effect: 'mountain_march_immunity', magnitude: 1, engineStatus: 'ready', category: 'speed', note: '山地按平原速度走（均势·迂回奇袭）' },
 
-    // ── 远征技能（非战略技能；远征系统专用，禁止混入战略技能） ──
+    // ── 特殊行军技（只按武将档案持有，不进入随机配技池） ──
 
-    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', category: 'expedition', note: '【远征技能】50% 概率绕过 small_city / stockade 的 ZOC（远征机制专用，非战略技能）' },
+    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', category: 'speed', note: '50% 概率绕过 small_city / stockade 的 ZOC；仅持有该技的武将生效' },
 
     str_12: { id: 'str_12', grid: 'S⑫', displayName: '乘胜追击', effect: 'skip_post_battle_rest', magnitude: 0, engineStatus: 'ready', category: 'speed', note: '胜后休整置 0（造势）' },
 

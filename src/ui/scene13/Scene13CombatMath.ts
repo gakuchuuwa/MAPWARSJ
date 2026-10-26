@@ -8,7 +8,7 @@ import type { WarBuilding, WarMan } from './Scene13Types';
 export const COLLAPSE_ANIM_DUR = 8.33;
 
 // 🔴 [2026-10-27 主人令「其他属性也高，请平衡下，看看最厉害的英雄，跟他的差不多就行。」]
-//    探马者不再享有额外属性倍率，与武将英雄一样直接采用当前兵模的基础战斗数值。
+//    探马者不再享有额外倍率；基础数值取已获兵模的历史峰值，当场科技/军团加成另算。
 export const HERO_ATTACK_RATE = 1.0;
 export const HERO_HP_MULT = 1.0;
 export const HERO_DAMAGE_TAKEN = 1.0;

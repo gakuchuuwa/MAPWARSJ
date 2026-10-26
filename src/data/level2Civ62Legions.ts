@@ -1333,7 +1333,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（托莱多、阿德里安堡、图卢兹；圣胡安德巴尼奥斯早期马蹄拱教堂、西哥特黄金还愿冠神坛；阿德里安堡重装破阵冲击骑兵、罗马破城者双手大剑、掠夺永恒之城铁骑大阵）
     //    英雄队（第 10 队·主将队）：hero_alaric / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代西哥特军团', civ: '哥特', age: 'antiquity', deStyle: 'WEST', region: 'GOTHS' as RegionType,
+        name: '古典时代哥特军团', civ: '哥特', age: 'antiquity', deStyle: 'WEST', region: 'GOTHS' as RegionType,
         buildingStyle: 'GOTHS',
         castleId: 'GOTH_CASTLE_AGE3', castleName: '哥特 早期蛮族石砌据点',
         formationMode: 'fish_scale',
@@ -2688,7 +2688,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'amazon_warrior', count: 3 },
             { type: 'amazon_archer', count: 4 },
-            { type: 'sarmatian', count: 2 },
+            { type: 'scythian_horse_archer', count: 2 },
         ],
     },
     // ── 库曼 · 封建时代 · 封建时代可萨军团　（三级升二级）────────────────
@@ -2705,7 +2705,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'raider', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
-            { type: 'sogdian_cataphract', count: 2 },
+            { type: 'sarmatian', count: 2 },
         ],
     },
     // ── 库曼 · 城堡时代 · 城堡时代库曼军团　（同名已在二级（重复→替换保留））────────────────
@@ -2744,7 +2744,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_darius',
         slots: [
             { type: 'elite_war_chariot', count: 2 },
-            { type: 'antiquity_scout_cavalry', count: 3 },
+            { type: 'companion_cavalry', count: 3 },
             { type: 'sickle_warrior', count: 4 },
         ],
     },
@@ -2822,7 +2822,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'phalangite', count: 3 },
             { type: 'bactrian_archer', count: 4 },
-            { type: 'companion_cavalry', count: 2 },
+            { type: 'sogdian_cataphract', count: 2 },
         ],
     },
     // ── 河中 · 封建时代 · 封建时代河中军团　（本次新建）────────────────
@@ -4320,9 +4320,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'TIBET_CASTLE_AGE3', castleName: '吐蕃 藏式金顶宗堡',
         formationMode: 'crescent',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_ibrahimlodi',
+        commanderUnit: 'hero_uruskhan',
         slots: [
-            { type: 'antiquity_spearman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 3 },
             { type: 'antiquity_cavalry_archer', count: 2 },
             { type: 'bowman', count: 4 },
         ],
@@ -4466,7 +4466,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_ibrahimlodi',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
         slots: [
-            { type: 'lancer', count: 3 },
+            { type: 'elite_tiger_cavalry', count: 3 },
             { type: 'xianbei_raider', count: 2 },
             { type: 'antiquity_cavalry_archer', count: 4 },
         ],

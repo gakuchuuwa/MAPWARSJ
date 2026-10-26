@@ -2024,7 +2024,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'donggete_berig', factionId: 'donggete', cityId: 'city_weishibi', generalName: '贝里格', portrait: '/assets/VIKINGS/donggete_berig.png', eliteName: '哥特战团', eliteTier: 4 },
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：奥多亚克＝意大利王，都拉文纳，493 年在拉文纳被围杀；美因茨与他无关 → 放拉文纳（donggete，风格 GOTHS）；仍挂本政权 rierman
         // 🔴 [2026-10-24 主人口径「据点、武将、势力、精锐、军团都是一个文化」] 武将文化=GOTHS（拉文纳风格）× 时代 antiquity → 古典时代西哥特军团；不再继承法兰克势力编制
-        { generalId: 'rierman_odoacer', cityId: 'city_ravenna', legionName: '古典时代西哥特军团', factionId: 'falanji', generalName: '奥多亚克', portrait: '/assets/GOTHS/rierman_odoacer.png', eliteName: '日耳曼佣兵', eliteTier: 4 },
+        { generalId: 'rierman_odoacer', cityId: 'city_ravenna', legionName: '古典时代哥特军团', factionId: 'falanji', generalName: '奥多亚克', portrait: '/assets/GOTHS/rierman_odoacer.png', eliteName: '日耳曼佣兵', eliteTier: 4 },
     ],
 
 
@@ -2092,7 +2092,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_ataulf', legionName: '古典时代西哥特军团', factionId: 'xigete', cityId: 'city_nabone', generalName: '阿陶尔夫', portrait: '/assets/GOTHS/gen_ataulf.png' },
+        { generalId: 'gen_ataulf', legionName: '古典时代哥特军团', factionId: 'xigete', cityId: 'city_nabone', generalName: '阿陶尔夫', portrait: '/assets/GOTHS/gen_ataulf.png' },
 
 
 
@@ -2722,7 +2722,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_91', cityId: 'city_ravenna', generalName: '霍诺留', portrait: '/assets/ROMA/bfe3_91.png', legionName: '古典时代西哥特军团' , eliteName: '西罗马卫军', eliteTier: 4},
+        { generalId: 'bfe3_91', cityId: 'city_ravenna', generalName: '霍诺留', portrait: '/assets/ROMA/bfe3_91.png', legionName: '古典时代哥特军团' , eliteName: '西罗马卫军', eliteTier: 4},
 
 
 

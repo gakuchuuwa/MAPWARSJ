@@ -1022,7 +1022,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "donggete": {
-        legionName: "古典时代西哥特军团",
+        legionName: "古典时代哥特军团",
         legionType: "sub",
     },
     "sashan": {

@@ -219,6 +219,7 @@ export interface PlayerQuestDeps {
         ): Army | null;
         getLegionById(id: string): Army | undefined;
         getArmies(): Army[];
+        moveLegionToCity(army: Army, targetCityId: string, sourceCityId?: string): boolean;
         dequeueArmyFromThirdPartyWaiters?(armyId: string): boolean;
         triggerSiege?(army: Army, targetCity: City): 'siege' | 'skipped';
     };
@@ -2321,9 +2322,9 @@ export class PlayerQuestSystem {
 
     /**
      * 首战结束后衔接：无论首战是野战/攻城、本地防守/进攻，打完后确保武将保有至少 10,000 兵力的出征军团，
-     * 自动锁定下一座敌方据点继续出征，直至战败。
+     * 向下一座敌方据点发出普通行军命令；此后回援、收复和改选目标均按普通军团规则处理。
      */
-    private completeFirstBattleAndContinueExpedition(q: PlayerQuest, host: Army): void {
+    private completeFirstBattleAndContinueCampaign(q: PlayerQuest, host: Army): void {
         const fbState = q.firstBattle;
         this.cleanupFirstBattleState(q);
 
@@ -2436,11 +2437,11 @@ export class PlayerQuestSystem {
         if (fbState.battleType === 'field') {
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
             if (!fbState.enemySpawnPending && (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0)) {
-                this.completeFirstBattleAndContinueExpedition(q, host);
+                this.completeFirstBattleAndContinueCampaign(q, host);
                 return;
             }
             if (fbState.engaged && !host.getIsInCombat()) {
-                this.completeFirstBattleAndContinueExpedition(q, host);
+                this.completeFirstBattleAndContinueCampaign(q, host);
                 return;
             }
             if (distToTarget <= 0.2) {
@@ -2451,7 +2452,7 @@ export class PlayerQuestSystem {
         } else if (fbState.role === 'defender') {
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
             if (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0 || (fbState.engaged && !host.getIsInCombat())) {
-                this.completeFirstBattleAndContinueExpedition(q, host);
+                this.completeFirstBattleAndContinueCampaign(q, host);
                 return;
             }
             if (distToTarget <= 0.22) {
@@ -2462,7 +2463,7 @@ export class PlayerQuestSystem {
         } else {
             const targetCity = fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
             if (!targetCity || (fbState.engaged && !host.getIsInCombat()) || (distToTarget <= 0.25 && targetCity.factionId === q.factionId && fbState.engaged)) {
-                this.completeFirstBattleAndContinueExpedition(q, host);
+                this.completeFirstBattleAndContinueCampaign(q, host);
                 return;
             }
             if (distToTarget <= 0.22) {
@@ -3496,9 +3497,7 @@ export class PlayerQuestSystem {
         const factionName = this.deps.cityManager.getFactionName(factionId);
         const targetId = army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
         const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
-        // 🔴 [2026-09-11 主人定 A 方案] 剧本主角军团：走真历史目标，**不再要求它有"目标城"**
-        //    （剧本军的 expeditionTargetCityId 只是行军航点，引擎那套会当成"要攻占的城"；
-        //      没有它时原来直接一句"所部暂无战事"把玩家挡在门外 —— 剧本军必须能入伍。）
+        // 剧本主角军团必须有真实目标；普通随军任务读取当前行军或攻城目标。
         if (!target) {
             this.deps.notify(`${generalName}所部暂无战事，另寻他人`);
             return;

@@ -350,7 +350,7 @@ export const RETIRED_STRATEGIC_IDS: readonly string[] = [
     'str_05', 'str_17', 'str_18', 'str_25', 'str_26', 'str_27',
 ];
 
-/** 特殊/远征专属战略技（str_11 长驱深入 为远征军团机制专用技，不属于普通武将配技池，不参与空置配技审计） */
+/** 特殊战略技（str_11 长驱深入只按武将档案持有，不进入随机配技池，不参与空置配技审计） */
 export const SPECIAL_EXCLUDED_STRATEGIC_IDS: readonly string[] = ['str_11'];
 
 export interface StrategicAssignAuditResult {
@@ -680,8 +680,8 @@ export const STRATEGIC_SKILL_TAGS = [
     { id: 'str_25', grid: 'S㉕', name: '足食足兵', tags: ['产兵', '增长'], terrain: '据点' },
     { id: 'str_26', grid: 'S㉖', name: '招兵买马', tags: ['募兵', '冷却'], terrain: '据点' },
     { id: 'str_27', grid: 'S㉗', name: '屯兵经略', tags: ['留兵', '屯田'], terrain: '据点' },
-    // ── 远征技能（远征机制专用，非战略技能） ──
-    { id: 'str_11', grid: 'S⑪', name: '长驱深入（远征技能）', tags: ['远征技能', '绕城', 'ZOC'], terrain: '远征' },
+    // ── 特殊行军技（只按武将档案持有，不进入随机配技池） ──
+    { id: 'str_11', grid: 'S⑪', name: '长驱深入', tags: ['行军', '绕城', 'ZOC'], terrain: '行军' },
 ] as const;
 
 /** 按 tacticalId 查标签 */

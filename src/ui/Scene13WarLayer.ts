@@ -46,6 +46,7 @@ import { WAR_TYPES, type WarType } from '../data/WarTypes';
 import { categorizeUnit } from '../legion/formation/deUnitCategories';
 import { computeDeFormationLayout, type DeCategoryGroup } from '../legion/formation/deFormationLayout';
 import type { Scene13PlayerSetup } from '../player/PlayerHero';
+import { withPlayerPeakStats } from '../player/PlayerGrowth';
 import { withCommander } from '../data/generalHeroUnits';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
@@ -1326,7 +1327,7 @@ export class Scene13WarLayer {
         const inp = this.heroInput;
         if (!inp) return false;
         const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
-        const spd = this.statsFor(m.key, m.f).spd * spdK;
+        const spd = this.statsFor(m.key, m.f, m.hero === true).spd * spdK;
         const dx = inp.dx;
         const dy = inp.dy;
         const upK = this.uphillSpeedK(m.x, m.y, dx, dy);
@@ -1363,9 +1364,9 @@ export class Scene13WarLayer {
         }
     }
 
-    /** 玩家本人的最大血量：兵种血 × HERO_HP_MULT。出生 / 落马重整 / HUD 血条上限只准走这里，别再各写各的。 */
+    /** 玩家本人的最大血量：历史峰值 + 当场科技/军团血量修正。出生、重整与 HUD 只走这里。 */
     private heroMaxHp(key: string, f: number): number {
-        return Math.max(1, Math.round(this.statsFor(key, f).hp * HERO_HP_MULT));
+        return Math.max(1, Math.round(this.statsFor(key, f, true).hp * HERO_HP_MULT));
     }
 
     private heroDown(m: WarMan): void {
@@ -1717,20 +1718,24 @@ export class Scene13WarLayer {
      * 🔴 每方按自己 66 建筑文化 + 当前年份算（同一兵种攻守双方数值可能不同）。
      * 🔴 返回新对象、绝不原地改 WAR_TYPES（就地改会逐场累积爆表）。分表缓存，一年才失效一次。
      */
-    statsFor(key: string, f: number): WarType & { sight?: number } {
+    statsFor(key: string, f: number, playerHero = false): WarType & { sight?: number } {
         // 城墙/城门建筑：直接返回 DE 属性（不走科技/文化，建筑不吃兵种科技加成）
         const wall = WALL_GATE_STATS[key];
         if (wall) return wall;
         const y = this.techYearGetter?.() ?? this.techYear;
         if (y !== this.techYear) this.onTechYearChanged(y);
-        let v = this.techStats[f].get(key);
+        // 玩家与普通同兵模士兵分缓存：玩家用历史峰值，当前兵模只保留外观和攻击/受击类别。
+        const cacheKey = playerHero ? `player:${key}` : key;
+        let v = this.techStats[f].get(cacheKey);
         if (!v) {
-            const base = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
+            const current = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
+            const peak = playerHero ? this.playerSetup?.heroStats : undefined;
+            const base: WarType = peak ? withPlayerPeakStats(current, peak) : current;
             const side: 0 | 1 = f === 0 ? 0 : 1;
             const techs = selectLegionTechs(y, this.sideTechCulture(side), this.sideTechSeed(side));
             v = applyTechsToStats(base, key, techs, SIGHT_MAP[key] ?? 160);
             if (this.sideHpMult[f] !== 1) v = { ...v, hp: Math.max(1, Math.round(v.hp * this.sideHpMult[f])) };
-            this.techStats[f].set(key, v);
+            this.techStats[f].set(cacheKey, v);
         }
         return v;
     }
@@ -4511,7 +4516,7 @@ export class Scene13WarLayer {
     /** 近战兵与目标隔着城墙（仅攻方在城墙未破且城外/城内相隔时生效；守方本身可穿自家城门，不按隔墙丢目标） */
     private wallSeparates(m: WarMan, o: { x: number; y: number }): boolean {
         if (this.battleType !== 'siege' || !this.siegeWithWalls || m.f === 1 || m.hero || m.siegeW
-            || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f).rng > 65) return false;
+            || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f, false).rng > 65) return false;
         this.ensureGateInfo();
         if (this.ringOpen()) return false;
         return this.insideRing(m.x, m.y) !== this.insideRing(o.x, o.y);
@@ -4520,8 +4525,8 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-20 主人令「普通远程兵不打墙、城门和建筑，带攻城加成的远程兵照打」]
      *  → 🔴 [2026-10-21 主人改「我的意思是最后打建筑」] 普通远程兵先打兵、最后打城门/建筑（见索敌处）。
      *  「带攻城加成」= DE 加成表里对建筑护甲类（11 全建筑 / 13 石质防御 / 21 标准建筑 / 22 城墙城门）有正加成。 */
-    private rangedHitsBuildings(key: string): boolean {
-        const bon = this.statsFor(key, 0).bonus;
+    private rangedHitsBuildings(key: string, f = 0, playerHero = false): boolean {
+        const bon = this.statsFor(key, f, playerHero).bonus;
         return !!bon && ((bon[11] ?? 0) > 0 || (bon[13] ?? 0) > 0 || (bon[21] ?? 0) > 0 || (bon[22] ?? 0) > 0);
     }
 
@@ -4532,7 +4537,7 @@ export class Scene13WarLayer {
      */
     private rangedHoldsOutside(m: WarMan): boolean {
         if (this.battleType !== 'siege' || !this.siegeWithWalls || m.f !== 0 || !m.key || m.hero || m.siegeW
-            || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, 0).rng <= 65 || this.rangedHitsBuildings(m.key)) return false;
+            || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f).rng <= 65 || this.rangedHitsBuildings(m.key, m.f)) return false;
         this.ensureGateInfo();
         return !this.ringOpen() && !this.insideRing(m.x, m.y);
     }
@@ -4546,7 +4551,7 @@ export class Scene13WarLayer {
      */
     private rangedMapFoe(m: WarMan): WarMan | null {
         if (this.battleType !== 'siege' || m.f !== 0 || !m.key || m.siegeW || WALL_PASS_TYPES.has(m.key)) return null;
-        if (this.statsFor(m.key, 0).rng <= 65 || this.rangedHitsBuildings(m.key) || this.inCenterLane(m)) return null;
+        if (this.statsFor(m.key, m.f, m.hero === true).rng <= 65 || this.rangedHitsBuildings(m.key, m.f, m.hero === true) || this.inCenterLane(m)) return null;
         const hold = this.rangedHoldsOutside(m);
         const reach2 = hold ? this.rangedShootReach2(m) : 0;
         const laneFoe = m.lane >= 0 ? this.laneTargets.get(m.lane)?.targetLane : undefined;
@@ -4564,7 +4569,7 @@ export class Scene13WarLayer {
 
     /** 远程兵站着不动就射得到的距离²（射程 + 自身半径 + 余量） */
     private rangedShootReach2(m: WarMan): number {
-        const r = this.statsFor(m.key, 0).rng + this.radiusOf(m.key) + 18;
+        const r = this.statsFor(m.key, m.f, m.hero === true).rng + this.radiusOf(m.key) + 18;
         return r * r;
     }
 
@@ -4575,7 +4580,7 @@ export class Scene13WarLayer {
         for (const m of this.men) {
             m.reservedFoe = null;
             if (deploying || m.hp <= 0) continue;
-            if (this.canKeepTarget(m, this.statsFor(m.key, m.f).sight ?? 160)) {
+            if (this.canKeepTarget(m, this.statsFor(m.key, m.f, m.hero === true).sight ?? 160)) {
                 m.reservedFoe = m.foe;
                 m.foe!.claims++;
             }
@@ -4690,7 +4695,7 @@ export class Scene13WarLayer {
             // 排除乱入者本人（m.hero）计入 50 人分队重心，防全队阵亡后仅剩乱入者在攻方营地复活时把守方大军引去蹲守营地
             if (m.hp <= 0 || m.lane < 0 || m.siegeW || m.hero) continue;
             const inR = (this.battleType === 'siege' && this.siegeWithWalls && this.insideRing(m.x, m.y)) ? 1 : 0;
-            const isMelee = !WALL_PASS_TYPES.has(m.key) && this.statsFor(m.key, m.f).rng <= 65;
+            const isMelee = !WALL_PASS_TYPES.has(m.key) && this.statsFor(m.key, m.f, false).rng <= 65;
             const isGuard = !!m.guardPost;
             const cur = laneInfo.get(m.lane);
             if (!cur) {
@@ -4959,7 +4964,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-20 主人令「两军交战总是拥挤在一起」→ 方案二 分路索敌] 野战：优先打自己拴绳带内（正对面）的敌人，
         //    带内一个都没有才落回原有的选法（本队目标敌队 → 全视野最近）。贴脸 65px 内的一律算带内（自卫）。
         const bandHome = (typeof wm.lane === 'number' && wm.key !== undefined) ? this.leashHome(m as WarMan) : null;
-        const bandW = bandHome !== null ? LEASH_LAT + Math.max(this.statsFor(wm.key!, m.f as 0 | 1).rng, 65) : 0;
+        const bandW = bandHome !== null ? LEASH_LAT + Math.max(this.statsFor(wm.key!, m.f as 0 | 1, (m as { hero?: boolean }).hero === true).rng, 65) : 0;
         const bandU = bandHome !== null ? this.leashAxis(m as WarMan)! : this.sideVec[0];
         let bBest: WarMan | null = null, bBd = r2;
         let bInRange: WarMan | null = null, bRd = r2;
@@ -4974,7 +4979,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-12 主人报「士兵挤在墙边也不打城墙」] 攻方近战兵：城外、墙还封着没路进城时，城里的敌兵够不着 ⇒ 不锁定他们，
         //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
         const outOnly = m.f === 0 && this.battleType === 'siege' && this.siegeWithWalls && !!wm.key
-            && !(m as { siegeW?: boolean }).siegeW && this.statsFor(wm.key, 0).rng <= 65
+            && !(m as { siegeW?: boolean }).siegeW && this.statsFor(wm.key, m.f as 0 | 1, (m as { hero?: boolean }).hero === true).rng <= 65
             && (this.ensureGateInfo(), !this.insideRing(m.x, m.y)) && !this.ringOpen();
         // 🔴 [2026-10-20 主人报「远程不攻击建筑后，远程兵就在城外转，也进不了城」]
         //    攻方远程在城外、墙还封着：城里的敌兵只在**射程内**才锁（隔墙放箭，同 DE）；射程外的不锁 ——
@@ -5101,7 +5106,7 @@ export class Scene13WarLayer {
         //    攻方士兵（含乱入者）：视野内走得到的兵 → 城墙完整且人在城外时打最近的城门 → 否则打最近的建筑（含箭塔）。
         if ((this.battleType === 'siege' || !!this.deCampaignMapId) && m.f === 0) {
             const mKey = wm.key ?? '';
-            const mRng = mKey ? (this.statsFor(mKey, 0).rng ?? 0) : 0;
+            const mRng = mKey ? (this.statsFor(mKey, m.f as 0 | 1, isHero).rng ?? 0) : 0;
             const mReach = Math.max(mRng, 65) + (mKey ? this.radiusOf(mKey) : 8);
             const bg = (this.siegeWithWalls || this.wallGates.length > 0) ? this.blockedWall(m as Partial<WarMan>) : null;
             // 🔴 [2026-10-20 主人令「普通远程兵不打墙、城门和建筑，带攻城加成的远程兵照打」]
@@ -5129,7 +5134,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-21 主人令「远程兵现在是不打建筑，这样是不对的，我的意思是最后打建筑」]
             //    普通远程兵：有敌兵先打敌兵；没有敌兵可打才落到下面打城门/建筑（与近战同一套就近口径）。
             //    「不是视野内，是地图中优先打人」：视野里没兵、但全图还有打得到的敌兵 ⇒ 不锁建筑（由 aimAtRaw 带去打人）。
-            if (mRng > 65 && (!mKey || !this.rangedHitsBuildings(mKey))) {
+            if (mRng > 65 && (!mKey || !this.rangedHitsBuildings(mKey, m.f as 0 | 1, isHero))) {
                 if (manChosen) {
                     if (reserve) manChosen.claims++;
                     return manChosen;
@@ -5553,7 +5558,7 @@ export class Scene13WarLayer {
         // 🔴 [主人需求] 真实伤害：穿透，一发 = atk（DE 箭塔科技 5/6/7、城堡 11）；
         //    吃守方八环 sideBonus[1] · 白热化，以及 DE 高地伤害倍率（高打低 +25%、低打高 -25%）。
         //    箭塔是远程：不计围攻人数、不吃围殴加成（见 isRangedWeapon）。
-        const target = this.statsFor(foe.key, foe.f);
+        const target = this.statsFor(foe.key, foe.f, !('sprite' in foe) && foe.hero === true);
         const dmg = Math.max(1, t.atk - target.pierceArmor);
         const foeElev = this.elevationLevelAt(foe.x, foe.y);
         const dElev = towerElev - foeElev;
@@ -5632,7 +5637,7 @@ export class Scene13WarLayer {
 
         // 真实伤害：与箭塔同档（瞭望 5 / 警戒 6 / 高级 7，受 DE 高地伤害倍率影响）
         const atk = b.atk ?? 5;
-        const target = this.statsFor(foe.key, foe.f);
+        const target = this.statsFor(foe.key, foe.f, !('sprite' in foe) && foe.hero === true);
         const dmg = Math.max(1, atk - target.pierceArmor);
         const foeElev = this.elevationLevelAt(foe.x, foe.y);
         const dElev = bldElev - foeElev;
@@ -5699,7 +5704,7 @@ export class Scene13WarLayer {
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
                     // 范围伤不挖「盲区空洞」：贴脸的敌人照样吃溅射（最小射程只管分配新目标，见 canKeepTarget 头注）。
                     // 范围伤：近战（战象踩踏）计入围攻并吃围殴加成；远程（投石车等）都不吃（见 isRangedWeapon）
-                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) * mult * frenzyMul / shooter.reload;
+                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f, o.hero === true)) * mult * frenzyMul / shooter.reload;
                     const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.panicTakenMul(o);
                     if (!isRangedWeapon(shooter)) o.atkNext++;
                     if (dps > 0) {
@@ -5760,7 +5765,7 @@ export class Scene13WarLayer {
         for (const m of this.men) {
             if (m.hp <= 0 || !m.march) continue;
             anyMarcher = true;
-            const sp = this.statsFor(m.key, m.f).spd;
+            const sp = this.statsFor(m.key, m.f, m.hero === true).spd;
             if (sp < spdMin[m.f]) spdMin[m.f] = sp;
         }
         if (!anyMarcher) { this.marching = false; return; }   // 列阵那批没了（理论上到不了），直接放开
@@ -6165,7 +6170,7 @@ export class Scene13WarLayer {
         }
         const raw = this.aimAtRaw(m);
         // 🔴 [2026-10-20] 野战阵位拴绳：寻敌落点横向收回本兵的带内（见 leashHome）
-        return this.gateExit(m, this.flowRedirect(m, raw ? this.leashPoint(m, raw, this.statsFor(m.key, m.f).sight ?? 160) : raw));
+        return this.gateExit(m, this.flowRedirect(m, raw ? this.leashPoint(m, raw, this.statsFor(m.key, m.f, m.hero === true).sight ?? 160) : raw));
     }
 
     /** 地块坐标（以画布中心为原点，与 resolveWorldObstructions 同一套） */
@@ -6437,7 +6442,7 @@ export class Scene13WarLayer {
                     if (gate) {
                         const vx = gate.x - c.x, vy = gate.y - c.y, vl = Math.hypot(vx, vy) || 1;
                         // 普通远程站在近战身后、约 0.6 个射程处列队（门前留给打门的近战），门一破再进城
-                        const back = 150 + (rangedHold ? this.statsFor(m.key, 0).rng * 0.6 : 0);
+                        const back = 150 + (rangedHold ? this.statsFor(m.key, m.f, m.hero === true).rng * 0.6 : 0);
                         return { x: gate.x + (vx / vl) * back + m.jx, y: gate.y + (vy / vl) * back + m.jy };
                     }
                 }
@@ -6898,7 +6903,7 @@ export class Scene13WarLayer {
             for (const m of this.men) {
                 if (m.hp <= 0 || m.hero || m.siegeW || !laneLeaders.has(m.lane)
                     || this.laneTargets.has(m.lane) || this.remnantLanes.has(m.lane)) continue;
-                const spd = this.statsFor(m.key, m.f).spd;
+                const spd = this.statsFor(m.key, m.f, false).spd;
                 laneFormationSpeeds.set(m.lane, Math.min(laneFormationSpeeds.get(m.lane) ?? Infinity, spd));
             }
         }
@@ -6960,7 +6965,7 @@ export class Scene13WarLayer {
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
             const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane));
             if (holdCmd || isGuard) { m.tx = m.x; m.ty = m.y; }
-            const wt = this.statsFor(m.key, m.f);
+            const wt = this.statsFor(m.key, m.f, m.hero === true);
             const stats = wt;
             // 地形细分减速（森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
             const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
@@ -7222,7 +7227,7 @@ export class Scene13WarLayer {
                     const kd = Math.sqrt(fd2);
                     // 🔴 [2026-08-23 主人定] 只被「近战」贴脸才放风筝：远程对射（dmgType=pierce）不跑、原地站撸；
                     //    敌人真挥刀砍过来（dmgType=melee）才拨马后撤。
-                    if (!m.kiting && kd < 65 && this.statsFor(foe.key, foe.f).dmgType === 'melee') { m.kiting = true; m.kiteLeg = 0; }
+                    if (!m.kiting && kd < 65 && this.statsFor(foe.key, foe.f, !('sprite' in foe) && foe.hero === true).dmgType === 'melee') { m.kiting = true; m.kiteLeg = 0; }
                     if (m.kiting) {
                         const uB = this.advanceVec[m.f], rx = (m.x - foe.x) / (kd || 1), ry = (m.y - foe.y) / (kd || 1);
                         const backOk = (rx * -uB.x + ry * -uB.y) >= -0.2;
@@ -7315,7 +7320,7 @@ export class Scene13WarLayer {
                     //    ⚠️ 但这条 4 秒换人**不能整个删掉**：实测关掉后骑兵对镜 1/6 打不完（600s 上限），
                     //       它在防同兵种对镜的僵持死锁。只去掉「快死了还走」这个荒唐场面即可。
                     //    实测阈值 0 / 0.3 / 0.5（war_sim 步骑远程各 2 种子）：0.5 与现状持平甚至略快。
-                    const foeMax = this.statsFor(foe.key, foe.f).hp;
+                    const foeMax = this.statsFor(foe.key, foe.f, !('sprite' in foe) && foe.hero === true).hp;
                     const nearlyDead = foe.hp < foeMax * KEEP_TARGET_HP;
                     if (m.fightT > 4 && !nearlyDead) {
                         m.foe = null; m.fightT = 0; m.next = 0.4; m.lock = 0;
@@ -7611,7 +7616,7 @@ export class Scene13WarLayer {
                 // 伤害 = DE 公式 dmgVs(攻+加成−防) / reload（装填时间），再乘 sideBonus（八环）与围殴。
                 // 相克由 DE 加成伤害 + 近/远防自然涌现（步克骑/弓克步/骑克弓），无全局系数。
                 const shooter = wt;   // [性能] 同上，复用本轮已取的分表结果
-                const target = this.statsFor(foe.key, foe.f);
+                const target = this.statsFor(foe.key, foe.f, !('sprite' in foe) && foe.hero === true);
                 // ── 迎面拒马：骑兵正面撞长枪/方阵列，冲不进来（见 PIKE_BRACE_* 长注释）──
                 let braceTaken = 1;
                 if (PIKE_BRACE_ENABLED && !('sprite' in foe)
@@ -7905,7 +7910,7 @@ export class Scene13WarLayer {
                 const fdx = m.x - m.prevX, fdy = m.y - m.prevY;
                 m.mvX = (m.mvX ?? fdx) * 0.8 + fdx * 0.2;
                 m.mvY = (m.mvY ?? fdy) * 0.8 + fdy * 0.2;
-                const spdF = (this.statsFor(m.key, m.f).spd || 0) * dt;
+                const spdF = (this.statsFor(m.key, m.f, m.hero === true).spd || 0) * dt;
                 if (spdF > 0 && m.mvX * m.mvX + m.mvY * m.mvY > (spdF * 0.3) ** 2) {
                     const nd = this.dir8Hyst(m.dir, m.mvX, m.mvY);
                     if (nd !== m.dir) { m.dir = nd; m.dirCd = 0; m.pendingDir = nd; m.pendingDirT = 0; }
@@ -7925,7 +7930,7 @@ export class Scene13WarLayer {
             }
             const dx = m.x - m.prevX, dy = m.y - m.prevY;
             m.stepMax = Math.max(Math.abs(dx), Math.abs(dy));
-            const spd = this.statsFor(m.key, m.f).spd || 0;
+            const spd = this.statsFor(m.key, m.f, m.hero === true).spd || 0;
             const want = spd * dt;
             // ① 单帧判定：被前面的人堵死、位移≈0（响应快，原逻辑不动）
             const frameStuck = m.st === 0 && want > 0 && (dx * dx + dy * dy) < (want * 0.25) ** 2;

@@ -16,9 +16,9 @@
  * 精锐环（第 7 环，GameConfig.COMBAT.ELITE_TIER_MULT）：
  *   T0 ×1.5 | T1 ×1.4 | T2 ×1.3 | T3 ×1.2 | T4 ×1.1，无精锐 ×1.0。
  *   ⚠️ 精锐环**只有这 5 个档**。2026-08-01 清理：原先还有一个 CAMPAIGN_LEGION_MULT=1.2
- *   （"是远征军团 / 精锐但查不到 tier"就给 1.2）挂在这一环，引擎侧 2026-07-24 起就不再乘它，
+ *   （"是精锐但查不到 tier"就给 1.2）挂在这一环，引擎侧 2026-07-24 起就不再乘它，
  *   只有面板角标还在显示，长期误导。常量与全部兜底分支已删除，别再加回来：
- *   **远征身份不进战力环**，精锐档由 CITY_ELITE_LEGIONS 的 tier 唯一决定。
+ *   精锐档由 CITY_ELITE_LEGIONS 的 tier 唯一决定。
  */
 
 import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';

@@ -25,6 +25,13 @@ import { isGeneralOnStage } from '../data/generalOnStage';
 import { getScriptEventStart } from '../events/scriptPeriod';
 import { HorseStable, type HorseStableSave } from './HorseStable';
 import {
+    clonePlayerPeakStats,
+    createInitialPlayerPeakStats,
+    mergePlayerPeakFromUnit,
+    restorePlayerPeakStats,
+    type PlayerPeakStats,
+} from './PlayerGrowth';
+import {
     PLAYER_CITY_ARRIVE_DIST,
     PLAYER_DEFEAT_HOLD_MS,
     PLAYER_ELITE_SQUAD_TROOPS,
@@ -64,6 +71,8 @@ export interface PlayerSaveState {
     heroDowns: number;
     factionId: string | null;
     learnedUnits?: LearnedUnit[];
+    /** 陆战基础属性历史峰值；旧存档缺省时按 learnedUnits 重建。 */
+    peakStats?: PlayerPeakStats;
     /** 玩家亲手换过兵模：读档后不许再自动换装 */
     manualUnitPick?: boolean;
     /** 已获海上兵模（战船 AssetId），终身保留 */
@@ -86,6 +95,8 @@ export interface Scene13PlayerSetup {
     side: 0 | 1;
     heroKey: string;
     heroName: string;
+    /** 历史最高基础属性；伤害类型、范围攻击与自身护甲类别仍取当前 heroKey。 */
+    heroStats: PlayerPeakStats;
     control: PlayerRank['control'];
     /* 🔴 [2026-09-18 主人定]「玩家永远不能改变军团的兵种」—— 原 `eliteLane`（玩家自带精锐编队）已删除。
      * 它曾被 Scene13WarLayer 用来**顶替**军团编制里的一口，那是 AI 从 12e「必须 9 支」反推出来的，
@@ -132,6 +143,8 @@ export class PlayerHero {
     /** 🔴 [2026-09-07 主人定] 本势力已学兵种：斥候学 1 个、探马再 1 个、先锋再 1 个，
      *  到先锋集齐该势力文化军团的三排。学到的兵种即玩家自己的素材（可在面板里挑）。 */
     public learnedUnits: LearnedUnit[] = [];
+    /** 🔴 [2026-10-27 主人定] 陆战属性按已获兵模记录历史峰值，只升不降；新游戏从斥候属性重设。 */
+    public peakStats: PlayerPeakStats = createInitialPlayerPeakStats();
     /**
      * 🔴 [2026-09-09 主人定] 海上兵模：**初始独木舟 CANOE，升到将军才可拥有所在军团的战船**。
      * 与陆上兵模同一套规矩：终身不回收，加入军团时若已到将军就把该军团的战船收进来并换上。
@@ -240,8 +253,7 @@ export class PlayerHero {
 
     public get id(): string { return this.army.id; }
     public get name(): string { return this.playerName; }
-    /** 玩家素材：随官阶变（主人 2026-09-07 定「起始套用民兵」）。
-     *  ⚠️ 同时决定 13 里的血/攻/防 —— Scene13 用 statsFor(heroKey) 取 WAR_TYPES。 */
+    /** 玩家当前兵模素材；13 数值取 peakStats 历史峰值，换弱兵模不会降属性。 */
     public get heroKey(): string {
         // 🔴 [2026-09-07 主人定「学到的兵种给玩家套用」] 优先用面板选中的本势力已学兵种；
         //    还没学到（平民/刚入伙那一瞬）才回落到官阶兜底素材（白身=古典斥候骑兵）。
@@ -614,6 +626,7 @@ export class PlayerHero {
             } else {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
                 this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
+                this.peakStats = mergePlayerPeakFromUnit(this.peakStats, pick.key);
                 // 🔴 [2026-10-24 主人令「加入势力给一个本势力中三排兵模之一，自动换上；升为探马再给…自动换上；
                 //    升为先锋再给…自动换上」] 三排陆地兵模：入伍与升阶（斥候/探马/先锋）每学到一张**立刻换上**。
                 //    取代 2026-10-23「只有入伍拿到的骑兵才换」——那条会让 174 个无骑兵三排的势力入伍后
@@ -1077,6 +1090,7 @@ export class PlayerHero {
             side: followedOnDefenderSide ? 1 : 0,
             heroKey: this.heroKey,
             heroName: this.name,
+            heroStats: clonePlayerPeakStats(this.peakStats),
             control: rank.control,
             unitKey: this.getSelectedUnit()?.unitKey ?? null,
             onKill: () => this.addMerit(20),
@@ -1092,6 +1106,7 @@ export class PlayerHero {
             side,
             heroKey: this.heroKey,
             heroName: this.name,
+            heroStats: clonePlayerPeakStats(this.peakStats),
             control: 'none',
             unitKey: null,
             onKill: () => this.addMerit(20),
@@ -1107,6 +1122,7 @@ export class PlayerHero {
             heroDowns: this.heroDowns,
             factionId: this.factionId,
             learnedUnits: this.learnedUnits.map((u) => ({ ...u })),
+            peakStats: clonePlayerPeakStats(this.peakStats),
             selectedUnit: this.selectedUnit,
             manualUnitPick: this.manualUnitPick,
             learnedShips: [...this.learnedShips],
@@ -1126,6 +1142,7 @@ export class PlayerHero {
         this.merit = s.merit ?? 0;
         this.heroDowns = s.heroDowns ?? 0;
         this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u }));
+        this.peakStats = restorePlayerPeakStats(s.peakStats, this.learnedUnits.map((u) => u.unitKey));
         this.selectedUnit = s.selectedUnit ?? -1;
         this.manualUnitPick = s.manualUnitPick ?? false;
         this.learnedShips = [...(s.learnedShips ?? [])];
@@ -1155,6 +1172,7 @@ export class PlayerHero {
         if (this.learnedUnits.some((u) => u.unitKey === unitKey)) return null;
         const name = WAR_TYPES[unitKey]?.name ?? unitKey;
         this.learnedUnits.push({ unitKey, unitName: name, factionId, row: 0 });
+        this.peakStats = mergePlayerPeakFromUnit(this.peakStats, unitKey);
         this.syncMoveProfile();
         this.emitChange();
         return name;

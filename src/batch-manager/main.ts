@@ -2337,7 +2337,7 @@ async function runSkillCoverageCheck(): Promise<void> {
             },
             {
                 level: 'info',
-                msg: '排除：远征技 str_11、关隘/文化中心系统技、不在册战术技（随机池）、已封存战略技（str_05/17/18/25/26/27）',
+                msg: '排除：特殊持有技 str_11、关隘/文化中心系统技、不在册战术技（随机池）、已封存战略技（str_05/17/18/25/26/27）',
             },
         ];
 

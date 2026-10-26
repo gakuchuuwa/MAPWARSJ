@@ -90,7 +90,7 @@ export function findFirstHostileAlongPolyline(
         const projection = nearestPointOnPolyline(cpos, path);
         if (!projection || projection.distance > zoc) continue;
         const along = projection.along;
-        // 远征军团：忽略身后路径上的敌城，避免后方失守时折返「回援」
+        // 可选：忽略指定折线位置之前的敌城。
         if (along < minAlong) continue;
         if (along < bestAlong) {
             bestAlong = along;

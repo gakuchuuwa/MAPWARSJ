@@ -277,7 +277,7 @@ export class BrawlFeedPanel {
         this.pushFeedLine(line, 's');
     }
 
-    /** 远征下令/功成（ExpeditionUI / 行为树远征结算调用，S 级） */
+    /** 玩家出征下令/任务完成（S 级） */
     pushExpedition(params: {
         /** 这支军团自己的武将（无则播「将军」） */
         generalId?: string | null;

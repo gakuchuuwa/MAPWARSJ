@@ -790,7 +790,7 @@ export class LegionManager {
             (army as { isFirstBattleFieldEnemy?: boolean } | null)?.isFirstBattleFieldEnemy
         ) return null;
 
-        // 长驱深入(str_11)：远征军团默认 50% 绕 small_city / stockade；非远征时仅挂 str_11 的将。概率 = 目录 magnitude。
+        // 长驱深入(str_11)：挂该技的武将按 magnitude 概率绕 small_city / stockade。
         const smallCityBypassChance = army ? getLongDriveDeepBypassChance(army) : 0;
         const zoc = GameConfig.SIEGE.COMBAT_RADIUS;
         let nearest: City | null = null;

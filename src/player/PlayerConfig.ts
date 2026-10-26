@@ -90,8 +90,8 @@ export const PLAYER_FALLBACK_HERO_KEY = 'antiquity_scout_cavalry';
  *
  *  🔴 [2026-09-09 主人定「玩家陆军初始形象改为古典斥候骑兵」] 开局是 antiquity_scout_cavalry。
  *     升上去之后穿什么由**收到的兵模**决定（凑卡玩法），不是靠这张表升级形象。
- *     ⚠️ 这个 key 同时决定 **13 里的血/攻/防**（Scene13 用 statsFor(heroKey) 取 WAR_TYPES）：
- *        古典斥候骑兵 hp45 / atk3 / 近防0 远防2 / 速130，所以换 key = 连外观带数值一起换。
+ *     ⚠️ 13 里的数值取 `PlayerHero.peakStats` 历史峰值；这个 key 只保留当前兵模的伤害类型、
+ *        范围攻击、自身护甲类别与攻击动作，换弱兵模不会降低已经成长的数值。
  *     ⚠️ 它还决定**地图行军速度大类**：cls='cav' → moveClassForHeroKey 返回 CAVALRY
  *        （平原 2.0 / 山地 0.9），比原来的民兵（步兵档 1.4/1.1）平原更快、山地更慢。
  *     ⚠️ 素材必须在 UNIT_ASSETS 登记过（HeroSpriteDrawer 直接读它）：

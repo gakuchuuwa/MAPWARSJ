@@ -172,7 +172,6 @@ export type StrategicCategory =
     | 'deterrence'  // 威慑类
     | 'diplomacy'   // 纵横类
     | 'defense'     // 防务类（已封印退役）
-    | 'expedition'  // 远征技能类（远征机制专用，非武将战略技）
     | 'tactical';   // 战术类（战斗面板乘区）
 
 export const STRATEGIC_CATEGORY_LABEL: Readonly<Record<StrategicCategory, string>> = {
@@ -182,7 +181,6 @@ export const STRATEGIC_CATEGORY_LABEL: Readonly<Record<StrategicCategory, string
     deterrence: '威慑类',
     diplomacy: '纵横类',
     defense: '防务类',
-    expedition: '远征技能',
     tactical: '战术类',
 };
 

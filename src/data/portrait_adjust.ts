@@ -8441,6 +8441,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.34,
             "offsetX": 0,
             "offsetY": -4
+        },
+        "/assets/XIANBEI/liao_d_tianzuodi.png": {
+            "scale": 0.9,
+            "offsetX": 2,
+            "offsetY": -3
         }
     },
     "folderGuides": {
