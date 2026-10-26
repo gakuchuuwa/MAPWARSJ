@@ -994,32 +994,67 @@ export class CityAssetManager {
         );
     }
 
+    /**
+     * 🔴 [PERF 2026-10-26 主人令「战略地图卡」] 视口内势力收集：**不得逐帧分配**。
+     *
+     * 为什么改：`GameAppMapListeners` 把 `notifyMapInteraction` 挂在 Leaflet 的 `move` 上，
+     *    而 `move` 在**跟拍/拖动/缩放的每一帧**都触发。原实现每次调用：
+     *      `getCities()`（拷贝 1082 条）→ `.filter()` → `.map()`（新造 1082 个 `{lat,lng,factionId}`）
+     *      → 再对每座城 `bounds.contains([lat, lng])`（每座城新造 1 个数组 + 1 个 LatLng）。
+     *    一次 ≈ 4000+ 个临时对象、约 150~250KB；跟拍 60fps 就是 **9~15MB/s 的纯垃圾**。
+     *    2026-10-26 分配采样实测：`collectFactionIdsInMapView` 占 287MB/25s，配套 major GC 约 295MB/次、
+     *    单次停顿 780ms（掉帧现场里各子系统计时合计只有 17ms → 停顿发生在帧与帧之间，即 GC）。
+     *
+     * 改法：直接按下标遍历实时城池，用**数值边界**判定（复刻 Leaflet `LatLngBounds.contains` 的跨 180° 语义），
+     *    全程不 new 对象、不 new 数组；`getCities()` 那份拷贝（1082 条引用 ≈ 8.6KB）由调用方 4Hz 节流吸收。
+     *    收集口径不变：仍用 CityManager 的**当前城归属**（不用开局快照），拿不到实时城池时才退回启动快照。
+     */
     private static collectFactionIdsInMapView(): string[] {
         const map = (window as any).game?.map?.getLeafletMap?.() as
-            | { getBounds: () => { contains: (p: [number, number]) => boolean } }
+            | {
+                getBounds: () => {
+                    getSouth: () => number;
+                    getNorth: () => number;
+                    getWest: () => number;
+                    getEast: () => number;
+                };
+            }
             | undefined;
         if (!map) return [];
         const bounds = map.getBounds();
-        const seen = new Set<string>();
-        const ids: string[] = [];
-        // 🔴 [2026-10-26 主人报「这个旗帜没有色。陈吊」]
-        //    原来只遍历 `bootCityList`（**开局快照**的 lat/lng/势力）：乱斗开局后城易手、或势力后占的城，
-        //    新势力永远不在这张表里 → 视口内也不会触发 onDemand 染色，旗面长期停在「已抠绿未染色」的
-        //    中性占位（看上去就是没有颜色，字色也按浅旗判成黑字）。
-        //    改为**每次用 CityManager 当前城归属**收集；拿不到时再退回启动快照。
+        const south = bounds.getSouth();
+        const north = bounds.getNorth();
+        const west = bounds.getWest();
+        const east = bounds.getEast();
+        const crossesAntimeridian = west > east;
         const cm = (window as any).game?.cityManager as
             | { getCities?: () => Array<{ latitude?: number; longitude?: number; factionId?: string }> }
             | undefined;
         const liveCities = cm?.getCities?.() ?? [];
-        const pool: Array<{ lat: number; lng: number; factionId: string }> = liveCities.length
-            ? liveCities
-                  .filter((c) => typeof c.latitude === 'number' && typeof c.longitude === 'number' && !!c.factionId)
-                  .map((c) => ({ lat: c.latitude as number, lng: c.longitude as number, factionId: c.factionId as string }))
-            : this.bootCityList;
-        for (const city of pool) {
-            if (!bounds.contains([city.lat, city.lng])) continue;
-            if (seen.has(city.factionId)) continue;
-            seen.add(city.factionId);
+        const found = new Set<string>();
+        const ids: string[] = [];
+        const inLngRange = (lng: number): boolean =>
+            crossesAntimeridian ? lng >= west || lng <= east : lng >= west && lng <= east;
+        for (let i = 0; i < liveCities.length; i += 1) {
+            const city = liveCities[i];
+            const lat = city?.latitude;
+            const lng = city?.longitude;
+            const factionId = city?.factionId;
+            if (typeof lat !== 'number' || typeof lng !== 'number' || !factionId) continue;
+            if (lat < south || lat > north) continue;
+            if (!inLngRange(lng)) continue;
+            if (found.has(factionId)) continue;
+            found.add(factionId);
+            ids.push(factionId);
+        }
+        if (liveCities.length > 0) return ids;
+        // 拿不到实时城池（编辑器 / 开局早期）→ 退回启动快照
+        for (let i = 0; i < this.bootCityList.length; i += 1) {
+            const city = this.bootCityList[i];
+            if (city.lat < south || city.lat > north) continue;
+            if (!inLngRange(city.lng)) continue;
+            if (found.has(city.factionId)) continue;
+            found.add(city.factionId);
             ids.push(city.factionId);
         }
         return ids;
@@ -1078,7 +1113,34 @@ export class CityAssetManager {
         this.scheduleBackgroundDrain();
     }
 
+    /**
+     * 🔴 [PERF 2026-10-26] 视口扫描节流到 **4Hz**。
+     *
+     * `notifyMapInteraction` 挂在 Leaflet 的 `move` 上（跟拍时每帧一次），而染色队列本身幂等、
+     * 后台染色是异步的 —— 每帧扫 1082 座城纯属重复劳动。这里只节流「视口扫描」；
+     * `lastMapInteractionAt`（后台批量暂停时长）仍在 `notifyMapInteraction` 里逐帧刷新，语义不变。
+     * 尾扫兜底：被节流时补一个定时器，镜头停下后 250ms 内必定再扫一次最终视口，不会漏势力。
+     */
+    private static readonly VIEWPORT_SCAN_MIN_INTERVAL_MS = 250;
+    private static lastViewportScanAt = 0;
+    private static viewportScanTimer: ReturnType<typeof setTimeout> | null = null;
+
     private static enqueueFactionsInMapView(): void {
+        const wait = this.VIEWPORT_SCAN_MIN_INTERVAL_MS - (performance.now() - this.lastViewportScanAt);
+        if (wait > 0) {
+            if (this.viewportScanTimer === null) {
+                this.viewportScanTimer = setTimeout(() => {
+                    this.viewportScanTimer = null;
+                    this.enqueueFactionsInMapViewNow();
+                }, wait);
+            }
+            return;
+        }
+        this.enqueueFactionsInMapViewNow();
+    }
+
+    private static enqueueFactionsInMapViewNow(): void {
+        this.lastViewportScanAt = performance.now();
         for (const factionId of this.collectFactionIdsInMapView()) {
             this.enqueueOnDemandFaction(factionId);
         }

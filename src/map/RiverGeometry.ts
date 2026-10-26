@@ -16,10 +16,11 @@ export function smoothRiverLine(coords: RiverPoint[]): RiverPoint[] {
             result.push(point);
             continue;
         }
-        // Round only near the corner: never cut more than a quarter of either segment
-        // or eight pixels at zoom 9. Long straight reaches keep their source alignment.
-        const entry = Math.min(0.25, 8 / before);
-        const exit = Math.min(0.25, 8 / after);
+        // Round only near the corner: never cut more than a third of either segment
+        // or eighteen pixels at zoom 9 (2026-10-26 主人令「河流更圆滑」：原 0.25 / 8px)。
+        // Long straight reaches keep their source alignment.
+        const entry = Math.min(0.42, 18 / before);
+        const exit = Math.min(0.42, 18 / after);
         const start: RiverPoint = [point[0] + ax * entry, point[1] + ay * entry];
         const end: RiverPoint = [point[0] + bx * exit, point[1] + by * exit];
         const curvature = Math.hypot(
@@ -28,11 +29,13 @@ export function smoothRiverLine(coords: RiverPoint[]): RiverPoint[] {
         ) * pixelsPerDegree;
         // Quadratic chord error <= curvature / (4 * steps^2); add detail only
         // where the bend needs it, instead of doubling every vertex globally.
-        if (curvature < 0.18) {
+        // 2026-10-26：阈值 0.18→0.06、步数上限 8→14 —— 细一点的弯也圆滑，
+        // 直线段仍保留原始顶点（顶点按需涨，不是全库翻倍）。
+        if (curvature < 0.06) {
             result.push(point);
             continue;
         }
-        const steps = Math.min(8, Math.max(2, Math.ceil(Math.sqrt(curvature / 0.72))));
+        const steps = Math.min(14, Math.max(2, Math.ceil(Math.sqrt(curvature / 0.24))));
         result.push(start);
         for (let j = 1; j <= steps; j++) {
             const t = j / steps, u = 1 - t;
@@ -43,5 +46,26 @@ export function smoothRiverLine(coords: RiverPoint[]): RiverPoint[] {
         }
     }
     result.push(coords[coords.length - 1]);
+    /**
+     * 🔴 [2026-10-26 主人令「河流更圆滑」] 最后做一遍**松弛**（relaxation）：
+     * 把每个内点往「前后邻点的中点」挪一小步。
+     *
+     * 关键点：这里**只挪点、不加点** —— 缩放时 Leaflet 要重投影的顶点数不变，
+     * 所以不会回到主人 2026-09-12 之前那次「一圆滑就卡」（案例 D 的锅是顶点数暴涨）。
+     * 端点（首尾）不动：支流汇入、湖口对位靠的就是端点固定。
+     */
+    const relaxPasses = 2;
+    const relaxStrength = 0.45;
+    for (let pass = 0; pass < relaxPasses; pass++) {
+        for (let i = 1; i < result.length - 1; i++) {
+            const previous = result[i - 1], point = result[i], next = result[i + 1];
+            const midX = (previous[0] + next[0]) / 2;
+            const midY = (previous[1] + next[1]) / 2;
+            result[i] = [
+                point[0] + (midX - point[0]) * relaxStrength,
+                point[1] + (midY - point[1]) * relaxStrength,
+            ];
+        }
+    }
     return result;
 }

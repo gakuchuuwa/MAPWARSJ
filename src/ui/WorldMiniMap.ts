@@ -85,6 +85,26 @@ export class WorldMiniMap {
     private territoryRenderer = L.canvas({ padding: 0.5, pane: "wm-territory" });
     private tickN = 0;
 
+    /**
+     * 🔴 [PERF 2026-10-26 主人令「战略地图卡」] 小地图同步**不能每帧真做**。
+     *
+     * `move` 在跟拍/拖动时逐帧触发，而每次真同步都要：
+     *   `viewRect.setBounds()`（重画视野框）+ `mini.setView()`（小图整层重算）——
+     * 小图上 1082 个据点圆点 + 势力领土多边形 + 视野框全部走 Leaflet 的
+     * `_updatePaths → _clipPoints / _simplifyDP / _updateCircle`。
+     * 2026-10-26 实测：12s CPU 采样里 `applyView` 自己占 7.82%，连带 Leaflet 裁剪/简化约 6%；
+     * 分配采样同一来源约 1000MB/25s（占总分配 55%），是 major GC 掉帧的一大来源。
+     *
+     * 改法：`move/zoom` 合并到 **最多 10Hz**，`moveend/zoomend/resize` 立即同步一次
+     *（松手即准，跟随观感不变）；中心/级别没变时连 `setView` 都不发。
+     */
+    private static readonly MINI_SYNC_MIN_INTERVAL_MS = 100;
+    private miniSyncAt = 0;
+    private miniSyncTimer = 0;
+    private miniSyncPending = false;
+    /** 上次真正发出的 mini 视口（中心 + 缩放级别），用于「没变就不 setView」 */
+    private lastMiniView: { lat: number; lng: number; zoom: number } | null = null;
+
     constructor(
         private readonly mainMap: L.Map,
         private readonly getPlayerPos: () => { lat: number; lng: number } | null,
@@ -159,16 +179,11 @@ export class WorldMiniMap {
         // 🔴 [2026-10-11 主人令「小地图显示的比例和位置应该和大地图一直保持一致」]
         //    改前：视口框只在「展开」且**每 4 拍**才更新一次（tick 里早退在更新之前）⇒ 收起时是旧框、
         //    拖动/缩放大地图时框滞后。现改为**跟随大地图的 move/zoom 事件实时同步**，与是否展开无关。
-        const syncViewRect = () => {
-            this.viewRect.setBounds(this.mainMap.getBounds());
-            // 🔴 [2026-10-11 主人报「拖战略大地图，小地图不跟着动」] 小地图**视野**也一起跟：
-            //    tick 里那句 `if (hide || !this.expanded) return;` 在**收起状态就早退了**，
-            //    所以普通（收起）小地图从来不会跟随 —— 这里挂在 move/zoom 事件上，收起时也跟。
-            if (!this.isTactical()) this.applyView();
-        };
-        this.mainMap.on('move zoom moveend zoomend', syncViewRect);
-        this.mainMap.on('resize', syncViewRect);
-        syncViewRect();
+        // 🔴 [PERF 2026-10-26] 但「实时」不等于「每帧」：见 requestMiniSync 上方说明。
+        //    move/zoom 合并到最多 10Hz，moveend/zoomend/resize 立即同步（松手即准）。
+        this.mainMap.on('move zoom', () => this.requestMiniSync());
+        this.mainMap.on('moveend zoomend resize', () => this.requestMiniSync(true));
+        this.requestMiniSync(true);
 
         // 🔴 [2026-10-04 主人定「只移动镜头」] 点小地图：大地图镜头跳到点击处（缩放级别不变），军团与玩家都不动
         this.mini.on('click', (e: L.LeafletMouseEvent) => {
@@ -272,20 +287,61 @@ export class WorldMiniMap {
     }
 
     /**
+     * 🔴 [PERF 2026-10-26] 小地图同步节流入口：`move/zoom` 期间合并到最多 10Hz；
+     * `moveend/zoomend/resize` 传 true 立即同步。
+     */
+    private requestMiniSync(immediate = false): void {
+        if (immediate) {
+            this.flushMiniSync();
+            return;
+        }
+        if (this.miniSyncPending) return;
+        if (performance.now() - this.miniSyncAt >= WorldMiniMap.MINI_SYNC_MIN_INTERVAL_MS) {
+            this.flushMiniSync();
+            return;
+        }
+        this.miniSyncPending = true;
+        this.miniSyncTimer = window.setTimeout(() => this.flushMiniSync(), WorldMiniMap.MINI_SYNC_MIN_INTERVAL_MS);
+    }
+
+    private flushMiniSync(): void {
+        this.miniSyncPending = false;
+        if (this.miniSyncTimer !== 0) {
+            window.clearTimeout(this.miniSyncTimer);
+            this.miniSyncTimer = 0;
+        }
+        this.miniSyncAt = performance.now();
+        this.viewRect.setBounds(this.mainMap.getBounds());
+        // 🔴 [2026-10-11 主人报「拖战略大地图，小地图不跟着动」] 小地图**视野**也一起跟；
+        //    tick 里那句 `if (hide || !this.expanded) return;` 在收起状态会早退，
+        //    所以这里挂在 move/zoom 事件上，收起时也跟。
+        if (!this.isTactical()) this.applyView();
+    }
+
+    /**
      * 级别 1 固定显示全世界；2～9 **以大地图当前视野为中心**。
      * 🔴 [2026-10-11 主人报「我用鼠标拖拽战略大地图，小地图不跟着动」]
      *    改前：这里用 `getPlayerPos()`（以玩家为中心）⇒ 拖大地图时小地图纹丝不动。
      *    改后：中心取 `mainMap.getCenter()` ⇒ 大地图拖到哪，小地图就跟到哪；
      *    拿不到大地图中心时（极端兜底）才退回玩家位置。
+     * 🔴 [PERF 2026-10-26] 中心/级别没变就不发 `setView` —— 每次 setView 都会让小图整层矢量重算。
      */
     private applyView(): void {
         if (this.level <= LEVEL_MIN) {
-            this.mini.setView([20, 0], FIT_ZOOM, { animate: false });
+            const lastWorld = this.lastMiniView;
+            if (!lastWorld || lastWorld.zoom !== FIT_ZOOM) {
+                this.lastMiniView = { lat: 20, lng: 0, zoom: FIT_ZOOM };
+                this.mini.setView([20, 0], FIT_ZOOM, { animate: false });
+            }
             return;
         }
         const c = (() => { try { return this.mainMap.getCenter(); } catch { return null; } })() ?? this.getPlayerPos();
         if (!c) return;
-        this.mini.setView([c.lat, c.lng], this.level - 1, { animate: false });
+        const zoom = this.level - 1;
+        const last = this.lastMiniView;
+        if (last && last.zoom === zoom && Math.abs(last.lat - c.lat) < 1e-4 && Math.abs(last.lng - c.lng) < 1e-4) return;
+        this.lastMiniView = { lat: c.lat, lng: c.lng, zoom };
+        this.mini.setView([c.lat, c.lng], zoom, { animate: false });
     }
 
     private tick(): void {
@@ -309,8 +365,9 @@ export class WorldMiniMap {
         if (this.trailOn && currentHostId) this.trail.setLatLngs(this.trailPts);
         else this.trail.setLatLngs([]);
         if (p) this.dot.setLatLng([p.lat, p.lng]);
-        this.viewRect.setBounds(this.mainMap.getBounds());
-        if (this.level > LEVEL_MIN) this.applyView();
+        // [PERF 2026-10-26] 统一走同步入口：中心/级别没变就只刷视野框、不发 setView，
+        // 避免每拍让小地图整层矢量重算（原来这两行是无条件 setBounds + applyView）。
+        this.requestMiniSync(true);
     }
 
     /** 据点势力色圆点：新增 / 换色 / 不再可见的撤掉；返回是否有据点换色或集合变动 */
