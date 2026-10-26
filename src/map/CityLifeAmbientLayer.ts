@@ -152,7 +152,9 @@ const SEASON_TRANSITION_SEC = 5;
 const HUNT_CYCLE_SEC = 30;
 const HUNT_DEATH_START_SEC = 10;
 const HUNT_DECAY_START_SEC = 13;
-const HUNT_NEXT_PREY_SEC = 24;
+const HUNT_CARRY_START_SEC = 23;
+const HUNT_RETURN_START_SEC = 27;
+const HUNT_NEXT_PREY_SEC = HUNT_RETURN_START_SEC;
 
 /** 67 文化 → 生计配置表（注意：陆地列表不含渔夫，所有渔业一律在海中生成渔船与海鱼群） */
 const LIVELIHOOD_SPECS: Record<LivelihoodCategory, LivelihoodSpec> = {
@@ -1067,23 +1069,56 @@ export class CityLifeAmbientLayer {
             if (season === 2) return actor.slotIdx % 2 === 0 ? 'move' : 'work';
             return 'work';
         }
-        if (actor.isAnimal) return 'walk';
+        if (actor.isAnimal) return this.usesIdleWalkCycle(actor) ? 'idle' : 'walk';
         // 所有陆地组合全年持续生产，换季只换劳作动作，不离开农田、资源或牧群。
         const isFarmer = actor.dir === 'VIL_MALE_FARMER' || actor.dir === 'VIL_FEMALE_FARMER';
         if (season === 0 && isFarmer) return actor.slotIdx % 2 === 0 ? 'seed' : 'work';
         return 'work';
     }
 
+    /** 马与骆驼停驻吃草和间歇走动共用同一套行为，其他牲畜保持原样。 */
+    private usesIdleWalkCycle(actor: CityLifeActor): boolean {
+        return actor.dir === 'HORSE' || actor.dir === 'CAMEL' || actor.dir === 'DROMEDARY';
+    }
+
+    /** 每 12 秒停驻吃草 8 秒、真实走动 4 秒；cycle 只累计走动时间，停驻时不滑移。 */
+    private getIdleWalkMotion(actor: CityLifeActor, tSec: number): { walking: boolean; cycle: number } {
+        const cycleSec = 12;
+        const idleSec = 8;
+        const walkSec = cycleSec - idleSec;
+        const clock = Math.max(0, tSec) + ((actor.phase % 100) / 100) * cycleSec;
+        const round = Math.floor(clock / cycleSec);
+        const local = clock - round * cycleSec;
+        const walkedSec = round * walkSec + Math.min(walkSec, Math.max(0, local - idleSec));
+        return {
+            walking: local >= idleSec,
+            cycle: (walkedSec * 0.12) % 2,
+        };
+    }
+
     private isHuntPrey(actor: CityLifeActor): boolean {
         return actor.isAnimal && actor.id.includes('_prey_');
     }
 
-    /** DE 猎捕顺序：活动 → 倒地死亡 → 尸体腐烂；环境循环后半段由下一只猎物接替。 */
+    /** DE 猎捕顺序：活动 → 倒地死亡 → 收集期间尸体腐烂 → 猎人搬走后下一只接替。 */
     private getHuntVisual(actor: CityLifeActor, tSec: number): { stage: 'alive' | 'death' | 'decay'; elapsed: number } {
         const phase = (tSec + actor.phase % HUNT_CYCLE_SEC) % HUNT_CYCLE_SEC;
         if (phase >= HUNT_NEXT_PREY_SEC || phase < HUNT_DEATH_START_SEC) return { stage: 'alive', elapsed: phase };
         if (phase < HUNT_DECAY_START_SEC) return { stage: 'death', elapsed: phase - HUNT_DEATH_START_SEC };
         return { stage: 'decay', elapsed: phase - HUNT_DECAY_START_SEC };
+    }
+
+    /** 猎人与自己的猎物共用相位：射箭 → 等倒地 → taskA 收集 → 搬运 → 空手返回。 */
+    private getHunterBehavior(actor: CityLifeActor, tSec: number): { action: string; cycle: number | null } {
+        const preyPhase = Math.floor(strHash01(`${actor.id}_prey_0`, 204) * 1000);
+        const phase = (tSec + preyPhase % HUNT_CYCLE_SEC) % HUNT_CYCLE_SEC;
+        if (phase < HUNT_DEATH_START_SEC) return { action: 'work', cycle: null };
+        if (phase < HUNT_DECAY_START_SEC) return { action: 'idle', cycle: null };
+        if (phase < HUNT_CARRY_START_SEC) return { action: 'gather', cycle: null };
+        if (phase < HUNT_RETURN_START_SEC) {
+            return { action: 'carry', cycle: (phase - HUNT_CARRY_START_SEC) / (HUNT_RETURN_START_SEC - HUNT_CARRY_START_SEC) };
+        }
+        return { action: 'move', cycle: 1 + (phase - HUNT_RETURN_START_SEC) / (HUNT_CYCLE_SEC - HUNT_RETURN_START_SEC) };
     }
 
     /** 扫描当前处于战斗波及中的据点集合；战后不再按秒数延长战争状态。 */
@@ -1368,8 +1403,23 @@ export class CityLifeAmbientLayer {
                 if (!this.activeActors.has(actor.id)) {
                     this.activeActors.set(actor.id, actor);
                 }
-                actor.desiredAction = this.resolveSeasonalAction(actor, actionSeason);
+                const seasonalAction = this.resolveSeasonalAction(actor, actionSeason);
+                actor.desiredAction = actor.dir === 'VIL_MALE_HUNTER'
+                    ? this.getHunterBehavior(actor, tSec).action
+                    : this.usesIdleWalkCycle(actor)
+                        ? (this.getIdleWalkMotion(actor, tSec).walking ? 'walk' : 'idle')
+                        : seasonalAction;
                 this.loadAsset(actor.lib, actor.dir, actor.desiredAction);
+                if (this.usesIdleWalkCycle(actor)) {
+                    this.loadAsset(actor.lib, actor.dir, 'idle');
+                    this.loadAsset(actor.lib, actor.dir, 'walk');
+                }
+                if (actor.dir === 'VIL_MALE_HUNTER') {
+                    // 五段动作全部预载，避免收集或搬运切换时短暂闪空。
+                    for (const action of ['work', 'idle', 'gather', 'carry', 'move']) {
+                        this.loadAsset(actor.lib, actor.dir, action);
+                    }
+                }
                 if (actor.previousAction) this.loadAsset(actor.lib, actor.dir, actor.previousAction);
                 if (this.isHuntPrey(actor)) {
                     this.loadAsset(actor.lib, actor.dir, 'death');
@@ -1406,9 +1456,16 @@ export class CityLifeAmbientLayer {
 
             actor.viewAlpha = 1;
             if (actor.desiredAction !== actor.displayedAction) {
-                actor.previousAction = actor.displayedAction;
-                actor.displayedAction = actor.desiredAction;
-                actor.actionAlpha = 0;
+                if (this.usesIdleWalkCycle(actor) || actor.dir === 'VIL_MALE_HUNTER') {
+                    // 吃草、迈步与猎捕工序都是行为切换，直接换动作，不做五秒半透明交叉渐隐。
+                    actor.previousAction = undefined;
+                    actor.displayedAction = actor.desiredAction;
+                    actor.actionAlpha = 1;
+                } else {
+                    actor.previousAction = actor.displayedAction;
+                    actor.displayedAction = actor.desiredAction;
+                    actor.actionAlpha = 0;
+                }
             }
             if (actor.previousAction && actor.previousAction !== actor.displayedAction) {
                 // 有季末时间基准时与农田、树林严格同步；手动跳季时也在五秒内完成。
@@ -1678,9 +1735,30 @@ export class CityLifeAmbientLayer {
         );
         list.sort((a, b) => b.homePos.lat - a.homePos.lat);
 
+        // 所有农田与草场先统一铺底；不能按组合穿插绘制，否则后画的地皮会盖住先画的动物。
+        for (const actor of list) {
+            if (actor.isSeaFishing || actor.isAnimal || !actor.seasonalPlot) continue;
+            const peaceFinalAlpha = actor.viewAlpha * actor.peaceAlpha;
+            if (peaceFinalAlpha <= 0.01) continue;
+            const groupPt = this.map.latLngToContainerPoint([actor.homePos.lat, actor.homePos.lng]);
+            const plotBySeason = SEASONAL_PLOT_BY_KIND[actor.seasonalPlot];
+            this.drawStripSprite(
+                'SUCAI_RESOURCE', plotBySeason[season], 0,
+                groupPt.x, groupPt.y + 4 * zoomFactor, 0.58 * zoomFactor,
+                peaceFinalAlpha * (1 - seasonBlend)
+            );
+            this.drawStripSprite(
+                'SUCAI_RESOURCE', plotBySeason[nextSeason], 0,
+                groupPt.x, groupPt.y + 4 * zoomFactor, 0.58 * zoomFactor,
+                peaceFinalAlpha * seasonBlend
+            );
+        }
+
         for (const actor of list) {
             const act = actor.displayedAction;
             const huntVisual = this.isHuntPrey(actor) ? this.getHuntVisual(actor, tSec) : null;
+            const idleWalkMotion = this.usesIdleWalkCycle(actor) ? this.getIdleWalkMotion(actor, tSec) : null;
+            const hunterBehavior = actor.dir === 'VIL_MALE_HUNTER' ? this.getHunterBehavior(actor, tSec) : null;
             let drawLat = actor.homePos.lat;
             let drawLng = actor.homePos.lng;
             let facing = actor.facing;
@@ -1690,9 +1768,9 @@ export class CityLifeAmbientLayer {
                     // 死亡后锁定在倒地位置，尸体不能继续跟着行走端点移动。
                     drawLat = actor.lastDrawPos.lat;
                     drawLng = actor.lastDrawPos.lng;
-                } else if (act === 'carry' || act === 'move' || act === 'walk') {
+                } else if (idleWalkMotion || (hunterBehavior && hunterBehavior.cycle !== null) || act === 'carry' || act === 'move' || act === 'walk') {
                     const speed = actor.isSeaFishing ? 0.10 : act === 'walk' ? 0.08 : 0.14;
-                    const cycle = (tSec * speed + (actor.phase % 100) / 100) % 2;
+                    const cycle = idleWalkMotion?.cycle ?? hunterBehavior?.cycle ?? (tSec * speed + (actor.phase % 100) / 100) % 2;
                     const u = cycle <= 1 ? cycle : 2 - cycle;
                     drawLat = actor.homePos.lat + (actor.gatePos.lat - actor.homePos.lat) * u;
                     drawLng = actor.homePos.lng + (actor.gatePos.lng - actor.homePos.lng) * u;
@@ -1728,31 +1806,10 @@ export class CityLifeAmbientLayer {
             // 战争透明度与换季动作透明度分开，避免换季时整组农田、资源和建筑一起消失。
             const peaceFinalAlpha = actor.viewAlpha * actor.peaceAlpha;
             if (peaceFinalAlpha > 0.01) {
-                // 组合附属物固定在主人落点：农田、果子、木材、矿石与随机建筑都先画在人物脚下／两侧。
+                // 农田与草场已在角色前统一铺底；果子、木材、矿石与随机建筑仍固定在主人脚下／两侧。
                 if (!actor.isSeaFishing && !actor.isAnimal) {
                     const groupPt = this.map.latLngToContainerPoint([actor.homePos.lat, actor.homePos.lng]);
                     const side = actor.slotIdx % 2 === 0 ? -1 : 1;
-                    if (actor.seasonalPlot) {
-                        const plotBySeason = SEASONAL_PLOT_BY_KIND[actor.seasonalPlot];
-                        this.drawStripSprite(
-                            'SUCAI_RESOURCE',
-                            plotBySeason[season],
-                            0,
-                            groupPt.x,
-                            groupPt.y + 4 * zoomFactor,
-                            0.58 * zoomFactor,
-                            peaceFinalAlpha * (1 - seasonBlend)
-                        );
-                        this.drawStripSprite(
-                            'SUCAI_RESOURCE',
-                            plotBySeason[nextSeason],
-                            0,
-                            groupPt.x,
-                            groupPt.y + 4 * zoomFactor,
-                            0.58 * zoomFactor,
-                            peaceFinalAlpha * seasonBlend
-                        );
-                    }
                     if (actor.groundResource && actor.groundResourceLib) {
                         this.drawStripSprite(
                             actor.groundResourceLib,

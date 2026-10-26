@@ -850,127 +850,7 @@ export function drawScene13SkillCastVfx(
     ctx.restore();
 }
 
-// ── 6. 持续阶段的全军整体大阵 ＋ 单兵特效（时间与技能生效时长 100% 严格同步，同生同灭） ──
-/** 计算某方当前交战重心（优先取正在交手的士兵，无交手取全体存活士兵） */
-function computeSideBattleCentroid(men: readonly WarMan[], side: 0 | 1): { x: number; y: number; count: number } {
-    let fx = 0, fy = 0, fn = 0;
-    let ax = 0, ay = 0, an = 0;
-    for (const m of men) {
-        if (m.f !== side || m.hp <= 0 || m.siegeW) continue;
-        ax += m.x;
-        ay += m.y;
-        an++;
-        if (m.foe) {
-            fx += m.x;
-            fy += m.y;
-            fn++;
-        }
-    }
-    if (fn > 0) return { x: fx / fn, y: fy / fn, count: an };
-    if (an > 0) return { x: ax / an, y: ay / an, count: an };
-    return { x: 0, y: 0, count: 0 };
-}
-
-/** 持续期全军整体大光阵：只要计时器 > 0 就随军阵重心持续呼吸运转，计时归零或被驱散当帧立即熄灭 */
-function drawPersistentArmyAura(
-    ctx: CanvasRenderingContext2D,
-    men: readonly WarMan[],
-    states: readonly [Scene13SkillVisualState, Scene13SkillVisualState],
-    lift: Lift,
-    nowSec: number,
-): void {
-    const breath = 0.5 + 0.5 * Math.sin(nowSec * 4.2);
-    for (const f of [0, 1] as const) {
-        const st = states[f];
-        if (!st.frenzy && !st.shield && !st.panic) continue;
-        const cen = computeSideBattleCentroid(men, f);
-        if (cen.count === 0) continue;
-        const cx = cen.x;
-        const cy = cen.y - lift(cen.x, cen.y);
-        const tier = sideCastTier[f];
-
-        // 1. 【攻】猛攻持续 20 秒全军赤金烈焰战阵
-        if (st.frenzy > 0) {
-            const fadeOut = clamp01(st.frenzy / 1.2);
-            const scale = tier.frenzyPaid ? 1.25 : 1.0;
-            const rx = (88 + breath * 14) * scale;
-            const ry = rx * 0.48;
-            ctx.save();
-            ctx.globalAlpha = (0.28 + breath * 0.12) * fadeOut;
-            drawStamp(ctx, getGlowStamp(COLOR.gongzhan), cx, cy, rx * 1.15, ry * 1.15);
-
-            ctx.strokeStyle = tier.frenzyPaid ? '#ffd700' : COLOR.gongzhan;
-            ctx.lineWidth = 3;
-            ctx.globalAlpha = (0.46 + breath * 0.18) * fadeOut;
-            ellipse(ctx, cx, cy, rx, ry);
-            ctx.stroke();
-
-            // 军阵外围旋转的 3 道弯月破阵刀罡流光
-            ctx.translate(cx, cy - 8);
-            ctx.scale(1, 0.52);
-            for (let k = 0; k < 3; k++) {
-                ctx.save();
-                ctx.rotate(nowSec * 2.6 + k * (TAU / 3));
-                ctx.globalAlpha = (0.52 + breath * 0.2) * fadeOut;
-                drawTaperedCrescent(ctx, 0, 0, rx * 0.78, 7 * scale, Math.PI * 0.72, COLOR.gongzhan, '#fff2b8');
-                ctx.restore();
-            }
-            ctx.restore();
-        }
-
-        // 2. 【敌】固己防持续 20 秒全军冰蓝呼吸穹顶大护罩
-        if (st.shield > 0) {
-            const fadeOut = clamp01(st.shield / 1.2);
-            const scale = tier.shieldPaid ? 1.25 : 1.0;
-            const r = (96 + breath * 10) * scale;
-            const domeY = cy + 22;
-            ctx.save();
-            const domeGrad = ctx.createRadialGradient(cx, domeY - r * 0.35, r * 0.1, cx, domeY, r);
-            domeGrad.addColorStop(0, 'rgba(220,250,255,0.02)');
-            domeGrad.addColorStop(0.7, 'rgba(82,204,255,0.12)');
-            domeGrad.addColorStop(1, 'rgba(140,235,255,0.32)');
-            ctx.globalAlpha = (0.65 + breath * 0.2) * fadeOut;
-            ctx.fillStyle = domeGrad;
-            ctx.beginPath();
-            ctx.arc(cx, domeY, r, Math.PI, TAU);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.strokeStyle = tier.shieldPaid ? '#ffe680' : '#8ce2ff';
-            ctx.lineWidth = 3.2;
-            ctx.globalAlpha = (0.52 + breath * 0.2) * fadeOut;
-            ctx.beginPath();
-            ctx.arc(cx, domeY, r, Math.PI, TAU);
-            ctx.stroke();
-
-            ctx.strokeStyle = '#64f7c8';
-            ctx.lineWidth = 2;
-            ctx.globalAlpha = (0.38 + breath * 0.18) * fadeOut;
-            ellipse(ctx, cx, cy, r * 0.88, r * 0.42);
-            ctx.stroke();
-            ctx.restore();
-        }
-
-        // 3. 【混】乱阵持续 15 秒全军紫电逆旋乱流大漩涡
-        if (st.panic > 0) {
-            const fadeOut = clamp01(st.panic / 1.2);
-            const scale = tier.panicPaid ? 1.25 : 1.0;
-            ctx.save();
-            ctx.translate(cx, cy - 10);
-            ctx.scale(1, 0.58);
-            for (let i = 0; i < 4; i++) {
-                const r = (32 + i * 20 + breath * 6) * scale;
-                ctx.save();
-                ctx.rotate((i % 2 ? -1 : 1) * nowSec * 2.8 + i * 1.4);
-                ctx.globalAlpha = (0.48 - i * 0.06 + breath * 0.14) * fadeOut;
-                drawTaperedCrescent(ctx, 0, 0, r, 6.5 * scale, Math.PI * 1.15, COLOR.hunzhan, '#f2d6ff');
-                ctx.restore();
-            }
-            ctx.restore();
-        }
-    }
-}
-
+// ── 6. 持续阶段的单兵特效（大圈只在释放瞬间 1.5~1.8 秒爆发，持续期仅保留单兵脚下小圈与头顶小标，不遮挡战场） ──
 export function drawScene13SkillStatusVfx(
     ctx: CanvasRenderingContext2D,
     men: readonly WarMan[],
@@ -987,14 +867,11 @@ export function drawScene13SkillStatusVfx(
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineCap = 'round';
 
-    // 1. 先画全军持续大光阵（与技能持续时间严格一致：20s / 20s / 15s）
-    drawPersistentArmyAura(ctx, men, states, lift, nowSec);
-
     const gongFlare = getFlareStamp(COLOR.gongzhan);
     const shengFlare = getFlareStamp(COLOR.shengzhan);
     const bingFlare = getFlareStamp('#ffd76a');
 
-    // 2. 再画每名受影响士兵脚下与头顶的高对比发光特效
+    // 绘制每名受影响士兵脚下的小光环与头顶状态小标
     for (const m of men) {
         if (m.hp <= 0) continue;
         const st = states[m.f];

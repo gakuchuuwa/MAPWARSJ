@@ -45,7 +45,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['PRE_QIN'],
         parentLegion: '古典时代华夏军团',
         shipId: 'LOU_CHUAN',
-        commanderUnit: 'hero_tsarkonstantin',
+        commanderUnit: 'hero_liubiao',
         buildingStyle: 'CENTRAL',
     },
     // 🔴 [2026-10-05 主人定「同族同时代不另立」＋「删除吧」] —— 已删「古典时代希腊雇佣军团」。
@@ -96,7 +96,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SPANISH'],
         parentLegion: '帝国时代西班牙方阵军团',
         shipId: 'ELITE_CANNON_GALLEON',
-        commanderUnit: 'hero_sforza',
+        commanderUnit: 'hero_gonzalopizarro',
         buildingStyle: 'SPANISH',
     },
     {

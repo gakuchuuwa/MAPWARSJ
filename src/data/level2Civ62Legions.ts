@@ -2835,7 +2835,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CEAS_CASTLE_AGE3', castleName: '中亚/鞑靼 撒马尔罕帖木儿蓝顶堡',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_tamerlane',
+        commanderUnit: 'hero_shaybanikhan',
         slots: [
             { type: 'hill_tribesman', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
@@ -4584,10 +4584,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HUGUANG_CASTLE_AGE3', castleName: '湖广 荆楚重楼要塞',
         formationMode: 'triangle',
         shipId: 'INCENDIARY_RAFT',
-        commanderUnit: 'hero_liubiao',
+        commanderUnit: 'hero_whitetigeryan',
         slots: [
-            { type: 'war_chariot_ranged', count: 2 },
-            { type: 'jian_swordsman', count: 3 },
+            { type: 'tiger_rider', count: 2 },
+            { type: 'jian_swordman_unshielded', count: 3 },
             { type: 'fire_archer', count: 4 },
         ],
     },
