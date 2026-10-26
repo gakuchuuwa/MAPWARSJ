@@ -2315,18 +2315,18 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 西西里　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
-    // ── 西西里 · 封建时代 · 封建时代西西里埃米尔军团　（2026-10-25 恢复：马尼亚克 为带名将）────────────────
+    // ── 西西里 · 封建时代 · 封建时代埃米尔军团　（2026-10-25 恢复：马尼亚克 为带名将；2026-10-26 主人改名，原「封建时代西西里埃米尔军团」）────────────────
     {
-        name: '封建时代西西里埃米尔军团', civ: '西西里', age: 'feudal', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
+        name: '封建时代埃米尔军团', civ: '西西里', age: 'feudal', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
         buildingStyle: 'SICILIANS',
         castleId: 'SICI_CASTLE_AGE3', castleName: '西西里 诺曼巴勒莫王宫堡',
         formationMode: 'echelon',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_belisarius',
+        commanderUnit: 'hero_tariqibnziyad',
         slots: [
             { type: 'elite_skirmisher', count: 4 },
             { type: 'spearman', count: 3 },
-            { type: 'light_cavalry', count: 2 },
+            { type: 'tarantine_cavalry', count: 2 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════
@@ -2722,27 +2722,27 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'triangle',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_qutlugh',
+        commanderUnit: 'hero_darius',
         slots: [
             { type: 'elite_war_chariot', count: 2 },
             { type: 'antiquity_scout_cavalry', count: 3 },
             { type: 'sickle_warrior', count: 4 },
         ],
     },
-    // ── 安纳托利亚 · 封建时代 · 封建时代突厥骑射军团　（本次新建）────────────────
-    //    评级：（未标评级）｜核心兵种：骑射为主
+    // ── 安纳托利亚 · 封建时代 · 封建时代安纳托利亚军团　（本次新建；2026-10-26 主人改：原名「封建时代突厥骑射军团」，476–1050 安纳托利亚为拜占庭军区，改名并换长枪兵＋具装骑兵）────────────────
+    //    评级：（未标评级）｜核心兵种：长枪步兵、具装骑兵、弓手
     //    描述正文（主人原文，一字未改）：（科尼亚、锡瓦斯；科尼亚因杰米纳雷学校精雕石门、苏丹哈尼石砌大驿站防御堡垒；双曲复合角弓高速环形回旋射击、轻型柳叶锁子甲、诱敌深入曼古歹伏击骑兵大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代突厥骑射军团', civ: '土耳其', age: 'feudal', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '封建时代安纳托利亚军团', civ: '土耳其', age: 'feudal', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'crescent',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_qutlugh',
+        commanderUnit: 'hero_belisarius',
         slots: [
-            { type: 'eastern_swordsman', count: 3 },
-            { type: 'cav_archer', count: 2 },
+            { type: 'pikeman', count: 3 },
+            { type: 'cataphract', count: 2 },
             { type: 'laminated_bowman', count: 4 },
         ],
     },
@@ -4530,6 +4530,60 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
 
+    // ── 湖广 · 四时代三级文化军团（2026-10-26 主人令新增）────────────
+    // 湖北、湖南、广东、广西、福建；越南不迁。建筑沿用岭南城堡素材。
+    {
+        name: '古典时代荆楚军团', civ: '湖广', age: 'antiquity', deStyle: 'ASIA', region: 'HUGUANG' as RegionType,
+        buildingStyle: 'HUGUANG',
+        castleId: 'LINGNAN_CASTLE_AGE3', castleName: '湖广 岭南山城水寨',
+        formationMode: 'fish_scale',
+        shipId: 'INCENDIARY_RAFT',
+        commanderUnit: 'hero_sunquan',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'elite_fire_archer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    {
+        name: '封建时代荆湘军团', civ: '湖广', age: 'feudal', deStyle: 'ASIA', region: 'HUGUANG' as RegionType,
+        buildingStyle: 'HUGUANG',
+        castleId: 'LINGNAN_CASTLE_AGE3', castleName: '湖广 岭南山城水寨',
+        formationMode: 'fish_scale',
+        shipId: 'FIRE_GALLEY',
+        commanderUnit: 'hero_sunjian',
+        slots: [
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'fire_archer', count: 4 },
+            { type: 'chukonu', count: 2 },
+        ],
+    },
+    {
+        name: '城堡时代湘楚军团', civ: '湖广', age: 'castle', deStyle: 'ASIA', region: 'HUGUANG' as RegionType,
+        buildingStyle: 'HUGUANG',
+        castleId: 'LINGNAN_CASTLE_AGE3', castleName: '湖广 岭南山城水寨',
+        formationMode: 'fish_scale',
+        shipId: 'JUNK',
+        commanderUnit: 'hero_sunjian',
+        slots: [
+            { type: 'elite_fire_lancer', count: 3 },
+            { type: 'chukonu', count: 4 },
+            { type: 'elite_fire_archer', count: 2 },
+        ],
+    },
+    {
+        name: '帝国时代湖广军团', civ: '湖广', age: 'imperial', deStyle: 'ASIA', region: 'HUGUANG' as RegionType,
+        buildingStyle: 'HUGUANG',
+        castleId: 'LINGNAN_CASTLE_AGE3', castleName: '湖广 岭南山城水寨',
+        formationMode: 'fish_scale',
+        shipId: 'LOU_CHUAN',
+        commanderUnit: 'hero_sunce',
+        slots: [
+            { type: 'fire_lancer', count: 3 },
+            { type: 'elite_fire_archer', count: 4 },
+            { type: 'cav_archer_heavy', count: 2 },
+        ],
+    },
 ];
 
 export const LEVEL_2_CIV_62_NAMES: Set<string> = new Set(LEVEL_2_CIV_62_LEGIONS.map(l => l.name));

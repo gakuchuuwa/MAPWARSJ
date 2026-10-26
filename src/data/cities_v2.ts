@@ -76,7 +76,9 @@ export type BuildingStyle =
      *  渲染不变：TIBET→底座 PURU + TIBET_CASTLE_AGE3；WESTERN→底座 CEAS + WESTERN_CASTLE_AGE3。 */
     | 'TIBET' | 'WESTERN'
     /** [2026-10-07 主人令「66 个建筑风格都必须有据点，按历史分配」] DE 新文明三类（二级）与三级自建两类，原先漏登记。 */
-    | 'SAXONS' | 'DANES' | 'VARANGIANS' | 'XIANBEI' | 'GREECE';
+    | 'SAXONS' | 'DANES' | 'VARANGIANS' | 'XIANBEI' | 'GREECE'
+    /** [2026-10-26 主人令] 新增三级文化湖广：湖北、湖南、广东、广西、福建；建筑沿用岭南城堡素材。 */
+    | 'HUGUANG';
 
 export interface CityDataV2 {
         id: string;

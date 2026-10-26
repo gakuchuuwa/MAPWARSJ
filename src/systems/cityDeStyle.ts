@@ -12,7 +12,7 @@ import { getCityRegion, type RegionType } from './RegionSystem';
 
 
 export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = {
-    CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', BASHU: 'ASIA',
+    CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', HUGUANG: 'ASIA', BASHU: 'ASIA',
     HEXI: 'ASIA', WESTERN: 'CEAS', JAPAN: 'ASIA', KOREA: 'ASIA', NORTHEAST: 'ASIA',
     TIBET: 'PURU', // 2026-09-11 主人定：吐蕃三层建筑风格套用南亚古典 PURU 粗石红褐石墙 + TIBET_CASTLE_AGE3
     // 🔴 [2026-10-05 主人怒斥「这世界上有两个漠北蒙古吗」] 原 `MOBEI_MONGOL: 'YURT'` 已删 ——

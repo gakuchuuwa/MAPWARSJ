@@ -236,7 +236,7 @@ export const CULTURE_62_GROUPS: readonly CultureGroup[] = [
     },
 ];
 
-/** 第三层专属定制风格（4 套自建，与 _citytest.html 完全对齐） */
+/** 第三层专属定制风格（5 套自建，与 _citytest.html 完全对齐） */
 export const LAYER3_CUSTOM_GROUPS: readonly CultureGroup[] = [
     {
         group: '🏔️ 青藏高原与高原专属宗堡',

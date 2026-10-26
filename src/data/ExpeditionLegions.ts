@@ -494,6 +494,195 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   yingzhou_d2_licunxu: { name: '从马直', tier: 2 },      // 李存勖：亲军从马直，柏乡等役为突击主力；鸦儿军归李克用（《旧五代史·庄宗纪》）。
   iyo_d_cunshangwuji: { name: '村上水军', tier: 1 },     // 村上武吉：能岛村上氏水军由其亲统，严岛等役为主力；毛利元就只取严岛伏兵，不混挂（《毛利家文书》）。
   qi_d_qijiguang: { name: '戚家军', tier: 1 },           // 戚继光：募义乌兵练成戚家军，台州九捷、东南平倭并长期转战南北，符合 v3 T1（《明史·戚继光传》）。
+
+  // 🔴 [2026-10-26 主人令「名将最好一人一支精锐，一个精锐最好只给一个武将」]
+  // 下列均恢复《武将百科》旧档已有的专属番号与档位，不为凑唯一另造新名。
+  yangshao_zhoubo: { name: '安刘北军', tier: 3 },
+  jingzhou_gs_huangfusong: { name: '安定突骑', tier: 3 },
+  xiayang_d_dengyu: { name: '西河突骑', tier: 3 },
+  liu_yingbu: { name: '九江裂骑', tier: 3 },
+  lanzhou_zhaochongguo: { name: '湟中胡骑', tier: 3 },
+  quli_chentang: { name: '轮台屯骑', tier: 3 },
+  guangwu_xinwuxian: { name: '河西突骑', tier: 3 },
+  pulei_dougu: { name: '蒲类落雕骑', tier: 3 },
+  merkit_boyan: { name: '岭北屯骑', tier: 3 },
+  chahar_yantiemuer: { name: '哈剌赤军', tier: 2 },
+  mi_chu_xionglv: { name: '左广右广', tier: 2 },
+  dingzhou_d_murongchui: { name: '鲜卑甲骑', tier: 2 },
+  yeli_yeliwangrong: { name: '擒生军', tier: 3 },
+  xiazhou_lijiqian: { name: '平夏部骑', tier: 3 },
+  pinghai_laihuer: { name: '征东舟师', tier: 2 },
+  hongnong_jun_yangsu: { name: '黄龙水师', tier: 3 },
+  jiyuan_huluguang: { name: '落雕卫', tier: 3 },
+  zhen_zhenxuan: { name: '完山虎贲', tier: 3 },
+  seljuq_sangjiaer: { name: '塞尔柱突骑', tier: 1 },
+  najie_minande: { name: '那竭方阵兵', tier: 3 },
+  jiazini_mahamaode: { name: '伽色尼禁卫', tier: 2 },
+  dizhou_wangyanzhang: { name: '龙骧军', tier: 2 },
+  dang_d_zhuwen: { name: '厅子都', tier: 2 },
+  ssangseong_cuiying: { name: '瀑池弩手', tier: 3 },
+  cai_lishuo: { name: '十八骑', tier: 2 },              // 石勒：起兵核心十八骑（《晋书·石勒载记》），旧档「汲桑所与」是叙述语，不作番号。
+  nong2_nongzhigao: { name: '侬峒狼兵', tier: 3 },
+  dongxu_mangruiti: { name: '金象陷阵', tier: 2 },
+  guo_jixin: { name: '果州戍兵', tier: 4 },
+  baishui_yanghuai: { name: '白水戍卒', tier: 4 },
+  kuai_kuaiyue: { name: '蒯氏宗兵', tier: 4 },
+  guide_d_xiaohe: { name: '酂侯亲卫', tier: 4 },
+  chu_d_lukang: { name: '庐江义旅', tier: 4 },
+  wuyuan_d_chengui: { name: '五原塞卒', tier: 4 },
+  woye_huangfugui: { name: '沃野镇兵', tier: 3 },
+  dongsheng_weishang: { name: '云中彀骑', tier: 3 },
+  ganzhou_dourong: { name: '觻得精骑', tier: 2 },
+  xiutu_jinridi: { name: '休屠王骑', tier: 3 },
+  lushui_dongzhuo: { name: '飞熊军', tier: 2 },
+  kunming_yi_lucheng: { name: '会川藤甲兵', tier: 3 },
+  miao_qing_yangwanzhe: { name: '黑旗苗獠', tier: 3 },
+  chunshen_huangxie: { name: '春申门客', tier: 4 },
+  yong_lujili: { name: '庸国戍卒', tier: 4 },
+  ruochu_doulian: { name: '若敖六卒', tier: 2 },
+  xiongding_murongyong: { name: '鲜卑燕骑', tier: 4 },
+  mushi_muchong: { name: '大岘戟士', tier: 4 },
+  yingli_jilasiyi: { name: '泼喜军', tier: 2 },
+  huo_songlaosheng: { name: '霍邑骁锐', tier: 4 },
+  chile_hulvjin: { name: '两池军', tier: 3 },
+  naju_d_wangjian_wangye: { name: '罗州精兵', tier: 4 },
+  shixing_houandou: { name: '大庾岭突锋', tier: 3 },
+  ouyang_ouyangwei: { name: '庐陵蛮兵', tier: 4 },
+  fu2_zhoudi: { name: '临川郡兵', tier: 4 },
+  muer_mujier: { name: '呼罗珊义从', tier: 4 },
+  baha_gaiwamu: { name: '巴哈尔兹铁卫', tier: 4 },
+  jibin_jianisejia: { name: '迦毕试梵骑', tier: 2 },
+  yaoluoge_yaoluogepusa: { name: '娑陵鹰骑', tier: 4 },
+  guzgan_abuhalisi: { name: '古兹根卫队', tier: 4 },
+  liao_houhongyuan: { name: '巴僚弩手', tier: 4 },
+  qingyi_fanchangsheng: { name: '天师道众', tier: 3 },
+  yunzhong_tuobaliwei: { name: '苍头军', tier: 3 },
+  donghu_tuiyin: { name: '东胡骑', tier: 4 },
+  woju_yinguan: { name: '别武班', tier: 2 },
+  ssangseong_lizichun: { name: '和宁戍骑', tier: 4 },
+  monong_anong: { name: '墨侬部卒', tier: 4 },
+  niang_suonanjiabo: { name: '琼结卫', tier: 4 },
+  pazhu_redangunsangpa: { name: '江孜宗武士', tier: 2 },
+  xuantu_yuangaisuwen: { name: '皂衣先人', tier: 2 },
+  huimo_gaoyanshou: { name: '濊貊长矛手', tier: 4 },
+  higo_d_juchiwuguang: { name: '菊池党', tier: 3 },
+  jinling_tandaoji: { name: '量沙军', tier: 2 },
+
+  // 多名将不得共用一支有明确主人的精锐；按各自主导战役、军区或本部拆分。
+  gen_artaphernes: { name: '萨迪斯军', tier: 3 },       // 阿尔塔弗涅斯：吕底亚总督，萨迪斯军区本部。
+  gen_datis: { name: '马拉松征军', tier: 2 },          // 达提斯：前490 与阿尔塔弗涅斯统军远征、登陆马拉松（希罗多德《历史》）。
+  aliya_satibazanishi: { name: '阿里亚骑', tier: 3 },   // 萨提巴扎尼斯：阿里亚总督，所部为阿里亚军区骑兵。
+  hekaniya_artabazos: { name: '普拉提亚卫', tier: 2 },  // 阿尔塔巴佐斯：普拉提亚战役所部后卫（希罗多德《历史》）。
+  eerbulushi_beisusi: { name: '大夏骑军', tier: 3 },    // 贝苏斯：巴克特里亚（大夏）总督本部骑军。
+  xuliya_shoujiang: { name: '高加米拉骑', tier: 2 },    // 马泽乌斯：高加米拉之战统波斯右翼骑兵（阿里安《亚历山大远征记》）。
+  gen_raymond_iv: { name: '图卢兹军', tier: 2 },        // 雷蒙四世：图卢兹伯国本部，第一次十字军南路主力。
+  gen_louis_xi: { name: '皮卡第军', tier: 3 },          // 路易十一：与勃艮第争夺皮卡第的王国野战军。
+  gen_boucicaut: { name: '尼科波利骑', tier: 2 },       // 布锡考特：尼科波利斯十字军法国骑士本部。
+  gen_francis_i: { name: '马里尼昂军', tier: 2 },       // 弗朗索瓦一世：马里尼亚诺会战亲征军。
+  gen_joanofarc: { name: '奥尔良义军', tier: 2 },       // 贞德：解奥尔良之围所统法军。
+  yuan_d_hubilie: { name: '金莲川军', tier: 3 },        // 忽必烈：金莲川幕府与漠南亲王本部（《元史·世祖本纪》）。
+  gen_zhang_rou: { name: '汉军万户', tier: 3 },         // 张柔：蒙古汉军万户，所统汉军世侯本部（《元史·张柔传》）。
+  gen_clovis_i: { name: '萨利安军', tier: 3 },          // 克洛维：萨利安法兰克本部。
+  falanji_baodewen: { name: '佛兰德骑', tier: 2 },      // 鲍德温九世：佛兰德伯国骑士，第四次十字军本部。
+  gen_otto_great: { name: '萨克森军', tier: 2 },        // 奥托一世：萨克森公国本部，莱希河战役核心。
+  baojialiya_aseni: { name: '阿森义军', tier: 2 },      // 阿森一世：1185 反拜占庭起义本部。
+  duonaobaojia_samuel: { name: '奥赫里德军', tier: 3 }, // 萨穆伊尔：奥赫里德政权本部军。
+  gen_krum: { name: '普利斯卡军', tier: 2 },            // 克鲁姆：811 普利斯卡歼拜占庭军。
+  gen_ivaylo: { name: '农民义军', tier: 2 },            // 伊瓦伊洛：保加利亚农民起义军。
+  jialiboli_kaluoyang: { name: '库曼骑军', tier: 2 },   // 卡洛扬：所部库曼、瓦拉几亚联军骑军。
+  gen_simeon_great: { name: '阿赫洛军', tier: 2 },      // 西美昂：917 阿赫洛河大破拜占庭之本部。
+  abasi_muwafake: { name: '赞吉讨军', tier: 2 },        // 穆瓦法克：主持平定赞吉起义的野战军。
+  samaila_muataisuimu: { name: '突厥古拉姆', tier: 2 }, // 穆阿台绥姆：萨迈拉突厥古拉姆新军。
+  xishudongyin_lijiasipi: { name: '马尼拉征军', tier: 2 }, // 莱加斯皮：菲律宾远征与马尼拉殖民军本部。
+  kasidiliya_afangsuoshiyi: { name: '萨拉多军', tier: 2 }, // 阿方索十一世：1340 萨拉多会战亲征军。
+  gen_juan_i_castile: { name: '卡斯蒂王军', tier: 3 },     // 胡安一世：卡斯蒂利亚王军本部。
+  kasidiliya_afangsuoba: { name: '纳瓦斯军', tier: 2 },    // 阿方索八世：1212 纳瓦斯·德托洛萨会战联军本部。
+  gen_fernando_iii: { name: '塞维利亚军', tier: 2 },       // 费尔南多三世：收复塞维利亚的围攻军。
+  gen_ferdinand_ii: { name: '格拉纳达军', tier: 2 },       // 斐迪南二世：格拉纳达战争王军。
+  gen_el_cid: { name: '瓦伦西亚军', tier: 2 },             // 熙德：据守瓦伦西亚的本部军。
+  litaowan_algirdas: { name: '蓝水骑军', tier: 2 },        // 阿尔吉尔达斯：1362 蓝水河战役所部。
+  gen_algirdas: { name: '立陶宛公军', tier: 3 },           // 奥尔格尔德：立陶宛大公国本部，与首战条目分用战场番号。
+  gen_vytautas_great: { name: '格伦瓦德军', tier: 2 },     // 维托夫特：1410 格伦瓦德会战立陶宛军。
+  gen_kestutis: { name: '特拉凯军', tier: 3 },             // 科斯图提斯：特拉凯公国本部。
+  gen_frederic_ii: { name: '西西里王军', tier: 3 },        // 腓特烈二世：西西里王国本部军。
+  gen_bohemond: { name: '安条克骑', tier: 2 },             // 博希蒙德：安条克公国诺曼骑军。
+  gen_robert_guiscard: { name: '都拉斯军', tier: 2 },      // 吉斯卡尔：都拉斯（迪拉基乌姆）战役诺曼军。
+  hre_manfred: { name: '贝内文托军', tier: 3 },            // 曼弗雷德：贝内文托战役所部。
+  gen_roger_i: { name: '墨西拿军', tier: 2 },              // 罗杰一世：渡墨西拿海峡征服西西里的诺曼本部。
+  gen_charles_i_naples: { name: '那不勒斯军', tier: 3 },   // 卡洛一世：那不勒斯王国本部。
+  gen_aristides: { name: '马拉松重装', tier: 2 },          // 阿里斯提德：马拉松会战雅典重装步兵。
+  gen_chabrias: { name: '纳克索斯舰', tier: 2 },           // 卡布里亚斯：前376 纳克索斯海战舰队。
+  bfe2_conon: { name: '克尼多斯舰', tier: 2 },             // 科农：前394 克尼多斯海战舰队。
+  sashan_khosrow_ii: { name: '达拉骑军', tier: 3 },        // 霍斯劳二世：对美索不达米亚与拜占庭战争本部。
+  sashan_bahram_vi: { name: '雷伊骑军', tier: 2 },         // 巴赫拉姆六世（楚宾）：雷伊起兵与米太本部骑军。
+  shahelude_weisitamu: { name: '米太骑军', tier: 3 },      // 维斯塔姆：米太与希尔卡尼亚地方本部。
+  talike_talike: { name: '直布罗陀军', tier: 2 },          // 塔里克：渡直布罗陀征服西哥特之本部。
+  womaya_muaweiye: { name: '叙利亚军', tier: 3 },          // 穆阿维叶：长期任叙利亚总督之本部军。
+  gen_abd_al_rahman_iii: { name: '科尔多瓦军', tier: 3 },  // 拉赫曼三世：科尔多瓦哈里发王军。
+  womaya_abdrahman: { name: '安达卢斯军', tier: 3 },       // 阿卜杜勒·拉赫曼一世：入安达卢斯建立后倭马亚之本部。
+
+  // [2026-10-26 主人令] 名将专属番号按史拆分：一支有明确历史主人的精锐不再由多位名将共带。
+  gen_sadashivrao: { name: '马拉塔军', tier: 3 },         // 萨达希夫：马拉塔北伐军，第三次帕尼帕特战役本部。
+  gen_hemu: { name: '苏尔军', tier: 3 },                 // 赫穆：苏尔王朝军，第二次帕尼帕特战役本部。
+  deli_alawuding: { name: '卡尔吉军', tier: 2 },          // 阿拉乌丁：卡尔吉王朝军，屡败蒙古并征服德干诸国。
+  gen_ibrahim_lodi: { name: '洛迪军', tier: 3 },          // 易卜拉欣·洛迪：第一次帕尼帕特战役的洛迪王军。
+  xindu_bahelamuhan: { name: '帕尼帕特军', tier: 2 },     // 拜拉姆汗：1556 第二次帕尼帕特战役击败赫穆之本部。
+  muertan_naxierding: { name: '木尔坦军', tier: 3 },      // 纳西尔丁·卡巴恰：据乌奇、木尔坦的割据军。
+  gen_lajos_ii: { name: '莫哈奇军', tier: 3 },           // 拉约什二世：1526 莫哈奇战役匈牙利王军。
+  xiongyati_yannuoshi: { name: '白城堡军', tier: 2 },     // 匈雅提：1456 白城堡（贝尔格莱德）解围军。
+  gen_brasidas: { name: '安菲波军', tier: 2 },            // 巴西达斯：前422 安菲波利斯战役本部。
+  gen_lysander: { name: '羊河舰队', tier: 2 },            // 吕山德：前405 羊河海战歼雅典舰队之本部。
+  bolan_suobiesiji: { name: '维也纳援军', tier: 2 },      // 索别斯基：1683 维也纳战役波兰援军。
+  gen_boleslaw_brave: { name: '格涅兹诺军', tier: 3 },    // 勇者波列：以格涅兹诺为核心的波兰公军。
+  gen_joao_i: { name: '阿尔儒巴军', tier: 2 },            // 若昂一世：1385 阿尔儒巴罗塔会战本部。
+  gen_hannibal: { name: '坎尼军', tier: 2 },              // 汉尼拔：前216 坎尼会战合围罗马军之本部。
+  gen_hamilcar: { name: '巴卡军', tier: 3 },              // 哈米尔卡：经营伊比利亚的巴卡家族本部。
+  wangdaer_gaisalike: { name: '汪达尔海军', tier: 2 },    // 盖萨里克：468 邦角海战大破东罗马舰队。
+  zhuozhou_shisiming: { name: '范阳叛军', tier: 3 },      // 史思明：范阳起兵及其后所统燕军。
+  safawei_d_abasi: { name: '古拉姆新军', tier: 2 },       // 阿拔斯一世：军制改革后的古拉姆新军。
+  yilihanguo_yisimeier: { name: '奇兹尔巴什', tier: 2 },  // 伊斯玛仪一世：萨法维建国核心奇兹尔巴什。
+  yilihanguo_kitbuqa: { name: '艾因贾鲁军', tier: 3 },    // 怯的不花：1260 艾因贾鲁战役蒙古本部。
+  safawei_aisimaier: { name: '萨法维王卫', tier: 3 },     // 艾斯迈尔：萨法维王室亲卫本部。
+  gen_batu: { name: '长子西征军', tier: 2 },              // 拔都：1236—1242 长子西征本部。
+  gen_mamai: { name: '蓝帐军', tier: 3 },                // 马麦：金帐汗国西部蓝帐系军。
+  jinzhang_nogai: { name: '那海部骑', tier: 3 },          // 那海：所统那海兀鲁思骑军。
+  gen_tashfin: { name: '萨拉卡军', tier: 2 },             // 优素福·本·塔什芬：1086 萨拉卡会战穆拉比特军。
+  malin_abulhasan: { name: '马拉喀什军', tier: 3 },       // 阿布·哈桑·阿里：马林王朝马拉喀什本部。
+  gen_kusaila: { name: '柏柏尔义军', tier: 3 },           // 库赛拉：抗击倭马亚的柏柏尔部众。
+  gen_yaqub_saffar: { name: '锡斯坦军', tier: 3 },        // 雅各布·本·莱斯：锡斯坦萨法尔王朝本部。
+  xisi_amr: { name: '巴尔赫军', tier: 3 },               // 阿姆尔·本·莱斯：据巴尔赫与呼罗珊之本部。
+  zhalange_barsaentes: { name: '扎兰季军', tier: 3 },     // 巴尔塞恩特斯：扎兰季地方本部，不占萨法尔王朝番号。
+  gen_charles_xii: { name: '卡罗林军', tier: 2 },         // 查理十二：大北方战争中的瑞典卡罗林军。
+  tuolemi_tuolemi: { name: '加沙军', tier: 2 },           // 托勒密一世：前312 加沙会战联军本部。
+  gen_dmitry_donskoy: { name: '库利科沃军', tier: 2 },    // 顿斯科伊：1380 库利科沃会战罗斯联军。
+  gen_vasili_iii: { name: '斯摩棱军', tier: 2 },          // 瓦西里三世：1514 攻取斯摩棱斯克之本部。
+  gen_vladimir_andreyevich: { name: '谢尔普军', tier: 3 }, // 勇者弗拉基米尔：谢尔普霍夫公国本部。
+  gurjara_vatsaraja: { name: '曲女城军', tier: 3 },       // 瓦萨拉贾：争夺曲女城的瞿折罗本部。
+  gurjara_nagabhata_ii: { name: '拉贾斯坦军', tier: 2 },  // 那加巴塔二世：拉贾斯坦抗击阿拉伯扩张之本部。
+  gen_alfonso_vi: { name: '托莱多军', tier: 2 },          // 阿方索六世：1085 收复托莱多之王军。
+  gen_alaric: { name: '阿德里安军', tier: 2 },            // 亚拉里克：378 阿德里安堡会战西哥特军。
+  boluo_damoboluo: { name: '孟加拉军', tier: 3 },         // 达磨波罗：波罗王朝孟加拉本部。
+  gen_shashanka: { name: '高达军', tier: 3 },             // 设赏迦：高达王国本部。
+  varendra_devapala: { name: '那烂陀军', tier: 3 },       // 提婆波罗：波罗王朝那烂陀与孟加拉本部。
+  gen_baodewen_iv: { name: '蒙吉萨军', tier: 2 },         // 鲍德温四世：1177 蒙吉萨会战耶路撒冷军。
+  aosiruowen_baodewen: { name: '耶路撒冷军', tier: 3 },   // 鲍德温一世：耶路撒冷王国本部。
+  mowoer_akeba: { name: '拉贾普特军', tier: 3 },          // 阿克巴：征服与整编拉贾普特诸邦之本部。
+  babuer_babuer: { name: '莫卧儿火炮', tier: 2 },         // 巴布尔：帕尼帕特、坎瓦会战火器野战本部。
+  gen_vlad_impaler: { name: '夜袭军', tier: 2 },          // 弗拉德三世：1462 夜袭奥斯曼军营之本部。
+  gen_basarab_i: { name: '波萨达军', tier: 2 },           // 巴萨拉布一世：1330 波萨达会战瓦拉几亚军。
+  gen_topa_inca: { name: '安第斯征军', tier: 3 },         // 图帕克：扩张安第斯诸地的印加本部。
+  gen_pachacuti: { name: '库斯科军', tier: 2 },           // 帕查库提：库斯科击破昌卡之本部。
+  danmai_abusalong: { name: '丹麦舰队', tier: 3 },        // 阿布萨隆：丹麦海岸与波罗的海征伐舰队。
+  gen_akechi_mitsuhide: { name: '本能寺军', tier: 2 },    // 明智光秀：1582 本能寺奇袭本部。
+  gen_prithviraj: { name: '塔兰军', tier: 2 },            // 普里特维：1191 第一次塔兰会战乔汉军。
+  zhelouqi_puliteweilajie: { name: '乔汉骑军', tier: 3 }, // 普里特维拉杰：乔汉王朝骑军，与首战条目分号。
+  maidina_halide: { name: '雅尔穆克军', tier: 2 },        // 哈立德：636 雅尔穆克会战穆斯林军。
+  maidina_ali: { name: '巴士拉军', tier: 3 },             // 阿里：656 巴士拉骆驼之战本部。
+  gen_liu_guoxuan: { name: '东宁水师', tier: 3 },         // 刘国轩：明郑东宁水师，不占沈有容澎湖守军番号。
+  gen_charlemagne: { name: '伦巴第军', tier: 2 },         // 查理曼：773—774 征服伦巴第王国之本部。
+  han_d_liubang: { name: '丰沛子弟', tier: 3 },           // 刘邦：丰沛起兵所率乡里部曲。
+  cangsong_machao: { name: '西凉铁骑', tier: 2 },         // 马超：凉州骑军，不占刘备白毦精兵番号。
+  shu_masu: { name: '街亭军', tier: 3 },                 // 马谡：228 街亭所部，不占刘备白毦精兵番号。
 };
 
 /**

@@ -824,6 +824,7 @@ export const STOCKADE_FENCE_BY_STYLE66: Record<string, StockadeFenceKey> = {
     CENTRAL: 'HARDWOOD',      // 中原：木栅/木寨，榫卯版筑附木，粗方硬木立柱
     BASHU: 'HARDWOOD',        // 巴蜀：中华定居核心圈，官制木作，粗方硬木立柱
     JIANGNAN: 'HARDWOOD',     // 江南：中华定居核心圈，榫卯版筑附木，正规城池/军寨粗方硬木立柱与拒马
+    HUGUANG: 'HARDWOOD',      // 湖广：湖北、湖南、广东、广西、福建，沿用中华定居核心圈硬木城寨
     WEI: 'HARDWOOD',          // 河朔：边防亭障/军寨粗方木栅
     PURU: 'HARDWOOD',         // 南亚普鲁（旁遮普/印度河，非普鲁士）：华氏城木栅·方木榫卯排桩（娑罗双/柚木）
     GURJARAS: 'HARDWOOD',     // 瞿折罗：娑罗双/柚木等耐腐硬木重桩，木石混筑

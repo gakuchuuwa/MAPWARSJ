@@ -2565,7 +2565,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_vukasin', eliteName: '杜尚兵团', eliteTier: 2, cityId: 'city_prilep', generalName: '武卡辛', portrait: '/assets/SLAVIC/gen_vukasin.png', legionName: '城堡时代博亚尔重骑军团' },
+        { generalId: 'gen_vukasin', eliteName: '普里莱普军', eliteTier: 3, cityId: 'city_prilep', generalName: '武卡辛', portrait: '/assets/SLAVIC/gen_vukasin.png', legionName: '城堡时代博亚尔重骑军团' }, // 普里莱普领主本部
 
 
 
@@ -2881,7 +2881,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_afonso_henriques', eliteName: '阿维斯骑士', eliteTier: 3, cityId: 'city_coimbra', generalName: '阿方索一世', portrait: '/assets/PORTUGUESE/gen_afonso_henriques.png' },
+        { generalId: 'gen_afonso_henriques', eliteName: '奥利克军', eliteTier: 2, cityId: 'city_coimbra', generalName: '阿方索一世', portrait: '/assets/PORTUGUESE/gen_afonso_henriques.png' }, // 1139 奥利克战役葡萄牙本部
         { generalId: 'gen_henry_navigator', factionId: 'putaoya', cityId: 'city_lisiben', generalName: '恩里克', portrait: '/assets/PORTUGUESE/gen_henry_navigator.png' },
 
 
@@ -4531,7 +4531,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         //    只归李世民；写在他自己条目上，不靠势力兜底（否则唐势力其他武将都会继承 T0）。
         { generalId: 'tang_lishimin', cityId: 'city_changan', generalName: '李世民', portrait: '/assets/CENTRAL/tang_lishimin.png', eliteName: '玄甲军', eliteTier: 0 },
         // 🔴 [2026-10-20 主人令] 李信＝秦将（前225 攻楚被项燕大破）→ 长安（秦旗，CENTRAL）；古典时代华夏军团；立绘留空
-        { generalId: 'gen_li_xin', cityId: 'city_changan', generalName: '李信', portrait: '/assets/CENTRAL/gen_li_xin.png', factionId: 'qin', legionName: '古典时代华夏军团' , eliteName: '秦锐士', eliteTier: 2},
+        { generalId: 'gen_li_xin', cityId: 'city_changan', generalName: '李信', portrait: '/assets/CENTRAL/gen_li_xin.png', factionId: 'qin', legionName: '古典时代华夏军团' , eliteName: '灭燕军', eliteTier: 2}, // 前222 与王贲灭燕、代之本部
 
 
 
@@ -4578,7 +4578,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_9', cityId: 'city_changan', generalName: '王龁', portrait: '/assets/CENTRAL/bfe3_9.png', legionName: '古典时代华夏军团', factionId: 'qin', eliteName: '秦锐士', eliteTier: 2 },   // 🔴 精锐随将：秦将配秦锐士（不配唐玄甲军）
+        { generalId: 'bfe3_9', cityId: 'city_changan', generalName: '王龁', portrait: '/assets/CENTRAL/bfe3_9.png', legionName: '古典时代华夏军团', factionId: 'qin', eliteName: '长平军', eliteTier: 3 },   // 前260 长平前期秦军本部
 
 
 
@@ -5047,7 +5047,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'shanzhou_wangzhongsi', factionId: 'tang', cityId: 'city_lingzhou', legionName: '封建时代河西军团', generalName: '王忠嗣', portrait: '/assets/KHITAN/shanzhou_wangzhongsi.png', eliteName: '陇右骁骑', eliteTier: 1  },   // 按史：王忠嗣为朔方节度使（治灵州），频战青海、积石皆大克捷（《旧唐书·卷一〇三·王忠嗣传》）
-        { generalId: 'gaoliang_geshuhan', cityId: 'city_ledou', factionId: 'tang', generalName: '哥舒翰', portrait: '/assets/KHITAN/gaoliang_geshuhan.png', legionName: '封建时代河西军团', eliteName: '河源军', eliteTier: 2  },   // 按史：哥舒翰充河源军使，积石军设伏破吐蕃抢麦骑（《旧唐书·卷一〇四·哥舒翰传》）
+        { generalId: 'gaoliang_geshuhan', cityId: 'city_ledou', factionId: 'tang', generalName: '哥舒翰', portrait: '/assets/KHITAN/gaoliang_geshuhan.png', legionName: '封建时代河西军团', eliteName: '河曲雕骑', eliteTier: 3  },   // 按史：哥舒翰久镇河曲、陇右，积石军设伏破吐蕃；恢复旧档专属番号，河源军独归黑齿常之（《旧唐书·哥舒翰传》）
 
 
 
@@ -6573,7 +6573,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'guzhu_tianyu', factionId: 'wei', cityId: 'city_beijing', legionName: '古典时代太行军团', generalName: '田豫', portrait: '/assets/WEI/guzhu_tianyu.png', eliteName: '乌桓突骑', eliteTier: 2  },   // 按史：田豫持节护乌丸校尉，兼领乌桓突骑（《三国志·卷二六·田豫传》《牵招传》）
+        { generalId: 'guzhu_tianyu', factionId: 'wei', cityId: 'city_beijing', legionName: '古典时代太行军团', generalName: '田豫', portrait: '/assets/WEI/guzhu_tianyu.png', eliteName: '辽西威锋', eliteTier: 3  },   // 按史：田豫持节护乌丸校尉、威震辽西；恢复旧档专属番号，乌桓突骑独归蹋顿（《三国志·田豫传》）
 
 
 
@@ -8146,7 +8146,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_38', cityId: 'city_toumancheng', generalName: '且鞮侯单于', portrait: '/assets/XIANBEI/bfe3_38.png', legionName: '古典时代漠南游牧军团' , eliteName: '匈奴控弦', eliteTier: 3},
+        { generalId: 'bfe3_38', cityId: 'city_toumancheng', generalName: '且鞮侯单于', portrait: '/assets/XIANBEI/bfe3_38.png', legionName: '古典时代漠南游牧军团' , eliteName: '浚稽山骑', eliteTier: 2}, // 前99 浚稽山围击李陵本部
 
 
 
@@ -9347,7 +9347,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'danmai_guthrum', eliteName: '丹斧兵', eliteTier: 3, cityId: 'city_norwich', generalName: '古思伦', portrait: '/assets/DANES/danmai_guthrum.png' },
+        { generalId: 'danmai_guthrum', eliteName: '东盎军', eliteTier: 3, cityId: 'city_norwich', generalName: '古思伦', portrait: '/assets/DANES/danmai_guthrum.png' }, // 统治东盎格利亚的丹麦军本部
         { generalId: 'danmai_harald', cityId: 'city_jelling', generalName: '蓝牙哈拉尔', portrait: '/assets/DANES/danmai_harald.png', legionName: '封建时代丹麦王国军团', eliteName: '耶灵亲兵', eliteTier: 4 },
         { generalId: 'danmai_godfred', cityId: 'city_hedeby', generalName: '戈德弗雷德', portrait: '/assets/DANES/danmai_godfred.png', legionName: '封建时代丹麦王国军团', eliteName: '海瑟比卫队', eliteTier: 4 },
 
@@ -14918,7 +14918,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'ailan_julushi', cityId: 'city_susa', generalName: '居鲁士二世', portrait: '/assets/PERSIAN/ailan_julushiershi.png', factionId: 'aqimeinide' , eliteName: '不死军', eliteTier: 2 },
+        { generalId: 'ailan_julushi', cityId: 'city_susa', generalName: '居鲁士二世', portrait: '/assets/PERSIAN/ailan_julushiershi.png', factionId: 'aqimeinide' , eliteName: '波斯王军', eliteTier: 3 }, // 阿契美尼德开国征服军本部
 
 
 
@@ -14934,7 +14934,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_cambyses', cityId: 'city_susa', generalName: '冈比西斯二世', portrait: '/assets/PERSIAN/gen_cambyses.png', factionId: 'aqimeinide' , eliteName: '不死军', eliteTier: 2 },
+        { generalId: 'gen_cambyses', cityId: 'city_susa', generalName: '冈比西斯二世', portrait: '/assets/PERSIAN/gen_cambyses.png', factionId: 'aqimeinide' , eliteName: '埃及征军', eliteTier: 2 }, // 前525 培琉喜阿姆胜埃及、完成征服之本部
 
 
 
@@ -15557,7 +15557,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_atahualpa', eliteName: '印加枪兵长', eliteTier: 3, cityId: 'city_quito', generalName: '阿塔瓦尔帕', portrait: '/assets/INCA/gen_atahualpa.png', legionName: '帝国时代塔万廷军团' },
+        { generalId: 'gen_atahualpa', eliteName: '卡哈马卡军', eliteTier: 3, cityId: 'city_quito', generalName: '阿塔瓦尔帕', portrait: '/assets/INCA/gen_atahualpa.png', legionName: '帝国时代塔万廷军团' }, // 1532 卡哈马卡所部
 
 
 
@@ -16966,7 +16966,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     
         { generalId: 'dang_d_zhuwen', factionId: 'hou_liang', cityId: 'city_bianliang', generalName: '朱温', portrait: '/assets/CENTRAL/dang_d_zhuwen.png' },
         { generalId: 'dang_d_pangshigu', factionId: 'hou_liang', cityId: 'city_bianliang', generalName: '庞师古', portrait: '/assets/CENTRAL/dang_d_pangshigu.png' },
-        { generalId: 'liang_d_zhuyouning', factionId: 'hou_liang', cityId: 'city_bianliang', generalName: '朱友宁', eliteName: '厅子都', eliteTier: 2, portrait: '/assets/CENTRAL/liang_d_zhuyouning.png' },   // 🔴 [2026-10-25 按史] 朱温从子、领所部兵守汴州（《旧五代史·卷十二·宗室传》）；903 石楼之战阵亡，作王师范首战敌将（双身份）
+        { generalId: 'liang_d_zhuyouning', factionId: 'hou_liang', cityId: 'city_bianliang', generalName: '朱友宁', eliteName: '汴州宗兵', eliteTier: 4, portrait: '/assets/CENTRAL/liang_d_zhuyouning.png' },   // 🔴 [2026-10-26 按史] 朱温从子、领所部宗兵守汴州，无厅子都专属依据；厅子都归朱温（《旧五代史·宗室传》）
 
     ],
     han_zhao: [
@@ -17170,7 +17170,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'higo_d_juchiwuguang', factionId: 'nanchou', cityId: 'city_xiongben', generalName: '菊池武光', portrait: '/assets/JAPAN/higo_d_juchiwuguang.png' },
 
     
-        { generalId: 'yamato_nanmuzhengcheng', eliteName: '楠木党', eliteTier: 2, factionId: 'nanchou', cityId: 'city_asuka', generalName: '楠木正成', portrait: '/assets/JAPAN/yamato_nanmuzhengcheng.png' },
+        { generalId: 'yamato_nanmuzhengcheng', eliteName: '千早众', eliteTier: 2, factionId: 'nanchou', cityId: 'city_asuka', generalName: '楠木正成', portrait: '/assets/JAPAN/yamato_nanmuzhengcheng.png' },   // 按史：楠木正成据千早城抗镰仓军，恢复旧档专属番号；楠木党不再与菊池武光混挂（《太平记》）
 
     ],
     nanbu_shi: [

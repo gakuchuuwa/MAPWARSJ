@@ -107,7 +107,7 @@ export function isBase16CultureLegion(name: string): boolean {
 
 /** 171 个文化区回溯到 16 母体 base region 的映射 */
 const BASE_16_MAP: Record<string, string> = {
-    CENTRAL: 'CENTRAL', PRE_QIN: 'CENTRAL', NORTH: 'CENTRAL', HEXI: 'CENTRAL', NORTHEAST: 'CENTRAL', JIANGNAN: 'CENTRAL',
+    CENTRAL: 'CENTRAL', PRE_QIN: 'CENTRAL', NORTH: 'CENTRAL', HEXI: 'CENTRAL', NORTHEAST: 'CENTRAL', JIANGNAN: 'CENTRAL', HUGUANG: 'CENTRAL',
     KOREA: 'CENTRAL', GOJOSEON: 'CENTRAL', KHITAN: 'CENTRAL', MOHE: 'CENTRAL', NANZHAO: 'CENTRAL', SONG: 'CENTRAL',
     JURCHEN: 'CENTRAL', DALI: 'CENTRAL', GORYEO: 'CENTRAL', VIETNAMESE: 'MALAY', MING: 'CENTRAL', MANCHU: 'CENTRAL',
     HUAXIA_IMPERIAL: 'CENTRAL', JOSEON: 'CENTRAL', KARA_KHITAN: 'CENTRAL', JAPAN: 'CENTRAL', JAPAN_ANTIQUITY: 'CENTRAL',
@@ -750,7 +750,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '封建时代突厥骑射军团': {
+    '封建时代安纳托利亚军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -822,7 +822,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['battering_ram', 'battering_ram', 'catapult', 'catapult', 'ballista', 'ballista'],
     },
-    '封建时代西西里埃米尔军团': {
+    '封建时代埃米尔军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'heavy_scorpion', 'heavy_scorpion'],
     },

@@ -160,7 +160,7 @@ export type SubCategory =
     // 船只
     | 'galley' | 'fire_ship' | 'cannon_ship' | 'demo_ship' | 'warship'
     // 英雄
-    | 'mounted_hero' | 'horse_archer_hero' | 'foot_hero' | 'foot_archer_hero' | 'magic_hero' | 'elephant_hero' | 'naval_hero' | 'noncombat_hero';
+    | 'mounted_hero' | 'horse_archer_hero' | 'foot_hero' | 'foot_archer_hero' | 'magic_hero' | 'elephant_hero' | 'chariot_hero' | 'naval_hero' | 'noncombat_hero';
 
 export const SUBCATEGORY_LABEL: Record<SubCategory, string> = {
     sword_shield: '刀盾',
@@ -188,6 +188,7 @@ export const SUBCATEGORY_LABEL: Record<SubCategory, string> = {
     foot_archer_hero: '步射',
     magic_hero: '法术',
     elephant_hero: '象驾',
+    chariot_hero: '战车',   // 🔴 [2026-10-26 主人令「英雄的类别少了战车」]
     naval_hero: '旗舰',
     noncombat_hero: '非战斗',
 };
@@ -199,7 +200,7 @@ export const SUBCATEGORY_BY_CATEGORY: Record<UnitCategory, SubCategory[]> = {
     cavalry: ['melee_cav', 'horse_archer', 'elephant', 'chariot'],
     siege: ['gunpowder_siege', 'mechanical'],
     naval: ['galley', 'fire_ship', 'cannon_ship', 'demo_ship', 'warship'],
-    hero: ['mounted_hero', 'horse_archer_hero', 'foot_hero', 'foot_archer_hero', 'magic_hero', 'elephant_hero', 'naval_hero', 'noncombat_hero'],
+    hero: ['mounted_hero', 'horse_archer_hero', 'foot_hero', 'foot_archer_hero', 'magic_hero', 'elephant_hero', 'chariot_hero', 'naval_hero', 'noncombat_hero'],
     civilian: [],
     other: [],
 };
@@ -1063,7 +1064,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_rogerbosso: 'mounted_hero', hero_shahismail: 'mounted_hero', hero_subotai: 'horse_archer_hero',
     hero_sumanguru: 'mounted_hero', hero_sunce: 'mounted_hero', hero_sundjata: 'mounted_hero',
     hero_sunjian: 'mounted_hero', hero_sunquan: 'horse_archer_hero', hero_tariqibnziyad: 'horse_archer_hero',
-    hero_thoros: 'mounted_hero', hero_thracian_chieftain: 'mounted_hero', hero_tsarkonstantin: 'mounted_hero',
+    hero_thoros: 'mounted_hero', hero_thracian_chieftain: 'mounted_hero', hero_tsarkonstantin: 'chariot_hero',   // 兵模是四马战车（2026-10-26 主人指出）
     hero_ulrichvonjungingen: 'mounted_hero', hero_vladdracula: 'mounted_hero', hero_vytautasthegreat: 'mounted_hero',
     envoy: 'mounted_hero', hero_jadwiga: 'magic_hero',
     hero_tamar: 'magic_hero', hero_bucephalus: 'noncombat_hero',
@@ -1204,7 +1205,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_zakare: 'foot_hero',
     hero_dongzhuo: 'mounted_hero',
     emperor_in_a_litter: 'noncombat_hero',
-    hero_liubiao: 'horse_archer_hero',
+    hero_liubiao: 'chariot_hero',   // 兵模 WARCHARIOT（战车）
     hero_whitetigeryan: 'mounted_hero',
     hero_yuji: 'magic_hero',
     hero_yuanshao: 'horse_archer_hero',
@@ -1215,7 +1216,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_finnarnason: 'foot_hero',
     hero_kalfarnason: 'foot_hero',
     hero_cleon: 'foot_hero',
-    hero_darius: 'mounted_hero',
+    hero_darius: 'chariot_hero',   // 兵模 ELITE_WAR_CHARIOT（战车）
     hero_leonidas: 'foot_hero',
     hero_miltiades: 'foot_hero',
     hero_flagshipofnearchos: 'naval_hero',
@@ -4862,8 +4863,19 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
 
     // 预计算全部军团的兵种使用情况（与自动检查同一份口径）
     const usageMap = collectUnitUsage();
-    // 🔴 [2026-10-26 主人令「不检查套用的英雄，检查除英雄所有」] 英雄不参与已套用/未套用：不计数、不标状态、不进筛选
-    const isChecked = (u: { category: UnitCategory }) => u.category !== 'hero';
+    // 🔴 [2026-10-26 主人令「英雄被套用的显示取消了，请恢复」] 自动检查仍不查英雄（computeCombatUnitCoverage 只数战斗兵模），
+    //    但选兵弹窗要照旧显示英雄被哪些军团当主将套用：把二级/三级军团的 commanderUnit 补进这份表。
+    const l23Names = new Set<string>([...LEVEL_2_CIV_62_NAMES, ...LEVEL_3_LEGION_NAMES]);
+    const addCommander = (id: string | undefined, label: string) => {
+        if (!id || !l23Names.has(label)) return;
+        const list = usageMap.get(id);
+        if (!list) usageMap.set(id, [label]);
+        else if (!list.includes(label)) list.push(label);
+    };
+    for (const d of getAllDistinctLegions().values()) addCommander(d.commanderUnit, d.name);
+    for (const l2 of LEVEL_2_CIV_62_LEGIONS) addCommander(l2.commanderUnit, l2.name);
+    for (const l3 of LEVEL_3_LEGIONS) addCommander((l3 as { commanderUnit?: string }).commanderUnit, l3.name);
+    const isChecked = (_u: { category: UnitCategory }) => true;
 
     const closeModal = () => {
         window.removeEventListener('keydown', handleKey);
@@ -4944,7 +4956,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
               <option value="5" ${unitThumbDir === 5 ? 'selected' : ''}>西 (5)</option>
               <option value="4" ${unitThumbDir === 4 ? 'selected' : ''}>西南 (4)</option>
             </select>
-            <div style="display:${isCommander ? 'none' : 'inline-flex'};gap:3px;align-items:center;margin-left:4px;">
+            <div style="display:inline-flex;gap:3px;align-items:center;margin-left:4px;">
               <button type="button" data-status="all" class="le-pk-status-btn" style="background:${unitStatusFilter === 'all' ? '#4a3e2c' : '#1e1c18'};border:1px solid ${unitStatusFilter === 'all' ? '#c8a84b' : '#363024'};color:${unitStatusFilter === 'all' ? '#f5e6c8' : '#8a8378'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;">全部 (${candidateUnits.length})</button>
               <button type="button" data-status="applied" class="le-pk-status-btn" style="background:${unitStatusFilter === 'applied' ? '#183620' : '#1e1c18'};border:1px solid ${unitStatusFilter === 'applied' ? '#38a169' : '#363024'};color:${unitStatusFilter === 'applied' ? '#7ee787' : '#8a8378'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;">✓ 已套用 (${appliedTotal})</button>
               <button type="button" data-status="unapplied" class="le-pk-status-btn" style="background:${unitStatusFilter === 'unapplied' ? '#352417' : '#1e1c18'};border:1px solid ${unitStatusFilter === 'unapplied' ? '#c05621' : '#363024'};color:${unitStatusFilter === 'unapplied' ? '#fbd38d' : '#8a8378'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;">⚪ 未套用 (${unappliedTotal})</button>

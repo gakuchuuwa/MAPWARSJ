@@ -367,7 +367,6 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
     // 预计算二级、三级军团的兵种/战船使用情况
     // 🔴 [2026-10-26 主人令「套用也包含了错误的剧本四级军团和一级军团，这不能算，只有二级和三级才算」]
     //    一级 16 母体只是素材底座、四级剧本军团已无剧本可用，都不计入「已套用」。
-    // 🔴 [2026-10-26 主人令「不检查套用的英雄，检查除英雄所有」] 英雄不参与已套用/未套用（见下方 isChecked）。
     const allRows = (rows.length ? rows : buildRows()).filter(r => r.layer === '二级' || r.layer === '三级');
     const usageMap = new Map<string, string[]>();
     const addUse = (id: string, legion: string): void => {
@@ -382,8 +381,12 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
         if (ship) for (const k of [shipUnitId(ship), ship, ship.toUpperCase()]) addUse(k, r.name);
         const types = curDraft ? curDraft.types : r.slots.map(s => s.type);
         for (const t of types) if (t) addUse(t, r.name);
+        // 🔴 [2026-10-26 主人令「英雄被套用的显示取消了，请恢复」] 英雄（主队 commanderUnit）也照常显示被哪些军团套用；
+        //    自动检查那边仍不查英雄未套用。
+        const cmdr = curDraft ? curDraft.commanderUnit : r.commanderUnit;
+        if (cmdr) addUse(cmdr, r.name);
     }
-    const isChecked = (u: { category: string }): boolean => u.category !== 'hero';
+    const isChecked = (_u: { category: string }): boolean => true;
 
     const paint = (): void => {
         hideThumbZoom();
@@ -448,7 +451,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
                 border:1px solid ${pickerCat === c ? '#8a6038' : '#4a5568'};color:#e8e0d0;border-radius:4px;padding:5px 9px;cursor:pointer;font-size:12px;">
                 ${esc(label)}</button>`;
             }).join('')}
-            <div style="display:${kind === 'hero' ? 'none' : 'inline-flex'};gap:3px;align-items:center;">
+            <div style="display:inline-flex;gap:3px;align-items:center;">
               <button type="button" data-status="all" class="lp-pk-status-btn" style="background:${pickerStatusFilter === 'all' ? '#4a3e2c' : '#1e1c18'};border:1px solid ${pickerStatusFilter === 'all' ? '#c8a84b' : '#363024'};color:${pickerStatusFilter === 'all' ? '#f5e6c8' : '#8a8378'};border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;">全部 (${candidateUnits.length})</button>
               <button type="button" data-status="applied" class="lp-pk-status-btn" style="background:${pickerStatusFilter === 'applied' ? '#183620' : '#1e1c18'};border:1px solid ${pickerStatusFilter === 'applied' ? '#38a169' : '#363024'};color:${pickerStatusFilter === 'applied' ? '#7ee787' : '#8a8378'};border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;">✓ 已套用 (${appliedTotal})</button>
               <button type="button" data-status="unapplied" class="lp-pk-status-btn" style="background:${pickerStatusFilter === 'unapplied' ? '#352417' : '#1e1c18'};border:1px solid ${pickerStatusFilter === 'unapplied' ? '#c05621' : '#363024'};color:${pickerStatusFilter === 'unapplied' ? '#fbd38d' : '#8a8378'};border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;">⚪ 未套用 (${unappliedTotal})</button>
