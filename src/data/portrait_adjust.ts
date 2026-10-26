@@ -8296,6 +8296,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 6,
             "offsetY": -16
+        },
+        "/assets/KHITAN/bfe3_69.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/WEI/gen_wang_tong.png": {
+            "scale": 1.44,
+            "offsetX": -22,
+            "offsetY": 40
+        },
+        "/assets/WEI/bfe_umar.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -3
         }
     },
     "folderGuides": {

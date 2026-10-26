@@ -170,6 +170,10 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   qiufu_qiufu: { name: '罗平义军', tier: 4 },              // 裘甫：唐末浙东农民武装，建元罗平据剡县（T4 存在）
   qiong_rengui: { name: '邛都夷兵', tier: 4 },              // 任贵：东汉建武邛都夷兵，杀越巂太守（T4 存在）
   tingzhou_d_chenmin: { name: '广陵部曲', tier: 4 },         // 陈敏：西晋末江南宗族部曲与乡勇，建制可考（T4 存在）
+
+  // 🔴 2026-10-26 主人令「T0、T1 只能一个人带」：宋国势力精锐「殿前捧日」T1 是赵匡胤（开封）的宿卫番号，
+  //    岳飞不该继承。按《精锐图鉴·T0》（郾川/郾城/岳飞/背嵬军，T0；《宋史·岳飞传》郾城以背嵬破拐子马）单列。
+  yanchuan_d_yuefei: { name: '背嵬军', tier: 0 },
 };
 
 /**

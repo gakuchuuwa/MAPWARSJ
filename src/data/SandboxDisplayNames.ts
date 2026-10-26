@@ -14,6 +14,13 @@
  *     **绝对不允许简化为单字**（如把鸿庞简写为"庞"、大夏简写为"大"）。
  *   - **政权（优先级 2）**：旗号 = 史籍**正式国号**（如 大理、大清、大周、百济、黎）。
  *     禁止自造截字（后百）、地名代国号（兰）、姓代国号（甄）、后缀国/族/人（黎国）。
+ *   - 🔴 **中国旗号一字优先（2026-10-26 主人令「中国旗号能用一个字的就用一个字，但是要符合历史」）**：
+ *     中国政权的旗号一律写**史籍正式国号**；**国号本为一字的就写一字**（东晋→晋、后晋→晋、
+ *     南唐→唐、南汉/成汉/后汉/汉赵→汉、孙吴/杨吴→吴、刘宋→宋、萧齐/高齐→齐、冉魏→魏、
+ *     后秦→秦、后赵→赵、后周/武周→周、南梁/后梁→梁、马楚/荆楚→楚、前蜀→蜀、成家/成汉→成、
+ *     隋→隋）；**没有通行一字简称的两字国号仍写两字**（大顺、大西、大周、大夏、大燕、大理、南越、吴越、
+ *     南诏、天完…不许为凑一字丢「大」或截字；已按通行简称写单字的 明/清/元/金 保持）。**同一国号按史可重旗**（晋国/东晋/后晋 都写「晋」），
+ *     靠势力色＋旗形区分，不再强求全局唯一。非中国政权仍守全局唯一。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kilwa': '基',
@@ -201,7 +208,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'tuoba': '拓跋',
 'yuwen': '宇文',
 'chen': '陈',
-'sui': '随',
+'sui': '隋',
     'tang': '唐',
     'min': '闽',
 'shatuo': '沙陀',
@@ -258,13 +265,13 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // 2026-05-25 三国核对追加势力
     // ── 2026-06-16 改：符离·宿（§4.7；旗号「徐」让位下邳徐国）──
-    'gaoqi_d': '高齐',
-    'wuzhou_d': '武周',
+    'gaoqi_d': '齐',
+    'wuzhou_d': '周',
     'zhuang_d': '壮',
 'xibo_d': '锡伯',
-'ranwei_d': '冉魏',
+'ranwei_d': '魏',
 
-'sunwu_d': '孙吴',
+'sunwu_d': '吴',
 
     // ── 2026-05-25 新增：隋朝核对追加势力 ──
 'linshihong': '干越',
@@ -320,7 +327,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-25 明清之际势力（28个）──
     'dashun': '大顺',
 'daxi_ming': '大西',
-'chenghan': '成汉',
+'chenghan': '成',
 'longwu': '隆武',
     'lujian': '婺',
 'dzungar': '绰罗',
@@ -513,7 +520,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chendiaoyan': '陈吊',
     'yezongliu': '处',
     'qianhui': '回军',
-    'miaomin': '苗民',
+    'miaomin': '苗',
     'zhongxiang': '鼎',
     'yang_bozhou': '杨',
     'she': '奢安',
@@ -785,28 +792,28 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   anga: '鸯伽',  // 鸯伽
   shunga: '巽伽',  // 巽伽
   antigonid: '安提',  // 安提柯
-'hou_han': '后汉',
+'hou_han': '汉',
 'yuan_shao': '袁',
-'hou_jin': '后晋',
-'hou_zhao': '后赵',
+'hou_jin': '晋',
+'hou_zhao': '赵',
 'da_yan': '大燕',
-'hou_liang': '后梁',
-'han_zhao': '汉赵',
-'dongjin': '东晋',
-'nan_liang': '南梁',
-'hou_qin': '后秦',
+'hou_liang': '梁',
+'han_zhao': '汉',
+'dongjin': '晋',
+'nan_liang': '梁',
+'hou_qin': '秦',
 'yiqu': '义渠',
-'hou_zhou': '后周',
+'hou_zhou': '周',
 'lvbu': '吕布',
-'chengjia': '成家',
-'qianshu': '前蜀',
-'chuguo': '荆楚',
-'liusong': '刘宋',
-'nanqi': '萧齐',
-'yangwu': '杨吴',
-'nantang': '南唐',
-'machu': '马楚',
-'nanhan': '南汉',
+'chengjia': '成',
+'qianshu': '蜀',
+'chuguo': '楚',
+'liusong': '宋',
+'nanqi': '齐',
+'yangwu': '吴',
+'nantang': '唐',
+'machu': '楚',
+'nanhan': '汉',
 'fangguozhen': '浙东',
 'liang_shuofang': '大梁',
 'qianliang': '前凉',

@@ -446,11 +446,20 @@ export class PlayerHero {
             // 战败 = 脱离军团：清势力（信息栏不再显示旧势力）+ 清任务 + 关自动模式。
             // 走 onHostLost → finishQuest(false) → detach() 统一清场（含 factionId / host / 权限乘数 / 自动模式）。
             this.resetMerit('随军战败');
-            if (this.onHostLost) {
-                this.onHostLost(this.hostLegionId ?? '');
-            } else {
-                this.detach();
-            }
+            // 🔴 [2026-10-26 主人报障「军团战败后，没有播报」] 脱军清场必须**推迟到本帧战斗结算之后**：
+            //    结算顺序 ＝ Army.onBattleEnd（这里）→ 出战单位 onDefeat 回调 → BattleField.resolve 里
+            //    的「攻城失败 / 野战结束 / 全军覆没」播报。这几处都靠 `cameraFollowUI.getFollowedArmyId()`
+            //    判「是不是跟拍军团」，而**跟随玩家本人**时它取的是 `playerHero.getHostLegionId()`——
+            //    原来在这里同步 detach 把 host 清成 null，判定当场落空，战败一句都不播
+            //    （胜仗不 detach，所以「胜有播报、败没播报」）。本帧结算跑完再脱军。
+            const lastHostId = this.hostLegionId;
+            const onLost = this.onHostLost;
+            window.setTimeout(() => {
+                // 本帧内已被别的路径（`PlayerHero.update` 的军团覆灭分支）清过场 → 不再二次处理
+                if (!lastHostId || this.hostLegionId !== lastHostId) return;
+                if (onLost) onLost(lastHostId);
+                else this.detach();
+            }, 0);
             return;
         }
         if (enemyKilled <= 0) return;
