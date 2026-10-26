@@ -941,6 +941,20 @@ export class CityAssetManager {
         this.scheduleBackgroundDrain();
     }
 
+    /**
+     * 🔴 [2026-10-26 主人报「这么多这种问题，请修复」]
+     * 大量据点旗长期停在「已抠绿、未染色」的中性占位：旗布是透明的，画面上只剩旗杆和旗号文字，
+     * 看上去就是「旗帜没有色」。
+     *
+     * 视口批量（`notifyMapInteraction`）依赖 moveend 节流 + 开局快照，容易漏；这里给**据点渲染**加一道兜底：
+     * 任何被画出来的据点，只要它所属势力的旗号还没染色，就立即插队染色（幂等：队列去重、已染色直接返回）。
+     */
+    public static requestFactionFlagTint(factionId: string | null | undefined): void {
+        if (!factionId) return;
+        if (!this.needsFactionTint(factionId)) return;
+        void this.ensureFactionFlag(factionId);
+    }
+
     /** 用户首次拖图：解锁全图 deferred 旗号染色 */
     public static unlockDeferredFlagDrain(): void {
         if (this.deferredDrainUnlocked) return;

@@ -233,7 +233,11 @@ export class GameApp {
 
             // 🔴 [2026-10-25 主人令「删除起义势力」] 起义占位势力 panjun 已删除，不再进 activeFactions；
             //    特殊势力只有叛军 panshu（无字旗、不能出征、兜底「没有武将的据点」）。
-            const activeFactions = [...new Set([...CITIES.map(c => c.factionId), 'panshu'])];
+            // 🔴 [2026-10-26 主人报「还有很多类似问题（旗帜没有色）」]
+            //    原 activeFactions 只取「cities_v2 原主的势力」：**没有原主城的势力**（新建势力、无城小势力）
+            //    既没有启动占位旗 CSS、也不进 deferred 染色队列 —— 乱斗/易手后它们占到的城，旗面就一直是空的。
+            //    改为**全部正规势力 + panshu**，占位与染色队列全覆盖。
+            const activeFactions = [...new Set([...FACTIONS.map((f) => f.id), 'panshu'])];
             const flagCities = CITIES.map((c) => ({
                 lat: c.lat,
                 lng: c.lng,

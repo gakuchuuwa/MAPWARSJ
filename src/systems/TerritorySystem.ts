@@ -2899,6 +2899,11 @@ export class TerritorySystem {
         // Assets (Using CSS Classes for better performance instead of inline Base64)
         const flagClass = resolveCityFlagClass(city);
 
+        // 🔴 [2026-10-26 主人报「这么多这种问题，请修复」] 据点旗兜底染色：
+        //    画到哪座城，该城势力的旗号还没染色就立即排队（幂等）——避免大面积停在
+        //    「已抠绿未染色」的中性占位（旗布透明、只剩旗杆和字，看上去没有颜色）。
+        CityAssetManager.requestFactionFlagTint(city.factionId);
+
         // 🔴 [2026-10-24 主人令「函谷关是吴越，错误」「潼关是太行，错误」]
         //   百岁模式的旗号时代名按**本据点建筑文化**取（同一势力的中原/江南据点各用各的时代名），
         //   所以旗号文字要带上据点的 buildingStyle；这个值同时写进旗面元素的 data 属性，

@@ -44,6 +44,10 @@ export class LegionFlagDrawer {
      * Dynamically retrieve or asynchronously load the faction flag body.
      */
     private static getOrLoadFactionFlag(factionId: string): HTMLImageElement | null {
+        // 🔴 [2026-10-26 主人报「这么多这种问题，请修复」] 军团旗同样兜底染色：
+        //    该势力旗号还没染色时，军团旗会拿「已抠绿未染色」的中性旗（黑/透明，看上去没有颜色）。
+        //    画军团旗的这一刻顺手把它排进染色队列（幂等，已染色势力直接返回）。
+        CityAssetManager.requestFactionFlagTint(factionId);
         const flagUrl = CityAssetManager.getProcessedFlag(factionId);
         if (!flagUrl) return null;
 

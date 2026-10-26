@@ -8286,6 +8286,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": -1,
             "offsetY": -13
+        },
+        "/assets/WEI/ming_d_hanqing.png": {
+            "scale": 1.14,
+            "offsetX": 6,
+            "offsetY": -5
+        },
+        "/assets/MALAY/halapeng_yiba.png": {
+            "scale": 1.06,
+            "offsetX": 6,
+            "offsetY": -16
         }
     },
     "folderGuides": {

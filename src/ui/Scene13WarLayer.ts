@@ -4468,7 +4468,7 @@ export class Scene13WarLayer {
      * 每帧维护每支分队（50 人）唯一的「队级攻击目标（Lane Target）」：
      *   1. 每个目标（敌方分队 targetLane 或守城建筑/城门 targetBld）最多只允许 MAX_LANE_ATTACKERS = 4 支分队同时锁定攻击；
      *   2. 超出 4 队的分队自动分流去攻击其他未满 4 队的目标；若所有可打目标均已满 4 队，则不分配队级目标；
-     *      [2026-10-26 主人令] 野战未分到目标的队伍沿进军方向继续前进（含自动跟随的玩家），不再原地等待；
+     *      [2026-10-26 主人令] 野战未分到目标的队伍由领队带队、队员保持槽位，按本队最低速度前进（含自动跟随的玩家）；
      *   3. 攻城战第二波起守军在九建筑出兵口刷新，城门被摧毁前原地待命，城门被摧毁后集体发动反攻。
      */
     private isInsideAttackerCamp(x: number, y: number): boolean {
@@ -6702,6 +6702,19 @@ export class Scene13WarLayer {
             if (laneFighting || this.search(L, MARCH_R, 0, false)) laneLeaders.delete(lane);
         }
 
+        // 🔴 [2026-10-26 主人令「战斗临时结束，本队保持阵型前进」] 暂时脱战且没有队级目标的野战分队：
+        //    领队前进、队员跟随各自槽位；整队速度取本队最低值，玩家自动跟队时也不能用英雄移速超过队伍。
+        //    laneLeaders 的净空判据保持不变：本队有人交战或领队附近发现敌人时不建表，照旧散开接战。
+        const laneFormationSpeeds = new Map<number, number>();
+        if (!this.marching && this.battleType !== 'siege') {
+            for (const m of this.men) {
+                if (m.hp <= 0 || m.hero || m.siegeW || !laneLeaders.has(m.lane)
+                    || this.laneTargets.has(m.lane) || this.remnantLanes.has(m.lane)) continue;
+                const spd = this.statsFor(m.key, m.f).spd;
+                laneFormationSpeeds.set(m.lane, Math.min(laneFormationSpeeds.get(m.lane) ?? Infinity, spd));
+            }
+        }
+
         for (const m of this.men) {
             this.releaseReservedTarget(m);
             if (m.hp <= 0) continue;
@@ -6957,11 +6970,12 @@ export class Scene13WarLayer {
                     //    改前这里会掉进 aimAt，每 0.5 秒把玩家点的点改掉一次（见 heroOrderPending）。
                     //    什么都不做 = 目标点保持玩家点下的那一个。
                 } else if (laneStandby) {
-                    // 🔴 [2026-10-26 主人令「残兵直接前进，包括玩家」] 4 队集火上限只限制队级目标分配，不再把没分到目标的野战分队钉在原地；
-                    //    沿本方进军方向继续前进，视野内接敌仍走上面的正常索敌/攻击；玩家自动跟随本队，手动「待命」由 holdCmd 拦截、不受影响。
+                    // 🔴 [2026-10-26 主人令「残兵直接前进，包括玩家」「本队保持阵型前进」] 4 队集火上限只限制队级目标分配；
+                    //    野战脱战后由领队带队前进，其余队员回各自槽位，整队按最低速度推进；视野内接敌仍走正常索敌/攻击。
+                    //    玩家自动跟随本队，手动「待命」由 holdCmd 拦截、不受影响。
                     // 🔴 [2026-10-16 主人令「守方却打到攻方营地，应该是回城需要敌人呀，不要再营地等着打乱入者」]
                     //    攻城战守方在无目标待命时，若已远离本队城防位置，领队带全队回城寻敌驻守，绝不在外场或攻方营地原地干等
-                    const slot = this.battleType === 'siege' ? this.laneSlotTarget(m, laneLeaders) : null;
+                    const slot = this.laneSlotTarget(m, laneLeaders);
                     if (slot) {
                         [m.tx, m.ty] = slot;
                     } else if (this.battleType === 'siege' && m.f === 1) {
@@ -7120,7 +7134,7 @@ export class Scene13WarLayer {
                         if (isGuard) {
                             m.tx = m.x; m.ty = m.y;
                         } else if (laneStandby) {
-                            const slot = this.battleType === 'siege' ? this.laneSlotTarget(m, laneLeaders) : null;
+                            const slot = this.laneSlotTarget(m, laneLeaders);
                             if (slot) {
                                 [m.tx, m.ty] = slot;
                             } else if (this.battleType !== 'siege') {
@@ -7600,7 +7614,13 @@ export class Scene13WarLayer {
                 //    只影响玩家本人无敌人时的走位；其他兵种的 8px 死区、追击与出手判定一律不动。
                 const heroTrackMoving = m.hero === true && !isGuard && this.playerCmd === 'attack';
                 const trackSlot = !!slot || m.march || isGuard || heroTrackMoving;
-                const step = (m.hero && (slot || m.march) && this.spawns[m.lane] ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd) : stats.spd) * spdK * this.uphillSpeedK(m.x, m.y, dx, dy) * dt;
+                const normalSpd = m.hero && (slot || m.march) && this.spawns[m.lane]
+                    ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd)
+                    : stats.spd;
+                // 脱战整队推进：普通队员与自动玩家都不得超过本队最慢兵种；地形、坡度等原有修正照常保留。
+                const formationSpd = (laneStandby || (m.hero && this.playerCmd === 'attack')) ? laneFormationSpeeds.get(m.lane) : undefined;
+                const moveSpdK = formationSpd !== undefined && m.hero ? spdK / HERO_SPEED_MULT : spdK;
+                const step = (formationSpd ?? normalSpd) * moveSpdK * this.uphillSpeedK(m.x, m.y, dx, dy) * dt;
                 const arriveAt = trackSlot ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
                 if (stats.spd > 0 && d > arriveAt) {
                     const mv = trackSlot ? Math.min(step, d) : step;   // 跟随锚点/列阵推进/原位警戒归位：连续跟随，不迈整步
@@ -7925,17 +7945,18 @@ export class Scene13WarLayer {
         this.engagedQuietSec = this.meleeContactCount > 0 ? 0 : this.engagedQuietSec + dt;
         // 近战接触音景结账：本帧兵种循环已把 meleeContactCount 数完，这里决定淡入还是淡出。
         this.tickContactSfx(dt);
-        if (!waitCollapse && (alive[0] <= 0 || (!centerRule && alive[1] <= 0) || centerDown || timeUp)) {
+        // 🔴 [2026-10-26 主人令「双方有一方无兵即算输」] 野战与攻城统一：池＋场上可计兵力任一方便是零，立即判该方负；
+        //    不再要求攻城守方必须中心建筑被拆才败，也不让中心建筑倒塌动画推迟无兵判负。
+        const noTroopDecision = alive[0] <= 0 || alive[1] <= 0;
+        if (noTroopDecision || (!waitCollapse && (centerDown || timeUp))) {
             this.over = true;
             if (this.contactSfxOn) {
                 this.contactSfxOn = false;
                 audioManager.stopSceneLoop('land_contact');
             }
             // 🔴 [2026-10-15 主人令] 300 秒倒计时到点仍未攻下城池（攻方未全灭且未拆掉中心建筑）⇒ 此次战斗算打平（'draw'）
-            const isDraw = timeUp && alive[0] > 0 && !centerDown && (centerRule || alive[1] > 0);
-            const attackerLost = centerRule
-                ? !centerDown
-                : (alive[0] <= 0 || (!centerDown && alive[1] > 0 && timeUp));
+            const isDraw = timeUp && !noTroopDecision && !centerDown;
+            const attackerLost = alive[0] <= 0 || (alive[1] > 0 && centerRule && !centerDown);
             const resultWinner: 'attacker' | 'defender' | 'draw' = isDraw
                 ? 'draw'
                 : (attackerLost ? 'defender' : 'attacker');
