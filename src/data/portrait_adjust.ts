@@ -7678,7 +7678,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/ORIE/gen_thoros.png": {
-            "scale": 1.22,
+            "scale": 1.2,
             "offsetX": 0,
             "offsetY": 13
         },
@@ -8038,8 +8038,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -1
         },
         "/assets/CENTRAL_ASIA/sute_sipitaminisi.png": {
-            "scale": 1.07,
-            "offsetX": 0,
+            "scale": 1.11,
+            "offsetX": 4,
             "offsetY": -5
         },
         "/assets/BURGUNDIANS/gen_john_fearless.png": {
@@ -8326,6 +8326,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -2
+        },
+        "/assets/ORIE/antiaokegongguo_nuerding.png": {
+            "scale": 1.32,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/GEORGIANS/yibiluliya_pharnavaz.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/MACEDONIAN/bfe_mendenus.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

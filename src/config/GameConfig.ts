@@ -46,11 +46,14 @@ export class GameConfig {
     static CITY = {
         MIN_GARRISON: 1000,
         /**
-         * [2026-10-26 主人定「边境据点增兵更快，只把内地的增兵调给边境，势力统一规划」]
-         * 边境据点每季到手的增兵 ≤ 自身产量 × 此倍数（多出来的仍留在内地原城，同旧规则）。
-         * 防大帝国内地多、边境少时把前线一下子灌满。见 RecruitmentSystem.recruitSeasonGarrison。
+         * [2026-10-26 主人定「边境据点增兵更快」「各自据点算各自的，像欧洲封建领主」]
+         * 每季增兵速度倍率（只管速度，不动兵力上限）；见 RecruitmentSystem.recruitSeasonGarrison。
+         * 边境城：路网直连的据点里有别家势力。
+         * 保持 1：开局几乎每城都是边境，边境 >1 等于全图加兵；「边境比内地快」靠内地放慢实现，总量只减不增。
          */
-        BORDER_RECRUIT_MAX_MULT: 3,
+        BORDER_RECRUIT_MULT: 1,
+        /** 内地城驻军够基础治安兵（开局驻军）以后的增兵倍率；不够时照常 ×1 */
+        INTERIOR_RECRUIT_MULT: 0.5,
     };
     static SIEGE = {
         /**

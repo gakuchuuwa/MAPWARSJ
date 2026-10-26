@@ -690,6 +690,37 @@ export class Scene13WarLayer {
         try { this.triggerScene13Skill(side, six); } finally { this.viewerCaster = null; }
         return 'cast';
     }
+
+    /** 渲染层每帧各读一次；持续余效直接跟随战斗计时，不另存第二份 Buff 状态。 */
+    public getScene13SkillVisualState(f: 0 | 1): Scene13SkillVisualState {
+        return {
+            frenzy: Math.max(0, this.skillFrenzyTimer[f]),
+            shield: Math.max(0, this.skillShieldTimer[f]),
+            panic: Math.max(0, this.skillPanicTimer[f]),
+        };
+    }
+
+    /** 释放爆发按真实毫秒播放：5× 加速时仍能让直播观众看清，且绝不参与战斗结算。 */
+    private spawnSkillVfx(
+        f: 0 | 1,
+        six: TacticalSixSet,
+        x: number,
+        y: number,
+        paid: boolean,
+        targets: WarMan[],
+        points: Scene13SkillVfxPoint[],
+    ): void {
+        const dur = six === 'shengzhan' || six === 'hunzhan' || six === 'bingzhan' ? 1.8 : 1.5;
+        const dir = this.advanceVec[f];
+        this.skillVfx.push({
+            six, side: f, x, y,
+            angle: Math.atan2(dir.y, dir.x),
+            startMs: performance.now(), dur, paid, targets, points,
+        });
+        // 正常 3.4 秒释放闸下最多同时存在一条；上限只防调试接口异常连发造成无界增长。
+        if (this.skillVfx.length > 12) this.skillVfx.splice(0, this.skillVfx.length - 12);
+    }
+
     /** 正在替哪位观众放计（大字上带他的名字） */
     private viewerCaster: { name: string; paid: boolean } | null = null;
     /** 这一方刚放的那一计叫什么（直播播报用） */
@@ -801,7 +832,7 @@ export class Scene13WarLayer {
         return taken;
     }
 
-    private spawnImmediateSkillReinforcements(f: 0 | 1, addTotalPop: number, keys?: string[]): void {
+    private spawnImmediateSkillReinforcements(f: 0 | 1, addTotalPop: number, keys?: string[], vfxTargets?: WarMan[]): void {
         const mySpawns = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
         if (mySpawns.length === 0) return;
 
@@ -835,7 +866,7 @@ export class Scene13WarLayer {
             //    本方的这套兵模从没加载过 ⇒ 渲染取不到图，整队隐形。入列前现补我方阵营素材。
             const manKey = keys && keys.length ? keys[(idx - 1) % keys.length] : s.key;
             this.ensureType(manKey, f);
-            this.men.push({
+            const man: WarMan = {
                 f: s.f, key: manKey, jx, jy,
                 zid: this.manSeq++,
                 x: spawnX, y: spawnY, tx: spawnX, ty: spawnY,
@@ -850,7 +881,9 @@ export class Scene13WarLayer {
                 lane: s.lane,
                 guardPost: (s.f === 1 && this.battleType === 'siege' && !!this.deCity && !this.isDefenderGateDestroyed()) ? { x: spawnX, y: spawnY } : undefined,
                 claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: FADE_IN, fadeMax: FADE_IN,
-            });
+            };
+            this.men.push(man);
+            vfxTargets?.push(man);
         }
     }
 
@@ -919,10 +952,14 @@ export class Scene13WarLayer {
         this.skillAnsweredSeq[f] = this.skillCastSeq[ef];
 
         // ── 执行六计正交战场效果 ──
+        // 只收集本次真正受影响的对象供渲染高光；下列各分支的战斗结算保持原样。
+        const vfxTargets: WarMan[] = [];
+        const vfxPoints: Scene13SkillVfxPoint[] = [];
         if (six === 'shengzhan') {
             // 1. 【胜】增己兵：立即从本方全部非玩家精锐出兵口一次性涌出 +6% 初始总兵力的生力军参战
             const addTotalPop = Math.max(12, Math.round(this.initPool[f] * 0.06));
-            this.spawnImmediateSkillReinforcements(f, addTotalPop);
+            for (const sp of this.spawns) if (sp.f === f && !sp.playerElite) vfxPoints.push({ x: sp.x, y: sp.y });
+            this.spawnImmediateSkillReinforcements(f, addTotalPop, undefined, vfxTargets);
         } else if (six === 'baizhan') {
             // 2. 【败】死战：折损敌方总兵力 6%（额度按总兵力算，体现在在场兵力上）
             // 🔴 [2026-10-21 主人令「所有的8%/5%是总兵力的，但体现是在场兵力；在场不够就从下一波继续」+「死前线的，逃跑退场不留尸」]
@@ -935,6 +972,7 @@ export class Scene13WarLayer {
                 if (quotaPop <= 0) break;
                 if (victim.hp <= 0) continue;
                 quotaPop -= Math.max(1, victim.pop || 1);
+                vfxPoints.push({ x: victim.x, y: victim.y });
                 victim.hp = 0;
                 (victim as WarMan & { forceFlee?: boolean }).forceFlee = true;   // 退场方式＝溃逃，不留尸体（见 pushCorpse）
                 // 🔴 [2026-10-22 查六计时修] 计策折损不是任何单位砍死的：旧写法传 victim 当 killer，
@@ -990,6 +1028,7 @@ export class Scene13WarLayer {
                 m.tx = m.x; m.ty = m.y; m.claims = 0; m.claimsNext = 0; m.atkers = 0; m.atkNext = 0;
                 m.fadeT = FADE_IN; m.fadeMax = FADE_IN;
                 converted.push(m);
+                vfxTargets.push(m);
             }
             if (converted.length > 0) {
                 const set = new Set(converted);
@@ -998,9 +1037,10 @@ export class Scene13WarLayer {
             // 在场不够：从敌方下一波（后备池）继续策反，直接以敌方兵种在我方出兵口入列
             if (quotaPop > 0) {
                 const taken = this.drainSidePool(ef, quotaPop);
-                if (taken.length > 0) this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key));
+                if (taken.length > 0) this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key), vfxTargets);
             }
         }
+        this.spawnSkillVfx(f, six, camX, camY, viewer?.paid === true, vfxTargets, vfxPoints);
 
         // 通知 CombatUI 播放立绘脉冲缩放与技能名 Cut-in 动画
         const sideKey: 'attacker' | 'defender' = f === 0 ? 'attacker' : 'defender';
@@ -1629,6 +1669,7 @@ export class Scene13WarLayer {
         this.slashes = [];
         this.sparks = [];
         this.fxs = [];
+        this.skillVfx = [];
         this.fallenFlags = [];
         this.clouds = [];
         this.clearGround();
@@ -2434,6 +2475,9 @@ export class Scene13WarLayer {
         // DE 攻击特效（爆炸/炮口焰）：独立一次性生命周期，播完移除。
         for (const f of this.fxs) f.t += dt;
         this.fxs = this.fxs.filter(f => f.t < f.dur);
+        // 六计释放爆发按真实时间收尾；残局也继续播完，不冻结在半空。
+        const nowMs = performance.now();
+        this.skillVfx = this.skillVfx.filter(v => nowMs - v.startMs < v.dur * 1000);
     }
 
     /** 残局待命的每帧推进：只推动画，不推战斗 */
@@ -2660,6 +2704,7 @@ export class Scene13WarLayer {
         this.slashes = [];
         this.sparks = [];
         this.fxs = [];
+        this.skillVfx = [];
         this.fallenFlags = [];
         this.clouds = [];
         this.decorSprites = [];

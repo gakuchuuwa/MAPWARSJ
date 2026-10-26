@@ -20,6 +20,7 @@ import { animalDeOf } from './Scene13Animals';
 import { gunpowderTrailSprite } from './Scene13SpriteCache';
 import { loopRate } from './Scene13UnitTables';
 import { syncDeCityGround } from './Scene13CityLayout';
+import { drawScene13SkillCastVfx, drawScene13SkillStatusVfx } from './Scene13SkillVfx';
 import type { WarBank } from './Scene13Types';
 
 /** 该动作的「整组（8 向）都到齐」判定：倒戈兵的本方染色素材是分批到的，整组齐了才换色，免得一队人花斑 */
@@ -239,6 +240,9 @@ export function render(this: Scene13WarLayer): void {
         for (const b of birds) vis[w++] = b;
     }
     _tSort = performance.now() - _tsort0;
+
+    // 六计地面层：冲击光圈、增援/溃逃落点放在士兵之下，不遮兵模。
+    drawScene13SkillCastVfx(ctx, this.skillVfx, 'ground', (x, y) => this.elevationLiftAt(x, y), performance.now());
 
     // ── [2026-09-05 玩家] 受控编队脚下标记环（画在人之下）：攻击=绿 / 待命=蓝；玩家脚下金环 ──
     if (this.playerSetup && this.playerCtlLanes.size) {
@@ -644,6 +648,16 @@ export function render(this: Scene13WarLayer): void {
             ctx.drawImage(fd.img, fr * fd.fw, 0, fd.fw, fd.fh, f.x - fd.hx * s, f.y - fd.hy * s, fd.fw * s, fd.fh * s);
         }
     }
+
+    // 六计上层：刀光、盾墙、漩涡、倒戈连线与金色认主扫光；持续余效只读现有倒计时。
+    drawScene13SkillCastVfx(ctx, this.skillVfx, 'top', (x, y) => this.elevationLiftAt(x, y), flagTick);
+    drawScene13SkillStatusVfx(
+        ctx,
+        this.men,
+        [this.getScene13SkillVisualState(0), this.getScene13SkillVisualState(1)],
+        (x, y) => this.elevationLiftAt(x, y),
+        flagTick * 0.001,
+    );
     if (hasTransform) ctx.restore();
     this.coverStrategyMap();
     // 文明6风格光影开关开启时：左上角鎏金斜阳 + 丁达尔斜向光束 + 右下冷蓝大气暗角（统合 2D 建筑/城墙/林木与 WebGL 地面光影）

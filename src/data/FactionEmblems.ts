@@ -24,10 +24,10 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     xila: 'OWL',   // 雅典·猫头鹰
     maqidun: 'SUN',   // 马其顿·维吉纳太阳
     gaolu: 'FLEUR',   // 法兰西·鸢尾
-    yinggelan: 'LATIN_CROSS',   // 英格兰·圣乔治十字
-    tiaodun_qishi: 'IRON_CROSS',   // 条顿骑士团·铁十字
+    yinggelan: 'ENGLAND_CROSS',   // 英格兰·圣乔治平十字（直臂、不外扩）
+    tiaodun_qishi: 'TEUTONIC_CROSS',   // 条顿骑士团·黑十字（不是1813年后的铁十字勋章）
     yelusalengwg: 'JERUSALEM_CROSS',   // 耶路撒冷王国·耶路撒冷十字
-    shengdian_qishi: 'TEMPLAR_SHIELD',   // 圣殿骑士团·盾
+    shengdian_qishi: 'TEMPLAR_CROSS',   // 圣殿骑士团·cross pattée（不再用通用盾）
     osman: 'CRESCENT',   // 奥斯曼·新月
     kongque: 'CARTWHEEL',   // 孔雀帝国·法轮
     zhuluo: 'TIGER',   // 朱罗·虎
@@ -150,6 +150,21 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     shunga: 'TRIRATNA',   // 巽伽·三宝（triratna）
     boluo: 'DHARMA_WHEEL12',   // 波罗帝国·十二辐法轮
     ahaomu: 'AHOM_ELEPHANT',   // 阿豪姆·象
+    // ── 2026-10-26 西方势力史实纹章补绘（14 家）────────────────────────────
+    lagoniya: 'SPARTA_LAMBDA',   // 斯巴达·Λ（前5世纪拉刻岱蒙盾饰文献）
+    boootiya: 'THEBES_BOEOTIAN_SHIELD',   // 底比斯·波俄提亚盾（城邦钱币主纹）
+    buni: 'CARTHAGE_TANIT',   // 迦太基·塔尼特符（还愿碑）
+    talanduo: 'TARENTUM_DOLPHIN',   // 塔兰托·海豚骑者（城邦钱币）
+    danmai: 'DENMARK_CROSS',   // 丹麦·Dannebrog偏杆侧北欧十字
+    asikanani: 'BRANDENBURG_EAGLE',   // 勃兰登堡藩侯国·红鹰（无普鲁士王冠）
+    huohengsuolun: 'PRUSSIA_EAGLE',   // 勃兰登堡-普鲁士·王冠黑鹰与剑杖
+    wende: 'SAXONY_CRANCELIN',   // 萨克森·横条与斜贯菱环
+    pufaerci: 'PALATINATE_LION',   // 普法尔茨·戴冠狮
+    habusibao: 'HABSBURG_EAGLE',   // 哈布斯堡·皇帝双头鹰与奥地利盾心
+    xibanya: 'SPAIN_PILLARS',   // 西班牙·海格力斯双柱（卡洛斯一世）
+    jiaohuangguo: 'PAPAL_KEYS',   // 教皇国·圣彼得交叉钥匙
+    yidali_wangguo: 'ITALY_SAVOY',   // 意大利王国·萨伏伊十字盾与王冠
+    xilawangguo: 'GREECE_CROWNED_CROSS',   // 希腊王国·希腊十字与王冠
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

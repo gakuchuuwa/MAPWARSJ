@@ -18,7 +18,7 @@
 import { CityManager } from '../core/CityManager';
 import { LegionManager } from '../core/LegionManager';
 import { GameConfig } from '../config/GameConfig';
-import { CITY_CONFIG, clampCityTroops, getCityMaxTroops } from '../config/CityConfig';
+import { CITY_CONFIG, clampCityTroops } from '../config/CityConfig';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { GameTime } from '../core/GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
@@ -211,16 +211,13 @@ export class RecruitmentSystem {
      * 每季：按据点等级补驻军（大200 / 中150 / 小100 / 关50），产出全进城防。
      * 【2026-06-12 主人裁定】「家城产出优先补自家军团」已删除；军团恢复改为战后统一 30%。
      *
-     * 【2026-10-26 主人定「边境据点增兵更快，只把内地的增兵给边境，势力统一规划；为了平衡，不为增加」】
-     *   各城产量照旧算；同势力内：
-     *   ① 边境城 = 路网直连（穿过战场节点）的据点里有别家势力的城；其余为内地城。
-     *   ② 内地城驻军已够出兵线（出兵门槛 ÷ 0.9）时，本季产量交给本势力边境池；不够则自留（保住内地武将出兵）。
-     *   ③ 边境池按各边境城自身产量比例分配，每城本季到手 ≤ 自身产量 × BORDER_RECRUIT_MAX_MULT，且不超城上限。
-     *   ④ 分不出去的退回原内地城（= 旧规则）。势力总增兵一兵不多。没有边境城的势力一切照旧。
+     * 【2026-10-26 主人定「武将跟着据点走，各自据点算各自的」「像欧洲封建领主，不像中国大一统」】
+     *   每座据点只按自己的处境调增兵速度，势力之间、据点之间不调兵：
+     *   ① 边境城（路网直连的据点里有别家势力）：本城产量 × BORDER_RECRUIT_MULT。
+     *   ② 内地城：驻军不到基础治安兵（开局驻军 initialTroops，且不低于出兵线）时照常增兵；
+     *      够了以后 × INTERIOR_RECRUIT_MULT（后方领主不扩军，只慢慢补）。
      */
     private recruitSeasonGarrison(cities: ReturnType<CityManager['getCities']>): void {
-        type Entry = { city: RecruitmentCity; culture66: string; prod: number; border: boolean };
-        const byFaction = new Map<string, Entry[]>();
         const factionOf = new Map<string, string>();
         for (const city of cities) factionOf.set(city.id, city.factionId || '');
 
@@ -231,69 +228,29 @@ export class RecruitmentSystem {
 
             const cfg = CITY_CONFIG[city.type];
             if (!cfg) continue;
+
+            // 攻城战中驻军兵力由 BattleUnitFactory 适配器缓存驱动，勿直接改 city.troops
+            if (!this.isCityGarrisonCommitted(city.id)) {
+                const region = this.getCityRegion(city as RecruitmentCity);
+                const culture66 = toCulture66((city as { buildingStyle?: string }).buildingStyle || region);
+                const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[culture66] ?? 1.0;
+                const troops = city.troops || 0;
+                const postureMult = this.isBorderCity(city.id, city.factionId, factionOf)
+                    ? GameConfig.CITY.BORDER_RECRUIT_MULT
+                    : troops >= this.getCityBaseGarrison(city as RecruitmentCity)
+                        ? GameConfig.CITY.INTERIOR_RECRUIT_MULT
+                        : 1;
+                const added = Math.floor(cfg.recruitPerSeason * recruitMult * postureMult);
+                city.troops = clampCityTroops(city.type, troops + added, culture66);
+            }
             this.pendingLabelCityIds.add(city.id);
-
-            // 攻城战中驻军兵力由 BattleUnitFactory 适配器缓存驱动，勿直接改 city.troops（不产也不收）
-            if (this.isCityGarrisonCommitted(city.id)) continue;
-
-            const region = this.getCityRegion(city as RecruitmentCity);
-            const culture66 = toCulture66((city as { buildingStyle?: string }).buildingStyle || region);
-            const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[culture66] ?? 1.0;
-            const prod = Math.floor(cfg.recruitPerSeason * recruitMult);
-            const border = this.isBorderCity(city.id, city.factionId, factionOf);
-            const list = byFaction.get(city.factionId) ?? [];
-            list.push({ city: city as RecruitmentCity, culture66, prod, border });
-            byFaction.set(city.factionId, list);
         }
+    }
 
-        const maxMult = GameConfig.CITY.BORDER_RECRUIT_MAX_MULT;
-        for (const list of byFaction.values()) {
-            const added = new Map<Entry, number>(list.map((e) => [e, e.prod]));
-            const borders = list.filter((e) => e.border);
-            if (borders.length > 0) {
-                // ② 内地城够出兵线的，本季产量入池
-                const donors = list.filter((e) =>
-                    !e.border && (e.city.troops || 0) >= this.getCityMinSpawnTroops(e.city) / 0.9);
-                let pool = 0;
-                for (const d of donors) { pool += d.prod; added.set(d, 0); }
-
-                // ③ 按自身产量比例分给边境城（各城有空间上限，分满的退出，剩下的再分一轮）
-                const room = new Map<Entry, number>(borders.map((b) => {
-                    const capRoom = getCityMaxTroops(b.city.type, b.culture66) - (b.city.troops || 0) - b.prod;
-                    return [b, Math.max(0, Math.min(b.prod * (maxMult - 1), capRoom))];
-                }));
-                let open = borders.filter((b) => room.get(b)! > 0 && b.prod > 0);
-                while (pool >= 1 && open.length > 0) {
-                    const weight = open.reduce((s, b) => s + b.prod, 0);
-                    let given = 0;
-                    for (const b of open) {
-                        const share = Math.min(room.get(b)!, Math.floor(pool * b.prod / weight));
-                        room.set(b, room.get(b)! - share);
-                        added.set(b, added.get(b)! + share);
-                        given += share;
-                    }
-                    pool -= given;
-                    if (given === 0) break;
-                    open = open.filter((b) => room.get(b)! > 0);
-                }
-
-                // ④ 没分出去的按比例退回内地原城
-                const donorProd = donors.reduce((s, d) => s + d.prod, 0);
-                if (pool > 0 && donorProd > 0) {
-                    let back = 0;
-                    for (const d of donors) {
-                        const share = Math.floor(pool * d.prod / donorProd);
-                        added.set(d, share);
-                        back += share;
-                    }
-                    added.set(donors[0], added.get(donors[0])! + pool - back); // 取整余数，保证总量不变
-                }
-            }
-
-            for (const e of list) {
-                e.city.troops = clampCityTroops(e.city.type, (e.city.troops || 0) + added.get(e)!, e.culture66);
-            }
-        }
+    /** 基础治安兵：开局驻军量，且不低于出兵线（内地城攒够这么多后放慢增兵） */
+    private getCityBaseGarrison(city: RecruitmentCity): number {
+        const initial = CITY_CONFIG[city.type]?.initialTroops ?? 0;
+        return Math.max(initial, this.getCityMinSpawnTroops(city) / 0.9);
     }
 
     /** 边境城：路网直连（战场节点穿过去）的据点里有别家势力（含叛军/无主）的城 */
