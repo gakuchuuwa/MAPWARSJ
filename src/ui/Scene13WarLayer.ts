@@ -1413,11 +1413,18 @@ export class Scene13WarLayer {
     private pickCamTarget(hero: WarMan, dt: number): WarMan | null {
         const f = hero.f;
         const heroAlive = hero.hp > 0;
-        // 档位：0 交战玩家 1 交战主将队 2 交战士兵 3 移动玩家 4 移动主将队 5 移动士兵
+        // 档位：0 交战玩家 1 交战主将队 2 交战士兵 3 移动玩家 4 移动主将队 5 移动士兵；6 静止不入选
+        const isMoving = (m: WarMan): boolean => {
+            if ((m.stepMax ?? 0) > 0.05) return true;
+            return m.march && this.deployT <= 0
+                && Math.hypot(m.tx - m.x, m.ty - m.y) > LANE_TRACK_EPS;
+        };
         const tierOf = (m: WarMan): number => {
-            if (m.hero) return m.foe ? 0 : 3;
+            if (m.hero) return m.foe ? 0 : (isMoving(m) ? 3 : 6);
             const cmd = !!this.spawns[m.lane]?.commander;
-            return (m.foe ? 0 : 3) + (cmd ? 1 : 2);
+            if (m.foe) return cmd ? 1 : 2;
+            if (!isMoving(m)) return 6;
+            return cmd ? 4 : 5;
         };
         const eligible = (m: WarMan): boolean => m.hp > 0 && m.f === f && !m.siegeW && (!m.hero || m === hero)
             && (m.hero || this.men.includes(m));
@@ -7998,12 +8005,15 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-11 主人令] **平时镜头自动跟随乱入者**；玩家可以拖拽（滚轮缩放）镜头，**9 秒**不再操作就自动回到乱入者。
         //    本块只在新战术模式跑（useGroundGL）；旧 13 无平移/缩放，不受影响。
         if (this.useGroundGL && this.canvas) {
+            // 🔴 [2026-10-26 主人令] 玩家交战立即回玩家：手拖镜头与计策落点的停留都立即作废。
+            if (this.heroMan && this.heroMan.hp > 0 && this.heroMan.foe) {
+                this.skillCamTimer = 0;
+                this.userInteractingTimer = 0;
+            }
             if (this.userInteractingTimer > 0) {
                 this.userInteractingTimer -= dt;
             } else {
                 let targetFocusX = 0, targetFocusY = 0, count = 0;
-                // 🔴 [2026-10-26 主人令「玩家交战取消计策镜头」] 玩家一交战，看计策落点的 9 秒作废，立即回玩家
-                if (this.heroMan && this.heroMan.hp > 0 && this.heroMan.foe) this.skillCamTimer = 0;
                 if (this.skillCamTimer > 0) {
                     // 守城待在城里时：先看放计的地方 9 秒，再回玩家（见 triggerScene13Skill）
                     this.skillCamTimer -= dt;

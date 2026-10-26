@@ -4378,9 +4378,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 20
         },
         "/assets/CENTRAL_ASIA/huarazim_mohemo.png": {
-            "scale": 1.25,
+            "scale": 1.21,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -5
         },
         "/assets/JIANGNAN/qianzhong_wubayue.png": {
             "scale": 1,
@@ -8411,6 +8411,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.38,
             "offsetX": -7,
             "offsetY": 0
+        },
+        "/assets/ORIE/sumeier_nabopalasa.png": {
+            "scale": 1.26,
+            "offsetX": 14,
+            "offsetY": 12
+        },
+        "/assets/BURMESE/arakan_mingbin.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/INDIA/gurjara_vatsaraja.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 4
         }
     },
     "folderGuides": {

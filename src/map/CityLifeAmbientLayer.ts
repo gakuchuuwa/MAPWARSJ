@@ -17,7 +17,8 @@ import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
  *      （DORADO_FISH / SALMON_FISH / TUNA_FISH / SHORE_FISH 跃水游弋）；战时渐变为沉没破损渔船（SHP_FISHING_SHIP:sink + SHIP_SINK_SMALL）。
  *   4. 对应四季（每季 15 秒；季末最后 5 秒交叉渐变农田、树林与劳作动作，季首完成衔接）。
  *   5. 战火破坏与尸骸渐变：据点被围攻或周围半径 0.3° 内有军团交战时，通过 damageBlend (0 → 1) 平滑渐变为
- *      被破坏的农车/栅栏/断木废墟、倒地平民尸体、平民白骨、战死牲畜与沉没渔船；战后余波结束后平滑恢复。
+ *      被破坏的农车/栅栏/断木废墟、倒地平民尸体、平民白骨、战死牲畜与沉没渔船；完全战毁后保留残骸，
+ *      到第二年春季且战斗已结束时，先渐隐残骸，再渐显生产组合。
  */
 
 type Pt = { lat: number; lng: number };
@@ -110,6 +111,7 @@ interface CityLifeActor {
     peaceAlpha: number;        // 和平期季节出勤透明度 0..1
     actionAlpha: number;       // 换季动作切换淡入淡出系数 0..1
     damageBlend: number;       // 战火破坏渐变系数：0=和平劳作，1=战火被毁废墟/尸体/沉船
+    recoveryYear?: number;     // 完全战毁后允许恢复的年份；仍须等到该年或更晚年份的春季
     combatStartSec: number;    // 本轮进入战火状态的起始秒数
     presentAtCombat: boolean;  // 本轮是否经历过战火；恢复完成后才复位
     inCombatVisual: boolean;   // 当前是否处于战争交叉渐变阶段
@@ -135,7 +137,6 @@ const CULL_MARGIN_DEG = 0.5;
 // 自动乱斗镜头一直跟着正在打的仗，半径过大会让画面里的据点永远处于战火态、看不到民生。
 // 只把战场贴身（约 30 公里）内的据点算进去，被围城本身另由 siegeCityId 判定。
 const COMBAT_HIDE_RADIUS_DEG = 0.3;
-const WAR_AFTERMATH_HOLD_MS = 8500;
 const FADE_TO_DAMAGE_SEC = 1.1;
 const FADE_RECOVER_PEACE_SEC = 2.4;
 const SEASON_TRANSITION_SEC = 5;
@@ -392,7 +393,6 @@ export class CityLifeAmbientLayer {
     private actorsByCity = new Map<string, CityLifeActor[]>();
     private forestByCity = new Map<string, CityForestProp[]>();
     private activeActors = new Map<string, CityLifeActor>();
-    private cityLastCombatMs = new Map<string, number>();
     private endangeredCities = new Set<string>();
     private lastCombatScanMs = 0;
     private clearedWhileHidden = false;
@@ -477,6 +477,11 @@ export class CityLifeAmbientLayer {
     private getSeason(): number {
         const s = (window as any).game?.timeSystem?.getSeason?.();
         return typeof s === 'number' && s >= 0 && s <= 3 ? s : 0;
+    }
+
+    private getYear(): number {
+        const year = (window as any).game?.timeSystem?.getYear?.();
+        return typeof year === 'number' && Number.isFinite(year) ? year : 0;
     }
 
     /** 每季 15 秒，季末最后 5 秒平滑进入下一季；smoothstep 让起手与收尾更柔。 */
@@ -932,6 +937,7 @@ export class CityLifeAmbientLayer {
             actor.peaceAlpha = prev.peaceAlpha;
             actor.actionAlpha = prev.actionAlpha;
             actor.damageBlend = prev.damageBlend;
+            actor.recoveryYear = prev.recoveryYear;
             actor.combatStartSec = prev.combatStartSec;
             actor.presentAtCombat = prev.presentAtCombat;
             actor.inCombatVisual = prev.inCombatVisual;
@@ -973,7 +979,7 @@ export class CityLifeAmbientLayer {
         return { stage: 'decay', elapsed: phase - HUNT_DECAY_START_SEC };
     }
 
-    /** 扫描当前处于战斗波及中的据点集合 */
+    /** 扫描当前处于战斗波及中的据点集合；战后不再按秒数延长战争状态。 */
     private scanEndangeredCities(nowMs: number, visibleCities: CityDataV2[]): void {
         if (nowMs - this.lastCombatScanMs < 200) return;
         this.lastCombatScanMs = nowMs;
@@ -995,7 +1001,6 @@ export class CityLifeAmbientLayer {
                 || a.state === 'SIEGE';
             // siegeTargetCityId 在战后仍会保留用于城图外推，只有真实交战时才能作为攻城依据。
             if (inFight && a.siegeTargetCityId) {
-                this.cityLastCombatMs.set(a.siegeTargetCityId, nowMs);
                 this.endangeredCities.add(a.siegeTargetCityId);
             }
             if (inFight && typeof a.getPosition === 'function') {
@@ -1010,7 +1015,6 @@ export class CityLifeAmbientLayer {
         for (const bf of activeBattles) {
             if (!bf || bf.isOver) continue;
             if (bf.siegeCityId) {
-                this.cityLastCombatMs.set(bf.siegeCityId, nowMs);
                 this.endangeredCities.add(bf.siegeCityId);
             }
             const p = bf.getReferencePosition?.()
@@ -1029,21 +1033,9 @@ export class CityLifeAmbientLayer {
                     const dLat = c.lat - cp.lat;
                     const dLng = c.lng - cp.lng;
                     if (dLat * dLat + dLng * dLng <= r2) {
-                        this.cityLastCombatMs.set(c.id, nowMs);
                         this.endangeredCities.add(c.id);
                         break;
                     }
-                }
-            }
-        }
-
-        for (const c of visibleCities) {
-            const lastMs = this.cityLastCombatMs.get(c.id);
-            if (lastMs !== undefined) {
-                if (nowMs - lastMs <= WAR_AFTERMATH_HOLD_MS) {
-                    this.endangeredCities.add(c.id);
-                } else {
-                    this.cityLastCombatMs.delete(c.id);
                 }
             }
         }
@@ -1331,20 +1323,30 @@ export class CityLifeAmbientLayer {
                     actor.combatStartSec = tSec;
                     actor.presentAtCombat = true;
                     actor.peaceAtCombat = actor.peaceAlpha;
+                    actor.recoveryYear = undefined;
                 }
                 actor.damageBlend = Math.min(1, actor.damageBlend + dt / FADE_TO_DAMAGE_SEC);
                 actor.peaceAlpha = actor.peaceAtCombat * (1 - actor.damageBlend);
+                if (actor.damageBlend >= 1 && actor.recoveryYear === undefined) {
+                    actor.recoveryYear = this.getYear() + 1;
+                }
                 if (!inCombat && actor.damageBlend >= 1) actor.inCombatVisual = false;
             } else if (actor.damageBlend > 0) {
-                // 第一阶段：生产保持完全隐藏，只让废墟、尸体与残骸渐隐。
+                // 第一阶段：完全战毁后保留残骸，到第二年或更晚年份的春季才渐隐；生产始终保持隐藏。
                 actor.peaceAlpha = 0;
-                actor.damageBlend = Math.max(0, actor.damageBlend - dt / FADE_RECOVER_PEACE_SEC);
+                const canRecover = season === 0
+                    && actor.recoveryYear !== undefined
+                    && this.getYear() >= actor.recoveryYear;
+                if (canRecover) {
+                    actor.damageBlend = Math.max(0, actor.damageBlend - dt / FADE_RECOVER_PEACE_SEC);
+                }
             } else if (actor.presentAtCombat) {
                 // 第二阶段：残骸全部消失后，原生产组合才渐显并恢复持续生产。
                 actor.peaceAlpha = Math.min(1, actor.peaceAlpha + dt / FADE_RECOVER_PEACE_SEC);
                 if (actor.peaceAlpha >= 1) {
                     actor.presentAtCombat = false;
                     actor.peaceAtCombat = 1;
+                    actor.recoveryYear = undefined;
                 }
             } else {
                 actor.peaceAlpha = 1;
