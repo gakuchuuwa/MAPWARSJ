@@ -68514,7 +68514,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "⚔西维塔特战役-罗马城",
+                name: "⚔西维塔特战役-罗马",
                 type: "road",
                 id: "road_bf_wecam3_1_city_luoma_1793009230494",
                 startConnection: "bf_wecam3_1",

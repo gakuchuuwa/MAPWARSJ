@@ -8386,6 +8386,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/GERMANIC/bfe_kniprode.png": {
+            "scale": 1.04,
+            "offsetX": 1,
+            "offsetY": 12
+        },
+        "/assets/LITHUANIANS/litaowan_algirdas.png": {
+            "scale": 0.9,
+            "offsetX": 5,
+            "offsetY": -22
         }
     },
     "folderGuides": {

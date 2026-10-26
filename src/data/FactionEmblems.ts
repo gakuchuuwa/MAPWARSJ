@@ -216,6 +216,14 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     kaerka: 'KHALKHA_SOYOMBO',   // 喀尔喀·索永布（札那巴札尔1686年创制；1911年博克多汗国旗）
     tubo: 'TIBETAN_ROYAL_TOMB_LION',   // 吐蕃·琼结藏王陵蹲坐石狮（7—9世纪王陵实物，非后世雪狮旗）
     kuman_oleshky: 'CUMAN_STONE_BABA',   // 库曼·12世纪草原石雕（尖帽、捧杯祖先像，非格莱塔木加）
+    // ── 2026-10-26 大势力史实旗面第八批（4 家）────────────────────────────
+    aiaoniya: 'IONIA_EPHESUS_BEE',   // 爱奥尼亚·以弗所蜜蜂（前6—前4世纪城邦钱币，四翼俯视形制）
+    hansa: 'HANSEATIC_COG',   // 汉萨·柯克船（汉萨城市印章与纹章；单桅方帆、首尾楼、搭接船板）
+    feilisidin: 'PHILISTINE_FEATHERED_CAP',   // 非利士·羽冠（拉美西斯三世麦迪奈特·哈布浮雕的Peleset战士）
+    arakan: 'ARAKAN_TRIPARTITE_SRIVATSA',   // 阿拉干·三瓣室利筏娑（本地钱币双菱中柱与外卷侧枝）
+    // ── 2026-10-26 大势力史实旗面第九批（2 家；花剌子模、米底证据不足，保留字旗）──
+    zhelouqi: 'CHAHAMANA_AJAYARAJA_LAKSHMI',   // 乔汉·阿阇耶罗阇银币四臂拉克什米结跏坐像（1110—1125年，Mitch NI 456）
+    adile: 'ADIL_SHAHI_DOTTED_LEAF',   // 阿迪勒·穆罕默德·阿迪勒·沙阿第四系列点叶纹铜币（1627—1656年，G&G BJ32）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

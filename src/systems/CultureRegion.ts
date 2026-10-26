@@ -74,8 +74,10 @@ export function resolveUnitCultureRegion(unit: IBattleUnit): RegionType {
         }
     }
 
-    const pos = unit.getPosition();
-    return getRegion(pos.lat, pos.lng);
+    // 🔴 [2026-10-26 修「unit.getPosition is not a function」] 调用方可能传「只有 id/势力」的哑对象
+    //    （跟拍武将立绘就是这样），没有 getPosition 时不许抛错（它会打掉整局加载）→ 退中原。
+    const pos = unit.getPosition?.();
+    return pos ? getRegion(pos.lat, pos.lng) : 'CENTRAL';
 }
 
 /**

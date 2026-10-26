@@ -3742,7 +3742,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "巴勒莫-罗马城",
+                name: "巴勒莫-罗马",
                 type: "sea",
                 id: "sea_city_palermo_city_luoma_1788228782817",
                 startConnection: "city_palermo",
@@ -3943,7 +3943,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "罗马城-卡利亚里",
+                name: "罗马-卡利亚里",
                 type: "sea",
                 id: "sea_city_luoma_city_cagliari_1788228676707",
                 startConnection: "city_luoma",

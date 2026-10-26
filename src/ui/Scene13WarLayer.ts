@@ -292,11 +292,7 @@ export class Scene13WarLayer {
      * 玩家守城、待在城里没敌人打时，谁放了计，镜头就去那一计落下的地方看 9 秒，再回到玩家身上。
      */
     private skillCamTimer = 0;
-    /** 🔴 [2026-10-25 主人「玩家复活后，先不要移动到玩家身上。等玩家交战后再跟随玩家」] 复活后镜头留在倒下处，只有再次交战才跟回玩家 */
-    private heroCamHold = false;
-    /** 🔴 [2026-10-25 主人「复活后玩家进过画面、再要走出画面时，镜头跟上他」] 停留期间玩家是否已进过画面 */
-    private heroCamSeen = false;
-    /** 🔴 [2026-10-25 主人「玩家阵亡，镜头就跟随主将队其中一员，这个也死了就继续另一员」] 玩家倒下/复活停留期间镜头盯着的本方主将队兵 */
+    /** 镜头当前盯着的本方兵（主将队员或普通兵）；同一档里它还活着就不换，见 pickCamTarget */
     private camWatchMan: WarMan | null = null;
     private skillCamX = 0;
     private skillCamY = 0;
@@ -1378,26 +1374,45 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-21 主人报「乱入者复活后有的时候不动」] 阵亡前点的地面令没走到就死了 → 复活后还挂着：
         //    目标点已被上面重置成复活点，而「走到才清」比的是旧点地位置 ⇒ 永远清不掉、原地站死。复活一律作废。
         this.heroClickOrder = null;
-        this.heroCamHold = true;
-        this.heroCamSeen = false;
         if (!this.men.includes(m)) {
             this.men.push(m);
         }
         this.diagPush('heroRespawn', { sec: +this.battleSec.toFixed(1) });
     }
 
-    /** 玩家倒下期间镜头盯的主将队兵：盯着的还活着就不换；死了换离镜头中心最近的另一员（正在交战的优先）。没有了返回 null */
-    private pickCamWatchMan(f: number): WarMan | null {
+    /**
+     * 🔴 [2026-10-26 主人令] 有乱入者时镜头跟谁，按六档优先：
+     *    交战的玩家 > 交战的主将队 > 交战的士兵 > 移动的玩家 > 移动的主将队 > 移动的士兵（均为本方）。
+     *    高档一出现就切过去（玩家一交战立刻切回玩家）；同一档里盯着的那员还活着就不换，死了换离镜头中心最近的。
+     *    取代 10-25 的「复活后先不跟玩家、等交战/出画面再跟」。全灭返回 null（镜头原地不动）。
+     */
+    private pickCamTarget(hero: WarMan): WarMan | null {
+        const f = hero.f;
+        const heroAlive = hero.hp > 0;
+        // 档位：0 交战玩家 1 交战主将队 2 交战士兵 3 移动玩家 4 移动主将队 5 移动士兵
+        const tierOf = (m: WarMan): number => {
+            if (m.hero) return m.foe ? 0 : 3;
+            const cmd = !!this.spawns[m.lane]?.commander;
+            return (m.foe ? 0 : 3) + (cmd ? 1 : 2);
+        };
+        const eligible = (m: WarMan): boolean => m.hp > 0 && m.f === f && !m.siegeW && (!m.hero || m === hero);
+        let bestTier = heroAlive ? tierOf(hero) : 6;
+        for (const m of this.men) {
+            if (!eligible(m) || m.hero) continue;
+            const t = tierOf(m);
+            if (t < bestTier) bestTier = t;
+        }
+        if (bestTier === 0 || bestTier === 3) { this.camWatchMan = null; return hero; }
+        if (bestTier === 6) { this.camWatchMan = null; return null; }
         const cur = this.camWatchMan;
-        if (cur && cur.hp > 0 && this.men.includes(cur)) return cur;
+        if (cur && eligible(cur) && !cur.hero && this.men.includes(cur) && tierOf(cur) === bestTier) return cur;
         const cx = this.worldCX - this.tacticalPanX / this.tacticalZoom;
         const cy = this.worldCY - this.tacticalPanY / this.tacticalZoom;
-        let best: WarMan | null = null, bestD = Infinity, bestFight = false;
+        let best: WarMan | null = null, bestD = Infinity;
         for (const m of this.men) {
-            if (m.hp <= 0 || m.f !== f || m.hero || !this.spawns[m.lane]?.commander) continue;
-            const fight = !!m.foe;
+            if (!eligible(m) || m.hero || tierOf(m) !== bestTier) continue;
             const d = Math.hypot(m.x - cx, m.y - cy);
-            if ((fight && !bestFight) || (fight === bestFight && d < bestD)) { best = m; bestD = d; bestFight = fight; }
+            if (d < bestD) { best = m; bestD = d; }
         }
         this.camWatchMan = best;
         return best;
@@ -2740,8 +2755,6 @@ export class Scene13WarLayer {
         this.heroInput = null;
         this.heroMan = null;
         this.heroRespawnTimer = 0;
-        this.heroCamHold = false;
-        this.heroCamSeen = false;
         this.camWatchMan = null;
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
@@ -7906,32 +7919,10 @@ export class Scene13WarLayer {
                     targetFocusX = this.skillCamX;
                     targetFocusY = this.skillCamY;
                     count = 1;
-                } else if (this.heroMan && (this.heroCamHold || this.heroMan.hp <= 0)) {
-                    // 玩家倒下（复活倒计时）及复活后停留期：镜头跟本方主将队一员，这员死了换另一员；
-                    // 玩家再次交战，或复活后进过画面又要走出画面 ⇒ 解除，跟回玩家
-                    //（复活点常在画面外，所以「出画面」只在进过画面之后才算，免得一复活就拉过去）
-                    const hm = this.heroMan;
-                    if (hm.hp > 0) {
-                        const sx = Math.abs((hm.x - this.worldCX) * this.tacticalZoom + this.tacticalPanX);
-                        const sy = Math.abs((hm.y - this.worldCY) * this.tacticalZoom + this.tacticalPanY);
-                        const w = this.canvas.width, h = this.canvas.height;
-                        if (sx < w * 0.35 && sy < h * 0.35) this.heroCamSeen = true;
-                        const leaving = this.heroCamSeen && (sx > w * 0.4 || sy > h * 0.4);
-                        if (hm.foe || leaving) this.heroCamHold = false;
-                    }
-                    if (this.heroCamHold || hm.hp <= 0) {
-                        // 主将队全灭 ⇒ 镜头原地不动
-                        const wm = this.pickCamWatchMan(hm.f);
-                        if (wm) { targetFocusX = wm.x; targetFocusY = wm.y; count = 1; }
-                    } else {
-                        this.camWatchMan = null;
-                    }
                 } else if (this.heroMan) {
-                    // 跟随乱入者本人
-                    this.camWatchMan = null;
-                    targetFocusX = this.heroMan.x;
-                    targetFocusY = this.heroMan.y;
-                    count = 1;
+                    // 交战的玩家/主将队/士兵 > 移动的玩家/主将队/士兵（见 pickCamTarget）；本方全灭 ⇒ 镜头原地不动
+                    const tm = this.pickCamTarget(this.heroMan);
+                    if (tm) { targetFocusX = tm.x; targetFocusY = tm.y; count = 1; }
                 } else if (this.battleType === 'siege' || this.deCity) {
                     // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
                     //    攻城战城池稳居正中心，镜头始终居中对齐正中央城郭，绝不可被交战部队拖跑甩到屏幕角落

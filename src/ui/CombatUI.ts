@@ -4424,8 +4424,22 @@ export class CombatUI {
         if (!army || !this.leftPortraitFrame) return;
         const generalId = army.generalId;
         const factionId = army.getFactionId?.() ?? army.factionId;
-        this.setPortrait(this.leftPortrait, { generalId, factionId, id: army.id, name: army.name } as any, generalId, factionId, undefined, 'attacker');
-        this.fillGeneralNameTag(this.leftGeneralNameTag, { generalId, factionId, id: army.id, name: army.name } as any, 'attacker');
+        // 🔴 [2026-10-26 修「跟拍出征开局报 unit.getPosition is not a function → 游戏加载失败」]
+        //    这里传给 setPortrait/fillGeneralNameTag 的「单位」不是真 IBattleUnit，只是立绘/名牌用的哑对象；
+        //    `resolveUnitCultureRegion` 在「势力在 cities_v2 没有据点」时（乱斗开局把城随机分给
+        //    「只有武将、cities_v2 无城」的势力，如 mamuluke / yamato / yuan_shao…）找不到势力首都，
+        //    就落到 `unit.getPosition()` —— 哑对象没这方法 → 启动流程整段失败。
+        //    补齐 unitType / getPosition（与 showRegional 里同类哑单位同口径），文化区照常按军团体判。
+        const unitLike = {
+            generalId,
+            factionId,
+            id: army.id,
+            name: army.name,
+            unitType: 'legion',
+            getPosition: () => army.getPosition?.() ?? { lat: 0, lng: 0 },
+        } as any;
+        this.setPortrait(this.leftPortrait, unitLike, generalId, factionId, undefined, 'attacker');
+        this.fillGeneralNameTag(this.leftGeneralNameTag, unitLike, 'attacker');
         if (this.leftFamousBadge) {
             this.leftFamousBadge.style.display = (generalId && getGeneralProfile(generalId)?.tier === 'famous') ? 'block' : 'none';
         }

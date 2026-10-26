@@ -2,7 +2,7 @@ import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
 import type { GameMap } from './GameMap';
 import { CITIES_V2, type CityDataV2, type BuildingStyle } from '../data/cities_v2';
-import { LandSeaSystem } from '../world/land-sea';
+import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 
@@ -15,7 +15,7 @@ import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
  *      战时树林渐变为倒伏断木 FELLED_GENERIC、树桩 STUMP_GENERIC 与焦枯死树 DEAD_TREE）。
  *   3. 渔业严格在海中（绝不在陆地放渔夫）：在沿海海域生成 DE 渔船（SHP_FISHING_SHIP 撒网/往返航行）与海鱼群
  *      （DORADO_FISH / SALMON_FISH / TUNA_FISH / SHORE_FISH 跃水游弋）；战时渐变为沉没破损渔船（SHP_FISHING_SHIP:sink + SHIP_SINK_SMALL）。
- *   4. 对应四季（春耕播种 seed、夏耘锄地/撒网 work、秋收归仓/渔船返港 carry/move、冬藏休耕/冬猎渐隐渐显）。
+ *   4. 对应四季（春耕播种、夏耘、秋收与冬猎直接切换；四季农田同步更换，和平期不做透明度渐变）。
  *   5. 战火破坏与尸骸渐变：据点被围攻或周围半径 0.3° 内有军团交战时，通过 damageBlend (0 → 1) 平滑渐变为
  *      被破坏的农车/栅栏/断木废墟、倒地平民尸体、平民白骨、战死牲畜与沉没渔船；战后余波结束后平滑恢复。
  */
@@ -110,7 +110,9 @@ interface CityLifeActor {
     actionAlpha: number;       // 换季动作切换淡入淡出系数 0..1
     damageBlend: number;       // 战火破坏渐变系数：0=和平劳作，1=战火被毁废墟/尸体/沉船
     combatStartSec: number;    // 本轮进入战火状态的起始秒数
-    presentAtCombat: boolean;  // 本轮受袭瞬间是否实际出勤（冬季休耕角色不生成本轮战损）
+    presentAtCombat: boolean;  // 本轮是否经历过战火；恢复完成后才复位
+    inCombatVisual: boolean;   // 当前是否处于战争交叉渐变阶段
+    peaceAtCombat: number;     // 本轮开战前的生产透明度，供再次开战时平滑接续
     damagePreset: WarDamagePreset;
     damageVariant: number;     // 破损贴图帧索引
     displayedAction: string;   // 当前正在画的动作名
@@ -412,6 +414,9 @@ export class CityLifeAmbientLayer {
         window.addEventListener('land-sea-tiles-updated', () => {
             this.layoutDirty = true;
         });
+        window.addEventListener('land-terrain-tiles-updated', () => {
+            this.layoutDirty = true;
+        });
     }
 
     private resize(): void {
@@ -489,6 +494,23 @@ export class CityLifeAmbientLayer {
         }
     }
 
+    /** 据点中心或周边约 20 公里内有真实山地，即允许安排伐木生产。 */
+    private hasMountainNearCity(city: CityDataV2): boolean {
+        for (let i = 0; i < 9; i++) {
+            const ang = (i / 8) * Math.PI * 2;
+            const pos = i === 0 ? { lat: city.lat, lng: city.lng } : {
+                lat: city.lat + Math.sin(ang) * 0.18 * 0.85,
+                lng: city.lng + Math.cos(ang) * 0.18,
+            };
+            try {
+                if (LandTerrainSystem.isMountainAt(pos)) return true;
+            } catch {
+                // 地形瓦片尚未就绪时按非山地处理，瓦片到达后会触发布局重算。
+            }
+        }
+        return false;
+    }
+
     /** 严格判定某点处于真实海域（中心点及周围至少 3 个邻点均为海，防止渔船搁浅在岸线陆地上） */
     private isDeepEnoughSea(pos: Pt): boolean {
         if (!this.isSea(pos)) return false;
@@ -534,7 +556,7 @@ export class CityLifeAmbientLayer {
         return null;
     }
 
-    /** 为渔猎民族（forest_hunting）据点生成环抱四周的树林与林下灌丛浆果植被 */
+    /** 渔猎据点与山地伐木据点都生成环抱四周的四季树林，统一采用东北式环绕布局。 */
     private getOrCreateCityForest(city: CityDataV2): CityForestProp[] {
         let list = this.forestByCity.get(city.id);
         if (list) return list;
@@ -542,7 +564,7 @@ export class CityLifeAmbientLayer {
 
         const style: BuildingStyle = city.buildingStyle ?? 'CENTRAL';
         const cat = CULTURE_TO_CATEGORY[style] ?? 'farming_dry';
-        if (cat !== 'forest_hunting') {
+        if (cat !== 'forest_hunting' && !this.hasMountainNearCity(city)) {
             this.forestByCity.set(city.id, list);
             return list;
         }
@@ -593,19 +615,33 @@ export class CityLifeAmbientLayer {
         return list;
     }
 
-    /** 根据据点生成确定性的民生角色列表（每个据点 2~5 个） */
+    /** 按城级生成 1~4 套民生组合；固定约一半据点显示，险要不生成。 */
     private getOrCreateCityActors(city: CityDataV2): CityLifeActor[] {
         let list = this.actorsByCity.get(city.id);
         if (list) return list;
         list = [];
 
+        const cityType = String(city.type);
+        const isPass = cityType === 'pass' || cityType === 'Pass';
+        const maxSlots = cityType === 'big_city' ? 4
+            : cityType === 'medium_city' ? 3
+                : cityType === 'small_city' ? 2
+                    : cityType === 'stockade' ? 1
+                        : 0;
+        // 同一据点永远保持同一显示结果与套数，不因视口移动、陆海瓦片重排而重掷。
+        if (isPass || maxSlots === 0 || strHash01(city.id, 501) >= 0.5) {
+            this.actorsByCity.set(city.id, list);
+            return list;
+        }
+        const totalSlots = maxSlots === 1 ? 1 : 1 + Math.floor(strHash01(city.id, 502) * maxSlots);
+
         const style: BuildingStyle = city.buildingStyle ?? 'CENTRAL';
         const cat = CULTURE_TO_CATEGORY[style] ?? 'farming_dry';
         const spec = LIVELIHOOD_SPECS[cat];
-
-        const cityType = String(city.type);
-        const isPass = cityType === 'pass' || cityType === 'Pass';
-        const totalSlots = isPass ? 2 : cityType === 'big_city' || cityType === 'huge_city' ? 5 : cityType === 'medium_city' || cityType === 'large_city' ? 4 : 3;
+        const mountainCity = this.hasMountainNearCity(city);
+        const lumberSlot = mountainCity ? Math.floor(strHash01(city.id, 601) * totalSlots) : -1;
+        // 随机工种不再直接抽到樵夫；山地据点由 lumberSlot 固定安排唯一一套伐木组合。
+        const villagerPool = spec.villagers.filter((dir) => dir !== 'VIL_MALE_LUMBERJACK');
 
         let animalPool = spec.animals;
         if (style === 'TIBET') animalPool = ['COW_BLACK', 'SHEEP', 'ARGALI'];
@@ -629,8 +665,8 @@ export class CityLifeAmbientLayer {
             ? ['SALMON_FISH', 'SHORE_FISH', 'TUNA_FISH']
             : ['DORADO_FISH', 'TUNA_FISH', 'SHORE_FISH', 'SALMON_FISH'];
 
-        // 渔猎民族先生成周围的树林植被节点，让猎人/樵夫/采集者围绕树林劳作
-        const forestNodes = cat === 'forest_hunting' ? this.getOrCreateCityForest(city) : [];
+        // 渔猎与山地伐木据点都先生成环绕树林，让对应组合直接在林间劳作。
+        const forestNodes = cat === 'forest_hunting' || mountainCity ? this.getOrCreateCityForest(city) : [];
 
         for (let i = 0; i < totalSlots; i++) {
             const h2 = strHash01(city.id, i * 17 + 2);
@@ -639,8 +675,8 @@ export class CityLifeAmbientLayer {
 
             const baseAngle = (i / totalSlots) * Math.PI * 2 + (h3 - 0.5) * 0.7;
 
-            // 判断本槽位是否应当尝试在海中生成渔业（海洋渔业文化前 3 个槽位优先下海，水网稻作文化第 2 个槽位若靠海也下海捕鱼）
-            const wantsSeaFishing = !isPass && (
+            // 山地伐木槽固定留在陆上林间，不能被海上渔业槽替代。
+            const wantsSeaFishing = !isPass && i !== lumberSlot && (
                 (cat === 'maritime_fishing' && i <= 2) ||
                 (cat === 'farming_rice' && i === totalSlots - 1)
             );
@@ -676,6 +712,8 @@ export class CityLifeAmbientLayer {
                         damageBlend: 0,
                         combatStartSec: 0,
                         presentAtCombat: false,
+                        inCombatVisual: false,
+                        peaceAtCombat: 1,
                         damagePreset: 'sea_shipwreck',
                         damageVariant,
                         displayedAction: 'work',
@@ -685,12 +723,15 @@ export class CityLifeAmbientLayer {
                 }
             }
 
-            // 陆地槽位只生成组合的主人；动物一律由牧羊／狩猎组合生成，禁止独立撒动物。
-            const dir = spec.villagers[Math.floor(h2 * spec.villagers.length) % spec.villagers.length];
+            // 山地固定一套樵夫＋木材；非山地只从其余工种抽取，绝不出现伐木生产。
+            const dir = i === lumberSlot
+                ? 'VIL_MALE_LUMBERJACK'
+                : villagerPool[Math.floor(h2 * villagerPool.length) % villagerPool.length];
+            const isFarmer = dir === 'VIL_MALE_FARMER' || dir === 'VIL_FEMALE_FARMER';
 
             let homePos: Pt | null = null;
-            // 渔猎组合围绕已有树林节点劳作，主人与其附属资源、猎物保持同一落点。
-            if (cat === 'forest_hunting' && forestNodes.length > 0) {
+            // 林间工种围绕树林；农田不挤进树林或城下，整套农夫组合统一放到更远的外围。
+            if (!isFarmer && forestNodes.length > 0) {
                 const fn = forestNodes[(i * 2) % forestNodes.length];
                 const cand = {
                     lat: fn.pos.lat + (h3 - 0.5) * 0.022,
@@ -702,7 +743,7 @@ export class CityLifeAmbientLayer {
             }
 
             if (!homePos) {
-                const distDeg = 0.14 + h4 * 0.11;
+                const distDeg = isFarmer ? 0.30 + h4 * 0.10 : 0.14 + h4 * 0.11;
                 for (let attempt = 0; attempt < 8; attempt++) {
                     const ang = baseAngle + attempt * (Math.PI / 4);
                     const cand = {
@@ -726,7 +767,6 @@ export class CityLifeAmbientLayer {
             const phase = Math.floor(strHash01(city.id, i * 17 + 6) * 1000);
             const damageVariant = Math.floor(strHash01(city.id, i * 17 + 7) * 100);
             const winterActive = !isColdWinter || dir === 'VIL_MALE_LUMBERJACK' || dir === 'VIL_MALE_HUNTER' || i === 0;
-            const isFarmer = dir === 'VIL_MALE_FARMER' || dir === 'VIL_FEMALE_FARMER';
 
             let groundResource: string | undefined;
             let groundResourceLib: 'SUCAI_RESOURCE' | 'SUCAI_NATURE' | undefined;
@@ -786,6 +826,8 @@ export class CityLifeAmbientLayer {
                 damageBlend: 0,
                 combatStartSec: 0,
                 presentAtCombat: false,
+                inCombatVisual: false,
+                peaceAtCombat: 1,
                 damagePreset: villagerPresets[i % villagerPresets.length],
                 damageVariant,
                 displayedAction: 'work',
@@ -845,6 +887,8 @@ export class CityLifeAmbientLayer {
                     damageBlend: 0,
                     combatStartSec: 0,
                     presentAtCombat: false,
+                    inCombatVisual: false,
+                    peaceAtCombat: 1,
                     damagePreset: 'animal_loss',
                     damageVariant: Math.floor(strHash01(id, 205) * 100),
                     displayedAction: 'walk',
@@ -863,6 +907,8 @@ export class CityLifeAmbientLayer {
             actor.damageBlend = prev.damageBlend;
             actor.combatStartSec = prev.combatStartSec;
             actor.presentAtCombat = prev.presentAtCombat;
+            actor.inCombatVisual = prev.inCombatVisual;
+            actor.peaceAtCombat = prev.peaceAtCombat;
             actor.displayedAction = prev.displayedAction;
             if (prev.damageBlend > 0) actor.lastDrawPos = prev.lastDrawPos;
             this.activeActors.set(actor.id, actor);
@@ -875,18 +921,14 @@ export class CityLifeAmbientLayer {
     /** 计算某个角色在当前季节应当执行的动作名 */
     private resolveSeasonalAction(actor: CityLifeActor, season: number): string {
         if (actor.isSeaFishing) {
-            // 海中渔船：春夏季在海鱼群上方撒网捕鱼（work），秋季满载往返渔场与近岸港湾（move），冬季作业或泊船
+            // 渔船全年生产，秋季部分船只往返渔场与港湾，冬季也不停航闲置。
             if (season === 2) return actor.slotIdx % 2 === 0 ? 'move' : 'work';
-            if (season === 3) return actor.slotIdx % 2 === 0 ? 'work' : 'idle';
             return 'work';
         }
         if (actor.isAnimal) return 'walk';
-        // 所有陆地主人都留在自己的组合内，换季只换劳作动作，不离开农田、资源或牧群。
+        // 所有陆地组合全年持续生产，换季只换劳作动作，不离开农田、资源或牧群。
         const isFarmer = actor.dir === 'VIL_MALE_FARMER' || actor.dir === 'VIL_FEMALE_FARMER';
         if (season === 0 && isFarmer) return actor.slotIdx % 2 === 0 ? 'seed' : 'work';
-        if (season === 3 && !isFarmer && actor.dir !== 'VIL_MALE_LUMBERJACK' && actor.dir !== 'VIL_MALE_HUNTER') {
-            return actor.slotIdx % 2 === 0 ? 'idle' : 'work';
-        }
         return 'work';
     }
 
@@ -1055,8 +1097,17 @@ export class CityLifeAmbientLayer {
                 st.anchorX = treeMeta?.anchorX ?? meta.anchor_x ?? Math.floor(st.boxW / 2);
                 st.anchorY = treeMeta?.anchorY ?? meta.anchor_y ?? Math.floor(st.boxH / 2);
                 const img = new Image();
+                let triedPreview = false;
                 img.onload = () => { st.ready = true; };
-                img.onerror = () => { st.ready = false; };
+                img.onerror = () => {
+                    // 部分 DE 小屋只保留单帧 preview.png，与 frames.png 一样是有效静态素材。
+                    if (folder === 'SUCAI_BUILDING' && !triedPreview) {
+                        triedPreview = true;
+                        img.src = `${basePath}/preview.png`;
+                    } else {
+                        st.ready = false;
+                    }
+                };
                 img.src = `${basePath}/frames.png`;
                 st.sheet = img;
             })
@@ -1148,7 +1199,7 @@ export class CityLifeAmbientLayer {
 
         for (const city of visibleCities) {
             const actors = this.getOrCreateCityActors(city);
-            const forestProps = this.getOrCreateCityForest(city);
+            const forestProps = actors.length > 0 ? this.getOrCreateCityForest(city) : [];
             const cityInWar = this.endangeredCities.has(city.id);
 
             // 预热当前季节的树林、灌丛与组合附属物；换季直接替换，不做透明度渐变。
