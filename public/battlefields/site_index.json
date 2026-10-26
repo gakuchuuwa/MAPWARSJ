@@ -16035,20 +16035,6 @@
    "cliffs": 0,
    "top": "Grass 3 89.6% · Forest, Mediterranean 6% · Pine Forest 2.2% · Forest, Bush 1%",
    "verify": "ok"
-  },
-  {
-   "id": "city_sundapura",
-   "file": "site_city_sundapura.json",
-   "bytes": 354245,
-   "koppen": "Af",
-   "theme": "INDOMALAYAN_TROPICAL",
-   "water": "WorldCover",
-   "waterCells": 13,
-   "waterPct": 0.1,
-   "reliefM": 20,
-   "cliffs": 0,
-   "top": "Dry Grass 89.3% · Forest, Lush Bamboo 6.9% · Bamboo 2.2% · Forest, Bush 1.3%",
-   "verify": "ok"
   }
  ],
  "failures": []

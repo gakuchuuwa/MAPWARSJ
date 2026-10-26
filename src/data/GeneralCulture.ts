@@ -472,7 +472,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_ypsilantis': 'BYZANTINE',   // 奥斯曼｜科贾·穆萨帕夏｜据点 君士坦丁堡
     'bfe_maniakes': 'SICILIANS',   // 拜占庭｜马尼亚克｜据点 锡拉库萨
     'bfe_rhetogenes': 'SPANISH',   // 阿雷瓦西｜雷图格诺斯｜据点 努曼提亚
-    'bfe_purnavarman': 'MALAY',   // 塔鲁玛迦拉｜普尔纳跋摩｜据点 巽他普拉
+    'bfe_purnavarman': 'MALAY',   // 塔鲁玛迦拉｜普尔纳跋摩｜据点 巴达维亚
     'maya_siyaj_kak': 'MAYANS',   // 玛雅｜西亚赫·卡克｜据点 蒂卡尔
     'bfe_apokaukos': 'SPARTANS',   // 拜占庭｜巴希尔｜据点 斯巴达
     'baizanting_thomas': 'SPARTANS',   // 拜占庭｜托马·巴列奥略｜据点 斯巴达

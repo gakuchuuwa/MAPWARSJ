@@ -770,7 +770,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_ypsilantis': 19,                      // 科贾·穆萨帕夏 · osman · 君士坦丁堡
     'bfe_maniakes': 11,                       // 马尼亚克 · baizanting · 锡拉库萨
     'bfe_rhetogenes': -2,                    // 雷图格诺斯 · arevaci · 努曼提亚
-    'bfe_purnavarman': 5,                     // 普尔纳跋摩 · taluma · 巽他普拉
+    'bfe_purnavarman': 5,                     // 普尔纳跋摩 · taluma · 巴达维亚
     'maya_siyaj_kak': 4,                      // 西亚赫·卡克 · maya · 蒂卡尔
     'bfe_apokaukos': 10,                      // 巴希尔 · baizanting · 斯巴达
     'baizanting_thomas': 15,                   // 托马·巴列奥略 · baizanting · 斯巴达

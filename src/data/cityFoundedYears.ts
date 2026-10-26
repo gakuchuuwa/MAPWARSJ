@@ -465,6 +465,6 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_yamaguchi: 1360,   // 山口
     city_ahmedabad: 1411,   // 艾哈迈达巴德
     city_miaowu: 1430,   // 妙乌
-    city_batavia: 1619,   // 巴达维亚
+    city_batavia: 400,   // 巴达维亚：同址巽他普拉为塔鲁玛迦拉都城；普尔纳跋摩 395–434 在位，取约 400 年
 };
 

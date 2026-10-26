@@ -131,7 +131,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'qiajia': 'city_kamanniya',
     'liangxixili': 'city_palermo',
     'arevaci': 'city_numantia',
-    'taluma': 'city_sundapura',
+    'taluma': 'city_batavia',
 'mazhaer': 'city_budapeisi',
   'falanji': 'city_kelong',
   'shiwaben': 'city_aogesibao',

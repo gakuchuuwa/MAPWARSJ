@@ -891,7 +891,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'qincha_baqiman', cityId: 'city_saksin', generalName: '巴奇曼', portrait: '/assets/CUMAN/qincha_baqiman.png', factionId: 'kuman_oleshky' , eliteName: '库曼弓骑', eliteTier: 1 },
+        { generalId: 'qincha_baqiman', cityId: 'city_saksin', generalName: '巴奇曼', portrait: '/assets/CUMAN/qincha_baqiman.png', factionId: 'kuman_oleshky' , eliteName: '钦察部骑', eliteTier: 4 },
 
 
 
@@ -901,7 +901,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_girgen', legionName: '城堡时代库曼军团', cityId: 'city_mierkefu', generalName: '吉尔根汗', portrait: '/assets/SLAVIC/gen_girgen.png', factionId: 'kuman_oleshky' , eliteName: '库曼弓骑', eliteTier: 1 },
+        { generalId: 'gen_girgen', legionName: '城堡时代库曼军团', cityId: 'city_mierkefu', generalName: '吉尔根汗', portrait: '/assets/SLAVIC/gen_girgen.png', factionId: 'kuman_oleshky' , eliteName: '钦察游骑', eliteTier: 4 },
 
 
 
@@ -1389,7 +1389,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'jiduoluoxiya_xibiertiwusi', legionName: '古典时代阿契美尼德军团', factionId: 'maqidun', cityId: 'city_pula', generalName: '西比尔提乌斯', portrait: '/assets/PERSIAN/jiduoluoxiya_xibiertiwusi.png', eliteName: '银盾兵', eliteTier: 1  },   // 按史：西比尔提乌斯前 316 受安提柯拨归银盾兵（Argyraspides）统辖（Diodorus XIX.48；复用现有银盾兵 T1 同番号）
+        { generalId: 'jiduoluoxiya_xibiertiwusi', legionName: '古典时代阿契美尼德军团', factionId: 'maqidun', cityId: 'city_pula', generalName: '西比尔提乌斯', portrait: '/assets/PERSIAN/jiduoluoxiya_xibiertiwusi.png', eliteName: '普拉戍卒', eliteTier: 4  },   // 按史：西比尔提乌斯前 316 受安提柯拨归银盾兵（Argyraspides）统辖（Diodorus XIX.48；复用现有银盾兵 T1 同番号）
 
 
 
@@ -1409,7 +1409,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bfe_mendenus', factionId: 'maqidun', cityId: 'city_salonica', generalName: '门德努斯', portrait: '/assets/MACEDONIAN/bfe_mendenus.png', eliteName: '马其顿方阵', eliteTier: 1 },
-        { generalId: 'bfe_erigius', factionId: 'maqidun', cityId: 'city_salonica', generalName: '埃里吉乌斯', portrait: '/assets/MACEDONIAN/bfe_erigius.png', eliteName: '伙伴骑兵', eliteTier: 0 },
+        { generalId: 'bfe_erigius', factionId: 'maqidun', cityId: 'city_salonica', generalName: '埃里吉乌斯', portrait: '/assets/MACEDONIAN/bfe_erigius.png', eliteName: '希腊同盟骑', eliteTier: 4 },
     ],
 
 
@@ -2625,7 +2625,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'baolusi', cityId: 'city_luoma', generalName: '保卢斯', portrait: '/assets/ROMA/baolusi.png', legionName: '古典时代罗马军团' , eliteName: '罗马军团', eliteTier: 1},
+        { generalId: 'baolusi', cityId: 'city_luoma', generalName: '保卢斯', portrait: '/assets/ROMA/baolusi.png', legionName: '古典时代罗马军团' , eliteName: '罗马骑士', eliteTier: 3},
 
 
 
@@ -2633,7 +2633,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'waluo', cityId: 'city_luoma', generalName: '瓦罗', portrait: '/assets/ROMA/waluo.png', legionName: '古典时代罗马军团' , eliteName: '罗马军团', eliteTier: 1},
+        { generalId: 'waluo', cityId: 'city_luoma', generalName: '瓦罗', portrait: '/assets/ROMA/waluo.png', legionName: '古典时代罗马军团' , eliteName: '同盟骑兵', eliteTier: 4},
 
 
 
@@ -2689,7 +2689,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_77', cityId: 'city_luoma', generalName: '瓦勒良', portrait: '/assets/ROMA/bfe3_77.png', legionName: '古典时代罗马军团' , eliteName: '罗马军团', eliteTier: 1},
+        { generalId: 'bfe3_77', cityId: 'city_luoma', generalName: '瓦勒良', portrait: '/assets/ROMA/bfe3_77.png', legionName: '古典时代罗马军团' , eliteName: '帕提卡', eliteTier: 3},
 
 
 
@@ -2856,7 +2856,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_crassus', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '克拉苏', portrait: '/assets/ROMA/bfe_crassus.png', eliteName: '罗马军团', eliteTier: 1 },
+        { generalId: 'bfe_crassus', factionId: 'luoma_diguo', cityId: 'city_luoma', generalName: '克拉苏', portrait: '/assets/ROMA/bfe_crassus.png', eliteName: '高卢骑兵', eliteTier: 3 },
     ],
 
 
@@ -3260,8 +3260,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_rhetogenes', factionId: 'arevaci', cityId: 'city_numantia', generalName: '雷图格诺斯', portrait: '', eliteName: '努曼提亚兵', eliteTier: 4 },
     ],
     taluma: [
-        // 🔴 [2026-10-25 补B] 普尔纳跋摩（395–434 在位，塔鲁玛迦拉极盛期君主；图古、芝阿鲁腾梵文碑铭记其身披重甲统战象水陆大军、攻破摧毁敌国 21 座设防城）｜势力 塔鲁玛迦拉｜据点 巽他普拉（MALAY 文化，西爪哇）｜普将｜精锐「巽他战象」T4｜立绘留空
-        { generalId: 'bfe_purnavarman', factionId: 'taluma', cityId: 'city_sundapura', generalName: '普尔纳跋摩', portrait: '', eliteName: '巽他战象', eliteTier: 4 },
+        // 🔴 [2026-10-25 补B] 普尔纳跋摩（395–434 在位，塔鲁玛迦拉极盛期君主；图古、芝阿鲁腾梵文碑铭记其身披重甲统战象水陆大军、攻破摧毁敌国 21 座设防城）｜势力 塔鲁玛迦拉｜据点 巴达维亚（MALAY 文化，西爪哇）｜普将｜精锐「巽他战象」T4｜立绘留空
+        { generalId: 'bfe_purnavarman', factionId: 'taluma', cityId: 'city_batavia', generalName: '普尔纳跋摩', portrait: '', eliteName: '巽他战象', eliteTier: 4 },
     ],
     wende: [
         // 🔴 [2026-10-25 主人令「存在就建」] 亨吉斯特（449 率撒克逊人入不列颠、肯特王；比德《英吉利教会史》《盎格鲁-撒克逊编年史》记载，半史）｜势力 萨克森｜据点 马格德堡（撒克逊核心，同文化据点）｜普将（存疑）｜精锐「撒克逊战团」T4｜立绘留空
@@ -3979,7 +3979,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_doria', factionId: 'kelimiya', cityId: 'city_genoa', generalName: '多里亚', portrait: '/assets/LATIN/bfe_doria.png', eliteName: '热那亚弩手', eliteTier: 1 },
+        { generalId: 'bfe_doria', factionId: 'kelimiya', cityId: 'city_genoa', generalName: '多里亚', portrait: '/assets/LATIN/bfe_doria.png', eliteName: '热那亚桨手', eliteTier: 3 },
     ],
 
 
@@ -4432,7 +4432,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'xin_baiqi', cityId: 'city_changan', generalName: '白起', portrait: '/assets/CENTRAL/xin_baiqi.png', factionId: 'qin' , eliteName: '铁鹰锐士', eliteTier: 1 },
+        { generalId: 'xin_baiqi', cityId: 'city_changan', generalName: '白起', portrait: '/assets/CENTRAL/xin_baiqi.png', factionId: 'qin' , eliteName: '上党锐骑', eliteTier: 2 },
 
 
 
@@ -4682,7 +4682,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'xin_liuchong', cityId: 'city_taiyuan', factionId: 'hou_han', generalName: '刘崇', portrait: '/assets/WEI/xin_liuchong.png', legionName: '封建时代河朔军团' },
         { generalId: 'bing_liji', factionId: 'tang', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李勣', portrait: '/assets/WEI/bing_liji.png', eliteName: '通漠道行军', eliteTier: 2  },   // 按史：李勣以并州都督出任通漠道行军总管，自并州北出白道破颉利（《旧唐书·卷六七·李勣传》）
         { generalId: 'shatuo_likeyong', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李克用', portrait: '/assets/WEI/shatuo_likeyong.png', factionId: 'shatuo', eliteName: '沙陀鸦军', eliteTier: 1 },
-        { generalId: 'qingyuan_bd_zhoudewei', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '周德威', portrait: '/assets/WEI/qingyuan_bd_zhoudewei.png', factionId: 'shatuo', eliteName: '沙陀鸦军', eliteTier: 1 },
+        { generalId: 'qingyuan_bd_zhoudewei', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '周德威', portrait: '/assets/WEI/qingyuan_bd_zhoudewei.png', factionId: 'shatuo', eliteName: '白马突骑', eliteTier: 3 },
         { generalId: 'song_wangbing', cityId: 'city_taiyuan', legionName: '城堡时代燕云军团', generalName: '王禀', portrait: '/assets/WEI/song_wangbing.png', factionId: 'song' },
         { generalId: 'liwang_liguangbi', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李光弼', portrait: '/assets/WEI/liwang_liguangbi.png', factionId: 'tang', eliteName: '河东军', eliteTier: 2 },
 
@@ -5035,7 +5035,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'pugu_puguhuaien', cityId: 'city_lingzhou', legionName: '封建时代河西军团', generalName: '仆固怀恩', portrait: '/assets/KHITAN/pugu_puguhuaien.png', factionId: 'tang', eliteName: '朔方军', eliteTier: 1 },
+        { generalId: 'pugu_puguhuaien', cityId: 'city_lingzhou', legionName: '封建时代河西军团', generalName: '仆固怀恩', portrait: '/assets/KHITAN/pugu_puguhuaien.png', factionId: 'tang', eliteName: '朔方突骑', eliteTier: 1 },
         { generalId: 'song_peiji', cityId: 'city_lingzhou', generalName: '裴济', portrait: '/assets/KHITAN/song_peiji.png', factionId: 'song', },
 
 
@@ -5046,7 +5046,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'shanzhou_wangzhongsi', factionId: 'tang', cityId: 'city_lingzhou', legionName: '封建时代河西军团', generalName: '王忠嗣', portrait: '/assets/KHITAN/shanzhou_wangzhongsi.png', eliteName: '朔方军', eliteTier: 1  },   // 按史：王忠嗣为朔方节度使（治灵州），频战青海、积石皆大克捷（《旧唐书·卷一〇三·王忠嗣传》）
+        { generalId: 'shanzhou_wangzhongsi', factionId: 'tang', cityId: 'city_lingzhou', legionName: '封建时代河西军团', generalName: '王忠嗣', portrait: '/assets/KHITAN/shanzhou_wangzhongsi.png', eliteName: '陇右骁骑', eliteTier: 1  },   // 按史：王忠嗣为朔方节度使（治灵州），频战青海、积石皆大克捷（《旧唐书·卷一〇三·王忠嗣传》）
         { generalId: 'gaoliang_geshuhan', cityId: 'city_ledou', factionId: 'tang', generalName: '哥舒翰', portrait: '/assets/KHITAN/gaoliang_geshuhan.png', legionName: '封建时代河西军团', eliteName: '河源军', eliteTier: 2  },   // 按史：哥舒翰充河源军使，积石军设伏破吐蕃抢麦骑（《旧唐书·卷一〇四·哥舒翰传》）
 
 
@@ -6002,7 +6002,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bfe_youxian', factionId: 'menggu_d', cityId: 'city_xiangyang', generalName: '游显', portrait: '/assets/CENTRAL/bfe_youxian.png', eliteName: '襄阳驻军', eliteTier: 4 },
-        { generalId: 'bfe_umar', factionId: 'yuan_d', cityId: 'city_yongzhou', generalName: '乌马儿', portrait: '/assets/WEI/bfe_umar.png', eliteName: '元军水师', eliteTier: 3 },
+        { generalId: 'bfe_umar', factionId: 'yuan_d', cityId: 'city_hailing', generalName: '乌马儿', portrait: '/assets/WEI/bfe_umar.png', eliteName: '元军水师', eliteTier: 3 },   // 🔴 [2026-10-26 按史] 至元十三年（1276）以万户从阿术攻宋、受命守泰州（今江苏泰州＝海陵，江南文化）；原晋兴（邕州）是「无对应城取最近同文化城」兜底，非其驻扎地（《新元史·乌马儿传》）
         { generalId: 'bfe_chagatai', factionId: 'menggu_d', cityId: 'city_almaliq', generalName: '察合台', portrait: '/assets/CENTRAL_ASIA/bfe_chagatai.png', eliteName: '察合台军', eliteTier: 2 },
         { generalId: 'bfe_yibula', factionId: 'menggu_d', cityId: 'city_guihua', generalName: '亦不剌', portrait: '/assets/XIANBEI/bfe_yibula.png', eliteName: '鄂尔多斯骑', eliteTier: 3 },
     ],
@@ -6330,7 +6330,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'zhuoshi_gaopian', factionId: 'tang', cityId: 'city_chengdu', legionName: '封建时代剑南军团', generalName: '高骈', portrait: '/assets/BASHU/zhuoshi_gaopian.png', eliteName: '剑南西川军', eliteTier: 1  },   // 按史：高骈镇西川，发步骑五千追南诏至大渡河（《资治通鉴·卷二五二》）
+        { generalId: 'zhuoshi_gaopian', factionId: 'tang', cityId: 'city_chengdu', legionName: '封建时代剑南军团', generalName: '高骈', portrait: '/assets/BASHU/zhuoshi_gaopian.png', eliteName: '井阑劲卒', eliteTier: 3  },   // 按史：高骈镇西川，发步骑五千追南诏至大渡河（《资治通鉴·卷二五二》）
 
 
 
@@ -7224,7 +7224,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'sabeol_jinshimin', eliteName: '义兴亲军卫', eliteTier: 1, factionId: 'joseon', cityId: 'city_jinju', legionName: '帝国时代朝鲜军团', generalName: '金时敏', portrait: '/assets/KOREA/sabeol_jinshimin.png' },
+        { generalId: 'sabeol_jinshimin', eliteName: '沙伐义兵', eliteTier: 3, factionId: 'joseon', cityId: 'city_jinju', legionName: '帝国时代朝鲜军团', generalName: '金时敏', portrait: '/assets/KOREA/sabeol_jinshimin.png' },
 
 
 
@@ -7265,7 +7265,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_20', cityId: 'city_pyongyang', generalName: '卫满', portrait: '/assets/KOREA/bfe3_20.png', legionName: '古典时代高句丽军团', factionId: 'joseon' , eliteName: '义兴亲军卫', eliteTier: 1 },
+        { generalId: 'bfe3_20', cityId: 'city_pyongyang', generalName: '卫满', portrait: '/assets/KOREA/bfe3_20.png', legionName: '古典时代高句丽军团', factionId: 'joseon' , eliteName: '浿水塞卒', eliteTier: 4 },
 
 
 
@@ -7281,7 +7281,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_31', cityId: 'city_pyongyang', generalName: '卫右渠', portrait: '/assets/KOREA/bfe3_31.png', legionName: '古典时代高句丽军团', factionId: 'joseon' , eliteName: '义兴亲军卫', eliteTier: 1 },
+        { generalId: 'bfe3_31', cityId: 'city_pyongyang', generalName: '卫右渠', portrait: '/assets/KOREA/bfe3_31.png', legionName: '古典时代高句丽军团', factionId: 'joseon' , eliteName: '王险守卒', eliteTier: 4 },
 
 
 
@@ -10290,7 +10290,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'dongxu_mangruiti', cityId: 'city_dongxu_old', generalName: '莽瑞体', portrait: '/assets/BURMESE/dongxu_mangruiti.png' },
         // 🔴 [2026-10-20 首战规则] 莽应里＝东吁王（1593 廓沙拉败于纳黎萱）→ 凯图玛蒂（BURMESE）；帝国时代缅甸军团；立绘留空
         { generalId: 'gen_nanda_bayin', cityId: 'city_bago', generalName: '莽应里', portrait: '/assets/BURMESE/gen_nanda_bayin.png', legionName: '帝国时代缅甸军团' },
-        { generalId: 'bfe_mingyiswa', factionId: 'dongxu', cityId: 'city_bago', generalName: '明耶苏瓦', portrait: '/assets/BURMESE/bfe_mingyiswa.png', eliteName: '东吁象兵', eliteTier: 1 },
+        { generalId: 'bfe_mingyiswa', factionId: 'dongxu', cityId: 'city_bago', generalName: '明耶苏瓦', portrait: '/assets/BURMESE/bfe_mingyiswa.png', eliteName: '勃固象兵', eliteTier: 3 },
     ],
 
 
@@ -12696,7 +12696,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     huluo: [
         { generalId: 'huluo_jiyasiding', cityId: 'city_helate', generalName: '吉亚斯丁', portrait: '/assets/PERSIAN/huluo_jiyasiding.png' },
-        { generalId: 'bfe_muhammad_ghur', factionId: 'huluo', cityId: 'city_helate', generalName: '穆罕默德·古尔', portrait: '/assets/PERSIAN/bfe_muhammad_ghur.png', eliteName: '古尔重骑', eliteTier: 1 },
+        { generalId: 'bfe_muhammad_ghur', factionId: 'huluo', cityId: 'city_helate', generalName: '穆罕默德·古尔', portrait: '/assets/PERSIAN/bfe_muhammad_ghur.png', eliteName: '古尔牙兵', eliteTier: 3 },
     ],
 
 
@@ -13814,7 +13814,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_6', cityId: 'city_antiejiya', generalName: '安条克一世', portrait: '/assets/ORIE/bfe3_6.png', legionName: '古典时代近东军团' , eliteName: '银盾兵', eliteTier: 1},
+        { generalId: 'bfe3_6', cityId: 'city_antiejiya', generalName: '安条克一世', portrait: '/assets/ORIE/bfe3_6.png', legionName: '古典时代近东军团' , eliteName: '叙利亚战象', eliteTier: 3},
 
 
 
@@ -14148,7 +14148,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_perdiccas', cityId: 'city_babilun', legionName: '古典时代近东军团', generalName: '佩尔狄卡斯', portrait: '/assets/ORIE/gen_perdiccas.png', factionId: 'maqidun' , eliteName: '伙伴骑兵', eliteTier: 0 },
+        { generalId: 'gen_perdiccas', cityId: 'city_babilun', legionName: '古典时代近东军团', generalName: '佩尔狄卡斯', portrait: '/assets/ORIE/gen_perdiccas.png', factionId: 'maqidun' , eliteName: '步战伙友', eliteTier: 3 },
 
 
 
@@ -17036,7 +17036,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe2_ziyu', factionId: 'chuguo', cityId: 'city_ying', generalName: '子玉', portrait: '/assets/JIANGNAN/bfe2_ziyu.png', legionName: '古典时代吴越军团' },
 
         // 🔴 [2026-10-25 主人令] 秦末楚（与战国楚同势力）非先秦武将：不跟「先秦军团」指针，按格位取古典军团
-        { generalId: 'bfe_xiangliang', factionId: 'chuguo', cityId: 'city_pengcheng', legionName: '古典时代华夏军团', generalName: '项梁', portrait: '/assets/CENTRAL/bfe_xiangliang.png', eliteName: '江东子弟', eliteTier: 0 },
+        { generalId: 'bfe_xiangliang', factionId: 'chuguo', cityId: 'city_pengcheng', legionName: '古典时代华夏军团', generalName: '项梁', portrait: '/assets/CENTRAL/bfe_xiangliang.png', eliteName: '吴中子弟', eliteTier: 3 },
     ],
     liusong: [
         { generalId: 'gen_li_jinglong', factionId: 'ming_d', cityId: 'city_nanjing', generalName: '李景隆', portrait: '/assets/JIANGNAN/gen_li_jinglong.png', },
@@ -17236,7 +17236,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     miaomin: [
         { generalId: 'miaomin_shiliudeng', factionId: 'miaomin', cityId: 'city_pinglong', generalName: '石柳邓', portrait: '/assets/JIANGNAN/miaomin_shiliudeng.png', legionName: '起义军' },
-    ],    gepids: [
+    ],
+    gepids: [
         { generalId: 'gepids_cunimund', factionId: 'gepids', cityId: 'city_budapeisi', generalName: '库尼蒙德', portrait: '/assets/MAGYAR/gepids_cunimund.png' },   // 🔴 [2026-10-25 按史] 革皮德末王，567 为伦巴第阿尔博因与阿瓦尔所败身死（Paul the Deacon《伦巴第史》I.27）
     ],
     kalbids: [
