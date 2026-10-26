@@ -465,8 +465,12 @@ export class CityLifeAmbientLayer {
 
     private isHiddenNow(): boolean {
         if (!this.layerVisible) return true;
-        if ((window as any).game?.scene13War?.isActive?.() === true) return true;
-        if ((window as any).game?.battleScene?.isLingering?.() === true) return true;
+        // scene13War 在自动乱斗时也会短暂激活；只有真正进入 13 战术画面才遮挡战略民生层。
+        const tacticalCovered = this.map.getZoom() >= 13 && (
+            (window as any).game?.scene13War?.isActive?.() === true
+            || (window as any).game?.battleScene?.isLingering?.() === true
+        );
+        if (tacticalCovered) return true;
         const s = this.map.getSize();
         if (s.x === 0 || s.y === 0) return true;
         const z = Math.round(this.map.getZoom());

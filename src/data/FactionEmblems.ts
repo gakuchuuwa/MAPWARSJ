@@ -204,6 +204,10 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     // ── 2026-10-26 大势力史实旗面第四批（2 家；萨珊撤销无专属依据日盘）────────
     heti: 'HITTITE_ROYAL_WINGED_SUN',   // 赫梯·王印翼日盘与大王符号（苏庇路里乌玛一世及后继者王印）
     kesa: 'KHAZAR_COIN_TAMGA',   // 可萨·枝形塔木加（837／838年特别钱币，非留里克三叉戟）
+    // ── 2026-10-26 大势力史实旗面第五批（3 家）────────────────────────────
+    nabatai: 'NABATAEAN_CROSSED_CORNUCOPIAE',   // 纳巴泰·交叉双丰饶角（阿雷塔斯四世与沙盖拉特、拉贝尔二世钱币）
+    aiji: 'EGYPT_SEDGE_AND_BEE',   // 埃及·莎草与蜂（法老 nswt-bjtj 王号，上下埃及王权）
+    wulaertu_guo: 'URARTU_SARDURI_SHIELD',   // 乌拉尔图·三环狮牛仪仗盾（萨尔杜里二世王盾）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */
