@@ -65,7 +65,7 @@ type WarDamagePreset =
     | 'corpse_and_fence'       // 倒地平民尸体 + 被毁木栅栏残骸
     | 'broken_cart_and_bones'  // 倾覆破损农车/辎重车 + 荷锄平民骸骨
     | 'rubble_and_corpse'      // 焦木石块废墟 + 倒地平民尸体
-    | 'animal_loss'            // 战死牲畜倒地尸骸 + 牲畜白骨
+    | 'animal_loss'            // 牲畜白骨 + 破损牧场围栏
     | 'sea_shipwreck';         // 海上渔船被毁沉没 + 残骸水花
 
 /** 渔猎民族据点周围伴生树林与灌丛植被节点 */
@@ -105,6 +105,7 @@ interface CityLifeActor {
     actionAlpha: number;       // 换季动作切换淡入淡出系数 0..1
     damageBlend: number;       // 战火破坏渐变系数：0=和平劳作，1=战火被毁废墟/尸体/沉船
     combatStartSec: number;    // 本轮进入战火状态的起始秒数
+    presentAtCombat: boolean;  // 本轮受袭瞬间是否实际出勤（冬季休耕角色不生成本轮战损）
     damagePreset: WarDamagePreset;
     damageVariant: number;     // 破损贴图帧索引
     displayedAction: string;   // 当前正在画的动作名
@@ -666,6 +667,7 @@ export class CityLifeAmbientLayer {
                         actionAlpha: 1,
                         damageBlend: 0,
                         combatStartSec: 0,
+                        presentAtCombat: false,
                         damagePreset: 'sea_shipwreck',
                         damageVariant,
                         displayedAction: 'work',
@@ -747,6 +749,7 @@ export class CityLifeAmbientLayer {
                 actionAlpha: 1,
                 damageBlend: 0,
                 combatStartSec: 0,
+                presentAtCombat: false,
                 damagePreset,
                 damageVariant,
                 displayedAction: isAnimal ? 'idle' : 'work',
@@ -801,11 +804,17 @@ export class CityLifeAmbientLayer {
 
         for (const a of armies) {
             if (!a || a.isDestroyed) continue;
-            if (a.siegeTargetCityId) {
+            const inFight = a.getIsInCombat?.() === true
+                || a.isAttacking
+                || a.isBattling
+                || a.inCombat
+                || a.state === 'COMBAT'
+                || a.state === 'SIEGE';
+            // siegeTargetCityId 在战后仍会保留用于城图外推，只有真实交战时才能作为攻城依据。
+            if (inFight && a.siegeTargetCityId) {
                 this.cityLastCombatMs.set(a.siegeTargetCityId, nowMs);
                 this.endangeredCities.add(a.siegeTargetCityId);
             }
-            const inFight = a.isAttacking || a.isBattling || a.inCombat || a.state === 'COMBAT' || a.state === 'SIEGE';
             if (inFight && typeof a.getPosition === 'function') {
                 const pos = a.getPosition();
                 if (pos && Number.isFinite(pos.lat) && Number.isFinite(pos.lng)) {
@@ -814,9 +823,17 @@ export class CityLifeAmbientLayer {
             }
         }
 
-        const activeBattles: any[] = game.battlefieldManager?.getActiveBattlefields?.() ?? [];
+        const activeBattles: any[] = game.combatSystem?.getActiveBattleFields?.() ?? [];
         for (const bf of activeBattles) {
-            const p = bf?.position || bf?.center || (Number.isFinite(bf?.lat) ? { lat: bf.lat, lng: bf.lng } : null);
+            if (!bf || bf.isOver) continue;
+            if (bf.siegeCityId) {
+                this.cityLastCombatMs.set(bf.siegeCityId, nowMs);
+                this.endangeredCities.add(bf.siegeCityId);
+            }
+            const p = bf.getReferencePosition?.()
+                ?? bf.position
+                ?? bf.center
+                ?? (Number.isFinite(bf.lat) ? { lat: bf.lat, lng: bf.lng } : null);
             if (p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) {
                 combatPositions.push(p);
             }
@@ -965,7 +982,6 @@ export class CityLifeAmbientLayer {
             return;
         }
         if (actor.isAnimal) {
-            this.loadAsset('SUCAI_ANIMAL', actor.dir, 'death');
             this.loadStripAsset('SUCAI_BATTLEFIELD', 'ANIMAL_SKELETON');
             this.loadStripAsset('SUCAI_BATTLEFIELD', 'FENCE_RUBBLE');
         } else {
@@ -988,7 +1004,6 @@ export class CityLifeAmbientLayer {
                 inUse.add('SUCAI/VIL_MALE_VILLAGER:death');
                 inUse.add('SUCAI/SHP_FISHING_SHIP:sink');
                 inUse.add('SUCAI/SHIP_SINK_SMALL:idle');
-                inUse.add(`SUCAI_ANIMAL/${a.dir}:death`);
             }
         }
         const cands = [...this.assets.entries()]
@@ -1084,6 +1099,7 @@ export class CityLifeAmbientLayer {
             if (inCombat) {
                 if (actor.damageBlend <= 0.01) {
                     actor.combatStartSec = tSec;
+                    actor.presentAtCombat = !winterSleep;
                 }
                 actor.damageBlend = Math.min(1, actor.damageBlend + dt / FADE_TO_DAMAGE_SEC);
             } else if (actor.damageBlend > 0) {
@@ -1158,9 +1174,9 @@ export class CityLifeAmbientLayer {
         this.ctx.restore();
     }
 
-    /** 绘制 8 方向死亡倒地/沉没并定格的精灵（村民、家畜或沉没渔船） */
+    /** 绘制 8 方向死亡倒地/沉没并定格的精灵（村民或沉没渔船） */
     private drawDirectionalCorpse(
-        lib: 'SUCAI' | 'SUCAI_ANIMAL',
+        lib: 'SUCAI',
         dir: string,
         action: string,
         facing: number,
@@ -1214,13 +1230,13 @@ export class CityLifeAmbientLayer {
             return;
         }
 
-        const corpseScale = (actor.isAnimal ? ANIMAL_SCALE_BASE : VILLAGER_SCALE_BASE) * zoomFactor;
+        const corpseScale = VILLAGER_SCALE_BASE * zoomFactor;
         const ox = ((actor.damageVariant % 7) - 3) * 4.5 * zoomFactor;
         const oy = (((actor.damageVariant >> 2) % 5) - 2) * 3.5 * zoomFactor;
 
         if (actor.damagePreset === 'animal_loss') {
+            // 当前 SUCAI_ANIMAL 没有 death 动作，不能用 walk 回退冒充死畜，只画既有白骨与牧场损失。
             this.drawStripSprite('SUCAI_BATTLEFIELD', 'FENCE_RUBBLE', actor.damageVariant, pt.x - 10 * zoomFactor, pt.y - 5 * zoomFactor, wreckScale * 0.9, damageAlpha * 0.92);
-            this.drawDirectionalCorpse('SUCAI_ANIMAL', actor.dir, 'death', facing, elapsed, pt.x, pt.y, corpseScale, damageAlpha);
             this.drawStripSprite('SUCAI_BATTLEFIELD', 'ANIMAL_SKELETON', actor.damageVariant, pt.x + 12 * zoomFactor + ox * 0.4, pt.y + 6 * zoomFactor + oy * 0.4, wreckScale * 0.88, damageAlpha * 0.95);
             return;
         }
@@ -1358,7 +1374,7 @@ export class CityLifeAmbientLayer {
             if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
 
             // 战火破坏层（破损农车/栅栏废墟、平民尸体、牲畜尸骨、沉没渔船），随 damageBlend (0 -> 1) 渐显
-            const damageAlpha = actor.viewAlpha * actor.damageBlend;
+            const damageAlpha = actor.presentAtCombat ? actor.viewAlpha * actor.damageBlend : 0;
             if (damageAlpha > 0.01) {
                 this.drawWarDamageForActor(actor, pt, facing, zoomFactor, tSec, damageAlpha);
             }

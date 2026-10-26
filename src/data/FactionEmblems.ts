@@ -34,7 +34,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     menggu_d: 'TAMGA',   // 蒙古·塔木加
     kushi: 'PYRAMID',   // 库施·金字塔
     aqimeinide: 'WINGED_SUN',   // 阿契美尼德·翼日盘
-    sashan: 'HERALDIC_SUN',   // 萨珊·日盘
     mapuche: 'STAR7',   // 马普切·七角星
     aztec: 'SERPENT',   // 阿兹特克·羽蛇
     tupi: 'FEATHER',   // 图皮·羽饰
@@ -202,6 +201,9 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     konbaung: 'KONBAUNG_PEACOCK',   // 贡榜·开屏孔雀（晚期王令国印；王室专用纹饰与19世纪旗帜）
     sijitai: 'SCYTHIAN_KUL_OBA_STAG',   // 斯基泰·库尔奥巴金鹿（前5—前4世纪盾饰／弓囊饰，蜷腿回环鹿角）
     piketai: 'PICTISH_CRESCENT_VROD',   // 皮克特·新月与V形杖（6—9世纪本文化符号石最常见专属符号）
+    // ── 2026-10-26 大势力史实旗面第四批（2 家；萨珊撤销无专属依据日盘）────────
+    heti: 'HITTITE_ROYAL_WINGED_SUN',   // 赫梯·王印翼日盘与大王符号（苏庇路里乌玛一世及后继者王印）
+    kesa: 'KHAZAR_COIN_TAMGA',   // 可萨·枝形塔木加（837／838年特别钱币，非留里克三叉戟）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */
