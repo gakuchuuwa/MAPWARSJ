@@ -8316,6 +8316,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 4,
             "offsetY": 3
+        },
+        "/assets/PERSIAN/jiazini_masud.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/BYZANTINE/bfe_andronikos_komnenos.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -2
         }
     },
     "folderGuides": {

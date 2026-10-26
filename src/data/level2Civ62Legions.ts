@@ -2958,6 +2958,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（华氏城、王舍城；阿育王石柱猛狮柱头、桑吉大塔浮雕石栏楯、那烂陀红砖佛寺巨壁；竹制六尺超长重步兵大弓、双刃阔铁剑、披挂重铠的双人象轿长枪战象冲阵大阵）
     //    英雄队（第 10 队·主将队）：elite_battle_elephant / hero_prithviraj / hero_rajendrachola / elite_sannahya　— 按 248 主将表取，不进三排兵种编制
     // 🔴 [2026-10-26 主人令「确保所有兵模都被套用在二级、三级军团」·按兵模样子] 上古南亚弓战车样，孔雀王朝有战车
+    // 🔴 [2026-10-26 主人令「象兵战车不能同队，都必须是2档」] 战车占 2 档前排（换下战象），中排复原古典掷矛手高级；不再象车同队
     {
         name: '古典时代孔雀军团', civ: '印度斯坦', age: 'antiquity', deStyle: 'INDI', region: 'MUGHAL' as RegionType,
         buildingStyle: 'MUGHAL',
@@ -2968,8 +2969,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令「象兵、战车只能安排在 2 档」＋「删除，别惹麻烦」] 战象不再上阵（不排 2 档，直接删）；
         //    空出的前排 3 档用非城堡精锐的印度部落民补位。军团改名：恒河战象军团 → 孔雀军团。
         slots: [
-            { type: 'elite_sannahya', count: 2 },
-            { type: 'elite_ratha_ranged', count: 4 },
+            { type: 'elite_ratha_ranged', count: 2 },
+            { type: 'elite_antiquity_skirmisher', count: 4 },
             { type: 'indian_tribesman', count: 3 },
         ],
     },
@@ -3035,6 +3036,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（卡尔纳苏瓦尔纳、高达；红砖砌筑多层佛寺基址、湿婆神庙石雕坛座；三角洲轻质硬木大弓、双刃破甲短矛、沼泽水网冲积平原浅滩战象突击大阵）
     //    英雄队（第 10 队·主将队）：elite_ratha_melee / hero_generalaraiyan / hero_rajendrachola　— 按 248 主将表取，不进三排兵种编制
     // 🔴 [2026-10-26 主人令「确保所有兵模都被套用在二级、三级军团」·按兵模样子] 上古南亚重饰战车样
+    // 🔴 [2026-10-26 主人令「象兵战车不能同队，都必须是2档」] 撤回第二排战车，复原印度部落民（一军团只一排战车）
     {
         name: '古典时代高陀军团', civ: '孟加拉', age: 'antiquity', deStyle: 'INDI', region: 'BENGALIS' as RegionType,
         buildingStyle: 'BENGALIS',
@@ -3048,7 +3050,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'ratha_ranged', count: 2 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
-            { type: 'elite_ratha_melee', count: 3 },
+            { type: 'indian_tribesman', count: 3 },
         ],
     },
     // ── 孟加拉 · 封建时代 · 封建时代波罗军团　（本次新建）────────────────
@@ -3115,17 +3117,18 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：重骑兵、骑射为主
     //    描述正文（主人原文，一字未改）：（乌贾因、朱纳加德；吉尔纳尔岩壁大理石储水大坝敕令铭刻、早期悬崖佛石窟玄武岩雕凿殿堂；塞种双曲复合反曲弓、精钢破甲双手长骑枪、人马具装重鳞甲与高机动骑射迂回大阵）
     //    英雄队（第 10 队·主将队）：hero_prithviraj / hero_rajendrachola / elite_sannahya / hero_chandbardai　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「象兵战车不能同队，都必须是2档」] 上古南亚重饰战车样；战车是绝对前排→阵型改 2-4-3（前战车·中掷矛手·后部落民），换下古典枪骑兵
     {
         name: '古典时代萨卡军团', civ: '瞿折罗', age: 'antiquity', deStyle: 'INDI', region: 'GURJARAS' as RegionType,
         buildingStyle: 'GURJARAS',
         castleId: 'GURJ_CASTLE_AGE3', castleName: '瞿折罗 索姆纳特多层砂岩堡',
-        formationMode: 'echelon',
+        formationMode: 'crane_wing',
         shipId: 'BIREME',
         commanderUnit: 'hero_artaphernes',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_prithviraj（主将队须为古典时代的英雄或精英兵）
         slots: [
+            { type: 'elite_ratha_melee', count: 2 },
             { type: 'antiquity_skirmisher', count: 4 },
             { type: 'indian_tribesman', count: 3 },
-            { type: 'lancer', count: 2 },
         ],
     },
     // ── 古吉拉特 · 封建时代 · 封建时代古贾拉铁骑军团　（本次新建）────────────────
@@ -3627,6 +3630,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【高级】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（特诺奇蒂特兰、特斯科科；特斯科科湖防波石堤巨型水闸要塞、特诺奇蒂特兰断桥湖泊防御石垒；两指浸盐致密防箭棉甲（Ichcahuipilli）、重型黑曜石刺枪、大航海早期特诺奇蒂特兰保卫战湖堤绝命阻击反攻大阵）
     //    英雄队（第 10 队·主将队）：hero_cunhambebe / hero_arariboiamelee　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「象兵战车不能同队，都必须是2档」] 中排 4 档是远程位，豹勇士(步兵)→玛雅羽箭手(美洲羽饰弓手样)
     {
         name: '帝国时代特诺奇军团', civ: '阿兹特克', age: 'imperial', deStyle: 'MESO', region: 'AMERICA' as RegionType,
         buildingStyle: 'AMERICA',
@@ -3638,7 +3642,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_cuauhtemoc',
         slots: [
             { type: 'elite_eagle_warrior', count: 3 },
-            { type: 'jaguar_warrior', count: 4 },
+            { type: 'plumed_archer', count: 4 },
             { type: 'xolotl_warrior', count: 2 },
         ],
     },

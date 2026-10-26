@@ -2,8 +2,8 @@
   "name": "HUGUANG_CASTLE_AGE3",
   "frames": 1,
   "box_w": 492,
-  "box_h": 487,
-  "anchor_x": 246,
-  "anchor_y": 382,
+  "box_h": 422,
+  "anchor_x": 276,
+  "anchor_y": 325,
   "sld_source": "user_huguang_castle"
 }

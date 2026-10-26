@@ -300,6 +300,23 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'petard', 'petard', 'heavy_scorpion', 'heavy_scorpion'],
     },
+    // 2026-10-26 主人令新增湖广：四档沿用拆分前江南文化链的同时代器械，每档 9 件。
+    '古典时代荆楚军团': {
+        age: 'antiquity',
+        weapons: ['antiquity_battering_ram', 'antiquity_battering_ram', 'antiquity_battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
+    },
+    '封建时代荆湘军团': {
+        age: 'feudal',
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
+    },
+    '城堡时代湘楚军团': {
+        age: 'castle',
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
+    },
+    '帝国时代湖广军团': {
+        age: 'imperial',
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'petard', 'petard', 'heavy_scorpion', 'heavy_scorpion'],
+    },
     '古典时代巴蜀军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_siege_tower', 'antiquity_siege_tower'],

@@ -61,6 +61,7 @@ import type {
     AnimalAction, TacticalAnimal, WarSlash, WarSpark, WarFx, FxDir, FxAsset,
     WarCorpse, WarFleer, WarBank, Scene13WarInit, PassMountainConfig, Scene13SkirmishSpec,
 } from './scene13/Scene13Types';
+import type { Scene13SkillVfx, Scene13SkillVfxPoint, Scene13SkillVisualState } from './scene13/Scene13SkillVfx';
 export type { TechBrief, Scene13WarInit, PassMountainConfig } from './scene13/Scene13Types';
 
 import {
@@ -195,6 +196,8 @@ export class Scene13WarLayer {
     sparks: WarSpark[] = [];
     /** DE 攻击特效实例（爆炸/炮口焰，一次性生命周期） */
     fxs: WarFx[] = [];
+    /** 六计释放特效：Canvas 手绘大形＋真实受影响士兵高光，付费计另带金色认主扫光。 */
+    skillVfx: Scene13SkillVfx[] = [];
     /** DE 攻击特效素材缓存（单组 1 向 / 炮口焰 8 向） */
     fxBank: Record<string, FxAsset> = {};
     fallenFlags: WarFallenFlag[] = [];

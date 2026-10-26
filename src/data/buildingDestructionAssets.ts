@@ -26,6 +26,7 @@ export const DE_RUBBLE_FALLBACK = 'FOUNDATION_1X1_RUBBLE';
 const DESTR_FAMILY: Record<string, string> = {
     HUGUANG_CASTLE_AGE3: 'CHIN_CASTLE_AGE3',
     WESTERN_CASTLE_AGE3: 'CEAS_CASTLE_AGE3',
+    TIBET_CASTLE_AGE3: 'PURU_CASTLE_AGE3',
 };
 
 /** 取一件素材的破坏素材族：有专属族就用专属，否则返回自身。 */

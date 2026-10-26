@@ -18,7 +18,8 @@
 import { CityManager } from '../core/CityManager';
 import { LegionManager } from '../core/LegionManager';
 import { GameConfig } from '../config/GameConfig';
-import { CITY_CONFIG, clampCityTroops } from '../config/CityConfig';
+import { CITY_CONFIG, clampCityTroops, getCityMaxTroops } from '../config/CityConfig';
+import { roadRegistry } from '../roads/RoadRegistry';
 import { GameTime } from '../core/GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
@@ -209,8 +210,20 @@ export class RecruitmentSystem {
     /**
      * 每季：按据点等级补驻军（大200 / 中150 / 小100 / 关50），产出全进城防。
      * 【2026-06-12 主人裁定】「家城产出优先补自家军团」已删除；军团恢复改为战后统一 30%。
+     *
+     * 【2026-10-26 主人定「边境据点增兵更快，只把内地的增兵给边境，势力统一规划；为了平衡，不为增加」】
+     *   各城产量照旧算；同势力内：
+     *   ① 边境城 = 路网直连（穿过战场节点）的据点里有别家势力的城；其余为内地城。
+     *   ② 内地城驻军已够出兵线（出兵门槛 ÷ 0.9）时，本季产量交给本势力边境池；不够则自留（保住内地武将出兵）。
+     *   ③ 边境池按各边境城自身产量比例分配，每城本季到手 ≤ 自身产量 × BORDER_RECRUIT_MAX_MULT，且不超城上限。
+     *   ④ 分不出去的退回原内地城（= 旧规则）。势力总增兵一兵不多。没有边境城的势力一切照旧。
      */
     private recruitSeasonGarrison(cities: ReturnType<CityManager['getCities']>): void {
+        type Entry = { city: RecruitmentCity; culture66: string; prod: number; border: boolean };
+        const byFaction = new Map<string, Entry[]>();
+        const factionOf = new Map<string, string>();
+        for (const city of cities) factionOf.set(city.id, city.factionId || '');
+
         for (const city of cities) {
             if (!city.factionId || city.factionId === '' || city.factionId === 'panjun' || city.factionId === 'panshu') continue;
             // 🔴 [2026-09-12 主人定] 战场已独立出据点体系（`src/data/Battlefields.ts`）→
@@ -218,17 +231,86 @@ export class RecruitmentSystem {
 
             const cfg = CITY_CONFIG[city.type];
             if (!cfg) continue;
-
-            // 攻城战中驻军兵力由 BattleUnitFactory 适配器缓存驱动，勿直接改 city.troops
-            if (!this.isCityGarrisonCommitted(city.id)) {
-                const region = this.getCityRegion(city as RecruitmentCity);
-                const culture66 = toCulture66((city as { buildingStyle?: string }).buildingStyle || region);
-                const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[culture66] ?? 1.0;
-                const added = Math.floor(cfg.recruitPerSeason * recruitMult);
-                city.troops = clampCityTroops(city.type, (city.troops || 0) + added, culture66);
-            }
             this.pendingLabelCityIds.add(city.id);
+
+            // 攻城战中驻军兵力由 BattleUnitFactory 适配器缓存驱动，勿直接改 city.troops（不产也不收）
+            if (this.isCityGarrisonCommitted(city.id)) continue;
+
+            const region = this.getCityRegion(city as RecruitmentCity);
+            const culture66 = toCulture66((city as { buildingStyle?: string }).buildingStyle || region);
+            const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[culture66] ?? 1.0;
+            const prod = Math.floor(cfg.recruitPerSeason * recruitMult);
+            const border = this.isBorderCity(city.id, city.factionId, factionOf);
+            const list = byFaction.get(city.factionId) ?? [];
+            list.push({ city: city as RecruitmentCity, culture66, prod, border });
+            byFaction.set(city.factionId, list);
         }
+
+        const maxMult = GameConfig.CITY.BORDER_RECRUIT_MAX_MULT;
+        for (const list of byFaction.values()) {
+            const added = new Map<Entry, number>(list.map((e) => [e, e.prod]));
+            const borders = list.filter((e) => e.border);
+            if (borders.length > 0) {
+                // ② 内地城够出兵线的，本季产量入池
+                const donors = list.filter((e) =>
+                    !e.border && (e.city.troops || 0) >= this.getCityMinSpawnTroops(e.city) / 0.9);
+                let pool = 0;
+                for (const d of donors) { pool += d.prod; added.set(d, 0); }
+
+                // ③ 按自身产量比例分给边境城（各城有空间上限，分满的退出，剩下的再分一轮）
+                const room = new Map<Entry, number>(borders.map((b) => {
+                    const capRoom = getCityMaxTroops(b.city.type, b.culture66) - (b.city.troops || 0) - b.prod;
+                    return [b, Math.max(0, Math.min(b.prod * (maxMult - 1), capRoom))];
+                }));
+                let open = borders.filter((b) => room.get(b)! > 0 && b.prod > 0);
+                while (pool >= 1 && open.length > 0) {
+                    const weight = open.reduce((s, b) => s + b.prod, 0);
+                    let given = 0;
+                    for (const b of open) {
+                        const share = Math.min(room.get(b)!, Math.floor(pool * b.prod / weight));
+                        room.set(b, room.get(b)! - share);
+                        added.set(b, added.get(b)! + share);
+                        given += share;
+                    }
+                    pool -= given;
+                    if (given === 0) break;
+                    open = open.filter((b) => room.get(b)! > 0);
+                }
+
+                // ④ 没分出去的按比例退回内地原城
+                const donorProd = donors.reduce((s, d) => s + d.prod, 0);
+                if (pool > 0 && donorProd > 0) {
+                    let back = 0;
+                    for (const d of donors) {
+                        const share = Math.floor(pool * d.prod / donorProd);
+                        added.set(d, share);
+                        back += share;
+                    }
+                    added.set(donors[0], added.get(donors[0])! + pool - back); // 取整余数，保证总量不变
+                }
+            }
+
+            for (const e of list) {
+                e.city.troops = clampCityTroops(e.city.type, (e.city.troops || 0) + added.get(e)!, e.culture66);
+            }
+        }
+    }
+
+    /** 边境城：路网直连（战场节点穿过去）的据点里有别家势力（含叛军/无主）的城 */
+    private isBorderCity(cityId: string, factionId: string, factionOf: Map<string, string>): boolean {
+        const seen = new Set<string>([cityId]);
+        const queue = [cityId];
+        while (queue.length > 0) {
+            const cur = queue.pop()!;
+            for (const n of roadRegistry.getConnectedCities(cur)) {
+                if (seen.has(n)) continue;
+                seen.add(n);
+                const f = factionOf.get(n);
+                if (f === undefined) queue.push(n); // 战场节点 → 接着往外找据点
+                else if (f !== factionId) return true;
+            }
+        }
+        return false;
     }
 
     private queueCityLabel(cityId: string): void {

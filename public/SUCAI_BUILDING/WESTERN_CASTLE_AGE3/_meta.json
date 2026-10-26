@@ -2,8 +2,8 @@
   "name": "WESTERN_CASTLE_AGE3",
   "frames": 1,
   "box_w": 492,
-  "box_h": 414,
-  "anchor_x": 246,
-  "anchor_y": 325,
+  "box_h": 393,
+  "anchor_x": 276,
+  "anchor_y": 303,
   "sld_source": "user_western_castle"
 }

@@ -44,7 +44,13 @@ export class GameConfig {
         EXPEDITION: true,
     };
     static CITY = {
-        MIN_GARRISON: 1000
+        MIN_GARRISON: 1000,
+        /**
+         * [2026-10-26 主人定「边境据点增兵更快，只把内地的增兵调给边境，势力统一规划」]
+         * 边境据点每季到手的增兵 ≤ 自身产量 × 此倍数（多出来的仍留在内地原城，同旧规则）。
+         * 防大帝国内地多、边境少时把前线一下子灌满。见 RecruitmentSystem.recruitSeasonGarrison。
+         */
+        BORDER_RECRUIT_MAX_MULT: 3,
     };
     static SIEGE = {
         /**
@@ -96,8 +102,9 @@ export class GameConfig {
         DESPAWN_FADE_OUT_MS: 5000,
         /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms)。
          *  同时是 13 野战结束后战场残局（尸体烙图）的保留时长（两者必须同长："残局停留 → 直接切新军团"一气呵成）。
-         *  🔴 [2026-10-03 主人令「改为 2 秒」] 原 5000 → 3000 → 2000。 */
-        FOLLOW_SWITCH_DELAY_MS: 2000,
+         *  🔴 [2026-10-03 主人令「改为 2 秒」] 原 5000 → 3000 → 2000。
+         *  🔴 [2026-10-26 主人令「之前不是有停留时间吗」「只要前者，只改停留」] 恢复 5 秒（只调停留画面，不加战斗禁入窗口）。 */
+        FOLLOW_SWITCH_DELAY_MS: 5000,
         /** 各类型据点最低出兵阈值（armySize = 驻军 × 0.9，须 ≥ 此值才可出兵）。统一 5000（与军团成立绝对底线一致）。 */
         CITY_MIN_SPAWN_TROOPS: {
             small_city: 5000,
