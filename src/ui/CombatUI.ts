@@ -4708,14 +4708,14 @@ export class CombatUI {
         side: 'attacker' | 'defender',
         sixSet: TacticalSixSet,
         displayName: string,
-        generalId?: string,
+        _generalId?: string,
         _skillId?: string,
         viewer?: { name: string; paid: boolean },
     ): void {
         if (!this.scene13LayoutOn) return;
         // 占用统一 Cut-in 闸门（错开由 Scene13WarLayer 的游戏秒＋真实秒双闸保证，此处不再顺延，保持技效与大字同刻）
         this.skillCutInBusyUntil = Date.now() + CombatUI.SKILL_CUTIN_GAP_MS;
-        audioManager.playGeneralSkillSfx(generalId || `${side}_${sixSet}`);
+        audioManager.playScene13SkillSfx(sixSet, viewer !== undefined);
 
         const frame = this.sideElement(side, this.leftPortraitFrame, this.rightPortraitFrame);
         if (!frame) return;

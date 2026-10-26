@@ -33,6 +33,7 @@ import {
 } from '../legion-editor/main';
 import { getNavalShipChineseName } from '../types/NavalShipTiers';
 import { getUnitLookNote } from '../data/UnitLookNotes';
+import { LEGION_78_SIEGE_MAP } from '../data/SiegeWeaponsByCulture';
 
 const BASE_16_LEGION_NAMES: Record<string, string> = {
     CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
@@ -1075,6 +1076,11 @@ async function rename(raw: string): Promise<void> {
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
         renameLegionInMemory(oldName, newName);
+        // 攻城武器发放表也按军团名查：内存里同步换键，「检查军团命名」⑤ 不用等 HMR 就认新名
+        if (LEGION_78_SIEGE_MAP[oldName] && !LEGION_78_SIEGE_MAP[newName]) {
+            LEGION_78_SIEGE_MAP[newName] = LEGION_78_SIEGE_MAP[oldName];
+            delete LEGION_78_SIEGE_MAP[oldName];
+        }
         selected = newName;
         // 🔴 [2026-10-20 修] 原来写死 '三级'：改的是二级军团时，选中层当场错位，
         //    右栏会拿错行（建筑文化/编制都跟着错）。改成沿用被改名那支军团本来的层。
@@ -1082,7 +1088,7 @@ async function rename(raw: string): Promise<void> {
         draft = null;
         rows = buildRows();
         render();
-        toast(`✏️ 【${oldName}】→【${newName}】　势力归属 ${json.factions} 处 · 文化区指针 ${json.cultures} 处已同改`);
+        toast(`✏️ 【${oldName}】→【${newName}】　势力归属 ${json.factions} 处 · 文化区指针 ${json.cultures} 处 · 攻城配置 ${json.siege ?? 0} 处 · 武将 ${json.generals ?? 0} 处 · 三级父级 ${json.parents ?? 0} 处 · 细分标签 ${json.subtags ?? 0} 处已同改`);
     } catch (e) {
         toast('❌ 改名失败：' + ((e as Error)?.message ?? String(e)), true);
     }
@@ -1332,6 +1338,12 @@ async function createLegion(
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
         patchLegionComposition(name, slots, mode, pickedShipId || parent.shipId || undefined, pickedCommanderUnit || null);   // 不等 HMR，立刻可见可编
+        // 服务端已把归属军团的攻城配置照抄给新军团；内存里同步一份，「检查军团命名」⑤ 不用等 HMR
+        const ageKey = ({ 古典时代: 'antiquity', 封建时代: 'feudal', 城堡时代: 'castle', 帝国时代: 'imperial' } as Record<string, string>)[name.slice(0, 4)];
+        const parentSiege = LEGION_78_SIEGE_MAP[parentName] ?? (ageKey ? LEGION_78_SIEGE_MAP[`${parentName}_${ageKey}`] : undefined);
+        if (json.siegeAdded && parentSiege && !LEGION_78_SIEGE_MAP[name]) {
+            LEGION_78_SIEGE_MAP[name] = { age: parentSiege.age, weapons: [...parentSiege.weapons] };
+        }
         // 🔴 [2026-09-18 主人定] 套用的武将：单条写入归属，与「保存武将换军团」同一个接口，绝不整表覆盖
         let assignedName = '';
         if (assignFactionId) {

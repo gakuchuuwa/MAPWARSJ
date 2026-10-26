@@ -194,6 +194,10 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     jialedi: 'BABYLON_MUSHHUSHSHU',   // 迦勒底·穆什胡舒龙（新巴比伦伊什塔尔门）
     hantawadi: 'HANTHAWADDY_HAMSA',   // 汉达瓦底·金色Hintar/Hamsa神鸟
     tiemuer: 'TIMURID_ANNULETS',   // 图兰（帖木儿）·三环三角（钱币与克拉维霍使节记载）
+    // ── 2026-10-26 大势力史实旗面第二批（3 家）────────────────────────────
+    guishuang: 'KUSHAN_KANISHKA_TAMGA',   // 贵霜·迦腻色迦四叉塔木加（同期钱币与玛瑙印章）
+    xibolai: 'ISRAEL_HASMONEAN_MENORAH',   // 以色列·七枝圣殿灯台（哈斯蒙尼王安提柯二世前40—37年钱币）
+    puxiangyindu: 'PORTUGUESE_INDIA_ARMILLARY',   // 葡属印度·浑天仪（曼努埃尔一世标志及印度航线旗）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

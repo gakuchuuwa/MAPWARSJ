@@ -135,6 +135,8 @@ export function relocateTemplateWater(
  *    ＋「战略地图中海在西边，战术地图中却在东边，请全面修复所有错误的战术地图」]
  * 自适应校正战术地图水体方位，使海岸线朝向与真实地理（＝战略地图）一致。
  */
+const ORIENTED_MAP_CACHE = new WeakMap<object, Map<string, any>>();
+
 export async function adaptMapDataSeaOrientation(
     mapData: any,
     lat: number | undefined,
@@ -142,6 +144,10 @@ export async function adaptMapDataSeaOrientation(
 ): Promise<any> {
     if (!mapData || !mapData.width || !mapData.height || !mapData.terrain) return mapData;
     if (lat === undefined || lng === undefined) return mapData;
+    const cacheKey = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+    let cacheByCoord = ORIENTED_MAP_CACHE.get(mapData);
+    const cached = cacheByCoord?.get(cacheKey);
+    if (cached) return cached;
 
     // ① 真实海向（屏幕坐标：东 = +x，北 = −y）
     const DIRS: Array<[number, number]> = [[1, 0], [0.707, -0.707], [0, -1], [-0.707, -0.707], [-1, 0], [-0.707, 0.707], [0, 1], [0.707, 0.707]];
@@ -166,11 +172,26 @@ export async function adaptMapDataSeaOrientation(
         if (!probes.includes('pending')) break;
         await new Promise((r) => setTimeout(r, 200));
     }
+    const finish = (result: any): any => {
+        // 探测数据没齐时得到的“无法判定”只是暂时结果，下一场必须重试，不能缓存成永久方向。
+        if (probes.includes('pending')) return result;
+        if (!cacheByCoord) {
+            cacheByCoord = new Map<string, any>();
+            ORIENTED_MAP_CACHE.set(mapData, cacheByCoord);
+        }
+        cacheByCoord.set(cacheKey, result);
+        while (cacheByCoord.size > 16) {
+            const oldest = cacheByCoord.keys().next().value;
+            if (oldest === undefined) break;
+            cacheByCoord.delete(oldest);
+        }
+        return result;
+    };
     let rx = 0, ry = 0, seaN = 0;
     pts.forEach((p, i) => { if (probes[i] === 'sea') { rx += p.ex; ry += p.sy; seaN++; } });
     const rl = Math.hypot(rx, ry);
     // 海太少（内陆）或四面皆海（小岛，方向无意义）就不动
-    if (seaN < 3 || rl < seaN * 0.25) return mapData;
+    if (seaN < 3 || rl < seaN * 0.25) return finish(mapData);
 
     // ② 地图水向
     const w = mapData.width, h = mapData.height;
@@ -188,9 +209,9 @@ export async function adaptMapDataSeaOrientation(
             waterN++;
         }
     }
-    if (waterN < 300) return mapData;
+    if (waterN < 300) return finish(mapData);
     const ml = Math.hypot(mx, my);
-    if (ml < waterN * 3) return mapData;   // 水均匀散在全图（多条小河），没有明确海岸方向
+    if (ml < waterN * 3) return finish(mapData);   // 水均匀散在全图（多条小河），没有明确海岸方向
 
     // ③ 8 种对称：作用在屏幕向量 (u, v) 上
     type Sym = { name: string; f: (u: number, v: number) => [number, number] };
@@ -215,7 +236,7 @@ export async function adaptMapDataSeaOrientation(
         const dot = a1 * ux + b1 * uy;
         if (dot > bestDot + 1e-6) { bestDot = dot; best = sym; }
     }
-    if (best === SYMS[0]) return mapData;
+    if (best === SYMS[0]) return finish(mapData);
 
     // 屏幕格 (sx, sy) 以图心为原点做对称，再换回原始数据坐标
     const cS = (h - 1) / 2, cT = (w - 1) / 2;   // sx ∈ [0,h)，sy ∈ [0,w)
@@ -241,7 +262,7 @@ export async function adaptMapDataSeaOrientation(
         return no;
     });
     console.info(`[Scene13WarLayer] 🌊 真实海向 (${ux.toFixed(2)}, ${uy.toFixed(2)})，地图水向已按「${best.name}」校正（一致度 ${bestDot.toFixed(2)}）`);
-    return {
+    return finish({
         ...mapData,
         terrain: remap(mapData.terrain),
         layer: remap(mapData.layer),
@@ -249,5 +270,5 @@ export async function adaptMapDataSeaOrientation(
         passable: remap(mapData.passable),
         speed: remap(mapData.speed),
         objects: newObjs,
-    };
+    });
 }

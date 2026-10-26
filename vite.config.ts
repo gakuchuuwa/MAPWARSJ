@@ -1312,7 +1312,7 @@ export default defineConfig({
                 // ========================================================
                 // 🔴 [2026-09-15 主人定「添加一个军团改名」]
                 //   /api/rename-legion   body: { oldName, newName }
-                //   一个军团名在三个地方各存一份，改名必须**三处同改**，漏一处就裂成两支：
+                //   一个军团名在多个地方各存一份，改名必须**全部同改**，漏一处就裂成两支（另四处见下方 ④–⑦）：
                 //     ① src/data/level3CustomLegions.ts / level2Civ62Legions.ts  `name: 'X'`  军团自己那条记录
                 //     ② src/data/FactionCompositions.ts                          `legionName: "X"`  势力专属归属
                 //     ③ src/types/CultureFormations.ts                           `REGION: 'X'`  文化区默认指针
@@ -1382,17 +1382,77 @@ export default defineConfig({
                             const cHits = countOf(tc, cV1) + countOf(tc, cV2);
                             tc = tc.split(cV1).join(": '" + newName + "'").split(cV2).join(': "' + newName + '"');
 
+                            // 🔴 [2026-10-26 主人报障「军团改名好像不够完整……只改了显示的名字，不改攻城武器的军团的名字」]
+                            //    军团名还被另外四处当「键 / 指针」引用，原先没跟着改 → 改名后攻城退回母体配置、
+                            //    武将挂的专属军团、三级军团的父级、细分标签军团全部指向一个已经不存在的名字：
+                            //     ④ src/data/SiegeWeaponsByCulture.ts   `'X': {`            攻城武器发放表（按军团名查）
+                            //     ⑤ src/data/FactionGenerals.ts         `legionName: 'X'`   武将自己挂的军团
+                            //     ⑥ src/data/level3CustomLegions.ts     `parentLegion: 'X'` 三级军团的父级
+                            //     ⑦ src/data/GeneralEraSubtags.ts       `: 'X'`             细分标签专属军团
+                            const ps = path.resolve(__dirname, 'src/data/SiegeWeaponsByCulture.ts');
+                            const pg = path.resolve(__dirname, 'src/data/FactionGenerals.ts');
+                            const pt = path.resolve(__dirname, 'src/data/GeneralEraSubtags.ts');
+                            let ts = safeReadFileSync(ps);
+                            let tg = safeReadFileSync(pg);
+                            let tt = safeReadFileSync(pt);
+                            const sOld = "'" + oldName + "': {";
+                            const sOldD = '"' + oldName + '": {';
+                            if (ts.includes("'" + newName + "': {") || ts.includes('"' + newName + '": {')) {
+                                throw new Error('攻城武器表里已有【' + newName + '】的配置，先清掉再改名');
+                            }
+                            const sHits = countOf(ts, sOld) + countOf(ts, sOldD);
+                            if (sHits > 1) throw new Error('攻城武器表里【' + oldName + '】命中 ' + sHits + ' 条，应 ≤1，已中止');
+                            ts = ts.split(sOld).join("'" + newName + "': {").split(sOldD).join('"' + newName + '": {');
+
+                            const gS = "legionName: '" + oldName + "'";
+                            const gD = 'legionName: "' + oldName + '"';
+                            const gHits = countOf(tg, gS) + countOf(tg, gD);
+                            tg = tg.split(gS).join("legionName: '" + newName + "'").split(gD).join('legionName: "' + newName + '"');
+
+                            // 三级父级：自身若在三级表，就在 selfText 上改（同一个文件，别各改各的互相覆盖）
+                            const pS = "parentLegion: '" + oldName + "'";
+                            const pD = 'parentLegion: "' + oldName + '"';
+                            let pHits = 0;
+                            if (in3) {
+                                pHits = countOf(selfText, pS) + countOf(selfText, pD);
+                                selfText = selfText.split(pS).join("parentLegion: '" + newName + "'").split(pD).join('parentLegion: "' + newName + '"');
+                            } else {
+                                pHits = countOf(t3, pS) + countOf(t3, pD);
+                                t3 = t3.split(pS).join("parentLegion: '" + newName + "'").split(pD).join('parentLegion: "' + newName + '"');
+                            }
+
+                            const tHits = countOf(tt, cV1) + countOf(tt, cV2);
+                            tt = tt.split(cV1).join(": '" + newName + "'").split(cV2).join(': "' + newName + '"');
+
                             markLegionSaveWrite();
-                            safeWriteFileSync(selfFile, selfText);
-                            if (fHits > 0) safeWriteFileSync(pf, tf);
-                            if (cHits > 0) safeWriteFileSync(pc, tc);
+                            // 🔴 [2026-10-26 实测] 七个文件逐个写，中途某个被占用（EPERM）会只改一半，
+                            //    军团当场裂成新旧两个名字 → 改成「全写成功才算数」：任何一个失败，已写的全部回退原文。
+                            const writes: Array<[string, string]> = [[selfFile, selfText]];
+                            if (fHits > 0) writes.push([pf, tf]);
+                            if (cHits > 0) writes.push([pc, tc]);
+                            if (sHits > 0) writes.push([ps, ts]);
+                            if (gHits > 0) writes.push([pg, tg]);
+                            if (pHits > 0 && !in3) writes.push([p3, t3]);
+                            if (tHits > 0) writes.push([pt, tt]);
+                            const originals = new Map(writes.map(([fp]) => [fp, safeReadFileSync(fp)] as [string, string]));
+                            const written: string[] = [];
+                            try {
+                                for (const [fp, text] of writes) { safeWriteFileSync(fp, text); written.push(fp); }
+                            } catch (werr: any) {
+                                for (const fp of written.reverse()) {
+                                    try { safeWriteFileSync(fp, originals.get(fp)!); } catch (rerr) { console.error('❌ [RenameLegion] 回退失败：' + fp, rerr); }
+                                }
+                                throw new Error('改名写盘失败，已全部回退、没有改动：' + (werr?.message ?? String(werr)));
+                            }
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({
                                 ok: true, layer: in2 ? '二级' : '三级',
                                 factions: fHits, cultures: cHits,
+                                siege: sHits, generals: gHits, parents: pHits, subtags: tHits,
                             }));
                             console.log('[RenameLegion] ✏️ 【' + oldName + '】→【' + newName + '】'
-                                + '  自身 1 处 · 势力 ' + fHits + ' 处 · 文化区 ' + cHits + ' 处');
+                                + '  自身 1 处 · 势力 ' + fHits + ' 处 · 文化区 ' + cHits + ' 处'
+                                + ' · 攻城 ' + sHits + ' 处 · 武将 ' + gHits + ' 处 · 三级父级 ' + pHits + ' 处 · 细分标签 ' + tHits + ' 处');
                         } catch (err: any) {
                             console.error('❌ [RenameLegion] Failed:', err);
                             res.statusCode = 500;
@@ -1463,9 +1523,12 @@ export default defineConfig({
                                 '    },',
                             ].join('\n') + '\n';
                             safeWriteFileSync(p3, text.slice(0, at) + entry + text.slice(at));
+                            // 攻城配置照抄归属军团（否则「检查军团命名」⑤ 立刻报缺）
+                            const siegeAdded = serverSyncLegionSiege('create', legionName, parentLegion);
                             res.setHeader('Content-Type', 'application/json');
-                            res.end(JSON.stringify({ ok: true }));
-                            console.log('[CreateLegion] ✅ 三级新建【' + legionName + '】← 归属 ' + parentLegion);
+                            res.end(JSON.stringify({ ok: true, siegeAdded }));
+                            console.log('[CreateLegion] ✅ 三级新建【' + legionName + '】← 归属 ' + parentLegion
+                                + (siegeAdded ? ' · 攻城配置已照抄归属军团' : ' · ⚠️ 归属军团没有攻城配置可抄'));
                         } catch (err: any) {
                             console.error('❌ [CreateLegion] Failed:', err);
                             res.statusCode = 500;
@@ -1517,9 +1580,10 @@ export default defineConfig({
                             let headStart = open;
                             while (headStart > 0 && (text[headStart - 1] === ' ' || text[headStart - 1] === '\t')) headStart--;
                             safeWriteFileSync(p3, text.slice(0, headStart) + text.slice(tail));
+                            const siegeRemoved = serverSyncLegionSiege('delete', legionName);
                             res.setHeader('Content-Type', 'application/json');
-                            res.end(JSON.stringify({ ok: true }));
-                            console.log('[DeleteLegion] 🗑 【' + legionName + '】已从三级表删除');
+                            res.end(JSON.stringify({ ok: true, siegeRemoved }));
+                            console.log('[DeleteLegion] 🗑 【' + legionName + '】已从三级表删除' + (siegeRemoved ? ' · 攻城配置一并删除' : ''));
                         } catch (err: any) {
                             console.error('❌ [DeleteLegion] Failed:', err);
                             res.statusCode = 500;
@@ -3401,7 +3465,61 @@ function safeWriteFileSync(filePath: string, text: string): void {
             while (Date.now() < until) { /* 同步退让：中间件里不能 await */ }
         }
     }
+    // 🔴 [2026-10-26 实测] 大文件刚写完，Vite/索引器正在读它时，Windows 上「临时文件改名覆盖」会一直 EPERM
+    //    （读者没开共享删除权限）；但直接覆写内容是允许的 → 改名路线失败后退一步直接写原文件。
+    if (transient.has(lastErr?.code)) {
+        for (let attempt = 0; attempt < 6; attempt++) {
+            try {
+                fs.writeFileSync(filePath, text, 'utf-8');
+                return;
+            } catch (err: any) {
+                lastErr = err;
+                if (!transient.has(err?.code)) break;
+                const until = Date.now() + 150 * (attempt + 1);
+                while (Date.now() < until) { /* 同步退让 */ }
+            }
+        }
+    }
     throw new Error('写入 ' + path.basename(filePath) + ' 失败（文件被占用，已重试 8 次）：' + (lastErr?.message ?? lastErr));
+}
+
+/**
+ * 🔴 [2026-10-26 主人报障「怎么老提示错误……把程序一起修好」]
+ *    攻城武器发放表（SiegeWeaponsByCulture.ts）按**军团名**查，编辑器「检查军团命名」⑤ 要求每支二级/三级军团都有一条。
+ *    原来新建军团不写这张表 → 每新建一支就报一次「没有攻城配置」。这里补上：
+ *    · 新建：照抄归属军团的那条配置（父级是二级就抄同名键；父级是一级母体就抄「母体名_时代」键，时代按新军团名前缀）。
+ *    · 删除：顺手删掉它那条，免得表里留下没人用的键。
+ *    返回是否改了文件；找不到可抄的配置时不写、返回 false（编辑器检查会照常提示）。
+ */
+function serverSyncLegionSiege(op: 'create' | 'delete', legionName: string, parentLegion?: string): boolean {
+    const ps = path.resolve(__dirname, 'src/data/SiegeWeaponsByCulture.ts');
+    const text = safeReadFileSync(ps);
+    const keyLine = (name: string) => "    '" + name + "': {";
+    const blockOf = (name: string): { start: number; end: number } | null => {
+        const start = text.indexOf(keyLine(name));
+        if (start < 0) return null;
+        const close = text.indexOf('\n    },', start);
+        if (close < 0) return null;
+        let end = close + '\n    },'.length;
+        if (text[end] === '\r') end++;
+        if (text[end] === '\n') end++;
+        return { start, end };
+    };
+    if (op === 'delete') {
+        const b = blockOf(legionName);
+        if (!b) return false;
+        safeWriteFileSync(ps, text.slice(0, b.start) + text.slice(b.end));
+        return true;
+    }
+    if (blockOf(legionName)) return false;
+    const AGE: Record<string, string> = { 古典时代: 'antiquity', 封建时代: 'feudal', 城堡时代: 'castle', 帝国时代: 'imperial' };
+    const age = Object.entries(AGE).find(([k]) => legionName.startsWith(k))?.[1];
+    const src = (parentLegion && blockOf(parentLegion)) || (parentLegion && age && blockOf(parentLegion + '_' + age)) || null;
+    if (!src) return false;
+    const srcText = text.slice(src.start, src.end);
+    const copy = keyLine(legionName) + srcText.slice(srcText.indexOf('\n'));
+    safeWriteFileSync(ps, text.slice(0, src.start) + copy + text.slice(src.start));
+    return true;
 }
 
 /** 同理，读也可能撞上占用 */

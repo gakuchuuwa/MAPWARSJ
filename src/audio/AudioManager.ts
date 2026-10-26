@@ -7,6 +7,7 @@ import { ALL_BRANCHES_MAP, toCulture66 } from '../systems/CultureHierarchy';
 import { REGION_TO_BRANCH } from '../config/deCastleAssets';
 import { BGM_TITLES } from './bgmTitles';
 import { isScriptPeriod } from '../events/scriptPeriod';
+import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
 
 export type SoundKey =
     | 'march_loop'
@@ -18,6 +19,13 @@ export type SoundKey =
     | 'battle_victory'
     | 'battle_defeat'
     | 'general_skill'
+    // 战术六计释放：玩家／观众正常响度，武将自己释放降低响度
+    | 'skill_gongzhan'
+    | 'skill_shengzhan'
+    | 'skill_dizhan'
+    | 'skill_hunzhan'
+    | 'skill_bingzhan'
+    | 'skill_baizhan'
     // 海战音效（2026-08-19 加：帝国时代2 DE 战斗音效）
     | 'naval_arrow_fire'
     | 'naval_cannon_fire'
@@ -150,6 +158,13 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     battle_victory: sound('battle', 'battle_victory', 0.5, 1800),
     battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
     general_skill: sound('battle', 'general_skill', 0.45, 1800),
+    // 六计释放均复用本地已校准素材，不新增下载；每种音色对应六计的战场图形。
+    skill_gongzhan: sounds('battle', ['melee_hit_1', 'melee_hit_4', 'melee_hit_7', 'melee_hit_10'], 0.70, 0),
+    skill_shengzhan: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.65, 0),
+    skill_dizhan: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.65, 0),
+    skill_hunzhan: sounds('battle', ['flamethrower_fire_1', 'flamethrower_fire_2', 'flamethrower_fire_3', 'flamethrower_fire_4', 'flamethrower_fire_5'], 0.65, 0),
+    skill_bingzhan: sound('battle', 'general_skill', 0.65, 0),
+    skill_baizhan: sounds('battle', ['siege_impact_de', 'siege_impact_2', 'siege_impact_3'], 0.70, 0),
     // 海战音效（2026-08-19：帝国时代2 DE 战斗音效，多源随机变奏）
     naval_arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.65, 250),
     naval_cannon_fire: sounds('battle', ['naval_cannon_fire_1', 'naval_cannon_fire_2', 'naval_cannon_fire_3', 'naval_cannon_fire_4', 'naval_cannon_fire_5', 'naval_cannon_fire_6'], 0.85, 400),
@@ -942,7 +957,7 @@ export class AudioManager {
         }
     }
 
-    public play(key: SoundKey, opts?: { fadeInMs?: number }): boolean {
+    public play(key: SoundKey, opts?: { fadeInMs?: number; volumeScale?: number }): boolean {
         if (!this.settings.enabled || !this.unlocked) return false;
 
         const definition = SOUND_DEFINITIONS[key];
@@ -955,7 +970,8 @@ export class AudioManager {
         if (!baseAudio) return false;
 
         const audio = baseAudio.cloneNode(true) as HTMLAudioElement;
-        const targetVol = this.resolveVolume(definition, key);
+        const volumeScale = Math.max(0, Math.min(1, opts?.volumeScale ?? 1));
+        const targetVol = this.resolveVolume(definition, key) * volumeScale;
         const fadeInMs = opts?.fadeInMs ?? 0;
         audio.volume = fadeInMs > 0 ? 0 : targetVol;
         audio.currentTime = 0;
@@ -980,6 +996,19 @@ export class AudioManager {
         }
 
         return true;
+    }
+
+    /** 战术六计：玩家／观众正常响度，武将自己释放压低，不与视觉主次颠倒。 */
+    public playScene13SkillSfx(six: TacticalSixSet, playerCast: boolean): boolean {
+        const keys: Record<TacticalSixSet, SoundKey> = {
+            gongzhan: 'skill_gongzhan',
+            shengzhan: 'skill_shengzhan',
+            dizhan: 'skill_dizhan',
+            hunzhan: 'skill_hunzhan',
+            bingzhan: 'skill_bingzhan',
+            baizhan: 'skill_baizhan',
+        };
+        return this.play(keys[six], { fadeInMs: FADE.oneShot, volumeScale: playerCast ? 1 : 0.45 });
     }
 
     /** 跟拍军团释放武将技时的短音效（非跟拍军团不播） */

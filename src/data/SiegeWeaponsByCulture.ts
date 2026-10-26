@@ -638,7 +638,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代博亚尔重骑军团': {
+    '城堡时代博亚尔军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },

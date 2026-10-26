@@ -734,10 +734,19 @@ export class VegetationLayer {
         const drawCommands: TreeDrawCommand[] = [];
         const waterSampler = LandSeaSystem.getWaterSampler();
 
-        const paddedBounds = bounds.pad(0.08);
+        const FOREST_HUNTING_STYLES = new Set([
+            'NORTHEAST', 'VARANGIANS', 'DIANQIAN', 'MAPUCHE',
+            'TUPI', 'AMERICA', 'MAYANS', 'GEORGIANS',
+        ]);
+        const paddedBounds = bounds.pad(0.42);
         const visibleCities = CITIES_V2
             .filter((city) => paddedBounds.contains([city.lat, city.lng]))
-            .map((city) => this.map.latLngToContainerPoint([city.lat, city.lng]));
+            .map((city) => ({
+                lat: city.lat,
+                lng: city.lng,
+                pt: this.map.latLngToContainerPoint([city.lat, city.lng]),
+                isForestHunting: FOREST_HUNTING_STYLES.has(city.buildingStyle ?? ''),
+            }));
 
         for (let gy = yMin; gy <= yMax; gy += TREE_GRID_STEP) {
             for (let gx = xMin; gx <= xMax; gx += TREE_GRID_STEP) {
@@ -753,9 +762,21 @@ export class VegetationLayer {
                     continue;
                 }
 
-                // 据点避让
+                // 据点避让（渔猎民族据点仅避让城堡核心 24px，让树林环抱据点四周；其余据点避让 46px）
                 const center = this.map.latLngToContainerPoint(ptLatLng);
-                if (visibleCities.some((p) => p.distanceTo(center) < CITY_CLEAR_PX)) continue;
+                if (visibleCities.some((c) => c.pt.distanceTo(center) < (c.isForestHunting ? 24 : CITY_CLEAR_PX))) continue;
+
+                // 检查是否处于渔猎民族据点周围 0.36°（约 40km）林带内
+                let huntingCityBoost = 0;
+                for (const c of visibleCities) {
+                    if (!c.isForestHunting) continue;
+                    const dLat = ptLatLng.lat - c.lat;
+                    const dLng = ptLatLng.lng - c.lng;
+                    const d = Math.hypot(dLat, dLng);
+                    if (d < 0.36) {
+                        huntingCityBoost = Math.max(huntingCityBoost, 0.52 * (1 - d / 0.45));
+                    }
+                }
 
                 // 自然地理林线与高寒冻土门控：
                 // 1. 阿尔卑斯山（44°~54°N）林线 2150m，青藏高原 4100m，高纬度 1400m；
@@ -783,14 +804,17 @@ export class VegetationLayer {
                 if (forestBiome === 13) continue; // 荒漠生态群系坚决不长树
 
                 // elev 可能为 null（上面「低地先放行」那条分支），按低地兜底取值，与该分支意图一致
-                if (!isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
+                if (huntingCityBoost <= 0 && !isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
 
                 // 连续世界坐标密度场：消除椭圆规则感，呈现犬牙交错与山谷林隙
                 const noiseVal = forestNoise(ptLatLng.lat, ptLatLng.lng);
 
-                // 真实卫星郁闭度驱动（0~100%）：决定当前格点是否生长树木
+                // 真实卫星郁闭度驱动（0~100%）：决定当前格点是否生长树木（渔猎民族据点周围强制拥有树林植被覆盖）
                 const canopyDensity = queryStrategicCanopyDensity(ptLatLng.lat, ptLatLng.lng);
-                const clusterWeight = forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal);
+                const clusterWeight = Math.max(
+                    huntingCityBoost,
+                    forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal),
+                );
                 // 🔴 [2026-10-21 主人问「战略地图上的树该成片，还是该单个？」→ 成片]
                 //    原来按 clusterWeight 当概率逐格抽签（hash > weight 就留白）→ 林区里也是稀稀拉拉的孤树，像噪点。
                 //    改为按权重定「林区」：权重够高的格子连成片栽（权重是连续场，天然连片），

@@ -1541,7 +1541,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_ivaylo', legionName: '城堡时代博亚尔重骑军团', factionId: 'baojialiya', cityId: 'city_delusitaer', generalName: '伊瓦伊洛', portrait: '/assets/SLAVIC/duobuluojia_yiwaiyiluo.png' },
+        { generalId: 'gen_ivaylo', legionName: '城堡时代博亚尔军团', factionId: 'baojialiya', cityId: 'city_delusitaer', generalName: '伊瓦伊洛', portrait: '/assets/SLAVIC/duobuluojia_yiwaiyiluo.png' },
 
 
 
@@ -2566,7 +2566,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_vukasin', eliteName: '普里莱普军', eliteTier: 3, cityId: 'city_prilep', generalName: '武卡辛', portrait: '/assets/SLAVIC/gen_vukasin.png', legionName: '城堡时代博亚尔重骑军团' }, // 普里莱普领主本部
+        { generalId: 'gen_vukasin', eliteName: '普里莱普军', eliteTier: 3, cityId: 'city_prilep', generalName: '武卡辛', portrait: '/assets/SLAVIC/gen_vukasin.png', legionName: '城堡时代博亚尔军团' }, // 普里莱普领主本部
 
 
 
