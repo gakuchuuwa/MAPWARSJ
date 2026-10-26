@@ -208,6 +208,10 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     nabatai: 'NABATAEAN_CROSSED_CORNUCOPIAE',   // 纳巴泰·交叉双丰饶角（阿雷塔斯四世与沙盖拉特、拉贝尔二世钱币）
     aiji: 'EGYPT_SEDGE_AND_BEE',   // 埃及·莎草与蜂（法老 nswt-bjtj 王号，上下埃及王权）
     wulaertu_guo: 'URARTU_SARDURI_SHIELD',   // 乌拉尔图·三环狮牛仪仗盾（萨尔杜里二世王盾）
+    // ── 2026-10-26 大势力史实旗面第六批（3 家；穆拉比特承袭阿拔斯黑旗、非专属，保留字旗）──
+    falanji: 'FRANKS_CHILDERIC_BEE',   // 法兰克·希尔德里克一世王墓金蜂饰（约458—481年，墨洛温王室）
+    xiongnu: 'XIONGNU_EAGLE_CROWN',   // 匈奴·阿鲁柴登鹰顶金冠（立鹰、半球冠顶与冠带）
+    yilihanguo_d: 'ILKHANID_HULEGU_HARE',   // 伊利汗国·旭烈兀伊尔比尔铜币的奔兔踏月（Album 2125.2）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

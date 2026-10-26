@@ -15,7 +15,7 @@ import { TREE_METAS } from './VegetationLayer';
  *   3. 渔业严格在海中（绝不在陆地放渔夫）：在沿海海域生成 DE 渔船（SHP_FISHING_SHIP 撒网/往返航行）与海鱼群
  *      （DORADO_FISH / SALMON_FISH / TUNA_FISH / SHORE_FISH 跃水游弋）；战时渐变为沉没破损渔船（SHP_FISHING_SHIP:sink + SHIP_SINK_SMALL）。
  *   4. 对应四季（春耕播种 seed、夏耘锄地/撒网 work、秋收归仓/渔船返港 carry/move、冬藏休耕/冬猎渐隐渐显）。
- *   5. 战火破坏与尸骸渐变：据点被围攻或周围半径 0.85° 内有军团交战时，通过 damageBlend (0 → 1) 平滑渐变为
+ *   5. 战火破坏与尸骸渐变：据点被围攻或周围半径 0.3° 内有军团交战时，通过 damageBlend (0 → 1) 平滑渐变为
  *      被破坏的农车/栅栏/断木废墟、倒地平民尸体、平民白骨、战死牲畜与沉没渔船；战后余波结束后平滑恢复。
  */
 
@@ -122,7 +122,9 @@ const FISH_SCALE_BASE = 0.44;
 const WRECK_SCALE_BASE = 0.44;
 const HUNTING_TREE_BASE_PX = 27;
 const CULL_MARGIN_DEG = 0.5;
-const COMBAT_HIDE_RADIUS_DEG = 0.85;
+// 自动乱斗镜头一直跟着正在打的仗，半径过大会让画面里的据点永远处于战火态、看不到民生。
+// 只把战场贴身（约 30 公里）内的据点算进去，被围城本身另由 siegeCityId 判定。
+const COMBAT_HIDE_RADIUS_DEG = 0.3;
 const WAR_AFTERMATH_HOLD_MS = 8500;
 const FADE_TO_DAMAGE_SEC = 1.1;
 const FADE_RECOVER_PEACE_SEC = 2.4;
@@ -375,6 +377,8 @@ export class CityLifeAmbientLayer {
     private lastCombatScanMs = 0;
     private clearedWhileHidden = false;
     private layerVisible = true;
+    private layoutDirty = false;
+    private lastLayoutRebuildMs = 0;
 
     private static readonly ASSET_BUDGET_BYTES = 64 * 1024 * 1024;
 
@@ -398,11 +402,10 @@ export class CityLifeAmbientLayer {
         map.on('resize', () => this.resize());
         map.on('move zoom viewreset moveend zoomend', () => this.reposition());
 
-        // 当陆海掩膜/高程瓦片加载完成时，清空据点缓存以重新精确计算海中渔场与陆地落点
+        // 陆海瓦片加载完成后要重算海中渔场与陆地落点。该事件实测每秒几十次，
+        // 直接清空会让角色每帧重建、透明度归零而永远显示不出来，所以只打标记，由 update 节流重排。
         window.addEventListener('land-sea-tiles-updated', () => {
-            this.actorsByCity.clear();
-            this.forestByCity.clear();
-            this.activeActors.clear();
+            this.layoutDirty = true;
         });
     }
 
@@ -471,9 +474,12 @@ export class CityLifeAmbientLayer {
             || (window as any).game?.battleScene?.isLingering?.() === true
         );
         if (tacticalCovered) return true;
+        // 开局地图尚未 setView 时 getZoom() 为 NaN，getBounds() 会抛错，此时先当作隐藏。
+        if (!(this.map as any)._loaded) return true;
         const s = this.map.getSize();
         if (s.x === 0 || s.y === 0) return true;
         const z = Math.round(this.map.getZoom());
+        if (!Number.isFinite(z)) return true;
         return z < MIN_ZOOM || z > MAX_ZOOM;
     }
 
@@ -761,6 +767,21 @@ export class CityLifeAmbientLayer {
             });
         }
 
+        // 重排落点时沿用同一角色已有的淡入、换季与战火状态，避免画面闪烁
+        for (const actor of list) {
+            const prev = this.activeActors.get(actor.id);
+            if (!prev) continue;
+            actor.viewAlpha = prev.viewAlpha;
+            actor.peaceAlpha = prev.peaceAlpha;
+            actor.actionAlpha = prev.actionAlpha;
+            actor.damageBlend = prev.damageBlend;
+            actor.combatStartSec = prev.combatStartSec;
+            actor.presentAtCombat = prev.presentAtCombat;
+            actor.displayedAction = prev.displayedAction;
+            if (prev.damageBlend > 0) actor.lastDrawPos = prev.lastDrawPos;
+            this.activeActors.set(actor.id, actor);
+        }
+
         this.actorsByCity.set(city.id, list);
         return list;
     }
@@ -1023,6 +1044,13 @@ export class CityLifeAmbientLayer {
     }
 
     private update(dt: number): void {
+        if (this.layoutDirty && this.nowMs - this.lastLayoutRebuildMs >= 3000) {
+            this.layoutDirty = false;
+            this.lastLayoutRebuildMs = this.nowMs;
+            this.actorsByCity.clear();
+            this.forestByCity.clear();
+        }
+
         const bounds = this.map.getBounds();
         const sw = bounds.getSouthWest();
         const ne = bounds.getNorthEast();
@@ -1446,11 +1474,16 @@ export class CityLifeAmbientLayer {
         }
         this.clearedWhileHidden = false;
 
-        const t0 = performance.now();
-        this.update(dt);
-        this.evictAssets();
-        this.draw();
-        perfDoctor.note('CityLifeAmbientLayer.tick(据点民生层)', performance.now() - t0, 'src/map/CityLifeAmbientLayer.ts:tick');
+        // 单帧出错不能让整条帧循环断掉（否则整局都不再显示），下一帧照常继续。
+        try {
+            const t0 = performance.now();
+            this.update(dt);
+            this.evictAssets();
+            this.draw();
+            perfDoctor.note('CityLifeAmbientLayer.tick(据点民生层)', performance.now() - t0, 'src/map/CityLifeAmbientLayer.ts:tick');
+        } catch (e) {
+            console.error('[CityLifeAmbientLayer] tick 出错', e);
+        }
         requestAnimationFrame(this.tick.bind(this));
     }
 }
