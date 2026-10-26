@@ -6,12 +6,12 @@
  * 图案来源，统一烘成 `public/emblem-flags/{KEY}_{w|b}.png`（4帧×6朝向雪碧图）：
  *   · ICON：game-icons.net 现成单色图标（CC BY 3.0，署名见 docs/02-design/旗号图案-图标素材来源.md）
  *   · HAND：手绘粗线条符号（`scratch/_emblem_symbols.py`，自绘无版权问题）
- *   · KAMON：日本家纹手绘（`scratch/_kamon_symbols.py`，按各家史实家纹，自绘无版权问题）
+ *   · KAMON：日本家纹（`scratch/_kamon_symbols.py`，按史料图形自绘或描摹公有领域参考图）
  * 烘焙：`scratch/_bake_emblem_sprites.py`。
  *
  * 回退：删掉本表条目 = 该势力立刻回汉字旗号；整表清空 = 全部回汉字。
  * 汉字文化圈（中国各朝/朝鲜/越南/吐蕃/契丹/女真…）**不登记**，照旧用旗号汉字；
- * 日本各家登记家纹（上杉/大友/宇都宫/龙造寺/南部/少弐/松前/对马/伊贺/一向宗/琉球 家纹难画或史实吃不准，仍用汉字）。
+ * 日本有明证家纹的各家登记家纹；伊贺众无统一家纹、加贺一向一揆使用佛号旗，仍用汉字。
  * ⚠ [2026-10-25 主人令] 试水版「按文化圈分派、同圈共用」已废：现在一种纹章只给一个势力，
  *   没有史有明证的专属纹章就恢复字旗（旗号＝1–2 字势力简称），不许两家共用一个纹章。
  */
@@ -165,6 +165,27 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     jiaohuangguo: 'PAPAL_KEYS',   // 教皇国·圣彼得交叉钥匙
     yidali_wangguo: 'ITALY_SAVOY',   // 意大利王国·萨伏伊十字盾与王冠
     xilawangguo: 'GREECE_CROWNED_CROSS',   // 希腊王国·希腊十字与王冠
+    // ── 2026-10-26 西方势力史实纹章第二批（14 家）─────────────────────────
+    meikelunbao: 'MECKLENBURG_BULL',   // 梅克伦堡·牛头（约1200年钱币、尼古劳斯1219—1255年印章）
+    jileinaijia: 'CYRENE_SILPHIUM',   // 昔兰尼·罗盘草（前525—480、前435—375年钱币）
+    aboerleiya: 'ARBOREA_TREE',   // 阿尔博雷亚·拔根树（马里亚诺四世1353年国徽）
+    saipulusi: 'CYPRUS_LUSIGNAN',   // 塞浦路斯·吕西尼昂横条底戴冠跃狮（14世纪钱币与纹章书）
+    donggete: 'THEODORIC_MONOGRAM',   // 东哥特·狄奥多里克王室花押（493—526年银币）
+    nasier: 'NASRID_SHIELD',   // 纳斯尔·盾与铭文斜带（阿尔罕布拉宫及13—15世纪器物）
+    kaliya: 'CARIA_LABRYS',   // 卡里亚·双刃斧（赫卡托姆尼德王朝宙斯·拉布劳恩多斯钱币）
+    sesali: 'THESSALY_HORSE',   // 色萨利·马与狮首喷泉（斐莱城邦前480—400年钱币，非伊阿宋个人徽章）
+    bosi_puluosi: 'BOSPORUS_PAN',   // 博斯普鲁斯·潘神头（潘提卡帕翁前4世纪钱币）
+    yadian_gongguo: 'ATHENS_LA_ROCHE',   // 雅典公国·德拉罗什五红四点纹章
+    shiwaben: 'SWABIA_LIONS',   // 施瓦本·霍亨斯陶芬三狮（菲利普1197年印章）
+    jialixiya: 'GALICIA_LION',   // 加利西亚—沃伦·狮（14世纪上半叶地域标志）
+    xinnidelan: 'NEW_NETHERLAND_BEAVER',   // 新尼德兰·海狸与伯爵冠（新尼德兰省印章）
+    voc: 'VOC_MONOGRAM',   // 荷兰东印度公司·VOC交织字母（17世纪旗帜、瓷器、火炮）
+    // ── 2026-10-26 日本史实家纹补绘（5 家）────────────────────────────────
+    uesugi: 'UESUGI_SASA',   // 上杉·竹轮笹叶对雀（《见闻诸家纹》）
+    utsunomiya: 'UTSUNOMIYA_TOMOE',   // 宇都宫·右三巴（《见闻诸家纹》，与琉球左三巴分开）
+    shoni: 'SHONI_MEYUI',   // 少弐·寄悬目结（《蒙古袭来绘词》军旗、《见闻诸家纹》）
+    kakizaki: 'MATSUMAE_WARBISHI',   // 松前·丸内割菱（四割菱加外圆，非武田菱）
+    so: 'SO_YOTSUME',   // 对马宗氏·隅立四目结（小孔径四目结，非少弐寄悬目结）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

@@ -4701,12 +4701,8 @@ export class CombatUI {
     }
 
     /**
-     * [2026-10-18 全新设计] 战术模式武将集气槽满 100% 释放六计时，触发与战略模式完全一致的武将立绘脉冲与技能大字 Cut-in。
-     * 🔴 [2026-10-25 直播] viewer＝这一计是直播观众放的：要一眼和武将自己放的分开——
-     *   · 计名用金字（武将的是白字），光晕仍按攻守方配色，看得出替哪边放；
-     *   · 名字单独一行「某某 献计」，付费的加金框（原先拼成「某某 · 计名」一行，长名字会被屏幕边切掉）；
-     *     名字是观众的「上屏时刻」，字号取到不出框的上限：6 字名＋「献计」放大到 1.1 倍仍在 266px 立绘框内；
-     *   · 不让武将立绘跳动：立绘一跳观众就以为是武将放的。
+     * 战术六计 Cut-in：玩家／观众释放是直播的上屏时刻，金字、金光并显示献计名字；
+     * 武将自己释放只保留短小计名，不再放大立绘，不抢玩家释放的视觉重心。
      */
     public onScene13SkillCast(
         side: 'attacker' | 'defender',
@@ -4719,7 +4715,6 @@ export class CombatUI {
         if (!this.scene13LayoutOn) return;
         // 占用统一 Cut-in 闸门（错开由 Scene13WarLayer 的游戏秒＋真实秒双闸保证，此处不再顺延，保持技效与大字同刻）
         this.skillCutInBusyUntil = Date.now() + CombatUI.SKILL_CUTIN_GAP_MS;
-        if (!viewer) this.pulsePortraitForSkill(side);
         audioManager.playGeneralSkillSfx(generalId || `${side}_${sixSet}`);
 
         const frame = this.sideElement(side, this.leftPortraitFrame, this.rightPortraitFrame);
@@ -4731,7 +4726,7 @@ export class CombatUI {
             by.style.cssText = `
                 display: inline-block; margin-bottom: ${uiPx(6)};
                 font-size: ${uiPx(32)}; font-weight: 700; font-style: normal; letter-spacing: ${uiPx(2)};
-                color: ${viewer.paid ? '#ffe08a' : '#f3e6c8'};
+                color: ${viewer.paid ? '#ffe08a' : '#ffd700'};
                 ${viewer.paid ? `border: 1px solid rgba(255, 215, 0, 0.85); border-radius: 4px; padding: 0 ${uiPx(10)}; background: rgba(60, 40, 0, 0.6);` : ''}
             `;
             const name = document.createElement('div');
@@ -4740,34 +4735,29 @@ export class CombatUI {
         } else {
             cutIn.textContent = displayName;
         }
-        const isAtt = side === 'attacker';
-        const coreGlow = isAtt ? 'rgba(255, 100, 0, 1)' : 'rgba(0, 150, 255, 1)';
-        const wideGlow = isAtt ? 'rgba(255, 50, 0, 0.8)' : 'rgba(0, 100, 255, 0.8)';
+        const cutInMs = viewer ? 3000 : 1500;
         cutIn.style.cssText = `
             position: absolute;
             top: 70%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.5);
             text-align: center;
-            color: ${viewer ? '#ffd700' : '#ffffff'};
-            font-size: ${uiPx(viewer?.paid ? 50 : 46)};
+            color: ${viewer ? '#ffd700' : 'rgba(255,255,255,0.82)'};
+            font-size: ${uiPx(viewer ? (viewer.paid ? 52 : 50) : 32)};
             font-weight: 900;
             font-family: 'Noto Serif SC', serif;
-            font-style: italic;
-            letter-spacing: ${uiPx(4)};
+            font-style: ${viewer ? 'italic' : 'normal'};
+            letter-spacing: ${uiPx(viewer ? 4 : 2)};
             pointer-events: none;
             z-index: 100;
-            text-shadow: 
-                0 2px 2px rgba(0,0,0,0.9),
-                0 0 10px ${coreGlow},
-                0 0 20px ${coreGlow},
-                0 0 40px ${wideGlow},
-                0 10px 20px rgba(0,0,0,0.9);
-            animation: skill-cut-in 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            text-shadow: ${viewer
+                ? '0 2px 2px rgba(0,0,0,0.9), 0 0 10px rgba(255,215,0,1), 0 0 24px rgba(255,170,0,0.9), 0 0 44px rgba(255,120,0,0.72), 0 10px 20px rgba(0,0,0,0.9)'
+                : '0 2px 3px rgba(0,0,0,0.9)'};
+            animation: skill-cut-in ${cutInMs}ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
             white-space: nowrap;
         `;
         frame.appendChild(cutIn);
-        window.setTimeout(() => cutIn.remove(), 3000);
+        window.setTimeout(() => cutIn.remove(), cutInMs);
     }
 
     public isBoundToBattleField(battleField: BattleField): boolean {

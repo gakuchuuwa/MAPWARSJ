@@ -173,6 +173,21 @@ export function gangMul(victim: WarMan | WarBuilding): number {
     return 1 + GANG_K * Math.min(GANG_CAP, Math.max(0, victim.atkers - 1));
 }
 
+/**
+ * 🔴 [2026-10-26 主人令「按 DE 原版，把围殴加成改成只对近战生效，远程不吃这条加成」]
+ * 远程兵器 = 射程 > 65px（与「贴身白刃」判据 `rng <= 65` 同一阈值）。按射程不按 dmgType：
+ * 飞斧、投石车在 DE 里是 melee 伤害类，但它们是远程兵器。
+ * 远程出手既不计入受害者的围攻人数（atkNext），伤害也不乘 gangMul；箭塔、城内建筑射箭同理。
+ */
+export function isRangedWeapon(t: WarType): boolean {
+    return t.rng > 65;
+}
+
+/** 这一击该乘的围殴倍率：近战 = gangMul，远程 = 1 */
+export function gangMulBy(shooter: WarType, victim: WarMan | WarBuilding): number {
+    return isRangedWeapon(shooter) ? 1 : gangMul(victim);
+}
+
 /* ── 【迎面拒马】长枪/方阵类兵种正面顶住骑兵（2026-09-12 主人定「先做1试试」）──────────── */
 export const PIKE_BRACE_ENABLED = true;
 export const PIKE_BRACE_FRONT_DEG = 60;   // 「正面」扇区半角（度）

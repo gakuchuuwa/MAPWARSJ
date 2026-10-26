@@ -12,7 +12,7 @@ export interface Scene13SkillVfx {
     angle: number;
     startMs: number;
     dur: number;
-    paid: boolean;
+    playerCast: boolean;
     targets: WarMan[];
     points: Scene13SkillVfxPoint[];
 }
@@ -254,8 +254,8 @@ function drawTopOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     else drawDefeat(ctx, v, p, lift);
     drawTargetGlow(ctx, v, p, lift);
 
-    // 付费计的金色认主扫光：军令计与武将计没有这一层。
-    if (v.paid) {
+    // 玩家／观众释放统一带金色认主扫光；武将自己放计没有这一层。
+    if (v.playerCast) {
         const e = easeOut(p);
         const y = v.y - lift(v.x, v.y);
         ctx.globalAlpha = (1 - p) * 0.95;

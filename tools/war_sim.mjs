@@ -1229,10 +1229,12 @@ function run(keyA, keyB, spritesPerSide, seed = 7, spritesPerSideB = 0, opts = {
                 let braceTaken = 1;
                 if (BRACE_ON && isCavT(st) && isPikeT(statsOf(m.foe.key))) braceTaken = BRACE_TAKEN;   // 上界：一律按正面算
 
-                m.foe.atkNext++;
+                // 🔴 [2026-10-26 主人令·镜像游戏层 isRangedWeapon] 围殴只对近战：远程（rng>65）不计围攻、不吃加成
+                const ranged = st.rng > 65;
+                if (!ranged) m.foe.atkNext++;
 
                 // 🔴 [2026-10-14 两相结算] 只登记，不立即扣血（帧末统一结算，消除先手偏袒）。
-                dmgAcc.set(m.foe, (dmgAcc.get(m.foe) ?? 0) + dps * DT * o.SIDE[m.f] * (o.GANG ? gangMul(m.foe) : 1) * attrMul(t) * braceTaken);
+                dmgAcc.set(m.foe, (dmgAcc.get(m.foe) ?? 0) + dps * DT * o.SIDE[m.f] * (o.GANG && !ranged ? gangMul(m.foe) : 1) * attrMul(t) * braceTaken);
 
             } else {
 

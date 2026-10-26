@@ -104,7 +104,7 @@ import {
     SLIDE_RATE, SLIDE_W, KEEP_TARGET_HP, KITE_RETREAT_DIST, KITE_SAFE, KITE_RETREAT_CAP,
     ATTRITION_START_SEC, ATTRITION_RAMP_SEC, ATTRITION_CAP, HKEY, CELL_M, CELL_R,
     SCENE13_SKILL_FILL_SEC,
-    gangMul, PIKE_BRACE_ENABLED, PIKE_BRACE_FRONT_DEG, PIKE_BRACE_TAKEN,
+    gangMulBy, isRangedWeapon, PIKE_BRACE_ENABLED, PIKE_BRACE_FRONT_DEG, PIKE_BRACE_TAKEN,
     isPikeBraceType, isCavalryType, attackArcDeg, inFrontArc,
     FLANK_ENABLED, flankMulOf,
 } from './scene13/Scene13CombatMath';
@@ -314,6 +314,8 @@ export class Scene13WarLayer {
     projBank: Record<string, ProjAsset> = {};
     pending = 0;
     private bankSides = new Map<string, Set<0 | 1>>();
+    /** 只保留最近一套“已全部加载完成”的兵种表；同攻守势力连续开战时直接复用，不重复异步装帧。 */
+    private completedBankCache: { key: string; bank: Record<string, WarBank>; sides: Map<string, Set<0 | 1>> } | null = null;
     private deferredAssetLoads: Array<() => void> = [];
     private coveredMap: { element: HTMLElement; visibility: string; priority: string } | null = null;
     /** 🔴 [2026-10-02 主人定] 等待行军播报完毕再播放战役战斗播报的轮询计时器 */
@@ -706,7 +708,7 @@ export class Scene13WarLayer {
         six: TacticalSixSet,
         x: number,
         y: number,
-        paid: boolean,
+        playerCast: boolean,
         targets: WarMan[],
         points: Scene13SkillVfxPoint[],
     ): void {
@@ -715,7 +717,7 @@ export class Scene13WarLayer {
         this.skillVfx.push({
             six, side: f, x, y,
             angle: Math.atan2(dir.y, dir.x),
-            startMs: performance.now(), dur, paid, targets, points,
+            startMs: performance.now(), dur, playerCast, targets, points,
         });
         // 正常 3.4 秒释放闸下最多同时存在一条；上限只防调试接口异常连发造成无界增长。
         if (this.skillVfx.length > 12) this.skillVfx.splice(0, this.skillVfx.length - 12);
@@ -1040,9 +1042,9 @@ export class Scene13WarLayer {
                 if (taken.length > 0) this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key), vfxTargets);
             }
         }
-        this.spawnSkillVfx(f, six, camX, camY, viewer?.paid === true, vfxTargets, vfxPoints);
+        this.spawnSkillVfx(f, six, camX, camY, viewer !== null, vfxTargets, vfxPoints);
 
-        // 通知 CombatUI 播放立绘脉冲缩放与技能名 Cut-in 动画
+        // 玩家献计与武将自动放计分开演出；技能结算仍共用上面的同一套逻辑。
         const sideKey: 'attacker' | 'defender' = f === 0 ? 'attacker' : 'defender';
         (window as any).game?.combatUI?.onScene13SkillCast?.(sideKey, six, skillName, gid ?? undefined, skillId, viewer ?? undefined);
     }
@@ -1694,6 +1696,7 @@ export class Scene13WarLayer {
         this.lastKillSec = 0;
         this.stallReported = false;
         this.assetsReadyOnce = false;
+        this.diagAssetsReady = false;   // 每一场都重新记录 assetsReady，不能只保留页面首场的时间
         this.enemyCen = [null, null];
         this.gm = new Map();
         this.gr = new Map();
@@ -3619,6 +3622,17 @@ export class Scene13WarLayer {
         } catch { return null; }
     }
 
+    private preserveCompletedBank(): void {
+        // 仍有在途帧或延后动作时绝不入缓存：否则下一场会把“半套素材”误判为已经齐全。
+        if (!this.assetsReadyOnce || this.pending !== 0 || this.deferredAssetLoads.length !== 0) return;
+        if (Object.keys(this.bank).length === 0) return;
+        this.completedBankCache = {
+            key: this.sideFaction.join('|'),
+            bank: this.bank,
+            sides: this.bankSides,
+        };
+    }
+
     private ensureType(key: string, side: 0 | 1): void {
         // 只准备实际出场方的染色；同兵种出现在双方时分别补齐，共享原图和元数据。
         let sides = this.bankSides.get(key);
@@ -5411,7 +5425,8 @@ export class Scene13WarLayer {
         }
         if (!foe) { t.cd = 0.25; return; }   // 无攻方/射程外，稍后再看
         // 🔴 [主人需求] 真实伤害：穿透，一发 = atk（DE 箭塔科技 5/6/7、城堡 11）；
-        //    吃守方八环 sideBonus[1] · 围殴 · 白热化，以及 DE 高地伤害倍率（高打低 +25%、低打高 -25%）。
+        //    吃守方八环 sideBonus[1] · 白热化，以及 DE 高地伤害倍率（高打低 +25%、低打高 -25%）。
+        //    箭塔是远程：不计围攻人数、不吃围殴加成（见 isRangedWeapon）。
         const target = this.statsFor(foe.key, foe.f);
         const dmg = Math.max(1, t.atk - target.pierceArmor);
         const foeElev = this.elevationLevelAt(foe.x, foe.y);
@@ -5419,8 +5434,7 @@ export class Scene13WarLayer {
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         const towerSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
             * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0);
-        foe.atkNext++;
-        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul() * towerSkillMul
+        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * towerSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
         // 🔴 [2026-09-09 修] 原来这里直接 pushCorpse：玩家被箭塔射死会**变成尸体永久离场**，
         //    而不是走落马重整（heroDown）。攻城战守方满墙箭塔，这条路正是「玩家一直死」的大头。
@@ -5499,8 +5513,8 @@ export class Scene13WarLayer {
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         const bldSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
             * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0);
-        foe.atkNext++;
-        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul() * bldSkillMul
+        // 建筑射箭是远程：不计围攻人数、不吃围殴加成（见 isRangedWeapon）
+        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * bldSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);
         if (foe.hp <= 0) {
             if (foe.hero) this.heroDown(foe);
@@ -5558,15 +5572,15 @@ export class Scene13WarLayer {
                     if (o.f === m.f || o.hp <= 0) continue;
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
                     // 范围伤不挖「盲区空洞」：贴脸的敌人照样吃溅射（最小射程只管分配新目标，见 canKeepTarget 头注）。
-                    // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
+                    // 范围伤：近战（战象踩踏）计入围攻并吃围殴加成；远程（投石车等）都不吃（见 isRangedWeapon）
                     const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) * mult * frenzyMul / shooter.reload;
                     const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.panicTakenMul(o);
-                    o.atkNext++;
+                    if (!isRangedWeapon(shooter)) o.atkNext++;
                     if (dps > 0) {
                         o.hurtBy = m;
                         o.hurtAt = this.battleSec;
                     }
-                    o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * takenSkillMul * dt
+                    o.hp -= dps * this.sideBonus[m.f] * gangMulBy(shooter, o) * this.attritionMul() * takenSkillMul * dt
                         * (o.hero ? HERO_DAMAGE_TAKEN : 1)   // 范围伤同样给玩家免伤
                         * this.passWallTaken(o);
                     if (o.hp <= 0) this.onManKilled(o, m);
@@ -7505,10 +7519,10 @@ export class Scene13WarLayer {
                 if ('sprite' in foe) {
                     // 🔴 [2026-09-18 主人定·增加所有攻城武器只对建筑破坏力]
                     //    目标为建筑时（城墙/城门），无论是否 wt.aoe，主目标均实打实扣血！
-                    foe.atkNext++;
+                    if (!isRangedWeapon(shooter)) foe.atkNext++;   // 远程不计围攻人数（见 isRangedWeapon）
                     if (dps > 0) {
                         if (foe.hitAt === undefined) foe.hitAt = this.battleSec;
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMulBy(shooter, foe) * this.attritionMul() * dt;
                         // 城门/城墙同样设置基础被摧毁保底时间，防多台攻城槌重叠秒破（见 applyWallGateFloor）
                         this.applyWallGateFloor(foe);
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
@@ -7540,7 +7554,7 @@ export class Scene13WarLayer {
                 } else if (!tooClose && wt.aoe) {
                     this.splash(m, REACH, shooter, dt, heroRate);
                 } else {
-                    foe.atkNext++;
+                    if (!isRangedWeapon(shooter)) foe.atkNext++;   // 远程不计围攻人数（见 isRangedWeapon）
                     // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
                     if (dps > 0) {
                         if (!('sprite' in foe)) {
@@ -7549,7 +7563,7 @@ export class Scene13WarLayer {
                         }
                         const shieldMul = this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0;
                         const panicMul = 'sprite' in foe ? 1 : this.panicTakenMul(foe);
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * shieldMul * panicMul * dt
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMulBy(shooter, foe) * this.attritionMul() * braceTaken * flankMul * shieldMul * panicMul * dt
                             * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1)   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
                             * ('sprite' in foe ? 1 : this.passWallTaken(foe));
                         if (foe.hp <= 0 && !('sprite' in foe)) {

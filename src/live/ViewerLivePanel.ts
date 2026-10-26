@@ -1,11 +1,10 @@
 /**
  * 🔴 [2026-10-23] 直播观众互动的屏幕面板（`ViewerLive`）。
- *   · [2026-10-26 主人定] 双态融合展示：
- *       1) 战略地图平时：贴在屏幕正下方中央（`bottom: 6px`），位于左下纪年面板与右下小地图之间；
- *       2) 战术模式（Scene13）：直接并入顶部玩家指挥面板（`#player-scene13-bar`）右侧同一行内，与上方玩家面板合为单行扁平顶栏。
+ *   · [2026-10-26 主人定] 只在战术模式（Scene13）显示，直接并入顶部玩家指挥面板
+ *     （`#player-scene13-bar`）右侧同一行内；战略地图不显示直播互动面板。
  *   · 按 F9 展开测试区：输入观众名，点「站攻方 / 站守方」、点六个字放计、勾「付费」——本地模拟弹幕，
  *     不用开直播就能试整套玩法。以后接上直播平台，消息走同一个 `ViewerLive.onChat`。
- *   · [2026-10-24] 接上直播间（SocialStreamBridge）后不打仗也常显；F9 里填 SSN 会话 ID、看连接状态、模拟打赏。
+ *   · [2026-10-24] F9 里填 SSN 会话 ID、看连接状态、模拟打赏。
  *   · [2026-10-25] 免费模式（军令）：显示规矩、全场点赞 / 订阅目标、最近挣到令的几个人；F9 填 YouTube 接口，模拟点赞 / 订阅。
  */
 import { type ViewerLive, ORDERS_PER_CAST } from './ViewerLive';
@@ -79,9 +78,8 @@ export class ViewerLivePanel {
         this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:360px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
     }
 
-    /** 根据当前是否在战术模式（`#player-scene13-bar` 是否显示），自动在「顶部玩家面板同行融合」与「战略地图底部居中」之间切换 */
+    /** 只把面板并入战术顶栏；战略地图下保持隐藏。隐藏时也要检测模式切换，才能及时回到战场。 */
     private updatePosition(): void {
-        if (this.root.style.display === 'none') return;
         const s13Bar = document.getElementById('player-scene13-bar');
         const s13Active = !!(s13Bar && s13Bar.style.display !== 'none');
 
@@ -99,7 +97,6 @@ export class ViewerLivePanel {
             this.inScene13Bar = false;
             this.root.append(this.dev, this.body);
             this.applyStrategicBottomStyle();
-            this.root.style.display = 'block';
             document.body.appendChild(this.root);
         }
 
@@ -118,16 +115,15 @@ export class ViewerLivePanel {
 
     private render(): void {
         const s = this.live.snapshot();
-        // 接上直播间后不打仗也常显（打赏随时会来，要让观众看见感谢和规矩）
+        this.updatePosition();
+        // 直播互动只在战场显示；战略地图不显示口令、打赏与军令信息。
         const linked = s.platform === '直播间已连接';
-        const show = s.on || linked || this.devOpen;
+        const show = this.inScene13Bar && (s.on || linked || this.devOpen);
         if (!show) {
             this.root.style.display = 'none';
             return;
         }
-        this.root.style.display = this.inScene13Bar ? 'inline-flex' : 'block';
-        this.updatePosition();
-        this.root.style.display = this.inScene13Bar ? 'inline-flex' : 'block';
+        this.root.style.display = 'inline-flex';
 
         const f = this.inScene13Bar ? FS_S13 : FS;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));

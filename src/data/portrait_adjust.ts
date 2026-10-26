@@ -5318,7 +5318,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/SLAVIC/peilieya_gongguo_monuomahe.png": {
-            "scale": 1.16,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": 15
         },
@@ -8055,7 +8055,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/LATIN/kelimiya_aobeituosikuaer.png": {
             "scale": 1.28,
             "offsetX": 2,
-            "offsetY": 0
+            "offsetY": 3
         },
         "/assets/CENTRAL/porbazhyn_mouyu.png": {
             "scale": 1.08,
@@ -8341,6 +8341,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/PERSIAN/shahelude_weisitamu.png": {
+            "scale": 1,
+            "offsetX": -11,
+            "offsetY": -21
+        },
+        "/assets/PERSIAN/hekaniya_aertabazuosi.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/CUMAN/kuman_tugorkan.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/BYZANTINE/baizanting_isaac_ii.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 26
         }
     },
     "folderGuides": {
