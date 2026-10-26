@@ -748,7 +748,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_subotai',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kushluk（主将队须为古典时代的英雄或精英兵）
         slots: [
-            { type: 'scythian_horse_archer', count: 3 },
+            { type: 'khan', count: 3 },
             { type: 'antiquity_cavalry_archer', count: 4 },
             { type: 'tarkan', count: 2 },
         ],
@@ -4003,7 +4003,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_shahking',
         // 🔴 [2026-10-16 主人令] 波斯战象：普通档进伊儿军团 2 档（精锐在霍拉桑军团 2 档）。
         slots: [
-            { type: 'khan', count: 3 },
+            { type: 'imperial_cavalry', count: 3 },
             { type: 'mangudai_elite', count: 4 },
             { type: 'keshik', count: 2 },
         ],

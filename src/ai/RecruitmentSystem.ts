@@ -7,8 +7,7 @@
  *      【2026-06-12 主人裁定】产出**全进城防**——曾实装一日的「家城产出优先补自家军团」已删除
  *      （它关闭了"一城一军保护伞下家城囤积→军团死后爆发出大军"的通道，导致大军团绝迹）。
  *      军团兵力的恢复改为**战后恢复 30%**（CombatSystem.getPostBattleRecoveryRate）。
- *      家城失守仍强制回师（行为树 resolveRecaptureTarget，游戏原生行为，所有文化无豁免；
- *      例外：远征军团（shouldSkipHomeRecapture）不回师）。
+ *      家城失守仍强制回师（行为树 resolveRecaptureTarget，所有军团一致）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
  *      每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）；16 套 DE 建筑素材家族（不是文化层，文化只有 66）
  *      （BASE16_CULTURES）轮流出兵，从上一季停下的大区开始逐个尝试，在该大区随机一座合格据点出兵

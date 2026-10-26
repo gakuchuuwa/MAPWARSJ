@@ -39,7 +39,6 @@ import {
 } from '../legion/combat/BattleReinforcementPoll';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
-import { shouldSkipHomeRecapture } from '../legion/LegionSpawnPolicy';
 import {
     assignSiegeGarrisonTier as applySiegeGarrisonBoostIfNeeded,
     clearSiegeGarrisonBoost,
@@ -1227,7 +1226,6 @@ export class SiegeManager {
                     });
                 }
                 markLegionAnnihilationFeed(army, 'attacker', targetCity.name, failSpeechTaken ? 'siege_attacker' : 'siege');
-                army.expeditionTargetCityId = null;
                 army.destroy();
             }
         );
@@ -1888,8 +1886,7 @@ export class SiegeManager {
             !army.isDestroyed &&
             army.isIdle() &&
             !army.getIsInCombat() &&
-            !this.isArmyWaitingSiege(army.id) &&
-            !shouldSkipHomeRecapture(army)
+            !this.isArmyWaitingSiege(army.id)
         );
 
         if (candidates.length === 0) {

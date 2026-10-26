@@ -697,13 +697,6 @@ export class LegionManager {
             (army as any).lastDrawCityId = null;
         }
 
-        // 【锁定目标不可跳，2026-08-07】收复老家 / 远征目标按军团选目标定稿①②「不重选」，
-        // HasTarget 的收复、远征分支都在越城而走检查之前 return true，跳过后没有重抽出口：
-        // 军团会停在城下，每帧 isSiegeSkipped 早退，空转满 60s 冷却再重掷，可无限续。
-        // 技能语义本就是「绕开去打别的城」，这两类目标无处可绕，既不触发也不受冷却名单影响。
-        const lockedTargetId = army.expeditionTargetCityId ?? army.homeCityId;
-        const isLockedTarget = !!lockedTargetId && targetCity.id === lockedTargetId;
-
         if (targetCity.factionId === army.getFactionId()) {
             army.setTargetCity(null);
             army.stopMovement(true);
@@ -849,13 +842,12 @@ export class LegionManager {
                 smallCityBypassChance > 0 &&
                 army &&
                 city.id !== army.getTargetCity?.()?.id &&
-                city.id !== army.expeditionTargetCityId &&
                 this.rollSmallCityZocBypass(army.id, city.id, smallCityBypassChance)
             ) {
                 const bypassedSet = (army as any).bypassedCities || ((army as any).bypassedCities = new Set<string>());
                 if (!bypassedSet.has(city.id)) {
                     bypassedSet.add(city.id);
-                    gameLog('battle', `〔长驱深入〕${army.expeditionTargetCityId ? '远征军' : (army.generalId || '将领')}无视【${city.name}】守军，长驱直入`);
+                    gameLog('battle', `〔长驱深入〕${army.generalId || '将领'}无视【${city.name}】守军，长驱直入`);
                 }
                 // 进入 ZOC 且判定绕城：跟拍时在军团脚下 pulse（未跟拍不写 dedupe，开跟拍后仍可补显示）
                 emitFollowedLongDriveDeepBypassFx(
@@ -1127,16 +1119,16 @@ export class LegionManager {
 
     /**
      * 行军减兵（远输困境）管线（2026-07-21 主人定稿 v2：时间口径·一视同仁）：
-     *   ① 计时：timeSinceSupply 每帧 += deltaTime（战斗中照走；战后休整停表；远征军团 2026-07-27 起同样走表）；
+     *   ① 计时：timeSinceSupply 每帧 += deltaTime（战斗中照走；战后休整停表）；
      *   ② 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（计时器为 0 时不查城，省每帧全表过滤）；
-     *   ③ 扣减：免费窗/战斗/休整/远征/str_13 豁免与保底 1 等守卫全在 MarchAttritionSystem 内。
+     *   ③ 扣减：免费窗/战斗/休整/str_13 豁免与保底 1 等守卫全在 MarchAttritionSystem 内。
      */
     private tickMarchAttritionPipeline(army: Army, deltaTime: number): void {
         if (!GameConfig.MARCH_ATTRITION.ENABLED) return;
         if (army.isDestroyed || army.getTroops() <= 0) return;
 
         // ① 计时（一视同仁：不分步骑水陆；战斗中照走——围城断粮题中之义，扣减在战斗内暂停；
-        //    战后休整停表；远征军团是否走表由 EXEMPT_CAMPAIGN_LEGIONS 决定，现为走表）
+        //    战后休整停表）
         //    🔴 [2026-09-11 主人定] 剧本行军豁免期间**连表也停**：否则豁免期照记断粮时长，
         //       剧本军团一解除豁免（抵达战场开打前那一刻）就会立刻吃到超高跳数的减员。
         if (isArmyCultureExemptFromMarchAttrition(army)) {
@@ -1144,8 +1136,7 @@ export class LegionManager {
             army.attritionChunkSec = 0;
             army.attritionChunkCount = 0;
         } else if (!(army.isPostBattleResting?.() ?? false)
-            && (!army.scriptMarchExempt || army.generalId === 'gen_alexander_great')
-            && !(GameConfig.MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null)) {
+            && (!army.scriptMarchExempt || army.generalId === 'gen_alexander_great')) {
             army.timeSinceSupply += deltaTime;
         }
 

@@ -11,9 +11,7 @@ export interface TargetAnchorCityAccess {
 
 /**
  * homeCityId 已不属于本势力（含不存在）。
- * 入参只要求 getCity —— 这样行为树和 ExpeditionUI 能共用同一判据。
- * 【务必共用】两边各写一份"家城失守"判断，会出现一边取消远征、另一边
- * 立刻重发的活锁（2026-07-30 修：军情面板「誓师远征」每 0.5 秒刷一条）。
+ * 入参只要求 getCity，供行为树统一判定家城是否失守。
  */
 export function isHomeCityLost(
     homeCityId: string,

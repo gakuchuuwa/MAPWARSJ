@@ -925,32 +925,14 @@ export class CameraFollowUI {
         const factionName = rawFactionName && rawFactionName !== '未知势力' ? rawFactionName : '';
 
         let targetCityId = '';
-        let isExpedition = false;
 
         if (isPlayer) {
             const player = (window as any).game?.playerHero ?? army;
             const travelId = player.getTravelCityId?.() || player.army?.getTargetCity?.()?.id;
             const host = player.getHostLegion?.();
-            if (travelId) {
-                targetCityId = travelId;
-                isExpedition = false;
-            } else if (host) {
-                if (host.expeditionTargetCityId) {
-                    targetCityId = host.expeditionTargetCityId;
-                    isExpedition = true;
-                } else if (host.getTargetCity?.()?.id) {
-                    targetCityId = host.getTargetCity().id;
-                    isExpedition = false;
-                }
-            }
+            targetCityId = travelId || host?.getTargetCity?.()?.id || '';
         } else {
-            if (army.expeditionTargetCityId) {
-                targetCityId = army.expeditionTargetCityId;
-                isExpedition = true;
-            } else if (army.getTargetCity?.()?.id) {
-                targetCityId = army.getTargetCity().id;
-                isExpedition = false;
-            }
+            targetCityId = army.getTargetCity?.()?.id || '';
         }
 
         let targetCityName = '';
@@ -960,8 +942,8 @@ export class CameraFollowUI {
             if (targetCity) targetCityName = targetCity.name;
         }
 
-        // 图标：出征为 ⚔️，行军前往为 🐎，驻留守备为 🛡️
-        const icon = isExpedition ? '⚔️' : (targetCityName ? '🐎' : '🛡️');
+        // 图标：行军前往为 🐎，驻留守备为 🛡️
+        const icon = targetCityName ? '🐎' : '🛡️';
 
         // 势力前缀（非未知势力时展示）
         const factionHtml = factionName

@@ -96,7 +96,8 @@ interface CityLifeActor {
     fishResource: string;      // 海中伴生鱼群（DORADO_FISH / SALMON_FISH / TUNA_FISH / SHORE_FISH）
     groundResource?: string;   // 组合内采集物：果子／木材／矿石
     groundResourceLib?: 'SUCAI_RESOURCE' | 'SUCAI_NATURE';
-    hasFarm?: boolean;         // 农夫组合带四季农田
+    hasFarm?: boolean;         // 农夫组合带四季农田（旱田或水田）
+    seasonalPlot?: SeasonalPlotKind; // 四季地皮套系：旱作农田 / 水稻田 / 游牧草场
     buildingResource?: string; // 组合内随机建筑：磨坊／牧栏／毡帐／小屋等
     lib: 'SUCAI' | 'SUCAI_ANIMAL';
     dir: string;
@@ -132,7 +133,15 @@ const SHIP_SCALE_BASE = 0.46;
 const FISH_SCALE_BASE = 0.44;
 const WRECK_SCALE_BASE = 0.44;
 const HUNTING_TREE_BASE_PX = 27;
+type SeasonalPlotKind = 'dry_farm' | 'rice_farm' | 'pasture';
 const FARM_BY_SEASON = ['FARM_SPRING', 'FARM_SUMMER', 'FARM_AUTUMN', 'FARM_WINTER'] as const;
+const RFARM_BY_SEASON = ['RFARM_SPRING', 'RFARM_SUMMER', 'RFARM_AUTUMN', 'RFARM_WINTER'] as const;
+const PASTURE_BY_SEASON = ['PASTURE_SPRING', 'PASTURE_SUMMER', 'PASTURE_AUTUMN', 'PASTURE_WINTER'] as const;
+const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string, string, string, string]>> = {
+    dry_farm: FARM_BY_SEASON,
+    rice_farm: RFARM_BY_SEASON,
+    pasture: PASTURE_BY_SEASON,
+};
 const CULL_MARGIN_DEG = 0.5;
 // 自动乱斗镜头一直跟着正在打的仗，半径过大会让画面里的据点永远处于战火态、看不到民生。
 // 只把战场贴身（约 30 公里）内的据点算进去，被围城本身另由 siegeCityId 判定。
@@ -204,49 +213,42 @@ const LIVELIHOOD_SPECS: Record<LivelihoodCategory, LivelihoodSpec> = {
 };
 
 const CULTURE_TO_CATEGORY: Readonly<Record<string, LivelihoodCategory>> = {
-    // 1. 农耕稻作与水网（8）
+    // 1. 农耕稻作与水网（11 文化 / 287 据点）—— 铺设 DE 水稻田四季图（rc2→rc3→rm1→rm2）
     JIANGNAN: 'farming_rice',
     HUGUANG: 'farming_rice',
+    BASHU: 'farming_rice',      // 成都平原都江堰水田稻作区（「水旱从人，不知饥馑」）
+    KOREA: 'farming_rice',      // 朝鲜半岛三南与汉江平原水田稻作（畓）
     VIETNAMESE: 'farming_rice',
     BENGALIS: 'farming_rice',
     BURMESE: 'farming_rice',
     KHMER: 'farming_rice',
     PURU: 'farming_rice',
     INDIA: 'farming_rice',
+    MUGHAL: 'farming_rice',     // 恒河—亚穆纳河冲积平原季风漫灌稻作区
 
-    // 2. 农耕旱作与庄园（26）
+    // 2. 农耕旱作与庄园（20 文化 / 285 据点）—— 铺设 DE 旱作农田四季图（fc2→fc3→fm1→fm2）
     CENTRAL: 'farming_dry',
     WEI: 'farming_dry',
-    BASHU: 'farming_dry',
-    KOREA: 'farming_dry',
     FRANKS: 'farming_dry',
     BURGUNDIANS: 'farming_dry',
     BRITONS: 'farming_dry',
-    CELTS: 'farming_dry',
     EAST: 'farming_dry',
     SAXONS: 'farming_dry',
     GERMANIC: 'farming_dry',
     POLES: 'farming_dry',
-    LITHUANIANS: 'farming_dry',
     SLAVIC: 'farming_dry',
     BULGARIANS: 'farming_dry',
     MAGYAR: 'farming_dry',
     LATIN: 'farming_dry',
-    SICILIANS: 'farming_dry',
-    SPANISH: 'farming_dry',
     ROMA: 'farming_dry',
     BYZANTINE: 'farming_dry',
-    GREECE: 'farming_dry',
-    ATHENIANS: 'farming_dry',
     SPARTANS: 'farming_dry',
-    MACEDONIAN: 'farming_dry',
-    MUGHAL: 'farming_dry',
     MAYANS: 'farming_dry',      // 玛雅玉米、豆类与南瓜农业
     TUPI: 'farming_dry',        // 图皮木薯等林下轮作农业
     MAPUCHE: 'farming_dry',     // 马普切玉米、马铃薯等农业
     INCA: 'farming_dry',        // 印加梯田与高原农业
 
-    // 3. 草原游牧（9）
+    // 3. 草原游牧（9 文化 / 98 据点）—— 铺设 DE 牧场四季图（pc2→pc3→pm1→pm2）
     MONGOL: 'nomadic_steppe',
     MOBEI_MONGOL: 'nomadic_steppe',
     YURT: 'nomadic_steppe',
@@ -257,7 +259,7 @@ const CULTURE_TO_CATEGORY: Readonly<Record<string, LivelihoodCategory>> = {
     GOTHS: 'nomadic_steppe',
     THRACIAN: 'nomadic_steppe',
 
-    // 4. 丝路绿洲与荒原驼牧（8）
+    // 4. 丝路绿洲与荒原驼牧（8 文化 / 232 据点）—— 铺设 DE 牧场四季图（pc2→pc3→pm1→pm2）
     KHITAN: 'nomadic_oasis',
     CENTRAL_ASIA: 'nomadic_oasis',
     WESTERN: 'nomadic_oasis',
@@ -267,29 +269,36 @@ const CULTURE_TO_CATEGORY: Readonly<Record<string, LivelihoodCategory>> = {
     BERBER: 'nomadic_oasis',
     GURJARAS: 'nomadic_oasis',
 
-    // 5. 雪域高原畜牧（1）
+    // 5. 雪域高原畜牧（1 文化 / 55 据点）—— 铺设 DE 牧场四季图（pc2→pc3→pm1→pm2）
     TIBET: 'highland_pastoral',
 
-    // 6. 山林渔猎与伐木（5）；东北固定渔猎，美洲与瓦良格固定伐木。
+    // 6. 山林渔猎与伐木（7 文化 / 64 据点）；东北、滇黔、格鲁吉亚、凯尔特固定渔猎，瓦良格、立陶宛、北美固定伐木。
     NORTHEAST: 'forest_hunting',
     VARANGIANS: 'forest_logging',
     DIANQIAN: 'forest_hunting',
     AMERICA: 'forest_logging',
     GEORGIANS: 'forest_hunting',
+    CELTS: 'forest_hunting',       // 高地山林猎鹿与野猪林地生计
+    LITHUANIANS: 'forest_logging', // 波罗的海原始密林采伐生计
 
-    // 7. 海洋渔业与峡湾群岛（5）
+    // 7. 海洋渔业与峡湾群岛（8 文化 / 106 据点）
     JAPAN: 'maritime_fishing',
     MALAY: 'maritime_fishing',
     VIKINGS: 'maritime_fishing',
     DANES: 'maritime_fishing',
     PORTUGUESE: 'maritime_fishing',
+    GREECE: 'maritime_fishing',    // 爱琴海群岛与半岛海洋渔业
+    ATHENIANS: 'maritime_fishing', // 萨罗尼克湾与爱琴海海洋生计
+    SICILIANS: 'maritime_fishing', // 地中海中心岛屿金枪鱼与近海渔业
 
-    // 8. 山地矿冶与热带采金（5）
+    // 8. 山地矿冶与热带采金（7 文化 / 44 据点）
     BOHEMIANS: 'mining_foraging',
     ARMENIANS: 'mining_foraging',
     MUISCA: 'mining_foraging',
     AFRICA: 'mining_foraging',
     ETHIOPIANS: 'mining_foraging',
+    SPANISH: 'mining_foraging',    // 伊比利亚银矿、金矿与铁矿开采（拉斯梅杜拉斯／里奥廷托）
+    MACEDONIAN: 'mining_foraging', // 马其顿潘盖翁山（Mount Pangaion）金银矿冶
 };
 
 function strHash01(s: string, salt: number): number {
@@ -773,7 +782,7 @@ export class CityLifeAmbientLayer {
                         lat: cLat + Math.sin(ang) * distDeg * 0.85,
                         lng: cLng + Math.cos(ang) * distDeg,
                     };
-                    const validLand = isFarmer ? this.isFarmFullyOnLand(cand) : !this.isSea(cand);
+                    const validLand = (isFarmer || isPastoral) ? this.isFarmFullyOnLand(cand) : !this.isSea(cand);
                     if (validLand) {
                         homePos = cand;
                         break;
@@ -840,6 +849,7 @@ export class CityLifeAmbientLayer {
                 groundResource,
                 groundResourceLib,
                 hasFarm: isFarmer,
+                seasonalPlot: isFarmer ? (cat === 'farming_rice' ? 'rice_farm' : 'dry_farm') : isPastoral ? 'pasture' : undefined,
                 buildingResource,
                 lib: 'SUCAI',
                 dir,
@@ -891,10 +901,10 @@ export class CityLifeAmbientLayer {
                 }
                 if (!homePos || !gatePos) continue;
 
-                // 波斯高原按史采用绵羊、山羊混养；2+1 只是固定视觉组合，不代表历史数量比例。
-                const persianMixedFlock = style === 'PERSIAN' || style === 'SASANIAN';
+                // 所有畜牧组合套均化随机配属：绵羊（SHEEP）、山羊（GOAT）、马（HORSE）
+                const pastoralPool = ['SHEEP', 'GOAT', 'HORSE'] as const;
                 const animalDir = isShepherd
-                    ? (persianMixedFlock && j === 2 ? 'GOAT' : 'SHEEP')
+                    ? pastoralPool[Math.floor(strHash01(leader.id, j * 31 + 206) * pastoralPool.length) % pastoralPool.length]
                     : preyPool[Math.floor(strHash01(leader.id, 206) * preyPool.length) % preyPool.length] ?? 'DEER';
                 const id = `${leader.id}_${isShepherd ? 'sheep' : 'prey'}_${j}`;
                 list.push({
@@ -1271,9 +1281,10 @@ export class CityLifeAmbientLayer {
                 if (actor.isSeaFishing && actor.fishResource) {
                     this.loadStripAsset('SUCAI_RESOURCE', actor.fishResource);
                 }
-                if (actor.hasFarm) {
-                    this.loadStripAsset('SUCAI_RESOURCE', FARM_BY_SEASON[season]);
-                    this.loadStripAsset('SUCAI_RESOURCE', FARM_BY_SEASON[nextSeason]);
+                if (actor.seasonalPlot) {
+                    const plotBySeason = SEASONAL_PLOT_BY_KIND[actor.seasonalPlot];
+                    this.loadStripAsset('SUCAI_RESOURCE', plotBySeason[season]);
+                    this.loadStripAsset('SUCAI_RESOURCE', plotBySeason[nextSeason]);
                 }
                 if (actor.groundResource && actor.groundResourceLib) {
                     this.loadStripAsset(actor.groundResourceLib, actor.groundResource);
@@ -1624,10 +1635,11 @@ export class CityLifeAmbientLayer {
                 if (!actor.isSeaFishing && !actor.isAnimal) {
                     const groupPt = this.map.latLngToContainerPoint([actor.homePos.lat, actor.homePos.lng]);
                     const side = actor.slotIdx % 2 === 0 ? -1 : 1;
-                    if (actor.hasFarm) {
+                    if (actor.seasonalPlot) {
+                        const plotBySeason = SEASONAL_PLOT_BY_KIND[actor.seasonalPlot];
                         this.drawStripSprite(
                             'SUCAI_RESOURCE',
-                            FARM_BY_SEASON[season],
+                            plotBySeason[season],
                             0,
                             groupPt.x,
                             groupPt.y + 4 * zoomFactor,
@@ -1636,7 +1648,7 @@ export class CityLifeAmbientLayer {
                         );
                         this.drawStripSprite(
                             'SUCAI_RESOURCE',
-                            FARM_BY_SEASON[nextSeason],
+                            plotBySeason[nextSeason],
                             0,
                             groupPt.x,
                             groupPt.y + 4 * zoomFactor,

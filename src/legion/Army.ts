@@ -268,23 +268,6 @@ export class Army implements IBattleUnit {
     public homeCityId: string | null = null;
 
     /**
-     * 远征目标城（GAME_DIRECTION「远征细则」2026-06-11）：
-     * 非 null = 远征军团——目标锁死该城、绝不回头（家城被打/失守都不回），直至占领或全军覆没；
-     * null = 据点军团（近 3 敌城抽签；家城正被攻城则回援、已失守则强制回师收复）。
-     * 仅跟拍军团可被玩家下达远征指令（ExpeditionUI），AI 不会自行远征。
-     */
-    public expeditionTargetCityId: string | null = null;
-    /** 远征前军团原名；功成保留番号后清空；仅目标异常时用于恢复 */
-    public expeditionSavedName: string | null = null;
-    /**
-     * 远征资格滞回锁（2026-07-06 修复"按钮一闪就没"）：
-     * 跟拍军团兵力达到过 UNLOCK_TROOPS（5 万）即置 true，此后即便战斗掉破仍保留可远征资格，
-     * 直至真正发起远征 / 全军覆没 / 被打到低于半数（见 ExpeditionUI.eligibleArmy）才重置。
-     * 解决"军团边打边掉血、瞬时判定让远征按钮反复闪现、点不到"的问题。
-     */
-    public expeditionUnlocked: boolean = false;
-
-    /**
      * 🔴 [2026-09-11 主人定] **剧本行军豁免：剧本军团赶赴战场期间的特殊放行。**
      *
      * 原话：「让剧本军团直接赶赴战场，期间，不予其他任何人交战。」
@@ -300,9 +283,7 @@ export class Army implements IBattleUnit {
      *      否则跑过 15 秒免费期后每 15 秒扣 15%/30%/45%……，
      *      剧情兵数（35000）会在抵达战场前就被啃光、甚至归零触发战败销毁，剧本直接断掉。
      *
-     * 与远征（`expeditionTargetCityId`）**不是一回事**：远征军照常交战、照吃行军减兵
-     *   （`MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS = false`，2026-07-27 主人定），
-     *   这是剧本专属的额外豁免。
+     * 这是剧本专属的额外豁免。
      * 抵达战场后由剧本亲自解除本旗标并开打（`launchScriptBattle`），不由引擎自行解除。
      */
     public scriptMarchExempt: boolean = false;
@@ -325,7 +306,7 @@ export class Army implements IBattleUnit {
     public columnMarch: boolean = false;
     /**
      * 行军减兵（远输困境）：自最后一次途经己方据点半径以来的游戏秒数（时间口径·一视同仁）。
-     * LegionManager 主循环每帧累加（战斗中照走、战后休整停表；远征豁免军团不走表），
+     * LegionManager 主循环每帧累加（战斗中照走、战后休整停表），
      * 途经任一己方据点 RESET_RADIUS_KM 内清零；split 时子军团继承（防拆分刷补给漏洞）。
      */
     public timeSinceSupply: number = 0;

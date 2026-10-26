@@ -1422,21 +1422,18 @@ export function scaleIntimidateChance(base: number, troopRatio: number): number 
     return Math.min(INTIMIDATE_CHANCE_CAP, base * troopRatio);
 }
 
-/** str_11 长驱深入：远征军团默认享有；非远征时仅挂 str_11 的将触发。二者不叠乘。 */
+/** str_11 长驱深入：仅挂该战略技的武将触发。 */
 export function getLongDriveDeepBypassChance(
-    army: Pick<Army, 'expeditionTargetCityId' | 'id'> & IBattleUnit,
+    army: Pick<Army, 'id'> & IBattleUnit,
 ): number {
-    if (isScriptPeriod()) return 0;   // 🔴 [2026-09-25] 剧本期无战略技（远征默认的长驱深入也不给）
+    if (isScriptPeriod()) return 0;
     const def = getStrategicSkillDef('str_11');
     const catalogChance = def?.magnitude ?? 0.5;
-    const onExpedition = army.expeditionTargetCityId != null;
-    const generalHas = generalHasStrategicEffect(army, 'ignore_small_city_zoc');
-    if (!onExpedition && !generalHas) return 0;
-    if (onExpedition) return catalogChance;
+    if (!generalHasStrategicEffect(army, 'ignore_small_city_zoc')) return 0;
     return getGeneralStrategicMagnitude(army, 'ignore_small_city_zoc', catalogChance);
 }
 
-/** 跟拍：长驱深入绕小城 pulse（远征专属技 str_11，不入随机池；坐标取军团脚下） */
+/** 跟拍：长驱深入绕小城 pulse（str_11 不入随机池；坐标取军团脚下） */
 export function emitFollowedLongDriveDeepBypassFx(
     army: { id: string },
     lat: number,

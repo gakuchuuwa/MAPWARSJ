@@ -3,12 +3,11 @@
  *
  * 语义：timeSinceSupply = 「最后一次途经己方据点至今的游戏秒数」（形成军团即起算；
  *   攻下敌城后该城即己方城，途经即复位；战斗胜利 = 就地进行补给，亦复位）。
- *   · 计时：LegionManager 主循环每帧 += deltaTime（战斗中照走、扣减暂停；战后休整停表停扣；
- *     远征军团 2026-07-27 起同样走表，见 GameConfig.MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS）；
+ *   · 计时：LegionManager 主循环每帧 += deltaTime（战斗中照走、扣减暂停；战后休整停表停扣）；
  *   · 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（不要求驻停，静止军团也生效）；
  *   · 整跳扣减：陆上超过 15 游戏秒、海上超过 30 游戏秒后，每 ATTRITION_CHUNK_SEC（15 游戏秒）
  *     对当前兵力按连续跳数逐次加重（当前 15%、30%、45%……），允许归零；
- *   · 豁免：战斗中暂停扣减 / 战后休整停表 / str_13 以战养战全免（远征军团已不再豁免）；
+ *   · 豁免：战斗中暂停扣减 / 战后休整停表 / str_13 以战养战全免；
  *   · 一视同仁：不分步骑水陆——同样的时间窗，速度快者走得更远，速度优势自动转为后勤优势
  *     （骑兵得补偿；海运快捷但长途航海同样断粮）。
  *
@@ -114,15 +113,12 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     //    这个「不扣兵」是剧本身份，不是行军豁免（scriptMarchExempt），故改判 isScriptArmy。
     //    不豁免的后果是实的：跑过 15 秒免费期后每 15 秒扣 15%/30%/45%……，
     //    剧本写死的 35000 兵会在抵达战场前被啃光，甚至归零触发「战败销毁」→ 剧本整条断掉。
-    //    与远征豁免（`EXEMPT_CAMPAIGN_LEGIONS`，2026-07-27 主人定为 false）是**两回事**，勿合并。
     // 亚历山大恢复常规战略地图减兵（2026-09-13）。
     if (army.isScriptArmy && army.generalId !== 'gen_alexander_great') return 0;
     if ((army as { isFirstBattleMarch?: boolean }).isFirstBattleMarch || army.scriptMarchExempt) return 0;
     // 🔴 [2026-09-23 主人定「剧本模式下，士兵数会在15秒自动减少，这个没有关闭」]
     //    历史剧本期一律不扣兵：兵力按史料写死，路上不许被啃掉。乱斗模式照旧。
     if (isScriptPeriod()) return 0;
-    // 远征军团整体豁免（expeditionTargetCityId 非空，含岳飞脚本军）
-    if (cfg.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null) return 0;
 
     const troops = army.getTroops();
     if (troops <= 0) return 0;

@@ -76,7 +76,6 @@ function describe(army: Army, stillSec: number): Record<string, unknown> {
         blocked: army.isBlocked?.() ?? null,
         postBattleRest: army.isPostBattleResting?.() ?? null,
         targetCity: target ? { id: target.id, name: target.name, faction: target.factionId } : null,
-        expeditionTargetCityId: army.expeditionTargetCityId ?? null,
         homeCityId: army.homeCityId ?? null,
         savedMarch: army.hasSavedMarchState?.() ?? null,
         waitingSiege:

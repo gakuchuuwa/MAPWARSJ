@@ -4,10 +4,10 @@
  * 抵达据点 → 看城中武将在不在（据点锚定武将，且此刻没随军在外）→ 对话：
  *   第一层：据点不是原势力的 → 武将（遗臣）请玩家助其复国。同意 → 遗臣起兵 1 万（本城精锐+本将）
  *           围攻本城，玩家入伍随军；城归原势力即复国成功。
- *   第二层：据点仍是原势力的 → 武将请玩家随他出征一座据点（沿路网最近的敌城）。同意 → 起兵 1 万远征；
+ *   第二层：据点仍是原势力的 → 武将请玩家随他出征一座据点（沿路网最近的敌城）。同意 → 起兵出征；
  *           占领目标后玩家学会该势力的主力精锐兵种（可选一支带进战术模式）。
  *
- * 军团一律走现成远征机制（expeditionTargetCityId + 行为树），本系统只发令、跟踪结果、收尾。
+ * 军团使用普通行军与行为树，本系统只发令、跟踪结果、收尾。
  */
 import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
@@ -1235,9 +1235,8 @@ export class PlayerQuestSystem {
         (host as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
         // 与剧本军同口径：赶路途中不主动与别人交战（免得半路被野战拦住去不了战场）
         host.scriptMarchExempt = true;
-        // 起兵路径把「本城」写成了远征目标（`raiseLegion` 的入参语义）——本仗目标是**战场坐标**，
-        // 把这个目标清掉，免得 AI 或别处把它当成「要攻打自己这座城」。
-        host.expeditionTargetCityId = null;
+        // 本仗由剧本路线接管，取消起兵时的普通行军路径。
+        host.stopMovement(false);
         this.armyMarchPoint = null;
         // 攻城战：赶路终点是**被攻的那座城**（战场标牌仍在史实地点，那是给玩家看的地理参照）
         const defCity = ev.defenderCityId ? this.deps.cityManager.getCity(ev.defenderCityId) : null;
@@ -1649,10 +1648,9 @@ export class PlayerQuestSystem {
         if (!army.generalId) army.generalId = general.generalId;
         const rec = getGeneralRecordByGeneralId(general.generalId);
         if (rec?.portrait) army.portraitPath = rec.portrait;
-        army.expeditionUnlocked = true;
-        army.expeditionTargetCityId = targetCityId;
         // 将/精随军离城：据点档位标记消耗，城防不再影分身（与募兵同口径）
         markSpawnTierConsumed(city, { general: true, elite: true });
+        this.deps.legionManager.moveLegionToCity(army, targetCityId);
         return army;
     }
 
@@ -1949,7 +1947,7 @@ export class PlayerQuestSystem {
         (host as Army & { firstBattleTargetCityId?: string }).firstBattleTargetCityId =
             fb.targetCityId ?? (effectiveBattleType === 'siege' ? city.id : undefined);
         host.scriptMarchExempt = true;
-        host.expeditionTargetCityId = null;
+        host.stopMovement(false);
 
         const targetCity = fb.targetCityId ? this.deps.cityManager.getCity(fb.targetCityId) : undefined;
         // 🔴 [2026-10-24 按 AGENTS 四-4「战场地点按史」] 野战一律按 targetLat/Lng 的史实坐标打；
@@ -2297,7 +2295,6 @@ export class PlayerQuestSystem {
             delete (host as { firstBattlePairEnemyId?: string }).firstBattlePairEnemyId;
             delete (host as { forceFirstBattleField?: boolean }).forceFirstBattleField;
             host.scriptMarchExempt = false;
-            host.expeditionUnlocked = true;
             this.deps.kickLegionAi(host.id);
         }
         const enemyId = q.firstBattle.enemyArmyId;
@@ -2383,7 +2380,6 @@ export class PlayerQuestSystem {
         host.stopMovement(false);
         host.isRetreatingHome = false;
         host.weakCheckAfterBattle = false;
-        host.expeditionUnlocked = true;
         // 🔴 [2026-10-21 主人报「姬发每次打完剧情都卡，战术模式结束后立马又战术模式」] 首战一打完就直扑邻近敌城，
         //    前一场战术场景还没收干净，下一场攻城战的战术场景又进来 → 卡住。打完留一段休整（游戏秒），先让战术场景收尾再出征。
         host.startPostBattleRest();   // 用现有的战后驻留设定（GameConfig TIME.POST_BATTLE_REST），不另起时长
@@ -2394,7 +2390,7 @@ export class PlayerQuestSystem {
             ?? homeCity;
         const nextTarget = anchorCity ? this.pickCampaignTarget(anchorCity) : null;
         if (nextTarget) {
-            host.expeditionTargetCityId = nextTarget.id;
+            this.deps.legionManager.moveLegionToCity(host, nextTarget.id);
             this.quest = {
                 kind: 'campaign',
                 cityId: q.cityId,
@@ -3471,7 +3467,7 @@ export class PlayerQuestSystem {
             });
             return;
         }
-        const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
+        const targetId = army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
         const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
         const targetName = target?.name ?? '前方敌城';
         this.deps.showDialogue({
@@ -3498,7 +3494,7 @@ export class PlayerQuestSystem {
         }
         const factionId = army.getFactionId() || city.factionId;
         const factionName = this.deps.cityManager.getFactionName(factionId);
-        const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
+        const targetId = army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
         const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
         // 🔴 [2026-09-11 主人定 A 方案] 剧本主角军团：走真历史目标，**不再要求它有"目标城"**
         //    （剧本军的 expeditionTargetCityId 只是行军航点，引擎那套会当成"要攻占的城"；

@@ -292,7 +292,7 @@ export class Scene13WarLayer {
     private userInteractingTimer = 0;
     /**
      * 🔴 [2026-10-23 主人「防守方第二波在城里呆着不动的时候，镜头可以跟随释放技能区域，然后9秒拉回」]
-     * 玩家守城、待在城里没敌人打时，谁放了计，镜头就去那一计落下的地方看 9 秒，再回到玩家身上。
+     * 玩家守城放计时登记落点；[2026-10-27] 只在六档完全无跟随目标时兜底展示，不再抢占六档镜头。
      */
     private skillCamTimer = 0;
     /** 镜头当前盯着的本方兵（主将队员或普通兵）；同一档里它还活着就不换，见 pickCamTarget */
@@ -1491,6 +1491,23 @@ export class Scene13WarLayer {
         this.camPendingTier = -1;
         this.camPendingT = 0;
         this.camWatchOffT = 0;
+    }
+
+    /** 有玩家时唯一的镜头目标仲裁入口：六档优先；玩家交战或当前目标失效立即解除一切镜头停留。 */
+    private resolveHeroCamTarget(hero: WarMan, dt: number): WarMan | null {
+        const watched = this.camWatchMan;
+        const watchingHero = this.camTier === 0 || this.camTier === 3;
+        const targetLost = this.camTier >= 0 && (watchingHero
+            ? hero.hp <= 0
+            : !watched || watched.hp <= 0 || !this.men.includes(watched));
+        if (targetLost || (hero.hp > 0 && hero.foe)) {
+            this.skillCamTimer = 0;
+            this.userInteractingTimer = 0;
+        }
+        const target = this.pickCamTarget(hero, dt);
+        // 有六档目标就不许计策落点抢镜头；只有完全无目标时才由外层使用计策兜底。
+        if (target) this.skillCamTimer = 0;
+        return target;
     }
 
     /**
@@ -8002,54 +8019,51 @@ export class Scene13WarLayer {
         }
         this.fleers = this.fleers.filter(f => f.t < FLEE_DUR);
 
-        // 🔴 [2026-10-11 主人令] **平时镜头自动跟随乱入者**；玩家可以拖拽（滚轮缩放）镜头，**9 秒**不再操作就自动回到乱入者。
+        // 平时按六档自动跟随；手动拖拽可停留 9 秒，但玩家交战或当前目标失效会立即恢复跟随。
         //    本块只在新战术模式跑（useGroundGL）；旧 13 无平移/缩放，不受影响。
         if (this.useGroundGL && this.canvas) {
-            // 🔴 [2026-10-26 主人令] 玩家交战立即回玩家：手拖镜头与计策落点的停留都立即作废。
-            if (this.heroMan && this.heroMan.hp > 0 && this.heroMan.foe) {
-                this.skillCamTimer = 0;
-                this.userInteractingTimer = 0;
+            let targetFocusX = 0, targetFocusY = 0, count = 0;
+            if (this.heroMan) {
+                // 每帧先仲裁六档目标，即使手动停留也继续处理阵亡顺延与玩家交战打断。
+                const tm = this.resolveHeroCamTarget(this.heroMan, dt);
+                if (tm) { targetFocusX = tm.x; targetFocusY = tm.y; count = 1; }
             }
             if (this.userInteractingTimer > 0) {
                 this.userInteractingTimer -= dt;
             } else {
-                let targetFocusX = 0, targetFocusY = 0, count = 0;
-                if (this.skillCamTimer > 0) {
-                    // 守城待在城里时：先看放计的地方 9 秒，再回玩家（见 triggerScene13Skill）
+                if (count === 0 && this.skillCamTimer > 0) {
+                    // 六档完全无目标时才看计策落点；一旦有跟随目标，计时已在仲裁入口清零。
                     this.skillCamTimer -= dt;
                     targetFocusX = this.skillCamX;
                     targetFocusY = this.skillCamY;
                     count = 1;
-                } else if (this.heroMan) {
-                    // 交战的玩家/主将队/士兵 > 移动的玩家/主将队/士兵（见 pickCamTarget）；本方全灭 ⇒ 镜头原地不动
-                    const tm = this.pickCamTarget(this.heroMan, dt);
-                    if (tm) { targetFocusX = tm.x; targetFocusY = tm.y; count = 1; }
-                } else if (this.battleType === 'siege' || this.deCity) {
-                    // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
-                    //    攻城战城池稳居正中心，镜头始终居中对齐正中央城郭，绝不可被交战部队拖跑甩到屏幕角落
-                    targetFocusX = this.worldCX;
-                    targetFocusY = this.worldCY;
-                    count = 1;
-                } else {
-                    // 本场没有乱入者（未随军/观战）⇒ 沿用原来的「跟随交战最激烈处」
-                    let sumX = 0, sumY = 0;
-                    for (const m of this.men) {
-                        if (m.hp > 0 && m.foe) {
-                            sumX += m.x;
-                            sumY += m.y;
-                            count++;
-                        }
-                    }
-                    if (count === 0) {
+                } else if (count === 0 && !this.heroMan) {
+                    if (this.battleType === 'siege' || this.deCity) {
+                        // 无玩家观战攻城战：保持城心居中。
+                        targetFocusX = this.worldCX;
+                        targetFocusY = this.worldCY;
+                        count = 1;
+                    } else {
+                        // 无玩家观战野战：沿用「跟随交战最激烈处」。
+                        let sumX = 0, sumY = 0;
                         for (const m of this.men) {
-                            if (m.hp > 0) {
+                            if (m.hp > 0 && m.foe) {
                                 sumX += m.x;
                                 sumY += m.y;
                                 count++;
                             }
                         }
+                        if (count === 0) {
+                            for (const m of this.men) {
+                                if (m.hp > 0) {
+                                    sumX += m.x;
+                                    sumY += m.y;
+                                    count++;
+                                }
+                            }
+                        }
+                        if (count > 0) { targetFocusX = sumX / count; targetFocusY = sumY / count; }
                     }
-                    if (count > 0) { targetFocusX = sumX / count; targetFocusY = sumY / count; }
                 }
                 if (count > 0) {
                     const desiredPanX = (this.worldCX - targetFocusX) * this.tacticalZoom;

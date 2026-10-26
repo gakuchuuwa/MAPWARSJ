@@ -3,21 +3,17 @@
  *
  * 军团 AI 行为树节点（收复发出点 → 附近敌军团追击 → 推进锚点方向池抽签 → 沿路推进 → 攻城）
  *
- * 双模式（GAME_DIRECTION 2026-06-11；回援规则见 AGENTS.md「军团回援与收复规则」2026-07-11）：
- *   据点军团：
- *     · 本城正被攻城（真打起来的攻城战）且仍属己方 → 回援守城（reinforceHome）。
- *       仅「非战斗状态」的军团回援（交战中不脱离；排队攻城算在路上，可回）；敌军仅在途/迫近不触发。
- *     · 本城已失守（易主）→ 强制回师收复（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
- *     · 否则 → 先扫附近敌军团（野战追击）→ 无则推进锚点**方向池**抽签
- *       （每条直连道路各取该方向最近 1 座敌城；池内有全图据点最多的势力则必打它；
- *        无直连/无方向敌城才回退「全局最近 3」，见 TargetEvaluator）
- *       【2026-08-06】途中改追击只**挂起**攻城目标（不清 strategicTargetCityId），
- *        追击结束/失败后恢复原城，禁止半路失忆重抽导致折返。
- *       ⚠️ 这里说的是【优先级顺序】，不是【发生频率】。追击半径只有
- *          HUNT_ENEMY_LEGION_RADIUS = 0.8°(≈89km)，圈内多数时候没有敌军团，
- *          所以实机约 90% 的战斗是攻城战、野战很少（AGENTS.md「战斗构成」节）。
- *          曾有 AI 把这行读成"野战比攻城多"而误判，勿重蹈。
- *   远征军团：目标锁死、绝不回头 —— 家城被攻城不回援、失守也不回师，直至占领目标或全军覆没
+ * 普通军团：
+ *   · 本城正被攻城（真打起来的攻城战）且仍属己方 → 回援守城（reinforceHome）。
+ *     仅「非战斗状态」的军团回援（交战中不脱离；排队攻城算在路上，可回）；敌军仅在途/迫近不触发。
+ *   · 本城已失守（易主）→ 强制回师收复（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有军团一致）
+ *   · 否则 → 先扫附近敌军团（野战追击）→ 无则推进锚点**方向池**抽签
+ *     （每条直连道路各取该方向最近 1 座敌城；无直连/无方向敌城才回退「全局最近 3」，见 TargetEvaluator）
+ *     【2026-08-06】途中改追击只**挂起**攻城目标（不清 strategicTargetCityId），
+ *     追击结束/失败后恢复原城，禁止半路失忆重抽导致折返。
+ *     ⚠️ 这里说的是【优先级顺序】，不是【发生频率】。追击半径只有
+ *        HUNT_ENEMY_LEGION_RADIUS = 0.8°(≈89km)，圈内多数时候没有敌军团，
+ *        所以实机约 90% 的战斗是攻城战、野战很少。
  */
 
 import { BTNode, BTStatus, BTContext, Condition, Action, Sequence, Selector } from './BehaviorTree';
@@ -42,11 +38,6 @@ import {
     resolveRecaptureTarget,
 } from '../TargetAnchorResolver';
 import { GameConfig } from '../../config/GameConfig';
-import {
-    commitExpeditionEliteLegionName,
-    restoreExpeditionLegionName,
-} from '../../data/ExpeditionLegions';
-import { isCampaignLegion, shouldSkipHomeRecapture } from '../../legion/LegionSpawnPolicy';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { clampCityTroops } from '../../config/CityConfig';
 import { roadRegistry } from '../../roads/RoadRegistry';
@@ -94,12 +85,11 @@ function homeOwnerFactionOf(army: BTContext['army'], cityManager: BTContext['cit
 }
 
 /**
- * 本城告急：正被攻城（仍我方，需回援）或已失守（需收复）。远征军团豁免（目标锁死不回家）。
+ * 本城告急：正被攻城（仍我方，需回援）或已失守（需收复）。
  * 「正被攻城」取严格口径（isCityBeingSieged，真打起来才算；在途/迫近不算）。
  * 用于让「排队攻城干等」的军团在老家有事时立刻退出排队，回援/收复不受距离限制。
  */
 function homeNeedsHelp(ctx: BTContext): boolean {
-    if (shouldSkipHomeRecapture(ctx.army)) return false; // 远征军团不回
     const homeId = getArmyOriginCityId(ctx.army);
     if (!homeId) return false;
     // 已失守 → 收复（判据统一走 isHomeCityLost，勿再内联手写）
@@ -123,25 +113,10 @@ export const IsWaitingSiege = new Condition('IsWaitingSiege', (ctx) => {
 });
 
 /**
- * 远征模式（GAME_DIRECTION「远征细则」2026-06-11）：
- * expeditionTargetCityId 非 null 时目标锁死、断粮不回师；
- * 目标城已属己方（无论谁打下的）→ 远征功成，回归据点军团模式。
- * 返回 'locked'（继续远征）| 'done'（刚结束）| null（非远征）。
+ * 已删除的远征模式。
  */
-function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
-    const army = ctx.army;
-
-    const expeditionId: string | null = army.expeditionTargetCityId ?? null;
-    if (!expeditionId) return null;
-
-    const myFaction = army.getFactionId();
-    const target = ctx.cityManager.getCity(expeditionId);
-
-    if (!target || target.factionId === myFaction) {
-        const legionName = army.name;
-        army.expeditionTargetCityId = null;
-        clearStrategicTarget(ctx);
-        army.setTargetCity(null);
+function resolveExpeditionStateRemoved(_ctx: BTContext): null {
+    return null;
         gameLog(
             'expedition',
             `🐎 [远征] ${legionName} 远征${target ? `【${target.name}】功成` : '目标已不存在'}，回归据点军团模式`
@@ -428,21 +403,12 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
         return false;
     }
     if (!ctx.army.isScriptArmy && !ctx.army.scriptMarchExempt && (!ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))) {
-        if (ctx.army.expeditionTargetCityId) {
-            restoreExpeditionLegionName(ctx.army);
-            ctx.army.expeditionTargetCityId = null;
-        }
         clearStrategicTarget(ctx);
         ctx.army.setTargetCity(null);
         ctx.army.stopMovement?.();
         ctx.army.weakCheckAfterBattle = true;
         return false;
     }
-
-    // 远征模式：跳过回师检查（断粮不回），目标锁死
-    const expedition = resolveExpeditionState(ctx);
-    if (expedition === 'locked') return true;
-    if (expedition === 'done') return false;
 
     const myFaction = ctx.army.getFactionId();
     const lastDrawCityId = (ctx.army as any).lastDrawCityId as string | undefined;
@@ -462,7 +428,7 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
         return false;
     }
 
-    if (!shouldSkipHomeRecapture(ctx.army)) {
+    {
         const originCityId = getArmyOriginCityId(ctx.army) ?? '';
         const recaptureId = resolveRecaptureTarget(homeOwnerFactionOf(ctx.army, ctx.cityManager), originCityId, ctx.cityManager);
 
@@ -629,8 +595,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         (ctx.army.getTroops() < GameConfig.LEGION.DISBAND_TROOP_THRESHOLD || !ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))
     ) {
         if (ctx.army.expeditionTargetCityId) {
-            restoreExpeditionLegionName(ctx.army);
-            ctx.army.expeditionTargetCityId = null;
+            ctx.army.weakCheckAfterBattle = true;
         }
         ctx.army.weakCheckAfterBattle = true;
         return BTStatus.FAILURE;
@@ -656,7 +621,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         return BTStatus.FAILURE;
     }
 
-    if (!shouldSkipHomeRecapture(ctx.army)) {
+    {
         const recaptureId = resolveRecaptureTarget(homeOwnerFactionOf(ctx.army, ctx.cityManager), originCityId, ctx.cityManager);
         if (recaptureId && recaptureId !== lastDrawCityId && !excludeTargetIds.has(recaptureId)) {
             const recaptureCity = ctx.cityManager.getCity(recaptureId);

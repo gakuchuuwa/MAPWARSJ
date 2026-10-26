@@ -13,7 +13,6 @@ import {
 } from '../LegionMarchPath';
 import { canResumeSavedMarch, marchPathPointsFromPreview } from './marchResumePolicy';
 import type { CityManager } from '../../world/CityManager';
-import { isCampaignLegion } from '../LegionSpawnPolicy';
 
 export interface LegionRoadMarchDeps {
     cityManager: CityManager;
@@ -86,9 +85,8 @@ function resolveMarchTarget(
         return targetCityId;
     }
 
-    // 远征军团：直取战略目标，不从路网起点重扫身后敌城
     const lastDrawCityId = (army as any).lastDrawCityId as string | undefined;
-    if (startCityId && !isCampaignLegion(army)) {
+    if (startCityId) {
         marchTargetId = resolveMarchTargetOnPath(
             factionId,
             startCityId,
@@ -103,12 +101,7 @@ function resolveMarchTarget(
         checkedPolyline = marchPath.length >= 2;
     }
     if (!checkedPolyline && marchPath.length >= 2) {
-        const polylineOpts = isCampaignLegion(army)
-            ? {
-                minAlong: Math.max(0, distanceAlongPolyline(currentPos, marchPath) - 0.02),
-                excludeCityId: lastDrawCityId,
-            }
-            : { excludeCityId: lastDrawCityId };
+        const polylineOpts = { excludeCityId: lastDrawCityId };
         marchTargetId = findFirstHostileAlongPolyline(
             factionId,
             marchPath,

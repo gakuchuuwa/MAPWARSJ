@@ -51,7 +51,6 @@ import { Army } from '../legion/Army';
 import { setDefeatCooldownTimeSource } from '../legion/DefeatCooldown';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
-import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
 import { ZoomController } from './ZoomController'; // 自动缩放控制
 import { GarrisonCityZoom } from './GarrisonCityZoom'; // 停驻放大据点
 import { ZoomPerfProbe } from '../debug/ZoomPerfProbe'; // 缩放卡顿自动采样（仅 DEV）
@@ -153,10 +152,9 @@ export class GameApp {
     public scene13War!: Scene13WarLayer;
     private gameTimeHUD!: GameTimeHUD;
     private worldMiniMap: WorldMiniMap | null = null;
-    public brawlFeedPanel!: BrawlFeedPanel; // 远征播报（ExpeditionUI/行为树）经 window.game 调用
+    public brawlFeedPanel!: BrawlFeedPanel; // 军情播报经 window.game 调用
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
-    public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥5万解锁）
     public zoomController!: ZoomController; // 自动缩放（规则见 ZoomController 文件头）
     public garrisonCityZoom!: GarrisonCityZoom; // 跟拍军团停驻据点时放大据点（见 GarrisonCityZoom 文件头）
     public tacticalModeEnabled: boolean = true; // 是否进入战术模式（zoom13 微观战斗），调试面板开关
@@ -821,15 +819,6 @@ export class GameApp {
 
             // [2026-09-05 玩家] 玩家登场：镜头改为永远跟玩家
             this.setupPlayer(legionManager);
-
-            this.expeditionUI = new ExpeditionUI();
-            this.expeditionUI.init(
-                () => {
-                    const id = this.cameraFollowUI.getFollowedArmyId();
-                    return id ? legionManager.getLegionById(id) ?? null : null;
-                },
-                this.cityManager
-            );
 
             StreamModeToggle.init();
             SpeechVoiceToggle.init();

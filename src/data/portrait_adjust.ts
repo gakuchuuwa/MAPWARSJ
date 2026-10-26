@@ -3537,11 +3537,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -32
         },
-        "/assets/WEI/you_gengyan.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": -10
-        },
         "/assets/BASHU/shengmiao_baoli.png": {
             "scale": 0.94,
             "offsetX": 5,
@@ -8426,6 +8421,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/PERSIAN/bfe_arslan_shah.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -24
+        },
+        "/assets/CENTRAL/bfe3_58.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/WEI/__闲置__WEI_02.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/WEI/you_gengyan.png": {
+            "scale": 1.34,
+            "offsetX": 0,
+            "offsetY": -4
         }
     },
     "folderGuides": {

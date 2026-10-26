@@ -64,7 +64,6 @@ import { SRIVIJAYA_EXPEDITION_ELITE_LEGIONS } from './SriVijayaExpeditionLegions
 import { STARTING_CAPITALS } from './StartingCapitals';
 import { CITIES_V2 } from './cities_v2';
 import { getRawGeneralByGeneralId } from './FactionGenerals';
-import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
 export type EliteTier = 0 | 1 | 2 | 3 | 4;
 export interface EliteLegionConfig {
@@ -921,59 +920,6 @@ export function getLegionEliteConfig(army: LegionEliteLookup): EliteLegionConfig
 /** 番号随将/随城：按军团 generalId 或 homeCityId / sourceCityId 查精锐番号 */
 export function getLegionEliteLegionName(army: LegionEliteLookup): string | null {
   return getLegionEliteConfig(army)?.name ?? null;
-}
-
-/** 远征解锁：跟拍军团须从有番号的据点出身（非叛军 panshu） */
-export function canLegionLaunchExpedition(army: LegionEliteLookup): boolean {
-  return army.getFactionId() !== 'panjun' && getLegionEliteLegionName(army) != null;
-}
-
-/** @deprecated 运行时改用 canLegionLaunchExpedition；保留供仅知 factionId 的旧调用 */
-export function canFactionLaunchExpedition(factionId: string): boolean {
-  return factionId !== 'panjun' && getExpeditionEliteLegionName(factionId) != null;
-}
-
-/** 远征下令：保存原名并改为精锐名（番号随城） */
-export function applyExpeditionEliteRename(
-  army: LegionEliteLookup & {
-    name: string;
-    expeditionSavedName: string | null;
-    isElite?: boolean;
-  },
-): boolean {
-  const elite = getLegionEliteLegionName(army);
-  if (!elite) return false;
-  if (army.name !== elite) {
-    if (army.expeditionSavedName == null) {
-      army.expeditionSavedName = army.name;
-    }
-    army.name = elite;
-  }
-  // 2026-08-04 修复：远征军团必为精锐——改名时必须标 isElite，
-  // 否则精锐环（第 7 环）与战斗面板精锐标签不生效（名字=番号但军×1.0）。
-  army.isElite = true;
-  // 将领不在此处绑定：档案在 FactionGenerals.ts，出场限 STARTING_CAPITALS 锚点据点
-  applyLegionCultureComposition(army as unknown as LegionCompositionTarget);
-  return true;
-}
-
-/** 远征功成：保留精锐番号，释放暂存的原名引用（便于再次远征） */
-export function commitExpeditionEliteLegionName(army: {
-  name: string;
-  expeditionSavedName: string | null;
-}): void {
-  army.expeditionSavedName = null;
-}
-
-/** 远征中断（目标消失等）：恢复改名前的军团名 */
-export function restoreExpeditionLegionName(army: {
-  name: string;
-  expeditionSavedName: string | null;
-}): void {
-  if (army.expeditionSavedName != null) {
-    army.name = army.expeditionSavedName;
-    army.expeditionSavedName = null;
-  }
 }
 
 // @ts-ignore
