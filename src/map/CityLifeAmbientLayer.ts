@@ -2,7 +2,7 @@ import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
 import type { GameMap } from './GameMap';
 import { CITIES_V2, type CityDataV2, type BuildingStyle } from '../data/cities_v2';
-import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
+import { LandSeaSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 
@@ -52,6 +52,7 @@ type LivelihoodCategory =
     | 'nomadic_oasis'
     | 'highland_pastoral'
     | 'forest_hunting'
+    | 'forest_logging'
     | 'maritime_fishing'
     | 'mining_foraging';
 
@@ -153,43 +154,49 @@ const LIVELIHOOD_SPECS: Record<LivelihoodCategory, LivelihoodSpec> = {
     },
     farming_dry: {
         category: 'farming_dry',
-        villagers: ['VIL_MALE_FARMER', 'VIL_FEMALE_FARMER', 'VIL_MALE_LUMBERJACK'],
+        villagers: ['VIL_MALE_FARMER', 'VIL_FEMALE_FARMER'],
         animals: ['COW_BROWN', 'SHEEP', 'PIG'],
         winterRestAboveLat: 27,
     },
     nomadic_steppe: {
         category: 'nomadic_steppe',
-        villagers: ['VIL_MALE_SHEPHERD', 'VIL_MALE_HUNTER'],
+        villagers: ['VIL_MALE_SHEPHERD'],
         animals: ['HORSE', 'SHEEP', 'GOAT'],
         winterRestAboveLat: 36,
     },
     nomadic_oasis: {
         category: 'nomadic_oasis',
-        villagers: ['VIL_MALE_SHEPHERD', 'VIL_MALE_FORAGER', 'VIL_MALE_FARMER'],
+        villagers: ['VIL_MALE_SHEPHERD'],
         animals: ['CAMEL', 'DROMEDARY', 'GOAT', 'HORSE'],
         winterRestAboveLat: 35,
     },
     highland_pastoral: {
         category: 'highland_pastoral',
-        villagers: ['VIL_MALE_SHEPHERD', 'VIL_FEMALE_FARMER'],
+        villagers: ['VIL_MALE_SHEPHERD'],
         animals: ['COW_BLACK', 'LLAMA', 'ALPACA', 'SHEEP'],
         winterRestAboveLat: 32,
     },
     forest_hunting: {
         category: 'forest_hunting',
-        villagers: ['VIL_MALE_HUNTER', 'VIL_MALE_LUMBERJACK', 'VIL_MALE_FORAGER'],
+        villagers: ['VIL_MALE_HUNTER'],
         animals: ['DEER', 'BOAR', 'TURKEY', 'GUANACO'],
         winterRestAboveLat: 90, // 渔猎民族支持冬猎踏雪
     },
+    forest_logging: {
+        category: 'forest_logging',
+        villagers: ['VIL_MALE_LUMBERJACK'],
+        animals: ['DEER', 'BOAR'],
+        winterRestAboveLat: 90,
+    },
     maritime_fishing: {
         category: 'maritime_fishing',
-        villagers: ['VIL_FEMALE_FARMER', 'VIL_MALE_LUMBERJACK', 'VIL_MALE_FORAGER'],
+        villagers: ['VIL_MALE_FORAGER'], // 仅找不到海域时的陆上组合，绝不再改种田
         animals: ['CHICKEN', 'GOAT'],
         winterRestAboveLat: 48,
     },
     mining_foraging: {
         category: 'mining_foraging',
-        villagers: ['VIL_MALE_MINER', 'VIL_MALE_FORAGER', 'VIL_MALE_FARMER'],
+        villagers: ['VIL_MALE_MINER'],
         animals: ['GOAT', 'COW_BROWN'],
         winterRestAboveLat: 42,
     },
@@ -259,9 +266,9 @@ const CULTURE_TO_CATEGORY: Readonly<Record<string, LivelihoodCategory>> = {
     TIBET: 'highland_pastoral',
     INCA: 'highland_pastoral',
 
-    // 6. 山林渔猎与寒带林海（8）
+    // 6. 山林渔猎与寒带林海（8）；东北固定渔猎，瓦良格固定伐木。
     NORTHEAST: 'forest_hunting',
-    VARANGIANS: 'forest_hunting',
+    VARANGIANS: 'forest_logging',
     DIANQIAN: 'forest_hunting',
     MAPUCHE: 'forest_hunting',
     TUPI: 'forest_hunting',
@@ -420,9 +427,6 @@ export class CityLifeAmbientLayer {
         window.addEventListener('land-sea-tiles-updated', () => {
             this.layoutDirty = true;
         });
-        window.addEventListener('land-terrain-tiles-updated', () => {
-            this.layoutDirty = true;
-        });
     }
 
     private resize(): void {
@@ -526,23 +530,6 @@ export class CityLifeAmbientLayer {
         return true;
     }
 
-    /** 据点中心或周边约 20 公里内有真实山地，即允许安排伐木生产。 */
-    private hasMountainNearCity(city: CityDataV2): boolean {
-        for (let i = 0; i < 9; i++) {
-            const ang = (i / 8) * Math.PI * 2;
-            const pos = i === 0 ? { lat: city.lat, lng: city.lng } : {
-                lat: city.lat + Math.sin(ang) * 0.18 * 0.85,
-                lng: city.lng + Math.cos(ang) * 0.18,
-            };
-            try {
-                if (LandTerrainSystem.isMountainAt(pos)) return true;
-            } catch {
-                // 地形瓦片尚未就绪时按非山地处理，瓦片到达后会触发布局重算。
-            }
-        }
-        return false;
-    }
-
     /** 严格判定某点处于真实海域（中心点及周围至少 3 个邻点均为海，防止渔船搁浅在岸线陆地上） */
     private isDeepEnoughSea(pos: Pt): boolean {
         if (!this.isSea(pos)) return false;
@@ -588,7 +575,7 @@ export class CityLifeAmbientLayer {
         return null;
     }
 
-    /** 渔猎据点与山地伐木据点都生成环抱四周的四季树林，统一采用东北式环绕布局。 */
+    /** 树林由文化固定：渔猎／伐木据点始终有，其他文化即使靠近山地也不临时追加。 */
     private getOrCreateCityForest(city: CityDataV2): CityForestProp[] {
         let list = this.forestByCity.get(city.id);
         if (list) return list;
@@ -596,7 +583,7 @@ export class CityLifeAmbientLayer {
 
         const style: BuildingStyle = city.buildingStyle ?? 'CENTRAL';
         const cat = CULTURE_TO_CATEGORY[style] ?? 'farming_dry';
-        if (cat !== 'forest_hunting' && !this.hasMountainNearCity(city)) {
+        if (cat !== 'forest_hunting' && cat !== 'forest_logging') {
             this.forestByCity.set(city.id, list);
             return list;
         }
@@ -670,10 +657,8 @@ export class CityLifeAmbientLayer {
         const style: BuildingStyle = city.buildingStyle ?? 'CENTRAL';
         const cat = CULTURE_TO_CATEGORY[style] ?? 'farming_dry';
         const spec = LIVELIHOOD_SPECS[cat];
-        const mountainCity = this.hasMountainNearCity(city);
-        const lumberSlot = mountainCity ? Math.floor(strHash01(city.id, 601) * totalSlots) : -1;
-        // 随机工种不再直接抽到樵夫；山地据点由 lumberSlot 固定安排唯一一套伐木组合。
-        const villagerPool = spec.villagers.filter((dir) => dir !== 'VIL_MALE_LUMBERJACK');
+        // 工种池只含本文化固定生产，不随山地、海域瓦片或槽位改换成另一种生产。
+        const villagerPool = spec.villagers;
 
         let animalPool = spec.animals;
         if (style === 'TIBET') animalPool = ['COW_BLACK', 'SHEEP', 'ARGALI'];
@@ -697,8 +682,8 @@ export class CityLifeAmbientLayer {
             ? ['SALMON_FISH', 'SHORE_FISH', 'TUNA_FISH']
             : ['DORADO_FISH', 'TUNA_FISH', 'SHORE_FISH', 'SALMON_FISH'];
 
-        // 渔猎与山地伐木据点都先生成环绕树林，让对应组合直接在林间劳作。
-        const forestNodes = cat === 'forest_hunting' || mountainCity ? this.getOrCreateCityForest(city) : [];
+        // 树林只跟随渔猎／伐木文化，农耕与其他文化不会临时长出新树林。
+        const forestNodes = cat === 'forest_hunting' || cat === 'forest_logging' ? this.getOrCreateCityForest(city) : [];
 
         for (let i = 0; i < totalSlots; i++) {
             const h2 = strHash01(city.id, i * 17 + 2);
@@ -707,11 +692,8 @@ export class CityLifeAmbientLayer {
 
             const baseAngle = (i / totalSlots) * Math.PI * 2 + (h3 - 0.5) * 0.7;
 
-            // 山地伐木槽固定留在陆上林间，不能被海上渔业槽替代。
-            const wantsSeaFishing = !isPass && i !== lumberSlot && (
-                (cat === 'maritime_fishing' && i <= 2) ||
-                (cat === 'farming_rice' && i === totalSlots - 1)
-            );
+            // 只有海洋文化生成渔船；稻作与其他文化不再混入渔业。
+            const wantsSeaFishing = !isPass && cat === 'maritime_fishing' && i <= 2;
 
             if (wantsSeaFishing) {
                 const seaSpot = this.findSeaFishingSpot(cLat, cLng, baseAngle, h4);
@@ -760,10 +742,8 @@ export class CityLifeAmbientLayer {
                 }
             }
 
-            // 山地固定一套樵夫＋木材；非山地只从其余工种抽取，绝不出现伐木生产。
-            const dir = i === lumberSlot
-                ? 'VIL_MALE_LUMBERJACK'
-                : villagerPool[Math.floor(h2 * villagerPool.length) % villagerPool.length];
+            // 同一文化只从同一种生产工种中选择；农夫的男女差异不改变生产类型。
+            const dir = villagerPool[Math.floor(h2 * villagerPool.length) % villagerPool.length];
             const isFarmer = dir === 'VIL_MALE_FARMER' || dir === 'VIL_FEMALE_FARMER';
 
             let homePos: Pt | null = null;
