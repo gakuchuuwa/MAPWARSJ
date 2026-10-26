@@ -224,6 +224,9 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     // ── 2026-10-26 大势力史实旗面第九批（2 家；花剌子模、米底证据不足，保留字旗）──
     zhelouqi: 'CHAHAMANA_AJAYARAJA_LAKSHMI',   // 乔汉·阿阇耶罗阇银币四臂拉克什米结跏坐像（1110—1125年，Mitch NI 456）
     adile: 'ADIL_SHAHI_DOTTED_LEAF',   // 阿迪勒·穆罕默德·阿迪勒·沙阿第四系列点叶纹铜币（1627—1656年，G&G BJ32）
+    // ── 2026-10-26 大势力史实旗面第十批（2 家；萨法尔、伊德里斯仅见铭文币，保留字旗）──
+    dulan_d: 'DURRANI_ABDALI_WHEAT_SWORD',   // 杜兰尼·阿卜达利旗麦穗、剑与星（Adamec《阿富汗历史词典》p.147；麦穗亦见艾哈迈德·沙加冕传统）
+    pagan: 'PAGAN_ANAWRAHTA_VOTIVE_SEAL',   // 蒲甘·阿奴律陀供养佛牌触地印佛陀、摩诃菩提式塔刹伞盖与两侧小塔（1044—1077年，图32）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

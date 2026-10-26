@@ -275,7 +275,8 @@ export function render(this: Scene13WarLayer): void {
     const flagTick = performance.now();
     for (const m of this.men) {
         if (!m.flag) continue;
-        LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideFaction[m.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
+        // 🔴 [2026-10-26] 旗杆也用**显示势力**：panshu 占位侧（史实内战首战）要举主将自己的旗，不再是叛军无字旗。
+        LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideDisplayFactionId(m.f), FLAG_POLE_RATIO, FLAG_POLE_LIFT);
     }
 
     for (const v of vis) {
@@ -347,7 +348,7 @@ export function render(this: Scene13WarLayer): void {
         ctx.translate(ff.x, ff.y - this.elevationLiftAt(ff.x, ff.y));
         ctx.rotate(Math.PI / 2 * Math.min(1, p * 2));
         ctx.globalAlpha = 1 - p;
-        LegionFlagDrawer.drawPole(ctx, { x: 0, y: 0 }, FLAG_SCALE, this.sideFaction[ff.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
+        LegionFlagDrawer.drawPole(ctx, { x: 0, y: 0 }, FLAG_SCALE, this.sideDisplayFactionId(ff.f), FLAG_POLE_RATIO, FLAG_POLE_LIFT);
         this.drawOneFlag(ctx, 0, 0, ff.f, flagTick + ff.fo);
         ctx.restore();
     }

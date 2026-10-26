@@ -1,7 +1,8 @@
 import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
 import type { GameMap } from './GameMap';
-import { getRegion, type RegionType } from '../systems/RegionSystem';
+import { CITIES_V2, type BuildingStyle } from '../data/cities_v2';
+import { getRegion } from '../systems/RegionSystem';
 import { LandSeaSystem } from '../world/land-sea';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
@@ -81,62 +82,169 @@ const OFFSCREEN_MARGIN = 0.25;      // 屏幕外起终点外推比例（× 视�
 // 🔴 [2026-08-31] 30 → 8 秒。这个数是「车队生成在视口外多远」——原值意味着
 //    最长要等 30 秒它才走进画面，而镜头常常撑不到 30 秒就切走了。
 const MAX_ENTRY_WAIT_SEC = 8;       // 生成后最迟 8 秒进入当前视口
-const MULE_CART_CHANCE = 0.15;      // 陆路：骡车概率（其余 = 区域贸易车满/空）
-const TRANSPORT_SHIP_CHANCE = 0.20; // 海上：运输船概率
-const CANOE_CHANCE = 0.20;          // 海上：独木舟概率
 // ──────────────────────────────────────────────────────────────────────────
 
-/** 文化区 → 区域贸易车皮肤（5 类：骆驼/马/牛/牛/羊驼） */
-const CART_CAMEL: RegionType[] = ['ORIE', 'WEST_ASIA', 'CENTRAL_ASIA', 'PERSIAN', 'BERBER', 'CUMAN'];
-const CART_HORSE: RegionType[] = [
-    'LATIN', 'GERMANIC', 'SLAVIC', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS',
-    'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES',
-    'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'EAST', 'GREEK', 'THRACIAN',
-];
-const CART_OX_ASIA: RegionType[] = [
-    'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN',
-    'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN',
-];
-const CART_OX_AFRI: RegionType[] = [
-    'AFRICA', 'ETHIOPIANS', 'INDIA', 'PURU', 'BENGALIS', 'GURJARAS',
-    'MALAY', 'VIETNAMESE', 'KHMER',
-];
-const CART_LLAMA: RegionType[] = ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI'];
+/**
+ * 22 套商贸素材全集（public/SUCAI_TRADE/）：
+ *  - 陆路 17 套：
+ *    · 丝路骆驼商车（满/空）：TRADE_CART_ORIE / TRADE_CART_ORIE_EMPTY
+ *    · 西方四轮马车（满/空）：TRADE_CART_WEST / TRADE_CART_WEST_EMPTY
+ *    · 东亚黄牛货车（满/空）：TRADE_CART_ASIA / TRADE_CART_ASIA_EMPTY
+ *    · 南亚/非洲水牛车（满/空）：TRADE_CART_AFRI / TRADE_CART_AFRI_EMPTY
+ *    · 美洲原住民商车（满/空）：TRADE_CART_MESO / TRADE_CART_MESO_EMPTY
+ *    · 民间骡驴驮车（1 套）：MULE_CART
+ *    · 徒步商旅/行商（6 套）：MERCHANT_ORIE / MERCHANT_ASIA / MERCHANT_WEST / MERCHANT_ANT / MERCHANT_AFRI / MERCHANT_MESO
+ *  - 海路 5 套：
+ *    · 中式帆船 JUNK / 欧洲柯克船 TRADE_COG / 三角帆大商船 MERCHANT_SHIP / 远洋渡运船 TRANSPORT_SHIP / 独木舟 CANOE
+ *
+ * 均化原则：先按最近据点的 67 建筑文化（CITIES_V2.buildingStyle）定出当地符合历史的候选池，
+ * 再在池内按「累计出场最少优先（Shuffle-Bag 均化）」挑选，保证当地每一种合法素材均匀轮番登场。
+ */
+const landUsageCount = new Map<string, number>();
+const shipUsageCount = new Map<string, number>();
 
-function cartBaseDir(region: RegionType): string {
-    if (CART_CAMEL.includes(region)) return 'TRADE_CART_ORIE';      // 丝路骆驼商队
-    if (CART_HORSE.includes(region)) return 'TRADE_CART_WEST';      // 马拉车
-    if (CART_OX_ASIA.includes(region)) return 'TRADE_CART_ASIA';    // 牛拉车（东亚）
-    if (CART_OX_AFRI.includes(region)) return 'TRADE_CART_AFRI';    // 牛拉车（非洲/南亚）
-    if (CART_LLAMA.includes(region)) return 'TRADE_CART_MESO';      // 羊驼/人拉车
-    return 'TRADE_CART_WEST';
+function pickBalanced(pool: readonly string[], usage: Map<string, number>): string {
+    let minCount = Infinity;
+    for (const item of pool) {
+        const c = usage.get(item) ?? 0;
+        if (c < minCount) minCount = c;
+    }
+    const candidates = pool.filter((item) => (usage.get(item) ?? 0) === minCount);
+    const chosen = candidates[Math.floor(Math.random() * candidates.length)] ?? pool[0];
+    usage.set(chosen, (usage.get(chosen) ?? 0) + 1);
+    return chosen;
 }
 
-/** 陆路商队皮肤（多样性池）：区域贸易车(满/空) + 骡车 */
-function landAssetDir(region: RegionType): string {
-    if (Math.random() < MULE_CART_CHANCE) return 'MULE_CART';
-    const base = cartBaseDir(region);
-    return Math.random() < 0.5 ? base : `${base}_EMPTY`;
+/** 查离 (lat, lng) 最近的据点建筑文化；无据点时用 getRegion 兜底 */
+function resolveLocalCulture(lat: number, lng: number): BuildingStyle | string {
+    let bestStyle: BuildingStyle | undefined;
+    let bestD2 = Infinity;
+    for (const c of CITIES_V2) {
+        const dLat = c.lat - lat;
+        const dLng = c.lng - lng;
+        const d2 = dLat * dLat + dLng * dLng;
+        if (d2 < bestD2) {
+            bestD2 = d2;
+            bestStyle = c.buildingStyle;
+        }
+    }
+    return bestStyle ?? getRegion(lat, lng);
 }
 
-/** 文化区 → 商船皮肤（多样性池：3 商船 + 运输船 + 独木舟） */
-const SHIP_JUNK: RegionType[] = [
-    'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN',
-    'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'VIETNAMESE', 'KHMER', 'MALAY',
-    'INDIA', 'PURU', 'BENGALIS', 'GURJARAS',
-];
-const SHIP_COG: RegionType[] = [
-    'LATIN', 'GERMANIC', 'SLAVIC', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS',
-    'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES',
-    'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'EAST', 'GREEK', 'THRACIAN',
-];
-function shipDir(region: RegionType): string {
-    const r = Math.random();
-    if (r < TRANSPORT_SHIP_CHANCE) return 'TRANSPORT_SHIP';
-    if (r < TRANSPORT_SHIP_CHANCE + CANOE_CHANCE) return 'CANOE';
-    if (SHIP_JUNK.includes(region)) return 'JUNK';
-    if (SHIP_COG.includes(region)) return 'TRADE_COG';
-    return 'MERCHANT_SHIP';
+/** 1. 丝路·大漠·中东·北非驼商圈（双峰骆驼商车满/空 + 丝路胡商 + 骡驴驮车） */
+const SILK_CAMEL_STYLES = new Set<string>([
+    'ORIE', 'WEST_ASIA', 'PERSIAN', 'SASANIAN', 'CENTRAL_ASIA', 'WESTERN', 'HEXI',
+    'MONGOL', 'STEPPE', 'XIANBEI', 'KHITAN', 'TURKS', 'CUMAN', 'HUNS', 'BERBER', 'MUGHAL',
+]);
+
+/** 2. 古典地中海·黑海·高加索圈（马车满/空 + 古典地中海行商 + 骡车；东地中海/高加索兼通丝路骆驼） */
+const MED_ANT_STYLES = new Set<string>([
+    'ROMA', 'BYZANTINE', 'GREECE', 'GREEK', 'ATHENIANS', 'SPARTANS',
+    'MACEDONIAN', 'THRACIAN', 'SICILIANS', 'ARMENIANS', 'GEORGIANS',
+]);
+
+/** 3. 欧洲大陆·北欧圈（马车满/空 + 欧洲行商 + 骡车） */
+const EUROPE_STYLES = new Set<string>([
+    'LATIN', 'FRANKS', 'SPANISH', 'PORTUGUESE', 'BURGUNDIANS', 'GERMANIC', 'TEUTONS',
+    'SAXONS', 'BRITONS', 'CELTS', 'DANES', 'VIKINGS', 'VARANGIANS', 'GOTHS',
+    'SLAVIC', 'POLES', 'LITHUANIANS', 'BOHEMIANS', 'BULGARIANS', 'MAGYAR', 'ITALIANS', 'EAST',
+]);
+
+/** 4. 南亚·东南亚·非洲圈（水牛/角牛车满/空 + 非洲/南亚行商 + 骡车；西北印度与红海兼通骆驼） */
+const AFRI_IND_STYLES = new Set<string>([
+    'INDIA', 'PURU', 'BENGALIS', 'GURJARAS', 'BURMESE', 'KHMER',
+    'VIETNAMESE', 'MALAY', 'ETHIOPIANS', 'AFRICA',
+]);
+
+/** 5. 美洲原住民圈（美洲商车满/空 + 美洲背篓行商 Pochtēca，严禁旧大陆牛马骆驼骡车） */
+const AMERICAS_STYLES = new Set<string>([
+    'AMERICA', 'ANDE', 'MAYANS', 'INCA', 'MUISCA', 'TUPI', 'MAPUCHE',
+]);
+
+/** 按当地历史文化与地理坐标，返回符合历史的陆路商队候选池并均化抽取 */
+function landAssetDir(lat: number, lng: number): string {
+    const style = resolveLocalCulture(lat, lng);
+
+    // 美洲：严格只用美洲商车（满/空）与美洲行商
+    if (AMERICAS_STYLES.has(style)) {
+        return pickBalanced(['TRADE_CART_MESO', 'TRADE_CART_MESO_EMPTY', 'MERCHANT_MESO'], landUsageCount);
+    }
+
+    // 丝路·大漠·中东·北非驼商圈：骆驼商车（满/空）、丝路胡商、骡车均化
+    if (SILK_CAMEL_STYLES.has(style)) {
+        return pickBalanced(['TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY', 'MERCHANT_ORIE', 'MULE_CART'], landUsageCount);
+    }
+
+    // 古典地中海·高加索圈：马车（满/空）、古典行商、骡车；拜占庭/亚美尼亚/格鲁吉亚丝路西端兼通骆驼商车与胡商
+    if (MED_ANT_STYLES.has(style)) {
+        const pool = (style === 'BYZANTINE' || style === 'ARMENIANS' || style === 'GEORGIANS')
+            ? ['TRADE_CART_WEST', 'TRADE_CART_WEST_EMPTY', 'MERCHANT_ANT', 'MULE_CART', 'TRADE_CART_ORIE', 'MERCHANT_ORIE']
+            : ['TRADE_CART_WEST', 'TRADE_CART_WEST_EMPTY', 'MERCHANT_ANT', 'MULE_CART'];
+        return pickBalanced(pool, landUsageCount);
+    }
+
+    // 欧洲大陆与北欧圈：马车（满/空）、欧洲行商、骡车均化
+    if (EUROPE_STYLES.has(style)) {
+        return pickBalanced(['TRADE_CART_WEST', 'TRADE_CART_WEST_EMPTY', 'MERCHANT_WEST', 'MULE_CART'], landUsageCount);
+    }
+
+    // 南亚·东南亚·非洲圈：水牛商车（满/空）、非洲/南亚行商、骡车；瞿折罗（塔尔沙漠）与埃塞俄比亚（红海驼道）兼通骆驼
+    if (AFRI_IND_STYLES.has(style)) {
+        const pool = (style === 'GURJARAS' || style === 'ETHIOPIANS')
+            ? ['TRADE_CART_AFRI', 'TRADE_CART_AFRI_EMPTY', 'MERCHANT_AFRI', 'MULE_CART', 'TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY']
+            : (style === 'AFRICA')
+                ? ['TRADE_CART_AFRI', 'TRADE_CART_AFRI_EMPTY', 'MERCHANT_AFRI']
+                : ['TRADE_CART_AFRI', 'TRADE_CART_AFRI_EMPTY', 'MERCHANT_AFRI', 'MULE_CART'];
+        return pickBalanced(pool, landUsageCount);
+    }
+
+    // 东亚商贸圈（CENTRAL / WEI / JIANGNAN / HUGUANG / BASHU / TIBET / NORTHEAST / KOREA / JAPAN）：
+    // 关中陇右河西走廊（lng < 109.5°）或幽燕塞北长城沿线（lat > 38.2°）自古有胡商驼队往来，兼入丝路骆驼商车与胡商
+    if ((style === 'CENTRAL' || style === 'WEI') && (lng < 109.5 || lat > 38.2)) {
+        return pickBalanced([
+            'TRADE_CART_ASIA', 'TRADE_CART_ASIA_EMPTY', 'MERCHANT_ASIA', 'MULE_CART',
+            'TRADE_CART_ORIE', 'TRADE_CART_ORIE_EMPTY', 'MERCHANT_ORIE',
+        ], landUsageCount);
+    }
+    return pickBalanced(['TRADE_CART_ASIA', 'TRADE_CART_ASIA_EMPTY', 'MERCHANT_ASIA', 'MULE_CART'], landUsageCount);
+}
+
+/** 按海域与沿岸文化历史特征，返回合法的海上商船候选池并均化抽取 */
+function shipDir(lat: number, lng: number): string {
+    const style = resolveLocalCulture(lat, lng);
+
+    // 1. 美洲海域与内陆大湖：前哥伦布时期严格使用美洲独木舟 CANOE
+    if (AMERICAS_STYLES.has(style)) {
+        return 'CANOE';
+    }
+
+    // 2. 撒哈拉以南西非（AFRICA）：尼日尔河与几内亚湾独木舟 + 商船 + 渡运船
+    if (style === 'AFRICA') {
+        return pickBalanced(['CANOE', 'MERCHANT_SHIP', 'TRANSPORT_SHIP'], shipUsageCount);
+    }
+
+    // 3. 东亚与东南亚海域（环中国海、日本海、南洋马六甲）：中式帆船 JUNK + 三角帆市舶船 + 渡运船 + 近岸独木舟
+    if (
+        style === 'CENTRAL' || style === 'WEI' || style === 'JIANGNAN' || style === 'HUGUANG'
+        || style === 'BASHU' || style === 'TIBET' || style === 'NORTHEAST' || style === 'KOREA'
+        || style === 'JAPAN' || style === 'VIETNAMESE' || style === 'KHMER' || style === 'BURMESE'
+        || style === 'MALAY' || style === 'MONGOL' || style === 'XIANBEI' || style === 'KHITAN'
+    ) {
+        return pickBalanced(['JUNK', 'MERCHANT_SHIP', 'TRANSPORT_SHIP', 'CANOE'], shipUsageCount);
+    }
+
+    // 4. 印度洋·孟加拉湾·阿拉伯海·红海·波斯湾（南亚 + 中东 + 东非）：阿拉伯三角帆商船 + 唐宋远洋福船 JUNK + 渡运船 + 近岸舟
+    if (AFRI_IND_STYLES.has(style) || style === 'ORIE' || style === 'PERSIAN' || style === 'SASANIAN') {
+        return pickBalanced(['MERCHANT_SHIP', 'TRANSPORT_SHIP', 'JUNK', 'CANOE'], shipUsageCount);
+    }
+
+    // 5. 地中海·黑海（古典地中海 + 北非柏柏尔 + 突厥/中亚西端）：三角帆商船 + 欧洲柯克货船 + 渡运船 + 沿岸轻舟
+    if (MED_ANT_STYLES.has(style) || SILK_CAMEL_STYLES.has(style)) {
+        return pickBalanced(['MERCHANT_SHIP', 'TRADE_COG', 'TRANSPORT_SHIP', 'CANOE'], shipUsageCount);
+    }
+
+    // 6. 欧洲北海·波罗的海·大西洋：柯克货船 TRADE_COG + 商船 + 渡运船 + 峡湾内河轻舟
+    return pickBalanced(['TRADE_COG', 'MERCHANT_SHIP', 'TRANSPORT_SHIP', 'CANOE'], shipUsageCount);
 }
 
 export class TradeTrafficLayer {
@@ -406,9 +514,8 @@ export class TradeTrafficLayer {
         const { cum, total } = TradeTrafficLayer.buildCum(path);
         if (total <= 0) return;
 
-        const region = getRegion(anchor.lat, anchor.lng);
-        const cartDir = landAssetDir(region);
-        const shipDirName = shipDir(region);
+        const cartDir = landAssetDir(anchor.lat, anchor.lng);
+        const shipDirName = shipDir(anchor.lat, anchor.lng);
         this.loadAsset(cartDir);
         this.loadAsset(shipDirName);
 

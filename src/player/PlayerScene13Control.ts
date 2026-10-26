@@ -67,9 +67,7 @@ export class PlayerScene13Control {
         if (!s) return;
         const { min, max } = this.getZoomBounds();
         const clamped = Math.max(min, Math.min(max, nextZoom));
-        s.tacticalZoom = clamped;
-        s.userInteractingTimer = 9.0;
-        if (typeof s.clampTacticalPan === 'function') s.clampTacticalPan();
+        s.setTacticalZoomKeepCenter(clamped);
         if (typeof s.syncDeCityGround === 'function') s.syncDeCityGround();
         this.syncZoomUI();
     }

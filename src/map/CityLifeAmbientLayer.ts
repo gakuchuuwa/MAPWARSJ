@@ -15,7 +15,7 @@ import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
  *      战时树林渐变为倒伏断木 FELLED_GENERIC、树桩 STUMP_GENERIC 与焦枯死树 DEAD_TREE）。
  *   3. 渔业严格在海中（绝不在陆地放渔夫）：在沿海海域生成 DE 渔船（SHP_FISHING_SHIP 撒网/往返航行）与海鱼群
  *      （DORADO_FISH / SALMON_FISH / TUNA_FISH / SHORE_FISH 跃水游弋）；战时渐变为沉没破损渔船（SHP_FISHING_SHIP:sink + SHIP_SINK_SMALL）。
- *   4. 对应四季（春耕播种、夏耘、秋收与冬猎直接切换；四季农田同步更换，和平期不做透明度渐变）。
+ *   4. 对应四季（每季 15 秒；季末最后 5 秒交叉渐变农田、树林与劳作动作，季首完成衔接）。
  *   5. 战火破坏与尸骸渐变：据点被围攻或周围半径 0.3° 内有军团交战时，通过 damageBlend (0 → 1) 平滑渐变为
  *      被破坏的农车/栅栏/断木废墟、倒地平民尸体、平民白骨、战死牲畜与沉没渔船；战后余波结束后平滑恢复。
  */
@@ -115,7 +115,8 @@ interface CityLifeActor {
     peaceAtCombat: number;     // 本轮开战前的生产透明度，供再次开战时平滑接续
     damagePreset: WarDamagePreset;
     damageVariant: number;     // 破损贴图帧索引
-    displayedAction: string;   // 当前正在画的动作名
+    displayedAction: string;   // 当前正在淡入的动作名
+    previousAction?: string;   // 换季时正在淡出的上一季动作
     desiredAction: string;     // 当前季节对应的目标动作名
 }
 
@@ -136,6 +137,7 @@ const COMBAT_HIDE_RADIUS_DEG = 0.3;
 const WAR_AFTERMATH_HOLD_MS = 8500;
 const FADE_TO_DAMAGE_SEC = 1.1;
 const FADE_RECOVER_PEACE_SEC = 2.4;
+const SEASON_TRANSITION_SEC = 5;
 
 /** 67 文化 → 生计配置表（注意：陆地列表不含渔夫，所有渔业一律在海中生成渔船与海鱼群） */
 const LIVELIHOOD_SPECS: Record<LivelihoodCategory, LivelihoodSpec> = {
@@ -467,6 +469,14 @@ export class CityLifeAmbientLayer {
     private getSeason(): number {
         const s = (window as any).game?.timeSystem?.getSeason?.();
         return typeof s === 'number' && s >= 0 && s <= 3 ? s : 0;
+    }
+
+    /** 每季 15 秒，季末最后 5 秒平滑进入下一季；smoothstep 让起手与收尾更柔。 */
+    private getSeasonBlend(): number {
+        const remaining = (window as any).game?.timeSystem?.getTimeToNextSeason?.();
+        if (typeof remaining !== 'number' || !Number.isFinite(remaining)) return 0;
+        const t = Math.min(1, Math.max(0, (SEASON_TRANSITION_SEC - Math.max(0, remaining)) / SEASON_TRANSITION_SEC));
+        return t * t * (3 - 2 * t);
     }
 
     private isHiddenNow(): boolean {
@@ -910,6 +920,8 @@ export class CityLifeAmbientLayer {
             actor.inCombatVisual = prev.inCombatVisual;
             actor.peaceAtCombat = prev.peaceAtCombat;
             actor.displayedAction = prev.displayedAction;
+            actor.previousAction = prev.previousAction;
+            actor.desiredAction = prev.desiredAction;
             if (prev.damageBlend > 0) actor.lastDrawPos = prev.lastDrawPos;
             this.activeActors.set(actor.id, actor);
         }
@@ -1150,6 +1162,7 @@ export class CityLifeAmbientLayer {
         const inUse = new Set<string>();
         for (const a of this.activeActors.values()) {
             inUse.add(`${a.lib}/${a.dir}:${a.displayedAction}`);
+            if (a.previousAction) inUse.add(`${a.lib}/${a.dir}:${a.previousAction}`);
             inUse.add(`${a.lib}/${a.dir}:${a.desiredAction}`);
             if (a.damageBlend > 0) {
                 inUse.add('SUCAI/VIL_MALE_VILLAGER:death');
@@ -1194,6 +1207,9 @@ export class CityLifeAmbientLayer {
 
         this.scanEndangeredCities(this.nowMs, visibleCities);
         const season = this.getSeason();
+        const nextSeason = (season + 1) % 4;
+        const seasonBlend = this.getSeasonBlend();
+        const actionSeason = seasonBlend > 0 ? nextSeason : season;
         const inViewActorIds = new Set<string>();
         const tSec = this.nowMs / 1000;
 
@@ -1202,10 +1218,11 @@ export class CityLifeAmbientLayer {
             const forestProps = actors.length > 0 ? this.getOrCreateCityForest(city) : [];
             const cityInWar = this.endangeredCities.has(city.id);
 
-            // 预热当前季节的树林、灌丛与组合附属物；换季直接替换，不做透明度渐变。
+            // 同时预热当前季与下一季，保证季末五秒交叉渐变不会闪空。
             for (const fp of forestProps) {
-                const curTree = season === 0 ? fp.springTree : season === 1 ? fp.summerTree : season === 2 ? fp.autumnTree : fp.winterTree;
-                this.loadStripAsset('SUCAI_NATURE', curTree);
+                const trees = [fp.springTree, fp.summerTree, fp.autumnTree, fp.winterTree];
+                this.loadStripAsset('SUCAI_NATURE', trees[season]);
+                this.loadStripAsset('SUCAI_NATURE', trees[nextSeason]);
                 this.loadStripAsset(fp.bushLib, fp.bushName);
                 if (cityInWar) {
                     this.loadStripAsset('SUCAI_NATURE', fp.isBamboo ? 'FELLED_LUSH_BAMBOO' : 'FELLED_GENERIC');
@@ -1219,13 +1236,15 @@ export class CityLifeAmbientLayer {
                 if (!this.activeActors.has(actor.id)) {
                     this.activeActors.set(actor.id, actor);
                 }
-                actor.desiredAction = this.resolveSeasonalAction(actor, season);
+                actor.desiredAction = this.resolveSeasonalAction(actor, actionSeason);
                 this.loadAsset(actor.lib, actor.dir, actor.desiredAction);
+                if (actor.previousAction) this.loadAsset(actor.lib, actor.dir, actor.previousAction);
                 if (actor.isSeaFishing && actor.fishResource) {
                     this.loadStripAsset('SUCAI_RESOURCE', actor.fishResource);
                 }
                 if (actor.hasFarm) {
                     this.loadStripAsset('SUCAI_RESOURCE', FARM_BY_SEASON[season]);
+                    this.loadStripAsset('SUCAI_RESOURCE', FARM_BY_SEASON[nextSeason]);
                 }
                 if (actor.groundResource && actor.groundResourceLib) {
                     this.loadStripAsset(actor.groundResourceLib, actor.groundResource);
@@ -1247,22 +1266,51 @@ export class CityLifeAmbientLayer {
             }
 
             const inCombat = this.endangeredCities.has(actor.cityId);
-            const winterSleep = season === 3 && !actor.winterActive;
 
-            // 和平期与视口进出均不渐变；冬季休耕只直接隐藏，只有战火使用 damageBlend 交叉渐变。
             actor.viewAlpha = 1;
-            actor.peaceAlpha = winterSleep ? 0 : 1;
-            actor.displayedAction = actor.desiredAction;
-            actor.actionAlpha = 1;
+            if (actor.desiredAction !== actor.displayedAction) {
+                actor.previousAction = actor.displayedAction;
+                actor.displayedAction = actor.desiredAction;
+                actor.actionAlpha = 0;
+            }
+            if (actor.previousAction && actor.previousAction !== actor.displayedAction) {
+                // 有季末时间基准时与农田、树林严格同步；手动跳季时也在五秒内完成。
+                actor.actionAlpha = seasonBlend > 0
+                    ? seasonBlend
+                    : Math.min(1, actor.actionAlpha + dt / SEASON_TRANSITION_SEC);
+                if (actor.actionAlpha >= 1) {
+                    actor.actionAlpha = 1;
+                    actor.previousAction = undefined;
+                }
+            } else {
+                actor.previousAction = undefined;
+                actor.actionAlpha = 1;
+            }
 
-            if (inCombat) {
-                if (actor.damageBlend <= 0.01) {
+            if (inCombat || actor.inCombatVisual) {
+                // 开战时记录当前生产透明度；短暂战斗也先完成战损渐变，不直接跳没。
+                if (!actor.inCombatVisual) {
+                    actor.inCombatVisual = true;
                     actor.combatStartSec = tSec;
-                    actor.presentAtCombat = !winterSleep;
+                    actor.presentAtCombat = true;
+                    actor.peaceAtCombat = actor.peaceAlpha;
                 }
                 actor.damageBlend = Math.min(1, actor.damageBlend + dt / FADE_TO_DAMAGE_SEC);
+                actor.peaceAlpha = actor.peaceAtCombat * (1 - actor.damageBlend);
+                if (!inCombat && actor.damageBlend >= 1) actor.inCombatVisual = false;
             } else if (actor.damageBlend > 0) {
+                // 第一阶段：生产保持完全隐藏，只让废墟、尸体与残骸渐隐。
+                actor.peaceAlpha = 0;
                 actor.damageBlend = Math.max(0, actor.damageBlend - dt / FADE_RECOVER_PEACE_SEC);
+            } else if (actor.presentAtCombat) {
+                // 第二阶段：残骸全部消失后，原生产组合才渐显并恢复持续生产。
+                actor.peaceAlpha = Math.min(1, actor.peaceAlpha + dt / FADE_RECOVER_PEACE_SEC);
+                if (actor.peaceAlpha >= 1) {
+                    actor.presentAtCombat = false;
+                    actor.peaceAtCombat = 1;
+                }
+            } else {
+                actor.peaceAlpha = 1;
             }
         }
     }
@@ -1418,13 +1466,15 @@ export class CityLifeAmbientLayer {
         const m = 64;
         const tSec = this.nowMs / 1000;
         const season = this.getSeason();
+        const nextSeason = (season + 1) % 4;
+        const seasonBlend = this.getSeasonBlend();
 
-        // 收集当前激活据点的状态（viewAlpha 与 damageBlend）以驱动渔猎民族周围树林植被的绘制与战损渐变
-        const cityState = new Map<string, { viewAlpha: number; damageBlend: number }>();
+        // 树林与生产组合同步经过“战损 → 残骸渐隐 → 生产渐显”三个阶段。
+        const cityState = new Map<string, { viewAlpha: number; damageBlend: number; peaceAlpha: number }>();
         for (const a of this.activeActors.values()) {
             const prev = cityState.get(a.cityId);
             if (!prev || a.viewAlpha > prev.viewAlpha) {
-                cityState.set(a.cityId, { viewAlpha: a.viewAlpha, damageBlend: a.damageBlend });
+                cityState.set(a.cityId, { viewAlpha: a.viewAlpha, damageBlend: a.damageBlend, peaceAlpha: a.peaceAlpha });
             }
         }
 
@@ -1439,7 +1489,7 @@ export class CityLifeAmbientLayer {
                 const pt = this.map.latLngToContainerPoint([fp.pos.lat, fp.pos.lng]);
                 if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
 
-                const peaceAlpha = st.viewAlpha * (1 - st.damageBlend);
+                const peaceAlpha = st.viewAlpha * st.peaceAlpha;
                 const damageAlpha = st.viewAlpha * st.damageBlend;
                 const bushScale = 0.36 * zoomFactor;
 
@@ -1454,21 +1504,30 @@ export class CityLifeAmbientLayer {
                     }
                 }
 
-                // 和平四季态：换季直接替换贴图，不做季节透明度渐变。
+                // 和平四季态：主树与伴生小树同步交叉渐变；同树种不叠画，避免半透明发虚。
                 if (peaceAlpha > 0.01) {
                     this.drawStripSprite(fp.bushLib, fp.bushName, fp.variant, pt.x + 11 * zoomFactor, pt.y + 5 * zoomFactor, bushScale, peaceAlpha * 0.92);
-                    const curTree = season === 0 ? fp.springTree : season === 1 ? fp.summerTree : season === 2 ? fp.autumnTree : fp.winterTree;
+                    const trees = [fp.springTree, fp.summerTree, fp.autumnTree, fp.winterTree];
+                    const curTree = trees[season];
+                    const nextTree = trees[nextSeason];
                     const mainH = treeBaseH * fp.scaleJitter;
                     const subH = mainH * 0.78;
-                    this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha);
-                    this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha);
+                    if (curTree === nextTree) {
+                        this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha);
+                        this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha);
+                    } else {
+                        this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha * (1 - seasonBlend));
+                        this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha * (1 - seasonBlend));
+                        this.drawHuntingTree(nextTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha * seasonBlend);
+                        this.drawHuntingTree(nextTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha * seasonBlend);
+                    }
                 }
             }
         }
 
         // 2. 按纬度从北到南排序绘制民生角色、海中渔船鱼群与战损尸骸
         const list = [...this.activeActors.values()].filter(
-            (a) => a.viewAlpha > 0.01 && (a.peaceAlpha * (1 - a.damageBlend) > 0.01 || a.damageBlend > 0.01)
+            (a) => a.viewAlpha > 0.01 && (a.peaceAlpha > 0.01 || a.damageBlend > 0.01)
         );
         list.sort((a, b) => b.homePos.lat - a.homePos.lat);
 
@@ -1512,8 +1571,8 @@ export class CityLifeAmbientLayer {
                 this.drawWarDamageForActor(actor, pt, facing, zoomFactor, tSec, damageAlpha);
             }
 
-            // 和平民生层（春耕、夏耘、秋收、冬猎、牧群、海中渔船与鱼群），随 (1 - damageBlend) 渐隐
-            const peaceFinalAlpha = actor.viewAlpha * actor.peaceAlpha * actor.actionAlpha * (1 - actor.damageBlend);
+            // 战争透明度与换季动作透明度分开，避免换季时整组农田、资源和建筑一起消失。
+            const peaceFinalAlpha = actor.viewAlpha * actor.peaceAlpha;
             if (peaceFinalAlpha > 0.01) {
                 // 组合附属物固定在主人落点：农田、果子、木材、矿石与随机建筑都先画在人物脚下／两侧。
                 if (!actor.isSeaFishing && !actor.isAnimal) {
@@ -1527,7 +1586,16 @@ export class CityLifeAmbientLayer {
                             groupPt.x,
                             groupPt.y + 4 * zoomFactor,
                             0.58 * zoomFactor,
-                            peaceFinalAlpha
+                            peaceFinalAlpha * (1 - seasonBlend)
+                        );
+                        this.drawStripSprite(
+                            'SUCAI_RESOURCE',
+                            FARM_BY_SEASON[nextSeason],
+                            0,
+                            groupPt.x,
+                            groupPt.y + 4 * zoomFactor,
+                            0.58 * zoomFactor,
+                            peaceFinalAlpha * seasonBlend
                         );
                     }
                     if (actor.groundResource && actor.groundResourceLib) {
@@ -1568,31 +1636,40 @@ export class CityLifeAmbientLayer {
                     );
                 }
 
-                const asset = this.assetFor(actor.lib, actor.dir, act);
-                if (!asset) continue;
-                const box = asset.dirs[String(facing)] ?? asset.dirs['0'];
-                if (!box) continue;
-                const sheet = asset.sheets[facing] ?? asset.sheets[0];
-                if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
-
-                const fps = act === 'idle' ? 10 : 14;
-                const frame = Math.floor(tSec * fps + actor.phase) % Math.max(1, asset.frames);
                 const baseScale = actor.isSeaFishing
                     ? SHIP_SCALE_BASE
                     : actor.isAnimal
                         ? ANIMAL_SCALE_BASE
                         : VILLAGER_SCALE_BASE;
                 const scale = baseScale * zoomFactor;
+                const actionLayers = actor.previousAction && actor.previousAction !== actor.displayedAction
+                    ? [
+                        { action: actor.previousAction, weight: 1 - actor.actionAlpha },
+                        { action: actor.displayedAction, weight: actor.actionAlpha },
+                    ]
+                    : [{ action: actor.displayedAction, weight: 1 }];
 
-                const fw = box.fw;
-                const fh = box.fh;
-                const dx = pt.x - box.hx * scale;
-                const dy = pt.y - box.hy * scale;
+                for (const actionLayer of actionLayers) {
+                    if (actionLayer.weight <= 0.001) continue;
+                    const asset = this.assetFor(actor.lib, actor.dir, actionLayer.action);
+                    if (!asset) continue;
+                    const box = asset.dirs[String(facing)] ?? asset.dirs['0'];
+                    if (!box) continue;
+                    const sheet = asset.sheets[facing] ?? asset.sheets[0];
+                    if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
 
-                ctx.save();
-                ctx.globalAlpha = Math.max(0, Math.min(1, peaceFinalAlpha));
-                ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
-                ctx.restore();
+                    const fps = actionLayer.action === 'idle' ? 10 : 14;
+                    const frame = Math.floor(tSec * fps + actor.phase) % Math.max(1, asset.frames);
+                    const fw = box.fw;
+                    const fh = box.fh;
+                    const dx = pt.x - box.hx * scale;
+                    const dy = pt.y - box.hy * scale;
+
+                    ctx.save();
+                    ctx.globalAlpha = Math.max(0, Math.min(1, peaceFinalAlpha * actionLayer.weight));
+                    ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+                    ctx.restore();
+                }
             }
         }
     }

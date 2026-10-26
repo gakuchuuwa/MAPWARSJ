@@ -50,7 +50,8 @@ import { withCommander } from '../data/generalHeroUnits';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { getGeneralProfile } from '../data/GeneralSkills';
-import { getFactionGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
+import { getFactionGeneral, getFactionIdOfGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig, getGeneralEliteConfig } from '../data/ExpeditionLegions';
 import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 import { getGameMode } from '../data/generalOnStage';
@@ -135,6 +136,8 @@ import { render } from './scene13/Scene13Render';
  *   以【败】为尺把三计拉到同一量级：攻 输出 ×2.25 持续 20 秒（≈25 秒交战）、敌 满血＋减伤六成 20 秒、混 乱阵 15 秒且受伤翻倍。
  *   🔴 [2026-10-22 主人定「败 6%」] 同批把即时三计收一档：败 8%→6%（劣势翻盘计，留一点翻盘感）、胜 8%→6%（主人令「胜也6%」，与败对称）、并 5%→3%（并＝敌减我增，净差约 6%）。
  */
+/** 🔴 [2026-10-26 主人令] 镜头换跟随档的缓冲秒数（玩家交战不吃缓冲），见 pickCamTarget */
+const CAM_SWITCH_HOLD = 1.5;
 const SKILL_FRENZY_SEC = 20;        // 【攻】振己威持续
 const SKILL_FRENZY_DMG = 1.5;       // 【攻】伤害倍率
 const SKILL_FRENZY_ATKSPD = 1.5;    // 【攻】攻速倍率
@@ -294,6 +297,12 @@ export class Scene13WarLayer {
     private skillCamTimer = 0;
     /** 镜头当前盯着的本方兵（主将队员或普通兵）；同一档里它还活着就不换，见 pickCamTarget */
     private camWatchMan: WarMan | null = null;
+    /** 镜头已认定的档（-1 = 未定）；换档要新档持续 CAM_SWITCH_HOLD 秒，玩家交战除外，见 pickCamTarget */
+    private camTier = -1;
+    private camPendingTier = -1;
+    private camPendingT = 0;
+    /** 盯着的那个兵掉出本档（丢目标）已多少秒；不满 CAM_SWITCH_HOLD 仍跟他 */
+    private camWatchOffT = 0;
     private skillCamX = 0;
     private skillCamY = 0;
     /** 八方向行军前进单位向量（两军对冲） */
@@ -482,7 +491,20 @@ export class Scene13WarLayer {
      */
     private displayFaction(side: 0 | 1): string {
         // 🔴 [2026-10-24 主人「城被占武将归占领者，依然生效」] 所有模式：旗号用战场势力（城主）
-        return this.sideFaction[side];
+        // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」「防守方旗帜不显示」]
+        //    叛军 panshu 只是**没有武将的据点**的占位：史实内战（如 312 米尔维安大桥 罗马 vs 罗马）开打时，
+        //    引擎拿 panshu 占位让两军能互打；照抄它，整侧就是无字叛军旗（看着像没旗）+ 不染势力色 +
+        //    直播站队榜写「守方叛军」。带主将的一侧一律回到主将自己的势力
+        //    （与 `Army.getDisplayFactionId` / `CombatUI.displayFactionId` 同一口径，只影响显示）。
+        return this.resolveDisplayFaction(this.sideFaction[side], this.sideGeneralId[side]);
+    }
+
+    /** 显示势力解析：panshu 占位 + 有主将 → 主将自己的势力；其余照旧＝战场势力（城主）。只影响显示。 */
+    private resolveDisplayFaction(fid: string | null | undefined, generalId: string | null | undefined): string {
+        if (isBlankRebelFaction(fid) && generalId) {
+            return getFactionIdOfGeneral(generalId) ?? fid ?? '';
+        }
+        return fid ?? '';
     }
     /** 攻/守双方是否为名将（名将 ×1.25 / 普将 ×1.00） */
     private sideIsFamous: [boolean, boolean] = [false, false];
@@ -1383,10 +1405,12 @@ export class Scene13WarLayer {
     /**
      * 🔴 [2026-10-26 主人令] 有乱入者时镜头跟谁，按六档优先：
      *    交战的玩家 > 交战的主将队 > 交战的士兵 > 移动的玩家 > 移动的主将队 > 移动的士兵（均为本方）。
-     *    高档一出现就切过去（玩家一交战立刻切回玩家）；同一档里盯着的那员还活着就不换，死了换离镜头中心最近的。
-     *    取代 10-25 的「复活后先不跟玩家、等交战/出画面再跟」。全灭返回 null（镜头原地不动）。
+     *    同一档里盯着的那员还活着就不换，死了换离镜头中心最近的。全灭返回 null（镜头原地不动）。
+     *    取代 10-25 的「复活后先不跟玩家、等交战/出画面再跟」。
+     *    🔴 [2026-10-26 主人令「切换加缓冲但玩家交战立即切」] 换档要新档持续 CAM_SWITCH_HOLD 秒才换（防有人锁到/丢掉目标一下镜头就来回甩）；
+     *    玩家交战立即切；当前跟的人死了也立即换。盯着的兵丢目标不满 CAM_SWITCH_HOLD 秒照样跟他。
      */
-    private pickCamTarget(hero: WarMan): WarMan | null {
+    private pickCamTarget(hero: WarMan, dt: number): WarMan | null {
         const f = hero.f;
         const heroAlive = hero.hp > 0;
         // 档位：0 交战玩家 1 交战主将队 2 交战士兵 3 移动玩家 4 移动主将队 5 移动士兵
@@ -1395,27 +1419,86 @@ export class Scene13WarLayer {
             const cmd = !!this.spawns[m.lane]?.commander;
             return (m.foe ? 0 : 3) + (cmd ? 1 : 2);
         };
-        const eligible = (m: WarMan): boolean => m.hp > 0 && m.f === f && !m.siegeW && (!m.hero || m === hero);
+        const eligible = (m: WarMan): boolean => m.hp > 0 && m.f === f && !m.siegeW && (!m.hero || m === hero)
+            && (m.hero || this.men.includes(m));
         let bestTier = heroAlive ? tierOf(hero) : 6;
         for (const m of this.men) {
             if (!eligible(m) || m.hero) continue;
             const t = tierOf(m);
             if (t < bestTier) bestTier = t;
         }
-        if (bestTier === 0 || bestTier === 3) { this.camWatchMan = null; return hero; }
-        if (bestTier === 6) { this.camWatchMan = null; return null; }
+        if (bestTier === 6) { this.resetCamFollow(); return null; }
+
+        const isHeroTier = (t: number) => t === 0 || t === 3;
         const cur = this.camWatchMan;
-        if (cur && eligible(cur) && !cur.hero && this.men.includes(cur) && tierOf(cur) === bestTier) return cur;
+        // 当前跟的对象已经没了（玩家倒下 / 盯的兵死了）⇒ 不等缓冲
+        const lost = this.camTier < 0
+            || (isHeroTier(this.camTier) ? !heroAlive : !(cur && eligible(cur)));
+        if (bestTier === this.camTier) {
+            this.camPendingTier = -1; this.camPendingT = 0;
+        } else if (lost || bestTier === 0) {
+            this.camTier = bestTier;
+            this.camPendingTier = -1; this.camPendingT = 0;
+        } else {
+            if (this.camPendingTier !== bestTier) { this.camPendingTier = bestTier; this.camPendingT = 0; }
+            this.camPendingT += dt;
+            if (this.camPendingT >= CAM_SWITCH_HOLD) {
+                this.camTier = bestTier;
+                this.camPendingTier = -1; this.camPendingT = 0;
+            }
+        }
+
+        if (isHeroTier(this.camTier)) { this.camWatchMan = null; this.camWatchOffT = 0; return hero; }
+        if (cur && eligible(cur) && !cur.hero) {
+            if (tierOf(cur) === this.camTier) { this.camWatchOffT = 0; return cur; }
+            this.camWatchOffT += dt;
+            if (this.camWatchOffT < CAM_SWITCH_HOLD) return cur;
+        }
         const cx = this.worldCX - this.tacticalPanX / this.tacticalZoom;
         const cy = this.worldCY - this.tacticalPanY / this.tacticalZoom;
-        let best: WarMan | null = null, bestD = Infinity;
-        for (const m of this.men) {
-            if (!eligible(m) || m.hero || tierOf(m) !== bestTier) continue;
-            const d = Math.hypot(m.x - cx, m.y - cy);
-            if (d < bestD) { best = m; bestD = d; }
+        const nearestIn = (tier: number): WarMan | null => {
+            let best: WarMan | null = null, bestD = Infinity;
+            for (const m of this.men) {
+                if (!eligible(m) || m.hero || tierOf(m) !== tier) continue;
+                const d = Math.hypot(m.x - cx, m.y - cy);
+                if (d < bestD) { best = m; bestD = d; }
+            }
+            return best;
+        };
+        let best = nearestIn(this.camTier);
+        if (!best) {
+            // 认定的档已经空了（例如主将队都停手了）⇒ 直接落到眼下最高档
+            this.camTier = bestTier;
+            this.camPendingTier = -1; this.camPendingT = 0;
+            if (isHeroTier(bestTier)) { this.camWatchMan = null; this.camWatchOffT = 0; return hero; }
+            best = nearestIn(bestTier);
         }
         this.camWatchMan = best;
+        this.camWatchOffT = 0;
         return best;
+    }
+
+    private resetCamFollow(): void {
+        this.camWatchMan = null;
+        this.camTier = -1;
+        this.camPendingTier = -1;
+        this.camPendingT = 0;
+        this.camWatchOffT = 0;
+    }
+
+    /**
+     * 🔴 [2026-10-26 主人令「缩放时保持画面中心」] 改缩放倍率并等比改平移：平移是屏幕像素，
+     *    画面中心世界点 = worldC − pan/zoom，只改 zoom 不改 pan 画面中心就会漂走。滚轮与面板滑条都走这里。
+     */
+    public setTacticalZoomKeepCenter(nextZoom: number): void {
+        const old = this.tacticalZoom;
+        this.tacticalZoom = nextZoom;
+        if (old > 0) {
+            this.tacticalPanX *= nextZoom / old;
+            this.tacticalPanY *= nextZoom / old;
+        }
+        this.userInteractingTimer = 9.0;
+        this.clampTacticalPan();
     }
 
     /** [2026-08-19 主人需求] 13 战斗退出按钮（点击后按当前兵力比自动结算战果，走 onDecision 通道） */
@@ -1499,28 +1582,26 @@ export class Scene13WarLayer {
             const zoomDelta = -e.deltaY * 0.0015;
             const nextZoom = this.tacticalZoom * Math.exp(zoomDelta);
             const minZoom = this.deCampaignMapId ? 0.15 : (this.useGroundGL ? 0.45 : 1.0);
-            this.tacticalZoom = Math.max(minZoom, Math.min(2.5, nextZoom));
-            this.userInteractingTimer = 9.0;
-            this.clampTacticalPan();
+            this.setTacticalZoomKeepCenter(Math.max(minZoom, Math.min(2.5, nextZoom)));
         };
         window.addEventListener('wheel', onWheel, { passive: false, capture: true });
 
         // 🔴 [2026-10-08 主人「战术模式放大后，可以拖拽镜头视角」] 放大后按住左键拖动平移；目标判定同滚轮（战术期间 #map 隐藏，命中 BODY）
         let dragging = false;
-        let lastX = 0, lastY = 0;
+        let lastX = 0, lastY = 0, downX = 0, downY = 0;
         const onDown = (e: MouseEvent) => {
             const canDrag = this.useGroundGL || this.tacticalZoom > 1.001;
             if (e.button !== 0 || !this.active || !canDrag) return;
             const t = e.target as HTMLElement | null;
             if (!t || !(t === document.body || t === document.documentElement || t.id === 'map' || t.closest('#map') || t.tagName === 'CANVAS')) return;
-            dragging = true; lastX = e.clientX; lastY = e.clientY;
-            this.userInteractingTimer = 9.0;
+            dragging = true; lastX = downX = e.clientX; lastY = downY = e.clientY;
             document.body.style.cursor = 'grabbing';
             e.preventDefault();
         };
         const onMove = (e: MouseEvent) => {
             if (!dragging) return;
-            this.userInteractingTimer = 9.0;
+            // 🔴 [2026-10-26 主人令「单击不算手动操作，拖动才算」] 按下后挪出 4 像素才算拖动，才暂停自动跟随 9 秒
+            if (this.userInteractingTimer > 0 || Math.hypot(e.clientX - downX, e.clientY - downY) > 4) this.userInteractingTimer = 9.0;
             this.tacticalPanX += e.clientX - lastX;
             this.tacticalPanY += e.clientY - lastY;
             lastX = e.clientX; lastY = e.clientY;
@@ -1701,12 +1782,18 @@ export class Scene13WarLayer {
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.tacticalZoom = 1.0;
         this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0;
+        this.resetCamFollow();
         this.useGroundGL = false;
         if (this.glCanvas) this.glCanvas.style.display = 'none';
         this.clearDeCity();
         this.preserveCompletedBank();
         const nextFaction: [string, string] = [init.attackerFactionId ?? '', init.defenderFactionId ?? ''];
-        const bankCacheKey = nextFaction.join('|');
+        // 🔴 [2026-10-26] 染色缓存按**显示势力**分（panshu 占位侧按主将势力染色，见 displayFaction）：
+        //    两场不同的「同势力内战」引擎势力都是 panshu，只按引擎势力做 key 会复用上一场的错色素材。
+        const bankCacheKey = [
+            this.resolveDisplayFaction(nextFaction[0], init.attackerGeneralId),
+            this.resolveDisplayFaction(nextFaction[1], init.defenderGeneralId),
+        ].join('|');
         const cachedBank = this.completedBankCache?.key === bankCacheKey ? this.completedBankCache : null;
         this.bank = cachedBank?.bank ?? {};
         this.bankSides = cachedBank?.sides ?? new Map<string, Set<0 | 1>>();
@@ -2684,6 +2771,7 @@ export class Scene13WarLayer {
         this.restoreStrategyMap();
         this.tacticalZoom = 1.0;
         this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0;
+        this.resetCamFollow();
         this.preserveCompletedBank();
         this.deferredAssetLoads = [];
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
@@ -2755,7 +2843,7 @@ export class Scene13WarLayer {
         this.heroInput = null;
         this.heroMan = null;
         this.heroRespawnTimer = 0;
-        this.camWatchMan = null;
+        this.resetCamFollow();
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         this.useGroundGL = false;
@@ -3640,7 +3728,8 @@ export class Scene13WarLayer {
         if (!this.assetsReadyOnce || this.pending !== 0 || this.deferredAssetLoads.length !== 0) return;
         if (Object.keys(this.bank).length === 0) return;
         this.completedBankCache = {
-            key: this.sideFaction.join('|'),
+            // 与 start() 里的 bankCacheKey 同口径：按**显示势力**（panshu 占位侧按主将势力染色）
+            key: [this.displayFaction(0), this.displayFaction(1)].join('|'),
             bank: this.bank,
             sides: this.bankSides,
         };
@@ -7913,6 +8002,8 @@ export class Scene13WarLayer {
                 this.userInteractingTimer -= dt;
             } else {
                 let targetFocusX = 0, targetFocusY = 0, count = 0;
+                // 🔴 [2026-10-26 主人令「玩家交战取消计策镜头」] 玩家一交战，看计策落点的 9 秒作废，立即回玩家
+                if (this.heroMan && this.heroMan.hp > 0 && this.heroMan.foe) this.skillCamTimer = 0;
                 if (this.skillCamTimer > 0) {
                     // 守城待在城里时：先看放计的地方 9 秒，再回玩家（见 triggerScene13Skill）
                     this.skillCamTimer -= dt;
@@ -7921,7 +8012,7 @@ export class Scene13WarLayer {
                     count = 1;
                 } else if (this.heroMan) {
                     // 交战的玩家/主将队/士兵 > 移动的玩家/主将队/士兵（见 pickCamTarget）；本方全灭 ⇒ 镜头原地不动
-                    const tm = this.pickCamTarget(this.heroMan);
+                    const tm = this.pickCamTarget(this.heroMan, dt);
                     if (tm) { targetFocusX = tm.x; targetFocusY = tm.y; count = 1; }
                 } else if (this.battleType === 'siege' || this.deCity) {
                     // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
