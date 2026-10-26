@@ -227,6 +227,10 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     // ── 2026-10-26 大势力史实旗面第十批（2 家；萨法尔、伊德里斯仅见铭文币，保留字旗）──
     dulan_d: 'DURRANI_ABDALI_WHEAT_SWORD',   // 杜兰尼·阿卜达利旗麦穗、剑与星（Adamec《阿富汗历史词典》p.147；麦穗亦见艾哈迈德·沙加冕传统）
     pagan: 'PAGAN_ANAWRAHTA_VOTIVE_SEAL',   // 蒲甘·阿奴律陀供养佛牌触地印佛陀、摩诃菩提式塔刹伞盖与两侧小塔（1044—1077年，图32）
+    // ── 2026-10-26 大势力史实旗面第十一批（3 家；乌兹别克仅见无史料说明的现代旗图，保留字旗）──
+    paermila: 'PALMYRA_ZENOBIA_CRESCENT_BUST',   // 帕尔米拉·芝诺比娅戴冠披衣右向胸像与新月（271—272年安条克币，RIC V.2）
+    jieri: 'HARSHA_FAN_TAILED_PEACOCK',   // 戒日·扇尾孔雀银德拉克马（606—647年，铭文 Sri Siladitya）
+    jiashi_d: 'KASHI_SCYPHATE_WHORLS',   // 迦尸·碟形银币ABBC四涡纹打印记（约前400—前350年，Rajgor 708）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

@@ -138,6 +138,10 @@ const WAR_AFTERMATH_HOLD_MS = 8500;
 const FADE_TO_DAMAGE_SEC = 1.1;
 const FADE_RECOVER_PEACE_SEC = 2.4;
 const SEASON_TRANSITION_SEC = 5;
+const HUNT_CYCLE_SEC = 30;
+const HUNT_DEATH_START_SEC = 10;
+const HUNT_DECAY_START_SEC = 13;
+const HUNT_NEXT_PREY_SEC = 24;
 
 /** 67 文化 → 生计配置表（注意：陆地列表不含渔夫，所有渔业一律在海中生成渔船与海鱼群） */
 const LIVELIHOOD_SPECS: Record<LivelihoodCategory, LivelihoodSpec> = {
@@ -504,6 +508,24 @@ export class CityLifeAmbientLayer {
         }
     }
 
+    /** 农田按贴图实际占地验收：中心、内圈和外圈都不能进入海域。 */
+    private isFarmFullyOnLand(pos: Pt): boolean {
+        if (this.isSea(pos)) return false;
+        // 128×96 贴图在 0.58 缩放下的半宽／半高，额外留一点柔边余量。
+        const radiusLng = 0.108;
+        const radiusLat = 0.082;
+        for (const [ring, steps] of [[0.5, 8], [1, 16]] as const) {
+            for (let i = 0; i < steps; i++) {
+                const angle = (i / steps) * Math.PI * 2;
+                if (this.isSea({
+                    lat: pos.lat + Math.sin(angle) * radiusLat * ring,
+                    lng: pos.lng + Math.cos(angle) * radiusLng * ring,
+                })) return false;
+            }
+        }
+        return true;
+    }
+
     /** 据点中心或周边约 20 公里内有真实山地，即允许安排伐木生产。 */
     private hasMountainNearCity(city: CityDataV2): boolean {
         for (let i = 0; i < 9; i++) {
@@ -699,6 +721,10 @@ export class CityLifeAmbientLayer {
                     const damageVariant = Math.floor(strHash01(city.id, i * 17 + 7) * 100);
                     const fishResource = fishPool[Math.floor(h2 * fishPool.length) % fishPool.length];
                     const winterActive = !isColdWinter || i === 0;
+                    // 船坞只随机出现在部分渔业组合；样式跟随文化，位置固定在近岸港湾。
+                    const buildingResource = strHash01(city.id, i * 17 + 301) < 0.38
+                        ? `${deStyle && deStyle !== 'YURT' ? deStyle : 'WEST'}_DOCK_AGE2`
+                        : undefined;
 
                     list.push({
                         id: `${city.id}_life_${i}`,
@@ -707,6 +733,7 @@ export class CityLifeAmbientLayer {
                         isAnimal: false,
                         isSeaFishing: true,
                         fishResource,
+                        buildingResource,
                         lib: 'SUCAI',
                         dir: 'SHP_FISHING_SHIP',
                         homePos: seaSpot.homePos,
@@ -760,7 +787,8 @@ export class CityLifeAmbientLayer {
                         lat: cLat + Math.sin(ang) * distDeg * 0.85,
                         lng: cLng + Math.cos(ang) * distDeg,
                     };
-                    if (!this.isSea(cand)) {
+                    const validLand = isFarmer ? this.isFarmFullyOnLand(cand) : !this.isSea(cand);
+                    if (validLand) {
                         homePos = cand;
                         break;
                     }
@@ -797,13 +825,19 @@ export class CityLifeAmbientLayer {
             const buildingVariant = Math.floor(strHash01(city.id, i * 17 + 302) * 4);
             if (buildingRoll < (isFarmer ? 0.55 : 0.38)) {
                 if (isFarmer) {
-                    const millAge = buildingVariant % 2 === 0 ? 2 : 3;
-                    buildingResource = deStyle && deStyle !== 'YURT'
-                        ? `${deStyle}_MILL_AGE${millAge}`
-                        : 'DARK_MILL_AGE1';
+                    if (buildingVariant < 2) {
+                        const millAge = buildingVariant % 2 === 0 ? 2 : 3;
+                        buildingResource = deStyle && deStyle !== 'YURT'
+                            ? `${deStyle}_MILL_AGE${millAge}`
+                            : 'DARK_MILL_AGE1';
+                    } else {
+                        buildingResource = buildingVariant === 2 ? 'HUT_A' : 'DARK_HOUSE_AGE1';
+                    }
                 } else if (dir === 'VIL_MALE_SHEPHERD') {
                     buildingResource = ['DARK_PASTURE', 'YURT_A', 'YURT_B', 'YURT_C'][buildingVariant];
-                } else if (dir === 'VIL_MALE_HUNTER' || dir === 'VIL_MALE_FORAGER' || dir === 'VIL_MALE_LUMBERJACK') {
+                } else if (dir === 'VIL_MALE_LUMBERJACK') {
+                    buildingResource = buildingVariant % 2 === 0 ? 'GREEK_LUMBER_CAMP_AGE2' : 'THRACIAN_LUMBER_CAMP_AGE2';
+                } else if (dir === 'VIL_MALE_HUNTER' || dir === 'VIL_MALE_FORAGER') {
                     buildingResource = ['HUT_A', 'HUT_B', 'HUT_C'][buildingVariant % 3];
                 } else if (dir === 'VIL_MALE_MINER') {
                     buildingResource = buildingVariant % 2 === 0 ? 'HUT_D' : 'DARK_HOUSE_AGE1';
@@ -942,6 +976,18 @@ export class CityLifeAmbientLayer {
         const isFarmer = actor.dir === 'VIL_MALE_FARMER' || actor.dir === 'VIL_FEMALE_FARMER';
         if (season === 0 && isFarmer) return actor.slotIdx % 2 === 0 ? 'seed' : 'work';
         return 'work';
+    }
+
+    private isHuntPrey(actor: CityLifeActor): boolean {
+        return actor.isAnimal && actor.id.includes('_prey_');
+    }
+
+    /** DE 猎捕顺序：活动 → 倒地死亡 → 尸体腐烂；环境循环后半段由下一只猎物接替。 */
+    private getHuntVisual(actor: CityLifeActor, tSec: number): { stage: 'alive' | 'death' | 'decay'; elapsed: number } {
+        const phase = (tSec + actor.phase % HUNT_CYCLE_SEC) % HUNT_CYCLE_SEC;
+        if (phase >= HUNT_NEXT_PREY_SEC || phase < HUNT_DEATH_START_SEC) return { stage: 'alive', elapsed: phase };
+        if (phase < HUNT_DECAY_START_SEC) return { stage: 'death', elapsed: phase - HUNT_DEATH_START_SEC };
+        return { stage: 'decay', elapsed: phase - HUNT_DECAY_START_SEC };
     }
 
     /** 扫描当前处于战斗波及中的据点集合 */
@@ -1164,6 +1210,10 @@ export class CityLifeAmbientLayer {
             inUse.add(`${a.lib}/${a.dir}:${a.displayedAction}`);
             if (a.previousAction) inUse.add(`${a.lib}/${a.dir}:${a.previousAction}`);
             inUse.add(`${a.lib}/${a.dir}:${a.desiredAction}`);
+            if (this.isHuntPrey(a)) {
+                inUse.add(`${a.lib}/${a.dir}:death`);
+                inUse.add(`${a.lib}/${a.dir}:decay`);
+            }
             if (a.damageBlend > 0) {
                 inUse.add('SUCAI/VIL_MALE_VILLAGER:death');
                 inUse.add('SUCAI/SHP_FISHING_SHIP:sink');
@@ -1239,6 +1289,10 @@ export class CityLifeAmbientLayer {
                 actor.desiredAction = this.resolveSeasonalAction(actor, actionSeason);
                 this.loadAsset(actor.lib, actor.dir, actor.desiredAction);
                 if (actor.previousAction) this.loadAsset(actor.lib, actor.dir, actor.previousAction);
+                if (this.isHuntPrey(actor)) {
+                    this.loadAsset(actor.lib, actor.dir, 'death');
+                    this.loadAsset(actor.lib, actor.dir, 'decay');
+                }
                 if (actor.isSeaFishing && actor.fishResource) {
                     this.loadStripAsset('SUCAI_RESOURCE', actor.fishResource);
                 }
@@ -1372,9 +1426,9 @@ export class CityLifeAmbientLayer {
         this.ctx.restore();
     }
 
-    /** 绘制 8 方向死亡倒地/沉没并定格的精灵（村民或沉没渔船） */
+    /** 绘制 8 方向死亡倒地、尸体腐烂或沉没并定格的精灵。 */
     private drawDirectionalCorpse(
-        lib: 'SUCAI',
+        lib: 'SUCAI' | 'SUCAI_ANIMAL',
         dir: string,
         action: string,
         facing: number,
@@ -1433,7 +1487,7 @@ export class CityLifeAmbientLayer {
         const oy = (((actor.damageVariant >> 2) % 5) - 2) * 3.5 * zoomFactor;
 
         if (actor.damagePreset === 'animal_loss') {
-            // 当前 SUCAI_ANIMAL 没有 death 动作，不能用 walk 回退冒充死畜，只画既有白骨与牧场损失。
+            // 战争损失沿用统一的白骨与牧场残骸，不改变猎捕组合的 DE 死亡／腐烂流程。
             this.drawStripSprite('SUCAI_BATTLEFIELD', 'FENCE_RUBBLE', actor.damageVariant, pt.x - 10 * zoomFactor, pt.y - 5 * zoomFactor, wreckScale * 0.9, damageAlpha * 0.92);
             this.drawStripSprite('SUCAI_BATTLEFIELD', 'ANIMAL_SKELETON', actor.damageVariant, pt.x + 12 * zoomFactor + ox * 0.4, pt.y + 6 * zoomFactor + oy * 0.4, wreckScale * 0.88, damageAlpha * 0.95);
             return;
@@ -1533,12 +1587,17 @@ export class CityLifeAmbientLayer {
 
         for (const actor of list) {
             const act = actor.displayedAction;
+            const huntVisual = this.isHuntPrey(actor) ? this.getHuntVisual(actor, tSec) : null;
             let drawLat = actor.homePos.lat;
             let drawLng = actor.homePos.lng;
             let facing = actor.facing;
 
             if (actor.damageBlend <= 0.05) {
-                if (act === 'carry' || act === 'move' || act === 'walk') {
+                if (huntVisual && huntVisual.stage !== 'alive') {
+                    // 死亡后锁定在倒地位置，尸体不能继续跟着行走端点移动。
+                    drawLat = actor.lastDrawPos.lat;
+                    drawLng = actor.lastDrawPos.lng;
+                } else if (act === 'carry' || act === 'move' || act === 'walk') {
                     const speed = actor.isSeaFishing ? 0.10 : act === 'walk' ? 0.08 : 0.14;
                     const cycle = (tSec * speed + (actor.phase % 100) / 100) % 2;
                     const u = cycle <= 1 ? cycle : 2 - cycle;
@@ -1555,8 +1614,10 @@ export class CityLifeAmbientLayer {
                     const turnOffset = Math.floor((tSec + actor.phase) / 8) % 2;
                     facing = (actor.facing + turnOffset) % 8;
                 }
-                actor.lastDrawPos.lat = drawLat;
-                actor.lastDrawPos.lng = drawLng;
+                if (!huntVisual || huntVisual.stage === 'alive') {
+                    actor.lastDrawPos.lat = drawLat;
+                    actor.lastDrawPos.lng = drawLng;
+                }
             } else {
                 drawLat = actor.lastDrawPos.lat;
                 drawLng = actor.lastDrawPos.lng;
@@ -1622,6 +1683,20 @@ export class CityLifeAmbientLayer {
                     }
                 }
 
+                // 船坞固定在近岸港湾，不跟随渔船往返；与渔船、鱼群同属一套生产组合。
+                if (actor.isSeaFishing && actor.buildingResource) {
+                    const dockPt = this.map.latLngToContainerPoint([actor.gatePos.lat, actor.gatePos.lng]);
+                    this.drawStripSprite(
+                        'SUCAI_BUILDING',
+                        actor.buildingResource,
+                        actor.damageVariant,
+                        dockPt.x,
+                        dockPt.y - 5 * zoomFactor,
+                        0.22 * zoomFactor,
+                        peaceFinalAlpha
+                    );
+                }
+
                 // 鱼群跟随渔船实时位置，船返港时也不会把鱼群独自留在渔场。
                 if (actor.isSeaFishing && actor.fishResource) {
                     const fishFrame = Math.floor(tSec * 15 + actor.phase);
@@ -1642,6 +1717,20 @@ export class CityLifeAmbientLayer {
                         ? ANIMAL_SCALE_BASE
                         : VILLAGER_SCALE_BASE;
                 const scale = baseScale * zoomFactor;
+                if (huntVisual && huntVisual.stage !== 'alive') {
+                    this.drawDirectionalCorpse(
+                        actor.lib,
+                        actor.dir,
+                        huntVisual.stage,
+                        facing,
+                        huntVisual.elapsed,
+                        pt.x,
+                        pt.y,
+                        scale,
+                        peaceFinalAlpha
+                    );
+                    continue;
+                }
                 const actionLayers = actor.previousAction && actor.previousAction !== actor.displayedAction
                     ? [
                         { action: actor.previousAction, weight: 1 - actor.actionAlpha },
