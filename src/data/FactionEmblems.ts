@@ -198,6 +198,10 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     guishuang: 'KUSHAN_KANISHKA_TAMGA',   // 贵霜·迦腻色迦四叉塔木加（同期钱币与玛瑙印章）
     xibolai: 'ISRAEL_HASMONEAN_MENORAH',   // 以色列·七枝圣殿灯台（哈斯蒙尼王安提柯二世前40—37年钱币）
     puxiangyindu: 'PORTUGUESE_INDIA_ARMILLARY',   // 葡属印度·浑天仪（曼努埃尔一世标志及印度航线旗）
+    // ── 2026-10-26 大势力史实旗面第三批（3 家）────────────────────────────
+    konbaung: 'KONBAUNG_PEACOCK',   // 贡榜·开屏孔雀（晚期王令国印；王室专用纹饰与19世纪旗帜）
+    sijitai: 'SCYTHIAN_KUL_OBA_STAG',   // 斯基泰·库尔奥巴金鹿（前5—前4世纪盾饰／弓囊饰，蜷腿回环鹿角）
+    piketai: 'PICTISH_CRESCENT_VROD',   // 皮克特·新月与V形杖（6—9世纪本文化符号石最常见专属符号）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */
