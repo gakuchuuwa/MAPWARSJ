@@ -240,6 +240,10 @@ const CULTURE_TO_CATEGORY: Readonly<Record<string, LivelihoodCategory>> = {
     SPARTANS: 'farming_dry',
     MACEDONIAN: 'farming_dry',
     MUGHAL: 'farming_dry',
+    MAYANS: 'farming_dry',      // 玛雅玉米、豆类与南瓜农业
+    TUPI: 'farming_dry',        // 图皮木薯等林下轮作农业
+    MAPUCHE: 'farming_dry',     // 马普切玉米、马铃薯等农业
+    INCA: 'farming_dry',        // 印加梯田与高原农业
 
     // 3. 草原游牧（9）
     MONGOL: 'nomadic_steppe',
@@ -262,18 +266,14 @@ const CULTURE_TO_CATEGORY: Readonly<Record<string, LivelihoodCategory>> = {
     BERBER: 'nomadic_oasis',
     GURJARAS: 'nomadic_oasis',
 
-    // 5. 雪域高原与安第斯农牧（2）
+    // 5. 雪域高原畜牧（1）
     TIBET: 'highland_pastoral',
-    INCA: 'highland_pastoral',
 
-    // 6. 山林渔猎与寒带林海（8）；东北固定渔猎，瓦良格固定伐木。
+    // 6. 山林渔猎与伐木（5）；东北固定渔猎，美洲与瓦良格固定伐木。
     NORTHEAST: 'forest_hunting',
     VARANGIANS: 'forest_logging',
     DIANQIAN: 'forest_hunting',
-    MAPUCHE: 'forest_hunting',
-    TUPI: 'forest_hunting',
-    AMERICA: 'forest_hunting',
-    MAYANS: 'forest_hunting',
+    AMERICA: 'forest_logging',
     GEORGIANS: 'forest_hunting',
 
     // 7. 海洋渔业与峡湾群岛（5）

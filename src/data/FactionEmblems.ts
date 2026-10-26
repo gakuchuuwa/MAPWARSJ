@@ -231,6 +231,21 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     paermila: 'PALMYRA_ZENOBIA_CRESCENT_BUST',   // 帕尔米拉·芝诺比娅戴冠披衣右向胸像与新月（271—272年安条克币，RIC V.2）
     jieri: 'HARSHA_FAN_TAILED_PEACOCK',   // 戒日·扇尾孔雀银德拉克马（606—647年，铭文 Sri Siladitya）
     jiashi_d: 'KASHI_SCYPHATE_WHORLS',   // 迦尸·碟形银币ABBC四涡纹打印记（约前400—前350年，Rajgor 708）
+    // ── 2026-10-26 大势力史实旗面第十二批（14 家）───────────────────────────
+    gurjara: 'GURJARA_PRATIHARA_ADIVARAHA',   // 瞿折罗·人猪身Varaha（850—900年Adivaraha银币）
+    qiajia: 'QAJAR_LION_SUN_SWORD',   // 恺加·立狮持剑与升日（卡扎尔王室标志，区别于萨法维无剑狮日）
+    luomu: 'RUM_KUBADABAD_EAGLE',   // 罗姆·库巴达巴德宫双头鹰（1220年代王宫砖饰）
+    liangxixili: 'TWO_SICILIES_LESSER_ARMS',   // 两西西里·1816—1830年小纹章（奔马、三曲腿与三鸢尾分区盾）
+    shahi: 'SHAHI_RECUMBENT_NANDI',   // 沙希·卧瘤牛、鞍布与臀部三叉记（jital银币）
+    antigonid: 'ANTIGONID_PAN_SHIELD',   // 安提柯·潘神马其顿盾与弯月星纹（戈纳塔斯钱币）
+    gesake: 'ZAPOROZHIAN_HOST_SEAL',   // 哥萨克·1595年扎波罗热军团印的肩枪哥萨克
+    yilisi: 'ELIS_EAGLE_THUNDERBOLT',   // 埃利斯·立鹰与带翼雷电（奥林匹亚城邦钱币正反面）
+    kanan: 'TYRE_EAGLE_PROW_PALM',   // 迦南·推罗城邦银币的鹰立船首与肩后棕榈枝
+    meitai: 'MANIPUR_PAKHANGBA_PAPHAL',   // 曼尼普尔·宁图贾王室Pakhangba盘龙结
+    pyu: 'PYU_SRI_KSETRA_SRIVATSA',   // 骠族·室利世固银币的室利筏娑、日月、海螺与金刚杵
+    pusikefu_gongheguo: 'PSKOV_DOVMONT_LEOPARD',   // 普斯科夫·多夫蒙特时期钱币猛兽（1425—1510年，非现代州徽）
+    ouka: 'RYAZAN_FYODOR_TAMGA',   // 梁赞·费奥多尔·奥利戈维奇钱币的双卷羊首形王室塔木加
+    sumeier: 'URUK_INANNA_REED_POST',   // 苏美尔·乌鲁克花瓶与印章的伊南娜芦苇环柱
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */
