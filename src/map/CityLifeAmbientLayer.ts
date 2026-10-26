@@ -745,9 +745,10 @@ export class CityLifeAmbientLayer {
             // 同一文化只从同一种生产工种中选择；农夫的男女差异不改变生产类型。
             const dir = villagerPool[Math.floor(h2 * villagerPool.length) % villagerPool.length];
             const isFarmer = dir === 'VIL_MALE_FARMER' || dir === 'VIL_FEMALE_FARMER';
+            const isPastoral = dir === 'VIL_MALE_SHEPHERD';
 
             let homePos: Pt | null = null;
-            // 林间工种围绕树林；农田不挤进树林或城下，整套农夫组合统一放到更远的外围。
+            // 林间工种围绕树林；农田与牧场都放到更远的外围，避免压住据点。
             if (!isFarmer && forestNodes.length > 0) {
                 const fn = forestNodes[(i * 2) % forestNodes.length];
                 const cand = {
@@ -760,7 +761,7 @@ export class CityLifeAmbientLayer {
             }
 
             if (!homePos) {
-                const distDeg = isFarmer ? 0.30 + h4 * 0.10 : 0.14 + h4 * 0.11;
+                const distDeg = isFarmer || isPastoral ? 0.30 + h4 * 0.10 : 0.14 + h4 * 0.11;
                 for (let attempt = 0; attempt < 8; attempt++) {
                     const ang = baseAngle + attempt * (Math.PI / 4);
                     const cand = {
@@ -885,8 +886,10 @@ export class CityLifeAmbientLayer {
                 }
                 if (!homePos || !gatePos) continue;
 
+                // 波斯高原按史采用绵羊、山羊混养；2+1 只是固定视觉组合，不代表历史数量比例。
+                const persianMixedFlock = style === 'PERSIAN' || style === 'SASANIAN';
                 const animalDir = isShepherd
-                    ? 'SHEEP'
+                    ? (persianMixedFlock && j === 2 ? 'GOAT' : 'SHEEP')
                     : preyPool[Math.floor(strHash01(leader.id, 206) * preyPool.length) % preyPool.length] ?? 'DEER';
                 const id = `${leader.id}_${isShepherd ? 'sheep' : 'prey'}_${j}`;
                 list.push({

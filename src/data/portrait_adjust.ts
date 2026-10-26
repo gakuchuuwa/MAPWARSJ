@@ -8396,6 +8396,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 5,
             "offsetY": -22
+        },
+        "/assets/JAPAN/bfe_sue_harutaka.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/PERSIAN/bfe3_73.png": {
+            "scale": 1.04,
+            "offsetX": 25,
+            "offsetY": -5
+        },
+        "/assets/PERSIAN/ailan_julushiershi.png": {
+            "scale": 1.38,
+            "offsetX": -7,
+            "offsetY": 0
         }
     },
     "folderGuides": {

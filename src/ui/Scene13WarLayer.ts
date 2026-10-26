@@ -735,7 +735,7 @@ export class Scene13WarLayer {
         this.skillVfx.push({
             six, side: f, x, y,
             angle: Math.atan2(dir.y, dir.x),
-            startMs: performance.now(), dur, playerCast, targets, points,
+            startMs: performance.now(), dur, playerCast, paid: this.viewerCaster?.paid === true, targets, points,
         });
         // 正常 3.4 秒释放闸下最多同时存在一条；上限只防调试接口异常连发造成无界增长。
         if (this.skillVfx.length > 12) this.skillVfx.splice(0, this.skillVfx.length - 12);

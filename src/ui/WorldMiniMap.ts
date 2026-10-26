@@ -86,6 +86,23 @@ export class WorldMiniMap {
     private tickN = 0;
 
     /**
+     * 🔴 [PERF 2026-10-26 主人令「小地图 0.25 秒重算」] 每拍都做的三笔重活，改成「变了才做」。
+     *
+     * 原来的 `tick()`（250ms 一拍）无条件做：
+     *   ① `trail.setLatLngs(trailPts)` —— 轨迹最多 6000 点，每拍都全量重投影一遍；
+     *   ② `dot.setLatLng([p.lat, p.lng])` —— 每拍新造 LatLng，即使玩家没动；
+     *   ③ `viewRect.setBounds(mainMap.getBounds())` —— 每拍重画视野框矩形。
+     * 据点/领土那半（`syncCityDots` + `syncTerritoryPolygons`）还把 1s 一拍降到 2s，
+     * 并且「据点集合没变就不重算占格、领土没变就不重合并」。
+     */
+    private trailDirty = false;
+    private trailShown = false;
+    private lastDotPos: { lat: number; lng: number } | null = null;
+    private lastViewRectKey = '';
+    /** `cityHexes` 是否对当前水域图/据点集合有效（水域图换了要重算） */
+    private hexesValid = false;
+
+    /**
      * 🔴 [PERF 2026-10-26 主人令「战略地图卡」] 小地图同步**不能每帧真做**。
      *
      * `move` 在跟拍/拖动时逐帧触发，而每次真同步都要：
@@ -229,7 +246,7 @@ export class WorldMiniMap {
         }
         this.territoryDirty = true;
         const res = this.syncCityDots();
-        this.syncTerritoryPolygons(true, res.marks);
+        this.syncTerritoryPolygons(true, true, res.marks);
     }
 
 
@@ -311,7 +328,14 @@ export class WorldMiniMap {
             this.miniSyncTimer = 0;
         }
         this.miniSyncAt = performance.now();
-        this.viewRect.setBounds(this.mainMap.getBounds());
+        // [PERF 2026-10-26] 视野框只在主图范围真的变了才 setBounds（每拍都设 → 每拍重画一次矩形）。
+        // 量化到 0.002°（约主图 0.7px、小图 0.02px）：肉眼无感，但能挡掉镜头慢漂时的无谓重画。
+        const bounds = this.mainMap.getBounds();
+        const key = `${Math.round(bounds.getSouth() * 500)},${Math.round(bounds.getWest() * 500)},${Math.round(bounds.getNorth() * 500)},${Math.round(bounds.getEast() * 500)}`;
+        if (key !== this.lastViewRectKey) {
+            this.lastViewRectKey = key;
+            this.viewRect.setBounds(bounds);
+        }
         // 🔴 [2026-10-11 主人报「拖战略大地图，小地图不跟着动」] 小地图**视野**也一起跟；
         //    tick 里那句 `if (hide || !this.expanded) return;` 在收起状态会早退，
         //    所以这里挂在 move/zoom 事件上，收起时也跟。
@@ -339,7 +363,9 @@ export class WorldMiniMap {
         if (!c) return;
         const zoom = this.level - 1;
         const last = this.lastMiniView;
-        if (last && last.zoom === zoom && Math.abs(last.lat - c.lat) < 1e-4 && Math.abs(last.lng - c.lng) < 1e-4) return;
+        // [PERF 2026-10-26] 0.02° ≈ 小图 0.18px（级别 5 时 1px≈0.09°）：低于这个量不重设视口，
+        // 否则镜头一有微小漂移就每拍 setView 一次，小图整层矢量跟着重算。
+        if (last && last.zoom === zoom && Math.abs(last.lat - c.lat) < 0.02 && Math.abs(last.lng - c.lng) < 0.02) return;
         this.lastMiniView = { lat: c.lat, lng: c.lng, zoom };
         this.mini.setView([c.lat, c.lng], zoom, { animate: false });
     }
@@ -355,17 +381,29 @@ export class WorldMiniMap {
             if (!last || Math.hypot(last.lat - p.lat, last.lng - p.lng) >= TRAIL_STEP_DEG) {
                 this.trailPts.push(L.latLng(p.lat, p.lng));
                 if (this.trailPts.length > TRAIL_MAX) this.trailPts.shift();
+                // [PERF 2026-10-26] 只有真记了新点才需要重设折线
+                this.trailDirty = true;
             }
         }
         if (hide || !this.expanded) return;
-        if (++this.tickN % 4 === 0) {
+        // [PERF 2026-10-26] 据点/领土同步 1s（4 拍）→ 2s（8 拍）：占领变化最慢 2 秒内反映，
+        // 但每秒重建的据点标记对象、seen 集合、claimsKey 字符串全部减半。
+        if (++this.tickN % 8 === 0) {
             const { colorChanged, citiesChanged, marks } = this.syncCityDots();
-            this.syncTerritoryPolygons(colorChanged || citiesChanged, marks);
+            this.syncTerritoryPolygons(colorChanged || citiesChanged, citiesChanged, marks);
         }
-        if (this.trailOn && currentHostId) this.trail.setLatLngs(this.trailPts);
-        else this.trail.setLatLngs([]);
-        if (p) this.dot.setLatLng([p.lat, p.lng]);
-        // [PERF 2026-10-26] 统一走同步入口：中心/级别没变就只刷视野框、不发 setView，
+        const showTrail = this.trailOn && !!currentHostId;
+        if (showTrail !== this.trailShown || this.trailDirty) {
+            this.trailShown = showTrail;
+            this.trailDirty = false;
+            this.trail.setLatLngs(showTrail ? this.trailPts : []);
+        }
+        // [PERF 2026-10-26] 玩家没动就不重设圆点（原来每拍新造一个 LatLng）
+        if (p && (!this.lastDotPos || Math.abs(this.lastDotPos.lat - p.lat) > 1e-5 || Math.abs(this.lastDotPos.lng - p.lng) > 1e-5)) {
+            this.lastDotPos = { lat: p.lat, lng: p.lng };
+            this.dot.setLatLng([p.lat, p.lng]);
+        }
+        // [PERF 2026-10-26] 统一走同步入口：中心/级别/视野框没变就什么都不做，
         // 避免每拍让小地图整层矢量重算（原来这两行是无条件 setBounds + applyView）。
         this.requestMiniSync(true);
     }
@@ -431,16 +469,22 @@ export class WorldMiniMap {
      */
     private syncTerritoryPolygons(
         needsRecalc: boolean,
+        citiesChanged: boolean,
         marks: { id: string; lat: number; lng: number; color: string; type?: CityType; factionId?: string }[]
     ): void {
         if (!this.showTerritory || !this.waterMask) return;
         if (!needsRecalc && !this.territoryDirty) return;
         this.territoryDirty = false;
 
-        const claimsKey = marks.map((m) => m.id).join('|');
-        if (claimsKey !== this.claimsKey) {
-            this.claimsKey = claimsKey;
-            this.cityHexes = this.computeCityHexes(marks);
+        // [PERF 2026-10-26] 只有「据点集合变了」或「水域图换了（hexesValid=false）」才重算占格。
+        // 原来每次都要把 1082 个 id 拼成一条 claimsKey 字符串再比对；现在大多数拍子直接跳过。
+        if (citiesChanged || !this.hexesValid) {
+            const claimsKey = marks.map((m) => m.id).join('|');
+            if (claimsKey !== this.claimsKey || !this.hexesValid) {
+                this.claimsKey = claimsKey;
+                this.cityHexes = this.computeCityHexes(marks);
+                this.hexesValid = true;
+            }
         }
 
         // 按势力分组收集据点，跳过叛军 panshu（无势力色；旧 panjun 占位势力已于 2026-10-25 删除）
@@ -565,6 +609,8 @@ export class WorldMiniMap {
         this.waterMaskW = w;
         this.waterMask = buildWaterMask(ctx.getImageData(0, 0, w, w).data, w * w);
         this.claimsKey = '';
+        // [PERF 2026-10-26] 水域图换了 → 占格必须重算（原来的判据是「claimsKey 变了」，现在独立标脏）
+        this.hexesValid = false;
         this.territoryDirty = true;
     }
 
