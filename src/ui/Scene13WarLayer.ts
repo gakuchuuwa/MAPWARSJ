@@ -1686,8 +1686,15 @@ export class Scene13WarLayer {
         this.useGroundGL = false;
         if (this.glCanvas) this.glCanvas.style.display = 'none';
         this.clearDeCity();
-        this.bank = {};
-        this.bankSides.clear();
+        this.preserveCompletedBank();
+        const nextFaction: [string, string] = [init.attackerFactionId ?? '', init.defenderFactionId ?? ''];
+        const bankCacheKey = nextFaction.join('|');
+        const cachedBank = this.completedBankCache?.key === bankCacheKey ? this.completedBankCache : null;
+        this.bank = cachedBank?.bank ?? {};
+        this.bankSides = cachedBank?.sides ?? new Map<string, Set<0 | 1>>();
+        if (cachedBank) this.completedBankCache = null;   // 取出后由本场接管；完整收场时才重新入缓存
+        this.diagPush('bankCache', { hit: !!cachedBank });
+        this.sideFaction = nextFaction;
         this.deferredAssetLoads = [];
         this.pending = 0;
         this.assetGen++;             // 上一场在途素材的回调从此不再加减本场 pending（见 assetGen）
@@ -1722,18 +1729,7 @@ export class Scene13WarLayer {
         game?.combatUI?.syncScene13WarStart?.(init);
 
         // [2026-08-11 势力本色] 攻守双方交给主游戏的 SpriteTinter 按 factionId 染色，
-        // 与地图上的军团、旗帜、领土同一套色，不另起炉灶。
-        const nextFaction: [string, string] = [
-            init.attackerFactionId ?? '',
-            init.defenderFactionId ?? '',
-        ];
-        // 🔴 换势力必须清素材缓存：bank 里存的是**已染色**的帧，上一场的颜色会带到下一场
-        if (nextFaction[0] !== this.sideFaction[0] || nextFaction[1] !== this.sideFaction[1]) {
-            this.bank = {};
-            this.pending = 0;
-            this.assetGen++;
-        }
-        this.sideFaction = nextFaction;
+        // 与地图上的军团、旗帜、领土同一套色，不另起炉灶；可复用表已在 start 开头按攻守势力严格匹配。
         /**
          * 🔴 [2026-08-31 主人定] 八环质量优势**拆两半**：一半走伤害、一半走血量。
          *
@@ -2670,6 +2666,7 @@ export class Scene13WarLayer {
         this.restoreStrategyMap();
         this.tacticalZoom = 1.0;
         this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0;
+        this.preserveCompletedBank();
         this.deferredAssetLoads = [];
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);

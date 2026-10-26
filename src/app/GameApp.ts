@@ -34,6 +34,7 @@ import { roadRegistry } from '../roads/RoadRegistry';
 import { RebellionSystem } from '../systems/RebellionSystem';
 import { initializeTradeTrafficLayer } from '../map/TradeTrafficLayer'; // [2026-08-31] 战略地图商贸交通层
 import { initializeAnimalAmbientLayer } from '../map/AnimalAmbientLayer'; // [2026-08-31] 战略地图野生动物生态层
+import { initializeCityLifeAmbientLayer } from '../map/CityLifeAmbientLayer'; // [2026-10-26] 战略地图 67 文化据点民生生态层
 
 // [NEW] Visual Renderers
 import { GameUIManager } from './GameUIManager';
@@ -327,6 +328,7 @@ export class GameApp {
 
             // [2026-08-31] 战略地图野生动物生态层（按真实世界分布撒点；独立层，不碰现有渲染）
             initializeAnimalAmbientLayer(this.map).start();
+            initializeCityLifeAmbientLayer(this.map).start();
 
             setLoadingProgress(50);
             // [PERF] yield before heavy city load

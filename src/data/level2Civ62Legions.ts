@@ -2036,7 +2036,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（莫斯科、弗拉基米尔；弗拉基米尔圣母安息白石浮雕大教堂、早期莫斯科克里姆林红砖城堡城垣；东方叠压铁板鳞甲（Behterets）、库里科沃破阵长矛骑兵、白石要塞防御铁骑）
     //    英雄队（第 10 队·主将队）：hero_vladdracula / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代博亚尔重骑军团', civ: '斯拉夫', age: 'castle', deStyle: 'SLAV', region: 'SLAVIC' as RegionType,
+        name: '城堡时代博亚尔军团', civ: '斯拉夫', age: 'castle', deStyle: 'SLAV', region: 'SLAVIC' as RegionType,
         buildingStyle: 'SLAVIC',
         castleId: 'SLAV_CASTLE_AGE3', castleName: '东欧/斯拉夫 莫斯科白石克里姆林',
         formationMode: 'fish_scale',

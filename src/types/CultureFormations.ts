@@ -1619,7 +1619,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     WESTERN_FEUDAL: '封建时代安西军团',
     WESTERN_CASTLE: '城堡时代蒙兀儿军团',
     WESTERN_IMPERIAL: '帝国时代叶尔羌军团',
-    SLAVIC_CASTLE: "城堡时代博亚尔重骑军团",
+    SLAVIC_CASTLE: "城堡时代博亚尔军团",
     GERMANIC_CASTLE: '城堡时代德意志骑士军团',   // 🔴 [2026-10-16] 原指「城堡时代日耳曼军团」→ 查无此军（幽灵指针）；日耳曼文明城堡节点正名＝德意志骑士团
     LATIN: '古典时代罗马军团',
     LATIN_CASTLE: '城堡时代意大利城邦军团',

@@ -282,11 +282,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "moerdaweiya": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "walajiyia": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "vidin_tsardom": {
@@ -1553,7 +1553,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "lagusa": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "meikelunbao": {
@@ -1561,7 +1561,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "bosiniya": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "zhayan": {
@@ -1624,7 +1624,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     //    → 城堡时代博亚尔重骑军团（原有正确值，本次保留）。曾误按旧首府登记 city_belgrade（MAGYAR，1456 匈牙利守城那段建筑）
     //    被判成「城堡时代匈牙利王国军团」；已按史把 STARTING_CAPITALS 的首府寄存器改成斯科普里（贝尔格莱德仍属塞尔维亚）。
     "saierweiya": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "habusibao": {
@@ -1657,7 +1657,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "mosike_gongguo": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "eluosi_diguo": {
@@ -1665,19 +1665,19 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "daniebo": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "jialixiya": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "pusikefu_gongheguo": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "ouka": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "bosi_puluosi": {
@@ -1685,11 +1685,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "teweier_gongguo": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "suzidaer": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "gesake": {
@@ -1697,7 +1697,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "peilieya_gongguo": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "城堡时代博亚尔军团",
         legionType: "sub",
     },
     "min": {

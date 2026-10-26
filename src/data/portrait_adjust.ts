@@ -8361,6 +8361,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 26
+        },
+        "/assets/SASANIAN/aliya_muhammad_tahir.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/ARMENIANS/wulaertu_davit_bek.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/ARMENIANS/wulaertu_ashot3.png": {
+            "scale": 1,
+            "offsetX": 15,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL_ASIA/gen_mamai.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 25
         }
     },
     "folderGuides": {

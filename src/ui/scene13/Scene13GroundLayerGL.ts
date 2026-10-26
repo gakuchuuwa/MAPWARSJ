@@ -317,13 +317,12 @@ void main() {
     float shimmer = (specSheen + specGlint) * (1.0 - isDeepWater * 0.30);
     waterCol += vec3(0.95, 0.97, 1.0) * shimmer;
 
-    // 战术近景可读性：沿用既有波浪扰动拉出细而疏的流向波峰，不新增噪声采样。
-    // 波峰只取很窄的一段并限制亮度；浅水更柔和，避免大块亮斑或水面发光。
-    float ripplePhase0 = dot(isoP, vec2(11.6, 19.4)) + phaseWarp * 1.4 + uTime * 1.10;
-    float ripplePhase1 = dot(isoP, vec2(15.2, -11.8)) - phaseWarp + uTime * 0.85;
-    float waveBands = sin(ripplePhase0) * 0.68 + sin(ripplePhase1) * 0.32;
-    float rippleCrest = smoothstep(0.74, 0.96, waveBands);
-    float rippleTrough = smoothstep(0.45, 0.90, -waveBands);
+    // 战术近景可读性：用沿流向拉伸的噪声形成断续细波，避免两组正弦波交叉出规则斜格亮点。
+    // 波峰只取较窄的一段并限制亮度；浅水更柔和，避免大块亮斑或水面发光。
+    vec2 rippleUV = isoP * vec2(2.2, 8.6) + vec2(uTime * 0.14, -uTime * 0.09);
+    float rippleNoise = snoise(rippleUV + vec2(phaseWarp * 0.35, phaseWarp * 0.18));
+    float rippleCrest = smoothstep(0.38, 0.76, rippleNoise);
+    float rippleTrough = smoothstep(0.38, 0.76, -rippleNoise);
     float rippleVisibility = mix(0.62, 1.0, isDeepWater);
     waterCol *= 1.0 + (rippleCrest * 0.06 - rippleTrough * 0.025) * rippleVisibility;
     waterCol += vec3(0.55, 0.75, 0.82) * rippleCrest * 0.055 * rippleVisibility;
@@ -467,13 +466,33 @@ export function transposeMapData(d: any): any {
   };
 }
 
+const GROUND_TEXTURE_CACHE = new Map<string, Promise<HTMLImageElement | null>>();
+const GROUND_TEXTURE_CACHE_MAX = 48;
+
+/** 地面贴图是只读素材：跨场复用已解码 Image；每场只重建自己的 WebGLTexture，不共享 GPU 状态。 */
 function loadImg(u: string): Promise<HTMLImageElement | null> {
-  return new Promise((res) => {
+  const hit = GROUND_TEXTURE_CACHE.get(u);
+  if (hit) {
+    GROUND_TEXTURE_CACHE.delete(u);
+    GROUND_TEXTURE_CACHE.set(u, hit);
+    return hit;
+  }
+  const job = new Promise<HTMLImageElement | null>((res) => {
     const i = new Image();
     i.onload = () => res(i);
     i.onerror = () => res(null);
     i.src = u;
   });
+  GROUND_TEXTURE_CACHE.set(u, job);
+  void job.then((img) => {
+    if (!img) GROUND_TEXTURE_CACHE.delete(u);
+    while (GROUND_TEXTURE_CACHE.size > GROUND_TEXTURE_CACHE_MAX) {
+      const oldest = GROUND_TEXTURE_CACHE.keys().next().value;
+      if (oldest === undefined) break;
+      GROUND_TEXTURE_CACHE.delete(oldest);
+    }
+  });
+  return job;
 }
 
 /** 把源图与文件名挂在纹理上，供探针读「这一场到底用了哪张图」（无行为影响） */

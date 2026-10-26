@@ -186,6 +186,14 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     shoni: 'SHONI_MEYUI',   // 少弐·寄悬目结（《蒙古袭来绘词》军旗、《见闻诸家纹》）
     kakizaki: 'MATSUMAE_WARBISHI',   // 松前·丸内割菱（四割菱加外圆，非武田菱）
     so: 'SO_YOTSUME',   // 对马宗氏·隅立四目结（小孔径四目结，非少弐寄悬目结）
+    // ── 2026-10-26 大势力史实旗面第一批（7 家）────────────────────────────
+    safawei_d: 'SAFAVID_LION_SUN',   // 萨法维·狮日（阿拔斯大帝时期波斯标志，不画后世佩剑）
+    womaya: 'UMAYYAD_WHITE_STANDARD',   // 倭马亚·白旌（矩形白旗，不添后世新月或国徽）
+    yashu: 'ASSYRIAN_LAMASSU',   // 亚述·人首翼牛拉玛苏（新亚述王宫守卫像）
+    jiazini: 'GHAZNAVID_LION',   // 伽色尼·行狮（狮旗，不与萨法维狮日混用）
+    jialedi: 'BABYLON_MUSHHUSHSHU',   // 迦勒底·穆什胡舒龙（新巴比伦伊什塔尔门）
+    hantawadi: 'HANTHAWADDY_HAMSA',   // 汉达瓦底·金色Hintar/Hamsa神鸟
+    tiemuer: 'TIMURID_ANNULETS',   // 图兰（帖木儿）·三环三角（钱币与克拉维霍使节记载）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

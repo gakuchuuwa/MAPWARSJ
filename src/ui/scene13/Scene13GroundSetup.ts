@@ -19,6 +19,10 @@ import { groundDecorFor, decorFits } from './DecorFit';
 import { setCachedViennaMapData } from './Scene13SpriteCache';
 import { loadDeCampaignMapForGround, populateDeCampaignObjects } from './Scene13DeCampaignLoader';
 
+/** 未改造的据点／主题地图数据与在途请求。后续转置、海向校正和城基改造都会另建数组，不回写这里。 */
+const GROUND_MAP_DATA_CACHE = new Map<string, Promise<any | null>>();
+const GROUND_MAP_DATA_CACHE_MAX = 24;
+
 /**
  * M3 WebGL 地面层接入：在 realGeography 开关开启时初始化底层 WebGL 视口，
  * 并加载新地图物件，替换旧 13 随机树木与岩石。
@@ -61,11 +65,28 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
             }
         }
         const load = async (file: string) => {
-            try {
-                const res = await fetch(MAPDATA_DIR + file);
-                if (res.ok) return await res.json();
-            } catch {}
-            return null;
+            const hit = GROUND_MAP_DATA_CACHE.get(file);
+            if (hit) {
+                GROUND_MAP_DATA_CACHE.delete(file);
+                GROUND_MAP_DATA_CACHE.set(file, hit);   // LRU：最近使用的据点图保留
+                return hit;
+            }
+            const job = (async () => {
+                try {
+                    const res = await fetch(MAPDATA_DIR + file);
+                    if (res.ok) return await res.json();
+                } catch {}
+                return null;
+            })();
+            GROUND_MAP_DATA_CACHE.set(file, job);
+            const data = await job;
+            if (!data) GROUND_MAP_DATA_CACHE.delete(file);   // 缺图／失败不缓存，下一场仍可重试
+            while (GROUND_MAP_DATA_CACHE.size > GROUND_MAP_DATA_CACHE_MAX) {
+                const oldest = GROUND_MAP_DATA_CACHE.keys().next().value;
+                if (oldest === undefined) break;
+                GROUND_MAP_DATA_CACHE.delete(oldest);
+            }
+            return data;
         };
         const siteId = this.defenderCityId;
         if (siteId) {
