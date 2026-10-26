@@ -2775,6 +2775,8 @@ const HUGUANG_FACTION_LEGIONS: Readonly<Record<string, string>> = {
     zhuang_d: '帝国时代湖广军团',
     machu: '城堡时代湘楚军团',
     nanhan: '封建时代荆湘军团',
+    tan_d: '城堡时代湘楚军团',
+    nan_liang: '封建时代荆湘军团',
 };
 for (const [factionId, legionName] of Object.entries(HUGUANG_FACTION_LEGIONS)) {
     if (FACTION_COMPOSITIONS[factionId]) FACTION_COMPOSITIONS[factionId].legionName = legionName;

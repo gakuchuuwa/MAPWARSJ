@@ -53,6 +53,7 @@ import {
 } from '../data/level2Civ62Legions';
 import { LEVEL_3_LEGION_NAMES, LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
 import { LEGION_78_SIEGE_MAP } from '../data/SiegeWeaponsByCulture';
+import { getUnitLookNote } from '../data/UnitLookNotes';
 import { mountLegionPanel } from '../legion-panel/main';
 import { resolveFallbackForFaction, planFallbackForDeletedLegion, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
 
@@ -4911,7 +4912,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             if (unitStatusFilter === 'unapplied' && isApplied) return false;
 
             if (!q) return true;
-            if (u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q)) return true;
+            if (u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q) || getUnitLookNote(u.id).includes(q)) return true;
             if (isChecked(u) && isApplied && (q === '已套用' || q === '已用' || q === 'applied')) return true;
             if (isChecked(u) && !isApplied && (q === '未套用' || q === '闲置' || q === '空闲' || q === 'unapplied')) return true;
             if (used.some(leg => leg.toLowerCase().includes(q))) return true;
@@ -4971,17 +4972,20 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
               const used = usageMap.get(u.id) ?? [];
               const isApplied = used.length > 0;
               const checked = isChecked(u);
-              const usedTooltip = !checked
+              // 🔴 [2026-10-26 主人令] 样貌备注（按兵模样子写的时代·文化·装扮）
+              const look = getUnitLookNote(u.id);
+              const usedTooltip = (look ? `样貌：${look}\n` : '') + (!checked
                   ? `【${u.name}】英雄不做套用检查`
                   : isApplied
                   ? `【${u.name}】已套用于 ${used.length} 支军团：\n` + used.map((l, i) => `  ${i + 1}. ${l}`).join('\n')
-                  : `【${u.name}】当前未在任何军团中套用（闲置）`;
+                  : `【${u.name}】当前未在任何军团中套用（闲置）`);
               return `
               <div class="le-unit-card" data-uid="${u.id}" title="${esc(usedTooltip)}" style="${checked && isApplied ? 'background:#162218;border-color:#2d5a38;' : ''}">
                 <canvas class="le-unit-thumb" data-uid="${u.id}" width="64" height="64"></canvas>
                 <div class="le-unit-card-text" style="min-width:0;flex:1;">
                   <div class="le-unit-card-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</div>
                   <div class="le-unit-card-cat">${CATEGORY_LABEL[u.category]}${subText}${tierText}</div>
+                  ${look ? `<div style="font-size:10px;color:#b8a77e;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">样貌：${esc(look)}</div>` : ''}
                   ${!checked ? '' : isApplied ? `
                     <div style="font-size:10px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(usedTooltip)}">
                       <span style="display:inline-block;padding:0 4px;border-radius:2px;background:#183620;border:1px solid #2d6639;color:#7ee787;font-weight:bold;font-size:9px;">✓ 已套用${used.length > 1 ? ` (${used.length})` : ''}</span>

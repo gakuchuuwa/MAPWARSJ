@@ -156,6 +156,23 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         commanderUnit: 'hero_arariboiamelee',
         buildingStyle: 'TUPI',
     },
+    // 🔴 [2026-10-26 主人令「确保所有兵模都被套用……实在不行就新建三级特殊专用军团，但是必须有有名字的武将」]
+    //    易洛魁战士（北美林地赤膊莫霍克发型战棍样）没有合适的二级格子 → 新建三级，专给奥农多加的海华沙；
+    //    原先他按「城堡时代 × 阿兹特克文化」带阿兹特克军团，样子不对。弓手、战棍兵都是美洲土著样。父级二级「城堡时代阿兹特克军团」。
+    {
+        name: '城堡时代易洛魁军团',
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'iroquois_warrior', count: 3 },
+            { type: 'blackwood_archer', count: 4 },
+            { type: 'ibirapema_warrior', count: 2 },
+        ],
+        regions: ['IROQUOIS'],
+        parentLegion: '城堡时代阿兹特克军团',
+        shipId: 'CANOE',
+        commanderUnit: 'hero_cunhambebe',
+        buildingStyle: 'AMERICA',
+    },
     {
         name: '起义军',
         formationMode: 'fish_scale',

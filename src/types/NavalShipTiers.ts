@@ -97,7 +97,7 @@ const BASE_SCALE = 0.8;
  *    的次序和手感。要更整齐就调大，要更还原原始比例就调小。
  */
 // 🔴 [2026-10-13 主人令] 原 0.7（把 41 种船的大小差从 3.2 倍压到 1.4 倍）取消：0 ＝ 完全按 DE 原始像素，不再归一化。
-const SIZE_NORMALIZE_K = 0;
+export const SIZE_NORMALIZE_K = 0;
 
 /** 按船型归一化后的绘制缩放：表里没有的船退回基准值。 */
 export function getNavalShipDrawScale(shipId?: string): number {
@@ -200,6 +200,28 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'DEMO_RAFT', why: '湟水皮筏：羌人居青藏东缘河谷，以皮筏渡湟水/洮河，无航海传统', regions: ['QIANG'] },
     { ship: 'DEMO_RAFT', why: '旁遮普五河渡筏：锡克帝国全境内陆，仅需渡萨特累季/杰赫勒姆等河', regions: ['SIKH'] },
     { ship: 'DEMO_RAFT', why: '阿尔卑斯湖筏：瑞士各州全境内陆，仅琉森湖/日内瓦湖有舟楫之利', regions: ['SWISS'] },
+
+    // 2026-10-26 修复显式登记缺口：逐区记录修复前 getCultureNavalShip(region, null) 的实际返回，
+    // 只消除兜底与漏登记，不重新设计海军、不改变任何区现用船型。
+    { ship: 'WAR_GALLEY', why: '沿用各区当前实际使用的通用桨帆战船，补显式登记，不改变现用模型', regions: [
+        'SLAVIC_FEUDAL', 'SLAVIC_CASTLE', 'SLAVIC_IMPERIAL',
+        'GERMANIC_FEUDAL', 'GERMANIC_IMPERIAL', 'LATIN_IMPERIAL', 'LATIN_FEUDAL',
+        'WEST_ASIA_CASTLE', 'CELTS_FEUDAL', 'IROQUOIS', 'TAIRONA', 'TEHUELCHE',
+        'GOJOSEON', 'JAPAN_ANTIQUITY', 'JAPAN_IMPERIAL',
+        'CENTRAL_ASIA_CASTLE', 'CENTRAL_ASIA_IMPERIAL',
+        'STEPPE_ANTIQUITY', 'STEPPE_FEUDAL', 'STEPPE_IMPERIAL',
+        'AFRICA_ANTIQUITY', 'AFRICA_CASTLE', 'AFRICA_IMPERIAL',
+        'PERSIAN_CASTLE', 'SEASIA_FEUDAL', 'SEASIA_CASTLE', 'SEASIA_IMPERIAL',
+        'NORTHAM_IMPERIAL', 'SOUTHAM_IMPERIAL', 'ORIE_ANTIQUITY', 'YARLUNG',
+        'INDIA_FEUDAL', 'INDIA_IMPERIAL',
+    ] },
+    { ship: 'DEMO_RAFT', why: '沿用内陆高原与绿洲各区当前实际使用的渡河木筏，补显式登记，不改变现用模型', regions: ['TIBET_CASTLE', 'TIBET_IMPERIAL', 'WESTERN_FEUDAL', 'WESTERN_CASTLE', 'WESTERN_IMPERIAL'] },
+    { ship: 'HULK', why: '沿用城堡日耳曼当前军团绑定的霍克船，补显式登记，不改变现用模型', regions: ['GERMANIC_CASTLE'] },
+    { ship: 'CARRACK', why: '沿用城堡拉丁当前军团绑定的卡拉克帆船，补显式登记，不改变现用模型', regions: ['LATIN_CASTLE'] },
+    { ship: 'ANT_ELITE_GALLEY', why: '沿用古典孟加拉当前军团绑定的高级古典桨帆船，补显式登记，不改变现用模型', regions: ['BENGALIS_ANTIQUITY'] },
+    { ship: 'ELITE_CANNON_GALLEON', why: '沿用帝国奥斯曼当前军团绑定的高级炮舰，补显式登记，不改变现用模型', regions: ['OTTOMAN_IMPERIAL'] },
+    { ship: 'LOU_CHUAN', why: '沿用帝国大明当前军团绑定的中国楼船，补显式登记，不改变现用模型', regions: ['MING'] },
+    { ship: 'DRAGON_SHIP', why: '沿用帝国中原当前军团绑定的龙头战舰，补显式登记，不改变现用模型', regions: ['HUAXIA_IMPERIAL'] },
 ];
 
 /** 区 → 船的查找表（模块加载时摊平一次） */

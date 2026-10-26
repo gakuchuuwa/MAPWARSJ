@@ -456,7 +456,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_sonni_baru': 'AFRICA',   // 桑海｜桑尼·巴鲁｜据点 廷巴克图
     'bfe_agha_mohammad': 'PERSIAN',   // 恺加｜阿迦·穆罕默德汗｜据点 卡曼尼亚
     'bfe_landi': 'SICILIANS',   // 两西西里｜兰迪｜据点 巴勒莫
-    'bfe_kehaya_mustafa': 'SPARTANS',   // 奥斯曼｜穆斯塔法｜据点 斯巴达
+    'bfe_kehaya_mustafa': 'TURKS',   // 奥斯曼｜穆斯塔法｜据点 埃迪尔内（2026-10-26 保留三级军团，迁最近同文化据点）
     'xilawangguo_petros': 'SPARTANS',   // 希腊王国｜彼得罗斯｜据点 斯巴达
     'bfe_abdulaziz_crete': 'BERBER',   // 阿格拉布｜阿卜杜勒·阿齐兹｜据点 凯鲁万
     'eluosi_diguo_apraksin': 'VARANGIANS',   // 俄罗斯帝国｜阿普拉克辛｜据点 拉多加

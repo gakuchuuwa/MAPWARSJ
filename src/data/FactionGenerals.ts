@@ -578,7 +578,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    yiluokui: { generalId: 'gen_hiawatha', cityId: 'city_onondaga', generalName: '海华沙', portrait: '/assets/AMERICA/gen_hiawatha.png' },
+    yiluokui: { generalId: 'gen_hiawatha', cityId: 'city_onondaga', generalName: '海华沙', portrait: '/assets/AMERICA/gen_hiawatha.png', legionName: '城堡时代易洛魁军团' },   // 🔴 [2026-10-26] 三级专用军团（易洛魁战士）
 
 
 
@@ -3249,8 +3249,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_landi', factionId: 'liangxixili', cityId: 'city_palermo', generalName: '兰迪', portrait: '/assets/SICILIANS/bfe_landi.png', eliteName: '西西里线列', eliteTier: 4 },
     ],
     osman_morae: [
-        // 🔴 [2026-10-25 补B] 穆斯塔法（凯哈亚·穆斯塔法贝伊，摩里亚总督胡尔希德帕夏副帅；1821 瓦尔泰齐率 5000 奥斯曼-阿尔巴尼亚军进攻，败于科洛科特罗尼斯）｜势力 奥斯曼｜据点 斯巴达（SPARTANS 文化，摩里亚）｜普将｜精锐「奥斯曼精兵」T4｜立绘留空
-        { generalId: 'bfe_kehaya_mustafa', factionId: 'osman', cityId: 'city_sparta', generalName: '穆斯塔法', portrait: '/assets/SPARTANS/bfe_kehaya_mustafa.png', eliteName: '奥斯曼精兵', eliteTier: 4 },
+        // 🔴 [2026-10-25 补B] 穆斯塔法（凯哈亚·穆斯塔法贝伊，摩里亚总督胡尔希德帕夏副帅；1821 瓦尔泰齐率 5000 奥斯曼-阿尔巴尼亚军进攻，败于科洛科特罗尼斯）｜势力 奥斯曼｜普将｜精锐「奥斯曼精兵」T4｜立绘留空
+        // 🔴 [2026-10-26 主人令「三级军团不要动」] 保留三级苏丹亲兵军团；斯巴达只是进攻事发地且文化不符，库中无对应 TURKS 据点，按事发地最近同文化据点迁埃迪尔内；立绘路径不动。
+        { generalId: 'bfe_kehaya_mustafa', factionId: 'osman', cityId: 'city_aidiernei', generalName: '穆斯塔法', portrait: '/assets/SPARTANS/bfe_kehaya_mustafa.png', eliteName: '奥斯曼精兵', eliteTier: 4 },
     ],
     xilawangguo_mani: [
         // 🔴 [2026-10-25 补B] 彼得罗斯·马夫罗米哈利斯（1765–1848，马尼 贝伊、希腊独立战争领袖）｜势力 希腊王国｜据点 斯巴达（SPARTANS 文化，摩里亚/马尼）｜普将｜精锐「马尼山兵」T4｜立绘留空
@@ -17246,12 +17247,17 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
 };
 
-// [2026-10-26 主人令新增湖广] 只改迁入五省据点武将的旧江南手写军团；起义军、先秦及其他三级军团不动。
+// [2026-10-26 主人令新增湖广] 只改迁入五省据点武将的旧二级手写军团；起义军、先秦及其他三级军团不动。
 const HUGUANG_LEGION_BY_OLD: Readonly<Record<string, string>> = {
     古典时代吴越军团: '古典时代荆楚军团',
+    古典时代华夏军团: '古典时代荆楚军团',
     封建时代江淮军团: '封建时代荆湘军团',
+    封建时代中原军团: '封建时代荆湘军团',
     城堡时代江南军团: '城堡时代湘楚军团',
+    城堡时代中华军团: '城堡时代湘楚军团',
+    城堡时代川峡军团: '城堡时代湘楚军团',
     帝国时代两江军团: '帝国时代湖广军团',
+    帝国时代中国军团: '帝国时代湖广军团',
 };
 for (const entry of Object.values(FACTION_GENERALS as Record<string, FactionGeneralEntry>)) {
     const list = Array.isArray(entry) ? entry : [entry as FactionGeneral];

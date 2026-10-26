@@ -23,7 +23,10 @@ export const DE_DESTR_FALLBACK = 'FOUNDATION_1X1_DESTR';
 export const DE_RUBBLE_FALLBACK = 'FOUNDATION_1X1_RUBBLE';
 
 /** 建筑 → DE 破坏素材族名（拼 `_DESTR` / `_RUBBLE` 即目录名；现全部建筑均有专属 DE 坍塌与残骸素材） */
-const DESTR_FAMILY: Record<string, string> = {};
+const DESTR_FAMILY: Record<string, string> = {
+    HUGUANG_CASTLE_AGE3: 'CHIN_CASTLE_AGE3',
+    WESTERN_CASTLE_AGE3: 'CEAS_CASTLE_AGE3',
+};
 
 /** 取一件素材的破坏素材族：有专属族就用专属，否则返回自身。 */
 export function destrFamilyOf(name: string): string {

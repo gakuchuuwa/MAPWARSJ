@@ -282,7 +282,7 @@ export const LAYER3_CUSTOM_GROUPS: readonly CultureGroup[] = [
         group: '🏯 湖广与岭南山城水寨',
         deStyle: 'ASIA',
         branches: [
-            { key: 'HUGUANG', deStyle: 'ASIA', castle: 'LINGNAN_CASTLE_AGE3', label: '🏯 湖广（湖北—湖南—广东—广西—福建）' },
+            { key: 'HUGUANG', deStyle: 'ASIA', castle: 'HUGUANG_CASTLE_AGE3', label: '🏯 湖广（湖北—湖南—广东—广西—福建）' },
         ],
     },
 ];

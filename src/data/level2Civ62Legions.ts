@@ -555,13 +555,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【精锐】｜核心兵种：远程（弩炮）、重步兵为主
     //    描述正文（主人原文，一字未改）：（合川钓鱼城、重庆；合川钓鱼城绝壁石城、白帝城石垣要塞；嘉陵江断崖重弩炮要塞防御、山城天险死守飞石滚木、击毙蒙哥汗山城铁血死士）
     //    英雄队（第 10 队·主将队）：hero_zhugeliang / hero_liubei / hero_guanyu / hero_zhangfei　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将草原枪骑样→东亚甲胄骑将样
     {
         name: '城堡时代川峡军团', civ: '巴蜀', age: 'castle', deStyle: 'ASIA', region: 'BASHU' as RegionType,
         buildingStyle: 'BASHU',
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_zhaoyun',
+        commanderUnit: 'hero_sunjian',
         slots: [
             { type: 'jian_swordman_unshielded', count: 3 },
             { type: 'elite_fire_lancer', count: 4 },
@@ -665,13 +666,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：远程（步弓）为主
     //    描述正文（主人原文，一字未改）：（吉林、长白山；石棺墓群、原始木构聚落；楛矢石砮穿甲硬射、原始森林雪原狩猎、白桦木具与骨角石器兵装）
     //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_kotyankhan　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将中原连弩手样→东北草原骑射样（同渤海、八旗）
     {
         name: '古典时代肃慎军团', civ: '白山黑水', age: 'antiquity', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
         buildingStyle: 'NORTHEAST',
         castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
         formationMode: 'balance_yoke',
         shipId: 'CANOE',
-        commanderUnit: 'hero_sudingfang',
+        commanderUnit: 'hero_girgenkhan',
         slots: [
             { type: 'antiquity_skirmisher', count: 4 },
             { type: 'xianbei_raider', count: 2 },
@@ -737,13 +739,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：骑射为主
     //    描述正文（主人原文，一字未改）：（龙城/单于庭、色楞格河；诺音乌拉巨冢古墓、草原石圈祭坛；引弓之民鸣镝重箭、白登围困合围骑阵、草原快马奔袭散兵阵）
     //    英雄队（第 10 队·主将队）：hero_subotai / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将中原红缨甲将样→草原骑射手样
     {
         name: '古典时代匈奴军团', civ: '漠北蒙古', age: 'antiquity', deStyle: 'ASIA', region: 'STEPPE' as RegionType,
         buildingStyle: 'MONGOL',
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_lubu',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kushluk（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_subotai',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kushluk（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'scythian_horse_archer', count: 3 },
             { type: 'antiquity_cavalry_archer', count: 4 },
@@ -979,13 +982,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（卢格杜努姆/里昂、阿莱西亚；尼姆嘉德水道桥、阿莱西亚要塞遗址；高卢长剑勇士、大木盾步兵方阵、抵御凯撒罗马鹰旗防线）
     //    英雄队（第 10 队·主将队）：hero_bernardarmagnac / hero_joanofarc / hero_joanthemaid　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将中世纪女子样→赤膊蓝漆蛮族战士样
     {
         name: '古典时代高卢军团', civ: '法兰克', age: 'antiquity', deStyle: 'WEST', region: 'FRANKS' as RegionType,
         buildingStyle: 'FRANKS',
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
         formationMode: 'echelon',
         shipId: 'MONOREME',
-        commanderUnit: 'hero_joanthemaid',
+        commanderUnit: 'hero_aethelfrith',
         slots: [
             { type: 'antiquity_skirmisher', count: 4 },
             { type: 'heavy_swordsman', count: 3 },
@@ -1125,13 +1129,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（温彻斯特、约克；厄尔斯巴顿石教堂方塔、木草大厅；阿尔弗雷德铁壁盾墙方阵、双手丹麦长战斧近卫、七国争霸重步大阵）
     //    英雄队（第 10 队·主将队）：hero_edwardlongshanks / hero_gilbertdeclare / hero_friartuck　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将大桶盔骑士样（太晚）→早期中世纪锁甲圆盾骑将样
     {
         name: '封建时代盎格鲁撒克逊军团', civ: '不列颠', age: 'feudal', deStyle: 'WEST', region: 'BRITONS' as RegionType,
         buildingStyle: 'BRITONS',
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_gilbertdeclare',
+        commanderUnit: 'hero_tostig',
         slots: [
             { type: 'swordsman', count: 3 },
             { type: 'laminated_bowman', count: 4 },
@@ -1159,13 +1164,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【高级】｜核心兵种：重步兵、远程为主
     //    描述正文（主人原文，一字未改）：（伦敦、朴次茅斯；汉普顿宫红砖都铎建筑群、格林威治宫旧殿；皇家重装双手长戟卫士（Yeomen）、都铎玫瑰金线战袍、早期大航海英格兰长弓与火绳枪长戟混合方阵）
     //    英雄队（第 10 队·主将队）：hero_edwardlongshanks / hero_gilbertdeclare / hero_friartuck　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将高地双手大剑样→西欧后期板甲骑士样（都铎英格兰）
     {
         name: '帝国时代不列颠军团', civ: '不列颠', age: 'imperial', deStyle: 'WEST', region: 'BRITONS' as RegionType,
         buildingStyle: 'BRITONS',
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'fish_scale',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_williamwallace',
+        commanderUnit: 'hero_henryv',
         slots: [
             { type: 'champion', count: 3 },
             { type: 'longbowman', count: 4 },
@@ -1215,6 +1221,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【精锐】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（爱丁堡、斯特灵；爱丁堡火山岩绝壁城堡、斯特灵石桥要塞；苏格兰长矛刺猬圆阵（Schiltron）、双手重型高地斩马阔剑（Claymore）、氏族风笛战吼冲锋）
     //    英雄队（第 10 队·主将队）：hero_dafyddapgruffydd / hero_llywelynapgruffydd / hero_williamwallace　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 东方骑射手样→长弓步兵样（威尔士长弓）
     {
         name: '城堡时代盖尔军团', civ: '凯尔特', age: 'castle', deStyle: 'WEST', region: 'CELTS' as RegionType,
         buildingStyle: 'CELTS',
@@ -1224,7 +1231,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_dafyddapgruffydd',
         slots: [
             { type: 'two_handed_swordsman', count: 3 },
-            { type: 'cav_archer_heavy', count: 4 },
+            { type: 'longbowman', count: 4 },
             { type: 'halberdier', count: 2 },
         ],
     },
@@ -1462,16 +1469,17 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     // ── 诺夫哥罗德 · 帝国时代 · 帝国时代北境长斧军团　（2026-10-25 恢复：阿普拉克辛 为带名将）────────────────
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 1500 年后西北罗斯：主将维京斧兵样→东欧暗甲金盾骑将样；维京骑将→东欧斧盾重骑
     {
         name: '帝国时代北境长斧军团', civ: '瓦良格', age: 'imperial', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
         buildingStyle: 'VARANGIANS',
         castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
         formationMode: 'crescent',
         shipId: 'CATAPULT_GALLEON',
-        commanderUnit: 'hero_harald',
+        commanderUnit: 'hero_vladdracula',
         slots: [
             { type: 'elite_varangian_guard', count: 3 },
-            { type: 'varangian_jarl', count: 2 },
+            { type: 'boyar', count: 2 },
             { type: 'recurve_bowman', count: 4 },
         ],
     },
@@ -1569,18 +1577,22 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 拜占庭　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
-    // ── 拜占庭 · 帝国时代 · 帝国时代东正教军团　（2026-10-25 恢复：科贾·穆萨帕夏 为带名将）────────────────
+    // ── 拜占庭 · 帝国时代 · 帝国时代伊斯坦布尔军团　（2026-10-25 恢复：科贾·穆萨帕夏 为带名将）────────────────
+    //    🔴 [2026-10-26 主人令「名字、编制、主将全不对，如果样子也不对的话，请替换」] 1500 年后博斯普鲁斯已是奥斯曼伊斯坦布尔：
+    //       原名「帝国时代东正教军团」；按兵模样子换：火枪手(西欧火枪手样)→奥斯曼皇家亲兵(白袍高帽火枪)、
+    //       欧洲重装长枪兵(西欧雇佣长枪样)→穆斯林东方剑士(黄袍尖盔圆盾)、骑士高级(西欧板甲骑士样)→萨瓦尔(弯刀圆盾披甲马)、
+    //       主将巴西琉斯(拜占庭步兵样)→冷酷者塞利姆(兵模 SAVAR，奥斯曼骑将样)。
     {
-        name: '帝国时代东正教军团', civ: '拜占庭', age: 'imperial', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
+        name: '帝国时代伊斯坦布尔军团', civ: '拜占庭', age: 'imperial', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
         buildingStyle: 'BYZANTINE',
         castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡石砌要塞',
         formationMode: 'echelon',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_basileus',
+        commanderUnit: 'hero_selimthegrim',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'cavalier', count: 2 },
+            { type: 'royal_janissary', count: 4 },
+            { type: 'eastern_swordsman', count: 3 },
+            { type: 'savar', count: 2 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════
@@ -1715,17 +1727,18 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（姆茨赫塔、乌普利斯齐赫；乌普利斯齐赫砂岩悬崖凿岩城、库拉河水运石桥哨所；高山生铁重砍刀、岩壁粗糙硬木长标枪、高加索高山隘口阻击方阵）
     //    英雄队（第 10 队·主将队）：hero_tamar / hero_thoros　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 古典时代：主将中世纪武僧样→古典伊朗骑将样；中世纪重甲枪骑→古典枪骑兵
     {
         name: '古典时代高加索伊比利亚军团', civ: '格鲁吉亚', age: 'antiquity', deStyle: 'EAST', region: 'GEORGIANS' as RegionType,
         buildingStyle: 'GEORGIANS',
         castleId: 'GEOR_CASTLE_AGE3', castleName: '格鲁吉亚 高加索斯万石塔古堡',
         formationMode: 'fish_scale',
         shipId: 'BIREME',
-        commanderUnit: 'hero_zakare',
+        commanderUnit: 'hero_artaphernes',
         slots: [
             { type: 'sakan_axeman', count: 3 },
             { type: 'bowman', count: 4 },
-            { type: 'monaspa', count: 2 },
+            { type: 'lancer', count: 2 },
         ],
     },
     // ── 高加索 · 封建时代 · 封建时代巴格拉特铁骑军团　（本次新建）────────────────
@@ -1987,13 +2000,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：步兵、远程（投矛）为主
     //    描述正文（主人原文，一字未改）：（第聂伯河中游森林沼泽；半穴居半木结构泥坑聚落、原木尖桩防御村寨；多柄倒钩破甲投矛（Sulitsy）、坚韧橡木长盾、林沼浅滩潜伏突袭大阵）
     //    英雄队（第 10 队·主将队）：hero_vladdracula / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将四马战车样→络腮胡锁甲圆盾步兵样
     {
         name: '古典时代安特军团', civ: '斯拉夫', age: 'antiquity', deStyle: 'SLAV', region: 'SLAVIC' as RegionType,
         buildingStyle: 'SLAVIC',
         castleId: 'SLAV_CASTLE_AGE3', castleName: '东欧/斯拉夫 莫斯科白石克里姆林',
         formationMode: 'echelon',
         shipId: 'MONOREME',
-        commanderUnit: 'hero_tsarkonstantin',
+        commanderUnit: 'hero_ivaylofoot',
         slots: [
             { type: 'elite_skirmisher', count: 4 },
             { type: 'manatarms', count: 3 },
@@ -2114,6 +2128,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（普罗夫迪夫、赛尔迪卡/索非亚；普罗夫迪夫罗马大剧场、大理石列柱广场与石槽排水渠；恐怖双手双刃逆刃长刀（Rhomphaia）、月牙形轻木小盾（Pelte）、多瑙河南岸山地伏击撕裂方阵）
     //    英雄队（第 10 队·主将队）：hero_ivaylo / hero_ivaylofoot / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「确保所有兵模都被套用在二级、三级军团」·按兵模样子] 色雷斯长刃斩手（古典色雷斯弯刃圆盾样）改用普通款，精锐款仍在古典色雷斯军团
     {
         name: '古典时代巴尔干军团', civ: '保加利亚', age: 'antiquity', deStyle: 'SLAV', region: 'BULGARIANS' as RegionType,
         buildingStyle: 'BULGARIANS',
@@ -2123,7 +2138,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_thracian_chieftain',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_ivaylofoot（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'elite_peltast', count: 4 },
-            { type: 'elite_rhomphaia_warrior', count: 3 },
+            { type: 'rhomphaia_warrior', count: 3 },
             { type: 'thracian_peltast', count: 2 },
         ],
     },
@@ -2334,6 +2349,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【高级】｜核心兵种：重步兵、远程（弩机）为主
     //    描述正文（主人原文，一字未改）：（叙拉古、阿格里真托；神殿之谷协和多立克柱廊神庙、古希腊采石场与大剧院；青铜阿尔戈斯圆盾、重型长矛刺猬密集方阵、阿基米德投石弩机海陆防卫大阵）
     //    英雄队（第 10 队·主将队）：hero_robertguiscard / hero_bohemond / hero_rogerbosso　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「确保所有兵模都被套用在二级、三级军团」·按兵模样子] 希腊披风长矛兵样，古典叙拉古
     {
         name: '古典时代叙拉古军团', civ: '西西里', age: 'antiquity', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
         buildingStyle: 'SICILIANS',
@@ -2343,7 +2359,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_cleon',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_rogerbosso（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'hoplite', count: 3 },
-            { type: 'tarantine_cavalry', count: 2 },
+            { type: 'hippeus', count: 2 },
             { type: 'gastraphetes', count: 4 },
         ],
     },
@@ -2475,13 +2491,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（布拉加、波尔图；布拉加圣弗鲁图奥索前罗曼式希腊十字石殿、早期杜罗河口石木营垒；日耳曼蛮族重装锁甲骑兵、倒钩双手猎矛、大西洋沿岸山地阻击大阵）
     //    英雄队（第 10 队·主将队）：hero_edwardlongshanks / hero_gilbertdeclare　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将大桶盔骑士样（太晚）→早期中世纪锁甲圆盾骑将样
     {
         name: '封建时代苏维汇铁骑军团', civ: '葡萄牙', age: 'feudal', deStyle: 'MEDI', region: 'PORTUGUESE' as RegionType,
         buildingStyle: 'PORTUGUESE',
         castleId: 'PORT_CASTLE_AGE3', castleName: '葡萄牙 贝伦塔大西洋海堡',
         formationMode: 'echelon',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_gilbertdeclare',
+        commanderUnit: 'hero_tostig',
         slots: [
             { type: 'throwing_axeman', count: 4 },
             { type: 'swordsman', count: 3 },
@@ -2588,13 +2605,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 匈人　四时代二级军团（古典）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ── 匈人 · 城堡时代 · 城堡时代匈牙利军团　（2026-10-25 恢复：匈雅提 为带名将，据点由贝尔格莱德改塞格德·匈人文化区）────────────────
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将草原弯刀骑兵样→西欧骑士样（匈牙利王国）
     {
         name: '城堡时代匈牙利军团', civ: '匈人', age: 'castle', deStyle: 'CEAS', region: 'HUNS' as RegionType,
         buildingStyle: 'HUNS',
         castleId: 'HUNS_CASTLE_AGE3', castleName: '匈人 蒂萨河草原土垒营堡',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_attila',
+        commanderUnit: 'hero_constablerichemont',
         slots: [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'crossbowman', count: 4 },
@@ -2699,6 +2717,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【高级】｜核心兵种：战车（大车垒）、骑兵、远程（火器）为主
     //    描述正文（主人原文，一字未改）：（扎波罗热塞契、霍尔蒂齐亚岛；第聂伯河沙洲橡木尖桩营寨（Sich）、早期简易原木东正教哨堂；哥萨克长管火绳枪依托掩体齐射、交叠重装大车防御车垒（Tabor）、长矛与东欧马刀（Sabre）轻骑近身突袭大阵）
     //    英雄队（第 10 队·主将队）：hero_cumanchief / hero_kotyankhan　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 西班牙高顶盔骑马火枪样→东欧羽饰轻骑样
     {
         name: '帝国时代哥萨克军团', civ: '库曼', age: 'imperial', deStyle: 'CEAS', region: 'CUMAN' as RegionType,
         buildingStyle: 'CUMAN',
@@ -2708,7 +2727,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_cumanchief',
         slots: [
             { type: 'elite_steppe_lancer', count: 3 },
-            { type: 'conquistador', count: 2 },
+            { type: 'light_cavalry', count: 2 },
             { type: 'kipchak', count: 4 },
         ],
     },
@@ -2792,6 +2811,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：步兵、战车、骑射为主
     //    描述正文（主人原文，一字未改）：（阿伊哈努姆、巴克特拉；阿伊哈努姆希腊化卫城多立克柱殿、泥砖希腊剧场与石砌体育馆；萨里萨超长枪重步兵方阵、塞种复合弓轻骑射协同、重型青铜甲双轮战车大阵）
     //    英雄队（第 10 队·主将队）：hero_qutlugh / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「确保所有兵模都被套用在二级、三级军团」·按兵模样子] 希腊化巴克特里亚：超长萨里萨方阵兵、希腊化持矛骑兵（与描述「萨里萨超长枪方阵」一致）
     {
         name: '古典时代粟特军团', civ: '鞑靼', age: 'antiquity', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
         buildingStyle: 'CENTRAL_ASIA',
@@ -2800,9 +2820,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_dismounted_alexander',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_qutlugh（主将队须为古典时代的英雄或精英兵）
         slots: [
-            { type: 'guardsman', count: 3 },
+            { type: 'phalangite', count: 3 },
             { type: 'bactrian_archer', count: 4 },
-            { type: 'sogdian_cataphract', count: 2 },
+            { type: 'companion_cavalry', count: 2 },
         ],
     },
     // ── 河中 · 封建时代 · 封建时代河中军团　（本次新建）────────────────
@@ -2864,6 +2884,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：轻步兵为主
     //    描述正文（主人原文，一字未改）：（普哈尔、乌赖尤尔；早期红砖湿婆祭坛、桑加姆时代海港条石水闸要塞；桑加姆阔刃刺枪（Vel）、竹制轻圆盾、热带雨林与沿海礁石伏击步战大阵）
     //    英雄队（第 10 队·主将队）：hero_generalaraiyan / hero_rajendrachola / elite_sannahya　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「确保所有兵模都被套用在二级、三级军团」·按兵模样子] 上古南亚战车样，古典泰米尔
     {
         name: '古典时代泰米尔军团', civ: '达罗毗荼', age: 'antiquity', deStyle: 'INDI', region: 'INDIA' as RegionType,
         buildingStyle: 'INDIA',
@@ -2872,7 +2893,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'ANT_WAR_GALLEY',
         commanderUnit: 'porus_elephant',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 elite_sannahya（主将队须为古典时代的英雄或精英兵）
         slots: [
-            { type: 'sannahya', count: 2 },
+            { type: 'ratha_melee', count: 2 },
             { type: 'urumi_swordsman', count: 3 },
             { type: 'pattiyoda_longbowman', count: 4 },
         ],
@@ -2936,6 +2957,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【高级】｜核心兵种：战象、远程（步弓）为主
     //    描述正文（主人原文，一字未改）：（华氏城、王舍城；阿育王石柱猛狮柱头、桑吉大塔浮雕石栏楯、那烂陀红砖佛寺巨壁；竹制六尺超长重步兵大弓、双刃阔铁剑、披挂重铠的双人象轿长枪战象冲阵大阵）
     //    英雄队（第 10 队·主将队）：elite_battle_elephant / hero_prithviraj / hero_rajendrachola / elite_sannahya　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「确保所有兵模都被套用在二级、三级军团」·按兵模样子] 上古南亚弓战车样，孔雀王朝有战车
     {
         name: '古典时代孔雀军团', civ: '印度斯坦', age: 'antiquity', deStyle: 'INDI', region: 'MUGHAL' as RegionType,
         buildingStyle: 'MUGHAL',
@@ -2947,7 +2969,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    空出的前排 3 档用非城堡精锐的印度部落民补位。军团改名：恒河战象军团 → 孔雀军团。
         slots: [
             { type: 'elite_sannahya', count: 2 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'elite_ratha_ranged', count: 4 },
             { type: 'indian_tribesman', count: 3 },
         ],
     },
@@ -2955,13 +2977,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：战象、骑兵为主
     //    描述正文（主人原文，一字未改）：（曲女城、瓦拉纳西；恒河畔多层石砌沐浴坛台、早期曲女城条石佛寺护法石柱；人马铁环轻锁甲、长刃骑兵突击长矛、千乘铁甲巨象开路步骑混编大阵）
     //    英雄队（第 10 队·主将队）：elite_battle_elephant / hero_prithviraj / hero_rajendrachola / elite_sannahya　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将草原可汗骑射样→印度王者骑将样
     {
         name: '封建时代戒日军团', civ: '印度斯坦', age: 'feudal', deStyle: 'INDI', region: 'MUGHAL' as RegionType,
         buildingStyle: 'MUGHAL',
         castleId: 'HIND_CASTLE_AGE3', castleName: '印度斯坦 德里红堡莫卧儿红砂岩',
         formationMode: 'triangle',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_ibrahimlodi',
+        commanderUnit: 'hero_rajendrachola',
         slots: [
             { type: 'armored_elephant', count: 2 },
             { type: 'indian_tribesman', count: 3 },
@@ -3011,6 +3034,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：战象、远程为主
     //    描述正文（主人原文，一字未改）：（卡尔纳苏瓦尔纳、高达；红砖砌筑多层佛寺基址、湿婆神庙石雕坛座；三角洲轻质硬木大弓、双刃破甲短矛、沼泽水网冲积平原浅滩战象突击大阵）
     //    英雄队（第 10 队·主将队）：elite_ratha_melee / hero_generalaraiyan / hero_rajendrachola　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「确保所有兵模都被套用在二级、三级军团」·按兵模样子] 上古南亚重饰战车样
     {
         name: '古典时代高陀军团', civ: '孟加拉', age: 'antiquity', deStyle: 'INDI', region: 'BENGALIS' as RegionType,
         buildingStyle: 'BENGALIS',
@@ -3024,13 +3048,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'ratha_ranged', count: 2 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
-            { type: 'indian_tribesman', count: 3 },
+            { type: 'elite_ratha_melee', count: 3 },
         ],
     },
     // ── 孟加拉 · 封建时代 · 封建时代波罗军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：战象、战车为主
     //    描述正文（主人原文，一字未改）：（索马普拉、帕哈尔普尔；帕哈尔普尔巨型十字形红砖阶梯佛寺大殿、赤陶浮雕外墙要塞；人披锁甲重型装甲象轿、长刃重斩刀（Khanda）、古印式双马战车（Ratha）远近切换协同穿插大阵）
     //    英雄队（第 10 队·主将队）：elite_ratha_melee / hero_generalaraiyan / hero_rajendrachola　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 中世纪孟加拉：战车→象轿弓象
     {
         name: '封建时代波罗军团', civ: '孟加拉', age: 'feudal', deStyle: 'INDI', region: 'BENGALIS' as RegionType,
         buildingStyle: 'BENGALIS',
@@ -3041,7 +3066,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] ①城堡兵普通档进同文化封建军团：拉塔战车（普通档）在编；
         //    ②按「象兵、战车只能安排在 2 档」＋「象车不能同队」：拉塔战车压到 2 档，战斗象高级离队。
         slots: [
-            { type: 'elite_ratha_ranged', count: 2 },
+            { type: 'elephant_archer', count: 2 },
             { type: 'elite_skirmisher', count: 4 },
             { type: 'indian_tribesman', count: 3 },
         ],
@@ -3050,6 +3075,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：远程、步兵为主
     //    描述正文（主人原文，一字未改）：（高达、潘杜瓦；阿迪纳大清真寺巨大拱券石砖大殿、沙特贡巴德六十圆顶砖石城堡；复合角弓密集阵列抛射、大马士革钢重型弯刀、三角洲水网竹桩要塞阻击北方铁骑大阵）
     //    英雄队（第 10 队·主将队）：elite_ratha_melee / hero_generalaraiyan / hero_rajendrachola　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 中世纪孟加拉：战车→战象
     {
         name: '城堡时代孟加拉军团', civ: '孟加拉', age: 'castle', deStyle: 'INDI', region: 'BENGALIS' as RegionType,
         buildingStyle: 'BENGALIS',
@@ -3058,7 +3084,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HEAVY_INCENDIARY_SHIP',
         commanderUnit: 'hero_rajendrachola',
         slots: [
-            { type: 'ratha_melee', count: 2 },
+            { type: 'battle_elephant', count: 2 },
             { type: 'indian_tribesman', count: 3 },
             { type: 'laminated_bowman', count: 4 },
         ],
@@ -3067,6 +3093,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【高级】｜核心兵种：战象、长枪步兵为主
     //    描述正文（主人原文，一字未改）：（高达、吉大港；高达乔塔索纳清真寺精雕黑玄武岩石饰贴面殿堂、吉大港早期石垒边防营寨；披挂铁甲的恒河火器战象、竹节涂毒长破甲枪、大航海早期三角洲密林泥沼阻击外敌铁壁大阵）
     //    英雄队（第 10 队·主将队）：elite_ratha_melee / hero_generalaraiyan / hero_rajendrachola　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 近代孟加拉：战车→战象
     {
         name: '帝国时代恒河军团', civ: '孟加拉', age: 'imperial', deStyle: 'INDI', region: 'BENGALIS' as RegionType,
         buildingStyle: 'BENGALIS',
@@ -3075,7 +3102,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_babur',
         slots: [
-            { type: 'elite_ratha_melee', count: 2 },
+            { type: 'battle_elephant', count: 2 },
             { type: 'indian_tribesman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
@@ -3606,10 +3633,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MESO_CASTLE_AGE3', castleName: '中美洲/阿兹特克 特诺奇蒂特兰金字塔',
         formationMode: 'fish_scale',
         shipId: 'CANOE',
-        commanderUnit: 'hero_cunhambebe',
+        // 🔴 [2026-10-26 主人令「看样子，不要看名字」] 易洛魁战士(北美林地赤膊战棍样)→阿兹特克豹勇士(豹皮木棍样)；
+        //    主将昆汉贝贝(南美羽披战棍样)→瓜特穆斯(兵模 ELITEEAGLEWARRIOR，阿兹特克鹰武士样)。
+        commanderUnit: 'hero_cuauhtemoc',
         slots: [
             { type: 'elite_eagle_warrior', count: 3 },
-            { type: 'iroquois_warrior', count: 4 },
+            { type: 'jaguar_warrior', count: 4 },
             { type: 'xolotl_warrior', count: 2 },
         ],
     },
@@ -3737,6 +3766,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【精锐】｜核心兵种：战象、轻骑兵、远程为主
     //    描述正文（主人原文，一字未改）：（迦太基、乌提卡；迦太基双重圆形人造军港石造船坞、布尔萨山六层砂岩干砌防御要塞；伊比利亚精钢短剑（Falcata）、巴利阿里编织投石索、战象前导与努米底亚轻骑兵双翼包抄大阵）
     //    英雄队（第 10 队·主将队）：hero_tariqibnziyad / hero_sumanguru　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「确保所有兵模都被套用在二级、三级军团」·按兵模样子] 古典重装圆盾长矛兵样（迦太基的希腊式重步兵）
     {
         name: '古典时代迦太基军团', civ: '柏柏尔', age: 'antiquity', deStyle: 'AFRI', region: 'BERBER' as RegionType,
         buildingStyle: 'BERBER',
@@ -3747,7 +3777,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'antiquity_skirmisher', count: 4 },
             { type: 'tarantine_cavalry', count: 2 },
-            { type: 'antiquity_spearman', count: 3 },
+            { type: 'lysander_raider', count: 3 },
         ],
     },
     // ── 马格里布 · 封建时代 · 封建时代柏柏尔军团　（本次新建）────────────────
@@ -3886,6 +3916,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【精锐】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（德布勒达摩、安巴盖申；德布勒达摩悬崖平顶石木猴头梁修道院、安巴山天然绝壁天然石堡；双刃弯月长砍刀（Shotel）、高山铁环锁子甲、高海拔山岳要隘居高临下滚石长矛突刺大阵）
     //    英雄队（第 10 队·主将队）：hero_yodit / dagnajan_elephant / hero_gidajan　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 东方骑射手样→步弓手
     {
         name: '城堡时代埃塞俄比亚军团', civ: '埃塞俄比亚', age: 'castle', deStyle: 'AFRI', region: 'ETHIOPIANS' as RegionType,
         buildingStyle: 'ETHIOPIANS',
@@ -3895,7 +3926,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_gidajan',
         slots: [
             { type: 'elite_shotel_warrior', count: 3 },
-            { type: 'cav_archer_heavy', count: 4 },
+            { type: 'bowman', count: 4 },
             { type: 'camel_rider', count: 2 },
         ],
     },
@@ -4034,13 +4065,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：远程、重步兵为主
     //    描述正文（主人原文，一字未改）：（设拉子、亚兹德；设拉子古老阿提格大清真寺巨型石刻伊万门、亚兹德高耸排风防卫土石风塔城；精钢反曲复合硬弓、长柄破甲铁战斧、扎格罗斯山脉险隘拒止铁骑大阵）
     //    英雄队（第 10 队·主将队）：hero_artaphernes / hero_datis　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将古典战车样→白头巾弯刀波斯骑将样
     {
         name: '城堡时代法尔斯军团', civ: '阿契美尼德', age: 'castle', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
         buildingStyle: 'PERSIAN',
         castleId: 'PERSIAN_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_darius',
+        commanderUnit: 'hero_shahismail',
         slots: [
             { type: 'ghulam', count: 3 },
             { type: 'laminated_bowman', count: 4 },
@@ -4069,13 +4101,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 雅典　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
     // ── 雅典 · 帝国时代 · 帝国时代希腊轻骑军团　（2026-10-25 恢复：古拉斯 为带名将）────────────────
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将 PALADIN 西欧板甲骑士样→白袍高帽火枪样（奥斯曼时代阿提卡）
     {
         name: '帝国时代希腊轻骑军团', civ: '雅典', age: 'imperial', deStyle: 'GREEK', region: 'ATHENIANS' as RegionType,
         buildingStyle: 'ATHENIANS',
         castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
         formationMode: 'echelon',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_henryv',
+        commanderUnit: 'hero_mustafapasha',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'champion', count: 3 },
@@ -4109,17 +4142,18 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 斯巴达　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
     // ── 斯巴达 · 封建时代 · 封建时代拉科尼亚军团　（2026-10-25 恢复：巴希尔 为带名将）────────────────
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 476–1050 拜占庭伯罗奔尼撒：主将古典希腊骑兵样→晚期罗马重骑样；古典斯巴达兵→长矛兵、具装重骑
     {
         name: '封建时代拉科尼亚军团', civ: '斯巴达', age: 'feudal', deStyle: 'GREEK', region: 'SPARTANS' as RegionType,
         buildingStyle: 'SPARTANS',
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_leonidas',
+        commanderUnit: 'hero_belisarius',
         slots: [
-            { type: 'hippeus', count: 3 },
+            { type: 'spearman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
-            { type: 'lysander_raider', count: 2 },
+            { type: 'cataphract', count: 2 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════
@@ -4132,13 +4166,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【高级】｜核心兵种：远程、步兵为主
     //    描述正文（主人原文，一字未改）：（米斯特拉斯、斯巴达遗址；米斯特拉斯悬崖巨石宫殿城堡群、巴列奥略晚期红砖拱券防御石寨；东方复合角弓连射、双刃精钢斩马剑、依托泰格特斯险峰要隘设伏歼敌大阵）
     //    英雄队（第 10 队·主将队）：hero_brasidas / hero_lysander　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将古典重装步兵样→拜占庭圆盾长矛步兵样
     {
         name: '城堡时代摩里亚军团', civ: '斯巴达', age: 'castle', deStyle: 'GREEK', region: 'SPARTANS' as RegionType,
         buildingStyle: 'SPARTANS',
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'fish_scale',
         shipId: 'HEAVY_LEMBOS',
-        commanderUnit: 'hero_lysander',
+        commanderUnit: 'hero_basileus',
         slots: [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'crossbowman', count: 4 },
@@ -4146,13 +4181,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     // ── 斯巴达 · 帝国时代 · 帝国时代曼尼军团　（2026-10-25 恢复：穆斯塔法 为带名将）────────────────
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将 PALADIN 西欧板甲骑士样→弯刀圆盾披甲马骑将样（奥斯曼时代）
     {
         name: '帝国时代曼尼军团', civ: '斯巴达', age: 'imperial', deStyle: 'GREEK', region: 'SPARTANS' as RegionType,
         buildingStyle: 'SPARTANS',
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'echelon',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_henryv',
+        commanderUnit: 'hero_selimthegrim',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'champion', count: 3 },
@@ -4163,6 +4199,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 马其顿　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
     // ── 马其顿 · 封建时代 · 封建时代拜占庭马其顿军团　（2026-10-25 恢复：彼得·德良 为带名将）────────────────
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 476–1050：超长萨里萨方阵兵、希腊化骑兵→中世纪盾矛步兵、具装重骑
     {
         name: '封建时代拜占庭马其顿军团', civ: '马其顿', age: 'feudal', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
         buildingStyle: 'MACEDONIAN',
@@ -4171,19 +4208,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         commanderUnit: 'hero_belisarius',
         slots: [
-            { type: 'phalangite', count: 3 },
+            { type: 'elite_guardsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
-            { type: 'companion_cavalry', count: 2 },
+            { type: 'cataphract', count: 2 },
         ],
     },
     // ── 马其顿 · 城堡时代 · 城堡时代瓦尔达尔军团　（2026-10-25 恢复：杜尚 为带名将）────────────────
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将 PALADIN 西欧板甲骑士样→拜占庭圆盾长矛步兵样
     {
         name: '城堡时代瓦尔达尔军团', civ: '马其顿', age: 'castle', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
         buildingStyle: 'MACEDONIAN',
         castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_henryv',
+        commanderUnit: 'hero_basileus',
         slots: [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'crossbowman', count: 4 },
@@ -4214,27 +4252,29 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 色雷斯　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
     // ── 色雷斯 · 封建时代 · 封建时代阿德里安堡军团　（2026-10-25 恢复：维塔利安 为带名将）────────────────
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 476–1050 拜占庭色雷斯：主将古典色雷斯骑将样→晚期罗马重骑样；古典弯刃斩手/轻盾投矛→中世纪盾矛步兵、锁甲弓手、具装重骑
     {
         name: '封建时代阿德里安堡军团', civ: '色雷斯', age: 'feudal', deStyle: 'GREEK', region: 'THRACIAN' as RegionType,
         buildingStyle: 'THRACIAN',
         castleId: 'THRACE_CASTLE_AGE3', castleName: '色雷斯 阿德里安堡要塞',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_thracian_chieftain',
+        commanderUnit: 'hero_belisarius',
         slots: [
-            { type: 'rhomphaia_warrior', count: 3 },
-            { type: 'elite_peltast', count: 4 },
-            { type: 'light_cavalry', count: 2 },
+            { type: 'elite_guardsman', count: 3 },
+            { type: 'laminated_bowman', count: 4 },
+            { type: 'cataphract', count: 2 },
         ],
     },
     // ── 色雷斯 · 城堡时代 · 城堡时代罗多彼军团　（2026-10-25 恢复：布拉纳斯 为带名将）────────────────
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将 PALADIN 西欧板甲骑士样→拜占庭圆盾长矛步兵样
     {
         name: '城堡时代罗多彼军团', civ: '色雷斯', age: 'castle', deStyle: 'GREEK', region: 'THRACIAN' as RegionType,
         buildingStyle: 'THRACIAN',
         castleId: 'THRACE_CASTLE_AGE3', castleName: '色雷斯 阿德里安堡要塞',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_henryv',
+        commanderUnit: 'hero_basileus',
         slots: [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'crossbowman', count: 4 },
@@ -4269,13 +4309,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：步兵、远程为主
     //    描述正文（主人原文，一字未改）：（阿里达巴、穹窿银城；卡尔东高耸泥石窑洞悬崖山寨、象雄黑白条石祭坛垒台；双曲硬木短弓、冷锻倒刺铁矛、高寒山巅悬崖堡寨居高临下滚石檑木阻击大阵）
     //    英雄队（第 10 队·主将队）：hero_prithviraj / hero_guanyu　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将中原红缨甲将样→内亚草原可汗骑射样
     {
         name: '古典时代发羌军团', civ: '青藏', age: 'antiquity', deStyle: 'PURU', region: 'TIBET' as RegionType,
         buildingStyle: 'TIBET',
         castleId: 'TIBET_CASTLE_AGE3', castleName: '吐蕃 藏式金顶宗堡',
         formationMode: 'crescent',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_lubu',
+        commanderUnit: 'hero_ibrahimlodi',
         slots: [
             { type: 'antiquity_spearman', count: 3 },
             { type: 'antiquity_cavalry_archer', count: 2 },
@@ -4516,13 +4557,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：（未标评级）｜核心兵种：步兵、远程（火炮/复合弓）为主
     //    描述正文（主人原文，一字未改）：（切什梅、伊兹密尔；切什梅滨海厚重条石防御城堡、士麦那内港条石角楼海防要塞；大马士革钢弯刀、反曲硬角复合弓与棱堡岸防重炮、大航海早期扼守小亚细亚西岸海峡城堡陆防铁壁大阵）
     //    英雄队（第 10 队·主将队）：—　— 按 248 主将表取，不进三排兵种编制
+    // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将古典马其顿统帅样→白袍高帽火枪样（奥斯曼时代爱琴海）
     {
         name: '帝国时代爱琴要塞军团', civ: '希腊', age: 'imperial', deStyle: 'GREEK', region: 'GREECE' as RegionType,
         buildingStyle: 'GREECE',
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'echelon',
         shipId: 'FAST_FIRE_SHIP',
-        commanderUnit: 'hero_macedonian_commander',
+        commanderUnit: 'hero_mustafapasha',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'heavy_pikeman', count: 3 },
@@ -4535,33 +4577,33 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '古典时代荆楚军团', civ: '湖广', age: 'antiquity', deStyle: 'ASIA', region: 'HUGUANG' as RegionType,
         buildingStyle: 'HUGUANG',
-        castleId: 'LINGNAN_CASTLE_AGE3', castleName: '湖广 岭南山城水寨',
-        formationMode: 'fish_scale',
+        castleId: 'HUGUANG_CASTLE_AGE3', castleName: '湖广 荆楚重楼要塞',
+        formationMode: 'triangle',
         shipId: 'INCENDIARY_RAFT',
-        commanderUnit: 'hero_sunquan',
+        commanderUnit: 'hero_liubiao',
         slots: [
+            { type: 'war_chariot_ranged', count: 2 },
             { type: 'jian_swordsman', count: 3 },
-            { type: 'elite_fire_archer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'fire_archer', count: 4 },
         ],
     },
     {
         name: '封建时代荆湘军团', civ: '湖广', age: 'feudal', deStyle: 'ASIA', region: 'HUGUANG' as RegionType,
         buildingStyle: 'HUGUANG',
-        castleId: 'LINGNAN_CASTLE_AGE3', castleName: '湖广 岭南山城水寨',
+        castleId: 'HUGUANG_CASTLE_AGE3', castleName: '湖广 荆楚重楼要塞',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
         commanderUnit: 'hero_sunjian',
         slots: [
-            { type: 'jian_swordsman', count: 3 },
-            { type: 'fire_archer', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'jian_swordman_unshielded', count: 3 },
+            { type: 'chukonu', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     {
         name: '城堡时代湘楚军团', civ: '湖广', age: 'castle', deStyle: 'ASIA', region: 'HUGUANG' as RegionType,
         buildingStyle: 'HUGUANG',
-        castleId: 'LINGNAN_CASTLE_AGE3', castleName: '湖广 岭南山城水寨',
+        castleId: 'HUGUANG_CASTLE_AGE3', castleName: '湖广 荆楚重楼要塞',
         formationMode: 'fish_scale',
         shipId: 'JUNK',
         commanderUnit: 'hero_sunjian',
@@ -4574,7 +4616,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '帝国时代湖广军团', civ: '湖广', age: 'imperial', deStyle: 'ASIA', region: 'HUGUANG' as RegionType,
         buildingStyle: 'HUGUANG',
-        castleId: 'LINGNAN_CASTLE_AGE3', castleName: '湖广 岭南山城水寨',
+        castleId: 'HUGUANG_CASTLE_AGE3', castleName: '湖广 荆楚重楼要塞',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         commanderUnit: 'hero_sunce',

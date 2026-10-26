@@ -1212,7 +1212,7 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/attack_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/idle_${d}.png`),
-            DEATH: [],
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/death_${d}.png`),
         },
         'THE_MIDDLEBROOK': {
             // 米德尔布鲁克（英雄·维京长船）：DE 沿用「维京长船高级」16 向素材（/SUCAI/ELITE_LONGBOAT/），2026-10-19 主人令登记为舰队模型，供军团 shipId 使用。

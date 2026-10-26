@@ -4943,7 +4943,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 31
         },
         "/assets/LATIN/gen_constantine_great.png": {
-            "scale": 1.19,
+            "scale": 1.15,
             "offsetX": 2,
             "offsetY": 29
         },
@@ -8311,6 +8311,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/ROMA/bfe3_81.png": {
+            "scale": 1.16,
+            "offsetX": 4,
+            "offsetY": 3
         }
     },
     "folderGuides": {

@@ -2203,12 +2203,13 @@ buildingStyle: 'TIBET', troops: 10000,
 // ============================================================
 /** [2026-10-26 主人令] 湖广三级文化：仅湖北、湖南、广东、广西、福建；越南及其他区域不迁。 */
 export const HUGUANG_CITY_IDS: ReadonlySet<string> = new Set([
-    // 湖北（11）
+    // 湖北（17）：2026-10-26 主人令「所有湖北据点」补入竹山、房陵、郧阳、武当、襄阳、枣阳
     'city_yiling', 'city_ying', 'city_suizhou', 'city_wushengguan', 'city_dangyang', 'city_laifeng',
     'city_jingling', 'city_yunmeng', 'city_wuchang', 'city_shicheng', 'city_qichun',
-    // 湖南（12）
+    'city_shangyong', 'city_fangling', 'city_yunyang', 'city_junzhou', 'city_xiangyang', 'city_zaoyang',
+    // 湖南（13）：2026-10-26 主人令「所有湖南据点」补入慈利
     'city_changsha', 'city_wuling', 'city_pinglong', 'city_wulingshan', 'city_bamian', 'city_yongzhou_hn',
-    'city_chenzhou2', 'city_yuanzhou', 'city_baling', 'city_linzheng', 'city_guiyang', 'city_shaozhou',
+    'city_chenzhou2', 'city_yuanzhou', 'city_baling', 'city_linzheng', 'city_guiyang', 'city_shaozhou', 'city_cili',
     // 广东（12）
     'city_qingyuan', 'city_hengpuguan', 'city_yangshanguan', 'city_huangxiguan', 'city_gaoliang', 'city_xinhui',
     'city_zhaoqing', 'city_haiyang', 'city_haikang', 'city_panyu', 'city_longchuan', 'city_qujiang',

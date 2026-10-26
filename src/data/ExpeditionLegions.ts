@@ -722,6 +722,18 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   xiaofulijiya_aerxitis: { name: '弗里吉亚军', tier: 4 }, // 阿尔西提斯：弗里吉亚地方本部。
   kamanniya_zongdu: { name: '卡尔曼军', tier: 4 },       // 阿斯普兰斯：卡尔曼尼亚总督区本部。
   bfe2_mardonius: { name: '普拉提亚军', tier: 3 },       // 马尔多尼乌斯：前479 普拉提亚战役波斯本部。
+
+  // [2026-10-26 剩余通制兵逐组复核] 只拆跨政权、跨时代及有明确主人的番号；同朝同军通制兵不另造名。
+  ribale_faheerdaolai: { name: '德莱木军', tier: 3 },     // 法赫尔道莱：白益王朝德莱木本部，非阿拔斯黑衣卫。
+  youfaladi_yehaiya: { name: '巴尔马克军', tier: 4 },     // 叶海亚·巴尔马克：巴尔马克家族部曲，非哈里发禁卫。
+  aliya_muhammad_tahir: { name: '塔希尔军', tier: 3 },    // 穆罕默德·塔希尔：塔希尔王朝呼罗珊本部。
+  bfe2_xerxes_i: { name: '希腊征军', tier: 3 },           // 薛西斯一世：前480 远征希腊的波斯王军，非埃兰战车。
+  lulisitan_shoujiang: { name: '卢里斯军', tier: 4 },     // 卢里斯坦守将：地方守军，不占古埃兰番号。
+  jiaye_punafamo: { name: '迦摩缕波军', tier: 3 },        // 普那伐摩：迦摩缕波伐摩王朝本部，非孔雀帝国战象。
+  muxikani_muxikanuosi: { name: '阿罗尔军', tier: 3 },    // 穆西卡诺斯：印度河下游阿罗尔本国军，非孔雀帝国战象。
+  sailiugu_yaghi: { name: '塞尔柱守军', tier: 3 },        // 雅吉·西扬：1098 安条克塞尔柱守军，非古代塞琉古方阵。
+  gen_carpini: { name: '安提瓦里军', tier: 4 },           // 柏朗嘉宾：1247—1252 任安提瓦里大主教，按驻地地方军配 T4，不占杜尚兵团。
+  bfe3_83: { name: '成汉军', tier: 3 },                  // 李势：成汉末帝成都本部，不占祖父李特的流民帅突骑。
 };
 
 /**

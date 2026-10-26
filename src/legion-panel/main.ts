@@ -32,6 +32,7 @@ import {
     attachUnitThumbZoom, hideThumbZoom,
 } from '../legion-editor/main';
 import { getNavalShipChineseName } from '../types/NavalShipTiers';
+import { getUnitLookNote } from '../data/UnitLookNotes';
 
 const BASE_16_LEGION_NAMES: Record<string, string> = {
     CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
@@ -417,7 +418,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
             if (pickerStatusFilter === 'unapplied' && isApplied) return false;
 
             if (!kw) return true;
-            if (u.name.includes(kw) || u.id.toLowerCase().includes(kwLower) || subLabelOf(u.id).includes(kw)) return true;
+            if (u.name.includes(kw) || u.id.toLowerCase().includes(kwLower) || subLabelOf(u.id).includes(kw) || getUnitLookNote(u.id).includes(kw)) return true;
             if (isChecked(u) && isApplied && (kw === '已套用' || kw === '已用' || kwLower === 'applied')) return true;
             if (isChecked(u) && !isApplied && (kw === '未套用' || kw === '闲置' || kw === '空闲' || kwLower === 'unapplied')) return true;
             if (used.some(leg => leg.includes(kw))) return true;
@@ -442,7 +443,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
         box.innerHTML = `
           <div style="padding:10px 14px;border-bottom:1px solid #2a2520;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <b style="color:#f6e05e;">选兵种 · ${kind === 'hero' ? '英雄（主队）' : (['前排', '中坚', '后排'][rowIdx] ?? '舰队')}</b>
-            <input id="lp-pk-search" placeholder="搜兵种 / 子分类 / 军团名 / ID" value="${esc(pickerKeyword)}"
+            <input id="lp-pk-search" placeholder="搜兵种 / 样貌 / 子分类 / 军团名 / ID" value="${esc(pickerKeyword)}"
               style="width:200px;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
             ${cats.map(c => {
               const icon = c === 'infantry' ? '🛡️ ' : c === 'cavalry' ? '🐎 ' : c === 'ranged' ? '🏹 ' : c === 'siege' ? '⚙️ ' : c === 'naval' ? '🚢 ' : c === 'hero' ? '👑 ' : c === 'civilian' ? '🧺 ' : c === 'other' ? '🐾 ' : '';
@@ -472,11 +473,14 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
                   const isApplied = checked && used.length > 0;
                   const borderCol = isCur ? '#c8a84b' : (isApplied ? '#2d5a38' : '#363024');
                   const bgCol = isCur ? '#3a2f1e' : (isApplied ? '#162218' : '#201d18');
-                  const usedTooltip = !checked
+                  // 🔴 [2026-10-26 主人令] 样貌备注（按兵模样子写的时代·文化·装扮）放在悬停提示最前
+                  const look = getUnitLookNote(u.id);
+                  const lookLine = look ? `样貌：${look}\n` : '';
+                  const usedTooltip = lookLine + (!checked
                       ? `【${u.name}】英雄不做套用检查`
                       : isApplied
                       ? `【${u.name}】已套用于 ${used.length} 支军团：\n` + used.map((l, i) => `  ${i + 1}. ${l}`).join('\n')
-                      : `【${u.name}】当前未在任何军团中套用（闲置）`;
+                      : `【${u.name}】当前未在任何军团中套用（闲置）`);
                   return `
                   <div class="lp-pk-card" data-uid="${esc(u.id)}" title="${esc(usedTooltip)}" style="display:flex;gap:8px;align-items:center;
                        background:${bgCol};
@@ -487,6 +491,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
                     <div style="min-width:0;flex:1;">
                       <div style="color:#e8e0d0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(u.name)}">${esc(u.name)}</div>
                       <div style="color:#8a8378;font-size:10px;margin-top:1px;">${esc(subLabelOf(u.id))}</div>
+                      ${look ? `<div style="color:#b8a77e;font-size:10px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="样貌：${esc(look)}">样貌：${esc(look)}</div>` : ''}
                       ${!checked ? '' : isApplied ? `
                         <div style="font-size:10px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(usedTooltip)}">
                           <span style="display:inline-block;padding:0 4px;border-radius:2px;background:#183620;border:1px solid #2d6639;color:#7ee787;font-weight:bold;font-size:9px;">✓ 已套用${used.length > 1 ? ` (${used.length})` : ''}</span>

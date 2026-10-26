@@ -814,7 +814,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '帝国时代东正教军团': {
+    '帝国时代伊斯坦布尔军团': {
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
