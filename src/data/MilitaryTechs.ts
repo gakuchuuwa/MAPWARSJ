@@ -145,14 +145,14 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'antiquity',
         basis: '汉代炒钢／百炼钢工艺成熟',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 47] }],   // 🔴 [2026-10-13 对账清空类] 删 45/46/50（DE 全表 0 单位）；47=斥候（DE 确有）
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'blast_furnace', name: '鼓风炉', de: 'Blast Furnace', year: 31,
         era: 'antiquity',
         basis: '东汉杜诗造水排（水力鼓风冶铁）；欧洲高炉迟至 12 世纪',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 47] }],   // 🔴 [2026-10-13 对账清空类] 同锻造线：删 45/46/50（DE 空类）
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'PERSIAN', ],
     },
 
     // ── 步兵护甲线：只作用于步兵6 ──────────────────────────────────────────
@@ -174,7 +174,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },   // 🔴 [2026-10-13 治本] 枪兵族按权威表已归 **6**（`UnitClasses.ts`），46 是 DE 空类 ⇒ 删除
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'plate_mail', name: '步兵钢甲', de: 'Plate Mail Armor', year: 1400,
@@ -184,7 +184,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },   // 🔴 [2026-10-13 治本] 枪兵族按权威表已归 **6**（`UnitClasses.ts`），46 是 DE 空类 ⇒ 删除
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 骑兵马铠线：骑兵12（含象、车）；🔴 不含弓骑36 ───────────────────────
@@ -196,7 +196,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'chain_barding', name: '骑兵锁甲', de: 'Chain Barding Armor', year: 1100,
@@ -206,7 +206,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 47] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'plate_barding', name: '骑兵钢甲', de: 'Plate Barding Armor', year: 1450,
@@ -216,7 +216,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 47] },
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [12, 47] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'STEPPE', 'NORTHEAST', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'STEPPE', 'NORTHEAST', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 远程攻击线：弓箭手0 / 弓骑36 ───────────────────────────────────────
@@ -251,7 +251,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 1, classes: [0, 36, 52] },
             { attr: 'los', op: 'add', value: 1, classes: [0, 36, 52] },
         ],
-        cultures: ['CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', ],
+        cultures: ['CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', ],
     },
 
     // ── 射手护甲线：弓箭手0 / 散兵23 / 🔴 弓骑36 / 火枪44 ──────────────────
@@ -273,7 +273,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [0, 23, 36, 44] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'ring_archer', name: '射手锁甲', de: 'Ring Archer Armor', year: 1300,
@@ -292,14 +292,14 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'antiquity',
         basis: '战马驯养与官牧良马自古典时代成熟，骑兵机动力提升',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [12, 23, 36, 47] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'bloodlines', name: '血统', de: 'Bloodlines', year: -101,
         era: 'antiquity',
         basis: '汉武帝得大宛汗血马，良种马育种',
         effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 23, 36, 47] }],
-        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'ORIE', 'EAST', 'PERSIAN', ],
     },
     {
         id: 'thumb_ring', name: '扳指', de: 'Thumb Ring', year: 1206,
@@ -335,7 +335,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'antiquity',
         basis: '古典军制步兵行军与耐力队列训练',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6] }],   // 🔴 [2026-10-13 治本] 同上：枪兵已归 6，删 DE 空类 46
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'tracking', name: '追踪', de: 'Tracking', year: null,
@@ -361,7 +361,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         //    类级只有 class 0 / 36 / 52，其余是逐个 unit 点名；**u5(HCANR 火枪) 那一项是 768 = 装甲类3 +0**，
         //    即 DE 的 Chemistry **不给火枪加穿刺**。⇒ 删掉 44，火枪 5 个兵种不再白得 +1 穿刺。
         effects: [{ attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36] }],
-        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 攻城技师（大学）：攻城器械/弩炮 +1 射程 ────────────────────────
@@ -541,7 +541,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'pierceAttack', op: 'add', value: 2, classes: [0, 36] },
             { attr: 'bonus', op: 'add', value: 2, classes: [0, 36], bonusClass: 11 },
         ],
-        cultures: ['JIANGNAN'],
+        cultures: ['JIANGNAN', 'HUGUANG'],
     },
     {
         id: 'sitting_tiger', name: '卧虎', de: 'Sitting Tiger', year: 222,
@@ -551,7 +551,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'pierceAttack', op: 'add', value: 2, classes: [13, 55] },
             { attr: 'bonus', op: 'mul', value: 1.2, classes: [13, 55], bonusClass: 11 },
         ],
-        cultures: ['JIANGNAN'],
+        cultures: ['JIANGNAN', 'HUGUANG'],
     },
     {
         id: 'kamandaran', name: '波斯步弓手', de: 'Kamandaran', year: 250,

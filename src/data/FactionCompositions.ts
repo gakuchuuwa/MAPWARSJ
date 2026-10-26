@@ -1455,8 +1455,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "panyao": {
-    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 帝国段 × 江南文化＝两江军团
-        legionName: "帝国时代两江军团",
+    // 🔴 [2026-10-26 主人令新增湖广] 主将实际为城堡段 × 湖广文化＝湘楚军团
+        legionName: "城堡时代湘楚军团",
         legionType: "sub",
     },
     // 🔴 [2026-10-05 主人令「该是什么就是什么」] 这 4 家原先没登记军团、走文化区保底挂错了，按时代＋族归位：
@@ -2756,4 +2756,27 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
 };
+
+// [2026-10-26 主人令新增湖广] 势力编制指针按主将的势力时代 × 五省新据点文化对齐；未迁主将的势力不动。
+const HUGUANG_FACTION_LEGIONS: Readonly<Record<string, string>> = {
+    nanyue: '古典时代荆楚军团',
+    longwu: '帝国时代湖广军团',
+    minyue: '古典时代荆楚军团',
+    sunwu_d: '古典时代荆楚军团',
+    dacheng: '帝国时代湖广军团',
+    nongzhigao: '城堡时代湘楚军团',
+    panyao: '城堡时代湘楚军团',
+    min: '封建时代荆湘军团',
+    wuling: '古典时代荆楚军团',
+    sui: '封建时代荆湘军团',
+    chen: '封建时代荆湘军团',
+    xiou: '古典时代荆楚军团',
+    cen_d: '帝国时代湖广军团',
+    zhuang_d: '帝国时代湖广军团',
+    machu: '城堡时代湘楚军团',
+    nanhan: '封建时代荆湘军团',
+};
+for (const [factionId, legionName] of Object.entries(HUGUANG_FACTION_LEGIONS)) {
+    if (FACTION_COMPOSITIONS[factionId]) FACTION_COMPOSITIONS[factionId].legionName = legionName;
+}
 

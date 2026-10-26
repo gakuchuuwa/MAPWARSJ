@@ -681,8 +681,47 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_liu_guoxuan: { name: '东宁水师', tier: 3 },         // 刘国轩：明郑东宁水师，不占沈有容澎湖守军番号。
   gen_charlemagne: { name: '伦巴第军', tier: 2 },         // 查理曼：773—774 征服伦巴第王国之本部。
   han_d_liubang: { name: '丰沛子弟', tier: 3 },           // 刘邦：丰沛起兵所率乡里部曲。
-  cangsong_machao: { name: '西凉铁骑', tier: 2 },         // 马超：凉州骑军，不占刘备白毦精兵番号。
+  cangsong_machao: { name: '渭南骑军', tier: 2 },         // 马超：211 渭南会战凉州联军骑军，不与华雄西凉铁骑混用。
   shu_masu: { name: '街亭军', tier: 3 },                 // 马谡：228 街亭所部，不占刘备白毦精兵番号。
+
+  // 名将专属番号下的跨时代／跨政权回落，改回各将真实本部；同朝通制兵仍允许合理共用。
+  mazhaer_bela_iv: { name: '赛约河军', tier: 3 },        // 贝拉四世：1241 赛约河战役匈牙利王军，非后世黑军。
+  mazhaer_charles_i: { name: '罗兹戈尼军', tier: 2 },    // 查理一世：1312 罗兹戈尼会战本部，非后世黑军。
+  shaiyue_aerpade: { name: '马扎尔军', tier: 3 },        // 阿尔帕德：马扎尔人迁居喀尔巴阡盆地之本部。
+  bfe3_80: { name: '鹿头关军', tier: 3 },                // 张微：鹿头关所部晋军，不占刘备白毦精兵。
+  bfe3_2: { name: '葭萌守军', tier: 3 },                 // 芦子霸王：葭萌地方守军，不占刘备白毦精兵。
+  bfe3_75: { name: '建宁夷兵', tier: 3 },                // 刘胄：建宁南中起事部众，不占刘备白毦精兵。
+  zhuozhou_anshouzhong: { name: '香积寺军', tier: 3 },   // 安守忠：757 香积寺战役燕军本部。
+  dayan_cuiqianyou: { name: '灵宝军', tier: 2 },         // 崔乾祐：756 灵宝伏破哥舒翰之本部。
+  bfe_yin_ziqi: { name: '睢阳围军', tier: 3 },           // 尹子奇：757 围攻睢阳所部。
+  lunbadi_alboin: { name: '伦巴第王军', tier: 2 },       // 阿尔博因：568 起征服意大利北部的伦巴第本部。
+  aiji_neiketaneibu: { name: '塞本尼军', tier: 3 },      // 内克塔内布：以塞本尼图斯为都的埃及王军。
+  hre_siegfried: { name: '科隆军', tier: 4 },            // 西格弗里德：科隆地方本部，不占查理马特图尔军。
+  bfe3_86: { name: '斯特拉斯军', tier: 3 },              // 克诺多马尔：357 斯特拉斯堡战役阿勒曼尼军。
+  falanji_kalman: { name: '巴伐利亚军', tier: 3 },       // 卡洛曼：所领巴伐利亚本部，不占查理马特图尔军。
+  gaoqi_d_xiaogui: { name: '白下军', tier: 3 },          // 萧轨：556 白下之战北齐军，不占高欢百保鲜卑。
+  gen_chen_youliang: { name: '鄱阳水师', tier: 3 },      // 陈友谅：1363 鄱阳湖水战本部。
+  chenli_d_zuoxianwang: { name: '武昌卫军', tier: 4 },   // 张必先：武昌守军本部。
+  gen_albert_riga: { name: '里加主教军', tier: 4 },      // 阿尔伯特：里加主教区本部，与宝剑骑士团区分。
+  gen_prettenberg: { name: '立窝尼亚军', tier: 3 },      // 普雷特贝格：立窝尼亚骑士团本部。
+  yamaxun_xibolvte: { name: '亚马逊骑', tier: 3 },       // 希波吕忒：史源转述的亚马逊女骑，非本都王军。
+  xian_d_xianfuren: { name: '高凉军', tier: 3 },         // 冼英：高凉本部，551 破李迁仕，非后世儋耳黎兵。
+  jialebi_brasilesuo: { name: '卡塔赫纳军', tier: 2 },   // 布拉斯·德·莱索：1741 卡塔赫纳守军大败英军。
+  gen_thoros: { name: '奇里乞亚军', tier: 3 },           // 托罗斯二世：奇里乞亚亚美尼亚本部，非乌拉尔图军。
+  gen_villaret: { name: '罗德岛骑士', tier: 3 },         // 维拉雷：罗德岛医院骑士团，与马耳他大围攻区分。
+  gen_toghtekin: { name: '大马士革军', tier: 3 },        // 图格特金：大马士革阿塔贝格本部，非萨迈拉古拉姆。
+  bfe_abdullah_ali: { name: '尼西比斯军', tier: 3 },     // 阿卜杜拉·本·阿里：754 尼西比斯叛乱所部。
+  bfe2_antiphilus: { name: '拉米亚舰队', tier: 3 },      // 安提菲卢斯：拉米亚战争雅典舰队，不占萨拉米斯舰。
+  bfe2_cleon: { name: '斯法克军', tier: 2 },             // 克里昂：前425 斯法克特里亚受降斯巴达军之本部。
+  fujisi_fujiweng: { name: '雅典舰队', tier: 3 },        // 福基翁：雅典海军本部，不占萨拉米斯舰。
+  keerman_xierzhan_shoujiang: { name: '克尔曼军', tier: 4 }, // 克尔曼守将：地方守军，不占大流士长生军。
+  golpayegan_yicheng: { name: '戈尔帕扬军', tier: 4 },   // 尼扎姆：戈尔帕扬地方本部。
+  bfe2_pharnabazus: { name: '达斯基利军', tier: 3 },     // 法那巴佐斯：达斯基利翁总督区本部。
+  mixiya_arsames: { name: '塔尔苏斯军', tier: 3 },       // 阿萨米斯：奇里乞亚塔尔苏斯本部。
+  panfeiliya_apollonios: { name: '潘菲利亚军', tier: 4 }, // 阿波罗尼奥斯：潘菲利亚地方本部。
+  xiaofulijiya_aerxitis: { name: '弗里吉亚军', tier: 4 }, // 阿尔西提斯：弗里吉亚地方本部。
+  kamanniya_zongdu: { name: '卡尔曼军', tier: 4 },       // 阿斯普兰斯：卡尔曼尼亚总督区本部。
+  bfe2_mardonius: { name: '普拉提亚军', tier: 3 },       // 马尔多尼乌斯：前479 普拉提亚战役波斯本部。
 };
 
 /**

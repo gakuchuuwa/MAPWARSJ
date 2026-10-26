@@ -647,7 +647,7 @@ function resolveAvailableBgmFolder(folder: string): string {
 }
 
 /**
- * 🔴 [2026-10-18 主人定「按 66 文化分曲子、各自独立、符合文化」]
+ * 🔴 [2026-10-18 主人定「按文化分曲子、各自独立、符合文化」]；2026-10-26 起 67 文化。
  * 🔴 [2026-10-20 主人定「每个文化至少 2 首」] 每池最低 **2 首**（原 2026-10-18「每个文化至少 3 首」旧标准作废）。
  * 每分支一个独立曲池（不再共享母体）：[专属主题曲] + [本文化自有曲]。
  */
@@ -684,6 +684,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     INDIA: ['de_INDIA', 'INDIA', 'india_a'],
     JAPAN: ['de_JAPAN', 'JAPAN', 'nobunaga', 'shogun_tsunami', 'shogun_shinobue', 'shogun_daimyo'],
     JIANGNAN: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
+    HUGUANG: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
     KHITAN: ['de_KHITAN', 'HEXI', 'khitan_a'],
     KHMER: ['de_KHMER', 'khmer_a', 'khmer_b'],
     KOREA: ['de_KOREA', 'KOREA', 'korea_a'],

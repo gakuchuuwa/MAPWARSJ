@@ -1281,7 +1281,7 @@ window.CULTURE_GROUPS = CULTURE_GROUPS;
 /**
  * 第三层：专属定制文明建筑风格列表
  * 🔴 [2026-09-18 主人定「每个据点都必须是一级 16 中的一种，其次必须是二级 62+3 中的一种」]
- *    三级 3 类同样是「一级 16 的细分」，所以 deStyleOfCultureKey 必须**两层都查** ——
+ *    三级 5 类同样是「一级 16 的细分」，所以 deStyleOfCultureKey 必须**两层都查** ——
  *    改前只查二级 62，导致 buildingStyle 写 TIBET / WESTERN / MOBEI_MONGOL 的 146 座据点
  *    在编辑器里一级那一格**留白**（实测 146 座），等于"没有一级风格"。下面同样挂到 window。
  * 在一层 16 母体 + 二层 62 文明分支之上，为拥有独立建筑视觉、专属宗堡与特殊据点形态的文明单独设立
@@ -1319,6 +1319,13 @@ const LAYER3_CUSTOM_GROUPS = [
     group: '🏛️ 古典希腊与城邦专属卫堡',
     branches: [
       { key: 'GREECE', deStyle: 'GREEK', castle: 'GREEK_CASTLE_AGE3', label: '🏛️ 希腊（希腊通用要塞）' },
+    ]
+  },
+  {
+    // [2026-10-26 主人令] 湖广：湖北、湖南、广东、广西、福建；越南不动。
+    group: '🏯 湖广与岭南山城水寨',
+    branches: [
+      { key: 'HUGUANG', deStyle: 'ASIA', castle: 'LINGNAN_CASTLE_AGE3', label: '🏯 湖广（湖北—湖南—广东—广西—福建）' },
     ]
   },
 ];

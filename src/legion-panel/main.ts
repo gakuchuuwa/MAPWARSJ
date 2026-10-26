@@ -75,7 +75,7 @@ interface LegionRow {
 /** 🔴 [2026-10-25 主人令] 文化＝一片区域的文化（当地人的生活、建筑风格），不是政权/民族；
  *  下面写区域名只是便于理解，建筑风格键与素材不动，军团名也不强制改名。 */
 const STYLE_LABELS: Record<string, string> = {
-    JAPAN: '日本', CENTRAL: '中原', WEI: '河朔', JIANGNAN: '江南', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
+    JAPAN: '日本', CENTRAL: '中原', WEI: '河朔', JIANGNAN: '江南', HUGUANG: '湖广', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
     GERMANIC: '条顿', FRANKS: '法兰克', BURGUNDIANS: '勃艮第', BRITONS: '不列颠', CELTS: '凯尔特', VIKINGS: '维京', GOTHS: '哥特', SAXONS: '撒克逊', VARANGIANS: '瓦良格', DANES: '丹麦',
     BYZANTINE: '拜占庭', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚',
     POLES: '波兰', BOHEMIANS: '波希米亚', MAGYAR: '马扎尔', SLAVIC: '斯拉夫', LITHUANIANS: '立陶宛', BULGARIANS: '保加利亚',
@@ -99,8 +99,8 @@ const cn = (id: string) => (WAR_TYPES as Record<string, { name?: string }>)[id]?
 /**
  * 建筑文化（buildingStyle）下拉项 —— 只有两级，标签口径与左表「建筑风格」列一致（STYLE_LABELS）。
  *   ① 文明建筑文化：level2Civ62Legions 里那 62 个文明的建筑文化（实测 2026-10-16：62 条 / 去重 62）
- *   ② 其它建筑文化：不属于上面 62 个的（希腊 / 青藏 / 西域 / 漠南鲜卑 等，实测 4 个）
- *   —— 合计 62 + 4 = 66。**没有「一级 16 母体」这一组**：母体只是素材底座，不是建筑文化。
+ *   ② 其它建筑文化：三级自建区域文化（希腊 / 青藏 / 西域 / 漠南 / 湖广）
+ *   —— 合计 62 + 5 = 67。**没有「一级 16 母体」这一组**：母体只是素材底座，不是建筑文化。
  * 两个组的数量都是**现算的**，不写死，数据增删后标签自动跟着变。
  */
 function styleSelectHtml(current: string): string {

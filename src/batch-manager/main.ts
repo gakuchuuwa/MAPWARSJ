@@ -1833,7 +1833,7 @@ async function handleQuickSubmit(): Promise<void> {
                         cityName: f.cityName,
                         lat: f.lat, lng: f.lng,
                         region: f.cityBranchKey,
-                        buildingStyle: f.cityBranchKey,   // 🔴 [2026-10-14] buildingStyle 只写 66 种之一
+                        buildingStyle: f.cityBranchKey,   // 🔴 [2026-10-14] buildingStyle 只写 67 种之一
                     }]
                 }),
             });
@@ -2048,7 +2048,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
                     factionId, factionName, flagText,
                     cityId, cityName, lat, lng,
                     region: region || undefined,
-                    buildingStyle: region || undefined,   // 🔴 [2026-10-14] buildingStyle 只写 66 种之一
+                    buildingStyle: region || undefined,   // 🔴 [2026-10-14] buildingStyle 只写 67 种之一
                     cityType: get('cityType') || 'small_city',
                     mirror: (form.querySelector('input[name="mirror"]') as HTMLInputElement | null)?.checked || undefined,
                 }]
@@ -2809,8 +2809,8 @@ function openCityPanel(cityId: string): void {
     const c = cityList().find(x => x.id === cityId);
     if (!c) return;
     const factions = entityData?.factions ?? [];
-    // 🔴 [2026-10-14 主人令「据点编辑中设计哪种建筑风格，就是哪种……只能在这66种中选择，显示，和其他一切无关，
-    //    一级只是一种城墙样式的备注而已」] 只留一个 66 选 1，存盘只写 buildingStyle；一级只按所选风格显示为备注。
+    // 🔴 [2026-10-14 主人令「据点编辑中设计哪种建筑风格，就是哪种……只能在这67种中选择，显示，和其他一切无关，
+    //    一级只是一种城墙样式的备注而已」] 只留一个 67 选 1，存盘只写 buildingStyle；一级只按所选风格显示为备注。
     const curStyle = resolveCityHierarchy(c).branchKey ?? '';
     const wallNoteOf = (k: string): string => {
         const b = ALL_BRANCHES_MAP[k];
@@ -2832,7 +2832,7 @@ function openCityPanel(cityId: string): void {
           </select>
         </label>
         <div style="background:#16130f;padding:10px 12px;border:1px solid #3a342c;border-radius:6px;margin-bottom:12px">
-          <label><span>🏛️ 建筑风格（66 选 1：二级 62 ＋ 三级 4）</span>
+          <label><span>🏛️ 建筑风格（67 选 1：二级 62 ＋ 三级 4）</span>
             <select name="buildingStyle" id="bm-ce-style">
               <option value="" ${curStyle ? '' : 'selected'}>── 请选择 ──</option>
               ${[...CULTURE_62_GROUPS, ...LAYER3_CUSTOM_GROUPS].map(g => `
@@ -2876,7 +2876,7 @@ function openCityPanel(cityId: string): void {
           <button type="button" id="bm-city-close" class="bm-btn">关闭</button>
         </div>
         <p style="font-size:11px;color:#8a8272;margin-top:8px;line-height:1.6">
-          建筑风格只写 buildingStyle（66 选 1），地图与战场只认这一项。<br />
+          建筑风格只写 buildingStyle（67 选 1），地图与战场只认这一项。<br />
           改坐标会先做 50km 邻近检查（项目铁律），不过关则整条不写盘。
         </p>
       </form>`;
@@ -2901,9 +2901,9 @@ function openCityPanel(cityId: string): void {
 async function saveCityEdits(cityId: string, form: HTMLFormElement): Promise<void> {
     const fd = new FormData(form);
     const style = String(fd.get('buildingStyle') ?? '').trim();
-    if (!ALL_BRANCHES_MAP[style]) { showToast('请选择建筑风格（66 种之一）', true); return; }
+    if (!ALL_BRANCHES_MAP[style]) { showToast('请选择建筑风格（67 种之一）', true); return; }
 
-    // 🔴 [2026-10-14 主人令] 建筑风格只写 buildingStyle（66 选 1），不再写 region。
+    // 🔴 [2026-10-14 主人令] 建筑风格只写 buildingStyle（67 选 1），不再写 region。
     const fields: Record<string, string | number | boolean | null> = {
         name: String(fd.get('name') ?? '').trim(),
         type: String(fd.get('type') ?? ''),

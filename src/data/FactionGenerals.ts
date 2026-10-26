@@ -223,6 +223,7 @@ import { isGeneralOnStage, getGameMode } from './generalOnStage';
 
 
 import { getGeneralProfile } from './general-skills/profiles';
+import { HUGUANG_CITY_IDS } from './cities_v2';
 
 
 
@@ -13872,7 +13873,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_toghtekin', cityId: 'city_damasikusi', generalName: '图格特金', portrait: '/assets/ORIE/gen_toghtekin.png', legionName: '城堡时代撒拉森军团' , eliteName: '突厥古拉姆', eliteTier: 2},
+        { generalId: 'gen_toghtekin', cityId: 'city_damasikusi', generalName: '图格特金', portrait: '/assets/ORIE/gen_toghtekin.png', legionName: '城堡时代撒拉森军团' , eliteName: '大马士革军', eliteTier: 3}, // 大马士革阿塔贝格本部，非萨迈拉古拉姆
 
 
 
@@ -14285,7 +14286,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_abdullah_ali', factionId: 'abasi', cityId: 'city_damasikusi', generalName: '阿卜杜拉·本·阿里', portrait: '/assets/ORIE/bfe_abdullah_ali.png', eliteName: '叙利亚军', eliteTier: 3 },
+        { generalId: 'bfe_abdullah_ali', factionId: 'abasi', cityId: 'city_damasikusi', generalName: '阿卜杜拉·本·阿里', portrait: '/assets/ORIE/bfe_abdullah_ali.png', eliteName: '尼西比斯军', eliteTier: 3 }, // 754 尼西比斯叛乱所部
     ],
 
 
@@ -17244,6 +17245,22 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'kalbids_ibnhawwas', factionId: 'kalbids', cityId: 'city_palermo', generalName: '伊本·哈瓦斯', portrait: '/assets/SICILIANS/kalbids_ibnhawwas.png' },   // 🔴 [2026-10-25 按史] 卡尔比德西西里埃米尔（巴勒莫），1063 切拉米为罗杰一世所败（Malaterra《西西里史》II.33）
     ],
 };
+
+// [2026-10-26 主人令新增湖广] 只改迁入五省据点武将的旧江南手写军团；起义军、先秦及其他三级军团不动。
+const HUGUANG_LEGION_BY_OLD: Readonly<Record<string, string>> = {
+    古典时代吴越军团: '古典时代荆楚军团',
+    封建时代江淮军团: '封建时代荆湘军团',
+    城堡时代江南军团: '城堡时代湘楚军团',
+    帝国时代两江军团: '帝国时代湖广军团',
+};
+for (const entry of Object.values(FACTION_GENERALS as Record<string, FactionGeneralEntry>)) {
+    const list = Array.isArray(entry) ? entry : [entry as FactionGeneral];
+    for (const general of list) {
+        if (!HUGUANG_CITY_IDS.has(general.cityId) || !general.legionName) continue;
+        const legionName = HUGUANG_LEGION_BY_OLD[general.legionName];
+        if (legionName) general.legionName = legionName;
+    }
+}
 
 
 

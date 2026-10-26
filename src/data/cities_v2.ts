@@ -51,7 +51,7 @@ export type BuildingStyle =
      *  （`buildingStyle === 'YURT'` → 毡帐营寨；deCastleAssets: YURT → MONG_CASTLE_AGE3），
      *  但联合类型里没有它 → 「游戏认、数据不认」。补上后编辑器与游戏取值一致。 */
     | 'YURT'
-    /** [2026-09-16 主人定] 62 二级文明（有独特城堡）；建筑文化共 62 + 4 = 66 种（一级 16 母体是另一套据点分类，不作建筑文化）。
+    /** [2026-09-16 主人定] 62 二级文明（有独特城堡）；建筑文化共 62 + 5 = 67 种（一级 16 母体是另一套据点分类，不作建筑文化）。
      *  重名 5 个（EAST/ORIE/PERSIAN/PURU/THRACIAN）已在上方母体里，此处不再重复。 */
     | 'JAPAN' | 'CENTRAL' | 'WEI' | 'JIANGNAN' | 'BASHU' | 'KHITAN' | 'NORTHEAST' | 'MONGOL' | 'KOREA'
     // 🔴 [2026-09-18 主人定「每座据点都必须是一级 16 中的一种，其次必须是二级 62+3 中的一种」]
@@ -826,12 +826,12 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_maozhou', name: '汶山城', factionId: 'han_d', lat: 31.693115, lng: 103.867493, type: 'small_city', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' , note: '推算：城居 1.2 万（汶山＝汶山郡治，同期郡城 1–1.5 万）→ 小城' },
 
 
-    // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-18 主人令「岭南算江南」→ JIANGNAN：清远（广东）
+    // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-26 主人令「岭南归入湖广」→ HUGUANG：清远（广东）
     { id: 'city_qingyuan', name: '清远', factionId: 'chen', lat: 23.68, lng: 113.06, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '推算：城居 1.5 万（清远，同期县城 1–2 万）→ 小城' },
 
     { id: 'city_gaoque', name: '高阙塞', factionId: 'qin', lat: 41.195202, lng: 107.166138, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI', mirror: true, note: '定级依据§6.2：赵/秦长城高阙塞，石砌/夯土墙 → 险要' },
 
-    // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-18 主人令「岭南算江南」→ JIANGNAN：横浦关（广东南雄）：秦五岭关隘
+    // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-26 主人令「岭南归入湖广」→ HUGUANG：横浦关（广东南雄）：秦五岭关隘
     { id: 'city_hengpuguan', name: '横浦关', factionId: 'nanyue', lat: 25.32, lng: 114.26, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
     {
@@ -854,7 +854,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         lat: 24.16, lng: 113.38,
         type: 'pass',
         region: 'JIANGNAN',
-        // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-18 主人令「岭南算江南」→ JIANGNAN：湟溪关（广东）：秦五岭关隘
+        // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 2026-10-26 主人令「岭南归入湖广」→ HUGUANG：湟溪关（广东）：秦五岭关隘
         buildingStyle: 'JIANGNAN',
         troops: 10000,
         note: '湟溪关；南岭入粤要隘（南汉刘龑驻防）。定级依据§6.2：关隘性质，名字带「关」→ 按 2026-10-25 标准判险要 PASS'
@@ -2201,6 +2201,25 @@ buildingStyle: 'TIBET', troops: 10000,
 // ============================================================
 // 汇总导出
 // ============================================================
+/** [2026-10-26 主人令] 湖广三级文化：仅湖北、湖南、广东、广西、福建；越南及其他区域不迁。 */
+export const HUGUANG_CITY_IDS: ReadonlySet<string> = new Set([
+    // 湖北（11）
+    'city_yiling', 'city_ying', 'city_suizhou', 'city_wushengguan', 'city_dangyang', 'city_laifeng',
+    'city_jingling', 'city_yunmeng', 'city_wuchang', 'city_shicheng', 'city_qichun',
+    // 湖南（12）
+    'city_changsha', 'city_wuling', 'city_pinglong', 'city_wulingshan', 'city_bamian', 'city_yongzhou_hn',
+    'city_chenzhou2', 'city_yuanzhou', 'city_baling', 'city_linzheng', 'city_guiyang', 'city_shaozhou',
+    // 广东（12）
+    'city_qingyuan', 'city_hengpuguan', 'city_yangshanguan', 'city_huangxiguan', 'city_gaoliang', 'city_xinhui',
+    'city_zhaoqing', 'city_haiyang', 'city_haikang', 'city_panyu', 'city_longchuan', 'city_qujiang',
+    // 广西（14）
+    'city_bushan', 'city_yongzhou', 'city_jintian', 'city_lingqu', 'city_huashan', 'city_hepu', 'city_cen',
+    'city_yongan', 'city_guyanguan', 'city_hezhou', 'city_mailingguan', 'city_cangwu', 'city_tianyang', 'city_tanzhong',
+    // 福建（10）
+    'city_fuzhou', 'city_zhenghe', 'city_zhangzhou', 'city_tingzhou', 'city_shaxian',
+    'city_yanping', 'city_jianning', 'city_qingjingsi', 'city_chongan', 'city_hengyu',
+]);
+
 export const CITIES_V2: CityDataV2[] = [
     // ── 2026-10-24 主人「添加据点」：环非洲 7 港（本地文化判定，见 docs/02-design/海路网-单一口径-2026-10-24.md）──
     { id: 'city_kilwa', name: '基尔瓦', factionId: 'kilwa', lat: -8.96, lng: 39.5128, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；基尔瓦基西瓦尼（Kilwa Kisiwani，斯瓦希里语「基尔瓦岛」）：基尔瓦苏丹国都城（约957–1513），13–15世纪斯瓦希里海岸霸主；鼎盛逾万人（>1万＝小城）。珊瑚石大清真寺（11世纪始建、13世纪16穹顶）、Husuni Kubwa 宫、Gereza 堡，UNESCO 世界遗产（1979）。按史＋依据：https://whc.unesco.org/en/list/144/ 、https://en.wikipedia.org/wiki/Kilwa_Kisiwani 、https://en.wikipedia.org/wiki/Kilwa_Sultanate；推算：城居 1.2 万（基尔瓦苏丹国都城，鼎盛逾万人）→ 小城' },
@@ -3808,7 +3827,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_hangai', name: '杭爱山', factionId: 'kaerka', lat: 47, lng: 101, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', tier: 4, note: '杭爱山；喀尔喀三音诺颜部牧地，无城郭 → 城寨' },
     { id: 'city_onon', name: '斡难河', factionId: 'zhadalan', lat: 49, lng: 112, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', tier: 4, note: '斡难河；札答兰部／蒙古乞颜部牧地，无城郭 → 城寨' },
     { id: 'city_norwich', name: '诺里奇', factionId: 'danmai', lat: 52.63, lng: 1.3, type: 'small_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'BRITONS', note: '诺里奇；东盎格利亚最大城（古思伦丹麦维京统治），中世纪人口约 1 万 → 小城；推算：城居 1 万（诺里奇，中世纪约 1 万）→ 小城' },
-        ];
+].map((city): CityDataV2 => { const base = city as CityDataV2; return HUGUANG_CITY_IDS.has(base.id) ? { ...base, buildingStyle: 'HUGUANG' as const } : base; });
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本
 // region: 'KOREA',         // 朝鲜

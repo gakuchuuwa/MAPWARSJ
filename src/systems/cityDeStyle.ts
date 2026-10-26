@@ -268,6 +268,7 @@ export const TIER3_STYLE_TO_BASE16: Record<string, string> = {
     XIANBEI: 'ASIA',
     // 🔴 [2026-10-05 主人令「建立一个三级建筑风格，希腊」] 新建三级专属风格 `GREECE`（希腊）→ 一级 GREEK。
     GREECE: 'GREEK',
+    HUGUANG: 'ASIA',
 };
 
 /** 某据点的**一级建筑风格**（16 选 1，永不返回三级皮肤）。

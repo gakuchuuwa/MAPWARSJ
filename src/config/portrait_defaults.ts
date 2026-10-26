@@ -189,12 +189,12 @@ export const REGION_PORTRAIT_POOLS: Record<RegionType, string[]> = Object.fromEn
     REGION_ORDER.map((r) => [r, collectRegionPortraitPool(r)]),
 ) as Record<RegionType, string[]>;
 
-// ── 66 文化立绘夹（62 二级 + 4 三级；夹名＝文化键，与 public/assets/{key}/ 一一对应）──
+// ── 67 文化立绘夹（62 二级 + 5 三级；夹名＝文化键，与 public/assets/{key}/ 一一对应）──
 // 🔴 [2026-10-25 主人令「凡是没有武将的据点，看据点的文化，然后随机从该文化的文件夹里选立绘」]
 //    上面那张表按旧 15/18 文化区（RegionType）分池，而 SOUTHAM_IMPERIAL、MANCHU、JURCHEN 这类
 //    文化区根本没有物理立绘夹 → 无将据点的守军抽签落到 CENTRAL / panjun 池，
-//    实测科马格雷（MUISCA 建筑、无武将）的守军立绘被抽成中原武将。故按 66 文化夹另建一张池。
-/** 66 文化键（62 二级 + 4 三级；顺序同 CultureHierarchy） */
+//    实测科马格雷（MUISCA 建筑、无武将）的守军立绘被抽成中原武将。故按文化夹另建一张池（2026-10-26 起 67 文化）。
+/** 67 文化键（62 二级 + 5 三级；顺序同 CultureHierarchy） */
 export const CULTURE66_KEYS: readonly string[] = (() => {
     const keys = [
         ...CULTURE_62_GROUPS.flatMap((g) => g.branches.map((b) => b.key)),
@@ -203,13 +203,15 @@ export const CULTURE66_KEYS: readonly string[] = (() => {
     return [...new Set(keys)];
 })();
 
-/** 66 文化 → 该文化唯一物理立绘夹 `/assets/{CULTURE66}/` 的 PNG 清单 */
+/** 67 文化 → 该文化唯一物理立绘夹 `/assets/{CULTURE66}/` 的 PNG 清单；湖广复用江南池。 */
 export const CULTURE66_PORTRAIT_POOLS: Record<string, string[]> = Object.fromEntries(
     CULTURE66_KEYS.map((key) => [
         key,
         _allPortraitPaths.filter((p) => p.toLowerCase().startsWith(`/assets/${key.toLowerCase()}/`)),
     ]),
 );
+// 湖广为新增三级文化，不另造立绘素材；按主人授权沿用原江南立绘池。
+CULTURE66_PORTRAIT_POOLS.HUGUANG = CULTURE66_PORTRAIT_POOLS.JIANGNAN;
 
 // Windows 大小写不敏感：统一转小写存储，查找时也转小写
 const KNOWN_PORTRAIT_PATHS = new Set(

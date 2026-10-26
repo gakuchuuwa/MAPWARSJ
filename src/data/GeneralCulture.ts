@@ -1610,6 +1610,11 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'kalbids_ibnhawwas': 'SICILIANS',   // 卡尔比德｜伊本·哈瓦斯｜据点 巴勒莫
 };
 
+// [2026-10-26 主人令新增湖广] 同步迁入五省据点的武将兜底文化；其余文化项保持原值。
+for (const generalId of Object.keys(GENERAL_CULTURE)) {
+    if (getGeneralCityCulture(generalId) === 'HUGUANG') GENERAL_CULTURE[generalId] = 'HUGUANG';
+}
+
 /**
  * 武将的建筑文化。
  * 🔴 [2026-10-24 主人「一个据点一个文化，武将和据点要同文化」] **以据点建筑风格为准**（唯一真相）：

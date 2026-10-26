@@ -278,9 +278,16 @@ export const LAYER3_CUSTOM_GROUPS: readonly CultureGroup[] = [
             { key: 'GREECE', deStyle: 'GREEK', castle: 'GREEK_CASTLE_AGE3', label: '🏛️ 希腊（希腊通用要塞）' },
         ],
     },
+    {
+        group: '🏯 湖广与岭南山城水寨',
+        deStyle: 'ASIA',
+        branches: [
+            { key: 'HUGUANG', deStyle: 'ASIA', castle: 'LINGNAN_CASTLE_AGE3', label: '🏯 湖广（湖北—湖南—广东—广西—福建）' },
+        ],
+    },
 ];
 
-/** 全量分支字典 key → CultureBranch（含 62 文明 + 4 专属） */
+/** 全量分支字典 key → CultureBranch（含 62 文明 + 5 专属） */
 export const ALL_BRANCHES_MAP: Record<string, CultureBranch> = {};
 
 for (const g of CULTURE_62_GROUPS) {
