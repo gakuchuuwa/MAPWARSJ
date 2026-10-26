@@ -984,6 +984,7 @@ export class Scene13WarLayer {
             if (quotaPop > 0) this.drainSidePool(ef, quotaPop);
         } else if (six === 'gongzhan') {
             // 3. 【攻】猛攻：20 秒内己方全军伤害 ×1.5、攻速 ×1.5、移速 ×1.3
+            for (const m of this.men) if (m.f === f && m.hp > 0) vfxTargets.push(m);
             this.skillFrenzyTimer[f] = SKILL_FRENZY_SEC;
         } else if (six === 'dizhan') {
             // 4. 【敌】固己防：己方场上存活士兵立即满血，且 20 秒内受到伤害降低六成（×0.4）
@@ -993,6 +994,7 @@ export class Scene13WarLayer {
                 if (m.f === f && m.hp > 0) {
                     const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
                     if (m.hp < maxHp) m.hp = maxHp;
+                    vfxTargets.push(m);
                 }
             }
             this.skillShieldTimer[f] = SKILL_SHIELD_SEC;
@@ -1000,6 +1002,7 @@ export class Scene13WarLayer {
             // 5. 【混】乱阵：当场驱散敌方正在生效的所有技能 Buff，并令敌军陷入混乱 15 秒（胡乱走动、期间不攻击，受一切伤害 ×2）
             // 🔴 [2026-10-22 主人令「混乱中的兵吃伤害双倍」「技能应该体现出明显的效果」] 守城站岗的兵同样混乱：原地发愣不还手、受伤翻倍
             //    （不离岗，免得城门没破就把守军乱出城外）。受伤倍率见 panicTakenMul。
+            for (const m of this.men) if (m.f === ef && m.hp > 0 && !m.march && !m.hero && !m.siegeW) vfxTargets.push(m);
             this.skillFrenzyTimer[ef] = 0;
             this.skillShieldTimer[ef] = 0;
             this.skillPanicTimer[ef] = SKILL_PANIC_SEC;

@@ -34,7 +34,7 @@ import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { applyLegionCultureComposition, getCultureMovementClass, isCultureCavalryOnly, type FormationMode, type MovementClass } from '../types/CultureFormations';
 import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
-import { getGeneralOwnFactionId } from '../data/FactionGenerals';
+import { getFactionIdOfGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { getGameMode } from '../data/generalOnStage';
 import { isDeployHeld } from './DeployGate';
@@ -1520,8 +1520,11 @@ export class Army implements IBattleUnit {
         //    叛军 panshu 是「没有武将的据点」的兜底无主状态（无字旗、不能出征），**带武将的部队绝不能显示成叛军**。
         //    首战「敌势力＝本方势力（史实内战／缺对应政权）」时，引擎拿 panshu 当占位势力让两军能互相开打；
         //    显示层一律回到武将自己的势力（只影响旗面/染色/播报，`getFactionId()` 的 AI/归属/攻防判定不变）。
+        // 🔴 [2026-10-26 主人令「军团排行榜中，不要显示叛军的信息，没有意义」] 查势力要走 `getFactionIdOfGeneral`
+        //    （＝武将表＋战场人物表，与 CombatUI 显示口径同一真源）：首战敌将多为 `bfe_*` 战场人物，
+        //    `getGeneralOwnFactionId` 只查武将表、查不到就退回 panshu，军团榜里就冒出一个「叛军」。
         if (isBlankRebelFaction(this._factionId) && this._generalId) {
-            return getGeneralOwnFactionId(this._generalId) ?? this._factionId;
+            return getFactionIdOfGeneral(this._generalId) ?? this._factionId;
         }
         return this._factionId;
     }

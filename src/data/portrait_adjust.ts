@@ -7968,7 +7968,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 30
         },
         "/assets/ORIE/maidina_halide.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 12
         },
@@ -8381,6 +8381,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": 25
+        },
+        "/assets/BYZANTINE/bfe_vahan.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {

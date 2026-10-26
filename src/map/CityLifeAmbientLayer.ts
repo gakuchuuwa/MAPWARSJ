@@ -4,6 +4,7 @@ import type { GameMap } from './GameMap';
 import { CITIES_V2, type CityDataV2, type BuildingStyle } from '../data/cities_v2';
 import { LandSeaSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
+import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 
 /**
  * CityLifeAmbientLayer — 战略地图「67 文化据点民生生态 & 战火破坏/尸骸渐变」环境层（2026-10-26 主人定稿）。
@@ -91,6 +92,10 @@ interface CityLifeActor {
     isAnimal: boolean;
     isSeaFishing: boolean;     // 是否为海上渔船 + 鱼群（严格在海中）
     fishResource: string;      // 海中伴生鱼群（DORADO_FISH / SALMON_FISH / TUNA_FISH / SHORE_FISH）
+    groundResource?: string;   // 组合内采集物：果子／木材／矿石
+    groundResourceLib?: 'SUCAI_RESOURCE' | 'SUCAI_NATURE';
+    hasFarm?: boolean;         // 农夫组合带四季农田
+    buildingResource?: string; // 组合内随机建筑：磨坊／牧栏／毡帐／小屋等
     lib: 'SUCAI' | 'SUCAI_ANIMAL';
     dir: string;
     homePos: Pt;               // 田间/牧场/林间/海上渔场劳作点
@@ -121,6 +126,7 @@ const SHIP_SCALE_BASE = 0.46;
 const FISH_SCALE_BASE = 0.44;
 const WRECK_SCALE_BASE = 0.44;
 const HUNTING_TREE_BASE_PX = 27;
+const FARM_BY_SEASON = ['FARM_SPRING', 'FARM_SUMMER', 'FARM_AUTUMN', 'FARM_WINTER'] as const;
 const CULL_MARGIN_DEG = 0.5;
 // 自动乱斗镜头一直跟着正在打的仗，半径过大会让画面里的据点永远处于战火态、看不到民生。
 // 只把战场贴身（约 30 公里）内的据点算进去，被围城本身另由 siegeCityId 判定。
@@ -128,7 +134,6 @@ const COMBAT_HIDE_RADIUS_DEG = 0.3;
 const WAR_AFTERMATH_HOLD_MS = 8500;
 const FADE_TO_DAMAGE_SEC = 1.1;
 const FADE_RECOVER_PEACE_SEC = 2.4;
-const FADE_SEASON_SEC = 1.4;
 
 /** 67 文化 → 生计配置表（注意：陆地列表不含渔夫，所有渔业一律在海中生成渔船与海鱼群） */
 const LIVELIHOOD_SPECS: Record<LivelihoodCategory, LivelihoodSpec> = {
@@ -459,13 +464,6 @@ export class CityLifeAmbientLayer {
         return typeof s === 'number' && s >= 0 && s <= 3 ? s : 0;
     }
 
-    private getSeasonBlend(): number {
-        const rem = (window as any).game?.timeSystem?.getTimeToNextSeason?.();
-        if (typeof rem !== 'number' || !Number.isFinite(rem)) return 0;
-        if (rem >= 2.0) return 0;
-        return Math.max(0, Math.min(1, 1 - rem / 2.0));
-    }
-
     private isHiddenNow(): boolean {
         if (!this.layerVisible) return true;
         // scene13War 在自动乱斗时也会短暂激活；只有真正进入 13 战术画面才遮挡战略民生层。
@@ -620,6 +618,7 @@ export class CityLifeAmbientLayer {
         const cLat = city.lat;
         const cLng = city.lng;
         const isColdWinter = Math.abs(cLat) >= spec.winterRestAboveLat;
+        const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, cLat, cLng, city.buildingStyle);
 
         const villagerPresets: WarDamagePreset[] = [
             'corpse_and_fence',
@@ -634,7 +633,6 @@ export class CityLifeAmbientLayer {
         const forestNodes = cat === 'forest_hunting' ? this.getOrCreateCityForest(city) : [];
 
         for (let i = 0; i < totalSlots; i++) {
-            const h1 = strHash01(city.id, i * 17 + 1);
             const h2 = strHash01(city.id, i * 17 + 2);
             const h3 = strHash01(city.id, i * 17 + 3);
             const h4 = strHash01(city.id, i * 17 + 4);
@@ -672,8 +670,8 @@ export class CityLifeAmbientLayer {
                         phase,
                         slotIdx: i,
                         winterActive,
-                        viewAlpha: 0,
-                        peaceAlpha: 0,
+                        viewAlpha: 1,
+                        peaceAlpha: 1,
                         actionAlpha: 1,
                         damageBlend: 0,
                         combatStartSec: 0,
@@ -687,16 +685,11 @@ export class CityLifeAmbientLayer {
                 }
             }
 
-            // 陆地槽位：前面槽位放村民，后面槽位放伴生家畜/猎物
-            const animalRatio = (cat === 'nomadic_steppe' || cat === 'nomadic_oasis' || cat === 'highland_pastoral') ? 0.55 : 0.34;
-            const isAnimal = !isPass && i >= 1 && h1 < animalRatio && animalPool.length > 0;
-
-            const dir = isAnimal
-                ? animalPool[Math.floor(h2 * animalPool.length) % animalPool.length]
-                : spec.villagers[Math.floor(h2 * spec.villagers.length) % spec.villagers.length];
+            // 陆地槽位只生成组合的主人；动物一律由牧羊／狩猎组合生成，禁止独立撒动物。
+            const dir = spec.villagers[Math.floor(h2 * spec.villagers.length) % spec.villagers.length];
 
             let homePos: Pt | null = null;
-            // 若是渔猎民族且周围已有树林节点，将樵夫/猎人/采集者/林鹿直接安置在树林节点旁劳作
+            // 渔猎组合围绕已有树林节点劳作，主人与其附属资源、猎物保持同一落点。
             if (cat === 'forest_hunting' && forestNodes.length > 0) {
                 const fn = forestNodes[(i * 2) % forestNodes.length];
                 const cand = {
@@ -733,19 +726,52 @@ export class CityLifeAmbientLayer {
             const phase = Math.floor(strHash01(city.id, i * 17 + 6) * 1000);
             const damageVariant = Math.floor(strHash01(city.id, i * 17 + 7) * 100);
             const winterActive = !isColdWinter || dir === 'VIL_MALE_LUMBERJACK' || dir === 'VIL_MALE_HUNTER' || i === 0;
+            const isFarmer = dir === 'VIL_MALE_FARMER' || dir === 'VIL_FEMALE_FARMER';
 
-            const damagePreset: WarDamagePreset = isAnimal
-                ? 'animal_loss'
-                : villagerPresets[i % villagerPresets.length];
+            let groundResource: string | undefined;
+            let groundResourceLib: 'SUCAI_RESOURCE' | 'SUCAI_NATURE' | undefined;
+            if (dir === 'VIL_MALE_FORAGER') {
+                groundResource = ['TUPI', 'MAYANS', 'AFRICA', 'MUISCA'].includes(style) ? 'FORAGE_PAPAYA' : 'FORAGE_BUSH';
+                groundResourceLib = 'SUCAI_RESOURCE';
+            } else if (dir === 'VIL_MALE_LUMBERJACK') {
+                groundResource = 'FELLED_GENERIC';
+                groundResourceLib = 'SUCAI_NATURE';
+            } else if (dir === 'VIL_MALE_MINER') {
+                groundResource = h3 < 0.5 ? 'GOLD_MINE' : 'STONE_MINE';
+                groundResourceLib = 'SUCAI_RESOURCE';
+            }
+
+            // 建筑与组合绑定，使用据点与槽位的固定哈希：重排地图不会随机闪换。
+            let buildingResource: string | undefined;
+            const buildingRoll = strHash01(city.id, i * 17 + 301);
+            const buildingVariant = Math.floor(strHash01(city.id, i * 17 + 302) * 4);
+            if (buildingRoll < (isFarmer ? 0.55 : 0.38)) {
+                if (isFarmer) {
+                    const millAge = buildingVariant % 2 === 0 ? 2 : 3;
+                    buildingResource = deStyle && deStyle !== 'YURT'
+                        ? `${deStyle}_MILL_AGE${millAge}`
+                        : 'DARK_MILL_AGE1';
+                } else if (dir === 'VIL_MALE_SHEPHERD') {
+                    buildingResource = ['DARK_PASTURE', 'YURT_A', 'YURT_B', 'YURT_C'][buildingVariant];
+                } else if (dir === 'VIL_MALE_HUNTER' || dir === 'VIL_MALE_FORAGER' || dir === 'VIL_MALE_LUMBERJACK') {
+                    buildingResource = ['HUT_A', 'HUT_B', 'HUT_C'][buildingVariant % 3];
+                } else if (dir === 'VIL_MALE_MINER') {
+                    buildingResource = buildingVariant % 2 === 0 ? 'HUT_D' : 'DARK_HOUSE_AGE1';
+                }
+            }
 
             list.push({
                 id: `${city.id}_life_${i}`,
                 cityId: city.id,
                 cityPos: { lat: cLat, lng: cLng },
-                isAnimal,
+                isAnimal: false,
                 isSeaFishing: false,
                 fishResource: '',
-                lib: isAnimal ? 'SUCAI_ANIMAL' : 'SUCAI',
+                groundResource,
+                groundResourceLib,
+                hasFarm: isFarmer,
+                buildingResource,
+                lib: 'SUCAI',
                 dir,
                 homePos,
                 gatePos,
@@ -754,20 +780,80 @@ export class CityLifeAmbientLayer {
                 phase,
                 slotIdx: i,
                 winterActive,
-                viewAlpha: 0,
-                peaceAlpha: 0,
+                viewAlpha: 1,
+                peaceAlpha: 1,
                 actionAlpha: 1,
                 damageBlend: 0,
                 combatStartSec: 0,
                 presentAtCombat: false,
-                damagePreset,
+                damagePreset: villagerPresets[i % villagerPresets.length],
                 damageVariant,
-                displayedAction: isAnimal ? 'idle' : 'work',
-                desiredAction: isAnimal ? 'idle' : 'work',
+                displayedAction: 'work',
+                desiredAction: 'work',
             });
         }
 
-        // 重排落点时沿用同一角色已有的淡入、换季与战火状态，避免画面闪烁
+        // 民生组合：1 个牧羊人固定带 3 只羊；1 个猎人固定带 1 只本地猎物。
+        // 动物只在组合中央的两侧小范围真实往返，不与主人分散到据点不同位置。
+        const preyPool = animalPool.filter((dir) => ['DEER', 'BOAR', 'TURKEY', 'GUANACO'].includes(dir));
+        const groupLeaders = list.filter((actor) => actor.dir === 'VIL_MALE_SHEPHERD' || actor.dir === 'VIL_MALE_HUNTER');
+        for (const leader of groupLeaders) {
+            const isShepherd = leader.dir === 'VIL_MALE_SHEPHERD';
+            const groupSize = isShepherd ? 3 : 1;
+            for (let j = 0; j < groupSize; j++) {
+                let homePos: Pt | null = null;
+                let gatePos: Pt | null = null;
+                const baseAngle = strHash01(leader.id, j * 23 + 201) * Math.PI * 2;
+                const distDeg = 0.022 + strHash01(leader.id, j * 23 + 202) * 0.010;
+                for (let attempt = 0; attempt < 8; attempt++) {
+                    const ang = baseAngle + attempt * (Math.PI / 4);
+                    const dLat = Math.sin(ang) * distDeg;
+                    const dLng = Math.cos(ang) * distDeg;
+                    const a = { lat: leader.homePos.lat + dLat, lng: leader.homePos.lng + dLng };
+                    const b = { lat: leader.homePos.lat - dLat, lng: leader.homePos.lng - dLng };
+                    if (!this.isSea(a) && !this.isSea(b)) {
+                        homePos = a;
+                        gatePos = b;
+                        break;
+                    }
+                }
+                if (!homePos || !gatePos) continue;
+
+                const animalDir = isShepherd
+                    ? 'SHEEP'
+                    : preyPool[Math.floor(strHash01(leader.id, 206) * preyPool.length) % preyPool.length] ?? 'DEER';
+                const id = `${leader.id}_${isShepherd ? 'sheep' : 'prey'}_${j}`;
+                list.push({
+                    id,
+                    cityId: leader.cityId,
+                    cityPos: { ...leader.cityPos },
+                    isAnimal: true,
+                    isSeaFishing: false,
+                    fishResource: '',
+                    lib: 'SUCAI_ANIMAL',
+                    dir: animalDir,
+                    homePos,
+                    gatePos,
+                    lastDrawPos: { ...homePos },
+                    facing: Math.floor(strHash01(id, 203) * 8) % 8,
+                    phase: Math.floor(strHash01(id, 204) * 1000),
+                    slotIdx: leader.slotIdx,
+                    winterActive: leader.winterActive,
+                    viewAlpha: 1,
+                    peaceAlpha: 1,
+                    actionAlpha: 1,
+                    damageBlend: 0,
+                    combatStartSec: 0,
+                    presentAtCombat: false,
+                    damagePreset: 'animal_loss',
+                    damageVariant: Math.floor(strHash01(id, 205) * 100),
+                    displayedAction: 'walk',
+                    desiredAction: 'walk',
+                });
+            }
+        }
+
+        // 重排落点时沿用同一角色已有的战火状态，避免战损画面闪烁
         for (const actor of list) {
             const prev = this.activeActors.get(actor.id);
             if (!prev) continue;
@@ -794,25 +880,14 @@ export class CityLifeAmbientLayer {
             if (season === 3) return actor.slotIdx % 2 === 0 ? 'work' : 'idle';
             return 'work';
         }
-        if (actor.isAnimal) {
-            if (season === 1 && actor.slotIdx % 2 === 1) return 'walk';
-            return 'idle';
-        }
+        if (actor.isAnimal) return 'walk';
+        // 所有陆地主人都留在自己的组合内，换季只换劳作动作，不离开农田、资源或牧群。
         const isFarmer = actor.dir === 'VIL_MALE_FARMER' || actor.dir === 'VIL_FEMALE_FARMER';
-        if (season === 0) {
-            if (isFarmer) return actor.slotIdx % 2 === 0 ? 'seed' : 'work';
-            return 'work';
+        if (season === 0 && isFarmer) return actor.slotIdx % 2 === 0 ? 'seed' : 'work';
+        if (season === 3 && !isFarmer && actor.dir !== 'VIL_MALE_LUMBERJACK' && actor.dir !== 'VIL_MALE_HUNTER') {
+            return actor.slotIdx % 2 === 0 ? 'idle' : 'work';
         }
-        if (season === 1) {
-            return 'work';
-        }
-        if (season === 2) {
-            return actor.slotIdx % 3 === 2 ? 'work' : 'carry';
-        }
-        if (actor.dir === 'VIL_MALE_LUMBERJACK' || actor.dir === 'VIL_MALE_HUNTER') {
-            return 'work';
-        }
-        return actor.slotIdx % 2 === 0 ? 'idle' : 'move';
+        return 'work';
     }
 
     /** 扫描当前处于战斗波及中的据点集合 */
@@ -953,7 +1028,7 @@ export class CityLifeAmbientLayer {
     }
 
     /** 加载单行精灵条资产（支持 SUCAI_BATTLEFIELD / SUCAI_NATURE / SUCAI_RESOURCE） */
-    private loadStripAsset(folder: 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE', name: string): void {
+    private loadStripAsset(folder: 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE' | 'SUCAI_BUILDING', name: string): void {
         const key = `${folder}/${name}`;
         if (this.stripAssets.has(key)) return;
         const basePath = `/${folder}/${name}`;
@@ -988,7 +1063,7 @@ export class CityLifeAmbientLayer {
             .catch(() => {});
     }
 
-    private stripAssetFor(folder: 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE', name: string): StripStaticAsset | undefined {
+    private stripAssetFor(folder: 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE' | 'SUCAI_BUILDING', name: string): StripStaticAsset | undefined {
         const key = `${folder}/${name}`;
         let st = this.stripAssets.get(key);
         if (!st) {
@@ -1076,13 +1151,10 @@ export class CityLifeAmbientLayer {
             const forestProps = this.getOrCreateCityForest(city);
             const cityInWar = this.endangeredCities.has(city.id);
 
-            // 预热渔猎民族据点树林与灌丛资源
+            // 预热当前季节的树林、灌丛与组合附属物；换季直接替换，不做透明度渐变。
             for (const fp of forestProps) {
                 const curTree = season === 0 ? fp.springTree : season === 1 ? fp.summerTree : season === 2 ? fp.autumnTree : fp.winterTree;
-                const nextS = (season + 1) % 4;
-                const nextTree = nextS === 0 ? fp.springTree : nextS === 1 ? fp.summerTree : nextS === 2 ? fp.autumnTree : fp.winterTree;
                 this.loadStripAsset('SUCAI_NATURE', curTree);
-                if (nextTree !== curTree) this.loadStripAsset('SUCAI_NATURE', nextTree);
                 this.loadStripAsset(fp.bushLib, fp.bushName);
                 if (cityInWar) {
                     this.loadStripAsset('SUCAI_NATURE', fp.isBamboo ? 'FELLED_LUSH_BAMBOO' : 'FELLED_GENERIC');
@@ -1101,6 +1173,15 @@ export class CityLifeAmbientLayer {
                 if (actor.isSeaFishing && actor.fishResource) {
                     this.loadStripAsset('SUCAI_RESOURCE', actor.fishResource);
                 }
+                if (actor.hasFarm) {
+                    this.loadStripAsset('SUCAI_RESOURCE', FARM_BY_SEASON[season]);
+                }
+                if (actor.groundResource && actor.groundResourceLib) {
+                    this.loadStripAsset(actor.groundResourceLib, actor.groundResource);
+                }
+                if (actor.buildingResource) {
+                    this.loadStripAsset('SUCAI_BUILDING', actor.buildingResource);
+                }
                 if (cityInWar || actor.damageBlend > 0) {
                     this.preloadWarDamageAssetsForActor(actor);
                 }
@@ -1109,24 +1190,19 @@ export class CityLifeAmbientLayer {
 
         for (const [id, actor] of this.activeActors.entries()) {
             const inView = inViewActorIds.has(id);
+            if (!inView) {
+                this.activeActors.delete(id);
+                continue;
+            }
+
             const inCombat = this.endangeredCities.has(actor.cityId);
             const winterSleep = season === 3 && !actor.winterActive;
 
-            if (inView) {
-                actor.viewAlpha = Math.min(1, actor.viewAlpha + dt / 0.8);
-            } else {
-                actor.viewAlpha = Math.max(0, actor.viewAlpha - dt / 0.8);
-                if (actor.viewAlpha <= 0) {
-                    this.activeActors.delete(id);
-                    continue;
-                }
-            }
-
-            if (!winterSleep) {
-                actor.peaceAlpha = Math.min(1, actor.peaceAlpha + dt / FADE_SEASON_SEC);
-            } else {
-                actor.peaceAlpha = Math.max(0, actor.peaceAlpha - dt / FADE_SEASON_SEC);
-            }
+            // 和平期与视口进出均不渐变；冬季休耕只直接隐藏，只有战火使用 damageBlend 交叉渐变。
+            actor.viewAlpha = 1;
+            actor.peaceAlpha = winterSleep ? 0 : 1;
+            actor.displayedAction = actor.desiredAction;
+            actor.actionAlpha = 1;
 
             if (inCombat) {
                 if (actor.damageBlend <= 0.01) {
@@ -1137,21 +1213,12 @@ export class CityLifeAmbientLayer {
             } else if (actor.damageBlend > 0) {
                 actor.damageBlend = Math.max(0, actor.damageBlend - dt / FADE_RECOVER_PEACE_SEC);
             }
-
-            if (actor.displayedAction !== actor.desiredAction) {
-                actor.actionAlpha = Math.max(0, actor.actionAlpha - dt / (FADE_SEASON_SEC * 0.5));
-                if (actor.actionAlpha <= 0) {
-                    actor.displayedAction = actor.desiredAction;
-                }
-            } else if (actor.actionAlpha < 1) {
-                actor.actionAlpha = Math.min(1, actor.actionAlpha + dt / (FADE_SEASON_SEC * 0.5));
-            }
         }
     }
 
     /** 绘制单行精灵条中的指定帧（破坏残骸、灌丛浆果、海鱼群、砍伐树桩等） */
     private drawStripSprite(
-        folder: 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE',
+        folder: 'SUCAI_BATTLEFIELD' | 'SUCAI_NATURE' | 'SUCAI_RESOURCE' | 'SUCAI_BUILDING',
         name: string,
         frameIdx: number,
         px: number,
@@ -1300,8 +1367,6 @@ export class CityLifeAmbientLayer {
         const m = 64;
         const tSec = this.nowMs / 1000;
         const season = this.getSeason();
-        const nextSeason = (season + 1) % 4;
-        const sBlend = this.getSeasonBlend();
 
         // 收集当前激活据点的状态（viewAlpha 与 damageBlend）以驱动渔猎民族周围树林植被的绘制与战损渐变
         const cityState = new Map<string, { viewAlpha: number; damageBlend: number }>();
@@ -1338,24 +1403,14 @@ export class CityLifeAmbientLayer {
                     }
                 }
 
-                // 和平四季态：绘制林下浆果灌丛 + 主树 + 伴生小树（支持四季渐变切换）
+                // 和平四季态：换季直接替换贴图，不做季节透明度渐变。
                 if (peaceAlpha > 0.01) {
                     this.drawStripSprite(fp.bushLib, fp.bushName, fp.variant, pt.x + 11 * zoomFactor, pt.y + 5 * zoomFactor, bushScale, peaceAlpha * 0.92);
-
                     const curTree = season === 0 ? fp.springTree : season === 1 ? fp.summerTree : season === 2 ? fp.autumnTree : fp.winterTree;
-                    const nextTree = nextSeason === 0 ? fp.springTree : nextSeason === 1 ? fp.summerTree : nextSeason === 2 ? fp.autumnTree : fp.winterTree;
                     const mainH = treeBaseH * fp.scaleJitter;
                     const subH = mainH * 0.78;
-
-                    if (sBlend > 0.01 && nextTree !== curTree) {
-                        this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha * (1 - sBlend));
-                        this.drawHuntingTree(nextTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha * sBlend);
-                        this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha * (1 - sBlend));
-                        this.drawHuntingTree(nextTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha * sBlend);
-                    } else {
-                        this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha);
-                        this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha);
-                    }
+                    this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha);
+                    this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha);
                 }
             }
         }
@@ -1373,8 +1428,8 @@ export class CityLifeAmbientLayer {
             let facing = actor.facing;
 
             if (actor.damageBlend <= 0.05) {
-                if (act === 'carry' || act === 'move') {
-                    const speed = actor.isSeaFishing ? 0.10 : 0.14;
+                if (act === 'carry' || act === 'move' || act === 'walk') {
+                    const speed = actor.isSeaFishing ? 0.10 : act === 'walk' ? 0.08 : 0.14;
                     const cycle = (tSec * speed + (actor.phase % 100) / 100) % 2;
                     const u = cycle <= 1 ? cycle : 2 - cycle;
                     drawLat = actor.homePos.lat + (actor.gatePos.lat - actor.homePos.lat) * u;
@@ -1386,11 +1441,6 @@ export class CityLifeAmbientLayer {
                         ? actor.gatePos.lng - actor.homePos.lng
                         : actor.homePos.lng - actor.gatePos.lng;
                     facing = dirFromDelta(dLat, dLng);
-                } else if (act === 'walk') {
-                    const ang = tSec * 0.45 + actor.phase;
-                    drawLat = actor.homePos.lat + Math.sin(ang) * 0.018;
-                    drawLng = actor.homePos.lng + Math.cos(ang) * 0.022;
-                    facing = dirFromDelta(Math.cos(ang) * 0.018, -Math.sin(ang) * 0.022);
                 } else {
                     const turnOffset = Math.floor((tSec + actor.phase) / 8) % 2;
                     facing = (actor.facing + turnOffset) % 8;
@@ -1414,16 +1464,54 @@ export class CityLifeAmbientLayer {
             // 和平民生层（春耕、夏耘、秋收、冬猎、牧群、海中渔船与鱼群），随 (1 - damageBlend) 渐隐
             const peaceFinalAlpha = actor.viewAlpha * actor.peaceAlpha * actor.actionAlpha * (1 - actor.damageBlend);
             if (peaceFinalAlpha > 0.01) {
-                // 若是海上渔业，先在渔场海面上绘制跃水游弋的海鱼群（DORADO_FISH / SALMON_FISH / TUNA_FISH / SHORE_FISH）
+                // 组合附属物固定在主人落点：农田、果子、木材、矿石与随机建筑都先画在人物脚下／两侧。
+                if (!actor.isSeaFishing && !actor.isAnimal) {
+                    const groupPt = this.map.latLngToContainerPoint([actor.homePos.lat, actor.homePos.lng]);
+                    const side = actor.slotIdx % 2 === 0 ? -1 : 1;
+                    if (actor.hasFarm) {
+                        this.drawStripSprite(
+                            'SUCAI_RESOURCE',
+                            FARM_BY_SEASON[season],
+                            0,
+                            groupPt.x,
+                            groupPt.y + 4 * zoomFactor,
+                            0.58 * zoomFactor,
+                            peaceFinalAlpha
+                        );
+                    }
+                    if (actor.groundResource && actor.groundResourceLib) {
+                        this.drawStripSprite(
+                            actor.groundResourceLib,
+                            actor.groundResource,
+                            actor.damageVariant,
+                            groupPt.x - side * 15 * zoomFactor,
+                            groupPt.y + 5 * zoomFactor,
+                            0.48 * zoomFactor,
+                            peaceFinalAlpha
+                        );
+                    }
+                    if (actor.buildingResource) {
+                        this.drawStripSprite(
+                            'SUCAI_BUILDING',
+                            actor.buildingResource,
+                            actor.damageVariant,
+                            groupPt.x + side * 28 * zoomFactor,
+                            groupPt.y - 7 * zoomFactor,
+                            0.22 * zoomFactor,
+                            peaceFinalAlpha
+                        );
+                    }
+                }
+
+                // 鱼群跟随渔船实时位置，船返港时也不会把鱼群独自留在渔场。
                 if (actor.isSeaFishing && actor.fishResource) {
-                    const fishPt = this.map.latLngToContainerPoint([actor.homePos.lat, actor.homePos.lng]);
                     const fishFrame = Math.floor(tSec * 15 + actor.phase);
                     this.drawStripSprite(
                         'SUCAI_RESOURCE',
                         actor.fishResource,
                         fishFrame,
-                        fishPt.x + 12 * zoomFactor,
-                        fishPt.y + 6 * zoomFactor,
+                        pt.x + 12 * zoomFactor,
+                        pt.y + 6 * zoomFactor,
                         FISH_SCALE_BASE * zoomFactor,
                         peaceFinalAlpha * 0.92
                     );

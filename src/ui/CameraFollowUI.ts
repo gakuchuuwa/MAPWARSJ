@@ -10,6 +10,7 @@
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { CITIES_V2 } from '../data/cities_v2';
+import { isBlankRebelFaction } from '../data/RebelFaction';
 
 export interface HistoricalStreakRecord {
     streak: number;
@@ -151,8 +152,11 @@ export class CameraFollowUI {
     /** 一次性汇总各势力的总兵力（城防+军团）与据点数 */
     private computeFactionTotals(): Map<string, { troops: number; cities: number }> {
         const totals = new Map<string, { troops: number; cities: number }>();
+        // 🔴 [2026-10-26 主人令「军团排行榜中，不要显示叛军的信息，没有意义」]
+        //    叛军 panshu 是「没有武将的据点」的兜底无主状态，不是正规势力，不进势力统计：
+        //    否则「据点最多」会一直挂着一个「叛军 N 城」，军团行的势力色条/排序也被它带偏。
         const bump = (fid: string, troops: number, cities: number) => {
-            if (!fid || fid === 'panjun') return;
+            if (!fid || fid === 'panjun' || isBlankRebelFaction(fid)) return;
             const e = totals.get(fid) ?? { troops: 0, cities: 0 };
             e.troops += troops; e.cities += cities;
             totals.set(fid, e);
@@ -487,10 +491,14 @@ export class CameraFollowUI {
             if (v.troops > maxFactionTroops) maxFactionTroops = v.troops;
         }
 
+        // 🔴 [2026-10-26 主人令「军团排行榜中，不要显示叛军的信息，没有意义」] 势力一律取**显示势力**
+        //    （武将自己的势力）：首战「敌势力＝本方势力」时引擎拿 panshu 占位，显示层不许出现「叛军」。
+        const displayFactionIdOf = (a: any): string =>
+            (a.getDisplayFactionId?.() ?? '') || (a.getFactionId?.() ?? '');
         // 按所属势力据点数降序（据点相同按 factionId 字典序，避免兵力波动导致频繁跳动）
         armies.sort((a: any, b: any) => {
-            const fidA = a.getFactionId?.() ?? '';
-            const fidB = b.getFactionId?.() ?? '';
+            const fidA = displayFactionIdOf(a);
+            const fidB = displayFactionIdOf(b);
             const fa = factionTotals.get(fidA) ?? { troops: 0, cities: 0 };
             const fb = factionTotals.get(fidB) ?? { troops: 0, cities: 0 };
             if (fb.cities !== fa.cities) return fb.cities - fa.cities;
@@ -503,7 +511,7 @@ export class CameraFollowUI {
             const troops = army.getTroops?.() || 0;
             const name = army.name || army.id;
             const isFollowed = army.id === this.followedArmyId;
-            const fid = army.getFactionId?.() ?? '';
+            const fid = displayFactionIdOf(army);
             const fTotal = factionTotals.get(fid) ?? { troops: 0, cities: 0 };
             const fName = this.factionManager?.getFactionName(fid) ?? fid;
             const fColor = this.factionManager?.getFactionColor(fid) ?? '#ffffff';

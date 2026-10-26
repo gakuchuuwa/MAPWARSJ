@@ -159,12 +159,12 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
     general_skill: sound('battle', 'general_skill', 0.45, 1800),
     // 六计释放均复用本地已校准素材，不新增下载；每种音色对应六计的战场图形。
-    skill_gongzhan: sounds('battle', ['melee_hit_1', 'melee_hit_4', 'melee_hit_7', 'melee_hit_10'], 0.70, 0),
+    skill_gongzhan: sounds('battle', ['melee_hit_5', 'melee_hit_10', 'melee_hit_11', 'melee_hit_12'], 0.70, 0),
     skill_shengzhan: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.65, 0),
     skill_dizhan: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.65, 0),
-    skill_hunzhan: sounds('battle', ['flamethrower_fire_1', 'flamethrower_fire_2', 'flamethrower_fire_3', 'flamethrower_fire_4', 'flamethrower_fire_5'], 0.65, 0),
+    skill_hunzhan: sounds('battle', ['flamethrower_fire_4', 'flamethrower_fire_5'], 0.65, 0),
     skill_bingzhan: sound('battle', 'general_skill', 0.65, 0),
-    skill_baizhan: sounds('battle', ['siege_impact_de', 'siege_impact_2', 'siege_impact_3'], 0.70, 0),
+    skill_baizhan: sounds('battle', ['siege_impact_3', 'siege_impact_4', 'building_collapse_1'], 0.70, 0),
     // 海战音效（2026-08-19：帝国时代2 DE 战斗音效，多源随机变奏）
     naval_arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.65, 250),
     naval_cannon_fire: sounds('battle', ['naval_cannon_fire_1', 'naval_cannon_fire_2', 'naval_cannon_fire_3', 'naval_cannon_fire_4', 'naval_cannon_fire_5', 'naval_cannon_fire_6'], 0.85, 400),
@@ -512,7 +512,8 @@ korea_a: 0.646,  // -17.2 LUFS
     turks_b: 0.724,  // -18.2 LUFS
     india_a: 0.724,  // -18.2 LUFS
     puru_a: 0.638,  // -17.1 LUFS
-    tibet_a: 0.733,  // -18.3 LUFS
+    // 🔴 [2026-10-26 主人令「藏族长号(喇嘛) [tibet_a]，删除。」] tibet_a 已删除：
+    //    文件 public/bgm/tibet_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.TIBET 同步移除（3 首 → 2 首，仍满足每文化 ≥2 首）。
     mughal_a: 0.684,  // -17.7 LUFS
     mughal_b: 0.700,  // -17.9 LUFS
     bengalis_a: 0.684,  // -17.7 LUFS
@@ -729,7 +730,9 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     SPANISH: ['de_SPANISH', 'spanish_a', 'spanish_b'],
     SPARTANS: ['de_SPARTANS', 'spartans_a', 'spartans_b'],
     THRACIAN: ['de_THRACIAN', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war'],
-    TIBET: ['TIBET', 'tibet_a', 'tibet_b'],
+    // 🔴 [2026-10-26 主人令「藏族长号(喇嘛) [tibet_a]，删除。」] tibet_a 已连同 .aud 文件删除，
+    //    本文化池保留 2 首（TIBET 千年的祈祷 + tibet_b 藏传法铃·钹·号角）。
+    TIBET: ['TIBET', 'tibet_b'],
     TUPI: ['de_TUPI', 'tupi_a', 'tupi_b'],
     TURKS: ['de_TURKS', 'turks_a', 'turks_b'],
     VARANGIANS: ['de_VARANGIANS', 'varangians_a', 'varangians_b'],
@@ -1008,7 +1011,8 @@ export class AudioManager {
             bingzhan: 'skill_bingzhan',
             baizhan: 'skill_baizhan',
         };
-        return this.play(keys[six], { fadeInMs: FADE.oneShot, volumeScale: playerCast ? 1 : 0.45 });
+        // 释放音立刻起声：短音效若再淡入 200ms，最有辨识度的开头会被吃掉。
+        return this.play(keys[six], { fadeInMs: 0, volumeScale: playerCast ? 1 : 0.45 });
     }
 
     /** 跟拍军团释放武将技时的短音效（非跟拍军团不播） */

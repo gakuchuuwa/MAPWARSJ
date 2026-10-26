@@ -212,6 +212,10 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     falanji: 'FRANKS_CHILDERIC_BEE',   // 法兰克·希尔德里克一世王墓金蜂饰（约458—481年，墨洛温王室）
     xiongnu: 'XIONGNU_EAGLE_CROWN',   // 匈奴·阿鲁柴登鹰顶金冠（立鹰、半球冠顶与冠带）
     yilihanguo_d: 'ILKHANID_HULEGU_HARE',   // 伊利汗国·旭烈兀伊尔比尔铜币的奔兔踏月（Album 2125.2）
+    // ── 2026-10-26 大势力史实旗面第七批（3 家；甘丹无可靠专属图案，保留字旗）──
+    kaerka: 'KHALKHA_SOYOMBO',   // 喀尔喀·索永布（札那巴札尔1686年创制；1911年博克多汗国旗）
+    tubo: 'TIBETAN_ROYAL_TOMB_LION',   // 吐蕃·琼结藏王陵蹲坐石狮（7—9世纪王陵实物，非后世雪狮旗）
+    kuman_oleshky: 'CUMAN_STONE_BABA',   // 库曼·12世纪草原石雕（尖帽、捧杯祖先像，非格莱塔木加）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

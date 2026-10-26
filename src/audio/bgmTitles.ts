@@ -193,7 +193,6 @@ export const BGM_TITLES: Record<string, string> = {
     spartans_a: '斯巴达战乐(无词)',
     spartans_b: '斯巴达战鼓',
     thraco_dacian: '色雷斯部落鼓',
-    tibet_a: '藏族长号(喇嘛)',
     tupi_a: '图皮竹笛 Takuapí',
     tupi_b: '图皮·瓜拉尼器乐',
     turks_a: 'Ceddin Deden 奥斯曼军乐',

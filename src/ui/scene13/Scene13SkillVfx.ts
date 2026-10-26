@@ -229,19 +229,48 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
 }
 
 function drawTargetGlow(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
-    if (v.six !== 'shengzhan' && v.six !== 'bingzhan') return;
+    if (v.six === 'baizhan') return; // 溃逃目标已退出在场队列，单兵反馈画在记录的溃逃位置。
     const n = Math.min(v.targets.length, 48);
-    ctx.strokeStyle = v.six === 'shengzhan' ? '#c4ffeb' : '#ffe19a';
-    ctx.shadowColor = ctx.strokeStyle;
+    if (n === 0) return;
+    const glow = v.six === 'shengzhan' ? '#c4ffeb'
+        : v.six === 'bingzhan' ? '#ffe19a'
+            : COLOR[v.six];
+    ctx.strokeStyle = glow;
+    ctx.shadowColor = glow;
     ctx.shadowBlur = 9;
-    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
     for (let i = 0; i < n; i++) {
-        const m = v.targets[i];
+        // 大军团均匀抽样覆盖全军，避免只画数组前 48 人挤成一团。
+        const m = v.targets[Math.floor(i * v.targets.length / n)];
         if (m.hp <= 0) continue;
         const y = m.y - lift(m.x, m.y);
         ctx.globalAlpha = (1 - p) * 0.85;
+        ctx.lineWidth = 2.5;
         ellipse(ctx, m.x, y, 10 + p * 8, 5 + p * 4);
         ctx.stroke();
+
+        if (v.six === 'gongzhan') {
+            // 每个受益士兵头顶一刀，和全军总冲击同向。
+            const dx = Math.cos(v.angle), dy = Math.sin(v.angle);
+            ctx.globalAlpha = (1 - p) * 0.9;
+            ctx.lineWidth = 2.2;
+            ctx.beginPath();
+            ctx.moveTo(m.x - dx * 7, y - 20 - dy * 7);
+            ctx.lineTo(m.x + dx * 10, y - 20 + dy * 10);
+            ctx.stroke();
+        } else if (v.six === 'dizhan') {
+            ctx.globalAlpha = (1 - p) * 0.9;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(m.x, y - 16, 10 + p * 3, Math.PI * 1.12, Math.PI * 1.88);
+            ctx.stroke();
+        } else if (v.six === 'hunzhan') {
+            ctx.globalAlpha = (1 - p) * 0.85;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(m.x, y - 21, 7 + p * 4, p * 5 + m.zid, p * 5 + m.zid + Math.PI * 1.35);
+            ctx.stroke();
+        }
     }
 }
 
