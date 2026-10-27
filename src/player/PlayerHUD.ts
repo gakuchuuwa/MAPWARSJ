@@ -136,17 +136,17 @@ export class PlayerHUD {
         panel.id = 'player-hero-panel';
         // 顶部玩家面板常驻展开，不加 is-collapsed
         panel.style.cssText = `
-            position:fixed; left:var(--army-panel-w, clamp(280px, 19vw, 360px)); right:var(--feed-panel-w, clamp(280px, 19vw, 360px)); top:0; z-index:10003;
-            width:auto; padding:4px 10px; box-sizing:border-box;
+            position:fixed; left:0; right:0; top:0; z-index:10003;
+            width:100%; padding:4px 12px; box-sizing:border-box;
             color:#f5e6c8; font-family:${FONT}; font-size:12px; line-height:1.35;
             background:rgba(20,16,12,0.95);
             backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-            border:1px solid rgba(212,175,55,0.55); border-top:none; border-radius:0 0 6px 6px;
-            box-shadow:0 8px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,235,170,0.12);
+            border-bottom:1px solid rgba(212,175,55,0.55); border-top:none; border-left:none; border-right:none; border-radius:0;
+            box-shadow:0 6px 20px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,235,170,0.12);
             pointer-events:auto; user-select:none;
-            transition:transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             transform:translateY(0);
         `;
+        document.documentElement.style.setProperty('--player-hud-bottom', '36px');
 
         const body = document.createElement('div');
         body.className = 'player-hud-body';
@@ -195,12 +195,10 @@ export class PlayerHUD {
      * 幂等，状态没变直接返回（refresh 每秒跑一次，不做无谓 DOM 写）。
      */
     public setMinimized(_minimized: boolean): void {
-        const minimized = false; // 顶部玩家面板常显不隐藏
-        if (this.minimized === minimized) return;
-        this.minimized = minimized;
+        this.minimized = false; // 顶部玩家面板常驻通栏展开，不再收起
         if (this.panel) {
-            this.panel.classList.toggle('is-collapsed', this.minimized);
-            this.panel.style.transform = this.minimized ? 'translateY(-100%)' : 'translateY(0)';
+            this.panel.classList.remove('is-collapsed');
+            this.panel.style.transform = 'translateY(0)';
         }
         if (this.drawerBtn) {
             this.drawerBtn.innerHTML = this.minimized

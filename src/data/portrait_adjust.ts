@@ -2038,9 +2038,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 18
         },
         "/assets/KHITAN/weiyuan_d_niangengyao.png": {
-            "scale": 1.04,
+            "scale": 0.98,
             "offsetX": 0,
-            "offsetY": -16
+            "offsetY": -17
         },
         "/assets/KHITAN/lushui_dongzhuo.png": {
             "scale": 1.13,
@@ -8671,6 +8671,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -5
+        },
+        "/assets/JIANGNAN/gen_chen_youliang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/JIANGNAN/bfe_zengguoquan.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/TIBET/gen_lobsang_danjin.png": {
+            "scale": 1.17,
+            "offsetX": 23,
+            "offsetY": 21
         }
     },
     "folderGuides": {

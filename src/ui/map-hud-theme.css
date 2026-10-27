@@ -10,6 +10,7 @@
     --side-panel-w: clamp(280px, 19vw, 360px);
     --army-panel-w: var(--side-panel-w);
     --feed-panel-w: var(--side-panel-w);
+    --player-hud-bottom: 36px;
 }
 
 body:has(#army-list-panel.is-collapsed) {
@@ -20,7 +21,6 @@ body:has(#event-display.event-panel.is-collapsed) {
     --feed-panel-w: 0px;
 }
 
-#player-hero-panel,
 #follow-banner {
     background: var(--map-hud-bg) !important;
     border: 1px solid var(--map-hud-line) !important;
@@ -37,13 +37,13 @@ body:has(#event-display.event-panel.is-collapsed) {
     display: flex !important;
     flex-direction: column !important;
     left: 0 !important;
-    top: 0 !important;
+    top: var(--player-hud-bottom, 36px) !important;
     bottom: 0 !important;
-    height: 100vh !important;
-    height: 100dvh !important;
+    height: calc(100vh - var(--player-hud-bottom, 36px)) !important;
+    height: calc(100dvh - var(--player-hud-bottom, 36px)) !important;
     width: clamp(280px, 19vw, 360px) !important;
-    max-height: 100vh !important;
-    max-height: 100dvh !important;
+    max-height: calc(100vh - var(--player-hud-bottom, 36px)) !important;
+    max-height: calc(100dvh - var(--player-hud-bottom, 36px)) !important;
     padding: 0 0 6px !important;
     border: none !important;
     border-right: 1px solid rgba(218, 184, 118, 0.48) !important;
@@ -140,32 +140,35 @@ body:has(#event-display.event-panel.is-collapsed) {
 #army-top-stats { flex-wrap: wrap; }
 #army-top-stats > div { min-width: 120px !important; }
 
-/* 🔴 2026-09-17 主人定：玩家面板左右贴着军团面板和军情面板，窄一点（高度扁平化） */
+/* 🔴 [2026-10-28 主人令「上面的玩家面板最好固定好，别总是乱动，从左边一致到右边，在军情面板和军团面板上面。一直显示，不要挡军团，军情和缩放按钮UI」] */
 #player-hero-panel {
-    left: var(--army-panel-w) !important;
-    right: var(--feed-panel-w) !important;
+    left: 0 !important;
+    right: 0 !important;
     top: 0 !important;
-    width: auto !important;
+    width: 100% !important;
     max-width: none !important;
-    padding: 4px 10px !important;
+    padding: 4px 12px !important;
     font-size: 12px !important;
     line-height: 1.35 !important;
     max-height: calc(100dvh - 120px);
     overflow: visible !important;
-    border-top: none !important;
-    border-left: 1px solid var(--map-hud-line) !important;
-    border-right: 1px solid var(--map-hud-line) !important;
+    background: var(--map-hud-bg) !important;
+    border: none !important;
     border-bottom: 1px solid rgba(218, 184, 118, 0.48) !important;
-    border-radius: 0 0 6px 6px !important;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55), inset 0 -1px 0 rgba(255, 232, 175, 0.14) !important;
+    border-radius: 0 !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55), inset 0 -1px 0 rgba(255, 232, 175, 0.14) !important;
     box-sizing: border-box !important;
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    color: var(--map-hud-text);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    font-variant-numeric: tabular-nums;
+    transition: none !important;
     transform: translateY(0) !important;
     z-index: 10003;
 }
 
 #player-hero-panel.is-collapsed {
-    transform: translateY(-100%) !important;
+    transform: translateY(0) !important;
 }
 
 #player-hero-panel:not(.is-collapsed) {
@@ -266,15 +269,15 @@ body:has(#event-display.event-panel.is-collapsed) {
 #event-display.event-panel {
     display: flex !important;
     flex-direction: column !important;
-    top: 0 !important;
+    top: var(--player-hud-bottom, 36px) !important;
     bottom: 0 !important;
-    height: 100vh !important;
-    height: 100dvh !important;
+    height: calc(100vh - var(--player-hud-bottom, 36px)) !important;
+    height: calc(100dvh - var(--player-hud-bottom, 36px)) !important;
     right: 0 !important;
     left: auto !important;
     width: clamp(280px, 19vw, 360px) !important;
-    max-height: 100vh !important;
-    max-height: 100dvh !important;
+    max-height: calc(100vh - var(--player-hud-bottom, 36px)) !important;
+    max-height: calc(100dvh - var(--player-hud-bottom, 36px)) !important;
     min-height: 0 !important;
     padding: 14px 16px;
     box-sizing: border-box;
@@ -569,4 +572,13 @@ body.script-period {
 body.script-period #army-list-panel,
 body.script-period #event-display {
     display: none !important;
+}
+
+/* 确保顶部跟随横幅、Leaflet 缩放及右上控件避让顶部通栏玩家面板 */
+#top-center-hud {
+    top: calc(var(--player-hud-bottom, 36px) + 8px) !important;
+}
+
+.leaflet-top {
+    top: var(--player-hud-bottom, 36px) !important;
 }
