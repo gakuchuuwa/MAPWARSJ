@@ -121,17 +121,6 @@ import { ensureDeCampaignSpriteMeta, getDeCampaignSpriteMetaSync, loadDeCampaign
 import { render } from './scene13/Scene13Render';
 
 /**
- * 🔴 [2026-10-20 主人令「对方刚放的计优先用克它的计回应」] 六计相克表（对方刚放的计 → 我方回应：首选、备选），
- * 🔴 [2026-10-21 主人令「相克改为与界面提示一致」] 并换成「夺敌兵」后重定，与 CombatUI 每计提示里的「破某计」对齐：
- *   攻（猛攻增伤）→ 敌（满血＋减伤六成）｜混（驱散增益）
- *   敌（固守减伤）→ 败（折损前线，绕开护盾）｜混（驱散护盾）
- *   混（乱阵＋驱散）→ 胜（补生力军，不受乱阵影响）｜敌（回血固守撑过混乱）
- *   并（夺敌兵倒戈）→ 攻（猛攻压住摇摆的兵）｜混（扰乱）
- *   胜（对方增兵 6%）→ 混（乱阵搅散新兵）｜败（折损抵消）
- *   败（我方折损 6%）→ 并（夺回兵力）｜胜（补回生力军）
- * 武将放计的逻辑不变：看对方上一次放的是什么，优先用克它的计（须在本方当前形势的计池里、且不是我上一计）。
- */
-/**
  * 🔴 [2026-10-22 主人令「武将技能要有明显效果；减兵 8% 非常有效，其他的不是很平衡」] 六计持续类数值。
  *   实测（真机三场）：正常交战每秒只折损对方总兵力约 0.16%~0.36%，【败】一下 8% ≈ 正常打 20~50 秒；
  *   旧【攻/敌/混】只有 8 秒、加成三到七成，折算仅 3~6 秒交战，差一个数量级。
@@ -151,22 +140,59 @@ const SKILL_PANIC_SEC = 15;         // 【混】乱敌阵持续
 const SKILL_PANIC_TAKEN = 2;        // 【混】混乱中受伤倍率
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
-//   六计**没有克制**：这张表只是 AI 武将的放计顺序（对方刚放某计 → 我方接着优先放哪计），回应的计不加任何效果，
-//   界面也不写「拆招 / 破」。上面 10-20 / 10-21 的「相克」说法作废。胜/敌两计效果 10-27 已对调，顺序跟着效果对调。
-const SIX_COUNTER: Readonly<Record<TacticalSixSet, readonly TacticalSixSet[]>> = {
-    gongzhan: ['shengzhan', 'hunzhan'],
-    shengzhan: ['baizhan', 'hunzhan'],
-    hunzhan: ['dizhan', 'shengzhan'],
-    bingzhan: ['gongzhan', 'hunzhan'],
-    dizhan: ['hunzhan', 'baizhan'],
-    baizhan: ['bingzhan', 'dizhan'],
+//   六计**没有克制**：这只是 AI 武将的放计顺序，回应的计不加任何效果，界面也不写「拆招 / 破」。
+// 🔴 [2026-10-27 主人令] 放计循环（对方放某计 → 我方接着放下一计）：
+//   「对方增兵，我就减兵；对方减兵，我就加攻；对方加攻，我就加防；对方加防，我就夺兵；对方夺兵，我就乱阵；对方乱阵，我就增兵」
+//   即 敌(增兵) → 败(减兵) → 攻(加攻) → 胜(加防) → 并(夺兵) → 混(乱阵) → 敌，首尾相接一个圈。
+//   另两条（主人同日定）：不重复自己最近三计、不和对方上一计重复；被挡就顺着圈往下找（见 resolveAutoNextSkill）。
+const SIX_CYCLE_NEXT: Readonly<Record<TacticalSixSet, TacticalSixSet>> = {
+    dizhan: 'baizhan',
+    baizhan: 'gongzhan',
+    gongzhan: 'shengzhan',
+    shengzhan: 'bingzhan',
+    bingzhan: 'hunzhan',
+    hunzhan: 'dizhan',
 };
+/** 【败】折损的兵在这么多秒内陆续倒下（见 stepSkillKills） */
+const SKILL_KILL_SPREAD_SEC = 1.2;
+/** 每帧最多烙进地面的尸体数（见 stepCorpses）：【败】一次几百具时分摊到后续几帧 */
+const CORPSE_BAKE_PER_FRAME = 24;
+/** 自己最近几计不重复（见 SIX_CYCLE_NEXT） */
+const SIX_RECENT_NO_REPEAT = 3;
 /** 三势计池（六计三类见 `SIX_SET_TO_TRI_CLASS`）：优势＝优势组＋均势组；劣势＝劣势组＋均势组；均势＝六计全有 */
 const SIX_POOL_BY_STANCE: Readonly<Record<'adv' | 'bal' | 'dis', readonly TacticalSixSet[]>> = {
     adv: ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan'],
     bal: ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan', 'bingzhan', 'baizhan'],
     dis: ['bingzhan', 'baizhan', 'dizhan', 'hunzhan'],
 };
+
+/**
+ * 放计循环选计：从 SIX_CYCLE_NEXT[base] 起顺着圈找第一个合格的计。
+ *   合格＝在本方计池里、不在自己最近三计里、不是对方上一计；
+ *   计池只有四计时可能一个都不合格 ⇒ 依次放宽：只避开自己上一计＋对方上一计 → 只避开自己上一计。
+ * base 为空（双方都还没放过）返回 undefined，交给开场选计。
+ */
+export function pickCycleSkill(
+    base: TacticalSixSet | null,
+    pool: readonly TacticalSixSet[],
+    recent: readonly TacticalSixSet[],
+    oppLast: TacticalSixSet | null,
+): TacticalSixSet | undefined {
+    if (!base) return undefined;
+    const myLast = recent[recent.length - 1] ?? null;
+    const tiers: Array<(s: TacticalSixSet) => boolean> = [
+        (s) => !recent.includes(s) && s !== oppLast,
+        (s) => s !== myLast && s !== oppLast,
+        (s) => s !== myLast,
+    ];
+    for (const ok of tiers) {
+        let s = SIX_CYCLE_NEXT[base];
+        for (let i = 0; i < 6; i++, s = SIX_CYCLE_NEXT[s]) {
+            if (pool.includes(s) && ok(s)) return s;
+        }
+    }
+    return undefined;
+}
 
 export class Scene13WarLayer {
     /** [2026-09-20 主人定稿] 关隘城门大山配置（未指定 asset/northAsset 时默认从 11 种大山随机抽取，支持两山夹一关） */
@@ -483,7 +509,7 @@ export class Scene13WarLayer {
     /** 演出判负回调（winner: 'attacker' | 'defender' | 'draw'）——由 GameAppCombatHooks 接 */
     public onDecision: ((winner: 'attacker' | 'defender' | 'draw', survivors: { attacker: number; defender: number }) => void) | null = null;
 
-    // ── 战术模式：武将技集气槽与六计见招拆招/玩家钦定系统 ──
+    // ── 战术模式：武将技集气槽与六计放计循环/玩家钦定系统 ──
     /** 攻/守双方主将 ID（若为无名统帅则为 null，按普将 ×1.00 档位计算） */
     private sideGeneralId: [string | null, string | null] = [null, null];
     /**
@@ -518,17 +544,21 @@ export class Scene13WarLayer {
     private skillRatePerSec: [number, number] = [0, 0];
     /** 攻/守双方集气总倍率（用于 UI 展示） */
     private skillRateMult: [number, number] = [1, 1];
-    /** 攻/守双方上一次释放的六计类型（供对方自动释放相克技能） */
+    /** 攻/守双方上一次释放的六计类型（对方按放计循环接着放下一计） */
     private lastCastSkill: [TacticalSixSet | null, TacticalSixSet | null] = [null, null];
+    /** 【败】已选定、还没倒下的兵（t＝还剩几秒倒下；f＝选定时的阵营，被【并】策反换边了就不再杀） */
+    private skillKillQueue: Array<{ m: WarMan; f: 0 | 1; t: number }> = [];
+    /** 攻/守双方最近放过的几计（新的在后，最多 SIX_RECENT_NO_REPEAT 个；观众替这一方放的也算） */
+    private recentCastSkills: [TacticalSixSet[], TacticalSixSet[]] = [[], []];
     /** 攻/守双方上一次释放的技能四字名称 */
     private lastCastSkillName: [string, string] = ['', ''];
     /** 双方各自已放了几计（每放一计 +1）——判断「对方刚放的那一计我回应过没有」 */
     private skillCastSeq: [number, number] = [0, 0];
-    /** 我方已回应到对方第几计（= 对方 skillCastSeq）；对方又放了新计且未回应 ⇒ 见招拆招 */
+    /** 我方已回应到对方第几计（= 对方 skillCastSeq）；对方又放了新计且未回应 ⇒ 按放计循环接着放 */
     private skillAnsweredSeq: [number, number] = [0, 0];
     /** 自动选好的下一计（含随机部分）：同一局面下定死，免得 UI 预告每帧乱跳；局面一变重选 */
     private plannedSkill: [{ key: string; six: TacticalSixSet } | null, { key: string; six: TacticalSixSet } | null] = [null, null];
-    /** 玩家手动预点亮（钦定）的下一计；null 表示自动见招拆招 */
+    /** 玩家手动预点亮（钦定）的下一计；null 表示按放计循环自动选 */
     private queuedSkill: [TacticalSixSet | null, TacticalSixSet | null] = [null, null];
     /** 【攻】振己威持续倒计时（秒）：己方全场士兵伤害、攻速、移速加成（数值见 SKILL_FRENZY_*） */
     private skillFrenzyTimer: [number, number] = [0, 0];
@@ -614,6 +644,7 @@ export class Scene13WarLayer {
             this.skillRatePerSec[f] = BASE_RATE * genMult * eliteMult;
             this.skillGauge[f] = 0;
             this.lastCastSkill[f] = null;
+            this.recentCastSkills[f] = [];
             this.lastCastSkillName[f] = '';
             this.queuedSkill[f] = null;
             this.skillCastSeq[f] = 0;
@@ -626,6 +657,7 @@ export class Scene13WarLayer {
         this.playerSixFrenzyTimer = 0;
         this.playerSixShieldTimer = 0;
         this.playerSixPanicMaxTimer = 0;
+        this.skillKillQueue = [];
         // 🔴 [2026-10-22] 小队模式没有武将：不集气、不放武将技
         if (init.skirmish) {
             this.sideGeneralId = [null, null];
@@ -635,10 +667,10 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-10-20 主人令「按方案甲改六计：对方刚放的计优先用克它的计回应；没有可克的就按当前优势、均势、劣势从对应计池里选，并且不连续重复同一计」]
      * 自动选下一计（玩家没钦定时）：
-     *   ① 见招拆招：对方放了新计、我方还没回应 ⇒ 用克它的计（首选 → 备选），须在本方当前形势的计池里、且不是我上一计；
-     *   ② 否则按形势从计池里选：优先本武将该形势的专属计（不是上一计时），其余在池里随机，不连续重复同一计。
+     *   ① 放计循环（见 SIX_CYCLE_NEXT / pickCycleSkill）：从对方上一计的下一计起顺着圈找，
+     *      须在本方当前形势的计池里、不在自己最近三计里、不是对方上一计；
+     *   ② 开场第一计（双方都还没放过）：优先本武将该形势的专属计，否则在池里随机。
      *   计池（六计三类见 `SIX_SET_TO_TRI_CLASS`：攻·胜=优势 / 敌·混=均势 / 并·败=劣势）：
      *     优势＝攻胜敌混；均势＝六计全有；劣势＝并败敌混 —— 「败」只有均势、劣势时才放得出。
      *   同一局面（形势、对方第几计、我上一计）下结果定死，UI 预告不乱跳。
@@ -661,16 +693,16 @@ export class Scene13WarLayer {
         const stance: 'adv' | 'bal' | 'dis' = ratio >= 1.15 ? 'adv' : (ratio <= 0.85 ? 'dis' : 'bal');
         const last = this.lastCastSkill[f];
         const oppNew = this.skillCastSeq[ef] > this.skillAnsweredSeq[f] ? this.lastCastSkill[ef] : null;
-        const key = `${stance}|${oppNew ?? '-'}|${this.skillCastSeq[ef]}|${last ?? '-'}`;
+        const key = `${stance}|${oppNew ?? '-'}|${this.skillCastSeq[ef]}|${this.skillCastSeq[f]}|${last ?? '-'}`;
         const planned = this.plannedSkill[f];
         if (planned && planned.key === key) return planned.six;
 
         const pool: readonly TacticalSixSet[] = SIX_POOL_BY_STANCE[stance];
         const usable = (s: TacticalSixSet | undefined): s is TacticalSixSet => !!s && s !== last && pool.includes(s);
-        let six: TacticalSixSet | undefined;
-        // ① 见招拆招
-        if (oppNew) six = SIX_COUNTER[oppNew].find(usable);
-        // ② 按形势选：本武将该形势专属计优先
+        // ① 放计循环：从「对方上一计的下一计」起顺着圈找（对方还没放过就从「我上一计的下一计」起）
+        let six: TacticalSixSet | undefined = pickCycleSkill(
+            this.lastCastSkill[ef] ?? last, pool, this.recentCastSkills[f], this.lastCastSkill[ef]);
+        // ② 开场第一计（双方都还没放过）：本武将该形势专属计优先
         if (!six) {
             const gid = this.sideGeneralId[f];
             if (gid) {
@@ -829,6 +861,7 @@ export class Scene13WarLayer {
             this.skillCastCooldown = Math.max(0, this.skillCastCooldown - dt);
         }
         if (deploying || this.over) return;
+        this.stepSkillKills(dt);
         for (const f of [0, 1] as const) {
             if (this.skillRatePerSec[f] <= 0) continue;
             this.skillGauge[f] = Math.min(100, this.skillGauge[f] + this.skillRatePerSec[f] * dt);
@@ -843,7 +876,7 @@ export class Scene13WarLayer {
                 if (this.skillGauge[f] >= 100) {
                     this.skillGauge[f] = 0;
                     const chosen = this.queuedSkill[f] ?? this.resolveAutoNextSkill(f);
-                    this.queuedSkill[f] = null; // 释放后清空手动钦定，回归自动见招拆招
+                    this.queuedSkill[f] = null; // 释放后清空手动钦定，回归放计循环
                     this.skillCastCooldown = Scene13WarLayer.SKILL_CAST_GAP_SEC;
                     this.skillCastWallUntil = wallNow + Scene13WarLayer.SKILL_CAST_GAP_SEC * 1000;
                     this.triggerScene13Skill(f, chosen);
@@ -1047,6 +1080,7 @@ export class Scene13WarLayer {
         const skillId = pickedEntry?.id ?? `tac13_${six}`;
 
         this.lastCastSkill[f] = six;
+        this.recentCastSkills[f] = [...this.recentCastSkills[f], six].slice(-SIX_RECENT_NO_REPEAT);
         this.lastCastSkillName[f] = skillName;
         // 计落在哪一方：攻/胜（固己防）作用在本方，乱阵/死战/倒戈作用在敌方（在执行效果前取，倒戈后敌兵就换边了）
         // 【敌】伏兵出在敌方出兵口 ⇒ 镜头 / 特效落在伏兵出没处
@@ -1061,7 +1095,7 @@ export class Scene13WarLayer {
             this.skillCamX = camX;
             this.skillCamY = camY;
         }
-        // 见招拆招计数：我放了一计（对方据此回应）；我这一计同时算回应了对方此前所有的计
+        // 放计计数：我放了一计（对方据此回应）；我这一计同时算回应了对方此前所有的计
         this.skillCastSeq[f]++;
         this.skillAnsweredSeq[f] = this.skillCastSeq[ef];
 
@@ -1112,9 +1146,9 @@ export class Scene13WarLayer {
                 if (victim.hp <= 0) continue;
                 quotaPop -= Math.max(1, victim.pop || 1);
                 vfxPoints.push({ x: victim.x, y: victim.y });
-                victim.hp = 0;
-                (victim as WarMan & { forceCorpse?: boolean }).forceCorpse = true;   // 一律留尸体（见 pushCorpse）
-                this.onManKilled(victim, null);
+                // 🔴 [2026-10-27 主人令「可以让士兵分批阵亡」] 不同帧一起倒（几百人同帧倒下 + 3 秒后同帧烙地面 ⇒ 卡一下），
+                //    排进队列，SKILL_KILL_SPREAD_SEC 内陆续倒下（见 stepSkillKills）
+                this.skillKillQueue.push({ m: victim, f: ef, t: Math.random() * SKILL_KILL_SPREAD_SEC });
             }
             if (scopedControl === null && quotaPop > 0) this.drainSidePool(ef, quotaPop);
         } else if (six === 'gongzhan') {
@@ -2860,13 +2894,7 @@ export class Scene13WarLayer {
         // 攻击特效继续播完（不推会原地冻住 5 秒，见 stepEffects 的说明）
         this.stepEffects(dt);
         // 尸体照常推进：死亡动画播完烙地面
-        for (const c of this.corpses) {
-            c.t += dt;
-            if (c.keep !== true && c.t >= DEATH_ANIM) {
-                if (this.bakeCorpse(c)) c.keep = true;   // 烙成功才标记；DE meta 未就绪返回 false，下帧重试
-            }
-        }
-        this.corpses = this.corpses.filter(c => c.keep !== true);
+        this.stepCorpses(dt);
         // 溃逃兵继续跑 + 渐隐
         for (const f of this.fleers) {
             f.t += dt;
@@ -8340,13 +8368,7 @@ export class Scene13WarLayer {
             }
         }
         // 留下的尸体：死亡动画播完 → 烙进地面图永久保留（不再逐帧重画、不再参与排序）
-        for (const c of this.corpses) {
-            c.t += dt;
-            if (c.keep !== true && c.t >= DEATH_ANIM) {
-                if (this.bakeCorpse(c)) c.keep = true;   // 烙成功才标记；DE meta 未就绪返回 false，下帧重试
-            }
-        }
-        this.corpses = this.corpses.filter(c => c.keep !== true);
+        this.stepCorpses(dt);
         // 溃逃兵：反向移动 + 渐隐，跑完即消失（主人 2026-08-16）；穿林涉水同受地形减速
         for (const f of this.fleers) {
             const fSpdK = this.terrainSpeedAt(f.x, f.y) * this.uphillSpeedK(f.x, f.y, f.vx, f.vy);
@@ -8592,6 +8614,40 @@ export class Scene13WarLayer {
         if (this.corpseAcc < 1) return false;
         this.corpseAcc -= 1;
         return true;
+    }
+
+    /** 【败】折损队列：到点的兵当场阵亡、一律留尸；期间已战死或被【并】策反换边的跳过 */
+    private stepSkillKills(dt: number): void {
+        if (this.skillKillQueue.length === 0) return;
+        const rest: typeof this.skillKillQueue = [];
+        for (const k of this.skillKillQueue) {
+            k.t -= dt;
+            if (k.t > 0) { rest.push(k); continue; }
+            const v = k.m;
+            if (v.hp <= 0 || v.f !== k.f) continue;
+            v.hp = 0;
+            (v as WarMan & { forceCorpse?: boolean }).forceCorpse = true;   // 一律留尸体（见 pushCorpse）
+            // 计策折损不是任何单位砍死的，不计单位功（见 2026-10-22 查六计时修）
+            this.onManKilled(v, null);
+        }
+        this.skillKillQueue = rest;
+    }
+
+    /**
+     * 尸体推进：死亡动画播完的烙进地面。
+     * 🔴 [2026-10-27 主人报「释放败战计，就是减兵，会卡一下」] 【败】同一帧折损几百人且全部留尸 ⇒ 3 秒后几百具同帧播完、
+     *    同帧 bakeCorpse（每具一次带 filter 的 drawImage）⇒ 一帧卡住。每帧最多烙 CORPSE_BAKE_PER_FRAME 具，
+     *    其余照旧按死亡末帧逐帧画着（Scene13Render 里 fr ≥ DEATH_ANIM 冻结末帧），下几帧再烙，画面不变。
+     */
+    private stepCorpses(dt: number): void {
+        let baked = 0;
+        for (const c of this.corpses) {
+            c.t += dt;
+            if (c.keep !== true && c.t >= DEATH_ANIM && baked < CORPSE_BAKE_PER_FRAME) {
+                if (this.bakeCorpse(c)) { c.keep = true; baked++; }   // 烙成功才标记；DE meta 未就绪返回 false，下帧重试
+            }
+        }
+        if (baked > 0) this.corpses = this.corpses.filter(c => c.keep !== true);
     }
 
     /** 把一具尸体的死亡末帧永久烙进地面图（留不留已由 takeCorpseSlot 裁定） */

@@ -368,9 +368,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/CENTRAL/yanchuan_d_yuefei.png": {
-            "scale": 1.2,
+            "scale": 1.14,
             "offsetX": 6,
-            "offsetY": -28
+            "offsetY": -30
         },
         "/assets/KHMER/champa_zhipenge.png": {
             "scale": 0.93,
@@ -8501,6 +8501,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 21
+        },
+        "/assets/CENTRAL/bfe_wu_yuanji.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_24.png": {
+            "scale": 1.03,
+            "offsetX": 8,
+            "offsetY": 19
+        },
+        "/assets/WEI/gaoqi_d_xiaogui.png": {
+            "scale": 1.26,
+            "offsetX": 24,
+            "offsetY": 8
         }
     },
     "folderGuides": {

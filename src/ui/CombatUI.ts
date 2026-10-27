@@ -6627,6 +6627,8 @@ export class CombatUI {
             (b) => b.generalId !== generalId && b.side !== side,
         );
         this.portraitBindStaging.push({ generalId, sourcePath, targetFolder, side, destPath });
+        // 选定后立即同步武将立绘覆盖，避免战术界面重绘时又被旧档案路径覆盖。
+        setGeneralPortraitOverride(generalId, sourcePath);
 
         this.correctorSide = side;
         this.highlightCorrectorSide();
