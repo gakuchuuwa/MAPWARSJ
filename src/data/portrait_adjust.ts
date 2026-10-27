@@ -8601,6 +8601,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 6,
             "offsetY": 13
+        },
+        "/assets/MONGOL/gen_chogtu_khan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/CENTRAL/dang_d_pangshigu.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/CENTRAL/tang_zhuci.png": {
+            "scale": 1.31,
+            "offsetX": -8,
+            "offsetY": 15
+        },
+        "/assets/CENTRAL/bfe3_7.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 6
         }
     },
     "folderGuides": {

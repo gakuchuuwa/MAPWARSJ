@@ -4356,7 +4356,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_genghiskhan',
         slots: [
-            { type: 'liao_dao', count: 3 },
+            { type: 'elite_liao_dao', count: 3 },
             { type: 'recurve_bowman', count: 4 },
             { type: 'keshik', count: 2 },
         ],
@@ -4373,9 +4373,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_subotai',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'liao_dao', count: 3 },
-            { type: 'hei_kuang_heavy', count: 2 },
+            { type: 'elite_liao_dao', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
+            { type: 'mangudai_elite', count: 2 },
         ],
     },
 

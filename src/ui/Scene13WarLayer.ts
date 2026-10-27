@@ -197,6 +197,9 @@ export function pickCycleSkill(
     return undefined;
 }
 
+/** 镜头盯的兵阵亡后原地停留秒数 */
+const CAM_HOLD_SEC = 1.2;
+
 export class Scene13WarLayer {
     /** [2026-09-20 主人定稿] 关隘城门大山配置（未指定 asset/northAsset 时默认从 11 种大山随机抽取，支持两山夹一关） */
     public passMountainConfig: PassMountainConfig = {};
@@ -332,6 +335,8 @@ export class Scene13WarLayer {
     private skillCamTimer = 0;
     /** 镜头锁定的本方兵（主将队员或普通兵）；活着就一直跟他，见 pickCamTarget */
     private camWatchMan: WarMan | null = null;
+    /** 盯的兵阵亡后，镜头原地停留的剩余秒数（停完才挑下一个，避免兵死太快时连续换镜头） */
+    private camHoldT = 0;
     /** 镜头锁定时所在的档（-1 = 未锁定；0/3 = 锁定玩家），见 pickCamTarget */
     private camTier = -1;
     private skillCamX = 0;
@@ -1571,6 +1576,15 @@ export class Scene13WarLayer {
         };
         this.heroMan = hero;
         this.men.push(hero);
+        // 🔴 [2026-10-27 主人问「战术开局镜头为什么不跟玩家」] 开局玩家站着不动，六档把他判成静止（档 6，不入选），
+        //    于是镜头先被入列中的兵抢走，又因「锁定到此人阵亡」再也换不回玩家。有玩家就开局直接锁玩家，
+        //    并把镜头立即对准他；他阵亡后才按六档换人。
+        this.camTier = 3;
+        this.camWatchMan = null;
+        this.userInteractingTimer = 0;
+        this.tacticalPanX = (this.worldCX - hx) * this.tacticalZoom;
+        this.tacticalPanY = (this.worldCY - hy) * this.tacticalZoom;
+        this.clampTacticalPan();
         this.diagPush('playerSetup', { side: f, control: setup.control, lanes: this.playerCtlLanes.size, unitKey: setup.unitKey });
     }
 
@@ -1746,10 +1760,11 @@ export class Scene13WarLayer {
     private resetCamFollow(): void {
         this.camWatchMan = null;
         this.camTier = -1;
+        this.camHoldT = 0;
     }
 
     /** 有玩家时唯一的镜头目标仲裁入口：六档优先；当前目标失效立即解除手动停留（玩家交战不解除，见下）。 */
-    private resolveHeroCamTarget(hero: WarMan): WarMan | null {
+    private resolveHeroCamTarget(hero: WarMan, dt: number): WarMan | null {
         const watched = this.camWatchMan;
         const watchingHero = this.camTier === 0 || this.camTier === 3;
         const targetLost = this.camTier >= 0 && (watchingHero
@@ -1761,6 +1776,16 @@ export class Scene13WarLayer {
         if (targetLost) {
             this.skillCamTimer = 0;
             this.userInteractingTimer = 0;
+            // 盯的是兵且阵亡：镜头先停在原地一会儿再挑下一个，兵连着倒也不会每帧跳镜头。盯玩家倒下不停（照旧立刻换）。
+            if (!watchingHero) {
+                this.camHoldT = CAM_HOLD_SEC;
+                this.camWatchMan = null;
+                this.camTier = -1;
+            }
+        }
+        if (this.camHoldT > 0) {
+            this.camHoldT -= dt;
+            if (this.camHoldT > 0) return null;
         }
         const target = this.pickCamTarget(hero);
         // 有六档目标就不许计策落点抢镜头；只有完全无目标时才由外层使用计策兜底。
@@ -8394,7 +8419,7 @@ export class Scene13WarLayer {
             let targetFocusX = 0, targetFocusY = 0, count = 0;
             if (this.heroMan) {
                 // 每帧先仲裁六档目标，即使手动停留也继续处理阵亡顺延与玩家交战打断。
-                const tm = this.resolveHeroCamTarget(this.heroMan);
+                const tm = this.resolveHeroCamTarget(this.heroMan, dt);
                 if (tm) { targetFocusX = tm.x; targetFocusY = tm.y; count = 1; }
             }
             if (this.userInteractingTimer > 0) {

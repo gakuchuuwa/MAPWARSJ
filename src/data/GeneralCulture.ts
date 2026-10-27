@@ -27,7 +27,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'adal_ghazi': 'ETHIOPIANS',   // 阿达尔｜格拉尼｜据点 塞拉
     'adao_d_mafushou': 'WESTERN',   // 阿克苏道｜马福寿｜据点 昆岗
     'adile_adilesha': 'INDIA',   // 阿迪勒｜阿迪勒沙｜据点 比贾布尔
-    'agui': 'BASHU',   // 金川｜阿桂｜据点 美诺寨
+    'agui': 'NORTHEAST',   // 金川｜阿桂｜据点 美诺寨
     'ahaomu_laqite': 'BENGALIS',   // 阿豪姆｜拉其特｜据点 戈尔冈
     'aiaoniya_alisita': 'GREECE',   // 爱奥尼亚｜阿里斯塔｜据点 以弗所
     'aiji_lameisisi': 'ORIE',   // 埃及｜拉美西斯｜据点 孟菲斯
@@ -917,7 +917,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'kala_satuke': 'WESTERN',   // 喀喇｜萨图克｜据点 盘橐
     'kalan_suhela': 'PERSIAN',   // 卡伦｜苏赫拉｜据点 图斯
     'kaleiliya_kelimu': 'SLAVIC',   // 卡累利阿｜克利姆索博列夫｜据点 基日岛
-    'kalun_dexinga': 'JIANGNAN',   // 杨吴｜德兴阿｜据点 广陵
+    'kalun_dexinga': 'NORTHEAST',   // 杨吴｜德兴阿｜据点 广陵
     'kamanniya_zongdu': 'PERSIAN',   // 卡曼尼亚行省｜阿斯普兰斯｜据点 卡曼尼亚
     'kanan_azemier': 'ORIE',   // 迦南｜阿泽米尔｜据点 推罗
     'kanata_lamalaya': 'INDIA',   // 卡纳塔｜拉玛拉亚｜据点 亨比
@@ -1213,7 +1213,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'shaodang_mitang': 'TIBET',   // 烧当｜迷唐｜据点 玛曲
     'shaozhou_d_mayin': 'JIANGNAN',   // 马楚｜马殷｜据点 邵州
     'shaozhou_zhangzhensun': 'JIANGNAN',   // 唐国｜张镇孙｜据点 番禺
-    'shatuo_likeyong': 'WEI',   // 唐国｜李克用｜据点 晋阳
+    'shatuo_likeyong': 'WESTERN',   // 唐国｜李克用｜据点 晋阳
     'shazhou_zhangyichao': 'KHITAN',   // 归义｜张议潮｜据点 敦煌
     'she_ethnic_leiwanxing': 'JIANGNAN',   // 畲族｜雷万兴｜据点 敕木山
     'she_shechongming': 'BASHU',   // 大明｜奢崇明｜据点 叙永
@@ -1438,7 +1438,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiongren_atila': 'HUNS',   // 匈人｜阿提拉｜据点 塞格德
     'xiongyati_yannuoshi': 'HUNS',   // 匈雅提｜匈雅提亚诺什｜据点 胡内多阿拉
     'xiou_yixusong': 'JIANGNAN',   // 西瓯｜译吁宋｜据点 布山
-    'xiqin_wanyanchenheshang': 'CENTRAL',   // 大金｜完颜陈和尚｜据点 真宁
+    'xiqin_wanyanchenheshang': 'NORTHEAST',   // 大金｜完颜陈和尚｜据点 真宁
     'xishudongyin_lijiasipi': 'SPANISH',   // 阿拉贡｜莱加斯皮｜据点 塞维利亚（2026-10-24 由马尼拉 MALAY 迁回民族起源地）
     'xisi_amr': 'PERSIAN',   // 锡斯坦｜阿姆尔·本·莱斯｜据点 博斯特
     'xisi_safaer': 'PERSIAN',   // 锡斯坦｜萨法尔｜据点 博斯特
@@ -1505,7 +1505,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yinggelan_warenne': 'BRITONS',   // 英格兰｜约翰·德·瓦伦｜据点 伦敦
     'yingli_jilasiyi': 'KHITAN',   // 大夏｜籍辣思义｜据点 鸣沙
     'yingzhou_d_liuqi': 'CENTRAL',   // 宋国｜刘锜｜据点 顺昌
-    'yingzhou_d2_licunxu': 'WEI',   // 沙陀｜李存勖｜据点 晋阳
+    'yingzhou_d2_licunxu': 'WESTERN',   // 沙陀｜李存勖｜据点 晋阳
     'yingzhou_liuyan': 'JIANGNAN',   // 南汉｜刘龑｜据点 番禺
     'yingzhou_ying_d_muronghuang': 'XIANBEI',   // 慕容｜慕容皝｜据点 朝阳（2026-10-25 朝阳改河朔，随据点）
     'yipilusi_piluoshi': 'GREECE',   // 伊庇鲁斯｜皮洛士｜据点 安布拉基亚
@@ -1602,7 +1602,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiongnu_yizhixie': 'XIANBEI',   // 首战敌将｜据点 city_toumancheng
     'luosi_svyatopolk': 'SLAVIC',   // 首战敌将｜据点 city_jifu
     'shu_masu': 'BASHU',   // 首战敌将｜据点 city_chengdu
-    'dajin_wanyan_zhongde': 'CENTRAL',   // 首战敌将｜据点 city_xuanhu（蔡州＝悬瓠同一城）
+    'dajin_wanyan_zhongde': 'NORTHEAST',   // 首战敌将｜据点 city_xuanhu（蔡州＝悬瓠同一城）
     'halapeng_yiba': 'BURMESE',   // 孟族｜伊巴｜据点 清坎寨
     'yuan_shidielibisi': 'KOREA',   // 大元｜石迭里必思｜据点 星主厅（耽罗）
     'muwaxide_axatafu': 'BERBER',   // 穆瓦希德｜阿夏塔夫｜据点 拉巴特

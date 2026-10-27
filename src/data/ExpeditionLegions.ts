@@ -253,7 +253,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   wan_liuyuan: { name: '野人原义兵', tier: 4 },   // 刘源｜宋｜皖口｜旧档《武将百科》作野人原义兵，档位 T4 照录；《宋史·忠义传》载刘源结寨野人原、聚义兵抗元。
   xie_xiefangde: { name: '信州弩士', tier: 4 },   // 谢枋得｜宋｜葛溪｜旧档《武将百科》作信州弩士，档位 T4 照录；《宋史·谢枋得传》载其知信州、率民兵守御。
   changshaguo_xinqiji: { name: '飞虎军', tier: 2 },   // 辛弃疾｜宋｜长沙｜旧档《武将百科》作飞虎军，档位 T2 照录；《宋史·辛弃疾传》载其帅湖南创飞虎军，雄镇一方。
-  song_peiji: { name: '大散关戍卒', tier: 4 },   // 裴济｜宋｜回乐｜旧档空缺，据其镇守地自定：裴济知灵州，城下戍卒即其部；《宋史·真宗纪》咸平五年三月「李继迁陷灵州，知州裴济死之」（[古今图书集成·边裔典引](https://www.shidianguji.com/book/GJTS08/chapter/1lpka8bjac2ze)）。
+  song_peiji: { name: '灵州戍卒', tier: 4 },   // 裴济｜宋｜回乐｜旧档空缺，据其镇守地自定：裴济知灵州，城下戍卒即其部；《宋史·真宗纪》咸平五年三月「李继迁陷灵州，知州裴济死之」（[古今图书集成·边裔典引](https://www.shidianguji.com/book/GJTS08/chapter/1lpka8bjac2ze)）。
   qiliqiya_pangpei: { name: '埃沃卡提', tier: 3 },   // 庞培｜罗马｜阿达纳｜《恺撒·内战记》卷三载法萨卢斯之战庞培军以历次东征召还的老兵（evocati）为军锋，故取其军号为番号。
   meisuobudamiya_shoujiang: { name: '斯基提卡', tier: 4 },   // 萨宾｜罗马｜尼西比斯｜斯特拉波《地理志》与《百官志》载罗马叙利亚—美索不达米亚防线常驻第四斯基提卡军团（Legio IV Scythica），尼西比斯守将萨宾取其军号。
   bfe3_4: { name: '特里阿里', tier: 4 },   // 拉维利乌斯｜罗马｜罗马城｜普鲁塔克《皮洛士传》载前280 赫拉克利亚之战，罗马执政官拉维努斯以第三线老兵特里阿里（triarii）死战不退。
@@ -274,7 +274,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   dongping_langtan: { name: '东平镇营', tier: 4 },   // 郎坦｜清｜瑷珲｜旧档原样保留（wikiElite=东平镇营/T4）：郎坦康熙二十一年与彭春往侦雅克萨，二十四年攻克之，驻黑龙江、瑷珲（《清史稿·郎坦传》），番号与驻地、时代相符。
   maomingan_suoetu: { name: '额尔古纳骑', tier: 4 },   // 索额图｜清｜北京｜旧档原样保留（wikiElite=额尔古纳骑/T4）：索额图康熙二十八年以领侍卫内大臣赴尼布楚与俄国定界，额尔古纳河即东段界河（《清史稿·索额图传》）。
   agui: { name: '健锐营', tier: 2 },   // 阿桂｜清｜美诺寨｜旧档原样保留（wikiElite=健锐营/T2）：健锐营为乾隆十四年所设云梯兵，专攻碉卡；阿桂平大小金川，以健锐营攻碉（《清史稿·阿桂传》《兵志》），与其据点美诺寨相符。
-  gen_mingrui: { name: '沈阳戍卒', tier: 4 },   // 明瑞｜清｜滇池｜《清史稿·明瑞传》：乾隆三十二年授云贵总督，驻云南府（滇池）练兵征缅，三十三年战死；绿营总督亲统者为督标（《清史稿·兵志二》），与驻地、时代相符。
+  gen_mingrui: { name: '云南督标', tier: 4 },   // 明瑞｜清｜滇池｜《清史稿·明瑞传》：乾隆三十二年授云贵总督，驻云南府（滇池）练兵征缅，三十三年战死；绿营总督亲统者为督标（《清史稿·兵志二》），与驻地、时代相符。
   kalun_dexinga: { name: '江北大营', tier: 4 },   // 德兴阿｜清｜广陵｜旧档 尕斯铁卫 与史实冲突，改江北大营：尕斯在青海柴达木，德兴阿一生未至；《清史稿·德兴阿传》咸丰六年授钦差大臣督办江北军务，驻扬州攻太平军，故用其本部大营番号（清军江北大营，咸丰三年设）。
   gen_furdan: { name: '科布多戍卒', tier: 4 },   // 傅尔丹｜清｜科布多｜《清史稿·傅尔丹传》：雍正七年授靖逆将军，雍正八年于科布多筑城屯兵为西路军大营，九年由此出师致和通泊之败；戍卒与据点科布多、时代相符。
   duonaobaojia_tzimiskes: { name: '不死军', tier: 2 },   // 齐米斯基｜拜占｜君士坦丁堡｜《牛津拜占庭辞典》Athanatoi 条：970 年齐米斯基为对罗斯战争新建「不死军」重装突骑，普雷斯拉夫与多罗斯托隆之战由其定胜负（维基 Immortals (Byzantine Empire)）。
@@ -407,7 +407,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   bfe3_25: { name: '泰米尔戍卒', tier: 4 },   // 埃拉拉｜朱罗｜坦贾武尔｜《大史》（Mahavamsa）记埃拉拉为「Damila」（泰米尔）王，率注辇军渡海据阿努拉德普勒四十四年，以泰米尔戍军守其地；维基「Ellalan」。（旧档空，自拟戍卒番号）
   zhuluo_lajindela: { name: '注辇水师', tier: 2 },   // 拉金德拉一世｜朱罗｜坦贾武尔｜坦贾武尔铭文载拉金德拉一世 1014–1017 年遣水师渡海破三佛齐（Kadaram），为朱罗海军最大远征；《宋史·外国传五·注辇》亦记注辇国；维基「Rajendra I」。（旧档空，取政权固有军号「注辇水师」，与埃拉拉分开）
   gen_abu_yahya: { name: '胡法兹锐士', tier: 3 },   // 阿布·叶海亚｜穆瓦｜拉巴特｜穆瓦希德以伊本·图马尔特所立「胡法兹」（Ḥuffāẓ，教义记诵者）为军中之锐，都城里巴特·法特赫为其教团军屯之地；阿布·叶海亚为穆瓦希德宗室、马略卡总督，1229 年守马略卡战死；维基「Conquest of Majorca」。（旧档空，考据自拟）
-  muwaxide_axatafu: { name: '拉巴特戍卒', tier: 4 },   // 阿夏塔夫｜穆瓦｜拉巴特｜（原挂塞维利亚=西班牙风格会算成卡斯蒂利亚军团，改放本势力柏柏尔据点；番号随据点取驻军）1248 年塞维利亚守将阿夏塔夫（穆瓦希德宗室）率安达卢斯城兵抗卡斯蒂利亚的费尔南多三世，城破出降；维基「Siege of Seville」、《西班牙编年史》（Primera Crónica General）。（旧档空，自拟地方部曲番号）
+  muwaxide_axatafu: { name: '安达卢斯兵', tier: 4 },   // 阿夏塔夫｜穆瓦｜1248 年塞维利亚守将阿夏塔夫（穆瓦希德宗室）率安达卢斯城兵抗卡斯蒂利亚的费尔南多三世，城破出降；维基「Siege of Seville」、《西班牙编年史》（Primera Crónica General）。（旧档空，自拟地方部曲番号）
   sengjialuo_mahinda_v: { name: '罗哈纳戍卒', tier: 4 },   // 摩哂陀五世｜僧伽｜阿努拉德｜摩哂陀五世 993 年弃阿努拉德普勒退保罗哈纳（Rohana），1017 年为注辇所俘；《大史》续篇 Culavamsa、维基「Mahinda V」。（旧档空，按其退守地戍军自拟）
   gen_binnya_dala: { name: '孟族象兵', tier: 4 },   // 彬尼亚达拉｜汉达｜勃固｜彬尼亚达拉为孟族汉达瓦底末王，1757 年阿朗帕耶围勃固，其率孟族象军守城，城破被俘；《琉璃宫史》、维基「Binnya Dala」。（旧档空，取民族固有军号自拟）
   huarazim_jalal: { name: '河中突骑', tier: 2 },   // 扎兰丁｜花剌｜玉龙杰赤｜1221 年八鲁湾（Parwan）之战，扎兰丁率花剌子模骑兵大破蒙古失吉忽秃忽部，为蒙古西征少有之败；《世界征服者史》《史集》。（旧档空，取其河中本部骑兵自拟，不夺「康里精骑」）
@@ -569,7 +569,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
 
   // 多名将不得共用一支有明确主人的精锐；按各自主导战役、军区或本部拆分。
   gen_artaphernes: { name: '萨迪斯军', tier: 3 },       // 阿尔塔弗涅斯：吕底亚总督，萨迪斯军区本部。
-  gen_datis: { name: '马拉松征军', tier: 2 },          // 达提斯：前490 与阿尔塔弗涅斯统军远征、登陆马拉松（希罗多德《历史》）。
+  gen_datis: { name: '米底军', tier: 2 },          // 达提斯：前490 与阿尔塔弗涅斯统军远征、登陆马拉松（希罗多德《历史》）。
   aliya_satibazanishi: { name: '阿里亚骑', tier: 3 },   // 萨提巴扎尼斯：阿里亚总督，所部为阿里亚军区骑兵。
   hekaniya_artabazos: { name: '普拉提亚卫', tier: 2 },  // 阿尔塔巴佐斯：普拉提亚战役所部后卫（希罗多德《历史》）。
   eerbulushi_beisusi: { name: '大夏骑军', tier: 3 },    // 贝苏斯：巴克特里亚（大夏）总督本部骑军。
@@ -592,7 +592,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_simeon_great: { name: '阿赫洛军', tier: 2 },      // 西美昂：917 阿赫洛河大破拜占庭之本部。
   abasi_muwafake: { name: '赞吉讨军', tier: 2 },        // 穆瓦法克：主持平定赞吉起义的野战军。
   samaila_muataisuimu: { name: '突厥古拉姆', tier: 2 }, // 穆阿台绥姆：萨迈拉突厥古拉姆新军。
-  xishudongyin_lijiasipi: { name: '马尼拉征军', tier: 2 }, // 莱加斯皮：菲律宾远征与马尼拉殖民军本部。
+  xishudongyin_lijiasipi: { name: '马尼拉守军', tier: 4 }, // 莱加斯皮：菲律宾远征与马尼拉殖民军本部。
   kasidiliya_afangsuoshiyi: { name: '萨拉多军', tier: 2 }, // 阿方索十一世：1340 萨拉多会战亲征军。
   gen_juan_i_castile: { name: '卡斯蒂王军', tier: 3 },     // 胡安一世：卡斯蒂利亚王军本部。
   kasidiliya_afangsuoba: { name: '纳瓦斯军', tier: 2 },    // 阿方索八世：1212 纳瓦斯·德托洛萨会战联军本部。
@@ -642,7 +642,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   yilihanguo_yisimeier: { name: '奇兹尔巴什', tier: 2 },  // 伊斯玛仪一世：萨法维建国核心奇兹尔巴什。
   yilihanguo_kitbuqa: { name: '艾因贾鲁军', tier: 3 },    // 怯的不花：1260 艾因贾鲁战役蒙古本部。
   safawei_aisimaier: { name: '萨法维王卫', tier: 3 },     // 艾斯迈尔：萨法维王室亲卫本部。
-  gen_batu: { name: '长子西征军', tier: 2 },              // 拔都：1236—1242 长子西征本部。
+  gen_batu: { name: '金帐骑军', tier: 2 },              // 拔都：1236—1242 长子西征本部。
   gen_mamai: { name: '蓝帐军', tier: 3 },                // 马麦：金帐汗国西部蓝帐系军。
   jinzhang_nogai: { name: '那海部骑', tier: 3 },          // 那海：所统那海兀鲁思骑军。
   gen_tashfin: { name: '萨拉卡军', tier: 2 },             // 优素福·本·塔什芬：1086 萨拉卡会战穆拉比特军。
@@ -669,7 +669,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   babuer_babuer: { name: '莫卧儿火炮', tier: 2 },         // 巴布尔：帕尼帕特、坎瓦会战火器野战本部。
   gen_vlad_impaler: { name: '夜袭军', tier: 2 },          // 弗拉德三世：1462 夜袭奥斯曼军营之本部。
   gen_basarab_i: { name: '波萨达军', tier: 2 },           // 巴萨拉布一世：1330 波萨达会战瓦拉几亚军。
-  gen_topa_inca: { name: '安第斯征军', tier: 3 },         // 图帕克：扩张安第斯诸地的印加本部。
+  gen_topa_inca: { name: '大耳卫队', tier: 3 },         // 图帕克：扩张安第斯诸地的印加本部。
   gen_pachacuti: { name: '库斯科军', tier: 2 },           // 帕查库提：库斯科击破昌卡之本部。
   danmai_abusalong: { name: '丹麦舰队', tier: 3 },        // 阿布萨隆：丹麦海岸与波罗的海征伐舰队。
   gen_akechi_mitsuhide: { name: '本能寺军', tier: 2 },    // 明智光秀：1582 本能寺奇袭本部。
@@ -714,7 +714,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   bfe2_cleon: { name: '斯法克军', tier: 2 },             // 克里昂：前425 斯法克特里亚受降斯巴达军之本部。
   fujisi_fujiweng: { name: '雅典舰队', tier: 3 },        // 福基翁：雅典海军本部，不占萨拉米斯舰。
   keerman_xierzhan_shoujiang: { name: '克尔曼军', tier: 4 }, // 克尔曼守将：地方守军，不占大流士长生军。
-  golpayegan_yicheng: { name: '赫拉特戍卒', tier: 4 },   // 尼扎姆：戈尔帕扬地方本部。
+  golpayegan_yicheng: { name: '戈尔帕扬军', tier: 4 },   // 尼扎姆：戈尔帕扬地方本部。
   bfe2_pharnabazus: { name: '达斯基利军', tier: 3 },     // 法那巴佐斯：达斯基利翁总督区本部。
   mixiya_arsames: { name: '塔尔苏斯军', tier: 3 },       // 阿萨米斯：奇里乞亚塔尔苏斯本部。
   panfeiliya_apollonios: { name: '潘菲利亚军', tier: 4 }, // 阿波罗尼奥斯：潘菲利亚地方本部。
@@ -726,7 +726,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   ribale_faheerdaolai: { name: '德莱木军', tier: 3 },     // 法赫尔道莱：白益王朝德莱木本部，非阿拔斯黑衣卫。
   youfaladi_yehaiya: { name: '巴尔马克军', tier: 4 },     // 叶海亚·巴尔马克：巴尔马克家族部曲，非哈里发禁卫。
   aliya_muhammad_tahir: { name: '塔希尔军', tier: 3 },    // 穆罕默德·塔希尔：塔希尔王朝呼罗珊本部。
-  bfe2_xerxes_i: { name: '希腊征军', tier: 3 },           // 薛西斯一世：前480 远征希腊的波斯王军，非埃兰战车。
+  bfe2_xerxes_i: { name: '长生军', tier: 2 },           // 薛西斯一世：前480 远征希腊的波斯王军，非埃兰战车。
   lulisitan_shoujiang: { name: '卢里斯军', tier: 4 },     // 卢里斯坦守将：地方守军，不占古埃兰番号。
   jiaye_punafamo: { name: '迦摩缕波军', tier: 3 },        // 普那伐摩：迦摩缕波伐摩王朝本部，非孔雀帝国战象。
   muxikani_muxikanuosi: { name: '阿罗尔军', tier: 3 },    // 穆西卡诺斯：印度河下游阿罗尔本国军，非孔雀帝国战象。

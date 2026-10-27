@@ -1484,7 +1484,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 拉德科·迪米特里耶夫（1859–1918，保加利亚第 3 集团军统帅；1912 第一次巴尔干战争洛зен格勒、吕莱布尔加兹大胜奥斯曼东色雷斯集团军）｜势力 保加利亚｜据点 普罗夫迪夫（THRACIAN 文化，北色雷斯）｜普将（存疑）｜精锐「保加利亚军」T4｜立绘留空
         { generalId: 'bfe_dimitriev', factionId: 'baojialiya', cityId: 'city_plovdiv', generalName: '迪米特里耶夫', portrait: '/assets/THRACIAN/bfe_dimitriev.png', eliteName: '保加利亚军', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 彼得·德良（？–1041，1040 反拜占庭大起义统帅，据斯科普里席卷马其顿与希腊北部）｜势力 保加利亚｜据点 斯科普里（MACEDONIAN 文化，瓦尔达尔河流域）｜普将（实败）｜精锐「马其顿义军」T4｜立绘留空
-        { generalId: 'bfe_peter_delyan', factionId: 'baojialiya', cityId: 'city_sofia', generalName: '彼得·德良', portrait: '/assets/MACEDONIAN/bfe_peter_delyan.png', eliteName: '索非亚戍卒', eliteTier: 4 },
+        { generalId: 'bfe_peter_delyan', factionId: 'baojialiya', cityId: 'city_sofia', generalName: '彼得·德良', portrait: '/assets/MACEDONIAN/bfe_peter_delyan.png', eliteName: '马其顿义军', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 戈采·代尔切夫（1872–1903，马其顿内部革命组织 IMRO 最高军事组织者，以斯科普里—什蒂普为活动大本营）｜势力 保加利亚｜据点 斯科普里（MACEDONIAN 文化）｜普将（存疑）｜精锐「马其顿游击」T4｜立绘留空
         { generalId: 'bfe_gotse_delchev', factionId: 'baojialiya', cityId: 'city_skopje', generalName: '戈采·代尔切夫', portrait: '/assets/MACEDONIAN/bfe_gotse_delchev.png', eliteName: '马其顿游击', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 瓦西尔·列夫斯基（1837–1873，保加利亚民族起义领袖）｜势力 保加利亚｜据点 索非亚（BULGARIANS 文化）｜普将｜精锐「保加利亚军」T4｜立绘留空
@@ -3783,7 +3783,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 巴希尔·阿波卡夫科斯（10 世纪末拜占庭摩里亚军区长官；997 年保加利亚沙皇撒慕尔南侵时坐镇斯巴达组织防务）｜势力 拜占庭｜据点 斯巴达（SPARTANS 文化，拉科尼亚）｜普将｜精锐「拉科尼亚守军」T4｜立绘留空
         { generalId: 'bfe_apokaukos', factionId: 'baizanting', cityId: 'city_sparta', generalName: '巴希尔·阿波卡夫科斯', portrait: '/assets/SPARTANS/bfe_apokaukos.png', eliteName: '拉科尼亚守军', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 乔治·马尼亚克（？–1043，拜占庭名将；1038–1040 西西里远征军最高统帅，罗梅塔与特罗伊纳大破阿拉伯军、收复墨西拿与叙拉古等十三城）｜势力 拜占庭｜据点 锡拉库萨（SICILIANS 文化）｜普将（存疑）｜精锐「西西里远征」T4｜立绘留空
-        { generalId: 'bfe_maniakes', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '马尼亚克', portrait: '/assets/SICILIANS/bfe_maniakes.png', eliteName: '帝国近卫', eliteTier: 4 },
+        { generalId: 'bfe_maniakes', factionId: 'baizanting', cityId: 'city_junshitandingbao', generalName: '马尼亚克', portrait: '/assets/SICILIANS/bfe_maniakes.png', eliteName: '诺曼佣兵', eliteTier: 3 },
         // 🔴 [2026-10-25 补B] 阿加利阿诺斯·孔托斯克莱斯（？–727，拜占庭希腊军区统帅；726–727 联合爱琴海水手起义、率舰队北上进攻君士坦丁堡）｜势力 拜占庭｜据点 底比斯（GREECE 文化，希腊军区首府）｜普将（实败）｜精锐「希腊军区兵」T4｜立绘留空
         { generalId: 'bfe_kontoskeles', factionId: 'baizanting', cityId: 'city_thebes', generalName: '孔托斯克莱斯', portrait: '/assets/GREECE/bfe_kontoskeles.png', eliteName: '希腊军区兵', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 维塔利安（？–520，东罗马色雷斯联邦军统帅；513–515 三次率色雷斯军进逼君士坦丁堡）｜势力 拜占庭｜据点 普罗夫迪夫（THRACIAN 文化，色雷斯）｜普将（实败）｜精锐「色雷斯军」T4｜立绘留空
@@ -4683,7 +4683,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'tongzhou_liuzhiyuan', cityId: 'city_taiyuan', factionId: 'hou_han', generalName: '刘知远', portrait: '/assets/WEI/tongzhou_liuzhiyuan.png', legionName: '封建时代河朔军团' },
         { generalId: 'xin_liuchong', cityId: 'city_taiyuan', factionId: 'hou_han', generalName: '刘崇', portrait: '/assets/WEI/xin_liuchong.png', legionName: '封建时代河朔军团' },
         { generalId: 'bing_liji', factionId: 'tang', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李勣', portrait: '/assets/WEI/bing_liji.png', eliteName: '通漠道行军', eliteTier: 2  },   // 按史：李勣以并州都督出任通漠道行军总管，自并州北出白道破颉利（《旧唐书·卷六七·李勣传》）
-        { generalId: 'shatuo_likeyong', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李克用', portrait: '/assets/WEI/shatuo_likeyong.png', factionId: 'shatuo', eliteName: '鸦儿军', eliteTier: 1 },   // 按史：李克用所部号鸦儿军，长期为河东主力（《旧五代史·武皇纪》）；李存勖另配其亲军从马直，不把父子两代的本部混作两支。
+        { generalId: 'shatuo_likeyong', cityId: 'city_dashicheng', generalName: '李克用', portrait: '/assets/WEI/shatuo_likeyong.png', factionId: 'shatuo', eliteName: '鸦儿军', eliteTier: 1 },   // 按史：李克用所部号鸦儿军，长期为河东主力（《旧五代史·武皇纪》）；李存勖另配其亲军从马直，不把父子两代的本部混作两支。
         { generalId: 'qingyuan_bd_zhoudewei', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '周德威', portrait: '/assets/WEI/qingyuan_bd_zhoudewei.png', factionId: 'shatuo', eliteName: '白马突骑', eliteTier: 3 },
         { generalId: 'song_wangbing', cityId: 'city_taiyuan', legionName: '城堡时代燕云军团', generalName: '王禀', portrait: '/assets/WEI/song_wangbing.png', factionId: 'song' },
         { generalId: 'liwang_liguangbi', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李光弼', portrait: '/assets/WEI/liwang_liguangbi.png', factionId: 'tang', eliteName: '河东军', eliteTier: 2 },
@@ -5542,7 +5542,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_kangxi', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '康熙', portrait: '/assets/NORTHEAST/gen_kangxi.png', legionName: '帝国时代八旗军团' },
         { generalId: 'ying_caojingzong', factionId: 'nan_liang', cityId: 'city_bengbu', legionName: '封建时代江淮军团', generalName: '曹景宗', portrait: '/assets/JIANGNAN/ying_caojingzong.png' },
         { generalId: 'yuan_d_tuotuo', factionId: 'yuan_d', cityId: 'city_merkit', legionName: '城堡时代蒙古军团', generalName: '脱脱', portrait: '/assets/XIANBEI/yuan_d_tuotuo.png' },
-        { generalId: 'dajin_wanyanchengyu', factionId: 'dajin', cityId: 'city_huining', generalName: '完颜承裕', portrait: '/assets/NORTHEAST/dajin_wanyanchengyu.png', eliteName: '会宁戍卒', eliteTier: 4  },   // 🔴 [2026-10-25 按史] 通远军节度使（巩州，今陇西）、陕西兵马都统副使，野狐岭主帅（《金史·宗室传·承裕》）；巩州无据点 → 取最近同文化据点天水（秦州，同属陇右）；精锐与其本部通远军对应
+        { generalId: 'dajin_wanyanchengyu', factionId: 'dajin', cityId: 'city_huining', generalName: '完颜承裕', portrait: '/assets/NORTHEAST/dajin_wanyanchengyu.png', eliteName: '通远军', eliteTier: 4  },   // 🔴 [2026-10-25 按史] 通远军节度使（巩州，今陇西）、陕西兵马都统副使，野狐岭主帅（《金史·宗室传·承裕》）；巩州无据点 → 取最近同文化据点天水（秦州，同属陇右）；精锐与其本部通远军对应
         { generalId: 'dajin_wanyanheda', factionId: 'dajin', cityId: 'city_huining', legionName: '城堡时代大金军团', generalName: '完颜合达', portrait: '/assets/NORTHEAST/dajin_wanyanheda.png', eliteName: '亲卫军', eliteTier: 2  },   // 按史：完颜合达在卫州以亲卫军三千破蒙古（《金史·完颜合达传》）
         // 🔴 [2026-10-24 险要补将·镇守] 韩青＝明都指挥，1449 年也先攻紫荆关，死守殉国；普将；精锐「紫荆守军」T4
         { generalId: 'zijing_hanqing', generalName: '韩青', factionId: 'ming_d', cityId: 'city_zijingguan', portrait: '/assets/WEI/ming_d_hanqing.png', eliteName: '紫荆守军', eliteTier: 4 },
@@ -7541,7 +7541,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     dajin: [
         { generalId: 'dajin_wanyaneke', factionId: 'dajin', cityId: 'city_huining', generalName: '完颜讹可', portrait: '/assets/NORTHEAST/dajin_wanyaneke.png' },   // 🔴 [2026-10-25 按史] 首战敌将；金将，1217-1219 攻枣阳不克；据点会宁府（NORTHEAST）；用势力精锐合扎猛安
-        { generalId: 'dajin_wanyan_zhongde', factionId: 'dajin', cityId: 'city_xuanhu', generalName: '完颜仲德', portrait: '/assets/CENTRAL/dajin_wanyan_zhongde.png' },   // 🔴 [2026-10-25 按史] 首战敌将；金尚书右丞、蔡州守将，1234 城破死节；🔴 蔡州＝悬瓠（汝南/汝阳，今河南汝南）同一城，唐—金称蔡州、南北朝称悬瓠，城库只立 city_xuanhu（CENTRAL），不另建蔡州点 → 据点 city_xuanhu；用势力精锐合扎猛安（金初建制，金末已废，暂按 lead 口径用势力精锐）
+        { generalId: 'dajin_wanyan_zhongde', factionId: 'dajin', cityId: 'city_huining', generalName: '完颜仲德', portrait: '/assets/CENTRAL/dajin_wanyan_zhongde.png' },   // 🔴 [2026-10-25 按史] 首战敌将；金尚书右丞、蔡州守将，1234 城破死节；🔴 蔡州＝悬瓠（汝南/汝阳，今河南汝南）同一城，唐—金称蔡州、南北朝称悬瓠，城库只立 city_xuanhu（CENTRAL），不另建蔡州点 → 据点 city_xuanhu；用势力精锐合扎猛安（金初建制，金末已废，暂按 lead 口径用势力精锐）
 
 
 
@@ -7588,7 +7588,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'xiqin_wanyanchenheshang', factionId: 'dajin', cityId: 'city_zhedi', legionName: '城堡时代中华军团', generalName: '完颜陈和尚', portrait: '/assets/CENTRAL/xiqin_wanyanchenheshang.png', eliteName: '忠孝军', eliteTier: 2  },   // 按史：忠孝军大昌原四百破八千，属特定战役战术尖刀，建制短、不作长期战略主力，依 v3 定 T2（《金史·兵志》《完颜陈和尚传》）。
+        { generalId: 'xiqin_wanyanchenheshang', factionId: 'dajin', cityId: 'city_huining', generalName: '完颜陈和尚', portrait: '/assets/CENTRAL/xiqin_wanyanchenheshang.png', eliteName: '忠孝军', eliteTier: 2  },   // 按史：忠孝军大昌原四百破八千，属特定战役战术尖刀，建制短、不作长期战略主力，依 v3 定 T2（《金史·兵志》《完颜陈和尚传》）。
 
 
 
@@ -9945,7 +9945,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'jinchuan_g_shaluoben', cityId: 'city_leweizhai', generalName: '莎罗奔', portrait: '/assets/TIBET/jinchuan_g_shaluoben.png' },
         { generalId: 'bfe_sonom', cityId: 'city_leweizhai', generalName: '索诺木', portrait: '/assets/TIBET/bfe_sonom.png', legionName: '帝国时代卫藏军团' },
     
-        { generalId: 'agui', factionId: 'manzhou_d', cityId: 'city_meinuozhai', legionName: '帝国时代四川军团', generalName: '阿桂', portrait: '/assets/BASHU/agui.png' },
+        { generalId: 'agui', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '阿桂', portrait: '/assets/BASHU/agui.png' },
 
 
 
@@ -14936,7 +14936,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_cambyses', cityId: 'city_susa', generalName: '冈比西斯二世', portrait: '/assets/PERSIAN/gen_cambyses.png', factionId: 'aqimeinide' , eliteName: '埃及征军', eliteTier: 2 }, // 前525 培琉喜阿姆胜埃及、完成征服之本部
+        { generalId: 'gen_cambyses', cityId: 'city_susa', generalName: '冈比西斯二世', portrait: '/assets/PERSIAN/gen_cambyses.png', factionId: 'aqimeinide' , eliteName: '长生军', eliteTier: 2 }, // 前525 培琉喜阿姆胜埃及、完成征服之本部
 
 
 
@@ -16933,7 +16933,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-24] 朱邪势力并入沙陀后，把原势力精锐番号「朱邪部兵」T3 落到本人条目（他 820 年生，早于李克用「鸦儿军」，不该借沙陀势力精锐）
         { generalId: 'zhuxie_zhuxiechixin', cityId: 'city_guanglu', generalName: '朱邪赤心', portrait: '/assets/XIANBEI/zhuxie_zhuxiechixin.png', legionName: '封建时代契丹军团', eliteName: '朱邪部兵', eliteTier: 3 },
     
-        { generalId: 'yingzhou_d2_licunxu', factionId: 'shatuo', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李存勖', portrait: '/assets/WEI/yingzhou_d2_licunxu.png' },
+        { generalId: 'yingzhou_d2_licunxu', factionId: 'shatuo', cityId: 'city_dashicheng', generalName: '李存勖', portrait: '/assets/WEI/yingzhou_d2_licunxu.png' },
 
     ],
     hou_han: [
@@ -17056,7 +17056,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     
         { generalId: 'bfe_sun_ru', cityId: 'city_yangzhou', generalName: '孙儒', portrait: '/assets/JIANGNAN/bfe_sun_ru.png', factionId: 'tang', legionName: '封建时代江淮军团', eliteName: '淮南军', eliteTier: 3  },   // 按史：孙儒据扬州自称淮南节度使，统淮南镇兵（《资治通鉴》卷二五七、二五八）
         { generalId: 'yang_zhou_yangxingmi', factionId: 'yangwu', cityId: 'city_yangzhou', generalName: '杨行密', portrait: '/assets/JIANGNAN/yang_zhou_yangxingmi.png' },
-        { generalId: 'kalun_dexinga', cityId: 'city_yangzhou', generalName: '德兴阿', portrait: '/assets/JIANGNAN/kalun_dexinga.png', factionId: 'manzhou_d', legionName: '帝国时代两江军团' },
+        { generalId: 'kalun_dexinga', cityId: 'city_shenyang', generalName: '德兴阿', portrait: '/assets/JIANGNAN/kalun_dexinga.png', factionId: 'manzhou_d',},
 
         { generalId: 'bfe3_28', factionId: 'wu', cityId: 'city_yangzhou', generalName: '刘濞', portrait: '/assets/JIANGNAN/bfe3_28.png', legionName: '古典时代吴越军团' , eliteName: '吴楚步卒', eliteTier: 3},
         { generalId: 'bfe3_70', cityId: 'city_changzhou', generalName: '刘繇', portrait: '/assets/JIANGNAN/bfe3_70.png', legionName: '古典时代吴越军团', factionId: 'han_d' , eliteName: '大汉材官', eliteTier: 2 },
