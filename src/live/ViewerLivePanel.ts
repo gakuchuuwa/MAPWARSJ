@@ -94,7 +94,7 @@ export class ViewerLivePanel {
         const s = this.live.snapshot();
         this.updatePosition();
         const linked = s.platform.includes('已连接');
-        const show = this.inScene13Bar && (s.on || linked || this.devOpen);
+        const show = this.devOpen || (this.inScene13Bar && (s.on || linked));
         if (!show) { this.root.style.display = 'none'; return; }
         this.root.style.display = 'inline-flex';
         const f = this.inScene13Bar ? FS_S13 : FS;
@@ -179,7 +179,10 @@ export class ViewerLivePanel {
             e.stopPropagation();
             if (e.key !== 'Enter') return;
             void this.link.configure(ytKey.value, ytVideo.value).then((ok) => {
-                if (ok) { ytKey.value = ''; ytVideo.value = this.link.getVideo(); }
+                if (ok) {
+                    ytKey.value = '';
+                    if (document.activeElement !== ytVideo) ytVideo.value = this.link.getVideo();
+                }
                 this.render();
             });
         };

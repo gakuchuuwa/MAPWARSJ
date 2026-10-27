@@ -12,6 +12,9 @@ export class YouTubeOfficialBridge {
     private stopped = false;
     private configured = false;
     private video = '';
+    private hasConnected = false;
+    private readonly clientId = globalThis.crypto?.randomUUID?.()
+        ?? `page-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     private ledgerChain: Promise<void> = Promise.resolve();
 
     constructor(private readonly live: ViewerLive) {
@@ -28,7 +31,7 @@ export class YouTubeOfficialBridge {
             const r = await fetch('/live-api/state', { cache: 'no-store' });
             if (!r.ok) throw new Error(`state HTTP ${r.status}`);
             const state = await r.json();
-            if (state.ledger) this.live.hydrateLedger(state.ledger as ViewerLedger);
+            if (!this.hasConnected && state.ledger) this.live.hydrateLedger(state.ledger as ViewerLedger);
             this.applyStatus(state);
             this.connect();
         } catch {
@@ -40,10 +43,22 @@ export class YouTubeOfficialBridge {
 
     private connect(): void {
         if (this.stopped) return;
-        if (this.events) this.events.close();
-        const events = new EventSource('/live-api/events');
+        clearTimeout(this.retry);
+        this.events?.close();
+        const events = new EventSource(`/live-api/events?client=${encodeURIComponent(this.clientId)}`);
         this.events = events;
-        events.addEventListener('status', (e) => this.applyStatus(JSON.parse((e as MessageEvent).data)));
+        events.addEventListener('status', (e) => {
+            this.applyStatus(JSON.parse((e as MessageEvent).data));
+            if (this.hasConnected) return;
+            this.hasConnected = true;
+            // 接管页面必须先取得唯一记账页的最新账本，再处理随后重发的事件。
+            this.ledgerChain = this.ledgerChain.then(async () => {
+                const r = await fetch('/live-api/state', { cache: 'no-store' });
+                if (!r.ok) throw new Error(`接管账本 HTTP ${r.status}`);
+                const state = await r.json();
+                if (state.ledger) this.live.hydrateLedger(state.ledger as ViewerLedger);
+            });
+        });
         events.addEventListener('live', (e) => {
             const event = JSON.parse((e as MessageEvent).data) as YouTubeLiveEvent;
             this.ledgerChain = this.ledgerChain.then(() => this.accept(event)).catch((error) => {
@@ -51,8 +66,11 @@ export class YouTubeOfficialBridge {
             });
         });
         events.onerror = () => {
+            events.close();
+            if (this.events === events) this.events = null;
             this.live.platformStatus = 'YouTube 本地通道重连中';
-            // EventSource 自动重连；服务端会在每次重连后重发全部未确认事件。
+            clearTimeout(this.retry);
+            this.retry = window.setTimeout(() => this.connect(), 5000);
         };
     }
 
@@ -70,19 +88,24 @@ export class YouTubeOfficialBridge {
     }
 
     public async configure(apiKey: string, video: string): Promise<boolean> {
-        const payload: { apiKey?: string; video: string } = { video };
-        // 已保存的密钥不在浏览器显示；换直播网址时留空即沿用。清空网址才同时清除配置。
-        if (apiKey.trim() || !video.trim() || !this.configured) payload.apiKey = apiKey;
-        const r = await fetch('/live-api/config', {
-            method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload),
-        });
-        const body = await r.json();
-        if (!r.ok) {
-            this.live.platformStatus = String(body.error || `配置失败 ${r.status}`);
+        try {
+            const payload: { apiKey?: string; video: string } = { video };
+            // 已保存的密钥不在浏览器显示；换直播网址时留空即沿用。清空网址才同时清除配置。
+            if (apiKey.trim() || !video.trim() || !this.configured) payload.apiKey = apiKey;
+            const r = await fetch('/live-api/config', {
+                method: 'POST', headers: this.headers(), body: JSON.stringify(payload),
+            });
+            const body = await r.json();
+            if (!r.ok) {
+                this.live.platformStatus = String(body.error || `配置失败 ${r.status}`);
+                return false;
+            }
+            this.applyStatus(body);
+            return true;
+        } catch (error) {
+            this.live.platformStatus = `配置失败：${String(error instanceof Error ? error.message : error).slice(0, 80)}`;
             return false;
         }
-        this.applyStatus(body);
-        return true;
     }
 
     private saveLedger(ledger: ViewerLedger): void {
@@ -91,9 +114,13 @@ export class YouTubeOfficialBridge {
         });
     }
 
+    private headers(): Record<string, string> {
+        return { 'content-type': 'application/json', 'x-mapwar-client': this.clientId };
+    }
+
     private async post(url: string, value: unknown): Promise<void> {
         const r = await fetch(url, {
-            method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(value),
+            method: 'POST', headers: this.headers(), body: JSON.stringify(value),
         });
         if (!r.ok) throw new Error(`${url} HTTP ${r.status}`);
     }

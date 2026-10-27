@@ -1099,12 +1099,15 @@ export class Scene13WarLayer {
     private playerLiveSkillTimer = 0;
     public getPlayerLiveSkillSec(): number { return Math.max(0, this.playerLiveSkillTimer); }
 
-    /** 斥候及以上的直播玩家技：本人立即回满，连续释放累加持续时间。 */
+    /** 斥候强化本人；探马起按现有指挥范围强化本队。只治疗存活单位，不复活。 */
     public castPlayerLiveSkill(): 'cast' | 'wait' | 'closed' {
         if (!this.active || this.over) return 'closed';
         const m = this.heroMan;
         if (!m || !this.playerSetup || this.deployT > 0 || m.hp <= 0) return 'wait';
-        m.hp = this.heroMaxHp(m.key, m.f);
+        for (const unit of this.men) {
+            if (unit.hp <= 0 || !this.playerLiveAffects(unit)) continue;
+            unit.hp = unit.hero ? this.heroMaxHp(unit.key, unit.f) : this.statsFor(unit.key, unit.f).hp;
+        }
         this.playerLiveSkillTimer = Math.max(0, this.playerLiveSkillTimer) + PLAYER_LIVE_SKILL.durationSec;
         return 'cast';
     }
@@ -1385,15 +1388,23 @@ export class Scene13WarLayer {
         return Math.max(1, Math.round(this.statsFor(key, f, true).hp * HERO_HP_MULT));
     }
 
-    /** 以下三条只认玩家本人；普通士兵、武将六计和主将队都不吃这套倍率。 */
+    /** 玩家技范围只跟官职与既有编队关系走，不读武将技、六计或主将光环。 */
+    private playerLiveAffects(m: WarMan): boolean {
+        const setup = this.playerSetup;
+        if (!setup || m.f !== setup.side) return false;
+        if (m === this.heroMan) return true;
+        if (setup.control === 'none') return false;
+        if (setup.control === 'all') return true;
+        return this.playerCtlLanes.has(m.lane);
+    }
     private playerLiveDamageMul(m: WarMan): number {
-        return m === this.heroMan && this.playerLiveSkillTimer > 0 ? PLAYER_LIVE_SKILL.damageMult : 1;
+        return this.playerLiveSkillTimer > 0 && this.playerLiveAffects(m) ? PLAYER_LIVE_SKILL.damageMult : 1;
     }
     private playerLiveAttackMul(m: WarMan): number {
-        return m === this.heroMan && this.playerLiveSkillTimer > 0 ? PLAYER_LIVE_SKILL.attackSpeedMult : 1;
+        return this.playerLiveSkillTimer > 0 && this.playerLiveAffects(m) ? PLAYER_LIVE_SKILL.attackSpeedMult : 1;
     }
     private playerLiveTakenMul(m: WarMan): number {
-        return m === this.heroMan && this.playerLiveSkillTimer > 0 ? PLAYER_LIVE_SKILL.damageTakenMult : 1;
+        return this.playerLiveSkillTimer > 0 && this.playerLiveAffects(m) ? PLAYER_LIVE_SKILL.damageTakenMult : 1;
     }
 
     private heroDown(m: WarMan): void {

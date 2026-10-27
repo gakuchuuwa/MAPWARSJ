@@ -69,12 +69,34 @@ export interface YouTubeLiveEvent {
     publishedAt: string;
     payment?: YouTubePayment;
 }
+export interface ViewerQueuedCast {
+    uid: string;
+    viewer: string;
+    side: 0 | 1;
+    six: TacticalSixSet;
+    word: string;
+    paid: boolean;
+}
+export interface ViewerQueuedScoutCast {
+    uid: string;
+    viewer: string;
+    bid: number;
+    seq: number;
+    ordersCost: number;
+    centsCost: number;
+}
 export interface ViewerLedger {
     version: 1;
     day: string;
     wallets: Record<string, { name: string; cents: number }>;
     orders: Record<string, { name: string; n: number }>;
     handled: string[];
+    /** 已扣款队列也必须持久化：ACK 后刷新不能把观众付费技能弄丢。 */
+    queue?: ViewerQueuedCast[];
+    scoutQueue?: ViewerQueuedScoutCast[];
+    sides?: [string, 0 | 1][];
+    wanted?: [string, string][];
+    scoutSeq?: number;
 }
 
 export interface ViewerCastResult {
@@ -85,22 +107,8 @@ export interface ViewerCastResult {
     outcome: 'cast' | 'void';
     skillName?: string;
 }
-interface QueuedCast {
-    uid: string;
-    viewer: string;
-    side: 0 | 1;
-    six: TacticalSixSet;
-    word: string;
-    paid: boolean;
-}
-interface QueuedScoutCast {
-    uid: string;
-    viewer: string;
-    bid: number;
-    seq: number;
-    ordersCost: number;
-    centsCost: number;
-}
+type QueuedCast = ViewerQueuedCast;
+type QueuedScoutCast = ViewerQueuedScoutCast;
 interface OrderAcct {
     name: string;
     n: number;
@@ -199,12 +207,9 @@ export class ViewerLive {
         const name = cleanViewerName(event.viewer);
         if (event.payment) {
             const cents = youTubePaymentCents(event.payment);
-            if (cents > 0) {
-                this.onPayment(event.uid, name, cents, `${event.payment.kind} ${event.payment.display}`);
-            } else {
-                this.acct(event.uid, name).seen = Date.now();
-                this.note(`${name} 的 ${event.payment.display} 已保存原始记录；该币种暂未折算，未扣款`);
-            }
+            // 无法折算时绝不 ACK：原始付款留在服务端待处理，不能假装已给观众入账。
+            if (cents <= 0) throw new Error(`付款 ${event.payment.display || event.id} 的金额或币种暂未支持，等待处理`);
+            this.onPayment(event.uid, name, cents, `${event.payment.kind} ${event.payment.display}`);
         }
         if (event.text) this.onChat(name, event.text, false, event.uid);
         this.handled.add(event.id);
@@ -328,7 +333,7 @@ export class ViewerLive {
         a.name = name;
         return a;
     }
-    private joinSide(id: string, side: 0 | 1): void { this.sides.set(id, side); }
+    private joinSide(id: string, side: 0 | 1): void { this.sides.set(id, side); this.save(); }
 
     private addOrders(id: string, name: string, n: number, bulk = false): void {
         const a = this.acct(id, name);
@@ -397,16 +402,17 @@ export class ViewerLive {
             const w = this.wallets.get(id);
             if (!w || w.cents < cost) {
                 this.wanted.set(id, `技${bid}`);
+                this.save();
                 return this.note(`${name}：这次要 ${bid} 积分；现有积分 ${a.n}/${bid}，或付费 $${(cost / 100).toFixed(2)} 放玩家技`);
             }
             w.cents -= cost;
             centsCost = cost;
         }
-        this.save();
         const item: QueuedScoutCast = { uid: id, viewer: name, bid, seq: ++this.scoutSeq, ordersCost, centsCost };
         const beforeLowerBid = this.scoutQueue.findIndex((q) => q.bid < bid);
         if (beforeLowerBid < 0) this.scoutQueue.push(item);
         else this.scoutQueue.splice(beforeLowerBid, 0, item);
+        this.save();
         return this.note(`${name} 出 ${bid} 积分放玩家技，排第 ${this.scoutQueue.indexOf(item) + 1}`);
     }
     private hasFreeQueued(id: string): boolean {
@@ -425,18 +431,19 @@ export class ViewerLive {
             const w = this.wallets.get(id);
             if (!w || w.cents < PRICE_PER_CAST) {
                 this.wanted.set(id, word);
+                this.save();
                 if (queuedFree && a.n >= ORDERS_PER_CAST) return this.note(`${name}：已有一计在排队，放完接着替你放【${word}】`);
                 return this.note(`${name}：积分 ${a.n}/${ORDERS_PER_CAST}，靠频道增长目标攒积分，或付费 $${PRICE_PER_CAST / 100} 放【${word}】`);
             }
             w.cents -= PRICE_PER_CAST;
             paid = true;
         }
-        this.save();
         const item: QueuedCast = { uid: id, viewer: name, side, six: SIX_BY_WORD[word], word, paid };
         if (paid) {
             const firstFree = this.queue.findIndex((q) => !q.paid);
             if (firstFree < 0) this.queue.push(item); else this.queue.splice(firstFree, 0, item);
         } else this.queue.push(item);
+        this.save();
         return this.note(`${name} 替${this.sideName(side)}点了【${word}】，${paid ? '付费' : '花积分'}，排第 ${this.queue.indexOf(item) + 1}`);
     }
     private credit(id: string, name: string, cents: number) {
@@ -451,7 +458,8 @@ export class ViewerLive {
 
     private tick(): void {
         const active = this.battleOn();
-        if (this.wasActive && !active) this.endBattle();
+        const hasBattleState = this.wasActive || this.queue.length > 0 || this.scoutQueue.length > 0 || this.wanted.size > 0 || this.sides.size > 0;
+        if (hasBattleState && !active) this.endBattle();
         this.wasActive = active;
         if (!active) return;
         this.tickScoutQueue();
@@ -461,6 +469,7 @@ export class ViewerLive {
         const r = this.war()!.castViewerSkill(head.side, head.six, head.viewer, head.paid);
         if (r === 'wait' || r === 'closed') return;
         this.queue.shift();
+        this.save();
         if (!head.paid) this.lastFreeCastAt = Date.now();
         const skillName = this.war()!.lastSkillNameOf(head.side);
         speechAnnouncer.announceViewerSkill(head.viewer, this.sideFaction(head.side) || this.sideName(head.side), skillName, { onlyIfIdle: !head.paid });
@@ -474,6 +483,7 @@ export class ViewerLive {
         const r = this.war()!.castPlayerLiveSkill();
         if (r === 'wait' || r === 'closed') return;
         this.scoutQueue.shift();
+        this.save();
         speechAnnouncer.announceViewerSkill(head.viewer, '玩家', '玩家技', { onlyIfIdle: head.centsCost === 0 });
         this.note(`${head.viewer} 出 ${head.bid} 积分，玩家技已释放`);
         this.fulfillWanted(head.uid, head.viewer);
@@ -517,6 +527,11 @@ export class ViewerLive {
             wallets: Object.fromEntries([...this.wallets].filter(([, w]) => w.cents > 0)),
             orders: Object.fromEntries([...this.orders].filter(([, a]) => a.n > 0).map(([id, a]) => [id, { name: a.name, n: a.n }])),
             handled: [...this.handled],
+            queue: this.queue.map((q) => ({ ...q })),
+            scoutQueue: this.scoutQueue.map((q) => ({ ...q })),
+            sides: [...this.sides],
+            wanted: [...this.wanted],
+            scoutSeq: this.scoutSeq,
         };
     }
 
@@ -534,6 +549,27 @@ export class ViewerLive {
                 if (Number.isFinite(o.n) && o.n > 0) this.orders.set(id, { name: String(o.name || '观众'), n: Math.floor(o.n), seen: 0, lastEarn: 0 });
             }
         }
+        this.queue = (Array.isArray(ledger.queue) ? ledger.queue : []).filter((q) =>
+            q && typeof q.uid === 'string' && (q.side === 0 || q.side === 1)
+            && typeof q.word === 'string' && SIX_BY_WORD[q.word] === q.six && typeof q.paid === 'boolean',
+        ).slice(0, 1000).map((q) => ({ ...q, viewer: cleanViewerName(String(q.viewer || '观众')) }));
+        this.scoutQueue = (Array.isArray(ledger.scoutQueue) ? ledger.scoutQueue : []).filter((q) =>
+            q && typeof q.uid === 'string' && Number.isSafeInteger(q.bid) && q.bid > 0
+            && ((q.ordersCost > 0) !== (q.centsCost > 0)),
+        ).slice(0, 1000).map((q) => ({
+            uid: q.uid, viewer: cleanViewerName(String(q.viewer || '观众')), bid: q.bid,
+            seq: Number.isSafeInteger(q.seq) ? q.seq : 0,
+            ordersCost: q.ordersCost > 0 ? q.bid : 0,
+            centsCost: q.centsCost > 0 ? scoutBidCents(q.bid) : 0,
+        }));
+        this.sides = new Map((Array.isArray(ledger.sides) ? ledger.sides : []).filter((x) =>
+            Array.isArray(x) && typeof x[0] === 'string' && (x[1] === 0 || x[1] === 1),
+        ));
+        this.wanted = new Map((Array.isArray(ledger.wanted) ? ledger.wanted : []).filter((x) =>
+            Array.isArray(x) && typeof x[0] === 'string' && typeof x[1] === 'string'
+            && (SIX_BY_WORD[x[1]] || scoutBidOf(x[1]) !== null),
+        ));
+        this.scoutSeq = Number.isSafeInteger(ledger.scoutSeq) ? Math.max(0, Number(ledger.scoutSeq)) : 0;
         this.writeCache();
     }
 
@@ -544,7 +580,7 @@ export class ViewerLive {
             if (!raw) return;
             const s = JSON.parse(raw) as Partial<ViewerLedger>;
             this.hydrateLedger({
-                version: 1, day: s.day || '', wallets: s.wallets || {}, orders: s.orders || {}, handled: s.handled || [],
+                ...s, version: 1, day: s.day || '', wallets: s.wallets || {}, orders: s.orders || {}, handled: s.handled || [],
             });
         } catch { /* 隐私模式或旧缓存损坏：等待服务端正式账本 */ }
     }

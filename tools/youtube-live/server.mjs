@@ -287,6 +287,11 @@ async function body(req) {
 }
 
 export function createHttpServer(service) {
+    // 一个直播只能有一个记账页面。其余页面的 EventSource 得 204（停止原生重连），
+    // 由桥接器低频重试；主页面断开后才允许另一页接管，防止双页面重复入账/覆盖账本。
+    let activeClient = '';
+    const requestClient = (req) => String(req.headers['x-mapwar-client'] || '');
+    const canWrite = (req) => !!activeClient && requestClient(req) === activeClient;
     return http.createServer(async (req, res) => {
         const url = new URL(req.url || '/', 'http://127.0.0.1');
         try {
@@ -294,19 +299,30 @@ export function createHttpServer(service) {
             if (req.method === 'GET' && url.pathname === '/state') return json(res, 200, service.snapshot());
             if (req.method === 'GET' && url.pathname === '/stats') return json(res, 200, await service.fetchStats());
             if (req.method === 'POST' && url.pathname === '/config') {
+                if (activeClient && !canWrite(req)) return json(res, 409, { error: '另一个游戏页面正在管理这场直播' });
                 const data = await body(req);
                 return json(res, 200, service.configure(data.apiKey, data.video));
             }
             if (req.method === 'POST' && url.pathname === '/ack') {
+                if (!canWrite(req)) return json(res, 409, { error: '这个页面不是当前记账页面' });
                 const data = await body(req);
                 service.acknowledge(String(data.id || ''), data.ledger);
                 return json(res, 200, { ok: true });
             }
             if (req.method === 'POST' && url.pathname === '/ledger') {
+                if (!canWrite(req)) return json(res, 409, { error: '这个页面不是当前记账页面' });
                 service.saveLedger(await body(req));
                 return json(res, 200, { ok: true });
             }
             if (req.method === 'GET' && url.pathname === '/events') {
+                const client = String(url.searchParams.get('client') || '').slice(0, 100);
+                if (!client) return json(res, 400, { error: '缺少页面标识' });
+                if (activeClient && activeClient !== client) {
+                    res.writeHead(204, { 'cache-control': 'no-store' });
+                    res.end();
+                    return;
+                }
+                activeClient = client;
                 res.writeHead(200, {
                     'content-type': 'text/event-stream; charset=utf-8',
                     'cache-control': 'no-cache, no-transform',
@@ -319,13 +335,15 @@ export function createHttpServer(service) {
                 const onStatus = (status) => send('status', status);
                 service.on('event', onEvent);
                 service.on('status', onStatus);
-                for (const event of service.state.pending) send('live', event);
+                // 状态先行：接管页先水合最新账本，再消费重发的未确认事件。
                 send('status', service.publicStatus());
+                for (const event of service.state.pending) send('live', event);
                 const heartbeat = setInterval(() => res.write(': heartbeat\n\n'), 15000);
                 req.on('close', () => {
                     clearInterval(heartbeat);
                     service.off('event', onEvent);
                     service.off('status', onStatus);
+                    if (activeClient === client) activeClient = '';
                 });
                 return;
             }
