@@ -3368,7 +3368,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 24
         },
         "/assets/TIBET/lang_clan_jiangqujianzan.png": {
-            "scale": 1.11,
+            "scale": 1.07,
             "offsetX": 12,
             "offsetY": -15
         },
@@ -8686,6 +8686,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.17,
             "offsetX": 23,
             "offsetY": 21
+        },
+        "/assets/TIBET/khon_wangzun.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -9
         }
     },
     "folderGuides": {
