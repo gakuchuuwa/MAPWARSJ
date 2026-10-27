@@ -6868,7 +6868,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/FRANKS/gen_kaernute_kotuatousi.png": {
-            "scale": 1.19,
+            "scale": 1.21,
             "offsetX": -7,
             "offsetY": 30
         },
@@ -8591,6 +8591,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 5,
             "offsetY": -8
+        },
+        "/assets/FRANKS/bfe3_46.png": {
+            "scale": 1.32,
+            "offsetX": 0,
+            "offsetY": 41
+        },
+        "/assets/BURGUNDIANS/gen_philip_good.png": {
+            "scale": 0.98,
+            "offsetX": 6,
+            "offsetY": 13
         }
     },
     "folderGuides": {

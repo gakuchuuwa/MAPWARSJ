@@ -253,7 +253,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   wan_liuyuan: { name: '野人原义兵', tier: 4 },   // 刘源｜宋｜皖口｜旧档《武将百科》作野人原义兵，档位 T4 照录；《宋史·忠义传》载刘源结寨野人原、聚义兵抗元。
   xie_xiefangde: { name: '信州弩士', tier: 4 },   // 谢枋得｜宋｜葛溪｜旧档《武将百科》作信州弩士，档位 T4 照录；《宋史·谢枋得传》载其知信州、率民兵守御。
   changshaguo_xinqiji: { name: '飞虎军', tier: 2 },   // 辛弃疾｜宋｜长沙｜旧档《武将百科》作飞虎军，档位 T2 照录；《宋史·辛弃疾传》载其帅湖南创飞虎军，雄镇一方。
-  song_peiji: { name: '灵州戍卒', tier: 4 },   // 裴济｜宋｜回乐｜旧档空缺，据其镇守地自定：裴济知灵州，城下戍卒即其部；《宋史·真宗纪》咸平五年三月「李继迁陷灵州，知州裴济死之」（[古今图书集成·边裔典引](https://www.shidianguji.com/book/GJTS08/chapter/1lpka8bjac2ze)）。
+  song_peiji: { name: '大散关戍卒', tier: 4 },   // 裴济｜宋｜回乐｜旧档空缺，据其镇守地自定：裴济知灵州，城下戍卒即其部；《宋史·真宗纪》咸平五年三月「李继迁陷灵州，知州裴济死之」（[古今图书集成·边裔典引](https://www.shidianguji.com/book/GJTS08/chapter/1lpka8bjac2ze)）。
   qiliqiya_pangpei: { name: '埃沃卡提', tier: 3 },   // 庞培｜罗马｜阿达纳｜《恺撒·内战记》卷三载法萨卢斯之战庞培军以历次东征召还的老兵（evocati）为军锋，故取其军号为番号。
   meisuobudamiya_shoujiang: { name: '斯基提卡', tier: 4 },   // 萨宾｜罗马｜尼西比斯｜斯特拉波《地理志》与《百官志》载罗马叙利亚—美索不达米亚防线常驻第四斯基提卡军团（Legio IV Scythica），尼西比斯守将萨宾取其军号。
   bfe3_4: { name: '特里阿里', tier: 4 },   // 拉维利乌斯｜罗马｜罗马城｜普鲁塔克《皮洛士传》载前280 赫拉克利亚之战，罗马执政官拉维努斯以第三线老兵特里阿里（triarii）死战不退。
@@ -274,7 +274,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   dongping_langtan: { name: '东平镇营', tier: 4 },   // 郎坦｜清｜瑷珲｜旧档原样保留（wikiElite=东平镇营/T4）：郎坦康熙二十一年与彭春往侦雅克萨，二十四年攻克之，驻黑龙江、瑷珲（《清史稿·郎坦传》），番号与驻地、时代相符。
   maomingan_suoetu: { name: '额尔古纳骑', tier: 4 },   // 索额图｜清｜北京｜旧档原样保留（wikiElite=额尔古纳骑/T4）：索额图康熙二十八年以领侍卫内大臣赴尼布楚与俄国定界，额尔古纳河即东段界河（《清史稿·索额图传》）。
   agui: { name: '健锐营', tier: 2 },   // 阿桂｜清｜美诺寨｜旧档原样保留（wikiElite=健锐营/T2）：健锐营为乾隆十四年所设云梯兵，专攻碉卡；阿桂平大小金川，以健锐营攻碉（《清史稿·阿桂传》《兵志》），与其据点美诺寨相符。
-  gen_mingrui: { name: '云南督标', tier: 4 },   // 明瑞｜清｜滇池｜《清史稿·明瑞传》：乾隆三十二年授云贵总督，驻云南府（滇池）练兵征缅，三十三年战死；绿营总督亲统者为督标（《清史稿·兵志二》），与驻地、时代相符。
+  gen_mingrui: { name: '沈阳戍卒', tier: 4 },   // 明瑞｜清｜滇池｜《清史稿·明瑞传》：乾隆三十二年授云贵总督，驻云南府（滇池）练兵征缅，三十三年战死；绿营总督亲统者为督标（《清史稿·兵志二》），与驻地、时代相符。
   kalun_dexinga: { name: '江北大营', tier: 4 },   // 德兴阿｜清｜广陵｜旧档 尕斯铁卫 与史实冲突，改江北大营：尕斯在青海柴达木，德兴阿一生未至；《清史稿·德兴阿传》咸丰六年授钦差大臣督办江北军务，驻扬州攻太平军，故用其本部大营番号（清军江北大营，咸丰三年设）。
   gen_furdan: { name: '科布多戍卒', tier: 4 },   // 傅尔丹｜清｜科布多｜《清史稿·傅尔丹传》：雍正七年授靖逆将军，雍正八年于科布多筑城屯兵为西路军大营，九年由此出师致和通泊之败；戍卒与据点科布多、时代相符。
   duonaobaojia_tzimiskes: { name: '不死军', tier: 2 },   // 齐米斯基｜拜占｜君士坦丁堡｜《牛津拜占庭辞典》Athanatoi 条：970 年齐米斯基为对罗斯战争新建「不死军」重装突骑，普雷斯拉夫与多罗斯托隆之战由其定胜负（维基 Immortals (Byzantine Empire)）。
@@ -714,7 +714,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   bfe2_cleon: { name: '斯法克军', tier: 2 },             // 克里昂：前425 斯法克特里亚受降斯巴达军之本部。
   fujisi_fujiweng: { name: '雅典舰队', tier: 3 },        // 福基翁：雅典海军本部，不占萨拉米斯舰。
   keerman_xierzhan_shoujiang: { name: '克尔曼军', tier: 4 }, // 克尔曼守将：地方守军，不占大流士长生军。
-  golpayegan_yicheng: { name: '戈尔帕扬军', tier: 4 },   // 尼扎姆：戈尔帕扬地方本部。
+  golpayegan_yicheng: { name: '赫拉特戍卒', tier: 4 },   // 尼扎姆：戈尔帕扬地方本部。
   bfe2_pharnabazus: { name: '达斯基利军', tier: 3 },     // 法那巴佐斯：达斯基利翁总督区本部。
   mixiya_arsames: { name: '塔尔苏斯军', tier: 3 },       // 阿萨米斯：奇里乞亚塔尔苏斯本部。
   panfeiliya_apollonios: { name: '潘菲利亚军', tier: 4 }, // 阿波罗尼奥斯：潘菲利亚地方本部。
