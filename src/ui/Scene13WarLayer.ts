@@ -93,7 +93,7 @@ import {
     COLLAPSE_ANIM_DUR, HERO_ATTACK_RATE, HERO_HP_MULT, HERO_DAMAGE_TAKEN, HERO_SPEED_MULT, HERO_DAMAGE_MULT, dmgVs,
     HUSSITE_SECONDARY_SHOT, UNIT_PX, AIM_JITTER, CHASE_RING, STALL_GUARD_ENFORCE,
     MELEE_QUIET_SEC, NO_KILL_SEC, HARD_STOP_SEC, BATTLE_LIMIT_SEC, BLD_MIN_DESTROY_BASE,
-    BLD_MIN_DESTROY_PER_SIDE, FLOW_SUB, PASS_INSIDE_DAMAGE_TAKEN, REMNANT_FRAC,
+    BLD_MIN_DESTROY_PER_SIDE, CITY_TYPE_GATE_FLOOR_SEC, CITY_TYPE_BLD_FLOOR_MULT, FLOW_SUB, PASS_INSIDE_DAMAGE_TAKEN, REMNANT_FRAC,
     DEF_WALL_GAP, SIEGE_FIELD_GAP, CLOUD_BASE_URL, CLOUD_FILES, CLOUD_COUNT_MIN,
     CLOUD_COUNT_MAX, CLOUD_SCALE_MAX, CLOUD_SCALE_MIN, CLOUD_SPD_MIN, CLOUD_SPD_MAX,
     CLOUD_ALPHA_MIN, CLOUD_ALPHA_MAX, NATURE_BASE_URL, BUILDING_BASE_URL,
@@ -5813,12 +5813,13 @@ export class Scene13WarLayer {
      *    （城内建筑的保底在 onDefBuildingHit，按占地 7~16 秒。）
      */
     private applyWallGateFloor(b: WarBuilding): void {
-        if (b.bld || b.hitAt === undefined) return;
-        let floorSec = 10;
+        if (b.bld || b.hitAt === undefined || b.key !== 'STONE_GATE') return;
+        const ct = this.defenderCityType;
+        let floorSec = 14;
         if (b.key === 'STONE_GATE') {
-            floorSec = b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? 30
-                : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? 15
-                : 25;
+            floorSec = (ct && CITY_TYPE_GATE_FLOOR_SEC[ct]) ? CITY_TYPE_GATE_FLOOR_SEC[ct] : (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? 20
+                : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? 8
+                : 14);
         }
         const minHp = b.maxHp * (1 - (this.battleSec - b.hitAt) / floorSec);
         if (b.hp < minHp) b.hp = minHp;
@@ -5833,7 +5834,9 @@ export class Scene13WarLayer {
         //    实测改前（小城安定）：民居 7.4 秒、磨坊 10.1、铁匠铺 7.5、城镇中心 12 —— 大小建筑倒得一样快。
         if (sp.destroyed || sp.collapse || sp.asset.includes('_RUBBLE')) return;
         if (b.hitAt !== undefined) {
-            const floorSec = BLD_MIN_DESTROY_BASE + BLD_MIN_DESTROY_PER_SIDE * bldFootprintSide(name);
+            const ct = this.defenderCityType;
+            const cityMult = (ct && CITY_TYPE_BLD_FLOOR_MULT[ct]) ? CITY_TYPE_BLD_FLOOR_MULT[ct] : 1.0;
+            const floorSec = (BLD_MIN_DESTROY_BASE + BLD_MIN_DESTROY_PER_SIDE * bldFootprintSide(name)) * cityMult;
             const minHp = b.maxHp * (1 - (this.battleSec - b.hitAt) / floorSec);
             if (b.hp < minHp) b.hp = minHp;
         }
@@ -6161,8 +6164,16 @@ export class Scene13WarLayer {
                 if (m.f === 0) { if (p > maxP0) maxP0 = p; }
                 else { if (p < minP1) minP1 = p; }
             }
+            // 攻城战若守军全在城内，攻方前锋推进到离城门/外墙 MARCH_REL 以内也算看到城防目标并展开接战
+            if (this.battleType === 'siege' && this.wallGates.length > 0) {
+                for (const b of this.wallGates) {
+                    if (b.f === 0 || !this.wallStanding(b)) continue;
+                    const p = (b.x - this.spawnBases[0].x) * u0.x + (b.y - this.spawnBases[0].y) * u0.y;
+                    if (p < minP1) minP1 = p;
+                }
+            }
             const liveGap = (maxP0 > -Infinity && minP1 < Infinity) ? (minP1 - maxP0) : Infinity;
-            if ((marchedDist >= 180 && (baseDist - (front0 + this.adv[0] + front1 + this.adv[1]) < MARCH_REL || liveGap < MARCH_REL)) || this.battleSec >= (this.battleType === 'siege' ? 25.0 : 15.0)) {
+            if (marchedDist >= 180 && (baseDist - (front0 + this.adv[0] + front1 + this.adv[1]) < MARCH_REL || liveGap < MARCH_REL)) {
                 this.marching = false;
                 this.holdLanes.clear();
                 for (const m of this.men) {
@@ -7520,21 +7531,21 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-11 主人报「开战全挤成一排」] **城墙不算锁敌**：攻城战 search 会把 wallGates 当目标，
             //    若按「锁敌即脱队」，全队 50 人第一轮索敌就锁定同一段墙、集体脱队压成一排。
             //    Attack Move 的脱队只对**真敌兵**生效（建筑目标用 'sprite' in foe 区分，见上方交战时计数那段）。
-            if (m.march && m.foe && !('sprite' in m.foe)) {
-                // 🔴 [2026-10-11 主人「按专业游戏修复」] **DE 的 Attack-Move 是「接触才脱队」，不是「看见就脱队」**。
-                // 🔴 [2026-10-15 主人令「在刚达最大射程时立即停步脱队射击，不再往敌人脸上多冲一段」]
-                //    远程单位（stats.rng > 65）一达到最大射程 REACH 立即脱队并原地停步（m.tx = m.x; m.ty = m.y）开火，不再多往前冲一段 MARCH_SP。
+            if (m.march && m.foe && !('sprite' in m.foe) && m.foe.hp > 0) {
+                // 🔴 [2026-10-27 主人令「保持同速阵型，直至看到敌方」] 列阵推进中一旦有士兵在自身视野（SIGHT）内看到敌兵，全军立即解除同速阵型展开接战
+                this.marching = false;
+                this.holdLanes.clear();
+                for (const u of this.men) {
+                    u.march = false;
+                    u.port = null;
+                    u.noFoeSec = LANE_REGROUP_SEC;
+                    u.stuckT = 0;
+                    u.netT = 0;
+                }
                 const _d2 = (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2;
-                const _contact = _d2 <= (REACH + (stats.rng > 65 ? 0 : MARCH_SP)) ** 2;
-                if (_contact) {
-                    m.march = false;
-                    m.port = null;
-                    m.stuckT = 0;
-                    m.netT = 0;
-                    if (stats.rng > 65) {
-                        m.tx = m.x;
-                        m.ty = m.y;
-                    }
+                if (stats.rng > 65 && _d2 <= REACH * REACH) {
+                    m.tx = m.x;
+                    m.ty = m.y;
                 }
             }
 
@@ -7756,7 +7767,7 @@ export class Scene13WarLayer {
                 if (m.march && !inReach && !holdCmd) {
                     m.st = 0;
                     const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy);
-                    const step = stats.spd * spdK * this.uphillSpeedK(m.x, m.y, dx, dy) * dt;
+                    const step = stats.spd * dt;
                     if (stats.spd > 0 && d > LANE_TRACK_EPS) {
                         const mv = Math.min(step, d);
                         m.x += (dx / d) * mv;
@@ -8209,7 +8220,7 @@ export class Scene13WarLayer {
                 // 脱战整队推进：普通队员与自动玩家都不得超过本队最慢兵种；地形、坡度等原有修正照常保留。
                 const formationSpd = laneStandby ? laneFormationSpeeds.get(m.lane) : undefined;
                 const moveSpdK = formationSpd !== undefined && m.hero ? spdK / HERO_SPEED_MULT : spdK;
-                const step = (formationSpd ?? normalSpd) * moveSpdK * this.uphillSpeedK(m.x, m.y, dx, dy) * dt;
+                const step = (m.march ? normalSpd : (formationSpd ?? normalSpd) * moveSpdK * this.uphillSpeedK(m.x, m.y, dx, dy)) * dt;
                 const arriveAt = trackSlot ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
                 if (stats.spd > 0 && d > arriveAt) {
                     const mv = trackSlot ? Math.min(step, d) : step;   // 跟随锚点/列阵推进/原位警戒归位：连续跟随，不迈整步

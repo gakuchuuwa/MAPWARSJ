@@ -76,8 +76,28 @@ export const HARD_STOP_SEC = 600;
 /** 🔴 [2026-10-12 主人令] 一场战斗最长 5 分钟，到点未分胜负攻方输 */
 export const BATTLE_LIMIT_SEC = 540;   // 🔴 [2026-10-21 主人令] 战斗时间改为 9 分钟
 /** 🔴 [2026-10-15 主人令「现在的建筑被击毁的又太快了，我觉得应该给每个建筑一个基础被摧毁保底时间」] */
-export const BLD_MIN_DESTROY_BASE = 8;
-export const BLD_MIN_DESTROY_PER_SIDE = 4;
+export const BLD_MIN_DESTROY_BASE = 4;
+export const BLD_MIN_DESTROY_PER_SIDE = 2;
+
+/**
+ * 🔴 [2026-10-27 主人令「这个时间应该根据大城，中城，险要，小城，城寨不同的类型，设置不同的保底时间」「城墙不要保底，本来就难打，还多。整体时间下调下。太长了。」]
+ * 按五种据点类型（大城 > 中城 > 险要 > 小城 > 城寨）分别设定城门保底被摧毁秒数，以及城内建筑保底时间倍率（城墙不设保底）。
+ */
+export const CITY_TYPE_GATE_FLOOR_SEC: Record<'big_city' | 'medium_city' | 'pass' | 'small_city' | 'stockade', number> = {
+    big_city: 20,
+    medium_city: 16,
+    pass: 13,
+    small_city: 10,
+    stockade: 6,
+};
+
+export const CITY_TYPE_BLD_FLOOR_MULT: Record<'big_city' | 'medium_city' | 'pass' | 'small_city' | 'stockade', number> = {
+    big_city: 1.3,
+    medium_city: 1.1,
+    pass: 0.95,
+    small_city: 0.8,
+    stockade: 0.6,
+};
 
 /** 流场细分：每个等轴地块切成 FLOW_SUB×FLOW_SUB 小格 */
 export const FLOW_SUB = 2;

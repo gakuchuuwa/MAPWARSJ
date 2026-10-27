@@ -4,7 +4,7 @@
 import type { PlayerHero, PlayerAutoPlan } from './PlayerHero';
 import type { PlayerQuestSystem } from './PlayerQuestSystem';
 import type { DialoguePayload } from './PlayerQuestSystem';
-import { heroKeyForRank, meritForNextRankStep, PLAYER_RANKS } from './PlayerConfig';
+import { heroKeyForRank, nextRankAfter, PLAYER_RANKS } from './PlayerConfig';
 import { moderateLiveName } from '../live/LiveNameModeration';
 import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipChineseName } from '../types/NavalShipTiers';
@@ -362,7 +362,7 @@ export class PlayerHUD {
 
         const hero = this.hero;
         const rank = hero.getRank();
-        const nextStepMerit = meritForNextRankStep(rank.id);
+        const nextStepMerit = nextRankAfter(rank)?.merit ?? null;
         const quest = this.quests.getQuest();
         const host = hero.getHostLegion();
         const factionName = hero.factionId ? this.deps.getFactionName(hero.factionId) : '独行';

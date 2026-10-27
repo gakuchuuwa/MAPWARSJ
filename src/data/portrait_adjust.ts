@@ -7253,7 +7253,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 28
         },
         "/assets/INCA/gen_topa_inca.png": {
-            "scale": 0.96,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": 1
         },
@@ -7533,7 +7533,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -26
         },
         "/assets/INCA/gen_minchancaman.png": {
-            "scale": 1.13,
+            "scale": 1.17,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -8646,6 +8646,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 6
+        },
+        "/assets/ROMA/luoma_xiageliwusi.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/CELTS/gaer_sigtrygg.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 37
+        },
+        "/assets/PORTUGUESE/luxitaniya_viriathus.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/ROMA/bfe_vetilius.png": {
+            "scale": 1.14,
+            "offsetX": 2,
+            "offsetY": 14
+        },
+        "/assets/INCA/gen_atahualpa.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {

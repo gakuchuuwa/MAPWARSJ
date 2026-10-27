@@ -77,16 +77,6 @@ export function nextRankAfter(rank: PlayerRank): PlayerRank | null {
 }
 
 /**
- * 当前官职升往下一官职所需的「本阶独立差额功勋」（离职清零只清本阶进度，已晋升的底盘不重练）。
- * 例：平民→斥候 1000（入伍直升）、斥候→探马 2000、探马→先锋 5000、先锋→将军 12000……皇帝封顶返回 null。
- */
-export function meritForNextRankStep(rankId: PlayerRankId): number | null {
-    const idx = PLAYER_RANKS.findIndex((r) => r.id === rankId);
-    if (idx < 0 || idx + 1 >= PLAYER_RANKS.length) return null;
-    return Math.max(1, PLAYER_RANKS[idx + 1].merit - PLAYER_RANKS[idx].merit);
-}
-
-/**
  * 玩家兜底素材 key（UnitAssets.UNIT_ASSETS / Scene13 WAR_TYPES 同名）。
  *
  * 🔴 [2026-09-09 主人定「玩家怎么显示成关羽了，赶紧删除」] 这里原本是 `'guanyu'`
