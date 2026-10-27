@@ -2483,9 +2483,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/MONGOL/wala_yexian.png": {
-            "scale": 1.16,
+            "scale": 1.1,
             "offsetX": 0,
-            "offsetY": -5
+            "offsetY": -3
         },
         "/assets/STEPPE/__闲置__STEPPE_47.png": {
             "scale": 1.05,
@@ -8516,6 +8516,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.26,
             "offsetX": 24,
             "offsetY": 8
+        },
+        "/assets/ORIE/guyashu_tigelate.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/ORIE/gen_sayf_al_dawla.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/NORTHEAST/bohai_dayinzhuan.png": {
+            "scale": 1.1,
+            "offsetX": 11,
+            "offsetY": 15
+        },
+        "/assets/CENTRAL/bfe_likaigu.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/WEI/ming_yanghong.png": {
+            "scale": 1.2,
+            "offsetX": -18,
+            "offsetY": -22
+        },
+        "/assets/JIANGNAN/bfe_chengong.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -4
         }
     },
     "folderGuides": {

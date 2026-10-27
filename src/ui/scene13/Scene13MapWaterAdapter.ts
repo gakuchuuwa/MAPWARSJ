@@ -131,6 +131,192 @@ export function relocateTemplateWater(
 }
 
 /**
+ * 🔴 [2026-10-27 主人令「战术模式中的地图……有的因为在港口附近，导致水域太多，我觉得一张地图水域不应该超过40%」]
+ * 将战术地图水域占比硬性限制在不超过 40%（0.40）：
+ *   若水域占比 > 40%，通过多源 BFS 计算水域到陆地的距离，将最靠近陆地/城心的超额水域（浅水/内湾/近岸水格）
+ *   平滑转化为陆地（主导陆地地形），并将新陆地与剩余水域的接触面重置为沙岸（Beach 2），
+ *   使水域有机退潮至 40% 以下，保留大洋深海轮廓同时为港口战役提供宽阔陆地机动战场。
+ */
+export function clampMapWaterRatio(mapData: any, maxRatio: number = 0.40): any {
+    if (!mapData?.terrain?.length || !mapData.width || !mapData.height) return mapData;
+    const w = mapData.width, h = mapData.height;
+    const total = w * h;
+    const maxWater = Math.floor(total * maxRatio);
+
+    const isWaterId = (tid: number): boolean => {
+        if (tid === 1 || tid === 15 || tid === 22 || tid === 23 || tid === 4 || tid === 58 || tid === 95 || tid === 96) return true;
+        const m: any = DE_TERRAIN_MANIFEST[tid];
+        return !!(m && ((m.is_water && (m.is_water & 7)) || m.overlay_mask_name === 'water.png'));
+    };
+    const isShoreId = (tid: number): boolean => {
+        if (tid === 2) return true;
+        const m: any = DE_TERRAIN_MANIFEST[tid];
+        return !!m && /beach|shore/i.test(String(m.name ?? '') + String(m.name_2 ?? ''));
+    };
+
+    const terrain = Array.from(mapData.terrain as ArrayLike<number>);
+    const passable = mapData.passable ? Array.from(mapData.passable as ArrayLike<number>) : null;
+    const speed = mapData.speed ? Array.from(mapData.speed as ArrayLike<number>) : null;
+
+    let waterCount = 0;
+    const landFreq = new Map<number, number>();
+    for (let i = 0; i < total; i++) {
+        const t = terrain[i];
+        if (isWaterId(t)) {
+            waterCount++;
+        } else if (!isShoreId(t)) {
+            landFreq.set(t, (landFreq.get(t) ?? 0) + 1);
+        }
+    }
+
+    if (waterCount <= maxWater) return mapData;
+
+    // 选取当前地图的主导陆地地形 ID（无陆地则回退到 12 绿草）
+    let domLandId = 12, maxLandFreq = -1;
+    for (const [tid, freq] of landFreq) {
+        if (freq > maxLandFreq) {
+            maxLandFreq = freq;
+            domLandId = tid;
+        }
+    }
+
+    const excess = waterCount - maxWater;
+
+    // 多源 BFS 计算所有水域格子到最近陆地/沙岸的距离
+    const dist = new Int32Array(total).fill(-1);
+    const queue: number[] = [];
+
+    for (let i = 0; i < total; i++) {
+        if (!isWaterId(terrain[i])) {
+            dist[i] = 0;
+        }
+    }
+
+    for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+            const idx = y * w + x;
+            if (dist[idx] === 0) {
+                const neighbors = [
+                    [x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]
+                ];
+                for (const [nx, ny] of neighbors) {
+                    if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                        const nIdx = ny * w + nx;
+                        if (isWaterId(terrain[nIdx]) && dist[nIdx] === -1) {
+                            dist[nIdx] = 1;
+                            queue.push(nIdx);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 若原图 100% 都是水（无陆地格），以中心为原点向外拓展陆地
+    if (queue.length === 0) {
+        const midY = Math.floor(h / 2), midX = Math.floor(w / 2);
+        const midIdx = midY * w + midX;
+        dist[midIdx] = 0;
+        terrain[midIdx] = domLandId;
+        queue.push(midIdx);
+    }
+
+    let head = 0;
+    while (head < queue.length) {
+        const curr = queue[head++];
+        const cx = curr % w, cy = (curr - cx) / w;
+        const cDist = dist[curr];
+        const neighbors = [
+            [cx - 1, cy], [cx + 1, cy], [cx, cy - 1], [cx, cy + 1]
+        ];
+        for (const [nx, ny] of neighbors) {
+            if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                const nIdx = ny * w + nx;
+                if (isWaterId(terrain[nIdx]) && dist[nIdx] === -1) {
+                    dist[nIdx] = cDist + 1;
+                    queue.push(nIdx);
+                }
+            }
+        }
+    }
+
+    // 收集全部水域格，加入伪随机噪声产生自然曲折海岸线
+    const waterCells: Array<{ idx: number; score: number }> = [];
+    for (let i = 0; i < total; i++) {
+        if (isWaterId(terrain[i])) {
+            const x = i % w, y = (i - x) / w;
+            const d = dist[i] > 0 ? dist[i] : 999;
+            const jitter = ((Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1 + 1) % 1;
+            const centerDist = Math.hypot(x - w / 2, y - h / 2) / (w / 2);
+            const score = d + jitter * 0.7 + centerDist * 0.5;
+            waterCells.push({ idx: i, score });
+        }
+    }
+
+    waterCells.sort((a, b) => a.score - b.score);
+
+    // 将离陆地最近的超额水域转为陆地
+    const converted = new Uint8Array(total);
+    const toConvert = Math.min(excess, waterCells.length);
+    for (let k = 0; k < toConvert; k++) {
+        const idx = waterCells[k].idx;
+        terrain[idx] = domLandId;
+        if (passable) passable[idx] = 1;
+        if (speed) speed[idx] = 100;
+        converted[idx] = 1;
+    }
+
+    // 重建自然沙滩岸线（Beach 2）：新陆地与剩余水域相邻的格子作为沙岸
+    const isNowWater = (x: number, y: number): boolean => {
+        if (x < 0 || x >= w || y < 0 || y >= h) return false;
+        return isWaterId(terrain[y * w + x]);
+    };
+
+    for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+            const idx = y * w + x;
+            if (!isWaterId(terrain[idx])) {
+                let touchesWater = false;
+                for (let dy = -1; dy <= 1 && !touchesWater; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        if (dx === 0 && dy === 0) continue;
+                        if (isNowWater(x + dx, y + dy)) {
+                            touchesWater = true;
+                            break;
+                        }
+                    }
+                }
+                if (touchesWater) {
+                    terrain[idx] = 2; // Beach / Shore
+                    if (passable) passable[idx] = 1;
+                    if (speed) speed[idx] = 90;
+                } else if (terrain[idx] === 2) {
+                    // 已退潮到内陆的旧沙岸复原为主导陆地
+                    terrain[idx] = domLandId;
+                    if (speed) speed[idx] = 100;
+                }
+            }
+        }
+    }
+
+    // 清理掉落在新陆地上的纯水生物件（鱼、独木舟、沉船、睡莲等）
+    const objects = (mapData.objects || []).filter((o: any) => {
+        const ox = Math.floor(o.x), oy = Math.floor(o.y);
+        if (ox < 0 || oy < 0 || ox >= w || oy >= h) return true;
+        const idx = oy * w + ox;
+        if (converted[idx]) {
+            const name = String(o.name || '');
+            if (/FISH|DOLPHIN|CANOE|SHIPWRECK|WATER_LILY|REEDS/i.test(name)) return false;
+        }
+        return true;
+    });
+
+    const newWater = terrain.filter(isWaterId).length;
+    console.info(`[Scene13WarLayer] 🌊 港口/滨水地图水域占比超额 (${(waterCount / total * 100).toFixed(1)}%)，已自动收拢退潮至 ${(newWater / total * 100).toFixed(1)}% (≤40%)`);
+    return { ...mapData, terrain, passable, speed, objects };
+}
+
+/**
  * 🔴 [2026-10-13 主人令「有的城海在西边，战术地图中却在东边。请采用合理处理方式」
  *    ＋「战略地图中海在西边，战术地图中却在东边，请全面修复所有错误的战术地图」]
  * 自适应校正战术地图水体方位，使海岸线朝向与真实地理（＝战略地图）一致。

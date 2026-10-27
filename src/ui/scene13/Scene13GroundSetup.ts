@@ -18,6 +18,7 @@ import { applyDeCityToGround } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { setCachedViennaMapData } from './Scene13SpriteCache';
 import { loadDeCampaignMapForGround, populateDeCampaignObjects } from './Scene13DeCampaignLoader';
+import { clampMapWaterRatio } from './Scene13MapWaterAdapter';
 
 /** 未改造的据点／主题地图数据与在途请求。后续转置、海向校正和城基改造都会另建数组，不回写这里。 */
 const GROUND_MAP_DATA_CACHE = new Map<string, Promise<any | null>>();
@@ -102,13 +103,12 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 if (wRatio > 0.02 && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
                     this.environmentPlan.waterKind = skelHmin > 10 ? 'river' : 'sea';
                 }
-                // 🔴 修复大非川（龙羊峡水库 100% 水）、萨尔克尔（齐姆良斯克水库 100% 水）、郧阳（丹江口水库 65% 水）等
-                //    因现代水库蓄水或海湾裁剪导致全图 >55% 变成汪洋大海、丧失陆地与林木的问题：
-                //    此类淹没图退回当前气候带的 _river / _sea 主题模板，并按真实河道/海岸方向生成城侧水体
-                if (wRatio <= 0.55) {
+                // 🔴 修复大非川（龙羊峡水库 100% 水）、萨尔克尔（齐姆良斯克水库 100% 水）等极端水体（水面 > 80% 几乎无陆地），
+                //    此类淹没图退回当前气候带的 _river / _sea 主题模板；一般港口/水系（≤ 80%）则保留并在后续由 clampMapWaterRatio 收拢至 ≤ 40%
+                if (wRatio <= 0.80) {
                     return site;
                 }
-                console.info(`[Scene13WarLayer] 🏞 据点图 site_${siteId}.json 水面占比过高 (${(wRatio * 100).toFixed(1)}%，现代水库/海湾淹没)，切换为当地气候水体模板`);
+                console.info(`[Scene13WarLayer] 🏞 据点图 site_${siteId}.json 水面占比过高 (${(wRatio * 100).toFixed(1)}%，缺乏陆地)，切换为当地气候水体模板`);
             }
         }
         const theme = this.environmentPlan?.deMapTheme;
@@ -170,9 +170,11 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         if (isInlandReservoirFlood && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
             this.environmentPlan.waterKind = 'river';
         }
-        const mapData = (rawMapData?.isDeCampaign || (rawMapData?.header?.skeleton && !isInlandReservoirFlood))
+        const mapDataRaw = (rawMapData?.isDeCampaign || (rawMapData?.header?.skeleton && !isInlandReservoirFlood))
             ? oriented
             : this.relocateTemplateWater(oriented);
+        // 🔴 [2026-10-27 主人令「战术模式中的地图……有的因为在港口附近，导致水域太多，我觉得一张地图水域不应该超过40%」]
+        const mapData = clampMapWaterRatio(mapDataRaw, 0.40);
         // 🔴 [2026-10-21 主人令「请全部和DE保持一致」]
         //    地面 6 张贴图改由 **DE 烘焙地形直方图** 决定（见 Scene13DeGround.ts）：
         //    `14 Desert→pal`、`12 Grass2→gr2`、`100 Dry Grass→gr7`、`2 Beach→bch`、`10 Forest→for`、`3 Dirt3→ds3`…
@@ -512,9 +514,97 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                                     obstructionContactSec: 0,
                                     obstructionTouched: false,
                                     obstructionDisabled: true,
-                                });
+                                    });
                             }
                         }
+                    }
+                }
+
+                // 🔴 [2026-10-27 主人令「岸边应该多一些树」]
+                // 沿水岸陆地/沙岸带（紧邻水域 1~3 格）点缀沿岸自然树林，使港口与滨水战场绿树成荫
+                const shoreTreeMinDistSq = 45 * 45;
+                const existingTreePositions: Array<{ x: number; y: number }> = [];
+                for (const sp of this.decorSprites) {
+                    if (TREE_RE.test(sp.asset)) {
+                        existingTreePositions.push({ x: sp.x, y: sp.y });
+                    }
+                }
+
+                const resolveShoreTreeSpecies = (gx: number, gy: number): string => {
+                    const hash = (gx * 37 + gy * 73) % 100;
+                    if (isBarrenBase || isSparseTreelessBiome || /^(des|pal|pal1|qs|ds2|ds5)/i.test(baseTerrain)) {
+                        // 热带/沙漠/干旱海岸：棕榈与海滨乔木
+                        return hash < 60 ? 'PALM' : (hash < 85 ? 'DRAGON_TREE' : 'ACACIA');
+                    }
+                    if (mapLat >= 20 && mapLat <= 42 && mapLng >= 98 && mapLng <= 135) {
+                        // 东亚水系/滨海：水柳 50%、竹林 25%、白桦/松 25%
+                        return hash < 50 ? 'WILLOW' : (hash < 75 ? 'BAMBOO' : 'ASIAN_PINE');
+                    }
+                    if ((mapLat >= 30 && mapLat <= 45 && mapLng >= -10 && mapLng <= 40) || /^(med|scr|dry)/i.test(baseTerrain)) {
+                        // 地中海/近东海岸：丝柏 45%、棕榈 30%、水柳 25%
+                        return hash < 45 ? 'CYPRESS' : (hash < 75 ? 'PALM' : 'WILLOW');
+                    }
+                    if (isSnowBase || /^(sno|sn2|snf|snd|snr|ic3|ice)/.test(baseTerrain)) {
+                        // 寒带/雪域：冬松与白桦
+                        return hash < 60 ? 'SNOW_PINE' : 'BIRCH_WINTER';
+                    }
+                    // 温带欧亚/美洲大陆水岸：水柳 45%、白桦 30%、橡树 25%
+                    return hash < 45 ? 'WILLOW' : (hash < 75 ? 'BIRCH_GREEN' : 'OAK');
+                };
+
+                for (let gy = 3; gy < 117; gy++) {
+                    for (let gx = 3; gx < 117; gx++) {
+                        const dens = glLayer.getWaterDensityAt(gx, gy);
+                        // 岸边带：water density 在 0.12 ~ 0.43 之间（即离水面 1~3 格的陆地岸线）
+                        if (dens < 0.12 || dens > 0.43) continue;
+
+                        const ox = gx - 0.5, oy = gy - 0.5;
+                        const sx = (ox - 60) * TAC_TILE_W + VW / 2;
+                        const sy = (oy - 60) * TAC_TILE_H + VH / 2;
+
+                        if (glLayer.isWaterAtCell(gx, gy)) continue;
+                        if (onFoundation(sx, sy) || inCityZone(sx, sy) || inCampZone(sx, sy)) continue;
+
+                        // 岸边散布密度控制：约 30%~35% 的岸边格生成树木
+                        const hash = (gx * 31 + gy * 53) % 100;
+                        if (hash >= 35) continue;
+
+                        const jx = (((hash * 17) % 23) / 22 - 0.5) * TAC_TILE_W * 0.46;
+                        const jy = (((hash * 31) % 29) / 28 - 0.5) * TAC_TILE_H * 0.46;
+                        const posX = sx + jx, posY = sy + jy;
+
+                        let tooClose = false;
+                        for (let k = 0; k < existingTreePositions.length; k++) {
+                            const et = existingTreePositions[k];
+                            const dx = posX - et.x, dy = posY - et.y;
+                            if (dx * dx + dy * dy < shoreTreeMinDistSq) {
+                                tooClose = true;
+                                break;
+                            }
+                        }
+                        if (tooClose) continue;
+
+                        const rawSpecies = resolveShoreTreeSpecies(gx, gy);
+                        const asset = seasonalDeTree(rawSpecies, calSeason, isSnowBase);
+                        this.ensureNatureAsset(asset);
+                        const lift = glLayer.elevationLiftAt(posX, posY, VW, VH);
+
+                        this.decorSprites.push({
+                            asset,
+                            frame: hash % 100,
+                            x: posX,
+                            y: posY,
+                            flip: (hash % 2 === 0),
+                            layer: 'world',
+                            z: 0,
+                            lift,
+                            densityHash: hash,
+                            obstruction: undefined,
+                            obstructionContactSec: 0,
+                            obstructionTouched: false,
+                            obstructionDisabled: true,
+                        });
+                        existingTreePositions.push({ x: posX, y: posY });
                     }
                 }
             }

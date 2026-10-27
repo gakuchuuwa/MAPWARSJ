@@ -4746,29 +4746,35 @@ export class CombatUI {
         } else {
             cutIn.textContent = displayName;
         }
-        const cutInMs = viewer ? 3000 : 1500;
+        if (!viewer) this.pulsePortraitForSkill(side);
+        const isAtt = side === 'attacker';
+        const coreGlow = isAtt ? 'rgba(255, 100, 0, 1)' : 'rgba(0, 150, 255, 1)';
+        const wideGlow = isAtt ? 'rgba(255, 50, 0, 0.8)' : 'rgba(0, 100, 255, 0.8)';
         cutIn.style.cssText = `
             position: absolute;
             top: 70%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.5);
             text-align: center;
-            color: ${viewer ? '#ffd700' : 'rgba(255,255,255,0.82)'};
-            font-size: ${uiPx(viewer ? (viewer.paid ? 52 : 50) : 32)};
+            color: ${viewer ? '#ffd700' : '#ffffff'};
+            font-size: ${uiPx(viewer?.paid ? 50 : 46)};
             font-weight: 900;
             font-family: 'Noto Serif SC', serif;
-            font-style: ${viewer ? 'italic' : 'normal'};
-            letter-spacing: ${uiPx(viewer ? 4 : 2)};
+            font-style: italic;
+            letter-spacing: ${uiPx(4)};
             pointer-events: none;
             z-index: 100;
-            text-shadow: ${viewer
-                ? '0 2px 2px rgba(0,0,0,0.9), 0 0 10px rgba(255,215,0,1), 0 0 24px rgba(255,170,0,0.9), 0 0 44px rgba(255,120,0,0.72), 0 10px 20px rgba(0,0,0,0.9)'
-                : '0 2px 3px rgba(0,0,0,0.9)'};
-            animation: skill-cut-in ${cutInMs}ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            text-shadow: 
+                0 2px 2px rgba(0,0,0,0.9),
+                0 0 10px ${coreGlow},
+                0 0 20px ${coreGlow},
+                0 0 40px ${wideGlow},
+                0 10px 20px rgba(0,0,0,0.9);
+            animation: skill-cut-in 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
             white-space: nowrap;
         `;
         frame.appendChild(cutIn);
-        window.setTimeout(() => cutIn.remove(), cutInMs);
+        window.setTimeout(() => cutIn.remove(), 3000);
     }
 
     public isBoundToBattleField(battleField: BattleField): boolean {
