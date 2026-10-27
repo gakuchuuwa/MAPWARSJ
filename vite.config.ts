@@ -249,9 +249,13 @@ export default defineConfig({
         include: ['leaflet', 'pinyin-pro'],
     },
     server: {
-        // 忽略 DE 战役导出的 1.5 万张静态精灵与拆包目录，避免 chokidar 扫描塞死 Vite 事件循环
+        // YouTube 单平台本地服务：官方聊天流、频道增长数据、待确认事件与持久账务。
+        proxy: {
+            '/live-api': { target: 'http://127.0.0.1:8787', rewrite: (path) => path.replace(/^\/live-api/, '') },
+        },
+        // 忽略 DE 战役导出的 1.5 万张静态精灵与拆包目录，以及本机直播账务写盘。
         watch: {
-            ignored: ['**/public/de-maps/**', '**/scratch/de_campaign/**'],
+            ignored: ['**/public/de-maps/**', '**/scratch/de_campaign/**', '**/.local/**'],
         },
         // 所有文件均由 Vite 监听；F2 写盘期间由 suppress-portrait-dev-hmr 插件短暂拦截全页刷新
         // [PERF] Warm up the most expensive modules on dev server start

@@ -95,7 +95,7 @@ import { clearAllFieldDefeats } from '../legion/FieldDefeatRecord';
 import { setCityOwnerProvider, getFactionIdOfGeneral } from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { ViewerLivePanel } from '../live/ViewerLivePanel';
-import { SocialStreamBridge } from '../live/SocialStreamBridge';
+import { YouTubeOfficialBridge } from '../live/YouTubeOfficialBridge';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -955,8 +955,8 @@ export class GameApp {
 
     /** 🔴 [2026-10-23] 直播观众互动：观众发字替一方放计（F9 测试面板；控制台 `game.live.onChat('某某', '攻', true)`） */
     public readonly live = new ViewerLive(this);
-    /** 🔴 [2026-10-24] 直播间聊天 / 打赏：经 Social Stream Ninja 进来（YouTube / Twitch / TikTok / Ko-fi） */
-    private readonly liveLink = new SocialStreamBridge(this.live);
+    /** 🔴 [2026-10-27] YouTube 单平台：官方聊天流、Super Chat 与持久账务。 */
+    private readonly liveLink = new YouTubeOfficialBridge(this.live);
     private readonly livePanel = new ViewerLivePanel(this.live, this.liveLink);
 
     /**

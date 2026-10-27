@@ -807,7 +807,7 @@ function drawPatronBurst(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: n
             drawStamp(ctx, goldFlare, sx, sy, 14);
         }
     } else {
-        // 免费弹幕军令：单层金色认主扫光环
+        // 免费弹幕积分：单层金色认主扫光环
         ctx.globalAlpha = fade * 0.92;
         ctx.strokeStyle = '#ffd76a';
         ctx.lineWidth = 3.5;

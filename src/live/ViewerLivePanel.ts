@@ -1,39 +1,25 @@
 /**
- * 🔴 [2026-10-23] 直播观众互动的屏幕面板（`ViewerLive`）。
- *   · [2026-10-26 主人定] 只在战术模式（Scene13）显示，直接并入顶部玩家指挥面板
- *     （`#player-scene13-bar`）右侧同一行内；战略地图不显示直播互动面板。
- *   · 按 F9 展开测试区：输入观众名，点「站攻方 / 站守方」、点六个字放计、勾「付费」——本地模拟弹幕，
- *     不用开直播就能试整套玩法。以后接上直播平台，消息走同一个 `ViewerLive.onChat`。
- *   · [2026-10-24] F9 里填 SSN 会话 ID、看连接状态、模拟打赏。
- *   · [2026-10-25] 免费模式（军令）：显示规矩、全场点赞 / 订阅目标、最近挣到令的几个人；F9 填 YouTube 接口，模拟点赞 / 订阅。
+ * YouTube 单平台直播互动面板。只在战术模式显示；F9 是本地测试与官方接口配置。
+ * 免费积分来自频道增长目标；真钱只来自 YouTube Super Chat / Super Sticker。
  */
 import { type ViewerLive, ORDERS_PER_CAST } from './ViewerLive';
-import type { SocialStreamBridge } from './SocialStreamBridge';
+import type { YouTubeOfficialBridge } from './YouTubeOfficialBridge';
 
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
 const WORDS = ['攻', '胜', '敌', '混', '并', '败'] as const;
-/** 战略地图底部横条字号（px，按 1920 宽的窗口设计） */
 const FS = { title: 16, main: 15, sub: 13.5, small: 12.5 } as const;
-/** 战术模式顶栏同行内嵌字号（与 #player-scene13-bar 13px 对齐） */
 const FS_S13 = { title: 13.5, main: 13, sub: 12, small: 12 } as const;
-/**
- * 面板按 1920 宽设计；战略地图底部独立展示时按窗口宽度等比缩放。
- */
 const DESIGN_WIDTH = 1920;
-/** F9 填的「打赏方式」（如 ko-fi.com/某某），存 localStorage */
-const TIP_KEY = 'mapwar-live-tip';
 
 export class ViewerLivePanel {
     private root: HTMLDivElement;
     private body: HTMLDivElement;
     private dev: HTMLDivElement;
     private devOpen = false;
-    private tip = '';
     private inScene13Bar = false;
 
-    constructor(private readonly live: ViewerLive, private readonly link: SocialStreamBridge) {
-        try { this.tip = localStorage.getItem(TIP_KEY) ?? ''; } catch { /* 隐私模式 */ }
+    constructor(private readonly live: ViewerLive, private readonly link: YouTubeOfficialBridge) {
         this.root = document.createElement('div');
         this.root.id = PANEL_ID;
         this.body = document.createElement('div');
@@ -42,7 +28,6 @@ export class ViewerLivePanel {
         this.applyStrategicBottomStyle();
         this.root.append(this.dev, this.body);
         document.body.appendChild(this.root);
-
         window.addEventListener('keydown', (e) => {
             if (e.key !== 'F9') return;
             e.preventDefault();
@@ -54,7 +39,6 @@ export class ViewerLivePanel {
         window.setInterval(() => this.render(), 300);
     }
 
-    /** 战略地图模式：独立挂在屏幕正下方居中 */
     private applyStrategicBottomStyle(): void {
         this.root.style.cssText = `
             position:fixed; left:50%; bottom:6px; top:auto; transform:translateX(-50%); transform-origin:bottom center;
@@ -67,7 +51,6 @@ export class ViewerLivePanel {
         this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; width:360px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
     }
 
-    /** 战术模式（Scene13）：无缝并入顶部 `#player-scene13-bar` 右侧同一行内 */
     private applyScene13MergedStyle(): void {
         this.root.style.cssText = `
             position:relative; display:inline-flex; align-items:center; flex-shrink:0;
@@ -78,11 +61,9 @@ export class ViewerLivePanel {
         this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:360px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
     }
 
-    /** 只把面板并入战术顶栏；战略地图下保持隐藏。隐藏时也要检测模式切换，才能及时回到战场。 */
     private updatePosition(): void {
         const s13Bar = document.getElementById('player-scene13-bar');
         const s13Active = !!(s13Bar && s13Bar.style.display !== 'none');
-
         if (s13Active && s13Bar) {
             if (!this.inScene13Bar || this.root.parentElement !== s13Bar) {
                 this.inScene13Bar = true;
@@ -92,21 +73,17 @@ export class ViewerLivePanel {
             }
             return;
         }
-
         if (this.inScene13Bar || this.root.parentElement !== document.body) {
             this.inScene13Bar = false;
             this.root.append(this.dev, this.body);
             this.applyStrategicBottomStyle();
             document.body.appendChild(this.root);
         }
-
         let bottomPx = 6;
         const combatCenter = document.querySelector<HTMLElement>('.combat-center');
         if (combatCenter && combatCenter.style.display !== 'none' && combatCenter.offsetHeight > 0) {
             const top = combatCenter.getBoundingClientRect().top;
-            if (top > 0 && top < window.innerHeight) {
-                bottomPx = Math.max(6, Math.round(window.innerHeight - top + 6));
-            }
+            if (top > 0 && top < window.innerHeight) bottomPx = Math.max(6, Math.round(window.innerHeight - top + 6));
         }
         const scale = Math.round(Math.max(1, window.innerWidth / DESIGN_WIDTH) * 100) / 100;
         this.root.style.bottom = `${bottomPx}px`;
@@ -116,58 +93,38 @@ export class ViewerLivePanel {
     private render(): void {
         const s = this.live.snapshot();
         this.updatePosition();
-        // 直播互动只在战场显示；战略地图不显示口令、打赏与军令信息。
-        const linked = s.platform === '直播间已连接';
+        const linked = s.platform.includes('已连接');
         const show = this.inScene13Bar && (s.on || linked || this.devOpen);
-        if (!show) {
-            this.root.style.display = 'none';
-            return;
-        }
+        if (!show) { this.root.style.display = 'none'; return; }
         this.root.style.display = 'inline-flex';
-
         const f = this.inScene13Bar ? FS_S13 : FS;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
         const b = (t: string) => `<b style="color:#ffd700;">${t}</b>`;
         const sep = `<span style="color:rgba(212,175,55,0.45);margin:0 2px;">｜</span>`;
-
-        // F9 才看得到的状态（主播自己看）
         const chat = s.lastChatAgo < 0 ? '还没收到弹幕' : `最近弹幕 ${s.lastChatAgo} 秒前`;
-        const port = location.port && location.port !== '5173'
-            ? `<br><span style="color:#ff8a7a;">⚠ 游戏开在 ${esc(location.port)} 端口，存的会话 ID、观众余额都在 5173 那边：先关掉多开的游戏</span>`
+        const platform = this.devOpen
+            ? `<div style="font-size:13px;color:#8fd3ff;margin-bottom:4px;text-align:center;">${esc(s.platform || '本地 YouTube 服务未连接')}　${chat}${s.yt ? '<br>' + esc(s.yt) : ''}</div>`
             : '';
-        const platform = this.devOpen && !this.inScene13Bar
-            ? `<div style="font-size:13px;color:#8fd3ff;margin-bottom:4px;text-align:center;">${esc(s.platform || '没接直播间')}${s.platform ? '　' + chat : ''}${s.yt ? '<br>' + esc(s.yt) : ''}${port}</div>`
-            : '';
-
-        // ── 第一行：核心参战口令（单行横向） ──
         const titleBadge = `<span style="font-size:${f.title}px;color:#ffd700;font-weight:900;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,0.9);">📢 发弹幕参战</span>`;
         const sideCmd = !s.on
             ? `<span style="font-size:${f.main}px;">开战发 ${b('1')} 攻方 · ${b('2')} 守方</span>`
             : `<span style="font-size:${f.main}px;">${b('1')} ${esc(s.names[0])}<span style="font-size:${f.sub}px;color:#dfc28c;">(${b(String(s.counts[0]))})</span> · ${b('2')} ${esc(s.names[1])}<span style="font-size:${f.sub}px;color:#dfc28c;">(${b(String(s.counts[1]))})</span></span>`;
         const castCmd = `<span style="font-size:${f.main}px;">${b('攻胜敌混并败')} 放计</span>`;
         const scoutCmd = `<span style="font-size:${f.main}px;">${b('技3')} 玩家技</span>`;
-        const earnCmd = this.inScene13Bar
-            ? `<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}令`)}/计)</span>`
-            : `<span style="font-size:${f.sub}px;color:#e0cfa9;">（站队/发弹幕攒军令，${b(`${ORDERS_PER_CAST} 令`)}放一计）</span>`;
-
+        const earnCmd = `<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}积分`)}/计)</span>`;
         const mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${sideCmd}${sep}${castCmd} ${earnCmd}${sep}${scoutCmd}</div>`;
-
-        // ── 动态辅助信息（打赏 / 点赞目标 / 军令榜 / 排队 / 最近放计日志，有内容才显） ──
         const subItems: string[] = [];
-        if (this.tip) {
-            subItems.push(`<span>打赏 ${b(`$${s.price / 100}`)} 马上放一计 · ${esc(this.tip)} <span style="color:#cdbb95;">(留YouTube名)</span></span>`);
-        }
+        subItems.push(`<span>Super Chat ${b(`$${s.price / 100}`)} 可放一计</span>`);
         const g = s.goal;
-        const showGoal = !!s.yt || g.likes > 0 || g.subs > 0;
-        if (showGoal) {
+        if (s.yt || g.likes > 0 || g.subs > 0) {
             const pct = Math.min(100, Math.round(g.likeProg / g.likeStep * 100));
             subItems.push(
-                `<span style="display:inline-flex;align-items:center;gap:5px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 满全军擂鼓${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''}`
+                `<span style="display:inline-flex;align-items:center;gap:5px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 新增发积分${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''} · 在线新高 ${b(String(g.viewers))}`
                 + `<span style="display:inline-block;width:60px;height:6px;background:#3a2a16;border-radius:3px;overflow:hidden;"><span style="display:block;height:6px;width:${pct}%;background:#d4af37;"></span></span></span>`
             );
         }
         if (s.top.length) {
-            subItems.push(`<span>军令：${s.top.slice(0, 3).map((t) =>
+            subItems.push(`<span>积分：${s.top.slice(0, 3).map((t) =>
                 `<span style="white-space:nowrap;${t.n >= ORDERS_PER_CAST ? 'color:#ffd700;' : ''}">${esc(t.name)} <b>${t.n}</b></span>`).join('　')}</span>`);
         }
         if (s.on && s.queueBrief.length) {
@@ -175,16 +132,10 @@ export class ViewerLivePanel {
             subItems.push(`<span><span style="color:#ffd700;">排队：</span>${q.slice(0, 3).map((x) =>
                 `${esc(x.name)}${x.label ? `·${x.label}` : ''}${x.paid ? '<span style="color:#ffd700;">·赏</span>' : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
         }
-        if (s.log.length) {
-            subItems.push(`<span style="color:#cdbb95;">${s.log.slice(-2).map(esc).join(' ｜ ')}</span>`);
-        }
-
+        if (s.log.length) subItems.push(`<span style="color:#cdbb95;">${s.log.slice(-2).map(esc).join(' ｜ ')}</span>`);
         const subRow = subItems.length
-            ? (this.inScene13Bar
-                ? `<div style="position:absolute;top:calc(100% + 6px);right:0;display:flex;align-items:center;gap:8px;padding:3px 10px;background:rgba(20,16,12,0.92);border:1px solid rgba(212,175,55,0.5);border-radius:6px;font-size:${f.small}px;white-space:nowrap;pointer-events:none;">${subItems.join(sep)}</div>`
-                : `<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:4px;padding-top:4px;border-top:1px solid rgba(212,175,55,0.25);font-size:${f.small}px;">${subItems.join(sep)}</div>`)
+            ? `<div style="position:absolute;top:calc(100% + 6px);right:0;display:flex;align-items:center;gap:8px;padding:3px 10px;background:rgba(20,16,12,0.92);border:1px solid rgba(212,175,55,0.5);border-radius:6px;font-size:${f.small}px;white-space:nowrap;pointer-events:none;">${subItems.join(sep)}</div>`
             : '';
-
         this.body.innerHTML = platform + mainRow + subRow;
     }
 
@@ -213,75 +164,48 @@ export class ViewerLivePanel {
             return r;
         };
         const send = (w: string) => { this.live.onChat(name.value, w, paid.checked); this.render(); };
-        // 直播间：Social Stream Ninja 会话 ID（扩展弹窗里那串），回车生效，清空＝断开
-        const ssnLabel = document.createElement('div');
-        ssnLabel.textContent = 'SSN 会话 ID，回车生效';
-        ssnLabel.style.cssText = 'color:#8fd3ff;margin-bottom:2px;';
-        const ssn = document.createElement('input');
-        ssn.type = 'password';
-        ssn.value = this.link.getSession();
-        ssn.style.cssText = name.style.cssText;
-        ssn.addEventListener('keydown', (e) => {
-            e.stopPropagation();
-            if (e.key === 'Enter') { this.link.setSession(ssn.value); this.render(); }
-        });
-        // YouTube 点赞 / 订阅接口：API 密钥 + 直播视频 ID（可粘贴整条网址），回车生效，任一项清空＝停止
         const ytLabel = document.createElement('div');
-        ytLabel.textContent = 'YouTube 接口密钥、本场直播网址，回车生效';
-        ytLabel.style.cssText = ssnLabel.style.cssText;
+        ytLabel.textContent = 'YouTube API 密钥、本场直播网址，回车生效；换网址时密钥留空即沿用';
+        ytLabel.style.cssText = 'color:#8fd3ff;margin-bottom:2px;';
         const ytKey = document.createElement('input');
         ytKey.type = 'password';
-        ytKey.value = this.link.yt.getKey();
-        ytKey.placeholder = 'API 密钥';
+        ytKey.placeholder = 'API 密钥（只保存到本机服务）';
         ytKey.style.cssText = name.style.cssText;
         const ytVideo = document.createElement('input');
-        ytVideo.value = this.link.yt.getVideo();
+        ytVideo.value = this.link.getVideo();
         ytVideo.placeholder = '直播网址或 11 位视频 ID';
         ytVideo.style.cssText = name.style.cssText;
         const applyYt = (e: KeyboardEvent) => {
             e.stopPropagation();
             if (e.key !== 'Enter') return;
-            // 认出了就把整条网址换成视频 ID 给人看；认不出就留着原文，状态行报错
-            if (this.link.yt.set(ytKey.value, ytVideo.value)) ytVideo.value = this.link.yt.getVideo();
-            this.render();
+            void this.link.configure(ytKey.value, ytVideo.value).then((ok) => {
+                if (ok) { ytKey.value = ''; ytVideo.value = this.link.getVideo(); }
+                this.render();
+            });
         };
         ytKey.addEventListener('keydown', applyYt);
         ytVideo.addEventListener('keydown', applyYt);
-        // 打赏方式：显示在面板上（如 ko-fi.com/某某）；清空＝面板不显示打赏那一行
-        const tipLabel = document.createElement('div');
-        tipLabel.textContent = '打赏方式，显示在面板上，如 ko-fi.com/你的名字，回车生效';
-        tipLabel.style.cssText = ssnLabel.style.cssText;
-        const tipInput = document.createElement('input');
-        tipInput.value = this.tip;
-        tipInput.placeholder = '不填＝面板不显示打赏';
-        tipInput.style.cssText = name.style.cssText;
-        tipInput.addEventListener('keydown', (e) => {
-            e.stopPropagation();
-            if (e.key !== 'Enter') return;
-            this.tip = tipInput.value.trim();
-            try { localStorage.setItem(TIP_KEY, this.tip); } catch { /* 隐私模式 */ }
-            this.render();
-        });
-        this.dev.append(ssnLabel, ssn, ytLabel, ytKey, ytVideo, tipLabel, tipInput, label, name, paidWrap,
+        this.dev.append(ytLabel, ytKey, ytVideo, label, name, paidWrap,
             row(['1 站攻方', '2 站守方'], (w) => send(w[0])),
             row([...WORDS], send),
             row(['技3', '技4', '技5'], send),
-            // 模拟打赏：按昵称当观众 id，跟上面发字的是同一个人；「站外$1」模拟 Ko-fi：只给名字，按名字找人
-            row(['打赏$1', '打赏$10', '站外$1'], (w) => {
-                if (w === '站外$1') this.live.onExternalPayment(name.value, 100, '测试站外打赏', '');
-                else this.live.onPayment(name.value.trim() || '观众', name.value, w.includes('10') ? 1000 : 100, `测试${w}`);
+            row(['Super Chat $1', 'Super Chat $10'], (w) => {
+                this.live.onPayment(name.value.trim() || '观众', name.value, w.includes('10') ? 1000 : 100, `测试${w}`);
                 this.render();
             }),
-            // 模拟全场目标：点赞（TikTok 式一条一份）、订阅 +1、在线人数
-            row(['点赞+1', '点赞+10', '订阅+1', '在线50人'], (w) => {
-                if (w === '点赞+1') this.live.onLikes(1);
-                else if (w === '点赞+10') this.live.onLikes(10);
-                else if (w === '订阅+1') {
-                    const cur = this.live.snapshot().goal.subs;
-                    this.live.onSubTotal(cur);       // 还没基线时先记下，下一句才算涨
-                    this.live.onSubTotal(cur + 1);
+            row(['点赞+1', '点赞+10', '订阅+1', '在线+1'], (w) => {
+                const g = this.live.snapshot().goal;
+                if (w === '点赞+1' || w === '点赞+10') {
+                    const d = w === '点赞+10' ? 10 : 1;
+                    this.live.onLikeTotal(g.likes);
+                    this.live.onLikeTotal(g.likes + d);
+                } else if (w === '订阅+1') {
+                    this.live.onSubTotal(g.subs);
+                    this.live.onSubTotal(g.subs + 1);
+                } else {
+                    this.live.onViewers(Math.max(0, g.viewers - 1));
+                    this.live.onViewers(g.viewers + 1);
                 }
-                else this.live.onViewers(50);
                 this.render();
             }));
     }

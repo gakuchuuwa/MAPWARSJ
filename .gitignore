@@ -6,6 +6,8 @@ package-lock.json
 .env
 .env.*
 !.env.example
+# 本机 YouTube 密钥、恢复游标、付款记录与观众账务
+.local/
 
 
 # Build outputs
