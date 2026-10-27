@@ -2,7 +2,11 @@ import 'leaflet/dist/leaflet.css';
 import '../style.css';
 import './ui/map-hud-theme.css';
 import { GameApp } from './app/GameApp';
-import { showGameAppErrorOverlay } from './app/boot/GameAppBootUtils';
+import {
+    isGameAppBooted,
+    showGameAppErrorOverlay,
+    showGameAppRuntimeErrorBadge,
+} from './app/boot/GameAppBootUtils';
 import { registerMapwarWebMcpTools } from './webmcp/registerMapwarTools';
 
 if (import.meta.env.DEV) {
@@ -22,6 +26,24 @@ function showBootError(err: unknown): void {
     showGameAppErrorOverlay(msg);
 }
 
+/**
+ * 全局未捕获错误的出口。
+ * 🔴 [2026-10-27 主人批准] 启动阶段的错照旧整屏「游戏加载失败」；启动完成后遇到的小错不再整屏黑框，
+ *    只在左下角显示一小行（方便截图），详细堆栈仍在控制台。
+ */
+function reportUncaughtError(err: unknown): void {
+    if (!isGameAppBooted()) {
+        showBootError(err);
+        return;
+    }
+    console.error('[MAPWAR] 启动完成后的未捕获错误（只在左下角提示，不整屏遮挡）:', err);
+    try {
+        showGameAppRuntimeErrorBadge(err);
+    } catch {
+        // 提示本身出错就不再追加：控制台里已有完整记录，别在错误处理里再引出新的错误
+    }
+}
+
 // MetaMask 注入脚本的连接失败不代表游戏启动失败；仍保留浏览器原始错误日志。
 function isMetaMaskExtensionError(error: unknown, filename = ''): boolean {
     if (!error || typeof error !== 'object') return false;
@@ -36,12 +58,12 @@ function isMetaMaskExtensionError(error: unknown, filename = ''): boolean {
 
 window.addEventListener('error', (event) => {
     if (isMetaMaskExtensionError(event.error ?? { message: event.message }, event.filename)) return;
-    showBootError(event.error ?? event.message);
+    reportUncaughtError(event.error ?? event.message);
 });
 
 window.addEventListener('unhandledrejection', (event) => {
     if (isMetaMaskExtensionError(event.reason)) return;
-    showBootError(event.reason);
+    reportUncaughtError(event.reason);
 });
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -8451,6 +8451,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.29,
             "offsetX": 0,
             "offsetY": 16
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_67.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/CENTRAL/bfe_youxian.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 14
         }
     },
     "folderGuides": {

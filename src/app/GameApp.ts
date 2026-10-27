@@ -100,6 +100,7 @@ import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
     showGameAppErrorOverlay,
+    markGameAppBooted,
     showLoadingOverlay,
     hideLoadingOverlay,
     setLoadingMessage,
@@ -886,6 +887,7 @@ export class GameApp {
 
             gameLog('startup', '✅ 游戏初始化完成 (重构版)');
             this.perfMonitor.finishBoot();
+            markGameAppBooted();   // 此后的未捕获小错只在左下角显示一行，不再整屏黑框（见 GameAppBootUtils）
         } catch (error) {
             console.error('❌ 游戏延后初始化失败:', error);
             showGameAppErrorOverlay(error instanceof Error ? error.message : '未知错误');

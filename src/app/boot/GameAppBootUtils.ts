@@ -76,6 +76,91 @@ export function showGameAppErrorOverlay(message: string): void {
     document.body.appendChild(overlay);
 }
 
+// ── 启动完成之后的未捕获错误：只在角落显示一小行，不再整屏黑框 ──
+// 🔴 [2026-10-27 主人批准「游戏启动完成后遇到的未捕获小错，不再整屏黑框，只在屏幕角落显示一小行错误（方便截图发给你）；
+//    启动阶段的错照旧整屏显示」] 起因：浏览器自动填充发的「假按键」没有 key，GameMap 的 e.key.toLowerCase() 崩了，
+//    被 main.ts 的全局错误监听整屏盖成「游戏加载失败」。直播就跑在 dev 服务上，一处小错不该让观众看到整屏黑框。
+let gameAppBooted = false;
+
+/** 启动全部完成（GameApp.completeLateBoot 末尾）后调用。此后的未捕获错误只在角落显示一小行 */
+export function markGameAppBooted(): void { gameAppBooted = true; }
+export function isGameAppBooted(): boolean { return gameAppBooted; }
+
+const RUNTIME_ERROR_BADGE_ID = 'game-runtime-error-badge';
+/** 角落提示停留多久（毫秒）：够截一张图；期间又有错误就重新计时 */
+const RUNTIME_ERROR_BADGE_MS = 20_000;
+const RUNTIME_ERROR_MAX_CHARS = 200;
+let runtimeErrorTimer = 0;
+let runtimeErrorLast = '';
+let runtimeErrorCount = 0;
+
+/**
+ * 把未捕获错误压成一行：`文件:行:列  类型: 信息`。
+ * 位置取堆栈第一帧；开发服务器给的是转译后的行号，比源码行号小（注释被剔掉），对不上时用
+ * `curl http://localhost:5173/src/<路径>.ts` 取转译结果核对。位置放最前，信息太长被截断时不会丢位置。
+ */
+export function describeUncaughtError(err: unknown): string {
+    let name = '';
+    let message = '';
+    let stack = '';
+    if (err instanceof Error) {
+        name = err.name;
+        message = err.message;
+        stack = err.stack ?? '';
+    } else if (typeof err === 'string') {
+        message = err;
+    } else if (err && typeof err === 'object') {
+        const o = err as { name?: unknown; message?: unknown; stack?: unknown };
+        if (typeof o.name === 'string') name = o.name;
+        if (typeof o.message === 'string') message = o.message;
+        if (typeof o.stack === 'string') stack = o.stack;
+        if (!message) {
+            try { message = JSON.stringify(err) ?? ''; } catch { message = String(err); }
+        }
+    } else {
+        message = String(err);
+    }
+    message = message.replace(/\s+/g, ' ').trim() || '未知错误';
+    if (message.length > RUNTIME_ERROR_MAX_CHARS) message = `${message.slice(0, RUNTIME_ERROR_MAX_CHARS)}…`;
+    const text = name && name !== 'Error' && !message.startsWith(`${name}:`) ? `${name}: ${message}` : message;
+    const frame = stack.split('\n').find((l) => /^\s*at\s/.test(l)) ?? '';
+    const m = frame.match(/([^\s()]+):(\d+):(\d+)\)?\s*$/);
+    // 文件名按 / 和 \ 都拆：浏览器里是 URL，Windows 本机脚本（node 测试等）的堆栈是 C:\...
+    const loc = m ? `${m[1].replace(/[?#].*$/, '').split(/[\\/]/).pop() || m[1]}:${m[2]}:${m[3]}` : '';
+    return loc ? `${loc}  ${text}` : text;
+}
+
+/** 左下角一小行错误提示：不挡点击，约 20 秒后自己消失；同一条错误连着出现只加计数 */
+export function showGameAppRuntimeErrorBadge(err: unknown): void {
+    const line = describeUncaughtError(err);
+    runtimeErrorCount = line === runtimeErrorLast ? runtimeErrorCount + 1 : 1;
+    runtimeErrorLast = line;
+    let el = document.getElementById(RUNTIME_ERROR_BADGE_ID);
+    if (!el) {
+        el = document.createElement('div');
+        el.id = RUNTIME_ERROR_BADGE_ID;
+        el.style.cssText = `
+            position: fixed; left: 6px; bottom: 6px; z-index: 99998;
+            max-width: min(70vw, 1100px); padding: 2px 10px;
+            background: rgba(30,6,0,0.82); color: #ffb4a0;
+            border-left: 3px solid #ff5722; border-radius: 3px;
+            font: 13px/1.5 Consolas, 'Courier New', monospace;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            pointer-events: none;
+        `;
+        document.body.appendChild(el);
+    }
+    el.textContent = `⚠ ${line}${runtimeErrorCount > 1 ? `  ×${runtimeErrorCount}` : ''}`;
+    el.style.display = 'block';
+    window.clearTimeout(runtimeErrorTimer);
+    const badge = el;
+    runtimeErrorTimer = window.setTimeout(() => {
+        badge.style.display = 'none';
+        runtimeErrorLast = '';
+        runtimeErrorCount = 0;
+    }, RUNTIME_ERROR_BADGE_MS);
+}
+
 /** 加载字幕轮播 timer（hideLoadingOverlay 清除） */
 let loadingPhraseTimer: ReturnType<typeof setInterval> | null = null;
 
