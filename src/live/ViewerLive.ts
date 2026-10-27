@@ -2,7 +2,7 @@
  * YouTube 单平台直播互动（公共玩家统一控制层）。
  * - 全体观众共同操作同一个公共玩家；原始弹幕先解析为结构化命令，经官职、状态、审核与积分仲裁后再驱动游戏。
  * - 免费积分只来自频道增长目标（新增点赞、订阅增长、在线里程碑）；普通聊天只刷新在场，不直接送分。
- * - 项目初期真钱（Super Chat / Super Sticker）与战斗技能脱钩，仅作为独立「实验点」持久记录与鸣谢。
+ * - 真钱（Super Chat / Super Sticker）先放一边：只照原样记账并致谢，不放技、不换积分；玩法一律用积分。
  */
 import type { GameApp } from '../app/GameApp';
 import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
@@ -361,7 +361,7 @@ export class ViewerLive {
         return this.request(id, name, word, eventId, pubMs);
     }
 
-    /** Super Chat 实验点：项目初期真钱与技能严格脱钩，只持久记录支持数据与鸣谢，不顶替积分。 */
+    /** Super Chat 先放一边：只记账和致谢，不放技、不换积分。 */
     public onPayment(uid: string, viewer: string, cents: number, what: string): void {
         const name = cleanViewerName(viewer);
         this.acct(uid, name).seen = Date.now();
@@ -374,10 +374,10 @@ export class ViewerLive {
             lastWhat: what,
         };
         this.save();
-        this.note(`实验点鸣谢：感谢 ${name} 的 ${what}（初期真钱与技能脱钩，已记入支持榜）`);
+        this.note(`感谢 ${name} 的 ${what}`);
     }
 
-    /** 官方事件幂等入口：记录实验点打赏，并对跨场迟到的战术口令做场次隔离。 */
+    /** 官方事件幂等入口：付款只记账，并对跨场迟到的战术口令做场次隔离。 */
     public handleYouTubeEvent(event: YouTubeLiveEvent): void {
         if (!event.id || this.handled.has(event.id)) return;
         this.syncBattleLifecycle();
@@ -463,13 +463,14 @@ export class ViewerLive {
         return !curName || curName === top.appliedName;
     }
 
-    /** 主播一键否决违规改名：立即撤下画面上的违规名、原数退回该观众积分、封禁该词、回退最高价 */
+    /**
+     * 主播一键否决违规改名：立即撤下画面上的违规名、封禁该词、回退最高价。
+     * 🔴 [2026-10-27] 出价的积分不退（原先全额退回）：恶意改名只亏不赚，才不会反复来试。
+     */
     public vetoPlayerName(): string {
         const top = this.renameHistory.pop();
         if (!top) return '当前没有观众竞拍改名记录';
         blockLiveName(top.appliedName);
-        const acct = this.acct(top.uid, top.viewer);
-        acct.n = Math.min(ORDER_CAP, acct.n + top.bid);
         const fallbackName = this.renameHistory.length > 0
             ? this.renameHistory[this.renameHistory.length - 1].appliedName
             : (top.prevName || PLAYER_HERO_NAME);
@@ -478,7 +479,7 @@ export class ViewerLive {
             : 0;
         this.app.playerHero?.rename(fallbackName);
         this.save();
-        const msg = `已否决违规名「${top.appliedName}」，恢复为「${fallbackName}」，${top.bid} 积分已退回 ${top.viewer}`;
+        const msg = `已否决违规名「${top.appliedName}」，恢复为「${fallbackName}」，${top.viewer} 出的 ${top.bid} 积分不退`;
         this.note(msg);
         return msg;
     }
@@ -509,6 +510,8 @@ export class ViewerLive {
         renameHighestBid: number;
         hasViewerRename: boolean;
         joinCandidates: { index: number; label: string; kind: 'faction' | 'general' }[];
+        /** 这一阶离队后能选的范围（面板标题用）：斥候同文化势力 / 探马同文化武将 / 先锋任一势力 / 将军起任一武将 */
+        joinScope: string;
         activeJoinBid: ViewerActiveJoinBid | null;
         experimental: ExperimentalSupportStats;
     } {
@@ -522,6 +525,11 @@ export class ViewerLive {
         const joinCandidates = (this.app.playerQuests?.getLiveJoinCandidates?.() ?? [])
             .slice(0, 5)
             .map((c) => ({ index: c.index, label: c.label, kind: c.kind }));
+        const rankId = this.app.playerHero?.getRank().id;
+        const joinScope = rankId === 'scout' ? '同文化势力'
+            : rankId === 'outrider' ? '同文化武将'
+                : rankId === 'vanguard' ? '任一势力'
+                    : '任一武将';
         return {
             on: this.battleOn(),
             names: [this.sideName(0), this.sideName(1)],
@@ -547,6 +555,7 @@ export class ViewerLive {
             renameHighestBid: this.renameHighestBid,
             hasViewerRename: this.hasActiveViewerRename(),
             joinCandidates,
+            joinScope,
             activeJoinBid: this.activeJoinBid ? { ...this.activeJoinBid } : null,
             experimental: { ...this.experimentalSupport },
         };

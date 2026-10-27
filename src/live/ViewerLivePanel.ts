@@ -1,7 +1,7 @@
 /**
  * YouTube 单平台直播互动面板。
  * 战术模式嵌入顶部控制栏，战略模式仅在直播已连接或按 F9 测试时贴底显示。
- * 免费积分来自频道增长目标；Super Chat 初期仅作独立「实验点」记录与鸣谢，不参与技能扣款。
+ * 积分来自频道增长目标；真钱（Super Chat）先放一边，面板不显示。
  */
 import { type ViewerLive, ORDERS_PER_CAST } from './ViewerLive';
 import type { YouTubeOfficialBridge } from './YouTubeOfficialBridge';
@@ -117,8 +117,8 @@ export class ViewerLivePanel {
             mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${castCmd}${sep}${scoutCmd}${sep}${renameCmd}</div>`;
         } else {
             const joinPart = s.joinCandidates.length > 0
-                ? `<span style="font-size:${f.main}px;">同文化择主：${s.joinCandidates.map((c) => `${b(`投${c.index}`)} ${esc(c.label)}`).join(' · ')}${s.activeJoinBid ? `<span style="color:#7cd4a0;">（当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分→${esc(s.activeJoinBid.label)}）</span>` : ''}</span>`
-                : `<span style="font-size:${f.sub}px;color:#dfc28c;">随军行进中 · 离职后可发 ${b('投1 积分')} 择同文化目标</span>`;
+                ? `<span style="font-size:${f.main}px;">选去处·${esc(s.joinScope)}：${s.joinCandidates.map((c) => `${b(`投${c.index}`)} ${esc(c.label)}`).join(' · ')}${s.activeJoinBid ? `<span style="color:#7cd4a0;">（当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分→${esc(s.activeJoinBid.label)}）</span>` : ''}</span>`
+                : `<span style="font-size:${f.sub}px;color:#dfc28c;">随军行进中 · 主角离队后可发 ${b('投1')} 选去处</span>`;
             mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${joinPart}${sep}${renameCmd}</div>`;
         }
 
@@ -139,9 +139,6 @@ export class ViewerLivePanel {
             const q = s.queueBrief;
             subItems.push(`<span><span style="color:#ffd700;">排队：</span>${q.slice(0, 3).map((x) =>
                 `${esc(x.name)}${x.label ? `·${esc(x.label)}` : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
-        }
-        if (s.experimental.count > 0) {
-            subItems.push(`<span style="color:#8fd3ff;">实验点打赏：${b(String(s.experimental.count))}笔（最近 ${esc(s.experimental.lastDonor)}）</span>`);
         }
         if (s.log.length) subItems.push(`<span style="color:#cdbb95;">${s.log.slice(-2).map(esc).join(' ｜ ')}</span>`);
         const subRow = subItems.length
@@ -211,10 +208,6 @@ export class ViewerLivePanel {
             row([...WORDS], send),
             row(['技3', '技4', '技5'], send),
             row(['名 龙骧 3', '名 虎贲 5', '投1 2', '投2 4'], send),
-            row(['Super Chat 实验点 $2', 'Super Chat 实验点 $10'], (w) => {
-                this.live.onPayment(name.value.trim() || '观众', name.value, w.includes('10') ? 1000 : 200, w);
-                this.render();
-            }),
             row(['点赞+10', '订阅+1', '在线+5'], (w) => {
                 const g = this.live.snapshot().goal;
                 if (w === '点赞+10') {

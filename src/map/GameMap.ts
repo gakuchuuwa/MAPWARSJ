@@ -1601,8 +1601,11 @@ export class GameMap {
     private initKeyboardNavigation(): void {
         const keys: { [key: string]: boolean } = {};
         
+        // 🔴 [2026-10-27 修「游戏加载失败 Cannot read properties of undefined (reading 'toLowerCase')」]
+        //    浏览器自动填充（密码 / 输入框历史建议）和部分扩展发出的「假按键」没有 key：e.key 是 undefined，
+        //    原先直接 .toLowerCase() 就崩，又被 main.ts 的全局错误监听整屏盖成「游戏加载失败」。所以一律先垫 ''。
         window.addEventListener('keydown', (e) => {
-            const key = e.key.toLowerCase();
+            const key = (e.key ?? '').toLowerCase();
             if (['w', 'a', 's', 'd'].includes(key)) {
                 // [2026-09-05 玩家] F2 立绘校正期间：WASD 只微调立绘，不平移镜头
                 if ((window as any).game?.combatUI?.isCorrectorOpen?.()) return;
@@ -1611,7 +1614,7 @@ export class GameMap {
         });
 
         window.addEventListener('keyup', (e) => {
-            const key = e.key.toLowerCase();
+            const key = (e.key ?? '').toLowerCase();
             if (['w', 'a', 's', 'd'].includes(key)) {
                 keys[key] = false;
             }

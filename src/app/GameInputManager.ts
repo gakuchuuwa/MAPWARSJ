@@ -125,22 +125,26 @@ export class GameInputManager {
             // Ignore if in input
             if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') return;
 
+            // 自动填充 / 扩展发出的假按键没有 key（见 GameMap.initKeyboardNavigation），不是任何快捷键，直接忽略
+            if (!e.key) return;
+            const key = e.key.toLowerCase();
+
             const step = 20; // pixels
             const map = this.map.getLeafletMap();
 
             // [2026-09-05 玩家] 战术模式里玩家在操控主角：WASD/QE/方向键 让给 PlayerScene13Control，不平移地图
             if ((window as any).game?.playerScene13Control?.isControlling?.()
-                && ['w', 'a', 's', 'd', 'q', 'e', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
+                && ['w', 'a', 's', 'd', 'q', 'e', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
                 return;
             }
 
             // [2026-09-05 玩家] F2 立绘校正期间：方向键/WASD 只微调立绘，不平移镜头、不脱离跟拍
             if ((window as any).game?.combatUI?.isCorrectorOpen?.()
-                && ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
+                && ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
                 return;
             }
 
-            switch (e.key.toLowerCase()) {
+            switch (key) {
                 case 'w': case 'arrowup': map.panBy([0, -step]); break;
                 case 's': case 'arrowdown': map.panBy([0, step]); break;
                 case 'a': case 'arrowleft': map.panBy([-step, 0]); break;
@@ -157,18 +161,18 @@ export class GameInputManager {
             }
 
             // [2026-09-05 玩家] WASD/方向键 移动镜头时脱离跟拍：否则跟拍每帧把镜头拉回主角，屏幕被锁死。
-            if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
+            if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
                 const game = (window as any).game;
                 if (game?.cameraFollowUI?.isFollowing()) {
                     game.cameraFollowUI.cancelFollow();
                 }
             }
 
-            if (e.ctrlKey && e.key.toLowerCase() === 'z') {
+            if (e.ctrlKey && key === 'z') {
                 if (this.speedOverlay.isEditing) {
                     this.speedOverlay.undo();
                 }
-            } else if (e.ctrlKey && e.key.toLowerCase() === 'y') {
+            } else if (e.ctrlKey && key === 'y') {
                 if (this.speedOverlay.isEditing) {
                     this.speedOverlay.redo();
                 }

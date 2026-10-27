@@ -47,7 +47,7 @@ import { categorizeUnit } from '../legion/formation/deUnitCategories';
 import { computeDeFormationLayout, type DeCategoryGroup } from '../legion/formation/deFormationLayout';
 import type { Scene13PlayerSetup } from '../player/PlayerHero';
 import { withPlayerPeakStats } from '../player/PlayerGrowth';
-import { PLAYER_LIVE_SKILL, playerLiveSkillAffects } from '../player/PlayerLiveSkill';
+import { playerLiveSkillAffects, playerLiveSkillTier } from '../player/PlayerLiveSkill';
 import { withCommander } from '../data/generalHeroUnits';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
@@ -1239,21 +1239,32 @@ export class Scene13WarLayer {
 
     /** 直播玩家技能剩余秒数；与武将六计状态分表，不读也不写技能槽。 */
     private playerLiveSkillTimer = 0;
+    /** 距离能放下一发玩家技还有几秒（生效秒数＋这一档要歇的秒数；先锋、将军放完要歇） */
+    private playerLiveSkillCooldown = 0;
     public getPlayerLiveSkillSec(): number { return Math.max(0, this.playerLiveSkillTimer); }
 
-    /** 斥候强化本人；探马起按现有指挥范围强化本队/本排/全军。生效期间返回 'wait' 让后续竞价排队等待。 */
+    /**
+     * 斥候强化本人；探马起按现有指挥范围强化本队/本排/全军。生效期间与歇息期间返回 'wait' 让后续竞价排队等待。
+     * 主角本人始终吃本人档（满血、×4），身边的兵按官职档（见 PLAYER_LIVE_SKILL_BY_CONTROL）。
+     */
     public castPlayerLiveSkill(): 'cast' | 'wait' | 'closed' {
         if (!this.active || this.over) return 'closed';
         const m = this.heroMan;
         if (!m || !this.playerSetup || this.deployT > 0 || m.hp <= 0) return 'wait';
-        if (this.playerLiveSkillTimer > 0) return 'wait';
+        if (this.playerLiveSkillTimer > 0 || this.playerLiveSkillCooldown > 0) return 'wait';
+        const control = this.playerSetup.control;
         const affected: WarMan[] = [];
         for (const unit of (this.men ?? [m])) {
             if (unit.hp <= 0 || !this.playerLiveAffects(unit)) continue;
-            unit.hp = unit.hero || unit === m ? this.heroMaxHp(unit.key, unit.f) : this.statsFor(unit.key, unit.f).hp;
+            const isHero = unit === m;
+            const maxHp = unit.hero || isHero ? this.heroMaxHp(unit.key, unit.f) : this.statsFor(unit.key, unit.f).hp;
+            const heal = playerLiveSkillTier(control, isHero).healFrac;
+            unit.hp = Math.min(maxHp, Math.max(unit.hp, unit.hp + maxHp * heal));
             affected.push(unit);
         }
-        this.playerLiveSkillTimer = PLAYER_LIVE_SKILL.durationSec;
+        const tier = playerLiveSkillTier(control, false);
+        this.playerLiveSkillTimer = tier.durationSec;
+        this.playerLiveSkillCooldown = tier.durationSec + tier.restSec;
         if (this.advanceVec?.[this.playerSetup.side]) {
             this.spawnSkillVfx(this.playerSetup.side, 'gongzhan', m.x ?? 0, m.y ?? 0, true, affected, []);
         }
@@ -1277,6 +1288,8 @@ export class Scene13WarLayer {
             !!b && (a === b || normUnitKey(a) === normUnitKey(b));
         const sameKey = (s: { f: number; key: string }) =>
             setup.unitKey !== null && s.f === f && matchKey(s.key, setup.unitKey);
+        // 先锋：主角兵种所在的那一排；这支军团里没有主角的兵种（学自别家、或换了编制）就给前排，
+        // 原先这种情况一个队都不给，先锋的玩家技只剩本人
         const vanguardPort = setup.control === 'front'
             ? this.spawns.find((s) => sameKey(s) && !s.commander)
             : undefined;
@@ -1285,9 +1298,7 @@ export class Scene13WarLayer {
             if (s.f !== f) continue;
             if (setup.control === 'all') this.playerCtlLanes.add(s.lane);
             else if (setup.control === 'front') {
-                if (!s.commander && s.row === vanguardRow && (setup.unitKey === null || vanguardPort)) {
-                    this.playerCtlLanes.add(s.lane);
-                }
+                if (!s.commander && s.row === vanguardRow) this.playerCtlLanes.add(s.lane);
             }
         }
         if (setup.control === 'one') {
@@ -1398,6 +1409,7 @@ export class Scene13WarLayer {
         this.heroMan = null;
         this.heroRespawnTimer = 0;
         this.playerLiveSkillTimer = 0;
+        this.playerLiveSkillCooldown = 0;
         this.playerSixFrenzyTimer = 0;
         this.playerSixShieldTimer = 0;
         this.playerSixPanicMaxTimer = 0;
@@ -1571,14 +1583,19 @@ export class Scene13WarLayer {
             setup.control, setup.side, m.f, m === this.heroMan, this.playerCtlLanes.has(m.lane),
         );
     }
+    /** 这个单位正在吃哪一档玩家技；没在生效或不在范围内返回 null */
+    private playerLiveTierOf(m: WarMan) {
+        if (this.playerLiveSkillTimer <= 0 || !this.playerSetup || !this.playerLiveAffects(m)) return null;
+        return playerLiveSkillTier(this.playerSetup.control, m === this.heroMan);
+    }
     private playerLiveDamageMul(m: WarMan): number {
-        return this.playerLiveSkillTimer > 0 && this.playerLiveAffects(m) ? PLAYER_LIVE_SKILL.damageMult : 1;
+        return this.playerLiveTierOf(m)?.damageMult ?? 1;
     }
     private playerLiveAttackMul(m: WarMan): number {
-        return this.playerLiveSkillTimer > 0 && this.playerLiveAffects(m) ? PLAYER_LIVE_SKILL.attackSpeedMult : 1;
+        return this.playerLiveTierOf(m)?.attackSpeedMult ?? 1;
     }
     private playerLiveTakenMul(m: WarMan): number {
-        return this.playerLiveSkillTimer > 0 && this.playerLiveAffects(m) ? PLAYER_LIVE_SKILL.damageTakenMult : 1;
+        return this.playerLiveTierOf(m)?.damageTakenMult ?? 1;
     }
     private unitHasFrenzy(m: WarMan): boolean {
         return (this.skillFrenzyTimer?.[m.f] ?? 0) > 0 || (this.playerSixFrenzyTimer > 0 && this.playerLiveAffects(m));
@@ -3094,6 +3111,7 @@ export class Scene13WarLayer {
         this.heroMan = null;
         this.heroRespawnTimer = 0;
         this.playerLiveSkillTimer = 0;
+        this.playerLiveSkillCooldown = 0;
         this.playerSixFrenzyTimer = 0;
         this.playerSixShieldTimer = 0;
         this.playerSixPanicMaxTimer = 0;
@@ -6995,6 +7013,7 @@ export class Scene13WarLayer {
     private step(dt: number): void {
         if (this.over) return;
         if (this.playerLiveSkillTimer > 0) this.playerLiveSkillTimer = Math.max(0, this.playerLiveSkillTimer - dt);
+        if (this.playerLiveSkillCooldown > 0) this.playerLiveSkillCooldown = Math.max(0, this.playerLiveSkillCooldown - dt);
         // 近战接触音景：每帧重新数，本帧的计数在下面的兵种循环里累加，循环跑完在 tickContactSfx 里结账
         this.meleeContactCount = 0;
         // ── 打不完的检测（当前只观察不动手，见 STALL_GUARD_ENFORCE）──

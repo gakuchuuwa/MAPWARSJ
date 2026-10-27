@@ -101,7 +101,7 @@ export class PlayerScene13Control {
             if (this.keys.size) { this.keys.clear(); this.pushInput(); }
             return;
         }
-        const k = e.key.toLowerCase();
+        const k = (e.key ?? '').toLowerCase();   // 自动填充 / 扩展的假按键没有 key，见 GameMap.initKeyboardNavigation
         const moveKeys: Record<string, string> = {
             w: 'up', arrowup: 'up', s: 'down', arrowdown: 'down',
             a: 'left', arrowleft: 'left', d: 'right', arrowright: 'right',
