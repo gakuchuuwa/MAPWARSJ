@@ -1481,7 +1481,7 @@ export class Scene13GroundLayerGL {
     this.cornerElev.fill(0);
 
     // 2. 城防与护城河外缓冲带（rFlat 已含护城河 + 2.8 格平地缓冲）保持 0 级平地，外围生成 DE 平顶丘陵
-    this.generateDeElevationGrid(cx, cy, rFlat, 3.0, rnd, 'big_city');
+    this.generateDeElevationGrid(cx, cy, rFlat, 5.0, rnd, 'big_city');
 
     this.updateCornerLight();
     this.elevDirty = true;
@@ -1831,7 +1831,7 @@ export class Scene13GroundLayerGL {
           prev[gy * V + (gx - 1)] +
           prev[gy * V + (gx + 1)]
         );
-        hillCorners[idx] = self * 0.68 + avg4 * 0.32;
+        hillCorners[idx] = self * 0.76 + avg4 * 0.24;
       }
     }
 
@@ -1884,7 +1884,7 @@ export class Scene13GroundLayerGL {
     const isBig = category === 'big_city';
     const isPass = category === 'pass';
     const isStockade = category === 'stockade';
-    const maxIntLevel = Math.max(2, Math.min(4, Math.floor(maxLevel)));
+    const maxIntLevel = Math.max(3, Math.min(5, Math.floor(maxLevel)));
 
     const D4: ReadonlyArray<[number, number]> = [[-1, 0], [1, 0], [0, -1], [0, 1]];
     const D8: ReadonlyArray<[number, number]> = [
@@ -2059,7 +2059,8 @@ export class Scene13GroundLayerGL {
     }
 
     // 将团块转为「外缘阶梯斜坡 + 内部宽阔平顶台地」高程
-    const applyPlateauElevation = (region: Set<number>, peakH: number) => {
+    const applyPlateauElevation = (region: Set<number>, basePeakH: number, summitH: number = basePeakH) => {
+      let maxD = 1;
       const dist = new Map<number, number>();
       let q: number[] = [];
       for (const idx of region) {
@@ -2081,6 +2082,7 @@ export class Scene13GroundLayerGL {
         const nextQ: number[] = [];
         for (const idx of q) {
           const curD = dist.get(idx)!;
+          if (curD > maxD) maxD = curD;
           const x = idx % N, y = (idx - x) / N;
           for (const [dx, dy] of D4) {
             const nx = x + dx, ny = y + dy;
@@ -2096,7 +2098,10 @@ export class Scene13GroundLayerGL {
       }
       for (const idx of region) {
         const d = dist.get(idx) ?? 1;
-        const h = Math.min(peakH, d);
+        let h = Math.min(basePeakH, Math.round(d * 1.25));
+        if (summitH > basePeakH && maxD >= 4 && d >= 4) {
+          h = Math.min(summitH, basePeakH + (d - 3));
+        }
         if (h > tileElev[idx]) tileElev[idx] = h;
       }
     };
@@ -2144,14 +2149,14 @@ export class Scene13GroundLayerGL {
       }
       if (!found) continue;
 
-      const peakH = Math.min(maxIntLevel, rnd() < 0.65 ? 3 : 2);
+      const peakH = Math.min(maxIntLevel, rnd() < 0.72 ? 4 : 3);
       const tangentAng = Math.atan2(seedY - cy, seedX - cx) + Math.PI * 0.5 + (rnd() - 0.5) * 0.6;
-      const clumpTiles = 52 + Math.floor(rnd() * 44);
+      const clumpTiles = 68 + Math.floor(rnd() * 48);
       const region = growCohesiveClump(seedX, seedY, clumpTiles, tangentAng, 0.45 + rnd() * 0.65);
       if (region.size < 18) continue;
 
       placedSeeds.push({ x: seedX, y: seedY });
-      applyPlateauElevation(region, peakH);
+      applyPlateauElevation(region, Math.min(maxIntLevel, 3), peakH);
     }
 
     // 第二圈：中远景战场原野高地（6 ~ 9 处宽阔平顶高地）
@@ -2188,11 +2193,11 @@ export class Scene13GroundLayerGL {
 
       const demH = this.origElev ? (this.origElev[seedY * N + seedX] ?? 0) : 0;
       const hRoll = rnd();
-      let peakH = 2;
+      let peakH = 4;
       if (maxIntLevel >= 3 && (hRoll < 0.65 || demH >= 2)) {
-        peakH = 3;
+        peakH = 5;
       }
-      peakH = Math.max(2, Math.min(maxIntLevel, peakH));
+      peakH = Math.max(3, Math.min(maxIntLevel, peakH));
 
       const styleRoll = rnd();
       const axisAngle = rnd() * Math.PI;
@@ -2205,7 +2210,7 @@ export class Scene13GroundLayerGL {
       if (region.size < 24) continue;
 
       placedSeeds.push({ x: seedX, y: seedY });
-      applyPlateauElevation(region, peakH);
+      applyPlateauElevation(region, Math.min(maxIntLevel, 3), peakH);
     }
 
     // 保底：外围树木所在格若尚未在丘陵上，按 DE 5×5 内聚生长平顶丘陵托底，保证树长在丘陵上
@@ -2215,7 +2220,7 @@ export class Scene13GroundLayerGL {
         if (!treeTileMask[idx] || tileElev[idx] > 0 || inProtect(x, y) || isWet(x, y)) continue;
         const region = growCohesiveClump(x, y, 42 + Math.floor(rnd() * 38), rnd() * Math.PI, 0.35 + rnd() * 0.5);
         if (region.size >= 14) {
-          applyPlateauElevation(region, 2);
+          applyPlateauElevation(region, 3, Math.min(maxIntLevel, 4));
         }
       }
     }
@@ -2329,7 +2334,7 @@ export class Scene13GroundLayerGL {
           prev[gy * V + (gx - 1)] +
           prev[gy * V + (gx + 1)]
         );
-        hillCorners[idx] = self * 0.68 + avg4 * 0.32;
+        hillCorners[idx] = self * 0.76 + avg4 * 0.24;
       }
     }
 
@@ -2380,7 +2385,7 @@ export class Scene13GroundLayerGL {
 
     // 2. rFlat 已含护城河及河外 2.8 格平地缓冲；在 rFlat - 0.4 以外生成 DE 平顶丘陵，100% 视野外围即可看见明显高地
     const rProt = Math.max(8.5, rFlat - 0.4);
-    const maxH = isMedium ? 3.5 : 3.0;
+    const maxH = isMedium ? 5.0 : 4.5;
     this.generateDeElevationGrid(cx, cy, rProt, maxH, rnd, cityType);
 
     this.updateCornerLight();
@@ -2448,7 +2453,7 @@ export class Scene13GroundLayerGL {
         protectR = (maxD > 0 ? maxD : 13.5) + 2.0;
       }
       this.cornerElev.fill(0);
-      this.generateDeElevationGrid(cgx, cgy, protectR, 3.0, rnd, 'pass');
+      this.generateDeElevationGrid(cgx, cgy, protectR, 5.0, rnd, 'pass');
       this.updateCornerLight();
       this.elevDirty = true;
       return { castleLevel: 0, innerLevel: 0, outerLevel: 0 };
@@ -2869,7 +2874,7 @@ export class Scene13GroundLayerGL {
     }
 
     // 4. 外围原野：DE 真实团块元胞生长（中心高四周低，全随机分布）
-    this.generateDeElevationGrid(cx, cy, hasFence ? fenceMax + FENCE_PAD + FENCE_SLOPE + 0.5 : R3 + 3.0, 3.0, rnd, 'stockade');
+    this.generateDeElevationGrid(cx, cy, hasFence ? fenceMax + FENCE_PAD + FENCE_SLOPE + 0.5 : R3 + 3.0, 5.0, rnd, 'stockade');
 
     // 5. 重新计算等轴浮雕坡面光照并标记脏标记
     this.updateCornerLight();
@@ -3034,6 +3039,7 @@ export class Scene13GroundLayerGL {
         const nextQ: number[] = [];
         for (const idx of q) {
           const curD = dist.get(idx)!;
+          if (curD > maxD) maxD = curD;
           if (curD > maxD) maxD = curD;
           const x = idx % N, y = (idx - x) / N;
           for (const [dx, dy] of D4) {

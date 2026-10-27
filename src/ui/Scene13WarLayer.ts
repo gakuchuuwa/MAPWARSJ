@@ -153,6 +153,9 @@ const SIX_CYCLE_NEXT: Readonly<Record<TacticalSixSet, TacticalSixSet>> = {
     bingzhan: 'hunzhan',
     hunzhan: 'dizhan',
 };
+/** 玩家点地面令：连续这么多秒没往点上靠近 HERO_CLICK_PROGRESS_PX 像素就作废（走不到的令不许一直挂着） */
+const HERO_CLICK_STALL_SEC = 1.5;
+const HERO_CLICK_PROGRESS_PX = 10;
 /** 【败】折损的兵在这么多秒内陆续倒下（见 stepSkillKills） */
 const SKILL_KILL_SPREAD_SEC = 1.2;
 /** 每帧最多烙进地面的尸体数（见 stepCorpses）：【败】一次几百具时分摊到后续几帧 */
@@ -925,11 +928,14 @@ export class Scene13WarLayer {
      *   · 攻城战攻方放计：🔴 [2026-10-27 主人令「攻方释放的地点是守方第一波的出兵口，不是墙根」]
      *     用守方第一波在城外列阵的出兵口（defOutsideBase + outFwd/outSide，与第一波守军出生点同一处），
      *     兵在口后排开，排法同第一波守军（该阵位本就排在墙外，不会进城墙圈）；城外守军打光后阵位照样能出兵。
-     *   · 攻城战守方放计 / 野战：直接用敌方出兵口。
+     *   · 野战（双方都放）：直接用敌方出兵口。
+     *   · 🔴 [2026-10-27 主人令「攻城战防守方的增兵还是不要在攻击方的出兵口，还是在自己方城里，优先保护城」]
+     *     攻城战守方放计：返回空 ⇒ 调用方回落到本方（城内）出兵口出兵，按守城兵站岗。
      * 返回 [锚点 x, y, 前进方向, 横排方向]；前进方向朝敌军（从敌方后方往前打）。
      */
     private ambushAnchors(f: 0 | 1): Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }> {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
+        if (this.battleType === 'siege' && this.deCity && f === 1) return [];
         const enemyPorts = this.spawns.filter((sp) => sp.f === ef && !sp.playerElite && !sp.commander);
         if (this.battleType === 'siege' && this.deCity && ef === 1) {
             const B = this.defOutsideBase();
@@ -1140,7 +1146,7 @@ export class Scene13WarLayer {
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeRatio));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
             const [fcx, fcy] = scopedControl === null ? this.sideCentroid(f) : [refX, refY];
-            enemyLiving.sort((m1, m2) => ((m1.x - fcx) ** 2 + (m1.y - fcy) ** 2) - ((m2.x - fcx) ** 2 + (m2.y - fcy) ** 2));
+            this.sortSkillVictims(enemyLiving, fcx, fcy);
             for (const victim of enemyLiving) {
                 if (quotaPop <= 0) break;
                 if (victim.hp <= 0) continue;
@@ -1207,7 +1213,7 @@ export class Scene13WarLayer {
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeRatio));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
             const [fcx, fcy] = scopedControl === null ? this.sideCentroid(f) : [refX, refY];
-            enemyLiving.sort((m1, m2) => ((m1.x - fcx) ** 2 + (m1.y - fcy) ** 2) - ((m2.x - fcx) ** 2 + (m2.y - fcy) ** 2));
+            this.sortSkillVictims(enemyLiving, fcx, fcy);
             const myLanes = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
             const converted: WarMan[] = [];
             const needSprite = new Set<string>();
@@ -1368,7 +1374,13 @@ export class Scene13WarLayer {
         [m.tx, m.ty] = this.fieldBound(ux, uy);
         this.heroInput = null;
         this.heroClickOrder = { x: m.tx, y: m.ty };   // 这道令归队与 aimAt 都不许改写，走到才清
+        this.heroClickBest = Infinity;
+        this.heroClickStallT = 0;
     }
+
+    /** 点地面令的最近距离记录与「没进展」秒数：走不到（被墙 / 地物挡住、点在不可达处）的令超时作废，见 step 里的 HERO_CLICK_STALL_SEC */
+    private heroClickBest = Infinity;
+    private heroClickStallT = 0;
 
     /**
      * 🔴 [2026-09-18 主人报障「待命再自动改后，军队没有移动动作，是平移的」]
@@ -2106,7 +2118,8 @@ export class Scene13WarLayer {
         game?.brawlFeedPanel?.onEnterBattleScene13?.();
         this.initScene13SkillSystem(init);
         // 🔴 [2026-08-26 主人定] 战术模式专用 UI 布局：立绘分置左下/右下，血槽在上，科技在下
-        game?.combatUI?.syncScene13WarStart?.(init);
+        // 🔴 [2026-10-27 主人令「攻方立绘固定在左，攻方从右边杀来很别扭」] 这个同步挪到下面算出两军出兵基座之后：
+        //    立绘按两军在画面上的左右站位摆（见 syncScene13WarStart 的 attackerOnLeft）
 
         // [2026-08-11 势力本色] 攻守双方交给主游戏的 SpriteTinter 按 factionId 染色，
         // 与地图上的军团、旗帜、领土同一套色，不另起炉灶；可复用表已在 start 开头按攻守势力严格匹配。
@@ -2335,6 +2348,10 @@ export class Scene13WarLayer {
                             { x: mx + uFwd0.x * SKIRMISH_HALF_GAP, y: my + uFwd0.y * SKIRMISH_HALF_GAP },
                         ];
                     }
+                    // 🔴 [2026-10-27 主人令] 立绘左右跟着两军在画面上的站位走：攻方基座在守方左边 ⇒ 攻方立绘在左，否则在右；
+                    //    几乎正上下对阵（左右差 <1px）时没有左右可言，沿用旧规则（跟随军团所在方在左）。
+                    const sideDx = this.spawnBases[1].x - this.spawnBases[0].x;
+                    (window as any).game?.combatUI?.syncScene13WarStart?.(init, Math.abs(sideDx) < 1 ? undefined : sideDx > 0);
                     // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
                     //    攻城战城池稳居正中心（世界中心 worldCX/CY），镜头默认居中对齐城池；野战才居中于两军中点
                     if (this.deCity || this.battleType === 'siege') {
@@ -3663,8 +3680,9 @@ export class Scene13WarLayer {
         const isBuilding = asset.startsWith('BUILDING:') || isAnim;
         const isBattlefield = asset.startsWith('BATTLEFIELD:');
         const isAnimal = asset.startsWith('ANIMAL:');
-        const base = isBattlefield ? BATTLEFIELD_BASE_URL : (isBuilding ? BUILDING_BASE_URL : (isAnimal ? ANIMAL_BASE_URL : NATURE_BASE_URL));
-        const name = isBattlefield ? asset.slice('BATTLEFIELD:'.length) : (isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : (isAnimal ? asset.slice('ANIMAL:'.length) : asset)));
+        const isResource = asset.startsWith('RESOURCE:');
+        const base = isBattlefield ? BATTLEFIELD_BASE_URL : (isBuilding ? BUILDING_BASE_URL : (isAnimal ? ANIMAL_BASE_URL : (isResource ? '/SUCAI_RESOURCE/' : NATURE_BASE_URL)));
+        const name = isBattlefield ? asset.slice('BATTLEFIELD:'.length) : (isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : (isAnimal ? asset.slice('ANIMAL:'.length) : (isResource ? asset.slice('RESOURCE:'.length) : asset))));
         if (isAnimal) {
             // 🔴 [2026-10-13 主人令「动物要会动」] 支持动物各种动作与朝向（ANIMAL:<species>/<action>_<dir>）
             const slashIdx = name.indexOf('/');
@@ -4809,8 +4827,12 @@ export class Scene13WarLayer {
      * 只射射程内的敌兵（可隔墙），不朝墙后够不着的兵走，没目标就在城门外、近战后方列队待命；墙/门一破照常走流场进城。
      */
     private rangedHoldsOutside(m: WarMan): boolean {
-        if (this.battleType !== 'siege' || !this.siegeWithWalls || m.f !== 0 || !m.key || m.hero || m.siegeW
-            || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f).rng <= 65 || this.rangedHitsBuildings(m.key, m.f)) return false;
+        // 🔴 [2026-10-27 主人报「玩家寻敌……不动，跟卡住一样」] 原来排除了玩家本人（m.hero）：远程玩家在城外、墙没破时
+        //    照样锁墙后射程外的守兵、朝他走 ⇒ 顶在墙上推不动（玩家不吃 wallSeparates，wallStuck 又只管近战）⇒ 一直干顶。
+        //    玩家本人与普通远程同一口径：射程内隔墙射，射程外的墙后兵不锁，没目标就到城门外近战身后列队，破墙再进。
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || m.f !== 0 || !m.key || m.siegeW
+            || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f, m.hero === true).rng <= 65
+            || this.rangedHitsBuildings(m.key, m.f, m.hero === true)) return false;
         this.ensureGateInfo();
         return !this.ringOpen() && !this.insideRing(m.x, m.y);
     }
@@ -6718,18 +6740,20 @@ export class Scene13WarLayer {
         //    小队模式里玩家本人没有自己的分队，原来视野里没敌人就直奔全图最近的敌人，比步兵快、一个人冲在最前。
         //    现在视野里没敌人时，跟在本方士兵中间走（本方重心）；敌人进了视野再照 ① 打。本方没人（单骑追贼）照旧。
         // 🔴 [2026-10-23 主人「为什么正常战争，玩家不跟着队伍走，总是擅自杀出去」「擅自冲锋更不好」]
-        //    正常战争同样适用：玩家跟着自己那一队（同兵种出兵口那队）的士兵走，那队没人了跟本方全体；
-        //    本队在城里待命，玩家也一起待着。只有本方一个人都不剩时才落到下面自己找敌人。
+        //    正常战争同样适用：玩家跟着自己那一队（同兵种出兵口那队）的士兵走（10-27 起那队没人了就自己找敌人，见下）；
+        //    本队在城里待命，玩家也一起待着。本队一个人都不剩时落到下面自己找敌人。
+        // 🔴 [2026-10-27 主人报「游戏开局各十队，队伍都死光了，还等谁？」] 原来本队没人了改跟「本方全体」的重心：
+        //    九队分在各处打，全体重心常落在没人交战的空地上，玩家站在那里横挪、不往前，看着就是卡住。
+        //    现在只跟自己那一队；本队死光就不再等任何人，落到下面自己找敌人（③ 本队目标 / ④ 全图最近）。
         if (m.hero && this.playerCmd === 'attack') {
-            let sx = 0, sy = 0, n = 0, ax = 0, ay = 0, an = 0;
+            let sx = 0, sy = 0, n = 0;
             for (const o of this.men) {
                 if (o === m || o.f !== m.f || o.hp <= 0 || o.hero) continue;
-                ax += o.x; ay += o.y; an++;
                 if (m.lane >= 0 && o.lane === m.lane) { sx += o.x; sy += o.y; n++; }
             }
-            if (n > 0 || an > 0) {
-                const gx = n > 0 ? sx / n + m.jx : ax / an + m.jx;
-                const gy = n > 0 ? sy / n + m.jy : ay / an + m.jy;
+            if (n > 0) {
+                const gx = sx / n + m.jx;
+                const gy = sy / n + m.jy;
                 // 🔴 [2026-10-27 主人报「玩家怎么还往回跑呢」] 玩家冲在前面时本队重心落在身后 ⇒ 原来掉头往回跑去找队伍。
                 //    与士兵归队同口径（noBackStep）：只许横移或往前，等队伍跟上，不往回走。
                 const [bx, by] = this.noBackStep(m, gx, gy);
@@ -7293,9 +7317,22 @@ export class Scene13WarLayer {
             // [2026-09-05 玩家] 玩家有键盘输入 → 本帧只走不打；受控编队「待命」= 不动、够得着照打
             if (m.hero && this.stepHeroInput(m, dt)) continue;
             // 玩家的点地面令：走到就作废（之后归队/索敌照旧接管）
-            if (m.hero && this.heroClickOrder
-                && (m.x - this.heroClickOrder.x) ** 2 + (m.y - this.heroClickOrder.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS) {
-                this.heroClickOrder = null;
+            if (m.hero && this.heroClickOrder) {
+                const cd = Math.hypot(m.x - this.heroClickOrder.x, m.y - this.heroClickOrder.y);
+                if (cd <= ARRIVE_EPS) {
+                    this.heroClickOrder = null;
+                } else if (cd < this.heroClickBest - HERO_CLICK_PROGRESS_PX) {
+                    this.heroClickBest = cd;
+                    this.heroClickStallT = 0;
+                } else if (!m.foe) {
+                    // 🔴 [2026-10-27 主人报「玩家寻敌有问题，不是站着不动，但也不动，跟卡住一样」]
+                    //    点地面令只有「走到」才作废；走不到（点在墙里 / 被地物或城墙挡住）时令永远挂着，
+                    //    heroOrderPending 一直为真 ⇒ 既不归队也不索敌（aimAt 被拦），人在原地使劲走却一动不动。
+                    //    连续 HERO_CLICK_STALL_SEC 秒没往点上靠近 HERO_CLICK_PROGRESS_PX 就作废，交还自动索敌 / 归队。
+                    //    正在打架（m.foe）不计时：令保留，打完接着走。
+                    this.heroClickStallT += dt;
+                    if (this.heroClickStallT >= HERO_CLICK_STALL_SEC) this.heroClickOrder = null;
+                }
             }
             // 🔴 [2026-10-18 主人定] 攻城战第二波以后出门点还是9建筑，刷新后看城门是否被击毁，没有的话原地待命，被击毁城门发起反攻
             const isGuard = !!m.guardPost;
@@ -8620,6 +8657,21 @@ export class Scene13WarLayer {
         if (this.corpseAcc < 1) return false;
         this.corpseAcc -= 1;
         return true;
+    }
+
+    /**
+     * 🔴 [2026-10-27 主人令「夺兵、减兵不该先从主将队开始，主将队有毅力，先从远程、步兵、骑兵这个顺序」]
+     * 【败】折损 / 【并】夺兵的选兵顺序：远程 → 步兵 → 骑兵 → 主将队（最后）；同一档内离释放方近的先。
+     * 兵种档按 WAR_TYPES.cls（ranged / melee / cav），主将队＝出兵口 commander 的那一队。
+     */
+    private sortSkillVictims(list: WarMan[], cx: number, cy: number): void {
+        const tier = (m: WarMan): number => {
+            if (this.spawns[m.lane]?.commander) return 3;
+            const cls = this.statsFor(m.key, m.f).cls;
+            return cls === 'ranged' ? 0 : cls === 'cav' ? 2 : 1;
+        };
+        const d2 = (m: WarMan): number => (m.x - cx) ** 2 + (m.y - cy) ** 2;
+        list.sort((a, b) => (tier(a) - tier(b)) || (d2(a) - d2(b)));
     }
 
     /** 【败】折损队列：到点的兵当场阵亡、一律留尸；期间已战死或被【并】策反换边的跳过 */

@@ -78,14 +78,21 @@ export class DynamicFlagTextGenerator {
 
                 // 4. 根据不同朝向（行数）给文字施加物理倾斜（切变），增强立体贴合感
                 // 既然现在是 4 倍高清渲染，抗锯齿足够好，我们可以安全地加回 3D 变形，让字看起来是“印”在飘动的布上的
+                // 🔴 [2026-10-27 主人「单字也可以像图标一样偏移一点点」] 单字旗的倾斜与图案旗（emblem-flags）同向：
+                //    图案旗在烘焙时已改成与原规则相反、合计约 ∓0.16（见 scratch/_bake_emblem_sprites.py 的 EXTRA_SHEAR）；
+                //    单字旗试过同量 0.16，主人说太多，回到 0.11。双字旗保持原规则（±0.15）不动。
+                const single = cleanText.length === 1;
+                const sx = single ? 0.11 : 0.15;   // 主人「偏移的太多了，回一点点」：单字 0.16 → 0.11
+                const sy = 0.02;
+                const dir = single ? -1 : 1;   // 单字：方向取反，与图案旗一致
                 let skewX = 0;
                 let skewY = 0;
                 if (row === 1 || row === 2) {
-                    skewX = -0.15; // 迎风面的透视切变
-                    skewY = -0.02;
+                    skewX = -sx * dir; // 迎风面的透视切变
+                    skewY = -sy * dir;
                 } else if (row === 4 || row === 5) {
-                    skewX = 0.15;
-                    skewY = 0.02;
+                    skewX = sx * dir;
+                    skewY = sy * dir;
                 }
                 ctx.transform(1, skewY, skewX, 1, 0, 0);
 

@@ -1660,11 +1660,13 @@ export class CombatUI {
      * [2026-08-26] 战术模式开战时同步填充战斗数据（立绘、武将名牌、标题、双方势力），
      * 确保无论从任何路径进入 13 战斗，左下/右下立绘与上方血槽均能完整展示。
      */
-    public syncScene13WarStart(init: Scene13WarInit): void {
+    public syncScene13WarStart(init: Scene13WarInit, attackerOnLeft?: boolean): void {
         this.isVisible = true;
         this.container.classList.add('is-battle-visible');
         this.isCollapsed = false;
-        this.scene13SidesFlipped = init.followedOnDefenderSide === true;
+        // 🔴 [2026-10-27 主人令「攻方立绘固定在左，攻方从右边杀来很别扭」] 立绘左右按两军在战场画面上的站位：
+        //    攻方在画面左边 ⇒ 攻方立绘在左；攻方从右边杀来 ⇒ 攻方立绘在右。没传（正上下对阵）才沿用旧规则。
+        this.scene13SidesFlipped = attackerOnLeft !== undefined ? !attackerOnLeft : init.followedOnDefenderSide === true;
         this.applyBattleBarOrientation();
         this.attackerFactionId = init.attackerFactionId ?? null;
         this.defenderFactionId = init.defenderFactionId ?? null;
@@ -2311,7 +2313,7 @@ export class CombatUI {
         const SIX_LIST: { key: TacticalSixSet; char: string; sub: string; tip: string }[] = [
             { key: 'gongzhan', char: '攻', sub: '振威', tip: '【攻】振己威：20秒内全军伤害+50%、攻速+50%、移速+30%\n点击钦定/取消下次释放' },
             { key: 'shengzhan', char: '胜', sub: '加防', tip: '【胜】固己防：场上全军立即满血，且20秒内减伤60%\n点击钦定/取消下次释放' },
-            { key: 'dizhan', char: '敌', sub: '偷袭', tip: '【敌】伏兵偷袭：立即征召6%初始兵力作为伏兵从敌方出兵口杀出\n点击钦定/取消下次释放' },
+            { key: 'dizhan', char: '敌', sub: '偷袭', tip: '【敌】伏兵偷袭：立即征召6%初始兵力作为伏兵从敌方出兵口杀出（攻城战守方放计则在本方城内出兵守城）\n点击钦定/取消下次释放' },
             { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵：驱散敌方已生效的增益，令敌军混乱15秒（胡乱走动、守城兵原地发愣，无法攻击，受到伤害翻倍）\n点击钦定/取消下次释放' },
             { key: 'bingzhan', char: '并', sub: '夺兵', tip: '【并】夺敌兵：策反敌方总兵力3%倒戈为己方（先取前线在场兵，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
             { key: 'baizhan', char: '败', sub: '减兵', tip: '【败】减敌兵：折损敌方总兵力6%（前线敌兵当场阵亡、全部留尸，不够从敌方下一波继续）\n点击钦定/取消下次释放' },

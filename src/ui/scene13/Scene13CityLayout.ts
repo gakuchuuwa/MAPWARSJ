@@ -361,7 +361,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     //    也不在山上另补人工林。只清「城内 + 城门大道 + 城郊碾平圈」这一带
     //    （DE 的 RMS 同样用 avoid_player_start_areas 把城周树林清开）。
     this.decorSprites = this.decorSprites.filter((sp) => {
-        if (sp.asset.startsWith('MOUNTAIN_') || (sp as any).cityInterior) return false;
+        if (sp.asset.startsWith('MOUNTAIN_') || (sp as any).cityInterior || (sp as any).cityOutskirts) return false;
         if (sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
         const isTree = TREE_FILTER_RE.test(sp.asset);
         const spCell = cityCell ? gl.screenToCell(sp.x, sp.y, W, H) : null;
@@ -878,6 +878,250 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     : (0.80 + mRnd() * 0.10); // BARRELS
                 pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale);
             });
+        }
+    }
+
+    // ── DE 式城郊附郭村落、农田/草场与前哨望楼（纯视觉无碰撞，避开攻方主冲锋线、城门大道、护城河与水域） ──
+    {
+        const deStyle = this.buildingStyleFor(1);
+        const cultStyle = String(defCityForInterior?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? '');
+        const seasonTag = isSnow
+            ? 'WINTER'
+            : (calSeason === 0 ? 'SPRING' : calSeason === 2 ? 'AUTUMN' : calSeason === 3 ? 'WINTER' : 'SUMMER');
+        const isNomadOutskirts = isYurtOrNomadCity
+            || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|KHITAN|TIBET)$/.test(cultStyle);
+        const isRiceOutskirts = !isNomadOutskirts && !isArid && !isSnow
+            && (/^(JIANGNAN|HUGUANG|BASHU|KOREA|VIETNAMESE|BENGALIS|BURMESE|KHMER|PURU|INDIA|MUGHAL|DIANQIAN|JAPAN|MALAY|CHAMPA|JAVANESE|SIAMESE|MON)$/.test(cultStyle)
+                || deStyle === 'SEAS' || deStyle === 'PURU' || deStyle === 'INDI');
+        const plotAsset = isNomadOutskirts
+            ? `RESOURCE:PASTURE_${seasonTag}`
+            : (isRiceOutskirts ? `RESOURCE:RFARM_${seasonTag}` : `RESOURCE:FARM_${seasonTag}`);
+        const useAge3 = this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city';
+        const millAsset = isNomadOutskirts
+            ? 'BUILDING:DARK_PASTURE'
+            : (this.defenderCityType === 'stockade'
+                ? 'BUILDING:DARK_MILL_AGE1'
+                : `BUILDING:${deStyle}_MILL_${useAge3 ? 'AGE3' : 'AGE2'}`);
+        const housePool = isNomadOutskirts
+            ? ['BUILDING:YURT_E', 'BUILDING:YURT_F', 'BUILDING:YURT_G', 'BUILDING:YURT_H']
+            : (this.defenderCityType === 'stockade'
+                ? ['BUILDING:HUT_A', 'BUILDING:HUT_B', 'BUILDING:HUT_C', 'BUILDING:DARK_HOUSE_AGE1']
+                : useAge3
+                    ? [`BUILDING:${deStyle}_HOUSE_AGE3`, `BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`]
+                    : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE2`]);
+
+        // 计算攻方营心 → 城心的主冲锋走廊，确保附郭村落落点分布在侧翼或城后，不堵主冲锋线
+        const atkSpawns = this.spawns.filter((s) => s.f === 0);
+        const atkCen = atkSpawns.length > 0
+            ? {
+                x: atkSpawns.reduce((sum, s) => sum + s.x, 0) / atkSpawns.length,
+                y: atkSpawns.reduce((sum, s) => sum + s.y, 0) / atkSpawns.length,
+            }
+            : { x: cx - 1200, y: cy };
+        const chargeDx = cx - atkCen.x, chargeDy = cy - atkCen.y;
+        const chargeLen = Math.hypot(chargeDx, chargeDy) || 1;
+        const chargeUx = chargeDx / chargeLen, chargeUy = chargeDy / chargeLen;
+
+        const isPointDryAndOpen = (px: number, py: number): boolean => {
+            if (inCity(px, py) || inGateRoad(px, py)) return false;
+            if (gl.isWaterAt(px, py, W, H) || (inMoat && inMoat(px, py))) return false;
+            const cCell = gl.screenToCell(px, py, W, H);
+            if (!cCell) return false;
+            if (gl.getWaterDensityAt(cCell.gx, cCell.gy) >= 0.12) return false;
+            return true;
+        };
+
+        const pushOutskirtsSprite = (
+            asset: string,
+            px: number,
+            py: number,
+            scale: number,
+            z = 0,
+            flip = mRnd() < 0.5,
+            frame = 0,
+        ): void => {
+            this.ensureNatureAsset(asset);
+            const sp: DecorSprite = {
+                asset,
+                frame,
+                x: px,
+                y: py,
+                flip,
+                scale,
+                layer: 'world',
+                z,
+                indestructible: true,
+                obstruction: undefined,
+                obstructionContactSec: 0,
+                obstructionTouched: false,
+                obstructionDisabled: true,
+            };
+            (sp as any).cityOutskirts = true;
+            this.decorSprites.push(sp);
+        };
+
+        const clearTreesInRadius = (centerX: number, centerY: number, radPx: number): void => {
+            this.decorSprites = this.decorSprites.filter((sp) => {
+                if ((sp as any).cityOutskirts || (sp as any).cityInterior || sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
+                if (!TREE_FILTER_RE.test(sp.asset)) return true;
+                const d = Math.hypot(sp.x - centerX, (sp.y - centerY) * 1.6);
+                if (d < radPx) {
+                    gl.clearForestAt(sp.x, sp.y, W, H, 1.8);
+                    return false;
+                }
+                return true;
+            });
+        };
+
+        const innerDist = minHillDistCells + (moatOn ? 2.4 : 1.4);
+        const outerDist = minHillDistCells + 13.5;
+        const hamletCandidates: Array<{ gx: number; gy: number; x: number; y: number; flankScore: number }> = [];
+        const outpostCandidates: Array<{ gx: number; gy: number; x: number; y: number }> = [];
+
+        for (let gy = 6; gy <= N - 6; gy += 2) {
+            for (let gx = 6; gx <= N - 6; gx += 2) {
+                const distCells = Math.hypot(gx - cGx, gy - cGy);
+                if (distCells < innerDist || distCells > outerDist) continue;
+                const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+                if (!isPointDryAndOpen(pt.x, pt.y)) continue;
+                const elev0 = gl.elevationLevelAt(pt.x, pt.y, W, H);
+                if (elev0 > 1.25) continue;
+                // 避开所有出生营地
+                let nearSpawn = false;
+                for (const sp of this.spawns) {
+                    if (Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.5) < 520) {
+                        nearSpawn = true;
+                        break;
+                    }
+                }
+                if (nearSpawn) continue;
+
+                // 计算到攻方主冲锋轴线的横向偏离与前后投影
+                const relX = pt.x - atkCen.x, relY = pt.y - atkCen.y;
+                const along = relX * chargeUx + relY * chargeUy;
+                const perp = Math.abs(-relX * chargeUy + relY * chargeUx);
+                const onMainChargeLine = along > 0 && along < chargeLen + 120 && perp < 380;
+
+                // 哨楼候选：可在外围侧前方或关隘谷口两侧（不踩主路中心）
+                if (distCells >= innerDist + 1.0 && perp >= 220) {
+                    outpostCandidates.push({ gx, gy, x: pt.x, y: pt.y });
+                }
+
+                // 村落农庄候选：必须远离主冲锋线，且周围 2 格内平坦无水无路
+                if (onMainChargeLine || this.defenderCityType === 'pass') continue;
+                let neighborhoodOk = true;
+                for (const [ox, oy] of [[-120, -48], [120, -48], [-120, 48], [120, 48], [0, -72], [0, 72]] as const) {
+                    const nx = pt.x + ox, ny = pt.y + oy;
+                    if (!isPointDryAndOpen(nx, ny)) {
+                        neighborhoodOk = false;
+                        break;
+                    }
+                    if (Math.abs(gl.elevationLevelAt(nx, ny, W, H) - elev0) > 0.65) {
+                        neighborhoodOk = false;
+                        break;
+                    }
+                }
+                if (!neighborhoodOk) continue;
+                hamletCandidates.push({ gx, gy, x: pt.x, y: pt.y, flankScore: perp + (mRnd() - 0.5) * 140 });
+            }
+        }
+
+        hamletCandidates.sort((a, b) => b.flankScore - a.flankScore);
+        const targetHamlets = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city')
+            ? 2
+            : (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade')
+                ? 1
+                : 0;
+        const placedCenters: Array<{ x: number; y: number }> = [];
+
+        for (const cand of hamletCandidates) {
+            if (placedCenters.length >= targetHamlets) break;
+            if (placedCenters.some((p) => Math.hypot(p.x - cand.x, (p.y - cand.y) * 1.5) < 560)) continue;
+            placedCenters.push({ x: cand.x, y: cand.y });
+
+            const vx = cand.x, vy = cand.y;
+            clearTreesInRadius(vx, vy, 230);
+            gl.carveFoundation(vx, vy, W, H, 2.8);
+
+            // 1) 连片等轴农田 / 牧草场贴片（z = -6 贴地绘制，绝不挡兵模与房屋）
+            const fieldSide = mRnd() < 0.5 ? 1 : -1;
+            const fx0 = vx + fieldSide * 86, fy0 = vy + 28;
+            const diamondOffsets: ReadonlyArray<readonly [number, number]> = [
+                [0, 0],
+                [64, 32],
+                [-64, 32],
+                [0, 64],
+            ];
+            let plotsPlaced = 0;
+            const maxPlots = this.defenderCityType === 'big_city' ? 4 : 3;
+            for (const [dx, dy] of diamondOffsets) {
+                if (plotsPlaced >= maxPlots) break;
+                const px = fx0 + dx, py = fy0 + dy;
+                if (!isPointDryAndOpen(px, py)) continue;
+                gl.carveFoundation(px, py, W, H, 1.5);
+                pushOutskirtsSprite(plotAsset, px, py, 1.0, -6, false, 0);
+                plotsPlaced++;
+            }
+
+            // 2) 磨坊 / 蓄牧棚居中
+            pushOutskirtsSprite(millAsset, vx, vy, 0.78 + mRnd() * 0.04, 0, mRnd() < 0.5, 0);
+
+            // 3) 2~3 间同风格民居 / 毡帐错落环绕
+            const houseOffsets: ReadonlyArray<readonly [number, number]> = [
+                [-fieldSide * 92, -34],
+                [-fieldSide * 32, -68],
+                [fieldSide * 72, -46],
+            ];
+            const houseCount = this.defenderCityType === 'big_city' ? 3 : 2;
+            let hPlaced = 0;
+            for (let hi = 0; hi < houseOffsets.length && hPlaced < houseCount; hi++) {
+                const hx = vx + houseOffsets[hi][0] + (mRnd() - 0.5) * 14;
+                const hy = vy + houseOffsets[hi][1] + (mRnd() - 0.5) * 8;
+                if (!isPointDryAndOpen(hx, hy)) continue;
+                gl.carveFoundation(hx, hy, W, H, 1.4);
+                const hAsset = housePool[(hi + Math.floor(mRnd() * housePool.length)) % housePool.length];
+                pushOutskirtsSprite(hAsset, hx, hy, 0.76 + mRnd() * 0.06, 0, mRnd() < 0.5, 0);
+                hPlaced++;
+            }
+
+            // 4) 村口生活小景（粮桶/木车 + 迎风火把）
+            if (isPointDryAndOpen(vx - fieldSide * 44, vy + 24)) {
+                pushOutskirtsSprite(mRnd() < 0.5 ? 'BARRELS' : 'BATTLEFIELD:CART_BROKEN', vx - fieldSide * 44, vy + 24, 0.78, 0, mRnd() < 0.5, 0);
+            }
+            if (isPointDryAndOpen(vx + fieldSide * 36, vy - 18)) {
+                pushOutskirtsSprite('BATTLEFIELD:TORCH_A', vx + fieldSide * 36, vy - 18, 0.86, 0, false, 0);
+            }
+        }
+
+        // 5) 城郊前哨望楼（Outpost / Fortified Outpost）：立于外围要道侧翼或关隘谷口前哨
+        outpostCandidates.sort(() => mRnd() - 0.5);
+        const targetOutposts = (this.defenderCityType === 'big_city' || this.defenderCityType === 'pass') ? 2 : 1;
+        const outpostAsset = (this.defenderCityType === 'big_city' || this.defenderCityType === 'pass') && !isNomadOutskirts
+            ? 'BUILDING:FORTIFIED_OUTPOST'
+            : 'BUILDING:OUTPOST';
+        let outpostsPlaced = 0;
+        for (const oc of outpostCandidates) {
+            if (outpostsPlaced >= targetOutposts) break;
+            if (placedCenters.some((p) => Math.hypot(p.x - oc.x, (p.y - oc.y) * 1.5) < 460)) continue;
+            placedCenters.push({ x: oc.x, y: oc.y });
+            clearTreesInRadius(oc.x, oc.y, 130);
+            gl.carveFoundation(oc.x, oc.y, W, H, 1.6);
+            pushOutskirtsSprite(outpostAsset, oc.x, oc.y, 0.82, 0, mRnd() < 0.5, 0);
+            if (isPointDryAndOpen(oc.x + 28, oc.y + 12)) {
+                pushOutskirtsSprite('BATTLEFIELD:TORCH_A', oc.x + 28, oc.y + 12, 0.86, 0, false, 0);
+            }
+            if (isPointDryAndOpen(oc.x - 26, oc.y + 14)) {
+                pushOutskirtsSprite(
+                    this.defenderCityType === 'pass' ? 'BATTLEFIELD:STAKE_BARRICADE' : 'BARRELS',
+                    oc.x - 26,
+                    oc.y + 14,
+                    0.82,
+                    0,
+                    oc.x < cx,
+                    0,
+                );
+            }
+            outpostsPlaced++;
         }
     }
 

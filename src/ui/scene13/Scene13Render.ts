@@ -221,6 +221,9 @@ export function render(this: Scene13WarLayer): void {
     // 在士兵贴墙且旁边有队友时形成 A < B < W < A 循环，导致 TimSort 每帧随机颠倒遮挡次序闪烁。
     // 现统一使用带迟滞的 sortY（环境已预设 sortY = y - 12），同高度时按固定 z / zid 决胜，100% 确定且无循环。
     vis.sort((a, b) => {
+        const aFlat = a.kind === 'environment' && a.z <= -5 ? 0 : 1;
+        const bFlat = b.kind === 'environment' && b.z <= -5 ? 0 : 1;
+        if (aFlat !== bFlat) return aFlat - bFlat;
         const dy = (a.sortY ?? a.y) - (b.sortY ?? b.y);
         if (Math.abs(dy) > 0.01) return dy;
         const dz = (a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0);

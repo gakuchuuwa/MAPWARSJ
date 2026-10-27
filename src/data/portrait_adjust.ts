@@ -2688,9 +2688,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/WEI/xuan_xuda.png": {
-            "scale": 1.25,
+            "scale": 1.17,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -4
         },
         "/assets/WEI/wuzhou_limu.png": {
             "scale": 1.03,
@@ -8546,6 +8546,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": -4
+        },
+        "/assets/KHITAN/gen_feng_sheng.png": {
+            "scale": 1.18,
+            "offsetX": 31,
+            "offsetY": 5
+        },
+        "/assets/XIANBEI/yuan_nahachu.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -25
         }
     },
     "folderGuides": {

@@ -110,6 +110,7 @@ interface CityLifeActor {
     slotIdx: number;           // 0..N-1
     winterActive: boolean;     // 冬季是否仍出勤
     viewAlpha: number;         // 视口可见度透明度 0..1
+    fieldHand?: boolean;       // 田里补出来的帮工农夫：战损只画自己的尸体，不再带农车 / 栅栏废墟（一套组合只有一份建筑类残骸）
     retiring?: boolean;        // 年度轮回已换新布局：本角色渐隐退场（不再随视口、战火更新）
     peaceAlpha: number;        // 和平期季节出勤透明度 0..1
     actionAlpha: number;       // 换季动作切换淡入淡出系数 0..1
@@ -1111,6 +1112,7 @@ export class CityLifeAmbientLayer {
                     list.push({
                         ...owner,
                         id: `${owner.id}_field_${k}`,
+                        fieldHand: true,
                         groundResource: undefined,
                         groundResourceLib: undefined,
                         hasFarm: false,
@@ -1848,6 +1850,12 @@ export class CityLifeAmbientLayer {
         const corpseScale = VILLAGER_SCALE_BASE * zoomFactor;
         const ox = ((actor.damageVariant % 7) - 3) * 4.5 * zoomFactor;
         const oy = (((actor.damageVariant >> 2) % 5) - 2) * 3.5 * zoomFactor;
+
+        if (actor.fieldHand) {
+            // 帮工农夫：只留自己的尸体；农车、栅栏、路障废墟归组合主人那一份
+            this.drawDirectionalCorpse('SUCAI', 'VIL_MALE_VILLAGER', 'death', facing, elapsed, pt.x + ox * 0.5, pt.y + oy * 0.5, corpseScale, damageAlpha);
+            return;
+        }
 
         if (actor.damagePreset === 'animal_loss') {
             // 战争损失沿用统一的白骨与牧场残骸，不改变猎捕组合的 DE 死亡／腐烂流程。

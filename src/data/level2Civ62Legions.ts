@@ -651,7 +651,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_qutlugh',
+        commanderUnit: 'hero_zhaoyun',
         slots: [
             { type: 'elite_liao_dao', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
