@@ -2298,7 +2298,7 @@ export class CombatUI {
         headerRow.appendChild(tierBadge);
         headerRow.appendChild(statusSpan);
 
-        // 中部：六计双行印章字牌 [攻·振威][胜·增兵][敌·固防][混·乱阵][并·夺兵][败·减兵]
+        // 中部：六计双行印章字牌 [攻·振威][胜·加防][敌·偷袭][混·乱阵][并·夺兵][败·减兵]
         const btnsWrap = document.createElement('div');
         btnsWrap.className = 's13-skill-btns';
         btnsWrap.style.cssText = `
@@ -2309,12 +2309,12 @@ export class CombatUI {
         `;
 
         const SIX_LIST: { key: TacticalSixSet; char: string; sub: string; tip: string }[] = [
-            { key: 'gongzhan', char: '攻', sub: '振威', tip: '【攻】振己威（破【并】）：20秒内全军伤害+50%、攻速+50%、移速+30%\n点击钦定/取消下次释放' },
-            { key: 'shengzhan', char: '胜', sub: '增兵', tip: '【胜】增己兵（破【混】）：立即征召6%初始兵力从出兵口涌入战场\n点击钦定/取消下次释放' },
-            { key: 'dizhan', char: '敌', sub: '固防', tip: '【敌】固己防（破【攻】）：场上全军立即满血，且20秒内减伤60%\n点击钦定/取消下次释放' },
-            { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵（破【胜】）：驱散敌方已生效的增益，令敌军混乱15秒（胡乱走动、守城兵原地发愣，无法攻击，受到伤害翻倍）\n点击钦定/取消下次释放' },
-            { key: 'bingzhan', char: '并', sub: '夺兵', tip: '【并】夺敌兵（破【败】）：策反敌方总兵力3%倒戈为己方（先取前线在场兵，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
-            { key: 'baizhan', char: '败', sub: '减兵', tip: '【败】减敌兵（破【敌】）：折损敌方总兵力6%（先让前线敌兵溃逃退场，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
+            { key: 'gongzhan', char: '攻', sub: '振威', tip: '【攻】振己威：20秒内全军伤害+50%、攻速+50%、移速+30%\n点击钦定/取消下次释放' },
+            { key: 'shengzhan', char: '胜', sub: '加防', tip: '【胜】固己防：场上全军立即满血，且20秒内减伤60%\n点击钦定/取消下次释放' },
+            { key: 'dizhan', char: '敌', sub: '偷袭', tip: '【敌】伏兵偷袭：立即征召6%初始兵力作为伏兵从敌方出兵口杀出\n点击钦定/取消下次释放' },
+            { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵：驱散敌方已生效的增益，令敌军混乱15秒（胡乱走动、守城兵原地发愣，无法攻击，受到伤害翻倍）\n点击钦定/取消下次释放' },
+            { key: 'bingzhan', char: '并', sub: '夺兵', tip: '【并】夺敌兵：策反敌方总兵力3%倒戈为己方（先取前线在场兵，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
+            { key: 'baizhan', char: '败', sub: '减兵', tip: '【败】减敌兵：折损敌方总兵力6%（前线敌兵当场阵亡、全部留尸，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
         ];
 
         for (const item of SIX_LIST) {
@@ -2438,16 +2438,16 @@ export class CombatUI {
         };
         const SUB_OF: Record<TacticalSixSet, string> = {
             gongzhan: '振己威',
-            shengzhan: '增己兵',
-            dizhan: '固己防',
+            shengzhan: '固己防',
+            dizhan: '伏兵袭',
             hunzhan: '乱敌阵',
             bingzhan: '夺敌兵',
             baizhan: '减敌兵',
         };
         const THEME_OF: Record<TacticalSixSet, { color: string; bg: string; border: string; glow: string }> = {
             gongzhan: { color: '#FFEADB', bg: 'linear-gradient(135deg, rgba(155, 58, 12, 0.96), rgba(58, 18, 6, 0.96))', border: '#f97316', glow: 'rgba(249, 115, 22, 0.7)' },
-            shengzhan: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(22, 115, 52, 0.96), rgba(6, 44, 18, 0.96))', border: '#22c55e', glow: 'rgba(34, 197, 94, 0.7)' },
-            dizhan: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(12, 102, 125, 0.96), rgba(6, 34, 50, 0.96))', border: '#06b6d4', glow: 'rgba(6, 182, 212, 0.7)' },
+            shengzhan: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(12, 102, 125, 0.96), rgba(6, 34, 50, 0.96))', border: '#06b6d4', glow: 'rgba(6, 182, 212, 0.7)' },
+            dizhan: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(22, 115, 52, 0.96), rgba(6, 44, 18, 0.96))', border: '#22c55e', glow: 'rgba(34, 197, 94, 0.7)' },
             hunzhan: { color: '#F3E8FF', bg: 'linear-gradient(135deg, rgba(102, 34, 136, 0.96), rgba(34, 8, 50, 0.96))', border: '#a855f7', glow: 'rgba(168, 85, 247, 0.7)' },
             bingzhan: { color: '#DBEAFE', bg: 'linear-gradient(135deg, rgba(24, 68, 138, 0.96), rgba(6, 22, 50, 0.96))', border: '#3b82f6', glow: 'rgba(59, 130, 246, 0.7)' },
             baizhan: { color: '#FEE2E2', bg: 'linear-gradient(135deg, rgba(138, 24, 24, 0.96), rgba(50, 6, 6, 0.96))', border: '#ef4444', glow: 'rgba(239, 68, 68, 0.7)' },
@@ -2469,7 +2469,7 @@ export class CombatUI {
             const isAtt = sideKey === 'attacker';
             const nextSix: TacticalSixSet = s.queuedSkill ?? s.autoNextSkill;
             const isManual = s.queuedSkill !== null;
-            // 「拆招」只认对方刚放、我还没回应的那一计；且只有自动下一计**真的克它**时才写“破”
+            // 对方刚放、我还没回应的那一计（只用来显示武将接下来按顺序放哪一计）
             const oppNew: TacticalSixSet | null = s.oppNewCast ?? null;
 
             const tierEl = bar.querySelector('.s13-skill-tier-badge') as HTMLSpanElement | null;
@@ -2486,11 +2486,8 @@ export class CombatUI {
                 if (isManual && s.queuedSkill) {
                     statusEl.textContent = `钦定：【${CHAR_OF[nextSix]}】${SUB_OF[nextSix]}`;
                     statusEl.style.color = '#ffd700';
-                } else if (oppNew && s.autoNextCounters) {
-                    statusEl.textContent = `拆招：破【${CHAR_OF[oppNew]}】➔【${CHAR_OF[nextSix]}】`;
-                    statusEl.style.color = '#86efac';
                 } else if (oppNew) {
-                    // 对方有新招，但本方当前形势计池/上一计限制下选不到克它的计 —— 如实显示，不谎称“破”
+                    // 🔴 [2026-10-27 主人令「不要克制了」] 六计没有克制效果，对方放计后的回应只是武将的放计顺序，不写「拆招 / 破」
                     statusEl.textContent = `对方【${CHAR_OF[oppNew]}】➔【${CHAR_OF[nextSix]}】`;
                     statusEl.style.color = '#e8d3a3';
                 } else {

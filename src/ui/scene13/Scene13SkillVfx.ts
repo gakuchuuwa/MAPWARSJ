@@ -31,8 +31,8 @@ type Lift = (x: number, y: number) => number;
 const TAU = Math.PI * 2;
 const COLOR: Record<TacticalSixSet, string> = {
     gongzhan: '#ff6a24',
-    shengzhan: '#3ef5c0',
-    dizhan: '#52ccff',
+    dizhan: '#3ef5c0',
+    shengzhan: '#52ccff',
     hunzhan: '#b572ff',
     bingzhan: '#e59eff',
     baizhan: '#f03240',
@@ -192,7 +192,7 @@ function ellipse(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number
 // ── 3. 状态追踪：让持续类与瞬发类的「全军大阵＋单兵特效」时间严格一致，并记住是否打赏 ──
 const INSTANT_SYNC_SEC = 4.2;
 interface UnitSkillTag {
-    six: 'shengzhan' | 'bingzhan';
+    six: 'dizhan' | 'bingzhan';
     untilSec: number;
     paid: boolean;
     playerCast: boolean;
@@ -220,13 +220,13 @@ function registerSkillCastMeta(v: Scene13SkillVfx, nowSec: number): void {
     if (v.six === 'gongzhan') {
         sideCastTier[v.side].frenzyPaid = paid;
         sideCastTier[v.side].frenzyPlayer = player;
-    } else if (v.six === 'dizhan') {
+    } else if (v.six === 'shengzhan') {
         sideCastTier[v.side].shieldPaid = paid;
         sideCastTier[v.side].shieldPlayer = player;
     } else if (v.six === 'hunzhan') {
         sideCastTier[ef].panicPaid = paid;
         sideCastTier[ef].panicPlayer = player;
-    } else if (v.six === 'shengzhan' || v.six === 'bingzhan') {
+    } else if (v.six === 'dizhan' || v.six === 'bingzhan') {
         const untilSec = nowSec + INSTANT_SYNC_SEC;
         if (untilSec > unitTagActiveUntilSec) unitTagActiveUntilSec = untilSec;
         for (const m of v.targets) {
@@ -280,7 +280,7 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     }
 
     // 3. 单兵／阵口地面发光环
-    if (v.six === 'shengzhan') {
+    if (v.six === 'dizhan') {
         const pn = Math.min(v.points.length, 32);
         ctx.strokeStyle = '#9effdf';
         for (let i = 0; i < pn; i++) {
@@ -378,7 +378,7 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     const fade = 1 - p;
     const scale = tierScale(v);
     const cx = v.x, cy = v.y - lift(v.x, v.y);
-    const flare = getFlareStamp(COLOR.shengzhan);
+    const flare = getFlareStamp(COLOR.dizhan);
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
@@ -446,7 +446,7 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     const scale = tierScale(v);
     const x = v.x, y = v.y - lift(v.x, v.y) + 28;
     const r = (68 + e * 128) * scale;
-    const flare = getFlareStamp(COLOR.dizhan);
+    const flare = getFlareStamp(COLOR.shengzhan);
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
@@ -465,7 +465,7 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
 
     // 穹顶高亮外弧 + 白炽内芯弧
     ctx.globalAlpha = fade * 0.95;
-    ctx.strokeStyle = COLOR.dizhan;
+    ctx.strokeStyle = COLOR.shengzhan;
     ctx.lineWidth = (7 - p * 2.5) * scale;
     ctx.beginPath();
     ctx.arc(x, y, r, Math.PI, TAU);
@@ -712,7 +712,7 @@ function drawTargetGlow(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: nu
                 '#fff4bd',
             );
             if (i % 2 === 0) drawStamp(ctx, flare, m.x, hy - 3, 8);
-        } else if (v.six === 'dizhan') {
+        } else if (v.six === 'shengzhan') {
             const hy = y - 18;
             ctx.strokeStyle = '#8ce2ff';
             ctx.globalAlpha = fade * 0.95;
@@ -729,7 +729,7 @@ function drawTargetGlow(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: nu
             ctx.beginPath();
             ctx.arc(m.x, y - 22, 7.5 + p * 3.5, ang, ang + Math.PI * 1.35);
             ctx.stroke();
-        } else if (v.six === 'shengzhan') {
+        } else if (v.six === 'dizhan') {
             const hy = y - 22 - e * 4;
             ctx.strokeStyle = 'rgba(140,255,220,0.85)';
             ctx.globalAlpha = fade * 0.85;
@@ -819,8 +819,8 @@ function drawPatronBurst(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: n
 
 function drawTopOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
     if (v.six === 'gongzhan') drawAttack(ctx, v, p, lift);
-    else if (v.six === 'shengzhan') drawReinforce(ctx, v, p, lift);
-    else if (v.six === 'dizhan') drawShield(ctx, v, p, lift);
+    else if (v.six === 'dizhan') drawReinforce(ctx, v, p, lift);
+    else if (v.six === 'shengzhan') drawShield(ctx, v, p, lift);
     else if (v.six === 'hunzhan') drawPanic(ctx, v, p, lift);
     else if (v.six === 'bingzhan') drawConvert(ctx, v, p, lift);
     else drawDefeat(ctx, v, p, lift);
@@ -868,7 +868,7 @@ export function drawScene13SkillStatusVfx(
     ctx.lineCap = 'round';
 
     const gongFlare = getFlareStamp(COLOR.gongzhan);
-    const shengFlare = getFlareStamp(COLOR.shengzhan);
+    const shengFlare = getFlareStamp(COLOR.dizhan);
     const bingFlare = getFlareStamp('#ffd76a');
 
     // 绘制每名受影响士兵脚下的小光环与头顶状态小标
@@ -908,11 +908,11 @@ export function drawScene13SkillStatusVfx(
             }
         }
 
-        // 【敌】固己防持续期：全员脚下冰蓝护体光圈 ＋ 头顶冰蓝双层弧盾
+        // 【胜】固己防持续期：全员脚下冰蓝护体光圈 ＋ 头顶冰蓝双层弧盾
         if (st.shield > 0 && !m.siegeW) {
             const fadeOut = clamp01(st.shield / 1.0);
             ctx.globalAlpha = (0.32 + pulse * 0.20) * fadeOut;
-            ctx.strokeStyle = tier.shieldPaid && pulse > 0.55 ? '#ffe680' : COLOR.dizhan;
+            ctx.strokeStyle = tier.shieldPaid && pulse > 0.55 ? '#ffe680' : COLOR.shengzhan;
             ctx.lineWidth = 2.2;
             ellipse(ctx, m.x, y, 10.5 + pulse * 2, 5.2 + pulse);
             ctx.stroke();
@@ -945,14 +945,14 @@ export function drawScene13SkillStatusVfx(
             }
         }
 
-        // 【胜】增援生力军 & 【并】倒戈兵 入场同步特效（4.2 秒内脚踏光环＋头顶星芒印记）
+        // 【敌】伏兵生力军 & 【并】倒戈兵 入场同步特效（4.2 秒内脚踏光环＋头顶星芒印记）
         if (hasUnitTags) {
             const tag = unitSkillTags.get(m);
             if (tag && nowSec < tag.untilSec) {
                 const rem = clamp01((tag.untilSec - nowSec) / 1.2);
-                if (tag.six === 'shengzhan') {
+                if (tag.six === 'dizhan') {
                     ctx.globalAlpha = (0.36 + pulse * 0.22) * rem;
-                    ctx.strokeStyle = tag.paid && pulse > 0.5 ? '#ffd700' : COLOR.shengzhan;
+                    ctx.strokeStyle = tag.paid && pulse > 0.5 ? '#ffd700' : COLOR.dizhan;
                     ctx.lineWidth = 2.3;
                     ellipse(ctx, m.x, y, 10.5 + pulse * 2, 5.2 + pulse);
                     ctx.stroke();

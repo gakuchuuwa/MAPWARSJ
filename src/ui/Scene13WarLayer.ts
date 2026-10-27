@@ -47,7 +47,7 @@ import { categorizeUnit } from '../legion/formation/deUnitCategories';
 import { computeDeFormationLayout, type DeCategoryGroup } from '../legion/formation/deFormationLayout';
 import type { Scene13PlayerSetup } from '../player/PlayerHero';
 import { withPlayerPeakStats } from '../player/PlayerGrowth';
-import { PLAYER_LIVE_SKILL } from '../player/PlayerLiveSkill';
+import { PLAYER_LIVE_SKILL, playerLiveSkillAffects } from '../player/PlayerLiveSkill';
 import { withCommander } from '../data/generalHeroUnits';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
@@ -144,18 +144,21 @@ const SKILL_FRENZY_SEC = 20;        // 【攻】振己威持续
 const SKILL_FRENZY_DMG = 1.5;       // 【攻】伤害倍率
 const SKILL_FRENZY_ATKSPD = 1.5;    // 【攻】攻速倍率
 const SKILL_FRENZY_MOVE = 1.3;      // 【攻】移速倍率
-const SKILL_SHIELD_SEC = 20;        // 【敌】固己防持续（释放瞬间全军满血）
-const SKILL_SHIELD_TAKEN = 0.4;     // 【敌】受伤倍率（减伤六成）
+const SKILL_SHIELD_SEC = 20;        // 【胜】固己防持续（释放瞬间全军满血）
+const SKILL_SHIELD_TAKEN = 0.4;     // 【胜】受伤倍率（减伤六成）
 const SKILL_PANIC_SEC = 15;         // 【混】乱敌阵持续
 const SKILL_PANIC_TAKEN = 2;        // 【混】混乱中受伤倍率
 
+// 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
+//   六计**没有克制**：这张表只是 AI 武将的放计顺序（对方刚放某计 → 我方接着优先放哪计），回应的计不加任何效果，
+//   界面也不写「拆招 / 破」。上面 10-20 / 10-21 的「相克」说法作废。胜/敌两计效果 10-27 已对调，顺序跟着效果对调。
 const SIX_COUNTER: Readonly<Record<TacticalSixSet, readonly TacticalSixSet[]>> = {
-    gongzhan: ['dizhan', 'hunzhan'],
-    dizhan: ['baizhan', 'hunzhan'],
-    hunzhan: ['shengzhan', 'dizhan'],
+    gongzhan: ['shengzhan', 'hunzhan'],
+    shengzhan: ['baizhan', 'hunzhan'],
+    hunzhan: ['dizhan', 'shengzhan'],
     bingzhan: ['gongzhan', 'hunzhan'],
-    shengzhan: ['hunzhan', 'baizhan'],
-    baizhan: ['bingzhan', 'shengzhan'],
+    dizhan: ['hunzhan', 'baizhan'],
+    baizhan: ['bingzhan', 'dizhan'],
 };
 /** 三势计池（六计三类见 `SIX_SET_TO_TRI_CLASS`）：优势＝优势组＋均势组；劣势＝劣势组＋均势组；均势＝六计全有 */
 const SIX_POOL_BY_STANCE: Readonly<Record<'adv' | 'bal' | 'dis', readonly TacticalSixSet[]>> = {
@@ -732,7 +735,7 @@ export class Scene13WarLayer {
         targets: WarMan[],
         points: Scene13SkillVfxPoint[],
     ): void {
-        const dur = six === 'shengzhan' || six === 'hunzhan' || six === 'bingzhan' ? 1.8 : 1.5;
+        const dur = six === 'dizhan' || six === 'hunzhan' || six === 'bingzhan' ? 1.8 : 1.5;
         const dir = this.advanceVec[f];
         this.skillVfx.push({
             six, side: f, x, y,
@@ -769,8 +772,6 @@ export class Scene13WarLayer {
                 lastCastSkillName: this.lastCastSkillName[f],
                 queuedSkill: this.queuedSkill[f],
                 autoNextSkill: autoNext,
-                /** 自动下一计是否真的克了对方刚放的那一计（界面「拆招：破X」只在这为真时显示） */
-                autoNextCounters: oppNew ? SIX_COUNTER[oppNew].includes(autoNext) : false,
                 oppLastCast: this.lastCastSkill[1 - f],
                 /** 对方刚放、尚未被我回应的一计（null = 没有新招要拆） */
                 oppNewCast: oppNew,
@@ -854,18 +855,51 @@ export class Scene13WarLayer {
         return taken;
     }
 
-    private spawnImmediateSkillReinforcements(f: 0 | 1, addTotalPop: number, keys?: string[], vfxTargets?: WarMan[]): void {
+    /**
+     * 🔴 [2026-10-27 主人令「增兵没有偷袭的感觉，改成从敌方第一波的 9 个出兵口出兵」]
+     * 【胜】增兵的伏兵落点：本方第 i 口的兵从敌方第 i 口（不含主将队、玩家精锐）冒出来。
+     *   · 攻城战攻方放计：守方出兵口在城里 ⇒ 改用守方**城外阵位**（defOutsideBase），从墙根往外排，
+     *     绝不出生在城墙圈内（否则等于跳过城墙）；城外守军打光后阵位照样能出兵。
+     *   · 攻城战守方放计 / 野战：直接用敌方出兵口。
+     * 返回 [锚点 x, y, 前进方向, 横排方向]；前进方向朝敌军（从敌方后方往前打）。
+     */
+    private ambushAnchors(f: 0 | 1): Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }> {
+        const ef: 0 | 1 = f === 0 ? 1 : 0;
+        const enemyPorts = this.spawns.filter((sp) => sp.f === ef && !sp.playerElite && !sp.commander);
+        if (this.battleType === 'siege' && this.deCity && ef === 1) {
+            const B = this.defOutsideBase(), C = this.deCityCenter;
+            const ports = enemyPorts.filter((sp) => sp.outFwd !== undefined && sp.outSide !== undefined);
+            return ports.map((sp) => {
+                // 本队横向位置不变，纵向贴到墙外表面 + DEF_WALL_GAP，再往外（B.fwd）排开
+                const ax = B.x + B.fwd.x * sp.outFwd! + B.side.x * sp.outSide!;
+                const ay = B.y + B.fwd.y * sp.outFwd! + B.side.y * sp.outSide!;
+                const d = B.wallOuter + DEF_WALL_GAP - ((ax - C.x) * B.fwd.x + (ay - C.y) * B.fwd.y);
+                return { x: ax + B.fwd.x * d, y: ay + B.fwd.y * d, fwd: B.fwd, side: B.side };
+            });
+        }
+        // 敌军从敌口往本方推进，伏兵在敌口追着敌军背后打 ⇒ 前进方向与敌军同向 = advanceVec[ef]
+        return enemyPorts.map((sp) => ({ x: sp.x, y: sp.y, fwd: this.advanceVec[ef], side: this.sideVec[ef] }));
+    }
+
+    private spawnImmediateSkillReinforcements(f: 0 | 1, addTotalPop: number, keys?: string[], vfxTargets?: WarMan[], ambush = false): void {
         const mySpawns = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
         if (mySpawns.length === 0) return;
+        const anchors = ambush ? this.ambushAnchors(f) : [];
+        const ambushOn = anchors.length > 0;
+        // 伏兵只从本方 9 口出（主将队不出），一口对一敌口
+        const srcSpawns = ambushOn ? mySpawns.filter((sp) => !sp.commander) : mySpawns;
+        if (srcSpawns.length === 0) return;
 
         let remainingPop = addTotalPop;
         const uFwd = this.advanceVec[f];
         const uSide = this.sideVec[f];
+        const [efx, efy] = ambushOn ? this.sideFrontCentroid(f === 0 ? 1 : 0) : [0, 0];
 
-        for (const s of mySpawns) s.slotN = 0;
+        for (const s of srcSpawns) s.slotN = 0;
         let idx = 0;
         while (remainingPop > 0) {
-            const s = mySpawns[idx % mySpawns.length];
+            const si = idx % srcSpawns.length;
+            const s = srcSpawns[si];
             idx++;
             const unitPop = Math.max(1, s.pop);
             remainingPop -= unitPop;
@@ -877,11 +911,24 @@ export class Scene13WarLayer {
             const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
             const dep = ((slotIdx / files) | 0) * spDep;
             const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
-            const [spawnX, spawnY] = this.fieldBound(
-                s.x - uFwd.x * dep + uSide.x * slotY,
-                s.y - uFwd.y * dep + uSide.y * slotY,
-            );
-            const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f] ?? { x: this.worldCX, y: this.worldCY };
+            let spawnX: number, spawnY: number;
+            if (ambushOn) {
+                const a = anchors[si % anchors.length];
+                // 攻城城外阵位：锚点在墙根，往外（fwd）排；敌口：锚点在敌口，往敌阵后方（-fwd）排
+                const k = this.battleType === 'siege' && !!this.deCity && f === 0 ? 1 : -1;
+                [spawnX, spawnY] = this.fieldBound(
+                    a.x + a.fwd.x * dep * k + a.side.x * slotY,
+                    a.y + a.fwd.y * dep * k + a.side.y * slotY,
+                );
+            } else {
+                [spawnX, spawnY] = this.fieldBound(
+                    s.x - uFwd.x * dep + uSide.x * slotY,
+                    s.y - uFwd.y * dep + uSide.y * slotY,
+                );
+            }
+            const tgt = ambushOn
+                ? { x: efx, y: efy }
+                : this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f] ?? { x: this.worldCX, y: this.worldCY };
             const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
             const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
             // 🔴 [2026-10-24] 【并】夺兵从敌方后备池策反的兵**保留敌方兵种**（见 triggerScene13Skill），
@@ -893,15 +940,16 @@ export class Scene13WarLayer {
                 zid: this.manSeq++,
                 x: spawnX, y: spawnY, tx: spawnX, ty: spawnY,
                 hp: this.statsFor(manKey, s.f).hp,
-                dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
+                dir: ambushOn ? this.dir8(tgt.x - spawnX, tgt.y - spawnY) : this.dir8(tgt.x - s.x, tgt.y - s.y),
                 ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.15,
                 fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                 prevX: spawnX, prevY: spawnY, anchorX: spawnX, anchorY: spawnY, netT: 0,
-                stuckT: 0, sepX: 0, sepY: 0, y0: s.y,
+                stuckT: 0, sepX: 0, sepY: 0, y0: ambushOn ? spawnY : s.y,
                 flag: bearer, fo: Math.random() * 600,
                 march: false, port: null, dep, slotY, pop: s.pop,
                 lane: s.lane,
-                guardPost: (s.f === 1 && this.battleType === 'siege' && !!this.deCity && !this.isDefenderGateDestroyed()) ? { x: spawnX, y: spawnY } : undefined,
+                // 守方伏兵出在攻方营地，按野战兵走，不站岗
+                guardPost: (!ambushOn && s.f === 1 && this.battleType === 'siege' && !!this.deCity && !this.isDefenderGateDestroyed()) ? { x: spawnX, y: spawnY } : undefined,
                 claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: FADE_IN, fadeMax: FADE_IN,
             };
             this.men.push(man);
@@ -947,8 +995,8 @@ export class Scene13WarLayer {
         }
         const fallbackNames: Record<TacticalSixSet, string> = {
             gongzhan: f === 0 ? '破釜沉舟' : '绝地反击',
-            shengzhan: f === 0 ? '全军突击' : '众志成城',
-            dizhan: f === 0 ? '步步为营' : '固若金汤',
+            shengzhan: f === 0 ? '步步为营' : '固若金汤',
+            dizhan: f === 0 ? '暗度陈仓' : '奇兵袭营',
             hunzhan: f === 0 ? '声东击西' : '疑兵之计',
             bingzhan: f === 0 ? '策反倒戈' : '离间反戈',
             baizhan: f === 0 ? '雷霆万钧' : '背水一战',
@@ -960,8 +1008,12 @@ export class Scene13WarLayer {
 
         this.lastCastSkill[f] = six;
         this.lastCastSkillName[f] = skillName;
-        // 计落在哪一方：攻/胜/固己防作用在本方，乱阵/死战/倒戈作用在敌方（在执行效果前取，倒戈后敌兵就换边了）
-        const [camX, camY] = this.sideFrontCentroid(six === 'hunzhan' || six === 'baizhan' || six === 'bingzhan' ? ef : f);
+        // 计落在哪一方：攻/胜（固己防）作用在本方，乱阵/死战/倒戈作用在敌方（在执行效果前取，倒戈后敌兵就换边了）
+        // 【敌】伏兵出在敌方出兵口 ⇒ 镜头 / 特效落在伏兵出没处
+        const ambushPts = six === 'dizhan' ? this.ambushAnchors(f) : [];
+        const [camX, camY] = ambushPts.length > 0
+            ? [ambushPts.reduce((a, p) => a + p.x, 0) / ambushPts.length, ambushPts.reduce((a, p) => a + p.y, 0) / ambushPts.length]
+            : this.sideFrontCentroid(six === 'hunzhan' || six === 'baizhan' || six === 'bingzhan' ? ef : f);
         const hm = this.heroMan;
         if (this.useGroundGL && hm && hm.hp > 0 && hm.f === 1 && !hm.foe
             && this.battleType === 'siege' && !!this.deCity && this.insideRing(hm.x, hm.y)) {
@@ -977,15 +1029,20 @@ export class Scene13WarLayer {
         // 只收集本次真正受影响的对象供渲染高光；下列各分支的战斗结算保持原样。
         const vfxTargets: WarMan[] = [];
         const vfxPoints: Scene13SkillVfxPoint[] = [];
-        if (six === 'shengzhan') {
-            // 1. 【胜】增己兵：立即从本方全部非玩家精锐出兵口一次性涌出 +6% 初始总兵力的生力军参战
+        // 🔴 [2026-10-27 主人令「按三十六计史实」] 胜战计＝加防（以逸待劳）、敌战计＝偷袭（暗度陈仓），两计效果对调
+        if (six === 'dizhan') {
+            // 1. 【敌】伏兵偷袭：+6% 初始总兵力的生力军作为伏兵，从敌方 9 个出兵口（攻城攻方＝守方城外阵位）一次性杀出
+            // 🔴 [2026-10-27 主人令] 原从本方出兵口出，没有偷袭感；落点见 ambushAnchors
             const addTotalPop = Math.max(12, Math.round(this.initPool[f] * 0.06));
-            for (const sp of this.spawns) if (sp.f === f && !sp.playerElite) vfxPoints.push({ x: sp.x, y: sp.y });
-            this.spawnImmediateSkillReinforcements(f, addTotalPop, undefined, vfxTargets);
+            const anchors = this.ambushAnchors(f);
+            if (anchors.length > 0) for (const a of anchors) vfxPoints.push({ x: a.x, y: a.y });
+            else for (const sp of this.spawns) if (sp.f === f && !sp.playerElite) vfxPoints.push({ x: sp.x, y: sp.y });
+            this.spawnImmediateSkillReinforcements(f, addTotalPop, undefined, vfxTargets, true);
         } else if (six === 'baizhan') {
             // 2. 【败】死战：折损敌方总兵力 6%（额度按总兵力算，体现在在场兵力上）
-            // 🔴 [2026-10-21 主人令「所有的8%/5%是总兵力的，但体现是在场兵力；在场不够就从下一波继续」+「死前线的，逃跑退场不留尸」]
-            //    先让离我方最近的前线敌兵溃逃退场（不留尸体），额度没用完再从敌方下一波（后备池）里扣。
+            // 🔴 [2026-10-21 主人令「所有的8%/5%是总兵力的，但体现是在场兵力；在场不够就从下一波继续」]
+            // 🔴 [2026-10-27 主人令「败战计不要用不留尸体，改为全为尸体」] 取代 10-21「逃跑退场不留尸」：
+            //    离我方最近的前线敌兵当场倒地、全部留尸（不走 40% 留尸名额），额度没用完再从敌方下一波（后备池）里扣。
             let quotaPop = Math.max(1, Math.round(this.initPool[ef] * 0.06));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
             const [fcx, fcy] = this.sideCentroid(f);
@@ -996,7 +1053,7 @@ export class Scene13WarLayer {
                 quotaPop -= Math.max(1, victim.pop || 1);
                 vfxPoints.push({ x: victim.x, y: victim.y });
                 victim.hp = 0;
-                (victim as WarMan & { forceFlee?: boolean }).forceFlee = true;   // 退场方式＝溃逃，不留尸体（见 pushCorpse）
+                (victim as WarMan & { forceCorpse?: boolean }).forceCorpse = true;   // 一律留尸体（见 pushCorpse）
                 // 🔴 [2026-10-22 查六计时修] 计策折损不是任何单位砍死的：旧写法传 victim 当 killer，
                 //    敌方对我方放【败】时反而给我方记功（playerKills++ / 每兵 addMerit(20)）。计划击杀一律不计单位功。
                 this.onManKilled(victim, null);
@@ -1006,8 +1063,8 @@ export class Scene13WarLayer {
             // 3. 【攻】猛攻：20 秒内己方全军伤害 ×1.5、攻速 ×1.5、移速 ×1.3
             for (const m of this.men) if (m.f === f && m.hp > 0) vfxTargets.push(m);
             this.skillFrenzyTimer[f] = SKILL_FRENZY_SEC;
-        } else if (six === 'dizhan') {
-            // 4. 【敌】固己防：己方场上存活士兵立即满血，且 20 秒内受到伤害降低六成（×0.4）
+        } else if (six === 'shengzhan') {
+            // 4. 【胜】固己防：己方场上存活士兵立即满血，且 20 秒内受到伤害降低六成（×0.4）
             //    🔴 [2026-10-22 查六计] 界面提示原先写「满血恢复」，但代码自 2026-10-18 17:08 起就是 +20% 且后续未再改；
             //       已把界面/旧注释同步成 20%（见 CombatUI SIX_LIST）。若主人要的是满血，改这一行即可。
             for (const m of this.men) {
@@ -1391,11 +1448,9 @@ export class Scene13WarLayer {
     /** 玩家技范围只跟官职与既有编队关系走，不读武将技、六计或主将光环。 */
     private playerLiveAffects(m: WarMan): boolean {
         const setup = this.playerSetup;
-        if (!setup || m.f !== setup.side) return false;
-        if (m === this.heroMan) return true;
-        if (setup.control === 'none') return false;
-        if (setup.control === 'all') return true;
-        return this.playerCtlLanes.has(m.lane);
+        return !!setup && playerLiveSkillAffects(
+            setup.control, setup.side, m.f, m === this.heroMan, this.playerCtlLanes.has(m.lane),
+        );
     }
     private playerLiveDamageMul(m: WarMan): number {
         return this.playerLiveSkillTimer > 0 && this.playerLiveAffects(m) ? PLAYER_LIVE_SKILL.damageMult : 1;
@@ -8269,9 +8324,9 @@ export class Scene13WarLayer {
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;
         }
-        // 🔴 [2026-10-21 主人令「【败】折损的 8% 采用逃跑的退场，不用留尸体」] 被「败」计折损的兵一律溃逃退场，不占尸体名额、不留尸体
-        const forceFlee = (m as WarMan & { forceFlee?: boolean }).forceFlee === true;
-        if (!forceFlee && this.takeCorpseSlot()) {
+        // 🔴 [2026-10-27 主人令「败战计改为全为尸体」] 被「败」计折损的兵一律留尸体，不走留尸累加器（取代 10-21「溃逃不留尸」）
+        const forceCorpse = (m as WarMan & { forceCorpse?: boolean }).forceCorpse === true;
+        if (forceCorpse || this.takeCorpseSlot()) {
             // 尸体朝向随机：每具倒向不同方向，避免全部同朝向呆板（主人 2026-08-21 定）
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;

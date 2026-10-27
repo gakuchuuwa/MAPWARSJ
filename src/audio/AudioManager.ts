@@ -1005,8 +1005,8 @@ export class AudioManager {
     public playScene13SkillSfx(six: TacticalSixSet, playerCast: boolean): boolean {
         const keys: Record<TacticalSixSet, SoundKey> = {
             gongzhan: 'skill_gongzhan',
-            shengzhan: 'skill_shengzhan',
-            dizhan: 'skill_dizhan',
+            shengzhan: 'skill_dizhan',   // [2026-10-27] 胜/敌效果对调，音效跟效果走
+            dizhan: 'skill_shengzhan',
             hunzhan: 'skill_hunzhan',
             bingzhan: 'skill_bingzhan',
             baizhan: 'skill_baizhan',

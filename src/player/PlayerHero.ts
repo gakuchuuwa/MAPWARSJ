@@ -68,6 +68,8 @@ export interface LearnedUnit {
 
 export interface PlayerSaveState {
     merit: number;
+    /** 历史最高官职；离开势力只清功劳，不清此字段。旧存档缺省时按功劳与势力状态重建。 */
+    rankId?: PlayerRankId;
     heroDowns: number;
     factionId: string | null;
     learnedUnits?: LearnedUnit[];
@@ -135,6 +137,8 @@ export class PlayerHeroArmy extends Army {
 export class PlayerHero {
     public readonly army: PlayerHeroArmy;
     public merit = 0;
+    /** 历史最高官职：2026-10-27 主人定「离开势力功劳清零，官职保留」。 */
+    private retainedRankId: PlayerRankId = 'civilian';
     /** 战术模式里落马次数（只做统计，不扣功勋） */
     public heroDowns = 0;
     /** 当前效忠势力（接任务时加入；null = 独行） */
@@ -319,8 +323,18 @@ export class PlayerHero {
     }
 
     public getPosition(): { lat: number; lng: number } { return this.army.getPosition(); }
-    /** 已投效势力则保底斥候（主人 2026-09-07 定），否则按功勋 */
-    public getRank(): PlayerRank { return rankFor(this.merit, this.factionId !== null); }
+    /** 当前功劳可晋升，历史最高官职只升不降；已投效势力仍保底斥候。 */
+    public getRank(): PlayerRank {
+        const current = rankFor(this.merit, this.factionId !== null);
+        const currentIdx = PLAYER_RANKS.findIndex((r) => r.id === current.id);
+        const retainedIdx = PLAYER_RANKS.findIndex((r) => r.id === this.retainedRankId);
+        return currentIdx >= retainedIdx ? current : PLAYER_RANKS[Math.max(0, retainedIdx)];
+    }
+    private rememberRank(rank: PlayerRank): void {
+        const nextIdx = PLAYER_RANKS.findIndex((r) => r.id === rank.id);
+        const retainedIdx = PLAYER_RANKS.findIndex((r) => r.id === this.retainedRankId);
+        if (nextIdx > retainedIdx) this.retainedRankId = rank.id;
+    }
     public getHostLegionId(): string | null { return this.hostLegionId; }
     public setAutoMode(on: boolean): void {
         if (this.autoMode === on) return;
@@ -381,6 +395,7 @@ export class PlayerHero {
         if (n <= 0) return;
         const before = this.getRank();
         this.merit += n;
+        this.rememberRank(rankFor(this.merit, this.factionId !== null));
         const after = this.getRank();
         if (after.id !== before.id) {
             this.syncLearnedUnits();  // 升阶 → 按配额补学本势力兵种（斥候1/探马2/先锋3）
@@ -401,16 +416,14 @@ export class PlayerHero {
         const before = this.getRank();
         const prevMerit = this.merit;
         this.merit = 0;
-        // 🔴 [2026-09-17 主人定] 军团解散/战败/脱离后，玩家已离开军团恢复单骑，
-        //    身份重归「布衣平民」，绝非在军中的「风行斥候」，且平民无官阶。
-        //    重置功勋即脱离势力，确保 after 必为布衣平民（civilian）。
+        // 🔴 [2026-10-27 主人定] 离开势力只清当前功劳；历史最高官职保留。
         this.factionId = null;
         this.army.setFactionId('');
         const rr = this.army.getRenderer();
         if (rr) rr.factionId = undefined;
 
         const after = this.getRank();
-        this.syncLearnedUnits();  // 降阶：收回超额已学兵种
+        this.syncLearnedUnits();  // 官职不降，只按现有官职刷新兵模配置
         this.syncMoveProfile();
         const host = this.getHostLegion();
         if (host) {
@@ -418,13 +431,8 @@ export class PlayerHero {
             host.playerHostRankName = null;
         }
         if (prevMerit > 0 || before.id !== after.id) {
-            if (after.id === 'civilian') {
-                this.deps.notify(`💥 ${reason}！功勋已归零，重归【${after.name}】`);
-                gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零，从【${before.name}】重归【${after.name}】`);
-            } else {
-                this.deps.notify(`💥 ${reason}！功勋已归零，官阶降为【${after.name}】`);
-                gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零，从【${before.name}】降为【${after.name}】`);
-            }
+            this.deps.notify(`💥 ${reason}！功勋已归零，官阶保留【${after.name}】`);
+            gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零，官阶保留【${after.name}】`);
         }
         this.emitChange();
     }
@@ -716,6 +724,7 @@ export class PlayerHero {
     // ── 势力 ──────────────────────────────────────────────
     public joinFaction(factionId: string): void {
         this.factionId = factionId;
+        this.rememberRank(rankFor(this.merit, true));
         this.army.setFactionId(factionId);
         this.syncLearnedUnits(true);  // 入伙即斥候 → 立刻从该势力三排随机学一个（骑兵优先，拿到骑兵就换上）
         this.syncMoveProfile();   // 素材换成学到的兵 → 行军大类跟着变
@@ -1119,6 +1128,7 @@ export class PlayerHero {
         const p = this.army.getPosition();
         return {
             merit: this.merit,
+            rankId: this.getRank().id,
             heroDowns: this.heroDowns,
             factionId: this.factionId,
             learnedUnits: this.learnedUnits.map((u) => ({ ...u })),
@@ -1140,6 +1150,10 @@ export class PlayerHero {
         this.cancelChase();
         this.cancelTravel();
         this.merit = s.merit ?? 0;
+        this.retainedRankId = s.rankId && PLAYER_RANKS.some((r) => r.id === s.rankId)
+            ? s.rankId
+            : rankFor(this.merit, !!s.factionId).id;
+        this.rememberRank(rankFor(this.merit, !!s.factionId));
         this.heroDowns = s.heroDowns ?? 0;
         this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u }));
         this.peakStats = restorePlayerPeakStats(s.peakStats, this.learnedUnits.map((u) => u.unitKey));
