@@ -2013,9 +2013,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -39
         },
         "/assets/JIANGNAN/luoping_zhangshijie.png": {
-            "scale": 1.19,
-            "offsetX": 0,
-            "offsetY": 25
+            "scale": 1.09,
+            "offsetX": 6,
+            "offsetY": 22
         },
         "/assets/WESTERN/chagatai_genggong.png": {
             "scale": 0.82,
@@ -2758,7 +2758,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/MONGOL/merkit_boyan.png": {
-            "scale": 1.03,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -4938,7 +4938,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 29
         },
         "/assets/SAXONS/gen_offa_mercia.png": {
-            "scale": 1.2,
+            "scale": 1.18,
             "offsetX": 6,
             "offsetY": 15
         },
@@ -7988,7 +7988,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/BRITONS/gen_edward_longshanks.png": {
-            "scale": 1.06,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -8619,6 +8619,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/CENTRAL/bfe3_7.png": {
             "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/CENTRAL/zhao_gerong.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/JIANGNAN/bfe_sun_ru.png": {
+            "scale": 0.96,
+            "offsetX": 3,
+            "offsetY": -6
+        },
+        "/assets/CELTS/gen_john_comyn.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": 29
+        },
+        "/assets/CELTS/gen_llywelyn.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/CELTS/scotland_hughmackay.png": {
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 6
         }

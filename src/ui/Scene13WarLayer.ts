@@ -199,6 +199,8 @@ export function pickCycleSkill(
 
 /** 镜头盯的兵阵亡后原地停留秒数 */
 const CAM_HOLD_SEC = 1.2;
+/** 放计后镜头先看计策落点的秒数，看完回到跟随目标（玩家） */
+const SKILL_CAM_SEC = 4;
 
 export class Scene13WarLayer {
     /** [2026-09-20 主人定稿] 关隘城门大山配置（未指定 asset/northAsset 时默认从 11 种大山随机抽取，支持两山夹一关） */
@@ -1102,7 +1104,7 @@ export class Scene13WarLayer {
         const hm = this.heroMan;
         if (this.useGroundGL && hm && hm.hp > 0 && hm.f === 1 && !hm.foe
             && this.battleType === 'siege' && !!this.deCity && this.insideRing(hm.x, hm.y)) {
-            this.skillCamTimer = 9;
+            this.skillCamTimer = SKILL_CAM_SEC;
             this.skillCamX = camX;
             this.skillCamY = camY;
         }
@@ -1787,10 +1789,9 @@ export class Scene13WarLayer {
             this.camHoldT -= dt;
             if (this.camHoldT > 0) return null;
         }
-        const target = this.pickCamTarget(hero);
-        // 有六档目标就不许计策落点抢镜头；只有完全无目标时才由外层使用计策兜底。
-        if (target) this.skillCamTimer = 0;
-        return target;
+        // 🔴 [2026-10-27 主人令「让计策镜头真正生效，放计时先去看落点几秒，再回到玩家」]
+        //    原来有六档目标就把计策计时清零 ⇒ 玩家活着时计策镜头实际 0 秒。现在计策优先，外层先看落点，看完再跟目标。
+        return this.pickCamTarget(hero);
     }
 
     /**
@@ -8425,8 +8426,8 @@ export class Scene13WarLayer {
             if (this.userInteractingTimer > 0) {
                 this.userInteractingTimer -= dt;
             } else {
-                if (count === 0 && this.skillCamTimer > 0) {
-                    // 六档完全无目标时才看计策落点；一旦有跟随目标，计时已在仲裁入口清零。
+                if (this.skillCamTimer > 0) {
+                    // 放计后先看计策落点 SKILL_CAM_SEC 秒（优先于六档跟随），看完回到跟随目标。
                     this.skillCamTimer -= dt;
                     targetFocusX = this.skillCamX;
                     targetFocusY = this.skillCamY;
