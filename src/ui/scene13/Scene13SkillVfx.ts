@@ -857,9 +857,12 @@ export function drawScene13SkillStatusVfx(
     states: readonly [Scene13SkillVisualState, Scene13SkillVisualState],
     lift: Lift,
     nowSec: number,
+    unitStateOf?: (m: WarMan) => Scene13SkillVisualState,
+    hasExtraActive = false,
 ): void {
     const hasUnitTags = nowSec < unitTagActiveUntilSec;
     if (!hasUnitTags
+        && !hasExtraActive
         && !states[0].frenzy && !states[0].shield && !states[0].panic
         && !states[1].frenzy && !states[1].shield && !states[1].panic) return;
 
@@ -874,7 +877,7 @@ export function drawScene13SkillStatusVfx(
     // 绘制每名受影响士兵脚下的小光环与头顶状态小标
     for (const m of men) {
         if (m.hp <= 0) continue;
-        const st = states[m.f];
+        const st = unitStateOf ? unitStateOf(m) : states[m.f];
         const tier = sideCastTier[m.f];
         const y = m.y - lift(m.x, m.y);
         const pulse = 0.5 + 0.5 * Math.sin(nowSec * 7 + m.zid * 0.73);

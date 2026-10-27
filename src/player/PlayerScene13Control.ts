@@ -292,11 +292,14 @@ export class PlayerScene13Control {
                 : (respawnSec > 0
                     ? `<span style="color:#ff6b6b; font-weight:900;">阵亡（${respawnSec}秒后复活）</span>`
                     : '<span style="color:#ff8585; font-weight:900;">阵亡复活中</span>');
+            const liveSec = Math.ceil(this.scene.getPlayerLiveSkillSec?.() ?? 0);
+            const liveTag = liveSec > 0 ? ` · <span style="color:#ffd700;font-weight:900;">⚡玩家技 ${liveSec}s</span>` : '';
             this.info.title = `统率权限：${ctl}`;
             this.info.innerHTML =
                 `<b style="color:#ffd27a;">${this.hero.name}</b> · ${rank.name} · `
                 + `${hpText} · `
-                + `斩 <b>${st.kills}</b> · 功勋 ${this.hero.merit}`;
+                + `斩 <b>${st.kills}</b> · 功勋 ${this.hero.merit}`
+                + liveTag;
             const on = 'rgba(212,175,55,0.35)';
             const off = 'rgba(255,255,255,0.06)';
             if (this.btnAttack) {

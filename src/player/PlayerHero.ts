@@ -11,7 +11,7 @@ import { GameConfig } from '../config/GameConfig';
  *   · 点据点 → 沿路网前往；抵达后由 PlayerQuestSystem 接管对话。
  *   · 接任务后"入伍"（attachTo）到任务军团：位置逐帧贴军团，镜头跟军团即跟玩家；
  *     军团开打进 13 时，Scene13WarLayer 通过 buildScene13Setup 把玩家放到本方前排前面。
- *   · 功勋只增不减；官阶由功勋推导（PlayerConfig.PLAYER_RANKS）。
+ *   · 当前功劳用于晋升；离开势力功劳清零，历史最高官职保留（PlayerConfig.PLAYER_RANKS）。
  */
 import { Army } from '../legion/Army';
 import type { GameMap } from '../map/GameMap';
@@ -39,6 +39,9 @@ import {
     factionlessAppearancePriority,
     PLAYER_START_SHIP_KEY,
     moveClassForHeroKey,
+    meritForNextRankStep,
+    nextRankAfter,
+    JOINED_FACTION_MIN_RANK,
     type PlayerRankId,
     PLAYER_HERO_NAME,
     PLAYER_HERO_SPEED_MULT,
@@ -46,10 +49,10 @@ import {
     PLAYER_MOUNTAIN_SPEED_SCALE,
     PLAYER_SEA_SPEED_SCALE,
     PLAYER_RANKS,
-    rankForMerit,
     rankFor,
     type PlayerRank,
 } from './PlayerConfig';
+import { moderateLiveName } from '../live/LiveNameModeration';
 
 /** 自动模式的三套玩法：乱斗模式（现行开局默认，全部武将恒在场）、百岁模式（按登场年～百岁出现）、剧本模式（按历史顺序去战场）（主人 2026-10-18 定；🔴 2026-10-24 主人令恢复百岁默认）。 */
 export type PlayerAutoPlan = 'centenarian' | 'script' | 'melee';
@@ -68,8 +71,12 @@ export interface LearnedUnit {
 
 export interface PlayerSaveState {
     merit: number;
-    /** 历史最高官职；离开势力只清功劳，不清此字段。旧存档缺省时按功劳与势力状态重建。 */
+    /** 历史最高官职；离开势力只清本阶功劳，不清此字段。旧存档缺省时按功劳与势力状态重建。 */
     rankId?: PlayerRankId;
+    /** 玩家自定义名（观众竞拍或主播设定） */
+    playerName?: string;
+    /** 上一次效忠势力所在据点的 67 建筑文化键（斥候/探马离职后同文化投靠依据） */
+    lastCulture?: string | null;
     heroDowns: number;
     factionId: string | null;
     learnedUnits?: LearnedUnit[];
@@ -206,6 +213,8 @@ export class PlayerHero {
     public autoPlan: PlayerAutoPlan = 'melee';
     /** 玩家自定义名（改名功能写入；默认「探马者」） */
     private playerName: string = PLAYER_HERO_NAME;
+    /** 上一次效忠势力所在据点的 67 文化键；离职后保留，供斥候/探马同文化择主使用 */
+    private lastCulture: string | null = null;
     private changeListeners = new Set<() => void>();
     /** 抵达据点回调（PlayerQuestSystem 接管对话） */
     public onArriveCity: ((city: City) => void) | null = null;
@@ -323,12 +332,20 @@ export class PlayerHero {
     }
 
     public getPosition(): { lat: number; lng: number } { return this.army.getPosition(); }
-    /** 当前功劳可晋升，历史最高官职只升不降；已投效势力仍保底斥候。 */
+    public getLastCulture(): string | null { return this.lastCulture; }
+    public setLastCulture(culture: string | null): void {
+        if (!culture || this.lastCulture === culture) return;
+        this.lastCulture = culture;
+        this.emitChange();
+    }
+    /** 当前官职：由本阶差额功勋逐级晋升；离开势力功劳归零但官职保留；已入势力保底斥候。 */
     public getRank(): PlayerRank {
-        const current = rankFor(this.merit, this.factionId !== null);
-        const currentIdx = PLAYER_RANKS.findIndex((r) => r.id === current.id);
-        const retainedIdx = PLAYER_RANKS.findIndex((r) => r.id === this.retainedRankId);
-        return currentIdx >= retainedIdx ? current : PLAYER_RANKS[Math.max(0, retainedIdx)];
+        const retainedIdx = Math.max(0, PLAYER_RANKS.findIndex((r) => r.id === this.retainedRankId));
+        if (this.factionId !== null) {
+            const floorIdx = Math.max(0, PLAYER_RANKS.findIndex((r) => r.id === JOINED_FACTION_MIN_RANK));
+            return PLAYER_RANKS[Math.max(retainedIdx, floorIdx)];
+        }
+        return PLAYER_RANKS[retainedIdx];
     }
     private rememberRank(rank: PlayerRank): void {
         const nextIdx = PLAYER_RANKS.findIndex((r) => r.id === rank.id);
@@ -390,24 +407,36 @@ export class PlayerHero {
     public onChange(fn: () => void): void { this.changeListeners.add(fn); }
     private emitChange(): void { for (const fn of this.changeListeners) fn(); }
 
-    // ── 功勋 ──────────────────────────────────────────────
+    // ── 功勋（当前官职独立差额制：离职只清本阶进度，已晋升官职不重攒） ──
     public addMerit(n: number): void {
         if (n <= 0) return;
         const before = this.getRank();
         this.merit += n;
-        this.rememberRank(rankFor(this.merit, this.factionId !== null));
+        while (true) {
+            const cur = this.getRank();
+            const step = meritForNextRankStep(cur.id);
+            const next = nextRankAfter(cur);
+            if (step === null || !next || this.merit < step) break;
+            this.merit -= step;
+            this.rememberRank(next);
+        }
         const after = this.getRank();
         if (after.id !== before.id) {
             this.syncLearnedUnits();  // 升阶 → 按配额补学本势力兵种（斥候1/探马2/先锋3）
             this.syncMoveProfile();   // 素材可能变 → 行军大类跟着变
-            this.deps.notify(`🎖️ 功勋 ${this.merit}，${this.name}晋升为【${after.name}】`);
-            gameLog('expedition', `[玩家] 晋升 ${before.name} → ${after.name}（功勋 ${this.merit}）`);
+            this.deps.notify(`🎖️ ${this.name}晋升为【${after.name}】`);
+            gameLog('expedition', `[玩家] 晋升 ${before.name} → ${after.name}（本阶余功勋 ${this.merit}）`);
             // 晋升：入伍中则同步军团第九环战力乘数 + 官阶名
             const host = this.getHostLegion();
             if (host) {
                 host.playerHostPowerMult = after.powerMult;
                 host.playerHostRankName = after.name;
             }
+            // 若在战术战场内临阵晋升（如斥候→探马），当场同步指挥编队与直播玩家技作用范围
+            (window as any).game?.scene13War?.syncPlayerRankFromHero?.(
+                after.control,
+                this.getSelectedUnit()?.unitKey ?? null,
+            );
         }
         this.emitChange();
     }
@@ -458,7 +487,7 @@ export class PlayerHero {
         return Date.now() < this.holdUntilMs;
     }
 
-    /** 大地图战略战斗结算：随军军团战胜时，按歼敌兵力与官阶指挥分成获得战略战功；战败则功勋归零降职 */
+    /** 大地图战略战斗结算：随军军团战胜时按官阶分成获得功劳；战败离开势力、功劳清零但官职保留。 */
     public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number): void {
         if (result === 'defeat') {
             // 战败立即回战略地图，从退场完成开始等待 5 秒，再走脱军清场流程。
@@ -722,9 +751,11 @@ export class PlayerHero {
     }
 
     // ── 势力 ──────────────────────────────────────────────
-    public joinFaction(factionId: string): void {
+    public joinFaction(factionId: string, cultureKey?: string | null): void {
         this.factionId = factionId;
-        this.rememberRank(rankFor(this.merit, true));
+        const floorRank = PLAYER_RANKS.find((r) => r.id === JOINED_FACTION_MIN_RANK) ?? PLAYER_RANKS[1];
+        this.rememberRank(floorRank);
+        if (cultureKey) this.lastCulture = cultureKey;
         this.army.setFactionId(factionId);
         this.syncLearnedUnits(true);  // 入伙即斥候 → 立刻从该势力三排随机学一个（骑兵优先，拿到骑兵就换上）
         this.syncMoveProfile();   // 素材换成学到的兵 → 行军大类跟着变
@@ -1129,6 +1160,8 @@ export class PlayerHero {
         return {
             merit: this.merit,
             rankId: this.getRank().id,
+            playerName: this.playerName,
+            lastCulture: this.lastCulture,
             heroDowns: this.heroDowns,
             factionId: this.factionId,
             learnedUnits: this.learnedUnits.map((u) => ({ ...u })),
@@ -1149,11 +1182,27 @@ export class PlayerHero {
         this.hostLegionId = null;
         this.cancelChase();
         this.cancelTravel();
-        this.merit = s.merit ?? 0;
-        this.retainedRankId = s.rankId && PLAYER_RANKS.some((r) => r.id === s.rankId)
-            ? s.rankId
-            : rankFor(this.merit, !!s.factionId).id;
-        this.rememberRank(rankFor(this.merit, !!s.factionId));
+        const rawMerit = Math.max(0, s.merit ?? 0);
+        if (s.rankId && PLAYER_RANKS.some((r) => r.id === s.rankId)) {
+            this.retainedRankId = s.rankId;
+            this.merit = rawMerit;
+        } else {
+            // 兼容旧存档（累计功勋制）：折算为对应官阶与本阶剩余功勋
+            const legacy = rankFor(rawMerit, !!s.factionId);
+            this.retainedRankId = legacy.id;
+            this.merit = Math.max(0, rawMerit - legacy.merit);
+        }
+        while (true) {
+            const cur = this.getRank();
+            const step = meritForNextRankStep(cur.id);
+            const next = nextRankAfter(cur);
+            if (step === null || !next || this.merit < step) break;
+            this.merit -= step;
+            this.rememberRank(next);
+        }
+        const checkedName = typeof s.playerName === 'string' ? moderateLiveName(s.playerName) : null;
+        this.rename(checkedName && checkedName.ok ? checkedName.name : PLAYER_HERO_NAME);
+        this.lastCulture = typeof s.lastCulture === 'string' && s.lastCulture ? s.lastCulture : null;
         this.heroDowns = s.heroDowns ?? 0;
         this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u }));
         this.peakStats = restorePlayerPeakStats(s.peakStats, this.learnedUnits.map((u) => u.unitKey));
@@ -1166,7 +1215,7 @@ export class PlayerHero {
         this.horses.restore(s.horses);
         // 马系统之前的存档：梦醒只记了标记「初马」，读档时补上这匹马
         if (this.horses.isEmpty() && this.storyFlags.includes('初马')) this.giveFirstHorse();
-        if (s.factionId) this.joinFaction(s.factionId);
+        if (s.factionId) this.joinFaction(s.factionId, this.lastCulture);
         else {
             this.factionId = null;
             this.army.setFactionId('');

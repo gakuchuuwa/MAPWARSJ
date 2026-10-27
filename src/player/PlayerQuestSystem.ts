@@ -75,11 +75,26 @@ const STYLE62_ALIAS: ReadonlyMap<string, string> = new Map(
         .filter(([, canon]) => canon !== ''),
 );
 
-/** 一座据点属于 66 类里的哪一类（取不到返回 null；2026-10-07 实测全库 1127 座全部取得到）。 */
-function style62OfCity(c: City): string | null {
+/** 一座据点属于 67 类建筑文化里的哪一类（取不到返回 null）。 */
+export function style62OfCity(c: City): string | null {
     const k = resolveCityHierarchy(c).branchKey;
     if (!k) return null;
     return STYLE62_SET.has(k) ? k : (STYLE62_ALIAS.get(k) ?? null);
+}
+
+export interface LiveJoinCandidate {
+    index: number;
+    kind: 'faction' | 'general';
+    id: string;
+    label: string;
+    cityId: string;
+    cityName: string;
+    generalId: string;
+    generalName: string;
+    factionId: string;
+    factionName: string;
+    culture: string;
+    distKm: number;
 }
 
 export interface PlayerQuest {
@@ -403,7 +418,11 @@ export class PlayerQuestSystem {
         });
         if (!candidates.length) return null;
         if (candidates.length > 1) {
+            const prefId = this.preferredLiveGeneralId;
             candidates.sort((a, b) => {
+                if (prefId && (a.generalId === prefId) !== (b.generalId === prefId)) {
+                    return a.generalId === prefId ? -1 : 1;
+                }
                 if (preferUnvisited) {
                     const ua = !this.visitedGenerals.has(a.generalId);
                     const ub = !this.visitedGenerals.has(b.generalId);
@@ -610,6 +629,11 @@ export class PlayerQuestSystem {
      */
     private leaveAndFindNextGeneral(city: City | null, generalId: string | null): void {
         this.deps.closeDialogue();
+        if (this.preferredLiveGeneralId) {
+            const failedId = this.preferredLiveGeneralId;
+            this.preferredLiveGeneralId = null;
+            this.onLiveJoinResolved?.({ ok: false, factionId: null, generalId: failedId, reason: '目标兵力不足五千或无法接战，积分已退回' });
+        }
         if (generalId) {
             this.declinedGenerals.add(generalId);
             this.visitedGenerals.add(generalId);
@@ -772,8 +796,9 @@ export class PlayerQuestSystem {
                     const host = side === 'attacker' ? attacker : defender;
                     // 剧本攻城战的守方是城、没有军团可随：只在旁观战
                     if (!host) { this.deps.notify(`守方凭城据守，无军可随，于城外观战`); return; }
-                    this.deps.hero.joinFaction(side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId);
-                    this.deps.hero.attachTo(host);
+                    const chosenFac = side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId;
+                    const chosenGen = side === 'attacker' ? (fb.attackerGeneralId ?? null) : (fb.defenderGeneralId ?? null);
+                    this.recordJoinAndAttach(chosenFac, host, chosenGen, null);
                 },
                 () => {
                     if (!side) return;   // 只观战
@@ -1227,8 +1252,7 @@ export class PlayerQuestSystem {
         if (!this.pendingEventOptions.includes(g.generalId)) this.pendingEventOptions.unshift(g.generalId);
         // 🔴 随军：**先 attach 再驱动军团**。attach 之后玩家位置每帧跟着 host 走（PlayerHero.update），
         //    所以只要把 host 送出去，玩家就在他身边，不需要另给玩家开一条「在军中还能自己走」的路。
-        this.deps.hero.joinFaction(factionId);
-        this.deps.hero.attachTo(host);
+        this.recordJoinAndAttach(factionId, host, g.generalId, city);
         this.deps.ensureUnpaused();
         // 🔴 钉住这支军团，不让 AI 行为树把它拉去攻别的城：本仗有**史实目标**，不是乱斗选目标。
         //    走引擎既有的 `__scriptPinned`（AIController.tickArmy 第一句就 return）——
@@ -1682,8 +1706,7 @@ export class PlayerQuestSystem {
             targetCityId: city.id,
             targetCityName: city.name,
         };
-        this.deps.hero.joinFaction(original);
-        this.deps.hero.attachTo(army);
+        this.recordJoinAndAttach(original, army, g.generalId, city);
         this.deps.ensureUnpaused();
         this.deps.kickLegionAi(army.id);
         this.deps.notify(`⚔️ ${g.generalName}于【${city.name}】举义，${factionName}复国之战开始`);
@@ -1722,8 +1745,7 @@ export class PlayerQuestSystem {
             targetCityId: target.id,
             targetCityName: target.name,
         };
-        this.deps.hero.joinFaction(city.factionId);
-        this.deps.hero.attachTo(army);
+        this.recordJoinAndAttach(city.factionId, army, g.generalId, city);
         this.deps.ensureUnpaused();
         this.deps.kickLegionAi(army.id);
         this.deps.feed?.pushExpedition?.({ legionName: army.name, generalId: army.generalId, cityName: target.name, kind: 'depart' });
@@ -2097,8 +2119,7 @@ export class PlayerQuestSystem {
         // 🔴 [2026-10-21] 接任务时敌将若已带兵在外，先把那支军团撤掉，免得地图上同时有两个他
         if (enemyGeneralId) this.recallEnemyGeneralFieldArmy(enemyGeneralId, false);
 
-        this.deps.hero.joinFaction(myFactionId);
-        this.deps.hero.attachTo(host);
+        this.recordJoinAndAttach(myFactionId, host, g.generalId, city);
         this.deps.ensureUnpaused();
         this.deps.hero.setTravelPointLabel(fb.battleName);
         this.marchHostToFirstBattle(host, targetPos);
@@ -2404,8 +2425,7 @@ export class PlayerQuestSystem {
                 targetCityId: nextTarget.id,
                 targetCityName: nextTarget.name,
             };
-            this.deps.hero.joinFaction(q.factionId);
-            this.deps.hero.attachTo(host);
+            this.recordJoinAndAttach(q.factionId, host, q.generalId, this.deps.cityManager.getCity(q.cityId) ?? null);
             this.deps.kickLegionAi(host.id);
             this.deps.notify(`🏆 【${fbState?.battleName ?? '首战'}】大捷！随${q.generalName}建立出征军团，继续征讨【${nextTarget.name}】`);
             gameLog('expedition', `[玩家] 首战大捷转出征：${q.generalName}(${host.getTroops()}) → 继续攻打【${nextTarget.name}】`);
@@ -3149,6 +3169,11 @@ export class PlayerQuestSystem {
                             ? getCityAnchoredGenerals(targetCityId).some((g) => isGeneralOnStage(g.generalId))
                             : true);
                 if (!targetHasOnStage) {
+                    if (this.preferredLiveGeneralId) {
+                        const lostId = this.preferredLiveGeneralId;
+                        this.preferredLiveGeneralId = null;
+                        this.onLiveJoinResolved?.({ ok: false, factionId: null, generalId: lostId, reason: '目标武将已离场，积分已退回' });
+                    }
                     this.deps.hero.cancelChase();
                     this.deps.hero.cancelTravel();
                 }
@@ -3518,8 +3543,7 @@ export class PlayerQuestSystem {
             targetCityId: target?.id ?? city.id,
             targetCityName: target?.name ?? city.name,
         };
-        this.deps.hero.joinFaction(factionId);
-        this.deps.hero.attachTo(army);
+        this.recordJoinAndAttach(factionId, army, army.generalId ?? null, city);
         this.deps.ensureUnpaused();
         this.deps.kickLegionAi(army.id);
         const goal = `同征【${target?.name ?? '前方敌城'}】`;
@@ -3862,7 +3886,174 @@ export class PlayerQuestSystem {
         this.emitChange();
     }
 
+    /** 直播观众竞价投靠目标：当前锁定的目标武将 ID，以及入伍成败通知（供 ViewerLive 结算或退分） */
+    private preferredLiveGeneralId: string | null = null;
+    private cachedLiveCandidatesKey = '';
+    private cachedLiveCandidates: LiveJoinCandidate[] = [];
+    public onLiveJoinResolved: ((res: { ok: boolean; factionId: string | null; generalId: string | null; reason?: string }) => void) | null = null;
+
+    private resolveJoinCulture(generalId: string | null, fallbackCity: City | null): string | null {
+        const homeId = generalId ? this.generalCityId(generalId) : null;
+        const homeCity = homeId ? (this.deps.cityManager.getCity(homeId) ?? fallbackCity) : fallbackCity;
+        return homeCity ? style62OfCity(homeCity) : null;
+    }
+
+    private recordJoinAndAttach(factionId: string, host: Army, generalId: string | null, city: City | null): void {
+        const culture = this.resolveJoinCulture(generalId, city);
+        this.preferredLiveGeneralId = null;
+        this.cachedLiveCandidatesKey = '';
+        this.cachedLiveCandidates = [];
+        this.deps.hero.joinFaction(factionId, culture);
+        this.deps.hero.attachTo(host);
+        this.onLiveJoinResolved?.({ ok: true, factionId, generalId });
+    }
+
+    private isGeneralSortieReady(city: City, generalId: string): boolean {
+        if (!isGeneralOnStage(generalId)) return false;
+        if (this.hasPendingFirstBattle(generalId)) return true;
+        const army = this.armyOfGeneral(generalId);
+        if (army) return !army.isRetreatingHome && army.getTroops() >= GameConfig.LEGION.MIN_ARMY_SIZE;
+        return Math.floor((city.troops || 0) * 0.9) >= GameConfig.LEGION.MIN_ARMY_SIZE;
+    }
+
+    /**
+     * 离职期间可供直播观众竞价选择的投靠目标：
+     *   · 斥候：与上一次同文化的所有可出征势力；
+     *   · 探马：与上一次同文化的所有可出征武将；
+     *   · 先锋：全图可出征势力；将军及以上：全图可出征武将。
+     */
+    public getLiveJoinCandidates(): LiveJoinCandidate[] {
+        const hero = this.deps.hero;
+        if (hero.isAttached() || this.quest || hero.autoPlan === 'script') {
+            this.cachedLiveCandidatesKey = '';
+            this.cachedLiveCandidates = [];
+            return [];
+        }
+        const rankId = hero.getRank().id;
+        if (rankId === 'civilian') return [];
+        const lastCulture = hero.getLastCulture();
+        const sameCultureOnly = rankId === 'scout' || rankId === 'outrider';
+        if (sameCultureOnly && !lastCulture) return [];
+        const kind: 'faction' | 'general' = (rankId === 'scout' || rankId === 'vanguard') ? 'faction' : 'general';
+        const cacheKey = `${rankId}|${lastCulture ?? '*'}`;
+        if (this.cachedLiveCandidatesKey === cacheKey && this.cachedLiveCandidates.length > 0) {
+            const stillValid = this.cachedLiveCandidates.filter((item) => {
+                const c = this.deps.cityManager.getCity(item.cityId);
+                return !!c && this.isGeneralSortieReady(c, item.generalId);
+            });
+            if (stillValid.length > 0) return stillValid;
+        }
+        const me = hero.getPosition();
+        const raw: Array<Omit<LiveJoinCandidate, 'index'> & { famous: boolean }> = [];
+        for (const c of this.deps.cityManager.getCities()) {
+            if (!c.factionId) continue;
+            const ck = style62OfCity(c);
+            if (!ck) continue;
+            if (sameCultureOnly && ck !== lastCulture) continue;
+            const d = me && Number.isFinite(me.lat)
+                ? PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude })
+                : 0;
+            for (const g of getCityAnchoredGenerals(c.id)) {
+                if (!this.isGeneralSortieReady(c, g.generalId)) continue;
+                const rec = getGeneralRecordByGeneralId(g.generalId);
+                const factionId = rec?.factionId || c.factionId;
+                const factionName = this.deps.cityManager.getFactionName(factionId) || factionId;
+                const generalName = rec?.generalName ?? g.generalName;
+                const famous = getGeneralProfile(g.generalId)?.tier === 'famous';
+                raw.push({
+                    kind,
+                    id: kind === 'faction' ? factionId : g.generalId,
+                    label: kind === 'faction' ? factionName : `${generalName}·${factionName}`,
+                    cityId: c.id,
+                    cityName: c.name,
+                    generalId: g.generalId,
+                    generalName,
+                    factionId,
+                    factionName,
+                    culture: ck,
+                    distKm: Math.round(d),
+                    famous,
+                });
+            }
+        }
+        raw.sort((a, b) => (a.famous !== b.famous ? (a.famous ? -1 : 1) : a.distKm - b.distKm));
+        const seen = new Set<string>();
+        const picked: LiveJoinCandidate[] = [];
+        for (const item of raw) {
+            if (seen.has(item.id)) continue;
+            seen.add(item.id);
+            const { famous: _f, ...rest } = item;
+            picked.push({ ...rest, index: picked.length + 1 });
+            if (picked.length >= 6) break;
+        }
+        this.cachedLiveCandidatesKey = cacheKey;
+        this.cachedLiveCandidates = picked;
+        return picked;
+    }
+
+    /** 执行观众竞价选中的投靠目标（立即改道前往该同文化势力/武将） */
+    public applyLiveJoinChoice(index: number): { ok: true; candidate: LiveJoinCandidate } | { ok: false; reason: string } {
+        const hero = this.deps.hero;
+        if (hero.isAttached() || this.quest) {
+            return { ok: false, reason: '玩家已入伍随军，离职后再选投靠目标' };
+        }
+        const rankId = hero.getRank().id;
+        if (rankId === 'civilian') {
+            return { ok: false, reason: '平民阶段尚不能自选投靠，升为斥候后开放' };
+        }
+        if ((rankId === 'scout' || rankId === 'outrider') && !hero.getLastCulture()) {
+            return { ok: false, reason: '尚未记录上一次效忠文化，先完成首次入伍离职后开放' };
+        }
+        const candidates = this.getLiveJoinCandidates();
+        if (candidates.length === 0) {
+            return { ok: false, reason: '当前同文化暂无满五千兵可出征的目标' };
+        }
+        const chosen = candidates.find((c) => c.index === index);
+        if (!chosen) {
+            return { ok: false, reason: `请从 1~${candidates.length} 号候选中选择` };
+        }
+        const city = this.deps.cityManager.getCity(chosen.cityId);
+        if (!city || !this.isGeneralSortieReady(city, chosen.generalId)) {
+            this.cachedLiveCandidatesKey = '';
+            return { ok: false, reason: '该目标刚刚兵力不足或已离场，请改选其他目标' };
+        }
+        this.deps.closeDialogue();
+        this.preferredLiveGeneralId = chosen.generalId;
+        this.chaseCityId = null;
+        this.pendingFrontGeneralId = null;
+
+        const front = this.firstBattleFrontSpot(chosen.generalId);
+        if (front) {
+            this.pendingFrontGeneralId = chosen.generalId;
+            const ok = front.kind === 'city'
+                ? hero.travelToCity(front.cityId, false, { allowNoGeneral: true })
+                : hero.travelToPoint(
+                    { lat: front.lat, lng: front.lng },
+                    front.label,
+                    () => this.onArriveFirstBattleFront(chosen.generalId),
+                );
+            if (ok) return { ok: true, candidate: chosen };
+            this.pendingFrontGeneralId = null;
+        }
+        const army = this.armyOfGeneral(chosen.generalId);
+        if (army) {
+            this.chaseCityId = city.id;
+            if (hero.travelToArmy(army.id, chosen.generalName)) {
+                return { ok: true, candidate: chosen };
+            }
+            this.chaseCityId = null;
+        }
+        if (hero.travelToCity(city.id, false, { allowNoGeneral: true })) {
+            return { ok: true, candidate: chosen };
+        }
+        this.preferredLiveGeneralId = null;
+        return { ok: false, reason: '当前位置无路可达该目标，未扣积分' };
+    }
+
     public clearForRestore(): void {
+        this.preferredLiveGeneralId = null;
+        this.cachedLiveCandidatesKey = '';
+        this.cachedLiveCandidates = [];
         this.cleanupFirstBattleState(this.quest);
         this.quest = null;
         this.declinedGenerals.clear();      // 读档 = 这一轮「告辞过谁」作废

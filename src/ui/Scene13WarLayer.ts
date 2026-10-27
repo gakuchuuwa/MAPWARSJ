@@ -539,6 +539,10 @@ export class Scene13WarLayer {
     private skillShieldTimer: [number, number] = [0, 0];
     /** 【混】乱敌阵持续倒计时（秒）：该侧（受害方）士兵陷入混乱——胡乱走动（守城站岗的原地发愣）、不攻击、受一切伤害 ×2 */
     private skillPanicTimer: [number, number] = [0, 0];
+    /** 玩家（观众）按官职局部释放六计时的持续计时（斥候本人 / 探马本队 / 先锋本排；将军及以上仍走全军计时） */
+    private playerSixFrenzyTimer = 0;
+    private playerSixShieldTimer = 0;
+    private playerSixPanicMaxTimer = 0;
     /** 双方武将技错开释放冷却（秒）：禁止双方同帧同时放技；同时满槽时攻方（0）先放，守方（1）隔 SKILL_CAST_GAP_SEC 再放 */
     private skillCastCooldown: number = 0;
     /**
@@ -622,6 +626,9 @@ export class Scene13WarLayer {
             this.skillShieldTimer[f] = 0;
             this.skillPanicTimer[f] = 0;
         }
+        this.playerSixFrenzyTimer = 0;
+        this.playerSixShieldTimer = 0;
+        this.playerSixPanicMaxTimer = 0;
         // 🔴 [2026-10-22] 小队模式没有武将：不集气、不放武将技
         if (init.skirmish) {
             this.sideGeneralId = [null, null];
@@ -707,12 +714,14 @@ export class Scene13WarLayer {
      */
     public castViewerSkill(side: 0 | 1, six: TacticalSixSet, viewerName: string, paid = false): 'cast' | 'wait' | 'closed' {
         if (!this.active || this.over || this.deployT > 0) return 'closed';
+        if (!this.playerSetup || !this.heroMan) return 'closed';
+        const targetSide: 0 | 1 = this.playerSetup.side ?? side;
         const wallNow = performance.now();
         if (this.skillCastCooldown > 0 || wallNow < this.skillCastWallUntil) return 'wait';
         this.skillCastCooldown = Scene13WarLayer.SKILL_CAST_GAP_SEC;
         this.skillCastWallUntil = wallNow + Scene13WarLayer.SKILL_CAST_GAP_SEC * 1000;
         this.viewerCaster = { name: viewerName, paid };
-        try { this.triggerScene13Skill(side, six); } finally { this.viewerCaster = null; }
+        try { this.triggerScene13Skill(targetSide, six); } finally { this.viewerCaster = null; }
         return 'cast';
     }
 
@@ -722,6 +731,23 @@ export class Scene13WarLayer {
             frenzy: Math.max(0, this.skillFrenzyTimer[f]),
             shield: Math.max(0, this.skillShieldTimer[f]),
             panic: Math.max(0, this.skillPanicTimer[f]),
+        };
+    }
+
+    public hasExtraPlayerSkillVisuals(): boolean {
+        return this.playerSixFrenzyTimer > 0
+            || this.playerSixShieldTimer > 0
+            || this.playerSixPanicMaxTimer > 0
+            || this.playerLiveSkillTimer > 0;
+    }
+
+    public getUnitSkillVisualState(m: WarMan): Scene13SkillVisualState {
+        const affects = this.playerLiveAffects(m);
+        const liveSec = affects ? Math.max(0, this.playerLiveSkillTimer) : 0;
+        return {
+            frenzy: Math.max(0, this.skillFrenzyTimer[m.f], affects ? this.playerSixFrenzyTimer : 0, liveSec),
+            shield: Math.max(0, this.skillShieldTimer[m.f], affects ? this.playerSixShieldTimer : 0, liveSec),
+            panic: Math.max(0, this.skillPanicTimer[m.f], m.playerPanicTimer ?? 0),
         };
     }
 
@@ -793,6 +819,14 @@ export class Scene13WarLayer {
             if (this.skillFrenzyTimer[f] > 0) this.skillFrenzyTimer[f] = Math.max(0, this.skillFrenzyTimer[f] - dt);
             if (this.skillShieldTimer[f] > 0) this.skillShieldTimer[f] = Math.max(0, this.skillShieldTimer[f] - dt);
             if (this.skillPanicTimer[f] > 0) this.skillPanicTimer[f] = Math.max(0, this.skillPanicTimer[f] - dt);
+        }
+        if (this.playerSixFrenzyTimer > 0) this.playerSixFrenzyTimer = Math.max(0, this.playerSixFrenzyTimer - dt);
+        if (this.playerSixShieldTimer > 0) this.playerSixShieldTimer = Math.max(0, this.playerSixShieldTimer - dt);
+        if (this.playerSixPanicMaxTimer > 0) {
+            this.playerSixPanicMaxTimer = Math.max(0, this.playerSixPanicMaxTimer - dt);
+            for (const m of this.men) {
+                if ((m.playerPanicTimer ?? 0) > 0) m.playerPanicTimer = Math.max(0, m.playerPanicTimer! - dt);
+            }
         }
         if (this.skillCastCooldown > 0) {
             this.skillCastCooldown = Math.max(0, this.skillCastCooldown - dt);
@@ -881,10 +915,17 @@ export class Scene13WarLayer {
         return enemyPorts.map((sp) => ({ x: sp.x, y: sp.y, fwd: this.advanceVec[ef], side: this.sideVec[ef] }));
     }
 
-    private spawnImmediateSkillReinforcements(f: 0 | 1, addTotalPop: number, keys?: string[], vfxTargets?: WarMan[], ambush = false): void {
+    private spawnImmediateSkillReinforcements(
+        f: 0 | 1,
+        addTotalPop: number,
+        keys?: string[],
+        vfxTargets?: WarMan[],
+        ambush = false,
+        customAnchors?: Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }>,
+    ): void {
         const mySpawns = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
         if (mySpawns.length === 0) return;
-        const anchors = ambush ? this.ambushAnchors(f) : [];
+        const anchors = ambush ? (customAnchors && customAnchors.length > 0 ? customAnchors : this.ambushAnchors(f)) : [];
         const ambushOn = anchors.length > 0;
         // 伏兵只从本方 9 口出（主将队不出），一口对一敌口
         const srcSpawns = ambushOn ? mySpawns.filter((sp) => !sp.commander) : mySpawns;
@@ -1026,26 +1067,46 @@ export class Scene13WarLayer {
         this.skillAnsweredSeq[f] = this.skillCastSeq[ef];
 
         // ── 执行六计正交战场效果 ──
-        // 只收集本次真正受影响的对象供渲染高光；下列各分支的战斗结算保持原样。
+        // 🔴 [2026-10-27 主人令「武将释放技能依然是全军有效，玩家释放技能，要因官职而定」]
+        //   · 武将满槽自动释放（viewer === null）或玩家已至将军及以上（control === 'all'）：100% 全军有效；
+        //   · 玩家（观众）在斥候/探马/先锋阶段释放：严格按当前官职约束作用单位与兵力规模（本人 / 本队 / 本排）。
+        const scopedControl = (viewer !== null && this.playerSetup && this.playerSetup.side === f && this.playerSetup.control !== 'all')
+            ? this.playerSetup.control
+            : null;
+        const scopeRatio = scopedControl === 'none' ? (1 / 18) : scopedControl === 'one' ? (1 / 9) : scopedControl === 'front' ? (1 / 3) : 1;
+        let refX = camX, refY = camY;
+        if (scopedControl !== null) {
+            let sx = 0, sy = 0, sn = 0;
+            for (const m of this.men) {
+                if (m.hp > 0 && this.playerLiveAffects(m)) { sx += m.x; sy += m.y; sn++; }
+            }
+            if (sn > 0) { refX = sx / sn; refY = sy / sn; }
+            else if (this.heroMan) { refX = this.heroMan.x; refY = this.heroMan.y; }
+        }
         const vfxTargets: WarMan[] = [];
         const vfxPoints: Scene13SkillVfxPoint[] = [];
         // 🔴 [2026-10-27 主人令「按三十六计史实」] 胜战计＝加防（以逸待劳）、敌战计＝偷袭（暗度陈仓），两计效果对调
         if (six === 'dizhan') {
-            // 1. 【敌】伏兵偷袭：+6% 初始总兵力的生力军作为伏兵，从敌方 9 个出兵口（攻城攻方＝守方城外阵位）一次性杀出
-            // 🔴 [2026-10-27 主人令] 原从本方出兵口出，没有偷袭感；落点见 ambushAnchors
-            const addTotalPop = Math.max(12, Math.round(this.initPool[f] * 0.06));
-            const anchors = this.ambushAnchors(f);
+            const fullAddPop = Math.max(12, Math.round(this.initPool[f] * 0.06));
+            const minPop = scopedControl === 'none' ? 2 : scopedControl === 'one' ? 4 : scopedControl === 'front' ? 8 : 12;
+            const addTotalPop = scopedControl === null ? fullAddPop : Math.max(minPop, Math.round(fullAddPop * scopeRatio));
+            const allAnchors = this.ambushAnchors(f);
+            const anchorLimit = scopedControl === null ? allAnchors.length : (scopedControl === 'front' ? 3 : 1);
+            const anchors = scopedControl === null
+                ? allAnchors
+                : [...allAnchors]
+                    .sort((a, b) => ((a.x - refX) ** 2 + (a.y - refY) ** 2) - ((b.x - refX) ** 2 + (b.y - refY) ** 2))
+                    .slice(0, Math.max(1, anchorLimit));
             if (anchors.length > 0) for (const a of anchors) vfxPoints.push({ x: a.x, y: a.y });
             else for (const sp of this.spawns) if (sp.f === f && !sp.playerElite) vfxPoints.push({ x: sp.x, y: sp.y });
-            this.spawnImmediateSkillReinforcements(f, addTotalPop, undefined, vfxTargets, true);
+            const customKeys = scopedControl !== null && this.playerSetup?.unitKey ? [this.playerSetup.unitKey] : undefined;
+            this.spawnImmediateSkillReinforcements(f, addTotalPop, customKeys, vfxTargets, true, anchors);
         } else if (six === 'baizhan') {
-            // 2. 【败】死战：折损敌方总兵力 6%（额度按总兵力算，体现在在场兵力上）
-            // 🔴 [2026-10-21 主人令「所有的8%/5%是总兵力的，但体现是在场兵力；在场不够就从下一波继续」]
-            // 🔴 [2026-10-27 主人令「败战计不要用不留尸体，改为全为尸体」] 取代 10-21「逃跑退场不留尸」：
-            //    离我方最近的前线敌兵当场倒地、全部留尸（不走 40% 留尸名额），额度没用完再从敌方下一波（后备池）里扣。
-            let quotaPop = Math.max(1, Math.round(this.initPool[ef] * 0.06));
+            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.06));
+            const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 6 : 1;
+            let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeRatio));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
-            const [fcx, fcy] = this.sideCentroid(f);
+            const [fcx, fcy] = scopedControl === null ? this.sideCentroid(f) : [refX, refY];
             enemyLiving.sort((m1, m2) => ((m1.x - fcx) ** 2 + (m1.y - fcy) ** 2) - ((m2.x - fcx) ** 2 + (m2.y - fcy) ** 2));
             for (const victim of enemyLiving) {
                 if (quotaPop <= 0) break;
@@ -1054,55 +1115,75 @@ export class Scene13WarLayer {
                 vfxPoints.push({ x: victim.x, y: victim.y });
                 victim.hp = 0;
                 (victim as WarMan & { forceCorpse?: boolean }).forceCorpse = true;   // 一律留尸体（见 pushCorpse）
-                // 🔴 [2026-10-22 查六计时修] 计策折损不是任何单位砍死的：旧写法传 victim 当 killer，
-                //    敌方对我方放【败】时反而给我方记功（playerKills++ / 每兵 addMerit(20)）。计划击杀一律不计单位功。
                 this.onManKilled(victim, null);
             }
-            if (quotaPop > 0) this.drainSidePool(ef, quotaPop);
+            if (scopedControl === null && quotaPop > 0) this.drainSidePool(ef, quotaPop);
         } else if (six === 'gongzhan') {
-            // 3. 【攻】猛攻：20 秒内己方全军伤害 ×1.5、攻速 ×1.5、移速 ×1.3
-            for (const m of this.men) if (m.f === f && m.hp > 0) vfxTargets.push(m);
-            this.skillFrenzyTimer[f] = SKILL_FRENZY_SEC;
+            if (scopedControl === null) {
+                for (const m of this.men) if (m.f === f && m.hp > 0) vfxTargets.push(m);
+                this.skillFrenzyTimer[f] = SKILL_FRENZY_SEC;
+            } else {
+                for (const m of this.men) if (m.hp > 0 && this.playerLiveAffects(m)) vfxTargets.push(m);
+                this.playerSixFrenzyTimer = SKILL_FRENZY_SEC;
+            }
         } else if (six === 'shengzhan') {
-            // 4. 【胜】固己防：己方场上存活士兵立即满血，且 20 秒内受到伤害降低六成（×0.4）
-            //    🔴 [2026-10-22 查六计] 界面提示原先写「满血恢复」，但代码自 2026-10-18 17:08 起就是 +20% 且后续未再改；
-            //       已把界面/旧注释同步成 20%（见 CombatUI SIX_LIST）。若主人要的是满血，改这一行即可。
-            for (const m of this.men) {
-                if (m.f === f && m.hp > 0) {
-                    const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
-                    if (m.hp < maxHp) m.hp = maxHp;
+            if (scopedControl === null) {
+                for (const m of this.men) {
+                    if (m.f === f && m.hp > 0) {
+                        const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
+                        if (m.hp < maxHp) m.hp = maxHp;
+                        vfxTargets.push(m);
+                    }
+                }
+                this.skillShieldTimer[f] = SKILL_SHIELD_SEC;
+            } else {
+                for (const m of this.men) {
+                    if (m.hp > 0 && this.playerLiveAffects(m)) {
+                        const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
+                        if (m.hp < maxHp) m.hp = maxHp;
+                        vfxTargets.push(m);
+                    }
+                }
+                this.playerSixShieldTimer = SKILL_SHIELD_SEC;
+            }
+        } else if (six === 'hunzhan') {
+            if (scopedControl === null) {
+                for (const m of this.men) if (m.f === ef && m.hp > 0 && !m.march && !m.hero && !m.siegeW) vfxTargets.push(m);
+                this.skillFrenzyTimer[ef] = 0;
+                this.skillShieldTimer[ef] = 0;
+                if (this.playerSetup?.side === ef) {
+                    this.playerSixFrenzyTimer = 0;
+                    this.playerSixShieldTimer = 0;
+                }
+                this.skillPanicTimer[ef] = SKILL_PANIC_SEC;
+            } else {
+                const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.march && !m.hero && !m.siegeW);
+                enemyLiving.sort((m1, m2) => ((m1.x - refX) ** 2 + (m1.y - refY) ** 2) - ((m2.x - refX) ** 2 + (m2.y - refY) ** 2));
+                const minCount = scopedControl === 'none' ? 3 : scopedControl === 'one' ? 8 : 20;
+                const limit = Math.max(minCount, Math.round(enemyLiving.length * scopeRatio));
+                for (let i = 0; i < Math.min(limit, enemyLiving.length); i++) {
+                    const m = enemyLiving[i];
+                    m.playerPanicTimer = SKILL_PANIC_SEC;
                     vfxTargets.push(m);
                 }
+                if (vfxTargets.length > 0) this.playerSixPanicMaxTimer = SKILL_PANIC_SEC;
             }
-            this.skillShieldTimer[f] = SKILL_SHIELD_SEC;
-        } else if (six === 'hunzhan') {
-            // 5. 【混】乱阵：当场驱散敌方正在生效的所有技能 Buff，并令敌军陷入混乱 15 秒（胡乱走动、期间不攻击，受一切伤害 ×2）
-            // 🔴 [2026-10-22 主人令「混乱中的兵吃伤害双倍」「技能应该体现出明显的效果」] 守城站岗的兵同样混乱：原地发愣不还手、受伤翻倍
-            //    （不离岗，免得城门没破就把守军乱出城外）。受伤倍率见 panicTakenMul。
-            for (const m of this.men) if (m.f === ef && m.hp > 0 && !m.march && !m.hero && !m.siegeW) vfxTargets.push(m);
-            this.skillFrenzyTimer[ef] = 0;
-            this.skillShieldTimer[ef] = 0;
-            this.skillPanicTimer[ef] = SKILL_PANIC_SEC;
         } else if (six === 'bingzhan') {
-            // 6. 【并】夺敌兵（倒戈）：策反敌方总兵力 3%，体现在在场兵力上
-            // 🔴 [2026-10-21 主人令「让敌方5%的在场兵力变为己方」替换原「挫敌锐」；额度按总兵力，在场不够就从下一波继续]
-            let quotaPop = Math.max(1, Math.round(this.initPool[ef] * 0.03));
+            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.03));
+            const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 4 : 1;
+            let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeRatio));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
-            const [fcx, fcy] = this.sideCentroid(f);
+            const [fcx, fcy] = scopedControl === null ? this.sideCentroid(f) : [refX, refY];
             enemyLiving.sort((m1, m2) => ((m1.x - fcx) ** 2 + (m1.y - fcy) ** 2) - ((m2.x - fcx) ** 2 + (m2.y - fcy) ** 2));
             const myLanes = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
             const converted: WarMan[] = [];
-            // 🔴 [2026-10-24 主人报障「并战计是夺兵，施展后背叛的兵不显示」] 兵模是「兵种 × 阵营」分别染色加载的
-            //    （见 ensureType）；倒戈兵**保留敌方兵种**，而我方从没出过这个兵种 ⇒ 我方阵营那一套帧集从未加载，
-            //    渲染层取不到图就 `if (!img) continue` 整队跳过 —— 面板兵力 +3%、画面上却一个都看不见。
-            //    就地补载倒戈兵种的我方阵营素材（同兵种只补一次），等染色到位前有半秒渐显兜着。
             const needSprite = new Set<string>();
             for (const m of enemyLiving) {
                 if (quotaPop <= 0) break;
                 quotaPop -= Math.max(1, m.pop || 1);
                 if (m.key && !needSprite.has(m.key)) { needSprite.add(m.key); this.ensureType(m.key, f); }
-                // 就地倒戈：换成我方阵营，归到离它最近的我方出兵口队列，清掉所有对阵关系
                 m.f = f;
+                m.playerPanicTimer = 0;
                 const nl = myLanes.reduce<typeof myLanes[number] | null>((best, sp) =>
                     (!best || (sp.x - m.x) ** 2 + (sp.y - m.y) ** 2 < (best.x - m.x) ** 2 + (best.y - m.y) ** 2) ? sp : best, null);
                 if (nl) m.lane = nl.lane;
@@ -1114,15 +1195,16 @@ export class Scene13WarLayer {
             }
             if (converted.length > 0) {
                 const set = new Set(converted);
-                for (const o of this.men) if (o.foe && set.has(o.foe as WarMan)) o.foe = null;   // 别人原先盯着它打，现在是自己人
+                for (const o of this.men) if (o.foe && set.has(o.foe as WarMan)) o.foe = null;
             }
-            // 在场不够：从敌方下一波（后备池）继续策反，直接以敌方兵种在我方出兵口入列
-            if (quotaPop > 0) {
+            if (scopedControl === null && quotaPop > 0) {
                 const taken = this.drainSidePool(ef, quotaPop);
                 if (taken.length > 0) this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key), vfxTargets);
             }
         }
-        this.spawnSkillVfx(f, six, camX, camY, viewer !== null, vfxTargets, vfxPoints);
+        const vfxX = scopedControl !== null ? refX : camX;
+        const vfxY = scopedControl !== null ? refY : camY;
+        this.spawnSkillVfx(f, six, vfxX, vfxY, viewer !== null, vfxTargets, vfxPoints);
 
         // 玩家献计与武将自动放计分开演出；技能结算仍共用上面的同一套逻辑。
         const sideKey: 'attacker' | 'defender' = f === 0 ? 'attacker' : 'defender';
@@ -1151,22 +1233,75 @@ export class Scene13WarLayer {
     private playerKills = 0;
 
     public hasPlayerHero(): boolean { return this.active && !!this.heroMan; }
+    public getPlayerSide(): 0 | 1 | null {
+        return (this.active && this.playerSetup && this.heroMan) ? this.playerSetup.side : null;
+    }
 
     /** 直播玩家技能剩余秒数；与武将六计状态分表，不读也不写技能槽。 */
     private playerLiveSkillTimer = 0;
     public getPlayerLiveSkillSec(): number { return Math.max(0, this.playerLiveSkillTimer); }
 
-    /** 斥候强化本人；探马起按现有指挥范围强化本队。只治疗存活单位，不复活。 */
+    /** 斥候强化本人；探马起按现有指挥范围强化本队/本排/全军。生效期间返回 'wait' 让后续竞价排队等待。 */
     public castPlayerLiveSkill(): 'cast' | 'wait' | 'closed' {
         if (!this.active || this.over) return 'closed';
         const m = this.heroMan;
         if (!m || !this.playerSetup || this.deployT > 0 || m.hp <= 0) return 'wait';
-        for (const unit of this.men) {
+        if (this.playerLiveSkillTimer > 0) return 'wait';
+        const affected: WarMan[] = [];
+        for (const unit of (this.men ?? [m])) {
             if (unit.hp <= 0 || !this.playerLiveAffects(unit)) continue;
-            unit.hp = unit.hero ? this.heroMaxHp(unit.key, unit.f) : this.statsFor(unit.key, unit.f).hp;
+            unit.hp = unit.hero || unit === m ? this.heroMaxHp(unit.key, unit.f) : this.statsFor(unit.key, unit.f).hp;
+            affected.push(unit);
         }
-        this.playerLiveSkillTimer = Math.max(0, this.playerLiveSkillTimer) + PLAYER_LIVE_SKILL.durationSec;
+        this.playerLiveSkillTimer = PLAYER_LIVE_SKILL.durationSec;
+        if (this.advanceVec?.[this.playerSetup.side]) {
+            this.spawnSkillVfx(this.playerSetup.side, 'gongzhan', m.x ?? 0, m.y ?? 0, true, affected, []);
+        }
         return 'cast';
+    }
+
+    /** 玩家在战术模式内临阵晋升（如斥候→探马）时，当场刷新指挥编队与直播技能范围 */
+    public syncPlayerRankFromHero(control: Scene13PlayerSetup['control'], unitKey: string | null): void {
+        if (!this.active || !this.playerSetup) return;
+        this.playerSetup.control = control;
+        if (unitKey) this.playerSetup.unitKey = unitKey;
+        this.rebuildPlayerCtlLanes(this.playerSetup);
+    }
+
+    private rebuildPlayerCtlLanes(setup: Scene13PlayerSetup): void {
+        this.playerCtlLanes.clear();
+        const f = setup.side;
+        const row0 = this.spawns.filter((s) => s.f === f && s.row === 0);
+        const normUnitKey = (k: string) => k.replace(/^elite_/, '').replace(/_elite$/, '');
+        const matchKey = (a: string, b: string | null | undefined) =>
+            !!b && (a === b || normUnitKey(a) === normUnitKey(b));
+        const sameKey = (s: { f: number; key: string }) =>
+            setup.unitKey !== null && s.f === f && matchKey(s.key, setup.unitKey);
+        const vanguardPort = setup.control === 'front'
+            ? this.spawns.find((s) => sameKey(s) && !s.commander)
+            : undefined;
+        const vanguardRow = vanguardPort?.row ?? 0;
+        for (const s of this.spawns) {
+            if (s.f !== f) continue;
+            if (setup.control === 'all') this.playerCtlLanes.add(s.lane);
+            else if (setup.control === 'front') {
+                if (!s.commander && s.row === vanguardRow && (setup.unitKey === null || vanguardPort)) {
+                    this.playerCtlLanes.add(s.lane);
+                }
+            }
+        }
+        if (setup.control === 'one') {
+            const heroPort = this.heroMan && this.heroMan.lane >= 0
+                ? this.spawns.find((s) => s.f === f && s.lane === this.heroMan!.lane && !s.commander)
+                : undefined;
+            const pick = heroPort
+                ?? this.spawns.find((s) => sameKey(s) && !s.commander)
+                ?? this.spawns.find((s) => sameKey(s))
+                ?? this.spawns.find((s) => s.f === f && s.row === -1 && !s.commander)
+                ?? row0.find((s) => !s.commander)
+                ?? row0[0];
+            if (pick) this.playerCtlLanes.add(pick.lane);
+        }
     }
 
     /** 键盘移动：屏幕方向 → 逻辑方向（左右对调时 x 取反） */
@@ -1263,6 +1398,9 @@ export class Scene13WarLayer {
         this.heroMan = null;
         this.heroRespawnTimer = 0;
         this.playerLiveSkillTimer = 0;
+        this.playerSixFrenzyTimer = 0;
+        this.playerSixShieldTimer = 0;
+        this.playerSixPanicMaxTimer = 0;
         this.playerKills = 0;
         const game = (window as any).game;
         // 小队模式：玩家不在军中也能上场（故事块小仗多半发生在平民阶段）
@@ -1300,26 +1438,7 @@ export class Scene13WarLayer {
         const normUnitKey = (k: string) => k.replace(/^elite_/, '').replace(/_elite$/, '');
         const matchKey = (a: string, b: string | null | undefined) =>
             !!b && (a === b || normUnitKey(a) === normUnitKey(b));
-        const sameKey = (s: { f: number; key: string }) =>
-            setup.unitKey !== null && s.f === f && matchKey(s.key, setup.unitKey);
-        for (const s of this.spawns) {
-            if (s.f !== f) continue;
-            if (setup.control === 'all') this.playerCtlLanes.add(s.lane);
-            else if (setup.control === 'front') {
-                // 先锋：同兵种的整整一排（该兵种所在的那一排全给他）
-                if (setup.unitKey !== null) { if (sameKey(s) && !s.commander) this.playerCtlLanes.add(s.lane); }
-                else if (s.row <= 0 && !s.commander) this.playerCtlLanes.add(s.lane);
-            }
-        }
-        if (setup.control === 'one') {
-            // 探马：同兵种里挑一队（优先常规 9 队，不抢主将队）
-            const pick = this.spawns.find((s) => sameKey(s) && !s.commander)
-                ?? this.spawns.find((s) => sameKey(s))
-                ?? this.spawns.find((s) => s.f === f && s.row === -1 && !s.commander)
-                ?? row0.find((s) => !s.commander)
-                ?? row0[0];
-            if (pick) this.playerCtlLanes.add(pick.lane);
-        }
+        this.rebuildPlayerCtlLanes(setup);
 
         this.ensureType(setup.heroKey, f);
         // 🔴 [2026-10-03 主人令]「把玩家也绑上锚点，不然要他乱跑。玩家的兵模是什么就和那一队锚定。」
@@ -1402,7 +1521,7 @@ export class Scene13WarLayer {
     private stepHeroInput(m: WarMan, dt: number): boolean {
         const inp = this.heroInput;
         if (!inp) return false;
-        const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
+        const spdK = this.terrainSpeedAt(m.x, m.y) * (this.unitHasFrenzy(m) ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
         const spd = this.statsFor(m.key, m.f, m.hero === true).spd * spdK;
         const dx = inp.dx;
         const dy = inp.dy;
@@ -1460,6 +1579,15 @@ export class Scene13WarLayer {
     }
     private playerLiveTakenMul(m: WarMan): number {
         return this.playerLiveSkillTimer > 0 && this.playerLiveAffects(m) ? PLAYER_LIVE_SKILL.damageTakenMult : 1;
+    }
+    private unitHasFrenzy(m: WarMan): boolean {
+        return (this.skillFrenzyTimer?.[m.f] ?? 0) > 0 || (this.playerSixFrenzyTimer > 0 && this.playerLiveAffects(m));
+    }
+    private unitHasShield(m: WarMan): boolean {
+        return (this.skillShieldTimer?.[m.f] ?? 0) > 0 || (this.playerSixShieldTimer > 0 && this.playerLiveAffects(m));
+    }
+    private unitHasPanic(m: WarMan): boolean {
+        return ((this.skillPanicTimer?.[m.f] ?? 0) > 0 || (m.playerPanicTimer ?? 0) > 0) && !m.march && !m.hero && !m.siegeW;
     }
 
     private heroDown(m: WarMan): void {
@@ -2966,6 +3094,9 @@ export class Scene13WarLayer {
         this.heroMan = null;
         this.heroRespawnTimer = 0;
         this.playerLiveSkillTimer = 0;
+        this.playerSixFrenzyTimer = 0;
+        this.playerSixShieldTimer = 0;
+        this.playerSixPanicMaxTimer = 0;
         this.resetCamFollow();
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
@@ -5658,7 +5789,7 @@ export class Scene13WarLayer {
         const dElev = towerElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         const towerSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
-            * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.playerLiveTakenMul(foe);
+            * (this.unitHasShield(foe) ? SKILL_SHIELD_TAKEN : 1.0) * this.playerLiveTakenMul(foe);
         foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * towerSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
         // 🔴 [2026-09-09 修] 原来这里直接 pushCorpse：玩家被箭塔射死会**变成尸体永久离场**，
@@ -5737,7 +5868,7 @@ export class Scene13WarLayer {
         const dElev = bldElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         const bldSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
-            * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.playerLiveTakenMul(foe);
+            * (this.unitHasShield(foe) ? SKILL_SHIELD_TAKEN : 1.0) * this.playerLiveTakenMul(foe);
         // 建筑射箭是远程：不计围攻人数、不吃围殴加成（见 isRangedWeapon）
         foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * bldSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);
@@ -5776,7 +5907,7 @@ export class Scene13WarLayer {
      */
     /** 【混】乱阵受伤倍率：混乱中的兵（不含行军入场中、玩家本人、攻城器械）受一切伤害 ×2，其余 ×1 */
     private panicTakenMul(m: WarMan): number {
-        return (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW) ? SKILL_PANIC_TAKEN : 1;
+        return this.unitHasPanic(m) ? SKILL_PANIC_TAKEN : 1;
     }
 
     private attritionMul(): number {
@@ -5788,7 +5919,7 @@ export class Scene13WarLayer {
     private splash(m: WarMan, radius: number, shooter: WarType, dt: number, mult = 1): void {
         const span = Math.max(1, Math.ceil(radius / CELL_M));
         const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
-        const frenzyMul = this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_DMG * SKILL_FRENZY_ATKSPD : 1.0;   // 与主伤害同口径：伤害 × 攻速（连续伤害模型里攻速也折进 DPS）
+        const frenzyMul = this.unitHasFrenzy(m) ? SKILL_FRENZY_DMG * SKILL_FRENZY_ATKSPD : 1.0;   // 与主伤害同口径：伤害 × 攻速（连续伤害模型里攻速也折进 DPS）
         for (let gx = cx - span; gx <= cx + span; gx++) {
             for (let gy = cy - span; gy <= cy + span; gy++) {
                 const a = this.gm.get(HKEY(gx, gy));
@@ -5799,7 +5930,7 @@ export class Scene13WarLayer {
                     // 范围伤不挖「盲区空洞」：贴脸的敌人照样吃溅射（最小射程只管分配新目标，见 canKeepTarget 头注）。
                     // 范围伤：近战（战象踩踏）计入围攻并吃围殴加成；远程（投石车等）都不吃（见 isRangedWeapon）
                     const dps = dmgVs(shooter, this.statsFor(o.key, o.f, o.hero === true)) * mult * frenzyMul * this.playerLiveDamageMul(m) / shooter.reload;
-                    const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.panicTakenMul(o) * this.playerLiveTakenMul(o);
+                    const takenSkillMul = (this.unitHasShield(o) ? SKILL_SHIELD_TAKEN : 1.0) * this.panicTakenMul(o) * this.playerLiveTakenMul(o);
                     if (!isRangedWeapon(shooter)) o.atkNext++;
                     if (dps > 0) {
                         o.hurtBy = m;
@@ -7063,10 +7194,10 @@ export class Scene13WarLayer {
             const wt = this.statsFor(m.key, m.f, m.hero === true);
             const stats = wt;
             // 地形细分减速（森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
-            const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
+            const spdK = this.terrainSpeedAt(m.x, m.y) * (this.unitHasFrenzy(m) ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
             // 【混】乱阵：处于混乱期的敌军胡乱走动 15 秒（每隔 0.85~1.6 秒或受阻时随机换向，期间停止攻击，受一切伤害 ×2）；
             //    守城站岗的兵原地发愣、不还手、不离岗
-            if (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW) {
+            if (this.unitHasPanic(m)) {
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
@@ -7581,7 +7712,7 @@ export class Scene13WarLayer {
                 m.lock = (m.lock ?? 0) - dt;
                 // 玩家本人出手更快（见 HERO_ATTACK_RATE）：装填缩短，攻击动画随之加快；【攻】振己威攻速加成
                 const heroRate = (m.hero ? HERO_ATTACK_RATE : 1) * this.playerLiveAttackMul(m);
-                const frenzyAtkSpd = this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_ATKSPD : 1.0;
+                const frenzyAtkSpd = this.unitHasFrenzy(m) ? SKILL_FRENZY_ATKSPD : 1.0;
                 const reloadTime = (stats.reload || 2.0) / (heroRate * frenzyAtkSpd);
                 if (m.lock <= 0) {
                     m.lock = reloadTime; m.ph = 0;
@@ -7740,7 +7871,7 @@ export class Scene13WarLayer {
                 // 🔴 [2026-10-15 DE 高地机制] 高打低 +25%（×1.25），低打高 -25%（×0.75）
                 const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
                 // 【攻】振己威：伤害 × 攻速（连续伤害模型里攻速也折进 DPS）
-                const frenzyDmgMul = this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_DMG * SKILL_FRENZY_ATKSPD : 1.0;
+                const frenzyDmgMul = this.unitHasFrenzy(m) ? SKILL_FRENZY_DMG * SKILL_FRENZY_ATKSPD : 1.0;
                 const dps = (primaryDamage + secondaryDamage) * heroRate * elevDmgMul * frenzyDmgMul * this.playerLiveDamageMul(m) / shooter.reload;
                 if ('sprite' in foe) {
                     // 🔴 [2026-09-18 主人定·增加所有攻城武器只对建筑破坏力]
@@ -7787,7 +7918,7 @@ export class Scene13WarLayer {
                             foe.hurtBy = m;
                             foe.hurtAt = this.battleSec;
                         }
-                        const shieldMul = this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0;
+                        const shieldMul = !('sprite' in foe) && this.unitHasShield(foe) ? SKILL_SHIELD_TAKEN : 1.0;
                         const panicMul = 'sprite' in foe ? 1 : this.panicTakenMul(foe);
                         foe.hp -= dps * this.sideBonus[m.f] * gangMulBy(shooter, foe) * this.attritionMul() * braceTaken * flankMul * shieldMul * panicMul * dt
                             * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1)   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN

@@ -658,6 +658,8 @@ export function render(this: Scene13WarLayer): void {
         [this.getScene13SkillVisualState(0), this.getScene13SkillVisualState(1)],
         (x, y) => this.elevationLiftAt(x, y),
         flagTick * 0.001,
+        (m) => this.getUnitSkillVisualState(m),
+        this.hasExtraPlayerSkillVisuals(),
     );
     if (hasTransform) ctx.restore();
     this.coverStrategyMap();
