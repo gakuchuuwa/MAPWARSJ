@@ -120,6 +120,8 @@ export interface WarMan {
     foe: WarMan | WarBuilding | null;
     /** 帧开始时预登记的目标；轮到本人更新时先释放，再登记最终选择。 */
     reservedFoe?: WarMan | WarBuilding | null;
+    /** 行进寻敌（aimAtRaw ①）上一次盯上的敌兵；还在视野内就继续追他，不左右换人 */
+    aimFoe?: WarMan | null;
     rangeWait?: number;
     /** 【被攻击反击】最近一次攻击我的人（WarMan）。被攻击的兵下次索敌时优先锁定它，无视围殴封顶 SPREAD_CAP */
     hurtBy?: WarMan | null;

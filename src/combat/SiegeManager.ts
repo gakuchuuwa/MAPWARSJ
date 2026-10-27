@@ -1120,7 +1120,11 @@ export class SiegeManager {
             landNavalLegionForSiege(legion, cityPos);
         }
 
-        const siegePreset = siegeData.result ?? (isFirstBattleSiegeEnemy ? 'defender_win' : isFirstBattleSiege ? 'attacker_win' : undefined);
+        // 🔴 [2026-10-27 主人令「首战战败，应该军队战败，玩家脱离势力，去下一家」]
+        //    原来首战攻城写死了我方必胜（`isFirstBattleSiegeEnemy → defender_win` / `isFirstBattleSiege → attacker_win`），
+        //    战术里守不住 / 攻不下都被判成「打赢」，军团照旧占城、继续打下一座。现在只有剧本事件自带的结果
+        //    （`siegeData.result`）算写死胜负，首战一律按实际战果结算。
+        const siegePreset = siegeData.result;
 
         // Adapters
         const attackerAdapter = BattleUnitFactory.createAdapter(

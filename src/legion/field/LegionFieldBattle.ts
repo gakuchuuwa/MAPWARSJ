@@ -335,9 +335,11 @@ function startFieldBattleBetween(
 
     const attName = deps.getCityManager().getFactionName(attFaction);
     const defName = deps.getCityManager().getFactionName(defFaction);
-    const firstBattlePreset: 'attacker_win' | 'defender_win' | undefined = firstBattleHero
-        ? (firstBattleRole === 'defender' ? 'defender_win' : 'attacker_win')
-        : undefined;
+    // 🔴 [2026-10-27 主人令「首战战败，应该军队战败，玩家脱离势力，去下一家」]
+    //    原来这里把首战写死成「我方必胜」（`firstBattlePreset`）——战术里打输了也被判成打赢，
+    //    军团照旧发奖励、继续打下一座城。现在首战**不预设胜负**：打输就是打输，按战败收场
+    //    （见 PlayerQuestSystem.failFirstBattle）。剧本 21 场写死胜负的历史战役走 isScriptArmy 那条链路，不受影响。
+    const firstBattlePreset: 'attacker_win' | 'defender_win' | undefined = undefined;
     const firstBattleTitle = (firstBattleHero as { firstBattleTitle?: string } | null)?.firstBattleTitle;
 
     const fieldBattleField = combatSystem.startRegionalBattle(

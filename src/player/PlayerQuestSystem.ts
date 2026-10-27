@@ -212,6 +212,32 @@ export function enlistmentPanelText(generalId: string): string {
 /** 参军面板第一颗按钮（两条会面链共用；剧本军没有「目标城」可写，故不带地名） */
 export const ENLIST_OPTION_LABEL = '⚔ 入伍随军';
 
+/**
+ * 🔴 [2026-10-27 主人令「所有首战攻守双方兵力必须上万；不上万的兵力不能算经典战役、也不算首战
+ *    （斯巴达三百不能只放三百）；但不要超过六万，不然打的时间太长」]
+ * 首战兵力一律夹进 `[FIRST_BATTLE_MIN_TROOPS, FIRST_BATTLE_MAX_TROOPS]`：
+ *   ① 先按**原有比例整体缩放**——史书里的强弱比（10 万 vs 5 万）要保住；
+ *   ② 比例太极端（如凑川 800 : 30000，整体缩放任一边都会破区间）时退化为**各自夹取**，
+ *      宁可丢强弱比，也绝不出现几百人的「首战」、也不会超过 6 万拖时间。
+ */
+export function clampFirstBattleTroops(my: number, enemy: number): { myTroops: number; enemyTroops: number } {
+    const MIN = GameConfig.COMBAT.FIRST_BATTLE_MIN_TROOPS;
+    const MAX = GameConfig.COMBAT.FIRST_BATTLE_MAX_TROOPS;
+    const a0 = Math.max(1, Math.round(my || 1));
+    const b0 = Math.max(1, Math.round(enemy || 1));
+    const ok = (v: number) => v >= MIN && v <= MAX;
+    if (ok(a0) && ok(b0)) return { myTroops: a0, enemyTroops: b0 };
+    const lo = Math.min(a0, b0), hi = Math.max(a0, b0);
+    const kUp = MIN / lo;          // 把小的一方抬到 1 万
+    const kDown = MAX / hi;        // 把大的一方压到 6 万
+    if (kUp <= kDown) {
+        const k = lo < MIN ? kUp : kDown;
+        const a = Math.round(a0 * k), b = Math.round(b0 * k);
+        if (ok(a) && ok(b)) return { myTroops: a, enemyTroops: b };
+    }
+    return { myTroops: Math.min(MAX, Math.max(MIN, a0)), enemyTroops: Math.min(MAX, Math.max(MIN, b0)) };
+}
+
 export interface PlayerQuestDeps {
     hero: PlayerHero;
     cityManager: {
@@ -1920,8 +1946,7 @@ export class PlayerQuestSystem {
         fb: GeneralFirstBattle,
         existingArmy: Army | null,
         opts?: { metAtFront?: boolean },
-    ): void {
-        this.deps.closeDialogue();
+    ): void {        this.deps.closeDialogue();
         this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
         this.pendingFrontGeneralId = null;
         const metAtFront = !!opts?.metAtFront;
@@ -1930,8 +1955,8 @@ export class PlayerQuestSystem {
         this.headingToEventGeneralId = null;
 
         const myFactionId = existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
-        const myTroops = Math.max(1, fb.myTroops);
-        const enemyTroops = Math.max(1, fb.enemyTroops);
+        // 🔴 [2026-10-27 主人令] 首战双方兵力必须上万、且不超过六万（见 clampFirstBattleTroops 头注）
+        const { myTroops, enemyTroops } = clampFirstBattleTroops(fb.myTroops, fb.enemyTroops);
 
         // 🔴 [2026-10-25 主人令「攻城战就去攻打的城，野战就去战场」] 会面在前线时，这位武将若已带兵在别处，
         //    先把那支撤掉（兵力还他本城），免得起兵后地图上同时有两个同一个人。
@@ -2440,7 +2465,13 @@ export class PlayerQuestSystem {
         const fbState = q.firstBattle;
         if (!fbState) return;
         const host = this.deps.legionManager.getLegionById(q.legionId);
-        if (!host || host.isDestroyed || host.getTroops() <= 0 || !isGeneralOnStage(q.generalId)) {
+        // 🔴 [2026-10-27 主人令「首战战败后，军队依然可以继续下一个目标，这是不对的」]
+        //    野战、攻城（攻/守）的败方军团都是全军覆没 ⇒ 军团没了就是**首战战败**，不许当成「打完了、接着下一个目标」。
+        if (!host || host.isDestroyed || host.getTroops() <= 0) {
+            this.failFirstBattle(q, host ?? null);
+            return;
+        }
+        if (!isGeneralOnStage(q.generalId)) {
             this.cleanupFirstBattleState(q);
             this.finishQuest(false);
             return;
@@ -2457,11 +2488,11 @@ export class PlayerQuestSystem {
         if (fbState.battleType === 'field') {
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
             if (!fbState.enemySpawnPending && (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0)) {
-                this.completeFirstBattleAndContinueCampaign(q, host);
+                this.settleFirstBattle(q, host);
                 return;
             }
             if (fbState.engaged && !host.getIsInCombat()) {
-                this.completeFirstBattleAndContinueCampaign(q, host);
+                this.settleFirstBattle(q, host);
                 return;
             }
             if (distToTarget <= 0.2) {
@@ -2472,7 +2503,7 @@ export class PlayerQuestSystem {
         } else if (fbState.role === 'defender') {
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
             if (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0 || (fbState.engaged && !host.getIsInCombat())) {
-                this.completeFirstBattleAndContinueCampaign(q, host);
+                this.settleFirstBattle(q, host);
                 return;
             }
             if (distToTarget <= 0.22) {
@@ -2482,8 +2513,13 @@ export class PlayerQuestSystem {
             }
         } else {
             const targetCity = fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
-            if (!targetCity || (fbState.engaged && !host.getIsInCombat()) || (distToTarget <= 0.25 && targetCity.factionId === q.factionId && fbState.engaged)) {
+            if (!targetCity) {
+                // 城都不在了（数据异常）：不按战败罚玩家，照旧收场
                 this.completeFirstBattleAndContinueCampaign(q, host);
+                return;
+            }
+            if ((fbState.engaged && !host.getIsInCombat()) || (distToTarget <= 0.25 && targetCity.factionId === q.factionId && fbState.engaged)) {
+                this.settleFirstBattle(q, host);
                 return;
             }
             if (distToTarget <= 0.22) {
@@ -2492,6 +2528,52 @@ export class PlayerQuestSystem {
                 this.marchHostToFirstBattle(host, targetPos);
             }
         }
+    }
+
+    /**
+     * 🔴 [2026-10-27 主人令「首战战败，应该军队战败，玩家脱离势力，去下一家」]
+     * 首战「打赢」的判据只有两条，其余一律算战败：
+     *   · 攻城且我方是攻方 → **目标城已经拿到手**（300 秒未克的平局、被击退都算没打赢）；
+     *   · 野战 / 守城 → **敌军那支军团被消灭**（不存在 / 已毁 / 兵力 0）。
+     */
+    private firstBattleWon(q: PlayerQuest, fbState: NonNullable<PlayerQuest['firstBattle']>): boolean {
+        if (fbState.battleType === 'siege' && fbState.role === 'attacker') {
+            const target = fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
+            return !!target && target.factionId === q.factionId;
+        }
+        const enemy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
+        return !enemy || enemy.isDestroyed || enemy.getTroops() <= 0;
+    }
+
+    /** 首战收场：打赢 → 大捷、奖励据点、随武将继续征讨；没打赢 → 战败（军团溃散、脱离势力、去下一家） */
+    private settleFirstBattle(q: PlayerQuest, host: Army): void {
+        const fbState = q.firstBattle;
+        if (!fbState || this.firstBattleWon(q, fbState)) {
+            this.completeFirstBattleAndContinueCampaign(q, host);
+            return;
+        }
+        this.failFirstBattle(q, host);
+    }
+
+    /**
+     * 首战战败：军队战败（军团溃散，绝不再去下一个目标）＋玩家脱离势力，随即去找下一家。
+     * 这一位进「告辞」名单（同一条列表：接任务 / 切模式 / 读档就清空，不是永远不见他）。
+     */
+    private failFirstBattle(q: PlayerQuest, host: Army | null): void {
+        const fbState = q.firstBattle;
+        this.cleanupFirstBattleState(q);
+        // 军队战败：还活着的那支（打平 300 秒未克、攻城被击退）也一并溃散，不许它继续打下一座
+        if (host && !host.isDestroyed) {
+            host.clearExternalCombatState();
+            host.clearPostBattleRest();
+            host.stopMovement(false);
+            host.destroy();
+        }
+        if (q.generalId) this.declinedGenerals.add(q.generalId);
+        this.deps.notify(`❌ 【${fbState?.battleName ?? '首战'}】战败：${q.generalName}的军团被打散，你脱离${q.factionName}，另投他处`);
+        gameLog('expedition', `[玩家] 首战战败：${q.generalName}【${fbState?.battleName ?? ''}】→ 军团战败，脱离 ${q.factionName}`);
+        this.finishQuest(false, { silent: true });
+        this.findNextGeneralNow();
     }
 
     /**
@@ -3830,7 +3912,7 @@ export class PlayerQuestSystem {
         }
     }
 
-    private finishQuest(success: boolean): void {
+    private finishQuest(success: boolean, opts?: { silent?: boolean }): void {
         const q = this.quest;
         if (!q) return;
         const host = this.deps.legionManager.getLegionById(q.legionId);
@@ -3860,9 +3942,12 @@ export class PlayerQuestSystem {
                 gameLog('expedition', `[玩家] 出征成功：${q.targetCityName}，奖战功 400`);
             }
         } else {
-            this.deps.notify(q.kind === 'restore'
-                ? `❌ 义军解散，${q.factionName}复国失败`
-                : `❌ 出征【${q.targetCityName}】失败，军团解散`);
+            // silent：首战战败那一路自己已经报了「战败 + 脱离势力」，这里不再补一条「出征失败」的自相矛盾提示
+            if (!opts?.silent) {
+                this.deps.notify(q.kind === 'restore'
+                    ? `❌ 义军解散，${q.factionName}复国失败`
+                    : `❌ 出征【${q.targetCityName}】失败，军团解散`);
+            }
             gameLog('expedition', `[玩家] 任务失败：${q.kind} ${q.targetCityName}`);
         }
         this.emitChange();

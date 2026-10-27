@@ -101,7 +101,7 @@ import {
     SIDE_CAP, TRIGGER, SPRITE_TROOPS, CORPSE_KEEP, FLEE_SPD, FLEE_DUR, FLAG_EVERY,
     FLAG_SCALE, FLAG_FALL, FLAG_POLE_RATIO, FLAG_POLE_LIFT, BATCH_COOLDOWN, FADE_IN,
     DEPLOY_SECS, DEPLOY_FADE, ARRIVE_EPS, MARCH_REL, LANE_REGROUP_SEC, LANE_TRACK_EPS, LANE_BEHIND_FREE, LANE_BEHIND_PEN,
-    LANE_REGROUP_MAX_BACK, LANE_REGROUP_MAX_DIST,
+    LANE_REGROUP_MAX_DIST,
     LANE_W, MARCH_R, SPREAD_CAP, SEP_DIST,
     SEP_SMOOTH, SEP_SPD, SEP_FIGHT, LEASH_LAT, CELL_S, STUCK_IDLE_SEC, NET_STUCK_WINDOW,
     SLIDE_RATE, SLIDE_W, KEEP_TARGET_HP, KITE_RETREAT_DIST, KITE_SAFE, KITE_RETREAT_CAP,
@@ -138,6 +138,9 @@ import { render } from './scene13/Scene13Render';
  *   以【败】为尺把三计拉到同一量级：攻 输出 ×2.25 持续 20 秒（≈25 秒交战）、敌 满血＋减伤六成 20 秒、混 乱阵 15 秒且受伤翻倍。
  *   🔴 [2026-10-22 主人定「败 6%」] 同批把即时三计收一档：败 8%→6%（劣势翻盘计，留一点翻盘感）、胜 8%→6%（主人令「胜也6%」，与败对称）、并 5%→3%（并＝敌减我增，净差约 6%）。
  */
+/** 🔴 [2026-10-27 主人令「寻敌优先前方」] search 前方加权：横向距离按 ×1.5、身后距离按 ×2 计（正前方按原距离） */
+const SEARCH_LAT_K = 1.5;
+const SEARCH_BACK_K = 2;
 const SKILL_FRENZY_SEC = 20;        // 【攻】振己威持续
 const SKILL_FRENZY_DMG = 1.5;       // 【攻】伤害倍率
 const SKILL_FRENZY_ATKSPD = 1.5;    // 【攻】攻速倍率
@@ -4916,6 +4919,31 @@ export class Scene13WarLayer {
             && Math.hypot(x - cityCen.x, y - cityCen.y) > campDist * 0.55;
     }
 
+    /** 攻城战的城心（守方「入城者」判据用）；非攻城战返回 null */
+    private defCityCenter(): { x: number; y: number } | null {
+        if (this.battleType !== 'siege') return null;
+        return this.deCity ? this.deCityCenter : (this.spawnBases[1] ?? null);
+    }
+
+    /** 本帧离城心最近的攻方活兵的距离²（每帧算一次）：守方据此判断「自己身后/城里有没有入城者」 */
+    private atkNearCitySec = -1;
+    private atkNearCity2 = Infinity;
+    private nearestAttackerToCity2(): number {
+        if (this.atkNearCitySec !== this.battleSec) {
+            this.atkNearCitySec = this.battleSec;
+            this.atkNearCity2 = Infinity;
+            const c = this.defCityCenter();
+            if (c) {
+                for (const o of this.men) {
+                    if (o.f !== 0 || o.hp <= 0) continue;
+                    const d = (o.x - c.x) ** 2 + (o.y - c.y) ** 2;
+                    if (d < this.atkNearCity2) this.atkNearCity2 = d;
+                }
+            }
+        }
+        return this.atkNearCity2;
+    }
+
     private defenderCityReturnGoal(m: WarMan): { x: number; y: number } {
         if (m.guardPost) return m.guardPost;
         const sp = m.lane >= 0 ? this.spawns[m.lane] : undefined;
@@ -5227,36 +5255,70 @@ export class Scene13WarLayer {
         //    攻方远程在城外、墙还封着：城里的敌兵只在**射程内**才锁（隔墙放箭，同 DE）；射程外的不锁 ——
         //    原来会锁上墙后够不着的兵，朝他走、顶在墙上被推挤着打转（远程又不打墙门，卡死）。
         const rangedOutReach2 = this.rangedHoldsOutside(m as WarMan) ? this.rangedShootReach2(m as WarMan) : 0;
+        // 🔴 [2026-10-27 主人令「军队寻敌左右摇摆不定。固定下，野战，攻城战，优先前方」] 下面所有「谁更近」的比较
+        //    改用前方加权距离²（frontScore）：正前方按原距离，横向 ×SEARCH_LAT_K、身后 ×SEARCH_BACK_K。
+        //    左右两个差不多远的敌人不再来回换，正对面那个稳赢。双方各按自己的前进方向算，仍对称。
+        //    分数恒 ≥ 真实距离²，所以下面圈层提前结束（floor 判据）照旧成立；视野半径照旧按真实距离筛。
+        // 🔴 [2026-10-27 主人令「防守方优先守城，优先打身后的，或者说是进城的」] 攻城战守方：
+        //    进城（墙圈内）或比自己更靠近城心的攻方兵（例：攻方敌战计伏兵出在城外阵位）算「入城者」，
+        //    视野内有入城者就先打入城者（按真实距离挑最近），盖过分路带与本队目标。
+        const fwdU = this.advanceVec[m.f as 0 | 1];
+        const frontScore = (o: WarMan, d: number): number => {
+            const fw = (o.x - m.x) * fwdU.x + (o.y - m.y) * fwdU.y;
+            const lat2 = Math.max(0, d - fw * fw);
+            return (fw >= 0 ? fw * fw : fw * fw * SEARCH_BACK_K * SEARCH_BACK_K) + lat2 * SEARCH_LAT_K * SEARCH_LAT_K;
+        };
+        const defCity = m.f === 1 ? this.defCityCenter() : null;
+        const myCity2 = defCity ? (m.x - defCity.x) ** 2 + (m.y - defCity.y) ** 2 : 0;
+        const isIntruder = (o: WarMan): boolean => !!defCity
+            && ((o.x - defCity.x) ** 2 + (o.y - defCity.y) ** 2 < myCity2 || this.insideRing(o.x, o.y));
+        let iBest: WarMan | null = null, iBd = r2;
+        let iInRange: WarMan | null = null, iRd = r2;
+        let iFree: WarMan | null = null, iFd = r2;
+        bd = Infinity; rd = Infinity; fd = Infinity;
+        pBd = Infinity; pRd = Infinity; pFd = Infinity;
+        bBd = Infinity; bRd = Infinity; bFd = Infinity;
+        const consider = (o: WarMan, d: number): void => {
+            if (guardPost && (o.x - guardPost.x) ** 2 + (o.y - guardPost.y) ** 2 > guardLeash2) return;
+            if (outOnly && this.insideRing(o.x, o.y)) return;
+            if (rangedOutReach2 > 0 && d > rangedOutReach2 && this.insideRing(o.x, o.y)) return;
+            const tooNear = minR2 > 0 && d < minR2;
+            const open = o.claims < SPREAD_CAP && !tooNear;
+            if (isIntruder(o)) {
+                if (d < iBd) { iBd = d; iBest = o; }
+                if (!tooNear && d < iRd) { iRd = d; iInRange = o; }
+                if (open && d < iFd) { iFd = d; iFree = o; }
+            }
+            const s = frontScore(o, d);
+            // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
+            // 就把眼前敌人当作不存在。未满目标仍走 free，全部满员时才回退 best。
+            if (s < bd) { bd = s; best = o; }
+            if (!tooNear && s < rd) { rd = s; inRange = o; }
+            if (prefLane !== undefined && (o.lane === prefLane || d < 65 * 65)) {
+                if (s < pBd) { pBd = s; pBest = o; }
+                if (!tooNear && s < pRd) { pRd = s; pInRange = o; }
+                if (open && s < pFd) { pFd = s; pFree = o; }
+            }
+            if (inBand(o, d)) {
+                if (s < bBd) { bBd = s; bBest = o; }
+                if (!tooNear && s < bRd) { bRd = s; bInRange = o; }
+                if (open && s < bFd) { bFd = s; bFree = o; }
+            }
+            if (open && s < fd) { fd = s; free = o; }
+        };
         if (span >= 6) {
             for (let i = 0; i < this.men.length; i++) {
                 const o = this.men[i];
                 if (o.f === m.f || o.hp <= 0) continue;
                 const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
-                if (d >= r2) continue;
-                if (guardPost && (o.x - guardPost.x) ** 2 + (o.y - guardPost.y) ** 2 > guardLeash2) continue;
-                if (outOnly && this.insideRing(o.x, o.y)) continue;
-                if (rangedOutReach2 > 0 && d > rangedOutReach2 && this.insideRing(o.x, o.y)) continue;
-                const tooNear = minR2 > 0 && d < minR2;
-                if (d < bd) { bd = d; best = o; }
-                if (!tooNear && d < rd) { rd = d; inRange = o; }
-                if (prefLane !== undefined && (o.lane === prefLane || d < 65 * 65)) {
-                    if (d < pBd) { pBd = d; pBest = o; }
-                    if (!tooNear && d < pRd) { pRd = d; pInRange = o; }
-                    if (o.claims < SPREAD_CAP && !tooNear && d < pFd) { pFd = d; pFree = o; }
-                }
-                if (inBand(o, d)) {
-                    if (d < bBd) { bBd = d; bBest = o; }
-                    if (!tooNear && d < bRd) { bRd = d; bInRange = o; }
-                    if (o.claims < SPREAD_CAP && !tooNear && d < bFd) { bFd = d; bFree = o; }
-                }
-                if (o.claims >= SPREAD_CAP) continue;
-                if (!tooNear && d < fd) { fd = d; free = o; }
+                if (d < r2) consider(o, d);
             }
         } else {
             for (let ring = 0; ring <= span; ring++) {
                 // 只有找到未满且满足最小射程的目标才能提前结束；若指定了 prefLane 则须等 pFree 找到才可提前结束。
                 // 🔴 [2026-10-20] 野战分路索敌：须等带内空闲目标（bFree）找到才可提前结束
-                if (bandHome !== null ? bFree : (prefLane !== undefined ? pFree : free)) {
+                // 🔴 [2026-10-27] 攻城守方要扫完整个视野找入城者，不提前结束
+                if (!defCity && (bandHome !== null ? bFree : (prefLane !== undefined ? pFree : free))) {
                     const floor = (ring - 1) * cell;
                     if (floor > 0 && (bandHome !== null ? bFd : (prefLane !== undefined ? pFd : fd)) < floor * floor) break;
                 }
@@ -5270,34 +5332,16 @@ export class Scene13WarLayer {
                             const o = a[i];
                             if (o.f === m.f || o.hp <= 0) continue;
                             const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
-                            if (d >= r2) continue;
-                            if (guardPost && (o.x - guardPost.x) ** 2 + (o.y - guardPost.y) ** 2 > guardLeash2) continue;
-                            if (outOnly && this.insideRing(o.x, o.y)) continue;
-                            if (rangedOutReach2 > 0 && d > rangedOutReach2 && this.insideRing(o.x, o.y)) continue;
-                            const tooNear = minR2 > 0 && d < minR2;
-                            // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
-                            // 就把眼前敌人当作不存在。未满目标仍走 free，全部满员时才回退 best。
-                            if (d < bd) { bd = d; best = o; }
-                            if (!tooNear && d < rd) { rd = d; inRange = o; }
-                            if (prefLane !== undefined && (o.lane === prefLane || d < 65 * 65)) {
-                                if (d < pBd) { pBd = d; pBest = o; }
-                                if (!tooNear && d < pRd) { pRd = d; pInRange = o; }
-                                if (o.claims < SPREAD_CAP && !tooNear && d < pFd) { pFd = d; pFree = o; }
-                            }
-                            if (inBand(o, d)) {
-                                if (d < bBd) { bBd = d; bBest = o; }
-                                if (!tooNear && d < bRd) { bRd = d; bInRange = o; }
-                                if (o.claims < SPREAD_CAP && !tooNear && d < bFd) { bFd = d; bFree = o; }
-                            }
-                            if (o.claims >= SPREAD_CAP) continue;
-                            if (!tooNear && d < fd) { fd = d; free = o; }
+                            if (d < r2) consider(o, d);
                         }
                     }
                 }
             }
         }
         const isHero = (m as { hero?: boolean }).hero === true;
-        const manChosen = (bFree ?? bInRange ?? bBest) ?? (pFree ?? pInRange ?? pBest) ?? (free ?? inRange ?? best);
+        // 入城者 → 分路带 → 本队目标敌队 → 全视野；每档内 空闲 → 够得着 → 最近（候选在 consider 闭包里赋值，故用数组取第一个非空，免得 TS 把它们收窄成 null）
+        const manChosen = ([iFree, iInRange, iBest, bFree, bInRange, bBest, pFree, pInRange, pBest, free, inRange, best] as Array<WarMan | WarBuilding | null>)
+            .find((c) => c !== null) ?? null;
         // 🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」]
         // 🔴 [2026-10-15 主人令「在进攻的途中，攻城武器不打人，直接往敌军中冲，这样不现实」]
         //    1) 若最近的目标城门/城墙/建筑已进入攻城武器自身射程（reach2）⇒ 优先锁定并摧毁该建筑；
@@ -6621,7 +6665,22 @@ export class Scene13WarLayer {
         const ringY = Math.sin(ra) * CHASE_RING;
 
         // ① 视野内最近的敌兵/建筑（reserve=true 按 claims 上限分流）
-        const near = this.search(m, MARCH_R, MIN_RANGE_TYPES[m.key] ?? 0, true);
+        let near = this.search(m, MARCH_R, MIN_RANGE_TYPES[m.key] ?? 0, true);
+        // 🔴 [2026-10-27 主人令「军队寻敌左右摇摆不定。固定下」] 上次盯上的敌兵还活着、还在视野内 ⇒ 继续追他，
+        //    不因左右另一个敌人这 0.5 秒稍近一点就换人。例外：攻城守方新出现了入城者（见 search 头注）照样改打入城者。
+        const prev = m.aimFoe;
+        if (prev && near && near !== prev && prev.hp > 0 && prev.f !== m.f
+            && (prev.x - m.x) ** 2 + (prev.y - m.y) ** 2 < MARCH_R * MARCH_R && !this.wallSeparates(m, prev)) {
+            const c = m.f === 1 ? this.defCityCenter() : null;
+            const myC2 = c ? (m.x - c.x) ** 2 + (m.y - c.y) ** 2 : 0;
+            const intr = (o: { x: number; y: number }) => !!c && ((o.x - c.x) ** 2 + (o.y - c.y) ** 2 < myC2 || this.insideRing(o.x, o.y));
+            if (!(intr(near) && !intr(prev))) {
+                near.claims--;
+                prev.claims++;
+                near = prev;
+            }
+        }
+        m.aimFoe = near && !('sprite' in near) ? near : null;
         if (near) {
             m.reservedFoe = near;
             return { x: near.x + ringX, y: near.y + ringY };
@@ -6640,8 +6699,14 @@ export class Scene13WarLayer {
                 ax += o.x; ay += o.y; an++;
                 if (m.lane >= 0 && o.lane === m.lane) { sx += o.x; sy += o.y; n++; }
             }
-            if (n > 0) return { x: sx / n + m.jx, y: sy / n + m.jy };
-            if (an > 0) return { x: ax / an + m.jx, y: ay / an + m.jy };
+            if (n > 0 || an > 0) {
+                const gx = n > 0 ? sx / n + m.jx : ax / an + m.jx;
+                const gy = n > 0 ? sy / n + m.jy : ay / an + m.jy;
+                // 🔴 [2026-10-27 主人报「玩家怎么还往回跑呢」] 玩家冲在前面时本队重心落在身后 ⇒ 原来掉头往回跑去找队伍。
+                //    与士兵归队同口径（noBackStep）：只许横移或往前，等队伍跟上，不往回走。
+                const [bx, by] = this.noBackStep(m, gx, gy);
+                return { x: bx, y: by };
+            }
         }
 
         // ② 攻城武器：走向第一档目标里离自己最近的那个
@@ -6762,7 +6827,7 @@ export class Scene13WarLayer {
      *   ① 本队有领队、且不是自己 —— 领队走自己的 aimAt（寻敌/巡逻）领队前行，不被拖；
      *   ② 自己「无敌人」已满 LANE_REGROUP_SEC —— 挡住索敌 0.2s 节流那批假空窗（见该常数）；
      *   ③ 玩家本人例外：点地面下的那道令没走完就不归队（见 heroOrderPending）。
-     *   ④ [2026-10-25 主人令「只优化归队」] 槽位落在自己身后 >LANE_REGROUP_MAX_BACK ⇒ 就地等，不许往回走；
+     *   ④ [2026-10-27 主人令「不要往回找队」] 槽位在身后的部分一律去掉，只横移或往前（noBackStep）；
      *   ⑤ [2026-10-25 同上] 槽位离自己 >LANE_REGROUP_MAX_DIST ⇒ 不回去，交给前方索敌兜底。
      */
     private laneSlotTarget(m: WarMan, leaders: Map<number, WarMan>): [number, number] | null {
@@ -6789,17 +6854,26 @@ export class Scene13WarLayer {
         const sx = leader.x - uFwd.x * dDep + uSide.x * dSide;
         const sy = leader.y - uFwd.y * dDep + uSide.y * dSide;
         // 🔴 [2026-10-25 主人令「只优化归队」] 归队只做**近距离对齐**，不许把人往后拖：
-        //   ① 槽位落在自己身后超过 LANE_REGROUP_MAX_BACK ⇒ 目标点收回自己脚下（就地等）。
-        //      要归也只许原地等/往前靠，绝不掉头往回走 —— 实测本局最远倒走 2474px，
+        //   ① 🔴 [2026-10-27] 槽位在身后的分量一律去掉（noBackStep），只横移或往前，一步不退。
+        //      绝不掉头往回走 —— 10-25 实测本局最远倒走 2474px，
         //      就是「锚点（本队出生槽位最靠中心的活兵）落在后面 ⇒ 全队槽位都在后面 ⇒ 整队往回走」。
         //   ② 槽位离自己超过 LANE_REGROUP_MAX_DIST ⇒ 不回去，返回 null 交给前方索敌兜底。
         //   ⚠️ 2026-10-03 那套「跟活动锚点必须连续跟随、不能用 8px 死区」的防颤抖算法一个字不动
         //      （返回的仍是同一套槽位坐标，只是方向/距离加了闸，见 LANE_TRACK_EPS 头注）。
-        if (-((sx - m.x) * uFwd.x + (sy - m.y) * uFwd.y) > LANE_REGROUP_MAX_BACK) {
-            return this.fieldBound(m.x, m.y);
-        }
         if ((sx - m.x) ** 2 + (sy - m.y) ** 2 > LANE_REGROUP_MAX_DIST ** 2) return null;
-        return this.fieldBound(sx, sy);
+        const [fx, fy] = this.noBackStep(m, sx, sy);
+        return this.fieldBound(fx, fy);
+    }
+
+    /**
+     * 🔴 [2026-10-27 主人令「其他士兵也……不要往回找队」] 归队/跟队的目标点去掉往后（逆 advanceVec）的分量：
+     *    只许横移或往前，一步都不往回走。取代 10-25 的「身后超过 LANE_REGROUP_MAX_BACK 才就地等」（150px 内照样后退）。
+     *    用投影而不是「在后面就站住」：目标点连续变化，不会在前后边界上走走停停（防颤抖链，见 LANE_TRACK_EPS 头注）。
+     */
+    private noBackStep(m: WarMan, tx: number, ty: number): [number, number] {
+        const u = this.advanceVec[m.f];
+        const along = (tx - m.x) * u.x + (ty - m.y) * u.y;
+        return along < 0 ? [tx - u.x * along, ty - u.y * along] : [tx, ty];
     }
 
     /**
@@ -7323,7 +7397,21 @@ export class Scene13WarLayer {
                 && m.foe && !('sprite' in m.foe) && stats.rng <= 65 && (m.stuckT ?? 0) > 0.35
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > (REACH + 18) ** 2) ? this.blockedWall(m) : null;
             const wallStuck = !!wallStuckBw && wallStuckBw.f !== m.f;
+            // 🔴 [2026-10-27 主人令「防守方优先守城，优先打身后的，或者说是进城的」] 攻城守方正打着城外的人，
+            //    而有攻方兵比自己更靠城心（进城 / 绕到身后，如敌战计伏兵）且在视野内 ⇒ 放掉当前目标，改打入城者。
+            let intruderSwitch = false;
+            const defCity = m.f === 1 && m.next <= 0 && m.foe && !('sprite' in m.foe) ? this.defCityCenter() : null;
+            if (defCity && m.foe && !('sprite' in m.foe)) {
+                const myCity2 = (m.x - defCity.x) ** 2 + (m.y - defCity.y) ** 2;
+                const foeCity2 = (m.foe.x - defCity.x) ** 2 + (m.foe.y - defCity.y) ** 2;
+                if (foeCity2 >= myCity2 && !this.insideRing(m.foe.x, m.foe.y) && this.nearestAttackerToCity2() < myCity2) {
+                    const alt = this.search(m, SIGHT, MIN_RANGE_TYPES[m.key] ?? 0, false);
+                    intruderSwitch = !!alt && alt !== m.foe && !('sprite' in alt)
+                        && ((alt.x - defCity.x) ** 2 + (alt.y - defCity.y) ** 2 < myCity2 || this.insideRing(alt.x, alt.y));
+                }
+            }
             const keep = this.canKeepTarget(m, SIGHT)
+                && !intruderSwitch
                 && !(m.foe && 'sprite' in m.foe && !m.siegeW && m.next <= 0)
                 && !(m.siegeW && m.foe && !('sprite' in m.foe) && m.next <= 0)
                 && !wrongLaneFoe
