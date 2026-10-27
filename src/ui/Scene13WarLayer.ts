@@ -138,8 +138,6 @@ import { render } from './scene13/Scene13Render';
  *   以【败】为尺把三计拉到同一量级：攻 输出 ×2.25 持续 20 秒（≈25 秒交战）、敌 满血＋减伤六成 20 秒、混 乱阵 15 秒且受伤翻倍。
  *   🔴 [2026-10-22 主人定「败 6%」] 同批把即时三计收一档：败 8%→6%（劣势翻盘计，留一点翻盘感）、胜 8%→6%（主人令「胜也6%」，与败对称）、并 5%→3%（并＝敌减我增，净差约 6%）。
  */
-/** 🔴 [2026-10-26 主人令] 镜头换跟随档的缓冲秒数（玩家交战不吃缓冲），见 pickCamTarget */
-const CAM_SWITCH_HOLD = 1.5;
 const SKILL_FRENZY_SEC = 20;        // 【攻】振己威持续
 const SKILL_FRENZY_DMG = 1.5;       // 【攻】伤害倍率
 const SKILL_FRENZY_ATKSPD = 1.5;    // 【攻】攻速倍率
@@ -300,14 +298,10 @@ export class Scene13WarLayer {
      * 玩家守城放计时登记落点；[2026-10-27] 只在六档完全无跟随目标时兜底展示，不再抢占六档镜头。
      */
     private skillCamTimer = 0;
-    /** 镜头当前盯着的本方兵（主将队员或普通兵）；同一档里它还活着就不换，见 pickCamTarget */
+    /** 镜头锁定的本方兵（主将队员或普通兵）；活着就一直跟他，见 pickCamTarget */
     private camWatchMan: WarMan | null = null;
-    /** 镜头已认定的档（-1 = 未定）；换档要新档持续 CAM_SWITCH_HOLD 秒，玩家交战除外，见 pickCamTarget */
+    /** 镜头锁定时所在的档（-1 = 未锁定；0/3 = 锁定玩家），见 pickCamTarget */
     private camTier = -1;
-    private camPendingTier = -1;
-    private camPendingT = 0;
-    /** 盯着的那个兵掉出本档（丢目标）已多少秒；不满 CAM_SWITCH_HOLD 仍跟他 */
-    private camWatchOffT = 0;
     private skillCamX = 0;
     private skillCamY = 0;
     /** 八方向行军前进单位向量（两军对冲） */
@@ -892,8 +886,9 @@ export class Scene13WarLayer {
     /**
      * 🔴 [2026-10-27 主人令「增兵没有偷袭的感觉，改成从敌方第一波的 9 个出兵口出兵」]
      * 【胜】增兵的伏兵落点：本方第 i 口的兵从敌方第 i 口（不含主将队、玩家精锐）冒出来。
-     *   · 攻城战攻方放计：守方出兵口在城里 ⇒ 改用守方**城外阵位**（defOutsideBase），从墙根往外排，
-     *     绝不出生在城墙圈内（否则等于跳过城墙）；城外守军打光后阵位照样能出兵。
+     *   · 攻城战攻方放计：🔴 [2026-10-27 主人令「攻方释放的地点是守方第一波的出兵口，不是墙根」]
+     *     用守方第一波在城外列阵的出兵口（defOutsideBase + outFwd/outSide，与第一波守军出生点同一处），
+     *     兵在口后排开，排法同第一波守军（该阵位本就排在墙外，不会进城墙圈）；城外守军打光后阵位照样能出兵。
      *   · 攻城战守方放计 / 野战：直接用敌方出兵口。
      * 返回 [锚点 x, y, 前进方向, 横排方向]；前进方向朝敌军（从敌方后方往前打）。
      */
@@ -901,15 +896,13 @@ export class Scene13WarLayer {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
         const enemyPorts = this.spawns.filter((sp) => sp.f === ef && !sp.playerElite && !sp.commander);
         if (this.battleType === 'siege' && this.deCity && ef === 1) {
-            const B = this.defOutsideBase(), C = this.deCityCenter;
+            const B = this.defOutsideBase();
             const ports = enemyPorts.filter((sp) => sp.outFwd !== undefined && sp.outSide !== undefined);
-            return ports.map((sp) => {
-                // 本队横向位置不变，纵向贴到墙外表面 + DEF_WALL_GAP，再往外（B.fwd）排开
-                const ax = B.x + B.fwd.x * sp.outFwd! + B.side.x * sp.outSide!;
-                const ay = B.y + B.fwd.y * sp.outFwd! + B.side.y * sp.outSide!;
-                const d = B.wallOuter + DEF_WALL_GAP - ((ax - C.x) * B.fwd.x + (ay - C.y) * B.fwd.y);
-                return { x: ax + B.fwd.x * d, y: ay + B.fwd.y * d, fwd: B.fwd, side: B.side };
-            });
+            return ports.map((sp) => ({
+                x: B.x + B.fwd.x * sp.outFwd! + B.side.x * sp.outSide!,
+                y: B.y + B.fwd.y * sp.outFwd! + B.side.y * sp.outSide!,
+                fwd: B.fwd, side: B.side,
+            }));
         }
         // 敌军从敌口往本方推进，伏兵在敌口追着敌军背后打 ⇒ 前进方向与敌军同向 = advanceVec[ef]
         return enemyPorts.map((sp) => ({ x: sp.x, y: sp.y, fwd: this.advanceVec[ef], side: this.sideVec[ef] }));
@@ -955,11 +948,10 @@ export class Scene13WarLayer {
             let spawnX: number, spawnY: number;
             if (ambushOn) {
                 const a = anchors[si % anchors.length];
-                // 攻城城外阵位：锚点在墙根，往外（fwd）排；敌口：锚点在敌口，往敌阵后方（-fwd）排
-                const k = this.battleType === 'siege' && !!this.deCity && f === 0 ? 1 : -1;
+                // 锚点即敌方出兵口（攻城为守方第一波城外出兵口），兵在口后（-fwd）排开，同该口原本的排法
                 [spawnX, spawnY] = this.fieldBound(
-                    a.x + a.fwd.x * dep * k + a.side.x * slotY,
-                    a.y + a.fwd.y * dep * k + a.side.y * slotY,
+                    a.x - a.fwd.x * dep + a.side.x * slotY,
+                    a.y - a.fwd.y * dep + a.side.y * slotY,
                 );
             } else {
                 [spawnX, spawnY] = this.fieldBound(
@@ -988,7 +980,11 @@ export class Scene13WarLayer {
                 stuckT: 0, sepX: 0, sepY: 0, y0: ambushOn ? spawnY : s.y,
                 flag: bearer, fo: Math.random() * 600,
                 march: false, port: null, dep, slotY, pop: s.pop,
-                lane: s.lane,
+                // 🔴 [2026-10-27 主人报「释放敌战计增兵后，士兵的寻敌会前后左右摇摆不定」] 伏兵出生在敌方出兵口，
+                //    离本队（s.lane）远隔整个战场：仍挂本队时，本队统一目标（laneTargets）每 0.2 秒把他从身边的敌人拽去
+                //    远处的目标敌队（wrongLaneFoe / rangedMapFoe），脱战又被本队领队槽位拉回 ⇒ 来回摆。
+                //    伏兵不入任何分队（lane=-1，同攻城武器），只按自己视野就近索敌，aimAt 落到 ①/④ 兜底。
+                lane: ambushOn ? -1 : s.lane,
                 // 守方伏兵出在攻方营地，按野战兵走，不站岗
                 guardPost: (!ambushOn && s.f === 1 && this.battleType === 'siege' && !!this.deCity && !this.isDefenderGateDestroyed()) ? { x: spawnX, y: spawnY } : undefined,
                 claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: FADE_IN, fadeMax: FADE_IN,
@@ -1644,12 +1640,9 @@ export class Scene13WarLayer {
     /**
      * 🔴 [2026-10-26 主人令] 有乱入者时镜头跟谁，按六档优先：
      *    交战的玩家 > 交战的主将队 > 交战的士兵 > 移动的玩家 > 移动的主将队 > 移动的士兵（均为本方）。
-     *    同一档里盯着的那员还活着就不换，死了换离镜头中心最近的。全灭返回 null（镜头原地不动）。
-     *    取代 10-25 的「复活后先不跟玩家、等交战/出画面再跟」。
-     *    🔴 [2026-10-26 主人令「切换加缓冲但玩家交战立即切」] 换档要新档持续 CAM_SWITCH_HOLD 秒才换（防有人锁到/丢掉目标一下镜头就来回甩）；
-     *    玩家交战立即切；当前跟的人死了也立即换。盯着的兵丢目标不满 CAM_SWITCH_HOLD 秒照样跟他。
+     *    选中一员后锁定到他阵亡为止，再按六档挑下一员（兵取离镜头中心最近的）。全灭返回 null（镜头原地不动）。
      */
-    private pickCamTarget(hero: WarMan, dt: number): WarMan | null {
+    private pickCamTarget(hero: WarMan): WarMan | null {
         const f = hero.f;
         const heroAlive = hero.hp > 0;
         // 档位：0 交战玩家 1 交战主将队 2 交战士兵 3 移动玩家 4 移动主将队 5 移动士兵；6 静止不入选
@@ -1667,6 +1660,18 @@ export class Scene13WarLayer {
         };
         const eligible = (m: WarMan): boolean => m.hp > 0 && m.f === f && !m.siegeW && (!m.hero || m === hero)
             && (m.hero || this.men.includes(m));
+        const isHeroTier = (t: number) => t === 0 || t === 3;
+        // 🔴 [2026-10-27 主人令「能不能在一个人身上固定好，直至此人阵亡」] 锁定后不再按档换人：
+        //    盯的是玩家就一直跟玩家（玩家倒下才换），盯的是兵就一直跟这个兵（他死了 / 离场才换），
+        //    不管他停手、走动还是别人开打。六档只用于「锁定的人没了」时挑下一个。
+        if (this.camTier >= 0) {
+            if (isHeroTier(this.camTier)) {
+                if (heroAlive) return hero;
+            } else if (this.camWatchMan && eligible(this.camWatchMan)) {
+                return this.camWatchMan;
+            }
+        }
+
         let bestTier = heroAlive ? tierOf(hero) : 6;
         for (const m of this.men) {
             if (!eligible(m) || m.hero) continue;
@@ -1675,65 +1680,27 @@ export class Scene13WarLayer {
         }
         if (bestTier === 6) { this.resetCamFollow(); return null; }
 
-        const isHeroTier = (t: number) => t === 0 || t === 3;
-        const cur = this.camWatchMan;
-        // 当前跟的对象已经没了（玩家倒下 / 盯的兵死了）⇒ 不等缓冲
-        const lost = this.camTier < 0
-            || (isHeroTier(this.camTier) ? !heroAlive : !(cur && eligible(cur)));
-        if (bestTier === this.camTier) {
-            this.camPendingTier = -1; this.camPendingT = 0;
-        } else if (lost || bestTier === 0) {
-            this.camTier = bestTier;
-            this.camPendingTier = -1; this.camPendingT = 0;
-        } else {
-            if (this.camPendingTier !== bestTier) { this.camPendingTier = bestTier; this.camPendingT = 0; }
-            this.camPendingT += dt;
-            if (this.camPendingT >= CAM_SWITCH_HOLD) {
-                this.camTier = bestTier;
-                this.camPendingTier = -1; this.camPendingT = 0;
-            }
-        }
-
-        if (isHeroTier(this.camTier)) { this.camWatchMan = null; this.camWatchOffT = 0; return hero; }
-        if (cur && eligible(cur) && !cur.hero) {
-            if (tierOf(cur) === this.camTier) { this.camWatchOffT = 0; return cur; }
-            this.camWatchOffT += dt;
-            if (this.camWatchOffT < CAM_SWITCH_HOLD) return cur;
-        }
+        this.camTier = bestTier;
+        if (isHeroTier(bestTier)) { this.camWatchMan = null; return hero; }
         const cx = this.worldCX - this.tacticalPanX / this.tacticalZoom;
         const cy = this.worldCY - this.tacticalPanY / this.tacticalZoom;
-        const nearestIn = (tier: number): WarMan | null => {
-            let best: WarMan | null = null, bestD = Infinity;
-            for (const m of this.men) {
-                if (!eligible(m) || m.hero || tierOf(m) !== tier) continue;
-                const d = Math.hypot(m.x - cx, m.y - cy);
-                if (d < bestD) { best = m; bestD = d; }
-            }
-            return best;
-        };
-        let best = nearestIn(this.camTier);
-        if (!best) {
-            // 认定的档已经空了（例如主将队都停手了）⇒ 直接落到眼下最高档
-            this.camTier = bestTier;
-            this.camPendingTier = -1; this.camPendingT = 0;
-            if (isHeroTier(bestTier)) { this.camWatchMan = null; this.camWatchOffT = 0; return hero; }
-            best = nearestIn(bestTier);
+        let best: WarMan | null = null, bestD = Infinity;
+        for (const m of this.men) {
+            if (!eligible(m) || m.hero || tierOf(m) !== bestTier) continue;
+            const d = Math.hypot(m.x - cx, m.y - cy);
+            if (d < bestD) { best = m; bestD = d; }
         }
         this.camWatchMan = best;
-        this.camWatchOffT = 0;
         return best;
     }
 
     private resetCamFollow(): void {
         this.camWatchMan = null;
         this.camTier = -1;
-        this.camPendingTier = -1;
-        this.camPendingT = 0;
-        this.camWatchOffT = 0;
     }
 
     /** 有玩家时唯一的镜头目标仲裁入口：六档优先；当前目标失效立即解除手动停留（玩家交战不解除，见下）。 */
-    private resolveHeroCamTarget(hero: WarMan, dt: number): WarMan | null {
+    private resolveHeroCamTarget(hero: WarMan): WarMan | null {
         const watched = this.camWatchMan;
         const watchingHero = this.camTier === 0 || this.camTier === 3;
         const targetLost = this.camTier >= 0 && (watchingHero
@@ -1746,7 +1713,7 @@ export class Scene13WarLayer {
             this.skillCamTimer = 0;
             this.userInteractingTimer = 0;
         }
-        const target = this.pickCamTarget(hero, dt);
+        const target = this.pickCamTarget(hero);
         // 有六档目标就不许计策落点抢镜头；只有完全无目标时才由外层使用计策兜底。
         if (target) this.skillCamTimer = 0;
         return target;
@@ -2361,17 +2328,43 @@ export class Scene13WarLayer {
                 const poolPer = Math.max(1, Math.round(side.troops / SPRITE_TROOPS / n));
                 // 每一排里最宽那一队的横宽（px）：列数 × 本兵种列距 + 体宽；队距按它拉开（见下 colSpacing）
                 const LANE_GAP = 120;
+                /** 主将队与同排邻队之间至少留出的空隙（px）：普通队之间是 LANE_GAP，主将队左右各占一半，取一半即可看起来一样空 */
+                const CMD_GAP = LANE_GAP / 2;
                 const cellOf = (idx: number) => idx >= 9
                     ? COMMANDER_CELL[mode]
                     : DE_FORMATION_LAYOUT
                         ? (this.deFormationCells(lanes2, mode)[idx] ?? LAYOUT[mode][idx])
                         : LAYOUT[mode][idx];
+                /** 一队列阵时的横宽（px）：(列数-1) × 本兵种列距 + 两侧半径 */
+                const laneWidthOf = (key: string) => (marchFilesOf(key) - 1) * marchSpacingOf(key) + 2 * this.radiusOf(key);
                 const rowWidth = new Map<number, number>();
                 lanes2.forEach((lane, idx) => {
-                    const w = (marchFilesOf(lane.key) - 1) * marchSpacingOf(lane.key) + 2 * this.radiusOf(lane.key);
+                    const w = laneWidthOf(lane.key);
                     const r = cellOf(idx).row;
                     rowWidth.set(r, Math.max(rowWidth.get(r) ?? 0, w));
                 });
+                // 🔴 [2026-10-27 主人报「双方各十队，主将队总是和其他队重叠，请拉开每队之间的间距」]
+                //    根因：主将队（第 10 口）按 COMMANDER_CELL 插在**同一排两队正中间**（col 是半数，如三角 2+3+4 的
+                //    col 0.5），而队距 colSpacing 是按「中心距」给普通队的 ⇒ 主将队到左右邻队的中心距只有**半个队距**
+                //    （356÷2=178px），两边各占约 118px 横宽，必然压上去 58px。
+                //    这里给主将队所在那一排单独定队距：要求 中心距(=|Δcol|×队距) ≥ 两边各半宽 + CMD_GAP，
+                //    即 队距 ≥ (主将队宽 + 邻队宽)/2 ÷ |Δcol| + CMD_GAP÷|Δcol|。同排的普通队跟着一起拉开，仍以主将队居中。
+                const rowSpacing = new Map<number, number>();
+                for (const [row, w] of rowWidth) rowSpacing.set(row, Math.max(COL_SPACING, w + LANE_GAP));
+                const cmdLane = lanes2[9];
+                if (cmdLane) {
+                    const cmdCell = COMMANDER_CELL[mode];
+                    const cmdW = laneWidthOf(cmdLane.key);
+                    lanes2.forEach((lane, idx) => {
+                        if (idx >= 9) return;
+                        const cell = cellOf(idx);
+                        if (cell.row !== cmdCell.row) return;
+                        const dCol = Math.abs(cell.col - cmdCell.col);
+                        if (dCol <= 0) return;   // 同列（方阵主将队独占一排）：纵向另有排距，不用横向拉
+                        const need = ((cmdW + laneWidthOf(lane.key)) / 2 + CMD_GAP) / dCol;
+                        rowSpacing.set(cell.row, Math.max(rowSpacing.get(cell.row) ?? COL_SPACING, need));
+                    });
+                }
                 lanes2.forEach((lane, idx) => {
                     const key = lane.key;
                     this.ensureType(key, side.f);
@@ -2391,7 +2384,9 @@ export class Scene13WarLayer {
                         // 🔴 [2026-10-20 主人令「每队50人，正好5*10，怎么阵型不对呢？」→ 选方案一]
                         //    原固定 300px，而一队 10 列横宽约 240px（战车 9 列约 400px）⇒ 同排相邻两队只空 60px、甚至压住，
                         //    看着连成一整条长线。改为：同排最宽那队的实际横宽 + LANE_GAP 空隙（不小于原 300）。
-                        const colSpacing = Math.max(COL_SPACING, (rowWidth.get(cell.row) ?? 0) + LANE_GAP);
+                        // 该排队距：普通队按「最宽队横宽 + LANE_GAP」，主将队那排另按上面的主将间隙要求拉宽（见 rowSpacing）
+                        const colSpacing = rowSpacing.get(cell.row)
+                            ?? Math.max(COL_SPACING, (rowWidth.get(cell.row) ?? 0) + LANE_GAP);
                         let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
                         x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
@@ -8280,7 +8275,7 @@ export class Scene13WarLayer {
             let targetFocusX = 0, targetFocusY = 0, count = 0;
             if (this.heroMan) {
                 // 每帧先仲裁六档目标，即使手动停留也继续处理阵亡顺延与玩家交战打断。
-                const tm = this.resolveHeroCamTarget(this.heroMan, dt);
+                const tm = this.resolveHeroCamTarget(this.heroMan);
                 if (tm) { targetFocusX = tm.x; targetFocusY = tm.y; count = 1; }
             }
             if (this.userInteractingTimer > 0) {

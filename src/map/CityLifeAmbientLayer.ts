@@ -110,6 +110,7 @@ interface CityLifeActor {
     slotIdx: number;           // 0..N-1
     winterActive: boolean;     // 冬季是否仍出勤
     viewAlpha: number;         // 视口可见度透明度 0..1
+    retiring?: boolean;        // 年度轮回已换新布局：本角色渐隐退场（不再随视口、战火更新）
     peaceAlpha: number;        // 和平期季节出勤透明度 0..1
     actionAlpha: number;       // 换季动作切换淡入淡出系数 0..1
     damageBlend: number;       // 战火破坏渐变系数：0=和平劳作，1=战火被毁废墟/尸体/沉船
@@ -456,6 +457,8 @@ export class CityLifeAmbientLayer {
     private clearedWhileHidden = false;
     private layerVisible = true;
     private layoutDirty = false;
+    /** 当前布局所属的游戏年份；年份一变就整体轮回 */
+    private layoutYear: number | null = null;
     private lastLayoutRebuildMs = 0;
 
     private static readonly ASSET_BUDGET_BYTES = 64 * 1024 * 1024;
@@ -837,6 +840,9 @@ export class CityLifeAmbientLayer {
         let list = this.actorsByCity.get(city.id);
         if (list) return list;
         list = [];
+        // 🔴 年度轮回：哪些据点有生产方式、放几组、落在哪、养什么，全按「据点＋年份」取随机数；
+        //    年份一变整套重排（update 里 rotateYearLayout），旧的淡出、新的淡入。
+        const yk = `${city.id}@${this.getYear()}`;
         this.plotElevPending = false;
 
         const cityType = String(city.type);
@@ -847,11 +853,11 @@ export class CityLifeAmbientLayer {
                     : cityType === 'stockade' ? 1
                         : 0;
         // 同一据点永远保持同一显示结果与套数，不因视口移动、陆海瓦片重排而重掷。
-        if (isPass || maxSlots === 0 || strHash01(city.id, 501) >= 0.5) {
+        if (isPass || maxSlots === 0 || strHash01(yk, 501) >= 0.5) {
             this.actorsByCity.set(city.id, list);
             return list;
         }
-        const totalSlots = maxSlots === 1 ? 1 : 1 + Math.floor(strHash01(city.id, 502) * maxSlots);
+        const totalSlots = maxSlots === 1 ? 1 : 1 + Math.floor(strHash01(yk, 502) * maxSlots);
 
         const style: BuildingStyle = city.buildingStyle ?? 'CENTRAL';
         const cat = this.resolveCityCategory(city);
@@ -889,9 +895,9 @@ export class CityLifeAmbientLayer {
 
         const newPlots: { x: number; y: number }[] = [];   // 本据点这次新放的地皮（提交时才进全局登记）
         for (let i = 0; i < totalSlots; i++) {
-            const h2 = strHash01(city.id, i * 17 + 2);
-            const h3 = strHash01(city.id, i * 17 + 3);
-            const h4 = strHash01(city.id, i * 17 + 4);
+            const h2 = strHash01(yk, i * 17 + 2);
+            const h3 = strHash01(yk, i * 17 + 3);
+            const h4 = strHash01(yk, i * 17 + 4);
 
             const baseAngle = (i / totalSlots) * Math.PI * 2 + (h3 - 0.5) * 0.7;
 
@@ -901,18 +907,18 @@ export class CityLifeAmbientLayer {
             if (wantsSeaFishing) {
                 const seaSpot = this.findSeaFishingSpot(cLat, cLng, baseAngle, h4);
                 if (seaSpot) {
-                    const facing = Math.floor(strHash01(city.id, i * 17 + 5) * 8) % 8;
-                    const phase = Math.floor(strHash01(city.id, i * 17 + 6) * 1000);
-                    const damageVariant = Math.floor(strHash01(city.id, i * 17 + 7) * 100);
+                    const facing = Math.floor(strHash01(yk, i * 17 + 5) * 8) % 8;
+                    const phase = Math.floor(strHash01(yk, i * 17 + 6) * 1000);
+                    const damageVariant = Math.floor(strHash01(yk, i * 17 + 7) * 100);
                     const fishResource = fishPool[Math.floor(h2 * fishPool.length) % fishPool.length];
                     const winterActive = !isColdWinter || i === 0;
                     // 船坞只随机出现在部分渔业组合；样式跟随文化，位置固定在近岸港湾。
-                    const buildingResource = strHash01(city.id, i * 17 + 301) < 0.38
+                    const buildingResource = strHash01(yk, i * 17 + 301) < 0.38
                         ? `${deStyle && deStyle !== 'YURT' ? deStyle : 'WEST'}_DOCK_AGE2`
                         : undefined;
 
                     list.push({
-                        id: `${city.id}_life_${i}`,
+                        id: `${yk}_life_${i}`,
                         cityId: city.id,
                         cityPos: { lat: cLat, lng: cLng },
                         isAnimal: false,
@@ -1017,9 +1023,9 @@ export class CityLifeAmbientLayer {
                 lng: cLng + (homePos.lng - cLng) * 0.38,
             };
 
-            const facing = Math.floor(strHash01(city.id, i * 17 + 5) * 8) % 8;
-            const phase = Math.floor(strHash01(city.id, i * 17 + 6) * 1000);
-            const damageVariant = Math.floor(strHash01(city.id, i * 17 + 7) * 100);
+            const facing = Math.floor(strHash01(yk, i * 17 + 5) * 8) % 8;
+            const phase = Math.floor(strHash01(yk, i * 17 + 6) * 1000);
+            const damageVariant = Math.floor(strHash01(yk, i * 17 + 7) * 100);
             const winterActive = !isColdWinter || dir === 'VIL_MALE_LUMBERJACK' || dir === 'VIL_MALE_HUNTER' || i === 0;
 
             let groundResource: string | undefined;
@@ -1037,8 +1043,8 @@ export class CityLifeAmbientLayer {
 
             // 建筑与组合绑定，使用据点与槽位的固定哈希：重排地图不会随机闪换。
             let buildingResource: string | undefined;
-            const buildingRoll = strHash01(city.id, i * 17 + 301);
-            const buildingVariant = Math.floor(strHash01(city.id, i * 17 + 302) * 4);
+            const buildingRoll = strHash01(yk, i * 17 + 301);
+            const buildingVariant = Math.floor(strHash01(yk, i * 17 + 302) * 4);
             if (buildingRoll < (isFarmer ? 0.55 : 0.38)) {
                 if (isFarmer) {
                     if (buildingVariant < 2) {
@@ -1061,7 +1067,7 @@ export class CityLifeAmbientLayer {
             }
 
             list.push({
-                id: `${city.id}_life_${i}`,
+                id: `${yk}_life_${i}`,
                 cityId: city.id,
                 cityPos: { lat: cLat, lng: cLng },
                 isAnimal: false,
@@ -1540,6 +1546,16 @@ export class CityLifeAmbientLayer {
     }
 
     private update(dt: number): void {
+        const year = this.getYear();
+        if (this.layoutYear === null) {
+            this.layoutYear = year;
+        } else if (year !== this.layoutYear) {
+            // 年度轮回：旧角色标记退场渐隐，布局缓存与地皮登记清空，下一帧各据点按新年份重抽
+            this.layoutYear = year;
+            for (const a of this.activeActors.values()) a.retiring = true;
+            this.actorsByCity.clear();
+            this.placedPlots = [];
+        }
         if (this.layoutDirty && this.nowMs - this.lastLayoutRebuildMs >= 3000) {
             this.layoutDirty = false;
             this.lastLayoutRebuildMs = this.nowMs;
@@ -1638,6 +1654,11 @@ export class CityLifeAmbientLayer {
         }
 
         for (const [id, actor] of this.activeActors.entries()) {
+            if (actor.retiring) {
+                actor.viewAlpha -= dt / PRODUCTION_FADE_IN_SEC;
+                if (actor.viewAlpha <= 0) this.activeActors.delete(id);
+                continue;
+            }
             const inView = inViewActorIds.has(id);
             if (!inView) {
                 this.activeActors.delete(id);

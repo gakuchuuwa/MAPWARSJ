@@ -8476,6 +8476,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 10,
             "offsetY": -9
+        },
+        "/assets/BYZANTINE/bfe3_92.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/MAGYAR/gepids_cunimund.png": {
+            "scale": 0.88,
+            "offsetX": 8,
+            "offsetY": -13
         }
     },
     "folderGuides": {
