@@ -87,7 +87,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   puluowangsi: '普罗',
   lunbadi: '伦巴',
 'donggete': '东哥',
-  xigete: '西哥',
+  xigete: '哥特',
   alagong: '阿拉',
   aboerleiya: '阿尔',   // 阿尔博雷亚（撒丁判官国）
 

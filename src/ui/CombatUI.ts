@@ -4756,7 +4756,6 @@ export class CombatUI {
         } else {
             cutIn.textContent = displayName;
         }
-        if (!viewer) this.pulsePortraitForSkill(side);
         const isAtt = side === 'attacker';
         const coreGlow = isAtt ? 'rgba(255, 100, 0, 1)' : 'rgba(0, 150, 255, 1)';
         const wideGlow = isAtt ? 'rgba(255, 50, 0, 0.8)' : 'rgba(0, 100, 255, 0.8)';

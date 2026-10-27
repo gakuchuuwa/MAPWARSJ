@@ -5679,7 +5679,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/DANES/danmai_abusalong.png": {
             "scale": 0.98,
-            "offsetX": 0,
+            "offsetX": 22,
             "offsetY": 10
         },
         "/assets/GERMANIC/ruidian_si_biergeyaer.png": {
@@ -8523,9 +8523,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/ORIE/gen_sayf_al_dawla.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": -1
+            "scale": 1.02,
+            "offsetX": 8,
+            "offsetY": -5
         },
         "/assets/NORTHEAST/bohai_dayinzhuan.png": {
             "scale": 1.1,
@@ -8566,6 +8566,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 16,
             "offsetY": 1
+        },
+        "/assets/BYZANTINE/bfe_nikephoros_ii.png": {
+            "scale": 1.14,
+            "offsetX": 11,
+            "offsetY": 24
+        },
+        "/assets/LATIN/gen_alaric.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/ROMA/bfe3_91.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 27
+        },
+        "/assets/GERMANIC/baojian_herman.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -34
+        },
+        "/assets/SLAVIC/luosi_dmitry_aleksandrovich.png": {
+            "scale": 0.98,
+            "offsetX": 5,
+            "offsetY": -8
         }
     },
     "folderGuides": {

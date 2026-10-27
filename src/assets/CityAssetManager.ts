@@ -790,7 +790,7 @@ export class CityAssetManager {
         'weijing_york': '约维',
         'xideweina': '波洛',
         'xierhe': '锡尔',
-        'xigete': '西哥',
+        'xigete': '哥特',
         'xila': '雅典',
         'xixiliwangguo': '西西',
         'yasuer': '亚速',

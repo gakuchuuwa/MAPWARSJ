@@ -170,6 +170,7 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     aboerleiya: 'ARBOREA_TREE',   // 阿尔博雷亚·拔根树（马里亚诺四世1353年国徽）
     saipulusi: 'CYPRUS_LUSIGNAN',   // 塞浦路斯·吕西尼昂横条底戴冠跃狮（14世纪钱币与纹章书）
     donggete: 'THEODORIC_MONOGRAM',   // 东哥特·狄奥多里克王室花押（493—526年银币）
+    xigete: 'VISIGOTH_VOTIVE_CROSS',   // 西哥特·瓜拉萨宝藏王室还愿十字架（7世纪托莱多出土，Cruz visigoda）
     nasier: 'NASRID_SHIELD',   // 纳斯尔·盾与铭文斜带（阿尔罕布拉宫及13—15世纪器物）
     kaliya: 'CARIA_LABRYS',   // 卡里亚·双刃斧（赫卡托姆尼德王朝宙斯·拉布劳恩多斯钱币）
     sesali: 'THESSALY_HORSE',   // 色萨利·马与狮首喷泉（斐莱城邦前480—400年钱币，非伊阿宋个人徽章）
