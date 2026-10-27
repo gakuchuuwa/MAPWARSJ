@@ -98,6 +98,7 @@ interface CityLifeActor {
     groundResourceLib?: 'SUCAI_RESOURCE' | 'SUCAI_NATURE';
     hasFarm?: boolean;         // 农夫组合带四季农田（旱田或水田）
     seasonalPlot?: SeasonalPlotKind; // 四季地皮套系：旱作农田 / 水稻田 / 游牧草场
+    plotCells?: number[];            // 地皮实际铺了哪几块（PLOT_CELL_OFFSETS 下标，1~4 块）；只记在组合主人身上
     buildingResource?: string; // 组合内随机建筑：磨坊／牧栏／毡帐／小屋等
     lib: 'SUCAI' | 'SUCAI_ANIMAL';
     dir: string;
@@ -142,16 +143,26 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
     rice_farm: RFARM_BY_SEASON,
     pasture: PASTURE_BY_SEASON,
 };
-/** 草场拆成 2×2 斜角四块（zoom 9 像素，相对四块中心）：0 北、1 西、2 东、3 南各放一只牲畜，牧羊人站在南块陪那一只。 */
-const PASTURE_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -23], [-35, 0], [35, 0], [0, 23]];
-const PASTURE_SHEPHERD_CELL = 3;
+/** 农田 / 水田 / 草场最多 2×2 斜角四块（zoom 9 像素，相对四块中心）：0 北、1 西、2 东、3 南；平地够几块铺几块。
+ *  草场一块一只牲畜、牧羊人站南块；农田一块一个农夫，南块那个是组合主人（建筑跟他走）。 */
+const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -23], [-35, 0], [35, 0], [0, 23]];
+const PLOT_LEADER_CELL = 3;
 /** 牲畜在自己那块草场内来回的半程（zoom 9 像素），不出本块 */
 const PASTURE_WANDER_PX = 9;
+/** 农田 / 水田 / 草场整块地皮内允许的最大高差（米）；超过就是山地，不铺 */
+const PLOT_MAX_RELIEF_M = 250;
+/** 地皮选址最远半径（经度度数；纬度方向再 ×0.85 ≈ 0.9° ≈ 100 km） */
+const PLOT_SEARCH_MAX_DEG = 1.05;
+/** 两组地皮落点的最小间距椭圆半径（zoom 9 像素）：2×2 四块宽约 144、高约 102，外加边侧建筑 */
+const PLOT_KEEPOUT_X = 170;
+const PLOT_KEEPOUT_Y = 120;
 const CULL_MARGIN_DEG = 0.5;
 // 自动乱斗镜头一直跟着正在打的仗，半径过大会让画面里的据点永远处于战火态、看不到民生。
 // 只把战场贴身（约 30 公里）内的据点算进去，被围城本身另由 siegeCityId 判定。
 const COMBAT_HIDE_RADIUS_DEG = 0.3;
 const FADE_TO_DAMAGE_SEC = 1.1;
+/** 生产方式（农田、牧场、猎场、渔场等）出现时的渐显时长（秒） */
+const PRODUCTION_FADE_IN_SEC = 1.5;
 const FADE_RECOVER_PEACE_SEC = 2.4;
 const SEASON_TRANSITION_SEC = 5;
 const HUNT_CYCLE_SEC = 30;
@@ -338,10 +349,15 @@ function strHash01(s: string, salt: number): number {
     return (h >>> 0) / 4294967296;
 }
 
+/**
+ * 地图位移 → DE 八向精灵编号。DE 素材的 8 个方向（对着马 / 渔船 / 村民帧图逐个核过）：
+ * 0 东北 · 1 东 · 2 东南 · 3 南（正对镜头）· 4 西南 · 5 西 · 6 西北 · 7 北（背对镜头）。
+ * 与战术战场 Scene13WarLayer.dir8 同一套。纬度向北为屏幕上方、经度向东为屏幕右方。
+ * 🔴 旧版把 0 当成南，整体偏 135°：往东走脸朝西北，猎人搬肉时看起来倒着走。
+ */
 function dirFromDelta(dLat: number, dLng: number): number {
-    const deg = ((Math.atan2(dLat, dLng) * 180) / Math.PI + 360) % 360;
-    const idx = Math.round(((270 - deg + 360) % 360) / 45) % 8;
-    return idx;
+    const deg = ((Math.atan2(dLat, dLng) * 180) / Math.PI + 360) % 360;   // 0 东、90 北
+    return (((1 - Math.round(deg / 45)) % 8) + 8) % 8;
 }
 
 /** 根据渔猎民族文化与纬度返回四季对应的树种组合 [春, 夏, 秋, 冬] 与伴生灌木 */
@@ -428,6 +444,10 @@ export class CityLifeAmbientLayer {
     private assets = new Map<string, SpriteSheetAsset>();
     private stripAssets = new Map<string, StripStaticAsset>();
     private actorsByCity = new Map<string, CityLifeActor[]>();
+    /** 本次生成某据点时，有地皮因高程瓦片未到而被拒（见 isPlotCellFlatLand） */
+    private plotElevPending = false;
+    /** 已定案的所有地皮（农田 / 水田 / 草场）的 zoom 9 像素落点，新地皮不许与之重叠 */
+    private placedPlots: { x: number; y: number }[] = [];
     private forestByCity = new Map<string, CityForestProp[]>();
     private categoryByCity = new Map<string, LivelihoodCategory>();
     private activeActors = new Map<string, CityLifeActor>();
@@ -621,32 +641,71 @@ export class CityLifeAmbientLayer {
         return resolved;
     }
 
-    /** 农田按贴图实际占地验收：中心、内圈和外圈都不能进入海域。 */
     /**
-     * 农田 / 水田 / 草场整块地皮都在陆上：按实际画出来的菱形（草场是 2×2 四块）在 zoom 9 像素里撒点逐个查海。
-     * 旧的椭圆一圈采样只量一块，草场拆四块后外侧三块都没查到，会伸进海里。
+     * 地皮选址：返回 pos 处能铺的地皮块号。农田 / 水田 / 草场都最多 2×2 四块，
+     * 主人所在的南块必须能铺，其余三块各自判、能铺几块铺几块（平原多半四块，山谷常常只剩一两块）。
      */
-    private isPlotOnLand(pos: Pt, kind: SeasonalPlotKind): boolean {
+    private plotCellsAt(pos: Pt): number[] {
         const p = this.map.project([pos.lat, pos.lng], 9);
-        const s = PASTURE_CELL_OFFSETS[PASTURE_SHEPHERD_CELL];
-        const cells = kind === 'pasture'
-            ? PASTURE_CELL_OFFSETS.map(([ox, oy]) => [ox - s[0], oy - s[1]] as const)
-            : [[0, 0] as const];
+        const s = PLOT_CELL_OFFSETS[PLOT_LEADER_CELL];
+        if (!this.isPlotCellFlatLand(p.x, p.y)) return [];
+        const cells: number[] = [];
+        PLOT_CELL_OFFSETS.forEach(([ox, oy], k) => {
+            if (k === PLOT_LEADER_CELL || this.isPlotCellFlatLand(p.x + ox - s[0], p.y + oy - s[1])) cells.push(k);
+        });
+        return cells;
+    }
+
+    /**
+     * 一块地皮（zoom 9 像素中心 x,y）按画出来的菱形撒点：不碰海、不碰湖河、块内高差不超过阈值。
+     * 高差超了就是压在山脊上，会把山形盖成一片平绿。
+     */
+    private plotPx(pos: Pt): { x: number; y: number } {
+        const p = this.map.project([pos.lat, pos.lng], 9);
+        return { x: p.x, y: p.y };
+    }
+
+    /**
+     * 整组地皮（2×2 四块 + 外侧建筑）占约 ±150×±100 个 zoom 9 像素；两组落点落在对方这个椭圆内就算重叠。
+     * 同时对照全局已定案的地皮和本据点刚放的地皮。
+     */
+    private plotOverlaps(pos: Pt, extra: { x: number; y: number }[]): boolean {
+        const q = this.plotPx(pos);
+        for (const list of [this.placedPlots, extra]) {
+            for (const o of list) {
+                const dx = (q.x - o.x) / PLOT_KEEPOUT_X;
+                const dy = (q.y - o.y) / PLOT_KEEPOUT_Y;
+                if (dx * dx + dy * dy < 1) return true;
+            }
+        }
+        return false;
+    }
+
+    private isPlotCellFlatLand(x: number, y: number): boolean {
         // 128×96 贴图 0.58 缩放后的半宽 / 半高，绘制时整体下移 4 像素
         const hw = 128 * 0.58 / 2;
         const hh = 96 * 0.58 / 2;
-        for (const [cx, cy] of cells) {
-            for (let gx = -2; gx <= 2; gx++) {
-                for (let gy = -2; gy <= 2; gy++) {
-                    if (Math.abs(gx) + Math.abs(gy) > 2) continue;
-                    const ll = this.map.unproject([p.x + cx + gx / 2 * hw, p.y + cy + 4 + gy / 2 * hh], 9);
-                    if (this.isSea({ lat: ll.lat, lng: ll.lng })) return false;
-                    // 内陆湖、河也不许压：掩膜说是水就算
-                    if (LandSeaSystem.getWaterSampler().isWaterSync(ll.lat, ll.lng) === true) return false;
+        let minElev = Infinity;
+        let maxElev = -Infinity;
+        for (let gx = -2; gx <= 2; gx++) {
+            for (let gy = -2; gy <= 2; gy++) {
+                if (Math.abs(gx) + Math.abs(gy) > 2) continue;
+                const ll = this.map.unproject([x + gx / 2 * hw, y + 4 + gy / 2 * hh], 9);
+                if (this.isSea({ lat: ll.lat, lng: ll.lng })) return false;
+                // 内陆湖、河也不许压：掩膜说是水就算
+                if (LandSeaSystem.getWaterSampler().isWaterSync(ll.lat, ll.lng) === true) return false;
+                const elev = LandSeaSystem.getElevationSync(ll.lat, ll.lng);
+                if (elev === null) {
+                    // 高程没到：本据点这次先不定案（不入缓存），拉到瓦片再判，免得「不知道」被当成平地
+                    LandSeaSystem.getSampler().scheduleFetch(ll.lat, ll.lng);
+                    this.plotElevPending = true;
+                    return false;
                 }
+                if (elev < minElev) minElev = elev;
+                if (elev > maxElev) maxElev = elev;
             }
         }
-        return true;
+        return maxElev - minElev <= PLOT_MAX_RELIEF_M;
     }
 
     private isFarmFullyOnLand(pos: Pt): boolean {
@@ -778,6 +837,7 @@ export class CityLifeAmbientLayer {
         let list = this.actorsByCity.get(city.id);
         if (list) return list;
         list = [];
+        this.plotElevPending = false;
 
         const cityType = String(city.type);
         const isPass = cityType === 'pass' || cityType === 'Pass';
@@ -827,6 +887,7 @@ export class CityLifeAmbientLayer {
         // 树林只跟随已经固定为渔猎／伐木的据点，其他文化即使靠近山地也不临时追加。
         const forestNodes = landCat === 'forest_hunting' || landCat === 'forest_logging' ? this.getOrCreateCityForest(city) : [];
 
+        const newPlots: { x: number; y: number }[] = [];   // 本据点这次新放的地皮（提交时才进全局登记）
         for (let i = 0; i < totalSlots; i++) {
             const h2 = strHash01(city.id, i * 17 + 2);
             const h3 = strHash01(city.id, i * 17 + 3);
@@ -894,6 +955,19 @@ export class CityLifeAmbientLayer {
             const plotKind: SeasonalPlotKind | undefined = isFarmer ? (landCat === 'farming_rice' ? 'rice_farm' : 'dry_farm') : isPastoral ? 'pasture' : undefined;
 
             let homePos: Pt | null = null;
+            let plotCells: number[] | undefined;
+            // 有地皮的组合：在所有候选点里取能铺块数最多的；满四块即可提前停。
+            const maxCells = PLOT_CELL_OFFSETS.length;
+            const tryPlot = (cand: Pt): boolean => {
+                // 平地少的地方（沙漠绿洲、山谷）各组会抢同一块：与已放好的地皮重叠的候选一律作废，继续往外找
+                if (this.plotOverlaps(cand, newPlots)) return false;
+                const cells = this.plotCellsAt(cand);
+                if (cells.length > (plotCells?.length ?? 0)) {
+                    homePos = cand;
+                    plotCells = cells;
+                }
+                return cells.length >= maxCells;
+            };
             // 林间工种围绕树林；农田、猎场与牧场都放到外围，避免压住据点。
             if (!isFarmer && forestNodes.length > 0) {
                 const fn = forestNodes[(i * 2) % forestNodes.length];
@@ -901,30 +975,38 @@ export class CityLifeAmbientLayer {
                     lat: fn.pos.lat + (h3 - 0.5) * 0.022,
                     lng: fn.pos.lng + (h4 - 0.5) * 0.026,
                 };
-                const validLand = isPastoral ? this.isPlotOnLand(cand, 'pasture')
-                    : isHunter ? this.isFarmFullyOnLand(cand) : !this.isSea(cand);
-                if (validLand) {
+                if (isPastoral) {
+                    tryPlot(cand);
+                } else if (isHunter ? this.isFarmFullyOnLand(cand) : !this.isSea(cand)) {
                     homePos = cand;
                 }
             }
 
-            if (!homePos) {
+            if (!homePos || (plotKind && (plotCells?.length ?? 0) < maxCells)) {
                 const distDeg = isPastoral || isHunter ? 0.38 + h4 * 0.10 : isFarmer ? 0.30 + h4 * 0.10 : 0.14 + h4 * 0.11;
-                for (let attempt = 0; attempt < 8; attempt++) {
+                // 有地皮的组合要找平地：由近到远八方向逐圈找，最远到据点周围约 100 km
+                // （据点间距 >40 km 且只有一半据点放民生，100 km 内找平地不会挤到别家）。
+                const rings = plotKind
+                    ? [...new Set([distDeg * 0.75, distDeg, distDeg * 1.3, 0.75, 0.9, PLOT_SEARCH_MAX_DEG])]
+                        .filter((d) => d <= PLOT_SEARCH_MAX_DEG).sort((a, b) => a - b)
+                    : [distDeg];
+                for (let attempt = 0; attempt < 8 * rings.length; attempt++) {
                     const ang = baseAngle + attempt * (Math.PI / 4);
+                    const d = rings[Math.floor(attempt / 8)];
                     const cand = {
-                        lat: cLat + Math.sin(ang) * distDeg * 0.85,
-                        lng: cLng + Math.cos(ang) * distDeg,
+                        lat: cLat + Math.sin(ang) * d * 0.85,
+                        lng: cLng + Math.cos(ang) * d,
                     };
-                    const validLand = plotKind ? this.isPlotOnLand(cand, plotKind)
-                        : isHunter ? this.isFarmFullyOnLand(cand) : !this.isSea(cand);
-                    if (validLand) {
+                    if (plotKind) {
+                        if (tryPlot(cand)) break;
+                    } else if (isHunter ? this.isFarmFullyOnLand(cand) : !this.isSea(cand)) {
                         homePos = cand;
                         break;
                     }
                 }
             }
             if (!homePos) continue;
+            if (plotKind) newPlots.push(this.plotPx(homePos));
 
             // 猎人只在猎场旁短距离搬运，交接点保持在已验收的陆上范围内，不跨海回城。
             const gatePos = isHunter ? {
@@ -989,6 +1071,7 @@ export class CityLifeAmbientLayer {
                 groundResourceLib,
                 hasFarm: isFarmer,
                 seasonalPlot: plotKind,
+                plotCells,
                 buildingResource,
                 lib: 'SUCAI',
                 dir,
@@ -1012,6 +1095,30 @@ export class CityLifeAmbientLayer {
                 displayedAction: 'work',
                 desiredAction: 'work',
             });
+
+            // 农田一块一个农夫：南块是组合主人（地皮、建筑都记在他身上），其余几块各补一个只种地的农夫。
+            if (isFarmer && plotCells) {
+                const owner = list[list.length - 1];
+                for (const k of plotCells) {
+                    if (k === PLOT_LEADER_CELL) continue;
+                    const pos = this.plotCellPos(owner.homePos, k, 0, 0);
+                    list.push({
+                        ...owner,
+                        id: `${owner.id}_field_${k}`,
+                        groundResource: undefined,
+                        groundResourceLib: undefined,
+                        hasFarm: false,
+                        seasonalPlot: undefined,
+                        plotCells: undefined,
+                        buildingResource: undefined,
+                        homePos: pos,
+                        gatePos: { ...pos },
+                        lastDrawPos: { ...pos },
+                        facing: (facing + k * 3) % 8,
+                        phase: phase + k * 137,
+                    });
+                }
+            }
         }
 
         if (cat === 'maritime_fishing' && list.length === 0) {
@@ -1026,22 +1133,22 @@ export class CityLifeAmbientLayer {
         const groupLeaders = list.filter((actor) => actor.dir === 'VIL_MALE_SHEPHERD' || actor.dir === 'VIL_MALE_HUNTER');
         for (const leader of groupLeaders) {
             const isShepherd = leader.dir === 'VIL_MALE_SHEPHERD';
-            // 牧羊组合四块草场一块一只：北、西、东各一只，牧羊人所在的南块也放一只陪着他。
-            const groupSize = isShepherd ? PASTURE_CELL_OFFSETS.length : 1;
+            // 牧羊组合草场实际铺了几块就放几只，一块一只；牧羊人所在的南块也放一只陪着他。
+            const cellList = isShepherd ? (leader.plotCells ?? [PLOT_LEADER_CELL]) : [0];
             const pastoralPool = PASTORAL_ANIMAL_POOLS[style] ?? LIVELIHOOD_SPECS[cat].animals;
             const pastoralOffset = Math.floor(strHash01(leader.id, 206) * pastoralPool.length) % pastoralPool.length;
-            for (let j = 0; j < groupSize; j++) {
+            for (const j of cellList) {
                 let homePos: Pt | null = null;
                 let gatePos: Pt | null = null;
                 const baseAngle = strHash01(leader.id, j * 23 + 201) * Math.PI * 2;
                 const distDeg = 0.022 + strHash01(leader.id, j * 23 + 202) * 0.010;
                 // 牧羊组合：每只牲畜各占一块草场，只在本块中心两侧小范围往返，不再穿过同一个中心叠在一起。
                 // 牧羊人那块：牲畜站在他身旁偏东北，走动幅度减半，不踩到人。
-                const withShepherd = j === PASTURE_SHEPHERD_CELL;
+                const withShepherd = j === PLOT_LEADER_CELL;
                 const cx = withShepherd ? 16 : 0;
                 const cy = withShepherd ? -6 : 0;
                 const wander = withShepherd ? PASTURE_WANDER_PX * 0.5 : PASTURE_WANDER_PX;
-                const center = isShepherd ? this.pastureCellPos(leader.homePos, j, cx, cy) : leader.homePos;
+                const center = isShepherd ? this.plotCellPos(leader.homePos, j, cx, cy) : leader.homePos;
                 for (let attempt = 0; attempt < 8; attempt++) {
                     const ang = baseAngle + attempt * (Math.PI / 4);
                     let a: Pt;
@@ -1049,8 +1156,8 @@ export class CityLifeAmbientLayer {
                     if (isShepherd) {
                         const wx = Math.cos(ang) * wander;
                         const wy = Math.sin(ang) * wander * 0.6;
-                        a = this.pastureCellPos(leader.homePos, j, cx + wx, cy + wy);
-                        b = this.pastureCellPos(leader.homePos, j, cx - wx, cy - wy);
+                        a = this.plotCellPos(leader.homePos, j, cx + wx, cy + wy);
+                        b = this.plotCellPos(leader.homePos, j, cx - wx, cy - wy);
                     } else {
                         const dLat = Math.sin(ang) * distDeg;
                         const dLng = Math.cos(ang) * distDeg;
@@ -1123,6 +1230,10 @@ export class CityLifeAmbientLayer {
             this.activeActors.set(actor.id, actor);
         }
 
+        // 有地皮因高程未到被拒：整城这次不定案、不入缓存，下一帧瓦片到了重排，免得地皮永久缺失
+        if (this.plotElevPending) return [];
+
+        this.placedPlots.push(...newPlots);
         this.actorsByCity.set(city.id, list);
         return list;
     }
@@ -1142,10 +1253,10 @@ export class CityLifeAmbientLayer {
     }
 
     /** 马与骆驼停驻吃草和间歇走动共用同一套行为，其他牲畜保持原样。 */
-    /** 牧羊人脚下（南块）为基准，求第 cell 块草场中心再偏 (dx,dy) zoom 9 像素处的经纬度。 */
-    private pastureCellPos(shepherdHome: Pt, cell: number, dx: number, dy: number): Pt {
-        const o = PASTURE_CELL_OFFSETS[cell];
-        const s = PASTURE_CELL_OFFSETS[PASTURE_SHEPHERD_CELL];
+    /** 组合主人脚下（南块）为基准，求第 cell 块地皮中心再偏 (dx,dy) zoom 9 像素处的经纬度。 */
+    private plotCellPos(shepherdHome: Pt, cell: number, dx: number, dy: number): Pt {
+        const o = PLOT_CELL_OFFSETS[cell];
+        const s = PLOT_CELL_OFFSETS[PLOT_LEADER_CELL];
         const p = this.map.project([shepherdHome.lat, shepherdHome.lng], 9);
         const ll = this.map.unproject([p.x + o[0] - s[0] + dx, p.y + o[1] - s[1] + dy], 9);
         return { lat: ll.lat, lng: ll.lng };
@@ -1433,6 +1544,7 @@ export class CityLifeAmbientLayer {
             this.layoutDirty = false;
             this.lastLayoutRebuildMs = this.nowMs;
             this.actorsByCity.clear();
+            this.placedPlots = [];   // 地皮登记随布局一起重来，否则旧落点会挡住自己的新落点
             this.forestByCity.clear();
         }
 
@@ -1480,6 +1592,7 @@ export class CityLifeAmbientLayer {
             for (const actor of actors) {
                 inViewActorIds.add(actor.id);
                 if (!this.activeActors.has(actor.id)) {
+                    actor.viewAlpha = 0;   // 新出现的生产组合（地皮、农夫、牲畜、建筑、树林）从全透明渐显
                     this.activeActors.set(actor.id, actor);
                 }
                 const seasonalAction = this.resolveSeasonalAction(actor, actionSeason);
@@ -1533,7 +1646,7 @@ export class CityLifeAmbientLayer {
 
             const inCombat = this.endangeredCities.has(actor.cityId);
 
-            actor.viewAlpha = 1;
+            actor.viewAlpha = Math.min(1, actor.viewAlpha + dt / PRODUCTION_FADE_IN_SEC);
             if (actor.desiredAction !== actor.displayedAction) {
                 if (this.usesIdleWalkCycle(actor) || actor.dir === 'VIL_MALE_HUNTER') {
                     // 吃草、迈步与猎捕工序都是行为切换，直接换动作，不做五秒半透明交叉渐隐。
@@ -1821,11 +1934,10 @@ export class CityLifeAmbientLayer {
             if (peaceFinalAlpha <= 0.01) continue;
             const groupPt = this.map.latLngToContainerPoint([actor.homePos.lat, actor.homePos.lng]);
             const plotBySeason = SEASONAL_PLOT_BY_KIND[actor.seasonalPlot];
-            // 草场铺成 2×2 四块（牧羊人在南块），农田仍是一块。
-            const s = PASTURE_CELL_OFFSETS[PASTURE_SHEPHERD_CELL];
-            const cells = actor.seasonalPlot === 'pasture'
-                ? PASTURE_CELL_OFFSETS.map(([ox, oy]) => [ox - s[0], oy - s[1]] as const)
-                : [[0, 0] as const];
+            // 农田 / 水田 / 草场都按选址时判出的块数铺 1~4 块（主人在南块）。
+            const s = PLOT_CELL_OFFSETS[PLOT_LEADER_CELL];
+            const cells = (actor.plotCells ?? [PLOT_LEADER_CELL])
+                .map((k) => [PLOT_CELL_OFFSETS[k][0] - s[0], PLOT_CELL_OFFSETS[k][1] - s[1]] as const);
             for (const [ox, oy] of cells) {
                 const px = groupPt.x + ox * zoomFactor;
                 const py = groupPt.y + (oy + 4) * zoomFactor;
@@ -1869,6 +1981,14 @@ export class CityLifeAmbientLayer {
                         ? actor.gatePos.lng - actor.homePos.lng
                         : actor.homePos.lng - actor.gatePos.lng;
                     facing = dirFromDelta(dLat, dLng);
+                } else if (hunterBehavior) {
+                    // 猎人原地射箭 / 等倒地 / 剖肉：面朝自己的猎物（DE 里猎人始终对着猎物），不再随机转向
+                    const prey = this.activeActors.get(`${actor.id}_prey_0`);
+                    if (prey) {
+                        const dLat = prey.lastDrawPos.lat - actor.homePos.lat;
+                        const dLng = prey.lastDrawPos.lng - actor.homePos.lng;
+                        if (dLat !== 0 || dLng !== 0) facing = dirFromDelta(dLat, dLng);
+                    }
                 } else {
                     const turnOffset = Math.floor((tSec + actor.phase) / 8) % 2;
                     facing = (actor.facing + turnOffset) % 8;
@@ -1914,8 +2034,8 @@ export class CityLifeAmbientLayer {
                             'SUCAI_BUILDING',
                             actor.buildingResource,
                             actor.damageVariant,
-                            // 四块草场东西两块中心在 ±35，牧场棚 / 毡帐挪到草场外侧，不压牲畜
-                            groupPt.x + side * (actor.seasonalPlot === 'pasture' ? 62 : 28) * zoomFactor,
+                            // 四块地皮东西两块中心在 ±35，有地皮的组合把建筑挪到地皮外侧，不压人和牲畜
+                            groupPt.x + side * (actor.seasonalPlot ? 62 : 28) * zoomFactor,
                             groupPt.y - 7 * zoomFactor,
                             0.22 * zoomFactor,
                             peaceFinalAlpha
