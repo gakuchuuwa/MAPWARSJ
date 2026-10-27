@@ -8,6 +8,7 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
+    { id: 'pattani', name: '北大年' },        // 北大年·北大年苏丹国（马来半岛东岸）
     // ── 2026-10-24 环非洲新势力（据点：基尔瓦/蒙巴萨/摩加迪沙/莫桑比克/罗安达/开普敦/亚丁）──
     { id: 'kilwa', name: '基尔瓦苏丹国' },      // 基尔瓦·斯瓦希里海岸霸主（约957–1513）
     { id: 'mombasa', name: '蒙巴萨苏丹国' },    // 蒙巴萨·斯瓦希里城邦（1502 后脱离基尔瓦）

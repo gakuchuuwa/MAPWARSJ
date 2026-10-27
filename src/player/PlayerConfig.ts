@@ -212,6 +212,7 @@ export const PLAYER_DEFEAT_HOLD_MS = 5000;
  *    当前玩家是古典斥候骑兵：平原 2.0 → 1.80，山地 0.90 → 1.035（两者都还要再乘
  *    PLAYER_HERO_SPEED_MULT，2026-09-24 起 = 1.0）。海上不受影响：上船走 SEA_SPEED_MULTIPLIER，兵种/地形加成整个失效。
  */
-export const PLAYER_PLAIN_SPEED_SCALE = 0.90;
-export const PLAYER_MOUNTAIN_SPEED_SCALE = 1.35;
+// 🔴 [2026-10-28 主人令「玩家在战略地图上移动，因为一直是骑兵，请改为匀速，不受山地平原限制」]
+export const PLAYER_PLAIN_SPEED_SCALE = 1.0;
+export const PLAYER_MOUNTAIN_SPEED_SCALE = 1.0;
 export const PLAYER_SEA_SPEED_SCALE = 1.30;

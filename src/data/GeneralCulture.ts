@@ -11,6 +11,10 @@ import type { BuildingStyle } from './cities_v2';
 import { getGeneralCityCulture } from './generalCultureResolve';
 
 export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
+    'gen_atoc': 'INCA',
+    'gen_uaxaclajuun': 'MAYANS',
+    'gen_harkhuf': 'ORIE',
+    'gen_rajah_hijau': 'MALAY',
     'mozambique_ataide': 'PORTUGUESE',
     'luanda_novais': 'PORTUGUESE',
     'capetown_riebeeck': 'GERMANIC',

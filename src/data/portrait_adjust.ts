@@ -6748,8 +6748,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/SPANISH/xishudongyin_lijiasipi.png": {
-            "scale": 0.91,
-            "offsetX": 0,
+            "scale": 0.87,
+            "offsetX": 1,
             "offsetY": -17
         },
         "/assets/PURU/sengjialuo_dutugamo.png": {
@@ -8691,6 +8691,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -9
+        },
+        "/assets/MALAY/bfe_rajah_sulayman.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 19
         }
     },
     "folderGuides": {

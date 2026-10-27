@@ -4562,27 +4562,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #219 李存勖 (885 ~ 926) — 公元918年胡柳陂之战
-    yingzhou_d2_licunxu: {
-        generalId: 'yingzhou_d2_licunxu',
-        battleName: '胡柳陂之战',
-        battleYear: 918,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '濮州胡柳陂',
-        targetCityId: 'city_puyang',
-        targetLat: 35.7621,
-        targetLng: 115.0291,
-        myTroops: 40000,
-        enemyFactionId: 'hou_liang',
-        enemyFactionName: '后梁',
-        enemyGeneralId: 'dizhou_wangyanzhang',
-        enemyTroops: 50000,
-        introLines: [
-            { speaker: 'general', text: '周德威老将军虽陷阵捐躯，我河东铁骑誓死不退！贼兵掠辎重乱阵，壮士，随庄宗亲提横冲都横绝敌阵，反败为胜！' },
-            { speaker: 'player', text: '愿随李存勖将军共赴胡柳陂之战，大破后梁敌军！' },
-        ],
-    },
 
     // #220 阿卜杜拉 (891 ~ 961) — 公元939年萨拉曼卡战役
     gen_abd_al_rahman_iii: {
@@ -5166,27 +5145,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #250 雷蒙四世 (1042 ~ 1105) — 公元1098年安条克围城战
-    gen_raymond_iv: {
-        generalId: 'gen_raymond_iv',
-        battleName: '安条克围城战',
-        battleYear: 1098,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '安条克城',
-        targetCityId: 'city_antiejiya',
-        targetLat: 36.2,
-        targetLng: 36.16,
-        myTroops: 35000,
-        enemyFactionId: 'sailiugu',
-        enemyFactionName: '塞尔柱突厥',
-        enemyGeneralId: 'sailiugu_yaghi',   // 🔴 [2026-10-20 首战规则] 1098 安条克守将雅吉·西扬
-        enemyTroops: 40000,
-        introLines: [
-            { speaker: 'general', text: '圣矛已被发掘，天主旨意必当践行！塞尔柱突厥高墙绝不能挡住十字军军团，普罗旺斯的勇士，持盾登城夺回圣城门阙！' },
-            { speaker: 'player', text: '愿随雷蒙四世将军共赴安条克围城战，大破塞尔柱突厥敌军！' },
-        ],
-    },
 
     // #251 莫诺马赫 (1053 ~ 1125) — 公元1111年萨尔尼察河战役
 
@@ -5818,51 +5776,9 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #284 速不台 (1176 ~ 1248) — 公元1223年迦勒迦河之战
-    wuliangha_subutai: {
-        generalId: 'wuliangha_subutai',
-        battleName: '迦勒迦河之战',
-        battleYear: 1223,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '顿涅茨迦勒迦河畔',
-        targetCityId: 'city_asu',   // 🔴 [2026-10-25 按史] 城库无该战场，锚最近据点 塔纳伊斯（约 162 km）
-        targetLat: 47.27,
-        targetLng: 37.55,
-        myTroops: 25000,
-        enemyFactionId: 'kuman_oleshky',
-        enemyFactionName: '罗斯钦察联军',
-        enemyGeneralId: 'gen_girgen',
-        enemyTroops: 50000,
-        introLines: [
-            { speaker: 'general', text: '勇士们假败诱敌九日，罗斯王公各自抢功争进阵形散乱！速不台合围圈已成，兀良哈雄鹰，挽满硬弓随某全歼敌军！' },
-            { speaker: 'player', text: '愿随速不台将军共赴迦勒迦河之战，大破罗斯钦察联军敌军！' },
-        ],
-    },
 
     // #285 阿历克塞 (1182 ~ 1222) — 公元1204年特拉布宗立国会战（本城就地开战）
 
-    // #286 绰儿马罕 (1190 ~ 1241) — 公元1231年击灭扎兰丁之战
-    ogodei_chuoermahan: {
-        generalId: 'ogodei_chuoermahan',
-        battleName: '击灭扎兰丁之战',
-        battleYear: 1231,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '迪亚巴克尔山谷',
-        targetCityId: 'city_nixibisi',
-        targetLat: 37.07,
-        targetLng: 41.22,
-        myTroops: 30000,
-        enemyFactionId: 'huarazim',
-        enemyFactionName: '花剌子模',
-        enemyGeneralId: 'huarazim_jalal',   // 🔴 [2026-10-20 首战规则] 1231 花剌子模末代沙阿扎兰丁
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '扎兰丁孤穷流窜数年犹作困兽斗！大汗旨意斩草除根，蒙古铁骑漫山遍野如疾风骤雨，壮士，随某搜山合围彻底擒杀！' },
-            { speaker: 'player', text: '愿随绰儿马罕将军共赴击灭扎兰丁之战，大破花剌子模敌军！' },
-        ],
-    },
 
     // #287 松迪亚塔 (1190 ~ 1255) — 公元1235年基里纳战役
     gen_sundjata: {
@@ -7523,27 +7439,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #376 莱加斯皮 (1502 ~ 1565) — 公元1571年夺取马尼拉之战（本城就地开战）
-    xishudongyin_lijiasipi: {
-        generalId: 'xishudongyin_lijiasipi',
-        battleName: '夺取马尼拉之战',
-        battleYear: 1571,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '马尼拉',
-        targetCityId: 'city_manila',
-        targetLat: 14.5904,
-        targetLng: 120.9804,
-        myTroops: 10000,
-        enemyFactionId: 'maynila',
-        enemyFactionName: '马尼拉土邦',
-        enemyGeneralId: 'bfe_rajah_sulayman',
-        enemyTroops: 15000,
-        introLines: [
-            { speaker: 'general', text: '帕西格河口的木堡拒纳腓力二世的皇恩！加利恩帆船火炮轰开栅栏，水陆勇士，随总督长驱直入夺取海港，定鼎西属东印度！' },
-            { speaker: 'player', text: '愿随莱加斯皮将军共赴夺取马尼拉之战，大破马尼拉土邦敌军！' },
-        ],
-    },
 
     // #377 俞大猷 (1503 ~ 1579) — 公元1555年王江泾大捷
     qian_d_yudayou: {
@@ -8630,27 +8525,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #434 海兰察 (1740 ~ 1793) — 公元1792年廓尔喀阳布决战
-    xingan_hailancha: {
-        generalId: 'xingan_hailancha',
-        battleName: '廓尔喀阳布决战',
-        battleYear: 1792,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '加德满都甲尔木山梁',
-        targetCityId: 'city_kathmandu',
-        targetLat: 27.715138,
-        targetLng: 85.185242,
-        myTroops: 15000,
-        enemyFactionId: 'gurkha',
-        enemyFactionName: '尼泊尔廓尔喀王国',
-        enemyGeneralId: 'gurkha_baduersaye',
-        enemyTroops: 20000,
-        introLines: [
-            { speaker: 'general', text: '廓尔喀蛮勇犯我西藏后藏扎什伦布！索伦额真提大刀翻越喜马拉雅绝壁连破六隘，壮士，随超勇侯冲锋，迫敌称臣纳贡！' },
-            { speaker: 'player', text: '愿随海兰察将军共赴廓尔喀阳布决战，大破尼泊尔廓尔喀王国敌军！' },
-        ],
-    },
 
     // #435 巴都尔萨野 (1757 ~ 1797) — 公元1768年统一廓尔喀吞并加德满都战
     gurkha_baduersaye: {
@@ -9080,27 +8954,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #555 拉金德拉一世 (971 ~ 1044) — 公元1025年远征三佛齐（朱罗海军袭击巨港与吉打，俘虏国王桑格拉玛·维阇耶东伽跋摩；出处：坦贾武尔布里哈迪什瓦拉神庙碑铭）
-    zhuluo_lajindela: {
-        generalId: 'zhuluo_lajindela',
-        battleName: '三佛齐远征战',
-        battleYear: 1025,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '巨港',
-        targetCityId: 'city_sanfoqi',
-        targetLat: -2.99,
-        targetLng: 104.75,
-        myTroops: 50000,
-        enemyFactionId: 'sanfoqi',
-        enemyFactionName: '三佛齐',
-        enemyGeneralId: 'gen_sangrama_vijayottungavarman',
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '三佛齐扼住马六甲海峡，阻断我朱罗商路。我已集结舰队渡海南征，你可愿随我远征？' },
-            { speaker: 'player', text: '愿随陛下扬帆南下，攻陷巨港，擒其国王！' },
-        ],
-    },
     // 🔴 [2026-10-20 首战剧情] 米太亚德（雅典名将）— 公元前490年马拉松之战
     gen_miltiades: {
         generalId: 'gen_miltiades',
@@ -9645,26 +9498,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '播磨丰臣秀吉引军来犯山城山崎天王山，明智光秀今率众迎战！壮士，随本将列阵，一战破敌！' },
             { speaker: 'player', text: '愿随明智光秀将军于山崎之战决战，击破丰臣秀吉！' },
-        ],
-    },
-    gen_mingrui: {
-        generalId: 'gen_mingrui',
-        battleName: '新街阻击清军之战',
-        battleYear: 1768,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '曼德勒新街八莫要塞',
-        targetCityId: 'city_mengmao',
-        targetLat: 24.01,
-        targetLng: 97.85,
-        myTroops: 35000,
-        enemyFactionId: 'miandian',
-        enemyFactionName: '缅甸',
-        enemyGeneralId: 'gen_maha_thiha_thura',
-        enemyTroops: 30000,
-        introLines: [
-            { speaker: 'general', text: '缅甸摩诃·悉都屯兵曼德勒新街八莫要塞，明瑞当先发制人！壮士，随本将进兵，一战破敌！' },
-            { speaker: 'player', text: '愿随明瑞将军于新街阻击清军之战决战，击破摩诃·悉都！' },
         ],
     },
     gen_furdan: {
@@ -10328,26 +10161,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '皇太极举国来围松锦，洪承畴受命督师，十三万大军岂能坐困！壮士，随本督凭垒死守、待机破围！' },
             { speaker: 'player', text: '愿随洪督师死守松锦，击破清军！' },
-        ],
-    },
-    gen_vernon: {
-        generalId: 'gen_vernon',
-        battleName: '卡塔赫纳战役',
-        battleYear: 1741,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '卡塔赫纳圣菲利佩堡',
-        targetCityId: 'city_katachena',
-        targetLat: 10.42,
-        targetLng: -75.54,
-        myTroops: 35000,
-        enemyFactionId: 'xingelana',
-        enemyFactionName: '加勒比',
-        enemyGeneralId: 'jialebi_brasilesuo',
-        enemyTroops: 10000,
-        introLines: [
-            { speaker: 'general', text: '卡塔赫纳要塞号称南美最坚，本将统英国舰队水陆并进，拿下它给西班牙人看看！壮士，随我抢滩攻城！' },
-            { speaker: 'player', text: '愿随弗农将军强攻卡塔赫纳，击破守军！' },
         ],
     },
     gen_kusaila: {

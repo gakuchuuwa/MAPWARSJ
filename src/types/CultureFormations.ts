@@ -1084,19 +1084,31 @@ function findLegionNameByCultureAndEra(buildingStyle: string, age: string): stri
  *   ⑤ 势力编制兜底（无将该格缺失时）。据点文化由 `getGeneralCulture`（＝据点 buildingStyle）给。
  */
 export function getLegionNameOfGeneral(factionId: string, generalId?: string | null): string | undefined {
+    // 🔴 [2026-10-28 主人令] 给武将自动判断军团：
+    // 军团等于势力时代+据点文化。势力属于哪个时代，武将就属于哪个势力；
+    // 再看武将属于哪个据点，据点属于哪个文化。来自动判定武将的军团。
+    // 武将文化要和据点文化相同，武将时代要和势力时代相同。
+
+    // ① 特殊军团例外：起义军 / 苏丹亲兵等三级军团保留
     const named = getGeneralOwnLegionName(generalId);
-    if (named && getLegionCompositionByName(named)) return named;
+    if (named && LEVEL_3_LEGION_MAP.has(named) && getLegionCompositionByName(named)) return named;
+    const factionLegion = FACTION_COMPOSITIONS[factionId]?.legionName;
+    if (factionLegion && LEVEL_3_LEGION_MAP.has(factionLegion)) return factionLegion;
+
+    // ② 特殊细分时代军团（如先秦古典）
     const subtagLegion = getGeneralEraSubtagLegion(generalId);
     if (subtagLegion) return subtagLegion;
-    const factionLegion = FACTION_COMPOSITIONS[factionId]?.legionName;
-    // 势力编制本身是三级军团（起义军 / 苏丹亲兵 / 西班牙征服 / 葡萄牙风琴 / 安第斯游击）→ 保留
-    if (factionLegion && LEVEL_3_LEGION_MAP.has(factionLegion)) return factionLegion;
+
+    // ③ 核心判定：军团 ＝ 势力时代 × 据点文化（自动推导）
     const era = generalId ? getGeneralEra(generalId, factionId) : undefined;
     const style = generalId ? getGeneralCulture(generalId) : undefined;
     if (era && style) {
         const grid = findLegionNameByCultureAndEra(String(style), era);
         if (grid && getLegionCompositionByName(grid)) return grid;
     }
+
+    // ④ 兜底：手写军团名或势力指针
+    if (named && getLegionCompositionByName(named)) return named;
     if (!named) return factionLegion;
     const found = resolveFallbackForFaction(factionId, generalId);
     return 'newLegionName' in found ? found.newLegionName : named;

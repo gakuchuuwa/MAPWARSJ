@@ -6101,5 +6101,59 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "北大年-阇槃",
+                type: "sea",
+                id: "sea_city_pattani_city_dupan_1793119439860",
+                startConnection: "city_pattani",
+                endConnection: "city_dupan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [101.25, 6.867],
+                    [101.60568, 6.96323],
+                    [102.42416, 6.32349],
+                    [103.53364, 5.51118],
+                    [104.76456, 6.12006],
+                    [107.3207, 7.6091],
+                    [107, 8.25],
+                    [106.91667, 9.5],
+                    [107.16667, 9.91667],
+                    [108.5, 10.08333],
+                    [109.25, 11],
+                    [109.75, 12],
+                    [109.75, 14],
+                    [109.11, 13.93],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "北大年-淡马锡",
+                type: "sea",
+                id: "sea_city_pattani_city_danmaxi_1793119449342",
+                startConnection: "city_pattani",
+                endConnection: "city_danmaxi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [101.25, 6.867],
+                    [101.91667, 7.16667],
+                    [102.5, 6.75],
+                    [103.33333, 6.25],
+                    [104.08333, 5.16667],
+                    [103.75, 4.33333],
+                    [104.5, 3.41667],
+                    [104.66667, 2.08333],
+                    [104.48229, 1.34131],
+                    [103.85, 1.29],
+                ]
+            }
+        },
     ]
 };

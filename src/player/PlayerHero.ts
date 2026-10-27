@@ -295,7 +295,8 @@ export class PlayerHero {
             }
             this.selectedUnit = picked;
         }
-        this.army.preferredMoveClass = moveClassForHeroKey(this.heroKey);
+        // 🔴 [2026-10-28 主人令] 玩家一直是骑兵，行军大类恒为 CAVALRY
+        this.army.preferredMoveClass = 'CAVALRY';
         // 🔴 [2026-09-11 主人定]「平地慢一小点，山地快一小点」—— 只作用于玩家这一支，
         //    幅度见 PLAYER_PLAIN_SPEED_SCALE / PLAYER_MOUNTAIN_SPEED_SCALE 的头注。
         // 🔴 [2026-10-22 马系统] 坐骑疲劳走得慢、没马可骑牵马步行更慢（海上不受影响）；

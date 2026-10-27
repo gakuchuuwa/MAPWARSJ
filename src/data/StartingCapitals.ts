@@ -3,6 +3,7 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+    'pattani': 'city_pattani',
     // 🔴 [2026-10-24] 恢复 2026-10-23 归并时被并入占位势力的各家政权（登记用，不作开局依据）
     'qiufu': 'city_shanxian',
     'chendiaoyan': 'city_zhangzhou',

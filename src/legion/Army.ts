@@ -1249,11 +1249,19 @@ export class Army implements IBattleUnit {
                 this.landFlipFrames = 0;
             }
 
-            const moveClass = this.preferredMoveClass ?? this.resolveMoveClassFromSlots();
-            const base = MOVEMENT_MATRIX[moveClass][this.confirmedLandKind];
-            const plainCultureMult = this.confirmedLandKind === 'plain' ? getArmyCulturePlainSpeedMultiplier(this) : 1;
-            // 玩家专属缩放（AI 军团 terrainSpeedScale 恒为 null，走原路）
-            this.terrainSpeedTarget = base * plainCultureMult * (this.terrainSpeedScale?.[this.confirmedLandKind] ?? 1);
+            if (this.type === 'hero') {
+                // 🔴 [2026-10-28 主人令「玩家在战略地图上移动，因为一直是骑兵，请改为匀速，不受山地平原限制」]
+                // 玩家陆地行军恒为骑兵（CAVALRY），且平原与山地速度完全相同（匀速 2.0 × 缩放），不受山地平原限制
+                const horse = this.terrainSpeedScale?.plain ?? 1;
+                this.terrainSpeedTarget = MOVEMENT_MATRIX.CAVALRY.plain * horse;
+                this.confirmedLandKind = 'plain';
+            } else {
+                const moveClass = this.preferredMoveClass ?? this.resolveMoveClassFromSlots();
+                const base = MOVEMENT_MATRIX[moveClass][this.confirmedLandKind];
+                const plainCultureMult = this.confirmedLandKind === 'plain' ? getArmyCulturePlainSpeedMultiplier(this) : 1;
+                // 玩家专属缩放（AI 军团 terrainSpeedScale 恒为 null，走原路）
+                this.terrainSpeedTarget = base * plainCultureMult * (this.terrainSpeedScale?.[this.confirmedLandKind] ?? 1);
+            }
         }
 
         // 平滑：约 TERRAIN_SPEED_LERP_TAU_SEC 内贴近目标；构造/瞬移 deltaTime≤0 则贴齐

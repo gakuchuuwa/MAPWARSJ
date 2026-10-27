@@ -23,6 +23,7 @@
  *     靠势力色＋旗形区分，不再强求全局唯一。非中国政权仍守全局唯一。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+    'pattani': '年',
     'kilwa': '基',
     'handong': '汉东', // 刘黑闼汉东王
     'douxia': '夏', // 窦建德·夏

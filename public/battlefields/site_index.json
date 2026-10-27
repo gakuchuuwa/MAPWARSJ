@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-27T12:44:07.829Z",
+ "generatedAt": "2026-10-27T16:41:25.893Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16034,6 +16034,62 @@
    "reliefM": 64,
    "cliffs": 0,
    "top": "Grass 3 89.6% · Forest, Mediterranean 6% · Pine Forest 2.2% · Forest, Bush 1%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_pattani",
+   "file": "site_city_pattani.json",
+   "bytes": 324787,
+   "koppen": "Am",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 444,
+   "waterPct": 3.1,
+   "reliefM": 18,
+   "cliffs": 0,
+   "top": "Dry Grass 85.1% · Forest, Lush Bamboo 5.4% · Beach 3.7% · Water, Shallow 3.1%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_aswan",
+   "file": "site_city_aswan.json",
+   "bytes": 226023,
+   "koppen": "BWh",
+   "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
+   "water": "WorldCover",
+   "waterCells": 2638,
+   "waterPct": 18.3,
+   "reliefM": 101,
+   "cliffs": 0,
+   "top": "Desert 69.9% · Water, Shallow 18.3% · Palm Desert 5.7% · Beach 3.6%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_copan",
+   "file": "site_city_copan.json",
+   "bytes": 297878,
+   "koppen": "Aw",
+   "theme": "NEOTROPICAL_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 38,
+   "waterPct": 0.3,
+   "reliefM": 231,
+   "cliffs": 0,
+   "top": "Jungle Grass 90.6% · Jungle 5.8% · Rainforest 2.4% · Beach 0.8%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_tumebamba",
+   "file": "site_city_tumebamba.json",
+   "bytes": 336775,
+   "koppen": "Cfb",
+   "theme": "NEOTROPICAL_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 158,
+   "cliffs": 0,
+   "top": "Grass 89.6% · Forest, Dry South American 10.2% · Jungle 0.2%",
    "verify": "ok"
   }
  ],

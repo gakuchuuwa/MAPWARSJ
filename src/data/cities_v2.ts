@@ -2222,6 +2222,51 @@ export const HUGUANG_CITY_IDS: ReadonlySet<string> = new Set([
 ]);
 
 export const CITIES_V2: CityDataV2[] = [
+    // ── 2026-10-28 补充超长道路中继历史据点 ──
+    {
+        id: 'city_pattani',
+        name: '北大年',
+        factionId: 'pattani',
+        lat: 6.867, lng: 101.250,
+        type: 'small_city',
+        troops: 10000,
+        region: 'SEAS',
+        buildingStyle: 'MALAY',
+        note: '16-17世纪北大年苏丹国都城；Reid考据城区与港市居民约3万；按2026-10-25标准：城居>1万 → 小城',
+    },
+    {
+        id: 'city_aswan',
+        name: '阿斯旺',
+        factionId: 'aiji',
+        lat: 24.088, lng: 32.899,
+        type: 'small_city',
+        troops: 10000,
+        region: 'EGYPT',
+        buildingStyle: 'ORIE',
+        note: '古埃及尼罗河第一瀑布要塞商埠；象岛总督驻所；石墙聚落人口约5000–8000；按2026-10-25标准：<1万石墙城邑 → 小城',
+    },
+    {
+        id: 'city_copan',
+        name: '科潘',
+        factionId: 'maya',
+        lat: 14.840, lng: -89.141,
+        type: 'small_city',
+        troops: 10000,
+        region: 'MESO',
+        buildingStyle: 'MAYANS',
+        note: '玛雅古典期南部核心王都；8世纪卫城与连片聚落人口约1.2–1.5万；按2026-10-25标准：城居>1万 → 小城',
+    },
+    {
+        id: 'city_tumebamba',
+        name: '托梅班巴',
+        factionId: 'inca',
+        lat: -2.900, lng: -79.005,
+        type: 'small_city',
+        troops: 10000,
+        region: 'ANDE',
+        buildingStyle: 'INCA',
+        note: '印加帝国北方副都；普马蓬戈神庙与驻防聚落人口约1.5–2万；按2026-10-25标准：城居>1万 → 小城',
+    },
     // ── 2026-10-24 主人「添加据点」：环非洲 7 港（本地文化判定，见 docs/02-design/海路网-单一口径-2026-10-24.md）──
     { id: 'city_kilwa', name: '基尔瓦', factionId: 'kilwa', lat: -8.96, lng: 39.5128, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；基尔瓦基西瓦尼（Kilwa Kisiwani，斯瓦希里语「基尔瓦岛」）：基尔瓦苏丹国都城（约957–1513），13–15世纪斯瓦希里海岸霸主；鼎盛逾万人（>1万＝小城）。珊瑚石大清真寺（11世纪始建、13世纪16穹顶）、Husuni Kubwa 宫、Gereza 堡，UNESCO 世界遗产（1979）。按史＋依据：https://whc.unesco.org/en/list/144/ 、https://en.wikipedia.org/wiki/Kilwa_Kisiwani 、https://en.wikipedia.org/wiki/Kilwa_Sultanate；推算：城居 1.2 万（基尔瓦苏丹国都城，鼎盛逾万人）→ 小城' },
     { id: 'city_mombasa', name: '蒙巴萨', factionId: 'mombasa', lat: -4.05, lng: 39.6667, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】66 文化无斯瓦希里分支，取东非最近分支埃塞俄比亚（代理，非精确）；蒙巴萨（Mombasa；斯瓦希里语 Mvita，汉籍「慢八撒」）：斯瓦希里城邦，1502年前属基尔瓦苏丹国、后为独立蒙巴萨苏丹国；Mnara 清真寺约1300年、Mandhry 清真寺1570年。中世纪人口无学术估算，按「算不出一律城寨」定级。按史＋依据：https://en.wikipedia.org/wiki/Mombasa 、https://en.wikipedia.org/wiki/List_of_rulers_of_Mombasa' },

@@ -31,6 +31,9 @@
  *    不看名字、也不再逐座问主人 —— 口径全文见 `docs/AGENTS/一据点一整套-单一口径.md` §六。
  */
 export const CITY_FOUNDED_YEAR: Record<string, number> = {
+    city_tumebamba: 1470,  // 约1470年印加图帕克·尤潘基征服卡尼亚里后营建北方重镇
+    city_pattani: 1390,  // 14世纪末北大年自狼牙脩故地迁立
+    city_copan: -150,  // 玛雅前古典晚期聚落始于约前150年；426年开创古典期王都
     city_kilwa: 800,  // 9世纪碳十四测年 AD800 起（设拉子王朝传统纪年 957）
     city_mombasa: 900,  // 肯尼亚教科书定约900年；al-Idrisi 1151 已记该城
     city_mogadishu: 900,  // 摩加迪沙苏丹国建于10世纪；最早钱币923–24年

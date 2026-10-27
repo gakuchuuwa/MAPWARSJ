@@ -48,6 +48,10 @@ export interface GeneralLifeYears {
 
 /** generalId → 生卒年。键顺序：按生年从古到今。 */
 export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
+    gen_rajah_hijau: { birth: 1560, death: 1616, debut: 1584, kaoju: '推定' }, // 北大年绿女王，1584–1616在位
+    gen_atoc: { birth: 1495, death: 1532, kaoju: '推定' }, // 印加帝国瓦斯卡尔皇室北征统帅，1532年托梅班巴战后死
+    gen_uaxaclajuun: { birth: 675, death: 738, debut: 695 }, // 科潘第十三代王“十八兔”，碑铭精确记载675年生、738年殉国
+    gen_harkhuf: { birth: -2290, death: -2230, kaoju: '推定' }, // 古埃及第六王朝象岛省督，麦伦拉至佩皮二世朝，约前23世纪
     luanda_novais: { birth: 1510, death: 1589, kaoju: '推定' },  // 诺瓦伊斯（约1510–1589）
     capetown_riebeeck: { birth: 1619, death: 1677 },           // 扬·范·里贝克（1619–1677）
 

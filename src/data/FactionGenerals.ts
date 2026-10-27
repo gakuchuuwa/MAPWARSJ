@@ -14080,6 +14080,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     aiji: [
+        { generalId: 'gen_harkhuf', factionId: 'aiji', cityId: 'city_aswan', generalName: '哈尔库夫', portrait: '', legionName: '古典时代近东军团', eliteName: '麦杰兵', eliteTier: 2 },
 
 
 
@@ -15548,6 +15549,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     inca: [
+        { generalId: 'gen_atoc', factionId: 'inca', cityId: 'city_tumebamba', generalName: '阿托克', portrait: '', legionName: '帝国时代塔万廷军团', eliteName: '卡尼亚里军', eliteTier: 2 },
 
 
 
@@ -15582,6 +15584,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     maya: [
+        { generalId: 'gen_uaxaclajuun', factionId: 'maya', cityId: 'city_copan', generalName: '十八兔', portrait: '', legionName: '封建时代尤卡坦军团', eliteName: '科潘武士', eliteTier: 3 },
         // 🔴 [2026-10-25 补B] 西亚赫·卡克（Siya(j) K'ak'，378–402 活跃，玛雅古典期早期最高军事统帅 Kaloomte'；蒂卡尔第 31 号石碑载 378-01-16 攻克蒂卡尔、击杀美洲虎爪一世，并征服瓦夏克吞等）｜势力 玛雅｜据点 蒂卡尔（MAYANS 文化，佩滕）｜普将（存疑）｜精锐「蒂卡尔军」T4｜立绘留空
         { generalId: 'maya_siyaj_kak', factionId: 'maya', cityId: 'city_tikal', generalName: '西亚赫·卡克', portrait: '/assets/MAYANS/maya_siyaj_kak.png', eliteName: '蒂卡尔军', eliteTier: 4 },
         { generalId: 'gen_jasawchan', cityId: 'city_tikal', generalName: '亚斯纳昌', portrait: '/assets/MAYANS/gen_jasawchan.png' },
