@@ -145,11 +145,12 @@ export class ViewerLivePanel {
             ? `<span style="font-size:${f.main}px;">开战发 ${b('1')} 攻方 · ${b('2')} 守方</span>`
             : `<span style="font-size:${f.main}px;">${b('1')} ${esc(s.names[0])}<span style="font-size:${f.sub}px;color:#dfc28c;">(${b(String(s.counts[0]))})</span> · ${b('2')} ${esc(s.names[1])}<span style="font-size:${f.sub}px;color:#dfc28c;">(${b(String(s.counts[1]))})</span></span>`;
         const castCmd = `<span style="font-size:${f.main}px;">${b('攻胜敌混并败')} 放计</span>`;
+        const scoutCmd = `<span style="font-size:${f.main}px;">${b('技3')} 玩家技</span>`;
         const earnCmd = this.inScene13Bar
             ? `<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}令`)}/计)</span>`
             : `<span style="font-size:${f.sub}px;color:#e0cfa9;">（站队/发弹幕攒军令，${b(`${ORDERS_PER_CAST} 令`)}放一计）</span>`;
 
-        const mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${sideCmd}${sep}${castCmd} ${earnCmd}</div>`;
+        const mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${sideCmd}${sep}${castCmd} ${earnCmd}${sep}${scoutCmd}</div>`;
 
         // ── 动态辅助信息（打赏 / 点赞目标 / 军令榜 / 排队 / 最近放计日志，有内容才显） ──
         const subItems: string[] = [];
@@ -172,7 +173,7 @@ export class ViewerLivePanel {
         if (s.on && s.queueBrief.length) {
             const q = s.queueBrief;
             subItems.push(`<span><span style="color:#ffd700;">排队：</span>${q.slice(0, 3).map((x) =>
-                `${esc(x.name)}${x.paid ? '<span style="color:#ffd700;">·赏</span>' : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
+                `${esc(x.name)}${x.label ? `·${x.label}` : ''}${x.paid ? '<span style="color:#ffd700;">·赏</span>' : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
         }
         if (s.log.length) {
             subItems.push(`<span style="color:#cdbb95;">${s.log.slice(-2).map(esc).join(' ｜ ')}</span>`);
@@ -264,6 +265,7 @@ export class ViewerLivePanel {
         this.dev.append(ssnLabel, ssn, ytLabel, ytKey, ytVideo, tipLabel, tipInput, label, name, paidWrap,
             row(['1 站攻方', '2 站守方'], (w) => send(w[0])),
             row([...WORDS], send),
+            row(['技3', '技4', '技5'], send),
             // 模拟打赏：按昵称当观众 id，跟上面发字的是同一个人；「站外$1」模拟 Ko-fi：只给名字，按名字找人
             row(['打赏$1', '打赏$10', '站外$1'], (w) => {
                 if (w === '站外$1') this.live.onExternalPayment(name.value, 100, '测试站外打赏', '');

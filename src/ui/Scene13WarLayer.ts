@@ -1202,6 +1202,7 @@ export class Scene13WarLayer {
         this.heroClickOrder = null;
         this.heroMan = null;
         this.heroRespawnTimer = 0;
+        this.playerLiveSkillTimer = 0;
         this.playerKills = 0;
         const game = (window as any).game;
         // 小队模式：玩家不在军中也能上场（故事块小仗多半发生在平民阶段）
@@ -1382,6 +1383,17 @@ export class Scene13WarLayer {
     /** 玩家本人的最大血量：历史峰值 + 当场科技/军团血量修正。出生、重整与 HUD 只走这里。 */
     private heroMaxHp(key: string, f: number): number {
         return Math.max(1, Math.round(this.statsFor(key, f, true).hp * HERO_HP_MULT));
+    }
+
+    /** 以下三条只认玩家本人；普通士兵、武将六计和主将队都不吃这套倍率。 */
+    private playerLiveDamageMul(m: WarMan): number {
+        return m === this.heroMan && this.playerLiveSkillTimer > 0 ? PLAYER_LIVE_SKILL.damageMult : 1;
+    }
+    private playerLiveAttackMul(m: WarMan): number {
+        return m === this.heroMan && this.playerLiveSkillTimer > 0 ? PLAYER_LIVE_SKILL.attackSpeedMult : 1;
+    }
+    private playerLiveTakenMul(m: WarMan): number {
+        return m === this.heroMan && this.playerLiveSkillTimer > 0 ? PLAYER_LIVE_SKILL.damageTakenMult : 1;
     }
 
     private heroDown(m: WarMan): void {
@@ -2887,6 +2899,7 @@ export class Scene13WarLayer {
         this.heroInput = null;
         this.heroMan = null;
         this.heroRespawnTimer = 0;
+        this.playerLiveSkillTimer = 0;
         this.resetCamFollow();
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
@@ -5579,7 +5592,7 @@ export class Scene13WarLayer {
         const dElev = towerElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         const towerSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
-            * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0);
+            * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.playerLiveTakenMul(foe);
         foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * towerSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
         // 🔴 [2026-09-09 修] 原来这里直接 pushCorpse：玩家被箭塔射死会**变成尸体永久离场**，
@@ -5658,7 +5671,7 @@ export class Scene13WarLayer {
         const dElev = bldElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         const bldSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
-            * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0);
+            * (this.skillShieldTimer[foe.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.playerLiveTakenMul(foe);
         // 建筑射箭是远程：不计围攻人数、不吃围殴加成（见 isRangedWeapon）
         foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * bldSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);
@@ -5719,8 +5732,8 @@ export class Scene13WarLayer {
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
                     // 范围伤不挖「盲区空洞」：贴脸的敌人照样吃溅射（最小射程只管分配新目标，见 canKeepTarget 头注）。
                     // 范围伤：近战（战象踩踏）计入围攻并吃围殴加成；远程（投石车等）都不吃（见 isRangedWeapon）
-                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f, o.hero === true)) * mult * frenzyMul / shooter.reload;
-                    const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.panicTakenMul(o);
+                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f, o.hero === true)) * mult * frenzyMul * this.playerLiveDamageMul(m) / shooter.reload;
+                    const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? SKILL_SHIELD_TAKEN : 1.0) * this.panicTakenMul(o) * this.playerLiveTakenMul(o);
                     if (!isRangedWeapon(shooter)) o.atkNext++;
                     if (dps > 0) {
                         o.hurtBy = m;
@@ -6784,6 +6797,7 @@ export class Scene13WarLayer {
 
     private step(dt: number): void {
         if (this.over) return;
+        if (this.playerLiveSkillTimer > 0) this.playerLiveSkillTimer = Math.max(0, this.playerLiveSkillTimer - dt);
         // 近战接触音景：每帧重新数，本帧的计数在下面的兵种循环里累加，循环跑完在 tickContactSfx 里结账
         this.meleeContactCount = 0;
         // ── 打不完的检测（当前只观察不动手，见 STALL_GUARD_ENFORCE）──
@@ -7500,7 +7514,7 @@ export class Scene13WarLayer {
                 this.steerManDir(m, foe.x - m.x, foe.y - m.y, dt);
                 m.lock = (m.lock ?? 0) - dt;
                 // 玩家本人出手更快（见 HERO_ATTACK_RATE）：装填缩短，攻击动画随之加快；【攻】振己威攻速加成
-                const heroRate = m.hero ? HERO_ATTACK_RATE : 1;
+                const heroRate = (m.hero ? HERO_ATTACK_RATE : 1) * this.playerLiveAttackMul(m);
                 const frenzyAtkSpd = this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_ATKSPD : 1.0;
                 const reloadTime = (stats.reload || 2.0) / (heroRate * frenzyAtkSpd);
                 if (m.lock <= 0) {
@@ -7661,7 +7675,7 @@ export class Scene13WarLayer {
                 const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
                 // 【攻】振己威：伤害 × 攻速（连续伤害模型里攻速也折进 DPS）
                 const frenzyDmgMul = this.skillFrenzyTimer[m.f] > 0 ? SKILL_FRENZY_DMG * SKILL_FRENZY_ATKSPD : 1.0;
-                const dps = (primaryDamage + secondaryDamage) * heroRate * elevDmgMul * frenzyDmgMul / shooter.reload;
+                const dps = (primaryDamage + secondaryDamage) * heroRate * elevDmgMul * frenzyDmgMul * this.playerLiveDamageMul(m) / shooter.reload;
                 if ('sprite' in foe) {
                     // 🔴 [2026-09-18 主人定·增加所有攻城武器只对建筑破坏力]
                     //    目标为建筑时（城墙/城门），无论是否 wt.aoe，主目标均实打实扣血！
@@ -7711,6 +7725,7 @@ export class Scene13WarLayer {
                         const panicMul = 'sprite' in foe ? 1 : this.panicTakenMul(foe);
                         foe.hp -= dps * this.sideBonus[m.f] * gangMulBy(shooter, foe) * this.attritionMul() * braceTaken * flankMul * shieldMul * panicMul * dt
                             * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1)   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
+                            * (!('sprite' in foe) ? this.playerLiveTakenMul(foe) : 1)
                             * ('sprite' in foe ? 1 : this.passWallTaken(foe));
                         if (foe.hp <= 0 && !('sprite' in foe)) {
                             this.onManKilled(foe, m);   // [2026-09-05 玩家] 玩家落马重整 / 玩家记功，其余留尸
