@@ -777,6 +777,7 @@ export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Objec
     mombasa: '#2E8B57', // 2026-10-24 环非洲新势力
     mogadishu: '#1F7A6B', // 2026-10-24 环非洲新势力
     zuraid: '#6A5ACD', // 2026-10-24 环非洲新势力
+    pattani: '#D4AF37', // 北大年·北大年苏丹国（金黄）
  ..._FIXED });
 
 export const RESERVED_FACTION_COLOR_HEXES: ReadonlySet<string> = new Set(

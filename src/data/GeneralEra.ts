@@ -16,6 +16,7 @@
 export type GeneralEra = 'antiquity' | 'feudal' | 'castle' | 'imperial';
 
 export const GENERAL_ERA: Record<string, GeneralEra> = {
+    'gen_rajah_hijau': 'imperial', // 北大年·拉者伊祖（帝国时代）
     'mozambique_ataide': 'imperial',
     'luanda_novais': 'imperial',
     'capetown_riebeeck': 'imperial',

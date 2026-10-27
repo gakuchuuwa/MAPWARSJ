@@ -493,6 +493,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     mombasa: { generalId: 'mombasa_yusuf', generalName: '优素福·本·哈桑', cityId: 'city_mombasa', portrait: '/assets/AFRICA/mombasa_yousufubenhasang.png' },
     mogadishu: { generalId: 'mogadishu_abubakr', generalName: '阿布·伯克尔', cityId: 'city_mogadishu', portrait: '/assets/AFRICA/mogadishu_abubokeer.png' },
     zuraid: { generalId: 'zuraid_yasir', generalName: '亚西尔·本·比拉勒', cityId: 'city_aden', portrait: '/assets/ORIE/zuraid_yaxierbenbilale.png' },
+    pattani: { generalId: 'gen_rajah_hijau', factionId: 'pattani', cityId: 'city_pattani', generalName: '拉者伊祖', portrait: '', legionName: '帝国时代马六甲军团', eliteName: '大年炮兵', eliteTier: 2 },
 
 
 

@@ -133,6 +133,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代撒拉森军团",
         legionType: "sub",
     },
+    "pattani": {
+        legionName: "帝国时代马六甲军团",
+        legionType: "sub",
+    },
 
     // 🔴 [2026-10-25 主人令「删除起义势力，哪有历史上哪有这个势力呀」] 原「起义（panjun）占位势力」条目已删除；
     //    起义首领各自是独立势力（太平天国/大顺/大西…），军团照旧挂三级「起义军」。

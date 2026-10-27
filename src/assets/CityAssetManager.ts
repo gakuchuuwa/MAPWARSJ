@@ -110,6 +110,7 @@ export class CityAssetManager {
     'mombasa': '蒙',
     'mogadishu': '摩',
     'zuraid': '祖',
+    'pattani': '年',
 
 'maqidun': '马其',
         'taino_d': '泰诺',
