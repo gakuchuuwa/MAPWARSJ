@@ -700,7 +700,8 @@ export class CityLifeAmbientLayer {
             const h3 = strHash01(city.id, i * 31 + 103);
 
             const baseAngle = (i / groveCount) * Math.PI * 2 + (h1 - 0.5) * 0.45;
-            const distDeg = 0.095 + h2 * 0.165;
+            // 打猎与伐木分开：猎场移到远处外围，伐木林场仍环绕山地据点。
+            const distDeg = cat === 'forest_hunting' ? 0.38 + h2 * 0.10 : 0.095 + h2 * 0.165;
             let pos: Pt | null = null;
             for (let attempt = 0; attempt < 8; attempt++) {
                 const ang = baseAngle + attempt * (Math.PI / 4);
@@ -708,7 +709,8 @@ export class CityLifeAmbientLayer {
                     lat: cLat + Math.sin(ang) * distDeg * 0.85,
                     lng: cLng + Math.cos(ang) * distDeg,
                 };
-                if (!this.isSea(cand)) {
+                const validLand = cat === 'forest_hunting' ? this.isFarmFullyOnLand(cand) : !this.isSea(cand);
+                if (validLand) {
                     pos = cand;
                     break;
                 }
@@ -852,29 +854,31 @@ export class CityLifeAmbientLayer {
             const dir = villagerPool[Math.floor(h2 * villagerPool.length) % villagerPool.length];
             const isFarmer = dir === 'VIL_MALE_FARMER' || dir === 'VIL_FEMALE_FARMER';
             const isPastoral = dir === 'VIL_MALE_SHEPHERD';
+            const isHunter = dir === 'VIL_MALE_HUNTER';
 
             let homePos: Pt | null = null;
-            // 林间工种围绕树林；农田与牧场都放到更远的外围，避免压住据点。
+            // 林间工种围绕树林；农田、猎场与牧场都放到外围，避免压住据点。
             if (!isFarmer && forestNodes.length > 0) {
                 const fn = forestNodes[(i * 2) % forestNodes.length];
                 const cand = {
                     lat: fn.pos.lat + (h3 - 0.5) * 0.022,
                     lng: fn.pos.lng + (h4 - 0.5) * 0.026,
                 };
-                if (!this.isSea(cand)) {
+                const validLand = isHunter ? this.isFarmFullyOnLand(cand) : !this.isSea(cand);
+                if (validLand) {
                     homePos = cand;
                 }
             }
 
             if (!homePos) {
-                const distDeg = isFarmer || isPastoral ? 0.30 + h4 * 0.10 : 0.14 + h4 * 0.11;
+                const distDeg = isPastoral || isHunter ? 0.38 + h4 * 0.10 : isFarmer ? 0.30 + h4 * 0.10 : 0.14 + h4 * 0.11;
                 for (let attempt = 0; attempt < 8; attempt++) {
                     const ang = baseAngle + attempt * (Math.PI / 4);
                     const cand = {
                         lat: cLat + Math.sin(ang) * distDeg * 0.85,
                         lng: cLng + Math.cos(ang) * distDeg,
                     };
-                    const validLand = (isFarmer || isPastoral) ? this.isFarmFullyOnLand(cand) : !this.isSea(cand);
+                    const validLand = (isFarmer || isPastoral || isHunter) ? this.isFarmFullyOnLand(cand) : !this.isSea(cand);
                     if (validLand) {
                         homePos = cand;
                         break;
@@ -883,7 +887,11 @@ export class CityLifeAmbientLayer {
             }
             if (!homePos) continue;
 
-            const gatePos = {
+            // 猎人只在猎场旁短距离搬运，交接点保持在已验收的陆上范围内，不跨海回城。
+            const gatePos = isHunter ? {
+                lat: homePos.lat + (cLat - homePos.lat) * 0.15,
+                lng: homePos.lng + (cLng - homePos.lng) * 0.15,
+            } : {
                 lat: cLat + (homePos.lat - cLat) * 0.38,
                 lng: cLng + (homePos.lng - cLng) * 0.38,
             };
@@ -993,7 +1001,8 @@ export class CityLifeAmbientLayer {
                     const dLng = Math.cos(ang) * distDeg;
                     const a = { lat: leader.homePos.lat + dLat, lng: leader.homePos.lng + dLng };
                     const b = { lat: leader.homePos.lat - dLat, lng: leader.homePos.lng - dLng };
-                    if (!this.isSea(a) && !this.isSea(b)) {
+                    const mid = { lat: leader.homePos.lat, lng: leader.homePos.lng };
+                    if (!this.isSea(a) && !this.isSea(mid) && !this.isSea(b)) {
                         homePos = a;
                         gatePos = b;
                         break;
@@ -1330,6 +1339,11 @@ export class CityLifeAmbientLayer {
             if (this.isHuntPrey(a)) {
                 inUse.add(`${a.lib}/${a.dir}:death`);
                 inUse.add(`${a.lib}/${a.dir}:decay`);
+            }
+            if (a.dir === 'VIL_MALE_HUNTER') {
+                for (const action of ['work', 'idle', 'gather', 'carry', 'move']) {
+                    inUse.add(`${a.lib}/${a.dir}:${action}`);
+                }
             }
             if (a.damageBlend > 0) {
                 inUse.add('SUCAI/VIL_MALE_VILLAGER:death');

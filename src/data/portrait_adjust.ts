@@ -8446,6 +8446,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 2,
             "offsetY": -3
+        },
+        "/assets/CENTRAL/bfe3_56.png": {
+            "scale": 1.29,
+            "offsetX": 0,
+            "offsetY": 16
         }
     },
     "folderGuides": {

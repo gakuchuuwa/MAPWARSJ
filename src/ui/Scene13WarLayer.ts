@@ -47,6 +47,7 @@ import { categorizeUnit } from '../legion/formation/deUnitCategories';
 import { computeDeFormationLayout, type DeCategoryGroup } from '../legion/formation/deFormationLayout';
 import type { Scene13PlayerSetup } from '../player/PlayerHero';
 import { withPlayerPeakStats } from '../player/PlayerGrowth';
+import { PLAYER_LIVE_SKILL } from '../player/PlayerLiveSkill';
 import { withCommander } from '../data/generalHeroUnits';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
@@ -1093,6 +1094,20 @@ export class Scene13WarLayer {
     private playerKills = 0;
 
     public hasPlayerHero(): boolean { return this.active && !!this.heroMan; }
+
+    /** 直播玩家技能剩余秒数；与武将六计状态分表，不读也不写技能槽。 */
+    private playerLiveSkillTimer = 0;
+    public getPlayerLiveSkillSec(): number { return Math.max(0, this.playerLiveSkillTimer); }
+
+    /** 斥候及以上的直播玩家技：本人立即回满，连续释放累加持续时间。 */
+    public castPlayerLiveSkill(): 'cast' | 'wait' | 'closed' {
+        if (!this.active || this.over) return 'closed';
+        const m = this.heroMan;
+        if (!m || !this.playerSetup || this.deployT > 0 || m.hp <= 0) return 'wait';
+        m.hp = this.heroMaxHp(m.key, m.f);
+        this.playerLiveSkillTimer = Math.max(0, this.playerLiveSkillTimer) + PLAYER_LIVE_SKILL.durationSec;
+        return 'cast';
+    }
 
     /** 键盘移动：屏幕方向 → 逻辑方向（左右对调时 x 取反） */
     public setHeroInput(v: { dx: number; dy: number } | null): void {
