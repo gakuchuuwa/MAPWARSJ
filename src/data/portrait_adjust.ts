@@ -813,7 +813,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/CENTRAL/yuzhou_zuti.png": {
-            "scale": 0.9,
+            "scale": 0.84,
             "offsetX": 1,
             "offsetY": 4
         },
@@ -8461,6 +8461,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 14
+        },
+        "/assets/WEI/bfe_taobao.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -13
         }
     },
     "folderGuides": {

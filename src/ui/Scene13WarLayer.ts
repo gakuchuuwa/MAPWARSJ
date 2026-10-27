@@ -1732,14 +1732,17 @@ export class Scene13WarLayer {
         this.camWatchOffT = 0;
     }
 
-    /** 有玩家时唯一的镜头目标仲裁入口：六档优先；玩家交战或当前目标失效立即解除一切镜头停留。 */
+    /** 有玩家时唯一的镜头目标仲裁入口：六档优先；当前目标失效立即解除手动停留（玩家交战不解除，见下）。 */
     private resolveHeroCamTarget(hero: WarMan, dt: number): WarMan | null {
         const watched = this.camWatchMan;
         const watchingHero = this.camTier === 0 || this.camTier === 3;
         const targetLost = this.camTier >= 0 && (watchingHero
             ? hero.hp <= 0
             : !watched || watched.hp <= 0 || !this.men.includes(watched));
-        if (targetLost || (hero.hp > 0 && hero.foe)) {
+        // 🔴 [2026-10-27 主人令「交战时无法拖拽镜头，不然我怎么检查地图」] 玩家交战不再清掉手动停留：
+        //    原来 hero.foe 为真时每帧清零，拖开的镜头立刻被拉回，交战中根本没法看图。现在拖拽后照样停留 9 秒；
+        //    当前盯的人阵亡仍立即恢复跟随。
+        if (targetLost) {
             this.skillCamTimer = 0;
             this.userInteractingTimer = 0;
         }
@@ -1752,6 +1755,8 @@ export class Scene13WarLayer {
     /**
      * 🔴 [2026-10-26 主人令「缩放时保持画面中心」] 改缩放倍率并等比改平移：平移是屏幕像素，
      *    画面中心世界点 = worldC − pan/zoom，只改 zoom 不改 pan 画面中心就会漂走。滚轮与面板滑条都走这里。
+     *    🔴 [2026-10-27] 缩放不再暂停自动跟随（原来这里置 userInteractingTimer = 9）：中心已保持，没必要停跟；
+     *    停了的话放大后乱入者走出画面也没人追。只有拖拽才暂停跟随。
      */
     public setTacticalZoomKeepCenter(nextZoom: number): void {
         const old = this.tacticalZoom;
@@ -1760,7 +1765,6 @@ export class Scene13WarLayer {
             this.tacticalPanX *= nextZoom / old;
             this.tacticalPanY *= nextZoom / old;
         }
-        this.userInteractingTimer = 9.0;
         this.clampTacticalPan();
     }
 
@@ -8270,7 +8274,7 @@ export class Scene13WarLayer {
         }
         this.fleers = this.fleers.filter(f => f.t < FLEE_DUR);
 
-        // 平时按六档自动跟随；手动拖拽可停留 9 秒，但玩家交战或当前目标失效会立即恢复跟随。
+        // 平时按六档自动跟随；手动拖拽可停留 9 秒（含玩家交战时），但当前目标失效会立即恢复跟随。
         //    本块只在新战术模式跑（useGroundGL）；旧 13 无平移/缩放，不受影响。
         if (this.useGroundGL && this.canvas) {
             let targetFocusX = 0, targetFocusY = 0, count = 0;

@@ -77,18 +77,33 @@ function followLerpFactor(deltaSeconds: number): number {
  * zoom9 尤其明显：1px ≈ 250m，要动镜头得军团偏离中心 **570m 以上**，
  * 而行军是慢慢挪的，大部分帧镜头都是静止的。zoom10（125m/px）像素增量翻倍就跟得上。
  *
- * 解法是整数量化的标准做法：**把丢掉的小数攒到下一帧**，只把整数部分交给 panBy。
- * 平均速度因此精确等于请求速度，顿挫被摊成均匀的 1px 步进。
+ * 当时的解法是「把丢掉的小数攒到下一帧」，只把整数部分交给 panBy。
+ *
+ * 🔴 [2026-10-27 修「战略地图玩家移动时轻微晃动」] 残差累积只保证了**平均速度**对，
+ *    镜头仍是整像素一格一格走，而主角位置是连续的 —— 主角相对屏幕中心就在 ±1px 里来回摆。
+ *    实测（scratch/probe_camera_jitter.mjs，zoom9 玩家行军 240 帧）：
+ *      主角屏幕偏移 X sd 0.41 / Y sd 0.71px，峰峰约 2px，**逐帧方向反转 X 163 / Y 146 次（共 238）**
+ *      —— 七成的帧主角都在换方向晃，镜头步长是 1,2,1,2… 交替。
+ *    叠加原因：指数平滑本身的滞后量随帧长变（长帧滞后大、短帧滞后小），也会让主角前后摆。
+ *    现在两处一起改：
+ *      ① 平移不再取整（`panByThrottledMoveEnd` 走 `_rawPanBy`），镜头与主角同为连续坐标；
+ *      ② 跟拍改成「刚性跟随 + 平滑收拢」：镜头先照搬目标本帧的位移，再按 k 收拢遗留偏移
+ *         （见 followPanStep）。偏移只会单调衰减，不再随帧长忽大忽小。
+ *    停稳（目标不动且进死区）时把地图层对齐回整像素，免得底图长期停在半像素上发虚。
  */
-const followPanResidual = { x: 0, y: 0 };
+const followPanState = { lastTarget: null as L.Point | null, lastZoom: NaN };
 let lastFollowPanArmyId: string | null = null;
 /** 本帧战斗场景生命周期（battleScene.tick）是否已经跑过（见 tickGameAppFrame 末尾的兜底） */
 let battleSceneTickedThisFrame = false;
 
-function resetFollowPanResidual(): void {
-    followPanResidual.x = 0;
-    followPanResidual.y = 0;
+function resetFollowPanState(): void {
+    followPanState.lastTarget = null;
+    followPanState.lastZoom = NaN;
 }
+/** 目标单帧位移小于这个（像素）算「没动」：只有没动时死区才生效，否则行进中会反复进出死区一停一走 */
+const FOLLOW_STILL_EPS_PX = 0.01;
+/** 目标单帧位移超过这个（像素）当作瞬移（入伍贴军团等），不照搬，交给平滑收拢 */
+const FOLLOW_JUMP_PX = 48;
 
 /**
  * 🔴 [2026-09-20 修「行军过程中持续有延迟感」] 跟拍平移的 `moveend` **节流**。
@@ -128,7 +143,7 @@ let lastMoveEndFiredAt = 0;
 let panPxSinceMoveEnd = 0;
 let moveEndTrailingTimer: ReturnType<typeof setTimeout> | null = null;
 
-/** 按整像素平移，并把逐帧 moveend 收敛成「节流 + 停稳补发」。 */
+/** 按亚像素平移（不取整，见 followPanState 的说明），并把逐帧 moveend 收敛成「节流 + 停稳补发」。 */
 function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
     const now = performance.now();
     // DEV A/B 量具：`__moveEndNoThrottle = true` 退回改前行为（每帧都 fire moveend），
@@ -152,7 +167,14 @@ function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
         };
     }
     try {
-        map.panBy(pt, { animate: false });
+        if (map.getSize().contains(pt)) {
+            // 等同 panBy({animate:false}) 的非动画分支，只是不把 offset 取整
+            map.fire('movestart');
+            (map as unknown as { _rawPanBy(offset: L.Point): void })._rawPanBy(pt);
+            map.fire('move').fire('moveend');
+        } else {
+            map.panBy(pt, { animate: false });   // 超过一屏：交给 Leaflet 走 _resetView
+        }
     } finally {
         anyMap.fire = origFire;
     }
@@ -177,38 +199,49 @@ function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
     }
 }
 
-/** 累积亚像素残差后按整像素平移；1px 内停稳，且绝不越过目标反向修正。 */
-function panByAccumulated(
-    map: L.Map,
-    dx: number,
-    dy: number,
-    remainingX: number,
-    remainingY: number,
-): void {
-    const settleX = Math.abs(remainingX) < 1;
-    const settleY = Math.abs(remainingY) < 1;
-    if (settleX) followPanResidual.x = 0;
-    if (settleY) followPanResidual.y = 0;
-    if (settleX && settleY) return;
+/** 地图层停在半像素上时对齐回整像素（底图不发虚）；已对齐则什么都不做。 */
+function snapMapPaneToWholePixel(map: L.Map): void {
+    const pos = (map as unknown as { _getMapPanePos(): L.Point })._getMapPanePos();
+    const fx = pos.x - Math.round(pos.x);
+    const fy = pos.y - Math.round(pos.y);
+    if (Math.abs(fx) < 1e-3 && Math.abs(fy) < 1e-3) return;
+    panByThrottledMoveEnd(map, L.point(fx, fy));
+}
 
-    // 🔴 拐弯（移动方向反转）时清零残差：旧方向攒下的小数带到新方向会造成过度转向，
-    //    观感就是镜头「退一步」。判据：本帧位移 dx/dy 与残差方向相反。
-    if (dx !== 0 && followPanResidual.x !== 0 && Math.sign(dx) !== Math.sign(followPanResidual.x)) followPanResidual.x = 0;
-    if (dy !== 0 && followPanResidual.y !== 0 && Math.sign(dy) !== Math.sign(followPanResidual.y)) followPanResidual.y = 0;
+/**
+ * 跟拍一帧（死区 / 吸附 / 刚性跟随 + 平滑收拢），战略地图主路与战败停留两处共用。
+ * 收拢：镜头先照搬目标本帧位移，再把上一帧遗留的偏移按 k 收掉 —— 偏移只单调衰减（见 followPanState）。
+ */
+function followPanStep(map: L.Map, target: L.LatLng, deltaTime: number): void {
+    const zoom = map.getZoom();
+    const center = map.getCenter();
+    const dist = center.distanceTo(target);
+    if (dist >= FOLLOW_SNAP_DISTANCE_M) {
+        resetFollowPanState();   // 吸附后上一帧目标作废
+        map.setView(target, zoom, { animate: false });
+        return;
+    }
+    const centerPx = map.project(center, zoom);
+    const targetPx = map.project(target, zoom);
+    const prev = followPanState.lastZoom === zoom ? followPanState.lastTarget : null;
+    followPanState.lastTarget = targetPx;
+    followPanState.lastZoom = zoom;
 
-    const fx = settleX ? 0 : dx + followPanResidual.x;
-    const fy = settleY ? 0 : dy + followPanResidual.y;
-    const constrain = (step: number, remaining: number, settled: boolean): number => {
-        if (settled || step === 0 || Math.sign(step) !== Math.sign(remaining)) return 0;
-        const maxWholePixels = Math.floor(Math.abs(remaining));
-        return Math.sign(step) * Math.min(Math.abs(step), maxWholePixels);
-    };
-    const ix = constrain(Math.round(fx), remainingX, settleX);
-    const iy = constrain(Math.round(fy), remainingY, settleY);
-    followPanResidual.x = settleX ? 0 : Math.max(-0.499, Math.min(0.499, fx - ix));
-    followPanResidual.y = settleY ? 0 : Math.max(-0.499, Math.min(0.499, fy - iy));
-    // 都是 0 就别调 panBy —— 省掉一次 pane transform + move 事件广播
-    if (ix !== 0 || iy !== 0) panByThrottledMoveEnd(map, L.point(ix, iy));
+    let mx = prev ? targetPx.x - prev.x : 0;
+    let my = prev ? targetPx.y - prev.y : 0;
+    if (Math.abs(mx) + Math.abs(my) > FOLLOW_JUMP_PX) { mx = 0; my = 0; }
+    const still = Math.abs(mx) + Math.abs(my) <= FOLLOW_STILL_EPS_PX;
+    if (still && dist <= FOLLOW_RECENTER_DEADZONE_M) {
+        snapMapPaneToWholePixel(map);
+        return;
+    }
+    // 上一帧遗留偏移 = 当前偏移 − 目标本帧位移
+    const k = followLerpFactor(deltaTime);
+    const sx = mx + (targetPx.x - centerPx.x - mx) * k;
+    const sy = my + (targetPx.y - centerPx.y - my) * k;
+    // 位移太小就别平移 —— 省掉一次 pane transform + move 事件广播
+    if (Math.abs(sx) < 1e-3 && Math.abs(sy) < 1e-3) return;
+    panByThrottledMoveEnd(map, L.point(sx, sy));
 }
 /**
  * 🔴 [2026-09-05 修「人物移动一顿一顿」] 单帧时间步：**下限 0、上限 0.1**。
@@ -546,7 +579,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             const legionManager = app.historicalEventManager?.getLegionManager();
             const followedId = app.cameraFollowUI.getFollowedArmyId();
             if (followedId !== lastFollowPanArmyId) {
-                resetFollowPanResidual();
+                resetFollowPanState();
                 lastFollowPanArmyId = followedId;
             }
             // 独立战斗画布激活时冻结战略地图的自动缩放与普通跟拍。
@@ -568,7 +601,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
 
                 if (!sceneActive) {
                     if (!autoCtrl) {
-                        resetFollowPanResidual();   // 关闭自动缩放：镜头冻结，交给玩家手动控制
+                        resetFollowPanState();   // 关闭自动缩放：镜头冻结，交给玩家手动控制
                     } else {
                         app.cameraFollowUI.tickFollowCamera(
                         (id) => resolveFollowTarget(app, id),
@@ -578,7 +611,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             const center = lMap.getCenter();
                             const dist = center.distanceTo(target);
                             // [2026-09-03] 行军顿挫探针 —— 🔴 必须放在三条分支**之前**（死区 return / 吸附 setView
-                            //   走不到 panByAccumulated，而它们恰恰最像「一顿一顿」）。
+                            //   走不到 followPanStep 的平移，而它们恰恰最像「一顿一顿」）。
                             // 🔴 修：探针原先只挂在下面「战斗画布激活」的 else 分支，战略地图正常跟拍这条主路
                             //   从没调过它，所以 scratch/stuck_legion_log.jsonl 一条都没有。
                             if (import.meta.env.DEV) {
@@ -601,43 +634,15 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                     );
                                 }
                             }
-                            if (dist <= FOLLOW_RECENTER_DEADZONE_M) {
-                                resetFollowPanResidual();
-                                return;
-                            }
-                            if (dist >= FOLLOW_SNAP_DISTANCE_M) {
-                                resetFollowPanResidual();   // 吸附后残差作废
-                                lMap.setView(target, currentZoom, { animate: false });
-                                return;
-                            }
-                            // 每帧向目标插值一小段（指数平滑追踪）：
-                            // 比「攒距离整步跳」平滑，比 panTo 动画叠加可控。
-                            // 🔴 [2026-09-15] 系数按真实帧长换算（followLerpFactor），不再用固定 0.5 —— 见其注释。
-                            const k = followLerpFactor(deltaTime);
-                            const next = L.latLng(
-                                center.lat + (target.lat - center.lat) * k,
-                                center.lng + (target.lng - center.lng) * k,
-                            );
-                            // [2026-08-28 修卡顿] 像素级 panBy 替代 setView：setView 每帧触发 Leaflet
-                            // _resetView（全量重定位领土 SVG + 据点 DOM + 河流 path），跟拍实测帧时间
-                            // ~30ms→~43ms。panBy 只 transform 各 pane（O(1)），不触发 _resetView，
-                            // 跟拍帧时间回落到 ~28ms。吸附（>12km）仍走 setView，见上。
-                            const _p1 = lMap.project(center, currentZoom);
-                            const _p2 = lMap.project(next, currentZoom);
-                            const _targetPx = lMap.project(target, currentZoom);
-                            panByAccumulated(
-                                lMap,
-                                _p2.x - _p1.x,
-                                _p2.y - _p1.y,
-                                _targetPx.x - _p1.x,
-                                _targetPx.y - _p1.y,
-                            );
+                            // [2026-08-28 修卡顿] 像素级平移替代 setView：setView 每帧触发 Leaflet _resetView
+                            // （全量重定位领土 SVG + 据点 DOM + 河流 path）；平移只 transform 各 pane。吸附（>12km）仍走 setView。
+                            followPanStep(lMap, target, deltaTime);
                         }
                     );
                     }
                 } else {
                     // 场景激活 → 不跑战略地图跟拍/自动缩放，只维护战斗场景生命周期。
-                    resetFollowPanResidual();
+                    resetFollowPanState();
                     app.battleScene?.tick();
                     battleSceneTickedThisFrame = true;
                     // [2026-08-11 战败停留] 13 演出已停（战斗结束、画面冻结在待命态）时，
@@ -659,7 +664,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                 const dist = center.distanceTo(target);
                                 // [2026-09-03] 行军顿挫探针 —— 🔴 必须放在三条分支**之前**：
                                 //   死区提前 return（相机冻结）与吸附 setView（相机突跳）这两条路
-                                //   压根走不到下面的 panByAccumulated，而它们恰恰是最像「一顿一顿」的两种。
+                                //   压根走不到 followPanStep 的平移，而它们恰恰是最像「一顿一顿」的两种。
                                 if (import.meta.env.DEV) {
                                     const fid = app.cameraFollowUI?.getFollowedArmyId?.();
                                     const fa = fid ? legionManager.getLegionById(fid) : null;
@@ -682,32 +687,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                                         );
                                     }
                                 }
-                                if (dist <= FOLLOW_RECENTER_DEADZONE_M) {
-                                    resetFollowPanResidual();
-                                    return;
-                                }
-                                if (dist >= FOLLOW_SNAP_DISTANCE_M) {
-                                    resetFollowPanResidual();   // 吸附后残差作废
-                                    lMap2.setView(target, currentZoom, { animate: false });
-                                    return;
-                                }
-                                // 🔴 [2026-09-15] 同上：系数按真实帧长换算，不再用固定 0.5。
-                                const k2 = followLerpFactor(deltaTime);
-                                const next = L.latLng(
-                                    center.lat + (target.lat - center.lat) * k2,
-                                    center.lng + (target.lng - center.lng) * k2,
-                                );
-                                // 同上：像素级 panBy 替代 setView，避免每帧 _resetView 全量重定位。
-                                const _p1 = lMap2.project(center, currentZoom);
-                                const _p2 = lMap2.project(next, currentZoom);
-                                const _targetPx = lMap2.project(target, currentZoom);
-                                panByAccumulated(
-                                    lMap2,
-                                    _p2.x - _p1.x,
-                                    _p2.y - _p1.y,
-                                    _targetPx.x - _p1.x,
-                                    _targetPx.y - _p1.y,
-                                );
+                                followPanStep(lMap2, target, deltaTime);
                             }
                         );
                     }
