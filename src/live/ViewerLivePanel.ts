@@ -1,6 +1,7 @@
 /**
- * YouTube 单平台直播互动面板。只在战术模式显示；F9 是本地测试与官方接口配置。
- * 免费积分来自频道增长目标；真钱只来自 YouTube Super Chat / Super Sticker。
+ * YouTube 单平台直播互动面板。
+ * 战术模式嵌入顶部控制栏，战略模式仅在直播已连接或按 F9 测试时贴底显示。
+ * 免费积分来自频道增长目标；Super Chat 初期仅作独立「实验点」记录与鸣谢，不参与技能扣款。
  */
 import { type ViewerLive, ORDERS_PER_CAST } from './ViewerLive';
 import type { YouTubeOfficialBridge } from './YouTubeOfficialBridge';
@@ -8,7 +9,7 @@ import type { YouTubeOfficialBridge } from './YouTubeOfficialBridge';
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
 const WORDS = ['攻', '胜', '敌', '混', '并', '败'] as const;
-const FS = { title: 16, main: 15, sub: 13.5, small: 12.5 } as const;
+const FS = { title: 15, main: 14, sub: 13, small: 12 } as const;
 const FS_S13 = { title: 13.5, main: 13, sub: 12, small: 12 } as const;
 const DESIGN_WIDTH = 1920;
 
@@ -48,7 +49,7 @@ export class ViewerLivePanel {
             padding:6px 16px; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
             box-shadow:0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22);
             pointer-events:auto; user-select:none;`;
-        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; width:360px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
+        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; width:380px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
     }
 
     private applyScene13MergedStyle(): void {
@@ -58,7 +59,7 @@ export class ViewerLivePanel {
             border-left:1px solid rgba(212,175,55,0.45);
             color:#f5e6c8; font-family:${FONT}; font-size:${FS_S13.sub}px; line-height:1.2;
             pointer-events:auto; user-select:none;`;
-        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:360px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
+        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:380px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
     }
 
     private updatePosition(): void {
@@ -94,9 +95,9 @@ export class ViewerLivePanel {
         const s = this.live.snapshot();
         this.updatePosition();
         const linked = s.platform.includes('已连接');
-        const show = this.devOpen || (this.inScene13Bar && (s.on || linked));
+        const show = this.devOpen || linked || (this.inScene13Bar && s.on);
         if (!show) { this.root.style.display = 'none'; return; }
-        this.root.style.display = 'inline-flex';
+        this.root.style.display = this.inScene13Bar ? 'inline-flex' : 'block';
         const f = this.inScene13Bar ? FS_S13 : FS;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
         const b = (t: string) => `<b style="color:#ffd700;">${t}</b>`;
@@ -105,22 +106,29 @@ export class ViewerLivePanel {
         const platform = this.devOpen
             ? `<div style="font-size:13px;color:#8fd3ff;margin-bottom:4px;text-align:center;">${esc(s.platform || '本地 YouTube 服务未连接')}　${chat}${s.yt ? '<br>' + esc(s.yt) : ''}</div>`
             : '';
-        const titleBadge = `<span style="font-size:${f.title}px;color:#ffd700;font-weight:900;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,0.9);">📢 发弹幕参战</span>`;
-        const sideCmd = !s.on
-            ? `<span style="font-size:${f.main}px;">开战发 ${b('1')} 攻方 · ${b('2')} 守方</span>`
-            : `<span style="font-size:${f.main}px;">${b('1')} ${esc(s.names[0])}<span style="font-size:${f.sub}px;color:#dfc28c;">(${b(String(s.counts[0]))})</span> · ${b('2')} ${esc(s.names[1])}<span style="font-size:${f.sub}px;color:#dfc28c;">(${b(String(s.counts[1]))})</span></span>`;
-        const castCmd = `<span style="font-size:${f.main}px;">${b('攻胜敌混并败')} 放计</span>`;
-        const scoutCmd = `<span style="font-size:${f.main}px;">${b('技3')} 玩家技</span>`;
-        const earnCmd = `<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}积分`)}/计)</span>`;
-        const mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${sideCmd}${sep}${castCmd} ${earnCmd}${sep}${scoutCmd}</div>`;
+        const titleBadge = `<span style="font-size:${f.title}px;color:#ffd700;font-weight:900;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,0.9);">📢 弹幕控将</span>`;
+        const nextRename = s.renameHighestBid + 1;
+        const renameCmd = `<span style="font-size:${f.sub}px;">${b(`名 名字 ${nextRename}`)} 改名(${nextRename}分起)</span>`;
+
+        let mainRow: string;
+        if (s.on) {
+            const castCmd = `<span style="font-size:${f.main}px;">${b('攻胜敌混并败')} 玩家六计<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)}先后)</span></span>`;
+            const scoutCmd = `<span style="font-size:${f.main}px;">${b('技3')} 爆发技<span style="font-size:${f.sub}px;color:#e0cfa9;">(高分插队)</span></span>`;
+            mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${castCmd}${sep}${scoutCmd}${sep}${renameCmd}</div>`;
+        } else {
+            const joinPart = s.joinCandidates.length > 0
+                ? `<span style="font-size:${f.main}px;">同文化择主：${s.joinCandidates.map((c) => `${b(`投${c.index}`)} ${esc(c.label)}`).join(' · ')}${s.activeJoinBid ? `<span style="color:#7cd4a0;">（当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分→${esc(s.activeJoinBid.label)}）</span>` : ''}</span>`
+                : `<span style="font-size:${f.sub}px;color:#dfc28c;">随军行进中 · 离职后可发 ${b('投1 积分')} 择同文化目标</span>`;
+            mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${joinPart}${sep}${renameCmd}</div>`;
+        }
+
         const subItems: string[] = [];
-        subItems.push(`<span>Super Chat ${b(`$${s.price / 100}`)} 可放一计</span>`);
         const g = s.goal;
         if (s.yt || g.likes > 0 || g.subs > 0) {
             const pct = Math.min(100, Math.round(g.likeProg / g.likeStep * 100));
             subItems.push(
-                `<span style="display:inline-flex;align-items:center;gap:5px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 新增发积分${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''} · 在线新高 ${b(String(g.viewers))}`
-                + `<span style="display:inline-block;width:60px;height:6px;background:#3a2a16;border-radius:3px;overflow:hidden;"><span style="display:block;height:6px;width:${pct}%;background:#d4af37;"></span></span></span>`
+                `<span style="display:inline-flex;align-items:center;gap:5px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 发分${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''} · 在线 ${b(String(g.viewers))}`
+                + `<span style="display:inline-block;width:54px;height:6px;background:#3a2a16;border-radius:3px;overflow:hidden;"><span style="display:block;height:6px;width:${pct}%;background:#d4af37;"></span></span></span>`
             );
         }
         if (s.top.length) {
@@ -130,40 +138,50 @@ export class ViewerLivePanel {
         if (s.on && s.queueBrief.length) {
             const q = s.queueBrief;
             subItems.push(`<span><span style="color:#ffd700;">排队：</span>${q.slice(0, 3).map((x) =>
-                `${esc(x.name)}${x.label ? `·${x.label}` : ''}${x.paid ? '<span style="color:#ffd700;">·赏</span>' : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
+                `${esc(x.name)}${x.label ? `·${esc(x.label)}` : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
+        }
+        if (s.experimental.count > 0) {
+            subItems.push(`<span style="color:#8fd3ff;">实验点打赏：${b(String(s.experimental.count))}笔（最近 ${esc(s.experimental.lastDonor)}）</span>`);
         }
         if (s.log.length) subItems.push(`<span style="color:#cdbb95;">${s.log.slice(-2).map(esc).join(' ｜ ')}</span>`);
         const subRow = subItems.length
-            ? `<div style="position:absolute;top:calc(100% + 6px);right:0;display:flex;align-items:center;gap:8px;padding:3px 10px;background:rgba(20,16,12,0.92);border:1px solid rgba(212,175,55,0.5);border-radius:6px;font-size:${f.small}px;white-space:nowrap;pointer-events:none;">${subItems.join(sep)}</div>`
+            ? (this.inScene13Bar
+                ? `<div style="position:absolute;top:calc(100% + 6px);right:0;display:flex;align-items:center;gap:8px;padding:3px 10px;background:rgba(20,16,12,0.92);border:1px solid rgba(212,175,55,0.5);border-radius:6px;font-size:${f.small}px;white-space:nowrap;pointer-events:none;">${subItems.join(sep)}</div>`
+                : `<div style="margin-top:4px;padding-top:3px;border-top:1px solid rgba(212,175,55,0.28);display:flex;align-items:center;justify-content:center;gap:8px;font-size:${f.small}px;white-space:nowrap;">${subItems.join(sep)}</div>`)
             : '';
         this.body.innerHTML = platform + mainRow + subRow;
     }
 
     private buildDev(): void {
         const label = document.createElement('div');
-        label.textContent = '测试，按 F9 收起：模拟观众发弹幕';
+        label.textContent = '本地模拟测试（按 F9 收起；不能代替真实 YouTube 直播验收）';
         label.style.cssText = 'color:#8fd3ff;font-weight:700;margin-bottom:4px;';
         const name = document.createElement('input');
         name.value = '测试观众1';
         name.style.cssText = 'width:100%;box-sizing:border-box;margin-bottom:6px;background:#221a12;color:#f3e6c8;border:1px solid #6b5a3a;padding:3px 6px;';
-        const paidWrap = document.createElement('label');
-        paidWrap.style.cssText = 'display:block;margin-bottom:6px;';
-        const paid = document.createElement('input');
-        paid.type = 'checkbox';
-        paidWrap.append(paid, document.createTextNode(' 这条带了一次的钱'));
+        const cmdInput = document.createElement('input');
+        cmdInput.placeholder = '输入弹幕口令回车发送（如：名 龙骧 4 / 投1 3 / 技4 / 攻）';
+        cmdInput.style.cssText = name.style.cssText;
+        cmdInput.addEventListener('keydown', (e) => {
+            e.stopPropagation();
+            if (e.key !== 'Enter' || !cmdInput.value.trim()) return;
+            this.live.onChat(name.value, cmdInput.value.trim());
+            cmdInput.value = '';
+            this.render();
+        });
         const row = (items: string[], onClick: (w: string) => void) => {
             const r = document.createElement('div');
             r.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;';
             for (const w of items) {
-                const b = document.createElement('button');
-                b.textContent = w;
-                b.style.cssText = 'flex:1;min-width:34px;padding:3px 0;background:#3a2a16;color:#ffd700;border:1px solid #8a6a2a;border-radius:4px;cursor:pointer;';
-                b.addEventListener('click', () => onClick(w));
-                r.appendChild(b);
+                const btn = document.createElement('button');
+                btn.textContent = w;
+                btn.style.cssText = 'flex:1;min-width:34px;padding:3px 4px;background:#3a2a16;color:#ffd700;border:1px solid #8a6a2a;border-radius:4px;cursor:pointer;';
+                btn.addEventListener('click', () => onClick(w));
+                r.appendChild(btn);
             }
             return r;
         };
-        const send = (w: string) => { this.live.onChat(name.value, w, paid.checked); this.render(); };
+        const send = (w: string) => { this.live.onChat(name.value, w, false); this.render(); };
         const ytLabel = document.createElement('div');
         ytLabel.textContent = 'YouTube API 密钥、本场直播网址，回车生效；换网址时密钥留空即沿用';
         ytLabel.style.cssText = 'color:#8fd3ff;margin-bottom:2px;';
@@ -188,28 +206,29 @@ export class ViewerLivePanel {
         };
         ytKey.addEventListener('keydown', applyYt);
         ytVideo.addEventListener('keydown', applyYt);
-        this.dev.append(ytLabel, ytKey, ytVideo, label, name, paidWrap,
-            row(['1 站攻方', '2 站守方'], (w) => send(w[0])),
+        this.dev.append(
+            ytLabel, ytKey, ytVideo, label, name, cmdInput,
             row([...WORDS], send),
             row(['技3', '技4', '技5'], send),
-            row(['Super Chat $1', 'Super Chat $10'], (w) => {
-                this.live.onPayment(name.value.trim() || '观众', name.value, w.includes('10') ? 1000 : 100, `测试${w}`);
+            row(['名 龙骧 3', '名 虎贲 5', '投1 2', '投2 4'], send),
+            row(['Super Chat 实验点 $2', 'Super Chat 实验点 $10'], (w) => {
+                this.live.onPayment(name.value.trim() || '观众', name.value, w.includes('10') ? 1000 : 200, w);
                 this.render();
             }),
-            row(['点赞+1', '点赞+10', '订阅+1', '在线+1'], (w) => {
+            row(['点赞+10', '订阅+1', '在线+5'], (w) => {
                 const g = this.live.snapshot().goal;
-                if (w === '点赞+1' || w === '点赞+10') {
-                    const d = w === '点赞+10' ? 10 : 1;
+                if (w === '点赞+10') {
                     this.live.onLikeTotal(g.likes);
-                    this.live.onLikeTotal(g.likes + d);
+                    this.live.onLikeTotal(g.likes + 10);
                 } else if (w === '订阅+1') {
                     this.live.onSubTotal(g.subs);
                     this.live.onSubTotal(g.subs + 1);
                 } else {
-                    this.live.onViewers(Math.max(0, g.viewers - 1));
-                    this.live.onViewers(g.viewers + 1);
+                    this.live.onViewers(g.viewers);
+                    this.live.onViewers(g.viewers + 5);
                 }
                 this.render();
-            }));
+            }),
+        );
     }
 }

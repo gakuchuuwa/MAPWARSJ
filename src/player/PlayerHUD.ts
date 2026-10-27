@@ -4,7 +4,8 @@
 import type { PlayerHero, PlayerAutoPlan } from './PlayerHero';
 import type { PlayerQuestSystem } from './PlayerQuestSystem';
 import type { DialoguePayload } from './PlayerQuestSystem';
-import { heroKeyForRank, nextRankAfter, PLAYER_RANKS } from './PlayerConfig';
+import { heroKeyForRank, meritForNextRankStep, PLAYER_RANKS } from './PlayerConfig';
+import { moderateLiveName } from '../live/LiveNameModeration';
 import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipChineseName } from '../types/NavalShipTiers';
 import { uiPx, COMBAT_UI_TOKENS as T } from '../config/combat-ui-tokens';
@@ -93,6 +94,9 @@ export class PlayerHUD {
             /** 🔴 [2026-10-20 主人令] 百岁模式跳年：返回实际跳到的年份，非百岁模式返回 null */
             getYear?(): number;
             jumpToYear?(year: number): number | null;
+            /** 直播观众竞拍改名状态与主播一键否决（退回违规改名积分并拉黑） */
+            hasViewerRename?(): boolean;
+            onVetoViewerRename?(): string;
         },
     ) {
         this.createPanel();
@@ -358,7 +362,7 @@ export class PlayerHUD {
 
         const hero = this.hero;
         const rank = hero.getRank();
-        const next = nextRankAfter(rank);
+        const nextStepMerit = meritForNextRankStep(rank.id);
         const quest = this.quests.getQuest();
         const host = hero.getHostLegion();
         const factionName = hero.factionId ? this.deps.getFactionName(hero.factionId) : '独行';
@@ -411,12 +415,31 @@ export class PlayerHUD {
         renameBtn.title = '修改玩家名称';
         renameBtn.style.cssText = 'cursor:pointer; background:linear-gradient(180deg, rgba(48,38,26,0.9), rgba(26,20,14,0.95)); border:1px solid rgba(212,175,55,0.45); color:#e8c77e; font-size:11px; padding:1px 5px; border-radius:4px; line-height:1.2; font-family:inherit; box-shadow:inset 0 1px 0 rgba(255,235,180,0.12);';
         renameBtn.addEventListener('click', () => {
-            const trimmed = prompt('请输入新的玩家名称：', hero.name)?.trim();
+            const trimmed = prompt('请输入新的玩家名称（最多6字）：', hero.name)?.trim();
             if (!trimmed || trimmed === hero.name) return;
-            hero.rename(trimmed);
+            const mod = moderateLiveName(trimmed);
+            if (!mod.ok) {
+                alert(mod.reason);
+                return;
+            }
+            hero.rename(mod.name);
             this.refresh();
         });
         secLeft.appendChild(renameBtn);
+
+        if (this.deps.hasViewerRename?.()) {
+            const vetoBtn = document.createElement('button');
+            vetoBtn.type = 'button';
+            vetoBtn.className = 'player-hud-pill-btn';
+            vetoBtn.textContent = '否决';
+            vetoBtn.title = '一键否决观众改名并退回该观众积分';
+            vetoBtn.style.cssText = 'cursor:pointer; background:rgba(120,32,32,0.85); border:1px solid rgba(235,110,110,0.65); color:#ffd8d8; font-size:10.5px; padding:1px 5px; border-radius:4px; line-height:1.2; font-family:inherit;';
+            vetoBtn.addEventListener('click', () => {
+                this.deps.onVetoViewerRename?.();
+                this.refresh();
+            });
+            secLeft.appendChild(vetoBtn);
+        }
 
         const sep1 = document.createElement('span');
         sep1.className = 'player-hud-divider';
@@ -437,7 +460,7 @@ export class PlayerHUD {
         const meritSpan = document.createElement('span');
         meritSpan.style.cssText = 'color:#fffcee; font-size:11px; white-space:nowrap;';
         meritSpan.title = '功勋';
-        meritSpan.textContent = next ? `${hero.merit.toLocaleString()}/${next.merit.toLocaleString()}` : hero.merit.toLocaleString();
+        meritSpan.textContent = nextStepMerit !== null ? `${hero.merit.toLocaleString()}/${nextStepMerit.toLocaleString()}` : hero.merit.toLocaleString();
         secLeft.appendChild(meritSpan);
 
         const sep2 = document.createElement('span');

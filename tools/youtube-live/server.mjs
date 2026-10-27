@@ -57,6 +57,8 @@ export class YouTubeLiveService extends EventEmitter {
         this.generation = 0;
         this.call = null;
         this.retry = null;
+        this.statsCache = { video: '', at: 0, value: null };
+        this.channelIdCache = new Map();
         const definition = protoLoader.loadSync(PROTO_FILE, {
             keepCase: true, longs: String, enums: String, defaults: false, oneofs: true,
         });
@@ -79,9 +81,14 @@ export class YouTubeLiveService extends EventEmitter {
     snapshot() {
         return { ...this.publicStatus(), ledger: this.state.ledger };
     }
+    scrubError(raw) {
+        const text = String(raw || '').slice(0, 240);
+        const key = this.config?.apiKey;
+        return key && key.length >= 6 ? text.split(key).join('[REDACTED]') : text;
+    }
     setStatus(status, error = '') {
         this.status = status;
-        this.lastError = error;
+        this.lastError = this.scrubError(error);
         this.emit('status', this.publicStatus());
     }
     save() { writeJson(this.stateFile, this.state); }
@@ -92,6 +99,7 @@ export class YouTubeLiveService extends EventEmitter {
         this.stop();
         const nextKey = apiKey === undefined ? this.config.apiKey : String(apiKey ?? '').trim();
         this.config = { apiKey: nextKey, video };
+        this.statsCache = { video: '', at: 0, value: null };
         writeJson(this.configFile, this.config);
         this.start();
         return this.publicStatus();
@@ -134,10 +142,11 @@ export class YouTubeLiveService extends EventEmitter {
         const url = new URL('https://www.googleapis.com/youtube/v3/videos');
         url.searchParams.set('part', 'liveStreamingDetails');
         url.searchParams.set('id', video);
-        url.searchParams.set('key', this.config.apiKey);
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            headers: { 'x-goog-api-key': this.config.apiKey },
+        });
         const body = await response.json().catch(() => null);
-        if (!response.ok) throw new Error(body?.error?.message || `videos.list HTTP ${response.status}`);
+        if (!response.ok) throw new Error(this.scrubError(body?.error?.message || `videos.list HTTP ${response.status}`));
         const item = body?.items?.[0];
         if (!item) throw new Error('找不到这个直播视频 ID');
         const chatId = item.liveStreamingDetails?.activeLiveChatId;
@@ -147,35 +156,41 @@ export class YouTubeLiveService extends EventEmitter {
 
     async fetchStats() {
         if (!this.config.apiKey || !this.config.video) throw new Error('尚未配置 YouTube');
+        const now = Date.now();
+        if (this.statsCache.video === this.config.video && this.statsCache.value && now - this.statsCache.at < 15_000) {
+            return this.statsCache.value;
+        }
+        const headers = { 'x-goog-api-key': this.config.apiKey };
         const videoUrl = new URL('https://www.googleapis.com/youtube/v3/videos');
         videoUrl.searchParams.set('part', 'snippet,statistics,liveStreamingDetails');
         videoUrl.searchParams.set('id', this.config.video);
-        videoUrl.searchParams.set('key', this.config.apiKey);
-        const videoResponse = await fetch(videoUrl);
+        const videoResponse = await fetch(videoUrl, { headers });
         const videoBody = await videoResponse.json().catch(() => null);
-        if (!videoResponse.ok) throw new Error(videoBody?.error?.message || `videos.list HTTP ${videoResponse.status}`);
+        if (!videoResponse.ok) throw new Error(this.scrubError(videoBody?.error?.message || `videos.list HTTP ${videoResponse.status}`));
         const item = videoBody?.items?.[0];
         if (!item) throw new Error('找不到这个直播视频 ID');
         let subscribers = null;
-        const channelId = item.snippet?.channelId;
+        const channelId = item.snippet?.channelId || this.channelIdCache.get(this.config.video) || '';
         if (channelId) {
+            this.channelIdCache.set(this.config.video, channelId);
             const channelUrl = new URL('https://www.googleapis.com/youtube/v3/channels');
             channelUrl.searchParams.set('part', 'statistics');
             channelUrl.searchParams.set('id', channelId);
-            channelUrl.searchParams.set('key', this.config.apiKey);
-            const channelResponse = await fetch(channelUrl);
+            const channelResponse = await fetch(channelUrl, { headers });
             const channelBody = await channelResponse.json().catch(() => null);
             if (channelResponse.ok) {
                 const stats = channelBody?.items?.[0]?.statistics;
                 if (stats && !stats.hiddenSubscriberCount) subscribers = Number(stats.subscriberCount);
             }
         }
-        return {
+        const value = {
             likes: Number(item.statistics?.likeCount),
             viewers: Number(item.liveStreamingDetails?.concurrentViewers),
             subscribers,
             ended: !!item.liveStreamingDetails?.actualEndTime,
         };
+        this.statsCache = { video: this.config.video, at: now, value };
+        return value;
     }
 
     streamChat(chatId, generation) {
@@ -201,7 +216,7 @@ export class YouTubeLiveService extends EventEmitter {
             });
             call.on('error', (error) => {
                 if (generation !== this.generation) return;
-                this.lastError = String(error?.details || error?.message || error).slice(0, 240);
+                this.lastError = this.scrubError(error?.details || error?.message || error);
                 resolve();
             });
             call.on('end', () => resolve());
@@ -211,7 +226,7 @@ export class YouTubeLiveService extends EventEmitter {
     ingest(item) {
         const id = item?.id ? `youtube:${item.id}` : '';
         const snippet = item?.snippet;
-        if (!id || !snippet || this.state.handled[id] || this.state.pending.some((e) => e.id === id)) return;
+        if (!id || !snippet || this.state.handled[id] || this.state.payments[id] || this.state.pending.some((e) => e.id === id)) return;
         const type = snippet.type;
         const isText = type === 'TEXT_MESSAGE_EVENT' || type === 1;
         const isSuperChat = type === 'SUPER_CHAT_EVENT' || type === 15;
@@ -265,9 +280,16 @@ export class YouTubeLiveService extends EventEmitter {
         this.emit('status', this.publicStatus());
     }
     saveLedger(ledger, persist = true) {
-        if (!ledger || typeof ledger !== 'object' || Array.isArray(ledger)) return;
+        if (!ledger || typeof ledger !== 'object' || Array.isArray(ledger)) return false;
+        const cur = this.state.ledger;
+        if (cur && cur.day === ledger.day
+            && Number.isSafeInteger(cur.revision) && Number.isSafeInteger(ledger.revision)
+            && ledger.revision < cur.revision) {
+            return false;
+        }
         this.state.ledger = ledger;
         if (persist) this.save();
+        return true;
     }
 }
 

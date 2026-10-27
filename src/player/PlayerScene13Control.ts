@@ -16,6 +16,7 @@ export interface Scene13PlayerApi {
     setPlayerCommand(cmd: 'attack' | 'hold'): void;
     requestExitWithResult(): void;
     getRemainingSec(): number;
+    getPlayerLiveSkillSec?(): number;
     getPlayerBattleState(): {
         heroAlive: boolean;
         heroHp: number;

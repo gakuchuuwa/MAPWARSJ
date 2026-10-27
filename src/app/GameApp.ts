@@ -1140,6 +1140,7 @@ export class GameApp {
             // 🔴 [2026-09-11 主人定 A 方案] 剧本军的真实历史目标（任务条显示用）
         });
         this.playerQuests = quests;
+        quests.onLiveJoinResolved = (res) => this.live.onJoinResolved(res);
 
         // 🔴 [2026-09-26 主人「我说的隐藏是最小化，你要把展开的UI按钮留着呀」]
         //    剧本期右下角 HUD 只**最小化一次**（只留那个展开按钮），之后主人自己点开就点开，不再被轮播按回去。
@@ -1161,6 +1162,8 @@ export class GameApp {
             setSpeed: (mult: number) => this.timeSystem.setSpeed(mult),
             getYear: () => this.timeSystem.getYear(),
             jumpToYear: (year: number) => this.jumpToYear(year),
+            hasViewerRename: () => this.live.hasActiveViewerRename(),
+            onVetoViewerRename: () => this.live.vetoPlayerName(),
             setCompanionPanelsExpanded: (expanded) => {
                 // 🔴 [2026-09-24 主人定] 剧本期：军团/军情两块不显示（CSS 藏）也不展开（免得白刷列表）。
                 // 🔴 [2026-09-26 主人两道令] 先令「把右下角的信息面板也隐藏」，随即报障
