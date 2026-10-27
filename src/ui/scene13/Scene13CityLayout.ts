@@ -675,14 +675,16 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
             ? rawCalSeason
             : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
-        const courtyardTreeAsset = pickTree({
-            baseTile: siteBaseTile,
-            lat: siteLat,
-            lng: siteLng,
-            season: calSeason,
-            isSiege: true,
-            buildingStyle: interiorBldStyle,
-        });
+        const courtyardTreeAsset = (themeLeadTree.length > 0 ? seasonalDeTree(themeLeadTree[0], calSeason, isSnow) : null)
+            ?? deTerrainSeasonalTree(terrainAtCell(cGx, cGy), calSeason, isSnow)
+            ?? (isAridSite ? 'PALM' : pickTree({
+                baseTile: siteBaseTile,
+                lat: siteLat,
+                lng: siteLng,
+                season: calSeason,
+                isSiege: true,
+                buildingStyle: interiorBldStyle,
+            }));
         const treeCandidateSlots: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
             ? [[-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5], [-1.8, -4.8], [1.8, 4.8], [-4.8, 1.8], [4.8, -1.8]]
             : this.defenderCityType === 'medium_city'

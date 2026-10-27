@@ -4620,7 +4620,7 @@ export class Scene13WarLayer {
                 continue;
             }
             // 🔴 [2026-10-03 主人选定 A] 归队后已站定在槽位上的队员：同样清零推挤（理由见本函数头注）
-            if (m.lane >= 0 && !m.hero && !m.foe) {
+            if (m.lane >= 0 && !m.foe) {
                 const L = laneLeaders.get(m.lane);
                 if (L === m && !this.marching && !m.siegeW && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane)
                     && (m.tx - m.x) ** 2 + (m.ty - m.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS) {
@@ -4647,7 +4647,7 @@ export class Scene13WarLayer {
             //    已处于本队归队编队中的领队、队员与玩家不吃**本队队友**的推挤（同上面「站定队员清零」）：
             //    防止本队内部边走边推领队或槽位间距小于两倍半径时「推开→拉回槽位→朝向反转」每帧往复颤抖；别队与敌兵照常推，交战照旧。
             const laneFollow = m.lane >= 0 && !m.foe && !m.march && !this.heroOrderPending(m) && laneLeaders.has(m.lane)
-                && (m.hero === true || m === laneLeaders.get(m.lane) || (m.noFoeSec ?? 0) >= LANE_REGROUP_SEC);
+                && (m === laneLeaders.get(m.lane) || (m.noFoeSec ?? 0) >= LANE_REGROUP_SEC);   // 🔴 [2026-10-27] 玩家与士兵同一口径，不再单列
             let ox = 0, oy = 0, seen = 0, nearest2 = Infinity, minGap = SEP_DIST;
             // 🔴 [2026-10-14 修·推挤偏右下] 原为 `seen < 6` 截断：扫描从左上往右下，左/上的邻居先数满、右/下的常被漏掉
             //    ⇒ 推力系统性偏向右下，人群整体往画面右下飘。war_sim 实测（200 种子镜像局）：截断时偏袒跟位置走
@@ -4806,7 +4806,9 @@ export class Scene13WarLayer {
 
     /** 近战兵与目标隔着城墙（仅攻方在城墙未破且城外/城内相隔时生效；守方本身可穿自家城门，不按隔墙丢目标） */
     private wallSeparates(m: WarMan, o: { x: number; y: number }): boolean {
-        if (this.battleType !== 'siege' || !this.siegeWithWalls || m.f === 1 || m.hero || m.siegeW
+        // 🔴 [2026-10-27 主人令「玩家自动模式走士兵同一套逻辑」] 原来排除了玩家本人（m.hero）：玩家不吃隔墙丢目标，
+        //    要靠另一条「贴墙被顶住改砍墙」补丁；现在与士兵一样，隔着没破的城墙就不锁墙后的兵。
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || m.f === 1 || m.siegeW
             || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f, false).rng > 65) return false;
         this.ensureGateInfo();
         if (this.ringOpen()) return false;
@@ -6736,30 +6738,9 @@ export class Scene13WarLayer {
             return { x: near.x + ringX, y: near.y + ringY };
         }
 
-        // ①½ 🔴 [2026-10-22 主人「我全程都是自动，为什么要让玩家先动，不跟着部队走？」]
-        //    小队模式里玩家本人没有自己的分队，原来视野里没敌人就直奔全图最近的敌人，比步兵快、一个人冲在最前。
-        //    现在视野里没敌人时，跟在本方士兵中间走（本方重心）；敌人进了视野再照 ① 打。本方没人（单骑追贼）照旧。
-        // 🔴 [2026-10-23 主人「为什么正常战争，玩家不跟着队伍走，总是擅自杀出去」「擅自冲锋更不好」]
-        //    正常战争同样适用：玩家跟着自己那一队（同兵种出兵口那队）的士兵走（10-27 起那队没人了就自己找敌人，见下）；
-        //    本队在城里待命，玩家也一起待着。本队一个人都不剩时落到下面自己找敌人。
-        // 🔴 [2026-10-27 主人报「游戏开局各十队，队伍都死光了，还等谁？」] 原来本队没人了改跟「本方全体」的重心：
-        //    九队分在各处打，全体重心常落在没人交战的空地上，玩家站在那里横挪、不往前，看着就是卡住。
-        //    现在只跟自己那一队；本队死光就不再等任何人，落到下面自己找敌人（③ 本队目标 / ④ 全图最近）。
-        if (m.hero && this.playerCmd === 'attack') {
-            let sx = 0, sy = 0, n = 0;
-            for (const o of this.men) {
-                if (o === m || o.f !== m.f || o.hp <= 0 || o.hero) continue;
-                if (m.lane >= 0 && o.lane === m.lane) { sx += o.x; sy += o.y; n++; }
-            }
-            if (n > 0) {
-                const gx = sx / n + m.jx;
-                const gy = sy / n + m.jy;
-                // 🔴 [2026-10-27 主人报「玩家怎么还往回跑呢」] 玩家冲在前面时本队重心落在身后 ⇒ 原来掉头往回跑去找队伍。
-                //    与士兵归队同口径（noBackStep）：只许横移或往前，等队伍跟上，不往回走。
-                const [bx, by] = this.noBackStep(m, gx, gy);
-                return { x: bx, y: by };
-            }
-        }
+        // 🔴 [2026-10-27 主人令「你把玩家做成和所有士兵一样的逻辑」] 上面 ①½ 的「玩家没敌人就跟本队重心走」专属分支已删
+        //    （10-22/10-23/10-27 几次补丁叠出来的，与士兵逻辑互相打架，是玩家卡住的主要来源）。
+        //    自动模式下玩家与同队士兵走同一套：分队待命 / 列阵待敌 / 归队 / 拴绳，下面 ②③④ 对玩家与士兵一视同仁。
 
         // ② 攻城武器：走向第一档目标里离自己最近的那个
         if (m.siegeW && this.battleType === 'siege') {
@@ -6839,11 +6820,8 @@ export class Scene13WarLayer {
             if (bestCityFoe) {
                 return { x: bestCityFoe.x + m.jx, y: bestCityFoe.y + m.jy };
             }
-            // 🔴 [2026-10-20 主人令「乱入者作为防守方，不需要等待」] 城边没敌人时，守方乱入者不回城站着，去找全图最近的敌人
-            if (m.hero && this.playerCmd === 'attack') {
-                const far = this.search(m, 13000, MIN_RANGE_TYPES[m.key] ?? 0, false);
-                if (far) return { x: far.x + m.jx, y: far.y + m.jy };
-            }
+            // 🔴 [2026-10-27 主人令「守方本队在城里待命时玩家也一起待命」] 取代 10-20「守方乱入者不需要等待、去找全图最近的敌人」：
+            //    城边没敌人时玩家与守城士兵一样回城防区驻守。
             return this.defenderCityReturnGoal(m);
         }
         const globalNearest = this.search(m, 13000, MIN_RANGE_TYPES[m.key] ?? 0, false);
@@ -6897,7 +6875,7 @@ export class Scene13WarLayer {
         if (!sp || sp.lane !== m.lane) return null;
         const leader = leaders.get(m.lane);
         if (!leader || leader === m) return null;
-        if (!m.hero && (m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;
+        if ((m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;   // 🔴 [2026-10-27] 玩家与士兵同一口径（原玩家免等）
         if (this.heroOrderPending(m)) return null;
         const uFwd = this.advanceVec[m.f];
         const uSide = this.sideVec[m.f];
@@ -6938,7 +6916,7 @@ export class Scene13WarLayer {
      *     第一波城外列阵的守军（outside1）还有人在城外 ⇒ 这批守军与城外的攻方兵照野战拴绳；
      *     城外守军打光（或退进城）⇒ 第二段攻城，全体解除，照旧走城门 / 绕缺口 / 打墙（原样不动）。
      *     城外守军的阵与最正对攻方的那面城墙平行（见 defOutsideBase），所以他们的横向轴用那面墙的方向，不用 sideVec。
-     * 玩家本人、攻城武器、守门兵、残兵队（全图找敌）不拴。
+     * 攻城武器、守门兵、残兵队（全图找敌）不拴；🔴 [2026-10-27] 玩家本人与士兵一样受拴绳。
      * `fieldLeash` 只给验收探针做新旧对照用，游戏里恒为 true。
      */
     fieldLeash = true;
@@ -6957,7 +6935,7 @@ export class Scene13WarLayer {
     /** 本兵拴绳的横向轴；不拴返回 null */
     private leashAxis(m: WarMan): { x: number; y: number } | null {
         if (!this.fieldLeash) return null;
-        if (m.lane < 0 || m.hero || m.siegeW || m.guardPost || this.remnantLanes.has(m.lane)) return null;
+        if (m.lane < 0 || m.siegeW || m.guardPost || this.remnantLanes.has(m.lane)) return null;   // 🔴 [2026-10-27] 玩家与士兵一样受拴绳
         if (this.battleType === 'siege' && this.siegeWithWalls) {
             if (!this.outsideWave1Alive || this.insideRing(m.x, m.y)) return null;
             if (m.f === 1) return m.outside1 ? this.defOutsideBaseCached().side : null;
@@ -7295,7 +7273,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-15 主人令「改为看到敌人就发起反击」「攻守双方开战的距离太近了，敌人都冲到眼前了，才开战，请拉开点距离」]
             //    注意此处在 `m.next -= dt`（10165 行）之前，故须用 `m.next <= dt` 判断本帧索敌到点（原写 `m.next <= 0` 因下方的重置恒为 false 导致远距索敌从未执行）；
             //    目视迎战距离拉大至 600px，敌军进入阵前 600px 即全军迎战。
-            if (this.holdLanes.size && !m.hero && m.lane >= 0 && this.holdLanes.has(m.lane)
+            if (this.holdLanes.size && m.lane >= 0 && this.holdLanes.has(m.lane)
                 && (!this.marching || m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= dt && this.search(m, 600, 0, false)))) {
                 this.holdLanes.clear();
                 if (this.marching) {
@@ -7336,13 +7314,11 @@ export class Scene13WarLayer {
             }
             // 🔴 [2026-10-18 主人定] 攻城战第二波以后出门点还是9建筑，刷新后看城门是否被击毁，没有的话原地待命，被击毁城门发起反攻
             const isGuard = !!m.guardPost;
-            // 🔴 [2026-10-20 主人令「战术模式中，乱入者作为防守方，不需要等待。不然镜头不动了」]
-            //    守方乱入者在「自动」下不吃本队的列阵待敌（holdLanes）与分队待命（laneStandby），一直自己找敌人打。
-            // 🔴 [2026-10-21 主人报「战术模式中，乱入者复活后不动了」] 攻方乱入者同样适用：复活时本队常已全灭（没有锚点、
-            //    laneTargets 也没有这一队）⇒ 原先落进 laneStandby 原地站死在出兵口。现攻守两方「自动」下都自己找敌人打。
-            const heroHunt = m.hero === true && this.playerCmd === 'attack';
+            // 🔴 [2026-10-27 主人令「自动模式下玩家走士兵同一套逻辑，守方本队在城里待命时玩家也一起待命」]
+            //    原 heroHunt（玩家在「自动」下不吃列阵待敌 holdLanes 与分队待命 laneStandby、一直自己找敌人）已删，取代 10-20 / 10-21 的两条例外。
+            //    玩家本队全灭时没有锚点 / 队级目标：与士兵一样落到下面的 aimAt（③ 本队目标 → ④ 全图最近敌人），不会原地站死。
             // 🔴 [2026-10-15 → 2026-10-26] 每个目标最多 4 队攻击；超出 4 队且场上已无其他可打目标的分队不设队级目标，野战仍继续前进
-            const laneStandby = !heroHunt && !this.marching && !m.march && m.lane >= 0 && !this.heroOrderPending(m) && !m.siegeW && !isGuard
+            const laneStandby = !this.marching && !m.march && m.lane >= 0 && !this.heroOrderPending(m) && !m.siegeW && !isGuard
                 && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane);
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
@@ -7551,7 +7527,7 @@ export class Scene13WarLayer {
                     // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
                     [m.tx, m.ty] = this.fieldBound(sx, sy);
                 }
-            } else if (!m.foe && !holdCmd && !isGuard && (heroHunt || !(m.lane >= 0 && this.holdLanes.has(m.lane)))) {   // 城外列阵待敌与城内未破门守军：原地不动
+            } else if (!m.foe && !holdCmd && !isGuard && !(m.lane >= 0 && this.holdLanes.has(m.lane))) {   // 城外列阵待敌与城内未破门守军：原地不动
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
                 // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
@@ -8198,18 +8174,14 @@ export class Scene13WarLayer {
                 //    两帧一循环的碎步（+4px/-0.25px…），就是主人 2026-10-03 报的「士兵不停颤抖」，
                 //    见 LANE_TRACK_EPS 头注与 scratch/_probe_tremble_trace.mjs 的逐帧轨迹。
                 const slot = isGuard ? null : this.laneSlotTarget(m, laneLeaders);
-                // 🔴 [2026-10-25 主人报「玩家有的时候会一步一步往前蹭」] 玩家本人在「自动」下跟本方部队走时，
-                //    移动目标（本方队伍重心）每帧都在动，却套了给固定目标用的 8px 到达死区 ⇒ 攒够 8px 才迈一步、
-                //    走两帧又停 = 一步一步蹭。归队队员早就不能用这个死区（见上面 LANE_TRACK_EPS 注释），
-                //    玩家本人同样并进「活动目标」口径：连续跟随，位移仍按 min(step, d) 夹住，不会冲过头。
-                //    只影响玩家本人无敌人时的走位；其他兵种的 8px 死区、追击与出手判定一律不动。
-                const heroTrackMoving = m.hero === true && !isGuard && this.playerCmd === 'attack';
-                const trackSlot = !!slot || m.march || isGuard || heroTrackMoving;
+                // 🔴 [2026-10-27 主人令「玩家走士兵同一套逻辑」] 原 heroTrackMoving（10-25 玩家跟本方重心时的连续跟随口径）已删：
+                //    玩家不再单独跟重心走，归队时走 laneSlotTarget 的 slot，与士兵同走 trackSlot。
+                const trackSlot = !!slot || m.march || isGuard;
                 const normalSpd = m.hero && (slot || m.march) && this.spawns[m.lane]
                     ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd)
                     : stats.spd;
                 // 脱战整队推进：普通队员与自动玩家都不得超过本队最慢兵种；地形、坡度等原有修正照常保留。
-                const formationSpd = (laneStandby || (m.hero && this.playerCmd === 'attack')) ? laneFormationSpeeds.get(m.lane) : undefined;
+                const formationSpd = laneStandby ? laneFormationSpeeds.get(m.lane) : undefined;
                 const moveSpdK = formationSpd !== undefined && m.hero ? spdK / HERO_SPEED_MULT : spdK;
                 const step = (formationSpd ?? normalSpd) * moveSpdK * this.uphillSpeedK(m.x, m.y, dx, dy) * dt;
                 const arriveAt = trackSlot ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
@@ -8246,7 +8218,7 @@ export class Scene13WarLayer {
                     m.idlePose === true
                     || holdCmd
                     || isGuard
-                    || (!heroHunt && m.lane >= 0 && this.holdLanes.has(m.lane))
+                    || (m.lane >= 0 && this.holdLanes.has(m.lane))
                     || (laneStandby && (m.tx - m.x) ** 2 + (m.ty - m.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS)
                 );
                 m.ph += dt * (isIdlePose ? (8 / LOOP_WINDOW_IDLE_SEC) : 8);

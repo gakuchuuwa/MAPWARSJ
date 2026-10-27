@@ -10,8 +10,8 @@ import type { AnimalAction, DecorSprite } from './Scene13Types';
 import { DEFAULT_TERRAIN_TILE } from '../Scene13Biome';
 import { FALLBACK_MAPDATA_URL, MAPDATA_DIR } from './Scene13CombatMath';
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_TILE_W, TAC_TILE_H } from './Scene13GroundLayerGL';
-import type { TreeSeason } from './TreeAssignment';
-import { bareSandRejectsTree, seasonalDeTree } from './Scene13DeTrees';
+import { pickTree, type TreeSeason } from './TreeAssignment';
+import { bareSandRejectsTree, deTerrainIsForest, deTerrainRollTreeAsset, seasonalDeTree } from './Scene13DeTrees';
 import { deriveDeGroundTiles } from './Scene13DeGround';
 import { animalNativeAt, animalDeOf } from './Scene13Animals';
 import { applyDeCityToGround } from './Scene13CityLayout';
@@ -412,20 +412,31 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                         }
 
                         // 静态自然植被与矿石资源
-                        // 🔴 [2026-10-21] 树种以**脚下 DE 地形**为准（见 Scene13DeTrees.ts）：
-                        //    DE 烘焙图里 FPAL 长在 13 Palm Desert、BIRCH 长在 110 Birch…，直接照用，不再按建筑风格替换。
+                        // 🔴 [2026-10-21 / 2026-10-27] 树种与分布完全以 **DE 烘焙图（Arabia.rms + dat terrain_units）** 为准：
+                        //    - 森林格（deTerrainIsForest(tid)）：直接按脚下 DE 森林地形 id 的 dat 千分比取树种
+                        //      （还原 BASE_FOREST + BASE_FOREST_VARIATION_A/B 多林种并存，及 88 地中海柏/橄榄/意松 1:4:5 混交）；
+                        //    - 散树格（非森林地形上的 STRAGGLER_SPAWN）：保留 DE 脚本生成的散树单位；
+                        //    - DE 1350 芦苇（内部代号同为 FBAM，长在 2 沙滩 / 4 浅滩 / 90~92 芦苇滩）：归位为 REEDS，绝不当成竹子。
+                        const tid = terrainUnder(ob);
                         let asset = r[1];
+                        if (ob.name === 'FBAM' && (tid === 2 || tid === 4 || tid === 90 || tid === 91 || tid === 92 || WATER_TERRAINS.has(tid))) {
+                            asset = 'REEDS';
+                        }
                         const isTree = TREE_RE.test(asset);
                         if (isTree) {
-                            const tid = terrainUnder(ob);
-                            // ① 水格不长树
-                            if (WATER_TERRAINS.has(tid)) continue;
-                            // ② 纯沙地（DE 14 Desert / 2 Beach）只准长沙漠树种（棕榈/龙血树/金合欢…）；
+                            // ① 水格不长树（含 DE 水地形与水密度场 > 0.38 的水面）
+                            if (WATER_TERRAINS.has(tid) || glLayer.isWaterAt(sx, sy, VW, VH)) continue;
+                            // ② 森林格直接由脚下 DE 森林地形 id 按 dat 密度表决定树种（避免旧烘焙 BFS 跨地形吞并变体林）
+                            if (deTerrainIsForest(tid)) {
+                                const roll = Math.abs(Math.round(ob.x * 73 + ob.y * 151)) % 1000;
+                                asset = deTerrainRollTreeAsset(tid, roll) ?? asset;
+                            }
+                            // ③ 纯沙地（DE 14 Desert / 2 Beach）只准长沙漠树种（棕榈/龙血树/金合欢…）；
                             //    松、桦、橡、枫这些温带/寒带树种长到沙地上就是「沙子里面长树」
                             if (bareSandRejectsTree(tid, asset)) continue;
-                            // ③ 季节换装：只换同族形态（橡→秋橡/雪橡、桦→秋桦/冬桦、松→雪松），绝不跨族换树种
+                            // ④ 季节换装：只换同族形态（橡→秋橡/雪橡、桦→秋桦/冬桦、松→雪松），绝不跨族换树种
                             asset = seasonalDeTree(asset, calSeason, isSnowBase);
-                            // ④ 高山砾石底图（青藏/帕米尔）不长成片针叶林（旧口径保留）
+                            // ⑤ 高山砾石底图（青藏/帕米尔）不长成片针叶林（旧口径保留）
                             if (baseTerrain === 'gravel_default' && /^(SNOW_PINE|PINE|ASIAN_PINE)$/.test(asset)) continue;
                         } else if (asset.startsWith('FORAGE_')) {
                             // 非湿润热带区域（如雪地、荒漠、温带/寒带），将烘培模板中的热带菠萝/木瓜浆果丛统一转为通用浆果丛
@@ -458,10 +469,21 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                             }
                             if (!decorFits(asset, decorCtx)) continue;
                         }
-                        const jx = isTree ? (((hash * 17) % 23) / 22 - 0.5) * TAC_TILE_W * 0.46 : 0;
-                        const jy = isTree ? (((hash * 31) % 29) / 28 - 0.5) * TAC_TILE_H * 0.46 : 0;
-                        sx += jx;
-                        sy += jy;
+                        if (isTree) {
+                            const jx = (((hash * 17) % 23) / 22 - 0.5) * TAC_TILE_W * 0.42;
+                            const jy = (((hash * 31) % 29) / 28 - 0.5) * TAC_TILE_H * 0.42;
+                            const candX = sx + jx;
+                            const candY = sy + jy;
+                            const candGx = Math.floor((candX - VW / 2) / TAC_TILE_W + 60.5);
+                            const candGy = Math.floor((candY - VH / 2) / TAC_TILE_H + 60.5);
+                            const candTid = (data.terrain && candGx >= 0 && candGx < N_TILES && candGy >= 0 && candGy < N_TILES)
+                                ? (data.terrain[candGy * N_TILES + candGx] ?? tid)
+                                : tid;
+                            if (!WATER_TERRAINS.has(candTid) && !bareSandRejectsTree(candTid, asset) && !glLayer.isWaterAt(candX, candY, VW, VH)) {
+                                sx = candX;
+                                sy = candY;
+                            }
+                        }
                         if (onFoundation(sx, sy)) continue;
                         this.ensureNatureAsset(asset);
                         const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
@@ -483,14 +505,14 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                     }
                 }
 
-                // 自然水岸生态：沿水岸线点缀芦苇与睡莲（按气候/季节/海陆水体自适应：冬季冰面不长，荒漠与海岸仅生芦苇不生睡莲）
+                // 自然水岸生态：沿浅滩边缘稀疏点缀芦苇与睡莲（按气候/季节/海陆水体自适应：冬季冰面不长，荒漠与海岸仅生芦苇不生睡莲）
                 const isFrozenWater = glLayer.isIce || baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
                 const allowWaterLily = !isFrozenWater && !isBarrenBase && this.sceneSeason === 0 && this.environmentPlan?.waterKind !== 'sea' && !/^(ds|drt|sav|sa2|zn)/.test(baseTerrain);
                 if (!isFrozenWater) {
-                    for (let gy = 2; gy < 118; gy += 2) {
-                        for (let gx = 2; gx < 118; gx += 2) {
+                    for (let gy = 4; gy < 116; gy += 4) {
+                        for (let gx = 4; gx < 116; gx += 4) {
                             const dens = glLayer.getWaterDensityAt(gx, gy);
-                            if (dens >= 0.41 && dens <= 0.48 && ((gx * 31 + gy * 19) % 5 === 0)) {
+                            if (dens >= 0.42 && dens <= 0.48 && ((gx * 31 + gy * 19) % 9 === 0)) {
                                 const ox = gx - 0.5, oy = gy - 0.5;
                                 const sx = (ox - 60) * TAC_TILE_W + VW / 2;
                                 const sy = (oy - 60) * TAC_TILE_H + VH / 2;
@@ -514,97 +536,9 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                                     obstructionContactSec: 0,
                                     obstructionTouched: false,
                                     obstructionDisabled: true,
-                                    });
+                                });
                             }
                         }
-                    }
-                }
-
-                // 🔴 [2026-10-27 主人令「岸边应该多一些树」]
-                // 沿水岸陆地/沙岸带（紧邻水域 1~3 格）点缀沿岸自然树林，使港口与滨水战场绿树成荫
-                const shoreTreeMinDistSq = 45 * 45;
-                const existingTreePositions: Array<{ x: number; y: number }> = [];
-                for (const sp of this.decorSprites) {
-                    if (TREE_RE.test(sp.asset)) {
-                        existingTreePositions.push({ x: sp.x, y: sp.y });
-                    }
-                }
-
-                const resolveShoreTreeSpecies = (gx: number, gy: number): string => {
-                    const hash = (gx * 37 + gy * 73) % 100;
-                    if (isBarrenBase || isSparseTreelessBiome || /^(des|pal|pal1|qs|ds2|ds5)/i.test(baseTerrain)) {
-                        // 热带/沙漠/干旱海岸：棕榈与海滨乔木
-                        return hash < 60 ? 'PALM' : (hash < 85 ? 'DRAGON_TREE' : 'ACACIA');
-                    }
-                    if (mapLat >= 20 && mapLat <= 42 && mapLng >= 98 && mapLng <= 135) {
-                        // 东亚水系/滨海：水柳 50%、竹林 25%、白桦/松 25%
-                        return hash < 50 ? 'WILLOW' : (hash < 75 ? 'BAMBOO' : 'ASIAN_PINE');
-                    }
-                    if ((mapLat >= 30 && mapLat <= 45 && mapLng >= -10 && mapLng <= 40) || /^(med|scr|dry)/i.test(baseTerrain)) {
-                        // 地中海/近东海岸：丝柏 45%、棕榈 30%、水柳 25%
-                        return hash < 45 ? 'CYPRESS' : (hash < 75 ? 'PALM' : 'WILLOW');
-                    }
-                    if (isSnowBase || /^(sno|sn2|snf|snd|snr|ic3|ice)/.test(baseTerrain)) {
-                        // 寒带/雪域：冬松与白桦
-                        return hash < 60 ? 'SNOW_PINE' : 'BIRCH_WINTER';
-                    }
-                    // 温带欧亚/美洲大陆水岸：水柳 45%、白桦 30%、橡树 25%
-                    return hash < 45 ? 'WILLOW' : (hash < 75 ? 'BIRCH_GREEN' : 'OAK');
-                };
-
-                for (let gy = 3; gy < 117; gy++) {
-                    for (let gx = 3; gx < 117; gx++) {
-                        const dens = glLayer.getWaterDensityAt(gx, gy);
-                        // 岸边带：water density 在 0.12 ~ 0.43 之间（即离水面 1~3 格的陆地岸线）
-                        if (dens < 0.12 || dens > 0.43) continue;
-
-                        const ox = gx - 0.5, oy = gy - 0.5;
-                        const sx = (ox - 60) * TAC_TILE_W + VW / 2;
-                        const sy = (oy - 60) * TAC_TILE_H + VH / 2;
-
-                        if (glLayer.isWaterAtCell(gx, gy)) continue;
-                        if (onFoundation(sx, sy) || inCityZone(sx, sy) || inCampZone(sx, sy)) continue;
-
-                        // 岸边散布密度控制：约 30%~35% 的岸边格生成树木
-                        const hash = (gx * 31 + gy * 53) % 100;
-                        if (hash >= 35) continue;
-
-                        const jx = (((hash * 17) % 23) / 22 - 0.5) * TAC_TILE_W * 0.46;
-                        const jy = (((hash * 31) % 29) / 28 - 0.5) * TAC_TILE_H * 0.46;
-                        const posX = sx + jx, posY = sy + jy;
-
-                        let tooClose = false;
-                        for (let k = 0; k < existingTreePositions.length; k++) {
-                            const et = existingTreePositions[k];
-                            const dx = posX - et.x, dy = posY - et.y;
-                            if (dx * dx + dy * dy < shoreTreeMinDistSq) {
-                                tooClose = true;
-                                break;
-                            }
-                        }
-                        if (tooClose) continue;
-
-                        const rawSpecies = resolveShoreTreeSpecies(gx, gy);
-                        const asset = seasonalDeTree(rawSpecies, calSeason, isSnowBase);
-                        this.ensureNatureAsset(asset);
-                        const lift = glLayer.elevationLiftAt(posX, posY, VW, VH);
-
-                        this.decorSprites.push({
-                            asset,
-                            frame: hash % 100,
-                            x: posX,
-                            y: posY,
-                            flip: (hash % 2 === 0),
-                            layer: 'world',
-                            z: 0,
-                            lift,
-                            densityHash: hash,
-                            obstruction: undefined,
-                            obstructionContactSec: 0,
-                            obstructionTouched: false,
-                            obstructionDisabled: true,
-                        });
-                        existingTreePositions.push({ x: posX, y: posY });
                     }
                 }
             }

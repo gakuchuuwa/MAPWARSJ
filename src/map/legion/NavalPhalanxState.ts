@@ -10,7 +10,12 @@ export interface NavalShipSlot {
     stateStartTime: number;
     /** 随机死亡方向（0-15，船全 16 向素材 2026-08-21） */
     deathDirection: number;
+    /** 非战斗减员（行军损耗等）：只做渐隐，不下沉、不放死亡帧（船队在移动，看不清动画） */
+    fadeOnly?: boolean;
 }
+
+/** 非战斗减员渐隐时长（ms） */
+export const NAVAL_FADE_ONLY_MS = 2000;
 
 export interface NavalUnitState {
     ships: NavalShipSlot[];
@@ -126,10 +131,28 @@ export class NavalPhalanxStateManager {
         // 🔴 [2026-10-15 主人「等舰船被击毁消失后再退出海战」] 军团已覆灭（troops=0）也不重建：
         //   重建会把整支舰队压成 1 艘（shipCountForTroops(0)=1），其余船凭空消失、沉没动画被截断。
         //   覆灭要保留原舰队，交给 drawNaval 的全局 DEATH 分支逐艘沉完。
+        // 🔴 [2026-10-27 主人「海上减员最后一艘船突然消失」] 非战斗减员（行军损耗/风暴）船数变少时，
+        //   原来直接重建 → 队尾船凭空消失。现在多出来的队尾船走 DYING 渐隐（fadeOnly，不下沉；海战才下沉），
+        //   淡完（DEAD）再重建；沉没期间不重建，编队长度保持不变。
+        state.justSank = 0;
         if (!isFighting && troops > 0) {
             const want = shipCountForTroops(troops);
             const hasSunk = state.ships.some((sh) => sh.state !== 'ALIVE');
-            if (state.ships.length === 0 || state.shipCount !== want || hasSunk) {
+            const hasDying = state.ships.some((sh) => sh.state === 'DYING');
+            const aliveCount = state.ships.filter((sh) => sh.state === 'ALIVE').length;
+            if (!hasSunk && state.ships.length > 0 && want < aliveCount) {
+                let stagger = 0;
+                for (let i = state.ships.length - 1; i >= want; i--) {
+                    const ship = state.ships[i];
+                    if (ship.state !== 'ALIVE') continue;
+                    ship.state = 'DYING';
+                    ship.stateStartTime = tick + stagger * 400;   // 队尾先淡出，错开
+                    ship.deathDirection = Math.floor(Math.random() * 8);
+                    ship.fadeOnly = true;
+                    stagger++;
+                }
+                state.lastTroops = troops;
+            } else if (!hasDying && (state.ships.length === 0 || state.shipCount !== want || hasSunk)) {
                 const ships: NavalShipSlot[] = [];
                 for (let i = 0; i < want; i++) {
                     ships.push({ state: 'ALIVE', stateStartTime: tick, deathDirection: Math.floor(Math.random() * 8) });
@@ -149,7 +172,6 @@ export class NavalPhalanxStateManager {
         }
 
         // 战中减员：按健康比计算应存活舰数
-        state.justSank = 0;
         if (state.isFighting && troops < state.lastTroops) {
             const healthRatio = Math.max(0, troops / Math.max(1, state.maxTroops));
             const targetAlive = Math.ceil(state.shipCount * healthRatio);
@@ -179,14 +201,16 @@ export class NavalPhalanxStateManager {
                 }
             }
 
-            // DYING → DEAD：沉没渐隐播完（2026-08-23 主人定 5 秒；原 1200ms 太短像突然消失）
-            const DEATH_ANIM_MS = 5000;
-            state.ships.forEach((ship) => {
-                if (ship.state === 'DYING' && tick - ship.stateStartTime >= DEATH_ANIM_MS) {
-                    ship.state = 'DEAD';
-                }
-            });
         }
+
+        // DYING → DEAD：沉没渐隐播完（2026-08-23 主人定 5 秒；原 1200ms 太短像突然消失）。
+        // 战斗内外都要推进（非战斗减员的沉没也靠它收尾）。
+        const DEATH_ANIM_MS = 5000;
+        state.ships.forEach((ship) => {
+            if (ship.state === 'DYING' && tick - ship.stateStartTime >= (ship.fadeOnly ? NAVAL_FADE_ONLY_MS : DEATH_ANIM_MS)) {
+                ship.state = 'DEAD';
+            }
+        });
 
         state.lastTroops = troops;
         return state;

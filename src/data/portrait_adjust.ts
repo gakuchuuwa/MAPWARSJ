@@ -185,7 +185,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/CENTRAL/yin_dixin.png": {
             "scale": 0.97,
             "offsetX": 20,
-            "offsetY": -35
+            "offsetY": -33
         },
         "/assets/KHMER/siam_nalixuan.png": {
             "scale": 0.9,
@@ -8556,6 +8556,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": -25
+        },
+        "/assets/PURU/sengjialuo_mahinda_v.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL/han_d_wangliang.png": {
+            "scale": 1.11,
+            "offsetX": 16,
+            "offsetY": 1
         }
     },
     "folderGuides": {

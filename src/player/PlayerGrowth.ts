@@ -34,7 +34,11 @@ export function clonePlayerPeakStats(stats: PlayerPeakStats): PlayerPeakStats {
 
 /** 当前兵模只保留外观对应的行为类别；数值来自峰值，且绝不原地改 WAR_TYPES。 */
 export function withPlayerPeakStats(current: WarType, peak: PlayerPeakStats): WarType {
-    return { ...current, ...peak, bonus: { ...peak.bonus } };
+    // 🔴 [2026-10-27 主人「步兵不能有射程」] 射程是兵种类别属性，不跟峰值走：
+    //    当前兵模是近战（rng 0，或 DE 近战兵的几像素够距）就用自己的射程，
+    //    只有当前兵模本身是远程（最小远程档 120）才吃历史最高射程。
+    const rng = current.rng >= 100 ? peak.rng : current.rng;
+    return { ...current, ...peak, rng, bonus: { ...peak.bonus } };
 }
 
 /** 新游戏只以初始斥候兵模的属性开局。 */

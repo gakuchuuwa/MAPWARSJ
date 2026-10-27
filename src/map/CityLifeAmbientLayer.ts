@@ -450,6 +450,9 @@ export class CityLifeAmbientLayer {
     private plotElevPending = false;
     /** 已定案的所有地皮（农田 / 水田 / 草场）的 zoom 9 像素落点，新地皮不许与之重叠 */
     private placedPlots: { x: number; y: number }[] = [];
+    /** 陆海瓦片重排期间保留的上一版布局：新布局暂时算不出来（数据没到）时继续用它，不让地块凭空消失 */
+    private prevActorsByCity = new Map<string, CityLifeActor[]>();
+    private retireSeq = 0;
     private forestByCity = new Map<string, CityForestProp[]>();
     private categoryByCity = new Map<string, LivelihoodCategory>();
     private activeActors = new Map<string, CityLifeActor>();
@@ -864,7 +867,7 @@ export class CityLifeAmbientLayer {
         const cat = this.resolveCityCategory(city);
         if (cat === null) return list;
         // 海陆瓦片没到时一律先不生成（不入缓存，下一帧再来），否则「未到」按陆处理，农田草场会永久落进海里。
-        if (this.hasPendingLandSeaAround(city.lat, city.lng)) return list;
+        if (this.hasPendingLandSeaAround(city.lat, city.lng)) return this.prevActorsByCity.get(city.id) ?? list;
         // 海洋文化只有找到真实海域才捕鱼；内陆据点按史固定为稻作或旱作，不再退化成采果子。
         const landCat: LivelihoodCategory = cat === 'maritime_fishing'
             ? (style === 'JAPAN' || style === 'MALAY' ? 'farming_rice' : 'farming_dry')
@@ -1218,11 +1221,18 @@ export class CityLifeAmbientLayer {
             }
         }
 
-        // 重排落点时沿用同一角色已有的战火状态，避免战损画面闪烁
+        // 有地皮因高程未到被拒：整城这次不定案、不入缓存，下一帧瓦片到了重排，免得地皮永久缺失。
+        // 重排期间沿用上一版布局，不让现有地块突然消失。必须在下面接管 activeActors 之前返回。
+        if (this.plotElevPending) return this.prevActorsByCity.get(city.id) ?? [];
+
+        // 重排落点时沿用同一角色已有的战火状态，避免战损画面闪烁；
+        // 落点变了的（陆海数据到齐后重新选址）不许瞬移：旧的原地渐隐，新的在新位置从全透明渐显。
         for (const actor of list) {
             const prev = this.activeActors.get(actor.id);
             if (!prev) continue;
-            actor.viewAlpha = prev.viewAlpha;
+            const a = this.plotPx(prev.homePos);
+            const b = this.plotPx(actor.homePos);
+            const moved = Math.hypot(a.x - b.x, a.y - b.y) > 2;
             actor.peaceAlpha = prev.peaceAlpha;
             actor.actionAlpha = prev.actionAlpha;
             actor.damageBlend = prev.damageBlend;
@@ -1234,12 +1244,18 @@ export class CityLifeAmbientLayer {
             actor.displayedAction = prev.displayedAction;
             actor.previousAction = prev.previousAction;
             actor.desiredAction = prev.desiredAction;
-            if (prev.damageBlend > 0) actor.lastDrawPos = prev.lastDrawPos;
+            if (moved) {
+                // 旧角色换个键留在原地渐隐（actor.id 不变，行为相位不乱），新角色从 0 渐显
+                this.activeActors.delete(actor.id);
+                prev.retiring = true;
+                this.activeActors.set(`${actor.id}#old${++this.retireSeq}`, prev);
+                actor.viewAlpha = 0;
+            } else {
+                actor.viewAlpha = prev.viewAlpha;
+                if (prev.damageBlend > 0) actor.lastDrawPos = prev.lastDrawPos;
+            }
             this.activeActors.set(actor.id, actor);
         }
-
-        // 有地皮因高程未到被拒：整城这次不定案、不入缓存，下一帧瓦片到了重排，免得地皮永久缺失
-        if (this.plotElevPending) return [];
 
         this.placedPlots.push(...newPlots);
         this.actorsByCity.set(city.id, list);
@@ -1555,12 +1571,14 @@ export class CityLifeAmbientLayer {
             // 年度轮回：旧角色标记退场渐隐，布局缓存与地皮登记清空，下一帧各据点按新年份重抽
             this.layoutYear = year;
             for (const a of this.activeActors.values()) a.retiring = true;
+            this.prevActorsByCity.clear();
             this.actorsByCity.clear();
             this.placedPlots = [];
         }
         if (this.layoutDirty && this.nowMs - this.lastLayoutRebuildMs >= 3000) {
             this.layoutDirty = false;
             this.lastLayoutRebuildMs = this.nowMs;
+            this.prevActorsByCity = new Map(this.actorsByCity);
             this.actorsByCity.clear();
             this.placedPlots = [];   // 地皮登记随布局一起重来，否则旧落点会挡住自己的新落点
             this.forestByCity.clear();
@@ -1581,6 +1599,7 @@ export class CityLifeAmbientLayer {
             }
         }
 
+        const visibleCityIds = new Set(visibleCities.map((c) => c.id));
         this.scanEndangeredCities(this.nowMs, visibleCities);
         const season = this.getSeason();
         const nextSeason = (season + 1) % 4;
@@ -1663,7 +1682,12 @@ export class CityLifeAmbientLayer {
             }
             const inView = inViewActorIds.has(id);
             if (!inView) {
-                this.activeActors.delete(id);
+                if (visibleCityIds.has(actor.cityId)) {
+                    // 据点还在视野里、新布局却没有这个角色（重排后不再放）：原地渐隐，不许一下消失
+                    actor.retiring = true;
+                } else {
+                    this.activeActors.delete(id);
+                }
                 continue;
             }
 

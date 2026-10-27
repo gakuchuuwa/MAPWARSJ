@@ -18,7 +18,7 @@ import { layoutColumn } from './columnMarchLayout';
 import { SPRITE_BASE_H, STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y } from '../../config/LegionSpacing';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
-import { NavalPhalanxStateManager, shipCountForTroops, type NavalUnitState } from './NavalPhalanxState';
+import { NavalPhalanxStateManager, NAVAL_FADE_ONLY_MS, shipCountForTroops, type NavalUnitState } from './NavalPhalanxState';
 import { NavalWakeDrawer, type WakeProjection } from './NavalWakeDrawer';
 import { audioManager } from '../../audio/AudioManager';
 
@@ -2577,12 +2577,20 @@ export class LegionPhalanxDrawer {
             let shipAlpha: number | undefined;
             /** 无 death 帧战船的模拟下沉偏移（px，屏幕向下），随阵亡动画从 0 沉到船身尺寸 */
             let sinkY = 0;
-            if (shipDead) {
+            if (shipDead && shipSlot?.fadeOnly) {
+                continue;   // 非战斗减员：淡完即无，不留残骸
+            } else if (shipDead) {
                 // 残骸：定格在死亡动画最后一帧，随军团尸体一同渐隐；无 death 帧（DE 桨帆船）→ 已沉没，不画
                 if (currentSet.DEATH.length === 0) continue;
                 rawSprite = currentSet.DEATH[shipSlot.deathDirection] || currentSet.DEATH[0];
                 spriteAnimState = 'DEATH';
                 currentFrameIndex = frameCountFor(spriteAnimState, rawSprite) - 1;
+            } else if (shipDying && shipSlot?.fadeOnly) {
+                // 非战斗减员：只渐隐（船队在动，看不清下沉），无下沉偏移、不放死亡帧
+                const timeFade = Math.max(0, tick - shipSlot.stateStartTime);
+                rawSprite = (state === 'MOVE' ? currentSet.MOVE : currentSet.IDLE)[shipDir] || currentSet.IDLE[0];
+                spriteAnimState = state === 'MOVE' ? 'MOVE' : 'IDLE';
+                shipAlpha = Math.max(0, 1 - timeFade / NAVAL_FADE_ONLY_MS);
             } else if (shipDying) {
                 // 逐舰阵亡动画：用该舰的 stateStartTime 驱动；无 death 帧 → idle 兜底 + 渐隐淡出
                 const timeDead = Math.max(0, tick - shipSlot.stateStartTime);

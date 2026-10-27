@@ -57,9 +57,7 @@ export const DE_TERRAIN_TREES: Readonly<Record<number, readonly DeTerrainTreeUni
         { unit: 'OLIVE', asset: 'OLIVE', density: 500 },
         { unit: 'CYPRESS', asset: 'CYPRESS', density: 100 },
     ],
-    90: [{ unit: 'FBAM', asset: 'BAMBOO', density: 1000 }],                     // Forest, Reeds (Shallows)
-    91: [{ unit: 'FBAM', asset: 'BAMBOO', density: 1000 }],                     // Forest, Reeds (Beach)
-    92: [{ unit: 'FBAM', asset: 'BAMBOO', density: 1000 }],                     // Forest, Reeds
+    // 注：90/91/92 Forest, Reeds 在 DE dat 里挂的是 1350 Reeds（内部代号同叫 FBAM，但外观是芦苇而非竹子 348），不算乔木
     104: [{ unit: 'FAUTUM', asset: 'AUTUMN_OAK', density: 1000 }],              // Forest, Autumn
     105: [{ unit: 'FAUTUMS', asset: 'SNOW_AUTUMN_OAK', density: 1000 }],        // Forest, Snow Autumn
     106: [{ unit: 'FDEAD', asset: 'DEAD_TREE', density: 1000 }],                // Dead Forest
@@ -105,6 +103,27 @@ export function deTerrainTreeAsset(terrainId: number): string | null {
     let best = list[0];
     for (const t of list) if (t.density > best.density) best = t;
     return best.asset;
+}
+
+/**
+ * 按 DE dat 的累计千分比（terrain_unit_density）从该森林地形的登记树种中抽一棵：
+ * - 单树种森林（10 橡、19 松、18 竹、104 秋橡、110 桦、13 棕榈…）直接返回该树种；
+ * - 多树种混交林（如 88 地中海森林：柏树 100 / 橄榄 500 / 意松 1000）按升序阈值命中。
+ */
+export function deTerrainRollTreeAsset(terrainId: number, roll0to999: number): string | null {
+    const list = deTerrainTrees(terrainId);
+    if (list.length === 0) return null;
+    if (list.length === 1) return list[0].asset;
+    const r = ((roll0to999 % 1000) + 1000) % 1000;
+    let chosen: DeTerrainTreeUnit | null = null;
+    let maxUnit = list[0];
+    for (const t of list) {
+        if (t.density > maxUnit.density) maxUnit = t;
+        if (r < t.density && (!chosen || t.density < chosen.density)) {
+            chosen = t;
+        }
+    }
+    return (chosen ?? maxUnit).asset;
 }
 
 /** 该 DE 地形是不是「森林地形」（登记了树、且至少有一种 density ≥ 400 的成林树） */

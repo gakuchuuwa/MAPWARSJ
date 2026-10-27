@@ -917,7 +917,7 @@ export class MapEngine {
             if (list?.length && list[list.length - 1].density >= 1000) {
                 const cId = clumpMap[i];
                 const cd = cId >= 0 ? clumpDominant.get(cId) : null;
-                const unit = (cd && this.rng() >= 0.04) ? cd.dom : (cd?.sub ?? list[0].unit);
+                const r = this.rng() * 1000; const unit = list.length === 1 ? list[0].unit : (list.find((u) => r < u.density)?.unit ?? list[list.length - 1].unit);
                 put(unit, i);
                 continue;
             }

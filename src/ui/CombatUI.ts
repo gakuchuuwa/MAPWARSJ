@@ -505,6 +505,9 @@ export class CombatUI {
     private defenderDisplayFactionId: string | null = null;
     /** ZOOM 13 展示侧：true 时守方（跟随军团）在左、攻方在右；战斗语义仍保持攻/守不变。 */
     private scene13SidesFlipped = false;
+    /** 战术战按两军站位算出的左右（syncScene13WarStart 写入，收起面板时清）。
+     *  有值时 show/showRegional 不再按跟拍军团改左右——它们在战术战启动后还会再调一次。 */
+    private scene13LockedFlip: boolean | null = null;
     private leftMultBadge: HTMLSpanElement | null = null;
     private rightMultBadge: HTMLSpanElement | null = null;
     private leftFactionNameSpan!: HTMLSpanElement;
@@ -1454,6 +1457,7 @@ export class CombatUI {
      *    退出时逐字还原 —— 非 13 逐像素不变。
      */
     public applyScene13Layout(on: boolean): void {
+        if (!on) this.scene13LockedFlip = null;   // 战术战结束：左右锁只管这一场
         if (on === this.scene13LayoutOn) return;
         this.scene13LayoutOn = on;
         this.container.classList.toggle('is-scene13', on);
@@ -1667,6 +1671,7 @@ export class CombatUI {
         // 🔴 [2026-10-27 主人令「攻方立绘固定在左，攻方从右边杀来很别扭」] 立绘左右按两军在战场画面上的站位：
         //    攻方在画面左边 ⇒ 攻方立绘在左；攻方从右边杀来 ⇒ 攻方立绘在右。没传（正上下对阵）才沿用旧规则。
         this.scene13SidesFlipped = attackerOnLeft !== undefined ? !attackerOnLeft : init.followedOnDefenderSide === true;
+        this.scene13LockedFlip = this.scene13SidesFlipped;
         this.applyBattleBarOrientation();
         this.attackerFactionId = init.attackerFactionId ?? null;
         this.defenderFactionId = init.defenderFactionId ?? null;
@@ -4242,7 +4247,7 @@ export class CombatUI {
 
     public show(battle: Battle) {
         const followedId = this.followedArmy?.id;
-        this.scene13SidesFlipped = !!followedId && battle.defender.id === followedId;
+        this.scene13SidesFlipped = this.scene13LockedFlip ?? (!!followedId && battle.defender.id === followedId);
         this.applyBattleBarOrientation();
         this.currentBattle = battle;
         this.currentRegionalUnits = null;
@@ -4286,7 +4291,10 @@ export class CombatUI {
         if (attackers.length === 0 || defenders.length === 0) return;
 
         const followedId = this.followedArmy?.id;
-        this.scene13SidesFlipped = !!followedId && defenders.some(u => u.id === followedId || (u as any).armyId === followedId);
+        // 🔴 [2026-10-27 主人报「攻方从右边来，立绘还在左边」] 开战钩子先启动战术战（已按两军站位定好左右），
+        //    紧接着又调本函数；这里不许再按跟拍军团把左右改回去。
+        this.scene13SidesFlipped = this.scene13LockedFlip
+            ?? (!!followedId && defenders.some(u => u.id === followedId || (u as any).armyId === followedId));
         this.applyBattleBarOrientation();
 
         this.clearRegionalTimers();
@@ -5733,6 +5741,7 @@ export class CombatUI {
         this.attackerDisplayFactionId = null;
         this.defenderDisplayFactionId = null;
         this.scene13SidesFlipped = false;
+        this.scene13LockedFlip = null;
         this.applyBattleBarOrientation();
         this.resetBattleOverlays();
         this.isCollapsed = false;
