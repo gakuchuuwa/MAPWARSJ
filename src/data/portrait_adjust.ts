@@ -2898,9 +2898,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/JIANGNAN/chizhou_changyuchun.png": {
-            "scale": 1.17,
+            "scale": 1.13,
             "offsetX": 0,
-            "offsetY": -47
+            "offsetY": -45
         },
         "/assets/JIANGNAN/fangla_fangla.png": {
             "scale": 1.28,
@@ -8466,6 +8466,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -13
+        },
+        "/assets/CENTRAL/liang_d_wangjingren.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/XIANBEI/yuan_d_manzihaiya.png": {
+            "scale": 1.24,
+            "offsetX": 10,
+            "offsetY": -9
         }
     },
     "folderGuides": {
