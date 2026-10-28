@@ -701,14 +701,13 @@ export class CityLifeAmbientLayer {
             for (let gy = -2; gy <= 2; gy++) {
                 if (Math.abs(gx) + Math.abs(gy) > 2) continue;
                 const ll = this.map.unproject([x + gx / 2 * hw, y + 4 + gy / 2 * hh], 9);
-                if (LandSeaSystem.probeLandSea(ll.lat, ll.lng) === 'pending') {
-                    this.isSea({ lat: ll.lat, lng: ll.lng });
+                const water = LandSeaSystem.getWaterSampler().isWaterSync(ll.lat, ll.lng);
+                if (water === null) {
+                    LandSeaSystem.getWaterSampler().scheduleFetch(ll.lat, ll.lng);
                     this.plotElevPending = true;
                     return false;
                 }
-                if (this.isSea({ lat: ll.lat, lng: ll.lng })) return false;
-                // 内陆湖、河也不许压：掩膜说是水就算
-                if (LandSeaSystem.getWaterSampler().isWaterSync(ll.lat, ll.lng) === true) return false;
+                if (water === true || this.isSea({ lat: ll.lat, lng: ll.lng })) return false;
                 const elev = LandSeaSystem.getElevationSync(ll.lat, ll.lng);
                 if (elev === null) {
                     // 高程没到：本据点这次先不定案（不入缓存），拉到瓦片再判，免得「不知道」被当成平地

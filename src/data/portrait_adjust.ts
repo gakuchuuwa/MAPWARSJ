@@ -7448,7 +7448,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/INDIA/zhelouqi_pulitewei.png": {
-            "scale": 1.14,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": -11
         },
@@ -8761,6 +8761,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": -1,
             "offsetY": -4
+        },
+        "/assets/GURJARAS/xisa_chastana.png": {
+            "scale": 0.92,
+            "offsetX": 11,
+            "offsetY": 0
         }
     },
     "folderGuides": {
