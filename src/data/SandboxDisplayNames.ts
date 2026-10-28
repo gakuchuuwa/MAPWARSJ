@@ -371,7 +371,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
 'kala': '喀汗',
-'xiliao': '大辽',
+'xiliao': '辽',   // 🔴 [2026-10-28 主人令「势力名字用东南西北上下的，旗帜用一个国号字」] 西辽国号「辽」（史称西辽/哈剌契丹）→ 辽
 'sogdian': '粟特',
     'suogediyana': '索格',
     'kangju': '康居',
@@ -555,7 +555,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'suwa_d': '诹访',
     'hui': '濊',
     'wure': '兀惹',
-'houliao': '东辽',
+'houliao': '辽',   // 🔴 [2026-10-28 主人令「例如东辽，这种的旗帜应该用一个辽字」] 东辽国号「辽」，旗号写国号一字
     'sunite': '苏尼',
 'dayuzi': '玉兹',
     'weiwuer': '乌第',
@@ -610,7 +610,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   fanyanna: '梵衍',
 'bailong': '白龙',
     'kepantuo': '渴盘',
-'yangguan': '西凉',
+'yangguan': '凉',   // 🔴 [2026-10-28 主人令「势力名字用东南西北上下的，旗帜用一个国号字」] 西凉国号「凉」（史称西凉）→ 凉
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
 'wugu_d': '乌古',
     xierhe: '锡尔',

@@ -338,9 +338,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -63
         },
         "/assets/JIANGNAN/wuwu_d_lvmeng.png": {
-            "scale": 0.96,
+            "scale": 0.92,
             "offsetX": 0,
-            "offsetY": -11
+            "offsetY": -10
         },
         "/assets/CENTRAL/ruzhou_sunjian.png": {
             "scale": 1.09,

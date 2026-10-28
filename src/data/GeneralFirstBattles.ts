@@ -2240,25 +2240,29 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #103 吕蒙 (178 ~ 220) — 公元213年濡须口保卫战（本城就地开战）
+    // #103 吕蒙 (178 ~ 220) — 公元219年白衣渡江袭荆州（攻城：江陵）
+    //   🔴 [2026-10-28 主人令「吕蒙的首战对手怎么是曹操，这个不对吧？请修复」] 原写 213 年濡须口对曹操——
+    //   那是孙权亲当曹操的仗，不是吕蒙本人的名战。改吕蒙最知名一役：219 年白衣渡江取荆州，
+    //   对手＝督荆州事的关羽（蜀）。史实：吕蒙称病回建业、陆逊卑辞使关羽尽撤后防北赴樊城，
+    //   蒙伏精兵于艨艟、白衣摇橹尽收江边屯候；公安傅士仁、江陵糜芳相继降，关羽回师军散、败走麦城。
     wuwu_d_lvmeng: {
         generalId: 'wuwu_d_lvmeng',
-        battleName: '濡须口之战',
-        battleYear: 213,
+        battleName: '荆州之战',
+        battleYear: 219,
         battleType: 'siege',
-        role: 'defender',
-        targetName: '濡须口',
-        targetCityId: 'city_jingkou',
-        targetLat: 31.58,
-        targetLng: 117.92,
-        myTroops: 35000,
-        enemyFactionId: 'wei',
-        enemyFactionName: '曹操军',
-        enemyGeneralId: 'cao_d_caocao',
-        enemyTroops: 50000,
+        role: 'attacker',
+        targetName: '江陵',
+        targetCityId: 'city_ying',
+        targetLat: 30.35,
+        targetLng: 112.18,
+        myTroops: 30000,
+        enemyFactionId: 'shu',
+        enemyFactionName: '蜀国',
+        enemyGeneralId: 'chu_guanyu',
+        enemyTroops: 20000,
         introLines: [
-            { speaker: 'general', text: '曹公四十万临江，濡须坞垒已峻！我吴下阿蒙早已非昔日白丁，壮士随我坚守濡须水坞，教曹军叹生子当如孙仲谋！' },
-            { speaker: 'player', text: '愿随吕将军据守濡须坞就地出击，令曹操感叹生子当如孙仲谋而退！' },
+            { speaker: 'general', text: '陆伯言一纸卑辞，关羽已尽撤荆州守备北赴樊城。我白衣摇橹、精兵尽伏艨艟，江边屯候一个不留——公安已下，江陵便在眼前。壮士，随我顺流入城，断关羽归路！' },
+            { speaker: 'player', text: '愿随吕将军白衣渡江，直取江陵，断关羽后路！' },
         ],
     },
 
