@@ -7301,6 +7301,26 @@ export class Scene13WarLayer {
                 laneFormationSpeeds.set(m.lane, Math.min(laneFormationSpeeds.get(m.lane) ?? Infinity, spd));
             }
         }
+        // 野战无队级目标的分队：整队朝「离本队最近的敌兵」推进（每队每帧算一次）。
+        // 改前固定沿开局推进方向走 ⇒ 两军错开后前方已无敌人，整队一路走到地图边。
+        const standbyGoals = new Map<number, { x: number; y: number } | null>();
+        const standbyGoal = (m: WarMan): [number, number] => {
+            let g = standbyGoals.get(m.lane);
+            if (g === undefined) {
+                const ref = laneLeaders.get(m.lane) ?? m;
+                let best: WarMan | null = null, bd = Infinity;
+                for (const o of this.men) {
+                    if (o.f === m.f || o.hp <= 0) continue;
+                    const d = (o.x - ref.x) ** 2 + (o.y - ref.y) ** 2;
+                    if (d < bd) { bd = d; best = o; }
+                }
+                g = best ? { x: best.x, y: best.y } : null;
+                standbyGoals.set(m.lane, g);
+            }
+            if (g) return this.fieldBound(g.x, g.y);
+            const u = this.advanceVec[m.f];
+            return this.fieldBound(m.x + u.x * MARCH_R, m.y + u.y * MARCH_R);
+        };
 
         for (const m of this.men) {
             this.releaseReservedTarget(m);
@@ -7599,6 +7619,8 @@ export class Scene13WarLayer {
                             m.tx = m.x;
                             m.ty = m.y;
                         }
+                    } else if (this.battleType !== 'siege') {
+                        [m.tx, m.ty] = standbyGoal(m);
                     } else {
                         const u = this.advanceVec[m.f];
                         [m.tx, m.ty] = this.fieldBound(m.x + u.x * MARCH_R, m.y + u.y * MARCH_R);
@@ -7750,8 +7772,7 @@ export class Scene13WarLayer {
                             if (slot) {
                                 [m.tx, m.ty] = slot;
                             } else if (this.battleType !== 'siege') {
-                                const u = this.advanceVec[m.f];
-                                [m.tx, m.ty] = this.fieldBound(m.x + u.x * MARCH_R, m.y + u.y * MARCH_R);
+                                [m.tx, m.ty] = standbyGoal(m);
                             } else {
                                 m.tx = m.x; m.ty = m.y;
                             }

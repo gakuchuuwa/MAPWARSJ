@@ -35,6 +35,8 @@ import {
     pollSiegeReinforcements,
     tryJoinLegionToBattle,
     landNavalLegionForSiege,
+    isEligibleReinforcement,
+    legionMatchesFaction,
     type ReinforcementJoinDeps,
 } from '../legion/combat/BattleReinforcementPoll';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
@@ -96,7 +98,6 @@ export class SiegeManager {
         return {
             spatialRegistry: this.legionManager.getSpatialRegistry(),
             removeArmy: (army) => this.legionManager.removeArmy(army),
-            isArmyWaitingSiege: (armyId) => this.isArmyWaitingSiege(armyId),
             resolveBattleCityName: (center) => {
                 const nearest = this.cityManager.getNearestCity(null, {
                     latitude: center.lat,
@@ -199,7 +200,6 @@ export class SiegeManager {
                 return city ? cityToLatLng(city) : null;
             },
             this.legionManager,
-            (armyId) => this.isArmyWaitingSiege(armyId),
             (legion, center) => this.positionArmyForSiege(legion, center),
         );
 
@@ -278,16 +278,20 @@ export class SiegeManager {
             for (const legion of nearby) {
                 if (legion.isDestroyed || legion.type !== 'legion') continue;
                 if (legion.getIsInCombat()) continue;
-                if (this.isArmyWaitingSiege(legion.id)) continue;
                 const myFaction = legion.getFactionId();
-                const myDisplayFaction = legion.getDisplayFactionId?.();
-                const isMyFaction = (fId: string | null | undefined) => !!fId && (myFaction === fId || (!!myDisplayFaction && myDisplayFaction === fId));
-                let isFriendly = isMyFaction(attFaction) || isMyFaction(defFaction);
-                if (!isFriendly) {
-                    const defUnits = battleField.getDefenderUnits?.() ?? [];
-                    if (defUnits.some((u) => isMyFaction(u.factionId))) {
-                        isFriendly = true;
+                const isMyFaction = (fId: string | null | undefined) => legionMatchesFaction(legion, fId);
+                const isDefenderSide = isMyFaction(defFaction)
+                    || (battleField.getDefenderUnits?.() ?? []).some((u) => isMyFaction(u.factionId));
+                const isFriendly = isDefenderSide || isMyFaction(attFaction);
+
+                if (this.isArmyWaitingSiege(legion.id)) {
+                    // 己方守军被误排进本城队列（旧版认旗不全）→ 放出队列，交给 pollSiegeReinforcements 编入守方
+                    const queuedHere = this.siegeThirdPartyWaiters.get(cityId)?.some((e) => e.army.id === legion.id);
+                    if (isDefenderSide && queuedHere) {
+                        this.dequeueArmyFromThirdPartyWaiters(legion.id);
+                        siegeLog(`↩️ [SiegeManager] ${legion.name} 是【${city.name}】守方同旗，不该排队，放出队列转援军`);
                     }
+                    continue;
                 }
                 if (isFriendly) continue; // 同旗由 pollSiegeReinforcements 处理
 
@@ -833,90 +837,17 @@ export class SiegeManager {
         return success;
     }
 
-    /** 攻城触发时，自动卷入附近同阵营友军（只做两边，不做第三方混战）。
-     * @param allowPassingBy 守方设 true：同旗军团即使是路过/奔他城也强制参战。攻方通常 false。 */
+    /** 攻城开战瞬间：开战圈内同势力军团一并合并（判据与中途轮询同一个 isEligibleReinforcement） */
     private collectNearbyLegionsForFaction(
         center: { lat: number; lng: number },
         factionId: string,
         excludeArmyIds: Set<string>,
-        /** 开战城 id：仅拉闲置或目标就是本城的军团，勿拉路过奔他城者 */
-        siegeCityId?: string,
-        allowPassingBy?: boolean,
+        isAttacker: boolean,
     ): Army[] {
-        const allArmies = this.legionManager.getArmies();
-        const candidates = allArmies.filter((legion) => {
-            const myFaction = legion.getFactionId();
-            const myDisplayFaction = legion.getDisplayFactionId?.();
-            const isSameFaction = (myFaction === factionId) || (!!myDisplayFaction && myDisplayFaction === factionId);
-            if (!isSameFaction) return false;
-            if (excludeArmyIds.has(legion.id)) {
-                siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 在 exclude 列表中`);
-                return false;
-            }
-            if (legion.type !== 'legion' || legion.isDestroyed) {
-                siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: type=${legion.type}, isDestroyed=${legion.isDestroyed}`);
-                return false;
-            }
-            if (legion.getIsInCombat()) {
-                siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 已经在战斗中`);
-                return false;
-            }
-            const lAny = legion as any;
-            if (
-                legion.scriptMarchExempt ||
-                lAny.isFirstBattleHero ||
-                lAny.isFirstBattleFieldEnemy ||
-                lAny.isFirstBattleSiegeEnemy ||
-                (!allowPassingBy && legion.isScriptArmy)
-            ) {
-                return false;
-            }
-
-            const dist = getEuclideanDistance(legion.getPosition(), center);
-            if (dist > SiegeManager.JOIN_RADIUS) {
-                siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 距离过远 (${dist.toFixed(3)} > ${SiegeManager.JOIN_RADIUS})`);
-                return false;
-            }
-
-            // 路过/奔他城：守方 allowPassingBy=true 时同旗不论目标强制参战
-            if (siegeCityId && !allowPassingBy) {
-                const targetId = legion.getTargetCity?.()?.id;
-                const idle = legion.isIdle();
-                const isHomeLegion = legion.homeCityId === siegeCityId;
-                if (!idle && targetId && targetId !== siegeCityId && !isHomeLegion) {
-                    siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 路过/奔他城（目标≠本城）`);
-                    return false;
-                }
-                if (!idle && !targetId && !isHomeLegion) {
-                    // 有路径但无城目标（如追击敌军）：也不强拉协战
-                    siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 行军中且无本城目标`);
-                    return false;
-                }
-            }
-
-            siegeLog(`✅ [SiegeManager] ${legion.name} 符合支援条件! 距离: ${dist.toFixed(3)}`);
-            return true;
-        });
-
-        candidates.sort(
-            (a, b) => (b.getTroops() || 0) - (a.getTroops() || 0)
-        );
-        return candidates;
-    }
-
-    /** 守城参战军团：同旗路过也强制参战（BATTLE_JOIN_RADIUS 内） */
-    private collectDefenderLegionsForSiege(
-        targetCity: { id: string; factionId: string; latitude: number; longitude: number },
-        cityPos: { lat: number; lng: number },
-        excludeArmyIds: Set<string>,
-    ): Army[] {
-        return this.collectNearbyLegionsForFaction(
-            cityPos,
-            targetCity.factionId,
-            excludeArmyIds,
-            targetCity.id,
-            true, // 守方：同旗路过也强制参战
-        );
+        return this.legionManager.getArmies()
+            .filter((legion) => !excludeArmyIds.has(legion.id)
+                && isEligibleReinforcement(legion, factionId, center, isAttacker))
+            .sort((a, b) => (b.getTroops() || 0) - (a.getTroops() || 0));
     }
 
     private onArmyArrive(
@@ -987,9 +918,9 @@ export class SiegeManager {
                 const attackerFaction = activeBattle.getAttackerFactionId();
                 const defenderFaction = activeBattle.getDefenderFactionId();
 
-                if (myFaction === attackerFaction || myFaction === defenderFaction) {
+                if (legionMatchesFaction(army, attackerFaction) || legionMatchesFaction(army, defenderFaction)) {
                     const cityPos = cityToLatLng(targetCity);
-                    const isAttacker = myFaction === attackerFaction;
+                    const isAttacker = legionMatchesFaction(army, attackerFaction);
                     // triggerSiege 在进本函数前已把本军标成在战（siege 占位），而援军资格检查
                     // 拒收「已在战」单位——不先撤掉占位标志，抵达路径的同旗加入永远失败，
                     // 军团被清目标后掉头走人（观感即「到了城下不打就走」）。先撤占位再试加入；
@@ -1049,19 +980,20 @@ export class SiegeManager {
             nearbyDefenderLegions = [];
             nearbyAttackerLegions = [];
         } else {
-            nearbyDefenderLegions = this.collectDefenderLegionsForSiege(
-                targetCity,
+            nearbyDefenderLegions = this.collectNearbyLegionsForFaction(
                 cityPos,
-                excludedIds
+                targetCity.factionId,
+                excludedIds,
+                false,
             );
             nearbyDefenderLegions.forEach((legion) => excludedIds.add(legion.id));
 
-            // 攻方：主攻军团 + 附近援军（仅闲置/目标本城；路过不拉）
+            // 攻方：主攻军团 + 开战圈内同势力
             nearbyAttackerLegions = this.collectNearbyLegionsForFaction(
                 cityPos,
                 army.getFactionId(),
                 excludedIds,
-                targetCity.id,
+                true,
             );
         }
 
@@ -1113,6 +1045,7 @@ export class SiegeManager {
         // 开战前：停步存档 + 统一面朝据点（绝不 setPosition）
         army.stopMovement(true);
         for (const legion of [...nearbyAttackerLegions, ...nearbyDefenderLegions]) {
+            this.dequeueArmyFromThirdPartyWaiters(legion.id); // 同野战开战：合并者先出排队
             legion.stopMovement(true);
         }
         repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies(), {
@@ -1962,11 +1895,10 @@ export class SiegeManager {
                 return;
             }
             const cityPos = cityToLatLng(city);
-            const myFaction = army.getFactionId();
             const att = activeBattle.getAttackerFactionId();
             const def = activeBattle.getDefenderFactionId();
-            if (myFaction === att || myFaction === def) {
-                const isAttacker = myFaction === att;
+            if (legionMatchesFaction(army, att) || legionMatchesFaction(army, def)) {
+                const isAttacker = legionMatchesFaction(army, att);
                 if (tryJoinLegionToBattle(activeBattle, army, isAttacker, cityPos, this.getReinforcementJoinDeps())) {
                     siegeLog(`📯 [Reinforcement] ${army.name} 中途加入【${targetCity.name}】攻城战`);
                     return;

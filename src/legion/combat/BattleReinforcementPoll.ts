@@ -29,7 +29,8 @@ export function createReinforcementPollState(): ReinforcementPollState {
 export interface ReinforcementJoinDeps {
     spatialRegistry: SpatialRegistry;
     removeArmy: (army: Army) => void;
-    isArmyWaitingSiege?: (armyId: string) => boolean;
+    /** 编入前移出攻城第三方排队（野战轮询不排除排队者，编入时须出队，同开战瞬间的野战编入） */
+    dequeueFromSiegeQueue?: (armyId: string) => void;
     resolveBattleCityName?: (center: LatLng) => string;
     /** 编入攻城战前城周错开（仅攻城注入，野战不传） */
     beforeJoinLegion?: (legion: Army, center: LatLng) => void;
@@ -40,34 +41,37 @@ export interface ReinforcementJoinDeps {
     siegeCityId?: string;
 }
 
+/** 军团是否属于该势力（认 getFactionId 与显示势力） */
+export function legionMatchesFaction(legion: Army, fId: string | null | undefined): boolean {
+    if (!fId) return false;
+    const displayFaction = legion.getDisplayFactionId?.();
+    return legion.getFactionId() === fId || (!!displayFaction && displayFaction === fId);
+}
+
+/**
+ * 同势力合并的唯一判据：开战瞬间（攻城/野战）与战斗中途轮询共用这一个函数。
+ * 规则：同势力、在开战圈内、没在别的战斗里 → 合并；只豁免剧本/首战专属军团。
+ * @param battleField 中途轮询时传入（防重复编入、守方按在场守军认旗）；开战瞬间战场未建，不传
+ */
 export function isEligibleReinforcement(
     legion: Army,
     factionId: string,
-    battleField: BattleField,
     center: LatLng,
-    deps: ReinforcementJoinDeps,
     isAttacker: boolean,
+    battleField?: BattleField | null,
 ): boolean {
-    const legionFaction = legion.getFactionId();
-    const displayFaction = legion.getDisplayFactionId?.();
-    const matchesFaction = (fId: string | null | undefined): boolean => {
-        if (!fId) return false;
-        return legionFaction === fId || (!!displayFaction && displayFaction === fId);
-    };
-
-    let isSameFaction = matchesFaction(factionId);
-    if (!isSameFaction && !isAttacker) {
+    let isSameFaction = legionMatchesFaction(legion, factionId);
+    if (!isSameFaction && !isAttacker && battleField) {
         // 守方额外兼容：若城内守军单位的势力与路过军团相同，亦视为同阵营守军
         const defUnits = battleField.getDefenderUnits?.() ?? [];
-        isSameFaction = defUnits.some(u => matchesFaction(u.factionId));
+        isSameFaction = defUnits.some(u => legionMatchesFaction(legion, u.factionId));
     }
     if (!isSameFaction) return false;
 
     if (legion.type !== 'legion' || legion.isDestroyed) return false;
     if (legion.getIsInCombat()) return false;
     if (legion.getTroops() < GameConfig.COMBAT.MIN_SURVIVAL_TROOPS) return false;
-    if (battleField.hasUnit(legion.id)) return false;
-    if (deps.isArmyWaitingSiege?.(legion.id)) return false;
+    if (battleField?.hasUnit(legion.id)) return false;
     const lAny = legion as any;
     if (
         legion.scriptMarchExempt ||
@@ -82,15 +86,6 @@ export function isEligibleReinforcement(
 
     const dist = getEuclideanDistance(legion.getPosition(), center);
     if (dist > GameConfig.COMBAT.BATTLE_JOIN_RADIUS) return false;
-
-    // 攻城援军：守方同旗路过也强制参战；攻方不拉路过者
-    if (deps.siegeCityId && isAttacker) {
-        const targetId = legion.getTargetCity?.()?.id;
-        if (!legion.isIdle()) {
-            if (targetId && targetId !== deps.siegeCityId) return false;
-            if (!targetId) return false;
-        }
-    }
 
     return true;
 }
@@ -160,16 +155,19 @@ export function tryJoinLegionToBattle(
     center: LatLng,
     deps: ReinforcementJoinDeps
 ): boolean {
-    if (battleField.isOver) return false;
+    // 进了战术模式（13 冻结）合并到此为止，与轮询一致
+    if (battleField.isOver || battleField.scene13Frozen) return false;
 
     const factionId = isAttacker
         ? battleField.getAttackerFactionId()
         : battleField.getDefenderFactionId();
 
-    if (!isEligibleReinforcement(legion, factionId, battleField, center, deps, isAttacker)) {
+    if (!isEligibleReinforcement(legion, factionId, center, isAttacker, battleField)) {
         return false;
     }
 
+    // 先出队（会重置战斗态并触发排队回调），再由下面设成真实在战
+    deps.dequeueFromSiegeQueue?.(legion.id);
     deps.beforeJoinLegion?.(legion, center);
 
     legion.stopMovement(true);
@@ -249,7 +247,7 @@ export function pollBattleFieldReinforcements(
             : battleField.getDefenderFactionId();
 
         const eligible = nearby
-            .filter((legion) => isEligibleReinforcement(legion, factionId, battleField, center, deps, isAttacker))
+            .filter((legion) => isEligibleReinforcement(legion, factionId, center, isAttacker, battleField))
             .sort((a, b) => (b.getTroops() || 0) - (a.getTroops() || 0));
 
         for (const legion of eligible) {
@@ -264,14 +262,13 @@ export function pollBattleFieldReinforcements(
 
 function buildJoinDeps(
     legionManager: LegionManager,
-    siegeWaiter?: (id: string) => boolean,
     beforeJoinLegion?: (legion: Army, center: LatLng) => void,
 ): ReinforcementJoinDeps {
     const cityManager = legionManager.getCityManager();
     return {
         spatialRegistry: legionManager.getSpatialRegistry(),
         removeArmy: (army) => legionManager.removeArmy(army),
-        isArmyWaitingSiege: siegeWaiter,
+        dequeueFromSiegeQueue: (armyId) => { legionManager.dequeueArmyFromThirdPartyWaiters(armyId); },
         beforeJoinLegion,
         resolveBattleCityName: (center) => {
             const nearest = cityManager.getNearestCity(null, {
@@ -288,7 +285,6 @@ export function pollSiegeReinforcements(
     activeSieges: Map<string, BattleField>,
     getCityPosition: (cityId: string) => LatLng | null,
     legionManager: LegionManager,
-    isArmyWaitingSiege?: (armyId: string) => boolean,
     beforeJoinLegion?: (legion: Army, center: LatLng) => void,
 ): number {
     let joined = 0;
@@ -297,7 +293,7 @@ export function pollSiegeReinforcements(
         if (battleField.isOver) continue;
         const center = getCityPosition(cityId);
         if (!center) continue;
-        const deps = buildJoinDeps(legionManager, isArmyWaitingSiege, beforeJoinLegion);
+        const deps = buildJoinDeps(legionManager, beforeJoinLegion);
         deps.siegeCityId = cityId;
         joined += pollBattleFieldReinforcements(battleField, center, deps);
     }

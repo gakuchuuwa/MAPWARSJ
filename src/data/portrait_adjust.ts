@@ -7448,7 +7448,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/INDIA/zhelouqi_pulitewei.png": {
-            "scale": 1.16,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": -11
         },
@@ -7933,7 +7933,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/INDIA/shiyuzu_aboluoduoluosi.png": {
-            "scale": 1.02,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -8766,6 +8766,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 11,
             "offsetY": 0
+        },
+        "/assets/ORIE/bfe3_6.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 15
         }
     },
     "folderGuides": {

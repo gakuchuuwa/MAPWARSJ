@@ -19,6 +19,7 @@ import {
     resolveAnnihilationCityName,
 } from '../LegionAnnihilationFeed';
 import { markCityGeneralDefeatedInField, FIELD_YIELD_GAME_MODES } from '../FieldDefeatRecord';
+import { isEligibleReinforcement } from '../combat/BattleReinforcementPoll';
 import { getCityGeneralsRaw } from '../../data/FactionGenerals';
 import { getGameMode } from '../../data/generalOnStage';
 import type { CityManager } from '../../world/CityManager';
@@ -38,36 +39,18 @@ export interface LegionFieldBattleDeps {
     dequeueArmyFromThirdPartyWaiters?(armyId: string): boolean;
 }
 
+/** 野战开战瞬间：开战圈内同势力军团一并合并（判据与中途轮询同一个 isEligibleReinforcement） */
 function collectLegionsNearBattleCenter(
     deps: LegionFieldBattleDeps,
     center: LatLng,
     factionId: string,
-    excludeArmyIds: Set<string>
+    excludeArmyIds: Set<string>,
+    isAttacker: boolean,
 ): Army[] {
-    const radius = GameConfig.COMBAT.BATTLE_JOIN_RADIUS;
-    const minTroops = GameConfig.COMBAT.MIN_SURVIVAL_TROOPS;
-
-    const candidates = deps.getArmies().filter((legion) => {
-        if (legion.getFactionId() !== factionId) return false;
-        if (excludeArmyIds.has(legion.id)) return false;
-        if (legion.type !== 'legion' || legion.isDestroyed) return false;
-        if (legion.getIsInCombat()) return false;
-        if (legion.getTroops() < minTroops) return false;
-        const lAny = legion as any;
-        if (
-            legion.scriptMarchExempt ||
-            lAny.isFirstBattleHero ||
-            lAny.isFirstBattleFieldEnemy ||
-            lAny.isFirstBattleSiegeEnemy ||
-            legion.isScriptArmy
-        ) {
-            return false;
-        }
-        return getEuclideanDistance(legion.getPosition(), center) <= radius;
-    });
-
-    candidates.sort((a, b) => (b.getTroops() || 0) - (a.getTroops() || 0));
-    return candidates;
+    return deps.getArmies()
+        .filter((legion) => !excludeArmyIds.has(legion.id)
+            && isEligibleReinforcement(legion, factionId, center, isAttacker))
+        .sort((a, b) => (b.getTroops() || 0) - (a.getTroops() || 0));
 }
 
 function legionToFieldAdapter(
@@ -282,14 +265,14 @@ function startFieldBattleBetween(
         ? [attackerPrimary]
         : [
             attackerPrimary,
-            ...collectLegionsNearBattleCenter(deps, center, attFaction, exclude),
+            ...collectLegionsNearBattleCenter(deps, center, attFaction, exclude, true),
         ];
     attLegions.forEach((l) => exclude.add(l.id));
     let defLegions = firstBattleHero
         ? [defenderPrimary]
         : [
             defenderPrimary,
-            ...collectLegionsNearBattleCenter(deps, center, defFaction, exclude),
+            ...collectLegionsNearBattleCenter(deps, center, defFaction, exclude, false),
         ];
 
     const followedFieldId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
