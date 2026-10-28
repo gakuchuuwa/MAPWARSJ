@@ -99,6 +99,7 @@ interface CityLifeActor {
     hasFarm?: boolean;         // 农夫组合带四季农田（旱田或水田）
     seasonalPlot?: SeasonalPlotKind; // 四季地皮套系：旱作农田 / 水稻田 / 游牧草场
     plotCells?: number[];            // 地皮实际铺了哪几块（PLOT_CELL_OFFSETS 下标，1~4 块）；只记在组合主人身上
+    pigCell?: number;                // 农田四块里改成猪圈的那一块（PLOT_CELL_OFFSETS 下标）；该块不派农夫、铺草场皮
     buildingResource?: string; // 组合内随机建筑：磨坊／牧栏／毡帐／小屋等
     lib: 'SUCAI' | 'SUCAI_ANIMAL';
     dir: string;
@@ -146,7 +147,8 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
     pasture: PASTURE_BY_SEASON,
 };
 /** 农田 / 水田 / 草场最多 2×2 斜角四块（zoom 9 像素，相对四块中心）：0 北、1 西、2 东、3 南；平地够几块铺几块。
- *  草场一块一只牲畜、牧羊人站南块；农田一块一个农夫，南块那个是组合主人（建筑跟他走）。 */
+ *  草场一块一只牲畜、牧羊人站南块；农田一块一个农夫，南块那个是组合主人（建筑跟他走）；
+ *  🔴 2026-10-28 主人令：农田四块里随机一块改猪圈（主人身上记 pigCell），该块不派农夫、只养一头猪。 */
 const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -23], [-35, 0], [35, 0], [0, 23]];
 const PLOT_LEADER_CELL = 3;
 /** 牲畜在自己那块草场内来回的半程（zoom 9 像素），不出本块 */
@@ -341,6 +343,18 @@ const PASTORAL_ANIMAL_POOLS: Readonly<Record<string, readonly string[]>> = {
     // DE 无独立牦牛素材，COW_BLACK 仅作高原牦牛视觉代理；不再把野生盘羊当家畜放牧。
     TIBET: ['COW_BLACK', 'SHEEP', 'GOAT', 'HORSE'],
 };
+
+/**
+ * 🔴 2026-10-28 主人令「现在种田的四块田都是一个在耕作，太单一了，可以把其中一个随机养猪」：
+ *   农田四块里随机一块改猪圈。但按史，新大陆（美洲原住民彼时无家猪）与伊斯兰／印度文化圈不圈养猪，
+ *   这些文化的农田保持四块全种，不拿别的牲畜硬凑（要一律放猪，主人一句话即改）。
+ */
+const PIG_PEN_EXCLUDED_CULTURES: ReadonlySet<string> = new Set([
+    // 美洲原住民：1492 年前无家猪（DEC 素材里的 PIG 是欧洲家猪）
+    'MUISCA', 'MAYANS', 'TUPI', 'MAPUCHE', 'INCA', 'AMERICA',
+    // 伊斯兰／印度文化圈：不养猪（与上方牧群配种表口径一致）
+    'MUGHAL', 'BENGALIS', 'PURU', 'INDIA',
+]);
 
 function strHash01(s: string, salt: number): number {
     let h = (salt * 2654435761) | 0;
@@ -1114,10 +1128,49 @@ export class CityLifeAmbientLayer {
             });
 
             // 农田一块一个农夫：南块是组合主人（地皮、建筑都记在他身上），其余几块各补一个只种地的农夫。
+            // 🔴 2026-10-28 主人令「现在种田的四块田都是一个在耕作，太单一了，可以把其中一个随机养猪」：
+            //    四块里随机挑一块改猪圈——该块不再派农夫、地皮铺草场皮，只养一头猪。
+            //    块号按「据点＋年份＋组合」取哈希，年度重排也不会前后闪换。
             if (isFarmer && plotCells) {
                 const owner = list[list.length - 1];
+                const handCells = plotCells.filter((k) => k !== PLOT_LEADER_CELL);
+                const pigCell = handCells.length > 0 && !PIG_PEN_EXCLUDED_CULTURES.has(style)
+                    ? handCells[Math.floor(strHash01(owner.id, 907) * handCells.length) % handCells.length]
+                    : undefined;
+                owner.pigCell = pigCell;
                 for (const k of plotCells) {
                     if (k === PLOT_LEADER_CELL) continue;
+                    if (k === pigCell) {
+                        // 猪只在自家这块猪圈里小范围来回（与草场牲畜同一套走动），不跑出地皮、不踩到人。
+                        const pigAngle = strHash01(owner.id, k * 23 + 231) * Math.PI * 2;
+                        const wx = Math.cos(pigAngle) * PASTURE_WANDER_PX;
+                        const wy = Math.sin(pigAngle) * PASTURE_WANDER_PX * 0.6;
+                        list.push({
+                            ...owner,
+                            id: `${owner.id}_pig_${k}`,
+                            isAnimal: true,
+                            lib: 'SUCAI_ANIMAL',
+                            dir: 'PIG',
+                            fieldHand: undefined,
+                            hasFarm: false,
+                            seasonalPlot: undefined,
+                            plotCells: undefined,
+                            pigCell: undefined,
+                            groundResource: undefined,
+                            groundResourceLib: undefined,
+                            buildingResource: undefined,
+                            homePos: this.plotCellPos(owner.homePos, k, wx, wy),
+                            gatePos: this.plotCellPos(owner.homePos, k, -wx, -wy),
+                            lastDrawPos: this.plotCellPos(owner.homePos, k, wx, wy),
+                            facing: Math.floor(strHash01(owner.id, k * 23 + 232) * 8) % 8,
+                            phase: Math.floor(strHash01(owner.id, k * 23 + 233) * 1000),
+                            damagePreset: 'animal_loss',
+                            damageVariant: Math.floor(strHash01(owner.id, k * 23 + 234) * 100),
+                            displayedAction: 'walk',
+                            desiredAction: 'walk',
+                        });
+                        continue;
+                    }
                     const pos = this.plotCellPos(owner.homePos, k, 0, 0);
                     list.push({
                         ...owner,
@@ -1128,6 +1181,7 @@ export class CityLifeAmbientLayer {
                         hasFarm: false,
                         seasonalPlot: undefined,
                         plotCells: undefined,
+                        pigCell: undefined,
                         buildingResource: undefined,
                         homePos: pos,
                         gatePos: { ...pos },
@@ -1662,6 +1716,11 @@ export class CityLifeAmbientLayer {
                     this.loadStripAsset('SUCAI_RESOURCE', plotBySeason[season]);
                     this.loadStripAsset('SUCAI_RESOURCE', plotBySeason[nextSeason]);
                 }
+                if (actor.pigCell !== undefined) {
+                    // 改成猪圈的那一块铺草场皮：本季与下一季都预热，季末交叉渐变不闪空。
+                    this.loadStripAsset('SUCAI_RESOURCE', PASTURE_BY_SEASON[season]);
+                    this.loadStripAsset('SUCAI_RESOURCE', PASTURE_BY_SEASON[nextSeason]);
+                }
                 if (actor.groundResource && actor.groundResourceLib) {
                     this.loadStripAsset(actor.groundResourceLib, actor.groundResource);
                 }
@@ -1989,19 +2048,22 @@ export class CityLifeAmbientLayer {
             const groupPt = this.toContainerPt(actor.homePos.lat, actor.homePos.lng);
             const plotBySeason = SEASONAL_PLOT_BY_KIND[actor.seasonalPlot];
             // 农田 / 水田 / 草场都按选址时判出的块数铺 1~4 块（主人在南块）。
+            // 主人身上记了 pigCell 的，那一块改铺草场皮（猪圈），其余仍是农田 / 水田。
             const s = PLOT_CELL_OFFSETS[PLOT_LEADER_CELL];
-            const cells = (actor.plotCells ?? [PLOT_LEADER_CELL])
-                .map((k) => [PLOT_CELL_OFFSETS[k][0] - s[0], PLOT_CELL_OFFSETS[k][1] - s[1]] as const);
-            for (const [ox, oy] of cells) {
+            const cellList = actor.plotCells ?? [PLOT_LEADER_CELL];
+            for (const k of cellList) {
+                const ox = PLOT_CELL_OFFSETS[k][0] - s[0];
+                const oy = PLOT_CELL_OFFSETS[k][1] - s[1];
+                const plotSeason = k === actor.pigCell ? PASTURE_BY_SEASON : plotBySeason;
                 const px = groupPt.x + ox * zoomFactor;
                 const py = groupPt.y + (oy + 4) * zoomFactor;
                 this.drawStripSprite(
-                    'SUCAI_RESOURCE', plotBySeason[season], 0,
+                    'SUCAI_RESOURCE', plotSeason[season], 0,
                     px, py, 0.58 * zoomFactor,
                     peaceFinalAlpha * (1 - seasonBlend)
                 );
                 this.drawStripSprite(
-                    'SUCAI_RESOURCE', plotBySeason[nextSeason], 0,
+                    'SUCAI_RESOURCE', plotSeason[nextSeason], 0,
                     px, py, 0.58 * zoomFactor,
                     peaceFinalAlpha * seasonBlend
                 );

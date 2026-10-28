@@ -2118,7 +2118,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/JIANGNAN/danyang_huanwen.png": {
-            "scale": 1.12,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 3
         },
@@ -8796,6 +8796,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.3,
             "offsetX": 0,
             "offsetY": 18
+        },
+        "/assets/BASHU/bfe3_83.png": {
+            "scale": 1.16,
+            "offsetX": 30,
+            "offsetY": -17
         }
     },
     "folderGuides": {
