@@ -422,9 +422,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const siteLat = defCityRec?.lat ?? this.centerLat ?? 30;
     const siteLng = defCityRec?.lng ?? this.centerLng ?? 110;
     const isArid = /^(des|pal|qs|ds5|pal1)/i.test(siteBaseTile);
-    const isSnow = this.sceneSeason === 2 || gl.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(siteBaseTile);
+    const isSnow = gl.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(siteBaseTile);
     const isPassType = this.defenderCityType === 'pass';
-    const rawCalSeason = this.environmentPlan?.season;
+    const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
     const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
         ? rawCalSeason
         : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
@@ -440,7 +440,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     /** DE 气候主题主树（BUSH_TREE 灌木/枯木除外；只用于山巅孤树这类单株点缀） */
     const themeLeadTree = ((calSeason === 2 && themePalette?.autumnTrees?.length)
         ? themePalette.autumnTrees
-        : (calSeason === 3 && themePalette?.winterTrees?.length)
+        : (calSeason === 3 && isSnow && themePalette?.winterTrees?.length)
             ? themePalette.winterTrees
             : (themePalette?.trees ?? [])).filter((a) => !/^BUSH_TREE_/.test(a) && a !== 'DEAD_TREE');
 
@@ -575,7 +575,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 //    DE 地形登记的树 > DE 主题主树 > 兜底（沙漠图给棕榈/枯木，不给松树）
                 const peakTree = deTerrainSeasonalTree(terrainAtCell(peakSpot.gx, peakSpot.gy), calSeason, isSnow)
                     ?? (themeLeadTree.length > 0 ? seasonalDeTree(themeLeadTree[0], calSeason, isSnow) : null);
-                const lonePine = peakTree ?? (isSnow ? 'PINE' : (isArid ? 'DEAD_TREE' : 'ASIAN_PINE'));
+                const lonePine = peakTree ?? (isSnow ? 'SNOW_PINE' : (isArid ? 'DEAD_TREE' : 'ASIAN_PINE'));
                 pushSafeDecor(lonePine, peakSpot.x + 32, peakSpot.y - 16, 0.82, 0, mRnd() < 0.5);
             }
         }
@@ -1249,8 +1249,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             ? isMountainPass(cId, cLat, cLng, defCity?.name)
             : !EXCLUDED_PASS_IDS.has(cId));
     if (shouldSpawnDeMountains) {
-        const isSnowScene = this.sceneSeason === 2
-            || this.environmentPlan?.biome === 'tundra_snow'
+        const isSnowScene = this.environmentPlan?.biome === 'tundra_snow'
             || gl.isIce
             || !!(this.environmentPlan?.baseTerrain && /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(this.environmentPlan.baseTerrain));
         const pool = getClimateMountainPool.call(this, isSnowScene);
@@ -1763,8 +1762,7 @@ export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
             // 🔴 [2026-10-08 主人「险要的防守方的两座山一个有雪一个没雪」修复]
             //    根据当前战场季节（冬=2）与地貌（冻原雪地 tundra_snow / 冰雪底图）区分雪山池与青山池，
             //    两座大山处于同一气候池，彻底根除「同一道关卡一座有雪、一座没雪」的视觉割裂。
-            const isSnowScene = this.sceneSeason === 2
-                || this.environmentPlan?.biome === 'tundra_snow'
+            const isSnowScene = this.environmentPlan?.biome === 'tundra_snow'
                 || !!(this.environmentPlan?.baseTerrain && /^(sno|sn2|snf|snd|snr|ic3|ice|snow)/i.test(this.environmentPlan.baseTerrain));
 
             const pool = getClimateMountainPool.call(this, isSnowScene);

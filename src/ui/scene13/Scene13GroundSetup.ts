@@ -187,8 +187,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         //    地面 6 张贴图改由 **DE 烘焙地形直方图** 决定（见 Scene13DeGround.ts）：
         //    `14 Desert→pal`、`12 Grass2→gr2`、`100 Dry Grass→gr7`、`2 Beach→bch`、`10 Forest→for`、`3 Dirt3→ds3`…
         //    旧做法只看据点建筑风格/气候主题，会让沙漠图铺成黄土、温带图铺成夯土，与 DE 原版观感不符。
-        //    雪地/冬季例外：仍按季节贴图（不能把雪原铺成草地）。
-        const isSnowGround = /^(sno|sn2|snf|snd|snr|ic3|ice)/.test(groundBaseTerrain) || this.sceneSeason === 2;
+        //    雪地例外：地面本身为积雪/冰原贴图时保留季节雪地贴图（不能把雪原铺成草地）。
+        const isSnowGround = /^(sno|sn2|snf|snd|snr|ic3|ice)/.test(groundBaseTerrain);
         const deGroundTiles = isSnowGround
             ? null
             : deriveDeGroundTiles(mapData?.terrain, this.environmentPlan?.groundTiles);

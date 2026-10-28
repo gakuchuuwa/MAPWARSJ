@@ -1623,7 +1623,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡红砖穹顶堡',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_basileus',
+        commanderUnit: 'hero_sirjohnfastolf',
         slots: [
             { type: 'equites', count: 3 },
             { type: 'crossbowman', count: 4 },
@@ -1640,7 +1640,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡红砖穹顶堡',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_basileus',
+        commanderUnit: 'hero_williamtheconqueror',
         slots: [
             { type: 'elite_varangian_guard', count: 3 },
             { type: 'arbalest', count: 4 },
@@ -1695,7 +1695,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_thoros',
+        commanderUnit: 'hero_emperorsigismund',
         slots: [
             { type: 'warrior_priest', count: 3 },
             { type: 'composite_bowman', count: 4 },
@@ -1806,10 +1806,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
         formationMode: 'echelon',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_youngjadwiga',
+        commanderUnit: 'hero_halldor',
                 slots: [
-            { type: 'swordsman', count: 3 },
-            { type: 'recurve_bowman', count: 4 },
+            { type: 'swordsman', count: 4 },
+            { type: 'recurve_bowman', count: 3 },
             { type: 'knight', count: 2 },
         ],
     },
@@ -2024,7 +2024,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SLAV_CASTLE_AGE3', castleName: '东欧/斯拉夫 莫斯科白石克里姆林',
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_ivaylofoot',
+        commanderUnit: 'hero_mikhailoftver',
         slots: [
             { type: 'pikeman', count: 3 },
             { type: 'laminated_bowman', count: 4 },
@@ -2079,10 +2079,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'LITH_CASTLE_AGE3', castleName: '立陶宛 特拉凯湖心红砖城堡',
         formationMode: 'echelon',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_youngjadwiga',
+        commanderUnit: 'hero_haraldhardrada',
                 slots: [
-            { type: 'pikeman', count: 3 },
-            { type: 'elite_skirmisher', count: 4 },
+            { type: 'pikeman', count: 4 },
+            { type: 'elite_skirmisher', count: 3 },
             { type: 'leitis', count: 2 },
         ],
     },
@@ -2186,7 +2186,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BULG_CASTLE_AGE3', castleName: '保加利亚 普雷斯拉夫圆顶城堡',
         formationMode: 'echelon',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_ivaylo',
+        commanderUnit: 'hero_guyjosselyne',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'champion', count: 3 },
@@ -2242,7 +2242,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'fish_scale',
         shipId: 'CARRACK',
-        commanderUnit: 'hero_sforza',
+        commanderUnit: 'hero_lahire',
         slots: [
             { type: 'condottiero', count: 3 },
             { type: 'elite_genoese_crossbowman', count: 4 },

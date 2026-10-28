@@ -558,7 +558,15 @@ export function pickTree(q: TreeQuery): string {
         if (picked === 'SNOW_DEAD_TREE') return 'DEAD_TREE';
     }
 
-    return picked; // 针叶/棕榈/热带树四季同形
+    return isSnowBaseTile(q.baseTile)
+        ? (picked === 'OAK' || picked === 'GREEN_OAK' || picked === 'AUTUMN_OAK' || picked === 'ASIAN_MAPLE_GREEN' || picked === 'ASIAN_MAPLE_AUTUMN' || picked === 'PEACH_BLOSSOM' || picked === 'OLIVE'
+            ? 'SNOW_AUTUMN_OAK'
+            : picked === 'PINE' || picked === 'ASIAN_PINE' || picked === 'ITALIAN_PINE' || picked === 'CYPRESS' || picked === 'CYPRESS_DEC' || picked === 'MONKEY_PUZZLE' || picked === 'BAMBOO' || picked === 'LUSH_BAMBOO'
+                ? 'SNOW_PINE'
+                : picked === 'BIRCH_GREEN' || picked === 'BIRCH_AUTUMN' || picked === 'WILLOW'
+                    ? 'BIRCH_WINTER'
+                    : picked)
+        : picked; // 针叶/棕榈/热带树四季同形
 }
 
 /** 调试/验收用：把三张表暴露出去 */

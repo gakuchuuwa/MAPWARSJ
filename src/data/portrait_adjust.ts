@@ -8831,6 +8831,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 12
+        },
+        "/assets/ROMA/luoma_diguo_leo_ix.png": {
+            "scale": 1.06,
+            "offsetX": 25,
+            "offsetY": 15
+        },
+        "/assets/LATIN/kelite_moluoxini.png": {
+            "scale": 1.24,
+            "offsetX": 13,
+            "offsetY": 28
         }
     },
     "folderGuides": {

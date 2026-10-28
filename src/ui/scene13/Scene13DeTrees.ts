@@ -150,24 +150,31 @@ export function bareSandRejectsTree(terrainId: number, asset: string): boolean {
     return isBareSandTerrain(terrainId) && !isDesertTreeAsset(asset);
 }
 
-/** 四季换装族：[春 0, 夏 1, 秋 2, 冬 3]；没登记的树四季同形（棕榈/龙血树/竹等常青或常枯） */
+/**
+ * 四季换装族（非积雪地面）：[春 0, 夏 1, 秋 2, 冬 3]；
+ * 没登记的树四季同形（棕榈/龙血树/竹/橄榄等常青或常枯）。
+ * 🔴 非积雪地面（如地中海、江南、岭南冬季无雪区）冬季（3）一律使用无白雪形态（AUTUMN_OAK / PINE / BIRCH_WINTER），
+ *    绝不在黄土或绿草地上挂白雪（SNOW_* 仅在 snowGround === true 时使用）。
+ */
 const SEASON_FAMILY: Readonly<Record<string, readonly [string, string, string, string]>> = {
-    OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK'],
-    GREEN_OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK'],
-    AUTUMN_OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK'],
-    SNOW_AUTUMN_OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK'],
+    OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'AUTUMN_OAK'],
+    GREEN_OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'AUTUMN_OAK'],
+    AUTUMN_OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'AUTUMN_OAK'],
+    SNOW_AUTUMN_OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'AUTUMN_OAK'],
     BIRCH_GREEN: ['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'],
     BIRCH_AUTUMN: ['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'],
     BIRCH_WINTER: ['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'],
-    PINE: ['PINE', 'PINE', 'PINE', 'SNOW_PINE'],
-    ASIAN_PINE: ['ASIAN_PINE', 'ASIAN_PINE', 'ASIAN_PINE', 'SNOW_PINE'],
+    PINE: ['PINE', 'PINE', 'PINE', 'PINE'],
+    ASIAN_PINE: ['ASIAN_PINE', 'ASIAN_PINE', 'ASIAN_PINE', 'ASIAN_PINE'],
     ITALIAN_PINE: ['ITALIAN_PINE', 'ITALIAN_PINE', 'ITALIAN_PINE', 'ITALIAN_PINE'],
     CYPRESS: ['CYPRESS', 'CYPRESS', 'CYPRESS_DEC', 'CYPRESS_DEC'],
+    CYPRESS_DEC: ['CYPRESS', 'CYPRESS', 'CYPRESS_DEC', 'CYPRESS_DEC'],
     ASIAN_MAPLE_GREEN: ['ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'ASIAN_MAPLE_AUTUMN'],
+    ASIAN_MAPLE_AUTUMN: ['ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'ASIAN_MAPLE_AUTUMN'],
     MONKEY_PUZZLE: ['MONKEY_PUZZLE', 'MONKEY_PUZZLE', 'MONKEY_PUZZLE', 'MONKEY_PUZZLE'],
 };
 
-/** 冬季积雪地面才有「挂雪树」；非积雪地面把 SNOW_* 换回同族无雪形态 */
+/** 冬季积雪地面才有「挂雪树」；非积雪地面把 SNOW_* 换回同族无雪基树，再走 SEASON_FAMILY 按季换装 */
 const SNOW_TO_PLAIN: Readonly<Record<string, string>> = {
     SNOW_PINE: 'PINE',
     SNOW_AUTUMN_OAK: 'AUTUMN_OAK',
@@ -177,30 +184,42 @@ const SNOW_TO_PLAIN: Readonly<Record<string, string>> = {
 };
 
 /**
- * 按季节/地面积雪把一棵树换成对应形态（**只换形态，不换树种**）。
- * @param snowGround 脚下地面是否积雪（战术场景 = environmentPlan.baseTerrain 是雪地贴图）
+ * 按季节/地面积雪把一棵树换成对应形态：
+ * - 积雪地面（snowGround === true）：全图统一为挂雪/冬枯形态，不留盛夏绿树与雪树混长；
+ * - 非积雪地面（snowGround === false）：先剥离 SNOW_* 前缀，再按四季换装，绝不出现挂雪树。
  */
 export function seasonalDeTree(asset: string, season: number, snowGround: boolean): string {
     const s: TreeSeason = (season === 0 || season === 1 || season === 2 || season === 3)
         ? season as TreeSeason
         : 1;
-    // ① 非积雪地面：挂雪树一律换成同族无雪形态
-    if (!snowGround && SNOW_TO_PLAIN[asset]) {
-        const plain = SNOW_TO_PLAIN[asset];
-        if (plain === 'AUTUMN_OAK' && (s === 0 || s === 1)) return s === 0 ? 'GREEN_OAK' : 'OAK';
-        return plain;
-    }
-    // ② 积雪地面：冬季形态（栎=雪橡、桦=冬桦、松=雪松；棕榈/龙血树/竹等无雪形态）
+    // ① 积雪地面：统一换为冬季挂雪/冬枯形态，杜绝同一战场雪树与普通绿树混杂
     if (snowGround) {
-        if (asset === 'OAK' || asset === 'GREEN_OAK' || asset === 'AUTUMN_OAK') return 'SNOW_AUTUMN_OAK';
-        if (asset === 'BIRCH_GREEN' || asset === 'BIRCH_AUTUMN' || asset === 'BIRCH_WINTER') return 'BIRCH_WINTER';
-        if (asset === 'PINE' || asset === 'ASIAN_PINE') return 'SNOW_PINE';
+        if (
+            asset === 'OAK' || asset === 'GREEN_OAK' || asset === 'AUTUMN_OAK' || asset === 'SNOW_AUTUMN_OAK'
+            || asset === 'ASIAN_MAPLE_GREEN' || asset === 'ASIAN_MAPLE_AUTUMN'
+            || asset === 'PEACH_BLOSSOM' || asset === 'CHERRY_BLOSSOM' || asset === 'GINKGO' || asset === 'OLIVE'
+        ) {
+            return 'SNOW_AUTUMN_OAK';
+        }
+        if (asset === 'BIRCH_GREEN' || asset === 'BIRCH_AUTUMN' || asset === 'BIRCH_WINTER' || asset === 'SNOW_BIRCH' || asset === 'WILLOW') {
+            return 'BIRCH_WINTER';
+        }
+        if (
+            asset === 'PINE' || asset === 'ASIAN_PINE' || asset === 'SNOW_PINE' || asset === 'SNOW_SPRUCE'
+            || asset === 'ITALIAN_PINE' || asset === 'CYPRESS' || asset === 'CYPRESS_DEC'
+            || asset === 'MONKEY_PUZZLE' || asset === 'BAMBOO' || asset === 'LUSH_BAMBOO'
+        ) {
+            return 'SNOW_PINE';
+        }
+        if (asset === 'SNOW_DEAD_TREE') return 'DEAD_TREE';
+        if (/^SCENARIO_TREE_/.test(asset)) return 'SCENARIO_TREE_I';
         return asset;
     }
-    // ③ 按族换季
-    const fam = SEASON_FAMILY[asset];
+    // ② 非积雪地面：先把烘焙图里可能自带的 SNOW_* 还原为同族无雪树，再按四季换装
+    const base = SNOW_TO_PLAIN[asset] ?? asset;
+    const fam = SEASON_FAMILY[base];
     if (fam) return fam[s];
-    return asset;
+    return base;
 }
 
 /** 查该 DE 地形这一季该长的树（主导树种换季后）；没登记树返回 null */
