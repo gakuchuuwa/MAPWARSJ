@@ -50,40 +50,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "姬路城-京都",
-                type: "road",
-                id: "road_city_himeji_city_kyoto_1780126728449",
-                startConnection: "city_himeji",
-                endConnection: "city_kyoto"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [134.6939, 34.8394],
-                    [134.84708, 34.940511],
-                    [134.896573, 34.944635],
-                    [134.941942, 34.940511],
-                    [135.053302, 34.91164],
-                    [135.102795, 34.907515],
-                    [135.127541, 34.895142],
-                    [135.189407, 34.886893],
-                    [135.222403, 34.870396],
-                    [135.238901, 34.858022],
-                    [135.27602, 34.841525],
-                    [135.366758, 34.833276],
-                    [135.399753, 34.808529],
-                    [135.432748, 34.804405],
-                    [135.482241, 34.808529],
-                    [135.552357, 34.808529],
-                    [135.581228, 34.8374],
-                    [135.655467, 34.882769],
-                    [135.77, 35.01],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "宇都宫城-江户",
                 type: "road",
                 id: "road_city_utsunomiya_city_edo_1780126728451",
@@ -70375,6 +70341,75 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [0.843959, 41.634599],
                     [0.7415771484375, 41.705728515237524],
                     [0.5683, 41.7967],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "京都-⚔山崎战役",
+                type: "road",
+                id: "road_city_kyoto_bf_fcam7_7_1793182979342",
+                startConnection: "city_kyoto",
+                endConnection: "bf_fcam7_7"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.77, 35.01],
+                    [135.754453, 34.940511],
+                    [135.6811, 34.8925],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "姬路城-⚔山崎战役",
+                type: "road",
+                id: "road_city_himeji_bf_fcam7_7_1793182986158",
+                startConnection: "city_himeji",
+                endConnection: "bf_fcam7_7"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [134.6939, 34.8394],
+                    [134.84708, 34.940511],
+                    [134.896573, 34.944635],
+                    [134.941942, 34.940511],
+                    [135.053302, 34.91164],
+                    [135.102795, 34.907515],
+                    [135.127541, 34.895142],
+                    [135.189407, 34.886893],
+                    [135.222403, 34.870396],
+                    [135.238901, 34.858022],
+                    [135.27602, 34.841525],
+                    [135.366758, 34.833276],
+                    [135.399753, 34.808529],
+                    [135.432748, 34.804405],
+                    [135.482241, 34.808529],
+                    [135.552357, 34.808529],
+                    [135.6811, 34.8925],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "姑衍山-⚔十三翼战役",
+                type: "road",
+                id: "road_city_guyanshan_bf_cam4_1_1793183031355",
+                startConnection: "city_guyanshan",
+                endConnection: "bf_cam4_1"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [110.6488, 48.6184],
+                    [110.630626, 48.627387],
+                    [110.573253, 48.670274],
+                    [110.5833, 49.0333],
                 ]
             }
         },
