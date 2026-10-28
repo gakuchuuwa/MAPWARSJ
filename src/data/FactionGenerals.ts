@@ -5262,7 +5262,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'luming_luxiangsheng', factionId: 'ming_d', cityId: 'city_yunyang', legionName: '帝国时代中国军团', generalName: '卢象升', portrait: '/assets/CENTRAL/luming_luxiangsheng.png' },
+        { generalId: 'luming_luxiangsheng', factionId: 'ming_d', cityId: 'city_daming', generalName: '卢象升', portrait: '/assets/CENTRAL/luming_luxiangsheng.png' },   // 🔴 [2026-10-28 史实复核] 卢象升长期镇守、治兵、建军之所是大名（崇祯二年至六年知大名府、整饬大名兵备道整整4年，募大名子弟创「天雄军」保卫大名府）；崇祯六年冬抚治郧阳仅数月且一直在外追剿流寇，非其长期镇守据点。精锐为天雄军（T2）。同城合挂：田承嗣（唐魏博）、麴义（袁绍）。
 
 
 

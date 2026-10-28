@@ -4508,9 +4508,17 @@ function collectUnitUsage(): Map<string, string[]> {
     return usage;
 }
 
+// 🔴 [2026-10-28 主人令「【攻城】4 个兵模未被套用：巨型投石机（打包）、坏邻居、神之弓、战狼号巨型投石机 这四个不被套用，不算错误提示」]
+const UNUSED_EXEMPT_UNIT_IDS = new Set([
+    'trebuchet_packed',
+    'bad_neighbor',
+    'gods_own_sling',
+    'warwolf_trebuchet',
+]);
+
 function computeCombatUnitCoverage(): { total: number; summary: string; unused: DeUnitDef[] } {
     const used = collectUnitUsage();
-    const combat = DE_UNITS_CATALOG.filter((u) => COMBAT_CATEGORIES.includes(u.category));
+    const combat = DE_UNITS_CATALOG.filter((u) => COMBAT_CATEGORIES.includes(u.category) && !UNUSED_EXEMPT_UNIT_IDS.has(u.id));
     const summary = COMBAT_CATEGORIES.map((c) => `${CATEGORY_LABEL[c]} ${combat.filter((u) => u.category === c).length}`).join('、');
     return { total: combat.length, summary, unused: combat.filter((u) => !used.has(u.id)) };
 }

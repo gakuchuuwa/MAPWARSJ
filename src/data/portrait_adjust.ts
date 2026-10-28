@@ -8806,6 +8806,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 12,
             "offsetY": 8
+        },
+        "/assets/LATIN/bfe_albert_lombard.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 35
         }
     },
     "folderGuides": {

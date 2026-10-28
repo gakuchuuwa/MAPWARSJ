@@ -194,7 +194,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'lingwu_guoziyi': 8,                                // 郭子仪 · xinping · 新平
     'long2_weixiaokuan': 6,                             // 韦孝宽 · long2 · 汧源
     'lulin_liuxiu': 1,                                  // 刘秀 · lulin · 昆阳
-    'luming_luxiangsheng': 17,                           // 卢象升 · luming · 郧阳
+    'luming_luxiangsheng': 17,                           // 卢象升 · luming · 大名
     'mengcheng_d_gaoqiong': 11,                          // 高琼 · mengcheng_d · 蒙城
     'mi_mizhu': 2,                                      // 麋竺 · mi · 朐城
     'mushi_muchong': 5,                                 // 公孙五楼 · mushi · 大岘关

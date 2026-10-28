@@ -32632,26 +32632,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "君士坦丁堡-尼凯亚",
-                type: "road",
-                id: "road_city_junshitandingbao_city_nixiya_1785183225696",
-                startConnection: "city_junshitandingbao",
-                endConnection: "city_nixiya",
-                hasSeaLeg: true
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [28.97, 41.01],
-                    [29.2382, 40.7382],
-                    [29.510821, 40.751129],
-                    [29.72, 40.43],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "库塔伊西-特拉布宗",
                 type: "road",
                 id: "road_city_kutayixi_city_telabuzong_1785183558417",
@@ -69967,28 +69947,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "君士坦丁堡-⚔巴菲乌斯战役",
-                type: "road",
-                id: "road_city_junshitandingbao_bf_fcam7_15_1793175055358",
-                startConnection: "city_junshitandingbao",
-                endConnection: "bf_fcam7_15"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [28.97, 41.01],
-                    [29.179539, 40.984983],
-                    [29.200597, 40.970539],
-                    [29.239746, 40.953208],
-                    [29.27834, 40.94493],
-                    [29.360371, 40.895346],
-                    [29.5167, 40.7167],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "金泽-⚔俱利伽罗战役",
                 type: "road",
                 id: "road_city_jianghu_bf_fcam7_13_1793175227912",
@@ -70410,6 +70368,43 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [110.630626, 48.627387],
                     [110.573253, 48.670274],
                     [110.5833, 49.0333],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "尼凯亚-⚔巴菲乌斯战役",
+                type: "road",
+                id: "road_city_nixiya_bf_fcam7_15_1793186756004",
+                startConnection: "city_nixiya",
+                endConnection: "bf_fcam7_15"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [29.72, 40.43],
+                    [29.65223333333333, 40.52556666666667],
+                    [29.584466666666668, 40.62113333333333],
+                    [29.5167, 40.7167],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "君士坦丁堡-⚔巴菲乌斯战役",
+                type: "road",
+                id: "road_city_junshitandingbao_bf_fcam7_15_1793186773136",
+                startConnection: "city_junshitandingbao",
+                endConnection: "bf_fcam7_15"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.97, 41.01],
+                    [29.358215332031254, 40.93011520598307],
+                    [29.5167, 40.7167],
                 ]
             }
         },

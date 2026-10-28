@@ -1016,7 +1016,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'lulin_liuxiu': 'CENTRAL',   // 汉国｜刘秀｜据点 昆阳（2026-10-24 按防御战迁）
     'lulisitan_shoujiang': 'SASANIAN',   // 卢里斯坦｜舒特鲁克｜据点 伊拉姆
     'lumiliya_lalashahin': 'TURKS',   // 鲁米利亚｜拉拉沙欣｜据点 埃迪尔内
-    'luming_luxiangsheng': 'CENTRAL',   // 大明｜卢象升｜据点 郧阳
+    'luming_luxiangsheng': 'CENTRAL',   // 大明｜卢象升｜据点 大名
     'lunbadi_alboin': 'LATIN',   // 伦巴第｜阿尔博因｜据点 米兰
     'lunbadi_desiderius': 'LATIN',   // 伦巴第｜德西德里乌斯｜据点 米兰
     'luodian_shexiang': 'BASHU',   // 罗甸｜奢香｜据点 大方城
