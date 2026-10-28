@@ -1466,7 +1466,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'malin_abulhasan', cityId: 'city_feisi', generalName: '阿布·哈桑·阿里', portrait: '/assets/BERBER/malin_abulhasan.png', factionId: 'mulabite', legionName: '城堡时代摩尔军团' },
+        { generalId: 'malin_abulhasan', cityId: 'city_feisi', generalName: '阿布·哈桑·阿里', portrait: '/assets/BERBER/malin_abulhasan.png', factionId: 'malin', legionName: '城堡时代摩尔军团' },   // 🔴 [2026-10-28 主人批修] 阿布·哈桑·阿里＝马林王朝苏丹（1340 里奥萨拉多、1333 攻直布罗陀）；原挂穆拉比特错（马林≠穆拉比特、晚约 3 个世纪）；据点仍非斯＝其都城；军团＝城堡×摩尔格（与文化同条）；专属精锐「马拉喀什军」T3 照旧
 
 
 
@@ -8204,7 +8204,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'chenli_d_zuoxianwang', factionId: 'xushouhui', cityId: 'city_wuchang', generalName: '张必先', portrait: '/assets/MONGOL/chenli_d_zuoxianwang.png' },
+        { generalId: 'chenli_d_zuoxianwang', factionId: 'xushouhui', cityId: 'city_wuchang', generalName: '张必先', portrait: '/assets/MONGOL/chenli_d_zuoxianwang.png' },   // 🔴 [2026-10-28 按史明示] 张必先＝陈友谅太尉、陈理托孤重臣——天完（陈友谅一系）与陈汉按「前后相承并成一家」并挂；精锐「武昌卫军」T4
 
 
 
@@ -11865,7 +11865,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_chen_youliang', cityId: 'city_wuchang', generalName: '陈友谅', portrait: '/assets/JIANGNAN/gen_chen_youliang.png', factionId: 'xushouhui' },
+        { generalId: 'gen_chen_youliang', cityId: 'city_wuchang', generalName: '陈友谅', portrait: '/assets/JIANGNAN/gen_chen_youliang.png', factionId: 'xushouhui' },   // 🔴 [2026-10-28 按史明示] 陈友谅＝徐寿辉（天完）部将夺位、国号汉——前后相承、彼此不打，按 AGENTS「并成一家」（同例：北汉并进后汉）故挂「天完」势力（库内无独立陈汉，属并入设计非漏建）
 
 
 

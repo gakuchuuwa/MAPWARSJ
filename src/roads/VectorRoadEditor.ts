@@ -227,8 +227,6 @@ export class VectorRoadEditor implements IEditor {
     private editMarkers: Map<string, L.CircleMarker[]> = new Map();
     private midMarkers: Map<string, L.CircleMarker[]> = new Map();
     private selectedRoadId: string | null = null;
-    private pendingConnectRoadId: string | null = null;
-    private connectBtn: HTMLButtonElement | null = null;
 
     // === 候选路径缓存与切换支持 ===
     private pathCandidates: RouteCandidate[] = [];
@@ -497,7 +495,7 @@ export class VectorRoadEditor implements IEditor {
         this.panel = document.createElement('div');
         this.panel.id = 'vector-road-editor-panel';
         // [LAYOUT 2026] 改成 2 行布局：
-        //   Row 1: 单条道路编辑（旧）— 状态/搜索/下拉/路网开关/重选/改起/改终/切换/保存/删除
+        //   Row 1: 单条道路编辑（旧）— 状态/搜索/下拉/路网开关/改起/改终/切换/保存/删除
         //   Row 2: 批量工作流（新）— 审计/清理/修端点/简化/查重/自动连
         // [2026-05-30 用户公理] 锁宽度 + 整体放大 (按钮位置 100% 固定)
         this.panel.style.cssText = `
@@ -583,12 +581,6 @@ export class VectorRoadEditor implements IEditor {
 
         // ===== 按钮定义 =====
 
-        // 重置（清空当前选择, 准备画下一条）
-        // [2026-05-30] 强化重置: 真正清干净 + 重新注册城市点击, 立刻能点新起点
-        const resetBtn = this.createButton('🔄 重选', '#ff5722', () => {
-            this.resetForNextDraw();
-        });
-
         // 保存 (写到磁盘, 自动重置准备下一条)
         const saveBtn = this.createButton('💾 保存', '#4caf50', async () => {
             await this.saveToFile();
@@ -610,7 +602,6 @@ export class VectorRoadEditor implements IEditor {
 
         // 删除当前选中的道路
         const deleteBtn = this.createButton('🗑️ 删除', '#f44336', () => this.deleteSelectedRoad());
-        this.connectBtn = this.createButton('🔗 连接', '#00897b', () => this.handleConnectRoads());
 
         // 切换路径（只在有多候选时显示）
         this.switchRouteBtn = this.createButton('🔀 切换路径', '#009688', () => this.cycleCandidates());
@@ -712,9 +703,7 @@ export class VectorRoadEditor implements IEditor {
         row1.appendChild(prevRoadBtn);
         row1.appendChild(nextRoadBtn);
         row1.appendChild(row1Label);
-        row1.appendChild(resetBtn);
         row1.appendChild(this.switchRouteBtn);
-        row1.appendChild(this.connectBtn);
         row1.appendChild(stashBtn);
         row1.appendChild(saveBtn);
         row1.appendChild(deleteBtn);
@@ -1257,11 +1246,6 @@ export class VectorRoadEditor implements IEditor {
         // 2. 清城市起终点 (含 marker)
         this.clearCitySelection();
 
-        this.pendingConnectRoadId = null;
-        if (this.connectBtn) {
-            this.connectBtn.style.background = '#00897b';
-            this.connectBtn.textContent = '🔗 连接';
-        }
         // 4. 重新注册城市点击 (确保 handler 活的)
         this.enableCitySelection();
 
@@ -3487,96 +3471,6 @@ export class VectorRoadEditor implements IEditor {
         this.map.on('mousemove', onMove);
         this.map.on('mouseup', onUp);
     } // Close makeDraggable
-
-    private handleConnectRoads(): void {
-        if (!this.selectedRoadId) {
-            this.setStatus('⚠ 请先选中道路');
-            return;
-        }
-        if (!this.pendingConnectRoadId) {
-            this.pendingConnectRoadId = this.selectedRoadId;
-            if (this.connectBtn) {
-                this.connectBtn.style.background = '#00695c';
-                this.connectBtn.textContent = '🔗 选第2条';
-            }
-            this.setStatus('🔗 已选第1条路，请选第2条后再点连接');
-            return;
-        }
-        if (this.pendingConnectRoadId === this.selectedRoadId) {
-            this.setStatus('⚠ 第2条不能与第1条相同');
-            return;
-        }
-        this.connectTwoRoads(this.pendingConnectRoadId, this.selectedRoadId);
-        this.pendingConnectRoadId = null;
-        if (this.connectBtn) {
-            this.connectBtn.style.background = '#00897b';
-            this.connectBtn.textContent = '🔗 连接';
-        }
-    }
-
-    private connectTwoRoads(roadAId: string, roadBId: string): void {
-        const a = VECTOR_ROAD_DATA.features.find(f => f.properties.id === roadAId);
-        const b = VECTOR_ROAD_DATA.features.find(f => f.properties.id === roadBId);
-        if (!a || !b) {
-            this.setStatus('⚠ 连接失败：找不到道路');
-            return;
-        }
-
-        let aCoords = [...(a.geometry.coordinates as [number, number][])];
-        let bCoords = [...(b.geometry.coordinates as [number, number][])];
-        if (aCoords.length < 2 || bCoords.length < 2) {
-            this.setStatus('⚠ 连接失败：道路点数不足');
-            return;
-        }
-
-        const aStart = aCoords[0], aEnd = aCoords[aCoords.length - 1];
-        const bStart = bCoords[0], bEnd = bCoords[bCoords.length - 1];
-        const dist = (p1: [number, number], p2: [number, number]) =>
-            this.haversine(p1[1], p1[0], p2[1], p2[0]);
-
-        const candidates = [
-            { pair: 'aEnd_bStart', d: dist(aEnd, bStart) },
-            { pair: 'aEnd_bEnd', d: dist(aEnd, bEnd) },
-            { pair: 'aStart_bStart', d: dist(aStart, bStart) },
-            { pair: 'aStart_bEnd', d: dist(aStart, bEnd) }
-        ].sort((x, y) => x.d - y.d);
-
-        const best = candidates[0];
-        if (best.pair === 'aStart_bStart') aCoords = [...aCoords].reverse();
-        else if (best.pair === 'aStart_bEnd') { aCoords = [...aCoords].reverse(); bCoords = [...bCoords].reverse(); }
-        else if (best.pair === 'aEnd_bEnd') bCoords = [...bCoords].reverse();
-
-        const tailA = aCoords[aCoords.length - 1];
-        const headB = bCoords[0];
-        const touchKm = dist(tailA, headB);
-        const merged = touchKm < 1
-            ? [...aCoords, ...bCoords.slice(1)]
-            : [...aCoords, ...bCoords];
-
-        const mergedFeature: VectorRoadFeature = {
-            type: 'Feature',
-            properties: {
-                name: `${a.properties.name || roadAId}+${b.properties.name || roadBId}`,
-                type: 'road',
-                id: `road_${Date.now()}_merge`,
-                startConnection: a.properties.startConnection,
-                endConnection: b.properties.endConnection
-            },
-            geometry: { type: 'LineString', coordinates: merged }
-        };
-
-        roadRegistry.removeVectorRoad(roadAId);
-        roadRegistry.removeVectorRoad(roadBId);
-        roadRegistry.addVectorRoad(mergedFeature);
-
-        this.removeRoadLayers(roadAId);
-        this.removeRoadLayers(roadBId);
-        this.renderRoad(mergedFeature.properties.id);
-        this.updateRoadSelect();
-        this.selectRoad(mergedFeature.properties.id);
-
-        this.setStatus(`🔗 已连接两条路（间距 ${best.d.toFixed(1)}km），记得点保存`);
-    }
 
     /**
      * [DEDUP] Check if the given road geometry is redundant (fully covered by another road).

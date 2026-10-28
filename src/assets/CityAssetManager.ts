@@ -773,6 +773,7 @@ export class CityAssetManager {
         'moerdaweiya': '摩尔',
         'mosike_gongguo': '莫斯',
         'mulabite': '穆拉',
+        'malin': '马林',   // 🔴 [2026-10-28 主人批修] 马林王朝（新势力，与 SandboxDisplayNames 同步）
         'nasier': '纳斯',
         'ouka': '奥卡',
         'peilieya_gongguo': '佩列',

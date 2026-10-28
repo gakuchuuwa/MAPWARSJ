@@ -6323,13 +6323,14 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 35.89,
         targetLng: -5.31,
         myTroops: 30000,
-        enemyFactionId: 'mulabite',
-        enemyFactionName: '摩洛哥马林联军',
+        enemyFactionId: 'malin',
+        enemyFactionName: '马林王朝',
+        // 🔴 [2026-10-28 按史] 敌方势力＝马林王朝（原挂「穆拉比特」错：1340 萨拉多河出兵方是马林苏丹阿布·哈桑）
         enemyGeneralId: 'malin_abulhasan',
         enemyTroops: 50000,
         introLines: [
             { speaker: 'general', text: '北非与格拉纳达倾数十万众围塔里法！圣地亚哥十字战旗引路，卡斯蒂利亚骑士，随国王马踏萨拉多河，尽覆摩尔敌酋！' },
-            { speaker: 'player', text: '愿随阿方索十一将军共赴萨拉多河战役，大破摩洛哥马林联军敌军！' },
+            { speaker: 'player', text: '愿随阿方索十一将军共赴萨拉多河战役，大破马林王朝敌军！' },
         ],
     },
 

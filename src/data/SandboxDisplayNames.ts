@@ -63,6 +63,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'bosiniya': '波黑',  // 🔴 [2026-09-12] 原「波斯」与 boluosi(波斯帝国·已删，与阿契美尼德重复)撞旗 → 取中文标准简称「波黑」
 
   mulabite: '穆拉',  // [2026-10-24 主人令「哪些单字合适就用单字」] 音译名无通行单字简称，不截一字
+  'malin': '马林',   // 🔴 [2026-10-28 主人批修] 马林王朝简称（库里无重）
 
   zhayan: '扎扬',
   hamade: '哈马',

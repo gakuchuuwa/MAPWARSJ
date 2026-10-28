@@ -1021,6 +1021,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代法兰克军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-28 主人批立] 科隆大主教区（新势力）：指针＝主将西格弗里德的实际军团（城堡×法兰西格；仅作无该格时兜底）
+    "koln": {
+        legionName: "城堡时代法兰西骑士军团",
+        legionType: "sub",
+    },
     "xigete": {
         legionName: "城堡时代伊比利亚军团",
         legionType: "sub",
@@ -1075,6 +1080,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "mulabite": {
+        legionName: "城堡时代摩尔军团",
+        legionType: "sub",
+    },
+    // 🔴 [2026-10-28 主人批修] 马林王朝（新势力）：指针＝主将阿布·哈桑的实际军团（城堡×摩尔格；仅作无该格时兜底）
+    "malin": {
         legionName: "城堡时代摩尔军团",
         legionType: "sub",
     },
@@ -2499,6 +2509,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "dalriada": {
+        legionName: "封建时代爱尔兰军团",
+        legionType: "sub",
+    },
+    // 🔴 [2026-10-28 主人批立] 都柏林王国（新势力）：指针＝主将西格特里格的实际军团（封建×凯尔特格；仅作无该格时兜底）
+    "dublin": {
         legionName: "封建时代爱尔兰军团",
         legionType: "sub",
     },

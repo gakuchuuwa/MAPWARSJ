@@ -676,6 +676,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mosike_gongguo': [{ from: -9999, era: 'castle' }, { from: 1514, era: 'imperial' }], // 莫斯公国｜按现存名将成名年推定：–∞起城堡 → 1514起帝国
     'muisca': [{ from: -9999, era: 'castle' }, { from: 1520, era: 'imperial' }], // 穆伊斯卡｜按现存名将成名年推定：–∞起城堡 → 1520起帝国
     'mulabite': [{ from: -9999, era: 'feudal' }, { from: 1086, era: 'castle' }], // 穆拉比特｜按现存名将成名年推定：–∞起封建 → 1086起城堡
+    'malin': [{ from: -9999, era: 'castle' }], // 🔴 [2026-10-28 主人批修] 马林王朝｜1244 立国、1331–1348 阿布·哈桑在位，1340 里奥萨拉多＝城堡时代
     'oirat_ming': [{ from: -9999, era: 'castle' }, { from: 1690, era: 'imperial' }], // 卫拉特｜按现存名将成名年推定：–∞起城堡 → 1690起帝国
     'panyao': [{ from: -9999, era: 'castle' }, { from: 1750, era: 'imperial' }], // 盘瑶｜按现存名将成名年推定：–∞起城堡 → 1750起帝国
     'putaoya': [{ from: -9999, era: 'castle' }, { from: 1520, era: 'imperial' }], // 葡萄牙｜按现存名将成名年推定：–∞起城堡 → 1520起帝国

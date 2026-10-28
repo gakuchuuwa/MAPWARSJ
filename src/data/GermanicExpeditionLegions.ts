@@ -49,5 +49,6 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     tuomengde: { name: '达尔战斧卫', tier: 3 },
     weiershigongguo: { name: '红龙卫队', tier: 2 }, // 布伊尔斯·卢埃林：威尔士公国大公亲王卫队，高举红龙战旗，1282欧温桥之战
     dalriada: { name: '盖尔战船队', tier: 4 },   // 邓纳德·费尔古斯：邓纳德·达尔里阿达：盖尔人以海湾桨船征发的"船队"兵役（Sluaged），736年邓哈芬之役
+    dublin: { name: '都柏林军', tier: 4 },   // 🔴 [2026-10-28 主人批立] 都柏林王国：都柏林北欧王军本部（西格特里格·丝须 1014 克朗塔夫守方；普将 T4）
     scotland: { name: '苏格兰枪阵', tier: 3 },   // 斯昆·约翰·科明：斯昆·科明：苏格兰长枪圆阵（schiltron）步兵，1298年福尔柯克之役
 };
