@@ -140,6 +140,15 @@ export class AIController {
         if (!this.enabled) return;
         const army = this.legionManager.getLegionById(armyId);
         if (!army || army.isDestroyed || army.type !== 'legion') return;
+        const context = this.armyContexts.get(army.id);
+        const armyCity = army.getTargetCity();
+        if (context && armyCity?.id && !army.getIsInCombat()) {
+            context.strategicTargetArmyId = null;
+            setStrategicTarget(context, armyCity.id, {
+                lat: armyCity.latitude,
+                lng: armyCity.longitude,
+            });
+        }
         this.tickArmy(army);
     }
 

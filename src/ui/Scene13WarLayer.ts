@@ -914,12 +914,12 @@ export class Scene13WarLayer {
     }
 
     /** 从某方的后备池（下一波）里扣掉 quotaPop 人口，轮流取各出兵口；返回扣掉的每一批（兵种、人口） */
-    private drainSidePool(side: 0 | 1, quotaPop: number): Array<{ key: string; pop: number }> {
+    private drainSidePool(side: 0 | 1, quotaPop: number, randomNonCommander = false): Array<{ key: string; pop: number }> {
         const taken: Array<{ key: string; pop: number }> = [];
-        const sps = this.spawns.filter((sp) => sp.f === side && !sp.playerElite && sp.pool > 0);
+        const sps = this.spawns.filter((sp) => sp.f === side && !sp.playerElite && (!randomNonCommander || !sp.commander) && sp.pool > 0);
         let idx = 0, guard = 0;
         while (quotaPop > 0 && sps.some((sp) => sp.pool > 0) && guard++ < 100000) {
-            const sp = sps[idx % sps.length]; idx++;
+            const sp = randomNonCommander ? sps[Math.floor(Math.random() * sps.length)] : sps[idx % sps.length]; idx++;
             if (sp.pool <= 0) continue;
             const unit = Math.max(1, sp.pop);
             sp.pool--;
@@ -1218,9 +1218,13 @@ export class Scene13WarLayer {
             const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.03));
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 4 : 1;
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeRatio));
-            const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
-            const [fcx, fcy] = scopedControl === null ? this.sideCentroid(f) : [refX, refY];
-            this.sortSkillVictims(enemyLiving, fcx, fcy);
+            const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW && !this.spawns[m.lane]?.commander);
+            for (let i = enemyLiving.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const tmp = enemyLiving[i];
+                enemyLiving[i] = enemyLiving[j];
+                enemyLiving[j] = tmp;
+            }
             const myLanes = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
             const converted: WarMan[] = [];
             const needSprite = new Set<string>();
@@ -1244,7 +1248,7 @@ export class Scene13WarLayer {
                 for (const o of this.men) if (o.foe && set.has(o.foe as WarMan)) o.foe = null;
             }
             if (scopedControl === null && quotaPop > 0) {
-                const taken = this.drainSidePool(ef, quotaPop);
+                const taken = this.drainSidePool(ef, quotaPop, true);
                 if (taken.length > 0) this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key), vfxTargets);
             }
         }
@@ -6913,7 +6917,7 @@ export class Scene13WarLayer {
         //    （本函数第一行就 return null）⇒ 全军落到 aimAt ⇒ 全队追同一个点 ⇒ 一排。
         //    现在攻城战同样走阵位：列阵推进时整队方块平移，够不着不追（见 step 里 m.march 分支）。
         //    旧令「攻城不列阵行军」由 step 的 inReach 判定照顾：接敌即自由接战，不再回槽位。
-        if (m.lane < 0) return null;
+        if (m.lane < 0 || this.remnantLanes.has(m.lane)) return null;
         // 🔴 [2026-10-12 主人报「守方寻敌不知道走城门还是直接找敌人」] 城墙还挡路时守方不归队：各自走城门出城，免得跟着卡在城里的领队打转
         if (m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls) return null;
         // lane 就是 spawns 的下标（建口时 lane = this.spawns.length，见 start），这里仍核一次防漂
@@ -6924,6 +6928,8 @@ export class Scene13WarLayer {
         if ((m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;   // 🔴 [2026-10-27] 玩家与士兵同一口径（原玩家免等）
         if (this.heroOrderPending(m)) return null;
         const uFwd = this.advanceVec[m.f];
+        // 领队自身的目标在身后（如杀穿敌营后掉头回师清剿后方伏兵）时，不套用正向防倒退阵型槽位，让队员直接走寻敌回师
+        if ((leader.tx - leader.x) * uFwd.x + (leader.ty - leader.y) * uFwd.y < -80) return null;
         const uSide = this.sideVec[m.f];
         const dDep = m.dep - leader.dep;
         const dSide = m.slotY - leader.slotY;
@@ -8521,12 +8527,29 @@ export class Scene13WarLayer {
         for (const m of this.men) if (m.hp > 0 && !m.siegeW && (!m.hero || this.skirmish)) alive[m.f] += m.hero ? 1 : m.pop;
         {
             const laneAlive = new Map<number, number>();
-            for (const s of this.spawns) laneAlive.set(s.lane, (laneAlive.get(s.lane) ?? 0) + Math.max(0, s.pool) * s.pop);
-            for (const m of this.men) if (m.hp > 0 && m.lane >= 0) laneAlive.set(m.lane, (laneAlive.get(m.lane) ?? 0) + m.pop);
+            const sideRegularAlive = [0, 0];
+            for (const s of this.spawns) {
+                const poolPop = Math.max(0, s.pool) * s.pop;
+                laneAlive.set(s.lane, (laneAlive.get(s.lane) ?? 0) + poolPop);
+                sideRegularAlive[s.f] += poolPop;
+            }
+            for (const m of this.men) {
+                if (m.hp > 0 && m.lane >= 0) {
+                    laneAlive.set(m.lane, (laneAlive.get(m.lane) ?? 0) + m.pop);
+                    if (!m.siegeW && !m.hero) sideRegularAlive[m.f] += m.pop;
+                }
+            }
             if (!this.laneStart && alive[0] > 0 && alive[1] > 0) this.laneStart = new Map(laneAlive);
             if (this.laneStart) {
                 this.remnantLanes.clear();
-                for (const [l, a] of laneAlive) { const st = this.laneStart.get(l) ?? 0; if (st > 0 && a <= st * REMNANT_FRAC) this.remnantLanes.add(l); }
+                for (const [l, a] of laneAlive) {
+                    const st = this.laneStart.get(l) ?? 0;
+                    const sp = this.spawns[l];
+                    const ef = sp ? (1 - sp.f) : -1;
+                    // 野战敌方常规分队（含后备池）已全灭、仅剩伏兵（lane=-1）时，全军转入残局全图清剿，直接回头杀敌
+                    const enemyOnlyAmbush = this.battleType !== 'siege' && ef >= 0 && sideRegularAlive[ef] <= 0 && alive[ef] > 0;
+                    if ((st > 0 && a <= st * REMNANT_FRAC) || enemyOnlyAmbush) this.remnantLanes.add(l);
+                }
             }
         }
         if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();

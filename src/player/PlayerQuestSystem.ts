@@ -1626,9 +1626,9 @@ export class PlayerQuestSystem {
         gameLog('expedition', `[玩家] 赶路军团 ${host.name} 归队解散（战场改用史实军团）`);
     }
 
-    /** 沿路网 BFS 最近敌城（跳数优先，同跳取直线最近）；找不到就全图直线最近敌城 */
-    private pickCampaignTarget(city: City): City | null {
-        const faction = city.factionId;
+    /** 沿路网 BFS 最近敌城（跳数优先，同跳取直线最近）；找不到就全图可达直线最近敌城 */
+    private pickCampaignTarget(city: City, myFactionId?: string): City | null {
+        const faction = myFactionId ?? city.factionId;
         const seen = new Set<string>([city.id]);
         let frontier: City[] = [city];
         for (let hop = 1; hop <= PLAYER_QUEST_TARGET_MAX_HOPS; hop++) {
@@ -1650,14 +1650,21 @@ export class PlayerQuestSystem {
             if (!next.length) break;
             frontier = next;
         }
-        let best: City | null = null;
-        let bd = Infinity;
+        let bestReachable: City | null = null;
+        let bdReachable = Infinity;
+        let bestAny: City | null = null;
+        let bdAny = Infinity;
+        const roadReady = roadRegistry.isInitialized();
         for (const c of this.deps.cityManager.getCities()) {
             if (!c.factionId || c.factionId === faction || c.id === city.id) continue;
             const d = getEuclideanDistance({ lat: city.latitude, lng: city.longitude }, { lat: c.latitude, lng: c.longitude });
-            if (d < bd) { bd = d; best = c; }
+            if (d < bdAny) { bdAny = d; bestAny = c; }
+            if (d < bdReachable && (!roadReady || roadRegistry.findPath(city.id, c.id))) {
+                bdReachable = d;
+                bestReachable = c;
+            }
         }
-        return best;
+        return bestReachable ?? bestAny;
     }
 
 
@@ -2329,7 +2336,7 @@ export class PlayerQuestSystem {
         fbState.enemyArmyId = enemyArmy.id;
     }
 
-    private cleanupFirstBattleState(q: PlayerQuest | null): void {
+    private cleanupFirstBattleState(q: PlayerQuest | null, kickAi: boolean = true): void {
         if (!q || q.kind !== 'first_battle' || !q.firstBattle) return;
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (host && !host.isDestroyed) {
@@ -2342,7 +2349,9 @@ export class PlayerQuestSystem {
             delete (host as { firstBattlePairEnemyId?: string }).firstBattlePairEnemyId;
             delete (host as { forceFirstBattleField?: boolean }).forceFirstBattleField;
             host.scriptMarchExempt = false;
-            this.deps.kickLegionAi(host.id);
+            if (kickAi) {
+                this.deps.kickLegionAi(host.id);
+            }
         }
         const enemyId = q.firstBattle.enemyArmyId;
         const enemyArmy = enemyId ? this.deps.legionManager.getLegionById(enemyId) : undefined;
@@ -2372,7 +2381,7 @@ export class PlayerQuestSystem {
      */
     private completeFirstBattleAndContinueCampaign(q: PlayerQuest, host: Army): void {
         const fbState = q.firstBattle;
-        this.cleanupFirstBattleState(q);
+        this.cleanupFirstBattleState(q, false);
 
         const homeCity = this.deps.cityManager.getCity(q.cityId);
         if (homeCity) {
@@ -2381,24 +2390,23 @@ export class PlayerQuestSystem {
                 homeCity.troops = 5000;
             }
         }
-        if (fbState?.battleType === 'siege' && fbState.targetCityId) {
-            const targetCity = this.deps.cityManager.getCity(fbState.targetCityId);
-            if (targetCity) {
-                targetCity.factionId = q.factionId;
-                if ((targetCity.troops || 0) < 3000) {
-                    targetCity.troops = 3000;
-                }
+        const fbTargetCity = fbState?.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
+        if (fbState?.battleType === 'siege' && fbTargetCity) {
+            fbTargetCity.factionId = q.factionId;
+            if ((fbTargetCity.troops || 0) < 3000) {
+                fbTargetCity.troops = 3000;
             }
         }
 
         // 🔴 [2026-10-20 主人令「所有野战剧情结束后，要有据点获得奖励」] 野战首战打赢后也奖励一座据点：
         //    优先战场所属据点（targetCityId）；没写据点或已是我方的，取离战场最近的非我方据点。
+        let fieldRewardCity: City | undefined;
         if (fbState?.battleType === 'field') {
             const cities = this.deps.cityManager.getCities();
             const battlePos = { lat: fbState.targetLat, lng: fbState.targetLng };
             // 🔴 [2026-10-21 主人令「奖励不要搞最近据点，按历史做成指定据点」] 先取史实指定的奖励据点，没指定的才走下面的旧规则
             const fixedReward = fbState.rewardCityId ? this.deps.cityManager.getCity(fbState.rewardCityId) : undefined;
-            let reward = fixedReward ?? (fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined);
+            let reward = fixedReward ?? fbTargetCity;
             if (!fixedReward && (!reward || reward.factionId === q.factionId)) {
                 let best: City | undefined;
                 let bestDist = Infinity;
@@ -2410,6 +2418,7 @@ export class PlayerQuestSystem {
                 reward = best;
             }
             if (reward) {
+                fieldRewardCity = reward;
                 reward.factionId = q.factionId;
                 if ((reward.troops || 0) < 3000) reward.troops = 3000;
                 this.deps.notify(`🏆 【${fbState.battleName}】大捷，获得据点【${reward.name}】`);
@@ -2432,12 +2441,21 @@ export class PlayerQuestSystem {
         host.startPostBattleRest();   // 用现有的战后驻留设定（GameConfig TIME.POST_BATTLE_REST），不另起时长
 
         this.deps.hero.addMerit(500);
+        const hPos = host.getPosition();
+        const nearestCityId =
+            roadRegistry.getNearestCityId(hPos.lat, hPos.lng) ??
+            roadRegistry.getNearestCityId(hPos.lat, hPos.lng, 5.0);
+        const nearestCity = nearestCityId ? this.deps.cityManager.getCity(nearestCityId) : undefined;
+        const nearHost = (c: City | undefined) =>
+            c && getEuclideanDistance(hPos, { lat: c.latitude, lng: c.longitude }) <= 0.8 ? c : undefined;
         const anchorCity =
-            (fbState?.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined)
-            ?? homeCity;
-        const nextTarget = anchorCity ? this.pickCampaignTarget(anchorCity) : null;
+            fbState?.battleType === 'siege'
+                ? (fbTargetCity ?? nearestCity ?? homeCity)
+                : (nearHost(fbTargetCity) ?? nearHost(fieldRewardCity) ?? nearestCity ?? fbTargetCity ?? fieldRewardCity ?? homeCity);
+        const nextTarget = anchorCity ? this.pickCampaignTarget(anchorCity, q.factionId) : null;
         if (nextTarget) {
-            this.deps.legionManager.moveLegionToCity(host, nextTarget.id);
+            const marchSourceCityId = nearestCity?.id ?? anchorCity?.id;
+            this.deps.legionManager.moveLegionToCity(host, nextTarget.id, marchSourceCityId);
             this.quest = {
                 kind: 'campaign',
                 cityId: q.cityId,
@@ -2561,7 +2579,7 @@ export class PlayerQuestSystem {
      */
     private failFirstBattle(q: PlayerQuest, host: Army | null): void {
         const fbState = q.firstBattle;
-        this.cleanupFirstBattleState(q);
+        this.cleanupFirstBattleState(q, false);
         // 军队战败：还活着的那支（打平 300 秒未克、攻城被击退）也一并溃散，不许它继续打下一座
         if (host && !host.isDestroyed) {
             host.clearExternalCombatState();

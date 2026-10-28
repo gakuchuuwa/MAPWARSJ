@@ -713,8 +713,11 @@ export class RoadRegistry {
     ): { lat: number; lng: number }[] {
         const start = { lat: startPos.lat, lng: startPos.lng };
 
-        const cityRoute = this.buildCityAnchoredPath(start, targetCityId, sourceCityId);
-        const cityLeg = this.offRoadFirstLeg(start, cityRoute);
+        const { route: cityRoute, offRoadDist: cityLeg } = this.buildCityAnchoredPath(
+            start,
+            targetCityId,
+            sourceCityId
+        );
 
         // 已经贴在道路上（含正常沿路行军）：直接返回，避免每次都全网扫描
         if (cityRoute.length >= 2 && cityLeg <= GameConfig.ROAD.JOIN_EPS) {
@@ -722,56 +725,46 @@ export class RoadRegistry {
         }
 
         // 离路较远：尝试投影到全网最近道路点进入，取离路首段更短的方案
-        const netRoute = this.buildPathViaNearestRoad(start, targetCityId);
-        if (netRoute && netRoute.length >= 2) {
-            const netLeg = this.offRoadFirstLeg(start, netRoute);
-            if (cityRoute.length < 2 || netLeg < cityLeg) {
-                return netRoute;
+        const net = this.buildPathViaNearestRoad(start, targetCityId);
+        if (net && net.route.length >= 2) {
+            if (cityRoute.length < 2 || net.offRoadDist + 1e-4 < cityLeg) {
+                return net.route;
             }
         }
 
         return cityRoute;
     }
 
-    /** 旧逻辑：从最近接入路网的城市跑 Dijkstra，再把当前位置接到该折线上 */
+    /** 从最近接入路网的城市跑 Dijkstra，再把当前位置接到该折线上，并返回接入前的真实脱路距离 */
     private buildCityAnchoredPath(
         startPos: { lat: number; lng: number },
         targetCityId: string,
         sourceCityId?: string
-    ): { lat: number; lng: number }[] {
-        const startId = sourceCityId || this.findNearestCityId(startPos.lat, startPos.lng, 0.5);
-        if (!startId) return [];
+    ): { route: { lat: number; lng: number }[]; offRoadDist: number } {
+        const startId =
+            sourceCityId ||
+            this.findNearestCityId(startPos.lat, startPos.lng, 0.5) ||
+            this.findNearestCityId(startPos.lat, startPos.lng, 5.0);
+        if (!startId) return { route: [], offRoadDist: Infinity };
 
         const path = this.findPath(startId, targetCityId);
-        if (!path) return [];
+        if (!path) return { route: [], offRoadDist: Infinity };
 
         const latLngs = this.pathToLatLngs(path);
-        if (latLngs.length === 0) return [];
+        if (latLngs.length === 0) return { route: [], offRoadDist: Infinity };
 
-        return joinStartToRoadPolyline(
+        const d0 = getEuclideanDistance(startPos, latLngs[0]);
+        const offRoadDist =
+            d0 <= GameConfig.ROAD.JOIN_EPS
+                ? d0
+                : (nearestPointOnPolyline(startPos, latLngs)?.distance ?? d0);
+
+        const route = joinStartToRoadPolyline(
             { lat: startPos.lat, lng: startPos.lng },
             latLngs,
             GameConfig.ROAD.JOIN_EPS
         );
-    }
-
-    /** 路径离路首段长度（LatLng 欧氏）：当前位置到第一个落在道路上的点 */
-    private offRoadFirstLeg(
-        startPos: { lat: number; lng: number },
-        route: { lat: number; lng: number }[]
-    ): number {
-        if (route.length === 0) return Infinity;
-        const head = route[0];
-        const headIsStart =
-            Math.abs(head.lat - startPos.lat) < 1e-6 && Math.abs(head.lng - startPos.lng) < 1e-6;
-        if (headIsStart) {
-            // 军团就在路径起点 = 已经贴在路上，离路距离是 0（2026-08-07 修）。
-            // 原实现返回「起点到下一个途径点的距离」（第一段长度），当第一段很长（> JOIN_EPS）
-            // 时会被误判为「偏离道路」，触发 buildPathViaNearestRoad 全网重投影，
-            // 产生先折返/绕行等异常路径（伊斯法罕三岔口折返案）。
-            return 0;
-        }
-        return getEuclideanDistance(startPos, head);
+        return { route, offRoadDist };
     }
 
     /**
@@ -842,7 +835,7 @@ export class RoadRegistry {
     private buildPathViaNearestRoad(
         startPos: { lat: number; lng: number },
         targetCityId: string
-    ): { lat: number; lng: number }[] | null {
+    ): { route: { lat: number; lng: number }[]; offRoadDist: number } | null {
         const entry = this.findNearestRoadEntry(startPos, 2.0);
         if (!entry) return null;
 
@@ -864,7 +857,10 @@ export class RoadRegistry {
         }
         if (!chosen || chosen.length === 0) return null;
 
-        return this.dedupeRoute([startPos, ...chosen]);
+        return {
+            route: this.dedupeRoute([startPos, ...chosen]),
+            offRoadDist: entry.distance,
+        };
     }
 
     /** 拼接「边上投影点→端节点」的局部段 + 该端节点到目标城的 Dijkstra 折线 */

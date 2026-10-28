@@ -31,7 +31,14 @@ export function resolveMarchTargetOnPath(
 ): string {
     let marchTargetId = targetCityId;
     if (startCityId) {
-        marchTargetId = resolveFirstHostileOnRoad(factionId, startCityId, targetCityId, getCityFaction);
+        const startCity = cities.getCity(startCityId);
+        const nearStartCity =
+            !startCity ||
+            marchPath.length === 0 ||
+            getEuclideanDistance(marchPath[0], { lat: startCity.latitude, lng: startCity.longitude }) <= 0.6;
+        if (nearStartCity) {
+            marchTargetId = resolveFirstHostileOnRoad(factionId, startCityId, targetCityId, getCityFaction);
+        }
     }
     if (marchPath.length >= 2) {
         marchTargetId = findFirstHostileAlongPolyline(factionId, marchPath, marchTargetId, cities, {

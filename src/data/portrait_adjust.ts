@@ -8841,6 +8841,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 13,
             "offsetY": 28
+        },
+        "/assets/LATIN/bfe_doria.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/BURGUNDIANS/bogendigongguo_rangdepuleixi.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/WEI/xin_liuchong.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 11
         }
     },
     "folderGuides": {

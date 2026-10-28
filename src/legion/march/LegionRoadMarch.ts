@@ -189,7 +189,9 @@ export function moveLegionToCity(
     const currentPos = army.getPosition();
     const factionId = army.getFactionId();
 
-    const nearestStartCityId = roadRegistry.getNearestCityId(currentPos.lat, currentPos.lng);
+    const nearestStartCityId =
+        roadRegistry.getNearestCityId(currentPos.lat, currentPos.lng) ??
+        roadRegistry.getNearestCityId(currentPos.lat, currentPos.lng, 5.0);
     if (army.hasSavedMarchState()) {
         const pathPreviewForResume = nearestStartCityId
             ? roadRegistry.getFullPathToCity(currentPos, targetCityId, nearestStartCityId)
