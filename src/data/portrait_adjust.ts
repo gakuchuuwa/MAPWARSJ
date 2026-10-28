@@ -8438,7 +8438,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/WEI/you_gengyan.png": {
-            "scale": 1.34,
+            "scale": 1.36,
             "offsetX": 0,
             "offsetY": -4
         },
