@@ -175,7 +175,7 @@ export class AnimalAmbientLayer {
 
         this.setupPane();
         // 🔴 [2026-10-28 修复镜头跟随颤抖] 不在 move/zoom 事件里挪动画布，只在 draw() 绘制那一刻统一对齐
-        this.map.on('viewreset moveend zoomend', this.syncCanvas.bind(this));
+        // 不在事件里单独挪动画布，统一在 draw() 绘制那一刻 syncCanvas
         this.map.on('resize', this.resize.bind(this));
         this.resize();
         this.syncCanvas();

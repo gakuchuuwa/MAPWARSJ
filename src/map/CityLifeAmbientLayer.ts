@@ -460,11 +460,8 @@ export class CityLifeAmbientLayer {
     private lastCombatScanMs = 0;
     private clearedWhileHidden = false;
     private layerVisible = true;
-    private layoutDirty = false;
     /** 当前布局所属的游戏年份；年份一变就整体轮回 */
     private layoutYear: number | null = null;
-    private lastLayoutRebuildMs = 0;
-
     private static readonly ASSET_BUDGET_BYTES = 64 * 1024 * 1024;
 
     constructor(map: L.Map) {
@@ -485,14 +482,8 @@ export class CityLifeAmbientLayer {
 
         this.resize();
         map.on('resize', () => this.resize());
-        // 🔴 [2026-10-28 修复镜头跟随颤抖] 不在 move/zoom 事件里挪动画布，只在 draw() 绘制那一刻统一对齐
-        map.on('viewreset moveend zoomend', () => this.reposition());
-
-        // 陆海瓦片加载完成后要重算海中渔场与陆地落点。该事件实测每秒几十次，
-        // 直接清空会让角色每帧重建、透明度归零而永远显示不出来，所以只打标记，由 update 节流重排。
-        window.addEventListener('land-sea-tiles-updated', () => {
-            this.layoutDirty = true;
-        });
+        // 🔴 [2026-10-28 修复镜头跟随晃动] 不在任何地图事件（含 move / moveend / zoom / viewreset）中单独调用 reposition()，
+        //    唯一只在 draw() 绘制那一刻同步对齐画布与投影，不重定位期间画布随 mapPane 硬件变换与底图严丝合缝移动。
     }
 
     private resize(): void {
@@ -505,6 +496,17 @@ export class CityLifeAmbientLayer {
     private reposition(): void {
         const topLeft = this.map.containerPointToLayerPoint([0, 0]);
         L.DomUtil.setPosition(this.canvas, topLeft);
+    }
+
+    /** 精确浮点容器坐标（绕开 Leaflet latLngToLayerPoint 内部的 ._round()，防止慢速走动的牲畜与跟拍产生 1px 阶梯跳动） */
+    private toContainerPt(lat: number, lng: number): { x: number; y: number } {
+        const p = this.map.project([lat, lng], this.map.getZoom());
+        const origin = this.map.getPixelOrigin();
+        const panePos = (this.map as unknown as { _getMapPanePos(): L.Point })._getMapPanePos();
+        return {
+            x: p.x - origin.x + panePos.x,
+            y: p.y - origin.y + panePos.y,
+        };
     }
 
     public start(): void {
@@ -699,6 +701,11 @@ export class CityLifeAmbientLayer {
             for (let gy = -2; gy <= 2; gy++) {
                 if (Math.abs(gx) + Math.abs(gy) > 2) continue;
                 const ll = this.map.unproject([x + gx / 2 * hw, y + 4 + gy / 2 * hh], 9);
+                if (LandSeaSystem.probeLandSea(ll.lat, ll.lng) === 'pending') {
+                    this.isSea({ lat: ll.lat, lng: ll.lng });
+                    this.plotElevPending = true;
+                    return false;
+                }
                 if (this.isSea({ lat: ll.lat, lng: ll.lng })) return false;
                 // 内陆湖、河也不许压：掩膜说是水就算
                 if (LandSeaSystem.getWaterSampler().isWaterSync(ll.lat, ll.lng) === true) return false;
@@ -1576,14 +1583,7 @@ export class CityLifeAmbientLayer {
             this.actorsByCity.clear();
             this.placedPlots = [];
         }
-        if (this.layoutDirty && this.nowMs - this.lastLayoutRebuildMs >= 3000) {
-            this.layoutDirty = false;
-            this.lastLayoutRebuildMs = this.nowMs;
-            this.prevActorsByCity = new Map(this.actorsByCity);
-            this.actorsByCity.clear();
-            this.placedPlots = [];   // 地皮登记随布局一起重来，否则旧落点会挡住自己的新落点
-            this.forestByCity.clear();
-        }
+        // 已定案据点在同一年份内锁定落点，未定案据点不入缓存、下一帧自动重算，不再定时清空已定案据点
 
         const bounds = this.map.getBounds();
         const sw = bounds.getSouthWest();
@@ -1855,7 +1855,7 @@ export class CityLifeAmbientLayer {
     /** 绘制战时被破坏的图、尸体、沉船与牲畜损失（随 damageBlend 0->1 渐显） */
     private drawWarDamageForActor(
         actor: CityLifeActor,
-        pt: L.Point,
+        pt: { x: number; y: number },
         facing: number,
         zoomFactor: number,
         tSec: number,
@@ -1937,7 +1937,7 @@ export class CityLifeAmbientLayer {
             if (!forestProps || forestProps.length === 0) continue;
 
             for (const fp of forestProps) {
-                const pt = this.map.latLngToContainerPoint([fp.pos.lat, fp.pos.lng]);
+                const pt = this.toContainerPt(fp.pos.lat, fp.pos.lng);
                 if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
 
                 const peaceAlpha = st.viewAlpha * st.peaceAlpha;
@@ -1987,7 +1987,7 @@ export class CityLifeAmbientLayer {
             if (actor.isSeaFishing || actor.isAnimal || !actor.seasonalPlot) continue;
             const peaceFinalAlpha = actor.viewAlpha * actor.peaceAlpha;
             if (peaceFinalAlpha <= 0.01) continue;
-            const groupPt = this.map.latLngToContainerPoint([actor.homePos.lat, actor.homePos.lng]);
+            const groupPt = this.toContainerPt(actor.homePos.lat, actor.homePos.lng);
             const plotBySeason = SEASONAL_PLOT_BY_KIND[actor.seasonalPlot];
             // 农田 / 水田 / 草场都按选址时判出的块数铺 1~4 块（主人在南块）。
             const s = PLOT_CELL_OFFSETS[PLOT_LEADER_CELL];
@@ -2057,7 +2057,7 @@ export class CityLifeAmbientLayer {
                 drawLng = actor.lastDrawPos.lng;
             }
 
-            const pt = this.map.latLngToContainerPoint([drawLat, drawLng]);
+            const pt = this.toContainerPt(drawLat, drawLng);
             if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
 
             // 战火破坏层（破损农车/栅栏废墟、平民尸体、牲畜尸骨、沉没渔船），随 damageBlend (0 -> 1) 渐显
@@ -2071,7 +2071,7 @@ export class CityLifeAmbientLayer {
             if (peaceFinalAlpha > 0.01) {
                 // 农田与草场已在角色前统一铺底；果子、木材、矿石与随机建筑仍固定在主人脚下／两侧。
                 if (!actor.isSeaFishing && !actor.isAnimal) {
-                    const groupPt = this.map.latLngToContainerPoint([actor.homePos.lat, actor.homePos.lng]);
+                    const groupPt = this.toContainerPt(actor.homePos.lat, actor.homePos.lng);
                     const side = actor.slotIdx % 2 === 0 ? -1 : 1;
                     if (actor.groundResource && actor.groundResourceLib) {
                         this.drawStripSprite(
@@ -2100,7 +2100,7 @@ export class CityLifeAmbientLayer {
 
                 // 船坞固定在近岸港湾，不跟随渔船往返；与渔船、鱼群同属一套生产组合。
                 if (actor.isSeaFishing && actor.buildingResource) {
-                    const dockPt = this.map.latLngToContainerPoint([actor.gatePos.lat, actor.gatePos.lng]);
+                    const dockPt = this.toContainerPt(actor.gatePos.lat, actor.gatePos.lng);
                     this.drawStripSprite(
                         'SUCAI_BUILDING',
                         actor.buildingResource,
