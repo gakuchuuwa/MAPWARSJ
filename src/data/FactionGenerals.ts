@@ -798,7 +798,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'halikanasu_memnon', cityId: 'city_halikanasu', generalName: '门农', portrait: '/assets/GREECE/halikanasu_memnon.png' },
+        { generalId: 'halikanasu_memnon', factionId: 'aqimeinide', cityId: 'city_halikanasu', generalName: '门农', portrait: '/assets/GREECE/halikanasu_memnon.png' },   // 🔴 [2026-10-28 按史] 门农＝罗德岛人、大流士三世波斯军的都督（前334 格拉尼库斯、334–333 守哈利卡纳苏斯）；原挂卡里亚行省（错，他并非卡里亚政权的人）；据点留哈利卡纳苏斯＝他的守城指挥所
 
 
 
@@ -3109,7 +3109,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'hre_siegfried', cityId: 'city_kelong', legionName: '城堡时代法兰西骑士军团', generalName: '西格弗里德', portrait: '/assets/FRANKS/hre_siegfried.png' },
+        { generalId: 'hre_siegfried', factionId: 'koln', cityId: 'city_kelong', legionName: '城堡时代法兰西骑士军团', generalName: '西格弗里德', portrait: '/assets/FRANKS/hre_siegfried.png' },   // 🔴 [2026-10-28 主人批立] 西格弗里德＝科隆大主教（1288 沃林根战败）；势力按其历史政权「科隆大主教区」（主人定：武将历史是哪个政权就是哪个势力）；军团仍城堡×法兰西格（与文化同条）
 
 
 
@@ -8269,7 +8269,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    wuhuan: { generalId: 'wuhuan_tadun', cityId: 'city_bailangshan', generalName: '蹋顿', portrait: '/assets/XIANBEI/wuhuan_tadun.png' },
+    wuhuan: { generalId: 'wuhuan_tadun', cityId: 'city_chaoyang', generalName: '蹋顿', portrait: '/assets/XIANBEI/wuhuan_tadun.png' },   // 🔴 [2026-10-28 主人批迁] 蹋顿＝三郡乌桓大人，王庭柳城（今朝阳）：镇守/居住都算（史实三条依据）；白狼山＝207 败亡战场非驻地。文化随据点（朝阳＝河朔 WEI）
 
 
 
@@ -9731,7 +9731,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    adao_d: { generalId: 'adao_d_mafushou', factionId: 'manzhou_d', cityId: 'city_kungang', generalName: '马福寿', portrait: '/assets/WESTERN/adao_d_mafushou.png' },
+    adao_d: { generalId: 'adao_d_mafushou', factionId: 'manzhou_d', cityId: 'city_kungang', generalName: '马福寿', portrait: '/assets/WESTERN/adao_d_mafushou.png', eliteName: '昆岗军台营', eliteTier: 4 },   // 🔴 [2026-10-28 按主令还原] 马福寿＝阿克苏道昆岗军台营官（白皮书定「军台营官、无战役级胜」→ 普将）；自带 T4 专属精锐「昆岗军台营」（与据点昆岗同名对口），不再随大清势力回落共带 T0 满洲八旗（T0 只许一人带＝多尔衮）
 
 
 
@@ -13083,7 +13083,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     
         // 🔴 [2026-10-25 主人令「把岳飞的军团制定为三级军团，岳家军，记住不要动我的三级军团」]
         //    岳飞单挂三级军团「岳家军」（编制、阵型、父级、战船一概不动）；其余三级军团同样一律不动。
-        { generalId: 'yanchuan_d_yuefei', factionId: 'song', cityId: 'city_yancheng2', generalName: '岳飞', portrait: '/assets/CENTRAL/yanchuan_d_yuefei.png' , legionName: '岳家军' },
+        { generalId: 'yanchuan_d_yuefei', factionId: 'song', cityId: 'city_wuchang', generalName: '岳飞', portrait: '/assets/CENTRAL/yanchuan_d_yuefei.png' , legionName: '岳家军' },   // 🔴 [2026-10-28 按史] 岳飞久镇鄂州（武昌）＝岳家军根基（1134 定襄阳后帅府所在）；郾城＝1140 首战战场非驻地。军团仍三级「岳家军」（三级军团不动）
 
 
 
@@ -14772,7 +14772,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'safawei_d_abasi', cityId: 'city_yisifahan', generalName: '阿拔斯', portrait: '/assets/PERSIAN/safawei_d_abasi.png' },
         { generalId: 'yilihanguo_yisimeier', factionId: 'safawei_d', cityId: 'city_zanzhan', generalName: '伊斯梅尔', portrait: '/assets/PERSIAN/yilihanguo_yisimeier.png' },   // 按史订正（2026-10-25）：即萨法维沙阿伊斯梅尔一世（1487–1524），原条生卒 1305–1335 与「城堡时代伊儿军团」皆误，已删手写军团走势力时代×据点文化,
-        { generalId: 'yilihanguo_kitbuqa', factionId: 'safawei_d', cityId: 'city_zanzhan', legionName: '城堡时代伊儿军团', generalName: '怯的不花', portrait: '/assets/SASANIAN/yilihanguo_kitbuqa.png' },
+        { generalId: 'yilihanguo_kitbuqa', factionId: 'yilihanguo_d', cityId: 'city_zanzhan', legionName: '城堡时代伊儿军团', generalName: '怯的不花', portrait: '/assets/SASANIAN/yilihanguo_kitbuqa.png' },   // 🔴 [2026-10-28 按史] 怯的不花是旭烈兀伊利汗国的先锋统帅；原挂萨法维（1487 年才建，晚 200 多年，错）。军团同合赞/旭烈兀＝城堡时代伊儿军团
 
 
 
@@ -15139,8 +15139,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     deli: [
         // 🔴 [2026-10-20 首战规则] 萨达希夫·拉奥·巴乌＝马拉塔统帅（1761 第三次帕尼帕特战死）；库无马拉塔势力，借德里（报告）；帝国时代莫卧儿军团；立绘留空
         { generalId: 'gen_sadashivrao', cityId: 'city_deli', generalName: '萨达希夫', portrait: '/assets/MUGHAL/gen_sadashivrao.png', legionName: '帝国时代莫卧儿军团' },
-        // 🔴 [2026-10-20 首战规则] 赫穆＝苏尔帝国将军（1556 第二次帕尼帕特战败被杀）；苏尔无独立势力，借德里（报告）；帝国时代莫卧儿军团；立绘留空
-        { generalId: 'gen_hemu', cityId: 'city_deli', generalName: '赫穆', portrait: '/assets/MUGHAL/gen_hemu.png', legionName: '帝国时代莫卧儿军团' },
+        // 🔴 [2026-10-20 首战规则] 赫穆＝苏尔王朝将领（1556 第二次帕尼帕特战败被杀）
+        // 🔴 [2026-10-28 主人批立] 苏尔王朝立独立势力（主人定：武将历史是哪个政权就是哪个势力）；据点仍德里＝他驻防的都城；军团＝帝国×莫卧儿格（手写）
+        { generalId: 'gen_hemu', factionId: 'sur', cityId: 'city_deli', generalName: '赫穆', portrait: '/assets/MUGHAL/gen_hemu.png', legionName: '帝国时代莫卧儿军团' },
 
 
 
@@ -15157,7 +15158,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'xindu_bahelamuhan', legionName: '帝国时代旁遮普军团', factionId: 'deli', cityId: 'city_kalaqi', generalName: '巴赫拉姆汗', portrait: '/assets/PURU/xindu_bahelamuhan.png' },
+        { generalId: 'xindu_bahelamuhan', legionName: '帝国时代旁遮普军团', factionId: 'mowoer', cityId: 'city_kalaqi', generalName: '巴赫拉姆汗', portrait: '/assets/PURU/xindu_bahelamuhan.png' },   // 🔴 [2026-10-28 按史] 巴赫拉姆汗是阿克巴的莫卧儿摄政（1556 保殿山之役）；原挂德里苏丹国（1526 年已亡，错）
 
 
 
@@ -16776,7 +16777,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'bfe_dalriada_king', cityId: 'city_dunadd', generalName: '费尔古斯', portrait: '/assets/CELTS/bfe_dalriada_king.png' , legionName: '封建时代爱尔兰军团', eliteName: '盖尔战团', eliteTier: 4},
         { generalId: 'gen_domhnall', factionId: 'dalriada', cityId: 'city_dublin', generalName: '多姆纳尔', portrait: '/assets/CELTS/gen_domhnall.png' },
-        { generalId: 'gaer_sigtrygg', factionId: 'dalriada', cityId: 'city_dublin', generalName: '西格特里格·丝须', portrait: '/assets/CELTS/gaer_sigtrygg.png' },
+        { generalId: 'gaer_sigtrygg', factionId: 'dublin', cityId: 'city_dublin', generalName: '西格特里格·丝须', portrait: '/assets/CELTS/gaer_sigtrygg.png' },   // 🔴 [2026-10-28 主人批立] 西格特里格·丝须＝都柏林北欧王（1014 克朗塔夫守方）；势力按其历史政权「都柏林王国」（主人定：武将历史是哪个政权就是哪个势力）；共青团多姆纳尔仍留达尔里阿达
 
 
 
@@ -17029,7 +17030,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'yong_lujili', factionId: 'chuguo', cityId: 'city_shangyong', generalName: '庐戢黎', portrait: '/assets/CENTRAL/yong_lujili.png' , legionName: '先秦军团' },
 
     
-        { generalId: 'chu_guanyu', factionId: 'shu', cityId: 'city_dangyang', legionName: '古典时代吴越军团', generalName: '关羽', portrait: '/assets/JIANGNAN/chu_guanyu.png' },
+        { generalId: 'chu_guanyu', factionId: 'shu', cityId: 'city_ying', legionName: '古典时代荆楚军团', generalName: '关羽', portrait: '/assets/JIANGNAN/chu_guanyu.png' },   // 🔴 [2026-10-28 按史] 关羽为刘备董督荆州事，治所江陵（长期镇守）；当阳＝被擒之地（不算据点据）。江陵＝HUGUANG，军团同那格「古典时代荆楚军团」
 
     
         { generalId: 'ruochu_doulian', factionId: 'chuguo', cityId: 'city_jingling', generalName: '鬬廉', portrait: '/assets/JIANGNAN/ruochu_doulian.png' , legionName: '先秦军团' },

@@ -9,14 +9,43 @@ body {
 #map {
     width: 100%;
     height: 100%;
-    background: #6395b8;
-    /* 统一海洋蓝底色：与大海同色，消除视口外和未加载区域的绿色暴露 */
+    background:
+        radial-gradient(circle at 30% 35%, rgba(154, 159, 164, 0.45) 0%, rgba(118, 123, 128, 0.65) 55%, rgba(98, 103, 108, 0.85) 100%),
+        #7d8388;
+    /* 未探索灰雾底色：未加载或延时区域呈现柔和灰蒙迷雾质感，取代刺眼纯蓝方洞 */
     position: relative;
 }
 
 /* 辅助消除 Chromium / WebKit 在 GPU 3D 变换下的瓦片边缘抗锯齿透明裂缝 */
 .leaflet-tile {
     outline: 1px solid transparent;
+}
+
+/* 战略地图未加载/延时瓦片：未探索灰蒙云雾态（边缘柔和羽化漫溢，消除 256px 直角方框切边） */
+.leaflet-tile.hillshade-tile-fog {
+    opacity: 1 !important;
+    z-index: 6 !important;
+    border-radius: 16px;
+    box-shadow:
+        0 0 32px 20px rgba(132, 137, 142, 0.88),
+        0 0 64px 34px rgba(120, 125, 130, 0.46);
+    filter: blur(1.2px);
+    transition: box-shadow 0.42s ease-out, filter 0.42s ease-out;
+}
+
+@keyframes hillshade-fog-clear {
+    0% {
+        filter: brightness(1.06) contrast(0.74) saturate(0.38) blur(1px);
+        box-shadow: 0 0 28px 14px rgba(132, 137, 142, 0.62);
+    }
+    100% {
+        filter: none;
+        box-shadow: none;
+    }
+}
+
+.leaflet-tile.hillshade-tile-reveal {
+    animation: hillshade-fog-clear 0.45s ease-out forwards;
 }
 
 /* 战略地图古典古卷氛围覆盖层（沙盘微暗角 + 宣纸绢帛暗纹，零交互遮挡） */

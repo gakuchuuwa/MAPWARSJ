@@ -161,6 +161,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'taluma': '塔鲁',
 'mazhaer': '匈',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   falanji: '弗兰',
+  koln: '科隆',   // 🔴 [2026-10-28 主人批立] 科隆大主教区简称（库里无重）
   shiwaben: '施瓦',
   asikanani: '勃兰',
 'wende': '萨克',
@@ -520,7 +521,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qiufu': '剡中',
     'chendiaoyan': '陈吊',
     'yezongliu': '处',
-    'qianhui': '回军',
+    'qianhui': '回',   // 🔴 [2026-10-28] 势力改名「回军→回民」，旗号用简称单字「回」（库里无重）
     'miaomin': '苗',
     'zhongxiang': '鼎',
     'yang_bozhou': '杨',
@@ -673,6 +674,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'nabatai': '纳巴',
     'xike': '锡克',
     'deli': '德苏',
+    'sur': '苏尔',   // 🔴 [2026-10-28 主人批立] 苏尔王朝简称（库里无重）
     'mowoer': '莫卧',
     'jieri': '戒日',
 'kongque': '孔雀',
@@ -780,6 +782,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'aolitai': '奥里',
     'shiyuzu': '食鱼',
   dalriada: '达里',  // 达尔里阿达
+  dublin: '都林',   // 🔴 [2026-10-28 主人批立] 都柏林王国简称（库里无重）
   scotland: '苏',  // 苏格兰；  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
   chanka: '昌卡',  // 昌卡
   ouchi: '大内',  // 大内

@@ -153,6 +153,7 @@ export const FACTIONS: Faction[] = [
     { id: 'taluma', name: '塔鲁玛迦拉' },
   { id: 'mazhaer', name: '匈牙利' },
   { id: 'falanji', name: '法兰克' },
+  { id: 'koln', name: '科隆大主教区' },   // 🔴 [2026-10-28 主人批立] 武将历史政权：西格弗里德＝科隆大主教（1288 沃林根战败）；主人定「武将历史是哪个政权，民族，就是哪个势力」
   { id: 'shiwaben', name: '施瓦本' },
   { id: 'asikanani', name: '勃兰登堡藩侯国' },
   { id: 'wende', name: '萨克森' },
@@ -1107,7 +1108,7 @@ export const FACTIONS: Faction[] = [
     { id: 'qiufu', name: '剡中' },
     { id: 'chendiaoyan', name: '陈吊' },
     { id: 'yezongliu', name: '处州' },
-    { id: 'qianhui', name: '回军' },
+    { id: 'qianhui', name: '回民' },   // 🔴 [2026-10-28 按主令改名] 白彦虎部（陕甘回民起义首领）；「回军」＝军队称谓不合势力名，改民族统称「回民」（锚点兴庆＝回民腹地，按改名阶梯①民族渊源）
     { id: 'miaomin', name: '苗民' },
     { id: 'zhongxiang', name: '鼎州' },
     { id: 'yang_bozhou', name: '播州杨氏' },
@@ -1514,6 +1515,7 @@ export const FACTIONS: Faction[] = [
     { id: 'nabatai', name: '纳巴泰王国' },
     { id: 'xike', name: '锡克帝国' },
     { id: 'deli', name: '德里苏丹国' },
+    { id: 'sur', name: '苏尔王朝' },   // 🔴 [2026-10-28 主人批立] 武将历史政权：赫穆＝苏尔王朝将领（1556 第二次帕尼帕特）；主人定「武将历史是哪个政权，民族，就是哪个势力」
     { id: 'mowoer', name: '莫卧儿帝国' },
     { id: 'jieri', name: '戒日帝国' },
     { id: 'kongque', name: '孔雀帝国' },
@@ -1645,6 +1647,7 @@ export const FACTIONS: Faction[] = [
     { id: 'kuman_oleshky', name: '库曼' },           // 2026-10-19：奥列什基（第聂伯河口库曼商埠）
   // ── 🔴 [2026-10-20 主人令「看武将，以武将来定义势力」] 起义占位首战改挂真实政权 ──
   { id: 'dalriada', name: '达尔里阿达' },  // 邓纳德
+  { id: 'dublin', name: '都柏林王国' },   // 🔴 [2026-10-28 主人批立] 武将历史政权：西格特里格·丝须＝都柏林北欧王（1014 克朗塔夫守方）；主人定「武将历史是哪个政权，民族，就是哪个势力」
   { id: 'scotland', name: '苏格兰' },  // 斯昆
   { id: 'chanka', name: '昌卡' },  // 安达瓦伊拉斯
   { id: 'ouchi', name: '大内' },  // 山口

@@ -646,6 +646,9 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xinbuli': [{ from: -9999, era: 'antiquity' }], // 辛布里（金布里）｜前 113–前 101 辛布里战争
     'daquyue': [{ from: -9999, era: 'feudal' }, { from: 1405, era: 'castle' }], // 大瞿越｜按现存名将成名年推定：–∞起封建 → 1405起城堡
     'deli': [{ from: -9999, era: 'castle' }, { from: 1526, era: 'imperial' }], // 德里苏丹国｜按现存名将成名年推定：–∞起城堡 → 1526起帝国
+    'sur': [{ from: -9999, era: 'imperial' }], // 🔴 [2026-10-28 主人批立] 苏尔王朝｜1540 舍尔沙立国，1556 第二次帕尼帕特亡（赫穆战败）→ 帝国时代
+    'koln': [{ from: -9999, era: 'castle' }], // 🔴 [2026-10-28 主人批立] 科隆大主教区｜1288 沃林根战役＝城堡时代
+    'dublin': [{ from: -9999, era: 'feudal' }], // 🔴 [2026-10-28 主人批立] 都柏林王国｜1014 克朗塔夫战役＝封建时代
     'dulan_d': [{ from: -9999, era: 'feudal' }, { from: 1500, era: 'castle' }, { from: 1761, era: 'imperial' }], // 杜兰尼｜按现存名将成名年推定：–∞起封建 → 1500起城堡 → 1761起帝国
     'ethiopia': [{ from: -9999, era: 'antiquity' }, { from: 890, era: 'feudal' }, { from: 1150, era: 'castle' }, { from: 1623, era: 'imperial' }], // 埃塞俄比亚｜按现存名将成名年推定：–∞起古典 → 890起封建 → 1150起城堡 → 1623起帝国
     'ganden': [{ from: -9999, era: 'castle' }, { from: 1638, era: 'imperial' }], // 甘丹｜按现存名将成名年推定：–∞起城堡 → 1638起帝国

@@ -776,7 +776,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 40.32,
         targetLng: 27.28,
         myTroops: 35000,
-        enemyFactionId: 'kaliya',
+        enemyFactionId: 'aqimeinide',   // 🔴 [2026-10-28 按史] 前334 格拉尼库斯敌军是阿契美尼德波斯；原挂卡里亚（错：卡里亚只是波斯行省）
         enemyFactionName: '波斯帝国',
         enemyGeneralId: 'halikanasu_memnon',
         enemyTroops: 40000,
@@ -1024,7 +1024,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 40.32,
         targetLng: 27.28,
         myTroops: 35000,
-        enemyFactionId: 'kaliya',
+        enemyFactionId: 'aqimeinide',   // 🔴 [2026-10-28 按史] 前334 格拉尼库斯敌军是阿契美尼德波斯；原挂卡里亚（错：卡里亚只是波斯行省）
         enemyFactionName: '波斯帝国',
         enemyGeneralId: 'halikanasu_memnon',
         enemyTroops: 40000,
@@ -4752,13 +4752,14 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 53.34,
         targetLng: -6.26,
         myTroops: 20000,
-        enemyFactionId: 'dalriada',
-        enemyFactionName: '都柏林维京联军',
+        enemyFactionId: 'dublin',
+        enemyFactionName: '都柏林王国',
+        // 🔴 [2026-10-28 按史] 敌方势力＝都柏林王国（原挂「达尔里阿达」错：1014 守都柏林的是北欧王西格特里格·丝须）
         enemyGeneralId: 'gaer_sigtrygg',   // 🔴 [2026-10-20 首战规则] 1014 克朗塔夫都柏林维京王西格特里格
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '异邦维京海盗奴役爱尔兰数百年，至高王布赖恩亲临战场！爱尔兰的勇士们，举起阔剑为了自由与天主，血战破敌！' },
-            { speaker: 'player', text: '愿随布赖恩博鲁将军共赴克朗塔夫战役，大破都柏林维京联军敌军！' },
+            { speaker: 'player', text: '愿随布赖恩博鲁将军共赴克朗塔夫战役，大破都柏林王国敌军！' },
         ],
     },
 
@@ -5997,8 +5998,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 32.53,
         targetLng: 35.44,
         myTroops: 25000,
-        enemyFactionId: 'safawei_d',
-        enemyFactionName: '伊儿汗国蒙古军',
+        enemyFactionId: 'yilihanguo_d',   // 🔴 [2026-10-28 按史] 1260 阿音贾鲁特敌军是旭烈兀伊利汗国（原挂萨法维；萨法维 1501 年才建国，晚了 240 年，错）
+        enemyFactionName: '伊利汗国',
         enemyGeneralId: 'yilihanguo_kitbuqa',   // 🔴 [2026-10-20 首战规则] 1260 阿音贾鲁特伊儿汗国先锋怯的不花
         enemyTroops: 20000,
         introLines: [
@@ -6133,13 +6134,14 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 50.93,
         targetLng: 6.95,
         myTroops: 15000,
-        enemyFactionId: 'falanji',
-        enemyFactionName: '科隆大主教联军',
+        enemyFactionId: 'koln',
+        enemyFactionName: '科隆大主教区',
+        // 🔴 [2026-10-28 按史] 敌方势力＝科隆大主教区（原挂「法兰克」错：1288 出兵者是科隆大主教西格弗里德所部）；势力色随新势力
         enemyGeneralId: 'hre_siegfried',   // 🔴 [2026-10-20 首战规则] 1288 沃林根科隆大主教西格弗里德
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '科隆主教与卢森堡骑兵妄夺林堡公国！正义在我手中，布拉班特骑士们，拉紧马缰平举长矛，随公爵冲垮封建联军！' },
-            { speaker: 'player', text: '愿随约翰一世将军共赴沃林根战役，大破科隆大主教联军敌军！' },
+            { speaker: 'player', text: '愿随约翰一世将军共赴沃林根战役，大破科隆大主教区敌军！' },
         ],
     },
 
@@ -7429,13 +7431,14 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 28.61,
         targetLng: 77.23,
         myTroops: 20000,
-        enemyFactionId: 'deli',
-        enemyFactionName: '苏尔王朝阿富汗联军',
+        enemyFactionId: 'sur',
+        enemyFactionName: '苏尔王朝',
+        // 🔴 [2026-10-28 按史] 敌方势力＝苏尔王朝（原挂「德里苏丹国」错：1556 出兵方是苏尔王朝，赫穆为其主将）
         enemyGeneralId: 'gen_hemu',
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '赫穆领千头披甲战象企图阻遏帝国中兴！少年阿克巴之威全在此战，神射手已射穿敌目，勇士，持矛随老帅突入中军全歼敌军！' },
-            { speaker: 'player', text: '愿随巴赫拉姆汗将军共赴第二次帕尼帕特战役，大破苏尔王朝阿富汗联军敌军！' },
+            { speaker: 'player', text: '愿随巴赫拉姆汗将军共赴第二次帕尼帕特战役，大破苏尔王朝敌军！' },
         ],
     },
 
@@ -9351,8 +9354,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 43.142315,
         targetLng: 26.813148,
         myTroops: 50000,
-        enemyFactionId: 'baojialiya',
-        enemyFactionName: '塞尔迪卡',
+        enemyFactionId: 'baojialiya',   // 🔴 [2026-10-28 按史] 811 瓦尔比察—普利斯卡敌军是克鲁姆的保加利亚第一帝国；原写城名「塞尔迪卡」（错，塞尔迪卡是城不是政权）
+        enemyFactionName: '保加利亚',
         enemyGeneralId: 'gen_krum',
         enemyTroops: 35000,
         introLines: [
@@ -9371,8 +9374,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 43.214,
         targetLng: 27.915,
         myTroops: 50000,
-        enemyFactionId: 'seleisi',
-        enemyFactionName: '色雷斯',
+        enemyFactionId: 'baojialiya',   // 🔴 [2026-10-28 按史] 917 阿海洛敌军是西美昂的保加利亚第一帝国；原写「色雷斯」地名（错）
+        enemyFactionName: '保加利亚',
         enemyGeneralId: 'gen_simeon_great',
         enemyTroops: 40000,
         introLines: [
@@ -9973,8 +9976,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 28.61,
         targetLng: 77.23,
         myTroops: 40000,
-        enemyFactionId: 'deli',
-        enemyFactionName: '信度',
+        enemyFactionId: 'mowoer',   // 🔴 [2026-10-28 按史] 1556 第二次帕尼帕特我方是莫卧儿帝国巴赫拉姆汗（阿克巴摄政）；原写「信度」（错）
+        enemyFactionName: '莫卧儿帝国',
         enemyGeneralId: 'xindu_bahelamuhan',
         enemyTroops: 20000,
         introLines: [
@@ -11029,8 +11032,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 44.12,
         targetLng: 27.26,
         myTroops: 20000,
-        enemyFactionId: 'baojialiya',
-        enemyFactionName: '保加利亚',
+        enemyFactionId: 'baizanting',   // 🔴 [2026-10-28 按史] 971 多罗斯托隆守军是被拜占庭（约翰一世·齐米斯基斯）围困的罗斯军（原写保加利亚，错）
+        enemyFactionName: '拜占庭帝国',
         enemyGeneralId: 'duonaobaojia_tzimiskes',
         enemyTroops: 35000,
         introLines: [

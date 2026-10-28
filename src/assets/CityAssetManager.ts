@@ -413,7 +413,7 @@ export class CityAssetManager {
         'qiufu': '剡中',
         'chendiaoyan': '陈吊',
         'yezongliu': '处',
-        'qianhui': '回军',
+        'qianhui': '回',   // 🔴 [2026-10-28 势力改名「回军→回民」，旗号同步单字「回」]
         'miaomin': '苗',
         'zhongxiang': '鼎',
         'yang_bozhou': '杨',
@@ -554,6 +554,7 @@ export class CityAssetManager {
         'nabatai': '纳巴',
         'xike': '锡克',
         'deli': '德苏',
+        'sur': '苏尔',   // 🔴 [2026-10-28 主人批立] 苏尔王朝（新势力，与 SandboxDisplayNames 同步）
         'mowoer': '莫卧',
         'jieri': '戒日',
 'kongque': '孔雀',
@@ -652,6 +653,7 @@ export class CityAssetManager {
         'shiyuzu': '食鱼',
         'chamorro': '查莫',
         'dalriada': '达里',
+        'dublin': '都林',   // 🔴 [2026-10-28 主人批立] 都柏林王国（新势力，与 SandboxDisplayNames 同步）
         'scotland': '苏',
         'chanka': '昌卡',
         'ouchi': '大内',
@@ -750,6 +752,7 @@ export class CityAssetManager {
         'daniebo': '斯摩',
         'didi': '佛兰',
         'falanji': '弗兰',
+        'koln': '科隆',   // 🔴 [2026-10-28 主人批立] 科隆大主教区（新势力，与 SandboxDisplayNames 同步）
         'fodejiao': '葡佛',
         'gaolu': '法',
         'gesake': '哥萨',

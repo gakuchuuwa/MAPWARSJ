@@ -1122,6 +1122,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代德里苏丹国军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-28 主人批立] 苏尔王朝（新势力）：指针＝主将赫穆的实际军团（帝国×莫卧儿格；仅作无该格时兜底）
+    "sur": {
+        legionName: "帝国时代莫卧儿军团",
+        legionType: "sub",
+    },
     "mowoer": {
         legionName: "帝国时代莫卧儿军团",
         legionType: "sub",

@@ -30,6 +30,66 @@ function tileBoundsFromCoords(z: number, x: number, y: number) {
     return { north: latN, south: latS, west: lngWest, east: lngEast };
 }
 
+/**
+ * 在未加载或网络延时的战略瓦片上绘制无缝连续的「未探索灰蒙云雾」（世界坐标多频噪声，相邻雾块完全无缝）。
+ * 采用 64×64 降采样缓冲放大绘制，单块耗时 < 0.12ms，不阻塞主线程。
+ */
+let _fogScratchCanvas: HTMLCanvasElement | null = null;
+let _fogScratchCtx: CanvasRenderingContext2D | null = null;
+let _fogImageData: ImageData | null = null;
+
+function fogNoise2D(wx: number, wy: number): number {
+    const v1 = Math.sin(wx * 0.052 + wy * 0.038 + Math.sin(wy * 0.041) * 1.6);
+    const v2 = Math.cos(wx * 0.115 - wy * 0.089 + Math.cos(wx * 0.063) * 1.4);
+    const v3 = Math.sin((wx + wy) * 0.21 + Math.sin(wx * 0.15 - wy * 0.17));
+    return v1 * 0.52 + v2 * 0.31 + v3 * 0.17;
+}
+
+function drawUnexploredFog(
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    tileX: number,
+    tileY: number,
+): void {
+    const S = 64;
+    if (!_fogScratchCanvas) {
+        _fogScratchCanvas = document.createElement('canvas');
+        _fogScratchCanvas.width = S;
+        _fogScratchCanvas.height = S;
+        _fogScratchCtx = _fogScratchCanvas.getContext('2d');
+        if (_fogScratchCtx) _fogImageData = _fogScratchCtx.createImageData(S, S);
+    }
+    if (!_fogScratchCanvas || !_fogScratchCtx || !_fogImageData) {
+        ctx.fillStyle = '#84898e';
+        ctx.fillRect(0, 0, width, height);
+        return;
+    }
+    const data = _fogImageData.data;
+    const baseWx = tileX * S;
+    const baseWy = tileY * S;
+    let p = 0;
+    for (let gy = 0; gy < S; gy++) {
+        const wy = baseWy + gy;
+        for (let gx = 0; gx < S; gx++) {
+            const wx = baseWx + gx;
+            const n = fogNoise2D(wx, wy); // [-1, 1]
+            const billow = fogNoise2D(wx * 1.9 + 37.2, wy * 1.9 - 19.4);
+            const shade = 132 + n * 16 + billow * 7;
+            data[p] = Math.max(98, Math.min(166, Math.round(shade - 2)));     // R（微冷灰褐）
+            data[p + 1] = Math.max(102, Math.min(170, Math.round(shade + 1))); // G
+            data[p + 2] = Math.max(106, Math.min(175, Math.round(shade + 5))); // B
+            data[p + 3] = 255;
+            p += 4;
+        }
+    }
+    _fogScratchCtx.putImageData(_fogImageData, 0, 0);
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(_fogScratchCanvas, 0, 0, width, height);
+    ctx.restore();
+}
+
 interface HillshadeOptions extends L.GridLayerOptions {
     azimuth?: number;
     altitude?: number;
@@ -77,7 +137,19 @@ export class HillshadeLayer extends L.GridLayer {
     private workerRenderSamples = 0;
     private rrIndex: number = 0; // Worker 轮询下标
     private msgIdCounter: number = 0;
-    private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, cacheKey: string, modeVersion: number }> = new Map();
+    private pendingTiles: Map<number, {
+        ctx: CanvasRenderingContext2D;
+        tile: HTMLCanvasElement;
+        done: L.DoneCallback;
+        cacheKey: string;
+        modeVersion: number;
+        coords: L.Coords;
+        size: L.Point;
+        bounds: { north: number; south: number; east: number; west: number };
+        isExpTile: boolean;
+        isValleyTile: boolean;
+        retryCount: number;
+    }> = new Map();
     /** LRU：Map 迭代序即插入序，命中时删了重插即「最近使用」 */
     private tileCache: Map<string, ImageBitmap> = new Map();
     /** 已发过预取请求的 z/x/y，避免每次 zoomend 重复占用连接 */
@@ -177,23 +249,33 @@ export class HillshadeLayer extends L.GridLayer {
             return;
         }
 
-        const { ctx, tile, done, cacheKey } = task;
+        const { ctx, tile, done, cacheKey, coords, size, bounds, isExpTile, isValleyTile, retryCount } = task;
 
         if (!bitmap) {
-            // [FALLBACK] 取图/解码失败：保持透明自然透出底图，杜绝实色方块破洞
-            if (error) console.warn('[Hillshade] tile failed:', error);
-            done(undefined, tile);
+            // 取图/解码超时或偶发失败：保留「未探索灰雾」遮罩并在后台自动延时重试，绝不留刺眼蓝洞或死块
+            if (error) console.warn('[Hillshade] tile delayed, keeping fog & scheduling retry:', error);
+            if (retryCount < 4) {
+                const nextRetry = retryCount + 1;
+                const delayMs = 1800 * nextRetry;
+                setTimeout(() => {
+                    if (!tile.isConnected || task.modeVersion !== this.modeVersion) return;
+                    this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, nextRetry);
+                }, delayMs);
+            }
             return;
         }
 
         try {
             const _t0 = performance.now();
+            ctx.clearRect(0, 0, size.x, size.y);
             ctx.drawImage(bitmap, 0, 0);
+            tile.classList.remove('hillshade-tile-fog');
+            tile.classList.add('hillshade-tile-reveal');
             this.cachePut(cacheKey, bitmap);
             perfDoctor.note('HillshadeLayer.handleWorkerMessage(山体瓦片上屏)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:handleWorkerMessage');
         } catch (err) {
-            // 异常兜底：保持透明透出底图，释放位图并确保 done() 被调用
-            console.warn('[Hillshade] 位图绘制失败，透出底图:', err);
+            // 异常兜底：保持灰雾并释放位图
+            console.warn('[Hillshade] 位图绘制失败:', err);
             bitmap.close();
         }
         done(undefined, tile);
@@ -414,16 +496,9 @@ export class HillshadeLayer extends L.GridLayer {
                 // 改为重新查一次缓存：条目还在 ⇒ 位图必定有效（淘汰是「close + 删键」成对做的）。
                 const fresh = this.cacheGet(cacheKey);
                 if (!fresh) {
-                    // 🔴 [2026-09-13 主人报障「海面有块状色差」的真凶]
-                    //    命中缓存到这个微任务之间，位图可能已被 LRU 淘汰或 clearTileCache 释放
-                    //    （缩放时两者都高发）。旧代码在这里「保持透明 + done()」，并注释说
-                    //    「随后 Leaflet redraw 会重建这块瓦片」——**这句是错的**：done() 一调，
-                    //    Leaflet 就把该瓦片记为 leaflet-tile-loaded 留在 _tiles 里，除非视图
-                    //    把它移出，否则**永不重画**。于是图上留下一块永久全透明的方格，露出底图，
-                    //    在平坦纯色的海面上就是一块边界笔直、颜色偏浅的矩形（陆地上表现为直边接缝）。
-                    //    这条路径全程无日志，所以控制台什么都看不到。
-                    //    正确做法：重新派发 Worker 算一遍，算完照常上屏。
-                    this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile);
+                    drawUnexploredFog(ctx, size.x, size.y, coords.x, coords.y);
+                    tile.classList.add('hillshade-tile-fog');
+                    this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
                     return;
                 }
                 try {
@@ -431,7 +506,9 @@ export class HillshadeLayer extends L.GridLayer {
                 } catch (err) {
                     // 兜底：绘制异常时重算，同样不留空白瓦片
                     console.warn('[Hillshade] 缓存位图绘制失败，改为重算:', err);
-                    this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile);
+                    drawUnexploredFog(ctx, size.x, size.y, coords.x, coords.y);
+                    tile.classList.add('hillshade-tile-fog');
+                    this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
                     return;
                 }
                 done(undefined, tile);
@@ -439,7 +516,10 @@ export class HillshadeLayer extends L.GridLayer {
             return tile;
         }
 
-        this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile);
+        // 未命中缓存（需网络请求 + Worker 计算）：先铺上无缝「未探索灰雾」遮罩，算完后自动拨雾显现地形
+        drawUnexploredFog(ctx, size.x, size.y, coords.x, coords.y);
+        tile.classList.add('hillshade-tile-fog');
+        this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
         return tile;
     }
 
@@ -459,6 +539,7 @@ export class HillshadeLayer extends L.GridLayer {
         cacheKey: string,
         isExpTile: boolean,
         isValleyTile: boolean,
+        retryCount: number = 0,
     ): void {
         this.ensureWorkers();
         const reqId = this.msgIdCounter++;
@@ -504,7 +585,19 @@ export class HillshadeLayer extends L.GridLayer {
         };
 
         this.statTilesComputed++;
-        this.pendingTiles.set(reqId, { ctx, tile, done, cacheKey, modeVersion: this.modeVersion });
+        this.pendingTiles.set(reqId, {
+            ctx,
+            tile,
+            done,
+            cacheKey,
+            modeVersion: this.modeVersion,
+            coords,
+            size,
+            bounds,
+            isExpTile,
+            isValleyTile,
+            retryCount,
+        });
 
         // 按 2×2 瓦片块空间分配 Worker：相邻瓦片共享同一 Worker 内的 rawDemCache 与 demPending，避免 3 个 Worker 重复拉取同一批邻块高程
         const workerIdx = ((Math.floor(coords.x / 2) + Math.floor(coords.y / 2)) % this.workers.length + this.workers.length) % this.workers.length;

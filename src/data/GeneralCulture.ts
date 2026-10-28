@@ -283,7 +283,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'choros_tuohuan': 'CENTRAL_ASIA',   // 萨吾尔｜脱欢｜据点 和博克
     'chosokabe_changzongwobuyuanqin': 'JAPAN',   // 土佐｜长宗我部｜据点 冈丰城
     'chu_d_lukang': 'JIANGNAN',   // 汉国｜陆康｜据点 潜山
-    'chu_guanyu': 'JIANGNAN',   // 楚国｜关羽｜据点 江陵
+    'chu_guanyu': 'HUGUANG',   // 蜀国｜关羽｜据点 江陵（＝据点文化；兜底只作无据点用）
     'chungju_d_quanli': 'KOREA',   // 朝鲜｜权栗｜据点 汉城
     'chunshen_huangxie': 'JIANGNAN',   // 唐国｜黄歇｜据点 姑苏
     'chuyue_shatuonasu': 'CENTRAL_ASIA',   // 处月｜沙陀那速｜据点 独山营
@@ -1361,7 +1361,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'wuer_wuernamu': 'ORIE',   // 乌尔｜乌尔纳姆｜据点 乌尔城
     'wugu_d_tugelile': 'CENTRAL_ASIA',   // 乌古斯｜图格里勒｜据点 毡的
     'wuhu_dukake': 'CENTRAL_ASIA',   // 乌护｜都卡克｜据点 真珠河
-    'wuhuan_tadun': 'XIANBEI',   // 乌桓｜蹋顿｜据点 朝阳（2026-10-25 朝阳改河朔，随据点）
+    'wuhuan_tadun': 'WEI',   // 乌桓｜蹋顿｜据点 朝阳（2026-10-25 朝阳改河朔，随据点；2026-10-28 蹋顿迁朝阳，随据点）
     'wuji_yilizhi': 'NORTHEAST',   // 勿吉｜乙力支｜据点 伯都
     'wukexiya_madates': 'PERSIAN',   // 埃兰｜马达泰斯｜据点 苏萨
     'wula_buzhantai': 'NORTHEAST',   // 乌拉｜布占泰｜据点 乌舍寨
@@ -1462,7 +1462,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yamaxun_faernake': 'ORIE',   // 亚马逊｜法尔纳克｜据点 忒弥斯基拉
     'yamaxun_xibolvte': 'ORIE',   // 亚马逊｜希波吕忒｜据点 忒弥斯基拉
     'yan_leyi': 'CENTRAL',   // 燕国｜乐毅｜据点 临淄
-    'yanchuan_d_yuefei': 'CENTRAL',   // 宋国｜岳飞｜据点 武昌
+    'yanchuan_d_yuefei': 'HUGUANG',   // 宋国｜岳飞｜据点 武昌（＝据点文化；兜底只作无据点用）
     'yanda_touluoman': 'CENTRAL_ASIA',   // 阿尔洪｜头罗曼｜据点 德拉普萨卡
     'yang_aner_yangan': 'WEI',   // 天顺｜杨安｜据点 蓬莱
     'yang_bozhou_yangyinglong': 'BASHU',   // 大明｜杨应龙｜据点 海龙屯

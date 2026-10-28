@@ -6663,8 +6663,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/TUPI/gualani_nicolas.png": {
-            "scale": 1.15,
-            "offsetX": 0,
+            "scale": 1.17,
+            "offsetX": 8,
             "offsetY": -11
         },
         "/assets/AMERICA/284a4093-ed85-4ceb-958c-76574fb2fb62.png": {
@@ -8786,6 +8786,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -31
+        },
+        "/assets/PORTUGUESE/bfe_portuguese_officer.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/PORTUGUESE/tupinijin_madingafangsuo.png": {
+            "scale": 1.3,
+            "offsetX": 0,
+            "offsetY": 18
         }
     },
     "folderGuides": {
