@@ -53,7 +53,7 @@ const ALL_ENDPOINT_IDS = (): Set<string> => new Set<string>([...CITIES.map((c) =
 import {removeBacktracks} from '../utils/GeometryUtils';
 import {REGION_CENTERS, getCityRegion, RegionType} from '../systems/RegionSystem';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
-import { SeaRouteEditor } from '../sea/SeaRouteEditor';
+import { SeaRouteEditor, LAND_MASK_PATH, loadLandMask, isLand } from '../sea/SeaRouteEditor';
 
 // ===== IEditor 接口 =====
 interface IEditor {
@@ -203,6 +203,10 @@ export class VectorRoadEditor implements IEditor {
     private static readonly SEA_LANE_CELL = 0.5;
     /** 已接驳的港口城数（状态栏/日志用） */
     private portLinkCount = 0;
+    /** 海陆掩膜已就绪（没就绪时 waterKmAlong 一律返回 0，等于不判） */
+    private landMaskReady = false;
+    /** 陆路直线段允许压到的水面（公里）：掩膜 0.03° 一格，海岸线锯齿和小河口别误杀 */
+    private static readonly LAND_LINK_WATER_TOLERANCE_KM = 0.5;
     private geoGraphBuilt: boolean = false;
     private _dijkstraDebugLogged: boolean = false;
 
@@ -1161,8 +1165,8 @@ export class VectorRoadEditor implements IEditor {
             const a = pts[i], b = pts[i + 1];
             const direct = this.haversine(a.lat, a.lng, b.lat, b.lng);
             const best = this.dijkstraBestAmongNodes(
-                this.findKNearestGeoNodes(a.lat, a.lng, 4),
-                this.findKNearestGeoNodes(b.lat, b.lng, 4),
+                this.findAccessGeoNodes(a.lat, a.lng, 4),
+                this.findAccessGeoNodes(b.lat, b.lng, 4),
                 { routePreference: 'land_first' }
             );
             let leg: [number, number][];
@@ -1310,6 +1314,10 @@ export class VectorRoadEditor implements IEditor {
             }
 
             this.cachedGeoJSON = geojsonRoads;  // [FIX] 缓存道路底图以便二次开启重用
+
+            // 海陆掩膜：补桥、城→路口接驳、清理周边都靠它判「这段直线有没有跨海」。取不到就退回不判。
+            this.landMaskReady = await loadLandMask(`${basePath}${LAND_MASK_PATH}`);
+            if (!this.landMaskReady) console.warn('[VectorRoadEditor] 海陆掩膜加载失败，本次不判陆路跨海');
 
             this.setStatus('⏳ 构建水陆混合图...');
 
@@ -1872,6 +1880,27 @@ export class VectorRoadEditor implements IEditor {
      * 离线评估（scratch/_probe_bridge_sea_check.mjs）：卡什断口判陆路、可补；达达尼尔海峡判跨海；
      * 现有「端点 80km 互连」4677+1198 条里有 1198 条被它拦下（贝尔岛海峡、休伦湖面等）。
      */
+    /**
+     * 🔴 [2026-10-28 主人「这是陆路」截图：君士坦丁堡—巴菲乌斯战役的路横穿马尔马拉海/伊兹密特湾]
+     * 一段直线压在水面上的公里数（每公里取一个样点，按海陆掩膜判）。
+     * 补桥、城→路口接驳、清理周边都是凭空拉直线，只查 crossesSeaLane 不够：海湾里没有航线也照样是海。
+     */
+    private waterKmAlong(lng1: number, lat1: number, lng2: number, lat2: number): number {
+        if (!this.landMaskReady) return 0;
+        const km = this.haversine(lat1, lng1, lat2, lng2);
+        const n = Math.max(1, Math.ceil(km));
+        let wet = 0;
+        for (let i = 0; i < n; i++) {
+            const t = (i + 0.5) / n;
+            if (!isLand(lat1 + (lat2 - lat1) * t, lng1 + (lng2 - lng1) * t)) wet++;
+        }
+        return km * wet / n;
+    }
+
+    private isOverWater(lng1: number, lat1: number, lng2: number, lat2: number): boolean {
+        return this.waterKmAlong(lng1, lat1, lng2, lat2) > VectorRoadEditor.LAND_LINK_WATER_TOLERANCE_KM;
+    }
+
     private crossesSeaLane(lng1: number, lat1: number, lng2: number, lat2: number): boolean {
         if (this.seaLaneSegs.length === 0) return false;
         const C = VectorRoadEditor.SEA_LANE_CELL;
@@ -1941,7 +1970,7 @@ export class VectorRoadEditor implements IEditor {
             }
             if (!best) continue;
             const o = this.geoNodes[best.id];
-            if (this.crossesSeaLane(node.lng, node.lat, o.lng, o.lat)) { seaRejected++; continue; }
+            if (this.crossesSeaLane(node.lng, node.lat, o.lng, o.lat) || this.isOverWater(node.lng, node.lat, o.lng, o.lat)) { seaRejected++; continue; }
             const coords: [number, number][] = [[node.lng, node.lat], [o.lng, o.lat]];
             const weight = best.d * 1.5;
             this.geoAdj.get(node.id)!.push({ from: node.id, to: best.id, weight, coords });
@@ -1995,7 +2024,8 @@ export class VectorRoadEditor implements IEditor {
                         const other = this.geoNodes[otherId];
                         const d = this.haversine(node.lat, node.lng, other.lat, other.lng);
                         // 🔴 [2026-09-28 陆海分开] 横穿海路航线的不当陆路补（渡海必须坐船）
-                        if (d <= maxDistKm && !this.crossesSeaLane(node.lng, node.lat, other.lng, other.lat)) {
+                        if (d <= maxDistKm && !this.crossesSeaLane(node.lng, node.lat, other.lng, other.lat)
+                            && !this.isOverWater(node.lng, node.lat, other.lng, other.lat)) {
                             candidates.push({id: otherId, dist: d});
                         }
                     }
@@ -2046,8 +2076,8 @@ export class VectorRoadEditor implements IEditor {
         }
 
         // 找最近的图节点（略多几个，便于接到不同走廊）
-        const startCandidates = this.findKNearestGeoNodes(startCity.lat, startCity.lng, 4);
-        let endCandidates = this.findKNearestGeoNodes(endCity.lat, endCity.lng, 4);
+        const startCandidates = this.findAccessGeoNodes(startCity.lat, startCity.lng, 4);
+        let endCandidates = this.findAccessGeoNodes(endCity.lat, endCity.lng, 4);
 
         // [FIX] 不再注入项目已有道路，不再做分支合流
         // 纯粹在 Natural Earth 路网上寻最短路径
@@ -2407,9 +2437,15 @@ export class VectorRoadEditor implements IEditor {
             }
         }
 
+        // 删掉半径内的点等于从城直接拉直线过去：这条直线跨海就不删（沿岸绕湾的路必须留着）
+        const [sLng, sLat] = coords[0];
+        const [eLng, eLat] = coords[coords.length - 1];
+        if (this.isOverWater(sLng, sLat, coords[firstOutsideIdx][0], coords[firstOutsideIdx][1])) firstOutsideIdx = 1;
+        if (this.isOverWater(coords[lastOutsideIdx][0], coords[lastOutsideIdx][1], eLng, eLat)) lastOutsideIdx = coords.length - 2;
+
         // 如果路径非常短，或者起终点的清理半径发生重叠，保留首尾
         if (firstOutsideIdx > lastOutsideIdx) {
-            return [coords[0], coords[coords.length - 1]];
+            return this.isOverWater(sLng, sLat, eLng, eLat) ? coords : [coords[0], coords[coords.length - 1]];
         }
 
         result.push(coords[0]);
@@ -2770,6 +2806,19 @@ export class VectorRoadEditor implements IEditor {
         return best;
     }
 
+    /**
+     * 城/战场接进路网用的近邻节点：城到节点那段直线跨海的不要（伊兹密特湾对岸的路口离得再近也不能直接连）。
+     * 先多取几名再筛；全被筛掉（孤岛、掩膜没就绪）就照旧用最近的。
+     */
+    private findAccessGeoNodes(lat: number, lng: number, k: number): { id: number; dist: number }[] {
+        const pool = this.findKNearestGeoNodes(lat, lng, k * 4);
+        const dry = pool.filter(n => {
+            const node = this.geoNodes[n.id];
+            return !this.isOverWater(lng, lat, node.lng, node.lat);
+        });
+        return (dry.length > 0 ? dry : pool).slice(0, k);
+    }
+
     // ===== 参考层 =====
 
     private showReferenceLayer(): void {
@@ -3066,8 +3115,8 @@ export class VectorRoadEditor implements IEditor {
 
         if (!this.geoGraphBuilt || this.geoNodes.length === 0) return [];
 
-        const sc = this.findKNearestGeoNodes(startCity.lat, startCity.lng, 6);
-        const ec = this.findKNearestGeoNodes(endCity.lat, endCity.lng, 6);
+        const sc = this.findAccessGeoNodes(startCity.lat, startCity.lng, 6);
+        const ec = this.findAccessGeoNodes(endCity.lat, endCity.lng, 6);
         const penaltyEdges = new Set<string>();
         const variants: RouteCandidate[] = [];
         const maxRounds = maxVariants * 2;
@@ -3628,8 +3677,8 @@ export class VectorRoadEditor implements IEditor {
             console.log(`🔧 [FixEndpoint] "${props.name}": 起点偏差 ${startDist.toFixed(1)}km, 终点偏差 ${endDist.toFixed(1)}km`);
 
             // 重新寻路
-            const startCandidates = this.findKNearestGeoNodes(startCity.lat, startCity.lng, 5);
-            const endCandidates = this.findKNearestGeoNodes(endCity.lat, endCity.lng, 5);
+            const startCandidates = this.findAccessGeoNodes(startCity.lat, startCity.lng, 5);
+            const endCandidates = this.findAccessGeoNodes(endCity.lat, endCity.lng, 5);
 
             const bestPath: { coordinates: [number, number][]; totalDistance: number } | null =
                 this.dijkstraGeo(startCandidates.map(n => n.id), endCandidates.map(n => n.id));
@@ -5014,8 +5063,8 @@ export class VectorRoadEditor implements IEditor {
             let bestRoadDist = 0;
             let bestHDist = 0;
             for (const { city: other, hDist } of topCands) {
-                const cSc = this.findKNearestGeoNodes(city.lat, city.lng, 3);
-                const cEc = this.findKNearestGeoNodes(other.lat, other.lng, 3);
+                const cSc = this.findAccessGeoNodes(city.lat, city.lng, 3);
+                const cEc = this.findAccessGeoNodes(other.lat, other.lng, 3);
                 const roadDist = this.dijkstraGeo(cSc.map(n => n.id), cEc.map(n => n.id), { forbidWater: true })?.totalDistance ?? Infinity;
                 if (roadDist === Infinity) continue; // 无 NE 陆路, 跳过
                 // 道路距离 × 类型权重 = score
@@ -5067,8 +5116,8 @@ export class VectorRoadEditor implements IEditor {
             // NE 路径 (5 候选 起 × 5 候选 终)
             // [2026-05-30] forbidWater: true — 自动连绝不走水路 (用户公理)
             // 只有手动改路 / 切换候选 时才允许选水路
-            const sc = this.findKNearestGeoNodes(a.lat, a.lng, 5);
-            const ec = this.findKNearestGeoNodes(b.lat, b.lng, 5);
+            const sc = this.findAccessGeoNodes(a.lat, a.lng, 5);
+            const ec = this.findAccessGeoNodes(b.lat, b.lng, 5);
             const bestPath = this.dijkstraGeo(sc.map(n => n.id), ec.map(n => n.id), { forbidWater: true });
             const bestPathDist = bestPath?.totalDistance ?? Infinity;
 

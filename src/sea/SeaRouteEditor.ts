@@ -56,7 +56,7 @@ const OPEN_SEA_PENALTY = 1.5;
  *   · 起点接驳节点全作源点、终点接驳代价作终端代价，一次 Dijkstra 取总代价最小
  *   · 视线拉直：航线网段两点直线全在水上且 ≤SHORTCUT_MAX_KM 就去掉中间的点（沿岸网绕圈/折返处）
  */
-const LAND_MASK_PATH = 'world/land-mask-ne10m.png';
+export const LAND_MASK_PATH = 'world/land-mask-ne10m.png';
 const LAND_KM_COST = 50;
 const PORT_LAND_ALLOWANCE_KM = 25;
 const INLAND_LAND_FACTOR = 10;
@@ -69,7 +69,8 @@ const SHORTCUT_MAX_KM = 150;
 /** 海陆掩膜：1 位/格，1 = 陆地 */
 let landMask: { w: number; h: number; res: number; bits: Uint8Array } | null = null;
 
-async function loadLandMask(url: string): Promise<boolean> {
+/** 道路编辑器也用它判「陆路有没有跨海」 */
+export async function loadLandMask(url: string): Promise<boolean> {
     if (landMask) return true;
     try {
         const res = await fetch(url);
@@ -112,7 +113,7 @@ function nearLng(bLng: number, aLng: number): number {
     return bLng;
 }
 
-function isLand(lat: number, lng: number): boolean {
+export function isLand(lat: number, lng: number): boolean {
     if (!landMask) return false;
     const { w, h, res, bits } = landMask;
     const y = Math.min(h - 1, Math.max(0, Math.floor((90 - lat) / res)));
