@@ -280,7 +280,16 @@ export class SiegeManager {
                 if (legion.getIsInCombat()) continue;
                 if (this.isArmyWaitingSiege(legion.id)) continue;
                 const myFaction = legion.getFactionId();
-                if (myFaction === attFaction || myFaction === defFaction) continue; // 同旗由 pollSiegeReinforcements 处理
+                const myDisplayFaction = legion.getDisplayFactionId?.();
+                const isMyFaction = (fId: string | null | undefined) => !!fId && (myFaction === fId || (!!myDisplayFaction && myDisplayFaction === fId));
+                let isFriendly = isMyFaction(attFaction) || isMyFaction(defFaction);
+                if (!isFriendly) {
+                    const defUnits = battleField.getDefenderUnits?.() ?? [];
+                    if (defUnits.some((u) => isMyFaction(u.factionId))) {
+                        isFriendly = true;
+                    }
+                }
+                if (isFriendly) continue; // 同旗由 pollSiegeReinforcements 处理
 
                 // 异旗：入队。已在停步环内的原地停步；还在环外的继续沿原路走近，
                 // 由 settleApproachingWaiters 每次轮询检查、走到环上再停（绝不传送）。
@@ -836,7 +845,10 @@ export class SiegeManager {
     ): Army[] {
         const allArmies = this.legionManager.getArmies();
         const candidates = allArmies.filter((legion) => {
-            if (legion.getFactionId() !== factionId) return false;
+            const myFaction = legion.getFactionId();
+            const myDisplayFaction = legion.getDisplayFactionId?.();
+            const isSameFaction = (myFaction === factionId) || (!!myDisplayFaction && myDisplayFaction === factionId);
+            if (!isSameFaction) return false;
             if (excludeArmyIds.has(legion.id)) {
                 siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 在 exclude 列表中`);
                 return false;
@@ -855,7 +867,7 @@ export class SiegeManager {
                 lAny.isFirstBattleHero ||
                 lAny.isFirstBattleFieldEnemy ||
                 lAny.isFirstBattleSiegeEnemy ||
-                legion.isScriptArmy
+                (!allowPassingBy && legion.isScriptArmy)
             ) {
                 return false;
             }

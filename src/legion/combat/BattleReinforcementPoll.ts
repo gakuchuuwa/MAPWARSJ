@@ -48,7 +48,21 @@ export function isEligibleReinforcement(
     deps: ReinforcementJoinDeps,
     isAttacker: boolean,
 ): boolean {
-    if (legion.getFactionId() !== factionId) return false;
+    const legionFaction = legion.getFactionId();
+    const displayFaction = legion.getDisplayFactionId?.();
+    const matchesFaction = (fId: string | null | undefined): boolean => {
+        if (!fId) return false;
+        return legionFaction === fId || (!!displayFaction && displayFaction === fId);
+    };
+
+    let isSameFaction = matchesFaction(factionId);
+    if (!isSameFaction && !isAttacker) {
+        // 守方额外兼容：若城内守军单位的势力与路过军团相同，亦视为同阵营守军
+        const defUnits = battleField.getDefenderUnits?.() ?? [];
+        isSameFaction = defUnits.some(u => matchesFaction(u.factionId));
+    }
+    if (!isSameFaction) return false;
+
     if (legion.type !== 'legion' || legion.isDestroyed) return false;
     if (legion.getIsInCombat()) return false;
     if (legion.getTroops() < GameConfig.COMBAT.MIN_SURVIVAL_TROOPS) return false;
@@ -61,7 +75,7 @@ export function isEligibleReinforcement(
         lAny.isFirstBattleHero ||
         lAny.isFirstBattleFieldEnemy ||
         lAny.isFirstBattleSiegeEnemy ||
-        legion.isScriptArmy
+        (isAttacker && legion.isScriptArmy)
     ) {
         return false;
     }

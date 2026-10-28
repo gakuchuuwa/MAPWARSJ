@@ -1531,9 +1531,13 @@ export class Scene13WarLayer {
             }
         }
         if (!anchorPort) {
-            const centerPort = row0.reduce(
+            // 🔴 [2026-10-28 主人令「请挨着本军，或者放到军中」]
+            // 未匹配到单队时优先中军（row 1 中心队伍），无则第一排中心队伍，确保玩家置于本军核心阵中
+            const row1 = this.spawns.filter((s) => s.f === f && s.row === 1);
+            const centerPool = row1.length ? row1 : row0;
+            const centerPort = centerPool.reduce(
                 (best, s) => (Math.hypot(s.x - base.x, s.y - base.y) < Math.hypot(best.x - base.x, best.y - base.y) ? s : best),
-                row0[0],
+                centerPool[0],
             );
             anchorPort = centerPort ?? row0[0] ?? mySpawns[0];
         }
@@ -1547,20 +1551,25 @@ export class Scene13WarLayer {
 
         const inMarch = this.deployT > 0;
         const heroPort = anchorPort;
-        // 🔴 [2026-10-15 主人令「乱入者要和相同兵种出兵口的位置保持相同」] 取消 10-13 的「站在第一排正前方」
-        //    （原 heroDep = -(半径之和 + 2)，为修「行军晃」把玩家前移）：玩家直接站在**相同兵种出兵口**的位置（dep=0）。
-        //    跟队不颤靠 10-13 的 heroFollow 豁免（无敌不吃本队推挤）＋站定清零，与是否前移无关。
-        const heroDep = 0;
-        let uFwd = this.advanceVec[f]; let hx = heroPort.x - uFwd.x * heroDep;
-        let hy = heroPort.y - uFwd.y * heroDep;
-        // 🔴 [2026-10-14 主人令「玩家作为守方也要列阵出城」] 守城时站到本队在城外阵里的位置（本队第一排），
+        // 🔴 [2026-10-28 主人令「请挨着本军，或者放到军中」]
+        // 玩家放入军中：置于本队方阵第 2 排（行距 1*spDep）横向正中（slotY = 0），四周有本方将士护卫，与本军紧密相连，绝不孤立在外
+        const sp = marchSpacingOf(heroPort.key);
+        const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+        const heroDep = spDep;
+        const heroSlotY = 0;
+        let uFwd = this.advanceVec[f];
+        let uSide = this.sideVec[f];
+        let hx = heroPort.x - uFwd.x * heroDep + uSide.x * heroSlotY;
+        let hy = heroPort.y - uFwd.y * heroDep + uSide.y * heroSlotY;
+        // 🔴 [2026-10-14 主人令「玩家作为守方也要列阵出城」] 守城时站到本队在城外阵里的位置（置于军中），
         //    与第一波守军一起出生、一起贴墙校正、一起原地待敌（见 spawnTick 的 outsideFirst 与 holdLanes）
         const heroOutside = f === 1 && this.battleType === 'siege' && !!this.deCity && heroPort.outFwd !== undefined;
         if (heroOutside) {
             const B = this.defOutsideBase();
             uFwd = B.fwd;
-            hx = B.x + B.fwd.x * (heroPort.outFwd! - heroDep) + B.side.x * heroPort.outSide!;
-            hy = B.y + B.fwd.y * (heroPort.outFwd! - heroDep) + B.side.y * heroPort.outSide!;
+            uSide = B.side;
+            hx = B.x + B.fwd.x * (heroPort.outFwd! - heroDep) + B.side.x * (heroPort.outSide! + heroSlotY);
+            hy = B.y + B.fwd.y * (heroPort.outFwd! - heroDep) + B.side.y * (heroPort.outSide! + heroSlotY);
         }
         const fadeDur = DEPLOY_FADE;
         const hero: WarMan = {
@@ -1573,7 +1582,7 @@ export class Scene13WarLayer {
             fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
             prevX: hx, prevY: hy, anchorX: hx, anchorY: hy, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: hy,
             flag: false, fo: Math.random() * 600,
-            march: inMarch && !heroOutside, port: inMarch && !heroOutside ? heroPort : null, dep: heroDep, slotY: 0, pop: 0,
+            march: inMarch && !heroOutside, port: inMarch && !heroOutside ? heroPort : null, dep: heroDep, slotY: heroSlotY, pop: 0,
             claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
         };
         this.heroMan = hero;
@@ -4528,9 +4537,9 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-14] 城外阵贴墙校正：defOutsideBase 按「每队 50 人」估最后一排，实际每队人数随队数、兵种人口而变
             //    （实测 9 队时有的队排到 6~7 排，最后一排压到墙上）⇒ 整批出生后按实际站位，沿墙的法线整体挪到「最后一人离墙外表面 DEF_WALL_GAP」。
             if (outsideMen.length) {
-                // 守城的玩家本人同在城外阵里（见 setupPlayerUnits），一起挪
+                // 守城的玩家本人同在城外阵里（见 setupPlayerUnits），一起挪（🔴 [2026-10-28] 玩家既然属于城外守军，无论初始落点是否在城圈边缘均同步校正入阵，绝不被遗弃在城内）
                 const hm = this.heroMan;
-                if (hm && hm.f === f && hm.hp > 0 && !outsideMen.includes(hm) && !this.insideRing(hm.x, hm.y)) outsideMen.push(hm);
+                if (hm && hm.f === f && hm.hp > 0 && !outsideMen.includes(hm)) outsideMen.push(hm);
                 const B = this.defOutsideBase(), F = B.fwd, C = this.deCityCenter;
                 let minP = Infinity;
                 for (const m of outsideMen) minP = Math.min(minP, (m.x - C.x) * F.x + (m.y - C.y) * F.y - this.radiusOf(m.key));

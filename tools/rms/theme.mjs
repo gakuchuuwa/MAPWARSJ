@@ -30,12 +30,15 @@ export function pickTheme(lat, lng, koppen) {
     return why('NEARCTIC_TEMPERATE', '北美·温带');
   }
   if (lng >= 110 && lat <= -10) return why('AUSTRALASIAN_TEMPERATE', '澳新');
+  // 🔴 [2026-10-28 修复青藏高原生态] 青藏高原（26°~39°N，78°~104°E）：世界屋脊高寒半干旱荒原草甸/砾石/灌木，严禁判为西伯利亚平原泰加林
+  if (lat >= 26 && lat <= 39 && lng >= 78 && lng <= 104) {
+    return why('PALAEARCTIC_TIBETAN_PLATEAU', '青藏高原（高寒干草甸/砾石/灌木）');
+  }
   if (g === 'E') {
     if (lat <= -60) return why('ANTARCTIC_TUNDRA', '南极·冻原');
-    if (lng >= 60 && lat < 66 && lat >= 0) return why('PALAEARCTIC_ASIA_TAIGA', '亚洲·高山/青藏（亚洲泰加）');
+    if (lng >= 60 && lat < 66 && lat >= 0) return why('PALAEARCTIC_ASIA_TAIGA', '亚洲·高山（亚洲泰加）');
     return why('NEARCTIC_TUNDRA', '极地/高山冻原');
   }
-  if (g !== 'B' && lat >= 27 && lat <= 38 && lng >= 78 && lng <= 103) return why('PALAEARCTIC_ASIA_TAIGA', '青藏高原（亚洲泰加）');
   if (g === 'A') return lng < 60 ? why('AFROTROPICAL_TROPICAL', '非洲/阿拉伯·热带') : why('INDOMALAYAN_TROPICAL', '印度马来·热带');
   if (g === 'B') return (lng >= 100 && k.startsWith('BS')) ? why('PALAEARCTIC_ASIA_TEMPERATE', '东亚草原') : why('PALAEARCTIC_MIDDLE_EAST_DESERT', '干旱区');
   if (k.startsWith('Cs')) return why('PALAEARCTIC_EUROPE_MEDITERRANEAN', '夏干冬雨');

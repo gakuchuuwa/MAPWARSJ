@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-27T16:41:25.893Z",
+ "generatedAt": "2026-10-28T02:58:13.660Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -10103,16 +10103,16 @@
   {
    "id": "city_sangzhuzi",
    "file": "site_city_sangzhuzi.json",
-   "bytes": 311253,
+   "bytes": 256580,
    "koppen": "Dwb",
-   "theme": "PALAEARCTIC_ASIA_TAIGA",
+   "theme": "PALAEARCTIC_TIBETAN_PLATEAU",
    "water": "WorldCover",
    "waterCells": 138,
    "waterPct": 1,
    "reliefM": 249,
    "cliffs": 0,
-   "top": "Dry Grass 90.4% · Forest, Autumn 5% · Forest, Snow Autumn 2% · Water, Shallow 1%",
-   "verify": "ok"
+   "top": "Dry Grass 98.7% · Water, Shallow 1% · Beach 0.3%",
+   "verify": "BAD:terrain@0,terrain@1,terrain@19,terrain@20,terrain@21,terrain@22"
   },
   {
    "id": "city_jiamachikang",

@@ -4413,7 +4413,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -1
         },
         "/assets/TIBET/gaxa_zhashenduanzhubu.png": {
-            "scale": 0.87,
+            "scale": 0.81,
             "offsetX": 0,
             "offsetY": 5
         },
