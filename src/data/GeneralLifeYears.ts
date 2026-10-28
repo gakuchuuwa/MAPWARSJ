@@ -511,7 +511,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     bfe_agha_mohammad: { birth: 1742, death: 1797 },  // 阿迦·穆罕默德汗
     bfe_landi: { birth: 1800, death: 1870, kaoju: '推定' },  // 兰迪
     bfe_kehaya_mustafa: { birth: 1770, death: 1830, kaoju: '推定' },  // 穆斯塔法（凯哈亚）
-    xilawangguo_petros: { birth: 1765, death: 1848 },  // 彼得罗斯·马夫罗米哈利斯
+    xilawangguo_petros: { birth: 1765, death: 1848 },  // 马夫罗米哈利斯
     bfe_abdulaziz_crete: { birth: 900, death: 961, kaoju: '推定' },  // 阿卜杜勒·阿齐兹（克里特埃米尔）
     eluosi_diguo_apraksin: { birth: 1659, death: 1728 },  // 阿普拉克辛
     bfe_peter_delyan: { birth: 1000, death: 1041, kaoju: '推定' },  // 彼得·德良

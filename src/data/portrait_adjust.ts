@@ -8826,6 +8826,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 0,
             "offsetY": 29
+        },
+        "/assets/SPARTANS/xilawangguo_petros.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
         }
     },
     "folderGuides": {
