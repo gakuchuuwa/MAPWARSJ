@@ -8816,6 +8816,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -5
+        },
+        "/assets/GEORGIANS/gelujiya_erekle_ii.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/SLAVIC/gen_vukasin.png": {
+            "scale": 1.24,
+            "offsetX": 0,
+            "offsetY": 29
         }
     },
     "folderGuides": {
