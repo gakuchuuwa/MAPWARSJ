@@ -720,15 +720,18 @@ export function getBattlefield(id: string): BattlefieldData | undefined {
 
 /**
  * 🔴 [2026-09-25 主人「有的战场离据点太近了，根本无法连接，怎么办。能不能归为一个点」]
- * 离某座据点不超过这个距离（公里）的战场，在**路网里归为那座据点**：不另立节点、不用画支线，
- * 道路连到这个战场就等于连到那座城。战场自己的坐标、标牌、剧本位置一概不变，只是「走路」共用那座城。
- * 实测（2026-09-25）：格拉尼库斯河距格拉尼库斯 0.4 km、锡尔河距忽毡 5.3 km → 归并；
- * 其余最近的海达斯佩斯河距蒙格 23 km，照常画支线。
+ * 在**路网里把战场归为一座据点**：不另立节点、不用画支线，道路连到这个战场就等于连到那座城。
+ * 战场自己的坐标、标牌、剧本位置一概不变，只是「走路」共用那座城。
+ * 🔴 [2026-10-28 主人令「改为20」] 阈值 10 km → 20 km；🔴 同日「都合并」一度不设阈值（Infinity）。
+ * 🔴 [2026-10-28 主人令「那还是10公里的合并吧」] **最终定 10 km**（都合并会把远端战场并到上百公里外的城，
+ *    支线端点被吸附后拉出直线近道，故退回 10 km）。
+ * 按 10 km 计（实测最近距离）：格拉尼库斯河 0.4、特斯科科湖 0.4、加龙河 1.1、阿尔帕德 1.5、
+ * 布巴特 1.5、亚瓦尔潘帕 2.5、悲痛之夜 5.0、锡尔河 5.3、夸尔特 5.6、多瑙河渡口 7.8、七河 8.5 → 归并。
  */
 export const BATTLEFIELD_MERGE_KM = 10;
 
 const mergedCityCache = new Map<string, string | null>();
-/** 这个战场在路网里归到哪座据点（null = 不归并，是独立的路网端点） */
+/** 这个战场在路网里归到哪座据点（null = 不归并，是独立的路网端点；阈值 10 km） */
 export function battlefieldMergedCityId(bfId: string): string | null {
     if (mergedCityCache.has(bfId)) return mergedCityCache.get(bfId)!;
     const bf = getBattlefield(bfId);
