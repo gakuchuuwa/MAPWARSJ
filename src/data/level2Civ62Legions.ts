@@ -2684,7 +2684,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CUMA_CASTLE_AGE3', castleName: '库曼 黑海北岸克里米亚要塞',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_belisarius',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_cumanchief（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_hephaistion',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_cumanchief（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'amazon_warrior', count: 3 },
             { type: 'amazon_archer', count: 4 },
@@ -4392,7 +4392,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WESTERN_CASTLE_AGE3', castleName: '西域 汉伊高台绿洲要塞',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_cleitus',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'sakan_axeman', count: 3 },
             { type: 'elite_scythian_horse_archer', count: 4 },

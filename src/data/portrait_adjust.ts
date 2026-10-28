@@ -5253,9 +5253,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/SLAVIC/liulike_niefusiji.png": {
-            "scale": 1.11,
+            "scale": 1.13,
             "offsetX": 0,
-            "offsetY": -8
+            "offsetY": -6
         },
         "/assets/SLAVIC/gesake_hemeili.png": {
             "scale": 1.14,
@@ -8588,7 +8588,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 27
         },
         "/assets/GERMANIC/baojian_herman.png": {
-            "scale": 1.02,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": -34
         },
@@ -8856,6 +8856,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 11
+        },
+        "/assets/PERSIAN/bfe_agha_mohammad.png": {
+            "scale": 1.22,
+            "offsetX": 13,
+            "offsetY": -24
+        },
+        "/assets/PERSIAN/keerman_huosilao.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": -17
         }
     },
     "folderGuides": {

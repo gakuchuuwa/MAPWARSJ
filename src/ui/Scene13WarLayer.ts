@@ -6928,8 +6928,12 @@ export class Scene13WarLayer {
         if ((m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;   // 🔴 [2026-10-27] 玩家与士兵同一口径（原玩家免等）
         if (this.heroOrderPending(m)) return null;
         const uFwd = this.advanceVec[m.f];
-        // 领队自身的目标在身后（如杀穿敌营后掉头回师清剿后方伏兵）时，不套用正向防倒退阵型槽位，让队员直接走寻敌回师
-        if ((leader.tx - leader.x) * uFwd.x + (leader.ty - leader.y) * uFwd.y < -80) return null;
+        // 领队自身的目标或本队队级目标在领队/本兵身后（如杀穿敌营后掉头回师）时，不套用正向防倒退阵型槽位，让队员直接走寻敌回师
+        if ((leader.tx - leader.x) * uFwd.x + (leader.ty - leader.y) * uFwd.y < -20
+            || (leader.tx - m.x) * uFwd.x + (leader.ty - m.y) * uFwd.y < -20) return null;
+        const lt = !this.marching && !m.siegeW ? this.laneTargets.get(m.lane) : undefined;
+        if (lt && ((lt.x - leader.x) * uFwd.x + (lt.y - leader.y) * uFwd.y < -20
+            || (lt.x - m.x) * uFwd.x + (lt.y - m.y) * uFwd.y < -20)) return null;
         const uSide = this.sideVec[m.f];
         const dDep = m.dep - leader.dep;
         const dSide = m.slotY - leader.slotY;
@@ -6972,6 +6976,51 @@ export class Scene13WarLayer {
      * `fieldLeash` 只给验收探针做新旧对照用，游戏里恒为 true。
      */
     fieldLeash = true;
+    /**
+     * 刷新残局清剿分队集合（remnantLanes）：
+     *   1) 本队总兵力（场上存活 + 后备池）剩不到开局 REMNANT_FRAC（25%）；
+     *   2) 或野战中敌方在场常规分队（lane >= 0）已全灭、场上仅剩敌方伏兵（lane < 0）——
+     *      注意此处必须只看「当前场上存活的常规分队」（onFieldRegular），不能加后备池 s.pool！
+     *      因为 spawnTick 只有在场上总人口 onField[ef] < TRIGGER(250) 时才会从 s.pool 刷下一波，
+     *      当敌方用【敌】增兵在己方营地刷出 ≥250 人口的伏兵（lane=-1）且场上常规敌军被打光时，
+     *      s.pool 虽有余兵却因 onField[ef] ≥ 250 卡住不刷，必须立即让全军转入全图清剿回头消灭伏兵。
+     */
+    private refreshRemnantLanes(): void {
+        const laneAlive = new Map<number, number>();
+        const sideTotalAlive = [0, 0];
+        const onFieldRegular = [0, 0];
+        const onFieldAny = [0, 0];
+        for (const s of this.spawns) {
+            const poolPop = Math.max(0, s.pool) * s.pop;
+            laneAlive.set(s.lane, (laneAlive.get(s.lane) ?? 0) + poolPop);
+            sideTotalAlive[s.f] += poolPop;
+        }
+        for (const m of this.men) {
+            if (m.hp <= 0) continue;
+            if (!m.siegeW && (!m.hero || this.skirmish)) {
+                sideTotalAlive[m.f] += m.hero ? 1 : m.pop;
+            }
+            if (m.lane >= 0) {
+                laneAlive.set(m.lane, (laneAlive.get(m.lane) ?? 0) + m.pop);
+                if (!m.siegeW && !m.hero) onFieldRegular[m.f] += m.pop;
+            }
+            if (!m.siegeW && !m.hero) onFieldAny[m.f] += m.pop;
+        }
+        if (!this.laneStart && sideTotalAlive[0] > 0 && sideTotalAlive[1] > 0) {
+            this.laneStart = new Map(laneAlive);
+        }
+        if (this.laneStart) {
+            this.remnantLanes.clear();
+            for (const [l, a] of laneAlive) {
+                const st = this.laneStart.get(l) ?? 0;
+                const sp = this.spawns[l];
+                const ef = sp ? (1 - sp.f) : -1;
+                const enemyOnlyAmbush = this.battleType !== 'siege' && ef >= 0 && onFieldRegular[ef] <= 0 && onFieldAny[ef] > 0;
+                if ((st > 0 && a <= st * REMNANT_FRAC) || enemyOnlyAmbush) this.remnantLanes.add(l);
+            }
+        }
+    }
+
     /** 本帧城外还有第一波守军活着（step 开头算一次，见 refreshOutsideWave1） */
     private outsideWave1Alive = false;
     private refreshOutsideWave1(): void {
@@ -7248,7 +7297,10 @@ export class Scene13WarLayer {
 
         this.rebuild();
         this.refreshOutsideWave1();   // 🔴 [2026-10-20] 攻城战第一段（城外守军在）照野战拴绳，见 leashAxis
-        if (!deploying) this.updateLaneTargets();
+        if (!deploying) {
+            this.refreshRemnantLanes();
+            this.updateLaneTargets();
+        }
         // 先登记全体有效锁定，新索敌者才能看见排在自己后面的同伴已占用的名额。
         this.reserveExistingTargets(deploying);
 
@@ -7269,7 +7321,7 @@ export class Scene13WarLayer {
         const laneLeaders = new Map<number, WarMan>();
         const laneLeaderScore = new Map<number, number>();
         for (const m of this.men) {
-            if (m.hp <= 0 || m.lane < 0 || m.hero || m.guardPost) continue;
+            if (m.hp <= 0 || m.lane < 0 || m.hero || m.guardPost || this.remnantLanes.has(m.lane)) continue;
             // 阵列几何：出生槽位 = 第 rank 排（间距 spDep）× 第 file 列（间距 sp），
             // 每批每口 50 个精灵（SIDE_CAP ÷ SIDE_LANES = 500 ÷ 10）→ 排数 = 50 ÷ 列数
             const sp = marchSpacingOf(m.key);
@@ -7323,7 +7375,7 @@ export class Scene13WarLayer {
                 g = best ? { x: best.x, y: best.y } : null;
                 standbyGoals.set(m.lane, g);
             }
-            if (g) return this.fieldBound(g.x, g.y);
+            if (g) return this.fieldBound(g.x + m.jx, g.y + m.jy);
             const u = this.advanceVec[m.f];
             return this.fieldBound(m.x + u.x * MARCH_R, m.y + u.y * MARCH_R);
         };
@@ -8525,33 +8577,7 @@ export class Scene13WarLayer {
         //    攻城武器（siegeW）不计兵力；乱入者本人 pop=0 本就不计（见 setupPlayerUnits）。
         //    🔴 [2026-10-22] 小队模式例外：玩家本人算一个兵（「一个人先追」时全靠他，他倒下就算输）。
         for (const m of this.men) if (m.hp > 0 && !m.siegeW && (!m.hero || this.skirmish)) alive[m.f] += m.hero ? 1 : m.pop;
-        {
-            const laneAlive = new Map<number, number>();
-            const sideRegularAlive = [0, 0];
-            for (const s of this.spawns) {
-                const poolPop = Math.max(0, s.pool) * s.pop;
-                laneAlive.set(s.lane, (laneAlive.get(s.lane) ?? 0) + poolPop);
-                sideRegularAlive[s.f] += poolPop;
-            }
-            for (const m of this.men) {
-                if (m.hp > 0 && m.lane >= 0) {
-                    laneAlive.set(m.lane, (laneAlive.get(m.lane) ?? 0) + m.pop);
-                    if (!m.siegeW && !m.hero) sideRegularAlive[m.f] += m.pop;
-                }
-            }
-            if (!this.laneStart && alive[0] > 0 && alive[1] > 0) this.laneStart = new Map(laneAlive);
-            if (this.laneStart) {
-                this.remnantLanes.clear();
-                for (const [l, a] of laneAlive) {
-                    const st = this.laneStart.get(l) ?? 0;
-                    const sp = this.spawns[l];
-                    const ef = sp ? (1 - sp.f) : -1;
-                    // 野战敌方常规分队（含后备池）已全灭、仅剩伏兵（lane=-1）时，全军转入残局全图清剿，直接回头杀敌
-                    const enemyOnlyAmbush = this.battleType !== 'siege' && ef >= 0 && sideRegularAlive[ef] <= 0 && alive[ef] > 0;
-                    if ((st > 0 && a <= st * REMNANT_FRAC) || enemyOnlyAmbush) this.remnantLanes.add(l);
-                }
-            }
-        }
+        this.refreshRemnantLanes();
         if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         // 🔴 [2026-10-15 主人令「请等中间建筑坍塌后，再退出战术模式」] 中心建筑血归零 = 攻方已胜（centerKilled），
         //    但要等倒塌动画（COLLAPSE_ANIM_DUR）播完切成残骸才结束（centerDown）；等待期间不因攻方打光 / 到点改判。
