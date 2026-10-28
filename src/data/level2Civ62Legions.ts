@@ -2135,7 +2135,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BULG_CASTLE_AGE3', castleName: '保加利亚 普雷斯拉夫圆顶城堡',
         formationMode: 'echelon',
         shipId: 'BIREME',
-        commanderUnit: 'hero_thracian_chieftain',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_ivaylofoot（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_macedonian_commander',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_ivaylofoot（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'elite_peltast', count: 4 },
             { type: 'rhomphaia_warrior', count: 3 },
@@ -2285,7 +2285,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'fish_scale',
         shipId: 'BOARDING_GALLEY',
-        commanderUnit: 'envoy',
+        commanderUnit: 'hero_sieurbertrand',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：罗马百夫长（普通档）替步弓手。
         slots: [
             { type: 'legionary', count: 3 },
@@ -2818,7 +2818,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CEAS_CASTLE_AGE3', castleName: '中亚/鞑靼 撒马尔罕帖木儿蓝顶堡',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_dismounted_alexander',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_qutlugh（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_datis',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_qutlugh（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'phalangite', count: 3 },
             { type: 'bactrian_archer', count: 4 },
@@ -3175,7 +3175,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'GURJ_CASTLE_AGE3', castleName: '瞿折罗 索姆纳特多层砂岩堡',
         formationMode: 'fish_scale',
         shipId: 'CANNON_GALLEON',
-        commanderUnit: 'hero_prithvi',
+        commanderUnit: 'hero_youngbabur',
         slots: [
             { type: 'chakram_thrower', count: 3 },
             { type: 'indian_tribesman', count: 4 },

@@ -8866,6 +8866,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.26,
             "offsetX": 0,
             "offsetY": -17
+        },
+        "/assets/JAPAN/bfe_ukita_hideie.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -31
         }
     },
     "folderGuides": {
