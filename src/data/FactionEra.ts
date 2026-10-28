@@ -642,6 +642,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'cuanshi': [{ from: -9999, era: 'antiquity' }, { from: 715, era: 'feudal' }], // 爨族｜按现存名将成名年推定：–∞起古典 → 715起封建
     'da_yan': [{ from: -9999, era: 'antiquity' }, { from: 720, era: 'feudal' }], // 大燕｜按现存名将成名年推定：–∞起古典 → 720起封建
     'dali': [{ from: -9999, era: 'feudal' }, { from: 1065, era: 'castle' }], // 大理｜按现存名将成名年推定：–∞起封建 → 1065起城堡
+    'da_qin': [{ from: -9999, era: 'feudal' }], // 🔴 [2026-10-28 主人令「一个势力不要开战，要不就分开势力」] 大秦（朱泚）｜783 据长安称帝、国号秦（应天），784 改国号汉 → 封建时代
     'danmai': [{ from: -9999, era: 'feudal' }, { from: 1184, era: 'castle' }, { from: 1500, era: 'imperial' }], // 丹麦｜–∞起封建 → 1184起城堡 → 1500起帝国
     'xinbuli': [{ from: -9999, era: 'antiquity' }], // 辛布里（金布里）｜前 113–前 101 辛布里战争
     'daquyue': [{ from: -9999, era: 'feudal' }, { from: 1405, era: 'castle' }], // 大瞿越｜按现存名将成名年推定：–∞起封建 → 1405起城堡

@@ -1290,7 +1290,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tan_d_qinhou': 'BASHU',   // 大明｜覃垕｜据点 慈利
     'tang_limi': 'BASHU',   // 蜀国｜李宓｜据点 成都
     'tang_lishimin': 'CENTRAL',   // 唐国｜李世民｜据点 长安
-    'tang_zhuci': 'CENTRAL',   // 唐国｜朱泚｜据点 长安
+    'tang_zhuci': 'CENTRAL',   // 大秦（朱泚）｜据点 长安（原注「唐国」已按 2026-10-28 分家改为大秦）
     'tatar_mieguzhen': 'MONGOL',   // 塔塔尔｜蔑古真｜据点 额布都格
     'teluoyi_heketuoer': 'ORIE',   // 达尔达尼亚｜赫克托耳｜据点 特洛伊
     'teluoyi_maniya': 'ORIE',   // 达尔达尼亚｜马尼亚｜据点 特洛伊

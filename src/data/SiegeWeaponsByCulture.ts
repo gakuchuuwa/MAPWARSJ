@@ -415,8 +415,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '帝国时代德意志佣兵军团': {
         age: 'imperial',
-        // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 一件 siege_onager → trebuchet_packed（巨型投石机（打包））
-        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'trebuchet_packed', 'siege_onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'siege_onager', 'siege_onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
     '古典时代高卢军团': {
         age: 'antiquity',
@@ -424,9 +423,8 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '城堡时代法兰西骑士军团': {
         age: 'castle',
-        // 🔴 [2026-10-19 主人令] 把一件「爆破工兵」换成 DE「破坏者」（同为坑道爆破，借爆破工兵兵模）：
-        // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 一件 onager → bad_neighbor（坏邻居：第三次十字军围阿卡 1191）
-        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'saboteur', 'bad_neighbor', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
+        // 🔴 [2026-10-19 主人令] 把一件「爆破工兵」换成 DE「破坏者」（同为坑道爆破，借爆破工兵兵模）
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'saboteur', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
     },
     '帝国时代法兰西军团': {
         age: 'imperial',
@@ -459,8 +457,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '城堡时代英格兰军团': {
         age: 'castle',
-        // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 一件 onager → warwolf_trebuchet（战狼号：爱德华一世 1304 年围斯特灵）
-        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'warwolf_trebuchet', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
     '帝国时代不列颠军团': {
         age: 'imperial',
@@ -696,8 +693,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '城堡时代罗马教廷军团': {
         age: 'castle',
-        // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 一件 onager → gods_own_sling（神之弓：第三次十字军围阿卡，教会募捐所造）
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'gods_own_sling', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
     '帝国时代意大利军团': {
         age: 'imperial',

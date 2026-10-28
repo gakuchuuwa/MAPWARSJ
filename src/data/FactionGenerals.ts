@@ -4629,6 +4629,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         // 🔴 [2026-10-20 首战规则] 朱泚＝784 据长安僭号的唐叛将（史实内战，双方同属唐国势力）→ 长安·唐国；普将；立绘留空
+        // 🔴 [2026-10-28 主人令「一个势力不要开战，要不就分开势力」] 朱泚单立势力「大秦」（783 据长安称帝，国号秦，建元应天；784 改国号汉），
+        //    不再挂在唐国下，免得奉天保卫战／收复长安战出现唐打唐。
 
 
 
@@ -4636,7 +4638,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'tang_zhuci', cityId: 'city_changan', generalName: '朱泚', portrait: '/assets/CENTRAL/tang_zhuci.png', legionName: '封建时代中原军团', eliteName: '泾原乱兵', eliteTier: 4 },
+        { generalId: 'tang_zhuci', cityId: 'city_changan', factionId: 'da_qin', generalName: '朱泚', portrait: '/assets/CENTRAL/tang_zhuci.png', legionName: '封建时代中原军团', eliteName: '泾原乱兵', eliteTier: 4 },
 
 
 

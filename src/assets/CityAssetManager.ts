@@ -160,6 +160,7 @@ export class CityAssetManager {
 'chen': '陈',
 'sui': '隋',
         'tang': '唐',
+'da_qin': '秦',   // 🔴 [2026-10-28] 大秦（朱泚）｜与 SandboxDisplayNames 同口径
 'shatuo': '沙陀',
 'bohai': '渤海',
 'dangxiang': '大夏',

@@ -772,6 +772,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代中原军团",
         legionType: "sub",
     },
+    "da_qin": {   // 🔴 [2026-10-28 主人令「一个势力不要开战，要不就分开势力」] 大秦（朱泚）｜主将朱泚（长安 CENTRAL × 封建）＝封建时代中原军团
+        legionName: "封建时代中原军团",
+        legionType: "sub",
+    },
     "jinzhang": {
         legionName: "城堡时代察合台军团",
         legionType: "sub",

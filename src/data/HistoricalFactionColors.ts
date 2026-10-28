@@ -355,6 +355,7 @@ const _FIXED: Record<string, string> = {
     kumoxi: '#587868', // 库莫奚·饶乐水松漠青
 
     fushi: '#2A2620', // 苻秦·前秦（水德尚黑）
+    da_qin: '#2F3B45', // 🔴 [2026-10-28] 大秦·朱泚（水德尚黑，取深青灰，与苻秦 #2A2620、后秦 #7A4A6A 区分）
     ewenki: '#495A6B',
     bailong: '#5D6E7F',
     kepantuo: '#627384',

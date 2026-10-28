@@ -213,6 +213,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'chen': '陈',
 'sui': '隋',
     'tang': '唐',
+    'da_qin': '秦',   // 🔴 [2026-10-28] 大秦（朱泚）｜国号秦，一字旗；与前秦、后秦同国号重旗（按史允许）
     'min': '闽',
 'shatuo': '沙陀',
 'bohai': '渤海',

@@ -217,6 +217,12 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'chen': 'city_qingyuan',
 'sui': 'city_suizhou',
     'tang': 'city_changan',
+    'da_qin': 'city_changan',   // 🔴 [2026-10-28] 大秦（朱泚）｜783 据长安称帝，长安为其都城（同城可与唐将并存）
+    // 🔴 [2026-10-28 补登记] 前批新立四家势力的首都（编辑器提示用，不作开局依据）
+    'malin': 'city_feisi',      // 马林王朝｜都城 非斯
+    'koln': 'city_kelong',      // 科隆大主教区｜主教座城 科隆
+    'sur': 'city_deli',         // 苏尔王朝｜舍尔沙 1540 取德里为都
+    'dublin': 'city_dublin',    // 都柏林王国｜都柏林
     'min': 'city_fuzhou',
 'shatuo': 'city_guanglu',
     'luoyue': 'city_huashan',
