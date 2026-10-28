@@ -2772,6 +2772,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 9,
             "offsetY": -5
         },
+        "/assets/WEI/jiyuan_huluguang.png": {
+            "scale": 0.93,
+            "offsetX": 9,
+            "offsetY": -5
+        },
         "/assets/MONGOL/kelie_zhaheganbu.png": {
             "scale": 0.91,
             "offsetX": 0,
@@ -7885,7 +7890,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/CENTRAL/caoren.png": {
             "scale": 1.25,
             "offsetX": -9,
-            "offsetY": 0
+            "offsetY": 2
         },
         "/assets/CENTRAL_ASIA/julushi_kataniesi.png": {
             "scale": 1.29,
@@ -8463,7 +8468,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/CENTRAL/liang_d_wangjingren.png": {
-            "scale": 1.17,
+            "scale": 1.13,
             "offsetX": 0,
             "offsetY": -2
         },
@@ -8696,6 +8701,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 19
+        },
+        "/assets/JIANGNAN/dayu_liqianshi.png": {
+            "scale": 1.1,
+            "offsetX": 12,
+            "offsetY": 24
+        },
+        "/assets/VIETNAMESE/yuenan_ruanguangzuan.png": {
+            "scale": 1.14,
+            "offsetX": 16,
+            "offsetY": 0
+        },
+        "/assets/XIANBEI/yuwen_yuwenxian.png": {
+            "scale": 1.02,
+            "offsetX": 9,
+            "offsetY": 18
+        },
+        "/assets/CENTRAL/tuoba_yuanying.png": {
+            "scale": 1.29,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_02.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 1
         }
     },
     "folderGuides": {

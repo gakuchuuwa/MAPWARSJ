@@ -114,7 +114,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "liuzhen": {
-        legionName: "起义军",
+        legionName: "封建时代河朔军团",
         legionType: "sub",
     },
     "kilwa": {

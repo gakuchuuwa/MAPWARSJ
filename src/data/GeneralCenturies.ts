@@ -173,7 +173,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'fengzhou_wujie': 12,                                // 吴玠 · fengzhou · 大散关
     'guide_d_xiaohe': -3,                                // 萧何 · guide_d · 永城
     'han_baoyuan': -3,                                   // 暴鸢 · han · 新郑
-    'caoren': 3,                                         // 曹仁 · xuguo · 许昌
+    'caoren': 3,                                         // 曹仁 · wei · 宛城
     'han_d_liubang': -3,                                 // 刘邦 · han_d · 南郑
     'hao_d_weirui': 6,                                  // 韦睿 · hao_d · 钟离
     'hongnong_jun_yangsu': 6,                           // 杨素 · hongnong_jun · 函谷关
@@ -184,7 +184,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'jin_xianzhen': -7,                                  // 先轸 · jin · 曲沃
     'jinan_tiexuan': 14,                                 // 铁铉 · jinan · 历下
     'jingzhou_gs_huangfusong': 2,                       // 皇甫嵩 · jingzhou_gs · 安定
-    'jiyuan_huluguang': 6,                              // 斛律光 · jiyuan · 轵关
+    'jiyuan_huluguang': 6,                              // 斛律光 · gaoqi_d · 晋阳
     'kong_d_caogui': -7,                                 // 曹刿 · kong_d · 曲阜
     'lai_wangshifan': 10,                                // 王师范 · lai · 青石关
     'li_lx_d_liguang': -2,                               // 李广 · li_lx_d · 襄武

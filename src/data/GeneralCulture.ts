@@ -254,7 +254,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'cangsong_machao': 'BASHU',   // 汉国｜马超｜据点 成都
     'cangzhou_liurengong': 'WEI',   // 幽州｜刘仁恭｜据点 北京
     'cao_d_caocao': 'CENTRAL',   // 魏国｜曹操｜据点 许昌
-    'caoren': 'CENTRAL',   // 宋国｜曹仁｜据点 襄阳
+    'caoren': 'CENTRAL',   // 魏国｜曹仁｜据点 宛城
     'cen_d_cenmeng': 'JIANGNAN',   // 岑氏｜岑猛｜据点 田阳
     'chagatai_genggong': 'KHITAN',   // 汉国｜耿恭｜据点 玉门关（汉玉门都尉治，属敦煌郡；西出阳关/玉门入西域）
     'chagatai_gouju': 'WESTERN',   // 车师｜姑句（车师后王）｜据点 务涂城
@@ -908,7 +908,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'jinzhou_lichengliang': 'WEI',   // 大明｜李成梁｜据点 徒河
     'jite_shouling': 'THRACIAN',   // 色雷斯｜科托罗｜据点 普罗夫迪夫
     'jiujiang_zhouyu': 'JIANGNAN',   // 孙吴｜周瑜｜据点 柴桑
-    'jiyuan_huluguang': 'CENTRAL',   // 北齐｜斛律光｜据点 轵关
+    'jiyuan_huluguang': 'WEI',   // 北齐｜斛律光｜据点 晋阳
     'joseon_lichenggui': 'KOREA',   // 朝鲜｜李成桂｜据点 汉城
     'juandu_peixingjian': 'WESTERN',   // 捐毒｜裴行俭｜据点 伊逻卢
     'julushi_catanes': 'CENTRAL_ASIA',   // 居鲁士｜卡塔涅斯｜据点 居鲁士城

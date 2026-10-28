@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Culture Formations
  * 15 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
@@ -1092,8 +1092,6 @@ export function getLegionNameOfGeneral(factionId: string, generalId?: string | n
     // ① 特殊军团例外：起义军 / 苏丹亲兵等三级军团保留
     const named = getGeneralOwnLegionName(generalId);
     if (named && LEVEL_3_LEGION_MAP.has(named) && getLegionCompositionByName(named)) return named;
-    const factionLegion = FACTION_COMPOSITIONS[factionId]?.legionName;
-    if (factionLegion && LEVEL_3_LEGION_MAP.has(factionLegion)) return factionLegion;
 
     // ② 特殊细分时代军团（如先秦古典）
     const subtagLegion = getGeneralEraSubtagLegion(generalId);
@@ -1108,6 +1106,7 @@ export function getLegionNameOfGeneral(factionId: string, generalId?: string | n
     }
 
     // ④ 兜底：手写军团名或势力指针
+    const factionLegion = FACTION_COMPOSITIONS[factionId]?.legionName;
     if (named && getLegionCompositionByName(named)) return named;
     if (!named) return factionLegion;
     const found = resolveFallbackForFaction(factionId, generalId);

@@ -174,8 +174,8 @@ export class AnimalAmbientLayer {
         this.birdCtx = this.birdCanvas.getContext('2d')!;
 
         this.setupPane();
-        this.map.on('move', this.syncCanvas.bind(this));
-        this.map.on('zoom', this.syncCanvas.bind(this));
+        // 🔴 [2026-10-28 修复镜头跟随颤抖] 不在 move/zoom 事件里挪动画布，只在 draw() 绘制那一刻统一对齐
+        this.map.on('viewreset moveend zoomend', this.syncCanvas.bind(this));
         this.map.on('resize', this.resize.bind(this));
         this.resize();
         this.syncCanvas();
@@ -548,6 +548,7 @@ export class AnimalAmbientLayer {
     }
 
     private draw(): void {
+        this.syncCanvas();
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         const birdCtx = this.birdCtx;

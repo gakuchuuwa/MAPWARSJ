@@ -11654,7 +11654,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'jiyuan_huluguang', factionId: 'gaoqi_d', cityId: 'city_zhiguan', legionName: '封建时代中原军团', generalName: '斛律光', portrait: '/assets/CENTRAL/jiyuan_huluguang.png' },
+        { generalId: 'jiyuan_huluguang', factionId: 'gaoqi_d', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '斛律光', portrait: '/assets/WEI/jiyuan_huluguang.png' },
 
 
 
@@ -13390,7 +13390,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'bfe3_17', cityId: 'city_fushi', generalName: '王离', portrait: '/assets/CENTRAL/bfe3_17.png', legionName: '古典时代华夏军团', factionId: 'qin', eliteName: '秦锐士', eliteTier: 2 },
         { generalId: 'bfe2_pang_juan', factionId: 'wei', cityId: 'city_bianliang', generalName: '庞涓', portrait: '/assets/WEI/bfe2_pang_juan.png', legionName: '古典时代华夏军团' },
-        { generalId: 'caoren', factionId: 'wei', cityId: 'city_xiangyang', legionName: '古典时代华夏军团', generalName: '曹仁', portrait: '/assets/CENTRAL/caoren.png', eliteName: '樊城守军', eliteTier: 2  },   // 按史：曹仁守樊城拒关羽，「仁人马数千守城」沉白马盟誓（《三国志·卷九·曹仁传》）
+        { generalId: 'caoren', factionId: 'wei', cityId: 'city_nanyang', legionName: '古典时代华夏军团', generalName: '曹仁', portrait: '/assets/CENTRAL/caoren.png', eliteName: '樊城守军', eliteTier: 2  },   // 按史：曹仁为魏征南将军驻宛城、守樊城拒关羽，「仁人马数千守城」沉白马盟誓（《三国志·卷九·曹仁传》）
         { generalId: 'shang_weiwuji', factionId: 'wei', cityId: 'city_bianliang', generalName: '魏无忌', portrait: '/assets/CENTRAL/shang_weiwuji.png' , legionName: '古典时代华夏军团' },
         // 🔴 [2026-10-24 险要补将·镇守] 张濡＝南宋独松关守将，德祐元年（1275）元军破关被执（《独松关之战》）；普将；精锐「独松戍卒」T4
         { generalId: 'dusong_zhangru', generalName: '张濡', factionId: 'song', cityId: 'city_dusong', portrait: '/assets/JIANGNAN/song_zhangru.png', eliteName: '独松戍卒', eliteTier: 4 },

@@ -485,7 +485,8 @@ export class CityLifeAmbientLayer {
 
         this.resize();
         map.on('resize', () => this.resize());
-        map.on('move zoom viewreset moveend zoomend', () => this.reposition());
+        // 🔴 [2026-10-28 修复镜头跟随颤抖] 不在 move/zoom 事件里挪动画布，只在 draw() 绘制那一刻统一对齐
+        map.on('viewreset moveend zoomend', () => this.reposition());
 
         // 陆海瓦片加载完成后要重算海中渔场与陆地落点。该事件实测每秒几十次，
         // 直接清空会让角色每帧重建、透明度归零而永远显示不出来，所以只打标记，由 update 节流重排。
@@ -1907,6 +1908,7 @@ export class CityLifeAmbientLayer {
     }
 
     private draw(): void {
+        this.reposition();
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
