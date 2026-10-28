@@ -86,7 +86,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    jinling_tandaoji: { generalId: 'jinling_tandaoji', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_683', defBalanceSkillId: 'ts_397', atkBalanceSkillId: 'ts_278', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_010', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage' , attackStyle: 'attack'},
+    jinling_tandaoji: { generalId: 'jinling_tandaoji', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_683', defBalanceSkillId: 'ts_397', atkBalanceSkillId: 'ts_278', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_010', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：北伐唱筹量沙（魏军具名）、灭后秦前锋
 
     sijitai_ateas: { generalId: 'sijitai_ateas', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_401', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_711', defAdvantageSkillId: 'ts_077', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_098', aptitude: 'create', attackStyle: 'attack' },
     yamaxun_xibolvte: { generalId: 'yamaxun_xibolvte', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_766', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_003', defBalanceSkillId: 'ts_045', defDisadvantageSkillId: 'ts_098', aptitude: 'leverage', attackStyle: 'defense' }, // 忒弥斯基拉亚马逊女王，传说人物无史载胜绩 → 不在册通用池
@@ -152,7 +152,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        shang_fuhao: { generalId: 'shang_fuhao', tier: 'ordinary', tacticalSkillId: 'ts_777', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_777', atkAdvantageSkillId: 'ts_208', atkBalanceSkillId: 'ts_407', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_688', aptitude: 'create' , attackStyle: 'attack'},
+        shang_fuhao: { generalId: 'shang_fuhao', tier: 'ordinary', tacticalSkillId: 'ts_777', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_777', atkAdvantageSkillId: 'ts_208', atkBalanceSkillId: 'ts_407', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_688', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 甲骨所载伐羌方土方无敌方主帅名（对阵无名闸）→普将
 
 
 
@@ -172,7 +172,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        wei_wuqi: { generalId: 'wei_wuqi', tier: 'ordinary', tacticalSkillId: 'ts_428', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_428', atkAdvantageSkillId: 'ts_036', atkBalanceSkillId: 'ts_053', atkDisadvantageSkillId: 'ts_429', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_513', aptitude: 'create' , attackStyle: 'balanced'}, // 拔秦五城 + 阴晋守 → 双行
+        wei_wuqi: { generalId: 'wei_wuqi', tier: 'ordinary', tacticalSkillId: 'ts_428', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_428', atkAdvantageSkillId: 'ts_036', atkBalanceSkillId: 'ts_053', atkDisadvantageSkillId: 'ts_429', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_513', aptitude: 'create' , attackStyle: 'balanced'}, // 拔秦五城 + 阴晋守 → 双行；🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 锚阴晋之战史失秦帅（该战役降级）→普将
 
 
 
@@ -212,7 +212,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    sanada_d_zhentianxingcun: { generalId: 'sanada_d_zhentianxingcun', tier: 'ordinary', tacticalSkillId: 'ts_289', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_354', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'defense' },
+    sanada_d_zhentianxingcun: { generalId: 'sanada_d_zhentianxingcun', tier: 'famous', tacticalSkillId: 'ts_289', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_354', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'defense' },   // 🔴 [2026-10-28 档位对齐] 白皮书：大坂真田丸破德川、天王寺突阵（具名）
 
 
 
@@ -224,11 +224,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    totomi_jiujingzhongci: { generalId: 'totomi_jiujingzhongci', tier: 'ordinary', tacticalSkillId: 'ts_363', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_372', atkBalanceSkillId: 'ts_745', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_730', aptitude: 'create' , attackStyle: 'attack'},
+    totomi_jiujingzhongci: { generalId: 'totomi_jiujingzhongci', tier: 'famous', tacticalSkillId: 'ts_363', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_372', atkBalanceSkillId: 'ts_745', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_730', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：长筱之战鸢巢山奇袭破武田（具名）
 
 
 
-    jinchuan_jinchuanyiyuan: { generalId: 'jinchuan_jinchuanyiyuan', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_398', atkBalanceSkillId: 'ts_757', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage' , attackStyle: 'attack'},
+    jinchuan_jinchuanyiyuan: { generalId: 'jinchuan_jinchuanyiyuan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_398', atkBalanceSkillId: 'ts_757', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准改档] 白皮书：扩张东海一隅、无战役大捷
 
 
 
@@ -244,7 +244,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    otomo_d_lihuadaoxue: { generalId: 'otomo_d_lihuadaoxue', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_402', atkBalanceSkillId: 'ts_767', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage' , attackStyle: 'attack'},
+    otomo_d_lihuadaoxue: { generalId: 'otomo_d_lihuadaoxue', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_402', atkBalanceSkillId: 'ts_767', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 「独当一面破敌」无具名锚战（存疑列普将）
 
 
 
@@ -281,11 +281,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    higo_d_juchiwuguang: { generalId: 'higo_d_juchiwuguang', tier: 'ordinary', tacticalSkillId: 'ts_381', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_705', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_580', aptitude: 'create' , attackStyle: 'attack'},
+    higo_d_juchiwuguang: { generalId: 'higo_d_juchiwuguang', tier: 'famous', tacticalSkillId: 'ts_381', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_705', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_580', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：筑后川之战大破北朝军（具名）
 
 
 
-    iyo_d_cunshangwuji: { generalId: 'iyo_d_cunshangwuji', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_439', atkAdvantageSkillId: 'ts_570', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_016', aptitude: 'leverage' , attackStyle: 'attack'},
+    iyo_d_cunshangwuji: { generalId: 'iyo_d_cunshangwuji', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_439', atkAdvantageSkillId: 'ts_570', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_016', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：木津川口破织田水军（具名）·村上水军统帅
 
 
 
@@ -375,7 +375,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    xuantu_yuangaisuwen: { generalId: 'xuantu_yuangaisuwen', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_208', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_416', aptitude: 'reverse' , attackStyle: 'defense'},
+    xuantu_yuangaisuwen: { generalId: 'xuantu_yuangaisuwen', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_208', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_416', aptitude: 'reverse' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 白皮书：安市挫唐太宗（具名）·专权抗唐
 
 
 
@@ -415,7 +415,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    guishuang_qiujiuque: { generalId: 'guishuang_qiujiuque', tier: 'ordinary', tacticalSkillId: 'ts_361', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_322', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_690', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_764', defDisadvantageSkillId: 'ts_017', aptitude: 'create' , attackStyle: 'attack'},
+    guishuang_qiujiuque: { generalId: 'guishuang_qiujiuque', tier: 'ordinary', tacticalSkillId: 'ts_361', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_322', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_690', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_764', defDisadvantageSkillId: 'ts_017', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 统一五翕侯建贵霜＝纯头衔、无具名胜→普将
 
 
 
@@ -487,7 +487,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    houliao_yelvliuge: { generalId: 'houliao_yelvliuge', tier: 'ordinary', tacticalSkillId: 'ts_333', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_333', atkAdvantageSkillId: 'ts_480', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_098', aptitude: 'leverage' , attackStyle: 'attack'},
+    houliao_yelvliuge: { generalId: 'houliao_yelvliuge', tier: 'famous', tacticalSkillId: 'ts_333', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_333', atkAdvantageSkillId: 'ts_480', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_098', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：起兵破金军（金军具名）、建东辽附蒙
 
 
 
@@ -499,7 +499,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    hezhe_shaerhuda: { generalId: 'hezhe_shaerhuda', tier: 'ordinary', tacticalSkillId: 'ts_365', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_816', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_365', defBalanceSkillId: 'ts_433', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},
+    hezhe_shaerhuda: { generalId: 'hezhe_shaerhuda', tier: 'famous', tacticalSkillId: 'ts_365', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_816', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_365', defBalanceSkillId: 'ts_433', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：松花江之战歼罗刹（具名俄军）
 
 
 
@@ -563,7 +563,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    woju_yinguan: { generalId: 'woju_yinguan', tier: 'ordinary', tacticalSkillId: 'ts_095', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_028', atkBalanceSkillId: 'ts_743', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_040', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_418', aptitude: 'create' , attackStyle: 'defense'}, // 拒契丹 → 擅守
+    woju_yinguan: { generalId: 'woju_yinguan', tier: 'ordinary', tacticalSkillId: 'ts_095', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_028', atkBalanceSkillId: 'ts_743', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_040', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_418', aptitude: 'create' , attackStyle: 'defense'}, // 拒契丹 → 擅守；🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 征女真拓九城，女真无具名主帅、拓边属头衔→普将
 
 
 
@@ -706,7 +706,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    gaoche_afuzhiluo: { generalId: 'gaoche_afuzhiluo', tier: 'ordinary', tacticalSkillId: 'ts_229', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_757', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},
+    gaoche_afuzhiluo: { generalId: 'gaoche_afuzhiluo', tier: 'famous', tacticalSkillId: 'ts_229', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_757', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：屡破柔然（柔然可汗具名）·建高车国
 
 
 
@@ -722,7 +722,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yaoluoge_yaoluogepusa: { generalId: 'yaoluoge_yaoluogepusa', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_480', atkBalanceSkillId: 'ts_768', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_513', aptitude: 'leverage' , attackStyle: 'attack'},
+    yaoluoge_yaoluogepusa: { generalId: 'yaoluoge_yaoluogepusa', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_480', atkBalanceSkillId: 'ts_768', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_513', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：马鬣山五千破突厥十万（《旧唐书》：颉利遣子欲谷设率十万骑讨之，菩萨身将五千骑破之——敌帅具名）
 
 
 
@@ -734,7 +734,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    choros_tuohuan: { generalId: 'choros_tuohuan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_141', atkDisadvantageSkillId: 'ts_228', atkBalanceSkillId: 'ts_278', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_650', aptitude: 'create' , attackStyle: 'attack'},
+    choros_tuohuan: { generalId: 'choros_tuohuan', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_141', atkDisadvantageSkillId: 'ts_228', atkBalanceSkillId: 'ts_278', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_650', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：破东蒙古阿鲁台（具名）·统一卫拉特
 
 
 
@@ -766,11 +766,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        rouran_shelun: { generalId: 'rouran_shelun', tier: 'ordinary', tacticalSkillId: 'ts_594', advantageSkillId: 'ts_005', balanceSkillId: 'ts_594', disadvantageSkillId: 'ts_595', atkBalanceSkillId: 'ts_043', atkDisadvantageSkillId: 'ts_595', atkAdvantageSkillId: 'ts_654', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_006', aptitude: 'create' , attackStyle: 'attack'},
+        rouran_shelun: { generalId: 'rouran_shelun', tier: 'ordinary', tacticalSkillId: 'ts_594', advantageSkillId: 'ts_005', balanceSkillId: 'ts_594', disadvantageSkillId: 'ts_595', atkBalanceSkillId: 'ts_043', atkDisadvantageSkillId: 'ts_595', atkAdvantageSkillId: 'ts_654', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_006', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 统一漠北建柔然＝开国头衔、无具名大捷→普将
 
 
 
-    chagatai_genggong: { generalId: 'chagatai_genggong', tier: 'ordinary', tacticalSkillId: 'ts_135', advantageSkillId: 'ts_012', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_368', atkAdvantageSkillId: 'ts_135', atkBalanceSkillId: 'ts_368', atkDisadvantageSkillId: 'ts_100', defAdvantageSkillId: 'ts_783', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_386', aptitude: 'reverse', attackStyle: 'defense' },
+    chagatai_genggong: { generalId: 'chagatai_genggong', tier: 'ordinary', tacticalSkillId: 'ts_135', advantageSkillId: 'ts_012', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_368', atkAdvantageSkillId: 'ts_135', atkBalanceSkillId: 'ts_368', atkDisadvantageSkillId: 'ts_100', defAdvantageSkillId: 'ts_783', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_386', aptitude: 'reverse', attackStyle: 'defense' },   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 疏勒死守属局部殉守未改大局、未击退敌帅（守将准则）→普将
     // 姑句（车师后王，普将；史无战功记载 → 通用技）
     chagatai_gouju: { generalId: 'chagatai_gouju', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_393', atkDisadvantageSkillId: 'ts_689', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_736', aptitude: 'create', attackStyle: 'attack' },
 
@@ -800,7 +800,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    zhadalan_zhamuhe: { generalId: 'zhadalan_zhamuhe', tier: 'ordinary', tacticalSkillId: 'ts_247', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_395', atkAdvantageSkillId: 'ts_010', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_580', aptitude: 'leverage' , attackStyle: 'attack'},
+    zhadalan_zhamuhe: { generalId: 'zhadalan_zhamuhe', tier: 'famous', tacticalSkillId: 'ts_247', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_395', atkAdvantageSkillId: 'ts_010', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_580', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：十三翼之战胜铁木真（具名）
     // 2026-07-27 补中东四城+苏萨
     ailan_shuteluke: { generalId: 'ailan_shuteluke', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_113', atkAdvantageSkillId: 'ts_031', atkBalanceSkillId: 'ts_403', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_294', aptitude: 'create', attackStyle: 'attack' },
     kesa_bulan: { generalId: 'kesa_bulan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_404', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_688', aptitude: 'leverage', attackStyle: 'attack' },
@@ -826,7 +826,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    zubu_mogusi: { generalId: 'zubu_mogusi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_208', atkBalanceSkillId: 'ts_537', atkDisadvantageSkillId: 'ts_733', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage' , attackStyle: 'attack'},
+    zubu_mogusi: { generalId: 'zubu_mogusi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_208', atkBalanceSkillId: 'ts_537', atkDisadvantageSkillId: 'ts_733', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 「屡破辽军」无具名锚战（存疑列普将）
 
 
 
@@ -953,7 +953,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    wusun_liejiaomi: { generalId: 'wusun_liejiaomi', tier: 'ordinary', tacticalSkillId: 'ts_313', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_660', atkBalanceSkillId: 'ts_631', atkDisadvantageSkillId: 'ts_313', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_294', aptitude: 'create', attackStyle: 'attack' },
+    wusun_liejiaomi: { generalId: 'wusun_liejiaomi', tier: 'ordinary', tacticalSkillId: 'ts_313', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_660', atkBalanceSkillId: 'ts_631', atkDisadvantageSkillId: 'ts_313', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_294', aptitude: 'create', attackStyle: 'attack' },   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 破大月氏无具名敌帅→普将
 
 
 
@@ -969,7 +969,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    jibin_jianisejia: { generalId: 'jibin_jianisejia', tier: 'ordinary', tacticalSkillId: 'ts_401', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_743', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
+    jibin_jianisejia: { generalId: 'jibin_jianisejia', tier: 'ordinary', tacticalSkillId: 'ts_401', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_743', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 贵霜盛世扩张＝纯头衔、无具名胜→普将
     babuer_babuer: { generalId: 'babuer_babuer', tier: 'famous', tacticalSkillId: 'ts_401', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_743', atkDisadvantageSkillId: 'ts_388', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
     danmai_abusalong: { generalId: 'danmai_abusalong', tier: 'famous', tacticalSkillId: 'ts_401', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_743', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
     kasidiliya_afangsuoshiyi: { generalId: 'kasidiliya_afangsuoshiyi', tier: 'famous', tacticalSkillId: 'ts_003', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_743', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
@@ -988,7 +988,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        kazakh_hasimu: { generalId: 'kazakh_hasimu', tier: 'ordinary', tacticalSkillId: 'ts_549', advantageSkillId: 'ts_549', balanceSkillId: 'ts_529', disadvantageSkillId: 'ts_551', atkBalanceSkillId: 'ts_757', atkAdvantageSkillId: 'ts_031', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_098', aptitude: 'create' , attackStyle: 'attack'},
+        kazakh_hasimu: { generalId: 'kazakh_hasimu', tier: 'famous', tacticalSkillId: 'ts_549', advantageSkillId: 'ts_549', balanceSkillId: 'ts_529', disadvantageSkillId: 'ts_551', atkBalanceSkillId: 'ts_757', atkAdvantageSkillId: 'ts_031', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_098', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：破昔班尼（具名）·统一哈萨克
 
 
 
@@ -996,7 +996,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yanda_touluoman: { generalId: 'yanda_touluoman', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_033', atkBalanceSkillId: 'ts_278', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'attack'},
+    yanda_touluoman: { generalId: 'yanda_touluoman', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_033', atkBalanceSkillId: 'ts_278', atkDisadvantageSkillId: 'ts_411', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 入侵征服西北印度＝扩张头衔、无具名胜→普将
 
 
 
@@ -1100,7 +1100,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    tuyu_d_kualv: { generalId: 'tuyu_d_kualv', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_401', atkBalanceSkillId: 'ts_433', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_730', aptitude: 'create' , attackStyle: 'attack'},
+    tuyu_d_kualv: { generalId: 'tuyu_d_kualv', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_401', atkBalanceSkillId: 'ts_433', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_730', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 称汗扩张称雄青海＝纯头衔、无具名胜→普将
 
 
 
@@ -1112,7 +1112,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    xianlingqiang_dianling: { generalId: 'xianlingqiang_dianling', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_474', atkBalanceSkillId: 'ts_631', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_048', aptitude: 'reverse' , attackStyle: 'attack'},
+    xianlingqiang_dianling: { generalId: 'xianlingqiang_dianling', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_474', atkBalanceSkillId: 'ts_631', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_048', aptitude: 'reverse' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 诸羌共主称帝，破汉军战役多由各部执行、亲统决断存疑（存疑列普）
 
 
 
@@ -1140,11 +1140,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    supi_xinuoluo: { generalId: 'supi_xinuoluo', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_428', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_757', defDisadvantageSkillId: 'ts_822', aptitude: 'create' , attackStyle: 'attack'},
+    supi_xinuoluo: { generalId: 'supi_xinuoluo', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_428', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_757', defDisadvantageSkillId: 'ts_822', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 726 大斗拔谷攻甘州不敢战、青海湖西败于王君㚟；陷瓜州旋被张守珪大败收复——一城得失未改战区态势→普将
 
 
 
-    tsangpa_pengcuonanjie: { generalId: 'tsangpa_pengcuonanjie', tier: 'ordinary', tacticalSkillId: 'ts_349', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_570', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_760', defDisadvantageSkillId: 'ts_484', aptitude: 'create' , attackStyle: 'attack'},
+    tsangpa_pengcuonanjie: { generalId: 'tsangpa_pengcuonanjie', tier: 'ordinary', tacticalSkillId: 'ts_349', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_570', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_760', defDisadvantageSkillId: 'ts_484', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 统一卫藏建藏巴汗＝纯头衔、无具名胜→普将
 
 
 
@@ -1180,7 +1180,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    ali_gandancaiwang: { generalId: 'ali_gandancaiwang', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_486', atkAdvantageSkillId: 'ts_003', atkDisadvantageSkillId: 'ts_733', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_397', defDisadvantageSkillId: 'ts_188', aptitude: 'create', attackStyle: 'attack' },
+    ali_gandancaiwang: { generalId: 'ali_gandancaiwang', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_486', atkAdvantageSkillId: 'ts_003', atkDisadvantageSkillId: 'ts_733', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_397', defDisadvantageSkillId: 'ts_188', aptitude: 'create', attackStyle: 'attack' },   // 🔴 [2026-10-28 档位对齐] 白皮书：1679–84 统蒙藏联军征拉达克、围列城迫其王求和复阿里（拉达克王具名）——战区级实胜
 
 
 
@@ -1224,7 +1224,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yueyi_zhangyi: { generalId: 'yueyi_zhangyi', tier: 'ordinary', tacticalSkillId: 'ts_005', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_201', atkBalanceSkillId: 'ts_366', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_048', aptitude: 'create' , attackStyle: 'defense'}, // 南中镇守 → 双行
+    yueyi_zhangyi: { generalId: 'yueyi_zhangyi', tier: 'ordinary', tacticalSkillId: 'ts_005', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_201', atkBalanceSkillId: 'ts_366', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_048', aptitude: 'create' , attackStyle: 'defense'}, // 南中镇守 → 双行；🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 平越巂诸夷＝治安战→普将
 
 
 
@@ -1263,7 +1263,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    dianguo_zhuangqiao: { generalId: 'dianguo_zhuangqiao', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defBalanceSkillId: 'ts_458', atkAdvantageSkillId: 'ts_322', atkBalanceSkillId: 'ts_046', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_630', defDisadvantageSkillId: 'ts_428', aptitude: 'create' , attackStyle: 'attack'},
+    dianguo_zhuangqiao: { generalId: 'dianguo_zhuangqiao', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defBalanceSkillId: 'ts_458', atkAdvantageSkillId: 'ts_322', atkBalanceSkillId: 'ts_046', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_630', defDisadvantageSkillId: 'ts_428', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 王滇建国＝头衔、远征略地无具名胜→普将
 
 
 
@@ -1291,7 +1291,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    suke_langanheng: { generalId: 'suke_langanheng', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_689', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_048', aptitude: 'leverage' , attackStyle: 'attack'},
+    suke_langanheng: { generalId: 'suke_langanheng', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_689', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_048', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 扩张素可泰＝头衔、无具名胜→普将
 
 
 
@@ -1311,7 +1311,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-            champa_zhipenge: { generalId: 'champa_zhipenge', tier: 'ordinary', tacticalSkillId: 'ts_787', advantageSkillId: 'ts_011', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_787', atkBalanceSkillId: 'ts_760', atkAdvantageSkillId: 'ts_401', atkDisadvantageSkillId: 'ts_727', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},
+            champa_zhipenge: { generalId: 'champa_zhipenge', tier: 'famous', tacticalSkillId: 'ts_787', advantageSkillId: 'ts_011', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_787', atkBalanceSkillId: 'ts_760', atkAdvantageSkillId: 'ts_401', atkDisadvantageSkillId: 'ts_727', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：屡破大越、攻陷昇龙（陈朝具名）
 
 
 
@@ -1355,7 +1355,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    ryukyu_shangbazhi: { generalId: 'ryukyu_shangbazhi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_570', atkBalanceSkillId: 'ts_393', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_098', aptitude: 'leverage' , attackStyle: 'attack'},
+    ryukyu_shangbazhi: { generalId: 'ryukyu_shangbazhi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_570', atkBalanceSkillId: 'ts_393', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_098', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 统一三山建尚氏＝纯头衔、无具名胜→普将
 
 
 
@@ -1387,7 +1387,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    jing_dingbuling: { generalId: 'jing_dingbuling', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_433', defDisadvantageSkillId: 'ts_688', aptitude: 'leverage' , attackStyle: 'attack'},
+    jing_dingbuling: { generalId: 'jing_dingbuling', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_433', defDisadvantageSkillId: 'ts_688', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准改档] 白皮书：平十二使君统交趾一隅
 
 
 
@@ -1495,7 +1495,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    miao_qing_yangwanzhe: { generalId: 'miao_qing_yangwanzhe', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_043', atkDisadvantageSkillId: 'ts_413', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'defense'},
+    miao_qing_yangwanzhe: { generalId: 'miao_qing_yangwanzhe', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_043', atkDisadvantageSkillId: 'ts_413', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 「屡破红巾军」无具名锚战（存疑列普将）
 
 
 
@@ -1527,7 +1527,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    shixing_houandou: { generalId: 'shixing_houandou', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_474', atkBalanceSkillId: 'ts_404', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_689', aptitude: 'create' , attackStyle: 'attack'},
+    shixing_houandou: { generalId: 'shixing_houandou', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_474', atkBalanceSkillId: 'ts_404', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_689', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：564 亲统破留异（留异/陈宝应/周迪连环叛乱＝浙东战区）、从破徐嗣徽引北齐军（敌帅具名）
 
 
 
@@ -1571,7 +1571,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    xiangzhou_lvwenhuan: { generalId: 'xiangzhou_lvwenhuan', tier: 'ordinary', tacticalSkillId: 'ts_273', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_672', atkBalanceSkillId: 'ts_393', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse' , attackStyle: 'defense'},
+    xiangzhou_lvwenhuan: { generalId: 'xiangzhou_lvwenhuan', tier: 'ordinary', tacticalSkillId: 'ts_273', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_672', atkBalanceSkillId: 'ts_393', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 襄阳死守六年终陷（未保全大局未击退敌帅，守将准则未过）→普将
 
 
 
@@ -1583,7 +1583,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    daxi_ming_zhangxianzhong: { generalId: 'daxi_ming_zhangxianzhong', tier: 'ordinary', tacticalSkillId: 'ts_495', advantageSkillId: 'ts_495', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_496', atkAdvantageSkillId: 'ts_497', atkBalanceSkillId: 'ts_495', defAdvantageSkillId: 'ts_496', atkDisadvantageSkillId: 'ts_218', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_418', aptitude: 'create', attackStyle: 'attack' },
+    daxi_ming_zhangxianzhong: { generalId: 'daxi_ming_zhangxianzhong', tier: 'famous', tacticalSkillId: 'ts_495', advantageSkillId: 'ts_495', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_496', atkAdvantageSkillId: 'ts_497', atkBalanceSkillId: 'ts_495', defAdvantageSkillId: 'ts_496', atkDisadvantageSkillId: 'ts_218', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_418', aptitude: 'create', attackStyle: 'attack' },   // 🔴 [2026-10-28 档位对齐] 白皮书：1639 播箕寨设伏大破左良玉（罗岱死、官军死万余）、1640 竹菌坪阵斩张令破秦良玉援——敌帅具名、明末川楚战区级
 
 
 
@@ -1623,7 +1623,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-            qiuchi_yangnandang: { generalId: 'qiuchi_yangnandang', tier: 'ordinary', tacticalSkillId: 'ts_790', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_790', atkDisadvantageSkillId: 'ts_790', atkAdvantageSkillId: 'ts_040', atkBalanceSkillId: 'ts_395', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage' , attackStyle: 'attack'},
+            qiuchi_yangnandang: { generalId: 'qiuchi_yangnandang', tier: 'ordinary', tacticalSkillId: 'ts_790', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_790', atkDisadvantageSkillId: 'ts_790', atkAdvantageSkillId: 'ts_040', atkBalanceSkillId: 'ts_395', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 仇池扩张袭汉中、终败降（无够格胜绩）→普将
 
 
 
@@ -1679,7 +1679,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    beidi_yaochang: { generalId: 'beidi_yaochang', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_594', atkAdvantageSkillId: 'ts_285', atkBalanceSkillId: 'ts_404', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_513', aptitude: 'create', attackStyle: 'attack' },
+    beidi_yaochang: { generalId: 'beidi_yaochang', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_594', atkAdvantageSkillId: 'ts_285', atkBalanceSkillId: 'ts_404', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_513', aptitude: 'create', attackStyle: 'attack' },   // 🔴 [2026-10-28 档位对齐] 白皮书：亲征擒杀苻坚（具名）·据关中建后秦
 
 
 
@@ -1711,7 +1711,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    liangzhou_zhanggui: { generalId: 'liangzhou_zhanggui', tier: 'ordinary', tacticalSkillId: 'ts_298', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_352', atkBalanceSkillId: 'ts_408', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'defense'},
+    liangzhou_zhanggui: { generalId: 'liangzhou_zhanggui', tier: 'famous', tacticalSkillId: 'ts_298', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_352', atkBalanceSkillId: 'ts_408', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 白皮书：破鲜卑若罗拔能（具名）·据凉州奠前凉
 
 
 
@@ -1743,7 +1743,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    ganzhou_dourong: { generalId: 'ganzhou_dourong', tier: 'ordinary', tacticalSkillId: 'ts_252', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_252', atkAdvantageSkillId: 'ts_401', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'defense'},
+    ganzhou_dourong: { generalId: 'ganzhou_dourong', tier: 'famous', tacticalSkillId: 'ts_252', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_252', atkAdvantageSkillId: 'ts_401', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 白皮书：率河西兵破隗嚣（具名）
 
 
 
@@ -1751,7 +1751,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        shazhou_zhangyichao: { generalId: 'shazhou_zhangyichao', tier: 'ordinary', tacticalSkillId: 'ts_609', advantageSkillId: 'ts_609', balanceSkillId: 'ts_610', disadvantageSkillId: 'ts_263', atkAdvantageSkillId: 'ts_609', atkBalanceSkillId: 'ts_397', defBalanceSkillId: 'ts_610', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_071', defDisadvantageSkillId: 'ts_418', aptitude: 'create' , attackStyle: 'attack'},
+        shazhou_zhangyichao: { generalId: 'shazhou_zhangyichao', tier: 'famous', tacticalSkillId: 'ts_609', advantageSkillId: 'ts_609', balanceSkillId: 'ts_610', disadvantageSkillId: 'ts_263', atkAdvantageSkillId: 'ts_609', atkBalanceSkillId: 'ts_397', defBalanceSkillId: 'ts_610', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_071', defDisadvantageSkillId: 'ts_418', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：856 西同之战破论恐热所指使的吐谷浑莫贺可汗军、生擒宰相三人（《张议潮变文》敌帅具名），861 克凉州复河陇四千里——战区级
 
 
 
@@ -1802,7 +1802,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    woye_huangfugui: { generalId: 'woye_huangfugui', tier: 'ordinary', tacticalSkillId: 'ts_295', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_760', atkDisadvantageSkillId: 'ts_580', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'attack'},
+    woye_huangfugui: { generalId: 'woye_huangfugui', tier: 'ordinary', tacticalSkillId: 'ts_295', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_760', atkDisadvantageSkillId: 'ts_580', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_416', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 破羌无具名敌帅（治安战）→普将
 
 
 
@@ -1818,7 +1818,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    huan_zhongshidao: { generalId: 'huan_zhongshidao', tier: 'ordinary', tacticalSkillId: 'ts_255', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_255', atkAdvantageSkillId: 'ts_654', atkBalanceSkillId: 'ts_769', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_822', aptitude: 'create' , attackStyle: 'defense'},
+    huan_zhongshidao: { generalId: 'huan_zhongshidao', tier: 'ordinary', tacticalSkillId: 'ts_255', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_255', atkAdvantageSkillId: 'ts_654', atkBalanceSkillId: 'ts_769', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_822', aptitude: 'create' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 席苇城反袭、葫芦河破夏军，夏军统帅无具名记载（平夏城擒嵬名阿埋属章楶/折可适）；且《宋史》载夏人屡败种师道——对阵有名存疑列普
 
 
 
@@ -1901,7 +1901,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    qi_simarangju: { generalId: 'qi_simarangju', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_201', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_475', defDisadvantageSkillId: 'ts_418', aptitude: 'create' , attackStyle: 'defense'},
+    qi_simarangju: { generalId: 'qi_simarangju', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_201', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_475', defDisadvantageSkillId: 'ts_418', aptitude: 'create' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 无交战胜（晋燕师闻风自退），《司马法》为兵书符号仅放大器；存疑列普将
 
 
 
@@ -1989,7 +1989,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    qing_quduan: { generalId: 'qing_quduan', tier: 'ordinary', tacticalSkillId: 'ts_355', advantageSkillId: 'ts_458', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_459', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_146', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_397', defDisadvantageSkillId: 'ts_459', aptitude: 'create', attackStyle: 'attack' },
+    qing_quduan: { generalId: 'qing_quduan', tier: 'ordinary', tacticalSkillId: 'ts_355', advantageSkillId: 'ts_458', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_459', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_146', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_397', defDisadvantageSkillId: 'ts_459', aptitude: 'create', attackStyle: 'attack' },   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 彭原店破撒离喝主将实为吴玠（曲端拥军屯宜禄不战），「啼哭郎君」典归吴玠；其余胜绩金帅无具名记载——存疑列普
 
 
 
@@ -2060,7 +2060,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    lai_wangshifan: { generalId: 'lai_wangshifan', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_504', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage' , attackStyle: 'defense'},   // 🔴 [2026-10-25 主人令按标准修复] 普将→名将：平卢节度使，刘鄩袭取兖州、石楼破朱友宁俘斩万计（《资治通鉴·卷二六四》）
+    lai_wangshifan: { generalId: 'lai_wangshifan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_504', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage' , attackStyle: 'defense'},   // 🔴 [2026-10-25 主人令按标准修复] 普将→名将：平卢节度使，刘鄩袭取兖州、石楼破朱友宁俘斩万计（《资治通鉴·卷二六四》）；🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准改档] 白皮书：藩镇讨朱温败降、无胜绩
 
 
 
@@ -2088,7 +2088,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    shizhao_d_shihu: { generalId: 'shizhao_d_shihu', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_570', atkBalanceSkillId: 'ts_407', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_412', aptitude: 'create' , attackStyle: 'attack'},
+    shizhao_d_shihu: { generalId: 'shizhao_d_shihu', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_570', atkBalanceSkillId: 'ts_407', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_412', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：洛阳之战破前赵擒刘曜（具名灭国）
 
 
 
@@ -2104,7 +2104,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        lingqiu_zhaowuling: { generalId: 'lingqiu_zhaowuling', tier: 'ordinary', tacticalSkillId: 'ts_564', advantageSkillId: 'ts_564', balanceSkillId: 'ts_565', disadvantageSkillId: 'ts_001', atkAdvantageSkillId: 'ts_044', atkDisadvantageSkillId: 'ts_565', defAdvantageSkillId: 'ts_564', defDisadvantageSkillId: 'ts_214', atkBalanceSkillId: 'ts_046', defBalanceSkillId: 'ts_433', aptitude: 'create' , attackStyle: 'attack'},
+        lingqiu_zhaowuling: { generalId: 'lingqiu_zhaowuling', tier: 'ordinary', tacticalSkillId: 'ts_564', advantageSkillId: 'ts_564', balanceSkillId: 'ts_565', disadvantageSkillId: 'ts_001', atkAdvantageSkillId: 'ts_044', atkDisadvantageSkillId: 'ts_565', defAdvantageSkillId: 'ts_564', defDisadvantageSkillId: 'ts_214', atkBalanceSkillId: 'ts_046', defBalanceSkillId: 'ts_433', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 灭中山对手史失其名、胡服骑射属军改不计→普将
 
 
 
@@ -2151,11 +2151,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    changshan_yangyanzhao: { generalId: 'changshan_yangyanzhao', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defBalanceSkillId: 'ts_095', defDisadvantageSkillId: 'ts_209', atkAdvantageSkillId: 'ts_028', atkBalanceSkillId: 'ts_046', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_033', aptitude: 'reverse', attackStyle: 'defense' },
+    changshan_yangyanzhao: { generalId: 'changshan_yangyanzhao', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defBalanceSkillId: 'ts_095', defDisadvantageSkillId: 'ts_209', atkAdvantageSkillId: 'ts_028', atkBalanceSkillId: 'ts_046', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_033', aptitude: 'reverse', attackStyle: 'defense' },   // 🔴 [2026-10-28 档位对齐] 白皮书：遂城冰城退辽、羊山伏击破辽（萧太后亲征具名）
 
 
 
-    hejian_gongsunzan: { generalId: 'hejian_gongsunzan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_213', atkDisadvantageSkillId: 'ts_746', atkBalanceSkillId: 'ts_743', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_513', aptitude: 'create' , attackStyle: 'attack'},
+    hejian_gongsunzan: { generalId: 'hejian_gongsunzan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_213', atkDisadvantageSkillId: 'ts_746', atkBalanceSkillId: 'ts_743', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_513', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 锚东光大破黄巾三十万（黄巾无帅＝治安战）→普将
 
 
 
@@ -2171,7 +2171,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    dizhou_wangyanzhang: { generalId: 'dizhou_wangyanzhang', tier: 'famous', tacticalSkillId: 'ts_083', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_083', atkBalanceSkillId: 'ts_760', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_733', aptitude: 'leverage' , attackStyle: 'attack'},
+    dizhou_wangyanzhang: { generalId: 'dizhou_wangyanzhang', tier: 'ordinary', tacticalSkillId: 'ts_083', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_083', atkBalanceSkillId: 'ts_760', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_733', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准改档] 白皮书：王铁枪武勇型、无独立战役级大捷
     liang_d_zhuyouning: { generalId: 'liang_d_zhuyouning', tier: 'famous', tacticalSkillId: 'ts_083', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_083', atkBalanceSkillId: 'ts_760', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_733', aptitude: 'leverage', attackStyle: 'attack' },   // 朱友宁：汴军宿将（救齐州、兖南伏兵、拔博昌/临淄/登州）→ 名将
 
 
@@ -2188,7 +2188,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    linyu_wusangui: { generalId: 'linyu_wusangui', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_768', atkAdvantageSkillId: 'ts_208', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_048', aptitude: 'leverage' , attackStyle: 'attack'},
+    linyu_wusangui: { generalId: 'linyu_wusangui', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_768', atkAdvantageSkillId: 'ts_208', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_048', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：山海关之战（李自成具名）、独镇一方
 
 
 
@@ -2216,7 +2216,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    ying_caojingzong: { generalId: 'ying_caojingzong', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_289', atkBalanceSkillId: 'ts_705', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},
+    ying_caojingzong: { generalId: 'ying_caojingzong', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_289', atkBalanceSkillId: 'ts_705', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：钟离之战大破北魏（元英/杨大眼具名）
 
 
 
@@ -2271,7 +2271,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    wuling_xiangdancheng: { generalId: 'wuling_xiangdancheng', tier: 'ordinary', tacticalSkillId: 'ts_338', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_399', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_048', aptitude: 'reverse' , attackStyle: 'defense'},
+    wuling_xiangdancheng: { generalId: 'wuling_xiangdancheng', tier: 'famous', tacticalSkillId: 'ts_338', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_399', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_048', aptitude: 'reverse' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 白皮书：大破汉军刘尚、困死马援（具名）
 
 
 
@@ -2291,7 +2291,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    ruochu_doulian: { generalId: 'ruochu_doulian', tier: 'ordinary', tacticalSkillId: 'ts_316', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_444', atkBalanceSkillId: 'ts_366', atkDisadvantageSkillId: 'ts_711', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'attack'},
+    ruochu_doulian: { generalId: 'ruochu_doulian', tier: 'ordinary', tacticalSkillId: 'ts_316', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_444', atkBalanceSkillId: 'ts_366', atkDisadvantageSkillId: 'ts_711', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 蒲骚之战郧师无具名主帅→普将
 
 
 
@@ -2307,7 +2307,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yue_goujian: { generalId: 'yue_goujian', tier: 'ordinary', tacticalSkillId: 'ts_177', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_177', defBalanceSkillId: 'ts_046', atkBalanceSkillId: 'ts_406', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_815', defDisadvantageSkillId: 'ts_759', aptitude: 'reverse' , attackStyle: 'attack'},
+    yue_goujian: { generalId: 'yue_goujian', tier: 'famous', tacticalSkillId: 'ts_177', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_177', defBalanceSkillId: 'ts_046', atkBalanceSkillId: 'ts_406', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_815', defDisadvantageSkillId: 'ts_759', aptitude: 'reverse' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：亲征灭吴（夫差具名）、称霸
 
 
 
@@ -2323,7 +2323,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    changshaguo_xinqiji: { generalId: 'changshaguo_xinqiji', tier: 'ordinary', tacticalSkillId: 'ts_525', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_525', atkBalanceSkillId: 'ts_176', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'attack' },
+    changshaguo_xinqiji: { generalId: 'changshaguo_xinqiji', tier: 'ordinary', tacticalSkillId: 'ts_525', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_525', atkBalanceSkillId: 'ts_176', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'attack' },   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 突营擒张安国/平茶商军＝战术级小胜非战役级→普将
 
 
 
@@ -2439,7 +2439,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yao_liuyuan: { generalId: 'yao_liuyuan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_207', atkAdvantageSkillId: 'ts_308', atkBalanceSkillId: 'ts_393', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_634', defDisadvantageSkillId: 'ts_712', aptitude: 'create' , attackStyle: 'attack'},
+    yao_liuyuan: { generalId: 'yao_liuyuan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_207', atkAdvantageSkillId: 'ts_308', atkBalanceSkillId: 'ts_393', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_634', defDisadvantageSkillId: 'ts_712', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 君主抽刀不剩（破晋主力是刘聪/石勒/王弥），开国头衔不计→普将
 
 
 
@@ -2710,7 +2710,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    sai_gaijiayun: { generalId: 'sai_gaijiayun', tier: 'ordinary', tacticalSkillId: 'ts_339', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_279', atkBalanceSkillId: 'ts_408', atkDisadvantageSkillId: 'ts_412', defAdvantageSkillId: 'ts_339', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_016', aptitude: 'create' , attackStyle: 'attack'},
+    sai_gaijiayun: { generalId: 'sai_gaijiayun', tier: 'famous', tacticalSkillId: 'ts_339', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_279', atkBalanceSkillId: 'ts_408', atkDisadvantageSkillId: 'ts_412', defAdvantageSkillId: 'ts_339', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_016', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 白皮书：碎叶破突骑施、擒吐火仙（具名）
 
 
 
@@ -2726,7 +2726,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    jingcheng_d_yuyouzhao: { generalId: 'jingcheng_d_yuyouzhao', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_480', atkBalanceSkillId: 'ts_631', atkDisadvantageSkillId: 'ts_484', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_415', aptitude: 'create' , attackStyle: 'attack'}, // 攻 → 擅攻
+    jingcheng_d_yuyouzhao: { generalId: 'jingcheng_d_yuyouzhao', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_480', atkBalanceSkillId: 'ts_631', atkDisadvantageSkillId: 'ts_484', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_415', aptitude: 'create' , attackStyle: 'attack'}, // 攻 → 擅攻；🔴 [2026-10-28 档位对齐] 白皮书：征建州女真、破李满住（具名）
 
 
 
@@ -2805,7 +2805,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    zizhou_wangjian: { generalId: 'zizhou_wangjian', tier: 'ordinary', tacticalSkillId: 'ts_816', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_040', atkBalanceSkillId: 'ts_767', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_416', aptitude: 'create', attackStyle: 'attack' },
+    zizhou_wangjian: { generalId: 'zizhou_wangjian', tier: 'famous', tacticalSkillId: 'ts_816', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_040', atkBalanceSkillId: 'ts_767', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_416', aptitude: 'create', attackStyle: 'attack' },   // 🔴 [2026-10-28 档位对齐] 白皮书：平定两川（陈敬瑄/顾彦晖具名）、建前蜀
 
 
 
@@ -2821,15 +2821,15 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    funan_fanman: { generalId: 'funan_fanman', tier: 'ordinary', tacticalSkillId: 'ts_158', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defDisadvantageSkillId: 'ts_730', atkAdvantageSkillId: 'ts_158', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_775', aptitude: 'create', attackStyle: 'attack' },
+    funan_fanman: { generalId: 'funan_fanman', tier: 'ordinary', tacticalSkillId: 'ts_158', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defDisadvantageSkillId: 'ts_730', atkAdvantageSkillId: 'ts_158', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_775', aptitude: 'create', attackStyle: 'attack' },   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 征服十余国＝扩张头衔、无具名胜→普将
 
 
 
-    lancang_faang: { generalId: 'lancang_faang', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_185', atkBalanceSkillId: 'ts_043', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},
+    lancang_faang: { generalId: 'lancang_faang', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_185', atkBalanceSkillId: 'ts_043', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_395', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 统一老挝建澜沧＝纯头衔、无具名胜→普将
 
 
 
-    ahaomu_laqite: { generalId: 'ahaomu_laqite', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_343', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_045', defDisadvantageSkillId: 'ts_081', aptitude: 'leverage', attackStyle: 'defense' },
+    ahaomu_laqite: { generalId: 'ahaomu_laqite', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_343', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_045', defDisadvantageSkillId: 'ts_081', aptitude: 'leverage', attackStyle: 'defense' },   // 🔴 [2026-10-28 档位对齐] 白皮书：萨莱加特之战大破莫卧儿（具名）、保阿萨姆
 
 
 
@@ -2853,7 +2853,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    liuzhou_shenxiyi: { generalId: 'liuzhou_shenxiyi', tier: 'ordinary', tacticalSkillId: 'ts_323', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_289', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_405', defDisadvantageSkillId: 'ts_098', aptitude: 'create' , attackStyle: 'attack'},
+    liuzhou_shenxiyi: { generalId: 'liuzhou_shenxiyi', tier: 'ordinary', tacticalSkillId: 'ts_323', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_289', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_405', defDisadvantageSkillId: 'ts_098', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 平广西瑶壮诸乱＝治安战→普将
 
 
 
@@ -2919,11 +2919,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
     gaxa_zhashi: { generalId: 'gaxa_zhashi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_362', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_046', defDisadvantageSkillId: 'ts_416', aptitude: 'reverse' , attackStyle: 'defense'},
 
-    jinchuan_g_shaluoben: { generalId: 'jinchuan_g_shaluoben', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_369', atkAdvantageSkillId: 'ts_480', atkBalanceSkillId: 'ts_366', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'defense'},
+    jinchuan_g_shaluoben: { generalId: 'jinchuan_g_shaluoben', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_369', atkAdvantageSkillId: 'ts_480', atkBalanceSkillId: 'ts_366', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 碉楼抗清属悲壮抵抗、无实质大胜→普将
 
     xiangxiong_limixia_x: { generalId: 'xiangxiong_limixia_x', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_504', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_394', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage' , attackStyle: 'defense'},
 
-    ladakh_senggelangjie: { generalId: 'ladakh_senggelangjie', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_370', atkAdvantageSkillId: 'ts_511', atkBalanceSkillId: 'ts_406', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_712', aptitude: 'create' , attackStyle: 'attack'},
+    ladakh_senggelangjie: { generalId: 'ladakh_senggelangjie', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_370', atkAdvantageSkillId: 'ts_511', atkBalanceSkillId: 'ts_406', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_712', aptitude: 'create' , attackStyle: 'attack'},   // 🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 拉达克扩张＝头衔、无具名胜→普将
 
         khoshut_gushihan: { generalId: 'khoshut_gushihan', tier: 'famous', tacticalSkillId: 'ts_128', advantageSkillId: 'ts_128', balanceSkillId: 'ts_553', disadvantageSkillId: 'ts_554', atkAdvantageSkillId: 'ts_553', atkBalanceSkillId: 'ts_486', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_672', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_822', aptitude: 'create' , attackStyle: 'attack'},
 

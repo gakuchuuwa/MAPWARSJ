@@ -232,6 +232,8 @@ export interface HillshadeResponse {
     renderMs?: number;
     /** 算好的瓦片位图（transferable）；主线程只需 drawImage，零像素拷贝 */
     bitmap?: ImageBitmap;
+    /** 是否为粗高程插值生成的远景临时兜底瓦片（主线程可先上屏消除异色与硬边，随后后台重拉高清替换） */
+    isCoarseFallback?: boolean;
     /** 取图/解码失败：主线程平涂兜底色 */
     error?: string;
 }
@@ -413,12 +415,71 @@ function writeTerrarium(src: Uint8ClampedArray, dem: Float32Array): void {
     }
 }
 
+/**
+ * 当目标高清高程瓦片 (z, x, y) 因网络拥塞超时未取到时，从已缓存的父级瓦片或 COARSE_Z(6) 全球粗高程
+ * 双线性插值合成 256×256 高程（不污染 rawDemCache），用于先渲染同色系朦胧远景地形，彻底消除空白硬边。
+ */
+async function synthesizeDemFromCoarser(z: number, x: number, y: number): Promise<Float32Array | null> {
+    if (z <= COARSE_Z) return null;
+    const n = 2 ** z;
+    if (y < 0 || y >= n) return null;
+    const normX = ((x % n) + n) % n;
+
+    let ancZ = -1;
+    let ancDem: Float32Array | null = null;
+    // 1. 优先查内存中已有的最近父级瓦片 (z-1 .. COARSE_Z)
+    for (let tryZ = z - 1; tryZ >= COARSE_Z; tryZ--) {
+        const s = 2 ** (z - tryZ);
+        const ax = Math.floor(normX / s);
+        const ay = Math.floor(y / s);
+        const hit = rawDemCache.get(`${tryZ}/${ax}/${ay}`);
+        if (hit) {
+            ancZ = tryZ;
+            ancDem = hit;
+            break;
+        }
+    }
+    // 2. 若内存无父级，则拉取 COARSE_Z(6) 粗高程（1 块覆盖 z=9 的 64 块瓦片，极易命中且体积小）
+    if (!ancDem) {
+        const s = 2 ** (z - COARSE_Z);
+        const ax = Math.floor(normX / s);
+        const ay = Math.floor(y / s);
+        ancDem = await fetchDemFloat32(COARSE_Z, ax, ay);
+        if (ancDem) ancZ = COARSE_Z;
+    }
+    if (!ancDem || ancZ < 0) return null;
+
+    const s = 2 ** (z - ancZ);
+    const ancOriginX = Math.floor(normX / s) * 256;
+    const ancOriginY = Math.floor(y / s) * 256;
+    const out = new Float32Array(256 * 256);
+
+    for (let py = 0; py < 256; py++) {
+        const fy = Math.max(0, Math.min(255, ((y * 256 + py + 0.5) / s) - 0.5 - ancOriginY));
+        const iy = Math.min(254, Math.floor(fy));
+        const ay = fy - iy;
+        const row0 = iy * 256;
+        const row1 = (iy + 1) * 256;
+        for (let px = 0; px < 256; px++) {
+            const fx = Math.max(0, Math.min(255, ((normX * 256 + px + 0.5) / s) - 0.5 - ancOriginX));
+            const ix = Math.min(254, Math.floor(fx));
+            const ax = fx - ix;
+            const a = ancDem[row0 + ix];
+            const b = ancDem[row0 + ix + 1];
+            const c = ancDem[row1 + ix];
+            const d = ancDem[row1 + ix + 1];
+            out[py * 256 + px] = (a * (1 - ax) + b * ax) * (1 - ay) + (c * (1 - ax) + d * ax) * ay;
+        }
+    }
+    return out;
+}
+
 // 🔴 [2026-10-21] 3 → 12：7 层高地试验的坡带（模糊半径 3）与台地投影（最长 8px）都要跨瓦片取样，
 //    外扩不够会在瓦片边缘断开。内部像素取值不变（原有算法只用到 ±3）。
 const PAD = 12;
 const PAD_W = 256 + 2 * PAD;
 
-async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: number; y: number }, centerDem?: Float32Array): Promise<Float32Array | null> {
+async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: number; y: number }, centerDem?: Float32Array, skipNetworkNeighbors: boolean = false): Promise<Float32Array | null> {
     let center = centerDem;
     if (!center) {
         center = new Float32Array(256 * 256);
@@ -427,10 +488,12 @@ async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: numb
         cacheDem(`${coords.z}/${((coords.x % n) + n) % n}/${coords.y}`, center);
     }
     const tiles = new Map<string, Float32Array>([['0/0', center]]);
-    await Promise.all([-1, 0, 1].flatMap(dy => [-1, 0, 1].filter(dx => dx !== 0 || dy !== 0).map(async dx => {
-        const dem = await fetchDemFloat32(coords.z, coords.x + dx, coords.y + dy);
-        if (dem) tiles.set(`${dx}/${dy}`, dem);
-    })));
+    if (!skipNetworkNeighbors) {
+        await Promise.all([-1, 0, 1].flatMap(dy => [-1, 0, 1].filter(dx => dx !== 0 || dy !== 0).map(async dx => {
+            const dem = await fetchDemFloat32(coords.z, coords.x + dx, coords.y + dy);
+            if (dem) tiles.set(`${dx}/${dy}`, dem);
+        })));
+    }
     // 即使个别邻块网络超时，内部 250×250 像素仍用本瓦片真实高程走 3D 浮雕光照（缺失邻块仅在外扩 3px 处钳制本瓦片边缘），彻底消除 256×256 方块断层。
     const padded = new Float32Array(PAD_W * PAD_W);
     for (let y = -PAD; y < 256 + PAD; y++) for (let x = -PAD; x < 256 + PAD; x++) {
@@ -1766,8 +1829,13 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
             : Promise.resolve(null);
         let src: Uint8ClampedArray;
         let centerDem: Float32Array | null = null;
+        let usedCoarseFallback = false;
         if (req.coords && req.width === 256 && req.height === 256) {
             centerDem = await fetchDemFloat32(req.coords.z, req.coords.x, req.coords.y);
+            if (!centerDem) {
+                centerDem = await synthesizeDemFromCoarser(req.coords.z, req.coords.x, req.coords.y);
+                if (centerDem) usedCoarseFallback = true;
+            }
             if (!centerDem) throw new Error('DEM load failed');
             src = new Uint8ClampedArray(256 * 256 * 4);
             writeTerrarium(src, centerDem);
@@ -1796,7 +1864,7 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
             ? fetchWaterMask(req.waterMaskUrl, req.width, req.height)
             : Promise.resolve(null);
         const paddedDemPending = req.experimentalRelief && req.coords && req.coords.z >= 7 && req.coords.z <= 12
-            ? getPaddedDem(src, req.coords, centerDem ?? undefined)
+            ? getPaddedDem(src, req.coords, centerDem ?? undefined, usedCoarseFallback)
             : Promise.resolve(null);
 
         const [mask, paddedDem] = await Promise.all([maskPending, paddedDemPending]);
@@ -1834,11 +1902,19 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
         }
         const renderStart = performance.now();
         const output = renderHillshade(src, req, mask, material, paddedDem, parentDem, caspianDem, riverStrip);
+        if (usedCoarseFallback) {
+            // 远景粗高程兜底：叠一层 16% 薄雾柔化过渡，待后台重试拿到高清瓦片后无缝替换
+            for (let i = 0; i < output.length; i += 4) {
+                output[i] = Math.round(output[i] * 0.84 + 136 * 0.16);
+                output[i + 1] = Math.round(output[i + 1] * 0.84 + 140 * 0.16);
+                output[i + 2] = Math.round(output[i + 2] * 0.84 + 145 * 0.16);
+            }
+        }
         const renderMs = performance.now() - renderStart;
         const bitmap = await createImageBitmap(new ImageData(output, req.width, req.height));
 
         // Cast to any to avoid TS matching Window.postMessage instead of Worker.postMessage
-        (self as any).postMessage({ id: req.id, bitmap, materialBytes: getMaterialBytes(), renderMs } as HillshadeResponse, [bitmap]);
+        (self as any).postMessage({ id: req.id, bitmap, isCoarseFallback: usedCoarseFallback || undefined, materialBytes: getMaterialBytes(), renderMs } as HillshadeResponse, [bitmap]);
     } catch (err) {
         (self as any).postMessage({ id: req.id, error: String(err) } as HillshadeResponse);
     }
