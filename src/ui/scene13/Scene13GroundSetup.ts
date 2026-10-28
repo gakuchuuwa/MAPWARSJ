@@ -18,7 +18,7 @@ import { applyDeCityToGround } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { setCachedViennaMapData } from './Scene13SpriteCache';
 import { loadDeCampaignMapForGround, populateDeCampaignObjects } from './Scene13DeCampaignLoader';
-import { clampMapWaterRatio } from './Scene13MapWaterAdapter';
+import { clampMapWaterRatio, enrichDeBattlefieldMidfield } from './Scene13MapWaterAdapter';
 
 /** 未改造的据点／主题地图数据与在途请求。后续转置、海向校正和城基改造都会另建数组，不回写这里。 */
 const GROUND_MAP_DATA_CACHE = new Map<string, Promise<any | null>>();
@@ -174,13 +174,20 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
             ? oriented
             : this.relocateTemplateWater(oriented);
         // 🔴 [2026-10-27 主人令「战术模式中的地图……有的因为在港口附近，导致水域太多，我觉得一张地图水域不应该超过40%」]
-        const mapData = clampMapWaterRatio(mapDataRaw, 0.40);
+        const mapDataClamped = clampMapWaterRatio(mapDataRaw, 0.40);
+        const groundBaseTerrain = this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
+        const mapData = enrichDeBattlefieldMidfield(
+            mapDataClamped,
+            this.deCity?.width,
+            String(this.defenderCityId ?? this.environmentPlan?.seed ?? 'field'),
+            groundBaseTerrain,
+            this.environmentPlan?.deMapTheme,
+        );
         // 🔴 [2026-10-21 主人令「请全部和DE保持一致」]
         //    地面 6 张贴图改由 **DE 烘焙地形直方图** 决定（见 Scene13DeGround.ts）：
         //    `14 Desert→pal`、`12 Grass2→gr2`、`100 Dry Grass→gr7`、`2 Beach→bch`、`10 Forest→for`、`3 Dirt3→ds3`…
         //    旧做法只看据点建筑风格/气候主题，会让沙漠图铺成黄土、温带图铺成夯土，与 DE 原版观感不符。
         //    雪地/冬季例外：仍按季节贴图（不能把雪原铺成草地）。
-        const groundBaseTerrain = this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
         const isSnowGround = /^(sno|sn2|snf|snd|snr|ic3|ice)/.test(groundBaseTerrain) || this.sceneSeason === 2;
         const deGroundTiles = isSnowGround
             ? null

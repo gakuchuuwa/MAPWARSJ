@@ -15,6 +15,7 @@
  */
 
 import { DE_TERRAIN_MANIFEST } from '../../data/battlefield/deTerrainData';
+import { groundVariationFor } from './DecorFit';
 import type { Scene13GroundTiles } from './Scene13EnvironmentGenerator';
 
 /** 水体 DE 地形 id（与 Scene13GroundSetup 的 WATER_TERRAINS 同一份口径） */
@@ -80,17 +81,42 @@ export function deriveDeGroundTiles(
     const baseTile = tileFromTerrainId(baseTid);
     if (!baseTile) return null;
 
-    const forestTid = pick(isForest);
-    const dirtTid = pick(isDirt);
-    const dryTid = pick(isDry);
+    const forestTid = pick((t) => t !== baseTid && isForest(t));
+    const dirtTid = pick((t) => t !== baseTid && isDirt(t));
+    const dryTid = pick((t) => t !== baseTid && isDry(t));
     const beachCnt = count.get(2) ?? 0;
+
+    // 照 DE Arabia.rms BASE_BLEND_A / B / C 同色系多层地面机制：
+    // 若烘焙图 terrain[] 中未单列副草皮/泥土格（或与主地面 baseTile 撞成同一张贴图），
+    // 从 DecorFit.groundVariationFor(baseTile) 取 DE 同色系深浅变体，确保 grass / dry / dirt 三层材质层次分明。
+    const variations = groundVariationFor(baseTile);
+    const rawDry = (dryTid !== null && tileFromTerrainId(dryTid)) || null;
+    const dryTile = (rawDry && rawDry !== baseTile)
+        ? rawDry
+        : (variations[0] ?? (fallback?.dry && fallback.dry !== baseTile ? fallback.dry : baseTile));
+
+    const rawDirt = (dirtTid !== null && tileFromTerrainId(dirtTid)) || null;
+    const dirtTile = (rawDirt && rawDirt !== baseTile && rawDirt !== dryTile)
+        ? rawDirt
+        : (variations.find((v) => v !== baseTile && v !== dryTile)
+            ?? variations[1]
+            ?? variations[0]
+            ?? (fallback?.dirt && fallback.dirt !== baseTile ? fallback.dirt : baseTile));
+
+    const rawForest = (forestTid !== null && tileFromTerrainId(forestTid)) || null;
+    const isSparseDesertBase = baseTile === 'pal' || baseTile === 'des' || baseTile === 'qs' || baseTile === 'pal1' || baseTile === 'ds5' || baseTile === 'gravel_default';
+    const forestTile = (rawForest && rawForest !== baseTile && !isSparseDesertBase)
+        ? rawForest
+        : (fallback?.forest && fallback.forest !== baseTile
+            ? fallback.forest
+            : (isSparseDesertBase ? dryTile : (baseTile === 'gr6' || baseTile === 'fo2' ? 'fo2' : 'for')));
 
     const out: Partial<Scene13GroundTiles> = {
         ...(fallback ?? {}),
         grass: baseTile,
-        forest: (forestTid !== null && tileFromTerrainId(forestTid)) || fallback?.forest || baseTile,
-        dirt: (dirtTid !== null && tileFromTerrainId(dirtTid)) || fallback?.dirt || baseTile,
-        dry: (dryTid !== null && tileFromTerrainId(dryTid)) || fallback?.dry || baseTile,
+        forest: forestTile,
+        dirt: dirtTile,
+        dry: dryTile,
         sand: beachCnt > 0 ? (tileFromTerrainId(2) ?? fallback?.sand) : (fallback?.sand ?? 'bch'),
     };
     return out;

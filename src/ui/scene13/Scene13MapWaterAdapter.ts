@@ -1,6 +1,7 @@
 import { DE_TERRAIN_MANIFEST } from '../../data/battlefield/deTerrainData';
 import { nearestStrategicRiver } from '../../map/StrategicRiverProximity';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
+import { deTerrainIsForest, deTerrainTrees } from './Scene13DeTrees';
 import { TAC_TILE_W } from './Scene13GroundLayerGL';
 
 /**
@@ -457,4 +458,241 @@ export async function adaptMapDataSeaOrientation(
         speed: remap(mapData.speed),
         objects: newObjs,
     });
+}
+
+/**
+ * 照 DE Arabia.rms（includes/forest.inc SPAWN_FOREST + includes/stragglers.inc STRAGGLER_SPAWN + stragglers_neutral.inc）：
+ * 补齐因退水改造（relocateTemplateWater / clampMapWaterRatio）或骨架烘焙在中圈（半径 14~38 格核心交战视野）留下的植被空白：
+ *   1. 树种与森林地形 id 100% 取自当前地图自身的 DE 森林地形（deTerrainIsForest），严禁跨气候带换树（沙漠图只用 13 Palm Desert → FPAL）；
+ *   2. 侧翼小林团（SPAWN_FOREST / STRAGGLER_FOREST，每团 9~15 格）直接将格子 terrain[idx] 写为本图森林地形 id，
+ *      并在每格中心 (x+0.5, y+0.5) 放置 1 棵对应 DE 树单位，使 WebGL 自动铺设林下腐殖土且 100% 符合「树跟 DE 地形走」铁律；
+ *   3. 开阔平原散布 DE 散树（STRAGGLER_SPAWN / STRAGGLER_NEUTRAL），纯沙地（14 Desert）或沙漠主题仅放 FPAL（棕榈），水体与 2 Beach 绝不放树。
+ */
+export function enrichDeBattlefieldMidfield(
+    mapData: any,
+    cityWidthPx: number | undefined,
+    seedBase: string,
+    baseTerrain: string | undefined,
+    deMapTheme: string | null | undefined,
+): any {
+    if (!mapData || mapData.isDeCampaign || !mapData.terrain || !mapData.objects) return mapData;
+    const w = mapData.width, h = mapData.height;
+    if (!w || !h || mapData.terrain.length !== w * h) return mapData;
+
+    const isGravelTreeless = baseTerrain === 'gravel_default' || baseTerrain === 'rck';
+    if (isGravelTreeless) return mapData;
+
+    const terrain: number[] = Array.from(mapData.terrain as ArrayLike<number>);
+    const objects: any[] = [...mapData.objects];
+
+    const isWaterId = (tid: number): boolean => {
+        if (tid === 1 || tid === 4 || tid === 15 || tid === 22 || tid === 23 || tid === 58 || tid === 95 || tid === 96) return true;
+        const m: any = DE_TERRAIN_MANIFEST[tid];
+        return !!(m && ((m.is_water && (m.is_water & 7)) || m.overlay_mask_name === 'water.png'));
+    };
+    const isShoreId = (tid: number): boolean => {
+        if (tid === 2) return true;
+        const m: any = DE_TERRAIN_MANIFEST[tid];
+        return !!m && /beach|shore/i.test(String(m.name ?? '') + String(m.name_2 ?? ''));
+    };
+
+    const isDesertTheme = /desert/i.test(String(deMapTheme || '') + ' ' + String(mapData?.header?.theme || ''))
+        || /^(pal|des|qs|pal1)$/i.test(String(baseTerrain || ''));
+
+    // 统计本图已有的 DE 森林地形 id
+    const forestFreq = new Map<number, number>();
+    for (let i = 0; i < terrain.length; i++) {
+        const tid = terrain[i];
+        if (deTerrainIsForest(tid)) {
+            if (isDesertTheme && tid !== 13 && tid !== 48) continue;
+            forestFreq.set(tid, (forestFreq.get(tid) ?? 0) + 1);
+        }
+    }
+
+    let domForestTid: number | null = null;
+    let maxForestCnt = 0;
+    for (const [tid, cnt] of forestFreq) {
+        if (cnt > maxForestCnt) {
+            maxForestCnt = cnt;
+            domForestTid = tid;
+        }
+    }
+    if (domForestTid === null && isDesertTheme) {
+        domForestTid = 13; // 13 Palm Desert
+    }
+    if (domForestTid === null) return mapData;
+
+    const treeUnits = deTerrainTrees(domForestTid);
+    if (!treeUnits || treeUnits.length === 0) return mapData;
+    const domTreeUnit = treeUnits[0].unit;
+
+    // 标记已有树木/物体的格子
+    const hasTree = new Uint8Array(w * h);
+    for (let i = 0; i < w * h; i++) {
+        if (deTerrainIsForest(terrain[i])) hasTree[i] = 1;
+    }
+    for (const ob of objects) {
+        const ox = Math.floor(ob.x), oy = Math.floor(ob.y);
+        if (ox >= 0 && ox < w && oy >= 0 && oy < h) {
+            hasTree[oy * w + ox] = 1;
+        }
+    }
+
+    const isSafeDryCell = (x: number, y: number, pad = 2): boolean => {
+        if (x < 5 || x >= w - 5 || y < 5 || y >= h - 5) return false;
+        for (let dy = -pad; dy <= pad; dy++) {
+            for (let dx = -pad; dx <= pad; dx++) {
+                const t = terrain[(y + dy) * w + (x + dx)];
+                if (isWaterId(t) || isShoreId(t)) return false;
+            }
+        }
+        return true;
+    };
+
+    const cX = (w - 1) / 2, cY = (h - 1) / 2;
+    const cityR = Math.max(11.5, (cityWidthPx ? cityWidthPx / 2 / TAC_TILE_W : 6) + 5.5);
+
+    // 避开四门十字大道与两军主冲锋走廊
+    const inRoadOrCorridor = (x: number, y: number): boolean => {
+        const dx = x - cX, dy = y - cY;
+        if (Math.abs(dx) <= 3.5 || Math.abs(dy) <= 3.5) return true;
+        // 主交战轴线（屏幕水平/对角方向留出开阔阵列机动走廊）
+        if (Math.abs(dx - dy) <= 4.5 && Math.hypot(dx, dy) < 28) return true;
+        return false;
+    };
+
+    let hsh = 2166136261 >>> 0;
+    const seedStr = seedBase + '|de_midfield';
+    for (let i = 0; i < seedStr.length; i++) {
+        hsh = Math.imul(hsh ^ seedStr.charCodeAt(i), 16777619) >>> 0;
+    }
+    const rnd = (): number => {
+        hsh = Math.imul(hsh ^ (hsh >>> 15), 2246822507) ^ Math.imul(hsh ^ (hsh >>> 13), 3266489909);
+        return ((hsh >>> 0) % 100000) / 100000;
+    };
+
+    const growDeForestClump = (startX: number, startY: number, targetSize: number, minR: number, maxR: number): number => {
+        if (!isSafeDryCell(startX, startY, 2) || inRoadOrCorridor(startX, startY)) return 0;
+        const q: Array<[number, number]> = [[startX, startY]];
+        const visited = new Set<number>([startY * w + startX]);
+        let grown = 0;
+        while (q.length > 0 && grown < targetSize) {
+            const pickIdx = Math.floor(rnd() * q.length);
+            const [cx, cy] = q.splice(pickIdx, 1)[0];
+            const idx = cy * w + cx;
+            const d = Math.hypot(cx - cX, cy - cY);
+            if (d < minR || d > maxR || !isSafeDryCell(cx, cy, 2) || inRoadOrCorridor(cx, cy)) continue;
+            if (!hasTree[idx]) {
+                terrain[idx] = domForestTid!;
+                hasTree[idx] = 1;
+                objects.push({
+                    name: domTreeUnit,
+                    x: cx + 0.5,
+                    y: cy + 0.5,
+                    cell: idx,
+                });
+                grown++;
+            }
+            const nbrs: Array<[number, number]> = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]];
+            for (const [nx, ny] of nbrs) {
+                const nIdx = ny * w + nx;
+                if (!visited.has(nIdx) && rnd() < 0.78) {
+                    visited.add(nIdx);
+                    q.push([nx, ny]);
+                }
+            }
+        }
+        return grown;
+    };
+
+    // 1. 检查中圈（半径 cityR+2.5 ~ 33 格）与外圈退水陆地（半径 31 ~ 46 格）的 8 个方位扇区
+    const midSectorTrees = new Int32Array(8);
+    const outerSectorTrees = new Int32Array(8);
+    const outerSectorLand = new Int32Array(8);
+    for (let y = 6; y < h - 6; y++) {
+        for (let x = 6; x < w - 6; x++) {
+            const dx = x - cX, dy = y - cY;
+            const d = Math.hypot(dx, dy);
+            const ang = Math.atan2(dy, dx);
+            const sec = Math.floor(((ang + Math.PI) / (Math.PI * 2)) * 8) % 8;
+            const idx = y * w + x;
+            if (d >= cityR + 2 && d <= 33) {
+                if (hasTree[idx]) midSectorTrees[sec]++;
+            } else if (d > 31 && d <= 47) {
+                if (!isWaterId(terrain[idx]) && !isShoreId(terrain[idx])) outerSectorLand[sec]++;
+                if (hasTree[idx]) outerSectorTrees[sec]++;
+            }
+        }
+    }
+
+    // 在中圈空旷侧翼扇区补齐 DE SPAWN_FOREST / STRAGGLER_FOREST 近战侧翼小林团（3~4 团，每团 9~14 格）
+    let midClumpsPlaced = 0;
+    const secOrder = [0, 1, 2, 3, 4, 5, 6, 7].sort(() => rnd() - 0.5);
+    for (const sec of secOrder) {
+        if (midClumpsPlaced >= 4) break;
+        if (midSectorTrees[sec] >= 6) continue;
+        const baseAng = (sec + 0.3 + rnd() * 0.4) * (Math.PI / 4) - Math.PI;
+        const rad = cityR + 4.5 + rnd() * (Math.min(31, cityR + 14) - (cityR + 4.5));
+        const sx = Math.round(cX + Math.cos(baseAng) * rad);
+        const sy = Math.round(cY + Math.sin(baseAng) * rad);
+        const clumpSize = 9 + Math.floor(rnd() * 6);
+        if (growDeForestClump(sx, sy, clumpSize, cityR + 2.5, 34) >= 4) {
+            midClumpsPlaced++;
+        }
+    }
+
+    // 在因退水（如水库/海湾退潮）变为空旷草地的外圈扇区补齐 DE BASE_FOREST 林团（最多 3 团，每团 14~20 格）
+    let outerClumpsPlaced = 0;
+    for (const sec of secOrder) {
+        if (outerClumpsPlaced >= 3) break;
+        if (outerSectorLand[sec] < 80 || outerSectorTrees[sec] >= 8) continue;
+        const baseAng = (sec + 0.25 + rnd() * 0.5) * (Math.PI / 4) - Math.PI;
+        const rad = 33 + rnd() * 11;
+        const sx = Math.round(cX + Math.cos(baseAng) * rad);
+        const sy = Math.round(cY + Math.sin(baseAng) * rad);
+        const clumpSize = 14 + Math.floor(rnd() * 7);
+        if (growDeForestClump(sx, sy, clumpSize, 30, 47) >= 6) {
+            outerClumpsPlaced++;
+        }
+    }
+
+    // 2. 照 DE includes/stragglers.inc & stragglers_neutral.inc：
+    //    在城郊与交战平原（半径 cityR+1.5 ~ 36 格）稀疏点缀 14~18 棵 DE 散树（间距 ≥ 4 格，绝不挡阵列）
+    const targetStragglers = 16;
+    let stragglersPlaced = 0;
+    for (let attempt = 0; attempt < 140 && stragglersPlaced < targetStragglers; attempt++) {
+        const ang = rnd() * Math.PI * 2;
+        const rad = cityR + 1.5 + rnd() * (36 - (cityR + 1.5));
+        const gx = Math.round(cX + Math.cos(ang) * rad);
+        const gy = Math.round(cY + Math.sin(ang) * rad);
+        if (!isSafeDryCell(gx, gy, 2) || inRoadOrCorridor(gx, gy)) continue;
+        const cellTid = terrain[gy * w + gx];
+        if (isWaterId(cellTid) || isShoreId(cellTid) || deTerrainIsForest(cellTid)) continue;
+
+        // 检查周围 3 格内是否已有树（保持 DE 散树疏朗间距）
+        let nearTree = false;
+        for (let dy = -3; dy <= 3 && !nearTree; dy++) {
+            for (let dx = -3; dx <= 3; dx++) {
+                if (hasTree[(gy + dy) * w + (gx + dx)]) {
+                    nearTree = true;
+                    break;
+                }
+            }
+        }
+        if (nearTree) continue;
+
+        // 纯沙地（14 Desert）或沙漠主题只放棕榈（FPAL），其余陆地用本图主导森林树种
+        const stragglerUnit = (cellTid === 14 || isDesertTheme) ? 'FPAL' : domTreeUnit;
+        const idx = gy * w + gx;
+        hasTree[idx] = 1;
+        objects.push({
+            name: stragglerUnit,
+            x: gx + 0.5,
+            y: gy + 0.5,
+            cell: idx,
+        });
+        stragglersPlaced++;
+    }
+
+    return { ...mapData, terrain, objects };
 }

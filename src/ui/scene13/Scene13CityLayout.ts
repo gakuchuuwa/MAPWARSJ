@@ -18,6 +18,7 @@ import {
 import { pickTree, type TreeSeason } from './TreeAssignment';
 import { DE_MAP_THEMES, type DeMapThemeId } from './Scene13DeMapThemes';
 import { deTerrainSeasonalTree, seasonalDeTree } from './Scene13DeTrees';
+import { groundDecorFor, decorFits } from './DecorFit';
 import { CITIES_V2 } from '../../data/cities_v2';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../../data/CityWonders';
 import { isWonderFounded } from '../../data/wonderFoundedYears';
@@ -483,6 +484,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         for (const sp of this.spawns) {
             if (Math.hypot(x - sp.x, (y - sp.y) * 1.5) < 320) return false;
         }
+        this.ensureNatureAsset(asset);
         this.decorSprites.push({
             asset,
             frame,
@@ -492,6 +494,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             scale,
             layer: 'world',
             z: extraZ,
+            lift: gl.elevationLiftAt(x, y, W, H),
             indestructible: true,
             obstruction: undefined,
             obstructionContactSec: 0,
@@ -506,28 +509,63 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     //    已整段删除：DE 的林地＝森林地形自动长出来的那些，人工造林会造出 DE 地图上不存在的成片林
     //    （沙漠图上就是「沙丘上一片棕榈密林」）。树木位置一律以 DE 烘焙图为准（见上方对象过滤）。
 
-    // ── 2. 【高崖地标险石（Cliff Landmark）】：全图仅 1 处，立于最高山梁 ──
-    const highSpots: Array<{ gx: number; gy: number; x: number; y: number; elev: number }> = [];
-    const midSlopeSpots: Array<{ x: number; y: number; elev: number }> = [];
-    const plainSpots: Array<{ x: number; y: number; elev: number }> = [];
+    // ── 2. 【DE 三层微景观体系（Arabia.rms SOLID_OBJECT + AESTHETIC_GROUPED/FLAT + AESTHETIC_SCATTER）】 ──
+    // 采集核心交战视野圈（半径 minHillDistCells+1.5 ~ 38 格）及外围的干燥陆地候选点，并按确定性随机洗牌
+    const highSpots: Array<{ gx: number; gy: number; x: number; y: number; elev: number; dist: number }> = [];
+    const midSlopeSpots: Array<{ gx: number; gy: number; x: number; y: number; elev: number; dist: number }> = [];
+    const midRingPlainSpots: Array<{ gx: number; gy: number; x: number; y: number; elev: number; dist: number }> = [];
+    const outerPlainSpots: Array<{ gx: number; gy: number; x: number; y: number; elev: number; dist: number }> = [];
 
-    for (let gy = 4; gy <= N - 4; gy += 3) {
-        for (let gx = 4; gx <= N - 4; gx += 3) {
+    for (let gy = 5; gy <= N - 5; gy += 2) {
+        for (let gx = 5; gx <= N - 5; gx += 2) {
             const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
             if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) continue;
             if (gl.isWaterAt(pt.x, pt.y, W, H) || (inMoat && inMoat(pt.x, pt.y))) continue;
             const distCells = Math.hypot(gx - cGx, gy - cGy);
+            if (distCells < minHillDistCells + 1.2) continue;
             const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
-            if (elev >= 2.0 && (!isPassType || Math.abs(gy - cGy) >= 16.0)) {
-                highSpots.push({ gx, gy, x: pt.x, y: pt.y, elev });
-            } else if (elev >= 0.8 && elev < 2.0) {
-                midSlopeSpots.push({ x: pt.x, y: pt.y, elev });
-            } else if (elev < 1.0 && distCells >= minHillDistCells + 2.0) {
-                plainSpots.push({ x: pt.x, y: pt.y, elev });
+            const item = { gx, gy, x: pt.x, y: pt.y, elev, dist: distCells };
+            if (elev >= 1.8 && (!isPassType || Math.abs(gy - cGy) >= 14.0)) {
+                highSpots.push(item);
+            } else if (elev >= 0.7 && elev < 1.8) {
+                midSlopeSpots.push(item);
+            } else if (distCells <= 36) {
+                midRingPlainSpots.push(item);
+            } else {
+                outerPlainSpots.push(item);
             }
         }
     }
 
+    const shuffle = <T>(arr: T[]): T[] => {
+        const out = [...arr];
+        for (let i = out.length - 1; i > 0; i--) {
+            const j = Math.floor(mRnd() * (i + 1));
+            const tmp = out[i];
+            out[i] = out[j];
+            out[j] = tmp;
+        }
+        return out;
+    };
+
+    const shuffledMidSlope = shuffle(midSlopeSpots);
+    const shuffledMidPlain = shuffle(midRingPlainSpots);
+    const shuffledOuterPlain = shuffle(outerPlainSpots);
+    const plainSpots = [...shuffledMidPlain, ...shuffledOuterPlain];
+
+    const decorSet = groundDecorFor(siteBaseTile);
+    const decorCtx = {
+        lat: siteLat,
+        lng: siteLng,
+        season: this.sceneSeason,
+        winterSnow: isSnow,
+        isSiege: true,
+    };
+    const validFlat = decorSet.flat.filter((a) => decorFits(a, decorCtx));
+    const validSolid = decorSet.solid.filter((a) => decorFits(a, decorCtx));
+    const validScatter = decorSet.scatter.filter((a) => decorFits(a, decorCtx));
+
+    // (2a) 高崖地标险石（Cliff Landmark）：立于山梁高点
     if (highSpots.length > 0) {
         const peakSpot = [...highSpots].sort((a, b) => b.elev - a.elev)[0];
         if (peakSpot) {
@@ -538,60 +576,123 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const peakTree = deTerrainSeasonalTree(terrainAtCell(peakSpot.gx, peakSpot.gy), calSeason, isSnow)
                     ?? (themeLeadTree.length > 0 ? seasonalDeTree(themeLeadTree[0], calSeason, isSnow) : null);
                 const lonePine = peakTree ?? (isSnow ? 'PINE' : (isArid ? 'DEAD_TREE' : 'ASIAN_PINE'));
-                this.ensureNatureAsset(lonePine);
                 pushSafeDecor(lonePine, peakSpot.x + 32, peakSpot.y - 16, 0.82, 0, mRnd() < 0.5);
             }
         }
     }
 
-    // ── 3. 【岩伴草灌微景（Rock + Flora Pairing，DE second_object）】：全图严格仅 3~4 处单石微景 ──
-    const rockSpots = [...(midSlopeSpots.length > 0 ? midSlopeSpots : plainSpots)]
-        .sort(() => mRnd() - 0.5)
-        .slice(0, isPassType ? 4 : 3);
-
-    for (const rs of rockSpots) {
-        const rockAsset = mRnd() < 0.55 ? 'ROCK1' : 'ROCK2';
-        if (pushSafeDecor(rockAsset, rs.x, rs.y, 0.90, Math.floor(mRnd() * 6), mRnd() < 0.5)) {
-            const companion = isArid ? 'GRASS_DRY' : (mRnd() < 0.5 ? 'SHRUB_GREEN' : 'GRASS_GREEN');
-            pushSafeDecor(companion, rs.x + (mRnd() < 0.5 ? -22 : 22), rs.y + 8, 0.72, 0, mRnd() < 0.5, -1);
+    // (2b) 岩伴草灌微景群（DE SOLID_OBJECT + second_object SOLID_UNDERBRUSH + SOLID_SURROUND）：
+    //      在交战圈侧翼坡地与平原布置 12~14 处主岩伴生灌木与碎石（保持间距 ≥ 520px）
+    const rockCandidates = [...shuffledMidSlope, ...shuffledMidPlain];
+    const placedRocks: Array<{ x: number; y: number }> = [];
+    const targetRockGroups = isPassType ? 14 : 12;
+    for (const rs of rockCandidates) {
+        if (placedRocks.length >= targetRockGroups) break;
+        if (placedRocks.some((p) => Math.hypot(p.x - rs.x, (p.y - rs.y) * 1.5) < 520)) continue;
+        const rockPool = validSolid.length > 0 ? validSolid : ['ROCK1', 'ROCK2'];
+        const rockAsset = rockPool[Math.floor(mRnd() * rockPool.length)];
+        if (pushSafeDecor(rockAsset, rs.x, rs.y, 0.88 + mRnd() * 0.14, Math.floor(mRnd() * 6), mRnd() < 0.5)) {
+            placedRocks.push({ x: rs.x, y: rs.y });
+            const companionPool = validFlat.length > 0 ? validFlat : (isArid ? ['GRASS_DRY'] : ['SHRUB_GREEN', 'GRASS_GREEN']);
+            const comp1 = companionPool[Math.floor(mRnd() * companionPool.length)];
+            pushSafeDecor(comp1, rs.x + (mRnd() < 0.5 ? -24 : 24), rs.y + 10, 0.76, Math.floor(mRnd() * 4), mRnd() < 0.5, -1);
+            if (mRnd() < 0.65 && validScatter.length > 0) {
+                const scAsset = validScatter[Math.floor(mRnd() * validScatter.length)];
+                pushSafeDecor(scAsset, rs.x + (mRnd() < 0.5 ? 28 : -28), rs.y - 8, 0.78, Math.floor(mRnd() * 4), mRnd() < 0.5, -1);
+            }
         }
     }
 
-    // ── 4. 【露天采石点 (Stone Mine)】：全图仅 1 处 ──
-    if (highSpots.length > 1) {
-        const mineSpot = highSpots[1];
-        pushSafeDecor('MINE_STONE', mineSpot.x, mineSpot.y, 1.05, 0, mRnd() < 0.5);
+    // (2c) 成簇花草灌木微景（DE AESTHETIC_GROUPED / AESTHETIC_FLAT，group_placement_radius 2~3）：
+    //      在核心交战圈及退水陆地上点缀 18 组同色系灌木/野花/蕨丛（每组 2~3 株自然散落，间距 ≥ 420px）
+    if (validFlat.length > 0) {
+        const placedFlats: Array<{ x: number; y: number }> = [];
+        const targetFlatGroups = 18;
+        for (const fs of plainSpots) {
+            if (placedFlats.length >= targetFlatGroups) break;
+            if (placedFlats.some((p) => Math.hypot(p.x - fs.x, (p.y - fs.y) * 1.5) < 420)) continue;
+            const leadFlat = validFlat[Math.floor(mRnd() * validFlat.length)];
+            if (pushSafeDecor(leadFlat, fs.x, fs.y, 0.84 + mRnd() * 0.12, Math.floor(mRnd() * 6), mRnd() < 0.5, -1)) {
+                placedFlats.push({ x: fs.x, y: fs.y });
+                const subCount = 1 + Math.floor(mRnd() * 2);
+                for (let s = 0; s < subCount; s++) {
+                    const subAsset = validFlat[Math.floor(mRnd() * validFlat.length)];
+                    const ang = mRnd() * Math.PI * 2;
+                    const distPx = 24 + mRnd() * 32;
+                    pushSafeDecor(
+                        subAsset,
+                        fs.x + Math.cos(ang) * distPx,
+                        fs.y + Math.sin(ang) * distPx * 0.5,
+                        0.74 + mRnd() * 0.14,
+                        Math.floor(mRnd() * 6),
+                        mRnd() < 0.5,
+                        -1
+                    );
+                }
+            }
+        }
     }
 
-    // ── 5. 【野生浆果灌木丛 (Forage Berry Bushes)】：全图仅 1 处成簇，4 丛聚在一块 ──
-    if (plainSpots.length > 0) {
-        const berryCenter = plainSpots[0];
-        const berryOffsets = [[0, 0], [22, -8], [-18, 10], [12, 14]];
+    // (2d) 原野散生草丛（DE AESTHETIC_SCATTER，对应 dat terrain_unit_density 草丛点缀）：
+    //      在开阔交战区及退水新陆地上均匀点缀 26 处当地草丛（GRASS_DRY / GRASS_GREEN），彻底消除光板平地感
+    if (validScatter.length > 0) {
+        const scatterAsset = validScatter[0];
+        let scatterPlaced = 0;
+        const step = Math.max(1, Math.floor(plainSpots.length / 32));
+        for (let i = 0; i < plainSpots.length && scatterPlaced < 26; i += step) {
+            const sp = plainSpots[i];
+            const jx = (mRnd() - 0.5) * 44;
+            const jy = (mRnd() - 0.5) * 22;
+            if (pushSafeDecor(scatterAsset, sp.x + jx, sp.y + jy, 0.78 + mRnd() * 0.14, Math.floor(mRnd() * 6), mRnd() < 0.5, -1)) {
+                scatterPlaced++;
+            }
+        }
+    }
+
+    // ── 4. 【露天采石点 (Stone Mine)】：交战圈侧翼坡地 2 处 ──
+    const mineCandidates = [... shuffle(highSpots), ...shuffledMidSlope];
+    let minesPlaced = 0;
+    for (const ms of mineCandidates) {
+        if (minesPlaced >= 2) break;
+        if (ms.dist >= minHillDistCells + 3 && ms.dist <= 36) {
+            if (pushSafeDecor('MINE_STONE', ms.x, ms.y, 1.02, 0, mRnd() < 0.5)) {
+                minesPlaced++;
+            }
+        }
+    }
+
+    // ── 5. 【野生浆果灌木丛 (Forage Berry Bushes)】：城郊交战圈侧翼 2 处成簇（每处 4~5 丛聚在一块） ──
+    let berriesPlaced = 0;
+    for (const bc of shuffledMidPlain) {
+        if (berriesPlaced >= 2) break;
+        if (bc.dist < minHillDistCells + 3 || bc.dist > 30) continue;
+        const berryOffsets = [[0, 0], [24, -9], [-20, 11], [14, 15], [-12, -12]];
+        let anyPlaced = false;
         for (const [bx, by] of berryOffsets) {
-            pushSafeDecor('FORAGE_BUSH', berryCenter.x + bx, berryCenter.y + by, 0.88, Math.floor(mRnd() * 4), mRnd() < 0.5);
+            if (pushSafeDecor('FORAGE_BUSH', bc.x + bx, bc.y + by, 0.88, Math.floor(mRnd() * 4), mRnd() < 0.5)) {
+                anyPlaced = true;
+            }
         }
+        if (anyPlaced) berriesPlaced++;
     }
 
-    // ── 6. 【向阳野花草甸 (Wildflower Patches)】：全图仅 1~2 处小野花斑 ──
-    if (!isArid && !isSnow && plainSpots.length > 1) {
-        const flowerSpots = plainSpots.slice(1, 3);
+    // ── 6. 【向阳野花草甸 (Wildflower Patches)】：温带非雪地城郊点缀 3 处野花斑 ──
+    if (!isArid && !isSnow && shuffledMidPlain.length > 4) {
         const flowerPick = ['FLOWER_1', 'FLOWER_2'];
-        for (let i = 0; i < flowerSpots.length; i++) {
-            const fs = flowerSpots[i];
-            pushSafeDecor(flowerPick[i % flowerPick.length], fs.x, fs.y, 0.85, 0, mRnd() < 0.5);
+        for (let i = 0; i < 3 && i + 2 < shuffledMidPlain.length; i++) {
+            const fs = shuffledMidPlain[i + 2];
+            pushSafeDecor(flowerPick[i % flowerPick.length], fs.x, fs.y, 0.82, 0, mRnd() < 0.5, -1);
         }
     }
 
-    // ── 7. 【古道遗痕 (Roadside Relic)】：远郊路旁仅 1 处废弃破木车伴生木桶 ──
-    if (plainSpots.length > 3) {
-        const rSpot = plainSpots[3];
+    // ── 7. 【古道遗痕 (Roadside Relic)】：城郊路旁废弃破木车伴生木桶与火把 ──
+    if (shuffledMidPlain.length > 6) {
+        const rSpot = shuffledMidPlain[5];
         if (pushSafeDecor('BATTLEFIELD:CART_BROKEN', rSpot.x, rSpot.y, 0.90, 0, false)) {
             pushSafeDecor('BARRELS', rSpot.x + 26, rSpot.y + 10, 0.80, 0, false);
         }
-        if (plainSpots.length > 4) {
-            const torchSpot = plainSpots[4];
-            pushSafeDecor('BATTLEFIELD:TORCH_A', torchSpot.x, torchSpot.y, 0.95, 0, false);
-        }
+        const torchSpot = shuffledMidPlain[6];
+        pushSafeDecor('BATTLEFIELD:TORCH_A', torchSpot.x, torchSpot.y, 0.95, 0, false);
     }
 
     // ── 大城 / 中城 / 小城 城内景观与街角细节（庭院绿植、内门火把、街角木桶与花坛，纯视觉点缀不挡路、不可摧毁） ──

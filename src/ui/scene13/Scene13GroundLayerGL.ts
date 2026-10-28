@@ -640,10 +640,10 @@ export class Scene13GroundLayerGL {
       const sampledTotal = Math.max(1, Math.floor((N - 16) / 2) * Math.floor((N - 16) / 2));
       const reliefRatio = elevatedCells / sampledTotal;
 
-      // 1. 中央区域保持 0 级平地，高地丘陵只在外围（距离中心 >= 22 格）生成
+      // 1. 中央城池核心地基保持 0 级平地，交战区侧翼及外围（距离中心 >= 13 格）允许保留 DE SPAWN_ELEVATION 缓坡微丘
       for (let y = 0; y < N; y++) {
         for (let x = 0; x < N; x++) {
-          if (!data.isDeCampaign && Math.hypot(x - cx, y - cy) < 22) {
+          if (!data.isDeCampaign && Math.hypot(x - cx, y - cy) < 13) {
             elev[y * N + x] = 0;
           }
         }
@@ -671,7 +671,7 @@ export class Scene13GroundLayerGL {
           sx = 8 + Math.floor(rnd() * (N - 16));
           sy = 8 + Math.floor(rnd() * (N - 16));
         }
-        if (Math.hypot(sx - cx, sy - cy) < 24 || isWetCell(sx, sy)) continue;
+        if (Math.hypot(sx - cx, sy - cy) < 15 || isWetCell(sx, sy)) continue;
         const baseOe = origElev[sy * N + sx];
         // 平原低地仅起 1 级微丘；真实山地/丘陵按原 DEM 高度延伸 1~3 级 DE 平顶山脊
         const maxAdd = baseOe >= 3 ? 3 : baseOe >= 1 ? 2 : 1;
@@ -693,14 +693,15 @@ export class Scene13GroundLayerGL {
         while (q.length > 0 && placed < maxT) {
           const idx = Math.floor(rnd() * q.length);
           const [x, y] = q.splice(idx, 1)[0];
-          if (isWetCell(x, y) || Math.hypot(x - cx, y - cy) < 22) continue;
+          if (isWetCell(x, y) || Math.hypot(x - cx, y - cy) < 13) continue;
           placed++;
-          const capH = origElev[y * N + x] >= 3 ? 4 : origElev[y * N + x] >= 1 ? 3 : 2;
+          const distC = Math.hypot(x - cx, y - cy);
+          const capH = distC < 20 ? 1 : (origElev[y * N + x] >= 3 ? 4 : origElev[y * N + x] >= 1 ? 3 : 2);
           elev[y * N + x] = Math.min(capH, Math.max(elev[y * N + x] ?? 0, origElev[y * N + x] + hAdd));
 
           const neighbors: Array<[number, number]> = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]];
           for (const [nx, ny] of neighbors) {
-            if (nx >= 2 && nx < N - 2 && ny >= 2 && ny < N - 2 && !visitedClump[ny * N + nx] && !isWetCell(nx, ny) && Math.hypot(nx - cx, ny - cy) >= 22) {
+            if (nx >= 2 && nx < N - 2 && ny >= 2 && ny < N - 2 && !visitedClump[ny * N + nx] && !isWetCell(nx, ny) && Math.hypot(nx - cx, ny - cy) >= 13) {
               // 顺应真实 DEM 走势扩散：真实高地方向满概率延伸，低平方向适度收敛
               if (origElev[ny * N + nx] >= origElev[y * N + x] || rnd() < 0.68) {
                 visitedClump[ny * N + nx] = 1;
@@ -715,7 +716,7 @@ export class Scene13GroundLayerGL {
       for (let pass = 0; pass < 4; pass++) {
         for (let y = 1; y < N - 1; y++) {
           for (let x = 1; x < N - 1; x++) {
-            if (!data.isDeCampaign && Math.hypot(x - cx, y - cy) < 20) {
+            if (!data.isDeCampaign && Math.hypot(x - cx, y - cy) < 11) {
               elev[y * N + x] = 0;
               continue;
             }
@@ -789,16 +790,53 @@ export class Scene13GroundLayerGL {
         }
         // 🔴 [2026-10-12 主人令「按顺序执行，只负责地图设计」「森林地下是铺满整块 forestFloorTile 的」]
         // 彻底按 DE dat 的所有森林/林地地形类型判定林地；
-        // 但当战场主底图为荒漠/戈壁/黄土/干草原/高寒砾石时，树木已被稀疏化为散生灌木/孤树，不铺大块深色森林底斑
+        // 但当战场主底图为荒漠/戈壁/高寒砾石时，树木为沙漠棕榈或孤树，不铺大块深色森林底斑（gr7 属温带/泰加常见底图，照常铺林下腐殖土）
         const baseGrass = grassTileName ?? 'gr2';
         const isSparseTreelessBiome = baseGrass === 'pal' || baseGrass === 'des' || baseGrass === 'ds5'
           || baseGrass === 'qs' || baseGrass === 'pal1'
-          || baseGrass === 'gr7' || baseGrass === 'gr5' || baseGrass === 'gravel_default';
+          || baseGrass === 'gr5' || baseGrass === 'gravel_default';
         const isForestTerrain = !isSparseTreelessBiome && (
           fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 || id === 13 || id === 48 ||
           tname.includes('Forest') || tname.includes('Jungle') || tname.includes('Leaves') || tname.includes('Palm')
         );
         if (isForestTerrain) rawForest[y * N + x] = 1.0;
+      }
+    }
+
+    // 照 DE Arabia.rms BASE_BLEND_A / B / C（terrain_mask 1 约 24% 覆盖率）机制：
+    // 当烘焙图 terrain[] 中未显式写入泥土/副地表斑块格时，按确定性种子生成有机多团块副地表斑块，打破大面积单一平铺感
+    let dirtCount = 0;
+    for (let i = 0; i < N * N; i++) {
+      if (rawDirt[i] > 0.5) dirtCount++;
+    }
+    if (dirtCount < N * N * 0.03) {
+      let dSeed = ((Math.round((this.noiseOff[0] + 50) * 1000) * 73856093) ^ (Math.round((this.noiseOff[1] + 50) * 1000) * 19349663)) >>> 0;
+      const dRnd = () => {
+        dSeed = (dSeed * 1664525 + 1013904223) >>> 0;
+        return dSeed / 4294967296;
+      };
+      const patchClumps = 22;
+      for (let c = 0; c < patchClumps; c++) {
+        const sx = 6 + Math.floor(dRnd() * (N - 12));
+        const sy = 6 + Math.floor(dRnd() * (N - 12));
+        if (rawWater[sy * N + sx] > 0.1) continue;
+        const targetTiles = 28 + Math.floor(dRnd() * 48);
+        const q: Array<[number, number]> = [[sx, sy]];
+        let placed = 0;
+        while (q.length > 0 && placed < targetTiles) {
+          const pickIdx = Math.floor(dRnd() * q.length);
+          const [px, py] = q.splice(pickIdx, 1)[0];
+          const cellIdx = py * N + px;
+          if (rawWater[cellIdx] > 0.1 || rawDirt[cellIdx] > 0.5) continue;
+          rawDirt[cellIdx] = 0.85;
+          placed++;
+          const nbrs: Array<[number, number]> = [[px + 1, py], [px - 1, py], [px, py + 1], [px, py - 1]];
+          for (const [nx, ny] of nbrs) {
+            if (nx >= 2 && nx < N - 2 && ny >= 2 && ny < N - 2 && rawWater[ny * N + nx] < 0.1 && rawDirt[ny * N + nx] < 0.1 && dRnd() < 0.65) {
+              q.push([nx, ny]);
+            }
+          }
+        }
       }
     }
 

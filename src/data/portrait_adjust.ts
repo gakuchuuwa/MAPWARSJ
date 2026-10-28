@@ -8771,6 +8771,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 15
+        },
+        "/assets/JIANGNAN/gen_xiao_xian.png": {
+            "scale": 1.16,
+            "offsetX": -3,
+            "offsetY": 14
+        },
+        "/assets/AFRICA/songhai_askia_muhammad.png": {
+            "scale": 0.92,
+            "offsetX": 10,
+            "offsetY": -9
+        },
+        "/assets/AFRICA/bfe_sonni_baru.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -31
         }
     },
     "folderGuides": {
