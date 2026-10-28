@@ -8811,6 +8811,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 35
+        },
+        "/assets/POLES/bfe_potocki.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {
