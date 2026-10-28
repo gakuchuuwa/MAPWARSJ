@@ -29,7 +29,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'abasi_mustasim': 'ORIE',   // 阿拔斯｜穆斯塔西姆｜据点 巴格达
     'abasi_muwafake': 'ORIE',   // 阿拔斯｜穆瓦法克｜据点 巴格达
     'adal_ghazi': 'ETHIOPIANS',   // 阿达尔｜格拉尼｜据点 塞拉
-    'adao_d_mafushou': 'WESTERN',   // 阿克苏道｜马福寿｜据点 昆岗
+    'adao_d_mafushou': 'WESTERN',   // 大清｜马福寿｜据点 昆岗
     'adile_adilesha': 'INDIA',   // 阿迪勒｜阿迪勒沙｜据点 比贾布尔
     'agui': 'NORTHEAST',   // 金川｜阿桂｜据点 美诺寨
     'ahaomu_laqite': 'BENGALIS',   // 阿豪姆｜拉其特｜据点 戈尔冈
@@ -1133,7 +1133,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'pingyuan_yanzhenqing': 'WEI',   // 唐国｜颜真卿｜据点 平原城
     'pisha_weichisheng': 'WESTERN',   // 毗沙｜尉迟胜｜据点 于阗
     'pishan_daihu': 'WESTERN',   // 皮山｜代胡｜据点 固玛
-    'pizhou_lvbu': 'CENTRAL',   // 吕布｜吕布｜据点 下邳
+    'pizhou_lvbu': 'CENTRAL',   // 徐州｜吕布｜据点 下邳
     'pomeilaniya_bogislaw': 'GERMANIC',   // 波美拉尼亚｜博吉斯拉夫｜据点 什切青
     'porbazhyn_mouyu': 'MONGOL',   // 回鹘｜牟羽可汗｜据点 博尔巴任
     'pugu_ashinaguduolu': 'MONGOL',   // 突厥｜骨咄禄｜据点 燕然山
@@ -1407,10 +1407,10 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xibo_d_tubote': 'CENTRAL_ASIA',   // 锡伯｜图伯特｜据点 固尔札
     'xibolai_dawei': 'ORIE',   // 希伯来｜大卫｜据点 耶路撒冷
     'xibolai_majiabi': 'ORIE',   // 希伯来｜犹大马加比｜据点 耶路撒冷
-    'xichu_xiangyu': 'CENTRAL',   // 西楚｜项羽｜据点 彭城
+    'xichu_xiangyu': 'CENTRAL',   // 楚国｜项羽｜据点 彭城
     'xie_xiefangde': 'JIANGNAN',   // 宋国｜谢枋得｜据点 葛溪
     'xiemian_xiemianwang': 'CUMAN',   // 萨维尔｜齐贝尔｜据点 谢缅杰尔（2026-10-24 城风格改可萨系）
-    'xierhe_saerjue': 'CENTRAL_ASIA',   // 锡尔河｜塞尔柱｜据点 哲德
+    'xierhe_saerjue': 'CENTRAL_ASIA',   // 乌古斯叶护国｜塞尔柱｜据点 哲德
     'xierwan_farukusha': 'ORIE',   // 希尔万王国｜法鲁克沙｜据点 巴库
     'xigete_roderic': 'GOTHS',   // 西哥特｜罗德里克｜据点 托莱多
     'xihai_d_fulianchou': 'KHITAN',   // 吐谷浑｜伏连筹｜据点 伏俟城

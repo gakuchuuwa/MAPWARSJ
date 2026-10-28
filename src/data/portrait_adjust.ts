@@ -258,7 +258,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/CENTRAL/shangzhou_shangyang.png": {
-            "scale": 1.12,
+            "scale": 1.08,
             "offsetX": 4,
             "offsetY": -8
         },
@@ -2078,8 +2078,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/CENTRAL/xichu_xiangyu.png": {
-            "scale": 1.32,
-            "offsetX": -33,
+            "scale": 1.26,
+            "offsetX": -29,
             "offsetY": -30
         },
         "/assets/liuhan/__闲置__liuhan_13.png": {
@@ -5518,8 +5518,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/PURU/mojietuo_pinbisuoluo.png": {
-            "scale": 1.03,
-            "offsetX": 0,
+            "scale": 0.99,
+            "offsetX": 2,
             "offsetY": 9
         },
         "/assets/MUGHAL/mowoer_akeba.png": {
@@ -5670,7 +5670,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/TIBET/gurkha_badouersaye.png": {
             "scale": 1.16,
             "offsetX": 0,
-            "offsetY": 8
+            "offsetY": 9
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_17.png": {
             "scale": 0.99,
@@ -8453,7 +8453,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/CENTRAL/__闲置__CENTRAL_67.png": {
-            "scale": 1.03,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": -14
         },
@@ -8726,6 +8726,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 1
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_23.png": {
+            "scale": 0.97,
+            "offsetX": 2,
+            "offsetY": 29
+        },
+        "/assets/JIANGNAN/bfe3_13.png": {
+            "scale": 1.16,
+            "offsetX": 16,
+            "offsetY": -4
+        },
+        "/assets/TIBET/bfe_jaya_prakash.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/PURU/bfe_pushyamitra.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/MUGHAL/gen_ibrahim_lodi.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -24
+        },
+        "/assets/INDIA/bfe_prasenajit.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/PURU/bfe_anga_king.png": {
+            "scale": 1.06,
+            "offsetX": -1,
+            "offsetY": -4
         }
     },
     "folderGuides": {

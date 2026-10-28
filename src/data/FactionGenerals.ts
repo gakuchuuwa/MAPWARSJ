@@ -9731,7 +9731,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    adao_d: { generalId: 'adao_d_mafushou', cityId: 'city_kungang', generalName: '马福寿', portrait: '/assets/WESTERN/adao_d_mafushou.png' },
+    adao_d: { generalId: 'adao_d_mafushou', factionId: 'manzhou_d', cityId: 'city_kungang', generalName: '马福寿', portrait: '/assets/WESTERN/adao_d_mafushou.png' },
 
 
 
@@ -10765,7 +10765,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    xichu: { generalId: 'xichu_xiangyu', cityId: 'city_pengcheng', generalName: '项羽', portrait: '/assets/CENTRAL/xichu_xiangyu.png' },
+    xichu: { generalId: 'xichu_xiangyu', factionId: 'chuguo', cityId: 'city_pengcheng', generalName: '项羽', portrait: '/assets/CENTRAL/xichu_xiangyu.png', legionName: '古典时代华夏军团' },
 
 
 

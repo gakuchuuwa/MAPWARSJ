@@ -254,7 +254,7 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'xichu', name: '西楚' },
+    // { id: 'xichu', name: '西楚' }, // 并入楚国 chuguo
     { id: 'shang', name: '商国' },
     { id: 'zhou', name: '周国' },
     
@@ -1261,7 +1261,7 @@ export const FACTIONS: Faction[] = [
     // 名张·伊贺国东境；远征精锐「伊贺众」,
     // ── 2026-06-16 新增：日本令制国补点（方案A·6城·间距≥50km）──
     { id: 'kaga_d', name: '一向宗' },   // 金泽·加贺一向一揆；一向宗门徒
-    { id: 'date_d', name: '仙台' },
+    { id: 'date_d', name: '伊达氏' },
    // 仙台·陆前；伊达铁骑
     // 松山·河野水军
     { id: 'otomo_d', name: '大友' },  // 府内·丰后；大友水军
@@ -1390,10 +1390,10 @@ export const FACTIONS: Faction[] = [
 
           // 彭迪·穆尔加布绿洲边镇（Margiana）
     { id: 'wugu_d', name: '乌古斯' },
-    { id: 'xierhe', name: '锡尔河' },
+    { id: 'xierhe', name: '乌古斯叶护国' },
               // 毡的·锡尔河下游乌古斯叶护国核心
     // ── 2026-06-19 新增：阿克苏道（昆岗军台）──
-    { id: 'adao_d', name: '阿克苏道' },            // 昆岗·清代南疆驿路军台
+    // { id: 'adao_d', name: '阿克苏道' }, // 2026-10-28 并入大清 manzhou_d,            // 昆岗·清代南疆驿路军台
     // ── 2026-06-19 新增：五原郡（固阳塞）──
     // ── 2026-06-19 新增：漠北/漠南要塞势力（7点）──
 
@@ -1482,7 +1482,7 @@ export const FACTIONS: Faction[] = [
     { id: 'ldiya', name: '吕底亚' },
     { id: 'pajiama', name: '帕加马' },
       { id: 'luomu', name: '罗姆' },
-    { id: 'sailiugu', name: '塞琉古' },
+    { id: 'sailiugu', name: '塞琉古帝国' },
     { id: 'womaya', name: '倭马亚' },
     { id: 'xibolai', name: '以色列' },
     { id: 'aiji', name: '埃及' },
@@ -1609,7 +1609,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xingelana', name: '新格拉纳达' },
     { id: 'gualani', name: '瓜拉尼' },
 
-        { id: 'bulu', name: '波鲁斯' },  // 保拉瓦（Porus/补噜王，印度河畔，与亚历山大大战于希达斯皮斯河）,
+        { id: 'bulu', name: '波罗婆' },  // 保拉瓦（Porus/补噜王，印度河畔，与亚历山大大战于希达斯皮斯河）,
     { id: 'mallabhum', name: '末罗王国' },
     { id: 'vidin_tsardom', name: '维丁国' },
 
@@ -1659,7 +1659,7 @@ export const FACTIONS: Faction[] = [
   { id: 'shunga', name: '巽伽' },  // 阿逾陀
   { id: 'antigonid', name: '安提柯' },  // 凯莱奈
   { id: 'hou_han', name: '后汉' },
-  { id: 'yuan_shao', name: '袁绍' },
+  { id: 'yuan_shao', name: '冀州' },
   { id: 'hou_jin', name: '后晋' },
   { id: 'hou_zhao', name: '后赵' },
   { id: 'da_yan', name: '大燕' },
@@ -1670,7 +1670,7 @@ export const FACTIONS: Faction[] = [
   { id: 'hou_qin', name: '后秦' },
   { id: 'yiqu', name: '义渠' },
   { id: 'hou_zhou', name: '后周' },
-  { id: 'lvbu', name: '吕布' },
+  { id: 'lvbu', name: '徐州' },
   { id: 'chengjia', name: '成家' },
   { id: 'qianshu', name: '前蜀' },
   { id: 'chuguo', name: '楚国' },
@@ -1680,7 +1680,7 @@ export const FACTIONS: Faction[] = [
   { id: 'nantang', name: '南唐' },
   { id: 'machu', name: '马楚' },
   { id: 'nanhan', name: '南汉' },
-  { id: 'fangguozhen', name: '方国珍' },
+  { id: 'fangguozhen', name: '浙东' },
   { id: 'liang_shuofang', name: '大梁' },
   { id: 'qianliang', name: '前凉' },
   // 🔴 [2026-10-26 主人令] 汉末凉州之乱（边章、韩遂、王国、马腾一脉，中平元年起兵、188 围陈仓）——

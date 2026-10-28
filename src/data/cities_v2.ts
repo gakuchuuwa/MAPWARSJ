@@ -323,7 +323,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_shangqiu', name: '商丘', factionId: 'song', lat: 34.41, lng: 115.66, type: 'medium_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '按 2026-10-25 标准：城居 8–12 → 中城' },
 
 
-    { id: 'city_pengcheng', name: '彭城', factionId: 'xichu', lat: 34.27, lng: 117.18, type: 'medium_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, tier: 1, note: '西楚都、徐州治；淮海枢纽；按 2026-10-25 标准：城居 5–8 → 中城' },
+    { id: 'city_pengcheng', name: '彭城', factionId: 'chuguo', lat: 34.27, lng: 117.18, type: 'medium_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, tier: 1, note: '西楚都、徐州治；淮海枢纽；按 2026-10-25 标准：城居 5–8 → 中城' },
     { id: 'city_langya', name: '琅琊', factionId: 'song', lat: 35.077231, lng: 118.363953, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '推算：城居 2 万（汉琅琊郡治，同期郡县同城 1.5–2.5 万）→ 小城' },
 
 
@@ -2921,7 +2921,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
     { id: 'city_dawushenkate', name: '大乌什', factionId: 'wensu', lat: 41.13, lng: 82.78, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '温宿国王城常备武装' },
-    { id: 'city_kungang', name: '昆岗', factionId: 'adao_d', lat: 40.54, lng: 81.26, type: 'pass', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '清代阿克苏道昆岗军台；南疆驿路要冲' },
+    { id: 'city_kungang', name: '昆岗', factionId: 'manzhou_d', lat: 40.54, lng: 81.26, type: 'pass', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '清代阿克苏道昆岗军台；南疆驿路要冲' },
     { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'pisha', lat: 38.58, lng: 80.8, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
 
     { id: 'city_yutian2', name: '于阗', factionId: 'yuchi', lat: 37.1000, lng: 79.9200, type: 'small_city', region: 'WESTERN_FEUDAL',

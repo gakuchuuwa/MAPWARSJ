@@ -342,7 +342,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'luohu': [{ from: -9999, era: 'castle' }], // 罗斛
     'luomu': [{ from: -9999, era: 'castle' }], // 罗姆
     'luoyue': [{ from: -9999, era: 'antiquity' }], // 骆越
-    'lvbu': [{ from: -9999, era: 'antiquity' }], // 吕布
+    'lvbu': [{ from: -9999, era: 'antiquity' }], // 徐州（吕布）
     'machu': [{ from: -9999, era: 'feudal' }], // 马楚
     'mahan': [{ from: -9999, era: 'antiquity' }], // 马韩
     'maidina': [{ from: -9999, era: 'feudal' }], // 拉希顿

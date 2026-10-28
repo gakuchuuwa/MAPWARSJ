@@ -547,7 +547,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'danluo': '耽罗',
 'iga_d': '伊贺',
     'kaga_d': '加贺',
-'date_d': '仙台',
+'date_d': '伊达',
     'otomo_d': '大友',
     'suwa_d': '诹访',
     'hui': '濊',
@@ -611,7 +611,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
 'wugu_d': '乌古',
     xierhe: '锡尔',
-    'adao_d': '阿克',     // 昆岗·阿克苏道军台
+    // 'adao_d': '阿克', // 并入大清,     // 昆岗·阿克苏道军台
     // ── Phase 1 Missing Flags ──
     'kumoxi': '奚',
     'shanshan': '鄯善',
@@ -752,7 +752,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yilaka': '伊拉',
     'xingelana': '新格',
     'gualani': '瓜拉',
-    'bulu': '波鲁',
+    'bulu': '波罗',
     'kanan': '推罗',
     'feilisidin': '非利',
 'mallabhum': '末罗',
@@ -805,7 +805,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'hou_qin': '秦',
 'yiqu': '义渠',
 'hou_zhou': '周',
-'lvbu': '吕布',
+'lvbu': '徐',
 'chengjia': '成',
 'qianshu': '蜀',
 'chuguo': '楚',

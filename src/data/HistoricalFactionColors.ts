@@ -700,7 +700,7 @@ const _FIXED: Record<string, string> = {
     hou_qin: '#7A4A6A', // 后秦
     yiqu: '#8C5A2E', // 义渠
     hou_zhou: '#8A5A2A', // 后周
-    lvbu: '#5A4A8A', // 吕布
+    lvbu: '#5A4A8A', // 徐州（吕布）
     chengjia: '#6D5B43', // 成家
     qianshu: '#B5651D', // 前蜀
     chuguo: '#8C2F39', // 楚国
