@@ -2767,7 +2767,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/CENTRAL/jiyuan_huluguang.png": {
+        "/assets/CENTRAL/__多余__CENTRAL_01.png": {
             "scale": 0.93,
             "offsetX": 9,
             "offsetY": -5
