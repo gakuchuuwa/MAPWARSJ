@@ -279,7 +279,7 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'song', name: '宋国' },
+    { id: 'song', name: '赵宋' },
 
     { id: 'yan', name: '燕国' },
     { id: 'zhao', name: '赵国' },
@@ -290,7 +290,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'wei', name: '魏国' },
     { id: 'han', name: '韩国' },
-    { id: 'han_d', name: '汉国' },
+    { id: 'han_d', name: '刘汉' },
     { id: 'handong', name: '汉东' },   // 2026-10-25 按史补：刘黑闼汉东王（622 洺水之战敌将）
 
 
@@ -334,7 +334,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'sui', name: '隋国' },
 
-    { id: 'tang', name: '唐国' },
+    { id: 'tang', name: '李唐' },
     // 🔴 [2026-10-28 主人令「一个势力不要开战，要不就分开势力」] 朱泚 783 年泾原兵变后据长安称帝，
     //    国号秦（自称大秦皇帝，建元应天），784 年改国号汉，史称朱泚之乱；与唐是敌对两家。
     //    原并入 tang 导致奉天保卫战、收复长安战出现「唐打唐」，现单独立势力。

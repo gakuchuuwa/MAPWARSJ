@@ -473,9 +473,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/JIANGNAN/heng_hetengjiao.png": {
-            "scale": 0.9,
+            "scale": 0.92,
             "offsetX": 0,
-            "offsetY": 29
+            "offsetY": 32
         },
         "/assets/NORTHEAST/eluoke_amuhaer.png": {
             "scale": 0.96,
@@ -8678,7 +8678,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/JIANGNAN/bfe_zengguoquan.png": {
-            "scale": 1.16,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": 18
         },

@@ -427,7 +427,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'luosi_dmitry_aleksandrovich': 'SLAVIC',   // 罗斯｜德米特里·亚历山德罗维奇｜据点 诺夫哥罗德
     'xinbuli_boiorix': 'DANES',   // 辛布里｜波伊奥里克斯｜据点 耶灵
     'awaer_bayan': 'HUNS',   // 阿瓦尔｜巴彦｜据点 塞格德
-    'baizanting_belisarius': 'BYZANTINE',   // 拜占庭｜贝利撒留｜据点 君士坦丁堡
+    'baizanting_belisarius': 'ROMA',   // 拜占庭｜贝利撒留｜据点 罗马城
     'chenla_jayavarman_ii': 'KHMER',   // 真腊｜阇耶跋摩二世｜据点 吴哥
     'chenla_bhavavarman': 'KHMER',   // 真腊｜拔婆跋摩一世｜据点 三菩
     'boximiya_wallenstein': 'BOHEMIANS',   // 波西米亚｜华伦斯坦｜据点 布拉格
@@ -442,7 +442,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xilawangguo_kolokotronis': 'GREECE',   // 希腊王国｜科洛科特罗尼斯｜据点 底比斯
     'ante_boz': 'SLAVIC',   // 安特｜博兹｜据点 基辅
     'suweihui_requiarius': 'PORTUGUESE',   // 苏维汇｜雷基亚尔｜据点 波尔图
-    'baizanting_nikephoros_phokas': 'BYZANTINE',   // 拜占庭｜福卡斯｜据点 君士坦丁堡
+    'baizanting_nikephoros_phokas': 'TURKS',   // 拜占庭｜福卡斯｜据点 伊科尼乌姆
     'yibiluliya_pharnavaz': 'GEORGIANS',   // 伊比利亚｜法尔纳瓦兹一世｜据点 第比利斯
     'gelujiya_erekle_ii': 'GEORGIANS',   // 格鲁吉亚｜埃雷克莱二世｜据点 第比利斯
     'litaowan_ostrogski': 'LITHUANIANS',   // 立陶宛｜奥斯特罗格斯基｜据点 维尔纽斯
@@ -463,8 +463,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_kehaya_mustafa': 'TURKS',   // 奥斯曼｜穆斯塔法｜据点 埃迪尔内（2026-10-26 保留三级军团，迁最近同文化据点）
     'xilawangguo_petros': 'SPARTANS',   // 希腊王国｜彼得罗斯｜据点 斯巴达
     'bfe_abdulaziz_crete': 'BERBER',   // 阿格拉布｜阿卜杜勒·阿齐兹｜据点 凯鲁万
-    'eluosi_diguo_apraksin': 'SLAVIC',   // 俄罗斯帝国｜阿普拉克辛｜据点 拉多加
-    'bfe_peter_delyan': 'BULGARIANS',   // 保加利亚｜彼得·德良｜据点 斯科普里
+    'eluosi_diguo_apraksin': 'VARANGIANS',   // 俄罗斯帝国｜阿普拉克辛｜据点 拉多加
+    'bfe_peter_delyan': 'MACEDONIAN',   // 保加利亚｜彼得·德良｜据点 斯科普里
     'bfe_gotse_delchev': 'MACEDONIAN',   // 保加利亚｜戈采·代尔切夫｜据点 斯科普里
     'bfe_vitalian': 'THRACIAN',   // 拜占庭｜维塔利安｜据点 普罗夫迪夫
     'bfe_alexios_branas': 'THRACIAN',   // 拜占庭｜布拉纳斯｜据点 普罗夫迪夫
@@ -474,7 +474,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_karaiskakis': 'ATHENIANS',   // 希腊王国｜卡拉伊斯卡基斯｜据点 雅典
     'bfe_kontoskeles': 'GREECE',   // 拜占庭｜孔托斯克莱斯｜据点 底比斯
     'bfe_ypsilantis': 'BYZANTINE',   // 奥斯曼｜科贾·穆萨帕夏｜据点 君士坦丁堡
-    'bfe_maniakes': 'BYZANTINE',   // 拜占庭｜马尼亚克｜据点 锡拉库萨
+    'bfe_maniakes': 'SICILIANS',   // 拜占庭｜马尼亚克｜据点 锡拉库萨
     'bfe_rhetogenes': 'SPANISH',   // 阿雷瓦西｜雷图格诺斯｜据点 努曼提亚
     'bfe_purnavarman': 'MALAY',   // 塔鲁玛迦拉｜普尔纳跋摩｜据点 巴达维亚
     'maya_siyaj_kak': 'MAYANS',   // 玛雅｜西亚赫·卡克｜据点 蒂卡尔

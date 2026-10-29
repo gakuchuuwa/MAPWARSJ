@@ -1478,9 +1478,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CATAPULT_GALLEON',
         commanderUnit: 'hero_vladdracula',
         slots: [
-            { type: 'elite_varangian_guard', count: 3 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'boyar', count: 2 },
-            { type: 'recurve_bowman', count: 4 },
+            { type: 'elite_varangian_guard', count: 4 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════
@@ -2736,7 +2736,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // 安纳托利亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ── 安纳托利亚 · 古典时代 · 古典时代安纳托利亚军团　（2026-10-25 恢复：穆瓦塔利 为带名将，哈图沙按区域文化判安纳托利亚）────────────────
     {
-        name: '古典时代安纳托利亚军团', civ: '土耳其', age: 'antiquity', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '古典时代安纳托利亚军团', civ: '安纳托利亚', age: 'antiquity', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'triangle',
@@ -2753,7 +2753,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（科尼亚、锡瓦斯；科尼亚因杰米纳雷学校精雕石门、苏丹哈尼石砌大驿站防御堡垒；双曲复合角弓高速环形回旋射击、轻型柳叶锁子甲、诱敌深入曼古歹伏击骑兵大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代卡帕多细亚铁甲军团', civ: '土耳其', age: 'feudal', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '封建时代卡帕多细亚铁甲军团', civ: '安纳托利亚', age: 'feudal', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'balance_yoke',
@@ -2771,7 +2771,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（布尔萨、埃迪尔内；布尔萨大清真寺二十小穹顶大殿、乌卢清真寺石造泉池中庭；大马士革钢重型弯刀（Kilij）、锥形精钢尖顶头盔、山地奔袭破阵步骑突击大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代鲁姆塞尔柱军团', civ: '土耳其', age: 'castle', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '城堡时代鲁姆塞尔柱军团', civ: '安纳托利亚', age: 'castle', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'triangle',
@@ -2788,7 +2788,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（伊斯坦布尔、埃迪尔内；托普卡帕宫崇敬之门石砌双角塔城堡、巴耶济德二世早期铅顶石砌清真寺；西帕希人马具装重锁甲骑兵、重型长破甲枪与圆牌盾、大航海早期巨型重石球锻铁臼炮围攻大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代斯帕希军团', civ: '土耳其', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '帝国时代斯帕希军团', civ: '安纳托利亚', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'triangle',
@@ -4210,7 +4210,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_reynalddechatillon',
+        commanderUnit: 'hero_theblackprince',
         slots: [
             { type: 'elite_guardsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
@@ -4648,6 +4648,7 @@ export const LEVEL_2_CIV_CIV_MAP: Map<string, Level2CivLegionDef> = new Map(
 const ottomanLegion = LEVEL_2_CIV_62_LEGIONS.find(l => l.name === '帝国时代土耳其军团');
 if (ottomanLegion) {
     LEVEL_2_CIV_CIV_MAP.set('突厥', ottomanLegion);
+    LEVEL_2_CIV_CIV_MAP.set('安纳托利亚', ottomanLegion);
     LEVEL_2_CIV_CIV_MAP.set('土耳其', ottomanLegion);
     LEVEL_2_CIV_62_MAP.set('帝国时代突厥军团', ottomanLegion);   // 旧简写别名，指向同一条真条目
 }

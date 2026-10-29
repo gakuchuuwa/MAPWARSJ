@@ -1714,7 +1714,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yuan_shidielibisi': 'castle',
     'muwaxide_axatafu': 'castle',
     'gepids_cunimund': 'feudal',
-    'kalbids_ibnhawwas': 'castle',
+    'kalbids_ibnhawwas': 'feudal',
     'zhanger': 'antiquity',   // 张耳（2026-10-25 新增，普将）
     'gaogouli_liuli': 'feudal',   // 琉璃明王
     'otomo_sorin': 'imperial',   // 大友宗麟

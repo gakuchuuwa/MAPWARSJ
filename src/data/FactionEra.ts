@@ -671,7 +671,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'litaowan': [{ from: -9999, era: 'castle' }, { from: 1470, era: 'imperial' }], // 立陶宛｜按现存名将成名年推定：–∞起城堡 → 1470起帝国
     'lunbadi': [{ from: -9999, era: 'feudal' }, { from: 1070, era: 'castle' }, { from: 1513, era: 'imperial' }], // 伦巴第｜按现存名将成名年推定：–∞起封建 → 1070起城堡 → 1513起帝国
     'gepids': [{ from: -9999, era: 'feudal' }], // 革皮德（5–6 世纪）
-    'kalbids': [{ from: -9999, era: 'castle' }], // 卡尔比德（10–11 世纪）
+    'kalbids': [{ from: -9999, era: 'feudal' }], // 卡尔比德（948–1053 西西里埃米尔）
     'luodian': [{ from: -9999, era: 'castle' }, { from: 1595, era: 'imperial' }], // 罗甸｜按现存名将成名年推定：–∞起城堡 → 1595起帝国
     'maerta_qishi': [{ from: -9999, era: 'castle' }, { from: 1565, era: 'imperial' }], // 圣约翰｜按现存名将成名年推定：–∞起城堡 → 1565起帝国
     'mosike_gongguo': [{ from: -9999, era: 'castle' }, { from: 1514, era: 'imperial' }], // 莫斯公国｜按现存名将成名年推定：–∞起城堡 → 1514起帝国

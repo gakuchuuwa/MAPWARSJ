@@ -11083,7 +11083,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 109.18,
         myTroops: 29000,
         enemyFactionId: 'song',   // 已核
-        enemyFactionName: '宋国',
+        enemyFactionName: '赵宋',
         enemyGeneralId: 'song_zhangjun',   // 已核（张浚 1097—1164，1130 在任川陕主帅）
         enemyTroops: 50000,
         introLines: [
@@ -11412,7 +11412,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 110.29,
         myTroops: 50000,
         enemyFactionId: 'tang',
-        enemyFactionName: '唐国',
+        enemyFactionName: '李唐',
         enemyGeneralId: 'tang_qikerang',
         enemyTroops: 50000,
         introLines: [
