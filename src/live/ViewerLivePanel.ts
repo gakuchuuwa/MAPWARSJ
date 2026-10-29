@@ -35,7 +35,7 @@ export class ViewerLivePanel {
             this.devOpen = !this.devOpen;
             this.dev.style.display = this.devOpen ? 'block' : 'none';
             this.render();
-        });
+        }, true); // 捕获阶段：光标在输入框里时输入框会 stopPropagation，F9 漏给 Edge 变成阅读模式
         window.addEventListener('resize', () => this.updatePosition());
         window.setInterval(() => this.render(), 300);
     }

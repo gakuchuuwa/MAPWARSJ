@@ -8871,6 +8871,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -31
+        },
+        "/assets/KHMER/champa_jaya_indravarman_iv.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": -16
         }
     },
     "folderGuides": {
