@@ -136,7 +136,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'cav_archer_heavy', count: 2 },
         ],
         regions: ['OTTOMAN'],
-        parentLegion: '帝国时代土耳其军团',
+        parentLegion: '帝国时代斯帕希军团',
         shipId: 'CANNON_GALLEON',
         commanderUnit: 'hero_osman',
         buildingStyle: 'TURKS',

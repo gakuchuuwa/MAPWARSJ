@@ -9,10 +9,9 @@ body {
 #map {
     width: 100%;
     height: 100%;
-    background:
-        radial-gradient(circle at 30% 35%, #c5b186 0%, #b8a377 60%, #a89368 100%),
-        #b8a377;
-    /* 暖沙盘宣纸底色：与陆地沙盘同色系自然过渡，彻底取消冷灰底色与刺眼纯蓝方洞 */
+    background: url('/SUCAI_TERRAIN/gr2.png') repeat #8b7b55;
+    background-size: 128px 128px;
+    /* 全球 DE 地表贴图兜底底纹 */
     position: relative;
 }
 

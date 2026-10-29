@@ -13697,7 +13697,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    luomu: { generalId: 'luomu_jilijie', cityId: 'city_yikeniwumu', generalName: '基利杰', portrait: '/assets/ORIE/luomu_jilijie.png', legionName: '城堡时代加齐突骑军团' },
+    luomu: { generalId: 'luomu_jilijie', cityId: 'city_yikeniwumu', generalName: '基利杰', portrait: '/assets/ORIE/luomu_jilijie.png', legionName: '城堡时代鲁姆塞尔柱军团' },
 
 
 
@@ -13713,9 +13713,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_sinan_pasha', factionId: 'osman', cityId: 'city_aidiernei', generalName: '锡南帕夏', portrait: '/assets/TURKS/bfe_sinan_pasha.png' },   // 🔴 [2026-10-25 按史] 首战敌将；奥斯曼大维齐尔，1605 苏菲安败后身死；据点埃迪尔内（TURKS）；用势力精锐苏丹亲兵
         { generalId: 'osman_kapadan', factionId: 'osman', cityId: 'city_buersa', generalName: '卡帕丹帕夏', portrait: '/assets/TURKS/osman_kapadan.png' },   // 🔴 [2026-10-25 按史] 首战敌将；奥斯曼舰队统帅 Canım Hoca Mehmed Pasha，1716 围科孚败退；1715 再取摩里亚有功，四闸可过判名将；据点布尔萨（TURKS）；用势力精锐苏丹亲兵
         // 🔴 [2026-10-20 首战规则] 卡拉·穆斯塔法帕夏＝奥斯曼大维齐尔（1683 维也纳战败被处死）→ 布尔萨（TURKS）；帝国时代土耳其军团；立绘留空
-        { generalId: 'gen_kara_mustafa', cityId: 'city_buersa', generalName: '卡拉·穆斯塔法', portrait: '/assets/TURKS/gen_kara_mustafa.png', legionName: '帝国时代土耳其军团' },
+        { generalId: 'gen_kara_mustafa', cityId: 'city_buersa', generalName: '卡拉·穆斯塔法', portrait: '/assets/TURKS/gen_kara_mustafa.png', legionName: '帝国时代斯帕希军团' },
         // 🔴 [2026-10-20 首战规则] 拉拉·穆斯塔法帕夏＝奥斯曼统帅（1565 马耳他大围攻）→ 布尔萨（TURKS）；帝国时代土耳其军团；立绘留空
-        { generalId: 'gen_mustafa_pasha', cityId: 'city_buersa', generalName: '穆斯塔法帕夏', portrait: '/assets/TURKS/gen_mustafa_pasha.png', legionName: '帝国时代土耳其军团' },
+        { generalId: 'gen_mustafa_pasha', cityId: 'city_buersa', generalName: '穆斯塔法帕夏', portrait: '/assets/TURKS/gen_mustafa_pasha.png', legionName: '帝国时代斯帕希军团' },
         // 🔴 [2026-10-20 首战规则] 苏莱曼大帝＝奥斯曼苏丹（1566 锡盖特堡军营中病逝）→ 布尔萨（TURKS）；帝国时代土耳其军团；立绘留空
         { generalId: 'gen_suleiman', cityId: 'city_buersa', generalName: '苏莱曼', portrait: '/assets/TURKS/gen_suleiman.png', legionName: '帝国时代苏丹亲兵军团' },
 
@@ -13729,12 +13729,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_bayezid_i', cityId: 'city_buersa', generalName: '巴耶济德一世', portrait: '/assets/TURKS/gen_bayezid_i.png', legionName: '城堡时代加齐突骑军团' },
+        { generalId: 'gen_bayezid_i', cityId: 'city_buersa', generalName: '巴耶济德一世', portrait: '/assets/TURKS/gen_bayezid_i.png', legionName: '城堡时代鲁姆塞尔柱军团' },
 
 
 
     
-        { generalId: 'gen_mehmed_giray', factionId: 'osman', cityId: 'city_akeman', legionName: '帝国时代土耳其军团', generalName: '迈赫迈德', portrait: '/assets/SLAVIC/deniesite_muhanmodegeli.png' },
+        { generalId: 'gen_mehmed_giray', factionId: 'osman', cityId: 'city_akeman', legionName: '帝国时代斯帕希军团', generalName: '迈赫迈德', portrait: '/assets/SLAVIC/deniesite_muhanmodegeli.png' },
 
 
 
@@ -13744,7 +13744,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_osman_i', factionId: 'osman', cityId: 'city_seyute', generalName: '奥斯曼一世', portrait: '/assets/TURKS/gen_osman_i.png', legionName: '城堡时代加齐突骑军团' },
+        { generalId: 'gen_osman_i', factionId: 'osman', cityId: 'city_seyute', generalName: '奥斯曼一世', portrait: '/assets/TURKS/gen_osman_i.png', legionName: '城堡时代鲁姆塞尔柱军团' },
 
 
 

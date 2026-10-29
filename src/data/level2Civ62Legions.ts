@@ -39,7 +39,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    onager 本是罗马扭力抛石机的名字；凯撒《高卢战记》4.25 登陆不列颠时令战舰以投射器（tormenta）压制岸上，
         //    阿格里帕在瑙洛库斯、亚克兴之战亦以舰载投石器作战。三列桨舰仍由古典时代东罗马军团使用。
         shipId: 'ONAGER_SHIP',
-        commanderUnit: 'hero_aristides',
+        commanderUnit: 'hero_belisarius',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝罗马城堡兵【百夫长精锐】。
         slots: [
             { type: 'legionary', count: 3 },
@@ -2753,16 +2753,16 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（科尼亚、锡瓦斯；科尼亚因杰米纳雷学校精雕石门、苏丹哈尼石砌大驿站防御堡垒；双曲复合角弓高速环形回旋射击、轻型柳叶锁子甲、诱敌深入曼古歹伏击骑兵大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代安纳托利亚军团', civ: '土耳其', age: 'feudal', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '封建时代卡帕多细亚铁甲军团', civ: '土耳其', age: 'feudal', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
-        formationMode: 'crescent',
+        formationMode: 'balance_yoke',
         shipId: 'GALLEY',
         commanderUnit: 'hero_belisarius',
         slots: [
-            { type: 'pikeman', count: 3 },
+            { type: 'imperial_legionary', count: 4 },
             { type: 'cataphract', count: 2 },
-            { type: 'laminated_bowman', count: 4 },
+            { type: 'antiquity_cavalry_archer', count: 3 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════
@@ -2771,15 +2771,15 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（布尔萨、埃迪尔内；布尔萨大清真寺二十小穹顶大殿、乌卢清真寺石造泉池中庭；大马士革钢重型弯刀（Kilij）、锥形精钢尖顶头盔、山地奔袭破阵步骑突击大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代加齐突骑军团', civ: '土耳其', age: 'castle', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '城堡时代鲁姆塞尔柱军团', civ: '土耳其', age: 'castle', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
-        formationMode: 'crescent',
+        formationMode: 'triangle',
         shipId: 'WAR_GALLEY',
         commanderUnit: 'hero_osman',
         slots: [
-            { type: 'eastern_swordsman', count: 3 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'cav_archer_heavy', count: 3 },
             { type: 'laminated_bowman', count: 4 },
         ],
     },
@@ -2788,19 +2788,19 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（伊斯坦布尔、埃迪尔内；托普卡帕宫崇敬之门石砌双角塔城堡、巴耶济德二世早期铅顶石砌清真寺；西帕希人马具装重锁甲骑兵、重型长破甲枪与圆牌盾、大航海早期巨型重石球锻铁臼炮围攻大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代土耳其军团', civ: '土耳其', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '帝国时代斯帕希军团', civ: '土耳其', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         shipId: 'ELITE_CANNON_GALLEON',
         commanderUnit: 'hero_mustafapasha',
         // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」自造规则无效。
         //    4 档＝苏丹亲兵精锐（主人令「4 档放城堡精锐」）；3 档恢复具装枪骑兵高级。
         //    苏丹亲兵基础档改放新建三级军团「帝国时代苏丹亲兵军团」3 档。
         slots: [
-            { type: 'elite_guardsman', count: 4 },
-            { type: 'elite_janissary', count: 3 },
-            { type: 'cav_archer_heavy', count: 2 },
+            { type: 'elite_steppe_lancer', count: 2 },
+            { type: 'cav_archer_heavy', count: 3 },
+            { type: 'elite_janissary', count: 4 },
         ],
     },
 
@@ -4281,7 +4281,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_basileus',
                 slots: [
             { type: 'obuch', count: 3 },
-            { type: 'elite_skirmisher', count: 4 },
+            { type: 'gastraphetes', count: 4 },
             { type: 'konnik', count: 2 },
         ],
     },
@@ -4290,13 +4290,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代鲁米利亚军团', civ: '色雷斯', age: 'imperial', deStyle: 'GREEK', region: 'THRACIAN' as RegionType,
         buildingStyle: 'THRACIAN',
         castleId: 'THRACE_CASTLE_AGE3', castleName: '色雷斯 阿德里安堡要塞',
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_mustafapasha',
+        commanderUnit: 'hero_johnthefearless',
                 slots: [
-            { type: 'royal_janissary', count: 3 },
-            { type: 'janissary', count: 4 },
             { type: 'savar', count: 2 },
+            { type: 'elite_rhomphaia_warrior', count: 3 },
+            { type: 'recurve_bowman', count: 4 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════

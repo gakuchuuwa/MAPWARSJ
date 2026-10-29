@@ -303,9 +303,9 @@ export class PlayerScene13Control {
             const flagCloth = CityAssetManager.getProcessedFlag(this.hero.factionId);
             const flagOverlay = CityAssetManager.getProcessedFlagTextSync(this.hero.factionId);
             const overlayHtml = flagOverlay
-                ? `<span style="position:absolute;left:0;top:0;width:32px;height:40px;background-image:url('${flagOverlay}');background-size:128px 240px;background-position:0px -160px;background-repeat:no-repeat;image-rendering:auto !important;"></span>`
+                ? `<span style="position:absolute;left:-3px;top:-2px;width:32px;height:40px;background-image:url('${flagOverlay}');background-size:128px 240px;background-position:-64px -120px;background-repeat:no-repeat;image-rendering:auto !important;"></span>`
                 : '';
-            flagHtml = `<span style="display:inline-block;position:relative;width:24px;height:20px;vertical-align:middle;margin-right:3px;"><span style="position:absolute;left:-1px;top:-2px;width:32px;height:40px;transform:scale(0.85);transform-origin:0 0;background-image:url('${flagCloth}');background-size:128px 320px;background-position:0px -200px;background-repeat:no-repeat;pointer-events:none;">${overlayHtml}</span></span>`;
+            flagHtml = `<span style="display:inline-block;position:relative;width:24px;height:20px;vertical-align:middle;margin-right:3px;"><span style="position:absolute;left:-1px;top:-1px;width:32px;height:40px;transform:scale(0.85);transform-origin:0 0;pointer-events:none;"><span style="position:absolute;left:0;top:0;width:32px;height:40px;transform:scaleX(-1);transform-origin:center;background-image:url('${flagCloth}');background-size:128px 320px;background-position:-96px -40px;background-repeat:no-repeat;"></span>${overlayHtml}</span></span>`;
         }
         const st = this.isControlling() ? this.scene.getPlayerBattleState() : null;
         if (st) {

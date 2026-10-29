@@ -477,25 +477,27 @@ export class PlayerHUD {
             const flagWrap = document.createElement('span');
             flagWrap.style.cssText = 'display:inline-block; position:relative; width:24px; height:20px; vertical-align:middle; margin-right:2px; flex-shrink:0;';
             flagWrap.title = flagLabel ? `势力：${factionName}（旗号：${flagLabel}）` : `势力：${factionName}`;
+            const flagStage = document.createElement('span');
+            flagStage.style.cssText = 'position:absolute; left:-1px; top:-1px; width:32px; height:40px; transform:scale(0.85); transform-origin:0 0; pointer-events:none;';
             const clothEl = document.createElement('span');
             clothEl.style.cssText = `
-                position:absolute; left:-1px; top:-2px; width:32px; height:40px;
-                transform:scale(0.85); transform-origin:0 0;
+                position:absolute; left:0; top:0; width:32px; height:40px;
+                transform:scaleX(-1); transform-origin:center;
                 background-image:url('${flagCloth}');
-                background-size:128px 320px; background-position:0px -200px; background-repeat:no-repeat;
-                pointer-events:none;
+                background-size:128px 320px; background-position:-96px -40px; background-repeat:no-repeat;
             `;
+            flagStage.appendChild(clothEl);
             if (flagOverlay) {
                 const overlayEl = document.createElement('span');
                 overlayEl.style.cssText = `
-                    position:absolute; left:0; top:0; width:32px; height:40px;
+                    position:absolute; left:-3px; top:-2px; width:32px; height:40px;
                     background-image:url('${flagOverlay}');
-                    background-size:128px 240px; background-position:0px -160px; background-repeat:no-repeat;
+                    background-size:128px 240px; background-position:-64px -120px; background-repeat:no-repeat;
                     image-rendering:auto !important;
                 `;
-                clothEl.appendChild(overlayEl);
+                flagStage.appendChild(overlayEl);
             }
-            flagWrap.appendChild(clothEl);
+            flagWrap.appendChild(flagStage);
             secLeft.appendChild(flagWrap);
         }
         const facSpan = document.createElement('span');

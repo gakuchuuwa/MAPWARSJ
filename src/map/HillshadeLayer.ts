@@ -8,6 +8,43 @@ import { ESRI_SHADED_RELIEF_URL } from '../world/land-sea/WaterMask';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { MATERIAL_BUDGET_BYTES } from './StrategicTerrainMaterial';
 import type { RiverSegmentsMessage } from './RiverStripData';
+import { loadWorldBaseData, queryStrategicBackdropTile } from '../ui/scene13/WorldBaseMap';
+
+const BACKDROP_TEX_SIZE = 128;
+const backdropTexCache = new Map<string, HTMLCanvasElement>();
+const backdropTexPending = new Set<string>();
+const backdropListeners = new Set<() => void>();
+let worldBaseInitStarted = false;
+
+function notifyBackdropReady(): void {
+    for (const fn of backdropListeners) fn();
+}
+
+function ensureBackdropTexture(name: string): HTMLCanvasElement | undefined {
+    const hit = backdropTexCache.get(name);
+    if (hit) return hit;
+    if (backdropTexPending.has(name)) return undefined;
+    backdropTexPending.add(name);
+    const img = new Image();
+    img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = BACKDROP_TEX_SIZE;
+        c.height = BACKDROP_TEX_SIZE;
+        const cctx = c.getContext('2d');
+        if (cctx) {
+            cctx.drawImage(img, 0, 0, BACKDROP_TEX_SIZE, BACKDROP_TEX_SIZE);
+            if (name === 'wtr') {
+                // 海洋贴图叠合战略地图统一海色 #6395b8，保留 DE 水波纹理且与山体瓦片成图海色一致
+                cctx.fillStyle = 'rgba(99, 149, 184, 0.72)';
+                cctx.fillRect(0, 0, BACKDROP_TEX_SIZE, BACKDROP_TEX_SIZE);
+            }
+            backdropTexCache.set(name, c);
+            notifyBackdropReady();
+        }
+    };
+    img.src = `/SUCAI_TERRAIN/${name}.png`;
+    return undefined;
+}
 
 // 转换 HistoricalRegion 为 Worker 友好结构(扁平化, 默认值)
 const REGIONS_FOR_WORKER: HillshadeRegion[] = HISTORICAL_REGIONS.map(r => ({
@@ -147,6 +184,7 @@ export class HillshadeLayer extends L.GridLayer {
         });
 
         this.ensureWorkers();
+        this.initBackdropMaterials();
 
         gameLog('startup', `HillshadeLayer: Initialized with ${WORKER_POOL_SIZE} Web Workers (z=${this.zFactor})`);
     }
@@ -483,7 +521,7 @@ export class HillshadeLayer extends L.GridLayer {
 
         if (drewAncestor || drewChildCount === 4) return;
 
-        const GRID = 4;
+        const GRID = 8;
         const cellW = size.x / GRID;
         const cellH = size.y / GRID;
         for (let gy = 0; gy < GRID; gy++) {
@@ -499,12 +537,46 @@ export class HillshadeLayer extends L.GridLayer {
                     if (this.tileCache.has(cKey)) continue;
                 }
                 const lng = bounds.west + ((gx + 0.5) / GRID) * (bounds.east - bounds.west);
-                const kind = LandSeaSystem.probeLandSea(lat, lng);
-                ctx.fillStyle = kind === 'sea' ? '#6395b8' : '#b8a377';
-                ctx.fillRect(gx * cellW, gy * cellH, cellW + 0.5, cellH + 0.5);
+                const landSea = LandSeaSystem.probeLandSea(lat, lng);
+                const wbTile = queryStrategicBackdropTile(lat, lng);
+                const isSea = landSea === 'sea' || wbTile === 'sea';
+                const texName = isSea ? 'wtr' : (wbTile && wbTile !== 'sea' ? wbTile : 'gr2');
+                const texCanvas = ensureBackdropTexture(texName) ?? (isSea ? undefined : backdropTexCache.get('gr2'));
+                const dx = gx * cellW;
+                const dy = gy * cellH;
+                if (texCanvas) {
+                    const sx = (((coords.x * size.x + dx) % BACKDROP_TEX_SIZE) + BACKDROP_TEX_SIZE) % BACKDROP_TEX_SIZE;
+                    const sy = (((coords.y * size.y + dy) % BACKDROP_TEX_SIZE) + BACKDROP_TEX_SIZE) % BACKDROP_TEX_SIZE;
+                    const sw = Math.min(cellW, BACKDROP_TEX_SIZE - sx);
+                    const sh = Math.min(cellH, BACKDROP_TEX_SIZE - sy);
+                    ctx.drawImage(texCanvas, sx, sy, sw, sh, dx, dy, cellW + 0.5, cellH + 0.5);
+                } else {
+                    ctx.fillStyle = isSea ? '#6395b8' : '#b8a377';
+                    ctx.fillRect(dx, dy, cellW + 0.5, cellH + 0.5);
+                }
             }
         }
     }
+
+    private initBackdropMaterials(): void {
+        if (!worldBaseInitStarted) {
+            worldBaseInitStarted = true;
+            loadWorldBaseData('/world/world-base.png').then(ok => {
+                if (ok) notifyBackdropReady();
+            });
+            for (const pre of ['gr2', 'grs', 'gr3', 'ds2', 'ds5', 'pal', 'for', 'wtr']) {
+                ensureBackdropTexture(pre);
+            }
+        }
+        backdropListeners.add(this.handleBackdropReady);
+    }
+
+    private handleBackdropReady = (): void => {
+        for (const task of this.pendingTiles.values()) {
+            if (!task.tile.isConnected || task.modeVersion !== this.modeVersion) continue;
+            this.drawProvisionalBackdrop(task.ctx, task.size, task.coords, task.bounds);
+        }
+    };
 
     createTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
         const tile = L.DomUtil.create('canvas', 'leaflet-tile') as HTMLCanvasElement;
@@ -523,6 +595,7 @@ export class HillshadeLayer extends L.GridLayer {
         // 创建时保持透明，在 Worker 计算完成前自然透出底图，彻底消除棋盘方块闪烁
 
         this.ensureWorkers();
+        this.initBackdropMaterials();
         const bounds = tileBoundsFromCoords(coords.z, coords.x, coords.y);
         const isExpTile = this.isReliefTile(coords.z);
         const isValleyTile = this.isValleyTile(coords.z, bounds);
@@ -586,6 +659,7 @@ export class HillshadeLayer extends L.GridLayer {
         retryCount: number = 0,
     ): void {
         this.ensureWorkers();
+        this.initBackdropMaterials();
         const reqId = this.msgIdCounter++;
         // 仅传与当前瓦片相交的区域,减少 Worker 内逐像素检查的循环次数
         // 沙漠涂色关闭（调试开关）→ 不传任何区域，Worker 走纯海拔着色，可对比开关前后效果
@@ -656,6 +730,7 @@ export class HillshadeLayer extends L.GridLayer {
 
     // Cleanup if layer removed
     onRemove(map: L.Map): this {
+        backdropListeners.delete(this.handleBackdropReady);
         for (const w of this.workers) w.terminate();
         this.materialBytesByWorker.clear();
         this.workers.length = 0;

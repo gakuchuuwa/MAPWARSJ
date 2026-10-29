@@ -8931,6 +8931,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/ROMA/wangdaer_bonifatiwusi.png": {
+            "scale": 1.24,
+            "offsetX": 6,
+            "offsetY": 21
         }
     },
     "folderGuides": {

@@ -1702,8 +1702,8 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     VANDALS: '封建时代东法兰克军团',
     LOMBARDS: '封建时代伦巴第军团',
     JURCHEN: "城堡时代女真军团",
-    OTTOMAN: "帝国时代土耳其军团",
-    OTTOMAN_IMPERIAL: '帝国时代土耳其军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
+    OTTOMAN: "帝国时代斯帕希军团",
+    OTTOMAN_IMPERIAL: '帝国时代斯帕希军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     MANCHU: "帝国时代八旗军团",
     MUGHAL: '帝国时代莫卧儿军团',
     RUSSIAN: '帝国时代俄罗斯军团',

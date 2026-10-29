@@ -1977,7 +1977,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "luomu": {
-        legionName: "城堡时代加齐突骑军团",
+        legionName: "城堡时代鲁姆塞尔柱军团",
         legionType: "sub",
     },
     "xibolai": {
