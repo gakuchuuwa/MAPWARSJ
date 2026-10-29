@@ -804,6 +804,7 @@ export class PlayerHero {
     public detach(): void {
         if (!this.hostLegionId) return;
         // 统一铁律：玩家脱离军团 = 功勋归零降职（无论战败覆灭还是主动离队，一律清零）
+        this.holdAfterDefeat();
         this.resetMerit('脱离军团');
         const host = this.getHostLegion();
         if (host) {
@@ -862,6 +863,16 @@ export class PlayerHero {
         const pos = this.army.getPosition();
         const target = { lat: city.latitude, lng: city.longitude };
         if (getEuclideanDistance(pos, target) <= PLAYER_CITY_ARRIVE_DIST) {
+            if (this.isHeld()) {
+                this.travelCityId = cityId;
+                this.travelPointLabel = null;
+                this.army.setTargetCity(city);
+                this.army.setOnArriveCallback(() => this.handleArrive(cityId));
+                this.army.moveAlongPath([{ lat: target.lat, lng: target.lng }]);
+                this.deps.followCamera();
+                this.emitChange();
+                return true;
+            }
             this.cancelTravel();
             // 追人途中锚点城正好在脚下：只是路过，不触发城中对话（同 handleArrive 的闸门）
             if (!this.chaseArmyId) this.onArriveCity?.(city);
@@ -911,7 +922,7 @@ export class PlayerHero {
             return false;
         }
         const pos = this.army.getPosition();
-        if (getEuclideanDistance(pos, target) * 111 <= 2) {
+        if (!this.isHeld() && getEuclideanDistance(pos, target) * 111 <= 2) {
             this.travelPointLabel = null;
             onArrive?.();       // 已经站在跟前了
             return true;
@@ -964,7 +975,7 @@ export class PlayerHero {
         if (!army.generalId || !isGeneralOnStage(army.generalId)) return false;
         this.chaseArmyId = armyId;
         this.chaseGeneralName = generalName ?? null;
-        this.stepChase(true);
+        if (!this.isHeld()) this.stepChase(true);
         return this.chaseArmyId != null;
     }
 
@@ -1213,7 +1224,7 @@ export class PlayerHero {
         this.rename(checkedName && checkedName.ok ? checkedName.name : PLAYER_HERO_NAME);
         this.lastCulture = typeof s.lastCulture === 'string' && s.lastCulture ? s.lastCulture : null;
         this.heroDowns = s.heroDowns ?? 0;
-        this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u }));
+        this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u, unitName: WAR_TYPES[u.unitKey]?.name ?? u.unitName }));
         this.peakStats = restorePlayerPeakStats(s.peakStats, this.learnedUnits.map((u) => u.unitKey));
         this.selectedUnit = s.selectedUnit ?? -1;
         this.manualUnitPick = s.manualUnitPick ?? false;

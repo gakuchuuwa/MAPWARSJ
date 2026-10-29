@@ -634,7 +634,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_ulrichvonjungingen', name: '英雄·容金根·条顿', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/ULRICHVONJUNGINGEN/' },
     { id: 'hero_vladdracula', name: '英雄·穿刺公德古拉·斯拉夫', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/VLADDRACULA/' },
     { id: 'hero_vytautasthegreat', name: '英雄·维陶塔斯大帝·立陶宛', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/VYTAUTASTHEGREAT/' },
-    { id: 'hero_williamwallace', name: '英雄·威廉·华莱士·凯尔特', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/WILLIAMWALLACE/' },
+    { id: 'hero_williamwallace', name: '英雄·华莱士·凯尔特', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/WILLIAMWALLACE/' },
     { id: 'hero_yodit', name: '英雄·尤迪特·埃塞俄比亚', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/YODIT/' },
     { id: 'hero_zhangfei', name: '英雄·张飞·巴蜀', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHANGFEI/' },
     { id: 'manatarms', name: '武装剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },

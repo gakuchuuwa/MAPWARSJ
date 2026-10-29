@@ -9036,6 +9036,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/BULGARIANS/duonaobaojia_samuel.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/SLAVIC/luosi_svyatopolk.png": {
+            "scale": 0.92,
+            "offsetX": 5,
+            "offsetY": -23
+        },
+        "/assets/SICILIANS/hre_manfred.png": {
+            "scale": 1.08,
+            "offsetX": 23,
+            "offsetY": 44
         }
     },
     "folderGuides": {

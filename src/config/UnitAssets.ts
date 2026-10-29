@@ -4085,7 +4085,7 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VYTAUTASTHEGREAT/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VYTAUTASTHEGREAT/death_${dir}.png`),
         },
-        // 【英雄·威廉·华莱士】8方向，AoE2 DE SLD 素材
+        // 【英雄·华莱士】8方向，AoE2 DE SLD 素材
         'hero_williamwallace': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WILLIAMWALLACE/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WILLIAMWALLACE/attack_${dir}.png`),

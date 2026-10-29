@@ -682,7 +682,7 @@ export class PlayerQuestSystem {
     /** 「告辞」之后立刻换人：剧本模式先让剧本链挑下一位，挑不到（或非剧本）就走自动寻将。 */
     private findNextGeneralNow(): void {
         const hero = this.deps.hero;
-        if (hero.isAttached() || this.quest) return;
+        if (hero.isAttached() || this.quest || hero.isHeld?.()) return;
         if (hero.autoPlan === 'script') {
             // 剧本模式：剧本链的目标若是刚告辞的那位，checkAndTriggerNextBattlefield 会跳过并返回 false
             this.headingToEventGeneralId = null;
@@ -1898,7 +1898,7 @@ export class PlayerQuestSystem {
     private travelToFirstBattleFront(generalId: string): void {
         this.deps.closeDialogue();
         const hero = this.deps.hero;
-        if (hero.isAttached() || this.quest) return;
+        if (hero.isAttached() || this.quest || hero.isHeld?.()) return;
         const spot = this.firstBattleFrontSpot(generalId);
         if (!spot) return;
         this.pendingFrontGeneralId = generalId;
@@ -2027,7 +2027,7 @@ export class PlayerQuestSystem {
             host.setPosition(defended.latitude, defended.longitude);
         } else if (metAtFront) {
             host.setPosition(targetPos.lat, targetPos.lng);
-        } else if (km(host.getPosition(), targetPos) > PlayerQuestSystem.FIRST_BATTLE_FAR_KM) {
+        } else if (false && km(host.getPosition(), targetPos) > PlayerQuestSystem.FIRST_BATTLE_FAR_KM) {
             // 优先离战场最近的己方据点（不含战场城本身），留一段短途行军；没有就直接摆到战场
             const stage = this.deps.cityManager.getCities()
                 .filter((c) => c.id !== targetCity?.id && c.factionId === myFactionId)
@@ -2604,6 +2604,8 @@ export class PlayerQuestSystem {
         if (q.generalId) this.declinedGenerals.add(q.generalId);
         this.deps.notify(`❌ 【${fbState?.battleName ?? '首战'}】战败：${q.generalName}的军团被打散，你脱离${q.factionName}，另投他处`);
         gameLog('expedition', `[玩家] 首战战败：${q.generalName}【${fbState?.battleName ?? ''}】→ 军团战败，脱离 ${q.factionName}`);
+        this.postDefeatHunt = true;
+        this.deps.hero.holdAfterDefeat();
         this.finishQuest(false, { silent: true });
         this.findNextGeneralNow();
     }
@@ -3546,7 +3548,7 @@ export class PlayerQuestSystem {
         // 已经追上了 → 「赶去与武将碰头」这一轮作废
         this.headingToEventGeneralId = null;
         const hero = this.deps.hero;
-        if (hero.isAttached() || this.quest) return;
+        if (hero.isAttached() || this.quest || hero.isHeld?.()) return;
         const cityId = this.chaseCityId;
         this.chaseCityId = null;
         const gid = army.generalId;
@@ -3815,6 +3817,8 @@ export class PlayerQuestSystem {
             ) >= PlayerQuestSystem.POST_DEFEAT_MIN_KM);
             if (far.length) fresh = far;
         }
+        const nonLocalFresh = fresh.filter((c) => PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude }) > 15);
+        if (nonLocalFresh.length) fresh = nonLocalFresh;
         const K = PlayerQuestSystem.NEAR_K;
         const ranked = fresh
             .map((c) => ({ c, d: PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude }) }))
@@ -4082,7 +4086,7 @@ export class PlayerQuestSystem {
                 raw.push({
                     kind,
                     id: kind === 'faction' ? factionId : g.generalId,
-                    label: kind === 'faction' ? factionName : `${generalName}·${factionName}`,
+                    label: kind === 'faction' ? factionName : generalName,
                     cityId: c.id,
                     cityName: c.name,
                     generalId: g.generalId,
@@ -4118,7 +4122,9 @@ export class PlayerQuestSystem {
         });
         // 探马只显示同文化名将（无名将时兜底全部）；将军开放全图所有武将（同文化+名将排最前）
         const famousOnly = rankId === 'outrider' ? raw.filter((r) => r.famous) : raw;
-        const sourceList = famousOnly.length > 0 ? famousOnly : raw;
+        const baseList = famousOnly.length > 0 ? famousOnly : raw;
+        const nonLocalList = baseList.filter((r) => r.distKm > 15);
+        const sourceList = nonLocalList.length > 0 ? nonLocalList : baseList;
         const seen = new Set<string>();
         const picked: LiveJoinCandidate[] = [];
         for (const item of sourceList) {

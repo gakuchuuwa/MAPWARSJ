@@ -156,7 +156,7 @@ export const DE_CIVILIZATIONS: DeCiv[] = [
             '攻城武器开火速率加快 25%',
             '羊群在凯尔特单位视野内不会被敌方转化俘获',
         ],
-        historyBrief: '苏格兰与爱尔兰的凯尔特勇士以剽悍不屈著称。威廉·华莱士的起义与风驰电掣的高地步兵，配合毁天灭地的强化攻城巨弩与投石机令人胆寒。',
+        historyBrief: '苏格兰与爱尔兰的凯尔特勇士以剽悍不屈著称。华莱士的起义与风驰电掣的高地步兵，配合毁天灭地的强化攻城巨弩与投石机令人胆寒。',
     },
     {
         id: 'spanish',
@@ -1767,7 +1767,7 @@ export const DE_ARMOR_CLASSES: DeArmorClass[] = [
 // 5. 官方经典战役剧本全览 (Official Campaigns)
 // ──────────────────────────────────────────────
 export const DE_CAMPAIGNS: DeCampaign[] = [
-    { title: '威廉·华莱士 (William Wallace)', hero: '威廉·华莱士', civ: '凯尔特', dlc: '原版', scenariosCount: 7, desc: '从斯特灵桥战役到福尔柯克，指引苏格兰勇士抵抗英格兰长腿爱德华的铁蹄。' },
+    { title: '华莱士 (William Wallace)', hero: '华莱士', civ: '凯尔特', dlc: '原版', scenariosCount: 7, desc: '从斯特灵桥战役到福尔柯克，指引苏格兰勇士抵抗英格兰长腿爱德华的铁蹄。' },
     { title: '圣女贞德 (Joan of Arc)', hero: '圣女贞德', civ: '法兰克', dlc: '原版', scenariosCount: 6, desc: '百年战争中带领法兰西军民解围奥尔良，打破英军包围，护送查理七世于兰斯加冕。' },
     { title: '萨拉丁 (Saladin)', hero: '萨拉丁', civ: '萨拉森', dlc: '原版', scenariosCount: 6, desc: '统一埃及与黎凡特，在哈丁战役大败十字军骑士团，收复圣城耶路撒冷。' },
     { title: '巴巴罗萨 (Barbarossa)', hero: '腓特烈一世', civ: '条顿', dlc: '原版', scenariosCount: 6, desc: '红胡子统领德意志神圣罗马帝国诸侯，远征意大利与黎凡特圣地。' },
