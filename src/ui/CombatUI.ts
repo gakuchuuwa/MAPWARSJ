@@ -4740,13 +4740,19 @@ export class CombatUI {
 
         const frame = this.sideElement(side, this.leftPortraitFrame, this.rightPortraitFrame);
         if (!frame) return;
+        // 观众献计：屏幕正中特大字、停 5 秒（直播间要看清是谁献的计；放在立绘上会被屏幕边裁掉）；
+        // 武将自放仍挂立绘、3 秒。新大字顶掉旧大字，免得叠字。
+        const durMs = viewer ? 5000 : 3000;
+        const host: HTMLElement = viewer ? document.body : frame;
+        host.querySelectorAll(viewer ? ':scope > [data-skill-cutin]' : '[data-skill-cutin]').forEach((el) => el.remove());
         const cutIn = document.createElement('div');
+        cutIn.dataset.skillCutin = '1';
         if (viewer) {
             const by = document.createElement('div');
             by.textContent = `${viewer.name} 献计`;
             by.style.cssText = `
-                display: inline-block; margin-bottom: ${uiPx(6)};
-                font-size: ${uiPx(32)}; font-weight: 700; font-style: normal; letter-spacing: ${uiPx(2)};
+                display: inline-block; margin-bottom: ${uiPx(10)};
+                font-size: ${uiPx(68)}; font-weight: 700; font-style: normal; letter-spacing: ${uiPx(3)};
                 color: ${viewer.paid ? '#ffe08a' : '#ffd700'};
                 ${viewer.paid ? `border: 1px solid rgba(255, 215, 0, 0.85); border-radius: 4px; padding: 0 ${uiPx(10)}; background: rgba(60, 40, 0, 0.6);` : ''}
             `;
@@ -4760,30 +4766,30 @@ export class CombatUI {
         const coreGlow = isAtt ? 'rgba(255, 100, 0, 1)' : 'rgba(0, 150, 255, 1)';
         const wideGlow = isAtt ? 'rgba(255, 50, 0, 0.8)' : 'rgba(0, 100, 255, 0.8)';
         cutIn.style.cssText = `
-            position: absolute;
-            top: 70%;
+            position: ${viewer ? 'fixed' : 'absolute'};
+            top: ${viewer ? '34%' : '70%'};
             left: 50%;
             transform: translate(-50%, -50%) scale(0.5);
             text-align: center;
             color: ${viewer ? '#ffd700' : '#ffffff'};
-            font-size: ${uiPx(viewer?.paid ? 50 : 46)};
+            font-size: ${uiPx(viewer ? (viewer.paid ? 136 : 124) : 46)};
             font-weight: 900;
             font-family: 'Noto Serif SC', serif;
             font-style: italic;
             letter-spacing: ${uiPx(4)};
             pointer-events: none;
-            z-index: 100;
-            text-shadow: 
+            z-index: ${viewer ? 10060 : 100};
+            text-shadow:
                 0 2px 2px rgba(0,0,0,0.9),
                 0 0 10px ${coreGlow},
                 0 0 20px ${coreGlow},
                 0 0 40px ${wideGlow},
                 0 10px 20px rgba(0,0,0,0.9);
-            animation: skill-cut-in 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation: skill-cut-in ${durMs}ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
             white-space: nowrap;
         `;
-        frame.appendChild(cutIn);
-        window.setTimeout(() => cutIn.remove(), 3000);
+        host.appendChild(cutIn);
+        window.setTimeout(() => cutIn.remove(), durMs);
     }
 
     public isBoundToBattleField(battleField: BattleField): boolean {

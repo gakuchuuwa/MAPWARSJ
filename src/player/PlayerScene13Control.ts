@@ -38,13 +38,19 @@ export class PlayerScene13Control {
     private btnAttack: HTMLButtonElement | null = null;
     private btnHold: HTMLButtonElement | null = null;
     private btnExit: HTMLButtonElement | null = null;
+    private btnVeto: HTMLButtonElement | null = null;
     private hint: HTMLSpanElement | null = null;
     private zoomSlider: HTMLInputElement | null = null;
     private zoomLabel: HTMLSpanElement | null = null;
     private keys = new Set<string>();
     private timer: number | null = null;
 
-    constructor(private hero: PlayerHero, private scene: Scene13PlayerApi) {
+    constructor(
+        private hero: PlayerHero,
+        private scene: Scene13PlayerApi,
+        /** 直播观众改名的主播一键否决（战略地图 HUD 在打仗时隐藏，战术顶栏也要有） */
+        private rename?: { hasViewerRename(): boolean; vetoViewerRename(): void },
+    ) {
         this.createBar();
         document.addEventListener('keydown', (e) => this.onKey(e, true));
         document.addEventListener('keyup', (e) => this.onKey(e, false));
@@ -151,6 +157,17 @@ export class PlayerScene13Control {
             box-shadow:0 2px 12px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,215,0,0.25); white-space:nowrap;`;
         const info = document.createElement('span');
         bar.appendChild(info);
+        const btnVeto = document.createElement('button');
+        btnVeto.textContent = '否决';
+        btnVeto.title = '一键否决观众改名，恢复上一个名字，出价积分不退';
+        btnVeto.style.cssText = 'display:none; cursor:pointer; background:rgba(120,32,32,0.85); border:1px solid rgba(235,110,110,0.65); color:#ffd8d8; font-family:inherit; font-size:12px; padding:2px 8px; border-radius:4px;';
+        btnVeto.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.rename?.vetoViewerRename();
+            this.refresh();
+        });
+        bar.appendChild(btnVeto);
+        this.btnVeto = btnVeto;
         const countdown = document.createElement('span');
         countdown.title = '战术模式 9 分钟倒计时（到时未攻下城池则算打平）';
         countdown.style.cssText = `
@@ -322,6 +339,7 @@ export class PlayerScene13Control {
             if (this.hint) this.hint.style.display = 'none';
         }
         if (this.btnExit) this.btnExit.style.display = 'inline-block';
+        if (this.btnVeto) this.btnVeto.style.display = this.rename?.hasViewerRename() ? 'inline-block' : 'none';
     }
 
     public dispose(): void {

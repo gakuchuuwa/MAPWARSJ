@@ -523,6 +523,13 @@ export class GameApp {
                         id: c.id, lat: c.latitude, lng: c.longitude, type: c.type, factionId: c.factionId,
                         color: HISTORICAL_FACTION_COLORS[c.factionId] ?? this.factionManager?.getFactionColor(c.factionId) ?? '#999999',
                     })),
+                // 🔴 [2026-10-29 主人令「势力色和行军路线色为反差色」]
+                // 提供玩家所属/随行势力的势力色（用于动态计算行军路线反差色，避免红势力与红路线重叠）
+                () => {
+                    const fid = this.playerHero?.factionId ?? (this.playerHero?.getHostLegion() as any)?.factionId;
+                    if (!fid) return null;
+                    return HISTORICAL_FACTION_COLORS[fid] ?? this.factionManager?.getFactionColor(fid) ?? null;
+                },
             );
 
             // 尽早启动主循环，避免 lengthy 同步初始化占死主线程（F12/拖动都失效）
@@ -1201,7 +1208,10 @@ export class GameApp {
                 this.gameTimeHUD?.setCollapsed(!expanded, false);
             },
         });
-        this.playerScene13Control = new PlayerScene13Control(hero, this.scene13War);
+        this.playerScene13Control = new PlayerScene13Control(hero, this.scene13War, {
+            hasViewerRename: () => this.live.hasActiveViewerRename(),
+            vetoViewerRename: () => { this.live.vetoPlayerName(); },
+        });
 
         this.cameraFollowUI.setPlayerHero(hero);
         hero.onChange(() => this.cameraFollowUI.refreshPlayerFollow());

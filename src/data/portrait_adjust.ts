@@ -7348,9 +7348,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/SLAVIC/__闲置__SLAVIC_06.png": {
-            "scale": 1.21,
-            "offsetX": 17,
-            "offsetY": 15
+            "scale": 1.19,
+            "offsetX": 10,
+            "offsetY": 37
         },
         "/assets/POLES/bolan_suobiesiji.png": {
             "scale": 0.93,
@@ -8876,6 +8876,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": -16
+        },
+        "/assets/MAGYAR/yili_bato.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/GERMANIC/falanji_kalman.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 44
         }
     },
     "folderGuides": {

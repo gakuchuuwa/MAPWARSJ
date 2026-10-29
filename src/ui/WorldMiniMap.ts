@@ -38,6 +38,75 @@ const TRAIL_MAX = 6000;
 /** 底图：Esri 世界自然地形图（陆地绿褐、海蓝，海陆分界清楚；最高到 8 级）。原用晕渲图，陆地粉灰、海陆不分明，主人 2026-10-04 嫌弃后换掉 */
 const BASE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}';
 
+/**
+ * 🔴 [2026-10-29 主人令「势力色和行军路线色为反差色」]
+ * 根据所属势力色计算高对比互补反差色：
+ * 1. 色相相反（+180° 互补色，红色变青天蓝，黄色变深宝蓝，蓝色变亮橙金）；
+ * 2. 明暗反差（暗底配亮线，亮底配深线）；
+ * 3. 饱和度增强（保证在小地图上鲜艳夺目）；
+ * 4. 黑白灰特判（暗底金黄，浅底深朱红）。
+ */
+export function computeContrastColor(hex: string): string {
+    const clean = hex.replace('#', '').trim();
+    if (!clean) return '#e8452c';
+    let r = 0, g = 0, b = 0;
+    if (clean.length === 3) {
+        r = parseInt(clean[0] + clean[0], 16);
+        g = parseInt(clean[1] + clean[1], 16);
+        b = parseInt(clean[2] + clean[2], 16);
+    } else if (clean.length >= 6) {
+        r = parseInt(clean.slice(0, 2), 16);
+        g = parseInt(clean.slice(2, 4), 16);
+        b = parseInt(clean.slice(4, 6), 16);
+    } else {
+        return '#e8452c';
+    }
+    if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return '#e8452c';
+
+    const rf = r / 255, gf = g / 255, bf = b / 255;
+    const max = Math.max(rf, gf, bf), min = Math.min(rf, gf, bf);
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
+    const d = max - min;
+
+    if (d > 0.001) {
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case rf: h = (gf - bf) / d + (gf < bf ? 6 : 0); break;
+            case gf: h = (bf - rf) / d + 2; break;
+            case bf: h = (rf - gf) / d + 4; break;
+        }
+        h *= 60;
+    }
+
+    if (s < 0.15) {
+        return l < 0.5 ? '#ffd700' : '#c02c38';
+    }
+
+    const targetH = (h + 180) % 360;
+    const targetS = Math.max(0.9, s);
+    const targetL = l < 0.55 ? 0.65 : 0.35;
+
+    const q = targetL < 0.5 ? targetL * (1 + targetS) : targetL + targetS - targetL * targetS;
+    const p = 2 * targetL - q;
+    const h2rgb = (t: number) => {
+        let tc = t;
+        if (tc < 0) tc += 1;
+        if (tc > 1) tc -= 1;
+        if (tc < 1 / 6) return p + (q - p) * 6 * tc;
+        if (tc < 1 / 2) return q;
+        if (tc < 2 / 3) return p + (q - p) * (2 / 3 - tc) * 6;
+        return p;
+    };
+    const normH = targetH / 360;
+    const ro = Math.round(h2rgb(normH + 1 / 3) * 255);
+    const go = Math.round(h2rgb(normH) * 255);
+    const bo = Math.round(h2rgb(normH - 1 / 3) * 255);
+
+    const toHex = (n: number) => Math.max(0, Math.min(255, n)).toString(16).padStart(2, '0');
+    return `#${toHex(ro)}${toHex(go)}${toHex(bo)}`;
+}
+
 export class WorldMiniMap {
     private root: HTMLDivElement;
     private body: HTMLDivElement;
@@ -68,6 +137,8 @@ export class WorldMiniMap {
     private mini: L.Map;
     private viewRect: L.Rectangle;
     private trail: L.Polyline;
+    /** 当前行军路线颜色（默认鲜红，加入势力后自动切换为与所属势力色高对比的反差色） */
+    private currentTrailColor = '#e8452c';
     private dot: L.Marker;
     private trailPts: L.LatLng[] = [];
     /** 线路是否显示（按钮切换；换军团时会被强制打开并清空重记） */
@@ -141,6 +212,11 @@ export class WorldMiniMap {
          * 不传时不画（与加此参数前行为一致）。
          */
         private readonly getCityMarks?: () => { id: string; lat: number; lng: number; color: string; type?: CityType; factionId?: string }[],
+        /**
+         * 🔴 [2026-10-29 主人令「势力色和行军路线色为反差色」]
+         * 当前宿主军团/玩家所在势力颜色（用于动态计算行军路线的反差色，避免红势力与红路线重叠看不清）。
+         */
+        private readonly getHostFactionColor?: () => string | null,
     ) {
         this.injectStyle();
         this.root = document.createElement('div');
@@ -187,7 +263,7 @@ export class WorldMiniMap {
         L.tileLayer(BASE_URL, { minZoom: 0, maxZoom: 8 }).addTo(this.mini);
         this.mini.createPane("wm-territory").style.zIndex = "350";
         this.viewRect = L.rectangle([[0, 0], [0, 0]], { color: '#f5d77a', weight: 1.5, fill: false, interactive: false }).addTo(this.mini);
-        this.trail = L.polyline([], { color: '#e8452c', weight: 2, opacity: 0.9, interactive: false }).addTo(this.mini);
+        this.trail = L.polyline([], { color: this.currentTrailColor, weight: 2, opacity: 0.95, interactive: false }).addTo(this.mini);
         this.dot = L.marker([0, 0], {
             interactive: false,
             icon: L.divIcon({ className: 'wm-dot', html: '<span></span>', iconSize: [12, 12], iconAnchor: [6, 6] }),
@@ -260,6 +336,18 @@ export class WorldMiniMap {
     }
 
     /**
+     * 🔴 [2026-10-29 主人令「势力色和行军路线色为反差色」]
+     * 动态同步行军路线颜色：使路线与当前势力色呈互补反差色，避免重叠混淆
+     */
+    private updateTrailColor(factionColor: string | null): void {
+        const targetColor = factionColor ? computeContrastColor(factionColor) : '#e8452c';
+        if (this.currentTrailColor !== targetColor) {
+            this.currentTrailColor = targetColor;
+            this.trail.setStyle({ color: targetColor });
+        }
+    }
+
+    /**
      * 🔴 [2026-10-07 主人令「小地图行军线路是用来画军团的行军线路，玩家加入一个势力后，这个军团的行军线路，如果离开势力就不画，再次加入势力再画」]
      * 宿主军团状态侦测：
      * 1. 离开势力（id == null）：不画军团线路，清空已有折线与采样点；
@@ -274,6 +362,7 @@ export class WorldMiniMap {
                 this.trailPts.length = 0;
                 this.trail.setLatLngs([]);
                 this.lastHostId = null;
+                this.updateTrailColor(null);
             }
             return null;
         }
@@ -282,6 +371,7 @@ export class WorldMiniMap {
             this.trailPts.length = 0;
             this.trail.setLatLngs([]);
             if (!this.trailOn) this.setTrailOn(true);   // 换军团/重新加入势力 → 重新显示
+            this.updateTrailColor(this.getHostFactionColor?.() ?? null);
             return null; // 本拍跳过采样，免得把上一军团/上一位置接进新线
         }
         return id;
@@ -391,6 +481,9 @@ export class WorldMiniMap {
         if (++this.tickN % 8 === 0) {
             const { colorChanged, citiesChanged, marks } = this.syncCityDots();
             this.syncTerritoryPolygons(colorChanged || citiesChanged, citiesChanged, marks);
+            if (currentHostId) {
+                this.updateTrailColor(this.getHostFactionColor?.() ?? null);
+            }
         }
         const showTrail = this.trailOn && !!currentHostId;
         if (showTrail !== this.trailShown || this.trailDirty) {
