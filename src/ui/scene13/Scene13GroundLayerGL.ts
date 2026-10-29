@@ -1157,10 +1157,9 @@ export class Scene13GroundLayerGL {
   }
 
   /**
-   * 从屏幕逻辑坐标 (screenX, screenY) 查询地形行军速度系数：
-   *   · 深水：×0.3
-   *   · 浅滩 / 沼泽：×0.6
-   *   · 森林（穿林减速）：×0.5
+   * 从屏幕逻辑坐标 (screenX, screenY) 查询地形行军速度系数（2026-10-29 主人定案）：
+   *   · 水体 / 沼泽：减20%（×0.8）
+   *   · 森林（穿林减速）：减30%（×0.7）
    *   · 平地 / 草地 / 道路：×1.0
    */
   public terrainSpeedAt(screenX: number, screenY: number, W: number, H: number): number {
@@ -1186,23 +1185,19 @@ export class Scene13GroundLayerGL {
     const tid = this.data?.terrain?.[cellIdx];
     const tName = String(DE_TERRAIN_MANIFEST[tid]?.name ?? '');
 
-    // 1. 水体判定（深水 ×0.3，浅滩/沼泽 ×0.6）
+    // 1. 水体判定（🔴 2026-10-29 主人令「水域20%」：战术模式无深水，水体均为浅水 ×0.8）
     if (wVal >= 0.45) {
-      if (rawSpd === 60 || /shallow|swamp|marsh|bog|quagmire|mud/i.test(tName)) {
-        return 0.6;
-      }
-      // 近岸浅水过渡带（0.45 <= wVal < 0.68）算浅滩 ×0.6，深水区（wVal >= 0.68）算深水 ×0.3
-      return wVal >= 0.68 ? 0.3 : 0.6;
+      return 0.8;
     }
 
-    // 2. 陆上沼泽 / 泥潭（×0.6）
+    // 2. 陆上沼泽 / 泥潭（水域/沼泽统一减20% → ×0.8）
     if (rawSpd === 60 || /swamp|marsh|bog|quagmire|shallows|mud/i.test(tName)) {
-      return 0.6;
+      return 0.8;
     }
 
-    // 3. 森林（穿林减速 ×0.5；carveFoundation 清空城基后 smoothForest 已归零，不会误减速）
+    // 3. 森林（🔴 2026-10-29 主人令「树林减30%」→ ×0.7；carveFoundation 清空城基后 smoothForest 已归零，不会误减速）
     if (fVal >= 0.35 || (rawSpd === 50 && fVal >= 0.15)) {
-      return 0.5;
+      return 0.7;
     }
 
     return 1.0;

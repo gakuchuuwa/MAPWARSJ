@@ -75,15 +75,23 @@ export function parseRenameCommand(word: string): { rawName: string; bid: number
     return { rawName: m[1].trim(), bid };
 }
 
-/** 离职选投靠目标口令：投1 3 / 选2 4（省略积分时默认在当前最高价上 +1） */
-export function parseJoinCommand(word: string): { index: number; bid: number | null } | null {
-    const m = word.match(/^(?:投|选)\s*([1-9]\d*)(?:\s+([1-9]\d*))?$/);
-    if (!m) return null;
-    const index = Number(m[1]);
-    const bid = m[2] !== undefined ? Number(m[2]) : null;
-    if (!Number.isSafeInteger(index) || index <= 0) return null;
+/** 离职选投靠目标口令：投1 3 / 选2 4 / 投 大明 3（省略积分时默认在当前最高价上 +1） */
+export function parseJoinCommand(word: string): { index: number; query?: string; bid: number | null } | null {
+    const mNum = word.match(/^(?:投|选)\s*([1-9]\d*)(?:\s+([1-9]\d*))?$/);
+    if (mNum) {
+        const index = Number(mNum[1]);
+        const bid = mNum[2] !== undefined ? Number(mNum[2]) : null;
+        if (!Number.isSafeInteger(index) || index <= 0) return null;
+        if (bid !== null && (!Number.isSafeInteger(bid) || bid <= 0)) return null;
+        return { index, bid };
+    }
+    const mName = word.match(/^(?:投|选)\s*([^\d\s]\S*?)(?:\s+([1-9]\d*))?$/);
+    if (!mName) return null;
+    const query = mName[1].trim();
+    const bid = mName[2] !== undefined ? Number(mName[2]) : null;
+    if (!query) return null;
     if (bid !== null && (!Number.isSafeInteger(bid) || bid <= 0)) return null;
-    return { index, bid };
+    return { index: 0, query, bid };
 }
 
 /** 常见直播聊天机器人：它们在聊天里发消息，但不是观众 */
@@ -342,7 +350,7 @@ export class ViewerLive {
         // 2. 离职后战略地图投靠竞价（斥候＝同文化势力，探马＝同文化武将）
         const joinCmd = parseJoinCommand(word);
         if (joinCmd) {
-            return this.handleJoinCommand(id, name, joinCmd.index, joinCmd.bid, eventId, pubMs);
+            return this.handleJoinCommand(id, name, joinCmd.query ?? joinCmd.index, joinCmd.bid, eventId, pubMs);
         }
 
         // 3. 玩家爆发技（技3 / 技4…，高价先放，同价 FIFO）
@@ -583,7 +591,6 @@ export class ViewerLive {
         let a = 0, d = 0;
         for (const s of this.sides.values()) { if (s === 0) a++; else d++; }
         const joinCandidates = (this.app.playerQuests?.getLiveJoinCandidates?.() ?? [])
-            .slice(0, 5)
             .map((c) => ({ index: c.index, label: c.label, kind: c.kind }));
         const rankId = this.app.playerHero?.getPeakRank().id;
         const joinScope = rankId === 'scout' ? '同文化势力'
@@ -659,19 +666,19 @@ export class ViewerLive {
         return this.note(`${name} 出 ${bid} 积分，将玩家改名为「${mod.name}」（下次改名需 ${bid + 1} 分起）`);
     }
 
-    private handleJoinCommand(id: string, name: string, index: number, explicitBid: number | null, eventId: string, pubMs: number): string {
+    private handleJoinCommand(id: string, name: string, target: number | string, explicitBid: number | null, eventId: string, pubMs: number): string {
         const now = Date.now();
         const quests = this.app.playerQuests;
         const hero = this.app.playerHero;
         if (!quests || !hero) return this.note(`${name}：当前尚无法选择投靠目标`);
         if (this.battleOn()) {
-            this.recordCmd(eventId, id, name, 'join_choice', String(index), explicitBid ?? 0, pubMs, now, 'rejected', '战斗进行中');
+            this.recordCmd(eventId, id, name, 'join_choice', String(target), explicitBid ?? 0, pubMs, now, 'rejected', '战斗进行中');
             return this.note(`${name}：正在交战中，脱离势力回到战略地图后再选投靠`);
         }
         const minNeed = (this.activeJoinBid?.bid ?? 0) + 1;
         const bid = explicitBid ?? minNeed;
         if (bid < minNeed) {
-            this.recordCmd(eventId, id, name, 'join_choice', String(index), bid, pubMs, now, 'rejected', `需出${minNeed}分以上`);
+            this.recordCmd(eventId, id, name, 'join_choice', String(target), bid, pubMs, now, 'rejected', `需出${minNeed}分以上`);
             return this.note(`${name}：当前已有人出 ${this.activeJoinBid!.bid} 积分选【${this.activeJoinBid!.label}】，改选需 ${minNeed} 积分以上`);
         }
         if (bid > MAX_SKILL_BID) {
@@ -679,12 +686,12 @@ export class ViewerLive {
         }
         const a = this.acct(id, name);
         if (a.n < bid) {
-            this.recordCmd(eventId, id, name, 'join_choice', String(index), bid, pubMs, now, 'rejected', '积分不足');
+            this.recordCmd(eventId, id, name, 'join_choice', String(target), bid, pubMs, now, 'rejected', '积分不足');
             return this.note(`${name}：选目标需 ${bid} 积分，现有积分 ${a.n}/${bid}`);
         }
-        const applied = quests.applyLiveJoinChoice(index);
+        const applied = quests.applyLiveJoinChoice(target);
         if (!applied.ok) {
-            this.recordCmd(eventId, id, name, 'join_choice', String(index), bid, pubMs, now, 'rejected', applied.reason);
+            this.recordCmd(eventId, id, name, 'join_choice', String(target), bid, pubMs, now, 'rejected', applied.reason);
             return this.note(`${name}：${applied.reason}`);
         }
         // 反超上一位出价者时，当场原数退回上一位积分
@@ -698,7 +705,7 @@ export class ViewerLive {
             uid: id,
             viewer: name,
             bid,
-            index,
+            index: applied.candidate.index,
             targetId: applied.candidate.id,
             label: applied.candidate.label,
         };

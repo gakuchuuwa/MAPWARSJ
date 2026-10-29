@@ -648,7 +648,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #20 吕山德 (-445 ~ -395) — 公元前405年羊河之战（本城就地开战）
+    // #20 吕山德 (-445 ~ -395) — 公元前405年羊河之战
     gen_lysander: {
         generalId: 'gen_lysander',
         battleName: '羊河之战',
@@ -665,8 +665,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe2_conon',
         enemyTroops: 25000,
         introLines: [
-            { speaker: 'general', text: '雅典将军科农率主力陈兵羊河滩头，连续数日轻敌懈怠、士卒四散觅食！今正是终结伯罗奔尼撒战争的决胜之机，你可愿随我就地突袭雅典大军？' },
-            { speaker: 'player', text: '愿随吕山德统帅就地出击，于羊河全歼雅典主力！' },
+            { speaker: 'general', text: '雅典将军科农率主力陈兵羊河滩头，连续数日轻敌懈怠、士卒四散觅食！今正是终结伯罗奔尼撒战争的决胜之机，你可愿随我突袭雅典大军？' },
+            { speaker: 'player', text: '愿随吕山德统帅出击，于羊河全歼雅典主力！' },
         ],
     },
 

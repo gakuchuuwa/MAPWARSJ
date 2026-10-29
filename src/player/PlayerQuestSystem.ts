@@ -4103,7 +4103,6 @@ export class PlayerQuestSystem {
             seen.add(item.id);
             const { famous: _f, ...rest } = item;
             picked.push({ ...rest, index: picked.length + 1 });
-            if (picked.length >= 6) break;
         }
         this.cachedLiveCandidatesKey = cacheKey;
         this.cachedLiveCandidates = picked;
@@ -4111,7 +4110,7 @@ export class PlayerQuestSystem {
     }
 
     /** 执行观众竞价选中的投靠目标（立即改道前往该同文化势力/武将） */
-    public applyLiveJoinChoice(index: number): { ok: true; candidate: LiveJoinCandidate } | { ok: false; reason: string } {
+    public applyLiveJoinChoice(target: number | string): { ok: true; candidate: LiveJoinCandidate } | { ok: false; reason: string } {
         const hero = this.deps.hero;
         if (hero.isAttached() || this.quest) {
             return { ok: false, reason: '玩家已入伍随军，离职后再选投靠目标' };
@@ -4127,7 +4126,11 @@ export class PlayerQuestSystem {
         if (candidates.length === 0) {
             return { ok: false, reason: '当前同文化暂无满五千兵可出征的目标' };
         }
-        const chosen = candidates.find((c) => c.index === index);
+        const q = typeof target === 'string' ? target.trim() : '';
+        const chosen = typeof target === 'number'
+            ? candidates.find((c) => c.index === target)
+            : candidates.find((c) => c.label === q || c.factionName === q || c.generalName === q)
+                ?? candidates.find((c) => c.label.includes(q) || c.factionName.includes(q));
         if (!chosen) {
             return { ok: false, reason: `请从 1~${candidates.length} 号候选中选择` };
         }

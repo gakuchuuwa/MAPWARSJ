@@ -9011,6 +9011,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": -8
+        },
+        "/assets/ATHENIANS/bfe2_conon.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 49
+        },
+        "/assets/GOTHS/womaya_yahya.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 31
+        },
+        "/assets/SPANISH/kasidiliya_peideluobeilaerde.png": {
+            "scale": 0.94,
+            "offsetX": 4,
+            "offsetY": -9
+        },
+        "/assets/SPANISH/gen_ramiro_ii.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 36
         }
     },
     "folderGuides": {

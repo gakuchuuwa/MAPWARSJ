@@ -642,7 +642,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_lorenzo_medici': 'LATIN',   // 托斯卡纳｜洛伦佐｜据点 佛罗伦萨
     'gen_louis_xi': 'FRANKS',   // 法兰西｜路易十一｜据点 巴黎
     'gen_ludwig_iv': 'GERMANIC',   // 普法尔茨｜路德维希｜据点 海德堡
-    'gen_lysander': 'ATHENIANS',   // 切索尼索斯｜吕山德｜据点 羊河
+    'gen_lysander': 'SPARTANS',   // 斯巴达｜吕山德｜据点 斯巴达
     'gen_magas': 'GREECE',   // 基雷奈加｜马加斯｜据点 班加西
     'gen_maha_thiha_thura': 'BURMESE',   // 缅甸｜摩诃悉都｜据点 三塔关
     'gen_mamai': 'CENTRAL_ASIA',   // 金帐｜马麦｜据点 萨莱

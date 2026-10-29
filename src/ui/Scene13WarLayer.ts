@@ -3744,17 +3744,16 @@ export class Scene13WarLayer {
         return false;
     }
 
-    /** 细分地形行军速度系数：森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0 */
+    /** 细分地形行军速度系数（2026-10-29 主人定案）：水体减20%（×0.8）、树林减30%（×0.7）、平地 ×1.0 */
     private terrainSpeedAt(screenX: number, screenY: number): number {
         if (this.groundLayerGL && this.canvas) {
             return this.groundLayerGL.terrainSpeedAt(screenX, screenY, this.worldCX * 2, this.worldCY * 2);
         }
-        return this.isWaterAt(screenX, screenY) ? 0.6 : 1.0;
+        return this.isWaterAt(screenX, screenY) ? 0.8 : 1.0;
     }
 
-    // 🔴 [2026-10-21 主人令「战术模式中，上坡的时候士兵应该减速。」主人批「上坡乘 0.8，下坡和平地不变」]
-    //    非 DE 设定：AoE2 DE 坡地只影响攻击（±25%）与建筑放置，不影响移速（Wiki「Elevation」「Speed」两页均无）。
-    private static readonly UPHILL_SPEED_K = 0.8;
+    // 🔴 [2026-10-29 主人令「上坡40%」]：上坡减速 40% → 乘 0.6；下坡和平地不变（×1.0）
+    private static readonly UPHILL_SPEED_K = 0.6;
     /** 上坡减速系数：沿本帧移动方向 (ux, uy) 前探一小段，前方地面高程高于脚下 → ×0.8；平地、下坡 ×1.0 */
     private uphillSpeedK(x: number, y: number, ux: number, uy: number): number {
         const g = this.groundLayerGL;
@@ -7555,7 +7554,7 @@ export class Scene13WarLayer {
             if (holdCmd || isGuard) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f, m.hero === true);
             const stats = wt;
-            // 地形细分减速（森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
+            // 地形细分减速（水域减20% ×0.8、树林减30% ×0.7、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
             const spdK = this.terrainSpeedAt(m.x, m.y) * (this.unitHasFrenzy(m) ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
             // 【混】乱阵：处于混乱期的敌军胡乱走动 15 秒（每隔 0.85~1.6 秒或受阻时随机换向，期间停止攻击，受一切伤害 ×2）；
             //    守城站岗的兵原地发愣、不还手、不离岗

@@ -1295,7 +1295,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_lysander', legionName: '古典时代雅典军团', factionId: 'lagoniya', cityId: 'city_yanghe', generalName: '吕山德', portrait: '/assets/ATHENIANS/gen_lysander.png' },
+        { generalId: 'gen_lysander', legionName: '古典时代斯巴达军团', factionId: 'lagoniya', cityId: 'city_sparta', generalName: '吕山德', portrait: '/assets/ATHENIANS/gen_lysander.png' },
 
 
 

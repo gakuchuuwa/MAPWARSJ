@@ -182,6 +182,7 @@ export class ViewerLivePanel {
         const rankBadge = `<span style="font-size:${f.main}px;">官职 ${b(esc(s.hero.rankTitle))}</span>`;
         const hint = (t: string) => `<span style="font-size:${f.sub}px;color:#dfc28c;">${t}</span>`;
         let mainRow: string;
+        let joinGrid = '';
         if (s.on && !civilian) {
             const castCmd = `<span style="font-size:${f.main}px;">${b('攻胜敌混并败')} 玩家六计<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)}先后)</span></span>`;
             const scoutCmd = `<span style="font-size:${f.main}px;">${b('技1')} 爆发技<span style="font-size:${f.sub}px;color:#e0cfa9;">(高分插队)</span></span>`;
@@ -189,7 +190,30 @@ export class ViewerLivePanel {
         } else {
             let statePart: string;
             if (s.joinCandidates.length > 0) {
-                statePart = `<span style="font-size:${f.main}px;">选去处·${esc(s.joinScope)}，在聊天里发：${s.joinCandidates.map((c) => `${b(`投${c.index}`)} 去${esc(c.label)}`).join(' · ')}${s.activeJoinBid ? `<span style="color:#7cd4a0;">（当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分→${esc(s.activeJoinBid.label)}）</span>` : ''}</span>`;
+                const bidFloor = (s.activeJoinBid?.bid ?? 0) + 1;
+                const activeBadge = s.activeJoinBid
+                    ? ` · <span style="color:#7cd4a0;font-weight:700;">当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分➔${esc(s.activeJoinBid.label)}</span>`
+                    : '';
+                statePart = `<span style="font-size:${f.main}px;">选去处·${b(esc(s.joinScope))}<span style="color:#dfc28c;font-size:${f.sub}px;">(共${s.joinCandidates.length}处，发 ${b('投编号')} 或 ${b('投名字')} 竞选，${bidFloor}分起；不选自动前往)</span>${activeBadge}</span>`;
+                const cells = s.joinCandidates.map((c) => {
+                    const isPicked = s.activeJoinBid?.index === c.index;
+                    const boxBg = isPicked
+                        ? 'linear-gradient(180deg, rgba(36,68,48,0.96) 0%, rgba(18,38,26,0.98) 100%)'
+                        : 'linear-gradient(180deg, rgba(46,36,24,0.94) 0%, rgba(24,19,13,0.98) 100%)';
+                    const boxBorder = isPicked ? '1px solid #7cd4a0' : '1px solid rgba(212,175,55,0.48)';
+                    const boxShadow = isPicked
+                        ? '0 0 8px rgba(124,212,160,0.38), inset 0 1px 0 rgba(190,255,215,0.25)'
+                        : '0 1px 3px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,228,150,0.16)';
+                    const tagBg = isPicked ? 'rgba(124,212,160,0.22)' : 'rgba(212,175,55,0.18)';
+                    const tagBorder = isPicked ? '1px solid rgba(124,212,160,0.45)' : '1px solid rgba(212,175,55,0.35)';
+                    const tagColor = isPicked ? '#9ef5c2' : '#ffd700';
+                    const nameColor = isPicked ? '#d6ffea' : '#f7ebd2';
+                    return `<span title="发 投${c.index} 或 投 ${esc(c.label)}" style="width:128px;height:25px;box-sizing:border-box;display:inline-flex;align-items:center;background:${boxBg};border:${boxBorder};border-radius:4px;box-shadow:${boxShadow};overflow:hidden;flex-shrink:0;">`
+                        + `<span style="width:38px;height:100%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:${tagBg};border-right:${tagBorder};color:${tagColor};font-size:12px;font-weight:800;letter-spacing:0.3px;">投${c.index}</span>`
+                        + `<span style="flex:1;min-width:0;padding:0 6px;text-align:center;color:${nameColor};font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,0.85);">${esc(c.label)}</span>`
+                        + `</span>`;
+                }).join('');
+                joinGrid = `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:5px 6px;max-width:88vw;max-height:94px;overflow:hidden;margin:0 auto 5px;padding:5px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.65);">${cells}</div>`;
             } else if (civilian && s.hero.peakRankId === 'civilian') {
                 // 平民没有资历：只能改名，投奔武将后升斥候才开放放技放计
                 statePart = hint(`单骑寻找武将投奔 · 平民现在可以 ${b('改名')} · 投奔后升斥候，打仗时可放技放计`);
@@ -203,7 +227,7 @@ export class ViewerLivePanel {
             mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${statePart}${sep}${renameCmd}${liveInfoPart}</div>`;
         }
 
-        const nextHtml = platform + mainRow;
+        const nextHtml = platform + joinGrid + mainRow;
         if (this.lastBodyHtml !== nextHtml) {
             this.lastBodyHtml = nextHtml;
             this.body.innerHTML = nextHtml;
