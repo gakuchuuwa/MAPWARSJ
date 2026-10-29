@@ -11,7 +11,7 @@ import { GameConfig } from '../config/GameConfig';
  *   · 点据点 → 沿路网前往；抵达后由 PlayerQuestSystem 接管对话。
  *   · 接任务后"入伍"（attachTo）到任务军团：位置逐帧贴军团，镜头跟军团即跟玩家；
  *     军团开打进 13 时，Scene13WarLayer 通过 buildScene13Setup 把玩家放到本方前排前面。
- *   · 当前功劳用于晋升；离开势力功劳清零，历史最高官职保留（PlayerConfig.PLAYER_RANKS）。
+ *   · 当前功劳定官职；离开势力功劳清零、官职重来（新势力从斥候做起），历史最高官职只当资历，管离队能选哪里。
  */
 import { Army } from '../legion/Army';
 import type { GameMap } from '../map/GameMap';
@@ -46,6 +46,8 @@ import {
     PLAYER_MOUNTAIN_SPEED_SCALE,
     PLAYER_SEA_SPEED_SCALE,
     PLAYER_RANKS,
+    PLAYER_KILL_MERIT,
+    PLAYER_BATTLE_MERIT_CAP,
     rankFor,
     type PlayerRank,
 } from './PlayerConfig';
@@ -68,7 +70,7 @@ export interface LearnedUnit {
 
 export interface PlayerSaveState {
     merit: number;
-    /** 历史最高官职；离开势力只清本阶功劳，不清此字段。旧存档缺省时按功劳与势力状态重建。 */
+    /** 历史最高官职（资历）；离开势力不清此字段。旧存档缺省时按功劳与势力状态重建。 */
     rankId?: PlayerRankId;
     /** 玩家自定义名（观众竞拍或主播设定） */
     playerName?: string;
@@ -141,8 +143,10 @@ export class PlayerHeroArmy extends Army {
 export class PlayerHero {
     public readonly army: PlayerHeroArmy;
     public merit = 0;
-    /** 历史最高官职：2026-10-27 主人定「离开势力功劳清零，官职保留」。 */
-    private retainedRankId: PlayerRankId = 'civilian';
+    /** 本场仗已记的功（封顶 PLAYER_BATTLE_MERIT_CAP；进战术战和战后结算时清零） */
+    private battleMerit = 0;
+    /** 历史最高官职（资历）：2026-10-29 主人定「离开势力官职重来」，资历只管离队选去处的范围。 */
+    private peakRankId: PlayerRankId = 'civilian';
     /** 战术模式里落马次数（只做统计，不扣功勋） */
     public heroDowns = 0;
     /** 当前效忠势力（接任务时加入；null = 独行） */
@@ -336,17 +340,20 @@ export class PlayerHero {
         this.lastCulture = culture;
         this.emitChange();
     }
-    /** 当前功劳可晋升，历史最高官职只升不降；已投效势力仍保底斥候。 */
+    /** 当前官职 = 本势力功劳定档；已投效势力保底斥候，离开势力回平民。 */
     public getRank(): PlayerRank {
-        const current = rankFor(this.merit, this.factionId !== null);
-        const currentIdx = PLAYER_RANKS.findIndex((r) => r.id === current.id);
-        const retainedIdx = PLAYER_RANKS.findIndex((r) => r.id === this.retainedRankId);
-        return currentIdx >= retainedIdx ? current : PLAYER_RANKS[Math.max(0, retainedIdx)];
+        return rankFor(this.merit, this.factionId !== null);
+    }
+    /** 资历：历史最高官职，只升不降；离队后观众选去处的范围按它定。 */
+    public getPeakRank(): PlayerRank {
+        const current = this.getRank();
+        const peak = PLAYER_RANKS.find((r) => r.id === this.peakRankId) ?? current;
+        return PLAYER_RANKS.indexOf(peak) > PLAYER_RANKS.indexOf(current) ? peak : current;
     }
     private rememberRank(rank: PlayerRank): void {
         const nextIdx = PLAYER_RANKS.findIndex((r) => r.id === rank.id);
-        const retainedIdx = PLAYER_RANKS.findIndex((r) => r.id === this.retainedRankId);
-        if (nextIdx > retainedIdx) this.retainedRankId = rank.id;
+        const peakIdx = PLAYER_RANKS.findIndex((r) => r.id === this.peakRankId);
+        if (nextIdx > peakIdx) this.peakRankId = rank.id;
     }
     public getHostLegionId(): string | null { return this.hostLegionId; }
     public setAutoMode(on: boolean): void {
@@ -435,27 +442,35 @@ export class PlayerHero {
         this.emitChange();
     }
 
+    /** 打仗得的功：每场合计不超过封顶 */
+    private addBattleMerit(n: number): void {
+        const g = Math.min(n, PLAYER_BATTLE_MERIT_CAP - this.battleMerit);
+        if (g <= 0) return;
+        this.battleMerit += g;
+        this.addMerit(g);
+    }
+
     public resetMerit(reason: string = '随军战败'): void {
         const before = this.getRank();
         const prevMerit = this.merit;
         this.merit = 0;
-        // 🔴 [2026-10-27 主人定] 离开势力只清当前功劳；历史最高官职保留。
+        // 🔴 [2026-10-29 主人定] 离开势力功劳清零、官职重来；历史最高官职只当资历（管离队选去处）。
         this.factionId = null;
         this.army.setFactionId('');
         const rr = this.army.getRenderer();
         if (rr) rr.factionId = undefined;
 
-        const after = this.getRank();
-        this.syncLearnedUnits();  // 官职不降，只按现有官职刷新兵模配置
+        this.syncLearnedUnits();
         this.syncMoveProfile();
         const host = this.getHostLegion();
         if (host) {
             host.playerHostPowerMult = null;
             host.playerHostRankName = null;
         }
-        if (prevMerit > 0 || before.id !== after.id) {
-            this.deps.notify(`💥 ${reason}！功勋已归零，官阶保留【${after.name}】`);
-            gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零，官阶保留【${after.name}】`);
+        if (prevMerit > 0 || before.id !== 'civilian') {
+            const peak = this.getPeakRank();
+            this.deps.notify(`💥 ${reason}！官职重来，资历【${peak.name}】保留`);
+            gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零、官职【${before.name}】重来，资历【${peak.name}】`);
         }
         this.emitChange();
     }
@@ -481,9 +496,10 @@ export class PlayerHero {
         return Date.now() < this.holdUntilMs;
     }
 
-    /** 大地图战略战斗结算：随军军团战胜时按官阶分成获得功劳；战败离开势力、功劳清零但官职保留。 */
+    /** 大地图战略战斗结算：随军军团战胜补满本场功劳（每胜一场正好一档）；战败离开势力、官职重来。 */
     public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number): void {
         if (result === 'defeat') {
+            this.battleMerit = 0;
             // 战败立即回战略地图，从退场完成开始等待 5 秒，再走脱军清场流程。
             this.holdAfterDefeat();
             // 战败 = 脱离军团：清势力（信息栏不再显示旧势力）+ 清任务 + 关自动模式。
@@ -505,14 +521,11 @@ export class PlayerHero {
             }, 0);
             return;
         }
-        if (enemyKilled <= 0) return;
-        const rank = this.getRank();
-        // 官阶指挥分成：平民2% / 斥候3% / 探马5% / 先锋8% / 将军12% / 元帅16% / 公侯20% / 国王25% / 皇帝30%
-        const ratio = rank.meritShare ?? (rank.control === 'none' ? 0.02
-            : rank.control === 'one' ? 0.05
-            : rank.control === 'front' ? 0.1 : 0.2);
-        const gained = Math.max(20, Math.round(enemyKilled * ratio));
-        this.addMerit(gained);   // 🔴 [2026-09-24 主人「删除这种无聊信息」] 只记战功，不弹「大捷！随军斩敌…记战功」
+        // 打赢补满本场功劳（见 PLAYER_BATTLE_MERIT_CAP）：每场胜仗正好一档，升官只看连胜几场
+        // 🔴 [2026-09-24 主人「删除这种无聊信息」] 只记战功，不弹「大捷！随军斩敌…记战功」
+        void enemyKilled;
+        this.addBattleMerit(PLAYER_BATTLE_MERIT_CAP);
+        this.battleMerit = 0;
     }
 
     // ── 兵模收集（凑卡玩法核心，见 docs/AGENTS/player-rules-verbatim.md 第零节）──
@@ -1116,6 +1129,7 @@ export class PlayerHero {
     /** 军团进 13 时由 Scene13WarLayer 调：玩家不在军中返回 null（不布置） */
     public buildScene13Setup(followedOnDefenderSide: boolean): Scene13PlayerSetup | null {
         if (!this.hostLegionId) return null;
+        this.battleMerit = 0;   // 新的一场仗，功劳封顶重新算
         const rank = this.getRank();
         // 🔴 [2026-09-18 主人定]「玩家永远不能改变军团的兵种」—— 不再下发 eliteLane。
         //    原先把玩家自选精锐传进 13、顶替编制里的一口，那是 AI 从「必须 9 支」反推的，
@@ -1127,7 +1141,7 @@ export class PlayerHero {
             heroStats: clonePlayerPeakStats(this.peakStats),
             control: rank.control,
             unitKey: this.getSelectedUnit()?.unitKey ?? null,
-            onKill: () => this.addMerit(20),
+            onKill: () => this.addBattleMerit(PLAYER_KILL_MERIT),
             onHeroDown: () => this.noteHeroDown(),
         };
     }
@@ -1136,6 +1150,7 @@ export class PlayerHero {
      * 🔴 [2026-10-22 主人令] 小队模式（故事块小仗）用：玩家不在军中也能上场，只以本人身份打，不指挥部队。
      */
     public buildScene13SkirmishSetup(side: 0 | 1): Scene13PlayerSetup {
+        this.battleMerit = 0;
         return {
             side,
             heroKey: this.heroKey,
@@ -1143,7 +1158,7 @@ export class PlayerHero {
             heroStats: clonePlayerPeakStats(this.peakStats),
             control: 'none',
             unitKey: null,
-            onKill: () => this.addMerit(20),
+            onKill: () => this.addBattleMerit(PLAYER_KILL_MERIT),
             onHeroDown: () => this.noteHeroDown(),
         };
     }
@@ -1153,7 +1168,7 @@ export class PlayerHero {
         const p = this.army.getPosition();
         return {
             merit: this.merit,
-            rankId: this.getRank().id,
+            rankId: this.getPeakRank().id,
             playerName: this.playerName,
             lastCulture: this.lastCulture,
             heroDowns: this.heroDowns,
@@ -1177,7 +1192,7 @@ export class PlayerHero {
         this.cancelChase();
         this.cancelTravel();
         this.merit = Math.max(0, s.merit ?? 0);
-        this.retainedRankId = s.rankId && PLAYER_RANKS.some((r) => r.id === s.rankId)
+        this.peakRankId = s.rankId && PLAYER_RANKS.some((r) => r.id === s.rankId)
             ? s.rankId
             : rankFor(this.merit, !!s.factionId).id;
         this.rememberRank(rankFor(this.merit, !!s.factionId));

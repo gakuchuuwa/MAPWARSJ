@@ -4032,7 +4032,8 @@ export class PlayerQuestSystem {
             this.cachedLiveCandidates = [];
             return [];
         }
-        const rankId = hero.getRank().id;
+        // 离队后当前官职已重来（回平民），选去处的范围按资历（历史最高官职）
+        const rankId = hero.getPeakRank().id;
         if (rankId === 'civilian') return [];
         const lastCulture = hero.getLastCulture();
         const sameCultureOnly = rankId === 'scout' || rankId === 'outrider';
@@ -4100,7 +4101,7 @@ export class PlayerQuestSystem {
         if (hero.isAttached() || this.quest) {
             return { ok: false, reason: '玩家已入伍随军，离职后再选投靠目标' };
         }
-        const rankId = hero.getRank().id;
+        const rankId = hero.getPeakRank().id;
         if (rankId === 'civilian') {
             return { ok: false, reason: '平民阶段尚不能自选投靠，升为斥候后开放' };
         }

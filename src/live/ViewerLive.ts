@@ -525,7 +525,7 @@ export class ViewerLive {
         const joinCandidates = (this.app.playerQuests?.getLiveJoinCandidates?.() ?? [])
             .slice(0, 5)
             .map((c) => ({ index: c.index, label: c.label, kind: c.kind }));
-        const rankId = this.app.playerHero?.getRank().id;
+        const rankId = this.app.playerHero?.getPeakRank().id;
         const joinScope = rankId === 'scout' ? '同文化势力'
             : rankId === 'outrider' ? '同文化武将'
                 : rankId === 'vanguard' ? '任一势力'
