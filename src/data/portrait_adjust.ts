@@ -818,9 +818,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/JIANGNAN/xiang_d_xiangdakun.png": {
-            "scale": 0.79,
+            "scale": 0.83,
             "offsetX": 0,
-            "offsetY": -23
+            "offsetY": -21
         },
         "/assets/BASHU/yang_bozhou_yangyinglong.png": {
             "scale": 0.94,
@@ -2101,11 +2101,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": -15
-        },
-        "/assets/JIANGNAN/__闲置__JIANGNAN_11.png": {
-            "scale": 1.25,
-            "offsetX": 0,
-            "offsetY": -16
         },
         "/assets/JIANGNAN/sui_yangjian.png": {
             "scale": 1.05,
@@ -4256,11 +4251,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 16,
             "offsetY": 13
-        },
-        "/assets/JIANGNAN/daozhou_yangzaixing.png": {
-            "scale": 0.85,
-            "offsetX": 0,
-            "offsetY": 21
         },
         "/assets/TIBET/shaodang_mitang.png": {
             "scale": 1.07,
@@ -8956,6 +8946,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/JIANGNAN/bfe2_zi_chang.png": {
+            "scale": 1.3,
+            "offsetX": 16,
+            "offsetY": 4
+        },
+        "/assets/JIANGNAN/__闲置__JIANGNAN_34.png": {
+            "scale": 0.85,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/JIANGNAN/daozhou_yangzaixing.png": {
+            "scale": 1.27,
+            "offsetX": 0,
+            "offsetY": -16
         }
     },
     "folderGuides": {

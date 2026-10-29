@@ -239,7 +239,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 30.4,
         myTroops: 30000,
         enemyFactionId: 'mosike_gongguo',
-        enemyFactionName: '莫斯公国',
+        enemyFactionName: '莫斯科',
         enemyGeneralId: 'bfe_chelyadnin',
         enemyTroops: 35000,
         introLines: [
@@ -2521,7 +2521,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 114.78,
         myTroops: 30000,
         enemyFactionId: 'hou_zhao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '后赵',
+        enemyFactionName: '石赵',
         enemyGeneralId: 'bfe_taobao',   // 🔴 [2026-10-25 按史] 320 蓬陂坞与祖逖相持的是后赵桃豹（石勒在襄国）
         enemyTroops: 45000,
         introLines: [
@@ -2587,7 +2587,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 120.45,
         myTroops: 40000,
         enemyFactionId: 'hou_zhao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '后赵',
+        enemyFactionName: '石赵',
         enemyGeneralId: 'shizhao_d_shihu',
         enemyTroops: 50000,
         introLines: [
@@ -2633,7 +2633,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 115.04,
         myTroops: 30000,
         enemyFactionId: 'hou_zhao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '后赵',
+        enemyFactionName: '石赵',
         enemyGeneralId: 'bfe_zhanghedu',   // 🔴 [2026-10-25 按史] 350 苍亭之战＝张贺度（石琨在邯郸另路）
         enemyTroops: 50000,
         introLines: [
@@ -2699,7 +2699,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 114.31,
         myTroops: 50000,
         enemyFactionId: 'dongjin',
-        enemyFactionName: '东晋',
+        enemyFactionName: '司马晋',
         enemyGeneralId: 'danyang_huanwen',
         enemyTroops: 50000,
         introLines: [
@@ -4470,7 +4470,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         // 🔴 [2026-10-20 兵力规则] 柏乡晋军约 3.5 万，按「守方≤攻方×2」与梁军 7 万配平
         myTroops: 35000,
         enemyFactionId: 'hou_liang',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '后梁',
+        enemyFactionName: '朱梁',
         enemyGeneralId: 'liang_d_wangjingren',   // 🔴 [2026-10-20 首战规则] 911 柏乡后梁主帅王景仁（原势力误填石赵）
         enemyTroops: 50000,
         introLines: [
@@ -9018,7 +9018,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 112.45,
         myTroops: 50000,
         enemyFactionId: 'gaoqi_d',
-        enemyFactionName: '北齐',
+        enemyFactionName: '高齐',
         enemyGeneralId: 'jiyuan_huluguang',
         enemyTroops: 50000,
         introLines: [
@@ -9141,7 +9141,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 39.74,
         myTroops: 50000,
         enemyFactionId: 'mosike_gongguo',
-        enemyFactionName: '莫斯公国',
+        enemyFactionName: '莫斯科',
         enemyGeneralId: 'gen_dmitry_donskoy',
         enemyTroops: 40000,
         introLines: [
@@ -9743,7 +9743,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 114.49,
         myTroops: 30000,
         enemyFactionId: 'erzhu',
-        enemyFactionName: '尔朱',
+        enemyFactionName: '尔朱契胡',
         enemyGeneralId: 'erzhu_erzhurong',
         enemyTroops: 15000,
         introLines: [
@@ -10709,7 +10709,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 118.55,
         myTroops: 20000,
         enemyFactionId: 'hou_liang',
-        enemyFactionName: '后梁',
+        enemyFactionName: '朱梁',
         enemyGeneralId: 'liang_d_zhuyouning',
         enemyTroops: 30000,
         introLines: [
@@ -11346,7 +11346,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 110.33,
         myTroops: 50000,
         enemyFactionId: 'hou_han',
-        enemyFactionName: '后汉',
+        enemyFactionName: '沙陀汉',
         enemyGeneralId: 'houhan_lishouzhen',
         enemyTroops: 30000,
         introLines: [
@@ -12148,7 +12148,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 131.60,
         myTroops: 12000,
         enemyFactionId: 'toyotomi',
-        enemyFactionName: '丰臣',
+        enemyFactionName: '丰臣家',
         enemyGeneralId: 'bfe_sogo_kazumasa',
         enemyTroops: 6000,
         introLines: [

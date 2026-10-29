@@ -394,7 +394,7 @@ function pickHuntingForestPalette(style: string, lat: number, idx: number): {
             springTree: bamboo ? 'LUSH_BAMBOO' : 'ASIAN_MAPLE_GREEN',
             summerTree: bamboo ? 'LUSH_BAMBOO' : 'GREEN_OAK',
             autumnTree: bamboo ? 'LUSH_BAMBOO' : 'ASIAN_MAPLE_AUTUMN',
-            winterTree: bamboo ? 'BAMBOO' : 'ASIAN_PINE',
+            winterTree: bamboo ? 'LUSH_BAMBOO' : 'ASIAN_PINE',
             bushName: idx % 3 === 0 ? 'FORAGE_BUSH' : 'UNDERBRUSH_JUNGLE',
             bushLib: idx % 3 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
             isBamboo: bamboo,
@@ -528,19 +528,22 @@ export class CityLifeAmbientLayer {
     }
 
     private reposition(): void {
-        const topLeft = this.map.containerPointToLayerPoint([0, 0]);
+        // 将画布锚定在整数 Layer 像素坐标 (-Math.round(panePos.x), -Math.round(panePos.y))，
+        // 亚像素小数位移交给外层 mapPane GPU translate3d 连续承载，彻底消除画布内静态树木/竹林/农田每帧亚像素重采样闪烁
+        const panePos = (this.map as unknown as { _getMapPanePos(): L.Point })._getMapPanePos();
+        const topLeft = L.point(-Math.round(panePos.x), -Math.round(panePos.y));
         L.DomUtil.setPosition(this.plotCanvas, topLeft);
         L.DomUtil.setPosition(this.canvas, topLeft);
     }
 
-    /** 精确浮点容器坐标（绕开 Leaflet latLngToLayerPoint 内部的 ._round()，防止慢速走动的牲畜与跟拍产生 1px 阶梯跳动） */
+    /** 精确容器画布坐标：与整数锚点 topLeft 配合，既保持慢速走动牲畜的连续平滑，又让静态树木/竹林在画布上锁定整数像素不闪烁 */
     private toContainerPt(lat: number, lng: number): { x: number; y: number } {
         const p = this.map.project([lat, lng], this.map.getZoom());
         const origin = this.map.getPixelOrigin();
         const panePos = (this.map as unknown as { _getMapPanePos(): L.Point })._getMapPanePos();
         return {
-            x: p.x - origin.x + panePos.x,
-            y: p.y - origin.y + panePos.y,
+            x: p.x - origin.x + Math.round(panePos.x),
+            y: p.y - origin.y + Math.round(panePos.y),
         };
     }
 
@@ -899,8 +902,8 @@ export class CityLifeAmbientLayer {
                 : cityType === 'small_city' ? 2
                     : cityType === 'stockade' ? 1
                         : 0;
-        // 同一据点永远保持同一显示结果与套数，不因视口移动、陆海瓦片重排而重掷。
-        if (isPass || maxSlots === 0 || strHash01(yk, 501) >= 0.5) {
+        // 同一据点永远保持同一显示结果与套数，不因视口移动、陆海瓦片重排或跨年重排而闪没。
+        if (isPass || maxSlots === 0 || strHash01(city.id, 501) >= 0.5) {
             this.actorsByCity.set(city.id, list);
             return list;
         }
@@ -1851,10 +1854,14 @@ export class CityLifeAmbientLayer {
 
         const frame = frameIdx % Math.max(1, st.frames);
         const sx = frame * st.boxW;
-        const dx = px - st.anchorX * scale;
-        const dy = py - st.anchorY * scale;
+        const w = Math.round(st.boxW * scale);
+        const h = Math.round(st.boxH * scale);
+        const dx = Math.round(px) - Math.round(st.anchorX * scale);
+        const dy = Math.round(py) - Math.round(st.anchorY * scale);
 
         targetCtx.save();
+        targetCtx.imageSmoothingEnabled = true;
+        targetCtx.imageSmoothingQuality = 'high';
         targetCtx.globalAlpha = Math.max(0, Math.min(1, alpha));
         targetCtx.drawImage(
             st.sheet,
@@ -1864,8 +1871,8 @@ export class CityLifeAmbientLayer {
             st.boxH,
             dx,
             dy,
-            st.boxW * scale,
-            st.boxH * scale
+            w,
+            h
         );
         targetCtx.restore();
     }
@@ -1882,13 +1889,16 @@ export class CityLifeAmbientLayer {
             ? validFrames[variant % validFrames.length]
             : (variant % Math.max(1, st.frames));
 
-        const w = targetH * (st.boxW / st.boxH);
-        const dx = px - w * (st.anchorX / st.boxW);
-        const dy = py - targetH * (st.anchorY / st.boxH);
+        const h = Math.round(targetH);
+        const w = Math.round(targetH * (st.boxW / st.boxH));
+        const dx = Math.round(px) - Math.round(w * (st.anchorX / st.boxW));
+        const dy = Math.round(py) - Math.round(h * (st.anchorY / st.boxH));
 
         this.ctx.save();
+        this.ctx.imageSmoothingEnabled = true;
+        this.ctx.imageSmoothingQuality = 'high';
         this.ctx.globalAlpha = Math.max(0, Math.min(1, alpha * 0.95));
-        this.ctx.drawImage(st.sheet, frame * st.boxW, 0, st.boxW, st.boxH, dx, dy, w, targetH);
+        this.ctx.drawImage(st.sheet, frame * st.boxW, 0, st.boxW, st.boxH, dx, dy, w, h);
         this.ctx.restore();
     }
 
@@ -1997,12 +2007,19 @@ export class CityLifeAmbientLayer {
         const nextSeason = (season + 1) % 4;
         const seasonBlend = this.getSeasonBlend();
 
-        // 树林与生产组合同步经过“战损 → 残骸渐隐 → 生产渐显”三个阶段。
+        // 树林与生产组合同步经过“战损 → 残骸渐隐 → 生产渐显”三个阶段；
+        // 跨年轮换（同城旧角色 retiring + 新角色渐显）时，合成该城总 viewAlpha 封顶为 1，防止固定树林/竹林在跨年时半透明闪烁。
         const cityState = new Map<string, { viewAlpha: number; damageBlend: number; peaceAlpha: number }>();
         for (const a of this.activeActors.values()) {
             const prev = cityState.get(a.cityId);
-            if (!prev || a.viewAlpha > prev.viewAlpha) {
+            if (!prev) {
                 cityState.set(a.cityId, { viewAlpha: a.viewAlpha, damageBlend: a.damageBlend, peaceAlpha: a.peaceAlpha });
+            } else {
+                cityState.set(a.cityId, {
+                    viewAlpha: Math.min(1, prev.viewAlpha + a.viewAlpha),
+                    damageBlend: Math.max(prev.damageBlend, a.damageBlend),
+                    peaceAlpha: Math.max(prev.peaceAlpha, a.peaceAlpha),
+                });
             }
         }
 
@@ -2040,14 +2057,17 @@ export class CityLifeAmbientLayer {
                     const nextTree = trees[nextSeason];
                     const mainH = treeBaseH * fp.scaleJitter;
                     const subH = mainH * 0.78;
-                    if (curTree === nextTree) {
+                    const nextReady = curTree !== nextTree && !!this.stripAssetFor('SUCAI_NATURE', nextTree);
+                    if (curTree === nextTree || !nextReady || seasonBlend <= 0.002) {
                         this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha);
                         this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha);
                     } else {
+                        const a1 = (1 - seasonBlend) * 0.95;
+                        const a2 = (1 - (1 - 0.95) / Math.max(0.05, 1 - a1)) / 0.95;
                         this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha * (1 - seasonBlend));
                         this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha * (1 - seasonBlend));
-                        this.drawHuntingTree(nextTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha * seasonBlend);
-                        this.drawHuntingTree(nextTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha * seasonBlend);
+                        this.drawHuntingTree(nextTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha * a2);
+                        this.drawHuntingTree(nextTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha * a2);
                     }
                 }
             }

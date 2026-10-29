@@ -16,6 +16,10 @@ const SAMPLE_ZOOM = 9;
 const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
 const CITY_CLEAR_PX = 46;
+/** 画布四周离屏余量（px）：平移期间直接由 mapPane GPU 硬件变换同步移动，消除每帧亚像素重采样闪烁 */
+const CANVAS_PAD_PX = 160;
+/** 镜头平移累计超过该阈值（px）才重定位并重绘离屏余量画布（小于 CANVAS_PAD_PX，屏边不露白） */
+const CANVAS_REPAINT_DRIFT_PX = 96;
 /** 两次重建之间的最小间隔（ms）。跟拍军团时 GameAppLoop 每帧 setView → 每帧 moveend，
  *  不节流的话整层色块每帧重画。 */
 const MIN_RENDER_INTERVAL_MS = 200;
@@ -433,11 +437,44 @@ export class VegetationLayer {
     private retryCount = 0;
 
     private terrainReadyTimer: number | null = null;
-    private readonly onViewportChanged = () => { this.lastRenderKey = ''; this.scheduleRender(); };
+    /** 画布当前锚定的整数 Layer 坐标左上角，以及锚定时的整数 panePos */
+    private canvasTopLeft: L.Point = L.point(0, 0);
+    private paintedPaneX = Number.NaN;
+    private paintedPaneY = Number.NaN;
+    private paintedZoom = Number.NaN;
+
+    private getMapPanePos(): L.Point {
+        return (this.map as unknown as { _getMapPanePos(): L.Point })._getMapPanePos();
+    }
+
+    /** 将画布锚定在整数 Layer 像素坐标上，使每棵树的画布坐标 (dx, dy) 恒为整数，彻底消除亚像素重采样闪烁 */
+    private syncCanvasPosition(): void {
+        const panePos = this.getMapPanePos();
+        const px = Math.round(panePos.x);
+        const py = Math.round(panePos.y);
+        this.paintedPaneX = px;
+        this.paintedPaneY = py;
+        this.paintedZoom = Math.floor(this.map.getZoom());
+        this.canvasTopLeft = L.point(-px - CANVAS_PAD_PX, -py - CANVAS_PAD_PX);
+        L.DomUtil.setPosition(this.canvas, this.canvasTopLeft);
+    }
+
+    private readonly onViewportChanged = () => { this.scheduleRender(); };
+    private readonly onZoomChanged = () => { this.lastRenderKey = ''; this.paint(); this.scheduleRender(0); };
     private readonly onResize = () => { this.resize(); this.lastRenderKey = ''; this.scheduleRender(); };
     private readonly onCanvasFollow = () => {
-        L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
-        this.paint();
+        // 平移期间画布已在 mapPane 内随 GPU translate3d 与底图严丝合缝同步移动；
+        // 仅当累计平移超出安全余量或缩放改变时才重锚定重绘，避免每帧 60FPS 重采样导致竹林/树木闪烁。
+        const panePos = this.getMapPanePos();
+        const zoom = Math.floor(this.map.getZoom());
+        if (
+            zoom !== this.paintedZoom ||
+            !Number.isFinite(this.paintedPaneX) ||
+            Math.abs(panePos.x - this.paintedPaneX) > CANVAS_REPAINT_DRIFT_PX ||
+            Math.abs(panePos.y - this.paintedPaneY) > CANVAS_REPAINT_DRIFT_PX
+        ) {
+            this.paint();
+        }
     };
     private readonly onTerrainReady = () => {
         if (this.terrainReadyTimer !== null) return;
@@ -461,8 +498,9 @@ export class VegetationLayer {
         this.ctx = this.canvas.getContext('2d')!;
         pane.appendChild(this.canvas);
 
-        map.on('moveend zoomend', this.onViewportChanged);
-        map.on('move zoom', this.onCanvasFollow);
+        map.on('moveend', this.onViewportChanged);
+        map.on('zoomend', this.onZoomChanged);
+        map.on('move', this.onCanvasFollow);
         map.on('resize', this.onResize);
         window.addEventListener('land-sea-tiles-updated', this.onTerrainReady);
         this.resize();
@@ -485,9 +523,9 @@ export class VegetationLayer {
 
     private resize(): void {
         const size = this.map.getSize();
-        this.canvas.width = size.x;
-        this.canvas.height = size.y;
-        L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
+        this.canvas.width = size.x + CANVAS_PAD_PX * 2;
+        this.canvas.height = size.y + CANVAS_PAD_PX * 2;
+        this.syncCanvasPosition();
     }
 
     /**
@@ -564,21 +602,34 @@ export class VegetationLayer {
         if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) return;
 
         const gameSeason = currentGameSeason();
-        // 淡出窗口按**剩余游戏秒**判定（见 SEASON_BLEND_SECONDS）；刚换季那帧 sampledGameSeason 还没跟上，
-        // 此时先按"不淡"处理，等下一次 render 用新季贴图重算。
+        // 换季翻转瞬间若 paint 先于 seasonTimer 触发，立即同步执行 renderInner 刷新四季树种，杜绝闪回上一季旧树
+        if (this.sampledGameSeason !== -1 && this.sampledGameSeason !== gameSeason) {
+            this.lastRenderKey = '';
+            this.renderInner();
+            return;
+        }
+        this.syncCanvasPosition();
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
         const baseBlend = this.sampledGameSeason === gameSeason
             ? Math.min(1, Math.max(0, seasonBlend()))
             : 0;
         const hScale = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM);
         const W = this.canvas.width, H = this.canvas.height;
+        const topLeftX = this.canvasTopLeft.x;
+        const topLeftY = this.canvasTopLeft.y;
 
         const items: { x: number; y: number; h: number; c: TreeDrawCommand }[] = [];
         if (LAST_DRAWN_ASSET.size > LAST_DRAWN_MAX) LAST_DRAWN_ASSET.clear();   // 防无限增长
         for (const c of this.trees) {
-            const pt = this.map.latLngToContainerPoint([c.lat, c.lng]);
+            // 使用整数 Layer 像素坐标减去整数 canvasTopLeft，保证每棵树在画布上的根部坐标恒为整数，平移重绘零亚像素跳变
+            const layerPt = this.map.latLngToLayerPoint([c.lat, c.lng]);
+            const x = layerPt.x - topLeftX;
+            const y = layerPt.y - topLeftY;
             const h = hScale * c.jitter;
-            if (pt.x < -h * 2 || pt.x > W + h * 2 || pt.y < -h * 2 || pt.y > H + h * 2) continue;
-            items.push({ x: pt.x, y: pt.y, h, c });
+            if (x < -h * 2 || x > W + h * 2 || y < -h * 2 || y > H + h * 2) continue;
+            items.push({ x, y, h, c });
         }
         items.sort((a, b) => a.y - b.y || a.x - b.x);
 
@@ -597,18 +648,19 @@ export class VegetationLayer {
                 // 🔴 若该树种第 0 帧被剔除（如 PINE / SNOW_PINE 的 preview.png 是第 0 帧枯木棍），绝不回退画 preview.png
                 const prevImg = meta.frames.includes(0) ? treeImage(asset, this.onTreeImageReady) : null;
 
-                const w = it.h * (meta.boxW / meta.boxH);
-                const dx = it.x - w * (meta.anchorX / meta.boxW);
-                const dy = it.y - it.h * (meta.anchorY / meta.boxH);
+                const h = Math.round(it.h);
+                const w = Math.round(it.h * (meta.boxW / meta.boxH));
+                const dx = it.x - Math.round(w * (meta.anchorX / meta.boxW));
+                const dy = it.y - Math.round(h * (meta.anchorY / meta.boxH));
 
                 if (framesImg) {
                     const frameIdx = meta.frames[variant % meta.frames.length];
                     const sx = frameIdx * meta.boxW;
-                    ctx.drawImage(framesImg, sx, 0, meta.boxW, meta.boxH, dx, dy, w, it.h);
+                    ctx.drawImage(framesImg, sx, 0, meta.boxW, meta.boxH, dx, dy, w, h);
                     return asset;
                 }
                 if (prevImg) {
-                    ctx.drawImage(prevImg, 0, 0, prevImg.naturalWidth, prevImg.naturalHeight, dx, dy, w, it.h);
+                    ctx.drawImage(prevImg, 0, 0, prevImg.naturalWidth, prevImg.naturalHeight, dx, dy, w, h);
                     return asset;
                 }
                 return null;   // 两张都没就绪：由调用方用「上一次画成的图」兜底，绝不留空
@@ -616,8 +668,9 @@ export class VegetationLayer {
             // 兜底：未配置元数据的资产按底部居中对齐
             const im = treeImage(asset, this.onTreeImageReady);
             if (im) {
-                const w = it.h * (im.naturalWidth / im.naturalHeight);
-                ctx.drawImage(im, it.x - w / 2, it.y - it.h, w, it.h);
+                const h = Math.round(it.h);
+                const w = Math.round(it.h * (im.naturalWidth / im.naturalHeight));
+                ctx.drawImage(im, it.x - Math.round(w / 2), it.y - h, w, h);
                 return asset;
             }
             return null;
@@ -706,17 +759,17 @@ export class VegetationLayer {
         if (!inRange) { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); this.lastRenderKey = ''; return; }
 
         const size = this.map.getSize();
-        if (size.x > 0 && (this.canvas.width !== size.x || this.canvas.height !== size.y)) this.resize();
-
-        L.DomUtil.setPosition(this.canvas, this.map.containerPointToLayerPoint([0, 0]));
+        const targetW = size.x + CANVAS_PAD_PX * 2;
+        const targetH = size.y + CANVAS_PAD_PX * 2;
+        if (size.x > 0 && (this.canvas.width !== targetW || this.canvas.height !== targetH)) this.resize();
 
         const bounds = this.map.getBounds();
         const nw = this.map.project(bounds.getNorthWest(), SAMPLE_ZOOM);
         const se = this.map.project(bounds.getSouthEast(), SAMPLE_ZOOM);
-        const xMin = Math.floor(nw.x / TREE_GRID_STEP) * TREE_GRID_STEP;
-        const xMax = Math.ceil(se.x / TREE_GRID_STEP) * TREE_GRID_STEP;
-        const yMin = Math.floor(nw.y / TREE_GRID_STEP) * TREE_GRID_STEP;
-        const yMax = Math.ceil(se.y / TREE_GRID_STEP) * TREE_GRID_STEP;
+        const xMin = Math.floor((nw.x - CANVAS_PAD_PX) / TREE_GRID_STEP) * TREE_GRID_STEP;
+        const xMax = Math.ceil((se.x + CANVAS_PAD_PX) / TREE_GRID_STEP) * TREE_GRID_STEP;
+        const yMin = Math.floor((nw.y - CANVAS_PAD_PX) / TREE_GRID_STEP) * TREE_GRID_STEP;
+        const yMax = Math.ceil((se.y + CANVAS_PAD_PX) / TREE_GRID_STEP) * TREE_GRID_STEP;
 
         const gameSeason = currentGameSeason();
         const season = currentTreeSeason();
@@ -738,15 +791,19 @@ export class VegetationLayer {
             'NORTHEAST', 'VARANGIANS', 'DIANQIAN', 'MAPUCHE',
             'TUPI', 'AMERICA', 'MAYANS', 'GEORGIANS',
         ]);
-        const paddedBounds = bounds.pad(0.42);
+        const paddedBounds = bounds.pad(0.48);
         const visibleCities = CITIES_V2
             .filter((city) => paddedBounds.contains([city.lat, city.lng]))
-            .map((city) => ({
-                lat: city.lat,
-                lng: city.lng,
-                pt: this.map.latLngToContainerPoint([city.lat, city.lng]),
-                isForestHunting: FOREST_HUNTING_STYLES.has(city.buildingStyle ?? ''),
-            }));
+            .map((city) => {
+                const wpt = this.map.project([city.lat, city.lng], SAMPLE_ZOOM);
+                return {
+                    lat: city.lat,
+                    lng: city.lng,
+                    wx: wpt.x,
+                    wy: wpt.y,
+                    isForestHunting: FOREST_HUNTING_STYLES.has(city.buildingStyle ?? ''),
+                };
+            });
 
         for (let gy = yMin; gy <= yMax; gy += TREE_GRID_STEP) {
             for (let gx = xMin; gx <= xMax; gx += TREE_GRID_STEP) {
@@ -756,15 +813,14 @@ export class VegetationLayer {
                 const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
                 if (ptLatLng.lat < -58 || ptLatLng.lat > 75) continue;
 
-                const water = waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng);
-                if (water !== false) {
-                    if (water === null) missingTiles++;
-                    continue;
-                }
+                // 据点避让统一在 SAMPLE_ZOOM 世界像素坐标系下计算，彻底杜绝因平移/缩放亚像素取整导致的城周树木闪现
+                if (visibleCities.some((c) => Math.hypot(c.wx - px, c.wy - py) < (c.isForestHunting ? 24 : CITY_CLEAR_PX))) continue;
 
-                // 据点避让（渔猎民族据点仅避让城堡核心 24px，让树林环抱据点四周；其余据点避让 46px）
-                const center = this.map.latLngToContainerPoint(ptLatLng);
-                if (visibleCities.some((c) => c.pt.distanceTo(center) < (c.isForestHunting ? 24 : CITY_CLEAR_PX))) continue;
+                const water = waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng);
+                if (water === true) continue;
+                if (water === null) {
+                    waterSampler.scheduleFetch(ptLatLng.lat, ptLatLng.lng);
+                }
 
                 // 检查是否处于渔猎民族据点周围 0.36°（约 40km）林带内
                 let huntingCityBoost = 0;
@@ -791,7 +847,7 @@ export class VegetationLayer {
                 if (elev === null) {
                     missingTiles++;
                     if (isHighPlateau) continue;
-                } else if (elev > treeLine || elev < 0) {
+                } else if (elev > treeLine || elev < 0 || (water === null && elev <= 0)) {
                     continue;
                 }
 

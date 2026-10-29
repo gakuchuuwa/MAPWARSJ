@@ -6608,7 +6608,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'sima_d_simayi', factionId: 'wei', cityId: 'city_luoyang', legionName: '古典时代华夏军团', generalName: '司马懿', portrait: '/assets/CENTRAL/sima_d_simayi.png', eliteName: '魏中军', eliteTier: 4  },   // 按史：司马懿夺洛阳中军兵权、平辽东统中军（《三国志·卷九·曹爽传》）
+        { generalId: 'sima_d_simayi', factionId: 'dongjin', cityId: 'city_luoyang', legionName: '古典时代华夏军团', generalName: '司马懿', portrait: '/assets/CENTRAL/sima_d_simayi.png', eliteName: '魏中军', eliteTier: 4  },   // 按史：司马懿夺洛阳中军兵权、平辽东统中军（《三国志·卷九·曹爽传》）
 
 
 
@@ -11307,7 +11307,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         // 🔴 [2026-10-25 主人令] 西晋（与春秋晋同势力）非先秦武将：不跟「先秦军团」指针，按格位取古典军团
-        { generalId: 'bfe_wangyan', factionId: 'jin', cityId: 'city_luoyang', legionName: '古典时代华夏军团', generalName: '王衍', portrait: '/assets/CENTRAL/bfe_wangyan.png', eliteName: '晋廷禁军', eliteTier: 4 },
+        { generalId: 'bfe_wangyan', factionId: 'dongjin', cityId: 'city_luoyang', legionName: '古典时代华夏军团', generalName: '王衍', portrait: '/assets/CENTRAL/bfe_wangyan.png', eliteName: '晋廷禁军', eliteTier: 4 },
     ],
 
 
