@@ -2027,15 +2027,6 @@ export class PlayerQuestSystem {
             host.setPosition(defended.latitude, defended.longitude);
         } else if (metAtFront) {
             host.setPosition(targetPos.lat, targetPos.lng);
-        } else if (false && km(host.getPosition(), targetPos) > PlayerQuestSystem.FIRST_BATTLE_FAR_KM) {
-            // 优先离战场最近的己方据点（不含战场城本身），留一段短途行军；没有就直接摆到战场
-            const stage = this.deps.cityManager.getCities()
-                .filter((c) => c.id !== targetCity?.id && c.factionId === myFactionId)
-                .map((c) => ({ c, d: km({ lat: c.latitude, lng: c.longitude }, targetPos) }))
-                .filter((x) => x.d <= PlayerQuestSystem.FIRST_BATTLE_FAR_KM)
-                .sort((a, b) => a.d - b.d)[0]?.c;
-            if (stage) host.setPosition(stage.latitude, stage.longitude);
-            else host.setPosition(targetPos.lat, targetPos.lng);
         }
         const isOnTheSpot = getEuclideanDistance(host.getPosition(), targetPos) <= 0.12;
 
@@ -3800,9 +3791,14 @@ export class PlayerQuestSystem {
             const inStyle = pool.filter((c) => !this.visited.has(c.id));
             if (inStyle.length) fresh = inStyle;
             else {
-                this.visited.clear();
-                this.visitedGenerals.clear();
-                fresh = tied;
+                for (const c of pool) {
+                    this.visited.delete(c.id);
+                    for (const g of getCityAnchoredGenerals(c.id)) {
+                        this.visitedGenerals.delete(g.generalId);
+                    }
+                }
+                const refamous = pool.filter(isFamousCity);
+                fresh = refamous.length ? refamous : pool;
             }
         }
         // K 固定 = NEAR_K（最近五座里抽，554km，留出随机性）；「就近寻将」开关已按主人令删除。
@@ -4188,7 +4184,11 @@ export class PlayerQuestSystem {
                 }
             }
             if (factionPool.length > 0) {
-                const rnd = factionPool[Math.floor(Math.random() * factionPool.length)];
+                const unvisitedFamous = factionPool.filter((x) => !this.visitedGenerals.has(x.generalId) && getGeneralProfile(x.generalId)?.tier === 'famous');
+                const famousPool = factionPool.filter((x) => getGeneralProfile(x.generalId)?.tier === 'famous');
+                const unvisitedPool = factionPool.filter((x) => !this.visitedGenerals.has(x.generalId));
+                const bestPool = unvisitedFamous.length > 0 ? unvisitedFamous : famousPool.length > 0 ? famousPool : unvisitedPool.length > 0 ? unvisitedPool : factionPool;
+                const rnd = bestPool[Math.floor(Math.random() * bestPool.length)];
                 targetCityId = rnd.cityId;
                 targetGeneralId = rnd.generalId;
                 targetGeneralName = rnd.generalName;

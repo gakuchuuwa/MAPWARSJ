@@ -49,6 +49,13 @@ export function buildDeCity(this: Scene13WarLayer): void {
             fetch('/SUCAI_BUILDING/' + p.dir + '/_meta.json').then((r) => (r.ok ? r.json() : null)).catch(() => null)));
         if (gen !== this.assetGen || this.deCity !== c) return;
         const { x: cx, y: cy } = this.deCityCenter;
+        const wonderSet = new Set<string>();
+        if (this.defenderCityId) {
+            const mw = CITY_WONDER[this.defenderCityId];
+            if (mw) wonderSet.add(mw);
+            const ew = CITY_WONDER_EXTRA[this.defenderCityId];
+            if (ew) for (const ex of ew) wonderSet.add(ex.asset);
+        }
         pieces.forEach((p, i) => {
             const meta = metas[i];
             if (!meta || !meta.box_w) return;
@@ -62,7 +69,7 @@ export function buildDeCity(this: Scene13WarLayer): void {
                 obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
             };
             this.decorSprites.push(sprite);
-            if (p.kind === 'building') { if (p.aux) (sprite as any).isAux = true; this.trackCityBuilding(sprite); return; }
+            if (p.kind === 'building') { if (p.aux) (sprite as any).isAux = true; this.trackCityBuilding(sprite, wonderSet.has(p.dir) ? 'WONDER' : undefined); return; }
             sprite.obstruction = { x: 0.95, y: 0.95 };
             if (p.kind === 'wall') {
                 // 木栅栏/篱笆走 WOOD_WALL 档；石墙/垛墙 STONE_WALL（加固墙取 FORTIFIED_WALL 3000 血）、破墙前按 HP 切 D25/D50/D75

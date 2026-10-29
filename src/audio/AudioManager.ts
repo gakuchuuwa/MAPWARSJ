@@ -301,6 +301,7 @@ const BGM_FALLBACK_MAP: Record<string, string> = {
  *      · GERMANIC          The Mass（ERA）
  *      · rock_house_jail   勇闯夺命岛 Rock House Jail（Nick Glennie-Smith / Harry Gregson-Williams / Hans Zimmer）
  *      · helmet_to_helmet  Brand X Music - Helmet To Helmet
+ *      · manqing           满清·江山风雨情 / The Warlord（Wai Lap wu 胡伟立）
  *
  *    🔴 **暂停 ≠ 删除**：.aud 音频文件、`BGM_REGION_GAIN` 响度标定、`BASE16_BGM_MAP` 母体映射
  *    全部原样保留（主人「不要删除，只是不用了」），恢复时把本集合里对应那一行删掉即可。
@@ -316,6 +317,7 @@ const PAUSED_BGM_FOLDERS = new Set<string>([
     'GERMANIC',
     'rock_house_jail',
     'helmet_to_helmet',
+    'manqing',
 ]);
 
 /**
@@ -684,7 +686,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     BURMESE: ['de_BURMESE', 'pugan', 'burmese_a'],
     BYZANTINE: ['de_BYZANTINE', 'age_of_kings', 'byzantine_a', 'byzantine_b'],
     CELTS: ['de_CELTS', 'celts_a', 'celts_b'],
-    CENTRAL: ['de_CENTRAL', 'CENTRAL', 'NORTH', 'daming', 'litang', 'liuhan', 'manqing', 'shadow_assassin'],
+    CENTRAL: ['de_CENTRAL', 'CENTRAL', 'NORTH', 'daming', 'litang', 'liuhan', 'shadow_assassin'],
     CENTRAL_ASIA: ['de_CENTRAL_ASIA', 'CENTRAL_ASIA', 'central_asia_a'],
     CUMAN: ['de_CUMAN', 'cuman_a'],
     DANES: ['de_DANES', 'furious_march', 'danes_a', 'danes_b'],

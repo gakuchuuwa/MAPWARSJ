@@ -200,7 +200,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
         formationMode: 'triangle',
         shipId: 'ELITE_TURTLE_SHIP',
-        commanderUnit: 'hero_zhaoyun',
+        commanderUnit: 'hero_letrien',
         slots: [
             { type: 'elite_war_wagon', count: 2 },
             { type: 'jian_swordsman', count: 3 },
@@ -673,7 +673,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
         formationMode: 'balance_yoke',
         shipId: 'CANOE',
-        commanderUnit: 'hero_girgenkhan',
+        commanderUnit: 'hero_ibrahimlodi',
         slots: [
             { type: 'antiquity_skirmisher', count: 4 },
             { type: 'xianbei_raider', count: 2 },
@@ -690,7 +690,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_girgenkhan',
+        commanderUnit: 'hero_subotai',
         slots: [
             { type: 'jian_swordman_unshielded', count: 3 },
             { type: 'recurve_bowman', count: 4 },
@@ -724,7 +724,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
         formationMode: 'fish_scale',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_girgenkhan',
+        commanderUnit: 'hero_tamerlane',
         slots: [
             { type: 'iron_pagoda', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
@@ -820,7 +820,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_guanyu',
+        commanderUnit: 'hero_dongzhuo',
         slots: [
             { type: 'liao_dao', count: 3 },
             { type: 'fire_archer', count: 4 },
@@ -877,7 +877,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FIRE_GALLEY',
         commanderUnit: 'hero_kitabatake',
         slots: [
-            { type: 'jian_swordman_unshielded', count: 3 },
+            { type: 'samurai', count: 3 },
             { type: 'rattan_archer', count: 4 },
             { type: 'levy', count: 2 },
         ],
@@ -897,8 +897,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_nobunaga',
         slots: [
             { type: 'samurai', count: 3 },
-            { type: 'ninja', count: 4 },
-            { type: 'samurai_elite', count: 2 },
+            { type: 'samurai_elite', count: 4 },
+            { type: 'ninja', count: 2 },
         ],
     },
 

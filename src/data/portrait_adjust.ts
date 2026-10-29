@@ -9051,6 +9051,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 23,
             "offsetY": 44
+        },
+        "/assets/JAPAN/bfe_sogo_kazumasa.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/JAPAN/bfe_oda_nobuhide.png": {
+            "scale": 0.92,
+            "offsetX": 2,
+            "offsetY": 6
         }
     },
     "folderGuides": {

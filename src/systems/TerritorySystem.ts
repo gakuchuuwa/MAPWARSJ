@@ -29,6 +29,8 @@ import { getCityRegion, type RegionType } from './RegionSystem';
 import { resolveCastleAsset } from '../config/deCastleAssets';
 import { DE_SPRITE_ANCHOR, DE_SPRITE_BOX_W } from './battlefield/deSpriteSizes';
 import { BATTLEFIELDS } from '../data/Battlefields';
+import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
+import { isWonderFounded } from '../data/wonderFoundedYears';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { isScriptPeriod } from '../events/scriptPeriod';
@@ -1635,15 +1637,50 @@ function buildDeCityGridHtml(
     };
     const dirOf = (src: string): string => /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(src)?.[1] ?? '';
 
+    // 🔴 [2026-10-30 主人令「如果据点中有特殊建筑，要优先在战术地图中展示出来」]
+    //    收集本据点已建成的特殊建筑（CITY_WONDER 主奇观 + CITY_WONDER_EXTRA 附加奇观），去重且避开与城心城堡同素材的项；
+    //    无城心城堡时主特殊建筑优先坐城心位，有城心城堡时特殊建筑优先排在视野最开阔的侧翼/前排槽位（避开北侧正后方被城堡屋脊遮挡）。
+    const castleDirForCenter = centerCastle ? resolveCastleAsset(style, factionId, region, cityId, buildingStyle) : null;
+    const rawWonders: string[] = [];
+    const mainWonder = CITY_WONDER[cityId];
+    if (mainWonder && isWonderFounded(mainWonder)) rawWonders.push(mainWonder);
+    const extraWonders = CITY_WONDER_EXTRA[cityId];
+    if (extraWonders) {
+        for (const ex of extraWonders) {
+            if (isWonderFounded(ex.asset) && !rawWonders.includes(ex.asset)) rawWonders.push(ex.asset);
+        }
+    }
+    const dedupWonders = castleDirForCenter ? rawWonders.filter((w) => w !== castleDirForCenter) : rawWonders;
+    const wonderSlotMap = new Map<number, string>();
+    if (dedupWonders.length > 0) {
+        const candidateIndices = slots
+            .map((sl, idx) => ({ sl, idx }))
+            .filter(({ sl }) => !(centerCastle && sl.isCenter))
+            .sort((a, b) => {
+                if (!centerCastle && a.sl.isCenter !== b.sl.isCenter) return a.sl.isCenter ? -1 : 1;
+                // 优先选左右两翼（|ci - cj| 大，完全不被中心城堡遮挡）与前排（ci + cj 大）
+                const wingA = Math.abs(a.sl.ci - a.sl.cj), wingB = Math.abs(b.sl.ci - b.sl.cj);
+                if (wingA !== wingB) return wingB - wingA;
+                return (b.sl.ci + b.sl.cj) - (a.sl.ci + a.sl.cj);
+            });
+        for (let wi = 0; wi < dedupWonders.length && wi < candidateIndices.length; wi++) {
+            wonderSlotMap.set(candidateIndices[wi].idx, dedupWonders[wi]);
+        }
+    }
+
     let otherIdx = 0;
     slots.forEach((slot, i) => {
-        if (centerCastle && slot.isCenter) {
-            const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
+        if (centerCastle && slot.isCenter && castleDirForCenter) {
             const cW = native.castleW ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「全世界统一」] 兜底 0.48 → 0.54（战术按格摆放；通常走 native.castleW 素材原生宽）
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
-            placeBuilding(castleDir, `/SUCAI_BUILDING/${castleDir}/preview.png`, cW, 4, slot.ci, slot.cj, cFlip);
+            placeBuilding(castleDirForCenter, `/SUCAI_BUILDING/${castleDirForCenter}/preview.png`, cW, 4, slot.ci, slot.cj, cFlip);
+        } else if (wonderSlotMap.has(i)) {
+            const wDir = wonderSlotMap.get(i)!;
+            const wW = DE_SPRITE_BOX_W[wDir] ?? (baseSize * 0.54);
+            const wFlip = cityBuildingFlip(cityId, `wonder_${i}_${wDir}`);
+            placeBuilding(wDir, `/SUCAI_BUILDING/${wDir}/preview.png`, wW, 4, slot.ci, slot.cj, wFlip);
         } else {
-            const entry = centerCastle ? pool[otherIdx++] : pool[i];
+            const entry = pool[otherIdx++];
             if (!entry) return;   // 个位比建筑多时空着（如无城堡时 13 位 / 12 栋）
             const [b, age] = entry as [string, 'AGE2' | 'AGE3'];
             const bStyle = g.buildingStyle ?? style;

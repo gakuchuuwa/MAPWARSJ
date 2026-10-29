@@ -191,7 +191,7 @@ export class ViewerLivePanel {
             let statePart: string;
             if (s.joinCandidates.length > 0) {
                 const total = s.joinCandidates.length;
-                const pageSize = 8;
+                const pageSize = 10;
                 const pageCount = Math.max(1, Math.ceil(total / pageSize));
                 const pageIdx = Math.floor(Date.now() / 4000) % pageCount;
                 const pageItems = s.joinCandidates.slice(pageIdx * pageSize, (pageIdx + 1) * pageSize);
@@ -219,12 +219,12 @@ export class ViewerLivePanel {
                     const tagBorder = isPicked ? '1px solid rgba(124,212,160,0.45)' : '1px solid rgba(212,175,55,0.35)';
                     const tagColor = isPicked ? '#9ef5c2' : '#ffd700';
                     const nameColor = isPicked ? '#d6ffea' : '#f7ebd2';
-                    return `<span title="发 投${c.index} 或 投 ${esc(c.label)}" style="width:138px;height:25px;box-sizing:border-box;display:inline-flex;align-items:center;background:${boxBg};border:${boxBorder};border-radius:4px;box-shadow:${boxShadow};overflow:hidden;flex-shrink:0;">`
+                    return `<span title="发 投${c.index} 或 投 ${esc(c.label)}" style="width:128px;height:25px;box-sizing:border-box;display:inline-flex;align-items:center;background:${boxBg};border:${boxBorder};border-radius:4px;box-shadow:${boxShadow};overflow:hidden;flex-shrink:0;">`
                         + `<span style="width:38px;height:100%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:${tagBg};border-right:${tagBorder};color:${tagColor};font-size:12px;font-weight:800;letter-spacing:0.3px;">投${c.index}</span>`
                         + `<span style="flex:1;min-width:0;padding:0 6px;text-align:center;color:${nameColor};font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,0.85);">${esc(c.label)}</span>`
                         + `</span>`;
                 }).join('');
-                joinGrid = `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:5px 6px;max-width:88vw;margin:0 auto 5px;padding:5px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.65);">${cells}</div>`;
+                joinGrid = `<div style="display:flex;flex-wrap:nowrap;justify-content:center;gap:5px;max-width:96vw;margin:0 auto 5px;padding:5px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.65);">${cells}</div>`;
             } else if (civilian && s.hero.peakRankId === 'civilian') {
                 // 平民没有资历：只能改名，投奔武将后升斥候才开放技能
                 statePart = hint(`单骑寻访武将 · 入伍升斥候后可在战中释放技能`);

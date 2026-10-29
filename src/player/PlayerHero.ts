@@ -488,7 +488,7 @@ export class PlayerHero {
     private holdUntilMs = 0;
 
     /** 随军战败 → 落地停顿（时长见 PLAYER_DEFEAT_HOLD_MS） */
-    private holdAfterDefeat(): void {
+    public holdAfterDefeat(): void {
         // 先退战术场景，避免残局停留消耗玩家在战略地图上的等待时间。
         (globalThis as any).window?.game?.battleScene?.exit();
         this.holdUntilMs = Date.now() + PLAYER_DEFEAT_HOLD_MS;
