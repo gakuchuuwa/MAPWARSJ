@@ -103,9 +103,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '帝国时代葡萄牙风琴军团',
         formationMode: 'echelon',
         slots: [
-            { type: 'organ_gun', count: 4 },
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'heavy_crossbowman', count: 2 },
+            { type: 'heavy_pikeman', count: 4 },
+            { type: 'heavy_crossbowman', count: 3 },
+            { type: 'organ_gun', count: 2 },
         ],
         regions: ['PORTUGUESE'],
         parentLegion: '帝国时代葡萄牙军团',

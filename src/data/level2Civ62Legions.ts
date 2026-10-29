@@ -186,8 +186,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_itzcoatl',
         slots: [
             { type: 'elite_jaguar_warrior', count: 3 },
-            { type: 'priest', count: 4 },   // 🔴 [2026-10-19 主人令「把这 5 个法术兵按历史编进对应文明的军团」] 原 plumed_archer；按史：阿兹特克祭司随军，为献祭俘获战俘
-            { type: 'eagle_warrior', count: 2 },
+            { type: 'eagle_warrior', count: 4 },
+            { type: 'priest', count: 2 },
         ],
     },
     {
@@ -453,7 +453,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
         formationMode: 'fish_scale',
         shipId: 'INCENDIARY_RAFT',
-        commanderUnit: 'hero_sunquan',
+        commanderUnit: 'hero_einarpaunchshaker',
         slots: [
             { type: 'jian_swordsman', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
@@ -1027,8 +1027,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANNON_GALLEON',
         commanderUnit: 'hero_bernardarmagnac',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'champion', count: 3 },
+            { type: 'champion', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'paladin', count: 2 },
         ],
     },
@@ -1099,8 +1099,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'ELITE_CANNON_GALLEON',
         commanderUnit: 'hero_philipthegood',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'flemish_pikeman_f', count: 3 },
+            { type: 'flemish_pikeman_f', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'coustillier', count: 2 },
         ],
     },
@@ -1247,8 +1247,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_williamwallace',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'two_handed_swordsman', count: 3 },
+            { type: 'two_handed_swordsman', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'light_cavalry', count: 2 },
         ],
     },
@@ -1549,7 +1549,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
         shipId: 'THE_MIDDLEBROOK',
-        commanderUnit: 'hero_kalfarnason',
+        commanderUnit: 'hero_erikthered',
         slots: [
             { type: 'jomsviking', count: 4 },
             { type: 'teutonic_knight', count: 3 },
@@ -1568,8 +1568,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_henryv',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'champion', count: 3 },
+            { type: 'champion', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'mounted_crossbowman_heavy', count: 2 },
         ],
     },
@@ -1590,8 +1590,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_selimthegrim',
         slots: [
-            { type: 'royal_janissary', count: 4 },
-            { type: 'eastern_swordsman', count: 3 },
+            { type: 'eastern_swordsman', count: 4 },
+            { type: 'royal_janissary', count: 3 },
             { type: 'savar', count: 2 },
         ],
     },
@@ -1842,8 +1842,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_vytautasthegreat',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'obuch', count: 3 },
+            { type: 'obuch', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'winged_hussar', count: 2 },
         ],
     },
@@ -1987,8 +1987,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FAST_FIRE_SHIP',
         commanderUnit: 'hero_miklostoldi',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'magyar_huszar', count: 3 },
+            { type: 'magyar_huszar', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'hussar', count: 2 },
         ],
     },
@@ -2061,8 +2061,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_vladdracula',
         slots: [
             { type: 'elite_varangian_guard', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'boyar', count: 2 },
+            { type: 'boyar', count: 4 },
+            { type: 'hand_cannoneer', count: 2 },
         ],
     },
 
@@ -2099,8 +2099,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_algirdas',
         slots: [
             { type: 'elite_leitis', count: 3 },
-            { type: 'pagan_priest', count: 4 },   // 🔴 [2026-10-19 主人令「把这 5 个法术兵按历史编进对应文明的军团」] 原 crossbowman；按史：立陶宛至 1387 年仍奉多神教
-            { type: 'winged_hussar', count: 2 },
+            { type: 'winged_hussar', count: 4 },
+            { type: 'pagan_priest', count: 2 },
         ],
     },
     // ── 立陶宛 · 帝国时代 · 帝国时代立陶宛军团　（本次新建）────────────────
@@ -2115,8 +2115,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANNON_GALLEON',
         commanderUnit: 'hero_kestutis',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'leitis', count: 3 },
+            { type: 'leitis', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'winged_hussar', count: 2 },
         ],
     },
@@ -2188,8 +2188,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_guyjosselyne',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'champion', count: 3 },
+            { type: 'champion', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'hussar', count: 2 },
         ],
     },
@@ -2306,8 +2306,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_richardthelionheart',
         slots: [
             { type: 'crusader_knight', count: 3 },
-            { type: 'monk', count: 4 },
-            { type: 'master_of_the_templar', count: 2 },
+            { type: 'master_of_the_templar', count: 4 },
+            { type: 'monk', count: 2 },
         ],
     },
     // ── 罗马 · 帝国时代 · 帝国时代意大利军团　（本次新建）────────────────
@@ -2322,8 +2322,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_popeleoi',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'heavy_pikeman', count: 3 },
+            { type: 'heavy_pikeman', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'paladin', count: 2 },
         ],
     },
@@ -2389,8 +2389,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_henryv',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'serjeant', count: 3 },
+            { type: 'serjeant', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'paladin', count: 2 },
         ],
     },
@@ -2647,8 +2647,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_henryv',
                 slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'heavy_pikeman', count: 3 },
+            { type: 'heavy_pikeman', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'magyar_huszar', count: 2 },
         ],
     },
@@ -2799,8 +2799,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    苏丹亲兵基础档改放新建三级军团「帝国时代苏丹亲兵军团」3 档。
         slots: [
             { type: 'elite_steppe_lancer', count: 2 },
-            { type: 'cav_archer_heavy', count: 3 },
-            { type: 'elite_janissary', count: 4 },
+            { type: 'elite_janissary', count: 3 },
+            { type: 'cav_archer_heavy', count: 4 },
         ],
     },
 
@@ -3351,8 +3351,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_tabinshwehti',
         slots: [
             { type: 'battle_elephant', count: 2 },
-            { type: 'arambai', count: 4 },
-            { type: 'pikeman', count: 3 },
+            { type: 'pikeman', count: 4 },
+            { type: 'arambai', count: 3 },
         ],
     },
     // ── 缅甸 · 城堡时代 · 城堡时代阿瓦军团　（本次新建）────────────────
@@ -3384,9 +3384,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'bayinnaung_elephant',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'arambai', count: 2 },
-            { type: 'paragon', count: 3 },
+            { type: 'paragon', count: 4 },
+            { type: 'hand_cannoneer', count: 2 },
+            { type: 'arambai', count: 3 },
         ],
     },
 
@@ -3830,9 +3830,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FAST_FIRE_SHIP',
         commanderUnit: 'hero_sumanguru',
         slots: [
-            { type: 'royal_janissary', count: 4 },
+            { type: 'champion', count: 4 },
             { type: 'genitour', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'royal_janissary', count: 3 },
         ],
     },
 
@@ -4095,8 +4095,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_shahismail',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'elite_guardsman', count: 3 },
+            { type: 'elite_guardsman', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'qizilbash_warrior', count: 2 },
         ],
     },
@@ -4114,8 +4114,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_mustafapasha',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'champion', count: 3 },
+            { type: 'champion', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'light_cavalry', count: 2 },
         ],
     },
@@ -4445,8 +4445,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_qutlugh',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'eastern_swordsman', count: 3 },
+            { type: 'eastern_swordsman', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'elite_keshik', count: 2 },
         ],
     },
@@ -4570,8 +4570,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FAST_FIRE_SHIP',
         commanderUnit: 'hero_mustafapasha',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'heavy_pikeman', count: 3 },
+            { type: 'heavy_pikeman', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'cavalier', count: 2 },
         ],
     },

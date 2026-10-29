@@ -5123,7 +5123,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/GERMANIC/batawei_xiweilisi.png": {
-            "scale": 1.2,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 20
         },
@@ -5229,7 +5229,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/BOHEMIANS/gen_swatopluk.png": {
             "scale": 1.12,
-            "offsetX": 0,
+            "offsetX": -19,
             "offsetY": 11
         },
         "/assets/SLAVIC/luosi_yaluosilafu.png": {
@@ -8868,9 +8868,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -4
         },
         "/assets/GERMANIC/falanji_kalman.png": {
-            "scale": 1.14,
+            "scale": 1.18,
             "offsetX": 0,
-            "offsetY": 44
+            "offsetY": 41
         },
         "/assets/LATIN/gen_maximilian_sforza.png": {
             "scale": 1.16,
@@ -8908,9 +8908,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -14
         },
         "/assets/GERMANIC/bfe_bogislaw_i.png": {
-            "scale": 0.94,
+            "scale": 0.92,
             "offsetX": 0,
-            "offsetY": -4
+            "offsetY": -6
         },
         "/assets/FRANKS/gen_louis_xi.png": {
             "scale": 1.22,
@@ -8991,6 +8991,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 8,
             "offsetY": 10
+        },
+        "/assets/ATHENIANS/bfe2_cleon.png": {
+            "scale": 1.14,
+            "offsetX": -14,
+            "offsetY": 28
+        },
+        "/assets/SAXONS/wende_heinrich_loewe.png": {
+            "scale": 0.96,
+            "offsetX": 4,
+            "offsetY": 0
+        },
+        "/assets/DANES/danmai_godfred.png": {
+            "scale": 1.18,
+            "offsetX": -9,
+            "offsetY": 29
         }
     },
     "folderGuides": {
