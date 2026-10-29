@@ -40,23 +40,24 @@ export interface PlayerRank {
 export const PLAYER_KILL_MERIT = 5;
 /**
  * 每场胜仗的功劳，正好这么多：打的时候斩杀一点点往上涨，打赢补满，超出不记；打输官职重来。
- * 🔴 [2026-10-29 主人「到皇帝要用 8 个小时，但不是每个一小时，可以前期快」，约 10 分钟一仗]
- *    官职门槛按「连胜几场」排（下表 merit ÷ 1000 = 场数）：
- *    探马 1 场（10 分钟）· 先锋 3（半小时）· 将军 6（1 小时）· 元帅 12（2 小时）·
- *    公侯 21（3.5 小时）· 国王 33（5.5 小时）· 皇帝 48（8 小时）。每升一级要的时间越来越长。
+ * 只认主角亲身上战术战场的仗（PlayerHero.battleArmed），随军在大地图上几秒打完的小仗不算。
+ * 🔴 [2026-10-29 主人「到皇帝要用 8 个小时，但不是每个一小时，可以前期快」
+ *    「战斗一场最多 10 分钟，通常 2-3 分一场」] 按一场连赶路约 4 分钟算，门槛按「连胜几场」排（merit ÷ 1000 = 场数）：
+ *    探马 3 场（约 12 分钟）· 先锋 8（半小时）· 将军 15（1 小时）· 元帅 30（2 小时）·
+ *    公侯 52（3.5 小时）· 国王 82（5.5 小时）· 皇帝 120（8 小时）。每升一级要的时间越来越长。
  */
 export const PLAYER_BATTLE_MERIT_CAP = 1000;
 
 export const PLAYER_RANKS: readonly PlayerRank[] = [
     { id: 'civilian', title: '平民', name: '布衣平民', merit: 0, control: 'none', powerMult: 1.1, authority: '单骑独行，随军出征' },
     { id: 'scout', title: '斥候', name: '风行斥候', merit: 500, control: 'none', powerMult: 1.2, authority: '刺探军情，独战游击' },
-    { id: 'outrider', title: '探马', name: '探马蓝旗', merit: 1000, control: 'one', powerMult: 1.3, authority: '先头前哨，指挥前排 1 队' },
-    { id: 'vanguard', title: '先锋', name: '破阵先锋', merit: 3000, control: 'front', powerMult: 1.4, authority: '破阵冲锋，统率突击前排全体编队' },
-    { id: 'general', title: '将军', name: '百战将军', merit: 6000, control: 'all', powerMult: 1.5, authority: '临阵决机，调度前中后全军 3 排编队' },
-    { id: 'marshal', title: '元帅', name: '兵马元帅', merit: 12000, control: 'all', powerMult: 1.6, authority: '执掌帅印，节制三军主力，全军提振' },
-    { id: 'duke', title: '公侯', name: '列土封侯', merit: 21000, control: 'all', powerMult: 1.7, authority: '裂土分封，自领精锐军府，威震方镇' },
-    { id: 'king', title: '国王', name: '一国之主', merit: 33000, control: 'all', powerMult: 1.8, authority: '一国之主，裁夺本国诸军出战与围攻' },
-    { id: 'emperor', title: '皇帝', name: '九五至尊', merit: 48000, control: 'all', powerMult: 1.9, authority: '九五至尊，号令四海诸王，天下兵马尽归驱策' },
+    { id: 'outrider', title: '探马', name: '探马蓝旗', merit: 3000, control: 'one', powerMult: 1.3, authority: '先头前哨，指挥前排 1 队' },
+    { id: 'vanguard', title: '先锋', name: '破阵先锋', merit: 8000, control: 'front', powerMult: 1.4, authority: '破阵冲锋，统率突击前排全体编队' },
+    { id: 'general', title: '将军', name: '百战将军', merit: 15000, control: 'all', powerMult: 1.5, authority: '临阵决机，调度前中后全军 3 排编队' },
+    { id: 'marshal', title: '元帅', name: '兵马元帅', merit: 30000, control: 'all', powerMult: 1.6, authority: '执掌帅印，节制三军主力，全军提振' },
+    { id: 'duke', title: '公侯', name: '列土封侯', merit: 52000, control: 'all', powerMult: 1.7, authority: '裂土分封，自领精锐军府，威震方镇' },
+    { id: 'king', title: '国王', name: '一国之主', merit: 82000, control: 'all', powerMult: 1.8, authority: '一国之主，裁夺本国诸军出战与围攻' },
+    { id: 'emperor', title: '皇帝', name: '九五至尊', merit: 120000, control: 'all', powerMult: 1.9, authority: '九五至尊，号令四海诸王，天下兵马尽归驱策' },
 ];
 
 /** 加入势力后的**保底官阶**：白身投效即为斥候，不必先攒功勋。

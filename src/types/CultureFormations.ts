@@ -1625,7 +1625,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     TIBET: "封建时代吐蕃军团",
     TIBET_CASTLE: '城堡时代萨迦军团',
     TIBET_IMPERIAL: "帝国时代卫藏军团",
-    CENTRAL_ASIA: "封建时代河中军团",
+    CENTRAL_ASIA: "封建时代图兰军团",
     WESTERN: '古典时代西域军团',
     WESTERN_FEUDAL: '封建时代安西军团',
     WESTERN_CASTLE: '城堡时代蒙兀儿军团',
@@ -1720,7 +1720,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     MING: "帝国时代燕晋军团",
     HUAXIA_IMPERIAL: "帝国时代中国军团",
     MAMLUKS: "城堡时代撒拉森军团",
-    TIMURID: "城堡时代察合台军团",
+    TIMURID: "城堡时代河中军团",
     DELHI: "城堡时代德里苏丹国军团",
     CASTILE: '城堡时代卡斯蒂利亚军团',
 };

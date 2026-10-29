@@ -2830,7 +2830,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（布哈拉、撒马尔罕；伊斯梅尔·萨曼烧结砖几何镂空陵殿、早期布哈拉方砖石木卫城；古拉姆人马锁甲重骑兵、重型破甲铁骨朵、抗击草原游牧袭扰的绿洲深壕营垒大阵）
     //    英雄队（第 10 队·主将队）：hero_qutlugh / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代河中军团', civ: '鞑靼', age: 'feudal', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
+        name: '封建时代图兰军团', civ: '鞑靼', age: 'feudal', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
         buildingStyle: 'CENTRAL_ASIA',
         castleId: 'CEAS_CASTLE_AGE3', castleName: '中亚/鞑靼 撒马尔罕帖木儿蓝顶堡',
         formationMode: 'fish_scale',
@@ -2847,7 +2847,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（撒马尔罕、渴石；比比哈努姆清真寺巨型伊万门、古尔·埃米尔陵高耸蓝绿琉璃瓦葱头双层穹顶；全套东方铁板鳞甲骑兵、超强复合角弓抛射、重装长骑枪与战象协同野战大阵）
     //    英雄队（第 10 队·主将队）：hero_qutlugh / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代察合台军团', civ: '鞑靼', age: 'castle', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
+        name: '城堡时代河中军团', civ: '鞑靼', age: 'castle', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
         buildingStyle: 'CENTRAL_ASIA',
         castleId: 'CEAS_CASTLE_AGE3', castleName: '中亚/鞑靼 撒马尔罕帖木儿蓝顶堡',
         formationMode: 'fish_scale',
@@ -2864,7 +2864,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（布哈拉、希瓦；布哈拉卡隆宣礼塔石砌广场基垒、早期希瓦土坯环形防御城垣；大马士革重型弯刀、中亚轻型锁子甲套护胸板、大航海早期昔班尼汗席卷河中绿洲铁骑大阵）
     //    英雄队（第 10 队·主将队）：hero_qutlugh / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代乌兹别克军团', civ: '鞑靼', age: 'imperial', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
+        name: '帝国时代突厥斯坦军团', civ: '鞑靼', age: 'imperial', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
         buildingStyle: 'CENTRAL_ASIA',
         castleId: 'CEAS_CASTLE_AGE3', castleName: '中亚/鞑靼 撒马尔罕帖木儿蓝顶堡',
         formationMode: 'fish_scale',

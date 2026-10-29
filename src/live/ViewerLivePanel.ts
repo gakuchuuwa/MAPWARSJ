@@ -57,10 +57,10 @@ export class ViewerLivePanel {
 
     private applyScene13MergedStyle(): void {
         this.root.style.cssText = `
-            position:relative; display:inline-flex; align-items:center; justify-content:center;
+            position:relative; display:flex; align-items:center; justify-content:center;
+            flex-basis:100%; width:100%;
             padding-top:3px; margin-top:2px;
             border-top:1px solid rgba(212,175,55,0.3);
-            width:100%;
             color:#f5e6c8; font-family:${FONT}; font-size:${FS_S13.sub}px; line-height:1.2;
             pointer-events:auto; user-select:none;`;
         this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:380px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
@@ -101,7 +101,7 @@ export class ViewerLivePanel {
         const linked = s.platform.includes('已连接');
         const show = this.devOpen || linked || (this.inScene13Bar && s.on);
         if (!show) { this.root.style.display = 'none'; return; }
-        this.root.style.display = this.inScene13Bar ? 'inline-flex' : 'block';
+        this.root.style.display = this.inScene13Bar ? 'flex' : 'block';
         const f = this.inScene13Bar ? FS_S13 : FS;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
         const b = (t: string) => `<b style="color:#ffd700;">${t}</b>`;
@@ -132,7 +132,7 @@ export class ViewerLivePanel {
             subItems.push(`<span><span style="color:#ffd700;">排队：</span>${q.slice(0, 3).map((x) =>
                 `${esc(x.name)}${x.label ? `·${esc(x.label)}` : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
         }
-        if (s.log.length) subItems.push(`<span style="color:#cdbb95;">${s.log.slice(-2).map(esc).join(' ｜ ')}</span>`);
+        if (s.log.length) subItems.push(`<span style="color:#cdbb95;">${esc(s.log[s.log.length - 1])}</span>`);
 
         // 🔴 [2026-10-29 主人令「把这些信息放到玩家信息面板，设计一行就行」]
         // 直播信息（点赞发分、在线、在场、积分）整合成单行，不再独立悬挂第二行
@@ -152,7 +152,7 @@ export class ViewerLivePanel {
         } else {
             let statePart: string;
             if (s.joinCandidates.length > 0) {
-                statePart = `<span style="font-size:${f.main}px;">选去处·${esc(s.joinScope)}：${s.joinCandidates.map((c) => `${b(`投${c.index}`)} ${esc(c.label)}`).join(' · ')}${s.activeJoinBid ? `<span style="color:#7cd4a0;">（当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分→${esc(s.activeJoinBid.label)}）</span>` : ''}</span>`;
+                statePart = `<span style="font-size:${f.main}px;">选去处·${esc(s.joinScope)}，在聊天里发：${s.joinCandidates.map((c) => `${b(`投${c.index}`)} 去${esc(c.label)}`).join(' · ')}${s.activeJoinBid ? `<span style="color:#7cd4a0;">（当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分→${esc(s.activeJoinBid.label)}）</span>` : ''}</span>`;
             } else if (civilian && s.hero.peakRankId === 'civilian') {
                 // 平民没有资历：只能改名，投奔武将后升斥候才开放放技放计
                 statePart = hint(`单骑寻找武将投奔 · 平民现在可以 ${b('改名')} · 投奔后升斥候，打仗时可放技放计`);

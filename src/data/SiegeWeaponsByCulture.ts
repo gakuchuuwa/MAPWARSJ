@@ -875,15 +875,15 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代河中军团': {
+    '封建时代图兰军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代察合台军团': {
+    '城堡时代河中军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'flaming_camel', 'flaming_camel', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '帝国时代乌兹别克军团': {
+    '帝国时代突厥斯坦军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'flaming_camel', 'flaming_camel', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
     },

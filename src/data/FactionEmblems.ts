@@ -222,7 +222,7 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     hansa: 'HANSEATIC_COG',   // 汉萨·柯克船（汉萨城市印章与纹章；单桅方帆、首尾楼、搭接船板）
     feilisidin: 'PHILISTINE_FEATHERED_CAP',   // 非利士·羽冠（拉美西斯三世麦迪奈特·哈布浮雕的Peleset战士）
     arakan: 'ARAKAN_TRIPARTITE_SRIVATSA',   // 阿拉干·三瓣室利筏娑（本地钱币双菱中柱与外卷侧枝）
-    // ── 2026-10-26 大势力史实旗面第九批（2 家；花剌子模、米底证据不足，保留字旗）──
+    // ── 2026-10-26 大势力史实旗面第九批（2 家；米底证据不足，保留字旗）──
     zhelouqi: 'CHAHAMANA_AJAYARAJA_LAKSHMI',   // 乔汉·阿阇耶罗阇银币四臂拉克什米结跏坐像（1110—1125年，Mitch NI 456）
     adile: 'ADIL_SHAHI_DOTTED_LEAF',   // 阿迪勒·穆罕默德·阿迪勒·沙阿第四系列点叶纹铜币（1627—1656年，G&G BJ32）
     // ── 2026-10-26 大势力史实旗面第十批（2 家；萨法尔、伊德里斯仅见铭文币，保留字旗）──
@@ -247,13 +247,14 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     pusikefu_gongheguo: 'PSKOV_DOVMONT_LEOPARD',   // 普斯科夫·多夫蒙特时期钱币猛兽（1425—1510年，非现代州徽）
     ouka: 'RYAZAN_FYODOR_TAMGA',   // 梁赞·费奥多尔·奥利戈维奇钱币的双卷羊首形王室塔木加
     sumeier: 'URUK_INANNA_REED_POST',   // 苏美尔·乌鲁克花瓶与印章的伊南娜芦苇环柱
-    // ── 2026-10-26 大势力史实旗面第十三批（6 家）───────────────────────────
+    // ── 2026-10-26 大势力史实旗面第十三批（7 家）───────────────────────────
     weijing_york: 'JORVIK_RAVEN_PENNY',   // 约维克·939—941年约克乌鸦便士（左向头、正面展翼与扇形尾）
     yada: 'HEPHTHALITE_S2_TAMGA',   // 嚈哒·帝国时期钱币S2塔木加（中央圆环、双外卷叉与弯干）
     lagusa: 'RAGUSA_ST_BLAISE',   // 拉古萨·1358—1808年圣布莱斯旗（主教冠、祝福手、牧杖与城市模型）
     yipilusi: 'EPIRUS_PYRRHUS_THUNDERBOLT',   // 伊庇鲁斯·皮洛士前278年叙拉古铜币的横向带翼雷电
     mojietuo: 'MAGADHA_KARSHAPANA_PUNCHMARKS',   // 摩揭陀·早期打印记银币五印记组合（太阳、六臂印、兽印与几何印）
     lancang: 'LAN_XANG_ELEPHANT_PARASOL',   // 澜沧·建国称号“百万大象与白伞王国”的单头立象与王室白伞
+    huarazim: 'KHWARAZM_MUHAMMAD_HORSEMAN',   // 花剌子模·沙阿摩诃末吉塔尔银铜币的右向持矛突骑（1200—1220年，Tye 212 / Album 1723）
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

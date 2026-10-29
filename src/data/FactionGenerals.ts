@@ -3698,7 +3698,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_kutlug_buga', cityId: 'city_salai', generalName: '库特卢格·布加', portrait: '/assets/CENTRAL_ASIA/gen_kutlug_buga.png', legionName: '城堡时代察合台军团' },
+        { generalId: 'gen_kutlug_buga', cityId: 'city_salai', generalName: '库特卢格·布加', portrait: '/assets/CENTRAL_ASIA/gen_kutlug_buga.png', legionName: '城堡时代河中军团' },
 
 
 
@@ -3706,7 +3706,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_mamai', cityId: 'city_salai', generalName: '马麦', portrait: '/assets/CENTRAL_ASIA/gen_mamai.png', legionName: '城堡时代察合台军团' },
+        { generalId: 'gen_mamai', cityId: 'city_salai', generalName: '马麦', portrait: '/assets/CENTRAL_ASIA/gen_mamai.png', legionName: '城堡时代河中军团' },
 
 
 
@@ -3730,7 +3730,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'jinzhang_nogai', cityId: 'city_salai', legionName: '城堡时代察合台军团', generalName: '那海', portrait: '/assets/CENTRAL_ASIA/jinzhang_nogai.png' },
+        { generalId: 'jinzhang_nogai', cityId: 'city_salai', legionName: '城堡时代河中军团', generalName: '那海', portrait: '/assets/CENTRAL_ASIA/jinzhang_nogai.png' },
 
 
 
@@ -3762,7 +3762,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_karasakal', cityId: 'city_kashan', generalName: '卡拉萨卡尔', portrait: '/assets/CENTRAL_ASIA/gen_karasakal.png', legionName: '帝国时代乌兹别克军团' },
+        { generalId: 'gen_karasakal', cityId: 'city_kashan', generalName: '卡拉萨卡尔', portrait: '/assets/CENTRAL_ASIA/gen_karasakal.png', legionName: '帝国时代突厥斯坦军团' },
 
 
 
@@ -9244,7 +9244,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'xiliao_uthman', cityId: 'city_suiye', legionName: '城堡时代察合台军团', generalName: '奥斯曼', portrait: '/assets/CENTRAL_ASIA/xiliao_uthman.png' },
+        { generalId: 'xiliao_uthman', cityId: 'city_suiye', legionName: '城堡时代河中军团', generalName: '奥斯曼', portrait: '/assets/CENTRAL_ASIA/xiliao_uthman.png' },
 
 
 
@@ -9526,7 +9526,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'xijue_ashina_funian', cityId: 'city_zhizhicheng', generalName: '阿史那匐念', portrait: '/assets/CENTRAL_ASIA/xijue_ashina_funian.png', legionName: '封建时代河中军团' , eliteName: '十箭铁骑', eliteTier: 3 },   // 🔴 康居精骑是郅支时代的西匈奴兵，不是 680 年西突厥十姓的兵
+        { generalId: 'xijue_ashina_funian', cityId: 'city_zhizhicheng', generalName: '阿史那匐念', portrait: '/assets/CENTRAL_ASIA/xijue_ashina_funian.png', legionName: '封建时代图兰军团' , eliteName: '十箭铁骑', eliteTier: 3 },   // 🔴 康居精骑是郅支时代的西匈奴兵，不是 680 年西突厥十姓的兵
 
 
 
@@ -9590,7 +9590,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'huarazim_jalal', cityId: 'city_urgench', legionName: '城堡时代察合台军团', generalName: '扎兰丁', portrait: '/assets/CENTRAL_ASIA/huarazim_jalal.png' },
+        { generalId: 'huarazim_jalal', cityId: 'city_urgench', legionName: '城堡时代河中军团', generalName: '扎兰丁', portrait: '/assets/CENTRAL_ASIA/huarazim_jalal.png' },
 
 
 
@@ -15520,7 +15520,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_onas_khan', cityId: 'city_salaichuke', generalName: '欧拿斯', portrait: '/assets/CENTRAL_ASIA/gen_onas_khan.png', legionName: '帝国时代乌兹别克军团' },
+        { generalId: 'gen_onas_khan', cityId: 'city_salaichuke', generalName: '欧拿斯', portrait: '/assets/CENTRAL_ASIA/gen_onas_khan.png', legionName: '帝国时代突厥斯坦军团' },
 
 
 

@@ -86,6 +86,12 @@ export function parseJoinCommand(word: string): { index: number; bid: number | n
     return { index, bid };
 }
 
+/** 常见直播聊天机器人：它们在聊天里发消息，但不是观众 */
+const CHAT_BOT_NAMES = new Set(['nightbot', 'streamlabs', 'streamelements', 'moobot', 'fossabot', 'wizebot']);
+export function isChatBot(raw: string | undefined | null): boolean {
+    return CHAT_BOT_NAMES.has(String(raw ?? '').normalize('NFKC').trim().replace(/^@/, '').toLowerCase());
+}
+
 export function cleanViewerName(raw: string | undefined | null): string {
     const s = String(raw ?? '').normalize('NFKC')
         .replace(/(?:https?:\/\/|www\.)\S+/gi, '')
@@ -330,7 +336,7 @@ export class ViewerLive {
             return this.handleRenameCommand(id, name, renameCmd.rawName, renameCmd.bid, eventId, pubMs);
         }
         if (/^(?:改名|名)\s+\S+$/.test(word)) {
-            return this.note(`${name}：改名格式为「名 新名字 积分」，当前需出 ${this.renameHighestBid + 1} 积分以上`);
+            return this.note(`${name}：改名格式为「名 新名字 积分」，当前需出 ${this.renameFloor() + 1} 积分以上`);
         }
 
         // 2. 离职后战略地图投靠竞价（斥候＝同文化势力，探马＝同文化武将）
@@ -413,6 +419,11 @@ export class ViewerLive {
     /** 官方事件幂等入口：付款只记账，并对跨场迟到的战术口令做场次隔离。 */
     public handleYouTubeEvent(event: YouTubeLiveEvent): void {
         if (!event.id || this.handled.has(event.id)) return;
+        // 聊天机器人（Nightbot 定时发玩法）不是观众：不算在场、不发分、不认口令
+        if (isChatBot(event.viewer)) {
+            this.handled.add(event.id);
+            return;
+        }
         this.syncBattleLifecycle();
         const name = cleanViewerName(event.viewer);
         if (event.payment) {
@@ -490,6 +501,15 @@ export class ViewerLive {
     }
 
     public pricePerCast(): number { return PRICE_PER_CAST; }
+
+    /**
+     * 改名要压过的价：画面上挂的还是观众买的那个名字，才要比它出得高；
+     * 新开一局（刷新页面主角名回到默认）、主播手动改名或否决后，名字已不是买来的，从 1 分起。
+     * 🔴 [2026-10-29 主人「本局没人改名，改名成了 2 分」] 原先最高价按天存在账本里，刷新开新局也不清。
+     */
+    private renameFloor(): number {
+        return this.hasActiveViewerRename() ? this.renameHighestBid : 0;
+    }
 
     /** 当前是否存在可由主播一键否决的观众竞拍改名 */
     public hasActiveViewerRename(): boolean {
@@ -592,7 +612,7 @@ export class ViewerLive {
                 ...this.scoutQueue.map((q) => ({ name: q.viewer, paid: false, label: `技${q.bid}` })),
                 ...this.queue.map((q) => ({ name: q.viewer, paid: false, label: q.word })),
             ],
-            renameHighestBid: this.renameHighestBid,
+            renameHighestBid: this.renameFloor(),
             hasViewerRename: this.hasActiveViewerRename(),
             joinCandidates,
             joinScope,
@@ -611,10 +631,11 @@ export class ViewerLive {
         const now = Date.now();
         const hero = this.app.playerHero;
         if (!hero) return this.note(`${name}：玩家尚未就绪`);
-        if (bid <= this.renameHighestBid) {
-            const need = this.renameHighestBid + 1;
-            this.recordCmd(eventId, id, name, 'rename', rawNewName, bid, pubMs, now, 'rejected', `低于最高价${this.renameHighestBid}`);
-            return this.note(`${name}：本局改名最高价已是 ${this.renameHighestBid} 积分，需出 ${need} 积分以上`);
+        const floor = this.renameFloor();
+        if (bid <= floor) {
+            const need = floor + 1;
+            this.recordCmd(eventId, id, name, 'rename', rawNewName, bid, pubMs, now, 'rejected', `低于最高价${floor}`);
+            return this.note(`${name}：现在的名字是出 ${floor} 积分买的，需出 ${need} 积分以上`);
         }
         const mod = moderateLiveName(rawNewName);
         if (!mod.ok) {
@@ -740,8 +761,10 @@ export class ViewerLive {
         return (fid ? this.app.cityManager?.getFactionName(fid) : '') || '';
     }
     private note(msg: string): string {
-        this.log.push(msg);
-        if (this.log.length > 8) this.log.shift();
+        if (this.log[this.log.length - 1] !== msg) {
+            this.log.push(msg);
+            if (this.log.length > 8) this.log.shift();
+        }
         return msg;
     }
     private acct(id: string, name: string): OrderAcct {
@@ -1035,6 +1058,7 @@ export class ViewerLive {
         const nowMs = Date.now();
         for (const [id, o] of Object.entries(ledger.orders ?? {})) {
             const day = typeof o.day === 'string' ? o.day : '';
+            if (isChatBot(o.name)) continue;   // 修复前混进账本的机器人账号，读账本时清掉
             if (Number.isFinite(o.n) && (o.n > 0 || day)) {
                 const seen = Number.isFinite(o.seen) && Number(o.seen) > 0 ? Math.min(nowMs, Number(o.seen)) : 0;
                 this.orders.set(id, { name: String(o.name || '观众'), n: Math.min(ORDER_CAP, Math.max(0, Math.floor(o.n))), seen, lastEarn: 0, day });

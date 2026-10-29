@@ -145,6 +145,8 @@ export class PlayerHero {
     public merit = 0;
     /** 本场仗已记的功（封顶 PLAYER_BATTLE_MERIT_CAP；进战术战和战后结算时清零） */
     private battleMerit = 0;
+    /** 主角这一仗亲身上了战术战场（只有这种仗打赢才记一场功劳） */
+    private battleArmed = false;
     /** 历史最高官职（资历）：2026-10-29 主人定「离开势力官职重来」，资历只管离队选去处的范围。 */
     private peakRankId: PlayerRankId = 'civilian';
     /** 战术模式里落马次数（只做统计，不扣功勋） */
@@ -498,6 +500,9 @@ export class PlayerHero {
 
     /** 大地图战略战斗结算：随军军团战胜补满本场功劳（每胜一场正好一档）；战败离开势力、官职重来。 */
     public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number): void {
+        // 这一仗主角有没有亲身上战术战场（进 13 时由 buildScene13Setup 记下），结算后作废
+        const fought = this.battleArmed;
+        this.battleArmed = false;
         if (result === 'defeat') {
             this.battleMerit = 0;
             // 战败立即回战略地图，从退场完成开始等待 5 秒，再走脱军清场流程。
@@ -522,9 +527,11 @@ export class PlayerHero {
             return;
         }
         // 打赢补满本场功劳（见 PLAYER_BATTLE_MERIT_CAP）：每场胜仗正好一档，升官只看连胜几场
+        // 🔴 [2026-10-29 主人「才 10 分钟就升到兵马元帅」] 只认主角亲身上场的仗：
+        //    原先随军军团在大地图上几秒打完的小仗（没进战术画面、主角没上场）也按一场补满，升官快了好几倍。
         // 🔴 [2026-09-24 主人「删除这种无聊信息」] 只记战功，不弹「大捷！随军斩敌…记战功」
         void enemyKilled;
-        this.addBattleMerit(PLAYER_BATTLE_MERIT_CAP);
+        if (fought) this.addBattleMerit(PLAYER_BATTLE_MERIT_CAP);
         this.battleMerit = 0;
     }
 
@@ -1130,6 +1137,7 @@ export class PlayerHero {
     public buildScene13Setup(followedOnDefenderSide: boolean): Scene13PlayerSetup | null {
         if (!this.hostLegionId) return null;
         this.battleMerit = 0;   // 新的一场仗，功劳封顶重新算
+        this.battleArmed = true;   // 主角亲身上场：这一仗打赢才补满功劳
         const rank = this.getRank();
         // 🔴 [2026-09-18 主人定]「玩家永远不能改变军团的兵种」—— 不再下发 eliteLane。
         //    原先把玩家自选精锐传进 13、顶替编制里的一口，那是 AI 从「必须 9 支」反推的，
