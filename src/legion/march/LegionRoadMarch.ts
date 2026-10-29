@@ -336,7 +336,7 @@ export function moveLegionToCity(
             lat: targetCity.latitude,
             lng: targetCity.longitude,
         });
-        if (distToCity <= siegeReach && army.isIdle()) {
+        if (distToCity <= siegeReach && army.isIdle() && !army.isPostBattleResting()) {
             deps.triggerSiege(army, targetCity);
             notePathfinding();
             return true;
@@ -377,6 +377,12 @@ export function moveLegionToCity(
             lng: targetCity.longitude,
         });
         if (distToCity <= siegeReach) {
+            if (army.isPostBattleResting()) {
+                army.setTargetCity(targetCity);
+                army.moveAlongPath([{ lat: targetCity.latitude, lng: targetCity.longitude }]);
+                notePathfinding();
+                return true;
+            }
             army.stopMovement(true);
             army.setTargetCity(targetCity);
             deps.triggerSiege(army, targetCity);

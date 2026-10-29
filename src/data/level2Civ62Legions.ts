@@ -911,7 +911,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（条顿堡森林、莱茵河东岸；原木栅栏要塞、萨满圣林神坛；泥木长屋聚落、抵御罗马鹰旗防线、狂暴双刃斧与方阵标枪投射）
     //    英雄队（第 10 队·主将队）：hero_ulrichvonjungingen / hero_johnthefearless　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代条顿军团', civ: '条顿', age: 'antiquity', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
+        name: '古典时代日耳曼尼亚军团', civ: '条顿', age: 'antiquity', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'echelon',
@@ -935,7 +935,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         commanderUnit: 'hero_henrythelion',
         slots: [
-            { type: 'longswordsman', count: 3 },
+            { type: 'teutonic_knight', count: 3 },
             { type: 'arbalest', count: 4 },
             { type: 'pikeman', count: 2 },
         ],
@@ -945,7 +945,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（马尔堡、纽伦堡；马尔堡砖构城堡主楼、高耸砂岩哥特式修道院要塞；白袍黑十字具装重甲骑士、城堡连环推进、条顿骑士团国疆土扩张）
     //    英雄队（第 10 队·主将队）：hero_ulrichvonjungingen / hero_johnthefearless　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代德意志骑士军团', civ: '条顿', age: 'castle', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
+        name: '城堡时代条顿骑士军团', civ: '条顿', age: 'castle', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'fish_scale',
@@ -954,7 +954,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_teutonic_knight', count: 3 },
             { type: 'mounted_crossbowman', count: 4 },
-            { type: 'cavalier', count: 2 },
+            { type: 'crusader_knight', count: 2 },
         ],
     },
     // ── 日耳曼 · 帝国时代 · 帝国时代帝国佣兵军团　（本次新建）────────────────
@@ -962,15 +962,15 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（奥格斯堡、纽伦堡；奥格斯堡早期文艺复兴市政厅、纽伦堡石砌重叠城郭；双手破阵巨剑士（Doppelsöldner）、18英尺密集长矛刺猬阵、马克西米利安精钢板甲与早期火绳枪协同步兵）
     //    英雄队（第 10 队·主将队）：hero_ulrichvonjungingen / hero_johnthefearless　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代德意志佣兵军团', civ: '条顿', age: 'imperial', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
+        name: '帝国时代普鲁士帝国军团', civ: '条顿', age: 'imperial', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'echelon',
         shipId: 'CANNON_GALLEON',
         commanderUnit: 'hero_siegfried',
         slots: [
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'teutonic_knight', count: 3 },
+            { type: 'champion', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'paladin', count: 2 },
         ],
     },
@@ -1166,7 +1166,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    英雄队（第 10 队·主将队）：hero_edwardlongshanks / hero_gilbertdeclare / hero_friartuck　— 按 248 主将表取，不进三排兵种编制
     // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将高地双手大剑样→西欧后期板甲骑士样（都铎英格兰）
     {
-        name: '帝国时代不列颠军团', civ: '不列颠', age: 'imperial', deStyle: 'WEST', region: 'BRITONS' as RegionType,
+        name: '帝国时代大不列颠军团', civ: '不列颠', age: 'imperial', deStyle: 'WEST', region: 'BRITONS' as RegionType,
         buildingStyle: 'BRITONS',
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'fish_scale',
@@ -1527,7 +1527,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（耶灵、特雷勒堡；耶灵石碑符文刻石、精密同心圆土木环形军营要塞；双手长柄丹麦破甲巨斧、八字胡斯韦恩北海铁骑、统一北欧职业王室禁卫大阵）
     //    英雄队（第 10 队·主将队）：hero_ulf / hero_harald　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代丹麦王国军团', civ: '丹麦', age: 'feudal', deStyle: 'WEST', region: 'DANES' as RegionType,
+        name: '封建时代丹人军团', civ: '丹麦', age: 'feudal', deStyle: 'WEST', region: 'DANES' as RegionType,
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
@@ -1544,15 +1544,15 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（罗斯基勒、沃尔丁堡；罗斯基勒双塔红砖主教座堂、沃尔丁堡金鹅石塔水郭；红底白十字波罗的海十字军骑士、全套精钢重装锁子甲、海峡咽喉红砖要塞围攻战）
     //    英雄队（第 10 队·主将队）：hero_ulf / hero_harald　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代丹麦骑士军团', civ: '丹麦', age: 'castle', deStyle: 'WEST', region: 'DANES' as RegionType,
+        name: '城堡时代卡尔马军团', civ: '丹麦', age: 'castle', deStyle: 'WEST', region: 'DANES' as RegionType,
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
         shipId: 'THE_MIDDLEBROOK',
         commanderUnit: 'hero_kalfarnason',
         slots: [
-            { type: 'throwing_axeman', count: 4 },
-            { type: 'jomsviking', count: 3 },
+            { type: 'jomsviking', count: 4 },
+            { type: 'teutonic_knight', count: 3 },
             { type: 'elite_varangian_guard', count: 2 },
         ],
     },
@@ -1561,7 +1561,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（赫尔辛格、哥本哈根；克隆堡宫文艺复兴青铜绿顶城堡、早期松德海峡角楼炮台；重装双手精钢长戟近卫、丹麦王室火绳枪手与重炮营、全欧咽喉要塞陆防铁壁卫队）
     //    英雄队（第 10 队·主将队）：hero_ulf / hero_harald　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代丹麦军团', civ: '丹麦', age: 'imperial', deStyle: 'WEST', region: 'DANES' as RegionType,
+        name: '帝国时代丹麦皇家军团', civ: '丹麦', age: 'imperial', deStyle: 'WEST', region: 'DANES' as RegionType,
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
@@ -2203,16 +2203,16 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（美狄奥兰农/米兰、布雷西亚；布雷西亚卡比托利欧古罗马神庙、米兰圣洛伦佐巨石柱廊；冷锻双手劈砍长剑、坚木卵形大盾、波河平原原始凯尔特狂暴突击大阵）
     //    英雄队（第 10 队·主将队）：hero_sforza / hero_bohemond　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代伊特鲁里亚军团', civ: '意大利', age: 'antiquity', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
+        name: '古典时代意大利亚军团', civ: '意大利', age: 'antiquity', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
         buildingStyle: 'LATIN',
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'fish_scale',
-        shipId: 'MONOREME',
-        commanderUnit: 'hero_alaric',
+        shipId: 'ONAGER_SHIP',
+        commanderUnit: 'envoy',
         slots: [
-            { type: 'heavy_swordsman', count: 3 },
-            { type: 'archer', count: 4 },
-            { type: 'scout_cavalry', count: 2 },
+            { type: 'legionary', count: 3 },
+            { type: 'cretan_archer', count: 4 },
+            { type: 'equites', count: 2 },
         ],
     },
     // ── 伦巴第 · 封建时代 · 封建时代伦巴第军团　（本次新建）────────────────
@@ -2228,7 +2228,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_bohemond',
         slots: [
             { type: 'pikeman', count: 3 },
-            { type: 'crossbowman', count: 4 },
+            { type: 'genoese_crossbowman', count: 4 },
             { type: 'knight', count: 2 },
         ],
     },
@@ -2237,7 +2237,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（米兰、曼托瓦；斯福尔扎城堡早期红砖石基、公社执政官官邸Palazzo della Ragione；神圣卡罗乔巨轮战车（Carroccio）、密集长矛刺猬拒马民团、莱尼亚诺大破神罗重骑公社战阵）
     //    英雄队（第 10 队·主将队）：hero_sforza / hero_bohemond　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代意大利城邦军团', civ: '意大利', age: 'castle', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
+        name: '城堡时代意大利雇兵军团', civ: '意大利', age: 'castle', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
         buildingStyle: 'LATIN',
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'fish_scale',
@@ -2254,15 +2254,15 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（米兰、帕维亚；米兰斯福尔扎红砖角塔要塞、帕维亚切尔托萨修道院雕花大理石立面；全套顶级镜面防弹全身板甲（Milanese Plate）、精钢重装长戟卫队、大航海早期文艺复兴要塞佣兵队长（Condottieri）铁壁近卫）
     //    英雄队（第 10 队·主将队）：hero_sforza / hero_bohemond　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代意大利雇佣军团', civ: '意大利', age: 'imperial', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
+        name: '帝国时代意大利皇家军团', civ: '意大利', age: 'imperial', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
         buildingStyle: 'LATIN',
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'fish_scale',
         shipId: 'ELITE_CANNON_GALLEON',
         commanderUnit: 'hero_sforza',
         slots: [
-            { type: 'condottiero', count: 3 },
-            { type: 'genoese_crossbowman', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
+            { type: 'condottiero', count: 4 },
             { type: 'paladin', count: 2 },
         ],
     },
@@ -4205,7 +4205,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ── 马其顿 · 封建时代 · 封建时代拜占庭马其顿军团　（2026-10-25 恢复：彼得·德良 为带名将）────────────────
     // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 476–1050：超长萨里萨方阵兵、希腊化骑兵→中世纪盾矛步兵、具装重骑
     {
-        name: '封建时代拜占庭马其顿军团', civ: '马其顿', age: 'feudal', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
+        name: '封建时代塞萨洛尼基军团', civ: '马其顿', age: 'feudal', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
         buildingStyle: 'MACEDONIAN',
         castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
         formationMode: 'fish_scale',
@@ -4234,7 +4234,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     },
     // ── 马其顿 · 帝国时代 · 帝国时代马其顿军团　（2026-10-25 恢复：戈采·代尔切夫 为带名将）────────────────
     {
-        name: '帝国时代马其顿军团', civ: '马其顿', age: 'imperial', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
+        name: '帝国时代塞拉尼克军团', civ: '马其顿', age: 'imperial', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
         buildingStyle: 'MACEDONIAN',
         castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
         formationMode: 'echelon',
@@ -4545,7 +4545,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（以弗所、米利都；以弗所阿耳忒弥斯巨石多列爱奥尼亚柱式神殿、米利都石构滨海要塞城池；希腊双手破甲长枪（Dory）、青铜覆面全脸盔与重圆盾、融合吕底亚风格的爱奥尼亚精锐贵族骑兵侧翼包抄大阵）
     //    英雄队（第 10 队·主将队）：—　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代爱奥尼亚军团', civ: '希腊', age: 'antiquity', deStyle: 'GREEK', region: 'GREECE' as RegionType,
+        name: '古典时代赫拉斯军团', civ: '希腊', age: 'antiquity', deStyle: 'GREEK', region: 'GREECE' as RegionType,
         buildingStyle: 'GREECE',
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'fish_scale',
@@ -4563,7 +4563,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    英雄队（第 10 队·主将队）：—　— 按 248 主将表取，不进三排兵种编制
     // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 主将古典马其顿统帅样→白袍高帽火枪样（奥斯曼时代爱琴海）
     {
-        name: '帝国时代爱琴要塞军团', civ: '希腊', age: 'imperial', deStyle: 'GREEK', region: 'GREECE' as RegionType,
+        name: '帝国时代希腊国民军团', civ: '希腊', age: 'imperial', deStyle: 'GREEK', region: 'GREECE' as RegionType,
         buildingStyle: 'GREECE',
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'echelon',

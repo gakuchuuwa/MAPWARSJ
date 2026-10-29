@@ -278,6 +278,7 @@ export interface PlayerQuestDeps {
     announceBriefing?: (text: string, onDone?: () => void, onStart?: () => void, minBannerMs?: number) => void;
     kickLegionAi: (armyId: string) => void;
     ensureUnpaused: () => void;
+    isScene13Active?: () => boolean;
     feed?: {
         pushRestoration?(p: { factionId: string; cityName: string }): void;
         pushExpedition?(p: { legionName: string; generalId?: string | null; cityName: string; kind: 'depart' | 'success' }): void;
@@ -2469,6 +2470,11 @@ export class PlayerQuestSystem {
     }
 
     private tickFirstBattle(q: PlayerQuest): void {
+        if (this.deps.isScene13Active?.()) {
+            const h = this.deps.legionManager.getLegionById(q.legionId);
+            if (h && !h.isDestroyed && h.getIsInCombat() && q.firstBattle) q.firstBattle.engaged = true;
+            return;
+        }
         const fbState = q.firstBattle;
         if (!fbState) return;
         const host = this.deps.legionManager.getLegionById(q.legionId);

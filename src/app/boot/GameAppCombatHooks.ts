@@ -540,6 +540,14 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         if (!followedId || !app.combatUI.isRegionalVisible()) return;
         const oursEnded = endedFields.some((bf) => bf.hasParticipant(followedId));
         if (!oursEnded) return;
+        const stillInNewBattle =
+            app.combatSystem.getActiveBattleFields().some((bf) => !bf.isOver && !endedFields.includes(bf) && bf.hasParticipant(followedId))
+            || app.combatSystem.getActiveBattles().some((b) => !b.isOver && (b.attacker.id === followedId || b.defender.id === followedId));
+        if (stillInNewBattle) {
+            app.combatUI.notifyRegionalBattlesEnded(endedFields);
+            return;
+        }
+        if (!oursEnded) return;
         // [2026-08-11 战败停留] 跟拍军团战败/战斗结束：
         //   🔴 不立即 exit（那会先切回 ZOOM8 干等 5 秒——主人 2026-08-11 实锤不要）。
         //   改为：停演出但**保留最后一帧**（keepFrame：战场残局冻结在 13，尸体烙图仍在）

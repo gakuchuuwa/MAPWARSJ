@@ -1115,6 +1115,7 @@ export class GameApp {
             ensureUnpaused: () => {
                 if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);
             },
+            isScene13Active: () => this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true,
             feed: this.brawlFeedPanel,
             // 自动模式去接"当年剧本任务"用（主人 2026-09-11 定：-334 年必须去找亚历山大）
             getYear: () => this.timeSystem.getYear(),

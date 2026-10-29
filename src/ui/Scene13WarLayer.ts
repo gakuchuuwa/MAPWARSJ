@@ -2111,6 +2111,7 @@ export class Scene13WarLayer {
             audioManager.rerollBgm();
         }
         this.active = true;
+        this.lingering = false;
         this.over = false;
         this.centerKilledAt = -1;
         this.spawns = [];

@@ -58,7 +58,7 @@ export class BattleSceneLayer {
         if (this.pauseHook && !this.pauseHook.isGamePaused()) {
             this.strategyPausedByScene = true;
             this.pauseHook.setPaused(true);
-        } else {
+        } else if (!this.strategyPausedByScene) {
             this.strategyPausedByScene = false;
         }
 

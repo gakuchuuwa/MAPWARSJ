@@ -1631,9 +1631,9 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     WESTERN_CASTLE: '城堡时代蒙兀儿军团',
     WESTERN_IMPERIAL: '帝国时代叶尔羌军团',
     SLAVIC_CASTLE: "城堡时代博亚尔军团",
-    GERMANIC_CASTLE: '城堡时代德意志骑士军团',   // 🔴 [2026-10-16] 原指「城堡时代日耳曼军团」→ 查无此军（幽灵指针）；日耳曼文明城堡节点正名＝德意志骑士团
+    GERMANIC_CASTLE: '城堡时代条顿骑士军团',   // 🔴 [2026-10-16] 原指「城堡时代日耳曼军团」→ 查无此军（幽灵指针）；日耳曼文明城堡节点正名＝德意志骑士团
     LATIN: '古典时代罗马军团',
-    LATIN_CASTLE: '城堡时代意大利城邦军团',
+    LATIN_CASTLE: '城堡时代意大利雇兵军团',
     IMPERIAL_ROME: '古典时代罗马军团',
     // 🔴 [2026-10-05 主人令「删除吧」] `古典时代希腊雇佣军团` 已删（同族同时代不另立）→
     //    本表指向它的悬空条目 `GREEK_MERCENARY` 一并删除（该文化区 0 座据点、0 势力挂，无影响）。
@@ -1663,9 +1663,9 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     BRITONS: '城堡时代英格兰军团',
     GOTHS: '封建时代阿斯图里亚斯军团',
     HUNS: '古典时代匈人军团',
-    TEUTONS: "城堡时代德意志骑士军团",
+    TEUTONS: "城堡时代条顿骑士军团",
     VIKINGS: '封建时代维京军团',
-    ITALIANS: "城堡时代意大利城邦军团",
+    ITALIANS: "城堡时代意大利雇兵军团",
     SICILIANS: '城堡时代诺曼军团',
     BULGARIANS: '封建时代保加利亚军团',
     MAGYAR: "城堡时代匈牙利王国军团",
