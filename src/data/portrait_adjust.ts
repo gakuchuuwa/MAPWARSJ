@@ -7358,9 +7358,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -20
         },
         "/assets/SAXONS/gen_henry_v.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": 19
+            "scale": 1,
+            "offsetX": 6,
+            "offsetY": 17
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_117.png": {
             "scale": 1.21,
@@ -9061,6 +9061,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 2,
             "offsetY": 6
+        },
+        "/assets/FRANKS/gen_boucicaut.png": {
+            "scale": 1.18,
+            "offsetX": 7,
+            "offsetY": 37
         }
     },
     "folderGuides": {

@@ -1,8 +1,40 @@
+import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
+
 /**
  * 直播观众共同操作的玩家技能：与武将六计、集气槽和主将光环完全分开。
  * 作用范围跟随玩家官职：斥候本人，探马本人和本队，先锋本人和本排，将军本人和本军；不改兵种基础属性。
  */
 export type PlayerLiveControl = 'none' | 'one' | 'front' | 'all';
+
+/**
+ * 🔴 [2026-10-30 主人定] 按官职阶梯逐级解锁玩家计策：
+ *   · 斥候（scout）：只开放【攻 · 胜】（强化/恢复主角自身）
+ *   · 探马（outrider）：解锁【敌 · 混】（共 4 计：攻 胜 敌 混；敌/混非作用在自身，效果与将军一致）
+ *   · 先锋（vanguard）/ 将军（general）及以上：解锁【并 · 败】（全开 6 计：攻 胜 敌 混 并 败；并/败效果与将军一致）
+ */
+export function allowedSixSetsForRank(rankId: string | undefined | null): readonly TacticalSixSet[] {
+    if (!rankId || rankId === 'civilian') return [];
+    if (rankId === 'scout') return ['gongzhan', 'shengzhan'];
+    if (rankId === 'outrider') return ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan'];
+    return ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan', 'bingzhan', 'baizhan'];
+}
+
+export function allowedSixWordsForRank(rankId: string | undefined | null): { words: string; label: string } {
+    if (rankId === 'scout') return { words: '攻胜', label: '玩家两计' };
+    if (rankId === 'outrider') return { words: '攻胜敌混', label: '玩家四计' };
+    return { words: '攻胜敌混并败', label: '玩家六计' };
+}
+
+export function sixUnlockBlockReason(rankId: string | undefined | null, six: TacticalSixSet): string | null {
+    const allowed = allowedSixSetsForRank(rankId);
+    if (allowed.includes(six)) return null;
+    if (six === 'dizhan' || six === 'hunzhan') {
+        return '斥候只能释放【攻·胜】，升为探马后解锁【敌·混】';
+    }
+    return rankId === 'scout'
+        ? '斥候只能释放【攻·胜】，升为先锋后解锁【并·败】'
+        : '探马只能释放【攻·胜·敌·混】，升为先锋后解锁【并·败】';
+}
 
 export interface PlayerLiveSkillTier {
     /** 一发生效的秒数 */

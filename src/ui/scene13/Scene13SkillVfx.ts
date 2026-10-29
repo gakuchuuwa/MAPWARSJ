@@ -31,8 +31,8 @@ type Lift = (x: number, y: number) => number;
 const TAU = Math.PI * 2;
 const COLOR: Record<TacticalSixSet, string> = {
     gongzhan: '#ff6a24',
-    dizhan: '#3ef5c0',
-    shengzhan: '#52ccff',
+    dizhan: '#52ccff',
+    shengzhan: '#26f065',
     hunzhan: '#b572ff',
     bingzhan: '#e59eff',
     baizhan: '#f03240',
@@ -187,6 +187,27 @@ function drawTaperedSlash(
 function ellipse(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number, ry: number): void {
     ctx.beginPath();
     ctx.ellipse(x, y, Math.max(0.1, rx), Math.max(0.1, ry), 0, 0, TAU);
+}
+
+/** 绘制高对比翠绿十字 `+` 号（外层翠绿荧光＋内芯高亮白绿） */
+function drawHealPlus(
+    ctx: CanvasRenderingContext2D,
+    cx: number,
+    cy: number,
+    arm: number,
+    thick: number,
+    outerColor = '#26f065',
+    coreColor = '#eafff0',
+): void {
+    const drawCross = (a: number, t: number) => {
+        const h = t * 0.5;
+        ctx.fillRect(cx - a, cy - h, a * 2, t);
+        ctx.fillRect(cx - h, cy - a, t, a * 2);
+    };
+    ctx.fillStyle = outerColor;
+    drawCross(arm, thick);
+    ctx.fillStyle = coreColor;
+    drawCross(arm * 0.78, thick * 0.48);
 }
 
 // ── 3. 状态追踪：让持续类与瞬发类的「全军大阵＋单兵特效」时间严格一致，并记住是否打赏 ──
@@ -461,11 +482,11 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
 
-    // 1. 全军巨型冰蓝穹顶护罩（径向渐变通透能量罩）
+    // 1. 全军巨型翠绿回血无敌穹顶（径向渐变通透能量罩）
     const domeGrad = ctx.createRadialGradient(x, y - r * 0.35, r * 0.15, x, y, r);
-    domeGrad.addColorStop(0, 'rgba(220,250,255,0.05)');
-    domeGrad.addColorStop(0.65, 'rgba(82,204,255,0.22)');
-    domeGrad.addColorStop(1, 'rgba(160,245,255,0.52)');
+    domeGrad.addColorStop(0, 'rgba(220,255,232,0.06)');
+    domeGrad.addColorStop(0.65, 'rgba(38,240,101,0.24)');
+    domeGrad.addColorStop(1, 'rgba(120,255,168,0.55)');
     ctx.globalAlpha = fade * 0.85;
     ctx.fillStyle = domeGrad;
     ctx.beginPath();
@@ -487,15 +508,29 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     ctx.arc(x, y, r, Math.PI + 0.03, TAU - 0.03);
     ctx.stroke();
 
-    // 穹顶内层翠绿满血光弧 + 顶部大型十字圣辉星芒
-    ctx.globalAlpha = fade * 0.78;
-    ctx.strokeStyle = '#64f7c8';
+    // 穹顶内层翠绿满血光弧 + 升腾绿色 + 号群
+    ctx.globalAlpha = fade * 0.82;
+    ctx.strokeStyle = '#8affb3';
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(x, y, Math.max(1, r - 18 * scale), Math.PI + 0.1, TAU - 0.1);
     ctx.stroke();
 
-    drawStamp(ctx, flare, x, y - r * 0.65, 26 * scale);
+    const plusOffsets = [
+        { dx: 0, dy: -0.62, s: 1.35 },
+        { dx: -0.42, dy: -0.38, s: 0.95 },
+        { dx: 0.42, dy: -0.38, s: 0.95 },
+        { dx: -0.22, dy: -0.78, s: 0.8 },
+        { dx: 0.22, dy: -0.78, s: 0.8 },
+    ];
+    for (const po of plusOffsets) {
+        const px = x + po.dx * r;
+        const py = y + po.dy * r - e * 22 * scale;
+        ctx.globalAlpha = fade * 0.95;
+        drawHealPlus(ctx, px, py, 12 * po.s * scale, 4.2 * po.s * scale, COLOR.shengzhan, '#eafff0');
+    }
+
+    drawStamp(ctx, flare, x, y - r * 0.65, 24 * scale);
     ctx.restore();
 }
 
@@ -765,14 +800,10 @@ function drawTargetGlow(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: nu
             );
             if (i % 2 === 0) drawStamp(ctx, flare, m.x, hy - 3, 8);
         } else if (v.six === 'shengzhan') {
-            const hy = y - 18;
-            ctx.strokeStyle = '#8ce2ff';
-            ctx.globalAlpha = fade * 0.95;
-            ctx.lineWidth = 2.8;
-            ctx.beginPath();
-            ctx.arc(m.x, hy, 10.5 + e * 3, Math.PI * 1.1, Math.PI * 1.9);
-            ctx.stroke();
-            drawStamp(ctx, flare, m.x, hy - 7 - e * 5, 8);
+            const hy = y - 20 - e * 8;
+            ctx.globalAlpha = fade * 0.96;
+            drawHealPlus(ctx, m.x, hy, 7.5, 2.8, COLOR.shengzhan, '#eafff0');
+            if (i % 2 === 0) drawStamp(ctx, flare, m.x, hy, 7.5);
         } else if (v.six === 'hunzhan') {
             const ang = p * 6 + m.zid;
             ctx.strokeStyle = '#d8a6ff';
@@ -963,21 +994,19 @@ export function drawScene13SkillStatusVfx(
             }
         }
 
-        // 【胜】固己防持续期：全员脚下冰蓝护体光圈 ＋ 头顶冰蓝双层弧盾
+        // 【胜】回满血＋无敌持续期：全员脚下翠绿光圈 ＋ 头顶上升绿色 + 号特效
         if (st.shield > 0 && !m.siegeW) {
             const fadeOut = clamp01(st.shield / 1.0);
-            ctx.globalAlpha = (0.32 + pulse * 0.20) * fadeOut;
+            ctx.globalAlpha = (0.36 + pulse * 0.22) * fadeOut;
             ctx.strokeStyle = tier.shieldPaid && pulse > 0.55 ? '#ffe680' : COLOR.shengzhan;
-            ctx.lineWidth = 2.2;
+            ctx.lineWidth = 2.3;
             ellipse(ctx, m.x, y, 10.5 + pulse * 2, 5.2 + pulse);
             ctx.stroke();
             if (m.zid % 2 === 0) {
-                ctx.globalAlpha = (0.55 + pulse * 0.35) * fadeOut;
-                ctx.strokeStyle = '#9be4ff';
-                ctx.lineWidth = 2.4;
-                ctx.beginPath();
-                ctx.arc(m.x, y - 18, 9.5 + pulse * 2, Math.PI * 1.12, Math.PI * 1.88);
-                ctx.stroke();
+                const rise = ((nowSec * 1.4 + m.zid * 0.37) % 1);
+                const hy = y - 18 - rise * 9;
+                ctx.globalAlpha = (0.68 + (1 - rise) * 0.28) * fadeOut;
+                drawHealPlus(ctx, m.x, hy, 5.8 + pulse * 1.2, 2.3, COLOR.shengzhan, '#eafff0');
             }
         }
 

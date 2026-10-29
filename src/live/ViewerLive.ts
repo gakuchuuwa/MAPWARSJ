@@ -17,6 +17,7 @@ import {
     moderateLiveName,
 } from './LiveNameModeration';
 import { PLAYER_HERO_NAME } from '../player/PlayerConfig';
+import { sixUnlockBlockReason } from '../player/PlayerLiveSkill';
 
 export const PRICE_PER_CAST = 100;
 export const ORDERS_PER_CAST = 3;
@@ -368,14 +369,14 @@ export class ViewerLive {
             return this.requestScout(id, name, scoutBid, eventId, pubMs);
         }
 
-        // 4. 玩家六计（固定 3 积分，不涨价，按先后顺序 FIFO，作用范围跟玩家官职走）
+        // 4. 玩家六计（固定 3 积分，不涨价，按先后顺序 FIFO；按官职阶梯解锁：斥候攻胜 / 探马+敌混 / 先锋将军+并败）
         const combo = word.match(/^([12])\s*(\S+)$/);
         if (combo && SIX_BY_WORD[combo[2]]) {
             if (meta?.staleForBattle) {
                 this.recordCmd(eventId, id, name, 'skill_six', combo[2], ORDERS_PER_CAST, pubMs, now, 'rejected', '迟到于上一场战斗');
                 return this.note(`${name}：上一仗迟到口令已忽略，未扣积分`);
             }
-            const blocked = this.playerSkillBlockReason();
+            const blocked = this.playerSixBlockReason(SIX_BY_WORD[combo[2]]);
             if (blocked) {
                 this.recordCmd(eventId, id, name, 'skill_six', combo[2], ORDERS_PER_CAST, pubMs, now, 'rejected', blocked);
                 return this.note(`${name}：${blocked}`);
@@ -400,7 +401,7 @@ export class ViewerLive {
             this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', '迟到于上一场战斗');
             return this.note(`${name}：上一仗迟到口令已忽略，未扣积分`);
         }
-        const blocked = this.playerSkillBlockReason();
+        const blocked = this.playerSixBlockReason(SIX_BY_WORD[word]);
         if (blocked) {
             this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', blocked);
             return this.note(`${name}：${blocked}`);
@@ -761,6 +762,11 @@ export class ViewerLive {
         if (!this.war()?.hasPlayerHero()) return '玩家本人没有参加这一仗';
         return null;
     }
+    private playerSixBlockReason(six: TacticalSixSet): string | null {
+        const base = this.playerSkillBlockReason();
+        if (base) return base;
+        return sixUnlockBlockReason(this.app.playerHero?.getRank().id, six);
+    }
     private sideName(side: 0 | 1): string {
         return `${side === 0 ? '攻方' : '守方'}${this.sideFaction(side)}`;
     }
@@ -857,7 +863,7 @@ export class ViewerLive {
             this.requestScout(id, name, scoutBid, `wanted:${++this.commandSeq}`, Date.now());
             return;
         }
-        if (this.playerSkillBlockReason() || !this.canAffordSix(id)) return;
+        if (this.playerSixBlockReason(SIX_BY_WORD[word]) || !this.canAffordSix(id)) return;
         this.wanted.delete(id);
         this.request(id, name, word, `wanted:${++this.commandSeq}`, Date.now());
     }

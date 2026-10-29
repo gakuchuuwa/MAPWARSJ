@@ -2316,12 +2316,12 @@ export class CombatUI {
         `;
 
         const SIX_LIST: { key: TacticalSixSet; char: string; sub: string; tip: string }[] = [
-            { key: 'gongzhan', char: '攻', sub: '振威', tip: '【攻】振己威：20秒内全军伤害+50%、攻速+50%、移速+30%\n点击钦定/取消下次释放' },
-            { key: 'shengzhan', char: '胜', sub: '加防', tip: '【胜】固己防：场上全军立即满血，且20秒内减伤60%\n点击钦定/取消下次释放' },
-            { key: 'dizhan', char: '敌', sub: '偷袭', tip: '【敌】伏兵偷袭：立即征召6%初始兵力作为伏兵从敌方出兵口杀出（攻城战守方放计则在本方城内出兵守城）\n点击钦定/取消下次释放' },
-            { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵：驱散敌方已生效的增益，令敌军混乱15秒（胡乱走动、守城兵原地发愣，无法攻击，受到伤害翻倍）\n点击钦定/取消下次释放' },
-            { key: 'bingzhan', char: '并', sub: '夺兵', tip: '【并】夺敌兵：策反敌方总兵力3%倒戈为己方（先取前线在场兵，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
-            { key: 'baizhan', char: '败', sub: '减兵', tip: '【败】减敌兵：折损敌方总兵力6%（前线敌兵当场阵亡、全部留尸，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
+            { key: 'gongzhan', char: '攻', sub: '振威', tip: '【攻】振己威：10秒内全军伤害+50%、攻速+50%、移速翻倍\n点击钦定/取消下次释放' },
+            { key: 'shengzhan', char: '胜', sub: '无敌', tip: '【胜】固己防：场上全军立即回满血，且10秒内无敌\n点击钦定/取消下次释放' },
+            { key: 'dizhan', char: '敌', sub: '偷袭', tip: '【敌】伏兵偷袭：立即征召10%初始兵力作为伏兵从敌方出兵口杀出（攻城战守方放计则在本方城内出兵守城）\n点击钦定/取消下次释放' },
+            { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵：驱散敌方已生效的增益，令敌军混乱20秒（胡乱走动、守城兵原地发愣，无法攻击，受到伤害翻倍）\n点击钦定/取消下次释放' },
+            { key: 'bingzhan', char: '并', sub: '夺兵', tip: '【并】夺敌兵：策反敌方总兵力5%倒戈为己方（先取前线在场兵，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
+            { key: 'baizhan', char: '败', sub: '减兵', tip: '【败】减敌兵：折损敌方总兵力10%（前线敌兵当场阵亡、全部留尸，不够从敌方下一波继续）\n点击钦定/取消下次释放' },
         ];
 
         for (const item of SIX_LIST) {
@@ -2453,8 +2453,8 @@ export class CombatUI {
         };
         const THEME_OF: Record<TacticalSixSet, { color: string; bg: string; border: string; glow: string }> = {
             gongzhan: { color: '#FFEADB', bg: 'linear-gradient(135deg, rgba(155, 58, 12, 0.96), rgba(58, 18, 6, 0.96))', border: '#f97316', glow: 'rgba(249, 115, 22, 0.7)' },
-            shengzhan: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(12, 102, 125, 0.96), rgba(6, 34, 50, 0.96))', border: '#06b6d4', glow: 'rgba(6, 182, 212, 0.7)' },
-            dizhan: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(22, 115, 52, 0.96), rgba(6, 44, 18, 0.96))', border: '#22c55e', glow: 'rgba(34, 197, 94, 0.7)' },
+            shengzhan: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(22, 115, 52, 0.96), rgba(6, 44, 18, 0.96))', border: '#22c55e', glow: 'rgba(34, 197, 94, 0.7)' },
+            dizhan: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(12, 102, 125, 0.96), rgba(6, 34, 50, 0.96))', border: '#06b6d4', glow: 'rgba(6, 182, 212, 0.7)' },
             hunzhan: { color: '#F3E8FF', bg: 'linear-gradient(135deg, rgba(102, 34, 136, 0.96), rgba(34, 8, 50, 0.96))', border: '#a855f7', glow: 'rgba(168, 85, 247, 0.7)' },
             bingzhan: { color: '#DBEAFE', bg: 'linear-gradient(135deg, rgba(24, 68, 138, 0.96), rgba(6, 22, 50, 0.96))', border: '#3b82f6', glow: 'rgba(59, 130, 246, 0.7)' },
             baizhan: { color: '#FEE2E2', bg: 'linear-gradient(135deg, rgba(138, 24, 24, 0.96), rgba(50, 6, 6, 0.96))', border: '#ef4444', glow: 'rgba(239, 68, 68, 0.7)' },

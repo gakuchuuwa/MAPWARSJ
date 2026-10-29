@@ -6,6 +6,7 @@
 import { type ViewerLive, ORDERS_PER_CAST } from './ViewerLive';
 import type { YouTubeOfficialBridge } from './YouTubeOfficialBridge';
 import { HowToPlayCard } from './HowToPlayCard';
+import { allowedSixWordsForRank } from '../player/PlayerLiveSkill';
 
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
@@ -184,7 +185,8 @@ export class ViewerLivePanel {
         let mainRow: string;
         let joinGrid = '';
         if (s.on && !civilian) {
-            const castCmd = `<span style="font-size:${f.main}px;">${b('攻胜敌混并败')} 玩家六计<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)}先后)</span></span>`;
+            const sixUi = allowedSixWordsForRank(s.hero.rankId);
+            const castCmd = `<span style="font-size:${f.main}px;">${b(sixUi.words)} ${sixUi.label}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)}先后)</span></span>`;
             const scoutCmd = `<span style="font-size:${f.main}px;">${b('技1')} 爆发技<span style="font-size:${f.sub}px;color:#e0cfa9;">(高分插队)</span></span>`;
             mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${castCmd}${sep}${scoutCmd}${sep}${renameCmd}${liveInfoPart}</div>`;
         } else {

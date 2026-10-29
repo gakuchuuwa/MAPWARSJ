@@ -130,13 +130,13 @@ import { render } from './scene13/Scene13Render';
 /** 🔴 [2026-10-27 主人令「寻敌优先前方」] search 前方加权：横向距离按 ×1.5、身后距离按 ×2 计（正前方按原距离） */
 const SEARCH_LAT_K = 1.5;
 const SEARCH_BACK_K = 2;
-const SKILL_FRENZY_SEC = 20;        // 【攻】振己威持续
+const SKILL_FRENZY_SEC = 10;        // 【攻】振己威持续（10秒）
 const SKILL_FRENZY_DMG = 1.5;       // 【攻】伤害倍率
 const SKILL_FRENZY_ATKSPD = 1.5;    // 【攻】攻速倍率
 const SKILL_FRENZY_MOVE = 2.0;      // 【攻】移速倍率
-const SKILL_SHIELD_SEC = 20;        // 【胜】固己防持续（释放瞬间全军满血）
-const SKILL_SHIELD_TAKEN = 0.4;     // 【胜】受伤倍率（减伤六成）
-const SKILL_PANIC_SEC = 15;         // 【混】乱敌阵持续
+const SKILL_SHIELD_SEC = 10;        // 【胜】持续（10秒：释放瞬间回满血 + 10秒内无敌）
+const SKILL_SHIELD_TAKEN = 0;       // 【胜】受伤倍率（0＝无敌）
+const SKILL_PANIC_SEC = 20;         // 【混】乱敌阵持续（20秒）
 const SKILL_PANIC_TAKEN = 2;        // 【混】混乱中受伤倍率
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
@@ -1149,9 +1149,11 @@ export class Scene13WarLayer {
 
         // ── 执行六计正交战场效果 ──
         // 🔴 [2026-10-27 主人令「武将释放技能依然是全军有效，玩家释放技能，要因官职而定」]
-        //   · 武将满槽自动释放（viewer === null）或玩家已至将军及以上（control === 'all'）：100% 全军有效；
-        //   · 玩家（观众）在斥候/探马/先锋阶段释放：严格按当前官职约束作用单位与兵力规模（本人 / 本队 / 本排）。
-        const scopedControl = (viewer !== null && this.playerSetup && this.playerSetup.side === f && this.playerSetup.control !== 'all')
+        // 🔴 [2026-10-30 主人令「当玩家探马的时候，混和敌的效果和将军一致。因为不是作用在自己身上。同理，先锋后，并，败的效果也和将军一致」]
+        //   · 【攻·胜】作用在己方身上，按官职范围与倍率缩放（斥候本人×3 / 探马本队×2 / 先锋本排×1.5 / 将军全军×1）；
+        //   · 【敌·混】（探马解锁）与【并·败】（先锋解锁）不作用在自己身上，解锁后效果直接与将军一致（100% 全军有效）。
+        const isSelfBuffSix = six === 'gongzhan' || six === 'shengzhan';
+        const scopedControl = (isSelfBuffSix && viewer !== null && this.playerSetup && this.playerSetup.side === f && this.playerSetup.control !== 'all')
             ? this.playerSetup.control
             : null;
         const scopeRatio = scopedControl === 'none' ? (1 / 18) : scopedControl === 'one' ? (1 / 9) : scopedControl === 'front' ? (1 / 3) : 1;
@@ -1174,7 +1176,7 @@ export class Scene13WarLayer {
         const vfxPoints: Scene13SkillVfxPoint[] = [];
         // 🔴 [2026-10-27 主人令「按三十六计史实」] 胜战计＝加防（以逸待劳）、敌战计＝偷袭（暗度陈仓），两计效果对调
         if (six === 'dizhan') {
-            const fullAddPop = Math.max(12, Math.round(this.initPool[f] * 0.06));
+            const fullAddPop = Math.max(12, Math.round(this.initPool[f] * 0.10));
             const minPop = scopedControl === 'none' ? 2 : scopedControl === 'one' ? 4 : scopedControl === 'front' ? 8 : 12;
             const addTotalPop = scopedControl === null ? fullAddPop : Math.max(minPop, Math.round(fullAddPop * scopeAmount));
             const allAnchors = this.ambushAnchors(f);
@@ -1189,7 +1191,7 @@ export class Scene13WarLayer {
             const customKeys = scopedControl !== null && this.playerSetup?.unitKey ? [this.playerSetup.unitKey] : undefined;
             this.spawnImmediateSkillReinforcements(f, addTotalPop, customKeys, vfxTargets, true, anchors);
         } else if (six === 'baizhan') {
-            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.06));
+            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10));
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 6 : 1;
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeAmount));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
@@ -1259,7 +1261,7 @@ export class Scene13WarLayer {
                 if (vfxTargets.length > 0) this.playerSixPanicMaxTimer = panicSec;
             }
         } else if (six === 'bingzhan') {
-            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.03));
+            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.05));
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 4 : 1;
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeAmount));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW && !this.spawns[m.lane]?.commander);
