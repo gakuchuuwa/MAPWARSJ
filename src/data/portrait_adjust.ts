@@ -9006,6 +9006,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": -9,
             "offsetY": 29
+        },
+        "/assets/ORIE/abasi_mustasim.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -8
         }
     },
     "folderGuides": {

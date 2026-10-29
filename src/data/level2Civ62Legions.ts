@@ -3998,14 +3998,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代伊儿军团', civ: '波斯', age: 'castle', deStyle: 'PERSIAN', region: 'SASANIAN' as RegionType,
         buildingStyle: 'SASANIAN',
         castleId: 'PERS_CASTLE_AGE3', castleName: '波斯 萨珊泰西封砖石穹顶堡',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         shipId: 'WAR_GALLEY',
         commanderUnit: 'hero_cumanchief',
         // 🔴 [2026-10-16 主人令] 波斯战象：普通档进伊儿军团 2 档（精锐在霍拉桑军团 2 档）。
         slots: [
-            { type: 'imperial_cavalry', count: 3 },
+            { type: 'imperial_cavalry', count: 2 },
+            { type: 'keshik', count: 3 },
             { type: 'mangudai_elite', count: 4 },
-            { type: 'keshik', count: 2 },
         ],
     },
     // ── 波斯 · 帝国时代 · 帝国时代红头军团　（本次新建）────────────────
@@ -4058,7 +4058,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'PERSIAN_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
         formationMode: 'triangle',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_ismail',
+        commanderUnit: 'hero_yury',
         slots: [
             { type: 'war_elephant', count: 2 },
             { type: 'immortal', count: 3 },
@@ -4597,7 +4597,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HUGUANG_CASTLE_AGE3', castleName: '湖广 荆楚重楼要塞',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_robinhood',
+        commanderUnit: 'hero_einarpaunchshaker',
         slots: [
             { type: 'jian_swordman_unshielded', count: 3 },
             { type: 'chukonu', count: 4 },
