@@ -1337,7 +1337,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "bulu": {
-        legionName: "古典时代贵霜军团",
+        legionName: "古典时代普鲁战象军团",
         legionType: "sub",
     },
     "abasi": {
@@ -2163,11 +2163,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "aolitai": {
-        legionName: "古典时代贵霜军团",
+        legionName: "古典时代普鲁战象军团",
         legionType: "sub",
     },
     "shiyuzu": {
-        legionName: "古典时代贵霜军团",
+        legionName: "古典时代普鲁战象军团",
         legionType: "sub",
     },
 
@@ -2493,11 +2493,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "aswaka": {
-        legionName: "古典时代贵霜军团",
+        legionName: "古典时代普鲁战象军团",
         legionType: "region",
     },
     "malli": {
-        legionName: "古典时代贵霜军团",
+        legionName: "古典时代普鲁战象军团",
         legionType: "region",
     },
     "dasaleiti": {

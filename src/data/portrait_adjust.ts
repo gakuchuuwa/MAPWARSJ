@@ -8803,9 +8803,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/GEORGIANS/gelujiya_erekle_ii.png": {
-            "scale": 1.18,
-            "offsetX": 0,
-            "offsetY": 16
+            "scale": 1.32,
+            "offsetX": 8,
+            "offsetY": 15
         },
         "/assets/SLAVIC/gen_vukasin.png": {
             "scale": 1.24,
@@ -8966,6 +8966,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 0,
             "offsetY": 29
+        },
+        "/assets/PURU/dulan_muzaffarkhan.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": -2
         }
     },
     "folderGuides": {

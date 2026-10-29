@@ -1649,7 +1649,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     //    实得走「建筑风格保底」，删前删后**逐区实得完全相同**（实测 PERSIAN_CASTLE 6 城→波斯军团｜
     //    CHIMU 昌昌→安第斯军团｜TARASCAN 钦聪灿→中美军团｜SEASIA_CASTLE 特罗武兰→城堡时代爪哇军团｜
     //    KARA_KHITAN 碎叶→中亚军团）。尺子：`scratch/audit_ghost_legions.mts`（清完不再有「查无此军」）。
-    PURU: '古典时代贵霜军团',
+    PURU: '古典时代普鲁战象军团',
     EAST: '封建时代罗曼尼亚军团',
     THRACIAN: '古典时代色雷斯军团',
     // 🔴 [2026-10-05 主人令「这两个军团在历史上是不是重复了？如果是，请删除三级的，保留二级的」]
@@ -1690,7 +1690,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     SASANIAN: '封建时代霍拉桑军团',
     TURKS: '封建时代突厥军团',
     SRIVIJAYA: '封建时代三佛齐军团',
-    KUSHAN: '古典时代贵霜军团',
+    KUSHAN: '古典时代普鲁战象军团',
     KHITAN: "封建时代河西军团",
     MOHE: '封建时代渤海军团',
     ANGLO_SAXON: '封建时代盎格鲁撒克逊军团',   // 🔴 [2026-10-16] 原指「封建时代盎格鲁-撒克逊军团」→ 查无此军（幽灵指针）；不列颠文明封建节点正名＝撒克森军团

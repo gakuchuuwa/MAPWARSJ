@@ -951,7 +951,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['elite_armored_elephant', 'elite_armored_elephant', 'elite_armored_elephant', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '古典时代贵霜军团': {
+    '古典时代普鲁战象军团': {
         age: 'antiquity',
         weapons: ['armored_elephant', 'armored_elephant', 'armored_elephant', 'antiquity_mangonel', 'antiquity_mangonel', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },

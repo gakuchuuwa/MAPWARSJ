@@ -3191,7 +3191,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（白沙瓦、塔克西拉；塔克西拉法门法罗舍利塔石坛、犍陀罗希腊式条石佛龛与方石卫城；人马重装精铁具装鳞甲、双刃破甲长骑枪、希腊化重步兵长矛密集方阵与塞种骑射协同大阵）
     //    英雄队（第 10 队·主将队）：porus_elephant / hero_prithviraj　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代贵霜军团', civ: '普鲁', age: 'antiquity', deStyle: 'PURU', region: 'PURU' as RegionType,
+        name: '古典时代普鲁战象军团', civ: '普鲁', age: 'antiquity', deStyle: 'PURU', region: 'PURU' as RegionType,
         buildingStyle: 'PURU',
         castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁·南亚 旁遮普红砂岩堡',
         formationMode: 'triangle',
