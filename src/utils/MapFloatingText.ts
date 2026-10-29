@@ -1,6 +1,8 @@
 /** 当前跟拍军团 id（战略技飘字只给跟拍军团显示；无跟拍时返回 null → 全部不飘） */
 export function getFollowedArmyId(): string | null {
-    return (window as any).game?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
+    return (window as any).game?.cameraFollowUI?.getFollowedArmyId?.()
+        ?? (window as any).game?.playerHero?.getHostLegionId?.()
+        ?? null;
 }
 
 

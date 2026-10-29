@@ -401,7 +401,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_yuanshao',
+        commanderUnit: 'hero_tokhtamyshkhan',
         slots: [
             { type: 'xianbei_raider', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
@@ -1661,7 +1661,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
         formationMode: 'fish_scale',
         shipId: 'BIREME',
-        commanderUnit: 'hero_belisarius',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_thoros（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_perdiccas',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_thoros（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'antiquity_spearman', count: 3 },
             { type: 'composite_bowman', count: 4 },
@@ -1934,7 +1934,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    伦博斯（lembus）与其后身利伯尼亚快船源出伊利里亚—亚得里亚海域，罗马潘诺尼亚舰队（Classis Pannonica）
         //    在多瑙河巡防即以此类快船为主力，正合本军团「多瑙河浅滩巡逻水陆大阵」。爆破筏仍有 30 余支军团使用。
         shipId: 'ELITE_LEMBOS',
-        commanderUnit: 'hero_belisarius',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_attila（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_dmitryofmoscow',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_attila（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'antiquity_light_cavalry', count: 3 },
             { type: 'antiquity_cavalry_archer', count: 4 },
@@ -4210,7 +4210,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_belisarius',
+        commanderUnit: 'hero_reynalddechatillon',
         slots: [
             { type: 'elite_guardsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
@@ -4263,7 +4263,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'THRACE_CASTLE_AGE3', castleName: '色雷斯 阿德里安堡要塞',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_belisarius',
+        commanderUnit: 'hero_robertguiscard',
         slots: [
             { type: 'elite_guardsman', count: 3 },
             { type: 'laminated_bowman', count: 4 },
@@ -4483,7 +4483,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_subotai',
         slots: [
-            { type: 'xianbei_raider', count: 3 },
+            { type: 'hero_yuanshao', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
             { type: 'hei_kuang_heavy', count: 2 },
         ],
@@ -4532,7 +4532,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_belisarius',
+        commanderUnit: 'hero_mordred',
         slots: [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'recurve_bowman', count: 4 },

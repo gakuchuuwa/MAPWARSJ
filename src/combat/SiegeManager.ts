@@ -1070,6 +1070,8 @@ export class SiegeManager {
         //    战术里守不住 / 攻不下都被判成「打赢」，军团照旧占城、继续打下一座。现在只有剧本事件自带的结果
         //    （`siegeData.result`）算写死胜负，首战一律按实际战果结算。
         const siegePreset = siegeData.result;
+        const initialFollowedIdForSpeech = window.game?.cameraFollowUI?.getFollowedArmyId?.()
+            ?? window.game?.playerHero?.getHostLegionId?.();
 
         // Adapters
         const attackerAdapter = BattleUnitFactory.createAdapter(
@@ -1158,7 +1160,8 @@ export class SiegeManager {
                 this.activeSieges.delete(targetCity.id);
                 // [语音播报] 跟随军团攻城失败：无论守方有无武将均播报攻城失败专句，并标记 siege_attacker 抑制通用覆没语音
                 const followedIdFail = window.game?.cameraFollowUI?.getFollowedArmyId?.()
-                    ?? window.game?.playerHero?.getHostLegionId?.();
+                    ?? window.game?.playerHero?.getHostLegionId?.()
+                    ?? initialFollowedIdForSpeech;
                 const failDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
                 const failSpeechTaken = followedIdFail === army.id;
                 if (failSpeechTaken) {
@@ -1417,7 +1420,9 @@ export class SiegeManager {
 
         // [语音播报] 跟随军团攻城：开战后一刻触发，势=攻守初始兵力比（与 BattleField assignSituationalSkills 同公式）。
         // 城池「兵临」、关隘「攻打」；守方有将续「势前缀…赵国[名将]武将，守方八字」，无将只一句。
-        const followedIdForSpeech = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+        const followedIdForSpeech = window.game?.cameraFollowUI?.getFollowedArmyId?.()
+            ?? window.game?.playerHero?.getHostLegionId?.()
+            ?? initialFollowedIdForSpeech;
         // [修复 2026-07-17] r 原在 if 块内声明，下方援军播报循环（块外）引用会 ReferenceError 崩溃——提升到共用作用域
         const r = battleField.getInitialAttDefRatio(); // attacker / defender
         if (followedIdForSpeech === army.id) {
@@ -1467,6 +1472,26 @@ export class SiegeManager {
         // 战斗结束 = 事件结束（战后动作在后台运行）
         battleField.onBattleComplete = (winnerFactionId) => {
             siegeLog(`✅ [Siege] Battle complete. Winner: ${winnerFactionId}`);
+            if (battleField.isDraw) {
+                const followedIdDraw = window.game?.cameraFollowUI?.getFollowedArmyId?.()
+                    ?? window.game?.playerHero?.getHostLegionId?.()
+                    ?? initialFollowedIdForSpeech;
+                if (followedIdDraw && attackerUnits.some((u) => u.id === followedIdDraw)) {
+                    const failAtkUnit = attackerUnits.find((u) => u.id === followedIdDraw)
+                        ?? attackerUnits.find((u) => u.generalId === army.generalId)
+                        ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
+                    const failDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
+                    const failR = battleField.getInitialAttDefRatio();
+                    const failJu: CaptureJu = failR > 1.5 ? 'advantage' : failR < 0.67 ? 'disadvantage' : 'balance';
+                    speechAnnouncer.announceSiegeFailure({
+                        attackerFactionId: army.getDisplayFactionId(),
+                        ju: failJu,
+                        attackerSkillId: failAtkUnit?.battleOverriddenSkillId ?? null,
+                        cityName: targetCity.name,
+                        defenderGeneralId: failDefGeneralId,
+                    });
+                }
+            }
             clearSiegeGarrisonBoost(targetCity as typeof targetCity & SiegeGarrisonBoostFields);
             // 特效停止/据点缩回由 BattleField.resolve() 的软停负责（火焰淡出 + 延迟缩回）；
             // 此处不得再立即硬停——否则会把淡出和"缩小藏进烟雾"杀死，战斗中据点提前恢复（2026-07-18 修复）

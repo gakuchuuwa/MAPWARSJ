@@ -383,7 +383,8 @@ function startFieldBattleBetween(
             }
         }
         const endFollowedId = window.game?.cameraFollowUI?.getFollowedArmyId?.()
-            ?? window.game?.playerHero?.getHostLegionId?.();
+            ?? window.game?.playerHero?.getHostLegionId?.()
+            ?? followedFieldId;
         if (!endFollowedId) return;
         const endOnAtt = attLegions.some((l) => l.id === endFollowedId);
         const endOnDef = defLegions.some((l) => l.id === endFollowedId);

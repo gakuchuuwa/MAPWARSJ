@@ -520,14 +520,8 @@ export class MultiLegionFieldBattle {
             }
         }
 
-        const handleAttackerVictory = () => {
-            if (!hasTriggeredEnd && onBattleEnd) {
-                hasTriggeredEnd = true;
-                const survivingArmies = attackerArmies.filter(a => !a.isDestroyed);
-                battleLog(`[MultiLegion] 攻击方胜利，触发后续逻辑，剩余军团数: ${survivingArmies.length}`);
-                onBattleEnd(data.attackerFactionId, survivingArmies);
-            }
-        };
+        const initialFollowedId = (window as any).game?.cameraFollowUI?.getFollowedArmyId?.()
+            ?? (window as any).game?.playerHero?.getHostLegionId?.();
 
         // 创建战斗单位适配器
         // [FIX] 事件链预设战果：该侧按 result 锁定胜负
@@ -542,10 +536,9 @@ export class MultiLegionFieldBattle {
                 'legion',
                 army.getTroops(),
                 () => {
-                    // Victory
+                    // Victory（onBattleEnd 统一在 battleField.onBattleComplete 语音播报之后触发，避免提前 detach 吞掉守方战败语音）
                     onBattleComplete(); // 清除特效
                     battleLog(`[MultiLegion] ${army.name} 获胜!`);
-                    handleAttackerVictory();
                 },
                 () => {
                     // Defeat Callback
@@ -554,8 +547,6 @@ export class MultiLegionFieldBattle {
                     if (attackerShouldSurvive) {
                         battleLog(`[MultiLegion] 剧情保护触发: ${army.name} 虽然兵力耗尽但在剧情中获胜，避免销毁。`);
                         army.setTroops(10000); // 剧情幸存 - 保底 10000 兵力
-                        // 此时仍视为"Defeat"回调被调用，但我们强制保留军团
-                        handleAttackerVictory(); // 强制触发这一方的胜利后续
                     } else {
                         army.destroy();
                     }
@@ -629,7 +620,8 @@ export class MultiLegionFieldBattle {
             this.visualizer.hideFieldBattleEffect(effectId);
 
             const endFollowedId = (window as any).game?.cameraFollowUI?.getFollowedArmyId?.()
-                ?? (window as any).game?.playerHero?.getHostLegionId?.();
+                ?? (window as any).game?.playerHero?.getHostLegionId?.()
+                ?? initialFollowedId;
             if (endFollowedId) {
                 const endOnAtt = attackerArmies.some((l) => l.id === endFollowedId);
                 const endOnDef = defenderArmies.some((l) => l.id === endFollowedId);

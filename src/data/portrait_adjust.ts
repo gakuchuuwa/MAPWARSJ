@@ -1268,7 +1268,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -21
         },
         "/assets/JIANGNAN/yezongliu_yezongliu.png": {
-            "scale": 1.06,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 9
         },
@@ -8946,6 +8946,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": -4
+        },
+        "/assets/JIANGNAN/bfe3_75.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/JIANGNAN/longwu_zhengcai.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {

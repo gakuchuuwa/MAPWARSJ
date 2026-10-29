@@ -915,13 +915,46 @@ export class Scene13WarLayer {
         return [sp?.x ?? this.worldCX, sp?.y ?? this.worldCY];
     }
 
-    /** 从某方的后备池（下一波）里扣掉 quotaPop 人口，轮流取各出兵口；返回扣掉的每一批（兵种、人口） */
-    private drainSidePool(side: 0 | 1, quotaPop: number, randomNonCommander = false): Array<{ key: string; pop: number }> {
+    /** 从某方的后备池（下一波）里扣掉 quotaPop 人口；randomNonCommander=true 时按兵种集中扣完一类再换下一类，不分散 */
+    private drainSidePool(side: 0 | 1, quotaPop: number, randomNonCommander = false, preferredKey?: string): Array<{ key: string; pop: number }> {
         const taken: Array<{ key: string; pop: number }> = [];
         const sps = this.spawns.filter((sp) => sp.f === side && !sp.playerElite && (!randomNonCommander || !sp.commander) && sp.pool > 0);
+        if (randomNonCommander) {
+            const byKey = new Map<string, typeof sps>();
+            for (const sp of sps) {
+                let list = byKey.get(sp.key);
+                if (!list) { list = []; byKey.set(sp.key, list); }
+                list.push(sp);
+            }
+            const keys = [...byKey.keys()];
+            for (let i = keys.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const tmp = keys[i];
+                keys[i] = keys[j];
+                keys[j] = tmp;
+            }
+            if (preferredKey && byKey.has(preferredKey)) {
+                const idx = keys.indexOf(preferredKey);
+                if (idx > 0) { keys.splice(idx, 1); keys.unshift(preferredKey); }
+            }
+            for (const k of keys) {
+                const group = byKey.get(k)!;
+                for (const sp of group) {
+                    while (quotaPop > 0 && sp.pool > 0) {
+                        const unit = Math.max(1, sp.pop);
+                        sp.pool--;
+                        quotaPop -= unit;
+                        taken.push({ key: sp.key, pop: unit });
+                    }
+                    if (quotaPop <= 0) break;
+                }
+                if (quotaPop <= 0) break;
+            }
+            return taken;
+        }
         let idx = 0, guard = 0;
         while (quotaPop > 0 && sps.some((sp) => sp.pool > 0) && guard++ < 100000) {
-            const sp = randomNonCommander ? sps[Math.floor(Math.random() * sps.length)] : sps[idx % sps.length]; idx++;
+            const sp = sps[idx % sps.length]; idx++;
             if (sp.pool <= 0) continue;
             const unit = Math.max(1, sp.pop);
             sp.pool--;
@@ -1229,24 +1262,60 @@ export class Scene13WarLayer {
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 4 : 1;
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeAmount));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW && !this.spawns[m.lane]?.commander);
-            for (let i = enemyLiving.length - 1; i > 0; i--) {
+            // 🔴 [2026-10-29 主人令「每次释放技能，随机只选一个兵种，兵数不够再下一个兵种。不要分散」]
+            //    按兵种（m.key）分桶并随机排定兵种顺序；同兵种内锚定同一分队与就近士兵集中夺取，绝不全场散抽。
+            const byKey = new Map<string, WarMan[]>();
+            for (const m of enemyLiving) {
+                let list = byKey.get(m.key);
+                if (!list) { list = []; byKey.set(m.key, list); }
+                list.push(m);
+            }
+            const typeKeys = [...byKey.keys()];
+            for (let i = typeKeys.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                const tmp = enemyLiving[i];
-                enemyLiving[i] = enemyLiving[j];
-                enemyLiving[j] = tmp;
+                const tmp = typeKeys[i];
+                typeKeys[i] = typeKeys[j];
+                typeKeys[j] = tmp;
+            }
+            const orderedCandidates: WarMan[] = [];
+            for (const k of typeKeys) {
+                const group = byKey.get(k)!;
+                const anchor = scopedControl !== null
+                    ? group.reduce((best, m) =>
+                        ((m.x - refX) ** 2 + (m.y - refY) ** 2 < (best.x - refX) ** 2 + (best.y - refY) ** 2 ? m : best), group[0])
+                    : group[Math.floor(Math.random() * group.length)];
+                const anchorLane = anchor.lane;
+                const ax = anchor.x, ay = anchor.y;
+                group.sort((a, b) => {
+                    const la = a.lane === anchorLane ? 0 : 1;
+                    const lb = b.lane === anchorLane ? 0 : 1;
+                    if (la !== lb) return la - lb;
+                    return ((a.x - ax) ** 2 + (a.y - ay) ** 2) - ((b.x - ax) ** 2 + (b.y - ay) ** 2);
+                });
+                orderedCandidates.push(...group);
             }
             const myLanes = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
             const converted: WarMan[] = [];
             const needSprite = new Set<string>();
-            for (const m of enemyLiving) {
+            const sharedLaneByKey = new Map<string, number>();
+            let lastPickedKey: string | undefined;
+            for (const m of orderedCandidates) {
                 if (quotaPop <= 0) break;
                 quotaPop -= Math.max(1, m.pop || 1);
+                lastPickedKey = m.key;
                 if (m.key && !needSprite.has(m.key)) { needSprite.add(m.key); this.ensureType(m.key, f); }
                 m.f = f;
                 m.playerPanicTimer = 0;
-                const nl = myLanes.reduce<typeof myLanes[number] | null>((best, sp) =>
-                    (!best || (sp.x - m.x) ** 2 + (sp.y - m.y) ** 2 < (best.x - m.x) ** 2 + (best.y - m.y) ** 2) ? sp : best, null);
-                if (nl) m.lane = nl.lane;
+                let assignedLane = sharedLaneByKey.get(m.key);
+                if (assignedLane === undefined) {
+                    const nl = myLanes.reduce<typeof myLanes[number] | null>((best, sp) =>
+                        (!best || (sp.x - m.x) ** 2 + (sp.y - m.y) ** 2 < (best.x - m.x) ** 2 + (best.y - m.y) ** 2) ? sp : best, null);
+                    if (nl) {
+                        assignedLane = nl.lane;
+                        sharedLaneByKey.set(m.key, assignedLane);
+                    }
+                }
+                if (assignedLane !== undefined) m.lane = assignedLane;
                 m.foe = null; m.fightT = 0; m.lock = 0; m.st = 0; m.march = false; m.port = null; m.guardPost = undefined;
                 m.tx = m.x; m.ty = m.y; m.claims = 0; m.claimsNext = 0; m.atkers = 0; m.atkNext = 0;
                 m.fadeT = FADE_IN; m.fadeMax = FADE_IN;
@@ -1258,12 +1327,22 @@ export class Scene13WarLayer {
                 for (const o of this.men) if (o.foe && set.has(o.foe as WarMan)) o.foe = null;
             }
             if (scopedControl === null && quotaPop > 0) {
-                const taken = this.drainSidePool(ef, quotaPop, true);
+                const taken = this.drainSidePool(ef, quotaPop, true, lastPickedKey);
                 if (taken.length > 0) this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key), vfxTargets);
             }
         }
-        const vfxX = scopedControl !== null ? refX : camX;
-        const vfxY = scopedControl !== null ? refY : camY;
+        let vfxX = scopedControl !== null ? refX : camX;
+        let vfxY = scopedControl !== null ? refY : camY;
+        if (six === 'bingzhan' && vfxTargets.length > 0) {
+            let tx = 0, ty = 0;
+            for (const m of vfxTargets) { tx += m.x; ty += m.y; }
+            vfxX = tx / vfxTargets.length;
+            vfxY = ty / vfxTargets.length;
+            if (this.skillCamTimer > 0) {
+                this.skillCamX = vfxX;
+                this.skillCamY = vfxY;
+            }
+        }
         this.spawnSkillVfx(f, six, vfxX, vfxY, viewer !== null, vfxTargets, vfxPoints);
 
         // 玩家献计与武将自动放计分开演出；技能结算仍共用上面的同一套逻辑。
@@ -2637,7 +2716,7 @@ export class Scene13WarLayer {
                 const briefingText = init.battleBriefing;
                 this.battleBriefingSpeaking = true;
                 const triggerBattleBriefing = () => {
-                    if (!this.active) {
+                    if (!this.active || this.over) {
                         this.battleBriefingSpeaking = false;
                         return;
                     }
@@ -2651,7 +2730,7 @@ export class Scene13WarLayer {
                     console.log('[Scene13WarLayer] 🎙️ 行军播报正在进行，等待结束后播放战役播报...');
                     if (this.battleBriefingTimer) clearInterval(this.battleBriefingTimer);
                     this.battleBriefingTimer = setInterval(() => {
-                        if (!this.active) {
+                        if (!this.active || this.over) {
                             clearInterval(this.battleBriefingTimer);
                             this.battleBriefingTimer = null;
                             this.battleBriefingSpeaking = false;
@@ -8629,6 +8708,11 @@ export class Scene13WarLayer {
         const noTroopDecision = alive[0] <= 0 || alive[1] <= 0;
         if (noTroopDecision || (!waitCollapse && (centerDown || timeUp))) {
             this.over = true;
+            if (this.battleBriefingTimer) {
+                clearInterval(this.battleBriefingTimer);
+                this.battleBriefingTimer = null;
+            }
+            this.battleBriefingSpeaking = false;
             if (this.contactSfxOn) {
                 this.contactSfxOn = false;
                 audioManager.stopSceneLoop('land_contact');

@@ -536,7 +536,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
     };
 
     app.combatSystem.onRegionalBattleEnd = (endedFields) => {
-        const followedId = app.cameraFollowUI?.getFollowedArmyId();
+        const followedId = app.cameraFollowUI?.getFollowedArmyId()
+            ?? app.playerHero?.getHostLegionId();
         if (!followedId || !app.combatUI.isRegionalVisible()) return;
         const oursEnded = endedFields.some((bf) => bf.hasParticipant(followedId));
         if (!oursEnded) return;
@@ -569,7 +570,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
     app.combatSystem.onRegionalBattleReinforcement = (battleField, joinedUnit) => {
         const isStory = isStoryOrFirstBattleUnit(joinedUnit);
         returnParkedCameraIfPlayerFights(app, [joinedUnit.id], isStory);
-        const followedId = app.cameraFollowUI?.getFollowedArmyId();
+        const followedId = app.cameraFollowUI?.getFollowedArmyId()
+            ?? app.playerHero?.getHostLegionId();
         if (app.combatUI.isBoundToBattleField(battleField)) {
             app.combatUI.syncRegionalParticipantsFromBattleField(battleField);
             if (joinedUnit.id !== followedId || battleField.scene13Frozen) return;

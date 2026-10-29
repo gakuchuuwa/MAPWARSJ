@@ -200,7 +200,8 @@ export function tryJoinLegionToBattle(
     battleField.addReinforcement(adapter, isAttacker);
 
     // [语音播报] 跟随军团作为援军参战
-    const followedId = (window as any).game?.cameraFollowUI?.getFollowedArmyId?.();
+    const followedId = (window as any).game?.cameraFollowUI?.getFollowedArmyId?.()
+        ?? (window as any).game?.playerHero?.getHostLegionId?.();
     if (followedId === legion.id) {
         const genRec = legion.generalId ? getGeneralRecordByGeneralId(legion.generalId) : null;
         const brR = battleField.getInitialAttDefRatio();

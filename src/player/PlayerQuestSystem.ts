@@ -2481,7 +2481,7 @@ export class PlayerQuestSystem {
         const host = this.deps.legionManager.getLegionById(q.legionId);
         // 🔴 [2026-10-27 主人令「首战战败后，军队依然可以继续下一个目标，这是不对的」]
         //    野战、攻城（攻/守）的败方军团都是全军覆没 ⇒ 军团没了就是**首战战败**，不许当成「打完了、接着下一个目标」。
-        if (!host || host.isDestroyed || host.getTroops() <= 0) {
+        if (!host || host.isDestroyed || (host.getTroops() <= 0 && !host.getIsInCombat())) {
             this.failFirstBattle(q, host ?? null);
             return;
         }
@@ -2501,7 +2501,7 @@ export class PlayerQuestSystem {
 
         if (fbState.battleType === 'field') {
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
-            if (!fbState.enemySpawnPending && (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0)) {
+            if (!fbState.enemySpawnPending && (!enemyArmy || enemyArmy.isDestroyed || (enemyArmy.getTroops() <= 0 && !enemyArmy.getIsInCombat()))) {
                 this.settleFirstBattle(q, host);
                 return;
             }
@@ -2516,7 +2516,7 @@ export class PlayerQuestSystem {
             }
         } else if (fbState.role === 'defender') {
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
-            if (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0 || (fbState.engaged && !host.getIsInCombat())) {
+            if (!enemyArmy || enemyArmy.isDestroyed || (enemyArmy.getTroops() <= 0 && !enemyArmy.getIsInCombat()) || (fbState.engaged && !host.getIsInCombat())) {
                 this.settleFirstBattle(q, host);
                 return;
             }
@@ -2578,20 +2578,23 @@ export class PlayerQuestSystem {
         this.cleanupFirstBattleState(q, false);
         // 军队战败：还活着的那支（打平 300 秒未克、攻城被击退）也一并溃散，不许它继续打下一座
         if (host && !host.isDestroyed) {
-            if (fbState?.battleType === 'siege' && fbState?.role === 'attacker') {
-                const targetCity = fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
-                speechAnnouncer.announceSiegeFailure({
-                    attackerFactionId: host.getDisplayFactionId(),
-                    ju: 'balance',
-                    cityName: targetCity?.name ?? q.targetCityName,
-                    defenderGeneralId: fbState.enemyGeneralId ?? null,
-                });
-            } else {
-                speechAnnouncer.announceFieldBattleEnd({
-                    win: false,
-                    followerFactionId: host.getDisplayFactionId(),
-                    ju: 'balance',
-                });
+            // 若已接战（fbState.engaged），SiegeManager（含 300s isDraw）/ LegionFieldBattle 已播报战败语音，此处仅对未接战兜底防重
+            if (!fbState?.engaged) {
+                if (fbState?.battleType === 'siege' && fbState?.role === 'attacker') {
+                    const targetCity = fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
+                    speechAnnouncer.announceSiegeFailure({
+                        attackerFactionId: host.getDisplayFactionId(),
+                        ju: 'balance',
+                        cityName: targetCity?.name ?? q.targetCityName,
+                        defenderGeneralId: fbState.enemyGeneralId ?? null,
+                    });
+                } else {
+                    speechAnnouncer.announceFieldBattleEnd({
+                        win: false,
+                        followerFactionId: host.getDisplayFactionId(),
+                        ju: 'balance',
+                    });
+                }
             }
             host.clearExternalCombatState();
             host.clearPostBattleRest();
@@ -3314,7 +3317,7 @@ export class PlayerQuestSystem {
             if (q.event.terminal) { this.watchTerminalLeg(); if (this.quest !== q) return; }
             this.followPendingGeneralEvent();
             const host = this.deps.legionManager.getLegionById(q.legionId);
-            if (!host || host.isDestroyed || host.getTroops() <= 0) {
+            if (!host || host.isDestroyed || (host.getTroops() <= 0 && !host.getIsInCombat())) {
                 this.deps.notify(`❌ 军团覆灭，未能抵达【${q.event.title}】`, undefined, true);
                 gameLog('expedition', `[玩家] 武将史实战役中断：${q.event.title}`);
                 this.quest = null;
@@ -3338,7 +3341,7 @@ export class PlayerQuestSystem {
             return;
         }
         const army = this.deps.legionManager.getLegionById(q.legionId);
-        if (!army || army.isDestroyed || army.getTroops() <= 0 || !isGeneralOnStage(q.generalId)) {
+        if (!army || army.isDestroyed || (army.getTroops() <= 0 && !army.getIsInCombat()) || !isGeneralOnStage(q.generalId)) {
             this.finishQuest(false);
         }
     }
@@ -3953,6 +3956,7 @@ export class PlayerQuestSystem {
         // [2026-09-05 玩家] 任务成功不 detach：玩家继续跟着军团，直到军团解散才恢复自由。
         // 只有任务失败（军团解散）才 detach。
         if (!success) {
+            this.clearJourneyBriefing();
             hero.resetMerit('随军任务失败');
             hero.detach();
             // 🔴 [2026-09-08 主人改口] 原先这里「战败即关闭自动模式」，主人当日又提：
