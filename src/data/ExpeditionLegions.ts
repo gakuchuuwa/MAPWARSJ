@@ -141,7 +141,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   sijitai_satraces: { name: '药杀水游骑', tier: 3 },
   yamaxun_faernake: { name: '本都重装骑', tier: 3 },
   gen_astrakhan_khan: { name: '阿斯特拉骑', tier: 3 },
-  oirat_ming_gaerdan: { name: '准噶尔驼炮', tier: 1 },
+  oirat_ming_gaerdan: { name: '准噶尔铁骑', tier: 1 },
 
   // ── 2026-10-24 主人令「武将应该都有精锐」：起义／边疆起事首领（各家独立势力；旧 panjun 占位势力已于 2026-10-25 删除）原先没有势力精锐表可继承，
   //    「一个武将一支精锐」逐位补齐。番号取该将本部的名号／族兵／成名战，3–5 字、全局不重名；
@@ -317,7 +317,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   qidan_shulvping: { name: '属珊锐骑', tier: 3 },   // 述律平｜辽｜临潢府｜旧档保留：《辽史·营卫志》应天皇太后置属珊军为其帐下亲军，述律平自将，故称属珊锐骑。
   yel_yelvxiuge: { name: '斡鲁朵军', tier: 1 },   // 耶律休哥｜辽｜降圣｜旧档保留：《辽史·卷八十三·耶律休哥传》高梁河、岐沟关两捷统辽宫卫劲骑，斡鲁朵即宫卫军。
   jingcheng_d_yuyouzhao: { name: '镜城突骑', tier: 3 },   // 鱼有沼｜朝鲜｜笼耳｜旧档保留：《朝鲜王朝实录·成宗实录》鱼有沼任咸镜道节度使，驻镜城屡讨尼麻车等女真部，以突骑取胜。
-  chungju_d_quanli: { name: '幸州天字铳', tier: 2 },   // 权栗｜朝鲜｜汉城｜旧档保留：万历二十一年（1593）幸州大捷，权栗以天字铳筒守幸州山城破日军，见《朝鲜王朝实录·宣祖实录》与维基「幸州山城之战」。
+  chungju_d_quanli: { name: '幸州勤王军', tier: 2 },   // 权栗｜朝鲜｜汉城｜万历二十一年（1593）幸州大捷，权栗率全罗道勤王军守幸州山城以车阵火矢大破日军，见《朝鲜王朝实录·宣祖实录》。
   sambyeol_lishunchen: { name: '龟甲板屋船', tier: 0 },   // 李舜臣｜朝鲜｜鸣梁｜旧档保留：李舜臣以龟船破日军于闲山岛、鸣梁，见《李忠武公全书》及维基「闲山岛海战」「鸣梁海战」。
   sheng_d_liyiqi: { name: '全罗水军', tier: 2 },   // 李亿祺｜朝鲜｜顺天｜旧档保留：李亿祺任全罗右水使，与李舜臣合兵闲山岛破日军，见《朝鲜王朝实录·宣祖实录》。
   luosi_svyatopolk: { name: '佩切涅格骑', tier: 3 },   // 斯维亚托波尔克｜罗斯｜基辅｜旧档无；《往年纪事》记 1016、1019 年斯维亚托波尔克两度借佩切涅格骑兵与雅罗斯拉夫争基辅，1019 阿尔塔河败死，佩切涅格骑即其争位主力（维基「斯维亚托波尔克一世」）。
@@ -666,7 +666,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_baodewen_iv: { name: '蒙吉萨军', tier: 2 },         // 鲍德温四世：1177 蒙吉萨会战耶路撒冷军。
   aosiruowen_baodewen: { name: '耶路撒冷军', tier: 3 },   // 鲍德温一世：耶路撒冷王国本部。
   mowoer_akeba: { name: '拉贾普特军', tier: 3 },          // 阿克巴：征服与整编拉贾普特诸邦之本部。
-  babuer_babuer: { name: '莫卧儿火炮', tier: 2 },         // 巴布尔：帕尼帕特、坎瓦会战火器野战本部。
+  babuer_babuer: { name: '莫卧儿近卫', tier: 2 },         // 巴布尔：帕尼帕特、坎瓦会战野战本部。
   gen_vlad_impaler: { name: '夜袭军', tier: 2 },          // 弗拉德三世：1462 夜袭奥斯曼军营之本部。
   gen_basarab_i: { name: '波萨达军', tier: 2 },           // 巴萨拉布一世：1330 波萨达会战瓦拉几亚军。
   gen_topa_inca: { name: '大耳卫队', tier: 3 },         // 图帕克：扩张安第斯诸地的印加本部。

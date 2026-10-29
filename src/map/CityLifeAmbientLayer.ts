@@ -130,6 +130,7 @@ interface CityLifeActor {
 
 const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
+const PLOT_PANE_ZINDEX = 330;  // 生产方式地皮（农田、水田、牧场等）位于矢量河流(335)与水域河流(340)下层，不遮挡河流
 const PANE_ZINDEX = 568;       // 高于陆地动物(560)/植被(565)，低于商队(570)/攻城底层军团(580)/据点(610)/主军团(620)
 const VILLAGER_SCALE_BASE = 0.42;
 const ANIMAL_SCALE_BASE = 0.48;
@@ -453,6 +454,8 @@ function pickHuntingForestPalette(style: string, lat: number, idx: number): {
 
 export class CityLifeAmbientLayer {
     private map: L.Map;
+    private plotCanvas: HTMLCanvasElement;
+    private plotCtx: CanvasRenderingContext2D;
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private running = false;
@@ -481,6 +484,20 @@ export class CityLifeAmbientLayer {
 
     constructor(map: L.Map) {
         this.map = map;
+        let plotPane = map.getPane('cityLifePlotPane');
+        if (!plotPane) {
+            plotPane = map.createPane('cityLifePlotPane');
+            plotPane.style.zIndex = String(PLOT_PANE_ZINDEX);
+            plotPane.style.pointerEvents = 'none';
+        }
+        this.plotCanvas = document.createElement('canvas');
+        this.plotCanvas.className = 'leaflet-zoom-animated';
+        this.plotCanvas.style.pointerEvents = 'none';
+        plotPane.appendChild(this.plotCanvas);
+        const plotCtx = this.plotCanvas.getContext('2d');
+        if (!plotCtx) throw new Error('CityLifeAmbientLayer: plot 2d context unavailable');
+        this.plotCtx = plotCtx;
+
         let pane = map.getPane('cityLifePane');
         if (!pane) {
             pane = map.createPane('cityLifePane');
@@ -503,6 +520,8 @@ export class CityLifeAmbientLayer {
 
     private resize(): void {
         const s = this.map.getSize();
+        this.plotCanvas.width = s.x;
+        this.plotCanvas.height = s.y;
         this.canvas.width = s.x;
         this.canvas.height = s.y;
         this.reposition();
@@ -510,6 +529,7 @@ export class CityLifeAmbientLayer {
 
     private reposition(): void {
         const topLeft = this.map.containerPointToLayerPoint([0, 0]);
+        L.DomUtil.setPosition(this.plotCanvas, topLeft);
         L.DomUtil.setPosition(this.canvas, topLeft);
     }
 
@@ -537,6 +557,7 @@ export class CityLifeAmbientLayer {
 
     public setVisible(v: boolean): void {
         this.layerVisible = v;
+        this.plotCanvas.style.display = v ? 'block' : 'none';
         this.canvas.style.display = v ? 'block' : 'none';
     }
 
@@ -1821,7 +1842,8 @@ export class CityLifeAmbientLayer {
         px: number,
         py: number,
         scale: number,
-        alpha: number
+        alpha: number,
+        targetCtx: CanvasRenderingContext2D = this.ctx
     ): void {
         if (alpha <= 0.01) return;
         const st = this.stripAssetFor(folder, name);
@@ -1832,9 +1854,9 @@ export class CityLifeAmbientLayer {
         const dx = px - st.anchorX * scale;
         const dy = py - st.anchorY * scale;
 
-        this.ctx.save();
-        this.ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-        this.ctx.drawImage(
+        targetCtx.save();
+        targetCtx.globalAlpha = Math.max(0, Math.min(1, alpha));
+        targetCtx.drawImage(
             st.sheet,
             sx,
             0,
@@ -1845,7 +1867,7 @@ export class CityLifeAmbientLayer {
             st.boxW * scale,
             st.boxH * scale
         );
-        this.ctx.restore();
+        targetCtx.restore();
     }
 
     /** 绘制渔猎据点的单棵季节性树木（严格对齐树根锚点） */
@@ -1964,6 +1986,7 @@ export class CityLifeAmbientLayer {
     private draw(): void {
         this.reposition();
         const ctx = this.ctx;
+        this.plotCtx.clearRect(0, 0, this.plotCanvas.width, this.plotCanvas.height);
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         const zoom = this.map.getZoom();
@@ -2055,12 +2078,14 @@ export class CityLifeAmbientLayer {
                 this.drawStripSprite(
                     'SUCAI_RESOURCE', plotBySeason[season], 0,
                     px, py, 0.58 * zoomFactor,
-                    peaceFinalAlpha * (1 - seasonBlend)
+                    peaceFinalAlpha * (1 - seasonBlend),
+                    this.plotCtx
                 );
                 this.drawStripSprite(
                     'SUCAI_RESOURCE', plotBySeason[nextSeason], 0,
                     px, py, 0.58 * zoomFactor,
-                    peaceFinalAlpha * seasonBlend
+                    peaceFinalAlpha * seasonBlend,
+                    this.plotCtx
                 );
             }
         }
@@ -2242,6 +2267,7 @@ export class CityLifeAmbientLayer {
 
         if (this.isHiddenNow()) {
             if (!this.clearedWhileHidden) {
+                this.plotCtx.clearRect(0, 0, this.plotCanvas.width, this.plotCanvas.height);
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 this.clearedWhileHidden = true;
             }

@@ -2348,7 +2348,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/KHITAN/xiazhou_lijiqian.png": {
-            "scale": 1.12,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": 8
         },
@@ -5508,7 +5508,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/PURU/kongque_zhantuoluo.png": {
-            "scale": 1.09,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": 15
         },
@@ -8936,6 +8936,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 6,
             "offsetY": 21
+        },
+        "/assets/KHITAN/song_peiji.png": {
+            "scale": 1.14,
+            "offsetX": 16,
+            "offsetY": 16
+        },
+        "/assets/PURU/bfe2_dhanananda.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -4
         }
     },
     "folderGuides": {

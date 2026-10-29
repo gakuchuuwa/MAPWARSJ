@@ -19,5 +19,5 @@ export const AFRICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     suosuo: { name: '索索骑兵', tier: 3 },  // 库姆比萨利赫·苏曼古鲁：索索骑兵
     ghana_diguo: { name: '加纳铁骑', tier: 3 },  // 库姆比萨利赫·加纳帝国（通卡·马宁）：al-Bakri 记加纳军以骑兵与弓手为主，取近卫骑兵
     saimien: { name: '塞米恩战士', tier: 3 },  // 塞米恩·尤迪特：塞米恩贝塔以色列战士
-    adal: { name: '阿达尔火枪', tier: 2 },   // 塞拉·格拉尼：奥斯曼援助重装火绳枪+精钢弯刀圣战突击主力
+    adal: { name: '马拉赛骑兵', tier: 2 },   // 塞拉·格拉尼：《征服阿比西尼亚纪》载伊玛目格拉尼麾下精锐骑兵号「马拉赛」（Malassay）
 };

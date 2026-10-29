@@ -16,43 +16,79 @@ const DESIGN_WIDTH = 1920;
 
 export class ViewerLivePanel {
     private root: HTMLDivElement;
+    private contentRow: HTMLDivElement;
     private body: HTMLDivElement;
+    private toggleBtn: HTMLButtonElement;
     private dev: HTMLDivElement;
     private devOpen = false;
+    private collapsed = false;
     private inScene13Bar = false;
+    private lastBodyHtml = '';
 
     constructor(private readonly live: ViewerLive, private readonly link: YouTubeOfficialBridge) {
         const howTo = new HowToPlayCard();
         this.live.onNewcomer = () => howTo.show();
         this.root = document.createElement('div');
         this.root.id = PANEL_ID;
+        this.contentRow = document.createElement('div');
+        this.contentRow.style.cssText = 'display:flex; align-items:center; justify-content:center; gap:8px;';
         this.body = document.createElement('div');
+        this.toggleBtn = document.createElement('button');
+        this.toggleBtn.type = 'button';
+        this.toggleBtn.style.cssText = `
+            flex-shrink:0; padding:2px 8px;
+            background:linear-gradient(180deg, rgba(38,30,22,0.95) 0%, rgba(22,17,12,0.98) 100%);
+            border:1px solid rgba(212,175,55,0.5); border-radius:4px;
+            color:#dfc28c; font-family:${FONT}; font-size:12px; font-weight:700;
+            cursor:pointer; white-space:nowrap; user-select:none;`;
+        this.toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.collapsed = !this.collapsed;
+            this.syncCollapsedState();
+            this.render();
+        });
+        this.contentRow.append(this.body, this.toggleBtn);
         this.dev = document.createElement('div');
         this.buildDev();
         this.applyStrategicBottomStyle();
-        this.root.append(this.dev, this.body);
+        this.root.append(this.dev, this.contentRow);
         document.body.appendChild(this.root);
+        this.syncCollapsedState();
         window.addEventListener('keydown', (e) => {
             if (e.key !== 'F9') return;
             e.preventDefault();
             this.devOpen = !this.devOpen;
-            this.dev.style.display = this.devOpen ? 'block' : 'none';
+            if (this.devOpen) this.collapsed = false;
+            this.syncCollapsedState();
             this.render();
         }, true); // 捕获阶段：光标在输入框里时输入框会 stopPropagation，F9 漏给 Edge 变成阅读模式
         window.addEventListener('resize', () => this.updatePosition());
         window.setInterval(() => this.render(), 300);
+        this.render();
+    }
+
+    private syncCollapsedState(): void {
+        this.body.style.display = this.collapsed ? 'none' : 'block';
+        this.dev.style.display = !this.collapsed && this.devOpen ? 'block' : 'none';
+        if (this.collapsed) {
+            this.toggleBtn.innerHTML = `📢 <span style="color:#ffd700;">弹幕控将</span> ${this.inScene13Bar ? '▼ 展开' : '▲ 展开'}`;
+            this.toggleBtn.title = '展开弹幕控制面板';
+        } else {
+            this.toggleBtn.innerHTML = this.inScene13Bar ? '▲ 收起' : '▼ 收起';
+            this.toggleBtn.title = '收起弹幕控制面板';
+        }
     }
 
     private applyStrategicBottomStyle(): void {
         this.root.style.cssText = `
             position:fixed; left:50%; bottom:6px; top:auto; transform:translateX(-50%); transform-origin:bottom center;
-            z-index:10054; width:max-content; max-width:94vw; display:none;
+            z-index:10054; width:max-content; max-width:94vw; display:block;
             background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
             border:1px solid rgba(212,175,55,0.65); border-radius:8px;
             padding:4px 14px; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
             box-shadow:0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22);
             pointer-events:auto; user-select:none;`;
-        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; width:380px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
+        this.dev.style.cssText = `display:${!this.collapsed && this.devOpen ? 'block' : 'none'}; width:380px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
     }
 
     private applyScene13MergedStyle(): void {
@@ -63,7 +99,7 @@ export class ViewerLivePanel {
             border-top:1px solid rgba(212,175,55,0.3);
             color:#f5e6c8; font-family:${FONT}; font-size:${FS_S13.sub}px; line-height:1.2;
             pointer-events:auto; user-select:none;`;
-        this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:380px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
+        this.dev.style.cssText = `display:${!this.collapsed && this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:380px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
     }
 
     private updatePosition(): void {
@@ -72,16 +108,18 @@ export class ViewerLivePanel {
         if (s13Active && s13Bar) {
             if (!this.inScene13Bar || this.root.parentElement !== s13Bar) {
                 this.inScene13Bar = true;
-                this.root.append(this.body, this.dev);
+                this.root.append(this.contentRow, this.dev);
                 this.applyScene13MergedStyle();
+                this.syncCollapsedState();
                 s13Bar.appendChild(this.root);
             }
             return;
         }
         if (this.inScene13Bar || this.root.parentElement !== document.body) {
             this.inScene13Bar = false;
-            this.root.append(this.dev, this.body);
+            this.root.append(this.dev, this.contentRow);
             this.applyStrategicBottomStyle();
+            this.syncCollapsedState();
             document.body.appendChild(this.root);
         }
         let bottomPx = 6;
@@ -98,10 +136,9 @@ export class ViewerLivePanel {
     private render(): void {
         const s = this.live.snapshot();
         this.updatePosition();
-        const linked = s.platform.includes('已连接');
-        const show = this.devOpen || linked || (this.inScene13Bar && s.on);
-        if (!show) { this.root.style.display = 'none'; return; }
         this.root.style.display = this.inScene13Bar ? 'flex' : 'block';
+        this.syncCollapsedState();
+        if (this.collapsed) return;
         const f = this.inScene13Bar ? FS_S13 : FS;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
         const b = (t: string) => `<b style="color:#ffd700;">${t}</b>`;
@@ -166,7 +203,11 @@ export class ViewerLivePanel {
             mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${statePart}${sep}${renameCmd}${liveInfoPart}</div>`;
         }
 
-        this.body.innerHTML = platform + mainRow;
+        const nextHtml = platform + mainRow;
+        if (this.lastBodyHtml !== nextHtml) {
+            this.lastBodyHtml = nextHtml;
+            this.body.innerHTML = nextHtml;
+        }
     }
 
     private buildDev(): void {

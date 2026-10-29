@@ -1202,7 +1202,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_mleh: 'foot_hero',
     hero_selimthegrim: 'mounted_hero',
     hero_stephan: 'foot_hero',
-    hero_yury: 'foot_hero',
+    hero_yury: 'mounted_hero',
     hero_zakare: 'foot_hero',
     hero_dongzhuo: 'mounted_hero',
     emperor_in_a_litter: 'noncombat_hero',

@@ -493,7 +493,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     mombasa: { generalId: 'mombasa_yusuf', generalName: '优素福·本·哈桑', cityId: 'city_mombasa', portrait: '/assets/AFRICA/mombasa_yousufubenhasang.png' },
     mogadishu: { generalId: 'mogadishu_abubakr', generalName: '阿布·伯克尔', cityId: 'city_mogadishu', portrait: '/assets/AFRICA/mogadishu_abubokeer.png' },
     zuraid: { generalId: 'zuraid_yasir', generalName: '亚西尔·本·比拉勒', cityId: 'city_aden', portrait: '/assets/ORIE/zuraid_yaxierbenbilale.png' },
-    pattani: { generalId: 'gen_rajah_hijau', factionId: 'pattani', cityId: 'city_pattani', generalName: '拉者伊祖', portrait: '/assets/MALAY/gen_rajah_hijau.png', legionName: '帝国时代马六甲军团', eliteName: '大年炮兵', eliteTier: 2 },
+    pattani: { generalId: 'gen_rajah_hijau', factionId: 'pattani', cityId: 'city_pattani', generalName: '拉者伊祖', portrait: '/assets/MALAY/gen_rajah_hijau.png', legionName: '帝国时代马六甲军团', eliteName: '大年御象军', eliteTier: 2 },
 
 
 
@@ -9059,7 +9059,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     dzungar: [
         { generalId: 'dzungar_galedanceling', cityId: 'city_yili', generalName: '噶勒丹策凌', portrait: '/assets/CENTRAL_ASIA/dzungar_galedanceling.png' },
-        { generalId: 'bfe_tsering_dondub', factionId: 'dzungar', cityId: 'city_yili', generalName: '策凌敦多布', portrait: '/assets/CENTRAL_ASIA/bfe_tsering_dondub.png', eliteName: '驼城火枪', eliteTier: 4 },
+        { generalId: 'bfe_tsering_dondub', factionId: 'dzungar', cityId: 'city_yili', generalName: '策凌敦多布', portrait: '/assets/CENTRAL_ASIA/bfe_tsering_dondub.png', eliteName: '伊犁枪骑', eliteTier: 4 },
         { generalId: 'bfe_xiaoceling', factionId: 'dzungar', cityId: 'city_yili', generalName: '策零敦多布', portrait: '/assets/CENTRAL_ASIA/bfe_xiaoceling.png', eliteName: '准噶尔骑', eliteTier: 4 },
     ],
 
