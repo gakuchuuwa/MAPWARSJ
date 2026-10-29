@@ -20,6 +20,8 @@ export class YouTubeOfficialBridge {
     constructor(private readonly live: ViewerLive) {
         this.yt = new YouTubeStats(live);
         this.live.onLedgerChange = (ledger) => this.saveLedger(ledger);
+        // 只有拿到事件流的页面才是唯一记账页；别的页面账本是副本，不许自己发在场分
+        this.live.isAccountingPage = () => this.hasConnected && this.events !== null;
         void this.start();
     }
 

@@ -1,7 +1,10 @@
 /**
  * YouTube 单平台直播互动（公共玩家统一控制层）。
  * - 全体观众共同操作同一个公共玩家；原始弹幕先解析为结构化命令，经官职、状态、审核与积分仲裁后再驱动游戏。
- * - 免费积分只来自频道增长目标（新增点赞、订阅增长、在线里程碑）；普通聊天只刷新在场，不直接送分。
+ * - 积分（2026-10-29 主人「要有助于增加播放量，要让玩家一直在线就一直能玩」重定）：
+ *     在场（10 分钟内说过话）每 3 分钟 +1 ⇒ 每场仗（约 10 分钟）够放一计；
+ *     第一次来送 3、每天第一次来送 3；点赞一档 / 新订阅 / 在线新高，在场的人一起加。
+ *     YouTube 不给观众名单，只能认在聊天里说过话的人（不说话的看客发不了分）。
  * - 真钱（Super Chat / Super Sticker）先放一边：只照原样记账并致谢，不放技、不换积分；玩法一律用积分。
  */
 import type { GameApp } from '../app/GameApp';
@@ -21,13 +24,23 @@ export const ORDER_CAP = 9999;
 export const MAX_SKILL_BID = 100;
 export const FREE_CAST_GAP_MS = 10_000;
 const PRESENT_MS = 10 * 60_000;
-const SUB_BONUS = 2;
+/** 在场发分：每隔这么久，在场的人各 +PRESENCE_PAY（约 10 分钟一仗 ⇒ 每仗 3 分＝一计） */
+const PRESENCE_PAY_MS = 3 * 60_000;
+const PRESENCE_PAY = 1;
+/** 第一次在本频道说话送的分（聊天只许订阅者发言 ⇒ 等于奖励新订阅的人马上能放一计） */
+const NEWCOMER_BONUS = 3;
+/** 每天第一次说话送的分（老观众隔天回来） */
+const RETURN_BONUS = 3;
+/** 订阅涨 1，在场每人加的分（一计） */
+const SUB_BONUS = 3;
 const GOAL_BONUS_MAX = 3;
 const HANDLED_CAP = 5000;
 const TICK_MS = 250;
 const STORE_KEY = 'mapwar-live-wallet';
 const NAME_MAX = 6;
 const STALE_BATTLE_CHAT_GRACE_MS = 2000;
+/** 隔这么久再说话也当新来的（弹「怎么玩」卡） */
+const NEWCOMER_GAP_MS = 30 * 60_000;
 
 const SIX_BY_WORD: Record<string, TacticalSixSet> = {
     攻: 'gongzhan', 胜: 'shengzhan', 敌: 'dizhan', 混: 'hunzhan', 并: 'bingzhan', 败: 'baizhan',
@@ -159,7 +172,8 @@ export interface ViewerLedger {
     revision?: number;
     day: string;
     wallets: Record<string, { name: string; cents: number }>;
-    orders: Record<string, { name: string; n: number }>;
+    /** seen：最近一次说话（刷新页面后在场不断）；day：最近一次说话是哪天（每天第一次来送分） */
+    orders: Record<string, { name: string; n: number; seen?: number; day?: string }>;
     handled: string[];
     queue?: ViewerQueuedCast[];
     scoutQueue?: ViewerQueuedScoutCast[];
@@ -188,6 +202,8 @@ interface OrderAcct {
     n: number;
     seen: number;
     lastEarn: number;
+    /** 最近一次说话的日期（today() 格式）；空＝还没在聊天里说过话 */
+    day: string;
 }
 const CN_NUM = ['零', '一', '两', '三', '四', '五', '六'];
 
@@ -243,8 +259,13 @@ export class ViewerLive {
     private likeTotal = 0;
     private subTotal = 0;
     private viewers = 0;
+    private lastPresencePayAt = Date.now();
+    /** 有新观众进来（在线人数涨了 / 有人本场第一次说话）；面板挂「怎么玩」卡 */
+    public onNewcomer: (() => void) | null = null;
     public onResult: ((r: ViewerCastResult) => void) | null = null;
     public onLedgerChange: ((ledger: ViewerLedger) => void) | null = null;
+    /** 这一页是不是唯一记账页（由 YouTubeOfficialBridge 接上）；在场发分只在记账页做 */
+    public isAccountingPage: () => boolean = () => true;
     public platformStatus = '';
     public ytStatus = '';
     public lastChatAt = 0;
@@ -271,7 +292,7 @@ export class ViewerLive {
         this.save();
     }
 
-    /** 普通聊天不加分，只刷新在场；统一命令层解析改名、投靠、玩家爆发技与玩家六计。 */
+    /** 普通聊天刷新在场（在场才吃每 3 分钟的分）；统一命令层解析查分、改名、投靠、玩家爆发技与玩家六计。 */
     public onChat(
         viewer: string,
         text: string,
@@ -286,9 +307,21 @@ export class ViewerLive {
         const eventId = meta?.eventId || `local:${++this.commandSeq}`;
         const pubMs = meta?.publishedAtMs && Number.isFinite(meta.publishedAtMs) ? meta.publishedAtMs : now;
         let word = normalizeCommand(text);
-        this.acct(id, name).seen = now;
+        const isNewViewer = !this.orders.has(id);
+        const acc = this.acct(id, name);
+        const prevSeen = acc.seen;
+        acc.seen = now;
+        // 本场第一次说话（或隔了半小时回来）＝新来的人 → 画面弹「怎么玩」
+        if (!prevSeen || now - prevSeen > NEWCOMER_GAP_MS) this.onNewcomer?.();
+        // 送分在口令之前：新来的人第一句就发「攻」也够分
+        this.welcome(id, name, acc, isNewViewer);
         if (paid) {
             this.onPayment(id, name, PRICE_PER_CAST, '测试打赏');
+        }
+
+        // 0. 查自己的积分（聊天机器人看不到游戏账本，只能在画面上回）
+        if (word === '积分' || word === '查分') {
+            return this.note(`${name} 现有 ${acc.n} 积分`);
         }
 
         // 1. 玩家改名竞拍（平民起全阶段可用，整局持续抬价）
@@ -406,7 +439,10 @@ export class ViewerLive {
     public onViewers(n: number): void {
         if (!Number.isFinite(n) || n < 0) return;
         const total = Math.floor(n);
+        const prevViewers = this.viewers;
         this.viewers = total;
+        // 在线人数涨了＝有人进来 → 画面弹「怎么玩」（首次读数只记底，不弹）
+        if (this.viewerPeak >= 0 && total > prevViewers) this.onNewcomer?.();
         if (this.viewerPeak < 0) {
             this.viewerPeak = total;
             this.viewerPeakMilestone = viewerPeakMilestone(total);
@@ -702,11 +738,30 @@ export class ViewerLive {
         this.rollDay();
         let a = this.orders.get(id);
         if (!a) {
-            a = { name, n: 0, seen: 0, lastEarn: 0 };
+            a = { name, n: 0, seen: 0, lastEarn: 0, day: '' };
             this.orders.set(id, a);
         }
         a.name = name;
         return a;
+    }
+    /** 第一次在本频道说话送 NEWCOMER_BONUS；之后每天第一次说话送 RETURN_BONUS（老观众隔天回来的理由） */
+    private welcome(id: string, name: string, a: OrderAcct, isNew: boolean): void {
+        const t = this.today();
+        if (a.day === t) return;
+        a.day = t;
+        const bonus = isNew ? NEWCOMER_BONUS : RETURN_BONUS;
+        this.addOrders(id, name, bonus, true);
+        this.note(isNew ? `欢迎 ${name} 入营，送 ${bonus} 积分` : `${name} 今日回营，送 ${bonus} 积分`);
+        this.save();
+    }
+    /** 在场发分：每 PRESENCE_PAY_MS 一次，只在唯一记账页发（别的页面拿到的是账本副本） */
+    private payPresence(): void {
+        const now = Date.now();
+        if (now - this.lastPresencePayAt < PRESENCE_PAY_MS) return;
+        this.lastPresencePayAt = now;
+        if (!this.isAccountingPage() || this.presentIds().length === 0) return;
+        const k = this.grantPresent(PRESENCE_PAY);
+        this.note(`在场 ${k} 人各 +${PRESENCE_PAY} 积分（每 ${PRESENCE_PAY_MS / 60_000} 分钟）`);
     }
     private joinSide(id: string, side: 0 | 1): void { this.sides.set(id, side); this.save(); }
 
@@ -736,7 +791,8 @@ export class ViewerLive {
      *    每个账号只能点一次赞（只认超过历史最高的部分），小直播间一赞一分不会被刷。
      */
     private likeStep(): number {
-        return this.viewers > 0 ? Math.min(50, Math.max(1, Math.ceil(this.viewers / 10))) : 5;
+        // 在线人数读不到（小直播间 YouTube 常报 0）按小直播间算：一个赞一档
+        return this.viewers > 0 ? Math.min(50, Math.max(1, Math.ceil(this.viewers / 10))) : 1;
     }
     private addLikes(d: number): void {
         const step = this.likeStep();
@@ -780,7 +836,7 @@ export class ViewerLive {
             this.wanted.set(id, `技${bid}`);
             this.recordCmd(eventId, id, name, 'skill_burst', `技${bid}`, bid, pubMs, now, 'rejected', '积分不足，已挂起等待积分到账');
             this.save();
-            return this.note(`${name}：这次要 ${bid} 积分，现有积分 ${a.n}/${bid}（靠点赞/订阅/在线目标获取）`);
+            return this.note(`${name}：这次要 ${bid} 积分，现有积分 ${a.n}/${bid}（在场每 ${PRESENCE_PAY_MS / 60_000} 分钟 +1，够了自动放）`);
         }
         a.n -= bid;
         const item: QueuedScoutCast = { uid: id, viewer: name, bid, seq: ++this.scoutSeq, ordersCost: bid, centsCost: 0 };
@@ -841,6 +897,7 @@ export class ViewerLive {
     }
 
     private tick(): void {
+        this.payPresence();
         const active = this.syncBattleLifecycle();
         if (!active) return;
         this.tickScoutQueue();
@@ -931,7 +988,10 @@ export class ViewerLive {
             revision: this.revision,
             day: this.day,
             wallets: Object.fromEntries([...this.wallets].filter(([, w]) => w.cents > 0)),
-            orders: Object.fromEntries([...this.orders].filter(([, a]) => a.n > 0).map(([id, a]) => [id, { name: a.name, n: a.n }])),
+            // 0 分但说过话的也留着：认得出「第一次来」，刷新页面后在场不断
+            orders: Object.fromEntries([...this.orders].filter(([, a]) => a.n > 0 || a.day).map(([id, a]) => [id, {
+                name: a.name, n: a.n, ...(a.seen > 0 ? { seen: a.seen } : {}), ...(a.day ? { day: a.day } : {}),
+            }])),
             handled: [...this.handled],
             queue: this.queue.map((q) => ({ ...q })),
             scoutQueue: this.scoutQueue.map((q) => ({ ...q })),
@@ -962,9 +1022,12 @@ export class ViewerLive {
             if (Number.isFinite(w.cents) && w.cents > 0) this.wallets.set(id, { name: String(w.name || '观众'), cents: Math.floor(w.cents) });
         }
         // 积分跨天保留（见 rollDay）
+        const nowMs = Date.now();
         for (const [id, o] of Object.entries(ledger.orders ?? {})) {
-            if (Number.isFinite(o.n) && o.n > 0) {
-                this.orders.set(id, { name: String(o.name || '观众'), n: Math.min(ORDER_CAP, Math.floor(o.n)), seen: 0, lastEarn: 0 });
+            const day = typeof o.day === 'string' ? o.day : '';
+            if (Number.isFinite(o.n) && (o.n > 0 || day)) {
+                const seen = Number.isFinite(o.seen) && Number(o.seen) > 0 ? Math.min(nowMs, Number(o.seen)) : 0;
+                this.orders.set(id, { name: String(o.name || '观众'), n: Math.min(ORDER_CAP, Math.max(0, Math.floor(o.n))), seen, lastEarn: 0, day });
             }
         }
         // 投靠目标只存在于这一页的游戏里：刷新或换页接管后，游戏里已没有这趟行程，账上挂着的出价原数退回
@@ -976,8 +1039,9 @@ export class ViewerLive {
             this.orders.set(jb.uid, {
                 name: prev?.name ?? cleanViewerName(String(jb.viewer || '观众')),
                 n: Math.min(ORDER_CAP, (prev?.n ?? 0) + jb.bid),
-                seen: 0,
+                seen: prev?.seen ?? 0,
                 lastEarn: 0,
+                day: prev?.day ?? '',
             });
         }
         if (ledger.day === this.today()) {

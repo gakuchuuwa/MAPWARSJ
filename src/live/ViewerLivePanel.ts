@@ -5,6 +5,7 @@
  */
 import { type ViewerLive, ORDERS_PER_CAST } from './ViewerLive';
 import type { YouTubeOfficialBridge } from './YouTubeOfficialBridge';
+import { HowToPlayCard } from './HowToPlayCard';
 
 const PANEL_ID = 'viewer-live-panel';
 const FONT = "'Noto Serif SC', 'SimSun', serif";
@@ -21,6 +22,8 @@ export class ViewerLivePanel {
     private inScene13Bar = false;
 
     constructor(private readonly live: ViewerLive, private readonly link: YouTubeOfficialBridge) {
+        const howTo = new HowToPlayCard();
+        this.live.onNewcomer = () => howTo.show();
         this.root = document.createElement('div');
         this.root.id = PANEL_ID;
         this.body = document.createElement('div');
@@ -127,7 +130,7 @@ export class ViewerLivePanel {
         if (s.yt || g.likes > 0 || g.subs > 0) {
             const pct = Math.min(100, Math.round(g.likeProg / g.likeStep * 100));
             subItems.push(
-                `<span style="display:inline-flex;align-items:center;gap:5px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 发分${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''} · 在线 ${b(String(g.viewers))}`
+                `<span style="display:inline-flex;align-items:center;gap:5px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 发分${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''} · 在线 ${b(String(g.viewers))} · 在场 ${b(String(g.present))}`
                 + `<span style="display:inline-block;width:54px;height:6px;background:#3a2a16;border-radius:3px;overflow:hidden;"><span style="display:block;height:6px;width:${pct}%;background:#d4af37;"></span></span></span>`
             );
         }
