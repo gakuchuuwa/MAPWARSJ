@@ -8748,9 +8748,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -4
         },
         "/assets/GURJARAS/xisa_chastana.png": {
-            "scale": 0.92,
+            "scale": 0.88,
             "offsetX": 11,
-            "offsetY": 0
+            "offsetY": -1
         },
         "/assets/ORIE/bfe3_6.png": {
             "scale": 1.02,

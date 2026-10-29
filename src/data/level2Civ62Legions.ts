@@ -453,7 +453,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
         formationMode: 'fish_scale',
         shipId: 'INCENDIARY_RAFT',
-        commanderUnit: 'hero_einarpaunchshaker',
+        commanderUnit: 'hero_zhangfei',
         slots: [
             { type: 'jian_swordsman', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
@@ -470,10 +470,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_sunjian',
+        commanderUnit: 'hero_sunquan',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：火焰弓箭手普通档（精锐留古典军团）。
         slots: [
-            { type: 'jian_swordsman', count: 3 },   // 🔴 [2026-10-19 主人令「DE 里没有、兵模还重复的，删除」] 原 jian_swordman_shielded（与华夏步兵同一 DE 单位、同一兵模）
+            { type: 'jian_swordsman', count: 3 },
             { type: 'fire_archer', count: 4 },
             { type: 'chukonu', count: 2 },
         ],
@@ -562,7 +562,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_sunjian',
+        commanderUnit: 'hero_zhangfei',
         slots: [
             { type: 'jian_swordman_unshielded', count: 3 },
             { type: 'elite_fire_lancer', count: 4 },
@@ -933,7 +933,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_henrythelion',
+        commanderUnit: 'hero_charlesmartel',
         slots: [
             { type: 'teutonic_knight', count: 3 },
             { type: 'arbalest', count: 4 },
@@ -1136,7 +1136,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_tostig',
+        commanderUnit: 'hero_robinhood',
                 slots: [
             { type: 'huskarl', count: 3 },
             { type: 'spearman', count: 4 },
@@ -1209,7 +1209,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
         formationMode: 'triangle',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_richarddeclare',
+        commanderUnit: 'hero_llywelynapgruffydd',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：凯尔特靛蓝突袭者（普通档）替链甲剑士。
         slots: [
             { type: 'elite_war_dog', count: 2 },
@@ -1266,9 +1266,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'VIKI_CASTLE_AGE3', castleName: '维京 斯堪的纳维亚环形堡垒',
         formationMode: 'echelon',
         shipId: 'LONGBOAT',
-        commanderUnit: 'hero_alaric',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_zakare',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
                 slots: [
-            { type: 'spearman', count: 4 },
+            { type: 'maceman', count: 4 },
             { type: 'antiquity_skirmisher', count: 3 },
             { type: 'woad_raider', count: 2 },
         ],
@@ -1410,7 +1410,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
         formationMode: 'echelon',
         shipId: 'HULK',
-        commanderUnit: 'hero_tostig',
+        commanderUnit: 'hero_kalfarnason',
         slots: [
             { type: 'throwing_axeman', count: 4 },
             { type: 'elite_hearth_troop', count: 3 },
@@ -1444,7 +1444,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
         formationMode: 'fish_scale',
         shipId: 'HERO_STOERTEBEKER',
-        commanderUnit: 'hero_tostig',
+        commanderUnit: 'hero_henryii',
         slots: [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'heavy_crossbowman', count: 4 },
@@ -1909,7 +1909,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BOHE_CASTLE_AGE3', castleName: '波希米亚 卡尔施泰因城堡',
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_janzizka',
+        commanderUnit: 'hero_mleh',
         // 🔴 [2026-10-16 主人令·按分批时代] 波希米亚（城堡批）胡斯战车：精锐已在城堡军团 2 档；普通进帝国军团 2 档。
         slots: [
             { type: 'hussite_wagon', count: 2 },
@@ -3124,7 +3124,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'GURJ_CASTLE_AGE3', castleName: '瞿折罗 索姆纳特多层砂岩堡',
         formationMode: 'crane_wing',
         shipId: 'BIREME',
-        commanderUnit: 'hero_artaphernes',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_prithviraj（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_amoghavarsha',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_prithviraj（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'elite_ratha_melee', count: 2 },
             { type: 'antiquity_skirmisher', count: 4 },
@@ -3927,7 +3927,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ETHI_CASTLE_AGE3', castleName: '埃塞俄比亚 阿克苏姆巨石柱堡',
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_gidajan',
+        commanderUnit: 'hero_yekunoamlak',
         slots: [
             { type: 'elite_shotel_warrior', count: 3 },
             { type: 'bowman', count: 4 },
@@ -4550,7 +4550,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'fish_scale',
         shipId: 'LEMBOS',
-        commanderUnit: 'hero_aristagoras',
+        commanderUnit: 'hero_leonidas',
         slots: [
             { type: 'ekdromos', count: 3 },
             { type: 'cretan_archer', count: 4 },
@@ -4597,7 +4597,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HUGUANG_CASTLE_AGE3', castleName: '湖广 荆楚重楼要塞',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_sunjian',
+        commanderUnit: 'hero_robinhood',
         slots: [
             { type: 'jian_swordman_unshielded', count: 3 },
             { type: 'chukonu', count: 4 },
