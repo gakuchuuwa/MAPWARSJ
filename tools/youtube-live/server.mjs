@@ -16,6 +16,17 @@ const DEFAULT_DATA_DIR = path.join(ROOT, '.local', 'youtube-live');
 const PROTO_FILE = path.join(ROOT, 'tools', 'youtube-live', 'stream_list.proto');
 const PORT = 8787;
 const RETRY_MS = 5000;
+// 🔴 [2026-10-30 主人报「连不上了」：配额用光] 每次重连 = videos.list 1 单位 + streamList 5 单位
+//    （官方：streamList「A call to this method has a quota cost of 5 units」）。原来不论什么错都 5 秒一重连，
+//    直播结束后对着已结束的视频每小时空烧几百到几千单位，默认每日 10000 单位撑不过一天。
+//    改为：连续失败按 5→10→20→40→60 秒退避；配额用光 15 分钟再试；直播已结束 / 没有聊天室 5 分钟再试。
+const RETRY_MAX_MS = 60_000;
+const RETRY_QUOTA_MS = 15 * 60_000;
+const RETRY_ENDED_MS = 5 * 60_000;
+/** 频道订阅数变化慢，单独缓存，省掉每次查增长数据都多花的 1 单位 */
+const CHANNEL_STATS_TTL_MS = 5 * 60_000;
+function isQuotaError(text) { return /quota/i.test(String(text || '')); }
+function isEndedError(text) { return /LIVE_CHAT_ENDED|LIVE_CHAT_DISABLED|ended|disabled|没有活动聊天室|找不到这个直播/i.test(String(text || '')); }
 
 function readJson(file, fallback) {
     try { return { ...fallback, ...JSON.parse(fs.readFileSync(file, 'utf8')) }; } catch { return fallback; }
@@ -59,6 +70,9 @@ export class YouTubeLiveService extends EventEmitter {
         this.retry = null;
         this.statsCache = { video: '', at: 0, value: null };
         this.channelIdCache = new Map();
+        this.channelStatsCache = { channelId: '', at: 0, subscribers: null };
+        this.chatIdCache = { video: '', chatId: '' };
+        this.failCount = 0;
         const definition = protoLoader.loadSync(PROTO_FILE, {
             keepCase: true, longs: String, enums: String, defaults: false, oneofs: true,
         });
@@ -71,6 +85,8 @@ export class YouTubeLiveService extends EventEmitter {
     publicStatus() {
         return {
             configured: !!(this.config.apiKey && this.config.video),
+            /** 本机服务里已存着密钥（不回传密钥本身）：面板据此提示「留空沿用」，不再像每次都要填 */
+            hasKey: !!this.config.apiKey,
             status: this.status,
             video: this.config.video || '',
             lastChatAt: this.lastChatAt,
@@ -100,6 +116,8 @@ export class YouTubeLiveService extends EventEmitter {
         const nextKey = apiKey === undefined ? this.config.apiKey : String(apiKey ?? '').trim();
         this.config = { apiKey: nextKey, video };
         this.statsCache = { video: '', at: 0, value: null };
+        this.chatIdCache = { video: '', chatId: '' };
+        this.failCount = 0;
         writeJson(this.configFile, this.config);
         this.start();
         return this.publicStatus();
@@ -121,24 +139,43 @@ export class YouTubeLiveService extends EventEmitter {
     }
 
     async run(generation) {
+        let message = '';
+        let gotData = false;
         try {
             const chatId = await this.resolveChatId(this.config.video);
             if (generation !== this.generation) return;
             this.setStatus('YouTube 官方聊天流已连接');
-            await this.streamChat(chatId, generation);
+            gotData = await this.streamChat(chatId, generation);
+            message = this.lastError;
         } catch (error) {
             if (generation !== this.generation) return;
-            const message = String(error?.details || error?.message || error).slice(0, 240);
-            this.setStatus('YouTube 连接中断，5 秒后恢复', message);
+            message = String(error?.details || error?.message || error).slice(0, 240);
         }
         if (generation !== this.generation) return;
+        // 收到过数据 = 正常断流（服务器到点关流），立即按基础间隔续连；否则累计失败退避
+        this.failCount = gotData ? 0 : this.failCount + 1;
+        let wait = Math.min(RETRY_MAX_MS, RETRY_MS * 2 ** Math.max(0, this.failCount - 1));
+        let label = `YouTube 连接中断，${Math.round(wait / 1000)} 秒后重试`;
+        if (isQuotaError(message)) {
+            wait = RETRY_QUOTA_MS;
+            label = 'YouTube 今日接口配额已用完，15 分钟后重试（配额每天太平洋时间零点重置）';
+        } else if (isEndedError(message)) {
+            wait = RETRY_ENDED_MS;
+            this.chatIdCache = { video: '', chatId: '' };
+            label = '这场直播已结束或没有聊天室，5 分钟后重试；新开播请填本场直播网址';
+        } else if (gotData) {
+            label = 'YouTube 聊天流重连中';
+        }
+        if (message || !gotData) this.setStatus(label, message);
         clearTimeout(this.retry);
         this.retry = setTimeout(() => {
             if (generation === this.generation) void this.run(generation);
-        }, RETRY_MS);
+        }, wait);
     }
 
     async resolveChatId(video) {
+        // 同一场直播的聊天室 ID 不变：重连不再每次花 1 单位查 videos.list
+        if (this.chatIdCache.video === video && this.chatIdCache.chatId) return this.chatIdCache.chatId;
         const url = new URL('https://www.googleapis.com/youtube/v3/videos');
         url.searchParams.set('part', 'liveStreamingDetails');
         url.searchParams.set('id', video);
@@ -151,6 +188,7 @@ export class YouTubeLiveService extends EventEmitter {
         if (!item) throw new Error('找不到这个直播视频 ID');
         const chatId = item.liveStreamingDetails?.activeLiveChatId;
         if (!chatId) throw new Error('本场直播没有活动聊天室；请确认正在直播且已开启聊天');
+        this.chatIdCache = { video, chatId };
         return chatId;
     }
 
@@ -171,7 +209,10 @@ export class YouTubeLiveService extends EventEmitter {
         if (!item) throw new Error('找不到这个直播视频 ID');
         let subscribers = null;
         const channelId = item.snippet?.channelId || this.channelIdCache.get(this.config.video) || '';
-        if (channelId) {
+        const cs = this.channelStatsCache;
+        if (channelId && cs.channelId === channelId && now - cs.at < CHANNEL_STATS_TTL_MS) {
+            subscribers = cs.subscribers;
+        } else if (channelId) {
             this.channelIdCache.set(this.config.video, channelId);
             const channelUrl = new URL('https://www.googleapis.com/youtube/v3/channels');
             channelUrl.searchParams.set('part', 'statistics');
@@ -181,6 +222,7 @@ export class YouTubeLiveService extends EventEmitter {
             if (channelResponse.ok) {
                 const stats = channelBody?.items?.[0]?.statistics;
                 if (stats && !stats.hiddenSubscriberCount) subscribers = Number(stats.subscriberCount);
+                this.channelStatsCache = { channelId, at: now, subscribers };
             }
         }
         const value = {
@@ -193,8 +235,11 @@ export class YouTubeLiveService extends EventEmitter {
         return value;
     }
 
+    /** 返回这一轮流里有没有收到过数据（决定重连是否退避） */
     streamChat(chatId, generation) {
         return new Promise((resolve) => {
+            let gotData = false;
+            this.lastError = '';
             const cursor = this.state.cursors[this.config.video] || undefined;
             const metadata = new grpc.Metadata();
             metadata.set('x-goog-api-key', this.config.apiKey);
@@ -208,6 +253,7 @@ export class YouTubeLiveService extends EventEmitter {
             this.call = call;
             call.on('data', (response) => {
                 if (generation !== this.generation) return;
+                gotData = true;
                 if (response.next_page_token) {
                     this.state.cursors[this.config.video] = response.next_page_token;
                 }
@@ -217,9 +263,9 @@ export class YouTubeLiveService extends EventEmitter {
             call.on('error', (error) => {
                 if (generation !== this.generation) return;
                 this.lastError = this.scrubError(error?.details || error?.message || error);
-                resolve();
+                resolve(gotData);
             });
-            call.on('end', () => resolve());
+            call.on('end', () => resolve(gotData));
         });
     }
 

@@ -4,7 +4,9 @@
  */
 import type { ViewerLive } from './ViewerLive';
 
-const POLL_MS = 30_000;
+// 🔴 [2026-10-30 主人报「连不上了」：YouTube 每日配额用光] 每查一次至少花 1 单位，游戏开着就一直查；
+//    30 秒一次一天就是 2880 次以上。点赞/在线人数一分钟更新一次足够发增长积分。
+const POLL_MS = 60_000;
 
 export class YouTubeStats {
     private videoTimer = 0;

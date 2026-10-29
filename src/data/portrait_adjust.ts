@@ -863,7 +863,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/CENTRAL_ASIA/kazakh_hasimu.png": {
-            "scale": 1.08,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 9
         },
@@ -9066,6 +9066,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 7,
             "offsetY": 37
+        },
+        "/assets/GURJARAS/bfe_muzaffar_shah.png": {
+            "scale": 0.96,
+            "offsetX": 7,
+            "offsetY": -26
+        },
+        "/assets/ORIE/gen_aristobulus_ii.png": {
+            "scale": 1.16,
+            "offsetX": 14,
+            "offsetY": 18
         }
     },
     "folderGuides": {

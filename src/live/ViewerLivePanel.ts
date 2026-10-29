@@ -25,6 +25,7 @@ export class ViewerLivePanel {
     private collapsed = false;
     private inScene13Bar = false;
     private lastBodyHtml = '';
+    private ytKeyInput: HTMLInputElement | null = null;
 
     constructor(private readonly live: ViewerLive, private readonly link: YouTubeOfficialBridge) {
         const howTo = new HowToPlayCard();
@@ -139,6 +140,11 @@ export class ViewerLivePanel {
         this.updatePosition();
         this.root.style.display = this.inScene13Bar ? 'flex' : 'block';
         this.syncCollapsedState();
+        if (this.ytKeyInput) {
+            this.ytKeyInput.placeholder = this.link.hasSavedKey()
+                ? '✅ 已保存密钥，留空即可；只有换密钥才填'
+                : 'API 密钥（只保存到本机服务）';
+        }
         if (this.collapsed) return;
         const f = this.inScene13Bar ? FS_S13 : FS;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
@@ -278,11 +284,12 @@ export class ViewerLivePanel {
         };
         const send = (w: string) => { this.live.onChat(name.value, w, false); this.render(); };
         const ytLabel = document.createElement('div');
-        ytLabel.textContent = 'YouTube API 密钥、本场直播网址，回车生效；换网址时密钥留空即沿用';
+        ytLabel.textContent = 'YouTube API 密钥、本场直播网址，回车生效；密钥只需填一次，之后留空即沿用';
         ytLabel.style.cssText = 'color:#8fd3ff;margin-bottom:2px;';
         const ytKey = document.createElement('input');
         ytKey.type = 'password';
         ytKey.placeholder = 'API 密钥（只保存到本机服务）';
+        this.ytKeyInput = ytKey;
         ytKey.style.cssText = name.style.cssText;
         const ytVideo = document.createElement('input');
         ytVideo.value = this.link.getVideo();

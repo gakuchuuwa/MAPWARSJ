@@ -11,6 +11,7 @@ export class YouTubeOfficialBridge {
     private retry = 0;
     private stopped = false;
     private configured = false;
+    private hasKey = false;
     private video = '';
     private hasConnected = false;
     private readonly clientId = globalThis.crypto?.randomUUID?.()
@@ -27,6 +28,8 @@ export class YouTubeOfficialBridge {
 
     public getVideo(): string { return this.video; }
     public isConfigured(): boolean { return this.configured; }
+    /** 本机服务已存有 API 密钥（密钥本身不进浏览器） */
+    public hasSavedKey(): boolean { return this.hasKey; }
 
     private async start(): Promise<void> {
         try {
@@ -83,6 +86,7 @@ export class YouTubeOfficialBridge {
 
     private applyStatus(s: any): void {
         this.configured = !!s.configured;
+        this.hasKey = !!s.hasKey;
         this.video = typeof s.video === 'string' ? s.video : '';
         this.live.platformStatus = String(s.status || '');
         if (s.lastChatAt) this.live.lastChatAt = Number(s.lastChatAt);
@@ -92,8 +96,10 @@ export class YouTubeOfficialBridge {
     public async configure(apiKey: string, video: string): Promise<boolean> {
         try {
             const payload: { apiKey?: string; video: string } = { video };
-            // 已保存的密钥不在浏览器显示；换直播网址时留空即沿用。清空网址才同时清除配置。
-            if (apiKey.trim() || !video.trim() || !this.configured) payload.apiKey = apiKey;
+            // 已保存的密钥不在浏览器显示；密钥框留空一律沿用本机已存的密钥。
+            // 🔴 [2026-10-30 主人报「为什么每次都让输入API」] 原来「网址为空 / 页面还没拿到服务状态（configured=false）」
+            //    时会把空密钥发过去，服务端照单全收 ⇒ 已存的密钥被清空，下次只好重填。现在只有真填了才发。
+            if (apiKey.trim()) payload.apiKey = apiKey;
             const r = await fetch('/live-api/config', {
                 method: 'POST', headers: this.headers(), body: JSON.stringify(payload),
             });

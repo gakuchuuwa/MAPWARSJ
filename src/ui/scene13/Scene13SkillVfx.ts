@@ -315,23 +315,39 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     } else if (v.six === 'baizhan') {
         const useTargets = v.targets.length > 0;
         const srcLen = useTargets ? v.targets.length : v.points.length;
-        const pn = Math.min(srcLen, 160);
+        const pn = Math.min(srcLen, 140);
         for (let i = 0; i < pn; i++) {
             const idx = Math.floor(i * srcLen / pn);
             const pt = useTargets ? v.targets[idx] : v.points[idx];
             const py = pt.y - lift(pt.x, pt.y);
-            ctx.globalAlpha = fade * 0.45;
-            drawStamp(ctx, glow, pt.x, py, 20 * scale, 11 * scale);
-            ctx.strokeStyle = COLOR.baizhan;
-            ctx.globalAlpha = fade * 0.92;
-            ctx.lineWidth = 3.2;
-            ellipse(ctx, pt.x, py, 13 + e * 14, 6.5 + e * 7);
-            ctx.stroke();
-            ctx.strokeStyle = v.paid ? '#ffe580' : '#ffdfd6';
-            ctx.globalAlpha = fade * 0.8;
-            ctx.lineWidth = 1.8;
-            ellipse(ctx, pt.x, py, 7 + e * 8, 3.5 + e * 4);
-            ctx.stroke();
+            // 与上层流星下坠错峰同步：前半段地面预警收缩圈，撞击瞬间爆开火环
+            const delay = ((i * 0.618034) % 1) * 0.42;
+            const localP = clamp01((p - delay) / (1 - delay));
+            const fallFrac = 0.42;
+            if (localP < fallFrac) {
+                const fp = localP / fallFrac;
+                ctx.strokeStyle = COLOR.baizhan;
+                ctx.globalAlpha = fade * (0.25 + fp * 0.45);
+                ctx.lineWidth = 1.8;
+                ellipse(ctx, pt.x, py, (18 - fp * 8) * scale, (9 - fp * 4) * scale);
+                ctx.stroke();
+            } else {
+                const ip = (localP - fallFrac) / (1 - fallFrac);
+                const ie = easeOut(ip);
+                const ifade = (1 - ip) ** 1.25;
+                ctx.globalAlpha = ifade * 0.52;
+                drawStamp(ctx, glow, pt.x, py, (16 + ie * 12) * scale, (9 + ie * 6) * scale);
+                ctx.strokeStyle = COLOR.baizhan;
+                ctx.globalAlpha = ifade * 0.95;
+                ctx.lineWidth = 3.2 * (1 - ip * 0.4);
+                ellipse(ctx, pt.x, py, 8 + ie * 20, 4 + ie * 10);
+                ctx.stroke();
+                ctx.strokeStyle = v.paid ? '#ffe580' : '#ffeaad';
+                ctx.globalAlpha = ifade * 0.85;
+                ctx.lineWidth = 1.8;
+                ellipse(ctx, pt.x, py, 4 + ie * 11, 2 + ie * 5.5);
+                ctx.stroke();
+            }
         }
     }
 
@@ -633,119 +649,136 @@ function drawConvert(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: numbe
 }
 
 function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
-    const e = easeOut(p);
     const fade = 1 - p;
     const scale = tierScale(v);
-    const cx = v.x + Math.cos(v.angle) * e * 80;
-    const cy = v.y - lift(v.x, v.y) + Math.sin(v.angle) * e * 80 - 16;
+    const cx = v.x;
+    const cy = v.y - lift(v.x, v.y) - 8;
     const redFlare = getFlareStamp(COLOR.baizhan);
+    const orangeGlow = getGlowStamp('#ff5e1a');
     const redGlow = getGlowStamp(COLOR.baizhan);
 
     const useTargets = v.targets.length > 0;
     const srcLen = useTargets ? v.targets.length : v.points.length;
-    const n = Math.min(srcLen, 160);
+    const n = Math.min(srcLen, 140);
     const unitScale = v.paid ? 1.2 : 1;
 
-    // 1. 暗黑底衬裂痕（先用 source-over 压暗衬托红金刀芒，防浅色地面吃光；大效果＋每名要死士兵身上的小效果同步铺底）
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(v.angle);
-    ctx.globalAlpha = fade * 0.75;
-    for (const ang of [0, Math.PI * 0.28, -Math.PI * 0.28]) {
-        ctx.save();
-        ctx.rotate(ang);
-        const len = (ang === 0 ? 140 : 98) * scale;
-        drawTaperedSlash(ctx, 0, -len, 0, len, (ang === 0 ? 15 : 10) * scale, '#1c060d', '#4a0d1b');
-        ctx.restore();
-    }
-    ctx.restore();
+    // 流星斜掠向量（从高空斜劈而下，带真实天象倾角）
+    const fallVecX = -110 * scale;
+    const fallVecY = -260 * scale;
 
-    if (n > 0) {
-        ctx.save();
-        ctx.globalAlpha = fade * 0.72;
-        const bSz = (19 + (1 - p) * 8) * unitScale;
-        for (let i = 0; i < n; i++) {
-            const idx = Math.floor(i * srcLen / n);
-            const pt = useTargets ? v.targets[idx] : v.points[idx];
-            const py = pt.y - lift(pt.x, pt.y) - 18;
-            drawTaperedSlash(ctx, pt.x - bSz, py - bSz * 0.72, pt.x + bSz, py + bSz * 0.72, 5.2 * unitScale, '#1c060d', '#4a0d1b');
-            drawTaperedSlash(ctx, pt.x + bSz, py - bSz * 0.72, pt.x - bSz, py + bSz * 0.72, 5.2 * unitScale, '#1c060d', '#4a0d1b');
-        }
-        ctx.restore();
-    }
-
-    // 2. 加法混合层：巨型两头尖锐的暗红镶金裂空十字斩＋每名要死士兵身上的小型裂空斩与贯顶血芒
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
-    ctx.globalAlpha = fade * 0.55;
-    drawStamp(ctx, redGlow, cx, cy, 115 * scale, 68 * scale);
 
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(v.angle);
-    for (const ang of [0, Math.PI * 0.28, -Math.PI * 0.28]) {
-        ctx.save();
-        ctx.rotate(ang);
-        const len = (ang === 0 ? 136 : 94) * scale;
-        ctx.globalAlpha = fade * 0.98;
+    // 1. 敌阵中心主陨星下坠（前 38% 拖曳巨型赤金火尾极速砸落，撞地后炸开巨型火云与飞溅火流星）
+    const mainFallEnd = 0.38;
+    if (p < mainFallEnd) {
+        const mp = p / mainFallEnd;
+        const headX = cx + fallVecX * (1 - mp);
+        const headY = cy + fallVecY * (1 - mp);
+        const tailX = headX + fallVecX * 0.55;
+        const tailY = headY + fallVecY * 0.55;
+
+        ctx.globalAlpha = 0.95;
+        drawTaperedSlash(ctx, tailX, tailY, headX, headY, 16 * scale, COLOR.baizhan, '#ffeaad');
         drawTaperedSlash(
             ctx,
-            0,
-            -len,
-            0,
-            len,
-            (ang === 0 ? 11 : 7.5) * scale * (1 - p * 0.3),
-            v.paid && ang === 0 ? '#ffae38' : COLOR.baizhan,
-            '#fff2dc',
+            headX + fallVecX * 0.32,
+            headY + fallVecY * 0.32,
+            headX,
+            headY,
+            10 * scale,
+            '#ff7b24',
+            '#ffffff',
         );
-        ctx.restore();
+        drawStamp(ctx, orangeGlow, headX, headY, 38 * scale);
+        drawStamp(ctx, redFlare, headX, headY, 26 * scale);
+    } else {
+        const ip = (p - mainFallEnd) / (1 - mainFallEnd);
+        const ie = easeOut(ip);
+        const ifade = (1 - ip) ** 1.2;
+        ctx.globalAlpha = ifade * 0.65;
+        drawStamp(ctx, redGlow, cx, cy, (75 + ie * 65) * scale, (42 + ie * 36) * scale);
+        ctx.globalAlpha = ifade * 0.95;
+        drawStamp(ctx, redFlare, cx, cy - ie * 14, (34 - ip * 14) * scale);
+        // 主陨星撞地飞溅的 8 颗火流星余烬
+        for (let k = 0; k < 8; k++) {
+            const ang = k * (TAU / 8) + 0.35;
+            const dist = ie * (45 + (k % 3) * 28) * scale;
+            const sx = cx + Math.cos(ang) * dist;
+            const sy = cy + Math.sin(ang) * dist * 0.52 - Math.sin(ip * Math.PI) * (26 + (k % 2) * 14);
+            ctx.globalAlpha = ifade * 0.88;
+            drawStamp(ctx, redFlare, sx, sy, (11 - ip * 5) * scale);
+        }
     }
-    ctx.restore();
 
-    // 3. 单兵溃灭小效果：实时锁定每名将死士兵（v.targets），爆开小型红金光晕＋贯顶落刃＋十字裂斩＋星芒
-    const sz = (18 + (1 - p) * 8) * unitScale;
-    const hw = 4.6 * unitScale * (1 - p * 0.25);
-    const strikeTop = (28 + (1 - e) * 18) * unitScale;
+    // 2. 漫天流星雨锁定每一名折损敌兵：错峰斜坠 ➔ 贯顶砸落 ➔ 爆裂火球与星芒
+    const uFallX = -72 * unitScale;
+    const uFallY = -185 * unitScale;
     for (let i = 0; i < n; i++) {
         const idx = Math.floor(i * srcLen / n);
         const pt = useTargets ? v.targets[idx] : v.points[idx];
-        const py = pt.y - lift(pt.x, pt.y);
-        const slashY = py - 18;
+        const py = pt.y - lift(pt.x, pt.y) - 10;
 
-        ctx.globalAlpha = fade * 0.62;
-        drawStamp(ctx, redGlow, pt.x, slashY, 26 * unitScale, 18 * unitScale);
+        // 黄金分割错峰（0~0.42），与 SKILL_KILL_SPREAD_SEC 分批倒下节奏呼应
+        const delay = ((i * 0.618034) % 1) * 0.42;
+        if (p < delay) continue;
+        const localP = clamp01((p - delay) / (1 - delay));
+        const fallFrac = 0.42;
 
-        ctx.globalAlpha = fade * 0.96;
-        drawTaperedSlash(
-            ctx,
-            pt.x,
-            slashY - strikeTop,
-            pt.x,
-            slashY + 12 * unitScale,
-            4.2 * unitScale * (1 - p * 0.25),
-            v.paid ? '#ffae38' : COLOR.baizhan,
-            '#fff5e0',
-        );
-        drawTaperedSlash(ctx, pt.x - sz, slashY - sz * 0.72, pt.x + sz, slashY + sz * 0.72, hw, v.paid ? '#ffae38' : COLOR.baizhan, '#fff2dc');
-        drawTaperedSlash(ctx, pt.x + sz, slashY - sz * 0.72, pt.x - sz, slashY + sz * 0.72, hw, '#ff5e36', '#ffffff');
+        if (localP < fallFrac) {
+            // 流星下坠阶段：高空斜劈火尾 + 白炽流星头
+            const fp = localP / fallFrac;
+            const hx = pt.x + uFallX * (1 - fp);
+            const hy = py + uFallY * (1 - fp);
+            const tx = hx + uFallX * 0.52;
+            const ty = hy + uFallY * 0.52;
 
-        ctx.globalAlpha = fade * 0.92;
-        drawStamp(
-            ctx,
-            redFlare,
-            pt.x,
-            slashY,
-            (11 + (1 - p) * 6) * unitScale,
-        );
-        if (i % 2 === 0) {
-            ctx.globalAlpha = fade * 0.85;
-            drawStamp(
+            ctx.globalAlpha = (0.55 + fp * 0.45) * fade;
+            drawTaperedSlash(
                 ctx,
-                redFlare,
-                pt.x + Math.sin(i * 2.3 + p * 4) * (4 + p * 10),
-                py - 20 - e * (24 + (i % 10) * 2),
-                7 + (1 - p) * 5,
+                tx,
+                ty,
+                hx,
+                hy,
+                5.4 * unitScale,
+                v.paid ? '#ffae38' : COLOR.baizhan,
+                '#fff4cc',
             );
+            ctx.globalAlpha = 0.95 * fade;
+            drawStamp(ctx, orangeGlow, hx, hy, 14 * unitScale);
+            drawStamp(ctx, redFlare, hx, hy, 10.5 * unitScale);
+        } else {
+            // 陨石命中爆裂阶段：冲击火球 + 冲天火柱 + 飞溅火星
+            const ip = (localP - fallFrac) / (1 - fallFrac);
+            const ie = easeOut(ip);
+            const ifade = (1 - ip) ** 1.3;
+
+            ctx.globalAlpha = ifade * 0.68;
+            drawStamp(ctx, redGlow, pt.x, py, (22 + ie * 10) * unitScale, (14 + ie * 6) * unitScale);
+
+            // 命中瞬间向上反冲的烈焰火舌
+            const pillarH = (32 - ip * 16) * unitScale;
+            ctx.globalAlpha = ifade * 0.94;
+            drawTaperedSlash(
+                ctx,
+                pt.x,
+                py - pillarH,
+                pt.x,
+                py + 6 * unitScale,
+                4.6 * unitScale * (1 - ip * 0.35),
+                '#ff6a24',
+                '#fff5dc',
+            );
+
+            ctx.globalAlpha = ifade * 0.95;
+            drawStamp(ctx, redFlare, pt.x, py - 4, (13 - ip * 5) * unitScale);
+
+            if (i % 2 === 0) {
+                const sparkX = pt.x + Math.sin(i * 2.3 + ip * 5) * (6 + ie * 14);
+                const sparkY = py - 10 - ie * (22 + (i % 7) * 3);
+                ctx.globalAlpha = ifade * 0.85;
+                drawStamp(ctx, redFlare, sparkX, sparkY, (7.5 - ip * 3) * unitScale);
+            }
         }
     }
     ctx.restore();
