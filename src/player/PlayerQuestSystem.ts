@@ -26,6 +26,7 @@ import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceU
 import { roadRegistry } from '../roads/RoadRegistry';
 import { findPathFromPoint, prefetchEntrySea, battlefieldRoadNode, findPathToBattlefield, cutPathBeforeEnd, BATTLE_STAND_KM } from '../events/scriptMarchPath';
 import { gameLog } from '../utils/GameLogger';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
@@ -2577,6 +2578,21 @@ export class PlayerQuestSystem {
         this.cleanupFirstBattleState(q, false);
         // 军队战败：还活着的那支（打平 300 秒未克、攻城被击退）也一并溃散，不许它继续打下一座
         if (host && !host.isDestroyed) {
+            if (fbState?.battleType === 'siege' && fbState?.role === 'attacker') {
+                const targetCity = fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
+                speechAnnouncer.announceSiegeFailure({
+                    attackerFactionId: host.getDisplayFactionId(),
+                    ju: 'balance',
+                    cityName: targetCity?.name ?? q.targetCityName,
+                    defenderGeneralId: fbState.enemyGeneralId ?? null,
+                });
+            } else {
+                speechAnnouncer.announceFieldBattleEnd({
+                    win: false,
+                    followerFactionId: host.getDisplayFactionId(),
+                    ju: 'balance',
+                });
+            }
             host.clearExternalCombatState();
             host.clearPostBattleRest();
             host.stopMovement(false);

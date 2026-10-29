@@ -21,7 +21,9 @@ import { spawnMapFloatingSmallText } from '../utils/MapFloatingText';
 
 function getFollowedArmyId(): string | null {
     try {
-        return (window as any).game?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
+        return (window as any).game?.cameraFollowUI?.getFollowedArmyId?.()
+            ?? (window as any).game?.playerHero?.getHostLegionId?.()
+            ?? null;
     } catch {
         return null;
     }
@@ -1161,6 +1163,16 @@ export class BattleField implements IOpeningPulseSink {
 
         this.tickInvincibleStates();
         this.tryComebackTacticalSkills();
+
+        this.updateGroupStats();
+        if (this.attackerGroup.totalTroops < 1) {
+            this.resolve(this.defenderGroup, this.attackerGroup);
+            return;
+        }
+        if (this.defenderGroup.totalTroops < 1) {
+            this.resolve(this.attackerGroup, this.defenderGroup);
+            return;
+        }
 
         if (Math.random() < 0.03) {
             gameLog('battleTick',

@@ -600,7 +600,8 @@ export class GameApp {
                     // [语音播报] 直播主角 = 跟拍军团：所有语音只围绕它（700 国全局播报太吵）。
                     // 跟拍军团攻占文化中心 → S 级仪式播报（带字幕条）；
                     // 普通攻占 → 常规播报（原行为）；别人干的一律不出声（军情面板留字）。
-                    const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
+                    const followedId = this.cameraFollowUI?.getFollowedArmyId?.()
+                        ?? this.playerHero?.getHostLegionId?.();
                     const byFollowed = !!event.captorLegionId && followedId === event.captorLegionId;
                     if (byFollowed) {
                         const regionKey = isCenter ? this.cityManager.getCity(event.cityId)?.region : undefined;
@@ -661,7 +662,8 @@ export class GameApp {
 
                 Army.setAnnihilationReporter((army, info) => {
                     // [语音播报] 跟随军团全军覆没 (移至最前，防止叛军（panshu）被 return)
-                    const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
+                    const followedId = this.cameraFollowUI?.getFollowedArmyId?.()
+                        ?? this.playerHero?.getHostLegionId?.();
                     // 野战阵亡('field')/攻城失败('siege_attacker')语音由专句接管，此处跳过通用覆没语音
                     // 援军('siege') — 不管是攻城还是守城援军 — 统一走野战结束句
                     if (followedId === army.id && info.kind !== 'field' && info.kind !== 'siege_attacker') {

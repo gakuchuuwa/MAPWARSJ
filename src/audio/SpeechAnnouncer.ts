@@ -546,6 +546,7 @@ export class SpeechAnnouncer {
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue(); // 攻占是战斗收尾，清掉未念完的技能脉冲
+    this.sTierBusyUntilMs = 0;
     const att = getFactionNameForSpeech(opts.attackerFactionId);
     const isCenter = !!opts.regionLabel;
     // 🔴 2026-09-11 主人定：攻占播报不加「XX中心」前缀，没有什么文化中心
@@ -583,6 +584,7 @@ export class SpeechAnnouncer {
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue();
+    this.sTierBusyUntilMs = 0;
     const att = getFactionNameForSpeech(opts.attackerFactionId);
     const def = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
     const text = def
@@ -644,6 +646,7 @@ export class SpeechAnnouncer {
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue();
+    this.sTierBusyUntilMs = 0;
     const ju: CaptureJu = opts.ju;
     const fFaction = getFactionNameForSpeech(opts.followerFactionId);
     let text: string;
@@ -677,7 +680,7 @@ export class SpeechAnnouncer {
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue();
-    if (!opts.defenderGeneralId) return; // 守方无将 → 不播报
+    this.sTierBusyUntilMs = 0;
     const ju: CaptureJu = opts.ju;
     const fFaction = getFactionNameForSpeech(opts.attackerFactionId);
     const text = `${fFaction}军，${SIEGE_FAIL_PHRASE[ju]}，${SIEGE_FAIL_VERB[ju]}${opts.cityName}`;

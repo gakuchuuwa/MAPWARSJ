@@ -1041,7 +1041,7 @@ export class PlayerHero {
         const r = this.army.getRenderer();
         if (this.hostLegionId) {
             const host = this.getHostLegion();
-            if (!host || host.isDestroyed || host.getTroops() <= 0) {
+            if (!host || host.isDestroyed || (host.getTroops() <= 0 && !host.getIsInCombat())) {
                 const lastId = this.hostLegionId;
                 // 🔴 [2026-09-11 修「玩家依然是军团一战败就移动，不等」] 停顿必须**也**落在这条路上。
                 //    原来只有 onHostBattleEnd('defeat') 里落停顿，而那个回调的触发条件是

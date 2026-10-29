@@ -19,6 +19,7 @@ import { roadRegistry } from '../roads/RoadRegistry';
 import { GameConfig } from '../config/GameConfig';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
+import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 
 const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
 
@@ -626,6 +627,32 @@ export class MultiLegionFieldBattle {
             battleLog(`[MultiLegion] BattleField ${battleField.id} reports completion. Winner: ${winnerFactionId}`);
             // Ensure visualizer cleanup
             this.visualizer.hideFieldBattleEffect(effectId);
+
+            const endFollowedId = (window as any).game?.cameraFollowUI?.getFollowedArmyId?.()
+                ?? (window as any).game?.playerHero?.getHostLegionId?.();
+            if (endFollowedId) {
+                const endOnAtt = attackerArmies.some((l) => l.id === endFollowedId);
+                const endOnDef = defenderArmies.some((l) => l.id === endFollowedId);
+                if (endOnAtt || endOnDef) {
+                    const endLegions = endOnAtt ? attackerArmies : defenderArmies;
+                    const endUnits = endOnAtt ? attackerUnits : defenderUnits;
+                    const endIdx = endLegions.findIndex((l) => l.id === endFollowedId);
+                    const follower = endLegions[endIdx];
+                    const endEnemyPrimary = endOnAtt ? defenderArmies[0] : attackerArmies[0];
+                    const endFollowerFaction = endOnAtt ? data.attackerFactionId : data.defenderFactionId;
+                    const endFlR = battleField.getInitialAttDefRatio();
+                    const endFollowerR = endOnAtt ? endFlR : (1 / Math.max(endFlR, 0.001));
+                    const endJu: CaptureJu = endFollowerR > 1.5 ? 'advantage' : endFollowerR < 0.67 ? 'disadvantage' : 'balance';
+                    speechAnnouncer.announceFieldBattleEnd({
+                        win: winnerFactionId === endFollowerFaction && !!follower && !follower.isDestroyed,
+                        followerFactionId: follower?.getDisplayFactionId?.() ?? endFollowerFaction,
+                        ju: endJu,
+                        followerSkillId: endUnits[endIdx]?.battleOverriddenSkillId ?? null,
+                        enemyFactionId: endEnemyPrimary?.getDisplayFactionId?.() ?? (endOnAtt ? data.defenderFactionId : data.attackerFactionId),
+                        enemyGeneralId: endEnemyPrimary?.generalId ?? null,
+                    });
+                }
+            }
 
             if (onBattleEnd && !hasTriggeredEnd) {
                 hasTriggeredEnd = true;

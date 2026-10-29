@@ -275,7 +275,8 @@ function startFieldBattleBetween(
             ...collectLegionsNearBattleCenter(deps, center, defFaction, exclude, false),
         ];
 
-    const followedFieldId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+    const followedFieldId = window.game?.cameraFollowUI?.getFollowedArmyId?.()
+        ?? window.game?.playerHero?.getHostLegionId?.();
     const hasNoReinforcements = attLegions.length === 1 && defLegions.length === 1;
     if (!firstBattleHero && hasNoReinforcements && followedFieldId === defenderPrimary.id) {
         [attFaction, defFaction] = [defFaction, attFaction];
@@ -381,7 +382,8 @@ function startFieldBattleBetween(
                 markCityGeneralDefeatedInField(cityId, winnerFactionId);
             }
         }
-        const endFollowedId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+        const endFollowedId = window.game?.cameraFollowUI?.getFollowedArmyId?.()
+            ?? window.game?.playerHero?.getHostLegionId?.();
         if (!endFollowedId) return;
         const endOnAtt = attLegions.some((l) => l.id === endFollowedId);
         const endOnDef = defLegions.some((l) => l.id === endFollowedId);

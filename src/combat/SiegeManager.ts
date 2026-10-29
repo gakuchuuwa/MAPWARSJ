@@ -1156,18 +1156,18 @@ export class SiegeManager {
             () => { // Defeat
                 siegeLog(`[Siege] Attacker Defeat!`);
                 this.activeSieges.delete(targetCity.id);
-                // [语音播报] 跟随军团攻城失败（守方有将才播）；专句真播出时才标记 siege_attacker 抑制通用覆没语音，
-                // 否则（守方无将/未跟随）保持默认 'siege'，覆没语音照常兜底，避免跟随军团无声覆没。
-                const followedIdFail = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+                // [语音播报] 跟随军团攻城失败：无论守方有无武将均播报攻城失败专句，并标记 siege_attacker 抑制通用覆没语音
+                const followedIdFail = window.game?.cameraFollowUI?.getFollowedArmyId?.()
+                    ?? window.game?.playerHero?.getHostLegionId?.();
                 const failDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
-                const failSpeechTaken = followedIdFail === army.id && !!failDefGeneralId;
+                const failSpeechTaken = followedIdFail === army.id;
                 if (failSpeechTaken) {
                     const failAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
                         ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
                     const failR = battleField.getInitialAttDefRatio();
                     const failJu: CaptureJu = failR > 1.5 ? 'advantage' : failR < 0.67 ? 'disadvantage' : 'balance';
                     speechAnnouncer.announceSiegeFailure({
-                        attackerFactionId: army.getFactionId(),
+                        attackerFactionId: army.getDisplayFactionId(),
                         ju: failJu,
                         attackerSkillId: failAtkUnit?.battleOverriddenSkillId ?? null,
                         cityName: targetCity.name,
