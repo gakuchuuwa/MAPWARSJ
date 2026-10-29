@@ -1234,7 +1234,7 @@ buildingStyle: 'JAPAN', troops: 10000,
     // 🔴 [2026-09-19 主人令「村上武吉换成源义经」「行就换」] 松山（伊予国）的守将改为**源义经**。
     //    史实依据：1184 年一之谷后，兄长源赖朝为义经奏请**伊予守**，伊予国即其守地；
     //    1185 年他确在伊予国忽那岛一带统率水军 —— 符合「在本处当官 / 执行过任务也行」。
-    //    故本城势力由 `iyo_d`（伊予·村上水军）改为 **`genji_iyo`（源氏·伊予）**，
+    //    故本城势力由 `iyo_d`（伊予·村上水军）改为 **`genji_iyo`（伊予源氏）**，
     //    守将随势力锚定 = 源义经。村上武吉则回其**真本据能岛城**（见下条），不再是「无城武将」。
     // 🔴 [2026-09-19 主人质问「sagami 也是空势力，你没改回去吗」后自查] 松山为满足 50km 铁律微移：
     //    新增能岛城（真址 34.18238,133.08109）后与松山仅 47.72km，不足 50km。
@@ -1246,7 +1246,7 @@ buildingStyle: 'JAPAN', troops: 10000,
     // 🔴 [2026-09-19 主人「能岛／因岛能添加上吗」「同理 iyo_d 也是空势力，你没改回去吗」]
     //    **能岛城** —— 村上武吉（能岛村上氏当主）的**真本据**，国指定史迹「能岛城迹」，
     //    濑户内海村上水军三家的中枢；坐标为城迹真实位置（マピオン 能岛城迹 34.18237848,133.08109418），未做位移。
-    //    势力 `iyo_d`（伊予）由此恢复「有城」状态（此前松山让给源氏·伊予后成了空势力）。
+    //    势力 `iyo_d`（伊予）由此恢复「有城」状态（此前松山让给伊予源氏后成了空势力）。
     //    注：能岛与因岛真实相距仅 15.86km，二岛只能取其一；取武吉本人的能岛。
     { id: 'city_noshima', name: '能岛城', factionId: 'mori', lat: 34.18238, lng: 133.08109, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '伊予国能岛；能岛村上氏（村上武吉）本据，国指定史迹能岛城迹，村上水军中枢' },
 
@@ -3605,7 +3605,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_debuleidamo', name: '德布雷达莫', factionId: 'ethiopia', lat: 14.37, lng: 39.27, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '提格雷悬崖修道要塞，吉达扬避难与反击阵地；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
     { id: 'city_waka', name: '瓦卡', factionId: 'wulaertu', lat: 37.81, lng: 35.91, type: 'pass', troops: 10000, region: 'ARMENIANS', buildingStyle: 'ARMENIANS', note: '陶鲁斯山岩顶城堡，托罗斯二世复国第一城（奇里乞亚亚美尼亚王国）；建筑风格按当地最著名本地政权＝亚美尼亚 → ARMENIANS（2026-10-25 主人令「全面修复」）；按 2026-10-25 标准：瓦卡岩顶城堡（石砌）→ 险要' },
     { id: 'city_debuleilibanuosi', name: '德布雷利巴诺斯', factionId: 'ethiopia', lat: 9.71, lng: 38.85, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '肖阿高原皇家修道据点，达格纳詹南征经略之地；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
-    { id: 'city_santaguan', name: '三塔关', factionId: 'miandian', lat: 14.35, lng: 98.43, type: 'pass', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '缅甸-暹罗边境三塔关，耸立三座缅式佛塔要塞，大元帅摩诃·悉都镇守' },
+    { id: 'city_santaguan', name: '三塔关', factionId: 'miandian', lat: 14.35, lng: 98.43, type: 'pass', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '缅甸-暹罗边境三塔关，耸立三座缅式佛塔要塞，大元帅摩诃悉都镇守' },
     { id: 'city_danmaxi', name: '淡马锡', factionId: 'malai', lat: 1.29, lng: 103.85, type: 'small_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '新加坡拉王国防御土垒（福康宁一带），扼马六甲海峡东口；定级依据§6.2：淡马锡非关隘/要塞/堡垒（海峡贸易港市，元《岛夷志略》"单马锡"），按城市判级；14世纪峰值约1万人（Miksic 估算）→ 小城；推算：城居 1 万（note 记 1 万）→ 小城' },
     { id: 'city_jinqi', name: '金奇', factionId: 'taimier', lat: 12.25, lng: 79.42, type: 'pass', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '泰米尔纳德三山连堡，东方特洛伊，马拉塔与莫卧儿反复争夺；按 2026-10-25 标准：金奇三山连堡（石砌山城）→ 险要' },
     { id: 'city_damasikusi', name: '大马士革', factionId: 'womaya', lat: 33.5131, lng: 36.3094, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '倭马亚都，西亚千年都会。定级按史：倭马亚期城居通行 10–20 万（各家上限 20 万）→ 中城（2026-10-25）。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 坐标按英文维基百科 Damascus 改为 33.5131,36.3094。' },

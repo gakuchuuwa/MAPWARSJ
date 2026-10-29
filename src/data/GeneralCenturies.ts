@@ -15,20 +15,20 @@
  */
 export const GENERAL_CENTURIES: Record<string, number> = {
     // ── 2026-10-25 归位/新增势力补世纪 ──
-    'aliya_muhammad_tahir': 9,   // 穆罕默德·塔希尔 · 阿拔斯呼罗珊总督（820–873）
+    'aliya_muhammad_tahir': 9,   // 塔希尔 · 阿拔斯呼罗珊总督（820–873）
     'luoma_diguo_leo_ix': 11,     // 利奥九世 · 教皇（1049–1054，奇维塔泰之战）
     'bfe2_rezin': -8,             // 利汛 · 亚兰（大马士革）王（前 8 世纪，前 732 亡）
     'bfe3_46': -1,                // 维钦托利 · 高卢联军首领（前 82–前 46）
     'mozambique_ataide': 17,  // 阿泰德 · putaoya · 莫桑比克（1607/08 守城退荷兰）
     'luanda_novais': 16,      // 诺瓦伊斯 · putaoya · 罗安达（1576 建城、1586 守御）
-    'capetown_riebeeck': 17,  // 扬·范·里贝克 · nidelan · 开普敦（1652 建城）
+    'capetown_riebeeck': 17,  // 里贝克 · nidelan · 开普敦（1652 建城）
 
-    'kilwa_suleiman': 12,  // 苏莱曼·本·哈桑 · kilwa · 基尔瓦
-    'mombasa_yusuf': 17,  // 优素福·本·哈桑 · mombasa · 蒙巴萨
-    'mogadishu_abubakr': 14,  // 阿布·伯克尔 · mogadishu · 摩加迪沙
-    'zuraid_yasir': 12,  // 亚西尔·本·比拉勒 · zuraid · 亚丁
+    'kilwa_suleiman': 12,  // 苏莱曼哈桑 · kilwa · 基尔瓦
+    'mombasa_yusuf': 17,  // 优素福 · mombasa · 蒙巴萨
+    'mogadishu_abubakr': 14,  // 阿布伯克尔 · mogadishu · 摩加迪沙
+    'zuraid_yasir': 12,  // 亚西尔 · zuraid · 亚丁
 
-    'xibanya_beilaerde': 19,  // 佩德罗·贝拉尔德 · xibanya · 马德里（1808 五月二日守蒙莱昂）
+    'xibanya_beilaerde': 19,  // 贝拉尔德 · xibanya · 马德里（1808 五月二日守蒙莱昂）
     'manding_musa': 14,  // 穆萨 · manding · 廷巴克图（1353 太守）
     'arakan_mingbin': 16,  // 明彬 · arakan · 妙乌
     'dusong_zhangru': 13,  // 张濡 · song · 独松关
@@ -43,7 +43,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_wang_qiaonian': 17,  // 汪乔年 · ming_d · 长安（1642 襄城之战殉国）
     'tang_guoyuanzhen': 8,  // 郭元振 · tang · 赤亭关
     'putaoya_afonso': 15,  // 阿方索 · putaoya · 布拉干萨
-    'montereau_pressy': 15,  // 让·德·普雷西 · bogendigongguo · 蒙特罗
+    'montereau_pressy': 15,  // 普雷西 · bogendigongguo · 蒙特罗
     'guyan_jiaolian': 17,  // 焦琏 · longwu · 古严关
     'yumen_suoban': 2,  // 索班 · han_d · 玉门关
     'yangguan_lixi': -2,  // 李息 · han_d · 阳关
@@ -728,9 +728,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'yidali_wangguo_garibaldi': 19,          // 加里波第 · yidali_wangguo · 罗马城
     'luxitaniya_viriathus': -2,              // 维里亚图斯 · luxitaniya · 里斯本
     'tuoerkete_topiltzin': 10,               // 托皮尔岑 · tuoerkete · 特诺奇提特兰
-    'yadian_gongguo_otto': 13,               // 奥托·德·拉罗什 · yadian_gongguo · 雅典
-    'mayapan_hunac_ceel': 13,                // 胡纳克·塞尔 · mayapan · 乌斯马尔
-    'songhai_askia_muhammad': 15,            // 阿斯基亚·穆罕默德 · songhai · 廷巴克图
+    'yadian_gongguo_otto': 13,               // 拉罗什 · yadian_gongguo · 雅典
+    'mayapan_hunac_ceel': 13,                // 胡纳克 · mayapan · 乌斯马尔
+    'songhai_askia_muhammad': 15,            // 阿斯基亚 · songhai · 廷巴克图
     'shahi_jayapala': 10,                    // 贾亚帕拉 · shahi · 白沙瓦
     'xisa_chastana': 2,                      // 查斯塔纳 · xisa · 帕坦
     'xilawangguo_kolokotronis': 19,          // 科洛科特罗尼斯 · xilawangguo · 底比斯
@@ -740,7 +740,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'yibiluliya_pharnavaz': -3,              // 法尔纳瓦兹一世 · yibiluliya · 第比利斯
     'gelujiya_erekle_ii': 18,                // 埃雷克莱二世 · gelujiya · 第比利斯
     'litaowan_ostrogski': 15,                // 奥斯特罗格斯基 · litaowan · 维尔纽斯
-    'wulaertu_davit_bek': 17,                // 达维德·贝克 · wulaertu · 埃里温
+    'wulaertu_davit_bek': 17,                // 达维德 · wulaertu · 埃里温
     'baojialiya_levski': 19,                 // 列夫斯基 · baojialiya · 索非亚
     'yicha_canek': 16,                       // 卡内克 · yicha · 蒂卡尔
     'mengjiala_shamsuddin': 14,              // 沙姆斯丁 · mengjiala · 戈尔冈
@@ -751,15 +751,15 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_mustafa_ii': 17,                    // 穆斯塔法二世 · osman · 埃迪尔内
     'bfe_perozes': 6,                        // 佩罗泽斯 · sashan · 呼勒万
     'bfe_mansfeld': 17,                      // 曼斯菲尔德 · boximiya · 布拉格
-    'bfe_sonni_baru': 15,                    // 桑尼·巴鲁 · songhai · 廷巴克图
-    'bfe_agha_mohammad': 18,                 // 阿迦·穆罕默德汗 · qiajia · 卡曼尼亚
+    'bfe_sonni_baru': 15,                    // 桑尼巴鲁 · songhai · 廷巴克图
+    'bfe_agha_mohammad': 18,                 // 阿迦穆罕默德 · qiajia · 卡曼尼亚
     'bfe_landi': 19,                         // 兰迪 · liangxixili · 巴勒莫
     'bfe_kehaya_mustafa': 19,                // 穆斯塔法 · osman · 斯巴达
     'xilawangguo_petros': 19,                // 彼得罗斯 · xilawangguo · 斯巴达
-    'bfe_abdulaziz_crete': 10,               // 阿卜杜勒·阿齐兹 · aguelabu · 凯鲁万
+    'bfe_abdulaziz_crete': 10,               // 阿齐兹 · aguelabu · 凯鲁万
     'eluosi_diguo_apraksin': 17,             // 阿普拉克辛 · eluosi_diguo · 拉多加
-    'bfe_peter_delyan': 11,                  // 彼得·德良 · baojialiya · 斯科普里
-    'bfe_gotse_delchev': 19,                 // 戈采·代尔切夫 · baojialiya · 斯科普里
+    'bfe_peter_delyan': 11,                  // 彼得德良 · baojialiya · 斯科普里
+    'bfe_gotse_delchev': 19,                 // 代尔切夫 · baojialiya · 斯科普里
     'bfe_vitalian': 6,                        // 维塔利安 · baizanting · 普罗夫迪夫
     'bfe_alexios_branas': 12,                // 布拉纳斯 · baizanting · 普罗夫迪夫
     'bfe_dimitriev': 19,                    // 卡拉·费兹 · osman · 普罗夫迪夫
@@ -771,9 +771,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_maniakes': 11,                       // 马尼亚克 · baizanting · 锡拉库萨
     'bfe_rhetogenes': -2,                    // 雷图格诺斯 · arevaci · 努曼提亚
     'bfe_purnavarman': 5,                     // 普尔纳跋摩 · taluma · 巴达维亚
-    'maya_siyaj_kak': 4,                      // 西亚赫·卡克 · maya · 蒂卡尔
+    'maya_siyaj_kak': 4,                      // 西亚赫卡克 · maya · 蒂卡尔
     'bfe_apokaukos': 10,                      // 巴希尔 · baizanting · 斯巴达
-    'baizanting_thomas': 15,                   // 托马·巴列奥略 · baizanting · 斯巴达
+    'baizanting_thomas': 15,                   // 巴列奥略 · baizanting · 斯巴达
     'bfe_maroboduus': -1,                    // 马罗博杜斯 · suweihui · 布拉格
     'yili_bato': -1,                         // 巴托 · yili · 布达佩斯
     'daqiya_burebista': -1,                  // 布雷比斯塔 · daqiya · 索非亚
@@ -1077,8 +1077,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_willem_juliette': 13,                           // 威廉一世 · didi · 布鲁日
     'gen_william_silent': 16,                            // 威廉奥兰治 · nidelan · 海牙
     'gen_william_wallace': 13,                           // 华莱士 · kanbuliya · 卡莱尔
-    'scotland_johngraham': 17,               // 约翰·格雷厄姆 · scotland · 因弗内斯
-    'scotland_hughmackay': 17,               // 休·麦凯 · scotland · 爱丁堡
+    'scotland_johngraham': 17,               // 格雷厄姆 · scotland · 因弗内斯
+    'scotland_hughmackay': 17,               // 麦凯 · scotland · 爱丁堡
     'gen_winkelried': 14,                                   // 温克尔里德 · ruishi · 巴塞尔（1386年森帕赫战役）
     'xiongyati_yannuoshi': 15,                          // 匈雅提亚诺什 · xiongyati · 胡内多阿拉
     'mazhaer_majiashi': 15,                             // 马加什一世 · mazhaer · 布达佩斯
@@ -1237,7 +1237,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bolan_suobiesiji':                  17,    // 扬三世·索别斯基 · bolan · 维也纳之战翼骑兵冲锋（1683年解围）
     'xibanya_pisaluo':                   16,    // 皮萨罗 · xibanya · 西班牙征服印加帝国（1532年成名）
     'xibanya_aerwa': 16,                     // 阿尔瓦公爵 · xibanya · 布鲁塞尔（米尔贝格 1547）
-    'wende_johnfriedrich': 16,               // 约翰·腓特烈 · wende · 马格德堡
+    'wende_johnfriedrich': 16,               // 约翰腓特烈 · wende · 马格德堡
     'wende_hengist': 5,                      // 亨吉斯特 · wende · 马格德堡
     'wende_heinrich_loewe': 12,              // 狮子亨利 · wende · 不伦瑞克
     'gen_cuauhtemoc':                    16,    // 库奥特莫克 · aztec · 阿兹特克抵抗西班牙末代君主（1520-1521成名）
@@ -1252,9 +1252,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_tome_sousa':                    16,    // 托梅·德·索萨 · baiyiya · 葡萄牙首任巴西总督建立萨尔瓦多（1549年）
     'gen_cortes':                        16,    // 科尔特斯 · tuotuonake · 1519 韦拉克鲁斯登陆、征服阿兹特克
     'gen_velazquez':                     16,    // 贝拉斯克斯 · taino · 1519 哈瓦那建城、古巴征服
-    'gen_martim_afonso':                 16,    // 马丁·阿方索 · tupinijin · 1532 圣维森特建镇
+    'gen_martim_afonso':                 16,    // 马丁阿方索 · tupinijin · 1532 圣维森特建镇
     'gen_morosini':                      17,    // 莫罗西尼 · kelite · 1669 干地亚守城
-    'gen_caffa_consul':                  14,    // 奥贝托·斯夸尔 · kelimiya · 热那亚卡法领事（Squarciafico 家族）
+    'gen_caffa_consul':                  14,    // 斯夸尔 · kelimiya · 热那亚卡法领事（Squarciafico 家族）
     'gen_nur_ad_din':                    12,    // 努尔丁 · antiaokegongguo · 叙利亚抗十字军
     'gen_abgar':                          1,    // 阿布加尔 · aosiruowen · 奥斯若恩王
     'gen_bonifatius':                     5,    // 博尼法提乌斯 · xiluoma · 罗马阿非利加守将
@@ -1265,7 +1265,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'foluolida_meinendeshi':             16,    // 佩德罗·梅嫩德斯 · foluolida · 建立圣奥古斯丁（1565年成名）
     'meitai_hagenba':                    17,    // 哈根巴（Khagemba） · meitai · 曼尼普尔梅泰王国雄主（1597-1652在位）
     'aimala_katali':                     18,    // 图帕克·卡塔里 · aimala · 艾马拉原住民起义围攻拉巴斯（1781年）
-    'gen_maha_thiha_thura':              18,    // 摩诃·悉都 · miandian · 缅甸贡榜王朝清缅战争名将（1765-1769年成名）
+    'gen_maha_thiha_thura':              18,    // 摩诃悉都 · miandian · 缅甸贡榜王朝清缅战争名将（1765-1769年成名）
     'panfeiliya_apollonios':             -3,    // 阿波罗尼奥斯 · panfeiliya · 佩尔格（圆锥曲线论作者）
     'hesitiya_yiasong':               -4,    // 伊阿宋（费莱的伊阿宋） · hesitiya · 佩利纳（前4世纪色萨利霸主，公元前375年统一色萨利）
     'hekaniya_artabazos':             -4,    // 阿尔塔巴佐斯 · hekaniya · 兹拉卡塔（前4世纪波斯宿将，大流士三世死后坐镇赫卡尼亚）

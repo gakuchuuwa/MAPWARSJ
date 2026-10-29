@@ -803,7 +803,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_mikhailoftver', name: '英雄·特维尔亲王米哈伊尔·斯拉夫', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/ELITEBOYAR/' },   // [2026-10-19 补入] DE「Mikhail of Tver」dat#1731；借用「斯拉夫贵族铁骑精锐」兵模
     { id: 'hero_youngjadwiga', name: '英雄·年轻的雅德维加·波兰', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/JOANTHEMAID/' },   // [2026-10-19 补入] DE「Young Jadwiga」dat#1732；借用「英雄·少女战士·法兰克」兵模
     { id: 'hero_amoghavarsha', name: '英雄·阿目佉跋沙·达罗毗荼', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ELITEURUMISWORDSMAN/' },   // [2026-10-19 补入] DE「Amoghavarsha」dat#1763；借用「达罗毗荼软剑士精锐」兵模
-    { id: 'hero_ibrahimlodi', name: '英雄·易卜拉欣·洛迪·印度斯坦', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/HERO_KHAN/' },   // [2026-10-19 补入] DE「Ibrahim Lodi」dat#1771；借用「蒙古可汗特殊」兵模
+    { id: 'hero_ibrahimlodi', name: '英雄·洛迪·印度斯坦', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/HERO_KHAN/' },   // [2026-10-19 补入] DE「Ibrahim Lodi」dat#1771；借用「蒙古可汗特殊」兵模
     { id: 'hero_mihirabhoja', name: '英雄·迷企罗·波阇·瞿折罗', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ELITESHRIVAMSHARIDER/' },   // [2026-10-19 补入] DE「Mihira Bhoja」dat#1762；借用「什里瓦姆沙骑手高级」兵模
     { id: 'hero_shaybanikhan', name: '英雄·昔班尼汗·鞑靼', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/GIRGENKHAN/' },   // [2026-10-19 补入] DE「Shaybani Khan」dat#1772；借用「英雄·吉尔根汗·库曼」兵模
     { id: 'hero_youngbabur', name: '英雄·年轻的巴布尔·印度斯坦', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },   // [2026-10-19 补入] DE「Young Babur」dat#1768；借用「骆驼骑兵高级」兵模

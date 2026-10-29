@@ -666,41 +666,7 @@ export function render(this: Scene13WarLayer): void {
     );
     if (hasTransform) ctx.restore();
     this.coverStrategyMap();
-    // 文明6风格光影开关开启时：左上角鎏金斜阳 + 丁达尔斜向光束 + 右下冷蓝大气暗角（统合 2D 建筑/城墙/林木与 WebGL 地面光影）
-    if (this.useGroundGL && this.groundLayerGL?.civLight) {
-        ctx.save();
-        const w = cv.width, h = cv.height;
-        const diag = Math.hypot(w, h);
-        // 1. 左上角暖金斜阳光晕与右下角冷蓝幽谷暗角
-        const sunGrad = ctx.createRadialGradient(w * 0.08, h * 0.08, 10, w * 0.18, h * 0.18, diag * 0.82);
-        sunGrad.addColorStop(0.0, 'rgba(255, 214, 118, 0.24)');
-        sunGrad.addColorStop(0.35, 'rgba(255, 198, 96, 0.10)');
-        sunGrad.addColorStop(0.68, 'rgba(0, 0, 0, 0.0)');
-        sunGrad.addColorStop(1.0, 'rgba(12, 26, 54, 0.26)');
-        ctx.fillStyle = sunGrad;
-        ctx.fillRect(0, 0, w, h);
 
-        // 2. 沿左上→右下 (35°) 洒落的动态丁达尔斜阳光束 (God-Rays)
-        ctx.globalCompositeOperation = 'screen';
-        const tSec = performance.now() * 0.001;
-        for (let i = 0; i < 3; i++) {
-            const phase = Math.sin(tSec * 0.45 + i * 2.1) * 0.06;
-            const cxRay = w * (0.18 + i * 0.24 + phase);
-            const rayGrad = ctx.createLinearGradient(cxRay - h * 0.35, 0, cxRay + h * 0.55, h);
-            rayGrad.addColorStop(0.0, 'rgba(255, 224, 140, 0.09)');
-            rayGrad.addColorStop(0.55, 'rgba(255, 210, 120, 0.03)');
-            rayGrad.addColorStop(1.0, 'rgba(255, 200, 100, 0.0)');
-            ctx.fillStyle = rayGrad;
-            ctx.beginPath();
-            ctx.moveTo(cxRay - w * 0.12, 0);
-            ctx.lineTo(cxRay + w * 0.08, 0);
-            ctx.lineTo(cxRay + w * 0.42, h);
-            ctx.lineTo(cxRay + w * 0.16, h);
-            ctx.closePath();
-            ctx.fill();
-        }
-        ctx.restore();
-    }
     // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
     if (this.timeOfDay.active && this.useGroundGL) {   // 地形缺图时画布不是满铺，不能整屏压色
         const _tt0 = import.meta.env.DEV ? performance.now() : 0;

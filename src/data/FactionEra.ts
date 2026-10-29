@@ -37,7 +37,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     // 🔴 [2026-10-25 补齐·主人令「每个势力都要有时代」] 这三家只有据点、没有武将，此前漏登记：
     'aodesuosi': [{ from: -9999, era: 'antiquity' }], // 奥德索斯｜瓦尔纳旧称，希腊殖民城邦（前 6 世纪起）＝古典；势指针＝古典时代色雷斯军团
     'jienei': [{ from: -9999, era: 'feudal' }], // 杰内｜加纳—马里商路商城（8–13 世纪，加纳帝国期入封建段）；势指针＝封建时代加纳军团
-    'ghana_diguo': [{ from: -9999, era: 'feudal' }], // 加纳帝国｜瓦加杜加纳（约 300–1200，8–11 世纪盛期，通卡·马宁）；势指针＝封建时代加纳军团
+    'ghana_diguo': [{ from: -9999, era: 'feudal' }], // 加纳帝国｜瓦加杜加纳（约 300–1200，8–11 世纪盛期，马宁）；势指针＝封建时代加纳军团
     'cueva': [{ from: -9999, era: 'imperial' }], // 库埃瓦｜巴拿马科马格雷酋邦（1510 巴尔沃亚到访）＝帝国段；势指针＝帝国时代格查武士军团
     'song': [{ from: -9999, era: 'castle' }], // 宋国｜宋（960–1279）＝城堡时代中华军团（神臂弓/步人甲/斩马刀），北宋南宋同一支宋军
     'ming_d': [{ from: -9999, era: 'imperial' }], // 大明｜大明（1368–1644）＝帝国时代中国军团（京营/神机/三眼铳），明初明末同为明军
@@ -62,9 +62,9 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'gaolu': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'castle' }, { from: 1500, era: 'imperial' }], // 法兰西（别名高卢）｜古典＝高卢战团（维钦托利）；476–1500＝城堡时代法兰西骑士军团；1500 后＝帝国法兰西军团
     'menggu_d': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 蒙古｜蒙古（含 10 世纪孛端察儿—元—北元）＝城堡时代漠南蒙古军团；1500 后（达延汗—喀尔喀/卫拉特）→ 帝国时代漠南蒙古军团
     // ══════ 二、单时代势力（整段一个时代）══════
-    'kilwa': [{ from: -9999, era: 'castle' }], // 基尔瓦苏丹国｜斯瓦希里海岸（约 957–1513），苏莱曼·本·哈桑
-    'mogadishu': [{ from: -9999, era: 'castle' }], // 摩加迪沙苏丹国｜索马里城邦（10–16 世纪），阿布·伯克尔
-    'zuraid': [{ from: -9999, era: 'castle' }], // 祖拉伊德｜亚丁王朝（1083–1174），亚西尔·本·比拉勒
+    'kilwa': [{ from: -9999, era: 'castle' }], // 基尔瓦苏丹国｜斯瓦希里海岸（约 957–1513），苏莱曼哈桑
+    'mogadishu': [{ from: -9999, era: 'castle' }], // 摩加迪沙苏丹国｜索马里城邦（10–16 世纪），阿布伯克尔
+    'zuraid': [{ from: -9999, era: 'castle' }], // 祖拉伊德｜亚丁王朝（1083–1174），亚西尔
     'aboerleiya': [{ from: -9999, era: 'castle' }], // 阿尔博雷亚
     'adal': [{ from: -9999, era: 'imperial' }], // 阿达尔
     'adile': [{ from: -9999, era: 'imperial' }], // 阿迪勒
@@ -225,7 +225,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'gelujiya': [{ from: -9999, era: 'castle' }, { from: 1500, era: 'imperial' }], // 格鲁吉亚｜城堡 → 1500 起帝国
     'geluolu': [{ from: -9999, era: 'feudal' }], // 葛逻禄
     'genji': [{ from: -9999, era: 'castle' }], // 源氏
-    'genji_iyo': [{ from: -9999, era: 'castle' }], // 源氏·伊予
+    'genji_iyo': [{ from: -9999, era: 'castle' }], // 伊予源氏
     'gesake': [{ from: -9999, era: 'imperial' }], // 哥萨克
     'gling': [{ from: -9999, era: 'castle' }], // 玉树
     'golog': [{ from: -9999, era: 'imperial' }], // 果洛

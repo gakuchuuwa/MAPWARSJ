@@ -23,7 +23,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // ── T3 风土之兵 ──
     lunbadi: { name: '撒克斯刀卫', tier: 3 },          // 米兰·阿尔博因：伦巴第撒克斯单刃大刀近卫
     gepids: { name: '革皮德兵', tier: 4 },   // 567 革皮德之战：蒂萨河畔革皮德部落战士（部落兵，无战术高光）
-    kalbids: { name: '卡尔比德卫', tier: 4 },   // 巴勒莫·伊本·哈瓦斯：西西里埃米尔亲卫（地方埃米尔卫队）
+    kalbids: { name: '卡尔比德卫', tier: 4 },   // 巴勒莫·哈瓦斯：西西里埃米尔亲卫（地方埃米尔卫队）
     gaolu: { name: '敕令骑兵', tier: 3 },          // 巴黎·查理七世：compagnies d'ordonnance；避势力「法兰西」叠字
     // 图卢兹·雷蒙五世：古名 Tolosa →「托洛萨骑」美化；无战役专名高光，档仍 T4（不抬）
     jiatailuoniya: { name: '加泰轻步', tier: 3 },          // 巴塞罗那·海梅：加泰轻装（佣兵团偏罗杰弗洛尔，不同代；阿尔莫加瓦已挂萨拉戈萨）

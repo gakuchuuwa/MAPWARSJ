@@ -5213,9 +5213,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -21
         },
         "/assets/SLAVIC/qiernigeweifu_gongguo_musidi.png": {
-            "scale": 0.95,
+            "scale": 0.91,
             "offsetX": 0,
-            "offsetY": -19
+            "offsetY": -16
         },
         "/assets/BOHEMIANS/gen_mojmir_i.png": {
             "scale": 1.1,
@@ -5298,7 +5298,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/SLAVIC/peilieya_gongguo_monuomahe.png": {
-            "scale": 1.18,
+            "scale": 1.22,
             "offsetX": 0,
             "offsetY": 15
         },
@@ -8333,9 +8333,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/CUMAN/kuman_tugorkan.png": {
-            "scale": 0.86,
+            "scale": 0.8,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -1
         },
         "/assets/BYZANTINE/baizanting_isaac_ii.png": {
             "scale": 1.04,
@@ -8971,6 +8971,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": -2
+        },
+        "/assets/VARANGIANS/eluosi_diguo_apraksin.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/SLAVIC/kaleiliya_kelimusuoboliefu.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/VARANGIANS/gen_sineus.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 42
+        },
+        "/assets/SLAVIC/ante_boz.png": {
+            "scale": 0.9,
+            "offsetX": 8,
+            "offsetY": 10
         }
     },
     "folderGuides": {

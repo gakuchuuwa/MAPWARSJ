@@ -11,7 +11,7 @@
  * ⚠️ 世纪-11(1001-1100) 骑跨 1050 边界，整数世纪不可切 —— 已按各将成名年份逐位精化：
  *    成名<1050 的 16 位(李元昊/波列/布列斯拉夫/哈马德/姆斯蒂/雅罗斯拉夫/姜邯赞/古格扎西查巴/马哈茂德/恰格里/高琼/神圣罗马亨利二世/大延琳/种世衡/野利旺荣/拉金德拉) = 封建；其余世纪-11 = 城堡。
  *    无纪年核查(2026-09-08)：磨古斯1092-1100辽阻卜=城堡、籍辣思义1224西夏沙州=城堡、格萨尔11世纪岭国史诗=城堡、阿尔斯兰=疏勒喀喇汗阿里·阿尔斯兰汗殁998→封建、沙马利克=蒙古部落译音查无实据暂归城堡。
- * 5 个美洲土著(海华沙/明查凯曼/齐齐潘达夸雷/库查西克=城堡、卡西米罗·比格=帝国)无世纪,按美洲组史实补。
+ * 5 个美洲土著(海华沙/明查凯曼/齐齐潘达夸雷/库查西克=城堡、比格=帝国)无世纪,按美洲组史实补。
  */
 export type GeneralEra = 'antiquity' | 'feudal' | 'castle' | 'imperial';
 
@@ -746,7 +746,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_prettenberg': 'imperial',
     'gen_przemysl_ii': 'castle',
     'gen_raymond_iv': 'castle',
-    'gen_raymond_berenguer_iv': 'castle',   // 雷蒙·贝朗热四世（1198–1245 普罗旺斯伯爵）
+    'gen_raymond_berenguer_iv': 'castle',   // 贝朗热（1198–1245 普罗旺斯伯爵）
     'gen_raymond_v': 'castle',
     'gen_robert_ii': 'castle',
     'gen_roger_i': 'castle',
@@ -1585,14 +1585,14 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe3_31': 'antiquity',   // 名将双身份：卫右渠
     'bfe3_74': 'antiquity',   // 名将双身份：轲比能
     'bfe_dalriada_king': 'feudal',   // 费尔古斯｜达尔里阿达
-    'gen_john_comyn': 'castle',   // 约翰·科明｜苏格兰
+    'gen_john_comyn': 'castle',   // 科明｜苏格兰
     'bfe_sigismund': 'castle',   // 西吉斯蒙德｜神圣罗马帝国
     'bfe_chanca_chief': 'castle',   // 阿斯塔瓦兰卡｜昌卡
     'bfe_sue_harutaka': 'imperial',   // 陶晴贤｜大内
     'bfe_rajah_sulayman': 'imperial',   // 拉者苏莱曼三世｜马尼拉土邦
     'bfe_muzaffar_shah': 'imperial',   // 穆扎法尔三世｜古吉拉特
     'bfe_coyett': 'imperial',   // 揆一｜荷兰东印度公司
-    'bfe_jaya_prakash': 'imperial',   // 贾亚·普拉卡什｜马拉
+    'bfe_jaya_prakash': 'imperial',   // 普拉卡什｜马拉
     'bfe_pisa_king': 'antiquity',   // 潘塔琉斯｜皮萨
     'bfe_cimmerian_king': 'antiquity',   // 图格达梅｜辛梅里安
     'bfe_prasenajit': 'antiquity',   // 波斯匿｜拘萨罗
@@ -1603,7 +1603,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_dian_chief': 'antiquity',   // 苴兰｜靡莫
     'bfe_niu_han': 'antiquity',   // 牛邯｜西州
     'bfe_ngo_nhat_khanh': 'feudal',   // 吴日庆｜十二使君
-    'xibanya_beilaerde': 'imperial',   // 佩德罗·贝拉尔德｜马德里·西班牙（1808）
+    'xibanya_beilaerde': 'imperial',   // 贝拉尔德｜马德里·西班牙（1808）
     'manding_musa': 'castle',   // 穆萨（廷巴克图太守）｜廷巴克图·马里（1353）
     'arakan_mingbin': 'imperial',   // 明彬｜妙乌·阿拉干
     'dusong_zhangru': 'castle',   // 张濡｜独松关·南宋（1275）
@@ -1613,7 +1613,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'ningwu_zhouyuji': 'imperial',   // 周遇吉｜宁武关·明（1644）
     'tang_guoyuanzhen': 'feudal',   // 郭元振｜赤亭关·唐（700 赤亭大捷）
     'putaoya_afonso': 'castle',   // 阿方索｜布拉干萨·葡萄牙（15 世纪）
-    'montereau_pressy': 'castle',   // 让·德·普雷西｜蒙特罗·勃艮第（1419）
+    'montereau_pressy': 'castle',   // 普雷西｜蒙特罗·勃艮第（1419）
     'guyan_jiaolian': 'imperial',   // 焦琏｜古严关·南明
     'yumen_suoban': 'antiquity',   // 索班｜玉门关·东汉
     'yangguan_lixi': 'antiquity',   // 李息｜阳关·西汉
@@ -1639,11 +1639,11 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_vahan': 'feudal',   // 瓦汉（2026-10-25 按史补）
     'bfe_likaigu': 'feudal',   // 李楷固（2026-10-25 按史补）
     'bfe_abdullah_ali': 'feudal',   // 阿卜杜拉（2026-10-25 按史补）
-    'bfe_leo_phokas': 'feudal',   // 利奥·福卡斯（2026-10-25 按史补）
+    'bfe_leo_phokas': 'feudal',   // 利奥福卡斯（2026-10-25 按史补）
     'bfe_bulcsu': 'feudal',   // 布尔丘（2026-10-25 按史补）
     'bfe_liurenshan': 'feudal',   // 刘仁赡（2026-10-25 按史补）
     'bfe_chengong': 'feudal',   // 陈珙（2026-10-25 按史补）
-    'bfe_muhammad_ghur': 'castle',   // 穆罕默德·古尔（2026-10-25 按史补）
+    'bfe_muhammad_ghur': 'castle',   // 穆罕默德古尔（2026-10-25 按史补）
     'bfe_youxian': 'castle',   // 游显（2026-10-25 按史补）
     'bfe_umar': 'castle',   // 乌马儿（2026-10-25 按史补）
     'bfe_chagatai': 'castle',   // 察合台（2026-10-25 按史补）

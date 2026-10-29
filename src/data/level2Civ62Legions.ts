@@ -59,9 +59,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HERO_THEMISTOCLES',
         commanderUnit: 'hero_themistocles_hoplite',
         slots: [
-            { type: 'elite_strategos', count: 3 },
-            { type: 'priestess', count: 4 },   // 🔴 [2026-10-19 主人令「把这 5 个法术兵按历史编进对应文明的军团」] 原 cretan_archer；按史：雅典城邦的雅典娜祭司
-            { type: 'sacred_band', count: 2 },
+            { type: 'sacred_band', count: 3 },
+            { type: 'elite_strategos', count: 4 },
+            { type: 'priestess', count: 2 },
         ],
     },
     {
@@ -3534,7 +3534,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 玛雅　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
-    // ── 玛雅 · 古典时代 · 古典时代佩滕军团　（2026-10-25 恢复：西亚赫·卡克 为带名将）────────────────
+    // ── 玛雅 · 古典时代 · 古典时代佩滕军团　（2026-10-25 恢复：西亚赫卡克 为带名将）────────────────
     {
         name: '古典时代佩滕军团', civ: '玛雅', age: 'antiquity', deStyle: 'MESO', region: 'MAYANS' as RegionType,
         buildingStyle: 'MAYANS',
@@ -4202,7 +4202,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
 
     // ═══════════════════════════════════════════════════════════════════
     // 马其顿　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
-    // ── 马其顿 · 封建时代 · 封建时代拜占庭马其顿军团　（2026-10-25 恢复：彼得·德良 为带名将）────────────────
+    // ── 马其顿 · 封建时代 · 封建时代拜占庭马其顿军团　（2026-10-25 恢复：彼得德良 为带名将）────────────────
     // 🔴 [2026-10-26 主人令「看样子，不要看名字」「请修复」] 476–1050：超长萨里萨方阵兵、希腊化骑兵→中世纪盾矛步兵、具装重骑
     {
         name: '封建时代塞萨洛尼基军团', civ: '马其顿', age: 'feudal', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
@@ -4232,7 +4232,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'boyar', count: 2 },
         ],
     },
-    // ── 马其顿 · 帝国时代 · 帝国时代马其顿军团　（2026-10-25 恢复：戈采·代尔切夫 为带名将）────────────────
+    // ── 马其顿 · 帝国时代 · 帝国时代马其顿军团　（2026-10-25 恢复：代尔切夫 为带名将）────────────────
     {
         name: '帝国时代塞拉尼克军团', civ: '马其顿', age: 'imperial', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
         buildingStyle: 'MACEDONIAN',

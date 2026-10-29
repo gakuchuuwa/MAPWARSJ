@@ -5432,7 +5432,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEURUMISWORDSMAN/death_${dir}.png`),
         },
         'hero_ibrahimlodi': {
-            // 【英雄·易卜拉欣·洛迪·印度斯坦】[2026-10-19 补入] DE「Ibrahim Lodi」，借用「蒙古可汗特殊」兵模
+            // 【英雄·洛迪·印度斯坦】[2026-10-19 补入] DE「Ibrahim Lodi」，借用「蒙古可汗特殊」兵模
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/idle_${dir}.png`),

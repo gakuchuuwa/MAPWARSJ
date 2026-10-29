@@ -267,7 +267,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'chosokabe': 'city_okafu',
     'kaga_d': 'city_jianghu',
 'date_d': 'city_xiantai',
-    // 🔴 [2026-09-19 主人令「村上武吉换成源义经」] 松山（伊予国）改归**源氏·伊予**，
+    // 🔴 [2026-09-19 主人令「村上武吉换成源义经」] 松山（伊予国）改归**伊予源氏**，
     //    守将 = 源义经（1184 年一之谷后受任**伊予守**，伊予国即其守地，1185 年他在伊予忽那岛统水军）。
     'genji_iyo': 'city_songshan',
     // 🔴 [2026-09-19 主人「能岛／因岛能添加上吗」「同理 iyo_d 也是空势力，你没改回去吗」] **归位**：

@@ -259,7 +259,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   bfe3_4: { name: '特里阿里', tier: 4 },   // 拉维利乌斯｜罗马｜罗马城｜普鲁塔克《皮洛士传》载前280 赫拉克利亚之战，罗马执政官拉维努斯以第三线老兵特里阿里（triarii）死战不退。
   bfe3_63: { name: '日耳曼尼卡', tier: 4 },   // 霍尔多尼乌斯｜罗马｜罗马城｜塔西佗《历史》卷一载 69 年日耳曼总督霍尔多尼乌斯统莱茵军团，含驻博纳的第一日耳曼尼卡军团（Legio I Germanica）。
   bfe3_51: { name: '昔兰尼加', tier: 4 },   // 佩特罗尼乌斯｜罗马｜罗马城｜斯特拉波《地理志》卷一七载前25–前21 埃及总督佩特罗尼乌斯远征麦罗埃，所率即驻埃及的第三昔兰尼加军团（Legio III Cyrenaica）。
-  bfe_gaius_livius: { name: '罗马舰队', tier: 3 },   // 盖乌斯·李维乌斯｜罗马｜罗马城｜李维《罗马史》卷三七载前190 欧里梅敦海战，罗马统帅盖乌斯·李维乌斯率罗马舰队破安条克水师。
+  bfe_gaius_livius: { name: '罗马舰队', tier: 3 },   // 李维乌斯｜罗马｜罗马城｜李维《罗马史》卷三七载前190 欧里梅敦海战，罗马统帅李维乌斯率罗马舰队破安条克水师。
   gen_constantine_great: { name: '约维亚尼', tier: 2 },   // 君士坦丁｜罗马｜特里尔｜《百官志》（Notitia Dignitatum）载约维亚尼（Ioviani）为戴克里先朝创设的宫廷野战军团，君士坦丁朝列近卫野战军，312 年随其破马克森提乌斯于米尔维安大桥。
   gen_julian_apostate: { name: '科尔努提', tier: 2 },   // 尤里安｜罗马｜里昂｜阿米阿努斯·马塞利努斯《罗马史》卷一六载 357 年斯特拉斯堡之战，尤里安以科尔努提（Cornuti）为前锋击破阿勒曼尼。
   gen_bonifatius: { name: '布切拉里', tier: 3 },   // 博尼法提乌斯｜罗马｜希波｜普罗柯比《战史》卷三载 430 年汪达尔人围希波，博尼法提乌斯以私兵布切拉里（bucellarii）死守孤城。
@@ -279,11 +279,11 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_furdan: { name: '科布多戍卒', tier: 4 },   // 傅尔丹｜清｜科布多｜《清史稿·傅尔丹传》：雍正七年授靖逆将军，雍正八年于科布多筑城屯兵为西路军大营，九年由此出师致和通泊之败；戍卒与据点科布多、时代相符。
   duonaobaojia_tzimiskes: { name: '不死军', tier: 2 },   // 齐米斯基｜拜占｜君士坦丁堡｜《牛津拜占庭辞典》Athanatoi 条：970 年齐米斯基为对罗斯战争新建「不死军」重装突骑，普雷斯拉夫与多罗斯托隆之战由其定胜负（维基 Immortals (Byzantine Empire)）。
   baizanting_diaofeilusi: { name: '阿克里泰', tier: 2 },   // 狄奥斐卢斯｜拜占｜君士坦丁堡｜838 年安曾之战，狄奥斐卢斯亲率东方边区阿克里泰边军拒阿拔斯军（维基 Battle of Anzen；《塞奥法尼斯续编》）；与阿历克塞同番同档 T2。
-  bfe_andronikos_komnenos: { name: '赫塔雷亚', tier: 3 },   // 安德洛尼卡·科穆宁｜拜占｜君士坦丁堡｜科穆宁朝宫廷亲卫「赫塔雷亚」（Hetaireia）宿卫皇帝，安德洛尼卡一世 1182 年入京即倚之控制京畿（维基 Hetaireia；《拜占庭帝国史》近卫条）。
-  bfe_isaac_komnenos: { name: '铁甲弓骑', tier: 3 },   // 伊萨克·科穆宁｜拜占｜君士坦丁堡｜科穆宁朝军制以重装弓骑（hippotoxotai）为锋，1184 年伊萨克·科穆宁据塞浦路斯自立所部即此（维基 Byzantine army (Komnenian era)、Isaac Komnenos of Cyprus）。
+  bfe_andronikos_komnenos: { name: '赫塔雷亚', tier: 3 },   // 科穆宁｜拜占｜君士坦丁堡｜科穆宁朝宫廷亲卫「赫塔雷亚」（Hetaireia）宿卫皇帝，安德洛尼卡一世 1182 年入京即倚之控制京畿（维基 Hetaireia；《拜占庭帝国史》近卫条）。
+  bfe_isaac_komnenos: { name: '铁甲弓骑', tier: 3 },   // 伊萨克｜拜占｜君士坦丁堡｜科穆宁朝军制以重装弓骑（hippotoxotai）为锋，1184 年伊萨克据塞浦路斯自立所部即此（维基 Byzantine army (Komnenian era)、Isaac Komnenos of Cyprus）。
   bfe_nikephoros_ii: { name: '铁甲重骑', tier: 2 },   // 尼基弗鲁斯二世｜拜占｜君士坦丁堡｜尼基弗鲁斯二世《军事训令》定铁甲重骑（kataphraktoi）编装，961 年克干地亚、965 年复奇里乞亚皆赖之（维基 Praecepta Militaria、Nikephoros II Phokas）。
   gen_constantine_xi: { name: '克里特弓手', tier: 3 },   // 君士坦丁十一世｜拜占｜君士坦丁堡｜1453 年君士坦丁堡之围，克里特弓手据守城墙段力战至城破（维基 Fall of Constantinople）。
-  gen_nikephoros_phokas: { name: '东方军区兵', tier: 4 },   // 福卡斯｜拜占｜君士坦丁堡｜尼基弗鲁斯·福卡斯出身边区军事贵族，累任安纳托利亚（东方）军区将领，所部即东方军区兵（维基 Nikephoros II Phokas；《拜占庭帝国史》军区制章）。
+  gen_nikephoros_phokas: { name: '东方军区兵', tier: 4 },   // 福卡斯｜拜占｜君士坦丁堡｜尼基弗鲁斯出身边区军事贵族，累任安纳托利亚（东方）军区将领，所部即东方军区兵（维基 Nikephoros II Phokas；《拜占庭帝国史》军区制章）。
   baizanting_nikephoros_i: { name: '斯科莱', tier: 3 },   // 尼基弗鲁斯一世｜拜占｜君士坦丁堡｜811 年普利斯卡之役，尼基弗鲁斯一世率近卫塔格马「斯科莱」（Scholai）亲征保加利亚，兵败身亡（《塞奥法尼斯编年史》；维基 Battle of Pliska）。
   baizanting_romanosi: { name: '德罗蒙', tier: 3 },   // 罗曼努斯一世｜拜占｜君士坦丁堡｜罗曼努斯一世起家于帝国舰队司令（droungarios tou stolou），以德罗蒙桨帆战舰为本钱夺位（维基 Romanos I Lekapenos）。
   baizanting_isaac_ii: { name: '普罗尼亚', tier: 3 },   // 伊萨克二世｜拜占｜君士坦丁堡｜安格洛斯朝野战主力为普罗尼亚封土骑兵，伊萨克二世 1185–1190 年对保加利亚、诺曼诸役皆用之（维基 Pronoia；《拜占庭帝国史》）。
@@ -291,7 +291,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   bitiniya_diaoduoer: { name: '尼西亚戍兵', tier: 4 },   // 狄奥多尔｜拜占｜尼凯亚｜1204 年君士坦丁堡陷后狄奥多尔一世据尼西亚立国，都城戍兵为其立国之本（维基 Empire of Nicaea、Theodore I Laskaris）。
   bfe_sinan_pasha: { name: '塞克班', tier: 4 },   // 锡南帕夏｜奥斯｜埃迪尔内｜旧档无；锡南帕夏（Koca Sinan Paşa，卒1596）五度出任大维齐尔，征也门、匈牙利皆自募塞克班（sekban）火枪手为部曲（维基「Koca Sinan Pasha」／《奥斯曼帝国史》）。
   osman_kapadan: { name: '阿扎普', tier: 3 },   // 卡帕丹帕夏｜奥斯｜布尔萨｜旧档无；卡帕丹帕夏即奥斯曼海军大臣（Kapudan Pasha），其桨船所载接舷陆战兵为阿扎普（azap），维基「Kapudan Pasha」「Azap」。为其驻布尔萨（帝国旧都、船厂所在）之海军本部。
-  gen_kara_mustafa: { name: '卡皮库鲁', tier: 3 },   // 卡拉·穆斯塔法｜奥斯｜布尔萨｜旧档无；1683年围维也纳，卡拉·穆斯塔法统卡皮库鲁（kapıkulu，宫廷常备步骑）为主力（维基「维也纳之战 (1683年)」）。
+  gen_kara_mustafa: { name: '卡皮库鲁', tier: 3 },   // 卡拉穆斯塔法｜奥斯｜布尔萨｜旧档无；1683年围维也纳，卡拉穆斯塔法统卡皮库鲁（kapıkulu，宫廷常备步骑）为主力（维基「维也纳之战 (1683年)」）。
   gen_mustafa_pasha: { name: '德里轻骑', tier: 4 },   // 穆斯塔法帕夏｜奥斯｜布尔萨｜旧档无；奥斯曼帝国时代巴尔干—安纳托利亚帕夏帐下突击轻骑为德里（deli，字面「狂人」），维基「Deli (military)」。
   gen_suleiman: { name: '穆特费里卡', tier: 2 },   // 苏莱曼｜奥斯｜布尔萨｜旧档无；苏莱曼一世亲征贝尔格莱德、罗得岛、莫哈奇（1526大捷）时随驾近卫骑兵即穆特费里卡（müteferrika），维基「Suleiman the Magnificent」。
   gen_bayezid_i: { name: '西帕希', tier: 3 },   // 巴耶济德一世｜奥斯｜布尔萨｜旧档无；1396年尼科波利斯之役，巴耶济德一世以安纳托利亚、鲁米利亚西帕希（sipahi）提马尔骑兵为主力大破十字军（维基「尼科波利斯战役」）。
@@ -348,7 +348,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   yangshe_yangshezhi: { name: '铜鞮私卒', tier: 4 },   // 羊舌职｜晋｜铜鞮｜旧档 铜鞮私卒 原样沿用：羊舌氏食邑铜鞮（今山西沁县），羊舌职为晋大夫（《左传·襄公三年》），私卒即其邑兵。
   gen_vernon: { name: '西印度舰队', tier: 3 },   // 弗农｜英｜坎佩尔｜弗农 1739–1742 年任西印度群岛海陆军总司令，率所部舰队攻波特贝洛、卡塔赫纳（维基「Edward Vernon」「Battle of Cartagena de Indias」）；18 世纪英国海外分舰队为其海军战力特色，属兵种特色一档。
   gen_suffolk: { name: '汉普郡兵', tier: 4 },   // 萨福克伯爵｜英｜温彻斯特｜萨福克伯爵 1428–29 年为奥尔良围城英军统帅，本部为英格兰骑士与郡征召兵（维基「William de la Pole, 1st Duke of Suffolk」「Siege of Orléans」）；据点温彻斯特即汉普郡治所，取本地郡兵为常规地方部曲。
-  yinggelan_warenne: { name: '萨里戍卒', tier: 4 },   // 约翰·德·瓦伦｜英｜伦敦｜约翰·德·瓦伦为第六代萨里伯爵，1296 年邓巴之战、1297 年斯特灵桥之战统英格兰封建征召军（维基「Battle of Stirling Bridge」「John de Warenne, 6th Earl of Surrey」），萨里即其伯爵领戍兵之地。
+  yinggelan_warenne: { name: '萨里戍卒', tier: 4 },   // 瓦伦｜英｜伦敦｜瓦伦为第六代萨里伯爵，1296 年邓巴之战、1297 年斯特灵桥之战统英格兰封建征召军（维基「Battle of Stirling Bridge」「John de Warenne, 6th Earl of Surrey」），萨里即其伯爵领戍兵之地。
   gen_alfred_great: { name: '塞恩亲兵', tier: 3 },   // 阿尔弗雷德｜英｜温彻斯特｜阿尔弗雷德以塞恩（thegn）亲兵为骨干，878 年埃丁顿之战率亲兵与民兵破丹麦大军（《盎格鲁-撒克逊编年史》878 年条；维基「Thegn」「Battle of Edington」），盎格鲁-撒克逊亲兵属兵种特色。
   gen_edward_longshanks: { name: '威尔士长弓', tier: 2 },   // 长腿爱德华｜英｜卡那封｜《武将百科》旧档改订；维基「Battle of Falkirk」(1298)：长腿爱德华以威尔士长弓手攒射破苏格兰长枪圆阵，长弓首成决胜兵种。
   gen_gilbert: { name: '卡菲利戍卒', tier: 4 },   // 吉尔伯特｜英｜格洛斯特｜吉尔伯特·德·克莱尔为第七代格洛斯特伯爵、格拉摩根领主，1271 年起建卡菲利城堡并驻军镇守威尔士边区（维基「Caerphilly Castle」「Gilbert de Clare, 7th Earl of Gloucester」）。
@@ -358,7 +358,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   dulan_muzaffarkhan: { name: '木尔坦戍卒', tier: 4 },   // 穆扎法尔汗｜杜兰｜马里斯｜穆扎法尔汗为木尔坦的阿富汗总督，1818 年城破战死；马里斯卫城墙高沟深，其守军即木尔坦戍卒（维基「Muzaffar Khan Sadozai」「Siege of Multan (1818)」；本库据点马里斯即木尔坦）。
   kuida_chakar: { name: '林德部骑', tier: 3 },   // 恰卡尔｜杜兰｜奎达｜恰卡尔为俾路支林德部（Rind）首领，俾路支部族史诗记其率林德部骑兵与拉沙尔部争战、据沙尔（今奎达）（俾路支《恰卡尔史诗》；维基「Chakar Khan Rind」），属民族固有军号一档。
   maikelan_punong: { name: '凯奇戍卒', tier: 4 },   // 普农｜杜兰｜特尔巴特｜普农为俾路支霍特氏族（Hot Baloch）凯奇河谷首领，居普纳堡（今特尔巴特，古称凯奇/Kech），部众即凯奇戍卒（维基「Turbat」；俾路支霍特氏族谱系「Punnun Fort」）。
-  bfe2_sin_shar_ishkun: { name: '尼尼微戍卒', tier: 4 },   // 辛·沙尔·伊什昆｜亚述｜尼尼微｜旧档无；《巴比伦编年史》记前612年米底与巴比伦联军围尼尼微，末代王辛·沙尔·伊什昆据城死战、城破身死（维基「尼尼微之战（前612年）」），戍城之兵即其本军，取驻地为号。
+  bfe2_sin_shar_ishkun: { name: '尼尼微戍卒', tier: 4 },   // 伊什昆｜亚述｜尼尼微｜旧档无；《巴比伦编年史》记前612年米底与巴比伦联军围尼尼微，末代王伊什昆据城死战、城破身死（维基「尼尼微之战（前612年）」），戍城之兵即其本军，取驻地为号。
   bfe2_shalmaneser_iii: { name: '尼尼微战车', tier: 3 },   // 沙尔马那塞尔三世｜亚述｜尼尼微｜旧档无；沙尔马那塞尔三世前853年西征卡尔卡尔，阵中战车约二千乘、骑兵五千五百（维基「卡尔卡尔之战」），亚述王军素以战车队为锋，尼尼微为其王城，故取兵种特色为号。
   bfe2_esarhaddon: { name: '沙雷希亲卫', tier: 2 },   // 以撒哈顿｜亚述｜尼尼微｜旧档无；前671年以撒哈顿渡西奈、克孟菲斯而灭埃及（维基「亚述征服埃及」），新亚述王家常备近卫称 ša rēši（「首上之人」），随王亲征为王军尖刀（维基「新亚述帝国的军事史」）。
   guyashu_shamushi: { name: '亚述城戍卒', tier: 4 },   // 沙姆希阿达｜亚述｜亚述城｜旧档无；《亚述王表》记沙姆希阿达一世（前1813–前1781）据亚述城、主阿淑尔神庙，古亚述尚无常备军，戍城之众即其本军，取驻地为号（维基「沙姆希阿达一世」）。
@@ -368,7 +368,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   tujue_abo_dagan: { name: '朔方游骑', tier: 4 },   // 阿波达干｜突厥｜头曼城｜旧档无；「达干」（tarqan）为突厥领兵官号，阿波达干以此号领部（《隋书·突厥传》突厥官制），头曼城在河套北朔方之地，漠南突厥部众以游骑为军，取驻地为号。
   tujue_wusumishi: { name: '于都斤牙帐', tier: 4 },   // 乌苏米施可汗｜突厥｜于都斤山｜旧档无；乌苏米施可汗为后突厥末代可汗，牙帐在于都斤山，天宝三载（744）为拔悉密、回纥所破被杀（《旧唐书·突厥传》），汗庭牙帐之众即其本军。
   pugu_ashinaguduolu: { name: '燕然劲骑', tier: 2 },   // 骨咄禄｜突厥｜燕然山｜旧档无；骨咄禄（颉跌利施可汗）永淳元年（682）起兵黑沙城、复后突厥，屡破唐军而建牙于都斤山（《旧唐书·突厥传》），燕然山即其劲骑出没之地。
-  bfe_qutlugh_khwaja: { name: '弓月戍卒', tier: 4 },   // 忽都鲁·火者｜蒙古｜弓月城｜旧档无；维基「都哇」记 1297 年都哇封其子忽都鲁火者为拉合尔统治者、1299 年率察合台军攻德里，弓月城（阿力麻里）为察合台汗国腹地，取驻地戍卒为号（CENTRAL_ASIA 本地部曲）。
+  bfe_qutlugh_khwaja: { name: '弓月戍卒', tier: 4 },   // 忽都鲁火者｜蒙古｜弓月城｜旧档无；维基「都哇」记 1297 年都哇封其子忽都鲁火者为拉合尔统治者、1299 年率察合台军攻德里，弓月城（阿力麻里）为察合台汗国腹地，取驻地戍卒为号（CENTRAL_ASIA 本地部曲）。
   menggu_d_mongke: { name: '和林宿卫', tier: 3 },   // 蒙哥｜蒙古｜哈拉和林｜旧档无；《元史·宪宗纪》记蒙哥 1251 年即位于阔帖兀阿阑、以哈拉和林为汗庭所在，大汗居和林置宿卫亲军，故取「和林宿卫」（维基「蒙哥」）。
   borjigin_tuolei: { name: '那可儿伴当', tier: 1 },   // 拖雷｜蒙古｜曲雕阿兰｜用本项目《武将百科》旧档 wikiElite＝那可儿伴当、wikiTier＝1；那可儿为蒙古伴当亲兵（《元朝秘史》），拖雷掌兀鲁思本部军，与旧档相合。
   dajin_wanyaneke: { name: '会宁猛安', tier: 4 },   // 完颜讹可｜金｜会宁府｜旧档无；《金史·卷111·完颜讹可传》记其为内族、护卫出身，正大八年与草火讹可将兵三万守河中力战；会宁府即金上京、猛安谋克故地（《金史·兵志》），取「会宁猛安」。
@@ -401,12 +401,12 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_bohdan_khmelnitsky: { name: '扎波罗热军', tier: 2 },   // 赫梅利｜哥萨｜塞契｜赫梅利为扎波罗热军（Військо Запорозьке）盖特曼，1648 年黄水、科尔松两战大破波军；维基「赫梅利尼茨基起义」。固有军号，非人名。
   gen_vyshnevetsky: { name: '切尔卡瑟团', tier: 4 },   // 拜达｜哥萨｜切尔卡瑟｜维什涅韦茨基（拜达）任切尔卡瑟长老（starosta），1556 年建霍尔蒂察塞契；切尔卡瑟团为注册哥萨克老团，维基「Dmytro Vyshnevetsky」。
   gen_mikhail_tatarinov: { name: '顿河哥萨', tier: 3 },   // 塔塔里诺夫｜哥萨｜维申斯卡亚｜「顿河军」与莫斯科三将（T2）同名异档，改；塔塔里诺夫为顿河哥萨克阿塔曼，1637 取亚速、1641 亚速坐困（《苏联大百科全书》「亚速坐困」条）。
-  gen_caffa_consul: { name: '卡法戍卒', tier: 4 },   // 奥贝托·斯夸尔｜热亚｜卡法｜卡法为热那亚黑海殖民地的领事驻地，设戍军与弩手守城，1346—47 年贾尼别围城；维基「Siege of Caffa」。
+  gen_caffa_consul: { name: '卡法戍卒', tier: 4 },   // 斯夸尔｜热亚｜卡法｜卡法为热那亚黑海殖民地的领事驻地，设戍军与弩手守城，1346—47 年贾尼别围城；维基「Siege of Caffa」。
   gen_valdivia: { name: '智利戍卒', tier: 3 },   // 瓦尔迪维亚｜西｜利马｜瓦尔迪维亚 1540 年自利马受皮萨罗委为智利副总督，率远征队南征，1541 建圣地亚哥、1550 建康塞普西翁，其部即智利首批常驻戍军；维基「Pedro de Valdivia」「图卡佩尔之战」（旧档空，自拟地方戍卒番号，不借「征服者」势力号）。
   gen_medinaceli: { name: '西西里方阵', tier: 4 },   // 梅迪纳科利｜西｜利马｜梅迪纳科利公爵胡安·德·拉·塞尔达 1557–1564 任西西里总督兼统帅、1560 率舰队征的黎波里败于杰尔巴岛，所辖即西西里方阵（Tercio de Sicilia）；Treccani「Medinaceli, Juan de la Cerda」。（旧档空，按其本任驻军自拟）
   bfe3_25: { name: '泰米尔戍卒', tier: 4 },   // 埃拉拉｜朱罗｜坦贾武尔｜《大史》（Mahavamsa）记埃拉拉为「Damila」（泰米尔）王，率注辇军渡海据阿努拉德普勒四十四年，以泰米尔戍军守其地；维基「Ellalan」。（旧档空，自拟戍卒番号）
   zhuluo_lajindela: { name: '注辇水师', tier: 2 },   // 拉金德拉一世｜朱罗｜坦贾武尔｜坦贾武尔铭文载拉金德拉一世 1014–1017 年遣水师渡海破三佛齐（Kadaram），为朱罗海军最大远征；《宋史·外国传五·注辇》亦记注辇国；维基「Rajendra I」。（旧档空，取政权固有军号「注辇水师」，与埃拉拉分开）
-  gen_abu_yahya: { name: '胡法兹锐士', tier: 3 },   // 阿布·叶海亚｜穆瓦｜拉巴特｜穆瓦希德以伊本·图马尔特所立「胡法兹」（Ḥuffāẓ，教义记诵者）为军中之锐，都城里巴特·法特赫为其教团军屯之地；阿布·叶海亚为穆瓦希德宗室、马略卡总督，1229 年守马略卡战死；维基「Conquest of Majorca」。（旧档空，考据自拟）
+  gen_abu_yahya: { name: '胡法兹锐士', tier: 3 },   // 阿布叶海亚｜穆瓦｜拉巴特｜穆瓦希德以伊本·图马尔特所立「胡法兹」（Ḥuffāẓ，教义记诵者）为军中之锐，都城里巴特·法特赫为其教团军屯之地；阿布叶海亚为穆瓦希德宗室、马略卡总督，1229 年守马略卡战死；维基「Conquest of Majorca」。（旧档空，考据自拟）
   muwaxide_axatafu: { name: '安达卢斯兵', tier: 4 },   // 阿夏塔夫｜穆瓦｜1248 年塞维利亚守将阿夏塔夫（穆瓦希德宗室）率安达卢斯城兵抗卡斯蒂利亚的费尔南多三世，城破出降；维基「Siege of Seville」、《西班牙编年史》（Primera Crónica General）。（旧档空，自拟地方部曲番号）
   sengjialuo_mahinda_v: { name: '罗哈纳戍卒', tier: 4 },   // 摩哂陀五世｜僧伽｜阿努拉德｜摩哂陀五世 993 年弃阿努拉德普勒退保罗哈纳（Rohana），1017 年为注辇所俘；《大史》续篇 Culavamsa、维基「Mahinda V」。（旧档空，按其退守地戍军自拟）
   gen_binnya_dala: { name: '孟族象兵', tier: 4 },   // 彬尼亚达拉｜汉达｜勃固｜彬尼亚达拉为孟族汉达瓦底末王，1757 年阿朗帕耶围勃固，其率孟族象军守城，城破被俘；《琉璃宫史》、维基「Binnya Dala」。（旧档空，取民族固有军号自拟）
@@ -618,13 +618,13 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   talike_talike: { name: '直布罗陀军', tier: 2 },          // 塔里克：渡直布罗陀征服西哥特之本部。
   womaya_muaweiye: { name: '叙利亚军', tier: 3 },          // 穆阿维叶：长期任叙利亚总督之本部军。
   gen_abd_al_rahman_iii: { name: '科尔多瓦军', tier: 3 },  // 拉赫曼三世：科尔多瓦哈里发王军。
-  womaya_abdrahman: { name: '安达卢斯军', tier: 3 },       // 阿卜杜勒·拉赫曼一世：入安达卢斯建立后倭马亚之本部。
+  womaya_abdrahman: { name: '安达卢斯军', tier: 3 },       // 拉赫曼一世：入安达卢斯建立后倭马亚之本部。
 
   // [2026-10-26 主人令] 名将专属番号按史拆分：一支有明确历史主人的精锐不再由多位名将共带。
   gen_sadashivrao: { name: '马拉塔军', tier: 3 },         // 萨达希夫：马拉塔北伐军，第三次帕尼帕特战役本部。
   gen_hemu: { name: '苏尔军', tier: 3 },                 // 赫穆：苏尔王朝军，第二次帕尼帕特战役本部。
   deli_alawuding: { name: '卡尔吉军', tier: 2 },          // 阿拉乌丁：卡尔吉王朝军，屡败蒙古并征服德干诸国。
-  gen_ibrahim_lodi: { name: '洛迪军', tier: 3 },          // 易卜拉欣·洛迪：第一次帕尼帕特战役的洛迪王军。
+  gen_ibrahim_lodi: { name: '洛迪军', tier: 3 },          // 洛迪：第一次帕尼帕特战役的洛迪王军。
   xindu_bahelamuhan: { name: '帕尼帕特军', tier: 2 },     // 拜拉姆汗：1556 第二次帕尼帕特战役击败赫穆之本部。
   muertan_naxierding: { name: '木尔坦军', tier: 3 },      // 纳西尔丁·卡巴恰：据乌奇、木尔坦的割据军。
   gen_lajos_ii: { name: '莫哈奇军', tier: 3 },           // 拉约什二世：1526 莫哈奇战役匈牙利王军。
@@ -646,10 +646,10 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_mamai: { name: '蓝帐军', tier: 3 },                // 马麦：金帐汗国西部蓝帐系军。
   jinzhang_nogai: { name: '那海部骑', tier: 3 },          // 那海：所统那海兀鲁思骑军。
   gen_tashfin: { name: '萨拉卡军', tier: 2 },             // 优素福·本·塔什芬：1086 萨拉卡会战穆拉比特军。
-  malin_abulhasan: { name: '马拉喀什军', tier: 3 },       // 阿布·哈桑·阿里：马林王朝马拉喀什本部。
+  malin_abulhasan: { name: '马拉喀什军', tier: 3 },       // 阿布哈桑：马林王朝马拉喀什本部。
   gen_kusaila: { name: '柏柏尔义军', tier: 3 },           // 库赛拉：抗击倭马亚的柏柏尔部众。
   gen_yaqub_saffar: { name: '锡斯坦军', tier: 3 },        // 雅各布·本·莱斯：锡斯坦萨法尔王朝本部。
-  xisi_amr: { name: '巴尔赫军', tier: 3 },               // 阿姆尔·本·莱斯：据巴尔赫与呼罗珊之本部。
+  xisi_amr: { name: '巴尔赫军', tier: 3 },               // 阿姆尔：据巴尔赫与呼罗珊之本部。
   zhalange_barsaentes: { name: '扎兰季军', tier: 3 },     // 巴尔塞恩特斯：扎兰季地方本部，不占萨法尔王朝番号。
   gen_charles_xii: { name: '卡罗林军', tier: 2 },         // 查理十二：大北方战争中的瑞典卡罗林军。
   tuolemi_tuolemi: { name: '加沙军', tier: 2 },           // 托勒密一世：前312 加沙会战联军本部。
@@ -709,7 +709,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_thoros: { name: '奇里乞亚军', tier: 3 },           // 托罗斯二世：奇里乞亚亚美尼亚本部，非乌拉尔图军。
   gen_villaret: { name: '罗德岛骑士', tier: 3 },         // 维拉雷：罗德岛医院骑士团，与马耳他大围攻区分。
   gen_toghtekin: { name: '大马士革军', tier: 3 },        // 图格特金：大马士革阿塔贝格本部，非萨迈拉古拉姆。
-  bfe_abdullah_ali: { name: '尼西比斯军', tier: 3 },     // 阿卜杜拉·本·阿里：754 尼西比斯叛乱所部。
+  bfe_abdullah_ali: { name: '尼西比斯军', tier: 3 },     // 阿卜杜拉：754 尼西比斯叛乱所部。
   bfe2_antiphilus: { name: '拉米亚舰队', tier: 3 },      // 安提菲卢斯：拉米亚战争雅典舰队，不占萨拉米斯舰。
   bfe2_cleon: { name: '斯法克军', tier: 2 },             // 克里昂：前425 斯法克特里亚受降斯巴达军之本部。
   fujisi_fujiweng: { name: '雅典舰队', tier: 3 },        // 福基翁：雅典海军本部，不占萨拉米斯舰。
@@ -724,13 +724,13 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
 
   // [2026-10-26 剩余通制兵逐组复核] 只拆跨政权、跨时代及有明确主人的番号；同朝同军通制兵不另造名。
   ribale_faheerdaolai: { name: '德莱木军', tier: 3 },     // 法赫尔道莱：白益王朝德莱木本部，非阿拔斯黑衣卫。
-  youfaladi_yehaiya: { name: '巴尔马克军', tier: 4 },     // 叶海亚·巴尔马克：巴尔马克家族部曲，非哈里发禁卫。
-  aliya_muhammad_tahir: { name: '塔希尔军', tier: 3 },    // 穆罕默德·塔希尔：塔希尔王朝呼罗珊本部。
+  youfaladi_yehaiya: { name: '巴尔马克军', tier: 4 },     // 巴尔马克：巴尔马克家族部曲，非哈里发禁卫。
+  aliya_muhammad_tahir: { name: '塔希尔军', tier: 3 },    // 塔希尔：塔希尔王朝呼罗珊本部。
   bfe2_xerxes_i: { name: '长生军', tier: 2 },           // 薛西斯一世：前480 远征希腊的波斯王军，非埃兰战车。
   lulisitan_shoujiang: { name: '卢里斯军', tier: 4 },     // 卢里斯坦守将：地方守军，不占古埃兰番号。
   jiaye_punafamo: { name: '迦摩缕波军', tier: 3 },        // 普那伐摩：迦摩缕波伐摩王朝本部，非孔雀帝国战象。
   muxikani_muxikanuosi: { name: '阿罗尔军', tier: 3 },    // 穆西卡诺斯：印度河下游阿罗尔本国军，非孔雀帝国战象。
-  sailiugu_yaghi: { name: '塞尔柱守军', tier: 3 },        // 雅吉·西扬：1098 安条克塞尔柱守军，非古代塞琉古方阵。
+  sailiugu_yaghi: { name: '塞尔柱守军', tier: 3 },        // 雅吉西扬：1098 安条克塞尔柱守军，非古代塞琉古方阵。
   gen_carpini: { name: '安提瓦里军', tier: 4 },           // 柏朗嘉宾：1247—1252 任安提瓦里大主教，按驻地地方军配 T4，不占杜尚兵团。
   bfe3_83: { name: '成汉军', tier: 3 },                  // 李势：成汉末帝成都本部，不占祖父李特的流民帅突骑。
 };

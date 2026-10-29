@@ -10,7 +10,7 @@ export const ANDE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     mapuche: { name: '科纳勇士', tier: 3 },      // 图卡佩尔·劳塔罗：马普切精英青年战士，图卡佩尔大捷
     muisca: { name: '格查战士', tier: 3 },       // 巴卡塔·萨瓜曼奇卡：穆伊斯卡精锐战士（木乃伊传统）
     tupi: { name: '图皮战士', tier: 4 },         // 瓜纳巴拉·阿拉里博亚：图皮弓手
-    tupinijin: { name: '巴西拓殖卫', tier: 4 },  // 圣维森特·马丁·阿方索：1532 葡属巴西首座拓殖镇守军
+    tupinijin: { name: '巴西拓殖卫', tier: 4 },  // 圣维森特·马丁阿方索：1532 葡属巴西首座拓殖镇守军
     xibanya: { name: '征服者', tier: 1 },        // 利马·皮萨罗：西班牙火枪骑兵（征服印加）
     aimala: { name: '艾马拉战士', tier: 4 },
     yilaka: { name: '圭查武士', tier: 3 },

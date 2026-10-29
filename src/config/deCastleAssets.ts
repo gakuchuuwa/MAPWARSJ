@@ -143,7 +143,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     champa: 'SEAS_CASTLE_AGE3',            // 占婆（美山关隘·制蓬峨）
     pagan: 'BURM_CASTLE_AGE3',             // 缅国（蒲甘）
     hantawadi: 'BURM_CASTLE_AGE3',         // 汉达瓦底
-    miandian: 'BURM_CASTLE_AGE3',          // 缅甸（三塔关摩诃·悉都）
+    miandian: 'BURM_CASTLE_AGE3',          // 缅甸（三塔关摩诃悉都）
     malacca: 'MALA_CASTLE_AGE3',           // 满剌加
     medang: 'MALA_CASTLE_AGE3',           // 马打蓝
     yelusalengwg: 'MEDI_CASTLE_AGE3',      // 耶路撒冷王国(十字军)

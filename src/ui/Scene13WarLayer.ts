@@ -8814,13 +8814,24 @@ export class Scene13WarLayer {
             return;
         }
         const mk = m.key.toLowerCase();
+        const isSiegeTower = mk.includes('siege_tower') || mk.includes('helepolis');
+        const isSiegeMachine = m.siegeW || mk.includes('ram') || mk.includes('mangonel') || mk.includes('trebuchet') || mk.includes('scorpion') || mk.includes('onager') || mk.includes('cannon') || mk.includes('ballista') || isSiegeTower;
         if (mk.includes('elephant')) {
             audioManager.play('elephant_die');
-        } else if (m.siegeW || mk.includes('wagon') || mk.includes('chariot')) {
+        } else if (isSiegeMachine || mk.includes('wagon') || mk.includes('chariot')) {
             audioManager.play('siege_destroyed');
         }
+        // 🔴 [DE 口径] 攻城器械（尤其攻城塔/赫勒波利斯）坍塌崩解：
+        //    DE 原版建筑与高塔摧毁时，在原位瞬间爆发大团木构爆裂与冲天碎石烟尘（FX_TREBUCHET_SMOKE / FX_WALL_DUST），
+        //    彻底掩盖从高耸木塔到地面矮残骸的高度差，烟尘消散后呈现地面积存残骸。
+        if (isSiegeTower) {
+            this.spawnFx('FX_TREBUCHET_SMOKE', m.x, m.y - 48, 0);
+            this.spawnFx('FX_WALL_DUST', m.x, m.y, 0);
+        } else if (isSiegeMachine) {
+            this.spawnFx('FX_WALL_DUST', m.x, m.y, 0);
+        }
         // 🔴 [2026-09-15 主人定] 攻城武器阵亡不能逃跑，只能留下尸体（残骸），永不进 fleers 通道。
-        if (m.siegeW) {
+        if (m.siegeW || isSiegeMachine) {
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;
         }

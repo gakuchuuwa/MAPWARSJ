@@ -53,9 +53,9 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_uaxaclajuun: { birth: 675, death: 738, debut: 695 }, // 科潘第十三代王“十八兔”，碑铭精确记载675年生、738年殉国
     gen_harkhuf: { birth: -2290, death: -2230, kaoju: '推定' }, // 古埃及第六王朝象岛省督，麦伦拉至佩皮二世朝，约前23世纪
     luanda_novais: { birth: 1510, death: 1589, kaoju: '推定' },  // 诺瓦伊斯（约1510–1589）
-    capetown_riebeeck: { birth: 1619, death: 1677 },           // 扬·范·里贝克（1619–1677）
+    capetown_riebeeck: { birth: 1619, death: 1677 },           // 里贝克（1619–1677）
 
-    mombasa_yusuf: { birth: 1607, death: 1638, kaoju: '推定' },  // 优素福·本·哈桑（约1607–1638）
+    mombasa_yusuf: { birth: 1607, death: 1638, kaoju: '推定' },  // 优素福（约1607–1638）
 
     // ── 上古/神话：主人定的主流学术断代定值（2026-10-15）──
     sumeier_zhajixi: { birth: -2359, death: -2335, kaoju: '推定' },      // 扎吉西（卢加尔扎克西）
@@ -209,17 +209,17 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bfe2_cleombrotus_i: { birth: -410, death: -371, kaoju: '推定' },
     bfe_callias: { birth: -400, death: -330, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 卡利斯（卡尔基斯）：前4世纪中期人（原 -520~-480 误）
     bfe_bomilcar: { birth: -330, death: -308, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 波米尔卡：迦太基将领，前308 死（原 -270~-210 误）
-    bfe_gaius_livius: { birth: -260, death: -170, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 盖乌斯·李维乌斯：前190 欧里梅敦罗马统帅（原 -280~-220 误）
+    bfe_gaius_livius: { birth: -260, death: -170, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 李维乌斯：前190 欧里梅敦罗马统帅（原 -280~-220 误）
     bfe3_51: { birth: -75, death: -20, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 盖乌斯·佩特罗尼乌斯：前25–前21 任埃及总督（原 20–60 误）
     bfe3_63: { birth: -5, death: 69, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 霍尔多尼乌斯：69 年罗马日耳曼总督，同年死（原 200–250 误）
-    bfe_isaac_komnenos: { birth: 1155, death: 1196, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 伊萨克·科穆宁（塞浦路斯）：1184–1191 在位，1196 卒（原 1007–1060 误）
+    bfe_isaac_komnenos: { birth: 1155, death: 1196, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 伊萨克（塞浦路斯）：1184–1191 在位，1196 卒（原 1007–1060 误）
     bfe2_esarhaddon: { birth: -700, death: -669, kaoju: '推定' },
     bfe2_shalmaneser_iii: { birth: -880, death: -824, kaoju: '推定' },
     bfe2_sin_shar_ishkun: { birth: -660, death: -612, kaoju: '推定' },
     bfe2_nabonidus: { birth: -600, death: -539, kaoju: '推定' },
-    bfe2_enlil_nadin_ahi: { birth: -1190, death: -1155, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 恩利尔纳丁·阿基：加喜特末王，约前1157–1155 在位（原 -1130~-1100 误）
+    bfe2_enlil_nadin_ahi: { birth: -1190, death: -1155, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 恩利尔纳丁：加喜特末王，约前1157–1155 在位（原 -1130~-1100 误）
     bfe2_nidintu_bel: { birth: -560, death: -521, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 尼丁图-贝尔：前522–521 巴比伦反叛之王，前521 被大流士处死
-    bfe2_yahdun_lim: { birth: -1850, death: -1794, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 亚赫敦·林：马里王，约前1794 卒（原 -1798 误）
+    bfe2_yahdun_lim: { birth: -1850, death: -1794, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 亚赫敦林：马里王，约前1794 卒（原 -1798 误）
     bfe2_rezin: { birth: -790, death: -732, kaoju: '推定' },
     bfe_meherdates: { birth: 20, death: 49, kaoju: '推定' },
     bfe_achish: { birth: -1080, death: -1000, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 亚吉：迦特王，大卫同时代人（原卒 -1030 误）
@@ -250,7 +250,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_binnya_dala: { birth: 1700, death: 1757, kaoju: '推定' }, // 彬尼亚达拉（汉达瓦底末王）
     gen_chogtu_khan: { birth: 1580, death: 1637, kaoju: '推定' }, // 却图汗（喀尔喀）
     gen_liu_guoxuan: { birth: 1629, death: 1693 },        // 刘国轩（明郑澎湖守将）
-    gen_kara_mustafa: { birth: 1634, death: 1683 },       // 卡拉·穆斯塔法帕夏
+    gen_kara_mustafa: { birth: 1634, death: 1683 },       // 卡拉穆斯塔法帕夏
     gen_kangxi: { birth: 1654, death: 1722 },             // 康熙帝
     gen_charles_xii: { birth: 1682, death: 1718 },        // 查理十二（瑞典国王）
     gen_akechi_mitsuhide: { birth: 1528, death: 1582 },   // 明智光秀
@@ -277,7 +277,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_beg_arslan: { birth: 1420, death: 1479, kaoju: '推定' }, // 癿加思兰（鞑靼太师）
     gen_muhammad_xii: { birth: 1460, death: 1533 },        // 穆罕默德十二世（格拉纳达末代苏丹）
     gen_maximilian_sforza: { birth: 1493, death: 1530 },   // 斯福尔扎（米兰公爵）
-    gen_ibrahim_lodi: { birth: 1480, death: 1526, kaoju: '推定' }, // 易卜拉欣·洛迪（德里苏丹）
+    gen_ibrahim_lodi: { birth: 1480, death: 1526, kaoju: '推定' }, // 洛迪（德里苏丹）
     gen_boucicaut: { birth: 1366, death: 1421 },          // 布锡考特（法国元帅）
     gen_suffolk: { birth: 1396, death: 1450 },            // 萨福克伯爵（英军统帅）
     gen_wangzhen: { birth: 1370, death: 1449, kaoju: '推定' }, // 王振（明司礼监太监）
@@ -289,20 +289,20 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_vukasin: { birth: 1320, death: 1371 },            // 武卡辛（塞尔维亚领主）
     gen_mamai: { birth: 1335, death: 1381, kaoju: '推定' }, // 马麦（金帐权臣）
     gen_juan_i_castile: { birth: 1358, death: 1390 },     // 胡安一世（卡斯蒂利亚国王）
-    gen_abu_yahya: { birth: 1190, death: 1229, kaoju: '推定' },           // 阿布·叶海亚（马略卡总督）
-    gen_pietro_tiepolo: { birth: 1200, death: 1250, kaoju: '推定' },      // 皮耶罗·提埃波洛（米兰执政官）
-    gen_kutlug_buga: { birth: 1300, death: 1363, kaoju: '推定' },         // 库特卢格·布加（金帐王公）
-    gen_ali_ibn_yusuf: { birth: 1084, death: 1143 },              // 阿里·本·优素福（穆拉比特埃米尔）
+    gen_abu_yahya: { birth: 1190, death: 1229, kaoju: '推定' },           // 阿布叶海亚（马略卡总督）
+    gen_pietro_tiepolo: { birth: 1200, death: 1250, kaoju: '推定' },      // 提埃波洛（米兰执政官）
+    gen_kutlug_buga: { birth: 1300, death: 1363, kaoju: '推定' },         // 库特卢格（金帐王公）
+    gen_ali_ibn_yusuf: { birth: 1084, death: 1143 },              // 阿里优素福（穆拉比特埃米尔）
     gen_kusaila: { birth: 620, death: 690, kaoju: '推定' },              // 库赛拉（柏柏尔王）
-    malin_abulhasan: { birth: 1297, death: 1351 },              // 阿布·哈桑·阿里（马林苏丹）
+    malin_abulhasan: { birth: 1297, death: 1351 },              // 阿布哈桑（马林苏丹）
     zhao_gerong: { birth: 495, death: 528, kaoju: '推定' },       // 葛荣（六镇起义首领）
     gen_ramiro_ii: { birth: 900, death: 951 },             // 拉米罗二世（莱昂国王）
     mazhaer_charles_i: { birth: 1288, death: 1342 },       // 查理一世（匈牙利）
-    baojialiya_mikhail: { birth: 1280, death: 1330, kaoju: '推定' },  // 米哈伊尔·希什曼（保加利亚沙皇）
+    baojialiya_mikhail: { birth: 1280, death: 1330, kaoju: '推定' },  // 希什曼（保加利亚沙皇）
     yuan_d_tuotuo: { birth: 1314, death: 1356 },           // 脱脱（元末丞相）
     yuan_d_manzihaiya: { birth: 1300, death: 1360, kaoju: '推定' },   // 蛮子海牙（元将）
     yuan_d_daulashah: { birth: 1280, death: 1328, kaoju: '推定' },  // 倒剌沙（元上都派权臣）
-    yinggelan_warenne: { birth: 1231, death: 1304 },       // 约翰·德·瓦伦
+    yinggelan_warenne: { birth: 1231, death: 1304 },       // 瓦伦
     gaolu_john_ii: { birth: 1319, death: 1364 },           // 约翰二世（法兰西国王）
     xiliao_uthman: { birth: 1175, death: 1212 },            // 奥斯曼（西喀喇汗末王）
     hre_manfred: { birth: 1232, death: 1266 },              // 曼弗雷德（西西里王）
@@ -324,14 +324,14 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     baizanting_alexios_v: { birth: 1140, death: 1205, kaoju: '推定' },  // 阿莱克修斯五世
     liao_d_tianzuodi: { birth: 1075, death: 1128 },                // 天祚帝耶律延禧
     song_zhangjun: { birth: 1097, death: 1164 },                   // 张浚（南宋川陕主帅）
-    jiazini_khusrau_malik: { birth: 1130, death: 1191, kaoju: '推定' },  // 呼斯劳·马利克（伽色尼末王）
-    gaer_sigtrygg: { birth: 960, death: 1042, kaoju: '推定' },   // 西格特里格·丝须
+    jiazini_khusrau_malik: { birth: 1130, death: 1191, kaoju: '推定' },  // 呼斯劳（伽色尼末王）
+    gaer_sigtrygg: { birth: 960, death: 1042, kaoju: '推定' },   // 西格特里格
     suomunate_bhima_i: { birth: 990, death: 1064, kaoju: '推定' }, // 毗摩一世
     song_renfu: { birth: 980, death: 1041, kaoju: '推定' },        // 任福（好水川战死）
     luoma_diguo_leo_ix: { birth: 1002, death: 1054 },              // 教皇利奥九世
     tubo_muzheng: { birth: 1030, death: 1090, kaoju: '推定' },     // 木征（吐蕃熙河首领）
     womaya_yahya: { birth: 1030, death: 1092, kaoju: '推定' },     // 叶海亚（托莱多泰法王）
-    sailiugu_yaghi: { birth: 1030, death: 1098, kaoju: '推定' },   // 雅吉·西扬（安条克守将）
+    sailiugu_yaghi: { birth: 1030, death: 1098, kaoju: '推定' },   // 雅吉西扬（安条克守将）
     sengjialuo_mahinda_v: { birth: 960, death: 1017, kaoju: '推定' },  // 摩哂陀五世（僧伽罗王）
     liao_d_handewei: { birth: 940, death: 1000, kaoju: '推定' },       // 韩德威（辽将）
     song_peiji: { birth: 950, death: 1002, kaoju: '推定' },            // 裴济（灵州殉国）
@@ -346,10 +346,10 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     dang_d_pangshigu: { birth: 850, death: 897, kaoju: '推定' },     // 庞师古（清口战死）
     liang_d_wangjingren: { birth: 860, death: 920, kaoju: '推定' },  // 王景仁（后梁将）
 liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁（后梁宗室将；903 石楼阵亡）
-    xisi_amr: { birth: 830, death: 902, kaoju: '推定' },            // 阿姆尔·本·莱斯（萨法尔埃米尔）
+    xisi_amr: { birth: 830, death: 902, kaoju: '推定' },            // 阿姆尔（萨法尔埃米尔）
     baizanting_romanosi: { birth: 870, death: 948 },                // 罗曼努斯一世（拜占庭皇帝）
     danmai_guthrum: { birth: 840, death: 890, kaoju: '推定' },        // 古思伦（丹麦维京首领）
-    aliya_muhammad_tahir: { birth: 820, death: 873, kaoju: '推定' },  // 穆罕默德·塔希尔（塔希尔末王）
+    aliya_muhammad_tahir: { birth: 820, death: 873, kaoju: '推定' },  // 塔希尔（塔希尔末王）
     huihu_wusa: { birth: 790, death: 840, kaoju: '推定' },      // 㕎馺可汗（回鹘末代可汗）
     abasi_muwafake: { birth: 844, death: 891 },                // 穆瓦法克（阿拔斯摄政）
     falanji_kalman: { birth: 830, death: 880 },                // 卡洛曼（巴伐利亚王）
@@ -364,8 +364,8 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     zhuozhou_shisiming: { birth: 703, death: 761 },                   // 史思明（大燕帝）
     xijue_ashina_funian: { birth: 640, death: 681, kaoju: '推定' },   // 阿史那匐念（西突厥十姓可汗）
     xigete_roderic: { birth: 688, death: 711, kaoju: '推定' },        // 罗德里克（西哥特末王）
-    womaya_muslim: { birth: 670, death: 730, kaoju: '推定' },         // 穆斯林·本·赛义德
-    womaya_abdrahman: { birth: 680, death: 732, kaoju: '推定' },      // 阿卜杜勒·拉赫曼（普瓦捷战死）
+    womaya_muslim: { birth: 670, death: 730, kaoju: '推定' },         // 穆斯林
+    womaya_abdrahman: { birth: 680, death: 732, kaoju: '推定' },      // 拉赫曼（普瓦捷战死）
     rierman_odoacer: { birth: 433, death: 493 },                   // 奥多亚克
     yidou_qixin: { birth: 550, death: 589, kaoju: '推定' },        // 戚昕
     maidina_ali: { birth: 600, death: 661 },                       // 阿里（第四任正统哈里发）
@@ -484,19 +484,19 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     yidali_wangguo_garibaldi: { birth: 1807, death: 1882 },  // 加里波第
     luxitaniya_viriathus: { birth: -180, death: -139, kaoju: '推定' },  // 维里亚图斯
     tuoerkete_topiltzin: { birth: 900, death: 947, kaoju: '推定' },  // 托皮尔岑
-    yadian_gongguo_otto: { birth: 1170, death: 1234, kaoju: '推定' },  // 奥托·德·拉罗什
-    mayapan_hunac_ceel: { birth: 1220, death: 1300, kaoju: '推定' },  // 胡纳克·塞尔
-    songhai_askia_muhammad: { birth: 1443, death: 1538 },  // 阿斯基亚·穆罕默德
+    yadian_gongguo_otto: { birth: 1170, death: 1234, kaoju: '推定' },  // 拉罗什
+    mayapan_hunac_ceel: { birth: 1220, death: 1300, kaoju: '推定' },  // 胡纳克
+    songhai_askia_muhammad: { birth: 1443, death: 1538 },  // 阿斯基亚
     shahi_jayapala: { birth: 940, death: 1002, kaoju: '推定' },  // 贾亚帕拉
     xisa_chastana: { birth: 60, death: 130, kaoju: '推定' },  // 查斯塔纳
     xilawangguo_kolokotronis: { birth: 1770, death: 1843 },  // 科洛科特罗尼斯
     ante_boz: { birth: 350, death: 376, kaoju: '推定' },  // 博兹
     suweihui_requiarius: { birth: 430, death: 500, kaoju: '推定' },  // 雷基亚尔
-    baizanting_nikephoros_phokas: { birth: 912, death: 969 },  // 尼基弗鲁斯·福卡斯
+    baizanting_nikephoros_phokas: { birth: 912, death: 969 },  // 尼基弗鲁斯
     yibiluliya_pharnavaz: { birth: -360, death: -280, kaoju: '推定' },  // 法尔纳瓦兹一世
     gelujiya_erekle_ii: { birth: 1720, death: 1798 },  // 埃雷克莱二世
     litaowan_ostrogski: { birth: 1460, death: 1530 },  // 奥斯特罗格斯基
-    wulaertu_davit_bek: { birth: 1650, death: 1730, kaoju: '推定' },  // 达维德·贝克
+    wulaertu_davit_bek: { birth: 1650, death: 1730, kaoju: '推定' },  // 达维德
     baojialiya_levski: { birth: 1837, death: 1873 },  // 列夫斯基
     yicha_canek: { birth: 1540, death: 1600, kaoju: '推定' },  // 卡内克
     mengjiala_shamsuddin: { birth: 1300, death: 1358, kaoju: '推定' },  // 沙姆斯丁
@@ -507,15 +507,15 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     bfe_mustafa_ii: { birth: 1664, death: 1703 },  // 穆斯塔法二世
     bfe_perozes: { birth: 500, death: 530, kaoju: '推定' },  // 佩罗泽斯
     bfe_mansfeld: { birth: 1580, death: 1626 },  // 曼斯菲尔德
-    bfe_sonni_baru: { birth: 1450, death: 1500, kaoju: '推定' },  // 桑尼·巴鲁
-    bfe_agha_mohammad: { birth: 1742, death: 1797 },  // 阿迦·穆罕默德汗
+    bfe_sonni_baru: { birth: 1450, death: 1500, kaoju: '推定' },  // 桑尼巴鲁
+    bfe_agha_mohammad: { birth: 1742, death: 1797 },  // 阿迦穆罕默德
     bfe_landi: { birth: 1800, death: 1870, kaoju: '推定' },  // 兰迪
     bfe_kehaya_mustafa: { birth: 1770, death: 1830, kaoju: '推定' },  // 穆斯塔法（凯哈亚）
     xilawangguo_petros: { birth: 1765, death: 1848 },  // 马夫罗米哈利斯
-    bfe_abdulaziz_crete: { birth: 900, death: 961, kaoju: '推定' },  // 阿卜杜勒·阿齐兹（克里特埃米尔）
+    bfe_abdulaziz_crete: { birth: 900, death: 961, kaoju: '推定' },  // 阿齐兹（克里特埃米尔）
     eluosi_diguo_apraksin: { birth: 1659, death: 1728 },  // 阿普拉克辛
-    bfe_peter_delyan: { birth: 1000, death: 1041, kaoju: '推定' },  // 彼得·德良
-    bfe_gotse_delchev: { birth: 1872, death: 1903 },  // 戈采·代尔切夫
+    bfe_peter_delyan: { birth: 1000, death: 1041, kaoju: '推定' },  // 彼得德良
+    bfe_gotse_delchev: { birth: 1872, death: 1903 },  // 代尔切夫
     bfe_vitalian: { birth: 460, death: 520, kaoju: '推定' },  // 维塔利安
     bfe_alexios_branas: { birth: 1130, death: 1187, kaoju: '推定' },  // 布拉纳斯
     bfe_dimitriev: { birth: 1859, death: 1918 },  // 卡拉·费兹
@@ -527,9 +527,9 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     bfe_maniakes: { birth: 998, death: 1043, kaoju: '推定' },  // 马尼亚克
     bfe_rhetogenes: { birth: -190, death: -133, kaoju: '推定' },  // 雷图格诺斯
     bfe_purnavarman: { birth: 375, death: 434, kaoju: '推定' },  // 普尔纳跋摩
-    maya_siyaj_kak: { birth: 340, death: 410, kaoju: '推定' },  // 西亚赫·卡克
-    bfe_apokaukos: { birth: 940, death: 1000, kaoju: '推定' },  // 巴希尔·阿波卡夫科斯
-    baizanting_thomas: { birth: 1409, death: 1465 },  // 托马·巴列奥略
+    maya_siyaj_kak: { birth: 340, death: 410, kaoju: '推定' },  // 西亚赫卡克
+    bfe_apokaukos: { birth: 940, death: 1000, kaoju: '推定' },  // 阿波卡夫
+    baizanting_thomas: { birth: 1409, death: 1465 },  // 巴列奥略
     bfe_maroboduus: { birth: -30, death: 37, kaoju: '推定' },  // 马罗博杜斯
     yili_bato: { birth: -30, death: 9, kaoju: '推定' },  // 巴托
     daqiya_burebista: { birth: -100, death: -44, kaoju: '推定' },  // 布雷比斯塔
@@ -571,7 +571,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     dayu_wangshouren: { birth: 1472, death: 1529 },        // 王守仁
     xibanya_pisaluo: { birth: 1478, death: 1541, kaoju: '异说' },         // 皮萨罗
     xibanya_aerwa: { birth: 1507, death: 1582 },  // 阿尔瓦公爵（费尔南多·阿尔瓦雷斯·德·托莱多）
-    wende_johnfriedrich: { birth: 1503, death: 1554 },  // 萨克森选侯 约翰·腓特烈
+    wende_johnfriedrich: { birth: 1503, death: 1554 },  // 萨克森选侯 约翰腓特烈
     wende_hengist: { birth: 400, death: 488, kaoju: '推定' },  // 亨吉斯特（半史，生卒无考）
     wende_heinrich_loewe: { birth: 1129, death: 1195 },  // 狮子亨利
     babuer_babuer: { birth: 1483, death: 1530 },           // 巴布尔
@@ -632,17 +632,17 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_minchancaman: { birth: 1430, death: 1480, kaoju: '推定' },  // 明查凯曼
     gen_tzitzipandaquare: { birth: 1430, death: 1479, kaoju: '推定' },  // 齐齐潘达夸雷
     gen_cuchacique: { birth: 1540, death: 1595, kaoju: '推定' },  // 库查西克
-    gen_casimiro_bigua: { birth: 1819, death: 1874, kaoju: '推定' },  // 卡西米罗·比格
+    gen_casimiro_bigua: { birth: 1819, death: 1874, kaoju: '推定' },  // 比格
     gen_stuyvesant: { birth: 1612, death: 1672, kaoju: '异说' },  // 斯泰弗森特
     gen_champlain: { birth: 1567, death: 1635, kaoju: '异说' },  // 尚普兰
     gen_urdaneta: { birth: 1498, death: 1568, kaoju: '异说' },  // 乌尔达内塔
     gen_gajah_mada: { birth: 1290, death: 1364 },  // 加查马达
     gen_prithviraj: { birth: 1166, death: 1192 },  // 普里特维
     gen_sumanguru: { birth: 1170, death: 1235, kaoju: '推定' },  // 苏曼古鲁
-    ghana_tongka_manin: { birth: 1030, death: 1100, kaoju: '推定' },  // 通卡·马宁（加纳帝国末代有载君主；al-Bakri 1067/68 在位，生卒史无载、推定）
+    ghana_tongka_manin: { birth: 1030, death: 1100, kaoju: '推定' },  // 马宁（加纳帝国末代有载君主；al-Bakri 1067/68 在位，生卒史无载、推定）
     gen_bohemond: { birth: 1054, death: 1111 },  // 博希蒙德
     gen_shi_chaoyi: { birth: 725, death: 763, kaoju: '推定' },  // 史朝义（卒年763自缢于广阳，生年史无载，推定）
-    gen_sayf_al_dawla: { birth: 916, death: 967 },  // 赛弗·道莱（哈姆丹王朝阿勒颇埃米尔）
+    gen_sayf_al_dawla: { birth: 916, death: 967 },  // 赛弗道莱（哈姆丹王朝阿勒颇埃米尔）
     gen_toghtekin: { birth: 1062, death: 1128, kaoju: '异说' },  // 图格特金（大马士革突厥总督）
     gen_sangrama_vijayottungavarman: { birth: 985, death: 1035, kaoju: '推定' },  // 桑格拉玛·维阇耶东伽跋摩（1025年被朱罗俘虏，生卒史无载，推定）
     gen_edward_longshanks: { birth: 1239, death: 1307 },  // 长腿爱德华
@@ -681,7 +681,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_gidajan: { birth: 1130, death: 1185, kaoju: '推定' },  // 吉达扬
     gen_thoros: { birth: 1120, death: 1169, kaoju: '推定' },  // 托罗斯二世
     gen_dagnajan: { birth: 870, death: 925, kaoju: '推定' },  // 达格纳詹
-    gen_maha_thiha_thura: { birth: 1720, death: 1800, kaoju: '异说' },  // 摩诃·悉都
+    gen_maha_thiha_thura: { birth: 1720, death: 1800, kaoju: '异说' },  // 摩诃悉都
     gen_sang_nila_utama: { birth: 1270, death: 1347, kaoju: '推定' },  // 桑尼拉乌他马
     gen_rajaram: { birth: 1670, death: 1700 },  // 拉贾拉姆
     gen_epaminondas: { birth: -418, death: -362, kaoju: '异说' },  // 伊巴密浓达
@@ -738,10 +738,10 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     gen_civilis: { birth: 25, death: 80, kaoju: '推定' },  // 西维利斯
     gen_eric_bloodaxe: { birth: 885, death: 954, kaoju: '推定' },  // 埃里克
     gen_william_wallace: { birth: 1270, death: 1305 },  // 华莱士
-    scotland_johngraham: { birth: 1648, death: 1689 },  // 约翰·格雷厄姆（邓迪子爵）
-    scotland_hughmackay: { birth: 1640, death: 1692 },  // 休·麦凯
+    scotland_johngraham: { birth: 1648, death: 1689 },  // 格雷厄姆（邓迪子爵）
+    scotland_hughmackay: { birth: 1640, death: 1692 },  // 麦凯
     gen_raymond_iv: { birth: 1042, death: 1105, kaoju: '异说' },  // 雷蒙四世
-    gen_raymond_berenguer_iv: { birth: 1198, death: 1245 },  // 雷蒙·贝朗热四世（普罗旺斯伯爵）
+    gen_raymond_berenguer_iv: { birth: 1198, death: 1245 },  // 贝朗热（普罗旺斯伯爵）
     lunbadi_alboin: { birth: 530, death: 572, kaoju: '异说' },  // 阿尔博因
     gen_abd_al_rahman_iii: { birth: 891, death: 961, kaoju: '异说' },  // 阿卜杜拉
     gen_james_i_aragon: { birth: 1208, death: 1276 },  // 海梅
@@ -1006,7 +1006,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     dayuan_wugua: { birth: -140, death: -101, kaoju: '推定' },  // 毋寡
     kokand_alimukuli: { birth: 1833, death: 1865, kaoju: '异说' },  // 阿里木库力
     dayuzi_yinalechihei: { birth: 1170, death: 1220, kaoju: '推定' },  // 亦纳勒赤黑
-    maer_d_bahelamuchubin: { birth: 545, death: 592, kaoju: '推定' },  // 巴赫拉姆·楚宾
+    maer_d_bahelamuchubin: { birth: 545, death: 592, kaoju: '推定' },  // 楚宾
     wugu_d_tugelile: { birth: 990, death: 1063, kaoju: '推定' },  // 图格里勒
     adao_d_mafushou: { birth: 1860, death: 1925, kaoju: '推定' },  // 马福寿
     wuyuan_d_chengui: { birth: 100, death: 165, kaoju: '推定' },  // 陈龟
@@ -1433,7 +1433,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     gen_saguamanchica: { birth: 1450, death: 1490, kaoju: '推定' },  // 萨瓜曼奇卡
     gen_arariboia: { birth: 1520, death: 1589, kaoju: '推定' },  // 阿拉里博亚
     gen_sundjata: { birth: 1190, death: 1255, kaoju: '异说' },  // 松迪亚塔
-    xibanya_beilaerde: { birth: 1779, death: 1808 },  // 佩德罗·贝拉尔德（1779-10-19～1808-05-02 蒙莱昂战死）
+    xibanya_beilaerde: { birth: 1779, death: 1808 },  // 贝拉尔德（1779-10-19～1808-05-02 蒙莱昂战死）
     manding_musa: { birth: 1300, death: 1370, kaoju: '推定' },  // 廷巴克图太守穆萨（1353 在任，生卒无考，推定）
     arakan_mingbin: { birth: 1493, death: 1554 },  // 明彬（1493～1554-01-11）
     dusong_zhangru: { birth: 1240, death: 1300, kaoju: '推定' },  // 张濡（南宋独松关守将，生卒无考，推定）
@@ -1443,7 +1443,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     ningwu_zhouyuji: { birth: 1590, death: 1644, kaoju: '推定' },  // 周遇吉（1644 宁武关殉国，生年无考，推定）
     tang_guoyuanzhen: { birth: 656, death: 713 },  // 郭元振（656～713）
     putaoya_afonso: { birth: 1370, death: 1461 },  // 布拉干萨公爵阿方索（1370～1461）
-    montereau_pressy: { birth: 1350, death: 1420, kaoju: '推定' },  // 让·德·普雷西（生卒无考，推定）
+    montereau_pressy: { birth: 1350, death: 1420, kaoju: '推定' },  // 普雷西（生卒无考，推定）
     guyan_jiaolian: { birth: 1600, death: 1660, kaoju: '推定' },  // 焦琏（南明桂林守将，生卒无考，推定）
     yumen_suoban: { birth: 80, death: 120, kaoju: '推定' },  // 索班（东汉西域长史，生卒无考，推定）
     yangguan_lixi: { birth: -160, death: -100, kaoju: '推定' },  // 李息（汉武帝将，生卒无考，推定）
@@ -1470,7 +1470,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     gen_tome_sousa: { birth: 1503, death: 1549, kaoju: '异说' },  // 托梅
     gen_cortes: { birth: 1485, death: 1547, kaoju: '异说' },  // 科尔特斯
     gen_velazquez: { birth: 1465, death: 1524, kaoju: '异说' },  // 贝拉斯克斯
-    gen_martim_afonso: { birth: 1500, death: 1564, kaoju: '异说' },  // 马丁·阿方索
+    gen_martim_afonso: { birth: 1500, death: 1564, kaoju: '异说' },  // 马丁阿方索
     gen_morosini: { birth: 1619, death: 1694, kaoju: '异说' },  // 莫罗西尼
     gen_nur_ad_din: { birth: 1118, death: 1174, kaoju: '异说' },  // 努尔丁
     gen_abgar: { birth: -25, death: 50, kaoju: '推定' },  // 阿布加尔五世
@@ -1573,7 +1573,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     zhou_jifu: { birth: -852, death: -775, kaoju: '推定' },  // 吉甫（岐山·西周太师尹吉甫，前823年自岐周统六师北伐猃狁）
     yin_yuejin: { birth: 159, death: 218, kaoju: '推定' },  // 乐进（朝歌·建安十年攻克朝歌斩严敬）
     xibolai_majiabi: { birth: -190, death: -160, kaoju: '推定' },  // 犹大马加比（耶路撒冷·马加比起义领袖收复耶路撒冷）
-    gen_caffa_consul: { birth: 1425, death: 1475, kaoju: '推定' },  // 奥贝托·斯夸尔（卡法·热那亚末任卡法执政官，1475年卡法围城战殉城）
+    gen_caffa_consul: { birth: 1425, death: 1475, kaoju: '推定' },  // 斯夸尔（卡法·热那亚末任卡法执政官，1475年卡法围城战殉城）
     baolusi: { birth: -254, death: -216, kaoju: '推定' },  // 保卢斯（坎尼战役罗马执政官卢基乌斯·埃米利乌斯·保卢斯，前216年阵亡）
     waluo: { birth: -256, death: -195, kaoju: '推定' },  // 瓦罗（坎尼战役罗马执政官盖乌斯·特伦提乌斯·瓦罗）
     aitiliusi: { birth: 391, death: 454, kaoju: '异说' },  // 埃提乌斯（沙隆战役西罗马名将弗拉维乌斯·埃提乌斯）
@@ -1608,14 +1608,14 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     bfe3_31: { birth: -160, death: -108, kaoju: '推定' },  // 卫右渠
     bfe3_74: { birth: 175, death: 235, kaoju: '推定' },  // 轲比能
     bfe_dalriada_king: { birth: 700, death: 761, kaoju: '推定' },  // 费尔古斯
-    gen_john_comyn: { birth: 1260, death: 1306, kaoju: '推定' },  // 约翰·科明
+    gen_john_comyn: { birth: 1260, death: 1306, kaoju: '推定' },  // 科明
     bfe_sigismund: { birth: 1368, death: 1437, kaoju: '推定' },  // 西吉斯蒙德
     bfe_chanca_chief: { birth: 1400, death: 1450, kaoju: '推定' },  // 阿斯塔瓦兰卡
     bfe_sue_harutaka: { birth: 1521, death: 1555, kaoju: '推定' },  // 陶晴贤
     bfe_rajah_sulayman: { birth: 1520, death: 1575, kaoju: '推定' },  // 拉者苏莱曼三世
     bfe_muzaffar_shah: { birth: 1560, death: 1611, kaoju: '推定' },  // 穆扎法尔三世
     bfe_coyett: { birth: 1615, death: 1687, kaoju: '推定' },  // 揆一
-    bfe_jaya_prakash: { birth: 1711, death: 1768, kaoju: '推定' },  // 贾亚·普拉卡什
+    bfe_jaya_prakash: { birth: 1711, death: 1768, kaoju: '推定' },  // 普拉卡什
     bfe_pisa_king: { birth: -830, death: -760, kaoju: '推定' },  // 潘塔琉斯
     bfe_cimmerian_king: { birth: -720, death: -640, kaoju: '推定' },  // 图格达梅
     bfe_prasenajit: { birth: -600, death: -520, kaoju: '推定' },  // 波斯匿
@@ -1647,11 +1647,11 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     bfe_vahan: { birth: 600, death: 636, kaoju: '推定' },  // 瓦汉：拜占庭亚美尼亚籍统帅，636 雅穆克战役主帅
     bfe_likaigu: { birth: 630, death: 700, kaoju: '推定' },  // 李楷固：武周玉钤卫大将军，698 天门岭追击大祚荣而大败
     bfe_abdullah_ali: { birth: 712, death: 764, kaoju: '推定' },  // 阿卜杜拉：阿拔斯宗室，754 尼西比斯争位兵败被擒
-    bfe_leo_phokas: { birth: 870, death: 920, kaoju: '推定' },  // 利奥·福卡斯：拜占庭野战军统帅，917 阿海洛斯之战败于西美昂
+    bfe_leo_phokas: { birth: 870, death: 920, kaoju: '推定' },  // 利奥福卡斯：拜占庭野战军统帅，917 阿海洛斯之战败于西美昂
     bfe_bulcsu: { birth: 900, death: 955, kaoju: '推定' },  // 布尔丘：马扎尔 harka，955 莱希河之战马扎尔军主将，被处死
     bfe_liurenshan: { birth: 900, death: 957, kaoju: '推定' },  // 刘仁赡：南唐寿州守将，957 后周攻寿春，坚守不下
     bfe_chengong: { birth: 1000, death: 1052, kaoju: '推定' },  // 陈珙：北宋知邕州，1052 侬智高破邕州时被执
-    bfe_muhammad_ghur: { birth: 1149, death: 1206, kaoju: '推定' },  // 穆罕默德·古尔：古尔苏丹，1191 第一次塔兰战役主帅（第二次塔兰胜）
+    bfe_muhammad_ghur: { birth: 1149, death: 1206, kaoju: '推定' },  // 穆罕默德古尔：古尔苏丹，1191 第一次塔兰战役主帅（第二次塔兰胜）
     bfe_youxian: { birth: 1200, death: 1263, kaoju: '推定' },  // 游显：蒙古所署襄阳副达鲁花赤，1239 京襄之战为宋军所擒
     bfe_umar: { birth: 1230, death: 1288, kaoju: '推定' },  // 乌马儿：元朝水军统帅，1288 白藤江之战被俘
     bfe_chagatai: { birth: 1183, death: 1242, kaoju: '推定' },  // 察合台：蒙古宗王，1221 与窝阔台共攻乌奇

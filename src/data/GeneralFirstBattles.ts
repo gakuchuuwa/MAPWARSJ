@@ -63,7 +63,7 @@ export interface GeneralFirstBattle {
 }
 
 export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>> = {
-    // 🔴 [2026-10-25 补B] 尼基弗鲁斯·福卡斯 — 961 干地亚之战（收复克里特；敌帅阿卜杜勒·阿齐兹）
+    // 🔴 [2026-10-25 补B] 尼基弗鲁斯 — 961 干地亚之战（收复克里特；敌帅阿齐兹）
     baizanting_nikephoros_phokas: {
         generalId: 'baizanting_nikephoros_phokas',
         battleName: '干地亚之战',
@@ -79,8 +79,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe_abdulaziz_crete',
         enemyTroops: 10000,
         introLines: [
-            { speaker: 'general', text: '克里特埃米尔阿卜杜勒·阿齐兹据干地亚顽抗，其埃米尔国出自凯鲁万阿格拉布。我拜占庭大军已登陆克里特，你可愿随我拔除此岛、收复失地？' },
-            { speaker: 'player', text: '愿随福卡斯登陆克里特，击破阿卜杜勒·阿齐兹，收复干地亚！' },
+            { speaker: 'general', text: '克里特埃米尔阿齐兹据干地亚顽抗，其埃米尔国出自凯鲁万阿格拉布。我拜占庭大军已登陆克里特，你可愿随我拔除此岛、收复失地？' },
+            { speaker: 'player', text: '愿随福卡斯登陆克里特，击破阿齐兹，收复干地亚！' },
         ],
     },
 
@@ -146,7 +146,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
             { speaker: 'player', text: '愿随华伦斯坦强攻德绍桥，击破曼斯菲尔德！' },
         ],
     },
-    // 🔴 [2026-10-25 补B] 阿斯基亚·穆罕默德 — 1493 安法奥之战（敌帅桑尼·巴鲁）
+    // 🔴 [2026-10-25 补B] 阿斯基亚 — 1493 安法奥之战（敌帅桑尼巴鲁）
     songhai_askia_muhammad: {
         generalId: 'songhai_askia_muhammad',
         battleName: '安法奥之战',
@@ -162,11 +162,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe_sonni_baru',
         enemyTroops: 15000,
         introLines: [
-            { speaker: 'general', text: '桑尼·巴鲁继位后失尽军心，我已联合诸部起兵。今日在安法奥平原决战，你可愿随我推翻旧主、另立新朝？' },
-            { speaker: 'player', text: '愿随阿斯基亚·穆罕默德决战安法奥，开创桑海新朝！' },
+            { speaker: 'general', text: '桑尼巴鲁继位后失尽军心，我已联合诸部起兵。今日在安法奥平原决战，你可愿随我推翻旧主、另立新朝？' },
+            { speaker: 'player', text: '愿随阿斯基亚决战安法奥，开创桑海新朝！' },
         ],
     },
-    // 🔴 [2026-10-25 补B] 埃雷克莱二世 — 1795 克尔察尼西之战（敌帅阿迦·穆罕默德汗）
+    // 🔴 [2026-10-25 补B] 埃雷克莱二世 — 1795 克尔察尼西之战（敌帅阿迦穆罕默德）
     gelujiya_erekle_ii: {
         generalId: 'gelujiya_erekle_ii',
         battleName: '克尔察尼西之战',
@@ -182,8 +182,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe_agha_mohammad',
         enemyTroops: 35000,
         introLines: [
-            { speaker: 'general', text: '阿迦·穆罕默德汗率波斯大军进逼第比利斯，已抵克尔察尼西。我格鲁吉亚军已列阵御敌，你可愿随我保卫都城？' },
-            { speaker: 'player', text: '愿随埃雷克莱二世死守克尔察尼西，挡住阿迦·穆罕默德汗！' },
+            { speaker: 'general', text: '阿迦穆罕默德率波斯大军进逼第比利斯，已抵克尔察尼西。我格鲁吉亚军已列阵御敌，你可愿随我保卫都城？' },
+            { speaker: 'player', text: '愿随埃雷克莱二世死守克尔察尼西，挡住阿迦穆罕默德！' },
         ],
     },
 
@@ -3752,7 +3752,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'womaya',
         enemyFactionName: '倭马亚王朝',
-        enemyGeneralId: 'womaya_muslim',   // 🔴 [2026-10-20 首战规则] 724 渴水日倭马亚主帅穆斯林·本·赛义德（原势力误填图兰）
+        enemyGeneralId: 'womaya_muslim',   // 🔴 [2026-10-20 首战规则] 724 渴水日倭马亚主帅穆斯林（原势力误填图兰）
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '倭马亚大食军深陷河中荒漠，水源尽断渴疲交加！突骑施的弓骑勇士，随莫贺达干引箭奔驰，全歼大食重骑！' },
@@ -3774,7 +3774,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'womaya',
         enemyFactionName: '倭马亚王朝',
-        enemyGeneralId: 'womaya_abdrahman',   // 🔴 [2026-10-20 首战规则] 732 普瓦捷倭马亚主帅阿卜杜勒·拉赫曼（原势力误填瓦卢瓦）
+        enemyGeneralId: 'womaya_abdrahman',   // 🔴 [2026-10-20 首战规则] 732 普瓦捷倭马亚主帅拉赫曼（原势力误填瓦卢瓦）
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '异教徒铁骑席卷比利牛斯山，法兰克高卢生死在此一举！重装方阵坚如磐石，勇士们，随铁锤查理誓死顶住冲击！' },
@@ -3977,7 +3977,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'abasi',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '阿卜杜拉',
-        enemyGeneralId: 'bfe_abdullah_ali',   // 🔴 [2026-10-25 按史] 754 尼西比斯＝阿卜杜拉·本·阿里（原填 891–961 的拉赫曼三世，差一个半世纪）
+        enemyGeneralId: 'bfe_abdullah_ali',   // 🔴 [2026-10-25 按史] 754 尼西比斯＝阿卜杜拉（原填 891–961 的拉赫曼三世，差一个半世纪）
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '叔父阿卜杜拉勾结叙利亚残党图谋篡夺大统！阿布·穆斯林大军已出，勇士，随真主哈里发扫除阿卜杜拉党羽巩固王权！' },
@@ -4294,7 +4294,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'abasi',   // 🔴 [2026-10-25 按史] 敌将势力对齐
         enemyFactionName: '塔希尔王朝',
-        enemyGeneralId: 'aliya_muhammad_tahir',   // 🔴 [2026-10-20 首战规则] 867 希拉特守方是塔希尔王朝穆罕默德·塔希尔
+        enemyGeneralId: 'aliya_muhammad_tahir',   // 🔴 [2026-10-20 首战规则] 867 希拉特守方是塔希尔王朝塔希尔
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '塔希尔总督苛政害民，阿拔斯走狗何足挂齿！锡斯坦铜匠之子举义旗，勇士，持战斧随萨法尔纵马奔驰，收复赫拉特！' },
@@ -4360,7 +4360,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'xisi',
         enemyFactionName: '锡斯坦',
-        enemyGeneralId: 'xisi_amr',   // 🔴 [2026-10-20 首战规则] 900 巴尔赫萨法尔主帅阿姆尔·本·莱斯（原势力误填贵霜）
+        enemyGeneralId: 'xisi_amr',   // 🔴 [2026-10-20 首战规则] 900 巴尔赫萨法尔主帅阿姆尔（原势力误填贵霜）
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '阿姆尔骄兵五万渡阿姆河欲灭我萨曼，其兵虽众民心已背！呼罗珊与河中的勇士，随我据险死战，一战生擒萨法尔王！' },
@@ -4515,7 +4515,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'baizanting',
         enemyFactionName: '拜占庭帝国',
-        enemyGeneralId: 'bfe_leo_phokas',   // 🔴 [2026-10-25 按史] 917 阿海洛斯拜占庭野战军＝老利奥·福卡斯（罗曼努斯在舰队）
+        enemyGeneralId: 'bfe_leo_phokas',   // 🔴 [2026-10-25 按史] 917 阿海洛斯拜占庭野战军＝老利奥福卡斯（罗曼努斯在舰队）
         enemyTroops: 50000,
         introLines: [
             { speaker: 'general', text: '拜占庭帝国倾举国军团妄图覆灭保加利亚！我伏兵已潜藏于高岗丘陵，勇士们，随沙皇全线反击，将敌人赶入黑海！' },
@@ -4759,7 +4759,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'dublin',
         enemyFactionName: '都柏林王国',
-        // 🔴 [2026-10-28 按史] 敌方势力＝都柏林王国（原挂「达尔里阿达」错：1014 守都柏林的是北欧王西格特里格·丝须）
+        // 🔴 [2026-10-28 按史] 敌方势力＝都柏林王国（原挂「达尔里阿达」错：1014 守都柏林的是北欧王西格特里格）
         enemyGeneralId: 'gaer_sigtrygg',   // 🔴 [2026-10-20 首战规则] 1014 克朗塔夫都柏林维京王西格特里格
         enemyTroops: 25000,
         introLines: [
@@ -5526,7 +5526,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 35000,
         enemyFactionId: 'jiazini',
         enemyFactionName: '加兹尼残部',
-        enemyGeneralId: 'jiazini_khusrau_malik',   // 🔴 [2026-10-20 首战规则] 1175 伽色尼末王呼斯劳·马利克
+        enemyGeneralId: 'jiazini_khusrau_malik',   // 🔴 [2026-10-20 首战规则] 1175 伽色尼末王呼斯劳
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '伽色尼末造残民荼毒呼罗珊，古尔王朝当立天下！战象开道长矛森严，勇士，随吉亚斯丁大王攻克赫拉特，威加东方！' },
@@ -5704,7 +5704,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 50000,
         enemyFactionId: 'huluo',
         enemyFactionName: '古尔王朝',
-        enemyGeneralId: 'bfe_muhammad_ghur',   // 🔴 [2026-10-25 按史] 1191 第一次塔兰＝穆罕默德·古尔（吉亚斯丁在古尔/呼罗珊）
+        enemyGeneralId: 'bfe_muhammad_ghur',   // 🔴 [2026-10-25 按史] 1191 第一次塔兰＝穆罕默德古尔（吉亚斯丁在古尔/呼罗珊）
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '突厥突厥贼寇越山犯我祖土！拉其普特王公战象森严阔剑如雪，骁勇的战士，随普里特维拉吉决死冲锋，重创古尔蛮兵！' },
@@ -6168,7 +6168,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 15000,
         enemyFactionId: 'yinggelan',
         enemyFactionName: '英格兰王国',
-        enemyGeneralId: 'yinggelan_warenne',   // 🔴 [2026-10-20 首战规则] 1297 斯特灵桥英格兰统帅约翰·德·瓦伦
+        enemyGeneralId: 'yinggelan_warenne',   // 🔴 [2026-10-20 首战规则] 1297 斯特灵桥英格兰统帅瓦伦
         enemyTroops: 15000,
         introLines: [
             { speaker: 'general', text: '英格兰骑士半数过桥乱不成队，木桥狭窄退路尽断！为了苏格兰的自由，高地勇士们，端平巨矛随我自山顶冲锋，斩尽侵略者！' },
@@ -6308,7 +6308,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'baojialiya',
         enemyFactionName: '保加利亚王国',
-        enemyGeneralId: 'baojialiya_mikhail',   // 🔴 [2026-10-20 首战规则] 1330 维尔布日德保加利亚沙皇米哈伊尔·希什曼
+        enemyGeneralId: 'baojialiya_mikhail',   // 🔴 [2026-10-20 首战规则] 1330 维尔布日德保加利亚沙皇希什曼
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '保加利亚与拜占庭联兵来犯我塞尔维亚边城！年轻的杜尚率重骑突袭其不备，勇士，挺枪冲杀生擒保加利亚沙皇！' },
@@ -8490,7 +8490,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #432 摩诃·悉都 (1720 ~ 1800) — 公元1768年新街之战
+    // #432 摩诃悉都 (1720 ~ 1800) — 公元1768年新街之战
     gen_maha_thiha_thura: {
         generalId: 'gen_maha_thiha_thura',
         battleName: '新街之战',
@@ -8508,7 +8508,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '清军经略统满洲劲旅深进丛林！某分兵断其粮道设伏象阵于新街，缅甸勇士们，密林拔刀随大将截击，让清军折戟江畔！' },
-            { speaker: 'player', text: '愿随摩诃·悉都将军共守新街之战，大破清朝敌军！' },
+            { speaker: 'player', text: '愿随摩诃悉都将军共守新街之战，大破清朝敌军！' },
         ],
     },
 
@@ -8919,7 +8919,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #553 福卡斯 (912 ~ 969) — 公元962年阿勒颇之战（东罗马军队统帅尼基弗鲁斯·福卡斯攻入哈姆丹王朝的阿勒颇，赛弗·道莱败走；出处：莱昂执事《历史》、Skylitzes 编年史）
+    // #553 福卡斯 (912 ~ 969) — 公元962年阿勒颇之战（东罗马军队统帅尼基弗鲁斯攻入哈姆丹王朝的阿勒颇，赛弗道莱败走；出处：莱昂执事《历史》、Skylitzes 编年史）
     gen_nikephoros_phokas: {
         generalId: 'gen_nikephoros_phokas',
         battleName: '阿勒颇之战',
@@ -8936,7 +8936,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'gen_sayf_al_dawla',
         enemyTroops: 20000,
         introLines: [
-            { speaker: 'general', text: '赛弗·道莱割据阿勒颇多年，屡犯我叙利亚边境。皇帝命我挥师东进，你可愿随我攻下这座名城？' },
+            { speaker: 'general', text: '赛弗道莱割据阿勒颇多年，屡犯我叙利亚边境。皇帝命我挥师东进，你可愿随我攻下这座名城？' },
             { speaker: 'player', text: '愿随将军合围阿勒颇，夺回叙利亚！' },
         ],
     },
@@ -9807,8 +9807,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'saman_yisimayi',
         enemyTroops: 20000,
         introLines: [
-            { speaker: 'general', text: '萨曼伊斯玛仪屯兵巴尔赫郊外，阿姆尔·本·莱斯当先发制人！壮士，随本将进兵，一战破敌！' },
-            { speaker: 'player', text: '愿随阿姆尔·本·莱斯将军于巴尔赫之战决战，击破伊斯玛仪！' },
+            { speaker: 'general', text: '萨曼伊斯玛仪屯兵巴尔赫郊外，阿姆尔当先发制人！壮士，随本将进兵，一战破敌！' },
+            { speaker: 'player', text: '愿随阿姆尔将军于巴尔赫之战决战，击破伊斯玛仪！' },
         ],
     },
     song_zhaoguangyi: {
@@ -9867,8 +9867,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bolan_suobiesiji',
         enemyTroops: 40000,
         introLines: [
-            { speaker: 'general', text: '波兰索别斯基引军来犯维也纳卡伦堡山丘，卡拉·穆斯塔法今率众迎战！壮士，随本将列阵，一战破敌！' },
-            { speaker: 'player', text: '愿随卡拉·穆斯塔法将军于维也纳之战决战，击破索别斯基！' },
+            { speaker: 'general', text: '波兰索别斯基引军来犯维也纳卡伦堡山丘，卡拉穆斯塔法今率众迎战！壮士，随本将列阵，一战破敌！' },
+            { speaker: 'player', text: '愿随卡拉穆斯塔法将军于维也纳之战决战，击破索别斯基！' },
         ],
     },
     gen_mustafa_pasha: {
@@ -9907,8 +9907,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'gen_charles_martel',
         enemyTroops: 30000,
         introLines: [
-            { speaker: 'general', text: '法兰克查理马特屯兵图尔与普瓦捷之间，阿卜杜勒·拉赫曼当先发制人！壮士，随本将进兵，一战破敌！' },
-            { speaker: 'player', text: '愿随阿卜杜勒·拉赫曼将军于普瓦捷战役决战，击破查理马特！' },
+            { speaker: 'general', text: '法兰克查理马特屯兵图尔与普瓦捷之间，拉赫曼当先发制人！壮士，随本将进兵，一战破敌！' },
+            { speaker: 'player', text: '愿随拉赫曼将军于普瓦捷战役决战，击破查理马特！' },
         ],
     },
     abasi_muwafake: {
@@ -10007,8 +10007,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'babuer_babuer',
         enemyTroops: 20000,
         introLines: [
-            { speaker: 'general', text: '喀布尔斯坦巴布尔引军来犯帕尼帕特原野，易卜拉欣·洛迪今率众迎战！壮士，随本将列阵，一战破敌！' },
-            { speaker: 'player', text: '愿随易卜拉欣·洛迪将军于第一次帕尼帕特战役决战，击破巴布尔！' },
+            { speaker: 'general', text: '喀布尔斯坦巴布尔引军来犯帕尼帕特原野，洛迪今率众迎战！壮士，随本将列阵，一战破敌！' },
+            { speaker: 'player', text: '愿随洛迪将军于第一次帕尼帕特战役决战，击破巴布尔！' },
         ],
     },
     gen_shashanka: {
@@ -10524,7 +10524,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '拜占庭皇帝尼基弗鲁斯倾国而来，阿勒颇城是哈姆丹之屏障！壮士，随本埃米尔凭城死守，教训希腊人！' },
-            { speaker: 'player', text: '愿随赛弗·道莱死守阿勒颇，击退拜占庭军！' },
+            { speaker: 'player', text: '愿随赛弗道莱死守阿勒颇，击退拜占庭军！' },
         ],
     },
     bfe_antigonus: {
@@ -10621,7 +10621,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 40000,
         enemyFactionId: 'ayoubu',
         enemyFactionName: '阿尤布',
-        enemyGeneralId: 'bfe_aulax',   // 🔴 [2026-10-25 按史] 969 安条克守将＝奥拉克斯（赛弗·道莱 967 已死）
+        enemyGeneralId: 'bfe_aulax',   // 🔴 [2026-10-25 按史] 969 安条克守将＝奥拉克斯（赛弗道莱 967 已死）
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '安条克乃东方首城，今朕亲征叙利亚，先取其城为帝国东境锁钥！壮士，随朕登城，光复罗马旧疆！' },
@@ -11150,11 +11150,11 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 12000,
         enemyFactionId: 'abasi',   // 已核（库内塔希尔势力记作 abasi）
         enemyFactionName: '阿拔斯',
-        enemyGeneralId: 'aliya_muhammad_tahir',   // 已核（穆罕默德·塔希尔 820—873，873 为卒年、在位）
+        enemyGeneralId: 'aliya_muhammad_tahir',   // 已核（塔希尔 820—873，873 为卒年、在位）
         enemyTroops: 15000,
         introLines: [
             { speaker: 'general', text: '塔希尔末王据尼沙布尔，军心已散。萨法尔骑随我直趋城下，取其都城，呼罗珊便定！' },
-            { speaker: 'player', text: '愿随雅库布攻取尼沙布尔，击破穆罕默德·塔希尔！' },
+            { speaker: 'player', text: '愿随雅库布攻取尼沙布尔，击破塔希尔！' },
         ],
     },
 
