@@ -584,7 +584,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'tianxiong': _zhongyuanPortraitPool,
     'wei': _xianqinPortraitPool,
     'xiezhou': _zhongyuanPortraitPool,
-    'xichu': _xianqinPortraitPool,
     'zhao': _xianqinPortraitPool,
     'zhou': _xianqinPortraitPool,
     // 江南 47 势力

@@ -23,7 +23,6 @@ const _FIXED: Record<string, string> = {
     sui: '#B83030', // 隋
     song: '#DC4850', // 宋（明亮珊瑚红；与大明深绛对照）
     ming_d: '#7A1418', // 大明（深绛暗红；南京↔临安邻近易混）
-    xichu: '#B03830', // 西楚
     erzhu: '#962828', // 尔朱
     xushouhui: '#883030', // 天完·红巾军（元末徐寿辉赤旗；避 lvbu 撞色）
     chimei: '#972838', // 赤眉
@@ -351,7 +350,6 @@ const _FIXED: Record<string, string> = {
     jiazini: '#227A46', // 伽色尼·古拉姆（伊斯兰圣色绿）
     fanyanna: '#3A5A78', // 梵衍那（青金石蓝）
     wugu_d: '#4A6B3A', // 乌古斯·草原青绿
-    adao_d: '#D4A52F', // 阿克苏道（清系明黄）
     kumoxi: '#587868', // 库莫奚·饶乐水松漠青
 
     fushi: '#2A2620', // 苻秦·前秦（水德尚黑）

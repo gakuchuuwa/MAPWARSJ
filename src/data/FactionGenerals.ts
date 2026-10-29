@@ -6107,7 +6107,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_wanggeon', factionId: 'goryeo', cityId: 'city_kaesong', generalName: '高丽太祖', portrait: '/assets/KOREA/bfe_wanggeon.png', eliteName: '高丽护军', eliteTier: 4 },
+        { generalId: 'bfe_wanggeon', factionId: 'goryeo', cityId: 'city_kaesong', generalName: '松岳王建', portrait: '/assets/KOREA/bfe_wanggeon.png', eliteName: '高丽护军', eliteTier: 4 },
     ],
 
 

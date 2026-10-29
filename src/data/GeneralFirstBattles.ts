@@ -4359,12 +4359,12 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 67.08252,
         myTroops: 20000,
         enemyFactionId: 'xisi',
-        enemyFactionName: '萨法尔王朝',
+        enemyFactionName: '锡斯坦',
         enemyGeneralId: 'xisi_amr',   // 🔴 [2026-10-20 首战规则] 900 巴尔赫萨法尔主帅阿姆尔·本·莱斯（原势力误填贵霜）
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '阿姆尔骄兵五万渡阿姆河欲灭我萨曼，其兵虽众民心已背！呼罗珊与河中的勇士，随我据险死战，一战生擒萨法尔王！' },
-            { speaker: 'player', text: '愿随伊斯玛仪将军共守巴尔赫之战，大破萨法尔王朝敌军！' },
+            { speaker: 'player', text: '愿随伊斯玛仪将军共守巴尔赫之战，大破锡斯坦敌军！' },
         ],
     },
 
@@ -6329,13 +6329,13 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: -5.31,
         myTroops: 30000,
         enemyFactionId: 'malin',
-        enemyFactionName: '马林王朝',
+        enemyFactionName: '马林苏丹国',
         // 🔴 [2026-10-28 按史] 敌方势力＝马林王朝（原挂「穆拉比特」错：1340 萨拉多河出兵方是马林苏丹阿布·哈桑）
         enemyGeneralId: 'malin_abulhasan',
         enemyTroops: 50000,
         introLines: [
             { speaker: 'general', text: '北非与格拉纳达倾数十万众围塔里法！圣地亚哥十字战旗引路，卡斯蒂利亚骑士，随国王马踏萨拉多河，尽覆摩尔敌酋！' },
-            { speaker: 'player', text: '愿随阿方索十一将军共赴萨拉多河战役，大破马林王朝敌军！' },
+            { speaker: 'player', text: '愿随阿方索十一将军共赴萨拉多河战役，大破马林苏丹国敌军！' },
         ],
     },
 
@@ -7438,13 +7438,13 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 77.23,
         myTroops: 20000,
         enemyFactionId: 'sur',
-        enemyFactionName: '苏尔王朝',
+        enemyFactionName: '苏尔帝国',
         // 🔴 [2026-10-28 按史] 敌方势力＝苏尔王朝（原挂「德里苏丹国」错：1556 出兵方是苏尔王朝，赫穆为其主将）
         enemyGeneralId: 'gen_hemu',
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '赫穆领千头披甲战象企图阻遏帝国中兴！少年阿克巴之威全在此战，神射手已射穿敌目，勇士，持矛随老帅突入中军全歼敌军！' },
-            { speaker: 'player', text: '愿随巴赫拉姆汗将军共赴第二次帕尼帕特战役，大破苏尔王朝敌军！' },
+            { speaker: 'player', text: '愿随巴赫拉姆汗将军共赴第二次帕尼帕特战役，大破苏尔帝国敌军！' },
         ],
     },
 
@@ -11285,7 +11285,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '甄萱已为其子所幽，后百济人心离贰。今三军并进，直指一善，降者不杀、归者复业——三韩当于此役归一。' },
-            { speaker: 'player', text: '愿随王建亲征一善，收后百济！' },
+            { speaker: 'player', text: '愿随松岳王建亲征一善，收后百济！' },
         ],
     },
 

@@ -446,8 +446,7 @@ export class CityAssetManager {
         'sunite': '苏尼',
 'dayuzi': '玉兹',
 'bailian': '白莲',
-'chimei': '赤眉',
-'xichu': '楚',
+'chimei': '赤眉',
 'yiwu': '伊吾',
 
         'weiwuer': '乌第',
@@ -499,8 +498,7 @@ export class CityAssetManager {
         'kepantuo': '渴盘',
 'yangguan': '凉',
         // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
-'wugu_d': '乌古',
-        'adao_d': '阿克',
+'wugu_d': '乌古',
         'kumoxi': '奚',
 'shanshan': '鄯善',
 'wuyue': '吴越',

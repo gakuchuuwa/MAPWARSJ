@@ -4692,9 +4692,14 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
     const gsCatText = fs.readFileSync(path.resolve(__dirname, 'src/data/general-skills/catalogs.ts'), 'utf-8');
     const tscText = fs.readFileSync(path.resolve(__dirname, 'src/data/TacticalSkillCatalog.ts'), 'utf-8');
 
-    // factions: { id, name }[]
-    const factions = [...factionText.matchAll(/\{\s*id:\s*'([^']+)',\s*name:\s*'([^']+)'/g)]
-        .map(m => ({ id: m[1], name: m[2] }));
+    // factions: { id, name }[] (ignore commented lines)
+    const factions = factionText
+        .split('\n')
+        .filter(l => !l.trim().startsWith('//'))
+        .flatMap(l => {
+            const m = l.match(/\{\s*id:\s*'([^']+)',\s*name:\s*'([^']+)'/);
+            return m ? [{ id: m[1], name: m[2] }] : [];
+        });
 
     // cities: parse block by block
     // 🔴 [2026-09-11 主人需求「据点编辑器」] 除原有字段外，再带上 buildingStyle / tier / note，

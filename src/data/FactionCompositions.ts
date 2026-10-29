@@ -963,11 +963,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "funan": {
         legionName: "古典时代扶南军团",
         legionType: "sub",
-    },
-    "xichu": {
-        legionName: "古典时代华夏军团",
-        legionType: "sub",
-    },
+    },
     "aztec": {
         legionName: "帝国时代特诺奇军团",
         legionType: "sub",
@@ -2347,11 +2343,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "dayuzi": {
         legionName: "城堡时代蒙兀儿军团",
         legionType: "region",
-    },
-    "adao_d": {
-        legionName: "帝国时代叶尔羌军团",
-        legionType: "region",
-    },
+    },
     "shi_clan": {
         legionName: "封建时代安西军团",
         legionType: "region",

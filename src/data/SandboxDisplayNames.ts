@@ -461,7 +461,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'hepan': '喝槃',
 
     // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──
-'mamon': '马朝',
+'mamon': '马蒙',
     'dai': '傣',
 'taiyuan': '泰沅',
     'luohu': '罗斛',
@@ -571,8 +571,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qiemo': '且末',
     'weitou': '尉头',
 
-    // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
-'xichu': '楚',
+    // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
     'qiepantuo': '朅盘',
     // ── 2026-06-11 新增：库页岛民族 ──
     'eluoke': '鄂罗',
@@ -614,7 +613,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
 'wugu_d': '乌古',
     xierhe: '锡尔',
-    // 'adao_d': '阿克', // 并入大清,     // 昆岗·阿克苏道军台
     // ── Phase 1 Missing Flags ──
     'kumoxi': '奚',
     'shanshan': '鄯善',
@@ -622,7 +620,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   // —— 2026-06-20 新增：旁遮普·阿托克 ——
   // —— 2026-06-20 新增：那竭国·顶骨城 ——
 'dulan_d': '杜兰',
-'xisi': '萨法',
+'xisi': '锡斯',
   huluo: '呼罗',
 'wuyue': '吴越',
 'yuezhi': '月氏',
@@ -744,7 +742,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'aimala': '艾马',
     'aolisha': '东恒',
     'kanata': '维查',
-    'adile': '阿迪',
+    'adile': '比贾',
     'foluolida': '西佛',
     'yilisi': '埃利',
     'nuowei': '挪威',

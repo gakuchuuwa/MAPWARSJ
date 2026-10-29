@@ -4383,8 +4383,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/BASHU/she_shechongming.png": {
-            "scale": 0.89,
-            "offsetX": 0,
+            "scale": 0.93,
+            "offsetX": 9,
             "offsetY": -10
         },
         "/assets/JIANGNAN/wenzhou_fangguozhen.png": {
@@ -5383,9 +5383,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/BASHU/zizhou_wangjian.png": {
-            "scale": 1.05,
+            "scale": 1.01,
             "offsetX": 0,
-            "offsetY": -10
+            "offsetY": -9
         },
         "/assets/CENTRAL/__闲置__CENTRAL_26.png": {
             "scale": 0.99,
@@ -8961,6 +8961,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.27,
             "offsetX": 0,
             "offsetY": -16
+        },
+        "/assets/BASHU/bfe3_78.png": {
+            "scale": 1.24,
+            "offsetX": 0,
+            "offsetY": 29
         }
     },
     "folderGuides": {

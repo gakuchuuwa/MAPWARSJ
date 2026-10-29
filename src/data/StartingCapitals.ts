@@ -538,7 +538,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'weitou': 'city_weitoucheng',
 
     // -- 2026-05-31 补齐遗漏势力 --
-// 'xichu': 'city_pengcheng', // 2026-10-28 并入楚国 chuguo
 'bailian': 'city_junzhou',
 'chimei': 'city_ju',
 'ashide': 'city_heishacheng',
@@ -581,7 +580,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yangguan': 'city_yangguan',
 'xihai_d': 'city_fusicheng',
 'wugu_d': 'city_zhande',
-    // 'adao_d': 'city_kungang', // 2026-10-28 并入大清 manzhou_d
     
 'dulan_d': 'city_kandaha',
 'xisi': 'city_bosite',

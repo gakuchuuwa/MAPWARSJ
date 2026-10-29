@@ -67,7 +67,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'zuraid': [{ from: -9999, era: 'castle' }], // 祖拉伊德｜亚丁王朝（1083–1174），亚西尔·本·比拉勒
     'aboerleiya': [{ from: -9999, era: 'castle' }], // 阿尔博雷亚
     'adal': [{ from: -9999, era: 'imperial' }], // 阿达尔
-    'adao_d': [{ from: -9999, era: 'imperial' }], // 阿克苏道
     'adile': [{ from: -9999, era: 'imperial' }], // 阿迪勒
     'adiyabeina': [{ from: -9999, era: 'antiquity' }], // 阿迪亚贝纳
     'aertai': [{ from: -9999, era: 'castle' }], // 阿尔泰
@@ -560,7 +559,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xibanya': [{ from: -9999, era: 'imperial' }], // 西班牙
     'xibo_d': [{ from: -9999, era: 'imperial' }], // 锡伯
     'xibolai': [{ from: -9999, era: 'antiquity' }], // 以色列
-    'xichu': [{ from: -9999, era: 'antiquity' }], // 西楚
     'xideweina': [{ from: -9999, era: 'feudal' }], // 波洛公国
     'xiemian': [{ from: -9999, era: 'feudal' }], // 萨维尔
     'xierhe': [{ from: -9999, era: 'feudal' }], // 锡尔河
