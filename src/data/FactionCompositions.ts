@@ -744,7 +744,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "baizanting": {
-        legionName: "封建时代拜占庭军区军团",
+        legionName: "封建时代罗曼尼亚军团",
         legionType: "sub",
     },
     "ayoubu": {
@@ -834,7 +834,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "houliao": {
-        legionName: "城堡时代大金军团",
+        legionName: "城堡时代女真军团",
         legionType: "sub",
     },
     "xianhai": {
@@ -1288,7 +1288,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "dajin": {
-        legionName: "城堡时代大金军团",
+        legionName: "城堡时代女真军团",
         legionType: "sub",
     },
     "muisca": {
@@ -2265,7 +2265,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "dongxia": {
-        legionName: "城堡时代大金军团",
+        legionName: "城堡时代女真军团",
         legionType: "region",
     },
     "wure": {
@@ -2281,7 +2281,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "jilimi": {
-        legionName: "城堡时代大金军团",
+        legionName: "城堡时代女真军团",
         legionType: "region",
     },
     "chagatai": {

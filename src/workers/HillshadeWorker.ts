@@ -1902,14 +1902,6 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
         }
         const renderStart = performance.now();
         const output = renderHillshade(src, req, mask, material, paddedDem, parentDem, caspianDem, riverStrip);
-        if (usedCoarseFallback) {
-            // 远景粗高程兜底：叠一层 16% 薄雾柔化过渡，待后台重试拿到高清瓦片后无缝替换
-            for (let i = 0; i < output.length; i += 4) {
-                output[i] = Math.round(output[i] * 0.84 + 136 * 0.16);
-                output[i + 1] = Math.round(output[i + 1] * 0.84 + 140 * 0.16);
-                output[i + 2] = Math.round(output[i + 2] * 0.84 + 145 * 0.16);
-            }
-        }
         const renderMs = performance.now() - renderStart;
         const bitmap = await createImageBitmap(new ImageData(output, req.width, req.height));
 

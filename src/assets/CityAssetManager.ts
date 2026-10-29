@@ -117,7 +117,7 @@ export class CityAssetManager {
 'gaogouli': '高句',
         'xinluo': '新罗',
 
-        'shu': '蜀',
+        'shu': '汉',
 'fushi': '苻',
 'heishui': '黑水',
         'fuguo': '附',

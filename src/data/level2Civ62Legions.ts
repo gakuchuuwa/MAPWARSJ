@@ -702,7 +702,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（阿城、金界壕；金上京会宁府夯土皇城遗址、界壕土石要塞；完颜女真铁浮屠重装具装甲骑、猛安谋克拐子马轻骑、界壕防御战阵）
     //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_kotyankhan　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代大金军团', civ: '白山黑水', age: 'castle', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
+        name: '城堡时代女真军团', civ: '白山黑水', age: 'castle', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
         buildingStyle: 'NORTHEAST',
         castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
         formationMode: 'fish_scale',
@@ -1601,7 +1601,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（君士坦丁堡；狄奥多西三重城墙、君士坦丁凯旋柱、地下水宫；三层护城壕石砌坚壁要塞、东罗马重型标枪方阵、罗马古典城防鹰旗大阵）
     //    英雄队（第 10 队·主将队）：hero_basileus / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代东罗马军团', civ: '拜占庭', age: 'antiquity', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
+        name: '古典时代博斯普鲁斯军团', civ: '拜占庭', age: 'antiquity', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
         buildingStyle: 'BYZANTINE',
         castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡红砖穹顶堡',
         formationMode: 'fish_scale',
@@ -1618,7 +1618,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（君士坦丁堡、安纳托利亚；圣索菲亚大教堂马赛克殿堂、达芙妮修道院；人马俱装重甲冲击铁骑（Cataphract）、手持喷筒式希腊火的伴随重步兵、军区制步骑协同大阵）
     //    英雄队（第 10 队·主将队）：hero_basileus / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代拜占庭军区军团', civ: '拜占庭', age: 'feudal', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
+        name: '封建时代罗曼尼亚军团', civ: '拜占庭', age: 'feudal', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
         buildingStyle: 'BYZANTINE',
         castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡红砖穹顶堡',
         formationMode: 'fish_scale',

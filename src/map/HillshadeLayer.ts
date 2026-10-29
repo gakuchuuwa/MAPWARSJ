@@ -5,6 +5,7 @@ import type { HillshadeRequest, HillshadeResponse, HillshadeRegion } from '../wo
 import { HISTORICAL_REGIONS, NILE_VALLEY_EXP_BOUNDS } from '../data/HistoricalRegions';
 import { gameLog } from '../utils/GameLogger';
 import { ESRI_SHADED_RELIEF_URL } from '../world/land-sea/WaterMask';
+import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { MATERIAL_BUDGET_BYTES } from './StrategicTerrainMaterial';
 import type { RiverSegmentsMessage } from './RiverStripData';
 
@@ -33,135 +34,6 @@ function tileBoundsFromCoords(z: number, x: number, y: number) {
 /**
  * 未探索迷雾画布向四周外扩的像素宽度（用于云絮 Alpha 透明羽化，直接漫过并柔化相邻已加载瓦片的 256px 刀切硬边）。
  */
-const FOG_PAD = 48;
-
-/**
- * 在未加载或网络延时的战略瓦片上绘制「未探索灰蒙云雾」：
- * - 中心 256×256 保持不透明（alpha=255），完全遮住底下刺眼蓝底，且相邻雾块使用连续世界坐标噪声无缝拼接；
- * - 四周外扩 FOG_PAD(48px) 边缘带采用云絮噪声调制的 Alpha 透明羽化（255 → 0），
- *   像云雾漫过山脊一样自然盖住周围已加载瓦片的直角硬边。
- */
-let _fogScratchCanvas: HTMLCanvasElement | null = null;
-let _fogScratchCtx: CanvasRenderingContext2D | null = null;
-let _fogImageData: ImageData | null = null;
-
-function fogNoise2D(wx: number, wy: number): number {
-    const v1 = Math.sin(wx * 0.052 + wy * 0.038 + Math.sin(wy * 0.041) * 1.6);
-    const v2 = Math.cos(wx * 0.115 - wy * 0.089 + Math.cos(wx * 0.063) * 1.4);
-    const v3 = Math.sin((wx + wy) * 0.21 + Math.sin(wx * 0.15 - wy * 0.17));
-    return v1 * 0.52 + v2 * 0.31 + v3 * 0.17;
-}
-
-function drawUnexploredFog(
-    ctx: CanvasRenderingContext2D,
-    coreWidth: number,
-    coreHeight: number,
-    pad: number,
-    tileX: number,
-    tileY: number,
-): void {
-    const CORE_S = 64; // 核心 256px 对应 64 格（每格 4px）
-    const PAD_S = Math.round((pad / coreWidth) * CORE_S); // 48px 对应 12 格
-    const FULL_S = CORE_S + PAD_S * 2; // 88×88 格
-    const fullW = coreWidth + pad * 2;
-    const fullH = coreHeight + pad * 2;
-
-    if (!_fogScratchCanvas || _fogScratchCanvas.width !== FULL_S) {
-        _fogScratchCanvas = document.createElement('canvas');
-        _fogScratchCanvas.width = FULL_S;
-        _fogScratchCanvas.height = FULL_S;
-        _fogScratchCtx = _fogScratchCanvas.getContext('2d');
-        if (_fogScratchCtx) _fogImageData = _fogScratchCtx.createImageData(FULL_S, FULL_S);
-    }
-    if (!_fogScratchCanvas || !_fogScratchCtx || !_fogImageData) {
-        ctx.fillStyle = '#84898e';
-        ctx.fillRect(pad, pad, coreWidth, coreHeight);
-        return;
-    }
-    const data = _fogImageData.data;
-    const baseWx = tileX * CORE_S;
-    const baseWy = tileY * CORE_S;
-    const coreMin = PAD_S;
-    const coreMax = PAD_S + CORE_S - 1;
-    let p = 0;
-    for (let gy = 0; gy < FULL_S; gy++) {
-        const wy = baseWy + (gy - PAD_S);
-        const dyOut = gy < coreMin ? (coreMin - gy) : (gy > coreMax ? (gy - coreMax) : 0);
-        for (let gx = 0; gx < FULL_S; gx++) {
-            const wx = baseWx + (gx - PAD_S);
-            const dxOut = gx < coreMin ? (coreMin - gx) : (gx > coreMax ? (gx - coreMax) : 0);
-            const n = fogNoise2D(wx, wy); // [-1, 1]
-            const billow = fogNoise2D(wx * 1.9 + 37.2, wy * 1.9 - 19.4);
-            const shade = 132 + n * 16 + billow * 7;
-
-            let alpha = 255;
-            if (dxOut > 0 || dyOut > 0) {
-                const dOut = Math.hypot(dxOut, dyOut) / PAD_S;
-                if (dOut >= 1 || gx === 0 || gx === FULL_S - 1 || gy === 0 || gy === FULL_S - 1) {
-                    alpha = 0;
-                } else {
-                    // 云絮噪声调制衰减半径：在 dOut=0（256px 接缝处）严格保持 alpha=255 盖死硬边，向外呈不规则云絮消散
-                    const cloudMod = (n * 0.22 + billow * 0.12) * Math.min(1, dOut * 2.2);
-                    const u = Math.max(0, Math.min(1, dOut + cloudMod));
-                    const fade = 1 - u * u * (3 - 2 * u);
-                    alpha = Math.round(255 * fade);
-                }
-            }
-
-            data[p] = Math.max(98, Math.min(166, Math.round(shade - 2)));     // R（微冷灰褐）
-            data[p + 1] = Math.max(102, Math.min(170, Math.round(shade + 1))); // G
-            data[p + 2] = Math.max(106, Math.min(175, Math.round(shade + 5))); // B
-            data[p + 3] = alpha;
-            p += 4;
-        }
-    }
-    _fogScratchCtx.putImageData(_fogImageData, 0, 0);
-    ctx.save();
-    ctx.clearRect(0, 0, fullW, fullH);
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(_fogScratchCanvas, 0, 0, fullW, fullH);
-    ctx.restore();
-}
-
-/** 将瓦片切换为外扩云雾状态（向四周外扩 FOG_PAD 像素并做透明云絮羽化） */
-function enterFogState(
-    tile: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D,
-    size: L.Point,
-    coords: L.Coords,
-): void {
-    const fullW = size.x + FOG_PAD * 2;
-    const fullH = size.y + FOG_PAD * 2;
-    if (tile.width !== fullW || tile.height !== fullH) {
-        tile.width = fullW;
-        tile.height = fullH;
-    }
-    tile.style.width = `${fullW}px`;
-    tile.style.height = `${fullH}px`;
-    tile.style.marginLeft = `${-FOG_PAD}px`;
-    tile.style.marginTop = `${-FOG_PAD}px`;
-    tile.classList.remove('hillshade-tile-reveal');
-    tile.classList.add('hillshade-tile-fog');
-    drawUnexploredFog(ctx, size.x, size.y, FOG_PAD, coords.x, coords.y);
-}
-
-/** 将瓦片恢复为标准 256×256 地形显示状态 */
-function exitFogState(
-    tile: HTMLCanvasElement,
-    size: L.Point,
-): void {
-    if (tile.width !== size.x || tile.height !== size.y) {
-        tile.width = size.x;
-        tile.height = size.y;
-    }
-    tile.style.width = `${size.x + 0.5}px`;
-    tile.style.height = `${size.y + 0.5}px`;
-    tile.style.marginLeft = '0px';
-    tile.style.marginTop = '0px';
-    tile.classList.remove('hillshade-tile-fog');
-    tile.classList.add('hillshade-tile-reveal');
-}
-
 interface HillshadeOptions extends L.GridLayerOptions {
     azimuth?: number;
     altitude?: number;
@@ -339,7 +211,7 @@ export class HillshadeLayer extends L.GridLayer {
 
         try {
             const _t0 = performance.now();
-            exitFogState(tile, size);
+            // removed exitFogState
             ctx.clearRect(0, 0, size.x, size.y);
             ctx.drawImage(bitmap, 0, 0);
             if (e.data.isCoarseFallback) {
@@ -543,6 +415,97 @@ export class HillshadeLayer extends L.GridLayer {
         this.redraw();
     }
 
+    /**
+     * 瓦片尚未算完时的同步垫底绘制（彻底取代冷灰雾）：
+     * 1. 优先从内存 tileCache 查找已缓存的父级瓦片（z-1..z-4）局部放大垫底；
+     * 2. 若从高倍缩放到低倍，叠加已缓存的子级瓦片（z+1 四象限）；
+     * 3. 若均无缓存，按内存海陆采样（不触发网络请求）铺暖沙盘宣纸色（#b8a377）或海洋蓝（#6395b8）。
+     */
+    private drawProvisionalBackdrop(
+        ctx: CanvasRenderingContext2D,
+        size: L.Point,
+        coords: L.Coords,
+        bounds: { north: number; south: number; east: number; west: number },
+    ): void {
+        let drewAncestor = false;
+        const minAncZ = Math.max(4, coords.z - 4);
+        for (let ancZ = coords.z - 1; ancZ >= minAncZ; ancZ--) {
+            const scale = 1 << (coords.z - ancZ);
+            const ancX = Math.floor(coords.x / scale);
+            const ancY = Math.floor(coords.y / scale);
+            const ancBounds = tileBoundsFromCoords(ancZ, ancX, ancY);
+            const ancKey = this.tileCacheKey(ancZ, ancX, ancY, this.isReliefTile(ancZ), this.isValleyTile(ancZ, ancBounds));
+            const ancBmp = this.tileCache.get(ancKey);
+            if (ancBmp) {
+                const subW = size.x / scale;
+                const subH = size.y / scale;
+                const sx = (coords.x - ancX * scale) * subW;
+                const sy = (coords.y - ancY * scale) * subH;
+                try {
+                    ctx.save();
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.drawImage(ancBmp, sx, sy, subW, subH, 0, 0, size.x, size.y);
+                    ctx.restore();
+                    drewAncestor = true;
+                    break;
+                } catch {
+                    // ignore detached bitmap
+                }
+            }
+        }
+
+        let drewChildCount = 0;
+        const childZ = coords.z + 1;
+        if (childZ <= 12) {
+            const halfW = size.x / 2;
+            const halfH = size.y / 2;
+            for (let dy = 0; dy < 2; dy++) {
+                for (let dx = 0; dx < 2; dx++) {
+                    const cx = coords.x * 2 + dx;
+                    const cy = coords.y * 2 + dy;
+                    const cBounds = tileBoundsFromCoords(childZ, cx, cy);
+                    const cKey = this.tileCacheKey(childZ, cx, cy, this.isReliefTile(childZ), this.isValleyTile(childZ, cBounds));
+                    const cBmp = this.tileCache.get(cKey);
+                    if (cBmp) {
+                        try {
+                            ctx.save();
+                            ctx.imageSmoothingEnabled = true;
+                            ctx.drawImage(cBmp, 0, 0, size.x, size.y, dx * halfW, dy * halfH, halfW, halfH);
+                            ctx.restore();
+                            drewChildCount++;
+                        } catch {
+                            // ignore detached bitmap
+                        }
+                    }
+                }
+            }
+        }
+
+        if (drewAncestor || drewChildCount === 4) return;
+
+        const GRID = 4;
+        const cellW = size.x / GRID;
+        const cellH = size.y / GRID;
+        for (let gy = 0; gy < GRID; gy++) {
+            const lat = bounds.north - ((gy + 0.5) / GRID) * (bounds.north - bounds.south);
+            for (let gx = 0; gx < GRID; gx++) {
+                if (drewChildCount > 0) {
+                    const qx = gx < GRID / 2 ? 0 : 1;
+                    const qy = gy < GRID / 2 ? 0 : 1;
+                    const cx = coords.x * 2 + qx;
+                    const cy = coords.y * 2 + qy;
+                    const cBounds = tileBoundsFromCoords(childZ, cx, cy);
+                    const cKey = this.tileCacheKey(childZ, cx, cy, this.isReliefTile(childZ), this.isValleyTile(childZ, cBounds));
+                    if (this.tileCache.has(cKey)) continue;
+                }
+                const lng = bounds.west + ((gx + 0.5) / GRID) * (bounds.east - bounds.west);
+                const kind = LandSeaSystem.probeLandSea(lat, lng);
+                ctx.fillStyle = kind === 'sea' ? '#6395b8' : '#b8a377';
+                ctx.fillRect(gx * cellW, gy * cellH, cellW + 0.5, cellH + 0.5);
+            }
+        }
+    }
+
     createTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
         const tile = L.DomUtil.create('canvas', 'leaflet-tile') as HTMLCanvasElement;
         tile.style.pointerEvents = 'none';
@@ -580,7 +543,7 @@ export class HillshadeLayer extends L.GridLayer {
                 // 改为重新查一次缓存：条目还在 ⇒ 位图必定有效（淘汰是「close + 删键」成对做的）。
                 const fresh = this.cacheGet(cacheKey);
                 if (!fresh) {
-                    enterFogState(tile, ctx, size, coords);
+                    this.drawProvisionalBackdrop(ctx, size, coords, bounds);
                     this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
                     return;
                 }
@@ -589,7 +552,7 @@ export class HillshadeLayer extends L.GridLayer {
                 } catch (err) {
                     // 兜底：绘制异常时重算，同样不留空白瓦片
                     console.warn('[Hillshade] 缓存位图绘制失败，改为重算:', err);
-                    enterFogState(tile, ctx, size, coords);
+                    this.drawProvisionalBackdrop(ctx, size, coords, bounds);
                     this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
                     return;
                 }
@@ -599,7 +562,7 @@ export class HillshadeLayer extends L.GridLayer {
         }
 
         // 未命中缓存（需网络请求 + Worker 计算）：先铺上无缝「未探索灰雾」遮罩，算完后自动拨雾显现地形
-        enterFogState(tile, ctx, size, coords);
+        this.drawProvisionalBackdrop(ctx, size, coords, bounds);
         this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
         return tile;
     }

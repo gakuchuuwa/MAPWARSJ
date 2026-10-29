@@ -1630,6 +1630,10 @@ export class PlayerQuestSystem {
     /** 沿路网 BFS 最近敌城（跳数优先，同跳取直线最近）；找不到就全图可达直线最近敌城 */
     private pickCampaignTarget(city: City, myFactionId?: string): City | null {
         const faction = myFactionId ?? city.factionId;
+        // 🔴 [2026-10-29 主人报「据点还是蜀国，姜维却可以无限穿插」] 首战打完以战场旁的据点为起点找下一个目标，
+        //    起点本身若是敌城（洮西之战后的武都＝魏城、四周全是蜀城），原来会把它排除在外、往远处找，
+        //    军团就绕过眼前的敌城在己方境内穿行。起点是敌城就先打它。
+        if (city.factionId && city.factionId !== faction) return city;
         const seen = new Set<string>([city.id]);
         let frontier: City[] = [city];
         for (let hop = 1; hop <= PLAYER_QUEST_TARGET_MAX_HOPS; hop++) {
@@ -2394,31 +2398,20 @@ export class PlayerQuestSystem {
             }
         }
 
-        // 🔴 [2026-10-20 主人令「所有野战剧情结束后，要有据点获得奖励」] 野战首战打赢后也奖励一座据点：
-        //    优先战场所属据点（targetCityId）；没写据点或已是我方的，取离战场最近的非我方据点。
+        // 🔴 [2026-10-29 主人令「按历史走，野战的后续要不要奖励据点，按历史走」] 推翻 10-20「所有野战剧情结束后要有据点奖励」：
+        //    野战首战打赢后，只有史实记载这一仗拿下了某座城（数据里写了 rewardCityId，如牧野之战入朝歌）才给据点；
+        //    没写的一律不给，也不再「就近取一座」或把目标据点硬划过来（如洮西之战，姜维只是大破王经，并未夺城）。
         let fieldRewardCity: City | undefined;
-        if (fbState?.battleType === 'field') {
-            const cities = this.deps.cityManager.getCities();
-            const battlePos = { lat: fbState.targetLat, lng: fbState.targetLng };
-            // 🔴 [2026-10-21 主人令「奖励不要搞最近据点，按历史做成指定据点」] 先取史实指定的奖励据点，没指定的才走下面的旧规则
-            const fixedReward = fbState.rewardCityId ? this.deps.cityManager.getCity(fbState.rewardCityId) : undefined;
-            let reward = fixedReward ?? fbTargetCity;
-            if (!fixedReward && (!reward || reward.factionId === q.factionId)) {
-                let best: City | undefined;
-                let bestDist = Infinity;
-                for (const c of cities) {
-                    if (c.factionId === q.factionId) continue;
-                    const d = getEuclideanDistance(battlePos, { lat: c.latitude, lng: c.longitude });
-                    if (d < bestDist) { bestDist = d; best = c; }
-                }
-                reward = best;
-            }
+        if (fbState?.battleType === 'field' && fbState.rewardCityId) {
+            const reward = this.deps.cityManager.getCity(fbState.rewardCityId);
             if (reward) {
                 fieldRewardCity = reward;
-                reward.factionId = q.factionId;
-                if ((reward.troops || 0) < 3000) reward.troops = 3000;
-                this.deps.notify(`🏆 【${fbState.battleName}】大捷，获得据点【${reward.name}】`);
-                gameLog('expedition', `[玩家] 野战首战奖励据点：${q.generalName} ${fbState.battleName} → ${reward.name}`);
+                if (reward.factionId !== q.factionId) {
+                    reward.factionId = q.factionId;
+                    if ((reward.troops || 0) < 3000) reward.troops = 3000;
+                    this.deps.notify(`🏆 【${fbState.battleName}】大捷，获得据点【${reward.name}】`);
+                    gameLog('expedition', `[玩家] 野战首战奖励据点（按史）：${q.generalName} ${fbState.battleName} → ${reward.name}`);
+                }
             }
         }
 

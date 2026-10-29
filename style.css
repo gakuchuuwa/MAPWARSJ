@@ -10,35 +10,15 @@ body {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 30% 35%, rgba(154, 159, 164, 0.45) 0%, rgba(118, 123, 128, 0.65) 55%, rgba(98, 103, 108, 0.85) 100%),
-        #7d8388;
-    /* 未探索灰雾底色：未加载或延时区域呈现柔和灰蒙迷雾质感，取代刺眼纯蓝方洞 */
+        radial-gradient(circle at 30% 35%, #c5b186 0%, #b8a377 60%, #a89368 100%),
+        #b8a377;
+    /* 暖沙盘宣纸底色：与陆地沙盘同色系自然过渡，彻底取消冷灰底色与刺眼纯蓝方洞 */
     position: relative;
 }
 
 /* 辅助消除 Chromium / WebKit 在 GPU 3D 变换下的瓦片边缘抗锯齿透明裂缝 */
 .leaflet-tile {
     outline: 1px solid transparent;
-}
-
-/* 战略地图未加载/延时瓦片：外扩 48px 云絮羽化迷雾态（像素级 Alpha 云雾漫过邻块直边，彻底消除 256px 刀切硬边） */
-.leaflet-tile.hillshade-tile-fog {
-    opacity: 1 !important;
-    z-index: 12 !important;
-    pointer-events: none !important;
-}
-
-@keyframes hillshade-fog-clear {
-    0% {
-        filter: brightness(1.05) contrast(0.78) saturate(0.45);
-    }
-    100% {
-        filter: none;
-    }
-}
-
-.leaflet-tile.hillshade-tile-reveal {
-    animation: hillshade-fog-clear 0.42s ease-out forwards;
 }
 
 /* 战略地图古典古卷氛围覆盖层（沙盘微暗角 + 宣纸绢帛暗纹，零交互遮挡） */

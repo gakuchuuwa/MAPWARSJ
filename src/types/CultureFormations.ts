@@ -1650,7 +1650,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     //    CHIMU 昌昌→安第斯军团｜TARASCAN 钦聪灿→中美军团｜SEASIA_CASTLE 特罗武兰→城堡时代爪哇军团｜
     //    KARA_KHITAN 碎叶→中亚军团）。尺子：`scratch/audit_ghost_legions.mts`（清完不再有「查无此军」）。
     PURU: '古典时代贵霜军团',
-    EAST: '封建时代拜占庭军区军团',
+    EAST: '封建时代罗曼尼亚军团',
     THRACIAN: '古典时代色雷斯军团',
     // 🔴 [2026-10-05 主人令「这两个军团在历史上是不是重复了？如果是，请删除三级的，保留二级的」]
     //    原指向三级自建「古典时代阿契美尼德军团」—— 那是**同一个阿契美尼德政权立的第二支波斯系军团**
@@ -1685,7 +1685,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     MUISCA: '城堡时代穆伊斯卡军团',
     BURMESE: '城堡时代阿瓦军团',
     HITTITES: '古典时代赫梯军团',
-    BYZANTINE: "封建时代拜占庭军区军团",
+    BYZANTINE: "封建时代罗曼尼亚军团",
     FRANKS: '封建时代法兰克军团',
     SASANIAN: '封建时代霍拉桑军团',
     TURKS: '封建时代突厥军团',
@@ -1701,7 +1701,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     //    ⚠️ 汪达尔≠萨克森，这一条是「按分支层级取最近节点」的机械修复，若主人另有裁定请改回。
     VANDALS: '封建时代东法兰克军团',
     LOMBARDS: '封建时代伦巴第军团',
-    JURCHEN: "城堡时代大金军团",
+    JURCHEN: "城堡时代女真军团",
     OTTOMAN: "帝国时代土耳其军团",
     OTTOMAN_IMPERIAL: '帝国时代土耳其军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     MANCHU: "帝国时代八旗军团",

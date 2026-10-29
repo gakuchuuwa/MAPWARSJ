@@ -2067,11 +2067,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -8
         },
-        "/assets/CENTRAL/__闲置__CENTRAL_14.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": -14
-        },
         "/assets/xianqin/__闲置__xianqin_15.png": {
             "scale": 1.05,
             "offsetX": 0,
@@ -4608,7 +4603,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 32
         },
         "/assets/BASHU/qiuchi_yangnandang.png": {
-            "scale": 0.95,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": -25
         },
@@ -8911,6 +8906,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 19,
             "offsetY": 32
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_68.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/CENTRAL/bfe_wangjing.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/GERMANIC/bfe_bogislaw_i.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/FRANKS/gen_louis_xi.png": {
+            "scale": 1.22,
+            "offsetX": 1,
+            "offsetY": 39
+        },
+        "/assets/JAPAN/gen_akechi_mitsuhide.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
         }
     },
     "folderGuides": {

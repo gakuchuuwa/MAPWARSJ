@@ -7,6 +7,7 @@
  *   · 指挥条/玩家面板（顶部居中）：官阶 / 本场击杀 / 攻击·待命·退出战斗按钮 / 受控编队数
  */
 import type { PlayerHero } from './PlayerHero';
+import { CityAssetManager } from '../assets/CityAssetManager';
 
 export interface Scene13PlayerApi {
     isActive(): boolean;
@@ -296,6 +297,16 @@ export class PlayerScene13Control {
             this.countdownEl.style.color = rem <= 60 ? '#ff6b6b' : '#ffd27a';
             this.countdownEl.style.borderColor = rem <= 60 ? 'rgba(255,107,107,0.75)' : 'rgba(212,175,55,0.55)';
         }
+        let flagHtml = '';
+        if (this.hero.factionId) {
+            CityAssetManager.requestFactionFlagTint(this.hero.factionId);
+            const flagCloth = CityAssetManager.getProcessedFlag(this.hero.factionId);
+            const flagOverlay = CityAssetManager.getProcessedFlagTextSync(this.hero.factionId);
+            const overlayHtml = flagOverlay
+                ? `<span style="position:absolute;left:0;top:0;width:32px;height:40px;background-image:url('${flagOverlay}');background-size:128px 240px;background-position:0px -160px;background-repeat:no-repeat;image-rendering:auto !important;"></span>`
+                : '';
+            flagHtml = `<span style="display:inline-block;position:relative;width:24px;height:20px;vertical-align:middle;margin-right:3px;"><span style="position:absolute;left:-1px;top:-2px;width:32px;height:40px;transform:scale(0.85);transform-origin:0 0;background-image:url('${flagCloth}');background-size:128px 320px;background-position:0px -200px;background-repeat:no-repeat;pointer-events:none;">${overlayHtml}</span></span>`;
+        }
         const st = this.isControlling() ? this.scene.getPlayerBattleState() : null;
         if (st) {
             const rank = this.hero.getRank();
@@ -317,7 +328,7 @@ export class PlayerScene13Control {
             const liveTag = liveSec > 0 ? ` · <span style="color:#ffd700;font-weight:900;">⚡玩家技 ${liveSec}s</span>` : '';
             this.info.title = `统率权限：${ctl}`;
             this.info.innerHTML =
-                `<b style="color:#ffd27a;">${this.hero.name}</b> · ${rank.name} · `
+                `${flagHtml}<b style="color:#ffd27a;">${this.hero.name}</b> · ${rank.name} · `
                 + `${hpText} · `
                 + `斩 <b>${st.kills}</b> · 功勋 ${this.hero.merit}`
                 + liveTag;
@@ -336,7 +347,7 @@ export class PlayerScene13Control {
             if (this.hint) this.hint.style.display = 'none';
         } else {
             this.info.innerHTML =
-                `<b style="color:#ffd27a;">${this.hero.name}</b> · 观战中`;
+                `${flagHtml}<b style="color:#ffd27a;">${this.hero.name}</b> · 观战中`;
             if (this.btnAttack) this.btnAttack.style.display = 'none';
             if (this.btnHold) this.btnHold.style.display = 'none';
             if (this.hint) this.hint.style.display = 'none';

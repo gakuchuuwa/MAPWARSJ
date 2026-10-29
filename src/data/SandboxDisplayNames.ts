@@ -200,7 +200,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'wei': '魏',
 'han': '韩',
 'han_d': '汉',
-    'shu': '蜀',
+    'shu': '汉',
 'juqu_d': '沮渠',
 'tufa_d': '秃发',
 'qiuchi': '仇池',

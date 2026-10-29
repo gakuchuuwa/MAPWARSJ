@@ -14,6 +14,9 @@ import { resolvePortraitSourceFacing } from '../config/portrait_defaults';
 import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { toggleHorseStablePanel, horseBrief, horseStatusColor } from './HorseStablePanel';
+import { CityAssetManager } from '../assets/CityAssetManager';
+import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
+import { FACTION_EMBLEM } from '../data/FactionEmblems';
 
 const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
 
@@ -466,6 +469,35 @@ export class PlayerHUD {
         sep2.textContent = '|';
         secLeft.appendChild(sep2);
 
+        if (hero.factionId) {
+            CityAssetManager.requestFactionFlagTint(hero.factionId);
+            const flagCloth = CityAssetManager.getProcessedFlag(hero.factionId);
+            const flagOverlay = CityAssetManager.getProcessedFlagTextSync(hero.factionId);
+            const flagLabel = FACTION_EMBLEM[hero.factionId] ? '' : (SANDBOX_DISPLAY_NAMES[hero.factionId] || '');
+            const flagWrap = document.createElement('span');
+            flagWrap.style.cssText = 'display:inline-block; position:relative; width:24px; height:20px; vertical-align:middle; margin-right:2px; flex-shrink:0;';
+            flagWrap.title = flagLabel ? `势力：${factionName}（旗号：${flagLabel}）` : `势力：${factionName}`;
+            const clothEl = document.createElement('span');
+            clothEl.style.cssText = `
+                position:absolute; left:-1px; top:-2px; width:32px; height:40px;
+                transform:scale(0.85); transform-origin:0 0;
+                background-image:url('${flagCloth}');
+                background-size:128px 320px; background-position:0px -200px; background-repeat:no-repeat;
+                pointer-events:none;
+            `;
+            if (flagOverlay) {
+                const overlayEl = document.createElement('span');
+                overlayEl.style.cssText = `
+                    position:absolute; left:0; top:0; width:32px; height:40px;
+                    background-image:url('${flagOverlay}');
+                    background-size:128px 240px; background-position:0px -160px; background-repeat:no-repeat;
+                    image-rendering:auto !important;
+                `;
+                clothEl.appendChild(overlayEl);
+            }
+            flagWrap.appendChild(clothEl);
+            secLeft.appendChild(flagWrap);
+        }
         const facSpan = document.createElement('span');
         facSpan.style.cssText = `color:${hero.factionId ? '#7cd4a0' : '#ba9e7b'}; font-weight:700; white-space:nowrap;`;
         facSpan.textContent = factionName;
