@@ -8886,6 +8886,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 44
+        },
+        "/assets/LATIN/gen_maximilian_sforza.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 39
+        },
+        "/assets/ORIE/aiji_neiketaneibu.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/GREECE/bfe2_pharnabazus.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 48
         }
     },
     "folderGuides": {

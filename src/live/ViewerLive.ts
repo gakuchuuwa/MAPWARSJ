@@ -550,9 +550,13 @@ export class ViewerLive {
         joinScope: string;
         activeJoinBid: ViewerActiveJoinBid | null;
         experimental: ExperimentalSupportStats;
+        /** 主角现在的官职、资历（离队后选去处按它）、是否随军 —— 面板据此写「现在能做什么」 */
+        hero: { rankId: string; rankTitle: string; peakRankId: string; attached: boolean };
     } {
+        // 排行只排在场的人（10 分钟内说过话）：不让几天前来过的人一直占着榜
+        const presentCut = Date.now() - PRESENT_MS;
         const top = [...this.orders.values()]
-            .filter((a) => a.n > 0 || a.lastEarn > 0)
+            .filter((a) => a.seen > presentCut && (a.n > 0 || a.lastEarn > 0))
             .sort((x, y) => (y.n - x.n) || (y.lastEarn - x.lastEarn))
             .slice(0, 6)
             .map((a) => ({ name: a.name, n: a.n }));
@@ -594,6 +598,12 @@ export class ViewerLive {
             joinScope,
             activeJoinBid: this.activeJoinBid ? { ...this.activeJoinBid } : null,
             experimental: { ...this.experimentalSupport },
+            hero: {
+                rankId: this.app.playerHero?.getRank().id ?? 'civilian',
+                rankTitle: this.app.playerHero?.getRank().title ?? '平民',
+                peakRankId: rankId ?? 'civilian',
+                attached: this.app.playerHero?.isAttached() ?? false,
+            },
         };
     }
 

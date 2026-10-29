@@ -148,15 +148,21 @@ export class PlayerScene13Control {
     private createBar(): void {
         const bar = document.createElement('div');
         bar.id = 'player-scene13-bar';
+        // 🔴 [2026-10-29 主人令「还是改为两行吧，把弹幕控将开始，为第二行」]
+        // 战术顶栏采用两行结构：第一行玩家信息与战斗操作，第二行为弹幕控将与直播数据
         bar.style.cssText = `
             position:fixed; top:0; left:50%; transform:translateX(-50%); z-index:10055; display:none;
-            flex-wrap:nowrap; justify-content:center; align-items:center; gap:8px; width:max-content; max-width:96vw;
-            padding:5px 12px; font-family:${FONT}; font-size:13px; color:#f5e6c8;
+            flex-direction:column; justify-content:center; align-items:center; gap:3px; width:max-content; max-width:96vw;
+            padding:4px 12px 5px; font-family:${FONT}; font-size:13px; color:#f5e6c8;
             background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
             border:1px solid rgba(212,175,55,0.6); border-radius:0 0 10px 10px; pointer-events:auto; user-select:none;
             box-shadow:0 2px 12px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,215,0,0.25); white-space:nowrap;`;
+        const topRow = document.createElement('div');
+        topRow.className = 'player-scene13-top-row';
+        topRow.style.cssText = 'display:flex; flex-wrap:nowrap; justify-content:center; align-items:center; gap:8px;';
+
         const info = document.createElement('span');
-        bar.appendChild(info);
+        topRow.appendChild(info);
         const btnVeto = document.createElement('button');
         btnVeto.textContent = '否决';
         btnVeto.title = '一键否决观众改名，恢复上一个名字，出价积分不退';
@@ -166,7 +172,7 @@ export class PlayerScene13Control {
             this.rename?.vetoViewerRename();
             this.refresh();
         });
-        bar.appendChild(btnVeto);
+        topRow.appendChild(btnVeto);
         this.btnVeto = btnVeto;
         const countdown = document.createElement('span');
         countdown.title = '战术模式 9 分钟倒计时（到时未攻下城池则算打平）';
@@ -174,7 +180,7 @@ export class PlayerScene13Control {
             padding:3px 9px; font-weight:900; font-size:13px; color:#ffd27a;
             background:rgba(212,175,55,0.14); border:1px solid rgba(212,175,55,0.55); border-radius:6px;`;
         countdown.textContent = '⏳ 9:00';
-        bar.appendChild(countdown);
+        topRow.appendChild(countdown);
         this.countdownEl = countdown;
         const mk = (label: string, cmd: 'attack' | 'hold') => {
             const b = document.createElement('button');
@@ -183,7 +189,7 @@ export class PlayerScene13Control {
                 padding:4px 12px; cursor:pointer; font-family:inherit; font-weight:900; font-size:13px; color:#f5e6c8;
                 background:rgba(255,255,255,0.06); border:1px solid rgba(212,175,55,0.5); border-radius:6px;`;
             b.addEventListener('click', () => { this.scene.setPlayerCommand(cmd); this.refresh(); });
-            bar.appendChild(b);
+            topRow.appendChild(b);
             return b;
         };
         // 🔴 [2026-09-09 主人定「设置两个选项，自动和待命」「默认自动」]
@@ -236,7 +242,7 @@ export class PlayerScene13Control {
         zoomWrap.appendChild(slider);
         zoomWrap.appendChild(btnZoomIn);
         zoomWrap.appendChild(zoomLabel);
-        bar.appendChild(zoomWrap);
+        topRow.appendChild(zoomWrap);
         this.zoomSlider = slider;
         this.zoomLabel = zoomLabel;
 
@@ -264,15 +270,16 @@ export class PlayerScene13Control {
             btnExit.disabled = true;
             this.scene.requestExitWithResult();
         });
-        bar.appendChild(btnExit);
+        topRow.appendChild(btnExit);
         this.btnExit = btnExit;
 
         const hint = document.createElement('span');
         hint.style.cssText = 'font-size:11px; color:#c9b58a;';
         hint.textContent = 'Q 自动 · E 待命（原地可攻击）';
-        bar.appendChild(hint);
+        topRow.appendChild(hint);
         this.hint = hint;
 
+        bar.appendChild(topRow);
         document.body.appendChild(bar);
         this.bar = bar;
         this.info = info;

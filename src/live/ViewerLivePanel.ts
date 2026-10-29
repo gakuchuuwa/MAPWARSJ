@@ -49,7 +49,7 @@ export class ViewerLivePanel {
             z-index:10054; width:max-content; max-width:94vw; display:none;
             background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
             border:1px solid rgba(212,175,55,0.65); border-radius:8px;
-            padding:6px 16px; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
+            padding:4px 14px; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
             box-shadow:0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22);
             pointer-events:auto; user-select:none;`;
         this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; width:380px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
@@ -57,9 +57,10 @@ export class ViewerLivePanel {
 
     private applyScene13MergedStyle(): void {
         this.root.style.cssText = `
-            position:relative; display:inline-flex; align-items:center; flex-shrink:0;
-            margin-left:2px; padding-left:10px;
-            border-left:1px solid rgba(212,175,55,0.45);
+            position:relative; display:inline-flex; align-items:center; justify-content:center;
+            padding-top:3px; margin-top:2px;
+            border-top:1px solid rgba(212,175,55,0.3);
+            width:100%;
             color:#f5e6c8; font-family:${FONT}; font-size:${FS_S13.sub}px; line-height:1.2;
             pointer-events:auto; user-select:none;`;
         this.dev.style.cssText = `display:${this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:380px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
@@ -113,25 +114,13 @@ export class ViewerLivePanel {
         const nextRename = s.renameHighestBid + 1;
         const renameCmd = `<span style="font-size:${f.sub}px;">${b(`名 名字 ${nextRename}`)} 改名(${nextRename}分起)</span>`;
 
-        let mainRow: string;
-        if (s.on) {
-            const castCmd = `<span style="font-size:${f.main}px;">${b('攻胜敌混并败')} 玩家六计<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)}先后)</span></span>`;
-            const scoutCmd = `<span style="font-size:${f.main}px;">${b('技3')} 爆发技<span style="font-size:${f.sub}px;color:#e0cfa9;">(高分插队)</span></span>`;
-            mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${castCmd}${sep}${scoutCmd}${sep}${renameCmd}</div>`;
-        } else {
-            const joinPart = s.joinCandidates.length > 0
-                ? `<span style="font-size:${f.main}px;">选去处·${esc(s.joinScope)}：${s.joinCandidates.map((c) => `${b(`投${c.index}`)} ${esc(c.label)}`).join(' · ')}${s.activeJoinBid ? `<span style="color:#7cd4a0;">（当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分→${esc(s.activeJoinBid.label)}）</span>` : ''}</span>`
-                : `<span style="font-size:${f.sub}px;color:#dfc28c;">随军行进中 · 主角离队后可发 ${b('投1')} 选去处</span>`;
-            mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${joinPart}${sep}${renameCmd}</div>`;
-        }
-
         const subItems: string[] = [];
         const g = s.goal;
         if (s.yt || g.likes > 0 || g.subs > 0) {
             const pct = Math.min(100, Math.round(g.likeProg / g.likeStep * 100));
             subItems.push(
-                `<span style="display:inline-flex;align-items:center;gap:5px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 发分${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''} · 在线 ${b(String(g.viewers))} · 在场 ${b(String(g.present))}`
-                + `<span style="display:inline-block;width:54px;height:6px;background:#3a2a16;border-radius:3px;overflow:hidden;"><span style="display:block;height:6px;width:${pct}%;background:#d4af37;"></span></span></span>`
+                `<span style="display:inline-flex;align-items:center;gap:4px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 发分${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''} · 在线 ${b(String(g.viewers))} · 在场 ${b(String(g.present))}`
+                + `<span style="display:inline-block;width:44px;height:5px;background:#3a2a16;border-radius:3px;overflow:hidden;vertical-align:middle;"><span style="display:block;height:5px;width:${pct}%;background:#d4af37;"></span></span></span>`
             );
         }
         if (s.top.length) {
@@ -144,12 +133,40 @@ export class ViewerLivePanel {
                 `${esc(x.name)}${x.label ? `·${esc(x.label)}` : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
         }
         if (s.log.length) subItems.push(`<span style="color:#cdbb95;">${s.log.slice(-2).map(esc).join(' ｜ ')}</span>`);
-        const subRow = subItems.length
-            ? (this.inScene13Bar
-                ? `<div style="position:absolute;top:calc(100% + 6px);right:0;display:flex;align-items:center;gap:8px;padding:3px 10px;background:rgba(20,16,12,0.92);border:1px solid rgba(212,175,55,0.5);border-radius:6px;font-size:${f.small}px;white-space:nowrap;pointer-events:none;">${subItems.join(sep)}</div>`
-                : `<div style="margin-top:4px;padding-top:3px;border-top:1px solid rgba(212,175,55,0.28);display:flex;align-items:center;justify-content:center;gap:8px;font-size:${f.small}px;white-space:nowrap;">${subItems.join(sep)}</div>`)
+
+        // 🔴 [2026-10-29 主人令「把这些信息放到玩家信息面板，设计一行就行」]
+        // 直播信息（点赞发分、在线、在场、积分）整合成单行，不再独立悬挂第二行
+        const liveInfoPart = subItems.length
+            ? `${sep}<span style="display:inline-flex;align-items:center;gap:6px;font-size:${f.small}px;">${subItems.join(sep)}</span>`
             : '';
-        this.body.innerHTML = platform + mainRow + subRow;
+
+        // 主角现在的官职，紧跟标题：观众一眼知道「现在能做什么」
+        const civilian = s.hero.rankId === 'civilian';
+        const rankBadge = `<span style="font-size:${f.main}px;">官职 ${b(esc(s.hero.rankTitle))}</span>`;
+        const hint = (t: string) => `<span style="font-size:${f.sub}px;color:#dfc28c;">${t}</span>`;
+        let mainRow: string;
+        if (s.on && !civilian) {
+            const castCmd = `<span style="font-size:${f.main}px;">${b('攻胜敌混并败')} 玩家六计<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)}先后)</span></span>`;
+            const scoutCmd = `<span style="font-size:${f.main}px;">${b('技1')} 爆发技<span style="font-size:${f.sub}px;color:#e0cfa9;">(高分插队)</span></span>`;
+            mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${castCmd}${sep}${scoutCmd}${sep}${renameCmd}${liveInfoPart}</div>`;
+        } else {
+            let statePart: string;
+            if (s.joinCandidates.length > 0) {
+                statePart = `<span style="font-size:${f.main}px;">选去处·${esc(s.joinScope)}：${s.joinCandidates.map((c) => `${b(`投${c.index}`)} ${esc(c.label)}`).join(' · ')}${s.activeJoinBid ? `<span style="color:#7cd4a0;">（当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分→${esc(s.activeJoinBid.label)}）</span>` : ''}</span>`;
+            } else if (civilian && s.hero.peakRankId === 'civilian') {
+                // 平民没有资历：只能改名，投奔武将后升斥候才开放放技放计
+                statePart = hint(`单骑寻找武将投奔 · 平民现在可以 ${b('改名')} · 投奔后升斥候，打仗时可放技放计`);
+            } else if (civilian) {
+                statePart = hint(`离队寻找去处 · 列出去处后发 ${b('投1')} 选 · 投奔后从斥候做起`);
+            } else if (s.hero.attached) {
+                statePart = hint('随军行进中 · 打仗时可放技放计');
+            } else {
+                statePart = hint('赶路中 · 打仗时可放技放计');
+            }
+            mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${statePart}${sep}${renameCmd}${liveInfoPart}</div>`;
+        }
+
+        this.body.innerHTML = platform + mainRow;
     }
 
     private buildDev(): void {
