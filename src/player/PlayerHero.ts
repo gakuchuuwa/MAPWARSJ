@@ -984,10 +984,8 @@ export class PlayerHero {
         const me = this.army.getPosition();
         const it = army.getPosition();
         if (getEuclideanDistance(me, it) <= PLAYER_CITY_ARRIVE_DIST) {
-            if (army.getIsInCombat()) {
-                this.cancelTravel();
-                return;
-            }
+            // 🔴 [2026-10-29 主人「武将正在交战，为什么不能直接加入」] 原先追上了但军团在交战就原地干等到打完；
+            //    现在照常会面、当场入伍（这一仗已经开打，主角从下一仗起上阵；这一仗打赢不记功，见 battleArmed）。
             this.chaseArmyId = null;
             this.chaseGeneralName = null;
             this.cancelTravel();

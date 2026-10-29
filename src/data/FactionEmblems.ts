@@ -255,6 +255,25 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     mojietuo: 'MAGADHA_KARSHAPANA_PUNCHMARKS',   // 摩揭陀·早期打印记银币五印记组合（太阳、六臂印、兽印与几何印）
     lancang: 'LAN_XANG_ELEPHANT_PARASOL',   // 澜沧·建国称号“百万大象与白伞王国”的单头立象与王室白伞
     huarazim: 'KHWARAZM_MUHAMMAD_HORSEMAN',   // 花剌子模·沙阿摩诃末吉塔尔银铜币的右向持矛突骑（1200—1220年，Tye 212 / Album 1723）
+    // ── 2026-10-29 大势力史实旗面第十四批（18 家）──────────────────────────
+    sashan: 'SASANIAN_ATASHDAN',   // 萨珊帝国·沙普尔一世至库思老二世银德拉克马背面的三阶拜火圣坛（Atashdan）与圣火
+    tujue: 'GOKTURK_ASHINA_IBEX_TAMGA',   // 突厥汗国·阙特勤碑与毗伽可汗碑额正中的阿史那王室盘角羱羊塔木加
+    sogdian: 'SAMARQAND_IKHSHID_TAMGA',   // 粟特（康国）·撒马尔罕伊赫什德王朝铜币正中的圆环三叉王室塔木加
+    yanda: 'ALCHON_S1_BULL_CRESCENT_TAMGA',   // 白匈奴（阿尔洪）·头罗曼与摩醯逻矩罗银币正面的S1新月托双枝心形塔木加
+    huluo: 'GHURID_MUIZZ_HORSEMAN_STAR',   // 古尔王朝·穆伊兹丁吉塔尔银铜币（Tye 185）正面的左向疾驰战马与六芒星印
+    kala: 'KARAKHANID_BOW_TREFOIL_TAMGA',   // 喀喇汗国·11世纪费尔干纳与喀什噶尔铜币中央的三叶结与反曲弓矢塔木加
+    ailan: 'ELAM_SUSA_HORNED_SERPENTS',   // 埃兰王国·苏萨出土王室滚筒印章与青铜礼器的对称交缠双有角龙蛇（Inshushinak圣兽）
+    wuer: 'UR_NAMMU_NANNA_CRESCENT_SUN',   // 乌尔第三王朝·乌尔纳姆石碑顶部的月神南纳仰月舟托八芒星盘
+    xikesuosi: 'HYKSOS_APOPHIS_SCARAB_SEAL',   // 喜克索斯·第十五王朝阿波菲斯与希安王印的圣甲虫（Khepri）高举日盘纹
+    suzidaer: 'SUZDAL_VLADIMIR_CROWNED_LION',   // 苏兹达尔·弗拉基米尔圣德米特里大教堂浮雕与大公印章的戴冠持十字杖行狮
+    dalriada: 'DALRIADA_DUNADD_TRISKELE_CROSS',   // 达尔里阿达·王都敦阿德（Dunadd）与阿尔巴石刻的凯尔特三旋涡纹十字圆盘
+    seleisi: 'ODRYSIAN_SEUTHES_STAR_WREATH',   // 色雷斯（奥德里西亚）·塞乌特斯三世钱币的橡叶王冠花环与中央八芒星
+    keerjisi: 'COLCHIS_KOLKHIDKI_BULL_RAM',   // 科尔基斯·前5世纪科尔基斯银币（Kolkhidki）与金羊毛传统的盘角公羊首徽
+    damolaweiya: 'GREAT_MORAVIA_MIKULCICE_FALCON',   // 大摩拉维亚·米库尔奇采（Mikulčice）王室镀金饰章的展翅猎鹰（Sokol）
+    champa: 'CHAMPA_MY_SON_TRISHULA',   // 占婆·美山圣地（Mỹ Sơn）王室浮雕与金印的湿婆火焰三叉戟配莲座
+    dongxu: 'TAUNGOO_SUN_PEACOCK',   // 东吁王朝·光芒日轮环抱左向昂首跃立孔雀（区别于贡榜正面开屏孔雀）
+    talasike: 'TARASCAN_IRECHEKWA_AXE_SUN',   // 塔拉斯科·米却肯纯佩查王室T形青铜仪式钺（Tajadera）叠嵌太阳神盘
+    imagawa: 'IMAGAWA_AKADORI_HIKIRYO',   // 今川氏·《见闻诸家纹》足利一门今川氏丸内二引两家纹
 };
 
 /** 该势力是否走图案旗号；返回 null = 照旧画汉字。 */

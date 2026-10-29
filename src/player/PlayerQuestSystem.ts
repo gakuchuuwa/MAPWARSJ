@@ -218,7 +218,8 @@ export const ENLIST_OPTION_LABEL = '⚔ 入伍随军';
  * 首战兵力一律夹进 `[FIRST_BATTLE_MIN_TROOPS, FIRST_BATTLE_MAX_TROOPS]`：
  *   ① 先按**原有比例整体缩放**——史书里的强弱比（10 万 vs 5 万）要保住；
  *   ② 比例太极端（如凑川 800 : 30000，整体缩放任一边都会破区间）时退化为**各自夹取**，
- *      宁可丢强弱比，也绝不出现几百人的「首战」、也不会超过 6 万拖时间。
+ *      宁可丢强弱比，也绝不出现几百人的「首战」、也不会超过上限拖时间。
+ * 🔴 [2026-10-29 主人令「为了开局不那么逆天，所有首战兵力都改为最多 2 万」] 上限现为 2 万（见 GameConfig）。
  */
 export function clampFirstBattleTroops(my: number, enemy: number): { myTroops: number; enemyTroops: number } {
     const MIN = GameConfig.COMBAT.FIRST_BATTLE_MIN_TROOPS;
@@ -229,7 +230,7 @@ export function clampFirstBattleTroops(my: number, enemy: number): { myTroops: n
     if (ok(a0) && ok(b0)) return { myTroops: a0, enemyTroops: b0 };
     const lo = Math.min(a0, b0), hi = Math.max(a0, b0);
     const kUp = MIN / lo;          // 把小的一方抬到 1 万
-    const kDown = MAX / hi;        // 把大的一方压到 6 万
+    const kDown = MAX / hi;        // 把大的一方压到上限
     if (kUp <= kDown) {
         const k = lo < MIN ? kUp : kDown;
         const a = Math.round(a0 * k), b = Math.round(b0 * k);
@@ -1844,20 +1845,12 @@ export class PlayerQuestSystem {
         const home = this.generalHomeCity(generalId);
         if (!fb || !home) return;
         const rec = getGeneralRecordByGeneralId(generalId);
-        const portrait = resolveGeneralPortraitPath(rec?.portrait ?? '', {
-            factionId: this.initialFaction.get(home.id) ?? home.factionId,
-            region: getCityRegion(home),
-        });
-        const factionName = this.deps.cityManager.getFactionName(home.factionId);
-        this.showFirstBattleDialogue(
-            home,
-            { generalId, generalName: rec?.generalName ?? '将军', portrait: rec?.portrait ?? '' },
-            portrait,
-            factionName,
-            fb,
-            null,
-            { metAtFront: true },
-        );
+        // 🔴 [2026-10-29 主人「现在好像有两段对话，是不是重复了」] 在本城那段已经答应「前往会合」，
+        //    到了前线不再问第二遍（原来这里又弹一次首战对话），直接会合开拔。
+        const generalName = rec?.generalName ?? '将军';
+        const spotLabel = this.firstBattleFrontSpot(generalId)?.label ?? home.name;
+        this.deps.notify(`⚔ 于【${spotLabel}】与${generalName}会合，同赴${fb.battleName}`);
+        this.startFirstBattle(home, { generalId, generalName, portrait: rec?.portrait ?? '' }, fb, null, { metAtFront: true });
     }
 
     /**
@@ -1876,11 +1869,14 @@ export class PlayerQuestSystem {
             this.showFirstBattleDialogue(city, g, portrait, factionName, fb, null);
             return;
         }
+        // 首战的史实台词并到这一段里讲完：到了前线不再弹第二段对话（见 onArriveFirstBattleFront）
+        const generalLines = fb.introLines.filter((l) => l.speaker === 'general').map((l) => l.text);
+        const gather = `某已传令三军向【${spot.label}】集结，壮士先往【${spot.label}】与某会合，同赴此战。`;
         this.deps.showDialogue({
             speaker: g.generalName,
             portrait,
             factionName,
-            text: `某已传令三军向【${spot.label}】集结，${fb.battleName}在即。壮士先往【${spot.label}】与某会合，同赴此战。`,
+            text: generalLines.length > 0 ? `${generalLines.join('\n')}\n${gather}` : `${fb.battleName}在即。${gather}`,
             options: [
                 {
                     label: `⚔ 前往【${spot.label}】会合`,
@@ -1962,7 +1958,7 @@ export class PlayerQuestSystem {
         this.headingToEventGeneralId = null;
 
         const myFactionId = existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
-        // 🔴 [2026-10-27 主人令] 首战双方兵力必须上万、且不超过六万（见 clampFirstBattleTroops 头注）
+        // 🔴 [2026-10-27 主人令] 首战双方兵力必须上万；🔴 [2026-10-29] 上限改 2 万（见 clampFirstBattleTroops 头注）
         const { myTroops, enemyTroops } = clampFirstBattleTroops(fb.myTroops, fb.enemyTroops);
 
         // 🔴 [2026-10-25 主人令「攻城战就去攻打的城，野战就去战场」] 会面在前线时，这位武将若已带兵在别处，

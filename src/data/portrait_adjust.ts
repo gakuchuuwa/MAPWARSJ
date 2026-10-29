@@ -6718,7 +6718,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/GERMANIC/bulabante_yuehanyishi.png": {
-            "scale": 1.15,
+            "scale": 1.17,
             "offsetX": -6,
             "offsetY": 11
         },
@@ -8906,6 +8906,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 25,
             "offsetY": -9
+        },
+        "/assets/FRANKS/hre_siegfried.png": {
+            "scale": 1.18,
+            "offsetX": 19,
+            "offsetY": 32
         }
     },
     "folderGuides": {
