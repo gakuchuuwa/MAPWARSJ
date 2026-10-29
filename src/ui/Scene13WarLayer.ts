@@ -802,7 +802,7 @@ export class Scene13WarLayer {
         targets: WarMan[],
         points: Scene13SkillVfxPoint[],
     ): void {
-        const dur = six === 'dizhan' || six === 'hunzhan' || six === 'bingzhan' ? 1.8 : 1.5;
+        const dur = six === 'dizhan' || six === 'hunzhan' || six === 'bingzhan' || six === 'baizhan' ? 1.8 : 1.5;
         const dir = this.advanceVec[f];
         this.skillVfx.push({
             six, side: f, x, y,
@@ -1199,6 +1199,7 @@ export class Scene13WarLayer {
                 if (quotaPop <= 0) break;
                 if (victim.hp <= 0) continue;
                 quotaPop -= Math.max(1, victim.pop || 1);
+                vfxTargets.push(victim);
                 vfxPoints.push({ x: victim.x, y: victim.y });
                 // 🔴 [2026-10-27 主人令「可以让士兵分批阵亡」] 不同帧一起倒（几百人同帧倒下 + 3 秒后同帧烙地面 ⇒ 卡一下），
                 //    排进队列，SKILL_KILL_SPREAD_SEC 内陆续倒下（见 stepSkillKills）
@@ -1333,7 +1334,7 @@ export class Scene13WarLayer {
         }
         let vfxX = scopedControl !== null ? refX : camX;
         let vfxY = scopedControl !== null ? refY : camY;
-        if (six === 'bingzhan' && vfxTargets.length > 0) {
+        if ((six === 'bingzhan' || six === 'baizhan') && vfxTargets.length > 0) {
             let tx = 0, ty = 0;
             for (const m of vfxTargets) { tx += m.x; ty += m.y; }
             vfxX = tx / vfxTargets.length;

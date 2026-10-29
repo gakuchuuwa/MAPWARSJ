@@ -5103,9 +5103,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/SAXONS/gen_alfred_great.png": {
-            "scale": 0.97,
+            "scale": 0.93,
             "offsetX": 0,
-            "offsetY": 6
+            "offsetY": 7
         },
         "/assets/GERMANIC/__闲置__GERMANIC_06.png": {
             "scale": 1.0318,
@@ -5173,7 +5173,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/BRITONS/gen_alain_i.png": {
-            "scale": 0.97,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -6698,7 +6698,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/CELTS/mangsite_bulaienbolu.png": {
-            "scale": 0.83,
+            "scale": 0.85,
             "offsetX": 0,
             "offsetY": 9
         },
@@ -9031,6 +9031,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 36
+        },
+        "/assets/BRITONS/gen_gilbert.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

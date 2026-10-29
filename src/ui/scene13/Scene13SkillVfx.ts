@@ -292,14 +292,24 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
             ctx.stroke();
         }
     } else if (v.six === 'baizhan') {
-        const pn = Math.min(v.points.length, 220);
-        ctx.strokeStyle = COLOR.baizhan;
+        const useTargets = v.targets.length > 0;
+        const srcLen = useTargets ? v.targets.length : v.points.length;
+        const pn = Math.min(srcLen, 160);
         for (let i = 0; i < pn; i++) {
-            const pt = v.points[Math.floor(i * v.points.length / pn)];
+            const idx = Math.floor(i * srcLen / pn);
+            const pt = useTargets ? v.targets[idx] : v.points[idx];
             const py = pt.y - lift(pt.x, pt.y);
-            ctx.globalAlpha = fade * 0.88;
-            ctx.lineWidth = 2.6;
-            ellipse(ctx, pt.x, py, 10 + e * 18, 5 + e * 9);
+            ctx.globalAlpha = fade * 0.45;
+            drawStamp(ctx, glow, pt.x, py, 20 * scale, 11 * scale);
+            ctx.strokeStyle = COLOR.baizhan;
+            ctx.globalAlpha = fade * 0.92;
+            ctx.lineWidth = 3.2;
+            ellipse(ctx, pt.x, py, 13 + e * 14, 6.5 + e * 7);
+            ctx.stroke();
+            ctx.strokeStyle = v.paid ? '#ffe580' : '#ffdfd6';
+            ctx.globalAlpha = fade * 0.8;
+            ctx.lineWidth = 1.8;
+            ellipse(ctx, pt.x, py, 7 + e * 8, 3.5 + e * 4);
             ctx.stroke();
         }
     }
@@ -596,7 +606,12 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     const redFlare = getFlareStamp(COLOR.baizhan);
     const redGlow = getGlowStamp(COLOR.baizhan);
 
-    // 1. 暗黑底衬裂痕（先用 source-over 压暗衬托红金刀芒，防浅色地面吃光）
+    const useTargets = v.targets.length > 0;
+    const srcLen = useTargets ? v.targets.length : v.points.length;
+    const n = Math.min(srcLen, 160);
+    const unitScale = v.paid ? 1.2 : 1;
+
+    // 1. 暗黑底衬裂痕（先用 source-over 压暗衬托红金刀芒，防浅色地面吃光；大效果＋每名要死士兵身上的小效果同步铺底）
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(v.angle);
@@ -610,7 +625,21 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     }
     ctx.restore();
 
-    // 2. 加法混合层：巨型两头尖锐的暗红镶金裂空十字斩＋全场单兵血芒爆裂
+    if (n > 0) {
+        ctx.save();
+        ctx.globalAlpha = fade * 0.72;
+        const bSz = (19 + (1 - p) * 8) * unitScale;
+        for (let i = 0; i < n; i++) {
+            const idx = Math.floor(i * srcLen / n);
+            const pt = useTargets ? v.targets[idx] : v.points[idx];
+            const py = pt.y - lift(pt.x, pt.y) - 18;
+            drawTaperedSlash(ctx, pt.x - bSz, py - bSz * 0.72, pt.x + bSz, py + bSz * 0.72, 5.2 * unitScale, '#1c060d', '#4a0d1b');
+            drawTaperedSlash(ctx, pt.x + bSz, py - bSz * 0.72, pt.x - bSz, py + bSz * 0.72, 5.2 * unitScale, '#1c060d', '#4a0d1b');
+        }
+        ctx.restore();
+    }
+
+    // 2. 加法混合层：巨型两头尖锐的暗红镶金裂空十字斩＋每名要死士兵身上的小型裂空斩与贯顶血芒
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     ctx.globalAlpha = fade * 0.55;
@@ -638,25 +667,48 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     }
     ctx.restore();
 
-    // 3. 单兵溃灭特效：每一名被斩溃敌兵位置爆开锥形十字裂斩＋星芒＋冲天血魂光点
-    const n = Math.min(v.points.length, 200);
+    // 3. 单兵溃灭小效果：实时锁定每名将死士兵（v.targets），爆开小型红金光晕＋贯顶落刃＋十字裂斩＋星芒
+    const sz = (18 + (1 - p) * 8) * unitScale;
+    const hw = 4.6 * unitScale * (1 - p * 0.25);
+    const strikeTop = (28 + (1 - e) * 18) * unitScale;
     for (let i = 0; i < n; i++) {
-        const pt = v.points[Math.floor(i * v.points.length / n)];
+        const idx = Math.floor(i * srcLen / n);
+        const pt = useTargets ? v.targets[idx] : v.points[idx];
         const py = pt.y - lift(pt.x, pt.y);
-        const slashY = py - 16 - e * 6;
-        const sz = (9 + (1 - p) * 6) * (v.paid ? 1.2 : 1);
+        const slashY = py - 18;
+
+        ctx.globalAlpha = fade * 0.62;
+        drawStamp(ctx, redGlow, pt.x, slashY, 26 * unitScale, 18 * unitScale);
+
+        ctx.globalAlpha = fade * 0.96;
+        drawTaperedSlash(
+            ctx,
+            pt.x,
+            slashY - strikeTop,
+            pt.x,
+            slashY + 12 * unitScale,
+            4.2 * unitScale * (1 - p * 0.25),
+            v.paid ? '#ffae38' : COLOR.baizhan,
+            '#fff5e0',
+        );
+        drawTaperedSlash(ctx, pt.x - sz, slashY - sz * 0.72, pt.x + sz, slashY + sz * 0.72, hw, v.paid ? '#ffae38' : COLOR.baizhan, '#fff2dc');
+        drawTaperedSlash(ctx, pt.x + sz, slashY - sz * 0.72, pt.x - sz, slashY + sz * 0.72, hw, '#ff5e36', '#ffffff');
 
         ctx.globalAlpha = fade * 0.92;
-        drawTaperedSlash(ctx, pt.x - sz, slashY - sz * 0.72, pt.x + sz, slashY + sz * 0.72, 2.6, COLOR.baizhan, '#ffe6d4');
-        drawTaperedSlash(ctx, pt.x + sz, slashY - sz * 0.72, pt.x - sz, slashY + sz * 0.72, 2.6, '#ff7340', '#ffffff');
-
+        drawStamp(
+            ctx,
+            redFlare,
+            pt.x,
+            slashY,
+            (11 + (1 - p) * 6) * unitScale,
+        );
         if (i % 2 === 0) {
             ctx.globalAlpha = fade * 0.85;
             drawStamp(
                 ctx,
                 redFlare,
                 pt.x + Math.sin(i * 2.3 + p * 4) * (4 + p * 10),
-                py - 16 - e * (24 + (i % 10) * 2),
+                py - 20 - e * (24 + (i % 10) * 2),
                 7 + (1 - p) * 5,
             );
         }

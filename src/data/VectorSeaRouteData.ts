@@ -516,41 +516,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "里斯本-里贝拉",
-                type: "sea",
-                id: "sea_city_lisiben_city_ribeira_20261024",
-                startConnection: "city_lisiben",
-                endConnection: "city_ribeira"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-9.13, 38.72],
-                    [-9.99896, 38.21927],
-                    [-11.13864, 37.41734],
-                    [-11.90023, 36.88145],
-                    [-12.60854, 36.13452],
-                    [-12.83978, 35.47013],
-                    [-13.11489, 34.6797],
-                    [-13.32875, 34.06524],
-                    [-13.9051, 32.4093],
-                    [-15.17212, 29.3375],
-                    [-16.14115, 28.33507],
-                    [-16.18616, 27.71606],
-                    [-18.6689, 24.7237],
-                    [-18.76187, 24.56037],
-                    [-19.93908, 22.49228],
-                    [-20.89753, 20.8085],
-                    [-21.0708, 20.5041],
-                    [-23.3439, 16.2512],
-                    [-23.3185, 15.2424],
-                    [-23.6, 14.92],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "利马-阿卡普尔科",
                 type: "sea",
                 id: "sea_city_lima_city_acapulco_20261024",
@@ -5473,14 +5438,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [109.2187, 18.017],
                     [110.3832, 18.3614],
                     [114.1, 21.7],
-                    [115.0, 22.25],
+                    [115, 22.25],
                     [115.83333, 22.25],
                     [116.83333, 22.58333],
                     [117.16667, 23.08333],
-                    [118.0, 23.41667],
-                    [119.0, 24.25],
+                    [118, 23.41667],
+                    [119, 24.25],
                     [119.16667, 24.58333],
-                    [118.5833, 24.9]
+                    [118.5833, 24.9],
                 ]
             }
         },
@@ -5506,7 +5471,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [128.9, 31.4],
                     [128.0145, 33.05486],
                     [126.64315, 33.73542],
-                    [126.5215, 33.5131]
+                    [126.5215, 33.5131],
                 ]
             }
         },
@@ -5527,7 +5492,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [129.73488, 34.02455],
                     [129.10062, 34.04667],
                     [127.82044, 34.71001],
-                    [127.4991, 34.9652]
+                    [127.4991, 34.9652],
                 ]
             }
         },
@@ -5550,7 +5515,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [135.88989, 33.32823],
                     [135.1, 33.2],
                     [134.23645, 33.10535],
-                    [133.5756, 33.5972]
+                    [133.5756, 33.5972],
                 ]
             }
         },
@@ -5572,7 +5537,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [120, 23.91253],
                     [119.87732, 23.01402],
                     [120.28931, 22.33685],
-                    [120.8333, 22.2]
+                    [120.8333, 22.2],
                 ]
             }
         },
@@ -5593,7 +5558,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.08333, 32.16667],
                     [33.66667, 31.75],
                     [32.5, 31.75],
-                    [32.55, 31.04]
+                    [32.55, 31.04],
                 ]
             }
         },
@@ -5613,8 +5578,8 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.08333, 32.16667],
                     [34.41667, 33.16667],
                     [34.91667, 34.33333],
-                    [35.41667, 35.0],
-                    [35.79, 35.52]
+                    [35.41667, 35],
+                    [35.79, 35.52],
                 ]
             }
         },
@@ -5636,7 +5601,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [32.88603, 32.33766],
                     [32.1, 31.7],
                     [30.07251, 31.74408],
-                    [29.8925, 31.1975]
+                    [29.8925, 31.1975],
                 ]
             }
         },
@@ -5659,7 +5624,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [27.97791, 34.67813],
                     [27.74596, 35.13191],
                     [27.2, 36.2],
-                    [28.22, 36.44]
+                    [28.22, 36.44],
                 ]
             }
         },
@@ -5683,7 +5648,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.45763, 37.27678],
                     [24.23668, 37.27952],
                     [23.88591, 37.61615],
-                    [23.72, 37.98]
+                    [23.72, 37.98],
                 ]
             }
         },
@@ -5709,7 +5674,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [30.766, 32.92511],
                     [32.1, 31.7],
                     [32.39076, 31.72772],
-                    [32.55, 31.04]
+                    [32.55, 31.04],
                 ]
             }
         },
@@ -5732,7 +5697,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [32.27253, 44.12585],
                     [30.11441, 44.09065],
                     [28.91667, 43.16667],
-                    [27.915, 43.214]
+                    [27.915, 43.214],
                 ]
             }
         },
@@ -5757,7 +5722,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [20.31196, 55.76764],
                     [19, 55],
                     [19.94139, 54.61513],
-                    [20.51, 54.71]
+                    [20.51, 54.71],
                 ]
             }
         },
@@ -5785,7 +5750,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [20.31196, 55.76764],
                     [19, 55],
                     [19.94139, 54.61513],
-                    [20.51, 54.71]
+                    [20.51, 54.71],
                 ]
             }
         },
@@ -5810,7 +5775,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [12.92541, 55.65125],
                     [12.68255, 55.30558],
                     [14.4, 54.4],
-                    [14.55, 53.43]
+                    [14.55, 53.43],
                 ]
             }
         },
@@ -5828,14 +5793,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [14.55, 53.43],
                     [14.4, 54.4],
-                    [15.58333, 55.0],
+                    [15.58333, 55],
                     [16.74077, 55.93291],
                     [18.11853, 56.64503],
                     [20.34353, 57.30853],
                     [21.60461, 57.70708],
                     [22.6593, 57.8769],
                     [23.99414, 57.11239],
-                    [24.1, 56.95]
+                    [24.1, 56.95],
                 ]
             }
         },
@@ -5861,7 +5826,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [3.5627, 54.30663],
                     [4.08333, 53.33333],
                     [4.08333, 52.83333],
-                    [4.3, 52.07]
+                    [4.3, 52.07],
                 ]
             }
         },
@@ -5885,7 +5850,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [30.01163, 43.80814],
                     [29.59641, 42.5965],
                     [29.13243, 41.24245],
-                    [28.97, 41.01]
+                    [28.97, 41.01],
                 ]
             }
         },
@@ -5906,7 +5871,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [7.52511, 38.67996],
                     [7.54593, 39.7413],
                     [7.98426, 40.28064],
-                    [8.59, 39.9]
+                    [8.59, 39.9],
                 ]
             }
         },
@@ -5928,7 +5893,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [10.66667, 37.58333],
                     [12.09994, 38.19647],
                     [12.74353, 38.24357],
-                    [13.36, 38.11]
+                    [13.36, 38.11],
                 ]
             }
         },
@@ -5949,7 +5914,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [6.49615, 38.183],
                     [7.51979, 38.4088],
                     [8.9959, 38.8624],
-                    [9.12, 39.22]
+                    [9.12, 39.22],
                 ]
             }
         },
@@ -5972,7 +5937,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [3.42935, 38.94201],
                     [2.07885, 39.14463],
                     [0.387, 39.34676],
-                    [-0.37, 39.47]
+                    [-0.37, 39.47],
                 ]
             }
         },
@@ -6007,7 +5972,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [33.16667, 44.08333],
                     [34.83333, 44.41667],
                     [36.66667, 44.75],
-                    [36.47, 45.36]
+                    [36.47, 45.36],
                 ]
             }
         },
@@ -6028,7 +5993,85 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [26.17701, 37.2784],
                     [27.00278, 36.54711],
                     [27.40186, 36.52023],
-                    [28.22, 36.44]
+                    [28.22, 36.44],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "里贝拉-特尔德",
+                type: "sea",
+                id: "sea_city_ribeira_city_telde_1793285956303",
+                startConnection: "city_ribeira",
+                endConnection: "city_telde"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-23.6, 14.92],
+                    [-23, 15],
+                    [-20.5422, 18.0164],
+                    [-18, 21],
+                    [-15.12817, 27.99925],
+                    [-15.42, 28],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "特尔德-加的斯",
+                type: "sea",
+                id: "sea_city_telde_city_jiadisi_1793285978510",
+                startConnection: "city_telde",
+                endConnection: "city_jiadisi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-15.42, 28],
+                    [-14.83333, 28.58333],
+                    [-14.08333, 29.66667],
+                    [-13.16667, 29.91667],
+                    [-13, 28.58333],
+                    [-12, 28.75],
+                    [-11.16667, 29.41667],
+                    [-10.41667, 30.16667],
+                    [-10.41667, 31.83333],
+                    [-9.75, 33],
+                    [-9, 33.75],
+                    [-7.66667, 34.25],
+                    [-7.08333, 34.83333],
+                    [-6.58333, 36],
+                    [-6.28, 36.52],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "里斯本-特尔德",
+                type: "sea",
+                id: "sea_city_lisiben_city_telde_1793285993204",
+                startConnection: "city_lisiben",
+                endConnection: "city_telde"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-9.13, 38.72],
+                    [-9.99896, 38.21927],
+                    [-11.13864, 37.41734],
+                    [-11.90023, 36.88145],
+                    [-12.60854, 36.13452],
+                    [-12.83978, 35.47013],
+                    [-13.11489, 34.6797],
+                    [-13.32875, 34.06524],
+                    [-13.9051, 32.4093],
+                    [-15.17212, 29.3375],
+                    [-15.14581, 28.53833],
+                    [-15.42, 28],
                 ]
             }
         },

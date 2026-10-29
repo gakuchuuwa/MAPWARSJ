@@ -3297,7 +3297,7 @@ export class PlayerQuestSystem {
             // 🔴 [2026-10-21 主人令「告辞之后换下一个人物接任务」] **刚告辞过武将**时例外：
             //    剧本链这次不找那位（见 checkAndTriggerNextBattlefield 的 declined 跳过），
             //    这里就按「换下一位武将」去自动寻将 —— 否则剧本模式下玩家会一直杵在原地。
-            if (!headingToBattlefield && !this.deps.hero.isTraveling()
+            if (!headingToBattlefield && !this.deps.hero.isTraveling() && !this.deps.hero.isHeld?.()
                 && (this.deps.hero.autoPlan !== 'script' || this.declinedGenerals.size > 0)) {
                 this.autoTravelToBestCity();
             }
@@ -4095,10 +4095,33 @@ export class PlayerQuestSystem {
                 });
             }
         }
-        raw.sort((a, b) => (a.famous !== b.famous ? (a.famous ? -1 : 1) : a.distKm - b.distKm));
+        // 统计各势力当前可出征武将数（供先锋/斥候按「武将多的势力优先」排序）
+        const factionGenCount = new Map<string, number>();
+        for (const r of raw) {
+            factionGenCount.set(r.factionId, (factionGenCount.get(r.factionId) ?? 0) + 1);
+        }
+        // 🔴 [2026-10-29 主人定]
+        //   · 先锋（选势力）：优先显示上一次同文化势力 → 武将多的势力优先 → 距离近优先；
+        //   · 将军（选武将）：优先显示上一次同文化武将 → 优先名将 → 距离近优先。
+        raw.sort((a, b) => {
+            if (lastCulture) {
+                const aSame = a.culture === lastCulture;
+                const bSame = b.culture === lastCulture;
+                if (aSame !== bSame) return aSame ? -1 : 1;
+            }
+            if (kind === 'faction') {
+                const diffCnt = (factionGenCount.get(b.factionId) ?? 0) - (factionGenCount.get(a.factionId) ?? 0);
+                if (diffCnt !== 0) return diffCnt;
+            }
+            if (a.famous !== b.famous) return a.famous ? -1 : 1;
+            return a.distKm - b.distKm;
+        });
+        // 探马只显示同文化名将（无名将时兜底全部）；将军开放全图所有武将（同文化+名将排最前）
+        const famousOnly = rankId === 'outrider' ? raw.filter((r) => r.famous) : raw;
+        const sourceList = famousOnly.length > 0 ? famousOnly : raw;
         const seen = new Set<string>();
         const picked: LiveJoinCandidate[] = [];
-        for (const item of raw) {
+        for (const item of sourceList) {
             if (seen.has(item.id)) continue;
             seen.add(item.id);
             const { famous: _f, ...rest } = item;
@@ -4134,39 +4157,77 @@ export class PlayerQuestSystem {
         if (!chosen) {
             return { ok: false, reason: `请从 1~${candidates.length} 号候选中选择` };
         }
-        const city = this.deps.cityManager.getCity(chosen.cityId);
-        if (!city || !this.isGeneralSortieReady(city, chosen.generalId)) {
+        // 🔴 [2026-10-29 主人令] 斥候选的是同文化势力（若该势力在同文化下有多位武将，随机抽一位）；探马选的是同文化指定武将
+        let targetCityId = chosen.cityId;
+        let targetGeneralId = chosen.generalId;
+        let targetGeneralName = chosen.generalName;
+        if (chosen.kind === 'faction') {
+            const sameCultureOnly = rankId === 'scout' || rankId === 'outrider';
+            const factionPool: Array<{ cityId: string; generalId: string; generalName: string }> = [];
+            for (const c of this.deps.cityManager.getCities()) {
+                if (!c.factionId) continue;
+                const ck = style62OfCity(c);
+                if (!ck) continue;
+                if (sameCultureOnly && ck !== chosen.culture) continue;
+                for (const g of getCityAnchoredGenerals(c.id)) {
+                    if (!this.isGeneralSortieReady(c, g.generalId)) continue;
+                    const rec = getGeneralRecordByGeneralId(g.generalId);
+                    const fid = rec?.factionId || c.factionId;
+                    if (fid !== chosen.factionId) continue;
+                    factionPool.push({
+                        cityId: c.id,
+                        generalId: g.generalId,
+                        generalName: rec?.generalName ?? g.generalName,
+                    });
+                }
+            }
+            if (factionPool.length > 0) {
+                const rnd = factionPool[Math.floor(Math.random() * factionPool.length)];
+                targetCityId = rnd.cityId;
+                targetGeneralId = rnd.generalId;
+                targetGeneralName = rnd.generalName;
+            }
+        }
+        const city = this.deps.cityManager.getCity(targetCityId);
+        if (!city || !this.isGeneralSortieReady(city, targetGeneralId)) {
             this.cachedLiveCandidatesKey = '';
             return { ok: false, reason: '该目标刚刚兵力不足或已离场，请改选其他目标' };
         }
+        const finalCandidate: LiveJoinCandidate = {
+            ...chosen,
+            cityId: city.id,
+            cityName: city.name,
+            generalId: targetGeneralId,
+            generalName: targetGeneralName,
+        };
         this.deps.closeDialogue();
-        this.preferredLiveGeneralId = chosen.generalId;
+        this.preferredLiveGeneralId = targetGeneralId;
         this.chaseCityId = null;
         this.pendingFrontGeneralId = null;
 
-        const front = this.firstBattleFrontSpot(chosen.generalId);
+        const front = this.firstBattleFrontSpot(targetGeneralId);
         if (front) {
-            this.pendingFrontGeneralId = chosen.generalId;
+            this.pendingFrontGeneralId = targetGeneralId;
             const ok = front.kind === 'city'
                 ? hero.travelToCity(front.cityId, false, { allowNoGeneral: true })
                 : hero.travelToPoint(
                     { lat: front.lat, lng: front.lng },
                     front.label,
-                    () => this.onArriveFirstBattleFront(chosen.generalId),
+                    () => this.onArriveFirstBattleFront(targetGeneralId),
                 );
-            if (ok) return { ok: true, candidate: chosen };
+            if (ok) return { ok: true, candidate: finalCandidate };
             this.pendingFrontGeneralId = null;
         }
-        const army = this.armyOfGeneral(chosen.generalId);
+        const army = this.armyOfGeneral(targetGeneralId);
         if (army) {
             this.chaseCityId = city.id;
-            if (hero.travelToArmy(army.id, chosen.generalName)) {
-                return { ok: true, candidate: chosen };
+            if (hero.travelToArmy(army.id, targetGeneralName)) {
+                return { ok: true, candidate: finalCandidate };
             }
             this.chaseCityId = null;
         }
         if (hero.travelToCity(city.id, false, { allowNoGeneral: true })) {
-            return { ok: true, candidate: chosen };
+            return { ok: true, candidate: finalCandidate };
         }
         this.preferredLiveGeneralId = null;
         return { ok: false, reason: '当前位置无路可达该目标，未扣积分' };

@@ -578,8 +578,8 @@ export class ViewerLive {
         joinScope: string;
         activeJoinBid: ViewerActiveJoinBid | null;
         experimental: ExperimentalSupportStats;
-        /** 主角现在的官职、资历（离队后选去处按它）、是否随军 —— 面板据此写「现在能做什么」 */
-        hero: { rankId: string; rankTitle: string; peakRankId: string; attached: boolean };
+        /** 主角现在的官职、资历（离队后选去处按它）、是否随军、离队停留倒计时秒数 —— 面板据此写「现在能做什么」 */
+        hero: { rankId: string; rankTitle: string; peakRankId: string; attached: boolean; holdSec: number };
     } {
         // 排行只排在场的人（10 分钟内说过话）：不让几天前来过的人一直占着榜
         const presentCut = Date.now() - PRESENT_MS;
@@ -594,9 +594,9 @@ export class ViewerLive {
             .map((c) => ({ index: c.index, label: c.label, kind: c.kind }));
         const rankId = this.app.playerHero?.getPeakRank().id;
         const joinScope = rankId === 'scout' ? '同文化势力'
-            : rankId === 'outrider' ? '同文化武将'
-                : rankId === 'vanguard' ? '任一势力'
-                    : '任一武将';
+            : rankId === 'outrider' ? '同文化名将'
+                : rankId === 'vanguard' ? '全图势力(同文化·将多优先)'
+                    : '全图武将(同文化·名将优先)';
         return {
             on: this.battleOn(),
             names: [this.sideName(0), this.sideName(1)],
@@ -630,6 +630,7 @@ export class ViewerLive {
                 rankTitle: this.app.playerHero?.getRank().title ?? '平民',
                 peakRankId: rankId ?? 'civilian',
                 attached: this.app.playerHero?.isAttached() ?? false,
+                holdSec: this.app.playerHero?.getHoldRemainingSec?.() ?? 0,
             },
         };
     }

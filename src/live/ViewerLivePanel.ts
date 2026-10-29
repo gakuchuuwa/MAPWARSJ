@@ -190,12 +190,23 @@ export class ViewerLivePanel {
         } else {
             let statePart: string;
             if (s.joinCandidates.length > 0) {
+                const total = s.joinCandidates.length;
+                const pageSize = 8;
+                const pageCount = Math.max(1, Math.ceil(total / pageSize));
+                const pageIdx = Math.floor(Date.now() / 4000) % pageCount;
+                const pageItems = s.joinCandidates.slice(pageIdx * pageSize, (pageIdx + 1) * pageSize);
+                const pageBadge = pageCount > 1
+                    ? ` · <span style="color:#ffd700;font-weight:700;">[第 ${pageIdx + 1}/${pageCount} 页·滚动轮播]</span>`
+                    : '';
                 const bidFloor = (s.activeJoinBid?.bid ?? 0) + 1;
                 const activeBadge = s.activeJoinBid
                     ? ` · <span style="color:#7cd4a0;font-weight:700;">当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分➔${esc(s.activeJoinBid.label)}</span>`
                     : '';
-                statePart = `<span style="font-size:${f.main}px;">选去处·${b(esc(s.joinScope))}<span style="color:#dfc28c;font-size:${f.sub}px;">(共${s.joinCandidates.length}处，发 ${b('投编号')} 或 ${b('投名字')} 竞选，${bidFloor}分起；不选自动前往)</span>${activeBadge}</span>`;
-                const cells = s.joinCandidates.map((c) => {
+                const holdBadge = s.hero.holdSec > 0
+                    ? `<span style="color:#ffd700;font-weight:800;margin-right:4px;">⏱ ${s.hero.holdSec}秒后出发</span>· `
+                    : '';
+                statePart = `<span style="font-size:${f.main}px;">${holdBadge}选去处·${b(esc(s.joinScope))}<span style="color:#dfc28c;font-size:${f.sub}px;">(共${total}位${pageBadge}，发 ${b('投编号')} 或 ${b('投名字')} 竞选，${bidFloor}分起；不选AI自动前往)</span>${activeBadge}</span>`;
+                const cells = pageItems.map((c) => {
                     const isPicked = s.activeJoinBid?.index === c.index;
                     const boxBg = isPicked
                         ? 'linear-gradient(180deg, rgba(36,68,48,0.96) 0%, rgba(18,38,26,0.98) 100%)'
@@ -208,21 +219,21 @@ export class ViewerLivePanel {
                     const tagBorder = isPicked ? '1px solid rgba(124,212,160,0.45)' : '1px solid rgba(212,175,55,0.35)';
                     const tagColor = isPicked ? '#9ef5c2' : '#ffd700';
                     const nameColor = isPicked ? '#d6ffea' : '#f7ebd2';
-                    return `<span title="发 投${c.index} 或 投 ${esc(c.label)}" style="width:128px;height:25px;box-sizing:border-box;display:inline-flex;align-items:center;background:${boxBg};border:${boxBorder};border-radius:4px;box-shadow:${boxShadow};overflow:hidden;flex-shrink:0;">`
+                    return `<span title="发 投${c.index} 或 投 ${esc(c.label)}" style="width:138px;height:25px;box-sizing:border-box;display:inline-flex;align-items:center;background:${boxBg};border:${boxBorder};border-radius:4px;box-shadow:${boxShadow};overflow:hidden;flex-shrink:0;">`
                         + `<span style="width:38px;height:100%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:${tagBg};border-right:${tagBorder};color:${tagColor};font-size:12px;font-weight:800;letter-spacing:0.3px;">投${c.index}</span>`
                         + `<span style="flex:1;min-width:0;padding:0 6px;text-align:center;color:${nameColor};font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,0.85);">${esc(c.label)}</span>`
                         + `</span>`;
                 }).join('');
-                joinGrid = `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:5px 6px;max-width:88vw;max-height:94px;overflow:hidden;margin:0 auto 5px;padding:5px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.65);">${cells}</div>`;
+                joinGrid = `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:5px 6px;max-width:88vw;margin:0 auto 5px;padding:5px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.65);">${cells}</div>`;
             } else if (civilian && s.hero.peakRankId === 'civilian') {
-                // 平民没有资历：只能改名，投奔武将后升斥候才开放放技放计
-                statePart = hint(`单骑寻找武将投奔 · 平民现在可以 ${b('改名')} · 投奔后升斥候，打仗时可放技放计`);
+                // 平民没有资历：只能改名，投奔武将后升斥候才开放技能
+                statePart = hint(`单骑寻访武将 · 入伍升斥候后可在战中释放技能`);
             } else if (civilian) {
-                statePart = hint(`离队寻找去处 · 列出去处后发 ${b('投1')} 选 · 投奔后从斥候做起`);
+                statePart = hint(`正前往投奔目标 · 入伍后从斥候做起`);
             } else if (s.hero.attached) {
-                statePart = hint('随军行进中 · 打仗时可放技放计');
+                statePart = hint('随军出征中 · 开战后可释放技能');
             } else {
-                statePart = hint('赶路中 · 打仗时可放技放计');
+                statePart = hint('单骑赶路中 · 开战后可释放技能');
             }
             mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${statePart}${sep}${renameCmd}${liveInfoPart}</div>`;
         }

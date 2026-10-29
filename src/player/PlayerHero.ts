@@ -470,6 +470,7 @@ export class PlayerHero {
             host.playerHostRankName = null;
         }
         if (prevMerit > 0 || before.id !== 'civilian') {
+            this.holdAfterDefeat?.();
             const peak = this.getPeakRank();
             this.deps.notify(`💥 ${reason}！官职重来，资历【${peak.name}】保留`);
             gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零、官职【${before.name}】重来，资历【${peak.name}】`);
@@ -489,13 +490,19 @@ export class PlayerHero {
     /** 随军战败 → 落地停顿（时长见 PLAYER_DEFEAT_HOLD_MS） */
     private holdAfterDefeat(): void {
         // 先退战术场景，避免残局停留消耗玩家在战略地图上的等待时间。
-        (window as any).game?.battleScene?.exit();
+        (globalThis as any).window?.game?.battleScene?.exit();
         this.holdUntilMs = Date.now() + PLAYER_DEFEAT_HOLD_MS;
     }
 
     /** 是否正处在战败停顿中（停顿期玩家不动） */
     public isHeld(): boolean {
         return Date.now() < this.holdUntilMs;
+    }
+
+    /** 离队停顿剩余秒数（向上取整，0 = 未停顿） */
+    public getHoldRemainingSec(): number {
+        const rem = this.holdUntilMs - Date.now();
+        return rem > 0 ? Math.ceil(rem / 1000) : 0;
     }
 
     /** 大地图战略战斗结算：随军军团战胜补满本场功劳（每胜一场正好一档）；战败离开势力、官职重来。 */
