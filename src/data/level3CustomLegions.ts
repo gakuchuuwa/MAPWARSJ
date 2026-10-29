@@ -70,13 +70,13 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'fish_scale',
         slots: [
             { type: 'liao_dao', count: 3 },
-            { type: 'elite_chukonu', count: 4 },
-            { type: 'elite_keshik', count: 2 },
+            { type: 'hero_sudingfang', count: 4 },
+            { type: 'hero_cumanchief', count: 2 },
         ],
         regions: [],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
-        commanderUnit: 'hero_sunce',
+        commanderUnit: 'hero_lubu',
         buildingStyle: 'CENTRAL',
     },
     // 🔴 [2026-10-05 主人令「都套用在游戏中」] 瓦良格卫队本体（兵营兵）与精锐首领，二级瓦良格军团的 3 个槽位放不下，单列一支三级军团，

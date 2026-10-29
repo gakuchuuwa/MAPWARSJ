@@ -166,10 +166,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_genghiskhan',
+        commanderUnit: 'hero_ibrahimlodi',
         slots: [
             { type: 'elite_keshik', count: 3 },
-            { type: 'mangudai_elite', count: 4 },
+            { type: 'hero_genghiskhan', count: 4 },
             { type: 'steppe_lancer', count: 2 },
         ],
     },
@@ -3019,7 +3019,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HIND_CASTLE_AGE3', castleName: '印度斯坦 德里红堡莫卧儿红砂岩',
         formationMode: 'fish_scale',
         shipId: 'CANNON_GALLEON',
-        commanderUnit: 'hero_rajendrachola',
+        commanderUnit: 'hero_abrahaelephant',
         slots: [
             { type: 'ghulam', count: 3 },
             { type: 'recurve_bowman', count: 4 },

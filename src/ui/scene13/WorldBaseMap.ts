@@ -494,21 +494,3 @@ export function baseTileTables(): { siege: Readonly<Record<number, string>>; fie
     return { siege: SIEGE_TILES, field: FIELD_TILES };
 }
 
-/**
- * 战略大地图垫底同步采样：按 world-base.png (2160×1080) 查询该经纬度的 DE 地表贴图名；
- * 若落在海面返回 'sea'，若 world-base.png 尚未加载完成返回 null。
- */
-export function queryStrategicBackdropTile(lat: number, lng: number): string | 'sea' | null {
-    if (!store) return null;
-    const { width: W, height: H, pixels } = store;
-    const fx = ((lng + 180) / 360) * W;
-    const fy = ((90 - lat) / 180) * H;
-    const x0 = ((Math.floor(fx) % W) + W) % W;
-    const y0 = Math.max(0, Math.min(H - 1, Math.floor(fy)));
-    const i = (y0 * W + x0) * 4;
-    const siegeCode = pixels[i];
-    const fieldCode = pixels[i + 1];
-    if (siegeCode === 0 && fieldCode === 0) return 'sea';
-    return resolveRawFieldTile(siegeCode, fieldCode, lat, lng) ?? 'gr2';
-}
-

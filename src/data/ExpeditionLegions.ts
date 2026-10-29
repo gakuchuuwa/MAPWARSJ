@@ -63,7 +63,7 @@ import { SCYTHIANS_EXPEDITION_ELITE_LEGIONS } from './ScythiansExpeditionLegions
 import { SRIVIJAYA_EXPEDITION_ELITE_LEGIONS } from './SriVijayaExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
 import { CITIES_V2 } from './cities_v2';
-import { getRawGeneralByGeneralId } from './FactionGenerals';
+import { FACTION_GENERALS, getRawGeneralByGeneralId } from './FactionGenerals';
 
 export type EliteTier = 0 | 1 | 2 | 3 | 4;
 export interface EliteLegionConfig {
@@ -779,6 +779,16 @@ function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> 
     if (cityId && !map[cityId]) {
       const elite = ALL_FACTION_ELITE_LEGIONS[factionId];
       if (elite) map[cityId] = elite;
+    }
+  }
+  for (const list of Object.values(FACTION_GENERALS)) {
+    if (!list) continue;
+    const arr = Array.isArray(list) ? list : [list];
+    for (const g of arr) {
+      if (g.cityId && !map[g.cityId]) {
+        const genElite = getGeneralEliteConfig(g.generalId);
+        if (genElite) map[g.cityId] = genElite;
+      }
     }
   }
   return map;

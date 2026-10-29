@@ -202,18 +202,19 @@ export function applyLegionSpawnTierToArmy(
     army: Army,
     tierState?: CitySpawnTierState,
 ): void {
-    const eliteName = getLegionEliteLegionName(army);
-    if (!eliteName) return;
-
     const state = tierState ?? {};
     const threshold = GameConfig.LEGION_TIER.PROMOTE_TROOPS; // 大军线 4 万（与远征无关）
     const cityId = army.homeCityId ?? army.getSourceCityId();
     const anchorFactionId = getCityAnchorFactionId(cityId);
     const excludedIds = getExcludedGeneralIdsForSpawn(cityId);
     const anchoredGeneral = getCityAnchoredGeneral(cityId, excludedIds);
+    const eliteName = (anchoredGeneral ? getGeneralEliteLegionName(anchoredGeneral.generalId) : null)
+        ?? getLegionEliteLegionName(army);
+    if (!eliteName && !anchoredGeneral) return;
+
     const hasGeneral = !!anchoredGeneral && isGeneralOnStage(anchoredGeneral.generalId) && !excludedIds.has(anchoredGeneral.generalId);
     const canGeneral = hasGeneral && !state.spawnGeneralUsed && !!cityId && !isGeneralOnCooldown(cityId);
-    const canElite = !state.spawnEliteUsed && !!cityId && !isEliteOnCooldown(cityId);
+    const canElite = !!eliteName && !state.spawnEliteUsed && !!cityId && !isEliteOnCooldown(cityId);
 
     if (army.getTroops() >= threshold) {
         if (canElite) {
@@ -252,6 +253,7 @@ export function applyLegionSpawnTierToArmy(
         case 'plain':
             return;
         case 'elite': {
+            if (!eliteName) break;
             const applied = makeArmyElite(army, eliteName, false);
             markSpawnTierConsumed(state, { elite: applied.elite });
             break;
@@ -263,6 +265,7 @@ export function applyLegionSpawnTierToArmy(
             break;
         }
         case 'elite_general': {
+            if (!eliteName) break;
             if (!canGeneral) {
                 // 冷却中只贴精锐，不贴将
                 const applied = makeArmyElite(army, eliteName, false);

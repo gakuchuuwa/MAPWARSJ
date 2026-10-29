@@ -9,9 +9,7 @@ body {
 #map {
     width: 100%;
     height: 100%;
-    background: url('/SUCAI_TERRAIN/gr2.png') repeat #8b7b55;
-    background-size: 128px 128px;
-    /* 全球 DE 地表贴图兜底底纹 */
+    background: #b8a377;
     position: relative;
 }
 

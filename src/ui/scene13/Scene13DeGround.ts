@@ -76,8 +76,8 @@ export function deriveDeGroundTiles(
     const isDirt = (t: number) => DIRT_RE.test(terrainName(t)) || /^(ds|des)/.test((DE_TERRAIN_MANIFEST as any)[t]?.name_2?.replace(/^g_/, '') ?? '');
     const isDry = (t: number) => DRY_RE.test(terrainName(t));
 
-    // 主地面：最常见的「非森林、非泥土」陆地地形（草地/干草/沙地…）；没有就退回最常见的陆地地形
-    const baseTid = pick((t) => !isForest(t) && !isDirt(t)) ?? land[0][0];
+    // 主地面：最常见的「非森林」陆地地形（草地/干草/沙地/黄土/萨凡纳土…）；不再跳过泥土类（否则塞伦盖蒂/法西尔堡等以 ds2/ds3 为主底图的地图会被 7% 的副草皮反客为主变成鲜绿草地）
+    const baseTid = pick((t) => !isForest(t)) ?? land[0][0];
     const baseTile = tileFromTerrainId(baseTid);
     if (!baseTile) return null;
 

@@ -513,6 +513,15 @@ export function resolveDeMapTheme(
     //     温带海洋/大陆(Cfb/Dfb)落默认 europe_temperate。巴黎 Cfb→温带 ✓、罗马 Csa→地中海 ✓、
     //     莫斯科 Dfb→温带（阔叶林带，比原 taiga 更贴实）、西伯利亚 Dfc→taiga ✓）
 
+    // 12b. 阿拉伯半岛与红海东岸（也门高原 Cwb 等）与撒哈拉以南非洲高原（埃塞俄比亚/东非/南非高原 Cwa/Cwb：lat -36~25, lng -20~55）：
+    //      绝不可落入下方欧洲温带默认分支（否则申布拉库雷等埃塞高原战役会变成欧洲绿草与欧洲温带树）
+    if (lat >= 12 && lat <= 30 && lng >= 38 && lng <= 60 && !(lat < 16 && lng < 43)) {
+        return DE_MAP_THEMES.palaearctic_middle_east_desert;
+    }
+    if (lat >= -36 && lat <= 25 && lng >= -20 && lng < 55) {
+        return DE_MAP_THEMES.serengeti;
+    }
+
     // 13. 东亚（日本/朝鲜/华东华北 lng ≥ 60）→ 亚洲温带
     if (lng >= 60) return DE_MAP_THEMES.palaearctic_asia_temperate;
     return DE_MAP_THEMES.palaearctic_europe_temperate;

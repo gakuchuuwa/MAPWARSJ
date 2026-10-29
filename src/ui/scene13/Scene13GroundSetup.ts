@@ -189,7 +189,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         //    旧做法只看据点建筑风格/气候主题，会让沙漠图铺成黄土、温带图铺成夯土，与 DE 原版观感不符。
         //    雪地例外：地面本身为积雪/冰原贴图时保留季节雪地贴图（不能把雪原铺成草地）。
         const isSnowGround = /^(sno|sn2|snf|snd|snr|ic3|ice)/.test(groundBaseTerrain);
-        const deGroundTiles = isSnowGround
+        const hasPlannedGround = !!(this.environmentPlan?.groundTiles?.grass) && !rawMapData?.isDeCampaign;
+        const deGroundTiles = (isSnowGround || hasPlannedGround)
             ? null
             : deriveDeGroundTiles(mapData?.terrain, this.environmentPlan?.groundTiles);
         const groundTiles = deGroundTiles ?? this.environmentPlan?.groundTiles;
