@@ -483,7 +483,7 @@ export class PlayerHero {
         this.emitChange();
     }
 
-    // ── 战败停顿：立即回战略地图，然后原地等待 5 秒再移动 ──
+    // ── 战败停顿：立即回战略地图，然后原地等待 9 秒再移动（时长见 PLAYER_DEFEAT_HOLD_MS） ──
     /** 停顿截止时刻（Date.now() 口径）；≤ 现在 = 没在停顿 */
     private holdUntilMs = 0;
 
@@ -512,7 +512,7 @@ export class PlayerHero {
         this.battleArmed = false;
         if (result === 'defeat') {
             this.battleMerit = 0;
-            // 战败立即回战略地图，从退场完成开始等待 5 秒，再走脱军清场流程。
+            // 战败立即回战略地图，从退场完成开始等待 9 秒，再走脱军清场流程。
             this.holdAfterDefeat();
             // 战败 = 脱离军团：清势力（信息栏不再显示旧势力）+ 清任务 + 关自动模式。
             // 走 onHostLost → finishQuest(false) → detach() 统一清场（含 factionId / host / 权限乘数 / 自动模式）。
@@ -1107,10 +1107,10 @@ export class PlayerHero {
             }
             return;
         }
-        // 🔴 [2026-09-11 主人定]「军团战败，玩家停留 5 秒再移动」：
-        //    停顿期内不吃 dt、不续航追击 —— 坐标就钉在战败那一刻，5 秒后照令继续赶路。
+        // 🔴 [2026-10-29 主人定 9 秒，原 2026-09-11 定 5 秒]「玩家离开势力后，停留9秒倒计时，然后再移动」：
+        //    停顿期内不吃 dt、不续航追击 —— 坐标就钉在战败那一刻，9 秒后照令继续赶路。
         //    指令本身照常受理（没有加「停顿期不许下令」这条额外约束）：
-        //    这 5 秒里自动模式重新选的目标、玩家手点的城，都会在停顿结束后自然出发。
+        //    这 9 秒里观众竞选的去处、玩家手点的城，都会在停顿结束后自然出发（自动寻将要等停顿结束才选）。
         if (!this.isHeld()) {
             this.army.update(dt);
             // 追将领：每帧续航（军团在动，锚点跟着变；够近了就会面）
@@ -1128,7 +1128,7 @@ export class PlayerHero {
         }
         if (r) {
             r.isOnSea = this.army.isOnSea;
-            // 停顿期内人是钉住的：即便这 5 秒里已受理了新的行军指令（army 处于 marching），
+            // 停顿期内人是钉住的：即便这 9 秒里已受理了新的行军指令（army 处于 marching），
             // 也不能播走路动画，否则会看到「原地踏步」
             r.isMoving = !this.isHeld() && this.army.isMarching();
             r.isAttacking = false;

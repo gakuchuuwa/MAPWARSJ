@@ -141,17 +141,16 @@ const SKILL_PANIC_TAKEN = 2;        // 【混】混乱中受伤倍率
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
 //   六计**没有克制**：这只是 AI 武将的放计顺序，回应的计不加任何效果，界面也不写「拆招 / 破」。
-// 🔴 [2026-10-27 主人令] 放计循环（对方放某计 → 我方接着放下一计）：
-//   「对方增兵，我就减兵；对方减兵，我就加攻；对方加攻，我就加防；对方加防，我就夺兵；对方夺兵，我就乱阵；对方乱阵，我就增兵」
-//   即 敌(增兵) → 败(减兵) → 攻(加攻) → 胜(加防) → 并(夺兵) → 混(乱阵) → 敌，首尾相接一个圈。
-//   另两条（主人同日定）：不重复自己最近三计、不和对方上一计重复；被挡就顺着圈往下找（见 resolveAutoNextSkill）。
+// 🔴 [2026-10-30 主人定] 放计循环（对方放某计 → 我方接着放下一计）：
+//   敌(增兵10%) → 败(减兵10%) → 攻(猛攻10秒) → 胜(满血无敌10秒) → 混(驱散无敌+乱阵20秒) → 并(趁乱夺兵5%) → 敌(增兵10%)
+//   另两条（主人定）：不重复自己最近三计、不和对方上一计重复；被挡就顺着圈往下找（见 resolveAutoNextSkill）。
 const SIX_CYCLE_NEXT: Readonly<Record<TacticalSixSet, TacticalSixSet>> = {
     dizhan: 'baizhan',
     baizhan: 'gongzhan',
     gongzhan: 'shengzhan',
-    shengzhan: 'bingzhan',
-    bingzhan: 'hunzhan',
-    hunzhan: 'dizhan',
+    shengzhan: 'hunzhan',
+    hunzhan: 'bingzhan',
+    bingzhan: 'dizhan',
 };
 /** 玩家点地面令：连续这么多秒没往点上靠近 HERO_CLICK_PROGRESS_PX 像素就作废（走不到的令不许一直挂着） */
 const HERO_CLICK_STALL_SEC = 1.5;
@@ -787,7 +786,7 @@ export class Scene13WarLayer {
         const liveSec = affects ? Math.max(0, this.playerLiveSkillTimer) : 0;
         return {
             frenzy: Math.max(0, this.skillFrenzyTimer[m.f], affects ? this.playerSixFrenzyTimer : 0, liveSec),
-            shield: Math.max(0, this.skillShieldTimer[m.f], affects ? this.playerSixShieldTimer : 0, liveSec),
+            shield: Math.max(0, this.skillShieldTimer[m.f], affects ? this.playerSixShieldTimer : 0),
             panic: Math.max(0, this.skillPanicTimer[m.f], m.playerPanicTimer ?? 0),
         };
     }
@@ -8824,8 +8823,9 @@ export class Scene13WarLayer {
             audioManager.play('siege_destroyed');
         }
         // 🔴 [DE 口径] 攻城器械（尤其攻城塔/赫勒波利斯）坍塌崩解：
-        //    DE 原版建筑与高塔摧毁时，在原位瞬间爆发大团木构爆裂与冲天碎石烟尘（FX_TREBUCHET_SMOKE / FX_WALL_DUST），
-        //    彻底掩盖从高耸木塔到地面矮残骸的高度差，烟尘消散后呈现地面积存残骸。
+        //    DE 原版建筑与高塔摧毁时，在原位瞬间爆发大团木构爆裂与冲天碎石烟尘（FX_TREBUCHET_SMOKE / FX_WALL_DUST）。
+        //    🔴 [2026-10-30] 攻城塔倒塌过程由死亡帧自己播（SIEGETOWER / ANTIQUITY_SIEGE_TOWER 的 death_* 已按
+        //    DE u_sie_siege_tower_deathA 重提，60 帧：塔身开裂→倒下→残骸堆）；烟尘只 0.45 秒，不挡倒塌。
         if (isSiegeTower) {
             this.spawnFx('FX_TREBUCHET_SMOKE', m.x, m.y - 48, 0);
             this.spawnFx('FX_WALL_DUST', m.x, m.y, 0);

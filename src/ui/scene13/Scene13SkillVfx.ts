@@ -34,7 +34,7 @@ const COLOR: Record<TacticalSixSet, string> = {
     dizhan: '#52ccff',
     shengzhan: '#26f065',
     hunzhan: '#b572ff',
-    bingzhan: '#e59eff',
+    bingzhan: '#3b9eff',
     baizhan: '#f03240',
 };
 
@@ -303,7 +303,7 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     // 3. 单兵／阵口地面发光环
     if (v.six === 'dizhan') {
         const pn = Math.min(v.points.length, 32);
-        ctx.strokeStyle = '#9effdf';
+        ctx.strokeStyle = '#9be8ff';
         for (let i = 0; i < pn; i++) {
             const pt = v.points[i];
             const py = pt.y - lift(pt.x, pt.y);
@@ -415,12 +415,12 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineCap = 'round';
 
-    // 1. 前线军阵中心：巨型翠青聚兵通天光柱（外层翠青＋内芯纯白高亮）
+    // 1. 前线军阵中心：巨型冰蓝聚兵通天光柱（外层冰蓝＋内芯纯白高亮）
     const mainH = (130 + 80 * easeOut(Math.min(1, p * 2))) * scale;
     const mainGrad = ctx.createLinearGradient(0, cy - mainH, 0, cy);
-    mainGrad.addColorStop(0, 'rgba(85,237,197,0)');
-    mainGrad.addColorStop(0.45, 'rgba(62,245,192,0.72)');
-    mainGrad.addColorStop(1, 'rgba(240,255,250,0.98)');
+    mainGrad.addColorStop(0, 'rgba(82,204,255,0)');
+    mainGrad.addColorStop(0.45, 'rgba(82,204,255,0.75)');
+    mainGrad.addColorStop(1, 'rgba(235,250,255,0.98)');
     ctx.globalAlpha = fade * 0.92;
     ctx.strokeStyle = mainGrad;
     ctx.lineWidth = (30 - p * 12) * scale;
@@ -439,7 +439,7 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
 
     // 底部星芒爆发 + 3 层上升号令光环
     drawStamp(ctx, flare, cx, cy - 8, 28 * scale, 16 * scale);
-    ctx.strokeStyle = v.paid ? '#ffe885' : '#c4ffeb';
+    ctx.strokeStyle = v.paid ? '#ffe885' : '#b8efff';
     for (let k = 0; k < 3; k++) {
         const rise = (p * 1.45 + k * 0.33) % 1;
         const ry = cy - rise * 92 * scale;
@@ -457,8 +457,8 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
         const y = pt.y - lift(pt.x, pt.y);
         const h = (72 + 64 * easeOut(Math.min(1, p * 2))) * scale;
         const grad = ctx.createLinearGradient(0, y - h, 0, y);
-        grad.addColorStop(0, 'rgba(160,255,225,0)');
-        grad.addColorStop(0.5, 'rgba(62,245,192,0.75)');
+        grad.addColorStop(0, 'rgba(150,230,255,0)');
+        grad.addColorStop(0.5, 'rgba(82,204,255,0.78)');
         grad.addColorStop(1, 'rgba(255,255,255,0.96)');
         ctx.globalAlpha = fade * 0.9;
         ctx.strokeStyle = grad;
@@ -814,7 +814,7 @@ function drawTargetGlow(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: nu
             ctx.stroke();
         } else if (v.six === 'dizhan') {
             const hy = y - 22 - e * 4;
-            ctx.strokeStyle = 'rgba(140,255,220,0.85)';
+            ctx.strokeStyle = 'rgba(145,232,255,0.88)';
             ctx.globalAlpha = fade * 0.85;
             ctx.lineWidth = 3.5 * (1 - p * 0.45);
             ctx.beginPath();

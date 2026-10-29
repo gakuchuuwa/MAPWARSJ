@@ -277,6 +277,27 @@ function pickNearbyEnemyLegion(
 }
 
 /**
+ * 追击对象的老家（出发据点）：仍是敌城、不在冷却、不是刚打平的城才算；
+ * 否则退到「离敌军最近的路网城」（即追击路线的终点），同样要求是敌城。
+ */
+function resolveHuntHomeCity(
+    ctx: BTContext,
+    enemy: Army,
+    excludeTargetIds: Set<string>,
+    lastDrawCityId: string | undefined,
+) {
+    const myFaction = ctx.army.getFactionId();
+    const ePos = enemy.getPosition();
+    const candidates = [getArmyOriginCityId(enemy), roadRegistry.getNearestCityId(ePos.lat, ePos.lng)];
+    for (const id of candidates) {
+        if (!id || id === lastDrawCityId || excludeTargetIds.has(id)) continue;
+        const city = ctx.cityManager.getCity(id);
+        if (city && city.factionId !== myFaction) return city;
+    }
+    return null;
+}
+
+/**
  * 「攻城途中被拉走」的量化诊断（2026-08-06）—— **只测量，不改行为**。
  *
  * 主人 2026-08-06 拍板：P2 收紧追击触发**暂不做**，先实机取数。理由是 P0 挂起落地后
@@ -601,6 +622,13 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     const nearbyEnemy = pickNearbyEnemyLegion(ctx, excludeTargetIds);
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();
+        // 🔴 [2026-10-30 主人令「打赢接着打」] 无城目标时起的追击，把对方老家挂起为城目标：
+        //    追击路线本就通往对方所在那一带，观众看到的是「去打 A 城」；
+        //    旧代码只记追击不记城，野战一赢就失忆、方向池重抽，改打别处。
+        const huntHome = resolveHuntHomeCity(ctx, nearbyEnemy, excludeTargetIds, lastDrawCityId);
+        if (huntHome) {
+            setStrategicTarget(ctx, huntHome.id, { lat: huntHome.latitude, lng: huntHome.longitude });
+        }
         setStrategicArmyTarget(ctx, nearbyEnemy.id, { lat: ePos.lat, lng: ePos.lng });
         ctx.army.setTargetCity(null);
         // 停掉旧目标残留路径，立即改追（2026-08-05）
