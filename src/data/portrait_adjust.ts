@@ -9076,6 +9076,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 14,
             "offsetY": 18
+        },
+        "/assets/MAYANS/gen_uaxaclajuun.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -71
+        },
+        "/assets/MAYANS/yicha_canek.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/SPANISH/tuotuonake_keertesi.png": {
+            "scale": 1.24,
+            "offsetX": 0,
+            "offsetY": 11
         }
     },
     "folderGuides": {

@@ -88,7 +88,10 @@ export class YouTubeOfficialBridge {
         this.configured = !!s.configured;
         this.hasKey = !!s.hasKey;
         this.video = typeof s.video === 'string' ? s.video : '';
-        this.live.platformStatus = String(s.status || '');
+        // 本服务按官方单价记的今日用量（只算本机发出的请求，同项目别处的用量看不到）
+        const used = Number(s.quota?.used);
+        const quota = Number.isFinite(used) && used > 0 ? ` · 今日配额约 ${used}/${Number(s.quota?.limit) || 10000}` : '';
+        this.live.platformStatus = String(s.status || '') + quota;
         if (s.lastChatAt) this.live.lastChatAt = Number(s.lastChatAt);
         this.yt.setVideo(this.video);
     }
