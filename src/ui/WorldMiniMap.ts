@@ -192,6 +192,8 @@ export class WorldMiniMap {
     private miniSyncPending = false;
     /** 上次真正发出的 mini 视口（中心 + 缩放级别），用于「没变就不 setView」 */
     private lastMiniView: { lat: number; lng: number; zoom: number } | null = null;
+    /** 上一拍是否处于战术模式隐藏状态（从隐藏切回显示时必须 invalidateSize + 强制重绘） */
+    private wasHidden = false;
 
     constructor(
         private readonly mainMap: L.Map,
@@ -255,6 +257,10 @@ export class WorldMiniMap {
             zoomSnap: 0,
             zoomAnimation: false,
             fadeAnimation: false,
+            // 小地图容器固定 220×140，关闭 Leaflet 默认的 window resize 监听：
+            // 否则在战术模式（display:none）或收起态期间一旦发生窗口/全屏/OBS 尺寸变化，
+            // Leaflet 会把小地图尺寸重算成 0×0 并偏移 _mapPane，退回大地图后只剩左侧一格残片且圆点/色块全空。
+            trackResize: false,
             // 🔴 [2026-10-11 主人报「小地图不循环，请修复」] 小地图自己那份瓦片层此前是
             //    `worldCopyJump:false` + 瓦片 `noWrap:true` ⇒ 过了 180° 经线就是空白
             //    （截图里右下角那块「map data not available」）。与大地图同款：开循环、去 noWrap。
@@ -382,7 +388,24 @@ export class WorldMiniMap {
         this.root.classList.toggle('is-collapsed', !on);
         this.toggleBtn.textContent = on ? '▼' : '▲';
         this.toggleBtn.title = on ? '收起' : '展开';
-        if (on) { this.mini.invalidateSize(); this.applyView(); }
+        if (on && !this.isTactical()) {
+            this.recoverMiniSizeAndRedraw();
+        }
+    }
+
+    /**
+     * 从隐藏态（战术模式 display:none / 收起态）恢复可见，或检测到容器缓存尺寸异常（< 220×140）时：
+     * 重置缓存视口 → invalidateSize(false) 校准 220×140 → 立即重设视口、视野框与据点/领土画布。
+     */
+    private recoverMiniSizeAndRedraw(): void {
+        this.lastMiniView = null;
+        this.lastViewRectKey = '';
+        this.mini.invalidateSize({ animate: false });
+        this.applyView();
+        const { colorChanged, citiesChanged, marks } = this.syncCityDots();
+        this.syncTerritoryPolygons(true, citiesChanged || colorChanged, marks);
+        (this.cityRenderer as any)._update?.();
+        (this.territoryRenderer as any)._update?.();
     }
 
     private setLevel(lv: number): void {
@@ -418,6 +441,9 @@ export class WorldMiniMap {
             this.miniSyncTimer = 0;
         }
         this.miniSyncAt = performance.now();
+        // 战术模式或容器仍处于 display:none / 收起态时，绝不对 0×0 容器调 setBounds / setView，
+        // 否则 Leaflet 会按 0×0 视口重算瓦片与画布范围，导致退回大地图后小地图残缺空白。
+        if (this.isTactical() || !this.expanded || this.root.style.display === 'none') return;
         // [PERF 2026-10-26] 视野框只在主图范围真的变了才 setBounds（每拍都设 → 每拍重画一次矩形）。
         // 量化到 0.002°（约主图 0.7px、小图 0.02px）：肉眼无感，但能挡掉镜头慢漂时的无谓重画。
         const bounds = this.mainMap.getBounds();
@@ -426,10 +452,7 @@ export class WorldMiniMap {
             this.lastViewRectKey = key;
             this.viewRect.setBounds(bounds);
         }
-        // 🔴 [2026-10-11 主人报「拖战略大地图，小地图不跟着动」] 小地图**视野**也一起跟；
-        //    tick 里那句 `if (hide || !this.expanded) return;` 在收起状态会早退，
-        //    所以这里挂在 move/zoom 事件上，收起时也跟。
-        if (!this.isTactical()) this.applyView();
+        this.applyView();
     }
 
     /**
@@ -441,6 +464,7 @@ export class WorldMiniMap {
      * 🔴 [PERF 2026-10-26] 中心/级别没变就不发 `setView` —— 每次 setView 都会让小图整层矢量重算。
      */
     private applyView(): void {
+        if (this.isTactical() || !this.expanded || this.root.style.display === 'none') return;
         if (this.level <= LEVEL_MIN) {
             const lastWorld = this.lastMiniView;
             if (!lastWorld || lastWorld.zoom !== FIT_ZOOM) {
@@ -462,7 +486,23 @@ export class WorldMiniMap {
 
     private tick(): void {
         const hide = this.isTactical();
-        this.root.style.display = hide ? 'none' : '';
+        if (hide) {
+            if (!this.wasHidden) {
+                this.wasHidden = true;
+                this.root.style.display = 'none';
+            }
+        } else if (this.wasHidden) {
+            this.wasHidden = false;
+            this.root.style.display = '';
+            if (this.expanded) {
+                this.recoverMiniSizeAndRedraw();
+            }
+        } else if (this.expanded) {
+            const sz = this.mini.getSize();
+            if (sz.x < MINI_W || sz.y < MINI_H) {
+                this.recoverMiniSizeAndRedraw();
+            }
+        }
         // 🔴 [2026-10-07 主人令] 仅加入势力军团期间记录与绘制行军线路，离开势力不画，再次加入再画
         const currentHostId = this.syncHostLegion();
         const p = this.getPlayerPos();

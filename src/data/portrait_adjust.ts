@@ -9111,6 +9111,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/MUGHAL/gen_hemu.png": {
+            "scale": 1,
+            "offsetX": 1,
+            "offsetY": -20
         }
     },
     "folderGuides": {
