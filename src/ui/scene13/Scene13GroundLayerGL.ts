@@ -223,14 +223,14 @@ void main() {
   // 2. 副地表二层斑块（地图数据层 DIRT 势场 field.a 随 uNoiseOff 镜像偏移 + 原野碎块咬合）
   vec2 dirtUV = clamp(abs(mod(fieldUV + uNoiseOff * 0.043, 2.0) - 1.0), 0.01, 0.99);
   float dirtFieldVal = texture2D(uFieldTex, dirtUV).a;
-  float dirtNoise = clamp(tn1 * 0.45 + tn2 * 0.35 + tn3 * 0.20, -1.0, 1.0);
-  float fieldDirt = deEdgeBlend(dirtFieldVal, 0.12, 0.55, microGrain, (lumaDirt - lumaGrass) * 2.5);
-  float wildDirt  = deEdgeBlend(dirtNoise, 0.16, 0.50, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.34;
-  float dirtMix   = clamp(fieldDirt + wildDirt, 0.0, 1.0);
+  float dirtNoise = clamp(tn1 * 0.48 + tn2 * 0.34 + tn3 * 0.18, -1.0, 1.0);
+  float fieldDirt = deEdgeBlend(dirtFieldVal, 0.08, 0.48, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.78;
+  float wildDirt  = deEdgeBlend(dirtNoise, -0.06, 0.36, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.48;
+  float dirtMix   = clamp(fieldDirt + wildDirt, 0.0, 0.85);
   
-  // 3. 副地表一层微斑驳（DE LAYER_A/B 双色同系地貌碎块咬合）
-  float dryEdge = deEdgeBlend(terrainPatch, -0.22, 0.32, microGrain, (lumaDry - lumaGrass) * 2.5);
-  float dryMix  = clamp(dryEdge * 0.52, 0.0, 1.0) * (1.0 - dirtMix * 0.65);
+  // 3. 副地表一层微斑驳（DE LAYER_A/B 双色同系地貌碎块咬合：主草皮 + 旱草 + 泥土三层交织）
+  float dryEdge = deEdgeBlend(terrainPatch, -0.26, 0.24, microGrain, (lumaDry - lumaGrass) * 2.5);
+  float dryMix  = clamp(dryEdge * 0.64, 0.0, 1.0) * (1.0 - dirtMix * 0.55);
   
   // 4. 基底主地形与副地表一层咬合
   vec3 baseLand = mix(colGrass, colDry, dryMix);
@@ -342,18 +342,20 @@ void main() {
     waterCol = mix(waterCol, vec3(0.95, 0.98, 1.0), totalFoam * 0.68);
   }
   
-  // ── DE 高地斜坡立体边坡肌理与坡脚体积暗部（不画 fract 等高线圈，仅对斜坡面赋予自然边坡立体感） ──
-  if ((vSlope > 0.04 || vElev > 0.02) && isWater < 0.25) {
+  // ── DE 高地斜坡立体边坡土石肌理与坡脚体积暗部（台地长草、斜坡透出裸土碎石肌理） ──
+  if ((vSlope > 0.03 || vElev > 0.02) && isWater < 0.25) {
     float flatBaseLight = 1.0 + min(0.07, vElev * 0.022);
     float slopeDiff = abs(vLight - flatBaseLight);
-    float isSlopeFace = smoothstep(0.02, 0.12, slopeDiff);
-    // 斜坡面自然透出边坡土石肌理，使高地四周坡面拥有坚实体积感（不再只是地面亮暗斑）
-    vec3 slopeEarth = mix(colDry, colDirt, 0.52);
-    landCol = mix(landCol, slopeEarth, isSlopeFace * 0.26);
+    float slopeFromGeom = smoothstep(0.05, 0.28, vSlope);
+    float isSlopeFace = clamp(max(smoothstep(0.02, 0.11, slopeDiff), slopeFromGeom * 0.88), 0.0, 1.0);
+    float slopeEdge = deEdgeBlend(isSlopeFace, 0.10, 0.68, microGrain, (lumaDirt - lumaGrass) * 2.2);
+    // 斜坡面自然透出粗粝边坡土石肌理（泥土与旱草碎石交织），使高地四周坡面拥有坚实立体感
+    vec3 slopeEarth = mix(colDirt, colDry, 0.35) * (0.95 + microGrain * 0.07);
+    landCol = mix(landCol, slopeEarth, slopeEdge * 0.58);
 
     // 坡脚柔和体积暗部（衬托高地从平原拔地而起，无等高线细圈）
-    float footAO = smoothstep(0.02, 0.20, vElev) * (1.0 - smoothstep(0.20, 0.58, vElev));
-    landCol *= (1.0 - footAO * 0.11);
+    float footAO = smoothstep(0.02, 0.22, vElev) * (1.0 - smoothstep(0.22, 0.62, vElev));
+    landCol *= (1.0 - footAO * 0.13);
   }
 
   // 最终合成与高程坡度光照（原版 DE 自然地形光照）
@@ -518,6 +520,8 @@ export class Scene13GroundLayerGL {
   }
 
   public readonly smoothWater: Float32Array;
+  /** 护城河 / 引水渠格（addWaterCoverage 写入）：水生动物不进 */
+  private readonly moatCells = new Set<number>();
   public readonly smoothForest: Float32Array;
   private readonly origElev: Uint8Array;
   private cornerElev: Float32Array;
@@ -748,28 +752,41 @@ export class Scene13GroundLayerGL {
           || baseGrass === 'gr5' || baseGrass === 'gravel_default';
         const isForestTerrain = !isSparseTreelessBiome && (
           fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 || id === 13 || id === 48 ||
-          tname.includes('Forest') || tname.includes('Jungle') || tname.includes('Leaves') || tname.includes('Palm')
+          /Forest|Jungle|Leaves|Palm|Pine|Oak|Birch|Bamboo|Mediterranean|Acacia|Baobab|Mangrove|Dragon|Willow|Cypress|Bush/i.test(tname)
         );
         if (isForestTerrain) rawForest[y * N + x] = 1.0;
       }
     }
 
     // 照 DE Arabia.rms BASE_BLEND_A / B / C（terrain_mask 1 约 24% 覆盖率）机制：
-    // 当烘焙图 terrain[] 中未显式写入泥土/副地表斑块格时，按确定性种子生成有机多团块副地表斑块，打破大面积单一平铺感
+    // 检查全图及首屏中央区域（|x-60|<=24, |y-60|<=24）的泥土斑块占比；若中心交战区缺乏副地表斑块，
+    // 按确定性种子在首屏与全域生成有机多团块副地表斑块，彻底打破大面积单一底图平铺感
     let dirtCount = 0;
-    for (let i = 0; i < N * N; i++) {
-      if (rawDirt[i] > 0.5) dirtCount++;
+    let centerDirtCount = 0;
+    const halfN = Math.floor(N / 2);
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        if (rawDirt[y * N + x] > 0.5) {
+          dirtCount++;
+          if (Math.abs(x - halfN) <= 24 && Math.abs(y - halfN) <= 24) centerDirtCount++;
+        }
+      }
     }
-    if (dirtCount < N * N * 0.03) {
+    if (dirtCount < N * N * 0.08 || centerDirtCount < 48 * 48 * 0.10) {
       let dSeed = ((Math.round((this.noiseOff[0] + 50) * 1000) * 73856093) ^ (Math.round((this.noiseOff[1] + 50) * 1000) * 19349663)) >>> 0;
       const dRnd = () => {
         dSeed = (dSeed * 1664525 + 1013904223) >>> 0;
         return dSeed / 4294967296;
       };
-      const patchClumps = 22;
+      const patchClumps = 28;
       for (let c = 0; c < patchClumps; c++) {
-        const sx = 6 + Math.floor(dRnd() * (N - 12));
-        const sy = 6 + Math.floor(dRnd() * (N - 12));
+        // 前 10 个斑块优先锚定在首屏与近郊（|dx|<=18, |dy|<=18），确保一开战首屏即有丰富三层地表交织
+        const sx = c < 10
+          ? (halfN - 18 + Math.floor(dRnd() * 37))
+          : (6 + Math.floor(dRnd() * (N - 12)));
+        const sy = c < 10
+          ? (halfN - 18 + Math.floor(dRnd() * 37))
+          : (6 + Math.floor(dRnd() * (N - 12)));
         if (rawWater[sy * N + sx] > 0.1) continue;
         const targetTiles = 28 + Math.floor(dRnd() * 48);
         const q: Array<[number, number]> = [[sx, sy]];
@@ -1151,6 +1168,22 @@ export class Scene13GroundLayerGL {
     return wVal >= 0.45;
   }
 
+  /** 屏幕坐标是否在护城河 / 引水渠上（含紧邻一圈岸格） */
+  public isMoatAt(screenX: number, screenY: number, W: number, H: number): boolean {
+    if (this.moatCells.size === 0) return false;
+    const c = this.screenToCell(screenX, screenY, W, H);
+    if (!c) return false;
+    const x0 = Math.floor(c.gx), y0 = Math.floor(c.gy);
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const x = x0 + dx, y = y0 + dy;
+        if (x < 0 || y < 0 || x >= this.N || y >= this.N) continue;
+        if (this.moatCells.has(y * this.N + x)) return true;
+      }
+    }
+    return false;
+  }
+
   public getWaterDensityAt(gx: number, gy: number): number {
     if (gx < 0 || gy < 0 || gx >= this.N || gy >= this.N) return 0;
     return this.smoothWater[Math.floor(gy) * this.N + Math.floor(gx)] ?? 0;
@@ -1345,6 +1378,7 @@ export class Scene13GroundLayerGL {
       const lvl = Math.min(1, cov * 2.2);
       const i = gy * N + gx;
       touched++;
+      this.moatCells.add(i);
       if (cov >= 0.35) this.data.terrain[i] = 1;
       if (lvl > sw[i]) sw[i] = lvl;                                            // smoothWater 是只读引用：原地改内容
       this.smoothForest[i] = 0;

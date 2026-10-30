@@ -27,16 +27,19 @@ interface CreatureAsset {
     screenW: number;
 }
 
-const ASSETS: Record<'DOLPHIN' | 'WHALE' | 'BOX_TURTLES', CreatureAsset> = {
+type CreatureKind = 'DOLPHIN' | 'WHALE' | 'BOX_TURTLES' | 'NESSIE';
+
+const ASSETS: Record<CreatureKind, CreatureAsset> = {
     // 硬编码来自 _meta.json（DE 水下潜游层 + 水上破水层 + 白色跃水浪花/涟漪合成，加载时再 fetch 覆盖一次）
     DOLPHIN:     { url: '/SUCAI_RESOURCE/DOLPHIN/frames.png',     frames: 104, cols: 26, boxW: 126, boxH: 102, anchorX: 96,  anchorY: 55, screenW: 104 },
     WHALE:       { url: '/SUCAI_RESOURCE/WHALE/frames.png',       frames: 241, cols: 25, boxW: 212, boxH: 115, anchorX: 113, anchorY: 59, screenW: 168 },
     BOX_TURTLES: { url: '/SUCAI_RESOURCE/BOX_TURTLES/frames.png', frames: 180, cols: 30, boxW: 76,  boxH: 41,  anchorX: 35,  anchorY: 17, screenW: 56 },
+    NESSIE:      { url: '/SUCAI_RESOURCE/NESSIE/frames.png',      frames: 180, cols: 30, boxW: 256, boxH: 222, anchorX: 98,  anchorY: 58, screenW: 196 },
 };
 
 interface Creature {
     id: number;
-    kind: 'DOLPHIN' | 'WHALE' | 'BOX_TURTLES';
+    kind: CreatureKind;
     lat: number;
     lng: number;
     frame: number;
@@ -141,7 +144,7 @@ export class MarineLifeLayer extends L.Layer {
     };
 
     private async ensureAssets(): Promise<void> {
-        await Promise.all((Object.keys(ASSETS) as Array<'DOLPHIN' | 'WHALE' | 'BOX_TURTLES'>).map(async (kind) => {
+        await Promise.all((Object.keys(ASSETS) as CreatureKind[]).map(async (kind) => {
             const a = ASSETS[kind];
             const im = new Image();
             await new Promise<void>((resolve) => {
@@ -262,20 +265,23 @@ export class MarineLifeLayer extends L.Layer {
 
         if (!found) return;
 
-        // 暖温海域（|lat| < 42°，如地中海、南洋、红海、波斯湾、加勒比、东海）支持海龟
+        // 暖温海域（|lat| < 42°，如地中海、南洋、红海、波斯湾、加勒比、东海）支持海龟；全海域支持抹香鲸、尼斯湖水怪与海豚
         const isWarmSea = Math.abs(spawnLat) < 42;
-        let kind: 'DOLPHIN' | 'WHALE' | 'BOX_TURTLES';
+        let kind: CreatureKind;
+        const r = Math.random();
         if (isWarmSea) {
-            const r = Math.random();
-            if (r < 0.40) kind = 'WHALE';
+            if (r < 0.28) kind = 'WHALE';
+            else if (r < 0.42) kind = 'NESSIE';
             else if (r < 0.75) kind = 'DOLPHIN';
             else kind = 'BOX_TURTLES'; // 25% 概率出现海龟游弋
         } else {
-            // 高纬寒带海域保持鲸鱼与海豚
-            kind = Math.random() < 0.65 ? 'WHALE' : 'DOLPHIN';
+            // 高纬寒温带海域（含北海/苏格兰外海等）：抹香鲸、尼斯湖水怪与海豚
+            if (r < 0.45) kind = 'WHALE';
+            else if (r < 0.65) kind = 'NESSIE';
+            else kind = 'DOLPHIN';
         }
-        // 鲸鱼只在水深超过 200 米的深海（大陆架以外）；浅海（如厄勒海峡约 26 米）换成海豚
-        if (kind === 'WHALE') {
+        // 鲸鱼与水怪只在水深超过 200 米的深海（大陆架以外）；浅海（如厄勒海峡约 26 米）换成海豚
+        if (kind === 'WHALE' || kind === 'NESSIE') {
             const elev = LandSeaSystem.getSampler().getElevationSync(spawnLat, spawnLng);
             if (elev === null || elev > -200) kind = 'DOLPHIN';
         }

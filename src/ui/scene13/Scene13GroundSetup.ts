@@ -236,6 +236,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 releaseGround();
                 return;
             }
+            let runMicroDecor: (() => void) | null = null;
             if (data && data.objects) {
                 // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 给每栋建筑 / 城门 / 塔 / 墙脚下清出一块干燥平地（地基），
                 //    并拿掉落在地基上的树木与建筑冲突物。
@@ -513,6 +514,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                     }
                 }
 
+                runMicroDecor = () => populateBattlefieldMicroDecor.call(this, glLayer, VW, VH, baseTerrain, decorSet, decorCtx, onFoundation);
                 // 自然水岸生态：沿浅滩边缘稀疏点缀芦苇与睡莲（按气候/季节/海陆水体自适应：冬季冰面不长，荒漠与海岸仅生芦苇不生睡莲）
                 const isFrozenWater = glLayer.isIce || baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
                 const allowWaterLily = !isFrozenWater && !isBarrenBase && this.sceneSeason === 0 && this.environmentPlan?.waterKind !== 'sea' && !/^(ds|drt|sav|sa2|zn)/.test(baseTerrain);
@@ -551,6 +553,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 }
             }
             applyDeCityToGround.call(this);
+            runMicroDecor?.();
+            spawnTacticalNessie.call(this, glLayer, VW, VH);
             if (!this.deCity) {
                 for (const sp of this.decorSprites) {
                     if (!sp.asset.startsWith('BUILDING') && sp.asset !== '' && !sp.asset.startsWith('ANIMAL:')) {
@@ -737,4 +741,284 @@ export function pruneWetBarricades(this: Scene13WarLayer, glLayer: Scene13Ground
     });
     const removed = before - this.decorSprites.length;
     if (removed > 0) console.info(`[Scene13] 拒马/木栅残骸清了 ${removed} 件（在水里或湿岸上）`);
+}
+
+
+/**
+ * 补齐野战与攻城战首屏及近翼的 DE 三层微景观体系（Arabia.rms SOLID_OBJECT + AESTHETIC_FLAT + AESTHETIC_SCATTER）：
+ *   · 解决此前 applyDeCityToGround 仅在有城池（this.deCity）时执行、导致所有野战（如伊普苏斯之战）跳过微景观生成的问题；
+ *   · 在高地斜坡与山梁边缘优先布置伴生岩石与灌木（④ 高地斜坡伴生石块）；
+ *   · 在 100% 首屏视野及近翼均匀补齐成簇花草灌木与散生草丛（③ 首屏补齐低矮花草碎石微装饰）。
+ */
+function populateBattlefieldMicroDecor(
+    this: Scene13WarLayer,
+    glLayer: Scene13GroundLayerGL,
+    VW: number,
+    VH: number,
+    baseTerrain: string,
+    decorSet: { scatter: readonly string[]; flat: readonly string[]; solid: readonly string[] },
+    decorCtx: { lat: number; lng: number; season: 0 | 1 | 2; winterSnow: boolean; isSiege: boolean },
+    onFoundation: (x: number, y: number) => boolean,
+): void {
+    const validFlat = decorSet.flat.filter((a) => decorFits(a, decorCtx));
+    const validSolid = decorSet.solid.filter((a) => decorFits(a, decorCtx));
+    const validScatter = decorSet.scatter.filter((a) => decorFits(a, decorCtx));
+    if (validFlat.length === 0 && validSolid.length === 0 && validScatter.length === 0) return;
+
+    const seedStr = `${this.defenderCityId || 'field'}_${Math.round(decorCtx.lat * 100)}_${Math.round(decorCtx.lng * 100)}_micro`;
+    let mSeed = 2166136261 >>> 0;
+    for (let i = 0; i < seedStr.length; i++) {
+        mSeed = Math.imul(mSeed ^ seedStr.charCodeAt(i), 16777619) >>> 0;
+    }
+    const mRnd = (): number => {
+        mSeed = Math.imul(mSeed ^ (mSeed >>> 15), 0x85ebca6b) >>> 0;
+        mSeed = Math.imul(mSeed ^ (mSeed >>> 13), 0xc2b2ae35) >>> 0;
+        return ((mSeed ^ (mSeed >>> 16)) >>> 0) / 4294967296;
+    };
+
+    const isField = !this.deCity;
+    const cx = this.deCity ? this.deCityCenter.x : VW * 0.5;
+    const cy = this.deCity ? this.deCityCenter.y : VH * 0.5;
+    const cityRx = this.deCity ? this.deCity.width / 2 + 160 : 0;
+    const cityRy = this.deCity ? this.deCity.height / 2 + 100 : 0;
+
+    const isSafeMicroSpot = (sx: number, sy: number): boolean => {
+        if (onFoundation(sx, sy)) return false;
+        if (this.deCity && (((sx - cx) / cityRx) ** 2 + ((sy - cy) / cityRy) ** 2 <= 1.0)) return false;
+        const wc = glLayer.screenToCell(sx, sy, VW, VH);
+        if (!wc || glLayer.getWaterDensityAt(wc.gx, wc.gy) >= 0.18) return false;
+        for (const sp of this.spawns) {
+            if (Math.hypot(sx - sp.x, (sy - sp.y) * 1.4) < 160) return false;
+        }
+        return true;
+    };
+
+    const pushMicro = (asset: string, sx: number, sy: number, scale: number, extraZ = -1): boolean => {
+        if (!isSafeMicroSpot(sx, sy)) return false;
+        this.ensureNatureAsset(asset);
+        const frame = Math.floor(mRnd() * 6);
+        const flip = mRnd() < 0.5;
+        const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
+        this.decorSprites.push({
+            asset,
+            frame,
+            x: sx,
+            y: sy,
+            flip,
+            scale,
+            layer: 'world',
+            z: extraZ,
+            lift,
+            indestructible: true,
+            obstruction: undefined,
+            obstructionContactSec: 0,
+            obstructionTouched: false,
+            obstructionDisabled: true,
+        });
+        return true;
+    };
+
+    const slopeSpots: Array<{ x: number; y: number; dist: number; elev: number; slope: number }> = [];
+    const screenPlainSpots: Array<{ x: number; y: number; dist: number }> = [];
+    const midPlainSpots: Array<{ x: number; y: number; dist: number }> = [];
+
+    for (let gy = 8; gy <= 112; gy += 2) {
+        for (let gx = 8; gx <= 112; gx += 2) {
+            const dCells = Math.hypot(gx - 60, gy - 60);
+            if (!isField && dCells > 18) continue; // 攻城战外圈已由 applyDeCityToGround 处理，这里只补首屏近郊
+            if (isField && dCells > 36) continue;
+            const pt = glLayer.cellToScreen(gx + 0.5, gy + 0.5, VW, VH);
+            if (!isSafeMicroSpot(pt.x, pt.y)) continue;
+
+            const eC = glLayer.elevationLevelAt(pt.x, pt.y, VW, VH);
+            const eR = glLayer.elevationLevelAt(pt.x + TAC_TILE_W, pt.y, VW, VH);
+            const eD = glLayer.elevationLevelAt(pt.x, pt.y + TAC_TILE_H, VW, VH);
+            const slope = Math.hypot(eR - eC, eD - eC);
+
+            if (slope >= 0.30 || eC >= 0.85) {
+                slopeSpots.push({ x: pt.x, y: pt.y, dist: dCells, elev: eC, slope });
+            } else if (dCells <= 14.5) {
+                screenPlainSpots.push({ x: pt.x, y: pt.y, dist: dCells });
+            } else {
+                midPlainSpots.push({ x: pt.x, y: pt.y, dist: dCells });
+            }
+        }
+    }
+
+    const shuffle = <T>(arr: T[]): T[] => {
+        const out = [...arr];
+        for (let i = out.length - 1; i > 0; i--) {
+            const j = Math.floor(mRnd() * (i + 1));
+            const tmp = out[i]; out[i] = out[j]; out[j] = tmp;
+        }
+        return out;
+    };
+
+    // 按首屏优先排序斜坡候选点（让首屏内的高地斜坡优先获得伴生石块与灌木）
+    const sortedSlopes = [
+        ...shuffle(slopeSpots.filter((s) => s.dist <= 15.5)),
+        ...shuffle(slopeSpots.filter((s) => s.dist > 15.5)),
+    ];
+    const allPlain = [...shuffle(screenPlainSpots), ...shuffle(midPlainSpots)];
+
+    // 1. 高地斜坡与山梁伴生岩石+灌木簇（④ 高地斜坡透出土石肌理与伴生石块）
+    const rockCands = [...sortedSlopes, ...allPlain];
+    const placedRocks: Array<{ x: number; y: number }> = [];
+    const targetRocks = isField ? 14 : 6;
+    const minRockGap = isField ? 320 : 360;
+    const rockPool = validSolid.length > 0 ? validSolid : ['ROCK1', 'ROCK2'];
+    const isArid = /^(des|pal|qs|ds5|pal1)/i.test(baseTerrain);
+
+    for (const rs of rockCands) {
+        if (placedRocks.length >= targetRocks) break;
+        if (placedRocks.some((p) => Math.hypot(p.x - rs.x, (p.y - rs.y) * 1.5) < minRockGap)) continue;
+        const rockAsset = rockPool[Math.floor(mRnd() * rockPool.length)];
+        if (pushMicro(rockAsset, rs.x, rs.y, 0.86 + mRnd() * 0.16, 0)) {
+            placedRocks.push({ x: rs.x, y: rs.y });
+            const compPool = validFlat.length > 0 ? validFlat : (isArid ? ['GRASS_DRY'] : ['SHRUB_GREEN', 'GRASS_GREEN']);
+            const comp1 = compPool[Math.floor(mRnd() * compPool.length)];
+            pushMicro(comp1, rs.x + (mRnd() < 0.5 ? -24 : 24), rs.y + 10, 0.78, -1);
+            if (validScatter.length > 0 && mRnd() < 0.75) {
+                const sc = validScatter[Math.floor(mRnd() * validScatter.length)];
+                pushMicro(sc, rs.x + (mRnd() < 0.5 ? 26 : -26), rs.y - 8, 0.80, -1);
+            }
+        }
+    }
+
+    // 2. 首屏与近翼成簇花草灌木微景（③ 首屏补齐低矮花草碎石微装饰，group_placement_radius 2~3）
+    if (validFlat.length > 0) {
+        const placedFlats: Array<{ x: number; y: number }> = [];
+        const targetFlats = isField ? 20 : 8;
+        const minFlatGap = isField ? 260 : 300;
+        const flatCands = [...shuffle(screenPlainSpots), ...sortedSlopes, ...shuffle(midPlainSpots)];
+        for (const fs of flatCands) {
+            if (placedFlats.length >= targetFlats) break;
+            if (placedFlats.some((p) => Math.hypot(p.x - fs.x, (p.y - fs.y) * 1.5) < minFlatGap)) continue;
+            const leadFlat = validFlat[Math.floor(mRnd() * validFlat.length)];
+            if (pushMicro(leadFlat, fs.x, fs.y, 0.84 + mRnd() * 0.14, -1)) {
+                placedFlats.push({ x: fs.x, y: fs.y });
+                const subCount = 1 + Math.floor(mRnd() * 2);
+                for (let s = 0; s < subCount; s++) {
+                    const subAsset = validFlat[Math.floor(mRnd() * validFlat.length)];
+                    const ang = mRnd() * Math.PI * 2;
+                    const distPx = 22 + mRnd() * 28;
+                    pushMicro(
+                        subAsset,
+                        fs.x + Math.cos(ang) * distPx,
+                        fs.y + Math.sin(ang) * distPx * 0.5,
+                        0.74 + mRnd() * 0.14,
+                        -1,
+                    );
+                }
+            }
+        }
+    }
+
+    // 3. 首屏与原野散生草丛（DE AESTHETIC_SCATTER）
+    if (validScatter.length > 0) {
+        const targetScatter = isField ? 32 : 12;
+        let scatterPlaced = 0;
+        const scatterCands = [...shuffle(screenPlainSpots), ...sortedSlopes, ...shuffle(midPlainSpots)];
+        const step = Math.max(1, Math.floor(scatterCands.length / (targetScatter + 6)));
+        for (let i = 0; i < scatterCands.length && scatterPlaced < targetScatter; i += step) {
+            const sp = scatterCands[i];
+            const scAsset = validScatter[scatterPlaced % validScatter.length];
+            const jx = (mRnd() - 0.5) * 42;
+            const jy = (mRnd() - 0.5) * 22;
+            if (pushMicro(scAsset, sp.x + jx, sp.y + jy, 0.78 + mRnd() * 0.14, -1)) {
+                scatterPlaced++;
+            }
+        }
+    }
+}
+
+/**
+ * 战术地图尼斯湖水怪（DE a_nessie）：只放在宽阔的天然水面（海、湖、大河），不放护城河 / 引水渠。
+ *   · 候选格：自身水体密度 ≥0.6，四周 2 格内全是水（窄河、护城河自然排除），3 格内没有护城河格；
+ *   · 离双方出兵点 ≥ 700px（开局不被立刻惊走）；
+ *   · 宽阔水面 1 只，特大水面（≥300 个候选格）2 只，彼此相隔 ≥ 1500px；
+ *   · 行为与陆地动物同一套（stepTacticalAnimals）：见兵就潜游远离，aquatic 约束保证不上岸、不进护城河。
+ */
+function spawnTacticalNessie(this: Scene13WarLayer, glLayer: Scene13GroundLayerGL, VW: number, VH: number): void {
+    const N = 120;
+    const isNatural = (x: number, y: number): boolean => glLayer.isWaterAt(x, y, VW, VH) && !glLayer.isMoatAt(x, y, VW, VH);
+    const cands: Array<{ x: number; y: number }> = [];
+    for (let gy = 6; gy < N - 6; gy += 2) {
+        for (let gx = 6; gx < N - 6; gx += 2) {
+            if (glLayer.getWaterDensityAt(gx, gy) < 0.6) continue;
+            let ok = true;
+            for (let dy = -2; dy <= 2 && ok; dy++) {
+                for (let dx = -2; dx <= 2; dx++) {
+                    if (glLayer.getWaterDensityAt(gx + dx, gy + dy) < 0.5) { ok = false; break; }
+                }
+            }
+            if (!ok) continue;
+            const pt = glLayer.cellToScreen(gx + 0.5, gy + 0.5, VW, VH);
+            let nearMoat = false;
+            for (let dy = -3; dy <= 3 && !nearMoat; dy += 3) {
+                for (let dx = -3; dx <= 3; dx += 3) {
+                    if (glLayer.isMoatAt(pt.x + dx * TAC_TILE_W, pt.y + dy * TAC_TILE_H, VW, VH)) { nearMoat = true; break; }
+                }
+            }
+            if (nearMoat || !isNatural(pt.x, pt.y)) continue;
+            if (this.spawns.some((sp) => Math.hypot(pt.x - sp.x, pt.y - sp.y) < 700)) continue;
+            cands.push(pt);
+        }
+    }
+    if (cands.length < 30) return;
+    const want = cands.length >= 300 ? 2 : 1;
+    let h = 2166136261 >>> 0;
+    const seedStr = String(this.defenderCityId ?? this.environmentPlan?.seed ?? 'field') + '|nessie';
+    for (let i = 0; i < seedStr.length; i++) h = Math.imul(h ^ seedStr.charCodeAt(i), 16777619) >>> 0;
+    const rnd = (): number => { h = (Math.imul(h, 1664525) + 1013904223) >>> 0; return h / 4294967296; };
+    const placed: Array<{ x: number; y: number }> = [];
+    for (let tries = 0; tries < 40 && placed.length < want; tries++) {
+        const c = cands[Math.floor(rnd() * cands.length)];
+        if (placed.some((p) => Math.hypot(p.x - c.x, p.y - c.y) < 1500)) continue;
+        placed.push(c);
+        const dir = Math.floor(rnd() * 8);
+        const phase = Math.floor(rnd() * 45);
+        const sprite: DecorSprite = {
+            asset: `ANIMAL:NESSIE/idle_${dir}`,
+            frame: phase,
+            x: c.x,
+            y: c.y,
+            flip: false,
+            layer: 'world',
+            z: 0,
+            lift: 0,
+            densityHash: phase,
+            obstructionContactSec: 0,
+            obstructionTouched: false,
+            obstructionDisabled: true,
+        };
+        this.ensureNatureAsset(sprite.asset);
+        this.decorSprites.push(sprite);
+        this.tacticalAnimals.push({
+            sprite,
+            species: 'NESSIE',
+            kind: 'prey',
+            action: 'idle',
+            dir,
+            homeX: c.x,
+            homeY: c.y,
+            x: c.x,
+            y: c.y,
+            vx: 0,
+            vy: 0,
+            fleeTimer: 0,
+            fleeDX: 0,
+            fleeDY: 0,
+            idleTimer: 2 + rnd() * 3,
+            wanderX: c.x,
+            wanderY: c.y,
+            animPhase: phase,
+            hp: 50,
+            atkNext: 0,
+            flyX: c.x,
+            flyY: c.y,
+            hovering: false,
+            aquatic: true,
+        });
+    }
 }

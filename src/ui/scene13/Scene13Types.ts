@@ -423,6 +423,8 @@ export interface TacticalAnimal {
     flyX: number;
     flyY: number;
     hovering: boolean;
+    /** 水生动物（尼斯湖水怪）：只在天然水域活动，不上岸、不进护城河 */
+    aquatic?: boolean;
 }
 
 export interface AnimalDe {

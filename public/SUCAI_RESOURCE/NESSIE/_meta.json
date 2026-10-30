@@ -1,0 +1,13 @@
+{
+  "name": "NESSIE",
+  "sld": "a_nessie_x1 + a_nessie_underwater_x1",
+  "category": "fish",
+  "frames": 180,
+  "cols": 30,
+  "rows": 6,
+  "box_w": 256,
+  "box_h": 222,
+  "anchor_x": 98,
+  "anchor_y": 58,
+  "composited_underwater": true
+}

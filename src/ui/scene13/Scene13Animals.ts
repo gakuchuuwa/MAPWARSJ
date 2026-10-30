@@ -42,6 +42,7 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
     ['FOX_RED', 'prey', 30, 80, 3, 0, 3, ANIMAL_ACTS.beast],       // 赤狐（机敏疾奔窜逃）
     ['FOX_ARCTIC', 'prey', 30, 80, 3, 0, 3, ANIMAL_ACTS.beast],    // 北极狐
     ['TURKEY', 'prey', 20, 50, 3, 0, 2, ANIMAL_ACTS.graze],        // 野鸡
+    ['NESSIE', 'prey', 22, 60, 50, 0, 6, ANIMAL_ACTS.flee],        // 尼斯湖水怪（DE a_nessie；水生，见人潜游远离）
 
     // ── 危险猎物（受惊冲刺脱离，65~75 px/s）──
     ['BOAR', 'danger', 32, 75, 75, 7, 4, ANIMAL_ACTS.beast],       // 野猪（凶猛冲撞脱离）
@@ -169,6 +170,8 @@ export function stepTacticalAnimals(
     dt: number,
     dir8: (dx: number, dy: number) => number,
     setAnimalAction: (an: TacticalAnimal, want: AnimalAction) => void,
+    /** 天然水域判定（不含护城河）：水生动物（aquatic）每步都必须落在这里 */
+    isNaturalWater?: (x: number, y: number) => boolean,
 ): TacticalAnimal[] {
     if (!list.length) return list;
     const MARGIN = 120;
@@ -223,6 +226,7 @@ export function stepTacticalAnimals(
         }
 
         const canMove = de.acts.includes('walk');
+        const prevX = an.x, prevY = an.y;
         let mx = 0, my = 0, spd = 0, fleeing = false;
         let want: AnimalAction = 'idle';
 
@@ -314,6 +318,29 @@ export function stepTacticalAnimals(
         }
         an.x = Math.max(X0, Math.min(X1, an.x));
         an.y = Math.max(Y0, Math.min(Y1, an.y));
+        // 水生动物：下一步出了天然水域（上岸 / 进护城河）就退回原位，逃跑时改朝最近一个仍是水面的方向
+        if (an.aquatic && isNaturalWater && !isNaturalWater(an.x, an.y)) {
+            an.x = prevX;
+            an.y = prevY;
+            if (fleeing) {
+                const base = Math.atan2(an.fleeDY, an.fleeDX);
+                const tries = [0.5, -0.5, 1.0, -1.0, 1.6, -1.6, 2.2, -2.2, Math.PI];
+                for (const t of tries) {
+                    const a = base + t;
+                    const nx = Math.cos(a), ny = Math.sin(a);
+                    if (isNaturalWater(an.x + nx * 60, an.y + ny * 60)) {
+                        an.fleeDX = nx; an.fleeDY = ny;
+                        an.dir = dir8(nx, ny);
+                        break;
+                    }
+                }
+            } else {
+                an.wanderX = an.x;
+                an.wanderY = an.y;
+                an.idleTimer = 2 + Math.random() * 3;
+                want = 'idle';
+            }
+        }
         an.sprite.x = an.x;
         an.sprite.y = an.y;
         an.sprite.flip = false;

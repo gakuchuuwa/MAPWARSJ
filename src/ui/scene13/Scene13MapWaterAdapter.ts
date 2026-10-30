@@ -550,14 +550,23 @@ export function enrichDeBattlefieldMidfield(
     };
 
     const cX = (w - 1) / 2, cY = (h - 1) / 2;
-    const cityR = Math.max(11.5, (cityWidthPx ? cityWidthPx / 2 / TAC_TILE_W : 6) + 5.5);
+    const isField = !cityWidthPx;
+    const cityR = isField
+        ? 5.2
+        : Math.max(10.5, cityWidthPx / 2 / TAC_TILE_W + 4.2);
 
-    // 避开四门十字大道与两军主冲锋走廊
+    // 避开四门十字大道（攻城）与两军中央主冲锋走廊（野战仅保护中央阵列交锋通道，首屏南北两翼与四角开放成团林地）
     const inRoadOrCorridor = (x: number, y: number): boolean => {
         const dx = x - cX, dy = y - cY;
-        if (Math.abs(dx) <= 3.5 || Math.abs(dy) <= 3.5) return true;
+        if (isField) {
+            if (Math.hypot(dx, dy) < 5.2) return true;
+            // 屏幕水平主冲锋走廊（在转置前地图格空间对应 dx - dy 轴线）留出两军对冲通道
+            if (Math.abs(dx - dy) <= 3.8 && Math.abs(dx + dy) <= 18.0) return true;
+            return false;
+        }
+        if (Math.abs(dx) <= 3.2 || Math.abs(dy) <= 3.2) return true;
         // 主交战轴线（屏幕水平/对角方向留出开阔阵列机动走廊）
-        if (Math.abs(dx - dy) <= 4.5 && Math.hypot(dx, dy) < 28) return true;
+        if (Math.abs(dx - dy) <= 4.2 && Math.hypot(dx, dy) < 26) return true;
         return false;
     };
 
@@ -605,10 +614,13 @@ export function enrichDeBattlefieldMidfield(
         return grown;
     };
 
-    // 1. 检查中圈（半径 cityR+2.5 ~ 33 格）与外圈退水陆地（半径 31 ~ 46 格）的 8 个方位扇区
+    // 1. 检查首屏近翼圈（半径 cityR+1.0 ~ cityR+8.5 格）、中圈（15 ~ 33 格）与外圈退水陆地（31 ~ 46 格）的 8 个方位扇区
+    const nearSectorTrees = new Int32Array(8);
     const midSectorTrees = new Int32Array(8);
     const outerSectorTrees = new Int32Array(8);
     const outerSectorLand = new Int32Array(8);
+    const nearMinR = cityR + 1.0;
+    const nearMaxR = isField ? 14.0 : Math.min(24.0, cityR + 8.5);
     for (let y = 6; y < h - 6; y++) {
         for (let x = 6; x < w - 6; x++) {
             const dx = x - cX, dy = y - cY;
@@ -616,7 +628,10 @@ export function enrichDeBattlefieldMidfield(
             const ang = Math.atan2(dy, dx);
             const sec = Math.floor(((ang + Math.PI) / (Math.PI * 2)) * 8) % 8;
             const idx = y * w + x;
-            if (d >= cityR + 2 && d <= 33) {
+            if (d >= nearMinR && d <= nearMaxR) {
+                if (hasTree[idx]) nearSectorTrees[sec]++;
+            }
+            if (d >= cityR + 3 && d <= 33) {
                 if (hasTree[idx]) midSectorTrees[sec]++;
             } else if (d > 31 && d <= 47) {
                 if (!isWaterId(terrain[idx]) && !isShoreId(terrain[idx])) outerSectorLand[sec]++;
@@ -625,17 +640,38 @@ export function enrichDeBattlefieldMidfield(
         }
     }
 
-    // 在中圈空旷侧翼扇区补齐 DE SPAWN_FOREST / STRAGGLER_FOREST 近战侧翼小林团（3~4 团，每团 9~14 格）
-    let midClumpsPlaced = 0;
     const secOrder = [0, 1, 2, 3, 4, 5, 6, 7].sort(() => rnd() - 0.5);
+
+    // 1a. 首屏两翼与四角近景林团（野战拉近到 7.0~12.8 格首屏两翼；攻城战紧贴护城河外缘四角）：
+    //     每团 8~13 格并同步写入 domForestTid 森林底土，使 100% 默认视野两翼即有成团树林与林下落叶腐殖土
+    let nearClumpsPlaced = 0;
+    const targetNearClumps = isField ? 4 : 3;
     for (const sec of secOrder) {
-        if (midClumpsPlaced >= 4) break;
-        if (midSectorTrees[sec] >= 6) continue;
-        const baseAng = (sec + 0.3 + rnd() * 0.4) * (Math.PI / 4) - Math.PI;
-        const rad = cityR + 4.5 + rnd() * (Math.min(31, cityR + 14) - (cityR + 4.5));
+        if (nearClumpsPlaced >= targetNearClumps) break;
+        if (nearSectorTrees[sec] >= 4) continue;
+        const baseAng = (sec + 0.25 + rnd() * 0.5) * (Math.PI / 4) - Math.PI;
+        const rad = isField
+            ? (7.0 + rnd() * 5.2)
+            : (cityR + 2.2 + rnd() * 5.0);
         const sx = Math.round(cX + Math.cos(baseAng) * rad);
         const sy = Math.round(cY + Math.sin(baseAng) * rad);
-        const clumpSize = 9 + Math.floor(rnd() * 6);
+        const clumpSize = isField ? (8 + Math.floor(rnd() * 6)) : (7 + Math.floor(rnd() * 5));
+        if (growDeForestClump(sx, sy, clumpSize, nearMinR, nearMaxR + 1.5) >= 4) {
+            nearClumpsPlaced++;
+        }
+    }
+
+    // 1b. 中圈空旷侧翼扇区补齐 DE SPAWN_FOREST / STRAGGLER_FOREST 侧翼林团（3~4 团，每团 10~15 格）
+    let midClumpsPlaced = 0;
+    for (const sec of secOrder) {
+        if (midClumpsPlaced >= 4) break;
+        if (midSectorTrees[sec] >= 7) continue;
+        const baseAng = (sec + 0.3 + rnd() * 0.4) * (Math.PI / 4) - Math.PI;
+        const minMid = isField ? 13.5 : (cityR + 5.0);
+        const rad = minMid + rnd() * (Math.min(31, minMid + 12) - minMid);
+        const sx = Math.round(cX + Math.cos(baseAng) * rad);
+        const sy = Math.round(cY + Math.sin(baseAng) * rad);
+        const clumpSize = 10 + Math.floor(rnd() * 6);
         if (growDeForestClump(sx, sy, clumpSize, cityR + 2.5, 34) >= 4) {
             midClumpsPlaced++;
         }
@@ -658,11 +694,13 @@ export function enrichDeBattlefieldMidfield(
 
     // 2. 照 DE includes/stragglers.inc & stragglers_neutral.inc：
     //    在城郊与交战平原（半径 cityR+1.5 ~ 36 格）稀疏点缀 14~18 棵 DE 散树（间距 ≥ 4 格，绝不挡阵列）
-    const targetStragglers = 16;
+    const targetStragglers = 22;
     let stragglersPlaced = 0;
-    for (let attempt = 0; attempt < 140 && stragglersPlaced < targetStragglers; attempt++) {
+    for (let attempt = 0; attempt < 180 && stragglersPlaced < targetStragglers; attempt++) {
         const ang = rnd() * Math.PI * 2;
-        const rad = cityR + 1.5 + rnd() * (36 - (cityR + 1.5));
+        const rad = (attempt < 70 && isField)
+            ? (5.8 + rnd() * 8.5)
+            : (cityR + 1.5 + rnd() * (36 - (cityR + 1.5)));
         const gx = Math.round(cX + Math.cos(ang) * rad);
         const gy = Math.round(cY + Math.sin(ang) * rad);
         if (!isSafeDryCell(gx, gy, 2) || inRoadOrCorridor(gx, gy)) continue;

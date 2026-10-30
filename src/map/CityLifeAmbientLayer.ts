@@ -100,7 +100,7 @@ interface CityLifeActor {
     hasFarm?: boolean;         // 农夫组合带四季农田（旱田或水田）
     seasonalPlot?: SeasonalPlotKind; // 四季地皮套系：旱作农田 / 水稻田 / 游牧草场
     plotCells?: number[];            // 地皮实际铺了哪几块（PLOT_CELL_OFFSETS 下标，1~4 块）；只记在组合主人身上
-    farmStockCell?: number;          // 农田四块里改养牲畜的那一块（PLOT_CELL_OFFSETS 下标）；该块不派农夫、只放一头猪或牛，地皮仍是农田
+    pigCell?: number;                // 农田四块里改养猪的那一块（PLOT_CELL_OFFSETS 下标）；该块不派农夫、只放一头猪，地皮仍是农田
     buildingResource?: string; // 组合内随机建筑：磨坊／牧栏／毡帐／小屋等
     lib: 'SUCAI' | 'SUCAI_ANIMAL';
     dir: string;
@@ -148,11 +148,10 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
     rice_farm: RFARM_BY_SEASON,
     pasture: PASTURE_BY_SEASON,
 };
-/** 农田 / 水田 / 草场最多 2×2 斜角四块（zoom 9 像素，相对四块中心）：0 北、1 西、2 东、3 南。
- *  🔴 2026-10-30 主人令「牧场、田地 1–4 块随机放」：每个组合按哈希定 1~4 块（平地不够就少），不再一律铺满四块；
+/** 农田 / 水田 / 草场最多 2×2 斜角四块（zoom 9 像素，相对四块中心）：0 北、1 西、2 东、3 南；平地够几块铺几块。
  *  草场一块一只牲畜、牧羊人站南块；农田一块一个农夫，南块那个是组合主人（建筑跟他走）；
- *  🔴 2026-10-28 主人令：农田里随机一块改养牲畜（主人身上记 farmStockCell），该块不派农夫、只放一头猪或牛；
- *     地皮一律是同一种农田皮，不铺牧场。 */
+ *  🔴 2026-10-28 主人令：农田四块里随机一块改养猪（主人身上记 pigCell），该块不派农夫、只放一头猪；
+ *     四块地皮一律不变，仍是同一种农田皮，不铺牧场。 */
 const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -23], [-35, 0], [35, 0], [0, 23]];
 /** 同一渔场主船之外的帮手船相对主船的 zoom 9 像素落点：北、西、东（船比农夫大，间距放宽） */
 const FISHING_BOAT_OFFSETS: readonly (readonly [number, number])[] = [[0, -46], [-60, -18], [60, -18]];
@@ -351,46 +350,16 @@ const PASTORAL_ANIMAL_POOLS: Readonly<Record<string, readonly string[]>> = {
 };
 
 /**
- * 农田那块牲畜地皮养什么 —— **猪牛两样都要有、两头都得按史**（2026-10-30 主人令
- * 「只有牛太单一了，牛和猪就多样性了，不过要符合历史」）：
- *   1. 牛是田里干活的牲口，种类按地域取：
- *      · 水牛 BUFFALO：亚洲季风稻作区——江南、湖广、巴蜀、滇黔、越南、缅甸、高棉、马来，
- *        以及南亚印度—旁遮普—孟加拉—莫卧儿（江南自汉已有水牛，恒河—印度河平原至今以水牛犁稻田）。
- *      · 黄牛 COW_BROWN：其余农耕区——中原、河朔、朝鲜半岛（韩牛）、日本（牛耕自 8–9 世纪普及）、
- *        欧洲、地中海、高加索、拜占庭等；朝鲜半岛与日本无野生水牛，稻田一律黄牛。
- *   2. 猪按当地农家养猪的实情给份额（**一律取整为「有猪」，只有份额差别，没有史无猪的地方**）：
- *      · 猪是农家畜养最广的家畜：中国（家猪最早驯化地之一）、朝鲜、越南、缅甸、高棉、欧洲、地中海、高加索、北欧 —— 一半一半，画面猪牛都有。
- *      · 南亚稻作带（印度、孟加拉、莫卧儿、旁遮普）—— 猪由低种姓、部落与渔民饲养（印度自史前即有 Sus indicus 家猪，孟加拉、喀拉拉养猪食猪肉皆有据），
- *        只是不入主流牛耕，故少量出场（约 1/4）。
- *      · 马来、日本 —— 猪只在华人、原住民（马来）与早期家猪（日本弥生—奈良有豚，675 年天武断屠后衰落）里出现，故更少（约 1/6）。
- *   3. 美洲原住民（穆伊斯卡、玛雅、图皮、马普切、印加、北美）1492 年前既无家牛也无家猪，农田四块全种农夫，不拿欧洲家畜硬凑。
+ * 🔴 2026-10-28 主人令「现在种田的四块田都是一个在耕作，太单一了，可以把其中一个随机养猪」：
+ *   农田四块里随机一块改养猪（四块地皮不动，仍是农田）。按史，新大陆（美洲原住民彼时无家猪）与
+ *   伊斯兰／印度文化圈不养猪，这些文化的农田保持四块全种农夫，不拿别的牲畜硬凑（要一律放猪，主人一句话即改）。
  */
-const WATER_BUFFALO_FARM_CULTURES: ReadonlySet<string> = new Set([
-    'JIANGNAN', 'HUGUANG', 'BASHU', 'DIANQIAN', 'VIETNAMESE', 'BURMESE', 'KHMER', 'MALAY',
-    'PURU', 'INDIA', 'MUGHAL', 'BENGALIS',
-]);
-/** 农家养猪的份额（0～1）；表里没写的农耕文化一律猪牛各半。 */
-const FARM_PIG_SHARE: Readonly<Record<string, number>> = {
-    // 南亚稻作带：猪由低种姓／部落／渔民饲养，史有其事但不入主流牛耕
-    INDIA: 0.25,
-    BENGALIS: 0.25,
-    MUGHAL: 0.25,
-    PURU: 0.25,
-    // 马来：养猪的是华人与原住民，马来农家不养；日本：弥生—奈良有豚，675 年断屠后衰落
-    MALAY: 0.16,
-    JAPAN: 0.16,
-};
-const NO_FARM_STOCK_CULTURES: ReadonlySet<string> = new Set([
-    // 美洲原住民：1492 年前无家牛、无家猪（DEC 素材里的 COW／PIG 都是欧洲家畜）
+const PIG_KEEPING_EXCLUDED_CULTURES: ReadonlySet<string> = new Set([
+    // 美洲原住民：1492 年前无家猪（DEC 素材里的 PIG 是欧洲家猪）
     'MUISCA', 'MAYANS', 'TUPI', 'MAPUCHE', 'INCA', 'AMERICA',
+    // 伊斯兰／印度文化圈：不养猪（与上方牧群配种表口径一致）
+    'MUGHAL', 'BENGALIS', 'PURU', 'INDIA',
 ]);
-
-/** 农田牲畜块养什么：牛按地域取水牛／黄牛；猪按当地养猪实情给份额，其余是耕牛。 */
-function farmStockKind(style: string, seed01: number): string {
-    const ox = WATER_BUFFALO_FARM_CULTURES.has(style) ? 'BUFFALO' : 'COW_BROWN';
-    const pigShare = FARM_PIG_SHARE[style] ?? 0.5;
-    return seed01 < pigShare ? 'PIG' : ox;
-}
 
 function strHash01(s: string, salt: number): number {
     let h = (salt * 2654435761) | 0;
@@ -400,18 +369,6 @@ function strHash01(s: string, salt: number): number {
     h ^= h >>> 16;
     return (h >>> 0) / 4294967296;
 }
-
-/**
- * 🔴 2026-10-30 主人令「所有生产都使用统一的一套规则，都是 1-4 随机」：
- *   一处生产组合出 1~4 份——**农田／水田 1~4 块地皮、草场 1~4 块草皮（1~4 只牲畜）**、
- *   **渔场 1~4 条渔船**、**猎场／伐木／采集／矿冶 1~4 个同样工种的村民（各带自己那份猎物／枯木／浆果／矿脉）**，
- *   全部走这一个函数、同一个哈希口径（据点＋槽位），且同一组合每次重排都是同一个数，不会一帧一变。
- */
-function rollProductionCount(seedKey: string, slot: number): number {
-    return 1 + (Math.floor(strHash01(seedKey, slot * 17 + 8) * 4) % 4);
-}
-/** 陆上多份生产的第 2~4 份相对组合中心的落点（zoom 9 像素）：北、西、东，与渔船同一套方位。 */
-const PRODUCTION_SITE_OFFSETS: readonly (readonly [number, number])[] = [[0, -42], [-52, 8], [52, 8]];
 
 /**
  * 地图位移 → DE 八向精灵编号。DE 素材的 8 个方向（对着马 / 渔船 / 村民帧图逐个核过）：
@@ -1052,11 +1009,11 @@ export class CityLifeAmbientLayer {
                         displayedAction: 'work',
                         desiredAction: 'work',
                     });
-                    // 🔴 2026-10-30 主人令「渔业可以和农业一样，随机显示 1-4 个，有船，有鱼」「所有生产统一 1–4 随机」：
-                    //    一处渔场按同一个 rollProductionCount 出 1~4 条渔船，主船之外的几条围在渔场四周，
+                    // 🔴 2026-10-30 主人令「渔业可以和农业一样，随机显示 1-4 个，有船，有鱼」：
+                    //    一处渔场按哈希出 1~4 条渔船，主船之外的几条围在渔场四周（与农田四块同一套方位），
                     //    各带一群鱼、原地撒网不回港；落点不是深海就少一条，绝不上岸。
                     const owner = list[list.length - 1];
-                    const boatCount = rollProductionCount(yk, i);
+                    const boatCount = 1 + Math.floor(strHash01(owner.id, 911) * 4);
                     const extraCells = [0, 1, 2]
                         .sort((a, b) => strHash01(owner.id, 920 + a) - strHash01(owner.id, 920 + b))
                         .slice(0, boatCount - 1);
@@ -1093,32 +1050,17 @@ export class CityLifeAmbientLayer {
 
             let homePos: Pt | null = null;
             let plotCells: number[] | undefined;
-            // 🔴 2026-10-30 主人令「看到很多牧场、田地都是 4 块，我的意思是 1–4 块随机放」「所有生产统一 1–4 随机」：
-            //    每个生产组合按「据点＋槽位」哈希定这次出 1~4 份（平地/水面够几份另说，不够就少），不再一律铺满四块。
-            const targetCells = plotKind ? rollProductionCount(yk, i) : 0;
-            /** 从这块平地可用的一组块里，按目标块数挑：南块（主人站位）必留，其余按哈希起点轮着取，形状各异。 */
-            const pickCells = (cells: number[], want: number): number[] => {
-                if (cells.length <= want) return cells;
-                const keep: number[] = cells.filter((k) => k === PLOT_LEADER_CELL);
-                const others = cells.filter((k) => k !== PLOT_LEADER_CELL);
-                const start = Math.floor(strHash01(yk, i * 17 + 9) * others.length) % others.length;
-                for (let n = 0; keep.length < want && n < others.length; n++) {
-                    keep.push(others[(start + n) % others.length]);
-                }
-                return keep.sort((a, b) => a - b);
-            };
+            // 有地皮的组合：在所有候选点里取能铺块数最多的；满四块即可提前停。
+            const maxCells = PLOT_CELL_OFFSETS.length;
             const tryPlot = (cand: Pt): boolean => {
                 // 平地少的地方（沙漠绿洲、山谷）各组会抢同一块：与已放好的地皮重叠的候选一律作废，继续往外找
                 if (this.plotOverlaps(cand, newPlots)) return false;
                 const cells = this.plotCellsAt(cand);
-                if (cells.length > 0) {
-                    const keep = pickCells(cells, targetCells);
-                    if (keep.length > (plotCells?.length ?? 0)) {
-                        homePos = cand;
-                        plotCells = keep;
-                    }
+                if (cells.length > (plotCells?.length ?? 0)) {
+                    homePos = cand;
+                    plotCells = cells;
                 }
-                return cells.length >= targetCells;
+                return cells.length >= maxCells;
             };
             // 林间工种围绕树林；农田、猎场与牧场都放到外围，避免压住据点。
             if (!isFarmer && forestNodes.length > 0) {
@@ -1134,7 +1076,7 @@ export class CityLifeAmbientLayer {
                 }
             }
 
-            if (!homePos || (plotKind && (plotCells?.length ?? 0) < targetCells)) {
+            if (!homePos || (plotKind && (plotCells?.length ?? 0) < maxCells)) {
                 const distDeg = isPastoral || isHunter ? 0.38 + h4 * 0.10 : isFarmer ? 0.30 + h4 * 0.10 : 0.14 + h4 * 0.11;
                 // 有地皮的组合要找平地：由近到远八方向逐圈找，最远到据点周围约 100 km
                 // （据点间距 >40 km 且只有一半据点放民生，100 km 内找平地不会挤到别家）。
@@ -1250,36 +1192,33 @@ export class CityLifeAmbientLayer {
 
             // 农田一块一个农夫：南块是组合主人（地皮、建筑都记在他身上），其余几块各补一个只种地的农夫。
             // 🔴 2026-10-28 主人令「现在种田的四块田都是一个在耕作，太单一了，可以把其中一个随机养猪」：
-            //    四块里随机挑一块改养牲畜——该块不派农夫、放一头猪或牛，四块地皮一律照旧是农田，不改铺牧场。
+            //    四块里随机挑一块改养猪——该块不派农夫、放一头猪，四块地皮一律照旧是农田，不改铺牧场。
             //    块号按「据点＋年份＋组合」取哈希，年度重排也不会前后闪换。
-            // 🔴 2026-10-30 主人令「不要看以前主人说的，要看现在是否符合历史」：养什么按当地史料定
-            //    （水牛／黄牛按地域取；猪按当地农家养猪的实情给份额），见 farmStockKind 的按史注释。
             if (isFarmer && plotCells) {
                 const owner = list[list.length - 1];
                 const handCells = plotCells.filter((k) => k !== PLOT_LEADER_CELL);
-                const farmStockCell = handCells.length > 0 && !NO_FARM_STOCK_CULTURES.has(style)
+                const pigCell = handCells.length > 0 && !PIG_KEEPING_EXCLUDED_CULTURES.has(style)
                     ? handCells[Math.floor(strHash01(owner.id, 907) * handCells.length) % handCells.length]
                     : undefined;
-                owner.farmStockCell = farmStockCell;
-                const stockKind = farmStockCell === undefined ? '' : farmStockKind(style, strHash01(owner.id, 908));
+                owner.pigCell = pigCell;
                 for (const k of plotCells) {
                     if (k === PLOT_LEADER_CELL) continue;
-                    if (k === farmStockCell) {
-                        // 牲畜只在自家这块田里小范围来回（与草场牲畜同一套走动），不跑出地皮、不踩到人。
-                        const stockAngle = strHash01(owner.id, k * 23 + 231) * Math.PI * 2;
-                        const wx = Math.cos(stockAngle) * PASTURE_WANDER_PX;
-                        const wy = Math.sin(stockAngle) * PASTURE_WANDER_PX * 0.6;
+                    if (k === pigCell) {
+                        // 猪只在自家这块田里小范围来回（与草场牲畜同一套走动），不跑出地皮、不踩到人。
+                        const pigAngle = strHash01(owner.id, k * 23 + 231) * Math.PI * 2;
+                        const wx = Math.cos(pigAngle) * PASTURE_WANDER_PX;
+                        const wy = Math.sin(pigAngle) * PASTURE_WANDER_PX * 0.6;
                         list.push({
                             ...owner,
-                            id: `${owner.id}_stock_${k}`,
+                            id: `${owner.id}_pig_${k}`,
                             isAnimal: true,
                             lib: 'SUCAI_ANIMAL',
-                            dir: stockKind,
+                            dir: 'PIG',
                             fieldHand: undefined,
                             hasFarm: false,
                             seasonalPlot: undefined,
                             plotCells: undefined,
-                            farmStockCell: undefined,
+                            pigCell: undefined,
                             groundResource: undefined,
                             groundResourceLib: undefined,
                             buildingResource: undefined,
@@ -1305,37 +1244,13 @@ export class CityLifeAmbientLayer {
                         hasFarm: false,
                         seasonalPlot: undefined,
                         plotCells: undefined,
-                        farmStockCell: undefined,
+                        pigCell: undefined,
                         buildingResource: undefined,
                         homePos: pos,
                         gatePos: { ...pos },
                         lastDrawPos: { ...pos },
                         facing: (facing + k * 3) % 8,
                         phase: phase + k * 137,
-                    });
-                }
-            }
-
-            // 🔴 2026-10-30 主人令「所有生产都使用统一的一套规则，都是 1-4 随机」：
-            //    没有地皮的生产组合（猎场／伐木／采集／矿冶）同样出 1~4 个人，各带自己那份猎物／枯木／浆果／矿脉，
-            //    落点按同一套方位围在组合四周；落在水里就不放那一份，绝不上岸。
-            if (!plotKind) {
-                const owner = list[list.length - 1];
-                const workers = rollProductionCount(yk, i);
-                for (let n = 1; n < workers; n++) {
-                    const o = PRODUCTION_SITE_OFFSETS[(n - 1) % PRODUCTION_SITE_OFFSETS.length];
-                    const pos = this.plotCellPos(owner.homePos, PLOT_LEADER_CELL, o[0], o[1]);
-                    if (isHunter ? !this.isFarmFullyOnLand(pos) : this.isSea(pos)) continue;
-                    list.push({
-                        ...owner,
-                        id: `${owner.id}_mate_${n}`,
-                        fieldHand: true,
-                        buildingResource: undefined,
-                        homePos: pos,
-                        gatePos: { ...pos },
-                        lastDrawPos: { ...pos },
-                        facing: (facing + n * 3) % 8,
-                        phase: phase + n * 173,
                     });
                 }
             }
@@ -1347,7 +1262,7 @@ export class CityLifeAmbientLayer {
             return this.getOrCreateCityActors(city);
         }
 
-        // 民生组合：牧羊人带 1~4 只牲畜（草场铺几块就几只，一块一只）；每个猎人带 1 只本地猎物（猎人也出 1~4 个）。
+        // 民生组合：1 个牧羊人固定带 4 只牲畜（四块草场一块一只）；1 个猎人固定带 1 只本地猎物。
         // 动物只在组合中央的两侧小范围真实往返，不与主人分散到据点不同位置。
         const preyPool = animalPool.filter((dir) => ['DEER', 'BOAR', 'TURKEY', 'GUANACO'].includes(dir));
         const groupLeaders = list.filter((actor) => actor.dir === 'VIL_MALE_SHEPHERD' || actor.dir === 'VIL_MALE_HUNTER');

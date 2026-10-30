@@ -2537,11 +2537,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/NORTHEAST/hezhe_shaerhuda.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": -3
-        },
         "/assets/CENTRAL/xiongding_murongyong.png": {
             "scale": 0.94,
             "offsetX": 0,
@@ -9261,6 +9256,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.19,
             "offsetX": 0,
             "offsetY": 21
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_48.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/NORTHEAST/hezhe_shaerhuda.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -2
         }
     },
     "folderGuides": {

@@ -8929,6 +8929,12 @@ export class Scene13WarLayer {
             dt,
             (dx, dy) => this.dir8(dx, dy),
             (an, want) => this.setAnimalAction(an, want),
+            (x, y) => {
+                const gl = this.groundLayerGL;
+                if (!gl) return true;
+                const W = this.worldCX * 2, H = this.worldCY * 2;
+                return gl.isWaterAt(x, y, W, H) && !gl.isMoatAt(x, y, W, H);
+            },
         );
     }
 
