@@ -24,6 +24,8 @@
  */
 
 /** 季节：春0 / 夏1 / 秋2 / 冬3（与 TimeSystem 的四季 1:1） */
+import { hasWorldBaseData, queryBaseTile } from './WorldBaseMap';
+
 export type TreeSeason = 0 | 1 | 2 | 3;
 
 export type FourSeasons = readonly [string, string, string, string];
@@ -438,17 +440,26 @@ function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
     const sub = q.buildingStyle.toUpperCase();
     const s = Math.max(0, Math.min(3, q.season));
 
-    const isGobiTile = q.baseTile === 'ds5' || q.baseTile === 'qs' || q.baseTile === 'pal1';
+    // 冬季底图已被替换为 sno/sn2/snf/snd 时，反查非冬季原生底图来判定该地是否属于荒漠/戈壁，防止春夏秋长梭梭灌木的地方冬天突变为白桦
+    const baseForBiome = (isSnowBaseTile(q.baseTile) && hasWorldBaseData())
+        ? (queryBaseTile({ lat: q.lat, lng: q.lng, isSiege: q.isSiege ?? false, isWinter: false, buildingStyle: q.buildingStyle }) ?? q.baseTile)
+        : q.baseTile;
+    const isGobiTile = baseForBiome === 'ds5' || baseForBiome === 'qs' || baseForBiome === 'pal1';
+    const isAridDesertOrGobi = isGobiTile || baseForBiome === 'des' || baseForBiome === 'pal';
     // ── 东亚及塞北特殊子区（对齐 DE theme_palaearctic_asia_steppe 白桦/松林与绿洲棕榈，仅在戈壁荒滩用梭梭灌木 BUSH_TREE_A） ──
     if (sub === 'JAPAN') return (['PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'SNOW_PINE'] as const)[s];
     if (sub === 'KOREA') return 'SCENARIO_TREE_B';
     if (sub === 'NORTHEAST') return (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
     if (sub === 'MONGOL' || sub === 'YURT' || sub === 'XIANBEI') {
-        return isGobiTile ? 'BUSH_TREE_A' : (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
+        if (isAridDesertOrGobi || (sub === 'XIANBEI' && q.lng < 101.2 && q.lat >= 38.0)) return 'BUSH_TREE_A';
+        return (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
     }
-    if (sub === 'KHITAN') return isGobiTile ? 'BUSH_TREE_A' : (q.lng < 112.0 ? 'BIRCH_GREEN' : 'OAK');
+    if (sub === 'KHITAN') {
+        if (isAridDesertOrGobi || q.lng < 101.2) return 'BUSH_TREE_A';
+        return q.lng < 112.0 ? 'BIRCH_GREEN' : 'OAK';
+    }
     if (sub === 'JIANGNAN') {
-        return (q.lat >= 28.0 && (q.baseTile === 'gr4' || q.baseTile === 'qs2' || q.baseTile === 'sh4'))
+        return (q.lat >= 28.0 && (baseForBiome === 'gr4' || baseForBiome === 'qs2' || baseForBiome === 'sh4'))
             ? 'WILLOW'
             : 'BAMBOO';
     }
@@ -460,9 +471,17 @@ function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
 
     // ── 青藏 / 西域 / 中亚 / 普鲁 / 东南亚 / 印度 ──
     if (sub === 'TIBET') return 'CYPRESS';
-    if (sub === 'WESTERN' || sub === 'CENTRAL_ASIA' || sub === 'CEAS' || sub === 'TURKS') {
+    if (sub === 'WESTERN') {
+        // 西域：天山北麓、帕米尔高原与昆仑高寒山口（冬雪带）四季统一用耐寒荒漠灌木 BUSH_TREE_A，冬季绝不突变为白桦；
+        // 塔里木/吐鲁番/费尔干纳低地绿洲（冬无连片积雪）戈壁野战用 BUSH_TREE_A、绿洲城用 PALM，四季保持一致。
+        const isColdHighlandOrNorthSlope = q.lat >= 43.25 || q.lat < 36.5 || (q.lng < 75.5 && !(q.lat >= 40.0 && q.lat <= 42.5 && q.lng < 72.0));
+        if (isGobiTile || isSnowBaseTile(q.baseTile) || isColdHighlandOrNorthSlope) return 'BUSH_TREE_A';
+        if (baseForBiome === 'des' || baseForBiome === 'pal') return 'PALM';
+        return 'BUSH_TREE_A';
+    }
+    if (sub === 'CENTRAL_ASIA' || sub === 'CEAS' || sub === 'TURKS') {
         if (isGobiTile) return 'BUSH_TREE_A';
-        if (q.baseTile === 'des' || q.baseTile === 'pal') return 'PALM';
+        if (baseForBiome === 'des' || baseForBiome === 'pal') return q.lat >= 36.5 ? 'BUSH_TREE_A' : 'PALM';
         return 'BIRCH_GREEN';
     }
     if (sub === 'CUMAN' || sub === 'HUNS') return isGobiTile ? 'BUSH_TREE_A' : (q.lng < 55 ? 'OAK' : 'BIRCH_GREEN');

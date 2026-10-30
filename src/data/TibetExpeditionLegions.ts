@@ -23,7 +23,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   lang_clan: { name: '帕木竹巴军', tier: 3 }, // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   karmapa: { name: '噶玛巴护教', tier: 4 },
     golog: { name: '果洛游骑', tier: 3 },
-    xihai_d: { name: '伏俟王骑', tier: 3 },
+  // xihai_d 已移入 SteppeExpeditionLegions.ts（伏俟城改 XIANBEI）
   // 康区长刀卒除名（无此兵种）
   bailang: { name: '白狼锐卒', tier: 3 }, // 汉代著名西南夷部落，因一首《白狼歌》文化名气极大，升入T3知名
     xiadun: { name: '竹巴护法', tier: 3 },
@@ -37,8 +37,8 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   hor: { name: '霍尔部勇士', tier: 4 },
     ganden: { name: '格鲁僧兵', tier: 3 }, // 格鲁派（黄教）的武装僧兵，近现代西藏绝对政教核心力量，升入T3知名,
     xianlingqiang: { name: '湟水勇士', tier: 3 },
-    qifu_d: { name: '苑川突骑', tier: 3 },
+  // qifu_d 已移入 SteppeExpeditionLegions.ts（枹罕改 XIANBEI）
     jinchuan_g: { name: '嘉绒碉锋', tier: 3 },
-    tufa_d: { name: '南凉铁骑', tier: 4 },
+  // tufa_d 已移入 SteppeExpeditionLegions.ts（青唐城改 XIANBEI）
     dangchang_guo: { name: '宕昌羌骑', tier: 3 },   // 宕昌｜统帅 梁勤｜T3 乘 1.2｜陇南羌族山地轻骑，依山阻险称雄西北数百年
 };

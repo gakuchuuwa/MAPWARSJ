@@ -48,6 +48,9 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     chuyue: { name: '处月骑兵', tier: 3 },
     juqu_d: { name: '卢水胡兵', tier: 3 },
     yuezhi: { name: '折兰骑', tier: 3 },
+    xihai_d: { name: '伏俟王骑', tier: 3 },
+    qifu_d: { name: '苑川突骑', tier: 3 },
+    tufa_d: { name: '南凉铁骑', tier: 4 },
     xijue: { name: '康居精骑', tier: 4 },          // 郅支城：郅支远遁康居，避将名/据点叠字
     dzungar: { name: '绰罗斯精骑', tier: 1 },
     dada_ming: { name: '鞑靼铁骑', tier: 1 },

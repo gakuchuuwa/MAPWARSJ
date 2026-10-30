@@ -312,6 +312,14 @@ def main():
     # 4 = 零星残雪：会下雪但存不住，底图不换、只在上面铺少量雪斑
     wflag[land & (t_cold >= WINTER_SNOW_TC) & (t_cold < SPARSE_SNOW_TC)] = 4
 
+    # 内陆温带极旱雨影盆地（塔里木、吐鲁番—哈密、罗布泊、河西西段与巴丹吉林—乌兰布和沙漠）：
+    # 年降水量仅 7~50mm，冬季极干，存不住连续积雪原，统一降为 4（零星残雪/底图保持沙漠戈壁）
+    in_tarim = (lat >= 36.5) & (lat < 42.3) & (lng >= 75.5) & (lng <= 89.2) & (s == 1) & (f != 13)
+    in_turpan_hami_hexi_west = (lat >= 38.6) & (lat < 43.25) & (lng >= 88.5) & (lng <= 101.5) & ((s == 1) | np.isin(f, [9, 10, 11, 12])) & (f != 13)
+    in_hexi_badain = (lat >= 38.5) & (lat < 42.6) & (lng > 101.5) & (lng <= 106.6) & (s == 1) & np.isin(f, [9, 10, 11])
+    hyper_arid_rain_shadow = land & (s != 7) & (f != 13) & (in_tarim | in_turpan_hami_hexi_west | in_hexi_badain)
+    wflag[hyper_arid_rain_shadow & (wflag > 0)] = 4
+
     rgb = np.zeros((H, W, 3), dtype=np.uint8)
     rgb[:, :, 0] = s        # 攻城战（非冬季）
     rgb[:, :, 1] = f        # 野战（非冬季）

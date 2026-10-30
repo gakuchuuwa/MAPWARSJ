@@ -432,7 +432,7 @@ export function queryBaseTile(q: WorldBaseQuery): string | null {
                 const i = (y * W + x) * 4;
                 const siegeCode = pixels[i];
                 const fieldCode = pixels[i + 1];
-                const winterFlag = pixels[i + 2];
+                const winterFlag = resolveEffectiveWinterFlag(siegeCode, fieldCode, pixels[i + 2], q.lat, q.lng);
                 if (siegeCode === 0 && fieldCode === 0) continue;   // 海面，继续往外找
 
                 // 🔴 标志 4 = 零星残雪（最冷月 -3~+2°C，会下雪但存不住）：
@@ -455,6 +455,44 @@ export function queryBaseTile(q: WorldBaseQuery): string | null {
         }
     }
     return null;
+}
+
+/**
+ * 修正内陆温带极旱雨影盆地（塔里木盆地、吐鲁番—哈密盆地、罗布泊、河西走廊西段及巴丹吉林—腾格里—乌兰布和沙漠）的冬季积雪标志：
+ * - 真实地理与气候史：天山以南、昆仑—祁连以北的极旱荒漠盆地（BWk）年降水量仅 7~50mm，冬季（12~2月）总降水量仅 1~5mm；
+ *   虽冬季气温低于 0°C，但因极端干燥无法形成连续稳定积雪原（sno），地表仍为大漠流沙/戈壁砾石/盐壳，仅偶有零星残雪（flag=4）。
+ * - 天山北麓与准噶尔南缘（lat >= 43.25°N，如迪化城、务涂城/北庭、巴里坤）、天山分水岭山口（达坂城）以及帕米尔高原（lng < 75.5°E，
+ *   如石头城、公主堡、休循）、昆仑/祁连高寒山带（fieldCode === 13，如阿什库尔、大斗拔谷、浩门）与天山河谷草原（碎叶、赤谷、鹰娑川）
+ *   受西风带高空湿气流及高山地形抬升影响，冬季保留真实积雪（flag=1/2/3）。
+ */
+function resolveEffectiveWinterFlag(
+    siegeCode: number,
+    fieldCode: number,
+    rawWinterFlag: number,
+    lat: number,
+    lng: number,
+): number {
+    if (rawWinterFlag !== 1 && rawWinterFlag !== 2 && rawWinterFlag !== 3) return rawWinterFlag;
+    // 天山以北（>=43.25°N）及帕米尔高原主体（<75.5°E）保留冬雪
+    if (lat >= 43.25 || lat < 36.5 || lng < 75.5 || lng > 106.8) return rawWinterFlag;
+    // 高山砾石寒漠带（编号 13，海拔 >3200m：昆仑山口、帕米尔、祁连山高寒带、青藏高原）保留冬雪
+    if (fieldCode === 13 || siegeCode === 7) return rawWinterFlag;
+
+    // 1. 塔里木盆地与罗布泊（lat 36.5~43.25°N, lng 75.5~89.2°E）及吐鲁番—哈密—河西西段（lat 38.6~43.25°N, lng 88.5~101.5°E，不含柴达木盆地）：
+    //    凡属砂质沙漠(9)、流沙(10)、干涸盐湖(11)、干旱戈壁(12)或塔里木盆地极旱绿洲山麓(siegeCode=1 & fieldCode=20)，冬季为大漠零星残雪(4)
+    const inTarimBasin = lat >= 36.5 && lng >= 75.5 && lng < 89.2;
+    const inTurpanHamiHexiWest = lat >= 38.6 && lng >= 88.5 && lng <= 101.5;
+    if (inTarimBasin || inTurpanHamiHexiWest) {
+        if (fieldCode === 9 || fieldCode === 10 || fieldCode === 11 || fieldCode === 12) return 4;
+        if (siegeCode === 1 && fieldCode === 20 && lat >= 38.5) return 4; // 库车(它乾城)、若羌(卡克里克)等盆地内缘极旱绿洲
+    }
+
+    // 2. 河西东段—阿拉善—乌兰布和沙漠腹地纯沙海/流沙/盐漠（fieldCode ∈ {9, 10, 11} 且 siegeCode === 1，如鸡鹿塞）：冬季同样不覆连片白雪
+    if (lat >= 38.5 && lng > 101.5 && lng <= 106.8 && siegeCode === 1 && (fieldCode === 9 || fieldCode === 10 || fieldCode === 11)) {
+        return 4;
+    }
+
+    return rawWinterFlag;
 }
 
 /**
@@ -482,7 +520,7 @@ export function queryWinterSnow(lat: number, lng: number): number | null {
                 const x = ((x0 + dx) % W + W) % W;
                 const i = (y * W + x) * 4;
                 if (pixels[i] === 0 && pixels[i + 1] === 0) continue;   // 海面
-                return pixels[i + 2];
+                return resolveEffectiveWinterFlag(pixels[i], pixels[i + 1], pixels[i + 2], lat, lng);
             }
         }
     }
