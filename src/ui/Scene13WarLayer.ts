@@ -1074,7 +1074,10 @@ export class Scene13WarLayer {
             const si = idx % srcSpawns.length;
             const s = srcSpawns[si];
             idx++;
-            const unitPop = Math.max(1, s.pop);
+            const manKey = keys && keys.length ? keys[(idx - 1) % keys.length] : s.key;
+            // 换了兵种（【敌】伏兵统一用最快兵种 / 【并】保留敌方兵种）时，每人代表的兵数按那个兵种的出兵口算
+            const manPop = manKey === s.key ? s.pop : (this.spawns.find((o) => o.key === manKey && o.f === f)?.pop ?? s.pop);
+            const unitPop = Math.max(1, manPop);
             remainingPop -= unitPop;
             s.spawned++;
             const bearer = (s.spawned % FLAG_EVERY === 0);
@@ -1105,7 +1108,6 @@ export class Scene13WarLayer {
             const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
             // 🔴 [2026-10-24] 【并】夺兵从敌方后备池策反的兵**保留敌方兵种**（见 triggerScene13Skill），
             //    本方的这套兵模从没加载过 ⇒ 渲染取不到图，整队隐形。入列前现补我方阵营素材。
-            const manKey = keys && keys.length ? keys[(idx - 1) % keys.length] : s.key;
             this.ensureType(manKey, f);
             const man: WarMan = {
                 f: s.f, key: manKey, jx, jy,
@@ -1118,7 +1120,7 @@ export class Scene13WarLayer {
                 prevX: spawnX, prevY: spawnY, anchorX: spawnX, anchorY: spawnY, netT: 0,
                 stuckT: 0, sepX: 0, sepY: 0, y0: ambushOn ? spawnY : s.y,
                 flag: bearer, fo: Math.random() * 600,
-                march: false, port: null, dep, slotY, pop: s.pop,
+                march: false, port: null, dep, slotY, pop: manPop,
                 // 🔴 [2026-10-27 主人报「释放敌战计增兵后，士兵的寻敌会前后左右摇摆不定」] 伏兵出生在敌方出兵口，
                 //    离本队（s.lane）远隔整个战场：仍挂本队时，本队统一目标（laneTargets）每 0.2 秒把他从身边的敌人拽去
                 //    远处的目标敌队（wrongLaneFoe / rangedMapFoe），脱战又被本队领队槽位拉回 ⇒ 来回摆。
@@ -1236,26 +1238,34 @@ export class Scene13WarLayer {
                     .slice(0, Math.max(1, anchorLimit));
             if (anchors.length > 0) for (const a of anchors) vfxPoints.push({ x: a.x, y: a.y });
             else for (const sp of this.spawns) if (sp.f === f && !sp.playerElite) vfxPoints.push({ x: sp.x, y: sp.y });
-            const customKeys = scopedControl !== null && this.playerSetup?.unitKey ? [this.playerSetup.unitKey] : undefined;
+            // 🔴 [2026-10-30 主人令「敌战计，增兵偷袭，优先三排中移速快的兵种。同移速再随机」]
+            //    武将放计（及玩家没有自选兵模时）伏兵全用本方三排里移速最快的那一种；玩家自选兵模照旧用自己的。
+            const fastKey = this.fastestSixRowKey(f);
+            const customKeys = scopedControl !== null && this.playerSetup?.unitKey
+                ? [this.playerSetup.unitKey]
+                : (fastKey ? [fastKey] : undefined);
             this.spawnImmediateSkillReinforcements(f, addTotalPop, customKeys, vfxTargets, true, anchors);
         } else if (six === 'baizhan') {
             const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10));
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 6 : 1;
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeAmount));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
-            const [fcx, fcy] = scopedControl === null ? this.sideCentroid(f) : [refX, refY];
-            this.sortSkillVictims(enemyLiving, fcx, fcy);
-            for (const victim of enemyLiving) {
+            // 🔴 [2026-10-30 主人令「败战计，减兵，随机一个三排兵种，伤害集中，不够再用第二兵种凑数」]
+            //    取代 10-27 的「远程→步兵→骑兵」顺序；主将队仍排在最后（见 orderSixVictimsByRowType）。
+            const ordered = this.orderSixVictimsByRowType(enemyLiving, ef, scopedControl !== null ? { x: refX, y: refY } : null);
+            let lastPickedKey: string | undefined;
+            for (const victim of ordered) {
                 if (quotaPop <= 0) break;
                 if (victim.hp <= 0) continue;
                 quotaPop -= Math.max(1, victim.pop || 1);
+                lastPickedKey = victim.key;
                 vfxTargets.push(victim);
                 vfxPoints.push({ x: victim.x, y: victim.y });
                 // 🔴 [2026-10-27 主人令「可以让士兵分批阵亡」] 不同帧一起倒（几百人同帧倒下 + 3 秒后同帧烙地面 ⇒ 卡一下），
                 //    排进队列，SKILL_KILL_SPREAD_SEC 内陆续倒下（见 stepSkillKills）
                 this.skillKillQueue.push({ m: victim, f: ef, t: Math.random() * SKILL_KILL_SPREAD_SEC });
             }
-            if (scopedControl === null && quotaPop > 0) this.drainSidePool(ef, quotaPop);
+            if (scopedControl === null && quotaPop > 0) this.drainSidePool(ef, quotaPop, true, lastPickedKey);
         } else if (six === 'gongzhan') {
             if (scopedControl === null) {
                 for (const m of this.men) if (m.f === f && m.hp > 0) vfxTargets.push(m);
@@ -1314,37 +1324,8 @@ export class Scene13WarLayer {
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeAmount));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW && !this.spawns[m.lane]?.commander);
             // 🔴 [2026-10-29 主人令「每次释放技能，随机只选一个兵种，兵数不够再下一个兵种。不要分散」]
-            //    按兵种（m.key）分桶并随机排定兵种顺序；同兵种内锚定同一分队与就近士兵集中夺取，绝不全场散抽。
-            const byKey = new Map<string, WarMan[]>();
-            for (const m of enemyLiving) {
-                let list = byKey.get(m.key);
-                if (!list) { list = []; byKey.set(m.key, list); }
-                list.push(m);
-            }
-            const typeKeys = [...byKey.keys()];
-            for (let i = typeKeys.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                const tmp = typeKeys[i];
-                typeKeys[i] = typeKeys[j];
-                typeKeys[j] = tmp;
-            }
-            const orderedCandidates: WarMan[] = [];
-            for (const k of typeKeys) {
-                const group = byKey.get(k)!;
-                const anchor = scopedControl !== null
-                    ? group.reduce((best, m) =>
-                        ((m.x - refX) ** 2 + (m.y - refY) ** 2 < (best.x - refX) ** 2 + (best.y - refY) ** 2 ? m : best), group[0])
-                    : group[Math.floor(Math.random() * group.length)];
-                const anchorLane = anchor.lane;
-                const ax = anchor.x, ay = anchor.y;
-                group.sort((a, b) => {
-                    const la = a.lane === anchorLane ? 0 : 1;
-                    const lb = b.lane === anchorLane ? 0 : 1;
-                    if (la !== lb) return la - lb;
-                    return ((a.x - ax) ** 2 + (a.y - ay) ** 2) - ((b.x - ax) ** 2 + (b.y - ay) ** 2);
-                });
-                orderedCandidates.push(...group);
-            }
+            // 🔴 [2026-10-30 主人令「并战计，夺兵，随机一个三排兵种，伤害集中，不够再用第二兵种凑数」]
+            const orderedCandidates = this.orderSixVictimsByRowType(enemyLiving, ef, scopedControl !== null ? { x: refX, y: refY } : null);
             const myLanes = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
             const converted: WarMan[] = [];
             const needSprite = new Set<string>();
@@ -1706,12 +1687,13 @@ export class Scene13WarLayer {
 
         const inMarch = this.deployT > 0;
         const heroPort = anchorPort;
-        // 🔴 [2026-10-28 主人令「请挨着本军，或者放到军中」]
-        // 玩家放入军中：置于本队方阵第 2 排（行距 1*spDep）横向正中（slotY = 0），四周有本方将士护卫，与本军紧密相连，绝不孤立在外
+        // 🔴 [2026-10-28 → 2026-10-30 主人令「把玩家的行为方式和普通士兵用一个逻辑，视为普通兵的行为」]
+        // 玩家置于本队方阵第 2 排（rank 1）正中列真实槽位，与普通士兵共用完全相同的排阵格点、随机抖动(jx/jy)、守城城外标记(outside1)与城内驻守点(guardPost)
+        const files = marchFilesOf(heroPort.key);
         const sp = marchSpacingOf(heroPort.key);
         const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
         const heroDep = spDep;
-        const heroSlotY = 0;
+        const heroSlotY = (Math.floor(files / 2) - (files - 1) / 2) * sp;
         let uFwd = this.advanceVec[f];
         let uSide = this.sideVec[f];
         let hx = heroPort.x - uFwd.x * heroDep + uSide.x * heroSlotY;
@@ -1725,19 +1707,26 @@ export class Scene13WarLayer {
             uSide = B.side;
             hx = B.x + B.fwd.x * (heroPort.outFwd! - heroDep) + B.side.x * (heroPort.outSide! + heroSlotY);
             hy = B.y + B.fwd.y * (heroPort.outFwd! - heroDep) + B.side.y * (heroPort.outSide! + heroSlotY);
+            this.holdLanes.add(heroPort.lane);
         }
+        const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
+        const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
         const fadeDur = DEPLOY_FADE;
         const hero: WarMan = {
-            f, key: setup.heroKey, jx: 0, jy: 0, lane: heroPort.lane, hero: true,
+            f, key: setup.heroKey, jx, jy, lane: heroPort.lane, hero: true,
             zid: this.manSeq++,
             x: hx, y: hy, tx: hx, ty: hy,
             hp: this.heroMaxHp(setup.heroKey, f),
             dir: this.dir8(uFwd.x, uFwd.y),
-            ph: 0, st: 0, foe: null, next: 0.1,
-            fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
+            ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
+            fightT: 0, aimT: 0.033, lock: 0, atkSt: 0, atkFlip: false,
             prevX: hx, prevY: hy, anchorX: hx, anchorY: hy, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: hy,
             flag: false, fo: Math.random() * 600,
             march: inMarch && !heroOutside, port: inMarch && !heroOutside ? heroPort : null, dep: heroDep, slotY: heroSlotY, pop: 0,
+            outside1: heroOutside || undefined,
+            guardPost: (f === 1 && this.battleType === 'siege' && !!this.deCity && !heroOutside && !this.isDefenderGateDestroyed())
+                ? { x: hx, y: hy }
+                : undefined,
             claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
         };
         this.heroMan = hero;
@@ -1861,18 +1850,76 @@ export class Scene13WarLayer {
     }
 
     /** 🔴 [2026-09-09 主人定] 阵亡 10 秒后复活：在本方后方重生并重置满血 */
+    /**
+     * 🔴 [2026-10-30 主人令「把玩家的行为方式和普通士兵用一个逻辑，视为普通兵的行为」]
+     * 普通士兵与本队同生共死，而玩家不死/会复活：当玩家原属分队在场普通兵全灭（或第二波在后方大本营刷新导致与玩家相隔千里）时，
+     * 自动将玩家并入离他最近、仍有在场普通兵存活的本方分队（同步 lane 与排阵槽位 dep/slotY），使玩家始终作为普通队员随队行动，绝不沦为无队游魂乱跑。
+     */
+    private syncHeroToLiveSquad(): void {
+        const m = this.heroMan;
+        if (!m || m.hp <= 0 || this.marching || m.march || this.skirmish) return;
+        const laneStats = new Map<number, { x: number; y: number; n: number }>();
+        for (const u of this.men) {
+            if (u.hp <= 0 || u.f !== m.f || u.hero || u.siegeW || u.lane < 0 || u.guardPost) continue;
+            const cur = laneStats.get(u.lane);
+            if (cur) { cur.x += u.x; cur.y += u.y; cur.n++; }
+            else laneStats.set(u.lane, { x: u.x, y: u.y, n: 1 });
+        }
+        if (laneStats.size === 0) {
+            for (const u of this.men) {
+                if (u.hp <= 0 || u.f !== m.f || u.hero || u.siegeW || u.lane < 0) continue;
+                const cur = laneStats.get(u.lane);
+                if (cur) { cur.x += u.x; cur.y += u.y; cur.n++; }
+                else laneStats.set(u.lane, { x: u.x, y: u.y, n: 1 });
+            }
+        }
+        if (laneStats.size === 0) return;
+        for (const st of laneStats.values()) { st.x /= st.n; st.y /= st.n; }
+        const curSt = laneStats.get(m.lane);
+        const curDist = curSt ? Math.hypot(curSt.x - m.x, curSt.y - m.y) : Infinity;
+        if (curSt && curDist <= 550 && !this.remnantLanes.has(m.lane)) return;
+        let bestLane = m.lane;
+        let bestDist = curDist;
+        for (const [lane, st] of laneStats) {
+            if (this.remnantLanes.has(lane) && curSt && !this.remnantLanes.has(m.lane)) continue;
+            const d = Math.hypot(st.x - m.x, st.y - m.y);
+            if (!curSt || d + 180 < bestDist) {
+                bestDist = d;
+                bestLane = lane;
+            }
+        }
+        if (bestLane !== m.lane && bestLane >= 0) {
+            m.lane = bestLane;
+            const port = this.spawns[bestLane];
+            if (port) {
+                const files = marchFilesOf(port.key);
+                const sp = marchSpacingOf(port.key);
+                const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+                m.dep = spDep;
+                m.slotY = (Math.floor(files / 2) - (files - 1) / 2) * sp;
+            }
+            if (this.playerSetup && this.playerSetup.control === 'one') {
+                this.rebuildPlayerCtlLanes(this.playerSetup);
+            }
+        }
+    }
+
     private respawnHero(): void {
         const m = this.heroMan;
         if (!m || !this.playerSetup) return;
-        // 🔴 [2026-10-11 AA #9 后半 属实] 复活点原先写死「屏幕最左/最右」(mx*0.6 / vw − mx*0.6)，
-        //    八方向/南北向战场里方向全错（主人早先报「乱入者复活不出现在出兵口」就是它）。
-        //    现在跟随**本方八方向基座** spawnBases[m.f]（与出兵口同一处），不再用屏幕边。
+        // 优先在仍有在场本队士兵或仍有后备兵源的本方出兵口复活并归队
+        this.syncHeroToLiveSquad();
         const _port = (m.lane >= 0 ? this.spawns[m.lane] : undefined) ?? this.spawnBases[m.f] ?? { x: this.worldCX, y: this.worldCY };
         const [x, y] = [_port.x, _port.y];
         m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
         m.dir = this.dir8(this.advanceVec[m.f].x, this.advanceVec[m.f].y);   // 🔴 [2026-10-11 主人「复活点还保留旧13？全删」] 朝向随本方八方向推进向量，不再写死左右(2/6)
-        m.foe = null; m.lock = 0; m.st = 0; m.fightT = 0; m.stuckT = 0; m.kiting = false;
+        m.foe = null; m.aimFoe = null; m.reservedFoe = null; m.lock = 0; m.st = 0; m.fightT = 0; m.stuckT = 0; m.kiting = false;
+        m.noFoeSec = LANE_REGROUP_SEC;
+        m.outside1 = undefined;
+        m.guardPost = (m.f === 1 && this.battleType === 'siege' && !!this.deCity && !this.isDefenderGateDestroyed())
+            ? { x, y }
+            : undefined;
         m.fadeT = 2; m.fadeMax = 2;
         this.heroInput = null;
         // 🔴 [2026-10-21 主人报「乱入者复活后有的时候不动」] 阵亡前点的地面令没走到就死了 → 复活后还挂着：
@@ -1881,6 +1928,7 @@ export class Scene13WarLayer {
         if (!this.men.includes(m)) {
             this.men.push(m);
         }
+        this.syncHeroToLiveSquad();
         this.diagPush('heroRespawn', { sec: +this.battleSec.toFixed(1) });
     }
 
@@ -2198,7 +2246,9 @@ export class Scene13WarLayer {
         if (!v) {
             const current = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
             const peak = playerHero ? this.playerSetup?.heroStats : undefined;
-            const base: WarType = peak ? withPlayerPeakStats(current, peak) : current;
+            // 🔴 [2026-10-30 主人令「把玩家的行为方式和普通士兵用一个逻辑，视为普通兵的行为」]
+            // 玩家保留血/攻/防/装填/加成的峰值战斗力，但移速(spd)与射程(rng)严格按当前兵模的普通士兵数值，绝不因历史骑兵峰值移速或超远射程脱队乱跑
+            const base: WarType = peak ? { ...withPlayerPeakStats(current, peak), spd: current.spd, rng: current.rng } : current;
             const side: 0 | 1 = f === 0 ? 0 : 1;
             const techs = selectLegionTechs(y, this.sideTechCulture(side), this.sideTechSeed(side));
             v = applyTechsToStats(base, key, techs, SIGHT_MAP[key] ?? 160);
@@ -4655,8 +4705,11 @@ export class Scene13WarLayer {
                 //    ⇒ 攻城时每个兵各自扑向城门，十队方阵立刻散成一条横线（主人多张截图实锤）。
                 //    现在与野战同款：整队方块推进，到城墙下再散开接战。
                 const inMarch = this.deployT > 0;
-                const slotIdx = s.slotN++;
                 const files = marchFilesOf(s.key);
+                if (this.heroMan && this.heroMan.hp > 0 && this.heroMan.lane === s.lane && s.slotN === files + Math.floor(files / 2)) {
+                    s.slotN++;
+                }
+                const slotIdx = s.slotN++;
                 // 横向按体型撑开（战车 44 / 步骑 24）；纵深另设上限 MARCH_SP_DEPTH_MAX，叠车由软推挤自然拉开。
                 const sp = marchSpacingOf(s.key);
                 // 🔴 [2026-10-12 主人「现在的方阵有问题，是前后长，应该是左右长」「先试A」]
@@ -5206,9 +5259,14 @@ export class Scene13WarLayer {
         const MAX_LANE_ATTACKERS = 4;
         const laneInfo = new Map<number, { f: number; x: number; y: number; n: number; inside: number; meleeOnly: boolean; guard: boolean }>();
         if (this.battleType === 'siege' && this.siegeWithWalls) this.ensureGateInfo();
+        const regularLanes = new Set<number>();
         for (const m of this.men) {
-            // 排除乱入者本人（m.hero）计入 50 人分队重心，防全队阵亡后仅剩乱入者在攻方营地复活时把守方大军引去蹲守营地
-            if (m.hp <= 0 || m.lane < 0 || m.siegeW || m.hero) continue;
+            if (m.hp > 0 && m.lane >= 0 && !m.siegeW && !m.hero) regularLanes.add(m.lane);
+        }
+        for (const m of this.men) {
+            // 本队尚有普通兵存活时按普通兵算分队重心；若全场仅剩玩家本人（且不在攻方营地内），玩家自身也计入分队以正常获得队级目标
+            if (m.hp <= 0 || m.lane < 0 || m.siegeW) continue;
+            if (m.hero && (regularLanes.has(m.lane) || (this.battleType === 'siege' && m.f === 0 && this.isInsideAttackerCamp(m.x, m.y)))) continue;
             const inR = (this.battleType === 'siege' && this.siegeWithWalls && this.insideRing(m.x, m.y)) ? 1 : 0;
             const isMelee = !WALL_PASS_TYPES.has(m.key) && this.statsFor(m.key, m.f, false).rng <= 65;
             const isGuard = !!m.guardPost;
@@ -5653,7 +5711,6 @@ export class Scene13WarLayer {
             return t;
         }
         for (const b of this.wallGates) {
-            if (isHero) break;   // [2026-09-05 玩家] 玩家不锁墙
             if (manChosen) break;   // 🔴 [2026-10-12] 士兵优先打兵
             // 🔴 [2026-10-12 主人令「优先攻击其他，最后考虑城墙」] 攻方士兵：视野内没敌兵、又没有进城的路时才打墙
             if (this.battleType === 'siege' && m.f === 0 && b !== this.blockedWall(m as Partial<WarMan>)) continue;   // 只打正挡着自己的那段墙
@@ -6375,7 +6432,7 @@ export class Scene13WarLayer {
             // 攻方士兵一个都到不了中心建筑 ⇒ 门当可通行重算（贴墙站的兵脚下是膨胀障碍格，看周围 2 小格）
             let any = false, reach = false;
             for (const m of this.men) {
-                if (m.f !== 0 || m.hp <= 0 || m.hero || m.siegeW || WALL_PASS_TYPES.has(m.key)) continue;
+                if (m.f !== 0 || m.hp <= 0 || m.siegeW || WALL_PASS_TYPES.has(m.key)) continue;
                 any = true;
                 const [fa, fb] = ab(m.x, m.y);
                 const a0 = Math.round(fa) + R, b0 = Math.round(fb) + R;
@@ -6633,11 +6690,14 @@ export class Scene13WarLayer {
         //    照常过流场（攻方绕缺口进城）与出城路线（守方走城门；险要的「守墙」此时不再生效，见 gateExit）。
         if (m.lane >= 0 && this.remnantLanes.has(m.lane)) {
             const siegeDef = this.battleType === 'siege' && m.f === 1;
+            const siegeAtkOutClosed = this.battleType === 'siege' && this.siegeWithWalls && m.f === 0
+                && (this.ensureGateInfo(), !this.ringOpen() && !this.insideRing(m.x, m.y));
             const cityCen = this.deCity ? this.deCityCenter : this.spawnBases[1];
             let t: WarMan | null = null, td = Infinity;
             for (const o of this.men) {
-                if (o.f === m.f || o.hp <= 0) continue;
+                if (o.f === m.f || o.hp <= 0 || o.siegeW) continue;
                 if (siegeDef && (o.hero || this.isInsideAttackerCamp(o.x, o.y))) continue;
+                if (siegeAtkOutClosed && this.insideRing(o.x, o.y)) continue;
                 const d = siegeDef
                     ? (o.x - cityCen.x) ** 2 + (o.y - cityCen.y) ** 2
                     : (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
@@ -7393,6 +7453,7 @@ export class Scene13WarLayer {
         this.rebuild();
         this.refreshOutsideWave1();   // 🔴 [2026-10-20] 攻城战第一段（城外守军在）照野战拴绳，见 leashAxis
         if (!deploying) {
+            this.syncHeroToLiveSquad();
             this.refreshRemnantLanes();
             this.updateLaneTargets();
         }
@@ -7450,7 +7511,7 @@ export class Scene13WarLayer {
         const laneFormationSpeeds = new Map<number, number>();
         if (!this.marching && this.battleType !== 'siege') {
             for (const m of this.men) {
-                if (m.hp <= 0 || m.hero || m.siegeW || !laneLeaders.has(m.lane)
+                if (m.hp <= 0 || m.siegeW || !laneLeaders.has(m.lane)
                     || this.laneTargets.has(m.lane) || this.remnantLanes.has(m.lane)) continue;
                 const spd = this.statsFor(m.key, m.f, false).spd;
                 laneFormationSpeeds.set(m.lane, Math.min(laneFormationSpeeds.get(m.lane) ?? Infinity, spd));
@@ -7713,34 +7774,23 @@ export class Scene13WarLayer {
             }
 
             // 列阵推进期间：移动目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走，不走 aimAt。
-            // 没有发现敌人的士兵继续跟队；已经锁敌的士兵已按 Attack Move 脱队。
+            // 玩家与普通士兵完全同一套推进槽位公式，不再单走 laneSlotTarget 分支。
             if (m.march && m.port && !holdCmd) {
-                const heroSlot = m.hero ? this.laneSlotTarget(m, laneLeaders) : null;
-                if (heroSlot) {
-                    [m.tx, m.ty] = heroSlot;
-                } else {
-                    const uFwd = this.advanceVec[m.f];
-                    const uSide = this.sideVec[m.f];
-                    const fwdDist = this.adv[m.f] - m.dep;
-                    const sx = m.port.x + uFwd.x * fwdDist + uSide.x * m.slotY;
-                    const sy = m.port.y + uFwd.y * fwdDist + uSide.y * m.slotY;
-                    // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
-                    [m.tx, m.ty] = this.fieldBound(sx, sy);
-                }
+                const uFwd = this.advanceVec[m.f];
+                const uSide = this.sideVec[m.f];
+                const fwdDist = this.adv[m.f] - m.dep;
+                const sx = m.port.x + uFwd.x * fwdDist + uSide.x * m.slotY;
+                const sy = m.port.y + uFwd.y * fwdDist + uSide.y * m.slotY;
+                // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
+                [m.tx, m.ty] = this.fieldBound(sx, sy);
             } else if (!m.foe && !holdCmd && !isGuard && !(m.lane >= 0 && this.holdLanes.has(m.lane))) {   // 城外列阵待敌与城内未破门守军：原地不动
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
-                // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
                 if (this.heroOrderPending(m)) {
                     // 🔴 玩家本人点了地面还没走到：这道令优先 —— 既不归队、也不许 aimAt 改写他的目标点。
-                    //    改前这里会掉进 aimAt，每 0.5 秒把玩家点的点改掉一次（见 heroOrderPending）。
-                    //    什么都不做 = 目标点保持玩家点下的那一个。
                 } else if (laneStandby) {
-                    // 🔴 [2026-10-26 主人令「残兵直接前进，包括玩家」「本队保持阵型前进」] 4 队集火上限只限制队级目标分配；
-                    //    野战脱战后由领队带队前进，其余队员回各自槽位，整队按最低速度推进；视野内接敌仍走正常索敌/攻击。
-                    //    玩家自动跟随本队，手动「待命」由 holdCmd 拦截、不受影响。
-                    // 🔴 [2026-10-16 主人令「守方却打到攻方营地，应该是回城需要敌人呀，不要再营地等着打乱入者」]
-                    //    攻城战守方在无目标待命时，若已远离本队城防位置，领队带全队回城寻敌驻守，绝不在外场或攻方营地原地干等
+                    // 🔴 [2026-10-26 → 2026-10-30] 4 队集火上限只限制队级目标分配；
+                    //    队员优先回各自槽位（slot）；领队或无槽位时：攻城守方回城防区，野战/攻城攻方统一按 0.5s 周期走 aimAt 寻敌/攻门（不再每帧无节流乱跳或盲目沿 advanceVec 走到地图边）
                     const slot = this.laneSlotTarget(m, laneLeaders);
                     if (slot) {
                         [m.tx, m.ty] = slot;
@@ -7753,11 +7803,15 @@ export class Scene13WarLayer {
                             m.tx = m.x;
                             m.ty = m.y;
                         }
-                    } else if (this.battleType !== 'siege') {
-                        [m.tx, m.ty] = standbyGoal(m);
                     } else {
-                        const u = this.advanceVec[m.f];
-                        [m.tx, m.ty] = this.fieldBound(m.x + u.x * MARCH_R, m.y + u.y * MARCH_R);
+                        m.aimT = (m.aimT ?? 0) - dt;
+                        if (m.aimT <= 0) {
+                            const aim = (m.hero && this.playerCmd === 'hold')
+                                ? null
+                                : (this.battleType !== 'siege' ? (() => { const [gx, gy] = standbyGoal(m); return this.leashPoint(m, { x: gx, y: gy }, SIGHT); })() : this.aimAt(m));
+                            if (aim && !m.march) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
+                            m.aimT = 0.5;
+                        }
                     }
                 } else {
                     const slot = this.laneSlotTarget(m, laneLeaders);
@@ -7985,7 +8039,10 @@ export class Scene13WarLayer {
                         const bl = Math.hypot(bx, by) || 1;
                         mvx = bx / bl; mvy = by / bl;
                     }
-                    const step = stats.spd * spdK * this.uphillSpeedK(m.x, m.y, mvx, mvy) * (avoiding ? SLIDE_RATE : 1) * dt;
+                    const chaseSpd = m.hero && m.lane >= 0 && this.spawns[m.lane]
+                        ? this.statsFor(this.spawns[m.lane].key, m.f, false).spd
+                        : stats.spd;
+                    const step = chaseSpd * spdK * this.uphillSpeedK(m.x, m.y, mvx, mvy) * (avoiding ? SLIDE_RATE : 1) * dt;
                     const mv = Math.min(step, fd);   // 限制单步不超过剩余距离 fd，彻底杜绝跨过航点后每帧 180° 往返闪动
                     m.x += mvx * mv;
                     m.y += mvy * mv;
@@ -8343,8 +8400,8 @@ export class Scene13WarLayer {
                 // 🔴 [2026-10-27 主人令「玩家走士兵同一套逻辑」] 原 heroTrackMoving（10-25 玩家跟本方重心时的连续跟随口径）已删：
                 //    玩家不再单独跟重心走，归队时走 laneSlotTarget 的 slot，与士兵同走 trackSlot。
                 const trackSlot = !!slot || m.march || isGuard;
-                const normalSpd = m.hero && (slot || m.march) && this.spawns[m.lane]
-                    ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd)
+                const normalSpd = m.hero && m.lane >= 0 && this.spawns[m.lane]
+                    ? this.statsFor(this.spawns[m.lane].key, m.f, false).spd
                     : stats.spd;
                 // 脱战整队推进：普通队员与自动玩家都不得超过本队最慢兵种；地形、坡度等原有修正照常保留。
                 const formationSpd = laneStandby ? laneFormationSpeeds.get(m.lane) : undefined;
@@ -8827,19 +8884,80 @@ export class Scene13WarLayer {
         return true;
     }
 
+    /** 某一方三排的兵种（9 个出兵口的兵种去重；不含主将队、玩家精锐口） */
+    private sixRowKeys(side: 0 | 1): string[] {
+        const keys: string[] = [];
+        for (const sp of this.spawns) {
+            if (sp.f !== side || sp.playerElite || sp.commander || !sp.key) continue;
+            if (!keys.includes(sp.key)) keys.push(sp.key);
+        }
+        return keys;
+    }
+
     /**
-     * 🔴 [2026-10-27 主人令「夺兵、减兵不该先从主将队开始，主将队有毅力，先从远程、步兵、骑兵这个顺序」]
-     * 【败】折损 / 【并】夺兵的选兵顺序：远程 → 步兵 → 骑兵 → 主将队（最后）；同一档内离释放方近的先。
-     * 兵种档按 WAR_TYPES.cls（ranged / melee / cav），主将队＝出兵口 commander 的那一队。
+     * 🔴 [2026-10-30 主人令「敌战计，增兵偷袭，优先三排中移速快的兵种。同移速再随机」]
+     * 本方三排里移速（WAR_TYPES.spd）最快的兵种；并列最快的随机取一个。
      */
-    private sortSkillVictims(list: WarMan[], cx: number, cy: number): void {
-        const tier = (m: WarMan): number => {
-            if (this.spawns[m.lane]?.commander) return 3;
-            const cls = this.statsFor(m.key, m.f).cls;
-            return cls === 'ranged' ? 0 : cls === 'cav' ? 2 : 1;
+    private fastestSixRowKey(side: 0 | 1): string | undefined {
+        const keys = this.sixRowKeys(side);
+        if (keys.length === 0) return undefined;
+        let best = -Infinity;
+        let top: string[] = [];
+        for (const k of keys) {
+            const spd = this.statsFor(k, side).spd;
+            if (spd > best) { best = spd; top = [k]; }
+            else if (spd === best) top.push(k);
+        }
+        return top[Math.floor(Math.random() * top.length)];
+    }
+
+    /**
+     * 🔴 [2026-10-30 主人令「并战计夺兵 / 败战计减兵：随机一个三排兵种，伤害集中，不够再用第二兵种凑数」]
+     * 选兵顺序：对方三排兵种随机排序，一个兵种取完才轮到下一个；三排以外的兵种（策反来的、伏兵等）排在三排之后。
+     * 同一兵种内锚定同一分队、离锚点近的先（集中，不全场散抽）；锚点：玩家按官职放计取离玩家本队最近的，武将放计随机。
+     * 主将队一律排在最后（10-27 主人令「主将队有毅力」）。
+     */
+    private orderSixVictimsByRowType(list: WarMan[], side: 0 | 1, ref: { x: number; y: number } | null): WarMan[] {
+        const shuffle = <T,>(a: T[]): T[] => {
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+            }
+            return a;
         };
-        const d2 = (m: WarMan): number => (m.x - cx) ** 2 + (m.y - cy) ** 2;
-        list.sort((a, b) => (tier(a) - tier(b)) || (d2(a) - d2(b)));
+        const byKey = new Map<string, WarMan[]>();
+        const commanderTail: WarMan[] = [];
+        for (const m of list) {
+            if (this.spawns[m.lane]?.commander) { commanderTail.push(m); continue; }
+            let g = byKey.get(m.key);
+            if (!g) { g = []; byKey.set(m.key, g); }
+            g.push(m);
+        }
+        const rowKeys = shuffle(this.sixRowKeys(side).filter((k) => byKey.has(k)));
+        const otherKeys = shuffle([...byKey.keys()].filter((k) => !rowKeys.includes(k)));
+        const out: WarMan[] = [];
+        for (const k of [...rowKeys, ...otherKeys]) {
+            const group = byKey.get(k)!;
+            const anchor = ref
+                ? group.reduce((best, m) =>
+                    ((m.x - ref.x) ** 2 + (m.y - ref.y) ** 2 < (best.x - ref.x) ** 2 + (best.y - ref.y) ** 2 ? m : best), group[0])
+                : group[Math.floor(Math.random() * group.length)];
+            const anchorLane = anchor.lane;
+            const ax = anchor.x, ay = anchor.y;
+            group.sort((a, b) => {
+                const la = a.lane === anchorLane ? 0 : 1;
+                const lb = b.lane === anchorLane ? 0 : 1;
+                if (la !== lb) return la - lb;
+                return ((a.x - ax) ** 2 + (a.y - ay) ** 2) - ((b.x - ax) ** 2 + (b.y - ay) ** 2);
+            });
+            out.push(...group);
+        }
+        if (commanderTail.length > 0) {
+            const cx = ref?.x ?? commanderTail[0].x, cy = ref?.y ?? commanderTail[0].y;
+            commanderTail.sort((a, b) => ((a.x - cx) ** 2 + (a.y - cy) ** 2) - ((b.x - cx) ** 2 + (b.y - cy) ** 2));
+            out.push(...commanderTail);
+        }
+        return out;
     }
 
     /** 【败】折损队列：到点的兵当场阵亡、一律留尸；期间已战死或被【并】策反换边的跳过 */

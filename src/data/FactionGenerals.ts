@@ -18134,37 +18134,35 @@ export function getCityGeneralsRaw(cityId: string | null | undefined): FactionGe
     return (_cityGeneralIndex.get(cityId) ?? []).map((r) => ({ ...r.general, factionId: r.general.factionId ?? r.blockFactionId }));
 }
 
-/** 该据点的全部武将（已解析阶段姓名/立绘，名将排前）；乱斗只留一位（优先本据点势力的武将） */
+/** 该据点的全部武将（已解析阶段姓名/立绘，乱斗下本据点城主同政权优先、名将排前；保留全部武将以支持一据点多武将与选主投奔） */
 export function getCityGeneralsResolved(cityId: string | null | undefined): FactionGeneral[] {
     if (!cityId) return [];
     if (!_cityGeneralIndex) _cityGeneralIndex = buildCityGeneralIndex();
-    let refs = _cityGeneralIndex.get(cityId) ?? [];
-    const melee = getGameMode() === 'melee';
-    if (melee) {
-        // 🔴 [2026-10-23 主人「城被占，城里武将归占领者」「据点每局归哪个势力…随机」]
-        //    乱斗：城里武将都替城主出兵；先挑和城主同一政权的那位（长安这局归汉 → 先出霍去病），没有再按名将挑
-        const owner = _cityOwnerProvider?.(cityId) ?? null;
-        const same = owner ? refs.filter((r) => (r.general.factionId ?? r.blockFactionId) === owner) : [];
-        if (same.length) refs = same;
-    }
+    const refs = _cityGeneralIndex.get(cityId) ?? [];
+    const owner = getGameMode() === 'melee' ? (_cityOwnerProvider?.(cityId) ?? null) : null;
     const resolved = refs.map((r, idx) => {
         const g = r.general;
+        const factionId = g.factionId ?? r.blockFactionId;
         const portrait = _generalPortraitOverrides[g.generalId] ?? g.portrait;
         const isFamous = getGeneralProfile(g.generalId)?.tier === 'famous';
+        const isOwnerMatch = !!owner && factionId === owner;
         return {
             item: {
                 ...g,
-                factionId: g.factionId ?? r.blockFactionId,
+                factionId,
                 generalName: stageGeneralName(g.generalId, g.generalName),
                 portrait: resolveGeneralPortraitPath(portrait, { factionId: r.blockFactionId, generalId: g.generalId, cityId: g.cityId }),
             },
+            isOwnerMatch,
             isFamous,
             idx,
         };
     });
-    resolved.sort((a, b) => (a.isFamous !== b.isFamous ? (a.isFamous ? -1 : 1) : a.idx - b.idx));
-    const out = resolved.map((r) => r.item);
-    return melee ? out.slice(0, 1) : out;
+    resolved.sort((a, b) =>
+        (a.isOwnerMatch !== b.isOwnerMatch ? (a.isOwnerMatch ? -1 : 1)
+            : (a.isFamous !== b.isFamous ? (a.isFamous ? -1 : 1) : a.idx - b.idx)),
+    );
+    return resolved.map((r) => r.item);
 }
 
 /** 该据点的「守将」（在场优先，其次名将/首位）；未配置返回 null */

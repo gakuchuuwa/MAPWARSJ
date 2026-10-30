@@ -9171,6 +9171,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 8,
             "offsetY": 10
+        },
+        "/assets/TURKS/osman_kapadan.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/BULGARIANS/baojialiya_mikhail.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 21
         }
     },
     "folderGuides": {

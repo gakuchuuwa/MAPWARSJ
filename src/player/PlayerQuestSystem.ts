@@ -4302,8 +4302,7 @@ export class PlayerQuestSystem {
         // 探马只显示同文化名将（无名将时兜底全部）；将军开放全图所有武将（同文化+名将排最前）
         const famousOnly = rankId === 'outrider' ? raw.filter((r) => r.famous) : raw;
         const baseList = famousOnly.length > 0 ? famousOnly : raw;
-        const nonLocalList = baseList.filter((r) => r.distKm > 15);
-        const sourceList = nonLocalList.length > 0 ? nonLocalList : baseList;
+        const sourceList = baseList;
         const seen = new Set<string>();
         const picked: LiveJoinCandidate[] = [];
         for (const item of sourceList) {
@@ -4330,17 +4329,26 @@ export class PlayerQuestSystem {
         if ((rankId === 'scout' || rankId === 'outrider') && !hero.getLastCulture()) {
             return { ok: false, reason: '尚未记录上一次效忠文化，先完成首次入伍离职后开放' };
         }
+        const q = typeof target === 'string' ? target.trim() : '';
+        if (q) this.cachedLiveCandidatesKey = '';
         const candidates = this.getLiveJoinCandidates();
         if (candidates.length === 0) {
-            return { ok: false, reason: '当前同文化暂无满五千兵可出征的目标' };
+            return { ok: false, reason: '当前暂无满五千兵可出征的目标' };
         }
-        const q = typeof target === 'string' ? target.trim() : '';
+        const matchQuery = (c: { label: string; factionName: string; generalName: string }) =>
+            c.label === q || c.factionName === q || c.generalName === q;
+        const matchFuzzy = (c: { label: string; factionName: string; generalName: string }) =>
+            c.label.includes(q) || c.factionName.includes(q) || c.generalName.includes(q);
         const chosen = typeof target === 'number'
             ? candidates.find((c) => c.index === target)
-            : candidates.find((c) => c.label === q || c.factionName === q || c.generalName === q)
-                ?? candidates.find((c) => c.label.includes(q) || c.factionName.includes(q));
+            : candidates.find(matchQuery) ?? candidates.find(matchFuzzy);
         if (!chosen) {
-            return { ok: false, reason: `请从 1~${candidates.length} 号候选中选择` };
+            return {
+                ok: false,
+                reason: typeof target === 'number'
+                    ? `请从 1~${candidates.length} 号候选中选择`
+                    : `当前可出征名单中未找到「${q}」，请核对名字或发「投编号」`,
+            };
         }
         // 🔴 [2026-10-29 主人令] 斥候选的是同文化势力（若该势力在同文化下有多位武将，随机抽一位）；探马选的是同文化指定武将
         let targetCityId = chosen.cityId;
