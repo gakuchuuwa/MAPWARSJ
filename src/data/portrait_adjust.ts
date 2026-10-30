@@ -6568,7 +6568,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/GREECE/fujisi_fujiweng.png": {
-            "scale": 1.21,
+            "scale": 1.23,
             "offsetX": -17,
             "offsetY": 53
         },
@@ -7953,9 +7953,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/GREECE/hesitiya_yiasong.png": {
-            "scale": 1.16,
+            "scale": 1.1,
             "offsetX": 0,
-            "offsetY": 12
+            "offsetY": 14
         },
         "/assets/MACEDONIAN/gen_philip_ii.png": {
             "scale": 1,
@@ -9121,6 +9121,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": -9
+        },
+        "/assets/PERSIAN/mixiya_arsames.png": {
+            "scale": 1.1,
+            "offsetX": 20,
+            "offsetY": 13
+        },
+        "/assets/ATHENIANS/yadian_gongguo_otto.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/GREECE/__闲置__LATIN_08.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 36
         }
     },
     "folderGuides": {
