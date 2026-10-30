@@ -14,6 +14,9 @@ export class YouTubeOfficialBridge {
     private hasKey = false;
     private video = '';
     private hasConnected = false;
+    /** 事件流最后一次收到任何消息（含服务端每 15 秒的 ping） */
+    private lastMessageAt = 0;
+    private watchdog = 0;
     private readonly clientId = globalThis.crypto?.randomUUID?.()
         ?? `page-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     private ledgerChain: Promise<void> = Promise.resolve();
@@ -52,6 +55,22 @@ export class YouTubeOfficialBridge {
         this.events?.close();
         const events = new EventSource(`/live-api/events?client=${encodeURIComponent(this.clientId)}`);
         this.events = events;
+        // 🔴 [2026-10-30 主人报「一直显示连接中」] 本机服务重启时，经 Vite 代理的旧连接可能既不报错也不再来消息，
+        //    页面就永远停在旧状态、弹幕也不记账。45 秒没收到任何消息（服务端每 15 秒 ping）就主动重连。
+        this.lastMessageAt = Date.now();
+        const touch = () => { this.lastMessageAt = Date.now(); };
+        events.addEventListener('ping', touch);
+        events.addEventListener('status', touch);
+        events.addEventListener('live', touch);
+        window.clearInterval(this.watchdog);
+        this.watchdog = window.setInterval(() => {
+            if (this.events !== events || Date.now() - this.lastMessageAt < 45_000) return;
+            window.clearInterval(this.watchdog);
+            events.close();
+            this.events = null;
+            this.live.platformStatus = 'YouTube 本地通道重连中';
+            this.connect();
+        }, 5000);
         events.addEventListener('status', (e) => {
             this.applyStatus(JSON.parse((e as MessageEvent).data));
             if (this.hasConnected) return;
@@ -139,6 +158,7 @@ export class YouTubeOfficialBridge {
     public stop(): void {
         this.stopped = true;
         clearTimeout(this.retry);
+        window.clearInterval(this.watchdog);
         this.events?.close();
         this.events = null;
     }

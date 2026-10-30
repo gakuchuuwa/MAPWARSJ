@@ -141,16 +141,17 @@ const SKILL_PANIC_TAKEN = 2;        // 【混】混乱中受伤倍率
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
 //   六计**没有克制**：这只是 AI 武将的放计顺序，回应的计不加任何效果，界面也不写「拆招 / 破」。
-// 🔴 [2026-10-30 主人定] 放计循环（对方放某计 → 我方接着放下一计）：
-//   敌(增兵10%) → 败(减兵10%) → 攻(猛攻10秒) → 胜(满血无敌10秒) → 混(驱散无敌+乱阵20秒) → 并(趁乱夺兵5%) → 敌(增兵10%)
+// 🔴 [2026-10-30 主人定·第二版] 放计循环（对方放某计 → 我方接着放下一计）：
+//   敌混我胜、敌胜我并、敌并我败、敌败我敌、敌敌我攻、敌攻我混
+//   即 混 → 胜 → 并 → 败 → 敌 → 攻 → 混
 //   另两条（主人定）：不重复自己最近三计、不和对方上一计重复；被挡就顺着圈往下找（见 resolveAutoNextSkill）。
 const SIX_CYCLE_NEXT: Readonly<Record<TacticalSixSet, TacticalSixSet>> = {
-    dizhan: 'baizhan',
-    baizhan: 'gongzhan',
-    gongzhan: 'shengzhan',
-    shengzhan: 'hunzhan',
-    hunzhan: 'bingzhan',
-    bingzhan: 'dizhan',
+    hunzhan: 'shengzhan',
+    shengzhan: 'bingzhan',
+    bingzhan: 'baizhan',
+    baizhan: 'dizhan',
+    dizhan: 'gongzhan',
+    gongzhan: 'hunzhan',
 };
 /** 玩家点地面令：连续这么多秒没往点上靠近 HERO_CLICK_PROGRESS_PX 像素就作废（走不到的令不许一直挂着） */
 const HERO_CLICK_STALL_SEC = 1.5;

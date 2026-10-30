@@ -63,6 +63,26 @@ function parseRunsText(runs) {
     if (!Array.isArray(runs)) return '';
     return runs.map((r) => r?.text ?? r?.emoji?.shortcuts?.[0] ?? '').join('');
 }
+// [2026-10-30] 网页聊天流的超级留言只有显示文字（如「$5.00」「CA$5.00」「¥1,000」），
+// 没有官方接口的 amount_micros / currency；原来一律记 0，游戏按金额折算 = 0 ⇒ 打赏不发计。
+// 聊天请求固定 hl=en，写法即英文习惯（¥ = 日元，人民币写 CN¥）。认不出的返回 null：宁可不发也不错发。
+const CURRENCY_PREFIX = [
+    ['US$', 'USD'], ['CN¥', 'CNY'], ['JP¥', 'JPY'], ['NT$', 'TWD'], ['HK$', 'HKD'], ['CA$', 'CAD'],
+    ['AU$', 'AUD'], ['A$', 'AUD'], ['S$', 'SGD'], ['RM', 'MYR'], ['€', 'EUR'], ['£', 'GBP'],
+    ['₩', 'KRW'], ['¥', 'JPY'], ['$', 'USD'],
+];
+export function parsePaidAmount(display) {
+    const s = String(display || '').replace(/ /g, ' ').trim();
+    const num = s.match(/(\d[\d,]*(?:\.\d+)?)/);
+    if (!num) return null;
+    const value = Number(num[1].replace(/,/g, ''));
+    if (!Number.isFinite(value) || value <= 0) return null;
+    const code = s.match(/\b([A-Z]{3})\b/)?.[1];
+    const prefix = s.slice(0, num.index).trim();
+    const currency = code || CURRENCY_PREFIX.find(([sym]) => prefix === sym)?.[1];
+    if (!currency) return null;
+    return { amountMicros: String(Math.round(value * 1_000_000)), currency };
+}
 function parseExactSubscriberCount(text) {
     const s = String(text || '').trim();
     if (!s || /\d\s*[kmb万亿]/i.test(s)) return null;
@@ -284,14 +304,15 @@ export class YouTubeLiveService extends EventEmitter {
                     headers: {
                         'Content-Type': 'application/json',
                         'User-Agent': WEB_UA,
-                        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                        'Accept-Language': 'en-US,en;q=0.9',
                     },
                     body: JSON.stringify({
                         context: {
                             client: {
                                 clientName: 'WEB',
                                 clientVersion: session.clientVersion,
-                                hl: 'zh-CN',
+                                // 英文写法，超级留言金额才认得出（见 parsePaidAmount）
+                                hl: 'en',
                                 gl: 'US',
                             },
                         },
@@ -383,6 +404,8 @@ export class YouTubeLiveService extends EventEmitter {
         const publishedAt = new Date(publishedMs).toISOString();
         const isPaid = !!(paidRenderer || stickerRenderer);
         const display = renderer.purchaseAmountText?.simpleText || '';
+        const amount = isPaid ? parsePaidAmount(display) : null;
+        if (isPaid && !amount) console.log(`[YouTube] 认不出超级留言金额「${display}」，不发计，原始记录留在 state.json 待核对`);
         const event = {
             id,
             platform: 'youtube',
@@ -392,8 +415,8 @@ export class YouTubeLiveService extends EventEmitter {
             publishedAt,
             ...(isPaid ? {
                 payment: {
-                    amountMicros: '0',
-                    currency: '',
+                    amountMicros: amount?.amountMicros ?? '0',
+                    currency: amount?.currency ?? '',
                     display,
                     kind: paidRenderer ? 'Super Chat' : 'Super Sticker',
                 },
@@ -469,12 +492,16 @@ export class YouTubeLiveService extends EventEmitter {
             throw new Error('这个视频不是直播');
         }
         const ended = !!(lbd?.endTimestamp || (lbd && lbd.isLiveNow === false && !vd.isLive));
-        const viewers = vd.isLive ? Number(vd.viewCount || 0) : 0;
+        // [2026-10-30 主人报「在线人数是累计的」] videoDetails.viewCount 是累计观看数；
+        // 实时在线（「N watching now」）在 ytInitialData 的 videoViewCountRenderer.originalViewCount
+        let viewers = 0;
         let likes = 0;
         let subscribers = null;
         const idMatch = html.match(/var ytInitialData\s*=\s*(\{.+?\});\s*<\/script>/s);
         if (idMatch) {
             const wText = idMatch[1];
+            const live = wText.match(/"videoViewCountRenderer":\{[^]*?"isLive":true,"originalViewCount":"(\d+)"/);
+            if (vd.isLive && live) viewers = Number(live[1]);
             likes = parseExactLikeCount(wText);
             const subMatch = wText.match(/"subscriberCountText":\{"accessibility":\{"accessibilityData":\{"label":"([^"]+)"\}\}/);
             if (subMatch) subscribers = parseExactSubscriberCount(subMatch[1]);
@@ -629,7 +656,7 @@ export function createHttpServer(service) {
                 // 状态先行：接管页先水合最新账本，再消费重发的未确认事件。
                 send('status', service.publicStatus());
                 for (const event of service.state.pending) send('live', event);
-                const heartbeat = setInterval(() => res.write(': heartbeat\n\n'), 15000);
+                const heartbeat = setInterval(() => res.write('event: ping\ndata: {}\n\n'), 15000);
                 req.on('close', () => {
                     clearInterval(heartbeat);
                     service.off('event', onEvent);

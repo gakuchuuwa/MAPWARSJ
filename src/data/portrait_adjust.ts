@@ -728,7 +728,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/BASHU/baishui_yanghuai.png": {
-            "scale": 0.91,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -15
         },
