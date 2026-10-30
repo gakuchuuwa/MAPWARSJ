@@ -1034,6 +1034,8 @@ export class Scene13WarLayer {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
         if (this.battleType === 'siege' && this.deCity && f === 1) return [];
         const enemyPorts = this.spawns.filter((sp) => sp.f === ef && !sp.playerElite && !sp.commander);
+        const flank = this.ambushFlankAnchors(f, Math.max(1, this.spawns.filter((sp) => sp.f === f && !sp.playerElite && !sp.commander).length));
+        if (flank.length > 0) return flank;
         if (this.battleType === 'siege' && this.deCity && ef === 1) {
             const B = this.defOutsideBase();
             const ports = enemyPorts.filter((sp) => sp.outFwd !== undefined && sp.outSide !== undefined);
@@ -1045,6 +1047,61 @@ export class Scene13WarLayer {
         }
         // 敌军从敌口往本方推进，伏兵在敌口追着敌军背后打 ⇒ 前进方向与敌军同向 = advanceVec[ef]
         return enemyPorts.map((sp) => ({ x: sp.x, y: sp.y, fwd: this.advanceVec[ef], side: this.sideVec[ef] }));
+    }
+
+    /**
+     * 🔴 [2026-10-30 主人「敌战计偷袭增兵，不要从敌方营寨的出兵口出，好像敌方出兵似的」]
+     * 【敌】伏兵改为**两翼包抄**：从敌阵左右两翼的外侧杀进来，打敌军侧后。
+     *   · 纵深：敌军前线重心再往敌后 AMBUSH_FLANK_BACK（打侧后，不正面撞）；
+     *   · 横向：敌阵最外一人再往外 AMBUSH_FLANK_OUT，夹在战场边界内；
+     *   · 每翼一列分队（沿战线方向错开 AMBUSH_FLANK_GAP），队头朝向敌阵（-side 方向冲进去）；
+     *   · 落点在水里就往敌阵方向挪到陆地；攻城战落点不许进城墙圈（再往外推），推不出去该翼作废。
+     * 两翼都算不出（没有敌兵等）返回空 ⇒ 调用方退回旧的敌口锚点。
+     */
+    private ambushFlankAnchors(f: 0 | 1, count: number): Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }> {
+        const ef: 0 | 1 = f === 0 ? 1 : 0;
+        const enemies = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.siegeW);
+        if (enemies.length === 0) return [];
+        const AMBUSH_FLANK_BACK = 80, AMBUSH_FLANK_OUT = 180, AMBUSH_FLANK_GAP = 70;
+        const adv = this.advanceVec[f];          // 本方进攻方向：往这个方向走就是敌后
+        const side = this.sideVec[f];
+        const [fx, fy] = this.sideFrontCentroid(ef);
+        const P0 = { x: fx + adv.x * AMBUSH_FLANK_BACK, y: fy + adv.y * AMBUSH_FLANK_BACK };
+        // 🔴 [2026-10-30 主人同意] 敌阵两端不取最外那一个兵（一个散兵/追远的兵就把一翼推得老远），
+        //    横向投影排序后去掉两头各 10%，用中间 90% 的兵定两端。
+        const proj = enemies.map((m) => (m.x - P0.x) * side.x + (m.y - P0.y) * side.y).sort((a, b) => a - b);
+        const trim = Math.floor(proj.length * 0.1);
+        const minS = Math.min(0, proj[trim]);
+        const maxS = Math.max(0, proj[proj.length - 1 - trim]);
+        const wings: Array<{ sign: 1 | -1; dist: number }> = [
+            { sign: 1, dist: maxS + AMBUSH_FLANK_OUT },
+            { sign: -1, dist: -minS + AMBUSH_FLANK_OUT },
+        ];
+        const out: Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }> = [];
+        const perWing = Math.ceil(count / 2);
+        for (const w of wings) {
+            const inward = { x: -side.x * w.sign, y: -side.y * w.sign };   // 队头朝敌阵
+            const colSide = { x: adv.x, y: adv.y };                          // 一翼的分队沿战线方向排开
+            const pts: Array<{ x: number; y: number }> = [];
+            for (let i = 0; i < perWing; i++) {
+                const along = (i - (perWing - 1) / 2) * AMBUSH_FLANK_GAP;
+                let x = P0.x + side.x * w.sign * w.dist + adv.x * along;
+                let y = P0.y + side.y * w.sign * w.dist + adv.y * along;
+                [x, y] = this.fieldBound(x, y);
+                // 攻城：不许进城墙圈，沿外侧方向再推
+                for (let k = 0; k < 12 && this.battleType === 'siege' && this.insideRing(x, y); k++) {
+                    [x, y] = this.fieldBound(x - inward.x * 60, y - inward.y * 60);
+                }
+                if (this.battleType === 'siege' && this.insideRing(x, y)) continue;
+                // 水面：往敌阵方向挪到陆地
+                for (let k = 0; k < 8 && this.isWaterAt(x, y); k++) {
+                    [x, y] = this.fieldBound(x + inward.x * 40, y + inward.y * 40);
+                }
+                pts.push({ x, y });
+            }
+            for (const p of pts) out.push({ x: p.x, y: p.y, fwd: inward, side: colSide });
+        }
+        return out;
     }
 
     private spawnImmediateSkillReinforcements(
@@ -1090,7 +1147,7 @@ export class Scene13WarLayer {
             let spawnX: number, spawnY: number;
             if (ambushOn) {
                 const a = anchors[si % anchors.length];
-                // 锚点即敌方出兵口（攻城为守方第一波城外出兵口），兵在口后（-fwd）排开，同该口原本的排法
+                // 锚点＝敌阵两翼外侧的包抄点（见 ambushFlankAnchors；算不出时退回敌方出兵口），兵在锚点后（-fwd）排开
                 [spawnX, spawnY] = this.fieldBound(
                     a.x - a.fwd.x * dep + a.side.x * slotY,
                     a.y - a.fwd.y * dep + a.side.y * slotY,

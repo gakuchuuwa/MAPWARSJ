@@ -75,16 +75,18 @@ export function scoutBidCents(bid: number): number {
     return Math.ceil(bid * PRICE_PER_CAST / ORDERS_PER_CAST);
 }
 
-/** 玩家改名竞拍口令：名 新名字 5 / 改名 新名字 10 */
-export function parseRenameCommand(word: string): { rawName: string; bid: number } | null {
-    const m = word.match(/^(?:改名|名)\s*(.+?)\s+([1-9]\d*)$/);
+/** 玩家改名竞拍口令：名 新名字 / 名 新名字 5 / 改名 新名字 10（省略积分时默认在当前最高价上 +1） */
+export function parseRenameCommand(word: string): { rawName: string; bid: number | null } | null {
+    const m = word.match(/^(?:改名|名)\s*([^\d\s]+?)\s*([1-9]\d*)?$/);
     if (!m) return null;
-    const bid = Number(m[2]);
-    if (!Number.isSafeInteger(bid) || bid <= 0) return null;
-    return { rawName: m[1].trim(), bid };
+    const rawName = m[1].trim();
+    if (!rawName) return null;
+    const bid = m[2] !== undefined ? Number(m[2]) : null;
+    if (bid !== null && (!Number.isSafeInteger(bid) || bid <= 0)) return null;
+    return { rawName, bid };
 }
 
-/** 离职选投靠目标口令：投1 3 / 选2 4 / 投 大明 3（省略积分时默认在当前最高价上 +1） */
+/** 离职选投靠目标口令：投1 3 / 选2 4 / 投 大明 3 / 投岳飞4 / 投岳飞（省略积分时默认在当前最高价上 +1） */
 export function parseJoinCommand(word: string): { index: number; query?: string; bid: number | null } | null {
     const mNum = word.match(/^(?:投|选)\s*([1-9]\d*)(?:\s+([1-9]\d*))?$/);
     if (mNum) {
@@ -94,7 +96,7 @@ export function parseJoinCommand(word: string): { index: number; query?: string;
         if (bid !== null && (!Number.isSafeInteger(bid) || bid <= 0)) return null;
         return { index, bid };
     }
-    const mName = word.match(/^(?:投|选)\s*([^\d\s]\S*?)(?:\s+([1-9]\d*))?$/);
+    const mName = word.match(/^(?:投|选)\s*([^\d\s]+?)\s*([1-9]\d*)?$/);
     if (!mName) return null;
     const query = mName[1].trim();
     const bid = mName[2] !== undefined ? Number(mName[2]) : null;
@@ -211,6 +213,8 @@ export interface ViewerLedger {
     renameHistory?: ViewerRenameRecord[];
     blockedNames?: string[];
     activeJoinBid?: ViewerActiveJoinBid | null;
+    joinHighestBid?: number;
+    joinLastLabel?: string;
     experimentalSupport?: ExperimentalSupportStats;
 }
 
@@ -281,6 +285,9 @@ export class ViewerLive {
     private renameHighestBid = 0;
     private renameHistory: ViewerRenameRecord[] = [];
     private activeJoinBid: ViewerActiveJoinBid | null = null;
+    private joinHighestBid = 0;
+    private joinLastLabel = '';
+    private prevJoinHighestBid = 0;
     private experimentalSupport: ExperimentalSupportStats = { count: 0, totalCents: 0, lastDonor: '', lastWhat: '' };
     private likeMax = -1;
     private subMax = -1;
@@ -313,6 +320,9 @@ export class ViewerLive {
     public resetGameSession(): void {
         this.renameHighestBid = 0;
         this.renameHistory = [];
+        this.joinHighestBid = 0;
+        this.joinLastLabel = '';
+        this.prevJoinHighestBid = 0;
         if (this.activeJoinBid) {
             this.acct(this.activeJoinBid.uid, this.activeJoinBid.viewer).n = Math.min(
                 ORDER_CAP,
@@ -579,14 +589,17 @@ export class ViewerLive {
         return msg;
     }
 
-    /** PlayerQuestSystem 入伍或选主失效回调：成功入伍即结算，目标失效则原数退回观众积分 */
+    /** PlayerQuestSystem 入伍或选主失效回调：成功入伍即结算（保留本局最高投靠竞价），目标失效则原数退回观众积分并回退竞价 */
     public onJoinResolved(res: { ok: boolean; factionId: string | null; generalId: string | null; reason?: string }): void {
         const cur = this.activeJoinBid;
         if (!cur) return;
         this.activeJoinBid = null;
         if (res.ok) {
+            this.joinHighestBid = Math.max(this.joinHighestBid, cur.bid);
+            this.joinLastLabel = cur.label;
             this.note(`${cur.viewer} 竞选的【${cur.label}】已成功投效`);
         } else {
+            this.joinHighestBid = this.prevJoinHighestBid;
             const a = this.acct(cur.uid, cur.viewer);
             a.n = Math.min(ORDER_CAP, a.n + cur.bid);
             this.note(`${cur.viewer} 竞选的【${cur.label}】未能成行（${res.reason || '目标变动'}），${cur.bid} 积分已退回`);
@@ -608,6 +621,8 @@ export class ViewerLive {
         /** 这一阶离队后能选的范围（面板标题用）：斥候同文化势力 / 探马同文化武将 / 先锋任一势力 / 将军起任一武将 */
         joinScope: string;
         activeJoinBid: ViewerActiveJoinBid | null;
+        joinHighestBid: number;
+        joinLastLabel: string;
         experimental: ExperimentalSupportStats;
         /** 主角现在的官职、资历（离队后选去处按它）、是否随军、离队停留倒计时秒数 —— 面板据此写「现在能做什么」 */
         hero: { rankId: string; rankTitle: string; peakRankId: string; peakRankTitle: string; attached: boolean; holdSec: number };
@@ -655,6 +670,8 @@ export class ViewerLive {
             joinCandidates,
             joinScope,
             activeJoinBid: this.activeJoinBid ? { ...this.activeJoinBid } : null,
+            joinHighestBid: Math.max(this.joinHighestBid, this.activeJoinBid?.bid ?? 0),
+            joinLastLabel: this.activeJoinBid?.label || this.joinLastLabel,
             experimental: { ...this.experimentalSupport },
             hero: {
                 rankId: this.app.playerHero?.getRank().id ?? 'civilian',
@@ -689,16 +706,20 @@ export class ViewerLive {
         return sum;
     }
 
-    private handleRenameCommand(id: string, name: string, rawNewName: string, bid: number, eventId: string, pubMs: number): string {
+    private handleRenameCommand(id: string, name: string, rawNewName: string, explicitBid: number | null, eventId: string, pubMs: number): string {
         const now = Date.now();
         const hero = this.app.playerHero;
         if (!hero) return this.note(`${name}：玩家尚未就绪`);
         const floor = this.renameFloor();
-        if (bid <= floor) {
-            const need = floor + 1;
-            this.recordCmd(eventId, id, name, 'rename', rawNewName, bid, pubMs, now, 'rejected', `低于最高价${floor}`);
+        const need = floor + 1;
+        const bid = explicitBid ?? need;
+        if (bid < need) {
+            this.recordCmd(eventId, id, name, 'rename', rawNewName, bid, pubMs, now, 'rejected', `低于最低竞价${need}`);
             this.notifyViewerVoice(id, `${name}，改名至少需要${need}积分`);
             return this.note(`${name}：现在的名字是出 ${floor} 积分买的，需出 ${need} 积分以上`);
+        }
+        if (bid > MAX_SKILL_BID) {
+            return this.note(`${name}：单次出价上限为 ${MAX_SKILL_BID} 积分`);
         }
         const mod = moderateLiveName(rawNewName);
         if (!mod.ok) {
@@ -736,12 +757,14 @@ export class ViewerLive {
             this.notifyViewerVoice(id, `${name}，正在打仗中，战后再选投奔目标`);
             return this.note(`${name}：正在交战中，脱离势力回到战略地图后再选投靠`);
         }
-        const minNeed = (this.activeJoinBid?.bid ?? 0) + 1;
+        const curFloor = Math.max(this.joinHighestBid, this.activeJoinBid?.bid ?? 0);
+        const minNeed = curFloor + 1;
         const bid = explicitBid ?? minNeed;
         if (bid < minNeed) {
+            const curLabel = this.activeJoinBid?.label || this.joinLastLabel || '上一目标';
             this.recordCmd(eventId, id, name, 'join_choice', String(target), bid, pubMs, now, 'rejected', `需出${minNeed}分以上`);
-            this.notifyViewerVoice(id, `${name}，改选投奔目标至少需要${minNeed}积分`);
-            return this.note(`${name}：当前已有人出 ${this.activeJoinBid!.bid} 积分选【${this.activeJoinBid!.label}】，改选需 ${minNeed} 积分以上`);
+            this.notifyViewerVoice(id, `${name}，当前投奔竞价已到${curFloor}分，改选至少需要${minNeed}积分`);
+            return this.note(`${name}：当前已有人出 ${curFloor} 积分选【${curLabel}】，改选需 ${minNeed} 积分以上`);
         }
         if (bid > MAX_SKILL_BID) {
             return this.note(`${name}：单次出价上限为 ${MAX_SKILL_BID} 积分`);
@@ -753,32 +776,38 @@ export class ViewerLive {
             this.notifyViewerVoice(id, `${name}，选将需要${bid}积分，你现有${avail}积分`);
             return this.note(`${name}：选目标需 ${bid} 积分，现有积分 ${avail}/${bid}`);
         }
+        const prev = this.activeJoinBid;
+        this.prevJoinHighestBid = this.joinHighestBid;
+        this.joinHighestBid = bid;
         const applied = quests.applyLiveJoinChoice(target);
         if (!applied.ok) {
+            this.joinHighestBid = this.prevJoinHighestBid;
             this.recordCmd(eventId, id, name, 'join_choice', String(target), bid, pubMs, now, 'rejected', applied.reason);
             this.notifyViewerVoice(id, `${name}，${applied.reason}`);
             return this.note(`${name}：${applied.reason}`);
         }
-        // 反超上一位出价者时，当场原数退回上一位积分
-        const prev = this.activeJoinBid;
+        // 反超尚未入伍的上一位出价者时，当场原数退回上一位积分
         if (prev) {
             const prevAcct = this.acct(prev.uid, prev.viewer);
             prevAcct.n = Math.min(ORDER_CAP, prevAcct.n + prev.bid);
         }
         a.n -= bid;
-        this.activeJoinBid = {
-            uid: id,
-            viewer: name,
-            bid,
-            index: applied.candidate.index,
-            targetId: applied.candidate.id,
-            label: applied.candidate.label,
-        };
+        this.joinLastLabel = applied.candidate.label;
+        if (!hero.isAttached()) {
+            this.activeJoinBid = {
+                uid: id,
+                viewer: name,
+                bid,
+                index: applied.candidate.index,
+                targetId: applied.candidate.id,
+                label: applied.candidate.label,
+            };
+        }
         this.recordCmd(eventId, id, name, 'join_choice', applied.candidate.id, bid, pubMs, now, 'executed');
         this.save();
-        this.notifyViewerVoice(id, `感谢${name}，已选定投奔${applied.candidate.label}`, true);
+        this.notifyViewerVoice(id, `感谢${name}，出${bid}积分投奔${applied.candidate.label}`, true);
         const refundNote = prev ? `（已退回 ${prev.viewer} 的 ${prev.bid} 积分）` : '';
-        return this.note(`${name} 出 ${bid} 积分选定投奔【${applied.candidate.label}】${refundNote}`);
+        return this.note(`${name} 出 ${bid} 积分选定投奔【${applied.candidate.label}】（下次改投需 ${bid + 1} 分起）${refundNote}`);
     }
 
     private recordCmd(
@@ -1144,6 +1173,9 @@ export class ViewerLive {
             this.day = t;
             this.renameHighestBid = 0;
             this.renameHistory = [];
+            this.joinHighestBid = 0;
+            this.joinLastLabel = '';
+            this.prevJoinHighestBid = 0;
             const jb = this.activeJoinBid;
             this.activeJoinBid = null;
             if (jb) {
@@ -1173,6 +1205,8 @@ export class ViewerLive {
             renameHistory: this.renameHistory.map((r) => ({ ...r })),
             blockedNames: getBlockedLiveNames(),
             activeJoinBid: this.activeJoinBid ? { ...this.activeJoinBid } : null,
+            joinHighestBid: this.joinHighestBid,
+            joinLastLabel: this.joinLastLabel,
             experimentalSupport: { ...this.experimentalSupport },
         };
     }
@@ -1219,6 +1253,8 @@ export class ViewerLive {
         if (ledger.day === this.today()) {
             this.day = ledger.day;
             this.renameHighestBid = Number.isSafeInteger(ledger.renameHighestBid) ? Math.max(0, Number(ledger.renameHighestBid)) : 0;
+            this.joinHighestBid = Number.isSafeInteger(ledger.joinHighestBid) ? Math.max(0, Number(ledger.joinHighestBid)) : 0;
+            this.joinLastLabel = typeof ledger.joinLastLabel === 'string' ? ledger.joinLastLabel : '';
             this.renameHistory = (Array.isArray(ledger.renameHistory) ? ledger.renameHistory : [])
                 .filter((r) => r && typeof r.uid === 'string' && typeof r.appliedName === 'string' && Number.isSafeInteger(r.bid) && r.bid > 0)
                 .slice(-50)
@@ -1233,6 +1269,8 @@ export class ViewerLive {
         } else {
             this.day = this.today();
             this.renameHighestBid = 0;
+            this.joinHighestBid = 0;
+            this.joinLastLabel = '';
             this.renameHistory = [];
         }
         if (ledger.experimentalSupport && typeof ledger.experimentalSupport === 'object') {

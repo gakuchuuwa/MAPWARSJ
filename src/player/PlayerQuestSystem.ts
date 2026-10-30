@@ -4223,9 +4223,9 @@ export class PlayerQuestSystem {
      *   · 探马：与上一次同文化的所有可出征武将；
      *   · 先锋：全图可出征势力；将军及以上：全图可出征武将。
      */
-    public getLiveJoinCandidates(): LiveJoinCandidate[] {
+    public getLiveJoinCandidates(allowWhileAttached = false): LiveJoinCandidate[] {
         const hero = this.deps.hero;
-        if (hero.isAttached() || this.quest || hero.autoPlan === 'script') {
+        if (hero.autoPlan === 'script' || (!allowWhileAttached && (hero.isAttached() || this.quest))) {
             this.cachedLiveCandidatesKey = '';
             this.cachedLiveCandidates = [];
             return [];
@@ -4316,11 +4316,11 @@ export class PlayerQuestSystem {
         return picked;
     }
 
-    /** 执行观众竞价选中的投靠目标（立即改道前往该同文化势力/武将） */
+    /** 执行观众竞价选中的投靠目标（立即改道前往该同文化势力/武将；若在战略地图已随军未开战，出更高价可改投） */
     public applyLiveJoinChoice(target: number | string): { ok: true; candidate: LiveJoinCandidate } | { ok: false; reason: string } {
         const hero = this.deps.hero;
-        if (hero.isAttached() || this.quest) {
-            return { ok: false, reason: '玩家已入伍随军，离职后再选投靠目标' };
+        if (hero.autoPlan === 'script') {
+            return { ok: false, reason: '剧本模式按史实推进，乱斗或百岁模式可竞拍选将' };
         }
         const rankId = hero.getPeakRank().id;
         if (rankId === 'civilian') {
@@ -4331,7 +4331,7 @@ export class PlayerQuestSystem {
         }
         const q = typeof target === 'string' ? target.trim() : '';
         if (q) this.cachedLiveCandidatesKey = '';
-        const candidates = this.getLiveJoinCandidates();
+        const candidates = this.getLiveJoinCandidates(true);
         if (candidates.length === 0) {
             return { ok: false, reason: '当前暂无满五千兵可出征的目标' };
         }
@@ -4389,6 +4389,10 @@ export class PlayerQuestSystem {
         if (!city || !this.isGeneralSortieReady(city, targetGeneralId)) {
             this.cachedLiveCandidatesKey = '';
             return { ok: false, reason: '该目标刚刚兵力不足或已离场，请改选其他目标' };
+        }
+        // 若此前已在某势力随军（例如已有人投了大明）且当前未在交战，高价竞拍改投时先脱离原军团再奔赴新目标
+        if (hero.isAttached()) {
+            this.leaveHost();
         }
         const finalCandidate: LiveJoinCandidate = {
             ...chosen,

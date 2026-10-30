@@ -242,10 +242,12 @@ export class ViewerLivePanel {
                 const pageBadge = pageCount > 1
                     ? ` · <span style="color:#ffd700;font-weight:700;">${pageIdx + 1}/${pageCount}页</span>`
                     : '';
-                const bidFloor = (s.activeJoinBid?.bid ?? 0) + 1;
+                const bidFloor = s.joinHighestBid + 1;
                 const activeBadge = s.activeJoinBid
                     ? ` · <span style="color:#7cd4a0;font-weight:700;">当前 ${esc(s.activeJoinBid.viewer)} ${s.activeJoinBid.bid}分➔${esc(s.activeJoinBid.label)}</span>`
-                    : '';
+                    : (s.joinHighestBid > 0 && s.joinLastLabel
+                        ? ` · <span style="color:#7cd4a0;font-weight:700;">上轮 ${s.joinHighestBid}分➔${esc(s.joinLastLabel)}</span>`
+                        : '');
                 const holdBadge = s.hero.holdSec > 0
                     ? `<span style="color:#ffd700;font-weight:800;margin-right:4px;">⏱ ${s.hero.holdSec}秒后出发</span>· `
                     : '';
