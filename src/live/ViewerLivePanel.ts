@@ -130,7 +130,27 @@ export class ViewerLivePanel {
             const top = combatCenter.getBoundingClientRect().top;
             if (top > 0 && top < window.innerHeight) bottomPx = Math.max(6, Math.round(window.innerHeight - top + 6));
         }
-        const scale = Math.round(Math.max(1, window.innerWidth / DESIGN_WIDTH) * 100) / 100;
+        // 避开左下角时间/存档面板（#game-time-hud）与右下角小地图（.world-minimap）
+        let leftEdge = 12;
+        let rightEdge = window.innerWidth - 12;
+        if (bottomPx < 220) {
+            const timeHud = document.getElementById('game-time-hud');
+            if (timeHud && timeHud.style.display !== 'none' && timeHud.offsetWidth > 0) {
+                leftEdge = Math.max(leftEdge, Math.ceil(timeHud.getBoundingClientRect().right + 8));
+            }
+            const miniMap = document.querySelector<HTMLElement>('.world-minimap');
+            if (miniMap && miniMap.style.display !== 'none' && miniMap.offsetWidth > 0) {
+                rightEdge = Math.min(rightEdge, Math.floor(miniMap.getBoundingClientRect().left - 8));
+            }
+        }
+        const availWidth = Math.max(320, rightEdge - leftEdge);
+        const centerX = Math.round((leftEdge + rightEdge) / 2);
+        let scale = Math.round(Math.max(1, window.innerWidth / DESIGN_WIDTH) * 100) / 100;
+        const naturalWidth = this.root.offsetWidth;
+        if (naturalWidth > 0 && naturalWidth * scale > availWidth) {
+            scale = Math.max(0.65, Math.floor((availWidth / naturalWidth) * 100) / 100);
+        }
+        this.root.style.left = `${centerX}px`;
         this.root.style.bottom = `${bottomPx}px`;
         this.root.style.transform = `translateX(-50%) scale(${scale})`;
     }
@@ -142,8 +162,8 @@ export class ViewerLivePanel {
         this.syncCollapsedState();
         if (this.ytKeyInput) {
             this.ytKeyInput.placeholder = this.link.hasSavedKey()
-                ? '✅ 已保存密钥，留空即可；只有换密钥才填'
-                : 'API 密钥（只保存到本机服务）';
+                ? '✅ 已保存密钥（免配额模式已启用，留空即可）'
+                : 'API 密钥（免配额模式无需填写，可留空）';
         }
         if (this.collapsed) return;
         const f = this.inScene13Bar ? FS_S13 : FS;
@@ -176,7 +196,10 @@ export class ViewerLivePanel {
             subItems.push(`<span><span style="color:#ffd700;">排队：</span>${q.slice(0, 3).map((x) =>
                 `${esc(x.name)}${x.label ? `·${esc(x.label)}` : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
         }
-        if (s.log.length) subItems.push(`<span style="color:#cdbb95;">${esc(s.log[s.log.length - 1])}</span>`);
+        if (s.log.length) {
+            const lastLog = esc(s.log[s.log.length - 1]);
+            subItems.push(`<span title="${lastLog}" style="color:#cdbb95;display:inline-block;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;">${lastLog}</span>`);
+        }
 
         // 🔴 [2026-10-29 主人令「把这些信息放到玩家信息面板，设计一行就行」]
         // 直播信息（点赞发分、在线、在场、积分）整合成单行，不再独立悬挂第二行
@@ -199,12 +222,12 @@ export class ViewerLivePanel {
             let statePart: string;
             if (s.joinCandidates.length > 0) {
                 const total = s.joinCandidates.length;
-                const pageSize = 10;
+                const pageSize = 8;
                 const pageCount = Math.max(1, Math.ceil(total / pageSize));
                 const pageIdx = Math.floor(Date.now() / 4000) % pageCount;
                 const pageItems = s.joinCandidates.slice(pageIdx * pageSize, (pageIdx + 1) * pageSize);
                 const pageBadge = pageCount > 1
-                    ? ` · <span style="color:#ffd700;font-weight:700;">[第 ${pageIdx + 1}/${pageCount} 页·滚动轮播]</span>`
+                    ? ` · <span style="color:#ffd700;font-weight:700;">${pageIdx + 1}/${pageCount}页</span>`
                     : '';
                 const bidFloor = (s.activeJoinBid?.bid ?? 0) + 1;
                 const activeBadge = s.activeJoinBid
@@ -213,7 +236,7 @@ export class ViewerLivePanel {
                 const holdBadge = s.hero.holdSec > 0
                     ? `<span style="color:#ffd700;font-weight:800;margin-right:4px;">⏱ ${s.hero.holdSec}秒后出发</span>· `
                     : '';
-                statePart = `<span style="font-size:${f.main}px;">${holdBadge}选去处·${b(esc(s.joinScope))}<span style="color:#dfc28c;font-size:${f.sub}px;">(共${total}位${pageBadge}，发 ${b('投编号')} 或 ${b('投名字')} 竞选，${bidFloor}分起；不选AI自动前往)</span>${activeBadge}</span>`;
+                statePart = `<span style="font-size:${f.main}px;">${holdBadge}选去处·${b(esc(s.joinScope))}<span style="color:#dfc28c;font-size:${f.sub}px;">(共${total}位${pageBadge}，发 ${b('投编号')} 或 ${b('投名字')}，${bidFloor}分起)</span>${activeBadge}</span>`;
                 const cells = pageItems.map((c) => {
                     const isPicked = s.activeJoinBid?.index === c.index;
                     const boxBg = isPicked
@@ -250,6 +273,7 @@ export class ViewerLivePanel {
         if (this.lastBodyHtml !== nextHtml) {
             this.lastBodyHtml = nextHtml;
             this.body.innerHTML = nextHtml;
+            this.updatePosition();
         }
     }
 
@@ -284,7 +308,7 @@ export class ViewerLivePanel {
         };
         const send = (w: string) => { this.live.onChat(name.value, w, false); this.render(); };
         const ytLabel = document.createElement('div');
-        ytLabel.textContent = 'YouTube API 密钥、本场直播网址，回车生效；密钥只需填一次，之后留空即沿用';
+        ytLabel.textContent = '填本场 YouTube 直播网址回车即可（免配额直连，API 密钥可留空）';
         ytLabel.style.cssText = 'color:#8fd3ff;margin-bottom:2px;';
         const ytKey = document.createElement('input');
         ytKey.type = 'password';

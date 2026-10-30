@@ -152,6 +152,8 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
  *  🔴 2026-10-28 主人令：农田四块里随机一块改养猪（主人身上记 pigCell），该块不派农夫、只放一头猪；
  *     四块地皮一律不变，仍是同一种农田皮，不铺牧场。 */
 const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -23], [-35, 0], [35, 0], [0, 23]];
+/** 同一渔场主船之外的帮手船相对主船的 zoom 9 像素落点：北、西、东（船比农夫大，间距放宽） */
+const FISHING_BOAT_OFFSETS: readonly (readonly [number, number])[] = [[0, -46], [-60, -18], [60, -18]];
 const PLOT_LEADER_CELL = 3;
 /** 牲畜在自己那块草场内来回的半程（zoom 9 像素），不出本块 */
 const PASTURE_WANDER_PX = 9;
@@ -790,9 +792,10 @@ export class CityLifeAmbientLayer {
         return seaCount >= 3;
     }
 
-    /** 在据点周边搜寻真实海域渔场点（0.10° ~ 0.68°），并同时返回近岸港湾海域点（全在海中） */
+    /** 在据点周边搜寻真实海域渔场点，并同时返回近岸港湾海域点（全在海中）。
+     *  🔴 2026-10-30 主人令「渔船可以离据点远些显示」：先找 0.30°~0.72° 的外海，找不到再退回近海，沿海小湾照样有渔场。 */
     private findSeaFishingSpot(cLat: number, cLng: number, baseAngle: number, distBias: number): { homePos: Pt; gatePos: Pt } | null {
-        const radii = [0.14, 0.20, 0.27, 0.35, 0.44, 0.54, 0.64];
+        const radii = [0.30, 0.38, 0.47, 0.57, 0.67, 0.14, 0.20, 0.25];
         const angleSteps = 20;
         for (const r of radii) {
             const actualR = r + distBias * 0.05;
@@ -806,7 +809,7 @@ export class CityLifeAmbientLayer {
                 if (this.isDeepEnoughSea(cand)) {
                     // 寻找从外海渔场朝据点方向推进的近岸港湾海域点（同样必须在海中）
                     let gatePos = cand;
-                    for (const f of [0.55, 0.68, 0.80]) {
+                    for (const f of [0.30, 0.42, 0.55, 0.68, 0.80]) {
                         const nearCand = {
                             lat: cLat + (cand.lat - cLat) * f,
                             lng: cLng + (cand.lng - cLng) * f,
@@ -997,6 +1000,32 @@ export class CityLifeAmbientLayer {
                         displayedAction: 'work',
                         desiredAction: 'work',
                     });
+                    // 🔴 2026-10-30 主人令「渔业可以和农业一样，随机显示 1-4 个，有船，有鱼」：
+                    //    一处渔场按哈希出 1~4 条渔船，主船之外的几条围在渔场四周（与农田四块同一套方位），
+                    //    各带一群鱼、原地撒网不回港；落点不是深海就少一条，绝不上岸。
+                    const owner = list[list.length - 1];
+                    const boatCount = 1 + Math.floor(strHash01(owner.id, 911) * 4);
+                    const extraCells = [0, 1, 2]
+                        .sort((a, b) => strHash01(owner.id, 920 + a) - strHash01(owner.id, 920 + b))
+                        .slice(0, boatCount - 1);
+                    for (const k of extraCells) {
+                        const o = FISHING_BOAT_OFFSETS[k];
+                        const pos = this.plotCellPos(owner.homePos, PLOT_LEADER_CELL, o[0], o[1]);
+                        if (!this.isDeepEnoughSea(pos)) continue;
+                        list.push({
+                            ...owner,
+                            id: `${owner.id}_boat_${k}`,
+                            fieldHand: true,
+                            buildingResource: undefined,
+                            fishResource: fishPool[Math.floor(strHash01(owner.id, k * 23 + 931) * fishPool.length) % fishPool.length],
+                            homePos: pos,
+                            gatePos: { ...pos },
+                            lastDrawPos: { ...pos },
+                            facing: Math.floor(strHash01(owner.id, k * 23 + 932) * 8) % 8,
+                            phase: Math.floor(strHash01(owner.id, k * 23 + 933) * 1000),
+                            damageVariant: Math.floor(strHash01(owner.id, k * 23 + 934) * 100),
+                        });
+                    }
                     continue;
                 }
                 // 沿海城市个别角度找不到渔场时宁可少一套，也不混入另一种生产。
@@ -1351,7 +1380,8 @@ export class CityLifeAmbientLayer {
     /** 计算某个角色在当前季节应当执行的动作名 */
     private resolveSeasonalAction(actor: CityLifeActor, season: number): string {
         if (actor.isSeaFishing) {
-            // 渔船全年生产，秋季部分船只往返渔场与港湾，冬季也不停航闲置。
+            // 渔船全年生产，秋季部分船只往返渔场与港湾，冬季也不停航闲置；同场的帮手船只撒网不回港。
+            if (actor.fieldHand) return 'work';
             if (season === 2) return actor.slotIdx % 2 === 0 ? 'move' : 'work';
             return 'work';
         }

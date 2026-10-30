@@ -708,7 +708,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/KOREA/zhen_zhenxuan.png": {
-            "scale": 0.97,
+            "scale": 0.95,
             "offsetX": 0,
             "offsetY": -16
         },
@@ -9091,6 +9091,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 0,
             "offsetY": 11
+        },
+        "/assets/KOREA/bfe_wanggeon.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/JIANGNAN/bfe_gao_zhihui.png": {
+            "scale": 1.08,
+            "offsetX": -13,
+            "offsetY": 11
+        },
+        "/assets/CENTRAL/qin_hengyi.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -21
+        },
+        "/assets/XIANBEI/yuan_d_daulashah.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

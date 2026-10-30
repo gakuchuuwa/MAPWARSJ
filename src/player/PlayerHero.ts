@@ -551,8 +551,8 @@ export class PlayerHero {
     private learnQuotaForRank(rankId: PlayerRankId): number {
         const idx = PLAYER_RANKS.findIndex((r) => r.id === rankId);
         const q = (id: PlayerRankId) => PLAYER_RANKS.findIndex((r) => r.id === id);
-        // 🔴 [2026-09-24 主人定「每个军团都有三兵模，然后还有一个将军兵模，还有一个舰队兵模…正好5个官阶，5个兵模」]
-        //    斥候/探马/先锋 → 三排各一；将军/元帅 → 将军兵模、舰队兵模（两者随机先后）。
+        // 🔴 [2026-10-30 主人令「除了主将最后拿，其他四个，四阶随机给」]
+        //    斥候/探马/先锋/将军 每阶随机给「三排 + 舰队」四张里的一张；元帅最后拿主将（英雄兵模）。
         if (idx >= q('marshal')) return 5;    // 元帅起：五种齐全
         if (idx >= q('general')) return 4;    // 将军：四种
         if (idx >= q('vanguard')) return 3;   // 先锋：三种
@@ -618,9 +618,8 @@ export class PlayerHero {
      * 按当前官阶补齐应学的兵模。
      * 🔴 [2026-10-03 主人定死唯一顺序与自动换装]
      *    「乱入者应该是先随机获得三个兵种素材，获得的时候就换上新的。然后是获得舰队的，最后获得英雄的。所以当玩家最后应该保持在英雄的兵模。」
-     *    1. 斥候/探马/先锋：从三排陆地兵种中随机获得，获得的时候立即换上新的！
-     *    2. 将军：获得本军团舰队战船！
-     *    3. 元帅：最后获得英雄兵模（主将队），获得的时候立即换上英雄兵模，并保持在英雄兵模！
+     *    [2026-10-30 改] 斥候/探马/先锋/将军 四阶随机给「三排 + 舰队」四张；元帅最后给主将（英雄兵模）。
+     *    三排与主将拿到即换上；舰队有势力时画面本就用势力舰队，视同已换上。
      * 规则全文见 docs/AGENTS/player-rules-verbatim.md 0-7。
      */
     /**
@@ -636,7 +635,9 @@ export class PlayerHero {
         //    已学兵种**永不回收**：军团战败、脱离势力、改投他家、掉阶，一律保留。
         //    配额只约束「本势力还能再学几个」，按**当前势力已学数**算，不看历史总数，
         //    所以改投新势力后照样能从头学三排，旧势力学的也还留着能选。
-        const want = this.learnQuotaForRank(rankFor(this.merit, this.factionId !== null).id);
+        const rankId = rankFor(this.merit, this.factionId !== null).id;
+        const want = this.learnQuotaForRank(rankId);
+        const isMarshal = PLAYER_RANKS.findIndex((r) => r.id === rankId) >= PLAYER_RANKS.findIndex((r) => r.id === 'marshal');
         if (!this.factionId) return;               // 独行期：不新收，但旧的原样保留
 
         const landKeys = this.legionUnitKeys();
@@ -661,26 +662,21 @@ export class PlayerHero {
             const heroRest = heroPool.filter((p) => !owns(p));
 
             let pick: Pick | undefined;
-            if (landRest.length > 0) {
-                // 1. 先获得三个兵种素材
-                // 🔴 [2026-10-24 主人令「探马者奖励兵模前三的顺序改为：先奖励后排，再奖励中排，先锋奖励前排」]
-                //    三排固定顺序：斥候拿**后排**（row 2）→ 探马拿**中排**（row 1）→ 先锋拿**前排**（row 0）。
-                //    取代 2026-10-22「开始都先给骑兵」的随机偏好（那条对这三档不再生效）。
-                const byRowDesc = [...landRest].sort((a, b) => b.row - a.row);
-                pick = byRowDesc[0];
-            } else if (shipRest.length > 0) {
-                // 2. 然后是获得舰队的
-                pick = shipRest[0];
-            } else if (heroRest.length > 0) {
-                // 3. 最后获得英雄的
+            // 🔴 [2026-10-30 主人令] 三排 + 舰队 四张由斥候/探马/先锋/将军四阶随机给；主将只在元帅给，且最后拿。
+            const randomRest = [...landRest, ...shipRest];
+            if (randomRest.length > 0) {
+                pick = randomRest[Math.floor(Math.random() * randomRest.length)];
+            } else if (isMarshal && heroRest.length > 0) {
                 pick = heroRest[0];
             } else {
-                break; // 该军团全部收齐
+                break; // 本阶可给的已给完（或该军团全部收齐）
             }
 
             if (pick.ship) {
                 this.learnedShips.push(pick.key);
-                this.deps.notify(`⛵ 获得本军团战船【${pick.key}】`);
+                // 🔴 [2026-10-30 主人令「给了兵模都自动换上」] 战船也一样：拿到即选上，离队独行时海上就是这条船
+                this.selectedShip = this.learnedShips.length - 1;
+                this.deps.notify(`⛵ 获得本军团战船【${pick.key}】，已换上`);
             } else {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
                 this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
@@ -694,8 +690,8 @@ export class PlayerHero {
                     this.selectedUnit = this.learnedUnits.length - 1;
                     this.syncMoveProfile();
                     this.deps.notify(`🛡️ 换上新兵模【${name}】`);
-                } else if (joining && WAR_TYPES[pick.key]?.cls === 'cav') {
-                    // 英雄（主将队）档：保留 2026-10-23 口径——入伍时若是骑兵类才换上
+                } else if (pick.row === 3) {
+                    // 🔴 [2026-10-30 主人令] 主将兵模（元帅档）拿到即换上并保持
                     this.selectedUnit = this.learnedUnits.length - 1;
                     this.syncMoveProfile();
                     this.deps.notify(`🛡️ 换上新兵模【${name}】`);
