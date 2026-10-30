@@ -24,6 +24,7 @@ export function setStrategicTarget(
     position: { lat: number; lng: number }
 ): void {
     ctx.strategicTargetArmyId = null;
+    (ctx.army as { isHuntingEnemyArmy?: boolean }).isHuntingEnemyArmy = false;
     ctx.strategicTargetCityId = cityId;
     ctx.targetCityId = cityId;
     ctx.targetPosition = position;
@@ -46,6 +47,7 @@ export function setStrategicArmyTarget(
     position: { lat: number; lng: number }
 ): void {
     ctx.strategicTargetArmyId = armyId;
+    (ctx.army as { isHuntingEnemyArmy?: boolean }).isHuntingEnemyArmy = true;
     ctx.targetPosition = position;
     ctx.huntBlockedSinceMs = null; // 换了追击对象，卡住计时重新开始
 }
@@ -53,6 +55,7 @@ export function setStrategicArmyTarget(
 /** 仅结束野战追击，保留挂起的攻城目标（半路恢复行军用） */
 export function clearHuntTarget(ctx: BTContext): void {
     ctx.strategicTargetArmyId = null;
+    (ctx.army as { isHuntingEnemyArmy?: boolean }).isHuntingEnemyArmy = false;
     ctx.huntBlockedSinceMs = null;
     const cityId = ctx.strategicTargetCityId ?? ctx.targetCityId;
     if (cityId && ctx.cityManager?.getCity) {
@@ -66,6 +69,7 @@ export function clearHuntTarget(ctx: BTContext): void {
 
 export function clearStrategicTarget(ctx: BTContext): void {
     ctx.strategicTargetArmyId = null;
+    (ctx.army as { isHuntingEnemyArmy?: boolean }).isHuntingEnemyArmy = false;
     ctx.strategicTargetCityId = null;
     ctx.targetCityId = null;
     ctx.targetPosition = null;

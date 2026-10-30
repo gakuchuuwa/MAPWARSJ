@@ -1789,11 +1789,14 @@ export class Army implements IBattleUnit {
         // 必须清存档让行为树重新选目标 → moveLegionToCity 走「来路折返」直接去下一个目标。
         // （currentBattleType 会在 setCombatState(false) 时被清空，须先读。）
         const wasSiegeBattle = this.currentBattleType === 'siege';
+        const wasHuntingArmy = !!(this as { isHuntingEnemyArmy?: boolean }).isHuntingEnemyArmy;
+        (this as { isHuntingEnemyArmy?: boolean }).isHuntingEnemyArmy = false;
         if (result === 'victory') {
             this.setCombatState(false);
-            if (wasSiegeBattle) {
+            if (wasSiegeBattle || wasHuntingArmy) {
                 this.clearSavedMarchState();
-                gameLog('army', `[Army] ${this.name} 攻城胜后清战前路径存档，由行为树重新选目标（不再先进城）`);
+                if (wasHuntingArmy) this.setTargetCity(null);
+                gameLog('army', `[Army] ${this.name} ${wasSiegeBattle ? '攻城' : '追击野战'}胜后清战前路径存档，由行为树重新选目标（不再先进城）`);
             } else {
                 this.resumeMovement();
             }

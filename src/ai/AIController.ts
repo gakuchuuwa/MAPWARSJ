@@ -153,6 +153,18 @@ export class AIController {
     }
 
     /**
+     * 查询军团当前的战略目标（供玩家面板/跟随横幅实时展示军团目标）
+     */
+    public getArmyTargetInfo(armyId: string): { strategicCityId: string | null; strategicArmyId: string | null } {
+        const ctx = this.armyContexts.get(armyId);
+        if (!ctx) return { strategicCityId: null, strategicArmyId: null };
+        return {
+            strategicCityId: getStrategicTargetId(ctx),
+            strategicArmyId: ctx.strategicTargetArmyId ?? null,
+        };
+    }
+
+    /**
      * 执行单个军团的行为树
      */
     private tickArmy(army: Army): void {
@@ -160,11 +172,6 @@ export class AIController {
         if ((army as Army & { __scriptPinned?: boolean }).__scriptPinned) return;
         // 历史剧本期：非剧本军团不寻敌（见 isScriptPeriod）
         if (!army.isScriptArmy && this.isScriptPeriod()) return;
-        // 🔴 [2026-10-23 主人「主角军团会自己去打别的据点，既然是漏洞为什么不修复呢」]
-        //    百岁模式（探马主线）里玩家随军的那支军团＝主角军团：不跑行为树、不自己寻敌攻城，只按主线脚本行动。
-        //    被别人打上门照样还手（战斗不归这里管）。
-        const hero = (window as unknown as { game?: { playerHero?: { autoPlan?: string; getHostLegionId?(): string | null } } }).game?.playerHero;
-        if (hero && (hero.autoPlan ?? 'melee') === 'centenarian' && hero.getHostLegionId?.() === army.id) return;
 
         // 获取或创建上下文
         let context = this.armyContexts.get(army.id);

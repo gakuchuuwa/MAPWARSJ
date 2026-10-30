@@ -1114,6 +1114,7 @@ export class GameApp {
             //    不另造第二条字幕。onDone 让调用方在**念完**后再推下一段。
             announceBriefing: (text, onDone, onStart, minBannerMs) => speechAnnouncer.announceBriefing(text, onDone, onStart, minBannerMs),
             kickLegionAi: (armyId) => this.aiController?.tickArmyById(armyId),
+            getArmyTargetInfo: (armyId) => this.aiController?.getArmyTargetInfo(armyId) ?? { strategicCityId: null, strategicArmyId: null },
             ensureUnpaused: () => {
                 if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);
             },

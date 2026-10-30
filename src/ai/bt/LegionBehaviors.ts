@@ -63,6 +63,14 @@ export const IsInCombat = new Condition('IsInCombat', (ctx) => {
         ctx.postBattleFoeArmyId = null; // 脱战：停止续期
         return false;
     }
+    const huntId = getStrategicTargetArmyId(ctx);
+    if (huntId) {
+        ctx.postBattleFoeArmyId = huntId;
+        markTargetCooldown(ctx, `army:${huntId}`, 'field_battle_engaged');
+        clearHuntTarget(ctx);
+        ctx.army.clearSavedMarchState?.();
+        ctx.army.setTargetCity(null);
+    }
     const foe = ctx.postBattleFoeArmyId;
     if (foe) markTargetCooldown(ctx, `army:${foe}`, 'field_battle_engaged');
     return true;
@@ -855,22 +863,12 @@ export const AbandonTarget = new Action('AbandonTarget', (ctx) => {
     return BTStatus.SUCCESS;
 });
 
-/** 追击贴身后：开战由碰撞系统负责；此处仅占位成功，避免误走攻城 */
+/** 追击贴身后：开战由碰撞系统负责；此处仅占位成功，避免误走攻城（交战态清追击与冷却续期已统一由根节点 IsInCombat 处理） */
 export const HoldForFieldContact = new Action('HoldForFieldContact', (ctx) => {
     const huntId = getStrategicTargetArmyId(ctx);
     if (!huntId) return BTStatus.FAILURE;
     const enemy = refreshHuntArmyTarget(ctx);
     if (!enemy) return BTStatus.FAILURE;
-    // 已在战斗：只清追击，保留挂起攻城目标，战后继续赶路（2026-08-06）
-    if (ctx.army.getIsInCombat()) {
-        // [2026-08-06] 记下对手并盖冷却章：打完若对方没被歼灭且仍在 0.8° 内，HasTarget 下一帧
-        // 会立刻再追同一支，挂起的攻城目标被无限期拖着（旧代码就这样，非本次回归）。
-        // 章由 IsInCombat 每帧续期到脱战为止，中间那 12s 不会在仗打完前失效。
-        ctx.postBattleFoeArmyId = huntId;
-        markTargetCooldown(ctx, `army:${huntId}`, 'field_battle_engaged');
-        clearHuntTarget(ctx);
-        return BTStatus.SUCCESS;
-    }
     if (!ctx.army.isIdle()) ctx.army.stopMovement?.(false);
     return BTStatus.SUCCESS;
 });

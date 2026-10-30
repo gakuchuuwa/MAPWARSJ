@@ -9116,6 +9116,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 1,
             "offsetY": -20
+        },
+        "/assets/INDIA/bfe_kalinga_king.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -9
         }
     },
     "folderGuides": {

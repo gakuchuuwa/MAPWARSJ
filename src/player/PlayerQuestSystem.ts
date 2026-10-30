@@ -278,6 +278,7 @@ export interface PlayerQuestDeps {
      */
     announceBriefing?: (text: string, onDone?: () => void, onStart?: () => void, minBannerMs?: number) => void;
     kickLegionAi: (armyId: string) => void;
+    getArmyTargetInfo?: (armyId: string) => { strategicCityId: string | null; strategicArmyId: string | null };
     ensureUnpaused: () => void;
     isScene13Active?: () => boolean;
     feed?: {
@@ -411,6 +412,101 @@ export class PlayerQuestSystem {
     public getQuest(): PlayerQuest | null { return this.quest; }
     public onChange(fn: () => void): void { this.changeListeners.add(fn); }
     private emitChange(): void { for (const fn of this.changeListeners) fn(); }
+    private lastHostTargetSnapshot = '';
+
+    /** 解析所随军团当前实际进攻的敌城（供任务目标同步与玩家面板显示） */
+    private resolveHostAttackCity(host: Army): City | null {
+        if (host.isRetreatingHome) return null;
+        const myFaction = host.getFactionId();
+        if (host.getIsInCombat() && host.siegeTargetCityId) {
+            const c = this.deps.cityManager.getCity(host.siegeTargetCityId);
+            if (c && c.factionId !== myFaction) return c;
+        }
+        const aiTarget = this.deps.getArmyTargetInfo?.(host.id);
+        if (aiTarget?.strategicCityId) {
+            const c = this.deps.cityManager.getCity(aiTarget.strategicCityId);
+            if (c && c.factionId !== myFaction) return c;
+        }
+        const hop = host.getTargetCity();
+        if (hop?.id) {
+            const c = this.deps.cityManager.getCity(hop.id) ?? hop;
+            if (c && c.factionId !== myFaction) return c;
+        }
+        return null;
+    }
+
+    /**
+     * 玩家随军期间，实时返回所随军团的当前目标文案（供顶部玩家面板展示）。
+     * 即使首座目标城已攻克（`this.quest` 已结算清空），只要玩家仍在军团中，就持续显示军团的下一个目标。
+     */
+    public getHostTargetText(): string | null {
+        const host = this.deps.hero.getHostLegion();
+        if (!host || host.isDestroyed) return null;
+        const q = this.quest;
+        if (q?.kind === 'restore') {
+            return `助${q.generalName}复国【${q.cityName}】`;
+        }
+        if (q?.kind === 'general_event' && q.event) {
+            return `随${q.generalName}赴【${q.event.title}】`;
+        }
+        if (q?.kind === 'first_battle' && q.firstBattle) {
+            return `随${q.generalName}赴【${q.firstBattle.battleName}】`;
+        }
+        const generalName =
+            (host.generalId ? getGeneralRecordByGeneralId(host.generalId)?.generalName : null)
+            ?? q?.generalName
+            ?? host.name;
+        const myFaction = host.getFactionId();
+
+        if (host.getIsInCombat() && host.siegeTargetCityId) {
+            const c = this.deps.cityManager.getCity(host.siegeTargetCityId);
+            if (c) return `随${generalName}攻【${c.name}】`;
+        }
+
+        const aiTarget = this.deps.getArmyTargetInfo?.(host.id);
+        if (aiTarget?.strategicArmyId) {
+            const enemy = this.deps.legionManager.getLegionById(aiTarget.strategicArmyId);
+            const stratCity = aiTarget.strategicCityId ? this.deps.cityManager.getCity(aiTarget.strategicCityId) : null;
+            if (enemy && stratCity && stratCity.factionId !== myFaction) {
+                return `随${generalName}追击【${enemy.name}】→【${stratCity.name}】`;
+            }
+            if (enemy) {
+                return `随${generalName}追击【${enemy.name}】`;
+            }
+        }
+        if (aiTarget?.strategicCityId) {
+            const c = this.deps.cityManager.getCity(aiTarget.strategicCityId);
+            if (c) {
+                if (host.isRetreatingHome) return `随${generalName}撤回【${c.name}】`;
+                if (c.factionId === myFaction) return `随${generalName}回援【${c.name}】`;
+                return `随${generalName}攻【${c.name}】`;
+            }
+        }
+
+        const hop = host.getTargetCity();
+        if (hop?.id) {
+            const latest = this.deps.cityManager.getCity(hop.id) ?? hop;
+            if (host.isRetreatingHome) return `随${generalName}撤回【${latest.name}】`;
+            if (latest.factionId === myFaction) return `随${generalName}前往【${latest.name}】`;
+            return `随${generalName}攻【${latest.name}】`;
+        }
+
+        if (q?.targetCityName) {
+            const qc = this.deps.cityManager.getCity(q.targetCityId);
+            if (!qc || qc.factionId !== myFaction) {
+                return `随${generalName}攻【${q.targetCityName}】`;
+            }
+        }
+
+        if (host.isRetreatingHome) {
+            const homeId = host.homeCityId ?? host.getSourceCityId?.();
+            const home = homeId ? this.deps.cityManager.getCity(homeId) : null;
+            return home ? `随${generalName}撤回【${home.name}】` : `随${generalName}撤回本城`;
+        }
+        if (host.getIsInCombat()) return `随${generalName}交战中`;
+        if (host.isPostBattleResting?.()) return `随${generalName}战后休整`;
+        return `随${generalName}待命寻敌`;
+    }
 
     public getInitialFactionId(cityId: string): string | null {
         return this.initialFaction.get(cityId) ?? null;
@@ -3296,7 +3392,40 @@ export class PlayerQuestSystem {
             }
         }
         const q = this.quest;
+        const hostTargetSnap = this.deps.hero.isAttached() ? (this.getHostTargetText() ?? '') : '';
+        if (hostTargetSnap !== this.lastHostTargetSnapshot) {
+            this.lastHostTargetSnapshot = hostTargetSnap;
+            this.emitChange();
+        }
         if (!q) {
+            // 随军攻下首座城后，玩家仍留在军中继续跟随军团：当军团锁定下一座进攻敌城时，自动续接出征任务
+            if (this.deps.hero.isAttached() && this.deps.hero.autoPlan !== 'script') {
+                const host = this.deps.hero.getHostLegion();
+                if (host && !host.isDestroyed && host.getTroops() > 0 && host.generalId && isGeneralOnStage(host.generalId)) {
+                    const nextTarget = this.resolveHostAttackCity(host);
+                    if (nextTarget) {
+                        const factionId = host.getFactionId();
+                        const factionName = this.deps.cityManager.getFactionName(factionId);
+                        const generalName = getGeneralRecordByGeneralId(host.generalId)?.generalName ?? host.name;
+                        const homeId = host.homeCityId ?? host.getSourceCityId?.() ?? nextTarget.id;
+                        const homeCity = this.deps.cityManager.getCity(homeId);
+                        this.quest = {
+                            kind: 'campaign',
+                            cityId: homeCity?.id ?? nextTarget.id,
+                            cityName: homeCity?.name ?? nextTarget.name,
+                            factionId,
+                            factionName,
+                            generalId: host.generalId,
+                            generalName,
+                            legionId: host.id,
+                            targetCityId: nextTarget.id,
+                            targetCityName: nextTarget.name,
+                        };
+                        this.emitChange();
+                        return;
+                    }
+                }
+            }
             // 🔴 [2026-10-23 探马主线] 玩家独自赶主线的路：同一套挂点旁白，跟着玩家本人走
             if (this.soloJourney) this.updateSegmentBriefing();
             return;
@@ -3336,6 +3465,15 @@ export class PlayerQuestSystem {
         const army = this.deps.legionManager.getLegionById(q.legionId);
         if (!army || army.isDestroyed || (army.getTroops() <= 0 && !army.getIsInCombat()) || !isGeneralOnStage(q.generalId)) {
             this.finishQuest(false);
+            return;
+        }
+        if (q.kind === 'campaign') {
+            const liveTarget = this.resolveHostAttackCity(army);
+            if (liveTarget && liveTarget.id !== q.targetCityId) {
+                q.targetCityId = liveTarget.id;
+                q.targetCityName = liveTarget.name;
+                this.emitChange();
+            }
         }
     }
 
