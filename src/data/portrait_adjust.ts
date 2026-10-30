@@ -9211,6 +9211,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 15
+        },
+        "/assets/WEI/ming_d_zhouyuji.png": {
+            "scale": 1.16,
+            "offsetX": 10,
+            "offsetY": 4
+        },
+        "/assets/MONGOL/tujue_xielikehan.png": {
+            "scale": 1.22,
+            "offsetX": 6,
+            "offsetY": 0
+        },
+        "/assets/XIANBEI/liao_d_xiaoduli.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/WEI/bfe_murongbao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 25
         }
     },
     "folderGuides": {

@@ -403,9 +403,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FIRE_GALLEY',
         commanderUnit: 'hero_tokhtamyshkhan',
         slots: [
-            { type: 'xianbei_raider', count: 3 },
+            { type: 'hei_kuang_heavy', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
-            { type: 'hei_kuang_heavy', count: 2 },
+            { type: 'xianbei_raider', count: 2 },
         ],
     },
     // ── 河朔 · 城堡时代 · 城堡时代燕云军团　（本次新建）────────────────
