@@ -52,7 +52,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ameng_jisi': 'ORIE',   // 阿蒙｜阿曼阿托｜据点 锡瓦绿洲
     'an_xibanni': 'CENTRAL_ASIA',   // 乌兹别克｜昔班尼｜据点 布哈拉
     'anmei_yuwandaqin': 'JAPAN',   // 琉球｜与湾大亲｜据点 赤木名城
-    'ansxi_aershake': 'PERSIAN',   // 安息帝国｜阿尔沙克｜据点 尼萨
+    'ansxi_aershake': 'CENTRAL_ASIA',   // 安息帝国｜阿尔沙克｜据点 尼萨
     'anushidgin_yile': 'CENTRAL_ASIA',   // 伊勒巴斯｜伊勒｜据点 希瓦
     'anxi_guoxin': 'WESTERN',   // 安西｜郭昕｜据点 拨换城
     'aola_menglielun': 'NORTHEAST',   // 达斡尔｜孟烈伦｜据点 雅克萨
@@ -124,7 +124,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_kalinga_king': 'INDIA',   // 羯陵伽｜婆摩｜据点 丹塔普拉
     'bfe_li_song': 'CENTRAL',   // 唐国｜李松｜据点 长安
     'bfe_ma_heluo': 'CENTRAL',   // 唐国｜马何罗｜据点 长安
-    'bfe_meherdates': 'PERSIAN',   // 安息帝国｜梅哈尔达特｜据点 尼萨
+    'bfe_meherdates': 'CENTRAL_ASIA',   // 安息帝国｜梅哈尔达特｜据点 尼萨
     'bfe_muzaffar_shah': 'GURJARAS',   // 古吉拉特｜穆扎法尔三世｜据点 艾哈迈达巴德
     'bfe_ngo_nhat_khanh': 'VIETNAMESE',   // 大瞿越｜吴日庆｜据点 华闾
     'bfe_nikephoros_ii': 'BYZANTINE',   // 拜占庭｜尼基弗鲁斯二世｜据点 君士坦丁堡
@@ -214,7 +214,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe3_7': 'CENTRAL',   // 唐国｜胡阳｜据点 长安
     'bfe3_70': 'JIANGNAN',   // 杨吴｜刘繇｜据点 延陵
     'bfe3_71': 'CENTRAL',   // 商国｜袁绍｜据点 安阳
-    'bfe3_73': 'PERSIAN',   // 安息帝国｜阿尔达班四世｜据点 尼萨
+    'bfe3_73': 'CENTRAL_ASIA',   // 安息帝国｜阿尔达班四世｜据点 尼萨
     'bfe3_74': 'XIANBEI',   // 大元｜轲比能｜据点 兴和城
     'bfe3_75': 'JIANGNAN',   // 隆武｜刘胄｜据点 建宁
     'bfe3_76': 'CENTRAL',   // 武周｜曹爽｜据点 洛阳
@@ -1589,7 +1589,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tang_qikerang': 'CENTRAL',   // 首战敌将｜据点 city_tongguan
     'xiongnu_hunxiewang': 'XIANBEI',   // 首战敌将｜据点 city_wuwei
     'khon_wangzun': 'TIBET',   // 首战敌将｜据点 city_sajia
-    'ansxi_surena': 'PERSIAN',   // 首战敌将｜据点 city_nisa
+    'ansxi_surena': 'CENTRAL_ASIA',   // 首战敌将｜据点 city_nisa
     'litaowan_algirdas': 'LITHUANIANS',   // 首战敌将｜据点 city_weierniwusi
     'dulan_muzaffarkhan': 'PURU',   // 首战敌将｜据点 city_malisi
     'qin_hengyi': 'CENTRAL',   // 首战敌将｜据点 city_changan

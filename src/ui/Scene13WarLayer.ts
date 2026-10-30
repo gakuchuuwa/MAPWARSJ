@@ -197,10 +197,10 @@ export function pickCycleSkill(
     return undefined;
 }
 
-/** 镜头盯的兵阵亡后原地停留秒数 */
-const CAM_HOLD_SEC = 1.2;
+/** 任何镜头切换的保底停留秒数（防频繁切镜头） */
+const CAM_HOLD_SEC = 4.5;
 /** 放计后镜头先看计策落点的秒数，看完回到跟随目标（玩家） */
-const SKILL_CAM_SEC = 4;
+const SKILL_CAM_SEC = 4.5;
 
 export class Scene13WarLayer {
     /** [2026-09-20 主人定稿] 关隘城门大山配置（未指定 asset/northAsset 时默认从 11 种大山随机抽取，支持两山夹一关） */
@@ -333,6 +333,8 @@ export class Scene13WarLayer {
      * 玩家守城放计时登记落点；[2026-10-27] 只在六档完全无跟随目标时兜底展示，不再抢占六档镜头。
      */
     private skillCamTimer = 0;
+    /** 镜头刚切回跟随目标或刚换锁新目标后的 4.5 秒保底计时（期间不响应新技能切镜） */
+    private camSwitchLockTimer = 0;
     /** 镜头锁定的本方兵（主将队员或普通兵）；活着就一直跟他，见 pickCamTarget */
     private camWatchMan: WarMan | null = null;
     /** 盯的兵阵亡后，镜头原地停留的剩余秒数（停完才挑下一个，避免兵死太快时连续换镜头） */
@@ -341,6 +343,9 @@ export class Scene13WarLayer {
     private camTier = -1;
     private skillCamX = 0;
     private skillCamY = 0;
+    private lastCamFocusX = 0;
+    private lastCamFocusY = 0;
+    private hasLastCamFocus = false;
     /** 八方向行军前进单位向量（两军对冲） */
     advanceVec: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 1, y: 0 }, { x: -1, y: 0 }];
     /** 八方向行军侧翼单位向量 */
@@ -1137,13 +1142,6 @@ export class Scene13WarLayer {
         const [camX, camY] = ambushPts.length > 0
             ? [ambushPts.reduce((a, p) => a + p.x, 0) / ambushPts.length, ambushPts.reduce((a, p) => a + p.y, 0) / ambushPts.length]
             : this.sideFrontCentroid(six === 'hunzhan' || six === 'baizhan' || six === 'bingzhan' ? ef : f);
-        const hm = this.heroMan;
-        if (this.useGroundGL && hm && hm.hp > 0 && hm.f === 1 && !hm.foe
-            && this.battleType === 'siege' && !!this.deCity && this.insideRing(hm.x, hm.y)) {
-            this.skillCamTimer = SKILL_CAM_SEC;
-            this.skillCamX = camX;
-            this.skillCamY = camY;
-        }
         // 放计计数：我放了一计（对方据此回应）；我这一计同时算回应了对方此前所有的计
         this.skillCastSeq[f]++;
         this.skillAnsweredSeq[f] = this.skillCastSeq[ef];
@@ -1337,12 +1335,22 @@ export class Scene13WarLayer {
         }
         let vfxX = scopedControl !== null ? refX : camX;
         let vfxY = scopedControl !== null ? refY : camY;
-        if ((six === 'bingzhan' || six === 'baizhan') && vfxTargets.length > 0) {
-            let tx = 0, ty = 0;
-            for (const m of vfxTargets) { tx += m.x; ty += m.y; }
-            vfxX = tx / vfxTargets.length;
-            vfxY = ty / vfxTargets.length;
-            if (this.skillCamTimer > 0) {
+        if (vfxTargets.length > 0) {
+            let tx = 0, ty = 0, tn = 0;
+            for (const m of vfxTargets) {
+                if (m.siegeW) continue;
+                tx += m.x; ty += m.y; tn++;
+            }
+            if (tn > 0) {
+                vfxX = tx / tn;
+                vfxY = ty / tn;
+            }
+        }
+        if (this.useGroundGL && this.userInteractingTimer <= 0 && (viewer !== null || this.camSwitchLockTimer <= 0)) {
+            const hm = this.heroMan;
+            const nearHero = scopedControl !== null && hm && hm.hp > 0 && Math.hypot(vfxX - hm.x, vfxY - hm.y) < 150;
+            if (!nearHero) {
+                this.skillCamTimer = SKILL_CAM_SEC;
                 this.skillCamX = vfxX;
                 this.skillCamY = vfxY;
             }
@@ -1409,7 +1417,19 @@ export class Scene13WarLayer {
         this.playerLiveSkillTimer = tier.durationSec;
         this.playerLiveSkillCooldown = tier.durationSec + tier.restSec;
         if (this.advanceVec?.[this.playerSetup.side]) {
-            this.spawnSkillVfx(this.playerSetup.side, 'gongzhan', m.x ?? 0, m.y ?? 0, true, affected, []);
+            let vx = m.x ?? 0, vy = m.y ?? 0;
+            if (affected.length > 0) {
+                let sx = 0, sy = 0;
+                for (const u of affected) { sx += u.x; sy += u.y; }
+                vx = sx / affected.length;
+                vy = sy / affected.length;
+            }
+            if (this.useGroundGL && this.userInteractingTimer <= 0 && !(m && m.hp > 0 && Math.hypot(vx - m.x, vy - m.y) < 150)) {
+                this.skillCamTimer = SKILL_CAM_SEC;
+                this.skillCamX = vx;
+                this.skillCamY = vy;
+            }
+            this.spawnSkillVfx(this.playerSetup.side, 'gongzhan', vx, vy, true, affected, []);
         }
         return 'cast';
     }
@@ -1869,7 +1889,9 @@ export class Scene13WarLayer {
         }
         if (bestTier === 6) { this.resetCamFollow(); return null; }
 
+        const switched = this.deployT <= 0 && this.battleSec > 0.5;
         this.camTier = bestTier;
+        if (switched) this.camSwitchLockTimer = CAM_HOLD_SEC;
         if (isHeroTier(bestTier)) { this.camWatchMan = null; return hero; }
         const cx = this.worldCX - this.tacticalPanX / this.tacticalZoom;
         const cy = this.worldCY - this.tacticalPanY / this.tacticalZoom;
@@ -1900,14 +1922,11 @@ export class Scene13WarLayer {
         //    原来 hero.foe 为真时每帧清零，拖开的镜头立刻被拉回，交战中根本没法看图。现在拖拽后照样停留 9 秒；
         //    当前盯的人阵亡仍立即恢复跟随。
         if (targetLost) {
-            this.skillCamTimer = 0;
-            this.userInteractingTimer = 0;
-            // 盯的是兵且阵亡：镜头先停在原地一会儿再挑下一个，兵连着倒也不会每帧跳镜头。盯玩家倒下不停（照旧立刻换）。
-            if (!watchingHero) {
-                this.camHoldT = CAM_HOLD_SEC;
-                this.camWatchMan = null;
-                this.camTier = -1;
-            }
+            // 盯的目标（含玩家或士兵）阵亡：原地保底停留 CAM_HOLD_SEC（4.5 秒）再换下一个目标，防止连续切镜头。
+            this.camHoldT = CAM_HOLD_SEC;
+            this.camWatchMan = null;
+            this.camTier = -1;
+            if (this.deployT <= 0) this.camSwitchLockTimer = CAM_HOLD_SEC;
         }
         if (this.camHoldT > 0) {
             this.camHoldT -= dt;
@@ -2034,7 +2053,10 @@ export class Scene13WarLayer {
         const onMove = (e: MouseEvent) => {
             if (!dragging) return;
             // 🔴 [2026-10-26 主人令「单击不算手动操作，拖动才算」] 按下后挪出 4 像素才算拖动，才暂停自动跟随 9 秒
-            if (this.userInteractingTimer > 0 || Math.hypot(e.clientX - downX, e.clientY - downY) > 4) this.userInteractingTimer = 9.0;
+            if (this.userInteractingTimer > 0 || Math.hypot(e.clientX - downX, e.clientY - downY) > 4) {
+                this.userInteractingTimer = 9.0;
+                this.skillCamTimer = 0;
+            }
             this.tacticalPanX += e.clientX - lastX;
             this.tacticalPanY += e.clientY - lastY;
             lastX = e.clientX; lastY = e.clientY;
@@ -2219,7 +2241,7 @@ export class Scene13WarLayer {
         // start 后素材加载期 pending>0 → tick 不 render，会把上一场最后一帧（含尸体）亮出来。
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.tacticalZoom = 1.0;
-        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0;
+        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0; this.camSwitchLockTimer = 0; this.hasLastCamFocus = false; this.hasLastCamFocus = false; this.camSwitchLockTimer = 0;
         this.resetCamFollow();
         this.useGroundGL = false;
         if (this.glCanvas) this.glCanvas.style.display = 'none';
@@ -8501,14 +8523,32 @@ export class Scene13WarLayer {
             if (this.heroMan) {
                 // 每帧先仲裁六档目标，即使手动停留也继续处理阵亡顺延与玩家交战打断。
                 const tm = this.resolveHeroCamTarget(this.heroMan, dt);
-                if (tm) { targetFocusX = tm.x; targetFocusY = tm.y; count = 1; }
+                if (tm) {
+                    targetFocusX = tm.x;
+                    targetFocusY = tm.y;
+                    this.lastCamFocusX = tm.x;
+                    this.lastCamFocusY = tm.y;
+                    this.hasLastCamFocus = true;
+                    count = 1;
+                } else if (this.camHoldT > 0 && this.hasLastCamFocus) {
+                    // 目标半路阵亡处于 4.5 秒保底停留期：继续滑完到该目标倒下的最后位置并稳住，防止半路急刹停在空地上
+                    targetFocusX = this.lastCamFocusX;
+                    targetFocusY = this.lastCamFocusY;
+                    count = 1;
+                }
+            }
+            if (this.camSwitchLockTimer > 0) {
+                this.camSwitchLockTimer = Math.max(0, this.camSwitchLockTimer - dt);
             }
             if (this.userInteractingTimer > 0) {
                 this.userInteractingTimer -= dt;
             } else {
                 if (this.skillCamTimer > 0) {
-                    // 放计后先看计策落点 SKILL_CAM_SEC 秒（优先于六档跟随），看完回到跟随目标。
+                    // 放计后先看计策落点 SKILL_CAM_SEC 秒（优先于六档跟随），看完回到跟随目标并进入 4.5 秒保底锁定。
                     this.skillCamTimer -= dt;
+                    if (this.skillCamTimer <= 0) {
+                        this.camSwitchLockTimer = CAM_HOLD_SEC;
+                    }
                     targetFocusX = this.skillCamX;
                     targetFocusY = this.skillCamY;
                     count = 1;
@@ -8543,7 +8583,8 @@ export class Scene13WarLayer {
                 if (count > 0) {
                     const desiredPanX = (this.worldCX - targetFocusX) * this.tacticalZoom;
                     const desiredPanY = (this.worldCY - targetFocusY) * this.tacticalZoom;
-                    const smooth = Math.min(1.0, 1.5 * dt);
+                    const camSpeed = this.skillCamTimer > 0 ? 4.5 : 1.5;
+                    const smooth = Math.min(1.0, camSpeed * dt);
                     this.tacticalPanX += (desiredPanX - this.tacticalPanX) * smooth;
                     this.tacticalPanY += (desiredPanY - this.tacticalPanY) * smooth;
                     this.clampTacticalPan();

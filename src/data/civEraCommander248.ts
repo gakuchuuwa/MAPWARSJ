@@ -94,7 +94,7 @@ const STYLE_KEY_TO_CIV: Readonly<Record<string, string>> = {
     GERMANIC: '条顿', FRANKS: '法兰克', BURGUNDIANS: '勃艮第', BRITONS: '不列颠', CELTS: '凯尔特', VIKINGS: '维京', GOTHS: '哥特',
     BYZANTINE: '拜占庭', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚', POLES: '波兰', BOHEMIANS: '波希米亚', MAGYAR: '马扎尔', SLAVIC: '斯拉夫', LITHUANIANS: '立陶宛', BULGARIANS: '保加利亚',
     LATIN: '意大利', ROMA: '罗马', SICILIANS: '西西里', SPANISH: '西班牙', PORTUGUESE: '葡萄牙', ORIE: '撒拉森',
-    HUNS: '匈人', CUMAN: '库曼', TURKS: '安纳托利亚', CENTRAL_ASIA: '鞑靼', INDIA: '达罗毗荼', MUGHAL: '印度斯坦', BENGALIS: '孟加拉', GURJARAS: '瞿折罗', PURU: '普鲁',
+    HUNS: '匈人', CUMAN: '库曼', TURKS: '安纳托利亚', CENTRAL_ASIA: '中亚', INDIA: '达罗毗荼', MUGHAL: '印度斯坦', BENGALIS: '孟加拉', GURJARAS: '瞿折罗', PURU: '普鲁',
     KHMER: '高棉', BURMESE: '缅甸', VIETNAMESE: '越南', MALAY: '马来', MAYANS: '玛雅', AMERICA: '阿兹特克', INCA: '印加', MUISCA: '穆伊斯卡', MAPUCHE: '马普切', TUPI: '图皮',
     BERBER: '柏柏尔', AFRICA: '马里', ETHIOPIANS: '埃塞俄比亚', SASANIAN: '波斯',
     SAXONS: '撒克逊', VARANGIANS: '瓦良格', DANES: '丹麦',

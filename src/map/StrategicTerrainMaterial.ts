@@ -1,4 +1,4 @@
-import { queryBaseTile, refineBaseTileWithBuildingStyle, setWorldBaseData } from '../ui/scene13/WorldBaseMap';
+import { queryBaseTile, queryWinterSnow, refineBaseTileWithBuildingStyle, setWorldBaseData } from '../ui/scene13/WorldBaseMap';
 
 type Bounds = { north: number; south: number; west: number; east: number };
 export type MaterialNode = ReadonlyArray<{ pixels: Uint8ClampedArray; weight: number }>;
@@ -99,6 +99,27 @@ export function sampleClimateMaterials(
         if (name && weight > 0) result.set(name, (result.get(name) ?? 0) + weight);
     }
     return result;
+}
+
+/** 在全球气候像素中心之间连续插值冬季降雪分区权重（与战术 queryWinterSnow 同源，跨瓦片无接缝）。 */
+export function sampleWinterWeights(
+    lat: number, lng: number, width: number, height: number,
+): { snow: number; deep: number; sparse: number } {
+    const px = (lng + 180) / 360 * width - 0.5;
+    const py = (90 - lat) / 180 * height - 0.5;
+    const x0 = Math.floor(px), y0 = Math.floor(py);
+    const fx = px - x0, fy = py - y0;
+    let snow = 0, deep = 0, sparse = 0;
+    for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) {
+        const x = ((x0 + dx) % width + width) % width;
+        const y = Math.max(0, Math.min(height - 1, y0 + dy));
+        const wf = queryWinterSnow(90 - (y + 0.5) / height * 180, (x + 0.5) / width * 360 - 180);
+        const weight = (dx ? fx : 1 - fx) * (dy ? fy : 1 - fy);
+        if (wf === 1 || wf === 2 || wf === 3) snow += weight;
+        if (wf === 2) deep += weight;
+        if (wf === 4) sparse += weight;
+    }
+    return { snow, deep, sparse };
 }
 
 /** 连续、确定的地理噪声；共享经纬度取相同值，不以瓦片为单位重复。 */
@@ -352,8 +373,8 @@ export function materialOriginForTile(z: number, x: number, y: number): Material
 export const TERRAIN_RULE_TEXTURES = [
     'rck', 'rock_wet', 'gravel_wet',          // 坡面岩石：干岩 / 湿岩 / 湿碎石（寒冷海岸）
     'bch', 'bc2', 'beach_wet',                // 海岸：热带白沙 / 温带沙滩 / 湿沙
-    'sno', 'snf', 'snd',                      // 雪线以上积雪 / 雪线附近残雪（带土、带沙）
-    'ice', 'ic2',                             // 极地海冰
+    'sno', 'sn2', 'snf', 'snd',               // 雪线以上积雪 / 冬季深雪 / 雪林 / 雪线附近残雪（带土、带沙）
+    'ice', 'ic2',                             // 极地海冰与冬季冰封河湖
     'wt4', 'wt2', 'wtr', 'wt3', 'wt5',        // 海水：深海 → 近海 → 热带浅海
     'sha',                                    // 热带浅海礁
     'des', 'pm2',                             // 橙色沙漠 / 橙褐荒漠
@@ -501,6 +522,12 @@ export type TerrainMaterial = {
     /** 逐像素干旱度 0~1、沙地程度 0~1（由气候贴图分类插值；无气候数据处为 0.5 / 0） */
     arid: Float32Array;
     sand: Float32Array;
+    /** 冬季真实积雪区权重 0~1（winterFlag ∈ {1,2,3} 双线性插值，跨瓦片连续） */
+    winterSnow?: Float32Array;
+    /** 冬季极寒深雪区权重 0~1（winterFlag === 2 双线性插值） */
+    winterDeep?: Float32Array;
+    /** 冬季零星残雪过渡带权重 0~1（winterFlag === 4 双线性插值） */
+    winterSparse?: Float32Array;
     /** 每个像素在「A / B 两套地理取样」里的纹素字节下标，及两套交替权重；规则贴图共用 */
     tapA: Int32Array;
     tapB: Int32Array;
@@ -575,6 +602,9 @@ export async function createTerrainMaterial(
     const northY = Math.asinh(Math.tan(bounds.north * Math.PI / 180));
     const southY = Math.asinh(Math.tan(bounds.south * Math.PI / 180));
     const nodes: Map<string, number>[] = [];
+    const nodeWinterSnow: number[] = [];
+    const nodeWinterDeep: number[] = [];
+    const nodeWinterSparse: number[] = [];
     for (let y = 0; y < rows; y++) {
         const lat = Math.atan(Math.sinh(northY + (southY - northY) * y * STEP / height)) * 180 / Math.PI;
         for (let x = 0; x < columns; x++) {
@@ -582,6 +612,10 @@ export async function createTerrainMaterial(
             const climate = sampleClimateMaterials(lat, lng, worldWidth, worldHeight,
                 (sampleLat, sampleLng) => queryBaseTile({ lat: sampleLat, lng: sampleLng, isSiege: false, isWinter: false }));
             nodes.push(varyTemperateMaterials(climate, lat, lng));
+            const ww = sampleWinterWeights(lat, lng, worldWidth, worldHeight);
+            nodeWinterSnow.push(ww.snow);
+            nodeWinterDeep.push(ww.deep);
+            nodeWinterSparse.push(ww.sparse);
         }
     }
     const assets = new Map<string, Uint8ClampedArray | null>();
@@ -596,8 +630,21 @@ export async function createTerrainMaterial(
     const climate = blendMaterialGrid(grid, columns, width, height, origin);
     const nodeArid = nodes.map(node => classOf(node, 'arid', 0.5));
     const nodeSand = nodes.map(node => classOf(node, 'sand', 0));
-    return assembleTerrainMaterial(climate, assets, width, height, origin,
-        interpolateNodes(nodeArid, columns, width, height), interpolateNodes(nodeSand, columns, width, height));
+    const hasSnow = nodeWinterSnow.some(v => v > 0.002);
+    const hasDeep = nodeWinterDeep.some(v => v > 0.002);
+    const hasSparse = nodeWinterSparse.some(v => v > 0.002);
+    return assembleTerrainMaterial(
+        climate,
+        assets,
+        width,
+        height,
+        origin,
+        interpolateNodes(nodeArid, columns, width, height),
+        interpolateNodes(nodeSand, columns, width, height),
+        hasSnow ? interpolateNodes(nodeWinterSnow, columns, width, height) : undefined,
+        hasDeep ? interpolateNodes(nodeWinterDeep, columns, width, height) : undefined,
+        hasSparse ? interpolateNodes(nodeWinterSparse, columns, width, height) : undefined,
+    );
 }
 
 function classOf(node: Map<string, number>, key: 'arid' | 'sand', fallback: number): number {
@@ -628,6 +675,9 @@ export function assembleTerrainMaterial(
     width: number, height: number, origin: MaterialOrigin,
     arid: Float32Array = new Float32Array(width * height).fill(0.5),
     sand: Float32Array = new Float32Array(width * height),
+    winterSnow?: Float32Array,
+    winterDeep?: Float32Array,
+    winterSparse?: Float32Array,
 ): TerrainMaterial {
     const { tapA, tapB, bomb, patch, level } = buildTaps(width, height, origin);
     const tex: TerrainMaterial['tex'] = {};
@@ -635,5 +685,5 @@ export function assembleTerrainMaterial(
         const pixels = assets.get(name);
         if (pixels) tex[name] = mipsOf(pixels)[level];
     }
-    return { climate, arid, sand, tapA, tapB, bomb, patch, tex };
+    return { climate, arid, sand, winterSnow, winterDeep, winterSparse, tapA, tapB, bomb, patch, tex };
 }

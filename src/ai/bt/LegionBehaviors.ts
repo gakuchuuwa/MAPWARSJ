@@ -303,12 +303,20 @@ function resolveHuntHomeCity(
     lastDrawCityId: string | undefined,
 ) {
     const myFaction = ctx.army.getFactionId();
+    const originId = getArmyOriginCityId(ctx.army);
+    const myStyle = getGeneralCulture(ctx.army.generalId) ?? (originId ? ctx.cityManager.getCity(originId)?.buildingStyle : undefined);
+    const hasUnunifiedSameCulture = !!myStyle && ctx.cityManager.getCities().some(
+        (c: { id: string; factionId?: string; buildingStyle?: string }) =>
+            c.factionId !== myFaction && c.buildingStyle === myStyle && !excludeTargetIds.has(c.id) && c.id !== lastDrawCityId,
+    );
     const ePos = enemy.getPosition();
     const candidates = [getArmyOriginCityId(enemy), roadRegistry.getNearestCityId(ePos.lat, ePos.lng)];
     for (const id of candidates) {
         if (!id || id === lastDrawCityId || excludeTargetIds.has(id)) continue;
         const city = ctx.cityManager.getCity(id);
-        if (city && city.factionId !== myFaction) return city;
+        if (!city || city.factionId === myFaction) continue;
+        if (hasUnunifiedSameCulture && city.buildingStyle !== myStyle) continue;
+        return city;
     }
     return null;
 }

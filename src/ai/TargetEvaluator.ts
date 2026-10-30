@@ -93,10 +93,31 @@ export class TargetEvaluator {
         );
         if (reachable.length === 0) return null;
 
-        let pool = TargetEvaluator.buildDirectionalPool(anchorCityId, reachable, homeCityId, cities);
+        const cityById = new Map(cities.map((c) => [c.id, c]));
+        const cap = options?.myTroops && options.myTroops > 0
+            ? options.myTroops * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO
+            : Infinity;
+
+        // 🔴 [2026-10-27 / 2026-10-30 主人定「先打统一一个文化的，再往外打」「应该先打同一个文化的」]
+        //    同文化优先必须在建方向池与路径过滤（standCityId / noHomePass）之前生效：
+        //    只要路网上还有本文化（myBuildingStyle）的敌方据点未统一，候选全集就锁定在本文化据点内
+        //    （优先打得过的同文化据点；即使需要跨过老家换方向，也先扫清本文化内部），全部统一后才对外扩张。
+        const myStyle = options?.myBuildingStyle;
+        let workingReachable = reachable;
+        if (myStyle) {
+            const sameCultureAll = reachable.filter((s) => cityById.get(s.targetId)?.buildingStyle === myStyle);
+            if (sameCultureAll.length > 0) {
+                const sameCultureBeatable = sameCultureAll.filter(
+                    (s) => (cityById.get(s.targetId)?.troops ?? 0) <= cap
+                );
+                workingReachable = sameCultureBeatable.length > 0 ? sameCultureBeatable : sameCultureAll;
+            }
+        }
+
+        let pool = TargetEvaluator.buildDirectionalPool(anchorCityId, workingReachable, homeCityId, cities);
         if (pool.length === 0) {
             const poolSize = Math.max(1, GameConfig.AI.TARGET_NEAR_POOL);
-            pool = reachable.slice(0, Math.min(poolSize, reachable.length));
+            pool = workingReachable.slice(0, Math.min(poolSize, workingReachable.length));
         }
 
         // 刚打平某城：优先避开最短路径仍需穿过该城的方向（换一条路进攻）
@@ -155,32 +176,20 @@ export class TargetEvaluator {
 
         // 「打不打得过」闸门（2026-08-12 主人批准）：把明显啃不动的城从抽签池里摘掉。
         // 放在同文化与叛军筛选之前，保证后续优先池仍是可攻击目标；筛空自动回落，避免军团停住。
-        if (options?.myTroops && options.myTroops > 0) {
-            const cap = options.myTroops * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO;
-            const troopsById = new Map(cities.map((c) => [c.id, c.troops ?? 0]));
-            const beatable = pool.filter((s) => (troopsById.get(s.targetId) ?? 0) <= cap);
+        if (cap < Infinity && pool.length > 1) {
+            const beatable = pool.filter((s) => (cityById.get(s.targetId)?.troops ?? 0) <= cap);
             if (beatable.length > 0) pool = beatable;
         }
 
-        // 🔴 [2026-10-21 主人令] 优先攻打同建筑文化风格的据点：只在方向池（各条直连路最近的一座敌城）里挑，
-        //    且道路距离 ≤ 池内最近者 ×1.5（不绕远）；池里没有同文化的 → 保留整池进入下一级叛军筛选。
-        const myStyle = options?.myBuildingStyle;
-        if (myStyle && pool.length > 1) {
-            const styleById = new Map(cities.map((c) => [c.id, c.buildingStyle]));
+        // 方向池内不绕远约束：保留距离 ≤ 池内最近者 ×1.5 的一档，避免某条分支已推到几百公里外仍与近处分支等概率平分
+        if (pool.length > 1) {
             const minKm = Math.min(...pool.map((s) => s.distanceKm));
-            const sameCulture = pool.filter((s) =>
-                styleById.get(s.targetId) === myStyle && s.distanceKm <= minKm * 1.5);
-            if (sameCulture.length > 0) pool = sameCulture;
+            const nearPool = pool.filter((s) => s.distanceKm <= minKm * 1.5);
+            if (nearPool.length > 0) pool = nearPool;
         }
 
-        // 🔴 [2026-10-27 主人定「先打统一一个文化的，再往外打」] 同文化筛选先于叛军：
-        //    有异文化叛军时，仍先整合同文化区域；当前候选池没有同文化目标时，才优先打得动的叛军。
-        //    叛军仍只限 panshu 无主状态，不包括各有真实政权的历史起义首领；啃不动的叛军不优先。
+        // 同文化筛选先于叛军：在当前候选池（同文化未统一时已是同文化池）里优先打得动的无主叛军（panshu）
         if (pool.length > 1) {
-            const cap = options?.myTroops && options.myTroops > 0
-                ? options.myTroops * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO
-                : Infinity;
-            const cityById = new Map(cities.map((c) => [c.id, c]));
             const rebelPool = pool.filter((s) => {
                 const c = cityById.get(s.targetId);
                 return isBlankRebelFaction(c?.factionId) && (c?.troops ?? 0) <= cap;

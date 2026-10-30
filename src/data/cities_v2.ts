@@ -3658,7 +3658,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_buersa', name: '布尔萨', factionId: 'osman', lat: 40.18, lng: 29.06, type: 'medium_city', troops: 10000, region: 'OTTOMAN', buildingStyle: 'TURKS', note: '奥斯曼帝国第一都城（1326–1363）；苏丹亲兵耶尼切里军团大本营。定级按史 Chandler：1400 年 9.5 万、1450 年 13 万 → 中城（2026-10-25）；按 2026-10-25 标准：城居 9.5–13 → 中城' },
     { id: 'city_yashucheng', name: '亚述城', factionId: 'yashu', lat: 35.46, lng: 43.26, type: 'small_city', troops: 10000, region: 'ASSYRIAN', buildingStyle: 'ORIE' , note: '推算：城居 3 万（亚述城，亚述帝国旧都，同期都城 2–4 万）→ 小城' },
 
-    { id: 'city_nisa', name: '尼萨', factionId: 'ansxi', lat: 37.9, lng: 58.2, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '安息（帕提亚）帝国第一个首都与皇家陵园，UNESCO世界遗产；推算：城居 1 万（尼萨，帕提亚早期首都，同期 1 万上下）→ 小城' },
+    { id: 'city_nisa', name: '尼萨', factionId: 'ansxi', lat: 37.9, lng: 58.2, type: 'small_city', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-10-30 主人令] 尼萨在科佩特山北麓（今土库曼斯坦阿什哈巴德附近），属中亚，安息起家于帕尼游牧部 → 文化由 PERSIAN 改为中亚 CENTRAL_ASIA；安息（帕提亚）帝国第一个首都与皇家陵园，UNESCO世界遗产；推算：城居 1 万（尼萨，帕提亚早期首都，同期 1 万上下）→ 小城' },
     { id: 'city_peitra', name: '佩特拉', factionId: 'nabatai', lat: 30.3, lng: 35.4, type: 'small_city', troops: 10000, region: 'NABATAEANS', buildingStyle: 'ORIE', note: '纳巴泰王国玫瑰红岩凿都城，红海香料商路要津，世界七大奇迹；按 2026-10-25 标准：城居 2–3 → 小城' },
     // 🔴 [2026-10-25 主人令「全面修复」印度据点文化] 拉合尔＝锡克帝国首都（旁遮普）→ PURU（五河/帝国旁遮普）；原标 INDIA
     { id: 'city_laheer', name: '拉合尔', factionId: 'xike', lat: 31.55, lng: 74.35, type: 'medium_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '锡克帝国首都，兰季特·辛格"拉合尔之狮"，统一旁遮普；按 2026-10-25 标准：城居 25–35 → 中城' },

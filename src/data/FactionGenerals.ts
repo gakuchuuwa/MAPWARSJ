@@ -15040,8 +15040,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     ansxi: [
-        { generalId: 'ansxi_surena', factionId: 'ansxi', cityId: 'city_nisa', generalName: '苏莱纳', portrait: '/assets/PERSIAN/ansxi_surena.png' },   // 🔴 [2026-10-25 按史] 首战敌将；苏林家族主帅，前53 卡莱全歼罗马军；四闸齐备（亲统、大胜、战区级、敌帅克拉苏实名）判名将；据点尼萨（PERSIAN，安息旧都）；用势力精锐帕提亚铁骑
-        { generalId: 'bfe_meherdates', cityId: 'city_nisa', generalName: '梅哈尔达特', portrait: '/assets/PERSIAN/bfe_meherdates.png', legionName: '古典时代阿契美尼德军团' },
+        { generalId: 'ansxi_surena', factionId: 'ansxi', cityId: 'city_nisa', generalName: '苏莱纳', portrait: '/assets/PERSIAN/ansxi_surena.png' },   // 🔴 [2026-10-25 按史] 首战敌将；苏林家族主帅，前53 卡莱全歼罗马军；四闸齐备（亲统、大胜、战区级、敌帅克拉苏实名）判名将；据点尼萨（中亚 CENTRAL_ASIA，安息旧都）；用势力精锐帕提亚铁骑
+        { generalId: 'bfe_meherdates', cityId: 'city_nisa', generalName: '梅哈尔达特', portrait: '/assets/PERSIAN/bfe_meherdates.png', legionName: '古典时代粟特军团' },
 
 
 
@@ -15065,7 +15065,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_73', cityId: 'city_nisa', generalName: '阿尔达班四世', portrait: '/assets/PERSIAN/bfe3_73.png', legionName: '古典时代阿契美尼德军团' , eliteName: '安息铁骑', eliteTier: 3},
+        { generalId: 'bfe3_73', cityId: 'city_nisa', generalName: '阿尔达班四世', portrait: '/assets/PERSIAN/bfe3_73.png', legionName: '古典时代粟特军团' , eliteName: '安息铁骑', eliteTier: 3},
 
 
 

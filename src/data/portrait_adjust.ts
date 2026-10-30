@@ -9146,6 +9146,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 12
+        },
+        "/assets/ROMA/bfe_crassus.png": {
+            "scale": 0.9,
+            "offsetX": 5,
+            "offsetY": 13
         }
     },
     "folderGuides": {

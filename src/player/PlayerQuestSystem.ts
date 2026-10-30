@@ -1741,49 +1741,62 @@ export class PlayerQuestSystem {
         gameLog('expedition', `[玩家] 赶路军团 ${host.name} 归队解散（战场改用史实军团）`);
     }
 
-    /** 沿路网 BFS 最近敌城（跳数优先，同跳取直线最近）；找不到就全图可达直线最近敌城 */
+    /** 沿路网优先选同建筑文化敌城（先统一本文化内部，全部统一后再对外），同档按跳数与距离由近到远 */
     private pickCampaignTarget(city: City, myFactionId?: string): City | null {
         const faction = myFactionId ?? city.factionId;
+        const myStyle = city.buildingStyle;
         // 🔴 [2026-10-29 主人报「据点还是蜀国，姜维却可以无限穿插」] 首战打完以战场旁的据点为起点找下一个目标，
         //    起点本身若是敌城（洮西之战后的武都＝魏城、四周全是蜀城），原来会把它排除在外、往远处找，
         //    军团就绕过眼前的敌城在己方境内穿行。起点是敌城就先打它。
         if (city.factionId && city.factionId !== faction) return city;
-        const seen = new Set<string>([city.id]);
-        let frontier: City[] = [city];
-        for (let hop = 1; hop <= PLAYER_QUEST_TARGET_MAX_HOPS; hop++) {
-            const next: City[] = [];
-            for (const c of frontier) {
-                for (const n of this.deps.cityManager.getConnectedCities(c.id)) {
-                    if (seen.has(n.id)) continue;
-                    seen.add(n.id);
-                    next.push(n);
+
+        const searchByCulture = (requireSameCulture: boolean): City | null => {
+            const seen = new Set<string>([city.id]);
+            let frontier: City[] = [city];
+            for (let hop = 1; hop <= PLAYER_QUEST_TARGET_MAX_HOPS; hop++) {
+                const next: City[] = [];
+                for (const c of frontier) {
+                    for (const n of this.deps.cityManager.getConnectedCities(c.id)) {
+                        if (seen.has(n.id)) continue;
+                        seen.add(n.id);
+                        next.push(n);
+                    }
+                }
+                const hostile = next.filter(
+                    (c) => c.factionId && c.factionId !== faction && (!requireSameCulture || c.buildingStyle === myStyle),
+                );
+                if (hostile.length) {
+                    hostile.sort((a, b) =>
+                        getEuclideanDistance({ lat: city.latitude, lng: city.longitude }, { lat: a.latitude, lng: a.longitude })
+                        - getEuclideanDistance({ lat: city.latitude, lng: city.longitude }, { lat: b.latitude, lng: b.longitude }));
+                    return hostile[0];
+                }
+                if (!next.length) break;
+                frontier = next;
+            }
+            let bestReachable: City | null = null;
+            let bdReachable = Infinity;
+            let bestAny: City | null = null;
+            let bdAny = Infinity;
+            const roadReady = roadRegistry.isInitialized();
+            for (const c of this.deps.cityManager.getCities()) {
+                if (!c.factionId || c.factionId === faction || c.id === city.id) continue;
+                if (requireSameCulture && c.buildingStyle !== myStyle) continue;
+                const d = getEuclideanDistance({ lat: city.latitude, lng: city.longitude }, { lat: c.latitude, lng: c.longitude });
+                if (d < bdAny) { bdAny = d; bestAny = c; }
+                if (d < bdReachable && (!roadReady || roadRegistry.findPath(city.id, c.id))) {
+                    bdReachable = d;
+                    bestReachable = c;
                 }
             }
-            const hostile = next.filter((c) => c.factionId && c.factionId !== faction);
-            if (hostile.length) {
-                hostile.sort((a, b) =>
-                    getEuclideanDistance({ lat: city.latitude, lng: city.longitude }, { lat: a.latitude, lng: a.longitude })
-                    - getEuclideanDistance({ lat: city.latitude, lng: city.longitude }, { lat: b.latitude, lng: b.longitude }));
-                return hostile[0];
-            }
-            if (!next.length) break;
-            frontier = next;
+            return bestReachable ?? (requireSameCulture ? null : bestAny);
+        };
+
+        if (myStyle) {
+            const sameCultureTarget = searchByCulture(true);
+            if (sameCultureTarget) return sameCultureTarget;
         }
-        let bestReachable: City | null = null;
-        let bdReachable = Infinity;
-        let bestAny: City | null = null;
-        let bdAny = Infinity;
-        const roadReady = roadRegistry.isInitialized();
-        for (const c of this.deps.cityManager.getCities()) {
-            if (!c.factionId || c.factionId === faction || c.id === city.id) continue;
-            const d = getEuclideanDistance({ lat: city.latitude, lng: city.longitude }, { lat: c.latitude, lng: c.longitude });
-            if (d < bdAny) { bdAny = d; bestAny = c; }
-            if (d < bdReachable && (!roadReady || roadRegistry.findPath(city.id, c.id))) {
-                bdReachable = d;
-                bestReachable = c;
-            }
-        }
-        return bestReachable ?? bestAny;
+        return searchByCulture(false);
     }
 
 

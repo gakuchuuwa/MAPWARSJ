@@ -274,7 +274,7 @@ export class GameConfig {
         /**
          * 陆地行军不减兵文化（66 文化键）：
          *   · 欧亚草原游牧核心系：MONGOL（漠北蒙古）、XIANBEI（漠南鲜卑）、HUNS（匈人）、
-         *     CUMAN（库曼）、CENTRAL_ASIA（鞑靼/中亚）、KHITAN（契丹/河西）、TURKS（突厥/奥斯曼）
+         *     CUMAN（库曼）、CENTRAL_ASIA（中亚）、KHITAN（契丹/河西）、TURKS（突厥/奥斯曼）
          *   · 东欧草原与北非大漠游牧系：MAGYAR（马扎尔）、BERBER（柏柏尔）
          */
         LAND_IMMUNE_CULTURES: [
