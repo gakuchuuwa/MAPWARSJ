@@ -247,6 +247,8 @@ export interface PlayerQuestDeps {
         getCities(): City[];
         getFactionName(id: string): string;
         getConnectedCities(cityId: string): City[];
+        updateCity(id: string, updates: Partial<City>, options?: { skipCaptureLog?: boolean }): void;
+        updateCityLabel?(id: string): void;
     };
     legionManager: {
         createLegion(
@@ -1806,6 +1808,7 @@ export class PlayerQuestSystem {
         factionId: string,
         general: { generalId: string; generalName: string; portrait: string },
         targetCityId: string,
+        skipInitialMove = false,
     ): Army | null {
         const eliteName = getCityEliteLegionName(city.id, general.generalId) ?? `${general.generalName}部`;
         // 🔴 [2026-09-10 主人定] 玩家起兵 = 势力本身的兵力（本城城防），不凭空造固定值；
@@ -1832,6 +1835,7 @@ export class PlayerQuestSystem {
         army.setTroops(troops);
         // 扣掉带走的那部分，剩下的 10% 留城当驻军（兵力守恒不变，只是不再清零）
         city.troops = Math.max(0, (city.troops || 0) - troops);
+        this.deps.cityManager.updateCityLabel?.(city.id);
         army.isElite = true;
         army.name = eliteName;
         army.homeCityId = city.id;
@@ -1840,7 +1844,9 @@ export class PlayerQuestSystem {
         if (rec?.portrait) army.portraitPath = rec.portrait;
         // 将/精随军离城：据点档位标记消耗，城防不再影分身（与募兵同口径）
         markSpawnTierConsumed(city, { general: true, elite: true });
-        this.deps.legionManager.moveLegionToCity(army, targetCityId);
+        if (!skipInitialMove) {
+            this.deps.legionManager.moveLegionToCity(army, targetCityId);
+        }
         return army;
     }
 
@@ -2107,9 +2113,14 @@ export class PlayerQuestSystem {
             host.isElite = true;
             if (!host.generalId) host.generalId = g.generalId;
         } else {
-            city.factionId = myFactionId;
+            const wasOwnCity = city.factionId === myFactionId;
+            const prevTroops = city.troops;
             city.troops = Math.max(city.troops || 0, Math.ceil(Math.max(myTroops, GameConfig.LEGION.MIN_ARMY_SIZE) / 0.9) + 1000);
-            host = this.raiseLegion(city, myFactionId, g, fb.targetCityId ?? city.id);
+            host = this.raiseLegion(city, myFactionId, g, fb.targetCityId ?? city.id, true);
+            if (!wasOwnCity) {
+                city.troops = prevTroops;
+                this.deps.cityManager.updateCityLabel?.(city.id);
+            }
             if (host) host.setTroops(myTroops);
         }
 
@@ -2176,9 +2187,8 @@ export class PlayerQuestSystem {
             (host as Army & { forceFirstBattleField?: boolean }).forceFirstBattleField = true;
         } else if (role === 'defender') {
             const defendedCity = targetCity ?? city;
-            defendedCity.factionId = myFactionId;
             const cityGarrison = Math.min(1000, Math.max(1, Math.floor(myTroops * 0.1)));
-            defendedCity.troops = cityGarrison;
+            this.deps.cityManager.updateCity(defendedCity.id, { factionId: myFactionId, troops: cityGarrison }, { skipCaptureLog: true });
             host.setTroops(Math.max(1, myTroops - cityGarrison));
             (defendedCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
             if (isOnTheSpot) {
@@ -2220,10 +2230,8 @@ export class PlayerQuestSystem {
                 enemyArmyId = enemyArmy.id;
             }
         } else if (targetCity) {
-            if (targetCity.factionId === myFactionId) {
-                targetCity.factionId = enemyFactionId;
-            }
-            targetCity.troops = enemyTroops;
+            const nextEnemyFaction = targetCity.factionId === myFactionId ? enemyFactionId : targetCity.factionId;
+            this.deps.cityManager.updateCity(targetCity.id, { factionId: nextEnemyFaction, troops: enemyTroops }, { skipCaptureLog: true });
             if (enemyGeneralId) {
                 (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = enemyGeneralId;
             }
@@ -2351,9 +2359,8 @@ export class PlayerQuestSystem {
             const defendedCity = this.deps.cityManager.getCity(fbState.targetCityId);
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
             if (defendedCity && enemyArmy && !enemyArmy.isDestroyed) {
-                defendedCity.factionId = host.getFactionId();
                 const cityGarrison = Math.min(1000, Math.max(1, Math.floor(fbState.myTroops * 0.1)));
-                defendedCity.troops = cityGarrison;
+                this.deps.cityManager.updateCity(defendedCity.id, { factionId: host.getFactionId(), troops: cityGarrison }, { skipCaptureLog: true });
                 host.setTroops(Math.max(1, fbState.myTroops - cityGarrison));
                 const cPos = { lat: defendedCity.latitude, lng: defendedCity.longitude };
                 if (getEuclideanDistance(host.getPosition(), cPos) > 0.04) {
@@ -2373,12 +2380,9 @@ export class PlayerQuestSystem {
         } else if (fbState.targetCityId) {
             const targetCity = this.deps.cityManager.getCity(fbState.targetCityId);
             if (targetCity) {
-                if (targetCity.factionId === host.getFactionId()) {
-                    targetCity.factionId = fbState.enemyFactionId;
-                }
-                if ((targetCity.troops || 0) < fbState.enemyTroops) {
-                    targetCity.troops = fbState.enemyTroops;
-                }
+                const nextEnemyFaction = targetCity.factionId === host.getFactionId() ? fbState.enemyFactionId : targetCity.factionId;
+                const nextEnemyTroops = Math.max(targetCity.troops || 0, fbState.enemyTroops);
+                this.deps.cityManager.updateCity(targetCity.id, { factionId: nextEnemyFaction, troops: nextEnemyTroops }, { skipCaptureLog: true });
                 if (fbState.enemyGeneralId) {
                     (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = fbState.enemyGeneralId;
                 }
@@ -2502,18 +2506,18 @@ export class PlayerQuestSystem {
         this.cleanupFirstBattleState(q, false);
 
         const homeCity = this.deps.cityManager.getCity(q.cityId);
-        if (homeCity) {
-            homeCity.factionId = q.factionId;
+        if (homeCity && homeCity.factionId === q.factionId) {
             if ((homeCity.troops || 0) < 5000) {
-                homeCity.troops = 5000;
+                this.deps.cityManager.updateCity(homeCity.id, { troops: 5000 }, { skipCaptureLog: true });
             }
         }
         const fbTargetCity = fbState?.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
         if (fbState?.battleType === 'siege' && fbTargetCity) {
-            fbTargetCity.factionId = q.factionId;
-            if ((fbTargetCity.troops || 0) < 3000) {
-                fbTargetCity.troops = 3000;
-            }
+            this.deps.cityManager.updateCity(
+                fbTargetCity.id,
+                { factionId: q.factionId, troops: Math.max(fbTargetCity.troops || 0, 3000) },
+                { skipCaptureLog: true },
+            );
         }
 
         // 🔴 [2026-10-29 主人令「按历史走，野战的后续要不要奖励据点，按历史走」] 推翻 10-20「所有野战剧情结束后要有据点奖励」：
@@ -2525,8 +2529,11 @@ export class PlayerQuestSystem {
             if (reward) {
                 fieldRewardCity = reward;
                 if (reward.factionId !== q.factionId) {
-                    reward.factionId = q.factionId;
-                    if ((reward.troops || 0) < 3000) reward.troops = 3000;
+                    this.deps.cityManager.updateCity(
+                        reward.id,
+                        { factionId: q.factionId, troops: Math.max(reward.troops || 0, 3000) },
+                        { skipCaptureLog: true },
+                    );
                     this.deps.notify(`🏆 【${fbState.battleName}】大捷，获得据点【${reward.name}】`);
                     gameLog('expedition', `[玩家] 野战首战奖励据点（按史）：${q.generalName} ${fbState.battleName} → ${reward.name}`);
                 }
@@ -2559,7 +2566,10 @@ export class PlayerQuestSystem {
             fbState?.battleType === 'siege'
                 ? (fbTargetCity ?? nearestCity ?? homeCity)
                 : (nearHost(fbTargetCity) ?? nearHost(fieldRewardCity) ?? nearestCity ?? fbTargetCity ?? fieldRewardCity ?? homeCity);
-        const nextTarget = anchorCity ? this.pickCampaignTarget(anchorCity, q.factionId) : null;
+        const nextTarget =
+            homeCity && homeCity.factionId !== q.factionId
+                ? homeCity
+                : (anchorCity ? this.pickCampaignTarget(anchorCity, q.factionId) : null);
         if (nextTarget) {
             const marchSourceCityId = nearestCity?.id ?? anchorCity?.id;
             this.deps.legionManager.moveLegionToCity(host, nextTarget.id, marchSourceCityId);

@@ -113,17 +113,19 @@ export class DynamicFlagTextGenerator {
                     ctx.strokeText(cleanText, 0, 0); 
                     ctx.fillText(cleanText, 0, 0); 
                 } else {
-                    // 【双字复姓排版】字号 8px
-                    ctx.font = `bold 8px ${fontName}`;
+                    // 【双字复姓排版】🔴 2026-10-30 主人令「旗号图标要一致大小」：
+                    //    字号与单字旗（11px）、与图案旗（烘焙后按面积折合 ≈11.1px）同一个规格，
+                    //    只是竖排两字、行距 ±6.4，旗面上下仍留得下。
+                    ctx.font = `bold 11px ${fontName}`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
 
                     ctx.strokeStyle = strokeColor;
-                    ctx.strokeText(cleanText[0], 0, -4.2);
-                    ctx.strokeText(cleanText[1], 0, 4.2);
+                    ctx.strokeText(cleanText[0], 0, -6.4);
+                    ctx.strokeText(cleanText[1], 0, 6.4);
                     
-                    ctx.fillText(cleanText[0], 0, -4.2);
-                    ctx.fillText(cleanText[1], 0, 4.2);
+                    ctx.fillText(cleanText[0], 0, -6.4);
+                    ctx.fillText(cleanText[1], 0, 6.4);
                 }
 
                 ctx.restore();

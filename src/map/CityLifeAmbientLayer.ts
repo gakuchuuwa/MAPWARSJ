@@ -402,6 +402,18 @@ function strHash01(s: string, salt: number): number {
 }
 
 /**
+ * 🔴 2026-10-30 主人令「所有生产都使用统一的一套规则，都是 1-4 随机」：
+ *   一处生产组合出 1~4 份——**农田／水田 1~4 块地皮、草场 1~4 块草皮（1~4 只牲畜）**、
+ *   **渔场 1~4 条渔船**、**猎场／伐木／采集／矿冶 1~4 个同样工种的村民（各带自己那份猎物／枯木／浆果／矿脉）**，
+ *   全部走这一个函数、同一个哈希口径（据点＋槽位），且同一组合每次重排都是同一个数，不会一帧一变。
+ */
+function rollProductionCount(seedKey: string, slot: number): number {
+    return 1 + (Math.floor(strHash01(seedKey, slot * 17 + 8) * 4) % 4);
+}
+/** 陆上多份生产的第 2~4 份相对组合中心的落点（zoom 9 像素）：北、西、东，与渔船同一套方位。 */
+const PRODUCTION_SITE_OFFSETS: readonly (readonly [number, number])[] = [[0, -42], [-52, 8], [52, 8]];
+
+/**
  * 地图位移 → DE 八向精灵编号。DE 素材的 8 个方向（对着马 / 渔船 / 村民帧图逐个核过）：
  * 0 东北 · 1 东 · 2 东南 · 3 南（正对镜头）· 4 西南 · 5 西 · 6 西北 · 7 北（背对镜头）。
  * 与战术战场 Scene13WarLayer.dir8 同一套。纬度向北为屏幕上方、经度向东为屏幕右方。
@@ -1040,11 +1052,11 @@ export class CityLifeAmbientLayer {
                         displayedAction: 'work',
                         desiredAction: 'work',
                     });
-                    // 🔴 2026-10-30 主人令「渔业可以和农业一样，随机显示 1-4 个，有船，有鱼」：
-                    //    一处渔场按哈希出 1~4 条渔船，主船之外的几条围在渔场四周（与农田四块同一套方位），
+                    // 🔴 2026-10-30 主人令「渔业可以和农业一样，随机显示 1-4 个，有船，有鱼」「所有生产统一 1–4 随机」：
+                    //    一处渔场按同一个 rollProductionCount 出 1~4 条渔船，主船之外的几条围在渔场四周，
                     //    各带一群鱼、原地撒网不回港；落点不是深海就少一条，绝不上岸。
                     const owner = list[list.length - 1];
-                    const boatCount = 1 + Math.floor(strHash01(owner.id, 911) * 4);
+                    const boatCount = rollProductionCount(yk, i);
                     const extraCells = [0, 1, 2]
                         .sort((a, b) => strHash01(owner.id, 920 + a) - strHash01(owner.id, 920 + b))
                         .slice(0, boatCount - 1);
@@ -1081,10 +1093,9 @@ export class CityLifeAmbientLayer {
 
             let homePos: Pt | null = null;
             let plotCells: number[] | undefined;
-            // 🔴 2026-10-30 主人令「看到很多牧场、田地都是 4 块，我的意思是 1–4 块随机放」：
-            //    每个生产组合按「据点＋槽位」哈希定这次铺 1~4 块（平地够几块另说，地形不够就少），
-            //    不再一律铺满四块。块数稳定（同一组合每次重排都是同数），不会一帧一变。
-            const targetCells = plotKind ? 1 + (Math.floor(strHash01(yk, i * 17 + 8) * PLOT_CELL_OFFSETS.length) % PLOT_CELL_OFFSETS.length) : 0;
+            // 🔴 2026-10-30 主人令「看到很多牧场、田地都是 4 块，我的意思是 1–4 块随机放」「所有生产统一 1–4 随机」：
+            //    每个生产组合按「据点＋槽位」哈希定这次出 1~4 份（平地/水面够几份另说，不够就少），不再一律铺满四块。
+            const targetCells = plotKind ? rollProductionCount(yk, i) : 0;
             /** 从这块平地可用的一组块里，按目标块数挑：南块（主人站位）必留，其余按哈希起点轮着取，形状各异。 */
             const pickCells = (cells: number[], want: number): number[] => {
                 if (cells.length <= want) return cells;
@@ -1304,6 +1315,30 @@ export class CityLifeAmbientLayer {
                     });
                 }
             }
+
+            // 🔴 2026-10-30 主人令「所有生产都使用统一的一套规则，都是 1-4 随机」：
+            //    没有地皮的生产组合（猎场／伐木／采集／矿冶）同样出 1~4 个人，各带自己那份猎物／枯木／浆果／矿脉，
+            //    落点按同一套方位围在组合四周；落在水里就不放那一份，绝不上岸。
+            if (!plotKind) {
+                const owner = list[list.length - 1];
+                const workers = rollProductionCount(yk, i);
+                for (let n = 1; n < workers; n++) {
+                    const o = PRODUCTION_SITE_OFFSETS[(n - 1) % PRODUCTION_SITE_OFFSETS.length];
+                    const pos = this.plotCellPos(owner.homePos, PLOT_LEADER_CELL, o[0], o[1]);
+                    if (isHunter ? !this.isFarmFullyOnLand(pos) : this.isSea(pos)) continue;
+                    list.push({
+                        ...owner,
+                        id: `${owner.id}_mate_${n}`,
+                        fieldHand: true,
+                        buildingResource: undefined,
+                        homePos: pos,
+                        gatePos: { ...pos },
+                        lastDrawPos: { ...pos },
+                        facing: (facing + n * 3) % 8,
+                        phase: phase + n * 173,
+                    });
+                }
+            }
         }
 
         if (cat === 'maritime_fishing' && list.length === 0) {
@@ -1312,7 +1347,7 @@ export class CityLifeAmbientLayer {
             return this.getOrCreateCityActors(city);
         }
 
-        // 民生组合：1 个牧羊人固定带 4 只牲畜（四块草场一块一只）；1 个猎人固定带 1 只本地猎物。
+        // 民生组合：牧羊人带 1~4 只牲畜（草场铺几块就几只，一块一只）；每个猎人带 1 只本地猎物（猎人也出 1~4 个）。
         // 动物只在组合中央的两侧小范围真实往返，不与主人分散到据点不同位置。
         const preyPool = animalPool.filter((dir) => ['DEER', 'BOAR', 'TURKEY', 'GUANACO'].includes(dir));
         const groupLeaders = list.filter((actor) => actor.dir === 'VIL_MALE_SHEPHERD' || actor.dir === 'VIL_MALE_HUNTER');

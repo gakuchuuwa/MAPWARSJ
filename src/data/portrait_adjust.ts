@@ -9251,6 +9251,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 13
+        },
+        "/assets/MACEDONIAN/bfe_antigonus.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -32
+        },
+        "/assets/CENTRAL_ASIA/jinzhang_nogai.png": {
+            "scale": 1.19,
+            "offsetX": 0,
+            "offsetY": 21
         }
     },
     "folderGuides": {

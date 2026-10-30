@@ -29,6 +29,7 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     yelusalengwg: 'JERUSALEM_CROSS',   // 耶路撒冷王国·耶路撒冷十字
     shengdian_qishi: 'TEMPLAR_CROSS',   // 圣殿骑士团·cross pattée（不再用通用盾）
     osman: 'CRESCENT',   // 奥斯曼·新月
+    adal: 'ADAL_CRESCENT_AND_SWORD',   // 阿达尔·新月＋弯刀（2026-10-30；苏丹国无留传专属纹章，取伊斯兰苏丹国军旗通行的新月＋弯刀，KEY 独立不与奥斯曼共用）
     kongque: 'CARTWHEEL',   // 孔雀帝国·法轮
     zhuluo: 'TIGER',   // 朱罗·虎
     menggu_d: 'TAMGA',   // 蒙古·塔木加
