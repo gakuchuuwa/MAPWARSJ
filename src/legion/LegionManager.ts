@@ -475,6 +475,9 @@ export class LegionManager {
         this.ownCitiesFrameCacheReady = false;
         this.armies.forEach(army => {
             if (army.isDestroyed || army.getTroops() <= 0) return;
+            if (army.getIsInCombat() && this.combatSystem && !this.combatSystem.hasActiveCombatParticipant(army.id)) {
+                army.clearExternalCombatState();
+            }
             const oldPos = army.getPosition();
 
             // Skip movement if army is in blocked cooldown

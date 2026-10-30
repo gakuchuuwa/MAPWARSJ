@@ -548,6 +548,17 @@ export class CombatSystem {
         return this.battles.filter((b) => !b.isOver);
     }
 
+    /** 检查指定单位当前是否处于任一活跃战场中（用于清除异常残留的假交战态） */
+    public hasActiveCombatParticipant(unitId: string): boolean {
+        for (const bf of this.battleFields) {
+            if (!bf.isOver && bf.hasParticipant(unitId)) return true;
+        }
+        for (const b of this.battles) {
+            if (!b.isOver && (b.attacker.id === unitId || b.defender.id === unitId)) return true;
+        }
+        return false;
+    }
+
     /**
      * [NEW] 强制瞬间结束所有活跃战斗
      */

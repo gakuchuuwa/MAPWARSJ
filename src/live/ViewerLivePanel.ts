@@ -25,7 +25,8 @@ export class ViewerLivePanel {
     private collapsed = false;
     private inScene13Bar = false;
     private lastBodyHtml = '';
-    private ytKeyInput: HTMLInputElement | null = null;
+    private ytStatusEl: HTMLDivElement | null = null;
+    private ytVideoInput: HTMLInputElement | null = null;
 
     constructor(private readonly live: ViewerLive, private readonly link: YouTubeOfficialBridge) {
         const howTo = new HowToPlayCard();
@@ -159,18 +160,23 @@ export class ViewerLivePanel {
         this.updatePosition();
         this.root.style.display = this.inScene13Bar ? 'inline-flex' : 'block';
         this.syncCollapsedState();
-        if (this.ytKeyInput) {
-            this.ytKeyInput.placeholder = this.link.hasSavedKey()
-                ? '✅ 已保存密钥（免配额模式已启用，留空即可）'
-                : 'API 密钥（免配额模式无需填写，可留空）';
+        const chat = s.lastChatAgo < 0 ? '还没收到弹幕' : `最近弹幕 ${s.lastChatAgo} 秒前`;
+        if (this.ytStatusEl) {
+            const vid = this.link.getVideo();
+            const isConnected = (s.yt || '').includes('已连接');
+            this.ytStatusEl.style.color = isConnected ? '#7cd4a0' : '#ffd700';
+            this.ytStatusEl.textContent = `${s.yt || s.platform || '本地 YouTube 服务未连接'}${vid ? ` (${vid})` : ''} · ${chat}`;
+        }
+        if (this.ytVideoInput && document.activeElement !== this.ytVideoInput && !this.ytVideoInput.value.trim()) {
+            const vid = this.link.getVideo();
+            if (vid) this.ytVideoInput.value = vid;
         }
         if (this.collapsed) return;
         const f = this.inScene13Bar ? FS_S13 : FS;
         const esc = (t: string) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
         const b = (t: string) => `<b style="color:#ffd700;">${t}</b>`;
         const sep = `<span style="color:rgba(212,175,55,0.45);margin:0 2px;">｜</span>`;
-        const chat = s.lastChatAgo < 0 ? '还没收到弹幕' : `最近弹幕 ${s.lastChatAgo} 秒前`;
-        const platform = this.devOpen
+        const platform = (this.devOpen && !this.inScene13Bar)
             ? `<div style="font-size:13px;color:#8fd3ff;margin-bottom:4px;text-align:center;">${esc(s.platform || '本地 YouTube 服务未连接')}　${chat}${s.yt ? '<br>' + esc(s.yt) : ''}</div>`
             : '';
         const titleBadge = `<span style="font-size:${f.title}px;color:#ffd700;font-weight:900;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,0.9);">📢 弹幕控将</span>`;
@@ -209,9 +215,9 @@ export class ViewerLivePanel {
             ? `${sep}<span style="display:inline-flex;align-items:center;gap:6px;font-size:${f.small}px;">${subItems.join(sep)}</span>`
             : '';
 
-        // 主角现在的官职，紧跟标题：观众一眼知道「现在能做什么」
+        // 主角现在的官职与本局最高官职（资历），紧跟标题：观众一眼知道「现在能做什么」与「离开势力后的功能」
         const civilian = s.hero.rankId === 'civilian';
-        const rankBadge = `<span style="font-size:${f.main}px;">官职 ${b(esc(s.hero.rankTitle))}</span>`;
+        const rankBadge = `<span style="font-size:${f.main}px;">官职 ${b(esc(s.hero.rankTitle))} · 资历 ${b(esc(s.hero.peakRankTitle))}</span>`;
         const hint = (t: string) => `<span style="font-size:${f.sub}px;color:#dfc28c;">${t}</span>`;
         let mainRow: string;
         let joinGrid = '';
@@ -315,32 +321,44 @@ export class ViewerLivePanel {
         };
         const send = (w: string) => { this.live.onChat(name.value, w, false); this.render(); };
         const ytLabel = document.createElement('div');
-        ytLabel.textContent = '填本场 YouTube 直播网址回车即可（免配额直连，API 密钥可留空）';
-        ytLabel.style.cssText = 'color:#8fd3ff;margin-bottom:2px;';
-        const ytKey = document.createElement('input');
-        ytKey.type = 'password';
-        ytKey.placeholder = 'API 密钥（只保存到本机服务）';
-        this.ytKeyInput = ytKey;
-        ytKey.style.cssText = name.style.cssText;
+        ytLabel.textContent = '本场 YouTube 直播网址（免配额直连，回车或点「连接」）：';
+        ytLabel.style.cssText = 'color:#8fd3ff;font-weight:700;margin-bottom:2px;';
+        const ytStatus = document.createElement('div');
+        ytStatus.style.cssText = 'color:#ffd700;font-size:12px;margin-bottom:4px;word-break:break-all;';
+        this.ytStatusEl = ytStatus;
+        const ytRow = document.createElement('div');
+        ytRow.style.cssText = 'display:flex;gap:6px;margin-bottom:8px;align-items:center;';
         const ytVideo = document.createElement('input');
         ytVideo.value = this.link.getVideo();
-        ytVideo.placeholder = '直播网址或 11 位视频 ID';
-        ytVideo.style.cssText = name.style.cssText;
-        const applyYt = (e: KeyboardEvent) => {
-            e.stopPropagation();
-            if (e.key !== 'Enter') return;
-            void this.link.configure(ytKey.value, ytVideo.value).then((ok) => {
-                if (ok) {
-                    ytKey.value = '';
-                    if (document.activeElement !== ytVideo) ytVideo.value = this.link.getVideo();
-                }
+        ytVideo.placeholder = '粘贴直播网址（如 https://youtube.com/live/xxxx）';
+        ytVideo.style.cssText = 'flex:1;min-width:0;box-sizing:border-box;background:#221a12;color:#f3e6c8;border:1px solid #6b5a3a;padding:4px 6px;';
+        this.ytVideoInput = ytVideo;
+        const ytBtn = document.createElement('button');
+        ytBtn.type = 'button';
+        ytBtn.textContent = '连接直播';
+        ytBtn.style.cssText = 'flex-shrink:0;padding:4px 10px;background:#3a2a16;color:#ffd700;border:1px solid #d4af37;border-radius:4px;font-weight:700;cursor:pointer;';
+        const doConnect = () => {
+            const val = ytVideo.value.trim();
+            if (!val) return;
+            ytBtn.textContent = '连接中…';
+            void this.link.configure('', val).then((ok) => {
+                ytBtn.textContent = ok ? '已连接' : '连接直播';
+                if (ok) ytVideo.value = this.link.getVideo() || val;
                 this.render();
             });
         };
-        ytKey.addEventListener('keydown', applyYt);
-        ytVideo.addEventListener('keydown', applyYt);
+        ytBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            doConnect();
+        });
+        ytVideo.addEventListener('keydown', (e: KeyboardEvent) => {
+            e.stopPropagation();
+            if (e.key !== 'Enter') return;
+            doConnect();
+        });
+        ytRow.append(ytVideo, ytBtn);
         this.dev.append(
-            ytLabel, ytKey, ytVideo, label, name, cmdInput,
+            ytLabel, ytStatus, ytRow, label, name, cmdInput,
             row([...WORDS], send),
             row(['技3', '技4', '技5'], send),
             row(['名 龙骧 3', '名 虎贲 5', '投1 2', '投2 4'], send),

@@ -162,14 +162,13 @@ export class YouTubeLiveService extends EventEmitter {
     save() { writeJson(this.stateFile, this.state); }
 
     configure(apiKey, videoInput) {
-        const video = parseVideoId(videoInput);
-        if (String(videoInput ?? '').trim() && !video) throw new Error('认不出这个 YouTube 直播网址');
+        const rawVideo = String(videoInput ?? '').trim() || (!/^AIza[\w-]{35}$/.test(String(apiKey ?? '').trim()) ? String(apiKey ?? '').trim() : '');
+        const video = parseVideoId(rawVideo);
+        if (rawVideo && !video) throw new Error('认不出这个 YouTube 直播网址');
         const typedKey = String(apiKey ?? '').trim();
-        if (typedKey && !/^AIza[\w-]{35}$/.test(typedKey)) {
-            throw new Error('这不像 YouTube API 密钥（应为 AIza 开头共 39 位），原密钥未改动');
-        }
+        const validKey = /^AIza[\w-]{35}$/.test(typedKey) ? typedKey : '';
         this.stop();
-        const nextKey = typedKey || this.config.apiKey;
+        const nextKey = validKey || this.config.apiKey;
         this.config = { apiKey: nextKey, video };
         this.statsCache = { video: '', at: 0, value: null };
         this.failCount = 0;
@@ -617,7 +616,6 @@ export function createHttpServer(service) {
             if (req.method === 'GET' && url.pathname === '/state') return json(res, 200, service.snapshot());
             if (req.method === 'GET' && url.pathname === '/stats') return json(res, 200, await service.fetchStats());
             if (req.method === 'POST' && url.pathname === '/config') {
-                if (activeClient && !canWrite(req)) return json(res, 409, { error: '另一个游戏页面正在管理这场直播' });
                 const data = await body(req);
                 return json(res, 200, service.configure(data.apiKey, data.video));
             }

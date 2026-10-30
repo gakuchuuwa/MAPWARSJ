@@ -190,6 +190,9 @@ export class BattleSceneLayer {
      * 由 GameAppCombatHooks 在置 scene13Frozen = true 的同一处调用。
      */
     public setFrozenBattle(b: { scene13Frozen: boolean } | null): void {
+        if (this.frozenBattle && this.frozenBattle !== b && this.frozenBattle.scene13Frozen) {
+            this.frozenBattle.scene13Frozen = false;
+        }
         this.frozenBattle = b;
     }
 

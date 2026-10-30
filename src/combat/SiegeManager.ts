@@ -494,6 +494,7 @@ export class SiegeManager {
         const targetCity = this.resolveSiegeTarget(siegeData);
         if (!targetCity) {
             console.warn(`[SiegeManager] Target city ${siegeData.defenderCityId} not found.`);
+            army.setCombatState(false);
             onSiegeComplete?.();
             return;
         }
@@ -904,10 +905,11 @@ export class SiegeManager {
         if (activeBattle && !activeBattle.isOver) {
             if (isFirstBattleSiege && !activeBattle.scene13Frozen) {
                 // 玩家跟随触发剧情首战攻城：优先接管战场，清退已有普通 AI 围城，直接开启剧情攻城进入战术模式
-                activeBattle.isOver = true;
+                clearSiegeGarrisonBoost(targetCity as typeof targetCity & SiegeGarrisonBoostFields);
+                activeBattle.abortWithoutSettlement();
                 for (const u of [...activeBattle.getAttackerUnits(), ...activeBattle.getDefenderUnits()]) {
-                    const src = (u as any).sourceObject;
-                    if (u.unitType === 'legion' && src && u.id !== army.id) {
+                    const src = u.getEntity?.() ?? (u as any).sourceObject;
+                    if ((u.unitType === 'legion' || u.unitType === 'army') && src && u.id !== army.id) {
                         src.clearExternalCombatState?.();
                         src.setCombatState?.(false);
                     }
@@ -1409,6 +1411,8 @@ export class SiegeManager {
             );
         } catch (err) {
             console.error('[SiegeManager] startRegionalBattle failed:', err);
+            nearbyDefenderLegions.forEach((l) => l.clearExternalCombatState());
+            nearbyAttackerLegions.forEach((l) => l.clearExternalCombatState());
             army.setCombatState(false);
             onSiegeComplete?.();
             throw err;

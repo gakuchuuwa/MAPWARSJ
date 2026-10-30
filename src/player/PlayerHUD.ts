@@ -455,6 +455,18 @@ export class PlayerHUD {
         rankSpan.textContent = rank.name;
         secLeft.appendChild(rankSpan);
 
+        const peakRank = hero.getPeakRank();
+        const peakScopeDesc = peakRank.id === 'civilian' ? '离队后就近寻访武将'
+            : peakRank.id === 'scout' ? '离队后可选同文化势力'
+            : peakRank.id === 'outrider' ? '离队后可选同文化名将'
+            : peakRank.id === 'vanguard' ? '离队后可选全图势力'
+            : '离队后可选全图武将';
+        const peakSpan = document.createElement('span');
+        peakSpan.style.cssText = 'color:#c9b382; font-size:11px; white-space:nowrap;';
+        peakSpan.title = `本局最高官职：${peakRank.name}（${peakScopeDesc}）`;
+        peakSpan.textContent = `资历·${peakRank.title}`;
+        secLeft.appendChild(peakSpan);
+
         const powerSpan = document.createElement('span');
         powerSpan.style.cssText = 'color:#dfc28c; font-size:11px; white-space:nowrap;';
         powerSpan.textContent = `×${rank.powerMult.toFixed(1)}`;

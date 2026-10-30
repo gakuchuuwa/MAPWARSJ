@@ -592,7 +592,7 @@ export class ViewerLive {
         activeJoinBid: ViewerActiveJoinBid | null;
         experimental: ExperimentalSupportStats;
         /** 主角现在的官职、资历（离队后选去处按它）、是否随军、离队停留倒计时秒数 —— 面板据此写「现在能做什么」 */
-        hero: { rankId: string; rankTitle: string; peakRankId: string; attached: boolean; holdSec: number };
+        hero: { rankId: string; rankTitle: string; peakRankId: string; peakRankTitle: string; attached: boolean; holdSec: number };
     } {
         // 排行只排在场的人（10 分钟内说过话）：不让几天前来过的人一直占着榜
         const presentCut = Date.now() - PRESENT_MS;
@@ -642,6 +642,7 @@ export class ViewerLive {
                 rankId: this.app.playerHero?.getRank().id ?? 'civilian',
                 rankTitle: this.app.playerHero?.getRank().title ?? '平民',
                 peakRankId: rankId ?? 'civilian',
+                peakRankTitle: this.app.playerHero?.getPeakRank().title ?? '平民',
                 attached: this.app.playerHero?.isAttached() ?? false,
                 holdSec: this.app.playerHero?.getHoldRemainingSec?.() ?? 0,
             },

@@ -9136,6 +9136,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 36
+        },
+        "/assets/PERSIAN/bfe_achaemenes.png": {
+            "scale": 0.88,
+            "offsetX": 8,
+            "offsetY": -2
+        },
+        "/assets/ORIE/gen_harkhuf.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
         }
     },
     "folderGuides": {
