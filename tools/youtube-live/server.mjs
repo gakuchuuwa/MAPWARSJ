@@ -17,9 +17,9 @@ const PORT = 8787;
 const RETRY_MS = 5000;
 const RETRY_MAX_MS = 60_000;
 const RETRY_ENDED_MS = 5 * 60_000;
-const CHAT_POLL_DEFAULT_MS = 2000;
-const CHAT_POLL_MIN_MS = 1200;
-const CHAT_POLL_MAX_MS = 5000;
+const CHAT_POLL_DEFAULT_MS = 1000;
+const CHAT_POLL_MIN_MS = 800;
+const CHAT_POLL_MAX_MS = 1200;
 /** 增长数据（点赞/在线/订阅）服务端缓存：多个页面或刷新也只查一次 */
 const STATS_TTL_MS = 30_000;
 /** 频道订阅数 API 兜底缓存（仅当网页显示 1.2K 等缩写且配了有效密钥时用） */

@@ -23,7 +23,7 @@ export const PRICE_PER_CAST = 100;
 export const ORDERS_PER_CAST = 1;
 export const ORDER_CAP = 9999;
 export const MAX_SKILL_BID = 100;
-export const FREE_CAST_GAP_MS = 10_000;
+export const FREE_CAST_GAP_MS = 2000;
 const PRESENT_MS = 20 * 60_000;
 /** 在场发分：每隔这么久，在场的人各 +PRESENCE_PAY */
 const PRESENCE_PAY_MS = 2 * 60_000;
@@ -262,6 +262,7 @@ export class ViewerLive {
     private readonly sessionId = `live-${Date.now()}`;
     private battleId = 0;
     private battleStartedAtMs = 0;
+    private lastBattleEndedAtMs = 0;
     private lastFreeCastAt = 0;
     private wasActive = false;
     private day = '';
@@ -453,8 +454,8 @@ export class ViewerLive {
         const pubMs = Date.parse(event.publishedAt);
         const staleForBattle = this.battleOn()
             && Number.isFinite(pubMs)
-            && this.battleStartedAtMs > 0
-            && pubMs < this.battleStartedAtMs - STALE_BATTLE_CHAT_GRACE_MS;
+            && this.lastBattleEndedAtMs > 0
+            && pubMs < this.lastBattleEndedAtMs - STALE_BATTLE_CHAT_GRACE_MS;
         if (event.text) {
             this.onChat(name, event.text, false, event.uid, {
                 eventId: event.id,
@@ -914,12 +915,10 @@ export class ViewerLive {
         const side: 0 | 1 = this.playerSideInBattle() ?? this.sides.get(id) ?? 0;
         this.sides.set(id, side);
         const a = this.acct(id, name);
-        const queuedFree = this.hasFreeQueued(id);
-        if (a.n < ORDERS_PER_CAST || queuedFree) {
+        if (a.n < ORDERS_PER_CAST) {
             this.wanted.set(id, word);
-            this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', queuedFree ? '已有排队六计' : '积分不足');
+            this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', '积分不足');
             this.save();
-            if (queuedFree && a.n >= ORDERS_PER_CAST) return this.note(`${name}：已有一计在排队，放完接着替你放【${word}】`);
             return this.note(`${name}：放【${word}】需 ${ORDERS_PER_CAST} 积分，现有 ${a.n}/${ORDERS_PER_CAST}`);
         }
         a.n -= ORDERS_PER_CAST;
@@ -993,6 +992,7 @@ export class ViewerLive {
         for (const q of this.queue) this.voidCast(q);
         this.queue = [];
         this.lastFreeCastAt = 0;
+        this.lastBattleEndedAtMs = Date.now();
         this.battleStartedAtMs = 0;
         this.sides.clear();
         this.wanted.clear();

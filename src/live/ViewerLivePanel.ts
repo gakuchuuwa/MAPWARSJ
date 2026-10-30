@@ -95,10 +95,9 @@ export class ViewerLivePanel {
 
     private applyScene13MergedStyle(): void {
         this.root.style.cssText = `
-            position:relative; display:flex; align-items:center; justify-content:center;
-            flex-basis:100%; width:100%;
-            padding-top:3px; margin-top:2px;
-            border-top:1px solid rgba(212,175,55,0.3);
+            position:relative; display:inline-flex; align-items:center; justify-content:center;
+            width:auto; padding-left:6px; margin-left:2px;
+            border-left:1px solid rgba(212,175,55,0.45);
             color:#f5e6c8; font-family:${FONT}; font-size:${FS_S13.sub}px; line-height:1.2;
             pointer-events:auto; user-select:none;`;
         this.dev.style.cssText = `display:${!this.collapsed && this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:380px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
@@ -158,7 +157,7 @@ export class ViewerLivePanel {
     private render(): void {
         const s = this.live.snapshot();
         this.updatePosition();
-        this.root.style.display = this.inScene13Bar ? 'flex' : 'block';
+        this.root.style.display = this.inScene13Bar ? 'inline-flex' : 'block';
         this.syncCollapsedState();
         if (this.ytKeyInput) {
             this.ytKeyInput.placeholder = this.link.hasSavedKey()
@@ -182,23 +181,26 @@ export class ViewerLivePanel {
         const g = s.goal;
         if (s.yt || g.likes > 0 || g.subs > 0) {
             const pct = Math.min(100, Math.round(g.likeProg / g.likeStep * 100));
+            const statTxt = this.inScene13Bar
+                ? `赞${b(`${g.likeProg}/${g.likeStep}`)}${g.subs > 0 ? `·订${b(String(g.subs))}` : ''}·在线${b(String(g.viewers))}·在场${b(String(g.present))}`
+                : `点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 发分${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''} · 在线 ${b(String(g.viewers))} · 在场 ${b(String(g.present))}`;
             subItems.push(
-                `<span style="display:inline-flex;align-items:center;gap:4px;">点赞 ${b(`${g.likeProg}/${g.likeStep}`)} 发分${g.subs > 0 ? ` · 订阅 ${b(String(g.subs))}` : ''} · 在线 ${b(String(g.viewers))} · 在场 ${b(String(g.present))}`
-                + `<span style="display:inline-block;width:44px;height:5px;background:#3a2a16;border-radius:3px;overflow:hidden;vertical-align:middle;"><span style="display:block;height:5px;width:${pct}%;background:#d4af37;"></span></span></span>`
+                `<span style="display:inline-flex;align-items:center;gap:4px;">${statTxt}`
+                + `<span style="display:inline-block;width:${this.inScene13Bar ? 32 : 44}px;height:5px;background:#3a2a16;border-radius:3px;overflow:hidden;vertical-align:middle;"><span style="display:block;height:5px;width:${pct}%;background:#d4af37;"></span></span></span>`
             );
         }
         if (s.top.length) {
-            subItems.push(`<span>积分：${s.top.slice(0, 3).map((t) =>
+            subItems.push(`<span>积分：${s.top.slice(0, this.inScene13Bar ? 2 : 3).map((t) =>
                 `<span style="white-space:nowrap;${t.n >= ORDERS_PER_CAST ? 'color:#ffd700;' : ''}">${esc(t.name)} <b>${t.n}</b></span>`).join('　')}</span>`);
         }
         if (s.on && s.queueBrief.length) {
             const q = s.queueBrief;
-            subItems.push(`<span><span style="color:#ffd700;">排队：</span>${q.slice(0, 3).map((x) =>
-                `${esc(x.name)}${x.label ? `·${esc(x.label)}` : ''}`).join('　')}${q.length > 3 ? ` 等 ${q.length} 人` : ''}</span>`);
+            subItems.push(`<span><span style="color:#ffd700;">排队：</span>${q.slice(0, 2).map((x) =>
+                `${esc(x.name)}${x.label ? `·${esc(x.label)}` : ''}`).join('　')}${q.length > 2 ? ` 等${q.length}人` : ''}</span>`);
         }
         if (s.log.length) {
             const lastLog = esc(s.log[s.log.length - 1]);
-            subItems.push(`<span title="${lastLog}" style="color:#cdbb95;display:inline-block;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;">${lastLog}</span>`);
+            subItems.push(`<span title="${lastLog}" style="color:#cdbb95;display:inline-block;max-width:${this.inScene13Bar ? 140 : 210}px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;">${lastLog}</span>`);
         }
 
         // 🔴 [2026-10-29 主人令「把这些信息放到玩家信息面板，设计一行就行」]
@@ -215,16 +217,21 @@ export class ViewerLivePanel {
         let joinGrid = '';
         if (s.on && !civilian) {
             const sixUi = allowedSixWordsForRank(s.hero.rankId);
-            const castCmd = `<span style="font-size:${f.main}px;">${b(sixUi.words)} ${sixUi.label}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)}先后)</span></span>`;
-            const scoutCmd = `<span style="font-size:${f.main}px;">${b('技1')} 爆发技<span style="font-size:${f.sub}px;color:#e0cfa9;">(高分插队)</span></span>`;
-            mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${castCmd}${sep}${scoutCmd}${sep}${renameCmd}${liveInfoPart}</div>`;
+            if (this.inScene13Bar) {
+                const castCompact = `<span style="font-size:${f.main}px;">📢 ${b(sixUi.words)}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${ORDERS_PER_CAST}分)</span> · ${b('技1')} · ${b(`名 名字 ${nextRename}`)}</span>`;
+                mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;">${castCompact}${liveInfoPart}</div>`;
+            } else {
+                const castCmd = `<span style="font-size:${f.main}px;">${b(sixUi.words)} ${sixUi.label}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)}先后)</span></span>`;
+                const scoutCmd = `<span style="font-size:${f.main}px;">${b('技1')} 爆发技<span style="font-size:${f.sub}px;color:#e0cfa9;">(高分插队)</span></span>`;
+                mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${castCmd}${sep}${scoutCmd}${sep}${renameCmd}${liveInfoPart}</div>`;
+            }
         } else {
             let statePart: string;
             if (s.joinCandidates.length > 0) {
                 const total = s.joinCandidates.length;
-                const pageSize = 9;
+                const pageSize = 10;
                 const pageCount = Math.max(1, Math.ceil(total / pageSize));
-                const pageIdx = Math.floor(Date.now() / 4000) % pageCount;
+                const pageIdx = Math.floor(Date.now() / 9000) % pageCount;
                 const pageItems = s.joinCandidates.slice(pageIdx * pageSize, (pageIdx + 1) * pageSize);
                 const pageBadge = pageCount > 1
                     ? ` · <span style="color:#ffd700;font-weight:700;">${pageIdx + 1}/${pageCount}页</span>`
@@ -250,12 +257,12 @@ export class ViewerLivePanel {
                     const tagBorder = isPicked ? '1px solid rgba(124,212,160,0.45)' : '1px solid rgba(212,175,55,0.35)';
                     const tagColor = isPicked ? '#9ef5c2' : '#ffd700';
                     const nameColor = isPicked ? '#d6ffea' : '#f7ebd2';
-                    return `<span title="发 投${c.index} 或 投 ${esc(c.label)}" style="width:128px;height:25px;box-sizing:border-box;display:inline-flex;align-items:center;background:${boxBg};border:${boxBorder};border-radius:4px;box-shadow:${boxShadow};overflow:hidden;flex-shrink:0;">`
-                        + `<span style="width:38px;height:100%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:${tagBg};border-right:${tagBorder};color:${tagColor};font-size:12px;font-weight:800;letter-spacing:0.3px;">投${c.index}</span>`
-                        + `<span style="flex:1;min-width:0;padding:0 6px;text-align:center;color:${nameColor};font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,0.85);">${esc(c.label)}</span>`
+                    return `<span title="发 投${c.index} 或 投 ${esc(c.label)}" style="width:118px;height:25px;box-sizing:border-box;display:inline-flex;align-items:center;background:${boxBg};border:${boxBorder};border-radius:4px;box-shadow:${boxShadow};overflow:hidden;flex-shrink:0;">`
+                        + `<span style="width:36px;height:100%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:${tagBg};border-right:${tagBorder};color:${tagColor};font-size:12px;font-weight:800;letter-spacing:0.2px;">投${c.index}</span>`
+                        + `<span style="flex:1;min-width:0;padding:0 5px;text-align:center;color:${nameColor};font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,0.85);">${esc(c.label)}</span>`
                         + `</span>`;
                 }).join('');
-                joinGrid = `<div style="display:flex;flex-wrap:nowrap;justify-content:center;gap:5px;max-width:96vw;margin:0 auto 5px;padding:5px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.65);">${cells}</div>`;
+                joinGrid = `<div style="width:1232px;max-width:96vw;height:37px;box-sizing:border-box;display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;gap:4px;margin:0 auto 5px;padding:5px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.65);">${cells}</div>`;
             } else if (civilian && s.hero.peakRankId === 'civilian') {
                 // 平民没有资历：只能改名，投奔武将后升斥候才开放技能
                 statePart = hint(`单骑寻访武将 · 入伍升斥候后可在战中释放技能`);

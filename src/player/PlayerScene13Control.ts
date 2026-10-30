@@ -154,8 +154,8 @@ export class PlayerScene13Control {
         // 第二行由 ViewerLivePanel（flex-basis:100%）独占一行
         bar.style.cssText = `
             position:fixed; top:0; left:50%; transform:translateX(-50%); z-index:10055; display:none;
-            flex-wrap:wrap; justify-content:center; align-items:center; gap:4px 8px; width:max-content; max-width:96vw;
-            padding:4px 12px 5px; font-family:${FONT}; font-size:13px; color:#f5e6c8;
+            flex-wrap:nowrap; justify-content:center; align-items:center; gap:6px; width:max-content; max-width:96vw;
+            padding:3px 10px; font-family:${FONT}; font-size:12.5px; color:#f5e6c8;
             background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
             border:1px solid rgba(212,175,55,0.6); border-radius:0 0 10px 10px; pointer-events:auto; user-select:none;
             box-shadow:0 2px 12px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,215,0,0.25); white-space:nowrap;`;
@@ -175,8 +175,8 @@ export class PlayerScene13Control {
         const countdown = document.createElement('span');
         countdown.title = '战术模式 9 分钟倒计时（到时未攻下城池则算打平）';
         countdown.style.cssText = `
-            padding:3px 9px; font-weight:900; font-size:13px; color:#ffd27a;
-            background:rgba(212,175,55,0.14); border:1px solid rgba(212,175,55,0.55); border-radius:6px;`;
+            padding:2px 7px; font-weight:900; font-size:12.5px; color:#ffd27a;
+            background:rgba(212,175,55,0.14); border:1px solid rgba(212,175,55,0.55); border-radius:5px;`;
         countdown.textContent = '⏳ 9:00';
         bar.appendChild(countdown);
         this.countdownEl = countdown;
@@ -184,8 +184,8 @@ export class PlayerScene13Control {
             const b = document.createElement('button');
             b.textContent = label;
             b.style.cssText = `
-                padding:4px 12px; cursor:pointer; font-family:inherit; font-weight:900; font-size:13px; color:#f5e6c8;
-                background:rgba(255,255,255,0.06); border:1px solid rgba(212,175,55,0.5); border-radius:6px;`;
+                padding:2px 8px; cursor:pointer; font-family:inherit; font-weight:900; font-size:12px; color:#f5e6c8;
+                background:rgba(255,255,255,0.06); border:1px solid rgba(212,175,55,0.5); border-radius:5px;`;
             b.addEventListener('click', () => { this.scene.setPlayerCommand(cmd); this.refresh(); });
             bar.appendChild(b);
             return b;
@@ -222,7 +222,7 @@ export class PlayerScene13Control {
         slider.step = '0.05';
         slider.value = '1';
         slider.title = '拖动缩放战术地图视角';
-        slider.style.cssText = 'width:76px; height:14px; cursor:pointer; accent-color:#d4af37; margin:0;';
+        slider.style.cssText = 'width:54px; height:14px; cursor:pointer; accent-color:#d4af37; margin:0;';
         slider.addEventListener('input', (e) => {
             e.stopPropagation();
             this.setTacticalZoom( parseFloat(slider.value) || 1.0 );
@@ -246,12 +246,12 @@ export class PlayerScene13Control {
 
         // 🔴 [2026-09-10 主人定] 战术模式退出战斗按钮移入战术模式玩家面板
         const btnExit = document.createElement('button');
-        btnExit.textContent = '退出战斗';
+        btnExit.textContent = '退出';
         btnExit.title = '点击后按当前战况自动结算战果并退出';
         btnExit.style.cssText = `
-            padding:4px 12px; cursor:pointer; font-family:inherit; font-weight:900; font-size:13px; color:#f5e6c8;
+            padding:2px 8px; cursor:pointer; font-family:inherit; font-weight:900; font-size:12px; color:#f5e6c8;
             background:linear-gradient(180deg, rgba(60,20,20,0.85) 0%, rgba(30,10,10,0.9) 100%);
-            border:1px solid rgba(212,175,55,0.6); border-radius:6px; transition:all 0.2s ease;
+            border:1px solid rgba(212,175,55,0.6); border-radius:5px; transition:all 0.2s ease;
             box-shadow:0 1px 4px rgba(0,0,0,0.4);`;
         btnExit.addEventListener('mouseenter', () => {
             btnExit.style.borderColor = '#ffd700';
@@ -328,9 +328,9 @@ export class PlayerScene13Control {
             const liveTag = liveSec > 0 ? ` · <span style="color:#ffd700;font-weight:900;">⚡玩家技 ${liveSec}s</span>` : '';
             this.info.title = `统率权限：${ctl}`;
             this.info.innerHTML =
-                `${flagHtml}<b style="color:#ffd27a;">${this.hero.name}</b> · ${rank.name} · `
-                + `${hpText} · `
-                + `斩 <b>${st.kills}</b> · 功勋 ${this.hero.merit}`
+                `${flagHtml}<b style="color:#ffd27a;">${this.hero.name}</b>·${rank.title}·`
+                + `${hpText}·`
+                + `斩<b>${st.kills}</b>·功${this.hero.merit}`
                 + liveTag;
             const on = 'rgba(212,175,55,0.35)';
             const off = 'rgba(255,255,255,0.06)';

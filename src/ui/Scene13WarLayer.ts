@@ -754,13 +754,14 @@ export class Scene13WarLayer {
      * paid＝这一计是观众花钱放的（大字另有打赏标记）。
      */
     public castViewerSkill(side: 0 | 1, six: TacticalSixSet, viewerName: string, paid = false): 'cast' | 'wait' | 'closed' {
-        if (!this.active || this.over || this.deployT > 0) return 'closed';
+        if (!this.active || this.over) return 'closed';
+        if (this.deployT > 0) return 'wait';
         if (!this.playerSetup || !this.heroMan) return 'closed';
         // [2026-10-30 主人令「玩家阵亡不能放技能，复活直接放」] 阵亡期间六计留在队里不扣、不放，复活后照排队顺序放
         if (this.heroMan.hp <= 0) return 'wait';
         const targetSide: 0 | 1 = this.playerSetup.side ?? side;
         const wallNow = performance.now();
-        if (this.skillCastCooldown > 0 || wallNow < this.skillCastWallUntil) return 'wait';
+        void wallNow;
         this.skillCastCooldown = Scene13WarLayer.SKILL_CAST_GAP_SEC;
         this.skillCastWallUntil = wallNow + Scene13WarLayer.SKILL_CAST_GAP_SEC * 1000;
         this.viewerCaster = { name: viewerName, paid };

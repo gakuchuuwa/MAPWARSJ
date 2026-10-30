@@ -8723,7 +8723,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -4
         },
         "/assets/TIBET/bfe_jaya_prakash.png": {
-            "scale": 1.01,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": 8
         },
