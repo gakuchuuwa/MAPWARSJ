@@ -84,6 +84,19 @@ function unitIsFortress(u: { unitType?: string }): boolean {
     return u.unitType === 'city';
 }
 
+type Scene13GateUnit = { troops?: number; generalId?: string | null; unitType?: string; getEntity?(): any };
+
+/** 区域战进 13 的普通门槛（开战与援军赶到共用）：双方合计兵力都 ≥ SCENE13_MIN_TROOPS、不都是海军、双方都有武将和精锐 */
+function regionalMeetsScene13Gate(attackers: Scene13GateUnit[], defenders: Scene13GateUnit[]): boolean {
+    const minTroops = GameConfig.COMBAT.SCENE13_MIN_TROOPS;
+    const attTroops = attackers.reduce((s, u) => s + (u.troops ?? 0), 0);
+    const defTroops = defenders.reduce((s, u) => s + (u.troops ?? 0), 0);
+    if (attTroops < minTroops || defTroops < minTroops) return false;
+    if (attackers.every(unitIsNaval) && defenders.every(unitIsNaval)) return false;
+    return attackers.some((u) => !!u.generalId) && defenders.some((u) => !!u.generalId)
+        && attackers.some(unitHasElite) && defenders.some(unitHasElite);
+}
+
 /**
  * [2026-09-19] 解析参战单位史实精锐番号（城池守军 > 军团精锐 > 势力精锐兜底）
  */
@@ -448,22 +461,14 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         // [2026-08-30 主人改｜2026-09-15 门槛下调] 进 13 条件：开关开 + 双方兵力都 ≥5000（含援军合计）+ 双方不能都是海军 + 双方都有武将+精锐。
         // 兵力门槛看每方当前合计（含所有已编入的援军）；跟随军团中途加入也复用此入口。
         // 进入 13 后冻结战略行军，不再有在途援军赶到。
-        const minTroops = GameConfig.COMBAT.SCENE13_MIN_TROOPS;
         const attTroops = attackers.reduce((s, u) => s + (u.troops ?? 0), 0); // 攻方合计（含援军）
         const defTroops = defenders.reduce((s, u) => s + (u.troops ?? 0), 0); // 守方合计（含援军）
-        const bigEnough = attTroops >= minTroops && defTroops >= minTroops;
         const isNavalBattle = allUnits.some(unitIsNaval);
-        const bothNaval = attackers.every(unitIsNaval) && defenders.every(unitIsNaval);
         const isNavalVsFortress = isNavalBattle
             && allUnits.some(unitIsFortress);
-        const attHasGen = attackers.some((u) => !!u.generalId);
-        const defHasGen = defenders.some((u) => !!u.generalId);
-        const attHasElite = attackers.some(unitHasElite);
-        const defHasElite = defenders.some(unitHasElite);
         // 战场事件与武将首次剧情战进战术模式：HistoricalEventManager 设置 isScriptArmy，PlayerQuestSystem 设置 isFirstBattleMarch。
         // 攻城和野战共用此入口，不受普通战斗的兵力、将领、精锐门槛阻挡。
-        const eligible = tacticalModeOn(app) && (isBattlefieldEvent || (bigEnough && !bothNaval
-            && attHasGen && defHasGen && attHasElite && defHasElite));
+        const eligible = tacticalModeOn(app) && (isBattlefieldEvent || regionalMeetsScene13Gate(attackers, defenders));
         if (eligible && (!battleField?.scene13Frozen || isBattlefieldEvent)) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
@@ -574,15 +579,21 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             ?? app.playerHero?.getHostLegionId();
         if (app.combatUI.isBoundToBattleField(battleField)) {
             app.combatUI.syncRegionalParticipantsFromBattleField(battleField);
-            if (joinedUnit.id !== followedId || battleField.scene13Frozen) return;
         }
-
-        if (!followedId || joinedUnit.id !== followedId) return;
-        if (battleField.isOver) return;
+        if (!followedId || battleField.isOver || battleField.scene13Frozen) return;
 
         const attackers = battleField.getAttackerUnits();
         const defenders = battleField.getDefenderUnits();
         if (attackers.length === 0 || defenders.length === 0) return;
+
+        // 🔴 [2026-10-30 主人报障「跟随军团攻 A 城（主力外出不进战术），A 城主力回援、双方都上万，应进战术模式」]
+        //    原先只在「赶到的是跟随军团本身」时重判；敌方（或友方其它军团）援军赶到直接跳过，
+        //    兵力合计早已过门槛也进不去。现在：跟随军团在这场仗里，任何一方来援都按合计兵力重判，
+        //    过门槛才走开战入口进 13；没过门槛只同步面板、不重弹。
+        if (joinedUnit.id !== followedId) {
+            if (!battleField.hasParticipant(followedId)) return;
+            if (!tacticalModeOn(app) || !regionalMeetsScene13Gate(attackers, defenders)) return;
+        }
 
         gameLog(
             'startup',

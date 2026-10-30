@@ -5,6 +5,7 @@ import { CITIES_V2, type CityDataV2, type BuildingStyle } from '../data/cities_v
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
+import { hasWorldBaseData, loadWorldBaseData, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
 
 /**
  * CityLifeAmbientLayer — 战略地图「67 文化据点民生生态 & 战火破坏/尸骸渐变」环境层（2026-10-26 主人定稿）。
@@ -380,8 +381,8 @@ function dirFromDelta(dLat: number, dLng: number): number {
     return (((1 - Math.round(deg / 45)) % 8) + 8) % 8;
 }
 
-/** 根据渔猎民族文化与纬度返回四季对应的树种组合 [春, 夏, 秋, 冬] 与伴生灌木 */
-function pickHuntingForestPalette(style: string, lat: number, idx: number): {
+/** 根据渔猎民族文化与真实冬雪分布返回四季对应的树种组合 [春, 夏, 秋, 冬] 与伴生灌木 */
+function pickHuntingForestPalette(style: string, lat: number, lng: number, idx: number): {
     springTree: string;
     summerTree: string;
     autumnTree: string;
@@ -390,13 +391,17 @@ function pickHuntingForestPalette(style: string, lat: number, idx: number): {
     bushLib: 'SUCAI_NATURE' | 'SUCAI_RESOURCE';
     isBamboo: boolean;
 } {
+    const wf = queryWinterSnow(lat, lng);
+    const hasWinterSnow = hasWorldBaseData()
+        ? (wf === 1 || wf === 2 || wf === 3)
+        : Math.abs(lat) > 38;
     if (style === 'DIANQIAN') {
         const bamboo = idx % 2 === 0;
         return {
             springTree: bamboo ? 'LUSH_BAMBOO' : 'ASIAN_MAPLE_GREEN',
             summerTree: bamboo ? 'LUSH_BAMBOO' : 'GREEN_OAK',
             autumnTree: bamboo ? 'LUSH_BAMBOO' : 'ASIAN_MAPLE_AUTUMN',
-            winterTree: bamboo ? 'LUSH_BAMBOO' : 'ASIAN_PINE',
+            winterTree: bamboo ? (hasWinterSnow ? 'SNOW_PINE' : 'LUSH_BAMBOO') : (hasWinterSnow ? 'SNOW_AUTUMN_OAK' : 'ASIAN_PINE'),
             bushName: idx % 3 === 0 ? 'FORAGE_BUSH' : 'UNDERBRUSH_JUNGLE',
             bushLib: idx % 3 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
             isBamboo: bamboo,
@@ -421,7 +426,7 @@ function pickHuntingForestPalette(style: string, lat: number, idx: number): {
             springTree: araucaria ? 'MONKEY_PUZZLE' : 'GREEN_OAK',
             summerTree: araucaria ? 'MONKEY_PUZZLE' : 'PINE',
             autumnTree: araucaria ? 'MONKEY_PUZZLE' : 'AUTUMN_OAK',
-            winterTree: araucaria ? 'MONKEY_PUZZLE' : (Math.abs(lat) > 36 ? 'SNOW_PINE' : 'PINE'),
+            winterTree: araucaria ? (hasWinterSnow ? 'SNOW_PINE' : 'MONKEY_PUZZLE') : (hasWinterSnow ? 'SNOW_PINE' : 'PINE'),
             bushName: idx % 2 === 0 ? 'FORAGE_BUSH' : 'BUSH_TREE_A',
             bushLib: idx % 2 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
             isBamboo: false,
@@ -434,7 +439,7 @@ function pickHuntingForestPalette(style: string, lat: number, idx: number): {
             springTree: pine ? mainPine : 'BIRCH_GREEN',
             summerTree: pine ? mainPine : 'BIRCH_GREEN',
             autumnTree: pine ? mainPine : 'BIRCH_AUTUMN',
-            winterTree: pine ? 'SNOW_PINE' : 'SNOW_AUTUMN_OAK',
+            winterTree: hasWinterSnow ? (pine ? 'SNOW_PINE' : 'SNOW_AUTUMN_OAK') : (pine ? mainPine : 'AUTUMN_OAK'),
             bushName: idx % 2 === 0 ? 'FORAGE_BUSH' : 'UNDERBRUSH',
             bushLib: idx % 2 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
             isBamboo: false,
@@ -442,12 +447,11 @@ function pickHuntingForestPalette(style: string, lat: number, idx: number): {
     }
     // AMERICA / GEORGIANS 等温带山林渔猎
     const isPine = idx % 3 === 0;
-    const cold = Math.abs(lat) > 38;
     return {
         springTree: isPine ? 'PINE' : 'GREEN_OAK',
         summerTree: isPine ? 'PINE' : 'GREEN_OAK',
         autumnTree: isPine ? 'PINE' : 'AUTUMN_OAK',
-        winterTree: isPine ? (cold ? 'SNOW_PINE' : 'PINE') : (cold ? 'SNOW_AUTUMN_OAK' : 'AUTUMN_OAK'),
+        winterTree: isPine ? (hasWinterSnow ? 'SNOW_PINE' : 'PINE') : (hasWinterSnow ? 'SNOW_AUTUMN_OAK' : 'AUTUMN_OAK'),
         bushName: idx % 2 === 0 ? 'FORAGE_BUSH' : 'BUSH_TREE_A',
         bushLib: idx % 2 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
         isBamboo: false,
@@ -516,6 +520,11 @@ export class CityLifeAmbientLayer {
 
         this.resize();
         map.on('resize', () => this.resize());
+        if (!hasWorldBaseData()) {
+            void loadWorldBaseData('/world/world-base.png').then((ok) => {
+                if (ok) this.forestByCity.clear();
+            });
+        }
         // 🔴 [2026-10-28 修复镜头跟随晃动] 不在任何地图事件（含 move / moveend / zoom / viewreset）中单独调用 reposition()，
         //    唯一只在 draw() 绘制那一刻同步对齐画布与投影，不重定位期间画布随 mapPane 硬件变换与底图严丝合缝移动。
     }
@@ -867,7 +876,7 @@ export class CityLifeAmbientLayer {
             }
             if (!pos) continue;
 
-            const pal = pickHuntingForestPalette(style, cLat, i);
+            const pal = pickHuntingForestPalette(style, pos.lat, pos.lng, i);
             list.push({
                 id: `${city.id}_forest_${i}`,
                 cityId: city.id,

@@ -95,6 +95,12 @@ export class HillshadeLayer extends L.GridLayer {
     }> = new Map();
     /** LRU：Map 迭代序即插入序，命中时删了重插即「最近使用」 */
     private tileCache: Map<string, ImageBitmap> = new Map();
+    /** 冬季地表雪域位图缓存（与 tileCache 同键同步淘汰；无冬雪的南方/热带瓦片不存，零显存浪费） */
+    private winterTileCache: Map<string, ImageBitmap> = new Map();
+    /** 当前冬季地表混合权重（0 = 春夏秋常态地表，1 = 隆冬雪域地表，季末最后 2 秒平滑插值） */
+    private currentWinterBlend: number = 0;
+    private seasonTimer: number | null = null;
+    private seasonRafId: number | null = null;
     /** 已发过预取请求的 z/x/y，避免每次 zoomend 重复占用连接 */
     private prefetchedKeys: Set<string> = new Set();
 
@@ -146,6 +152,8 @@ export class HillshadeLayer extends L.GridLayer {
         });
 
         this.ensureWorkers();
+        this.currentWinterBlend = this.computeWinterBlend();
+        this.startSeasonBlendWatch();
 
         gameLog('startup', `HillshadeLayer: Initialized with ${WORKER_POOL_SIZE} Web Workers (z=${this.zFactor})`);
     }
@@ -168,7 +176,7 @@ export class HillshadeLayer extends L.GridLayer {
     }
 
     private handleWorkerMessage(e: MessageEvent<HillshadeResponse>) {
-        const { id, bitmap, error } = e.data;
+        const { id, bitmap, winterBitmap, error } = e.data;
         if (e.data.materialBytes !== undefined) {
             this.materialBytesByWorker.set(e.target as Worker, e.data.materialBytes);
         }
@@ -182,12 +190,14 @@ export class HillshadeLayer extends L.GridLayer {
         if (!task) {
             // 瓦片已被 Leaflet 剔除（快速连切 zoom）：位图无人认领，直接释放
             bitmap?.close();
+            winterBitmap?.close();
             return;
         }
 
         // 快速开关保护：旧 Worker 任务完成时如果 modeVersion 不匹配，直接丢弃位图避免串画
         if (task.modeVersion !== this.modeVersion) {
             bitmap?.close();
+            winterBitmap?.close();
             task.done(undefined, task.tile);
             return;
         }
@@ -195,6 +205,7 @@ export class HillshadeLayer extends L.GridLayer {
         const { ctx, tile, done, cacheKey, coords, size, bounds, isExpTile, isValleyTile, retryCount } = task;
 
         if (!bitmap) {
+            winterBitmap?.close();
             // 取图/解码超时或偶发失败：保留「未探索灰雾」遮罩并在后台自动延时重试，绝不留刺眼蓝洞或死块
             if (error) console.warn('[Hillshade] tile delayed, keeping fog & scheduling retry:', error);
             if (retryCount < 4) {
@@ -210,12 +221,11 @@ export class HillshadeLayer extends L.GridLayer {
 
         try {
             const _t0 = performance.now();
-            // removed exitFogState
-            ctx.clearRect(0, 0, size.x, size.y);
-            ctx.drawImage(bitmap, 0, 0);
+            this.paintTileCanvas(ctx, size.x, size.y, bitmap, winterBitmap);
             if (e.data.isCoarseFallback) {
                 // 粗高程远景兜底已上屏（无缝同色系过渡），不写入高清缓存，后台静默重拉高清瓦片替换
                 bitmap.close();
+                winterBitmap?.close();
                 if (retryCount < 4) {
                     const nextRetry = retryCount + 1;
                     const delayMs = 2000 * nextRetry;
@@ -225,13 +235,14 @@ export class HillshadeLayer extends L.GridLayer {
                     }, delayMs);
                 }
             } else {
-                this.cachePut(cacheKey, bitmap);
+                this.cachePut(cacheKey, bitmap, winterBitmap);
             }
             perfDoctor.note('HillshadeLayer.handleWorkerMessage(山体瓦片上屏)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:handleWorkerMessage');
         } catch (err) {
             // 异常兜底：保持灰雾并释放位图
             console.warn('[Hillshade] 位图绘制失败:', err);
             bitmap.close();
+            winterBitmap?.close();
         }
         done(undefined, tile);
     }
@@ -257,7 +268,7 @@ export class HillshadeLayer extends L.GridLayer {
      *    预取侧的版本号落后（v3 vs v6）就再也判不出「这块已经算好了」，每次切 zoom 都白发一轮请求。
      */
     private tileCacheKey(z: number, x: number, y: number, isRelief: boolean, isValley: boolean): string {
-        return `${z}/${x}/${y}:${isRelief ? 'relief_snow_v15' : 'std_v7'}:${isValley ? 'valley_nile_v1' : 'v0'}${isRelief && this.terraceExp ? ':terrace7_v1' : ''}`;
+        return `${z}/${x}/${y}:${isRelief ? 'relief_snow_v16' : 'std_v7'}:${isValley ? 'valley_nile_v1' : 'v0'}${isRelief && this.terraceExp ? ':terrace7_v1' : ''}`;
     }
 
     /** LRU 读：命中则移到队尾标记为最近使用 */
@@ -271,20 +282,26 @@ export class HillshadeLayer extends L.GridLayer {
     }
 
     /** LRU 写：超上限则淘汰最久未用的一块并释放其显存 */
-    private cachePut(key: string, bitmap: ImageBitmap): void {
-        // [FIX 2026-07-28] 同键覆盖时必须释放旧位图，否则那块显存再没人能回收
-        //（两个 Worker 同时算出同一块瓦片时会走到；虽罕见但确实泄漏）。
-        // 安全性：缓存命中路径已改为在微任务里重新查缓存，拿到的必是新位图，
-        // 不会有人还攥着这个被 close 的旧引用。
+    private cachePut(key: string, bitmap: ImageBitmap, winterBitmap?: ImageBitmap): void {
         const prev = this.tileCache.get(key);
         if (prev && prev !== bitmap) prev.close();
         this.tileCache.delete(key);
         this.tileCache.set(key, bitmap);
+
+        const prevWinter = this.winterTileCache.get(key);
+        if (prevWinter && prevWinter !== winterBitmap) prevWinter.close();
+        this.winterTileCache.delete(key);
+        if (winterBitmap) {
+            this.winterTileCache.set(key, winterBitmap);
+        }
+
         while (this.tileCache.size > TILE_CACHE_MAX) {
             const oldestKey = this.tileCache.keys().next().value as string | undefined;
             if (oldestKey === undefined) break;
             this.tileCache.get(oldestKey)?.close();
             this.tileCache.delete(oldestKey);
+            this.winterTileCache.get(oldestKey)?.close();
+            this.winterTileCache.delete(oldestKey);
         }
     }
 
@@ -292,6 +309,125 @@ export class HillshadeLayer extends L.GridLayer {
     private clearTileCache(): void {
         for (const bmp of this.tileCache.values()) bmp.close();
         this.tileCache.clear();
+        for (const bmp of this.winterTileCache.values()) bmp.close();
+        this.winterTileCache.clear();
+    }
+
+    /**
+     * 计算当前游戏季节对应的冬季地表混合系数（0..1），与 VegetationLayer / CityLifeAmbientLayer 的 SEASON_BLEND_SECONDS = 5.0 完全同步：
+     * - 春(0) / 夏(1)：0
+     * - 秋(2)：前 10 秒为 0，季末最后 5 秒由 0 平滑 smoothstep 过渡至 1（入冬降雪）
+     * - 冬(3)：前 10 秒为 1，季末最后 5 秒由 1 平滑 smoothstep 过渡至 0（开春消融）
+     */
+    private computeWinterBlend(): number {
+        const ts = (window as any).game?.timeSystem;
+        const season = ts?.getSeason?.();
+        if (typeof season !== 'number') return 0;
+        const remain = ts?.getTimeToNextSeason?.();
+        const BLEND_SEC = 5.0;
+        if (season === 2) {
+            if (typeof remain !== 'number' || remain >= BLEND_SEC) return 0;
+            const t = Math.min(1, Math.max(0, (BLEND_SEC - Math.max(0, remain)) / BLEND_SEC));
+            return t * t * (3 - 2 * t);
+        }
+        if (season === 3) {
+            if (typeof remain !== 'number' || remain >= BLEND_SEC) return 1;
+            const t = Math.min(1, Math.max(0, (BLEND_SEC - Math.max(0, remain)) / BLEND_SEC));
+            return 1 - t * t * (3 - 2 * t);
+        }
+        return 0;
+    }
+
+    /** 将单张瓦片的常态位图与冬雪位图按当前 currentWinterBlend 合成到瓦片画布 */
+    private paintTileCanvas(
+        ctx: CanvasRenderingContext2D,
+        width: number,
+        height: number,
+        normalBmp: ImageBitmap,
+        winterBmp?: ImageBitmap,
+    ): void {
+        ctx.clearRect(0, 0, width, height);
+        const wBlend = winterBmp ? this.currentWinterBlend : 0;
+        if (wBlend >= 0.999 && winterBmp) {
+            ctx.globalAlpha = 1;
+            ctx.drawImage(winterBmp, 0, 0);
+            return;
+        }
+        ctx.globalAlpha = 1;
+        ctx.drawImage(normalBmp, 0, 0);
+        if (wBlend > 0.001 && winterBmp) {
+            ctx.globalAlpha = wBlend;
+            ctx.drawImage(winterBmp, 0, 0);
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    /** 当季节混合系数变化时，仅重绘当前视口内拥有冬雪位图的活跃瓦片（零 Worker 重算，60FPS 丝滑覆雪/融雪） */
+    private winterPaintDeferred = false;
+    private repaintVisibleWinterTiles(): void {
+        if (this._map?.getContainer()?.style?.visibility === 'hidden') {
+            this.winterPaintDeferred = true;
+            return;
+        }
+        this.winterPaintDeferred = false;
+        const tilesObj = (this as any)._tiles as Record<string, { el?: HTMLElement }> | undefined;
+        if (!tilesObj) return;
+        for (const key in tilesObj) {
+            const tile = tilesObj[key]?.el as HTMLCanvasElement | undefined;
+            if (!tile || !tile.isConnected) continue;
+            const cacheKey = (tile as any).__hsCacheKey as string | undefined;
+            if (!cacheKey) continue;
+            const winterBmp = this.winterTileCache.get(cacheKey);
+            if (!winterBmp) continue;
+            const normalBmp = this.tileCache.get(cacheKey);
+            if (!normalBmp) continue;
+            const ctx = tile.getContext('2d');
+            if (!ctx) continue;
+            this.paintTileCanvas(ctx, tile.width, tile.height, normalBmp, winterBmp);
+        }
+    }
+
+    private startSeasonBlendWatch(): void {
+        if (this.seasonTimer !== null || this.seasonRafId !== null) return;
+        let isRafActive = false;
+
+        const syncBlend = () => {
+            if (this.winterPaintDeferred && this._map?.getContainer()?.style?.visibility !== 'hidden') {
+                this.currentWinterBlend = this.computeWinterBlend();
+                this.repaintVisibleWinterTiles();
+                return this.currentWinterBlend;
+            }
+            const nextBlend = this.computeWinterBlend();
+            if (Math.abs(nextBlend - this.currentWinterBlend) > 0.002) {
+                this.currentWinterBlend = nextBlend;
+                this.repaintVisibleWinterTiles();
+            }
+            return nextBlend;
+        };
+
+        const rafLoop = () => {
+            if (this._map?.getContainer()?.style?.visibility === 'hidden') {
+                this.winterPaintDeferred = true;
+                isRafActive = false;
+                this.seasonRafId = null;
+                return;
+            }
+            const b = syncBlend();
+            if (b > 0.001 && b < 0.999) {
+                this.seasonRafId = requestAnimationFrame(rafLoop);
+            } else {
+                isRafActive = false;
+                this.seasonRafId = null;
+            }
+        };
+
+        this.seasonTimer = window.setInterval(() => {
+            const b = syncBlend();
+            if (b > 0.001 && b < 0.999 && !isRafActive && this._map?.getContainer()?.style?.visibility !== 'hidden') {
+                isRafActive = true;
+                this.seasonRafId = requestAnimationFrame(rafLoop);
+            }
+        }, 180);
     }
 
     /**
@@ -435,6 +571,7 @@ export class HillshadeLayer extends L.GridLayer {
         const isExpTile = this.isReliefTile(coords.z);
         const isValleyTile = this.isValleyTile(coords.z, bounds);
         const cacheKey = this.tileCacheKey(coords.z, coords.x, coords.y, isExpTile, isValleyTile);
+        (tile as any).__hsCacheKey = cacheKey;
 
         // ── 缓存命中：来回切 zoom 时的常见路径，无网络、无 Worker、无像素回读 ──
         const cached = this.cacheGet(cacheKey);
@@ -454,8 +591,9 @@ export class HillshadeLayer extends L.GridLayer {
                     this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
                     return;
                 }
+                const freshWinter = this.winterTileCache.get(cacheKey);
                 try {
-                    ctx.drawImage(fresh, 0, 0);
+                    this.paintTileCanvas(ctx, size.x, size.y, fresh, freshWinter);
                 } catch (err) {
                     // 兜底：绘制异常时重算，同样不留空白瓦片
                     console.warn('[Hillshade] 缓存位图绘制失败，改为重算:', err);
@@ -559,8 +697,22 @@ export class HillshadeLayer extends L.GridLayer {
         (L.GridLayer.prototype as any)._resetView?.call(this, e);
     }
 
+    onAdd(map: L.Map): this {
+        this.currentWinterBlend = this.computeWinterBlend();
+        this.startSeasonBlendWatch();
+        return super.onAdd(map);
+    }
+
     // Cleanup if layer removed
     onRemove(map: L.Map): this {
+        if (this.seasonTimer !== null) {
+            window.clearInterval(this.seasonTimer);
+            this.seasonTimer = null;
+        }
+        if (this.seasonRafId !== null) {
+            cancelAnimationFrame(this.seasonRafId);
+            this.seasonRafId = null;
+        }
         for (const w of this.workers) w.terminate();
         this.materialBytesByWorker.clear();
         this.workers.length = 0;

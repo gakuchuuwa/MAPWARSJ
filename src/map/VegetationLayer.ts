@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import { CITIES_V2 } from '../data/cities_v2';
 import { resolveTerrainTile } from '../ui/Scene13Biome';
-import { queryBaseTile } from '../ui/scene13/WorldBaseMap';
+import { loadWorldBaseData, queryBaseTile, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
 import { pickTree, type TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { perfDoctor } from '../debug/PerfDoctor';
@@ -247,6 +247,136 @@ function forestNoise(lat: number, lng: number): number {
 
 const RESOLVE_FOREST_BIOMES = new Set([1, 2, 3, 4, 5, 6, 12, 14]);
 
+/** 丝路绿洲、西域/河西、两河、尼罗河与阿den/阿拉伯绿洲据点建筑风格 */
+const OASIS_STYLES = new Set([
+    'XINJIANG', 'HEXI', 'TRANSOXIANA', 'PERSIA', 'SASANIAN',
+    'ARABIA', 'EGYPT', 'MESOPOTAMIA', 'MAGHREB', 'TANGUT',
+]);
+
+/**
+ * 精准地理生境补充判定（2026-10-30 主人令）：
+ * 在严守「华北/关中/汾河等农耕大平原不乱长树、流动沙海/戈壁腹地不长树」的前提下，精准还原四大历史生态植被带：
+ *   1. 西北与塞北高山森林绿岛（天山北麓雪岭云杉、祁连山青海云杉、阴山/贺兰山松桦林、阿尔泰/杭爱/肯特山泰加林）；
+ *   2. 藏东南与雅鲁藏布江中游河谷（海拔 < 3850m）的巨柏林（CYPRESS）；
+ *   3. 古典地中海、黎巴嫩雪松山地、阿特拉斯山脉与扎格罗斯/厄尔布尔士山地林（OLIVE / ITALIAN_PINE / CYPRESS / OAK）；
+ *   4. 非洲萨赫勒/东非/德干稀树草原疏林（ACACIA / BAOBAB）、也门索科特拉龙血树（DRAGON_TREE）及丝路/大河绿洲红柳椰枣林（BUSH_TREE_A / PALM）。
+ */
+export function resolveSpecialEcoVegetation(
+    lat: number,
+    lng: number,
+    elev: number | null,
+    tile: string,
+    forestBiome: number,
+    canopyDensity: number,
+    noiseVal: number,
+    oasisCityBoost: number,
+): { weight: number; effectiveTile: string } {
+    // 流动流沙、干涸盐壳、常年冰雪与荒漠群系（非绿洲）一票否决
+    if (tile === 'qs' || tile === 'pal1' || tile === 'sno' || tile === 'sn2' || tile === 'snd' || tile === 'ice' || tile === 'ic3') {
+        return { weight: 0, effectiveTile: tile };
+    }
+    if (forestBiome === 13 && oasisCityBoost <= 0) {
+        return { weight: 0, effectiveTile: tile };
+    }
+
+    const clusterFactor = noiseVal >= 0.36 ? Math.pow((noiseVal - 0.36) / 0.64, 1.20) : 0;
+
+    // ① 丝路绿洲据点外围 & 尼罗河/两河冲积绿洲林带（红柳/梭梭灌丛 BUSH_TREE_A 与椰枣棕榈 PALM）
+    const isNileOrMesopotamiaOasis = (
+        (lat >= 24.0 && lat <= 31.5 && lng >= 29.8 && lng <= 32.6 && (tile === 'ds2' || tile === 'gr2' || tile === 'gr3' || tile === 'des')) ||
+        (lat >= 30.0 && lat <= 35.5 && lng >= 43.2 && lng <= 48.5 && (tile === 'ds2' || tile === 'gr2' || tile === 'gr3'))
+    ) && (elev === null || elev < 220) && noiseVal >= 0.54;
+    if (oasisCityBoost > 0 || isNileOrMesopotamiaOasis) {
+        const w = Math.max(oasisCityBoost, isNileOrMesopotamiaOasis ? 0.16 + (noiseVal - 0.54) * 0.25 : 0);
+        if (w >= 0.12) {
+            const isTemperateSilkRoad = lat >= 35.5 && lng >= 45.0 && lng <= 115.0;
+            return {
+                weight: w,
+                effectiveTile: isTemperateSilkRoad ? 'ds5' : 'des',
+            };
+        }
+    }
+
+    if (clusterFactor <= 0) return { weight: 0, effectiveTile: tile };
+
+    // ② 西北与塞北四大高山森林绿岛（严格限山腰林带海拔或 RESOLVE 针叶林群系，盆地戈壁与沙海不长树）
+    // 2a. 天山北麓与伊犁河谷雪岭云杉林带（41.8°~44.8°N, 78.5°~94.5°E）
+    if (lat >= 41.8 && lat <= 44.8 && lng >= 78.5 && lng <= 94.5 && tile !== 'pal' && tile !== 'des') {
+        if (forestBiome === 5 || (elev !== null && elev >= 1400 && elev <= 2850)) {
+            const w = (0.42 + 0.25 * Math.min(1, canopyDensity / 18)) * clusterFactor;
+            return { weight: w, effectiveTile: 'underbrush_leaves' };
+        }
+    }
+    // 2b. 祁连山北麓与焉支山青海云杉/圆柏水源林（37.0°~39.6°N, 97.5°~103.2°E）
+    if (lat >= 37.0 && lat <= 39.6 && lng >= 97.5 && lng <= 103.2 && tile !== 'pal' && tile !== 'des') {
+        if (forestBiome === 5 || (elev !== null && elev >= 2050 && elev <= 3450)) {
+            const w = (0.44 + 0.22 * Math.min(1, canopyDensity / 12)) * clusterFactor;
+            return { weight: w, effectiveTile: 'underbrush_leaves' };
+        }
+    }
+    // 2c. 阴山山脉（大青山/乌拉山）与贺兰山松桦林带
+    const isYinshan = lat >= 40.45 && lat <= 41.45 && lng >= 108.2 && lng <= 112.5 && elev !== null && elev >= 1320 && elev <= 2300;
+    const isHelanshan = lat >= 38.3 && lat <= 39.35 && lng >= 105.55 && lng <= 106.4 && (forestBiome === 5 || (elev !== null && elev >= 1450 && elev <= 2900));
+    if ((isYinshan || isHelanshan) && tile !== 'pal' && tile !== 'des') {
+        const w = 0.42 * clusterFactor;
+        return { weight: w, effectiveTile: isYinshan && lng >= 110.2 ? 'gr3' : 'underbrush_leaves' };
+    }
+    // 2d. 阿尔泰山、杭爱山、肯特山（不儿罕合勒敦山）泰加针叶与白桦林带（46.2°~51.8°N, 85.0°~112.5°E）
+    if (lat >= 46.2 && lat <= 51.8 && lng >= 85.0 && lng <= 112.5 && tile !== 'pal' && tile !== 'des') {
+        if (forestBiome === 5 || forestBiome === 6 || (elev !== null && elev >= 1400 && elev <= 2450 && tile === 'gr7')) {
+            const w = (0.38 + 0.35 * Math.min(1, canopyDensity / 30)) * clusterFactor;
+            return { weight: w, effectiveTile: 'underbrush_leaves' };
+        }
+    }
+
+    // ③ 藏东南（林芝）与雅鲁藏布江中游河谷巨柏林（CYPRESS，严格限河谷海拔 < 3850m，藏北高寒羌塘高原不长树）
+    if (lat >= 27.5 && lat <= 31.8 && lng >= 88.0 && lng <= 98.8) {
+        const inValleyElev = elev === null ? (forestBiome === 4 || forestBiome === 5) : (elev >= 1600 && elev <= 3850);
+        if (inValleyElev && ((forestBiome === 4 || forestBiome === 5) || ((tile === 'gravel_default' || tile === 'ds2' || tile === 'gr3') && noiseVal >= 0.45))) {
+            const w = (forestBiome === 4 || forestBiome === 5 ? 0.42 + 0.35 * Math.min(1, canopyDensity / 40) : 0.34) * clusterFactor;
+            return { weight: w, effectiveTile: 'gravel_default' };
+        }
+    }
+
+    // ④ 古典地中海、黎巴嫩雪松山地、阿特拉斯山脉与扎格罗斯/厄尔布尔士山地林
+    // 4a. 地中海森林与灌木林群系（forestBiome === 12：黎凡特/黎巴嫩、阿特拉斯山脉、希腊/意大利/伊比利亚）
+    if (forestBiome === 12 && tile !== 'pal' && tile !== 'des') {
+        const isLebanon = lat >= 33.0 && lat <= 36.8 && lng >= 35.1 && lng <= 37.2;
+        const isAtlas = lat >= 32.0 && lat <= 37.0 && lng >= -8.0 && lng <= 10.5;
+        if (canopyDensity >= 3 || isLebanon || (isAtlas && (elev === null || elev >= 500))) {
+            const w = (0.34 + 0.44 * Math.min(1, canopyDensity / 28)) * clusterFactor;
+            const effTile = isLebanon && (elev === null || elev >= 550)
+                ? 'rck'
+                : (tile === 'ds5' || tile === 'gravel_default' ? 'gr7' : tile);
+            return { weight: w, effectiveTile: effTile };
+        }
+    }
+    // 4b. 扎格罗斯山脉、厄尔布尔士山脉与小亚细亚山地栎林/阔叶林（30°~40°N, 30°~56°E）
+    if (lat >= 30.0 && lat <= 40.0 && lng >= 30.0 && lng <= 56.0 && (forestBiome === 4 || forestBiome === 5) && tile !== 'pal' && tile !== 'des') {
+        if (canopyDensity >= 1 || (elev !== null && elev >= 850 && elev <= 2650)) {
+            const w = (0.35 + 0.42 * Math.min(1, canopyDensity / 28)) * clusterFactor;
+            const effTile = tile === 'ds5' || tile === 'gravel_default' ? 'gr7' : tile;
+            return { weight: w, effectiveTile: effTile };
+        }
+    }
+
+    // ⑤ 热带/亚热带稀树草原疏林（Savanna：萨赫勒/东非金合欢 ACACIA & 猴面包树 BAOBAB、也门/索科特拉龙血树 DRAGON_TREE、德干高原）
+    const isAfricaSavanna = lat >= -24.0 && lat <= 15.8 && lng >= -17.5 && lng <= 51.0;
+    const isYemenSocotra = lat >= 12.0 && lat <= 17.8 && lng >= 42.5 && lng <= 55.0;
+    const isDeccanSavanna = lat >= 9.5 && lat <= 23.5 && lng >= 72.5 && lng <= 82.5;
+    if (
+        (isAfricaSavanna || isYemenSocotra || isDeccanSavanna) &&
+        (tile === 'gr5' || tile === 'gr7' || tile === 'gr3' || tile === 'ds4' || tile === 'ds2') &&
+        noiseVal >= 0.55
+    ) {
+        // 稀树草原只取噪声峰顶（约 18% 格点）生成 2 棵装疏林簇，82% 面积保持开阔萨凡纳草地
+        const w = 0.16 + (noiseVal - 0.55) * 0.28;
+        return { weight: w, effectiveTile: 'gr5' };
+    }
+
+    return { weight: 0, effectiveTile: tile };
+}
+
 function isStrategicForestArea(biome: number, tile: string, elevation: number, lat: number): boolean {
     // 荒漠、流沙、盐壳、高山裸岩与冰雪一票否决
     if (NON_VEGETATION_TILES.has(tile)) return false;
@@ -317,14 +447,14 @@ function nextTreeSeason(s: TreeSeason): TreeSeason {
  *   原实现 `SEASON_BLEND_WINDOW = 0.45`（**季长的 45%**）→ 按 `GameConfig.TIME.SEASON_DURATION = 15`
  *   （15 游戏秒/季）折算就是 **6.75 秒**都在渐变 —— 将近一半时间树都是半透明的，
  *   再叠加交叉淡出自身的透明度塌陷，视觉上就是"淡着淡着没了"。
- *   改为读 `TimeSystem.getTimeToNextSeason()`（剩余**游戏秒**）：只在季末最后 **2 秒**才淡出，
- *   1× 倍速下占一季 13%（原来 45%）。口径与季节长度自动同步，以后改 SEASON_DURATION 不用再动这里。
+ *   改为读 `TimeSystem.getTimeToNextSeason()`（剩余**游戏秒**）：每季 15 秒，前 10 秒稳态展示当季风貌，
+ *   季末最后 **5 秒**平滑渐变进入下一季（与 `HillshadeLayer` 地形覆雪、`CityLifeAmbientLayer` 据点民生层严格统一）。
  */
-const SEASON_BLEND_SECONDS = 2.0;
+const SEASON_BLEND_SECONDS = 5.0;
 
 /**
  * 淡出进度 0..1。
- * @param offsetSec 该树自己的错峰延迟（0~0.35 秒）：整片林依次换装，不是齐刷一变。
+ * @param offsetSec 该树自己的错峰延迟（0~0.6 秒）：整片林依次换装，不是齐刷一变。
  */
 function seasonBlend(offsetSec = 0): number {
     const remain = (window as any).game?.timeSystem?.getTimeToNextSeason?.();
@@ -510,6 +640,11 @@ export class VegetationLayer {
             this.lastRenderKey = '';
             this.scheduleRender();
         });
+        void loadWorldBaseData('/world/world-base.png').then((ready) => {
+            if (!ready) return;
+            this.lastRenderKey = '';
+            this.scheduleRender();
+        });
         this.startSeasonBlendWatch();
     }
 
@@ -682,10 +817,10 @@ export class VegetationLayer {
             /** 树位键（经纬度 5 位小数）：给「上一帧画成的贴图」备忘用，四季之间坐标绝对不变 */
             const posKey = `${Math.round(it.c.lat * 1e5)},${Math.round(it.c.lng * 1e5)}`;
 
-            // 每棵树基于经纬度哈希做秒级错峰（0~0.35 秒）：整片林依次换装
+            // 每棵树基于经纬度哈希做秒级错峰（0~0.60 秒）：整片林在 5 秒窗口内依次换装覆雪/融雪
             let treeBlend = baseBlend;
             if (baseBlend > 0 && it.c.assetNext !== it.c.asset) {
-                treeBlend = seasonBlend(hash(it.c.lat, it.c.lng, 99) * 0.35);
+                treeBlend = seasonBlend(hash(it.c.lat, it.c.lng, 99) * 0.60);
             }
 
             // 🔴 零消失铁律：只有当下一季新树贴图完全解码就绪时，才允许进入交叉淡出；
@@ -898,20 +1033,68 @@ export class VegetationLayer {
                     const curLatLng = i === 0 ? ptLatLng : this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
 
                     // 🔴 严格保护四季系统：春/夏/秋/冬 4 季树种 1:1 动态轮转；
-                    //    同时在战略地图尺度（25px）下，将全秃枯树枝（BIRCH_WINTER / SCENARIO_TREE_I / DEAD_TREE）
-                    //    映射为覆雪/金秋/灌丛饱满树冠，消除绿草/黄褐地表上像插着一排枯黑铁丝的违和感。
-                    const isSnowTile = tile === 'sno' || tile === 'sn2' || tile === 'snf' || tile === 'snd' || tile === 'ic3' || tile === 'ice';
-                    const softenStrategicTree = (a: string): string => {
-                        if (a === 'BIRCH_WINTER') return isSnowTile ? (Math.abs(curLatLng.lat) > 46 ? 'SNOW_PINE' : 'SNOW_AUTUMN_OAK') : (Math.abs(curLatLng.lat) > 46 ? 'ASIAN_PINE' : 'AUTUMN_OAK');
-                        if (a === 'SCENARIO_TREE_I') return isSnowTile ? 'SNOW_AUTUMN_OAK' : 'AUTUMN_OAK';
-                        if (a === 'DEAD_TREE') return 'BUSH_TREE_A';
+                    //    同时保证「战略冬天与战术冬天 100% 同源一致」：
+                    //    1. 在冬季真积雪区（world-base winterFlag ∈ {1, 2, 3} 或高寒雪线林带），松柏与阔叶林全部披挂 DE 饱满覆雪树冠（SNOW_PINE / SNOW_AUTUMN_OAK），消除白雪地上长翠绿树冠或金黄秋橡树的割裂感；
+                    //    2. 在冬季无雪区与零星残雪区（winterFlag === 0 或 4），绝不误戴厚白雪冠；
+                    //    3. 在战略地图尺度（25px）下，将全秃枯树枝（BIRCH_WINTER / SCENARIO_TREE_I / DEAD_TREE）映射为覆雪/金秋/灌丛饱满树冠，消除像插着一排枯黑铁丝的违和感。
+                    const isPermSnowTile = tile === 'sno' || tile === 'sn2' || tile === 'snf' || tile === 'snd' || tile === 'ic3' || tile === 'ice';
+                    const wf = queryWinterSnow(curLatLng.lat, curLatLng.lng);
+                    const isAlpineWinterSnow = elev !== null && Math.abs(curLatLng.lat) >= 26 && elev >= treeLine - 350;
+                    const hasWinterSnowGround = wf === 1 || wf === 2 || wf === 3 || isAlpineWinterSnow;
+
+                    const resolveStrategicTreeForSeason = (s: TreeSeason): string => {
+                        const isSnow = isPermSnowTile || (s === 3 && hasWinterSnowGround);
+                        // 🔴 传入夏季常态底图 tile 以命中 REGION_TREES 生态分区（保留各地区真实的针叶 vs 落叶阔叶树种比例），
+                        //    再按 isSnow 与战术 seasonalDeTree 同一套规则映射为 SNOW_PINE / SNOW_AUTUMN_OAK。
+                        const a = pickTree({ baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng, season: s, isSiege: false });
+
+                        if (a === 'DEAD_TREE') return isSnow ? 'SNOW_PINE' : 'BUSH_TREE_A';
+
+                        if (isSnow) {
+                            if (
+                                a === 'PINE' ||
+                                a === 'ASIAN_PINE' ||
+                                a === 'SNOW_PINE' ||
+                                a === 'ITALIAN_PINE' ||
+                                a === 'CYPRESS' ||
+                                a === 'CYPRESS_DEC' ||
+                                a === 'MONKEY_PUZZLE' ||
+                                a === 'BAMBOO' ||
+                                a === 'LUSH_BAMBOO'
+                            ) {
+                                return 'SNOW_PINE';
+                            }
+                            if (a === 'BIRCH_WINTER' || a === 'BIRCH_AUTUMN' || a === 'BIRCH_GREEN') {
+                                return (Math.abs(curLatLng.lat) > 46 || wf === 2 || (wf === 3 && ((gx + gy + i) & 1) === 0))
+                                    ? 'SNOW_PINE'
+                                    : 'SNOW_AUTUMN_OAK';
+                            }
+                            if (
+                                a === 'SCENARIO_TREE_I' ||
+                                a === 'OAK' ||
+                                a === 'GREEN_OAK' ||
+                                a === 'AUTUMN_OAK' ||
+                                a === 'SNOW_AUTUMN_OAK' ||
+                                a === 'ASIAN_MAPLE_GREEN' ||
+                                a === 'ASIAN_MAPLE_AUTUMN' ||
+                                a === 'PEACH_BLOSSOM' ||
+                                a === 'WILLOW' ||
+                                a === 'OLIVE' ||
+                                a.startsWith('SCENARIO_TREE_')
+                            ) {
+                                return 'SNOW_AUTUMN_OAK';
+                            }
+                            return a;
+                        }
+
+                        // 非覆雪地面（含春/夏/秋及冬季无雪/零星残雪区）：确保不残留重度白雪冠或枯黑铁丝枝
+                        if (a === 'BIRCH_WINTER') return Math.abs(curLatLng.lat) > 46 ? 'ASIAN_PINE' : 'AUTUMN_OAK';
+                        if (a === 'SCENARIO_TREE_I' || a === 'SNOW_AUTUMN_OAK') return 'AUTUMN_OAK';
+                        if (a === 'SNOW_PINE') return 'ASIAN_PINE';
                         return a;
                     };
-                    const asset = softenStrategicTree(pickTree({ baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng, season, isSiege: false }));
-                    const assetNext = softenStrategicTree(pickTree({
-                        baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng,
-                        season: nextSeason, isSiege: false,
-                    }));
+                    const asset = resolveStrategicTreeForSeason(season);
+                    const assetNext = resolveStrategicTreeForSeason(nextSeason);
 
                     // 预热多变体精灵图（对于第 0 帧可用者兼顾 preview.png）
                     const preloadAsset = (targetAsset: string): boolean => {

@@ -8583,7 +8583,10 @@ export class Scene13WarLayer {
                 if (count > 0) {
                     const desiredPanX = (this.worldCX - targetFocusX) * this.tacticalZoom;
                     const desiredPanY = (this.worldCY - targetFocusY) * this.tacticalZoom;
-                    const camSpeed = this.skillCamTimer > 0 ? 4.5 : 1.5;
+                    const returnFrac = this.camSwitchLockTimer > 0 ? (1 - this.camSwitchLockTimer / CAM_HOLD_SEC) : 1;
+                    const camSpeed = this.skillCamTimer > 0
+                        ? 2.8
+                        : (this.camSwitchLockTimer > 0 ? (0.45 + 1.05 * returnFrac * returnFrac) : 1.5);
                     const smooth = Math.min(1.0, camSpeed * dt);
                     this.tacticalPanX += (desiredPanX - this.tacticalPanX) * smooth;
                     this.tacticalPanY += (desiredPanY - this.tacticalPanY) * smooth;
