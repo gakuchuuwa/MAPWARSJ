@@ -322,11 +322,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/MONGOL/tiele_qibiheli.png": {
-            "scale": 0.82,
-            "offsetX": 0,
-            "offsetY": -12
-        },
         "/assets/CENTRAL/fengzhou_wujie.png": {
             "scale": 1,
             "offsetX": 0,
@@ -9191,6 +9186,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 0,
             "offsetY": 51
+        },
+        "/assets/XIANBEI/tujue_abo_dagan.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/KHITAN/xihai_d_fuyun.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/MONGOL/__闲置__MONGOL_02.png": {
+            "scale": 0.82,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/MONGOL/tiele_qibiheli.png": {
+            "scale": 1.04,
+            "offsetX": -5,
+            "offsetY": -3
+        },
+        "/assets/MONGOL/__闲置__STEPPE_83.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 15
         }
     },
     "folderGuides": {

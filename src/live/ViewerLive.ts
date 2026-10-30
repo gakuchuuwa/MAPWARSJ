@@ -805,9 +805,11 @@ export class ViewerLive {
         }
         this.recordCmd(eventId, id, name, 'join_choice', applied.candidate.id, bid, pubMs, now, 'executed');
         this.save();
-        this.notifyViewerVoice(id, `感谢${name}，出${bid}积分投奔${applied.candidate.label}`, true);
+        const destCity = applied.candidate.cityName;
+        const destVoice = destCity ? `，目标${destCity}` : '';
+        this.notifyViewerVoice(id, `感谢${name}出${bid}积分，投奔${applied.candidate.label}${destVoice}`, true);
         const refundNote = prev ? `（已退回 ${prev.viewer} 的 ${prev.bid} 积分）` : '';
-        return this.note(`${name} 出 ${bid} 积分选定投奔【${applied.candidate.label}】（下次改投需 ${bid + 1} 分起）${refundNote}`);
+        return this.note(`${name} 出 ${bid} 积分，投奔【${applied.candidate.label}】${destCity ? `，目标【${destCity}】` : ''}（下次改投需 ${bid + 1} 分起）${refundNote}`);
     }
 
     private recordCmd(

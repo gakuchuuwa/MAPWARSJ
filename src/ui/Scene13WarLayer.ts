@@ -343,6 +343,8 @@ export class Scene13WarLayer {
     private camTier = -1;
     private skillCamX = 0;
     private skillCamY = 0;
+    /** 放计特写期间实时跟随的单位列表（如【敌】伏兵冲锋时镜头一路跟进） */
+    private skillCamFollowUnits: WarMan[] = [];
     private lastCamFocusX = 0;
     private lastCamFocusY = 0;
     private hasLastCamFocus = false;
@@ -1051,57 +1053,78 @@ export class Scene13WarLayer {
 
     /**
      * 🔴 [2026-10-30 主人「敌战计偷袭增兵，不要从敌方营寨的出兵口出，好像敌方出兵似的」]
-     * 【敌】伏兵改为**两翼包抄**：从敌阵左右两翼的外侧杀进来，打敌军侧后。
-     *   · 纵深：敌军前线重心再往敌后 AMBUSH_FLANK_BACK（打侧后，不正面撞）；
-     *   · 横向：敌阵最外一人再往外 AMBUSH_FLANK_OUT，夹在战场边界内；
-     *   · 每翼一列分队（沿战线方向错开 AMBUSH_FLANK_GAP），队头朝向敌阵（-side 方向冲进去）；
-     *   · 落点在水里就往敌阵方向挪到陆地；攻城战落点不许进城墙圈（再往外推），推不出去该翼作废。
-     * 两翼都算不出（没有敌兵等）返回空 ⇒ 调用方退回旧的敌口锚点。
+     * 【敌】伏兵改为从敌军**斜后方**杀进来（我方左手 0°、正前 90°，即 45° 左后或 135° 右后）。
+     * 🔴 [2026-10-30 修复两翼割裂与距离失真]：
+     *   · 每次伏兵集中从**同一侧斜后翼**（45° 或 135° 中空地更开阔、不贴边/不落水/不进城墙的一侧，两侧都开阔则随机一侧）整军杀出，
+     *     避免拆成相隔两千像素的两半导致镜头对在两翼中间的空地上；
+     *   · 沿所选 45°/135° 斜线方向直接量敌阵外沿（去掉两头各 10% 散兵后的 90% 分位），再往斜后方外推 AMBUSH_CLEARANCE（420px），
+     *     既不会贴脸刷在敌兵堆里，也不会被横向宽阵型连累推到地图边缘；
+     *   · 各分队沿与斜线垂直的方向紧凑排开（间距 AMBUSH_FLANK_GAP=56px），队头顺着斜线直插敌军前线重心。
      */
     private ambushFlankAnchors(f: 0 | 1, count: number): Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }> {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
         const enemies = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.siegeW);
         if (enemies.length === 0) return [];
-        const AMBUSH_FLANK_BACK = 80, AMBUSH_FLANK_OUT = 180, AMBUSH_FLANK_GAP = 70;
+        const AMBUSH_CLEARANCE = 420;
+        const AMBUSH_FLANK_GAP = 56;
         const adv = this.advanceVec[f];          // 本方进攻方向：往这个方向走就是敌后
         const side = this.sideVec[f];
         const [fx, fy] = this.sideFrontCentroid(ef);
-        const P0 = { x: fx + adv.x * AMBUSH_FLANK_BACK, y: fy + adv.y * AMBUSH_FLANK_BACK };
-        // 🔴 [2026-10-30 主人同意] 敌阵两端不取最外那一个兵（一个散兵/追远的兵就把一翼推得老远），
-        //    横向投影排序后去掉两头各 10%，用中间 90% 的兵定两端。
-        const proj = enemies.map((m) => (m.x - P0.x) * side.x + (m.y - P0.y) * side.y).sort((a, b) => a - b);
-        const trim = Math.floor(proj.length * 0.1);
-        const minS = Math.min(0, proj[trim]);
-        const maxS = Math.max(0, proj[proj.length - 1 - trim]);
-        const wings: Array<{ sign: 1 | -1; dist: number }> = [
-            { sign: 1, dist: maxS + AMBUSH_FLANK_OUT },
-            { sign: -1, dist: -minS + AMBUSH_FLANK_OUT },
-        ];
-        const out: Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }> = [];
-        const perWing = Math.ceil(count / 2);
-        for (const w of wings) {
-            const inward = { x: -side.x * w.sign, y: -side.y * w.sign };   // 队头朝敌阵
-            const colSide = { x: adv.x, y: adv.y };                          // 一翼的分队沿战线方向排开
-            const pts: Array<{ x: number; y: number }> = [];
-            for (let i = 0; i < perWing; i++) {
-                const along = (i - (perWing - 1) / 2) * AMBUSH_FLANK_GAP;
-                let x = P0.x + side.x * w.sign * w.dist + adv.x * along;
-                let y = P0.y + side.y * w.sign * w.dist + adv.y * along;
-                [x, y] = this.fieldBound(x, y);
+        const P0 = { x: fx, y: fy };
+        const R2 = Math.SQRT1_2;
+
+        type WingCand = {
+            sign: 1 | -1;
+            pts: Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }>;
+            penalty: number;
+        };
+        const buildWing = (sign: 1 | -1): WingCand => {
+            // 斜线方向（我方 45° / 135° = 敌方斜后方）；队头朝向敌阵 = -diag；分队横排方向与斜线垂直
+            const diag = { x: (adv.x + side.x * sign) * R2, y: (adv.y + side.y * sign) * R2 };
+            const inward = { x: -diag.x, y: -diag.y };
+            const colSide = { x: (adv.x - side.x * sign) * R2, y: (adv.y - side.y * sign) * R2 };
+            // 敌军在当前斜线方向上的投影（去掉外端 10% 散兵），从敌阵斜后外沿再往外留出 AMBUSH_CLEARANCE
+            const projs = enemies.map((m) => (m.x - P0.x) * diag.x + (m.y - P0.y) * diag.y).sort((a, b) => a - b);
+            const idx90 = Math.min(projs.length - 1, Math.max(0, Math.floor(projs.length * 0.9)));
+            const outerDiag = Math.max(80, projs[idx90] ?? 80);
+            const dist = outerDiag + AMBUSH_CLEARANCE;
+
+            const pts: Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }> = [];
+            let penalty = 0;
+            for (let i = 0; i < count; i++) {
+                const along = (i - (count - 1) / 2) * AMBUSH_FLANK_GAP;
+                const rawX = P0.x + diag.x * dist + colSide.x * along;
+                const rawY = P0.y + diag.y * dist + colSide.y * along;
+                let [x, y] = this.fieldBound(rawX, rawY);
+                penalty += Math.hypot(x - rawX, y - rawY);
                 // 攻城：不许进城墙圈，沿外侧方向再推
                 for (let k = 0; k < 12 && this.battleType === 'siege' && this.insideRing(x, y); k++) {
                     [x, y] = this.fieldBound(x - inward.x * 60, y - inward.y * 60);
+                    penalty += 80;
                 }
-                if (this.battleType === 'siege' && this.insideRing(x, y)) continue;
+                if (this.battleType === 'siege' && this.insideRing(x, y)) {
+                    penalty += 5000;
+                    continue;
+                }
                 // 水面：往敌阵方向挪到陆地
                 for (let k = 0; k < 8 && this.isWaterAt(x, y); k++) {
                     [x, y] = this.fieldBound(x + inward.x * 40, y + inward.y * 40);
+                    penalty += 50;
                 }
-                pts.push({ x, y });
+                pts.push({ x, y, fwd: inward, side: colSide });
             }
-            for (const p of pts) out.push({ x: p.x, y: p.y, fwd: inward, side: colSide });
-        }
-        return out;
+            return { sign, pts, penalty };
+        };
+
+        const wLeft = buildWing(-1);
+        const wRight = buildWing(1);
+        const pick =
+            wLeft.pts.length !== wRight.pts.length
+                ? (wLeft.pts.length > wRight.pts.length ? wLeft : wRight)
+                : Math.abs(wLeft.penalty - wRight.penalty) > 60
+                    ? (wLeft.penalty < wRight.penalty ? wLeft : wRight)
+                    : (Math.random() < 0.5 ? wLeft : wRight);
+        return pick.pts;
     }
 
     private spawnImmediateSkillReinforcements(
@@ -1286,7 +1309,7 @@ export class Scene13WarLayer {
             const fullAddPop = Math.max(12, Math.round(this.initPool[f] * 0.10));
             const minPop = scopedControl === 'none' ? 2 : scopedControl === 'one' ? 4 : scopedControl === 'front' ? 8 : 12;
             const addTotalPop = scopedControl === null ? fullAddPop : Math.max(minPop, Math.round(fullAddPop * scopeAmount));
-            const allAnchors = this.ambushAnchors(f);
+            const allAnchors = ambushPts.length > 0 ? ambushPts : this.ambushAnchors(f);
             const anchorLimit = scopedControl === null ? allAnchors.length : (scopedControl === 'front' ? 3 : 1);
             const anchors = scopedControl === null
                 ? allAnchors
@@ -1432,6 +1455,7 @@ export class Scene13WarLayer {
                 this.skillCamTimer = SKILL_CAM_SEC;
                 this.skillCamX = vfxX;
                 this.skillCamY = vfxY;
+                this.skillCamFollowUnits = six === 'dizhan' ? vfxTargets.slice() : [];
             }
         }
         this.spawnSkillVfx(f, six, vfxX, vfxY, viewer !== null, vfxTargets, vfxPoints);
@@ -1504,6 +1528,7 @@ export class Scene13WarLayer {
                 this.skillCamTimer = SKILL_CAM_SEC;
                 this.skillCamX = vx;
                 this.skillCamY = vy;
+                this.skillCamFollowUnits = [];
             }
             this.spawnSkillVfx(this.playerSetup.side, 'gongzhan', vx, vy, true, affected, []);
         }
@@ -2386,7 +2411,7 @@ export class Scene13WarLayer {
         // start 后素材加载期 pending>0 → tick 不 render，会把上一场最后一帧（含尸体）亮出来。
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.tacticalZoom = 1.0;
-        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0; this.camSwitchLockTimer = 0; this.hasLastCamFocus = false; this.hasLastCamFocus = false; this.camSwitchLockTimer = 0;
+        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0; this.skillCamFollowUnits = []; this.skillCamFollowUnits = []; this.camSwitchLockTimer = 0; this.hasLastCamFocus = false;
         this.resetCamFollow();
         this.useGroundGL = false;
         if (this.glCanvas) this.glCanvas.style.display = 'none';
@@ -3402,7 +3427,7 @@ export class Scene13WarLayer {
          *    所以那边另加了「演出已停不许盖」的守卫，两处配合才真正修好。 */
         this.restoreStrategyMap();
         this.tacticalZoom = 1.0;
-        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0;
+        this.tacticalPanX = 0; this.tacticalPanY = 0; this.skillCamTimer = 0; this.skillCamFollowUnits = [];
         this.resetCamFollow();
         this.preserveCompletedBank();
         this.deferredAssetLoads = [];
@@ -8697,8 +8722,18 @@ export class Scene13WarLayer {
             } else {
                 if (this.skillCamTimer > 0) {
                     // 放计后先看计策落点 SKILL_CAM_SEC 秒（优先于六档跟随），看完回到跟随目标并进入 4.5 秒保底锁定。
+                    // 敌战计伏兵从斜后方冲锋时，镜头实时跟随存活伏兵的重心一起推进。
                     this.skillCamTimer -= dt;
+                    if (this.skillCamFollowUnits.length > 0) {
+                        const alive = this.skillCamFollowUnits.filter((u) => u.hp > 0);
+                        if (alive.length > 0) {
+                            const [fx, fy] = this.denseClusterCenter(alive, this.skillCamX, this.skillCamY);
+                            this.skillCamX = fx;
+                            this.skillCamY = fy;
+                        }
+                    }
                     if (this.skillCamTimer <= 0) {
+                        this.skillCamFollowUnits = [];
                         this.camSwitchLockTimer = CAM_HOLD_SEC;
                     }
                     targetFocusX = this.skillCamX;
