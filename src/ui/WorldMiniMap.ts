@@ -268,6 +268,8 @@ export class WorldMiniMap {
         });
         L.tileLayer(BASE_URL, { minZoom: 0, maxZoom: 8 }).addTo(this.mini);
         this.mini.createPane("wm-territory").style.zIndex = "350";
+        this.territoryRenderer.addTo(this.mini);
+        this.cityRenderer.addTo(this.mini);
         this.viewRect = L.rectangle([[0, 0], [0, 0]], { color: '#f5d77a', weight: 1.5, fill: false, interactive: false }).addTo(this.mini);
         this.trail = L.polyline([], { color: this.currentTrailColor, weight: 2, opacity: 0.95, interactive: false }).addTo(this.mini);
         this.dot = L.marker([0, 0], {
@@ -298,9 +300,9 @@ export class WorldMiniMap {
         // 🔴 [2026-10-08 主人令] 势力色开关：显示 / 不显示
         this.colorBtn.addEventListener('click', () => this.setColorMode((this.colorMode + 1) % 4));
 
-        this.setExpanded(true);
         this.setLevel(LEVEL_DEFAULT);
         this.setTrailOn(true);
+        this.setExpanded(true);
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
         void this.loadWaterMask();
     }
@@ -404,8 +406,12 @@ export class WorldMiniMap {
         this.applyView();
         const { colorChanged, citiesChanged, marks } = this.syncCityDots();
         this.syncTerritoryPolygons(true, citiesChanged || colorChanged, marks);
-        (this.cityRenderer as any)._update?.();
-        (this.territoryRenderer as any)._update?.();
+        if ((this.cityRenderer as any)._map) {
+            (this.cityRenderer as any)._update?.();
+        }
+        if ((this.territoryRenderer as any)._map) {
+            (this.territoryRenderer as any)._update?.();
+        }
     }
 
     private setLevel(lv: number): void {

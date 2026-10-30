@@ -58,11 +58,7 @@ import type { Army } from '../../legion/Army';
  * 脱战瞬间 HasTarget 又会挑中同一支残兵接着追，挂起的攻城目标被无限期拖着。
  * 每帧续期 ⇒ 冷却实际从**脱战那刻**开始算 12s，够军团重新上路。
  */
-export const IsInCombat = new Condition('IsInCombat', (ctx) => {
-    if (!ctx.army.getIsInCombat()) {
-        ctx.postBattleFoeArmyId = null; // 脱战：停止续期
-        return false;
-    }
+function settleEngagedHuntTarget(ctx: BTContext): void {
     const huntId = getStrategicTargetArmyId(ctx);
     if (huntId) {
         ctx.postBattleFoeArmyId = huntId;
@@ -73,11 +69,23 @@ export const IsInCombat = new Condition('IsInCombat', (ctx) => {
     }
     const foe = ctx.postBattleFoeArmyId;
     if (foe) markTargetCooldown(ctx, `army:${foe}`, 'field_battle_engaged');
+}
+
+export const IsInCombat = new Condition('IsInCombat', (ctx) => {
+    if (!ctx.army.getIsInCombat()) {
+        if (!ctx.army.isPostBattleResting?.()) {
+            ctx.postBattleFoeArmyId = null; // 脱战且休整结束：停止续期
+        }
+        return false;
+    }
+    settleEngagedHuntTarget(ctx);
     return true;
 });
 
 export const IsPostBattleResting = new Condition('IsPostBattleResting', (ctx) => {
-    return ctx.army.isPostBattleResting?.() ?? false;
+    if (!(ctx.army.isPostBattleResting?.() ?? false)) return false;
+    settleEngagedHuntTarget(ctx);
+    return true;
 });
 
 /**

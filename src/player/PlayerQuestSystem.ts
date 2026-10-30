@@ -423,6 +423,14 @@ export class PlayerQuestSystem {
             if (c && c.factionId !== myFaction) return c;
         }
         const aiTarget = this.deps.getArmyTargetInfo?.(host.id);
+        // 非追击敌军时，若当前行军路径的下一跳（hop）即为敌城，军团必先攻打该城
+        if (!aiTarget?.strategicArmyId) {
+            const hop = host.getTargetCity();
+            if (hop?.id) {
+                const c = this.deps.cityManager.getCity(hop.id) ?? hop;
+                if (c && c.factionId !== myFaction) return c;
+            }
+        }
         if (aiTarget?.strategicCityId) {
             const c = this.deps.cityManager.getCity(aiTarget.strategicCityId);
             if (c && c.factionId !== myFaction) return c;
@@ -474,6 +482,15 @@ export class PlayerQuestSystem {
                 return `随${generalName}追击【${enemy.name}】`;
             }
         }
+
+        const hop = host.getTargetCity();
+        if (hop?.id && !host.isRetreatingHome) {
+            const latestHop = this.deps.cityManager.getCity(hop.id) ?? hop;
+            if (latestHop.factionId !== myFaction) {
+                return `随${generalName}攻【${latestHop.name}】`;
+            }
+        }
+
         if (aiTarget?.strategicCityId) {
             const c = this.deps.cityManager.getCity(aiTarget.strategicCityId);
             if (c) {
@@ -483,7 +500,6 @@ export class PlayerQuestSystem {
             }
         }
 
-        const hop = host.getTargetCity();
         if (hop?.id) {
             const latest = this.deps.cityManager.getCity(hop.id) ?? hop;
             if (host.isRetreatingHome) return `随${generalName}撤回【${latest.name}】`;
@@ -3457,15 +3473,19 @@ export class PlayerQuestSystem {
             return;
         }
 
-        const target = this.deps.cityManager.getCity(q.targetCityId);
-        if (target && target.factionId === q.factionId) {
-            this.finishQuest(true);
-            return;
-        }
         const army = this.deps.legionManager.getLegionById(q.legionId);
         if (!army || army.isDestroyed || (army.getTroops() <= 0 && !army.getIsInCombat()) || !isGeneralOnStage(q.generalId)) {
             this.finishQuest(false);
             return;
+        }
+        const target = this.deps.cityManager.getCity(q.targetCityId);
+        if (target && target.factionId === q.factionId) {
+            // 军团就在目标城下（≤0.3°）才算本军攻克；若还在远方赶路而目标城已被友军占领，则随军团改道新目标，不误发捷报
+            const distToTarget = getEuclideanDistance(army.getPosition(), { lat: target.latitude, lng: target.longitude });
+            if (q.kind === 'restore' || distToTarget <= 0.3) {
+                this.finishQuest(true);
+                return;
+            }
         }
         if (q.kind === 'campaign') {
             const liveTarget = this.resolveHostAttackCity(army);
@@ -3738,9 +3758,18 @@ export class PlayerQuestSystem {
             });
             return;
         }
-        const targetId = army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
-        const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
-        const targetName = target?.name ?? '前方敌城';
+        const target = this.resolveHostAttackCity(army) ?? this.pickCampaignTarget(city, factionId);
+        if (!target) {
+            this.deps.showDialogue({
+                speaker: generalName,
+                portrait,
+                factionName,
+                text: `壮士竟寻到军中来了。四境暂无敌患，${factionName}无事相托，请自便。`,
+                options: [{ label: '告辞', onPick: () => this.leaveAndFindNextGeneral(city, gid) }],
+            });
+            return;
+        }
+        const targetName = target.name;
         this.deps.showDialogue({
             speaker: generalName,
             portrait,
@@ -3757,21 +3786,24 @@ export class PlayerQuestSystem {
     /** 野外会面后入伍：军团现成的，不起兵，其余与 startCampaign 同口径 */
     private joinMarchingArmy(city: City, army: Army, generalName: string): void {
         this.deps.closeDialogue();
-        this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
-        if (!army.generalId || !isGeneralOnStage(army.generalId)) return;
+        if (army.isDestroyed || !army.generalId || !isGeneralOnStage(army.generalId)) {
+            this.leaveAndFindNextGeneral(city, army.generalId ?? null);
+            return;
+        }
         if (!army.isScriptArmy && army.getTroops() < GameConfig.LEGION.MIN_ARMY_SIZE) {
             this.deps.notify(`${generalName}所部兵马不足五千，无力出征`);
+            this.leaveAndFindNextGeneral(city, army.generalId);
             return;
         }
         const factionId = army.getFactionId() || city.factionId;
         const factionName = this.deps.cityManager.getFactionName(factionId);
-        const targetId = army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
-        const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
-        // 剧本主角军团必须有真实目标；普通随军任务读取当前行军或攻城目标。
+        const target = this.resolveHostAttackCity(army) ?? this.pickCampaignTarget(city, factionId);
         if (!target) {
             this.deps.notify(`${generalName}所部暂无战事，另寻他人`);
+            this.leaveAndFindNextGeneral(city, army.generalId);
             return;
         }
+        this.declinedGenerals.clear();   // 接了任务 = 「告辞过谁」这一轮作废
         if (army.generalId && !isFirstBattleCompleted(army.generalId)) {
             markFirstBattleCompleted(army.generalId);
             (army as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
