@@ -43,7 +43,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ming_d': [{ from: -9999, era: 'imperial' }], // 大明｜大明（1368–1644）＝帝国时代中国军团（京营/神机/三眼铳），明初明末同为明军
     'dangxiang': [{ from: -9999, era: 'castle' }], // 大夏｜大夏·西夏（982–1227）＝城堡时代大夏军团（铁鹞子冷锻重甲/山讹）
     'goryeo': [{ from: -9999, era: 'castle' }], // 高丽｜高丽（918–1392）＝城堡时代高丽军团（三别抄/别武班）
-    'liao_d': [{ from: -9999, era: 'feudal' }], // 大辽｜大辽（907–1125）＝封建时代契丹军团（皮室具装铁骑/铁林军）
+    'liao_d': [{ from: -9999, era: 'feudal' }], // 大辽｜大辽（907–1125）＝封建时代漠南军团（皮室具装铁骑/铁林军）
     'manzhou_d': [{ from: -9999, era: 'imperial' }], // 大清｜大清（1616–1912，含建州女真）＝帝国时代八旗军团
     'xixiliwangguo': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'castle' }], // 西西里｜古典＝叙拉古城邦（阿加索克利）；476 后＝城堡时代诺曼军团
     'abasi': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 阿拔斯｜阿拔斯（750–1258）：封建＝哈里发军团（四大哈里发—阿拔斯黄金时代）；1050 塞尔柱入主巴格达 → 城堡时代撒拉森军团
@@ -612,7 +612,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yuan_d': [{ from: -9999, era: 'castle' }], // 大元
     'yuan_shao': [{ from: -9999, era: 'antiquity' }], // 袁绍
     'yuenan': [{ from: -9999, era: 'imperial' }], // 越南
-    'yuezhi': [{ from: -9999, era: 'feudal' }], // 月氏
+    'yuezhi': [{ from: -9999, era: 'antiquity' }], // 月氏｜按史秦汉之际居敦煌祁连间＝古典时代
     'yumi': [{ from: -9999, era: 'antiquity' }], // 扜弥
     'yun': [{ from: -9999, era: 'antiquity' }], // 允戎
     'yuwen': [{ from: -9999, era: 'feudal' }], // 宇文

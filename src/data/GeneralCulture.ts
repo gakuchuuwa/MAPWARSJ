@@ -195,8 +195,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe3_36': 'CENTRAL',   // 汉国｜李广利｜据点 长安
     'bfe3_38': 'XIANBEI',   // 匈奴｜且鞮侯单于｜据点 头曼城
     'bfe3_4': 'ROMA',   // 罗马帝国｜拉维利乌斯｜据点 罗马城
-    'bfe3_43': 'KHITAN',   // 先零｜杨玉｜据点 允吾
-    'bfe3_44': 'KHITAN',   // 乞伏｜靡忘｜据点 枹罕
+    'bfe3_43': 'TIBET',   // 先零｜杨玉｜据点 允吾
+    'bfe3_44': 'TIBET',   // 先零｜靡忘｜据点 允吾
     'bfe3_45': 'KHITAN',   // 汉国｜郑吉｜据点 轮台
     'bfe3_46': 'FRANKS',   // 高卢｜维钦托利｜据点 巴黎（2026-10-24 高卢＝法兰克文化的古典时代：古典时代高卢军团）
     'bfe3_48': 'XIANBEI',   // 密西亚｜呼韩邪单于｜据点 光禄城
@@ -294,7 +294,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'daca_dacajilong': 'TIBET',   // 达擦｜达擦济咙｜据点 八宿宗
     'dacheng_chenkai': 'JIANGNAN',   // 大成｜陈开｜据点 金田村
     'dada_ming_dayanhan': 'XIANBEI',   // 鞑靼｜巴图蒙克｜据点 河套
-    'dafeichuan_nuohebo': 'KHITAN',   // 吐谷浑｜诺曷钵｜据点 伏俟城
+    'dafeichuan_nuohebo': 'XIANBEI',   // 吐谷浑｜诺曷钵｜据点 伏俟城
     'dai_d_shijingtang': 'WEI',   // 后晋｜石敬瑭｜据点 晋阳
     'dai_daoyingmeng': 'BURMESE',   // 傣族｜刀应勐｜据点 勐泐城
     'dajin_wanyanaguda': 'NORTHEAST',   // 大金｜完颜阿骨打｜据点 会宁府
@@ -360,7 +360,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'dulan_dashibatuer': 'TIBET',   // 和硕特｜达什巴图尔｜据点 台吉乃尔
     'duluo_sangqiao': 'PORTUGUESE',   // 杜罗｜桑乔一世｜据点 波尔图
     'duolu_ashinahelu': 'CENTRAL_ASIA',   // 咄陆｜阿史那贺鲁｜据点 孛罗营
-    'duomi_lunkongre': 'KHITAN',   // 吐蕃｜论恐热｜据点 乐都
+    'duomi_lunkongre': 'TIBET',   // 吐蕃｜论恐热｜据点 浇河
     'duonaobaojia_samuel': 'BULGARIANS',   // 多瑙保加｜萨穆伊尔｜据点 索非亚
     'duonaobaojia_tzimiskes': 'BYZANTINE',   // 多瑙保加｜齐米斯基｜据点 君士坦丁堡
     'dzungar_galedanceling': 'CENTRAL_ASIA',   // 绰罗斯｜噶勒丹策凌｜据点 固尔札
@@ -912,7 +912,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'joseon_lichenggui': 'KOREA',   // 朝鲜｜李成桂｜据点 汉城
     'juandu_peixingjian': 'WESTERN',   // 捐毒｜裴行俭｜据点 伊逻卢
     'julushi_catanes': 'CENTRAL_ASIA',   // 居鲁士｜卡塔涅斯｜据点 居鲁士城
-    'juqu_d_juqumengxun': 'KHITAN',   // 沮渠｜沮渠蒙逊｜据点 表氏
+    'juqu_d_juqumengxun': 'XIANBEI',   // 沮渠｜沮渠蒙逊｜据点 表氏
     'jurchen_wanyanzongbi': 'NORTHEAST',   // 大金｜完颜宗弼｜据点 会宁府
     'kaerka_abadaihan': 'MONGOL',   // 喀尔喀｜阿巴岱｜据点 推河堡
     'kaga_d_xiajianlailian': 'JAPAN',   // 一向宗｜下间赖廉｜据点 金泽
@@ -1151,7 +1151,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'qidan_shulvping': 'XIANBEI',   // 大辽｜述律平｜据点 临潢府
     'qiemo_anmoshenpan': 'WESTERN',   // 且末｜安末深盘｜据点 播仙
     'qiepantuo_luozhentan': 'CENTRAL_ASIA',   // 护密｜罗真檀｜据点 护密
-    'qifu_d_qifuchipan': 'KHITAN',   // 乞伏｜乞伏炽磐｜据点 枹罕
+    'qifu_d_qifuchipan': 'XIANBEI',   // 乞伏｜乞伏炽磐｜据点 枹罕
     'qiliqiya_pangpei': 'ORIE',   // 奇里乞亚｜庞培｜据点 阿达纳
     'qin_simacuo': 'CENTRAL',   // 秦国｜司马错｜据点 长安
     'qincha_baqiman': 'CUMAN',   // 库曼｜巴奇曼｜据点 萨克辛
@@ -1305,11 +1305,11 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'totomi_jiujingzhongci': 'JAPAN',   // 德川｜酒井忠次｜据点 浜松城
     'tsangpa_pengcuonanjie': 'TIBET',   // 藏巴汗｜彭措南杰｜据点 桑珠孜
     'tubo_lunmangre': 'TIBET',   // 吐蕃｜论莽热｜据点 逻些
-    'tubo_muzheng': 'KHITAN',   // 乞伏｜木征｜据点 枹罕
+    'tubo_muzheng': 'TIBET',   // 吐蕃｜木征｜据点 浇河
     'tubo_songzanganbu': 'TIBET',   // 吐蕃｜松赞干布｜据点 逻些
     'tubo_xinuoluo': 'TIBET',   // 吐蕃｜悉诺逻恭禄｜据点 逻些
     'tuerhute_wobaxi': 'CENTRAL_ASIA',   // 土尔扈特｜渥巴锡｜据点 鹰娑川
-    'tufa_d_tufanutan': 'KHITAN',   // 秃发｜秃发傉檀｜据点 乐都
+    'tufa_d_tufanutan': 'XIANBEI',   // 秃发｜秃发傉檀｜据点 青唐城
     'tujia_d_qinliangyu': 'BASHU',   // 大明｜秦良玉｜据点 石柱
     'tujishi_sulukehan': 'WESTERN',   // 突骑施｜苏禄｜据点 怛罗斯
     'tujue_ashinatumen': 'MONGOL',   // 突厥｜阿史那土门｜据点 于都斤山
@@ -1324,7 +1324,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tuoming_tuomin': 'WESTERN',   // 清真｜妥明｜据点 迪化城
     'tushetu_tuxietuhan': 'MONGOL',   // 喀尔喀｜衮布｜据点 库伦
     'tuva_qinggunzabu': 'MONGOL',   // 喀尔喀｜青滚杂卜｜据点 唐努
-    'tuyu_d_kualv': 'KHITAN',   // 吐谷浑｜夸吕｜据点 伏俟城
+    'tuyu_d_kualv': 'XIANBEI',   // 吐谷浑｜夸吕｜据点 伏俟城
     'varendra_devapala': 'BENGALIS',   // 伐连陀｜提婆波罗｜据点 高达城（2026-10-24 由华氏城 PURU 迁入波罗首都）
     'wala_yexian': 'MONGOL',   // 卫拉特｜也先｜据点 科布多
     'waluo': 'ROMA',   // 罗马帝国｜瓦罗｜据点 罗马城
@@ -1413,8 +1413,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xierhe_saerjue': 'CENTRAL_ASIA',   // 乌古斯叶护国｜塞尔柱｜据点 哲德
     'xierwan_farukusha': 'ORIE',   // 希尔万王国｜法鲁克沙｜据点 巴库
     'xigete_roderic': 'GOTHS',   // 西哥特｜罗德里克｜据点 托莱多
-    'xihai_d_fulianchou': 'KHITAN',   // 吐谷浑｜伏连筹｜据点 伏俟城
-    'xihai_d_fuyun': 'KHITAN',   // 吐谷浑｜伏允｜据点 伏俟城
+    'xihai_d_fulianchou': 'XIANBEI',   // 吐谷浑｜伏连筹｜据点 伏俟城
+    'xihai_d_fuyun': 'XIANBEI',   // 吐谷浑｜伏允｜据点 伏俟城
     'xijue_ashina_funian': 'CENTRAL_ASIA',   // 十箭｜阿史那匐念｜据点 郅支城
     'xijue_ganyanshou': 'XIANBEI',   // 十箭｜郅支｜据点 郅支城
     'xike_lanjite': 'PURU',   // 锡克帝国｜兰季特辛格｜据点 拉合尔
@@ -1531,7 +1531,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yue_d_lusu': 'JIANGNAN',   // 孙吴｜鲁肃｜据点 巴陵
     'yue_goujian': 'JIANGNAN',   // 越国｜勾践｜据点 会稽
     'yueyi_zhangyi': 'BASHU',   // 蜀国｜张嶷｜据点 越嶲
-    'yuezhi_xihou': 'KHITAN',   // 月氏｜黄头｜据点 删丹
+    'yuezhi_xihou': 'XIANBEI',   // 月氏｜黄头｜据点 删丹
     'yujiulu_yujiulv': 'MONGOL',   // 柔然｜郁久闾大檀｜据点 弱水畔
     'yumi_anguo': 'WESTERN',   // 扜弥｜安国｜据点 阿赫雅尔
     'yun_wuli': 'CENTRAL',   // 允戎｜吾离｜据点 陆浑关

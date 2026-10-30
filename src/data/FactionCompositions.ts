@@ -322,7 +322,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xianlingqiang": {
-        legionName: "古典时代凉州军团",
+        legionName: "古典时代发羌军团",
         legionType: "sub",
     },
     "shaodang": {
@@ -382,7 +382,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "juqu_d": {
-        legionName: "古典时代凉州军团",
+        legionName: "古典时代漠南游牧军团",
         legionType: "sub",
     },
     "helian": {
@@ -410,7 +410,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "yuezhi": {
-        legionName: "封建时代河西军团",
+        legionName: "古典时代漠南游牧军团",
         legionType: "sub",
     },
     "mangshi": {
@@ -470,7 +470,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "tufa_d": {
-        legionName: "古典时代凉州军团",
+        legionName: "古典时代漠南游牧军团",
         legionType: "region",
     },
     // 🔴 [2026-10-25 主人令] 大夏·西夏（982–1227）＝城堡时代（FACTION_ERA `dangxiang` 全段城堡）｜首府兴庆府 KHITAN 河西
@@ -484,7 +484,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "qifu_d": {
-        legionName: "古典时代凉州军团",
+        legionName: "古典时代漠南游牧军团",
         legionType: "sub",
     },
     "xiaobolu": {
@@ -492,7 +492,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "xihai_d": {
-        legionName: "封建时代河西军团",
+        legionName: "封建时代漠南军团",
         legionType: "region",
     },
     "guge": {
@@ -949,11 +949,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "liao_d": {
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代漠南军团",
         legionType: "sub",
     },
     "kumoxi": {
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代漠南军团",
         legionType: "sub",
     },
     "jiashi_d": {
@@ -1480,11 +1480,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 🔴 [2026-10-05 主人令「该是什么就是什么」] 这 4 家原先没登记军团、走文化区保底挂错了，按时代＋族归位：
     "shatuo": {            // 光禄城·李克用（沙陀，唐末，封建）
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代漠南军团",
         legionType: "sub",
     },
     "yuwen": {             // 武川镇·宇文泰（鲜卑，封建）
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代漠南军团",
         legionType: "sub",
     },
     // 🔴 [2026-10-07 主人令「符合历史就行」] 原未登记回落一级母体的 10 家势力改套二级/三级军团
@@ -2660,7 +2660,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "liang_shuofang": {
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代漠南军团",
         legionType: "sub",
     },
     "qianliang": {

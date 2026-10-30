@@ -549,7 +549,7 @@ buildingStyle: 'WESTERN', tier: 1,
     { id: 'city_lanzhou', name: '皋兰', factionId: 'han_d', lat: 36.062422, lng: 103.765869, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' , note: '按 2026-10-25 标准：城居 2–4 → 小城' },
 
 
-    { id: 'city_ledu', name: '浇河', factionId: 'xihai_d', lat: 35.7264, lng: 101.2061, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_ledu', name: '浇河', factionId: 'tubo', lat: 35.7264, lng: 101.2061, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'TIBET', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史归青藏吐蕃河湟据点）' },
 
     { id: 'city_lintao', name: '狄道', factionId: 'song', lat: 35.37, lng: 103.86, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '推算：城居 1.5 万（狄道＝陇西郡治，同期郡城 1–2 万）→ 小城' },
 
@@ -1085,7 +1085,7 @@ buildingStyle: 'KOREA', troops: 10000, tier: 0,
     { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'stockade', troops: 10000, region: 'KOREA', buildingStyle: 'KOREA', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）', mirror: true },
 
     // === 第三批新增据点 ===
-    { id: 'city_fuhan', name: '枹罕', factionId: 'qifu_d', lat: 35.6, lng: 103.21, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' , note: '推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
+    { id: 'city_fuhan', name: '枹罕', factionId: 'qifu_d', lat: 35.6, lng: 103.21, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI' , note: '推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城（2026-10-30 按史：陇西乞伏鲜卑西秦国都，归漠南 XIANBEI）' },
 
     // ---- 从 CITIES_LEGACY 迁移的城市 ----
     { id: 'city_qishan', name: '岐山', factionId: 'zhou', lat: 34.506539, lng: 107.487488, type: 'stockade', region: 'CENTRAL',
@@ -1266,7 +1266,7 @@ buildingStyle: 'JAPAN', troops: 10000,
 
         
 
-    { id: 'city_fusicheng', name: '伏俟城', factionId: 'xihai_d', lat: 36.76089, lng: 99.742126, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' , note: '推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
+    { id: 'city_fusicheng', name: '伏俟城', factionId: 'xihai_d', lat: 36.76089, lng: 99.742126, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI' , note: '推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城（2026-10-30 按史：慕容鲜卑吐谷浑王城，归漠南 XIANBEI）' },
 
     {
         id: 'city_xianglin',
@@ -1763,7 +1763,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_leh', name: '列城', factionId: 'ladakh', lat: 34.16, lng: 77.58, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET' , note: '推算：城居 0.5 万（列城，拉达克王城 0.5 万）→ 城寨' },
 
 
-    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' , note: '按 2026-10-25 标准：城居 2–3 → 小城' },
+    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI' , note: '按 2026-10-25 标准：城居 2–3 → 小城（2026-10-30 按史：河西鲜卑秃发南凉西平都城，归漠南 XIANBEI）' },
 
 
     { id: 'city_dangxiong', name: '当雄', factionId: 'khoshut', lat: 30.48, lng: 91.1, type: 'stockade', region: 'TIBET_IMPERIAL',
@@ -2089,7 +2089,7 @@ buildingStyle: 'BASHU', troops: 10000,
 
 
     // ── 2026-05-27 新增：先零(允吾) ──
-    { id: 'city_yunwu', name: '允吾', factionId: 'xianlingqiang', lat: 36.301845, lng: 102.897949, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '金城郡治，湟水流域先零羌首领滇零起兵犯关中之战略枢纽；推算：城居 1.5 万（允吾，金城郡治 1.5 万）→ 小城' },
+    { id: 'city_yunwu', name: '允吾', factionId: 'xianlingqiang', lat: 36.301845, lng: 102.897949, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'TIBET', note: '金城郡治，湟水流域先零羌首领起兵据点；推算：城居 1.5 万 → 小城（2026-10-30 按史：先零羌据点归青藏 TIBET）' },
 
 
 
@@ -3429,7 +3429,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
 
-    { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8, lng: 99.8, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8, lng: 99.8, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：临松卢水胡沮渠北凉起兵据点，归漠南 XIANBEI）' },
 
     { id: 'city_hakone', name: '箱根关', factionId: 'hojo', lat: 35.1861, lng: 138.9999, type: 'pass', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '天下第一关，关东的物理大门' },
     // 🔴 [2026-09-19 主人令「源义经新建镰仓，据点可以错位，错位的时候要两边据点都要一点一点移动」]
@@ -3458,7 +3458,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     { id: 'city_qingchi', name: '清池', factionId: 'you', lat: 38.3, lng: 116.83, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '推算：城居 1.5 万（清池，唐沧州治 1.5 万）→ 小城' },
-    { id: 'city_shandan', name: '删丹', factionId: 'yuezhi', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_shandan', name: '删丹', factionId: 'yuezhi', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：月氏随畜移徙与匈奴同俗，归漠南 XIANBEI）' },
 
     { id: 'city_chongan', name: '崇安', factionId: 'minyue', lat: 27.76, lng: 118.02, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '推算：城居 1.5 万（崇安，宋县，同期县城 1–2 万）→ 小城' },
     { id: 'city_piyetuo', name: '毗耶陀', factionId: 'funan', lat: 11.66, lng: 104.93, type: 'small_city', troops: 10000, region: 'SEASIA_ANTIQUITY', buildingStyle: 'KHMER', mirror: true , note: '推算：城居 1 万（毗耶陀，东南亚古国都 1 万）→ 小城' },

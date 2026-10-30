@@ -801,7 +801,9 @@ export class AudioManager {
         isNaval: boolean;
         /** [2026-09-11] 跟拍对象是否玩家本人（独骑）——决定行军音走 player_march_loop */
         isPlayer: boolean;
-    } = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false };
+        /** [2026-10-30] 此刻是否在战术模式（13）——交战中途进/出 13 也要重算战斗循环音 */
+        inScene13: boolean;
+    } = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false, inScene13: false };
     /** 播报进行中：音效 + 音乐压低（优先级闪避） */
     private speechDucking = false;
     private bgmAudio: HTMLAudioElement | null = null;
@@ -1049,18 +1051,25 @@ export class AudioManager {
         const isCavalry = state.isCavalry ?? false;
         const isNaval = state.isNaval ?? false;
         const isPlayer = state.isPlayer ?? false;
+        // 🔴 [2026-10-30 主人报「援军赶到后进了战术模式，但战斗音效不重计」]
+        //    原先缓存只比「在不在交战」：援军中途把这场仗拖进 13 时，跟随军团早已在交战，
+        //    状态判成没变就直接返回，战略层的 battle_loop 一路带进 13。13 开关也要进缓存比较。
+        //    ⚠️ 进 13 后 battle_loop 停掉，13 自己的交战音景 land_contact **只在两军近战接触时才响**
+        //    （Scene13WarLayer 接触判定驱动）；进场到接触前这段安静是设计如此，不是漏音效。
+        const inScene13 = (window as any).game?.scene13War?.isActive?.() === true;
         if (
             this.followedAudioState.armyId === state.armyId &&
             this.followedAudioState.marching === state.marching &&
             this.followedAudioState.inCombat === state.inCombat &&
             this.followedAudioState.isCavalry === isCavalry &&
             this.followedAudioState.isNaval === isNaval &&
-            this.followedAudioState.isPlayer === isPlayer
+            this.followedAudioState.isPlayer === isPlayer &&
+            this.followedAudioState.inScene13 === inScene13
         ) {
             return;
         }
 
-        this.followedAudioState = { ...state, isCavalry, isNaval, isPlayer };
+        this.followedAudioState = { ...state, isCavalry, isNaval, isPlayer, inScene13 };
 
         // 四条行军循环音互斥：航海优先；陆上再按玩家独骑、纯骑军团、其他军团区分。
         const marchKey: SoundKey = isNaval ? 'naval_march_loop'
@@ -1081,7 +1090,6 @@ export class AudioManager {
             for (const k of otherMarchKeys) this.stopLoop(k);
             this.stopLoop(marchKey);
             // 13 微观看由具体 DE 战斗音效驱动；战略层海战改播专用海战循环音。
-            const inScene13 = (window as any).game?.scene13War?.isActive?.() === true;
             if (inScene13) {
                 this.stopLoop('battle_loop');
                 this.stopLoop('naval_battle_loop');
@@ -1552,7 +1560,7 @@ export class AudioManager {
 
     private reapplyFollowedLegionAudio(): void {
         const state = { ...this.followedAudioState };
-        this.followedAudioState = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false };
+        this.followedAudioState = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false, inScene13: false };
         this.syncFollowedLegionAudio(state);
     }
 

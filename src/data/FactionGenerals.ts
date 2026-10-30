@@ -4990,7 +4990,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'dingxiang_d_lijing', factionId: 'tang', cityId: 'city_eyangling', legionName: '封建时代契丹军团', generalName: '李靖', portrait: '/assets/XIANBEI/dingxiang_d_lijing.png', eliteName: '定襄骁骑', eliteTier: 0  },   // 按史：李靖以定襄骁骑夜袭破颉利，继灭东突厥，直接改写漠南格局，符合 v3 T0（《旧唐书·卷六七·李靖传》）。
+        { generalId: 'dingxiang_d_lijing', factionId: 'tang', cityId: 'city_eyangling', legionName: '封建时代漠南军团', generalName: '李靖', portrait: '/assets/XIANBEI/dingxiang_d_lijing.png', eliteName: '定襄骁骑', eliteTier: 0  },   // 按史：李靖以定襄骁骑夜袭破颉利，继灭东突厥，直接改写漠南格局，符合 v3 T0（《旧唐书·卷六七·李靖传》）。
 
 
 
@@ -5824,7 +5824,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'duomi_lunkongre', factionId: 'tubo', cityId: 'city_ledou', legionName: '封建时代河西军团', generalName: '论恐热', portrait: '/assets/KHITAN/duomi_lunkongre.png' },
+        { generalId: 'duomi_lunkongre', factionId: 'tubo', cityId: 'city_ledu', generalName: '论恐热', portrait: '/assets/KHITAN/duomi_lunkongre.png' },
 
 
 
@@ -6832,7 +6832,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'weiyuan_d_niangengyao', factionId: 'manzhou_d', cityId: 'city_qingtang', legionName: '帝国时代陕甘军团', generalName: '年羹尧', portrait: '/assets/KHITAN/weiyuan_d_niangengyao.png', eliteName: '川陕督标', eliteTier: 4  },   // 按史：年羹尧平青海统川陕绿营督标（《清史稿·年羹尧传》）
+        { generalId: 'weiyuan_d_niangengyao', factionId: 'manzhou_d', cityId: 'city_lanzhou', legionName: '帝国时代陕甘军团', generalName: '年羹尧', portrait: '/assets/KHITAN/weiyuan_d_niangengyao.png', eliteName: '川陕督标', eliteTier: 4  },   // 按史：年羹尧平青海统川陕绿营督标（《清史稿·年羹尧传》）；移驻皋兰与清将杨应琚同城（青唐城专归秃发南凉）
 
 
 
@@ -7804,7 +7804,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     // 🔴 [2026-10-25 修] 突地稽＝粟末靺鞨，隋末率部内附、唐置营州（朝阳）安置（史实居住地，据点不动）。
     //    朝阳 2026-10-25 已按主人令改 WEI 河朔 → 他的军团应走「封建 × 河朔＝封建时代河朔军团」自动解；
-    //    原来手写的「封建时代契丹军团」是漠南 XIANBEI 那一格的军团，与据点文化不符（文化同一链审计报错），已删掉。
+    //    原来手写的「封建时代漠南军团」是漠南 XIANBEI 那一格的军团，与据点文化不符（文化同一链审计报错），已删掉。
     sushen: { generalId: 'sushen_tudiji', cityId: 'city_dongkang', generalName: '突地稽', portrait: '/assets/NORTHEAST/sushen_tudiji.png' },
 
 
@@ -7884,7 +7884,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'yuwen_yuwentai', cityId: 'city_wuchuanzhen', legionName: '封建时代契丹军团', generalName: '宇文泰', portrait: '/assets/XIANBEI/yuwen_yuwentai.png' },
+        { generalId: 'yuwen_yuwentai', cityId: 'city_wuchuanzhen', legionName: '封建时代漠南军团', generalName: '宇文泰', portrait: '/assets/XIANBEI/yuwen_yuwentai.png' },
 
 
 
@@ -9048,7 +9048,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     shule: [
         { generalId: 'shule_aersilan', cityId: 'city_shule', generalName: '阿尔斯兰', portrait: '/assets/WESTERN/shule_aersilan.png' },
-        { generalId: 'bfe_shulezhong', factionId: 'shule', cityId: 'city_shule', generalName: '疏勒忠', portrait: '/assets/WESTERN/bfe_shulezhong.png', eliteName: '盘橐守军', eliteTier: 4 },
+        { generalId: 'bfe_shulezhong', factionId: 'shule', cityId: 'city_shule', generalName: '榆勒', portrait: '/assets/WESTERN/bfe_shulezhong.png', eliteName: '盘橐守军', eliteTier: 4 },
     ],
 
 
@@ -9924,7 +9924,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    tufa_d: { generalId: 'tufa_d_tufanutan', cityId: 'city_ledou', generalName: '秃发傉檀', portrait: '/assets/KHITAN/tufa_d_tufanutan.png' },
+    tufa_d: { generalId: 'tufa_d_tufanutan', cityId: 'city_qingtang', generalName: '秃发傉檀', portrait: '/assets/KHITAN/tufa_d_tufanutan.png' }, // 按史：南凉曾都西平（青唐城），专归秃发鲜卑（漠南 XIANBEI）
 
 
 
@@ -9934,9 +9934,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     qifu_d: [
         { generalId: 'qifu_d_qifuchipan', cityId: 'city_fuhan', generalName: '乞伏炽磐', portrait: '/assets/KHITAN/qifu_d_qifuchipan.png' },
-        // 🔴 [2026-10-20 主人问「木征为什么不挂熙河」→ 按史实改] 木征＝河州（今临夏，库里的枹罕）吐蕃首领，1072～1073 王韶熙河之役所败者；熙州＝库里的狄道。上一轮误以为熙河无据点而放玛曲，现放枹罕（风格 KHITAN 河西，文化随据点）；仍挂本政权 tubo
-        { generalId: 'tubo_muzheng', cityId: 'city_fuhan', factionId: 'tubo', legionName: '城堡时代大夏军团', generalName: '木征', portrait: '/assets/KHITAN/tubo_muzheng.png' },
-        { generalId: 'bfe3_44', factionId: 'xianlingqiang', cityId: 'city_fuhan', generalName: '靡忘', portrait: '/assets/KHITAN/bfe3_44.png', legionName: '古典时代凉州军团' },
+        // 🔴 [2026-10-30 按史分城] 枹罕专归乞伏鲜卑（XIANBEI）；吐蕃木征移驻河湟青藏据点浇河（city_ledu，TIBET），先零羌靡忘移驻允吾（city_yunwu，TIBET）
+        { generalId: 'tubo_muzheng', cityId: 'city_ledu', factionId: 'tubo', generalName: '木征', portrait: '/assets/KHITAN/tubo_muzheng.png' },
+        { generalId: 'bfe3_44', factionId: 'xianlingqiang', cityId: 'city_yunwu', generalName: '靡忘', portrait: '/assets/KHITAN/bfe3_44.png' },
     ],
 
 
@@ -10050,7 +10050,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     xianlingqiang: [
-        { generalId: 'bfe3_43', cityId: 'city_yunwu', generalName: '杨玉', portrait: '/assets/KHITAN/bfe3_43.png', legionName: '古典时代凉州军团' },
+        { generalId: 'bfe3_43', cityId: 'city_yunwu', generalName: '杨玉', portrait: '/assets/KHITAN/bfe3_43.png' },
     ],
 
 
@@ -11229,7 +11229,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'xiazhou_lijiqian', cityId: 'city_lingzhou', generalName: '李继迁', portrait: '/assets/KHITAN/xiazhou_lijiqian.png', factionId: 'dangxiang' },   // 按史：1002 年攻取灵州、改西平府并迁都（《宋史·夏国传》）；统万城是赫连大夏都城（漠南文化），李继迁不占统万城,
+        { generalId: 'xiazhou_lijiqian', cityId: 'city_jingbianbao', generalName: '李继迁', portrait: '/assets/KHITAN/xiazhou_lijiqian.png', factionId: 'dangxiang' },   // 按史：李继迁生于银州无定河畔（今陕西靖边境，库里靖边堡），由此起兵抗宋建夏（《宋史·夏国传》）；回乐专归唐朔方军，不与唐将混居,
 
 
 
@@ -16938,7 +16938,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-10-20 主人批准] 驻地型新增：保定（张柔）/嘉峪关（冯胜）/常德（钟相）/延恩（苏建）/格拉尼库斯（阿萨米斯）/沙陀（朱邪赤心）
     shatuo: [
         // 🔴 [2026-10-24] 朱邪势力并入沙陀后，把原势力精锐番号「朱邪部兵」T3 落到本人条目（他 820 年生，早于李克用「鸦儿军」，不该借沙陀势力精锐）
-        { generalId: 'zhuxie_zhuxiechixin', cityId: 'city_guanglu', generalName: '朱邪赤心', portrait: '/assets/XIANBEI/zhuxie_zhuxiechixin.png', legionName: '封建时代契丹军团', eliteName: '朱邪部兵', eliteTier: 3 },
+        { generalId: 'zhuxie_zhuxiechixin', cityId: 'city_guanglu', generalName: '朱邪赤心', portrait: '/assets/XIANBEI/zhuxie_zhuxiechixin.png', legionName: '封建时代漠南军团', eliteName: '朱邪部兵', eliteTier: 3 },
     
         { generalId: 'yingzhou_d2_licunxu', factionId: 'shatuo', cityId: 'city_dashicheng', generalName: '李存勖', portrait: '/assets/WEI/yingzhou_d2_licunxu.png' },
 

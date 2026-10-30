@@ -4471,12 +4471,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'antiquity_cavalry_archer', count: 4 },
         ],
     },
-    // ── 漠南 · 封建时代 · 封建时代契丹军团　（本次新建）────────────────
+    // ── 漠南 · 封建时代 · 封建时代漠南军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（上京临潢府、中京大定府；临潢府汉城皇城双重石土城堞、巴林左旗舍利八角密檐实心砖塔；人马具装“铁林”全套铁铠、冷锻长刺矛与重型骨朵、诱敌深入长途包抄骑兵大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代契丹军团', civ: '漠南', age: 'feudal', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
+        name: '封建时代漠南军团', civ: '漠南', age: 'feudal', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
         buildingStyle: 'XIANBEI',
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'fish_scale',

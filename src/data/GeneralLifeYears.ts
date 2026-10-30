@@ -1637,7 +1637,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     bfe_andragoras: { birth: -300, death: -238, kaoju: '推定' },  // 安德拉戈拉斯：塞琉古所署帕提亚总督，前238 为阿尔沙克一世所败
     bfe_mendenus: { birth: -380, death: -329, kaoju: '推定' },  // 门德努斯：前329 波利提美图斯河之战马其顿偏师主将
     bfe_erigius: { birth: -380, death: -325, kaoju: '推定' },  // 埃里吉乌斯：前330 讨萨提巴扎尼斯、阵前斩之
-    bfe_shulezhong: { birth: 30, death: 90, kaoju: '推定' },  // 疏勒忠：东汉疏勒叛王，为班超所平
+    bfe_shulezhong: { birth: 30, death: 90, kaoju: '推定' },  // 榆勒（疏勒王忠）：东汉疏勒叛王，为班超所平
     bfe_zhangping: { birth: -260, death: -205, kaoju: '推定' },  // 章平：雍王章邯之弟，前205 好畤、景陵为周勃曹参所破
     bfe_wangjing: { birth: 200, death: 260, kaoju: '推定' },  // 王经：曹魏雍州刺史，255 洮西为姜维所破
     bfe_wangyan: { birth: 256, death: 311, kaoju: '推定' },  // 王衍：西晋太尉，311 宁平城行台元帅，为石勒所执

@@ -1494,7 +1494,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yue_d_lusu': 'antiquity',
     'yue_goujian': 'antiquity',
     'yueyi_zhangyi': 'antiquity',
-    'yuezhi_xihou': 'feudal',
+    'yuezhi_xihou': 'antiquity',
     'yujiulu_yujiulv': 'antiquity',
     'yumi_anguo': 'antiquity',
     'yun_wuli': 'antiquity',
@@ -1629,7 +1629,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_andragoras': 'antiquity',   // 安德拉戈拉斯（2026-10-25 按史补）
     'bfe_mendenus': 'antiquity',   // 门德努斯（2026-10-25 按史补）
     'bfe_erigius': 'antiquity',   // 埃里吉乌斯（2026-10-25 按史补）
-    'bfe_shulezhong': 'antiquity',   // 疏勒忠（2026-10-25 按史补）
+    'bfe_shulezhong': 'antiquity',   // 榆勒（疏勒王忠，2026-10-25 按史补）
     'bfe_zhangping': 'antiquity',   // 章平（2026-10-25 按史补）
     'bfe_wangjing': 'antiquity',   // 王经（2026-10-25 按史补）
     'bfe_wangyan': 'antiquity',   // 王衍（2026-10-25 按史补）
