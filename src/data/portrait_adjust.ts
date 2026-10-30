@@ -4433,7 +4433,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/JIANGNAN/paiyao_huangguasi.png": {
-            "scale": 0.93,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -19
         },

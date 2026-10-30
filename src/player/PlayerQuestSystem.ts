@@ -14,7 +14,7 @@ import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCity } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getCityEliteLegionName, getExpeditionEliteConfig } from '../data/ExpeditionLegions';
-import { getFactionGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getFactionGeneral, getFactionIdOfGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { ALL_BRANCHES_MAP, CULTURE_62_GROUPS, LAYER3_CUSTOM_GROUPS, resolveCityHierarchy } from '../systems/CultureHierarchy';
@@ -507,10 +507,10 @@ export class PlayerQuestSystem {
                 if (fb) {
                     const rec = getGeneralRecordByGeneralId(anchored.generalId);
                     const portrait = resolveGeneralPortraitPath(rec?.portrait ?? '', {
-                        factionId: this.initialFaction.get(city.id) ?? city.factionId,
+                        factionId: getFactionIdOfGeneral(anchored.generalId) ?? this.initialFaction.get(city.id) ?? city.factionId,
                         region: getCityRegion(city),
                     });
-                    const factionName = this.deps.cityManager.getFactionName(city.factionId);
+                    const factionName = this.deps.cityManager.getFactionName(getFactionIdOfGeneral(anchored.generalId) ?? this.initialFaction.get(city.id) ?? city.factionId);
                     this.rememberVisit(city, anchored.generalId);
                     this.showFirstBattleFrontRedirect(
                         city,
@@ -542,7 +542,7 @@ export class PlayerQuestSystem {
             this.deps.notify(`抵达【${city.name}】：手上还有任务未了（${this.quest.targetCityName}），先完成再谈`);
             return;
         }
-        const original = this.initialFaction.get(city.id) ?? city.factionId;
+        const original = getFactionIdOfGeneral(g.generalId) ?? this.initialFaction.get(city.id) ?? city.factionId;
         const factionName = this.deps.cityManager.getFactionName(city.factionId);
         const portrait = resolveGeneralPortraitPath(g.portrait, {
             factionId: original,
@@ -581,7 +581,7 @@ export class PlayerQuestSystem {
             // 🔴 [2026-10-25 主人令「不去武将所在点」] 首战场离本城 >300km → 他已在打仗的地方，
             //    本城不再原地触发，只把玩家指过去（攻城战＝被攻的城；野战＝战场）。
             if (this.firstBattleFrontSpot(g.generalId)) {
-                this.showFirstBattleFrontRedirect(city, g, portrait, factionName, fb);
+                this.showFirstBattleFrontRedirect(city, g, portrait, this.deps.cityManager.getFactionName(original), fb);
                 return;
             }
             this.showFirstBattleDialogue(city, g, portrait, factionName, fb, null);
@@ -1733,7 +1733,7 @@ export class PlayerQuestSystem {
         if (firstTime) {
             (army as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
         }
-        const factionName = this.deps.cityManager.getFactionName(original);
+        const factionName = this.deps.cityManager.getFactionName(city.factionId);
         this.quest = {
             kind: 'restore',
             cityId: city.id,
@@ -1963,7 +1963,7 @@ export class PlayerQuestSystem {
         markFirstBattleCompleted(g.generalId);
         this.headingToEventGeneralId = null;
 
-        const myFactionId = existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
+        const myFactionId = getFactionIdOfGeneral(g.generalId) || existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
         // 🔴 [2026-10-27 主人令] 首战双方兵力必须上万；🔴 [2026-10-29] 上限改 2 万（见 clampFirstBattleTroops 头注）
         const { myTroops, enemyTroops } = clampFirstBattleTroops(fb.myTroops, fb.enemyTroops);
 
@@ -4075,7 +4075,7 @@ export class PlayerQuestSystem {
             for (const g of getCityAnchoredGenerals(c.id)) {
                 if (!this.isGeneralSortieReady(c, g.generalId)) continue;
                 const rec = getGeneralRecordByGeneralId(g.generalId);
-                const factionId = rec?.factionId || c.factionId;
+                const factionId = getFactionIdOfGeneral(g.generalId) || rec?.factionId || c.factionId;
                 const factionName = this.deps.cityManager.getFactionName(factionId) || factionId;
                 const generalName = rec?.generalName ?? g.generalName;
                 const famous = getGeneralProfile(g.generalId)?.tier === 'famous';
@@ -4174,7 +4174,7 @@ export class PlayerQuestSystem {
                 for (const g of getCityAnchoredGenerals(c.id)) {
                     if (!this.isGeneralSortieReady(c, g.generalId)) continue;
                     const rec = getGeneralRecordByGeneralId(g.generalId);
-                    const fid = rec?.factionId || c.factionId;
+                    const fid = getFactionIdOfGeneral(g.generalId) || rec?.factionId || c.factionId;
                     if (fid !== chosen.factionId) continue;
                     factionPool.push({
                         cityId: c.id,

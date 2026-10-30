@@ -17435,6 +17435,7 @@ function resolveGeneralRefs(refs: CityGeneralRef[]): FactionGeneral[] {
         return {
             item: {
                 ...g,
+                factionId: g.factionId ?? r.blockFactionId,
                 generalName: stageGeneralName(g.generalId, g.generalName),
                 portrait: resolveGeneralPortraitPath(portrait, { factionId: r.blockFactionId, generalId: g.generalId, cityId: g.cityId }),
             },
@@ -17450,7 +17451,7 @@ function resolveGeneralRefs(refs: CityGeneralRef[]): FactionGeneral[] {
 export function getFactionGenerals(factionId: string): FactionGeneral[] {
     if (!factionId) return [];
     if (!_factionGeneralIndex) _factionGeneralIndex = buildFactionGeneralIndex();
-    return (_factionGeneralIndex.get(factionId) ?? []).map((r) => r.general);
+    return (_factionGeneralIndex.get(factionId) ?? []).map((r) => ({ ...r.general, factionId: r.general.factionId ?? r.blockFactionId }));
 }
 
 /** 该势力的全部武将（已解析阶段姓名/立绘，名将排前） */
@@ -18130,7 +18131,7 @@ function buildCityGeneralIndex(): Map<string, CityGeneralRef[]> {
 export function getCityGeneralsRaw(cityId: string | null | undefined): FactionGeneral[] {
     if (!cityId) return [];
     if (!_cityGeneralIndex) _cityGeneralIndex = buildCityGeneralIndex();
-    return (_cityGeneralIndex.get(cityId) ?? []).map((r) => r.general);
+    return (_cityGeneralIndex.get(cityId) ?? []).map((r) => ({ ...r.general, factionId: r.general.factionId ?? r.blockFactionId }));
 }
 
 /** 该据点的全部武将（已解析阶段姓名/立绘，名将排前）；乱斗只留一位（优先本据点势力的武将） */
@@ -18153,6 +18154,7 @@ export function getCityGeneralsResolved(cityId: string | null | undefined): Fact
         return {
             item: {
                 ...g,
+                factionId: g.factionId ?? r.blockFactionId,
                 generalName: stageGeneralName(g.generalId, g.generalName),
                 portrait: resolveGeneralPortraitPath(portrait, { factionId: r.blockFactionId, generalId: g.generalId, cityId: g.cityId }),
             },
@@ -18499,6 +18501,7 @@ export function getGeneralRecordByGeneralId(
 
 
             generalName: bfChar.generalName,
+            factionId: bfChar.factionId,
 
 
 
@@ -18587,6 +18590,7 @@ export function getGeneralRecordByGeneralId(
 
 
         ...hit.general,
+        factionId: hit.factionId,
 
 
 

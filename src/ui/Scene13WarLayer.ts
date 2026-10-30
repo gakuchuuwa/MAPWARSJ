@@ -756,6 +756,8 @@ export class Scene13WarLayer {
     public castViewerSkill(side: 0 | 1, six: TacticalSixSet, viewerName: string, paid = false): 'cast' | 'wait' | 'closed' {
         if (!this.active || this.over || this.deployT > 0) return 'closed';
         if (!this.playerSetup || !this.heroMan) return 'closed';
+        // [2026-10-30 主人令「玩家阵亡不能放技能，复活直接放」] 阵亡期间六计留在队里不扣、不放，复活后照排队顺序放
+        if (this.heroMan.hp <= 0) return 'wait';
         const targetSide: 0 | 1 = this.playerSetup.side ?? side;
         const wallNow = performance.now();
         if (this.skillCastCooldown > 0 || wallNow < this.skillCastWallUntil) return 'wait';
@@ -1793,6 +1795,9 @@ export class Scene13WarLayer {
         m.hp = 0;
         this.pushCorpse(m);
         this.heroRespawnTimer = 10;
+        // [2026-10-30 主人令「复活直接放」] 阵亡即免掉玩家技剩下的歇息期，只留正在生效的余效；
+        // 排队的玩家技复活那一刻就能放，不再多等歇息
+        this.playerLiveSkillCooldown = Math.min(this.playerLiveSkillCooldown, this.playerLiveSkillTimer);
         this.heroInput = null;
         this.playerSetup?.onHeroDown();
         this.diagPush('heroDown', { sec: +this.battleSec.toFixed(1) });

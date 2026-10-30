@@ -20,14 +20,18 @@ import { PLAYER_HERO_NAME } from '../player/PlayerConfig';
 import { sixUnlockBlockReason } from '../player/PlayerLiveSkill';
 
 export const PRICE_PER_CAST = 100;
-export const ORDERS_PER_CAST = 3;
+export const ORDERS_PER_CAST = 1;
 export const ORDER_CAP = 9999;
 export const MAX_SKILL_BID = 100;
 export const FREE_CAST_GAP_MS = 10_000;
-const PRESENT_MS = 10 * 60_000;
-/** 在场发分：每隔这么久，在场的人各 +PRESENCE_PAY（约 10 分钟一仗 ⇒ 每仗 3 分＝一计） */
-const PRESENCE_PAY_MS = 3 * 60_000;
+const PRESENT_MS = 20 * 60_000;
+/** 在场发分：每隔这么久，在场的人各 +PRESENCE_PAY */
+const PRESENCE_PAY_MS = 2 * 60_000;
 const PRESENCE_PAY = 1;
+/** 发言参与加分冷却：每隔这么久在聊天室发言可得 +1 积分 */
+const CHAT_EARN_GAP_MS = 60_000;
+/** 战术模式战斗满这么久结束时，在场全员 +1 积分（过滤 10 秒非战术略过战） */
+const TACTICAL_BATTLE_REWARD_MIN_MS = 30_000;
 /** 第一次在本频道说话送的分（聊天只许订阅者发言 ⇒ 等于奖励新订阅的人马上能放一计） */
 const NEWCOMER_BONUS = 3;
 /** 每天第一次说话送的分（老观众隔天回来） */
@@ -246,6 +250,7 @@ export function youTubePaymentCents(payment: YouTubePayment): number {
 export class ViewerLive {
     private sides = new Map<string, 0 | 1>();
     private orders = new Map<string, OrderAcct>();
+    private lastChatEarnAt = new Map<string, number>();
     private wallets = new Map<string, { name: string; cents: number }>();
     private wanted = new Map<string, string>();
     private handled = new Set<string>();
@@ -328,8 +333,14 @@ export class ViewerLive {
         acc.seen = now;
         // 本场第一次说话（或隔了半小时回来）＝新来的人 → 画面弹「怎么玩」
         if (!prevSeen || now - prevSeen > NEWCOMER_GAP_MS) this.onNewcomer?.();
-        // 送分在口令之前：新来的人第一句就发「攻」也够分
+        // 送分在口令之前：新来的人第一句就发「攻」也够分；老观众每满 1 分钟发言参与再 +1 分
         this.welcome(id, name, acc, isNewViewer);
+        const lastChatEarn = this.lastChatEarnAt.get(id) ?? 0;
+        if (now - lastChatEarn >= CHAT_EARN_GAP_MS) {
+            this.lastChatEarnAt.set(id, now);
+            this.addOrders(id, name, 1, true);
+            this.save();
+        }
         if (paid) {
             this.onPayment(id, name, PRICE_PER_CAST, '测试打赏');
         }
@@ -796,6 +807,7 @@ export class ViewerLive {
         const t = this.today();
         if (a.day === t) return;
         a.day = t;
+        this.lastChatEarnAt.set(id, Date.now());
         const bonus = isNew ? NEWCOMER_BONUS : RETURN_BONUS;
         this.addOrders(id, name, bonus, true);
         this.note(isNew ? `欢迎 ${name} 入营，送 ${bonus} 积分` : `${name} 今日回营，送 ${bonus} 积分`);
@@ -975,6 +987,7 @@ export class ViewerLive {
         this.fulfillWanted(head.uid, head.viewer);
     }
     private endBattle(): void {
+        const foughtMs = this.battleStartedAtMs > 0 ? Date.now() - this.battleStartedAtMs : 0;
         for (const q of this.scoutQueue) this.voidScoutCast(q);
         this.scoutQueue = [];
         for (const q of this.queue) this.voidCast(q);
@@ -983,6 +996,10 @@ export class ViewerLive {
         this.battleStartedAtMs = 0;
         this.sides.clear();
         this.wanted.clear();
+        if (foughtMs >= TACTICAL_BATTLE_REWARD_MIN_MS && this.isAccountingPage()) {
+            const k = this.grantPresent(1);
+            if (k > 0) this.note(`本场战术战结束，在场 ${k} 人各 +1 积分`);
+        }
         this.save();
     }
     private voidScoutCast(q: QueuedScoutCast): void {

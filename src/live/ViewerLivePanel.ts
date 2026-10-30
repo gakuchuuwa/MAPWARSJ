@@ -222,7 +222,7 @@ export class ViewerLivePanel {
             let statePart: string;
             if (s.joinCandidates.length > 0) {
                 const total = s.joinCandidates.length;
-                const pageSize = 8;
+                const pageSize = 9;
                 const pageCount = Math.max(1, Math.ceil(total / pageSize));
                 const pageIdx = Math.floor(Date.now() / 4000) % pageCount;
                 const pageItems = s.joinCandidates.slice(pageIdx * pageSize, (pageIdx + 1) * pageSize);
