@@ -247,10 +247,9 @@ function forestNoise(lat: number, lng: number): number {
 
 const RESOLVE_FOREST_BIOMES = new Set([1, 2, 3, 4, 5, 6, 12, 14]);
 
-/** 丝路绿洲、西域/河西、两河、尼罗河与阿den/阿拉伯绿洲据点建筑风格 */
+/** 丝路绿洲、西域/河西、中亚河中、波斯、两河、尼罗河与马格里布绿洲据点建筑风格 */
 const OASIS_STYLES = new Set([
-    'XINJIANG', 'HEXI', 'TRANSOXIANA', 'PERSIA', 'SASANIAN',
-    'ARABIA', 'EGYPT', 'MESOPOTAMIA', 'MAGHREB', 'TANGUT',
+    'WESTERN', 'CENTRAL_ASIA', 'SASANIAN', 'PERSIAN', 'ORIE', 'BERBER',
 ]);
 
 /**
@@ -279,14 +278,17 @@ export function resolveSpecialEcoVegetation(
         return { weight: 0, effectiveTile: tile };
     }
 
-    const clusterFactor = noiseVal >= 0.36 ? Math.pow((noiseVal - 0.36) / 0.64, 1.20) : 0;
+    const clusterFactor = noiseVal >= 0.24 ? Math.min(1, 0.36 + (noiseVal - 0.24) * 1.05) : 0;
 
     // ① 丝路绿洲据点外围 & 尼罗河/两河冲积绿洲林带（红柳/梭梭灌丛 BUSH_TREE_A 与椰枣棕榈 PALM）
+    //    仅对非森林群系（forestBiome === 0 或 13）的干旱底图生效，避免把黎巴嫩山/阿特拉斯山（forestBiome 12）变成沙漠棕榈
+    const isAridOasisTile = (forestBiome === 0 || forestBiome === 13) &&
+        (tile === 'pal' || tile === 'des' || tile === 'ds2' || tile === 'ds5' || tile === 'gr7' || tile === 'gr3' || tile === 'gr2');
     const isNileOrMesopotamiaOasis = (
         (lat >= 24.0 && lat <= 31.5 && lng >= 29.8 && lng <= 32.6 && (tile === 'ds2' || tile === 'gr2' || tile === 'gr3' || tile === 'des')) ||
         (lat >= 30.0 && lat <= 35.5 && lng >= 43.2 && lng <= 48.5 && (tile === 'ds2' || tile === 'gr2' || tile === 'gr3'))
     ) && (elev === null || elev < 220) && noiseVal >= 0.54;
-    if (oasisCityBoost > 0 || isNileOrMesopotamiaOasis) {
+    if ((oasisCityBoost > 0 && isAridOasisTile) || isNileOrMesopotamiaOasis) {
         const w = Math.max(oasisCityBoost, isNileOrMesopotamiaOasis ? 0.16 + (noiseVal - 0.54) * 0.25 : 0);
         if (w >= 0.12) {
             const isTemperateSilkRoad = lat >= 35.5 && lng >= 45.0 && lng <= 115.0;
@@ -315,11 +317,11 @@ export function resolveSpecialEcoVegetation(
         }
     }
     // 2c. 阴山山脉（大青山/乌拉山）与贺兰山松桦林带
-    const isYinshan = lat >= 40.45 && lat <= 41.45 && lng >= 108.2 && lng <= 112.5 && elev !== null && elev >= 1320 && elev <= 2300;
-    const isHelanshan = lat >= 38.3 && lat <= 39.35 && lng >= 105.55 && lng <= 106.4 && (forestBiome === 5 || (elev !== null && elev >= 1450 && elev <= 2900));
+    const isYinshan = lat >= 40.45 && lat <= 41.45 && lng >= 108.2 && lng <= 112.5 && (forestBiome === 5 || (elev !== null && elev >= 1280 && elev <= 2350));
+    const isHelanshan = lat >= 38.3 && lat <= 39.35 && lng >= 105.55 && lng <= 106.4 && (forestBiome === 5 || (elev !== null && elev >= 1400 && elev <= 2950));
     if ((isYinshan || isHelanshan) && tile !== 'pal' && tile !== 'des') {
-        const w = 0.42 * clusterFactor;
-        return { weight: w, effectiveTile: isYinshan && lng >= 110.2 ? 'gr3' : 'underbrush_leaves' };
+        const w = 0.44 * clusterFactor;
+        return { weight: w, effectiveTile: 'underbrush_leaves' };
     }
     // 2d. 阿尔泰山、杭爱山、肯特山（不儿罕合勒敦山）泰加针叶与白桦林带（46.2°~51.8°N, 85.0°~112.5°E）
     if (lat >= 46.2 && lat <= 51.8 && lng >= 85.0 && lng <= 112.5 && tile !== 'pal' && tile !== 'des') {
@@ -361,17 +363,22 @@ export function resolveSpecialEcoVegetation(
     }
 
     // ⑤ 热带/亚热带稀树草原疏林（Savanna：萨赫勒/东非金合欢 ACACIA & 猴面包树 BAOBAB、也门/索科特拉龙血树 DRAGON_TREE、德干高原）
-    const isAfricaSavanna = lat >= -24.0 && lat <= 15.8 && lng >= -17.5 && lng <= 51.0;
     const isYemenSocotra = lat >= 12.0 && lat <= 17.8 && lng >= 42.5 && lng <= 55.0;
+    if (isYemenSocotra && (tile === 'gr5' || tile === 'rck' || tile === 'ds5') && noiseVal >= 0.44) {
+        const w = 0.22 + (noiseVal - 0.44) * 0.35;
+        return { weight: w, effectiveTile: 'gr5' };
+    }
+    const isAfricaSavanna = lat >= -24.0 && lat <= 15.8 && lng >= -17.5 && lng <= 51.0;
     const isDeccanSavanna = lat >= 9.5 && lat <= 23.5 && lng >= 72.5 && lng <= 82.5;
     if (
-        (isAfricaSavanna || isYemenSocotra || isDeccanSavanna) &&
+        (isAfricaSavanna || isDeccanSavanna) &&
         (tile === 'gr5' || tile === 'gr7' || tile === 'gr3' || tile === 'ds4' || tile === 'ds2') &&
         noiseVal >= 0.55
     ) {
         // 稀树草原只取噪声峰顶（约 18% 格点）生成 2 棵装疏林簇，82% 面积保持开阔萨凡纳草地
+        // 德干高原传 'gr3' 以精确命中 REGION_TREES 的德干金合欢（ACACIA）规则
         const w = 0.16 + (noiseVal - 0.55) * 0.28;
-        return { weight: w, effectiveTile: 'gr5' };
+        return { weight: w, effectiveTile: isDeccanSavanna ? 'gr3' : 'gr5' };
     }
 
     return { weight: 0, effectiveTile: tile };
@@ -510,8 +517,19 @@ function colorFor(asset: string, season: TreeSeason): [number, number, number] {
  */
 function getTreeLine(lat: number, lng?: number): number {
     const absLat = Math.abs(lat);
-    if (lng !== undefined && lng >= 75 && lng <= 105 && absLat >= 26 && absLat <= 40) {
-        return 4100;
+    if (lng !== undefined) {
+        // 青藏高原、横断山脉、祁连山、贺兰山（25°~40.5°N, 74°~107°E）
+        if (lng >= 74 && lng <= 107 && absLat >= 25 && absLat <= 40.5) {
+            return 4100;
+        }
+        // 天山山脉与帕米尔北缘（40.5°~45.2°N, 70°~96°E）：雪岭云杉林线约 2850~2900m
+        if (lng >= 70 && lng <= 96 && absLat > 40.5 && absLat <= 45.2) {
+            return 2900;
+        }
+        // 阿尔泰山、杭爱山、肯特山等内陆大陆性山脉（45.2°~52.5°N, 84°~115°E）：林线约 2450m
+        if (lng >= 84 && lng <= 115 && absLat > 45.2 && absLat <= 52.5) {
+            return 2450;
+        }
     }
     if (absLat < 30) return 3800;
     if (absLat < 44) return 2600;
@@ -931,12 +949,14 @@ export class VegetationLayer {
             .filter((city) => paddedBounds.contains([city.lat, city.lng]))
             .map((city) => {
                 const wpt = this.map.project([city.lat, city.lng], SAMPLE_ZOOM);
+                const style = city.buildingStyle ?? '';
                 return {
                     lat: city.lat,
                     lng: city.lng,
                     wx: wpt.x,
                     wy: wpt.y,
-                    isForestHunting: FOREST_HUNTING_STYLES.has(city.buildingStyle ?? ''),
+                    isForestHunting: FOREST_HUNTING_STYLES.has(style),
+                    isOasisCity: OASIS_STYLES.has(style) || (style === 'KHITAN' && city.lng <= 107.0),
                 };
             });
 
@@ -957,18 +977,6 @@ export class VegetationLayer {
                     waterSampler.scheduleFetch(ptLatLng.lat, ptLatLng.lng);
                 }
 
-                // 检查是否处于渔猎民族据点周围 0.36°（约 40km）林带内
-                let huntingCityBoost = 0;
-                for (const c of visibleCities) {
-                    if (!c.isForestHunting) continue;
-                    const dLat = ptLatLng.lat - c.lat;
-                    const dLng = ptLatLng.lng - c.lng;
-                    const d = Math.hypot(dLat, dLng);
-                    if (d < 0.36) {
-                        huntingCityBoost = Math.max(huntingCityBoost, 0.52 * (1 - d / 0.45));
-                    }
-                }
-
                 // 自然地理林线与高寒冻土门控：
                 // 1. 阿尔卑斯山（44°~54°N）林线 2150m，青藏高原 4100m，高纬度 1400m；
                 // 2. 超出林线或裸岩、高山雪原一律不长树，刃脊与雪峰自然裸露。
@@ -986,24 +994,54 @@ export class VegetationLayer {
                     continue;
                 }
 
+                // 检查是否处于渔猎民族据点周围 0.36°（约 40km）林带内，或干旱区绿洲重镇周围 0.10°~0.28° 绿洲林带内
+                let huntingCityBoost = 0;
+                let oasisCityBoost = 0;
+                for (const c of visibleCities) {
+                    if (c.isForestHunting) {
+                        const d = Math.hypot(ptLatLng.lat - c.lat, ptLatLng.lng - c.lng);
+                        if (d < 0.36) {
+                            huntingCityBoost = Math.max(huntingCityBoost, 0.52 * (1 - d / 0.45));
+                        }
+                    } else if (c.isOasisCity && (elev === null || elev < 1850)) {
+                        const d = Math.hypot(ptLatLng.lat - c.lat, ptLatLng.lng - c.lng);
+                        if (d >= 0.10 && d <= 0.28) {
+                            oasisCityBoost = Math.max(oasisCityBoost, 0.30 * (1 - (d - 0.10) / 0.22));
+                        }
+                    }
+                }
+
                 // 地表材质与生物群系判定
                 const tile = queryBaseTile({ lat: ptLatLng.lat, lng: ptLatLng.lng, isSiege: false, isWinter: false })
                     ?? resolveTerrainTile(ptLatLng.lat, ptLatLng.lng, 0);
-                if (NON_VEGETATION_TILES.has(tile)) continue;
-
                 const forestBiome = queryStrategicForestBiome(ptLatLng.lat, ptLatLng.lng);
-                if (forestBiome === 13) continue; // 荒漠生态群系坚决不长树
-
-                // elev 可能为 null（上面「低地先放行」那条分支），按低地兜底取值，与该分支意图一致
-                if (huntingCityBoost <= 0 && !isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
-
+                const canopyDensity = queryStrategicCanopyDensity(ptLatLng.lat, ptLatLng.lng);
                 // 连续世界坐标密度场：消除椭圆规则感，呈现犬牙交错与山谷林隙
                 const noiseVal = forestNoise(ptLatLng.lat, ptLatLng.lng);
 
-                // 真实卫星郁闭度驱动（0~100%）：决定当前格点是否生长树木（渔猎民族据点周围强制拥有树林植被覆盖）
-                const canopyDensity = queryStrategicCanopyDensity(ptLatLng.lat, ptLatLng.lng);
+                // 四大特殊历史与生态林带补齐判定（西北/漠北高山林岛、藏东南河谷柏林、古典地中海/黎巴嫩/扎格罗斯山地林、热带稀树草原与丝路/两河/尼罗河绿洲林）
+                const specialEco = resolveSpecialEcoVegetation(
+                    ptLatLng.lat,
+                    ptLatLng.lng,
+                    elev,
+                    tile,
+                    forestBiome,
+                    canopyDensity,
+                    noiseVal,
+                    oasisCityBoost,
+                );
+
+                if (specialEco.weight <= 0) {
+                    if (NON_VEGETATION_TILES.has(tile)) continue;
+                    if (forestBiome === 13) continue; // 荒漠生态群系坚决不长树
+                    // elev 可能为 null（上面「低地先放行」那条分支），按低地兜底取值，与该分支意图一致
+                    if (huntingCityBoost <= 0 && !isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
+                }
+
+                const treeTile = specialEco.weight > 0 ? specialEco.effectiveTile : tile;
                 const clusterWeight = Math.max(
                     huntingCityBoost,
+                    specialEco.weight,
                     forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal),
                 );
                 // 🔴 [2026-10-21 主人问「战略地图上的树该成片，还是该单个？」→ 成片]
@@ -1044,11 +1082,14 @@ export class VegetationLayer {
 
                     const resolveStrategicTreeForSeason = (s: TreeSeason): string => {
                         const isSnow = isPermSnowTile || (s === 3 && hasWinterSnowGround);
-                        // 🔴 传入夏季常态底图 tile 以命中 REGION_TREES 生态分区（保留各地区真实的针叶 vs 落叶阔叶树种比例），
+                        // 🔴 传入夏季常态底图 treeTile 以命中 REGION_TREES 生态分区（保留各地区真实的针叶 vs 落叶阔叶树种比例），
                         //    再按 isSnow 与战术 seasonalDeTree 同一套规则映射为 SNOW_PINE / SNOW_AUTUMN_OAK。
-                        const a = pickTree({ baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng, season: s, isSiege: false });
+                        const a = pickTree({ baseTile: treeTile, lat: curLatLng.lat, lng: curLatLng.lng, season: s, isSiege: false });
 
                         if (a === 'DEAD_TREE') return isSnow ? 'SNOW_PINE' : 'BUSH_TREE_A';
+                        if (a === 'BAOBAB' && (curLatLng.lat >= 11.5 || (curLatLng.lng >= 31.0 && ((gx + gy) & 1) === 0))) {
+                            return 'ACACIA';
+                        }
 
                         if (isSnow) {
                             if (

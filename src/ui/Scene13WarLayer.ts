@@ -921,6 +921,55 @@ export class Scene13WarLayer {
         return [sp?.x ?? this.worldCX, sp?.y ?? this.worldCY];
     }
 
+    /** 取受影响士兵最密集一团的重心（防分兵、多路列阵或守城四门分散时算术平均落到中间空地） */
+    private denseClusterCenter(targets: WarMan[], fallbackX: number, fallbackY: number): [number, number] {
+        const list = targets.filter((m) => !m.siegeW);
+        if (list.length === 0) return [fallbackX, fallbackY];
+        if (list.length === 1) return [list[0].x, list[0].y];
+        const CELL = 140;
+        const buckets = new Map<number, WarMan[]>();
+        const keyOf = (gx: number, gy: number) => ((gx + 32768) << 16) | ((gy + 32768) & 0xffff);
+        const visitedCells = new Set<number>();
+        for (const m of list) {
+            const gx = Math.floor(m.x / CELL);
+            const gy = Math.floor(m.y / CELL);
+            const k = keyOf(gx, gy);
+            let arr = buckets.get(k);
+            if (!arr) { arr = []; buckets.set(k, arr); }
+            arr.push(m);
+        }
+        let bestGX = 0, bestGY = 0, bestScore = -1;
+        for (const m of list) {
+            const gx = Math.floor(m.x / CELL);
+            const gy = Math.floor(m.y / CELL);
+            const ck = keyOf(gx, gy);
+            if (visitedCells.has(ck)) continue;
+            visitedCells.add(ck);
+            let score = 0;
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                    const arr = buckets.get(keyOf(gx + dx, gy + dy));
+                    if (!arr) continue;
+                    for (const u of arr) score += u.foe ? 1.05 : 1.0;
+                }
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                bestGX = gx;
+                bestGY = gy;
+            }
+        }
+        let sx = 0, sy = 0, n = 0;
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                const arr = buckets.get(keyOf(bestGX + dx, bestGY + dy));
+                if (!arr) continue;
+                for (const m of arr) { sx += m.x; sy += m.y; n++; }
+            }
+        }
+        return n > 0 ? [sx / n, sy / n] : [fallbackX, fallbackY];
+    }
+
     /** 从某方的后备池（下一波）里扣掉 quotaPop 人口；randomNonCommander=true 时按兵种集中扣完一类再换下一类，不分散 */
     private drainSidePool(side: 0 | 1, quotaPop: number, randomNonCommander = false, preferredKey?: string): Array<{ key: string; pop: number }> {
         const taken: Array<{ key: string; pop: number }> = [];
@@ -1336,15 +1385,7 @@ export class Scene13WarLayer {
         let vfxX = scopedControl !== null ? refX : camX;
         let vfxY = scopedControl !== null ? refY : camY;
         if (vfxTargets.length > 0) {
-            let tx = 0, ty = 0, tn = 0;
-            for (const m of vfxTargets) {
-                if (m.siegeW) continue;
-                tx += m.x; ty += m.y; tn++;
-            }
-            if (tn > 0) {
-                vfxX = tx / tn;
-                vfxY = ty / tn;
-            }
+            [vfxX, vfxY] = this.denseClusterCenter(vfxTargets, vfxX, vfxY);
         }
         if (this.useGroundGL && this.userInteractingTimer <= 0 && (viewer !== null || this.camSwitchLockTimer <= 0)) {
             const hm = this.heroMan;
@@ -1419,10 +1460,7 @@ export class Scene13WarLayer {
         if (this.advanceVec?.[this.playerSetup.side]) {
             let vx = m.x ?? 0, vy = m.y ?? 0;
             if (affected.length > 0) {
-                let sx = 0, sy = 0;
-                for (const u of affected) { sx += u.x; sy += u.y; }
-                vx = sx / affected.length;
-                vy = sy / affected.length;
+                [vx, vy] = this.denseClusterCenter(affected, vx, vy);
             }
             if (this.useGroundGL && this.userInteractingTimer <= 0 && !(m && m.hp > 0 && Math.hypot(vx - m.x, vy - m.y) < 150)) {
                 this.skillCamTimer = SKILL_CAM_SEC;

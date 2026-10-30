@@ -223,4 +223,5 @@ export const PLAYER_DEFEAT_HOLD_MS = 9000;
 // 🔴 [2026-10-28 主人令「玩家在战略地图上移动，因为一直是骑兵，请改为匀速，不受山地平原限制」]
 export const PLAYER_PLAIN_SPEED_SCALE = 1.0;
 export const PLAYER_MOUNTAIN_SPEED_SCALE = 1.0;
-export const PLAYER_SEA_SPEED_SCALE = 1.30;
+// 🔴 [2026-10-30 主人问「玩家在海上的航行速度可以增加吗」] 1.30 → 2.0：海上 1.2×2.0=2.4，略快于陆上骑兵 2.0（原 1.56 比陆上还慢）
+export const PLAYER_SEA_SPEED_SCALE = 2.0;

@@ -173,6 +173,14 @@ export class Army implements IBattleUnit {
      * 全程 ×1.05，船仍走可见弧线而不是原地掉头。
      */
     private static readonly NAVAL_TURN_RATE_RAD_S = 120 * Math.PI / 180;
+    /**
+     * 上面转向角速度对应的基准航速（普通军团海速：UNIFIED_MARCH_SPEED × SEA_SPEED_MULTIPLIER）。
+     * 🔴 [2026-10-30 主人「以前说走海路太快会脱离航线、原地打转，请检查」] 转弯半径 R = 航速 / 角速度，
+     *    比基准快的船（玩家海速 ×2.0、水网文化 ×1.25）角速度按航速同比放大，R 保持基准的 ≈16 km。
+     *    离线逐帧模拟 247 条真实海路：不放大时 0.6°/s 偏离航线最远 31 km、37 条超 20 km；
+     *    放大后各档都 ≈10 km、0 条超 20 km，均无绕圈（最多 0.35 圈）。
+     */
+    private static readonly NAVAL_BASE_SEA_SPEED = PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED * SEA_SPEED_MULTIPLIER;
     /** 大角度操舵时仍保留少量前进量，形成调头弧线而不是原地旋转。 */
     private static readonly NAVAL_MIN_FORWARD_FACTOR = 0.12;
     /** 连续这么多秒没靠近下一个路点 = 判定绕圈，直接换下一个路点脱出（不瞬移） */
@@ -863,7 +871,8 @@ export class Army implements IBattleUnit {
         while (diff <= -Math.PI) diff += Math.PI * 2;
         while (diff > Math.PI) diff -= Math.PI * 2;
 
-        const maxTurn = Army.NAVAL_TURN_RATE_RAD_S * deltaTime;
+        const turnRate = Army.NAVAL_TURN_RATE_RAD_S * Math.max(1, finalSpeed / Army.NAVAL_BASE_SEA_SPEED);
+        const maxTurn = turnRate * deltaTime;
         const turn = Math.max(-maxTurn, Math.min(maxTurn, diff));
         this.navalHeadingRad += turn;
         while (this.navalHeadingRad <= -Math.PI) this.navalHeadingRad += Math.PI * 2;
@@ -878,7 +887,7 @@ export class Army implements IBattleUnit {
             ? distToNext * maxTurn * 0.8
             : Infinity;
         const advance = Math.min(moveDist * forwardFactor, turnLimitedAdvance);
-        const minTurnRadius = finalSpeed / Army.NAVAL_TURN_RATE_RAD_S * 1.25;
+        const minTurnRadius = finalSpeed / turnRate * 1.25;
 
         // 🔴 [2026-09-01 修「海上行军一颤一颤」] 到达判定**绝不能用最小转弯半径当捕获半径**。
         //    旧写法 captureRadius = max(moveDist, minTurnRadius) = 0.31°（35 km），而海路
