@@ -3182,10 +3182,10 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
 
-    { id: 'city_dashicheng', name: '大石堡', factionId: 'shatuo', lat: 41.28, lng: 79.22, type: 'pass', region: 'WESTERN_FEUDAL',
+    { id: 'city_dashicheng', name: '大石堡', factionId: 'weitou', lat: 41.28, lng: 79.22, type: 'pass', region: 'WESTERN_FEUDAL',
 buildingStyle: 'WESTERN', troops: 10000,
-        // 🔴 [2026-10-24] 原属「朱邪」；朱邪氏＝沙陀酋长家族（朱邪赤心即李国昌，李克用之父），朱邪势力已并入沙陀 → 关隘随归沙陀。
-        note: '大石城；朱邪关隘（2026-10-24 朱邪部并入沙陀，关隘随归沙陀）。定级依据§6.2：未查得石砖夯土墙实证 → 按规则不列险要，落城寨',
+        // 🔴 [2026-10-30 按史修正] 沙陀李克用父子已移归漠南/河朔祖邑（光禄城/彰国军城），大石堡位于天山别迭里达坂南麓阿克苏乌什北，属古尉头/安西西域要隘，归属尉头（weitou）
+        note: '大石城/大石堡；天山别迭里达坂南麓西域要隘。定级依据§6.2：未查得石砖夯土墙实证 → 按规则不列险要，落城寨',
     },
     { id: 'city_weitoucheng', name: '阿合奇', factionId: 'weitou', lat: 40.3, lng: 79.05, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '尉头国王城驻军' },
     { id: 'city_wosedecheng', name: '握瑟德', factionId: 'sai', lat: 39.77, lng: 78.56, type: 'stockade', region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', troops: 10000, note: '塞种部落骑射武装' },

@@ -4686,7 +4686,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'tongzhou_liuzhiyuan', cityId: 'city_taiyuan', factionId: 'hou_han', generalName: '刘知远', portrait: '/assets/WEI/tongzhou_liuzhiyuan.png', legionName: '封建时代河朔军团' },
         { generalId: 'xin_liuchong', cityId: 'city_taiyuan', factionId: 'hou_han', generalName: '刘崇', portrait: '/assets/WEI/xin_liuchong.png', legionName: '封建时代河朔军团' },
         { generalId: 'bing_liji', factionId: 'tang', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李勣', portrait: '/assets/WEI/bing_liji.png', eliteName: '通漠道行军', eliteTier: 2  },   // 按史：李勣以并州都督出任通漠道行军总管，自并州北出白道破颉利（《旧唐书·卷六七·李勣传》）
-        { generalId: 'shatuo_likeyong', cityId: 'city_dashicheng', generalName: '李克用', portrait: '/assets/WEI/shatuo_likeyong.png', factionId: 'shatuo', eliteName: '鸦儿军', eliteTier: 1 },   // 按史：李克用所部号鸦儿军，长期为河东主力（《旧五代史·武皇纪》）；李存勖另配其亲军从马直，不把父子两代的本部混作两支。
+        { generalId: 'shatuo_likeyong', cityId: 'city_guanglu', generalName: '李克用', portrait: '/assets/WEI/shatuo_likeyong.png', factionId: 'shatuo', eliteName: '鸦儿军', eliteTier: 1 },   // 按史：李克用所部号鸦儿军，长期为河东主力（《旧五代史·武皇纪》）；李存勖另配其亲军从马直，不把父子两代的本部混作两支。
         { generalId: 'qingyuan_bd_zhoudewei', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '周德威', portrait: '/assets/WEI/qingyuan_bd_zhoudewei.png', factionId: 'shatuo', eliteName: '白马突骑', eliteTier: 3 },
         { generalId: 'song_wangbing', cityId: 'city_taiyuan', legionName: '城堡时代燕云军团', generalName: '王禀', portrait: '/assets/WEI/song_wangbing.png', factionId: 'song' },
         { generalId: 'liwang_liguangbi', cityId: 'city_taiyuan', legionName: '封建时代河朔军团', generalName: '李光弼', portrait: '/assets/WEI/liwang_liguangbi.png', factionId: 'tang', eliteName: '河东军', eliteTier: 2 },
@@ -4990,7 +4990,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'dingxiang_d_lijing', factionId: 'tang', cityId: 'city_eyangling', legionName: '封建时代漠南军团', generalName: '李靖', portrait: '/assets/XIANBEI/dingxiang_d_lijing.png', eliteName: '定襄骁骑', eliteTier: 0  },   // 按史：李靖以定襄骁骑夜袭破颉利，继灭东突厥，直接改写漠南格局，符合 v3 T0（《旧唐书·卷六七·李靖传》）。
+        { generalId: 'dingxiang_d_lijing', factionId: 'tang', cityId: 'city_piantouguan', legionName: '封建时代河朔军团', generalName: '李靖', portrait: '/assets/XIANBEI/dingxiang_d_lijing.png', eliteName: '定襄骁骑', eliteTier: 0  },   // 按史：李靖以定襄骁骑夜袭破颉利，继灭东突厥，直接改写漠南格局，符合 v3 T0（《旧唐书·卷六七·李靖传》）。
 
 
 
@@ -6393,7 +6393,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'wuyuan_d_chengui', factionId: 'han_d', cityId: 'city_guyangsai', legionName: '古典时代漠南游牧军团', generalName: '陈龟', portrait: '/assets/XIANBEI/wuyuan_d_chengui.png' },
+        { generalId: 'wuyuan_d_chengui', factionId: 'han_d', cityId: 'city_chilechuan', legionName: '古典时代太行军团', generalName: '陈龟', portrait: '/assets/XIANBEI/wuyuan_d_chengui.png' },
 
 
 
@@ -6411,7 +6411,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'shuofang_sujian', cityId: 'city_ordos', generalName: '苏建', portrait: '/assets/XIANBEI/shuofang_sujian.png', factionId: 'han_d', legionName: '古典时代漠南游牧军团' },
+        { generalId: 'shuofang_sujian', cityId: 'city_quyancheng', generalName: '苏建', portrait: '/assets/XIANBEI/shuofang_sujian.png', factionId: 'han_d', legionName: '古典时代凉州军团' },
 
 
 
@@ -6420,7 +6420,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'woye_huangfugui', factionId: 'han_d', cityId: 'city_linrong', legionName: '古典时代漠南游牧军团', generalName: '皇甫规', portrait: '/assets/XIANBEI/woye_huangfugui.png' },
+        { generalId: 'woye_huangfugui', factionId: 'han_d', cityId: 'city_jilusai', legionName: '古典时代凉州军团', generalName: '皇甫规', portrait: '/assets/XIANBEI/woye_huangfugui.png' },
 
 
 
@@ -6429,7 +6429,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'dongsheng_weishang', factionId: 'han_d', cityId: 'city_yunzhongcheng', legionName: '古典时代漠南游牧军团', generalName: '魏尚', portrait: '/assets/XIANBEI/dongsheng_weishang.png' },
+        { generalId: 'dongsheng_weishang', factionId: 'han_d', cityId: 'city_chilechuan', legionName: '古典时代太行军团', generalName: '魏尚', portrait: '/assets/XIANBEI/dongsheng_weishang.png' },
 
 
 
@@ -16940,7 +16940,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-24] 朱邪势力并入沙陀后，把原势力精锐番号「朱邪部兵」T3 落到本人条目（他 820 年生，早于李克用「鸦儿军」，不该借沙陀势力精锐）
         { generalId: 'zhuxie_zhuxiechixin', cityId: 'city_guanglu', generalName: '朱邪赤心', portrait: '/assets/XIANBEI/zhuxie_zhuxiechixin.png', legionName: '封建时代漠南军团', eliteName: '朱邪部兵', eliteTier: 3 },
     
-        { generalId: 'yingzhou_d2_licunxu', factionId: 'shatuo', cityId: 'city_dashicheng', generalName: '李存勖', portrait: '/assets/WEI/yingzhou_d2_licunxu.png' },
+        { generalId: 'yingzhou_d2_licunxu', factionId: 'shatuo', cityId: 'city_zhangguojuncheng', generalName: '李存勖', portrait: '/assets/WEI/yingzhou_d2_licunxu.png' },
 
     ],
     hou_han: [

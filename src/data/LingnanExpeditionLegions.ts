@@ -22,7 +22,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     nanyue: { name: '南越舟师', tier: 3 },
   nongzhigao: { name: '侬峒劲卒', tier: 4 },    // 晋兴·侬智高侬峒兵（《宋史·蛮夷传》）（缺乏极其著名的战术高光，降T3）
   yelang: { name: '夜郎锐卒', tier: 3 },        // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
-  dacheng: { name: '永安戍卒', tier: 4 },       // 永安·明永安千户所戍卒（原大成水师）
+  dacheng: { name: '大成水师', tier: 4 },       // 浔州·陈开大成国水师战船部队（建大成国于浔州，沿江水师数万）
   xiou: { name: '西瓯戍兵', tier: 4 },           // 布山·西瓯
   luoyue: { name: '骆越部卒', tier: 4 },         // 花山·骆越
   shuizhen: { name: '水真戍卒', tier: 4 },     // 三菩·区大任驻守
