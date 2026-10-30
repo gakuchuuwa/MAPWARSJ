@@ -353,7 +353,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'quanzhou_liucongxiao': 10,                          // 留从效 · quanzhou · 刺桐
     'ruochu_doulian': -8,                                // 鬬廉 · ruochu · 竟陵
     'shanyue_sunce': 2,                                 // 孙策 · shanyue · 宛陵城
-    'shaozhou_d_mayin': 10,                              // 马殷 · shaozhou_d · 邵州
+    'shaozhou_d_mayin': 10,                              // 马殷 · shaozhou_d · 长沙
     'she_ethnic_leiwanxing': 7,                         // 雷万兴 · she_ethnic · 敕木山（唐·畲族抗唐首领）
     'shenshi_wentianxiang': 13,                           // 文天祥 · shenshi · 独松关
     'shuntian_linshuangwen': 18,                         // 林爽文 · shuntian · 彰化

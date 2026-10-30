@@ -9241,6 +9241,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": -7
+        },
+        "/assets/JIANGNAN/longwu_jiaolian.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/JIANGNAN/zhongxiang_zhongxiang.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 13
         }
     },
     "folderGuides": {

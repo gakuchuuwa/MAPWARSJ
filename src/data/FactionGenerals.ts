@@ -6275,7 +6275,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'ruzhou_sunjian', factionId: 'han_d', cityId: 'city_changsha', legionName: '古典时代吴越军团', generalName: '孙坚', portrait: '/assets/CENTRAL/ruzhou_sunjian.png' },
+        { generalId: 'ruzhou_sunjian', factionId: 'sunwu_d', cityId: 'city_changsha', legionName: '古典时代吴越军团', generalName: '孙坚', portrait: '/assets/CENTRAL/ruzhou_sunjian.png' },   // 按史：孙坚为孙氏江东基业开创者（长沙太守起兵讨董），归孙吴（《三国志·吴书·孙破虏传》）
 
 
 
@@ -17085,7 +17085,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_zengguofan', cityId: 'city_changsha', generalName: '曾国藩', portrait: '/assets/JIANGNAN/gen_zengguofan.png', factionId: 'manzhou_d', legionName: '帝国时代两江军团', eliteName: '湘军', eliteTier: 1  },   // 按史：曾国藩创湘军，平太平天国（《清史稿·曾国藩传》）
 
     
-        { generalId: 'shaozhou_d_mayin', eliteName: '银枪效节', eliteTier: 2, factionId: 'machu', cityId: 'city_shaozhou', generalName: '马殷', portrait: '/assets/JIANGNAN/shaozhou_d_mayin.png' },
+        { generalId: 'shaozhou_d_mayin', eliteName: '银枪效节', eliteTier: 2, factionId: 'machu', cityId: 'city_changsha', generalName: '马殷', portrait: '/assets/JIANGNAN/shaozhou_d_mayin.png' },   // 按史：马殷以潭州（长沙）为武安军治所、马楚立国都长沙（军团仍为封建时代荆湘军团，据点文化同为 HUGUANG）
 
     ],
     nanhan: [

@@ -9,7 +9,9 @@ import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import {getCompositionTier, expandCompositionSlots} from '../../types/LegionComposition';
 import { WAR_TYPES } from '../../data/WarTypes';
 import type { FormationMode } from '../../types/CultureFormations';
-import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, type NavalShipAssetId } from '../../types/NavalShipTiers';
+import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, getFactionCultureRegion, type NavalShipAssetId } from '../../types/NavalShipTiers';
+import { needsSail, getSailDir, DE_STYLE_TO_SAIL_GROUP, type SailGroup } from '../../data/NavalSails';
+import { REGION_TO_DE_STYLE } from '../../systems/cityDeStyle';
 import { gameLog } from '../../utils/GameLogger';
 import { popCostOf } from '../../data/UnitPopCost';
 import { OrientationSystem } from '../../core/OrientationSystem';
@@ -656,6 +658,41 @@ export class LegionPhalanxDrawer {
     // [RTS INTERFACE] Expose assets for RTS renderer
     public static getUnitAssets(unitAssetsId: string) {
         return this.unitSpriteCache.get(unitAssetsId);
+    }
+
+    // ───────────────────────── 船帆（DE 独立 sail 素材） ─────────────────────────
+    // 🔴 [2026-10-30 主人「我们的船都没有解析帆，是吗？」→「请执行」]
+    //   DE 的帆不在船体 SLD 里，是单独的 u_shp_sail_<group>_<boat|ship>_<tier>_x1.sld。
+    //   素材由 tools/extract_sail_assets.py 解到 public/SUCAI_SAIL/<GROUP>/<KIND_TIER>/（8 向）。
+    private static sailCache = new Map<string, HTMLImageElement[]>();
+    private static sailLoading = new Set<string>();
+
+    /** 取某档帆的 8 向图；首次调用发起加载并返回 null（下一帧就有）。 */
+    private static getSailSet(dir: string): HTMLImageElement[] | null {
+        const hit = this.sailCache.get(dir);
+        if (hit) return hit;
+        if (this.sailLoading.has(dir)) return null;
+        this.sailLoading.add(dir);
+        const imgs: HTMLImageElement[] = [];
+        let pending = 8;
+        const settle = () => {
+            if (--pending <= 0) this.sailCache.set(dir, imgs);
+        };
+        for (let d = 0; d < 8; d++) {
+            const img = new Image();
+            img.onload = settle;
+            img.onerror = settle;
+            img.src = `${dir}/idle_${d}.png`;
+            imgs[d] = img;
+        }
+        return null;
+    }
+
+    /** 势力文化 → DE 帆文化组（10 组）。判据与据点建筑风格同源：region → DE style。 */
+    private static sailGroupOf(factionId: string): SailGroup {
+        const region = getFactionCultureRegion(factionId);
+        const style = region ? (REGION_TO_DE_STYLE as Record<string, string>)[region] : undefined;
+        return (style && DE_STYLE_TO_SAIL_GROUP[style]) || 'west';
     }
 
     private static isLoaded = false;
@@ -2395,6 +2432,18 @@ export class LegionPhalanxDrawer {
             }
         }
 
+        // 🔴 [2026-10-30] 船帆（DE 独立 sail 素材）：按势力文化取组、按船型取档。
+        //   帆是 8 向（DE 的 sail SLD 每套只有 8 个方向×30 帧），船体是 16 向 →
+        //   船向 d 取帆向 (d>>1 + 3) & 7（拿正对/斜向最贴的几张手工校过）。
+        const sailGroup = LegionPhalanxDrawer.sailGroupOf(factionId);
+        const sailSets = new Map<NavalShipAssetId, HTMLImageElement[] | null>();
+        for (const typeId of neededShips) {
+            if (!needsSail(typeId)) continue;
+            const sailDir = getSailDir(typeId, sailGroup);
+            if (!sailDir) continue;
+            sailSets.set(typeId, this.getSailSet(sailDir));
+        }
+
         // 编队间距以旗舰（首舰）尺寸为基准。
         // 🔴 [2026-08-19 修·叠船] 纵向间距基准 = 船长（fw）× 1.15，配 formation 的 r 步进 1.0 → 船距 1.15 船长。
         // 🔴 [2026-08-19 实测修] 横向基准 = 整个船宽，c=±0.5 → 两列中心隔一个船宽，刚好不叠。
@@ -2460,7 +2509,7 @@ export class LegionPhalanxDrawer {
         const smoothSpan = shipDepth * 0.45;   // 切线取前后各半档船距的弦向，抹掉 16px 采样锯齿
 
         // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态
-        const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: CanvasImageSource; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number; bobY?: number; roll?: number; sinkY?: number }[] = [];
+        const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: CanvasImageSource; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number; bobY?: number; roll?: number; sinkY?: number; sail?: { img: CanvasImageSource; ox: number; oy: number; w: number; h: number } }[] = [];
         const shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir: number; rot?: number; deg?: number; shipLen?: number }[] = [];
 
         // 逐军团相位种子（只依赖 unitId）：站位误差与浮沉横摇共用，避免同屏所有舰队同频共振
@@ -2659,6 +2708,15 @@ export class LegionPhalanxDrawer {
             const activeDynEntry = (currentSet as any).dyn?.[spriteAnimState] ?? td.dynEntry;
             const activeTotalFrames = activeDynEntry?.frames ?? this.getFrameCount(tintedSprite);
 
+            // 船帆（DE 独立素材）：只用**这一艘船**的方向取帆图，锚点跟着船体帧框走。
+            const sailImg = sailSets.get(pos.ship ?? targetShipId)?.[(((shipDir & 7) >> 1) + 3) & 7];
+            const sailFor = (ox: number, oy: number, w: number, h: number) => {
+                if (!sailImg || !sailImg.complete || sailImg.naturalWidth === 0) return undefined;
+                const sH = h * 0.72;
+                const sW = Math.max(1, Math.round(sH * (sailImg.naturalWidth / sailImg.naturalHeight)));
+                return { img: sailImg as CanvasImageSource, w: sW, h: sH, ox: ox + w * 0.5 - sW / 2, oy: oy + h * 0.32 - sH };
+            };
+
             if (td.dyn) {
                 // DE：hotspot 对齐。帧框按该船自己的朝向查；缺该向元数据 → 回落旗舰向（typeDraws 已确认存在）
                 const dd = this.metaDirFor(activeDynEntry, shipDir, true) ?? this.metaDirFor(activeDynEntry, direction, true)!;
@@ -2674,6 +2732,7 @@ export class LegionPhalanxDrawer {
                     sx: currentFrameIndex * dd.fw, sy: 0, sw: dd.fw, sh: dd.fh,
                     w: dd.fw * td.s!, h: dd.fh * td.s!,
                     alpha: shipAlpha, rot: shipRot, bobY, roll, sinkY,
+                    sail: sailFor(-dd.hx * td.s!, -dd.hy * td.s!, dd.fw * td.s!, dd.fh * td.s!),
                 });
             } else {
                 const tfw = tintedSprite.width / activeTotalFrames;
@@ -2683,6 +2742,7 @@ export class LegionPhalanxDrawer {
                     sx: currentFrameIndex * tfw, sy: 0, sw: tfw, sh: tintedSprite.height,
                     w: td.w, h: td.h,
                     alpha: shipAlpha, rot: shipRot, bobY, roll, sinkY,
+                    sail: sailFor(-td.w / 2, -td.h / 2, td.w, td.h),
                 });
             }
         }
@@ -2714,9 +2774,12 @@ export class LegionPhalanxDrawer {
                 ctx.translate(s.ax, tY);
                 ctx.rotate(tRot);
                 ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh, s.ox, s.oy, s.w, s.h);
+                // 帆在船上层，同一变换（转向残差 + 横摇 + 浮沉一起跟）
+                if (s.sail) ctx.drawImage(s.sail.img, s.sail.ox, s.sail.oy, s.sail.w, s.sail.h);
                 ctx.restore();
             } else {
                 ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh, s.ax + s.ox, tY + s.oy, s.w, s.h);
+                if (s.sail) ctx.drawImage(s.sail.img, s.ax + s.sail.ox, tY + s.sail.oy, s.sail.w, s.sail.h);
             }
             if (s.alpha !== undefined && s.alpha < 1) ctx.globalAlpha = 1;
         }

@@ -100,7 +100,7 @@ interface CityLifeActor {
     hasFarm?: boolean;         // 农夫组合带四季农田（旱田或水田）
     seasonalPlot?: SeasonalPlotKind; // 四季地皮套系：旱作农田 / 水稻田 / 游牧草场
     plotCells?: number[];            // 地皮实际铺了哪几块（PLOT_CELL_OFFSETS 下标，1~4 块）；只记在组合主人身上
-    pigCell?: number;                // 农田四块里改养猪的那一块（PLOT_CELL_OFFSETS 下标）；该块不派农夫、只放一头猪，地皮仍是农田
+    farmStockCell?: number;          // 农田四块里改养牲畜的那一块（PLOT_CELL_OFFSETS 下标）；该块不派农夫、只放一头猪或牛，地皮仍是农田
     buildingResource?: string; // 组合内随机建筑：磨坊／牧栏／毡帐／小屋等
     lib: 'SUCAI' | 'SUCAI_ANIMAL';
     dir: string;
@@ -150,7 +150,7 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
 };
 /** 农田 / 水田 / 草场最多 2×2 斜角四块（zoom 9 像素，相对四块中心）：0 北、1 西、2 东、3 南；平地够几块铺几块。
  *  草场一块一只牲畜、牧羊人站南块；农田一块一个农夫，南块那个是组合主人（建筑跟他走）；
- *  🔴 2026-10-28 主人令：农田四块里随机一块改养猪（主人身上记 pigCell），该块不派农夫、只放一头猪；
+ *  🔴 2026-10-28 主人令：农田四块里随机一块改养牲畜（主人身上记 farmStockCell），该块不派农夫、只放一头猪或牛；
  *     四块地皮一律不变，仍是同一种农田皮，不铺牧场。 */
 const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -23], [-35, 0], [35, 0], [0, 23]];
 /** 同一渔场主船之外的帮手船相对主船的 zoom 9 像素落点：北、西、东（船比农夫大，间距放宽） */
@@ -350,16 +350,46 @@ const PASTORAL_ANIMAL_POOLS: Readonly<Record<string, readonly string[]>> = {
 };
 
 /**
- * 🔴 2026-10-28 主人令「现在种田的四块田都是一个在耕作，太单一了，可以把其中一个随机养猪」：
- *   农田四块里随机一块改养猪（四块地皮不动，仍是农田）。按史，新大陆（美洲原住民彼时无家猪）与
- *   伊斯兰／印度文化圈不养猪，这些文化的农田保持四块全种农夫，不拿别的牲畜硬凑（要一律放猪，主人一句话即改）。
+ * 农田那块牲畜地皮养什么 —— **猪牛两样都要有、两头都得按史**（2026-10-30 主人令
+ * 「只有牛太单一了，牛和猪就多样性了，不过要符合历史」）：
+ *   1. 牛是田里干活的牲口，种类按地域取：
+ *      · 水牛 BUFFALO：亚洲季风稻作区——江南、湖广、巴蜀、滇黔、越南、缅甸、高棉、马来，
+ *        以及南亚印度—旁遮普—孟加拉—莫卧儿（江南自汉已有水牛，恒河—印度河平原至今以水牛犁稻田）。
+ *      · 黄牛 COW_BROWN：其余农耕区——中原、河朔、朝鲜半岛（韩牛）、日本（牛耕自 8–9 世纪普及）、
+ *        欧洲、地中海、高加索、拜占庭等；朝鲜半岛与日本无野生水牛，稻田一律黄牛。
+ *   2. 猪按当地农家养猪的实情给份额（**一律取整为「有猪」，只有份额差别，没有史无猪的地方**）：
+ *      · 猪是农家畜养最广的家畜：中国（家猪最早驯化地之一）、朝鲜、越南、缅甸、高棉、欧洲、地中海、高加索、北欧 —— 一半一半，画面猪牛都有。
+ *      · 南亚稻作带（印度、孟加拉、莫卧儿、旁遮普）—— 猪由低种姓、部落与渔民饲养（印度自史前即有 Sus indicus 家猪，孟加拉、喀拉拉养猪食猪肉皆有据），
+ *        只是不入主流牛耕，故少量出场（约 1/4）。
+ *      · 马来、日本 —— 猪只在华人、原住民（马来）与早期家猪（日本弥生—奈良有豚，675 年天武断屠后衰落）里出现，故更少（约 1/6）。
+ *   3. 美洲原住民（穆伊斯卡、玛雅、图皮、马普切、印加、北美）1492 年前既无家牛也无家猪，农田四块全种农夫，不拿欧洲家畜硬凑。
  */
-const PIG_KEEPING_EXCLUDED_CULTURES: ReadonlySet<string> = new Set([
-    // 美洲原住民：1492 年前无家猪（DEC 素材里的 PIG 是欧洲家猪）
-    'MUISCA', 'MAYANS', 'TUPI', 'MAPUCHE', 'INCA', 'AMERICA',
-    // 伊斯兰／印度文化圈：不养猪（与上方牧群配种表口径一致）
-    'MUGHAL', 'BENGALIS', 'PURU', 'INDIA',
+const WATER_BUFFALO_FARM_CULTURES: ReadonlySet<string> = new Set([
+    'JIANGNAN', 'HUGUANG', 'BASHU', 'DIANQIAN', 'VIETNAMESE', 'BURMESE', 'KHMER', 'MALAY',
+    'PURU', 'INDIA', 'MUGHAL', 'BENGALIS',
 ]);
+/** 农家养猪的份额（0～1）；表里没写的农耕文化一律猪牛各半。 */
+const FARM_PIG_SHARE: Readonly<Record<string, number>> = {
+    // 南亚稻作带：猪由低种姓／部落／渔民饲养，史有其事但不入主流牛耕
+    INDIA: 0.25,
+    BENGALIS: 0.25,
+    MUGHAL: 0.25,
+    PURU: 0.25,
+    // 马来：养猪的是华人与原住民，马来农家不养；日本：弥生—奈良有豚，675 年断屠后衰落
+    MALAY: 0.16,
+    JAPAN: 0.16,
+};
+const NO_FARM_STOCK_CULTURES: ReadonlySet<string> = new Set([
+    // 美洲原住民：1492 年前无家牛、无家猪（DEC 素材里的 COW／PIG 都是欧洲家畜）
+    'MUISCA', 'MAYANS', 'TUPI', 'MAPUCHE', 'INCA', 'AMERICA',
+]);
+
+/** 农田牲畜块养什么：牛按地域取水牛／黄牛；猪按当地养猪实情给份额，其余是耕牛。 */
+function farmStockKind(style: string, seed01: number): string {
+    const ox = WATER_BUFFALO_FARM_CULTURES.has(style) ? 'BUFFALO' : 'COW_BROWN';
+    const pigShare = FARM_PIG_SHARE[style] ?? 0.5;
+    return seed01 < pigShare ? 'PIG' : ox;
+}
 
 function strHash01(s: string, salt: number): number {
     let h = (salt * 2654435761) | 0;
@@ -1192,33 +1222,36 @@ export class CityLifeAmbientLayer {
 
             // 农田一块一个农夫：南块是组合主人（地皮、建筑都记在他身上），其余几块各补一个只种地的农夫。
             // 🔴 2026-10-28 主人令「现在种田的四块田都是一个在耕作，太单一了，可以把其中一个随机养猪」：
-            //    四块里随机挑一块改养猪——该块不派农夫、放一头猪，四块地皮一律照旧是农田，不改铺牧场。
+            //    四块里随机挑一块改养牲畜——该块不派农夫、放一头猪或牛，四块地皮一律照旧是农田，不改铺牧场。
             //    块号按「据点＋年份＋组合」取哈希，年度重排也不会前后闪换。
+            // 🔴 2026-10-30 主人令「不要看以前主人说的，要看现在是否符合历史」：养什么按当地史料定
+            //    （水牛／黄牛按地域取；猪按当地农家养猪的实情给份额），见 farmStockKind 的按史注释。
             if (isFarmer && plotCells) {
                 const owner = list[list.length - 1];
                 const handCells = plotCells.filter((k) => k !== PLOT_LEADER_CELL);
-                const pigCell = handCells.length > 0 && !PIG_KEEPING_EXCLUDED_CULTURES.has(style)
+                const farmStockCell = handCells.length > 0 && !NO_FARM_STOCK_CULTURES.has(style)
                     ? handCells[Math.floor(strHash01(owner.id, 907) * handCells.length) % handCells.length]
                     : undefined;
-                owner.pigCell = pigCell;
+                owner.farmStockCell = farmStockCell;
+                const stockKind = farmStockCell === undefined ? '' : farmStockKind(style, strHash01(owner.id, 908));
                 for (const k of plotCells) {
                     if (k === PLOT_LEADER_CELL) continue;
-                    if (k === pigCell) {
-                        // 猪只在自家这块田里小范围来回（与草场牲畜同一套走动），不跑出地皮、不踩到人。
-                        const pigAngle = strHash01(owner.id, k * 23 + 231) * Math.PI * 2;
-                        const wx = Math.cos(pigAngle) * PASTURE_WANDER_PX;
-                        const wy = Math.sin(pigAngle) * PASTURE_WANDER_PX * 0.6;
+                    if (k === farmStockCell) {
+                        // 牲畜只在自家这块田里小范围来回（与草场牲畜同一套走动），不跑出地皮、不踩到人。
+                        const stockAngle = strHash01(owner.id, k * 23 + 231) * Math.PI * 2;
+                        const wx = Math.cos(stockAngle) * PASTURE_WANDER_PX;
+                        const wy = Math.sin(stockAngle) * PASTURE_WANDER_PX * 0.6;
                         list.push({
                             ...owner,
-                            id: `${owner.id}_pig_${k}`,
+                            id: `${owner.id}_stock_${k}`,
                             isAnimal: true,
                             lib: 'SUCAI_ANIMAL',
-                            dir: 'PIG',
+                            dir: stockKind,
                             fieldHand: undefined,
                             hasFarm: false,
                             seasonalPlot: undefined,
                             plotCells: undefined,
-                            pigCell: undefined,
+                            farmStockCell: undefined,
                             groundResource: undefined,
                             groundResourceLib: undefined,
                             buildingResource: undefined,
@@ -1244,7 +1277,7 @@ export class CityLifeAmbientLayer {
                         hasFarm: false,
                         seasonalPlot: undefined,
                         plotCells: undefined,
-                        pigCell: undefined,
+                        farmStockCell: undefined,
                         buildingResource: undefined,
                         homePos: pos,
                         gatePos: { ...pos },

@@ -1178,7 +1178,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ruo_wangjian': 'CENTRAL',   // 秦国｜王翦｜据点 长安
     'ruochu_doulian': 'JIANGNAN',   // 楚国｜鬬廉｜据点 竟陵
     'ruoqiang_quhulai': 'WESTERN',   // 婼羌｜去胡来｜据点 卡克里克
-    'ruzhou_sunjian': 'JIANGNAN',   // 汉国｜孙坚｜据点 长沙
+    'ruzhou_sunjian': 'JIANGNAN',   // 孙吴｜孙坚｜据点 长沙
     'ryukyu_shangbazhi': 'JAPAN',   // 琉球｜尚巴志｜据点 首里
     'sabeol_jinshimin': 'KOREA',   // 朝鲜｜金时敏｜据点 晋州
     'saerbadaer_lazhake': 'PERSIAN',   // 萨尔巴达尔｜拉扎克｜据点 白哈格
@@ -1215,7 +1215,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'shanyue_sunce': 'JIANGNAN',   // 南齐｜孙策｜据点 会稽
     'shanzhou_wangzhongsi': 'KHITAN',   // 唐国｜王忠嗣｜据点 回乐
     'shaodang_mitang': 'TIBET',   // 烧当｜迷唐｜据点 玛曲
-    'shaozhou_d_mayin': 'JIANGNAN',   // 马楚｜马殷｜据点 邵州
+    'shaozhou_d_mayin': 'HUGUANG',   // 马楚｜马殷｜据点 长沙（湖广）
     'shaozhou_zhangzhensun': 'JIANGNAN',   // 唐国｜张镇孙｜据点 番禺
     'shatuo_likeyong': 'XIANBEI',   // 沙陀｜李克用｜据点 光禄城
     'shazhou_zhangyichao': 'KHITAN',   // 归义｜张议潮｜据点 敦煌
