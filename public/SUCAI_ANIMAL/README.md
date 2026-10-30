@@ -90,3 +90,14 @@
 | CHICKEN | 鸡 | idle, walk | 8 |
 | CAPYBARA | 水豚 | idle, walk | 8 |
 | WAR_DOG | 军犬/猎犬 | idle, walk, run, attack | 8 |
+
+## 2026-10-30 新增（scratch/extract_animals_20261030.py、scratch/extract_nessie_tactical.py）
+| 目录名 | 中文名 | 动作包含 | 方向 | 说明 |
+|---|---|---|---|---|
+| ELK | 驼鹿 / 马鹿 | idle, walk, run, attack | 8 | 原 RMS 名 ELK 借用 DEER |
+| PHEASANT | 雉鸡 | idle, walk, run | 8 | 原借用 TURKEY |
+| RAVEN | 渡鸦 | fly, hover | 16 | 原借用 FALCON |
+| SEAL | 海豹 | idle, walk | 8 | 高纬海岸 |
+| WALRUS | 海象 | idle, walk, attack | 8 | 北极圈 |
+| LYNX | 猞猁 | idle, walk, run, attack | 8 | 温带—寒带森林 |
+| NESSIE | 尼斯湖水怪 | idle, walk, run（同一游动循环 45 帧） | 8 | 水下+水面合成，0.5 倍；战术地图天然水面专用，不进护城河 |

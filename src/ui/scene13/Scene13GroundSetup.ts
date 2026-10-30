@@ -270,7 +270,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 // 🔴 [2026-10-10 主人「这里光秃秃的，啥元素也没有呀」]
                 //    保留未落入建筑地基（!onFoundation）的自然植被与草花碎石，绝不一刀切清空整场生态
                 // 🔴 [2026-10-12 任务1] 地图数据自带完整树林时，剔除旧环境方案遗留的混杂树木，树种严格统一由地图数据决定
-                const TREE_RE = /^(?!PLANT|UNDERBRUSH|ROCK|FORAGE|FALLEN_LEAVES|FELLED|STUMP|FLOWER|GRASS|WEED|SHRUB|BUSH_GREEN).*(TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE)/i;
+                const TREE_RE = /^(?!PLANT|UNDERBRUSH|ROCK|FORAGE|FALLEN_LEAVES|FELLED|STUMP|FLOWER|GRASS|WEED|SHRUB|BUSH_GREEN).*(TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE|SPRUCE)/i;
                 this.decorSprites = this.decorSprites.filter((s) => {
                     const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.startsWith('BATTLEFIELD:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
                     const isWaterPlant = s.asset === 'WATER_LILY' || s.asset === 'REEDS' || s.asset === 'SEA_ROCKS' || s.asset === 'SHIPWRECK';
@@ -355,6 +355,31 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                     const ob = data.objects[obIdx];
                     if (ob.name && ob.name.includes('CLIFF')) continue;
                     const r = resolveNatureSprite(ob.name);
+                    // 🔴 [2026-10-30] 水生资源（DE FISHS 近岸鱼群 / TURTLES 海龟群）：只放天然水面，冰面不放；海龟只在暖海（|纬度|<42°）
+                    if (r && r[0] === 'RESOURCE') {
+                        const rsx = (ob.x - 0.5 - 60) * TAC_TILE_W + VW / 2;
+                        const rsy = (ob.y - 0.5 - 60) * TAC_TILE_H + VH / 2;
+                        if (glLayer.isIce || isSnowBase || !glLayer.isWaterAt(rsx, rsy, VW, VH)) continue;
+                        if (r[1] === 'BOX_TURTLES' && Math.abs(mapLat) >= 42) continue;
+                        const rh = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
+                        this.ensureNatureAsset('RESOURCE:' + r[1]);
+                        this.decorSprites.push({
+                            asset: 'RESOURCE:' + r[1],
+                            frame: rh,
+                            x: rsx,
+                            y: rsy,
+                            flip: rh % 2 === 0,
+                            layer: 'world',
+                            z: 0,
+                            lift: 0,
+                            densityHash: rh,
+                            obstruction: undefined,
+                            obstructionContactSec: 0,
+                            obstructionTouched: false,
+                            obstructionDisabled: true,
+                        });
+                        continue;
+                    }
                     if (r && (r[0] === 'NATURE' || r[0] === 'ANIMAL')) {
                         const isAnimal = r[0] === 'ANIMAL';
                         const ox = ob.x - 0.5, oy = ob.y - 0.5;
@@ -515,6 +540,35 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 }
 
                 runMicroDecor = () => populateBattlefieldMicroDecor.call(this, glLayer, VW, VH, baseTerrain, decorSet, decorCtx, onFoundation);
+                // 🔴 [2026-10-30] 浅海海带（DE n_plant_kelp_seaweeds）：只在海边图的浅海带（水体密度 0.5~0.72）稀疏点缀，冰海不长
+                if (this.environmentPlan?.waterKind === 'sea' && !glLayer.isIce && !isSnowBase) {
+                    this.ensureNatureAsset('KELP_SEAWEEDS');
+                    for (let gy = 5; gy < 115; gy += 3) {
+                        for (let gx = 5; gx < 115; gx += 3) {
+                            const dens = glLayer.getWaterDensityAt(gx, gy);
+                            if (dens < 0.5 || dens > 0.72 || ((gx * 17 + gy * 29) % 11) !== 0) continue;
+                            const kx = (gx - 0.5 - 60) * TAC_TILE_W + VW / 2;
+                            const ky = (gy - 0.5 - 60) * TAC_TILE_H + VH / 2;
+                            const kh = (gx * 13 + gy * 7) % 100;
+                            this.decorSprites.push({
+                                asset: 'KELP_SEAWEEDS',
+                                frame: kh,
+                                x: kx,
+                                y: ky,
+                                flip: kh % 2 === 0,
+                                layer: 'world',
+                                z: -1,
+                                lift: 0,
+                                densityHash: kh,
+                                obstruction: undefined,
+                                obstructionContactSec: 0,
+                                obstructionTouched: false,
+                                obstructionDisabled: true,
+                            });
+                        }
+                    }
+                }
+
                 // 自然水岸生态：沿浅滩边缘稀疏点缀芦苇与睡莲（按气候/季节/海陆水体自适应：冬季冰面不长，荒漠与海岸仅生芦苇不生睡莲）
                 const isFrozenWater = glLayer.isIce || baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
                 const allowWaterLily = !isFrozenWater && !isBarrenBase && this.sceneSeason === 0 && this.environmentPlan?.waterKind !== 'sea' && !/^(ds|drt|sav|sa2|zn)/.test(baseTerrain);

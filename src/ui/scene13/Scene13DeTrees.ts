@@ -71,8 +71,8 @@ export const DE_TERRAIN_TREES: Readonly<Record<number, readonly DeTerrainTreeUni
         { unit: 'MONKEYPUZZLE', asset: 'MONKEY_PUZZLE', density: 300 },
         { unit: 'OLIVE', asset: 'OLIVE', density: 150 },
     ],
-    131: [{ unit: 'SPRUCE', asset: 'PINE', density: 1000 }],                    // Forest, Spruce（本作无云杉素材，走松）
-    132: [{ unit: 'SPRUCESNOW', asset: 'SNOW_PINE', density: 1000 }],           // Forest, Spruce Snow
+    131: [{ unit: 'SPRUCE', asset: 'SPRUCE', density: 1000 }],                  // Forest, Spruce（2026-10-30 已提取云杉素材）
+    132: [{ unit: 'SPRUCESNOW', asset: 'SPRUCE_SNOW', density: 1000 }],         // Forest, Spruce Snow
     133: [{ unit: 'GREENOAK', asset: 'GREEN_OAK', density: 1000 }],             // Forest, Oak Green
 };
 
@@ -172,6 +172,7 @@ const SEASON_FAMILY: Readonly<Record<string, readonly [string, string, string, s
     ASIAN_MAPLE_GREEN: ['ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'ASIAN_MAPLE_AUTUMN'],
     ASIAN_MAPLE_AUTUMN: ['ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'ASIAN_MAPLE_AUTUMN'],
     MONKEY_PUZZLE: ['MONKEY_PUZZLE', 'MONKEY_PUZZLE', 'MONKEY_PUZZLE', 'MONKEY_PUZZLE'],
+    SPRUCE: ['SPRUCE', 'SPRUCE', 'SPRUCE', 'SPRUCE'],
 };
 
 /** 冬季积雪地面才有「挂雪树」；非积雪地面把 SNOW_* 换回同族无雪基树，再走 SEASON_FAMILY 按季换装 */
@@ -181,6 +182,7 @@ const SNOW_TO_PLAIN: Readonly<Record<string, string>> = {
     SNOW_BIRCH: 'BIRCH_WINTER',
     SNOW_DEAD_TREE: 'DEAD_TREE',
     SNOW_SPRUCE: 'PINE',
+    SPRUCE_SNOW: 'SPRUCE',
 };
 
 /**
@@ -211,6 +213,7 @@ export function seasonalDeTree(asset: string, season: number, snowGround: boolea
         ) {
             return 'SNOW_PINE';
         }
+        if (asset === 'SPRUCE' || asset === 'SPRUCE_SNOW') return 'SPRUCE_SNOW';
         if (asset === 'SNOW_DEAD_TREE') return 'DEAD_TREE';
         if (/^SCENARIO_TREE_/.test(asset)) return 'SCENARIO_TREE_I';
         return asset;

@@ -45,6 +45,10 @@ const CULTURE_ONLY: Readonly<Record<string, readonly Box[]>> = {
                              //（花剌子模 41°N、布哈拉 40°N 都在线下）
         [29, 38, 32, 42],    // 黎凡特 —— 十字军国家时期的基督教墓地（耶路撒冷、阿卡）
     ],
+    // 石楠（Calluna 帚石楠荒原）：原生于欧洲西北—北欧—地中海北缘，东亚、美洲、热带不出
+    HEATHER: [
+        [36, 72, -12, 45],
+    ],
 };
 
 export interface DecorFitQuery {
@@ -125,29 +129,29 @@ const GROUND_DECOR_BY_BASE: Readonly<Record<string, GroundDecorSet>> = {
     ds3: { scatter: ['GRASS_GREEN', 'GRASS_DRY'], flat: ['BUSH_GREEN', 'FLOWER', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
     ds4: { scatter: ['GRASS_DRY'], flat: ['SHRUB_GREEN', 'FLOWER', 'PLANT_DEAD'], solid: ['ROCK1', 'ROCK2'] },
     ds2: { scatter: ['GRASS_DRY'], flat: ['WEED', 'PLANT', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK3'] },
-    gr2: { scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'BUSH_GREEN', 'SHRUB_GREEN', 'WEED'], solid: ['ROCK1', 'ROCK2'] },
+    gr2: { scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'BUSH_GREEN', 'SHRUB_GREEN', 'WEED', 'HEATHER'], solid: ['ROCK1', 'ROCK2'] },
     grs: { scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'SHRUB_GREEN', 'WEED'], solid: ['ROCK1', 'ROCK2'] },
-    gr4: { scatter: ['GRASS_GREEN'], flat: ['SHRUB_GREEN', 'FLOWER', 'WEED'], solid: ['ROCK1', 'ROCK2'] },
+    gr4: { scatter: ['GRASS_GREEN'], flat: ['SHRUB_GREEN', 'FLOWER', 'WEED', 'HEATHER'], solid: ['ROCK1', 'ROCK2', 'ROCK_MOSSY'] },
 
     // ── 林地与热带丛林：DE dat 60/83 Grass Green(d=60) + PLANT_JUNGLE / PLANT_RAINFOREST / UNDERBRUSH ──
-    for:               { scatter: ['GRASS_GREEN'], flat: ['UNDERBRUSH', 'FERNPATCH', 'BUSH_GREEN'], solid: ['ROCK1', 'ROCK2'] },
-    underbrush_leaves: { scatter: ['GRASS_GREEN'], flat: ['UNDERBRUSH', 'FERNPATCH', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+    for:               { scatter: ['GRASS_GREEN'], flat: ['UNDERBRUSH', 'FERNPATCH', 'BUSH_GREEN'], solid: ['ROCK_MOSSY', 'ROCK1', 'ROCK2'] },
+    underbrush_leaves: { scatter: ['GRASS_GREEN'], flat: ['UNDERBRUSH', 'FERNPATCH', 'SHRUB_GREEN'], solid: ['ROCK_MOSSY', 'ROCK1', 'ROCK2'] },
     fo2:               { scatter: ['GRASS_GREEN'], flat: ['PLANT_RAINFOREST', 'UNDERBRUSH_RAINFOREST', 'FERNPATCH'], solid: ['ROCK_JUNGLE', 'ROCK1'] },
     gr6:               { scatter: ['GRASS_GREEN'], flat: ['PLANT_JUNGLE', 'UNDERBRUSH_JUNGLE', 'SHRUB_GREEN'], solid: ['ROCK_JUNGLE', 'ROCK1'] },
 
     // ── 湿地陆岸（WATER_LILY / REEDS 仅限水体内部，陆岸用湿草与蕨丛灌木，杜绝睡莲长在旱地上） ──
-    qs2: { scatter: ['GRASS_GREEN'], flat: ['WEED', 'FERNPATCH', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK_JUNGLE'] },
-    sh4: { scatter: ['GRASS_GREEN'], flat: ['WEED', 'SHRUB_GREEN', 'FERNPATCH'], solid: ['ROCK1', 'ROCK2'] },
+    qs2: { scatter: ['GRASS_GREEN'], flat: ['WEED', 'FERNPATCH', 'SHRUB_GREEN'], solid: ['ROCK_MOSSY', 'ROCK1', 'ROCK_JUNGLE'] },
+    sh4: { scatter: ['GRASS_GREEN'], flat: ['WEED', 'SHRUB_GREEN', 'FERNPATCH'], solid: ['ROCK_MOSSY', 'ROCK1', 'ROCK2'] },
 
     // ── 高地裸岩 / 砾石 ──
     rck:            { scatter: ['GRASS_DRY'], flat: ['WEED', 'SHRUB_GREEN'], solid: ['ROCK_LIMESTONE', 'ROCK_PILLAR', 'ROCK1'] },
     gravel_default: { scatter: ['GRASS_DRY'], flat: ['WEED', 'PLANT'], solid: ['ROCK1', 'ROCK2', 'ROCK_LIMESTONE'] },
 
     // ── 雪 ──
-    snd: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK1', 'ROCK2'] },
-    sno: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK1', 'ROCK2'] },
-    sn2: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK1'] },
-    snf: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+    snd: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK_SNOW', 'ROCK1', 'ROCK2'] },
+    sno: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK_SNOW', 'ROCK1', 'ROCK2'] },
+    sn2: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK_SNOW', 'ROCK1'] },
+    snf: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'SHRUB_GREEN'], solid: ['ROCK_SNOW', 'ROCK1', 'ROCK2'] },
 };
 
 /** 兜底：查不到底图时按温带草地算 */
@@ -258,6 +262,8 @@ const ASSET_TILES: Readonly<Record<string, number>> = {
     // 岩石（solid 走自己的数量控制，这里只为验收统计）
     ROCK_PILLAR: 70.5, ROCK_FORMATION3: 38.2, ROCK_JUNGLE: 14.6, ROCK_FORMATION2: 12.4,
     ROCK1: 11.3, ROCK2: 7.6, ROCK_FORMATION1: 7.5, ROCK_LIMESTONE: 5.4, ROCK3: 4.9,
+    // 2026-10-30 新提取（box_w × box_h ÷ 2048 实测）
+    ROCK_MOSSY: 10.4, ROCK_SNOW: 11.3, HEATHER: 2.9, KELP_SEAWEEDS: 6.2,
 };
 
 /** 这个素材占几格。没登记的按 3 格算（小件的量级）。 */

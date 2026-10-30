@@ -43,6 +43,9 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
     ['FOX_ARCTIC', 'prey', 30, 80, 3, 0, 3, ANIMAL_ACTS.beast],    // 北极狐
     ['TURKEY', 'prey', 20, 50, 3, 0, 2, ANIMAL_ACTS.graze],        // 野鸡
     ['NESSIE', 'prey', 22, 60, 50, 0, 6, ANIMAL_ACTS.flee],        // 尼斯湖水怪（DE a_nessie；水生，见人潜游远离）
+    ['ELK', 'prey', 32, 90, 5, 0, 3, ANIMAL_ACTS.flee],            // 驼鹿/马鹿（DE a_hunt_elk，此前借用鹿）
+    ['PHEASANT', 'prey', 20, 55, 3, 0, 2, ANIMAL_ACTS.flee],       // 雉鸡（DE a_hunt_pheasant，此前借用火鸡）
+    ['SEAL', 'prey', 15, 30, 5, 0, 3, ANIMAL_ACTS.graze],          // 海豹（DE a_hunt_seal：只有 idle/walk）
 
     // ── 危险猎物（受惊冲刺脱离，65~75 px/s）──
     ['BOAR', 'danger', 32, 75, 75, 7, 4, ANIMAL_ACTS.beast],       // 野猪（凶猛冲撞脱离）
@@ -53,6 +56,7 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
     ['RHINO', 'danger', 30, 70, 75, 7, 4, ANIMAL_ACTS.beast],      // 犀牛（厚重冲刺）
     ['ELEPHANT', 'danger', 30, 65, 75, 7, 4, ANIMAL_ACTS.beast],   // 大象（践踏狂奔）
     ['TAPIR', 'danger', 28, 65, 75, 7, 4, ANIMAL_ACTS.beast],      // 貘
+    ['WALRUS', 'danger', 15, 30, 75, 6, 4, ANIMAL_ACTS.beastSlow], // 海象（DE a_hunt_walrus：idle/walk/attack）
 
     // ── 猛兽（极速扑杀与追击，80~95 px/s，飞扑爆发力）──
     ['BLACK_PANTHER', 'predator', 35, 95, 25, 3, 12, ANIMAL_ACTS.beast], // 黑豹（爆发力之王）
@@ -63,6 +67,7 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
     ['WOLF', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],          // 狼（迅猛扑杀）
     ['WOLF_ARABIAN', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],  // 阿拉伯狼
     ['WOLF_ARCTIC', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],   // 北极狼
+    ['LYNX', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],          // 猞猁（DE a_pred_lynx）
     ['CROCODILE', 'predator', 24, 55, 25, 3, 12, ANIMAL_ACTS.beastSlow], // 鳄鱼（短程扑咬）
     ['CAIMAN', 'predator', 24, 55, 20, 2, 12, ANIMAL_ACTS.beastSlow],    // 凯门鳄
     ['KOMODO', 'predator', 26, 58, 25, 3, 12, ANIMAL_ACTS.beastSlow],    // 科莫多巨蜥
@@ -93,6 +98,7 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
     ['FLAMINGO', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
     ['CONDOR', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
     ['MACAW', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['RAVEN', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],          // 渡鸦（DE a_bird_raven，此前借用游隼）
 ];
 
 /** 表展开成查表 */
@@ -124,6 +130,8 @@ export const ANIMAL_RANGE: Record<string, ReadonlyArray<readonly [number, number
         JAGUAR: [AMER], JAVELINA: [AMER], GUANACO: [AMER], TAPIR: [AMER, [-8, 20, 95, 120]], CAPYBARA: [AMER], MACAW: [AMER], LLAMA: [AMER], ALPACA: [AMER],
         CONDOR: [AMER], RHEA: [AMER],
         SNAKE_GROUND: [[-40, 60, -180, 180]],
+        // 🔴 [2026-10-30] 新增物种原生分布：海豹（南北高纬海岸）、海象（北极圈）、猞猁（欧亚北美温带—寒带）
+        SEAL: [[40, 90, -180, 180], [-90, -40, -180, 180]], WALRUS: [[60, 90, -180, 180]], LYNX: [[30, 72, -180, 180]],
     };
 })();
 

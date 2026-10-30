@@ -1057,7 +1057,8 @@ export class Scene13WarLayer {
      * 🔴 [2026-10-30 修复两翼割裂与距离失真]：
      *   · 每次伏兵集中从**同一侧斜后翼**（45° 或 135° 中空地更开阔、不贴边/不落水/不进城墙的一侧，两侧都开阔则随机一侧）整军杀出，
      *     避免拆成相隔两千像素的两半导致镜头对在两翼中间的空地上；
-     *   · 沿所选 45°/135° 斜线方向直接量敌阵外沿（去掉两头各 10% 散兵后的 90% 分位），再往斜后方外推 AMBUSH_CLEARANCE（420px），
+     *   · 沿所选 45°/135° 斜线方向直接量敌阵外沿（去掉两头各 10% 散兵后的 90% 分位），再往斜后方外推 AMBUSH_CLEARANCE（800px；
+     *     🔴 2026-10-30 主人定「都 800」：野战、攻城同一个值，不按地图／城型分档），
      *     既不会贴脸刷在敌兵堆里，也不会被横向宽阵型连累推到地图边缘；
      *   · 各分队沿与斜线垂直的方向紧凑排开（间距 AMBUSH_FLANK_GAP=56px），队头顺着斜线直插敌军前线重心。
      */
@@ -1065,7 +1066,7 @@ export class Scene13WarLayer {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
         const enemies = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.siegeW);
         if (enemies.length === 0) return [];
-        const AMBUSH_CLEARANCE = 420;
+        const AMBUSH_CLEARANCE = 800;   // 🔴 2026-10-30 主人定「都 800」：野战／攻城一律 800px（原 420px 太贴脸，进了敌弓 220px 射程边）
         const AMBUSH_FLANK_GAP = 56;
         const adv = this.advanceVec[f];          // 本方进攻方向：往这个方向走就是敌后
         const side = this.sideVec[f];
@@ -4257,11 +4258,17 @@ export class Scene13WarLayer {
             const act = s.asset.split('/')[1]?.split('_')[0];
             const fps = (act === 'walk' || act === 'run') ? 24 : 15;
             fr = Math.floor(this.battleSec * fps + s.frame) % m.frames;
+        } else if (s.asset.startsWith('RESOURCE:') && /FISH|TURTLES/.test(s.asset) && m.frames > 1) {
+            // 🔴 [2026-10-30] 水生资源（近岸鱼群跃水 / 海龟游弋）按 DE 15fps 循环播放，s.frame 作随机相位
+            fr = Math.floor(this.battleSec * 15 + s.frame) % m.frames;
         } else {
             fr = m.frames > 0 ? (s.frame % m.frames) : 0;
         }
         const sw = m.box_w, sh = m.box_h;
-        const sx = fr * sw;
+        // 多行网格素材（_meta.cols，如 BOX_TURTLES 30×6）按行列取帧；其余单行横条 cols 缺省 → sy = 0，与原逻辑逐像素一致
+        const gridCols = (m as { cols?: number }).cols ?? 0;
+        const sx = gridCols > 0 ? (fr % gridCols) * sw : fr * sw;
+        const sy = gridCols > 0 ? Math.floor(fr / gridCols) * sh : 0;
         // scale 未设置 = 原尺寸原路径（其余装饰逐像素不变）；设置时尺寸与锚点等比缩放，脚点仍落在 (s.x, drawY)
         const k = s.scale ?? 1;
         let bld: WarBuilding | undefined;
@@ -4306,12 +4313,12 @@ export class Scene13WarLayer {
             g.save();
             g.translate(s.x, drawY);
             g.scale(-k, k);
-            g.drawImage(na.img, sx, 0, sw, sh, -m.anchor_x, -m.anchor_y, sw, sh);
+            g.drawImage(na.img, sx, sy, sw, sh, -m.anchor_x, -m.anchor_y, sw, sh);
             g.restore();
         } else if (k !== 1) {
-            g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x * k, drawY - m.anchor_y * k, sw * k, sh * k);
+            g.drawImage(na.img, sx, sy, sw, sh, s.x - m.anchor_x * k, drawY - m.anchor_y * k, sw * k, sh * k);
         } else {
-            g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x, drawY - m.anchor_y, sw, sh);
+            g.drawImage(na.img, sx, sy, sw, sh, s.x - m.anchor_x, drawY - m.anchor_y, sw, sh);
         }
         // 🔴 [2026-10-15 严格复刻 DE empires2_x2_p1.dat damage_graphics + particles/fire_*.json]
         //    1) 尺寸：DE fire_*.json 统一规定 "Scale": 0.5（图集为 2× 分辨率），故按 fk = 0.5 * k 绘制；

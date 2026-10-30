@@ -27,7 +27,7 @@ interface CreatureAsset {
     screenW: number;
 }
 
-type CreatureKind = 'DOLPHIN' | 'WHALE' | 'BOX_TURTLES' | 'NESSIE';
+type CreatureKind = 'DOLPHIN' | 'WHALE' | 'BOX_TURTLES' | 'NESSIE' | 'TUNA_FISH' | 'MARLIN_FISH';
 
 const ASSETS: Record<CreatureKind, CreatureAsset> = {
     // 硬编码来自 _meta.json（DE 水下潜游层 + 水上破水层 + 白色跃水浪花/涟漪合成，加载时再 fetch 覆盖一次）
@@ -35,6 +35,9 @@ const ASSETS: Record<CreatureKind, CreatureAsset> = {
     WHALE:       { url: '/SUCAI_RESOURCE/WHALE/frames.png',       frames: 241, cols: 25, boxW: 212, boxH: 115, anchorX: 113, anchorY: 59, screenW: 168 },
     BOX_TURTLES: { url: '/SUCAI_RESOURCE/BOX_TURTLES/frames.png', frames: 180, cols: 30, boxW: 76,  boxH: 41,  anchorX: 35,  anchorY: 17, screenW: 56 },
     NESSIE:      { url: '/SUCAI_RESOURCE/NESSIE/frames.png',      frames: 180, cols: 30, boxW: 256, boxH: 222, anchorX: 98,  anchorY: 58, screenW: 196 },
+    // 跃水鱼（DE a_fish_tuna / a_fish_marlin1，单行横条 cols = frames；尺寸按与鲸鱼同一比例 0.79）
+    TUNA_FISH:   { url: '/SUCAI_RESOURCE/TUNA_FISH/frames.png',   frames: 91,  cols: 91, boxW: 96,  boxH: 92,  anchorX: 56,  anchorY: 84, screenW: 76 },
+    MARLIN_FISH: { url: '/SUCAI_RESOURCE/MARLIN_FISH/frames.png', frames: 61,  cols: 61, boxW: 80,  boxH: 120, anchorX: 24,  anchorY: 120, screenW: 63 },
 };
 
 interface Creature {
@@ -270,15 +273,18 @@ export class MarineLifeLayer extends L.Layer {
         let kind: CreatureKind;
         const r = Math.random();
         if (isWarmSea) {
-            if (r < 0.28) kind = 'WHALE';
-            else if (r < 0.42) kind = 'NESSIE';
-            else if (r < 0.75) kind = 'DOLPHIN';
-            else kind = 'BOX_TURTLES'; // 25% 概率出现海龟游弋
+            if (r < 0.24) kind = 'WHALE';
+            else if (r < 0.36) kind = 'NESSIE';
+            else if (r < 0.60) kind = 'DOLPHIN';
+            else if (r < 0.70) kind = 'MARLIN_FISH';   // 剑鱼：暖海
+            else if (r < 0.80) kind = 'TUNA_FISH';
+            else kind = 'BOX_TURTLES'; // 20% 概率出现海龟游弋
         } else {
-            // 高纬寒温带海域（含北海/苏格兰外海等）：抹香鲸、尼斯湖水怪与海豚
-            if (r < 0.45) kind = 'WHALE';
-            else if (r < 0.65) kind = 'NESSIE';
-            else kind = 'DOLPHIN';
+            // 高纬寒温带海域（含北海/苏格兰外海等）：抹香鲸、尼斯湖水怪、海豚与金枪鱼
+            if (r < 0.38) kind = 'WHALE';
+            else if (r < 0.55) kind = 'NESSIE';
+            else if (r < 0.80) kind = 'DOLPHIN';
+            else kind = 'TUNA_FISH';
         }
         // 鲸鱼与水怪只在水深超过 200 米的深海（大陆架以外）；浅海（如厄勒海峡约 26 米）换成海豚
         if (kind === 'WHALE' || kind === 'NESSIE') {
