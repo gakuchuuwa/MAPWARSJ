@@ -1942,7 +1942,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 25000,
         enemyFactionId: 'shule',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '疏勒',
-        enemyGeneralId: 'bfe_shulezhong',   // 🔴 [2026-10-25 按史] 疏勒叛王忠；《后汉书·班超传》元和三年（86）忠借康居兵据损中，超伏兵斩之
+        enemyGeneralId: 'bfe_shulezhong',   // 🔴 [2026-10-25 按史] 疏勒叛王疏勒忠；《后汉书·班超传》元和三年（86）忠借康居兵据损中，超伏兵斩之
         enemyTroops: 30000,
         introLines: [
             { speaker: 'general', text: '疏勒王忠叛汉，借康居之兵据守损中，欲断我西域南道！大丈夫无他志略，犹当效傅介子、张骞立功异域——壮士，随某以夷制夷，斩忠以定疏勒！' },

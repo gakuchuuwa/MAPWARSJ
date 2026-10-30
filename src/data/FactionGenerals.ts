@@ -9048,7 +9048,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     shule: [
         { generalId: 'shule_aersilan', cityId: 'city_shule', generalName: '阿尔斯兰', portrait: '/assets/WESTERN/shule_aersilan.png' },
-        { generalId: 'bfe_shulezhong', factionId: 'shule', cityId: 'city_shule', generalName: '忠', portrait: '/assets/WESTERN/bfe_shulezhong.png', eliteName: '盘橐守军', eliteTier: 4 },
+        { generalId: 'bfe_shulezhong', factionId: 'shule', cityId: 'city_shule', generalName: '疏勒忠', portrait: '/assets/WESTERN/bfe_shulezhong.png', eliteName: '盘橐守军', eliteTier: 4 },
     ],
 
 

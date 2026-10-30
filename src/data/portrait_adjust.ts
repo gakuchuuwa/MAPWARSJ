@@ -4662,11 +4662,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/WESTERN/sai_gaijiayun.png": {
-            "scale": 0.71,
-            "offsetX": 0,
-            "offsetY": -1
-        },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_108.png": {
             "scale": 1.05,
             "offsetX": 0,
@@ -4676,11 +4671,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 16
-        },
-        "/assets/WESTERN/__闲置__WESTERN_31.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": 13
         },
         "/assets/WESTERN/__闲置__WESTERN_33.png": {
             "scale": 1.07,
@@ -5748,9 +5738,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/WESTERN/__闲置__WESTERN_39.png": {
-            "scale": 0.76,
+            "scale": 0.71,
             "offsetX": 0,
-            "offsetY": -13
+            "offsetY": -1
         },
         "/assets/WESTERN/kepantuo_dulimi.png": {
             "scale": 0.89,
@@ -6203,7 +6193,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -46
         },
         "/assets/KHITAN/guangwu_xinwuxian.png": {
-            "scale": 1.06,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": -30
         },
@@ -9150,6 +9140,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/ROMA/bfe_crassus.png": {
             "scale": 0.9,
             "offsetX": 5,
+            "offsetY": 13
+        },
+        "/assets/KHITAN/bfe3_44.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/KHITAN/bfe3_43.png": {
+            "scale": 1.18,
+            "offsetX": 10,
+            "offsetY": 18
+        },
+        "/assets/KHITAN/tubo_muzheng.png": {
+            "scale": 1.22,
+            "offsetX": 24,
+            "offsetY": 23
+        },
+        "/assets/WESTERN/bfe_shulezhong.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/WESTERN/sai_gaijiayun.png": {
+            "scale": 0.91,
+            "offsetX": 0,
             "offsetY": 13
         }
     },
