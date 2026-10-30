@@ -8298,7 +8298,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 14
         },
         "/assets/GEORGIANS/yibiluliya_pharnavaz.png": {
-            "scale": 1.06,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 4
         },

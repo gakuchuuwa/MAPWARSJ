@@ -1705,8 +1705,9 @@ export class CombatUI {
         const defCityObj = init.defenderCityId
             ? (window as any).game?.cityManager?.getCity?.(init.defenderCityId)
             : null;
+        const defExclude = this.getNamelessPortraitExcludePath('defender', attackerPortrait.src || undefined);
         const defenderCityPortrait = defCityObj
-            ? getCityCulturePortraitPath(defCityObj, { exclude: attackerPortrait.src || undefined })
+            ? getCityCulturePortraitPath(defCityObj, { exclude: defExclude })
             : undefined;
         this.setPortrait(
             defenderPortrait,
@@ -1715,7 +1716,7 @@ export class CombatUI {
             init.defenderFactionId || undefined,
             defenderCityPortrait,
             'defender',
-            attackerPortrait.src || undefined,
+            defExclude,
         );
 
         // 武将名牌
@@ -4722,6 +4723,57 @@ export class CombatUI {
     }
 
     /**
+     * 战术模式（Scene13）武将自放技能语音：武将名 + 四字计名 + 精锐番号 + 对应六计八字诀。
+     * 观众献计（viewer !== undefined）已由 ViewerLive 播晓晓感谢语音，此处仅播 AI 武将自身释放。
+     */
+    private announceScene13GeneralSkillVoice(
+        side: 'attacker' | 'defender',
+        sixSet: TacticalSixSet,
+        displayName: string,
+        generalId?: string,
+        skillId?: string,
+    ): void {
+        if (!generalId || !displayName) return;
+        const rec = getGeneralRecordByGeneralId(generalId);
+        if (!rec?.generalName) return;
+        const generalName = this.resolveGeneralSpeechName(generalId, side) ?? rec.generalName;
+
+        let eliteName: string | null = rec.eliteName?.trim() || null;
+        let audioUnitId: string | null = null;
+        const bf = this.boundRegionalBattleField;
+        if (bf) {
+            const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+            const gUnit = units.find((u) => u.generalId === generalId) ?? null;
+            if (gUnit) {
+                audioUnitId = gUnit.id;
+                const badgeElite = getLegionEliteBadgeName(gUnit);
+                if (badgeElite) eliteName = badgeElite;
+            }
+        }
+
+        const oppSide: 'attacker' | 'defender' = side === 'attacker' ? 'defender' : 'attacker';
+        const opponentHasGeneral = !!this.sideElement(oppSide, this.leftGeneralNameTag, this.rightGeneralNameTag).dataset.generalId;
+        const ju: CaptureJu = (sixSet === 'gongzhan' || sixSet === 'shengzhan')
+            ? 'advantage'
+            : (sixSet === 'dizhan' || sixSet === 'hunzhan')
+                ? 'balance'
+                : 'disadvantage';
+
+        speechAnnouncer.announceSkillRelease({
+            side,
+            ju,
+            sixSet,
+            generalId,
+            generalName,
+            skillDisplayName: displayName,
+            skillId: skillId || `tac13_${sixSet}`,
+            eliteName,
+            opponentHasGeneral,
+            audioUnitId,
+        });
+    }
+
+    /**
      * 战术六计 Cut-in：玩家／观众释放是直播的上屏时刻，金字、金光并显示献计名字；
      * 武将自己释放只保留短小计名，不再放大立绘，不抢玩家释放的视觉重心。
      */
@@ -4737,6 +4789,9 @@ export class CombatUI {
         // 占用统一 Cut-in 闸门（错开由 Scene13WarLayer 的游戏秒＋真实秒双闸保证，此处不再顺延，保持技效与大字同刻）
         this.skillCutInBusyUntil = Date.now() + CombatUI.SKILL_CUTIN_GAP_MS;
         audioManager.playScene13SkillSfx(sixSet, viewer !== undefined);
+        if (!viewer && _generalId) {
+            this.announceScene13GeneralSkillVoice(side, sixSet, displayName, _generalId, _skillId);
+        }
 
         const frame = this.sideElement(side, this.leftPortraitFrame, this.rightPortraitFrame);
         if (!frame) return;
@@ -6929,6 +6984,46 @@ export class CombatUI {
 
     // --- SHARED UTILS ---
 
+    /** 获取当前镜头跟随武将立绘与对侧立绘排除串（用于无武将一方排除，防止无将防守与跟随武将撞脸） */
+    private getNamelessPortraitExcludePath(side?: 'attacker' | 'defender', callerExclude?: string): string | undefined {
+        const parts: string[] = [];
+        if (callerExclude?.trim()) parts.push(callerExclude.trim());
+        if (side) {
+            const oppSide: 'attacker' | 'defender' = side === 'attacker' ? 'defender' : 'attacker';
+            const oppImg = this.sideElement(oppSide, this.leftPortrait, this.rightPortrait);
+            if (oppImg?.src?.trim()) parts.push(oppImg.src.trim());
+            const oppTag = this.sideElement(oppSide, this.leftGeneralNameTag, this.rightGeneralNameTag);
+            const oppGenId = oppTag?.dataset?.generalId;
+            if (oppGenId) {
+                const oppRec = getGeneralRecordByGeneralId(oppGenId);
+                if (oppRec?.portrait?.trim()) parts.push(oppRec.portrait.trim());
+            }
+        }
+        try {
+            const game = (window as any).game;
+            const followedId = game?.cameraFollowUI?.getFollowedArmyId?.();
+            if (followedId && game?.legionManager?.getArmies) {
+                const followedArmy = game.legionManager.getArmies().find((a: any) => a?.id === followedId);
+                if (followedArmy) {
+                    if (followedArmy.portraitPath?.trim()) parts.push(followedArmy.portraitPath.trim());
+                    const fGenId = followedArmy.getGeneralId?.() ?? followedArmy.generalId;
+                    if (fGenId) {
+                        const rec = getGeneralRecordByGeneralId(fGenId);
+                        if (rec?.portrait?.trim()) parts.push(rec.portrait.trim());
+                    }
+                }
+            }
+            const questGenId = game?.playerQuestSystem?.getTargetGeneralId?.();
+            if (questGenId) {
+                const rec = getGeneralRecordByGeneralId(questGenId);
+                if (rec?.portrait?.trim()) parts.push(rec.portrait.trim());
+            }
+        } catch {
+            // ignore
+        }
+        return parts.length > 0 ? parts.join('|') : undefined;
+    }
+
     // Priority: ① portrait_config → ②b 将领专图 → ② 脚本/军团随机 → ③ portraitPath → …
     private setPortrait(
         img: HTMLImageElement,
@@ -6939,6 +7034,10 @@ export class CombatUI {
         side?: 'attacker' | 'defender',
         excludePath?: string,
     ) {
+        const effectiveExclude = generalId
+            ? excludePath
+            : this.getNamelessPortraitExcludePath(side, excludePath);
+
         const rememberFacing = (url: string) => {
             if (!side) return;
             this.portraitSourceFacing[side] = resolvePortraitSourceFacing(unit, url);
@@ -6947,17 +7046,20 @@ export class CombatUI {
             if (side) this.applyPortraitFacing(side);
         };
         const setSrc = (rawUrl: string, isRetry = false) => {
-            const resolveOptsWithExclude = { ...portraitOpts, exclude: excludePath };
+            const resolveOptsWithExclude = { ...portraitOpts, exclude: effectiveExclude };
             let finalUrl = rawUrl?.trim()
                 ? resolvePortraitAssetPath(rawUrl, resolveOptsWithExclude)
                 : '';
+            if (!generalId && effectiveExclude && finalUrl?.trim() && portraitUrlsEqual(finalUrl, effectiveExclude)) {
+                finalUrl = '';
+            }
             if (!finalUrl?.trim() && unit) {
-                finalUrl = getCombatPortraitPath(unit, excludePath);
+                finalUrl = getCombatPortraitPath(unit, effectiveExclude);
             }
             if (!finalUrl?.trim()) {
                 finalUrl = getRandomRegionPortraitPath(cultureRegion, {
                     factionId: portraitOpts.factionId,
-                    exclude: excludePath,
+                    exclude: effectiveExclude,
                 });
             }
             if (!finalUrl?.trim()) {
@@ -6981,9 +7083,10 @@ export class CombatUI {
                     if (!portraitUrlsEqual(finalUrl, BATTLE_PORTRAIT_FALLBACK)) {
                         unregisterPortraitPathRuntime(finalUrl);
                     }
+                    const retryExclude = [effectiveExclude, finalUrl].filter(Boolean).join('|') || finalUrl;
                     const alt = getRandomRegionPortraitPath(cultureRegion, {
                         factionId: portraitOpts.factionId,
-                        exclude: finalUrl,
+                        exclude: retryExclude,
                     }) || BATTLE_PORTRAIT_FALLBACK;
                     if (!portraitUrlsEqual(alt, finalUrl)) {
                         setSrc(alt, true);
@@ -7025,16 +7128,16 @@ export class CombatUI {
                 return;
             }
         }
-        // ② 事件脚本立绘（无武将专图时；不与对侧相同）
+        // ② 事件脚本立绘（无武将专图时；不与对侧及跟随武将相同）
         if (providedDefault?.trim()) {
-            if (!excludePath || !portraitUrlsEqual(providedDefault, excludePath)) {
+            if (!effectiveExclude || !portraitUrlsEqual(providedDefault, effectiveExclude)) {
                 setSrc(providedDefault);
                 return;
             }
         }
         // ③ 军团/城防已 resolve 的 portraitPath
         if (unit?.portraitPath?.trim()) {
-            if (!excludePath || !portraitUrlsEqual(unit.portraitPath, excludePath)) {
+            if (!effectiveExclude || !portraitUrlsEqual(unit.portraitPath, effectiveExclude)) {
                 setSrc(unit.portraitPath);
                 return;
             }
@@ -7047,15 +7150,17 @@ export class CombatUI {
         }
         // ⑤ 势力默认（秦国 qin → qinjiang.png）
         if (factionId && portraits[factionId]) {
-            setSrc(portraits[factionId]);
-            return;
+            if (!effectiveExclude || !portraitUrlsEqual(portraits[factionId], effectiveExclude)) {
+                setSrc(portraits[factionId]);
+                return;
+            }
         }
         // ⑥ 文化区军队/守军（含叛军 panshu）
         if (unit) {
-            setSrc(getCombatPortraitPath(unit, excludePath));
+            setSrc(getCombatPortraitPath(unit, effectiveExclude));
             return;
         }
-        setSrc(getRandomRegionPortraitPath('CENTRAL', { factionId: factionId ?? undefined }));
+        setSrc(getRandomRegionPortraitPath('CENTRAL', { factionId: factionId ?? undefined, exclude: effectiveExclude }));
     }
 
     /** 配置 key：展示标题 + 攻守双方，避免「区域冲突」一条污染全部区域战 */

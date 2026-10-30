@@ -837,7 +837,7 @@ function resolvePortraitPool(
 
 /** 从候选池中随机取一张磁盘上存在的立绘 */
 function pickRandom(arr: string[], exclude?: string): string {
-    if (exclude && arr.length > 1) {
+    if (exclude) {
         const filtered = arr.filter(p => !portraitUrlsEqual(p, exclude));
         if (filtered.length > 0) return filtered[Math.floor(Math.random() * filtered.length)];
     }
@@ -850,7 +850,14 @@ function pickExisting(pool: string[], exclude?: string, stableKey?: string): str
         .map(normalizePortraitWebPath)
         .filter(p => portraitAssetExists(p));
     if (!existing.length) return undefined;
-    if (!stableKey) return pickRandom(existing, exclude);
+    if (!stableKey) {
+        if (exclude) {
+            const filtered = existing.filter(p => !portraitUrlsEqual(p, exclude));
+            if (filtered.length > 0) return filtered[Math.floor(Math.random() * filtered.length)];
+            return undefined;
+        }
+        return pickRandom(existing, exclude);
+    }
     let arr = [...new Set(existing)].sort();
     if (exclude && arr.length > 1) {
         const filtered = arr.filter(p => !portraitUrlsEqual(p, exclude));
@@ -864,12 +871,30 @@ function pickExisting(pool: string[], exclude?: string, stableKey?: string): str
     return arr[(h >>> 0) % arr.length];
 }
 
-/** 比较两个立绘路径是否指向同一文件（浏览器 src 可能解析为完整 URL） */
+function extractPortraitBaseName(url: string): string {
+    const trimmed = url.trim().split(/[?#]/)[0] || '';
+    let decoded = trimmed;
+    try {
+        decoded = decodeURIComponent(trimmed);
+    } catch {
+        // ignore decode error
+    }
+    return (decoded.split('/').pop() || decoded).toLowerCase();
+}
+
+/** 比较两个立绘路径是否指向同一文件（浏览器 src 可能带完整 URL 或 ?v= 缓存参数；支持 | 分隔多排除项） */
 export function portraitUrlsEqual(a: string, b: string): boolean {
+    if (!a || !b) return false;
     if (a === b) return true;
-    const aName = a.split('/').pop() || a;
-    const bName = b.split('/').pop() || b;
-    return aName === bName;
+    if (a.includes('|')) {
+        return a.split('|').some(part => part.trim() && portraitUrlsEqual(part.trim(), b));
+    }
+    if (b.includes('|')) {
+        return b.split('|').some(part => part.trim() && portraitUrlsEqual(a, part.trim()));
+    }
+    const aName = extractPortraitBaseName(a);
+    const bName = extractPortraitBaseName(b);
+    return !!aName && aName === bName;
 }
 
 /**
@@ -963,6 +988,7 @@ export function resolvePortraitAssetPath(
 
     if (
         requested?.trim()
+        && !(exclude && portraitUrlsEqual(requested, exclude))
         && (portraitAssetExists(requested) || culturePoolMissing)
     ) {
         return normalizePortraitWebPath(requested);

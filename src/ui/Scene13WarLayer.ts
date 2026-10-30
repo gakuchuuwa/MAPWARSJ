@@ -1221,7 +1221,49 @@ export class Scene13WarLayer {
         const roleTag = f === 0 ? '攻击' : '防御';
         const gid = this.sideGeneralId[f];
 
-        // 挑选贴合该武将身份与攻守角色的四字技能名
+        // 挑选贴合该武将身份、攻守角色且与战术六计真实效果一致的四字技能名
+        // （TacticalSkillCatalog.EFFECT_TO_SIX_SET 锁死给战略旧表，此处按 Scene13 实际技效匹配，防「回血固防喊迎头痛击、减敌兵喊退避疲敌」）
+        const matchesScene13Effect = (name: string, baseEffect: string, targetSix: TacticalSixSet): boolean => {
+            const holdOrRetreatNames = new Set([
+                '步步为营', '固若金汤', '壁垒森严', '金城汤池', '据险持重',
+                '先据山险', '持重待疲', '休养生息', '据垒固守', '缓攻懈敌', '退避疲敌', '走为上计',
+            ]);
+            const ambushNames = new Set([
+                '暗度陈仓', '声东击西', '无中生有', '趁火打劫', '围魏救赵',
+                '调虎离山', '瞒天过海', '假道伐虢', '混水摸鱼', '李代桃僵',
+            ]);
+            const defectNames = new Set([
+                '反客为主', '借刀杀人', '顺手牵羊', '反间计', '远交近攻',
+                '笑里藏刀', '借尸还魂', '釜底抽薪', '擒贼擒王', '关门捉贼',
+            ]);
+            const panicNames = new Set([
+                '打草惊蛇', '指桑骂槐', '假痴不颠', '树上开花', '空城计',
+                '美人计', '连环计', '偷梁换柱', '抛砖引玉', '欲擒故纵',
+            ]);
+            const strikeNames = new Set([
+                '迎头痛击', '肉薄骨并', '上屋抽梯',
+            ]);
+            switch (targetSix) {
+                case 'gongzhan': // 【攻】振己威：全军狂暴加攻
+                    if (holdOrRetreatNames.has(name) || ambushNames.has(name) || defectNames.has(name)) return false;
+                    return baseEffect === '破军' || baseEffect === '死战' || baseEffect === '压制' || baseEffect === '穿透';
+                case 'shengzhan': // 【胜】固己防：全军回满血＋无敌护盾固防
+                    if (strikeNames.has(name) || ambushNames.has(name) || defectNames.has(name)) return false;
+                    return holdOrRetreatNames.has(name) || baseEffect === '镇定' || baseEffect === '壁垒' || baseEffect === '减损';
+                case 'dizhan': // 【敌】伏兵袭：奇兵斜后方突袭增援
+                    return ambushNames.has(name) || baseEffect === '奇袭';
+                case 'hunzhan': // 【混】乱敌阵：敌军恐慌乱走
+                    if (holdOrRetreatNames.has(name)) return false;
+                    return panicNames.has(name) || baseEffect === '混乱' || baseEffect === '挫锐';
+                case 'bingzhan': // 【并】夺敌兵：策反敌军阵前倒戈
+                    if (holdOrRetreatNames.has(name)) return false;
+                    return defectNames.has(name) || baseEffect === '可夺';
+                case 'baizhan': // 【败】减敌兵：雷霆重创直接歼敌减兵
+                    if (holdOrRetreatNames.has(name) || name === '隔岸观火') return false;
+                    return strikeNames.has(name) || baseEffect === '歼敌';
+            }
+        };
+
         let pickedEntry = gid ? (() => {
             const p = getGeneralProfile(gid);
             const sigIds = f === 0
@@ -1230,23 +1272,20 @@ export class Scene13WarLayer {
             for (const sid of sigIds) {
                 if (!sid) continue;
                 const e = TACTICAL_SKILL_ENTRIES_V1.find((x) => x.id === sid);
-                if (e && EFFECT_TO_SIX_SET[e.baseEffect] === six) return e;
+                if (e && matchesScene13Effect(e.displayName, e.baseEffect, six)) return e;
             }
             return undefined;
         })() : undefined;
 
         if (!pickedEntry) {
-            // 🔴 [2026-10-22 查六计时修] 名将的「本命六槽」并不覆盖全部六计（实测 552 位名将里 517 位没有敌战计），
-            //    旧逻辑 `isFamous ? !!e.ownerGeneralId : !e.ownerGeneralId` 会在兜底时随机挑**别的武将**的典故技名
-            //    （大字表演变成张冠李戴）。本命已在上面的签名槽里优先取过，兜底一律只用不在册通用技名。
             const candidates = TACTICAL_SKILL_ENTRIES_V1.filter(
                 (e) => (e.usageTag === roleTag || e.usageTag === '双行' || !e.usageTag)
-                    && EFFECT_TO_SIX_SET[e.baseEffect] === six
+                    && matchesScene13Effect(e.displayName, e.baseEffect, six)
                     && !e.ownerGeneralId,
             );
             const pool = candidates.length > 0
                 ? candidates
-                : TACTICAL_SKILL_ENTRIES_V1.filter((e) => EFFECT_TO_SIX_SET[e.baseEffect] === six);
+                : TACTICAL_SKILL_ENTRIES_V1.filter((e) => matchesScene13Effect(e.displayName, e.baseEffect, six) && !e.ownerGeneralId);
             if (pool.length > 0) {
                 pickedEntry = pool[Math.floor(Math.random() * pool.length)];
             }

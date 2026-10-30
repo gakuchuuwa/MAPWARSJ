@@ -148,10 +148,11 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
     rice_farm: RFARM_BY_SEASON,
     pasture: PASTURE_BY_SEASON,
 };
-/** 农田 / 水田 / 草场最多 2×2 斜角四块（zoom 9 像素，相对四块中心）：0 北、1 西、2 东、3 南；平地够几块铺几块。
+/** 农田 / 水田 / 草场最多 2×2 斜角四块（zoom 9 像素，相对四块中心）：0 北、1 西、2 东、3 南。
+ *  🔴 2026-10-30 主人令「牧场、田地 1–4 块随机放」：每个组合按哈希定 1~4 块（平地不够就少），不再一律铺满四块；
  *  草场一块一只牲畜、牧羊人站南块；农田一块一个农夫，南块那个是组合主人（建筑跟他走）；
- *  🔴 2026-10-28 主人令：农田四块里随机一块改养牲畜（主人身上记 farmStockCell），该块不派农夫、只放一头猪或牛；
- *     四块地皮一律不变，仍是同一种农田皮，不铺牧场。 */
+ *  🔴 2026-10-28 主人令：农田里随机一块改养牲畜（主人身上记 farmStockCell），该块不派农夫、只放一头猪或牛；
+ *     地皮一律是同一种农田皮，不铺牧场。 */
 const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -23], [-35, 0], [35, 0], [0, 23]];
 /** 同一渔场主船之外的帮手船相对主船的 zoom 9 像素落点：北、西、东（船比农夫大，间距放宽） */
 const FISHING_BOAT_OFFSETS: readonly (readonly [number, number])[] = [[0, -46], [-60, -18], [60, -18]];
@@ -1080,17 +1081,33 @@ export class CityLifeAmbientLayer {
 
             let homePos: Pt | null = null;
             let plotCells: number[] | undefined;
-            // 有地皮的组合：在所有候选点里取能铺块数最多的；满四块即可提前停。
-            const maxCells = PLOT_CELL_OFFSETS.length;
+            // 🔴 2026-10-30 主人令「看到很多牧场、田地都是 4 块，我的意思是 1–4 块随机放」：
+            //    每个生产组合按「据点＋槽位」哈希定这次铺 1~4 块（平地够几块另说，地形不够就少），
+            //    不再一律铺满四块。块数稳定（同一组合每次重排都是同数），不会一帧一变。
+            const targetCells = plotKind ? 1 + (Math.floor(strHash01(yk, i * 17 + 8) * PLOT_CELL_OFFSETS.length) % PLOT_CELL_OFFSETS.length) : 0;
+            /** 从这块平地可用的一组块里，按目标块数挑：南块（主人站位）必留，其余按哈希起点轮着取，形状各异。 */
+            const pickCells = (cells: number[], want: number): number[] => {
+                if (cells.length <= want) return cells;
+                const keep: number[] = cells.filter((k) => k === PLOT_LEADER_CELL);
+                const others = cells.filter((k) => k !== PLOT_LEADER_CELL);
+                const start = Math.floor(strHash01(yk, i * 17 + 9) * others.length) % others.length;
+                for (let n = 0; keep.length < want && n < others.length; n++) {
+                    keep.push(others[(start + n) % others.length]);
+                }
+                return keep.sort((a, b) => a - b);
+            };
             const tryPlot = (cand: Pt): boolean => {
                 // 平地少的地方（沙漠绿洲、山谷）各组会抢同一块：与已放好的地皮重叠的候选一律作废，继续往外找
                 if (this.plotOverlaps(cand, newPlots)) return false;
                 const cells = this.plotCellsAt(cand);
-                if (cells.length > (plotCells?.length ?? 0)) {
-                    homePos = cand;
-                    plotCells = cells;
+                if (cells.length > 0) {
+                    const keep = pickCells(cells, targetCells);
+                    if (keep.length > (plotCells?.length ?? 0)) {
+                        homePos = cand;
+                        plotCells = keep;
+                    }
                 }
-                return cells.length >= maxCells;
+                return cells.length >= targetCells;
             };
             // 林间工种围绕树林；农田、猎场与牧场都放到外围，避免压住据点。
             if (!isFarmer && forestNodes.length > 0) {
@@ -1106,7 +1123,7 @@ export class CityLifeAmbientLayer {
                 }
             }
 
-            if (!homePos || (plotKind && (plotCells?.length ?? 0) < maxCells)) {
+            if (!homePos || (plotKind && (plotCells?.length ?? 0) < targetCells)) {
                 const distDeg = isPastoral || isHunter ? 0.38 + h4 * 0.10 : isFarmer ? 0.30 + h4 * 0.10 : 0.14 + h4 * 0.11;
                 // 有地皮的组合要找平地：由近到远八方向逐圈找，最远到据点周围约 100 km
                 // （据点间距 >40 km 且只有一半据点放民生，100 km 内找平地不会挤到别家）。

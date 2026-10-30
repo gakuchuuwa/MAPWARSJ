@@ -12,7 +12,7 @@ import {
 import { SubtitleBanner } from "../ui/SubtitleBanner";
 import { audioManager } from "./AudioManager";
 import { getGeneralNameForSpeech, prepareSpeechText } from "./GeneralSpeechNames";
-import { getTacticalSkillEntry } from "../data/TacticalSkillCatalog";
+import { getTacticalSkillEntry, type TacticalSixSet } from "../data/TacticalSkillCatalog";
 import { edgeTtsClient, type EdgeVoice } from "./EdgeTtsClient";
 
 import { isGeneralOnStage } from "../data/generalOnStage";
@@ -117,24 +117,33 @@ function classifyStratagem(skillId: string): StratagemKey | null {
   return EFF_SUIJI.has(be) ? "bing" : "bai"; // 并战或败战
 }
 
-/** 六套八字诀（攻/守两套，主人 2026-07 定稿，原文照录，勿改） */
+/** 六套八字诀（攻/守两套，与战术六计真实技能效果严格对齐：攻=振己威加攻，胜=固己防回血护盾，敌=伏兵斜后突袭，混=乱敌阵脚恐慌，并=策反夺兵倒戈，败=雷霆重创歼敌） */
 const STRATAGEM_BAJUE: Record<"attacker" | "defender", Record<StratagemKey, string>> = {
   attacker: {
     gong: "厉兵秣马，先发制人",
-    sheng: "摧枯拉朽，分割聚歼",
-    di: "乱其阵脚，出奇制胜",
-    hun: "攻其不备，出其不意",
-    bing: "孤注一掷，乘虚而击",
-    bai: "置之死地，而后生",
+    sheng: "抚恤士卒，壁垒益坚",
+    di: "攻其不备，出其不意",
+    hun: "乱其阵脚，出奇制胜",
+    bing: "攻心为上，策反敌军",
+    bai: "摧枯拉朽，分割聚歼",
   },
   defender: {
     gong: "严阵以待，乘势掩杀",
-    sheng: "请君入瓮，聚而歼之",
-    di: "虚张声势，挫其锐气",
-    hun: "伺机而动，后发制人",
-    bing: "坚壁清野，以拖待变",
-    bai: "背城借一，负隅坚守",
+    sheng: "坚壁清野，岿然不动",
+    di: "伺机而动，后发制人",
+    hun: "虚张声势，挫其锐气",
+    bing: "分化瓦解，临阵收编",
+    bai: "请君入瓮，聚而歼之",
   },
+};
+
+const SIX_SET_TO_STRATAGEM_KEY: Record<TacticalSixSet, StratagemKey> = {
+  gongzhan: "gong",
+  shengzhan: "sheng",
+  dizhan: "di",
+  hunzhan: "hun",
+  bingzhan: "bing",
+  baizhan: "bai",
 };
 
 /** 攻占播报·三势词（主人 2026-07 定稿，原文照录，勿改） */
@@ -773,6 +782,7 @@ export class SpeechAnnouncer {
   public announceSkillRelease(opts: {
     side: "attacker" | "defender";
     ju: CaptureJu;                    // 兵力比决定的势 → 选八字诀
+    sixSet?: TacticalSixSet;          // 战术模式明确六计（直接按六计取对应八字诀，保证与技能效果一致）
     generalId?: string | null;
     generalName: string;
     skillDisplayName: string;
@@ -785,14 +795,17 @@ export class SpeechAnnouncer {
   }): boolean {
     if (!this.enabled) return false;
     if (!opts.generalName || !opts.skillDisplayName) return false;
-    // 按兵力比势选八字诀：优势→攻战/胜战 二选一，均势→敌战/混战 二选一，劣势→并战/败战 二选一
+    // 优先按明确传入的 sixSet 或 skillId 对应的六计取八字诀，保证语音词与技能真实效果严格一致；兜底才按势二选一
     const pick = (a: StratagemKey, b: StratagemKey): StratagemKey => Math.random() < 0.5 ? a : b;
     const juMap: Record<CaptureJu, StratagemKey> = {
       advantage: pick('gong', 'sheng'),
       balance: pick('di', 'hun'),
       disadvantage: pick('bing', 'bai'),
     };
-    const bajue = STRATAGEM_BAJUE[opts.side][juMap[opts.ju]];
+    const stratKey: StratagemKey = (opts.sixSet ? SIX_SET_TO_STRATAGEM_KEY[opts.sixSet] : undefined)
+      ?? classifyStratagem(opts.skillId)
+      ?? juMap[opts.ju];
+    const bajue = STRATAGEM_BAJUE[opts.side][stratKey];
     if (!bajue) return false;
     const eliteClause = opts.eliteName ? `，${opts.eliteName}` : "";
     const speechName = getGeneralNameForSpeech(opts.generalId, opts.generalName);

@@ -2,13 +2,15 @@
 """
 DE 船帆（sail）素材提取 → public/SUCAI_SAIL/<GROUP>/<TIER>/idle_<dir>.png + _meta.json
 
-背景（2026-10-30 主人「我们的船都没有解析帆，是吗？」→「请执行」）：
+背景（2026-10-30 主人「我们的船都没有解析帆，是吗？」→「请执行」；同日复核修正）：
   DE 的船**帆不在船体里**，是独立素材 drs/graphics/u_shp_sail_<group>_<boat|ship>_<tier>_x1.sld，
-  共 10 个文化组 × 12 档。船体只有桅杆索具，帆要另取另叠 —— 我们过去只解了船体，
-  所以战船在海上全是光桅杆。本脚本把 120 套帆解成 16 向逐帧 PNG，供渲染叠加。
-
-SLD 帧结构：480 帧 = 16 向 × 30 帧（dat: angles=16, frames=30），
-  实际带图层的内容帧按 for d in 0..15: base + d*30 取首帧（其余为该向的摆动帧）。
+  共 10 个文化组 × 12 个图层组件（boat_2..6、ship_2..8）。
+  - SLD 480 帧 = 16 向 × 30 帧（每向首帧 = de_angle * 30）。
+  - 游戏方向 d（0..15）与船体 SLD 完全同源：de_angle = (d - 2) % 16 ⇔ d = (de_angle + 2) % 16。
+  - boat_4 / ship_5 为主桅帆（16 向全有）；其余为副桅/尾桅/斜桁帆的前后半圈成对图层
+    （boat_2/5、ship_2/3/6 存 de_angle 0..7；boat_3/6、ship_4/7/8 存 de_angle 8..15）。
+  - 每帧按 main 图层 (x1, y1, x2, y2) 裁切，并在 _meta.json 记录精确热点 (hx - x1, hy - y1)，
+    与船体 _meta.json 同坐标系，叠加时直接按 .dat 的 delta offset_y 对齐。
 
 用法：
   python tools/extract_sail_assets.py            # 全量
@@ -34,43 +36,32 @@ def sail_sld(group: str, kind: str, tier: int) -> str:
     return os.path.join(DE_DIR, f'u_shp_sail_{group}_{kind}_{tier}_x1.sld')
 
 
-def dir_frames(frames):
-    """返回 {dir: 首帧索引}。
-
-    SLD 480 帧 = 16 向 × 30 帧，但每套只有 **8 个方向**有内容，且这 8 向
-    有的落在前半（帧 0..239）、有的落在后半（帧 240..479）——
-    实测 medi_ship_2 是 0 起、west_ship_4 是 240 起。所以先找第一个有图层的帧，
-    再按 30 帧步长取满 8 向，输出统一编号 0..7（键名与 DE 帧号解耦）。
-    """
-    first = next((i for i, f in enumerate(frames) if 'main' in f[6]), None)
-    if first is None:
-        return {}
-    out = {}
-    for d in range(8):
-        base = first + d * 30
-        for k in range(30):
-            i = base + k
-            if i < len(frames) and 'main' in frames[i][6]:
-                out[d] = i
-                break
-    return out
-
-
 def extract(group: str, kind: str, tier: int, out_dir: str) -> dict:
     path = sail_sld(group, kind, tier)
     _ver, frames = parse_sld(path)
-    picks = dir_frames(frames)
-    dirs = {}
     os.makedirs(out_dir, exist_ok=True)
-    for d, idx in picks.items():
-        cw, ch, hx, hy, ftype, fidx, layers = frames[idx]
-        img = Image.frombytes('RGBA', (cw, ch), render_main_to_canvas(layers, cw, ch))
-        bb = img.getbbox()
-        if not bb:
+    # 清理旧文件，避免半圈图层残留旧编号的 idle_*.png
+    for fn in os.listdir(out_dir):
+        if fn.endswith('.png'):
+            os.remove(os.path.join(out_dir, fn))
+
+    dirs = {}
+    for de_a in range(16):
+        idx = de_a * 30
+        if idx >= len(frames):
             continue
-        crop = img.crop(bb)
+        cw, ch, hx, hy, ftype, fidx, layers = frames[idx]
+        if 'main' not in layers:
+            continue
+        x1, y1, x2, y2, w, h, *_ = layers['main']
+        if w <= 0 or h <= 0:
+            continue
+        d = (de_a + 2) % 16
+        img = Image.frombytes('RGBA', (cw, ch), render_main_to_canvas(layers, cw, ch))
+        crop = img.crop((x1, y1, x2, y2))
         crop.save(os.path.join(out_dir, f'idle_{d}.png'))
-        dirs[str(d)] = {'fw': crop.width, 'fh': crop.height}
+        dirs[str(d)] = {'fw': w, 'fh': h, 'hx': hx - x1, 'hy': hy - y1}
+
     meta = {
         'source': 'AoE2 DE SLD',
         'dePrefix': f'u_shp_sail_{group}_{kind}_{tier}',

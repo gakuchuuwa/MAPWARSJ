@@ -9,6 +9,7 @@ import {
     resolvePortraitAssetPath,
 } from '../config/portrait_defaults';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { getCityAnchorFactionId } from '../data/ExpeditionLegions';
 import { getCityRegion } from '../systems/RegionSystem';
 import type { RegionType } from '../systems/RegionSystem';
@@ -60,14 +61,44 @@ export class BattleUnitFactory {
         // 可移动单位 (军团、玩家、土匪)
         const isMobile = !isCity;
 
+        // 获取当前镜头跟随武将的立绘（用于无将防守/无将部队排除，避免与跟随武将撞脸）
+        const resolveFollowedGeneralExclude = (): string | undefined => {
+            try {
+                const game = (window as any).game;
+                const excludes: string[] = [];
+                const followedId = game?.cameraFollowUI?.getFollowedArmyId?.();
+                if (followedId && game?.legionManager?.getArmies) {
+                    const followedArmy = game.legionManager.getArmies().find((a: any) => a?.id === followedId);
+                    if (followedArmy) {
+                        if (followedArmy.portraitPath?.trim()) excludes.push(followedArmy.portraitPath.trim());
+                        const fGenId = followedArmy.getGeneralId?.() ?? followedArmy.generalId;
+                        if (fGenId) {
+                            const rec = getGeneralRecordByGeneralId(fGenId);
+                            if (rec?.portrait?.trim()) excludes.push(rec.portrait.trim());
+                        }
+                    }
+                }
+                const questGenId = game?.playerQuestSystem?.getTargetGeneralId?.();
+                if (questGenId) {
+                    const rec = getGeneralRecordByGeneralId(questGenId);
+                    if (rec?.portrait?.trim()) excludes.push(rec.portrait.trim());
+                }
+                return excludes.length > 0 ? excludes.join('|') : undefined;
+            } catch {
+                return undefined;
+            }
+        };
+
         // 立绘：军团固定 portraitPath；城防临时将优先，无将据点按据点自己的 66 文化夹随机
         let legionPortraitPath: string | undefined;
         let cityPortraitPath: string | undefined;
         if (isLegion) {
             const army = entity as Army;
             if (!army.portraitPath?.trim()) {
+                const hasArmyGeneral = !!army.generalId;
                 army.portraitPath = ensureFactionPortraitPath(
                     army.getFactionId?.() ?? army.factionId ?? factionId,
+                    hasArmyGeneral ? undefined : { exclude: resolveFollowedGeneralExclude() },
                 );
             }
             legionPortraitPath = army.portraitPath;
@@ -79,7 +110,8 @@ export class BattleUnitFactory {
                 longitude: entity.longitude,
                 region: entity.region,
             }) as RegionType;
-            // [2026-09-05 玩家] 据点武将不在（出征）时，依旧用本城锚定武将立绘，不再随机挑人物（只不显示人名）
+            const garrisonGeneralId = readSiegeGarrisonGeneralId(entity)
+                ?? (typeof entity.generalId === 'string' && entity.generalId.trim() ? entity.generalId.trim() : undefined);
             const anchoredGeneral = getCityAnchoredGeneral(entity.id);
             const anchorFaction = getCityAnchorFactionId(entity.id);
             const anchoredPortrait = anchoredGeneral
@@ -88,25 +120,27 @@ export class BattleUnitFactory {
                     region: cityRegion,
                 })
                 : undefined;
-            // 🔴 [2026-10-25 主人令「凡是没有武将的据点，看据点的文化，然后随机从该文化的文件夹里选立绘」]
-            //    本场没有城防将、本城也没有锚定武将 ⇒ 守军立绘只按据点自己的 66 文化（buildingStyle）取夹随机，
-            //    不再按占城势力/叛军池抽（旧链会把 MUISCA 城抽成中原武将）。
-            const cityHasGeneral = !!readSiegeGarrisonGeneralId(entity) || !!anchoredGeneral;
+            // 🔴 无将据点守军（本场无驻防武将）：按据点自己的 66 文化（buildingStyle）取夹随机，
+            //    且排除跟随武将与本城外出名将立绘，避免防守无将却与跟随武将立绘一致。
+            const cityHasGeneral = !!garrisonGeneralId;
+            const followedExclude = resolveFollowedGeneralExclude();
+            const namelessCityExclude = [followedExclude, anchoredPortrait].filter(Boolean).join('|') || undefined;
             const cityCulturePortrait = cityHasGeneral
                 ? undefined
                 : getCityCulturePortraitPath({
                     id: entity.id,
                     buildingStyle: (entity as { buildingStyle?: string }).buildingStyle,
                     region: entity.region,
+                }, {
+                    exclude: namelessCityExclude,
                 });
-            const rawPortrait =
-                siegePortrait ??
-                anchoredPortrait ??
-                cityCulturePortrait ??
-                ensureFactionPortraitPath(ownerFactionId, { region: cityRegion });
+            const rawPortrait = cityHasGeneral
+                ? (siegePortrait ?? anchoredPortrait ?? ensureFactionPortraitPath(ownerFactionId, { region: cityRegion }))
+                : (cityCulturePortrait ?? ensureFactionPortraitPath(ownerFactionId, { region: cityRegion, exclude: namelessCityExclude }));
             cityPortraitPath = resolvePortraitAssetPath(rawPortrait, {
                 factionId: ownerFactionId,
                 region: cityRegion,
+                exclude: cityHasGeneral ? undefined : namelessCityExclude,
             });
         }
 

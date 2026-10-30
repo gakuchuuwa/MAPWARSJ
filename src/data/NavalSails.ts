@@ -1,52 +1,66 @@
 /**
- * DE 船帆（sail）素材表 —— 2026-10-30 主人「我们的船都没有解析帆，是吗？」→「请执行」
+ * DE 船帆（sail）素材与图层栈表 —— 2026-10-30 主人「我们的船都没有解析帆，是吗？」→「请执行」；同日复核对齐 DE `.dat`
  *
- * DE 的战船**帆不在船体里**：`u_shp_galley_x1.sld` 只有桅杆与索具，帆是另一套素材
- * `u_shp_sail_<group>_<boat|ship>_<tier>_x1.sld`（10 文化组 × 12 档），
- * 引擎按「势力文化 + 船档」把帆叠在船上。我们过去只解了船体，所以海上全是光桅杆。
+ * DE 的中世纪/近代战船**帆不在船体里**：`u_shp_galley_x1.sld` 等只有船身、桅杆与索具，
+ * 帆是独立素材 `u_shp_sail_<group>_<boat|ship>_<2..8>_x1.sld`（10 文化组 × 12 个图层组件）。
  *
- * 本表只做三件事：
- *   ① 哪些船型需要叠帆（自带帆的古典船/长船/商船/独木舟不在此列）；
- *   ② 每个船型取哪一档帆；
- *   ③ 势力文化 → DE 帆文化组。
+ * 经核对 `empires2_x2_p1.dat`（`graphic.deltas`）：
+ *   1. `boat_2..6` 与 `ship_2..8` **不是按船大小分的单帆档位**，而是**多桅帆船按画家算法拆开的前后图层组件**：
+ *      - `boat_4`、`ship_5`：中心主桅帆（SLD 含全部 16 向）；
+ *      - `(boat_2, boat_6)`、`(boat_5, boat_3)`、`(ship_2, ship_8)`、`(ship_3, ship_7)`、`(ship_6, ship_4)`：
+ *        副桅/尾桅/斜桁帆的前后半圈成对图层（前半存 DE 角 0..7 即游戏向 2..9，后半存 DE 角 8..15 即游戏向 10..15,0,1），
+ *        绕主桅按从后到前的顺序叠画，使船朝南/朝北时多桅遮挡关系始终正确。
+ *   2. 船体与船帆共用同一个 DE 热点坐标系 `(hx, hy)`，每面帆只需按 `.dat` 登记的 `offset_y`（`offset_x` 恒为 0）
+ *      与船体同缩放系数 `s` 叠画，索具、桅杆脚、鸦巢即逐像素严丝合缝。
+ *   3. 古典桨帆船、楼船（LOU_CHUAN，重檐楼阁无帆）、龙船（DRAGON_SHIP，草篷火船无帆）、
+ *      古典投石舰/重型投石舰（CATAPULT_SHIP / ONAGER_SHIP，横桁已自带收拢帆布）、
+ *      古典火攻船（INCENDIARY_SHIP / HEAVY_INCENDIARY_SHIP，无桅无帆）、卡拉维尔、德罗蒙、维京长船、
+ *      中式帆船（JUNK）、巨型桨帆船（THIRISADAI）、龟船、独木舟等在 DE `.dat` 中不挂 `u_shp_sail_*`，不在此列。
  *
- * 素材由 `tools/extract_sail_assets.py` 从 DE 本体解出，落在 `public/SUCAI_SAIL/<GROUP>/<TIER>/`。
+ * 素材由 `tools/extract_sail_assets.py` 从 DE 本体解出，落在 `public/SUCAI_SAIL/<GROUP>/<PART>/`。
  */
 
 export type SailGroup = 'afri' | 'asia' | 'ceas' | 'east' | 'medi' | 'meso' | 'orie' | 'seas' | 'slav' | 'west';
 
-export interface SailTier {
-    kind: 'boat' | 'ship';
-    tier: number;
+export type SailPartId =
+    | 'boat_2' | 'boat_3' | 'boat_4' | 'boat_5' | 'boat_6'
+    | 'ship_2' | 'ship_3' | 'ship_4' | 'ship_5' | 'ship_6' | 'ship_7' | 'ship_8';
+
+export interface SailDelta {
+    part: SailPartId;
+    /** DE `.dat` graphic.deltas 的纵向偏移（px，负值向上；offset_x 恒为 0） */
+    oy: number;
 }
 
 /**
- * 船型 → 帆档。档位按 DE 的船型大小递进走（小船 2 档、大舰 5 档），
- * 与船体素材的实际尺寸次序一致：GALLEY ＜ WAR_GALLEY ＜ GALLEON ≈ CARRACK。
+ * 船型 → DE `.dat` 真实船帆图层栈（按从后到前的绘制顺序排列；半圈图层在对应方向自动生效）。
+ * 19 型船与 `empires2_x2_p1.dat` 逐条对应。
  */
-export const SAIL_TIER_BY_SHIP: Record<string, SailTier> = {
-    GALLEY: { kind: 'ship', tier: 2 },
-    WAR_GALLEY: { kind: 'ship', tier: 3 },
-    GALLEON: { kind: 'ship', tier: 4 },
-    CANNON_GALLEON: { kind: 'ship', tier: 4 },
-    ELITE_CANNON_GALLEON: { kind: 'ship', tier: 5 },
-    CARRACK: { kind: 'ship', tier: 5 },
-    HULK: { kind: 'ship', tier: 3 },
-    WAR_HULK: { kind: 'ship', tier: 4 },
-    FIRE_SHIP: { kind: 'ship', tier: 2 },
-    FAST_FIRE_SHIP: { kind: 'ship', tier: 3 },
-    DEMO_SHIP: { kind: 'ship', tier: 2 },
-    HEAVY_DEMO_SHIP: { kind: 'ship', tier: 3 },
-    CATAPULT_SHIP: { kind: 'ship', tier: 4 },
-    CATAPULT_GALLEON: { kind: 'ship', tier: 4 },
-    ONAGER_SHIP: { kind: 'ship', tier: 4 },
-    TRADE_COG: { kind: 'ship', tier: 2 },
-    TRANSPORT_SHIP: { kind: 'ship', tier: 3 },
-    LOU_CHUAN: { kind: 'ship', tier: 5 },
-    DRAGON_SHIP: { kind: 'boat', tier: 6 },
-    FIRE_GALLEY: { kind: 'boat', tier: 3 },
-    INCENDIARY_SHIP: { kind: 'boat', tier: 4 },
-    HEAVY_INCENDIARY_SHIP: { kind: 'boat', tier: 5 },
+export const SAIL_DELTAS_BY_SHIP: Record<string, readonly SailDelta[]> = {
+    // ── 单桅船（boat_4 全 16 向主帆） ──
+    GALLEY:               [{ part: 'boat_4', oy: -13 }],
+    BOARDING_GALLEY:      [{ part: 'boat_4', oy: -13 }], // ABGAL：复用 GALLEY 船体与帆
+    HULK:                 [{ part: 'boat_4', oy: -10 }],
+    DEMO_SHIP:            [{ part: 'boat_4', oy: -19 }],
+    DEMO_RAFT:            [{ part: 'boat_4', oy: -6 }],
+
+    // ── 双桅/多桅 boat 系 ──
+    TRADE_COG:            [{ part: 'boat_3', oy: -23 }, { part: 'boat_4', oy: -15 }, { part: 'boat_5', oy: -23 }],
+    HEAVY_DEMO_SHIP:      [{ part: 'boat_2', oy: -32 }, { part: 'boat_4', oy: -12 }, { part: 'boat_6', oy: -32 }],
+    HERO_STOERTEBEKER:    [{ part: 'boat_2', oy: -32 }, { part: 'boat_4', oy: -12 }, { part: 'boat_6', oy: -32 }],
+    FIRE_GALLEY:          [{ part: 'boat_2', oy: -16 }, { part: 'boat_3', oy: -16 }, { part: 'boat_5', oy: -16 }, { part: 'boat_6', oy: -16 }],
+    WAR_HULK:             [{ part: 'ship_3', oy: -18 }, { part: 'boat_4', oy: -13 }, { part: 'ship_7', oy: -18 }],
+
+    // ── 双桅/三桅/四桅 ship 系 ──
+    WAR_GALLEY:           [{ part: 'ship_2', oy: -30 }, { part: 'ship_5', oy: -20 }, { part: 'ship_8', oy: -30 }],
+    CANNON_GALLEON:       [{ part: 'ship_3', oy: -25 }, { part: 'ship_5', oy: -25 }, { part: 'ship_7', oy: -25 }],
+    ELITE_CANNON_GALLEON: [{ part: 'ship_3', oy: -25 }, { part: 'ship_5', oy: -25 }, { part: 'ship_7', oy: -25 }],
+    CATAPULT_GALLEON:     [{ part: 'ship_3', oy: -25 }, { part: 'ship_5', oy: -25 }, { part: 'ship_7', oy: -25 }],
+    TRANSPORT_SHIP:       [{ part: 'ship_2', oy: -28 }, { part: 'ship_3', oy: -18 }, { part: 'ship_7', oy: -18 }, { part: 'ship_8', oy: -28 }],
+    FIRE_SHIP:            [{ part: 'ship_2', oy: -28 }, { part: 'ship_4', oy: -20 }, { part: 'ship_6', oy: -20 }, { part: 'ship_8', oy: -28 }],
+    FAST_FIRE_SHIP:       [{ part: 'ship_2', oy: -28 }, { part: 'ship_3', oy: -14 }, { part: 'ship_4', oy: -20 }, { part: 'ship_6', oy: -20 }, { part: 'ship_7', oy: -14 }, { part: 'ship_8', oy: -28 }],
+    CARRACK:              [{ part: 'boat_3', oy: -40 }, { part: 'ship_3', oy: -25 }, { part: 'ship_5', oy: -25 }, { part: 'ship_7', oy: -22 }, { part: 'boat_5', oy: -40 }],
+    GALLEON:              [{ part: 'ship_2', oy: -40 }, { part: 'ship_3', oy: -25 }, { part: 'ship_4', oy: -25 }, { part: 'ship_5', oy: -25 }, { part: 'ship_6', oy: -25 }, { part: 'ship_7', oy: -25 }, { part: 'ship_8', oy: -40 }],
 };
 
 /** DE 16 母体建筑风格 → 帆文化组（DE 只有这 10 组帆） */
@@ -69,14 +83,17 @@ export const DE_STYLE_TO_SAIL_GROUP: Record<string, SailGroup> = {
     PERSIAN: 'orie',
 };
 
-/** 需要叠帆的船型（自带帆布的船不在此列：古典桨帆船、卡拉维尔、德罗蒙、长船、楼船以外的中式帆船、商船、独木舟…） */
+/** 需要叠帆的船型 */
 export function needsSail(shipId: string | null | undefined): boolean {
-    return !!shipId && shipId in SAIL_TIER_BY_SHIP;
+    return !!shipId && shipId in SAIL_DELTAS_BY_SHIP;
 }
 
-/** 取某档帆的素材目录（相对 public） */
-export function getSailDir(shipId: string, group: SailGroup): string | null {
-    const t = SAIL_TIER_BY_SHIP[shipId];
-    if (!t) return null;
-    return `/SUCAI_SAIL/${group.toUpperCase()}/${t.kind}_${t.tier}`;
+/** 取某船型的 DE 船帆图层栈 */
+export function getSailDeltas(shipId: string): readonly SailDelta[] | null {
+    return SAIL_DELTAS_BY_SHIP[shipId] ?? null;
+}
+
+/** 取某个帆图层组件的素材目录（相对 public） */
+export function getSailPartDir(part: SailPartId, group: SailGroup): string {
+    return `/SUCAI_SAIL/${group.toUpperCase()}/${part}`;
 }
