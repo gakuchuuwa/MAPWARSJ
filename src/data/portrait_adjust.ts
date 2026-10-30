@@ -9231,6 +9231,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 25
+        },
+        "/assets/CENTRAL/song_renfu.png": {
+            "scale": 1.21,
+            "offsetX": 44,
+            "offsetY": 7
+        },
+        "/assets/BENGALIS/mengjiala_shamsuddin.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -7
         }
     },
     "folderGuides": {
