@@ -9181,6 +9181,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 21
+        },
+        "/assets/BYZANTINE/baizanting_alexios_v.png": {
+            "scale": 1.1,
+            "offsetX": 8,
+            "offsetY": 26
         }
     },
     "folderGuides": {

@@ -44,6 +44,10 @@ const TICK_MS = 250;
 const STORE_KEY = 'mapwar-live-wallet';
 const NAME_MAX = 6;
 const STALE_BATTLE_CHAT_GRACE_MS = 2000;
+/** 战斗结束前这么久内刚放出的技能视为被直播延迟坑在收尾，自动原数退回积分 */
+const LATE_CAST_REFUND_WINDOW_MS = 6000;
+/** 同一观众语音提示最小间隔（防刷屏口令把语音队列塞满） */
+const VIEWER_VOICE_NOTICE_GAP_MS = 2500;
 /** 隔这么久再说话也当新来的（弹「怎么玩」卡） */
 const NEWCOMER_GAP_MS = 30 * 60_000;
 
@@ -140,6 +144,8 @@ export interface ViewerQueuedCast {
     six: TacticalSixSet;
     word: string;
     paid: boolean;
+    /** 是否已在入队时预扣积分（false＝释放时再扣，未放出不扣分） */
+    deducted?: boolean;
 }
 export interface ViewerQueuedScoutCast {
     uid: string;
@@ -148,6 +154,8 @@ export interface ViewerQueuedScoutCast {
     seq: number;
     ordersCost: number;
     centsCost: number;
+    /** 是否已在入队时预扣积分（false＝释放时再扣，未放出不扣分） */
+    deducted?: boolean;
 }
 export interface ViewerRenameRecord {
     uid: string;
@@ -251,6 +259,8 @@ export class ViewerLive {
     private sides = new Map<string, 0 | 1>();
     private orders = new Map<string, OrderAcct>();
     private lastChatEarnAt = new Map<string, number>();
+    private lastVoiceNoticeAt = new Map<string, number>();
+    private recentBattleCasts: { uid: string; viewer: string; cost: number; label: string; castAtMs: number }[] = [];
     private wallets = new Map<string, { name: string; cents: number }>();
     private wanted = new Map<string, string>();
     private handled = new Set<string>();
@@ -346,8 +356,9 @@ export class ViewerLive {
             this.onPayment(id, name, PRICE_PER_CAST, '测试打赏');
         }
 
-        // 0. 查自己的积分（聊天机器人看不到游戏账本，只能在画面上回）
+        // 0. 查自己的积分（聊天机器人看不到游戏账本，只能在画面上回 + 晓晓语音播报）
         if (word === '积分' || word === '查分') {
+            this.notifyViewerVoice(id, `${name}，你现有${acc.n}积分`);
             return this.note(`${name} 现有 ${acc.n} 积分`);
         }
 
@@ -357,6 +368,7 @@ export class ViewerLive {
             return this.handleRenameCommand(id, name, renameCmd.rawName, renameCmd.bid, eventId, pubMs);
         }
         if (/^(?:改名|名)\s+\S+$/.test(word)) {
+            this.notifyViewerVoice(id, `${name}，改名需在名字后加积分，至少${this.renameFloor() + 1}分`);
             return this.note(`${name}：改名格式为「名 新名字 积分」，当前需出 ${this.renameFloor() + 1} 积分以上`);
         }
 
@@ -371,26 +383,30 @@ export class ViewerLive {
         if (scoutBid !== null) {
             if (meta?.staleForBattle) {
                 this.recordCmd(eventId, id, name, 'skill_burst', `技${scoutBid}`, scoutBid, pubMs, now, 'rejected', '迟到于上一场战斗');
+                this.notifyViewerVoice(id, `${name}，上一仗刚结束，未扣积分`, true);
                 return this.note(`${name}：上一仗迟到口令已忽略，未扣积分`);
             }
             const blocked = this.playerSkillBlockReason();
             if (blocked) {
                 this.recordCmd(eventId, id, name, 'skill_burst', `技${scoutBid}`, scoutBid, pubMs, now, 'rejected', blocked);
+                this.notifyViewerVoice(id, `${name}，${blocked}，未扣积分`);
                 return this.note(`${name}：${blocked}`);
             }
             return this.requestScout(id, name, scoutBid, eventId, pubMs);
         }
 
-        // 4. 玩家六计（固定 3 积分，不涨价，按先后顺序 FIFO；按官职阶梯解锁：斥候攻胜 / 探马+敌混 / 先锋将军+并败）
+        // 4. 玩家六计（固定 1 积分，不涨价，按先后顺序 FIFO；按官职阶梯解锁：斥候攻胜 / 探马+敌混 / 先锋将军+并败）
         const combo = word.match(/^([12])\s*(\S+)$/);
         if (combo && SIX_BY_WORD[combo[2]]) {
             if (meta?.staleForBattle) {
                 this.recordCmd(eventId, id, name, 'skill_six', combo[2], ORDERS_PER_CAST, pubMs, now, 'rejected', '迟到于上一场战斗');
+                this.notifyViewerVoice(id, `${name}，上一仗刚结束，未扣积分`, true);
                 return this.note(`${name}：上一仗迟到口令已忽略，未扣积分`);
             }
             const blocked = this.playerSixBlockReason(SIX_BY_WORD[combo[2]]);
             if (blocked) {
                 this.recordCmd(eventId, id, name, 'skill_six', combo[2], ORDERS_PER_CAST, pubMs, now, 'rejected', blocked);
+                this.notifyViewerVoice(id, `${name}，${blocked}，未扣积分`);
                 return this.note(`${name}：${blocked}`);
             }
             const reqSide: 0 | 1 = combo[1] === '1' ? 0 : 1;
@@ -411,11 +427,13 @@ export class ViewerLive {
         if (!SIX_BY_WORD[word]) return '';
         if (meta?.staleForBattle) {
             this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', '迟到于上一场战斗');
+            this.notifyViewerVoice(id, `${name}，上一仗刚结束，未扣积分`, true);
             return this.note(`${name}：上一仗迟到口令已忽略，未扣积分`);
         }
         const blocked = this.playerSixBlockReason(SIX_BY_WORD[word]);
         if (blocked) {
             this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', blocked);
+            this.notifyViewerVoice(id, `${name}，${blocked}，未扣积分`);
             return this.note(`${name}：${blocked}`);
         }
         return this.request(id, name, word, eventId, pubMs);
@@ -649,6 +667,28 @@ export class ViewerLive {
         };
     }
 
+    private notifyViewerVoice(uid: string, text: string, force = false): void {
+        const now = Date.now();
+        if (!force) {
+            const prev = this.lastVoiceNoticeAt.get(uid) ?? 0;
+            if (now - prev < VIEWER_VOICE_NOTICE_GAP_MS) return;
+        }
+        this.lastVoiceNoticeAt.set(uid, now);
+        speechAnnouncer.announceViewerNotice(text);
+    }
+
+    /** 统计该观众已在队列中排队、尚未扣分的预留积分（避免连点刷队列超支，同时保证没放出前不扣账面积分） */
+    private reservedOrders(uid: string): number {
+        let sum = 0;
+        for (const q of this.scoutQueue) {
+            if (q.uid === uid && q.deducted === false) sum += q.ordersCost;
+        }
+        for (const q of this.queue) {
+            if (q.uid === uid && !q.paid && q.deducted === false) sum += ORDERS_PER_CAST;
+        }
+        return sum;
+    }
+
     private handleRenameCommand(id: string, name: string, rawNewName: string, bid: number, eventId: string, pubMs: number): string {
         const now = Date.now();
         const hero = this.app.playerHero;
@@ -657,18 +697,22 @@ export class ViewerLive {
         if (bid <= floor) {
             const need = floor + 1;
             this.recordCmd(eventId, id, name, 'rename', rawNewName, bid, pubMs, now, 'rejected', `低于最高价${floor}`);
+            this.notifyViewerVoice(id, `${name}，改名至少需要${need}积分`);
             return this.note(`${name}：现在的名字是出 ${floor} 积分买的，需出 ${need} 积分以上`);
         }
         const mod = moderateLiveName(rawNewName);
         if (!mod.ok) {
             // 违规名字前置拦截：绝不上屏白嫖，也不扣观众积分（若已预扣则等价原数退回）
             this.recordCmd(eventId, id, name, 'rename', rawNewName, bid, pubMs, now, 'rejected', mod.reason);
+            this.notifyViewerVoice(id, `${name}，名字不合规范，未扣积分`);
             return this.note(`${name}：${mod.reason}（未扣积分）`);
         }
         const a = this.acct(id, name);
-        if (a.n < bid) {
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < bid) {
             this.recordCmd(eventId, id, name, 'rename', mod.name, bid, pubMs, now, 'rejected', '积分不足');
-            return this.note(`${name}：改名需 ${bid} 积分，现有积分 ${a.n}/${bid}`);
+            this.notifyViewerVoice(id, `${name}，改名需要${bid}积分，你现有${avail}积分`);
+            return this.note(`${name}：改名需 ${bid} 积分，现有积分 ${avail}/${bid}`);
         }
         const prevName = hero.name;
         a.n -= bid;
@@ -678,6 +722,7 @@ export class ViewerLive {
         hero.rename(mod.name);
         this.recordCmd(eventId, id, name, 'rename', mod.name, bid, pubMs, now, 'executed');
         this.save();
+        this.notifyViewerVoice(id, `感谢${name}，主角改名为${mod.name}`, true);
         return this.note(`${name} 出 ${bid} 积分，将玩家改名为「${mod.name}」（下次改名需 ${bid + 1} 分起）`);
     }
 
@@ -688,25 +733,30 @@ export class ViewerLive {
         if (!quests || !hero) return this.note(`${name}：当前尚无法选择投靠目标`);
         if (this.battleOn()) {
             this.recordCmd(eventId, id, name, 'join_choice', String(target), explicitBid ?? 0, pubMs, now, 'rejected', '战斗进行中');
+            this.notifyViewerVoice(id, `${name}，正在打仗中，战后再选投奔目标`);
             return this.note(`${name}：正在交战中，脱离势力回到战略地图后再选投靠`);
         }
         const minNeed = (this.activeJoinBid?.bid ?? 0) + 1;
         const bid = explicitBid ?? minNeed;
         if (bid < minNeed) {
             this.recordCmd(eventId, id, name, 'join_choice', String(target), bid, pubMs, now, 'rejected', `需出${minNeed}分以上`);
+            this.notifyViewerVoice(id, `${name}，改选投奔目标至少需要${minNeed}积分`);
             return this.note(`${name}：当前已有人出 ${this.activeJoinBid!.bid} 积分选【${this.activeJoinBid!.label}】，改选需 ${minNeed} 积分以上`);
         }
         if (bid > MAX_SKILL_BID) {
             return this.note(`${name}：单次出价上限为 ${MAX_SKILL_BID} 积分`);
         }
         const a = this.acct(id, name);
-        if (a.n < bid) {
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < bid) {
             this.recordCmd(eventId, id, name, 'join_choice', String(target), bid, pubMs, now, 'rejected', '积分不足');
-            return this.note(`${name}：选目标需 ${bid} 积分，现有积分 ${a.n}/${bid}`);
+            this.notifyViewerVoice(id, `${name}，选将需要${bid}积分，你现有${avail}积分`);
+            return this.note(`${name}：选目标需 ${bid} 积分，现有积分 ${avail}/${bid}`);
         }
         const applied = quests.applyLiveJoinChoice(target);
         if (!applied.ok) {
             this.recordCmd(eventId, id, name, 'join_choice', String(target), bid, pubMs, now, 'rejected', applied.reason);
+            this.notifyViewerVoice(id, `${name}，${applied.reason}`);
             return this.note(`${name}：${applied.reason}`);
         }
         // 反超上一位出价者时，当场原数退回上一位积分
@@ -726,6 +776,7 @@ export class ViewerLive {
         };
         this.recordCmd(eventId, id, name, 'join_choice', applied.candidate.id, bid, pubMs, now, 'executed');
         this.save();
+        this.notifyViewerVoice(id, `感谢${name}，已选定投奔${applied.candidate.label}`, true);
         const refundNote = prev ? `（已退回 ${prev.viewer} 的 ${prev.bid} 积分）` : '';
         return this.note(`${name} 出 ${bid} 积分选定投奔【${applied.candidate.label}】${refundNote}`);
     }
@@ -882,31 +933,41 @@ export class ViewerLive {
         this.request(id, name, word, `wanted:${++this.commandSeq}`, Date.now());
     }
     private canAffordSix(id: string): boolean {
-        return (this.orders.get(id)?.n ?? 0) >= ORDERS_PER_CAST && !this.hasFreeQueued(id);
+        const avail = (this.orders.get(id)?.n ?? 0) - this.reservedOrders(id);
+        return avail >= ORDERS_PER_CAST && !this.hasFreeQueued(id);
     }
     private requestScout(id: string, name: string, rawBid: number, eventId = '', pubMs = Date.now()): string {
         const now = Date.now();
         // 超过单次上限直接拒绝、分文不扣（原先悄悄按上限扣：手滑打「技999」会一下扣掉 100 积分）
         if (rawBid > MAX_SKILL_BID) {
             this.recordCmd(eventId, id, name, 'skill_burst', `技${rawBid}`, rawBid, pubMs, now, 'rejected', `超过单次上限${MAX_SKILL_BID}`);
+            this.notifyViewerVoice(id, `${name}，单次最多出${MAX_SKILL_BID}积分，未扣积分`);
             return this.note(`${name}：单次最多出 ${MAX_SKILL_BID} 积分，未扣积分`);
         }
         const bid = rawBid;
         const a = this.acct(id, name);
-        if (a.n < bid) {
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < bid) {
             this.wanted.set(id, `技${bid}`);
             this.recordCmd(eventId, id, name, 'skill_burst', `技${bid}`, bid, pubMs, now, 'rejected', '积分不足，已挂起等待积分到账');
             this.save();
-            return this.note(`${name}：这次要 ${bid} 积分，现有积分 ${a.n}/${bid}（在场每 ${PRESENCE_PAY_MS / 60_000} 分钟 +1，够了自动放）`);
+            this.notifyViewerVoice(id, `${name}，放玩家技需要${bid}积分，现有${avail}分，攒够自动释放`);
+            return this.note(`${name}：这次要 ${bid} 积分，现有积分 ${avail}/${bid}（在场每 ${PRESENCE_PAY_MS / 60_000} 分钟 +1，够了自动放）`);
         }
-        a.n -= bid;
-        const item: QueuedScoutCast = { uid: id, viewer: name, bid, seq: ++this.scoutSeq, ordersCost: bid, centsCost: 0 };
+        // 入队时不提前扣分，等技能真正释放时再扣，避免排队等待或战斗收尾白扣积分
+        const item: QueuedScoutCast = { uid: id, viewer: name, bid, seq: ++this.scoutSeq, ordersCost: bid, centsCost: 0, deducted: false };
         const beforeLowerBid = this.scoutQueue.findIndex((q) => q.bid < bid);
         if (beforeLowerBid < 0) this.scoutQueue.push(item);
         else this.scoutQueue.splice(beforeLowerBid, 0, item);
         this.recordCmd(eventId, id, name, 'skill_burst', `技${bid}`, bid, pubMs, now, 'queued');
         this.save();
-        return this.note(`${name} 出 ${bid} 积分放玩家技，排第 ${this.scoutQueue.indexOf(item) + 1}`);
+        // 当场尝试释放一次：若因冷却/重整尚在排队，立即用晓晓语音告知观众「已排队，释放时再扣积分」
+        this.tickScoutQueue();
+        if (this.scoutQueue.includes(item)) {
+            const pos = this.scoutQueue.indexOf(item) + 1;
+            this.notifyViewerVoice(id, `${name}，玩家技已排第${pos}位，冷却结束后释放再扣积分`, true);
+        }
+        return this.note(`${name} 出 ${bid} 积分放玩家技，排第 ${Math.max(1, this.scoutQueue.indexOf(item) + 1)}`);
     }
     private hasFreeQueued(id: string): boolean {
         return this.queue.some((q) => q.uid === id);
@@ -916,18 +977,24 @@ export class ViewerLive {
         const side: 0 | 1 = this.playerSideInBattle() ?? this.sides.get(id) ?? 0;
         this.sides.set(id, side);
         const a = this.acct(id, name);
-        if (a.n < ORDERS_PER_CAST) {
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < ORDERS_PER_CAST) {
             this.wanted.set(id, word);
             this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', '积分不足');
             this.save();
-            return this.note(`${name}：放【${word}】需 ${ORDERS_PER_CAST} 积分，现有 ${a.n}/${ORDERS_PER_CAST}`);
+            this.notifyViewerVoice(id, `${name}，放${word}计需要${ORDERS_PER_CAST}积分，攒够自动释放`);
+            return this.note(`${name}：放【${word}】需 ${ORDERS_PER_CAST} 积分，现有 ${avail}/${ORDERS_PER_CAST}`);
         }
-        a.n -= ORDERS_PER_CAST;
-        const item: QueuedCast = { uid: id, viewer: name, side, six: SIX_BY_WORD[word], word, paid: false };
+        // 入队时不提前扣分，等技能真正释放时再扣
+        const item: QueuedCast = { uid: id, viewer: name, side, six: SIX_BY_WORD[word], word, paid: false, deducted: false };
         // 六计固定积分、不涨价，严格按先后顺序（FIFO）入队
         this.queue.push(item);
         this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'queued');
         this.save();
+        if (this.queue.length > 1 || Date.now() - this.lastFreeCastAt < FREE_CAST_GAP_MS) {
+            const pos = this.queue.indexOf(item) + 1;
+            this.notifyViewerVoice(id, `${name}，${word}计已排队第${pos}位，释放时再扣积分`);
+        }
         return this.note(`${name} 花 ${ORDERS_PER_CAST} 积分点了【${word}】，按先后排第 ${this.queue.indexOf(item) + 1}`);
     }
     private credit(id: string, name: string, cents: number) {
@@ -944,6 +1011,7 @@ export class ViewerLive {
         if (!this.wasActive && active) {
             this.battleId++;
             this.battleStartedAtMs = Date.now();
+            this.recentBattleCasts = [];
             this.wasActive = true;
             return true;
         }
@@ -967,10 +1035,23 @@ export class ViewerLive {
         const r = this.war()!.castViewerSkill(side, head.six, head.viewer, false);
         if (r === 'wait' || r === 'closed') return;
         this.queue.shift();
+        if (!head.paid && head.deducted === false) {
+            const a = this.acct(head.uid, head.viewer);
+            a.n = Math.max(0, a.n - ORDERS_PER_CAST);
+            head.deducted = true;
+        }
+        const now = Date.now();
+        this.recentBattleCasts.push({
+            uid: head.uid,
+            viewer: head.viewer,
+            cost: ORDERS_PER_CAST,
+            label: `${head.word}计`,
+            castAtMs: now,
+        });
         this.save();
-        this.lastFreeCastAt = Date.now();
+        this.lastFreeCastAt = now;
         const skillName = this.war()!.lastSkillNameOf(side);
-        speechAnnouncer.announceViewerSkill(head.viewer, this.sideFaction(side) || this.sideName(side), skillName, { onlyIfIdle: true });
+        speechAnnouncer.announceViewerSkill(head.viewer, this.sideFaction(side) || this.sideName(side), skillName);
         this.note(`${head.viewer} 助玩家施展【${skillName}】`);
         this.report({ viewer: head.viewer, side, six: head.six, paid: false, outcome: 'cast', skillName });
         this.fulfillWanted(head.uid, head.viewer);
@@ -981,19 +1062,42 @@ export class ViewerLive {
         const r = this.war()!.castPlayerLiveSkill();
         if (r === 'wait' || r === 'closed') return;
         this.scoutQueue.shift();
+        if (head.ordersCost > 0 && head.deducted === false) {
+            const a = this.acct(head.uid, head.viewer);
+            a.n = Math.max(0, a.n - head.ordersCost);
+            head.deducted = true;
+        }
+        this.recentBattleCasts.push({
+            uid: head.uid,
+            viewer: head.viewer,
+            cost: head.ordersCost,
+            label: '玩家技',
+            castAtMs: Date.now(),
+        });
         this.save();
-        speechAnnouncer.announceViewerSkill(head.viewer, '玩家', '玩家技', { onlyIfIdle: true });
+        speechAnnouncer.announceViewerSkill(head.viewer, '玩家', '玩家技');
         this.note(`${head.viewer} 出 ${head.bid} 积分，玩家技已释放`);
         this.fulfillWanted(head.uid, head.viewer);
     }
     private endBattle(): void {
-        const foughtMs = this.battleStartedAtMs > 0 ? Date.now() - this.battleStartedAtMs : 0;
+        const now = Date.now();
+        const foughtMs = this.battleStartedAtMs > 0 ? now - this.battleStartedAtMs : 0;
+        // 战斗收尾 6 秒内刚放出的技能（受直播画面延迟影响）：自动原数退回积分并语音告知
+        for (const c of this.recentBattleCasts) {
+            if (c.cost > 0 && now - c.castAtMs <= LATE_CAST_REFUND_WINDOW_MS) {
+                const a = this.acct(c.uid, c.viewer);
+                a.n = Math.min(ORDER_CAP, a.n + c.cost);
+                this.note(`${c.viewer} 的【${c.label}】赶上战斗收尾，${c.cost} 积分已自动退回`);
+                this.notifyViewerVoice(c.uid, `${c.viewer}，刚放的${c.label}赶上战斗结束，${c.cost}积分已退回`, true);
+            }
+        }
+        this.recentBattleCasts = [];
         for (const q of this.scoutQueue) this.voidScoutCast(q);
         this.scoutQueue = [];
         for (const q of this.queue) this.voidCast(q);
         this.queue = [];
         this.lastFreeCastAt = 0;
-        this.lastBattleEndedAtMs = Date.now();
+        this.lastBattleEndedAtMs = now;
         this.battleStartedAtMs = 0;
         this.sides.clear();
         this.wanted.clear();
@@ -1005,19 +1109,21 @@ export class ViewerLive {
     }
     private voidScoutCast(q: QueuedScoutCast): void {
         if (q.centsCost > 0) this.credit(q.uid, q.viewer, q.centsCost);
-        if (q.ordersCost > 0) {
+        if (q.ordersCost > 0 && q.deducted !== false) {
             const a = this.acct(q.uid, q.viewer);
             a.n = Math.min(ORDER_CAP, a.n + q.ordersCost);
         }
-        this.note(`${q.viewer} 的玩家技没轮到，${q.bid} 积分已退回`);
+        this.note(`${q.viewer} 的玩家技没轮到，${q.bid} 积分未扣`);
+        this.notifyViewerVoice(q.uid, `${q.viewer}，战斗结束，排队的玩家技未扣积分`, true);
     }
     private voidCast(q: QueuedCast): void {
         if (q.paid) this.credit(q.uid, q.viewer, PRICE_PER_CAST);
-        else {
+        else if (q.deducted !== false) {
             const a = this.acct(q.uid, q.viewer);
             a.n = Math.min(ORDER_CAP, a.n + ORDERS_PER_CAST);
         }
-        this.note(`${q.viewer} 的【${q.word}】没轮到，这一仗结束了，积分已退回`);
+        this.note(`${q.viewer} 的【${q.word}】没轮到，这一仗结束了，积分未扣`);
+        this.notifyViewerVoice(q.uid, `${q.viewer}，战斗结束，排队的${q.word}计未扣积分`, true);
         this.report({ viewer: q.viewer, side: q.side, six: q.six, paid: q.paid, outcome: 'void' });
     }
     private report(r: ViewerCastResult): void { this.onResult?.(r); }
@@ -1150,6 +1256,7 @@ export class ViewerLive {
             seq: Number.isSafeInteger(q.seq) ? q.seq : 0,
             ordersCost: q.ordersCost > 0 ? q.bid : 0,
             centsCost: q.centsCost > 0 ? scoutBidCents(q.bid) : 0,
+            ...(typeof q.deducted === 'boolean' ? { deducted: q.deducted } : {}),
         }));
         this.sides = new Map((Array.isArray(ledger.sides) ? ledger.sides : []).filter((x) =>
             Array.isArray(x) && typeof x[0] === 'string' && (x[1] === 0 || x[1] === 1),

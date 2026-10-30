@@ -187,10 +187,15 @@ export class SpeechAnnouncer {
   /** S 级播报占用截止时间戳：期间常规播报直接丢弃（S 级大事不被小事打断） */
   private sTierBusyUntilMs = 0;
 
+  /** 直播间观众互动播报专用女声（晓晓，与战争旁白男声云健严格区分） */
+  private static readonly VIEWER_LIVE_VOICE: EdgeVoice = "zh-CN-XiaoxiaoNeural";
+
   /** 技能释放播报串行队列（入队顺序=亮相顺序：劣先/均势随机；不互相打断）；onStart 在 TTS 开口时触发 */
   private skillSpeakQueue: {
     text: string;
     skipGlobalNameReplace?: boolean;
+    voice?: EdgeVoice;
+    gapMs?: number;
     onStart?: () => void;
   }[] = [];
   private skillSpeaking = false;
@@ -383,6 +388,41 @@ export class SpeechAnnouncer {
     // 兜底：其它非女声中文
     for (const v of zhVoices) {
       if (!this.isKnownFemaleVoice(this.getVoiceEffectiveName(v))) push(v);
+    }
+    return ranked;
+  }
+
+  /**
+   * 按优先级列出可用中文女声（供直播互动播报「晓晓」在 Edge 直连失败回落 Web Speech 时使用，绝不用云健男声）。
+   */
+  private rankFemaleVoices(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice[] {
+    const zhVoices = voices.filter((v) => v.lang.toLowerCase().startsWith("zh"));
+    const preferredFemales = [
+      "晓晓", "Xiaoxiao",
+      "晓伊", "Xiaoyi",
+      "晓辰", "Xiaochen",
+      "晓涵", "Xiaohan",
+      "慧慧", "Huihui",
+      "瑶瑶", "Yaoyao",
+      "Google 普通话",
+    ];
+    const ranked: SpeechSynthesisVoice[] = [];
+    const seen = new Set<string>();
+    const push = (v: SpeechSynthesisVoice) => {
+      const key = v.voiceURI || v.name;
+      if (seen.has(key)) return;
+      seen.add(key);
+      ranked.push(v);
+    };
+    for (const keyword of preferredFemales) {
+      const matches = zhVoices.filter((v) => this.voiceNameMatches(this.getVoiceEffectiveName(v), keyword));
+      const local = matches.filter((v) => this.isReliableLocalVoice(v));
+      const onlineOk = matches.filter((v) => !this.isReliableLocalVoice(v) && !this.isVoiceNameCorrupt(v));
+      const onlineCorrupt = matches.filter((v) => !this.isReliableLocalVoice(v) && this.isVoiceNameCorrupt(v));
+      for (const v of [...local, ...onlineOk, ...onlineCorrupt]) push(v);
+    }
+    for (const v of zhVoices) {
+      if (this.isKnownFemaleVoice(this.getVoiceEffectiveName(v))) push(v);
     }
     return ranked;
   }
@@ -778,21 +818,52 @@ export class SpeechAnnouncer {
 
   /**
    * 🔴 [2026-10-23 直播观众放计] 「感谢某某，蓝方放猛攻」——排进技能播报队列，跟大字 Cut-in 同一道闸，不与武将技抢话。
+   * 🔴 [2026-10-30 主人令「要换一个声音，不要再用云健了」] 直播间观众互动统一用晓晓女声（zh-CN-XiaoxiaoNeural），与战争旁白男声云健区分开。
    */
   public announceViewerSkill(viewerName: string, sideName: string, skillName: string, opts?: { onlyIfIdle?: boolean }): void {
     if (!this.enabled) return;
-    // [2026-10-25] 免费计只在没别的话要念时才念：排队会越拖越晚，而且说话期间战斗音效一直停着（主人 10-02 定）
     if (opts?.onlyIfIdle && (this.skillSpeaking || this.skillSpeakQueue.length > 0 || this.isSpeaking())) return;
-    this.skillSpeakQueue.push({ text: `感谢${viewerName}，${sideName}放${skillName}`, skipGlobalNameReplace: true });
+    this.skillSpeakQueue.push({
+      text: `感谢${viewerName}，${sideName}放${skillName}`,
+      skipGlobalNameReplace: true,
+      voice: SpeechAnnouncer.VIEWER_LIVE_VOICE,
+      gapMs: 350,
+    });
     this.drainSkillQueue();
   }
 
   /**
-   * 🔴 [2026-10-25 直播免费模式] 直播间的感谢（订阅涨了等）——跟观众放计同一条队列，不与武将技抢话。
+   * 🔴 [2026-10-25 直播免费模式] 直播间的感谢（订阅涨了等）——跟观众放计同一条队列，用晓晓女声播报。
    */
   public announceViewerThanks(text: string): void {
     if (!this.enabled) return;
-    this.skillSpeakQueue.push({ text, skipGlobalNameReplace: true });
+    this.skillSpeakQueue.push({
+      text,
+      skipGlobalNameReplace: true,
+      voice: SpeechAnnouncer.VIEWER_LIVE_VOICE,
+      gapMs: 350,
+    });
+    this.drainSkillQueue();
+  }
+
+  /**
+   * 🔴 [2026-10-30 直播观众口令状态语音回执] 用晓晓女声通知观众排队、冷却等待、迟到退分、查分、改名或选将结果，不遮挡屏幕。
+   */
+  public announceViewerNotice(text: string): void {
+    if (!this.enabled) return;
+    const line = text.trim();
+    if (!line) return;
+    // 队列过长时丢弃最旧的普通观众提示，防刷屏堆积
+    if (this.skillSpeakQueue.length >= 6) {
+      const dropIdx = this.skillSpeakQueue.findIndex((item) => item.voice === SpeechAnnouncer.VIEWER_LIVE_VOICE && !item.onStart);
+      if (dropIdx >= 0) this.skillSpeakQueue.splice(dropIdx, 1);
+    }
+    this.skillSpeakQueue.push({
+      text: line,
+      skipGlobalNameReplace: true,
+      voice: SpeechAnnouncer.VIEWER_LIVE_VOICE,
+      gapMs: 350,
+    });
     this.drainSkillQueue();
   }
 
@@ -811,15 +882,17 @@ export class SpeechAnnouncer {
     if (this.skillSpeakQueue.length === 0) return;
     // 🔴 [2026-10-20 主人令「不要语音比大字早一点念出来，宁可字早」]
     //    出队前先问 Cut-in 闸门：另一方大字还没收尾 → 这句语音连同它的大字一起等，绝不先开口。
+    //    同时若当前正在播 S 级旁白或另一句语音，直播间晓晓提示也稍候再出队，既不打断旁白、也不会被 sTier 静默吞掉。
     const gateWait = this.skillCutInGate ? this.skillCutInGate() : 0;
-    if (gateWait > 0) {
+    const busyWait = gateWait > 0 ? gateWait : (this.isSTierBusy() || this.activeEdgeAudio !== null ? 450 : 0);
+    if (busyWait > 0) {
       if (!this.skillGateTimer) {
         const gateGen = this.skillQueueGen;
         this.skillGateTimer = window.setTimeout(() => {
           this.skillGateTimer = 0;
           if (gateGen !== this.skillQueueGen) return;
           this.drainSkillQueue();
-        }, gateWait);
+        }, busyWait);
       }
       return;
     }
@@ -833,11 +906,13 @@ export class SpeechAnnouncer {
     // 🔴 [2026-10-20] 大字先亮再开口：onStart 在调用 speak 之前触发，TTS 起声延迟只会让字比声早，不会让声比字早。
     const gen = this.skillQueueGen;
     const startedAt = Date.now();
+    const minGapMs = next.gapMs ?? SpeechAnnouncer.SKILL_CUTIN_GAP_MS;
     next.onStart?.();
     this.speak(next.text, {
       skipGlobalNameReplace: next.skipGlobalNameReplace,
+      voice: next.voice,
       onDone: () => {
-        const wait = Math.max(0, startedAt + SpeechAnnouncer.SKILL_CUTIN_GAP_MS - Date.now());
+        const wait = Math.max(0, startedAt + minGapMs - Date.now());
         const release = () => {
           if (gen !== this.skillQueueGen) return;   // 期间队列已被新一场清掉：旧计时器不再动状态
           this.skillSpeaking = false;
@@ -895,7 +970,8 @@ export class SpeechAnnouncer {
           URL.revokeObjectURL(url);
           if (this.activeEdgeAudio === audio) this.activeEdgeAudio = null;
         };
-        audio.onplay = () => { console.log("[Speech] 使用: 云健/云希 Neural (直连微软)"); cb.onPlay(); };
+        const voiceLabel = opts?.voice === "zh-CN-XiaoxiaoNeural" ? "晓晓 Neural" : "云健/云希 Neural";
+        audio.onplay = () => { console.log(`[Speech] 使用: ${voiceLabel} (直连微软)`); cb.onPlay(); };
         audio.onended = () => { cleanup(); cb.onEnd(); };
         audio.onerror = () => { cleanup(); if (!cb.isSettled()) cb.fallback(); };
         audio.play().catch(() => { cleanup(); if (!cb.isSettled()) cb.fallback(); });
@@ -982,17 +1058,20 @@ export class SpeechAnnouncer {
         }
 
         const speechText = opts?.skipGlobalNameReplace ? text : prepareSpeechText(text);
+        const wantFemale = opts?.voice === "zh-CN-XiaoxiaoNeural";
         const maleCandidates = this.rankMaleVoices(voicesNow);
+        const femaleCandidates = wantFemale ? this.rankFemaleVoices(voicesNow) : [];
         const fallback = this.pickBestVoice(voicesNow);
-        // 候选：男声排序 +（若有）降调兜底；损坏 Online 排在可靠本机之后，onerror 可顺延
-        const candidates: { voice: SpeechSynthesisVoice; pitchDown: boolean }[] = maleCandidates.map((v) => ({
+        // 候选：直播观众提示优先用女声候选（晓晓等，绝不用云健）；战争旁白用男声排序 + 降调兜底
+        const primaryList = wantFemale && femaleCandidates.length > 0 ? femaleCandidates : maleCandidates;
+        const candidates: { voice: SpeechSynthesisVoice; pitchDown: boolean }[] = primaryList.map((v) => ({
           voice: v,
           pitchDown: false,
         }));
-        if (fallback?.pitchDown && !candidates.some((c) => c.voice === fallback.voice)) {
+        if (!wantFemale && fallback?.pitchDown && !candidates.some((c) => c.voice === fallback.voice)) {
           candidates.push(fallback);
         }
-        if (candidates.length === 0 && fallback) candidates.push(fallback);
+        if (candidates.length === 0 && fallback) candidates.push({ voice: fallback.voice, pitchDown: !wantFemale && fallback.pitchDown });
 
         // [2026-07-27] 语音清单诊断改为每会话只打一次。
         // 原来每说一句话就遍历全部 324 个语音拼长串打印，一场战斗刷屏好几屏，
