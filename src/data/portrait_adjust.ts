@@ -1597,11 +1597,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/MONGOL/gaoche_afuzhiluo.png": {
-            "scale": 0.84,
-            "offsetX": 0,
-            "offsetY": -32
-        },
         "/assets/CENTRAL_ASIA/geluolu_chisipijia.png": {
             "scale": 1.07,
             "offsetX": 0,
@@ -9376,6 +9371,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": -33
+        },
+        "/assets/CENTRAL/bfe2_xun_linfu.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_16.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/MONGOL/__闲置__MONGOL_03.png": {
+            "scale": 0.84,
+            "offsetX": 0,
+            "offsetY": -32
+        },
+        "/assets/MONGOL/gaoche_afuzhiluo.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL/yin_yuejin.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {
