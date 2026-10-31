@@ -1,6 +1,7 @@
 import { getFactionCultureRegion } from '../config/portrait_defaults';
 import { getRegionLegionComposition, getFactionCompositionSlots } from '../types/CultureFormations';
 import { WAR_TYPES } from '../data/WarTypes';
+import { isShipUnitKey } from '../data/generalHeroUnits';
 import { GameConfig } from '../config/GameConfig';
 /**
  * PlayerHero —— 玩家单骑（乱入者）在战略地图上的本体。
@@ -593,7 +594,7 @@ export class PlayerHero {
         const slots = this.getHostLegion()?.cultureSlots;
         if (!slots || slots.length < 10) return null;
         const key = slots[9];
-        return key && !slots.slice(0, 9).includes(key) ? key : null;
+        return key && !isShipUnitKey(key) && !slots.slice(0, 9).includes(key) ? key : null;
     }
 
     /** 所在军团的战船（舰队兵模）；独行期按势力文化区取，取不到返回 null */
@@ -1236,7 +1237,9 @@ export class PlayerHero {
         this.rename(checkedName && checkedName.ok ? checkedName.name : PLAYER_HERO_NAME);
         this.lastCulture = typeof s.lastCulture === 'string' && s.lastCulture ? s.lastCulture : null;
         this.heroDowns = s.heroDowns ?? 0;
-        this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u, unitName: WAR_TYPES[u.unitKey]?.name ?? u.unitName }));
+        this.learnedUnits = (s.learnedUnits ?? [])
+            .filter((u) => u?.unitKey && !isShipUnitKey(u.unitKey))
+            .map((u) => ({ ...u, unitName: WAR_TYPES[u.unitKey]?.name ?? u.unitName }));
         this.peakStats = restorePlayerPeakStats(s.peakStats, this.learnedUnits.map((u) => u.unitKey));
         this.selectedUnit = s.selectedUnit ?? -1;
         this.manualUnitPick = s.manualUnitPick ?? false;

@@ -1757,11 +1757,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -11
         },
-        "/assets/MONGOL/zubu_mogusi.png": {
-            "scale": 0.78,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/KHITAN/tufa_d_tufanutan.png": {
             "scale": 1.15,
             "offsetX": 0,
@@ -2976,11 +2971,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -43
-        },
-        "/assets/MONGOL/zhasaketu_zhasakesubadi.png": {
-            "scale": 0.95,
-            "offsetX": 9,
-            "offsetY": 21
         },
         "/assets/KHITAN/duomi_lunkongre.png": {
             "scale": 0.97,
@@ -4558,7 +4548,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/TIBET/__闲置__TIBET_02.png": {
-            "scale": 1.32,
+            "scale": 1.36,
             "offsetX": 0,
             "offsetY": 32
         },
@@ -9406,6 +9396,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -16
+        },
+        "/assets/MONGOL/__闲置__MONGOL_04.png": {
+            "scale": 0.78,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/MONGOL/zubu_mogusi.png": {
+            "scale": 1.1,
+            "offsetX": 7,
+            "offsetY": 18
+        },
+        "/assets/MONGOL/__闲置__MONGOL_05.png": {
+            "scale": 0.95,
+            "offsetX": 9,
+            "offsetY": 21
+        },
+        "/assets/MONGOL/zhasaketu_zhasakesubadi.png": {
+            "scale": 1.24,
+            "offsetX": 0,
+            "offsetY": -25
         }
     },
     "folderGuides": {

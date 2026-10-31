@@ -14,12 +14,16 @@ import { loadLandUseMask } from './LandUseMask';
 import { FOREST_COVER_THRESHOLD, forestCoverAt } from '../world/environment/forestModel';
 import { plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
+import { VECTOR_ROAD_DATA } from '../data/VectorRoadData';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
 const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
 const CITY_CLEAR_PX = 46;
+/** 战略道路穿过密林时的半幅净空（px，SAMPLE_ZOOM=9 下约 11.5px，形成 23px 宽的 DE 式林间驿道走廊） */
+const ROAD_CLEAR_PX = 11.5;
+const ROAD_BUCKET_PX = 64;
 /** 画布四周离屏余量（px）：平移期间直接由 mapPane GPU 硬件变换同步移动，消除每帧亚像素重采样闪烁 */
 const CANVAS_PAD_PX = 160;
 /** 镜头平移累计超过该阈值（px）才重定位并重绘离屏余量画布（小于 CANVAS_PAD_PX，屏边不露白） */
@@ -570,8 +574,8 @@ function getTreeLine(lat: number, lng?: number): number {
 }
 
 const TREE_GRID_STEP = 46;
-/** 单次重建最多保留的树数（2026-10-31 战略地图素材规划：防大视口满铺导致拖动卡顿） */
-const MAX_TREES_PER_RENDER = 3000;
+/** 单次重建最多保留的树数（兼顾密林连冠咬合与大视口 60FPS 拖动流畅度） */
+const MAX_TREES_PER_RENDER = 4200;
 
 /** 四季 DE 风格林下阴翳基底离屏缓存（春0 夏1 秋2 冬3） */
 const UNDERBRUSH_CANVAS: (HTMLCanvasElement | null)[] = [null, null, null, null];
@@ -585,17 +589,17 @@ function getUnderbrushSprite(season: TreeSeason): HTMLCanvasElement | null {
     c.height = 36;
     const cx = c.getContext('2d');
     if (cx) {
-        // DE 林下柔光底色：仅在成团密林中心轻铺一层温润苔草/落叶底韵，绝不压脏浅色荒原地表
+        // DE 林下柔光底色：仅在成团密林中心轻铺一层温润苔草/落叶底韵，视觉缝合相邻树冠间隙，绝不压脏浅色荒原/沙地地表
         const colors = [
-            'rgba(40, 58, 28, 0.13)', // 春：温润草绿
-            'rgba(32, 52, 24, 0.14)', // 夏：深翠林荫
-            'rgba(62, 50, 26, 0.13)', // 秋：暖金落叶
-            'rgba(46, 52, 42, 0.10)', // 冬：清透微影
+            'rgba(36, 56, 26, 0.22)', // 春：温润草绿
+            'rgba(28, 48, 22, 0.24)', // 夏：深翠林荫
+            'rgba(60, 48, 24, 0.20)', // 秋：暖金落叶
+            'rgba(44, 50, 40, 0.14)', // 冬：清透微影
         ];
         const color = colors[s];
         const grad = cx.createRadialGradient(32, 18, 2, 32, 18, 30);
         grad.addColorStop(0, color);
-        grad.addColorStop(0.50, color);
+        grad.addColorStop(0.55, color);
         grad.addColorStop(1, 'rgba(0,0,0,0)');
         cx.fillStyle = grad;
         cx.beginPath();
@@ -867,6 +871,26 @@ export class VegetationLayer {
             return null;
         };
 
+        // 🔴 [2026-11-01 主人令「密林连冠成海（唤醒林下底荫 + 跨格咬合）」]
+        //    参照 DE 森林地形（10 Forest / 71 Underbrush Leaves）：先在郁闭密林格（inGrove）底层铺一层四季林下阴翳底色，
+        //    将相邻树冠之间的细碎缝隙自然缝合成连片林海；疏林/稀树草原/绿洲（inGrove=false）不铺底荫，保持沙地/草地干净通透。
+        const underbrush = getUnderbrushSprite((gameSeason >= 0 && gameSeason <= 3 ? gameSeason : 0) as TreeSeason);
+        if (underbrush) {
+            const ubW = Math.round(hScale * 2.85);
+            const ubH = Math.round(hScale * 1.62);
+            ctx.globalAlpha = 1;
+            for (const it of items) {
+                if (!it.c.inGrove) continue;
+                ctx.drawImage(
+                    underbrush,
+                    Math.round(it.x - ubW * 0.5),
+                    Math.round(it.y - ubH * 0.58),
+                    ubW,
+                    ubH,
+                );
+            }
+        }
+
         // 🔴 DE 原生树木精灵（frames.png）自身已内置柔化好的左下角等轴测地面阴影；
         //    不再叠加反向右下角椭圆阴影或暗黑泥印，保持树干根部与翠绿/黄褐地表干净通透融合。
         for (const it of items) {
@@ -1000,6 +1024,76 @@ export class VegetationLayer {
                 };
             });
 
+        // 🔴 [2026-11-01 主人令「密林连冠成海 + 疏林/绿洲保持成簇 + 战略道路自动留出林间走廊，分布摆放学习 DE」]
+        //    构建视口内战略道路的世界像素空间哈希桶（SAMPLE_ZOOM），密林遇到官道/山道自动退让，劈出清晰的林间行军走廊（如秦岭栈道、条顿堡林道）。
+        const roadBuckets = new Map<string, Array<[number, number, number, number]>>();
+        const rLatMin = paddedBounds.getSouth();
+        const rLatMax = paddedBounds.getNorth();
+        const rLngMin = paddedBounds.getWest();
+        const rLngMax = paddedBounds.getEast();
+        for (const feat of VECTOR_ROAD_DATA.features) {
+            const coords = feat.geometry?.coordinates;
+            if (!coords || coords.length < 2) continue;
+            const sy = feat.properties?.startYear;
+            const ey = feat.properties?.endYear;
+            if (sy !== undefined && gameYear < sy) continue;
+            if (ey !== undefined && gameYear > ey) continue;
+            let prevWpt: { x: number; y: number } | null = null;
+            let prevIn = false;
+            for (let k = 0; k < coords.length; k++) {
+                const [lng, lat] = coords[k];
+                const curIn = lat >= rLatMin && lat <= rLatMax && lng >= rLngMin && lng <= rLngMax;
+                if (!curIn && !prevIn) {
+                    prevWpt = null;
+                    prevIn = false;
+                    continue;
+                }
+                const wpt = this.map.project([lat, lng], SAMPLE_ZOOM);
+                if (prevWpt === null && k > 0) {
+                    const [pLng, pLat] = coords[k - 1];
+                    prevWpt = this.map.project([pLat, pLng], SAMPLE_ZOOM);
+                }
+                if (prevWpt !== null) {
+                    const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - ROAD_CLEAR_PX) / ROAD_BUCKET_PX);
+                    const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + ROAD_CLEAR_PX) / ROAD_BUCKET_PX);
+                    const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - ROAD_CLEAR_PX) / ROAD_BUCKET_PX);
+                    const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + ROAD_CLEAR_PX) / ROAD_BUCKET_PX);
+                    const seg: [number, number, number, number] = [prevWpt.x, prevWpt.y, wpt.x, wpt.y];
+                    for (let by = by0; by <= by1; by++) {
+                        for (let bx = bx0; bx <= bx1; bx++) {
+                            const key = `${bx},${by}`;
+                            let arr = roadBuckets.get(key);
+                            if (!arr) {
+                                arr = [];
+                                roadBuckets.set(key, arr);
+                            }
+                            arr.push(seg);
+                        }
+                    }
+                }
+                prevWpt = wpt;
+                prevIn = curIn;
+            }
+        }
+        const distSqToRoad = (tx: number, ty: number): number => {
+            const segs = roadBuckets.get(`${Math.floor(tx / ROAD_BUCKET_PX)},${Math.floor(ty / ROAD_BUCKET_PX)}`);
+            if (!segs) return Infinity;
+            let best = Infinity;
+            for (const [x1, y1, x2, y2] of segs) {
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const lenSq = dx * dx + dy * dy;
+                let t = lenSq > 1e-6 ? ((tx - x1) * dx + (ty - y1) * dy) / lenSq : 0;
+                if (t < 0) t = 0;
+                else if (t > 1) t = 1;
+                const ddx = tx - (x1 + t * dx);
+                const ddy = ty - (y1 + t * dy);
+                const dSq = ddx * ddx + ddy * ddy;
+                if (dSq < best) best = dSq;
+            }
+            return best;
+        };
+
         for (let gy = yMin; gy <= yMax; gy += TREE_GRID_STEP) {
             for (let gx = xMin; gx <= xMax; gx += TREE_GRID_STEP) {
                 // 有机微抖动：打破网格机械感
@@ -1099,37 +1193,66 @@ export class VegetationLayer {
                         riparianBoost = 0.14 + 0.18 * ((noiseVal - 0.44) / 0.56);
                     }
                 }
+                const naturalForestWeight = forestClusterWeight(
+                    forestBiome,
+                    tile,
+                    canopyDensity,
+                    noiseVal,
+                    forestCoverAt(ptLatLng.lat, ptLatLng.lng, gameYear, elev),
+                );
                 const clusterWeight = Math.max(
                     huntingCityBoost,
                     specialEco.weight,
                     riparianBoost,
-                    forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal,
-                        forestCoverAt(ptLatLng.lat, ptLatLng.lng, gameYear, elev)),
+                    naturalForestWeight,
                 );
-                // 🔴 [2026-10-21 主人问「战略地图上的树该成片，还是该单个？」→ 成片]
-                //    原来按 clusterWeight 当概率逐格抽签（hash > weight 就留白）→ 林区里也是稀稀拉拉的孤树，像噪点。
-                //    改为按权重定「林区」：权重够高的格子连成片栽（权重是连续场，天然连片），
-                //    林缘（权重低）只做软过渡，不再有单棵孤树；林区内部只留少量随机林隙。
+                // 🔴 [2026-10-21 ~ 2026-11-01 主人令「密林连冠成海 + 疏林/绿洲保持成簇 + 战略道路自动留出林间走廊，分布摆放学习 DE」]
+                //    DE 森林摆放精髓：
+                //    1. 郁闭密林（isDenseCanopy：DE 1000‰ 级，如秦巴/江南竹林/西伯利亚泰加林/东北长白山/黑森林/亚马逊/刚果）：
+                //       底层铺 Forest Underbrush 林下腐殖质暗色底荫，每格 4~5 棵树（内圈 9~15px 聚拢 + 外圈 17~24.5px 跨格咬合），树冠相连成海；
+                //    2. 疏林与点状绿洲（isSparseEco：DE 250~500‰ 级，如非洲稀树草原猴面包树/金合欢、沙漠绿洲椰枣、农田河岸柳树）：
+                //       不铺林下暗底，保持 2~3 棵小树丛（6~13px），留出 75% 开阔地表；
+                //    3. 成簇树种内聚（Clump Species Coherence）：同一 2×2 邻格树团共享主导抽签值，避免一团 4 棵树杂乱混成 4 个物种，同时保留 25% 伴生树混交。
                 if (clusterWeight < 0.12) continue;
                 if (clusterWeight < 0.24 && hash(gx, gy, 46) > (clusterWeight - 0.12) / 0.12) continue;   // 林缘软过渡
-                if (clusterWeight >= 0.24 && clusterWeight < 0.40 && hash(gx, gy, 47) > 0.88) continue;   // 林内偶有小林隙
+                if (clusterWeight >= 0.24 && clusterWeight < 0.40 && hash(gx, gy, 47) > 0.88) continue;   // 林缘浅带偶有小林隙
 
-                // 🔴 自然树丛聚簇（Grove Clustering）：一格至少 2 棵（不再有孤树），林区深处 3~4 棵，
-                //    主树高大居中 + 伴生树错落环绕，相邻格的树丛连成林海。
-                const count = clusterWeight >= 0.40
-                    ? (hash(gx, gy, 53) > 0.5 ? 4 : 3)
-                    : (clusterWeight >= 0.24 ? 3 : 2);
+                // 区分「郁闭密林」与「稀树草原/绿洲/河岸疏林」
+                const isSparseEco =
+                    (specialEco.weight > 0 && naturalForestWeight < 0.34 && (treeTile === 'sv1' || treeTile === 'sv2' || treeTile === 'du1' || treeTile === 'des')) ||
+                    (riparianBoost > 0 && naturalForestWeight < 0.28 && huntingCityBoost < 0.28);
+                const isDenseCanopy = !isSparseEco && clusterWeight >= 0.34;
 
+                const count = isDenseCanopy
+                    ? (clusterWeight >= 0.48 ? (hash(gx, gy, 53) > 0.35 ? 5 : 4) : 4)
+                    : (clusterWeight >= 0.26 ? 3 : 2);
+
+                // DE 同团树种内聚：2×2 格共享主树种抽签（使竹林成片、松林成带、桦林成林），伴生树 25% 概率混入本区次要树种
+                const clumpCellX = Math.floor(gx / (TREE_GRID_STEP * 2));
+                const clumpCellY = Math.floor(gy / (TREE_GRID_STEP * 2));
+                const clumpRoll = hash(clumpCellX, clumpCellY, 67);
+
+                let placedInCell = 0;
                 for (let i = 0; i < count; i++) {
                     let curPx = px;
                     let curPy = py;
                     if (i > 0) {
-                        const baseAng = hash(gx, gy, 31) * Math.PI * 2 + (i - 1) * (Math.PI * 0.72);
-                        const ang = baseAng + (hash(gx, gy, i * 17 + 31) - 0.5) * 0.48;
-                        const dist = 6 + hash(gx, gy, i * 19 + 32) * 7;
+                        const baseAng = hash(gx, gy, 31) * Math.PI * 2 + (i - 1) * ((Math.PI * 2) / Math.max(1, count - 1));
+                        const ang = baseAng + (hash(gx, gy, i * 17 + 31) - 0.5) * 0.52;
+                        // 郁闭密林：前两棵伴生树紧拱主树（9~15.5px），外圈伴生树跨出半格（17~24.5px）与邻格树丛咬合连冠；
+                        // 疏林/绿洲：收敛在 6~12.5px 内，保持成簇不糊地。
+                        const dist = isDenseCanopy
+                            ? (i <= 2
+                                ? 9.0 + hash(gx, gy, i * 19 + 32) * 6.5
+                                : 17.0 + hash(gx, gy, i * 19 + 32) * 7.5)
+                            : (6.0 + hash(gx, gy, i * 19 + 32) * 6.5);
                         curPx += Math.cos(ang) * dist;
-                        curPy += Math.sin(ang) * dist * 0.68;
+                        curPy += Math.sin(ang) * dist * 0.74;
                     }
+
+                    // 战略官道/栈道走廊退让：树干落进道路净空带（11.5px）内则自动让路，露出林间古道
+                    if (distSqToRoad(curPx, curPy) < ROAD_CLEAR_PX * ROAD_CLEAR_PX) continue;
+
                     const curLatLng = i === 0 ? ptLatLng : this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
 
                     // 🔴 2026-10-31 ~ 2026-11-01 主人令「植被符合区域，战略和战术保持一致」「按真实的地理，历史模拟」：
@@ -1140,9 +1263,13 @@ export class VegetationLayer {
                     const isAlpineWinterSnow = elev !== null && Math.abs(curLatLng.lat) >= 26 && elev >= treeLine - 350;
                     const hasWinterSnowGround = wf === 1 || wf === 2 || wf === 3 || isAlpineWinterSnow;
 
+                    // 主树与 75% 伴生树沿用本树团主导树种抽签（clumpRoll），25% 伴生树独立抽签作为混交林点缀
+                    const speciesRoll = (i === 0 || hash(gx, gy, i * 29 + 61) < 0.75)
+                        ? clumpRoll
+                        : hash(gx, gy, i * 13 + 71);
                     const resolveStrategicTreeForSeason = (s: TreeSeason): string => {
                         const isSnow = isPermSnowTile || (s === 3 && hasWinterSnowGround);
-                        return seasonalDeTree(plantTreeAt(curLatLng.lat, curLatLng.lng, hash(gx, gy, i * 13 + 71)), s, isSnow);
+                        return seasonalDeTree(plantTreeAt(curLatLng.lat, curLatLng.lng, speciesRoll), s, isSnow);
                     };
                     const asset = resolveStrategicTreeForSeason(season);
                     const assetNext = resolveStrategicTreeForSeason(nextSeason);
@@ -1158,10 +1285,12 @@ export class VegetationLayer {
                     if (!preloadAsset(asset)) pendingImages++;
                     if (assetNext !== asset && !preloadAsset(assetNext)) pendingImages++;
 
-                    // 主树（i===0）挺拔饱满，伴生树（i>0）高低错落拱卫，形成自然树丛轮廓
-                    const jitter = count > 1
-                        ? (i === 0 ? 1.06 + hash(gx, gy, 71) * 0.22 : 0.76 + hash(gx, gy, i * 23 + 71) * 0.24)
-                        : (0.92 + hash(gx, gy, 71) * 0.26);
+                    // 主树挺拔饱满，内圈伴生树厚实相拥，外圈跨格树略收敛，形成 DE 经典林冠高低层次
+                    const jitter = isDenseCanopy
+                        ? (i === 0
+                            ? 1.12 + hash(gx, gy, 71) * 0.22
+                            : (i <= 2 ? 0.92 + hash(gx, gy, i * 23 + 71) * 0.24 : 0.82 + hash(gx, gy, i * 23 + 71) * 0.22))
+                        : (i === 0 ? 1.04 + hash(gx, gy, 71) * 0.20 : 0.76 + hash(gx, gy, i * 23 + 71) * 0.22);
                     const variant = Math.floor(hash(gx, gy, i * 37 + 89) * 100);
                     drawCommands.push({
                         lat: curLatLng.lat,
@@ -1170,8 +1299,9 @@ export class VegetationLayer {
                         asset,
                         assetNext,
                         variant,
-                        inGrove: count >= 2 && i === 0,
+                        inGrove: isDenseCanopy && placedInCell === 0,
                     });
+                    placedInCell++;
                 }
             }
         }

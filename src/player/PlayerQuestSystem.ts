@@ -561,7 +561,7 @@ export class PlayerQuestSystem {
         });
         if (!candidates.length) return null;
         if (candidates.length > 1) {
-            const prefId = this.preferredLiveGeneralId;
+            const prefId = this.preferredLiveGeneralId ?? this.headingTargetGeneralId;
             candidates.sort((a, b) => {
                 if (prefId && (a.generalId === prefId) !== (b.generalId === prefId)) {
                     return a.generalId === prefId ? -1 : 1;
@@ -611,11 +611,24 @@ export class PlayerQuestSystem {
             }
             this.pendingFrontGeneralId = null;
         }
-        const g = this.generalInCity(city.id);
+        const intended = this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
+        this.headingTargetGeneralId = null;
+        // 🔴 [2026-09-09 主人定「找武将：认人不认城，如果武将出征，就直接去找出征的武将」]
+        //    哪怕这座城是一据点多武将（城里还有别的留守副将），只要玩家原本要找的这位主将（intended）
+        //    已经率军出征在外，就优先追去他军中会面，绝不因为城里还有别人或有远距成名战而放弃追击。
+        const intendedArmy = intended ? this.armyOfGeneral(intended.generalId) : null;
+        if (intended && intendedArmy) {
+            this.chaseCityId = city.id;
+            if (this.deps.hero.travelToArmy(intendedArmy.id, intended.generalName)) {
+                this.deps.notify(`抵达【${city.name}】：${intended.generalName}已率军在外，追往其军中`);
+                return;
+            }
+        }
+        const g = (intended && !intendedArmy) ? intended : this.generalInCity(city.id);
         if (!g) {
-            const anchored = this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
-            // 🔴 [2026-10-25 主人令「不去武将所在点」] 他的成名战场离本城 >300km：他已率军赴前线，
-            //    本城只指路（去被攻的城／去战场），不在这儿触发成名战、也不追他的军团。
+            const anchored = intended;
+            // 🔴 [2026-10-25 主人令「不去武将所在点」] 他本人没带军团在外，且成名战场离本城 >300km：
+            //    本城只指路（去被攻的城／去战场），不在这儿原地触发成名战。
             if (anchored && this.firstBattleFrontSpot(anchored.generalId)) {
                 const fb = this.hasPendingFirstBattle(anchored.generalId);
                 if (fb) {
@@ -633,16 +646,6 @@ export class PlayerQuestSystem {
                         factionName,
                         fb,
                     );
-                    return;
-                }
-            }
-            // 🔴 [2026-09-09 主人定] 扑空不再换人：他既然带兵出去了，就追出去找他。
-            //    （赶路途中武将出征是常态，原来在这里直接放弃，玩家就一直在空跑。）
-            const army = anchored ? this.armyOfGeneral(anchored.generalId) : null;
-            if (anchored && army) {
-                this.chaseCityId = city.id;
-                if (this.deps.hero.travelToArmy(army.id, anchored.generalName)) {
-                    this.deps.notify(`抵达【${city.name}】：${anchored.generalName}已率军在外，追往其军中`);
                     return;
                 }
             }
@@ -3391,35 +3394,48 @@ export class PlayerQuestSystem {
         // 若玩家已加入势力（isAttached），则全程跟随武将，不触发战场事件。
         // 🔴 [2026-09-17 主人定]「剧本和乱斗模式分开……乱斗模式的话，玩家不去战场。」
         //    乱斗模式下整条战场分支不走，直接去找武将入伍。切模式时已出发的行程由 setAutoPlan 掐掉。
+        if (!this.quest && !this.deps.hero.isAttached() && this.deps.hero.autoPlan !== 'script' && this.deps.hero.isTraveling()) {
+            const targetCityId = this.deps.hero.getTravelCityId();
+            const chaseArmyId = this.deps.hero.getChaseArmyId();
+            // 🔴 [2026-10-25] 正去远距成名战的接任务城（被攻的城）时，那城本来就可能没有在场武将，
+            //    不许按「目标城无将」把行程掐掉。
+            const frontSpot = this.pendingFrontGeneralId ? this.firstBattleFrontSpot(this.pendingFrontGeneralId) : null;
+            const headingFrontCity = frontSpot?.kind === 'city' && frontSpot.cityId === targetCityId;
+            const targetHasOnStage = headingFrontCity
+                || (chaseArmyId
+                    ? (() => {
+                        const gid = this.deps.legionManager.getLegionById(chaseArmyId)?.generalId;
+                        return !!gid && isGeneralOnStage(gid);
+                    })()
+                    : targetCityId
+                        ? getCityAnchoredGenerals(targetCityId).some((g) => isGeneralOnStage(g.generalId))
+                        : true);
+            if (!targetHasOnStage) {
+                if (this.preferredLiveGeneralId) {
+                    const lostId = this.preferredLiveGeneralId;
+                    this.preferredLiveGeneralId = null;
+                    this.onLiveJoinResolved?.({ ok: false, factionId: null, generalId: lostId, reason: '目标武将已离场，积分已退回' });
+                }
+                this.headingTargetGeneralId = null;
+                this.deps.hero.cancelChase();
+                this.deps.hero.cancelTravel();
+            } else if (targetCityId && !chaseArmyId && !headingFrontCity) {
+                // 🔴 [2026-09-09 主人定「如果武将出征，就直接去找出征的武将」]
+                //    玩家在前往据点的半路上（或刚手点据点），目标武将若已率军出征，当场改道直追其军团，不必先傻走到空城再转追。
+                const targetGen = this.pickCityGeneralForPlayer(targetCityId, { requireInCity: false, preferUnvisited: true });
+                const marchingArmy = targetGen ? this.armyOfGeneral(targetGen.generalId) : null;
+                if (targetGen && marchingArmy) {
+                    this.chaseCityId = targetCityId;
+                    if (this.deps.hero.travelToArmy(marchingArmy.id, targetGen.generalName)) {
+                        this.deps.notify(`🐎 ${targetGen.generalName}已率军在外，前往其军中相见`);
+                        return;
+                    }
+                }
+            }
+        }
         if (canAdvance) {
             const headingToBattlefield = this.deps.hero.autoPlan === 'script'
                 && this.checkAndTriggerNextBattlefield();
-            if (!headingToBattlefield && this.deps.hero.autoPlan !== 'script' && this.deps.hero.isTraveling()) {
-                const targetCityId = this.deps.hero.getTravelCityId();
-                const chaseArmyId = this.deps.hero.getChaseArmyId();
-                // 🔴 [2026-10-25] 正去远距成名战的接任务城（被攻的城）时，那城本来就可能没有在场武将，
-                //    不许按「目标城无将」把行程掐掉。
-                const frontSpot = this.pendingFrontGeneralId ? this.firstBattleFrontSpot(this.pendingFrontGeneralId) : null;
-                const headingFrontCity = frontSpot?.kind === 'city' && frontSpot.cityId === targetCityId;
-                const targetHasOnStage = headingFrontCity
-                    || (chaseArmyId
-                        ? (() => {
-                            const gid = this.deps.legionManager.getLegionById(chaseArmyId)?.generalId;
-                            return !!gid && isGeneralOnStage(gid);
-                        })()
-                        : targetCityId
-                            ? getCityAnchoredGenerals(targetCityId).some((g) => isGeneralOnStage(g.generalId))
-                            : true);
-                if (!targetHasOnStage) {
-                    if (this.preferredLiveGeneralId) {
-                        const lostId = this.preferredLiveGeneralId;
-                        this.preferredLiveGeneralId = null;
-                        this.onLiveJoinResolved?.({ ok: false, factionId: null, generalId: lostId, reason: '目标武将已离场，积分已退回' });
-                    }
-                    this.deps.hero.cancelChase();
-                    this.deps.hero.cancelTravel();
-                }
-            }
             // 🔴 [2026-09-23] 剧本期不去找武将乱斗：军团此时不寻敌，起兵入伍只会原地停着；
             //    战场一时去不了（寻路冷却）就等冷却后再试。
             // 🔴 [2026-10-21 主人令「告辞之后换下一个人物接任务」] **刚告辞过武将**时例外：
@@ -3529,9 +3545,23 @@ export class PlayerQuestSystem {
         const city = this.pickAutoCity();
         if (!city) return;
         const g = this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
+        this.headingTargetGeneralId = g?.generalId ?? null;
         this.rememberVisit(city, g?.generalId);
-        // 🔴 [2026-10-25 主人令「不去武将所在点」] 这位名将的成名战场离他本城 >300km：
-        //    直接去**接任务点**（攻城战＝被攻的城；野战＝战场坐标），不跑他本城、也不追他的军团。
+        // 🔴 [2026-09-09 主人定「找武将：认人不认城，如果武将出征，就直接去找出征的武将」]
+        //    先看选中的这位武将本人（g）是不是已经率军在外：
+        //    （修 2026-10-19 一据点多武将后 `!inCityGen` 因同城有其他副将而恒为 false 的 bug，
+        //     以及 2026-10-25 `firstBattleFrontSpot` 排在前面把追击出征军团截断的 bug。）
+        const army = g ? this.armyOfGeneral(g.generalId) : null;
+        if (g && army) {
+            this.chaseCityId = city.id;
+            this.pendingFrontGeneralId = null;
+            if (this.deps.hero.travelToArmy(army.id, g.generalName)) {
+                this.deps.notify(`🐎 ${g.generalName}已率军在外，前往其军中相见`);
+                return;
+            }
+        }
+        // 🔴 [2026-10-25 主人令「不去武将所在点」] 他本人没率军在外，且成名战场离本城 >300km：
+        //    直接去**接任务点**（攻城战＝被攻的城；野战＝战场坐标），不跑他本城。
         if (g) {
             const front = this.firstBattleFrontSpot(g.generalId);
             if (front) {
@@ -3547,20 +3577,8 @@ export class PlayerQuestSystem {
                 if (ok) {
                     return;
                 }
-                // 走不到接任务点（无路可达）→ 退回他本城：本城只指路、不会原地触发成名战，
-                // 也**不去追他的军团**（那条路会走回旧的成名战瞬移逻辑）。
                 this.pendingFrontGeneralId = null;
                 this.deps.hero.travelToCity(city.id, false, { allowNoGeneral: true });
-                return;
-            }
-        }
-        const inCityGen = this.generalInCity(city.id);
-        const army = (!inCityGen && g) ? this.armyOfGeneral(g.generalId) : null;
-        if (army) {
-            // 人不在城中 → 直接去野外找他（PlayerHero.stepChase 每帧续航）
-            this.chaseCityId = city.id;
-            if (this.deps.hero.travelToArmy(army.id, g!.generalName)) {
-                this.deps.notify(`🐎 ${g!.generalName}已率军在外，前往其军中相见`);
                 return;
             }
         }
@@ -3570,6 +3588,8 @@ export class PlayerQuestSystem {
 
     /** 追击中的那位武将的**本城**（会面后谈事仍以这座城的势力/目标为准） */
     private chaseCityId: string | null = null;
+    /** 自动寻将选定的目标武将 ID（防止出发时记入 visitedGenerals 后，到城时在一据点多武将下换成了同城另一人） */
+    private headingTargetGeneralId: string | null = null;
     /**
      * 🔴 [2026-10-25 主人令] 玩家正去「远距成名战接任务点」途中 —— 那位的 generalId；
      * 抵达触发点（被攻的城／战场坐标）时据此弹出**他的**成名战，而不是该地别人的对话。
@@ -4416,6 +4436,14 @@ export class PlayerQuestSystem {
         this.chaseCityId = null;
         this.pendingFrontGeneralId = null;
 
+        const army = this.armyOfGeneral(targetGeneralId);
+        if (army) {
+            this.chaseCityId = city.id;
+            if (hero.travelToArmy(army.id, targetGeneralName)) {
+                return { ok: true, candidate: finalCandidate };
+            }
+            this.chaseCityId = null;
+        }
         const front = this.firstBattleFrontSpot(targetGeneralId);
         if (front) {
             this.pendingFrontGeneralId = targetGeneralId;
@@ -4428,14 +4456,6 @@ export class PlayerQuestSystem {
                 );
             if (ok) return { ok: true, candidate: finalCandidate };
             this.pendingFrontGeneralId = null;
-        }
-        const army = this.armyOfGeneral(targetGeneralId);
-        if (army) {
-            this.chaseCityId = city.id;
-            if (hero.travelToArmy(army.id, targetGeneralName)) {
-                return { ok: true, candidate: finalCandidate };
-            }
-            this.chaseCityId = null;
         }
         if (hero.travelToCity(city.id, false, { allowNoGeneral: true })) {
             return { ok: true, candidate: finalCandidate };

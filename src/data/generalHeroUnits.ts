@@ -12,6 +12,33 @@
  * 🔴 剧本模式：每个主角武将的主将队兵种在事件编辑器里**必选**（事件字段 commanderUnit），按素材样貌选、不看兵名。
  */
 import { getScriptCommanderUnit } from '../events/scriptPeriod';
+import { WAR_TYPES } from './WarTypes';
+
+/**
+ * 🔴 [2026-11-01 主人令「阿尔特米西亚是船，却跑到了战术地图上。英雄应该使用自己的兵模，但是船不行呀，船只能用在海战。」]
+ * 判定某个兵种键是否为船只（DE 战舰护甲类 16 或海军旗舰英雄）：船只严禁作为陆战主将队（第 10 队）或玩家陆战兵模。
+ */
+const SHIP_HERO_UNIT_KEYS = new Set<string>([
+    'hero_artemisia',
+    'hero_themistocles',
+    'hero_dionysus',
+    'hero_dreki',
+    'hero_stoertebeker',
+    'hero_aeginetan',
+    'hero_admiralyisunshin',
+    'hero_leiferikson',
+    'the_middlebrook',
+    'hero_vascodagama',
+    'hero_flagshipofnearchos',
+    'wheeled_ship',
+]);
+
+export function isShipUnitKey(unitKey: string | null | undefined): boolean {
+    if (!unitKey) return false;
+    if (SHIP_HERO_UNIT_KEYS.has(unitKey)) return true;
+    const def = WAR_TYPES[unitKey];
+    return Array.isArray(def?.armorTags) && def.armorTags.includes(16);
+}
 
 /** 武将 → 专属英雄兵种（WAR_TYPES 键）。只登记有现成素材的 */
 export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
@@ -116,13 +143,17 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     //    （李舜臣龟船、莱夫·埃里克松长船、尼阿库斯旗舰）按 §3.4 不用。
     //    同一人有多个兵模时：骑兵优先，同类取战力高（熙德取骑马坎培多尔、地米斯托克利取骑马版、伊斯玛仪取沙阿版 201>84）。
     //    对照底账：scratch/_hero_general_match_20261031.txt
-    gen_artemisia: 'hero_artemisia',
+    // 🔴 [2026-11-01 主人令「阿尔特米西亚是船，却跑到了战术地图上。船只能用在海战」]
+    //    hero_artemisia（紫帆三列桨战船）与 hero_themistocles（圆盾三列桨战船）本体都是战船（armorTags 含 16），
+    //    只能用于海战舰队（shipId: 'HERO_ARTEMISIA' / 'HERO_THEMISTOCLES'），严禁进陆战主将队：
+    //    · 阿尔特米西亚无陆战个人兵模 → 回落本军团默认陆战主将兵模；
+    //    · 地米斯托克利陆战改用本人步战兵模 hero_themistocles_hoplite。
     gen_roger_i: 'hero_rogerbosso',              // 罗杰一世（博索）
     gen_leonidas: 'hero_leonidas',
     gen_theodoric_great: 'hero_theodoricthegoth',
     gen_el_cid: 'hero_elcidcampeador',           // 骑马版（cav 217）优先于步战熙德
     bfe2_cleon: 'hero_cleon',
-    gen_themistocles: 'hero_themistocles',       // 战力 281 > 步战版 211
+    gen_themistocles: 'hero_themistocles_hoplite', // 地米斯托克利本人步战重装兵（船形 hero_themistocles 仅海战用）
     gen_miltiades: 'hero_miltiades',
     gen_henry_v: 'hero_henryv',
     mazhaer_bela_iv: 'hero_belaiv',
@@ -270,10 +301,14 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
  *    军团 commanderUnit 只给**没有专属英雄的武将**兜底，不再走 248 英雄随机池。
  */
 export function commanderUnitOf(generalId: string | null | undefined, expandedSlots: readonly string[], ctx?: { factionId?: string | null; seedKey?: string; legionCommanderUnit?: string | null }): string | null {
-    const picked = generalId ? getScriptCommanderUnit(generalId) : null;
-    const hero = generalId ? GENERAL_HERO_UNITS[generalId] : undefined;
-    const legionCmd = ctx?.legionCommanderUnit ? ctx.legionCommanderUnit : null;
-    return picked ?? hero ?? legionCmd ?? expandedSlots[0] ?? null;
+    const rawPicked = generalId ? getScriptCommanderUnit(generalId) : null;
+    const picked = rawPicked && !isShipUnitKey(rawPicked) ? rawPicked : null;
+    const rawHero = generalId ? GENERAL_HERO_UNITS[generalId] : undefined;
+    const hero = rawHero && !isShipUnitKey(rawHero) ? rawHero : undefined;
+    const rawLegionCmd = ctx?.legionCommanderUnit ? ctx.legionCommanderUnit : null;
+    const legionCmd = rawLegionCmd && !isShipUnitKey(rawLegionCmd) ? rawLegionCmd : null;
+    const fallbackSlot = expandedSlots.find((k) => !isShipUnitKey(k)) ?? null;
+    return picked ?? hero ?? legionCmd ?? fallbackSlot;
 }
 
 /** 编制 9 队展开后追加主将队 → 10 队；不是 9 队的（异常/旧数据）原样返回 */
