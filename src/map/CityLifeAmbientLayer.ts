@@ -486,6 +486,8 @@ export class CityLifeAmbientLayer {
     private layerVisible = true;
     /** 当前布局所属的游戏年份；年份一变就整体轮回 */
     private layoutYear: number | null = null;
+    private visibleCitiesKey = '';
+    private visibleCitiesCache: CityDataV2[] = [];
     private static readonly ASSET_BUDGET_BYTES = 64 * 1024 * 1024;
 
     constructor(map: L.Map) {
@@ -1710,12 +1712,18 @@ export class CityLifeAmbientLayer {
         const minLng = sw.lng - CULL_MARGIN_DEG;
         const maxLng = ne.lng + CULL_MARGIN_DEG;
 
-        const visibleCities: CityDataV2[] = [];
-        for (const c of CITIES_V2) {
-            if (c.lat >= minLat && c.lat <= maxLat && c.lng >= minLng && c.lng <= maxLng) {
-                visibleCities.push(c);
+        // 🔴 [2026-10-31 战略地图素材规划] 视口据点列表只在镜头移动后重算，不再每帧线性扫全部 CITIES_V2
+        const cullKey = `${minLat.toFixed(3)}|${maxLat.toFixed(3)}|${minLng.toFixed(3)}|${maxLng.toFixed(3)}|${CITIES_V2.length}`;
+        if (cullKey !== this.visibleCitiesKey) {
+            this.visibleCitiesKey = cullKey;
+            this.visibleCitiesCache = [];
+            for (const c of CITIES_V2) {
+                if (c.lat >= minLat && c.lat <= maxLat && c.lng >= minLng && c.lng <= maxLng) {
+                    this.visibleCitiesCache.push(c);
+                }
             }
         }
+        const visibleCities = this.visibleCitiesCache;
 
         const visibleCityIds = new Set(visibleCities.map((c) => c.id));
         this.scanEndangeredCities(this.nowMs, visibleCities);

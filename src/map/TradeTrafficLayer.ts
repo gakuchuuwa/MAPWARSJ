@@ -468,27 +468,6 @@ export class TradeTrafficLayer {
         return full.length >= 2 ? full : null;
     }
 
-    /** 兜底：寻路失败时，沿跟拍位置拉一条横穿屏幕的直线（东西/南北随机）。 */
-    private buildStraightRoute(anchor: Pt): Pt[] {
-        const bounds = this.map.getBounds();
-        const sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
-        const viewW = Math.max(0.5, ne.lng - sw.lng);
-        const viewH = Math.max(0.5, ne.lat - sw.lat);
-        const westLng = sw.lng - viewW * OFFSCREEN_MARGIN;
-        const eastLng = ne.lng + viewW * OFFSCREEN_MARGIN;
-        const southLat = sw.lat - viewH * OFFSCREEN_MARGIN;
-        const northLat = ne.lat + viewH * OFFSCREEN_MARGIN;
-        const forward = Math.random() < 0.5;
-        if (Math.random() < 0.5) {
-            const a = forward ? westLng : eastLng;
-            const b = forward ? eastLng : westLng;
-            return [{ lat: anchor.lat, lng: a }, { lat: anchor.lat, lng: b }];
-        }
-        const a = forward ? southLat : northLat;
-        const b = forward ? northLat : southLat;
-        return [{ lat: a, lng: anchor.lng }, { lat: b, lng: anchor.lng }];
-    }
-
     private initialDistForEntry(path: Pt[], cum: number[]): number {
         const viewport = L.bounds(L.point(0, 0), this.map.getSize());
         for (let i = 1; i < path.length; i++) {
@@ -510,7 +489,9 @@ export class TradeTrafficLayer {
 
     private spawnTraffic(anchor: Pt): void {
         if (this.caravans.length >= CARAVAN_MAX) return;
-        const path = this.buildCrossRoute(anchor) ?? this.buildStraightRoute(anchor);
+        // 🔴 [2026-10-31 战略地图素材规划] 商队只走真实道路/海路；寻路失败就不生成（原兜底横穿屏幕直线会穿山过海，已删）
+        const path = this.buildCrossRoute(anchor);
+        if (!path) return;
         const { cum, total } = TradeTrafficLayer.buildCum(path);
         if (total <= 0) return;
 

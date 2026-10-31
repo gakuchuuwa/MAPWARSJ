@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
 import type { RiverOverlayLayer } from './RiverOverlayLayer';
+import { getReachLevel } from './StrategicReachMask';
 
 /**
  * CoastalWaveLayer - 战略地图开阔水面细纹与海岸潮汐层
@@ -133,6 +134,8 @@ export class CoastalWaveLayer extends L.Layer {
 
             // 视口粗裁剪
             if (tx > cw || tx + 256 < 0 || ty > ch || ty + 256 < 0) continue;
+            // 🔴 [2026-10-31 战略地图素材规划] 玩家到不了的海岸（离道路/海路/据点 >80km，如大洋洲）不画浪花
+            if (!this.isTileReachable(coords)) continue;
 
             if (ripples) this.drawSeaRipples(g, ripples, tx, ty, t, cw, ch);
             if (!waves) continue;
@@ -159,6 +162,16 @@ export class CoastalWaveLayer extends L.Layer {
                 this.drawWaveCrest(g, sx, sy, nx, ny, phase2, angle);
             }
         }
+    }
+
+    /** 瓦片中心与四角任一点在可达带内即画（掩膜未建好时一律放行） */
+    private isTileReachable(coords: { x: number; y: number; z: number }): boolean {
+        if (!this.map) return true;
+        for (const [fx, fy] of [[0.5, 0.5], [0, 0], [1, 0], [0, 1], [1, 1]]) {
+            const ll = this.map.unproject(L.point((coords.x + fx) * 256, (coords.y + fy) * 256), coords.z);
+            if (getReachLevel(ll.lat, ll.lng) > 0) return true;
+        }
+        return false;
     }
 
     /** 开阔海面：细波峰有慢速推进与呼吸，但不整片闪烁、不盖成白色网格。 */

@@ -10,6 +10,7 @@ import {
     queryStrategicCanopyDensity,
     queryStrategicForestBiome,
 } from './StrategicForestMask';
+import { getReachLevel, REACH_MASK_READY_EVENT } from './StrategicReachMask';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
@@ -345,7 +346,10 @@ export function resolveSpecialEcoVegetation(
     if (forestBiome === 12 && tile !== 'pal' && tile !== 'des') {
         const isLebanon = lat >= 33.0 && lat <= 36.8 && lng >= 35.1 && lng <= 37.2;
         const isAtlas = lat >= 32.0 && lat <= 37.0 && lng >= -8.0 && lng <= 10.5;
-        if (canopyDensity >= 3 || isLebanon || (isAtlas && (elev === null || elev >= 500))) {
+        // 🔴 [2026-10-31 战略地图素材规划] 郁闭度 <22 的是开阔台地/农田/干草原（梅塞塔高原、希腊/意大利平原等），
+        //    与通用林区口径一致，不长树；原 >=3 的宽门槛把整个地中海铺满了树。黎巴嫩雪松山、阿特拉斯山地的专条保留。
+        const mediterraneanForest = canopyDensity >= 22 || isLebanon || (isAtlas && (elev === null || elev >= 500));
+        if (mediterraneanForest) {
             const w = (0.34 + 0.44 * Math.min(1, canopyDensity / 28)) * clusterFactor;
             const effTile = isLebanon && (elev === null || elev >= 550)
                 ? 'rck'
@@ -355,7 +359,9 @@ export function resolveSpecialEcoVegetation(
     }
     // 4b. 扎格罗斯山脉、厄尔布尔士山脉与小亚细亚山地栎林/阔叶林（30°~40°N, 30°~56°E）
     if (lat >= 30.0 && lat <= 40.0 && lng >= 30.0 && lng <= 56.0 && (forestBiome === 4 || forestBiome === 5) && tile !== 'pal' && tile !== 'des') {
-        if (canopyDensity >= 1 || (elev !== null && elev >= 850 && elev <= 2650)) {
+        // 🔴 [2026-10-31] 原「郁闭度 >=1 或海拔 850~2650m」把整个安纳托利亚/伊朗高原铺满；改为真林区（>=22），
+        //    或山地林带海拔内且确有疏林（>=8，扎格罗斯栎疏林）。
+        if (canopyDensity >= 22 || (canopyDensity >= 8 && elev !== null && elev >= 850 && elev <= 2650)) {
             const w = (0.35 + 0.42 * Math.min(1, canopyDensity / 28)) * clusterFactor;
             const effTile = tile === 'ds5' || tile === 'gravel_default' ? 'gr7' : tile;
             return { weight: w, effectiveTile: effTile };
@@ -539,6 +545,8 @@ function getTreeLine(lat: number, lng?: number): number {
 }
 
 const TREE_GRID_STEP = 46;
+/** 单次重建最多保留的树数（2026-10-31 战略地图素材规划：防大视口满铺导致拖动卡顿） */
+const MAX_TREES_PER_RENDER = 3000;
 
 /** 四季 DE 风格林下阴翳基底离屏缓存（春0 夏1 秋2 冬3） */
 const UNDERBRUSH_CANVAS: (HTMLCanvasElement | null)[] = [null, null, null, null];
@@ -651,6 +659,7 @@ export class VegetationLayer {
         map.on('move', this.onCanvasFollow);
         map.on('resize', this.onResize);
         window.addEventListener('land-sea-tiles-updated', this.onTerrainReady);
+        window.addEventListener(REACH_MASK_READY_EVENT, this.onTerrainReady);
         this.resize();
         this.render();
         void loadStrategicForestMask().then((ready) => {
@@ -968,6 +977,11 @@ export class VegetationLayer {
                 const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
                 if (ptLatLng.lat < -58 || ptLatLng.lat > 75) continue;
 
+                // 🔴 [2026-10-31 战略地图素材规划] 素材跟着玩家走：离道路/海路/据点 >80km 不画；30~80km 的视野带减半
+                const reach = getReachLevel(ptLatLng.lat, ptLatLng.lng);
+                if (reach === 0) continue;
+                if (reach === 1 && hash(gx, gy, 61) > 0.5) continue;
+
                 // 据点避让统一在 SAMPLE_ZOOM 世界像素坐标系下计算，彻底杜绝因平移/缩放亚像素取整导致的城周树木闪现
                 if (visibleCities.some((c) => Math.hypot(c.wx - px, c.wy - py) < (c.isForestHunting ? 24 : CITY_CLEAR_PX))) continue;
 
@@ -1175,6 +1189,13 @@ export class VegetationLayer {
         // 🔴 [2026-09-19 主人令「全面修复」] 上一版把判据放宽成「新采样不足旧列表 60% 也保留旧树」——
         //   那会让镜头移到另一片区域时整批留下旧树、新视口该长的树反而不画（旧树又多在屏外＝等于少画树），
         //   故收窄回上面这条原判据：只在「新采样为空」时兜底。
+        // 🔴 [2026-10-31] 单次重建树数封顶：超出时按树位哈希等比抽稀（保留林区形状），防大视口拖动时 paint 过重
+        if (drawCommands.length > MAX_TREES_PER_RENDER) {
+            const keep = MAX_TREES_PER_RENDER / drawCommands.length;
+            const thinned = drawCommands.filter((c) => hash(Math.round(c.lat * 1e4), Math.round(c.lng * 1e4), 77) < keep);
+            drawCommands.length = 0;
+            drawCommands.push(...thinned);
+        }
         const keepOldTrees = drawCommands.length === 0 && this.trees.length > 0 && missingTiles > 0;
         if (!keepOldTrees) this.trees = drawCommands;
         this.sampledGameSeason = gameSeason;
