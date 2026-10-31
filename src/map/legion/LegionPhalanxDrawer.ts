@@ -2327,6 +2327,16 @@ export class LegionPhalanxDrawer {
          * 挡回「全队同向」，于是主人看到的就是「船头与队列方向对不上」。
          */
         columnMarch = false,
+        /**
+         * 🔴 [2026-10-31 主人令「请把海战改为只显示双方的旗舰对战，就是双方只显示一艘船」
+         *    「就是海战的时候。其他行驶的时候不要动。只是海战的时候。」]
+         *
+         * 本帧是否处于**海战**（舰队 vs 舰队的野战，判据 = GlobalUnitRenderer.isNavalFleetBattle：
+         * 自己在海上 + 这场是野战 + 对面也全是舰队）。true 时整支舰队只画旗舰一艘，船数不再按兵力算。
+         * ⚠️ 不能拿 `isFighting`（ATTACK/DAMAGE）代替：双将海战里渲染端把 ATTACK 演成 MOVE 传进来，
+         *    isFighting 在那种情况恒为 false，判不出来。
+         */
+        navalBattleActive = false,
     ): void {
         // 兵力驱动纵队舰队（2026-08-19 主人定）：船数随兵力、旗舰领航、后随成列。
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
@@ -2345,7 +2355,7 @@ export class LegionPhalanxDrawer {
             //   §4 要的「转弯跟着河道弯」从未真正生效过。
             //   脱战恢复满编现在由 update() 自己负责（非战斗 + 有沉船/档位变 → 重建），
             //   既保住航迹，也不必每帧置空重建。
-            navalState = NavalPhalanxStateManager.update(unitId, troops, isFighting, tick);
+            navalState = NavalPhalanxStateManager.update(unitId, troops, isFighting, tick, navalBattleActive);
             // 跟拍换了船队 → 三条节流归零，新船队从干净相位起算（否则会继承旧队的冷却/待播落水）
             if (navalSfxUnitId !== unitId) {
                 navalSfxUnitId = unitId;
@@ -2398,7 +2408,9 @@ export class LegionPhalanxDrawer {
             ? lockedShipId!
             : getCultureNavalShip(null, factionId);
 
-        const shipCount = navalState?.shipCount ?? shipCountForTroops(troops);
+        // 🔴 [2026-10-31 主人令「海战只显示双方的旗舰对战，双方只显示一艘船」]
+        //   海战（双将舰队野战）时编队固定 1 艘 = 旗舰；行军 / 停泊 / 攻城照旧按兵力档位。
+        const shipCount = navalBattleActive ? 1 : (navalState?.shipCount ?? shipCountForTroops(troops));
         const formation = this.navalFormation(shipCount, navalMode, targetShipId);
 
         // 按所需船型准备贴图集与绘制尺寸；缺任一档 → 触发懒加载，等下一帧
@@ -2990,7 +3002,7 @@ if (import.meta.env.DEV) {
         churn: () => LegionPhalanxDrawer.debugChurn(),
     });
     perfDoctor.registerCache({
-        name: 'LegionPhalanxDrawer:processedBySrc(抠绿图·从不淘汰)',
+        name: 'LegionPhalanxDrawer:processedBySrc(抠绿图从不淘汰)',
         where: 'src/map/legion/LegionPhalanxDrawer.ts:processedBySrc',
         entries: () => LegionPhalanxDrawer.debugProcessedCount(),
         // 这个 Map 存的是 Promise，取不到实际字节；条目数已能暴露量级，

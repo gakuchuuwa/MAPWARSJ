@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔴 [2026-10-20 主人令「按功能模块拆分 Scene13WarLayer.ts，保证原有功能完全正常」]
  * 战术模式（Scene13）**城池与营地布置**：从 Scene13WarLayer.ts 原样搬出（逻辑一行未改）。
  *   · 攻城战守方城池（战略地图同款，摆在地图中心）：buildDeCity / applyDeCityToGround / syncDeCityGround
@@ -1260,6 +1260,40 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             || gl.isIce
             || !!(this.environmentPlan?.baseTerrain && /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(this.environmentPlan.baseTerrain));
         const pool = getClimateMountainPool.call(this, isSnowScene);
+        // 🔴 [2026-10-31 主人令「战术模式中，会有一些大山的素材，但是这些大山不要在营地前端和城之间。大山会遮挡战场上的士兵。」]
+        //    「攻方营地前端 → 城心」是这场仗的主冲锋走廊。大山模型放大 2 倍后一张就有 1240×800（MOUNTAIN_01 620×400），
+        //    落进这条走廊，整片前排骑兵/步兵都会被山体盖住 —— 之前只查「离城 ≥980px、离出兵口 ≥700px」，
+        //    走廊中段的高地上照样能立山（山离城 980px 仍然在城与营地之间）。现在整条走廊一律禁山：
+        //      · 横向：战阵半宽（双方出兵口实测横向散布）＋ 山体半宽 640 ＋ 余量 320；
+        //      · 纵向：从攻方营地前端往前 420px，一直封到城心再往外 cityR（城郭半径）＋420px；
+        //      · 只有两侧远翼、攻方营地背后、城郭背后可以立山（当远景山脊用，不压兵）。
+        //    关隘手工摆位（passMountainConfig 的 x/y）照旧优先，不受这条影响。
+        const corridorSpawns = this.spawns.filter((s) => s.f === 0);
+        const atkFront = corridorSpawns.length > 0
+            ? {
+                x: corridorSpawns.reduce((sum, s) => sum + s.x, 0) / corridorSpawns.length,
+                y: corridorSpawns.reduce((sum, s) => sum + s.y, 0) / corridorSpawns.length,
+            }
+            : { x: cx - 1200, y: cy };   // 没有攻方出兵口（异常兜底）：按「攻方在城西」算轴线
+        const corrDx = cx - atkFront.x, corrDy = cy - atkFront.y;
+        const corrLen = Math.hypot(corrDx, corrDy) || 1;
+        const corrUx = corrDx / corrLen, corrUy = corrDy / corrLen;
+        let formationHalfW = 0;
+        for (const sp of this.spawns) {
+            formationHalfW = Math.max(
+                formationHalfW,
+                Math.abs(-(sp.x - atkFront.x) * corrUy + (sp.y - atkFront.y) * corrUx),
+            );
+        }
+        const MOUNTAIN_HALF_W = 640;      // 大山×2 后半宽（620 → 1240）
+        const corridorHalfW = formationHalfW + MOUNTAIN_HALF_W + 320;
+        const cityR = Math.hypot(c.width / 2, c.height / 2);
+        const inBattleCorridor = (pt: { x: number; y: number }): boolean => {
+            const rx = pt.x - atkFront.x, ry = pt.y - atkFront.y;
+            const along = rx * corrUx + ry * corrUy;
+            if (along < -420 || along > corrLen + cityR + 420) return false;   // 营地背后 / 城郭背后放行
+            return Math.abs(-rx * corrUy + ry * corrUx) < corridorHalfW;
+        };
         // 扫描远郊高地平顶台面中心：
         //   1) 远离城墙与护城河（dCells >= minHillDistCells + 9.5，且屏幕椭圆外扩 >= 920×520px）；
         //   2) 严格避开四门进出军大道与桥头延长线（di >= 8.5 && dj >= 8.5），只落在正北/正南/正东/正西四翼远郊高地；
@@ -1269,6 +1303,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         // 2. 纯随机选点：在全图高地（elev >= 2.0，基座 3 级/5 级/7 级）候选点里随机洗牌抽取，自然散落各方高地。
         const isMountainSafeSpot = (gx: number, gy: number, pt: { x: number; y: number }): boolean => {
             if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) return false;
+            if (inBattleCorridor(pt)) return false;
             const distFromCityCenter = Math.hypot((pt.x - cx) / 1.15, (pt.y - cy) * 1.45);
             if (distFromCityCenter < 980) return false;
             if (this.defenderCityType === 'pass') {
@@ -2071,3 +2106,6 @@ export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
     placeCamp(7, 'FORTIFIED_OUTPOST');
     placeCamp(8, `${style}_TOWER_AGE2`);
 }
+
+
+

@@ -50,24 +50,24 @@ export interface BfPart {
 /** ① 拒马位：完好的拒马 + 4 款打烂的拒马残骸，**5 款随机**
  *  （主人：「打烂的拒马残骸替换拒马」→「**拒马残骸和拒马随机**」） */
 export const BF_BARRICADES: BfPart[] = [
-    { key: 'STAKE', label: '拒马 · 鹿角完好', path: '/SUCAI_BATTLEFIELD/STAKE_BARRICADE/preview.png', w: 96, h: 76, ax: 57, ay: 73 },
-    { key: 'A', label: '拒马残骸 A · 长条散架', path: '/SUCAI_BATTLEFIELD/BARRICADE_RUBBLE_A/preview.png', w: 228, h: 56, ax: 113, ay: 56 },
-    { key: 'B', label: '拒马残骸 B · 斜倒', path: '/SUCAI_BATTLEFIELD/BARRICADE_RUBBLE_B/preview.png', w: 164, h: 96, ax: 80, ay: 95 },
-    { key: 'C', label: '拒马残骸 C · 堆成一堆', path: '/SUCAI_BATTLEFIELD/BARRICADE_RUBBLE_C/preview.png', w: 100, h: 120, ax: 66, ay: 118 },
-    { key: 'D', label: '拒马残骸 D · 散开', path: '/SUCAI_BATTLEFIELD/BARRICADE_RUBBLE_D/preview.png', w: 176, h: 88, ax: 89, ay: 88 },
+    { key: 'STAKE', label: '拒马   鹿角完好', path: '/SUCAI_BATTLEFIELD/STAKE_BARRICADE/preview.png', w: 96, h: 76, ax: 57, ay: 73 },
+    { key: 'A', label: '拒马残骸 A   长条散架', path: '/SUCAI_BATTLEFIELD/BARRICADE_RUBBLE_A/preview.png', w: 228, h: 56, ax: 113, ay: 56 },
+    { key: 'B', label: '拒马残骸 B   斜倒', path: '/SUCAI_BATTLEFIELD/BARRICADE_RUBBLE_B/preview.png', w: 164, h: 96, ax: 80, ay: 95 },
+    { key: 'C', label: '拒马残骸 C   堆成一堆', path: '/SUCAI_BATTLEFIELD/BARRICADE_RUBBLE_C/preview.png', w: 100, h: 120, ax: 66, ay: 118 },
+    { key: 'D', label: '拒马残骸 D   散开', path: '/SUCAI_BATTLEFIELD/BARRICADE_RUBBLE_D/preview.png', w: 176, h: 88, ax: 89, ay: 88 },
 ];
 
 /** ② 尸体 —— 2 款随机（主人指的「木棍插着一个尸体」两版） */
 export const BF_CORPSES: BfPart[] = [
-    { key: 'IMPALED_ANT', label: '尸体 · 木棍插着·古典', path: '/SUCAI_BATTLEFIELD/IMPALED_CORPSE_ANT/preview.png', w: 24, h: 116, ax: 16, ay: 114 },
-    { key: 'IMPALED', label: '尸体 · 木棍插着·通用', path: '/SUCAI_BATTLEFIELD/IMPALED_CORPSE/preview.png', w: 24, h: 112, ax: 12, ay: 112 },
+    { key: 'IMPALED_ANT', label: '尸体   木棍插着 古典', path: '/SUCAI_BATTLEFIELD/IMPALED_CORPSE_ANT/preview.png', w: 24, h: 116, ax: 16, ay: 114 },
+    { key: 'IMPALED', label: '尸体   木棍插着 通用', path: '/SUCAI_BATTLEFIELD/IMPALED_CORPSE/preview.png', w: 24, h: 112, ax: 12, ay: 112 },
 ];
 
 /** ③ 骨骸 —— 3 款随机（放大逐张比对过，确实是三件不同的东西） */
 export const BF_BONES: BfPart[] = [
-    { key: 'BONES_PLAIN', label: '骨骸 · 白骨（旁落一矛）', path: '/SUCAI_BATTLEFIELD/SKELETON_BATTLEFIELD/preview.png', w: 76, h: 44, ax: 31, ay: 36 },
-    { key: 'BONES_CIVILIAN', label: '骨骸 · 带腐肉（旁落一剑）', path: '/SUCAI_BATTLEFIELD/SKELETON_CIVILIAN/preview.png', w: 80, h: 44, ax: 33, ay: 38 },
-    { key: 'BONES_SOLDIER', label: '骨骸 · 阵亡甲士（带圆盾）', path: '/SUCAI_BATTLEFIELD/SKELETON_SOLDIER/preview.png', w: 84, h: 68, ax: 28, ay: 68 },
+    { key: 'BONES_PLAIN', label: '骨骸   白骨（旁落一矛）', path: '/SUCAI_BATTLEFIELD/SKELETON_BATTLEFIELD/preview.png', w: 76, h: 44, ax: 31, ay: 36 },
+    { key: 'BONES_CIVILIAN', label: '骨骸   带腐肉（旁落一剑）', path: '/SUCAI_BATTLEFIELD/SKELETON_CIVILIAN/preview.png', w: 80, h: 44, ax: 33, ay: 38 },
+    { key: 'BONES_SOLDIER', label: '骨骸   阵亡甲士（带圆盾）', path: '/SUCAI_BATTLEFIELD/SKELETON_SOLDIER/preview.png', w: 84, h: 68, ax: 28, ay: 68 },
 ];
 
 export interface BfExtraKind {
@@ -80,7 +80,7 @@ export interface BfExtraKind {
 export const BF_EXTRA_KINDS: BfExtraKind[] = [
     {
         key: 'torch', label: '火把', variants: [
-            { key: 'TORCH_A', label: '火把 · 细', path: '/SUCAI_BATTLEFIELD/TORCH_A/preview.png', w: 16, h: 68, ax: 8, ay: 68 },
+            { key: 'TORCH_A', label: '火把   细', path: '/SUCAI_BATTLEFIELD/TORCH_A/preview.png', w: 16, h: 68, ax: 8, ay: 68 },
             { key: 'TORCH_B', label: '火把', path: '/SUCAI_BATTLEFIELD/TORCH_B/preview.png', w: 28, h: 92, ax: 16, ay: 92 },
         ],
     },
@@ -98,13 +98,13 @@ export const BF_EXTRA_KINDS: BfExtraKind[] = [
     //     **已不再进战场**（抽签时被剔除）；条目留着只为不挪动随机序列 + 评估页对照。
     {
         key: 'flag', label: '残破战旗', variants: [
-            { key: 'N', label: '旗 N · 深灰破布（边缘撕裂）', path: '/SUCAI_BUILDING/SCEN_FLAG_N/preview.png', w: 80, h: 96, ax: 60, ay: 95 },
-            { key: 'R', label: '旗 R · 深色破旗（带白色兽纹）', path: '/SUCAI_BUILDING/SCEN_FLAG_R/preview.png', w: 80, h: 96, ax: 68, ay: 92 },
-            { key: 'D', label: '旗 D · 白旗破边', path: '/SUCAI_BUILDING/SCEN_FLAG_D/preview.png', w: 72, h: 84, ax: 64, ay: 81 },
-            { key: 'E', label: '旗 E · 白旗垂落破边', path: '/SUCAI_BUILDING/SCEN_FLAG_E/preview.png', w: 92, h: 104, ax: 58, ay: 101 },
-            { key: 'U', label: '旗 U · 白旗破边（小）', path: '/SUCAI_BUILDING/SCEN_FLAG_U/preview.png', w: 80, h: 96, ax: 60, ay: 95 },
-            { key: 'RITUAL_A', label: '旗 · 只剩旗杆（布没了）', path: '/SUCAI_BUILDING/SCEN_FLAG_RITUAL_A/preview.png', w: 76, h: 136, ax: 50, ay: 132 },
-            { key: 'MACEDONIAN', label: '旗 · 马其顿维吉纳太阳（完好·对照）', path: '/SUCAI_BUILDING/SCEN_FLAG_MACEDONIAN/preview.png', w: 76, h: 80, ax: 58, ay: 78 },
+            { key: 'N', label: '旗 N   深灰破布（边缘撕裂）', path: '/SUCAI_BUILDING/SCEN_FLAG_N/preview.png', w: 80, h: 96, ax: 60, ay: 95 },
+            { key: 'R', label: '旗 R   深色破旗（带白色兽纹）', path: '/SUCAI_BUILDING/SCEN_FLAG_R/preview.png', w: 80, h: 96, ax: 68, ay: 92 },
+            { key: 'D', label: '旗 D   白旗破边', path: '/SUCAI_BUILDING/SCEN_FLAG_D/preview.png', w: 72, h: 84, ax: 64, ay: 81 },
+            { key: 'E', label: '旗 E   白旗垂落破边', path: '/SUCAI_BUILDING/SCEN_FLAG_E/preview.png', w: 92, h: 104, ax: 58, ay: 101 },
+            { key: 'U', label: '旗 U   白旗破边（小）', path: '/SUCAI_BUILDING/SCEN_FLAG_U/preview.png', w: 80, h: 96, ax: 60, ay: 95 },
+            { key: 'RITUAL_A', label: '旗   只剩旗杆（布没了）', path: '/SUCAI_BUILDING/SCEN_FLAG_RITUAL_A/preview.png', w: 76, h: 136, ax: 50, ay: 132 },
+            { key: 'MACEDONIAN', label: '旗   马其顿维吉纳太阳（完好 对照）', path: '/SUCAI_BUILDING/SCEN_FLAG_MACEDONIAN/preview.png', w: 76, h: 80, ax: 58, ay: 78 },
         ],
     },
 ];

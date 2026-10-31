@@ -1413,6 +1413,37 @@ export class GlobalUnitRenderer {
     }
 
     /**
+     * 🔴 [2026-10-31 主人令「请把海战改为只显示双方的旗舰对战，就是双方只显示一艘船」
+     *    「就是海战的时候。其他行驶的时候不要动。只是海战的时候。」]
+     *
+     * 本帧是不是**海战** ＝ 战略地图上的「舰队 vs 舰队」野战（与 ZoomController 里海战同口径：
+     * 自己在海上、这场是野战、对面也全是舰队）。舰队按这个判据收成旗舰一艘。
+     *
+     * ⚠️ 与 getNavalFieldBattlePose 的区别：那个还叠了「攻守双方都要有武将」与轨道机动的闸门，
+     *    是**演出**的闸门；「海战只显示一艘旗舰」是**画面规格**，非双将的海战同样要符合，
+     *    所以这里只判形态，不判双将。
+     */
+    private isNavalFleetBattle(unit: IAnimatedUnit): boolean {
+        if (this.isBattleScene13()) return false;
+        if (!unit.isAttacking || unit.currentBattleType !== 'field' || !unit.isOnSea) return false;
+        const fields: any[] = (window as any).game?.combatSystem?.getActiveBattleFields?.() ?? [];
+        for (const field of fields) {
+            if (!field || field.isOver || field.type !== 'field') continue;
+            const attackers: any[] = field.getAttackerUnits?.() ?? [];
+            const defenders: any[] = field.getDefenderUnits?.() ?? [];
+            if (attackers.length === 0 || defenders.length === 0) continue;
+            const inField = [...attackers, ...defenders].some((u: any) => u?.id === unit.id);
+            if (!inField) continue;
+            const isFleet = (battleUnit: any): boolean => {
+                const entity = battleUnit?.getEntity?.() ?? battleUnit;
+                return entity?.isOnSea === true && entity?.isDestroyed !== true;
+            };
+            return attackers.every(isFleet) && defenders.every(isFleet);
+        }
+        return false;
+    }
+
+    /**
      * [2026-08-30 海战演出·档1] 海军野战对射。
      * 普通海战向敌舰位置射击；纯舰队野战则从双鱼机动的实时屏幕位置互射。
      * 炮弹（cannon，2.6s 节流对齐 naval_cannon_fire）+ 箭矢（arrow，1.2s 节流对齐
@@ -2668,6 +2699,11 @@ export class GlobalUnitRenderer {
                     // 🔴 [2026-09-24] 乱斗期玩家所随军团也走长蛇阵：只看 columnMarch（它只会打在玩家所随军团上）
                     !this.isBattleScene13()
                         && (unit as { columnMarch?: boolean }).columnMarch === true,
+                    // 🔴 [2026-10-31 主人令「海战只显示双方的旗舰对战，双方只显示一艘船；
+                    //    就是海战的时候，其他行驶的时候不要动」]
+                    //   只有「舰队 vs 舰队的野战」才收成旗舰一艘（isNavalFleetBattle）；
+                    //   海上行军 / 港口停泊不满足该判据，船数照旧按兵力。
+                    this.isNavalFleetBattle(unit),
                 );
             } else {
                 // 🔴 [2026-09-24 主人报「旗舰往北，其他的船为什么不在后面跟着？」]

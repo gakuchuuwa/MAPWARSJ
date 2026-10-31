@@ -308,7 +308,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '古典时代华夏军团', civ: '中原', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
-        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         commanderUnit: 'hero_whitetigeryan',
@@ -325,7 +325,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '封建时代中原军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
-        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
         commanderUnit: 'hero_guanyu',
@@ -342,7 +342,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '城堡时代中华军团', civ: '中原', age: 'castle', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
-        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         commanderUnit: 'hero_guanyu',
@@ -359,7 +359,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '帝国时代中国军团', civ: '中原', age: 'imperial', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
-        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'DRAGON_SHIP',
         commanderUnit: 'hero_guanyu',
@@ -3193,7 +3193,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '古典时代普鲁战象军团', civ: '普鲁', age: 'antiquity', deStyle: 'PURU', region: 'PURU' as RegionType,
         buildingStyle: 'PURU',
-        castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁·南亚 旁遮普红砂岩堡',
+        castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁南亚 旁遮普红砂岩堡',
         formationMode: 'triangle',
         shipId: 'MONOREME',
         commanderUnit: 'porus_elephant',
@@ -3213,7 +3213,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '封建时代沙希军团', civ: '普鲁', age: 'feudal', deStyle: 'PURU', region: 'PURU' as RegionType,
         buildingStyle: 'PURU',
-        castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁·南亚 旁遮普红砂岩堡',
+        castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁南亚 旁遮普红砂岩堡',
         formationMode: 'triangle',
         shipId: 'INCENDIARY_RAFT',
         commanderUnit: 'hero_mihirabhoja',
@@ -3232,7 +3232,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '城堡时代五河军团', civ: '普鲁', age: 'castle', deStyle: 'PURU', region: 'PURU' as RegionType,
         buildingStyle: 'PURU',
-        castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁·南亚 旁遮普红砂岩堡',
+        castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁南亚 旁遮普红砂岩堡',
         formationMode: 'triangle',
         shipId: 'INCENDIARY_SHIP',
         commanderUnit: 'hero_babur',
@@ -3249,7 +3249,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '帝国时代旁遮普军团', civ: '普鲁', age: 'imperial', deStyle: 'PURU', region: 'PURU' as RegionType,
         buildingStyle: 'PURU',
-        castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁·南亚 旁遮普红砂岩堡',
+        castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁南亚 旁遮普红砂岩堡',
         formationMode: 'fish_scale',
         shipId: 'HEAVY_INCENDIARY_SHIP',
         commanderUnit: 'porus_elephant',

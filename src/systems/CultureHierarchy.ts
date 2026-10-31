@@ -68,7 +68,7 @@ export const CULTURE_62_GROUPS: readonly CultureGroup[] = [
         deStyle: 'ASIA',
         branches: [
             { key: 'JAPAN',     deStyle: 'ASIA', castle: 'ASIA_CASTLE_AGE3', label: '🏯 日本（重檐天守阁）' },
-            { key: 'CENTRAL',   deStyle: 'ASIA', castle: 'CHIN_CASTLE_AGE3', label: '🏯 中原（北方华北·汉唐城楼）' },
+            { key: 'CENTRAL',   deStyle: 'ASIA', castle: 'CHIN_CASTLE_AGE3', label: '🏯 中原（北方华北汉唐城楼）' },
             { key: 'WEI',       deStyle: 'ASIA', castle: 'WEI_CASTLE_AGE3',  label: '🏯 河朔（中原高台阙楼）' },
             { key: 'JIANGNAN',  deStyle: 'ASIA', castle: 'WU_CASTLE_AGE3',   label: '🏯 江南（江南水榭坞堡）' },
             { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',  label: '🏯 巴蜀（巴蜀剑阁木关）' },
@@ -108,7 +108,7 @@ export const CULTURE_62_GROUPS: readonly CultureGroup[] = [
         group: '🏛️ EAST 东南欧 (3套)',
         deStyle: 'EAST',
         branches: [
-            { key: 'BYZANTINE', deStyle: 'EAST', castle: 'BYZA_CASTLE_AGE3', label: '🏛️ 拜占庭（东罗马·希腊语帝国要塞）' },
+            { key: 'BYZANTINE', deStyle: 'EAST', castle: 'BYZA_CASTLE_AGE3', label: '🏛️ 拜占庭（东罗马希腊语帝国要塞）' },
             { key: 'ARMENIANS', deStyle: 'EAST', castle: 'ARME_CASTLE_AGE3', label: '⚔️ 亚美尼亚（高山石堡）' },
             { key: 'GEORGIANS', deStyle: 'EAST', castle: 'GEOR_CASTLE_AGE3', label: '⚔️ 格鲁吉亚（高加索石碉）' },
         ],

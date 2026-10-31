@@ -2,6 +2,8 @@
  * 海军逐舰阵亡状态（2026-07-18；2026-08-19 改「兵力动态纵队舰队」）
  * 参照 LegionPhalanxStateManager 的 ALIVE→DYING→DEAD 三级，
  * 海军按兵力定船数（§3.1 档位表），战中按 troops 比例逐舰阵亡，且**从队尾往前沉**。
+ * 🔴 例外（2026-10-31 主人令）：**海战（舰队 vs 舰队的野战）只显示旗舰一艘**——
+ *    开打即裁成 1 艘（见 collapseToFlagship），行军 / 停泊照旧按兵力档位。
  */
 
 export interface NavalShipSlot {
@@ -88,6 +90,25 @@ export class NavalPhalanxStateManager {
     }
 
     /**
+     * 海战只留旗舰（🔴 2026-10-31 主人令「把海战改为只显示双方的旗舰对战，就是双方只显示一艘船；
+     * 就是海战的时候，其他行驶的时候不要动」）。
+     *
+     * 把编队压成 1 艘：索引 0 的旗舰保留原状态（ALIVE/DYING 都照留，沉没动画不被截断），
+     * 其余僚舰直接退出编队 —— 海战画面里双方各只有一艘旗舰。只在「刚进入海战」那一刻调一次；
+     * 战斗中本来就不重建编队（见 update 里 `!isFighting` 那道门），所以 1 艘会一直保持到脱战。
+     */
+    private static collapseToFlagship(state: NavalUnitState, tick: number): void {
+        if (state.shipCount === 1 && state.ships.length === 1) return;
+        const flagship = state.ships[0];
+        state.ships = [
+            flagship && flagship.state !== 'DEAD'
+                ? flagship
+                : { state: 'ALIVE', stateStartTime: tick, deathDirection: Math.floor(Math.random() * 8) },
+        ];
+        state.shipCount = 1;
+    }
+
+    /**
      * 每帧更新：按 troops 比例计算存活舰数，逐舰转入 DYING。
      * 与陆军一致：每帧最多 1 艘。逐舰阵亡从**队尾（最大索引）往前**——
      * 旗舰（索引 0）最后沉，对应「只剩旗舰浴血苦战」。
@@ -97,11 +118,20 @@ export class NavalPhalanxStateManager {
         troops: number,
         isFighting: boolean,
         tick: number,
+        /**
+         * 🔴 [2026-10-31 主人令「海战只显示双方的旗舰对战，就是双方只显示一艘船」「其他行驶的时候不要动」]
+         * 是不是海战（舰队 vs 舰队的野战，判据见 GlobalUnitRenderer.isNavalFleetBattle）。
+         * 双将海战里渲染端会把 ATTACK 演成 MOVE 传进来，所以 isFighting 抓不到它，必须单独给标记。
+         * 为 true 时整支舰队按「旗舰一艘」处理（见 collapseToFlagship）。
+         */
+        navalBattle = false,
     ): NavalUnitState {
+        const inCombat = isFighting || navalBattle;
         let state = this.states.get(unitId);
 
         if (!state) {
-            const shipCount = shipCountForTroops(troops);
+            // 🔴 [2026-10-31] 若第一帧就是海战中建的 state，同样只给旗舰一艘。
+            const shipCount = inCombat ? 1 : shipCountForTroops(troops);
             const ships: NavalShipSlot[] = [];
             for (let i = 0; i < shipCount; i++) {
                 ships.push({
@@ -115,7 +145,7 @@ export class NavalPhalanxStateManager {
                 shipCount,
                 maxTroops: troops,
                 lastTroops: troops,
-                isFighting,
+                isFighting: inCombat,
                 justSank: 0,
                 trail: [],
             };
@@ -135,7 +165,9 @@ export class NavalPhalanxStateManager {
         //   原来直接重建 → 队尾船凭空消失。现在多出来的队尾船走 DYING 渐隐（fadeOnly，不下沉；海战才下沉），
         //   淡完（DEAD）再重建；沉没期间不重建，编队长度保持不变。
         state.justSank = 0;
-        if (!isFighting && troops > 0) {
+        // 🔴 [2026-10-31] 海战期间（inCombat）一律不重建：以「旗舰一艘」为准，
+        //   否则每帧会被 shipCountForTroops 拉回 2~8 艘，海战画面又变回船队。
+        if (!inCombat && troops > 0) {
             const want = shipCountForTroops(troops);
             const hasSunk = state.ships.some((sh) => sh.state !== 'ALIVE');
             const hasDying = state.ships.some((sh) => sh.state === 'DYING');
@@ -164,11 +196,21 @@ export class NavalPhalanxStateManager {
             }
         }
 
-        if (isFighting && !state.isFighting) {
+        if (inCombat && !state.isFighting) {
             state.isFighting = true;
             state.maxTroops = troops;
-        } else if (!isFighting && state.isFighting) {
+        } else if (!inCombat && state.isFighting) {
             state.isFighting = false;
+        }
+
+        // 🔴 [2026-10-31 主人令「请把海战改为只显示双方的旗舰对战，就是双方只显示一艘船」
+        //    「就是海战的时候。其他行驶的时候不要动。只是海战的时候。」]
+        //   海战（navalBattle，判据由渲染端给）= 编队裁成**旗舰一艘**，此后编队间距、开火、
+        //   沉没全部按 1 艘走：旗舰被击沉（兵力归零）= 全队覆没。幂等，每帧调用无副作用。
+        //   ⚠️ 只认 navalBattle，不拿 isFighting 代替 —— 港口挨打之类的 ATTACK/DAMAGE 不算海战。
+        if (navalBattle) {
+            state.maxTroops = Math.max(state.maxTroops, troops);
+            NavalPhalanxStateManager.collapseToFlagship(state, tick);
         }
 
         // 战中减员：按健康比计算应存活舰数

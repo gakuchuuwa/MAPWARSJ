@@ -9291,6 +9291,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -10
+        },
+        "/assets/INDIA/bfe3_25.png": {
+            "scale": 0.96,
+            "offsetX": 11,
+            "offsetY": -21
+        },
+        "/assets/INDIA/zhuluo_lajindela.png": {
+            "scale": 1.28,
+            "offsetX": 13,
+            "offsetY": -29
+        },
+        "/assets/INDIA/zhelouqi_puliteweilajie.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/TURKS/baizanting_nikephoros_phokas.png": {
+            "scale": 1.36,
+            "offsetX": -6,
+            "offsetY": 39
         }
     },
     "folderGuides": {

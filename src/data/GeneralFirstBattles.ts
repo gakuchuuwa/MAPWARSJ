@@ -100,7 +100,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe_kehaya_mustafa',
         enemyTroops: 10000,
         introLines: [
-            { speaker: 'general', text: '胡尔希德帕夏的副帅凯哈亚·穆斯塔法率五千奥斯曼与阿尔巴尼亚军从特里波利察出击，三路围攻瓦尔泰齐。我希腊军已在村外山地设防，你可愿随我据险迎敌？' },
+            { speaker: 'general', text: '胡尔希德帕夏的副帅凯哈亚穆斯塔法率五千奥斯曼与阿尔巴尼亚军从特里波利察出击，三路围攻瓦尔泰齐。我希腊军已在村外山地设防，你可愿随我据险迎敌？' },
             { speaker: 'player', text: '愿随科洛科特罗尼斯死守瓦尔泰齐，击退穆斯塔法！' },
         ],
     },
@@ -510,7 +510,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe2_nidintu_bel',
         enemyTroops: 35000,
         introLines: [
-            { speaker: 'general', text: '巴比伦叛首尼丁图·贝尔妄称先王之子，据巴比伦举兵谋逆。我亲率不死军与波斯主力西征讨逆，你可愿随王师出战？' },
+            { speaker: 'general', text: '巴比伦叛首尼丁图贝尔妄称先王之子，据巴比伦举兵谋逆。我亲率不死军与波斯主力西征讨逆，你可愿随王师出战？' },
             { speaker: 'player', text: '愿奉万王之王号令，随大军西征巴比伦！' },
         ],
     },
@@ -1586,7 +1586,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '异教徒肆虐圣殿、逼迫族人弃绝律法！主赐我等刚毅之力，壮士，随我伏击峡谷，斩杀塞琉古大将！' },
-            { speaker: 'player', text: '愿随犹大·马加比于伯特和仑就地奋战，斩杀塞隆！' },
+            { speaker: 'player', text: '愿随犹大马加比于伯特和仑就地奋战，斩杀塞隆！' },
         ],
     },
 
@@ -2305,7 +2305,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe3_73',
         enemyTroops: 50000,
         introLines: [
-            { speaker: 'general', text: '腐朽的安息王廷已经走到尽头，阿胡拉·马兹达注视着我们！勇士，随我率波斯萨珊铁骑席卷平原，开创新纪元！' },
+            { speaker: 'general', text: '腐朽的安息王廷已经走到尽头，阿胡拉马兹达注视着我们！勇士，随我率波斯萨珊铁骑席卷平原，开创新纪元！' },
             { speaker: 'player', text: '愿随阿尔达希尔大王就地冲锋，击斩阿尔达班四世、开创萨珊波斯帝国！' },
         ],
     },
@@ -3980,7 +3980,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'bfe_abdullah_ali',   // 🔴 [2026-10-25 按史] 754 尼西比斯＝阿卜杜拉（原填 891–961 的拉赫曼三世，差一个半世纪）
         enemyTroops: 40000,
         introLines: [
-            { speaker: 'general', text: '叔父阿卜杜拉勾结叙利亚残党图谋篡夺大统！阿布·穆斯林大军已出，勇士，随真主哈里发扫除阿卜杜拉党羽巩固王权！' },
+            { speaker: 'general', text: '叔父阿卜杜拉勾结叙利亚残党图谋篡夺大统！阿布穆斯林大军已出，勇士，随真主哈里发扫除阿卜杜拉党羽巩固王权！' },
             { speaker: 'player', text: '愿随曼苏尔将军共赴尼西比斯之战，大破阿卜杜拉军！' },
         ],
     },
@@ -5056,7 +5056,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '教皇与施瓦本德意志重剑士视我们为狡黠盗贼，但诺曼骑士无坚不摧！勇士们，拔出长剑随罗贝尔全线冲锋，生擒教皇！' },
-            { speaker: 'player', text: '愿随罗贝尔·吉斯卡尔将军共赴奇维塔特战役，大破教皇教宗国神圣联军敌军！' },
+            { speaker: 'player', text: '愿随罗贝尔吉斯卡尔将军共赴奇维塔特战役，大破教皇教宗国神圣联军敌军！' },
         ],
     },
 
@@ -6130,7 +6130,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 15000,
         introLines: [
             { speaker: 'general', text: '英格兰骑士半数过桥乱不成队，木桥狭窄退路尽断！为了苏格兰的自由，高地勇士们，端平巨矛随我自山顶冲锋，斩尽侵略者！' },
-            { speaker: 'player', text: '愿随威廉·华莱士将军共赴斯特灵桥之战，大破英格兰王国敌军！' },
+            { speaker: 'player', text: '愿随威廉华莱士将军共赴斯特灵桥之战，大破英格兰王国敌军！' },
         ],
     },
 
@@ -6695,7 +6695,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 10000,
         introLines: [
             { speaker: 'general', text: '罗马教皇与皇帝发十字军践踏波希米亚！独眼杰斯卡以战车结堡垒铁链相扣，胡斯勇士，手握铁枷战锤随我砸碎骑士铠甲！' },
-            { speaker: 'player', text: '愿随扬·杰式卡将军共守维特科夫山战役，大破神圣罗马帝国敌军！' },
+            { speaker: 'player', text: '愿随扬杰式卡将军共守维特科夫山战役，大破神圣罗马帝国敌军！' },
         ],
     },
 
@@ -8546,7 +8546,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '阿淑尔至高之神赐予本王统御上美索不达米亚之权柄！幼发拉底河重镇马里指日可下，亚述的勇士，持铜矛随宇宙之王破城立霸！' },
-            { speaker: 'player', text: '愿随沙姆希·阿达德将军共赴廷巴克图之战，大破马里王国！' },
+            { speaker: 'player', text: '愿随沙姆希阿达德将军共赴廷巴克图之战，大破马里王国！' },
         ],
     },
 
@@ -9140,7 +9140,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'gen_afonso_henriques',
         enemyTroops: 15000,
         introLines: [
-            { speaker: 'general', text: '阿方索·恩里克斯僭称葡萄牙之王，竟敢来犯！穆拉比特的军旗从未退过，壮士，随本埃米尔于奥里基迎战，叫他片甲不回！' },
+            { speaker: 'general', text: '阿方索恩里克斯僭称葡萄牙之王，竟敢来犯！穆拉比特的军旗从未退过，壮士，随本埃米尔于奥里基迎战，叫他片甲不回！' },
             { speaker: 'player', text: '愿随阿里埃米尔决战奥里基，击破葡萄牙军！' },
         ],
     },
@@ -9902,8 +9902,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'babuer_babuer',
         enemyTroops: 20000,
         introLines: [
-            { speaker: 'general', text: '喀布尔斯坦巴布尔引军来犯帕尼帕特原野，易卜拉欣·洛迪今率众迎战！壮士，随本将列阵，一战破敌！' },
-            { speaker: 'player', text: '愿随易卜拉欣·洛迪将军于第一次帕尼帕特战役决战，击破巴布尔！' },
+            { speaker: 'general', text: '喀布尔斯坦巴布尔引军来犯帕尼帕特原野，易卜拉欣洛迪今率众迎战！壮士，随本将列阵，一战破敌！' },
+            { speaker: 'player', text: '愿随易卜拉欣洛迪将军于第一次帕尼帕特战役决战，击破巴布尔！' },
         ],
     },
     gen_shashanka: {
@@ -11401,7 +11401,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'dulan_muzaffarkhan',
         enemyTroops: 10000,
         introLines: [
-            { speaker: 'general', text: '穆扎法尔汗据木尔坦坚堡，屡附喀布尔而叛我。今遣米斯尔·迪万·昌德统兵，掘壕断水、以重炮毁其女墙——降者免死。' },
+            { speaker: 'general', text: '穆扎法尔汗据木尔坦坚堡，屡附喀布尔而叛我。今遣米斯尔迪万昌德统兵，掘壕断水、以重炮毁其女墙——降者免死。' },
             { speaker: 'player', text: '愿随兰季特辛格攻木尔坦，平阿富汗守军！' },
         ],
     },
@@ -11534,7 +11534,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 3000,
         introLines: [
             { speaker: 'general', text: '条顿骑士铁甲楔阵最利冲阵，然湖冰滑薄、阵形难展。中军退诱其入冰，两翼合围，专斫其马足！' },
-            { speaker: 'player', text: '愿随亚历山大·涅夫斯基诱敌入冰，歼灭条顿骑士团！' },
+            { speaker: 'player', text: '愿随亚历山大涅夫斯基诱敌入冰，歼灭条顿骑士团！' },
         ],
     },
 
