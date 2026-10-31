@@ -86,6 +86,15 @@ const LIVELIHOOD_SPECS = extractConst<Record<string, { animals: string[] }>>('LI
 
 // 战略森林掩膜（R = RESOLVE 群系编号，G = 树冠密度%），取值公式与 StrategicForestMask.ts 一致。
 const mask = await sharp(path.join(ROOT, 'public/world/strategic-forest-mask.png')).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+// 森林模型（口径 C）：注入潜在植被与 HYDE 开垦两张掩膜，战略「成不成林」与战术「模板树留多少」都按游戏同一函数算
+const FM = await mod('src/map/StrategicForestMask.ts');
+FM.setStrategicForestMaskData(new Uint8ClampedArray(mask.data), mask.info.width, mask.info.height);
+const LU = await mod('src/map/LandUseMask.ts');
+const lu = await sharp(path.join(ROOT, 'public/world/land-use-hyde.png')).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+LU.setLandUseMaskData(new Uint8ClampedArray(lu.data), lu.info.width, lu.info.height);
+const { forestCoverAt, forestPotentialAt, tacticalTreeKeepRatio, FOREST_COVER_THRESHOLD } = await mod('src/world/environment/forestModel.ts');
+const yearAt = process.argv.indexOf('--year');
+const AUDIT_YEAR = yearAt > 0 ? Number(process.argv[yearAt + 1]) : 1000;
 function maskAt(lat: number, lng: number): { biome: number; canopy: number } {
     const { width, height } = mask.info;
     const x = ((Math.floor(((lng + 180) / 360) * width) % width) + width) % width;
@@ -144,8 +153,12 @@ for (const c of CITIES_V2 as any[]) {
     const badWild = [...pool.land, ...pool.birds].filter((sp) => !animalNativeAt(sp, lat, lng, theme.baseTerrain));
 
     const { canopy } = maskAt(lat, lng);
-    const forestClash = canopy >= 22 && OPEN_BIOMES.has(biome) ? '战略有林·战术开阔'
-        : canopy < 8 && FOREST_BIOMES.has(biome) ? '战略无林·战术森林'
+    // 战略成林 = 森林模型 ≥ 门槛；战术 = 模板树保留比例。两边同查 forestModel，按设计应 0 不一致
+    const cover = forestCoverAt(lat, lng, AUDIT_YEAR, elev) ?? 0;
+    const keep = tacticalTreeKeepRatio(lat, lng, AUDIT_YEAR, elev);
+    const potential = forestPotentialAt(lat, lng) ?? 0;
+    const forestClash = cover >= FOREST_COVER_THRESHOLD && keep < 0.6 ? '战略成林·战术砍光'
+        : potential > 0 && cover < FOREST_COVER_THRESHOLD / 2 && keep >= 0.95 ? '战略开阔·战术满林'
             : null;
 
     const livelihood = CULTURE_TO_CATEGORY[style] ?? 'farming_dry';

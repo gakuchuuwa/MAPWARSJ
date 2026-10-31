@@ -14,6 +14,9 @@ import { pickTree, type TreeSeason } from './TreeAssignment';
 import { bareSandRejectsTree, deTerrainIsForest, deTerrainRollTreeAsset, seasonalDeTree } from './Scene13DeTrees';
 import { deriveDeGroundTiles } from './Scene13DeGround';
 import { animalNativeAt, animalDeOf } from './Scene13Animals';
+import { tacticalTreeKeepRatio } from '../../world/environment/forestModel';
+import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
+import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { applyDeCityToGround } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { setCachedViennaMapData } from './Scene13SpriteCache';
@@ -296,6 +299,14 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
                     ? rawCalSeason
                     : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
+                // 🔴 2026-10-31 主人定森林口径 C：DE 模板的树按战场所在地「本该长的林 × 史实开垦」疏伐，
+                //    与战略植被层同查 forestModel（城边农耕区约留四成，深山老林全留；天然无林处不动）。
+                const gameYear = (window as any).game?.timeSystem?.getYear?.();
+                const treeKeep = tacticalTreeKeepRatio(
+                    mapLat, mapLng,
+                    typeof gameYear === 'number' && Number.isFinite(gameYear) ? gameYear : 0,
+                    LandSeaSystem.getSampler().getElevationSync(mapLat, mapLng),
+                );
                 const decorSet = groundDecorFor(baseTerrain);
                 const isSnowBase = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf'
                     || baseTerrain === 'snd' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
@@ -458,6 +469,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                         }
                         const isTree = TREE_RE.test(asset);
                         if (isTree) {
+                            // ⓪ 按森林模型疏伐（位置哈希定，同一场战斗每次砍同一批）
+                            if (treeKeep < 1 && (Math.abs(Math.round(ob.x * 31 + ob.y * 57)) % 1000) / 1000 >= treeKeep) continue;
                             // ① 水格不长树（含 DE 水地形与水密度场 > 0.38 的水面）
                             if (WATER_TERRAINS.has(tid) || glLayer.isWaterAt(sx, sy, VW, VH)) continue;
                             // ② 森林格直接由脚下 DE 森林地形 id 按 dat 密度表决定树种（避免旧烘焙 BFS 跨地形吞并变体林）
@@ -465,6 +478,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                                 const roll = Math.abs(Math.round(ob.x * 73 + ob.y * 151)) % 1000;
                                 asset = deTerrainRollTreeAsset(tid, roll) ?? asset;
                             }
+                            // ②-b 植物总表：不合本区的树（阿斯旺的桦、开普敦的意大利松…）换成本区主树种，与战略图同一组树种
+                            asset = plantRegionalizeTree(mapLat, mapLng, asset, (Math.abs(Math.round(ob.x * 89 + ob.y * 127)) % 1000) / 1000);
                             // ③ 纯沙地（DE 14 Desert / 2 Beach）只准长沙漠树种（棕榈/龙血树/金合欢…）；
                             //    松、桦、橡、枫这些温带/寒带树种长到沙地上就是「沙子里面长树」
                             if (bareSandRejectsTree(tid, asset)) continue;

@@ -1317,10 +1317,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'VIKI_CASTLE_AGE3', castleName: '维京 斯堪的纳维亚环形堡垒',
         formationMode: 'fish_scale',
         shipId: 'CATAPULT_GALLEON',
-        commanderUnit: 'hero_ulf',
+        commanderUnit: 'hero_franciscodeorellana',
         slots: [
             { type: 'heavy_pikeman', count: 3 },
-            { type: 'heavy_crossbowman', count: 4 },
+            { type: 'hand_cannoneer', count: 4 },
             { type: 'paladin', count: 2 },
         ],
     },

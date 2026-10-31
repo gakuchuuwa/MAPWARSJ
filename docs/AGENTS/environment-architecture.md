@@ -68,7 +68,8 @@
 |---|---|---|---|
 | 柯本气候 | Beck et al. 2023 | CC0 | 已有 `src/data/KoppenGeigerGrid.ts` |
 | 生态区 | RESOLVE Ecoregions 2017 | CC BY 4.0 | 只烘焙了森林部分，需补全 |
-| 树冠密度 | Hansen / UMD 2000 | CC BY 4.0 | 已有 `public/world/strategic-forest-mask.png` |
+| 树冠密度 | Hansen / UMD 2000 | CC BY 4.0 | 已有 `public/world/strategic-forest-mask.png`（只作参考，不再决定成林） |
+| 历史土地利用 | HYDE 3.3 | CC BY 4.0 | `public/world/land-use-hyde.png`（前 1000 / 1000 / 1500 年） |
 | 海域 | Natural Earth 10m marine polys | 公有领域 | 待下载 |
 | 海陆、海拔 | 现有 ESRI 掩膜、地形瓦片 | — | 已有 |
 
@@ -82,6 +83,11 @@
 
 每一步重跑实测；画面变化给主人看新旧并排图，画面过不过由主人判。
 
-## 七、待主人定的标准
+## 七、森林口径（2026-10-31 主人定 C）
 
-- **森林口径**：A 按气候本该长的（潜在植被）／B 按现代卫星树冠／C 潜在植被为底，据点周边按开垦减林。
+实际森林 = 本该长的林（RESOLVE 群系潜在植被）× (1 − 开垦程度)，统一入口 `src/world/environment/forestModel.ts`：
+- 开垦程度 = HYDE 3.3 史实土地利用（耕地＋牧场比例 × 3，随游戏年份在前 1000 / 1000 / 1500 年三个时间点插值，`public/world/land-use-hyde.png`，`tools/build-land-use-mask.py` 烘焙）⊕ 据点开垦圈（按城型半径，城心最多 60%）。
+- 只按据点画圈不行：会把华北、关中、恒河平原画回原始森林（离线实测）。
+- 战略植被层：实际森林 ≥ 0.4 才成片成林；战术战场：DE 模板树按 35% + 65% × min(1, 实际森林 ÷ 0.7) 疏伐，天然无林处不动。
+- 不再用 2000 年卫星树冠决定成不成林（那是现代开垦后的样子）。
+- HYDE 授权 CC BY 4.0，须注明：Klein Goldewijk et al. 2017/2024，doi:10.24416/UU01-94FNH0。

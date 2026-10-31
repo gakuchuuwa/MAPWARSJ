@@ -7658,7 +7658,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/ORIE/gen_cleitus.png": {
-            "scale": 0.94,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -9361,6 +9361,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.28,
             "offsetX": 1,
             "offsetY": -70
+        },
+        "/assets/ATHENIANS/gen_miltiades.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/GERMANIC/gen_charles_xii.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GERMANIC/bfe_sigismund.png": {
+            "scale": 1.16,
+            "offsetX": 14,
+            "offsetY": 25
         }
     },
     "folderGuides": {

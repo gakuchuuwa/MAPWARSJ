@@ -21,6 +21,16 @@ export function queryStrategicCanopyDensity(lat: number, lng: number): number {
     return store.pixels[(y * store.width + x) * 4 + 1] ?? 0;
 }
 
+/** 掩膜是否已载入（未载入时调用方保持旧逻辑，不按「全无森林」处理） */
+export function isStrategicForestMaskReady(): boolean {
+    return store !== null;
+}
+
+/** 命令行工具直接注入像素（与 WorldBaseMap.setWorldBaseData 同一做法） */
+export function setStrategicForestMaskData(pixels: Uint8ClampedArray, width: number, height: number): void {
+    store = { width, height, pixels };
+}
+
 export function loadStrategicForestMask(url = '/world/strategic-forest-mask.png'): Promise<boolean> {
     if (store) return Promise.resolve(true);
     if (loading) return loading;

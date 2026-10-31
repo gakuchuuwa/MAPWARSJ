@@ -344,6 +344,10 @@ export interface NatureMeta {
     box_h: number;
     anchor_x: number;
     anchor_y: number;
+    /** 🔴 2026-10-31 DE 原生帧数（动物支持降采样：尼斯湖水怪 180→45）。有它才能按 DE 原速播放 */
+    src_frames?: number;
+    /** 多行网格素材列数（如 BOX_TURTLES 30×6）；单行横条不填 */
+    cols?: number;
 }
 export interface NatureAsset {
     img: HTMLImageElement | null;

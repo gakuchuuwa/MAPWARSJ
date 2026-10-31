@@ -4103,6 +4103,10 @@ export class Scene13WarLayer {
                     anchor_x: d?.hx ?? 20,
                     anchor_y: d?.hy ?? 35,
                     frames: actMeta?.frames ?? 1,
+                    // 🔴 2026-10-31 主人报「尼斯湖水怪动作太快、动画没解析全」：
+                    //    DE 原生 180 帧的水怪素材被降采样成 45 帧（src_frames=180），
+                    //    仍按 15fps 播就是 DE 的 4 倍速；这里把原生帧数带上，播放端按比例还原速度。
+                    src_frames: actMeta?.src_frames ?? actMeta?.frames ?? 1,
                 };
                 na.meta = finalMeta;
                 const im = new Image();
@@ -4255,8 +4259,14 @@ export class Scene13WarLayer {
             //    叠加 s.frame 随机相位避免群体动物机械同步；其他植物/岩石/建筑保持静态。
             // 🔴 [2026-10-15 主人令「加快移动频率」] 移动（walk/run）帧率提到 24fps 匹配提速后的奔跑，
             //    idle 仍按 15fps（吃草/甩尾慢节奏）。
+            // 🔴 2026-10-31 主人报「尼斯湖水怪动作太快」：素材是**降采样**的（DE 原生 180 帧 → 抽出 45 帧），
+            //    直接按 15fps 播等于 4 倍速，所以按 frames/src_frames 把速度还原成 DE 原速
+            //    （水怪 45/180 → 3.75fps，一个完整的浮出—巡游—下潜循环 12 秒，与 DE 一致）。
             const act = s.asset.split('/')[1]?.split('_')[0];
-            const fps = (act === 'walk' || act === 'run') ? 24 : 15;
+            const baseFps = (act === 'walk' || act === 'run') ? 24 : 15;
+            const srcFrames = m.src_frames ?? m.frames;
+            const speedFactor = srcFrames > m.frames ? m.frames / srcFrames : 1;
+            const fps = baseFps * speedFactor;
             fr = Math.floor(this.battleSec * fps + s.frame) % m.frames;
         } else if (s.asset.startsWith('RESOURCE:') && /FISH|TURTLES/.test(s.asset) && m.frames > 1) {
             // 🔴 [2026-10-30] 水生资源（近岸鱼群跃水 / 海龟游弋）按 DE 15fps 循环播放，s.frame 作随机相位

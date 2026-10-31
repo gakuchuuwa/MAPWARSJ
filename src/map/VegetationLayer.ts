@@ -2,7 +2,7 @@ import L from 'leaflet';
 import { CITIES_V2 } from '../data/cities_v2';
 import { resolveTerrainTile } from '../ui/Scene13Biome';
 import { loadWorldBaseData, queryBaseTile, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
-import { pickTree, type TreeSeason } from '../ui/scene13/TreeAssignment';
+import type { TreeSeason } from '../ui/scene13/TreeAssignment';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { perfDoctor } from '../debug/PerfDoctor';
 import {
@@ -10,6 +10,10 @@ import {
     queryStrategicCanopyDensity,
     queryStrategicForestBiome,
 } from './StrategicForestMask';
+import { loadLandUseMask } from './LandUseMask';
+import { FOREST_COVER_THRESHOLD, forestCoverAt } from '../world/environment/forestModel';
+import { plantTreeAt } from '../world/environment/plantCatalog';
+import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
@@ -80,6 +84,12 @@ export const TREE_METAS: Record<string, TreeAssetMeta> = {
     CACTUS: { boxW: 60, boxH: 76, anchorX: 36, anchorY: 65, frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
     WAX_PALM: { boxW: 272, boxH: 288, anchorX: 180, anchorY: 264, frames: [0, 1, 2, 3] },
     BUSH_TREE_A: { boxW: 156, boxH: 104, anchorX: 86, anchorY: 74, frames: [0, 1, 2, 3] },
+    // 🔴 2026-10-31 植物总表新用到的五种（尺寸取各自 _meta.json；帧逐张看过，剔除枯木杆、贴地小灌丛、秋色帧）
+    SPRUCE: { boxW: 144, boxH: 196, anchorX: 96, anchorY: 176, frames: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 21, 23, 24] },
+    SPRUCE_SNOW: { boxW: 144, boxH: 184, anchorX: 100, anchorY: 168, frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+    JUNGLE: { boxW: 332, boxH: 236, anchorX: 132, anchorY: 200, frames: [21, 22, 23, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38] },
+    BUSH_TREE_B: { boxW: 156, boxH: 120, anchorX: 72, anchorY: 84, frames: [0, 2, 4, 6, 8, 10, 12, 14, 18, 20, 22, 24, 26, 28, 30, 36, 38, 40, 42, 44] },
+    BUSH_TREE_C: { boxW: 168, boxH: 104, anchorX: 92, anchorY: 64, frames: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26] },
     // 战役大树阔叶变体（精确锚定树干底座接地处，消除换季跳动）：
     SCENARIO_TREE_A: { boxW: 176, boxH: 172, anchorX: 112, anchorY: 148, frames: [0, 1, 2] },
     SCENARIO_TREE_B: { boxW: 164, boxH: 188, anchorX: 104, anchorY: 168, frames: [0, 1, 2] },
@@ -405,8 +415,19 @@ function forestClusterWeight(
     tile: string,
     canopyDensity: number,
     noiseVal: number,
+    /** 森林模型给的实际森林程度（潜在植被 × 史实开垦）；null = 掩膜未载入，走旧的卫星树冠逻辑 */
+    forestCover: number | null = null,
 ): number {
     if (NON_VEGETATION_TILES.has(tile) || biome === 13) return 0;
+
+    // 🔴 2026-10-31 主人定森林口径 C（本该长的林为底、按史实开垦减林）：成不成林只看森林模型，
+    //    与战术战场同源；不再用 2000 年卫星树冠（那是现代开垦后的样子）。
+    if (forestCover !== null) {
+        if (forestCover < FOREST_COVER_THRESHOLD) return 0;
+        if (noiseVal < 0.38) return 0;
+        const norm = Math.min(1, (forestCover - FOREST_COVER_THRESHOLD) / (1 - FOREST_COVER_THRESHOLD));
+        return (0.20 + 0.60 * norm) * Math.pow((noiseVal - 0.38) / 0.62, 1.25);
+    }
 
     const isForestBiome = RESOLVE_FOREST_BIOMES.has(biome);
     const isForestTile = BASE_FOREST_TILES.has(tile);
@@ -432,6 +453,11 @@ function forestClusterWeight(
     const clusterFactor = Math.pow((noiseVal - 0.38) / 0.62, 1.25);
 
     return baseWeight * clusterFactor;
+}
+
+function currentGameYear(): number {
+    const y = (window as any).game?.timeSystem?.getYear?.();
+    return typeof y === 'number' && Number.isFinite(y) ? y : 0;
 }
 
 function currentGameSeason(): number {
@@ -661,6 +687,11 @@ export class VegetationLayer {
         this.resize();
         this.render();
         void loadStrategicForestMask().then((ready) => {
+            if (!ready) return;
+            this.lastRenderKey = '';
+            this.scheduleRender();
+        });
+        void loadLandUseMask().then((ready) => {
             if (!ready) return;
             this.lastRenderKey = '';
             this.scheduleRender();
@@ -917,6 +948,8 @@ export class VegetationLayer {
         const inRange = zoom >= MIN_ZOOM && zoom <= MAX_ZOOM;
         this.canvas.style.display = inRange ? 'block' : 'none';
         if (!inRange) { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); this.lastRenderKey = ''; return; }
+        // 森林模型按史实开垦随年份变化：一次渲染取一次年份（换季重绘时自然跟上新年份）
+        const gameYear = currentGameYear();
 
         const size = this.map.getSize();
         const targetW = size.x + CANVAS_PAD_PX * 2;
@@ -1049,7 +1082,8 @@ export class VegetationLayer {
                 const clusterWeight = Math.max(
                     huntingCityBoost,
                     specialEco.weight,
-                    forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal),
+                    forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal,
+                        forestCoverAt(ptLatLng.lat, ptLatLng.lng, gameYear, elev)),
                 );
                 // 🔴 [2026-10-21 主人问「战略地图上的树该成片，还是该单个？」→ 成片]
                 //    原来按 clusterWeight 当概率逐格抽签（hash > weight 就留白）→ 林区里也是稀稀拉拉的孤树，像噪点。
@@ -1089,9 +1123,9 @@ export class VegetationLayer {
 
                     const resolveStrategicTreeForSeason = (s: TreeSeason): string => {
                         const isSnow = isPermSnowTile || (s === 3 && hasWinterSnowGround);
-                        // 🔴 传入夏季常态底图 treeTile 以命中 REGION_TREES 生态分区（保留各地区真实的针叶 vs 落叶阔叶树种比例），
-                        //    再按 isSnow 与战术 seasonalDeTree 同一套规则映射为 SNOW_PINE / SNOW_AUTUMN_OAK。
-                        const a = pickTree({ baseTile: treeTile, lat: curLatLng.lat, lng: curLatLng.lng, season: s, isSiege: false });
+                        // 🔴 2026-10-31 主人令「植被符合区域，战略和战术保持一致」：树种从植物总表本区主树种里按权重挑，
+                        //    季节换装用战术同一个 seasonalDeTree；下面的积雪映射照旧。
+                        const a = seasonalDeTree(plantTreeAt(curLatLng.lat, curLatLng.lng, hash(gx, gy, i * 13 + 71)), s, false);
 
                         if (a === 'DEAD_TREE') return isSnow ? 'SNOW_PINE' : 'BUSH_TREE_A';
                         if (a === 'BAOBAB' && (curLatLng.lat >= 11.5 || (curLatLng.lng >= 31.0 && ((gx + gy) & 1) === 0))) {
@@ -1112,6 +1146,7 @@ export class VegetationLayer {
                             ) {
                                 return 'SNOW_PINE';
                             }
+                            if (a === 'SPRUCE') return 'SPRUCE_SNOW';   // 与战术 seasonalDeTree 同：云杉积雪换积雪云杉
                             if (a === 'BIRCH_WINTER' || a === 'BIRCH_AUTUMN' || a === 'BIRCH_GREEN') {
                                 return (Math.abs(curLatLng.lat) > 46 || wf === 2 || (wf === 3 && ((gx + gy + i) & 1) === 0))
                                     ? 'SNOW_PINE'
