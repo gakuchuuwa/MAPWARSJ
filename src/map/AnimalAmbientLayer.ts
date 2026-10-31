@@ -4,9 +4,10 @@ import type { GameMap } from './GameMap';
 import { LandSeaSystem } from '../world/land-sea';
 import { CITIES_V2 } from '../data/cities_v2';
 import { strategicSpriteScale } from './strategicSpriteScale';
-import { FAUNA_AREA_RATIO, WILD_LAND_PER_SQ_DEG, animalHerdSize, animalNeedsCoast, wildPoolAt } from '../world/environment/animalCatalog';
+import { FAUNA_AREA_RATIO, WILD_LAND_PER_SQ_DEG, animalHerdSize, animalNeedsCoast, animalNeedsRiver, wildPoolAt } from '../world/environment/animalCatalog';
 import { ENV_ZONE_FAUNA_DENSITY, envZoneAt } from '../world/environment/envZones';
 import { collectHumanPresence } from './strategicPresence';
+import { isNearStrategicRiver, nearestStrategicRiver } from './StrategicRiverProximity';
 
 /**
  * AnimalAmbientLayer — 战略地图「野生动物生态」环境层（2026-08-31 主人定稿）。
@@ -164,6 +165,10 @@ const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s
 //    本层不再自写生物区和物种池（原 18 区经纬度框已删）。战术战查同一张表，两边天然一致。
 /** 海岸物种（北极熊、海象、海豹、企鹅）落点四向 0.2° 内要有海 */
 const COAST_PROBE_DEG = 0.2;
+/** 淡水河岸物种（鳄鱼、凯门鳄、水蛇、水豚）：在格内 35km 找矢量河流并吸附到距河心约 4.5km 的干岸上，活动范围不离河 12km、且不去海边 */
+const RIVER_SEARCH_KM = 35;
+const RIVER_BANK_OFFSET_KM = 4.5;
+const RIVER_KEEP_KM = 12;
 
 /** 危险源（军团 / 玩家）*/
 export interface LandThreat { lat: number; lng: number; /** 受惊半径（度），不写 = LAND_FLEE_RADIUS_DEG */ r?: number }
@@ -629,18 +634,30 @@ export class AnimalAmbientLayer {
                         const yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
                         const offLat = (hash01(col, row, 3 + yearSalt) - 0.5) * CELL_DEG * 0.8;
                         const offLng = (hash01(col, row, 4 + yearSalt) - 0.5) * CELL_DEG * 0.8;
-                        const anchor = { lat: clat + offLat, lng: clng + offLng };
+                        let anchor: Pt | null = { lat: clat + offLat, lng: clng + offLng };
                         // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
                         // 🔴 2026-10-31 主人令「动物不要出现在据点附近」：据点 0.30° 圈内不生成
                         // 🔴 冬眠物种在冬季连"活跃"都不算：不进 activeIds，场上那只就会自动渐隐消失
                         if (isHibernating(dir, anchor.lat, this.getSeason())) continue;
+                        const needsRiver = animalNeedsRiver(dir);
+                        if (needsRiver) {
+                            anchor = this.snapToRiverBank(anchor, dir, hash01(col, row, 13));
+                            if (!anchor) continue;
+                        }
                         for (let k = 0; k < herdSize; k++) {
                             // 群员绕群中心错开：第 0 只站中心，其余按金角螺旋排开（间距约 HERD_SPREAD_DEG 的一半）
                             const ang = k * 2.39996 + hash01(col, row, 12) * Math.PI * 2;
-                            const rad = k === 0 ? 0 : HERD_SPREAD_DEG * (0.35 + 0.25 * Math.sqrt(k));
+                            const spread = needsRiver ? HERD_SPREAD_DEG * 0.45 : HERD_SPREAD_DEG;
+                            const rad = k === 0 ? 0 : spread * (0.35 + 0.25 * Math.sqrt(k));
                             const pos = { lat: anchor.lat + Math.sin(ang) * rad * 0.7, lng: anchor.lng + Math.cos(ang) * rad };
                             // 🔴 2026-10-31「大象进海了」：按体型判海（中心 + 四向），象身不许跨在岸线上
-                            if (this.isWetBody(pos, dir) || this.isNearCity(pos) || (animalNeedsCoast(dir) && !this.isNearCoast(pos))) continue;
+                            // 🔴 淡水河岸物种（鳄鱼/凯门鳄/水蛇/水豚）：只放矢量河流岸边，不去海边
+                            if (
+                                this.isWetBody(pos, dir)
+                                || this.isNearCity(pos)
+                                || (animalNeedsCoast(dir) && !this.isNearCoast(pos))
+                                || (needsRiver && (this.isNearCoast(pos) || !isNearStrategicRiver(pos.lat, pos.lng, RIVER_KEEP_KM)))
+                            ) continue;
                             const id = herdSize > 1 ? `${herdKey},${k}` : herdKey;
                             activeIds.add(id);
                             // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
@@ -704,9 +721,10 @@ export class AnimalAmbientLayer {
                     continue;
                 }
                 e.alpha = Math.min(1, e.alpha + dt / FADE_DUR);
+                const riverBound = animalNeedsRiver(e.dir);
                 stepLandEntry(e, dt, threats, {
-                    // 判海一律按体型（身体任何一段沾水都算不能去），走动目标与逃跑同一条口径
-                    isSea: (p) => this.isWetBody(p, e.dir),
+                    // 判海一律按体型（身体任何一段沾水都算不能去），走动目标与逃跑同一条口径；淡水河岸物种额外约束不离河、不去海边
+                    isSea: (p) => this.isWetBody(p, e.dir) || (riverBound && (this.isNearCoast(p) || !isNearStrategicRiver(p.lat, p.lng, RIVER_KEEP_KM))),
                     rand: Math.random,
                     nearCity: (p) => this.isNearCity(p),
                     canWalk: !NO_WALK_SPECIES.has(e.dir),
@@ -824,6 +842,32 @@ export class AnimalAmbientLayer {
         const sea = (p: Pt): boolean => { try { return LandSeaSystem.isSeaAt(p); } catch { return false; } };
         return sea({ lat: pos.lat + d, lng: pos.lng }) || sea({ lat: pos.lat - d, lng: pos.lng })
             || sea({ lat: pos.lat, lng: pos.lng + d }) || sea({ lat: pos.lat, lng: pos.lng - d });
+    }
+
+    /**
+     * 将淡水河岸物种（鳄鱼、凯门鳄、水蛇、水豚）吸附到格内最近的矢量河流干岸边：
+     *   · 35km 内无矢量河流 → 返回 null（不生成在无河荒漠或内陆干山）；
+     *   · 沿河道法向偏移约 4.5km 落岸，且避开海边、水面与据点圈。
+     */
+    private snapToRiverBank(anchor: Pt, dir: string, sidePick: number): Pt | null {
+        const riv = nearestStrategicRiver(anchor.lat, anchor.lng, RIVER_SEARCH_KM);
+        if (!riv) return null;
+        const cosLat = Math.max(0.01, Math.cos((anchor.lat * Math.PI) / 180));
+        const rLat = anchor.lat + (riv.distKm * riv.sideN) / 111.32;
+        const rLng = anchor.lng + (riv.distKm * riv.sideE) / (111.32 * cosLat);
+        const nE = -riv.dirN;
+        const nN = riv.dirE;
+        const signs = sidePick < 0.5 ? [1, -1] : [-1, 1];
+        for (const s of signs) {
+            const cand = {
+                lat: rLat + (s * RIVER_BANK_OFFSET_KM * nN) / 111.32,
+                lng: rLng + (s * RIVER_BANK_OFFSET_KM * nE) / (111.32 * cosLat),
+            };
+            if (!this.isWetBody(cand, dir) && !this.isNearCity(cand) && !this.isNearCoast(cand)) {
+                return cand;
+            }
+        }
+        return null;
     }
 
     /** 季节（0 春 / 1 夏 / 2 秋 / 3 冬），与据点民生层同一源 */

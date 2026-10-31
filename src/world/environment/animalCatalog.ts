@@ -25,8 +25,8 @@ export interface AnimalEntry {
     winterZones?: readonly EnvZone[];
     /** 这些岛上没有 */
     excludeIslands?: readonly EnvIsland[];
-    /** 'coast'：只在海岸附近出现 */
-    habitat?: 'coast';
+    /** 'coast'：只在海岸附近出现；'river'：只在内陆矢量河流岸边出现（不上岸海滩、不进无河荒漠） */
+    habitat?: 'coast' | 'river';
     /** 同一素材也作家畜用：zones 只限野生出现地，人类聚落（战术战 DE 原图摆放）不限 */
     alsoDomestic?: boolean;
     /** 偶见：常住区之外零星出现的邻近区（权重为常住的 1/4） */
@@ -110,16 +110,16 @@ export const ANIMAL_CATALOG: Readonly<Record<string, AnimalEntry>> = {
     RHINO: { kind: 'wild', look: '犀', zones: [...TROPICAL_ASIA, 'AFR'], herd: [1, 2] },
     MONKEY: { kind: 'wild', look: '猕猴 / 狒狒类', zones: [...TROPICAL_ASIA, 'NCP', 'AFR', 'NEO'] },
     PEACOCK: { kind: 'wild', look: '孔雀（蓝孔雀 / 绿孔雀）', zones: TROPICAL_ASIA, herd: [1, 3] },
-    CROCODILE: { kind: 'wild', look: '鳄（尼罗鳄、沼泽鳄、湾鳄）', zones: [...TROPICAL_ASIA, 'HDS', 'AFR', 'NEO', 'AUS'] },
+    CROCODILE: { kind: 'wild', look: '鳄（尼罗鳄、沼泽鳄、湾鳄）', zones: [...TROPICAL_ASIA, 'HDS', 'AFR', 'NEO', 'AUS'], habitat: 'river' },
     KOMODO: { kind: 'wild', look: '巨蜥（泽巨蜥、荒漠巨蜥）', zones: [...TROPICAL_ASIA, 'HDS', 'CAD', 'AUS'] },
     SNAKE_GROUND: { kind: 'wild', look: '花纹地蛇', zones: ['WEU', 'CEU', 'MED', 'WAH', 'HDS', 'STP', 'CAD', 'NCP', 'LOE', 'EAS', 'SWM', 'SAS', 'SEA', 'AFR', 'NEO', 'NAM', 'AND', 'AUS'] },
-    SNAKE_WATER: { kind: 'wild', look: '水蛇', zones: [...TROPICAL_ASIA, 'AFR', 'NEO'] },
+    SNAKE_WATER: { kind: 'wild', look: '水蛇', zones: [...TROPICAL_ASIA, 'AFR', 'NEO'], habitat: 'river' },
     ZEBRA: { kind: 'wild', look: '斑马', zones: ['AFR'], herd: [1, 4] },
     // ── 美洲 ──
     TAPIR: { kind: 'wild', look: '南美貘（深棕色）', zones: ['NEO'] },
     JAGUAR: { kind: 'wild', look: '美洲豹', zones: ['NEO'] },
-    CAPYBARA: { kind: 'wild', look: '水豚', zones: ['NEO'], herd: [2, 5] },
-    CAIMAN: { kind: 'wild', look: '凯门鳄', zones: ['NEO'] },
+    CAPYBARA: { kind: 'wild', look: '水豚', zones: ['NEO'], habitat: 'river', herd: [2, 5] },
+    CAIMAN: { kind: 'wild', look: '凯门鳄', zones: ['NEO'], habitat: 'river' },
     JAVELINA: { kind: 'wild', look: '西貒', zones: ['NEO', 'NAM'] },
     TURKEY: { kind: 'wild', look: '野火鸡', zones: ['NAM', 'NEO'], herd: [1, 4] },
     GUANACO: { kind: 'wild', look: '原驼', zones: ['AND'], herd: [2, 5] },
@@ -191,6 +191,10 @@ export function animalHerdSize(species: string, rand01: number): number {
 
 export function animalNeedsCoast(species: string): boolean {
     return ANIMAL_CATALOG[species]?.habitat === 'coast';
+}
+
+export function animalNeedsRiver(species: string): boolean {
+    return ANIMAL_CATALOG[species]?.habitat === 'river';
 }
 
 const poolCache = new Map<string, { land: string[]; birds: string[] }>();
