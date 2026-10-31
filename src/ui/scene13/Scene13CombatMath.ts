@@ -96,7 +96,7 @@ export const CITY_TYPE_BLD_FLOOR_MULT: Record<'big_city' | 'medium_city' | 'pass
     medium_city: 1.1,
     pass: 0.95,
     small_city: 0.8,
-    stockade: 0.6,
+    stockade: 0.6,
 };
 
 /** 流场细分：每个等轴地块切成 FLOW_SUB×FLOW_SUB 小格 */

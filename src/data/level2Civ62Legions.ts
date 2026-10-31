@@ -1266,7 +1266,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'VIKI_CASTLE_AGE3', castleName: '维京 斯堪的纳维亚环形堡垒',
         formationMode: 'echelon',
         shipId: 'LONGBOAT',
-        commanderUnit: 'hero_zakare',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_ulf',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
                 slots: [
             { type: 'maceman', count: 4 },
             { type: 'antiquity_skirmisher', count: 3 },
@@ -2079,7 +2079,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'LITH_CASTLE_AGE3', castleName: '立陶宛 特拉凯湖心红砖城堡',
         formationMode: 'echelon',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_haraldhardrada',
+        commanderUnit: 'hero_kestutis',
                 slots: [
             { type: 'pikeman', count: 4 },
             { type: 'elite_skirmisher', count: 3 },
@@ -3506,7 +3506,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MALA_CASTLE_AGE3', castleName: '马来 马六甲海峡水上海堡',
         formationMode: 'crane_wing',
         shipId: 'FAST_FIRE_SHIP',
-        commanderUnit: 'hero_radenwijaya',
+        commanderUnit: 'hero_gajahmada',
         slots: [
             { type: 'battle_elephant', count: 2 },
             { type: 'sunda_royal_fighter', count: 4 },
@@ -4192,10 +4192,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'echelon',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_selimthegrim',
+        commanderUnit: 'hero_lysander',
                 slots: [
-            { type: 'condottiero', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'condottiero', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
             { type: 'elite_genitour', count: 2 },
         ],
     },
@@ -4241,9 +4241,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         commanderUnit: 'hero_mustafapasha',
                 slots: [
-            { type: 'halberdier', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
-            { type: 'hussar', count: 2 },
+            { type: 'halberdier', count: 4 },
+            { type: 'janissary', count: 3 },
+            { type: 'cav_archer_heavy', count: 2 },
         ],
     },
     // ═══════════════════════════════════════════════════════════════════

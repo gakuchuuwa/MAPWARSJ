@@ -58,6 +58,7 @@ export type CityType =
     | 'small_city'    // 小城（含原渡口等小型据点）
     | 'pass'          // 关隘 (包括山关/要塞)
     | 'stockade'      // 城寨 (2026-09-03 新增：边境屯戍/羁縻小寨，比小城更小的军事哨所)
+                      //    无聚落、无驻军、不建城墙、不驻武将，只作野外会战地点
 
 export interface City {
     id: string;

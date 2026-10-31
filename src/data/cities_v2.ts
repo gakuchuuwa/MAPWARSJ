@@ -573,7 +573,7 @@ buildingStyle: 'BASHU', troops: 10000,
 
 
     // 🔴 [2026-10-25 主人令「朝阳改为河朔文化、与程名振就不冲突了，都改为河朔」] 朝阳＝唐营州（河北道），按当地最著名本地政权取河朔（WEI）
-    { id: 'city_chaoyang', name: '朝阳', factionId: 'murong', lat: 41.57, lng: 120.45, type: 'small_city', troops: 10000, region: 'NORTHEAST', buildingStyle: 'WEI' , note: '按 2026-10-25 标准：城居 3–5 → 小城' },
+    { id: 'city_chaoyang', name: '朝阳', factionId: 'wuhuan', lat: 41.57, lng: 120.45, type: 'small_city', troops: 10000, region: 'NORTHEAST', buildingStyle: 'WEI' , note: '按 2026-10-25 标准：城居 3–5 → 小城' },
 
 
 
