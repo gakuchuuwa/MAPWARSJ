@@ -390,7 +390,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                         if (isAnimal) {
                             const species = r[1];
                             const de = animalDeOf(species);
-                            if (!animalNativeAt(species, mapLat, mapLng, baseTerrain)) continue;   // 非当地或非当前地表气候物种不放
+                            if (!animalNativeAt(species, mapLat, mapLng, baseTerrain, calSeason === 3)) continue;   // 非当地或非当前地表气候物种不放（冬季放冬毛物种）
 
                             // ① 建筑地基上不放；野生动物不进城内 / 攻方营帐，**家畜可以留在城里**
                             //    （DE 每名玩家出生点旁就有 4 只牲畜 + 近旁 4 只，全在自家聚落里）

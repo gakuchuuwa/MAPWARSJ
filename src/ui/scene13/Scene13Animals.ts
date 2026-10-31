@@ -1,5 +1,6 @@
 import { TAC_MAP_HALF_W, TAC_MAP_HALF_H } from './Scene13GroundLayerGL';
 import type { AnimalAction, AnimalDe, AnimalKind, TacticalAnimal, WarMan } from './Scene13Types';
+import { animalAllowedAt } from '../../world/environment/animalCatalog';
 
 /** DE 素材实际有的动作（本机 public/SUCAI_ANIMAL/<物种>/_meta.json 实测）。
  *  🔴 缺的动作一律不许请求：请求了就是 404 → 那只动物整只不画（2026-10-13 核出来的消失病根）。 */
@@ -74,8 +75,8 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
     ['SNAKE_GROUND', 'predator', 24, 50, 25, 3, 12, ANIMAL_ACTS.beastSlow], // 地蟒
 
     // ── 家畜（受惊小跑脱离人群，45~65 px/s）──
-    ['CAMEL', 'livestock', 35, 65, 50, 0, 4, ANIMAL_ACTS.graze],     // 骆驼
-    ['DROMEDARY', 'livestock', 35, 65, 50, 0, 4, ANIMAL_ACTS.graze], // 单峰驼
+    ['CAMEL', 'livestock', 35, 65, 50, 0, 4, ANIMAL_ACTS.graze],     // 单峰驼（素材样子；文件夹名与样子相反）
+    ['DROMEDARY', 'livestock', 35, 65, 50, 0, 4, ANIMAL_ACTS.graze], // 双峰驼（素材样子）
     ['BUFFALO', 'livestock', 26, 50, 30, 0, 3, ANIMAL_ACTS.graze],   // 水牛
     ['COW_BROWN', 'livestock', 26, 50, 14, 0, 3, ANIMAL_ACTS.graze], // 黄牛
     ['COW_BLACK', 'livestock', 26, 50, 14, 0, 3, ANIMAL_ACTS.graze], // 黑牛
@@ -108,47 +109,12 @@ for (const [sp, kind, walk, run, hp, atk, los, acts] of ANIMAL_DE_TABLE) {
 }
 
 /**
- * 🔴 [2026-10-13 主人令「不要让日本出现老虎狮子」] 物种原产地（粗框，[latMin, latMax, lngMin, lngMax]）。
  * DE 地图的动物是一张通用图里摆好的，不看据点所在地；这里按战场中心经纬度剔掉**不属于当地**的物种。
- * 没列的物种（狼、熊、鹿、牛羊猪鸡鹅等）各地皆有，不限；缺经纬度也不限。
+ * 🔴 2026-10-31 主人令「按专业的游戏设计管理」：出现地统一查 src/world/environment/animalCatalog.ts，
+ *    与战略野生动物层同一张表（原 ANIMAL_RANGE 坐标框与日本框已删，日本无虎狮等例外在总表 excludeIslands 里）。
+ * 缺经纬度不限。
  */
-export const ANIMAL_RANGE: Record<string, ReadonlyArray<readonly [number, number, number, number]>> = (() => {
-    const AFR: [number, number, number, number] = [-35, 37, -20, 52];
-    const SASIA: [number, number, number, number] = [5, 42, 25, 100];        // 西亚—南亚
-    const AMER: [number, number, number, number] = [-56, 40, -120, -30];      // 中南美
-    const LION: [number, number, number, number][] = [AFR, SASIA, [36, 45, 19, 30]];   // 非洲、西亚南亚、古希腊巴尔干
-    // 第二框南界 41→38：补上朝鲜东北海岸（东经 129.5° 以东、北纬 38–41°）的空隙，东北虎原生地。
-    const TIGER: [number, number, number, number][] = [[-8, 55, 45, 129.5], [38, 55, 129.5, 137]];
-    const OLD_DRY: [number, number, number, number][] = [AFR, [10, 50, 25, 110]];
-    return {
-        LION, TIGER,
-        WOLF_ARABIAN: [[12, 40, 30, 60]], BLACK_PANTHER: [AFR, [-8, 30, 60, 125]], SNOWLEOPARD: [[25, 50, 65, 110]],
-        ELEPHANT: [AFR, [5, 30, 70, 110]], RHINO: [AFR, [5, 30, 70, 110]], OSTRICH: [AFR, [12, 40, 30, 60]], ZEBRA: [AFR],
-        GAZELLE: OLD_DRY, MOUFLON: [[30, 45, -10, 50]], ARGALI: [[35, 55, 60, 120]], IBEX: [[28, 48, -10, 100]],
-        CAMEL: OLD_DRY, DROMEDARY: OLD_DRY, MONKEY: [AFR, [-10, 35, 60, 128]],
-        CROCODILE: [[-40, 28, -20, 150], [-35, 32, -20, 52]], CAIMAN: [AMER], KOMODO: [[-12, -7, 115, 125]],
-        BEAR_POLAR: [[60, 90, -180, 180]], FOX_ARCTIC: [[52, 90, -180, 180]], HARE_ARCTIC: [[52, 90, -180, 180]],
-        JAGUAR: [AMER], JAVELINA: [AMER], GUANACO: [AMER], TAPIR: [AMER, [-8, 20, 95, 120]], CAPYBARA: [AMER], MACAW: [AMER], LLAMA: [AMER], ALPACA: [AMER],
-        CONDOR: [AMER], RHEA: [AMER],
-        SNAKE_GROUND: [[-40, 60, -180, 180]],
-        // 🔴 [2026-10-30] 新增物种原生分布：海豹（南北高纬海岸）、海象（北极圈）、猞猁（欧亚北美温带—寒带）
-        SEAL: [[40, 90, -180, 180], [-90, -40, -180, 180]], WALRUS: [[60, 90, -180, 180]], LYNX: [[30, 72, -180, 180]],
-    };
-})();
-
-export function animalNativeAt(species: string, lat: number | undefined, lng: number | undefined, baseTerrain?: string): boolean {
-    if (lat !== undefined && lng !== undefined) {
-        // 日本列岛（冲绳至北海道）：自然界绝无野生老虎、狮子。
-        // 🔴 2026-10-31 实测修正：原四至矩形 lat 24–46 / lng 122.5–146 把朝鲜半岛、辽东、山东东端一起框进去，
-        //    汉城、平壤、国内城等地的东北虎全被剔除。改为只框列岛本身：本州—九州—四国—北海道、琉球、对马、五岛。
-        //    本州框北界 41.6°、北海道框西界 139.3°：都不碰滨海边疆区（海参崴一带是东北虎原生地）。
-        const isJapan = (lat >= 30.5 && lat <= 41.6 && lng >= 129.7 && lng <= 142.1)
-            || (lat > 41.3 && lat <= 46 && lng >= 139.3 && lng <= 146)
-            || (lat >= 24 && lat < 30.5 && lng >= 122.5 && lng <= 131.5)
-            || (lat >= 34.0 && lat <= 34.75 && lng >= 129.1 && lng <= 129.55)
-            || (lat >= 32.5 && lat <= 33.4 && lng >= 128.5 && lng <= 129.2);
-        if (isJapan && (species === 'TIGER' || species === 'LION')) return false;
-    }
+export function animalNativeAt(species: string, lat: number | undefined, lng: number | undefined, baseTerrain?: string, winter = false): boolean {
     if (baseTerrain) {
         // 极旱沙漠/戈壁/盐漠/高寒砾石与雪原：不出林栖野猪（BOAR）与火鸡（TURKEY）
         const isAridOrAlpine = baseTerrain === 'pal' || baseTerrain === 'des' || baseTerrain === 'ds5'
@@ -156,9 +122,8 @@ export function animalNativeAt(species: string, lat: number | undefined, lng: nu
             || baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snd';
         if (isAridOrAlpine && (species === 'BOAR' || species === 'TURKEY')) return false;
     }
-    const r = ANIMAL_RANGE[species];
-    if (!r || lat === undefined || lng === undefined) return true;
-    return r.some(([a, b, c, d]) => lat >= a && lat <= b && lng >= c && lng <= d);
+    if (lat === undefined || lng === undefined) return true;
+    return animalAllowedAt(species, lat, lng, winter);
 }
 
 /** 表里没有的物种（以后地图新增）按 DE 最常见的胆小猎物走，不许崩 */

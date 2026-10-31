@@ -1,8 +1,8 @@
 /**
  * 战略地图 vs 战术地图 环境判定一致性实测（只读，不改任何游戏数据）。
  *
- * 逐个据点，拿战略图各层（野生动物 18 区、森林掩膜、民生生计）的判定，
- * 去对战术图（柯本 → 9 地貌 → 18 套 DE 主题、物种原产地框表 ANIMAL_RANGE）的判定。
+ * 逐个据点，拿战略图各层（环境区、动物总表、森林掩膜、民生生计）的判定，
+ * 去对战术图（柯本 → 9 地貌 → 18 套 DE 主题、animalNativeAt）的判定；并统计每个物种在多少据点周边看得到。
  *
  * 用法：npx tsx tools/audit-env-consistency.mts [--json 输出路径]
  * 局限：海拔要在线拉瓦片，这里一律按「无海拔」判地貌（雪线以上的高山据点会被判成山下的地貌）。
@@ -32,7 +32,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const mod = (p: string) => import(pathToFileURL(path.join(ROOT, p)).href);
 
 const { CITIES_V2 } = await mod('src/data/cities_v2.ts');
-const { realmKeyAt, realmAt } = await mod('src/map/AnimalAmbientLayer.ts');
+const { envZoneAt, ENV_ZONE_REALM, ENV_ZONE_NAMES } = await mod('src/world/environment/envZones.ts');
+const { wildPoolAt, ANIMAL_CATALOG } = await mod('src/world/environment/animalCatalog.ts');
 const { detectBiomeAtElevation, resolveClimateRegion } = await mod('src/ui/Scene13Biome.ts');
 const { resolveDeMapTheme } = await mod('src/ui/scene13/Scene13DeMapThemes.ts');
 const { animalNativeAt } = await mod('src/ui/scene13/Scene13Animals.ts');
@@ -65,15 +66,6 @@ function maskAt(lat: number, lng: number): { biome: number; canopy: number } {
     return { biome: mask.data[i], canopy: mask.data[i + 1] };
 }
 
-/** 战略 18 区 → WWF 生物地理大区（与 DE 主题名前缀同一口径） */
-function strategicRealmToWwf(key: string, lng: number): string {
-    if (key === 'ARCTIC' || key === 'BOREAL') return lng <= -30 ? 'nearctic' : 'palaearctic';
-    if (key === 'NEARCTIC') return 'nearctic';
-    if (key === 'NEOTROPIC' || key === 'ANDES' || key === 'PATAGONIA') return 'neotropical';
-    if (key === 'AFROTROPIC') return 'afrotropical';
-    if (key.startsWith('ORIENTAL')) return 'indomalayan';
-    return 'palaearctic';
-}
 function themeToWwf(id: string): string | null {
     if (id === 'serengeti') return 'afrotropical';
     if (id === 'palustrine_swamp') return null;   // 沼泽主题不分大区
@@ -101,6 +93,7 @@ type Row = {
     livelihood: string; livelihoodClash: boolean; badLivelihoodAnimals: string[];
 };
 const rows: Row[] = [];
+const seen: Record<string, number> = {}, seenWinter: Record<string, number> = {}, zoneCount: Record<string, number> = {};
 
 for (const c of CITIES_V2 as any[]) {
     const lat = c.lat as number, lng = c.lng as number;
@@ -108,13 +101,17 @@ for (const c of CITIES_V2 as any[]) {
     const koppen = resolveClimateRegion(lat, lng);
     const biome = detectBiomeAtElevation(lat, lng, null) as string;
     const theme = resolveDeMapTheme(lat, lng, biome, null, 'none');
-    const realmKey = realmKeyAt(lat, lng) as string;
+    const realmKey = envZoneAt(lat, lng) as string;
 
-    const sw = strategicRealmToWwf(realmKey, lng);
+    const sw = ENV_ZONE_REALM[realmKey] as string;
     const tw = themeToWwf(theme.id);
     const realmMismatch = tw !== null && tw !== sw;
 
-    const pool = realmAt(lat, lng) as { land: string[]; birds: string[] };
+    const pool = wildPoolAt(lat, lng) as { land: string[]; birds: string[] };
+    const winterPool = wildPoolAt(lat, lng, true) as { land: string[]; birds: string[] };
+    for (const sp of new Set([...pool.land, ...pool.birds])) seen[sp] = (seen[sp] ?? 0) + 1;
+    for (const sp of new Set([...winterPool.land, ...winterPool.birds])) seenWinter[sp] = (seenWinter[sp] ?? 0) + 1;
+    zoneCount[realmKey] = (zoneCount[realmKey] ?? 0) + 1;
     const badWild = [...pool.land, ...pool.birds].filter((sp) => !animalNativeAt(sp, lat, lng, theme.baseTerrain));
 
     const { canopy } = maskAt(lat, lng);
@@ -154,10 +151,10 @@ const lvAnimBad = rows.filter((r) => r.badLivelihoodAnimals.length > 0);
 const anyBad = rows.filter((r) => r.realmMismatch || r.badWild.length || r.forestClash || r.livelihoodClash || r.badLivelihoodAnimals.length);
 
 console.log(`据点 ${n} 个；至少一项对不上：${pct(anyBad.length)}\n`);
-console.log(`① 生物地理大区（战略 18 区 vs 战术 DE 主题前缀）不一致：${pct(realmBad.length)}`);
+console.log(`① 生物地理大区（环境区所属大区 vs 战术 DE 主题前缀）不一致：${pct(realmBad.length)}`);
 console.log('   组合：' + tally(realmBad.map((r) => `${r.strategicRealm}→${r.theme}`)).slice(0, 10).map(([k, v]) => `${k}×${v}`).join('，'));
 console.log(sample(realmBad, (r) => ` 战略 ${r.strategicRealm} / 战术 ${r.theme}`));
-console.log(`\n② 野生动物：战略图会放、战术图原产地表不认的物种，涉及据点：${pct(wildBad.length)}`);
+console.log(`\n② 野生动物：战略图会放、战术图不认的物种（同查总表，非 0 只会来自战术的荒漠剔野猪规则），涉及据点：${pct(wildBad.length)}`);
 console.log('   物种：' + tally(wildBad.flatMap((r) => r.badWild)).slice(0, 15).map(([k, v]) => `${k}×${v}`).join('，'));
 console.log(sample(wildBad, (r) => ` ${r.strategicRealm}：${r.badWild.join('、')}`));
 console.log(`\n③ 森林：战略森林掩膜 vs 战术地貌 对不上：${pct(forestBad.length)}`);
@@ -169,6 +166,15 @@ console.log(sample(lvBad, (r) => ` ${r.style} ${r.livelihood} / 柯本 ${r.koppe
 console.log(`\n⑤ 猎场／伐木的野生猎物战术图不认：${pct(lvAnimBad.length)}`);
 console.log('   ' + tally(lvAnimBad.flatMap((r) => r.badLivelihoodAnimals)).map(([k, v]) => `${k}×${v}`).join('，'));
 console.log(sample(lvAnimBad, (r) => ` ${r.style}：${r.badLivelihoodAnimals.join('、')}`));
+
+
+console.log('\n⑥ 各环境区据点数：' + Object.entries(zoneCount).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${ENV_ZONE_NAMES[k]}×${v}`).join('，'));
+console.log('\n⑦ 野生动物与飞鸟可见性（周边能出现它的据点数：全年 / 冬季）：');
+const vis = Object.entries<any>(ANIMAL_CATALOG).filter(([, e]) => e.kind === 'wild' || e.kind === 'bird')
+    .map(([sp]) => [sp, seen[sp] ?? 0, seenWinter[sp] ?? 0] as const).sort((a, b) => a[2] - b[2]);
+console.log('   ' + vis.map(([sp, y, w]) => `${sp} ${y}/${w}`).join('，'));
+const never = vis.filter(([, y, w]) => y === 0 && w === 0).map(([sp]) => sp);
+console.log(`   永远看不到（任何据点周边都不出现）：${never.length ? never.join('、') : '无'}`);
 
 const jsonAt = process.argv.indexOf('--json');
 if (jsonAt > 0 && process.argv[jsonAt + 1]) {

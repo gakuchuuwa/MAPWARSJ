@@ -4,6 +4,7 @@ import type { GameMap } from './GameMap';
 import { LandSeaSystem } from '../world/land-sea';
 import { CITIES_V2 } from '../data/cities_v2';
 import { strategicSpriteScale } from './strategicSpriteScale';
+import { animalNeedsCoast, wildPoolAt } from '../world/environment/animalCatalog';
 
 /**
  * AnimalAmbientLayer — 战略地图「野生动物生态」环境层（2026-08-31 主人定稿）。
@@ -120,159 +121,11 @@ const BIRD_DRIFT_RADIUS_PX = 70;    // 飞鸟盘旋半径（屏幕像素，与�
 const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s 一圈）
 // ──────────────────────────────────────────────────────────────────────────
 
-// ── 生态分区（按世界动物地理区划，坐标优先）────────────────────────────────
-// 🔴 2026-10-31 主人令「优化动物的出现地，不要错乱……玩家主要在欧亚大陆、北非、美洲，不要搞得永远都看不到」：
-//   旧实现只认 RegionSystem 的 19 个城环，环外一律 `return 'CENTRAL'` 兜底 ——
-//   于是美洲、撒哈拉以南非洲、东南亚全被当成「东亚」，屏幕上出现的是梅花鹿/野猪/老虎；
-//   而 MALAY / ANDE / AMERICA 三个桶永远走不到，科莫多、貘、美洲豹、美洲鸵、水豚、西貒、凯门鳄、
-//   金刚鹦鹉、安第斯神鹰共 10 种在战略地图一次都不会出现。
-//   现在改成：**先按经纬度判生物地理界（美洲/撒南非洲/东南亚/北极这些城环覆盖不到的地方），
-//   判不出来的欧亚内陆才回落 19 个城环**，两套并存，谁也不会掉进 CENTRAL 兜底。
-interface RealmPool { land: string[]; birds: string[] }
-export type RealmKey =
-    | 'ARCTIC' | 'BOREAL' | 'NEARCTIC' | 'NEOTROPIC' | 'ANDES' | 'PATAGONIA'
-    | 'AFROTROPIC' | 'NORTH_AFRICA' | 'MIDEAST' | 'TIBET'
-    | 'ORIENTAL_INDIA' | 'ORIENTAL_SEA' | 'ORIENTAL_CHINA' | 'EASTASIA' | 'JAPAN'
-    | 'STEPPE' | 'NORTHEAST' | 'EUROPE';
-
-/**
- * 18 个生物地理区 → 物种池（🔴 2026-10-31 主人令「所有动物都要套用，按真实的地理分布重新分布」）。
- * 每个物种都按**原生分布**放到它真正生活的区，绝不为了凑数跨洲借用：
- *   非洲区只出非洲种，美洲区只出美洲种，旧大陆的虎／孔雀／象／犀不进美洲，美洲豹／水豚／貘不进旧大陆。
- * 素材库里 72 种全部有落点（陆地野生 43 种 + 飞鸟 11 种 + 家畜 15 种走民生层 + 海洋 6 种走海洋层）。
- */
-const REALMS: Readonly<Record<RealmKey, RealmPool>> = {
-    /** 北极圈（lat ≥ 66）：北极熊、海象、海豹（冰海沿岸）、北极狼/狐/兔，驼鹿与猞猁的泰加林缘 */
-    ARCTIC: {
-        land: ['BEAR_POLAR', 'WALRUS', 'SEAL', 'WOLF_ARCTIC', 'FOX_ARCTIC', 'HARE_ARCTIC', 'ELK', 'LYNX', 'WOLF'],
-        birds: ['RAVEN', 'OWL', 'FALCON'],
-    },
-    /** 寒温带泰加（lat 62–66）：驼鹿、猞猁、狼、棕熊、赤狐、雪兔、野猪、马鹿 */
-    BOREAL: {
-        land: ['ELK', 'LYNX', 'WOLF', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'BOAR', 'DEER'],
-        birds: ['RAVEN', 'OWL', 'FALCON', 'CRANE'],
-    },
-    /** 新北界·北美（西经 30 以西、lat ≥ 22）：白尾鹿、野火鸡、黑熊、棕熊、灰狼、赤狐、西貒、雪鞋兔、马鹿、加拿大猞猁 */
-    NEARCTIC: {
-        land: ['DEER', 'ELK', 'TURKEY', 'BEAR_BLACK', 'BEAR', 'WOLF', 'FOX_RED', 'JAVELINA', 'HARE_GREY', 'LYNX'],
-        birds: ['VULTURE', 'HAWK', 'FALCON', 'OWL', 'RAVEN', 'CONDOR'],
-    },
-    /** 新热带界·中美—亚马孙—巴西：美洲豹、水豚、中美貘、凯门鳄、卷尾猴、美洲鳄、西貒、眼斑火鸡 */
-    NEOTROPIC: {
-        land: ['JAGUAR', 'CAPYBARA', 'TAPIR', 'CAIMAN', 'CROCODILE', 'MONKEY', 'JAVELINA', 'TURKEY'],
-        birds: ['MACAW', 'VULTURE', 'HAWK', 'OWL', 'FALCON'],
-    },
-    /** 安第斯—潘帕斯（南美南部）：原驼、美洲鸵、山貘、欧洲野兔（近代引入且极盛） */
-    ANDES: {
-        land: ['GUANACO', 'RHEA', 'TAPIR', 'HARE_GREY'],
-        birds: ['CONDOR', 'HAWK', 'FALCON', 'OWL'],
-    },
-    /** 巴塔哥尼亚—火地岛（南纬 35 以南、西经 55 以西）：原驼、美洲鸵、麦哲伦企鹅、欧洲野兔（南美无北方海豹，不放） */
-    PATAGONIA: {
-        land: ['GUANACO', 'RHEA', 'PENGUIN', 'HARE_GREY'],
-        birds: ['CONDOR', 'HAWK', 'FALCON', 'OWL'],
-    },
-    /** 埃塞俄比亚界·撒哈拉以南非洲：狮、斑马、瞪羚、鸵鸟、象、犀、鳄、狒狒、非洲豹、非洲野犬、非洲蛇 */
-    AFROTROPIC: {
-        land: ['LION', 'ZEBRA', 'GAZELLE', 'OSTRICH', 'ELEPHANT', 'RHINO', 'CROCODILE', 'MONKEY', 'BLACK_PANTHER', 'WAR_DOG', 'SNAKE_GROUND'],
-        birds: ['FLAMINGO', 'VULTURE', 'STORK', 'CRANE', 'FALCON', 'HAWK', 'OWL'],
-    },
-    /** 北非—撒哈拉—阿拉伯：巴巴里狮（历史）、瞪羚、阿拉伯狼、努比亚北山羊、角蝰、阿拉伯鸵鸟（1970 年代灭绝） */
-    NORTH_AFRICA: {
-        land: ['LION', 'GAZELLE', 'WOLF_ARABIAN', 'IBEX', 'SNAKE_GROUND', 'OSTRICH'],
-        birds: ['FLAMINGO', 'VULTURE', 'FALCON', 'HAWK', 'OWL'],
-    },
-    /** 西亚（安纳托利亚、黎凡特、两河、伊朗）：波斯瞪羚、灰狼、北山羊、亚美尼亚盘羊、蛇 */
-    MIDEAST: {
-        land: ['GAZELLE', 'WOLF', 'IBEX', 'MOUFLON', 'SNAKE_GROUND'],
-        birds: ['VULTURE', 'FALCON', 'HAWK', 'OWL', 'FLAMINGO'],
-    },
-    /** 青藏高原—帕米尔—兴都库什：雪豹、北山羊、盘羊、岩羊、藏棕熊、藏野驴、藏羚/鹅喉羚 */
-    TIBET: {
-        land: ['SNOWLEOPARD', 'IBEX', 'ARGALI', 'MOUFLON', 'WOLF', 'BEAR', 'DONKEY', 'GAZELLE'],
-        birds: ['VULTURE', 'FALCON', 'HAWK', 'OWL'],
-    },
-    /** 东洋界·印度次大陆：虎、亚洲狮、象、印度犀、蓝孔雀、猕猴、沼鳄、水蛇、花鹿、豺 */
-    ORIENTAL_INDIA: {
-        land: ['TIGER', 'LION', 'ELEPHANT', 'RHINO', 'PEACOCK', 'MONKEY', 'CROCODILE', 'SNAKE_WATER', 'DEER', 'WAR_DOG'],
-        birds: ['FLAMINGO', 'CRANE', 'VULTURE', 'FALCON', 'HAWK', 'OWL', 'STORK'],
-    },
-    /** 东洋界·东南亚（马来、苏门答腊、爪哇、婆罗洲、苏拉威西）：虎、马来貘、科莫多巨蜥、绿孔雀、象、犀、鳄、水蛇、豺 */
-    ORIENTAL_SEA: {
-        land: ['TIGER', 'TAPIR', 'KOMODO', 'PEACOCK', 'MONKEY', 'ELEPHANT', 'RHINO', 'CROCODILE', 'SNAKE_WATER', 'WAR_DOG'],
-        birds: ['CRANE', 'HAWK', 'FALCON', 'OWL', 'FLAMINGO'],
-    },
-    /** 东洋界·华南（岭南、云贵、海南）：华南虎、亚洲象、中国犀、猕猴、水蛇、水鹿、野猪、豺 */
-    ORIENTAL_CHINA: {
-        land: ['TIGER', 'ELEPHANT', 'RHINO', 'MONKEY', 'SNAKE_WATER', 'DEER', 'BOAR', 'WAR_DOG'],
-        birds: ['PHEASANT', 'CRANE', 'HAWK', 'FALCON', 'OWL'],
-    },
-    /** 东亚汉地（华北、中原、江淮、河西、朝鲜）：鹿、野猪、狼、棕熊、黑熊、赤狐、草兔、雉鸡、猕猴、虎、马鹿、猞猁 */
-    EASTASIA: {
-        land: ['DEER', 'BOAR', 'WOLF', 'BEAR', 'BEAR_BLACK', 'FOX_RED', 'HARE_BROWN', 'PHEASANT', 'MONKEY', 'TIGER', 'ELK', 'LYNX'],
-        birds: ['CRANE', 'STORK', 'HAWK', 'FALCON', 'OWL', 'PHEASANT'],
-    },
-    /** 日本列岛：日本鹿、野猪、日本狼（已灭绝）、棕熊、亚洲黑熊、赤狐、日本野兔、日本猕猴（无虎豹） */
-    JAPAN: {
-        land: ['DEER', 'BOAR', 'WOLF', 'BEAR', 'BEAR_BLACK', 'FOX_RED', 'HARE_BROWN', 'MONKEY'],
-        birds: ['CRANE', 'HAWK', 'FALCON', 'OWL'],
-    },
-    /** 欧亚草原（蒙古高原、哈萨克、伏尔加—顿河）：狼、马鹿、棕熊、赤狐、草兔、野猪、驼鹿、蒙古野驴、鹅喉羚、普氏野马 */
-    STEPPE: {
-        land: ['WOLF', 'DEER', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'BOAR', 'ELK', 'DONKEY', 'GAZELLE', 'HORSE'],
-        birds: ['FALCON', 'VULTURE', 'CRANE', 'HAWK', 'OWL'],
-    },
-    /** 北亚泰加（西伯利亚、远东）：驼鹿、猞猁、狼、棕熊、赤狐、雪兔、野猪、马鹿 */
-    NORTHEAST: {
-        land: ['ELK', 'LYNX', 'WOLF', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'BOAR', 'DEER'],
-        birds: ['RAVEN', 'CRANE', 'HAWK', 'FALCON', 'OWL'],
-    },
-    /** 欧洲（含地中海北岸、巴尔干、不列颠、北欧南部）：马鹿、野猪、灰狼、棕熊、赤狐、草兔、欧洲盘羊、北山羊、驼鹿、猞猁、蛇 */
-    EUROPE: {
-        land: ['DEER', 'BOAR', 'WOLF', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'MOUFLON', 'IBEX', 'ELK', 'LYNX', 'SNAKE_GROUND'],
-        birds: ['STORK', 'FALCON', 'HAWK', 'OWL', 'RAVEN'],
-    },
-};
-
-/**
- * 经纬度 → 生物区键（**战略地图唯一入口**，纯坐标判定）。
- * 🔴 不再用 RegionSystem.getRegion：它只认 19 个城环，环外一律 'CENTRAL'，
- *    美洲/撒南非洲/东南亚/爱尔兰/埃及/印度全被当成中原出东亚动物，且城环本身留了大量空洞。
- * 顺序即优先级：极地 → 美洲 → 西亚 → 非洲 → 高原 → 南亚 → 日本 → 华南 → 东南亚 → 东亚 → 泰加 → 草原 → 欧洲。
- */
-export function realmKeyAt(lat: number, lng: number): RealmKey {
-    if (lat >= 66) return 'ARCTIC';
-    if (lat >= 62) return 'BOREAL';
-    if (lng <= -30) {
-        if (lat <= -35) return 'PATAGONIA';
-        if (lat <= -12) return 'ANDES';
-        if (lat < 22) return 'NEOTROPIC';
-        return 'NEARCTIC';
-    }
-    if (lat >= 12 && lat < 42 && lng >= 35 && lng < 62) return 'MIDEAST';
-    if (lat < 19 && lng > -20 && lng < 52) {
-        if (lng < 43 || lat < 10) return 'AFROTROPIC';
-    }
-    if (lat < 35 && lng > -20 && lng < 52) return 'NORTH_AFRICA';
-    if (lat >= 33 && lat < 41 && lng >= 62 && lng < 80) return 'TIBET';   // 帕米尔—兴都库什
-    if (lat >= 29 && lat < 38 && lng >= 80 && lng < 102) return 'TIBET';  // 青藏高原
-    if (lat >= 5 && lat < 33 && lng >= 60 && lng < 92) return 'ORIENTAL_INDIA';
-    if (lng >= 130 && lat >= 30 && lat < 50) return 'JAPAN';
-    if (lat >= 18 && lat < 26 && lng >= 100 && lng < 122) return 'ORIENTAL_CHINA';
-    if (lat >= -11 && lat < 26 && lng >= 92 && lng < 142) return 'ORIENTAL_SEA';
-    if (lat >= 20 && lat < 50 && lng >= 100 && lng < 136) return 'EASTASIA';
-    if (lat >= 50 && lng >= 45) return 'NORTHEAST';
-    if (lat >= 36 && lat < 56 && lng >= 40 && lng < 115) return 'STEPPE';
-    if (lat >= 33 && lat < 62 && lng >= -25 && lng < 45) return 'EUROPE';
-    if (lat >= 20) return 'EUROPE';
-    if (lat >= -12) return 'AFROTROPIC';
-    return 'ANDES';
-}
-
-/** 经纬度 → 该地野生动物池（陆地 + 飞鸟） */
-export function realmAt(lat: number, lng: number): RealmPool {
-    return REALMS[realmKeyAt(lat, lng)];
-}
+// ── 生态分区 ──────────────────────────────────────────────────────────────
+// 🔴 2026-10-31 主人令「按专业的游戏设计管理」：物种出现地统一查 src/world/environment/animalCatalog.ts，
+//    本层不再自写生物区和物种池（原 18 区经纬度框已删）。战术战查同一张表，两边天然一致。
+/** 海岸物种（北极熊、海象、海豹、企鹅）落点四向 0.2° 内要有海 */
+const COAST_PROBE_DEG = 0.2;
 
 /** 危险源（军团 / 玩家）*/
 export interface LandThreat { lat: number; lng: number }
@@ -692,13 +545,15 @@ export class AnimalAmbientLayer {
         if (this.landVisible) {
             for (let col = colMin; col <= colMax; col++) {
                 for (let row = rowMin; row <= rowMax; row++) {
-                    const id = `${col},${row}`;
                     const lh = hash01(col, row, 1);
                     if (lh < LAND_DENSITY) {
                         const clat = (row + 0.5) * CELL_DEG;
                         const clng = (col + 0.5) * CELL_DEG;
-                        const { land } = realmAt(clat, clng);
+                        // 冬毛物种（白狼、雪兔）只在冬季进池：物种编进 id，换季时旧的渐隐、新的渐显
+                        const { land } = wildPoolAt(clat, clng, this.getSeason() === 3);
+                        if (land.length === 0) continue;
                         const dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
+                        const id = `${col},${row},${dir}`;
                         // 🔴 2026-10-31 主人令「冬眠动物到期不显示，来年随机换个位置渐显，一年一次」：
                         //   熊类的落点按「年」取哈希 —— 每年春天都在**新位置**从透明渐显；冬季则整只渐隐退场。
                         const yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
@@ -709,7 +564,7 @@ export class AnimalAmbientLayer {
                         // 🔴 2026-10-31 主人令「动物不要出现在据点附近」：据点 0.30° 圈内不生成
                         // 🔴 冬眠物种在冬季连"活跃"都不算：不进 activeIds，场上那只就会自动渐隐消失
                         const winterSleep = isHibernating(dir, pos.lat, this.getSeason());
-                        if (!this.isSea(pos) && !this.isNearCity(pos) && !winterSleep) {
+                        if (!this.isSea(pos) && !this.isNearCity(pos) && !winterSleep && (!animalNeedsCoast(dir) || this.isNearCoast(pos))) {
                             activeIds.add(id);
                             // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
                             let entry = this.entries.find((e) => e.id === id);
@@ -804,6 +659,13 @@ export class AnimalAmbientLayer {
         }
     }
 
+    /** 陆地点四向 COAST_PROBE_DEG 内有海（海岸物种用） */
+    private isNearCoast(pos: Pt): boolean {
+        const d = COAST_PROBE_DEG;
+        return this.isSea({ lat: pos.lat + d, lng: pos.lng }) || this.isSea({ lat: pos.lat - d, lng: pos.lng })
+            || this.isSea({ lat: pos.lat, lng: pos.lng + d }) || this.isSea({ lat: pos.lat, lng: pos.lng - d });
+    }
+
     /** 季节（0 春 / 1 夏 / 2 秋 / 3 冬），与据点民生层同一源 */
     private getSeason(): number {
         const s = (window as any).game?.timeSystem?.getSeason?.();
@@ -865,7 +727,8 @@ export class AnimalAmbientLayer {
         // 🔴 [2026-10-31 主人令「只在所在屏幕显示」] 视口内任意处起飞（取消道路可达掩膜）
         const lat = sw.lat + Math.random() * (ne.lat - sw.lat);
         const lng = sw.lng + Math.random() * (ne.lng - sw.lng);
-        const { birds } = realmAt(lat, lng);
+        const { birds } = wildPoolAt(lat, lng, this.getSeason() === 3);
+        if (birds.length === 0) return;
         const dir = birds[Math.floor(Math.random() * birds.length)];
         this.loadAsset(dir, 'fly', true);
         this.loadAsset(dir, 'hover', true);

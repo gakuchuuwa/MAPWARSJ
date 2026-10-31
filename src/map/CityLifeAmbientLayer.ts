@@ -335,7 +335,11 @@ const CULTURE_TO_CATEGORY: Readonly<Record<string, LivelihoodCategory>> = {
     MACEDONIAN: 'mining_foraging',
 };
 
-/** 牧群按文化配种；每种组合仍固定三只，四畜种池按固定哈希起点连续取三只。 */
+/**
+ * 牧群按文化配种；每种组合仍固定三只，四畜种池按固定哈希起点连续取三只。
+ * 🔴 2026-10-31 看素材样子修正：CAMEL 文件夹是**单峰驼**、DROMEDARY 文件夹是**双峰驼**（名字与样子相反）。
+ *    契丹 / 中亚 / 西域用双峰驼 → DROMEDARY；阿拉伯 / 柏柏尔 / 拉贾斯坦用单峰驼 → CAMEL。
+ */
 const PASTORAL_ANIMAL_POOLS: Readonly<Record<string, readonly string[]>> = {
     MONGOL: ['HORSE', 'SHEEP', 'GOAT'],
     MOBEI_MONGOL: ['HORSE', 'SHEEP', 'GOAT'],
@@ -344,13 +348,13 @@ const PASTORAL_ANIMAL_POOLS: Readonly<Record<string, readonly string[]>> = {
     HUNS: ['HORSE', 'SHEEP', 'GOAT'],
     CUMAN: ['HORSE', 'SHEEP', 'GOAT'],
     TURKS: ['HORSE', 'SHEEP', 'GOAT'],
-    KHITAN: ['HORSE', 'SHEEP', 'GOAT', 'CAMEL'],
-    CENTRAL_ASIA: ['CAMEL', 'HORSE', 'SHEEP', 'GOAT'],
-    WESTERN: ['CAMEL', 'HORSE', 'SHEEP', 'GOAT'],
+    KHITAN: ['HORSE', 'SHEEP', 'GOAT', 'DROMEDARY'],
+    CENTRAL_ASIA: ['DROMEDARY', 'HORSE', 'SHEEP', 'GOAT'],
+    WESTERN: ['DROMEDARY', 'HORSE', 'SHEEP', 'GOAT'],
     PERSIAN: ['SHEEP', 'SHEEP', 'GOAT'],
     SASANIAN: ['SHEEP', 'SHEEP', 'GOAT'],
-    ORIE: ['DROMEDARY', 'GOAT', 'SHEEP', 'HORSE'],
-    BERBER: ['DROMEDARY', 'GOAT', 'SHEEP', 'HORSE'],
+    ORIE: ['CAMEL', 'GOAT', 'SHEEP', 'HORSE'],
+    BERBER: ['CAMEL', 'GOAT', 'SHEEP', 'HORSE'],
     GURJARAS: ['CAMEL', 'GOAT', 'SHEEP'],
     // DE 无独立牦牛素材，COW_BLACK 仅作高原牦牛视觉代理；不再把野生盘羊当家畜放牧。
     TIBET: ['COW_BLACK', 'SHEEP', 'GOAT', 'HORSE'],
