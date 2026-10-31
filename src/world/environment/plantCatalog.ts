@@ -22,8 +22,8 @@ export const ZONE_PLANTS: Readonly<Record<EnvZone, ZonePlants>> = {
     SWM: { main: [['ASIAN_PINE', 3], ['LUSH_BAMBOO', 2], ['GREEN_OAK', 1], ['ASIAN_MAPLE_GREEN', 1], ['SPRUCE', 1]], extra: ['BAMBOO'] }, // 云南松、竹、常绿栎
     SEA: { main: [['RAINFOREST', 3], ['JUNGLE', 2], ['LUSH_BAMBOO', 2], ['WAX_PALM', 1]], extra: ['MANGROVE', 'PALM', 'BAMBOO'] },
     SAS: { main: [['JUNGLE', 3], ['RAINFOREST', 1], ['BAMBOO', 1], ['WAX_PALM', 1], ['ACACIA', 1]], extra: ['MANGROVE', 'PALM'] },   // 季风林、竹、棕榈、德干金合欢
-    EAS: { main: [['BAMBOO', 3], ['ASIAN_PINE', 2], ['ASIAN_MAPLE_GREEN', 2], ['GREEN_OAK', 2], ['PEACH_BLOSSOM', 1]], extra: ['LUSH_BAMBOO', 'MANGROVE', 'WILLOW'] }, // 竹、马尾松、枫香、常绿栎
-    NCP: { main: [['OAK', 3], ['ASIAN_PINE', 2], ['WILLOW', 1], ['ASIAN_MAPLE_GREEN', 1], ['PEACH_BLOSSOM', 1], ['BIRCH_GREEN', 1]], extra: ['SCENARIO_TREE'] }, // 栎、油松、柳、槭
+    EAS: { main: [['BAMBOO', 3], ['ASIAN_PINE', 3], ['ASIAN_MAPLE_GREEN', 2], ['GREEN_OAK', 2]], extra: ['LUSH_BAMBOO', 'MANGROVE', 'WILLOW', 'PEACH_BLOSSOM'] }, // 竹、马尾松、枫香、常绿栎（山桃入附带，不在深山成片刷粉红果园）
+    NCP: { main: [['OAK', 3], ['ASIAN_PINE', 3], ['WILLOW', 1], ['ASIAN_MAPLE_GREEN', 1], ['BIRCH_GREEN', 1]], extra: ['SCENARIO_TREE', 'PEACH_BLOSSOM'] }, // 栎、油松、柳、槭、桦
     LOE: { main: [['OAK', 2], ['ASIAN_PINE', 2], ['WILLOW', 1], ['BUSH_TREE_A', 1]], extra: ['DEAD_TREE', 'BIRCH_GREEN'] },       // 辽东栎、油松、河谷柳
     NEB: { main: [['BIRCH_GREEN', 2], ['ASIAN_PINE', 2], ['SPRUCE', 2], ['OAK', 2]], extra: ['PINE', 'WILLOW'] },               // 白桦、红松、云冷杉、蒙古栎
     STP: { main: [['BIRCH_GREEN', 2], ['PINE', 2], ['WILLOW', 1], ['BUSH_TREE_B', 1]], extra: ['DEAD_TREE', 'SPRUCE'] },        // 森林草原桦、松，河谷柳

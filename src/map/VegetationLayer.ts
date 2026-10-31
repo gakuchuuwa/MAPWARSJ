@@ -31,8 +31,8 @@ const CANVAS_REPAINT_DRIFT_PX = 96;
 /** 两次重建之间的最小间隔（ms）。跟拍军团时 GameAppLoop 每帧 setView → 每帧 moveend，
  *  不节流的话整层色块每帧重画。 */
 const MIN_RENDER_INTERVAL_MS = 200;
-/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。Z9 为 25px，Z10 随缩放自然展开至约 32px。 */
-const TREE_BASE_PX = 25;
+/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。与民生层树木（45px）及 DE 兵模比例（0.7）对齐，消除细碎豆芽感。 */
+const TREE_BASE_PX = 40;
 /** 战略树木保持饱满通透的色彩质感，同时留出微透余量与地形自然融合。 */
 const TREE_OPACITY = 0.94;
 /** 树根处的轻微接地阴影，只用于消除贴图悬浮感，避免在浅色地表留下脏黑斑。 */
@@ -421,40 +421,58 @@ function forestClusterWeight(
     noiseVal: number,
     /** 森林模型给的实际森林程度（潜在植被 × 史实开垦）；null = 掩膜未载入，走旧的卫星树冠逻辑 */
     forestCover: number | null = null,
+    elev: number | null = null,
 ): number {
     if (NON_VEGETATION_TILES.has(tile) || biome === 13) return 0;
 
-    // 🔴 2026-10-31 主人定森林口径 C（本该长的林为底、按史实开垦减林）：成不成林只看森林模型，
-    //    与战术战场同源；不再用 2000 年卫星树冠（那是现代开垦后的样子）。
+    const isForestTile = BASE_FOREST_TILES.has(tile);
+    // 黄土高原（tile === 'ds2'）天然海拔 900~1800m，不能只靠 elev >= 165m 一概视为密林真山；
+    // 只有真正具有树冠郁闭（canopy >= 22）或陇山/六盘山/吕梁山高脊（elev >= 1750m）才算山林，其余黄土塬沟仅疏林成簇。
+    const isLoessTableland = tile === 'ds2' && canopyDensity < 22 && (elev === null || elev < 1750);
+    const isMountainOrHill = !isLoessTableland && elev !== null && elev >= 165;
+    const hasRealCanopy = canopyDensity >= 22 || isForestTile;
+
+    // 🔴 2026-10-31 ~ 2026-11-01 森林模型结合真实山形地貌（修复「辽河平地长满树、赫图阿拉/白狼山真山反而秃光」）：
+    //    1. 森林模型 < 0.40 的历史农垦区直接留白；
+    //    2. 山地丘陵（elev >= 165m）或真林区（canopy >= 22 / 森林底图）：顺应山脉走势连绵成林，
+    //       取消「noiseVal < 0.38 一刀切砍光整座山脉」的正弦波门控，使长白山余脉（赫图阿拉/萨尔浒）、医巫闾山脊、辽西山地真正披林；
+    //    3. 黄土高原沟壑塬面（isLoessTableland）：仅在阴坡深沟（noiseVal >= 0.56）散落疏林小丛，露出黄土梁峁底色；
+    //    4. 低平冲积平原（elev < 165m 且 canopy < 22 且非森林底图，如辽河平原腹地）：保持开阔平川沃野，不画大坨平地树斑。
     if (forestCover !== null) {
         if (forestCover < FOREST_COVER_THRESHOLD) return 0;
-        if (noiseVal < 0.38) return 0;
+        if (isLoessTableland) {
+            if (noiseVal < 0.56) return 0;
+            return 0.16 + 0.12 * ((noiseVal - 0.56) / 0.44);
+        }
+        if (!isMountainOrHill && !hasRealCanopy) {
+            // 平原低地且无森林郁闭度：仅在极高噪声峰顶偶留零星小树丛，绝不铺满平川
+            if (noiseVal < 0.76) return 0;
+            return 0.22 * ((noiseVal - 0.76) / 0.24);
+        }
         const norm = Math.min(1, (forestCover - FOREST_COVER_THRESHOLD) / (1 - FOREST_COVER_THRESHOLD));
-        return (0.20 + 0.60 * norm) * Math.pow((noiseVal - 0.38) / 0.62, 1.25);
+        const terrainBoost = isMountainOrHill ? Math.min(0.24, (elev! - 165) / 900) : 0;
+        const canopyBoost = Math.min(0.22, canopyDensity / 220);
+        // 山林内部仅在 noiseVal < 0.20 留出少量自然林间空地，其余顺山势连成林海
+        if (noiseVal < 0.20 && canopyDensity < 45) return 0;
+        const nFactor = 0.65 + 0.35 * Math.max(0, (noiseVal - 0.15) / 0.85);
+        return Math.min(1, (0.34 + 0.42 * norm + terrainBoost + canopyBoost) * nFactor);
     }
 
     const isForestBiome = RESOLVE_FOREST_BIOMES.has(biome);
-    const isForestTile = BASE_FOREST_TILES.has(tile);
     if (!isForestBiome && !isForestTile) return 0;
 
-    // 🔴 解决「有的地方的树是不是太多了」：
-    // 1. 真实郁闭度低于 22% 属于开阔农田平原、干草原、平川河谷，坚决不长树；
-    //    把平原（汾河谷地、太原盆地、关中平原、华北大平原）彻底还给开阔农田与沃野！
-    // 2. 地表材质显式标注森林的（for, fo2, snf），即使 canopy 偏低也给予适当树林呈现；
-    // 3. 聚簇门控：连续世界坐标场低于 0.38 的直接留白，高于 0.38 的凝聚成块状/带状自然林海。
     let baseWeight = 0;
     if (isForestTile) {
         const canopy = Math.max(0, Math.min(1, canopyDensity / 100));
         baseWeight = Math.max(0.35, canopy);
     } else if (isForestBiome) {
-        if (canopyDensity < 22) return 0; // 开阔平原农田/干旱荒草坚决 0 树木
-        const norm = Math.min(1.0, (canopyDensity - 22) / 53);
-        baseWeight = 0.20 + 0.60 * norm;
+        if (canopyDensity < 22 && !isMountainOrHill) return 0;
+        const norm = Math.min(1.0, Math.max(0.15, (canopyDensity - 15) / 55));
+        baseWeight = 0.24 + 0.56 * norm;
     }
 
-    // 连续噪声场强门控：消除均匀撒点感，塑造有致的林带与山川留白
-    if (noiseVal < 0.38) return 0;
-    const clusterFactor = Math.pow((noiseVal - 0.38) / 0.62, 1.25);
+    if (noiseVal < 0.26) return 0;
+    const clusterFactor = 0.60 + 0.40 * ((noiseVal - 0.26) / 0.74);
 
     return baseWeight * clusterFactor;
 }
@@ -871,28 +889,8 @@ export class VegetationLayer {
             return null;
         };
 
-        // 🔴 [2026-11-01 主人令「密林连冠成海（唤醒林下底荫 + 跨格咬合）」]
-        //    参照 DE 森林地形（10 Forest / 71 Underbrush Leaves）：先在郁闭密林格（inGrove）底层铺一层四季林下阴翳底色，
-        //    将相邻树冠之间的细碎缝隙自然缝合成连片林海；疏林/稀树草原/绿洲（inGrove=false）不铺底荫，保持沙地/草地干净通透。
-        const underbrush = getUnderbrushSprite((gameSeason >= 0 && gameSeason <= 3 ? gameSeason : 0) as TreeSeason);
-        if (underbrush) {
-            const ubW = Math.round(hScale * 2.85);
-            const ubH = Math.round(hScale * 1.62);
-            ctx.globalAlpha = 1;
-            for (const it of items) {
-                if (!it.c.inGrove) continue;
-                ctx.drawImage(
-                    underbrush,
-                    Math.round(it.x - ubW * 0.5),
-                    Math.round(it.y - ubH * 0.58),
-                    ubW,
-                    ubH,
-                );
-            }
-        }
-
         // 🔴 DE 原生树木精灵（frames.png）自身已内置柔化好的左下角等轴测地面阴影；
-        //    不再叠加反向右下角椭圆阴影或暗黑泥印，保持树干根部与翠绿/黄褐地表干净通透融合。
+        //    不再叠加额外黑椭圆底荫（截图中会外露成黑圆斑/膏药印），靠 40px DE 饱满树冠自身层叠咬合，保持树根与地表干净通透融合。
         for (const it of items) {
             /** 树位键（经纬度 5 位小数）：给「上一帧画成的贴图」备忘用，四季之间坐标绝对不变 */
             const posKey = `${Math.round(it.c.lat * 1e5)},${Math.round(it.c.lng * 1e5)}`;
@@ -1132,10 +1130,10 @@ export class VegetationLayer {
                 let huntingCityBoost = 0;
                 let oasisCityBoost = 0;
                 for (const c of visibleCities) {
-                    if (c.isForestHunting) {
+                    if (c.isForestHunting && (elev === null || elev >= 145)) {
                         const d = Math.hypot(ptLatLng.lat - c.lat, ptLatLng.lng - c.lng);
-                        if (d < 0.36) {
-                            huntingCityBoost = Math.max(huntingCityBoost, 0.52 * (1 - d / 0.45));
+                        if (d < 0.32) {
+                            huntingCityBoost = Math.max(huntingCityBoost, 0.48 * (1 - d / 0.36));
                         }
                     } else if (c.isOasisCity && (elev === null || elev < 1850)) {
                         const d = Math.hypot(ptLatLng.lat - c.lat, ptLatLng.lng - c.lng);
@@ -1199,6 +1197,7 @@ export class VegetationLayer {
                     canopyDensity,
                     noiseVal,
                     forestCoverAt(ptLatLng.lat, ptLatLng.lng, gameYear, elev),
+                    elev,
                 );
                 const clusterWeight = Math.max(
                     huntingCityBoost,
@@ -1207,12 +1206,6 @@ export class VegetationLayer {
                     naturalForestWeight,
                 );
                 // 🔴 [2026-10-21 ~ 2026-11-01 主人令「密林连冠成海 + 疏林/绿洲保持成簇 + 战略道路自动留出林间走廊，分布摆放学习 DE」]
-                //    DE 森林摆放精髓：
-                //    1. 郁闭密林（isDenseCanopy：DE 1000‰ 级，如秦巴/江南竹林/西伯利亚泰加林/东北长白山/黑森林/亚马逊/刚果）：
-                //       底层铺 Forest Underbrush 林下腐殖质暗色底荫，每格 4~5 棵树（内圈 9~15px 聚拢 + 外圈 17~24.5px 跨格咬合），树冠相连成海；
-                //    2. 疏林与点状绿洲（isSparseEco：DE 250~500‰ 级，如非洲稀树草原猴面包树/金合欢、沙漠绿洲椰枣、农田河岸柳树）：
-                //       不铺林下暗底，保持 2~3 棵小树丛（6~13px），留出 75% 开阔地表；
-                //    3. 成簇树种内聚（Clump Species Coherence）：同一 2×2 邻格树团共享主导抽签值，避免一团 4 棵树杂乱混成 4 个物种，同时保留 25% 伴生树混交。
                 if (clusterWeight < 0.12) continue;
                 if (clusterWeight < 0.24 && hash(gx, gy, 46) > (clusterWeight - 0.12) / 0.12) continue;   // 林缘软过渡
                 if (clusterWeight >= 0.24 && clusterWeight < 0.40 && hash(gx, gy, 47) > 0.88) continue;   // 林缘浅带偶有小林隙
@@ -1236,16 +1229,22 @@ export class VegetationLayer {
                 for (let i = 0; i < count; i++) {
                     let curPx = px;
                     let curPy = py;
-                    if (i > 0) {
+                    if (isDenseCanopy) {
+                        // 密林按 2×2 子象限（每象限 23×23px）均匀布点 + 随机抖动，使格内间距与跨格间距完全一致，消除「46px 网格一撮一撮」的团块缝隙
+                        if (i < 4) {
+                            const qx = i & 1;
+                            const qy = (i >> 1) & 1;
+                            const halfStep = TREE_GRID_STEP * 0.5;
+                            curPx = gx + (qx + 0.5) * halfStep + (hash(gx, gy, i * 17 + 31) - 0.5) * (halfStep * 0.72);
+                            curPy = gy + (qy + 0.5) * halfStep + (hash(gx, gy, i * 19 + 32) - 0.5) * (halfStep * 0.72);
+                        } else {
+                            curPx = px + (hash(gx, gy, 97) - 0.5) * 14;
+                            curPy = py + (hash(gx, gy, 99) - 0.5) * 12;
+                        }
+                    } else if (i > 0) {
                         const baseAng = hash(gx, gy, 31) * Math.PI * 2 + (i - 1) * ((Math.PI * 2) / Math.max(1, count - 1));
                         const ang = baseAng + (hash(gx, gy, i * 17 + 31) - 0.5) * 0.52;
-                        // 郁闭密林：前两棵伴生树紧拱主树（9~15.5px），外圈伴生树跨出半格（17~24.5px）与邻格树丛咬合连冠；
-                        // 疏林/绿洲：收敛在 6~12.5px 内，保持成簇不糊地。
-                        const dist = isDenseCanopy
-                            ? (i <= 2
-                                ? 9.0 + hash(gx, gy, i * 19 + 32) * 6.5
-                                : 17.0 + hash(gx, gy, i * 19 + 32) * 7.5)
-                            : (6.0 + hash(gx, gy, i * 19 + 32) * 6.5);
+                        const dist = 7.0 + hash(gx, gy, i * 19 + 32) * 5.5;
                         curPx += Math.cos(ang) * dist;
                         curPy += Math.sin(ang) * dist * 0.74;
                     }
@@ -1253,7 +1252,7 @@ export class VegetationLayer {
                     // 战略官道/栈道走廊退让：树干落进道路净空带（11.5px）内则自动让路，露出林间古道
                     if (distSqToRoad(curPx, curPy) < ROAD_CLEAR_PX * ROAD_CLEAR_PX) continue;
 
-                    const curLatLng = i === 0 ? ptLatLng : this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
+                    const curLatLng = this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
 
                     // 🔴 2026-10-31 ~ 2026-11-01 主人令「植被符合区域，战略和战术保持一致」「按真实的地理，历史模拟」：
                     //    树种从植物总表本区主树种按权重取，四季物候（温带落叶阔叶冬枯/覆雪、常绿与针叶冬青/披雪、荒漠枯木）

@@ -11,6 +11,7 @@
  * 🔴 2026-10-31 主人定「北极熊按 B（冬季南延）；所有其他物种尽量也按偶尔能看到」：
  *    物种在常住区之外，可写现实中零星出现的邻近区（strays，可限冬季、纬度），进物种池的权重是常住的 1/4。
  */
+import { koppenClassIdAt } from '../../data/KoppenGeigerGrid';
 import { envIslandAt, envZoneAt, type EnvIsland, type EnvZone } from './envZones';
 
 export type AnimalKind = 'wild' | 'bird' | 'livestock' | 'legend';
@@ -27,6 +28,8 @@ export interface AnimalEntry {
     excludeIslands?: readonly EnvIsland[];
     /** 'coast'：只在海岸附近出现；'river'：只在内陆矢量河流岸边出现（不上岸海滩、不进无河荒漠） */
     habitat?: 'coast' | 'river';
+    /** 林栖物种：不进柯本荒漠（BWk/BWh）与极地高寒苔原冰原（ET/EF），与战术战场荒漠剔野猪/火鸡同源 */
+    noAridOrTundra?: boolean;
     /** 同一素材也作家畜用：zones 只限野生出现地，人类聚落（战术战 DE 原图摆放）不限 */
     alsoDomestic?: boolean;
     /** 偶见：常住区之外零星出现的邻近区（权重为常住的 1/4） */
@@ -46,6 +49,8 @@ export interface AnimalStray {
     winterOnly?: boolean;
     /** 只在该纬度以北（北半球） */
     minLat?: number;
+    /** 只在该纬度以南（如岭南/滇南北纬 24.5° 以南） */
+    maxLat?: number;
 }
 
 /**
@@ -70,20 +75,56 @@ const RESIDENT_WEIGHT = 4;
 const STRAY_WEIGHT = 1;
 
 const PALAEARCTIC_TEMPERATE: readonly EnvZone[] = ['WEU', 'CEU', 'MED', 'WAH', 'NCP', 'LOE', 'NEB', 'EAS', 'SWM', 'STP', 'CAD', 'TIB', 'SIB'];
-const TROPICAL_ASIA: readonly EnvZone[] = ['SEA', 'SAS', 'EAS', 'SWM'];
+/** 真正的热带亚洲（东南亚热带雨林/季雨林 + 南亚热带季风区） */
+const TROPICAL_ASIA_CORE: readonly EnvZone[] = ['SEA', 'SAS'];
+/** 含东亚亚热带与西南山地的泛南方稻作/山林带（供猕猴、水蛇、家养水牛等广布种使用） */
+const SUBTROPICAL_AND_TROPICAL_ASIA: readonly EnvZone[] = ['SEA', 'SAS', 'EAS', 'SWM'];
 const EVERYWHERE: readonly EnvZone[] = [...PALAEARCTIC_TEMPERATE, 'SEA', 'SAS', 'HDS', 'ARC', 'NAM', 'NEO', 'AND', 'AFR', 'AUS'];
 
 export const ANIMAL_CATALOG: Readonly<Record<string, AnimalEntry>> = {
-    // ── 陆地野生：欧亚通布 ──
-    WOLF: { kind: 'wild', look: '灰狼', zones: ['WEU', 'CEU', 'MED', 'WAH', 'NCP', 'LOE', 'NEB', 'EAS', 'STP', 'CAD', 'TIB', 'SIB', 'SAS', 'NAM'] },
+    // ── 陆地野生：欧亚通布与温带山林 ──
+    WOLF: {
+        kind: 'wild',
+        look: '灰狼',
+        zones: ['WEU', 'CEU', 'MED', 'WAH', 'LOE', 'NEB', 'STP', 'CAD', 'TIB', 'SIB', 'NAM'],
+        strays: [{ zones: ['NCP', 'SAS'] }],
+        excludeIslands: ['TAIWAN', 'SRI_LANKA'],
+    },
     FOX_RED: { kind: 'wild', look: '赤狐', zones: [...PALAEARCTIC_TEMPERATE, 'HDS', 'NAM'] },
     DEER: { kind: 'wild', look: '马鹿 / 梅花鹿 / 水鹿', zones: [...PALAEARCTIC_TEMPERATE, 'SAS', 'SEA', 'NAM', 'NEO'], herd: [1, 5] },
-    BOAR: { kind: 'wild', look: '野猪（林地与河谷芦苇丛，不进荒漠）', zones: ['WEU', 'CEU', 'MED', 'WAH', 'NCP', 'LOE', 'NEB', 'EAS', 'SWM', 'STP', 'SAS', 'SEA'] },
-    BEAR: { kind: 'wild', look: '棕熊', zones: ['WEU', 'CEU', 'MED', 'WAH', 'NCP', 'NEB', 'STP', 'CAD', 'TIB', 'SIB', 'NAM'] },
-    BEAR_BLACK: { kind: 'wild', look: '亚洲黑熊 / 美洲黑熊', zones: ['NCP', 'NEB', 'EAS', 'SWM', 'SAS', 'SEA', 'NAM'] },
+    BOAR: {
+        kind: 'wild',
+        look: '野猪（林地与河谷芦苇丛，不进荒漠）',
+        zones: ['WEU', 'CEU', 'MED', 'WAH', 'NCP', 'LOE', 'NEB', 'EAS', 'SWM', 'STP', 'SAS', 'SEA'],
+        noAridOrTundra: true,
+    },
+    BEAR: {
+        kind: 'wild',
+        look: '棕熊（北方寒温带森林与高山高原，不下华北平原与开阔干草原）',
+        zones: ['NEB', 'SIB', 'TIB', 'CEU', 'NAM'],
+        strays: [
+            { zones: ['WAH'] },
+            { zones: ['CAD'], minLat: 41 },
+            { zones: ['WEU', 'MED'], minLat: 40 },
+        ],
+    },
+    BEAR_BLACK: {
+        kind: 'wild',
+        look: '亚洲黑熊 / 美洲黑熊（山林物种，不在华北平川扎堆）',
+        zones: ['NEB', 'SWM', 'SEA', 'NAM'],
+        strays: [
+            { zones: ['EAS', 'SAS'] },
+            { zones: ['NCP'], minLat: 36 },
+        ],
+    },
     HARE_BROWN: { kind: 'wild', look: '草兔 / 欧洲野兔', zones: [...PALAEARCTIC_TEMPERATE] },
     HARE_GREY: { kind: 'wild', look: '灰褐色干旱区野兔', zones: ['HDS', 'CAD', 'WAH', 'STP', 'SAS', 'TIB', 'NAM', 'AND', 'AFR'] },
-    LYNX: { kind: 'wild', look: '猞猁（温带—寒带山林，不到亚热带）', zones: ['WEU', 'CEU', 'MED', 'WAH', 'NCP', 'LOE', 'NEB', 'CAD', 'TIB', 'SIB', 'NAM'] },
+    LYNX: {
+        kind: 'wild',
+        look: '猞猁（北方寒温带林与高山高原，不到亚热带与华北平原）',
+        zones: ['NEB', 'SIB', 'CEU', 'TIB', 'NAM'],
+        strays: [{ zones: ['CAD', 'WAH'] }, { zones: ['WEU'], minLat: 45 }],
+    },
     ELK: { kind: 'wild', look: '驼鹿（掌状角，北方林地）', zones: ['CEU', 'WEU', 'NEB', 'SIB', 'NAM'], strays: [{ zones: ['STP'], minLat: 50 }], herd: [1, 2] },   // 哈萨克北部森林草原
     // ── 冬毛与北极／亚北极物种：北极常住，北纬 60° 以北亚北极常年可见，北方温带冬季南下 ──
     WOLF_ARCTIC: { kind: 'wild', look: '白色冬毛的狼', zones: ['ARC', 'SIB'], winterZones: ['NEB', 'CEU', 'STP'], strays: [{ zones: ['CEU', 'WEU', 'NAM'], minLat: 60 }] },
@@ -92,28 +133,93 @@ export const ANIMAL_CATALOG: Readonly<Record<string, AnimalEntry>> = {
     // ── 北极与亚北极海岸（北纬 64° 起常住；北纬 60° 以北白海、挪威北岸、冰岛等海岸亦可见）──
     BEAR_POLAR: { kind: 'wild', look: '北极熊', zones: ['ARC'], habitat: 'coast', strays: [{ zones: ['CEU', 'WEU', 'SIB', 'NAM'], minLat: 60 }] },
     WALRUS: { kind: 'wild', look: '海象（史上白海、挪威北岸都有）', zones: ['ARC'], habitat: 'coast', strays: [{ zones: ['CEU', 'WEU', 'SIB', 'NAM'], minLat: 60 }], herd: [2, 5] },
-    SEAL: { kind: 'wild', look: '海豹（北海、波罗的海、地中海僧海豹、里海海豹、渤海斑海豹、开普毛皮海狮）', zones: ['ARC', 'WEU', 'CEU', 'MED', 'STP', 'CAD', 'NCP', 'NEB', 'SIB', 'AND', 'AFR', 'NAM'], habitat: 'coast', herd: [2, 5] },
+    SEAL: {
+        kind: 'wild',
+        look: '海豹（高纬与寒流海岸常住；里海、地中海僧海豹、渤海斑海豹、南非开普海狮为偶见，不去赤道热带海岸）',
+        zones: ['ARC', 'SIB', 'NEB', 'CEU', 'WEU', 'NAM', 'AND'],
+        habitat: 'coast',
+        strays: [
+            { zones: ['CAD', 'STP', 'MED'] },
+            { zones: ['NCP'], minLat: 37 },
+            { zones: ['AFR'], maxLat: -18 },
+        ],
+        herd: [2, 5],
+    },
     // ── 山地与干旱 ──
-    IBEX: { kind: 'wild', look: '北山羊 / 努比亚羱羊', zones: ['MED', 'WAH', 'HDS', 'CAD', 'TIB'], herd: [1, 3] },
-    MOUFLON: { kind: 'wild', look: '盘羊 / 东方盘羊', zones: ['MED', 'WAH', 'CAD'], herd: [2, 3] },
-    ARGALI: { kind: 'wild', look: '大头盘羊', zones: ['TIB', 'CAD', 'STP'], herd: [2, 4] },
-    SNOWLEOPARD: { kind: 'wild', look: '雪豹', zones: ['TIB', 'CAD'], strays: [{ zones: ['SWM', 'STP'] }] },   // 横断山、阿尔泰山
+    IBEX: { kind: 'wild', look: '北山羊 / 努比亚羱羊', zones: ['TIB', 'WAH', 'CAD'], strays: [{ zones: ['MED', 'HDS'] }], herd: [1, 3] },
+    MOUFLON: { kind: 'wild', look: '盘羊 / 东方盘羊', zones: ['WAH'], strays: [{ zones: ['MED', 'CAD'] }], herd: [2, 3] },
+    ARGALI: { kind: 'wild', look: '大头盘羊', zones: ['TIB', 'CAD'], strays: [{ zones: ['STP'] }], herd: [2, 4] },
+    SNOWLEOPARD: { kind: 'wild', look: '雪豹', zones: ['TIB'], strays: [{ zones: ['CAD', 'SWM'] }, { zones: ['STP'], minLat: 47 }] },   // 天山、横断山、阿尔泰山
     GAZELLE: { kind: 'wild', look: '瞪羚 / 鹅喉羚 / 黄羊 / 藏原羚', zones: ['HDS', 'WAH', 'CAD', 'STP', 'TIB', 'SAS', 'AFR'], herd: [2, 6] },
     WOLF_ARABIAN: { kind: 'wild', look: '阿拉伯狼', zones: ['HDS', 'WAH'] },
     HORSE: { kind: 'wild', look: '无鞍马：野生只在草原（普氏野马 / 欧洲野马），同一素材兼作家马', zones: ['STP', 'CAD'], alsoDomestic: true, herd: [1, 4] },
-    OSTRICH: { kind: 'wild', look: '鸵鸟（含已灭绝的阿拉伯鸵鸟）', zones: ['HDS', 'AFR'], strays: [{ zones: ['WAH'] }], herd: [1, 4] },   // 叙利亚沙漠
-    // ── 热带与亚热带 ──
-    TIGER: { kind: 'wild', look: '虎（含东北虎、里海虎）', zones: ['SEA', 'SAS', 'EAS', 'SWM', 'NCP', 'LOE', 'NEB', 'CAD', 'WAH'], excludeIslands: ['JAPAN', 'TAIWAN', 'SRI_LANKA'] },
-    LION: { kind: 'wild', look: '狮（含亚洲狮、巴巴里狮）', zones: ['AFR', 'HDS', 'WAH', 'SAS'] },
-    BLACK_PANTHER: { kind: 'wild', look: '黑豹', zones: [...TROPICAL_ASIA, 'AFR'], herd: [1, 2] },
-    ELEPHANT: { kind: 'wild', look: '象（含岭南亚洲象）', zones: [...TROPICAL_ASIA, 'AFR'], herd: [1, 2] },
-    RHINO: { kind: 'wild', look: '犀', zones: [...TROPICAL_ASIA, 'AFR'], herd: [1, 2] },
-    MONKEY: { kind: 'wild', look: '猕猴 / 狒狒类', zones: [...TROPICAL_ASIA, 'NCP', 'AFR', 'NEO'] },
-    PEACOCK: { kind: 'wild', look: '孔雀（蓝孔雀 / 绿孔雀）', zones: TROPICAL_ASIA, herd: [1, 3] },
-    CROCODILE: { kind: 'wild', look: '鳄（尼罗鳄、沼泽鳄、湾鳄）', zones: [...TROPICAL_ASIA, 'HDS', 'AFR', 'NEO', 'AUS'], habitat: 'river' },
-    KOMODO: { kind: 'wild', look: '巨蜥（泽巨蜥、荒漠巨蜥）', zones: [...TROPICAL_ASIA, 'HDS', 'CAD', 'AUS'] },
+    OSTRICH: { kind: 'wild', look: '鸵鸟（含已灭绝的阿拉伯鸵鸟）', zones: ['HDS', 'AFR'], strays: [{ zones: ['WAH'], maxLat: 36 }], herd: [1, 4] },   // 叙利亚沙漠
+    // ── 热带与亚热带（🔴 2026-11-01 主人问「湖南有大象，犀牛吗」「请检查下陆地动物的分布」：
+    //    亚洲象、犀牛、孔雀、黑豹、泽巨蜥、湾鳄常住仅限热带 SEA/SAS；在东亚 EAS/SWM 严守北纬 24.5° 南岭—北回归线以南的岭南/滇南偶见，绝不进湖南、湖北、江浙、巴蜀与日本！）──
+    TIGER: {
+        kind: 'wild',
+        look: '虎（东南亚、孟加拉、东北林海常住；华南/西南山林与里海虎带偶见，不上华北农耕平川）',
+        zones: ['SEA', 'SAS', 'NEB'],
+        strays: [{ zones: ['EAS', 'SWM', 'CAD', 'WAH'] }],
+        excludeIslands: ['JAPAN', 'TAIWAN', 'SRI_LANKA'],
+    },
+    LION: {
+        kind: 'wild',
+        look: '狮（非洲稀树草原、北非巴巴里与阿拉伯常住；西亚波斯与印度西北亚洲狮偶见）',
+        zones: ['AFR', 'HDS'],
+        strays: [{ zones: ['WAH', 'SAS'], maxLat: 38 }],
+        excludeIslands: ['SRI_LANKA'],
+    },
+    BLACK_PANTHER: {
+        kind: 'wild',
+        look: '黑豹（热带雨林/季雨林黑化豹）',
+        zones: [...TROPICAL_ASIA_CORE, 'AFR'],
+        strays: [{ zones: ['EAS', 'SWM'], maxLat: 24.5 }],
+        excludeIslands: ['JAPAN', 'TAIWAN'],
+        herd: [1, 2],
+    },
+    ELEPHANT: {
+        kind: 'wild',
+        look: '象（东南亚/南亚/非洲常住；中国境内仅限北纬 24.5° 南岭以南的岭南与滇南偶见，湖南/江南/巴蜀无象）',
+        zones: [...TROPICAL_ASIA_CORE, 'AFR'],
+        strays: [{ zones: ['EAS', 'SWM'], maxLat: 24.5 }],
+        excludeIslands: ['JAPAN', 'TAIWAN'],
+        herd: [1, 2],
+    },
+    RHINO: {
+        kind: 'wild',
+        look: '犀（东南亚/南亚/非洲常住；中国境内仅限北纬 24.5° 南岭以南的岭南与滇南偶见，湖南/江南/巴蜀无犀）',
+        zones: [...TROPICAL_ASIA_CORE, 'AFR'],
+        strays: [{ zones: ['EAS', 'SWM'], maxLat: 24.5 }],
+        excludeIslands: ['JAPAN', 'TAIWAN', 'SRI_LANKA'],
+        herd: [1, 2],
+    },
+    MONKEY: { kind: 'wild', look: '猕猴 / 狒狒类', zones: [...SUBTROPICAL_AND_TROPICAL_ASIA, 'AFR', 'NEO'], strays: [{ zones: ['NCP'] }] },
+    PEACOCK: {
+        kind: 'wild',
+        look: '孔雀（南亚蓝孔雀 / 东南亚与滇南岭南绿孔雀）',
+        zones: TROPICAL_ASIA_CORE,
+        strays: [{ zones: ['EAS', 'SWM'], maxLat: 24.5 }],
+        excludeIslands: ['JAPAN', 'TAIWAN'],
+        herd: [1, 3],
+    },
+    CROCODILE: {
+        kind: 'wild',
+        look: '鳄（尼罗鳄、沼泽鳄、湾鳄；东亚仅限北纬 24.5° 以南岭南韩江/珠江口）',
+        zones: [...TROPICAL_ASIA_CORE, 'HDS', 'AFR', 'NEO', 'AUS'],
+        strays: [{ zones: ['EAS'], maxLat: 24.5 }],
+        excludeIslands: ['JAPAN', 'TAIWAN'],
+        habitat: 'river',
+    },
+    KOMODO: {
+        kind: 'wild',
+        look: '巨蜥（东南亚/南亚泽巨蜥、西亚北非荒漠巨蜥、澳洲巨蜥；不去中亚寒漠与江南湖广）',
+        zones: [...TROPICAL_ASIA_CORE, 'HDS', 'AUS'],
+        strays: [{ zones: ['EAS', 'SWM'], maxLat: 24.5 }],
+        excludeIslands: ['JAPAN', 'TAIWAN'],
+    },
     SNAKE_GROUND: { kind: 'wild', look: '花纹地蛇', zones: ['WEU', 'CEU', 'MED', 'WAH', 'HDS', 'STP', 'CAD', 'NCP', 'LOE', 'EAS', 'SWM', 'SAS', 'SEA', 'AFR', 'NEO', 'NAM', 'AND', 'AUS'] },
-    SNAKE_WATER: { kind: 'wild', look: '水蛇', zones: [...TROPICAL_ASIA, 'AFR', 'NEO'], habitat: 'river' },
+    SNAKE_WATER: { kind: 'wild', look: '水蛇', zones: [...SUBTROPICAL_AND_TROPICAL_ASIA, 'AFR', 'NEO'], habitat: 'river' },
     ZEBRA: { kind: 'wild', look: '斑马', zones: ['AFR'], herd: [1, 4] },
     // ── 美洲 ──
     TAPIR: { kind: 'wild', look: '南美貘（深棕色）', zones: ['NEO'] },
@@ -121,10 +227,17 @@ export const ANIMAL_CATALOG: Readonly<Record<string, AnimalEntry>> = {
     CAPYBARA: { kind: 'wild', look: '水豚', zones: ['NEO'], habitat: 'river', herd: [2, 5] },
     CAIMAN: { kind: 'wild', look: '凯门鳄', zones: ['NEO'], habitat: 'river' },
     JAVELINA: { kind: 'wild', look: '西貒', zones: ['NEO', 'NAM'] },
-    TURKEY: { kind: 'wild', look: '野火鸡', zones: ['NAM', 'NEO'], herd: [1, 4] },
+    TURKEY: { kind: 'wild', look: '野火鸡', zones: ['NAM', 'NEO'], noAridOrTundra: true, herd: [1, 4] },
     GUANACO: { kind: 'wild', look: '原驼', zones: ['AND'], herd: [2, 5] },
     RHEA: { kind: 'wild', look: '美洲鸵（大美洲鸵到巴西高原）', zones: ['AND', 'NEO'], herd: [2, 4] },
-    PENGUIN: { kind: 'wild', look: '企鹅（麦哲伦企鹅、非洲企鹅）', zones: ['AND', 'AFR'], habitat: 'coast', herd: [3, 6] },
+    PENGUIN: {
+        kind: 'wild',
+        look: '企鹅（南美安第斯/麦哲伦企鹅常住，非洲仅限南纬 18° 以南开普寒流海岸，不去赤道热带海滩）',
+        zones: ['AND'],
+        strays: [{ zones: ['AFR'], maxLat: -18 }],
+        habitat: 'coast',
+        herd: [3, 6],
+    },
 
     // ── 飞鸟 ──
     FALCON: { kind: 'bird', look: '隼', zones: EVERYWHERE },
@@ -144,7 +257,7 @@ export const ANIMAL_CATALOG: Readonly<Record<string, AnimalEntry>> = {
     DROMEDARY: { kind: 'livestock', look: '双峰驼', zones: ['CAD', 'STP', 'TIB', 'LOE', 'NCP', 'WAH'] },
     LLAMA: { kind: 'livestock', look: '美洲驼', zones: ['AND', 'NEO'] },
     ALPACA: { kind: 'livestock', look: '羊驼', zones: ['AND', 'NEO'] },
-    BUFFALO: { kind: 'livestock', look: '水牛', zones: [...TROPICAL_ASIA, 'HDS', 'WAH', 'MED'] },
+    BUFFALO: { kind: 'livestock', look: '水牛', zones: [...SUBTROPICAL_AND_TROPICAL_ASIA, 'HDS', 'WAH', 'MED'] },
     DONKEY: { kind: 'livestock', look: '驮筐家驴' },
     WAR_DOG: { kind: 'livestock', look: '家养獒犬' },
     CHICKEN: { kind: 'livestock', look: '鸡' },
@@ -160,12 +273,24 @@ export const ANIMAL_CATALOG: Readonly<Record<string, AnimalEntry>> = {
     NESSIE: { kind: 'legend', look: '水怪（海洋层按主人旧定放）' },
 };
 
+/** 柯本极旱沙漠（BWh=4, BWk=5）与极地高山冰原苔原（ET=29, EF=30） */
+function isKoppenDesertOrTundra(lat: number, lng: number): boolean {
+    const kc = koppenClassIdAt(lat, lng) ?? 0;
+    return kc === 4 || kc === 5 || kc === 29 || kc === 30;
+}
+
 /** 该物种在此处的权重：常住 RESIDENT_WEIGHT、偶见 STRAY_WEIGHT、不出现 0 */
-function weightAt(entry: AnimalEntry, zone: EnvZone, lat: number, winter: boolean): number {
+function weightAt(entry: AnimalEntry, zone: EnvZone, lat: number, winter: boolean, aridOrTundra = false): number {
+    if (entry.noAridOrTundra && aridOrTundra) return 0;
     if (!entry.zones) return RESIDENT_WEIGHT;
     if (entry.zones.includes(zone) || (winter && entry.winterZones?.includes(zone))) return RESIDENT_WEIGHT;
     for (const st of entry.strays ?? []) {
-        if (st.zones.includes(zone) && (!st.winterOnly || winter) && (st.minLat === undefined || lat >= st.minLat)) return STRAY_WEIGHT;
+        if (
+            st.zones.includes(zone)
+            && (!st.winterOnly || winter)
+            && (st.minLat === undefined || lat >= st.minLat)
+            && (st.maxLat === undefined || lat <= st.maxLat)
+        ) return STRAY_WEIGHT;
     }
     return 0;
 }
@@ -177,7 +302,9 @@ function weightAt(entry: AnimalEntry, zone: EnvZone, lat: number, winter: boolea
 export function animalAllowedAt(species: string, lat: number, lng: number, winter = false): boolean {
     const entry = ANIMAL_CATALOG[species];
     if (!entry || entry.alsoDomestic) return true;
-    if (weightAt(entry, envZoneAt(lat, lng), lat, winter) === 0) return false;
+    const latBand = Math.floor(lat * 2) / 2;
+    const aridOrTundra = entry.noAridOrTundra ? isKoppenDesertOrTundra(lat, lng) : false;
+    if (weightAt(entry, envZoneAt(lat, lng), latBand, winter, aridOrTundra) === 0) return false;
     const island = entry.excludeIslands ? envIslandAt(lat, lng) : null;
     return !(island && entry.excludeIslands!.includes(island));
 }
@@ -208,14 +335,15 @@ const BIRDS = Object.entries(ANIMAL_CATALOG).filter(([, e]) => e.kind === 'bird'
 export function wildPoolAt(lat: number, lng: number, winter = false): { land: string[]; birds: string[] } {
     const zone = envZoneAt(lat, lng);
     const island = envIslandAt(lat, lng);
-    const latBand = Math.floor(lat);
-    const key = `${zone}|${island ?? ''}|${winter ? 1 : 0}|${latBand}`;
+    const latBand = Math.floor(lat * 2) / 2;
+    const aridOrTundra = isKoppenDesertOrTundra(lat, lng);
+    const key = `${zone}|${island ?? ''}|${winter ? 1 : 0}|${latBand}|${aridOrTundra ? 1 : 0}`;
     let pool = poolCache.get(key);
     if (!pool) {
         const expand = (list: string[]) => list.flatMap((sp) => {
             const e = ANIMAL_CATALOG[sp];
             if (island && e.excludeIslands?.includes(island)) return [];
-            return Array<string>(weightAt(e, zone, latBand, winter)).fill(sp);
+            return Array<string>(weightAt(e, zone, latBand, winter, aridOrTundra)).fill(sp);
         });
         pool = { land: expand(WILD), birds: expand(BIRDS) };
         poolCache.set(key, pool);

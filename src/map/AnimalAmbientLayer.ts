@@ -111,12 +111,13 @@ const BODY_HALF_DEG: Readonly<Record<string, number>> = {
 const BODY_HALF_DEG_DEFAULT = 0.025;
 
 /**
- * 🔴 2026-10-31 主人令「动物不要出现在据点附近」：
- *   据点 0.30°（≈33 km，约 110 屏幕像素，恰好是城池图标 + 近郊农舍那一圈）以内不生成野生动物；
+ * 🔴 2026-10-31 ~ 2026-11-01 主人令「据点周围不要放陆地动物」：
+ *   每个据点代表周围 50 公里（≈0.45°~0.48°，涵盖城池图标 + 外围农田/牧场/民生圈），
+ *   0.48° 以内一律不生成野生陆地动物（且不得把落入圈内的动物推到圈边聚拢）；
  *   走动/逃跑也不许踏进这个圈 —— 中途踏进去立刻停步回头（与「不下水」同一套处理）。
  */
-const CITY_CLEAR_DEG = 0.30;
-const CITY_INDEX_CELL_DEG = 0.5;
+const CITY_CLEAR_DEG = 0.48;
+const CITY_INDEX_CELL_DEG = 0.6;
 
 /** DE 巡航飞鸟：跨屏巡游 + 振翅/滑翔交替 + 渐显/渐隐 */
 interface BirdAgent {
@@ -632,7 +633,8 @@ export class AnimalAmbientLayer {
                         const offLng = (hash01(col, row, 4 + yearSalt) - 0.5) * CELL_DEG * 0.8;
                         const rawAnchor: Pt = { lat: clat + offLat, lng: clng + offLng };
                         // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
-                        // 🔴 2026-10-31 主人令「动物不要出现在据点附近」：据点 0.30° 圈内不生成
+                        // 🔴 2026-11-01 主人令「据点周围不要放陆地动物」：出生点落在据点周围禁区内直接跳过，严禁挪到据点边缘聚拢
+                        if (this.isNearCity(rawAnchor, dir)) continue;
                         // 🔴 冬眠物种在冬季连"活跃"都不算：不进 activeIds，场上那只就会自动渐隐消失
                         if (isHibernating(dir, rawAnchor.lat, this.getSeason())) continue;
                         let needsRiver = animalNeedsRiver(dir);
@@ -652,17 +654,19 @@ export class AnimalAmbientLayer {
                             const fb = inland[Math.floor(hash01(col, row, 15) * inland.length) % inland.length];
                             if (isHibernating(fb, rawAnchor.lat, this.getSeason())) continue;
                             dir = fb;
+                            if (this.isNearCity(rawAnchor, dir)) continue;
                             yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
                             needsRiver = false;
                             needsCoast = false;
                             anchor = rawAnchor;
                         }
                         if (!needsRiver && !needsCoast && anchor) {
-                            if (this.isWetBody(anchor, dir) || this.isNearCity(anchor)) {
+                            if (this.isNearCity(anchor, dir)) continue;
+                            if (this.isWetBody(anchor, dir)) {
                                 anchor = this.snapToDryLand(anchor, dir, snapSeed);
                             }
                         }
-                        if (!anchor) continue;
+                        if (!anchor || this.isNearCity(anchor, dir)) continue;
                         // 🔴 2026-10-31 主人令「群体成群出现，学习 DE」：一格抽中一种后按总表 herd 生成一整群，
                         //    群员围着同一个群中心（home）错开站位；独行物种 herd 缺省 = 1 只，与原来一样。
                         const herdSize = animalHerdSize(dir, hash01(col, row, 11));
@@ -677,7 +681,7 @@ export class AnimalAmbientLayer {
                                 lat: anchor.lat + Math.sin(ang) * rad * 0.7,
                                 lng: anchor.lng + (Math.cos(ang) * rad) / cosAnchor,
                             };
-                            if (k > 0 && needsCoast && (this.isWetBody(pos, dir) || !this.isNearCoast(pos) || this.isNearCity(pos))) {
+                            if (k > 0 && needsCoast && (this.isWetBody(pos, dir) || !this.isNearCoast(pos) || this.isNearCity(pos, dir))) {
                                 pos = this.snapToCoast(pos, dir, hash01(col, row, 13 + k));
                             }
                             if (!pos) continue;
@@ -685,7 +689,7 @@ export class AnimalAmbientLayer {
                             // 🔴 淡水河岸物种（鳄鱼/凯门鳄/水蛇/水豚）：只放矢量河流岸边，不去海边
                             if (
                                 this.isWetBody(pos, dir)
-                                || this.isNearCity(pos)
+                                || this.isNearCity(pos, dir)
                                 || (needsCoast && !this.isNearCoast(pos))
                                 || (needsRiver && (this.isNearCoast(pos) || !isNearStrategicRiver(pos.lat, pos.lng, RIVER_KEEP_KM)))
                             ) continue;
@@ -913,7 +917,7 @@ export class AnimalAmbientLayer {
      *   · 原落点偏入近海或偏入内陆 → 沿同心环搜索最近的干海岸线（避免北极格抽中北极熊/海象后因差半格全部作废）。
      */
     private snapToCoast(anchor: Pt, dir: string, seed: number): Pt | null {
-        if (!this.isWetBody(anchor, dir) && this.isNearCoast(anchor) && !this.isNearCity(anchor)) {
+        if (!this.isWetBody(anchor, dir) && this.isNearCoast(anchor) && !this.isNearCity(anchor, dir)) {
             return anchor;
         }
         const cosLat = Math.max(0.2, Math.cos((anchor.lat * Math.PI) / 180));
@@ -925,7 +929,7 @@ export class AnimalAmbientLayer {
                     lat: anchor.lat + Math.sin(a) * ring,
                     lng: anchor.lng + (Math.cos(a) * ring) / cosLat,
                 };
-                if (!this.isWetBody(cand, dir) && this.isNearCoast(cand) && !this.isNearCity(cand)) {
+                if (!this.isWetBody(cand, dir) && this.isNearCoast(cand) && !this.isNearCity(cand, dir)) {
                     return cand;
                 }
             }
@@ -934,7 +938,7 @@ export class AnimalAmbientLayer {
     }
 
     /**
-     * 内陆物种若格内随机点恰好踩在湖泊、峡湾或据点边缘，在本格邻域内就近挪到干地（外海格附近无干地仍返回 null）。
+     * 内陆物种若格内随机点恰好踩在湖泊、峡湾，在本格邻域内就近挪到干地（外海格附近无干地或触碰据点圈仍返回 null）。
      */
     private snapToDryLand(anchor: Pt, dir: string, seed: number): Pt | null {
         const cosLat = Math.max(0.2, Math.cos((anchor.lat * Math.PI) / 180));
@@ -946,7 +950,7 @@ export class AnimalAmbientLayer {
                     lat: anchor.lat + Math.sin(a) * ring,
                     lng: anchor.lng + (Math.cos(a) * ring) / cosLat,
                 };
-                if (!this.isWetBody(cand, dir) && !this.isNearCity(cand)) {
+                if (!this.isWetBody(cand, dir) && !this.isNearCity(cand, dir)) {
                     return cand;
                 }
             }
@@ -973,7 +977,7 @@ export class AnimalAmbientLayer {
                 lat: rLat + (s * RIVER_BANK_OFFSET_KM * nN) / 111.32,
                 lng: rLng + (s * RIVER_BANK_OFFSET_KM * nE) / (111.32 * cosLat),
             };
-            if (!this.isWetBody(cand, dir) && !this.isNearCity(cand) && !this.isNearCoast(cand)) {
+            if (!this.isWetBody(cand, dir) && !this.isNearCity(cand, dir) && !this.isNearCoast(cand)) {
                 return cand;
             }
         }
@@ -992,10 +996,10 @@ export class AnimalAmbientLayer {
         return typeof y === 'number' && Number.isFinite(y) ? y : 0;
     }
 
-    // ── 据点圈避让（2026-10-31 主人令「动物不要出现在据点附近」）────────────────
+    // ── 据点圈避让（2026-10-31 ~ 2026-11-01 主人令「据点周围不要放陆地动物」）────────────────
     private cityBuckets: Map<string, Pt[]> | null = null;
 
-    /** LLC 网格索引：把 1175 个据点按 0.5° 分桶，查一只动物是否落在据点 0.30° 圈内只算 9 个桶 */
+    /** 网格索引：把 1175 个据点按 0.6° 分桶，查一只动物是否落在据点 0.48° 圈内只算 9 个桶 */
     private ensureCityIndex(): Map<string, Pt[]> {
         if (this.cityBuckets) return this.cityBuckets;
         const buckets = new Map<string, Pt[]>();
@@ -1010,17 +1014,18 @@ export class AnimalAmbientLayer {
         return buckets;
     }
 
-    /** 该点是否在任一据点 0.30° 圈内（城池图标 + 近郊那一圈不出野生动物） */
-    private isNearCity(p: Pt): boolean {
+    /** 该点是否在任一据点 0.48°（+ 动物体型半径）圈内（城池图标 + 周围 50km 城郊与民生圈不出野生动物） */
+    private isNearCity(p: Pt, dir?: string): boolean {
         const buckets = this.ensureCityIndex();
         const row = Math.floor(p.lat / CITY_INDEX_CELL_DEG);
         const col = Math.floor(p.lng / CITY_INDEX_CELL_DEG);
+        const clearR = CITY_CLEAR_DEG + (dir ? (BODY_HALF_DEG[dir] ?? BODY_HALF_DEG_DEFAULT) : 0);
         for (let dr = -1; dr <= 1; dr++) {
             for (let dc = -1; dc <= 1; dc++) {
                 const arr = buckets.get(`${row + dr},${col + dc}`);
                 if (!arr) continue;
                 for (const c of arr) {
-                    if (Math.hypot(c.lat - p.lat, c.lng - p.lng) < CITY_CLEAR_DEG) return true;
+                    if (Math.hypot(c.lat - p.lat, c.lng - p.lng) < clearR) return true;
                 }
             }
         }
