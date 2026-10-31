@@ -1470,6 +1470,18 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gaolu_jeannehachette': 15,
     'ethiopia_eleni': 15,
     'bolan_maria': 14,
+    'han_fengting': -3,
+    'qi_luzhonglian': -3,
+    'song_bizaiyu': 12,
+    'shu_mengda': 2,
+    'ming_d_wuweizhong': 16,
+    'longwu_zhengzhilong': 17,
+    'ming_d_tanlun': 16,
+    'han_zhao_liuyao': 3,
+    'song_lixianzhong': 12,
+    'taiping_yangxiuqing': 19,
+    'han_lubode': -1,
+    'wei_xuchu': 2,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

@@ -1769,6 +1769,18 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gaolu_jeannehachette': 'FRANKS',
     'ethiopia_eleni': 'ETHIOPIANS',
     'bolan_maria': 'POLES',
+    'han_fengting': 'CENTRAL',
+    'qi_luzhonglian': 'CENTRAL',
+    'song_bizaiyu': 'CENTRAL',
+    'shu_mengda': 'HUGUANG',
+    'ming_d_wuweizhong': 'HUGUANG',
+    'longwu_zhengzhilong': 'HUGUANG',
+    'ming_d_tanlun': 'WEI',
+    'han_zhao_liuyao': 'WEI',
+    'song_lixianzhong': 'CENTRAL',
+    'taiping_yangxiuqing': 'HUGUANG',
+    'han_lubode': 'KHITAN',
+    'wei_xuchu': 'CENTRAL',
 };
 
 // [2026-10-26 主人令新增湖广] 同步迁入五省据点的武将兜底文化；其余文化项保持原值。

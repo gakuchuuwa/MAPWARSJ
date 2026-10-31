@@ -1804,6 +1804,18 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     'gaolu_jeannehachette': { birth: 1454, death: 1488, kaoju: '推定' },
     'ethiopia_eleni': { birth: 1445, death: 1522, kaoju: '推定' },
     'bolan_maria': { birth: 1371, death: 1395, kaoju: '推定' },
+    'han_fengting': { birth: -320, death: -260, kaoju: '推定' },
+    'qi_luzhonglian': { birth: -305, death: -245, kaoju: '推定' },
+    'song_bizaiyu': { birth: 1149, death: 1211, kaoju: '推定' },
+    'shu_mengda': { birth: 170, death: 228, kaoju: '推定' },
+    'ming_d_wuweizhong': { birth: 1535, death: 1615, kaoju: '推定' },
+    'longwu_zhengzhilong': { birth: 1604, death: 1661, kaoju: '推定' },
+    'ming_d_tanlun': { birth: 1520, death: 1577, kaoju: '推定' },
+    'han_zhao_liuyao': { birth: 275, death: 329, kaoju: '推定' },
+    'song_lixianzhong': { birth: 1109, death: 1177, kaoju: '推定' },
+    'taiping_yangxiuqing': { birth: 1823, death: 1856, kaoju: '推定' },
+    'han_lubode': { birth: -160, death: -100, kaoju: '推定' },
+    'wei_xuchu': { birth: 170, death: 230, kaoju: '推定' },
 };
 
 /** 生年（未收录返回 null） */

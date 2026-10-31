@@ -526,7 +526,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
         formationMode: 'fish_scale',
         shipId: 'INCENDIARY_SHIP',
-        commanderUnit: 'hero_zhugeliang',
+        commanderUnit: 'hero_zhangfei',
         slots: [
             { type: 'elite_white_feather_guard', count: 3 },
             { type: 'chukonu', count: 4 },
@@ -562,7 +562,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_zhangfei',
+        commanderUnit: 'hero_sudingfang',
         slots: [
             { type: 'jian_swordman_unshielded', count: 3 },
             { type: 'elite_fire_lancer', count: 4 },
@@ -2456,7 +2456,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SPAN_CASTLE_AGE3', castleName: '西班牙 塞戈维亚阿尔卡萨堡',
         formationMode: 'crescent',
         shipId: 'ELITE_CANNON_GALLEON',
-        commanderUnit: 'hero_kingalfonso',
+        commanderUnit: 'hero_elcidcampeador',
         // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」自造规则无效。
         //    4 档＝西班牙征服者精锐（主人令「4 档放城堡精锐」）；3 档恢复冠军剑士。
         //    征服者基础档改放新建三级军团「帝国时代西班牙征服军团」3 档。
@@ -2891,7 +2891,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'INDI_CASTLE_AGE3', castleName: '南亚/达罗毗荼 坦贾武尔寺庙高塔堡',
         formationMode: 'triangle',
         shipId: 'ANT_WAR_GALLEY',
-        commanderUnit: 'porus_elephant',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 elite_sannahya（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_amoghavarsha',
         slots: [
             { type: 'ratha_melee', count: 2 },
             { type: 'urumi_swordsman', count: 3 },
@@ -2965,7 +2965,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HIND_CASTLE_AGE3', castleName: '印度斯坦 德里红堡莫卧儿红砂岩',
         formationMode: 'crane_wing',
         shipId: 'ANT_GALLEY',
-        commanderUnit: 'porus_elephant',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 elite_sannahya（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'porus_elephant',
         // 🔴 [2026-10-16 主人令「象兵、战车只能安排在 2 档」＋「删除，别惹麻烦」] 战象不再上阵（不排 2 档，直接删）；
         //    空出的前排 3 档用非城堡精锐的印度部落民补位。军团改名：恒河战象军团 → 孔雀军团。
         slots: [
@@ -2985,7 +2985,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HIND_CASTLE_AGE3', castleName: '印度斯坦 德里红堡莫卧儿红砂岩',
         formationMode: 'triangle',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_rajendrachola',
+        commanderUnit: 'hero_youngbabur',
         slots: [
             { type: 'armored_elephant', count: 2 },
             { type: 'indian_tribesman', count: 3 },
@@ -3019,7 +3019,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HIND_CASTLE_AGE3', castleName: '印度斯坦 德里红堡莫卧儿红砂岩',
         formationMode: 'fish_scale',
         shipId: 'CANNON_GALLEON',
-        commanderUnit: 'hero_abrahaelephant',
+        commanderUnit: 'dagnajan_elephant',
         slots: [
             { type: 'ghulam', count: 3 },
             { type: 'recurve_bowman', count: 4 },
@@ -3043,7 +3043,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BENG_CASTLE_AGE3', castleName: '孟加拉 恒河三角洲砖石堡',
         formationMode: 'crane_wing',
         shipId: 'ANT_ELITE_GALLEY',
-        commanderUnit: 'porus_elephant',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 elite_ratha_melee（主将队须为古典时代的英雄或精英兵）
         // 🔴 [2026-10-16 主人令] ①「象兵、战车只能安排在 2 档」②「象兵和战车不能同时在一个军团，替换不是城堡的精锐兵种」
         //    ⇒ 拉塔弓战车精锐（孟加拉自家城堡兵）压到 2 档；桑纳亚战象高级（普鲁马厩专属，借调而来）离队；
         //      空出的 3 档用非城堡精锐补位——印度部落民（3 档·前排）＋帕提尤达长弓兵基础档（4 档·后排）。
@@ -3252,7 +3251,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁南亚 旁遮普红砂岩堡',
         formationMode: 'fish_scale',
         shipId: 'HEAVY_INCENDIARY_SHIP',
-        commanderUnit: 'porus_elephant',
         slots: [
             { type: 'elite_guardsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
@@ -3273,7 +3271,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SEAS_CASTLE_AGE3', castleName: '东南亚/高棉 吴哥窟砂岩塔',
         formationMode: 'triangle',
         shipId: 'INCENDIARY_SHIP',
-        commanderUnit: 'bayinnaung_elephant',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 elite_elephant_archer（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'battle_elephant', count: 2 },
             { type: 'indian_tribesman', count: 3 },
@@ -3348,7 +3345,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BURM_CASTLE_AGE3', castleName: '缅甸 蒲甘千佛塔金顶堡',
         formationMode: 'crane_wing',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_tabinshwehti',
         slots: [
             { type: 'battle_elephant', count: 2 },
             { type: 'pikeman', count: 4 },
@@ -3472,7 +3468,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MALA_CASTLE_AGE3', castleName: '马来 马六甲海峡水上海堡',
         formationMode: 'crane_wing',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_suryavarmani',
                 slots: [
             { type: 'karambit_warrior', count: 3 },
             { type: 'antiquity_skirmisher', count: 4 },
@@ -3489,7 +3484,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MALA_CASTLE_AGE3', castleName: '马来 马六甲海峡水上海堡',
         formationMode: 'crane_wing',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_suryavarmani',
                 slots: [
             { type: 'swordsman', count: 3 },
             { type: 'rattan_archer', count: 4 },
@@ -3909,7 +3903,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ETHI_CASTLE_AGE3', castleName: '埃塞俄比亚 阿克苏姆巨石柱堡',
         formationMode: 'echelon',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_yodit',
+        commanderUnit: 'hero_abrahaelephant',
         slots: [
             { type: 'elite_antiquity_skirmisher', count: 4 },
             { type: 'guardsman', count: 3 },
@@ -4358,7 +4352,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'keshik', count: 3 },
             { type: 'recurve_bowman', count: 4 },
-            { type: 'hero_buibi', count: 2 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 2 },
         ],
     },
     // ── 吐蕃 · 帝国时代 · 帝国时代卫藏军团　（本次新建）────────────────

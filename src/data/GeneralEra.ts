@@ -1796,6 +1796,18 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gaolu_jeannehachette': 'castle',
     'ethiopia_eleni': 'castle',
     'bolan_maria': 'castle',
+    'han_fengting': 'antiquity',
+    'qi_luzhonglian': 'antiquity',
+    'song_bizaiyu': 'castle',
+    'shu_mengda': 'antiquity',
+    'ming_d_wuweizhong': 'imperial',
+    'longwu_zhengzhilong': 'imperial',
+    'ming_d_tanlun': 'imperial',
+    'han_zhao_liuyao': 'antiquity',
+    'song_lixianzhong': 'castle',
+    'taiping_yangxiuqing': 'imperial',
+    'han_lubode': 'antiquity',
+    'wei_xuchu': 'antiquity',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

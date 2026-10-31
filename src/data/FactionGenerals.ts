@@ -3001,7 +3001,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'gen_jan_zizka', cityId: 'city_bulage', generalName: '扬杰式卡', portrait: '/assets/BOHEMIANS/gen_jan_zizka.png', eliteName: '胡斯战车', eliteTier: 1 },
-        { generalId: 'gen_swatopluk', cityId: 'city_aoermuci', legionName: '封建时代波希米亚军团', generalName: '斯瓦托', portrait: '/assets/BOHEMIANS/gen_swatopluk.png', factionId: 'damolaweiya', eliteName: '波西米亚兵', eliteTier: 3 },
+        { generalId: 'gen_swatopluk', cityId: 'city_aoermuci', legionName: '封建时代波希米亚军团', generalName: '斯瓦托', portrait: '/assets/BOHEMIANS/gen_swatopluk.png', factionId: 'damolaweiya', eliteName: '摩拉维亚骑', eliteTier: 3 },
 
 
 
@@ -4277,7 +4277,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_vyshnevetsky', factionId: 'gesake', cityId: 'city_cherkasy', generalName: '拜达', portrait: '/assets/SLAVIC/qiekase_weishenniao.png', eliteName: '罗斯民兵', eliteTier: 4 },
+        { generalId: 'gen_vyshnevetsky', factionId: 'gesake', cityId: 'city_zhapoluore', generalName: '拜达', portrait: '/assets/SLAVIC/qiekase_weishenniao.png', eliteName: '罗斯民兵', eliteTier: 4 },
 
 
 
@@ -5600,6 +5600,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-24 险要补将·镇守] 周遇吉＝明山西总兵，1644 年守宁武关抗李自成，城破殉国（局部殉城，未改大局）；普将；精锐「宁武守军」T4
         { generalId: 'ningwu_zhouyuji', generalName: '周遇吉', factionId: 'ming_d', cityId: 'city_ningwuguan', portrait: '/assets/WEI/ming_d_zhouyuji.png', eliteName: '宁武守军', eliteTier: 4 },
         { generalId: 'ming_shenyourong', factionId: 'ming_d', cityId: 'city_penghu', generalName: '沈有容', portrait: '/assets/JIANGNAN/ming_shenyourong.png', eliteName: '澎湖水师', eliteTier: 4 },   // 🔴 [2026-10-25 新增] 1604 守澎湖、谕退荷兰韦麻郎（镇守/防御战）；普将；据点澎湖 JIANGNAN 文化
+        { generalId: 'ming_d_wuweizhong', factionId: 'ming_d', cityId: 'city_hengyu', generalName: '吴惟忠', portrait: '', eliteName: '横屿水师', eliteTier: 4 },   // 戚家军部将，1562 横屿之战涉海破倭（参战驻守横屿）
+        { generalId: 'ming_d_tanlun', factionId: 'ming_d', cityId: 'city_gubeikou', generalName: '谭纶', portrait: '', eliteName: '蓟镇守军', eliteTier: 3 },   // 明蓟辽总督，与戚继光同修古北口—山海关边墙（镇守古北口）
     ],
 
 
@@ -5786,6 +5788,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'tang_limi', factionId: 'tang', cityId: 'city_chengdu', generalName: '李宓', portrait: '/assets/CENTRAL/tang_limi.png', legionName: '封建时代剑南军团', eliteName: '剑南兵', eliteTier: 4 },
         { generalId: 'daxi_ming_zhangxianzhong', factionId: 'daxi_ming', cityId: 'city_chengdu', generalName: '张献忠', portrait: '/assets/BASHU/daxi_ming_zhangxianzhong.png', legionName: '起义军', eliteName: '大西军', eliteTier: 3 },
+        { generalId: 'shu_mengda', factionId: 'shu', cityId: 'city_fangling', generalName: '孟达', portrait: '', eliteName: '房陵守军', eliteTier: 4 },   // 蜀汉宜都太守，后屯房陵、上庸置新城郡（镇守房陵）
     ],
 
 
@@ -6608,6 +6611,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'han_liubiao', factionId: 'han_d', cityId: 'city_xiangyang', generalName: '刘表', portrait: '', eliteName: '荆州兵', eliteTier: 3 },
         { generalId: 'han_yanbaihu', factionId: 'han_d', cityId: 'city_kuaiji', generalName: '严白虎', portrait: '', eliteName: '江东豪强', eliteTier: 4 },
         { generalId: 'han_yuji', factionId: 'han_d', cityId: 'city_gusu', generalName: '于吉', portrait: '', eliteName: '符水道众', eliteTier: 4 },
+        { generalId: 'han_lubode', factionId: 'han_d', cityId: 'city_juyansai', generalName: '路博德', portrait: '', eliteName: '居延戍卒', eliteTier: 4 },   // 汉伏波将军：元鼎六年与公孙贺出九原，筑遮虏障、屯守居延边塞（镇守遮虏障）
     ],
 
 
@@ -6713,6 +6717,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         //    按格位（势力时代 × 据点文化）手写古典军团 —— 与曹操／曹爽／司马懿／于禁／邓艾同口径。
         { generalId: 'bfe_zhanghe', factionId: 'wei', cityId: 'city_anyang', legionName: '古典时代华夏军团', generalName: '张郃', portrait: '/assets/CENTRAL/bfe_zhanghe.png', eliteName: '河北突骑', eliteTier: 2 },
         { generalId: 'bfe_wangjing', factionId: 'wei', cityId: 'city_lintao', legionName: '古典时代华夏军团', generalName: '王经', portrait: '/assets/CENTRAL/bfe_wangjing.png', eliteName: '雍州戍兵', eliteTier: 4 },
+        { generalId: 'wei_xuchu', factionId: 'wei', cityId: 'city_qiaojun', generalName: '许褚', portrait: '', eliteName: '虎卫军', eliteTier: 3 },   // 谯国谯人，汉末率宗族数千家坚壁于谯，后为曹操宿卫（镇守谯县）
     ],
 
 
@@ -10732,6 +10737,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'xianxia_zhengcai', generalName: '郑彩', factionId: 'longwu', cityId: 'city_xianxia', portrait: '/assets/JIANGNAN/longwu_zhengcai.png', eliteName: '郑氏水师', eliteTier: 3 },
         // 🔴 [2026-10-25 险要补将·镇守] 焦琏＝南明桂林守将，古严关为桂林北门户，属其防御战区；普将；精锐「桂林守军」T4
         { generalId: 'guyan_jiaolian', generalName: '焦琏', factionId: 'longwu', cityId: 'city_guyanguan', portrait: '/assets/JIANGNAN/longwu_jiaolian.png', eliteName: '桂林守军', eliteTier: 4 },
+        { generalId: 'longwu_zhengzhilong', factionId: 'longwu', cityId: 'city_yanping', generalName: '郑芝龙', portrait: '', eliteName: '郑家水师', eliteTier: 3 },   // 南明隆武朝太师、平国公，隆武行在驻延平，郑氏水师据此（居住）
     ],
 
 
@@ -10821,7 +10827,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    xichu: { generalId: 'xichu_xiangyu', factionId: 'chuguo', cityId: 'city_pengcheng', generalName: '项羽', portrait: '/assets/CENTRAL/xichu_xiangyu.png', legionName: '古典时代华夏军团', eliteName: '江东子弟', eliteTier: 1 },
 
 
 
@@ -10889,6 +10894,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        { generalId: 'taiping_yangxiuqing', factionId: 'taiping', cityId: 'city_yongan', generalName: '杨秀清', portrait: '', eliteName: '太平锐卒', eliteTier: 3 },   // 1851 永安建制封东王、掌军政（居住永安）
     ],
 
 
@@ -11421,6 +11427,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bfe_chuzi', factionId: 'qi', cityId: 'city_linzi', generalName: '触子', portrait: '/assets/CENTRAL/bfe_chuzi.png', eliteName: '齐技击', eliteTier: 3 },
+        { generalId: 'qi_luzhonglian', factionId: 'qi', cityId: 'city_liaocheng', generalName: '鲁仲连', portrait: '', eliteName: '聊城守军', eliteTier: 4 },   // 燕将据聊城不下，他作书射入城中劝降，聊城复归于齐（居聊城）
     ],
 
 
@@ -11491,7 +11498,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    han: { generalId: 'han_baoyuan', cityId: 'city_xinzheng', generalName: '暴鸢', portrait: '/assets/CENTRAL/han_baoyuan.png', eliteName: '中原郡兵', eliteTier: 4 },
+    han: [
+        { generalId: 'han_baoyuan', cityId: 'city_xinzheng', generalName: '暴鸢', portrait: '/assets/CENTRAL/han_baoyuan.png', eliteName: '中原郡兵', eliteTier: 4 },
+        { generalId: 'han_fengting', factionId: 'han', cityId: 'city_shangdang', generalName: '冯亭', portrait: '', eliteName: '上党守军', eliteTier: 4 },   // 韩上党郡守：前262 秦取野王、上党道绝，他以郡献赵，引发长平之战（镇守上党）
+    ],
 
 
 
@@ -13456,6 +13466,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'wusheng_dongxian', generalName: '董先', factionId: 'song', cityId: 'city_wushengguan', portrait: '/assets/JIANGNAN/song_dongxian.png', eliteName: '义阳戍卒', eliteTier: 4 },
         { generalId: 'bfe_chengong', factionId: 'song', cityId: 'city_yongzhou', generalName: '陈珙', portrait: '/assets/JIANGNAN/bfe_chengong.png', eliteName: '邕州戍卒', eliteTier: 4 },
         { generalId: 'bfe_liuping', factionId: 'song', cityId: 'city_changan', generalName: '刘平', portrait: '/assets/CENTRAL/bfe_liuping.png', eliteName: '关中禁军', eliteTier: 4 },
+        { generalId: 'song_bizaiyu', factionId: 'song', cityId: 'city_zhongli', generalName: '毕再遇', portrait: '', eliteName: '盱眙守军', eliteTier: 3 },   // 南宋开禧北伐第一勇将，1206–1207 守盱眙、六合连破金军（镇守盱眙）
+        { generalId: 'song_lixianzhong', factionId: 'song', cityId: 'city_xucheng', generalName: '李显忠', portrait: '', eliteName: '淮西军', eliteTier: 3 },   // 南宋 1163 符离之战宋军主将（统兵于此）
     ],
 
 
@@ -13641,7 +13653,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 补B] 埃雷克莱二世（1720–1798，格鲁吉亚王、名将；抗波斯/奥斯曼）｜势力 格鲁吉亚｜据点 第比利斯（GEORGIANS 文化）｜名将｜精锐「格鲁吉亚近卫」T1｜立绘留空｜成名战待补
         { generalId: 'gelujiya_erekle_ii', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '埃雷克莱二世', portrait: '/assets/GEORGIANS/gelujiya_erekle_ii.png', eliteName: '高加索卫队', eliteTier: 1 },
         { generalId: 'gelujiya_ivane', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '伊万', portrait: '', eliteName: '格鲁吉亚骑', eliteTier: 3 },
-        { generalId: 'gelujiya_zakare', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '扎卡雷', portrait: '', eliteName: '格鲁吉亚兵', eliteTier: 3 },
+        { generalId: 'gelujiya_zakare', factionId: 'gelujiya', cityId: 'city_dibilisi', generalName: '扎卡雷', portrait: '', eliteName: '格鲁吉亚兵', eliteTier: 4 },
     ],
 
 
@@ -17073,6 +17085,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     
         { generalId: 'yao_liuyuan', factionId: 'han_zhao', cityId: 'city_linfen', legionName: '古典时代华夏军团', generalName: '刘渊', portrait: '/assets/CENTRAL/yao_liuyuan.png', eliteName: '中原郡兵', eliteTier: 4 },
 
+        { generalId: 'han_zhao_liuyao', factionId: 'han_zhao', cityId: 'city_lishi', generalName: '刘曜', portrait: '', eliteName: '匈奴骑兵', eliteTier: 3 },   // 刘渊族子，304 年随起兵于离石，后为前赵皇帝（居住离石）
     ],
     dongjin: [
         { generalId: 'zhong_xiexuan', factionId: 'dongjin', cityId: 'city_shouxian', legionName: '古典时代华夏军团', generalName: '谢玄', portrait: '/assets/CENTRAL/zhong_xiexuan.png', eliteName: '北府兵', eliteTier: 0 },
@@ -17135,6 +17148,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         // 🔴 [2026-10-25 主人令] 秦末楚（与战国楚同势力）非先秦武将：不跟「先秦军团」指针，按格位取古典军团
         { generalId: 'bfe_xiangliang', factionId: 'chuguo', cityId: 'city_pengcheng', legionName: '古典时代华夏军团', generalName: '项梁', portrait: '/assets/CENTRAL/bfe_xiangliang.png', eliteName: '吴中子弟', eliteTier: 3 },
+        { generalId: 'xichu_xiangyu', factionId: 'chuguo', cityId: 'city_pengcheng', generalName: '项羽', portrait: '/assets/CENTRAL/xichu_xiangyu.png', legionName: '古典时代华夏军团', eliteName: '江东子弟', eliteTier: 1 },   // [2026-10-31 主人令「项羽是楚」] 并入楚国
     ],
     liusong: [
         { generalId: 'gen_li_jinglong', factionId: 'ming_d', cityId: 'city_nanjing', generalName: '李景隆', portrait: '/assets/JIANGNAN/gen_li_jinglong.png', eliteName: '江南郡兵', eliteTier: 4 },

@@ -9351,6 +9351,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.25,
             "offsetX": 0,
             "offsetY": 21
+        },
+        "/assets/CENTRAL_ASIA/xijue_ashina_funian.png": {
+            "scale": 1.17,
+            "offsetX": 5,
+            "offsetY": 16
         }
     },
     "folderGuides": {
