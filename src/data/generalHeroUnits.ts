@@ -178,7 +178,6 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     gaolu_reynald: 'hero_reynalddechatillon',
     gaolu_lahire: 'hero_lahire',
     gaolu_alencon: 'hero_dukedalencon',
-    amaniyake_bernard: 'hero_bernardarmagnac',
     gaolu_bertrand: 'hero_sieurbertrand',
     gaolu_demetz: 'hero_sieurdemetz',
     gaolu_josselyne: 'hero_guyjosselyne',
@@ -192,7 +191,6 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     nuowei_kalf: 'hero_kalfarnason',
     nuowei_finn: 'hero_finnarnason',
     nuowei_einar: 'hero_einarpaunchshaker',
-    kasidiliya_alfonso: 'hero_kingalfonso',
     kasidiliya_sancho: 'hero_kingsancho',
     xibanya_orellana: 'hero_franciscodeorellana',
     xibanya_gonzalo: 'hero_gonzalopizarro',
@@ -206,7 +204,6 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     feierganna_qutlugh: 'hero_qutlugh',
     jinzhang_tokhtamysh: 'hero_tokhtamyshkhan',
     jinzhang_urus: 'hero_uruskhan',
-    inca_topayupanqui: 'hero_topayupanqui',
     inca_huayna: 'hero_huaynacapac',
     han_liubiao: 'hero_liubiao',
     han_yanbaihu: 'hero_whitetigeryan',
@@ -222,7 +219,6 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     maqidun_nearchos: 'hero_nearchos',
     manzheboyi_radenwijaya: 'hero_radenwijaya',
     manzheboyi_jayanegara: 'hero_jayanegara',
-    mosike_dmitry: 'hero_dmitryofmoscow',
     luosi_yury: 'hero_yury',
     wulaertu_mleh: 'hero_mleh',
     wulaertu_stephan: 'hero_stephan',
@@ -238,7 +234,6 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     osman_selim: 'hero_selimthegrim',
     mazhaer_toldi: 'hero_miklostoldi',
     womaya_musa: 'hero_musaibnnusayr',
-    maya_pacal: 'hero_pacalii',
     aztec_itzcoatl: 'hero_itzcoatl',
     aztec_cuauhtemoc: 'hero_cuauhtemoc',
     bogendi_jacqueline: 'hero_jacquelineofhainaut',
@@ -249,6 +244,21 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     abasi_imam: 'hero_imam',
     gaolu_bureau: 'hero_jeanbureau',
     gaolu_lorrain: 'hero_jeandelorrain',
+    gen_alfonso_vi: 'hero_kingalfonso',   // 阿方索六世本人王型
+    nuowei_halaer: 'hero_harald',   // 挪威 哈拉尔（同势力维京战士）
+    suomunate_bhima_i: 'hero_prithvi',   // 毗摩一世（瞿折罗，同文化拉其普特步弓）
+    gen_topa_inca: 'hero_topayupanqui',   // 图帕克·尤潘基本人兵模
+    mowoer_akeba: 'hero_youngbabur',   // 阿克巴（莫卧儿，巴布尔后人）
+    safawei_d_abasi: 'hero_ismail',   // 阿拔斯（萨法维，同势力波斯骑兵）
+    gen_chabrias: 'hero_themistocles_hoplite',   // 卡布里亚斯（雅典重装兵，同势力）
+    maqidun_craterus: 'hero_dismounted_alexander',   // 克拉特罗斯（亚历山大麾下，同势力马其顿步兵）
+    gen_dmitry_donskoy: 'hero_dmitryofmoscow',   // 顿斯科伊本人
+    gen_pakal: 'hero_pacalii',   // 帕卡尔本人
+    gen_james_i_aragon: 'hero_elcid',   // 海梅（阿拉贡，熙德同势力）用熙德步战兵模
+    gen_atoc: 'hero_cusiyupanqui',   // 阿托克（帕查库特克之弟、印加名将）用帕查库特克早年的印加武士样子
+    gaolu_jeannehachette: 'hero_joanthemaid',   // 让娜阿谢：1472 博韦守城、斧劈云梯
+    ethiopia_eleni: 'hero_princessyodit',   // 埃莱妮：埃塞摄政太后
+    bolan_maria: 'hero_youngjadwiga',   // 玛丽亚：安茹家匈牙利女王、波兰王位继承人
 };
 
 /**

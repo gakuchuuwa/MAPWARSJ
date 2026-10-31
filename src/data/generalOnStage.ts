@@ -57,11 +57,11 @@ export function isGeneralOnStage(generalId: string | null | undefined): boolean 
     }
     if (year == null) return true;
     if (scriptMode) {
+        // 🔴 [2026-10-31 主人令「登场年一律改为20岁，只在百岁模式生效」]
+        //    剧本模式不再按登场年拦人，只按卒年（剧本自身的事件表已决定谁在场）
         const life = GENERAL_LIFE_YEARS[generalId];
         if (!life) return false;
-        const debut = getGeneralDebutYear(generalId);
-        if (debut == null) return false;
-        return year >= debut && year <= life.death;
+        return year <= life.death;
     }
     const win = getCentenarianStageWindow(generalId);
     return !!win && year >= win.from && year <= win.to;

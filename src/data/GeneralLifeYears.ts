@@ -1036,7 +1036,6 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     khyungpo_qiongbobangse: { birth: 570, death: 635, kaoju: '推定' },  // 琼波邦色
     gar_kham_dengbazeren: { birth: 1678, death: 1738, kaoju: '异说' },  // 登巴泽仁
     guangwu_xinwuxian: { birth: -110, death: -50, kaoju: '推定' },  // 辛武贤
-    supi_xinuoluo: { birth: 675, death: 728, kaoju: '推定' },  // 悉诺逻
     tsangpa_pengcuonanjie: { birth: 1586, death: 1621 },  // 彭措南杰
     spurgyal_dariniansai: { birth: 510, death: 565, kaoju: '推定' },  // 达日年塞
     galangdiba_wangqindundui: { birth: 1725, death: 1785, kaoju: '推定' },  // 旺钦顿堆
@@ -1537,7 +1536,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     xuliya_shoujiang: { birth: -380, death: -318, kaoju: '推定' },  // 马泽乌斯
     emesene_xierkuhe: { birth: 1105, death: 1169, kaoju: '推定' },  // 🔴 [2026-10-25 按史] 希尔库赫：卒 1169（原 1146 误）
     sute_spitamenes: { birth: -370, death: -328, kaoju: '推定' },  // 斯皮塔米尼斯
-    xinde_patalawang: { birth: -360, death: -300, kaoju: '推定' },  // 涅阿库斯
     jiduoluoxiya_xibiertiwusi: { birth: -370, death: -319, kaoju: '推定' },  // 西比尔提乌斯
     aolitai_shouling: { birth: -375, death: -315, kaoju: '推定' },  // 拉托尼斯
     shiyuzu_aolaqiuzhang: { birth: -180, death: -120, kaoju: '推定' },  // 阿波罗多洛斯
@@ -1738,7 +1736,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     gaolu_reynald: { birth: 1125, death: 1187, kaoju: '推定' },
     gaolu_lahire: { birth: 1390, death: 1443, kaoju: '推定' },
     gaolu_alencon: { birth: 1409, death: 1476, kaoju: '推定' },
-    amaniyake_bernard: { birth: 1360, death: 1418, kaoju: '推定' },
     gaolu_bertrand: { birth: 1350, death: 1400, kaoju: '推定' },
     gaolu_demetz: { birth: 1350, death: 1420, kaoju: '推定' },
     gaolu_josselyne: { birth: 1380, death: 1440, kaoju: '推定' },
@@ -1752,7 +1749,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     nuowei_kalf: { birth: 990, death: 1051, kaoju: '推定' },
     nuowei_finn: { birth: 990, death: 1065, kaoju: '推定' },
     nuowei_einar: { birth: 980, death: 1050, kaoju: '推定' },
-    kasidiliya_alfonso: { birth: 1040, death: 1109, kaoju: '推定' },
     kasidiliya_sancho: { birth: 1036, death: 1072, kaoju: '推定' },
     xibanya_orellana: { birth: 1511, death: 1546, kaoju: '推定' },
     xibanya_gonzalo: { birth: 1502, death: 1548, kaoju: '推定' },
@@ -1766,7 +1762,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     feierganna_qutlugh: { birth: 1450, death: 1505, kaoju: '推定' },
     jinzhang_tokhtamysh: { birth: 1342, death: 1406, kaoju: '推定' },
     jinzhang_urus: { birth: 1330, death: 1377, kaoju: '推定' },
-    inca_topayupanqui: { birth: 1441, death: 1493, kaoju: '推定' },
     inca_huayna: { birth: 1468, death: 1527, kaoju: '推定' },
     han_liubiao: { birth: 142, death: 208, kaoju: '推定' },
     han_yanbaihu: { birth: 170, death: 210, kaoju: '推定' },
@@ -1782,7 +1777,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     maqidun_nearchos: { birth: -360, death: -300, kaoju: '推定' },
     manzheboyi_radenwijaya: { birth: 1267, death: 1309, kaoju: '推定' },
     manzheboyi_jayanegara: { birth: 1294, death: 1328, kaoju: '推定' },
-    mosike_dmitry: { birth: 1350, death: 1389, kaoju: '推定' },
     luosi_yury: { birth: 1160, death: 1196, kaoju: '推定' },
     wulaertu_mleh: { birth: 1150, death: 1180, kaoju: '推定' },
     wulaertu_stephan: { birth: 1150, death: 1180, kaoju: '推定' },
@@ -1798,7 +1792,6 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     osman_selim: { birth: 1470, death: 1520, kaoju: '推定' },
     mazhaer_toldi: { birth: 1320, death: 1390, kaoju: '推定' },
     womaya_musa: { birth: 640, death: 716, kaoju: '推定' },
-    maya_pacal: { birth: 603, death: 683, kaoju: '推定' },
     aztec_itzcoatl: { birth: 1380, death: 1440, kaoju: '推定' },
     aztec_cuauhtemoc: { birth: 1495, death: 1525, kaoju: '推定' },
     bogendi_jacqueline: { birth: 1401, death: 1436, kaoju: '推定' },
@@ -1808,6 +1801,9 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     abasi_imam: { birth: 800, death: 850, kaoju: '推定' },
     gaolu_bureau: { birth: 1390, death: 1463, kaoju: '推定' },
     gaolu_lorrain: { birth: 1380, death: 1450, kaoju: '推定' },
+    'gaolu_jeannehachette': { birth: 1454, death: 1488, kaoju: '推定' },
+    'ethiopia_eleni': { birth: 1445, death: 1522, kaoju: '推定' },
+    'bolan_maria': { birth: 1371, death: 1395, kaoju: '推定' },
 };
 
 /** 生年（未收录返回 null） */

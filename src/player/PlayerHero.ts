@@ -768,13 +768,18 @@ export class PlayerHero {
     }
 
     // ── 势力 ──────────────────────────────────────────────
-    public joinFaction(factionId: string, cultureKey?: string | null): void {
+    /**
+     * @param learnOnAttach 紧接着就 `attachTo` 时传 true：兵模留到挂上军团后按**该军团实际编成**学。
+     *   入伍前只能按势力默认军团查编制，而一武将一军团，约三成武将的军团与势力默认不同——
+     *   在这里先学会多拿一张别的军团的兵模（还抬高 peakStats），紧接着又换一次。
+     */
+    public joinFaction(factionId: string, cultureKey?: string | null, learnOnAttach = false): void {
         this.factionId = factionId;
         const floorRank = rankFor(this.merit, true);
         this.rememberRank(floorRank);
         if (cultureKey) this.lastCulture = cultureKey;
         this.army.setFactionId(factionId);
-        this.syncLearnedUnits(true);  // 入伙即斥候 → 立刻从该势力三排随机学一个（骑兵优先，拿到骑兵就换上）
+        if (!learnOnAttach) this.syncLearnedUnits(true);  // 读档只入伙不入伍：按势力默认军团学
         this.syncMoveProfile();   // 素材换成学到的兵 → 行军大类跟着变
         const r = this.army.getRenderer();
         if (r) r.factionId = factionId;

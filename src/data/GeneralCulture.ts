@@ -1267,7 +1267,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'suolun_bomuboguoer': 'NORTHEAST',   // 达斡尔｜博穆博果尔｜据点 雅克萨
     'suomunate_bhima_i': 'GURJARAS',   // 瞿折罗｜毗摩一世｜据点 帕坦
     'suomunate_kumalapala': 'GURJARAS',   // 索姆纳特｜库马拉帕拉｜据点 索姆纳特
-    'supi_xinuoluo': 'TIBET',   // 苏毗｜悉诺逻｜据点 帕羊驿
     'sushen_tudiji': 'NORTHEAST',   // 肃慎｜突地稽｜据点 朝阳（2026-10-25 朝阳改河朔，随据点）
     'sute_spitamenes': 'CENTRAL_ASIA',   // 诺塔卡｜斯皮塔米尼斯｜据点 诺塔卡
     'suwa_d_zoufanglaizhong': 'JAPAN',   // 诹访｜诹访赖重｜据点 高岛
@@ -1419,7 +1418,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiliao_yelvdashi': 'CENTRAL_ASIA',   // 西辽｜耶律大石｜据点 碎叶
     'xin_baiqi': 'CENTRAL',   // 秦国｜白起｜据点 长安
     'xin_liuchong': 'WEI',   // 唐国｜刘崇｜据点 晋阳
-    'xinde_patalawang': 'PURU',   // 信德｜涅阿库斯｜据点 帕塔拉
     'xindu_bahelamuhan': 'PURU',   // 信度｜巴赫拉姆汗｜据点 卡拉奇
     'xingan_hailancha': 'NORTHEAST',   // 大清｜海兰察｜据点 北京
     'xingelana_dawila': 'SPANISH',   // 新格拉纳达｜达维拉｜据点 巴拿马
@@ -1619,7 +1617,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'manzheboyi_jayanegara': 'MALAY',
     'montereau_pressy': 'BURGUNDIANS',
     'bogendi_jacqueline': 'BURGUNDIANS',
-    'amaniyake_bernard': 'FRANKS',
     'weiershi_arthur': 'BRITONS',
     'weiershi_mordred': 'BRITONS',
     'bfe_mendenus': 'MACEDONIAN',
@@ -1658,7 +1655,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'mazhaer_toldi': 'MAGYAR',
     'shiwaben_barbarossa': 'GERMANIC',
     'luosi_yury': 'SLAVIC',
-    'mosike_dmitry': 'SLAVIC',
     'jinzhang_tokhtamysh': 'CENTRAL_ASIA',
     'jinzhang_urus': 'CENTRAL_ASIA',
     'bfe_vahan': 'BYZANTINE',
@@ -1703,7 +1699,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_quzhisheng': 'WESTERN',
     'bfe_arslan_shah': 'PERSIAN',
     'xibanya_beilaerde': 'SPANISH',
-    'kasidiliya_alfonso': 'SPANISH',
     'kasidiliya_sancho': 'SPANISH',
     'bfe_mingyiswa': 'BURMESE',
     'bfe_takayutpi': 'BURMESE',
@@ -1737,9 +1732,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_aulax': 'ORIE',
     'aztec_itzcoatl': 'AMERICA',
     'aztec_cuauhtemoc': 'AMERICA',
-    'inca_topayupanqui': 'INCA',
     'inca_huayna': 'INCA',
-    'maya_pacal': 'MAYANS',
     'xibanya_orellana': 'SPANISH',
     'xibanya_gonzalo': 'SPANISH',
     'manding_musa': 'AFRICA',
@@ -1773,6 +1766,9 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yuenan_luunhanchu': 'VIETNAMESE',
     'yuenan_buibi': 'VIETNAMESE',
     'jiaohuangguo_leoi': 'ROMA',
+    'gaolu_jeannehachette': 'FRANKS',
+    'ethiopia_eleni': 'ETHIOPIANS',
+    'bolan_maria': 'POLES',
 };
 
 // [2026-10-26 主人令新增湖广] 同步迁入五省据点的武将兜底文化；其余文化项保持原值。

@@ -300,7 +300,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'shaodang_mitang': 1,                               // 迷唐 · shaodang · 玛曲
     'song2_houjunji': 7,                                // 侯君集 · song2 · 嘉诚
     'spurgyal_dariniansai': 6,                          // 达日年塞 · spurgyal · 甲玛赤康
-    'supi_xinuoluo': 8,                                 // 悉诺逻 · supi · 帕羊驿
     'tsangpa_pengcuonanjie': 17,                         // 彭措南杰 · tsangpa · 桑珠孜
     'tubo_songzanganbu': 7,                             // 松赞干布 · tubo · 逻些
     'tufa_d_tufanutan': 5,                              // 秃发傉檀 · tufa_d · 青唐城
@@ -1188,7 +1187,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'jite_shouling':                     -4,    // 科托罗 · seleisi · 多瑙河渡口（公元前335年多瑙河渡河战役守帅）
     'suogediyana_arimazes':    -4,    // 阿里马泽斯 · suogediyana · 索格狄亚那（公元前327年索格狄亚那岩守将）
     'sute_spitamenes':                   -4,    // 斯皮塔米尼斯 · sute · 诺塔卡（公元前328年粟特起义统帅）
-    'xinde_patalawang':                  -4,    // 涅阿库斯 · xinde · 帕塔拉（公元前325年信德印度洋航线提督）
     'jiduoluoxiya_xibiertiwusi':         -4,    // 西比尔提乌斯 · jiduoluoxiya · 普拉（公元前325年吉德罗西亚总督）
     'aolitai_shouling':                  -4,    // 拉托尼斯 · aolitai · 兰巴基亚（公元前325年奥里泰人首领）
     'kamanniya_zongdu':                  -4,    // 阿斯普兰斯 · kamanniyaxingsheng · 卡曼尼亚（公元前325年卡曼尼亚总督）
@@ -1404,7 +1402,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gaolu_reynald': 12,
     'gaolu_lahire': 14,
     'gaolu_alencon': 15,
-    'amaniyake_bernard': 14,
     'gaolu_bertrand': 14,
     'gaolu_demetz': 14,
     'gaolu_josselyne': 14,
@@ -1418,7 +1415,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'nuowei_kalf': 10,
     'nuowei_finn': 10,
     'nuowei_einar': 10,
-    'kasidiliya_alfonso': 11,
     'kasidiliya_sancho': 11,
     'xibanya_orellana': 16,
     'xibanya_gonzalo': 16,
@@ -1432,7 +1428,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'feierganna_qutlugh': 15,
     'jinzhang_tokhtamysh': 14,
     'jinzhang_urus': 14,
-    'inca_topayupanqui': 15,
     'inca_huayna': 15,
     'han_liubiao': 2,
     'han_yanbaihu': 2,
@@ -1448,7 +1443,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'maqidun_nearchos': -3,
     'manzheboyi_radenwijaya': 13,
     'manzheboyi_jayanegara': 13,
-    'mosike_dmitry': 14,
     'luosi_yury': 12,
     'wulaertu_mleh': 12,
     'wulaertu_stephan': 12,
@@ -1464,7 +1458,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'osman_selim': 15,
     'mazhaer_toldi': 14,
     'womaya_musa': 7,
-    'maya_pacal': 7,
     'aztec_itzcoatl': 14,
     'aztec_cuauhtemoc': 15,
     'bogendi_jacqueline': 15,
@@ -1474,6 +1467,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'abasi_imam': 9,
     'gaolu_bureau': 14,
     'gaolu_lorrain': 14,
+    'gaolu_jeannehachette': 15,
+    'ethiopia_eleni': 15,
+    'bolan_maria': 14,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

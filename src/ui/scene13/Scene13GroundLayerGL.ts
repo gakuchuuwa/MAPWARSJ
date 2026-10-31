@@ -225,8 +225,12 @@ void main() {
   float tn3 = snoise(vGUV * 0.58 + vec2(41.7, 92.3) + uNoiseOff * 0.73);
   float terrainPatch = tn1 * 0.50 + tn2 * 0.32 + tn3 * 0.18;
   
-  // 2. 副地表二层斑块（地图数据层 DIRT 势场 field.a 随 uNoiseOff 镜像偏移 + 原野碎块咬合）
-  vec2 dirtUV = clamp(abs(mod(fieldUV + uNoiseOff * 0.043, 2.0) - 1.0), 0.01, 0.99);
+  // 2. 副地表二层斑块（地图数据层 DIRT 势场 field.a ＋ 低频域扭曲错开第一层，原野碎块咬合）
+  // 🔴 [2026-10-31 主人报「有的贴图之间出现直线、直角」] 旧做法 abs(mod(uv+off,2)-1) 是镜像映射，
+  //    在 u/v 各留一条贯穿全图的镜像折线（两条折线相交就是直角）。改成低频噪声域扭曲：
+  //    采样点连续漂移、不折叠，泥斑边缘与 DE blendomatic 一样自然蜿蜒。
+  vec2 dirtWarp = vec2(n1 * 0.075 + nMicro1 * 0.012, n2 * 0.055 + nMicro2 * 0.010);
+  vec2 dirtUV = clamp(fieldUV + dirtWarp, 0.01, 0.99);
   float dirtFieldVal = texture2D(uFieldTex, dirtUV).a;
   float dirtNoise = clamp(tn1 * 0.48 + tn2 * 0.34 + tn3 * 0.18, -1.0, 1.0);
   float fieldDirt = deEdgeBlend(dirtFieldVal, 0.08, 0.48, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.78;
@@ -348,10 +352,15 @@ void main() {
   }
   
   // ── DE 高地斜坡立体边坡土石肌理与坡脚体积暗部（台地长草、斜坡透出裸土碎石肌理） ──
-  if ((vSlope > 0.03 || vElev > 0.02) && isWater < 0.25) {
+  if ((vSlope > 0.012 || vElev > 0.02) && isWater < 0.25) {
     float flatBaseLight = 1.0 + min(0.07, vElev * 0.022);
     float slopeDiff = abs(vLight - flatBaseLight);
-    float slopeFromGeom = smoothstep(0.05, 0.28, vSlope);
+    // 🔴 [2026-10-31 主人报「有的贴图之间出现直线，直角，应该是圆滑、渐变的边缘」]
+    //    原来 aSlope 传的是「单格四角最大落差」（每格一个常数）⇒ 土石肌理整格翻色，格边就是一条直线、格角就是直角。
+    //    现在 aSlope 是**逐角平滑坡势场**（见 cornerSlope），经顶点插值后是连续渐变，再叠低频噪声让坡脚蜿蜒咬合，
+    //    与 DE blendomatic 的边缘观感一致：只有平滑过渡，没有整格色块。
+    float slopeField = vSlope + n2 * 0.016 + n1 * 0.010;
+    float slopeFromGeom = smoothstep(0.030, 0.150, slopeField);
     float isSlopeFace = clamp(max(smoothstep(0.02, 0.11, slopeDiff), slopeFromGeom * 0.88), 0.0, 1.0);
     float slopeEdge = deEdgeBlend(isSlopeFace, 0.10, 0.68, microGrain, (lumaDirt - lumaGrass) * 2.2);
     // 斜坡面自然透出粗粝边坡土石肌理（泥土与旱草碎石交织），使高地四周坡面拥有坚实立体感
@@ -461,6 +470,12 @@ export function attachTexImage(tex: WebGLTexture, img: any, tile?: string): WebG
   return tex;
 }
 
+/** 0→1 的平滑插值（clamp + smoothstep），坡势场与坡面光照的连续权重都用它 */
+function smooth01(t: number): number {
+  const x = Math.min(1, Math.max(0, t));
+  return x * x * (3 - 2 * x);
+}
+
 function blurGrid2D(src: Float32Array, N: number): Float32Array {
   const tmp = new Float32Array(N * N);
   const dst = new Float32Array(N * N);
@@ -531,6 +546,8 @@ export class Scene13GroundLayerGL {
   private readonly origElev: Uint8Array;
   private cornerElev: Float32Array;
   private cornerLight: Float32Array;
+  /** 逐角平滑坡势场（着色器 aSlope 的来源）：角高程梯度算出后做两遍高斯模糊，跨格连续、不再有整格色块 */
+  private cornerSlope: Float32Array;
   private noiseOff: [number, number] = [0, 0];
 
   private cam = { x: 0, y: 0, zoom: 1 };
@@ -869,6 +886,7 @@ export class Scene13GroundLayerGL {
     const V_SIZE = this.N + 1;
     this.cornerElev = new Float32Array(V_SIZE * V_SIZE);
     this.cornerLight = new Float32Array(V_SIZE * V_SIZE);
+    this.cornerSlope = new Float32Array(V_SIZE * V_SIZE);
     this.computeCornerElev();
   }
 
@@ -910,8 +928,8 @@ export class Scene13GroundLayerGL {
   private updateCornerLight(): void {
     const N = this.N;
     const V_SIZE = N + 1;
+    this.updateCornerSlope();
     const rawLight = new Float32Array(V_SIZE * V_SIZE);
-    const rawIsSlope = new Uint8Array(V_SIZE * V_SIZE);
 
     for (let gy = 0; gy <= N; gy++) {
       for (let gx = 0; gx <= N; gx++) {
@@ -923,34 +941,36 @@ export class Scene13GroundLayerGL {
         const hD = gy < N ? this.cornerElev[(gy + 1) * V_SIZE + gx] : hC;
         const dhx = (hR - hL) / (gx > 0 && gx < N ? 2 : 1);
         const dhy = (hD - hU) / (gy > 0 && gy < N ? 2 : 1);
-        const slopeMag = Math.hypot(dhx, dhy);
+        const slopeMag = this.cornerSlope[idx];
 
         // 🔴 [REA逆向 AoE2DE_s.exe 0x1410416E0 + 0x14185CC10：DE 360° 完整坡面折面光照]
         // 向阳坡提亮（+28%）、背阳坡压暗（-31%）、侧向坡微暗（-10%），保证高地四周一圈都有清晰边坡体积感；
-        // 同时锁定平顶与平地不跨界模糊，防止高地被糊成地面明暗斑。
+        // 🔴 [2026-10-31 主人令「应该是圆滑、渐变的边缘」] 坡面明暗按**平滑坡势**连续加权：
+        //    平地/平顶权重 0（保持原来的清晰锁边），坡面权重 1；两者之间是渐变，不再出现一格一亮一格的硬色块。
         const slopeTowardSun = (dhx - dhy) * 0.72 + (dhx + dhy) * 0.24;
         const crossSlope = Math.abs(dhx + dhy);
-        let light = 1.0;
-        if (slopeMag > 0.022) {
-          rawIsSlope[idx] = 1;
-          if (slopeTowardSun > 0.01) {
-            light = 1.0 + Math.min(0.34, slopeTowardSun * 0.78);
-          } else if (slopeTowardSun < -0.01) {
-            light = 1.0 + Math.max(-0.36, slopeTowardSun * 0.84);
-          } else {
-            light = 1.0 - Math.min(0.14, crossSlope * 0.28);
-          }
+        let slopeLight = 1.0;
+        if (slopeTowardSun > 0.01) {
+          slopeLight = 1.0 + Math.min(0.34, slopeTowardSun * 0.78);
+        } else if (slopeTowardSun < -0.01) {
+          slopeLight = 1.0 + Math.max(-0.36, slopeTowardSun * 0.84);
+        } else {
+          slopeLight = 1.0 - Math.min(0.14, crossSlope * 0.28);
         }
+        const sw = smooth01((slopeMag - 0.015) / 0.075);
+        const flatLight = 1.0;
+        const light = flatLight + (slopeLight - flatLight) * sw;
         const elevBoost = Math.min(0.10, hC * 0.025);
         rawLight[idx] = Math.max(0.62, Math.min(1.35, light + elevBoost));
       }
     }
 
-    // 仅在斜坡角点内部做柔和过渡，严格保留平顶台地边缘与坡脚边界
+    // 坡面内部再做一遍柔和过渡（只在坡面加权，平顶/平地保持锁定）；坡面临界处权重连续，故不会留下硬边
     for (let gy = 0; gy <= N; gy++) {
       for (let gx = 0; gx <= N; gx++) {
         const idx = gy * V_SIZE + gx;
-        if (!rawIsSlope[idx]) {
+        const sw = smooth01((this.cornerSlope[idx] - 0.012) / 0.07);
+        if (sw <= 0.001) {
           this.cornerLight[idx] = rawLight[idx];
           continue;
         }
@@ -963,14 +983,41 @@ export class Scene13GroundLayerGL {
             const nx = gx + dx;
             if (nx < 0 || nx > N) continue;
             const nIdx = ny * V_SIZE + nx;
-            const w = rawIsSlope[nIdx] ? ((dx === 0 || dy === 0) ? 1.5 : 0.75) : 0.30;
+            const w = (dx === 0 || dy === 0) ? 1.5 : 0.75;
             sum += rawLight[nIdx] * w;
             totalW += w;
           }
         }
-        this.cornerLight[idx] = sum / totalW;
+        const blurred = sum / totalW;
+        this.cornerLight[idx] = rawLight[idx] + (blurred - rawLight[idx]) * sw;
       }
     }
+  }
+
+  /**
+   * 🔴 [2026-10-31 主人报「战术地图有的贴图之间出现直线、直角，应该是圆滑、渐变的边缘」]
+   * 逐角坡势场：由角高程中心差分求梯度，再做两遍高斯模糊。
+   * 旧做法把「单格四角最大落差」当坡度传给着色器（每格一个常数）⇒ 土石肌理/坡面明暗整格翻色，
+   * 格边是一条直线、格角是直角。改为逐角连续场后，同样的坡面在画面上是平滑渐变（DE blendomatic 观感）。
+   */
+  private updateCornerSlope(): void {
+    const N = this.N;
+    const V_SIZE = N + 1;
+    const raw = new Float32Array(V_SIZE * V_SIZE);
+    for (let gy = 0; gy <= N; gy++) {
+      for (let gx = 0; gx <= N; gx++) {
+        const idx = gy * V_SIZE + gx;
+        const hC = this.cornerElev[idx];
+        const hL = gx > 0 ? this.cornerElev[gy * V_SIZE + (gx - 1)] : hC;
+        const hR = gx < N ? this.cornerElev[gy * V_SIZE + (gx + 1)] : hC;
+        const hU = gy > 0 ? this.cornerElev[(gy - 1) * V_SIZE + gx] : hC;
+        const hD = gy < N ? this.cornerElev[(gy + 1) * V_SIZE + gx] : hC;
+        const dhx = (hR - hL) / (gx > 0 && gx < N ? 2 : 1);
+        const dhy = (hD - hU) / (gy > 0 && gy < N ? 2 : 1);
+        raw[idx] = Math.hypot(dhx, dhy);
+      }
+    }
+    this.cornerSlope = blurGrid2D(raw, V_SIZE);
   }
 
   public setCamera(c: { x: number; y: number; zoom: number }): void {
@@ -1102,15 +1149,10 @@ export class Scene13GroundLayerGL {
           [x, y + 1]
         ];
 
-        const tileSlope = Math.max(
-          Math.abs(cElev[0] - cElev[1]),
-          Math.abs(cElev[1] - cElev[2]),
-          Math.abs(cElev[2] - cElev[3]),
-          Math.abs(cElev[3] - cElev[0])
-        );
         const tri = Math.abs(cElev[0] - cElev[2]) <= Math.abs(cElev[1] - cElev[3]) ? TRI_A : TRI_B;
         for (const t of tri) {
           const gx = guv[t][0], gy = guv[t][1];
+          const vIdx = (gy) * V_SIZE + gx;
           verts.push(
             this.offX + (gx - N * 0.5) * TW,
             centerY + (gy - N * 0.5) * TH - (cElev[t] * DE_ELEV_H),
@@ -1118,7 +1160,8 @@ export class Scene13GroundLayerGL {
             gy,
             cLight[t],
             cElev[t],
-            tileSlope
+            // 🔴 逐角平滑坡势场（旧做法是单格常数 tileSlope，会让土石肌理整格翻色 ⇒ 直线/直角）
+            this.cornerSlope[vIdx] ?? 0
           );
         }
       }

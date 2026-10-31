@@ -748,7 +748,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/BASHU/guo_jixin.png": {
-            "scale": 0.97,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": 2
         },
@@ -8438,7 +8438,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -2
         },
         "/assets/XIANBEI/yuan_d_manzihaiya.png": {
-            "scale": 1.24,
+            "scale": 1.22,
             "offsetX": 10,
             "offsetY": -9
         },
@@ -9336,6 +9336,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 20,
             "offsetY": 46
+        },
+        "/assets/WEI/bfe3_71.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/CENTRAL/houhan_lishouzhen.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": -3
         }
     },
     "folderGuides": {

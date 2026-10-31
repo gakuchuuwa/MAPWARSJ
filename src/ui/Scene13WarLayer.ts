@@ -1227,7 +1227,7 @@ export class Scene13WarLayer {
         const matchesScene13Effect = (name: string, baseEffect: string, targetSix: TacticalSixSet): boolean => {
             const holdOrRetreatNames = new Set([
                 '步步为营', '固若金汤', '壁垒森严', '金城汤池', '据险持重',
-                '先据山险', '持重待疲', '休养生息', '据垒固守', '缓攻懈敌', '退避疲敌', '走为上计',
+                '先据山险', '持重待疲', '休养生息', '据垒固守', '缓攻懈敌', '三舍避锋', '走为上计',
             ]);
             const ambushNames = new Set([
                 '暗度陈仓', '声东击西', '无中生有', '趁火打劫', '围魏救赵',

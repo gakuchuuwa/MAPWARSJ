@@ -4214,8 +4214,8 @@ export class PlayerQuestSystem {
         this.preferredLiveGeneralId = null;
         this.cachedLiveCandidatesKey = '';
         this.cachedLiveCandidates = [];
-        this.deps.hero.joinFaction(factionId, culture);
-        this.deps.hero.attachTo(host);
+        this.deps.hero.joinFaction(factionId, culture, true);
+        this.deps.hero.attachTo(host);   // 兵模在这里按 host 实际编成学并换上
         this.onLiveJoinResolved?.({ ok: true, factionId, generalId });
     }
 
