@@ -1010,8 +1010,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'WAR_GALLEY',
         commanderUnit: 'hero_joanofarc',
         slots: [
-            { type: 'throwing_axeman', count: 4 },
-            { type: 'two_handed_swordsman', count: 3 },
+            { type: 'heavy_crossbowman', count: 4 },
+            { type: 'crusader_knight', count: 3 },
             { type: 'master_of_the_templar', count: 2 },
         ],
     },

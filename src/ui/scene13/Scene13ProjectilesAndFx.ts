@@ -59,6 +59,10 @@ export const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     warwolf_trebuchet: 1.78,
     conquistador: 2.31,
     elite_conquistador: 2.31,
+    // 🔴 [2026-10-31 主人令「要真实，符合历史」] 两位借「西班牙征服者」兵模的英雄（DE dat HFORE / HGPIZ）
+    //    开火相位与征服者一致（2.31），弹丸在枪口动作那帧才出。
+    hero_franciscodeorellana: 2.31,
+    hero_gonzalopizarro: 2.31,
     chukonu: 2.53,
     elite_chukonu: 2.53,
     fire_archer: 2.67,
@@ -87,6 +91,10 @@ export const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     janissary: 3.2,
     elite_janissary: 3.2,
     royal_janissary: 3.2,
+    // 🔴 [2026-10-31 主人令「穆斯塔法帕夏兵模的攻击特效是弓箭，应该套火枪」]
+    //    英雄穆斯塔法帕夏（DE dat#1068 HPASHA）借的是「土耳其苏丹亲兵精锐」兵模（SUCAI/ELITEJANISSARY），
+    //    开火相位必须跟精锐亲兵一致（3.2），否则弹丸比枪口动作早/晚半拍。
+    hero_mustafapasha: 3.2,
     mameluke: 3.2,
     elite_guecha_warrior: 3.33,
     guecha_warrior: 3.33,
@@ -313,8 +321,16 @@ export const PROJ_TYPE: Record<string, string> = {
     janissary: 'PROJ_GUNPOWDER',
     elite_janissary: 'PROJ_GUNPOWDER',
     royal_janissary: 'PROJ_GUNPOWDER',
+    // 🔴 [2026-10-31 主人令「穆斯塔法帕夏兵模的攻击特效是弓箭，应该套火枪」]
+    //    兵模是苏丹亲兵精锐（火绳枪），此条漏登记 → 落回默认 PROJ_ARROW，于是端枪射箭。
+    hero_mustafapasha: 'PROJ_GUNPOWDER',
     conquistador: 'PROJ_GUNPOWDER',
     elite_conquistador: 'PROJ_GUNPOWDER',
+    // 🔴 [2026-10-31 主人令「要真实，符合历史」] DE dat：HFORE（奥雷利亚纳 425）、HGPIZ（皮萨罗 427）
+    //    的 projectile_unit_id 都是 380「Projectile Gunpowder (Primary)」—— 16 世纪西班牙征服者端的就是火绳枪，
+    //    此前漏登记 → 落回 PROJ_ARROW，端枪射箭。补成火枪弹。
+    hero_franciscodeorellana: 'PROJ_GUNPOWDER',
+    hero_gonzalopizarro: 'PROJ_GUNPOWDER',
     organ_gun: 'PROJ_GUNPOWDER',
     elite_organ_gun: 'PROJ_GUNPOWDER',
     bombard_cannon: 'PROJ_BOMBARD_BALL',
@@ -346,6 +362,11 @@ export const ACCURACY_BY_TYPE: Record<string, number> = {
     elite_camel_archer: 95,
     conquistador: 65,
     elite_conquistador: 70,
+    // 🔴 [2026-10-31 主人令「要真实，符合历史」] DE dat 实测 accuracy_percent：HPASHA 70、HFORE 70、HGPIZ 70。
+    //    此前这三位 Hero 不在本表 → 落进「骑射 50 / 火器默认 75」的兜底里，与 DE 不符。
+    hero_mustafapasha: 70,
+    hero_franciscodeorellana: 70,
+    hero_gonzalopizarro: 70,
     cretan_archer: 90,
     elite_arambai: 30,
     elite_blackwood_archer: 90,
@@ -534,6 +555,10 @@ export const FIREARM_TYPES = new Set([
     'bombard_cannon', 'houfnice', 'hero_jeanbureau', 'hero_jeandelorrain', 'hand_cannoneer',
     'janissary', 'elite_janissary', 'royal_janissary',
     'conquistador', 'elite_conquistador', 'organ_gun', 'elite_organ_gun',
+    // 🔴 [2026-10-31 主人令「穆斯塔法帕夏兵模的攻击特效是弓箭，应该套火枪」] 英雄穆斯塔法帕夏＝苏丹亲兵精锐兵模
+    'hero_mustafapasha',
+    // 🔴 [2026-10-31 主人令「要真实，符合历史」] 两位西班牙征服者英雄（DE dat 425/427）用的是火绳枪
+    'hero_franciscodeorellana', 'hero_gonzalopizarro',
 ]);
 /** 抛射物基准朝向偏移（素材竖向朝上 vs 横向朝东）：火枪弹竖向，旋转需 +90°。 */
 export const PROJ_ANGLE_OFFSET: Record<string, number> = {
@@ -742,7 +767,11 @@ export const FIREARM_MUZZLE: Record<string, string> = {
     organ_gun: 'FX_MUZZLE_ORGAN', elite_organ_gun: 'FX_MUZZLE_ORGAN',
     hand_cannoneer: 'FX_MUZZLE_HAND', janissary: 'FX_MUZZLE_HAND',
     elite_janissary: 'FX_MUZZLE_HAND', royal_janissary: 'FX_MUZZLE_HAND',
+    // 🔴 [2026-10-31 主人令「穆斯塔法帕夏兵模的攻击特效是弓箭，应该套火枪」] 与精锐亲兵同一支火绳枪的枪口焰
+    hero_mustafapasha: 'FX_MUZZLE_HAND',
     conquistador: 'FX_MUZZLE_CONQ', elite_conquistador: 'FX_MUZZLE_CONQ',
+    // 🔴 [2026-10-31 主人令「要真实，符合历史」] 两位征服者英雄与征服者同一支火绳枪的枪口焰
+    hero_franciscodeorellana: 'FX_MUZZLE_CONQ', hero_gonzalopizarro: 'FX_MUZZLE_CONQ',
     hussite_wagon: 'FX_MUZZLE_HAND', elite_hussite_wagon: 'FX_MUZZLE_HAND',
 };
 

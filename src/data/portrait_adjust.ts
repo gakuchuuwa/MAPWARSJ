@@ -862,11 +862,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/WESTERN/kokand_alimukuli.png": {
-            "scale": 0.83,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/WESTERN/tuoming_tuomin.png": {
             "scale": 0.96,
             "offsetX": 0,
@@ -4312,11 +4307,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -1
         },
-        "/assets/WESTERN/__闲置__WESTERN_37.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": -33
-        },
         "/assets/BASHU/boren_ada.png": {
             "scale": 0.9709,
             "offsetX": 0,
@@ -7553,9 +7543,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/WESTERN/__多余__WESTERN_01.png": {
-            "scale": 1.11,
-            "offsetX": 1,
-            "offsetY": -23
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": 3
         },
         "/assets/WESTERN/shache_shachexian.png": {
             "scale": 1,
@@ -9381,6 +9371,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": -17,
             "offsetY": 29
+        },
+        "/assets/WESTERN/kokand_alimukuli.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -33
         }
     },
     "folderGuides": {
