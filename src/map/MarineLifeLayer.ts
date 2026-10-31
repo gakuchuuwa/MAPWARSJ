@@ -74,6 +74,36 @@ interface Creature {
 const MARINE_SPAWN_RADIUS_DEG = 0.08;
 
 /**
+ * 🔴 [2026-11-01 主人令「战略地图上，爱琴海是浅海区，还是深海区？这里有鲸鱼吗，如果没有的话，也不能有海怪。」]
+ * 与 StrategicWaterMaterial.ts 的「离岸/离岛 26px（≈60~70km）以内压为浅海区（effD <= 0.50）」严格对齐：
+ *   鲸鱼（WHALE）与海怪（NESSIE）只允许出现在真正的远岸深海区（水深 ≥ 200m，且周围 0.28°/0.55° 两圈八方无岛屿与浅滩）；
+ *   爱琴海等群岛密布的浅海区（离岸/离岛均在 60km 内，战略图渲染为浅海浅蓝）无鲸鱼，也绝不刷海怪，统一换为海豚。
+ */
+const DEEP_SEA_RING_RADII_DEG = [0.28, 0.55] as const;
+const DEEP_SEA_DIRS: ReadonlyArray< readonly [number, number]> = [
+    [1, 0], [0.707, 0.707], [0, 1], [-0.707, 0.707],
+    [-1, 0], [-0.707, -0.707], [0, -1], [0.707, -0.707],
+];
+
+export function canSpawnDeepSeaWhaleOrNessie(lat: number, lng: number): boolean {
+    if (!isOpenOcean(lat, lng)) return false;
+    const sampler = LandSeaSystem.getSampler();
+    const centerElev = sampler.getElevationSync(lat, lng);
+    if (centerElev === null || centerElev > -200) return false;
+    const cosLat = Math.max(0.25, Math.cos(lat * Math.PI / 180));
+    for (const r of DEEP_SEA_RING_RADII_DEG) {
+        for (const [dy, dx] of DEEP_SEA_DIRS) {
+            const la = lat + dy * r;
+            const ln = lng + (dx * r) / cosLat;
+            if (!LandSeaSystem.isSeaAt(L.latLng(la, ln))) return false;
+            const e = sampler.getElevationSync(la, ln);
+            if (e === null || e > -120) return false;
+        }
+    }
+    return true;
+}
+
+/**
  * 🔴 [2026-10-13 主人令] 海洋生物（海豚/抹香鲸/海龟）只在大洋与边缘海生成：
  *    排除里海（Caspian Basin）、死海（Dead Sea）等海拔在 0 以下但与大洋不相通的内陆封闭咸水盆地。
  */
@@ -332,10 +362,10 @@ export class MarineLifeLayer extends L.Layer {
             else if (r < 0.80) kind = 'DOLPHIN';
             else kind = 'TUNA_FISH';
         }
-        // 鲸鱼与水怪只在水深超过 200 米的深海（大陆架以外）；浅海（如厄勒海峡约 26 米）换成海豚
+        // 🔴 [2026-11-01 主人令] 鲸鱼与海怪只出现在远岸深海区（水深 ≥200m 且周围 ~60km 无岛屿/浅滩）；
+        //    爱琴海等群岛浅海区无鲸鱼，也绝不出现海怪，统一换成海豚。
         if (kind === 'WHALE' || kind === 'NESSIE') {
-            const elev = LandSeaSystem.getSampler().getElevationSync(spawnLat, spawnLng);
-            if (elev === null || elev > -200) kind = 'DOLPHIN';
+            if (!canSpawnDeepSeaWhaleOrNessie(spawnLat, spawnLng)) kind = 'DOLPHIN';
         }
 
         this.creatures.push({

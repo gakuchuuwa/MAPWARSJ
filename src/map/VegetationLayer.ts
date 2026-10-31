@@ -506,9 +506,9 @@ function seasonBlend(offsetSec = 0): number {
 }
 
 function hueClass(asset: string): 'conifer' | 'broadleaf' | 'arid' | 'dead' {
-    if (/PINE|CYPRESS|SNOW_|BAMBOO|CEDAR/i.test(asset)) return 'conifer';
+    if (/PINE|CYPRESS|SPRUCE|SNOW_|BAMBOO|CEDAR/i.test(asset)) return 'conifer';
     if (/PALM|ACACIA|BAOBAB|OLIVE|DRAGON_TREE/i.test(asset)) return 'arid';
-    if (/DEAD_TREE/i.test(asset)) return 'dead';
+    if (/DEAD_TREE|BIRCH_WINTER|SCENARIO_TREE_I|SCENARIO_TREE_F/i.test(asset)) return 'dead';
     return 'broadleaf';
 }
 
@@ -1079,9 +1079,30 @@ export class VegetationLayer {
                 }
 
                 const treeTile = specialEco.weight > 0 ? specialEco.effectiveTile : tile;
+                // 🔴 [2026-11-01 主人令「把战略战术同源的河岸护岸树一并落地」]
+                //    内陆河岸护岸林带：在本来有潜在森林的温带/亚热带/地中海平川河谷（即便周围农田因开垦使 forestCover < 0.40），
+                //    紧贴河道两岸（邻格 0.022°≈2.4km 有水且海拔 > 3m 非海岸）按噪声场间断保留河岸护岸树丛，与战术地图河岸树严格一致。
+                let riparianBoost = 0;
+                if (
+                    (elev === null || (elev > 3 && elev < treeLine)) &&
+                    RESOLVE_FOREST_BIOMES.has(forestBiome) &&
+                    !NON_VEGETATION_TILES.has(tile) &&
+                    noiseVal >= 0.44
+                ) {
+                    const R_STEP = 0.022;
+                    const nearRiver =
+                        waterSampler.isWaterSync(ptLatLng.lat + R_STEP, ptLatLng.lng) === true ||
+                        waterSampler.isWaterSync(ptLatLng.lat - R_STEP, ptLatLng.lng) === true ||
+                        waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng + R_STEP) === true ||
+                        waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng - R_STEP) === true;
+                    if (nearRiver) {
+                        riparianBoost = 0.14 + 0.18 * ((noiseVal - 0.44) / 0.56);
+                    }
+                }
                 const clusterWeight = Math.max(
                     huntingCityBoost,
                     specialEco.weight,
+                    riparianBoost,
                     forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal,
                         forestCoverAt(ptLatLng.lat, ptLatLng.lng, gameYear, elev)),
                 );
@@ -1111,11 +1132,9 @@ export class VegetationLayer {
                     }
                     const curLatLng = i === 0 ? ptLatLng : this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
 
-                    // 🔴 严格保护四季系统：春/夏/秋/冬 4 季树种 1:1 动态轮转；
-                    //    同时保证「战略冬天与战术冬天 100% 同源一致」：
-                    //    1. 在冬季真积雪区（world-base winterFlag ∈ {1, 2, 3} 或高寒雪线林带），松柏与阔叶林全部披挂 DE 饱满覆雪树冠（SNOW_PINE / SNOW_AUTUMN_OAK），消除白雪地上长翠绿树冠或金黄秋橡树的割裂感；
-                    //    2. 在冬季无雪区与零星残雪区（winterFlag === 0 或 4），绝不误戴厚白雪冠；
-                    //    3. 在战略地图尺度（25px）下，将全秃枯树枝（BIRCH_WINTER / SCENARIO_TREE_I / DEAD_TREE）映射为覆雪/金秋/灌丛饱满树冠，消除像插着一排枯黑铁丝的违和感。
+                    // 🔴 2026-10-31 ~ 2026-11-01 主人令「植被符合区域，战略和战术保持一致」「按真实的地理，历史模拟」：
+                    //    树种从植物总表本区主树种按权重取，四季物候（温带落叶阔叶冬枯/覆雪、常绿与针叶冬青/披雪、荒漠枯木）
+                    //    完全由与战术共用的 seasonalDeTree(base, s, isSnow) 统一决定，不再在战略层把枯树/冬枝强行改成灌木或松树。
                     const isPermSnowTile = tile === 'sno' || tile === 'sn2' || tile === 'snf' || tile === 'snd' || tile === 'ic3' || tile === 'ice';
                     const wf = queryWinterSnow(curLatLng.lat, curLatLng.lng);
                     const isAlpineWinterSnow = elev !== null && Math.abs(curLatLng.lat) >= 26 && elev >= treeLine - 350;
@@ -1123,58 +1142,7 @@ export class VegetationLayer {
 
                     const resolveStrategicTreeForSeason = (s: TreeSeason): string => {
                         const isSnow = isPermSnowTile || (s === 3 && hasWinterSnowGround);
-                        // 🔴 2026-10-31 主人令「植被符合区域，战略和战术保持一致」：树种从植物总表本区主树种里按权重挑，
-                        //    季节换装用战术同一个 seasonalDeTree；下面的积雪映射照旧。
-                        const a = seasonalDeTree(plantTreeAt(curLatLng.lat, curLatLng.lng, hash(gx, gy, i * 13 + 71)), s, false);
-
-                        if (a === 'DEAD_TREE') return isSnow ? 'SNOW_PINE' : 'BUSH_TREE_A';
-                        if (a === 'BAOBAB' && (curLatLng.lat >= 11.5 || (curLatLng.lng >= 31.0 && ((gx + gy) & 1) === 0))) {
-                            return 'ACACIA';
-                        }
-
-                        if (isSnow) {
-                            if (
-                                a === 'PINE' ||
-                                a === 'ASIAN_PINE' ||
-                                a === 'SNOW_PINE' ||
-                                a === 'ITALIAN_PINE' ||
-                                a === 'CYPRESS' ||
-                                a === 'CYPRESS_DEC' ||
-                                a === 'MONKEY_PUZZLE' ||
-                                a === 'BAMBOO' ||
-                                a === 'LUSH_BAMBOO'
-                            ) {
-                                return 'SNOW_PINE';
-                            }
-                            if (a === 'SPRUCE') return 'SPRUCE_SNOW';   // 与战术 seasonalDeTree 同：云杉积雪换积雪云杉
-                            if (a === 'BIRCH_WINTER' || a === 'BIRCH_AUTUMN' || a === 'BIRCH_GREEN') {
-                                return (Math.abs(curLatLng.lat) > 46 || wf === 2 || (wf === 3 && ((gx + gy + i) & 1) === 0))
-                                    ? 'SNOW_PINE'
-                                    : 'SNOW_AUTUMN_OAK';
-                            }
-                            if (
-                                a === 'SCENARIO_TREE_I' ||
-                                a === 'OAK' ||
-                                a === 'GREEN_OAK' ||
-                                a === 'AUTUMN_OAK' ||
-                                a === 'SNOW_AUTUMN_OAK' ||
-                                a === 'ASIAN_MAPLE_GREEN' ||
-                                a === 'ASIAN_MAPLE_AUTUMN' ||
-                                a === 'PEACH_BLOSSOM' ||
-                                a === 'WILLOW' ||
-                                a === 'OLIVE' ||
-                                a.startsWith('SCENARIO_TREE_')
-                            ) {
-                                return 'SNOW_AUTUMN_OAK';
-                            }
-                            return a;
-                        }
-
-                        // 非覆雪地面（含春/夏/秋及冬季无雪/零星残雪区）：确保不残留重度白雪冠或枯黑铁丝枝
-                        if (a === 'BIRCH_WINTER') return Math.abs(curLatLng.lat) > 46 ? 'ASIAN_PINE' : 'AUTUMN_OAK';
-                        if (a === 'SCENARIO_TREE_I' || a === 'SNOW_AUTUMN_OAK') return 'AUTUMN_OAK';
-                        if (a === 'SNOW_PINE') return 'ASIAN_PINE';
-                        return a;
+                        return seasonalDeTree(plantTreeAt(curLatLng.lat, curLatLng.lng, hash(gx, gy, i * 13 + 71)), s, isSnow);
                     };
                     const asset = resolveStrategicTreeForSeason(season);
                     const assetNext = resolveStrategicTreeForSeason(nextSeason);

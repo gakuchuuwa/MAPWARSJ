@@ -523,11 +523,12 @@ function pickHuntingForestPalette(style: string, lat: number, lng: number, idx: 
     if (style === 'NORTHEAST' || style === 'VARANGIANS') {
         const pine = idx % 2 === 0;
         const mainPine = style === 'NORTHEAST' ? 'ASIAN_PINE' : 'PINE';
+        const base = pine ? mainPine : 'BIRCH_GREEN';
         return {
-            springTree: pine ? mainPine : 'BIRCH_GREEN',
-            summerTree: pine ? mainPine : 'BIRCH_GREEN',
-            autumnTree: pine ? mainPine : 'BIRCH_AUTUMN',
-            winterTree: hasWinterSnow ? (pine ? 'SNOW_PINE' : 'SNOW_AUTUMN_OAK') : (pine ? mainPine : 'AUTUMN_OAK'),
+            springTree: seasonalDeTree(base, 0, false),
+            summerTree: seasonalDeTree(base, 1, false),
+            autumnTree: seasonalDeTree(base, 2, false),
+            winterTree: seasonalDeTree(base, 3, hasWinterSnow),
             bushName: idx % 2 === 0 ? 'FORAGE_BUSH' : 'UNDERBRUSH',
             bushLib: idx % 2 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
             isBamboo: false,
@@ -535,11 +536,12 @@ function pickHuntingForestPalette(style: string, lat: number, lng: number, idx: 
     }
     // AMERICA / GEORGIANS 等温带山林渔猎
     const isPine = idx % 3 === 0;
+    const base = isPine ? 'PINE' : 'OAK';
     return {
-        springTree: isPine ? 'PINE' : 'GREEN_OAK',
-        summerTree: isPine ? 'PINE' : 'GREEN_OAK',
-        autumnTree: isPine ? 'PINE' : 'AUTUMN_OAK',
-        winterTree: isPine ? (hasWinterSnow ? 'SNOW_PINE' : 'PINE') : (hasWinterSnow ? 'SNOW_AUTUMN_OAK' : 'AUTUMN_OAK'),
+        springTree: seasonalDeTree(base, 0, false),
+        summerTree: seasonalDeTree(base, 1, false),
+        autumnTree: seasonalDeTree(base, 2, false),
+        winterTree: seasonalDeTree(base, 3, hasWinterSnow),
         bushName: idx % 2 === 0 ? 'FORAGE_BUSH' : 'BUSH_TREE_A',
         bushLib: idx % 2 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
         isBamboo: false,

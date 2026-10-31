@@ -18,6 +18,7 @@ import { animalHerdSize } from '../../world/environment/animalCatalog';
 import { tacticalTreeKeepRatio } from '../../world/environment/forestModel';
 import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
+import { canSpawnDeepSeaWhaleOrNessie } from '../../map/MarineLifeLayer';
 import { applyDeCityToGround } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { queryWinterSnow } from './WorldBaseMap';
@@ -189,12 +190,22 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         // 🔴 [2026-10-27 主人令「战术模式中的地图……有的因为在港口附近，导致水域太多，我觉得一张地图水域不应该超过40%」]
         const mapDataClamped = clampMapWaterRatio(mapDataRaw, 0.40);
         const groundBaseTerrain = this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
+        const preCityRec = this.defenderCityRecord();
+        const preLat = preCityRec?.lat ?? this.centerLat ?? 30;
+        const preLng = preCityRec?.lng ?? this.centerLng ?? 110;
+        const preYear = (window as any).game?.timeSystem?.getYear?.();
+        const preTreeKeep = tacticalTreeKeepRatio(
+            preLat, preLng,
+            typeof preYear === 'number' && Number.isFinite(preYear) ? preYear : 0,
+            LandSeaSystem.getSampler().getElevationSync(preLat, preLng),
+        );
         const mapData = enrichDeBattlefieldMidfield(
             mapDataClamped,
             this.deCity?.width,
             String(this.defenderCityId ?? this.environmentPlan?.seed ?? 'field'),
             groundBaseTerrain,
             this.environmentPlan?.deMapTheme,
+            preTreeKeep,
         );
         // 🔴 [2026-10-21 主人令「请全部和DE保持一致」]
         //    地面 6 张贴图改由 **DE 烘焙地形直方图** 决定（见 Scene13DeGround.ts）：
@@ -499,8 +510,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                         }
                         const isTree = TREE_RE.test(asset);
                         if (isTree) {
-                            // ⓪ 按森林模型疏伐（位置哈希定，同一场战斗每次砍同一批）
-                            if (treeKeep < 1 && (Math.abs(Math.round(ob.x * 31 + ob.y * 57)) % 1000) / 1000 >= treeKeep) continue;
+                            // ⓪ 按森林模型疏伐（位置哈希定，同一场战斗每次砍同一批；河岸护岸树已在 enrichDeBattlefieldMidfield 按 treeKeep 缩算数量，不再二次抽删）
+                            if (!ob.riparian && treeKeep < 1 && (Math.abs(Math.round(ob.x * 31 + ob.y * 57)) % 1000) / 1000 >= treeKeep) continue;
                             // ① 水格不长树（含 DE 水地形与水密度场 > 0.38 的水面）
                             if (WATER_TERRAINS.has(tid) || glLayer.isWaterAt(sx, sy, VW, VH)) continue;
                             // ② 森林格直接由脚下 DE 森林地形 id 按 dat 密度表决定树种（避免旧烘焙 BFS 跨地形吞并变体林）
@@ -566,7 +577,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                         if (onFoundation(sx, sy)) continue;
                         this.ensureNatureAsset(asset);
                         const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
-                        this.decorSprites.push({
+                        const spr: DecorSprite = {
                             asset,
                             frame: ob.rot !== undefined ? Math.round(ob.rot) : hash,
                             x: sx,
@@ -580,7 +591,9 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                             obstructionContactSec: 0,
                             obstructionTouched: false,
                             obstructionDisabled: true,
-                        });
+                        };
+                        if (ob.riparian) (spr as any).riparian = true;
+                        this.decorSprites.push(spr);
                     }
                 }
 
@@ -1147,6 +1160,23 @@ function populateBattlefieldMicroDecor(
  *   · 行为与陆地动物同一套（stepTacticalAnimals）：见兵就潜游远离，aquatic 约束保证不上岸、不进护城河。
  */
 function spawnTacticalNessie(this: Scene13WarLayer, glLayer: Scene13GroundLayerGL, VW: number, VH: number): void {
+    // 🔴 [2026-11-01 主人令「这里有鲸鱼吗，如果没有的话，也不能有海怪」]
+    //    海怪与战略图鲸鱼同源：仅在濒临远岸深海（有鲸鱼分布）的海域战场才允许生成；
+    //    内陆河湖、爱琴海等群岛浅海（无鲸鱼）一概不出海怪。
+    if (this.environmentPlan?.waterKind !== 'sea') return;
+    const defRec = this.defenderCityRecord();
+    const lat = defRec?.lat ?? this.centerLat ?? 30;
+    const lng = defRec?.lng ?? this.centerLng ?? 110;
+    const cosLat = Math.max(0.25, Math.cos(lat * Math.PI / 180));
+    const OFFSHORE_DIRS: ReadonlyArray<readonly [number, number]> = [
+        [0, 0], [1, 0], [0.707, 0.707], [0, 1], [-0.707, 0.707],
+        [-1, 0], [-0.707, -0.707], [0, -1], [0.707, -0.707],
+    ];
+    const hasAdjacentDeepWhaleSea = OFFSHORE_DIRS.some(([dy, dx]) =>
+        canSpawnDeepSeaWhaleOrNessie(lat + dy * 0.65, lng + (dx * 0.65) / cosLat)
+    );
+    if (!hasAdjacentDeepWhaleSea) return;
+
     const N = 120;
     const isNatural = (x: number, y: number): boolean => glLayer.isWaterAt(x, y, VW, VH) && !glLayer.isMoatAt(x, y, VW, VH);
     const cands: Array<{ x: number; y: number }> = [];

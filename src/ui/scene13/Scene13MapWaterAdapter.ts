@@ -474,6 +474,7 @@ export function enrichDeBattlefieldMidfield(
     seedBase: string,
     baseTerrain: string | undefined,
     deMapTheme: string | null | undefined,
+    treeKeepRatio: number = 1.0,
 ): any {
     if (!mapData || mapData.isDeCampaign || !mapData.terrain || !mapData.objects) return mapData;
     const w = mapData.width, h = mapData.height;
@@ -649,15 +650,18 @@ export function enrichDeBattlefieldMidfield(
     for (const sec of secOrder) {
         if (nearClumpsPlaced >= targetNearClumps) break;
         if (nearSectorTrees[sec] >= 4) continue;
-        const baseAng = (sec + 0.25 + rnd() * 0.5) * (Math.PI / 4) - Math.PI;
-        const rad = isField
-            ? (7.0 + rnd() * 5.2)
-            : (cityR + 2.2 + rnd() * 5.0);
-        const sx = Math.round(cX + Math.cos(baseAng) * rad);
-        const sy = Math.round(cY + Math.sin(baseAng) * rad);
         const clumpSize = isField ? (8 + Math.floor(rnd() * 6)) : (7 + Math.floor(rnd() * 5));
-        if (growDeForestClump(sx, sy, clumpSize, nearMinR, nearMaxR + 1.5) >= 4) {
-            nearClumpsPlaced++;
+        for (let tryIdx = 0; tryIdx < 6; tryIdx++) {
+            const baseAng = (sec + 0.18 + rnd() * 0.64) * (Math.PI / 4) - Math.PI;
+            const rad = isField
+                ? (7.0 + rnd() * 5.2)
+                : (cityR + 2.2 + rnd() * 5.0);
+            const sx = Math.round(cX + Math.cos(baseAng) * rad);
+            const sy = Math.round(cY + Math.sin(baseAng) * rad);
+            if (growDeForestClump(sx, sy, clumpSize, nearMinR, nearMaxR + 1.5) >= 4) {
+                nearClumpsPlaced++;
+                break;
+            }
         }
     }
 
@@ -666,14 +670,17 @@ export function enrichDeBattlefieldMidfield(
     for (const sec of secOrder) {
         if (midClumpsPlaced >= 4) break;
         if (midSectorTrees[sec] >= 7) continue;
-        const baseAng = (sec + 0.3 + rnd() * 0.4) * (Math.PI / 4) - Math.PI;
         const minMid = isField ? 13.5 : (cityR + 5.0);
-        const rad = minMid + rnd() * (Math.min(31, minMid + 12) - minMid);
-        const sx = Math.round(cX + Math.cos(baseAng) * rad);
-        const sy = Math.round(cY + Math.sin(baseAng) * rad);
         const clumpSize = 10 + Math.floor(rnd() * 6);
-        if (growDeForestClump(sx, sy, clumpSize, cityR + 2.5, 34) >= 4) {
-            midClumpsPlaced++;
+        for (let tryIdx = 0; tryIdx < 6; tryIdx++) {
+            const baseAng = (sec + 0.2 + rnd() * 0.6) * (Math.PI / 4) - Math.PI;
+            const rad = minMid + rnd() * (Math.min(31, minMid + 12) - minMid);
+            const sx = Math.round(cX + Math.cos(baseAng) * rad);
+            const sy = Math.round(cY + Math.sin(baseAng) * rad);
+            if (growDeForestClump(sx, sy, clumpSize, cityR + 2.5, 34) >= 4) {
+                midClumpsPlaced++;
+                break;
+            }
         }
     }
 
@@ -689,6 +696,118 @@ export function enrichDeBattlefieldMidfield(
         const clumpSize = 14 + Math.floor(rnd() * 7);
         if (growDeForestClump(sx, sy, clumpSize, 30, 47) >= 6) {
             outerClumpsPlaced++;
+        }
+    }
+
+    // 1d. 🔴 [2026-11-01 主人令「把战略战术同源的河岸护岸树一并落地」]
+    //     沿河道/水岸两侧干地（沙岸外 1~3 格，距离水格 2~4 格）布置河岸护岸林簇与散树：
+    //     · 严格避开中央渡口冲锋走廊（inRoadOrCorridor），绝不阻挡大军渡河；
+    //     · 数量按战略同源的 treeKeepRatio（forestModel.ts 潜在森林 × 史实开垦度）自适应缩放；
+    //     · 树种走本图 DE 森林地形与后续 plantRegionalizeTree + seasonalDeTree，与战略图 100% 同源。
+    const riparianCells: Array<[number, number]> = [];
+    const minRiparianR = isField ? 4.8 : Math.max(8.5, cityR - 0.5);
+    for (let y = 6; y < h - 6; y++) {
+        for (let x = 6; x < w - 6; x++) {
+            const d = Math.hypot(x - cX, y - cY);
+            if (d < minRiparianR || d > 42 || inRoadOrCorridor(x, y)) continue;
+            if (!isSafeDryCell(x, y, 1)) continue;
+            let nearWater = false;
+            for (let dy = -4; dy <= 4 && !nearWater; dy++) {
+                for (let dx = -4; dx <= 4; dx++) {
+                    if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) continue;
+                    const t = terrain[(y + dy) * w + (x + dx)];
+                    if (isWaterId(t)) {
+                        nearWater = true;
+                        break;
+                    }
+                }
+            }
+            if (nearWater && !hasTree[y * w + x]) {
+                riparianCells.push([x, y]);
+            }
+        }
+    }
+    if (riparianCells.length > 0) {
+        for (let i = riparianCells.length - 1; i > 0; i--) {
+            const j = Math.floor(rnd() * (i + 1));
+            const tmp = riparianCells[i];
+            riparianCells[i] = riparianCells[j];
+            riparianCells[j] = tmp;
+        }
+        const growRiparianClump = (startX: number, startY: number, targetSize: number): number => {
+            if (!isSafeDryCell(startX, startY, 1) || inRoadOrCorridor(startX, startY)) return 0;
+            const q: Array<[number, number]> = [[startX, startY]];
+            const visited = new Set<number>([startY * w + startX]);
+            let grown = 0;
+            while (q.length > 0 && grown < targetSize) {
+                const pickIdx = Math.floor(rnd() * q.length);
+                const [cx, cy] = q.splice(pickIdx, 1)[0];
+                const idx = cy * w + cx;
+                const d = Math.hypot(cx - cX, cy - cY);
+                if (d < minRiparianR || d > 43 || !isSafeDryCell(cx, cy, 1) || inRoadOrCorridor(cx, cy)) continue;
+                if (!hasTree[idx]) {
+                    terrain[idx] = domForestTid!;
+                    hasTree[idx] = 1;
+                    objects.push({
+                        name: (terrain[idx] === 14 || isDesertTheme) ? 'FPAL' : domTreeUnit,
+                        x: cx + 0.5,
+                        y: cy + 0.5,
+                        cell: idx,
+                        riparian: true,
+                    });
+                    grown++;
+                }
+                const nbrs: Array<[number, number]> = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]];
+                for (const [nx, ny] of nbrs) {
+                    const nIdx = ny * w + nx;
+                    if (!visited.has(nIdx) && rnd() < 0.75) {
+                        visited.add(nIdx);
+                        q.push([nx, ny]);
+                    }
+                }
+            }
+            return grown;
+        };
+
+        const keepClamped = Math.max(0.35, Math.min(1.0, treeKeepRatio));
+        const targetRiparianGroves = keepClamped >= 0.75 ? 4 : keepClamped >= 0.45 ? 3 : 2;
+        const placedGroves: Array<[number, number]> = [];
+        for (const [rx, ry] of riparianCells) {
+            if (placedGroves.length >= targetRiparianGroves) break;
+            if (placedGroves.some(([px, py]) => Math.hypot(rx - px, ry - py) < 10)) continue;
+            const groveSize = 4 + Math.floor(rnd() * 3);
+            if (growRiparianClump(rx, ry, groveSize) >= 3) {
+                placedGroves.push([rx, ry]);
+            }
+        }
+
+        const targetRiparianTrees = Math.round(8 + 8 * keepClamped);
+        let riparianStragglers = 0;
+        for (const [rx, ry] of riparianCells) {
+            if (riparianStragglers >= targetRiparianTrees) break;
+            const idx = ry * w + rx;
+            if (hasTree[idx]) continue;
+            const cellTid = terrain[idx];
+            if (isWaterId(cellTid) || isShoreId(cellTid) || deTerrainIsForest(cellTid)) continue;
+            let nearOther = false;
+            for (let dy = -3; dy <= 3 && !nearOther; dy++) {
+                for (let dx = -3; dx <= 3; dx++) {
+                    if (hasTree[(ry + dy) * w + (rx + dx)]) {
+                        nearOther = true;
+                        break;
+                    }
+                }
+            }
+            if (nearOther) continue;
+            hasTree[idx] = 1;
+            objects.push({
+                name: (cellTid === 14 || isDesertTheme) ? 'FPAL' : domTreeUnit,
+                x: rx + 0.5,
+                y: ry + 0.5,
+                cell: idx,
+                riparian: true,
+            });
+            riparianStragglers++;
         }
     }
 

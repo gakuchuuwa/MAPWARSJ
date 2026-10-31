@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔴 [2026-10-20 主人令「按功能模块拆分 Scene13WarLayer.ts，保证原有功能完全正常」]
  * 战术模式（Scene13）**城池与营地布置**：从 Scene13WarLayer.ts 原样搬出（逻辑一行未改）。
  *   · 攻城战守方城池（战略地图同款，摆在地图中心）：buildDeCity / applyDeCityToGround / syncDeCityGround
@@ -378,7 +378,11 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         const distCells = (cityCell && spCell) ? Math.hypot(spCell.gx - cityCell.gx, spCell.gy - cityCell.gy) : 999;
         const inCityOrRoad = inCity(sp.x, sp.y) || inGateRoad(sp.x, sp.y);
         const inWaterOrMoat = !!(inMoat && inMoat(sp.x, sp.y)) || gl.isWaterAt(sp.x, sp.y, W, H);
-        const inCityFlatRing = isTree && distCells < minHillDistCells - 0.5;
+        const isRiparianTree = isTree && Boolean((sp as any).riparian);
+        const flatRingLimit = isRiparianTree
+            ? (ringLm > 0 ? ringLm / 2 + (moatOn ? 3.6 : 1.6) : rCells + 1.4)
+            : (minHillDistCells - 0.5);
+        const inCityFlatRing = isTree && distCells < flatRingLimit;
         const keep = !inCityOrRoad && !inWaterOrMoat && !inCityFlatRing;
         if (!keep) {
             if (inCityOrRoad) {

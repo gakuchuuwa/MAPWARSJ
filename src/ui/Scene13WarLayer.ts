@@ -3993,9 +3993,10 @@ export class Scene13WarLayer {
         return this.isWaterAt(screenX, screenY) ? 0.8 : 1.0;
     }
 
-    // 🔴 [2026-10-29 主人令「上坡40%」]：上坡减速 40% → 乘 0.6；下坡和平地不变（×1.0）
+    // 🔴 [2026-10-29 主人令「上坡40%」；2026-11-01 主人令「下坡 +20% 加速」]：上坡减速 40%（×0.6），下坡加速 20%（×1.2），平地 ×1.0
     private static readonly UPHILL_SPEED_K = 0.6;
-    /** 上坡减速系数：沿本帧移动方向 (ux, uy) 前探一小段，前方地面高程高于脚下 → ×0.8；平地、下坡 ×1.0 */
+    private static readonly DOWNHILL_SPEED_K = 1.2;
+    /** 坡度移速系数：沿本帧移动方向 (ux, uy) 前探一小段，前方地面高程高于脚下 → ×0.6（上坡）；低于脚下 → ×1.2（下坡）；平地 ×1.0 */
     private uphillSpeedK(x: number, y: number, ux: number, uy: number): number {
         const g = this.groundLayerGL;
         if (!g) return 1.0;
@@ -4004,7 +4005,9 @@ export class Scene13WarLayer {
         const W = this.worldCX * 2, H = this.worldCY * 2;
         const ahead = 16 / l;
         const dz = g.elevationLevelAt(x + ux * ahead, y + uy * ahead, W, H) - g.elevationLevelAt(x, y, W, H);
-        return dz > 0.01 ? Scene13WarLayer.UPHILL_SPEED_K : 1.0;
+        if (dz > 0.01) return Scene13WarLayer.UPHILL_SPEED_K;
+        if (dz < -0.01) return Scene13WarLayer.DOWNHILL_SPEED_K;
+        return 1.0;
     }
 
     /** 河流 / 湖泊模板水体从东北角迁到城边（实现见 Scene13MapWaterAdapter.ts） */

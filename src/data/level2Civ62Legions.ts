@@ -2580,8 +2580,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_saladin',
         slots: [
             { type: 'elite_mameluke', count: 3 },
-            { type: 'archer_of_the_eyes', count: 4 },
-            { type: 'camel_rider', count: 2 },
+            { type: 'recurve_bowman', count: 4 },
+            { type: 'camel_heavy', count: 2 },
         ],
     },
     // ── 阿拉伯 · 帝国时代 · 帝国时代阿拉伯军团　（本次新建）────────────────
