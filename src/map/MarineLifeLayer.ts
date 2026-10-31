@@ -212,7 +212,10 @@ export class MarineLifeLayer extends L.Layer {
         // 清理过期生物
         if (this.creatures.length > 0) {
             // 🔴 [2026-10-13 主人报「沙地中出现海洋生物」] 存活期内点位若不再是海（或位于内陆盆地里海/死海）就立刻撤掉
-            this.creatures = this.creatures.filter(c => now <= c.expiresAt && isOpenOcean(c.lat, c.lng) && LandSeaSystem.isSeaAt(L.latLng(c.lat, c.lng)));
+            // 🔴 2026-10-31 主人令「在屏幕期间不要无缘无故消失」：海拔瓦片暂时不在缓存时 isSeaAt 按「陆」返回，
+            //    原来会把正在跃水的海豚当场删掉（无渐隐）；现在只有海拔已知且确实不是海才撤，到期的走渲染里的 1.5 秒渐隐。
+            this.creatures = this.creatures.filter(c => now <= c.expiresAt && isOpenOcean(c.lat, c.lng)
+                && (LandSeaSystem.isSeaAt(L.latLng(c.lat, c.lng)) || LandSeaSystem.getSampler().getElevationSync(c.lat, c.lng) === null));
         }
 
         // 尝试生成新生物

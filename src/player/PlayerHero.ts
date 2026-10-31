@@ -655,8 +655,18 @@ export class PlayerHero {
             ? this.learnedShips.includes(p.key)
             : this.learnedUnits.some((u) => u.unitKey === p.key);
         const got = () => pool.filter(owns).length;
+        /** 本军团是否已拿到**陆地三排**里的一张（舰队不算）。 */
+        const hasLandOfLegion = () => this.learnedUnits.some((u) => landKeys.includes(u.unitKey));
 
-        while (got() < want) {
+        // 🔴 [2026-10-31 主人报「玩家加入李唐、侯君集势力后，怎么不给兵模呀」]
+        //    病根：2026-10-30「三排 + 舰队 四张、四阶随机」把舰队也塞进了第一张卡 —— 入伙（斥候档）那一次
+        //    有 1/4 概率直接抽到战船，于是 learnedUnits 仍是空的：HUD 陆战下拉还是灰的（显示官阶兜底素材）、
+        //    地图上人也还是官阶兜底形象，看起来就是「没给兵模」。
+        //    两条口径并存：2026-10-24「加入势力给一个本势力中三排兵模之一，自动换上」＋
+        //    2026-10-30「三排 + 舰队四张、由斥候/探马/先锋/将军四阶随机给」。
+        //    落法：**在本军团一张陆地兵模都没拿到之前，这一张只许从三排里抽**（舰队押后）；
+        //    拿到之后，剩下的 2 张三排 + 1 张舰队照旧由后面的官阶随机发。
+        while (got() < want || (!hasLandOfLegion() && landPool.length > 0)) {
             const landRest = landPool.filter((p) => !owns(p));
             const shipRest = shipPool.filter((p) => !owns(p));
             const heroRest = heroPool.filter((p) => !owns(p));
@@ -664,8 +674,9 @@ export class PlayerHero {
             let pick: Pick | undefined;
             // 🔴 [2026-10-30 主人令] 三排 + 舰队 四张由斥候/探马/先锋/将军四阶随机给；主将只在元帅给，且最后拿。
             const randomRest = [...landRest, ...shipRest];
-            if (randomRest.length > 0) {
-                pick = randomRest[Math.floor(Math.random() * randomRest.length)];
+            const drawPool = !hasLandOfLegion() && landRest.length > 0 ? landRest : randomRest;
+            if (drawPool.length > 0) {
+                pick = drawPool[Math.floor(Math.random() * drawPool.length)];
             } else if (isMarshal && heroRest.length > 0) {
                 pick = heroRest[0];
             } else {

@@ -129,6 +129,10 @@ const CULL_MARGIN_DEG = 0.6;        // 视口外多算一圈，避免边缘弹�
 const BIRD_DRIFT_RADIUS_PX = 70;    // 飞鸟盘旋半径（屏幕像素，与翼展匹配的高空开阔盘旋）
 /** 鸟群队形间距（≈15px） */
 const BIRD_FLOCK_SPACING_DEG = 0.04;
+/** 飞鸟从屏幕边外多远起飞、飞到对面边外多远为目标、飞出边外多远才渐隐移除（度） */
+const BIRD_ENTRY_OUTSIDE_DEG = 0.1;
+const BIRD_EXIT_BEYOND_DEG = 0.6;
+const BIRD_LEAVE_MARGIN_DEG = 0.45;
 const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s 一圈）
 // ──────────────────────────────────────────────────────────────────────────
 
@@ -766,20 +770,27 @@ export class AnimalAmbientLayer {
         return (18 - Math.floor(((a + 11.25) % 360) / 22.5)) % 16;
     }
 
-    /** 在视口内生成一只 DE 巡航飞鸟（跨屏直线长途巡游） */
+    /** 生成一只（一群）DE 巡航飞鸟：从屏幕外飞入、横穿屏幕、从对面飞出 */
     private spawnBirdInBounds(sw: L.LatLng, ne: L.LatLng): void {
-        // 在视口内随机生成起始点，严格以此处真实经纬度确定地理生态区
-        // 🔴 [2026-10-31 主人令「只在所在屏幕显示」] 视口内任意处起飞（取消道路可达掩膜）
-        const lat = sw.lat + Math.random() * (ne.lat - sw.lat);
-        const lng = sw.lng + Math.random() * (ne.lng - sw.lng);
+        // 🔴 2026-10-31 主人令「所有素材都要从屏幕外进入屏幕内，再出屏幕，在屏幕期间不要无缘无故消失」：
+        //    原来在视口内随机一点凭空渐显。现在在四条边中随机一条外侧 BIRD_ENTRY_OUTSIDE_DEG 处起飞，
+        //    目标定在对面那条边外 BIRD_EXIT_BEYOND_DEG 处，必然横穿屏幕；鸟种按起飞点所在区取。
+        const h = ne.lat - sw.lat, w = ne.lng - sw.lng;
+        const edge = Math.floor(Math.random() * 4);   // 0 南 1 北 2 西 3 东
+        const u = Math.random(), v = Math.random();
+        const out = BIRD_ENTRY_OUTSIDE_DEG, far = BIRD_EXIT_BEYOND_DEG;
+        const [lat, lng, tLat, tLng] =
+            edge === 0 ? [sw.lat - out, sw.lng + u * w, ne.lat + far, sw.lng + v * w]
+            : edge === 1 ? [ne.lat + out, sw.lng + u * w, sw.lat - far, sw.lng + v * w]
+            : edge === 2 ? [sw.lat + u * h, sw.lng - out, sw.lat + v * h, ne.lng + far]
+            : [sw.lat + u * h, ne.lng + out, sw.lat + v * h, sw.lng - far];
         const { birds } = wildPoolAt(lat, lng, this.getSeason() === 3);
         if (birds.length === 0) return;
         const dir = birds[Math.floor(Math.random() * birds.length)];
         this.loadAsset(dir, 'fly', true);
         this.loadAsset(dir, 'hover', true);
 
-        const angle = Math.random() * Math.PI * 2;
-        const distFly = 1.5 + Math.random() * 2.5; // 目标跨越 1.5~4.0 度（大范围长途巡航）
+        const angle = Math.atan2(tLat - lat, tLng - lng);
         // 🔴 2026-10-31 主人令「群体成群出现」：鹤、火烈鸟等按总表 herd 成群飞，鹰隼秃鹫独飞（DE 原图实测）。
         //    群员按「人」字错开排在领头鸟身后，目标同向平移，振翅 / 滑翔同步切换，整群平行巡航。
         const size = animalHerdSize(dir, Math.random());
@@ -797,8 +808,8 @@ export class AnimalAmbientLayer {
                 dir,
                 lat: lat + dLat,
                 lng: lng + dLng,
-                targetLat: lat + Math.sin(angle) * distFly + dLat,
-                targetLng: lng + Math.cos(angle) * distFly + dLng,
+                targetLat: tLat + dLat,
+                targetLng: tLng + dLng,
                 hovering,
                 timer,
                 phase: Math.random() * 1000,
@@ -839,8 +850,9 @@ export class AnimalAmbientLayer {
                 b.timer = 3.0 + ((b.flock * 7919) % 400) / 100;   // 按鸟群固定：同群同步切换振翅 / 滑翔
             }
 
-            // 飞鸟渐隐判定：不可见状态、或飞临视口边缘缓冲带时触发渐隐
-            const margin = 0.3;
+            // 飞鸟渐隐判定：不可见状态、或已飞出视口外缓冲带时触发渐隐
+            // （缓冲带要大于「起飞点在边外 + 整群队尾」的距离，否则队尾一出生就被判离开）
+            const margin = BIRD_LEAVE_MARGIN_DEG;
             const nearEdge = b.lat < sw.lat - margin || b.lat > ne.lat + margin || b.lng < sw.lng - margin || b.lng > ne.lng + margin;
             if (!this.birdsVisible || nearEdge) {
                 b.fadingOut = true;
@@ -862,11 +874,10 @@ export class AnimalAmbientLayer {
             const dist = Math.hypot(dLat, dLng);
 
             if (dist < 0.05) {
-                // 到达当前目标点，选一个新远方目标继续巡航
-                const angle = Math.random() * Math.PI * 2;
-                const distFly = 1.5 + Math.random() * 2.5;
-                b.targetLat = b.lat + Math.sin(angle) * distFly;
-                b.targetLng = b.lng + Math.cos(angle) * distFly;
+                // 到达目标（已在屏幕外）仍沿原方向直飞，不在屏幕里转向打转；离开缓冲带后由上面渐隐移除
+                const back = Math.hypot(b.targetLat - b.lat + 1e-9, b.targetLng - b.lng);
+                b.targetLat = b.lat + (b.targetLat - b.lat) / back * 2;
+                b.targetLng = b.lng + (b.targetLng - b.lng) / back * 2;
             } else {
                 b.lat += (dLat / dist) * speedDeg * dt;
                 b.lng += (dLng / dist) * speedDeg * dt;

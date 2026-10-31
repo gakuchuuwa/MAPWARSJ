@@ -11,14 +11,16 @@ import { DEFAULT_TERRAIN_TILE } from '../Scene13Biome';
 import { FALLBACK_MAPDATA_URL, MAPDATA_DIR } from './Scene13CombatMath';
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_TILE_W, TAC_TILE_H } from './Scene13GroundLayerGL';
 import { pickTree, type TreeSeason } from './TreeAssignment';
-import { bareSandRejectsTree, deTerrainIsForest, deTerrainRollTreeAsset, seasonalDeTree } from './Scene13DeTrees';
+import { bareSandRejectsTree, deTerrainIsForest, deTerrainRollTreeAsset, seasonalDeTree, snowToPlainTree } from './Scene13DeTrees';
 import { deriveDeGroundTiles } from './Scene13DeGround';
 import { animalNativeAt, animalDeOf } from './Scene13Animals';
+import { animalHerdSize } from '../../world/environment/animalCatalog';
 import { tacticalTreeKeepRatio } from '../../world/environment/forestModel';
 import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { applyDeCityToGround } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
+import { queryWinterSnow } from './WorldBaseMap';
 import { setCachedViennaMapData } from './Scene13SpriteCache';
 import { loadDeCampaignMapForGround, populateDeCampaignObjects } from './Scene13DeCampaignLoader';
 import { clampMapWaterRatio, enrichDeBattlefieldMidfield } from './Scene13MapWaterAdapter';
@@ -26,6 +28,14 @@ import { clampMapWaterRatio, enrichDeBattlefieldMidfield } from './Scene13MapWat
 /** 未改造的据点／主题地图数据与在途请求。后续转置、海向校正和城基改造都会另建数组，不回写这里。 */
 const GROUND_MAP_DATA_CACHE = new Map<string, Promise<any | null>>();
 const GROUND_MAP_DATA_CACHE_MAX = 24;
+
+/**
+ * 🔴 [2026-10-31 主人令「战术模式中的鸟不成群，请和战略地图动物成群保持一致」]
+ * 战术飞鸟群队形间距（px）：战略动物层用 0.04°（zoom 9 一屏约 15px），战术战场同一视觉尺度取 14px。
+ */
+const BIRD_FLOCK_SPACING_PX = 14;
+/** 同种飞鸟相距这么近（px，约 5 格）就算同一簇，并进同一群（对应动物总表「同种 4 格内算一群」的 DE 实测口径） */
+const BIRD_FLOCK_MERGE_PX = 320;
 
 /**
  * M3 WebGL 地面层接入：在 realGeography 开关开启时初始化底层 WebGL 视口，
@@ -239,6 +249,14 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 releaseGround();
                 return;
             }
+            // 🔴 [2026-10-31 主人问「高昌的冬天，植被上有雪吗？」]
+            //    挂雪树不能只看「底图是不是雪地」，还要看当地冬季**是不是真积雪**：
+            //    WorldClim 冬季标志 1/2/3＝积雪/深雪/雪林，**4＝零星残雪（不覆连片白雪）**、0＝不积雪。
+            //    高昌／吐鲁番—哈密盆地全年降水约十几毫米，标志是 4 —— 盆地里不积雪，植被上不该挂雪；
+            //    只有天山坡地、雪线以上的真积雪区才出 SNOW_*。数据查不到（null）时按底图判，维持原状。
+            const snowRec = this.defenderCityRecord();
+            const winterSnowFlag = queryWinterSnow(snowRec?.lat ?? this.centerLat ?? 30, snowRec?.lng ?? this.centerLng ?? 110);
+            const winterSnowArea = winterSnowFlag === null ? true : (winterSnowFlag > 0 && winterSnowFlag !== 4);
             let runMicroDecor: (() => void) | null = null;
             if (data && data.objects) {
                 // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 给每栋建筑 / 城门 / 塔 / 墙脚下清出一块干燥平地（地基），
@@ -308,8 +326,9 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                     LandSeaSystem.getSampler().getElevationSync(mapLat, mapLng),
                 );
                 const decorSet = groundDecorFor(baseTerrain);
-                const isSnowBase = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf'
-                    || baseTerrain === 'snd' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
+                // 冬雪判定已在上面（外层）算好：winterSnowArea＝当地冬季真积雪（1/2/3），4／0 一律按无雪
+                const isSnowBase = winterSnowArea && (baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf'
+                    || baseTerrain === 'snd' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice');
                 const decorCtx = {
                     lat: mapLat,
                     lng: mapLng,
@@ -362,6 +381,9 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                     return false;
                 };
 
+                /** 🔴 [2026-10-31 主人令「战术模式中的鸟不成群」] 待成群的飞鸟：先收集，出循环后按「同种 + 邻近」并群再下发 */
+                const pendingBirds: Array<{ species: string; sx: number; sy: number; hash: number }> = [];
+
                 for (let obIdx = 0; obIdx < data.objects.length; obIdx++) {
                     const ob = data.objects[obIdx];
                     if (ob.name && ob.name.includes('CLIFF')) continue;
@@ -412,15 +434,23 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                             const dir = hash % 8;
                             const isBird = de.kind === 'bird';
                             const startAct: AnimalAction = isBird ? 'fly' : (de.acts.includes('idle') ? 'idle' : de.acts[0]);
+
+                            // 🔴 [2026-10-31 主人令「战术模式中的鸟不成群，请和战略地图动物成群保持一致」]
+                            //   飞鸟不在这里逐只单飞，先收集起来，出循环后按「同种 + 邻近」并成群再下发（见循环后的成群下发）。
+                            if (isBird) {
+                                pendingBirds.push({ species, sx, sy, hash });
+                                continue;
+                            }
+
                             const animSprite: DecorSprite = {
-                                asset: `ANIMAL:${species}/${startAct}_${isBird ? 0 : dir}`,
+                                asset: `ANIMAL:${species}/${startAct}_${dir}`,
                                 frame: hash,
                                 x: sx,
                                 y: sy,
                                 flip: false,
                                 layer: 'world',
                                 z: 0,
-                                lift: isBird ? 180 : glLayer.elevationLiftAt(sx, sy, VW, VH),
+                                lift: glLayer.elevationLiftAt(sx, sy, VW, VH),
                                 densityHash: hash,
                                 obstructionContactSec: 0,
                                 obstructionTouched: false,
@@ -433,7 +463,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                                 species,
                                 kind: de.kind,
                                 action: startAct,
-                                dir: isBird ? 0 : dir,
+                                dir,
                                 homeX: sx,
                                 homeY: sy,
                                 x: sx,
@@ -449,8 +479,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                                 animPhase: hash,
                                 hp: de.hp,
                                 atkNext: 0,
-                                flyX: sx + Math.cos(hash * 0.1) * 800,
-                                flyY: sy + Math.sin(hash * 0.1) * 800,
+                                flyX: sx,
+                                flyY: sy,
                                 hovering: false,
                             });
                             continue;
@@ -554,6 +584,103 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                     }
                 }
 
+                // ── 飞鸟成群下发（与战略野生层 AnimalAmbientLayer 同一套群形）──────────────
+                // 🔴 [2026-10-31 主人令「战术模式中的鸟不成群，请和战略地图动物成群保持一致」]
+                //   ① 按物种归堆：DE 原图本来就是把同种鸟一只只摆在一起当一群（同种 4 格内算一群），
+                //      这里按动物总表的 herd 上限分群 —— **不额外加只数**，DE 摆了几只就几只；
+                //   ② 只有该物种在图上比 herd 下限还少（例如整张图只有 1 只鹤）才按表补够下限，让它们真的成群；
+                //   ③ 群形与战略图一致：头鸟带队，群员在头鸟身后「人」字左右交替张开，目标同向平移、振翅/滑翔同步。
+                {
+                    const bySpecies = new Map<string, Array<{ species: string; sx: number; sy: number; hash: number }>>();
+                    for (const b of pendingBirds) {
+                        const arr = bySpecies.get(b.species);
+                        if (arr) arr.push(b); else bySpecies.set(b.species, [b]);
+                    }
+                    for (const [speciesKey, birds] of bySpecies) {
+                        const deBird = animalDeOf(speciesKey);
+                        if (!deBird.acts.includes('fly')) continue;
+                        const herdMax = animalHerdSize(speciesKey, 1);   // 一群上限（表里没写 herd = 1，鹰隼等独行）
+                        const herdMin = animalHerdSize(speciesKey, 0);   // 一群下限
+                        const taken = new Set<number>();
+                        for (let bi = 0; bi < birds.length; bi++) {
+                            if (taken.has(bi)) continue;
+                            taken.add(bi);
+                            const head = birds[bi];
+                            const members: Array<{ species: string; sx: number; sy: number; hash: number }> = [head];
+                            // 第一遍先收挨在一起的同种鸟，第二遍再按顺序补满这一群
+                            for (let pass = 0; pass < 2 && members.length < herdMax; pass++) {
+                                for (let bj = bi + 1; bj < birds.length && members.length < herdMax; bj++) {
+                                    if (taken.has(bj)) continue;
+                                    if (pass === 0 && Math.hypot(birds[bj].sx - head.sx, birds[bj].sy - head.sy) > BIRD_FLOCK_MERGE_PX) continue;
+                                    taken.add(bj);
+                                    members.push(birds[bj]);
+                                }
+                            }
+                            // DE 摆的只数够 herd 下限就照原数成群；不够才按表补几只一起飞
+                            const total = members.length < herdMin
+                                ? Math.min(8, herdMin + Math.floor(Math.random() * (herdMax - herdMin + 1)))
+                                : members.length;
+                            const flockId = ++this.birdFlockSeq;
+                            const headAng = head.hash * 0.1;          // 头鸟起飞方向（与原 flyX/flyY 的取角一致）
+                            const headCOS = Math.cos(headAng), headSIN = Math.sin(headAng);
+                            for (let k = 0; k < total; k++) {
+                                // 「人」字队形：第 k 只（k = 0 是头鸟）排在第 row 排，左右交替张开
+                                const row = Math.ceil(k / 2);
+                                const side = k % 2 === 1 ? 1 : -1;
+                                const back = row * BIRD_FLOCK_SPACING_PX;
+                                const across = k === 0 ? 0 : side * row * BIRD_FLOCK_SPACING_PX * 0.8;
+                                const offX = -back * headCOS - across * headSIN;
+                                const offY = -back * headSIN + across * headCOS;
+                                const ax = head.sx + offX, ay = head.sy + offY;
+                                const birdSprite: DecorSprite = {
+                                    asset: `ANIMAL:${speciesKey}/fly_0`,
+                                    frame: head.hash,
+                                    x: ax,
+                                    y: ay,
+                                    flip: false,
+                                    layer: 'world',
+                                    z: 0,
+                                    lift: 180,
+                                    densityHash: head.hash,
+                                    obstructionContactSec: 0,
+                                    obstructionTouched: false,
+                                    obstructionDisabled: true,
+                                };
+                                this.ensureNatureAsset(birdSprite.asset);
+                                this.decorSprites.push(birdSprite);
+                                this.tacticalAnimals.push({
+                                    sprite: birdSprite,
+                                    species: speciesKey,
+                                    kind: deBird.kind,
+                                    action: 'fly',
+                                    dir: 0,
+                                    homeX: head.sx,
+                                    homeY: head.sy,
+                                    x: ax,
+                                    y: ay,
+                                    vx: 0,
+                                    vy: 0,
+                                    fleeTimer: 0,
+                                    fleeDX: 0,
+                                    fleeDY: 0,
+                                    idleTimer: Math.random() * 3,
+                                    wanderX: ax,
+                                    wanderY: ay,
+                                    animPhase: head.hash,
+                                    hp: deBird.hp,
+                                    atkNext: 0,
+                                    flyX: head.sx + headCOS * 800 + offX,
+                                    flyY: head.sy + headSIN * 800 + offY,
+                                    hovering: false,
+                                    flockId,
+                                    flockDX: offX,
+                                    flockDY: offY,
+                                });
+                            }
+                        }
+                    }
+                }
+
                 runMicroDecor = () => populateBattlefieldMicroDecor.call(this, glLayer, VW, VH, baseTerrain, decorSet, decorCtx, onFoundation);
                 // 🔴 [2026-10-30] 浅海海带（DE n_plant_kelp_seaweeds）：只在海边图的浅海带（水体密度 0.5~0.72）稀疏点缀，冰海不长
                 if (this.environmentPlan?.waterKind === 'sea' && !glLayer.isIce && !isSnowBase) {
@@ -632,6 +759,17 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 }
             }
             spawnBattlefieldRelics.call(this, glLayer, VW, VH);
+            // 🔴 [2026-10-31 主人问「高昌的冬天，植被上有雪吗？」] 非真积雪区兜底：高昌这类极旱区（冬季标志 4＝零星残雪）
+            //    场景里不许出现任何挂雪树 —— 不管这棵树是 DE 烘焙物件、气候主题主树还是城郊庭院树走哪条支路带进来的，
+            //    收尾时统一把 SNOW_* 剥回同族无雪树（真积雪区 1/2/3 不动，数据查不到也不动）。
+            if (winterSnowFlag !== null && !winterSnowArea) {
+                for (const sp of this.decorSprites) {
+                    const plain = snowToPlainTree(sp.asset);
+                    if (plain === sp.asset) continue;
+                    sp.asset = plain;
+                    this.ensureNatureAsset(plain);
+                }
+            }
             // 🔴 [2026-10-21 主人报「拒马立在河里」] 兜底清扫：不管拒马/木栅残骸是哪条支路摆进来的
             //    （营地拒马圈 / 攻城残骸），只要脚下是水（密度 ≥0.18 的湿岸也算）就一律移除。
             //    放在最后一步做，是因为前面 carveFoundation 会改水体势场，就地判断可能漏掉。

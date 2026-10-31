@@ -267,6 +267,8 @@ export class Scene13WarLayer {
     groundHasContent = false;
     decorSprites: DecorSprite[] = [];
     tacticalAnimals: TacticalAnimal[] = [];
+    /** 🔴 [2026-10-31] 战术飞鸟群编号（一递增，一场一个号，与战略动物层 flock 同一概念）：同群共用一个号，见 Scene13GroundSetup */
+    birdFlockSeq = 0;
     private animalMetaCache: Record<string, any> = {};
     /** 攻城战守方城墙/城门装饰贴图（纯视觉，不可攻击不阻挡）；30 秒随机塌一半 */
     wallGates: WarBuilding[] = [];

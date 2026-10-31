@@ -4517,11 +4517,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -9
         },
-        "/assets/WESTERN/yarkand_latifu.png": {
-            "scale": 1.25,
-            "offsetX": 0,
-            "offsetY": 11
-        },
         "/assets/WESTERN/dayuan_wugua.png": {
             "scale": 0.85,
             "offsetX": 0,
@@ -4681,11 +4676,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 9
-        },
-        "/assets/WESTERN/__闲置__WESTERN_35.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 23
         },
         "/assets/WESTERN/yiduhu_baershu.png": {
             "scale": 0.78,
@@ -7553,9 +7543,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/WESTERN/__闲置__WESTERN_40.png": {
-            "scale": 0.77,
+            "scale": 1.25,
             "offsetX": 0,
-            "offsetY": -20
+            "offsetY": 11
         },
         "/assets/WESTERN/shache_xian_suoche_shachexian.png": {
             "scale": 1.11,
@@ -9376,6 +9366,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 14,
             "offsetY": 25
+        },
+        "/assets/WESTERN/__闲置__WESTERN_41.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/WESTERN/yarkand_abudulatifu.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/ORIE/xibolai_youdamajiabi.png": {
+            "scale": 1.18,
+            "offsetX": -17,
+            "offsetY": 29
         }
     },
     "folderGuides": {

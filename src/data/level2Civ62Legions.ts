@@ -548,7 +548,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'liao_dao', count: 3 },
             { type: 'elite_chukonu', count: 4 },
-            { type: 'elite_fire_archer', count: 2 },
+            { type: 'hei_kuang', count: 2 },
         ],
     },
     // ── 巴蜀 · 城堡时代 · 城堡时代川峡军团　（本次新建）────────────────
@@ -4446,7 +4446,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_qutlugh',
         slots: [
             { type: 'eastern_swordsman', count: 4 },
-            { type: 'hand_cannoneer', count: 3 },
+            { type: 'janissary', count: 3 },
             { type: 'elite_keshik', count: 2 },
         ],
     },

@@ -427,6 +427,15 @@ export interface TacticalAnimal {
     flyX: number;
     flyY: number;
     hovering: boolean;
+    /**
+     * 🔴 [2026-10-31 主人令「战术模式中的鸟不成群，请和战略地图动物成群保持一致」]
+     * 鸟群编号（与战略动物层同一概念）：同群由第一只当头鸟带飞 —— 目标同向平移、振翅/滑翔同步。
+     * undefined / 单群只有一只 = 独飞，行为与原来一致。
+     */
+    flockId?: number;
+    /** 群员相对头鸟的队形偏移（px，「人」字，头鸟身后左右交替张开） */
+    flockDX?: number;
+    flockDY?: number;
     /** 水生动物（尼斯湖水怪）：只在天然水域活动，不上岸、不进护城河 */
     aquatic?: boolean;
 }

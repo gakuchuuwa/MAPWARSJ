@@ -138,10 +138,17 @@ export function birdDir(dx: number, dy: number): number {
     return (18 - Math.floor(((a + 11.25) % 360) / 22.5)) % 16;
 }
 
+/** 鸟群队形允许的偏差（px）：超过这点就直回自己的队形位（并略微提速追赶），防越飞越散 */
+const BIRD_FORMATION_TOLERANCE_PX = 26;
+/** 掉队群员的追赶倍速（头鸟 53 px/s，追队时略快一点，回队后自动落回同速） */
+const BIRD_CATCHUP_SPEED_MULT = 1.6;
+
 /**
  * 动物生态更新（2026-10-13 按 DE 数据驱动）：
  *  · 所有陆地动物见到人就朝锁定的反方向奔逃脱离，停下后原地吃草/小幅踱步；
  *  · 飞鸟：fly 巡航 ⇄ hover 展翅滑翔交替，空中持续移动不停滞。
+ *  · 🔴 [2026-10-31 主人令「战术模式中的鸟不成群，请和战略地图动物成群保持一致」]
+ *    飞鸟成群：同 flockId 的一群由头鸟选航点、切振翅/滑翔，群员按队形偏移跟着飞（与战略动物层同一套）。
  */
 export function stepTacticalAnimals(
     list: TacticalAnimal[],
@@ -172,12 +179,45 @@ export function stepTacticalAnimals(
         centroids.set(a.species, c);
     }
 
+    // 鸟群头鸟：同 flockId 的第一只带队（群由生成端一次摆好，头鸟在前）
+    const flockLeaders = new Map<number, TacticalAnimal>();
+    for (const a of list) {
+        if (a.sprite.destroyed || a.flockId === undefined) continue;
+        if (!flockLeaders.has(a.flockId)) flockLeaders.set(a.flockId, a);
+    }
+
     for (const an of list) {
         if (an.sprite.destroyed) continue;
         const de = animalDeOf(an.species);
 
         // ── 飞鸟：fly 巡航 ⇄ hover 展翅滑翔（DE 两种动作交替，空间位置永不停顿）──
         if (de.kind === 'bird') {
+            const leader = an.flockId !== undefined ? flockLeaders.get(an.flockId) : undefined;
+            if (leader && leader !== an && !leader.sprite.destroyed) {
+                // 群员：头鸟怎么飞就怎么飞 —— 目标＝头鸟航点同向平移队形偏移，振翅/滑翔与头鸟同步；
+                // 掉队（被边界夹住等）先直回自己的队形位，绝不自找航点飞散。
+                const offX = an.flockDX ?? 0, offY = an.flockDY ?? 0;
+                an.hovering = leader.hovering;
+                an.flyX = leader.flyX + offX;
+                an.flyY = leader.flyY + offY;
+                let tx = an.flyX, ty = an.flyY;
+                const slotX = leader.x + offX, slotY = leader.y + offY;
+                const slotErr = Math.hypot(an.x - slotX, an.y - slotY);
+                let spd = de.walk;
+                if (slotErr > BIRD_FORMATION_TOLERANCE_PX) {
+                    tx = slotX;
+                    ty = slotY;
+                    spd = de.walk * BIRD_CATCHUP_SPEED_MULT;   // 掉队的先追回队形位，别越飞越散
+                }
+                const dx = tx - an.x, dy = ty - an.y, d = Math.hypot(dx, dy) || 1;
+                an.x += (dx / d) * spd * dt;
+                an.y += (dy / d) * spd * dt;
+                an.dir = birdDir(dx, dy);
+                an.sprite.x = an.x;
+                an.sprite.y = an.y;
+                setAnimalAction(an, an.hovering ? 'hover' : 'fly');
+                continue;
+            }
             an.idleTimer -= dt;
             const dx = an.flyX - an.x, dy = an.flyY - an.y, d = Math.hypot(dx, dy) || 1;
             if (d < 20 || an.idleTimer <= 0) {

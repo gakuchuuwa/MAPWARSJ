@@ -20,6 +20,7 @@ import { DE_MAP_THEMES, type DeMapThemeId } from './Scene13DeMapThemes';
 import { deTerrainSeasonalTree, seasonalDeTree } from './Scene13DeTrees';
 import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
 import { groundDecorFor, decorFits } from './DecorFit';
+import { queryWinterSnow } from './WorldBaseMap';
 import { CITIES_V2 } from '../../data/cities_v2';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../../data/CityWonders';
 import { isWonderFounded } from '../../data/wonderFoundedYears';
@@ -430,7 +431,11 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const siteLat = defCityRec?.lat ?? this.centerLat ?? 30;
     const siteLng = defCityRec?.lng ?? this.centerLng ?? 110;
     const isArid = /^(des|pal|qs|ds5|pal1)/i.test(siteBaseTile);
-    const isSnow = gl.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(siteBaseTile);
+    // 🔴 [2026-10-31 主人问「高昌的冬天，植被上有雪吗？」] 城郊/庭院树也只在**当地冬季真积雪**时才挂雪：
+    //    WorldClim 冬季标志 4＝零星残雪（高昌/吐鲁番—哈密就是 4，盆地不积雪）、0＝不积雪 → 一律按无雪处理。
+    const siteWinterFlag = queryWinterSnow(siteLat, siteLng);
+    const siteWinterSnow = siteWinterFlag === null ? true : (siteWinterFlag > 0 && siteWinterFlag !== 4);
+    const isSnow = siteWinterSnow && (gl.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(siteBaseTile));
     const isPassType = this.defenderCityType === 'pass';
     const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
     const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)

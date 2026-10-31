@@ -59,6 +59,8 @@ interface Caravan {
     ageMs: number;
     lastDirIdx: number[];  // 每单位上一帧朝向 index（迟滞用）
     lastDirDeg: number[];  // 每单位上一帧朝向角度（迟滞用）
+    /** 整支渐隐中的透明度倍数（1 → 0；切换跟拍后离镜头太远的车队不再一刀删，而是渐隐） */
+    fadeOut?: number;
 }
 
 // ── 可调参数 ──────────────────────────────────────────────────────────────
@@ -76,6 +78,12 @@ const UNITS_MIN = 3;
 const UNITS_MAX = 6;
 const SPEED_DEG_PER_SEC = 0.18;     // 行进速度（度/秒；zoom9 ≈ 66px/s）
 const UNIT_SPACING_DEG = 0.22;      // 队内相邻单位间距（度）
+/**
+ * 🔴 2026-10-31 主人令「所有素材都要渐显渐隐，从屏幕外进入、再出屏幕，在屏幕期间不要无缘无故消失」：
+ *    每个单位在路线起点后、终点前这段距离内渐显 / 渐隐（≈ 1.2 秒路程）；切换跟拍的整队渐隐用 1 秒。
+ */
+const UNIT_FADE_DEG = SPEED_DEG_PER_SEC * 1.2;
+const CARAVAN_FADE_OUT_SEC = 1.0;
 const CART_ANIM_FPS = 18;           // 车 move 动画帧率
 // 🔴 [2026-08-31 修「攻城战只显示攻城武器」] 必须低于 UNITS_LOW(580)。
 //    580 是攻城战里**画在城池背后**的那批士兵所在的层；本层原值压在它之上，
@@ -280,10 +288,9 @@ export class TradeTrafficLayer {
     constructor(map: L.Map) {
         this.map = map;
         // 🔴 2026-10-31 主人令「动物碰到人要逃跑」：每个商队单位都登记给野生动物层
-        registerHumanPresence(() => this.caravans.flatMap((c) => Array.from({ length: c.count }, (_, u) => ({
-            ...TradeTrafficLayer.pointAt(c.path, c.cumLen, Math.max(0, c.dist - u * UNIT_SPACING_DEG)),
-            r: CARAVAN_SCARE_RADIUS_DEG,
-        }))));
+        registerHumanPresence(() => this.caravans.flatMap((c) => Array.from({ length: c.count }, (_, u) => c.dist - u * UNIT_SPACING_DEG)
+            .filter((ud) => ud >= 0 && ud <= c.totalLen)
+            .map((ud) => ({ ...TradeTrafficLayer.pointAt(c.path, c.cumLen, ud), r: CARAVAN_SCARE_RADIUS_DEG }))));
         this.canvas = document.createElement('canvas');
         this.canvas.style.pointerEvents = 'none';
         this.canvas.className = 'leaflet-zoom-animated';
@@ -552,14 +559,12 @@ export class TradeTrafficLayer {
             //    而车队是生成在视口外、要走一段才进画面的（见 initialDistForEntry），
             //    镜头只要在这段时间内切走，车队就被删掉 —— 于是一辈子也看不到它进画面。
             //    改成只丢「离新镜头太远、这辈子也走不过来」的，近处的继续走完它的路。
-            if (followedPos) {
-                this.caravans = this.caravans.filter((c) => {
-                    const at = TradeTrafficLayer.pointAt(c.path, c.cumLen, c.dist);
-                    const dLat = at.lat - followedPos.lat, dLng = at.lng - followedPos.lng;
-                    return Math.sqrt(dLat * dLat + dLng * dLng) <= KEEP_RADIUS_DEG;
-                });
-            } else {
-                this.caravans.length = 0;   // 完全没有跟拍目标时才清空
+            for (const c of this.caravans) {
+                if (c.fadeOut !== undefined) continue;
+                if (!followedPos) { c.fadeOut = 1; continue; }   // 完全没有跟拍目标时整队渐隐
+                const at = TradeTrafficLayer.pointAt(c.path, c.cumLen, c.dist);
+                const dLat = at.lat - followedPos.lat, dLng = at.lng - followedPos.lng;
+                if (Math.sqrt(dLat * dLat + dLng * dLng) > KEEP_RADIUS_DEG) c.fadeOut = 1;
             }
         }
 
@@ -585,8 +590,10 @@ export class TradeTrafficLayer {
             const c = this.caravans[i];
             c.ageMs += dt * 1000;
             c.dist += SPEED_DEG_PER_SEC * dt;
-            // 走到屏幕外终点 → 直接移除（屏外，无需渐隐）
-            if (c.dist >= c.totalLen) {
+            if (c.fadeOut !== undefined) c.fadeOut -= dt / CARAVAN_FADE_OUT_SEC;
+            // 原来领头一到终点就整队删除，队尾最多还落后 1.1°，终点在屏幕里时后几辆车凭空消失。
+            // 现在等**队尾**也走完全程（每辆车在终点前已渐隐），或整队渐隐完才移除。
+            if (c.dist - (c.count - 1) * UNIT_SPACING_DEG >= c.totalLen || (c.fadeOut !== undefined && c.fadeOut <= 0)) {
                 this.caravans.splice(i, 1);
             }
         }
@@ -601,7 +608,7 @@ export class TradeTrafficLayer {
         const zoom = this.map.getZoom();
         const scale = Math.pow(2, zoom - 9) * SCALE_BASE;
         /** 本帧待画的精灵：位置先全部算完 —— **先画水迹、后画船体**，浪花才垫在船底下 */
-        const pending: Array<{ sheet: HTMLImageElement; frame: number; fw: number; fh: number; ax: number; ay: number; ox: number; oy: number; rot: number }> = [];
+        const pending: Array<{ sheet: HTMLImageElement; frame: number; fw: number; fh: number; ax: number; ay: number; ox: number; oy: number; rot: number; alpha: number }> = [];
 
         for (const c of this.caravans) {
             const cartAsset = this.assetFor(c.cartDir);
@@ -611,7 +618,11 @@ export class TradeTrafficLayer {
 
             for (let u = 0; u < c.count; u++) {
                 const ud = c.dist - u * UNIT_SPACING_DEG;
-                const pos = TradeTrafficLayer.pointAt(c.path, c.cumLen, Math.max(0, ud));
+                // 还没出发 / 已走完的单位不画（原来夹在起点 / 终点上，几辆车叠成一坨）
+                if (ud < 0 || ud > c.totalLen) continue;
+                const alpha = Math.min(1, ud / UNIT_FADE_DEG, (c.totalLen - ud) / UNIT_FADE_DEG) * (c.fadeOut ?? 1);
+                if (alpha <= 0.01) continue;
+                const pos = TradeTrafficLayer.pointAt(c.path, c.cumLen, ud);
 
                 // 陆上商队 / 进海商船：逐单位按海陆判定（渡海路段自动换船）
                 //
@@ -673,7 +684,7 @@ export class TradeTrafficLayer {
                     while (resDeg < -180) resDeg += 360;
                     shipRot = resDeg * Math.PI / 180;
                 }
-                pending.push({ sheet, frame, fw, fh, ax: pt.x, ay: pt.y, ox: -hx * scale, oy: -hy * scale, rot: shipRot });
+                pending.push({ sheet, frame, fw, fh, ax: pt.x, ay: pt.y, ox: -hx * scale, oy: -hy * scale, rot: shipRot, alpha });
                 if (sea) {
                     seaShips.push({
                         x: pt.x, y: pt.y, r: c.count - u, isAlive: true,
@@ -702,6 +713,7 @@ export class TradeTrafficLayer {
         }
 
         for (const p of pending) {
+            ctx.globalAlpha = p.alpha;
             if (Math.abs(p.rot) > 0.001) {
                 ctx.save();
                 ctx.translate(p.ax, p.ay);
@@ -712,6 +724,7 @@ export class TradeTrafficLayer {
                 ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.ax + p.ox, p.ay + p.oy, p.fw * scale, p.fh * scale);
             }
         }
+        ctx.globalAlpha = 1;
     }
 
     private dirIndex(asset: TradeAsset, from: Pt, to: Pt, lastIdx: number, lastDeg: number): { idx: number; deg: number } {

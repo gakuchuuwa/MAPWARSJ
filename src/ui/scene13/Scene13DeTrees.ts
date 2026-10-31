@@ -186,6 +186,16 @@ const SNOW_TO_PLAIN: Readonly<Record<string, string>> = {
 };
 
 /**
+ * 把一棵挂雪树剥回同族无雪树（不改四季形态）。
+ * 🔴 [2026-10-31 主人问「高昌的冬天，植被上有雪吗？」]
+ *    高昌／吐鲁番—哈密这类极旱区，WorldClim 冬季标志是 **4＝零星残雪、不覆连片白雪**，
+ *    植被上不该挂雪。凡不是真积雪区（标志 0／4）的场景，任何来路的 SNOW_* 树都要剥成无雪同族树。
+ */
+export function snowToPlainTree(asset: string): string {
+    return SNOW_TO_PLAIN[asset] ?? asset;
+}
+
+/**
  * 按季节/地面积雪把一棵树换成对应形态：
  * - 积雪地面（snowGround === true）：全图统一为挂雪/冬枯形态，不留盛夏绿树与雪树混长；
  * - 非积雪地面（snowGround === false）：先剥离 SNOW_* 前缀，再按四季换装，绝不出现挂雪树。

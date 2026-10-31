@@ -9155,7 +9155,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    yarkand: { generalId: 'yarkand_abudulatifu', cityId: 'city_yinai', generalName: '拉提夫', portrait: '/assets/WESTERN/yarkand_latifu.png', eliteName: '西域兵', eliteTier: 4 },
+    yarkand: { generalId: 'yarkand_abudulatifu', cityId: 'city_yinai', generalName: '拉提夫', portrait: '/assets/WESTERN/yarkand_abudulatifu.png', eliteName: '西域兵', eliteTier: 4 },
 
 
 
