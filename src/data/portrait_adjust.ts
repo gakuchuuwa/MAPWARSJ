@@ -9281,6 +9281,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.13,
             "offsetX": -16,
             "offsetY": 6
+        },
+        "/assets/CENTRAL/bfe_liuping.png": {
+            "scale": 0.91,
+            "offsetX": 2,
+            "offsetY": -30
         }
     },
     "folderGuides": {
