@@ -312,7 +312,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'danmai_guthrum': 'BRITONS',   // 丹麦｜古思伦｜据点 诺里奇
     'danmai_harald': 'DANES',   // 丹麦｜蓝牙哈拉尔｜据点 耶灵
     'danyang_huanwen': 'JIANGNAN',   // 东晋｜桓温｜据点 姑孰
-    'daozhou_yangzaixing': 'HUGUANG',   // 宋国｜杨再兴｜据点 麦岭关
+    'daozhou_yangzaixing': 'CENTRAL',   // 宋国｜杨再兴｜据点 麦岭关
     'dasaleiti_kleitos': 'THRACIAN',   // 达萨雷提｜克莱图斯｜据点 佩利昂
     'dashun_lizicheng': 'CENTRAL',   // 大顺｜李自成｜据点 长安
     'date_d_yidazhengzong': 'JAPAN',   // 仙台｜伊达政宗｜据点 青叶馆
@@ -1431,7 +1431,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiongding_murongyong': 'XIANBEI',   // 慕容｜慕容永｜据点 长子
     'xiongnu_maodun': 'XIANBEI',   // 匈奴｜冒顿｜据点 头曼城
     'xiongren_atila': 'HUNS',   // 匈人｜阿提拉｜据点 塞格德
-    'xiongyati_yannuoshi': 'HUNS',   // 匈雅提｜匈雅提亚诺什｜据点 胡内多阿拉
+    'xiongyati_yannuoshi': 'MAGYAR',   // 匈雅提｜匈雅提亚诺什｜据点 胡内多阿拉
     'xiou_yixusong': 'HUGUANG',   // 西瓯｜译吁宋｜据点 布山
     'xiqin_wanyanchenheshang': 'NORTHEAST',   // 大金｜完颜陈和尚｜据点 真宁
     'xishudongyin_lijiasipi': 'SPANISH',   // 阿拉贡｜莱加斯皮｜据点 塞维利亚（2026-10-24 由马尼拉 MALAY 迁回民族起源地）

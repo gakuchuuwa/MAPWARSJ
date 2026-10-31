@@ -3079,7 +3079,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'xiongyati_yannuoshi', factionId: 'mazhaer', cityId: 'city_saigede', generalName: '匈雅提亚诺什', portrait: '/assets/MAGYAR/xiongyati_yannuoshi.png', eliteName: '匈牙利黑军', eliteTier: 2 },
+        { generalId: 'xiongyati_yannuoshi', factionId: 'mazhaer', cityId: 'city_huneiduolala', generalName: '匈雅提亚诺什', portrait: '/assets/MAGYAR/xiongyati_yannuoshi.png', eliteName: '匈牙利黑军', eliteTier: 2 },
 
 
 
@@ -4100,7 +4100,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_algirdas', factionId: 'litaowan', cityId: 'city_weierniwusi', generalName: '阿尔吉尔达斯', portrait: '/assets/LITHUANIANS/gen_algirdas.png', eliteName: '立陶宛重骑', eliteTier: 2 },
+        { generalId: 'gen_algirdas', factionId: 'litaowan', cityId: 'city_weijiebusike', generalName: '阿尔吉尔达斯', portrait: '/assets/LITHUANIANS/gen_algirdas.png', eliteName: '立陶宛重骑', eliteTier: 2 },
 
 
 
@@ -9757,7 +9757,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    dayuan: { generalId: 'dayuan_wugua', cityId: 'city_aoshen', generalName: '毋寡', portrait: '/assets/WESTERN/dayuan_wugua.png', eliteName: '西域兵', eliteTier: 4 },
+    dayuan: { generalId: 'dayuan_wugua', cityId: 'city_guishancheng', generalName: '毋寡', portrait: '/assets/WESTERN/dayuan_wugua.png', eliteName: '西域兵', eliteTier: 4 },
 
 
 
@@ -13357,7 +13357,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'daozhou_yangzaixing', factionId: 'song', cityId: 'city_mailingguan', legionName: '城堡时代江南军团', generalName: '杨再兴', portrait: '/assets/JIANGNAN/daozhou_yangzaixing.png', eliteName: '荆楚兵', eliteTier: 4 },
+        { generalId: 'daozhou_yangzaixing', factionId: 'song', cityId: 'city_yancheng2', legionName: '城堡时代江南军团', generalName: '杨再兴', portrait: '/assets/JIANGNAN/daozhou_yangzaixing.png', eliteName: '荆楚兵', eliteTier: 4 },
 
 
 

@@ -9346,6 +9346,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/CENTRAL/hou_zhou_guowei.png": {
+            "scale": 1.25,
+            "offsetX": 0,
+            "offsetY": 21
         }
     },
     "folderGuides": {

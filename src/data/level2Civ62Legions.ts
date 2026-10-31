@@ -1080,7 +1080,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BURG_CASTLE_AGE3', castleName: '勃艮第 第戎公爵宫圆锥塔',
         formationMode: 'fish_scale',
         shipId: 'WAR_HULK',
-        commanderUnit: 'hero_jacquelineofhainaut',
+        commanderUnit: 'hero_dukedalencon',
         slots: [
             { type: 'flemish_pikeman', count: 3 },
             { type: 'heavy_crossbowman', count: 4 },
@@ -1768,7 +1768,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'GEOR_CASTLE_AGE3', castleName: '格鲁吉亚 高加索斯万石塔古堡',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_tamar',
+        commanderUnit: 'hero_reynalddechatillon',
         slots: [
             { type: 'elite_guardsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
@@ -1968,7 +1968,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MAGY_CASTLE_AGE3', castleName: '马扎尔 布达佩斯多瑙河石堡',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_jadwiga',
+        commanderUnit: 'hero_vytautasthegreat',
         slots: [
             { type: 'elite_magyar_huszar', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
@@ -2320,7 +2320,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'echelon',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_popeleoi',
+        commanderUnit: 'hero_sforza',
         slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'hand_cannoneer', count: 3 },
@@ -2594,7 +2594,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ORIE_CASTLE_AGE3', castleName: '中东/萨拉森 开罗萨拉丁大城堡',
         formationMode: 'fish_scale',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_imam',
+        commanderUnit: 'hero_saladin',
         slots: [
             { type: 'mameluke', count: 3 },
             { type: 'eastern_swordsman', count: 4 },
@@ -3307,7 +3307,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SEAS_CASTLE_AGE3', castleName: '东南亚/高棉 吴哥窟砂岩塔',
         formationMode: 'crane_wing',
         shipId: 'FAST_FIRE_SHIP',
-        commanderUnit: 'hero_udayadityavarmani',
+        commanderUnit: 'hero_jayaviravarman',
         // 🔴 [2026-10-16 主人令·按分批时代] 高棉＝城堡批：弩炮战象精锐进城堡吴哥军团 2 档；
         //    普通进下一时代（帝国洛韦克军团）2 档。象类只占 2 档。
         slots: [
@@ -3382,7 +3382,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BURM_CASTLE_AGE3', castleName: '缅甸 蒲甘千佛塔金顶堡',
         formationMode: 'balance_yoke',
         shipId: 'GALLEON',
-        commanderUnit: 'bayinnaung_elephant',
+        commanderUnit: 'hero_tabinshwehti',
         slots: [
             { type: 'paragon', count: 4 },
             { type: 'hand_cannoneer', count: 2 },

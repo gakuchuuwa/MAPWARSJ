@@ -5267,6 +5267,7 @@ export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
     ...UNIQUE_T1_ZHAO,
     ...UNIQUE_T1_PRECISION,
     ...UNIQUE_T1_EXPAND,
+    ...GENERIC_POOL_EVEN_20261031,
 ];
 
 export const TACTICAL_SKILL_BY_ID: Readonly<Record<string, TacticalSkillEntry>> = Object.fromEntries(
