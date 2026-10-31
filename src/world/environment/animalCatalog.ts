@@ -85,13 +85,13 @@ export const ANIMAL_CATALOG: Readonly<Record<string, AnimalEntry>> = {
     HARE_GREY: { kind: 'wild', look: '灰褐色干旱区野兔', zones: ['HDS', 'CAD', 'WAH', 'STP', 'SAS', 'TIB', 'NAM', 'AND', 'AFR'] },
     LYNX: { kind: 'wild', look: '猞猁（温带—寒带山林，不到亚热带）', zones: ['WEU', 'CEU', 'MED', 'WAH', 'NCP', 'LOE', 'NEB', 'CAD', 'TIB', 'SIB', 'NAM'] },
     ELK: { kind: 'wild', look: '驼鹿（掌状角，北方林地）', zones: ['CEU', 'WEU', 'NEB', 'SIB', 'NAM'], strays: [{ zones: ['STP'], minLat: 50 }], herd: [1, 2] },   // 哈萨克北部森林草原
-    // ── 冬毛样子：北方冬季也看得到 ──
-    WOLF_ARCTIC: { kind: 'wild', look: '白色冬毛的狼', zones: ['ARC', 'SIB'], winterZones: ['NEB', 'CEU', 'STP'] },
-    HARE_ARCTIC: { kind: 'wild', look: '冬季换白毛的雪兔', zones: ['ARC', 'SIB'], winterZones: ['NEB', 'CEU', 'WEU', 'STP'] },
-    FOX_ARCTIC: { kind: 'wild', look: '北极狐', zones: ['ARC', 'SIB'], strays: [{ zones: ['CEU', 'WEU', 'NEB'], winterOnly: true, minLat: 59 }] },   // 斯堪的纳维亚山地
-    // ── 北极海岸（北纬 64° 起，含白海南岸，基日岛以北可见）──
-    BEAR_POLAR: { kind: 'wild', look: '北极熊', zones: ['ARC'], habitat: 'coast', strays: [{ zones: ['CEU', 'WEU', 'SIB'], winterOnly: true, minLat: 61 }] },   // 主人定 B：冬季海冰期南下
-    WALRUS: { kind: 'wild', look: '海象（史上白海、挪威北岸都有）', zones: ['ARC'], habitat: 'coast', strays: [{ zones: ['CEU', 'WEU', 'SIB'], winterOnly: true, minLat: 61 }], herd: [2, 5] },
+    // ── 冬毛与北极／亚北极物种：北极常住，北纬 60° 以北亚北极常年可见，北方温带冬季南下 ──
+    WOLF_ARCTIC: { kind: 'wild', look: '白色冬毛的狼', zones: ['ARC', 'SIB'], winterZones: ['NEB', 'CEU', 'STP'], strays: [{ zones: ['CEU', 'WEU', 'NAM'], minLat: 60 }] },
+    HARE_ARCTIC: { kind: 'wild', look: '冬季换白毛的雪兔', zones: ['ARC', 'SIB'], winterZones: ['NEB', 'CEU', 'WEU', 'STP'], strays: [{ zones: ['CEU', 'WEU', 'NAM'], minLat: 60 }] },
+    FOX_ARCTIC: { kind: 'wild', look: '北极狐', zones: ['ARC', 'SIB'], winterZones: ['CEU', 'WEU', 'NEB'], strays: [{ zones: ['CEU', 'WEU', 'NEB', 'NAM'], minLat: 59 }] },   // 斯堪的纳维亚山地与卡累利阿常年有，冬季更广
+    // ── 北极与亚北极海岸（北纬 64° 起常住；北纬 60° 以北白海、挪威北岸、冰岛等海岸亦可见）──
+    BEAR_POLAR: { kind: 'wild', look: '北极熊', zones: ['ARC'], habitat: 'coast', strays: [{ zones: ['CEU', 'WEU', 'SIB', 'NAM'], minLat: 60 }] },
+    WALRUS: { kind: 'wild', look: '海象（史上白海、挪威北岸都有）', zones: ['ARC'], habitat: 'coast', strays: [{ zones: ['CEU', 'WEU', 'SIB', 'NAM'], minLat: 60 }], herd: [2, 5] },
     SEAL: { kind: 'wild', look: '海豹（北海、波罗的海、地中海僧海豹、里海海豹、渤海斑海豹、开普毛皮海狮）', zones: ['ARC', 'WEU', 'CEU', 'MED', 'STP', 'CAD', 'NCP', 'NEB', 'SIB', 'AND', 'AFR', 'NAM'], habitat: 'coast', herd: [2, 5] },
     // ── 山地与干旱 ──
     IBEX: { kind: 'wild', look: '北山羊 / 努比亚羱羊', zones: ['MED', 'WAH', 'HDS', 'CAD', 'TIB'], herd: [1, 3] },

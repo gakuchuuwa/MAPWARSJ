@@ -596,7 +596,8 @@ korea_a: 0.646,  // -17.2 LUFS
     muisca_b: 0.661,  // -17.4 LUFS
     mapuche_a: 0.653,  // -17.3 LUFS
     mapuche_b: 0.661,  // -17.4 LUFS
-    tupi_a: 0.692,  // -17.8 LUFS
+    // 🔴 [2026-10-31 主人令「图皮竹笛 Takuapí [tupi_a] 删除这个曲子，有人说话，不能作为背景音乐」]
+    //    tupi_a 已连同 .aud 文件删除（曲子里有人声，不能当 BGM），TUPI 池剩 de_TUPI + tupi_b 两首。
     tupi_b: 0.668,  // -17.5 LUFS
 };
 
@@ -735,7 +736,9 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     // 🔴 [2026-10-26 主人令「藏族长号(喇嘛) [tibet_a]，删除。」] tibet_a 已连同 .aud 文件删除，
     //    本文化池保留 2 首（TIBET 千年的祈祷 + tibet_b 藏传法铃·钹·号角）。
     TIBET: ['TIBET', 'tibet_b'],
-    TUPI: ['de_TUPI', 'tupi_a', 'tupi_b'],
+    // 🔴 [2026-10-31 主人令「图皮竹笛 Takuapí [tupi_a] 删除这个曲子，有人说话」] tupi_a 已删，
+    //    本文化池由 3 首降为 2 首（de_TUPI 主题曲 + tupi_b 图皮瓜拉尼器乐）。
+    TUPI: ['de_TUPI', 'tupi_b'],
     TURKS: ['de_TURKS', 'turks_a', 'turks_b'],
     VARANGIANS: ['de_VARANGIANS', 'varangians_a', 'varangians_b'],
     // 🔴 [2026-10-18 主人令] vietnamese_a（越南独弦琴 Dan Bau）已连同 .aud 文件删除，

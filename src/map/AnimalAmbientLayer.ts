@@ -624,38 +624,69 @@ export class AnimalAmbientLayer {
                         // 冬毛物种（白狼、雪兔）只在冬季进池：物种编进 id，换季时旧的渐隐、新的渐显
                         const { land } = wildPoolAt(clat, clng, this.getSeason() === 3);
                         if (land.length === 0) continue;
-                        const dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
+                        let dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
+                        // 🔴 2026-10-31 主人令「冬眠动物到期不显示，来年随机换个位置渐显，一年一次」：
+                        //   熊类的落点按「年」取哈希 —— 每年春天都在**新位置**从透明渐显；冬季则整只渐隐退场。
+                        let yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
+                        const offLat = (hash01(col, row, 3 + yearSalt) - 0.5) * CELL_DEG * 0.8;
+                        const offLng = (hash01(col, row, 4 + yearSalt) - 0.5) * CELL_DEG * 0.8;
+                        const rawAnchor: Pt = { lat: clat + offLat, lng: clng + offLng };
+                        // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
+                        // 🔴 2026-10-31 主人令「动物不要出现在据点附近」：据点 0.30° 圈内不生成
+                        // 🔴 冬眠物种在冬季连"活跃"都不算：不进 activeIds，场上那只就会自动渐隐消失
+                        if (isHibernating(dir, rawAnchor.lat, this.getSeason())) continue;
+                        let needsRiver = animalNeedsRiver(dir);
+                        let needsCoast = animalNeedsCoast(dir);
+                        let anchor: Pt | null = rawAnchor;
+                        const snapSeed = hash01(col, row, 13);
+                        if (needsRiver) {
+                            anchor = this.snapToRiverBank(rawAnchor, dir, snapSeed);
+                        } else if (needsCoast) {
+                            anchor = this.snapToCoast(rawAnchor, dir, snapSeed);
+                        }
+                        if (!anchor && (needsRiver || needsCoast)) {
+                            // 内陆无河／无海岸的格子抽到河岸或海岸物种时：若海陆瓦片已就绪且该格并非纯外海，改抽本区陆生物种，避免北极内陆苔原等平白少一半动物
+                            if (needsCoast && this.hasUnloadedTileNear(rawAnchor)) continue;
+                            const inland = land.filter((sp) => !animalNeedsCoast(sp) && !animalNeedsRiver(sp));
+                            if (inland.length === 0) continue;
+                            const fb = inland[Math.floor(hash01(col, row, 15) * inland.length) % inland.length];
+                            if (isHibernating(fb, rawAnchor.lat, this.getSeason())) continue;
+                            dir = fb;
+                            yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
+                            needsRiver = false;
+                            needsCoast = false;
+                            anchor = rawAnchor;
+                        }
+                        if (!needsRiver && !needsCoast && anchor) {
+                            if (this.isWetBody(anchor, dir) || this.isNearCity(anchor)) {
+                                anchor = this.snapToDryLand(anchor, dir, snapSeed);
+                            }
+                        }
+                        if (!anchor) continue;
                         // 🔴 2026-10-31 主人令「群体成群出现，学习 DE」：一格抽中一种后按总表 herd 生成一整群，
                         //    群员围着同一个群中心（home）错开站位；独行物种 herd 缺省 = 1 只，与原来一样。
                         const herdSize = animalHerdSize(dir, hash01(col, row, 11));
                         const herdKey = `${col},${row},${dir}`;
-                        // 🔴 2026-10-31 主人令「冬眠动物到期不显示，来年随机换个位置渐显，一年一次」：
-                        //   熊类的落点按「年」取哈希 —— 每年春天都在**新位置**从透明渐显；冬季则整只渐隐退场。
-                        const yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
-                        const offLat = (hash01(col, row, 3 + yearSalt) - 0.5) * CELL_DEG * 0.8;
-                        const offLng = (hash01(col, row, 4 + yearSalt) - 0.5) * CELL_DEG * 0.8;
-                        let anchor: Pt | null = { lat: clat + offLat, lng: clng + offLng };
-                        // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
-                        // 🔴 2026-10-31 主人令「动物不要出现在据点附近」：据点 0.30° 圈内不生成
-                        // 🔴 冬眠物种在冬季连"活跃"都不算：不进 activeIds，场上那只就会自动渐隐消失
-                        if (isHibernating(dir, anchor.lat, this.getSeason())) continue;
-                        const needsRiver = animalNeedsRiver(dir);
-                        if (needsRiver) {
-                            anchor = this.snapToRiverBank(anchor, dir, hash01(col, row, 13));
-                            if (!anchor) continue;
-                        }
+                        const cosAnchor = Math.max(0.2, Math.cos((anchor.lat * Math.PI) / 180));
                         for (let k = 0; k < herdSize; k++) {
                             // 群员绕群中心错开：第 0 只站中心，其余按金角螺旋排开（间距约 HERD_SPREAD_DEG 的一半）
                             const ang = k * 2.39996 + hash01(col, row, 12) * Math.PI * 2;
-                            const spread = needsRiver ? HERD_SPREAD_DEG * 0.45 : HERD_SPREAD_DEG;
+                            const spread = (needsRiver || needsCoast) ? HERD_SPREAD_DEG * 0.45 : HERD_SPREAD_DEG;
                             const rad = k === 0 ? 0 : spread * (0.35 + 0.25 * Math.sqrt(k));
-                            const pos = { lat: anchor.lat + Math.sin(ang) * rad * 0.7, lng: anchor.lng + Math.cos(ang) * rad };
+                            let pos: Pt | null = {
+                                lat: anchor.lat + Math.sin(ang) * rad * 0.7,
+                                lng: anchor.lng + (Math.cos(ang) * rad) / cosAnchor,
+                            };
+                            if (k > 0 && needsCoast && (this.isWetBody(pos, dir) || !this.isNearCoast(pos) || this.isNearCity(pos))) {
+                                pos = this.snapToCoast(pos, dir, hash01(col, row, 13 + k));
+                            }
+                            if (!pos) continue;
                             // 🔴 2026-10-31「大象进海了」：按体型判海（中心 + 四向），象身不许跨在岸线上
                             // 🔴 淡水河岸物种（鳄鱼/凯门鳄/水蛇/水豚）：只放矢量河流岸边，不去海边
                             if (
                                 this.isWetBody(pos, dir)
                                 || this.isNearCity(pos)
-                                || (animalNeedsCoast(dir) && !this.isNearCoast(pos))
+                                || (needsCoast && !this.isNearCoast(pos))
                                 || (needsRiver && (this.isNearCoast(pos) || !isNearStrategicRiver(pos.lat, pos.lng, RIVER_KEEP_KM)))
                             ) continue;
                             const id = herdSize > 1 ? `${herdKey},${k}` : herdKey;
@@ -722,9 +753,12 @@ export class AnimalAmbientLayer {
                 }
                 e.alpha = Math.min(1, e.alpha + dt / FADE_DUR);
                 const riverBound = animalNeedsRiver(e.dir);
+                const coastBound = animalNeedsCoast(e.dir);
                 stepLandEntry(e, dt, threats, {
-                    // 判海一律按体型（身体任何一段沾水都算不能去），走动目标与逃跑同一条口径；淡水河岸物种额外约束不离河、不去海边
-                    isSea: (p) => this.isWetBody(p, e.dir) || (riverBound && (this.isNearCoast(p) || !isNearStrategicRiver(p.lat, p.lng, RIVER_KEEP_KM))),
+                    // 判海一律按体型（身体任何一段沾水都算不能去），走动目标与逃跑同一条口径；海岸物种不远离海岸，淡水河岸物种不离河、不去海边
+                    isSea: (p) => this.isWetBody(p, e.dir)
+                        || (coastBound && !this.isNearCoast(p))
+                        || (riverBound && (this.isNearCoast(p) || !isNearStrategicRiver(p.lat, p.lng, RIVER_KEEP_KM))),
                     rand: Math.random,
                     nearCity: (p) => this.isNearCity(p),
                     canWalk: !NO_WALK_SPECIES.has(e.dir),
@@ -768,23 +802,20 @@ export class AnimalAmbientLayer {
     }
 
     /**
-     * 是不是动物不能去的地方（海，或海拔瓦片还没到的未知地）。
+     * 是不是动物不能去的地方（海，或掩膜与海拔瓦片都还没到的未知地）。
      * 🔴 2026-10-31 主人截图「北极海面上站着白狼、北极狐、雪兔，没看到北极熊」：
      *    LandSeaSystem 在海拔瓦片未到时按「陆」返回（为了不卡军团行军），野生动物一进画面就按格生成，
      *    瓦片还在路上时海面被当成陆地 → 陆兽生在海上；取瓦片失败要冷却 60 秒，这期间一直站在海上。
-     *    同理，海岸物种查「旁边是不是海」时一律得到「陆」，北极熊永远找不到海岸。
-     *    这里只改野生动物：未知地一律当作不能去，瓦片到了再按真实海陆生成（isSeaAt 内部已发起拉取）。
+     *    这里只改野生动物：
+     *      · 水域掩膜明确是水（water === true）→ 是水，不能去；
+     *      · 水域掩膜明确是陆（water === false）→ 是干地，立即放行（不必再等 S3 高程瓦片）；
+     *      · 掩膜尚未到（water === null）→ 回退查高程瓦片，都未到时暂作未知水体拦住，到齐后按真实海陆生成。
      */
     private isSea(pos: Pt): boolean {
         try {
-            // 🔴 2026-10-31 主人截图「大象进海了」的**第二层原因**：判据比画面严格。
-            //    战略地图的海面是按**水域掩膜**画的（StrategicWaterMaterial：只取真实水域掩膜），
-            //    而 LandSeaSystem.isSeaAt = 掩膜是水 ∧ 海拔≤0。浅滩/潟湖里凡是高程被抹成 ≥0 的地方，
-            //    屏幕上是蓝的、判定却是「陆」。实测近岸瓦片这一比例 3.8%（局部 8%~10%），
-            //    正是野生动物站进浅湾的地方 —— 所以这里对**野生动物**改用「画成水就是水」。
-            //    （军团/据点/海陆形态仍走 LandSeaSystem 原判据，这里不动全局口径。）
             const water = LandSeaSystem.getWaterSampler().isWaterSync(pos.lat, pos.lng);
             if (water === true) return true;
+            if (water === false) return false;
             if (LandSeaSystem.isSeaAt(pos)) return true;
             return LandSeaSystem.getSampler().getElevationSync(pos.lat, pos.lng) === null;
         } catch {
@@ -836,12 +867,91 @@ export class AnimalAmbientLayer {
         e.doomed = true;   // 整座岛都泡在水里：让它在原地渐隐退场，下一帧不再重生（出生点同一套判海会拒掉）
     }
 
-    /** 陆地点四向 COAST_PROBE_DEG 内有海（海岸物种用） */
-    private isNearCoast(pos: Pt): boolean {        // 只认真实的海（未加载的未知地不算海岸，否则北极熊会生在内陆）
-        const d = COAST_PROBE_DEG;
-        const sea = (p: Pt): boolean => { try { return LandSeaSystem.isSeaAt(p); } catch { return false; } };
-        return sea({ lat: pos.lat + d, lng: pos.lng }) || sea({ lat: pos.lat - d, lng: pos.lng })
-            || sea({ lat: pos.lat, lng: pos.lng + d }) || sea({ lat: pos.lat, lng: pos.lng - d });
+    /**
+     * 陆地点八向 COAST_PROBE_DEG 内有海（海岸物种用，经度按 1/cos(lat) 缩放，避免高纬海岸被漏判）。
+     * 同时兼容高纬峡湾／浅海（掩膜是水且近岸海拔 ≤ 8m），并排除内陆高海拔湖河。
+     */
+    private isNearCoast(pos: Pt): boolean {
+        const dLat = COAST_PROBE_DEG;
+        const cosLat = Math.max(0.2, Math.cos((pos.lat * Math.PI) / 180));
+        const dLng = dLat / cosLat;
+        const diagLat = dLat * 0.7071;
+        const diagLng = dLng * 0.7071;
+        const sea = (p: Pt): boolean => {
+            try {
+                if (LandSeaSystem.isSeaAt(p)) return true;
+                if (LandSeaSystem.getWaterSampler().isWaterSync(p.lat, p.lng) === true) {
+                    const elev = LandSeaSystem.getSampler().getElevationSync(p.lat, p.lng)
+                        ?? LandSeaSystem.getSampler().getElevationSync(pos.lat, pos.lng);
+                    if (elev !== null && elev <= 8) return true;
+                }
+                return false;
+            } catch {
+                return false;
+            }
+        };
+        return sea({ lat: pos.lat + dLat, lng: pos.lng })
+            || sea({ lat: pos.lat - dLat, lng: pos.lng })
+            || sea({ lat: pos.lat, lng: pos.lng + dLng })
+            || sea({ lat: pos.lat, lng: pos.lng - dLng })
+            || sea({ lat: pos.lat + diagLat, lng: pos.lng + diagLng })
+            || sea({ lat: pos.lat + diagLat, lng: pos.lng - diagLng })
+            || sea({ lat: pos.lat - diagLat, lng: pos.lng + diagLng })
+            || sea({ lat: pos.lat - diagLat, lng: pos.lng - diagLng });
+    }
+
+    /** 附近海陆瓦片是否仍在加载中（避免海岸格在瓦片未到齐时提前回退成内陆物种） */
+    private hasUnloadedTileNear(pos: Pt): boolean {
+        const ws = LandSeaSystem.getWaterSampler();
+        const es = LandSeaSystem.getSampler();
+        return ws.isWaterSync(pos.lat, pos.lng) === null && es.getElevationSync(pos.lat, pos.lng) === null;
+    }
+
+    /**
+     * 将海岸物种（北极熊、海象、海豹、企鹅）吸附到格内及邻近海岸的干岸线上：
+     *   · 原落点已在干海岸上 → 直接采用；
+     *   · 原落点偏入近海或偏入内陆 → 沿同心环搜索最近的干海岸线（避免北极格抽中北极熊/海象后因差半格全部作废）。
+     */
+    private snapToCoast(anchor: Pt, dir: string, seed: number): Pt | null {
+        if (!this.isWetBody(anchor, dir) && this.isNearCoast(anchor) && !this.isNearCity(anchor)) {
+            return anchor;
+        }
+        const cosLat = Math.max(0.2, Math.cos((anchor.lat * Math.PI) / 180));
+        const baseAng = seed * Math.PI * 2;
+        for (const ring of [0.06, 0.12, 0.2, 0.3, 0.42, 0.56, 0.72]) {
+            for (let k = 0; k < 12; k++) {
+                const a = baseAng + (k / 12) * Math.PI * 2;
+                const cand = {
+                    lat: anchor.lat + Math.sin(a) * ring,
+                    lng: anchor.lng + (Math.cos(a) * ring) / cosLat,
+                };
+                if (!this.isWetBody(cand, dir) && this.isNearCoast(cand) && !this.isNearCity(cand)) {
+                    return cand;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 内陆物种若格内随机点恰好踩在湖泊、峡湾或据点边缘，在本格邻域内就近挪到干地（外海格附近无干地仍返回 null）。
+     */
+    private snapToDryLand(anchor: Pt, dir: string, seed: number): Pt | null {
+        const cosLat = Math.max(0.2, Math.cos((anchor.lat * Math.PI) / 180));
+        const baseAng = seed * Math.PI * 2;
+        for (const ring of [0.06, 0.12, 0.2, 0.28]) {
+            for (let k = 0; k < 8; k++) {
+                const a = baseAng + (k / 8) * Math.PI * 2;
+                const cand = {
+                    lat: anchor.lat + Math.sin(a) * ring,
+                    lng: anchor.lng + (Math.cos(a) * ring) / cosLat,
+                };
+                if (!this.isWetBody(cand, dir) && !this.isNearCity(cand)) {
+                    return cand;
+                }
+            }
+        }
+        return null;
     }
 
     /**

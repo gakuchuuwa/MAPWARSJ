@@ -47,7 +47,7 @@ export function reconcileSiegeGarrisonBoostWithLegion(
     city: SiegeGarrisonBoostFields,
     legion: Army,
 ): void {
-    if (legion.generalId) {
+    if (legion.generalId && !(city as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId) {
         delete city._siegeGarrisonGeneralId;
         delete city._siegeGarrisonPortrait;
     }
@@ -84,7 +84,7 @@ export function assignSiegeGarrisonTier(
     // 武将首次会面·历史成名战攻城：若指定了成名战敌将，则强制由该成名战敌将守城（不受锚点城或冷却限制）
     const fbDefenderId = (city as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId;
     if (fbDefenderId) {
-        delete (city as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId;
+        // 🔴 保留 _firstBattleDefenderGeneralId 直至成名战结算（由 PlayerQuestSystem.cleanupFirstBattleState 清理），防中途重判/援军 reconcile 丢失成名战守将
         const fbDefender = getGeneralRecordByGeneralId(fbDefenderId);
         if (fbDefender) {
             city._siegeGarrisonGeneralId = fbDefender.generalId;
@@ -184,7 +184,8 @@ export function assignSiegeGarrisonTier(
 }
 
 export function readSiegeGarrisonGeneralId(entity: unknown): string | undefined {
-    return (entity as SiegeGarrisonBoostFields | undefined)?._siegeGarrisonGeneralId;
+    const e = entity as (SiegeGarrisonBoostFields & { _firstBattleDefenderGeneralId?: string }) | undefined;
+    return e?._siegeGarrisonGeneralId ?? e?._firstBattleDefenderGeneralId;
 }
 
 export function readSiegeGarrisonPortrait(entity: unknown): string | undefined {

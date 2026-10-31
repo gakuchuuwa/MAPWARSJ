@@ -9396,6 +9396,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.25,
             "offsetX": 0,
             "offsetY": 11
+        },
+        "/assets/BURGUNDIANS/bogendi_gundioc.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 13
         }
     },
     "folderGuides": {

@@ -93,7 +93,7 @@ type Scene13GateUnit = { troops?: number; generalId?: string | null; unitType?: 
  *    进战术模式的**硬门槛**，剧本战、成名战、普通战一律适用（原来剧本/成名战会绕过武将判定）。
  */
 function sideHasRealGeneral(u: Scene13GateUnit): boolean {
-    if (isBlankRebelFaction(u.factionId)) return false;
+    if (isBlankRebelFaction(u.factionId) && !isStoryOrFirstBattleUnit(u)) return false;
     const e = u.getEntity?.();
     return !!(u.generalId || e?._firstBattleDefenderGeneralId || e?._siegeGarrisonGeneralId);
 }
@@ -332,6 +332,7 @@ function isStoryOrFirstBattleUnit(u: { getEntity?(): any } | null | undefined): 
         || ent.isFirstBattleHero === true
         || ent.isFirstBattleFieldEnemy === true
         || ent.isFirstBattleSiegeEnemy === true
+        || ent._firstBattleLockedForHero === true
         || !!ent._firstBattleDefenderGeneralId;
 }
 
@@ -353,7 +354,11 @@ function returnParkedCameraIfPlayerFights(app: GameApp, ids: string[], forceForS
 /** 战斗 UI：仅在镜头跟随军团参战时才弹出。 */
 export function wireGameAppCombatUiHooks(app: GameApp): void {
     app.combatSystem.onBattleStart = (battle) => {
-        const isBattlefieldEvent = isStoryOrFirstBattleUnit(battle.attacker) || isStoryOrFirstBattleUnit(battle.defender);
+        const quest = app.playerQuests?.getQuest();
+        const isQuestStoryBattle = !!quest
+            && (quest.kind === 'first_battle' || quest.kind === 'general_event')
+            && (battle.attacker.id === quest.legionId || battle.defender.id === quest.legionId);
+        const isBattlefieldEvent = isQuestStoryBattle || isStoryOrFirstBattleUnit(battle.attacker) || isStoryOrFirstBattleUnit(battle.defender);
         returnParkedCameraIfPlayerFights(app, [battle.attacker.id, battle.defender.id], isBattlefieldEvent);
         let followedId = app.cameraFollowUI?.getFollowedArmyId();
         if (isBattlefieldEvent && (!followedId || (battle.attacker.id !== followedId && battle.defender.id !== followedId))) {
@@ -511,7 +516,11 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 const defEntity = (battleField.type === 'siege' || isNavalVsFortress)
                     ? (defenders.find((u) => u.unitType === 'city') ?? def)
                     : def;
-                const defGeneralId = def?.generalId ?? defEntity?.generalId ?? defenders.find((u) => !!u.generalId)?.generalId;
+                const defGeneralId = def?.generalId
+                    ?? defEntity?.generalId
+                    ?? defenders.find((u) => !!u.generalId)?.generalId
+                    ?? defEntity?.getEntity?.()?._firstBattleDefenderGeneralId
+                    ?? defEntity?.getEntity?.()?._siegeGarrisonGeneralId;
                 if (att && def) {
                     startScene13War(
                         app,
@@ -611,7 +620,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    过门槛才走开战入口进 13；没过门槛只同步面板、不重弹。
         if (joinedUnit.id !== followedId) {
             if (!battleField.hasParticipant(followedId)) return;
-            if (!tacticalModeOn(app) || !regionalMeetsScene13Gate(attackers, defenders)) return;
+            const anyStory = isStory || attackers.some(isStoryOrFirstBattleUnit) || defenders.some(isStoryOrFirstBattleUnit);
+            if (!tacticalModeOn(app) || !(anyStory ? bothSidesHaveRealGenerals(attackers, defenders) : regionalMeetsScene13Gate(attackers, defenders))) return;
         }
 
         gameLog(

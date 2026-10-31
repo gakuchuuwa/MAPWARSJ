@@ -46,7 +46,7 @@ export const ENV_ZONE_REALM: Readonly<Record<EnvZone, 'palaearctic' | 'indomalay
 export const ENV_ZONE_FAUNA_DENSITY: Readonly<Record<EnvZone, number>> = {
     TIB: 0.6, SWM: 1.0, SEA: 1.0, SAS: 1.0, EAS: 0.85, NCP: 0.7, LOE: 0.6, NEB: 1.3,
     STP: 1.3, CAD: 0.4, WAH: 0.7, HDS: 0.35, MED: 0.8, WEU: 0.9, CEU: 1.1,
-    ARC: 0.5, SIB: 1.0, NAM: 1.3, NEO: 1.2, AND: 0.8, AFR: 1.5, AUS: 0.8,
+    ARC: 0.9, SIB: 1.0, NAM: 1.3, NEO: 1.2, AND: 0.8, AFR: 1.5, AUS: 0.8,
 };
 
 /** KoppenGeigerGrid 的 1–30 类编号顺序 */
