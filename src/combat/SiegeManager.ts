@@ -904,7 +904,7 @@ export class SiegeManager {
         const activeBattle = this.activeSieges.get(targetCity.id);
         if (activeBattle && !activeBattle.isOver) {
             if (isFirstBattleSiege && !activeBattle.scene13Frozen) {
-                // 玩家跟随触发剧情首战攻城：优先接管战场，清退已有普通 AI 围城，直接开启剧情攻城进入战术模式
+                // 玩家跟随触发剧情成名战攻城：优先接管战场，清退已有普通 AI 围城，直接开启剧情攻城进入战术模式
                 clearSiegeGarrisonBoost(targetCity as typeof targetCity & SiegeGarrisonBoostFields);
                 activeBattle.abortWithoutSettlement();
                 for (const u of [...activeBattle.getAttackerUnits(), ...activeBattle.getDefenderUnits()]) {
@@ -1000,7 +1000,7 @@ export class SiegeManager {
         }
 
         // ── 纵横技（必须在守城加成 applySiegeGarrisonBoostIfNeeded 前执行，确保 spawnUsed 优先消耗）──
-        // 剧情/首战攻城不触发纵横削将/削精锐，保证历史对手完整出场并进入战术模式
+        // 剧情/成名战攻城不触发纵横削将/削精锐，保证历史对手完整出场并进入战术模式
         if (!isFirstBattleSiege) {
             // 纵横捭阖：攻城前按 magnitude 概率消耗守城将/精出场配额
             if (generalHasStrategicEffect(army, 'sabotage_garrison')) {
@@ -1067,10 +1067,10 @@ export class SiegeManager {
             landNavalLegionForSiege(legion, cityPos);
         }
 
-        // 🔴 [2026-10-27 主人令「首战战败，应该军队战败，玩家脱离势力，去下一家」]
-        //    原来首战攻城写死了我方必胜（`isFirstBattleSiegeEnemy → defender_win` / `isFirstBattleSiege → attacker_win`），
+        // 🔴 [2026-10-27 主人令「成名战战败，应该军队战败，玩家脱离势力，去下一家」]
+        //    原来成名战攻城写死了我方必胜（`isFirstBattleSiegeEnemy → defender_win` / `isFirstBattleSiege → attacker_win`），
         //    战术里守不住 / 攻不下都被判成「打赢」，军团照旧占城、继续打下一座。现在只有剧本事件自带的结果
-        //    （`siegeData.result`）算写死胜负，首战一律按实际战果结算。
+        //    （`siegeData.result`）算写死胜负，成名战一律按实际战果结算。
         const siegePreset = siegeData.result;
         const initialFollowedIdForSpeech = window.game?.cameraFollowUI?.getFollowedArmyId?.()
             ?? window.game?.playerHero?.getHostLegionId?.();
@@ -1343,7 +1343,7 @@ export class SiegeManager {
             }
         }
 
-        // ── 威慑·不战而屈：兵力优势时概率跳过战斗直接占城（剧情首战攻城禁止跳过战斗！）──
+        // ── 威慑·不战而屈：兵力优势时概率跳过战斗直接占城（剧情成名战攻城禁止跳过战斗！）──
         if (!isFirstBattleSiege && generalHasStrategicEffect(army, 'intimidate_instant_win')) {
             const myTroops = army.getTroops();
             const enemyTroops = targetCity.troops;
@@ -1435,7 +1435,7 @@ export class SiegeManager {
             const siegeDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
             const attJu: CaptureJu = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
             // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 播报的守方势力名取显示势力：
-            //    首战同势力时守方城被占位成 panshu（无字叛军），有守将就播他的势力，不许播「叛军」。
+            //    成名战同势力时守方城被占位成 panshu（无字叛军），有守将就播他的势力，不许播「叛军」。
             const defFactionForSpeech = (isBlankRebelFaction(targetCity.factionId) && siegeDefGeneralId)
                 ? (getFactionIdOfGeneral(siegeDefGeneralId) ?? targetCity.factionId)
                 : targetCity.factionId;

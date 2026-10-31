@@ -617,7 +617,7 @@ export class GameApp {
                         } else {
                             const capJu = (event.attackerJu as CaptureJu) ?? 'balance';
                             // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 攻占播报的守方势力名取显示势力：
-                            //    首战同势力时被攻城被占位成 panshu（无字叛军），有守将就播他的势力，不许播「叛军」。
+                            //    成名战同势力时被攻城被占位成 panshu（无字叛军），有守将就播他的势力，不许播「叛军」。
                             const defFactionForSpeech = (isBlankRebelFaction(event.previousFactionId) && event.defenderGeneralId)
                                 ? (getFactionIdOfGeneral(event.defenderGeneralId) ?? event.previousFactionId)
                                 : event.previousFactionId;

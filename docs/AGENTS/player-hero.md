@@ -143,12 +143,12 @@
 主人原话：**「开局接任务的时候，有的据点兵马不足五千，此时告辞，然后应该换下一个人物接任务。」**
 
 - **「告辞」不是关掉对话框了事**：它＝**不接这一位**，玩家必须立刻被带去**下一位在场武将**。
-  统一出口 `PlayerQuestSystem.leaveAndFindNextGeneral(city, generalId)`（城中/野外的武将对话、首战对话的
+  统一出口 `PlayerQuestSystem.leaveAndFindNextGeneral(city, generalId)`（城中/野外的武将对话、成名战对话的
   「告辞」全走它；战场选边的「告辞」不含在内）。
 - 两件事：① 把这位置进 `declinedGenerals`（剧本链 `checkAndTriggerNextBattlefield` 不再把他当目标，
   `visitedGenerals` 也记一笔，自动寻将不优先找他）；② **立刻**换人，不等下一拍 tick、也不看自动模式开关：
   剧本模式先让剧本链换下一位（刚告辞的那位被跳过），剧本链没有下一位 / 非剧本模式 → 走 `autoTravelToBestCity()`。
-- `declinedGenerals` 在**接下任何任务**（入伍/出征/复国/首战）、**切模式/关自动**、**读档**时清空 ——
+- `declinedGenerals` 在**接下任何任务**（入伍/出征/复国/成名战）、**切模式/关自动**、**读档**时清空 ——
   告辞只是这一次不接，不是永远不见。
 - 同理，「兵马不足五千」的两句对话（城中 / 军中各一句）以前只有一个 `closeDialogue()` 的死胡同，
   现在告辞即换下一位。验收：`scratch/_probe_leave_next_general.mjs`（自动关着也换人）、

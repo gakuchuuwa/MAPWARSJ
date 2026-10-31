@@ -574,7 +574,7 @@ let rawGeneralEntryMap = new Map<string, Record<string, any>>();
 
 function buildGeneralBrief(g: { generalId: string; generalName: string; portrait: string; cityId?: string; factionId?: string }, cityMap: Map<string, { name: string }>, factionId: string): GeneralBrief {
     const p = entityData!.profiles[g.generalId];
-    // 🔴 [2026-10-25 主人令「时代归势力」] 时代先走 FactionEra.getGeneralEra（势力年段 × 首战/登场年），
+    // 🔴 [2026-10-25 主人令「时代归势力」] 时代先走 FactionEra.getGeneralEra（势力年段 × 成名战/登场年），
     //    实体接口里那张 `eras` 是 GENERAL_ERA 原值，只作旧数据兜底（不然明朝将领还显示成名年各算的旧时代）。
     const era = (getGeneralEra(g.generalId, factionId) ?? entityData!.eras?.[g.generalId]) as GeneralEra | undefined;
     const raw = rawGeneralEntryMap.get(g.generalId);
@@ -780,7 +780,7 @@ function updateStats(): void {
     const complete = rows.filter(r => r.completeness === 100).length;
     const noGen = rows.filter(r => !r.generalId).length;
     // 🔴 [2026-10-20 主人令「没有立绘的武将应该报错」] 缺立绘按全库武将逐条统计（不是按势力行，避免同势力多武将漏计）
-    //    2026-10-20 再补：战场人物（首战里只出场一仗的人）也算，与「运行校验」报错同一口径
+    //    2026-10-20 再补：战场人物（成名战里只出场一仗的人）也算，与「运行校验」报错同一口径
     const noPortrait = countMissingPortraits();
     const noSkill = rows.filter(r => rowHasSkillError(r)).length;
     const noElite = rows.filter(r => !r.eliteName).length;
@@ -2206,7 +2206,7 @@ async function collectScriptPortraitIssues(): Promise<ValidationIssue[]> {
 /**
  * 🔴 [2026-10-20 主人令「把所有缺少立绘的武将都要报错，不然我无法知道哪些武将缺少立绘」]
  * 全库武将立绘检查（并入「运行校验」）：据点武将（FACTION_GENERALS，一个势力多位武将逐个查）
- * ＋ 战场人物（BATTLEFIELD_CHARACTERS，首战里只出场一仗的人），逐个报 error：
+ * ＋ 战场人物（BATTLEFIELD_CHARACTERS，成名战里只出场一仗的人），逐个报 error：
  *   ① 没有立绘；② 立绘文件不存在（被挪走／改名／删了）。只检查、不改任何立绘与路径。
  */
 async function collectAllGeneralPortraitIssues(): Promise<ValidationIssue[]> {
@@ -2523,7 +2523,7 @@ function renderValidation(): void {
             const cityHint = cityOwnedByOrphan
                 ? `\n以及关联据点 "${city!.name}" (${cityId})`
                 : cityId ? `\n以及首府登记 "${city?.name ?? cityId}" (${cityId})（属别家，不删城，仅清 SC 引用）` : '';
-            const filesTip = `StartingCapitals / CityAssetManager / SandboxDisplayNames / FactionGenerals / general-skills/profiles / 势力色 / 军团编制 / 立绘池 / 旗号图案 / 武将时代·文化·生卒·首战 / 战场人物 / 14 区精锐${cityOwnedByOrphan ? ' / cities_v2 / VectorRoadData' : ''}`;
+            const filesTip = `StartingCapitals / CityAssetManager / SandboxDisplayNames / FactionGenerals / general-skills/profiles / 势力色 / 军团编制 / 立绘池 / 旗号图案 / 武将时代·文化·生卒·成名战 / 战场人物 / 14 区精锐${cityOwnedByOrphan ? ' / cities_v2 / VectorRoadData' : ''}`;
             if (!confirm(`确认清扫孤儿势力 "${fid}"${cityHint}？\n将从 ${filesTip} 中删除所有残留。`)) return;
             try {
                 const res = await fetch('/api/batch-delete', {

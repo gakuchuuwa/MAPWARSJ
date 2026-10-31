@@ -283,7 +283,7 @@ export function render(this: Scene13WarLayer): void {
     const flagTick = performance.now();
     for (const m of this.men) {
         if (!m.flag) continue;
-        // 🔴 [2026-10-26] 旗杆也用**显示势力**：panshu 占位侧（史实内战首战）要举主将自己的旗，不再是叛军无字旗。
+        // 🔴 [2026-10-26] 旗杆也用**显示势力**：panshu 占位侧（史实内战成名战）要举主将自己的旗，不再是叛军无字旗。
         LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideDisplayFactionId(m.f), FLAG_POLE_RATIO, FLAG_POLE_LIFT);
     }
 

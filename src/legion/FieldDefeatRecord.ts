@@ -13,7 +13,7 @@
  * 🔴 [2026-10-24 下午 主人「你觉得百岁模式也该是这样」] 百岁模式同样适用：
  *   百岁的空城本来就多（将未登场/已退场），若只按「无将」免战会白送；带上
  *   「刚被打掉武将」这个野战前提，只在「野战决胜后乘胜拔城」这一种情形生效，不会滥发。
- *   剧本模式仍不适用（史实战役必须打，且首战攻城另有闸门）。
+ *   剧本模式仍不适用（史实战役必须打，且成名战攻城另有闸门）。
  *
  * 纯运行时记录：不进存档、不占 City / Army 字段（与 `DefeatCooldown` 同一做法）。
  */
@@ -69,7 +69,7 @@ export interface FieldYieldCheckInput {
     cityType: string;
     /** getGameMode()：乱斗／百岁模式生效（见 FIELD_YIELD_GAME_MODES） */
     gameMode: string | null;
-    /** 剧本首战攻城禁止跳过战斗 */
+    /** 剧本成名战攻城禁止跳过战斗 */
     isFirstBattleSiege: boolean;
 }
 

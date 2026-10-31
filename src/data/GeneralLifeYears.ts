@@ -48,9 +48,9 @@ export interface GeneralLifeYears {
 
 /** generalId → 生卒年。键顺序：按生年从古到今。 */
 export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
-    gen_rajah_hijau: { birth: 1560, death: 1616, debut: 1584, kaoju: '推定' }, // 北大年绿女王，1584–1616在位
+    gen_rajah_hijau: { birth: 1560, death: 1616, kaoju: '推定' }, // 北大年绿女王，1584–1616在位
     gen_atoc: { birth: 1495, death: 1532, kaoju: '推定' }, // 印加帝国瓦斯卡尔皇室北征统帅，1532年托梅班巴战后死
-    gen_uaxaclajuun: { birth: 675, death: 738, debut: 695 }, // 科潘第十三代王“十八兔”，碑铭精确记载675年生、738年殉国
+    gen_uaxaclajuun: { birth: 675, death: 738 }, // 科潘第十三代王“十八兔”，碑铭精确记载675年生、738年殉国
     gen_harkhuf: { birth: -2290, death: -2230, kaoju: '推定' }, // 古埃及第六王朝象岛省督，麦伦拉至佩皮二世朝，约前23世纪
     luanda_novais: { birth: 1510, death: 1589, kaoju: '推定' },  // 诺瓦伊斯（约1510–1589）
     capetown_riebeeck: { birth: 1619, death: 1677 },           // 里贝克（1619–1677）
@@ -379,11 +379,11 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     erzhu_erzhuzhao: { birth: 500, death: 533, kaoju: '推定' },   // 尔朱兆
     gaoqi_d_xiaogui: { birth: 500, death: 556, kaoju: '推定' },   // 萧轨
     yuwen_yuwenxian: { birth: 544, death: 578 },                  // 宇文宪
-    // 🔴 2026-10-20 首战补敌将
+    // 🔴 2026-10-20 成名战补敌将
     sashan_khosrow_ii: { birth: 570, death: 628, kaoju: '推定' },   // 霍斯劳二世（萨珊末代雄主）
     sui_yuwenshu: { birth: 546, death: 616 },                      // 宇文述（隋，萨水主帅）
     tujue_xielikehan: { birth: 580, death: 634, kaoju: '推定' },    // 颉利可汗（东突厥末代大可汗）
-    // 🔴 2026-10-20 首战补敌将（生卒史料不全者按「推定」）
+    // 🔴 2026-10-20 成名战补敌将（生卒史料不全者按「推定」）
     sashan_beilusi: { birth: 440, death: 484, kaoju: '推定' },        // 卑路斯一世（484 赫拉特之战战死）
     luoma_xiageliwusi: { birth: 430, death: 487, kaoju: '推定' },     // 西阿格里乌斯（486 苏瓦松战败，487 被杀）
     tuoba_yuanying: { birth: 460, death: 510, kaoju: '推定' },        // 元英（北魏中山王）
@@ -532,8 +532,8 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     yili_bato: { birth: -30, death: 9, kaoju: '推定' },  // 巴托
     daqiya_burebista: { birth: -100, death: -44, kaoju: '推定' },  // 布雷比斯塔
     danmai_christian_iv: { birth: 1577, death: 1648 },  // 克里斯蒂安四世
-    gen_rurik: { birth: 830, death: 879, debut: 862, kaoju: '推定' },   // 留里克（生卒为传统推定；862 据拉多加/诺夫哥罗德）
-    gen_sineus: { birth: 840, death: 864, debut: 862, kaoju: '推定' },  // 西涅乌斯（留里克之弟，862 据白湖；卒年 864 见《往年纪事》，生年为推定）
+    gen_rurik: { birth: 830, death: 879, kaoju: '推定' },   // 留里克（生卒为传统推定；862 据拉多加/诺夫哥罗德）
+    gen_sineus: { birth: 840, death: 864, kaoju: '推定' },  // 西涅乌斯（留里克之弟，862 据白湖；卒年 864 见《往年纪事》，生年为推定）
     mamuluke_baibaisi: { birth: 1223, death: 1277, kaoju: '异说' },       // 拜巴尔斯
     khon_basiba: { birth: 1235, death: 1280 },             // 八思巴
     merkit_boyan: { birth: 1236, death: 1295, kaoju: '推定' },            // 伯颜
@@ -563,7 +563,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     song_lijilong: { birth: 950, death: 1005 },            // 李继隆（北宋）
     gen_charles_vii: { birth: 1403, death: 1461 },         // 查理七世
     // 卒时仅 19 岁：按「生年 + 20」会被整段掐掉（1432 > 1431）→ 显式登场年＝1429 解奥尔良之围（17 岁）
-    gen_joanofarc: { birth: 1412, death: 1431, debut: 1429 },  // 圣女贞德（生年取传统 1412）
+    gen_joanofarc: { birth: 1412, death: 1431 },  // 圣女贞德（生年取传统 1412）
     osman_mehmed_ii: { birth: 1432, death: 1481 },         // 穆罕默德二世
     an_xibanni: { birth: 1451, death: 1510 },              // 昔班尼
     dayu_wangshouren: { birth: 1472, death: 1529 },        // 王守仁
@@ -982,8 +982,8 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     jiazini_mahamaode: { birth: 971, death: 1030 },  // 马哈茂德
     jibin_jianisejia: { birth: 78, death: 144, kaoju: '推定' },  // 迦腻色迦
     danmai_abusalong: { birth: 1128, death: 1201 },  // 阿布萨隆
-    danmai_harald: { birth: 935, death: 986, debut: 958, kaoju: '推定' },  // 蓝牙哈拉尔（生年推定；958 继位，986 死于与子斯韦恩之战）
-    danmai_godfred: { birth: 760, death: 810, debut: 790, kaoju: '推定' },  // 戈德弗雷德（生年推定；804 见于法兰克史料，810 被杀）
+    danmai_harald: { birth: 935, death: 986, kaoju: '推定' },  // 蓝牙哈拉尔（生年推定；958 继位，986 死于与子斯韦恩之战）
+    danmai_godfred: { birth: 760, death: 810, kaoju: '推定' },  // 戈德弗雷德（生年推定；804 见于法兰克史料，810 被杀）
     ruidian_si_biergeyaer: { birth: 1210, death: 1266 },  // 比尔格雅尔
     kasidiliya_afangsuoshiyi: { birth: 1311, death: 1350 },  // 阿方索十一
     duluo_sangqiao: { birth: 1154, death: 1211 },  // 桑乔一世
@@ -1365,7 +1365,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     yilihanguo_yisimeier: { birth: 1487, death: 1524 },  // 伊斯梅尔一世（萨法维沙阿，1501 建萨法维王朝，1510 梅尔夫破昔班尼）
     yilihanguo_d_hezan: { birth: 1271, death: 1304 },  // 合赞
     wulaertu_ajishenti: { birth: 400, death: 451, kaoju: '异说' },  // 瓦尔丹
-    wulaertu_ashot3: { birth: 920, death: 977, debut: 953, kaoju: '推定' },  // 阿硕特三世（生年推定；953–977 在位，961 迁都阿尼）
+    wulaertu_ashot3: { birth: 920, death: 977, kaoju: '推定' },  // 阿硕特三世（生年推定；953–977 在位，961 迁都阿尼）
     gelujiya_tamaer: { birth: 1160, death: 1213 },  // 塔玛尔
     bendou_alikesai: { birth: 1182, death: 1222 },  // 阿历克塞
     keerjisi_bagelate: { birth: 960, death: 1014, kaoju: '异说' },  // 巴格拉特
@@ -1422,7 +1422,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     gen_cuauhtemoc: { birth: 1496, death: 1525, kaoju: '异说' },  // 库奥特莫克
     gen_topa_inca: { birth: 1440, death: 1493, kaoju: '推定' },  // 图帕克
     gen_jasawchan: { birth: 682, death: 734, kaoju: '推定' },  // 亚斯纳昌
-    gen_pakal: { birth: 603, death: 683, debut: 615 },  // 帕卡尔大帝（帕伦克，615–683 在位）
+    gen_pakal: { birth: 603, death: 683 },  // 帕卡尔大帝（帕伦克，615–683 在位）
     gen_lautaro: { birth: 1534, death: 1557 },  // 劳塔罗
     gen_saguamanchica: { birth: 1450, death: 1490, kaoju: '推定' },  // 萨瓜曼奇卡
     gen_arariboia: { birth: 1520, death: 1589, kaoju: '推定' },  // 阿拉里博亚
@@ -1756,9 +1756,9 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     kasidiliya_sancho: { birth: 1036, death: 1072, kaoju: '推定' },
     xibanya_orellana: { birth: 1511, death: 1546, kaoju: '推定' },
     xibanya_gonzalo: { birth: 1502, death: 1548, kaoju: '推定' },
-    yuenan_lelai: { birth: 1390, death: 1428, kaoju: '推定' },
+    yuenan_lelai: { birth: 1390, death: 1418, kaoju: '推定' },
     yuenan_letrien: { birth: 1390, death: 1427, kaoju: '推定' },
-    yuenan_luunhanchu: { birth: 1250, death: 1300, kaoju: '推定' },
+    yuenan_luunhanchu: { birth: 1390, death: 1441, kaoju: '推定' },
     yuenan_buibi: { birth: 1000, death: 1050, kaoju: '推定' },
     chenla_suryavarman: { birth: 970, death: 1050, kaoju: '推定' },
     chenla_jayaviravarman: { birth: 1050, death: 1100, kaoju: '推定' },

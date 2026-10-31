@@ -865,7 +865,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     // ═══════════════════════════════════════════════════════════════
     {
         year: -327,
-        season: 2,                                   // 秋（战役信息框 date = May 327 – March 326 BC；马萨加为该战役首战，按月序推秋 —— 合理推定）
+        season: 2,                                   // 秋（战役信息框 date = May 327 – March 326 BC；马萨加为该战役成名战，按月序推秋 —— 合理推定）
         generalId: 'gen_alexander_great',
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Cophen campaign 的 Siege of Massaga 节：公元前327年马其顿军团攻取阿斯瓦卡人首府马萨加的攻城战。该战役无独立条目，本场按其条目内这一节设计（主人总纲：维基有这个信息就可以设计）。' },

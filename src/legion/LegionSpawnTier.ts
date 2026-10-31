@@ -38,12 +38,12 @@ function getActiveLegionGeneralIds(): ReadonlySet<string> {
 let _reservedGeneralIdsProvider: (() => ReadonlySet<string>) | null = null;
 
 /** 🔴 [2026-10-21 主人令「玩家跟随姬发打牧野，子受还没到野战地点就出征打别人，观感上有两个子受」]
- *  由 PlayerQuestSystem 注入：进行中的首战所预置的敌将，不许再被据点掷出去领兵（剧本里他就是那一场的敌将）。 */
+ *  由 PlayerQuestSystem 注入：进行中的成名战所预置的敌将，不许再被据点掷出去领兵（剧本里他就是那一场的敌将）。 */
 export function setReservedGeneralIdsProvider(provider: () => ReadonlySet<string>): void {
     _reservedGeneralIdsProvider = provider;
 }
 
-/** 排除已在外领兵的武将 + 首战预占的敌将 + 尚未打完本城就地/防守首战、需留在城中等候玩家的武将 */
+/** 排除已在外领兵的武将 + 成名战预占的敌将 + 尚未打完本城就地/防守成名战、需留在城中等候玩家的武将 */
 function getExcludedGeneralIdsForSpawn(cityId?: string | null): ReadonlySet<string> {
     let activeIds = getActiveLegionGeneralIds();
     const reserved = _reservedGeneralIdsProvider?.();
@@ -62,7 +62,7 @@ function getExcludedGeneralIdsForSpawn(cityId?: string | null): ReadonlySet<stri
     return merged;
 }
 
-/** 该据点是否仍有未出征且可自由出征的在场武将（本城首战待命武将留在城中等玩家，首战打完后再自由出征） */
+/** 该据点是否仍有未出征且可自由出征的在场武将（本城成名战待命武将留在城中等玩家，成名战打完后再自由出征） */
 export function hasAvailableCityGeneral(cityId: string | null | undefined): boolean {
     if (!cityId) return false;
     const excludedIds = getExcludedGeneralIdsForSpawn(cityId);

@@ -52,11 +52,11 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     // 🔴 [2026-10-24 主人令「把武将中，没有名字的武将删除」]
     //   本表原登记的一批「史无载、按军职／民族拟名」的战场人物
     //   （帕维亚东罗马守将、匈奴左贤王、卡迭石王 苏穆阿达德 等共 85 位）已按令全部删除；
-    //   对应首战条目已去掉 `enemyGeneralId`，敌方主帅按引擎兜底显示为「{enemyFactionName}武将」。
+    //   对应成名战条目已去掉 `enemyGeneralId`，敌方主帅按引擎兜底显示为「{enemyFactionName}武将」。
     //   本表只登记**史有其人、有真名**的战场人物（例：下面这位曼努埃尔·皮雷斯）。
     bfe_portuguese_officer: { generalId: 'bfe_portuguese_officer', generalName: '皮雷斯', factionId: 'putaoya', portrait: '/assets/PORTUGUESE/bfe_portuguese_officer.png', note: '史有其人：1641 年姆博罗雷之战圣保罗 bandeira 主将 Manuel Pires（副将 Jerónimo Pedroso de Barros）；生卒无载，仅此战出场。' },
 
-    // 🔴 [2026-10-25 首战敌将复核 → 同日升级] 原本登记为战场人物的 58 位「该战真实对方指挥官」，
+    // 🔴 [2026-10-25 成名战敌将复核 → 同日升级] 原本登记为战场人物的 58 位「该战真实对方指挥官」，
     //    已按主人令「新增武将要符合标准」升级为**正式据点武将**（进 FactionGenerals / profiles / GeneralEra / GeneralLifeYears / GeneralCenturies，
     //    配据点＋势力＋时代＋名将/普将＋精锐 T0–T4，立绘留空），本表不再保留他们的条目。
 };

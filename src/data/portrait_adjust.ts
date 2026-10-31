@@ -9311,6 +9311,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.36,
             "offsetX": -6,
             "offsetY": 39
+        },
+        "/assets/GREECE/xilawangguo_kolokotronis.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/SPARTANS/bfe_kehaya_mustafa.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/HUNS/habusibao_eugene.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 38
+        },
+        "/assets/TURKS/bfe_mustafa_ii.png": {
+            "scale": 0.94,
+            "offsetX": 5,
+            "offsetY": -8
+        },
+        "/assets/MAGYAR/mazhaer_bela_iv.png": {
+            "scale": 1.22,
+            "offsetX": 20,
+            "offsetY": 46
         }
     },
     "folderGuides": {
