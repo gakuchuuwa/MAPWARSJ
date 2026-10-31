@@ -884,7 +884,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'jieri_jieriwang': 'MUGHAL',   // 戒日帝国｜哈尔沙｜据点 曲女城
     'jilimi_takuna': 'NORTHEAST',   // 吉里｜塔库纳｜据点 囊哈儿
     'jilin_fujun': 'NORTHEAST',   // 大清｜富俊｜据点 宽城屯
-    'jilizhou_chengmingzhen': 'WEI',   // 高句丽｜程名振｜据点 朝阳（唐营州，2026-10-25 主人令迁朝阳、文化河朔）
+    'jilizhou_chengmingzhen': 'KOREA',   // 高句丽｜程名振｜据点 朝阳（唐营州，2026-10-25 主人令迁朝阳、文化河朔）
     'jiluo_d_douxian': 'CENTRAL',   // 汉国｜窦宪｜据点 洛阳
     'jin_xianzhen': 'CENTRAL',   // 晋国｜先轸｜据点 曲沃
     'jinan_tiexuan': 'CENTRAL',   // 大明｜铁铉｜据点 历下
@@ -1353,7 +1353,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'wuer_wuernamu': 'ORIE',   // 乌尔｜乌尔纳姆｜据点 乌尔城
     'wugu_d_tugelile': 'CENTRAL_ASIA',   // 乌古斯｜图格里勒｜据点 毡的
     'wuhu_dukake': 'CENTRAL_ASIA',   // 乌护｜都卡克｜据点 真珠河
-    'wuhuan_tadun': 'WEI',   // 乌桓｜蹋顿｜据点 朝阳（2026-10-25 朝阳改河朔，随据点；2026-10-28 蹋顿迁朝阳，随据点）
+    'wuhuan_tadun': 'XIANBEI',   // 乌桓｜蹋顿｜据点 朝阳（2026-10-25 朝阳改河朔，随据点；2026-10-28 蹋顿迁朝阳，随据点）
     'wuji_yilizhi': 'NORTHEAST',   // 勿吉｜乙力支｜据点 伯都
     'wukexiya_madates': 'PERSIAN',   // 埃兰｜马达泰斯｜据点 苏萨
     'wula_buzhantai': 'NORTHEAST',   // 乌拉｜布占泰｜据点 乌舍寨

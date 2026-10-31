@@ -361,6 +361,23 @@ const PIG_KEEPING_EXCLUDED_CULTURES: ReadonlySet<string> = new Set([
     'MUGHAL', 'BENGALIS', 'PURU', 'INDIA',
 ]);
 
+/**
+ * 🔴 2026-10-31 主人令「农田只有猪，没有牛，我设计了牛，请修复」：农田四块里的牲畜块按文化取役畜。
+ *   · 稻作区＝水牛（BUFFALO，江南/东南亚水田役畜）；
+ *   · 旱作区＝黄牛（COW_BROWN，欧亚非旱地耕牛）；
+ *   · 美洲原住民 1492 年前既无牛也无猪：安第斯与南美南部用羊驼（LLAMA），中美洲与亚马孙用火鸡（TURKEY）。
+ *   不在这张表里的文化按作物类型取牛，绝不空手（有田就有役畜）。
+ */
+const FARM_OX_BY_CULTURE: Readonly<Record<string, string>> = {
+    INCA: 'LLAMA', MUISCA: 'LLAMA', MAPUCHE: 'LLAMA',
+    MAYANS: 'TURKEY', TUPI: 'TURKEY', AMERICA: 'TURKEY',
+};
+function farmOxSpecies(style: string, cat: LivelihoodCategory): string {
+    const special = FARM_OX_BY_CULTURE[style];
+    if (special) return special;
+    return cat === 'farming_rice' ? 'BUFFALO' : 'COW_BROWN';
+}
+
 function strHash01(s: string, salt: number): number {
     let h = (salt * 2654435761) | 0;
     for (let i = 0; i < s.length; i++) {
@@ -1196,44 +1213,61 @@ export class CityLifeAmbientLayer {
             // 🔴 2026-10-28 主人令「现在种田的四块田都是一个在耕作，太单一了，可以把其中一个随机养猪」：
             //    四块里随机挑一块改养猪——该块不派农夫、放一头猪，四块地皮一律照旧是农田，不改铺牧场。
             //    块号按「据点＋年份＋组合」取哈希，年度重排也不会前后闪换。
+            // 🔴 2026-10-31 主人令「农田只有猪，没有牛，我设计了牛，请修复」：农田的牲畜块原来写死一头猪，
+            //    耕牛从来不出现。现固定为「一块耕牛 + 一块猪」（不养猪的文化只放耕牛）：耕牛取该文化农田
+            //    真正的役畜——稻作＝水牛（BUFFALO），旱作＝黄牛（COW_BROWN），美洲原住民 1492 年前无牛无猪，
+            //    安第斯/南美南部用羊驼（LLAMA），中美洲与亚马孙用火鸡（TURKEY）。猪块仍按史跳过禁猪文化。
             if (isFarmer && plotCells) {
                 const owner = list[list.length - 1];
                 const handCells = plotCells.filter((k) => k !== PLOT_LEADER_CELL);
-                const pigCell = handCells.length > 0 && !PIG_KEEPING_EXCLUDED_CULTURES.has(style)
-                    ? handCells[Math.floor(strHash01(owner.id, 907) * handCells.length) % handCells.length]
+                // 块序按哈希打乱：耕牛取第一块、猪取第二块，牛先占位，永远不会被猪挤掉。
+                const orderedCells = [...handCells].sort(
+                    (a, b) => strHash01(owner.id, 900 + a) - strHash01(owner.id, 900 + b)
+                );
+                const oxSpecies = orderedCells.length > 0 ? farmOxSpecies(style, landCat) : undefined;
+                const oxCell = oxSpecies ? orderedCells[0] : undefined;
+                const pigCell = orderedCells.length > 1 && !PIG_KEEPING_EXCLUDED_CULTURES.has(style)
+                    ? orderedCells[1]
                     : undefined;
                 owner.pigCell = pigCell;
+                // 牲畜只在自家这块田里小范围来回（与草场牲畜同一套走动），不跑出地皮、不踩到人。
+                const pushFarmLivestock = (cell: number, species: string, idTag: string): void => {
+                    const ang = strHash01(owner.id, cell * 23 + 231) * Math.PI * 2;
+                    const wx = Math.cos(ang) * PASTURE_WANDER_PX;
+                    const wy = Math.sin(ang) * PASTURE_WANDER_PX * 0.6;
+                    list.push({
+                        ...owner,
+                        id: `${owner.id}_${idTag}_${cell}`,
+                        isAnimal: true,
+                        lib: 'SUCAI_ANIMAL',
+                        dir: species,
+                        fieldHand: undefined,
+                        hasFarm: false,
+                        seasonalPlot: undefined,
+                        plotCells: undefined,
+                        pigCell: undefined,
+                        groundResource: undefined,
+                        groundResourceLib: undefined,
+                        buildingResource: undefined,
+                        homePos: this.plotCellPos(owner.homePos, cell, wx, wy),
+                        gatePos: this.plotCellPos(owner.homePos, cell, -wx, -wy),
+                        lastDrawPos: this.plotCellPos(owner.homePos, cell, wx, wy),
+                        facing: Math.floor(strHash01(owner.id, cell * 23 + 232) * 8) % 8,
+                        phase: Math.floor(strHash01(owner.id, cell * 23 + 233) * 1000),
+                        damagePreset: 'animal_loss',
+                        damageVariant: Math.floor(strHash01(owner.id, cell * 23 + 234) * 100),
+                        displayedAction: 'walk',
+                        desiredAction: 'walk',
+                    });
+                };
                 for (const k of plotCells) {
                     if (k === PLOT_LEADER_CELL) continue;
+                    if (k === oxCell && oxSpecies) {
+                        pushFarmLivestock(k, oxSpecies, 'ox');
+                        continue;
+                    }
                     if (k === pigCell) {
-                        // 猪只在自家这块田里小范围来回（与草场牲畜同一套走动），不跑出地皮、不踩到人。
-                        const pigAngle = strHash01(owner.id, k * 23 + 231) * Math.PI * 2;
-                        const wx = Math.cos(pigAngle) * PASTURE_WANDER_PX;
-                        const wy = Math.sin(pigAngle) * PASTURE_WANDER_PX * 0.6;
-                        list.push({
-                            ...owner,
-                            id: `${owner.id}_pig_${k}`,
-                            isAnimal: true,
-                            lib: 'SUCAI_ANIMAL',
-                            dir: 'PIG',
-                            fieldHand: undefined,
-                            hasFarm: false,
-                            seasonalPlot: undefined,
-                            plotCells: undefined,
-                            pigCell: undefined,
-                            groundResource: undefined,
-                            groundResourceLib: undefined,
-                            buildingResource: undefined,
-                            homePos: this.plotCellPos(owner.homePos, k, wx, wy),
-                            gatePos: this.plotCellPos(owner.homePos, k, -wx, -wy),
-                            lastDrawPos: this.plotCellPos(owner.homePos, k, wx, wy),
-                            facing: Math.floor(strHash01(owner.id, k * 23 + 232) * 8) % 8,
-                            phase: Math.floor(strHash01(owner.id, k * 23 + 233) * 1000),
-                            damagePreset: 'animal_loss',
-                            damageVariant: Math.floor(strHash01(owner.id, k * 23 + 234) * 100),
-                            displayedAction: 'walk',
-                            desiredAction: 'walk',
-                        });
+                        pushFarmLivestock(k, 'PIG', 'pig');
                         continue;
                     }
                     const pos = this.plotCellPos(owner.homePos, k, 0, 0);

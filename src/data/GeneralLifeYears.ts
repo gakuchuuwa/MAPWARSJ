@@ -1801,14 +1801,14 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     abasi_imam: { birth: 800, death: 850, kaoju: '推定' },
     gaolu_bureau: { birth: 1390, death: 1463, kaoju: '推定' },
     gaolu_lorrain: { birth: 1380, death: 1450, kaoju: '推定' },
-    'gaolu_jeannehachette': { birth: 1454, death: 1488, kaoju: '推定' },
+    'gaolu_jeannehachette': { birth: 1454, death: 1500, kaoju: '推定' },   // 生年 1454 有载（Armarium 肖像档案 1454–15..）；1472 守博韦、1474 受封免税，卒年无载，1500 为推定
     'ethiopia_eleni': { birth: 1445, death: 1522, kaoju: '推定' },
     'bolan_maria': { birth: 1371, death: 1395, kaoju: '推定' },
     'han_fengting': { birth: -320, death: -260, kaoju: '推定' },
     'qi_luzhonglian': { birth: -305, death: -245, kaoju: '推定' },
     'song_bizaiyu': { birth: 1149, death: 1211, kaoju: '推定' },
     'shu_mengda': { birth: 170, death: 228, kaoju: '推定' },
-    'ming_d_wuweizhong': { birth: 1535, death: 1615, kaoju: '推定' },
+    'ming_d_wuweizhong': { birth: 1533, death: 1611, kaoju: '推定' },   // 生卒据《义乌史志》：1533—1611，字汝诚，义乌兵把总
     'longwu_zhengzhilong': { birth: 1604, death: 1661, kaoju: '推定' },
     'ming_d_tanlun': { birth: 1520, death: 1577, kaoju: '推定' },
     'han_zhao_liuyao': { birth: 275, death: 329, kaoju: '推定' },
@@ -1822,7 +1822,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     'shu_zhangyi': { birth: 175, death: 264, kaoju: '推定' },
     'shu_hezhi': { birth: 190, death: 250, kaoju: '推定' },
     'shu_wulan': { birth: 170, death: 218, kaoju: '推定' },
-    'cen_d_cenyunhan': { birth: 1560, death: 1620, kaoju: '推定' },
+    'cen_d_cenyunhan': { birth: 1578, death: 1644, kaoju: '推定' },   // 生卒据岑氏族谱：1578—1644，万历四十年袭泗城州第十三任知州
     'safawei_d_tahmasp': { birth: 1514, death: 1576, kaoju: '推定' },
 };
 

@@ -5231,7 +5231,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'shanrong_lanyu', factionId: 'ming_d', cityId: 'city_wuzhong', generalName: '蓝玉', portrait: '/assets/WEI/shanrong_lanyu.png', eliteName: '京营铁骑', eliteTier: 3 },
+        { generalId: 'shanrong_lanyu', factionId: 'ming_d', cityId: 'city_wuzhong', generalName: '蓝玉', portrait: '/assets/WEI/shanrong_lanyu.png', eliteName: '亲军铁骑', eliteTier: 3 },
         { generalId: 'li_lx_d_liguang', cityId: 'city_wuzhong', generalName: '李广', portrait: '/assets/WEI/li_lx_d_liguang.png', legionName: '古典时代太行军团', factionId: 'han_d', eliteName: '河朔骑兵', eliteTier: 4 },
 
 
@@ -7351,7 +7351,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         // 🔴 [2026-10-25 主人令「程名振史实该放营州（营州都督兼东夷都护），朝阳改为河朔文化」] 据点 长安→朝阳（唐营州，治柳城）；文化随据点＝河朔，军团按「封建×河朔」自动取，不再手写中原军团
-        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_chaoyang', generalName: '程名振', portrait: '/assets/WEI/jilizhou_chengmingzhen.png', eliteName: '营州铁骑', eliteTier: 3  },   // 按史：程名振任营州都督兼东夷都护，镇营州（《旧唐书·卷八三·程务挺传附》）
+        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_wugucheng', generalName: '程名振', portrait: '/assets/WEI/jilizhou_chengmingzhen.png', eliteName: '高句丽弩手', eliteTier: 4  },   // 按史：程名振任营州都督兼东夷都护，镇营州（《旧唐书·卷八三·程务挺传附》）
 
 
 
@@ -8326,7 +8326,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    wuhuan: { generalId: 'wuhuan_tadun', cityId: 'city_chaoyang', generalName: '蹋顿', portrait: '/assets/XIANBEI/wuhuan_tadun.png', eliteName: '河朔骑兵', eliteTier: 4 },   // 🔴 [2026-10-28 主人批迁] 蹋顿＝三郡乌桓大人，王庭柳城（今朝阳）：镇守/居住都算（史实三条依据）；白狼山＝207 败亡战场非驻地。文化随据点（朝阳＝河朔 WEI）
+    wuhuan: { generalId: 'wuhuan_tadun', cityId: 'city_chaoyang', generalName: '蹋顿', portrait: '/assets/XIANBEI/wuhuan_tadun.png', eliteName: '乌桓突骑', eliteTier: 4 },   // 🔴 [2026-10-28 主人批迁] 蹋顿＝三郡乌桓大人，王庭柳城（今朝阳）：镇守/居住都算（史实三条依据）；白狼山＝207 败亡战场非驻地。文化随据点（朝阳＝河朔 WEI）
 
 
 

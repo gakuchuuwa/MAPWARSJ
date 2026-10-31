@@ -229,7 +229,9 @@ void main() {
   // 🔴 [2026-10-31 主人报「有的贴图之间出现直线、直角」] 旧做法 abs(mod(uv+off,2)-1) 是镜像映射，
   //    在 u/v 各留一条贯穿全图的镜像折线（两条折线相交就是直角）。改成低频噪声域扭曲：
   //    采样点连续漂移、不折叠，泥斑边缘与 DE blendomatic 一样自然蜿蜒。
-  vec2 dirtWarp = vec2(n1 * 0.075 + nMicro1 * 0.012, n2 * 0.055 + nMicro2 * 0.010);
+  //    扭动量按「格」计（低频约 1.5 格 + 细碎约 0.1 格，再除以 uMapSize 换成 UV），
+  //    避免按全图比例放大到 9 格把泥斑搅乱、偏离地图数据原位。
+  vec2 dirtWarp = vec2(n1 * 1.5 + nMicro1 * 0.10, n2 * 1.2 + nMicro2 * 0.08) / uMapSize;
   vec2 dirtUV = clamp(fieldUV + dirtWarp, 0.01, 0.99);
   float dirtFieldVal = texture2D(uFieldTex, dirtUV).a;
   float dirtNoise = clamp(tn1 * 0.48 + tn2 * 0.34 + tn3 * 0.18, -1.0, 1.0);
@@ -546,7 +548,7 @@ export class Scene13GroundLayerGL {
   private readonly origElev: Uint8Array;
   private cornerElev: Float32Array;
   private cornerLight: Float32Array;
-  /** 逐角平滑坡势场（着色器 aSlope 的来源）：角高程梯度算出后做两遍高斯模糊，跨格连续、不再有整格色块 */
+  /** 逐角平滑坡势场（着色器 aSlope 的来源）：角高程梯度算出后做一遍高斯模糊（横竖各一次），跨格连续、不再有整格色块 */
   private cornerSlope: Float32Array;
   private noiseOff: [number, number] = [0, 0];
 
@@ -996,7 +998,7 @@ export class Scene13GroundLayerGL {
 
   /**
    * 🔴 [2026-10-31 主人报「战术地图有的贴图之间出现直线、直角，应该是圆滑、渐变的边缘」]
-   * 逐角坡势场：由角高程中心差分求梯度，再做两遍高斯模糊。
+   * 逐角坡势场：由角高程中心差分求梯度，再做一遍高斯模糊（横竖各一次）。
    * 旧做法把「单格四角最大落差」当坡度传给着色器（每格一个常数）⇒ 土石肌理/坡面明暗整格翻色，
    * 格边是一条直线、格角是直角。改为逐角连续场后，同样的坡面在画面上是平滑渐变（DE blendomatic 观感）。
    */

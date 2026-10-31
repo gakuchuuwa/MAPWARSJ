@@ -3,7 +3,6 @@ import { perfDoctor } from '../debug/PerfDoctor';
 import type { GameMap } from './GameMap';
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { LandSeaSystem } from '../world/land-sea';
-import { getReachLevel } from './StrategicReachMask';
 
 /**
  * AnimalAmbientLayer — 战略地图「野生动物生态」环境层（2026-08-31 主人定稿）。
@@ -361,8 +360,8 @@ export class AnimalAmbientLayer {
                         const offLat = (hash01(col, row, 3) - 0.5) * CELL_DEG * 0.8;
                         const offLng = (hash01(col, row, 4) - 0.5) * CELL_DEG * 0.8;
                         const pos = { lat: clat + offLat, lng: clng + offLng };
-                        // 🔴 [2026-10-31 战略地图素材规划] 陆兽只在道路/海路/据点 30km 核心带内（玩家看得到的地方）
-                        if (getReachLevel(pos.lat, pos.lng) === 2 && !this.isSea(pos)) {
+                        // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
+                        if (!this.isSea(pos)) {
                             activeIds.add(id);
                             // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
                             let entry = this.entries.find((e) => e.id === id);
@@ -418,14 +417,9 @@ export class AnimalAmbientLayer {
     /** 在视口内生成一只 DE 巡航飞鸟（跨屏直线长途巡游） */
     private spawnBirdInBounds(sw: L.LatLng, ne: L.LatLng): void {
         // 在视口内随机生成起始点，严格以此处真实经纬度确定地理生态区
-        // 🔴 [2026-10-31 战略地图素材规划] 只在可达带（离道路/海路/据点 ≤80km）上空起飞；视口内全不可达就不生成
-        let lat = 0, lng = 0, ok = false;
-        for (let k = 0; k < 8; k++) {
-            lat = sw.lat + Math.random() * (ne.lat - sw.lat);
-            lng = sw.lng + Math.random() * (ne.lng - sw.lng);
-            if (getReachLevel(lat, lng) > 0) { ok = true; break; }
-        }
-        if (!ok) return;
+        // 🔴 [2026-10-31 主人令「只在所在屏幕显示」] 视口内任意处起飞（取消道路可达掩膜）
+        const lat = sw.lat + Math.random() * (ne.lat - sw.lat);
+        const lng = sw.lng + Math.random() * (ne.lng - sw.lng);
         const region = getRegion(lat, lng);
         const { birds } = animalsForRegion(region);
         const dir = birds[Math.floor(Math.random() * birds.length)];

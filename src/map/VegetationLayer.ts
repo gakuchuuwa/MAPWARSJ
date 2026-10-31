@@ -10,7 +10,6 @@ import {
     queryStrategicCanopyDensity,
     queryStrategicForestBiome,
 } from './StrategicForestMask';
-import { getReachLevel, REACH_MASK_READY_EVENT } from './StrategicReachMask';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
@@ -659,7 +658,6 @@ export class VegetationLayer {
         map.on('move', this.onCanvasFollow);
         map.on('resize', this.onResize);
         window.addEventListener('land-sea-tiles-updated', this.onTerrainReady);
-        window.addEventListener(REACH_MASK_READY_EVENT, this.onTerrainReady);
         this.resize();
         this.render();
         void loadStrategicForestMask().then((ready) => {
@@ -976,11 +974,6 @@ export class VegetationLayer {
                 const py = gy + TREE_GRID_STEP * 0.5 + (hash(gx, gy, 12) - 0.5) * (TREE_GRID_STEP * 0.65);
                 const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
                 if (ptLatLng.lat < -58 || ptLatLng.lat > 75) continue;
-
-                // 🔴 [2026-10-31 战略地图素材规划] 素材跟着玩家走：离道路/海路/据点 >80km 不画；30~80km 的视野带减半
-                const reach = getReachLevel(ptLatLng.lat, ptLatLng.lng);
-                if (reach === 0) continue;
-                if (reach === 1 && hash(gx, gy, 61) > 0.5) continue;
 
                 // 据点避让统一在 SAMPLE_ZOOM 世界像素坐标系下计算，彻底杜绝因平移/缩放亚像素取整导致的城周树木闪现
                 if (visibleCities.some((c) => Math.hypot(c.wx - px, c.wy - py) < (c.isForestHunting ? 24 : CITY_CLEAR_PX))) continue;
