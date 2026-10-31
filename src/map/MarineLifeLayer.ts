@@ -3,6 +3,7 @@ import { perfDoctor } from '../debug/PerfDoctor';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { strategicSpriteScale } from './strategicSpriteScale';
+import { FAUNA_AREA_RATIO, WILD_LAND_PER_SQ_DEG } from '../world/environment/animalCatalog';
 
 /**
  * 战略地图「海洋生物」层（2026-09-17 优化升级）：
@@ -11,8 +12,17 @@ import { strategicSpriteScale } from './strategicSpriteScale';
  * 3. 彻底修复 Canvas 平移漂移与每帧误杀 Bug，绝对经纬度固定，持续 16~26 秒后平滑自然消失。
  */
 const PANE = 'marineLifePane';
-const TRIGGER_INTERVAL_MS = 10_000; // 每 10 秒检查一次是否需要补充海洋动物
-const MAX_CREATURES = 2;            // 视口内最多同时存在 2 只，纯点缀不喧宾夺主
+/**
+ * 🔴 2026-10-31 主人令「注意陆海空动物数量的比例」：同屏海洋动物数 = 画面面积 × 水面比例 × 陆地基准密度 × 海/陆比
+ *    （DE 236 张原图实测：海豚 / 鲸 / 海龟每万水面格 6.5 只，同面积约为陆地野生动物的 0.44 倍）。
+ *    原来固定「最多 2 只、10 秒补 1 只」，全是海的画面也只有 2 只，远低于 DE。
+ *    每只存活约 21 秒，补充间隔 = 21 秒 ÷ 目标数，才能维持到目标数。
+ */
+const CREATURE_LIFE_MS = 21_000;
+const MIN_TRIGGER_INTERVAL_MS = 2_000;
+const MAX_TRIGGER_INTERVAL_MS = 10_000;
+const MAX_CREATURES_CAP = 10;          // 封顶防满屏（zoom 9 全海面约 6–8 只，海战 zoom 10 画面更小、更少）
+const SEA_FRACTION_SAMPLE_MS = 1_500;  // 水面比例每 1.5 秒重算一次（4×4 采样）
 const FPS = 15;
 const MIN_ZOOM = 8;
 const MAX_ZOOM = 10;
@@ -206,7 +216,9 @@ export class MarineLifeLayer extends L.Layer {
         }
 
         // 尝试生成新生物
-        if (this.creatures.length < MAX_CREATURES && now - this.lastTriggerAt >= TRIGGER_INTERVAL_MS) {
+        const target = this.targetCreatureCount(now);
+        const interval = Math.min(MAX_TRIGGER_INTERVAL_MS, Math.max(MIN_TRIGGER_INTERVAL_MS, CREATURE_LIFE_MS / Math.max(1, target)));
+        if (this.creatures.length < target && now - this.lastTriggerAt >= interval) {
             this.tryTrigger(now);
         }
 
@@ -223,8 +235,33 @@ export class MarineLifeLayer extends L.Layer {
         this.render(now);
     }
 
+    private seaFraction = 0;
+    private seaFractionAt = -Infinity;
+
+    /** 同屏海洋动物目标数（开阔海面比例 × 画面面积 × 陆地基准密度 × 海/陆比） */
+    private targetCreatureCount(now: number): number {
+        if (!this.map) return 0;
+        const b = this.map.getBounds();
+        if (now - this.seaFractionAt >= SEA_FRACTION_SAMPLE_MS) {
+            this.seaFractionAt = now;
+            let sea = 0;
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    const lat = b.getSouth() + (i + 0.5) / 4 * (b.getNorth() - b.getSouth());
+                    const lng = b.getWest() + (j + 0.5) / 4 * (b.getEast() - b.getWest());
+                    if (isOpenOcean(lat, lng) && LandSeaSystem.isSeaAt(L.latLng(lat, lng))) sea++;
+                }
+            }
+            this.seaFraction = sea / 16;
+        }
+        if (this.seaFraction <= 0) return 0;
+        const area = Math.abs(b.getNorth() - b.getSouth()) * Math.abs(b.getEast() - b.getWest());
+        const n = Math.round(area * this.seaFraction * WILD_LAND_PER_SQ_DEG * FAUNA_AREA_RATIO.sea);
+        return Math.min(MAX_CREATURES_CAP, Math.max(1, n));
+    }
+
     private tryTrigger(now: number): void {
-        if (!this.map || this.creatures.length >= MAX_CREATURES) return;
+        if (!this.map) return;
         this.lastTriggerAt = now;
 
         let spawnLat = 0;

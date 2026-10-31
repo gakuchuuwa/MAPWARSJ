@@ -5,7 +5,9 @@
  * 去对战术图（柯本 → 9 地貌 → 18 套 DE 主题、animalNativeAt）的判定；并统计每个物种在多少据点周边看得到。
  *
  * 用法：npx tsx tools/audit-env-consistency.mts [--json 输出路径]
- * 局限：海拔要在线拉瓦片，这里一律按「无海拔」判地貌（雪线以上的高山据点会被判成山下的地貌）。
+ * 海拔：默认按「无海拔」判地貌（战术高原框内会被误判成高原）。
+ *   传 --dem <目录> 时读取该目录下的 Terrarium 海拔瓦片（文件名 <x>_<y>.png）带真实海拔判。
+ *   缩放级别取游戏的 DEM_ZOOM（项目只在 zoom 9 运行，游戏按 zoom 9 瓦片取海拔），与游戏同一口径。
  */
 import { registerHooks } from 'node:module';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -38,6 +40,32 @@ const { detectBiomeAtElevation, resolveClimateRegion } = await mod('src/ui/Scene
 const { resolveDeMapTheme } = await mod('src/ui/scene13/Scene13DeMapThemes.ts');
 const { animalNativeAt } = await mod('src/ui/scene13/Scene13Animals.ts');
 const sharp = (await import('sharp')).default;
+
+// --dem <目录>：游戏 DEM_ZOOM 级 Terrarium 瓦片，海拔 = R×256 + G + B/256 − 32768（米）
+const { DEM_ZOOM } = await mod('src/world/land-sea/TerrariumCodec.ts');
+const demAt = process.argv.indexOf('--dem');
+const demDir = demAt > 0 ? process.argv[demAt + 1] : null;
+const demCache = new Map<string, { data: Buffer; width: number } | null>();
+async function elevationAt(lat: number, lng: number): Promise<number | null> {
+    if (!demDir) return null;
+    const z = DEM_ZOOM as number, n = 2 ** z;
+    const fx = (lng + 180) / 360 * n;
+    const la = lat * Math.PI / 180;
+    const fy = (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * n;
+    const key = `${Math.floor(fx)}_${Math.floor(fy)}`;
+    if (!demCache.has(key)) {
+        try {
+            const r = await sharp(path.join(demDir, `${key}.png`)).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+            demCache.set(key, { data: r.data, width: r.info.width });
+        } catch { demCache.set(key, null); }
+    }
+    const t = demCache.get(key);
+    if (!t) return null;
+    const px = Math.min(t.width - 1, Math.floor((fx - Math.floor(fx)) * t.width));
+    const py = Math.min(t.width - 1, Math.floor((fy - Math.floor(fy)) * t.width));
+    const i = (py * t.width + px) * 3;
+    return t.data[i] * 256 + t.data[i + 1] + t.data[i + 2] / 256 - 32768;
+}
 
 /** 民生层的表是文件内私有常量：按源码原文取出对象字面量（纯数据，不含类型标注）。 */
 const cityLifeSrc = readFileSync(path.join(ROOT, 'src/map/CityLifeAmbientLayer.ts'), 'utf8');
@@ -99,8 +127,9 @@ for (const c of CITIES_V2 as any[]) {
     const lat = c.lat as number, lng = c.lng as number;
     const style = (c.buildingStyle ?? 'CENTRAL') as string;
     const koppen = resolveClimateRegion(lat, lng);
-    const biome = detectBiomeAtElevation(lat, lng, null) as string;
-    const theme = resolveDeMapTheme(lat, lng, biome, null, 'none');
+    const elev = await elevationAt(lat, lng);
+    const biome = detectBiomeAtElevation(lat, lng, elev) as string;
+    const theme = resolveDeMapTheme(lat, lng, biome, elev, 'none');
     const realmKey = envZoneAt(lat, lng) as string;
 
     const sw = ENV_ZONE_REALM[realmKey] as string;

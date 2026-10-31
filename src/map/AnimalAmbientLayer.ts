@@ -4,7 +4,8 @@ import type { GameMap } from './GameMap';
 import { LandSeaSystem } from '../world/land-sea';
 import { CITIES_V2 } from '../data/cities_v2';
 import { strategicSpriteScale } from './strategicSpriteScale';
-import { animalNeedsCoast, wildPoolAt } from '../world/environment/animalCatalog';
+import { FAUNA_AREA_RATIO, WILD_LAND_PER_SQ_DEG, animalHerdSize, animalNeedsCoast, wildPoolAt } from '../world/environment/animalCatalog';
+import { ENV_ZONE_FAUNA_DENSITY, envZoneAt } from '../world/environment/envZones';
 
 /**
  * AnimalAmbientLayer — 战略地图「野生动物生态」环境层（2026-08-31 主人定稿）。
@@ -39,7 +40,7 @@ interface AnimalAsset {
 type LandAction = 'idle' | 'walk' | 'run';
 
 interface AnimalEntry {
-    id: string;          // 网格标识（如 `${col},${row}`）
+    id: string;          // 网格标识：`${col},${row},${物种}`，成群时再加 `,${群内序号}`
     dir: string;
     pos: Pt;
     facing: number;      // 方向索引（陆 0-7）
@@ -55,6 +56,7 @@ interface AnimalEntry {
     fleeDX: number;      // 逃跑方向（单位向量，经纬度空间）
     fleeDY: number;
     seaTimer: number;    // 距下次判海的秒数（每 0.25 秒一次，省查询）
+    herd?: string;       // 所属群（成群物种同群共用；同群不互相惊散，拴在群中心 home 附近）
 }
 
 /** 陆地动物的移动常量（zoom 9 下 0.00275°≈1px：走 ≈18px/s，逃 ≈60px/s） */
@@ -76,6 +78,11 @@ const LAND_FLEE_RADIUS_DEG = 0.18;  // 军团/玩家进入 ≈65px 就受惊
 const LAND_STEP_MIN_DEG = 0.07;     // 一次随机走动的最短距离 ≈25px（🔴 多动：0.055→0.07）
 const LAND_STEP_MAX_DEG = 0.24;     // 最长 ≈90px（原 0.19）
 const LAND_LEASH_DEG = 0.46;        // 离出生格超过 ≈170px 就往回走（步长变大，圈同步放宽）
+/** 成群物种（总表 herd）：群内间距 ≈15px、单步 7–26px、离群中心 ≈45px 就往回走 */
+const HERD_SPREAD_DEG = 0.08;
+const HERD_STEP_MIN_DEG = 0.02;
+const HERD_STEP_MAX_DEG = 0.07;
+const HERD_LEASH_DEG = 0.12;
 const LAND_SEA_CHECK_SEC = 0.25;
 
 /**
@@ -98,6 +105,7 @@ interface BirdAgent {
     phase: number;
     alpha: number;       // 当前透明度 0.0 ~ 1.0（渐显/渐隐）
     fadingOut?: boolean; // 渐隐中
+    flock: number;       // 所属鸟群编号（独飞的一群 1 只）
 }
 
 // ── 可调参数 ──────────────────────────────────────────────────────────────
@@ -118,6 +126,8 @@ const PANE_ZINDEX = 560;            // 陆地动物：最底（低于植被565/�
 const BIRD_PANE_ZINDEX = 635;       // 飞鸟高空层：高于据点(610)/奇观(615)/军团(620)
 const CULL_MARGIN_DEG = 0.6;        // 视口外多算一圈，避免边缘弹入
 const BIRD_DRIFT_RADIUS_PX = 70;    // 飞鸟盘旋半径（屏幕像素，与翼展匹配的高空开阔盘旋）
+/** 鸟群队形间距（≈15px） */
+const BIRD_FLOCK_SPACING_DEG = 0.04;
 const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s 一圈）
 // ──────────────────────────────────────────────────────────────────────────
 
@@ -164,7 +174,7 @@ export interface LandStepOptions {
 }
 
 /** 同屏其它动物（用于"碰到动物分头逃跑"） */
-export interface LandNeighbor { id: string; lat: number; lng: number }
+export interface LandNeighbor { id: string; lat: number; lng: number; herd?: string }
 
 /** 两只动物靠得比这更近（0.06°≈22px）就互相受惊、分头跑开 */
 const LAND_SCATTER_RADIUS_DEG = 0.06;
@@ -216,6 +226,7 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
         let nbDist = Infinity;
         for (const n of opts.neighbors) {
             if (n.id === e.id) continue;
+            if (e.herd && n.herd === e.herd) continue;   // 同群不互相惊散
             const d = Math.hypot(n.lat - e.pos.lat, n.lng - e.pos.lng);
             if (d < nbDist) { nbDist = d; nb = n; }
         }
@@ -252,12 +263,17 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
             e.timer = 0.6 + rand() * 1.4;
             if (canWalk && rand() < 0.92) {
                 const ang = rand() * Math.PI * 2;
-                const step = LAND_STEP_MIN_DEG + rand() * (LAND_STEP_MAX_DEG - LAND_STEP_MIN_DEG);
+                // 成群个体步子小、拴在群中心附近（DE 鹿群「松散成群、绝不走散」）；独行的照旧大范围走
+                const stepMin = e.herd ? HERD_STEP_MIN_DEG : LAND_STEP_MIN_DEG;
+                const stepMax = e.herd ? HERD_STEP_MAX_DEG : LAND_STEP_MAX_DEG;
+                const leash = e.herd ? HERD_LEASH_DEG : LAND_LEASH_DEG;
+                const step = stepMin + rand() * (stepMax - stepMin);
                 let tx = e.pos.lng + Math.cos(ang) * step;
                 let ty = e.pos.lat + Math.sin(ang) * step;
-                if (Math.hypot(tx - e.home.lng, ty - e.home.lat) > LAND_LEASH_DEG) {
-                    tx = e.home.lng + (rand() - 0.5) * 0.1;
-                    ty = e.home.lat + (rand() - 0.5) * 0.1;
+                if (Math.hypot(tx - e.home.lng, ty - e.home.lat) > leash) {
+                    const back = e.herd ? HERD_SPREAD_DEG : 0.1;
+                    tx = e.home.lng + (rand() - 0.5) * back;
+                    ty = e.home.lat + (rand() - 0.5) * back;
                 }
                 const cand = { lat: ty, lng: tx };
                 if (!blocked(cand)) {
@@ -341,6 +357,7 @@ export class AnimalAmbientLayer {
     private assets: Map<string, AnimalAsset> = new Map();
     private entries: AnimalEntry[] = [];
     private birds: BirdAgent[] = [];
+    private flockSeq = 0;
     private lastCellRange: string | null = null;
     private running = false;
     private lastTime = 0;
@@ -546,46 +563,56 @@ export class AnimalAmbientLayer {
             for (let col = colMin; col <= colMax; col++) {
                 for (let row = rowMin; row <= rowMax; row++) {
                     const lh = hash01(col, row, 1);
-                    if (lh < LAND_DENSITY) {
-                        const clat = (row + 0.5) * CELL_DEG;
-                        const clng = (col + 0.5) * CELL_DEG;
+                    const clat = (row + 0.5) * CELL_DEG;
+                    const clng = (col + 0.5) * CELL_DEG;
+                    // 🔴 2026-10-31 主人令「注意每个区域动物的数量」：出群概率乘环境区多寡系数（荒漠少、草原林地多）
+                    if (lh < LAND_DENSITY * ENV_ZONE_FAUNA_DENSITY[envZoneAt(clat, clng)]) {
                         // 冬毛物种（白狼、雪兔）只在冬季进池：物种编进 id，换季时旧的渐隐、新的渐显
                         const { land } = wildPoolAt(clat, clng, this.getSeason() === 3);
                         if (land.length === 0) continue;
                         const dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
-                        const id = `${col},${row},${dir}`;
+                        // 🔴 2026-10-31 主人令「群体成群出现，学习 DE」：一格抽中一种后按总表 herd 生成一整群，
+                        //    群员围着同一个群中心（home）错开站位；独行物种 herd 缺省 = 1 只，与原来一样。
+                        const herdSize = animalHerdSize(dir, hash01(col, row, 11));
+                        const herdKey = `${col},${row},${dir}`;
                         // 🔴 2026-10-31 主人令「冬眠动物到期不显示，来年随机换个位置渐显，一年一次」：
                         //   熊类的落点按「年」取哈希 —— 每年春天都在**新位置**从透明渐显；冬季则整只渐隐退场。
                         const yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
                         const offLat = (hash01(col, row, 3 + yearSalt) - 0.5) * CELL_DEG * 0.8;
                         const offLng = (hash01(col, row, 4 + yearSalt) - 0.5) * CELL_DEG * 0.8;
-                        const pos = { lat: clat + offLat, lng: clng + offLng };
+                        const anchor = { lat: clat + offLat, lng: clng + offLng };
                         // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
                         // 🔴 2026-10-31 主人令「动物不要出现在据点附近」：据点 0.30° 圈内不生成
                         // 🔴 冬眠物种在冬季连"活跃"都不算：不进 activeIds，场上那只就会自动渐隐消失
-                        const winterSleep = isHibernating(dir, pos.lat, this.getSeason());
-                        if (!this.isSea(pos) && !this.isNearCity(pos) && !winterSleep && (!animalNeedsCoast(dir) || this.isNearCoast(pos))) {
+                        if (isHibernating(dir, anchor.lat, this.getSeason())) continue;
+                        for (let k = 0; k < herdSize; k++) {
+                            // 群员绕群中心错开：第 0 只站中心，其余按金角螺旋排开（间距约 HERD_SPREAD_DEG 的一半）
+                            const ang = k * 2.39996 + hash01(col, row, 12) * Math.PI * 2;
+                            const rad = k === 0 ? 0 : HERD_SPREAD_DEG * (0.35 + 0.25 * Math.sqrt(k));
+                            const pos = { lat: anchor.lat + Math.sin(ang) * rad * 0.7, lng: anchor.lng + Math.cos(ang) * rad };
+                            if (this.isSea(pos) || this.isNearCity(pos) || (animalNeedsCoast(dir) && !this.isNearCoast(pos))) continue;
+                            const id = herdSize > 1 ? `${herdKey},${k}` : herdKey;
                             activeIds.add(id);
                             // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
-                            let entry = this.entries.find((e) => e.id === id);
-                            if (!entry) {
-                                const facing = Math.floor(hash01(col, row, 6 + yearSalt) * 8) % 8;
-                                const phase = Math.floor(hash01(col, row, 7 + yearSalt) * 1000);
-                                this.loadAsset(dir, 'idle', false);
-                                // 起始相位错开：不让整屏动物同时起步（决策计时器 0~3 秒随机）
-                                const seed = hash01(col, row, 9);
-                                this.entries.push({
-                                    id, dir, pos, facing, phase, alpha: 0, fadingOut: false,
-                                    home: { lat: pos.lat, lng: pos.lng },
-                                    action: 'idle',
-                                    timer: seed * 3,
-                                    target: null,
-                                    fleeTimer: 0,
-                                    fleeDX: 0,
-                                    fleeDY: 0,
-                                    seaTimer: 0,
-                                });
-                            }
+                            if (this.entries.some((e) => e.id === id)) continue;
+                            const salt = yearSalt + k * 17;
+                            const facing = Math.floor(hash01(col, row, 6 + salt) * 8) % 8;
+                            const phase = Math.floor(hash01(col, row, 7 + salt) * 1000);
+                            this.loadAsset(dir, 'idle', false);
+                            // 起始相位错开：不让整屏动物同时起步（决策计时器 0~3 秒随机）
+                            const seed = hash01(col, row, 9 + k * 17);
+                            this.entries.push({
+                                id, dir, pos, facing, phase, alpha: 0, fadingOut: false,
+                                home: herdSize > 1 ? { lat: anchor.lat, lng: anchor.lng } : { lat: pos.lat, lng: pos.lng },
+                                action: 'idle',
+                                timer: seed * 3,
+                                target: null,
+                                fleeTimer: 0,
+                                fleeDX: 0,
+                                fleeDY: 0,
+                                seaTimer: 0,
+                                herd: herdSize > 1 ? herdKey : undefined,
+                            });
                         }
                     }
                 }
@@ -598,7 +625,7 @@ export class AnimalAmbientLayer {
         const threats = this.collectThreats();
         const season = this.getSeason();
         // 🔴 2026-10-31「动物碰到动物也要分头逃跑」：本帧同屏动物的位置快照，供逐只判定碰头
-        const neighbors: LandNeighbor[] = this.entries.map((e) => ({ id: e.id, lat: e.pos.lat, lng: e.pos.lng }));
+        const neighbors: LandNeighbor[] = this.entries.map((e) => ({ id: e.id, lat: e.pos.lat, lng: e.pos.lng, herd: e.herd }));
         for (let i = this.entries.length - 1; i >= 0; i--) {
             const e = this.entries[i];
             if (activeIds.has(e.id)) {
@@ -735,19 +762,33 @@ export class AnimalAmbientLayer {
 
         const angle = Math.random() * Math.PI * 2;
         const distFly = 1.5 + Math.random() * 2.5; // 目标跨越 1.5~4.0 度（大范围长途巡航）
-
-        this.birds.push({
-            dir,
-            lat,
-            lng,
-            targetLat: lat + Math.sin(angle) * distFly,
-            targetLng: lng + Math.cos(angle) * distFly,
-            hovering: Math.random() < 0.5,
-            timer: 3.0 + Math.random() * 4.0, // 3~7 秒交替
-            phase: Math.random() * 1000,
-            alpha: 0.0,       // 初始透明度 0（渐显）
-            fadingOut: false,
-        });
+        // 🔴 2026-10-31 主人令「群体成群出现」：鹤、火烈鸟等按总表 herd 成群飞，鹰隼秃鹫独飞（DE 原图实测）。
+        //    群员按「人」字错开排在领头鸟身后，目标同向平移，振翅 / 滑翔同步切换，整群平行巡航。
+        const size = animalHerdSize(dir, Math.random());
+        const flock = ++this.flockSeq;
+        const hovering = Math.random() < 0.5;
+        const timer = 3.0 + Math.random() * 4.0; // 3~7 秒交替
+        for (let k = 0; k < size; k++) {
+            const row = Math.ceil(k / 2);
+            const side = k % 2 === 1 ? 1 : -1;
+            const back = row * BIRD_FLOCK_SPACING_DEG;
+            const across = k === 0 ? 0 : side * row * BIRD_FLOCK_SPACING_DEG * 0.8;
+            const dLat = -Math.sin(angle) * back + Math.cos(angle) * across;
+            const dLng = -Math.cos(angle) * back - Math.sin(angle) * across;
+            this.birds.push({
+                dir,
+                lat: lat + dLat,
+                lng: lng + dLng,
+                targetLat: lat + Math.sin(angle) * distFly + dLat,
+                targetLng: lng + Math.cos(angle) * distFly + dLng,
+                hovering,
+                timer,
+                phase: Math.random() * 1000,
+                alpha: 0.0,       // 初始透明度 0（渐显）
+                fadingOut: false,
+                flock,
+            });
+        }
     }
 
     /** 飞鸟长途巡航更新：长距直线巡游 + fly 振翅 ⇄ hover 滑翔交替 + 渐显/渐隐 */
@@ -757,9 +798,14 @@ export class AnimalAmbientLayer {
         const FADE_DUR = 1.2; // 渐显/渐隐时长（秒）
 
         // 维持视口内 2~3 只活跃飞鸟（渐隐中的飞鸟不计入配额，确保渐显平滑补位）
-        const MAX_BIRDS = 3;
+        // 🔴 2026-10-31 主人令「注意陆海空动物数量的比例」：同屏鸟群数 = 画面面积 × 陆地基准密度 × 空/陆比（DE 实测 0.18）
+        //    × 画面中心所在区的多寡系数；按「群」计，独飞 1 只算一群，至少 1 群
+        const viewArea = Math.abs(ne.lat - sw.lat) * Math.abs(ne.lng - sw.lng);
+        const center = bounds.getCenter();
+        const MAX_BIRDS = Math.max(1, Math.round(viewArea * WILD_LAND_PER_SQ_DEG * FAUNA_AREA_RATIO.air
+            * ENV_ZONE_FAUNA_DENSITY[envZoneAt(center.lat, center.lng)]));
         if (this.birdsVisible) {
-            const activeCount = this.birds.filter((b) => !b.fadingOut).length;
+            const activeCount = new Set(this.birds.filter((b) => !b.fadingOut).map((b) => b.flock)).size;
             if (activeCount < MAX_BIRDS) {
                 this.spawnBirdInBounds(sw, ne);
             }
@@ -772,7 +818,7 @@ export class AnimalAmbientLayer {
             // 🔴 [DE 原生机制] fly 振翅巡航 ⇄ hover 展翅滑翔交替（每 3~7 秒切换一次）
             if (b.timer <= 0) {
                 b.hovering = !b.hovering;
-                b.timer = 3.0 + Math.random() * 4.0;
+                b.timer = 3.0 + ((b.flock * 7919) % 400) / 100;   // 按鸟群固定：同群同步切换振翅 / 滑翔
             }
 
             // 飞鸟渐隐判定：不可见状态、或飞临视口边缘缓冲带时触发渐隐

@@ -33,6 +33,18 @@ export const ENV_ZONE_REALM: Readonly<Record<EnvZone, 'palaearctic' | 'indomalay
     AND: 'neotropical', AFR: 'afrotropical', AUS: 'australasian',
 };
 
+/**
+ * 各环境区野生动物多寡系数（1 = 基准密度）。
+ * 🔴 2026-10-31 主人令「注意每个区域动物的数量」：DE 236 张战役原图陆地动物密度各图差很大
+ *    （每万陆地格 10% 分位 0、中位 12.6、90% 分位 30.7），按现实生物量定：
+ *    草原、稀树草原、北方林地多；荒漠、高寒、北极少；千年农耕的稠密平原（华北、黄土）大型野兽少。
+ */
+export const ENV_ZONE_FAUNA_DENSITY: Readonly<Record<EnvZone, number>> = {
+    TIB: 0.6, SWM: 1.0, SEA: 1.0, SAS: 1.0, EAS: 0.85, NCP: 0.7, LOE: 0.6, NEB: 1.3,
+    STP: 1.3, CAD: 0.4, WAH: 0.7, HDS: 0.35, MED: 0.8, WEU: 0.9, CEU: 1.1,
+    ARC: 0.5, SIB: 1.0, NAM: 1.3, NEO: 1.2, AND: 0.8, AFR: 1.5, AUS: 0.8,
+};
+
 /** KoppenGeigerGrid 的 1–30 类编号顺序 */
 const KOPPEN_CODES: readonly string[] = [
     '', 'Af', 'Am', 'Aw', 'BWh', 'BWk', 'BSh', 'BSk',
