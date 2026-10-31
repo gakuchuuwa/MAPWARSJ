@@ -2425,7 +2425,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gaolu_alencon', factionId: 'gaolu', cityId: 'city_lansi', generalName: '阿朗松公爵', portrait: '/assets/FRANKS/gaolu_alencon.png', eliteName: '法兰克骑兵', eliteTier: 3 },
         { generalId: 'gaolu_bertrand', factionId: 'gaolu', cityId: 'city_bordeaux', generalName: '伯特兰爵士', portrait: '/assets/FRANKS/gaolu_bertrand.png', eliteName: '法兰克弓手', eliteTier: 4 },
         { generalId: 'gaolu_demetz', factionId: 'gaolu', cityId: 'city_lansi', generalName: '德梅斯爵士', portrait: '/assets/FRANKS/gaolu_demetz.png', eliteName: '法兰克骑士', eliteTier: 4 },
-        { generalId: 'gaolu_josselyne', factionId: 'gaolu', cityId: 'city_lansi', generalName: '盖佐斯尔立', portrait: '', eliteName: '法兰克侍从', eliteTier: 4 },
+        { generalId: 'gaolu_josselyne', factionId: 'gaolu', cityId: 'city_lansi', generalName: '盖佐斯尔立', portrait: '/assets/FRANKS/gaolu_josselyne.png', eliteName: '法兰克侍从', eliteTier: 4 },
         { generalId: 'gaolu_graville', factionId: 'gaolu', cityId: 'city_lansi', generalName: '格拉维尔领主', portrait: '/assets/FRANKS/gaolu_graville.png', eliteName: '法兰克弓手', eliteTier: 4 },
         { generalId: 'gaolu_richemont', factionId: 'gaolu', cityId: 'city_lansi', generalName: '理察蒙', portrait: '/assets/FRANKS/gaolu_richemont.png', eliteName: '布列塔尼兵', eliteTier: 3 },
         { generalId: 'gaolu_bureau', factionId: 'gaolu', cityId: 'city_bali', generalName: '让彼罗', portrait: '/assets/FRANKS/gaolu_bureau.png', eliteName: '法兰西炮队', eliteTier: 2 },
@@ -3511,7 +3511,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'luosi_yury', factionId: 'luosi', cityId: 'city_nuofugeerdede', generalName: '尤里博戈柳布斯基', portrait: '', eliteName: '罗斯亲兵', eliteTier: 4 },
+        { generalId: 'luosi_yury', factionId: 'luosi', cityId: 'city_nuofugeerdede', generalName: '尤里博戈柳布斯基', portrait: '/assets/SLAVIC/luosi_yury.png', eliteName: '罗斯亲兵', eliteTier: 4 },
     ],
 
 
@@ -16384,7 +16384,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'nuowei_erikred', factionId: 'nuowei', cityId: 'city_boergong', generalName: '红胡子艾里克', portrait: '/assets/VIKINGS/nuowei_erikred.png', eliteName: '冰岛殖民队', eliteTier: 4 },
         { generalId: 'nuowei_hrolf', factionId: 'nuowei', cityId: 'city_boergong', generalName: '首领罗夫', portrait: '/assets/VIKINGS/nuowei_hrolf.png', eliteName: '诺曼突袭队', eliteTier: 3 },
         { generalId: 'nuowei_ulf', factionId: 'nuowei', cityId: 'city_boergong', generalName: '乌尔夫', portrait: '/assets/VIKINGS/nuowei_ulf.png', eliteName: '近卫斧兵', eliteTier: 4 },
-        { generalId: 'nuowei_halldor', factionId: 'nuowei', cityId: 'city_boergong', generalName: '哈尔多尔', portrait: '', eliteName: '近卫斧兵', eliteTier: 4 },
+        { generalId: 'nuowei_halldor', factionId: 'nuowei', cityId: 'city_boergong', generalName: '哈尔多尔', portrait: '/assets/VIKINGS/nuowei_halldor.png', eliteName: '近卫斧兵', eliteTier: 4 },
         { generalId: 'nuowei_kalf', factionId: 'nuowei', cityId: 'city_boergong', generalName: '卡尔夫', portrait: '/assets/VIKINGS/nuowei_kalf.png', eliteName: '挪威民兵', eliteTier: 4 },
         { generalId: 'nuowei_finn', factionId: 'nuowei', cityId: 'city_boergong', generalName: '芬恩', portrait: '/assets/VIKINGS/nuowei_finn.png', eliteName: '挪威民兵', eliteTier: 4 },
         { generalId: 'nuowei_einar', factionId: 'nuowei', cityId: 'city_boergong', generalName: '神射手埃纳尔', portrait: '/assets/VIKINGS/nuowei_einar.png', eliteName: '维京弓手', eliteTier: 4 },
