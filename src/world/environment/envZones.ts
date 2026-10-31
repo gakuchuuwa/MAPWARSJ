@@ -41,7 +41,10 @@ const KOPPEN_CODES: readonly string[] = [
 ];
 
 function classify(lat: number, lng: number): EnvZone {
-    const k = KOPPEN_CODES[koppenClassIdAt(lat, lng) ?? 0] ?? '';
+    let k = KOPPEN_CODES[koppenClassIdAt(lat, lng) ?? 0] ?? '';
+    // 高山苔原 ET / 冰原 EF 只有在亚洲高原框内才算青藏；挪威山地、阿尔卑斯、高加索、天山的高山按寒温带归区
+    const asianPlateau = lat >= 25 && lat <= 42 && lng >= 60 && lng <= 105;
+    if ((k === 'ET' || k === 'EF') && !asianPlateau) k = 'Dfc';
     const dry = k.startsWith('B');
 
     // ── 外围 ──
@@ -81,6 +84,7 @@ function classify(lat: number, lng: number): EnvZone {
     }
     if (k.startsWith('Cs')) return 'MED';
     if (lng < 60 && (k.startsWith('Cf') || k.startsWith('Cw'))) return lng >= 26 && lat < 43 ? 'WAH' : 'WEU';
+    if (k.startsWith('D') && lng >= 26 && lng < 60 && lat < 43) return 'WAH';   // 高加索、安纳托利亚东部山地
     if (k.startsWith('D') && lng < 60) return 'CEU';
     if (k.startsWith('D')) return 'STP';
     if (k.startsWith('A')) return lng >= 92 ? 'SEA' : lng >= 60 ? 'SAS' : 'AFR';
