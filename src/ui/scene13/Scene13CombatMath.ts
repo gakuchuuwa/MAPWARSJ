@@ -86,13 +86,22 @@ export const BLD_MIN_DESTROY_PER_SIDE = 2;
 /**
  * 🔴 [2026-10-27 主人令「这个时间应该根据大城，中城，险要，小城，城寨不同的类型，设置不同的保底时间」「城墙不要保底，本来就难打，还多。整体时间下调下。太长了。」]
  * 按五种据点类型（大城 > 中城 > 险要 > 小城 > 城寨）分别设定城门保底被摧毁秒数，以及城内建筑保底时间倍率（城墙不设保底）。
+ *
+ * 🔴 [2026-11-01 主人令「只改城门保底时间，不要擅自改动其他」] 按**门材质**再分三档：
+ *    判据 = 保底取「4 台冲车自然破门时间」的 0.65~0.75（冲车 ≈25 伤害/秒/台：
+ *    石城门 2750 → 4 台 27 秒、加固城门 4000 → 40 秒、木栅/篱笆门 540 → 5.5 秒）；
+ *    原来三材质共用一档，540 血的篱笆门被拉到石门的保底，手感跟石门没差别。
+ *    木门约 ×0.6、加固门约 ×1.2 —— 仅此一项改动，其它数值与逻辑未动。
  */
-export const CITY_TYPE_GATE_FLOOR_SEC: Record<'big_city' | 'medium_city' | 'pass' | 'small_city' | 'stockade', number> = {
-    big_city: 20,
-    medium_city: 16,
-    pass: 13,
-    small_city: 10,
-    stockade: 6,
+export const CITY_TYPE_GATE_FLOOR_SEC: Record<
+    'big_city' | 'medium_city' | 'pass' | 'small_city' | 'stockade',
+    { stone: number; fortified: number; wood: number }
+> = {
+    big_city: { stone: 18, fortified: 22, wood: 11 },
+    medium_city: { stone: 15, fortified: 18, wood: 9 },
+    pass: { stone: 12, fortified: 14, wood: 7 },
+    small_city: { stone: 9, fortified: 11, wood: 5 },
+    stockade: { stone: 5, fortified: 5, wood: 3 },
 };
 
 export const CITY_TYPE_BLD_FLOOR_MULT: Record<'big_city' | 'medium_city' | 'pass' | 'small_city' | 'stockade', number> = {
@@ -100,7 +109,7 @@ export const CITY_TYPE_BLD_FLOOR_MULT: Record<'big_city' | 'medium_city' | 'pass
     medium_city: 1.1,
     pass: 0.95,
     small_city: 0.8,
-    stockade: 0.6,
+    stockade: 0.6,
 };
 
 /** 流场细分：每个等轴地块切成 FLOW_SUB×FLOW_SUB 小格 */

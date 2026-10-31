@@ -6126,18 +6126,28 @@ export class Scene13WarLayer {
     /**
      * 城墙/城门的「保底被摧毁时间」：从第一次挨打算起，血量不低于按保底时间线性掉到 0 的那条线 ⇒ 人再多也快不过保底。
      * 🔴 [2026-10-22 主人「现在城门有点好打，请略微加点难度。或者像建筑一样，设计一个时间点」]
-     *    原来城门一律 15 秒（木门、石门、加固门同一档），自爆兵（爆破手等）那条路还不吃保底。
-     *    现在城门按材质分：木栅/篱笆门 15 秒（不变）、石城门 25 秒、加固城门 30 秒；城墙照旧 10 秒；两条伤害路都吃。
-     *    （城内建筑的保底在 onDefBuildingHit，按占地 7~16 秒。）
+     *    自爆兵（爆破手等）那条伤害路也吃保底；两条伤害路都吃（另一处在正面攻击的 dmg 结算里）。
+     * 🔴 [2026-10-27 主人令「按大城/中城/险要/小城/城寨设不同保底时间」「城墙不要保底…整体时间下调」]
+     *    保底改由 CITY_TYPE_GATE_FLOOR_SEC 按据点类型取；**城墙不设保底**（非城门在这里直接 return）。
+     * 🔴 [2026-11-01] 同表再按**门材质**分三档（木栅/篱笆门 · 石城门 · 加固城门），
+     *    现行值见 Scene13CombatMath.CITY_TYPE_GATE_FLOOR_SEC（大城 18/22/11、中城 15/18/9、
+     *    险要 12/14/7、小城 9/11/5、城寨 5/5/3 秒）；本函数只按 maxHp 认出三档。
+     *    （城内建筑的保底在 onDefBuildingHit，按占地 + 城型倍率。）
      */
     private applyWallGateFloor(b: WarBuilding): void {
         if (b.bld || b.hitAt === undefined || b.key !== 'STONE_GATE') return;
         const ct = this.defenderCityType;
         let floorSec = 14;
         if (b.key === 'STONE_GATE') {
-            floorSec = (ct && CITY_TYPE_GATE_FLOOR_SEC[ct]) ? CITY_TYPE_GATE_FLOOR_SEC[ct] : (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? 20
-                : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? 8
-                : 14);
+            // 🔴 [2026-11-01 主人令「只改城门保底时间」] 按门材质取档（木栅/篱笆门 / 石城门 / 加固城门）
+            const row = ct ? CITY_TYPE_GATE_FLOOR_SEC[ct] : undefined;
+            floorSec = row
+                ? (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? row.fortified
+                    : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? row.wood
+                        : row.stone)
+                : (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? 20
+                    : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? 8
+                        : 14);
         }
         const minHp = b.maxHp * (1 - (this.battleSec - b.hitAt) / floorSec);
         if (b.hp < minHp) b.hp = minHp;

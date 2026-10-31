@@ -132,7 +132,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
         formationMode: 'echelon',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_charlemagne',
+        commanderUnit: 'hero_sheriffofnottingham',
         slots: [
             { type: 'elite_throwing_axeman', count: 4 },
             { type: 'longswordsman', count: 3 },
