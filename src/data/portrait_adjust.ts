@@ -5697,11 +5697,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -29
         },
-        "/assets/WESTERN/weiwuer_yusubu.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": 16
-        },
         "/assets/WESTERN/__闲置__WESTERN_39.png": {
             "scale": 0.71,
             "offsetX": 0,
@@ -7526,11 +7521,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.87,
             "offsetX": 0,
             "offsetY": 5
-        },
-        "/assets/WESTERN/__闲置__WESTERN_40.png": {
-            "scale": 1.25,
-            "offsetX": 0,
-            "offsetY": 11
         },
         "/assets/WESTERN/shache_xian_suoche_shachexian.png": {
             "scale": 1.11,
@@ -9396,6 +9386,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/WESTERN/__闲置__WESTERN_42.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/WESTERN/weiwuer_yusubu.png": {
+            "scale": 1.25,
+            "offsetX": 0,
+            "offsetY": 11
         }
     },
     "folderGuides": {

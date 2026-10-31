@@ -338,7 +338,7 @@ export function isSandTile(tile: string): boolean {
 
 /** 沙漠/干热树种（沙地上唯一允许的树） */
 const DESERT_SAFE_TREES: ReadonlySet<string> = new Set([
-    'PALM', 'DRAGON_TREE', 'ACACIA', 'BAOBAB', 'CACTUS', 'DEAD_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B', 'BUSH_TREE_C',
+    'PALM', 'DRAGON_TREE', 'ACACIA', 'BAOBAB', 'CACTUS', 'DEAD_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B',
 ]);
 function guardSandTree(tree: string, baseTile: string): string {
     if (!isSandTile(baseTile)) return tree;

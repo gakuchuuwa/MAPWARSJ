@@ -27,9 +27,9 @@ export const ZONE_PLANTS: Readonly<Record<EnvZone, ZonePlants>> = {
     LOE: { main: [['OAK', 2], ['ASIAN_PINE', 2], ['WILLOW', 1], ['BUSH_TREE_A', 1]], extra: ['DEAD_TREE', 'BIRCH_GREEN'] },       // 辽东栎、油松、河谷柳
     NEB: { main: [['BIRCH_GREEN', 2], ['ASIAN_PINE', 2], ['SPRUCE', 2], ['OAK', 2]], extra: ['PINE', 'WILLOW'] },               // 白桦、红松、云冷杉、蒙古栎
     STP: { main: [['BIRCH_GREEN', 2], ['PINE', 2], ['WILLOW', 1], ['BUSH_TREE_B', 1]], extra: ['DEAD_TREE', 'SPRUCE'] },        // 森林草原桦、松，河谷柳
-    CAD: { main: [['WILLOW', 2], ['SPRUCE', 1], ['BUSH_TREE_C', 1], ['DEAD_TREE', 1]], extra: [] },                               // 胡杨柳（绿洲河谷）、天山云杉、梭梭
+    CAD: { main: [['WILLOW', 2], ['SPRUCE', 1], ['BUSH_TREE_A', 1], ['DEAD_TREE', 1]], extra: [] },                               // 胡杨柳（绿洲河谷）、天山云杉、梭梭（BUSH_TREE_C 为覆雪灌木，无雪灌木用 BUSH_TREE_A）
     WAH: { main: [['CYPRESS', 2], ['OAK', 2], ['PINE', 1], ['BUSH_TREE_A', 1]], extra: ['OLIVE', 'DEAD_TREE', 'PALM'] },          // 波斯柏、扎格罗斯栎
-    HDS: { main: [['PALM', 3], ['ACACIA', 2], ['DEAD_TREE', 1]], extra: ['DRAGON_TREE', 'BUSH_TREE_C'] },                           // 枣椰、金合欢；也门龙血树
+    HDS: { main: [['PALM', 3], ['ACACIA', 2], ['DEAD_TREE', 1]], extra: ['DRAGON_TREE', 'BUSH_TREE_A'] },                           // 枣椰、金合欢；也门龙血树
     MED: { main: [['OLIVE', 2], ['ITALIAN_PINE', 2], ['CYPRESS', 2], ['GREEN_OAK', 1]], extra: ['PALM', 'OAK', 'PINE'] },        // 橄榄、意大利松、柏、冬青栎
     WEU: { main: [['OAK', 3], ['SCENARIO_TREE_C', 2], ['BIRCH_GREEN', 1], ['PINE', 1]], extra: ['WILLOW', 'SCENARIO_TREE'] },
     CEU: { main: [['OAK', 2], ['BIRCH_GREEN', 2], ['PINE', 2], ['SPRUCE', 1], ['SCENARIO_TREE_E', 1]], extra: ['WILLOW', 'SCENARIO_TREE'] },

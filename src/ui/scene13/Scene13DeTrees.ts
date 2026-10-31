@@ -88,7 +88,7 @@ export const DE_BARE_SAND_TERRAINS: ReadonlySet<number> = new Set([2, 14]);
  */
 export const DESERT_TREE_ASSETS: ReadonlySet<string> = new Set([
     'PALM', 'DRAGON_TREE', 'ACACIA', 'BAOBAB', 'CACTUS', 'DEAD_TREE',
-    'BUSH_TREE_A', 'BUSH_TREE_B', 'BUSH_TREE_C',
+    'BUSH_TREE_A', 'BUSH_TREE_B',
 ]);
 
 /** 该 DE 地形登记了哪些树（可能多种，按 density 从高到低） */
@@ -183,6 +183,7 @@ const SNOW_TO_PLAIN: Readonly<Record<string, string>> = {
     SNOW_DEAD_TREE: 'DEAD_TREE',
     SNOW_SPRUCE: 'PINE',
     SPRUCE_SNOW: 'SPRUCE',
+    BUSH_TREE_C: 'BUSH_TREE_A',
 };
 
 /**
@@ -224,6 +225,7 @@ export function seasonalDeTree(asset: string, season: number, snowGround: boolea
             return 'SNOW_PINE';
         }
         if (asset === 'SPRUCE' || asset === 'SPRUCE_SNOW') return 'SPRUCE_SNOW';
+        if (asset === 'BUSH_TREE_A' || asset === 'BUSH_TREE_B' || asset === 'BUSH_TREE_C') return 'BUSH_TREE_C';
         if (asset === 'SNOW_DEAD_TREE') return 'DEAD_TREE';
         if (/^SCENARIO_TREE_/.test(asset)) return 'SCENARIO_TREE_I';
         return asset;
