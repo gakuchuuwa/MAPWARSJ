@@ -279,8 +279,9 @@ export class TradeTrafficLayer {
         this.canvas.className = 'leaflet-zoom-animated';
         this.ctx = this.canvas.getContext('2d')!;
         this.setupPane();
-        this.map.on('move', this.syncCanvas.bind(this));
-        this.map.on('zoom', this.syncCanvas.bind(this));
+        // 🔴 [2026-10-31 修「玩家移动时有拖拽感」] 不在 move/zoom 事件里挪动画布，只在 draw() 绘制那一刻对齐
+        //    （同 AnimalAmbientLayer 2026-10-28 的修法）。本层 rAF 排在主循环镜头平移之前：
+        //    move 时把画布钉回屏幕原点，而画布内容还是平移前画的 → 商队整层落后镜头一帧。
         this.map.on('resize', this.resize.bind(this));
         this.resize();
         this.syncCanvas();
@@ -583,6 +584,7 @@ export class TradeTrafficLayer {
 
     private draw(): void {
         const ctx = this.ctx;
+        this.syncCanvas();   // 画布与本次绘制用同一镜头位置（见构造函数说明）
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.caravans.length === 0) return;
 

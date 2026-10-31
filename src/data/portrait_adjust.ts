@@ -2833,7 +2833,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/CENTRAL/cai_lishuo.png": {
-            "scale": 1.12,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": -19
         },
@@ -9276,6 +9276,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.28,
             "offsetX": 0,
             "offsetY": 47
+        },
+        "/assets/CENTRAL/bfe_wangyan.png": {
+            "scale": 1.13,
+            "offsetX": -16,
+            "offsetY": 6
         }
     },
     "folderGuides": {

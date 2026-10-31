@@ -15,6 +15,7 @@ import {
     setOnTacticalSkillTriggered,
 } from '../../combat/GeneralSkillCombat';
 import { HISTORICAL_EVENT_SCRIPT } from '../../data/HistoricalEventScript';
+import { isBlankRebelFaction } from '../../data/RebelFaction';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
  * 🔴 [2026-08-10 主人铁律] 镜头永远跟随军团（跟拍军团将领编队）——禁止改成跟战场中点/中心点。 */
@@ -84,7 +85,23 @@ function unitIsFortress(u: { unitType?: string }): boolean {
     return u.unitType === 'city';
 }
 
-type Scene13GateUnit = { troops?: number; generalId?: string | null; unitType?: string; getEntity?(): any };
+type Scene13GateUnit = { troops?: number; generalId?: string | null; unitType?: string; factionId?: string | null; getEntity?(): any };
+
+/**
+ * 🔴 [2026-10-31 主人令「对手是叛军为什么还进入战术模式了？战术模式双方必须是武将」]
+ *    这一方是不是「真武将」：有实名武将（军团 generalId／首战守将／城池守将），且不是叛军（panshu，无主状态、没有武将）。
+ *    进战术模式的**硬门槛**，剧本战、首战、普通战一律适用（原来剧本/首战会绕过武将判定）。
+ */
+function sideHasRealGeneral(u: Scene13GateUnit): boolean {
+    if (isBlankRebelFaction(u.factionId)) return false;
+    const e = u.getEntity?.();
+    return !!(u.generalId || e?._firstBattleDefenderGeneralId || e?._siegeGarrisonGeneralId);
+}
+
+/** 双方都有真武将（区域战：每方至少一支） */
+function bothSidesHaveRealGenerals(attackers: Scene13GateUnit[], defenders: Scene13GateUnit[]): boolean {
+    return attackers.some(sideHasRealGeneral) && defenders.some(sideHasRealGeneral);
+}
 
 /** 区域战进 13 的普通门槛（开战与援军赶到共用）：双方合计兵力都 ≥ SCENE13_MIN_TROOPS、不都是海军、双方都有武将和精锐 */
 function regionalMeetsScene13Gate(attackers: Scene13GateUnit[], defenders: Scene13GateUnit[]): boolean {
@@ -93,7 +110,7 @@ function regionalMeetsScene13Gate(attackers: Scene13GateUnit[], defenders: Scene
     const defTroops = defenders.reduce((s, u) => s + (u.troops ?? 0), 0);
     if (attTroops < minTroops || defTroops < minTroops) return false;
     if (attackers.every(unitIsNaval) && defenders.every(unitIsNaval)) return false;
-    return attackers.some((u) => !!u.generalId) && defenders.some((u) => !!u.generalId)
+    return bothSidesHaveRealGenerals(attackers, defenders)
         && attackers.some(unitHasElite) && defenders.some(unitHasElite);
 }
 
@@ -361,7 +378,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    那条写的是「玩家入伍的仗不进 13，改弹大地图战斗面板观战」，但玩家开自动模式后
         //    基本一直在伍，等于战术模式永远进不去；与「随军必进 13」的定案也相冲。
         //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥5000 / 不都是海军 / 双方都有将+精锐）不变。
-        const eligible = tacticalModeOn(app) && (isBattlefieldEvent || (bigEnough && !bothNaval
+        const eligible = tacticalModeOn(app) && bothSidesHaveRealGenerals([battle.attacker], [battle.defender])
+            && (isBattlefieldEvent || (bigEnough && !bothNaval
             && (!!battle.attacker.generalId && !!battle.defender.generalId
                 && attHasElite && defHasElite)));
         // 🔴 [2026-09-16] 「进不去战术模式」闸门归因：六道闸哪道拦的，直接落盘，别再靠猜。
@@ -468,7 +486,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             && allUnits.some(unitIsFortress);
         // 战场事件与武将首次剧情战进战术模式：HistoricalEventManager 设置 isScriptArmy，PlayerQuestSystem 设置 isFirstBattleMarch。
         // 攻城和野战共用此入口，不受普通战斗的兵力、将领、精锐门槛阻挡。
-        const eligible = tacticalModeOn(app) && (isBattlefieldEvent || regionalMeetsScene13Gate(attackers, defenders));
+        const eligible = tacticalModeOn(app) && bothSidesHaveRealGenerals(attackers, defenders)
+            && (isBattlefieldEvent || regionalMeetsScene13Gate(attackers, defenders));
         if (eligible && (!battleField?.scene13Frozen || isBattlefieldEvent)) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];

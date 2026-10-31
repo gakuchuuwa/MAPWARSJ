@@ -401,11 +401,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_tokhtamyshkhan',
+        commanderUnit: 'hero_dongzhuo',
         slots: [
-            { type: 'hei_kuang_heavy', count: 3 },
+            { type: 'xianbei_raider', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
-            { type: 'xianbei_raider', count: 2 },
+            { type: 'hei_kuang_heavy', count: 2 },
         ],
     },
     // ── 河朔 · 城堡时代 · 城堡时代燕云军团　（本次新建）────────────────
@@ -418,11 +418,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_caocao',
+        commanderUnit: 'hero_tokhtamyshkhan',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
-            { type: 'hei_kuang', count: 2 },
+            { type: 'elite_iron_pagoda', count: 2 },
         ],
     },
     // ── 河朔 · 帝国时代 · 帝国时代燕晋军团　（三级升二级）────────────────
@@ -438,7 +438,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_lubu',
         slots: [
             { type: 'fire_lancer', count: 3 },
-            { type: 'mangudai', count: 2 },
+            { type: 'mangudai_elite', count: 2 },
             { type: 'elite_fire_archer', count: 4 },
         ],
     },

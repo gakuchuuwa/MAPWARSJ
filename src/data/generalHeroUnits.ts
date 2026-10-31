@@ -27,7 +27,7 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     sunwu_d_sunquan: 'hero_sunquan',
 
     // 草原游牧
-    menggu_d_chengjisihan: 'hero_subotai',
+    menggu_d_chengjisihan: 'hero_genghiskhan',   // 2026-10-31 同人同兵模：原借用速不台，改用本人英雄·成吉思汗
     wuliangha_subutai: 'hero_subotai',
     xiongren_atila: 'hero_attila',
     gen_kotyan: 'hero_kotyankhan',
@@ -106,6 +106,46 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     aiaoniya_alisita: 'hero_aristagoras',
     gen_jogaila: 'hero_jogaila',
     nuowei_halaer: 'hero_harald',   // 挪威哈拉尔（DE 新提取的英雄·哈拉尔）
+
+    // 🔴 [2026-10-31 主人令「游戏中的武将战术模式登场的时候，请使用与自己相同的兵模作为主将队。
+    //    如果有重复的兵模，例如亚历山大有骑马的和步兵的，骑兵类优先，战力高的优先」]
+    //    逐个核对 218 个英雄兵模与 1361 名武将，只登记**同一个人**（同名异人不登记，如 腓特烈二世≠巴巴罗萨、
+    //    曼萨·穆萨≠穆萨·伊本·奴萨尔、大流士三世≠大流士一世）；船形英雄（李舜臣龟船）按 §3.4 不用。
+    //    同一人有多个兵模时：骑兵优先，同类取战力高（熙德取骑马坎培多尔、地米斯托克利取骑马版）。
+    //    对照底账：scratch/_hero_general_match_20261031.txt
+    gen_artemisia: 'hero_artemisia',
+    gen_roger_i: 'hero_rogerbosso',              // 罗杰一世（博索）
+    gen_leonidas: 'hero_leonidas',
+    gen_theodoric_great: 'hero_theodoricthegoth',
+    gen_el_cid: 'hero_elcidcampeador',           // 骑马版（cav 217）优先于步战熙德
+    bfe2_cleon: 'hero_cleon',
+    gen_themistocles: 'hero_themistocles',       // 战力 281 > 步战版 211
+    gen_miltiades: 'hero_miltiades',
+    gen_henry_v: 'hero_henryv',
+    mazhaer_bela_iv: 'hero_belaiv',
+    gen_charles_martel: 'hero_charlesmartel',
+    gen_charlemagne: 'hero_charlemagne',
+    bfe_sigismund: 'hero_emperorsigismund',
+    litaowan_algirdas: 'hero_algirdas',
+    weihaiwei_sudingfang: 'hero_sudingfang',
+    jingmen_zhaoyun: 'hero_zhaoyun',
+    bfe3_71: 'hero_yuanshao',
+    lushui_dongzhuo: 'hero_dongzhuo',
+    dongxu_mangruiti: 'hero_tabinshwehti',
+    gen_wang_tong: 'hero_wangtong',
+    jiujiang_zhouyu: 'hero_zhouyu',
+    gen_mustafa_pasha: 'hero_mustafapasha',
+    aqimeinide_daliushi: 'hero_darius',          // 大流士一世（DE 大流士＝马拉松时代）
+    gen_ibrahim_lodi: 'hero_ibrahimlodi',
+    babuer_babuer: 'hero_babur',                 // 战力 163 > 年轻的巴布尔 117
+    gen_mihirabhoja: 'hero_mihirabhoja',
+    owari_zhitianxinchang: 'hero_nobunaga',
+    zhelouqi_puliteweilajie: 'hero_prithviraj',
+    wende_heinrich_loewe: 'hero_henrythelion',
+    baizanting_belisarius: 'hero_belisarius',
+    gen_vlad_impaler: 'hero_vladdracula',
+    yilihanguo_yisimeier: 'hero_shahismail',     // 萨法维 伊斯玛仪一世
+    zhuluo_lajindela: 'hero_rajendrachola',
 };
 
 /**

@@ -45,16 +45,15 @@ export class CoastalWaveLayer extends L.Layer {
         this.resize();
         this.syncCanvas();
 
-        this.map.on('move', this.syncCanvas);
-        this.map.on('zoom', this.syncCanvas);
+        // 🔴 [2026-10-31 修「玩家移动时有拖拽感」] 不在 move/zoom 事件里挪画布，只在 render() 绘制那一刻对齐
+        //    （同 AnimalAmbientLayer 2026-10-28）。本层 30fps 且 rAF 排在主循环镜头平移之前：
+        //    原来 move 时把画布钉回屏幕原点，跳过绘制的那帧浪花就「粘在屏幕上」不随地图走，下一帧再一跳。
         this.map.on('resize', this.resize);
         this.rafId = requestAnimationFrame(this.tick);
         return this;
     }
 
     public onRemove(map: L.Map): this {
-        this.map?.off('move', this.syncCanvas);
-        this.map?.off('zoom', this.syncCanvas);
         this.map?.off('resize', this.resize);
         this.map = null;
         if (this.rafId !== null) cancelAnimationFrame(this.rafId);
@@ -115,6 +114,7 @@ export class CoastalWaveLayer extends L.Layer {
         }
 
         const g = this.ctx;
+        this.syncCanvas();   // 画布与本次绘制用同一镜头位置（见 onAdd 说明）
         g.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // 🔴 [2026-10-11 主人「玩家在战略地图移动时掉帧」] 不再每帧 getBoundingClientRect：
