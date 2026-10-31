@@ -445,6 +445,18 @@ const FARM_PEN_BY_CULTURE: Readonly<Record<string, readonly string[]>> = {
     AMERICA: ['TURKEY'],
 };
 
+/** 该文化的农田畜种池：耕牛排第一，后面按生计／文化追加猪、鸡、鹅、羊、山羊、驴…（去重、禁猪文化剔除 PIG） */
+function farmLivestockPool(style: string, cat: LivelihoodCategory): string[] {
+    const ox = farmOxSpecies(style, cat);
+    const pen = FARM_PEN_BY_CULTURE[style] ?? FARM_PEN_BY_CATEGORY[cat] ?? [];
+    const out: string[] = [];
+    for (const sp of [ox, ...pen]) {
+        if (sp === 'PIG' && PIG_KEEPING_EXCLUDED_CULTURES.has(style)) continue;
+        if (!out.includes(sp)) out.push(sp);
+    }
+    return out;
+}
+
 function pickPenSpecies(
     ownerId: string,
     style: string,
@@ -1057,6 +1069,8 @@ export class CityLifeAmbientLayer {
         const forestNodes = landCat === 'forest_hunting' || landCat === 'forest_logging' ? this.getOrCreateCityForest(city) : [];
 
         const newPlots: { x: number; y: number }[] = [];   // 本据点这次新放的地皮（提交时才进全局登记）
+        // 🔴 2026-10-31「每田一只，随机，不要重复」：本据点本年已用过的农田畜种，各套农田之间不重样
+        const usedFarmLivestock = new Set<string>();
         for (let i = 0; i < totalSlots; i++) {
             const h2 = strHash01(yk, i * 17 + 2);
             const h3 = strHash01(yk, i * 17 + 3);
@@ -1317,13 +1331,25 @@ export class CityLifeAmbientLayer {
                 const orderedCells = [...handCells].sort(
                     (a, b) => strHash01(owner.id, 900 + a) - strHash01(owner.id, 900 + b)
                 );
-                // 有田就有役畜：地块全满时耕牛占一块，地块不够时站到农夫身旁（见下方 aside）
+                // 🔴 2026-10-31 主人令「每田一只，随机，不要重复，人可以重复」：
+                //   一套农田只养**一只**牲畜（占一块地皮；地皮不够就站到农夫身旁）；
+                //   同一据点同一年的各套农田之间牲畜**不重样**：第一套先给耕牛，后面从该文化畜种池随机补；
+                //   池子用光才允许重复。农夫不受限，想站几块站几块。
+                const livestockPool = farmLivestockPool(style, landCat);
                 const oxSpecies = farmOxSpecies(style, landCat);
-                const oxCell = orderedCells[0];
-                // 🔴 2026-10-31「都要显示，套用，多样化」：第二块不再写死猪，按生计／文化出家畜（猪/鸡/鹅/羊/山羊/驴之一）
-                const penSpecies = pickPenSpecies(owner.id, style, landCat, FARM_PEN_BY_CATEGORY, 907);
-                const penCell = orderedCells.length > 1 ? orderedCells[1] : undefined;
-                owner.pigCell = penSpecies === 'PIG' ? penCell : undefined;
+                const unusedLivestock = livestockPool.filter((sp) => !usedFarmLivestock.has(sp));
+                let livestockSpecies: string | undefined;
+                if (!usedFarmLivestock.has(oxSpecies)) {
+                    livestockSpecies = oxSpecies;                        // 第一套：保底有耕牛
+                } else if (unusedLivestock.length) {
+                    livestockSpecies = unusedLivestock[Math.floor(strHash01(owner.id, 907) * unusedLivestock.length) % unusedLivestock.length];
+                } else {
+                    // 该文化的畜种池用完了：这套田只种地、不再放牲畜 —— 宁可少一只，也不重复（人多几个无妨）
+                    livestockSpecies = undefined;
+                }
+                if (livestockSpecies) usedFarmLivestock.add(livestockSpecies);
+                const livestockCell = livestockSpecies ? orderedCells[0] : undefined;
+                owner.pigCell = livestockSpecies === 'PIG' ? livestockCell : undefined;
                 // 牲畜只在自家这块田里小范围来回（与草场牲畜同一套走动），不跑出地皮、不踩到人。
                 const pushFarmLivestock = (cell: number, species: string, idTag: string, bx = 0, by = 0): void => {
                     const ang = strHash01(owner.id, cell * 23 + 231) * Math.PI * 2;
@@ -1354,18 +1380,15 @@ export class CityLifeAmbientLayer {
                         desiredAction: 'walk',
                     });
                 };
-                // 🔴 2026-10-31「所有元素都要显示」：山谷／绿洲只能铺一块田时没有空余地块，
-                //   耕牛与畜圈改站到农夫身旁（农夫左右各一只），绝不缺席。
-                if (!oxCell && oxSpecies) pushFarmLivestock(PLOT_LEADER_CELL, oxSpecies, 'oxAside', 26, -6);
-                if (!penCell && penSpecies) pushFarmLivestock(PLOT_LEADER_CELL, penSpecies, 'penAside', -26, -2);
+                // 🔴 2026-10-31「每田一只」：只能铺一块田时没有空余地块，牲畜站到农夫身旁，绝不缺席。
+                // 🔴 地块下标 0 是 falsy，必须显式判 undefined，否则「第 0 块」会被误判成"没有空块"再多塞一只
+                if (livestockSpecies && livestockCell === undefined) {
+                    pushFarmLivestock(PLOT_LEADER_CELL, livestockSpecies, 'livestockAside', 26, -6);
+                }
                 for (const k of plotCells) {
                     if (k === PLOT_LEADER_CELL) continue;
-                    if (k === oxCell && oxSpecies) {
-                        pushFarmLivestock(k, oxSpecies, 'ox');
-                        continue;
-                    }
-                    if (k === penCell && penSpecies) {
-                        pushFarmLivestock(k, penSpecies, 'pen');
+                    if (livestockSpecies && k === livestockCell) {
+                        pushFarmLivestock(k, livestockSpecies, 'livestock');
                         continue;
                     }
                     const pos = this.plotCellPos(owner.homePos, k, 0, 0);
@@ -1655,6 +1678,19 @@ export class CityLifeAmbientLayer {
 
     private usesIdleWalkCycle(actor: CityLifeActor): boolean {
         return actor.dir === 'HORSE' || actor.dir === 'CAMEL' || actor.dir === 'DROMEDARY';
+    }
+
+    /**
+     * 🔴 2026-10-31 主人令「家畜尽量不要动，野生尽量多动」：民生层牲畜的活动节奏。
+     *   每 100 秒里只有 22 秒在挪动（其余 78 秒原地站着吃草／反刍），挪动幅度也只有正常行程的 35%，
+     *   看上去就是偶尔踱两步；猎人猎物同样按这套节奏（猎物站着不动，猎人才好射）。
+     */
+    private getAnimalPace(actor: CityLifeActor, tSec: number): { moving: boolean; scale: number } {
+        const cycleSec = 100;
+        const moveSec = 22;
+        const clock = Math.max(0, tSec) + (actor.phase % 100) * 0.7;
+        const local = clock % cycleSec;
+        return local < moveSec ? { moving: true, scale: 0.35 } : { moving: false, scale: 0 };
     }
 
     /** 每 12 秒停驻吃草 8 秒、真实走动 4 秒；cycle 只累计走动时间，停驻时不滑移。 */
@@ -2398,7 +2434,11 @@ export class CityLifeAmbientLayer {
         }
 
         for (const actor of list) {
-            const act = actor.displayedAction;
+            // 🔴 2026-10-31 主人令「家畜尽量不要动，野生尽量多动」：
+            //   民生层的牲畜（农田耕牛/畜圈家畜、牧场畜群、猎人猎物）改为「长时间站着吃草、偶尔挪几步」，
+            //   挪动幅度只有正常行程的 35%，且每 100 秒里只有 22 秒在挪；其余时间原地不动。
+            const animalPace = actor.isAnimal ? this.getAnimalPace(actor, tSec) : null;
+            const act = animalPace ? (animalPace.moving ? 'walk' : 'idle') : actor.displayedAction;
             const huntVisual = this.isHuntPrey(actor) ? this.getHuntVisual(actor, tSec) : null;
             const idleWalkMotion = this.usesIdleWalkCycle(actor) ? this.getIdleWalkMotion(actor, tSec) : null;
             const hunterBehavior = actor.dir === 'VIL_MALE_HUNTER' ? this.getHunterBehavior(actor, tSec) : null;
@@ -2413,7 +2453,9 @@ export class CityLifeAmbientLayer {
                     drawLng = actor.lastDrawPos.lng;
                 } else if (idleWalkMotion || (hunterBehavior && hunterBehavior.cycle !== null) || act === 'carry' || act === 'move' || act === 'walk') {
                     const speed = actor.isSeaFishing ? 0.10 : act === 'walk' ? 0.08 : 0.14;
-                    const cycle = idleWalkMotion?.cycle ?? hunterBehavior?.cycle ?? (tSec * speed + (actor.phase % 100) / 100) % 2;
+                    let cycle = idleWalkMotion?.cycle ?? hunterBehavior?.cycle ?? (tSec * speed + (actor.phase % 100) / 100) % 2;
+                    // 家畜：只有 pacing 时段才挪，且幅度压到 35%
+                    if (animalPace) cycle = animalPace.moving ? cycle * animalPace.scale : 0;
                     const u = cycle <= 1 ? cycle : 2 - cycle;
                     drawLat = actor.homePos.lat + (actor.gatePos.lat - actor.homePos.lat) * u;
                     drawLng = actor.homePos.lng + (actor.gatePos.lng - actor.homePos.lng) * u;

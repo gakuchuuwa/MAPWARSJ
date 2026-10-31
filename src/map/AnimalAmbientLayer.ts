@@ -54,16 +54,27 @@ interface AnimalEntry {
     fleeDX: number;      // 逃跑方向（单位向量，经纬度空间）
     fleeDY: number;
     seaTimer: number;    // 距下次判海的秒数（每 0.25 秒一次，省查询）
-    hibernating?: boolean; // 冬季蛰伏中（熊类；绘制端压低帧率）
 }
 
 /** 陆地动物的移动常量（zoom 9 下 0.00275°≈1px：走 ≈18px/s，逃 ≈60px/s） */
-const LAND_WALK_SPEED_DEG = 0.05;   // 度/秒
+const LAND_WALK_SPEED_DEG = 0.07;   // 度/秒（🔴 2026-10-31「野生尽量多动」：0.05→0.07）
 const LAND_FLEE_SPEED_DEG = 0.165;  // 度/秒
+/**
+ * 🔴 2026-10-31 优化：素材只有 idle 的物种（盘羊 ARGALI 缺 walk）不参与随机走动，避免"滑步"；
+ *   缺 run 的物种逃跑时用 walk 帧、速度降到 1.6 倍（否则 3.3 倍速的快走会明显打滑）。
+ */
+const NO_WALK_SPECIES: ReadonlySet<string> = new Set(['ARGALI']);
+const NO_RUN_SPECIES: ReadonlySet<string> = new Set([
+    'ALPACA', 'BUFFALO', 'CAMEL', 'CAPYBARA', 'CHICKEN', 'COW_BLACK', 'COW_BROWN', 'COW_BW', 'DONKEY',
+    'DROMEDARY', 'GOAT', 'GOOSE', 'HORSE', 'KOMODO', 'LLAMA', 'MONKEY', 'PEACOCK', 'PENGUIN', 'PIG',
+    'SEAL', 'SHEEP', 'SNAKE_GROUND', 'SNAKE_WATER', 'TURKEY', 'WALRUS', 'CAIMAN', 'CROCODILE',
+    // run 素材过大（象 37MB、水怪 82MB 解码）也按无 run 处理，控内存
+    'ELEPHANT', 'NESSIE',
+]);
 const LAND_FLEE_RADIUS_DEG = 0.18;  // 军团/玩家进入 ≈65px 就受惊
-const LAND_STEP_MIN_DEG = 0.055;    // 一次随机走动的最短距离 ≈20px
-const LAND_STEP_MAX_DEG = 0.19;     // 最长 ≈70px
-const LAND_LEASH_DEG = 0.42;        // 离出生格超过 ≈150px 就往回走
+const LAND_STEP_MIN_DEG = 0.07;     // 一次随机走动的最短距离 ≈25px（🔴 多动：0.055→0.07）
+const LAND_STEP_MAX_DEG = 0.24;     // 最长 ≈90px（原 0.19）
+const LAND_LEASH_DEG = 0.46;        // 离出生格超过 ≈170px 就往回走（步长变大，圈同步放宽）
 const LAND_SEA_CHECK_SEC = 0.25;
 
 /**
@@ -289,11 +300,21 @@ export function landDir8(dLat: number, dLng: number): number {
 export interface LandStepOptions {
     isSea: (p: Pt) => boolean;
     rand: () => number;
-    /** 🔴 2026-10-31「雪地动物要冬眠」：冬季蛰伏中 —— 不吃不走、外敌来了也不逃 */
-    hibernating?: boolean;
     /** 🔴 2026-10-31「动物不要出现在据点附近」：落在据点 0.30° 圈内视同障碍 */
     nearCity?: (p: Pt) => boolean;
+    /** 该物种素材是否有 walk（无 walk 的如盘羊：只原地张望，不做位移，避免滑步） */
+    canWalk?: boolean;
+    /** 该物种素材是否有 run（无 run：逃跑改用 walk 帧、速度 1.6 倍） */
+    canRun?: boolean;
+    /** 🔴 2026-10-31「动物碰到动物也要分头逃跑」：同屏其它动物的实时位置 */
+    neighbors?: readonly LandNeighbor[];
 }
+
+/** 同屏其它动物（用于"碰到动物分头逃跑"） */
+export interface LandNeighbor { id: string; lat: number; lng: number }
+
+/** 两只动物靠得比这更近（0.06°≈22px）就互相受惊、分头跑开 */
+const LAND_SCATTER_RADIUS_DEG = 0.06;
 
 /**
  * 陆地动物一步行为（2026-10-31 主人令「要不定期，随机朝不同的方向跑动；军团或者玩家过来的时候也要逃跑」）：
@@ -305,16 +326,13 @@ export interface LandStepOptions {
  */
 export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly LandThreat[], opts: LandStepOptions): void {
     const { isSea, rand } = opts;
+    const canWalk = opts.canWalk !== false;
+    // 有 run 素材：3.3 倍速真跑；只有 walk：1.6 倍速快走；连 walk 都没有（盘羊）：1.2 倍速缓慢挪开
+    const fleeSpeed = opts.canRun === false
+        ? (canWalk ? LAND_WALK_SPEED_DEG * 1.6 : LAND_WALK_SPEED_DEG * 1.2)
+        : LAND_FLEE_SPEED_DEG;
     // 水面与据点圈一律当作走不进去的障碍
     const blocked = (p: Pt): boolean => isSea(p) || (opts.nearCity ? opts.nearCity(p) : false);
-
-    // ⓪ 冬眠（熊类）：不决策、不移动、不逃跑，动作定在 idle；绘制端同时把帧率压到 3 帧/秒，像在伏着喘气
-    if (opts.hibernating) {
-        e.action = 'idle';
-        e.target = null;
-        e.fleeTimer = 0;
-        return;
-    }
 
     // ① 找最近的威胁
     let threat: LandThreat | null = null;
@@ -339,6 +357,35 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
         e.target = null;
     }
 
+    // ①-b 动物碰到动物：互相受惊、分头跑开（军团/玩家优先，已在上一步锁方向的这里不再改）
+    if (opts.neighbors && e.fleeTimer <= 0) {
+        let nb: LandNeighbor | null = null;
+        let nbDist = Infinity;
+        for (const n of opts.neighbors) {
+            if (n.id === e.id) continue;
+            const d = Math.hypot(n.lat - e.pos.lat, n.lng - e.pos.lng);
+            if (d < nbDist) { nbDist = d; nb = n; }
+        }
+        if (nb && nbDist < LAND_SCATTER_RADIUS_DEG) {
+            let dx = e.pos.lng - nb.lng;
+            let dy = e.pos.lat - nb.lat;
+            const len = Math.hypot(dx, dy);
+            if (len < 1e-6) {
+                const a = rand() * Math.PI * 2;
+                dx = Math.cos(a); dy = Math.sin(a);
+            } else {
+                dx /= len; dy /= len;
+            }
+            // 分头：先朝远离对方的方向，再按自身相位左/右偏一个角 —— 两只对撞时各自拐向两侧，不会顺着同一条线跑
+            const side = (Math.floor(e.phase) % 2 === 0 ? 1 : -1) * (0.6 + rand() * 0.45);
+            const ca = Math.cos(side), sa = Math.sin(side);
+            e.fleeDX = dx * ca - dy * sa;
+            e.fleeDY = dx * sa + dy * ca;
+            e.fleeTimer = 0.9 + rand() * 1.1;
+            e.target = null;
+        }
+    }
+
     // ② 动作与目标
     if (e.fleeTimer > 0) {
         e.action = 'run';
@@ -348,8 +395,9 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
         e.action = 'idle';
         e.timer -= dt;
         if (e.timer <= 0) {
-            e.timer = 1.6 + rand() * 3.2;
-            if (rand() < 0.78) {
+            // 🔴 2026-10-31「野生尽量多动」：决策间隔 1.6–4.8s → 0.6–2.0s，起走概率 0.78 → 0.92
+            e.timer = 0.6 + rand() * 1.4;
+            if (canWalk && rand() < 0.92) {
                 const ang = rand() * Math.PI * 2;
                 const step = LAND_STEP_MIN_DEG + rand() * (LAND_STEP_MAX_DEG - LAND_STEP_MIN_DEG);
                 let tx = e.pos.lng + Math.cos(ang) * step;
@@ -375,7 +423,7 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
     if (e.action === 'run' && e.fleeTimer > 0) {
         vx = e.fleeDX;
         vy = e.fleeDY;
-        speed = LAND_FLEE_SPEED_DEG;
+        speed = fleeSpeed;
     } else if (e.action === 'walk' && e.target) {
         const dx = e.target.lng - e.pos.lng;
         const dy = e.target.lat - e.pos.lat;
@@ -385,7 +433,7 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
             e.pos = { lat: e.target.lat, lng: e.target.lng };
             e.target = null;
             e.action = 'idle';
-            e.timer = 1.2 + rand() * 2.5;
+            e.timer = 0.4 + rand() * 1.0;   // 走到目标后只歇 0.4–1.4 秒又走（原来 1.2–3.7 秒）
             speed = 0;
         } else {
             vx = dx / len;
@@ -418,7 +466,7 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
         if (e.fleeTimer <= 0) {
             e.fleeTimer = 0;
             e.action = 'idle';
-            e.timer = 1.5 + rand() * 3;
+            e.timer = 0.5 + rand() * 1.2;   // 逃完马上接着活动
         }
     }
 }
@@ -619,7 +667,12 @@ export class AnimalAmbientLayer {
         }
     }
 
-    private static readonly ASSET_BUDGET_BYTES = 120 * 1024 * 1024;
+    /**
+     * 🔴 2026-10-31 优化：动物多了「走/跑」两套动作（一屏 12 只最坏要同时驻留 idle+walk+run ≈150MB 解码），
+     *   原 120MB 会边用边淘汰、导致走两步又重下的抖动；提到 256MB。
+     *   仍有上限：跨洲平移会淘汰久未用的物种，重下只是一次 HTTP。
+     */
+    private static readonly ASSET_BUDGET_BYTES = 256 * 1024 * 1024;
 
     /** PerfDoctor 体检口子（private 在类外读不到） */
     public debugAssetCount(): number { return this.assets.size; }
@@ -644,20 +697,25 @@ export class AnimalAmbientLayer {
                     if (lh < LAND_DENSITY) {
                         const clat = (row + 0.5) * CELL_DEG;
                         const clng = (col + 0.5) * CELL_DEG;
-                        const offLat = (hash01(col, row, 3) - 0.5) * CELL_DEG * 0.8;
-                        const offLng = (hash01(col, row, 4) - 0.5) * CELL_DEG * 0.8;
+                        const { land } = realmAt(clat, clng);
+                        const dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
+                        // 🔴 2026-10-31 主人令「冬眠动物到期不显示，来年随机换个位置渐显，一年一次」：
+                        //   熊类的落点按「年」取哈希 —— 每年春天都在**新位置**从透明渐显；冬季则整只渐隐退场。
+                        const yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
+                        const offLat = (hash01(col, row, 3 + yearSalt) - 0.5) * CELL_DEG * 0.8;
+                        const offLng = (hash01(col, row, 4 + yearSalt) - 0.5) * CELL_DEG * 0.8;
                         const pos = { lat: clat + offLat, lng: clng + offLng };
                         // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
                         // 🔴 2026-10-31 主人令「动物不要出现在据点附近」：据点 0.30° 圈内不生成
-                        if (!this.isSea(pos) && !this.isNearCity(pos)) {
+                        // 🔴 冬眠物种在冬季连"活跃"都不算：不进 activeIds，场上那只就会自动渐隐消失
+                        const winterSleep = isHibernating(dir, pos.lat, this.getSeason());
+                        if (!this.isSea(pos) && !this.isNearCity(pos) && !winterSleep) {
                             activeIds.add(id);
                             // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
                             let entry = this.entries.find((e) => e.id === id);
                             if (!entry) {
-                                const { land } = realmAt(clat, clng);
-                                const dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
-                                const facing = Math.floor(hash01(col, row, 6) * 8) % 8;
-                                const phase = Math.floor(hash01(col, row, 7) * 1000);
+                                const facing = Math.floor(hash01(col, row, 6 + yearSalt) * 8) % 8;
+                                const phase = Math.floor(hash01(col, row, 7 + yearSalt) * 1000);
                                 this.loadAsset(dir, 'idle', false);
                                 // 起始相位错开：不让整屏动物同时起步（决策计时器 0~3 秒随机）
                                 const seed = hash01(col, row, 9);
@@ -684,6 +742,8 @@ export class AnimalAmbientLayer {
         //    30 只以内动物共用这一份，不必逐只查军团。
         const threats = this.collectThreats();
         const season = this.getSeason();
+        // 🔴 2026-10-31「动物碰到动物也要分头逃跑」：本帧同屏动物的位置快照，供逐只判定碰头
+        const neighbors: LandNeighbor[] = this.entries.map((e) => ({ id: e.id, lat: e.pos.lat, lng: e.pos.lng }));
         for (let i = this.entries.length - 1; i >= 0; i--) {
             const e = this.entries[i];
             if (activeIds.has(e.id)) {
@@ -697,13 +757,13 @@ export class AnimalAmbientLayer {
                 // 处于可见区：渐显 + 走动/逃跑行为
                 e.fadingOut = false;
                 e.alpha = Math.min(1, e.alpha + dt / FADE_DUR);
-                // 🔴 2026-10-31「雪地动物要冬眠」：冬季（season 3）且纬度高时，熊类原地蛰伏
-                e.hibernating = isHibernating(e.dir, e.pos.lat, season);
                 stepLandEntry(e, dt, threats, {
                     isSea: (p) => this.isSea(p),
                     rand: Math.random,
-                    hibernating: e.hibernating,
                     nearCity: (p) => this.isNearCity(p),
+                    canWalk: !NO_WALK_SPECIES.has(e.dir),
+                    canRun: !NO_RUN_SPECIES.has(e.dir),
+                    neighbors,
                 });
                 if (e.action !== 'idle') this.loadAsset(e.dir, e.action, false);   // walk/run 懒加载（素材无 run 时自动回落 walk）
             } else {
@@ -748,6 +808,12 @@ export class AnimalAmbientLayer {
     private getSeason(): number {
         const s = (window as any).game?.timeSystem?.getSeason?.();
         return typeof s === 'number' && s >= 0 && s <= 3 ? s : 0;
+    }
+
+    /** 年号（冬眠动物"来年换个位置"按它取随机种子） */
+    private getYear(): number {
+        const y = (window as any).game?.timeSystem?.getYear?.();
+        return typeof y === 'number' && Number.isFinite(y) ? y : 0;
     }
 
     // ── 据点圈避让（2026-10-31 主人令「动物不要出现在据点附近」）────────────────
@@ -951,9 +1017,7 @@ export class AnimalAmbientLayer {
             const sheet = asset.sheets[e.facing];
             if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
 
-            // 冬眠中把动作帧率压到 3 帧/秒，看起来只是伏着缓慢喘气，不是站在那儿机械踏步
-            const fps = e.hibernating ? 3 : 14;
-            const frame = Math.floor((this.nowMs / 1000) * fps + e.phase) % asset.frames;
+            const frame = Math.floor((this.nowMs / 1000) * 14 + e.phase) % asset.frames;
             const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
             const dx = pt.x - hx * scale;
             const dy = pt.y - hy * scale;
@@ -1012,7 +1076,7 @@ export function initializeAnimalAmbientLayer(gameMap: GameMap): AnimalAmbientLay
             entries: () => singleton!.debugAssetCount(),
             bytes: () => singleton!.debugAssetBytes(),
             limitKind: 'bytes',
-            limitValue: 120 * 1024 * 1024,
+            limitValue: 256 * 1024 * 1024,
         });
     }
     singleton.setVisible(visible);

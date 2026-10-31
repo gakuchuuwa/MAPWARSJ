@@ -483,9 +483,15 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.palaearctic_asia_temperate;
     }
 
-    // 9. 热带稀树草原（印度 savanna → 东南亚；其余 → 塞伦盖蒂）
+    // 9. 热带稀树草原（印度 savanna → 东南亚；美洲 → 新热带；北非 / 阿拉伯的半干旱 → 西亚；只有撒哈拉以南 → 塞伦盖蒂）
+    // 🔴 2026-10-31 实测修正：柯本 Aw/BSh 一律落塞伦盖蒂，马拉喀什、的黎波里、班加西、亚丁与科潘都铺成了东非草原。
     if (biome === 'savanna') {
         if (lng >= 55 && lat < 30) return DE_MAP_THEMES.indomalayan_tropical;
+        if (lng < -30) return DE_MAP_THEMES.neotropical_tropical;
+        if (lat >= 12 && lat <= 30 && lng >= 38 && lng <= 60 && !(lat < 16 && lng < 43)) {
+            return DE_MAP_THEMES.palaearctic_middle_east_desert;   // 阿拉伯半岛（与下方 12b 同一框）
+        }
+        if (lat >= 25) return DE_MAP_THEMES.palaearctic_middle_east_highland;   // 马格里布—利比亚—埃及半干旱草原
         return DE_MAP_THEMES.serengeti;
     }
     // 10. 沙漠 / 地中海（先排除——绿洲/地中海不沼泽）/ 温带半干旱草原 / 低洼湿地（DE Swamp biome） / 寒带

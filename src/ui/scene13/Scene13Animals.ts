@@ -117,7 +117,8 @@ export const ANIMAL_RANGE: Record<string, ReadonlyArray<readonly [number, number
     const SASIA: [number, number, number, number] = [5, 42, 25, 100];        // 西亚—南亚
     const AMER: [number, number, number, number] = [-56, 40, -120, -30];      // 中南美
     const LION: [number, number, number, number][] = [AFR, SASIA, [36, 45, 19, 30]];   // 非洲、西亚南亚、古希腊巴尔干
-    const TIGER: [number, number, number, number][] = [[-8, 55, 45, 129.5], [41, 55, 129.5, 137]];
+    // 第二框南界 41→38：补上朝鲜东北海岸（东经 129.5° 以东、北纬 38–41°）的空隙，东北虎原生地。
+    const TIGER: [number, number, number, number][] = [[-8, 55, 45, 129.5], [38, 55, 129.5, 137]];
     const OLD_DRY: [number, number, number, number][] = [AFR, [10, 50, 25, 110]];
     return {
         LION, TIGER,
@@ -137,8 +138,15 @@ export const ANIMAL_RANGE: Record<string, ReadonlyArray<readonly [number, number
 
 export function animalNativeAt(species: string, lat: number | undefined, lng: number | undefined, baseTerrain?: string): boolean {
     if (lat !== undefined && lng !== undefined) {
-        // 日本四至矩形（冲绳至北海道）：自然界绝无野生老虎、狮子
-        const isJapan = lat >= 24 && lat <= 46 && lng >= 122.5 && lng <= 146;
+        // 日本列岛（冲绳至北海道）：自然界绝无野生老虎、狮子。
+        // 🔴 2026-10-31 实测修正：原四至矩形 lat 24–46 / lng 122.5–146 把朝鲜半岛、辽东、山东东端一起框进去，
+        //    汉城、平壤、国内城等地的东北虎全被剔除。改为只框列岛本身：本州—九州—四国—北海道、琉球、对马、五岛。
+        //    本州框北界 41.6°、北海道框西界 139.3°：都不碰滨海边疆区（海参崴一带是东北虎原生地）。
+        const isJapan = (lat >= 30.5 && lat <= 41.6 && lng >= 129.7 && lng <= 142.1)
+            || (lat > 41.3 && lat <= 46 && lng >= 139.3 && lng <= 146)
+            || (lat >= 24 && lat < 30.5 && lng >= 122.5 && lng <= 131.5)
+            || (lat >= 34.0 && lat <= 34.75 && lng >= 129.1 && lng <= 129.55)
+            || (lat >= 32.5 && lat <= 33.4 && lng >= 128.5 && lng <= 129.2);
         if (isJapan && (species === 'TIGER' || species === 'LION')) return false;
     }
     if (baseTerrain) {
