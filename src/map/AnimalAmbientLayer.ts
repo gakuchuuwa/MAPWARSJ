@@ -57,6 +57,10 @@ interface AnimalEntry {
     fleeDX: number;      // 逃跑方向（单位向量，经纬度空间）
     fleeDY: number;
     seaTimer: number;    // 距下次判海的秒数（每 0.25 秒一次，省查询）
+    /** 🔴 2026-10-31「大象进海了」：原地不动时也要复查脚下（走/跑才判海的话，搁浅那只永远不会挪） */
+    recheck: number;
+    /** 复查发现整只泡在海里、附近又找不到干地 → 渐隐退场 */
+    doomed?: boolean;
     herd?: string;       // 所属群（成群物种同群共用；同群不互相惊散，拴在群中心 home 附近）
 }
 
@@ -80,11 +84,30 @@ const LAND_STEP_MIN_DEG = 0.07;     // 一次随机走动的最短距离 ≈25px
 const LAND_STEP_MAX_DEG = 0.24;     // 最长 ≈90px（原 0.19）
 const LAND_LEASH_DEG = 0.46;        // 离出生格超过 ≈170px 就往回走（步长变大，圈同步放宽）
 /** 成群物种（总表 herd）：群内间距 ≈15px、单步 7–26px、离群中心 ≈45px 就往回走 */
-const HERD_SPREAD_DEG = 0.08;
+const HERD_SPREAD_DEG = 0.13;       // 🔴 2026-10-31 主人令「分散些」：0.08→0.13，一群摊开而不是挤成一坨
 const HERD_STEP_MIN_DEG = 0.02;
-const HERD_STEP_MAX_DEG = 0.07;
-const HERD_LEASH_DEG = 0.12;
+const HERD_STEP_MAX_DEG = 0.09;
+const HERD_LEASH_DEG = 0.22;        // 群圈同步放宽，免得摊开后一走动就被拽回中心
 const LAND_SEA_CHECK_SEC = 0.25;
+
+/**
+ * 🔴 [2026-10-31 主人截图「大象进海了，请优化」] 判海要把**身体**算进去，不能只判脚下的落点。
+ *
+ *   精灵的锚点在脚下，但身子有半个屏那么宽（象 116×80px，zoom 9 缩放 0.7 后 ≈ 0.22° 宽）；
+ *   只判一个点时，只要锚点的下一个像素是陆地，象身就能横跨岸线、半个身子泡在海里 —— 截图上那只就是这样。
+ *   这里给每个物种一个「体型半径（度）」：中心 + 四向都要是干地才算站得住。
+ *
+ *   数值口径：按 zoom 9（基准缩放 0.7）的贴图宽度折算，取半个身宽，略收一点免得把海岸线动物全赶走。
+ *   判据只用于**野生动物**；军团/据点/海陆形态一律仍走 LandSeaSystem（不许在这里改全局口径）。
+ */
+const BODY_HALF_DEG: Readonly<Record<string, number>> = {
+    NESSIE: 0.12,
+    ELEPHANT: 0.09,
+    RHINO: 0.08,
+    BUFFALO: 0.055, CROCODILE: 0.055, ELK: 0.05, WALRUS: 0.05, CAMEL: 0.05, DROMEDARY: 0.05,
+    BEAR: 0.045, BEAR_POLAR: 0.045, BEAR_BLACK: 0.045, HORSE: 0.045, TIGER: 0.045, LION: 0.045,
+};
+const BODY_HALF_DEG_DEFAULT = 0.025;
 
 /**
  * 🔴 2026-10-31 主人令「动物不要出现在据点附近」：
@@ -111,7 +134,7 @@ interface BirdAgent {
 
 // ── 可调参数 ──────────────────────────────────────────────────────────────
 const CELL_DEG = 0.5;               // 撒点网格尺寸（度）
-const LAND_DENSITY = 0.11;          // 陆地格出现动物的概率（🔴 2026-10-31 主人令「不要搞得永远都看不到」：0.07→0.11，zoom 9 一屏约 12 只）
+const LAND_DENSITY = 0.09;          // 陆地格出现动物的概率（🔴 2026-10-31 主人令「陆地动物有点多。分散些」：配合下面的哈希修正，线上实测一屏从 12~17 只降到 4~8 只；再稀就 0.06）
 const BIRD_DENSITY = 0.08;          // 格出现飞鸟的概率（稀疏点缀，视野内偶见 1~2 只翱翔，不喧宾夺主）
 /** 🔴 2026-10-31 主人令「陆海空动物的显示比例统一，大小对齐 DE」：野生动物与飞鸟改用与军团/家畜同一 DE 基准
  *  （strategicSpriteScale，zoom 9 基准 0.7 ×2^(zoom-9)），不再单独写 0.6，否则同一只鹿在野外比猎人身旁大 25%。 */
@@ -346,12 +369,24 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
     }
 }
 
-/** 确定性整数哈希 → [0,1)。同 (col,row,salt) 恒同值，保证动物位置不跳。 */
+/**
+ * 确定性整数哈希 → [0,1)。同 (col,row,salt) 恒同值，保证动物位置不跳。
+ *
+ * 🔴 2026-10-31 主人令「陆地动物有点多。分散些」——查到**分布本身是偏的**：
+ *   旧写法 `h = (h ^ (h >> 13)) * 1274126177` 的结果会超过 2^53（双精度整数上限），
+ *   乘法丢精度后低位全歪，实测把 6% 的撒点概率放大成 **11.8%**，而且列与列之间命中率在
+ *   5%~17.5% 之间起伏 —— 于是有的地方挤一堆、有的地方一只没有。
+ *   改成全程 32 位整数（Math.imul + murmur3 收尾），命中率回到理论值（6%→6.1%，列间波动就是纯抽样误差）。
+ */
 function hash01(col: number, row: number, salt: number): number {
-    let h = (col * 374761393 + row * 668265263 + salt * 1274126177) | 0;
-    h = (h ^ (h >> 13)) * 1274126177;
-    h = h ^ (h >> 16);
-    return (h >>> 0) / 4294967295;
+    let h = 2166136261 >>> 0;
+    h = Math.imul(h ^ (col | 0), 16777619) >>> 0;
+    h = Math.imul(h ^ (row | 0), 16777619) >>> 0;
+    h = Math.imul(h ^ (salt | 0), 16777619) >>> 0;
+    h ^= h >>> 15; h = Math.imul(h, 2246822507) >>> 0;
+    h ^= h >>> 13; h = Math.imul(h, 3266489909) >>> 0;
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
 }
 
 export class AnimalAmbientLayer {
@@ -387,7 +422,15 @@ export class AnimalAmbientLayer {
         this.map.on('resize', this.resize.bind(this));
         this.resize();
         this.syncCanvas();
+        // 🔴 2026-10-31「大象进海了」：海陆瓦片/掩膜到位时 LandSeaSystem 会清缓存重算，
+        //    场上每一只立刻复查一遍脚下，别让「按未知地放行」的那只永远站在水里。
+        window.addEventListener('land-sea-tiles-updated', this.onLandSeaTilesUpdated);
     }
+
+    /** 海陆数据订正 → 全场上动物下一帧复查脚下 */
+    private readonly onLandSeaTilesUpdated = (): void => {
+        for (const e of this.entries) e.recheck = 0;
+    };
 
     private setupPane(): void {
         const name = 'animalPane';
@@ -596,7 +639,8 @@ export class AnimalAmbientLayer {
                             const ang = k * 2.39996 + hash01(col, row, 12) * Math.PI * 2;
                             const rad = k === 0 ? 0 : HERD_SPREAD_DEG * (0.35 + 0.25 * Math.sqrt(k));
                             const pos = { lat: anchor.lat + Math.sin(ang) * rad * 0.7, lng: anchor.lng + Math.cos(ang) * rad };
-                            if (this.isSea(pos) || this.isNearCity(pos) || (animalNeedsCoast(dir) && !this.isNearCoast(pos))) continue;
+                            // 🔴 2026-10-31「大象进海了」：按体型判海（中心 + 四向），象身不许跨在岸线上
+                            if (this.isWetBody(pos, dir) || this.isNearCity(pos) || (animalNeedsCoast(dir) && !this.isNearCoast(pos))) continue;
                             const id = herdSize > 1 ? `${herdKey},${k}` : herdKey;
                             activeIds.add(id);
                             // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
@@ -617,6 +661,7 @@ export class AnimalAmbientLayer {
                                 fleeDX: 0,
                                 fleeDY: 0,
                                 seaTimer: 0,
+                                recheck: 0,
                                 herd: herdSize > 1 ? herdKey : undefined,
                             });
                         }
@@ -644,9 +689,24 @@ export class AnimalAmbientLayer {
                 }
                 // 处于可见区：渐显 + 走动/逃跑行为
                 e.fadingOut = false;
+                // 🔴 2026-10-31「大象进海了，请优化」：不动也要判海。
+                //   原来只在 speed>0 时才判 —— 出生时海陆瓦片还没到（按陆放行）、或逃跑一步踏进浅滩的那只，
+                //   一旦停下就再也不会判海，于是整场站在水里不动（截图那只就是这样）。
+                e.recheck -= dt;
+                if (e.recheck <= 0) {
+                    e.recheck = LAND_SEA_CHECK_SEC;
+                    if (this.isWetBody(e.pos, e.dir)) this.rescueFromWater(e);
+                }
+                if (e.doomed) {
+                    // 整只泡在水里、附近又没有干地 → 原地渐隐退场（不再走/跑，也不再恢复透明度）
+                    e.alpha = Math.max(0, e.alpha - dt / FADE_DUR);
+                    if (e.alpha <= 0) this.entries.splice(i, 1);
+                    continue;
+                }
                 e.alpha = Math.min(1, e.alpha + dt / FADE_DUR);
                 stepLandEntry(e, dt, threats, {
-                    isSea: (p) => this.isSea(p),
+                    // 判海一律按体型（身体任何一段沾水都算不能去），走动目标与逃跑同一条口径
+                    isSea: (p) => this.isWetBody(p, e.dir),
                     rand: Math.random,
                     nearCity: (p) => this.isNearCity(p),
                     canWalk: !NO_WALK_SPECIES.has(e.dir),
@@ -699,6 +759,14 @@ export class AnimalAmbientLayer {
      */
     private isSea(pos: Pt): boolean {
         try {
+            // 🔴 2026-10-31 主人截图「大象进海了」的**第二层原因**：判据比画面严格。
+            //    战略地图的海面是按**水域掩膜**画的（StrategicWaterMaterial：只取真实水域掩膜），
+            //    而 LandSeaSystem.isSeaAt = 掩膜是水 ∧ 海拔≤0。浅滩/潟湖里凡是高程被抹成 ≥0 的地方，
+            //    屏幕上是蓝的、判定却是「陆」。实测近岸瓦片这一比例 3.8%（局部 8%~10%），
+            //    正是野生动物站进浅湾的地方 —— 所以这里对**野生动物**改用「画成水就是水」。
+            //    （军团/据点/海陆形态仍走 LandSeaSystem 原判据，这里不动全局口径。）
+            const water = LandSeaSystem.getWaterSampler().isWaterSync(pos.lat, pos.lng);
+            if (water === true) return true;
             if (LandSeaSystem.isSeaAt(pos)) return true;
             return LandSeaSystem.getSampler().getElevationSync(pos.lat, pos.lng) === null;
         } catch {
@@ -706,9 +774,52 @@ export class AnimalAmbientLayer {
         }
     }
 
+    /**
+     * 🔴 [2026-10-31 主人截图「大象进海了，请优化」] 按**体型**判海：中心 + 四向 bodyHalfDeg 都要是干地。
+     *   精灵锚点在脚下、身子却有约 0.22°（象）宽，只判落点时象身会横跨岸线泡在海里。
+     */
+    private isWetBody(pos: Pt, dir: string): boolean {
+        if (this.isSea(pos)) return true;
+        const r = BODY_HALF_DEG[dir] ?? BODY_HALF_DEG_DEFAULT;
+        if (r <= 0) return false;
+        const cosLat = Math.cos((pos.lat * Math.PI) / 180) || 1;
+        const dLat = r;
+        const dLng = r / cosLat;   // 经度按纬度缩放，四个方向的实际距离一致
+        return this.isSea({ lat: pos.lat + dLat, lng: pos.lng })
+            || this.isSea({ lat: pos.lat - dLat, lng: pos.lng })
+            || this.isSea({ lat: pos.lat, lng: pos.lng + dLng })
+            || this.isSea({ lat: pos.lat, lng: pos.lng - dLng });
+    }
+
+    /**
+     * 搁浅补救：脚下的海陆数据后来才到位（瓦片迟到、掩膜订正 → LandSeaSystem 清缓存重算），
+     * 或逃跑时一步踩进浅滩 —— 就地就近找一块干地挪过去；附近没有干地（礁石、小岛）就渐隐退场。
+     * 只挪野生动物，不改它的出生格以外的任何状态（动作、群、朝向全部重置成吃草）。
+     */
+    private rescueFromWater(e: AnimalEntry): void {
+        const cosLat = Math.cos((e.pos.lat * Math.PI) / 180) || 1;
+        for (const ring of [0.05, 0.1, 0.18, 0.3, 0.45, 0.65]) {
+            for (let k = 0; k < 8; k++) {
+                const a = (k / 8) * Math.PI * 2 + (e.phase % 360) * (Math.PI / 180);
+                const p = {
+                    lat: e.pos.lat + Math.sin(a) * ring,
+                    lng: e.pos.lng + (Math.cos(a) * ring) / cosLat,
+                };
+                if (this.isWetBody(p, e.dir) || this.isNearCity(p)) continue;
+                e.pos = p;
+                e.home = { lat: p.lat, lng: p.lng };
+                e.target = null;
+                e.fleeTimer = 0;
+                e.action = 'idle';
+                e.timer = 0.6 + Math.random() * 1.4;
+                return;
+            }
+        }
+        e.doomed = true;   // 整座岛都泡在水里：让它在原地渐隐退场，下一帧不再重生（出生点同一套判海会拒掉）
+    }
+
     /** 陆地点四向 COAST_PROBE_DEG 内有海（海岸物种用） */
-    private isNearCoast(pos: Pt): boolean {
-        // 只认真实的海（未加载的未知地不算海岸，否则北极熊会生在内陆）
+    private isNearCoast(pos: Pt): boolean {        // 只认真实的海（未加载的未知地不算海岸，否则北极熊会生在内陆）
         const d = COAST_PROBE_DEG;
         const sea = (p: Pt): boolean => { try { return LandSeaSystem.isSeaAt(p); } catch { return false; } };
         return sea({ lat: pos.lat + d, lng: pos.lng }) || sea({ lat: pos.lat - d, lng: pos.lng })

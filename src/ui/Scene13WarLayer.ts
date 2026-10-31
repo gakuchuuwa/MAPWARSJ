@@ -8196,9 +8196,9 @@ export class Scene13WarLayer {
                         const bl = Math.hypot(bx, by) || 1;
                         mvx = bx / bl; mvy = by / bl;
                     }
-                    const chaseSpd = m.hero && m.lane >= 0 && this.spawns[m.lane]
-                        ? this.statsFor(this.spawns[m.lane].key, m.f, false).spd
-                        : stats.spd;
+                    // 🔴 [2026-10-31 主人令「战术模式中，玩家移动速度特别慢，请修复」]
+                    //    追击同理：玩家用自己的兵模移速（原按所在出兵口兵种移速，被绑到慢兵那一口就整场追不上人）。
+                    const chaseSpd = stats.spd;
                     const step = chaseSpd * spdK * this.uphillSpeedK(m.x, m.y, mvx, mvy) * (avoiding ? SLIDE_RATE : 1) * dt;
                     const mv = Math.min(step, fd);   // 限制单步不超过剩余距离 fd，彻底杜绝跨过航点后每帧 180° 往返闪动
                     m.x += mvx * mv;
@@ -8557,13 +8557,16 @@ export class Scene13WarLayer {
                 // 🔴 [2026-10-27 主人令「玩家走士兵同一套逻辑」] 原 heroTrackMoving（10-25 玩家跟本方重心时的连续跟随口径）已删：
                 //    玩家不再单独跟重心走，归队时走 laneSlotTarget 的 slot，与士兵同走 trackSlot。
                 const trackSlot = !!slot || m.march || isGuard;
-                const normalSpd = m.hero && m.lane >= 0 && this.spawns[m.lane]
-                    ? this.statsFor(this.spawns[m.lane].key, m.f, false).spd
-                    : stats.spd;
-                // 脱战整队推进：普通队员与自动玩家都不得超过本队最慢兵种；地形、坡度等原有修正照常保留。
+                // 🔴 [2026-10-31 主人令「战术模式中，玩家移动速度特别慢，请修复」]
+                //    玩家本人的移速一律按**他自己这一身兵模的移速 × HERO_SPEED_MULT** 算。原来有两处把他按
+                //    「所在出兵口的兵种移速」算（他自选的兵模不在军团编制里时会被绑到中军那一口，整场都跟着
+                //    那一口的重步/象兵 24~38 走），列阵推进时还把身上的倍率除回去 ⇒ 玩家恒定和全场最慢的兵一个速度。
+                //    归队照旧走 trackSlot 的 min(step, d)：槽位本身随队推进，所以跑快了只是尽快补到位，不会脱队乱跑。
+                const normalSpd = stats.spd;
+                // 脱战整队推进：普通队员不得超过本队最慢兵种；地形、坡度等原有修正照常保留。
                 const formationSpd = laneStandby ? laneFormationSpeeds.get(m.lane) : undefined;
-                const moveSpdK = formationSpd !== undefined && m.hero ? spdK / HERO_SPEED_MULT : spdK;
-                const step = (m.march ? normalSpd : (formationSpd ?? normalSpd) * moveSpdK * this.uphillSpeedK(m.x, m.y, dx, dy)) * dt;
+                const walkSpd = m.hero ? normalSpd : (formationSpd ?? normalSpd);
+                const step = (m.march ? normalSpd : walkSpd * spdK * this.uphillSpeedK(m.x, m.y, dx, dy)) * dt;
                 const arriveAt = trackSlot ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
                 if (stats.spd > 0 && d > arriveAt) {
                     const mv = trackSlot ? Math.min(step, d) : step;   // 跟随锚点/列阵推进/原位警戒归位：连续跟随，不迈整步

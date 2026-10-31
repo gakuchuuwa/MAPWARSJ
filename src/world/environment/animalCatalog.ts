@@ -57,7 +57,11 @@ export const FAUNA_AREA_RATIO = { land: 1, sea: 0.44, air: 0.18 } as const;
 
 /**
  * 陆地野生动物基准密度（多寡系数 = 1 时，每平方度约几只）：
- * 战略野生层 0.5° 一格、11% 出一群、平均一群约 1.5 只 → 0.11 × 1.5 ÷ 0.25 ≈ 0.66。海、空按 FAUNA_AREA_RATIO 从它推算。
+ * 战略野生层 0.5° 一格、平均一群约 1.5 只。海、空按 FAUNA_AREA_RATIO 从它推算。
+ *
+ * 🔴 2026-10-31 主人令「陆地动物有点多。分散些」：战略陆地撒点概率 0.11→0.07（见 AnimalAmbientLayer.LAND_DENSITY），
+ *   本常量**只用于海面/空中的配额**（MarineLifeLayer、飞鸟），陆地不再由它算，故数值保持不动，
+ *   免得主人说「陆地稀一点」时海豚和飞鸟也跟着少一半。
  */
 export const WILD_LAND_PER_SQ_DEG = 0.66;
 

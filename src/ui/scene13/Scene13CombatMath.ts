@@ -12,7 +12,11 @@ export const COLLAPSE_ANIM_DUR = 8.33;
 export const HERO_ATTACK_RATE = 1.0;
 export const HERO_HP_MULT = 1.0;
 export const HERO_DAMAGE_TAKEN = 1.0;
-export const HERO_SPEED_MULT = 1.0;
+// 🔴 [2026-10-31 主人令「战术模式中，玩家移动速度特别慢，请修复」]
+//    只把玩家本人的**移速**倍率加回来（1.0 → 1.8，即 10-27 之前玩家一直用的那个值）：
+//    攻速、血量、免伤、出手伤害全部仍是 1.0，不动 10-27「跟最厉害的英雄差不多就行」那次的平衡结论。
+//    玩家移速 = 他自己当前兵模的移速 × 本倍率（不再按所在出兵口兵种移速算，见 Scene13WarLayer.step）。
+export const HERO_SPEED_MULT = 1.8;
 export const HERO_DAMAGE_MULT = 1.0;
 
 /**
