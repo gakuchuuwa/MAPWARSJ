@@ -18,6 +18,7 @@ import {
 import { pickTree, type TreeSeason } from './TreeAssignment';
 import { DE_MAP_THEMES, type DeMapThemeId } from './Scene13DeMapThemes';
 import { deTerrainSeasonalTree, seasonalDeTree } from './Scene13DeTrees';
+import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { CITIES_V2 } from '../../data/cities_v2';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../../data/CityWonders';
@@ -582,7 +583,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 //    DE 地形登记的树 > DE 主题主树 > 兜底（沙漠图给棕榈/枯木，不给松树）
                 const peakTree = deTerrainSeasonalTree(terrainAtCell(peakSpot.gx, peakSpot.gy), calSeason, isSnow)
                     ?? (themeLeadTree.length > 0 ? seasonalDeTree(themeLeadTree[0], calSeason, isSnow) : null);
-                const lonePine = peakTree ?? (isSnow ? 'SNOW_PINE' : (isArid ? 'DEAD_TREE' : 'ASIAN_PINE'));
+                // 🔴 2026-10-31 植物总表：不合本区的换成本区树种，与战略图同一组
+                const lonePine = seasonalDeTree(plantRegionalizeTree(siteLat, siteLng,
+                    peakTree ?? (isSnow ? 'SNOW_PINE' : (isArid ? 'DEAD_TREE' : 'ASIAN_PINE')), mRnd()), calSeason, isSnow);
                 pushSafeDecor(lonePine, peakSpot.x + 32, peakSpot.y - 16, 0.82, 0, mRnd() < 0.5);
             }
         }
@@ -783,7 +786,8 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
             ? rawCalSeason
             : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
-        const courtyardTreeAsset = (themeLeadTree.length > 0 ? seasonalDeTree(themeLeadTree[0], calSeason, isSnow) : null)
+        // 🔴 2026-10-31 植物总表：庭院树同样先合本区（不合的换成本区树种），再按季节换装
+        const courtyardTreeAsset = seasonalDeTree(plantRegionalizeTree(siteLat, siteLng, (themeLeadTree.length > 0 ? seasonalDeTree(themeLeadTree[0], calSeason, isSnow) : null)
             ?? deTerrainSeasonalTree(terrainAtCell(cGx, cGy), calSeason, isSnow)
             ?? (isAridSite ? 'PALM' : pickTree({
                 baseTile: siteBaseTile,
@@ -792,7 +796,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 season: calSeason,
                 isSiege: true,
                 buildingStyle: interiorBldStyle,
-            }));
+            })), mRnd()), calSeason, isSnow);
         const treeCandidateSlots: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
             ? [[-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5], [-1.8, -4.8], [1.8, 4.8], [-4.8, 1.8], [4.8, -1.8]]
             : this.defenderCityType === 'medium_city'

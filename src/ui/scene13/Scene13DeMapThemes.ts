@@ -1,5 +1,6 @@
 import type { Biome, ElevationBand } from '../Scene13Biome';
 import { queryWinterSnow } from './WorldBaseMap';
+import { envZoneAt, type EnvZone } from '../../world/environment/envZones';
 
 export type DeMapThemeId =
     | 'afrotropical_tropical'
@@ -410,8 +411,7 @@ export function resolveDeMapTheme(
     elev: number | null = null,
     waterKind: 'sea' | 'lake' | 'river' | 'none' | undefined = undefined,
 ): DeMapThemePalette {
-    // 🔴 [2026-08-21 完善·气候纯按坐标] 分流完全由「经纬度坐标带 + 柯本 biome + 海拔」决定，
-    //    **不接收 region 文化区参数**——气候是自然边界，文化区是政治边界，二者解耦（主人定）。
+    // 不接收文化区参数——气候是自然边界，文化区是政治边界，二者解耦（主人定）。
 
     // 0a. 干涸盐湖（罗布泊/咸海/卡维尔/卢特/杰里德/乌尤尼/大盐湖）：先于普通荒漠分流
     if ((biome === 'desert' || biome === 'cold_steppe') && inGeoBoxes(lat, lng, SALT_FLAT_BOXES)) {
@@ -422,115 +422,44 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.palustrine_swamp;
     }
 
-    // 0. 澳洲大陆（lat < -10 才落澳洲；印尼爪哇/新几内亚是热带雨林，不能被澳洲主题劫持）
-    if (lat < -10 && lng >= 100) return DE_MAP_THEMES.australasian_temperate;
+    // 🔴 2026-10-31 主人令「植被符合区域，战略和战术保持一致」：除盐湖、沼泽两个按地形的特例外，
+    //    主题一律由环境区（src/world/environment/envZones.ts）决定，原来十几条经纬度框分流整段删除。
+    // 1. 湖边低地 → 沼泽
+    if (waterKind === 'lake' && elev !== null && elev < 200) return DE_MAP_THEMES.palustrine_swamp;
+    const zone = envZoneAt(lat, lng);
+    // 2. 荒漠气候：亚洲内陆用戈壁荒漠，其余（两河、阿拉伯、北非、秘鲁海岸…）用中东沙漠
+    if (biome === 'desert') {
+        return zone === 'CAD' || zone === 'STP' || zone === 'LOE' || zone === 'TIB' || zone === 'NCP'
+            ? DE_MAP_THEMES.palaearctic_asia_desert
+            : DE_MAP_THEMES.palaearctic_middle_east_desert;
+    }
+    // 3. 地中海气候落在西亚、北非、非洲的（黎凡特海岸、马格里布、开普敦）用地中海主题
+    if (biome === 'mediterranean' && (zone === 'WAH' || zone === 'HDS' || zone === 'AFR')) {
+        return DE_MAP_THEMES.palaearctic_europe_mediterranean;
+    }
+    return DE_MAP_THEMES[themeIdForZone(zone, lat, biome, elev)];
+}
 
-    // 1. 热带雨林 biome（按经度分非洲/南美/东南亚）
-    if (biome === 'tropical_rainforest') {
-        if (lng < -30) return DE_MAP_THEMES.neotropical_tropical;
-        if (lng < 55) return DE_MAP_THEMES.afrotropical_tropical;
-        return DE_MAP_THEMES.indomalayan_tropical;
+/** 环境区 → DE 主题（主题只决定林下地面、海滩、海水色；主地面与花草由世界底图决定，树种由植物总表决定） */
+function themeIdForZone(zone: EnvZone, lat: number, biome: Biome, elev: number | null): DeMapThemeId {
+    switch (zone) {
+        case 'TIB': return elev !== null && elev < 2500 ? 'palaearctic_asia_temperate' : 'palaearctic_tibetan_plateau';
+        case 'EAS': return lat < 24.5 ? 'indomalayan_tropical' : 'palaearctic_asia_temperate';   // 岭南热带、江南温带
+        case 'SWM': case 'NCP': case 'NEB': return 'palaearctic_asia_temperate';
+        case 'SEA': case 'SAS': return 'indomalayan_tropical';
+        case 'LOE': case 'STP': return 'palaearctic_asia_steppe';
+        case 'CAD': return 'palaearctic_asia_desert';
+        case 'WAH': return 'palaearctic_middle_east_highland';
+        case 'HDS': return 'palaearctic_middle_east_desert';
+        case 'MED': return 'palaearctic_europe_mediterranean';
+        case 'WEU': case 'CEU': return 'palaearctic_europe_temperate';
+        case 'ARC': case 'SIB': return 'palaearctic_europe_taiga';
+        case 'NAM': return 'nearctic_temperate';
+        case 'NEO': return 'neotropical_tropical';
+        case 'AND': return 'neotropical_temperate';
+        case 'AFR': return biome === 'tropical_rainforest' ? 'afrotropical_tropical' : 'serengeti';
+        case 'AUS': return 'australasian_temperate';
     }
-
-    // 2. 岭南 / 越南 / 东南亚热带亚热带水乡（纯坐标带 lng 90~130、lat 0~24；不依赖 region——
-    //    🔴 2026-08-21 气候按坐标划分：热带纬度(lat<24) + 东南亚经度 = 热带水乡，其余低纬各归其主）
-    if (lng > 90 && lng < 130 && lat > 0 && lat < 24) {
-        return DE_MAP_THEMES.indomalayan_tropical;
-    }
-
-    // 3. 青藏高原（纯坐标带 + 海拔：lat 26~40、lng 78~105；若有海拔需 ≥2500m 排除成都盆地）
-    if (lat > 26 && lat < 40 && lng > 78 && lng < 105 && (elev === null || elev >= 2500)) {
-        return DE_MAP_THEMES.palaearctic_tibetan_plateau;
-    }
-
-    // 4. 西亚带（安纳托利亚内陆/黎凡特/两河/伊朗高原：lng 30~62、lat 25~43；
-    //    巴尔干/君士坦丁堡/爱琴海西岸 lng<30 属欧洲温带/地中海，不进入西亚带）
-    if (lng >= 30 && lng < 62 && lat > 25 && lat < 43) {
-        if (biome === 'desert' || lat < 31) return DE_MAP_THEMES.palaearctic_middle_east_desert; // 两河/波斯湾低地
-        // 🔴 [2026-08-21 完善] 地中海东岸（黎凡特海岸 lat 33-36、安纳托利亚西岸）都是地中海气候：
-        //    原 lat>36 漏掉贝鲁特（33.9）→ 改成 lng<40（东地中海沿岸带）即可
-        if (biome === 'mediterranean' && lng < 40) return DE_MAP_THEMES.palaearctic_europe_mediterranean;
-        return DE_MAP_THEMES.palaearctic_middle_east_highland; // 伊朗高原/扎格罗斯
-    }
-
-    // 5. 中亚 / 阿富汗 / 巴基斯坦带（lng 62~75、lat 25~45：伊朗东部/阿富汗/俾路支/旁遮普干旱带）
-    if (lng >= 62 && lng < 75 && lat > 25 && lat < 45) {
-        if (biome === 'desert') return DE_MAP_THEMES.palaearctic_middle_east_desert;
-        return DE_MAP_THEMES.palaearctic_asia_steppe;
-    }
-
-    // 6. 🔴 [2026-08-22 主人定] 西域与河西走廊戈壁荒漠带（赤金堡/玉门关/敦煌/酒泉/嘉峪关/金塔/居延/哈密/吐鲁番/塔里木：
-    //    lng 75~101.5、lat 36~44 且海拔 < 2500m 排除祁连山/天山雪山）
-    if (lng >= 75 && lng < 101.5 && lat > 36 && lat < 44 && (elev ?? 1000) < 2500) {
-        return DE_MAP_THEMES.palaearctic_asia_desert;
-    }
-
-    // 7. 陇右 / 陇东 / 陕北黄土高原带（天水/兰州/定西/陇西/平凉/庆阳：lng 101.5~110、lat 33~42）
-    if (lng >= 101.5 && lng < 110 && lat > 33 && lat < 42 && (elev ?? 1000) < 2500) {
-        return DE_MAP_THEMES.palaearctic_asia_steppe;
-    }
-
-    // 7. 塞外蒙古草原（纯坐标带 lng 85~125、lat 42~55；不依赖 region STEPPE——草原纬度带即草原）
-    if (lng > 85 && lng < 125 && lat > 42 && lat < 55) {
-        return DE_MAP_THEMES.palaearctic_asia_steppe;
-    }
-
-    // 8. 华北 / 晋北黄土高原（纯坐标带 lat 34~42、lng 103~120 + 海拔：
-    //    🔴 2026-08-21 不依赖 region NORTH——华北带 = 黄河中下游平原/黄土高原坐标；
-    //    elev≥600（黄土高原核心）→ 黄土草原；低地（华北平原）→ 亚洲温带）
-    if (lat > 34 && lat < 42 && lng > 103 && lng < 120) {
-        if (elev !== null && elev >= 600) return DE_MAP_THEMES.palaearctic_asia_steppe;
-        return DE_MAP_THEMES.palaearctic_asia_temperate;
-    }
-
-    // 9. 热带稀树草原（印度 savanna → 东南亚；美洲 → 新热带；北非 / 阿拉伯的半干旱 → 西亚；只有撒哈拉以南 → 塞伦盖蒂）
-    // 🔴 2026-10-31 实测修正：柯本 Aw/BSh 一律落塞伦盖蒂，马拉喀什、的黎波里、班加西、亚丁与科潘都铺成了东非草原。
-    if (biome === 'savanna') {
-        if (lng >= 55 && lat < 30) return DE_MAP_THEMES.indomalayan_tropical;
-        if (lng < -30) return DE_MAP_THEMES.neotropical_tropical;
-        if (lat >= 12 && lat <= 30 && lng >= 38 && lng <= 60 && !(lat < 16 && lng < 43)) {
-            return DE_MAP_THEMES.palaearctic_middle_east_desert;   // 阿拉伯半岛（与下方 12b 同一框）
-        }
-        if (lat >= 25) return DE_MAP_THEMES.palaearctic_middle_east_highland;   // 马格里布—利比亚—埃及半干旱草原
-        return DE_MAP_THEMES.serengeti;
-    }
-    // 10. 沙漠 / 地中海（先排除——绿洲/地中海不沼泽）/ 温带半干旱草原 / 低洼湿地（DE Swamp biome） / 寒带
-    if (biome === 'desert') return DE_MAP_THEMES.palaearctic_middle_east_desert;
-    if (biome === 'mediterranean') return DE_MAP_THEMES.palaearctic_europe_mediterranean;
-    // 🔴 [2026-08-21 全面检查·补 gap] cold_steppe（温带半干旱草原：BSk/Dsa/Dsb——中亚草原/北美大平原/
-    //    马德里高原/巴塔哥尼亚）→ 草原主题。原落默认 europe_temperate（温带绿），马德里半干旱高原出绿草地（违和）。
-    if (biome === 'cold_steppe') return DE_MAP_THEMES.palaearctic_asia_steppe;
-    // 🔴 [2026-08-21 补全·Swamp] 内陆水域（lake）+ 低地（<200m）→ 沼泽主题，优先于寒带针叶林：
-    //   东北松嫩/三江湿地（boreal）、北欧波罗的海沿岸、中欧低地、洞庭湖边——低洼湿地就是沼泽观感。
-    //   只认 lake 不认 sea——海边（东京湾/大连）是海岸战场不是沼泽。
-    if (waterKind === 'lake' && elev !== null && elev < 200) {
-        return DE_MAP_THEMES.palustrine_swamp;
-    }
-    if (biome === 'boreal' || biome === 'tundra_snow') {
-        return lng < -30 ? DE_MAP_THEMES.nearctic_temperate : DE_MAP_THEMES.palaearctic_europe_taiga;
-    }
-    // 11. 美洲（lng < -30）
-    if (lng < -30) {
-        return lat < 0 ? DE_MAP_THEMES.neotropical_temperate : DE_MAP_THEMES.nearctic_temperate;
-    }
-
-    // 12. 欧洲（🔴 2026-08-21 气候按坐标划分：不再依赖 region SLAVIC/GERMANIC/LATIN——
-    //     欧洲气候由柯本 biome 决定：地中海(Csa/Csb)已在第 10 步分流；寒带(Dfc)→taiga 已在第 10 步；
-    //     温带海洋/大陆(Cfb/Dfb)落默认 europe_temperate。巴黎 Cfb→温带 ✓、罗马 Csa→地中海 ✓、
-    //     莫斯科 Dfb→温带（阔叶林带，比原 taiga 更贴实）、西伯利亚 Dfc→taiga ✓）
-
-    // 12b. 阿拉伯半岛与红海东岸（也门高原 Cwb 等）与撒哈拉以南非洲高原（埃塞俄比亚/东非/南非高原 Cwa/Cwb：lat -36~25, lng -20~55）：
-    //      绝不可落入下方欧洲温带默认分支（否则申布拉库雷等埃塞高原战役会变成欧洲绿草与欧洲温带树）
-    if (lat >= 12 && lat <= 30 && lng >= 38 && lng <= 60 && !(lat < 16 && lng < 43)) {
-        return DE_MAP_THEMES.palaearctic_middle_east_desert;
-    }
-    if (lat >= -36 && lat <= 25 && lng >= -20 && lng < 55) {
-        return DE_MAP_THEMES.serengeti;
-    }
-
-    // 13. 东亚（日本/朝鲜/华东华北 lng ≥ 60）→ 亚洲温带
-    if (lng >= 60) return DE_MAP_THEMES.palaearctic_asia_temperate;
-    return DE_MAP_THEMES.palaearctic_europe_temperate;
 }
 
 /**

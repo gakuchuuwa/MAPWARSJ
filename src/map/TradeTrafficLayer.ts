@@ -9,6 +9,10 @@ import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { OrientationSystem } from '../core/OrientationSystem';
 import { NavalWakeDrawer } from './legion/NavalWakeDrawer';
 import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
+import { registerHumanPresence } from './strategicPresence';
+
+/** 商队经过时惊走野生动物的半径（度，zoom 9 ≈ 50px） */
+const CARAVAN_SCARE_RADIUS_DEG = 0.14;
 
 /**
  * TradeTrafficLayer — 战略地图「商贸交通」环境层（2026-08-31 主人定稿）。
@@ -275,6 +279,11 @@ export class TradeTrafficLayer {
 
     constructor(map: L.Map) {
         this.map = map;
+        // 🔴 2026-10-31 主人令「动物碰到人要逃跑」：每个商队单位都登记给野生动物层
+        registerHumanPresence(() => this.caravans.flatMap((c) => Array.from({ length: c.count }, (_, u) => ({
+            ...TradeTrafficLayer.pointAt(c.path, c.cumLen, Math.max(0, c.dist - u * UNIT_SPACING_DEG)),
+            r: CARAVAN_SCARE_RADIUS_DEG,
+        }))));
         this.canvas = document.createElement('canvas');
         this.canvas.style.pointerEvents = 'none';
         this.canvas.className = 'leaflet-zoom-animated';

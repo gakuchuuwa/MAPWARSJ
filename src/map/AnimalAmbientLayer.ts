@@ -6,6 +6,7 @@ import { CITIES_V2 } from '../data/cities_v2';
 import { strategicSpriteScale } from './strategicSpriteScale';
 import { FAUNA_AREA_RATIO, WILD_LAND_PER_SQ_DEG, animalHerdSize, animalNeedsCoast, wildPoolAt } from '../world/environment/animalCatalog';
 import { ENV_ZONE_FAUNA_DENSITY, envZoneAt } from '../world/environment/envZones';
+import { collectHumanPresence } from './strategicPresence';
 
 /**
  * AnimalAmbientLayer — 战略地图「野生动物生态」环境层（2026-08-31 主人定稿）。
@@ -138,7 +139,7 @@ const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s
 const COAST_PROBE_DEG = 0.2;
 
 /** 危险源（军团 / 玩家）*/
-export interface LandThreat { lat: number; lng: number }
+export interface LandThreat { lat: number; lng: number; /** 受惊半径（度），不写 = LAND_FLEE_RADIUS_DEG */ r?: number }
 
 /**
  * 真正会冬眠的物种（按真实生物学习性，素材库里只有熊类）：
@@ -200,11 +201,12 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
     // ① 找最近的威胁
     let threat: LandThreat | null = null;
     let threatDist = Infinity;
+    // 各威胁按自己的受惊半径判（军团 / 玩家大、商队中、村民小），取进入半径的最近一个
     for (const t of threats) {
         const d = Math.hypot(t.lat - e.pos.lat, t.lng - e.pos.lng);
-        if (d < threatDist) { threatDist = d; threat = t; }
+        if (d < (t.r ?? LAND_FLEE_RADIUS_DEG) && d < threatDist) { threatDist = d; threat = t; }
     }
-    if (threat && threatDist < LAND_FLEE_RADIUS_DEG) {
+    if (threat) {
         let dx = e.pos.lng - threat.lng;
         let dy = e.pos.lat - threat.lat;
         const len = Math.hypot(dx, dy);
@@ -674,13 +676,27 @@ export class AnimalAmbientLayer {
             const p = a.getPosition?.();
             if (p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) out.push({ lat: p.lat, lng: p.lng });
         }
+        // 🔴 2026-10-31 主人令「动物碰到人和军团经过的时候要逃跑」：
+        //    玩家脱离大军单独行动时不在军团列表里，单独加；村民、商队从人类活动登记取（半径各自带）
+        const hero = game?.playerHero?.getPosition?.();
+        if (hero && Number.isFinite(hero.lat) && Number.isFinite(hero.lng)) out.push({ lat: hero.lat, lng: hero.lng });
+        for (const p of collectHumanPresence()) out.push(p);
         this.threatCache = out;
         return out;
     }
 
+    /**
+     * 是不是动物不能去的地方（海，或海拔瓦片还没到的未知地）。
+     * 🔴 2026-10-31 主人截图「北极海面上站着白狼、北极狐、雪兔，没看到北极熊」：
+     *    LandSeaSystem 在海拔瓦片未到时按「陆」返回（为了不卡军团行军），野生动物一进画面就按格生成，
+     *    瓦片还在路上时海面被当成陆地 → 陆兽生在海上；取瓦片失败要冷却 60 秒，这期间一直站在海上。
+     *    同理，海岸物种查「旁边是不是海」时一律得到「陆」，北极熊永远找不到海岸。
+     *    这里只改野生动物：未知地一律当作不能去，瓦片到了再按真实海陆生成（isSeaAt 内部已发起拉取）。
+     */
     private isSea(pos: Pt): boolean {
         try {
-            return LandSeaSystem.isSeaAt(pos);
+            if (LandSeaSystem.isSeaAt(pos)) return true;
+            return LandSeaSystem.getSampler().getElevationSync(pos.lat, pos.lng) === null;
         } catch {
             return false;
         }
@@ -688,9 +704,11 @@ export class AnimalAmbientLayer {
 
     /** 陆地点四向 COAST_PROBE_DEG 内有海（海岸物种用） */
     private isNearCoast(pos: Pt): boolean {
+        // 只认真实的海（未加载的未知地不算海岸，否则北极熊会生在内陆）
         const d = COAST_PROBE_DEG;
-        return this.isSea({ lat: pos.lat + d, lng: pos.lng }) || this.isSea({ lat: pos.lat - d, lng: pos.lng })
-            || this.isSea({ lat: pos.lat, lng: pos.lng + d }) || this.isSea({ lat: pos.lat, lng: pos.lng - d });
+        const sea = (p: Pt): boolean => { try { return LandSeaSystem.isSeaAt(p); } catch { return false; } };
+        return sea({ lat: pos.lat + d, lng: pos.lng }) || sea({ lat: pos.lat - d, lng: pos.lng })
+            || sea({ lat: pos.lat, lng: pos.lng + d }) || sea({ lat: pos.lat, lng: pos.lng - d });
     }
 
     /** 季节（0 春 / 1 夏 / 2 秋 / 3 冬），与据点民生层同一源 */

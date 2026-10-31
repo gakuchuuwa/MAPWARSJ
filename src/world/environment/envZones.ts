@@ -23,10 +23,14 @@ export const ENV_ZONE_NAMES: Readonly<Record<EnvZone, string>> = {
     AND: '南美南部', AFR: '撒哈拉以南非洲', AUS: '澳洲',
 };
 
-/** 环境区所属生物地理大区（与 DE 主题名前缀同一口径） */
+/**
+ * 环境区所属生物地理大区（与 DE 主题名前缀同一口径）。
+ * 东亚亚热带的主体是江南与西日本（古北界，日本全境属古北界），只有北纬 24.5° 以南的岭南属东洋界，
+ * 岭南在主题对应表（Scene13DeMapThemes.themeIdForZone）里单独给热带主题。
+ */
 export const ENV_ZONE_REALM: Readonly<Record<EnvZone, 'palaearctic' | 'indomalayan' | 'nearctic' | 'neotropical' | 'afrotropical' | 'australasian'>> = {
     TIB: 'palaearctic', SWM: 'palaearctic', SEA: 'indomalayan', SAS: 'indomalayan',
-    EAS: 'indomalayan', NCP: 'palaearctic', LOE: 'palaearctic', NEB: 'palaearctic',
+    EAS: 'palaearctic', NCP: 'palaearctic', LOE: 'palaearctic', NEB: 'palaearctic',
     STP: 'palaearctic', CAD: 'palaearctic', WAH: 'palaearctic', HDS: 'palaearctic',
     MED: 'palaearctic', WEU: 'palaearctic', CEU: 'palaearctic',
     ARC: 'palaearctic', SIB: 'palaearctic', NAM: 'nearctic', NEO: 'neotropical',

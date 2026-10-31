@@ -8448,7 +8448,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/MAGYAR/gepids_cunimund.png": {
-            "scale": 0.88,
+            "scale": 0.86,
             "offsetX": 8,
             "offsetY": -13
         },

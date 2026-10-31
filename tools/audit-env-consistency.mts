@@ -218,6 +218,27 @@ console.log('   ' + vis.map(([sp, y, w]) => `${sp} ${y}/${w}`).join('，'));
 const never = vis.filter(([, y, w]) => y === 0 && w === 0).map(([sp]) => sp);
 console.log(`   永远看不到（任何据点周边都不出现）：${never.length ? never.join('、') : '无'}`);
 
+
+// ⑧ 树种：战术战场（据点烘焙图的树 → 植物总表合区域）与战略图（本区主树种）是否同一组
+const { deTerrainTrees } = await mod('src/ui/scene13/Scene13DeTrees.ts');
+const { plantTreeAt, plantRegionalizeTree, treeFamily, ZONE_PLANTS } = await mod('src/world/environment/plantCatalog.ts');
+const { existsSync } = await import('node:fs');
+let treeOk = 0; const treeBad: string[] = [];
+for (const c of CITIES_V2 as any[]) {
+    const f = path.join(ROOT, 'public/battlefields', `site_${c.id}.json`);
+    if (!existsSync(f)) continue;
+    const terrain = JSON.parse(readFileSync(f, 'utf8')).terrain as number[];
+    const tac = new Set<string>();
+    terrain.forEach((t, i) => { for (const u of deTerrainTrees(t)) tac.add(treeFamily(plantRegionalizeTree(c.lat, c.lng, u.asset, (i % 1000) / 1000))); });
+    const allowed = new Set<string>();
+    for (let k = 0; k < 100; k++) allowed.add(treeFamily(plantTreeAt(c.lat, c.lng, k / 100)));
+    for (const e of ZONE_PLANTS[envZoneAt(c.lat, c.lng)].extra ?? []) allowed.add(treeFamily(e));
+    const stray = [...tac].filter((x) => !allowed.has(x));
+    if (stray.length === 0) treeOk++; else treeBad.push(`${c.name}：${stray.join('、')}`);
+}
+console.log(`\n⑧ 树种：战术战场的树不在本区树种表内的据点：${treeBad.length}（一致 ${treeOk}）`);
+if (treeBad.length) console.log('    ' + treeBad.slice(0, 8).join('\n    '));
+
 const jsonAt = process.argv.indexOf('--json');
 if (jsonAt > 0 && process.argv[jsonAt + 1]) {
     writeFileSync(process.argv[jsonAt + 1], JSON.stringify(rows, null, 1));

@@ -36,7 +36,7 @@ export const ZONE_PLANTS: Readonly<Record<EnvZone, ZonePlants>> = {
     ARC: { main: [['SPRUCE', 1], ['BIRCH_GREEN', 1]], extra: ['DEAD_TREE'] },
     SIB: { main: [['SPRUCE', 2], ['PINE', 2], ['BIRCH_GREEN', 2]], extra: [] },
     NAM: { main: [['OAK', 2], ['PINE', 2], ['SPRUCE', 1], ['BIRCH_GREEN', 1]], extra: ['CACTUS'] },
-    NEO: { main: [['RAINFOREST', 2], ['JUNGLE', 2], ['BRAZILWOOD', 2], ['WAX_PALM', 1]], extra: ['MANGROVE', 'CACTUS', 'PALM', 'GREEN_OAK'] },
+    NEO: { main: [['RAINFOREST', 2], ['JUNGLE', 2], ['BRAZILWOOD', 2], ['WAX_PALM', 1]], extra: ['MANGROVE', 'CACTUS', 'PALM', 'GREEN_OAK', 'PINE'] },   // PINE：墨西哥中部高原松栎林
     AND: { main: [['MONKEY_PUZZLE', 2], ['GREEN_OAK', 1], ['ACACIA', 1]], extra: ['CACTUS'] },                                    // 智利南洋杉、南青冈、智利刺槐
     AFR: { main: [['ACACIA', 3], ['BAOBAB', 2], ['JUNGLE', 1], ['PALM', 1]], extra: ['MANGROVE', 'RAINFOREST', 'DRAGON_TREE'] },
     AUS: { main: [['ACACIA', 2], ['BUSH_TREE_A', 1]], extra: ['PALM'] },

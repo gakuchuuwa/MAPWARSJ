@@ -7,6 +7,12 @@ import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { hasWorldBaseData, loadWorldBaseData, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
 import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
+import { registerHumanPresence } from './strategicPresence';
+import { plantAllowedAt, plantTreeAt } from '../world/environment/plantCatalog';
+import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
+
+/** 村民惊走野生动物的半径（度，zoom 9 ≈ 36px） */
+const VILLAGER_SCARE_RADIUS_DEG = 0.10;
 
 /**
  * CityLifeAmbientLayer — 战略地图「67 文化据点民生生态 & 战火破坏/尸骸渐变」环境层（2026-10-26 主人定稿）。
@@ -496,7 +502,11 @@ function dirFromDelta(dLat: number, dLng: number): number {
     return (((1 - Math.round(deg / 45)) % 8) + 8) % 8;
 }
 
-/** 根据渔猎民族文化与真实冬雪分布返回四季对应的树种组合 [春, 夏, 秋, 冬] 与伴生灌木 */
+/**
+ * 根据渔猎 / 伐木文化与真实冬雪分布返回四季对应的树种组合 [春, 夏, 秋, 冬] 与伴生灌木。
+ * 会长树丛的只有东北（渔猎）与瓦良格、美洲、立陶宛（山地伐木）四个文化；原来滇黔 / 图皮 / 玛雅 / 马普切几套走不到，已删。
+ * 🔴 2026-10-31：取完再过植物总表——树种不合所在环境区就换成本区主树种（与战略植被、战术战场同一条规则）。
+ */
 function pickHuntingForestPalette(style: string, lat: number, lng: number, idx: number): {
     springTree: string;
     summerTree: string;
@@ -510,43 +520,6 @@ function pickHuntingForestPalette(style: string, lat: number, lng: number, idx: 
     const hasWinterSnow = hasWorldBaseData()
         ? (wf === 1 || wf === 2 || wf === 3)
         : Math.abs(lat) > 38;
-    if (style === 'DIANQIAN') {
-        const bamboo = idx % 2 === 0;
-        return {
-            springTree: bamboo ? 'LUSH_BAMBOO' : 'ASIAN_MAPLE_GREEN',
-            summerTree: bamboo ? 'LUSH_BAMBOO' : 'GREEN_OAK',
-            autumnTree: bamboo ? 'LUSH_BAMBOO' : 'ASIAN_MAPLE_AUTUMN',
-            winterTree: bamboo ? (hasWinterSnow ? 'SNOW_PINE' : 'LUSH_BAMBOO') : (hasWinterSnow ? 'SNOW_AUTUMN_OAK' : 'ASIAN_PINE'),
-            bushName: idx % 3 === 0 ? 'FORAGE_BUSH' : 'UNDERBRUSH_JUNGLE',
-            bushLib: idx % 3 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
-            isBamboo: bamboo,
-        };
-    }
-    if (style === 'TUPI' || style === 'MAYANS') {
-        const trees = ['RAINFOREST', 'BRAZILWOOD', 'MANGROVE', 'PALM'];
-        const t = trees[idx % trees.length];
-        return {
-            springTree: t,
-            summerTree: t,
-            autumnTree: t,
-            winterTree: t,
-            bushName: idx % 2 === 0 ? 'FORAGE_PAPAYA' : 'UNDERBRUSH_JUNGLE',
-            bushLib: idx % 2 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
-            isBamboo: false,
-        };
-    }
-    if (style === 'MAPUCHE') {
-        const araucaria = idx % 2 === 0;
-        return {
-            springTree: araucaria ? 'MONKEY_PUZZLE' : 'GREEN_OAK',
-            summerTree: araucaria ? 'MONKEY_PUZZLE' : 'PINE',
-            autumnTree: araucaria ? 'MONKEY_PUZZLE' : 'AUTUMN_OAK',
-            winterTree: araucaria ? (hasWinterSnow ? 'SNOW_PINE' : 'MONKEY_PUZZLE') : (hasWinterSnow ? 'SNOW_PINE' : 'PINE'),
-            bushName: idx % 2 === 0 ? 'FORAGE_BUSH' : 'BUSH_TREE_A',
-            bushLib: idx % 2 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
-            isBamboo: false,
-        };
-    }
     if (style === 'NORTHEAST' || style === 'VARANGIANS') {
         const pine = idx % 2 === 0;
         const mainPine = style === 'NORTHEAST' ? 'ASIAN_PINE' : 'PINE';
@@ -570,6 +543,24 @@ function pickHuntingForestPalette(style: string, lat: number, lng: number, idx: 
         bushName: idx % 2 === 0 ? 'FORAGE_BUSH' : 'BUSH_TREE_A',
         bushLib: idx % 2 === 0 ? 'SUCAI_RESOURCE' : 'SUCAI_NATURE',
         isBamboo: false,
+    };
+}
+
+/** 树丛树种合区域：主树种（夏态）属于本区就原样保留；否则整组换成本区主树种，四季形态按战术同一套 seasonalDeTree */
+function regionalizeGrovePalette(
+    pal: ReturnType<typeof pickHuntingForestPalette>, lat: number, lng: number, roll01: number,
+): ReturnType<typeof pickHuntingForestPalette> {
+    if (plantAllowedAt(lat, lng, pal.summerTree)) return pal;
+    const wf = queryWinterSnow(lat, lng);
+    const hasWinterSnow = hasWorldBaseData() ? (wf === 1 || wf === 2 || wf === 3) : Math.abs(lat) > 38;
+    const base = plantTreeAt(lat, lng, roll01);
+    return {
+        ...pal,
+        springTree: seasonalDeTree(base, 0, false),
+        summerTree: seasonalDeTree(base, 1, false),
+        autumnTree: seasonalDeTree(base, 2, false),
+        winterTree: seasonalDeTree(base, 3, hasWinterSnow),
+        isBamboo: base === 'BAMBOO' || base === 'LUSH_BAMBOO',
     };
 }
 
@@ -607,6 +598,15 @@ export class CityLifeAmbientLayer {
 
     constructor(map: L.Map) {
         this.map = map;
+        // 🔴 2026-10-31 主人令「动物碰到人要逃跑」：据点外劳作的村民登记给野生动物层
+        registerHumanPresence(() => {
+            const out: { lat: number; lng: number; r: number }[] = [];
+            for (const a of this.activeActors.values()) {
+                if (a.isAnimal || a.isSeaFishing || a.retiring) continue;
+                out.push({ lat: a.lastDrawPos.lat, lng: a.lastDrawPos.lng, r: VILLAGER_SCARE_RADIUS_DEG });
+            }
+            return out;
+        });
         let plotPane = map.getPane('cityLifePlotPane');
         if (!plotPane) {
             plotPane = map.createPane('cityLifePlotPane');
@@ -993,7 +993,7 @@ export class CityLifeAmbientLayer {
             }
             if (!pos) continue;
 
-            const pal = pickHuntingForestPalette(style, pos.lat, pos.lng, i);
+            const pal = regionalizeGrovePalette(pickHuntingForestPalette(style, pos.lat, pos.lng, i), pos.lat, pos.lng, h3);
             list.push({
                 id: `${city.id}_forest_${i}`,
                 cityId: city.id,

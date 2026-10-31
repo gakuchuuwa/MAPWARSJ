@@ -136,7 +136,7 @@ const SKILL_FRENZY_ATKSPD = 1.5;    // 【攻】攻速倍率
 const SKILL_FRENZY_MOVE = 2.0;      // 【攻】移速倍率
 const SKILL_SHIELD_SEC = 10;        // 【胜】持续（10秒：释放瞬间回满血 + 10秒内无敌）
 const SKILL_SHIELD_TAKEN = 0;       // 【胜】受伤倍率（0＝无敌）
-const SKILL_PANIC_SEC = 20;         // 【混】乱敌阵持续（20秒）
+const SKILL_PANIC_SEC = 15;         // 【混】乱敌阵持续（15秒，2026-10-31 主人令改 15 秒）
 const SKILL_PANIC_TAKEN = 2;        // 【混】混乱中受伤倍率
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
