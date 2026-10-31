@@ -12083,6 +12083,50 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
             { speaker: 'player', text: '得令，抢占高地！' },
         ],
     },
+
+    // [2026-10-31 按史补] 狮心王理查三世 (1157 ~ 1199) — 公元1191年阿苏夫之战
+    yinggelan_lionheart: {
+        generalId: 'yinggelan_lionheart',
+        battleName: '阿苏夫之战',
+        battleYear: 1191,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '阿苏夫',
+        targetCityId: 'city_ake',
+        targetLat: 32.06,
+        targetLng: 34.75,
+        myTroops: 20000,
+        enemyFactionId: 'ayoubu',
+        enemyFactionName: '阿尤布王朝',
+        enemyGeneralId: 'ayoubu_salaheding',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '萨拉丁的轻骑终日缠扰，我军沿海南下、阵形不乱。勇士，听号令——弓弩先射，骑士随后冲垮他的马穆鲁克！' },
+            { speaker: 'player', text: '愿随狮心王共赴阿苏夫之战，正面击破阿尤布王朝！' },
+        ],
+    },
+
+    // [2026-10-31 按史补] 莱加斯皮 (1510 ~ 1572) — 公元1571年马尼拉之战
+    xishudongyin_lijiasipi: {
+        generalId: 'xishudongyin_lijiasipi',
+        battleName: '马尼拉之战',
+        battleYear: 1571,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '马尼拉',
+        targetCityId: 'city_manila',
+        targetLat: 14.59,
+        targetLng: 120.97,
+        myTroops: 12000,
+        enemyFactionId: 'maynila',
+        enemyFactionName: '马尼拉土邦',
+        enemyGeneralId: 'bfe_rajah_sulayman',
+        enemyTroops: 12000,
+        introLines: [
+            { speaker: 'general', text: '马尼拉的木栅城就在眼前，拉者苏莱曼据河而守。勇士，架炮轰开栅墙，火枪队压住滩头，一举拿下这座港城！' },
+            { speaker: 'player', text: '愿随莱加斯皮攻克马尼拉，为西班牙王国夺下东方良港！' },
+        ],
+    },
 };
 
 export function getGeneralFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {

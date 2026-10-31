@@ -1623,7 +1623,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡红砖穹顶堡',
         formationMode: 'fish_scale',
         shipId: 'DROMON',
-        commanderUnit: 'hero_sirjohnfastolf',
+        commanderUnit: 'hero_gilbertdeclare',
         slots: [
             { type: 'equites', count: 3 },
             { type: 'crossbowman', count: 4 },
@@ -2208,7 +2208,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'fish_scale',
         shipId: 'ONAGER_SHIP',
-        commanderUnit: 'envoy',
+        commanderUnit: 'hero_belisarius',
         slots: [
             { type: 'legionary', count: 3 },
             { type: 'cretan_archer', count: 4 },
@@ -2285,7 +2285,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'fish_scale',
         shipId: 'BOARDING_GALLEY',
-        commanderUnit: 'hero_sieurbertrand',
+        commanderUnit: 'hero_gawain',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：罗马百夫长（普通档）替步弓手。
         slots: [
             { type: 'legionary', count: 3 },
@@ -3043,6 +3043,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BENG_CASTLE_AGE3', castleName: '孟加拉 恒河三角洲砖石堡',
         formationMode: 'crane_wing',
         shipId: 'ANT_ELITE_GALLEY',
+        commanderUnit: 'hero_amoghavarsha',
         // 🔴 [2026-10-16 主人令] ①「象兵、战车只能安排在 2 档」②「象兵和战车不能同时在一个军团，替换不是城堡的精锐兵种」
         //    ⇒ 拉塔弓战车精锐（孟加拉自家城堡兵）压到 2 档；桑纳亚战象高级（普鲁马厩专属，借调而来）离队；
         //      空出的 3 档用非城堡精锐补位——印度部落民（3 档·前排）＋帕提尤达长弓兵基础档（4 档·后排）。
@@ -3251,6 +3252,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁南亚 旁遮普红砂岩堡',
         formationMode: 'fish_scale',
         shipId: 'HEAVY_INCENDIARY_SHIP',
+        commanderUnit: 'hero_sundjata',
         slots: [
             { type: 'elite_guardsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
@@ -3271,6 +3273,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SEAS_CASTLE_AGE3', castleName: '东南亚/高棉 吴哥窟砂岩塔',
         formationMode: 'triangle',
         shipId: 'INCENDIARY_SHIP',
+        commanderUnit: 'hero_gajahmada',
         slots: [
             { type: 'battle_elephant', count: 2 },
             { type: 'indian_tribesman', count: 3 },
@@ -3345,6 +3348,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BURM_CASTLE_AGE3', castleName: '缅甸 蒲甘千佛塔金顶堡',
         formationMode: 'crane_wing',
         shipId: 'GALLEY',
+        commanderUnit: 'hero_generalaraiyan',
         slots: [
             { type: 'battle_elephant', count: 2 },
             { type: 'pikeman', count: 4 },
@@ -3468,10 +3472,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MALA_CASTLE_AGE3', castleName: '马来 马六甲海峡水上海堡',
         formationMode: 'crane_wing',
         shipId: 'FIRE_GALLEY',
+        commanderUnit: 'hero_gajahmada',
                 slots: [
-            { type: 'karambit_warrior', count: 3 },
+            { type: 'karambit_warrior', count: 2 },
             { type: 'antiquity_skirmisher', count: 4 },
-            { type: 'battle_elephant', count: 2 },
+            { type: 'battle_elephant', count: 3 },
         ],
     },
     // ── 南洋 · 封建时代 · 封建时代三佛齐军团　（三级升二级）────────────────
@@ -3484,10 +3489,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MALA_CASTLE_AGE3', castleName: '马来 马六甲海峡水上海堡',
         formationMode: 'crane_wing',
         shipId: 'FIRE_GALLEY',
+        commanderUnit: 'hero_gajahmada',
                 slots: [
-            { type: 'swordsman', count: 3 },
+            { type: 'swordsman', count: 2 },
             { type: 'rattan_archer', count: 4 },
-            { type: 'karambit_warrior', count: 2 },
+            { type: 'karambit_warrior', count: 3 },
         ],
     },
     // ── 南洋 · 城堡时代 · 城堡时代爪哇军团　（本次新建）────────────────
@@ -3517,7 +3523,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MALA_CASTLE_AGE3', castleName: '马来 马六甲海峡水上海堡',
         formationMode: 'crane_wing',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_gajahmada',
+        commanderUnit: 'hero_lelai',
         slots: [
             { type: 'elite_battle_elephant', count: 2 },
             { type: 'imperial_skirmisher', count: 4 },

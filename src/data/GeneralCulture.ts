@@ -1781,6 +1781,14 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'taiping_yangxiuqing': 'HUGUANG',
     'han_lubode': 'KHITAN',
     'wei_xuchu': 'CENTRAL',
+    'chuguo_yangyouji': 'HUGUANG',
+    'chuguo_doubobi': 'HUGUANG',
+    'chuguo_pandang': 'HUGUANG',
+    'shu_zhangyi': 'BASHU',
+    'shu_hezhi': 'BASHU',
+    'shu_wulan': 'BASHU',
+    'cen_d_cenyunhan': 'HUGUANG',
+    'safawei_d_tahmasp': 'PERSIAN',
 };
 
 // [2026-10-26 主人令新增湖广] 同步迁入五省据点的武将兜底文化；其余文化项保持原值。

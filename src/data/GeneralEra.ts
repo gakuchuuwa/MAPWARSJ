@@ -1808,6 +1808,14 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'taiping_yangxiuqing': 'imperial',
     'han_lubode': 'antiquity',
     'wei_xuchu': 'antiquity',
+    'chuguo_yangyouji': 'antiquity',
+    'chuguo_doubobi': 'antiquity',
+    'chuguo_pandang': 'antiquity',
+    'shu_zhangyi': 'antiquity',
+    'shu_hezhi': 'antiquity',
+    'shu_wulan': 'antiquity',
+    'cen_d_cenyunhan': 'imperial',
+    'safawei_d_tahmasp': 'imperial',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

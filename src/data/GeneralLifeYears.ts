@@ -1816,6 +1816,14 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     'taiping_yangxiuqing': { birth: 1823, death: 1856, kaoju: '推定' },
     'han_lubode': { birth: -160, death: -100, kaoju: '推定' },
     'wei_xuchu': { birth: 170, death: 230, kaoju: '推定' },
+    'chuguo_yangyouji': { birth: -610, death: -550, kaoju: '推定' },
+    'chuguo_doubobi': { birth: -730, death: -680, kaoju: '推定' },
+    'chuguo_pandang': { birth: -600, death: -550, kaoju: '推定' },
+    'shu_zhangyi': { birth: 175, death: 264, kaoju: '推定' },
+    'shu_hezhi': { birth: 190, death: 250, kaoju: '推定' },
+    'shu_wulan': { birth: 170, death: 218, kaoju: '推定' },
+    'cen_d_cenyunhan': { birth: 1560, death: 1620, kaoju: '推定' },
+    'safawei_d_tahmasp': { birth: 1514, death: 1576, kaoju: '推定' },
 };
 
 /** 生年（未收录返回 null） */

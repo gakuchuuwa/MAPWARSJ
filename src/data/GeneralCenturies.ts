@@ -1482,6 +1482,14 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'taiping_yangxiuqing': 19,
     'han_lubode': -1,
     'wei_xuchu': 2,
+    'chuguo_yangyouji': -6,
+    'chuguo_doubobi': -7,
+    'chuguo_pandang': -5,
+    'shu_zhangyi': 2,
+    'shu_hezhi': 2,
+    'shu_wulan': 2,
+    'cen_d_cenyunhan': 16,
+    'safawei_d_tahmasp': 16,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */
