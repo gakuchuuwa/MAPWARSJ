@@ -879,7 +879,7 @@ export class GameMap {
                         <b>🌲 开启植被图层</b>
                     </label>
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#6d4c41;margin-top:4px;">
-                        <input type="checkbox" id="chk-land-animal">
+                        <input type="checkbox" id="chk-land-animal" checked>
                         <b>🦌 陆地动物</b>
                     </label>
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#0288d1;margin-top:4px;">
@@ -972,6 +972,8 @@ export class GameMap {
             let savedDebugPanelState: {
                 sourceKey?: string;
                 collapsed?: boolean;
+                /** 🔴 2026-10-31 主人令「陆地动物开关默认打开」：旧存档（旧版本默认是关）不拿它覆盖新的默认值 */
+                animalDefaultOn?: boolean;
                 inputs?: Record<string, string | boolean>;
             } | null = null;
 
@@ -993,6 +995,7 @@ export class GameMap {
                     localStorage.setItem(debugPanelStorageKey, JSON.stringify({
                         sourceKey: this.currentSourceKey,
                         collapsed: panelContent.style.display === 'none',
+                        animalDefaultOn: true,
                         inputs,
                     }));
                 } catch {
@@ -1536,6 +1539,9 @@ export class GameMap {
             if (savedInputs && panelContent) {
                 for (const [id, value] of Object.entries(savedInputs)) {
                     if (id.startsWith('rng-sep') || id.startsWith('rng-sat') || id.startsWith('rng-con') || id === 'chk-style') continue;
+                    // 🔴 2026-10-31：旧存档里「陆地动物」是关着的（旧版本默认关），这一条不恢复 —— 一律按新默认打开；
+                    //    玩家在新版本里再手动关掉，会连同 animalDefaultOn 一起写进存档，之后照玩家的选择走。
+                    if (id === 'chk-land-animal' && savedDebugPanelState?.animalDefaultOn !== true) continue;
                     const input = panelContent.querySelector<HTMLInputElement>(`#${id}`);
                     if (!input) continue;
                     if (input.type === 'checkbox' && typeof value === 'boolean') {

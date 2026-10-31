@@ -1,8 +1,9 @@
 import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
 import type { GameMap } from './GameMap';
-import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { LandSeaSystem } from '../world/land-sea';
+import { CITIES_V2 } from '../data/cities_v2';
+import { strategicSpriteScale } from './strategicSpriteScale';
 
 /**
  * AnimalAmbientLayer — 战略地图「野生动物生态」环境层（2026-08-31 主人定稿）。
@@ -34,6 +35,8 @@ interface AnimalAsset {
     lastUsed: number;
 }
 
+type LandAction = 'idle' | 'walk' | 'run';
+
 interface AnimalEntry {
     id: string;          // 网格标识（如 `${col},${row}`）
     dir: string;
@@ -42,7 +45,34 @@ interface AnimalEntry {
     phase: number;       // 动画相位
     alpha: number;       // 当前透明度 0.0 ~ 1.0（渐显/渐隐）
     fadingOut?: boolean; // 渐隐中
+    // 🔴 2026-10-31 主人令「不定期随机朝不同方向跑动，军团或玩家过来时逃跑」：
+    home: Pt;            // 出生格中心（不乱跑出活动范围）
+    action: LandAction;  // 当前动作：吃草 / 走 / 奔跑
+    timer: number;       // 距下次随机决策的秒数
+    target: Pt | null;   // 走动目标点（null = 原地吃草）
+    fleeTimer: number;   // 逃跑剩余秒数
+    fleeDX: number;      // 逃跑方向（单位向量，经纬度空间）
+    fleeDY: number;
+    seaTimer: number;    // 距下次判海的秒数（每 0.25 秒一次，省查询）
+    hibernating?: boolean; // 冬季蛰伏中（熊类；绘制端压低帧率）
 }
+
+/** 陆地动物的移动常量（zoom 9 下 0.00275°≈1px：走 ≈18px/s，逃 ≈60px/s） */
+const LAND_WALK_SPEED_DEG = 0.05;   // 度/秒
+const LAND_FLEE_SPEED_DEG = 0.165;  // 度/秒
+const LAND_FLEE_RADIUS_DEG = 0.18;  // 军团/玩家进入 ≈65px 就受惊
+const LAND_STEP_MIN_DEG = 0.055;    // 一次随机走动的最短距离 ≈20px
+const LAND_STEP_MAX_DEG = 0.19;     // 最长 ≈70px
+const LAND_LEASH_DEG = 0.42;        // 离出生格超过 ≈150px 就往回走
+const LAND_SEA_CHECK_SEC = 0.25;
+
+/**
+ * 🔴 2026-10-31 主人令「动物不要出现在据点附近」：
+ *   据点 0.30°（≈33 km，约 110 屏幕像素，恰好是城池图标 + 近郊农舍那一圈）以内不生成野生动物；
+ *   走动/逃跑也不许踏进这个圈 —— 中途踏进去立刻停步回头（与「不下水」同一套处理）。
+ */
+const CITY_CLEAR_DEG = 0.30;
+const CITY_INDEX_CELL_DEG = 0.5;
 
 /** DE 巡航飞鸟：跨屏巡游 + 振翅/滑翔交替 + 渐显/渐隐 */
 interface BirdAgent {
@@ -60,12 +90,12 @@ interface BirdAgent {
 
 // ── 可调参数 ──────────────────────────────────────────────────────────────
 const CELL_DEG = 0.5;               // 撒点网格尺寸（度）
-const LAND_DENSITY = 0.07;          // 陆地格出现动物的概率
+const LAND_DENSITY = 0.11;          // 陆地格出现动物的概率（🔴 2026-10-31 主人令「不要搞得永远都看不到」：0.07→0.11，zoom 9 一屏约 12 只）
 const BIRD_DENSITY = 0.08;          // 格出现飞鸟的概率（稀疏点缀，视野内偶见 1~2 只翱翔，不喧宾夺主）
-/** 🔴 [2026-09-01 主人定] 动物只在这两个缩放层显示：9 和 10 */
-const ANIMAL_MIN_ZOOM = 9;
+/** 🔴 2026-10-31 主人令「陆海空动物的显示比例统一，大小对齐 DE」：野生动物与飞鸟改用与军团/家畜同一 DE 基准
+ *  （strategicSpriteScale，zoom 9 基准 0.7 ×2^(zoom-9)），不再单独写 0.6，否则同一只鹿在野外比猎人身旁大 25%。 */
+const ANIMAL_MIN_ZOOM = 9;          // 🔴 [2026-09-01 主人定] 动物只在 9 和 10 这两级显示
 const ANIMAL_MAX_ZOOM = 10;
-const SCALE_BASE = 0.6;             // 渲染缩放（× 2^(zoom-9)）
 // 🔴 [2026-08-31 修「攻城战只显示攻城武器」] 必须低于 UNITS_LOW(580)。
 //    580 是攻城战里**画在城池背后**的那批士兵所在的层；本层原值压在它之上，
 //    等于把攻城方的士兵整个涂掉，只剩画在主层(UNITS=620)的攻城器械还看得见。
@@ -79,64 +109,318 @@ const BIRD_DRIFT_RADIUS_PX = 70;    // 飞鸟盘旋半径（屏幕像素，与�
 const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s 一圈）
 // ──────────────────────────────────────────────────────────────────────────
 
-// ── 生态分区（真实世界分布）───────────────────────────────────────────────
-const RG_AFRICA: RegionType[] = ['AFRICA', 'BERBER'];
-const RG_INDIA: RegionType[] = ['INDIA', 'PURU'];
-const RG_SEASIA: RegionType[] = ['MALAY'];
-const RG_EASTASIA: RegionType[] = [
-    'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'KOREA',
-];
-const RG_JAPAN: RegionType[] = ['JAPAN'];
-const RG_TIBET_CENTRALASIA: RegionType[] = ['CENTRAL_ASIA', 'TIBET', 'WESTERN', 'PERSIAN'];
-const RG_STEPPE: RegionType[] = ['STEPPE', 'NORTHEAST', 'CUMAN'];
-const RG_MIDEAST: RegionType[] = ['ORIE', 'WEST_ASIA', 'WEST_ASIA_ANTIQUITY', 'WEST_ASIA_CASTLE'];
-const RG_EUROPE: RegionType[] = [
-    'LATIN', 'LATIN_CASTLE', 'LATIN_IMPERIAL',
-    'GERMANIC', 'GERMANIC_FEUDAL', 'GERMANIC_CASTLE', 'GERMANIC_IMPERIAL',
-    'SLAVIC', 'SLAVIC_FEUDAL', 'SLAVIC_CASTLE', 'SLAVIC_IMPERIAL',
-    'BRITONS', 'EAST', 'GREEK', 'THRACIAN',
-];
-const RG_AMERICA_ANDE: RegionType[] = ['ANDE'];
-const RG_AMERICA_TROPICAL: RegionType[] = ['AMERICA'];
+// ── 生态分区（按世界动物地理区划，坐标优先）────────────────────────────────
+// 🔴 2026-10-31 主人令「优化动物的出现地，不要错乱……玩家主要在欧亚大陆、北非、美洲，不要搞得永远都看不到」：
+//   旧实现只认 RegionSystem 的 19 个城环，环外一律 `return 'CENTRAL'` 兜底 ——
+//   于是美洲、撒哈拉以南非洲、东南亚全被当成「东亚」，屏幕上出现的是梅花鹿/野猪/老虎；
+//   而 MALAY / ANDE / AMERICA 三个桶永远走不到，科莫多、貘、美洲豹、美洲鸵、水豚、西貒、凯门鳄、
+//   金刚鹦鹉、安第斯神鹰共 10 种在战略地图一次都不会出现。
+//   现在改成：**先按经纬度判生物地理界（美洲/撒南非洲/东南亚/北极这些城环覆盖不到的地方），
+//   判不出来的欧亚内陆才回落 19 个城环**，两套并存，谁也不会掉进 CENTRAL 兜底。
+interface RealmPool { land: string[]; birds: string[] }
+export type RealmKey =
+    | 'ARCTIC' | 'BOREAL' | 'NEARCTIC' | 'NEOTROPIC' | 'ANDES' | 'PATAGONIA'
+    | 'AFROTROPIC' | 'NORTH_AFRICA' | 'MIDEAST' | 'TIBET'
+    | 'ORIENTAL_INDIA' | 'ORIENTAL_SEA' | 'ORIENTAL_CHINA' | 'EASTASIA' | 'JAPAN'
+    | 'STEPPE' | 'NORTHEAST' | 'EUROPE';
 
-/** 陆上野生动物（8 向；只野生，不含家畜与极地物种） */
-const LAND_AFRICA = ['LION', 'ZEBRA', 'GAZELLE', 'OSTRICH', 'ELEPHANT', 'RHINO', 'CROCODILE', 'MONKEY', 'BLACK_PANTHER'];
-const LAND_INDIA = ['TIGER', 'PEACOCK', 'ELEPHANT', 'RHINO', 'MONKEY', 'CROCODILE', 'SNAKE_WATER'];
-const LAND_SEASIA = ['TIGER', 'PEACOCK', 'MONKEY', 'TAPIR', 'CROCODILE', 'KOMODO'];
-const LAND_EASTASIA = ['DEER', 'BOAR', 'WOLF', 'BEAR', 'BEAR_BLACK', 'FOX_RED', 'HARE_BROWN', 'MONKEY', 'TIGER'];
-const LAND_JAPAN = ['DEER', 'BOAR', 'WOLF', 'BEAR', 'BEAR_BLACK', 'FOX_RED', 'HARE_BROWN', 'MONKEY'];
-const LAND_CENTRALASIA = ['SNOWLEOPARD', 'IBEX', 'ARGALI', 'MOUFLON', 'WOLF', 'BEAR'];
-const LAND_STEPPE = ['WOLF', 'DEER', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'BOAR'];
-const LAND_MIDEAST = ['GAZELLE', 'WOLF_ARABIAN', 'SNAKE_GROUND', 'IBEX'];
-const LAND_EUROPE = ['DEER', 'BOAR', 'WOLF', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'MOUFLON', 'IBEX'];
-const LAND_AMERICA = ['JAGUAR', 'GUANACO', 'RHEA', 'CAPYBARA', 'JAVELINA', 'TAPIR', 'CAIMAN', 'HARE_GREY', 'BLACK_PANTHER'];
+/**
+ * 18 个生物地理区 → 物种池（🔴 2026-10-31 主人令「所有动物都要套用，按真实的地理分布重新分布」）。
+ * 每个物种都按**原生分布**放到它真正生活的区，绝不为了凑数跨洲借用：
+ *   非洲区只出非洲种，美洲区只出美洲种，旧大陆的虎／孔雀／象／犀不进美洲，美洲豹／水豚／貘不进旧大陆。
+ * 素材库里 72 种全部有落点（陆地野生 43 种 + 飞鸟 11 种 + 家畜 15 种走民生层 + 海洋 6 种走海洋层）。
+ */
+const REALMS: Readonly<Record<RealmKey, RealmPool>> = {
+    /** 北极圈（lat ≥ 66）：北极熊、海象、海豹（冰海沿岸）、北极狼/狐/兔，驼鹿与猞猁的泰加林缘 */
+    ARCTIC: {
+        land: ['BEAR_POLAR', 'WALRUS', 'SEAL', 'WOLF_ARCTIC', 'FOX_ARCTIC', 'HARE_ARCTIC', 'ELK', 'LYNX', 'WOLF'],
+        birds: ['RAVEN', 'OWL', 'FALCON'],
+    },
+    /** 寒温带泰加（lat 62–66）：驼鹿、猞猁、狼、棕熊、赤狐、雪兔、野猪、马鹿 */
+    BOREAL: {
+        land: ['ELK', 'LYNX', 'WOLF', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'BOAR', 'DEER'],
+        birds: ['RAVEN', 'OWL', 'FALCON', 'CRANE'],
+    },
+    /** 新北界·北美（西经 30 以西、lat ≥ 22）：白尾鹿、野火鸡、黑熊、棕熊、灰狼、赤狐、西貒、雪鞋兔、马鹿、加拿大猞猁 */
+    NEARCTIC: {
+        land: ['DEER', 'ELK', 'TURKEY', 'BEAR_BLACK', 'BEAR', 'WOLF', 'FOX_RED', 'JAVELINA', 'HARE_GREY', 'LYNX'],
+        birds: ['VULTURE', 'HAWK', 'FALCON', 'OWL', 'RAVEN', 'CONDOR'],
+    },
+    /** 新热带界·中美—亚马孙—巴西：美洲豹、水豚、中美貘、凯门鳄、卷尾猴、美洲鳄、西貒、眼斑火鸡 */
+    NEOTROPIC: {
+        land: ['JAGUAR', 'CAPYBARA', 'TAPIR', 'CAIMAN', 'CROCODILE', 'MONKEY', 'JAVELINA', 'TURKEY'],
+        birds: ['MACAW', 'VULTURE', 'HAWK', 'OWL', 'FALCON'],
+    },
+    /** 安第斯—潘帕斯（南美南部）：原驼、美洲鸵、山貘、欧洲野兔（近代引入且极盛） */
+    ANDES: {
+        land: ['GUANACO', 'RHEA', 'TAPIR', 'HARE_GREY'],
+        birds: ['CONDOR', 'HAWK', 'FALCON', 'OWL'],
+    },
+    /** 巴塔哥尼亚—火地岛（南纬 35 以南、西经 55 以西）：原驼、美洲鸵、麦哲伦企鹅、欧洲野兔（南美无北方海豹，不放） */
+    PATAGONIA: {
+        land: ['GUANACO', 'RHEA', 'PENGUIN', 'HARE_GREY'],
+        birds: ['CONDOR', 'HAWK', 'FALCON', 'OWL'],
+    },
+    /** 埃塞俄比亚界·撒哈拉以南非洲：狮、斑马、瞪羚、鸵鸟、象、犀、鳄、狒狒、非洲豹、非洲野犬、非洲蛇 */
+    AFROTROPIC: {
+        land: ['LION', 'ZEBRA', 'GAZELLE', 'OSTRICH', 'ELEPHANT', 'RHINO', 'CROCODILE', 'MONKEY', 'BLACK_PANTHER', 'WAR_DOG', 'SNAKE_GROUND'],
+        birds: ['FLAMINGO', 'VULTURE', 'STORK', 'CRANE', 'FALCON', 'HAWK', 'OWL'],
+    },
+    /** 北非—撒哈拉—阿拉伯：巴巴里狮（历史）、瞪羚、阿拉伯狼、努比亚北山羊、角蝰、阿拉伯鸵鸟（1970 年代灭绝） */
+    NORTH_AFRICA: {
+        land: ['LION', 'GAZELLE', 'WOLF_ARABIAN', 'IBEX', 'SNAKE_GROUND', 'OSTRICH'],
+        birds: ['FLAMINGO', 'VULTURE', 'FALCON', 'HAWK', 'OWL'],
+    },
+    /** 西亚（安纳托利亚、黎凡特、两河、伊朗）：波斯瞪羚、灰狼、北山羊、亚美尼亚盘羊、蛇 */
+    MIDEAST: {
+        land: ['GAZELLE', 'WOLF', 'IBEX', 'MOUFLON', 'SNAKE_GROUND'],
+        birds: ['VULTURE', 'FALCON', 'HAWK', 'OWL', 'FLAMINGO'],
+    },
+    /** 青藏高原—帕米尔—兴都库什：雪豹、北山羊、盘羊、岩羊、藏棕熊、藏野驴、藏羚/鹅喉羚 */
+    TIBET: {
+        land: ['SNOWLEOPARD', 'IBEX', 'ARGALI', 'MOUFLON', 'WOLF', 'BEAR', 'DONKEY', 'GAZELLE'],
+        birds: ['VULTURE', 'FALCON', 'HAWK', 'OWL'],
+    },
+    /** 东洋界·印度次大陆：虎、亚洲狮、象、印度犀、蓝孔雀、猕猴、沼鳄、水蛇、花鹿、豺 */
+    ORIENTAL_INDIA: {
+        land: ['TIGER', 'LION', 'ELEPHANT', 'RHINO', 'PEACOCK', 'MONKEY', 'CROCODILE', 'SNAKE_WATER', 'DEER', 'WAR_DOG'],
+        birds: ['FLAMINGO', 'CRANE', 'VULTURE', 'FALCON', 'HAWK', 'OWL', 'STORK'],
+    },
+    /** 东洋界·东南亚（马来、苏门答腊、爪哇、婆罗洲、苏拉威西）：虎、马来貘、科莫多巨蜥、绿孔雀、象、犀、鳄、水蛇、豺 */
+    ORIENTAL_SEA: {
+        land: ['TIGER', 'TAPIR', 'KOMODO', 'PEACOCK', 'MONKEY', 'ELEPHANT', 'RHINO', 'CROCODILE', 'SNAKE_WATER', 'WAR_DOG'],
+        birds: ['CRANE', 'HAWK', 'FALCON', 'OWL', 'FLAMINGO'],
+    },
+    /** 东洋界·华南（岭南、云贵、海南）：华南虎、亚洲象、中国犀、猕猴、水蛇、水鹿、野猪、豺 */
+    ORIENTAL_CHINA: {
+        land: ['TIGER', 'ELEPHANT', 'RHINO', 'MONKEY', 'SNAKE_WATER', 'DEER', 'BOAR', 'WAR_DOG'],
+        birds: ['PHEASANT', 'CRANE', 'HAWK', 'FALCON', 'OWL'],
+    },
+    /** 东亚汉地（华北、中原、江淮、河西、朝鲜）：鹿、野猪、狼、棕熊、黑熊、赤狐、草兔、雉鸡、猕猴、虎、马鹿、猞猁 */
+    EASTASIA: {
+        land: ['DEER', 'BOAR', 'WOLF', 'BEAR', 'BEAR_BLACK', 'FOX_RED', 'HARE_BROWN', 'PHEASANT', 'MONKEY', 'TIGER', 'ELK', 'LYNX'],
+        birds: ['CRANE', 'STORK', 'HAWK', 'FALCON', 'OWL', 'PHEASANT'],
+    },
+    /** 日本列岛：日本鹿、野猪、日本狼（已灭绝）、棕熊、亚洲黑熊、赤狐、日本野兔、日本猕猴（无虎豹） */
+    JAPAN: {
+        land: ['DEER', 'BOAR', 'WOLF', 'BEAR', 'BEAR_BLACK', 'FOX_RED', 'HARE_BROWN', 'MONKEY'],
+        birds: ['CRANE', 'HAWK', 'FALCON', 'OWL'],
+    },
+    /** 欧亚草原（蒙古高原、哈萨克、伏尔加—顿河）：狼、马鹿、棕熊、赤狐、草兔、野猪、驼鹿、蒙古野驴、鹅喉羚、普氏野马 */
+    STEPPE: {
+        land: ['WOLF', 'DEER', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'BOAR', 'ELK', 'DONKEY', 'GAZELLE', 'HORSE'],
+        birds: ['FALCON', 'VULTURE', 'CRANE', 'HAWK', 'OWL'],
+    },
+    /** 北亚泰加（西伯利亚、远东）：驼鹿、猞猁、狼、棕熊、赤狐、雪兔、野猪、马鹿 */
+    NORTHEAST: {
+        land: ['ELK', 'LYNX', 'WOLF', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'BOAR', 'DEER'],
+        birds: ['RAVEN', 'CRANE', 'HAWK', 'FALCON', 'OWL'],
+    },
+    /** 欧洲（含地中海北岸、巴尔干、不列颠、北欧南部）：马鹿、野猪、灰狼、棕熊、赤狐、草兔、欧洲盘羊、北山羊、驼鹿、猞猁、蛇 */
+    EUROPE: {
+        land: ['DEER', 'BOAR', 'WOLF', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'MOUFLON', 'IBEX', 'ELK', 'LYNX', 'SNAKE_GROUND'],
+        birds: ['STORK', 'FALCON', 'HAWK', 'OWL', 'RAVEN'],
+    },
+};
 
-/** 空中飞鸟（16 向；严格按世界自然动物地理学分布） */
-const BIRD_AFRICA = ['FLAMINGO', 'VULTURE', 'FALCON', 'HAWK', 'OWL'];               // 非洲：大裂谷盐湖红鹳、热带草原兀鹫、游隼
-const BIRD_MIDEAST = ['FLAMINGO', 'VULTURE', 'FALCON', 'HAWK', 'OWL'];              // 中东/埃及/波斯：红海波斯湾火烈鸟、沙漠兀鹫、阿拉伯猎隼
-const BIRD_INDIA = ['FLAMINGO', 'CRANE', 'VULTURE', 'FALCON', 'HAWK', 'OWL'];      // 印度：卡奇大盐沼火烈鸟、印度圣鸟赤颈鹤、印度兀鹫
-const BIRD_SEASIA = ['CRANE', 'HAWK', 'FALCON', 'OWL'];                            // 东南亚：湄公河湿地赤颈鹤、林栖苍鹰、游隼
-const BIRD_EASTASIA = ['CRANE', 'STORK', 'HAWK', 'FALCON', 'OWL'];                 // 东亚汉地/朝鲜：松鹤延年丹顶鹤、江淮东方白鹳、游隼
-const BIRD_JAPAN = ['CRANE', 'HAWK', 'FALCON', 'OWL'];                             // 日本：北海道钏路丹顶鹤、苍鹰、游隼（岛屿无秃鹫白鹳）
-const BIRD_TIBET_CENTRALASIA = ['VULTURE', 'FALCON', 'HAWK', 'OWL'];               // 青藏高原/中亚/西域：高山天葬兀鹫、高原猎隼（无白鹳）
-const BIRD_STEPPE = ['FALCON', 'VULTURE', 'CRANE', 'HAWK', 'OWL'];                // 欧亚草原/东北：海东青猎隼、草原兀鹫、湿地迁徙鹤
-const BIRD_EUROPE = ['STORK', 'FALCON', 'HAWK', 'OWL'];                            // 欧洲全境：欧洲标志白鹳（送子鸟）、欧洲游隼、苍鹰
-const BIRD_AMERICA_ANDE = ['CONDOR', 'HAWK', 'FALCON', 'OWL'];                     // 南美安第斯高地：安第斯神鹰（CONDOR 独占）、高山猛禽
-const BIRD_AMERICA_TROPICAL = ['MACAW', 'HAWK', 'OWL', 'FALCON'];                  // 中美/热带雨林低地：金刚鹦鹉（MACAW 独占）、林区猛禽
+/**
+ * 经纬度 → 生物区键（**战略地图唯一入口**，纯坐标判定）。
+ * 🔴 不再用 RegionSystem.getRegion：它只认 19 个城环，环外一律 'CENTRAL'，
+ *    美洲/撒南非洲/东南亚/爱尔兰/埃及/印度全被当成中原出东亚动物，且城环本身留了大量空洞。
+ * 顺序即优先级：极地 → 美洲 → 西亚 → 非洲 → 高原 → 南亚 → 日本 → 华南 → 东南亚 → 东亚 → 泰加 → 草原 → 欧洲。
+ */
+export function realmKeyAt(lat: number, lng: number): RealmKey {
+    if (lat >= 66) return 'ARCTIC';
+    if (lat >= 62) return 'BOREAL';
+    if (lng <= -30) {
+        if (lat <= -35) return 'PATAGONIA';
+        if (lat <= -12) return 'ANDES';
+        if (lat < 22) return 'NEOTROPIC';
+        return 'NEARCTIC';
+    }
+    if (lat >= 12 && lat < 42 && lng >= 35 && lng < 62) return 'MIDEAST';
+    if (lat < 19 && lng > -20 && lng < 52) {
+        if (lng < 43 || lat < 10) return 'AFROTROPIC';
+    }
+    if (lat < 35 && lng > -20 && lng < 52) return 'NORTH_AFRICA';
+    if (lat >= 33 && lat < 41 && lng >= 62 && lng < 80) return 'TIBET';   // 帕米尔—兴都库什
+    if (lat >= 29 && lat < 38 && lng >= 80 && lng < 102) return 'TIBET';  // 青藏高原
+    if (lat >= 5 && lat < 33 && lng >= 60 && lng < 92) return 'ORIENTAL_INDIA';
+    if (lng >= 130 && lat >= 30 && lat < 50) return 'JAPAN';
+    if (lat >= 18 && lat < 26 && lng >= 100 && lng < 122) return 'ORIENTAL_CHINA';
+    if (lat >= -11 && lat < 26 && lng >= 92 && lng < 142) return 'ORIENTAL_SEA';
+    if (lat >= 20 && lat < 50 && lng >= 100 && lng < 136) return 'EASTASIA';
+    if (lat >= 50 && lng >= 45) return 'NORTHEAST';
+    if (lat >= 36 && lat < 56 && lng >= 40 && lng < 115) return 'STEPPE';
+    if (lat >= 33 && lat < 62 && lng >= -25 && lng < 45) return 'EUROPE';
+    if (lat >= 20) return 'EUROPE';
+    if (lat >= -12) return 'AFROTROPIC';
+    return 'ANDES';
+}
 
-function animalsForRegion(region: RegionType): { land: string[]; birds: string[] } {
-    if (RG_AFRICA.includes(region)) return { land: LAND_AFRICA, birds: BIRD_AFRICA };
-    if (RG_INDIA.includes(region)) return { land: LAND_INDIA, birds: BIRD_INDIA };
-    if (RG_SEASIA.includes(region)) return { land: LAND_SEASIA, birds: BIRD_SEASIA };
-    if (RG_JAPAN.includes(region)) return { land: LAND_JAPAN, birds: BIRD_JAPAN };
-    if (RG_EASTASIA.includes(region)) return { land: LAND_EASTASIA, birds: BIRD_EASTASIA };
-    if (RG_TIBET_CENTRALASIA.includes(region)) return { land: LAND_CENTRALASIA, birds: BIRD_TIBET_CENTRALASIA };
-    if (RG_STEPPE.includes(region)) return { land: LAND_STEPPE, birds: BIRD_STEPPE };
-    if (RG_MIDEAST.includes(region)) return { land: LAND_MIDEAST, birds: BIRD_MIDEAST };
-    if (RG_EUROPE.includes(region)) return { land: LAND_EUROPE, birds: BIRD_EUROPE };
-    if (RG_AMERICA_ANDE.includes(region)) return { land: LAND_AMERICA, birds: BIRD_AMERICA_ANDE };
-    if (RG_AMERICA_TROPICAL.includes(region)) return { land: LAND_AMERICA, birds: BIRD_AMERICA_TROPICAL };
-    return { land: LAND_EUROPE, birds: BIRD_EUROPE };
+/** 经纬度 → 该地野生动物池（陆地 + 飞鸟） */
+export function realmAt(lat: number, lng: number): RealmPool {
+    return REALMS[realmKeyAt(lat, lng)];
+}
+
+/** 危险源（军团 / 玩家）*/
+export interface LandThreat { lat: number; lng: number }
+
+/**
+ * 真正会冬眠的物种（按真实生物学习性，素材库里只有熊类）：
+ *   · 棕熊 BEAR、黑熊／亚洲黑熊 BEAR_BLACK —— 冬季进洞蛰伏，不吃不走、外敌来了也不逃；
+ *   · **不冬眠的雪地动物**（有意不列）：北极熊（只有怀孕母熊产仔期蛰伏，公熊冬季照常巡猎）、
+ *     北极狐／北极狼／北极兔／雪兔（只换白毛，全年活动）、驼鹿／马鹿（冬季啃树皮）、
+ *     海豹／海象（冰下捕食）、猞猁／赤狐／狼（冬季照常狩猎）、企鹅（南半球繁殖季活动）。
+ */
+export const HIBERNATORS: ReadonlySet<string> = new Set(['BEAR', 'BEAR_BLACK']);
+
+/** 该物种在冬季（season 3 = 冬）且纬度够冷时是否蛰伏 */
+export function isHibernating(species: string, lat: number, season: number): boolean {
+    return season === 3 && Math.abs(lat) >= 30 && HIBERNATORS.has(species);
+}
+
+/** 8 向朝向（与据点民生层 dirFromDelta 同一套：0 东北 1 东 2 东南 3 南 4 西南 5 西 6 西北 7 北） */
+export function landDir8(dLat: number, dLng: number): number {
+    const deg = ((Math.atan2(dLat, dLng) * 180) / Math.PI + 360) % 360;   // 0 东、90 北
+    return (((1 - Math.round(deg / 45)) % 8) + 8) % 8;
+}
+
+export interface LandStepOptions {
+    isSea: (p: Pt) => boolean;
+    rand: () => number;
+    /** 🔴 2026-10-31「雪地动物要冬眠」：冬季蛰伏中 —— 不吃不走、外敌来了也不逃 */
+    hibernating?: boolean;
+    /** 🔴 2026-10-31「动物不要出现在据点附近」：落在据点 0.30° 圈内视同障碍 */
+    nearCity?: (p: Pt) => boolean;
+}
+
+/**
+ * 陆地动物一步行为（2026-10-31 主人令「要不定期，随机朝不同的方向跑动；军团或者玩家过来的时候也要逃跑」）：
+ *   ① 没有威胁时：吃草几十秒 → 随机挑一个方向走 20~70px → 再吃草，周而复始（不定时、不定向）；
+ *   ② 军团/玩家进入 ≈65px（0.18°）：立刻锁定「远离威胁」的方向奔跑 1.6~3.2 秒，速度是走动的 3 倍；
+ *   ③ 一律不下水：选点先判海，跑动中每 0.25 秒复查一次，踩到海面就停步回头；
+ *   ④ 离出生格超过 ≈150px（0.42°）就往回走，绝不整场跑丢。
+ * 纯函数、无 DOM 依赖，便于离线核查。
+ */
+export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly LandThreat[], opts: LandStepOptions): void {
+    const { isSea, rand } = opts;
+    // 水面与据点圈一律当作走不进去的障碍
+    const blocked = (p: Pt): boolean => isSea(p) || (opts.nearCity ? opts.nearCity(p) : false);
+
+    // ⓪ 冬眠（熊类）：不决策、不移动、不逃跑，动作定在 idle；绘制端同时把帧率压到 3 帧/秒，像在伏着喘气
+    if (opts.hibernating) {
+        e.action = 'idle';
+        e.target = null;
+        e.fleeTimer = 0;
+        return;
+    }
+
+    // ① 找最近的威胁
+    let threat: LandThreat | null = null;
+    let threatDist = Infinity;
+    for (const t of threats) {
+        const d = Math.hypot(t.lat - e.pos.lat, t.lng - e.pos.lng);
+        if (d < threatDist) { threatDist = d; threat = t; }
+    }
+    if (threat && threatDist < LAND_FLEE_RADIUS_DEG) {
+        let dx = e.pos.lng - threat.lng;
+        let dy = e.pos.lat - threat.lat;
+        const len = Math.hypot(dx, dy);
+        if (len < 1e-6) {
+            const a = rand() * Math.PI * 2;
+            dx = Math.cos(a); dy = Math.sin(a);
+        } else {
+            dx /= len; dy /= len;
+        }
+        e.fleeDX = dx;
+        e.fleeDY = dy;
+        e.fleeTimer = 1.6 + rand() * 1.6;
+        e.target = null;
+    }
+
+    // ② 动作与目标
+    if (e.fleeTimer > 0) {
+        e.action = 'run';
+    } else if (e.target) {
+        e.action = 'walk';
+    } else {
+        e.action = 'idle';
+        e.timer -= dt;
+        if (e.timer <= 0) {
+            e.timer = 1.6 + rand() * 3.2;
+            if (rand() < 0.78) {
+                const ang = rand() * Math.PI * 2;
+                const step = LAND_STEP_MIN_DEG + rand() * (LAND_STEP_MAX_DEG - LAND_STEP_MIN_DEG);
+                let tx = e.pos.lng + Math.cos(ang) * step;
+                let ty = e.pos.lat + Math.sin(ang) * step;
+                if (Math.hypot(tx - e.home.lng, ty - e.home.lat) > LAND_LEASH_DEG) {
+                    tx = e.home.lng + (rand() - 0.5) * 0.1;
+                    ty = e.home.lat + (rand() - 0.5) * 0.1;
+                }
+                const cand = { lat: ty, lng: tx };
+                if (!blocked(cand)) {
+                    e.target = cand;
+                    e.action = 'walk';
+                } else if (rand() < 0.5) {
+                    // 挑到的方向是海，下次决策提早重试
+                    e.timer = 0.6 + rand() * 0.8;
+                }
+            }
+        }
+    }
+
+    // ③ 位移
+    let vx = 0, vy = 0, speed = 0;
+    if (e.action === 'run' && e.fleeTimer > 0) {
+        vx = e.fleeDX;
+        vy = e.fleeDY;
+        speed = LAND_FLEE_SPEED_DEG;
+    } else if (e.action === 'walk' && e.target) {
+        const dx = e.target.lng - e.pos.lng;
+        const dy = e.target.lat - e.pos.lat;
+        const len = Math.hypot(dx, dy);
+        speed = LAND_WALK_SPEED_DEG;
+        if (len <= speed * dt) {
+            e.pos = { lat: e.target.lat, lng: e.target.lng };
+            e.target = null;
+            e.action = 'idle';
+            e.timer = 1.2 + rand() * 2.5;
+            speed = 0;
+        } else {
+            vx = dx / len;
+            vy = dy / len;
+        }
+    }
+
+    if (speed > 0) {
+        const next = { lat: e.pos.lat + vy * speed * dt, lng: e.pos.lng + vx * speed * dt };
+        e.seaTimer -= dt;
+        const check = e.seaTimer <= 0;
+        if (check) e.seaTimer = LAND_SEA_CHECK_SEC;
+        // 据点圈每帧都判（走 O(9) 个桶，代价极低），保证一只也踏不进去；水面仍按 0.25 秒复查
+        const intoCity = opts.nearCity ? opts.nearCity(next) : false;
+        if (!intoCity && (!check || !isSea(next))) {
+            e.pos = next;
+            e.facing = landDir8(vy, vx);
+        } else {
+            // 踩到水面、或走进据点 0.30° 圈：停步、清目标、回头
+            e.target = null;
+            e.fleeTimer = 0;
+            e.action = 'idle';
+            e.timer = 1 + rand() * 2;
+        }
+    }
+
+    // ④ 逃跑计时
+    if (e.fleeTimer > 0) {
+        e.fleeTimer -= dt;
+        if (e.fleeTimer <= 0) {
+            e.fleeTimer = 0;
+            e.action = 'idle';
+            e.timer = 1.5 + rand() * 3;
+        }
+    }
 }
 
 /** 确定性整数哈希 → [0,1)。同 (col,row,salt) 恒同值，保证动物位置不跳。 */
@@ -317,7 +601,10 @@ export class AnimalAmbientLayer {
         let bytes = this.totalAssetBytes();
         if (bytes <= AnimalAmbientLayer.ASSET_BUDGET_BYTES) return;
         const inUse = new Set<string>();
-        for (const e of this.entries) inUse.add(`${e.dir}:idle`);
+        for (const e of this.entries) {
+            inUse.add(`${e.dir}:idle`);
+            if (e.action !== 'idle') inUse.add(`${e.dir}:${e.action}`);
+        }
         for (const b of this.birds) {
             inUse.add(`${b.dir}:fly`);
             inUse.add(`${b.dir}:hover`);
@@ -361,18 +648,30 @@ export class AnimalAmbientLayer {
                         const offLng = (hash01(col, row, 4) - 0.5) * CELL_DEG * 0.8;
                         const pos = { lat: clat + offLat, lng: clng + offLng };
                         // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
-                        if (!this.isSea(pos)) {
+                        // 🔴 2026-10-31 主人令「动物不要出现在据点附近」：据点 0.30° 圈内不生成
+                        if (!this.isSea(pos) && !this.isNearCity(pos)) {
                             activeIds.add(id);
                             // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
                             let entry = this.entries.find((e) => e.id === id);
                             if (!entry) {
-                                const region = getRegion(clat, clng);
-                                const { land } = animalsForRegion(region);
+                                const { land } = realmAt(clat, clng);
                                 const dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
                                 const facing = Math.floor(hash01(col, row, 6) * 8) % 8;
                                 const phase = Math.floor(hash01(col, row, 7) * 1000);
                                 this.loadAsset(dir, 'idle', false);
-                                this.entries.push({ id, dir, pos, facing, phase, alpha: 0, fadingOut: false });
+                                // 起始相位错开：不让整屏动物同时起步（决策计时器 0~3 秒随机）
+                                const seed = hash01(col, row, 9);
+                                this.entries.push({
+                                    id, dir, pos, facing, phase, alpha: 0, fadingOut: false,
+                                    home: { lat: pos.lat, lng: pos.lng },
+                                    action: 'idle',
+                                    timer: seed * 3,
+                                    target: null,
+                                    fleeTimer: 0,
+                                    fleeDX: 0,
+                                    fleeDY: 0,
+                                    seaTimer: 0,
+                                });
                             }
                         }
                     }
@@ -381,12 +680,32 @@ export class AnimalAmbientLayer {
         }
 
         const FADE_DUR = 1.0; // 渐显/渐隐时长（秒）
+        // 🔴 2026-10-31 主人令「军团或者玩家过来的时候也要逃跑」：每帧取一次威胁点（军团 + 跟随的玩家军团），
+        //    30 只以内动物共用这一份，不必逐只查军团。
+        const threats = this.collectThreats();
+        const season = this.getSeason();
         for (let i = this.entries.length - 1; i >= 0; i--) {
             const e = this.entries[i];
             if (activeIds.has(e.id)) {
-                // 处于可见区：渐显
+                // 🔴 2026-10-31「动物不要出现在据点附近」：万一被挤进据点圈（新增据点/旧位置），立刻渐隐退场
+                if (this.isNearCity(e.pos)) {
+                    e.fadingOut = true;
+                    e.alpha = Math.max(0, e.alpha - dt / FADE_DUR);
+                    if (e.alpha <= 0) this.entries.splice(i, 1);
+                    continue;
+                }
+                // 处于可见区：渐显 + 走动/逃跑行为
                 e.fadingOut = false;
                 e.alpha = Math.min(1, e.alpha + dt / FADE_DUR);
+                // 🔴 2026-10-31「雪地动物要冬眠」：冬季（season 3）且纬度高时，熊类原地蛰伏
+                e.hibernating = isHibernating(e.dir, e.pos.lat, season);
+                stepLandEntry(e, dt, threats, {
+                    isSea: (p) => this.isSea(p),
+                    rand: Math.random,
+                    hibernating: e.hibernating,
+                    nearCity: (p) => this.isNearCity(p),
+                });
+                if (e.action !== 'idle') this.loadAsset(e.dir, e.action, false);   // walk/run 懒加载（素材无 run 时自动回落 walk）
             } else {
                 // 移出可见区或关闭：渐隐
                 e.fadingOut = true;
@@ -398,12 +717,72 @@ export class AnimalAmbientLayer {
         }
     }
 
+    /** 危机来源：所有军团（玩家跟随的那支也在其中）。0.3 秒缓存一次，平移地图时不重复取。 */
+    private threatCache: LandThreat[] = [];
+    private threatCacheAt = 0;
+    private collectThreats(): LandThreat[] {
+        const now = performance.now();
+        if (now - this.threatCacheAt < 300) return this.threatCache;
+        this.threatCacheAt = now;
+        const out: LandThreat[] = [];
+        const game = (window as any).game;
+        const armies = game?.legionManager?.getArmies?.() ?? [];
+        for (const a of armies) {
+            if (!a || a.isDestroyed) continue;
+            const p = a.getPosition?.();
+            if (p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) out.push({ lat: p.lat, lng: p.lng });
+        }
+        this.threatCache = out;
+        return out;
+    }
+
     private isSea(pos: Pt): boolean {
         try {
             return LandSeaSystem.isSeaAt(pos);
         } catch {
             return false;
         }
+    }
+
+    /** 季节（0 春 / 1 夏 / 2 秋 / 3 冬），与据点民生层同一源 */
+    private getSeason(): number {
+        const s = (window as any).game?.timeSystem?.getSeason?.();
+        return typeof s === 'number' && s >= 0 && s <= 3 ? s : 0;
+    }
+
+    // ── 据点圈避让（2026-10-31 主人令「动物不要出现在据点附近」）────────────────
+    private cityBuckets: Map<string, Pt[]> | null = null;
+
+    /** LLC 网格索引：把 1175 个据点按 0.5° 分桶，查一只动物是否落在据点 0.30° 圈内只算 9 个桶 */
+    private ensureCityIndex(): Map<string, Pt[]> {
+        if (this.cityBuckets) return this.cityBuckets;
+        const buckets = new Map<string, Pt[]>();
+        for (const c of CITIES_V2) {
+            if (!Number.isFinite(c.lat) || !Number.isFinite(c.lng)) continue;
+            const key = `${Math.floor(c.lat / CITY_INDEX_CELL_DEG)},${Math.floor(c.lng / CITY_INDEX_CELL_DEG)}`;
+            const arr = buckets.get(key);
+            if (arr) arr.push({ lat: c.lat, lng: c.lng });
+            else buckets.set(key, [{ lat: c.lat, lng: c.lng }]);
+        }
+        this.cityBuckets = buckets;
+        return buckets;
+    }
+
+    /** 该点是否在任一据点 0.30° 圈内（城池图标 + 近郊那一圈不出野生动物） */
+    private isNearCity(p: Pt): boolean {
+        const buckets = this.ensureCityIndex();
+        const row = Math.floor(p.lat / CITY_INDEX_CELL_DEG);
+        const col = Math.floor(p.lng / CITY_INDEX_CELL_DEG);
+        for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+                const arr = buckets.get(`${row + dr},${col + dc}`);
+                if (!arr) continue;
+                for (const c of arr) {
+                    if (Math.hypot(c.lat - p.lat, c.lng - p.lng) < CITY_CLEAR_DEG) return true;
+                }
+            }
+        }
+        return false;
     }
 
     // ── DE 飞鸟系统（与战术模式 Scene13 及 DE 原作完全一致） ────────────────
@@ -420,8 +799,7 @@ export class AnimalAmbientLayer {
         // 🔴 [2026-10-31 主人令「只在所在屏幕显示」] 视口内任意处起飞（取消道路可达掩膜）
         const lat = sw.lat + Math.random() * (ne.lat - sw.lat);
         const lng = sw.lng + Math.random() * (ne.lng - sw.lng);
-        const region = getRegion(lat, lng);
-        const { birds } = animalsForRegion(region);
+        const { birds } = realmAt(lat, lng);
         const dir = birds[Math.floor(Math.random() * birds.length)];
         this.loadAsset(dir, 'fly', true);
         this.loadAsset(dir, 'hover', true);
@@ -557,13 +935,14 @@ export class AnimalAmbientLayer {
         birdCtx.clearRect(0, 0, this.birdCanvas.width, this.birdCanvas.height);
 
         const zoom = this.map.getZoom();
-        const scale = Math.pow(2, zoom - 9) * SCALE_BASE;
+        const scale = strategicSpriteScale(zoom);
         const m = 40; // 屏幕裁剪余量
 
-        // 1. 绘制陆地动物（idle 吃草/张望，位置固定，渐显/渐隐）
+        // 1. 绘制陆地动物（吃草／走动／逃跑三态，位置随行为实时变化，渐显/渐隐）
         for (const e of this.entries) {
             if (e.alpha <= 0) continue;
-            const asset = this.assetFor(`${e.dir}:idle`);
+            // 走动/逃跑时用对应动作贴图；素材没有 run 的（家畜、火鸡）自动回落 walk
+            const asset = this.assetFor(`${e.dir}:${e.action}`) ?? this.assetFor(`${e.dir}:idle`);
             if (!asset) continue;
             const pt = this.map.latLngToContainerPoint([e.pos.lat, e.pos.lng]);
             if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
@@ -572,7 +951,9 @@ export class AnimalAmbientLayer {
             const sheet = asset.sheets[e.facing];
             if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
 
-            const frame = Math.floor((this.nowMs / 1000) * 14 + e.phase) % asset.frames;
+            // 冬眠中把动作帧率压到 3 帧/秒，看起来只是伏着缓慢喘气，不是站在那儿机械踏步
+            const fps = e.hibernating ? 3 : 14;
+            const frame = Math.floor((this.nowMs / 1000) * fps + e.phase) % asset.frames;
             const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
             const dx = pt.x - hx * scale;
             const dy = pt.y - hy * scale;
@@ -616,7 +997,7 @@ export class AnimalAmbientLayer {
 
 let singleton: AnimalAmbientLayer | null = null;
 let visible = true;
-let landVisible = false;
+let landVisible = true;   // 🔴 2026-10-31 主人令「不要搞得永远都看不到」：陆地野生动物默认开启（原默认关，开局一只都看不到）
 let birdsVisible = true;
 
 export function initializeAnimalAmbientLayer(gameMap: GameMap): AnimalAmbientLayer {

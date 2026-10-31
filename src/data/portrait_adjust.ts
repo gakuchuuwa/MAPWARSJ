@@ -9356,6 +9356,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.17,
             "offsetX": 5,
             "offsetY": 16
+        },
+        "/assets/KHMER/bfe_mahathammaracha.png": {
+            "scale": 1.28,
+            "offsetX": 1,
+            "offsetY": -70
         }
     },
     "folderGuides": {

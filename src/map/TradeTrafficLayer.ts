@@ -8,6 +8,7 @@ import { roadRegistry } from '../roads/RoadRegistry';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { OrientationSystem } from '../core/OrientationSystem';
 import { NavalWakeDrawer } from './legion/NavalWakeDrawer';
+import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
 
 /**
  * TradeTrafficLayer — 战略地图「商贸交通」环境层（2026-08-31 主人定稿）。
@@ -77,7 +78,7 @@ const CART_ANIM_FPS = 18;           // 车 move 动画帧率
 //    等于把攻城方的士兵整个涂掉，只剩画在主层(UNITS=620)的攻城器械还看得见。
 //    地面氛围层（植被/动物/商队）一律排在 CONNECTIONS(450) 与 UNITS_LOW(580) 之间。
 const PANE_ZINDEX = 570;            // 商队：地面氛围层最高，仍低于 UNITS_LOW(580)
-const SCALE_BASE = 0.35;            // 渲染缩放（× 2^(zoom-9)，比军团小）
+const SCALE_BASE = STRATEGIC_SPRITE_SCALE;   // 🔴 2026-10-31 主人令「显示比例统一、大小对齐 DE」：商队与军团/家畜同一基准（原 0.35）
 const OFFSCREEN_MARGIN = 0.25;      // 屏幕外起终点外推比例（× 视口宽；须大于车队展开长度）
 // 🔴 [2026-08-31] 30 → 8 秒。这个数是「车队生成在视口外多远」——原值意味着
 //    最长要等 30 秒它才走进画面，而镜头常常撑不到 30 秒就切走了。

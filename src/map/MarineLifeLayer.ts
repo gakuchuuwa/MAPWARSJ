@@ -2,6 +2,7 @@ import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
+import { strategicSpriteScale } from './strategicSpriteScale';
 
 /**
  * 战略地图「海洋生物」层（2026-09-17 优化升级）：
@@ -24,20 +25,25 @@ interface CreatureAsset {
     boxH: number;
     anchorX: number;
     anchorY: number;
-    screenW: number;
 }
 
 type CreatureKind = 'DOLPHIN' | 'WHALE' | 'BOX_TURTLES' | 'NESSIE' | 'TUNA_FISH' | 'MARLIN_FISH';
 
+/**
+ * 🔴 2026-10-31 主人令「陆海空动物的显示比例统一，大小对齐 DE」：海洋生物原先是「固定屏幕像素」
+ *   （海豚 104px、不随缩放），于是 zoom 9 时比黄牛大 3 倍、zoom 10 世界翻倍它却不变。
+ *   现在与陆地动物同一 DE 基准：**素材原尺寸 × strategicSpriteScale**（zoom 9 基准 0.7 ×2^(zoom-9)），
+ *   锚点同比例换算，鲸／海豚／海龟／鱼与陆地动物的相对大小回到 DE 原样。
+ */
 const ASSETS: Record<CreatureKind, CreatureAsset> = {
     // 硬编码来自 _meta.json（DE 水下潜游层 + 水上破水层 + 白色跃水浪花/涟漪合成，加载时再 fetch 覆盖一次）
-    DOLPHIN:     { url: '/SUCAI_RESOURCE/DOLPHIN/frames.png',     frames: 104, cols: 26, boxW: 126, boxH: 102, anchorX: 96,  anchorY: 55, screenW: 104 },
-    WHALE:       { url: '/SUCAI_RESOURCE/WHALE/frames.png',       frames: 241, cols: 25, boxW: 212, boxH: 115, anchorX: 113, anchorY: 59, screenW: 168 },
-    BOX_TURTLES: { url: '/SUCAI_RESOURCE/BOX_TURTLES/frames.png', frames: 180, cols: 30, boxW: 76,  boxH: 41,  anchorX: 35,  anchorY: 17, screenW: 56 },
-    NESSIE:      { url: '/SUCAI_RESOURCE/NESSIE/frames.png',      frames: 180, cols: 30, boxW: 256, boxH: 222, anchorX: 98,  anchorY: 58, screenW: 196 },
-    // 跃水鱼（DE a_fish_tuna / a_fish_marlin1，单行横条 cols = frames；尺寸按与鲸鱼同一比例 0.79）
-    TUNA_FISH:   { url: '/SUCAI_RESOURCE/TUNA_FISH/frames.png',   frames: 91,  cols: 91, boxW: 96,  boxH: 92,  anchorX: 56,  anchorY: 84, screenW: 76 },
-    MARLIN_FISH: { url: '/SUCAI_RESOURCE/MARLIN_FISH/frames.png', frames: 61,  cols: 61, boxW: 80,  boxH: 120, anchorX: 24,  anchorY: 120, screenW: 63 },
+    DOLPHIN:     { url: '/SUCAI_RESOURCE/DOLPHIN/frames.png',     frames: 104, cols: 26, boxW: 126, boxH: 102, anchorX: 96,  anchorY: 55 },
+    WHALE:       { url: '/SUCAI_RESOURCE/WHALE/frames.png',       frames: 241, cols: 25, boxW: 212, boxH: 115, anchorX: 113, anchorY: 59 },
+    BOX_TURTLES: { url: '/SUCAI_RESOURCE/BOX_TURTLES/frames.png', frames: 180, cols: 30, boxW: 76,  boxH: 41,  anchorX: 35,  anchorY: 17 },
+    NESSIE:      { url: '/SUCAI_RESOURCE/NESSIE/frames.png',      frames: 180, cols: 30, boxW: 256, boxH: 222, anchorX: 98,  anchorY: 58 },
+    // 跃水鱼（DE a_fish_tuna / a_fish_marlin1，单行横条 cols = frames）
+    TUNA_FISH:   { url: '/SUCAI_RESOURCE/TUNA_FISH/frames.png',   frames: 91,  cols: 91, boxW: 96,  boxH: 92,  anchorX: 56,  anchorY: 84 },
+    MARLIN_FISH: { url: '/SUCAI_RESOURCE/MARLIN_FISH/frames.png', frames: 61,  cols: 61, boxW: 80,  boxH: 120, anchorX: 24,  anchorY: 120 },
 };
 
 interface Creature {
@@ -311,6 +317,8 @@ export class MarineLifeLayer extends L.Layer {
         if (this.creatures.length === 0) return;
 
         const bounds = this.map.getBounds();
+        // 与陆地动物/家畜同一 DE 基准，随地图缩放（zoom 8 → 0.35，9 → 0.7，10 → 1.4）
+        const spriteScale = strategicSpriteScale(this.map.getZoom());
         for (const c of this.creatures) {
             // 视口粗筛（留 0.1° 边距防边缘截断）
             if (c.lat < bounds.getSouth() - 0.1 || c.lat > bounds.getNorth() + 0.1 ||
@@ -323,8 +331,8 @@ export class MarineLifeLayer extends L.Layer {
             if (!img) continue;
 
             const p = this.map.latLngToContainerPoint(L.latLng(c.lat, c.lng));
-            const w = a.screenW;
-            const h = (a.boxH / a.boxW) * w;
+            const w = a.boxW * spriteScale;
+            const h = a.boxH * spriteScale;
             const cols = a.cols || Math.max(1, Math.round(img.naturalWidth / a.boxW));
             const sx = (c.frame % cols) * a.boxW;
             const sy = Math.floor(c.frame / cols) * a.boxH;

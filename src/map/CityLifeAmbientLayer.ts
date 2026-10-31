@@ -6,6 +6,7 @@ import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { hasWorldBaseData, loadWorldBaseData, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
+import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
 
 /**
  * CityLifeAmbientLayer — 战略地图「67 文化据点民生生态 & 战火破坏/尸骸渐变」环境层（2026-10-26 主人定稿）。
@@ -133,12 +134,18 @@ const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
 const PLOT_PANE_ZINDEX = 330;  // 生产方式地皮（农田、水田、牧场等）位于矢量河流(335)与水域河流(340)下层，不遮挡河流
 const PANE_ZINDEX = 568;       // 高于陆地动物(560)/植被(565)，低于商队(570)/攻城底层军团(580)/据点(610)/主军团(620)
-const VILLAGER_SCALE_BASE = 0.42;
-const ANIMAL_SCALE_BASE = 0.48;
-const SHIP_SCALE_BASE = 0.46;
-const FISH_SCALE_BASE = 0.44;
-const WRECK_SCALE_BASE = 0.44;
-const HUNTING_TREE_BASE_PX = 27;
+/**
+ * 🔴 2026-10-31 主人令「把生产方式，陆海空动物的显示比例统一，大小对齐 DE」：
+ *   村民、家畜/猎物、渔船、鱼群、尸体与沉船残骸一律用**同一个 DE 基准**（STRATEGIC_SPRITE_SCALE＝军团 0.7），
+ *   不再各写一套 0.42 / 0.48 / 0.46 / 0.44。DE 素材本来就是同一世界像素，同系数即 DE 原比例。
+ *   地皮（0.58）、建筑（0.22）、树丛（0.36 等）是场景件、不是活物，另按布局标定，不在这一族。
+ */
+const VILLAGER_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const ANIMAL_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const SHIP_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const FISH_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const WRECK_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const HUNTING_TREE_BASE_PX = 45;   // 🔴 2026-10-31 随活物同比例 ×1.67（原 27）：人放大后树不能比人矮
 type SeasonalPlotKind = 'dry_farm' | 'rice_farm' | 'pasture';
 const FARM_BY_SEASON = ['FARM_SPRING', 'FARM_SUMMER', 'FARM_AUTUMN', 'FARM_WINTER'] as const;
 const RFARM_BY_SEASON = ['RFARM_SPRING', 'RFARM_SUMMER', 'RFARM_AUTUMN', 'RFARM_WINTER'] as const;
@@ -362,9 +369,11 @@ const PIG_KEEPING_EXCLUDED_CULTURES: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * 🔴 2026-10-31 主人令「农田只有猪，没有牛，我设计了牛，请修复」：农田四块里的牲畜块按文化取役畜。
+ * 🔴 2026-10-31 主人令「农田只有猪，没有牛，我设计了牛，请修复」＋「把所有元素都解析，都要显示，套用，多样化」：
+ *   农田四块里的牲畜块按文化取役畜，并把素材库里的三种牛都用上（黄牛 / 花斑牛 / 黑牛）：
  *   · 稻作区＝水牛（BUFFALO，江南/东南亚水田役畜）；
- *   · 旱作区＝黄牛（COW_BROWN，欧亚非旱地耕牛）；
+ *   · 旱作区＝黄牛（COW_BROWN，欧亚非旱地耕牛）；西欧—中欧—北欧的赤白花斑牛＝COW_BW；
+ *     南欧—伊比利亚—地中海黑牛＝COW_BLACK；
  *   · 美洲原住民 1492 年前既无牛也无猪：安第斯与南美南部用羊驼（LLAMA），中美洲与亚马孙用火鸡（TURKEY）。
  *   不在这张表里的文化按作物类型取牛，绝不空手（有田就有役畜）。
  */
@@ -372,10 +381,83 @@ const FARM_OX_BY_CULTURE: Readonly<Record<string, string>> = {
     INCA: 'LLAMA', MUISCA: 'LLAMA', MAPUCHE: 'LLAMA',
     MAYANS: 'TURKEY', TUPI: 'TURKEY', AMERICA: 'TURKEY',
 };
+
+/** 花斑牛（COW_BW）：西欧—中欧—北欧—东欧的赤白花牛带（荷尔斯泰因—西门塔尔—丹麦红白） */
+const COW_BW_CULTURES: ReadonlySet<string> = new Set([
+    'FRANKS', 'BURGUNDIANS', 'GERMANIC', 'SAXONS', 'BRITONS', 'POLES', 'SLAVIC', 'LATIN', 'ROMA',
+    'EAST', 'MAGYAR', 'BULGARIANS', 'BOHEMIANS', 'VARANGIANS', 'DANES', 'VIKINGS', 'LITHUANIANS',
+]);
+/** 黑牛（COW_BLACK）：伊比利亚—南欧—地中海黑牛带 */
+const COW_BLACK_CULTURES: ReadonlySet<string> = new Set([
+    'SPANISH', 'PORTUGUESE', 'SICILIANS', 'MACEDONIAN', 'BYZANTINE', 'ARMENIANS', 'GEORGIANS',
+]);
+
 function farmOxSpecies(style: string, cat: LivelihoodCategory): string {
     const special = FARM_OX_BY_CULTURE[style];
     if (special) return special;
-    return cat === 'farming_rice' ? 'BUFFALO' : 'COW_BROWN';
+    if (cat === 'farming_rice') {
+        // 温带稻作（朝鲜半岛、日本）按史用黄牛／朝鲜牛耕作；水牛只在水热充足的亚热带—热带稻作区（江南、东南亚、南亚）
+        if (style === 'KOREA' || style === 'JAPAN') return 'COW_BROWN';
+        return 'BUFFALO';
+    }
+    if (COW_BW_CULTURES.has(style)) return 'COW_BW';
+    if (COW_BLACK_CULTURES.has(style)) return 'COW_BLACK';
+    return 'COW_BROWN';
+}
+
+/**
+ * 🔴 2026-10-31「都要显示，套用，多样化」：农田第二块（原来写死一头猪）改按生计/文化出家畜，
+ *   让素材库里的猪、鸡、鹅、绵羊、山羊、驴都能在战略地图出现；伊斯兰/印度/美洲原住民不养猪，池里去掉 PIG。
+ */
+const FARM_PEN_BY_CATEGORY: Readonly<Record<LivelihoodCategory, readonly string[]>> = {
+    farming_rice: ['PIG', 'CHICKEN', 'GOOSE', 'PIG', 'CHICKEN'],
+    farming_dry: ['PIG', 'CHICKEN', 'SHEEP', 'GOAT', 'DONKEY', 'PIG'],
+    nomadic_steppe: ['SHEEP', 'GOAT', 'HORSE'],
+    nomadic_oasis: ['GOAT', 'SHEEP', 'DONKEY'],
+    highland_pastoral: ['SHEEP', 'GOAT', 'LLAMA'],
+    forest_hunting: ['CHICKEN', 'GOAT'],
+    forest_logging: ['CHICKEN', 'GOAT', 'DONKEY'],
+    maritime_fishing: ['CHICKEN', 'GOOSE', 'GOAT'],
+    mining_foraging: ['GOAT', 'DONKEY', 'CHICKEN', 'SHEEP'],
+};
+
+/** 农舍旁的零散家畜（采集 / 伐木 / 矿冶组合没有地皮，也要有家畜：鸡、山羊、驴、绵羊） */
+const SETTLEMENT_PEN_BY_CATEGORY: Readonly<Record<LivelihoodCategory, readonly string[]>> = {
+    farming_rice: ['CHICKEN', 'GOOSE'],
+    farming_dry: ['CHICKEN', 'GOAT', 'DONKEY'],
+    nomadic_steppe: ['SHEEP', 'GOAT'],
+    nomadic_oasis: ['GOAT', 'DONKEY'],
+    highland_pastoral: ['SHEEP', 'GOAT'],
+    forest_hunting: ['CHICKEN'],
+    forest_logging: ['CHICKEN', 'DONKEY'],
+    maritime_fishing: ['CHICKEN', 'GOOSE'],
+    mining_foraging: ['GOAT', 'DONKEY', 'CHICKEN'],
+};
+
+/** 按文化覆盖的畜圈：安第斯—南美南部养羊驼／美洲驼（素材里的 ALPACA 只在这里出场） */
+const FARM_PEN_BY_CULTURE: Readonly<Record<string, readonly string[]>> = {
+    INCA: ['LLAMA', 'ALPACA'],
+    MUISCA: ['LLAMA', 'ALPACA'],
+    MAPUCHE: ['LLAMA', 'ALPACA'],
+    // 中美洲／亚马孙：1492 年前只有火鸡可养，没有马牛羊猪驴鸡
+    MAYANS: ['TURKEY'],
+    TUPI: ['TURKEY'],
+    AMERICA: ['TURKEY'],
+};
+
+function pickPenSpecies(
+    ownerId: string,
+    style: string,
+    cat: LivelihoodCategory,
+    pool: Readonly<Record<LivelihoodCategory, readonly string[]>>,
+    salt: number,
+): string | undefined {
+    const source = FARM_PEN_BY_CULTURE[style] ?? pool[cat] ?? [];
+    const candidates = source.filter(
+        (sp) => sp !== 'PIG' || !PIG_KEEPING_EXCLUDED_CULTURES.has(style),
+    );
+    if (!candidates.length) return undefined;
+    return candidates[Math.floor(strHash01(ownerId, salt) * candidates.length) % candidates.length];
 }
 
 function strHash01(s: string, salt: number): number {
@@ -1069,8 +1151,11 @@ export class CityLifeAmbientLayer {
 
             let homePos: Pt | null = null;
             let plotCells: number[] | undefined;
-            // 有地皮的组合：在所有候选点里取能铺块数最多的；满四块即可提前停。
-            const maxCells = PLOT_CELL_OFFSETS.length;
+            // 🔴 2026-10-31 主人令「所有生产方式显示为 1-4 随机」：农田 / 水田 / 草场的块数、
+            //    伐木 / 采集 / 采矿的人数、猎场的猎物数，统一按「据点＋年份＋组合」哈希出 1~4（渔船早已如此）。
+            const unitCount = 1 + Math.floor(strHash01(yk, i * 17 + 9) * 4);
+            // 有地皮的组合：在所有候选点里取能铺块数最多的；够本组要的块数即可提前停。
+            const maxCells = unitCount;
             const tryPlot = (cand: Pt): boolean => {
                 // 平地少的地方（沙漠绿洲、山谷）各组会抢同一块：与已放好的地皮重叠的候选一律作废，继续往外找
                 if (this.plotOverlaps(cand, newPlots)) return false;
@@ -1120,6 +1205,14 @@ export class CityLifeAmbientLayer {
             }
             if (!homePos) continue;
             if (plotKind) newPlots.push(this.plotPx(homePos));
+            // 平原能铺满四块时也只留本组抽到的块数：南块（主人）必留，其余按哈希挑。
+            if (plotCells && plotCells.length > unitCount) {
+                const others = plotCells
+                    .filter((k) => k !== PLOT_LEADER_CELL)
+                    .sort((a, b) => strHash01(yk, i * 17 + 10 + a) - strHash01(yk, i * 17 + 10 + b))
+                    .slice(0, unitCount - 1);
+                plotCells = plotCells.filter((k) => k === PLOT_LEADER_CELL || others.includes(k));
+            }
 
             // 猎人只在猎场旁短距离搬运，交接点保持在已验收的陆上范围内，不跨海回城。
             const gatePos = isHunter ? {
@@ -1224,17 +1317,18 @@ export class CityLifeAmbientLayer {
                 const orderedCells = [...handCells].sort(
                     (a, b) => strHash01(owner.id, 900 + a) - strHash01(owner.id, 900 + b)
                 );
-                const oxSpecies = orderedCells.length > 0 ? farmOxSpecies(style, landCat) : undefined;
-                const oxCell = oxSpecies ? orderedCells[0] : undefined;
-                const pigCell = orderedCells.length > 1 && !PIG_KEEPING_EXCLUDED_CULTURES.has(style)
-                    ? orderedCells[1]
-                    : undefined;
-                owner.pigCell = pigCell;
+                // 有田就有役畜：地块全满时耕牛占一块，地块不够时站到农夫身旁（见下方 aside）
+                const oxSpecies = farmOxSpecies(style, landCat);
+                const oxCell = orderedCells[0];
+                // 🔴 2026-10-31「都要显示，套用，多样化」：第二块不再写死猪，按生计／文化出家畜（猪/鸡/鹅/羊/山羊/驴之一）
+                const penSpecies = pickPenSpecies(owner.id, style, landCat, FARM_PEN_BY_CATEGORY, 907);
+                const penCell = orderedCells.length > 1 ? orderedCells[1] : undefined;
+                owner.pigCell = penSpecies === 'PIG' ? penCell : undefined;
                 // 牲畜只在自家这块田里小范围来回（与草场牲畜同一套走动），不跑出地皮、不踩到人。
-                const pushFarmLivestock = (cell: number, species: string, idTag: string): void => {
+                const pushFarmLivestock = (cell: number, species: string, idTag: string, bx = 0, by = 0): void => {
                     const ang = strHash01(owner.id, cell * 23 + 231) * Math.PI * 2;
-                    const wx = Math.cos(ang) * PASTURE_WANDER_PX;
-                    const wy = Math.sin(ang) * PASTURE_WANDER_PX * 0.6;
+                    const wx = bx + Math.cos(ang) * PASTURE_WANDER_PX;
+                    const wy = by + Math.sin(ang) * PASTURE_WANDER_PX * 0.6;
                     list.push({
                         ...owner,
                         id: `${owner.id}_${idTag}_${cell}`,
@@ -1260,14 +1354,18 @@ export class CityLifeAmbientLayer {
                         desiredAction: 'walk',
                     });
                 };
+                // 🔴 2026-10-31「所有元素都要显示」：山谷／绿洲只能铺一块田时没有空余地块，
+                //   耕牛与畜圈改站到农夫身旁（农夫左右各一只），绝不缺席。
+                if (!oxCell && oxSpecies) pushFarmLivestock(PLOT_LEADER_CELL, oxSpecies, 'oxAside', 26, -6);
+                if (!penCell && penSpecies) pushFarmLivestock(PLOT_LEADER_CELL, penSpecies, 'penAside', -26, -2);
                 for (const k of plotCells) {
                     if (k === PLOT_LEADER_CELL) continue;
                     if (k === oxCell && oxSpecies) {
                         pushFarmLivestock(k, oxSpecies, 'ox');
                         continue;
                     }
-                    if (k === pigCell) {
-                        pushFarmLivestock(k, 'PIG', 'pig');
+                    if (k === penCell && penSpecies) {
+                        pushFarmLivestock(k, penSpecies, 'pen');
                         continue;
                     }
                     const pos = this.plotCellPos(owner.homePos, k, 0, 0);
@@ -1290,6 +1388,73 @@ export class CityLifeAmbientLayer {
                     });
                 }
             }
+
+            // 伐木 / 采集 / 采矿：主人之外再补 0~3 个同工种帮工，围在主人四周（与农田块同一套方位），
+            // 各守一份自己的木材 / 果子 / 矿石原地劳作；建筑只归主人。落点是海就少一个。
+            if (groundResource) {
+                const owner = list[list.length - 1];
+                const extraCells = PLOT_CELL_OFFSETS
+                    .map((_, k) => k)
+                    .filter((k) => k !== PLOT_LEADER_CELL)
+                    .sort((a, b) => strHash01(owner.id, 940 + a) - strHash01(owner.id, 940 + b))
+                    .slice(0, unitCount - 1);
+                for (const k of extraCells) {
+                    const pos = this.plotCellPos(owner.homePos, k, 0, 0);
+                    if (this.isSea(pos)) continue;
+                    list.push({
+                        ...owner,
+                        id: `${owner.id}_hand_${k}`,
+                        fieldHand: true,
+                        buildingResource: undefined,
+                        homePos: pos,
+                        gatePos: { ...pos },
+                        lastDrawPos: { ...pos },
+                        facing: Math.floor(strHash01(owner.id, k * 23 + 941) * 8) % 8,
+                        phase: Math.floor(strHash01(owner.id, k * 23 + 942) * 1000),
+                        damageVariant: Math.floor(strHash01(owner.id, k * 23 + 943) * 100),
+                    });
+                }
+            }
+
+            // 🔴 2026-10-31「所有元素都要显示，套用，多样化」：采集／伐木／矿冶这些没有地皮的组合，
+            //   农舍旁也放一只散养家畜（鸡／山羊／驴／绵羊），让素材库里的鸡、鹅、驴、山羊都能在战略地图出现。
+            if (!plotKind) {
+                const owner = list[list.length - 1];
+                const pen = pickPenSpecies(owner.id, style, landCat, SETTLEMENT_PEN_BY_CATEGORY, 913);
+                if (pen) {
+                    const ang = strHash01(owner.id, 913) * Math.PI * 2;
+                    const wx = Math.cos(ang) * 22;
+                    const wy = Math.sin(ang) * 12;
+                    const a = this.plotCellPos(owner.homePos, PLOT_LEADER_CELL, wx, wy);
+                    const b = this.plotCellPos(owner.homePos, PLOT_LEADER_CELL, -wx, -wy);
+                    if (!this.isSea(a) && !this.isSea(b)) {
+                        list.push({
+                            ...owner,
+                            id: `${owner.id}_pen`,
+                            isAnimal: true,
+                            lib: 'SUCAI_ANIMAL',
+                            dir: pen,
+                            fieldHand: undefined,
+                            hasFarm: false,
+                            seasonalPlot: undefined,
+                            plotCells: undefined,
+                            pigCell: undefined,
+                            groundResource: undefined,
+                            groundResourceLib: undefined,
+                            buildingResource: undefined,
+                            homePos: a,
+                            gatePos: b,
+                            lastDrawPos: { ...a },
+                            facing: Math.floor(strHash01(owner.id, 914) * 8) % 8,
+                            phase: Math.floor(strHash01(owner.id, 915) * 1000),
+                            damagePreset: 'animal_loss',
+                            damageVariant: Math.floor(strHash01(owner.id, 916) * 100),
+                            displayedAction: 'walk',
+                            desiredAction: 'walk',
+                        });
+                    }
+                }
+            }
         }
 
         if (cat === 'maritime_fishing' && list.length === 0) {
@@ -1300,12 +1465,18 @@ export class CityLifeAmbientLayer {
 
         // 民生组合：1 个牧羊人固定带 4 只牲畜（四块草场一块一只）；1 个猎人固定带 1 只本地猎物。
         // 动物只在组合中央的两侧小范围真实往返，不与主人分散到据点不同位置。
-        const preyPool = animalPool.filter((dir) => ['DEER', 'BOAR', 'TURKEY', 'GUANACO'].includes(dir));
+        // 火鸡、原驼只产于美洲：旧大陆猎场只从鹿、野猪里抽。
+        const isAmericas = ['MUISCA', 'MAYANS', 'TUPI', 'MAPUCHE', 'INCA', 'AMERICA'].includes(style);
+        const preyPool = animalPool.filter((dir) => (isAmericas ? ['DEER', 'BOAR', 'TURKEY', 'GUANACO'] : ['DEER', 'BOAR']).includes(dir));
         const groupLeaders = list.filter((actor) => actor.dir === 'VIL_MALE_SHEPHERD' || actor.dir === 'VIL_MALE_HUNTER');
         for (const leader of groupLeaders) {
             const isShepherd = leader.dir === 'VIL_MALE_SHEPHERD';
             // 牧羊组合草场实际铺了几块就放几只，一块一只；牧羊人所在的南块也放一只陪着他。
-            const cellList = isShepherd ? (leader.plotCells ?? [PLOT_LEADER_CELL]) : [0];
+            // 猎场按哈希出 1~4 只同种猎物：0 号是猎人正在猎的那只（走倒地／腐烂流程），其余是同群活兽。
+            const preyCount = 1 + Math.floor(strHash01(`${leader.cityId}@${this.getYear()}`, leader.slotIdx * 17 + 9) * 4);
+            const cellList = isShepherd
+                ? (leader.plotCells ?? [PLOT_LEADER_CELL])
+                : Array.from({ length: preyCount }, (_, k) => k);
             const pastoralPool = PASTORAL_ANIMAL_POOLS[style] ?? LIVELIHOOD_SPECS[cat].animals;
             const pastoralOffset = Math.floor(strHash01(leader.id, 206) * pastoralPool.length) % pastoralPool.length;
             for (const j of cellList) {
@@ -1347,8 +1518,9 @@ export class CityLifeAmbientLayer {
                 // 一个牧场（四块）只养一种：按牧羊人哈希从文化畜种池里挑一种，四只都是它；不同牧场才会不同。
                 const animalDir = isShepherd
                     ? pastoralPool[pastoralOffset]   // 四块合为一个牧场：一个牧场只养一种牲畜
-                    : preyPool[Math.floor(strHash01(leader.id, 206) * preyPool.length) % preyPool.length] ?? 'DEER';
-                const id = `${leader.id}_${isShepherd ? 'sheep' : 'prey'}_${j}`;
+                    // 🔴 2026-10-31 主人令「打猎的猎物要随机」：每只猎物各自从本地猎物池里按哈希抽种类。
+                    : preyPool[Math.floor(strHash01(leader.id, 206 + j * 7) * preyPool.length) % preyPool.length] ?? 'DEER';
+                const id = `${leader.id}_${isShepherd ? 'sheep' : j === 0 ? 'prey' : 'herd'}_${j}`;
                 list.push({
                     id,
                     cityId: leader.cityId,
@@ -1378,6 +1550,40 @@ export class CityLifeAmbientLayer {
                     displayedAction: 'walk',
                     desiredAction: 'walk',
                 });
+            }
+            // 🔴 2026-10-31「所有元素都要显示」：猎人身边配一条猎犬（DE WAR_DOG 素材），
+            //   跟着猎人在猎场旁小范围活动；不参与猎捕循环、不替换猎物。
+            if (!isShepherd) {
+                const dogAngle = strHash01(leader.id, 241) * Math.PI * 2;
+                const dLat = Math.sin(dogAngle) * 0.016, dLng = Math.cos(dogAngle) * 0.016;
+                const a = { lat: leader.homePos.lat + dLat, lng: leader.homePos.lng + dLng };
+                const b = { lat: leader.homePos.lat - dLat, lng: leader.homePos.lng - dLng };
+                if (!this.isSea(a) && !this.isSea(b)) {
+                    list.push({
+                        ...leader,
+                        id: `${leader.id}_dog`,
+                        isAnimal: true,
+                        lib: 'SUCAI_ANIMAL',
+                        dir: 'WAR_DOG',
+                        fieldHand: undefined,
+                        hasFarm: false,
+                        seasonalPlot: undefined,
+                        plotCells: undefined,
+                        pigCell: undefined,
+                        groundResource: undefined,
+                        groundResourceLib: undefined,
+                        buildingResource: undefined,
+                        homePos: a,
+                        gatePos: b,
+                        lastDrawPos: { ...a },
+                        facing: Math.floor(strHash01(leader.id, 242) * 8) % 8,
+                        phase: Math.floor(strHash01(leader.id, 243) * 1000),
+                        damagePreset: 'animal_loss',
+                        damageVariant: Math.floor(strHash01(leader.id, 244) * 100),
+                        displayedAction: 'walk',
+                        desiredAction: 'walk',
+                    });
+                }
             }
         }
 
@@ -2117,7 +2323,7 @@ export class CityLifeAmbientLayer {
 
                 const peaceAlpha = st.viewAlpha * st.peaceAlpha;
                 const damageAlpha = st.viewAlpha * st.damageBlend;
-                const bushScale = 0.36 * zoomFactor;
+                const bushScale = 0.60 * zoomFactor;   // 🔴 2026-10-31 随活物同比例（原 0.36）
 
                 // 战火破坏态：树林渐变为被砍倒的断木（FELLED_GENERIC）、树桩（STUMP_GENERIC）与焦枯死树（DEAD_TREE）
                 if (damageAlpha > 0.01) {
@@ -2271,10 +2477,12 @@ export class CityLifeAmbientLayer {
                             'SUCAI_BUILDING',
                             actor.buildingResource,
                             actor.damageVariant,
-                            // 四块地皮东西两块中心在 ±35，有地皮的组合把建筑挪到地皮外侧，不压人和牲畜
-                            groupPt.x + side * (actor.seasonalPlot ? 62 : 28) * zoomFactor,
+                            // 四块地皮东西两块中心在 ±35，有地皮的组合把建筑挪到地皮外侧，不压人和牲畜。
+                            // 🔴 2026-10-31 建筑随活物同比例放大（0.22→0.42，磨坊≈1.3 个农夫高，DE 原比例），
+                            //    所以有地皮时的横向偏移同步外移 62→85、无地皮 28→60，建筑内沿都不压人。
+                            groupPt.x + side * (actor.seasonalPlot ? 85 : 60) * zoomFactor,
                             groupPt.y - 7 * zoomFactor,
-                            0.22 * zoomFactor,
+                            0.42 * zoomFactor,
                             peaceFinalAlpha
                         );
                     }
@@ -2289,7 +2497,7 @@ export class CityLifeAmbientLayer {
                         actor.damageVariant,
                         dockPt.x,
                         dockPt.y - 5 * zoomFactor,
-                        0.22 * zoomFactor,
+                        0.42 * zoomFactor,   // 与生产建筑同一比例（原 0.22），船坞不小于渔船
                         peaceFinalAlpha
                     );
                 }
