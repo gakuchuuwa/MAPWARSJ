@@ -127,7 +127,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_meherdates': 'CENTRAL_ASIA',   // 安息帝国｜梅哈尔达特｜据点 尼萨
     'bfe_muzaffar_shah': 'GURJARAS',   // 古吉拉特｜穆扎法尔三世｜据点 艾哈迈达巴德
     'bfe_ngo_nhat_khanh': 'VIETNAMESE',   // 大瞿越｜吴日庆｜据点 华闾
-    'bfe_nikephoros_ii': 'BYZANTINE',   // 拜占庭｜尼基弗鲁斯二世｜据点 君士坦丁堡
     'bfe_niu_han': 'CENTRAL',   // 秦国｜牛邯｜据点 天水
     'bfe_pisa_king': 'GREECE',   // 埃利斯｜潘塔琉斯｜据点 奥林匹亚
     // 🔴 [2026-10-24 按史] 1641 姆博罗雷之战葡方主将 Manuel Pires（曼努埃尔·皮雷斯）：无据点战场人物，
@@ -149,7 +148,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_xu_hai': 'JAPAN',      // 日本｜徐海｜据点 鹿儿岛城（萨摩巢穴）
     'bfe_yin_ziqi': 'WEI',   // 大燕｜尹子奇｜据点 范阳
     'bfe_zhu_chenhao': 'JIANGNAN',   // 唐国｜朱宸濠｜据点 豫章
-    'bfe2_antiphilus': 'ATHENIANS',   // 阿提卡｜安提菲卢斯｜据点 雅典
     'bfe2_bao_shuya': 'CENTRAL',   // 齐国｜鲍叔牙｜据点 临淄
     'bfe2_cleombrotus_i': 'SPARTANS',   // 拉哥尼亚｜克勒翁布罗图斯一世｜据点 斯巴达
     'bfe2_cleon': 'ATHENIANS',   // 阿提卡｜克里昂｜据点 雅典
@@ -487,7 +485,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_alfonso_ix': 'SPANISH',   // 莱昂｜阿方索九世｜据点 萨拉曼卡
     'gen_alfonso_vi': 'GOTHS',   // 西哥特｜阿方索六世｜据点 托莱多
     'gen_alfred_great': 'BRITONS',   // 盎格鲁｜阿尔弗雷德｜据点 温彻斯特
-    'gen_algirdas': 'LITHUANIANS',   // 维捷公国｜奥尔格尔德｜据点 维捷布斯克
+    'gen_algirdas': 'LITHUANIANS',   // 立陶宛｜阿尔吉尔达斯｜据点 维尔纽斯（都城）
     'gen_ali_ibn_yusuf': 'BERBER',   // 穆拉比特｜阿里优素福｜据点 马拉喀什
     'gen_andrea_doria': 'LATIN',   // 利古里亚｜安德烈亚｜据点 热那亚
     'gen_andrey_bogolyub': 'SLAVIC',   // 克利亚济马｜安德烈｜据点 弗拉基米尔
@@ -513,7 +511,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_binnya_dala': 'BURMESE',   // 汉达瓦底｜彬尼亚达拉｜据点 勃固
     'gen_bir_hambir': 'BENGALIS',   // 末罗王国｜比尔汉比尔｜据点 比什努普尔
     'gen_black_prince': 'FRANKS',   // 阿奎丹｜黑太子｜据点 波尔多
-    'gen_bohdan_khmelnitsky': 'SLAVIC',   // 哥萨克｜赫梅利｜据点 塞契
     'gen_bohemond': 'SICILIANS',   // 西西里｜博希蒙德｜据点 巴勒莫（2026-10-24 由塔兰托 GREECE 迁入诺曼本家）
     'gen_boleslaw_brave': 'POLES',   // 皮雅斯特｜勇者波列｜据点 波兹南
     'gen_bolusi': 'PURU',   // 补噜｜波鲁斯｜据点 蒙格
@@ -667,7 +664,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_mustafa_pasha': 'TURKS',   // 奥斯曼｜穆斯塔法帕夏｜据点 布尔萨
     'gen_nanda_bayin': 'BURMESE',   // 东吁｜莽应里｜据点 勃固
     'gen_nikan': 'NORTHEAST',   // 大清｜尼堪｜据点 沈阳
-    'gen_nikephoros_phokas': 'BYZANTINE',   // 拜占庭｜福卡斯｜据点 君士坦丁堡
     'gen_nikola_zrinski': 'SLAVIC',   // 克罗地亚｜兹林斯基｜据点 格拉代茨
     'gen_noli': 'PORTUGUESE',   // 佛得角｜诺利｜据点 里贝拉
     'gen_nur_ad_din': 'ORIE',   // 赞吉王朝｜努尔丁｜据点 拉塔基亚
@@ -689,7 +685,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_philip_ii': 'MACEDONIAN',   // 马其顿｜腓力二世｜据点 佩拉
     'gen_pietro_tiepolo': 'LATIN',   // 伦巴第｜提埃波洛｜据点 米兰
     'gen_prettenberg': 'GERMANIC',   // 利沃尼亚｜普雷特贝格｜据点 塔林
-    'gen_prithviraj': 'GURJARAS',   // 遮娄其｜普里特维｜据点 阿杰梅尔
     'gen_przemysl_ii': 'POLES',   // 波兰亚｜普热梅斯｜据点 波兹南
     'gen_qiu_luan': 'WEI',   // 拓跋｜仇鸾｜据点 大同
     'gen_qutlugh': 'WESTERN',   // 费尔干纳｜忽都鲁｜据点 阿赫西克特
@@ -774,7 +769,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_xiao_xian': 'JIANGNAN',   // 大梁｜萧铣｜据点 江陵
     'gen_yaghmurasen': 'BERBER',   // 扎扬｜亚格姆拉森｜据点 特莱姆森
     'gen_yang_hao': 'WEI',   // 辽东｜杨镐｜据点 襄平
-    'gen_yaqub_saffar': 'PERSIAN',   // 克尔曼｜雅各布｜据点 巴姆
     'gen_yaroslav': 'SLAVIC',   // 罗斯｜雅罗斯拉夫｜据点 基辅
     'gen_yodit': 'ETHIOPIANS',   // 塞米恩｜尤迪特｜据点 塞米恩
     'gen_yuri_ryazan': 'SLAVIC',   // 奥卡｜尤里｜据点 梁赞
@@ -1182,7 +1176,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ryukyu_shangbazhi': 'JAPAN',   // 琉球｜尚巴志｜据点 首里
     'sabeol_jinshimin': 'KOREA',   // 朝鲜｜金时敏｜据点 晋州
     'saerbadaer_lazhake': 'PERSIAN',   // 萨尔巴达尔｜拉扎克｜据点 白哈格
-    'safawei_aisimaier': 'PERSIAN',   // 吉兰｜艾斯迈尔｜据点 加兹温
     'safawei_d_abasi': 'PERSIAN',   // 萨法维｜阿拔斯｜据点 伊斯法罕
     'safuyi_ameidi': 'LATIN',   // 萨伏伊｜阿梅迪奥｜据点 尚贝里
     'sagami_beitiaoshikang': 'JAPAN',   // 北条｜北条氏康｜据点 箱根关
@@ -1590,7 +1583,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiongnu_hunxiewang': 'XIANBEI',   // 首战敌将｜据点 city_wuwei
     'khon_wangzun': 'TIBET',   // 首战敌将｜据点 city_sajia
     'ansxi_surena': 'CENTRAL_ASIA',   // 首战敌将｜据点 city_nisa
-    'litaowan_algirdas': 'LITHUANIANS',   // 首战敌将｜据点 city_weierniwusi
     'dulan_muzaffarkhan': 'PURU',   // 首战敌将｜据点 city_malisi
     'qin_hengyi': 'CENTRAL',   // 首战敌将｜据点 city_changan
     'dajin_wanyaneke': 'NORTHEAST',   // 首战敌将｜据点 city_huining

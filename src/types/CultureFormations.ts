@@ -878,7 +878,7 @@ export const PERSIAN_DYNASTY_GENERAL_IDS = new Set([
     'aqimeinide_daliushi',      // 大流士一世（波斯波利斯·阿契美尼德帝国）
     'aba_shapuer',              // 沙普尔大帝（尼沙布尔·萨珊波斯帝国）
     'safawei_d_abasi',          // 阿拔斯大帝（伊斯法罕·萨非波斯帝国）
-    'safawei_aisimaier',        // 艾斯迈尔/伊斯玛仪一世（加兹温·萨非波斯帝国）
+    'yilihanguo_yisimeier',     // 伊斯玛仪一世（赞詹·萨法维波斯）
     'delan_sulun',              // 苏伦（法拉·帕提亚安息战神）
     'ansxi_aershake',           // 阿尔沙克一世（尼萨·安息波斯帝国）
     'midi_daiaokaisi',          // 戴奥凯斯（哈马丹·米底王国）

@@ -347,7 +347,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_bentejui': 'castle',
     'gen_bir_hambir': 'imperial',
     'gen_black_prince': 'castle',
-    'gen_bohdan_khmelnitsky': 'imperial',
     'gen_boleslaw_brave': 'feudal',
     'gen_bolusi': 'antiquity',
     'gen_breslav': 'feudal',
@@ -355,7 +354,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_casimir_great': 'castle',
     'gen_jadwiga': 'castle',
     'gen_gajah_mada': 'castle',
-    'gen_prithviraj': 'castle',
     'gen_sumanguru': 'castle',
     'ghana_tongka_manin': 'feudal',
     'gen_shi_chaoyi': 'feudal',
@@ -440,7 +438,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_cleombrotus': 'antiquity',
     'bfe2_pharnabazus': 'antiquity',
     'bfe2_theagenes': 'antiquity',
-    'bfe2_antiphilus': 'antiquity',
     'bfe3_19': 'antiquity',
     'bfe3_23': 'antiquity',
     'bfe3_4': 'antiquity',
@@ -496,7 +493,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe2_rezin': 'antiquity',
     'bfe_meherdates': 'antiquity',
     'bfe_achish': 'antiquity',
-    'bfe_nikephoros_ii': 'feudal',
     'bfe2_pang_juan': 'antiquity',
     'bfe3_18': 'antiquity',
     'bfe2_qi_qinggong': 'antiquity',
@@ -731,7 +727,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_mojmir_i': 'feudal',
     'gen_mstislav': 'feudal',
     'gen_muhammad_i': 'castle',
-    'gen_nikephoros_phokas': 'feudal',
     'gen_nikola_zrinski': 'imperial',
     'gen_noli': 'castle',
     'gen_offa_mercia': 'feudal',
@@ -806,7 +801,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'scotland_hughmackay': 'imperial',
     'gen_winkelried': 'castle',
     'gen_yaghmurasen': 'castle',
-    'gen_yaqub_saffar': 'feudal',
     'gen_yaroslav': 'feudal',
     'gen_yuri_ryazan': 'castle',
     'gen_zhytomyr': 'feudal',
@@ -1192,7 +1186,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'ryukyu_shangbazhi': 'castle',
     'sabeol_jinshimin': 'imperial',
     'saerbadaer_lazhake': 'castle',
-    'safawei_aisimaier': 'imperial',
     'safawei_d_abasi': 'imperial',
     'safuyi_ameidi': 'castle',
     'sagami_beitiaoshikang': 'imperial',
@@ -1651,7 +1644,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_suleiman_pasha': 'castle',   // 苏莱曼帕夏（2026-10-25 按史补）
     'bfe_frederick_iii': 'castle',   // 腓特烈三世（2026-10-25 按史补）
     'bfe_yibula': 'imperial',   // 亦不剌（2026-10-25 按史补）
-    'bfe_doria': 'imperial',   // 多里亚（2026-10-25 按史补）
     'bfe_takayutpi': 'imperial',   // 多迦逾毕（2026-10-25 按史补）
     'bfe_mingyiswa': 'imperial',   // 明耶苏瓦（2026-10-25 按史补）
     'bfe_potocki': 'imperial',   // 波托茨基（2026-10-25 按史补）
@@ -1693,7 +1685,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xiongnu_hunxiewang': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
     'khon_wangzun': 'castle',   // 2026-10-25 首战敌将（随势力时代）
     'ansxi_surena': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
-    'litaowan_algirdas': 'castle',   // 2026-10-25 首战敌将（随势力时代）
     'dulan_muzaffarkhan': 'imperial',   // 2026-10-25 首战敌将（随势力时代）
     'qin_hengyi': 'antiquity',   // 2026-10-25 首战敌将（随势力时代）
     'dajin_wanyaneke': 'castle',   // 2026-10-25 首战敌将（随势力时代）

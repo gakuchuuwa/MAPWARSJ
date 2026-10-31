@@ -3512,7 +3512,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_jiaziwen', name: '加兹温', factionId: 'safawei_d', lat: 36.27, lng: 50, type: 'small_city', troops: 10000, region: 'SAFAVID', buildingStyle: 'PERSIAN' , note: '推算：城居 2 万（加兹温，萨法维早期都城 2 万）→ 小城' },
 
 
-    { id: 'city_zanzhan', name: '赞詹', factionId: 'safawei_d', lat: 36.67, lng: 48.48, type: 'stockade', troops: 10000, region: 'ILKHANATE', buildingStyle: 'SASANIAN', note: '🔴 [2026-10-22 按史] 赞詹为阿杰姆（萨法维·伊斯梅尔）与伊儿汗国（怯的不花）据点；近郊苏丹尼耶为伊儿汗国都城（完者都陵墓，UNESCO），SASANIAN 分支「城堡时代伊儿军团」描述点名大不里士、苏丹尼耶；PERSIAN 分支为阿契美尼德／法尔斯链，赞詹无阿契美尼德层 → 原 PERSIAN 改 SASANIAN。' },
+    { id: 'city_zanzhan', name: '赞詹', factionId: 'safawei_d', lat: 36.67, lng: 48.48, type: 'stockade', troops: 10000, region: 'ILKHANATE', buildingStyle: 'SASANIAN', note: '🔴 [2026-10-22 按史] 赞詹为阿杰姆（萨法维·伊斯玛仪一世）与伊儿汗国（怯的不花）据点；近郊苏丹尼耶为伊儿汗国都城（完者都陵墓，UNESCO），SASANIAN 分支「城堡时代伊儿军团」描述点名大不里士、苏丹尼耶；PERSIAN 分支为阿契美尼德／法尔斯链，赞詹无阿契美尼德层 → 原 PERSIAN 改 SASANIAN。' },
 
 
 

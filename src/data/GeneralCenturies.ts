@@ -490,7 +490,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'pangzha_halixinge': 19,                             // 哈里辛格 · pangzha · 阿托克
     'qiepantuo_luozhentan': 8,                          // 罗真檀 · qiepantuo · 护密城
     'saerbadaer_lazhake': 14,                            // 拉扎克 · saerbadaer · 白哈格
-    'safawei_aisimaier': 16,                             // 艾斯迈尔 · safawei · 加兹温
     'safawei_d_abasi': 16,                               // 阿拔斯 · safawei_d · 伊斯法罕
     'saman_yisimayi': 9,                                // 伊斯玛仪 · saman · 阿母城
     'seljuq_sangjiaer': 12,                              // 桑贾尔 · seljuq · 木鹿
@@ -780,10 +779,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'danmai_christian_iv': 16,               // 克里斯蒂安四世 · danmai · 哥本哈根
     'gen_rurik': 9,                                      // 留里克 · liulike · 拉多加（862 据拉多加/诺夫哥罗德）
     'gen_sineus': 9,                                     // 西涅乌斯 · liulike · 白湖（862 据白湖）
-    'gen_algirdas': 14,                                  // 奥尔格尔德 · weijiebusike_gongguo · 维捷布斯克
+    'gen_algirdas': 14,                                  // 阿尔吉尔达斯 · litaowan · 维尔纽斯（2026-10-31 同人合并，原 litaowan_algirdas 已删）
     'gen_andrey_bogolyub': 12,                           // 安德烈 · fulajimier_gongguo · 弗拉基米尔
     'gen_aspurgus': 1,                                  // 阿斯普尔 · taolika · 赫尔松涅斯
-    'gen_bohdan_khmelnitsky': 17,                        // 赫梅利 · gesake · 塞契
     'gen_breslav': 11,                                   // 布列斯拉夫 · xideweina · 波洛茨克
     'gen_casimir_great': 14,                             // 卡齐米日 · piyasite · 克拉科夫
     'gen_daniel_galitsky': 13,                           // 丹尼尔 · jialixiya · 加利奇
@@ -1130,7 +1128,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_epaminondas': -4,                               // 伊巴密浓达 · boootiya · 底比斯
     'yipilusi_piluoshi': -3,                              // 皮洛士 · yipilusi · 安布拉基亚
     'gen_leonidas': -5,                                  // 列奥尼达 · lagoniya · 斯巴达
-    'gen_nikephoros_phokas': 10,                         // 福卡斯 · kelite · 诺索斯
     'gen_themistocles': -5,                              // 地米斯托 · xila · 雅典
     'gen_villaret': 14,                                  // 维拉雷 · luodesi · 罗得城
     'muwaxide_yakubu': 12,
@@ -1160,7 +1157,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_ibrahim_qutb': 16,
     'gen_adityawarman': 14,
     'gen_chan_chak': 10,
-    'gen_yaqub_saffar': 9,
     'gen_joao_i': 14,
     'gen_ferdinand_ii': 16,                              // 斐迪南二世 · trastamara · 拉莫塔堡（1452-1516，收复那不勒斯与创立西班牙方阵）
     'gen_seuthes_iii': -4,
@@ -1321,7 +1317,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'bfe_suleiman_pasha': 15,   // 2026-10-25 按首战 1475 年补
     'bfe_frederick_iii': 15,   // 2026-10-25 按首战 1485 年补
     'bfe_yibula': 16,   // 2026-10-25 按首战 1510 年补
-    'bfe_doria': 16,   // 2026-10-25 按首战 1538 年补
     'bfe_takayutpi': 16,   // 2026-10-25 按首战 1538 年补
     'bfe_mingyiswa': 16,   // 2026-10-25 按首战 1593 年补
     'bfe_potocki': 17,   // 2026-10-25 按首战 1648 年补
@@ -1363,7 +1358,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xiongnu_hunxiewang': -2,
     'khon_wangzun': 14,
     'ansxi_surena': -1,
-    'litaowan_algirdas': 14,
     'dulan_muzaffarkhan': 19,
     'qin_hengyi': -3,
     'dajin_wanyaneke': 13,

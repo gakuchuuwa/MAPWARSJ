@@ -20,6 +20,7 @@ import { animalDeOf } from './Scene13Animals';
 import { gunpowderTrailSprite } from './Scene13SpriteCache';
 import { loopRate } from './Scene13UnitTables';
 import { syncDeCityGround } from './Scene13CityLayout';
+import { isGroundCoverVegetation } from './DecorFit';
 import { drawScene13SkillCastVfx, drawScene13SkillStatusVfx } from './Scene13SkillVfx';
 import type { WarBank } from './Scene13Types';
 
@@ -121,7 +122,11 @@ export function render(this: Scene13WarLayer): void {
             it.kind = 'environment';
             it.y = sprite.y - (sprite.lift !== undefined ? sprite.lift : this.elevationLiftAt(sprite.x, sprite.y));
             it.sortY = it.y - 12;   // 环境对象等效排序 y 上提 12px（严格传递序：近墙 12px 内恒保证人压在墙前，消除非传递 3-cycle 抖动）
-            it.z = sprite.layer === 'ground' ? -10 : sprite.z;
+            // 🔴 [2026-10-31 主人令「这些植被应该在士兵脚下，下层，不要遮挡士兵」]
+            //    贴地植被（草 / 花丛 / 灌丛 / 蕨 / 芦苇 / 落叶）是 DE 的地面贴花：一律走地面层（z=-10），
+            //    在排序里整组排到最前，先画、永远在士兵之下；只有树、岩石、建筑才按脚点 y 与单位抢遮挡。
+            //    判据见 DecorFit.isGroundCoverVegetation。
+            it.z = (sprite.layer === 'ground' || isGroundCoverVegetation(sprite.asset)) ? -10 : sprite.z;
             it.zid = 0;
             it.sprite = sprite;
             decorDrawnCount++;

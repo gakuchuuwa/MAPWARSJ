@@ -281,9 +281,8 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   baizanting_diaofeilusi: { name: '阿克里泰', tier: 2 },   // 狄奥斐卢斯｜拜占｜君士坦丁堡｜838 年安曾之战，狄奥斐卢斯亲率东方边区阿克里泰边军拒阿拔斯军（维基 Battle of Anzen；《塞奥法尼斯续编》）；与阿历克塞同番同档 T2。
   bfe_andronikos_komnenos: { name: '赫塔雷亚', tier: 3 },   // 科穆宁｜拜占｜君士坦丁堡｜科穆宁朝宫廷亲卫「赫塔雷亚」（Hetaireia）宿卫皇帝，安德洛尼卡一世 1182 年入京即倚之控制京畿（维基 Hetaireia；《拜占庭帝国史》近卫条）。
   bfe_isaac_komnenos: { name: '铁甲弓骑', tier: 3 },   // 伊萨克｜拜占｜君士坦丁堡｜科穆宁朝军制以重装弓骑（hippotoxotai）为锋，1184 年伊萨克据塞浦路斯自立所部即此（维基 Byzantine army (Komnenian era)、Isaac Komnenos of Cyprus）。
-  bfe_nikephoros_ii: { name: '铁甲重骑', tier: 2 },   // 尼基弗鲁斯二世｜拜占｜君士坦丁堡｜尼基弗鲁斯二世《军事训令》定铁甲重骑（kataphraktoi）编装，961 年克干地亚、965 年复奇里乞亚皆赖之（维基 Praecepta Militaria、Nikephoros II Phokas）。
+  baizanting_nikephoros_phokas: { name: '铁甲重骑', tier: 2 },   // 尼基弗鲁斯二世｜拜占｜君士坦丁堡｜尼基弗鲁斯二世《军事训令》定铁甲重骑（kataphraktoi）编装，961 年克干地亚、965 年复奇里乞亚皆赖之（维基 Praecepta Militaria、Nikephoros II Phokas）。
   gen_constantine_xi: { name: '克里特弓手', tier: 3 },   // 君士坦丁十一世｜拜占｜君士坦丁堡｜1453 年君士坦丁堡之围，克里特弓手据守城墙段力战至城破（维基 Fall of Constantinople）。
-  gen_nikephoros_phokas: { name: '东方军区兵', tier: 4 },   // 福卡斯｜拜占｜君士坦丁堡｜尼基弗鲁斯出身边区军事贵族，累任安纳托利亚（东方）军区将领，所部即东方军区兵（维基 Nikephoros II Phokas；《拜占庭帝国史》军区制章）。
   baizanting_nikephoros_i: { name: '斯科莱', tier: 3 },   // 尼基弗鲁斯一世｜拜占｜君士坦丁堡｜811 年普利斯卡之役，尼基弗鲁斯一世率近卫塔格马「斯科莱」（Scholai）亲征保加利亚，兵败身亡（《塞奥法尼斯编年史》；维基 Battle of Pliska）。
   baizanting_romanosi: { name: '德罗蒙', tier: 3 },   // 罗曼努斯一世｜拜占｜君士坦丁堡｜罗曼努斯一世起家于帝国舰队司令（droungarios tou stolou），以德罗蒙桨帆战舰为本钱夺位（维基 Romanos I Lekapenos）。
   baizanting_isaac_ii: { name: '普罗尼亚', tier: 3 },   // 伊萨克二世｜拜占｜君士坦丁堡｜安格洛斯朝野战主力为普罗尼亚封土骑兵，伊萨克二世 1185–1190 年对保加利亚、诺曼诸役皆用之（维基 Pronoia；《拜占庭帝国史》）。
@@ -398,7 +397,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_cangrande: { name: '维罗纳戍卒', tier: 4 },   // 坎格兰德｜威共｜维罗纳｜坎格兰德一世自 1311 年起为维罗纳领主兼帝国代牧，兵源以维罗纳城兵与德意志雇佣骑士为骨干；维基「Cangrande I della Scala」（旧档空，自拟地方戍卒番号）。
   gen_dandolo: { name: '圣马可桨手', tier: 3 },   // 丹多洛｜威共｜威尼斯｜丹多洛以威尼斯桨帆舰队运送第四次十字军，1204 年攻君士坦丁堡时桨手兼充陆战、奉圣马可旗；维基「第四次十字军」「Enrico Dandolo」。
   kejila_shulunbao: { name: '科孚戍卒', tier: 3 },   // 舒伦堡｜威共｜科孚｜舒伦堡 1716 年率威尼斯守军与岛民守科孚，击退奥斯曼围城二十二日；维基「Corfu (1716)」、《威尼斯共和国史》。
-  gen_bohdan_khmelnitsky: { name: '扎波罗热军', tier: 2 },   // 赫梅利｜哥萨｜塞契｜赫梅利为扎波罗热军（Військо Запорозьке）盖特曼，1648 年黄水、科尔松两战大破波军；维基「赫梅利尼茨基起义」。固有军号，非人名。
+  gesake_khmelnytsky: { name: '扎波罗热军', tier: 2 },   // 赫梅利尼茨基｜哥萨｜塞契｜赫梅利为扎波罗热军（Військо Запорозьке）盖特曼，1648 年黄水、科尔松两战大破波军；维基「赫梅利尼茨基起义」。固有军号，非人名。
   gen_vyshnevetsky: { name: '切尔卡瑟团', tier: 4 },   // 拜达｜哥萨｜切尔卡瑟｜维什涅韦茨基（拜达）任切尔卡瑟长老（starosta），1556 年建霍尔蒂察塞契；切尔卡瑟团为注册哥萨克老团，维基「Dmytro Vyshnevetsky」。
   gen_mikhail_tatarinov: { name: '顿河哥萨', tier: 3 },   // 塔塔里诺夫｜哥萨｜维申斯卡亚｜「顿河军」与莫斯科三将（T2）同名异档，改；塔塔里诺夫为顿河哥萨克阿塔曼，1637 取亚速、1641 亚速坐困（《苏联大百科全书》「亚速坐困」条）。
   gen_caffa_consul: { name: '卡法戍卒', tier: 4 },   // 斯夸尔｜热亚｜卡法｜卡法为热那亚黑海殖民地的领事驻地，设戍军与弩手守城，1346—47 年贾尼别围城；维基「Siege of Caffa」。
@@ -599,7 +598,6 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_fernando_iii: { name: '塞维利亚军', tier: 2 },       // 费尔南多三世：收复塞维利亚的围攻军。
   gen_ferdinand_ii: { name: '格拉纳达军', tier: 2 },       // 斐迪南二世：格拉纳达战争王军。
   gen_el_cid: { name: '瓦伦西亚军', tier: 2 },             // 熙德：据守瓦伦西亚的本部军。
-  litaowan_algirdas: { name: '蓝水骑军', tier: 2 },        // 阿尔吉尔达斯：1362 蓝水河战役所部。
   gen_algirdas: { name: '立陶宛公军', tier: 3 },           // 奥尔格尔德：立陶宛大公国本部，与首战条目分用战场番号。
   gen_vytautas_great: { name: '格伦瓦德军', tier: 2 },     // 维托夫特：1410 格伦瓦德会战立陶宛军。
   gen_kestutis: { name: '特拉凯军', tier: 3 },             // 科斯图提斯：特拉凯公国本部。
@@ -641,14 +639,13 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   safawei_d_abasi: { name: '古拉姆新军', tier: 2 },       // 阿拔斯一世：军制改革后的古拉姆新军。
   yilihanguo_yisimeier: { name: '奇兹尔巴什', tier: 2 },  // 伊斯玛仪一世：萨法维建国核心奇兹尔巴什。
   yilihanguo_kitbuqa: { name: '艾因贾鲁军', tier: 3 },    // 怯的不花：1260 艾因贾鲁战役蒙古本部。
-  safawei_aisimaier: { name: '萨法维王卫', tier: 3 },     // 艾斯迈尔：萨法维王室亲卫本部。
   gen_batu: { name: '金帐骑军', tier: 2 },              // 拔都：1236—1242 长子西征本部。
   gen_mamai: { name: '蓝帐军', tier: 3 },                // 马麦：金帐汗国西部蓝帐系军。
   jinzhang_nogai: { name: '那海部骑', tier: 3 },          // 那海：所统那海兀鲁思骑军。
   gen_tashfin: { name: '萨拉卡军', tier: 2 },             // 优素福·本·塔什芬：1086 萨拉卡会战穆拉比特军。
   malin_abulhasan: { name: '马拉喀什军', tier: 3 },       // 阿布哈桑：马林王朝马拉喀什本部。
   gen_kusaila: { name: '柏柏尔义军', tier: 3 },           // 库赛拉：抗击倭马亚的柏柏尔部众。
-  gen_yaqub_saffar: { name: '锡斯坦军', tier: 3 },        // 雅各布·本·莱斯：锡斯坦萨法尔王朝本部。
+  xisi_yakubusafaer: { name: '锡斯坦军', tier: 3 },        // 雅各布·本·莱斯：锡斯坦萨法尔王朝本部。
   xisi_amr: { name: '巴尔赫军', tier: 3 },               // 阿姆尔：据巴尔赫与呼罗珊之本部。
   zhalange_barsaentes: { name: '扎兰季军', tier: 3 },     // 巴尔塞恩特斯：扎兰季地方本部，不占萨法尔王朝番号。
   gen_charles_xii: { name: '卡罗林军', tier: 2 },         // 查理十二：大北方战争中的瑞典卡罗林军。
@@ -673,7 +670,6 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_pachacuti: { name: '库斯科军', tier: 2 },           // 帕查库提：库斯科击破昌卡之本部。
   danmai_abusalong: { name: '丹麦舰队', tier: 3 },        // 阿布萨隆：丹麦海岸与波罗的海征伐舰队。
   gen_akechi_mitsuhide: { name: '本能寺军', tier: 2 },    // 明智光秀：1582 本能寺奇袭本部。
-  gen_prithviraj: { name: '塔兰军', tier: 2 },            // 普里特维：1191 第一次塔兰会战乔汉军。
   zhelouqi_puliteweilajie: { name: '乔汉骑军', tier: 3 }, // 普里特维拉杰：乔汉王朝骑军，与首战条目分号。
   maidina_halide: { name: '雅尔穆克军', tier: 2 },        // 哈立德：636 雅尔穆克会战穆斯林军。
   maidina_ali: { name: '巴士拉军', tier: 3 },             // 阿里：656 巴士拉骆驼之战本部。
@@ -710,7 +706,6 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_villaret: { name: '罗德岛骑士', tier: 3 },         // 维拉雷：罗德岛医院骑士团，与马耳他大围攻区分。
   gen_toghtekin: { name: '大马士革军', tier: 3 },        // 图格特金：大马士革阿塔贝格本部，非萨迈拉古拉姆。
   bfe_abdullah_ali: { name: '尼西比斯军', tier: 3 },     // 阿卜杜拉：754 尼西比斯叛乱所部。
-  bfe2_antiphilus: { name: '拉米亚舰队', tier: 3 },      // 安提菲卢斯：拉米亚战争雅典舰队，不占萨拉米斯舰。
   bfe2_cleon: { name: '斯法克军', tier: 2 },             // 克里昂：前425 斯法克特里亚受降斯巴达军之本部。
   fujisi_fujiweng: { name: '雅典舰队', tier: 3 },        // 福基翁：雅典海军本部，不占萨拉米斯舰。
   keerman_xierzhan_shoujiang: { name: '克尔曼军', tier: 4 }, // 克尔曼守将：地方守军，不占大流士长生军。

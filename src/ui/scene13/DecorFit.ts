@@ -291,3 +291,33 @@ export function countForCover(asset: string, usableTiles: number, cover: number)
 export function assetTilesTable(): Readonly<Record<string, number>> {
     return ASSET_TILES;
 }
+
+// ── 贴地植被（画在士兵层之下）────────────────────────────────────
+//
+// 🔴 [2026-10-31 主人令「战术模式中，这些植被应该在士兵脚下，下层，不要遮挡士兵」]
+//    FLOWER_1 / FLOWER_2 这类成片花丛一张就 356~580px 宽，按脚点 y 与单位共同排序时，
+//    只要它的脚点比附近的兵低 1px，整片花草就压在骑兵、步兵身上 —— 截图里整片绿盖住半队人。
+//
+//    DE 的模型：草（AESTHETIC_SCATTER）与花草灌丛（AESTHETIC_FLAT）是**地面贴花**，
+//    烙在地形上、人踩在上面走，本来就不参与 depth sort。所以这些素材一律走地面层
+//    （Scene13Render 里按 z = -10 归入最前一组，先画、永远在士兵之下）。
+//
+//    **树（含 BUSH_TREE_A/B/C 灌丛树）、岩石、建筑仍是 world 层**，照旧按脚点 y 与单位
+//    共同排序 —— 人绕到树后照样被树冠遮住，这条 DE 深度排序不变。
+const GROUND_COVER_NAMES = new Set([
+    'WEED', 'PLANT', 'PLANT_DEAD', 'PLANT_JUNGLE', 'PLANT_RAINFOREST',
+    'UNDERBRUSH', 'UNDERBRUSH_JUNGLE', 'UNDERBRUSH_RAINFOREST', 'FERNPATCH',
+    'BUSH_GREEN', 'SHRUB_GREEN', 'HEATHER', 'CACTUS',
+    'REEDS', 'WATER_LILY', 'KELP_SEAWEEDS',
+]);
+
+const GROUND_COVER_PREFIXES = ['GRASS_', 'FLOWER', 'FALLEN_LEAVES', 'FORAGE_'];
+
+/** 这个素材是不是「贴地植被」（草/花/灌丛/蕨/芦苇/水草/落叶）——是则画在士兵层之下，永不遮兵。 */
+export function isGroundCoverVegetation(asset: string): boolean {
+    if (!asset) return false;
+    if (asset.includes(':')) return false;   // ANIMAL: / RESOURCE: / BUILDING: 等非自然植被
+    if (GROUND_COVER_NAMES.has(asset)) return true;
+    for (const p of GROUND_COVER_PREFIXES) if (asset.startsWith(p)) return true;
+    return false;
+}

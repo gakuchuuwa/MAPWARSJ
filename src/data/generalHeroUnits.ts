@@ -33,7 +33,8 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     gen_kotyan: 'hero_kotyankhan',
     gen_kuchlug: 'hero_kushluk',
     gen_girgen: 'hero_girgenkhan',
-    gen_qutlugh: 'hero_qutlugh',
+    // gen_qutlugh 已撤（2026-10-31 复核）：DE 的「英雄·忽都鲁」是 Qutlugh Nigar Khanum（巴布尔之母，卒 1505，女将），
+    // 与本库费尔干纳的「忽都鲁」（1335–1385）不是一个人 → 回落军团默认主将兵模。
 
     // 希腊/马其顿
     gen_alexander_great: 'hero_mounted_alexander',
@@ -49,7 +50,8 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     // 波斯
     gen_artaphernes: 'hero_artaphernes',
     gen_datis: 'hero_datis',
-    saman_yisimayi: 'hero_shahismail',
+    // saman_yisimayi 已撤（2026-10-31 复核）：萨曼王朝 伊斯玛仪（849–907）与萨法维「沙阿·伊斯玛仪」（1487–1524）不是一个人；
+    // DE 的「英雄·亦思马因·波斯」（hero_ismail，战力 84）是萨法维沙阿的幼年版，同属萨法维，不能给萨曼 → 回落军团默认主将兵模。
     gen_thoros: 'hero_thoros',
 
     // 西欧
@@ -82,7 +84,6 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     talike_talike: 'hero_tariqibnziyad',
     gen_osman_i: 'hero_osman',
     gen_bolusi: 'porus_elephant',
-    gen_prithviraj: 'hero_prithviraj',
     zhuluo_lajialajia: 'hero_generalaraiyan',
     gen_gajah_mada: 'hero_gajahmada',
     leloi: 'hero_leloi',
@@ -105,13 +106,15 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     qincha_baqiman: 'hero_cumanchief',
     aiaoniya_alisita: 'hero_aristagoras',
     gen_jogaila: 'hero_jogaila',
-    nuowei_halaer: 'hero_harald',   // 挪威哈拉尔（DE 新提取的英雄·哈拉尔）
+    // nuowei_halaer 已撤（2026-10-31）：DE 的「哈拉尔」＝哈拉尔·哈德拉达（1015–1066，青年版），
+    // 与库内挪威「哈拉尔」（850–933，美发王）不是一个人 → 回落军团默认主将兵模。
 
     // 🔴 [2026-10-31 主人令「游戏中的武将战术模式登场的时候，请使用与自己相同的兵模作为主将队。
     //    如果有重复的兵模，例如亚历山大有骑马的和步兵的，骑兵类优先，战力高的优先」]
-    //    逐个核对 218 个英雄兵模与 1361 名武将，只登记**同一个人**（同名异人不登记，如 腓特烈二世≠巴巴罗萨、
-    //    曼萨·穆萨≠穆萨·伊本·奴萨尔、大流士三世≠大流士一世）；船形英雄（李舜臣龟船）按 §3.4 不用。
-    //    同一人有多个兵模时：骑兵优先，同类取战力高（熙德取骑马坎培多尔、地米斯托克利取骑马版）。
+    //    逐个核对 218 个英雄兵模与 1675 名武将，只登记**同一个人**（同名异人不登记，如 腓特烈二世≠巴巴罗萨、
+    //    曼萨·穆萨≠穆萨·伊本·奴萨尔、大流士三世≠大流士一世、奥斯曼·巴巴罗萨≠腓特烈·巴巴罗萨）；船形英雄
+    //    （李舜臣龟船、莱夫·埃里克松长船、尼阿库斯旗舰）按 §3.4 不用。
+    //    同一人有多个兵模时：骑兵优先，同类取战力高（熙德取骑马坎培多尔、地米斯托克利取骑马版、伊斯玛仪取沙阿版 201>84）。
     //    对照底账：scratch/_hero_general_match_20261031.txt
     gen_artemisia: 'hero_artemisia',
     gen_roger_i: 'hero_rogerbosso',              // 罗杰一世（博索）
@@ -126,7 +129,6 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     gen_charles_martel: 'hero_charlesmartel',
     gen_charlemagne: 'hero_charlemagne',
     bfe_sigismund: 'hero_emperorsigismund',
-    litaowan_algirdas: 'hero_algirdas',
     weihaiwei_sudingfang: 'hero_sudingfang',
     jingmen_zhaoyun: 'hero_zhaoyun',
     bfe3_71: 'hero_yuanshao',
@@ -144,8 +146,16 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     wende_heinrich_loewe: 'hero_henrythelion',
     baizanting_belisarius: 'hero_belisarius',
     gen_vlad_impaler: 'hero_vladdracula',
-    yilihanguo_yisimeier: 'hero_shahismail',     // 萨法维 伊斯玛仪一世
+    yilihanguo_yisimeier: 'hero_shahismail',     // 萨法维 伊斯玛仪一世（沙阿版 201 > 幼年版 hero_ismail 84）
     zhuluo_lajindela: 'hero_rajendrachola',
+
+    // 2026-10-31 复核补登（同一人、有本人兵模、原来漏登）
+    ayoubu_salaheding: 'hero_saladin',           // 萨拉赫丁（1138–1193·大马士革）＝萨拉丁
+    gen_black_prince: 'hero_theblackprince',     // 黑太子爱德华（阿基坦·波尔多）
+    tiemuer_tiemuer: 'hero_tamerlane',           // 帖木儿（1336–1405·撒马尔罕）
+    an_xibanni: 'hero_shaybanikhan',             // 昔班尼（1451–1510·布哈拉）
+    gen_alexander_nef: 'hero_alexandernevski',   // 涅夫斯基（1221–1263·拉多加）
+    gen_mikhail_tver: 'hero_mikhailoftver',      // 特维尔亲王米哈伊尔（1271–1318·特维尔）
 };
 
 /**

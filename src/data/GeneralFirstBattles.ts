@@ -4302,27 +4302,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #207 雅各布 (840 ~ 879) — 公元876年代尔阿库勒之战
-    gen_yaqub_saffar: {
-        generalId: 'gen_yaqub_saffar',
-        battleName: '代尔阿库勒之战',
-        battleYear: 876,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '巴格达下游代尔阿库勒',
-        targetCityId: 'city_bageda',
-        targetLat: 33.33,
-        targetLng: 44.37,
-        myTroops: 35000,
-        enemyFactionId: 'abasi',
-        enemyFactionName: '阿拔斯哈里发军',
-        enemyGeneralId: 'abasi_muwafake',   // 🔴 [2026-10-20 首战规则] 876 代尔阿库勒阿拔斯主帅穆瓦法克
-        enemyTroops: 45000,
-        introLines: [
-            { speaker: 'general', text: '铜匠的铁锤已锻造出万里江山，底格里斯河畔哈里发阻路！不屈的波斯勇士，握紧钢刀随我迎击禁卫军，直取巴格达！' },
-            { speaker: 'player', text: '愿随雅各布将军共赴代尔阿库勒之战，大破阿拔斯哈里发军敌军！' },
-        ],
-    },
 
     // #208 阿尔弗雷德 (849 ~ 899) — 公元878年埃丁顿战役
     gen_alfred_great: {
@@ -5077,7 +5056,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '教皇与施瓦本德意志重剑士视我们为狡黠盗贼，但诺曼骑士无坚不摧！勇士们，拔出长剑随罗贝尔全线冲锋，生擒教皇！' },
-            { speaker: 'player', text: '愿随吉斯卡尔将军共赴奇维塔特战役，大破教皇教宗国神圣联军敌军！' },
+            { speaker: 'player', text: '愿随罗贝尔·吉斯卡尔将军共赴奇维塔特战役，大破教皇教宗国神圣联军敌军！' },
         ],
     },
 
@@ -5508,7 +5487,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '十字军军团干渴难耐，已深陷哈丁角无水绝境！烈火与浓烟顺风而起，安拉的勇士，拔出马刀随苏丹冲锋，光复耶路撒冷！' },
-            { speaker: 'player', text: '愿随萨拉赫丁将军共赴哈丁战役，大破耶路撒冷王国敌军！' },
+            { speaker: 'player', text: '愿随萨拉丁将军共赴哈丁战役，大破耶路撒冷王国敌军！' },
         ],
     },
 
@@ -5661,7 +5640,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'ayoubu_salaheding',
         enemyTroops: 10000,
         introLines: [
-            { speaker: 'general', text: '萨拉赫丁狂兵三万深入抢掠军容散乱！朕虽麻风残躯，真十字架下圣骑永存！勇士，随少年国王五百骑冲锋，斩尽敌锋！' },
+            { speaker: 'general', text: '萨拉丁狂兵三万深入抢掠军容散乱！朕虽麻风残躯，真十字架下圣骑永存！勇士，随少年国王五百骑冲锋，斩尽敌锋！' },
             { speaker: 'player', text: '愿随鲍德温四世将军共赴蒙吉萨战役，大破阿尤布王朝敌军！' },
         ],
     },
@@ -5690,27 +5669,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
 
     // #278 孟宗政 (1163 ~ 1223) — 公元1217年襄阳击退金军保卫战
 
-    // #279 普里特维 (1166 ~ 1192) — 公元1191年第一次塔莱战役
-    gen_prithviraj: {
-        generalId: 'gen_prithviraj',
-        battleName: '第一次塔莱战役',
-        battleYear: 1191,
-        battleType: 'field',
-        role: 'defender',
-        targetName: '塔莱草原',
-        targetCityId: 'city_deli',
-        targetLat: 28.61,
-        targetLng: 77.23,
-        myTroops: 50000,
-        enemyFactionId: 'huluo',
-        enemyFactionName: '古尔王朝',
-        enemyGeneralId: 'bfe_muhammad_ghur',   // 🔴 [2026-10-25 按史] 1191 第一次塔兰＝穆罕默德古尔（吉亚斯丁在古尔/呼罗珊）
-        enemyTroops: 40000,
-        introLines: [
-            { speaker: 'general', text: '突厥突厥贼寇越山犯我祖土！拉其普特王公战象森严阔剑如雪，骁勇的战士，随普里特维拉吉决死冲锋，重创古尔蛮兵！' },
-            { speaker: 'player', text: '愿随普里特维将军共守第一次塔莱战役，大破古尔王朝敌军！' },
-        ],
-    },
 
     // #280 摩诃末 (1169 ~ 1220) — 公元1212年撒马尔罕之战
     huarazim_mohemo: {
@@ -6172,7 +6130,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 15000,
         introLines: [
             { speaker: 'general', text: '英格兰骑士半数过桥乱不成队，木桥狭窄退路尽断！为了苏格兰的自由，高地勇士们，端平巨矛随我自山顶冲锋，斩尽侵略者！' },
-            { speaker: 'player', text: '愿随华莱士将军共赴斯特灵桥之战，大破英格兰王国敌军！' },
+            { speaker: 'player', text: '愿随威廉·华莱士将军共赴斯特灵桥之战，大破英格兰王国敌军！' },
         ],
     },
 
@@ -6224,7 +6182,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
 
     // #314 楠木正成 (1294 ~ 1336) — 公元1333年千早城保卫战（本城就地开战）
 
-    // #315 奥尔格尔德 (1296 ~ 1377) — 公元1362年蓝水河战役
+    // #315 阿尔吉尔达斯 (1296 ~ 1377) — 公元1362年蓝水河战役
     gen_algirdas: {
         generalId: 'gen_algirdas',
         battleName: '蓝水河战役',
@@ -6242,7 +6200,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '鞑靼鞑靼三位秃儿汗企图阻我收复乌克兰土地！金帐游牧弓骑已乱，立陶宛勇士，随大公重装骑兵冲破敌阵，饮马黑海！' },
-            { speaker: 'player', text: '愿随奥尔格尔德将军共赴蓝水河战役，大破金帐汗国敌军！' },
+            { speaker: 'player', text: '愿随阿尔吉尔达斯将军共赴蓝水河战役，大破金帐汗国敌军！' },
         ],
     },
 
@@ -6649,7 +6607,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '条顿大团长重铠列阵不可一世！某引立陶宛轻骑佯败诱其分散阵形，波兰立陶宛勇士，随维陶塔斯全线反击斩杀大团长！' },
-            { speaker: 'player', text: '愿随维托夫特将军共赴格伦瓦尔德战役，大破条顿骑士团敌军！' },
+            { speaker: 'player', text: '愿随维陶塔斯将军共赴格伦瓦尔德战役，大破条顿骑士团敌军！' },
         ],
     },
 
@@ -6737,7 +6695,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 10000,
         introLines: [
             { speaker: 'general', text: '罗马教皇与皇帝发十字军践踏波希米亚！独眼杰斯卡以战车结堡垒铁链相扣，胡斯勇士，手握铁枷战锤随我砸碎骑士铠甲！' },
-            { speaker: 'player', text: '愿随扬杰斯卡将军共守维特科夫山战役，大破神圣罗马帝国敌军！' },
+            { speaker: 'player', text: '愿随扬·杰式卡将军共守维特科夫山战役，大破神圣罗马帝国敌军！' },
         ],
     },
 
@@ -6847,7 +6805,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 20000,
         introLines: [
             { speaker: 'general', text: '昌卡凶蛮围攻库斯科，父兄逃遁唯某坚守！太阳神将地面的石头皆化作我方战士，印加勇士，举起石斧长矛随我誓死血战！' },
-            { speaker: 'player', text: '愿随帕查库提将军共守库斯科之战，大破昌卡敌军！' },
+            { speaker: 'player', text: '愿随帕查库特克将军共守库斯科之战，大破昌卡敌军！' },
         ],
     },
 
@@ -7261,7 +7219,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 30000,
         enemyFactionId: 'kelimiya',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '神圣同盟联军',
-        enemyGeneralId: 'bfe_doria',   // 🔴 [2026-10-25 按史] 1538 普雷韦扎神圣同盟舰队＝安德烈亚·多里亚（皮萨罗在秘鲁）
+        enemyGeneralId: 'gen_andrea_doria',   // 🔴 [2026-10-25 按史] 1538 普雷韦扎神圣同盟舰队＝安德烈亚·多里亚（皮萨罗在秘鲁）
         enemyTroops: 50000,
         introLines: [
             { speaker: 'general', text: '基督教联合舰队巨舰如林，然各怀鬼胎！加莱桨帆船借风破浪，真主的红胡子在此，勇士们，点燃火炮随我撕碎多利亚的铁索！' },
@@ -7335,27 +7293,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #370 艾斯迈尔 (1487 ~ 1524) — 公元1510年木鹿之战
-    safawei_aisimaier: {
-        generalId: 'safawei_aisimaier',
-        battleName: '木鹿之战',
-        battleYear: 1510,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '木鹿城郊',
-        targetCityId: 'city_merv',
-        targetLat: 37.61641,
-        targetLng: 62.234802,
-        myTroops: 30000,
-        enemyFactionId: 'an',
-        enemyFactionName: '乌兹别克布哈拉汗国',
-        enemyGeneralId: 'an_xibanni',
-        enemyTroops: 40000,
-        introLines: [
-            { speaker: 'general', text: '昔班尼屡次犯我边境杀我信众！某引红头军佯败诱其出城渡桥，伏兵齐起截断浮桥，萨法维勇士，拔出佩刀随沙阿踏平乌兹别克！' },
-            { speaker: 'player', text: '愿随艾斯迈尔将军共赴木鹿之战，大破乌兹别克布哈拉汗国敌军！' },
-        ],
-    },
 
     // #371 瓦莱特 (1494 ~ 1568) — 公元1565年马耳他之战（本城就地开战）
     maerta_qishi_walaite: {
@@ -8105,27 +8042,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
 
     // #411 阿旺朗杰 (1594 ~ 1651) — 公元1639年五次击退藏巴汗之战
 
-    // #412 赫梅利 (1595 ~ 1657) — 公元1648年黄水战役
-    gen_bohdan_khmelnitsky: {
-        generalId: 'gen_bohdan_khmelnitsky',
-        battleName: '黄水战役',
-        battleYear: 1648,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '黄水河畔沼泽',
-        targetCityId: 'city_zhapoluore',
-        targetLat: 47.83,
-        targetLng: 35.16,
-        myTroops: 20000,
-        enemyFactionId: 'bolan',
-        enemyFactionName: '波兰立陶宛联邦',
-        enemyGeneralId: 'bfe_potocki',   // 🔴 [2026-10-25 按史] 1648 黄水波军＝盖特曼斯特凡·波托茨基（索别斯基时年 19）
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '波兰贵族将我们乌克兰哥萨克视作农奴！鞑靼盟骑已断其后路，黄水河谷泥泞深陷，塞契的勇士们，拔出弯刀随盖特曼求自由！' },
-            { speaker: 'player', text: '愿随赫梅利将军共赴黄水战役，大破波兰立陶宛联邦敌军！' },
-        ],
-    },
 
     // #413 卢象升 (1600 ~ 1639) — 公元1635年朱阳关之战
     luming_luxiangsheng: {
@@ -8790,7 +8706,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 45000,
         enemyFactionId: 'xila',
         enemyFactionName: '雅典希腊反马其顿联军',
-        enemyGeneralId: 'bfe2_antiphilus',
+        enemyGeneralId: 'xila_antiphilus',
         enemyTroops: 28000,
         introLines: [
             { speaker: 'general', text: '雅典与埃托利亚人趁亚历山大驾崩举兵围困安提帕特，某已率东征百战老兵自奇里乞亚驰援色萨利！马其顿银盾勇士，挺起萨里沙长矛随我击溃联军！' },
@@ -8919,27 +8835,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #553 福卡斯 (912 ~ 969) — 公元962年阿勒颇之战（东罗马军队统帅尼基弗鲁斯攻入哈姆丹王朝的阿勒颇，赛弗道莱败走；出处：莱昂执事《历史》、Skylitzes 编年史）
-    gen_nikephoros_phokas: {
-        generalId: 'gen_nikephoros_phokas',
-        battleName: '阿勒颇之战',
-        battleYear: 962,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '阿勒颇',
-        targetCityId: 'city_alepo',
-        targetLat: 36.2,
-        targetLng: 37.16,
-        myTroops: 40000,
-        enemyFactionId: 'ayoubu',
-        enemyFactionName: '哈姆丹',
-        enemyGeneralId: 'gen_sayf_al_dawla',
-        enemyTroops: 20000,
-        introLines: [
-            { speaker: 'general', text: '赛弗道莱割据阿勒颇多年，屡犯我叙利亚边境。皇帝命我挥师东进，你可愿随我攻下这座名城？' },
-            { speaker: 'player', text: '愿随将军合围阿勒颇，夺回叙利亚！' },
-        ],
-    },
 
     // #554 鲍德温一世 (1058 ~ 1118) — 公元1105年第三次拉姆拉之战（耶路撒冷国王鲍德温一世以少击多，大破埃及法蒂玛军与大马士革图格特金联军；出处：沙特尔的富尔彻《耶路撒冷史》）
     aosiruowen_baodewen: {
@@ -9924,7 +9819,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 45000,
         enemyFactionId: 'xisi',
         enemyFactionName: '克尔曼',
-        enemyGeneralId: 'gen_yaqub_saffar',
+        enemyGeneralId: 'xisi_yakubusafaer',
         enemyTroops: 35000,
         introLines: [
             { speaker: 'general', text: '克尔曼雅各布引军来犯巴格达下游代尔阿库勒，穆瓦法克今率众迎战！壮士，随本将列阵，一战破敌！' },
@@ -10007,8 +9902,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyGeneralId: 'babuer_babuer',
         enemyTroops: 20000,
         introLines: [
-            { speaker: 'general', text: '喀布尔斯坦巴布尔引军来犯帕尼帕特原野，洛迪今率众迎战！壮士，随本将列阵，一战破敌！' },
-            { speaker: 'player', text: '愿随洛迪将军于第一次帕尼帕特战役决战，击破巴布尔！' },
+            { speaker: 'general', text: '喀布尔斯坦巴布尔引军来犯帕尼帕特原野，易卜拉欣·洛迪今率众迎战！壮士，随本将列阵，一战破敌！' },
+            { speaker: 'player', text: '愿随易卜拉欣·洛迪将军于第一次帕尼帕特战役决战，击破巴布尔！' },
         ],
     },
     gen_shashanka: {
@@ -10520,7 +10415,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'baizanting',
         enemyFactionName: '拜占庭',
-        enemyGeneralId: 'bfe_nikephoros_ii',
+        enemyGeneralId: 'baizanting_nikephoros_phokas',
         enemyTroops: 40000,
         introLines: [
             { speaker: 'general', text: '拜占庭皇帝尼基弗鲁斯倾国而来，阿勒颇城是哈姆丹之屏障！壮士，随本埃米尔凭城死守，教训希腊人！' },
@@ -10606,26 +10501,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         introLines: [
             { speaker: 'general', text: '塔哈尔卡据孟菲斯而抗亚述，本王亲统大军南下，先破下埃及诸城，再取孟菲斯！壮士，随我攻城！' },
             { speaker: 'player', text: '愿随亚述王攻取孟菲斯，击破埃及军！' },
-        ],
-    },
-    bfe_nikephoros_ii: {
-        generalId: 'bfe_nikephoros_ii',
-        battleName: '安条克之战',
-        battleYear: 969,
-        battleType: 'siege',
-        role: 'attacker',
-        targetName: '安条克',
-        targetCityId: 'city_antiejiya',
-        targetLat: 36.2,
-        targetLng: 36.16,
-        myTroops: 40000,
-        enemyFactionId: 'ayoubu',
-        enemyFactionName: '阿尤布',
-        enemyGeneralId: 'bfe_aulax',   // 🔴 [2026-10-25 按史] 969 安条克守将＝奥拉克斯（赛弗道莱 967 已死）
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'general', text: '安条克乃东方首城，今朕亲征叙利亚，先取其城为帝国东境锁钥！壮士，随朕登城，光复罗马旧疆！' },
-            { speaker: 'player', text: '愿随尼基弗鲁斯皇帝攻取安条克，击破叙利亚军！' },
         ],
     },
     bfe_dou_jiande: {
@@ -10813,8 +10688,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
     },
 
     // 多里亚 (1466 ~ 1560) — 公元1538年普雷韦扎之战（神圣同盟舰队对奥斯曼舰队）
-    bfe_doria: {
-        generalId: 'bfe_doria',
+    gen_andrea_doria: {
+        generalId: 'gen_andrea_doria',
         battleName: '普雷韦扎之战',
         battleYear: 1538,
         battleType: 'field',
@@ -11501,7 +11376,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 15000,
         enemyFactionId: 'litaowan',
         enemyFactionName: '立陶宛',
-        enemyGeneralId: 'litaowan_algirdas',
+        enemyGeneralId: 'gen_algirdas',
         enemyTroops: 25000,
         introLines: [
             { speaker: 'general', text: '立陶宛两公合兵越境，欲乘秋收掠普鲁士。我以兄弟骑士列阵于鲁道平原，重骑居中、弩手护两翼，待其骑军冲阵而后反卷。' },
@@ -11659,7 +11534,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 3000,
         introLines: [
             { speaker: 'general', text: '条顿骑士铁甲楔阵最利冲阵，然湖冰滑薄、阵形难展。中军退诱其入冰，两翼合围，专斫其马足！' },
-            { speaker: 'player', text: '愿随涅夫斯基诱敌入冰，歼灭条顿骑士团！' },
+            { speaker: 'player', text: '愿随亚历山大·涅夫斯基诱敌入冰，歼灭条顿骑士团！' },
         ],
     },
 
@@ -11888,27 +11763,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         ],
     },
 
-    // #FB-批2b litaowan_algirdas (1370) — 鲁道之战（与 bfe_kniprode 同一役反向）
-    litaowan_algirdas: {
-        generalId: 'litaowan_algirdas',
-        battleName: '鲁道之战',
-        battleYear: 1370,
-        battleType: 'field',
-        role: 'attacker',
-        targetName: '鲁道',
-        targetCityId: 'city_kenisibao',
-        targetLat: 54.75,
-        targetLng: 20.7,
-        myTroops: 25000,
-        enemyFactionId: 'tiaodun_qishi',
-        enemyFactionName: '立陶宛',
-        enemyGeneralId: 'bfe_kniprode',
-        enemyTroops: 25000,
-        introLines: [
-            { speaker: 'player', text: '愿随大公夜袭鲁道！' },
-            { speaker: 'player', text: '得令，先断其退路！' },
-        ],
-    },
 
     // #FB-批2b qin_hengyi (-233) — 肥之战（与 wuzhou_limu 同一役反向）
     qin_hengyi: {

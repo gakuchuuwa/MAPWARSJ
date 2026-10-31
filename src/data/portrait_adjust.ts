@@ -9286,6 +9286,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.91,
             "offsetX": 2,
             "offsetY": -30
+        },
+        "/assets/BURMESE/gen_si_lunfa.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -10
         }
     },
     "folderGuides": {
