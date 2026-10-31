@@ -9266,6 +9266,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -2
+        },
+        "/assets/SPANISH/womaya_abdrahman.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 42
+        },
+        "/assets/SAXONS/yinggelan_warenne.png": {
+            "scale": 1.28,
+            "offsetX": 0,
+            "offsetY": 47
         }
     },
     "folderGuides": {
