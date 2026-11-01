@@ -229,9 +229,12 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     'city_ava': [
         { asset: 'BURM_CASTLE_AGE3', name: '因瓦王城', category: 'HERITAGE_FORT', lat: 21.858, lng: 95.985, description: '缅甸因瓦城墙、宫门与佛塔群的复合城堡表现。' },
     ],
-    'city_huneiduolala': [
-        { asset: 'EAST_CASTLE_AGE3', name: '科文城堡', category: 'HERITAGE_FORT', lat: 45.749, lng: 22.888, description: '胡内多阿拉的科文城堡，DE 东欧旧式城堡原型。' },
-    ],
+    // 🔴 [2026-11-01 主人报「重复了」（截图：胡内多阿拉城里「科文城堡」金标牌挂了两次）]
+    //    `city_huneiduolala` 的主奇观 SLAV_WONDER_MAGYARS **本身就是科文城堡**（马扎尔文明奇观，1446 年），
+    //    这里原有第二条附加奇观 `EAST_CASTLE_AGE3`「科文城堡」（东欧旧式城堡原型，坐标与城完全相同 45.749/22.888，相距 0.0km）
+    //    → 同一座科文城堡在一座城里挂了两份（战略地图两块金标牌上下叠在一起、战术攻城摆两座）＝**真重复**，**该条已删**。
+    //    城堡没有消失：仍由主奇观 SLAV_WONDER_MAGYARS 画；该素材目录未删（它同时是罗斯／条顿／日耳曼的通用城堡）。
+    //    体检脚本 `scratch/_audit_wonder_name_dup_20261101.mts`（同城同名 0 处）。
     'city_heersongniesi': [
         { asset: 'GOTH_CASTLE_AGE3', name: '曼古普堡', category: 'HERITAGE_FORT', lat: 44.592, lng: 33.807, description: '克里米亚哥特人的山城曼古普及其城门。' },
     ],

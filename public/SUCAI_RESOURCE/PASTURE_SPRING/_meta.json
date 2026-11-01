@@ -1,8 +1,8 @@
 {
   "frames": 2,
-  "box_w": 256,
-  "box_h": 192,
-  "anchor_x": 128,
-  "anchor_y": 96,
+  "box_w": 384,
+  "box_h": 288,
+  "anchor_x": 192,
+  "anchor_y": 144,
   "source": "AoE2 DE pc2.png"
 }

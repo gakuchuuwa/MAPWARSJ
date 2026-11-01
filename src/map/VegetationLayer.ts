@@ -595,9 +595,9 @@ function getTreeLine(lat: number, lng?: number): number {
     return 600;
 }
 
-const TREE_GRID_STEP = 60;
+const TREE_GRID_STEP = 46;
 /** 单次重建最多保留的树数（兼顾密林连冠咬合与大视口 60FPS 拖动流畅度） */
-const MAX_TREES_PER_RENDER = 4200;
+const MAX_TREES_PER_RENDER = 5000;
 
 /** 四季 DE 风格林下阴翳基底离屏缓存（春0 夏1 秋2 冬3） */
 const UNDERBRUSH_CANVAS: (HTMLCanvasElement | null)[] = [null, null, null, null];
@@ -1213,19 +1213,19 @@ export class VegetationLayer {
                     naturalForestWeight,
                 );
                 // 🔴 [2026-10-21 ~ 2026-11-01 主人令「密林连冠成海 + 疏林/绿洲保持成簇 + 战略道路自动留出林间走廊，分布摆放学习 DE」]
-                if (clusterWeight < 0.12) continue;
-                if (clusterWeight < 0.24 && hash(gx, gy, 46) > (clusterWeight - 0.12) / 0.12) continue;   // 林缘软过渡
-                if (clusterWeight >= 0.24 && clusterWeight < 0.40 && hash(gx, gy, 47) > 0.88) continue;   // 林缘浅带偶有小林隙
+                if (clusterWeight < 0.18) continue;
+                if (clusterWeight < 0.32 && hash(gx, gy, 46) > (clusterWeight - 0.18) / 0.14) continue;   // 林缘软过渡
+                if (clusterWeight >= 0.32 && clusterWeight < 0.44 && hash(gx, gy, 47) > 0.85) continue;   // 林缘浅带偶有小林隙
 
                 // 区分「郁闭密林」与「稀树草原/绿洲/河岸疏林」
                 const isSparseEco =
                     (specialEco.weight > 0 && naturalForestWeight < 0.34 && (treeTile === 'sv1' || treeTile === 'sv2' || treeTile === 'du1' || treeTile === 'des')) ||
                     (riparianBoost > 0 && naturalForestWeight < 0.28 && huntingCityBoost < 0.28);
-                const isDenseCanopy = !isSparseEco && clusterWeight >= 0.34;
+                const isDenseCanopy = !isSparseEco && clusterWeight >= 0.36;
 
                 const count = isDenseCanopy
                     ? (clusterWeight >= 0.56 ? 3 : 2)
-                    : (clusterWeight >= 0.26 ? 2 : 1);
+                    : (clusterWeight >= 0.28 ? 2 : 1);
 
                 // DE 同团树种内聚：2×2 格共享主树种抽签（使竹林成片、松林成带、桦林成林），伴生树 25% 概率混入本区次要树种
                 const clumpCellX = Math.floor(gx / (TREE_GRID_STEP * 2));
@@ -1238,7 +1238,7 @@ export class VegetationLayer {
                     let curPx = px;
                     let curPy = py;
                     if (isDenseCanopy) {
-                        // 密林按 2×2 子象限（每象限 23×23px）旋转抽样 3~4 株 + 随机抖动，既消除 46px 网格缝，又避免 5 棵树挤成一团绿球
+                        // 密林按 2×2 子象限（每象限 23×23px）旋转抽样 2~3 株 + 随机抖动，既成团连冠又留出山脊透气感
                         const qIdx = (i + quadRot) & 3;
                         const qx = qIdx & 1;
                         const qy = (qIdx >> 1) & 1;
@@ -1248,7 +1248,7 @@ export class VegetationLayer {
                     } else if (i > 0) {
                         const baseAng = hash(gx, gy, 31) * Math.PI * 2 + (i - 1) * ((Math.PI * 2) / Math.max(1, count - 1));
                         const ang = baseAng + (hash(gx, gy, i * 17 + 31) - 0.5) * 0.52;
-                        const dist = 7.5 + hash(gx, gy, i * 19 + 32) * 5.5;
+                        const dist = 6.0 + hash(gx, gy, i * 19 + 32) * 4.5;
                         curPx += Math.cos(ang) * dist;
                         curPy += Math.sin(ang) * dist * 0.74;
                     }

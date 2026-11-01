@@ -115,7 +115,7 @@ const SIX_ICON_URLS: Record<TacticalSixSet, string> = {
     dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=opaque2',
     hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=opaque2',
     bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=opaque2',
-    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=opaque2',
+    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=three3',
 };
 
 const sixRawImages = new Map<TacticalSixSet, HTMLImageElement>();
@@ -171,6 +171,27 @@ function getSixSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElem
     sixBadgeCache.set(cacheKey, cv);
     return cv;
 }
+
+// DE 吴国精锐火焰弓箭手火箭抛射物素材（/SUCAI/PROJ_ARROW_FIRE/fly_0.png：11 帧，单帧 20×20，anchor 6×10）
+let deFireArrowImg: HTMLImageElement | null = null;
+let deFireArrowLoading = false;
+function getDeFireArrowImg(): HTMLImageElement | null {
+    if (deFireArrowImg) return deFireArrowImg;
+    if (typeof Image !== 'undefined' && !deFireArrowLoading) {
+        deFireArrowLoading = true;
+        const img = new Image();
+        img.onload = () => {
+            deFireArrowLoading = false;
+            deFireArrowImg = img;
+        };
+        img.onerror = () => {
+            deFireArrowLoading = false;
+        };
+        img.src = '/SUCAI/PROJ_ARROW_FIRE/fly_0.png';
+    }
+    return null;
+}
+getDeFireArrowImg();
 
 const glowStampCache = new Map<string, HTMLCanvasElement>();
 const flareStampCache = new Map<string, HTMLCanvasElement>();
@@ -436,8 +457,10 @@ function registerSkillCastMeta(v: Scene13SkillVfx, nowSec: number): void {
         meta.instantSix = v.six;
         meta.instantUntilSec = untilSec;
         meta.instantSeq = seq;
-        for (const m of v.targets) {
-            unitSkillTags.set(m, { six: v.six, untilSec, seq, paid, playerCast: player });
+        if (v.six !== 'baizhan') {
+            for (const m of v.targets) {
+                unitSkillTags.set(m, { six: v.six, untilSec, seq, paid, playerCast: player });
+            }
         }
     }
 }
@@ -881,10 +904,10 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     const cy = v.y - lift(v.x, v.y) - 12;
     const pal = getCastPalette(v);
     const mainGlow = getGlowStamp(pal.main);
+    const fireFlare = getFlareStamp('#ff7a18');
 
-    const useTargets = v.targets.length > 0;
-    const srcLen = useTargets ? v.targets.length : v.points.length;
-    const n = Math.min(srcLen, 140);
+    const usePoints = v.points.length > 0;
+    const srcLen = usePoints ? v.points.length : v.targets.length;
 
     // 1. 阵心动画色彩层：高对比赤红（或叠加前序技能色彩）能量光环与破阵气浪
     ctx.save();
@@ -905,95 +928,130 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     ctx.stroke();
     ctx.restore();
 
-    // 2. 漫天箭雨（单支箭贴图 baizhan 成片斜向下坠）
-    const badge = getSixSkillIconBadge('baizhan', v.paid);
-    if (badge) {
+    // 2. 小特效：使用 DE 吴火焰弓箭手精锐的火箭（PROJ_ARROW_FIRE）作为漫天火箭雨从天而降
+    const fireArrowImg = getDeFireArrowImg();
+    if (fireArrowImg) {
         const hash01 = (k: number) => {
             const s = Math.sin(k * 12.9898) * 43758.5453;
             return s - Math.floor(s);
         };
-        const mainFlare = getFlareStamp(pal.main);
-        const volleyCount = Math.max(84, Math.min(150, n > 0 ? n * 2 : 96));
-        // 单支箭贴图朝向：左上 -> 右下（约 42°），飞行轨迹与箭身方向严格一致
-        const FLIGHT_DX = 270 * scale;
-        const FLIGHT_DY = 244 * scale;
+        const volleyCount = Math.max(96, Math.min(180, srcLen > 0 ? srcLen * 3 : 110));
+        const FLIGHT_DX = 220 * scale;
+        const FLIGHT_DY = 260 * scale;
+        const ARC_H = 52 * scale;
+        // DE PROJ_ARROW_FIRE 单帧参数：11 帧，fw=20, fh=20, hx=6, hy=10，取第 5 帧水平基准帧旋转切线角
+        const FW = 20, FH = 20, HX = 6, HY = 10, FR = 5;
+        const S = 1.35 * scale;
 
         ctx.save();
         for (let i = 0; i < volleyCount; i++) {
-            const h1 = hash01(i * 17 + 3);
-            const h2 = hash01(i * 31 + 11);
-            const h3 = hash01(i * 47 + 29);
+            const h1 = hash01(i * 19 + 5);
+            const h2 = hash01(i * 37 + 13);
+            const h3 = hash01(i * 53 + 29);
 
-            // 分多波次密集倾泻（0 ~ 0.60 陆续发射，飞行时长约 0.22，插地残留至淡出）
-            const startP = h1 * 0.60;
-            const flightDur = 0.20 + h2 * 0.05;
+            const startP = h1 * 0.62;
+            const flightDur = 0.16 + h2 * 0.05;
             const localP = (p - startP) / flightDur;
             if (localP < 0) continue;
 
-            // 落点：优先锚定受创敌兵坐标，并带小幅散射覆盖整片阵地
             let tx: number;
             let ty: number;
             if (srcLen > 0) {
-                const pt = useTargets ? v.targets[i % srcLen] : v.points[i % srcLen];
-                const jitterX = (h2 - 0.5) * 34;
-                const jitterY = (h3 - 0.5) * 22;
-                tx = pt.x + jitterX;
-                ty = pt.y - lift(pt.x, pt.y) + jitterY;
+                const pt = usePoints ? v.points[i % srcLen] : v.targets[i % srcLen];
+                tx = pt.x + (h2 - 0.5) * 32;
+                ty = pt.y - lift(pt.x, pt.y) + (h3 - 0.5) * 20;
             } else {
                 const ang = h2 * TAU;
-                const rad = Math.sqrt(h3) * 120 * scale;
+                const rad = Math.sqrt(h3) * 125 * scale;
                 tx = cx + Math.cos(ang) * rad;
                 ty = cy + Math.sin(ang) * rad * 0.55;
             }
 
-            const arrowR = (20 + (i % 3) * 3.5) * scale;
-            // 箭头位于贴图中心偏右下 (+0.72*r, +0.66*r)，校准使落点恰好为箭头着地处
-            const tipOffsetX = arrowR * 0.72;
-            const tipOffsetY = arrowR * 0.66;
+            const sx = tx - FLIGHT_DX * (0.88 + h3 * 0.24);
+            const sy = ty - FLIGHT_DY * (0.88 + h2 * 0.24);
 
             if (localP <= 1) {
-                // 空中高速下坠阶段
                 const fp = localP;
-                const curTipX = tx - (1 - fp) * FLIGHT_DX;
-                const curTipY = ty - (1 - fp) * FLIGHT_DY;
-                const cxArrow = curTipX - tipOffsetX;
-                const cyArrow = curTipY - tipOffsetY;
+                const arc = 4 * ARC_H * fp * (1 - fp);
+                const ax = sx + (tx - sx) * fp;
+                const ay = sy + (ty - sy) * fp - arc;
+                const vx = tx - sx;
+                const vy = (ty - sy) - 4 * ARC_H * (1 - 2 * fp);
+                const angle = Math.atan2(vy, vx);
 
-                // 箭尾破空流光拖尾
+                // 火箭尾迹火光流线
                 ctx.save();
                 ctx.globalCompositeOperation = 'lighter';
-                ctx.strokeStyle = i % 2 === 0 ? pal.light : pal.main;
-                ctx.lineWidth = 2.0 * scale;
-                ctx.globalAlpha = Math.min(1, fp * 3.5) * 0.75 * fade;
+                ctx.strokeStyle = i % 2 === 0 ? '#ffae38' : pal.main;
+                ctx.lineWidth = 1.6 * scale;
+                ctx.globalAlpha = Math.min(1, fp * 4) * 0.72 * fade;
                 ctx.beginPath();
-                ctx.moveTo(curTipX, curTipY);
-                ctx.lineTo(curTipX - FLIGHT_DX * 0.20, curTipY - FLIGHT_DY * 0.20);
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(ax - Math.cos(angle) * 22 * scale, ay - Math.sin(angle) * 22 * scale);
                 ctx.stroke();
                 ctx.restore();
 
-                // 飞行中的单箭贴图
-                ctx.globalAlpha = Math.min(1, fp * 4) * (p < 0.85 ? 1 : (1 - p) / 0.15);
-                drawStamp(ctx, badge, cxArrow, cyArrow, arrowR);
+                // 绘制 DE 火焰箭本体
+                ctx.save();
+                ctx.globalAlpha = Math.min(1, fp * 5) * (p < 0.86 ? 1 : (1 - p) / 0.14);
+                ctx.translate(ax, ay);
+                ctx.rotate(angle);
+                ctx.drawImage(fireArrowImg, FR * FW, 0, FW, FH, -HX * S, -HY * S, FW * S, FH * S);
+                ctx.restore();
             } else {
-                // 命中地面阶段：瞬间火花 + 箭矢插地短暂残留后淡出
+                // 命中地面：爆出火焰星花 + 火箭插地短暂残留
                 const groundT = localP - 1;
-                if (groundT < 0.35) {
-                    const burstFade = 1 - groundT / 0.35;
+                if (groundT < 0.32) {
+                    const burstFade = 1 - groundT / 0.32;
                     ctx.save();
                     ctx.globalCompositeOperation = 'lighter';
-                    ctx.globalAlpha = burstFade * 0.85 * fade;
-                    drawStamp(ctx, mainFlare, tx, ty, (15 + groundT * 20) * scale);
+                    ctx.globalAlpha = burstFade * 0.88 * fade;
+                    drawStamp(ctx, fireFlare, tx, ty, (12 + groundT * 18) * scale);
                     ctx.restore();
                 }
-                if (groundT < 1.15) {
-                    const stickFade = (1 - groundT / 1.15) * (p < 0.78 ? 1 : (1 - p) / 0.22);
-                    if (stickFade > 0.02) {
-                        ctx.globalAlpha = stickFade * 0.92;
-                        drawStamp(ctx, badge, tx - tipOffsetX, ty - tipOffsetY, arrowR * 0.92);
+                if (groundT < 0.95) {
+                    const stickFade = (1 - groundT / 0.95) * (p < 0.80 ? 1 : (1 - p) / 0.20);
+                    if (stickFade > 0.03) {
+                        const hitAngle = Math.atan2((ty - sy) + 4 * ARC_H, tx - sx);
+                        ctx.save();
+                        ctx.globalAlpha = stickFade * 0.9;
+                        ctx.translate(tx, ty);
+                        ctx.rotate(hitAngle);
+                        ctx.drawImage(fireArrowImg, FR * FW, 0, FW, FH, -HX * S, -HY * S, FW * S, FH * S);
+                        ctx.restore();
                     }
                 }
             }
         }
+        ctx.restore();
+    }
+
+    // 3. 大特效图标：使用原图「三支箭」作为大特效图标（置于受创士兵队列旁侧上方，不遮挡中箭士兵）
+    const badge = getSixSkillIconBadge('baizhan', v.paid);
+    if (badge) {
+        let minDx = 0;
+        let maxDx = 0;
+        for (let i = 0; i < srcLen; i++) {
+            const pt = usePoints ? v.points[i] : v.targets[i];
+            const dx = pt.x - cx;
+            const dy = pt.y - v.y;
+            if (Math.abs(dx) < 160 && Math.abs(dy) < 160) {
+                if (dx < minDx) minDx = dx;
+                if (dx > maxDx) maxDx = dx;
+            }
+        }
+        const sideSign = Math.cos(v.angle) >= 0 ? -1 : 1;
+        const edgeSpan = Math.min(85, Math.max(28, sideSign < 0 ? -minDx : maxDx));
+        const iconX = cx + sideSign * (edgeSpan + 116 * scale);
+        const iconY = cy - 32 * scale;
+
+        const iconAlpha = p < 0.72 ? 1 : (1 - p) / 0.28;
+        const dropOffset = (1 - easeOut(Math.min(1, p * 3.8))) * 36;
+        const mainPulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
+
+        ctx.save();
+        ctx.globalAlpha = iconAlpha;
+        drawStamp(ctx, badge, iconX, iconY - dropOffset * 0.6, 108 * scale * mainPulse);
         ctx.restore();
     }
 }

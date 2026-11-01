@@ -6,7 +6,7 @@ import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { hasWorldBaseData, loadWorldBaseData, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
-import { STRATEGIC_SPRITE_SCALE, STRATEGIC_TREE_SCALE, STRATEGIC_WONDER_SCALE } from './strategicSpriteScale';
+import { STRATEGIC_ACTOR_SCALE, STRATEGIC_SPRITE_SCALE, STRATEGIC_TREE_SCALE, STRATEGIC_WONDER_SCALE } from './strategicSpriteScale';
 import { registerHumanPresence } from './strategicPresence';
 import { plantAllowedAt, plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
@@ -145,8 +145,8 @@ const PANE_ZINDEX = 568;       // 高于陆地动物(560)/植被(565)，低于�
  *   1. 村民、家畜/猎物、渔船、鱼群、地面采集物/矿石、尸体与沉船残骸一律用同一个 DE 基准（STRATEGIC_SPRITE_SCALE＝0.7）；
  *   2. 城外生产建筑与伴生树木一律直接乘 DE 原生像素（STRATEGIC_BUILDING_SCALE＝0.22 / STRATEGIC_TREE_SCALE＝0.20，与战略据点内建筑同比例系，且房屋与磨坊同文化同代）。
  */
-const VILLAGER_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
-const ANIMAL_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const VILLAGER_SCALE_BASE = STRATEGIC_ACTOR_SCALE;
+const ANIMAL_SCALE_BASE = STRATEGIC_ACTOR_SCALE;
 const SHIP_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const FISH_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const WRECK_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
@@ -1887,7 +1887,8 @@ export class CityLifeAmbientLayer {
         };
         this.stripAssets.set(key, st);
 
-        fetch(`${basePath}/_meta.json`)
+        const bust = /^(FARM|RFARM|PASTURE)_/.test(name) ? '?v=384p' : '';
+        fetch(`${basePath}/_meta.json${bust}`)
             .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`strip meta ${r.status}`))))
             .then((meta) => {
                 st.frames = Math.max(1, meta.frames ?? 1);
@@ -1907,7 +1908,7 @@ export class CityLifeAmbientLayer {
                         st.ready = false;
                     }
                 };
-                img.src = `${basePath}/frames.png`;
+                img.src = `${basePath}/frames.png${bust}`;
                 st.sheet = img;
             })
             .catch(() => {});
@@ -2540,7 +2541,7 @@ export class CityLifeAmbientLayer {
                             actor.buildingResource,
                             actor.damageVariant,
                             // 城外生产建筑间距随 STRATEGIC_SPRITE_SCALE 同比例联动，改一处系数整体同步缩放
-                            groupPt.x + side * Math.round((actor.seasonalPlot ? 240 : 136) * STRATEGIC_SPRITE_SCALE) * zoomFactor,
+                            groupPt.x + side * Math.round((actor.seasonalPlot === 'pasture' ? 290 : actor.seasonalPlot ? 240 : 136) * STRATEGIC_SPRITE_SCALE) * zoomFactor,
                             groupPt.y - 5 * zoomFactor,
                             BUILDING_SCALE_BASE * zoomFactor,
                             peaceFinalAlpha

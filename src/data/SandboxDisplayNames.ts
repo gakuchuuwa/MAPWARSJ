@@ -342,6 +342,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'shuntian': '天地',
 'bailian': '白莲',
 'chimei': '赤眉',
+        'zhangchu': '楚',   // 张楚·陈胜
+        'desheng': '德胜',
+        'wuzhou_yijun': '婺义',
     'gurkha': '廓喀',
 'xiadun': '夏顿',
     'kazakh': '哈萨',

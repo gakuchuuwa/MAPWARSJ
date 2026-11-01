@@ -158,6 +158,9 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'taluma': [{ from: -9999, era: 'antiquity' }], // 塔鲁玛迦拉（西爪哇，5 世纪）
     'cheshihou': [{ from: -9999, era: 'antiquity' }], // 乌垒
     'chimei': [{ from: -9999, era: 'antiquity' }], // 赤眉
+'zhangchu': [{ from: -9999, era: 'antiquity' }], // 张楚
+'desheng': [{ from: -9999, era: 'castle' }], // 德胜（1465）
+'wuzhou_yijun': [{ from: -9999, era: 'feudal' }], // 婺州义军（隋末）
     'choros': [{ from: -9999, era: 'castle' }], // 萨吾尔
     'chosokabe': [{ from: -9999, era: 'imperial' }], // 土佐
     'chuguo': [{ from: -9999, era: 'antiquity' }], // 楚国

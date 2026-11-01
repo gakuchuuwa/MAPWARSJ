@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将成名世纪表（generalId → 世纪）。
  *
  * 用途：配合文化区构成「文化区 × 时代」二维支文化，决定军团编成。
@@ -1491,7 +1491,16 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'cen_d_cenyunhan': 16,
     'safawei_d_tahmasp': 16,
     'chu_sunfu': 3,
-    'han_d_pengyue': -3,   // 彭越 · 梁王（卒前196）
+    'han_d_pengyue': -2,   // 彭越 · 梁王（卒前196）
+    'shu_haopu': 3,
+    'wu_taohuang': 3,
+    'han_d_wuyang': -3,
+    'tuoba_weijingxin': 6,
+    'zhangchu_chensheng': -3,
+    'desheng_liutong': 15,
+    'wuzhou_wangwenjin': 7,
+    'liusong_tanshao': 5,
+    'han_d_sunang': -2,
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

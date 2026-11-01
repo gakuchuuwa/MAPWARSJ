@@ -18,8 +18,6 @@
 
 
 
-    { generalId: 'han_d_pengyue', factionId: 'han_d', cityId: 'city_dingtao', generalName: '彭越', portrait: '', eliteName: '梁地游兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 梁王都定陶；据点=定陶（空据点补将）；文化随据点＝CENTRAL
-    { generalId: 'chu_sunfu', factionId: 'sunwu_d', cityId: 'city_luling', generalName: '孙辅', portrait: '', eliteName: '江南郡兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 据点=庐陵（空据点补将）；文化随据点＝JIANGNAN；史据见 docs
 
 
 
@@ -490,6 +488,15 @@ export interface FactionGeneral {
 
 
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
+    desheng: [
+        { generalId: 'desheng_liutong', factionId: 'desheng', cityId: 'city_yunyang', legionName: '起义军', generalName: '刘通', portrait: '', eliteName: '荆襄流民', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 明成化荆襄流民起义首领，据郧阳、称汉王、建元德胜（《明朝军事史》郧阳地区农民起义）
+    ],
+    wuzhou_yijun: [
+        { generalId: 'wuzhou_wangwenjin', factionId: 'wuzhou_yijun', cityId: 'city_wuzhou', legionName: '起义军', generalName: '汪文进', portrait: '', eliteName: '婺州乡兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 隋末据婺州，以蔡道人为司空拒守乐安（《隋朝军事史》：叛首汪文进以蔡道人为司空，拒守于乐安）
+    ],
+    zhangchu: [
+        { generalId: 'zhangchu_chensheng', factionId: 'zhangchu', cityId: 'city_huaiyang', legionName: '起义军', generalName: '陈胜', portrait: '', eliteName: '大泽戍卒', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 陈王都陈（宛丘即陈国故都），张楚政权立于陈（《史记·陈涉世家》）；文化随据点＝CENTRAL
+    ],
     // ── 2026-10-24 环非洲新将（普将：皆为一隅镇守/城邦之主，无战略级胜绩；立绘留空）──
     kilwa: { generalId: 'kilwa_suleiman', generalName: '苏莱曼哈桑', cityId: 'city_kilwa', portrait: '/assets/AFRICA/kilwa_sulaimanbenhasang.png', eliteName: '埃塞卫兵', eliteTier: 4 },
     mombasa: { generalId: 'mombasa_yusuf', generalName: '优素福', cityId: 'city_mombasa', portrait: '/assets/AFRICA/mombasa_yousufubenhasang.png', eliteName: '埃塞卫兵', eliteTier: 4 },
@@ -5604,6 +5611,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     shu: [
+        { generalId: 'shu_haopu', factionId: 'shu', cityId: 'city_yongzhou_hn', generalName: '郝普', portrait: '', eliteName: '零陵郡兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 零陵太守，守城不降（《三国战争史》引《三国志·吕蒙传》：惟零陵太守郝普守城不降）；文化随据点＝JIANGNAN
         { generalId: 'shu_masu', factionId: 'shu', cityId: 'city_chengdu', generalName: '马谡', portrait: '/assets/BASHU/shu_masu.png', eliteName: '巴蜀弩士', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 成名战敌将；蜀汉参军，228 街亭大败；据点成都（BASHU）；用势力精锐白毦精兵
         { generalId: 'bfe3_83', cityId: 'city_chengdu', generalName: '李势', portrait: '/assets/BASHU/bfe3_83.png', factionId: 'chenghan', legionName: '古典时代巴蜀军团', eliteName: '巴蜀弩士', eliteTier: 4 },
         { generalId: 'bfe3_80', cityId: 'city_chengdu', generalName: '张微', portrait: '/assets/BASHU/bfe3_80.png', factionId: 'shu', legionName: '古典时代巴蜀军团', eliteName: '巴蜀弩士', eliteTier: 4 },
@@ -6251,6 +6259,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     han_d: [
+        { generalId: 'han_d_pengyue', factionId: 'han_d', cityId: 'city_dingtao', generalName: '彭越', portrait: '', eliteName: '梁地游兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 梁王都定陶；据点=定陶（空据点补将）；文化随据点＝CENTRAL
+        { generalId: 'han_d_wuyang', factionId: 'han_d', cityId: 'city_chenzhou2', generalName: '吴阳', portrait: '', eliteName: '沅陵戍卒', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 汉沅陵侯，长沙王吴芮之后，居沅陵（黔中故地）；文化随据点＝JIANGNAN
+        { generalId: 'han_d_sunang', factionId: 'han_d', cityId: 'city_xiaoguan', generalName: '孙卬', portrait: '', eliteName: '北地戍卒', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 汉北地都尉，前166 匈奴入萧关力战殉职（《西汉军事史》：突入朝那、萧关…斩杀都尉孙卬）；文化随据点＝CENTRAL
 
 
 
@@ -11636,6 +11647,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     tuoba: [
+        { generalId: 'tuoba_weijingxin', factionId: 'tuoba', cityId: 'city_tancheng', generalName: '韦敬欣', portrait: '', eliteName: '东海戍兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 北魏东海太守，以司吾城拒守（《南北朝战争史》：魏东海太守韦敬欣以司吾城…）；东海郡治郯城；文化随据点＝CENTRAL
 
 
 
@@ -11919,6 +11931,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     sunwu_d: [
+        { generalId: 'chu_sunfu', factionId: 'sunwu_d', cityId: 'city_luling', generalName: '孙辅', portrait: '', eliteName: '江南郡兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 据点=庐陵（空据点补将）；文化随据点＝JIANGNAN；史据见 docs
+        { generalId: 'wu_taohuang', factionId: 'sunwu_d', cityId: 'city_cangwu', generalName: '陶璜', portrait: '', eliteName: '交州兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 苍梧太守、后交州牧（《晋朝战争史》：苍梧太守丹阳陶璜等自荆州道逾岭以入交广）；文化随据点＝JIANGNAN
 
 
 
@@ -17155,6 +17169,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'chuguo_pandang', factionId: 'chuguo', cityId: 'city_yunmeng', generalName: '潘党', portrait: '/assets/JIANGNAN/chuguo_pandang.png', eliteName: '楚锐卒', eliteTier: 4 },   // 楚大夫，前575 鄢陵之战与养由基同率楚军射士（居楚地）
     ],
     liusong: [
+        { generalId: 'liusong_tanshao', factionId: 'liusong', cityId: 'city_langya', generalName: '檀韶', portrait: '', eliteName: '北府兵', eliteTier: 3 },   // 🔴 [2026-11-01 补将] 刘宋琅邪太守（《晋朝战争史》：檀韶为琅邪太守，以抚新收）；文化随据点＝CENTRAL
         { generalId: 'gen_li_jinglong', factionId: 'ming_d', cityId: 'city_nanjing', generalName: '李景隆', portrait: '/assets/JIANGNAN/gen_li_jinglong.png', eliteName: '江南郡兵', eliteTier: 4 },
         { generalId: 'gen_li_xiucheng', cityId: 'city_nanjing', generalName: '李秀成', portrait: '/assets/JIANGNAN/gen_li_xiucheng.png', factionId: 'taiping', legionName: '起义军', eliteName: '太平锐卒', eliteTier: 3 },
         { generalId: 'nanqi_xiaobaojuan', factionId: 'nanqi', cityId: 'city_nanjing', generalName: '萧宝卷', portrait: '/assets/JIANGNAN/nanqi_xiaobaojuan.png', legionName: '封建时代江淮军团' , eliteName: '南齐台军', eliteTier: 4 },   // 🔴 南齐禁军「台军」（原配「量沙军」是刘宋檀道济的）

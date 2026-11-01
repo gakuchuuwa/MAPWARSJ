@@ -3,7 +3,7 @@ import { perfDoctor } from '../debug/PerfDoctor';
 import type { GameMap } from './GameMap';
 import { LandSeaSystem } from '../world/land-sea';
 import { CITIES_V2 } from '../data/cities_v2';
-import { strategicSpriteScale } from './strategicSpriteScale';
+import { strategicActorScale } from './strategicSpriteScale';
 import { FAUNA_AREA_RATIO, WILD_LAND_PER_SQ_DEG, animalHerdSize, animalNeedsCoast, animalNeedsRiver, wildPoolAt } from '../world/environment/animalCatalog';
 import { ENV_ZONE_FAUNA_DENSITY, envZoneAt } from '../world/environment/envZones';
 import { collectHumanPresence } from './strategicPresence';
@@ -1209,7 +1209,7 @@ export class AnimalAmbientLayer {
         birdCtx.clearRect(0, 0, this.birdCanvas.width, this.birdCanvas.height);
 
         const zoom = this.map.getZoom();
-        const scale = strategicSpriteScale(zoom);
+        const scale = strategicActorScale(zoom);
         const m = 40; // 屏幕裁剪余量
 
         // 1. 绘制陆地动物（吃草／走动／逃跑三态，位置随行为实时变化，渐显/渐隐）

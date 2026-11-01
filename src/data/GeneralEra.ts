@@ -1818,6 +1818,15 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'safawei_d_tahmasp': 'imperial',
     'chu_sunfu': 'antiquity',
     'han_d_pengyue': 'antiquity', // 彭越（秦汉之际）
+    'shu_haopu': 'antiquity', // 郝普
+    'wu_taohuang': 'antiquity', // 陶璜
+    'han_d_wuyang': 'antiquity', // 吴阳
+    'tuoba_weijingxin': 'feudal', // 韦敬欣
+    'zhangchu_chensheng': 'antiquity', // 陈胜
+    'desheng_liutong': 'castle', // 刘通
+    'wuzhou_wangwenjin': 'feudal', // 汪文进
+    'liusong_tanshao': 'feudal', // 檀韶
+    'han_d_sunang': 'antiquity', // 孙卬
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

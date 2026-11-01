@@ -8,6 +8,9 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
+  { id: 'desheng', name: '德胜' },   // 刘通·荆襄流民起义，称汉王、建元德胜（1465）
+  { id: 'wuzhou_yijun', name: '婺州义军' },   // 汪文进据婺州（隋末）
+  { id: 'zhangchu', name: '张楚' },   // 陈胜·张楚政权（前209 陈县称王）
     { id: 'pattani', name: '北大年' },        // 北大年·北大年苏丹国（马来半岛东岸）
     // ── 2026-10-24 环非洲新势力（据点：基尔瓦/蒙巴萨/摩加迪沙/莫桑比克/罗安达/开普敦/亚丁）──
     { id: 'kilwa', name: '基尔瓦苏丹国' },      // 基尔瓦·斯瓦希里海岸霸主（约957–1513）

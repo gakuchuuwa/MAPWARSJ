@@ -9491,6 +9491,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": -25
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_24.png": {
+            "scale": 0.94,
+            "offsetX": 12,
+            "offsetY": -14
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_15.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 19
         }
     },
     "folderGuides": {

@@ -1826,6 +1826,15 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     'safawei_d_tahmasp': { birth: 1514, death: 1576, kaoju: '推定' },
     chu_sunfu: { birth: 175, death: 219, kaoju: '推定' },
     han_d_pengyue: { birth: -250, death: -196, kaoju: '推定' },  // 彭越，生年不详
+    shu_haopu: { birth: 175, death: 230, kaoju: '推定' },  // 郝普
+    wu_taohuang: { birth: 230, death: 300, kaoju: '推定' },  // 陶璜
+    han_d_wuyang: { birth: -230, death: -180, kaoju: '推定' },  // 吴阳
+    tuoba_weijingxin: { birth: 470, death: 540, kaoju: '推定' },  // 韦敬欣
+    zhangchu_chensheng: { birth: -240, death: -208, kaoju: '推定' },  // 陈胜，前208 被车夫庄贾杀害
+    desheng_liutong: { birth: 1400, death: 1466, kaoju: '推定' },  // 刘通
+    wuzhou_wangwenjin: { birth: 570, death: 620, kaoju: '推定' },  // 汪文进
+    liusong_tanshao: { birth: 370, death: 430, kaoju: '推定' },  // 檀韶
+    han_d_sunang: { birth: -230, death: -166, kaoju: '推定' },  // 孙卬
 };
 
 /** 生年（未收录返回 null） */

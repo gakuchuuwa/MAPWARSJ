@@ -277,6 +277,9 @@ export class CityAssetManager {
 'kokand': '霍罕',
         'badakhshan': '达克',
 'taiping': '太平',
+        'zhangchu': '楚',
+        'desheng': '德胜',
+        'wuzhou_yijun': '婺义',
         'dacheng': '大成',
         'tuoming': '清真',
 

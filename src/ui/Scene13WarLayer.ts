@@ -156,8 +156,8 @@ const SIX_CYCLE_NEXT: Readonly<Record<TacticalSixSet, TacticalSixSet>> = {
 /** 玩家点地面令：连续这么多秒没往点上靠近 HERO_CLICK_PROGRESS_PX 像素就作废（走不到的令不许一直挂着） */
 const HERO_CLICK_STALL_SEC = 1.5;
 const HERO_CLICK_PROGRESS_PX = 10;
-/** 【败】折损的兵在这么多秒内陆续倒下（见 stepSkillKills） */
-const SKILL_KILL_SPREAD_SEC = 1.2;
+/** 【败】折损的兵在这么多秒内随火箭雨陆续倒下（见 stepSkillKills） */
+const SKILL_KILL_SPREAD_SEC = 2.4;
 /** 每帧最多烙进地面的尸体数（见 stepCorpses）：【败】一次几百具时分摊到后续几帧 */
 const CORPSE_BAKE_PER_FRAME = 24;
 /** 自己最近几计不重复（见 SIX_CYCLE_NEXT） */
