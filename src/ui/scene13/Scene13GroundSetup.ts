@@ -513,8 +513,12 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                         }
                         const isTree = TREE_RE.test(asset);
                         if (isTree) {
-                            // ⓪ 按森林模型疏伐（位置哈希定，同一场战斗每次砍同一批；河岸护岸树已在 enrichDeBattlefieldMidfield 按 treeKeep 缩算数量，不再二次抽删）
-                            if (!ob.riparian && treeKeep < 1 && (Math.abs(Math.round(ob.x * 31 + ob.y * 57)) % 1000) / 1000 >= treeKeep) continue;
+                            // ⓪ 按森林模型疏伐：
+                            //    · DE 森林格（deTerrainIsForest(tid)）底土已铺设林下落叶腐殖土，必须保持 100% 树冠覆盖（density=1000），不作单格随机抽删以免林团被掏空露光秃褐土；
+                            //    · 河岸护岸树（ob.riparian）已在 enrichDeBattlefieldMidfield 按 treeKeep 缩算数量，不再二次抽删；
+                            //    · 非森林格散树按温和下限（>=0.68）疏伐，避免农耕平原野战散树被抽光。
+                            const stragglerKeep = Math.max(0.68, treeKeep);
+                            if (!deTerrainIsForest(tid) && !ob.riparian && stragglerKeep < 1 && (Math.abs(Math.round(ob.x * 31 + ob.y * 57)) % 1000) / 1000 >= stragglerKeep) continue;
                             // ① 水格不长树（含 DE 水地形与水密度场 > 0.38 的水面）
                             if (WATER_TERRAINS.has(tid) || glLayer.isWaterAt(sx, sy, VW, VH)) continue;
                             // ② 森林格直接由脚下 DE 森林地形 id 按 dat 密度表决定树种（避免旧烘焙 BFS 跨地形吞并变体林）
@@ -1046,33 +1050,6 @@ function populateBattlefieldMicroDecor(
         return true;
     };
 
-    const slopeSpots: Array<{ x: number; y: number; dist: number; elev: number; slope: number }> = [];
-    const screenPlainSpots: Array<{ x: number; y: number; dist: number }> = [];
-    const midPlainSpots: Array<{ x: number; y: number; dist: number }> = [];
-
-    for (let gy = 8; gy <= 112; gy += 2) {
-        for (let gx = 8; gx <= 112; gx += 2) {
-            const dCells = Math.hypot(gx - 60, gy - 60);
-            if (!isField && dCells > 18) continue; // 攻城战外圈已由 applyDeCityToGround 处理，这里只补首屏近郊
-            if (isField && dCells > 36) continue;
-            const pt = glLayer.cellToScreen(gx + 0.5, gy + 0.5, VW, VH);
-            if (!isSafeMicroSpot(pt.x, pt.y)) continue;
-
-            const eC = glLayer.elevationLevelAt(pt.x, pt.y, VW, VH);
-            const eR = glLayer.elevationLevelAt(pt.x + TAC_TILE_W, pt.y, VW, VH);
-            const eD = glLayer.elevationLevelAt(pt.x, pt.y + TAC_TILE_H, VW, VH);
-            const slope = Math.hypot(eR - eC, eD - eC);
-
-            if (slope >= 0.30 || eC >= 0.85) {
-                slopeSpots.push({ x: pt.x, y: pt.y, dist: dCells, elev: eC, slope });
-            } else if (dCells <= 14.5) {
-                screenPlainSpots.push({ x: pt.x, y: pt.y, dist: dCells });
-            } else {
-                midPlainSpots.push({ x: pt.x, y: pt.y, dist: dCells });
-            }
-        }
-    }
-
     const shuffle = <T>(arr: T[]): T[] => {
         const out = [...arr];
         for (let i = out.length - 1; i > 0; i--) {
@@ -1082,24 +1059,77 @@ function populateBattlefieldMicroDecor(
         return out;
     };
 
-    // 按首屏优先排序斜坡候选点（让首屏内的高地斜坡优先获得伴生石块与灌木）
-    const sortedSlopes = [
-        ...shuffle(slopeSpots.filter((s) => s.dist <= 15.5)),
-        ...shuffle(slopeSpots.filter((s) => s.dist > 15.5)),
-    ];
-    const allPlain = [...shuffle(screenPlainSpots), ...shuffle(midPlainSpots)];
+    // 将全战场 [8, 112]×[8, 112] 划分为 4×4 共 16 个屏幕级空间分块（每块 26×26 格 ≈ 1 屏）+ 中心首屏桶：
+    // 采用跨分块轮询交错（Round-Robin Interleave），杜绝配额在中心 14 格内被一次性耗尽，保证无论镜头在中央、西南营、东北营或侧翼行军走廊，每一屏都有均衡的岩石+灌木簇与散生花草。
+    type Spot = { x: number; y: number; dist: number; sec: number; isSlope: boolean };
+    const sectorSlopes: Spot[][] = Array.from({ length: 16 }, () => []);
+    const sectorPlains: Spot[][] = Array.from({ length: 16 }, () => []);
+    const centerSlopes: Spot[] = [];
+    const centerPlains: Spot[] = [];
 
-    // 1. 高地斜坡与山梁伴生岩石+灌木簇（④ 高地斜坡透出土石肌理与伴生石块）
+    for (let gy = 8; gy <= 112; gy += 2) {
+        for (let gx = 8; gx <= 112; gx += 2) {
+            const dCells = Math.hypot(gx - 60, gy - 60);
+            if (dCells > 50) continue;
+            const pt = glLayer.cellToScreen(gx + 0.5, gy + 0.5, VW, VH);
+            if (!isSafeMicroSpot(pt.x, pt.y)) continue;
+
+            const eC = glLayer.elevationLevelAt(pt.x, pt.y, VW, VH);
+            const eR = glLayer.elevationLevelAt(pt.x + TAC_TILE_W, pt.y, VW, VH);
+            const eD = glLayer.elevationLevelAt(pt.x, pt.y + TAC_TILE_H, VW, VH);
+            const slope = Math.hypot(eR - eC, eD - eC);
+            const isSlope = slope >= 0.30 || eC >= 0.85;
+            const sec = Math.min(3, Math.floor((gy - 8) / 26)) * 4 + Math.min(3, Math.floor((gx - 8) / 26));
+            const spot: Spot = { x: pt.x, y: pt.y, dist: dCells, sec, isSlope };
+
+            if (dCells <= 15.0) {
+                if (isSlope) centerSlopes.push(spot);
+                else centerPlains.push(spot);
+            } else {
+                if (isSlope) sectorSlopes[sec].push(spot);
+                else sectorPlains[sec].push(spot);
+            }
+        }
+    }
+
+    const interleaveBuckets = (buckets: Spot[][]): Spot[] => {
+        const shuffledBuckets = buckets.map((b) => shuffle(b)).filter((b) => b.length > 0);
+        const out: Spot[] = [];
+        let maxLen = 0;
+        for (const b of shuffledBuckets) {
+            if (b.length > maxLen) maxLen = b.length;
+        }
+        for (let i = 0; i < maxLen; i++) {
+            for (const b of shuffledBuckets) {
+                if (i < b.length) out.push(b[i]);
+            }
+        }
+        return out;
+    };
+
+    const secOrder = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+    const rockBuckets: Spot[][] = [
+        [...shuffle(centerSlopes), ...shuffle(centerPlains)],
+        ...secOrder.map((s) => [...shuffle(sectorSlopes[s]), ...shuffle(sectorPlains[s])]),
+    ];
+    const flatBuckets: Spot[][] = [
+        [...shuffle(centerPlains), ...shuffle(centerSlopes)],
+        ...secOrder.map((s) => [...shuffle(sectorPlains[s]), ...shuffle(sectorSlopes[s])]),
+    ];
+
+    const rockCands = interleaveBuckets(rockBuckets);
+    const flatCands = interleaveBuckets(flatBuckets);
+
+    // 1. 高地斜坡与原野伴生岩石+灌木簇（④ 高地斜坡透出土石肌理与伴生石块，全图 16 分块均衡覆盖）
     //    先把底图烘焙与 applyDeCityToGround 已放的岩石纳入间距表，杜绝贴着既有石头再塞一块
-    const rockCands = [...sortedSlopes, ...allPlain];
     const placedRocks: Array<{ x: number; y: number }> = [];
     for (const sp of this.decorSprites) {
         if (/^(ROCK|MINE_STONE)/.test(sp.asset)) {
             placedRocks.push({ x: sp.x, y: sp.y });
         }
     }
-    const targetRocks = isField ? 14 : 6;
-    const minRockGap = isField ? 380 : 440;
+    const targetRocks = isField ? 36 : 26;
+    const minRockGap = isField ? 350 : 380;
     const rockPool = validSolid.length > 0 ? validSolid : ['ROCK1', 'ROCK2'];
     const isArid = /^(des|pal|qs|ds5|pal1)/i.test(baseTerrain);
 
@@ -1121,12 +1151,11 @@ function populateBattlefieldMicroDecor(
         }
     }
 
-    // 2. 首屏与近翼成簇花草灌木微景（③ 首屏补齐低矮花草碎石微装饰，group_placement_radius 2~3）
+    // 2. 全战场成簇花草灌木微景（③ 首屏与各方向行军视野均补齐低矮花草碎石微装饰，group_placement_radius 2~3）
     if (validFlat.length > 0) {
         const placedFlats: Array<{ x: number; y: number }> = [];
-        const targetFlats = isField ? 20 : 8;
-        const minFlatGap = isField ? 260 : 300;
-        const flatCands = [...shuffle(screenPlainSpots), ...sortedSlopes, ...shuffle(midPlainSpots)];
+        const targetFlats = isField ? 56 : 40;
+        const minFlatGap = isField ? 230 : 250;
         for (const fs of flatCands) {
             if (placedFlats.length >= targetFlats) break;
             if (placedFlats.some((p) => Math.hypot(p.x - fs.x, (p.y - fs.y) * 1.5) < minFlatGap)) continue;
@@ -1150,18 +1179,19 @@ function populateBattlefieldMicroDecor(
         }
     }
 
-    // 3. 首屏与原野散生草丛（DE AESTHETIC_SCATTER）
+    // 3. 全战场散生草丛（DE AESTHETIC_SCATTER，16 分块轮询铺开）
     if (validScatter.length > 0) {
-        const targetScatter = isField ? 32 : 12;
+        const targetScatter = isField ? 88 : 60;
+        const placedScatters: Array<{ x: number; y: number }> = [];
         let scatterPlaced = 0;
-        const scatterCands = [...shuffle(screenPlainSpots), ...sortedSlopes, ...shuffle(midPlainSpots)];
-        const step = Math.max(1, Math.floor(scatterCands.length / (targetScatter + 6)));
-        for (let i = 0; i < scatterCands.length && scatterPlaced < targetScatter; i += step) {
-            const sp = scatterCands[i];
+        for (const sp of flatCands) {
+            if (scatterPlaced >= targetScatter) break;
+            if (placedScatters.some((p) => Math.hypot(p.x - sp.x, (p.y - sp.y) * 1.5) < 150)) continue;
             const scAsset = validScatter[scatterPlaced % validScatter.length];
             const jx = (mRnd() - 0.5) * 42;
             const jy = (mRnd() - 0.5) * 22;
             if (pushMicro(scAsset, sp.x + jx, sp.y + jy, 0.78 + mRnd() * 0.14, -1)) {
+                placedScatters.push({ x: sp.x, y: sp.y });
                 scatterPlaced++;
             }
         }

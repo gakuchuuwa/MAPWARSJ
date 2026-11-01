@@ -6,6 +6,8 @@ import { WONDER_COORD } from '../data/WonderCoords';
 import { CITIES_V2 } from '../data/cities_v2';
 import { deHashString } from '../systems/cityWallShared';
 import { isScriptPeriod } from '../events/scriptPeriod';
+import { DE_SPRITE_BOX_W } from '../systems/battlefield/deSpriteSizes';
+import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
 
 /** 奇观 monument 数据（原 MonumentData 类型内联，野外奇观已全部转城内奇观挂靠据点） */
 interface MonumentData {
@@ -23,19 +25,6 @@ interface MonumentData {
     cityId: string;
 }
 
-/** 奇观 marker 基准宽度（px）：= 大城/险要据点底宽 120 × 0.54 —— 与中心城堡同一把尺（120×0.54=64.8），
- *  不再比城堡大；个别奇观仍按 WONDER_SCALE_OVERRIDE 相对本基准缩放。
- *  🔴 [2026-10-12 主人令「全图所有，特殊建筑也改为0.54」] 原 90 → 64.8（90 相当于底宽 ×0.75，比城堡还大 ⇒ 不真实）。 */
-const BASE_SIZE = 120 * 0.54;
-/** [2026-08-28 主人要求「杰姆宣礼塔图改大」、「斯芬克斯雕像缩小」、「德尔斐神谕缩小」]：单独调整相对基准宽的倍数 */
-const WONDER_SCALE_OVERRIDE: Record<string, number> = {
-    'MINARET_OF_JAM': 1.15,         // 杰姆宣礼塔（贾姆宣礼塔）：缩小至 1.15 倍，保持修长协调
-    'SCEN_INDIAN_RUINS': 0.9,       // 亨比巨石神庙群遗迹：缩小至 0.9 倍
-    'SCEN_SPHINX': 0.65,            // 斯芬克斯雕像：雕像体量较小，缩小至 0.65 倍
-    'SCEN_ARCHAIC_THOLOS': 0.75,    // 德尔斐神谕（古圆庙）：缩小至 0.75 倍
-    'ARCH_OF_CONSTANTINE': 0.55,    // 君士坦丁凯旋门：缩小至 0.55 倍，体量更小巧精致，紧邻斗兽场呈现良好纵深感
-    'SEAS_WONDER_MALAY': 0.8,       // 卡拉桑神庙：缩小至 0.8 倍
-};
 /** [2026-08-29] 个别奇观素材底部带大段地面阴影（实心底边远高于精灵底边），常规「底边锚定」会把建筑抬高悬空。
  *  按该奇观实心底边改用 top 锚定到底座前角（参考其它奇观「实心底边≈精灵底边」的成熟做法）。
  *  键 = SUCAI_BUILDING 素材目录名；值 = top 像素（基准宽 90 下）。 */
@@ -146,7 +135,6 @@ export class MonumentLayer {
                     lat,
                     lng,
                     asset: `/SUCAI_BUILDING/${asset}/preview.png`,
-                    scale: WONDER_SCALE_OVERRIDE[asset],
                     description: `${place}的文明奇观·${wonderName}`,
                     cityId,
                 };
@@ -167,7 +155,6 @@ export class MonumentLayer {
                     lat: ex.lat ?? city.lat,
                     lng: ex.lng ?? city.lng,
                     asset: `/SUCAI_BUILDING/${ex.asset}/preview.png`,
-                    scale: WONDER_SCALE_OVERRIDE[ex.asset],
                     description: ex.description,
                     cityId,
                 }));
@@ -220,7 +207,7 @@ export class MonumentLayer {
         //    据点显隐切换）就会换个方向；改后按 `deHashString(id + '|mirror')` 落定
         //    （带每局会话种子，见 GameApp 的 `setCityStyleSessionSeed`）→ **每局随机、局内稳定、按 id 可复现**。
         const mirror = (deHashString(mon.id + '|mirror') & 1) === 1;
-        const w = BASE_SIZE * (mon.scale ?? 1);
+        const w = (DE_SPRITE_BOX_W[mon.assetKey] ?? 160) * STRATEGIC_SPRITE_SCALE;
         const h = w;
         const groundW = w * 1.6;
         const groundH = groundW * 0.58;
@@ -240,7 +227,7 @@ export class MonumentLayer {
         // [2026-08-29] 素材名 + 实心底边锚定：个别底部带地面阴影的奇观（泰西封巨拱）用 top 锚定实心底边，其余走原底边锚定
         const assetName = mon.asset.split('/').filter(Boolean).slice(-2)[0] ?? '';
         const groundTop = WONDER_GROUND_TOP[assetName];
-        const anchorStyle = groundTop != null ? `top: ${groundTop}px;` : `bottom: ${bottomOffset}px;`;
+        const anchorStyle = groundTop != null ? `top: ${Math.round(groundTop * (w / 90))}px;` : `bottom: ${bottomOffset}px;`;
         const animClass = fadeIn ? ' map-fade-in' : '';
 
         const html = `

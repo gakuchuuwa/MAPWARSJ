@@ -63,7 +63,7 @@ export const DE_REF_FRAME_H = 64;
  *       → 68（2026-09-03 主人「士兵素材有点小，统一大一点」，+17%；
  *             此时间距已改为由绘制尺寸推导，不再需要同步调第二个数）
  */
-export const SPRITE_BASE_H = 68;
+export const SPRITE_BASE_H = 64;
 
 /**
  * 方阵格位间距（横 / 纵），单位是「屏幕像素 ÷ scale」。实际间距 = 这个数 × scale。

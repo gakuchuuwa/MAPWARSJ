@@ -108,14 +108,14 @@ const PALETTE: Record<TacticalSixSet, SkillPalette> = {
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
 const easeOut = (p: number) => 1 - (1 - p) ** 3;
 
-// ── 1. 六计专属手绘镂空图标（256×256 去黑底透明 PNG）＋ 离屏发光印章池 ──
+// ── 1. 六计专属手绘图标（256×256 内部全不透明 PNG）＋ 离屏发光印章池 ──
 const SIX_ICON_URLS: Record<TacticalSixSet, string> = {
-    gongzhan: '/SUCAI_FX/SIX_ICONS/gongzhan.png',
-    shengzhan: '/SUCAI_FX/SIX_ICONS/shengzhan.png',
-    dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png',
-    hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png',
-    bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png',
-    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png',
+    gongzhan: '/SUCAI_FX/SIX_ICONS/gongzhan.png?v=opaque2',
+    shengzhan: '/SUCAI_FX/SIX_ICONS/shengzhan.png?v=opaque2',
+    dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=opaque2',
+    hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=opaque2',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=opaque2',
+    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=opaque2',
 };
 
 const sixRawImages = new Map<TacticalSixSet, HTMLImageElement>();
@@ -164,6 +164,9 @@ function getSixSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElem
     g.shadowOffsetY = 2;
     g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
     g.restore();
+
+    // 第三遍无阴影实心绘制，确保贴图主体 100% 实心不透底，完全盖住下方士兵
+    g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
 
     sixBadgeCache.set(cacheKey, cv);
     return cv;
@@ -885,28 +888,95 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     ctx.stroke();
     ctx.restore();
 
-    // 2. 受创敌兵头顶与阵心：显示「败战·箭雨」专属手绘贴图（即使士兵阵亡倒地仍在原位完整显示）
+    // 2. 漫天箭雨（单支箭贴图 baizhan 成片斜向下坠）
     const badge = getSixSkillIconBadge('baizhan', v.paid);
     if (badge) {
-        const iconAlpha = p < 0.72 ? 1 : (1 - p) / 0.28;
-        const dropOffset = (1 - easeOut(Math.min(1, p * 3.8))) * 36;
-        const ICON_R = 14.5;
+        const hash01 = (k: number) => {
+            const s = Math.sin(k * 12.9898) * 43758.5453;
+            return s - Math.floor(s);
+        };
+        const mainFlare = getFlareStamp(pal.main);
+        const volleyCount = Math.max(84, Math.min(150, n > 0 ? n * 2 : 96));
+        // 单支箭贴图朝向：左上 -> 右下（约 42°），飞行轨迹与箭身方向严格一致
+        const FLIGHT_DX = 270 * scale;
+        const FLIGHT_DY = 244 * scale;
 
         ctx.save();
-        ctx.globalAlpha = iconAlpha;
-        for (let i = 0; i < n; i++) {
-            if (i % 2 !== 0) continue;
-            const idx = Math.floor(i * srcLen / n);
-            const pt = useTargets ? v.targets[idx] : v.points[idx];
-            const py = pt.y - lift(pt.x, pt.y);
-            const pulse = 0.5 + 0.5 * Math.sin(p * TAU * 3 + i * 0.73);
-            const hy = py - 28 - dropOffset - pulse * 2.0;
-            drawStamp(ctx, badge, pt.x, hy, ICON_R);
-        }
+        for (let i = 0; i < volleyCount; i++) {
+            const h1 = hash01(i * 17 + 3);
+            const h2 = hash01(i * 31 + 11);
+            const h3 = hash01(i * 47 + 29);
 
-        // 阵心大号「败战·箭雨」贴图
-        const mainPulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
-        drawStamp(ctx, badge, cx, cy - 42 * scale - dropOffset * 0.6, 108 * scale * mainPulse);
+            // 分多波次密集倾泻（0 ~ 0.60 陆续发射，飞行时长约 0.22，插地残留至淡出）
+            const startP = h1 * 0.60;
+            const flightDur = 0.20 + h2 * 0.05;
+            const localP = (p - startP) / flightDur;
+            if (localP < 0) continue;
+
+            // 落点：优先锚定受创敌兵坐标，并带小幅散射覆盖整片阵地
+            let tx: number;
+            let ty: number;
+            if (srcLen > 0) {
+                const pt = useTargets ? v.targets[i % srcLen] : v.points[i % srcLen];
+                const jitterX = (h2 - 0.5) * 34;
+                const jitterY = (h3 - 0.5) * 22;
+                tx = pt.x + jitterX;
+                ty = pt.y - lift(pt.x, pt.y) + jitterY;
+            } else {
+                const ang = h2 * TAU;
+                const rad = Math.sqrt(h3) * 120 * scale;
+                tx = cx + Math.cos(ang) * rad;
+                ty = cy + Math.sin(ang) * rad * 0.55;
+            }
+
+            const arrowR = (20 + (i % 3) * 3.5) * scale;
+            // 箭头位于贴图中心偏右下 (+0.72*r, +0.66*r)，校准使落点恰好为箭头着地处
+            const tipOffsetX = arrowR * 0.72;
+            const tipOffsetY = arrowR * 0.66;
+
+            if (localP <= 1) {
+                // 空中高速下坠阶段
+                const fp = localP;
+                const curTipX = tx - (1 - fp) * FLIGHT_DX;
+                const curTipY = ty - (1 - fp) * FLIGHT_DY;
+                const cxArrow = curTipX - tipOffsetX;
+                const cyArrow = curTipY - tipOffsetY;
+
+                // 箭尾破空流光拖尾
+                ctx.save();
+                ctx.globalCompositeOperation = 'lighter';
+                ctx.strokeStyle = i % 2 === 0 ? pal.light : pal.main;
+                ctx.lineWidth = 2.0 * scale;
+                ctx.globalAlpha = Math.min(1, fp * 3.5) * 0.75 * fade;
+                ctx.beginPath();
+                ctx.moveTo(curTipX, curTipY);
+                ctx.lineTo(curTipX - FLIGHT_DX * 0.20, curTipY - FLIGHT_DY * 0.20);
+                ctx.stroke();
+                ctx.restore();
+
+                // 飞行中的单箭贴图
+                ctx.globalAlpha = Math.min(1, fp * 4) * (p < 0.85 ? 1 : (1 - p) / 0.15);
+                drawStamp(ctx, badge, cxArrow, cyArrow, arrowR);
+            } else {
+                // 命中地面阶段：瞬间火花 + 箭矢插地短暂残留后淡出
+                const groundT = localP - 1;
+                if (groundT < 0.35) {
+                    const burstFade = 1 - groundT / 0.35;
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'lighter';
+                    ctx.globalAlpha = burstFade * 0.85 * fade;
+                    drawStamp(ctx, mainFlare, tx, ty, (15 + groundT * 20) * scale);
+                    ctx.restore();
+                }
+                if (groundT < 1.15) {
+                    const stickFade = (1 - groundT / 1.15) * (p < 0.78 ? 1 : (1 - p) / 0.22);
+                    if (stickFade > 0.02) {
+                        ctx.globalAlpha = stickFade * 0.92;
+                        drawStamp(ctx, badge, tx - tipOffsetX, ty - tipOffsetY, arrowR * 0.92);
+                    }
+                }
+            }
+        }
         ctx.restore();
     }
 }
@@ -967,13 +1037,13 @@ function drawPatronBurst(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: n
 }
 
 function drawTopOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
+    drawPatronBurst(ctx, v, p, lift);
     if (v.six === 'gongzhan') drawAttack(ctx, v, p, lift);
     else if (v.six === 'dizhan') drawReinforce(ctx, v, p, lift);
     else if (v.six === 'shengzhan') drawShield(ctx, v, p, lift);
     else if (v.six === 'hunzhan') drawPanic(ctx, v, p, lift);
     else if (v.six === 'bingzhan') drawConvert(ctx, v, p, lift);
     else drawDefeat(ctx, v, p, lift);
-    drawPatronBurst(ctx, v, p, lift);
 }
 
 export function drawScene13SkillCastVfx(

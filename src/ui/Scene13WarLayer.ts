@@ -1165,7 +1165,8 @@ export class Scene13WarLayer {
             const unitPop = Math.max(1, manPop);
             remainingPop -= unitPop;
             s.spawned++;
-            const bearer = (s.spawned % FLAG_EVERY === 0);
+            // 🔴 [2026-11-01 主人令「敌战计的增兵，请每两人就给一面旗帜，不然看不出是谁」]
+            const bearer = ambush ? ((idx - 1) % 2 === 0) : (s.spawned % FLAG_EVERY === 0);
             const slotIdx = s.slotN++;
             const files = marchFilesOf(s.key);
             const sp = marchSpacingOf(s.key);

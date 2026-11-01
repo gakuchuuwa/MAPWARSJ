@@ -9476,6 +9476,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 12,
             "offsetY": 20
+        },
+        "/assets/SPANISH/gen_juan_i_castile.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 16
         }
     },
     "folderGuides": {

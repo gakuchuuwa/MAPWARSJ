@@ -658,8 +658,7 @@ export function render(this: Scene13WarLayer): void {
         }
     }
 
-    // 六计上层：刀光、盾墙、漩涡、倒戈连线与金色认主扫光；持续余效只读现有倒计时。
-    drawScene13SkillCastVfx(ctx, this.skillVfx, 'top', (x, y) => this.elevationLiftAt(x, y), flagTick);
+    // 六计上层：先画单兵持续小特效，最后画技能释放大特效与大图标贴图，确保大特效贴图在所有士兵与小特效最上层、不被遮挡。
     drawScene13SkillStatusVfx(
         ctx,
         this.men,
@@ -669,6 +668,7 @@ export function render(this: Scene13WarLayer): void {
         (m) => this.getUnitSkillVisualState(m),
         this.hasExtraPlayerSkillVisuals(),
     );
+    drawScene13SkillCastVfx(ctx, this.skillVfx, 'top', (x, y) => this.elevationLiftAt(x, y), flagTick);
     if (hasTransform) ctx.restore();
     this.coverStrategyMap();
 

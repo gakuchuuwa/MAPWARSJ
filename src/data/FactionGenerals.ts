@@ -6321,7 +6321,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'ruzhou_sunjian', factionId: 'han_d', cityId: 'city_changsha', legionName: '古典时代吴越军团', generalName: '孙坚', portrait: '/assets/CENTRAL/ruzhou_sunjian.png', eliteName: '长沙子弟', eliteTier: 3 },
+        { generalId: 'ruzhou_sunjian', factionId: 'sunwu_d', cityId: 'city_changsha', legionName: '古典时代吴越军团', generalName: '孙坚', portrait: '/assets/CENTRAL/ruzhou_sunjian.png', eliteName: '长沙子弟', eliteTier: 3 },
 
 
 
@@ -6530,8 +6530,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'lushui_dongzhuo', factionId: 'han_d', cityId: 'city_luoyang', legionName: '古典时代华夏军团', generalName: '董卓', portrait: '/assets/KHITAN/lushui_dongzhuo.png', eliteName: '中原郡兵', eliteTier: 4 },
-        { generalId: 'bfe3_69', factionId: 'han_d', cityId: 'city_guangchengguan', generalName: '华雄', portrait: '/assets/KHITAN/bfe3_69.png', legionName: '古典时代华夏军团' , eliteName: '西凉铁骑', eliteTier: 3},
+        { generalId: 'lushui_dongzhuo', factionId: 'yangguan', cityId: 'city_luoyang', legionName: '古典时代华夏军团', generalName: '董卓', portrait: '/assets/KHITAN/lushui_dongzhuo.png', eliteName: '飞熊军', eliteTier: 2 },
+        { generalId: 'bfe3_69', factionId: 'yangguan', cityId: 'city_guangchengguan', generalName: '华雄', portrait: '/assets/KHITAN/bfe3_69.png', legionName: '古典时代华夏军团' , eliteName: '飞熊军', eliteTier: 2},
 
 
 
