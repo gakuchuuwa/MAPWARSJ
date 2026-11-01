@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -855,7 +855,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wuguobu': '五国',   // 五国部
     'balti': '巴尔',   // 巴尔蒂
     'qingyuan_yijun': '清远',   // 清远义军
-    'zhenghe_yijun': '政和',   // 政和义军    'latin_empire': '拉丁',   // 拉丁帝国
+    'zhenghe_yijun': '政和',   // 政和义军
+    'latin_empire': '拉丁',   // 拉丁帝国
     'anjou': '安茹',   // 安茹
     'pisa': '比萨',   // 比萨共和国
 };

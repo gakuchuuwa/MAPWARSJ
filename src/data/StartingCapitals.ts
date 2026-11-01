@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 沙盒模式：势力 id → 首都 cityId（1 势力 = 1 据点）。
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
@@ -811,7 +811,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'wuguobu': 'city_wuguo',   // 五国部
   'balti': 'city_puticheng',   // 巴尔蒂
   'qingyuan_yijun': 'city_qingyuan',   // 清远义军
-  'zhenghe_yijun': 'city_zhenghe',   // 政和义军  'latin_empire': 'city_junshitandingbao',   // 拉丁帝国
+  'zhenghe_yijun': 'city_zhenghe',   // 政和义军
+    'latin_empire': 'city_junshitandingbao',   // 拉丁帝国
   'anjou': 'city_naples',   // 安茹
   'pisa': 'city_pisa',   // 比萨共和国
 };

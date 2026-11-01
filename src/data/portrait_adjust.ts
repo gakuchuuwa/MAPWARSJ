@@ -9506,6 +9506,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 14
+        },
+        "/assets/CENTRAL/__多余__CENTRAL_02.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/CENTRAL/zhangchu_chensheng.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/WEI/gen_qiu_luan.png": {
+            "scale": 1.24,
+            "offsetX": 24,
+            "offsetY": -22
+        },
+        "/assets/NORTHEAST/83c82c03-92da-417b-a742-89e220b5d7c5.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/NORTHEAST/gen_zengguofan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
         }
     },
     "folderGuides": {

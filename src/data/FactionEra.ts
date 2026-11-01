@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 势力时代表（factionId → 年份段 → 四时代）。
  *
  * 🔴 2026-10-25 主人令：「武将有生卒登场年，势力有时代」「按史分年段」「这样能保证一个势力的人，都是一个军团」。
@@ -713,7 +713,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'wuguobu': [{ from: -9999, era: 'feudal' }], // 五国部
     'balti': [{ from: -9999, era: 'imperial' }], // 巴尔蒂
     'qingyuan_yijun': [{ from: -9999, era: 'castle' }], // 清远义军
-    'zhenghe_yijun': [{ from: -9999, era: 'castle' }], // 政和义军    'latin_empire': [{ from: -9999, era: 'castle' }], // 拉丁帝国
+    'zhenghe_yijun': [{ from: -9999, era: 'castle' }], // 政和义军
+    'latin_empire': [{ from: -9999, era: 'castle' }], // 拉丁帝国
     'anjou': [{ from: -9999, era: 'castle' }], // 安茹
     'pisa': [{ from: -9999, era: 'castle' }], // 比萨共和国
 };

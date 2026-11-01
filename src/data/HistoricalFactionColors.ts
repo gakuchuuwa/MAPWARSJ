@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 势力固定显示色：势力 id → 专属 hex（全局唯一）。
  * 有尚色/服色依据的政权、民族、起义写入此处；其余每局随机（FactionManager）。
  * 随机池避开红/黄/青色相楔及近白、近黑区。
@@ -791,6 +791,9 @@ export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Objec
     mogadishu: '#1F7A6B', // 2026-10-24 环非洲新势力
     zuraid: '#6A5ACD', // 2026-10-24 环非洲新势力
     pattani: '#D4AF37', // 北大年·北大年苏丹国（金黄）
+    latin_empire: '#5B21B6',   // 拉丁帝国
+    anjou: '#B45309',   // 安茹
+    pisa: '#047857',   // 比萨共和国
  ..._FIXED });
 
 export const RESERVED_FACTION_COLOR_HEXES: ReadonlySet<string> = new Set(
@@ -840,6 +843,4 @@ export const FLAG_TEXT_BLACK_STYLE_FACTIONS: ReadonlySet<string> = new Set(['han
 if (import.meta.hot) {
     // @ts-ignore
     import.meta.hot.accept();
-}    latin_empire: '#5B21B6',   // 拉丁帝国
-    anjou: '#B45309',   // 安茹
-    pisa: '#047857',   // 比萨共和国
+}
