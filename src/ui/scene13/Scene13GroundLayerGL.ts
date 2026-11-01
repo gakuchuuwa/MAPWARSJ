@@ -16,6 +16,7 @@
 import { DE_TERRAIN_MANIFEST, DE_TERRAIN_BLEND, type DeTerrainManifestItem } from '../../data/battlefield/deTerrainData';
 import type { Scene13GroundTiles } from './Scene13EnvironmentGenerator';
 import type { PassRingHalfExtents } from '../../systems/cityWallShared';
+import { resolveTacticalSeasonalGroundUniforms, type CalendarSeason4 } from '../../world/environment/seasonalGround';
 
 export const DE_TILE_W = 96, DE_TILE_H = 48, DE_ELEV_H = 24;
 // 🔴 [2026-10-12 主人令「地面放大到 96×48」「保留长方形」] 原 64×32：建筑/城墙/兵模按 DE 原生像素画（1.0），
@@ -142,6 +143,9 @@ uniform float uMapSize;
 uniform float uTime;
 uniform float uIsIce;
 uniform vec2 uNoiseOff;
+uniform vec3 uSeasonTint;
+uniform vec4 uSeasonGold;
+uniform float uSeasonDryBias;
 
 // 2D Simplex Noise (Ashima Arts)
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
@@ -241,17 +245,21 @@ void main() {
   
   // 3. 副地表一层微斑驳（DE LAYER_A/B 双色同系地貌碎块咬合：主草皮 + 旱草 + 泥土三层交织）
   float dryEdge = deEdgeBlend(terrainPatch, -0.26, 0.24, microGrain, (lumaDry - lumaGrass) * 2.5);
-  float dryMix  = clamp(dryEdge * 0.64, 0.0, 1.0) * (1.0 - dirtMix * 0.55);
+  float dryMix  = clamp(dryEdge * 0.64 + uSeasonDryBias, 0.0, 1.0) * (1.0 - dirtMix * 0.55);
   
-  // 4. 基底主地形与副地表一层咬合
+  // 4. 基底主地形与副地表一层咬合 + 全球气候带四季色彩调制（与战略地图 100% 同步）
   vec3 baseLand = mix(colGrass, colDry, dryMix);
+  float baseLuma = dot(baseLand, vec3(0.299, 0.587, 0.114));
+  vec3 goldTarget = uSeasonGold.rgb * clamp(baseLuma * 2.15, 0.55, 1.38);
+  baseLand = mix(baseLand * uSeasonTint, goldTarget, uSeasonGold.a);
   
   // 5. 混入副地表二层与道路/城基裸土斑块
   vec3 landCol = mix(baseLand, colDirt, dirtMix);
   
   // 6. 森林底土与落叶垫底（🔴 [2026-10-12 主人令] 树林下铺满专属落叶腐殖土，边缘带落叶颗粒咬合）
   float isForest = deEdgeBlend(fPerturb, 0.16, 0.40, microGrain, (lumaFor - lumaGrass) * 2.0) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
-  landCol = mix(landCol, colForest, isForest);
+  vec3 forTinted = mix(colForest, colForest * uSeasonTint, 0.45);
+  landCol = mix(landCol, forTinted, isForest);
   
   // 7. 水际沙滩与退潮湿沙带过渡（DE 经典海滩湿沙 + 沙岸颗粒咬合）
   float sandBlend = deEdgeBlend(isSandRaw, 0.12, 0.62, microGrain, (lumaSand - lumaGrass) * 2.0);
@@ -534,6 +542,10 @@ export class Scene13GroundLayerGL {
   private dirtTex: WebGLTexture | null = null;
   private dryTex: WebGLTexture | null = null;
   public isIce = false;
+  private seasonProfile: { lat: number; lng: number; isSnowGround: boolean } | null = null;
+  public setSeasonalGroundProfile(lat: number, lng: number, isSnowGround: boolean): void {
+    this.seasonProfile = { lat, lng, isSnowGround };
+  }
   public static civLightEnabled = false;
   public civLight = false;
   public setCivLight(_on: boolean): void {
@@ -732,6 +744,9 @@ export class Scene13GroundLayerGL {
       uTime: U('uTime'),
       uIsIce: U('uIsIce'),
       uNoiseOff: U('uNoiseOff'),
+      uSeasonTint: U('uSeasonTint'),
+      uSeasonGold: U('uSeasonGold'),
+      uSeasonDryBias: U('uSeasonDryBias'),
       uFieldTex: U('uFieldTex'),
       uGrassTex: U('uGrassTex'),
       uSandTex: U('uSandTex'),
@@ -1060,6 +1075,32 @@ export class Scene13GroundLayerGL {
     gl.uniform1f(this.loc.uTime as WebGLUniformLocation, performance.now() * 0.001);
     gl.uniform1f(this.loc.uIsIce as WebGLUniformLocation, this.isIce ? 1.0 : 0.0);
     gl.uniform2f(this.loc.uNoiseOff as WebGLUniformLocation, this.noiseOff[0], this.noiseOff[1]);
+    if (this.seasonProfile) {
+      const ts = (window as any).game?.timeSystem;
+      const calSeason = (((typeof ts?.getSeason === 'function' ? ts.getSeason() : 0) | 0) & 3) as CalendarSeason4;
+      const ttr = typeof ts?.getTimeToNextSeason === 'function' ? ts.getTimeToNextSeason() : 999;
+      let seasonBlend = 0;
+      if (ttr <= 5.0) {
+        const p = Math.max(0, Math.min(1, (5.0 - ttr) / 5.0));
+        seasonBlend = p * p * (3 - 2 * p);
+      }
+      const nextCalSeason = (((calSeason + 1) & 3) as CalendarSeason4);
+      const su = resolveTacticalSeasonalGroundUniforms(
+        this.seasonProfile.lat,
+        this.seasonProfile.lng,
+        calSeason,
+        nextCalSeason,
+        seasonBlend,
+        this.seasonProfile.isSnowGround || this.isIce,
+      );
+      gl.uniform3f(this.loc.uSeasonTint as WebGLUniformLocation, su.tint[0], su.tint[1], su.tint[2]);
+      gl.uniform4f(this.loc.uSeasonGold as WebGLUniformLocation, su.gold[0], su.gold[1], su.gold[2], su.gold[3]);
+      gl.uniform1f(this.loc.uSeasonDryBias as WebGLUniformLocation, su.dryBias);
+    } else {
+      gl.uniform3f(this.loc.uSeasonTint as WebGLUniformLocation, 1.0, 1.0, 1.0);
+      gl.uniform4f(this.loc.uSeasonGold as WebGLUniformLocation, 0.74, 0.59, 0.30, 0.0);
+      gl.uniform1f(this.loc.uSeasonDryBias as WebGLUniformLocation, 0.0);
+    }
 
     if (this.fieldTex) {
       gl.activeTexture(gl.TEXTURE0);

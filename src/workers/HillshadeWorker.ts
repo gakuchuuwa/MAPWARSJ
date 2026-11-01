@@ -7,6 +7,12 @@ import { buildWaterMask, isDefectGrayTile } from '../world/land-sea/WaterMask';
 import { createTerrainMaterial, getMaterialBytes, type TerrainMaterial, type TerrainRuleTexture } from '../map/StrategicTerrainMaterial';
 import type { RiverSegmentsMessage } from '../map/RiverStripData';
 import { NILE_ALLUVIAL_POLYGONS, NILE_VALLEY_EXP_BOUNDS, type NileAlluvialPolygon } from '../data/HistoricalRegions';
+import {
+    applySeasonalGroundToPixel,
+    computeSeasonalGroundModulation,
+    resolveEnvZoneId,
+    type EnvZoneId,
+} from '../world/environment/seasonalGround';
 
 interface PreparedNilePolygon extends NileAlluvialPolygon {
     minLat: number;
@@ -230,9 +236,13 @@ export interface HillshadeResponse {
     id: number;
     materialBytes?: number;
     renderMs?: number;
-    /** 算好的瓦片位图（transferable）；主线程只需 drawImage，零像素拷贝 */
+    /** 算好的瓦片位图（日历春季 0；transferable）；主线程只需 drawImage，零像素拷贝 */
     bitmap?: ImageBitmap;
-    /** 算好的冬季瓦片位图（仅当本瓦片含冬季积雪/残雪/冰封水体时生成，供四季平滑渐变） */
+    /** 算好的日历夏季(1)瓦片位图（含夏草苍翠、地中海夏干焦黄、热带雨季返青、南半球冬雪与冬枯） */
+    summerBitmap?: ImageBitmap;
+    /** 算好的日历秋季(2)瓦片位图（含温带/北方草原秋草金黄、南半球春芽嫩绿） */
+    autumnBitmap?: ImageBitmap;
+    /** 算好的日历冬季(3)瓦片位图（含北半球冬雪冰封、无雪温带冬枯霜褐、地中海冬润返青、热带旱季枯黄、南半球盛夏） */
     winterBitmap?: ImageBitmap;
     /** 是否为粗高程插值生成的远景临时兜底瓦片（主线程可先上屏消除异色与硬边，随后后台重拉高清替换） */
     isCoarseFallback?: boolean;
@@ -936,6 +946,9 @@ function renderHillshade(
     caspianDem: Float32Array | null = null,
     riverStrip: Float32Array | null = null,
     winterOutput: Uint8ClampedArray<ArrayBuffer> | null = null,
+    summerOutput: Uint8ClampedArray<ArrayBuffer> | null = null,
+    autumnOutput: Uint8ClampedArray<ArrayBuffer> | null = null,
+    seasonDiff?: { summer: boolean; autumn: boolean; winter: boolean },
 ): Uint8ClampedArray<ArrayBuffer> {
     // LUT 在调用前由 initLUTs() 建好；取成局部常量，让类型收窄在本函数内成立
     initLUTs();
@@ -1087,10 +1100,13 @@ function renderHillshade(
             // （旧版整块瓦片用中心经度，经度相关的抬升在瓦片交界处会断开。）
             const snowlineW = snowlineAt(rowLat, tileBounds ? tileBounds.west : tileCenterLng);
             const snowlineE = snowlineAt(rowLat, tileBounds ? tileBounds.east : tileCenterLng);
+            let curZone: EnvZoneId | undefined = undefined;
 
             for (let x = 0; x < width; x++) {
                 const idx = (yM + x) * 4;
                 const rowSnowline = snowlineW + (snowlineE - snowlineW) * (x + 0.5) / width;
+                const pixLng = tileBounds ? (tileWestLng + (x + 0.5) * rowLngStep) : tileCenterLng;
+                if ((x & 15) === 0) curZone = resolveEnvZoneId(rowLat, pixLng);
 
                 // X Neighbors
                 const xL = (x === 0 ? 0 : x - 1);
@@ -1434,6 +1450,7 @@ function renderHillshade(
                 // ④ 坡面露岩与高山裸岩带：
                 // A. 坡面露岩：坡度 0.10（约 5.7°）起露岩，0.42（约 23°）以上陡崖以岩石为主；
                 // B. 高山裸岩带：林线以上随海拔升高土层变薄，高寒冰劈风化露岩；雪线下方 500m 内即使缓坡也露出岩石基底。
+                let nonVegRockBeach = 0;
                 if (isLand && matTapA && texRck) {
                     const slopeT = Math.max(0, Math.min(1, (slopeGrad - 0.10) / 0.32));
                     const alpineRock = alpineT * rampWorker(colorZ, rowSnowline - 750, rowSnowline - 150) * Math.max(0.30, Math.min(1.0, slopeGrad / 0.08));
@@ -1441,6 +1458,7 @@ function renderHillshade(
                     if (rockT > 0 && sampleTex(texRck, p)) {
                         const rockMax = 0.56 + 0.28 * Math.max(0, Math.min(1, (zC - 1200) / 1600));
                         const w = rockT * rockT * (3 - 2 * rockT) * rockMax * snowFade;
+                        nonVegRockBeach = w;
                         const grey = TX[0] * 0.299 + TX[1] * 0.587 + TX[2] * 0.114;
                         let tr = (TX[0] + (grey - TX[0]) * 0.28) * 0.98;
                         let tg = (TX[1] + (grey - TX[1]) * 0.28) * 0.98;
@@ -1461,6 +1479,7 @@ function renderHillshade(
                     const beach = (1 - rampWorker(colorZ, 6, 20)) * 0.8;
                     const beachTex = absLat < 30 ? texBch : absLat < 55 ? texBc2 : texGravelWet;
                     if (beach > 0 && sampleTex(beachTex, p)) {
+                        nonVegRockBeach = Math.max(nonVegRockBeach, beach);
                         r += (TX[0] - r) * beach; g += (TX[1] - g) * beach; b += (TX[2] - b) * beach;
                     }
                 }
@@ -1577,302 +1596,322 @@ function renderHillshade(
                     r += (riverGreenR - r) * riverGreenW; g += (riverGreenG - g) * riverGreenW; b += (riverGreenB - b) * riverGreenW;
                 }
                 const preSnowR = r, preSnowG = g, preSnowB = b;
+                const vegMask = isLand ? Math.max(0, Math.min(1, (1 - nonVegRockBeach) * snowFade)) : 0;
+                const patchVal = matPatch ? matPatch[p] : 0.5;
 
-                // 真实高山雪线与常年冰川着色（严格符合欧亚大陆自然地理学规律）
-                if (zC > rowSnowline - 250) {
-                    // 进入雪线过渡带：前 250m 为冰碛岩石与雪融过渡区，向上过渡为深厚积雪
-                    const snowT = Math.min(1.0, (zC - (rowSnowline - 250)) / 450);
+                // 统一高山常年雪线 + 坡面阴阳冷暖 + 7层高地 + 天光散射 + 浮雕增益着色管线
+                const shadeAndWriteSeason = (
+                    baseR: number,
+                    baseG: number,
+                    baseB: number,
+                    extraWinterSnowW: number,
+                    extraWinterSnowline: number,
+                    targetBuf: Uint8ClampedArray,
+                ) => {
+                    let sr = baseR, sg = baseG, sb = baseB;
 
-                    // 陡峭山体物理排雪（陡崖坡度 > 45° 时露出冷板岩裸岩，形成角峰与刃脊）
-                    let snowCover = 1.0;
-                    if (paddedDem) {
-                        const steepness = Math.max(0, Math.min(1.0, (0.72 - surfaceNormZ) * 4.5));
-                        snowCover = 1.0 - steepness * 0.65;
-                    }
-                    const finalSnow = snowT * snowCover;
-
-                    // 冰川积雪高反照率底色（微泛高寒冷青）；🔴 [2026-09-30] 叠 DE 雪地贴图 sno 的纹理（35%），不再是一片死白
-                    let snowR = 250, snowG = 252, snowB = 255;
-                    if (sampleTex(texSno, yM + x)) {
-                        snowR += (TX[0] * 1.12 - snowR) * 0.35; snowG += (TX[1] * 1.12 - snowG) * 0.35; snowB += (Math.min(255, TX[2] * 1.12) - snowB) * 0.35;
-                    }
-                    // 雪线附近（snowT < 0.6）先铺残雪：湿润区 snf（雪夹土），干旱高原 snd（雪夹沙）
-                    const patchyW = (1 - rampWorker(snowT, 0.2, 0.6));
-                    if (patchyW > 0 && mix2(texSnf, humidity, texSnd, aridity, yM + x)) {
-                        snowR += (TX[0] - snowR) * patchyW; snowG += (TX[1] - snowG) * patchyW; snowB += (TX[2] - snowB) * patchyW;
-                    }
-                    r = r * (1 - finalSnow) + snowR * finalSnow;
-                    g = g * (1 - finalSnow) + snowG * finalSnow;
-                    b = b * (1 - finalSnow) + snowB * finalSnow;
-                }
-
-                // 高山雪峰冰棱与山脊微高光（只作用于雪线以上山脊）
-                if (zC > rowSnowline && curvature > 1.2) {
-                    const rStr = Math.min(0.45, (curvature - 1.2) * 0.08);
-                    const invR = 1 - rStr;
-                    r = r * invR + 255 * rStr;
-                    g = g * invR + 255 * rStr;
-                    b = b * invR + 255 * rStr;
-                }
-
-                // 🔴 [2026-09-30] 阳坡偏暖、阴坡偏冷（制图常用手法，只作用于陆地），加强立体感
-                if (!isWater && zC > 0) {
-                    const lit = Math.max(-0.5, Math.min(0.4, shadeFactor - 1));
-                    const k = lit * 0.12;
-                    r *= 1 + k;
-                    b *= 1 - k;
-                }
-
-                // 7 层高地：坡面混 26% 土石色（同战术模式），雪线以上不混
-                if (terraceOn) {
-                    const k = terrace.slope[yM + x] * 0.26 * snowFade;
-                    r += (150 - r) * k;
-                    g += (124 - g) * k;
-                    b += (92 - b) * k;
-                }
-
-                let outR = r * shadeFactor;
-                let outG = g * shadeFactor;
-                let outB = b * shadeFactor;
-
-                // 瑞士制图学天光散射（Imhof relief fill）：背阴山坡不陷入死黑，由清透冷调天光（瑞利散射）填充，
-                // 既保持阴阳立体反差，又让谷地与山脊背阴面纹理清晰可辨、质感通透巍峨。
-                if (!isWater && zC > 0 && shadeFactor < 0.96) {
-                    const shadowDepth = (0.96 - shadeFactor) / 0.96;
-                    const elevSky = Math.min(1.0, 0.66 + Math.max(0, zC) * 0.00016);
-                    const skyW = shadowDepth * shadowDepth * 0.30 * elevSky;
-                    outR += (138 - outR) * skyW * 0.38;
-                    outG += (166 - outG) * skyW * 0.48;
-                    outB += (202 - outB) * skyW * 0.72;
-                }
-
-                // 地形图以山川地貌为主：只增强既有坡面光影，不改地表色相。
-                // 平原保持安静；丘陵、山地与高原按真实坡度/海拔渐进加强，山脊、谷地和山脉走向更清楚。
-                if (isLand) {
-                    const slopeRelief = Math.max(0, Math.min(1, (slopeGrad - 0.025) / 0.275));
-                    const elevRelief = Math.max(0, Math.min(1, (colorZ - 250) / 1750));
-                    const reliefWeight = Math.max(slopeRelief, elevRelief * 0.55);
-                    const reliefGain = 1 + 0.14 * reliefWeight;
-                    outR = r + (outR - r) * reliefGain;
-                    outG = g + (outG - g) * reliefGain;
-                    outB = b + (outB - b) * reliefGain;
-                }
-
-                // ☀️ 文明6风格光影（试验）：向阳山脊鎏金暖阳 + 背阴峡谷冷蓝天光 + 地貌色彩饱和度提振 + 浅海翡翠金辉
-                if (req.civ6LightExp) {
-                    if (!isWater && zC > 0) {
-                        if (shadeFactor >= 1.0) {
-                            const sunW = Math.min(1.0, (shadeFactor - 1.0) * 2.6);
-                            outR = outR * (1.06 + sunW * 0.26) + sunW * 14.0;
-                            outG = outG * (1.02 + sunW * 0.09) + sunW * 5.0;
-                            outB = outB * (0.91 - sunW * 0.16);
-                        } else {
-                            const shW = Math.min(1.0, (1.0 - shadeFactor) * 2.2);
-                            outR = outR * (1.0 - shW * 0.22) + 58.0 * shW * 0.28;
-                            outG = outG * (1.0 - shW * 0.10) + 108.0 * shW * 0.30;
-                            outB = outB * (1.0 + shW * 0.08) + 188.0 * shW * 0.42;
+                    // 真实高山常年雪线与冰川着色（仅当未叠入更高强度的冬季雪线时生效）
+                    if (extraWinterSnowW < 0.999 && zC > rowSnowline - 250) {
+                        const snowT = Math.min(1.0, (zC - (rowSnowline - 250)) / 450);
+                        let snowCover = 1.0;
+                        if (paddedDem) {
+                            const steepness = Math.max(0, Math.min(1.0, (0.72 - surfaceNormZ) * 4.5));
+                            snowCover = 1.0 - steepness * 0.65;
                         }
-                        // 适度提升地貌色彩饱和度与暖金阳光通透感（类似文明6手绘暖金地图质感）
-                        const luma = outR * 0.299 + outG * 0.587 + outB * 0.114;
-                        outR = luma + (outR - luma) * 1.24;
-                        outG = luma + (outG - luma) * 1.20;
-                        outB = luma + (outB - luma) * 1.15;
-                    } else if (isWater) {
-                        // 近岸浅海翡翠绿松石光泽 + 深海浓郁宝石蓝
-                        const shallowW = Math.max(0.0, Math.min(1.0, (colorZ + 140.0) / 140.0));
-                        outR = outR * (0.92 + shallowW * 0.12);
-                        outG = outG * (0.98 + shallowW * 0.22) + shallowW * 12.0;
-                        outB = outB * (1.06 + shallowW * 0.10) + shallowW * 8.0;
+                        const finalSnow = snowT * snowCover * (1 - extraWinterSnowW);
+                        if (finalSnow > 0.002) {
+                            let snowR = 250, snowG = 252, snowB = 255;
+                            if (sampleTex(texSno, yM + x)) {
+                                snowR += (TX[0] * 1.12 - snowR) * 0.35;
+                                snowG += (TX[1] * 1.12 - snowG) * 0.35;
+                                snowB += (Math.min(255, TX[2] * 1.12) - snowB) * 0.35;
+                            }
+                            const patchyW = (1 - rampWorker(snowT, 0.2, 0.6));
+                            if (patchyW > 0 && mix2(texSnf, humidity, texSnd, aridity, yM + x)) {
+                                snowR += (TX[0] - snowR) * patchyW;
+                                snowG += (TX[1] - snowG) * patchyW;
+                                snowB += (TX[2] - snowB) * patchyW;
+                            }
+                            sr = sr * (1 - finalSnow) + snowR * finalSnow;
+                            sg = sg * (1 - finalSnow) + snowG * finalSnow;
+                            sb = sb * (1 - finalSnow) + snowB * finalSnow;
+                        }
+                    }
+
+                    // 高山雪峰冰棱与山脊微高光
+                    if ((zC > extraWinterSnowline || extraWinterSnowW > 0.5) && curvature > 1.2) {
+                        const rStr = Math.min(0.45, (curvature - 1.2) * 0.08);
+                        const invR = 1 - rStr;
+                        sr = sr * invR + 255 * rStr;
+                        sg = sg * invR + 255 * rStr;
+                        sb = sb * invR + 255 * rStr;
+                    }
+
+                    // 阳坡偏暖、阴坡偏冷
+                    if (!isWater && zC > 0) {
+                        const lit = Math.max(-0.5, Math.min(0.4, shadeFactor - 1));
+                        const k = lit * (extraWinterSnowW > 0.3 ? 0.09 : 0.12);
+                        sr *= 1 + k;
+                        sb *= 1 - k;
+                    }
+
+                    // 7 层高地坡面混土石色
+                    if (terraceOn) {
+                        const effSnowFade = Math.min(snowFade, 1 - Math.min(1, extraWinterSnowW * 0.85));
+                        const k = terrace.slope[yM + x] * 0.26 * effSnowFade;
+                        sr += (150 - sr) * k;
+                        sg += (124 - sg) * k;
+                        sb += (92 - sb) * k;
+                    }
+
+                    let sOutR = sr * shadeFactor;
+                    let sOutG = sg * shadeFactor;
+                    let sOutB = sb * shadeFactor;
+
+                    // 瑞士制图学天光散射（Imhof relief fill）
+                    if (!isWater && zC > 0 && shadeFactor < 0.96) {
+                        const shadowDepth = (0.96 - shadeFactor) / 0.96;
+                        const elevSky = Math.min(1.0, 0.66 + Math.max(0, zC) * 0.00016 + extraWinterSnowW * 0.18);
+                        const skyW = shadowDepth * shadowDepth * (0.30 + extraWinterSnowW * 0.02) * elevSky;
+                        sOutR += (138 - sOutR) * skyW * 0.38;
+                        sOutG += (166 - sOutG) * skyW * 0.48;
+                        sOutB += (204 - sOutB) * skyW * 0.73;
+                    }
+
+                    // 山川坡面光影加强
+                    if (isLand) {
+                        const slopeRelief = Math.max(0, Math.min(1, (slopeGrad - 0.025) / 0.275));
+                        const elevRelief = Math.max(0, Math.min(1, (colorZ - 250) / 1750));
+                        const reliefWeight = Math.max(slopeRelief, elevRelief * 0.55);
+                        const reliefGain = 1 + 0.14 * reliefWeight;
+                        sOutR = sr + (sOutR - sr) * reliefGain;
+                        sOutG = sg + (sOutG - sg) * reliefGain;
+                        sOutB = sb + (sOutB - sb) * reliefGain;
+                    }
+
+                    if (req.civ6LightExp) {
+                        if (!isWater && zC > 0) {
+                            if (shadeFactor >= 1.0) {
+                                const sunW = Math.min(1.0, (shadeFactor - 1.0) * 2.6);
+                                sOutR = sOutR * (1.06 + sunW * 0.26) + sunW * 14.0;
+                                sOutG = sOutG * (1.02 + sunW * 0.09) + sunW * 5.0;
+                                sOutB = sOutB * (0.91 - sunW * 0.16);
+                            } else {
+                                const shW = Math.min(1.0, (1.0 - shadeFactor) * 2.2);
+                                sOutR = sOutR * (1.0 - shW * 0.22) + 58.0 * shW * 0.28;
+                                sOutG = sOutG * (1.0 - shW * 0.10) + 108.0 * shW * 0.30;
+                                sOutB = sOutB * (1.0 + shW * 0.08) + 188.0 * shW * 0.42;
+                            }
+                            const luma = sOutR * 0.299 + sOutG * 0.587 + sOutB * 0.114;
+                            sOutR = luma + (sOutR - luma) * 1.24;
+                            sOutG = luma + (sOutG - luma) * 1.20;
+                            sOutB = luma + (sOutB - luma) * 1.15;
+                        } else if (isWater) {
+                            const shallowW = Math.max(0.0, Math.min(1.0, (colorZ + 140.0) / 140.0));
+                            sOutR = sOutR * (0.92 + shallowW * 0.12);
+                            sOutG = sOutG * (0.98 + shallowW * 0.22) + shallowW * 12.0;
+                            sOutB = sOutB * (1.06 + shallowW * 0.10) + shallowW * 8.0;
+                        }
+                    }
+
+                    targetBuf[idx] = Math.min(255, Math.max(0, sOutR));
+                    targetBuf[idx + 1] = Math.min(255, Math.max(0, sOutG));
+                    targetBuf[idx + 2] = Math.min(255, Math.max(0, sOutB));
+                    targetBuf[idx + 3] = 255;
+                };
+
+                // 当地冬季积雪/残雪/冰封叠加（北半球在日历冬 3 触发，南半球在日历夏 1 触发）
+                const applyLocalWinterSnowAndIce = (
+                    inR: number,
+                    inG: number,
+                    inB: number,
+                    hemisphereW: number,
+                ): [number, number, number, number, number] => {
+                    if (hemisphereW <= 0.002) return [inR, inG, inB, 0, rowSnowline];
+                    const wSnow = (matWinterSnow ? matWinterSnow[p] : 0) * hemisphereW;
+                    const wDeep = (matWinterDeep ? matWinterDeep[p] : 0) * hemisphereW;
+                    const wSparse = (matWinterSparse ? matWinterSparse[p] : 0) * hemisphereW;
+                    const winterSnowline = rowSnowline - 420 * rampWorker(absLat, 22, 38) * hemisphereW;
+                    if (wSnow <= 0.002 && wSparse <= 0.002 && zC <= winterSnowline - 250) {
+                        return [inR, inG, inB, 0, rowSnowline];
+                    }
+                    let wr = inR, wg = inG, wb = inB;
+                    let effSnowW = 0;
+                    if (isLand) {
+                        if (wSparse > 0.002) {
+                            const grey0 = wr * 0.299 + wg * 0.587 + wb * 0.114;
+                            const dormantW = Math.min(1, wSparse) * 0.24 * (1 - sandiness);
+                            wr += (grey0 * 1.04 - wr) * dormantW;
+                            wg += (grey0 * 0.96 - wg) * dormantW;
+                            wb += (grey0 * 0.94 - wb) * dormantW;
+
+                            const shadeBias = Math.max(0, Math.min(0.28, (1.02 - shadeFactor) * 0.45));
+                            const elevBias = Math.min(0.18, Math.max(0, zC - 150) * 0.00025);
+                            const sparseField = patchVal * 0.72 + shadeBias + elevBias;
+                            const sparseMask = rampWorker(sparseField, 0.55, 0.78) * Math.min(1, wSparse * 1.25);
+                            if (sparseMask > 0.005) {
+                                let spR = 238, spG = 242, spB = 248;
+                                if (mix2(texSn2 ?? texSno, humidity, texSnd, aridity, p)) {
+                                    spR += (TX[0] * 1.08 - spR) * 0.45;
+                                    spG += (TX[1] * 1.08 - spG) * 0.45;
+                                    spB += (Math.min(255, TX[2] * 1.08) - spB) * 0.45;
+                                }
+                                const sw = sparseMask * 0.76 * (1 - sandiness * 0.65);
+                                wr += (spR - wr) * sw;
+                                wg += (spG - wg) * sw;
+                                wb += (spB - wb) * sw;
+                                effSnowW = Math.max(effSnowW, sw * 0.5);
+                            }
+                        }
+
+                        const alpineWinterT = zC > winterSnowline - 250
+                            ? Math.min(1.0, (zC - (winterSnowline - 250)) / 450) * hemisphereW
+                            : 0;
+                        let climaticSnow = 0;
+                        if (wSnow > 0.002) {
+                            const edgeMod = (patchVal - 0.48) * 0.34 + Math.max(-0.12, Math.min(0.16, (1.0 - shadeFactor) * 0.35));
+                            climaticSnow = wSnow >= 0.96
+                                ? 1.0
+                                : rampWorker(wSnow + edgeMod * wSnow * (1 - wSnow) * 3.6, 0.12, 0.88);
+                        }
+                        const rawSnowT = Math.max(climaticSnow, alpineWinterT);
+                        if (rawSnowT > 0.002) {
+                            let cliffKeep = 1.0;
+                            if (paddedDem) {
+                                const steepness = Math.max(0, Math.min(1.0, (0.72 - surfaceNormZ) * 4.5));
+                                cliffKeep = 1.0 - steepness * 0.62;
+                            }
+                            const desertAtten = Math.max(
+                                rampWorker(sandiness, 0.25, 0.78) * 0.68,
+                                rampWorker(aridity, 0.78, 0.96) * (0.45 + 0.25 * (1 - patchVal)),
+                            );
+                            const aridKeep = alpineWinterT > 0.5 ? 1.0 : (1.0 - desertAtten);
+                            const finalWinterSnow = Math.min(0.95, rawSnowT * cliffKeep * (0.86 + 0.09 * wDeep) * aridKeep);
+
+                            let snowR = 246 + wDeep * 4;
+                            let snowG = 250 + wDeep * 3;
+                            let snowB = 255;
+                            const baseSnowTex = wDeep > 0.4 && texSn2 ? texSn2 : texSno;
+                            if (sampleTex(baseSnowTex, p)) {
+                                snowR += (TX[0] * 1.12 - snowR) * 0.34;
+                                snowG += (TX[1] * 1.12 - snowG) * 0.34;
+                                snowB += (Math.min(255, TX[2] * 1.12) - snowB) * 0.34;
+                            }
+                            const detailW = (1 - rampWorker(rawSnowT, 0.35, 0.85)) * 0.48 + (1 - wDeep) * 0.20;
+                            if (detailW > 0 && mix2(texSnf, humidity, texSnd, aridity, p)) {
+                                snowR += (TX[0] * 1.06 - snowR) * detailW;
+                                snowG += (TX[1] * 1.06 - snowG) * detailW;
+                                snowB += (Math.min(255, TX[2] * 1.06) - snowB) * detailW;
+                            }
+                            wr += (snowR - wr) * finalWinterSnow;
+                            wg += (snowG - wg) * finalWinterSnow;
+                            wb += (snowB - wb) * finalWinterSnow;
+                            effSnowW = Math.max(effSnowW, finalWinterSnow);
+                        }
+                    } else if (isWater && (wSnow > 0.35 || zC > winterSnowline - 100)) {
+                        const isInlandOrShallow = colorZ >= -22;
+                        if (isInlandOrShallow) {
+                            const depthFade = colorZ < -5 ? (1 - rampWorker(-colorZ, 5, 22)) : 1.0;
+                            const freezeW = Math.min(1, Math.max(wSnow, zC > winterSnowline ? 0.9 * hemisphereW : 0)) * depthFade * (0.72 + 0.16 * wDeep);
+                            if (freezeW > 0.02) {
+                                let iceR = 212, iceG = 228, iceB = 242;
+                                if (mix2(texIc2, 0.65, texIce, 0.35, p)) {
+                                    iceR += (TX[0] * 1.05 - iceR) * 0.55;
+                                    iceG += (TX[1] * 1.05 - iceG) * 0.55;
+                                    iceB += (Math.min(255, TX[2] * 1.05) - iceB) * 0.55;
+                                }
+                                wr += (iceR - wr) * freezeW;
+                                wg += (iceG - wg) * freezeW;
+                                wb += (iceB - wb) * freezeW;
+                                effSnowW = Math.max(effSnowW, freezeW);
+                            }
+                        }
+                    }
+                    return [wr, wg, wb, effSnowW, winterSnowline];
+                };
+
+                const rockMute = 1 - vegMask;
+                // ── 日历春 0（北半球春芽嫩绿 · 南半球秋草金黄 · 地中海春润青翠 · 萨瓦纳旱末微黄） ──
+                const [spR, spG, spB] = vegMask > 0.002
+                    ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(0, rowLat, pixLng, aridity, sandiness, curZone), rockMute)
+                    : [preSnowR, preSnowG, preSnowB];
+                shadeAndWriteSeason(spR, spG, spB, 0, rowSnowline, output);
+
+                // ── 日历夏 1（北半球盛夏苍翠 · 地中海盛夏焦黄干涸 · 萨瓦纳雨季返青 · 南半球严冬积雪/霜枯） ──
+                if (summerOutput) {
+                    let [suR, suG, suB] = vegMask > 0.002
+                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(1, rowLat, pixLng, aridity, sandiness, curZone), rockMute)
+                        : [preSnowR, preSnowG, preSnowB];
+                    const shWinterW = rowLat < -1.0 ? rampWorker(-rowLat, 1.0, 7.0) : 0;
+                    let suSnowW = 0;
+                    let suSnowline = rowSnowline;
+                    if (shWinterW > 0.002) {
+                        [suR, suG, suB, suSnowW, suSnowline] = applyLocalWinterSnowAndIce(suR, suG, suB, shWinterW);
+                    }
+                    if (Math.abs(suR - spR) < 0.4 && Math.abs(suG - spG) < 0.4 && Math.abs(suB - spB) < 0.4 && suSnowW <= 0.002) {
+                        summerOutput[idx] = output[idx];
+                        summerOutput[idx + 1] = output[idx + 1];
+                        summerOutput[idx + 2] = output[idx + 2];
+                        summerOutput[idx + 3] = 255;
+                    } else {
+                        shadeAndWriteSeason(suR, suG, suB, suSnowW, suSnowline, summerOutput);
+                        if (seasonDiff && !seasonDiff.summer) {
+                            if (Math.abs(summerOutput[idx] - output[idx]) >= 2 ||
+                                Math.abs(summerOutput[idx + 1] - output[idx + 1]) >= 2 ||
+                                Math.abs(summerOutput[idx + 2] - output[idx + 2]) >= 2) {
+                                seasonDiff.summer = true;
+                            }
+                        }
                     }
                 }
 
-                output[idx] = Math.min(255, Math.max(0, outR));
-                output[idx + 1] = Math.min(255, Math.max(0, outG));
-                output[idx + 2] = Math.min(255, Math.max(0, outB));
-                output[idx + 3] = 255;
+                // ── 日历秋 2（北半球温带平原/森林与北方草原秋草金黄 · 南半球春芽嫩绿） ──
+                if (autumnOutput) {
+                    const [auR, auG, auB] = vegMask > 0.002
+                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(2, rowLat, pixLng, aridity, sandiness, curZone), rockMute)
+                        : [preSnowR, preSnowG, preSnowB];
+                    if (Math.abs(auR - spR) < 0.4 && Math.abs(auG - spG) < 0.4 && Math.abs(auB - spB) < 0.4) {
+                        autumnOutput[idx] = output[idx];
+                        autumnOutput[idx + 1] = output[idx + 1];
+                        autumnOutput[idx + 2] = output[idx + 2];
+                        autumnOutput[idx + 3] = 255;
+                    } else {
+                        shadeAndWriteSeason(auR, auG, auB, 0, rowSnowline, autumnOutput);
+                        if (seasonDiff && !seasonDiff.autumn) {
+                            if (Math.abs(autumnOutput[idx] - output[idx]) >= 2 ||
+                                Math.abs(autumnOutput[idx + 1] - output[idx + 1]) >= 2 ||
+                                Math.abs(autumnOutput[idx + 2] - output[idx + 2]) >= 2) {
+                                seasonDiff.autumn = true;
+                            }
+                        }
+                    }
+                }
 
-                // ❄️ 冬季战略地表渲染（与战术模式 WorldBaseMap / Scene13EnvironmentGenerator 100% 同源）：
-                //   ① 真实降雪区（winterFlag ∈ {1,2,3}）与冬季高山雪线：湿润/半湿润森林平原与山地覆皑皑白雪（sno / sn2 / snf），
-                //      极旱流动沙海/戈壁（塔克拉玛干、戈壁）保留大漠寒沙并覆风吹斑驳残雪（snd），陡崖物理排雪显露苍岩；
-                //   ② 零星残雪过渡带（winterFlag === 4，如中原、关中、江淮、中西欧）：冬日苍黄微寒草土 + 约 23% 背阴残雪斑块（sn2 / snd）；
-                //   ③ 北方内陆河湖与极寒浅湾冰封（ic2 / ice），深海大洋保持液态。
+                // ── 日历冬 3（北半球寒冬皑皑白雪/霜褐枯草/河湖冰封 · 地中海冬雨返青 · 萨瓦纳旱季枯黄 · 南半球盛夏苍翠） ──
                 if (winterOutput) {
-                    const wSnow = matWinterSnow ? matWinterSnow[p] : 0;
-                    const wDeep = matWinterDeep ? matWinterDeep[p] : 0;
-                    const wSparse = matWinterSparse ? matWinterSparse[p] : 0;
-                    const winterSnowline = rowSnowline - 420 * rampWorker(absLat, 22, 38);
-                    if (wSnow <= 0.002 && wSparse <= 0.002 && zC <= winterSnowline - 250) {
+                    let [wiR, wiG, wiB] = vegMask > 0.002
+                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(3, rowLat, pixLng, aridity, sandiness, curZone), rockMute)
+                        : [preSnowR, preSnowG, preSnowB];
+                    const nhWinterW = rowLat > -3.0 ? rampWorker(rowLat, -3.0, 4.0) : 0;
+                    let wiSnowW = 0;
+                    let wiSnowline = rowSnowline;
+                    if (nhWinterW > 0.002) {
+                        [wiR, wiG, wiB, wiSnowW, wiSnowline] = applyLocalWinterSnowAndIce(wiR, wiG, wiB, nhWinterW);
+                    }
+                    if (Math.abs(wiR - spR) < 0.4 && Math.abs(wiG - spG) < 0.4 && Math.abs(wiB - spB) < 0.4 && wiSnowW <= 0.002) {
                         winterOutput[idx] = output[idx];
                         winterOutput[idx + 1] = output[idx + 1];
                         winterOutput[idx + 2] = output[idx + 2];
                         winterOutput[idx + 3] = 255;
                     } else {
-                        let wr = preSnowR, wg = preSnowG, wb = preSnowB;
-                        const patchVal = matPatch ? matPatch[p] : 0.5;
-
-                        if (isLand) {
-                            if (wSparse > 0.002) {
-                                const grey0 = wr * 0.299 + wg * 0.587 + wb * 0.114;
-                                const dormantW = Math.min(1, wSparse) * 0.24 * (1 - sandiness);
-                                wr += (grey0 * 1.04 - wr) * dormantW;
-                                wg += (grey0 * 0.96 - wg) * dormantW;
-                                wb += (grey0 * 0.94 - wb) * dormantW;
-
-                                const shadeBias = Math.max(0, Math.min(0.28, (1.02 - shadeFactor) * 0.45));
-                                const elevBias = Math.min(0.18, Math.max(0, zC - 150) * 0.00025);
-                                const sparseField = patchVal * 0.72 + shadeBias + elevBias;
-                                const sparseMask = rampWorker(sparseField, 0.55, 0.78) * Math.min(1, wSparse * 1.25);
-                                if (sparseMask > 0.005) {
-                                    let spR = 238, spG = 242, spB = 248;
-                                    if (mix2(texSn2 ?? texSno, humidity, texSnd, aridity, p)) {
-                                        spR += (TX[0] * 1.08 - spR) * 0.45;
-                                        spG += (TX[1] * 1.08 - spG) * 0.45;
-                                        spB += (Math.min(255, TX[2] * 1.08) - spB) * 0.45;
-                                    }
-                                    const sw = sparseMask * 0.76 * (1 - sandiness * 0.65);
-                                    wr += (spR - wr) * sw;
-                                    wg += (spG - wg) * sw;
-                                    wb += (spB - wb) * sw;
-                                }
-                            }
-
-                            const alpineWinterT = zC > winterSnowline - 250
-                                ? Math.min(1.0, (zC - (winterSnowline - 250)) / 450)
-                                : 0;
-                            let climaticSnow = 0;
-                            if (wSnow > 0.002) {
-                                const edgeMod = (patchVal - 0.48) * 0.34 + Math.max(-0.12, Math.min(0.16, (1.0 - shadeFactor) * 0.35));
-                                climaticSnow = wSnow >= 0.96
-                                    ? 1.0
-                                    : rampWorker(wSnow + edgeMod * wSnow * (1 - wSnow) * 3.6, 0.12, 0.88);
-                            }
-                            const rawSnowT = Math.max(climaticSnow, alpineWinterT);
-                            if (rawSnowT > 0.002) {
-                                let cliffKeep = 1.0;
-                                if (paddedDem) {
-                                    const steepness = Math.max(0, Math.min(1.0, (0.72 - surfaceNormZ) * 4.5));
-                                    cliffKeep = 1.0 - steepness * 0.62;
-                                }
-                                const desertAtten = Math.max(
-                                    rampWorker(sandiness, 0.25, 0.78) * 0.68,
-                                    rampWorker(aridity, 0.78, 0.96) * (0.45 + 0.25 * (1 - patchVal)),
-                                );
-                                const aridKeep = alpineWinterT > 0.5 ? 1.0 : (1.0 - desertAtten);
-                                const finalWinterSnow = Math.min(0.95, rawSnowT * cliffKeep * (0.86 + 0.09 * wDeep) * aridKeep);
-
-                                let snowR = 246 + wDeep * 4;
-                                let snowG = 250 + wDeep * 3;
-                                let snowB = 255;
-                                const baseSnowTex = wDeep > 0.4 && texSn2 ? texSn2 : texSno;
-                                if (sampleTex(baseSnowTex, p)) {
-                                    snowR += (TX[0] * 1.12 - snowR) * 0.34;
-                                    snowG += (TX[1] * 1.12 - snowG) * 0.34;
-                                    snowB += (Math.min(255, TX[2] * 1.12) - snowB) * 0.34;
-                                }
-                                const detailW = (1 - rampWorker(rawSnowT, 0.35, 0.85)) * 0.48 + (1 - wDeep) * 0.20;
-                                if (detailW > 0 && mix2(texSnf, humidity, texSnd, aridity, p)) {
-                                    snowR += (TX[0] * 1.06 - snowR) * detailW;
-                                    snowG += (TX[1] * 1.06 - snowG) * detailW;
-                                    snowB += (Math.min(255, TX[2] * 1.06) - snowB) * detailW;
-                                }
-                                wr += (snowR - wr) * finalWinterSnow;
-                                wg += (snowG - wg) * finalWinterSnow;
-                                wb += (snowB - wb) * finalWinterSnow;
-                            }
-                        } else if (isWater && (wSnow > 0.35 || zC > winterSnowline - 100)) {
-                            const isInlandOrShallow = colorZ >= -22;
-                            if (isInlandOrShallow) {
-                                const depthFade = colorZ < -5 ? (1 - rampWorker(-colorZ, 5, 22)) : 1.0;
-                                const freezeW = Math.min(1, Math.max(wSnow, zC > winterSnowline ? 0.9 : 0)) * depthFade * (0.72 + 0.16 * wDeep);
-                                if (freezeW > 0.02) {
-                                    let iceR = 212, iceG = 228, iceB = 242;
-                                    if (mix2(texIc2, 0.65, texIce, 0.35, p)) {
-                                        iceR += (TX[0] * 1.05 - iceR) * 0.55;
-                                        iceG += (TX[1] * 1.05 - iceG) * 0.55;
-                                        iceB += (Math.min(255, TX[2] * 1.05) - iceB) * 0.55;
-                                    }
-                                    wr += (iceR - wr) * freezeW;
-                                    wg += (iceG - wg) * freezeW;
-                                    wb += (iceB - wb) * freezeW;
-                                }
+                        shadeAndWriteSeason(wiR, wiG, wiB, wiSnowW, wiSnowline, winterOutput);
+                        if (seasonDiff && !seasonDiff.winter) {
+                            if (Math.abs(winterOutput[idx] - output[idx]) >= 2 ||
+                                Math.abs(winterOutput[idx + 1] - output[idx + 1]) >= 2 ||
+                                Math.abs(winterOutput[idx + 2] - output[idx + 2]) >= 2) {
+                                seasonDiff.winter = true;
                             }
                         }
-
-                        if ((zC > winterSnowline || wSnow > 0.5) && curvature > 1.2) {
-                            const rStr = Math.min(0.45, (curvature - 1.2) * 0.08);
-                            const invR = 1 - rStr;
-                            wr = wr * invR + 255 * rStr;
-                            wg = wg * invR + 255 * rStr;
-                            wb = wb * invR + 255 * rStr;
-                        }
-
-                        if (!isWater && zC > 0) {
-                            const lit = Math.max(-0.5, Math.min(0.4, shadeFactor - 1));
-                            const k = lit * (wSnow > 0.3 ? 0.09 : 0.12);
-                            wr *= 1 + k;
-                            wb *= 1 - k;
-                        }
-
-                        const winterSnowFade = Math.min(snowFade, 1 - Math.min(1, wSnow * 0.85));
-                        if (terraceOn) {
-                            const k = terrace.slope[yM + x] * 0.26 * winterSnowFade;
-                            wr += (150 - wr) * k;
-                            wg += (124 - wg) * k;
-                            wb += (92 - wb) * k;
-                        }
-
-                        let wOutR = wr * shadeFactor;
-                        let wOutG = wg * shadeFactor;
-                        let wOutB = wb * shadeFactor;
-
-                        if (!isWater && zC > 0 && shadeFactor < 0.96) {
-                            const shadowDepth = (0.96 - shadeFactor) / 0.96;
-                            const elevSky = Math.min(1.0, 0.66 + Math.max(0, zC) * 0.00016 + wSnow * 0.18);
-                            const skyW = shadowDepth * shadowDepth * 0.32 * elevSky;
-                            wOutR += (136 - wOutR) * skyW * 0.40;
-                            wOutG += (168 - wOutG) * skyW * 0.52;
-                            wOutB += (210 - wOutB) * skyW * 0.76;
-                        }
-
-                        if (isLand) {
-                            const slopeRelief = Math.max(0, Math.min(1, (slopeGrad - 0.025) / 0.275));
-                            const elevRelief = Math.max(0, Math.min(1, (colorZ - 250) / 1750));
-                            const reliefWeight = Math.max(slopeRelief, elevRelief * 0.55);
-                            const reliefGain = 1 + 0.14 * reliefWeight;
-                            wOutR = wr + (wOutR - wr) * reliefGain;
-                            wOutG = wg + (wOutG - wg) * reliefGain;
-                            wOutB = wb + (wOutB - wb) * reliefGain;
-                        }
-
-                        if (req.civ6LightExp) {
-                            if (!isWater && zC > 0) {
-                                if (shadeFactor >= 1.0) {
-                                    const sunW = Math.min(1.0, (shadeFactor - 1.0) * 2.6);
-                                    wOutR = wOutR * (1.06 + sunW * 0.26) + sunW * 14.0;
-                                    wOutG = wOutG * (1.02 + sunW * 0.09) + sunW * 5.0;
-                                    wOutB = wOutB * (0.91 - sunW * 0.16);
-                                } else {
-                                    const shW = Math.min(1.0, (1.0 - shadeFactor) * 2.2);
-                                    wOutR = wOutR * (1.0 - shW * 0.22) + 58.0 * shW * 0.28;
-                                    wOutG = wOutG * (1.0 - shW * 0.10) + 108.0 * shW * 0.30;
-                                    wOutB = wOutB * (1.0 + shW * 0.08) + 188.0 * shW * 0.42;
-                                }
-                                const luma = wOutR * 0.299 + wOutG * 0.587 + wOutB * 0.114;
-                                wOutR = luma + (wOutR - luma) * 1.24;
-                                wOutG = luma + (wOutG - luma) * 1.20;
-                                wOutB = luma + (wOutB - luma) * 1.15;
-                            } else if (isWater) {
-                                const shallowW = Math.max(0.0, Math.min(1.0, (colorZ + 140.0) / 140.0));
-                                wOutR = wOutR * (0.92 + shallowW * 0.12);
-                                wOutG = wOutG * (0.98 + shallowW * 0.22) + shallowW * 12.0;
-                                wOutB = wOutB * (1.06 + shallowW * 0.10) + shallowW * 8.0;
-                            }
-                        }
-
-                        winterOutput[idx] = Math.min(255, Math.max(0, wOutR));
-                        winterOutput[idx + 1] = Math.min(255, Math.max(0, wOutG));
-                        winterOutput[idx + 2] = Math.min(255, Math.max(0, wOutB));
-                        winterOutput[idx + 3] = 255;
                     }
                 }
             }
@@ -2093,30 +2132,42 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
             if (maxArid >= 0.6 && await waitRivers()) riverStrip = computeRiverStrip(req.tileBounds, req.width, req.height);
         }
         const renderStart = performance.now();
-        let hasWinterTile = !!(material && (material.winterSnow || material.winterSparse));
-        if (!hasWinterTile && req.params.useElevationColor && req.tileBounds) {
-            const latMaxAbs = Math.max(Math.abs(req.tileBounds.north), Math.abs(req.tileBounds.south));
-            if (latMaxAbs > 24) {
-                const lowestWinterSnowline = snowlineAt(latMaxAbs, (req.tileBounds.west + req.tileBounds.east) * 0.5) - 650;
-                for (let i = 0; i < src.length; i += 16) {
-                    const z = src[i] * 256 + src[i + 1] + src[i + 2] / 256 - 32768;
-                    if (z > lowestWinterSnowline) { hasWinterTile = true; break; }
-                }
-            }
-        }
-        const winterOutput = hasWinterTile && req.params.useElevationColor
-            ? new Uint8ClampedArray(req.width * req.height * 4)
-            : null;
-        const output = renderHillshade(src, req, mask, material, paddedDem, parentDem, caspianDem, riverStrip, winterOutput);
+        const useSeasonalColor = !!req.params.useElevationColor;
+        const summerOutput = useSeasonalColor ? new Uint8ClampedArray(req.width * req.height * 4) : null;
+        const autumnOutput = useSeasonalColor ? new Uint8ClampedArray(req.width * req.height * 4) : null;
+        const winterOutput = useSeasonalColor ? new Uint8ClampedArray(req.width * req.height * 4) : null;
+        const seasonDiff = { summer: false, autumn: false, winter: false };
+        const output = renderHillshade(
+            src, req, mask, material, paddedDem, parentDem, caspianDem, riverStrip,
+            winterOutput, summerOutput, autumnOutput, seasonDiff,
+        );
         const renderMs = performance.now() - renderStart;
         const bitmap = await createImageBitmap(new ImageData(output, req.width, req.height));
-        const winterBitmap = winterOutput
+        const summerBitmap = (summerOutput && seasonDiff.summer)
+            ? await createImageBitmap(new ImageData(summerOutput, req.width, req.height))
+            : undefined;
+        const autumnBitmap = (autumnOutput && seasonDiff.autumn)
+            ? await createImageBitmap(new ImageData(autumnOutput, req.width, req.height))
+            : undefined;
+        const winterBitmap = (winterOutput && seasonDiff.winter)
             ? await createImageBitmap(new ImageData(winterOutput, req.width, req.height))
             : undefined;
-        const transfer: Transferable[] = winterBitmap ? [bitmap, winterBitmap] : [bitmap];
+        const transfer: Transferable[] = [bitmap];
+        if (summerBitmap) transfer.push(summerBitmap);
+        if (autumnBitmap) transfer.push(autumnBitmap);
+        if (winterBitmap) transfer.push(winterBitmap);
 
         // Cast to any to avoid TS matching Window.postMessage instead of Worker.postMessage
-        (self as any).postMessage({ id: req.id, bitmap, winterBitmap, isCoarseFallback: usedCoarseFallback || undefined, materialBytes: getMaterialBytes(), renderMs } as HillshadeResponse, transfer);
+        (self as any).postMessage({
+            id: req.id,
+            bitmap,
+            summerBitmap,
+            autumnBitmap,
+            winterBitmap,
+            isCoarseFallback: usedCoarseFallback || undefined,
+            materialBytes: getMaterialBytes(),
+            renderMs,
+        } as HillshadeResponse, transfer);
     } catch (err) {
         (self as any).postMessage({ id: req.id, error: String(err) } as HillshadeResponse);
     }

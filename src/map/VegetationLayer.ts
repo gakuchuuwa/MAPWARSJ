@@ -14,16 +14,17 @@ import { loadLandUseMask } from './LandUseMask';
 import { FOREST_COVER_THRESHOLD, forestCoverAt } from '../world/environment/forestModel';
 import { plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
+import { localSeasonAtLat } from '../world/environment/seasonalGround';
 import { VECTOR_ROAD_DATA } from '../data/VectorRoadData';
-import { STRATEGIC_TREE_SCALE } from './strategicSpriteScale';
+import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
 const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
-const CITY_CLEAR_PX = 64;
-/** 战略道路穿过密林时的半幅净空（px，SAMPLE_ZOOM=9 下约 13.5px，形成 27px 宽的 DE 式林间驿道走廊） */
-const ROAD_CLEAR_PX = 13.5;
+const CITY_CLEAR_PX = 74;
+/** 战略道路穿过密林时的半幅净空（px，SAMPLE_ZOOM=9 下约 16px，形成 32px 宽的 DE 式林间驿道走廊） */
+const ROAD_CLEAR_PX = 16;
 const ROAD_BUCKET_PX = 64;
 /** 画布四周离屏余量（px）：平移期间直接由 mapPane GPU 硬件变换同步移动，消除每帧亚像素重采样闪烁 */
 const CANVAS_PAD_PX = 160;
@@ -594,7 +595,7 @@ function getTreeLine(lat: number, lng?: number): number {
     return 600;
 }
 
-const TREE_GRID_STEP = 46;
+const TREE_GRID_STEP = 60;
 /** 单次重建最多保留的树数（兼顾密林连冠咬合与大视口 60FPS 拖动流畅度） */
 const MAX_TREES_PER_RENDER = 4200;
 
@@ -831,7 +832,7 @@ export class VegetationLayer {
         const baseBlend = this.sampledGameSeason === gameSeason
             ? Math.min(1, Math.max(0, seasonBlend()))
             : 0;
-        const treeBaseScale = STRATEGIC_TREE_SCALE * Math.pow(1.35, zoom - SAMPLE_ZOOM);
+        const treeBaseScale = STRATEGIC_SPRITE_SCALE * Math.pow(1.35, zoom - SAMPLE_ZOOM);
         const W = this.canvas.width, H = this.canvas.height;
         const topLeftX = this.canvasTopLeft.x;
         const topLeftY = this.canvasTopLeft.y;
@@ -1223,7 +1224,7 @@ export class VegetationLayer {
                 const isDenseCanopy = !isSparseEco && clusterWeight >= 0.34;
 
                 const count = isDenseCanopy
-                    ? (clusterWeight >= 0.56 ? 4 : 3)
+                    ? (clusterWeight >= 0.56 ? 3 : 2)
                     : (clusterWeight >= 0.26 ? 2 : 1);
 
                 // DE 同团树种内聚：2×2 格共享主树种抽签（使竹林成片、松林成带、桦林成林），伴生树 25% 概率混入本区次要树种
@@ -1271,8 +1272,9 @@ export class VegetationLayer {
                         ? clumpRoll
                         : hash(gx, gy, i * 13 + 71);
                     const resolveStrategicTreeForSeason = (s: TreeSeason): string => {
-                        const isSnow = isPermSnowTile || (s === 3 && hasWinterSnowGround);
-                        return seasonalDeTree(plantTreeAt(curLatLng.lat, curLatLng.lng, speciesRoll), s, isSnow);
+                        const localS = localSeasonAtLat(s, curLatLng.lat);
+                        const isSnow = isPermSnowTile || (localS === 3 && hasWinterSnowGround);
+                        return seasonalDeTree(plantTreeAt(curLatLng.lat, curLatLng.lng, speciesRoll), localS, isSnow);
                     };
                     const asset = resolveStrategicTreeForSeason(season);
                     const assetNext = resolveStrategicTreeForSeason(nextSeason);
@@ -1291,9 +1293,9 @@ export class VegetationLayer {
                     // 主树挺拔饱满，内圈伴生树厚实相拥，外圈跨格树略收敛，形成 DE 经典林冠高低层次
                     const jitter = isDenseCanopy
                         ? (i === 0
-                            ? 1.12 + hash(gx, gy, 71) * 0.22
-                            : (i <= 2 ? 0.92 + hash(gx, gy, i * 23 + 71) * 0.24 : 0.82 + hash(gx, gy, i * 23 + 71) * 0.22))
-                        : (i === 0 ? 1.04 + hash(gx, gy, 71) * 0.20 : 0.76 + hash(gx, gy, i * 23 + 71) * 0.22);
+                            ? 0.88 + hash(gx, gy, 71) * 0.16
+                            : (i <= 1 ? 0.74 + hash(gx, gy, i * 23 + 71) * 0.16 : 0.66 + hash(gx, gy, i * 23 + 71) * 0.16))
+                        : (i === 0 ? 0.84 + hash(gx, gy, 71) * 0.16 : 0.64 + hash(gx, gy, i * 23 + 71) * 0.16);
                     const variant = Math.floor(hash(gx, gy, i * 37 + 89) * 100);
                     drawCommands.push({
                         lat: curLatLng.lat,

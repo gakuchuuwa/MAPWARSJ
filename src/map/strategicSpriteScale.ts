@@ -1,18 +1,26 @@
 /**
- * 战略地图精灵统一基准（2026-10-31 ~ 2026-11-01 主人令「让素材的显示大小都和 DE 一致，所有素材显示大小比例一致」）。
+ * 战略地图精灵统一基准（2026-10-31 ~ 2026-11-01 主人定稿）。
  *
- * 铁律：所有非据点素材一律直接按「DE 原生像素（boxW × boxH）× 统一缩放系数」等比绘制，
- * 严禁按固定像素高强行拉平（如把灌木/仙人掌拉成与大树同高），也严禁同层混用不同时代尺寸的建筑。
- *
- * 两档 DE 原生等比基准（zoom 9 基准）：
- *   1. STRATEGIC_SPRITE_SCALE = 0.7：所有活物、车船与地面资源（军团士兵、村民、家畜、野生动物、飞鸟、海兽、渔船、商队/商船、采集果丛/矿石/尸骸残骸）
- *   2. STRATEGIC_BUILDING_SCALE = 0.22 / STRATEGIC_TREE_SCALE = 0.20：城外生产建筑与自然树木（与战略据点内建筑 0.16~0.20 同比例系，避免城外单栋磨坊或单棵大树比整座城池还大，同时内部 100% 保持 DE 原生相对大小）
+ * 视觉层级与铁律：
+ *   1. 一级沙盘主角棋子：
+ *      - 据点城池：80~120px（见 city-marker-tokens.ts）
+ *      - 出征军团（STRATEGIC_ARMY_SCALE = 0.70）：保持直播主画面中军团列阵交战的高辨识度（见 unit-sprite-scale.md）
+ *   2. 二级大地图环境与生产生态（STRATEGIC_SPRITE_SCALE = 0.38，全局唯一系数，严禁再拆子档）：
+ *      - 城外生产建筑（磨坊、房屋、船坞、牧栏、营地）、自然树木与灌木、村民、家畜、野生动物、飞鸟、
+ *        海洋生物、渔船、商队/商船、采集果丛/矿石、战损尸骸残骸，100% 共用唯一系数 0.38 × DE 原生像素（boxW × boxH）。
+ *      - 在 0.38 统一基准下（zoom 9）：磨坊/房屋约 90×71px（小于据点城池）、乔木约 56×76px、
+ *        水牛/黄牛约 29×20px（严格为房屋的 1/3）、村民站立约 17px/挥锄 30px（严格为房屋的 1/4~1/3）、
+ *        商队车马约 30×25px，100% 还原 DE 原生相对比例。
  */
-export const STRATEGIC_SPRITE_SCALE = 0.7;
-export const STRATEGIC_BUILDING_SCALE = 0.22;
-export const STRATEGIC_TREE_SCALE = 0.20;
+export const STRATEGIC_SPRITE_SCALE = 0.38;
+export const STRATEGIC_ARMY_SCALE = 0.7;
 
-/** zoom → 精灵缩放：zoom 9 为基准，每级 ×2（与地图投影同步）。 */
+/** zoom → 二级大地图素材统一缩放：zoom 9 为基准（0.38），每级 ×2（与地图投影同步）。 */
 export function strategicSpriteScale(zoom: number): number {
     return Math.pow(2, zoom - 9) * STRATEGIC_SPRITE_SCALE;
+}
+
+/** zoom → 一级主角出征军团缩放：zoom 9 为基准（0.70），每级 ×2。 */
+export function strategicArmyScale(zoom: number): number {
+    return Math.pow(2, zoom - 9) * STRATEGIC_ARMY_SCALE;
 }

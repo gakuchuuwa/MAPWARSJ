@@ -6,7 +6,7 @@ import { OrientationSystem } from '../core/OrientationSystem';
 import { GridSystem } from '../systems/GridSystem';
 import { MAP_LAYER_ZINDEX, MAP_PANES } from '../config/MapLayers';
 import { perfDoctor } from '../debug/PerfDoctor';
-import { strategicSpriteScale } from './strategicSpriteScale';
+import { strategicArmyScale } from './strategicSpriteScale';
 import { isMacroMapZoom } from '../config/StrategicView';
 import { PlayerPhalanxDrawer } from './player/PlayerPhalanxDrawer'; // [NEW] Preload only
 import { LegionPhalanxDrawer, PhalanxAnimState } from './legion/LegionPhalanxDrawer'; // [AI SYSTEM]
@@ -1227,7 +1227,7 @@ export class GlobalUnitRenderer {
         // [NEW] Draw Projectiles AFTER units
         const currentZoom = this.map.getZoom();
         const effectiveZoom = Math.min(currentZoom, 10);
-        const scale = strategicSpriteScale(effectiveZoom);
+        const scale = strategicArmyScale(effectiveZoom);
 
         // [2026-08-11 13 v2] 出兵口互攻演出接管：地图上不画箭矢特效（主人实锤「射箭的特效还在」）。
         // 背景军团已被 collectVisibleUnitsInView 过滤，箭矢是独立渲染链，必须同门控。
@@ -1852,7 +1852,7 @@ export class GlobalUnitRenderer {
         const atkPos = unit.getPosition();
         if (!atkPos) return fallback;
         const cityPos = { lat: city.latitude, lng: city.longitude };
-        const scale = strategicSpriteScale(Math.min(this.map.getZoom(), 10));
+        const scale = strategicArmyScale(Math.min(this.map.getZoom(), 10));
 
         // 🔴 [2026-10-21 主人令「防守的也是武将，武将是什么军团，就出什么军团」] 守军按守将取军团
         //    无在场武将（只剩普通守军）→ 当时年份 × 据点建筑风格
@@ -1957,7 +1957,7 @@ export class GlobalUnitRenderer {
         screenDx: number,
         screenDy: number,
     ): number | null {
-        const scale = strategicSpriteScale(Math.min(this.map.getZoom(), 10))
+        const scale = strategicArmyScale(Math.min(this.map.getZoom(), 10))
             * (unit.previewScale ?? 1);
         return this.scene13FrontRadiusCore(
             unit.cultureSlots ?? [],
@@ -2302,7 +2302,7 @@ export class GlobalUnitRenderer {
         // 例外：攻城视觉外推只改渲染点（逻辑坐标不动），见 applySiegeVisualPush。
         const currentZoom = this.map.getZoom();
         const effectiveZoom = Math.min(currentZoom, 10);
-        const scale = strategicSpriteScale(effectiveZoom);
+        const scale = strategicArmyScale(effectiveZoom);
         const navalFieldPose = this.getNavalFieldBattlePose(unit);
         if (navalFieldPose) centerPoint = navalFieldPose.point;
 
@@ -3526,7 +3526,7 @@ export class GlobalUnitRenderer {
             const cultureScales = expandCompositionScales(slots);
 
             const zoom = this.map.getZoom();
-            const scale = strategicSpriteScale(Math.min(zoom, 10));
+            const scale = strategicArmyScale(Math.min(zoom, 10));
             // 守军面向攻方 = 城中心 → 攻方方向
             const directionIndex = OrientationSystem.get8DirectionIndex(
                 { lat: city.latitude, lng: city.longitude },

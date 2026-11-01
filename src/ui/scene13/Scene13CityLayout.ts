@@ -18,6 +18,7 @@ import {
 import { pickTree, type TreeSeason } from './TreeAssignment';
 import { DE_MAP_THEMES, type DeMapThemeId } from './Scene13DeMapThemes';
 import { deTerrainSeasonalTree, seasonalDeTree } from './Scene13DeTrees';
+import { localSeasonAtLat } from '../../world/environment/seasonalGround';
 import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { queryWinterSnow } from './WorldBaseMap';
@@ -442,9 +443,10 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const isSnow = siteWinterSnow && (gl.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(siteBaseTile));
     const isPassType = this.defenderCityType === 'pass';
     const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
-    const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
+    const rawSeason4: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
         ? rawCalSeason
         : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
+    const calSeason: TreeSeason = localSeasonAtLat(rawSeason4, siteLat);
 
     // 🔴 [2026-10-21 主人令「请全部和DE保持一致」]
     //    DE 的树由「脚下地形」＋「气候主题」决定，不由建筑风格决定：

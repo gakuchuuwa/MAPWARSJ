@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 远征精锐番号统一查询（14 文化区）
  *
  * ═══════════════════════════════════════════════════════════════════
@@ -289,7 +289,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   baizanting_alexios_v: { name: '城垣戍卒', tier: 4 },   // 阿莱克修斯五世｜拜占｜君士坦丁堡｜旧档「瓦兰吉卫队」与雅罗斯拉夫 T1 重名，改；霍尼亚提斯《历史》：1204 年阿莱克修斯五世据君士坦丁堡城垣拒第四次十字军，陆墙戍卒与瓦兰吉共守。
   bitiniya_diaoduoer: { name: '尼西亚戍兵', tier: 4 },   // 狄奥多尔｜拜占｜尼凯亚｜1204 年君士坦丁堡陷后狄奥多尔一世据尼西亚立国，都城戍兵为其立国之本（维基 Empire of Nicaea、Theodore I Laskaris）。
   bfe_sinan_pasha: { name: '塞克班', tier: 4 },   // 锡南帕夏｜奥斯｜埃迪尔内｜旧档无；锡南帕夏（Koca Sinan Paşa，卒1596）五度出任大维齐尔，征也门、匈牙利皆自募塞克班（sekban）火枪手为部曲（维基「Koca Sinan Pasha」／《奥斯曼帝国史》）。
-  osman_kapadan: { name: '阿扎普', tier: 3 },   // 卡帕丹帕夏｜奥斯｜布尔萨｜旧档无；卡帕丹帕夏即奥斯曼海军大臣（Kapudan Pasha），其桨船所载接舷陆战兵为阿扎普（azap），维基「Kapudan Pasha」「Azap」。为其驻布尔萨（帝国旧都、船厂所在）之海军本部。
+  osman_kapadan: { name: '阿扎普', tier: 3 },   // 卡尼姆穆罕默德帕夏｜奥斯｜布尔萨｜旧档无；卡尼姆穆罕默德帕夏即奥斯曼海军大臣（Kapudan Pasha），其桨船所载接舷陆战兵为阿扎普（azap），维基「Kapudan Pasha」「Azap」。为其驻布尔萨（帝国旧都、船厂所在）之海军本部。
   gen_kara_mustafa: { name: '卡皮库鲁', tier: 3 },   // 卡拉穆斯塔法｜奥斯｜布尔萨｜旧档无；1683年围维也纳，卡拉穆斯塔法统卡皮库鲁（kapıkulu，宫廷常备步骑）为主力（维基「维也纳之战 (1683年)」）。
   gen_mustafa_pasha: { name: '德里轻骑', tier: 4 },   // 穆斯塔法帕夏｜奥斯｜布尔萨｜旧档无；奥斯曼帝国时代巴尔干—安纳托利亚帕夏帐下突击轻骑为德里（deli，字面「狂人」），维基「Deli (military)」。
   gen_suleiman: { name: '穆特费里卡', tier: 2 },   // 苏莱曼｜奥斯｜布尔萨｜旧档无；苏莱曼一世亲征贝尔格莱德、罗得岛、莫哈奇（1526大捷）时随驾近卫骑兵即穆特费里卡（müteferrika），维基「Suleiman the Magnificent」。

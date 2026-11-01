@@ -6,11 +6,7 @@ import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { hasWorldBaseData, loadWorldBaseData, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
-import {
-    STRATEGIC_SPRITE_SCALE,
-    STRATEGIC_BUILDING_SCALE,
-    STRATEGIC_TREE_SCALE,
-} from './strategicSpriteScale';
+import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
 import { registerHumanPresence } from './strategicPresence';
 import { plantAllowedAt, plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
@@ -155,8 +151,9 @@ const SHIP_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const FISH_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const WRECK_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const RESOURCE_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
-const BUILDING_SCALE_BASE = STRATEGIC_BUILDING_SCALE;
-const TREE_SCALE_BASE = STRATEGIC_TREE_SCALE;
+const BUILDING_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const TREE_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const PLOT_SCALE_BASE = 0.44;
 type SeasonalPlotKind = 'dry_farm' | 'rice_farm' | 'pasture';
 const FARM_BY_SEASON = ['FARM_SPRING', 'FARM_SUMMER', 'FARM_AUTUMN', 'FARM_WINTER'] as const;
 const RFARM_BY_SEASON = ['RFARM_SPRING', 'RFARM_SUMMER', 'RFARM_AUTUMN', 'RFARM_WINTER'] as const;
@@ -170,12 +167,12 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
  *  草场一块一只牲畜、牧羊人站南块；农田一块一个农夫，南块那个是组合主人（建筑跟他走）；
  *  🔴 2026-10-28 主人令：农田四块里随机一块改养猪（主人身上记 pigCell），该块不派农夫、只放一头猪；
  *     四块地皮一律不变，仍是同一种农田皮，不铺牧场。 */
-const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -23], [-35, 0], [35, 0], [0, 23]];
+const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -18], [-27, 0], [27, 0], [0, 18]];
 /** 同一渔场主船之外的帮手船相对主船的 zoom 9 像素落点：北、西、东（船比农夫大，间距放宽） */
 const FISHING_BOAT_OFFSETS: readonly (readonly [number, number])[] = [[0, -46], [-60, -18], [60, -18]];
 const PLOT_LEADER_CELL = 3;
 /** 牲畜在自己那块草场内来回的半程（zoom 9 像素），不出本块 */
-const PASTURE_WANDER_PX = 9;
+const PASTURE_WANDER_PX = 7;
 /** 农田 / 水田 / 草场整块地皮内允许的最大高差（米）；超过就是山地，不铺 */
 const PLOT_MAX_RELIEF_M = 250;
 /** 地皮选址最远半径（经度度数；纬度方向再 ×0.85 ≈ 0.9° ≈ 100 km） */
@@ -867,8 +864,8 @@ export class CityLifeAmbientLayer {
 
     private isPlotCellFlatLand(x: number, y: number): boolean {
         // 128×96 贴图 0.58 缩放后的半宽 / 半高，绘制时整体下移 4 像素
-        const hw = 128 * 0.58 / 2;
-        const hh = 96 * 0.58 / 2;
+        const hw = 128 * PLOT_SCALE_BASE / 2;
+        const hh = 96 * PLOT_SCALE_BASE / 2;
         let minElev = Infinity;
         let maxElev = -Infinity;
         for (let gx = -2; gx <= 2; gx++) {
@@ -1013,7 +1010,7 @@ export class CityLifeAmbientLayer {
                 bushLib: pal.bushLib,
                 isBamboo: pal.isBamboo,
                 variant: Math.floor(h3 * 100),
-                scaleJitter: 0.86 + h1 * 0.30,
+                scaleJitter: 0.78 + h1 * 0.22,
             });
         }
 
@@ -2027,12 +2024,15 @@ export class CityLifeAmbientLayer {
             const actors = this.getOrCreateCityActors(city);
             const forestProps = actors.length > 0 ? this.getOrCreateCityForest(city) : [];
             const cityInWar = this.endangeredCities.has(city.id);
+            const citySeason = city.lat < -5 ? (season + 2) % 4 : season;
+            const cityNextSeason = (citySeason + 1) % 4;
+            const cityActionSeason = seasonBlend > 0 ? cityNextSeason : citySeason;
 
             // 同时预热当前季与下一季，保证季末五秒交叉渐变不会闪空。
             for (const fp of forestProps) {
                 const trees = [fp.springTree, fp.summerTree, fp.autumnTree, fp.winterTree];
-                this.loadStripAsset('SUCAI_NATURE', trees[season]);
-                this.loadStripAsset('SUCAI_NATURE', trees[nextSeason]);
+                this.loadStripAsset('SUCAI_NATURE', trees[citySeason]);
+                this.loadStripAsset('SUCAI_NATURE', trees[cityNextSeason]);
                 this.loadStripAsset(fp.bushLib, fp.bushName);
                 if (cityInWar) {
                     this.loadStripAsset('SUCAI_NATURE', fp.isBamboo ? 'FELLED_LUSH_BAMBOO' : 'FELLED_GENERIC');
@@ -2047,7 +2047,7 @@ export class CityLifeAmbientLayer {
                     actor.viewAlpha = 0;   // 新出现的生产组合（地皮、农夫、牲畜、建筑、树林）从全透明渐显
                     this.activeActors.set(actor.id, actor);
                 }
-                const seasonalAction = this.resolveSeasonalAction(actor, actionSeason);
+                const seasonalAction = this.resolveSeasonalAction(actor, cityActionSeason);
                 actor.desiredAction = actor.dir === 'VIL_MALE_HUNTER'
                     ? this.getHunterBehavior(actor, tSec).action
                     : this.usesIdleWalkCycle(actor)
@@ -2074,8 +2074,8 @@ export class CityLifeAmbientLayer {
                 }
                 if (actor.seasonalPlot) {
                     const plotBySeason = SEASONAL_PLOT_BY_KIND[actor.seasonalPlot];
-                    this.loadStripAsset('SUCAI_RESOURCE', plotBySeason[season]);
-                    this.loadStripAsset('SUCAI_RESOURCE', plotBySeason[nextSeason]);
+                    this.loadStripAsset('SUCAI_RESOURCE', plotBySeason[citySeason]);
+                    this.loadStripAsset('SUCAI_RESOURCE', plotBySeason[cityNextSeason]);
                 }
                 if (actor.groundResource && actor.groundResourceLib) {
                     this.loadStripAsset(actor.groundResourceLib, actor.groundResource);
@@ -2389,8 +2389,10 @@ export class CityLifeAmbientLayer {
                 if (peaceAlpha > 0.01) {
                     this.drawStripSprite(fp.bushLib, fp.bushName, fp.variant, pt.x + 11 * zoomFactor, pt.y + 5 * zoomFactor, bushScale, peaceAlpha * 0.92);
                     const trees = [fp.springTree, fp.summerTree, fp.autumnTree, fp.winterTree];
-                    const curTree = trees[season];
-                    const nextTree = trees[nextSeason];
+                    const fpSeason = fp.pos.lat < -5 ? (season + 2) % 4 : season;
+                    const fpNextSeason = (fpSeason + 1) % 4;
+                    const curTree = trees[fpSeason];
+                    const nextTree = trees[fpNextSeason];
                     const mainScale = treeBaseScale * fp.scaleJitter;
                     const subScale = mainScale * 0.78;
                     const nextReady = curTree !== nextTree && !!this.stripAssetFor('SUCAI_NATURE', nextTree);
@@ -2422,6 +2424,8 @@ export class CityLifeAmbientLayer {
             if (peaceFinalAlpha <= 0.01) continue;
             const groupPt = this.toContainerPt(actor.homePos.lat, actor.homePos.lng);
             const plotBySeason = SEASONAL_PLOT_BY_KIND[actor.seasonalPlot];
+            const actorSeason = actor.homePos.lat < -5 ? (season + 2) % 4 : season;
+            const actorNextSeason = (actorSeason + 1) % 4;
             // 农田 / 水田 / 草场都按选址时判出的块数铺 1~4 块（主人在南块）。
             // 🔴 2026-10-28 主人令：养猪那一块地皮也不许改，四块农田一律铺同一种田皮。
             const s = PLOT_CELL_OFFSETS[PLOT_LEADER_CELL];
@@ -2432,14 +2436,14 @@ export class CityLifeAmbientLayer {
                 const px = groupPt.x + ox * zoomFactor;
                 const py = groupPt.y + (oy + 4) * zoomFactor;
                 this.drawStripSprite(
-                    'SUCAI_RESOURCE', plotBySeason[season], 0,
-                    px, py, 0.58 * zoomFactor,
+                    'SUCAI_RESOURCE', plotBySeason[actorSeason], 0,
+                    px, py, PLOT_SCALE_BASE * zoomFactor,
                     peaceFinalAlpha * (1 - seasonBlend),
                     this.plotCtx
                 );
                 this.drawStripSprite(
-                    'SUCAI_RESOURCE', plotBySeason[nextSeason], 0,
-                    px, py, 0.58 * zoomFactor,
+                    'SUCAI_RESOURCE', plotBySeason[actorNextSeason], 0,
+                    px, py, PLOT_SCALE_BASE * zoomFactor,
                     peaceFinalAlpha * seasonBlend,
                     this.plotCtx
                 );
@@ -2533,7 +2537,7 @@ export class CityLifeAmbientLayer {
                             actor.buildingResource,
                             actor.damageVariant,
                             // 城外生产建筑与据点内建筑同比例系（BUILDING_SCALE_BASE = 0.22，磨坊与同代民居同宽约 52px，不压过城池）
-                            groupPt.x + side * (actor.seasonalPlot ? 68 : 42) * zoomFactor,
+                            groupPt.x + side * (actor.seasonalPlot ? 74 : 52) * zoomFactor,
                             groupPt.y - 5 * zoomFactor,
                             BUILDING_SCALE_BASE * zoomFactor,
                             peaceFinalAlpha

@@ -1337,9 +1337,10 @@ export class CityAssetManager {
 
         // [PERF 2026-07-17] 6 张模板并行处理：像素工作仅 ~3ms/张，启动期主线程被山体瓦片等挤占时
         // 逐张 await 的每个 hop 要等数百 ms～数秒，改并行让等待重叠（6 张不构成并行 chromaKey 风暴）。
-        await Promise.all(
-            getAllFactionFlagTemplatePaths().map((p) => this.ensureChromaNeutralTemplateForPath(p)),
-        );
+        await Promise.all([
+            this.ensureFlagPole(),
+            ...getAllFactionFlagTemplatePaths().map((p) => this.ensureChromaNeutralTemplateForPath(p)),
+        ]);
 
         const placeholderByFaction = new Map<string, string>();
         for (const factionId of unique) {
@@ -1384,6 +1385,11 @@ export class CityAssetManager {
         try {
             const poleUrl = await this.chromaKeyImage(this.flagPolePath, null);
             this.processedFlagCache.set(this.flagPolePath, poleUrl);
+            if (typeof document !== 'undefined') {
+                document.querySelectorAll<HTMLImageElement>('img.city-flag-pole').forEach((img) => {
+                    if (img.src !== poleUrl) img.src = poleUrl;
+                });
+            }
         } catch {
             this.processedFlagCache.set(this.flagPolePath, this.flagPolePath);
         }
@@ -1512,7 +1518,11 @@ export class CityAssetManager {
         for (let i = start; i <= endId; i++) {
             const path = `/SUCAI/S10QZ/${i}-1.png`;
             const dataUrl = await this.chromaKeyImage(path, null).catch(() => null);
-            if (dataUrl) this.processedRebelFlags.push(dataUrl);
+            if (dataUrl) {
+                const rebelIdx = this.processedRebelFlags.length;
+                this.processedRebelFlags.push(dataUrl);
+                setRebelFlagStyleRule(rebelIdx, dataUrl);
+            }
             const tYield = performance.now();
             await CityAssetManager.yieldSchedulingSlice(preferIdleYield);
             this.flagPerf.yieldMs += performance.now() - tYield;

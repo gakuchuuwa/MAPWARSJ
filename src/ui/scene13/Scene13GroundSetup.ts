@@ -16,6 +16,7 @@ import { deriveDeGroundTiles } from './Scene13DeGround';
 import { animalNativeAt, animalDeOf } from './Scene13Animals';
 import { animalHerdSize } from '../../world/environment/animalCatalog';
 import { tacticalTreeKeepRatio } from '../../world/environment/forestModel';
+import { localSeasonAtLat } from '../../world/environment/seasonalGround';
 import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { canSpawnDeepSeaWhaleOrNessie } from '../../map/MarineLifeLayer';
@@ -229,6 +230,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 return;
             }
             this.groundLayerGL = glLayer;
+            glLayer.setSeasonalGroundProfile(preLat, preLng, isSnowGround);
             setCachedViennaMapData(glLayer.data);
             this.useGroundGL = true;
             // 🔴 [2026-10-11 主人令「这个菱形的周边黑色很丑，可以换成底图吗」]
@@ -325,9 +327,10 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 const mapLat = defCityRec?.lat ?? this.centerLat ?? 30;
                 const mapLng = defCityRec?.lng ?? this.centerLng ?? 110;
                 const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
-                const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
+                const rawSeason4: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
                     ? rawCalSeason
                     : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
+                const calSeason: TreeSeason = localSeasonAtLat(rawSeason4, mapLat);
                 // 🔴 2026-10-31 主人定森林口径 C：DE 模板的树按战场所在地「本该长的林 × 史实开垦」疏伐，
                 //    与战略植被层同查 forestModel（城边农耕区约留四成，深山老林全留；天然无林处不动）。
                 const gameYear = (window as any).game?.timeSystem?.getYear?.();

@@ -1,4 +1,5 @@
 import { queryBaseTile, queryWinterSnow, refineBaseTileWithBuildingStyle, setWorldBaseData } from '../ui/scene13/WorldBaseMap';
+export { queryWinterSnow };
 
 type Bounds = { north: number; south: number; west: number; east: number };
 export type MaterialNode = ReadonlyArray<{ pixels: Uint8ClampedArray; weight: number }>;
@@ -397,6 +398,13 @@ export const CLIMATE_CLASS: Readonly<Record<string, { arid: number; sand: number
     ds4: { arid: 0.75, sand: 0 }, gravel_default: { arid: 0.8, sand: 0 }, ds2: { arid: 0.8, sand: 0.25 },
     ds5: { arid: 0.9, sand: 0.1 }, pal: { arid: 1, sand: 1 }, pal1: { arid: 1, sand: 1 }, qs: { arid: 1, sand: 1 },
 };
+
+/** 查询任意经纬度的战略气候干旱度 arid 与沙地度 sand（0..1） */
+export function queryAridSand(lat: number, lng: number): [number, number] {
+    const t = queryBaseTile({ lat, lng, isSiege: false, isWinter: false });
+    const c = t ? CLIMATE_CLASS[t] : undefined;
+    return [c?.arid ?? 0.35, c?.sand ?? 0];
+}
 
 const rampUpStrategic = (v: number, a: number, b: number) => {
     const t = Math.max(0, Math.min(1, (v - a) / (b - a)));

@@ -15,8 +15,14 @@ import {
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { isNearStrategicRiver } from '../../map/StrategicRiverProximity';
-import { queryStrategicBaseTile } from '../../map/StrategicTerrainMaterial';
+import { queryAridSand, queryStrategicBaseTile } from '../../map/StrategicTerrainMaterial';
 import { refineBaseTileWithBuildingStyle } from './WorldBaseMap';
+import {
+    isMediterraneanClimateAt,
+    isTropicalMonsoonOrSavannaAt,
+    localSeasonAtLat,
+    type CalendarSeason4,
+} from '../../world/environment/seasonalGround';
 import { CITIES_V2 } from '../../data/cities_v2';
 import {
     DE_MAP_THEMES,
@@ -188,16 +194,26 @@ function probeWater(lat: number | undefined, lng: number | undefined): 'sea' | '
     return 'none';
 }
 
-// ── 季节判定（以游戏日历为准：夏绿/秋橙/冬白；海拔/区域不再覆盖季节） ──
+// ── 季节判定（以游戏日历为准：春夏绿/秋橙/冬白，含南半球季节反转） ──
 
-function resolveSeason(
-    _lat: number | undefined,
-    _lng: number | undefined,
+function resolveCalendarAndLocalSeason(
+    lat: number | undefined,
     getCalendarSeason?: () => 0 | 1 | 2
-): 0 | 1 | 2 {
-    // 🔴 主人 2026-08-20 定：季节唯一权威 = 游戏日历。原「海拔≥600→秋、区域∈中亚/西域→秋」导致
-    //    日历写「夏」战场却出红叶白桦（雷伊血训）。海拔/区域只影响 biome/地表/树密度，绝不改季节。
-    return getCalendarSeason?.() ?? 0;
+): { season3: 0 | 1 | 2; localSeason4: CalendarSeason4 } {
+    // 🔴 主人 2026-08-20 定：季节唯一权威 = 游戏日历；南半球（lat < -5）季节反转 +2 季
+    const tsSeason = (window as any).game?.timeSystem?.getSeason?.();
+    let cal4: CalendarSeason4;
+    if (typeof tsSeason === 'number') {
+        cal4 = (tsSeason & 3) as CalendarSeason4;
+    } else if (getCalendarSeason) {
+        const s3 = getCalendarSeason();
+        cal4 = s3 === 2 ? 3 : s3 === 1 ? 2 : 1;
+    } else {
+        cal4 = 1;
+    }
+    const localSeason4 = lat !== undefined ? localSeasonAtLat(cal4, lat) : cal4;
+    const season3: 0 | 1 | 2 = localSeason4 === 3 ? 2 : localSeason4 === 2 ? 1 : 0;
+    return { season3, localSeason4 };
 }
 
 // ── 主入口 ─────────────────────────────────────────────────────
@@ -222,7 +238,7 @@ export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13Cl
     const elevationBand = input.forceElevationBand
         ?? (hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev, input.lng) : 'lowland');
     const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
-    const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
+    const { season3: season, localSeason4 } = resolveCalendarAndLocalSeason(input.lat, input.getCalendarSeason);
     const waterKind = input.forceWaterKind ?? probeWater(input.waterProbeLat ?? input.lat, input.waterProbeLng ?? input.lng);
     const theme = input.forceTheme
         ? DE_MAP_THEMES[input.forceTheme]
@@ -246,16 +262,48 @@ export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13Cl
     const rawFallbackTerrain: string = theme
         ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, isSiege, input.lng)
         : DEFAULT_TERRAIN_TILE;
-    const baseTerrain: string = fromWorld ?? (hasCoord && buildingStyle
+    let baseTerrain: string = fromWorld ?? (hasCoord && buildingStyle
         ? refineBaseTileWithBuildingStyle(rawFallbackTerrain, buildingStyle, input.lat!, input.lng!, isSiege, isWinter)
         : rawFallbackTerrain);
+
+    // ── 分气候带四季战术底图与副地表同步（地中海夏干冬润 · 热带旱雨季 · 温带秋草金黄） ──
+    let seasonalDryOverride: string | undefined;
+    if (hasCoord && !isSiege) {
+        const isSnowRaw = /^(sno|sn2|snd|snf|ic3|ice)/.test(baseTerrain);
+        if (!isSnowRaw) {
+            const [arid, sand] = queryAridSand(input.lat!, input.lng!);
+            if (isMediterraneanClimateAt(input.lat!, input.lng!)) {
+                if ((localSeason4 === 3 || localSeason4 === 0) && baseTerrain === 'gr7') {
+                    // 地中海冬春多雨返青：主草地切向温润绿草 gr3，副草地保留 gr7
+                    baseTerrain = 'gr3';
+                    seasonalDryOverride = 'gr7';
+                } else if (localSeason4 === 1 && (baseTerrain === 'gr2' || baseTerrain === 'grs' || baseTerrain === 'gr3')) {
+                    // 地中海盛夏炎热干涸：副地表配金黄干草 gr7
+                    seasonalDryOverride = 'gr7';
+                }
+            } else if (isTropicalMonsoonOrSavannaAt(input.lat!, input.lng!, arid, sand)) {
+                if ((localSeason4 === 1 || localSeason4 === 2) && (baseTerrain === 'gr7' || baseTerrain === 'gr5')) {
+                    // 热带季风与稀树草原雨季返青：副草地配葱茏青草 gr2/gr3
+                    seasonalDryOverride = 'gr2';
+                } else if ((localSeason4 === 3 || localSeason4 === 0) && (baseTerrain === 'gr2' || baseTerrain === 'gr3' || baseTerrain === 'gr6')) {
+                    // 热带旱季枯黄：副草地配干黄草 gr7
+                    seasonalDryOverride = 'gr7';
+                }
+            } else if (localSeason4 === 2 && (baseTerrain === 'gr2' || baseTerrain === 'grs' || baseTerrain === 'gr3' || baseTerrain === 'for')) {
+                // 温带与北方草原秋季：副草地配金黄秋草 gr7，配合 GL 四季着色展现秋草金黄
+                seasonalDryOverride = 'gr7';
+            }
+        }
+    }
+
     let groundTiles: Partial<Scene13GroundTiles> = {};
     if (hasCoord && theme) {
         // 副地表 dry / dirt 按真实地理 baseTerrain 从 DecorFit 同色系变体表取（色差 ≤30），
         // 消除沙漠混草（pal/des 落回 gr7）、雪原混褐泥（sno/sn2 落回 ds3+gr7）及黑土/红壤与主题表脱节问题
         const variations = groundVariationFor(baseTerrain);
         const gList = Array.isArray(theme.groundTiles) ? theme.groundTiles : [];
-        const themeDry = variations[0]
+        const themeDry = seasonalDryOverride
+            ?? variations[0]
             ?? gList.find((t) => /gr3|gr7|gr8|gr9|gravel|pc/i.test(t) && t !== baseTerrain)
             ?? (baseTerrain === 'gr7' ? 'gr3' : 'gr7');
         const themeDirt = variations[1]

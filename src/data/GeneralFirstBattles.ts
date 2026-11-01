@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将首次会面·历史成名战设定（GeneralFirstBattles）
  *
  * 规则：
@@ -11600,7 +11600,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         enemyTroops: 10000,
         introLines: [
             { speaker: 'general', text: '奥斯曼舰队已入海峡，陆师必自新旧堡之间登陆。诸堡炮位勿乱发，待其蚁附城下，铳炮齐下！' },
-            { speaker: 'player', text: '愿随舒伦堡元帅死守科孚，打退卡帕丹帕夏奥斯曼军！' },
+            { speaker: 'player', text: '愿随舒伦堡元帅死守科孚，打退卡尼姆穆罕默德帕夏的奥斯曼舰队！' },
         ],
     },
 

@@ -59,7 +59,7 @@ const WORKER_POOL_SIZE = 3;
  * 让 9↔10 来回切换第二次起直接命中，既省网络也省 Worker 计算。
  * 单块 256×256 RGBA ≈ 256KB，满载约 60MB。
  */
-const TILE_CACHE_MAX = 240;
+const TILE_CACHE_MAX = 140;
 
 export class HillshadeLayer extends L.GridLayer {
     private zFactor: number;
@@ -93,12 +93,17 @@ export class HillshadeLayer extends L.GridLayer {
         isValleyTile: boolean;
         retryCount: number;
     }> = new Map();
-    /** LRU：Map 迭代序即插入序，命中时删了重插即「最近使用」 */
+    /** LRU：Map 迭代序即插入序，命中时删了重插即「最近使用」（日历春季 0 主位图） */
     private tileCache: Map<string, ImageBitmap> = new Map();
-    /** 冬季地表雪域位图缓存（与 tileCache 同键同步淘汰；无冬雪的南方/热带瓦片不存，零显存浪费） */
+    /** 日历夏季(1)瓦片位图缓存（夏草苍翠 / 地中海夏干焦黄 / 热带雨季返青 / 南半球冬雪与冬枯） */
+    private summerTileCache: Map<string, ImageBitmap> = new Map();
+    /** 日历秋季(2)瓦片位图缓存（温带与草原秋草金黄 / 南半球春芽嫩绿） */
+    private autumnTileCache: Map<string, ImageBitmap> = new Map();
+    /** 日历冬季(3)瓦片位图缓存（北半球冬雪冰封 / 无雪温带冬枯霜褐 / 地中海冬润返青 / 热带旱季枯黄 / 南半球盛夏） */
     private winterTileCache: Map<string, ImageBitmap> = new Map();
-    /** 当前冬季地表混合权重（0 = 春夏秋常态地表，1 = 隆冬雪域地表，季末最后 2 秒平滑插值） */
-    private currentWinterBlend: number = 0;
+    /** 当前日历季节（0春 1夏 2秋 3冬）与向下一季过渡权重（0..1，季末最后 5 秒 smoothstep 插值） */
+    private currentSeason: 0 | 1 | 2 | 3 = 1;
+    private currentSeasonBlend: number = 0;
     private seasonTimer: number | null = null;
     private seasonRafId: number | null = null;
     /** 已发过预取请求的 z/x/y，避免每次 zoomend 重复占用连接 */
@@ -152,7 +157,9 @@ export class HillshadeLayer extends L.GridLayer {
         });
 
         this.ensureWorkers();
-        this.currentWinterBlend = this.computeWinterBlend();
+        const initState = this.computeSeasonState();
+        this.currentSeason = initState.season;
+        this.currentSeasonBlend = initState.blend;
         this.startSeasonBlendWatch();
 
         gameLog('startup', `HillshadeLayer: Initialized with ${WORKER_POOL_SIZE} Web Workers (z=${this.zFactor})`);
@@ -176,7 +183,7 @@ export class HillshadeLayer extends L.GridLayer {
     }
 
     private handleWorkerMessage(e: MessageEvent<HillshadeResponse>) {
-        const { id, bitmap, winterBitmap, error } = e.data;
+        const { id, bitmap, summerBitmap, autumnBitmap, winterBitmap, error } = e.data;
         if (e.data.materialBytes !== undefined) {
             this.materialBytesByWorker.set(e.target as Worker, e.data.materialBytes);
         }
@@ -190,6 +197,8 @@ export class HillshadeLayer extends L.GridLayer {
         if (!task) {
             // 瓦片已被 Leaflet 剔除（快速连切 zoom）：位图无人认领，直接释放
             bitmap?.close();
+            summerBitmap?.close();
+            autumnBitmap?.close();
             winterBitmap?.close();
             return;
         }
@@ -197,6 +206,8 @@ export class HillshadeLayer extends L.GridLayer {
         // 快速开关保护：旧 Worker 任务完成时如果 modeVersion 不匹配，直接丢弃位图避免串画
         if (task.modeVersion !== this.modeVersion) {
             bitmap?.close();
+            summerBitmap?.close();
+            autumnBitmap?.close();
             winterBitmap?.close();
             task.done(undefined, task.tile);
             return;
@@ -205,6 +216,8 @@ export class HillshadeLayer extends L.GridLayer {
         const { ctx, tile, done, cacheKey, coords, size, bounds, isExpTile, isValleyTile, retryCount } = task;
 
         if (!bitmap) {
+            summerBitmap?.close();
+            autumnBitmap?.close();
             winterBitmap?.close();
             // 取图/解码超时或偶发失败：保留「未探索灰雾」遮罩并在后台自动延时重试，绝不留刺眼蓝洞或死块
             if (error) console.warn('[Hillshade] tile delayed, keeping fog & scheduling retry:', error);
@@ -221,10 +234,12 @@ export class HillshadeLayer extends L.GridLayer {
 
         try {
             const _t0 = performance.now();
-            this.paintTileCanvas(ctx, size.x, size.y, bitmap, winterBitmap);
+            this.paintTileCanvas(ctx, size.x, size.y, bitmap, summerBitmap, autumnBitmap, winterBitmap);
             if (e.data.isCoarseFallback) {
                 // 粗高程远景兜底已上屏（无缝同色系过渡），不写入高清缓存，后台静默重拉高清瓦片替换
                 bitmap.close();
+                summerBitmap?.close();
+                autumnBitmap?.close();
                 winterBitmap?.close();
                 if (retryCount < 4) {
                     const nextRetry = retryCount + 1;
@@ -235,13 +250,15 @@ export class HillshadeLayer extends L.GridLayer {
                     }, delayMs);
                 }
             } else {
-                this.cachePut(cacheKey, bitmap, winterBitmap);
+                this.cachePut(cacheKey, bitmap, summerBitmap, autumnBitmap, winterBitmap);
             }
             perfDoctor.note('HillshadeLayer.handleWorkerMessage(山体瓦片上屏)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:handleWorkerMessage');
         } catch (err) {
             // 异常兜底：保持灰雾并释放位图
             console.warn('[Hillshade] 位图绘制失败:', err);
             bitmap.close();
+            summerBitmap?.close();
+            autumnBitmap?.close();
             winterBitmap?.close();
         }
         done(undefined, tile);
@@ -268,7 +285,7 @@ export class HillshadeLayer extends L.GridLayer {
      *    预取侧的版本号落后（v3 vs v6）就再也判不出「这块已经算好了」，每次切 zoom 都白发一轮请求。
      */
     private tileCacheKey(z: number, x: number, y: number, isRelief: boolean, isValley: boolean): string {
-        return `${z}/${x}/${y}:${isRelief ? 'relief_snow_v16' : 'std_v7'}:${isValley ? 'valley_nile_v1' : 'v0'}${isRelief && this.terraceExp ? ':terrace7_v1' : ''}`;
+        return `${z}/${x}/${y}:${isRelief ? 'relief_4season_v17' : 'std_4season_v8'}:${isValley ? 'valley_nile_v1' : 'v0'}${isRelief && this.terraceExp ? ':terrace7_v1' : ''}`;
     }
 
     /** LRU 读：命中则移到队尾标记为最近使用 */
@@ -282,11 +299,27 @@ export class HillshadeLayer extends L.GridLayer {
     }
 
     /** LRU 写：超上限则淘汰最久未用的一块并释放其显存 */
-    private cachePut(key: string, bitmap: ImageBitmap, winterBitmap?: ImageBitmap): void {
+    private cachePut(
+        key: string,
+        bitmap: ImageBitmap,
+        summerBitmap?: ImageBitmap,
+        autumnBitmap?: ImageBitmap,
+        winterBitmap?: ImageBitmap,
+    ): void {
         const prev = this.tileCache.get(key);
         if (prev && prev !== bitmap) prev.close();
         this.tileCache.delete(key);
         this.tileCache.set(key, bitmap);
+
+        const prevSummer = this.summerTileCache.get(key);
+        if (prevSummer && prevSummer !== summerBitmap) prevSummer.close();
+        this.summerTileCache.delete(key);
+        if (summerBitmap) this.summerTileCache.set(key, summerBitmap);
+
+        const prevAutumn = this.autumnTileCache.get(key);
+        if (prevAutumn && prevAutumn !== autumnBitmap) prevAutumn.close();
+        this.autumnTileCache.delete(key);
+        if (autumnBitmap) this.autumnTileCache.set(key, autumnBitmap);
 
         const prevWinter = this.winterTileCache.get(key);
         if (prevWinter && prevWinter !== winterBitmap) prevWinter.close();
@@ -300,6 +333,10 @@ export class HillshadeLayer extends L.GridLayer {
             if (oldestKey === undefined) break;
             this.tileCache.get(oldestKey)?.close();
             this.tileCache.delete(oldestKey);
+            this.summerTileCache.get(oldestKey)?.close();
+            this.summerTileCache.delete(oldestKey);
+            this.autumnTileCache.get(oldestKey)?.close();
+            this.autumnTileCache.delete(oldestKey);
             this.winterTileCache.get(oldestKey)?.close();
             this.winterTileCache.delete(oldestKey);
         }
@@ -309,67 +346,83 @@ export class HillshadeLayer extends L.GridLayer {
     private clearTileCache(): void {
         for (const bmp of this.tileCache.values()) bmp.close();
         this.tileCache.clear();
+        for (const bmp of this.summerTileCache.values()) bmp.close();
+        this.summerTileCache.clear();
+        for (const bmp of this.autumnTileCache.values()) bmp.close();
+        this.autumnTileCache.clear();
         for (const bmp of this.winterTileCache.values()) bmp.close();
         this.winterTileCache.clear();
     }
 
     /**
-     * 计算当前游戏季节对应的冬季地表混合系数（0..1），与 VegetationLayer / CityLifeAmbientLayer 的 SEASON_BLEND_SECONDS = 5.0 完全同步：
-     * - 春(0) / 夏(1)：0
-     * - 秋(2)：前 10 秒为 0，季末最后 5 秒由 0 平滑 smoothstep 过渡至 1（入冬降雪）
-     * - 冬(3)：前 10 秒为 1，季末最后 5 秒由 1 平滑 smoothstep 过渡至 0（开春消融）
+     * 计算当前游戏季节（0春 1夏 2秋 3冬）与向下一季的过渡混合系数（0..1），
+     * 与 VegetationLayer / CityLifeAmbientLayer 的 SEASON_BLEND_SECONDS = 5.0 100% 同步。
      */
-    private computeWinterBlend(): number {
+    private computeSeasonState(): { season: 0 | 1 | 2 | 3; blend: number } {
         const ts = (window as any).game?.timeSystem;
-        const season = ts?.getSeason?.();
-        if (typeof season !== 'number') return 0;
+        const rawSeason = ts?.getSeason?.();
+        const season = (typeof rawSeason === 'number' ? (rawSeason & 3) : 1) as 0 | 1 | 2 | 3;
         const remain = ts?.getTimeToNextSeason?.();
         const BLEND_SEC = 5.0;
-        if (season === 2) {
-            if (typeof remain !== 'number' || remain >= BLEND_SEC) return 0;
-            const t = Math.min(1, Math.max(0, (BLEND_SEC - Math.max(0, remain)) / BLEND_SEC));
-            return t * t * (3 - 2 * t);
+        if (typeof remain !== 'number' || remain >= BLEND_SEC) {
+            return { season, blend: 0 };
         }
-        if (season === 3) {
-            if (typeof remain !== 'number' || remain >= BLEND_SEC) return 1;
-            const t = Math.min(1, Math.max(0, (BLEND_SEC - Math.max(0, remain)) / BLEND_SEC));
-            return 1 - t * t * (3 - 2 * t);
-        }
-        return 0;
+        const t = Math.min(1, Math.max(0, (BLEND_SEC - Math.max(0, remain)) / BLEND_SEC));
+        return { season, blend: t * t * (3 - 2 * t) };
     }
 
-    /** 将单张瓦片的常态位图与冬雪位图按当前 currentWinterBlend 合成到瓦片画布 */
+    private pickSeasonBmp(
+        season: 0 | 1 | 2 | 3,
+        springBmp: ImageBitmap,
+        summerBmp?: ImageBitmap,
+        autumnBmp?: ImageBitmap,
+        winterBmp?: ImageBitmap,
+    ): ImageBitmap {
+        if (season === 1) return summerBmp ?? springBmp;
+        if (season === 2) return autumnBmp ?? summerBmp ?? springBmp;
+        if (season === 3) return winterBmp ?? springBmp;
+        return springBmp;
+    }
+
+    /** 将单张瓦片的四季位图按当前 currentSeason 与 currentSeasonBlend 合成到瓦片画布 */
     private paintTileCanvas(
         ctx: CanvasRenderingContext2D,
         width: number,
         height: number,
-        normalBmp: ImageBitmap,
+        springBmp: ImageBitmap,
+        summerBmp?: ImageBitmap,
+        autumnBmp?: ImageBitmap,
         winterBmp?: ImageBitmap,
     ): void {
         ctx.clearRect(0, 0, width, height);
-        const wBlend = winterBmp ? this.currentWinterBlend : 0;
-        if (wBlend >= 0.999 && winterBmp) {
+        const curSeason = this.currentSeason;
+        const nextSeason = ((curSeason + 1) & 3) as 0 | 1 | 2 | 3;
+        const curBmp = this.pickSeasonBmp(curSeason, springBmp, summerBmp, autumnBmp, winterBmp);
+        const nextBmp = this.pickSeasonBmp(nextSeason, springBmp, summerBmp, autumnBmp, winterBmp);
+        const blend = curBmp === nextBmp ? 0 : this.currentSeasonBlend;
+
+        if (blend >= 0.999) {
             ctx.globalAlpha = 1;
-            ctx.drawImage(winterBmp, 0, 0);
+            ctx.drawImage(nextBmp, 0, 0);
             return;
         }
         ctx.globalAlpha = 1;
-        ctx.drawImage(normalBmp, 0, 0);
-        if (wBlend > 0.001 && winterBmp) {
-            ctx.globalAlpha = wBlend;
-            ctx.drawImage(winterBmp, 0, 0);
+        ctx.drawImage(curBmp, 0, 0);
+        if (blend > 0.001) {
+            ctx.globalAlpha = blend;
+            ctx.drawImage(nextBmp, 0, 0);
             ctx.globalAlpha = 1;
         }
     }
 
-    /** 当季节混合系数变化时，仅重绘当前视口内拥有冬雪位图的活跃瓦片（零 Worker 重算，60FPS 丝滑覆雪/融雪） */
-    private winterPaintDeferred = false;
-    private repaintVisibleWinterTiles(): void {
+    /** 当季节或季节过渡系数变化时，仅重绘当前视口内拥有四季差异位图的活跃瓦片（零 Worker 重算，60FPS 丝滑换季） */
+    private seasonPaintDeferred = false;
+    private repaintVisibleSeasonTiles(): void {
         if (this._map?.getContainer()?.style?.visibility === 'hidden') {
-            this.winterPaintDeferred = true;
+            this.seasonPaintDeferred = true;
             return;
         }
-        this.winterPaintDeferred = false;
+        this.seasonPaintDeferred = false;
         const tilesObj = (this as any)._tiles as Record<string, { el?: HTMLElement }> | undefined;
         if (!tilesObj) return;
         for (const key in tilesObj) {
@@ -377,13 +430,15 @@ export class HillshadeLayer extends L.GridLayer {
             if (!tile || !tile.isConnected) continue;
             const cacheKey = (tile as any).__hsCacheKey as string | undefined;
             if (!cacheKey) continue;
+            const springBmp = this.tileCache.get(cacheKey);
+            if (!springBmp) continue;
+            const summerBmp = this.summerTileCache.get(cacheKey);
+            const autumnBmp = this.autumnTileCache.get(cacheKey);
             const winterBmp = this.winterTileCache.get(cacheKey);
-            if (!winterBmp) continue;
-            const normalBmp = this.tileCache.get(cacheKey);
-            if (!normalBmp) continue;
+            if (!summerBmp && !autumnBmp && !winterBmp) continue;
             const ctx = tile.getContext('2d');
             if (!ctx) continue;
-            this.paintTileCanvas(ctx, tile.width, tile.height, normalBmp, winterBmp);
+            this.paintTileCanvas(ctx, tile.width, tile.height, springBmp, summerBmp, autumnBmp, winterBmp);
         }
     }
 
@@ -392,22 +447,25 @@ export class HillshadeLayer extends L.GridLayer {
         let isRafActive = false;
 
         const syncBlend = () => {
-            if (this.winterPaintDeferred && this._map?.getContainer()?.style?.visibility !== 'hidden') {
-                this.currentWinterBlend = this.computeWinterBlend();
-                this.repaintVisibleWinterTiles();
-                return this.currentWinterBlend;
+            if (this.seasonPaintDeferred && this._map?.getContainer()?.style?.visibility !== 'hidden') {
+                const st = this.computeSeasonState();
+                this.currentSeason = st.season;
+                this.currentSeasonBlend = st.blend;
+                this.repaintVisibleSeasonTiles();
+                return st.blend;
             }
-            const nextBlend = this.computeWinterBlend();
-            if (Math.abs(nextBlend - this.currentWinterBlend) > 0.002) {
-                this.currentWinterBlend = nextBlend;
-                this.repaintVisibleWinterTiles();
+            const st = this.computeSeasonState();
+            if (st.season !== this.currentSeason || Math.abs(st.blend - this.currentSeasonBlend) > 0.002) {
+                this.currentSeason = st.season;
+                this.currentSeasonBlend = st.blend;
+                this.repaintVisibleSeasonTiles();
             }
-            return nextBlend;
+            return st.blend;
         };
 
         const rafLoop = () => {
             if (this._map?.getContainer()?.style?.visibility === 'hidden') {
-                this.winterPaintDeferred = true;
+                this.seasonPaintDeferred = true;
                 isRafActive = false;
                 this.seasonRafId = null;
                 return;
@@ -591,9 +649,11 @@ export class HillshadeLayer extends L.GridLayer {
                     this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
                     return;
                 }
+                const freshSummer = this.summerTileCache.get(cacheKey);
+                const freshAutumn = this.autumnTileCache.get(cacheKey);
                 const freshWinter = this.winterTileCache.get(cacheKey);
                 try {
-                    this.paintTileCanvas(ctx, size.x, size.y, fresh, freshWinter);
+                    this.paintTileCanvas(ctx, size.x, size.y, fresh, freshSummer, freshAutumn, freshWinter);
                 } catch (err) {
                     // 兜底：绘制异常时重算，同样不留空白瓦片
                     console.warn('[Hillshade] 缓存位图绘制失败，改为重算:', err);
@@ -698,7 +758,9 @@ export class HillshadeLayer extends L.GridLayer {
     }
 
     onAdd(map: L.Map): this {
-        this.currentWinterBlend = this.computeWinterBlend();
+        const st = this.computeSeasonState();
+        this.currentSeason = st.season;
+        this.currentSeasonBlend = st.blend;
         this.startSeasonBlendWatch();
         return super.onAdd(map);
     }

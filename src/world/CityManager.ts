@@ -611,14 +611,18 @@ export class CityManager {
         this.territorySystem.cancelPendingRender();
         await CityAssetManager.ensureFactionFlag(city.factionId);
 
-        if (!this.territorySystem.patchCityMarkerFaction(city)) {
-            this.territorySystem.refreshCityMarker(city);
-            this.territorySystem.updateCityLabel(city);
+        if (this.territorySystem.hasCityMarker(city.id)) {
+            if (!this.territorySystem.patchCityMarkerFaction(city)) {
+                this.territorySystem.refreshCityMarker(city);
+                this.territorySystem.updateCityLabel(city);
+            }
         }
 
         const cityRef = city;
         CityAssetManager.whenFactionFlagReady(city.factionId, () => {
-            this.territorySystem.patchCityMarkerFaction(cityRef);
+            if (this.territorySystem.hasCityMarker(cityRef.id)) {
+                this.territorySystem.patchCityMarkerFaction(cityRef);
+            }
         });
 
         this.scheduleTerritoryIncremental(city.id, previousFactionId);

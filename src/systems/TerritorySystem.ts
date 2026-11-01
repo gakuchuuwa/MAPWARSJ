@@ -2246,7 +2246,10 @@ export class TerritorySystem {
                     const existingMarker = this.cityMarkers.get(city.id)!;
                     const existingLabel = this.cityLabels.get(city.id);
                     tempCityMarkers.set(city.id, existingMarker);
-                    if (existingLabel) tempCityLabels.set(city.id, existingLabel);
+                    if (existingLabel) {
+                        tempCityLabels.set(city.id, existingLabel);
+                        this.updateCityLabel(city);
+                    }
                     continue;
                 }
                 // 🔴 [2026-09-30 主人令「据点和战场的显现请设计为渐显」]
@@ -3337,16 +3340,29 @@ export class TerritorySystem {
             // 城名 / 城防数字变了 → 直接改两个 span 的文本，省掉 setIcon 重建 icon 的 DOM 开销
             // 🔴 [2026-09-25 据点显示名会变（开局套唯一显示名 `cityDisplayNames.ts`、玩家改名）]
             //    原来这里只改第二个 span（兵力）、把城名当成不变的 → 改名后标签上仍挂着旧名（实测「切回剧本」时露馅）。
+            // 🔴 [2026-11-01] 旗面 `<div class="city-flag-host">` 挂在 labelOriginal 内（与 `.city-label-content` 并列）：
+            //    切模式（剧本 1 个 span ⇄ 乱斗/百岁 2 个 span）时只替换 `.city-label-content`，严禁整颗 setIcon 抹掉 `.city-flag-host`！
             const el = labelOriginal.getElement();
-            const spans = el?.querySelectorAll('span');
-            if (el && spans && spans.length >= 2) {
-                spans[0].textContent = city.name;
-                spans[1].textContent = TerritorySystem.formatTroopsLabel(city.troops ?? 0);
-                return;
+            const nextContentHtml = TerritorySystem.buildCityLabelHtml(city, false, !TerritorySystem.hasCitySprite(city));
+            if (el) {
+                const contentEl = el.querySelector('.city-label-content');
+                const spans = contentEl?.querySelectorAll('span');
+                if (!isScriptPeriod() && spans && spans.length >= 2) {
+                    spans[0].textContent = city.name;
+                    spans[1].textContent = TerritorySystem.formatTroopsLabel(city.troops ?? 0);
+                    return;
+                }
+                if (contentEl) {
+                    contentEl.outerHTML = nextContentHtml;
+                    return;
+                }
             }
+            const prevHtml = String((labelOriginal.options.icon as L.DivIcon | undefined)?.options?.html ?? '');
+            const contentIdx = prevHtml.indexOf('<div class="city-label-content');
+            const preservedFlagHtml = contentIdx > 0 ? prevHtml.slice(0, contentIdx) : '';
             const newIcon = L.divIcon({
                 className: 'city-troop-label',
-                html: TerritorySystem.buildCityLabelHtml(city, false, !TerritorySystem.hasCitySprite(city)),
+                html: preservedFlagHtml + nextContentHtml,
             });
             labelOriginal.setIcon(newIcon);
         }
