@@ -1031,14 +1031,12 @@ export class Scene13WarLayer {
      *   · 攻城战攻方放计：🔴 [2026-10-27 主人令「攻方释放的地点是守方第一波的出兵口，不是墙根」]
      *     用守方第一波在城外列阵的出兵口（defOutsideBase + outFwd/outSide，与第一波守军出生点同一处），
      *     兵在口后排开，排法同第一波守军（该阵位本就排在墙外，不会进城墙圈）；城外守军打光后阵位照样能出兵。
-     *   · 野战（双方都放）：直接用敌方出兵口。
-     *   · 🔴 [2026-10-27 主人令「攻城战防守方的增兵还是不要在攻击方的出兵口，还是在自己方城里，优先保护城」]
-     *     攻城战守方放计：返回空 ⇒ 调用方回落到本方（城内）出兵口出兵，按守城兵站岗。
+     *   · 野战与攻城战（攻守双方一致）：🔴 [2026-11-01 主人令「攻城战中，守军的敌战计，增兵是在城内，请修改为和攻方一致的效果，在城外」]
+     *     优先从敌军斜后方（城外）伏兵杀出；无在场敌兵时回退到敌方出兵口。
      * 返回 [锚点 x, y, 前进方向, 横排方向]；前进方向朝敌军（从敌方后方往前打）。
      */
     private ambushAnchors(f: 0 | 1): Array<{ x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number } }> {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
-        if (this.battleType === 'siege' && this.deCity && f === 1) return [];
         const enemyPorts = this.spawns.filter((sp) => sp.f === ef && !sp.playerElite && !sp.commander);
         const flank = this.ambushFlankAnchors(f, Math.max(1, this.spawns.filter((sp) => sp.f === f && !sp.playerElite && !sp.commander).length));
         if (flank.length > 0) return flank;
@@ -1421,10 +1419,10 @@ export class Scene13WarLayer {
             }
         } else if (six === 'hunzhan') {
             if (scopedControl === null) {
-                for (const m of this.men) if (m.f === ef && m.hp > 0 && !m.march && !m.hero && !m.siegeW) vfxTargets.push(m);
+                for (const m of this.men) if (m.f === ef && m.hp > 0 && !m.hero && !m.siegeW) { m.march = false; vfxTargets.push(m); }
                 this.skillPanicTimer[ef] = SKILL_PANIC_SEC;
             } else {
-                const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.march && !m.hero && !m.siegeW);
+                const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
                 enemyLiving.sort((m1, m2) => ((m1.x - refX) ** 2 + (m1.y - refY) ** 2) - ((m2.x - refX) ** 2 + (m2.y - refY) ** 2));
                 const minCount = scopedControl === 'none' ? 3 : scopedControl === 'one' ? 8 : 20;
                 const limit = Math.max(minCount, Math.round(enemyLiving.length * scopeRatio));
@@ -1432,6 +1430,7 @@ export class Scene13WarLayer {
                 const panicSec = SKILL_PANIC_SEC * boost;
                 for (let i = 0; i < Math.min(limit, enemyLiving.length); i++) {
                     const m = enemyLiving[i];
+                    m.march = false;
                     m.playerPanicTimer = panicSec;
                     vfxTargets.push(m);
                 }
@@ -1966,7 +1965,7 @@ export class Scene13WarLayer {
         return k > 0 ? SKILL_SHIELD_TAKEN ** k : 1.0;
     }
     private unitHasPanic(m: WarMan): boolean {
-        return ((this.skillPanicTimer?.[m.f] ?? 0) > 0 || (m.playerPanicTimer ?? 0) > 0) && !m.march && !m.hero && !m.siegeW;
+        return ((this.skillPanicTimer?.[m.f] ?? 0) > 0 || (m.playerPanicTimer ?? 0) > 0) && !m.hero && !m.siegeW;
     }
 
     private heroDown(m: WarMan): void {

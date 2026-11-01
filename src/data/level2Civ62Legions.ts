@@ -3338,6 +3338,29 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 缅甸　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第五批·孟加拉＋古吉拉特＋旁遮普＋吴哥＋缅甸＋安南＋南洋）
     // ═══════════════════════════════════════════════════════════════════
+    // ── 缅甸 · 古典时代 · 古典时代骠人军团　（2026-11-01 新建·补缺格）────────────────
+    //    评级：（未标评级）｜核心兵种：步兵（长矛）、远程为主
+    //    按史 + 依据：古典时代伊洛瓦底江流域＝骠国城邦期——毗湿奴城（Beikthano，今马圭省东敦枝西 12 英里；
+    //      考古年代前 200–公元 100，夯土砖砌矩形城郭 3km×1km、墙体厚约 6 米、东向宫门，墙垣碳十四前 180–公元 610）；
+    //      室利差罗（Sri Ksetra，今卑谬 Pyay 附近 Hmawza）4–5 世纪为骠国都城。
+    //      UNESCO「骠国古城」三城（2014 年列入）总年代前 200–公元 900。
+    //      兵：以铁刃长矛、硬藤盾步兵为主，弓为辅；象兵无实证，故不列象。
+    //    英雄队（第 10 队·主将队）：hero_gajahmada —— 东南亚唯一古典可用战斗英雄兵模
+    //      （库内先例：古典时代扶南军团同用此兵模），按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代骠人军团', civ: '缅甸', age: 'antiquity', deStyle: 'SEAS', region: 'BURMESE' as RegionType,
+        buildingStyle: 'BURMESE',
+        castleId: 'BURM_CASTLE_AGE3', castleName: '缅甸 蒲甘千佛塔金顶堡',
+        formationMode: 'fish_scale',
+        shipId: 'GALLEY',
+        commanderUnit: 'hero_gajahmada',
+        // 步弓（fish_scale 3-4-2）：前排长矛 3 ｜ 中排步弓 4 ｜ 后排掷矛轻兵 2（本军团无骑，末位以轻兵补）
+        slots: [
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'archer', count: 4 },
+            { type: 'skirmisher', count: 2 },
+        ],
+    },
     // ── 缅甸 · 封建时代 · 封建时代蒲甘军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：战象、重骑兵为主
     //    描述正文（主人原文，一字未改）：（蒲甘、敏巫；阿难陀寺白色希腊十字形密檐大殿、达玛扬吉梯级无缝咬合红砖石堡；披挂熟牛皮甲战象冲阵、重型破甲刺枪、皇家桂家精锐马军（Cavalry）与巨象踏阵大阵）
@@ -3351,7 +3374,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_generalaraiyan',
         slots: [
             { type: 'battle_elephant', count: 2 },
-            { type: 'pikeman', count: 4 },
+            { type: 'elite_chukonu', count: 4 },
             { type: 'arambai', count: 3 },
         ],
     },
@@ -3369,7 +3392,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'paragon', count: 3 },
             { type: 'elite_arambai', count: 2 },
-            { type: 'gastraphetes', count: 4 },
+            { type: 'elite_chukonu', count: 4 },
         ],
     },
     // ── 缅甸 · 帝国时代 · 帝国时代缅甸军团　（本次新建）────────────────

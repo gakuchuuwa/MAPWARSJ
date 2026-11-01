@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将时代表（generalId → 四时代）——**只作兜底/原值**（游戏内取时代走 `FactionEra.getGeneralEra()`：势力年段 × 该将成名战年/登场年）。
  *
  * 由 GENERAL_CENTURIES（成名世纪=辉煌年代）派生，不做生卒/寿命。
@@ -1145,6 +1145,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'pugu_puguhuaien': 'feudal',
     'pulei_dougu': 'antiquity',
     'puxiangyindu_albukeerke': 'imperial',
+    'pyu_duttabaung': 'antiquity',   // 杜达巴翁｜室利差罗建城（传说）
     'pyu_moluo': 'feudal',
     'qi_d_qijiguang': 'imperial',
     'qi_simarangju': 'antiquity',

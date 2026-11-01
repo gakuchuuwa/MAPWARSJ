@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 势力时代表（factionId → 年份段 → 四时代）。
  *
  * 🔴 2026-10-25 主人令：「武将有生卒登场年，势力有时代」「按史分年段」「这样能保证一个势力的人，都是一个军团」。
@@ -419,7 +419,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'puluowangsi': [{ from: -9999, era: 'castle' }], // 普罗旺斯
     'pusikefu_gongheguo': [{ from: -9999, era: 'castle' }], // 伟利卡亚
     'puxiangyindu': [{ from: -9999, era: 'imperial' }], // 葡属印度
-    'pyu': [{ from: -9999, era: 'feudal' }], // 骠族
+    // 🔴 [2026-11-01 补缺格] 骠族｜按史分段：古典＝骠国城邦期（毗湿奴城前 200–室利差罗 4–5 世纪为都）→ 476 起封建（室利差罗盛期至骠国 9 世纪）
+    'pyu': [{ from: -9999, era: 'antiquity' }, { from: 476, era: 'feudal' }],
     'qi': [{ from: -9999, era: 'antiquity' }], // 齐国
     'qianhui': [{ from: -9999, era: 'imperial' }], // 回军
     'qianliang': [{ from: -9999, era: 'antiquity' }], // 前凉

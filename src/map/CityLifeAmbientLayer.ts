@@ -1081,6 +1081,8 @@ export class CityLifeAmbientLayer {
         const newPlots: { x: number; y: number }[] = [];   // 本据点这次新放的地皮（提交时才进全局登记）
         // 🔴 2026-10-31「每田一只，随机，不要重复」：本据点本年已用过的农田畜种，各套农田之间不重样
         const usedFarmLivestock = new Set<string>();
+        // 🔴 2026-11-01 主人令「无论随机出几个渔业，最多出一个渔港」：同一据点最多只生成 1 座船坞/渔港
+        let hasCityDock = false;
         for (let i = 0; i < totalSlots; i++) {
             const h2 = strHash01(yk, i * 17 + 2);
             const h3 = strHash01(yk, i * 17 + 3);
@@ -1099,8 +1101,10 @@ export class CityLifeAmbientLayer {
                     const damageVariant = Math.floor(strHash01(yk, i * 17 + 7) * 100);
                     const fishResource = fishPool[Math.floor(h2 * fishPool.length) % fishPool.length];
                     const winterActive = !isColdWinter || i === 0;
-                    // 船坞只随机出现在部分渔业组合；样式跟随文化，位置固定在近岸港湾。
-                    const buildingResource = strHash01(yk, i * 17 + 301) < 0.38
+                    // 船坞只随机出现在部分渔业组合，且同一据点最多只出 1 座渔港；样式跟随文化，位置固定在近岸港湾。
+                    const wantsDock = !hasCityDock && strHash01(yk, i * 17 + 301) < 0.38;
+                    if (wantsDock) hasCityDock = true;
+                    const buildingResource = wantsDock
                         ? `${deStyle && deStyle !== 'YURT' ? deStyle : 'WEST'}_DOCK_AGE2`
                         : undefined;
 

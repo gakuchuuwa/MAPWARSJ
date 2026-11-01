@@ -1,4 +1,4 @@
-﻿/**
+/**
 
  * 武将技 · 将领装配档案（从 GeneralSkills.ts 拆出，2026-07-13）
 
@@ -2612,6 +2612,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
+    // 🔴 [2026-11-01 补缺格·古典缅甸] 杜达巴翁＝普将（传说人物、缺史载实胜，四闸缺一即普将）；技能按普将通制取
+    pyu_duttabaung: { generalId: 'pyu_duttabaung', tier: 'ordinary', tacticalSkillId: 'ts_183', advantageSkillId: 'ts_183', balanceSkillId: 'ts_1116', disadvantageSkillId: 'ts_680', atkAdvantageSkillId: 'ts_183', atkBalanceSkillId: 'ts_1116', atkDisadvantageSkillId: 'ts_680', defAdvantageSkillId: 'ts_532', defBalanceSkillId: 'ts_439', defDisadvantageSkillId: 'ts_230', aptitude: 'reverse' , attackStyle: 'defense'},
     pyu_moluo: { generalId: 'pyu_moluo', tier: 'ordinary', tacticalSkillId: 'ts_183', advantageSkillId: 'ts_183', balanceSkillId: 'ts_1116', disadvantageSkillId: 'ts_680', atkAdvantageSkillId: 'ts_183', atkBalanceSkillId: 'ts_1116', atkDisadvantageSkillId: 'ts_680', defAdvantageSkillId: 'ts_532', defBalanceSkillId: 'ts_439', defDisadvantageSkillId: 'ts_230', aptitude: 'reverse' , attackStyle: 'defense'},
 
 

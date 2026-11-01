@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将文化表（generalId → 建筑文化）。由 tools/gen-general-culture.mts 生成。
  *
  * 🔴 [2026-10-19 主人令「必须给每个武将单独添加一个文化属性，才能对应上军团」]
@@ -1134,6 +1134,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'pugu_puguhuaien': 'KHITAN',   // 唐国｜仆固怀恩｜据点 回乐
     'pulei_dougu': 'KHITAN',   // 汉国｜窦固｜据点 敦煌（河西；屯凉州、出酒泉塞、出敦煌昆仑塞）
     'puxiangyindu_albukeerke': 'PORTUGUESE',   // 葡属印度｜阿尔布克尔克｜据点 果阿
+    'pyu_duttabaung': 'BURMESE',   // 骠族｜杜达巴翁｜据点 室利差罗
     'pyu_moluo': 'BURMESE',   // 骠族｜摩罗惹｜据点 室利差罗
     'qi_d_qijiguang': 'JIANGNAN',   // 大明｜戚继光｜据点 宁波
     'qi_simarangju': 'CENTRAL',   // 齐国｜司马穰苴｜据点 临淄

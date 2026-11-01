@@ -1131,7 +1131,7 @@ function resolveUnitSkillLayers(
     if (st.shield > 0 && !m.siegeW) {
         active.push({ six: 'shengzhan', seq: tier.shieldSeq, rem: st.shield, paid: tier.shieldPaid });
     }
-    if (st.panic > 0 && !m.march && !m.hero && !m.siegeW) {
+    if (st.panic > 0 && !m.hero && !m.siegeW) {
         active.push({ six: 'hunzhan', seq: tier.panicSeq, rem: st.panic, paid: tier.panicPaid });
     }
     if (hasUnitTags) {
@@ -1181,7 +1181,6 @@ export function drawScene13SkillStatusVfx(
 
     for (const m of men) {
         if (m.hp <= 0) continue;
-        if (!m.hero && (m.zid % 2) !== 0) continue;
         const st = unitStateOf ? unitStateOf(m) : states[m.f];
         const tier = sideCastTier[m.f];
         const resolved = resolveUnitSkillLayers(m, st, tier, nowSec, hasUnitTags);
@@ -1206,7 +1205,6 @@ export function drawScene13SkillStatusVfx(
     const ICON_R = 14.5;
     for (const m of men) {
         if (m.hp <= 0) continue;
-        if (!m.hero && (m.zid % 2) !== 0) continue;
 
         const st = unitStateOf ? unitStateOf(m) : states[m.f];
         const tier = sideCastTier[m.f];

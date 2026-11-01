@@ -1027,11 +1027,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/MALAY/taiyuan_menglai.png": {
-            "scale": 0.84,
-            "offsetX": 0,
-            "offsetY": 8
-        },
         "/assets/BURMESE/hantawadi_mangyinglong.png": {
             "scale": 0.88,
             "offsetX": 0,
@@ -9531,6 +9526,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 18
+        },
+        "/assets/KHMER/66cc862e-676b-4ac9-8bf1-d4125fe1e3e8.png": {
+            "scale": 1.13,
+            "offsetX": -5,
+            "offsetY": -19
+        },
+        "/assets/MALAY/__闲置__MALAY_03.png": {
+            "scale": 0.84,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/KHMER/taiyuan_menglai.png": {
+            "scale": 1.13,
+            "offsetX": -5,
+            "offsetY": -19
+        },
+        "/assets/MALAY/taiyuan_menglai.png": {
+            "scale": 0.84,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/MALAY/gen_rajah_hijau.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/BASHU/dali_gaoliangcheng.png": {
+            "scale": 1,
+            "offsetX": 14,
+            "offsetY": 3
+        },
+        "/assets/BASHU/nanzhao_duanqiuxian.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 25
         }
     },
     "folderGuides": {

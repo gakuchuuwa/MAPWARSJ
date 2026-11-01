@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将生卒年表（generalId → { 生年 birth, 卒年 death[, 登场年 debut] }）。
  * 登场年默认 = 生年 + 20（20 岁登场），由 `getGeneralDebutYear` 推算，不重复存。
  *
@@ -1293,6 +1293,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     dalung_sangjiwen: { birth: 1251, death: 1296, kaoju: '异说' },  // 桑吉温
     dong_nangqianjiabo: { birth: 1135, death: 1195, kaoju: '推定' },  // 囊谦
     hor_chisang: { birth: 1615, death: 1675, kaoju: '推定' },  // 赤桑
+    pyu_duttabaung: { birth: 340, death: 420, kaoju: '推定' },  // 杜达巴翁（《琉璃宫史》传说的室利差罗建城王；纪年不可信，取考古对应的 4 世纪伐毗湿奴城之战，生卒为估）
     pyu_moluo: { birth: 750, death: 810, kaoju: '推定' },  // 摩罗惹
     nongzhigao_huangshimi: { birth: 1005, death: 1053, kaoju: '推定' },  // 黄师宓
     weitou_douti: { birth: 30, death: 74, kaoju: '推定' },  // 兜题

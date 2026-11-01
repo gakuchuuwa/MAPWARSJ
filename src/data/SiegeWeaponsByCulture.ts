@@ -983,6 +983,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'elite_ballista_elephant', 'elite_ballista_elephant', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
     },
+    // 🔴 [2026-11-01 补缺格] 古典时代骠人军团（缅甸·古典）：骠国城邦期攻城器械按 antiquity 档取
+    '古典时代骠人军团': {
+        age: 'antiquity',
+        weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
+    },
     '封建时代蒲甘军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],

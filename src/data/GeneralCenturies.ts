@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将成名世纪表（generalId → 世纪）。
  *
  * 用途：配合文化区构成「文化区 × 时代」二维支文化，决定军团编成。
@@ -699,6 +699,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'mu_lijiang_muzeng': 17,                             // 木增 · mu_lijiang · 大研
     'nanzhao_geluofeng': 8,                             // 阁罗凤 · nanzhao · 蒙舍城
     'pagan_anulvtuo': 11,                                // 阿奴律陀 · pagan · 蒲甘
+    'pyu_duttabaung': 4,                                // 杜达巴翁 · pyu · 室利差罗（传说纪年不可信，取考古对应的 4 世纪伐毗湿奴城之战）
     'pyu_moluo': 8,                                     // 摩罗惹 · pyu · 室利差罗
     'siam_nalixuan': 16,                                 // 纳黎萱 · siam · 阿瑜陀耶
     'suke_langanheng': 13,                               // 兰甘亨 · suke · 素可泰

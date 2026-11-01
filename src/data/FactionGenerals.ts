@@ -1,4 +1,4 @@
-﻿/**
+/**
 
 
 
@@ -10590,7 +10590,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    taiyuan: { generalId: 'taiyuan_menglai', cityId: 'city_chingkham', generalName: '孟莱', portrait: '/assets/MALAY/taiyuan_menglai.png', eliteName: '兰纳象兵', eliteTier: 3 },
+    taiyuan: { generalId: 'taiyuan_menglai', cityId: 'city_chingkham', generalName: '孟莱', portrait: '/assets/KHMER/taiyuan_menglai.png', eliteName: '兰纳象兵', eliteTier: 3 },
 
 
 
@@ -12512,7 +12512,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    pyu: { generalId: 'pyu_moluo', cityId: 'city_srikshetra', generalName: '摩罗惹', portrait: '/assets/BURMESE/pyu_moluo.png', eliteName: '缅甸象兵', eliteTier: 4 },
+    // 🔴 [2026-11-01 补缺格·古典缅甸] 骠族＝骠国；室利差罗一城两将（同文化 BURMESE、同据点）
+    //    摩罗惹＝《新唐书·骠国传》802 年骠王（封建，保留旧条目在前，不改开局取将顺序）；
+    //    杜达巴翁＝《琉璃宫史》传说的室利差罗建城之王（伐毗湿奴城之战约 4 世纪 → 古典），立绘留空
+    pyu: [
+        { generalId: 'pyu_moluo', cityId: 'city_srikshetra', generalName: '摩罗惹', portrait: '/assets/BURMESE/pyu_moluo.png', eliteName: '缅甸象兵', eliteTier: 4 },
+        { generalId: 'pyu_duttabaung', cityId: 'city_srikshetra', generalName: '杜达巴翁', portrait: '/assets/BURMESE/pyu_duttabaung.png', eliteName: '骠国战象', eliteTier: 4 },
+    ],
 
 
 
