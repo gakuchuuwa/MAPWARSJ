@@ -1,17 +1,18 @@
-/**
+﻿/**
  * 文化战略特性审计（2026-10-24 重写；原 2026-07-29 版按 16 母体 × 五张战斗六维表审计，已作废）
  *
  * 🔴 现行口径（2026-10-18 主人定 + 2026-10-24 代码现状）：
  *   · 文化 100% 归属**大战略层**，不进战斗八环 ⇒ `TIER_TABLE` / `SPEED_TABLE` **已废除（空表）**；
  *     再往里写数值不会被读取，等于死数据。
- *   · 现行文化表按 **66 文化**开键（62 二级 + 4 三级）：`RECRUIT_TABLE`（募兵）、
+ *   · 现行文化表按 **67 文化**开键（62 二级 + 5 三级；2026-10-26 主人批准新增湖广 HUGUANG）：
+ *     `RECRUIT_TABLE`（募兵）、
  *     `LEGION_TROOP_CAP_TABLE`（军团兵力上限）、`CITY_TROOP_CAP_TABLE`（据点驻军上限），
  *     其余文化一律 ×1.00（不写键 = 1.00，属正常，不是缺键）。
  *   · 另有特性清单：山地行军免减速、海行加速、平原疾行、陆/海行军不减兵——里面的文化 ID
- *     必须是 66 之一，写错会静默失效。
+ *     必须是 67 之一，写错会静默失效。
  *
  * 本脚本检查：
- *   ① 66 文化键表：键必须在 66 文化里、不能有多余键、倍率在合理区间；
+ *   ① 67 文化键表：键必须在 67 文化里、不能有多余键、倍率在合理区间；
  *   ② TIER_TABLE / SPEED_TABLE 必须为空（已废除；若非空 = 回潮，报硬伤）；
  *   ③ 特性清单里的文化 ID 全部合法、无重复；
  *   ④ 输出每个文化吃到的战略特性（情报）。
@@ -31,7 +32,7 @@ let failed = 0;
 const fail = (msg) => { failed++; console.log('  ✗ ' + msg); };
 const info = (msg) => console.log('  · ' + msg);
 
-// ── 66 文化：62 二级 + 4 三级，全部从 CultureHierarchy.ts 读（避免第二份权威）──
+// ── 67 文化：62 二级 + 5 三级，全部从 CultureHierarchy.ts 读（避免第二份权威）──
 function grabBlock(name) {
     const i = hierSrc.indexOf('export const ' + name);
     if (i < 0) throw new Error('CultureHierarchy.ts 里找不到 ' + name);
@@ -52,10 +53,10 @@ const L2 = branchKeys(grabBlock('CULTURE_62_GROUPS'));
 const L3 = branchKeys(grabBlock('LAYER3_CUSTOM_GROUPS'));
 const CULTURES = [...L2, ...L3];
 const CULTURE_SET = new Set(CULTURES);
-console.log('=== 66 文化键（62 二级 + 4 三级）===');
+console.log('=== 67 文化键（62 二级 + 5 三级）===');
 console.log(`  二级 ${L2.length}｜三级 ${L3.length}｜合计 ${CULTURES.length}`);
-if (L2.length !== 62 || L3.length !== 4 || CULTURES.length !== 66) {
-    fail(`应为 62+4=66，实为 ${L2.length}+${L3.length}=${CULTURES.length}`);
+if (L2.length !== 62 || L3.length !== 5 || CULTURES.length !== 67) {
+    fail(`应为 62+5=67，实为 ${L2.length}+${L3.length}=${CULTURES.length}`);
 }
 
 // ── 读 GameConfig.CULTURE_COMBAT 里的表 / 清单 ──
@@ -98,18 +99,18 @@ const LISTS = {
     PLAIN_SPEED_BONUS_CULTURES: grabList('PLAIN_SPEED_BONUS_CULTURES'),
 };
 
-// ── ① 66 文化键表 ──
-console.log('\n=== ① 66 文化键表（66 文化开键；未写键 = ×1.00）===');
+// ── ① 67 文化键表 ──
+console.log('\n=== ① 67 文化键表（67 文化开键；未写键 = ×1.00）===');
 let bad = 0;
 for (const [tn, t] of Object.entries(TABLES)) {
     const keys = Object.keys(t);
     const unknown = keys.filter((k) => !CULTURE_SET.has(k));
     const outOfRange = keys.filter((k) => !(t[k] >= 1 && t[k] <= 2));
-    if (unknown.length) { fail(`${tn} 含非 66 文化键: ${unknown.join(', ')}`); bad++; }
+    if (unknown.length) { fail(`${tn} 含非 67 文化键: ${unknown.join(', ')}`); bad++; }
     if (outOfRange.length) { fail(`${tn} 倍率越界(1~2): ${outOfRange.map((k) => `${k}=${t[k]}`).join(', ')}`); bad++; }
     console.log(`  ${tn}: ${keys.length} 个加成键${unknown.length ? '' : ' ✓'}｜${keys.map((k) => `${k}×${t[k]}`).join('、')}`);
 }
-if (!bad) info('三张策略表键全部落在 66 文化内');
+if (!bad) info('三张策略表键全部落在 67 文化内');
 
 // ── ② 已废除的两张表必须为空 ──
 console.log('\n=== ② 已废除表必须为空（文化不进战斗八环 / 行军速度由兵种+地形决定）===');
@@ -126,7 +127,7 @@ console.log('\n=== ③ 特性清单（文化 ID 必须合法、不重复）===')
 for (const [ln, list] of Object.entries(LISTS)) {
     const unknown = list.filter((k) => !CULTURE_SET.has(k));
     const dup = list.filter((k, i) => list.indexOf(k) !== i);
-    if (unknown.length) fail(`${ln} 含非 66 文化: ${unknown.join(', ')}`);
+    if (unknown.length) fail(`${ln} 含非 67 文化: ${unknown.join(', ')}`);
     if (dup.length) fail(`${ln} 有重复: ${dup.join(', ')}`);
     if (!unknown.length && !dup.length) info(`${ln}: ${list.length} 个（${list.join('、')}）✓`);
 }
@@ -136,7 +137,7 @@ const ATTR = [
 ];
 for (const [ln, list] of ATTR) {
     const unknown = list.filter((k) => !CULTURE_SET.has(k));
-    if (unknown.length) fail(`${ln} 含非 66 文化: ${unknown.join(', ')}`);
+    if (unknown.length) fail(`${ln} 含非 67 文化: ${unknown.join(', ')}`);
     else info(`${ln}: ${list.length} 个 ✓`);
 }
 

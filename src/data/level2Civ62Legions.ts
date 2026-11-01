@@ -3353,12 +3353,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BURM_CASTLE_AGE3', castleName: '缅甸 蒲甘千佛塔金顶堡',
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_gajahmada',
-        // 步弓（fish_scale 3-4-2）：前排长矛 3 ｜ 中排步弓 4 ｜ 后排掷矛轻兵 2（本军团无骑，末位以轻兵补）
+        commanderUnit: 'hero_joanthemaid',
+        // 步弓（fish_scale 3-4-2）：前排古典长矛兵 3 ｜ 中排古典弓手 4 ｜ 后排古典掷矛手 2
+        // 🔴 [2026-11-01] 三排兵种一律取古典档兵模（antiquity_spearman／bowman／antiquity_skirmisher），
+        //    不用封建档的 archer（步弓手）与 skirmisher（掷矛手），避免古典军团跨时代带封建兵。
         slots: [
             { type: 'antiquity_spearman', count: 3 },
-            { type: 'archer', count: 4 },
-            { type: 'skirmisher', count: 2 },
+            { type: 'bowman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 2 },
         ],
     },
     // ── 缅甸 · 封建时代 · 封建时代蒲甘军团　（本次新建）────────────────

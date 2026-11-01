@@ -4349,16 +4349,19 @@ export class CombatUI {
         const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
         // 立绘/标签：跟拍优先，否则带武将 > 精锐 > 其余（本城有将不换）；第二行队名另走 pickSideNameUnit。
-        const attacker = this.pickPortraitTagUnit(attackers, 'attacker') ?? attBattler;
-        const defender = this.pickPortraitTagUnit(defenders, 'defender') ?? defBattler;
+        const rawAttacker = this.pickPortraitTagUnit(attackers, 'attacker') ?? attBattler;
+        const rawDefender = this.pickPortraitTagUnit(defenders, 'defender') ?? defBattler;
+        const { unit: attacker, generalId: attGenId } = this.resolveSideGeneralUnitAndId(rawAttacker, 'attacker');
+        const { unit: defender, generalId: rawDefGenId } = this.resolveSideGeneralUnitAndId(rawDefender, 'defender');
+        const defGenId = (attGenId && rawDefGenId === attGenId) ? undefined : rawDefGenId;
 
         const attName = this.buildWaveGroupedSideName(attackers, 'attacker');
         const defName = this.buildWaveGroupedSideName(defenders, 'defender');
 
         this.attackerFactionId = attacker.factionId;
         this.defenderFactionId = defender.factionId;
-        this.attackerDisplayFactionId = this.displayFactionId(attacker.factionId, attacker.generalId);
-        this.defenderDisplayFactionId = this.displayFactionId(defender.factionId, defender.generalId);
+        this.attackerDisplayFactionId = this.displayFactionId(attacker.factionId, attGenId);
+        this.defenderDisplayFactionId = this.displayFactionId(defender.factionId, defGenId);
         this.currentBattleKey = this.buildPortraitConfigKey(displayTitle, attacker, defender);
 
         this.updateMultiplierBadges(attacker, defender);
@@ -4370,17 +4373,17 @@ export class CombatUI {
         this.setPortrait(
             attackerPortraitImg,
             attacker,
-            attacker.generalId,
+            attGenId,
             attacker.factionId,
-            attacker.generalId ? attackerPortrait : (attackerPortrait ?? attacker.portraitPath),
+            attGenId ? attackerPortrait : (attackerPortrait ?? attacker.portraitPath),
             'attacker',
         );
         this.setPortrait(
             defenderPortraitImg,
             defender,
-            defender.generalId,
+            defGenId,
             defender.factionId,
-            defender.generalId ? defenderPortrait : (defenderPortrait ?? defender.portraitPath),
+            defGenId ? defenderPortrait : (defenderPortrait ?? defender.portraitPath),
             'defender',
             attackerPortraitImg.src || undefined,
         );
@@ -4474,6 +4477,11 @@ export class CombatUI {
 
     public isRegionalVisible(): boolean {
         return this.isVisible && this.currentRegionalUnits !== null;
+    }
+
+    /** 战斗界面是否已激活显示（含区域战、1v1 战斗、战术模式 13 布局） */
+    public isBattleVisible(): boolean {
+        return this.isVisible && (this.currentRegionalUnits !== null || this.currentBattle !== null || this.scene13LayoutOn);
     }
 
     /** 以战场单位列表判定 generalId 属攻/守（优先于名牌 dataset，防攻城城防将错位） */
@@ -4867,24 +4875,29 @@ export class CombatUI {
         const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
         // 立绘/标签与第二行队名解耦：脸可借援军将，队名仍钉本城/开局波次。
-        const attGeneral = this.pickPortraitTagUnit(attackers, 'attacker') ?? attBattler;
-        const defGeneral = this.pickPortraitTagUnit(defenders, 'defender') ?? defBattler;
+        const rawAttGeneral = this.pickPortraitTagUnit(attackers, 'attacker') ?? attBattler;
+        const rawDefGeneral = this.pickPortraitTagUnit(defenders, 'defender') ?? defBattler;
+        const { unit: attGeneral, generalId: attGenId } = this.resolveSideGeneralUnitAndId(rawAttGeneral, 'attacker');
+        const { unit: defGeneral, generalId: rawDefGenId } = this.resolveSideGeneralUnitAndId(rawDefGeneral, 'defender');
+        const defGenId = (attGenId && rawDefGenId === attGenId) ? undefined : rawDefGenId;
 
         this.updateMultiplierBadges(attGeneral, defGeneral);
         this.updateSkillBadges(attGeneral, defGeneral);
-        const attackerPortrait = this.sideElement('attacker', this.leftPortrait, this.rightPortrait);
-        const defenderPortrait = this.sideElement('defender', this.leftPortrait, this.rightPortrait);
-        this.setPortrait(attackerPortrait, attGeneral, attGeneral.generalId, attGeneral.factionId, attGeneral.portraitPath, 'attacker');
-        this.setPortrait(
-            defenderPortrait,
-            defGeneral,
-            defGeneral.generalId,
-            defGeneral.factionId,
-            defGeneral.portraitPath,
-            'defender',
-            attackerPortrait.src || undefined,
-        );
-        this.updateGeneralNameTags(attGeneral, defGeneral);
+        if (!this.correctorOpen) {
+            const attackerPortrait = this.sideElement('attacker', this.leftPortrait, this.rightPortrait);
+            const defenderPortrait = this.sideElement('defender', this.leftPortrait, this.rightPortrait);
+            this.setPortrait(attackerPortrait, attGeneral, attGenId, attGeneral.factionId, attGeneral.portraitPath, 'attacker');
+            this.setPortrait(
+                defenderPortrait,
+                defGeneral,
+                defGenId,
+                defGeneral.factionId,
+                defGeneral.portraitPath,
+                'defender',
+                attackerPortrait.src || undefined,
+            );
+            this.updateGeneralNameTags(attGeneral, defGeneral);
+        }
         this.refreshRegionalSafetyDeadline();
         this.updateStats();
     }
@@ -5000,7 +5013,8 @@ export class CombatUI {
      *  统一经 normalizePortraitWebPath 去掉可能混入的 /public 前缀——保证调校的
      *  「存 key」与「读 key」永远一致，杜绝 /public 前缀导致的「调了又丢」。 */
     private srcToPath(img: HTMLImageElement): string {
-        const src = img.currentSrc || img.src;
+        const rawAttr = img.getAttribute('src')?.trim();
+        const src = rawAttr || img.src || img.currentSrc;
         if (!src) return '';
         try {
             return normalizePortraitWebPath(decodeURIComponent(new URL(src, location.href).pathname));
@@ -5524,28 +5538,43 @@ export class CombatUI {
     private async applyBoundPortraitToCombatImg(
         bind: { destPath: string; sourcePath: string; side: 'attacker' | 'defender'; generalId: string },
     ): Promise<void> {
-        // 先用 sourcePath 做临时 override（源图保证可访问），避免 destPath 尚未就绪时显示空白
-        setGeneralPortraitOverride(bind.generalId, bind.sourcePath);
+        // 先 bump 选图器版本号，避免 preload 与 img.src 命中 openPortraitPicker 时缓存的旧图
+        this.bumpPortraitPickerCatalogRev();
+        registerPortraitPathRuntime(bind.destPath, bind.generalId);
+        setGeneralPortraitOverride(bind.generalId, bind.destPath);
         try {
             await this.preloadPortraitWebPath(bind.destPath);
         } catch {
-            // Windows 文件系统延迟，destPath 暂 404；源图已在战斗 UI 显示，不额外操作
-            // 刷新页面后 FactionGenerals.ts 的 destPath 生效
-            return;
+            // Windows 文件系统偶发延迟，仍继续把 img.src 切到新路径并套用调校
         }
-        // destPath 确认可访问，升级 override 并更新 img.src
-        setGeneralPortraitOverride(bind.generalId, bind.destPath);
         const img = this.sideElement(bind.side, this.leftPortrait, this.rightPortrait);
+        this.portraitSourceFacing[bind.side] = resolvePortraitSourceFacing(undefined, bind.destPath);
+        this.applyPortraitFacing(bind.side);
         const bust = `${bind.destPath}?v=${this.portraitPickerCatalogRev}`;
         await new Promise<void>((resolve) => {
+            let handled = false;
             const done = () => {
-                this.loadCorrectorDraft();
+                if (handled) return;
+                handled = true;
+                img.onload = null;
+                img.onerror = null;
+                if (this.correctorSide === bind.side) {
+                    this.loadCorrectorDraft();
+                }
                 applyPortraitAdjustToElement(img, bind.destPath, this.correctorData);
                 this.scheduleCorrectorCrosshairRefresh();
                 resolve();
             };
-            img.addEventListener('load', done, { once: true });
-            img.addEventListener('error', () => resolve(), { once: true });
+            img.onload = done;
+            img.onerror = () => {
+                if (handled) return;
+                handled = true;
+                img.onload = null;
+                img.onerror = null;
+                applyPortraitAdjustToElement(img, bind.destPath, this.correctorData);
+                resolve();
+            };
+            img.removeAttribute('src');
             img.src = bust;
             if (img.complete && img.naturalWidth > 0) done();
         });
@@ -5587,9 +5616,9 @@ export class CombatUI {
                         this.correctorDirtyPaths.add(finalPath);
                     }
                 }
-                registerPortraitPathRuntime(finalPath);           // 注入 KNOWN_PORTRAIT_PATHS
-                setGeneralPortraitOverride(bind.generalId, finalPath); // 更新将领立绘缓存
-                bind.destPath = finalPath;                        // 同步 staging 的 destPath
+                registerPortraitPathRuntime(finalPath, bind.generalId); // 注入 KNOWN_PORTRAIT_PATHS 并清回落缓存
+                setGeneralPortraitOverride(bind.generalId, finalPath);  // 更新将领立绘缓存
+                bind.destPath = finalPath;                              // 同步 staging 的 destPath
                 committed.push(bind);
                 failedBind = null;
                 await this.applyBoundPortraitToCombatImg(bind);
@@ -5917,6 +5946,10 @@ export class CombatUI {
         if (!this.isRegionalVisible() || this.regionalHideTimer) return;
         this.regionalHideTimer = setTimeout(() => {
             this.regionalHideTimer = null;
+            if (this.correctorOpen) {
+                this.finishRegionalBattle();
+                return;
+            }
             if (this.currentRegionalUnits) this.hide();
         }, CombatUI.REGIONAL_TAIL_MS);
     }
@@ -5930,7 +5963,12 @@ export class CombatUI {
 
     private refreshRegionalSafetyDeadline(): void {
         const bf = this.boundRegionalBattleField;
-        if (!bf || bf.isOver) return;
+        if (!bf || bf.isOver) {
+            if (this.correctorOpen && this.regionalSafetyDeadline > 0) {
+                this.regionalSafetyDeadline = Math.max(this.regionalSafetyDeadline, performance.now() + 15000);
+            }
+            return;
+        }
         const remainingGameSec = Math.max(8, bf.targetDuration - bf.elapsed + 4);
         const wallMs = (remainingGameSec / this.lastTimeScale) * 1000 + CombatUI.REGIONAL_TAIL_MS;
         this.regionalSafetyDeadline = performance.now() + wallMs;
@@ -5939,6 +5977,10 @@ export class CombatUI {
     public update(timeScale: number = 1) {
         if (!this.isVisible) return;
         this.lastTimeScale = Math.max(0.1, timeScale);
+        if (this.correctorOpen) {
+            this.refreshRegionalSafetyDeadline();
+            return;
+        }
 
         if (this.boundRegionalBattleField) {
             if (this.boundRegionalBattleField.isOver) {
@@ -5991,17 +6033,23 @@ export class CombatUI {
             }
             return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; text-align: inherit;"><span style="white-space: nowrap;">${base}</span><span style="opacity: 0.85; font-size: 0.95em; margin-left: 2px; white-space: nowrap;">${suffix}</span></div>`;
         };
-        this.attackerFactionId = att.factionId;
-        this.defenderFactionId = def.factionId;
-        this.attackerDisplayFactionId = this.displayFactionId(att.factionId, att.generalId);
-        this.defenderDisplayFactionId = this.displayFactionId(def.factionId, def.generalId);
+        const { unit: attResolved, generalId: attGenId } = this.resolveSideGeneralUnitAndId(att, 'attacker');
+        const { unit: defResolved, generalId: rawDefGenId } = this.resolveSideGeneralUnitAndId(def, 'defender');
+        const defGenId = (attGenId && rawDefGenId === attGenId) ? undefined : rawDefGenId;
+
+        this.attackerFactionId = attResolved.factionId;
+        this.defenderFactionId = defResolved.factionId;
+        this.attackerDisplayFactionId = this.displayFactionId(attResolved.factionId, attGenId);
+        this.defenderDisplayFactionId = this.displayFactionId(defResolved.factionId, defGenId);
         
         this.updateInfoDirect(mapName(att), mapName(def), title, year, undefined, def);
         
         this.currentBattleKey = title || `battle_${Date.now()}`;
-        this.setPortrait(this.leftPortrait, att, att.generalId, att.factionId, undefined, 'attacker');
-        const defGenId = (att.generalId && def.generalId === att.generalId) ? undefined : def.generalId;
-        this.setPortrait(this.rightPortrait, def, defGenId, def.factionId, undefined, 'defender', this.leftPortrait.src || undefined);
+        const attackerPortrait = this.sideElement('attacker', this.leftPortrait, this.rightPortrait);
+        const defenderPortrait = this.sideElement('defender', this.leftPortrait, this.rightPortrait);
+        this.setPortrait(attackerPortrait, attResolved, attGenId, attResolved.factionId, undefined, 'attacker');
+        this.setPortrait(defenderPortrait, defResolved, defGenId, defResolved.factionId, undefined, 'defender', attackerPortrait.src || undefined);
+        this.updateGeneralNameTags(attResolved, defResolved);
         this.updateStats();
     }
 
@@ -6375,6 +6423,36 @@ export class CombatUI {
         }
     }
 
+    /** 解析立绘与名牌共用的主将单位及 generalId（含指挥官回退与攻城驻将兜底，确保立绘与名牌永远同一个人） */
+    private resolveSideGeneralUnitAndId(
+        unit: IBattleUnit,
+        side: 'attacker' | 'defender',
+    ): { unit: IBattleUnit; generalId: string | undefined } {
+        let resolvedUnit = unit;
+        let generalId = unit.generalId;
+        let rec = generalId ? getGeneralRecordByGeneralId(generalId) : null;
+        if (!rec) {
+            const cmd = this.resolvePowerBadgeUnit(unit, side);
+            const cmdRec = cmd.generalId ? getGeneralRecordByGeneralId(cmd.generalId) : null;
+            if (cmdRec) {
+                resolvedUnit = cmd;
+                generalId = cmd.generalId;
+                rec = cmdRec;
+            }
+        }
+        if (!rec && side === 'defender') {
+            const ent = unit.getEntity?.() as {
+                _firstBattleDefenderGeneralId?: string;
+                _siegeGarrisonGeneralId?: string;
+            } | undefined;
+            const fallbackGid = ent?._firstBattleDefenderGeneralId ?? ent?._siegeGarrisonGeneralId;
+            if (fallbackGid && getGeneralRecordByGeneralId(fallbackGid)) {
+                generalId = fallbackGid;
+            }
+        }
+        return { unit: resolvedUnit, generalId };
+    }
+
     private fillGeneralNameTag(
         tag: HTMLDivElement,
         unit: IBattleUnit,
@@ -6382,23 +6460,8 @@ export class CombatUI {
     ): void {
         /* 🔴 [2026-09-18 主人报障「朱棣怎么是封建时代中原军团？必须一套数据」]
          *   名牌与军团名必须同源：名字取自谁，军团名/精锐番号就取谁，永远是同一支军队。 */
-        let nameUnit: IBattleUnit = unit;
-        let generalId = unit.generalId;
-        let rec = generalId ? getGeneralRecordByGeneralId(generalId) : null;
-        if (!rec) {
-            // 显示单位无在册将（典型：攻城战守方顶到前排的城防驻军）→ 名牌退回
-            // 开战锁定指挥官/放技将，与技能条同口径（resolvePowerBadgeUnit），
-            // 否则出现「技能条在放将技、名牌却空着」（2026-08-03 顺昌攻防战守方无名）。
-            const cmd = this.resolvePowerBadgeUnit(unit, side);
-            const cmdRec = cmd.generalId ? getGeneralRecordByGeneralId(cmd.generalId) : null;
-            if (cmdRec) {
-                generalId = cmd.generalId;
-                rec = cmdRec;
-                // 名字改取自指挥官 → 军团名/精锐番号也必须取自指挥官
-                // （改前军团名固定取原 unit，会显示成「朱棣 + 别人的军团名」）
-                nameUnit = cmd;
-            }
-        }
+        const { unit: nameUnit, generalId } = this.resolveSideGeneralUnitAndId(unit, side);
+        const rec = generalId ? getGeneralRecordByGeneralId(generalId) : null;
         const famousBadge = this.sideElement(side, this.leftFamousBadge, this.rightFamousBadge);
         const legionTag = this.sideElement(side, this.leftLegionTag, this.rightLegionTag);
         if (rec) {
@@ -6699,36 +6762,58 @@ export class CombatUI {
         const targetFolder = this.portraitPickerFolder;
         if (!generalId || !side || !sourcePath || !targetFolder) return;
 
+        if (this.correctorSide !== side) {
+            this.syncCurrentCorrectorDraftToData();
+        }
+
         const destPath = `${targetFolder}${generalId}.png`;
         this.portraitBindStaging = this.portraitBindStaging.filter(
             (b) => b.generalId !== generalId && b.side !== side,
         );
         this.portraitBindStaging.push({ generalId, sourcePath, targetFolder, side, destPath });
-        // 选定后立即同步武将立绘覆盖，避免战术界面重绘时又被旧档案路径覆盖。
+        // 选定后立即注册运行时路径并同步武将立绘覆盖，避免战术界面重绘时又被旧档案路径或随机回落图覆盖
+        registerPortraitPathRuntime(sourcePath, generalId);
         setGeneralPortraitOverride(generalId, sourcePath);
 
         this.correctorSide = side;
         this.highlightCorrectorSide();
+        this.portraitSourceFacing[side] = resolvePortraitSourceFacing(undefined, sourcePath);
+        this.applyPortraitFacing(side);
+
         const img = this.sideElement(side, this.leftPortrait, this.rightPortrait);
+        // 用源图已有的调校初始化草稿，让预览立即以调好的状态显示
+        // 按自身路径优先解析（resolvePortraitAdjust 内部会自身→canonical→文件夹兜底）
+        const sourceAdj = resolvePortraitAdjust(sourcePath, this.correctorData);
+        this.correctorDraft = { scale: sourceAdj.scale, offsetX: sourceAdj.offsetX, offsetY: sourceAdj.offsetY };
+        // 同时把调校值写入 destPath，并标记 dirty
+        // 这样即使用户不动滑块直接关 F2，下场战斗也会用正确的位置
+        if (this.canPersistPortraitPath(destPath)) {
+            this.correctorData.images = this.correctorData.images ?? {};
+            this.correctorData.images[destPath] = { ...this.correctorDraft };
+            this.correctorDirtyPaths.add(destPath);
+        }
+        this.renderCorrectorReadout();
+        applyPortraitAdjustToElement(img, this.correctorPathForSide(side), this.correctorData);
+
+        let loaded = false;
         const onPortraitLoaded = () => {
-            // 用源图已有的调校初始化草稿，让预览立即以调好的状态显示
-            // 按自身路径优先解析（resolvePortraitAdjust 内部会自身→canonical→文件夹兜底）
-            const sourceAdj = resolvePortraitAdjust(sourcePath, this.correctorData);
-            this.correctorDraft = { scale: sourceAdj.scale, offsetX: sourceAdj.offsetX, offsetY: sourceAdj.offsetY };
-            // 同时把调校值写入 destPath，并标记 dirty
-            // 这样即使用户不动滑块直接关 F2，下场战斗也会用正确的位置
-            if (this.canPersistPortraitPath(destPath)) {
-                this.correctorData.images = this.correctorData.images ?? {};
-                this.correctorData.images[destPath] = { ...this.correctorDraft };
-                this.correctorDirtyPaths.add(destPath);
-            }
-            this.renderCorrectorReadout();
-            applyPortraitAdjustToElement(img, sourcePath, this.correctorData);
+            if (loaded) return;
+            loaded = true;
+            img.onload = null;
+            img.onerror = null;
+            this.applyPortraitFacing(side);
+            applyPortraitAdjustToElement(img, this.correctorPathForSide(side), this.correctorData);
             this.scheduleCorrectorCrosshairRefresh();
         };
-        img.addEventListener('load', onPortraitLoaded, { once: true });
+        img.onload = onPortraitLoaded;
+        img.onerror = () => {
+            img.onload = null;
+            img.onerror = null;
+            this.setCorrectorStatus(`⚠ 立绘预览加载失败：${sourcePath}`);
+        };
+        img.removeAttribute('src');
         img.src = `${sourcePath}?v=${Date.now()}`;
-        if (img.complete) onPortraitLoaded();
+        if (img.complete && img.naturalWidth > 0) onPortraitLoaded();
 
         this.closePortraitPicker();
         this.setCorrectorStatus(
@@ -7067,16 +7152,20 @@ export class CombatUI {
             }
 
             rememberFacing(finalUrl);
+            const adjustKey = (side ? this.correctorPathForSide(side) : '') || finalUrl;
             let loaded = false;
             const onLoad = () => {
                 if (loaded) return;
                 loaded = true;
+                img.onload = null;
+                img.onerror = null;
                 applyFacing();
-                applyPortraitAdjustToElement(img, finalUrl, this.correctorData);
+                applyPortraitAdjustToElement(img, (side ? this.correctorPathForSide(side) : '') || finalUrl, this.correctorData);
             };
-            img.addEventListener('load', onLoad, { once: true });
+            img.onload = onLoad;
             if (!isRetry) {
                 img.onerror = () => {
+                    img.onload = null;
                     img.onerror = null;
                     // 主人边玩边删立绘：加载失败即从内存清单剔除，
                     // 之后所有池子抽签自动跳过它，同一张坏图只会坑一次，无需重启 dev server
@@ -7092,6 +7181,8 @@ export class CombatUI {
                         setSrc(alt, true);
                     }
                 };
+            } else {
+                img.onerror = null;
             }
             // 切换立绘先清空旧图：img.src 是异步加载，不清空会残留上一场人物（新图 onload 才替换）
             img.removeAttribute('src');
@@ -7102,7 +7193,7 @@ export class CombatUI {
                 onLoad();
             } else {
                 applyFacing();
-                applyPortraitAdjustToElement(img, finalUrl, this.correctorData);
+                applyPortraitAdjustToElement(img, adjustKey, this.correctorData);
             }
         };
 

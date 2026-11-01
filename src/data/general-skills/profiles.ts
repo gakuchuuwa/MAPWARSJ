@@ -1743,6 +1743,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     ganzhou_dourong: { generalId: 'ganzhou_dourong', tier: 'ordinary', tacticalSkillId: 'ts_652', advantageSkillId: 'ts_652', balanceSkillId: 'ts_252', disadvantageSkillId: 'ts_209', atkBalanceSkillId: 'ts_252', atkAdvantageSkillId: 'ts_652', atkDisadvantageSkillId: 'ts_209', defAdvantageSkillId: 'ts_783', defBalanceSkillId: 'ts_1111', defDisadvantageSkillId: 'ts_277', aptitude: 'leverage' , attackStyle: 'defense'},   // 🔴 [2026-10-28 档位对齐] 白皮书：率河西兵破隗嚣（具名）　🔴[2026-11-01 主人令·四闸复核] 名将→普将：从汉军破隗嚣，非第一线决断者
+    // 🔴 [2026-11-01 按史补] 夜落纥＝甘州回鹘可汗；普将（区域政权，史载实胜不细），技能按普将通制取
+    ganzhou_huihu_yeluohu: { generalId: 'ganzhou_huihu_yeluohu', tier: 'ordinary', tacticalSkillId: 'ts_183', advantageSkillId: 'ts_183', balanceSkillId: 'ts_1116', disadvantageSkillId: 'ts_680', atkAdvantageSkillId: 'ts_183', atkBalanceSkillId: 'ts_1116', atkDisadvantageSkillId: 'ts_680', defAdvantageSkillId: 'ts_532', defBalanceSkillId: 'ts_439', defDisadvantageSkillId: 'ts_230', aptitude: 'reverse' , attackStyle: 'defense'},
 
 
 

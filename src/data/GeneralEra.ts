@@ -249,6 +249,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'ganden_zongkaba': 'castle',
     'gandenpozhang_dibasangjiejiacuo': 'imperial',
     'ganzhou_dourong': 'antiquity',
+    'ganzhou_huihu_yeluohu': 'feudal',   // 甘州回鹘｜夜落纥｜据点 张掖（894–1036）
     'gaoche_afuzhiluo': 'antiquity',
     'gaogouli_yizhiwende': 'feudal',
     'gaoliang_geshuhan': 'feudal',

@@ -398,6 +398,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ganden_zongkaba': 'TIBET',   // 甘丹｜宗喀巴｜据点 逻些
     'gandenpozhang_dibasangjiejiacuo': 'TIBET',   // 甘丹｜桑结嘉措｜据点 逻些
     'ganzhou_dourong': 'KHITAN',   // 汉国｜窦融｜据点 张掖
+    'ganzhou_huihu_yeluohu': 'KHITAN',   // 甘州回鹘｜夜落纥｜据点 张掖
     'gaoche_afuzhiluo': 'MONGOL',   // 高车｜阿伏至罗｜据点 浚稽山
     'gaogouli_yizhiwende': 'KOREA',   // 高句丽｜乙支文德｜据点 平壤
     'gaoliang_geshuhan': 'KHITAN',   // 唐国｜哥舒翰｜据点 乐都

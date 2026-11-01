@@ -1684,7 +1684,15 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     MAPUCHE: '帝国时代阿劳卡尼亚军团',
     MUISCA: '城堡时代穆伊斯卡军团',
     BURMESE: '城堡时代阿瓦军团',
-    HITTITES: '古典时代赫梯军团',
+    // 🔴 [2026-11-01 主人令「古典时代赫梯军团是幽灵名…请处理」] 本条原写 `HITTITES: '古典时代赫梯军团'`，
+    //    而该军团**一/二/三级与剧本表全查无此军**（同名的三级已于 2026-10-16 按「重复的删三级」删除，
+    //    二级名册里从来没有这一支）＝悬空指针。按 2026-10-05「清掉幽灵指针」同一口径删除本条。
+    //    实得不变：`getCultureLegionName` 里 `legionNameExists` 早已挡掉它，删前删后走同一条
+    //    `REGION_TO_BUILDING_STYLE['HITTITES'] = 'ORIE'` 保底＝【中东军团】；逐城守城军团亦不变
+    //    （哈图沙 TURKS→古典时代安纳托利亚军团；阿达纳／安卡拉 ORIE→古典时代近东军团）。
+    //    对拍：`scratch/_probe_hittites_ghost_20261101.mts`；尺子：`scratch/audit_ghost_legions.mts`（须 0 处）。
+    // ⚠️ 该区域（HITTITES）现跨两种建筑风格（哈图沙 TURKS、阿达纳／安卡拉 ORIE），
+    //    给单一显式指针必然错配一部分，故不另指某支具体军团，一律走建筑风格保底。
     BYZANTINE: "封建时代罗曼尼亚军团",
     FRANKS: '封建时代法兰克军团',
     SASANIAN: '封建时代霍拉桑军团',

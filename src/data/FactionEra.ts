@@ -272,6 +272,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'huarazim': [{ from: -9999, era: 'castle' }], // 花剌子模
     'hui': [{ from: -9999, era: 'antiquity' }], // 濊族
     'huihu': [{ from: -9999, era: 'feudal' }], // 回鹘
+    // 🔴 [2026-11-01 按史] 甘州回鹘｜894 年（唐昭宗乾宁元年）据甘州立国—1036 年为西夏所灭，全段封建
+    'ganzhou_huihu': [{ from: 894, era: 'feudal' }],
     'huite': [{ from: -9999, era: 'imperial' }], // 辉特
     'huluo': [{ from: -9999, era: 'castle' }], // 古尔
     'huohengsuolun': [{ from: -9999, era: 'castle' }], // 勃兰登堡-普鲁士

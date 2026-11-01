@@ -198,7 +198,7 @@
 
 
 
-import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
+import { resolveGeneralPortraitPath, registerPortraitPathRuntime } from '../config/portrait_defaults';
 
 
 
@@ -5797,7 +5797,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'sou_gaodingyuan', factionId: 'sou', cityId: 'city_jianchang', generalName: '高定元', portrait: '/assets/BASHU/sou_gaodingyuan.png', eliteName: '巴蜀弩士', eliteTier: 4 },
+        { generalId: 'sou_gaodingyuan', factionId: 'sou', cityId: 'city_jianchang', generalName: '高定元', portrait: '/assets/BASHU/sou_gaodingyuan.png', eliteName: '越嶲叟兵', eliteTier: 4 },   // 🔴 [2026-11-01] 精锐名按 BASHU 远征表正名（原占位「巴蜀弩士」）
 
 
 
@@ -8946,6 +8946,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    // 🔴 [2026-11-01 主人令「河西不足最低线 10，请处理」·按史补]
+    //    甘州回鹘（河西回鹘）可汗夜落纥，据甘州（张掖，KHITAN 河西文化）；894–1036 立国，屡拒西夏，1036 亡于李元昊。
+    //    普将（四闸：区域政权、史载实胜不细，存疑列普将）；精锐「回鹘铁骑」T3（风土之兵，控丝路咽喉）；立绘留空。
+    ganzhou_huihu: { generalId: 'ganzhou_huihu_yeluohu', cityId: 'city_zhangye', generalName: '夜落纥', portrait: '/assets/KHITAN/ganzhou_huihu_yeluohu.png', eliteName: '回鹘铁骑', eliteTier: 3 },
     huihu: [
 
 
@@ -18026,6 +18030,9 @@ export function setGeneralPortraitOverride(generalId: string, portraitPath: stri
 
 
     _generalPortraitOverrides[generalId] = portraitPath;
+    if (portraitPath) {
+        registerPortraitPathRuntime(portraitPath, generalId);
+    }
 
 
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -170,7 +170,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   huohengsuolun: '勃普',
   ruishi: '瑞士',
   damolaweiya: '摩拉',
-  luoma_diguo: '罗马',
+  // 🔴 [2026-11-01 主人令「expedition:triple-check 拉丁/罗马 旗号＝据点名逐字相同，请处理」]
+  //    旗号「罗马」与首府据点名「罗马」逐字相同（播报会念成「罗马 罗马军团」），按汉籍史称改「大秦」
+  //    （《后汉书·西域传》大秦即罗马；与势力名「罗马帝国」并存，如大明旗号「明」）。据点名、番号不动。
+  luoma_diguo: '大秦',
   xiongren: '匈人',
     'awaer': '瓦尔',   // 阿瓦尔
 
@@ -516,6 +519,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yiwu': '伊吾',
 'pulei': '蒲类',
     'duerbote': '杜尔',
+    // 🔴 [2026-11-01] 甘州回鹘（河西回鹘）：旗号「甘鹘」，2 字、不含「州/国」，与「回鹘」区分
+    'ganzhou_huihu': '甘鹘',
     'kaerka': '喀尔',
 'huihu': '回鹘',
 'wuzhumuqin': '乌珠',
@@ -574,7 +579,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qiemo': '且末',
     'weitou': '尉头',
 
-    // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
+    // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
     'qiepantuo': '朅盘',
     // ── 2026-06-11 新增：库页岛民族 ──
     'eluoke': '鄂罗',

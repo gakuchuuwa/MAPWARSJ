@@ -963,7 +963,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "funan": {
         legionName: "古典时代扶南军团",
         legionType: "sub",
-    },
+    },
     "aztec": {
         legionName: "帝国时代特诺奇军团",
         legionType: "sub",
@@ -1800,6 +1800,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代突厥军团",
         legionType: "sub",
     },
+    // 🔴 [2026-11-01 按史] 甘州回鹘＝封建时代 × 河西文化（据点张掖 buildingStyle KHITAN）→ 封建时代河西军团
+    "ganzhou_huihu": {
+        legionName: "封建时代河西军团",
+        legionType: "sub",
+    },
     "pulei": {
         legionName: "古典时代西域军团",
         legionType: "sub",
@@ -2343,7 +2348,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "dayuzi": {
         legionName: "城堡时代蒙兀儿军团",
         legionType: "region",
-    },
+    },
     "shi_clan": {
         legionName: "封建时代安西军团",
         legionType: "region",

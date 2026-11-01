@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 沙盒模式：势力 id → 首都 cityId（1 势力 = 1 据点）。
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
@@ -414,6 +414,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'dongxu': 'city_dongxu_old',
     'meitai': 'city_kangla',
     'pyu': 'city_srikshetra',
+    'ganzhou_huihu': 'city_zhangye',   // 🔴 [2026-11-01] 甘州回鹘都甘州（张掖）
     'mon': 'city_thaton',
 'ming_zheng': 'city_tainan',
     'xiou': 'city_bushan',

@@ -1160,6 +1160,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     dangzhou_qiangduan: { birth: 175, death: 235, kaoju: '推定' },  // 强端
     didao_wangshao: { birth: 1030, death: 1081 },  // 王韶
     ganzhou_dourong: { birth: -16, death: 62 },  // 窦融
+    ganzhou_huihu_yeluohu: { birth: 960, death: 1020, kaoju: '推定' },  // 夜落纥（甘州回鹘可汗：11 世纪初屡拒西夏、控丝路；生卒无载，为估）
     shazhou_zhangyichao: { birth: 799, death: 872 },  // 张议潮
     dongshengwei_wangyue: { birth: 1423, death: 1498, kaoju: '异说' },  // 王越
     guiyi_caoyijin: { birth: 880, death: 935, kaoju: '推定' },  // 曹议金

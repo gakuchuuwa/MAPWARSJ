@@ -406,6 +406,8 @@ export class CityAssetManager {
         'duerbote': '杜尔',
         'kaerka': '喀尔',
 'huihu': '回鹘',
+        // 🔴 [2026-11-01] 甘州回鹘（河西回鹘）：登记表只登记旗号、值＝旗号（与 SANDBOX_DISPLAY_NAMES 一致）
+        'ganzhou_huihu': '甘鹘',
 'wuzhumuqin': '乌珠',
 'zhadalan': '扎答',
         'zhuerqi': '主儿',
@@ -449,7 +451,7 @@ export class CityAssetManager {
         'sunite': '苏尼',
 'dayuzi': '玉兹',
 'bailian': '白莲',
-'chimei': '赤眉',
+'chimei': '赤眉',
 'yiwu': '伊吾',
 
         'weiwuer': '乌第',
@@ -501,7 +503,7 @@ export class CityAssetManager {
         'kepantuo': '渴盘',
 'yangguan': '凉',
         // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
-'wugu_d': '乌古',
+'wugu_d': '乌古',
         'kumoxi': '奚',
 'shanshan': '鄯善',
 'wuyue': '吴越',

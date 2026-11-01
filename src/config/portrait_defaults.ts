@@ -944,9 +944,11 @@ export function portraitAssetExists(path: string | undefined): boolean {
 }
 
 /** F2 绑定新立绘后调用：把运行时复制的文件路径注入内存缓存，无需重启 dev server */
-export function registerPortraitPathRuntime(path: string): void {
-    const normalized = normalizePortraitWebPath(path).toLowerCase();
+export function registerPortraitPathRuntime(path: string, generalId?: string): void {
+    if (!path) return;
+    const normalized = normalizePortraitWebPath(path.split('?')[0]).toLowerCase();
     if (normalized) KNOWN_PORTRAIT_PATHS.add(normalized);
+    if (generalId) _generalFallbackPortraits.delete(generalId);
 }
 
 /**

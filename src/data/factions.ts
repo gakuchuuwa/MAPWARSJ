@@ -1108,6 +1108,10 @@ export const FACTIONS: Faction[] = [
     { id: 'duerbote', name: '杜尔伯特' },
     { id: 'kaerka', name: '喀尔喀' },
     { id: 'huihu', name: '回鹘' },
+    // 🔴 [2026-11-01 主人令「expedition:coverage 河西不足最低线 10，请处理」] 按史补：甘州回鹘（河西回鹘）
+    //    894–1036 年据甘州（张掖）立国，控丝路咽喉，屡败西夏，1036 年为李元昊所灭；
+    //    《宋史·回鹘传》《辽史》皆称「甘州回鹘」，是历史统称，非自造名。
+    { id: 'ganzhou_huihu', name: '甘州回鹘' },
 
 
     { id: 'wuzhumuqin', name: '乌珠穆沁' },

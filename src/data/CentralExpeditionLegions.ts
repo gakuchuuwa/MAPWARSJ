@@ -47,7 +47,8 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     zhao: { name: '丛台绝剑', tier: 2 },
     chimei: { name: '赤眉军', tier: 2 },
     daxi_ming: { name: '大西老营', tier: 2 },
-    yangguan: { name: '西凉锐骑', tier: 2 },
+    // 🔴 [2026-11-01 主人令「河西不足最低线 10，请处理」] `yangguan: 西凉锐骑` 已迁 HEXI 表
+    //    （西凉都敦煌、据阳关，二城 buildingStyle 均 KHITAN＝河西文化，番号随据点文化归区）。
     hou_han: { name: '河东牙兵', tier: 4 },
     yuan_shao: { name: '大戟士', tier: 2 },
     hou_zhou: { name: '殿前军', tier: 2 },

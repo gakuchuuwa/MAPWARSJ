@@ -371,7 +371,7 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
             // 走到这条后台心跳 → 直接 return → 战斗 elapsed 永远不涨 → 战斗永远打不完 →
             // 场景不退出 → 暂停不解除 → **整个世界永久卡死**，且 ReloadGate 因场景激活还
             // 挡着热更新，刷都刷不回来。实测采样：elapsed 十次全是 0。
-            if (app.cityManager && app.battleScene?.isStrategyPausedByScene()) {
+            if (app.cityManager && app.battleScene?.isStrategyPausedByScene() && !app.combatUI?.isCorrectorOpen()) {
                 const sceneDelta = deltaTime * GameConfig.COMBAT.SCENE13_TIME_SCALE;
                 app.combatSystem?.update(sceneDelta, app.battleScene.getFollowUnitId());
                 // [2026-08-11 13 v2] 后台心跳同样驱动出兵口互攻演出（否则切后台演出停摆，
@@ -518,7 +518,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 app.recruitmentSystem.update(gameDelta);
             }
             perfMonitor.endTimer('recruitment');
-        } else if (app.battleScene?.isStrategyPausedByScene()) {
+        } else if (app.battleScene?.isStrategyPausedByScene() && !app.combatUI?.isCorrectorOpen()) {
             // ── [2026-08-10 13 独立时钟] 战术层：大地图停着，只有镜头里这场战斗在跑 ──
             // 停的：年历、城池纪年、历史事件、AI 决策、募兵、军团行军（大战略整体冻结）
             // 跑的：只有被跟拍的那一场战斗（军团行军不再放行，见下）
@@ -543,7 +543,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             perfMonitor.endTimer('combatUI');
 
             // 每帧检查：跟随军团在战斗中但 UI 未显示 → 补弹
-            if (!app.combatUI.isRegionalVisible()) {
+            if (!app.combatUI.isBattleVisible() && !app.scene13War?.isActive?.()) {
                 const followedId = app.cameraFollowUI?.getFollowedArmyId();
                 if (followedId && app.combatSystem) {
                     // 查区域战
@@ -562,7 +562,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                         break;
                     }
                     // 查 1v1 战斗
-                    if (!app.combatUI.isRegionalVisible()) {
+                    if (!app.combatUI.isBattleVisible() && !app.scene13War?.isActive?.()) {
                         for (const battle of app.combatSystem.getActiveBattles()) {
                             if (battle.isOver) continue;
                             if (battle.attacker.id !== followedId && battle.defender.id !== followedId) continue;
@@ -643,7 +643,9 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 } else {
                     // 场景激活 → 不跑战略地图跟拍/自动缩放，只维护战斗场景生命周期。
                     resetFollowPanState();
-                    app.battleScene?.tick();
+                    if (!app.combatUI?.isCorrectorOpen()) {
+                        app.battleScene?.tick();
+                    }
                     battleSceneTickedThisFrame = true;
                     // [2026-08-11 战败停留] 13 演出已停（战斗结束、画面冻结在待命态）时，
                     // 放行普通跟拍逻辑：tickFollowCamera 看到军团阵亡会启动 FOLLOW_SWITCH_DELAY_MS
@@ -719,7 +721,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
         //    原先只在「镜头正跟随某支军团」的分支里跑。战场事件里：赶路军团开战即收掉、战后双方史实军团撤场，
         //    镜头就没有可跟的军团了 → 这条分支不进 → 永远没人调 battleScene.tick → 停在最后一帧、暂停不解除。
         //    这里兜底：场景还开着、本帧又没跑过，就补跑一次（不管镜头跟没跟随）。
-        if (!battleSceneTickedThisFrame && app.battleScene?.isActive?.()) {
+        if (!battleSceneTickedThisFrame && app.battleScene?.isActive?.() && !app.combatUI?.isCorrectorOpen()) {
             app.battleScene.tick();
         }
     } catch (error) {

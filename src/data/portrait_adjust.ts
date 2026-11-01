@@ -9561,6 +9561,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 25
+        },
+        "/assets/BURMESE/pyu_duttabaung.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -9
         }
     },
     "folderGuides": {

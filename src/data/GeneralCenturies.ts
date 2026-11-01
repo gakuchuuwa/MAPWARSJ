@@ -923,6 +923,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'dangxiang_liyuanhao': 11,                           // 李元昊 · dangxiang · 兴庆府
     'didao_wangshao': 11,                                // 王韶 · didao · 狄道
     'ganzhou_dourong': 1,                               // 窦融 · ganzhou · 张掖
+    'ganzhou_huihu_yeluohu': 11,                        // 夜落纥 · ganzhou_huihu · 张掖
     'guazhou_zhangshougui': 8,                          // 张守珪 · guazhou · 晋昌城
     'guiyi_caoyijin': 10,                                // 曹议金 · guiyi · 玉门关
     'helian_helianbobo': 5,                             // 赫连勃勃 · helian · 统万城
