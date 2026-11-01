@@ -789,16 +789,33 @@ function drawConvert(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: numbe
     const goldFlare = getFlareStamp('#ffd76a');
     const mainGlow = getGlowStamp(pal.main);
 
+    // 将并战计大特效与大图标偏置到倒戈士兵队列旁边，避免大图标遮挡正在换旗倒戈的士兵
+    let minDx = 0;
+    let maxDx = 0;
+    for (const m of v.targets) {
+        if (m.hp <= 0) continue;
+        const dx = m.x - x;
+        const dy = m.y - v.y;
+        if (Math.abs(dx) < 160 && Math.abs(dy) < 160) {
+            if (dx < minDx) minDx = dx;
+            if (dx > maxDx) maxDx = dx;
+        }
+    }
+    const sideSign = Math.cos(v.angle) >= 0 ? -1 : 1;
+    const edgeSpan = Math.min(85, Math.max(28, sideSign < 0 ? -minDx : maxDx));
+    const iconX = x + sideSign * (edgeSpan + 116 * scale);
+    const iconY = y - 18 * scale;
+
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
 
-    // 1. 全军重心：阴阳策反大漩涡
+    // 1. 士兵旁边：阴阳策反大漩涡（大图标底座）
     ctx.globalAlpha = fade * 0.55;
-    drawStamp(ctx, mainGlow, x, y, 85 * scale, 50 * scale);
-    drawStamp(ctx, goldFlare, x, y, 28 * scale);
+    drawStamp(ctx, mainGlow, iconX, iconY, 85 * scale, 50 * scale);
+    drawStamp(ctx, goldFlare, iconX, iconY, 28 * scale);
 
     ctx.save();
-    ctx.translate(x, y);
+    ctx.translate(iconX, iconY);
     ctx.scale(1, 0.6);
     for (let i = 0; i < 4; i++) {
         const r = (24 + i * 18 + e * 24) * scale;
@@ -819,39 +836,39 @@ function drawConvert(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: numbe
     }
     ctx.restore();
 
-    // 2. 射向每一名倒戈士兵的高亮招降弧光锁链＋彗星星芒节点
+    // 2. 从旁侧虎符大图标射向每一名倒戈士兵的高亮招降弧光锁链＋彗星星芒节点
     const n = Math.min(v.targets.length, 96);
     ctx.lineCap = 'round';
     for (let i = 0; i < n; i++) {
         const m = v.targets[Math.floor(i * v.targets.length / n)];
         if (m.hp <= 0) continue;
         const my = m.y - lift(m.x, m.y);
-        const cpx = (x + m.x) * 0.5;
-        const cpy = Math.min(y, my) - 52 - (i % 3) * 14;
+        const cpx = (iconX + m.x) * 0.5;
+        const cpy = Math.min(iconY, my) - 52 - (i % 3) * 14;
         ctx.globalAlpha = fade * 0.72;
         ctx.strokeStyle = i % 2 ? '#ffd76a' : pal.main;
         ctx.lineWidth = 2.6;
         ctx.beginPath();
-        ctx.moveTo(x, y);
+        ctx.moveTo(iconX, iconY);
         ctx.quadraticCurveTo(cpx, cpy, m.x, my - 14);
         ctx.stroke();
 
         const t = clamp01(p * 1.35);
         const u = 1 - t;
-        const px = u * u * x + 2 * u * t * cpx + t * t * m.x;
-        const py = u * u * y + 2 * u * t * cpy + t * t * (my - 14);
+        const px = u * u * iconX + 2 * u * t * cpx + t * t * m.x;
+        const py = u * u * iconY + 2 * u * t * cpy + t * t * (my - 14);
         ctx.globalAlpha = fade * 0.95;
         drawStamp(ctx, goldFlare, px, py, 9);
     }
     ctx.restore();
 
-    // 3. 阵心浮现「并战·双回旋箭虎符」专属手绘图标
+    // 3. 倒戈士兵旁侧浮现「并战·双回旋箭虎符」专属手绘大图标（不遮挡倒戈士兵与军旗）
     const badge = getSixSkillIconBadge('bingzhan', v.paid);
     if (badge) {
         ctx.save();
         const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
         ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
-        drawStamp(ctx, badge, x, y - 30 * scale, 108 * scale * pulse);
+        drawStamp(ctx, badge, iconX, iconY - 12 * scale, 108 * scale * pulse);
         ctx.restore();
     }
 }

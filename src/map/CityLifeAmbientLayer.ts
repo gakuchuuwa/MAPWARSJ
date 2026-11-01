@@ -6,7 +6,7 @@ import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { hasWorldBaseData, loadWorldBaseData, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
-import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
+import { STRATEGIC_SPRITE_SCALE, STRATEGIC_TREE_SCALE, STRATEGIC_WONDER_SCALE } from './strategicSpriteScale';
 import { registerHumanPresence } from './strategicPresence';
 import { plantAllowedAt, plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
@@ -151,8 +151,8 @@ const SHIP_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const FISH_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const WRECK_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const RESOURCE_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
-const BUILDING_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
-const TREE_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const BUILDING_SCALE_BASE = STRATEGIC_WONDER_SCALE;
+const TREE_SCALE_BASE = STRATEGIC_TREE_SCALE;
 const PLOT_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 type SeasonalPlotKind = 'dry_farm' | 'rice_farm' | 'pasture';
 const FARM_BY_SEASON = ['FARM_SPRING', 'FARM_SUMMER', 'FARM_AUTUMN', 'FARM_WINTER'] as const;
@@ -167,14 +167,14 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
  *  草场一块一只牲畜、牧羊人站南块；农田一块一个农夫，南块那个是组合主人（建筑跟他走）；
  *  🔴 2026-10-28 主人令：农田四块里随机一块改养猪（主人身上记 pigCell），该块不派农夫、只放一头猪；
  *     四块地皮一律不变，仍是同一种农田皮，不铺牧场。 */
-const PLOT_DX = Math.round(60 * STRATEGIC_SPRITE_SCALE);
-const PLOT_DY = Math.round(40 * STRATEGIC_SPRITE_SCALE);
+const PLOT_DX = Math.round(120 * STRATEGIC_SPRITE_SCALE);
+const PLOT_DY = Math.round(80 * STRATEGIC_SPRITE_SCALE);
 const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -PLOT_DY], [-PLOT_DX, 0], [PLOT_DX, 0], [0, PLOT_DY]];
 /** 同一渔场主船之外的帮手船相对主船的 zoom 9 像素落点：北、西、东（船比农夫大，间距放宽） */
 const FISHING_BOAT_OFFSETS: readonly (readonly [number, number])[] = [[0, -46], [-60, -18], [60, -18]];
 const PLOT_LEADER_CELL = 3;
 /** 牲畜在自己那块草场内来回的半程（zoom 9 像素），不出本块 */
-const PASTURE_WANDER_PX = Math.round(18 * STRATEGIC_SPRITE_SCALE);
+const PASTURE_WANDER_PX = Math.round(36 * STRATEGIC_SPRITE_SCALE);
 /** 农田 / 水田 / 草场整块地皮内允许的最大高差（米）；超过就是山地，不铺 */
 const PLOT_MAX_RELIEF_M = 250;
 /** 地皮选址最远半径（经度度数；纬度方向再 ×0.85 ≈ 0.9° ≈ 100 km） */
@@ -2437,14 +2437,15 @@ export class CityLifeAmbientLayer {
                 const oy = PLOT_CELL_OFFSETS[k][1] - s[1];
                 const px = groupPt.x + ox * zoomFactor;
                 const py = groupPt.y + (oy + 4) * zoomFactor;
+                const plotFrame = actor.damageVariant + k;
                 this.drawStripSprite(
-                    'SUCAI_RESOURCE', plotBySeason[actorSeason], 0,
+                    'SUCAI_RESOURCE', plotBySeason[actorSeason], plotFrame,
                     px, py, PLOT_SCALE_BASE * zoomFactor,
                     peaceFinalAlpha * (1 - seasonBlend),
                     this.plotCtx
                 );
                 this.drawStripSprite(
-                    'SUCAI_RESOURCE', plotBySeason[actorNextSeason], 0,
+                    'SUCAI_RESOURCE', plotBySeason[actorNextSeason], plotFrame,
                     px, py, PLOT_SCALE_BASE * zoomFactor,
                     peaceFinalAlpha * seasonBlend,
                     this.plotCtx
@@ -2539,7 +2540,7 @@ export class CityLifeAmbientLayer {
                             actor.buildingResource,
                             actor.damageVariant,
                             // 城外生产建筑间距随 STRATEGIC_SPRITE_SCALE 同比例联动，改一处系数整体同步缩放
-                            groupPt.x + side * Math.round((actor.seasonalPlot ? 195 : 136) * STRATEGIC_SPRITE_SCALE) * zoomFactor,
+                            groupPt.x + side * Math.round((actor.seasonalPlot ? 240 : 136) * STRATEGIC_SPRITE_SCALE) * zoomFactor,
                             groupPt.y - 5 * zoomFactor,
                             BUILDING_SCALE_BASE * zoomFactor,
                             peaceFinalAlpha

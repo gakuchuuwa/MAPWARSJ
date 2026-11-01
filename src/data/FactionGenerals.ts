@@ -18,6 +18,8 @@
 
 
 
+    { generalId: 'han_d_pengyue', factionId: 'han_d', cityId: 'city_dingtao', generalName: '彭越', portrait: '', eliteName: '梁地游兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 梁王都定陶；据点=定陶（空据点补将）；文化随据点＝CENTRAL
+    { generalId: 'chu_sunfu', factionId: 'sunwu_d', cityId: 'city_luling', generalName: '孙辅', portrait: '', eliteName: '江南郡兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 据点=庐陵（空据点补将）；文化随据点＝JIANGNAN；史据见 docs
 
 
 

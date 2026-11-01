@@ -1490,6 +1490,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'shu_wulan': 2,
     'cen_d_cenyunhan': 16,
     'safawei_d_tahmasp': 16,
+    'chu_sunfu': 3,
+    'han_d_pengyue': -3,   // 彭越 · 梁王（卒前196）
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

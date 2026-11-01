@@ -16,7 +16,7 @@ import { plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
 import { localSeasonAtLat } from '../world/environment/seasonalGround';
 import { VECTOR_ROAD_DATA } from '../data/VectorRoadData';
-import { strategicSpriteScale } from './strategicSpriteScale';
+import { strategicTreeScale } from './strategicSpriteScale';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
@@ -832,7 +832,7 @@ export class VegetationLayer {
         const baseBlend = this.sampledGameSeason === gameSeason
             ? Math.min(1, Math.max(0, seasonBlend()))
             : 0;
-        const treeBaseScale = strategicSpriteScale(zoom);
+        const treeBaseScale = strategicTreeScale(zoom);
         const W = this.canvas.width, H = this.canvas.height;
         const topLeftX = this.canvasTopLeft.x;
         const topLeftY = this.canvasTopLeft.y;

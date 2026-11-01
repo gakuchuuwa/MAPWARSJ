@@ -1824,6 +1824,8 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     'shu_wulan': { birth: 170, death: 218, kaoju: '推定' },
     'cen_d_cenyunhan': { birth: 1578, death: 1644, kaoju: '推定' },   // 生卒据岑氏族谱：1578—1644，万历四十年袭泗城州第十三任知州
     'safawei_d_tahmasp': { birth: 1514, death: 1576, kaoju: '推定' },
+    chu_sunfu: { birth: 175, death: 219, kaoju: '推定' },
+    han_d_pengyue: { birth: -250, death: -196, kaoju: '推定' },  // 彭越，生年不详
 };
 
 /** 生年（未收录返回 null） */

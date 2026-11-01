@@ -1816,6 +1816,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'shu_wulan': 'antiquity',
     'cen_d_cenyunhan': 'imperial',
     'safawei_d_tahmasp': 'imperial',
+    'chu_sunfu': 'antiquity',
+    'han_d_pengyue': 'antiquity', // 彭越（秦汉之际）
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {
