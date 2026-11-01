@@ -993,9 +993,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/KHMER/basha_d_daogengmeng.png": {
-            "scale": 1.29,
+            "scale": 1.23,
             "offsetX": -31,
-            "offsetY": 53
+            "offsetY": 51
         },
         "/assets/DIANQIAN/__闲置__DIANQIAN_21.png": {
             "scale": 0.86,
@@ -5948,9 +5948,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -44
         },
         "/assets/KHMER/chenla_duyebamo.png": {
-            "scale": 1.07,
+            "scale": 1.11,
             "offsetX": 0,
-            "offsetY": -20
+            "offsetY": -21
         },
         "/assets/NORTHEAST/yilou_naoya.png": {
             "scale": 1.01,
@@ -9147,11 +9147,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/MONGOL/tiele_qibiheli.png": {
-            "scale": 1.04,
-            "offsetX": -5,
-            "offsetY": -3
-        },
         "/assets/MONGOL/__闲置__STEPPE_83.png": {
             "scale": 1.1,
             "offsetX": 0,
@@ -9566,6 +9561,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -9
+        },
+        "/assets/CENTRAL/9da2d658-08f8-439e-8289-209161d597d7.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/MONGOL/__闲置__MONGOL_06.png": {
+            "scale": 1.04,
+            "offsetX": -5,
+            "offsetY": -3
+        },
+        "/assets/CENTRAL/tiele_qibiheli.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 16
         }
     },
     "folderGuides": {

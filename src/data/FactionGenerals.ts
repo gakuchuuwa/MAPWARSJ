@@ -8651,7 +8651,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'tiele_qibiheli', factionId: 'tang', cityId: 'city_hanhai', legionName: '封建时代突厥军团', generalName: '契苾何力', portrait: '/assets/MONGOL/tiele_qibiheli.png', eliteName: '契苾部骑', eliteTier: 3  },   // 按史：铁勒契苾部酋长，自选骁骑千余夜袭突沦川（《旧唐书·卷一〇九·契苾何力传》）
+        { generalId: 'tiele_qibiheli', factionId: 'tang', cityId: 'city_hanhai', legionName: '封建时代突厥军团', generalName: '契苾何力', portrait: '/assets/CENTRAL/tiele_qibiheli.png', eliteName: '契苾部骑', eliteTier: 3  },   // 按史：铁勒契苾部酋长，自选骁骑千余夜袭突沦川（《旧唐书·卷一〇九·契苾何力传》）
 
 
 

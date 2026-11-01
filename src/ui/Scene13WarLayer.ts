@@ -5430,15 +5430,18 @@ export class Scene13WarLayer {
             if (m.hp > 0 && m.lane >= 0 && !m.siegeW && !m.hero) regularLanes.add(m.lane);
         }
         for (const m of this.men) {
-            // 本队尚有普通兵存活时按普通兵算分队重心；若全场仅剩玩家本人（且不在攻方营地内），玩家自身也计入分队以正常获得队级目标
-            if (m.hp <= 0 || m.lane < 0 || m.siegeW) continue;
+            // 本队尚有普通兵存活时按普通兵算分队重心；若全场仅剩玩家本人（且不在攻方营地内），玩家自身也计入分队以正常获得队级目标；
+            // 伏兵（lane=-1）按阵营归入虚拟分队（-10 - m.f），使对方常规分队能感知并锁定伏兵群
+            if (m.hp <= 0 || m.siegeW) continue;
+            if (m.lane < 0 && m.hero) continue;
             if (m.hero && (regularLanes.has(m.lane) || (this.battleType === 'siege' && m.f === 0 && this.isInsideAttackerCamp(m.x, m.y)))) continue;
+            const laneKey = m.lane >= 0 ? m.lane : (-10 - m.f);
             const inR = (this.battleType === 'siege' && this.siegeWithWalls && this.insideRing(m.x, m.y)) ? 1 : 0;
             const isMelee = !WALL_PASS_TYPES.has(m.key) && this.statsFor(m.key, m.f, false).rng <= 65;
             const isGuard = !!m.guardPost;
-            const cur = laneInfo.get(m.lane);
+            const cur = laneInfo.get(laneKey);
             if (!cur) {
-                laneInfo.set(m.lane, { f: m.f, x: m.x, y: m.y, n: 1, inside: inR, meleeOnly: isMelee, guard: isGuard });
+                laneInfo.set(laneKey, { f: m.f, x: m.x, y: m.y, n: 1, inside: inR, meleeOnly: isMelee, guard: isGuard });
             } else if (cur.guard && !isGuard) {
                 // 本队尚有第一波城外作战守军存活时，分队目标只按城外第一波守军算，不被城内补出的第二波 guardPost 守军污染
                 cur.x = m.x;
@@ -5539,7 +5542,7 @@ export class Scene13WarLayer {
         // 第二遍：为尚无目标的分队分配未满 4 队的新目标；若所有可打目标均已满 4 队，则不设队级目标（野战继续前进，攻城守方远在城外时回城寻敌）
         if (this.battleType === 'siege' && this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         for (const [lane, info] of laneInfo) {
-            if (this.laneTargets.has(lane)) continue;
+            if (lane < 0 || this.laneTargets.has(lane)) continue;
             const uF = this.advanceVec[info.f], uS = this.sideVec[info.f];
             let bestELane: number | undefined, bestEScore = Infinity, bestERawDist = Infinity;
             let noGateELane: number | undefined, noGateScore = Infinity;
@@ -5628,8 +5631,8 @@ export class Scene13WarLayer {
                 noteReassign();
                 this.laneTargets.set(lane, { targetLane: bestELane, x: eInfo.x, y: eInfo.y });
                 laneClaims.set(bestELane, (laneClaims.get(bestELane) ?? 0) + 1);
-            } else if (this.battleType === 'siege' && info.f === 1 && fallbackCityELane !== undefined && fallbackRawDist > 280) {
-                // 攻城战守方：若场上敌队均已满 4 队围攻而本队错开落在远处（>280px），仍向离城最近的敌队靠拢回城寻敌，不在外场发呆
+            } else if (this.battleType === 'siege' && info.f === 1 && fallbackCityELane !== undefined) {
+                // 攻城战守方：若场上敌队均已满 4 队围攻，仍向离城最近的敌队迎击靠拢，不在防区原地发呆
                 const eInfo = laneInfo.get(fallbackCityELane)!;
                 this.laneTargets.set(lane, { targetLane: fallbackCityELane, x: eInfo.x, y: eInfo.y });
             }
@@ -7346,7 +7349,7 @@ export class Scene13WarLayer {
                 const st = this.laneStart.get(l) ?? 0;
                 const sp = this.spawns[l];
                 const ef = sp ? (1 - sp.f) : -1;
-                const enemyOnlyAmbush = this.battleType !== 'siege' && ef >= 0 && onFieldRegular[ef] <= 0 && onFieldAny[ef] > 0;
+                const enemyOnlyAmbush = (this.battleType !== 'siege' || (sp && sp.f === 1)) && ef >= 0 && onFieldRegular[ef] <= 0 && onFieldAny[ef] > 0;
                 if ((st > 0 && a <= st * REMNANT_FRAC) || enemyOnlyAmbush) this.remnantLanes.add(l);
             }
         }
@@ -7970,7 +7973,7 @@ export class Scene13WarLayer {
                     const slot = this.laneSlotTarget(m, laneLeaders);
                     if (slot) {
                         [m.tx, m.ty] = slot;
-                    } else if (this.battleType === 'siege' && m.f === 1) {
+                    } else if (this.battleType === 'siege' && m.f === 1 && !this.men.some(o => o.f !== m.f && o.hp > 0 && !o.hero && !this.isInsideAttackerCamp(o.x, o.y))) {
                         const ret = this.defenderCityReturnGoal(m);
                         if ((m.x - ret.x) ** 2 + (m.y - ret.y) ** 2 > 180 * 180) {
                             const aim = this.gateExit(m, ret) ?? ret;
