@@ -359,7 +359,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         return (di <= roadMaxU && dj <= roadMaxV) || (dj <= roadMaxU && di <= roadMaxV);
     };
     const cityCell = gl.screenToCell(cx, cy, W, H);
-    const baseFlatCells = ringLm > 0 ? ringLm / 2 + (this.defenderCityType === 'big_city' ? 6.5 : 4.5) : rCells + 2.5;
+    const baseFlatCells = ringLm > 0 ? ringLm / 2 + (this.defenderCityType === 'big_city' ? 9.5 : 7.5) : rCells + 5.5;
     const minHillDistCells = this.defenderCityType === 'pass'
         ? baseFlatCells + 4.5
         : this.defenderCityType === 'stockade'

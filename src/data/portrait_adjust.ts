@@ -2948,7 +2948,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/CENTRAL/baiyang_mengtian.png": {
-            "scale": 1.18,
+            "scale": 1.12,
             "offsetX": 0,
             "offsetY": 15
         },

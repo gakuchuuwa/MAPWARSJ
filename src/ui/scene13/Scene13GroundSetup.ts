@@ -397,6 +397,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
 
                 /** 🔴 [2026-10-31 主人令「战术模式中的鸟不成群」] 待成群的飞鸟：先收集，出循环后按「同种 + 邻近」并群再下发 */
                 const pendingBirds: Array<{ species: string; sx: number; sy: number; hash: number }> = [];
+                const placedTreePts: Array<{ x: number; y: number }> = [];
+                const minTreeGap = 136 + Math.round((1 - Math.min(1, treeKeep)) * 42);
 
                 for (let obIdx = 0; obIdx < data.objects.length; obIdx++) {
                     const ob = data.objects[obIdx];
@@ -513,12 +515,22 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                         }
                         const isTree = TREE_RE.test(asset);
                         if (isTree) {
-                            // ⓪ 按森林模型疏伐：
-                            //    · DE 森林格（deTerrainIsForest(tid)）底土已铺设林下落叶腐殖土，必须保持 100% 树冠覆盖（density=1000），不作单格随机抽删以免林团被掏空露光秃褐土；
-                            //    · 河岸护岸树（ob.riparian）已在 enrichDeBattlefieldMidfield 按 treeKeep 缩算数量，不再二次抽删；
-                            //    · 非森林格散树按温和下限（>=0.68）疏伐，避免农耕平原野战散树被抽光。
-                            const stragglerKeep = Math.max(0.68, treeKeep);
-                            if (!deTerrainIsForest(tid) && !ob.riparian && stragglerKeep < 1 && (Math.abs(Math.round(ob.x * 31 + ob.y * 57)) % 1000) / 1000 >= stragglerKeep) continue;
+                            // ⓪ 疏化战术树林密度，避免林团每格一棵树（96×48 格塞 180px 树冠）叠成密不透风的树墙遮挡军队交战：
+                            //    · 出生营地周边（260px）与野战中央主交锋区（380px）不留树，保证主战场视野开阔；
+                            //    · 森林格按 treeKeep 疏伐，并统一施加树间最小等轴间距（minTreeGap），使林间留出透气空隙、能清楚看到林中作战部队。
+                            if (!this.deCity && Math.hypot(sx - VW / 2, (sy - VH / 2) * 1.45) < 380) {
+                                glLayer.clearForestAt(sx, sy, VW, VH, 1.8);
+                                continue;
+                            }
+                            if (this.spawns.some((sp) => Math.hypot(sx - sp.x, (sy - sp.y) * 1.45) < 260)) {
+                                glLayer.clearForestAt(sx, sy, VW, VH, 1.8);
+                                continue;
+                            }
+                            const treeHash01 = (Math.abs(Math.round(ob.x * 31 + ob.y * 57)) % 1000) / 1000;
+                            const keepProb = deTerrainIsForest(tid)
+                                ? (0.45 * Math.max(0.55, treeKeep))
+                                : Math.max(0.55, treeKeep);
+                            if (!ob.riparian && treeHash01 >= keepProb) continue;
                             // ① 水格不长树（含 DE 水地形与水密度场 > 0.38 的水面）
                             if (WATER_TERRAINS.has(tid) || glLayer.isWaterAt(sx, sy, VW, VH)) continue;
                             // ② 森林格直接由脚下 DE 森林地形 id 按 dat 密度表决定树种（避免旧烘焙 BFS 跨地形吞并变体林）
@@ -580,6 +592,8 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                                 sx = candX;
                                 sy = candY;
                             }
+                            if (placedTreePts.some((p) => Math.hypot(sx - p.x, (sy - p.y) * 1.45) < minTreeGap)) continue;
+                            placedTreePts.push({ x: sx, y: sy });
                         }
                         if (onFoundation(sx, sy)) continue;
                         this.ensureNatureAsset(asset);

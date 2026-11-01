@@ -4570,7 +4570,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'baiyang_mengtian', factionId: 'qin', cityId: 'city_fushi', generalName: '蒙恬', portrait: '/assets/CENTRAL/baiyang_mengtian.png', eliteName: '秦北军', eliteTier: 2 },   // 🔴 [2026-10-24 主人核定] 蒙恬＝秦上郡守将，长年驻节上郡肤施（统三十万北击匈奴、筑长城直道）→ 迁肤施；军团随中原文化自动取
+        { generalId: 'baiyang_mengtian', factionId: 'qin', cityId: 'city_fushi', generalName: '蒙恬', portrait: '/assets/CENTRAL/baiyang_mengtian.png', eliteName: '长城军', eliteTier: 3 },   // 🔴 [2026-10-24 主人核定] 蒙恬＝秦上郡守将，长年驻节上郡肤施（统三十万北击匈奴、筑长城直道）→ 迁肤施；军团随中原文化自动取。🔴 [2026-11-02 主人令] 精锐改「长城军」（原「秦北军」T2 与权威表 GENERAL_ELITE_LEGIONS 的 T3 打架，本次统一为 T3）
 
 
 

@@ -624,13 +624,9 @@ export function enrichDeBattlefieldMidfield(
         return grown;
     };
 
-    // 1. 检查首屏近翼圈（半径 cityR+1.0 ~ cityR+8.5 格）、中圈（15 ~ 33 格）与外圈退水陆地（31 ~ 46 格）的 8 个方位扇区
-    const nearSectorTrees = new Int32Array(8);
-    const midSectorTrees = new Int32Array(8);
+    // 1. 检查外圈退水陆地（31 ~ 46 格）的 8 个方位扇区（不在近景/中圈/20×20 空旷交战区人工补种密林团，保持主战场视野开阔）
     const outerSectorTrees = new Int32Array(8);
     const outerSectorLand = new Int32Array(8);
-    const nearMinR = cityR + 1.0;
-    const nearMaxR = isField ? 14.0 : Math.min(24.0, cityR + 8.5);
     for (let y = 6; y < h - 6; y++) {
         for (let x = 6; x < w - 6; x++) {
             const dx = x - cX, dy = y - cY;
@@ -638,12 +634,7 @@ export function enrichDeBattlefieldMidfield(
             const ang = Math.atan2(dy, dx);
             const sec = Math.floor(((ang + Math.PI) / (Math.PI * 2)) * 8) % 8;
             const idx = y * w + x;
-            if (d >= nearMinR && d <= nearMaxR) {
-                if (hasTree[idx]) nearSectorTrees[sec]++;
-            }
-            if (d >= cityR + 3 && d <= 33) {
-                if (hasTree[idx]) midSectorTrees[sec]++;
-            } else if (d > 31 && d <= 47) {
+            if (d > 31 && d <= 47) {
                 if (!isWaterId(terrain[idx]) && !isShoreId(terrain[idx])) outerSectorLand[sec]++;
                 if (hasTree[idx]) outerSectorTrees[sec]++;
             }
@@ -652,130 +643,25 @@ export function enrichDeBattlefieldMidfield(
 
     const secOrder = [0, 1, 2, 3, 4, 5, 6, 7].sort(() => rnd() - 0.5);
 
-    // 1a. 首屏两翼与四角近景林团（野战拉近到 7.0~12.8 格首屏两翼；攻城战紧贴护城河外缘四角）：
-    //     每团 8~13 格并同步写入 domForestTid 森林底土，使 100% 默认视野两翼即有成团树林与林下落叶腐殖土
-    let nearClumpsPlaced = 0;
-    const targetNearClumps = isField ? 4 : 3;
-    for (const sec of secOrder) {
-        if (nearClumpsPlaced >= targetNearClumps) break;
-        if (nearSectorTrees[sec] >= 4) continue;
-        const clumpSize = isField ? (8 + Math.floor(rnd() * 6)) : (7 + Math.floor(rnd() * 5));
-        for (let tryIdx = 0; tryIdx < 6; tryIdx++) {
-            const baseAng = (sec + 0.18 + rnd() * 0.64) * (Math.PI / 4) - Math.PI;
-            const rad = isField
-                ? (7.0 + rnd() * 5.2)
-                : (cityR + 2.2 + rnd() * 5.0);
-            const sx = Math.round(cX + Math.cos(baseAng) * rad);
-            const sy = Math.round(cY + Math.sin(baseAng) * rad);
-            if (growDeForestClump(sx, sy, clumpSize, nearMinR, nearMaxR + 1.5) >= 4) {
-                nearClumpsPlaced++;
-                break;
-            }
-        }
-    }
-
-    // 1b. 中圈空旷侧翼扇区补齐 DE SPAWN_FOREST / STRAGGLER_FOREST 侧翼林团（3~4 团，每团 10~15 格）
-    let midClumpsPlaced = 0;
-    for (const sec of secOrder) {
-        if (midClumpsPlaced >= 4) break;
-        if (midSectorTrees[sec] >= 7) continue;
-        const minMid = isField ? 13.5 : (cityR + 5.0);
-        const clumpSize = 10 + Math.floor(rnd() * 6);
-        for (let tryIdx = 0; tryIdx < 6; tryIdx++) {
-            const baseAng = (sec + 0.2 + rnd() * 0.6) * (Math.PI / 4) - Math.PI;
-            const rad = minMid + rnd() * (Math.min(31, minMid + 12) - minMid);
-            const sx = Math.round(cX + Math.cos(baseAng) * rad);
-            const sy = Math.round(cY + Math.sin(baseAng) * rad);
-            if (growDeForestClump(sx, sy, clumpSize, cityR + 2.5, 34) >= 4) {
-                midClumpsPlaced++;
-                break;
-            }
-        }
-    }
-
-    // 在因退水（如水库/海湾退潮）变为空旷草地的外圈扇区补齐 DE BASE_FOREST 林团（最多 3 团，每团 14~20 格）
+    // 仅在因退水（如水库/海湾退潮）变为空旷草地的外圈边缘扇区补齐少量林团（最多 2 团，每团 8~12 格）
     let outerClumpsPlaced = 0;
     for (const sec of secOrder) {
-        if (outerClumpsPlaced >= 3) break;
+        if (outerClumpsPlaced >= 2) break;
         if (outerSectorLand[sec] < 80 || outerSectorTrees[sec] >= 8) continue;
         const baseAng = (sec + 0.25 + rnd() * 0.5) * (Math.PI / 4) - Math.PI;
-        const rad = 33 + rnd() * 11;
+        const rad = 35 + rnd() * 10;
         const sx = Math.round(cX + Math.cos(baseAng) * rad);
         const sy = Math.round(cY + Math.sin(baseAng) * rad);
-        const clumpSize = 14 + Math.floor(rnd() * 7);
-        if (growDeForestClump(sx, sy, clumpSize, 30, 47) >= 6) {
+        const clumpSize = 8 + Math.floor(rnd() * 5);
+        if (growDeForestClump(sx, sy, clumpSize, 32, 47) >= 4) {
             outerClumpsPlaced++;
         }
     }
 
-    // 1c-2. 2D 网格空旷区巡检补林：
-    //       DE Arabia.rms 烘培图天生留有两个约 35×35 格的 avoid_player_start_areas 玩家基地无树圆区，
-    //       当野战/攻城大军从西南、东北或南北大跨度（2500px）行军时，镜头视野会恰好落入该空旷圈。
-    //       按 20×20 格（约 1 屏）分块巡检全图 [10, w-10]×[10, h-10]：凡干地充裕但树木 < 6 棵的空旷分块，
-    //       自动补种 1~2 团 DE 原生森林（同步写 domForestTid 底土）与 3~5 棵散树，彻底消除整屏无树的空白带。
-    for (let gy0 = 10; gy0 <= h - 30; gy0 += 10) {
-        for (let gx0 = 10; gx0 <= w - 30; gx0 += 10) {
-            let dryCnt = 0;
-            let treeCnt = 0;
-            for (let y = gy0; y < gy0 + 20; y++) {
-                for (let x = gx0; x < gx0 + 20; x++) {
-                    const idx = y * w + x;
-                    if (hasTree[idx]) treeCnt++;
-                    if (Math.hypot(x - cX, y - cY) >= cityR + 1.5 && !inRoadOrCorridor(x, y) && isSafeDryCell(x, y, 1)) {
-                        dryCnt++;
-                    }
-                }
-            }
-            if (dryCnt < 130 || treeCnt >= 6) continue;
-            const targetBoxClumps = treeCnt === 0 ? 2 : 1;
-            let boxClumps = 0;
-            for (let att = 0; att < 14 && boxClumps < targetBoxClumps; att++) {
-                const sx = gx0 + 3 + Math.floor(rnd() * 14);
-                const sy = gy0 + 3 + Math.floor(rnd() * 14);
-                const cSize = 8 + Math.floor(rnd() * 6);
-                if (growDeForestClump(sx, sy, cSize, cityR + 1.5, 68) >= 4) {
-                    boxClumps++;
-                }
-            }
-            let boxStragglers = 0;
-            for (let att = 0; att < 24 && boxStragglers < 4; att++) {
-                const sx = gx0 + 2 + Math.floor(rnd() * 16);
-                const sy = gy0 + 2 + Math.floor(rnd() * 16);
-                const idx = sy * w + sx;
-                if (hasTree[idx] || hasObject[idx]) continue;
-                if (Math.hypot(sx - cX, sy - cY) < cityR + 1.5 || inRoadOrCorridor(sx, sy) || !isSafeDryCell(sx, sy, 2)) continue;
-                const cellTid = terrain[idx];
-                if (isWaterId(cellTid) || isShoreId(cellTid) || deTerrainIsForest(cellTid)) continue;
-                let nearT = false;
-                for (let dy = -3; dy <= 3 && !nearT; dy++) {
-                    for (let dx = -3; dx <= 3; dx++) {
-                        if (hasTree[(sy + dy) * w + (sx + dx)]) {
-                            nearT = true;
-                            break;
-                        }
-                    }
-                }
-                if (nearT) continue;
-                hasTree[idx] = 1;
-                hasObject[idx] = 1;
-                objects.push({
-                    name: (cellTid === 14 || isDesertTheme) ? 'FPAL' : domTreeUnit,
-                    x: sx + 0.5,
-                    y: sy + 0.5,
-                    cell: idx,
-                });
-                boxStragglers++;
-            }
-        }
-    }
-
     // 1d. 🔴 [2026-11-01 主人令「把战略战术同源的河岸护岸树一并落地」]
-    //     沿河道/水岸两侧干地（沙岸外 1~3 格，距离水格 2~4 格）布置河岸护岸林簇与散树：
-    //     · 严格避开中央渡口冲锋走廊（inRoadOrCorridor），绝不阻挡大军渡河；
-    //     · 数量按战略同源的 treeKeepRatio（forestModel.ts 潜在森林 × 史实开垦度）自适应缩放；
-    //     · 树种走本图 DE 森林地形与后续 plantRegionalizeTree + seasonalDeTree，与战略图 100% 同源。
+    //     沿河道/水岸两侧干地（沙岸外 1~3 格，距离水格 2~4 格）稀疏点缀河岸护岸树（不造密林团，避免遮挡渡河与岸战视野）：
     const riparianCells: Array<[number, number]> = [];
-    const minRiparianR = isField ? 4.8 : Math.max(8.5, cityR - 0.5);
+    const minRiparianR = isField ? 8.0 : Math.max(11.0, cityR + 2.0);
     for (let y = 6; y < h - 6; y++) {
         for (let x = 6; x < w - 6; x++) {
             const d = Math.hypot(x - cX, y - cY);
@@ -804,55 +690,8 @@ export function enrichDeBattlefieldMidfield(
             riparianCells[i] = riparianCells[j];
             riparianCells[j] = tmp;
         }
-        const growRiparianClump = (startX: number, startY: number, targetSize: number): number => {
-            if (!isSafeDryCell(startX, startY, 1) || inRoadOrCorridor(startX, startY)) return 0;
-            const q: Array<[number, number]> = [[startX, startY]];
-            const visited = new Set<number>([startY * w + startX]);
-            let grown = 0;
-            while (q.length > 0 && grown < targetSize) {
-                const pickIdx = Math.floor(rnd() * q.length);
-                const [cx, cy] = q.splice(pickIdx, 1)[0];
-                const idx = cy * w + cx;
-                const d = Math.hypot(cx - cX, cy - cY);
-                if (d < minRiparianR || d > 43 || !isSafeDryCell(cx, cy, 1) || inRoadOrCorridor(cx, cy)) continue;
-                if (!hasTree[idx] && !hasObject[idx]) {
-                    terrain[idx] = domForestTid!;
-                    hasTree[idx] = 1;
-                    hasObject[idx] = 1;
-                    objects.push({
-                        name: (terrain[idx] === 14 || isDesertTheme) ? 'FPAL' : domTreeUnit,
-                        x: cx + 0.5,
-                        y: cy + 0.5,
-                        cell: idx,
-                        riparian: true,
-                    });
-                    grown++;
-                }
-                const nbrs: Array<[number, number]> = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]];
-                for (const [nx, ny] of nbrs) {
-                    const nIdx = ny * w + nx;
-                    if (!visited.has(nIdx) && rnd() < 0.75) {
-                        visited.add(nIdx);
-                        q.push([nx, ny]);
-                    }
-                }
-            }
-            return grown;
-        };
-
         const keepClamped = Math.max(0.35, Math.min(1.0, treeKeepRatio));
-        const targetRiparianGroves = keepClamped >= 0.75 ? 4 : keepClamped >= 0.45 ? 3 : 2;
-        const placedGroves: Array<[number, number]> = [];
-        for (const [rx, ry] of riparianCells) {
-            if (placedGroves.length >= targetRiparianGroves) break;
-            if (placedGroves.some(([px, py]) => Math.hypot(rx - px, ry - py) < 10)) continue;
-            const groveSize = 4 + Math.floor(rnd() * 3);
-            if (growRiparianClump(rx, ry, groveSize) >= 3) {
-                placedGroves.push([rx, ry]);
-            }
-        }
-
-        const targetRiparianTrees = Math.round(8 + 8 * keepClamped);
+        const targetRiparianTrees = Math.round(5 + 6 * keepClamped);
         let riparianStragglers = 0;
         for (const [rx, ry] of riparianCells) {
             if (riparianStragglers >= targetRiparianTrees) break;
@@ -861,8 +700,8 @@ export function enrichDeBattlefieldMidfield(
             const cellTid = terrain[idx];
             if (isWaterId(cellTid) || isShoreId(cellTid) || deTerrainIsForest(cellTid)) continue;
             let nearOther = false;
-            for (let dy = -3; dy <= 3 && !nearOther; dy++) {
-                for (let dx = -3; dx <= 3; dx++) {
+            for (let dy = -4; dy <= 4 && !nearOther; dy++) {
+                for (let dx = -4; dx <= 4; dx++) {
                     if (hasTree[(ry + dy) * w + (rx + dx)]) {
                         nearOther = true;
                         break;
@@ -884,14 +723,14 @@ export function enrichDeBattlefieldMidfield(
     }
 
     // 2. 照 DE includes/stragglers.inc & stragglers_neutral.inc：
-    //    在城郊与交战平原（半径 cityR+1.5 ~ 48 格）稀疏点缀 28 棵 DE 散树（间距 ≥ 4 格，绝不挡阵列）
-    const targetStragglers = 28;
+    //    在城郊与交战平原（半径 cityR+3.5 ~ 48 格）稀疏点缀 10 棵 DE 散树（间距 ≥ 5 格，绝不挡阵列）
+    const targetStragglers = 10;
     let stragglersPlaced = 0;
-    for (let attempt = 0; attempt < 240 && stragglersPlaced < targetStragglers; attempt++) {
+    for (let attempt = 0; attempt < 180 && stragglersPlaced < targetStragglers; attempt++) {
         const ang = rnd() * Math.PI * 2;
-        const rad = (attempt < 75 && isField)
-            ? (5.8 + rnd() * 9.0)
-            : (cityR + 1.5 + rnd() * (48 - (cityR + 1.5)));
+        const rad = isField
+            ? (9.5 + rnd() * 36.0)
+            : (cityR + 3.5 + rnd() * (48 - (cityR + 3.5)));
         const gx = Math.round(cX + Math.cos(ang) * rad);
         const gy = Math.round(cY + Math.sin(ang) * rad);
         if (!isSafeDryCell(gx, gy, 2) || inRoadOrCorridor(gx, gy)) continue;
@@ -900,10 +739,10 @@ export function enrichDeBattlefieldMidfield(
         const cellTid = terrain[idx];
         if (isWaterId(cellTid) || isShoreId(cellTid) || deTerrainIsForest(cellTid)) continue;
 
-        // 检查周围 3 格内是否已有树（保持 DE 散树疏朗间距）
+        // 检查周围 5 格内是否已有树（保持 DE 散树疏朗间距）
         let nearTree = false;
-        for (let dy = -3; dy <= 3 && !nearTree; dy++) {
-            for (let dx = -3; dx <= 3; dx++) {
+        for (let dy = -5; dy <= 5 && !nearTree; dy++) {
+            for (let dx = -5; dx <= 5; dx++) {
                 if (hasTree[(gy + dy) * w + (gx + dx)]) {
                     nearTree = true;
                     break;
