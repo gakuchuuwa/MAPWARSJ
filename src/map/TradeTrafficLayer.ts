@@ -6,6 +6,7 @@ import { getRegion } from '../systems/RegionSystem';
 import { LandSeaSystem } from '../world/land-sea';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
+import { unwrapLongitudeNear } from '../utils/GeoLongitude';
 import { OrientationSystem } from '../core/OrientationSystem';
 import { NavalWakeDrawer } from './legion/NavalWakeDrawer';
 import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
@@ -454,18 +455,29 @@ export class TradeTrafficLayer {
         const nearestId = roadRegistry.getNearestCityId(anchor.lat, anchor.lng, 3.0);
         if (!nearestId) return null;
 
-        // 随机轴：东西 / 南北；起终点各在屏外两侧（哪边来都可以）
+        // 随机轴：东西 / 南北；起终点优先在当前视口周边的区域范围（避免跨半个地球挑美洲/欧洲远端导致折线绕洋），无候选时再放宽
         const horizontal = Math.random() < 0.5;
-        const startIds: string[] = [];
-        const endIds: string[] = [];
-        for (const [id, p] of idx) {
-            if (horizontal) {
-                if (p.lng < westLng) startIds.push(id);
-                else if (p.lng > eastLng) endIds.push(id);
-            } else {
-                if (p.lat < southLat) startIds.push(id);
-                else if (p.lat > northLat) endIds.push(id);
+        const maxLngSpan = Math.max(15, viewW * 4);
+        const maxLatSpan = Math.max(12, viewH * 4);
+        const collectSides = (limitSpan: boolean) => {
+            const sIds: string[] = [];
+            const eIds: string[] = [];
+            for (const [id, p] of idx) {
+                const pLng = unwrapLongitudeNear(p.lng, anchor.lng);
+                if (limitSpan && (Math.abs(pLng - anchor.lng) > maxLngSpan || Math.abs(p.lat - anchor.lat) > maxLatSpan)) continue;
+                if (horizontal) {
+                    if (pLng < westLng) sIds.push(id);
+                    else if (pLng > eastLng) eIds.push(id);
+                } else {
+                    if (p.lat < southLat) sIds.push(id);
+                    else if (p.lat > northLat) eIds.push(id);
+                }
             }
+            return { sIds, eIds };
+        };
+        let { sIds: startIds, eIds: endIds } = collectSides(true);
+        if (startIds.length === 0 || endIds.length === 0) {
+            ({ sIds: startIds, eIds: endIds } = collectSides(false));
         }
         if (startIds.length === 0 || endIds.length === 0) return null;
 
@@ -482,7 +494,20 @@ export class TradeTrafficLayer {
         if (!p1 || !p2) return null;
         const seg1 = roadRegistry.pathToLatLngs(p1);
         const seg2 = roadRegistry.pathToLatLngs(p2);
-        const full = [...seg1, ...seg2.slice(1)];
+        if (seg1.length === 0 || seg2.length === 0) return null;
+        // 以视口内锚点城 nearestId 为基准向两端连续展开经度，杜绝跨 180° 海路与陆路拼接时产生横穿全球陆地的 360° 飞线
+        seg1[seg1.length - 1] = { ...seg1[seg1.length - 1], lng: unwrapLongitudeNear(seg1[seg1.length - 1].lng, anchor.lng) };
+        for (let i = seg1.length - 2; i >= 0; i--) {
+            seg1[i] = { ...seg1[i], lng: unwrapLongitudeNear(seg1[i].lng, seg1[i + 1].lng) };
+        }
+        let prevLng = seg1[seg1.length - 1].lng;
+        const tail: Pt[] = [];
+        for (let i = 1; i < seg2.length; i++) {
+            const lng = unwrapLongitudeNear(seg2[i].lng, prevLng);
+            tail.push({ ...seg2[i], lng });
+            prevLng = lng;
+        }
+        const full = [...seg1, ...tail];
         return full.length >= 2 ? full : null;
     }
 

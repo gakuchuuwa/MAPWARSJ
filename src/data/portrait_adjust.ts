@@ -2138,9 +2138,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/BENGALIS/ahaomu_laqite.png": {
-            "scale": 0.92,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": -47
+            "offsetY": -14
         },
         "/assets/BURMESE/jingpozu_zaodan.png": {
             "scale": 1.04,

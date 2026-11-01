@@ -545,7 +545,9 @@ export class RoadRegistry {
             const isSea = !!edges[i].isSea;
             const startIdx = i === 0 ? 0 : 1;
             for (let j = startIdx; j < edgeCoords.length; j++) {
-                coordinates.push(edgeCoords[j]);
+                const [rawLng, lat] = edgeCoords[j];
+                const lng = coordinates.length > 0 ? unwrapLongitudeNear(rawLng, coordinates[coordinates.length - 1][0]) : rawLng;
+                coordinates.push([lng, lat]);
                 seaFlags.push(isSea);   // 点归它所在的那条边（形态判定用，见 GraphEdge.isSea）
             }
         }
@@ -873,7 +875,13 @@ export class RoadRegistry {
         if (!path) return null;
         const roadLatLngs = this.pathToLatLngs(path); // 首点 = nodeId 坐标
         // partialToNode 末点已是 nodeId 坐标，拼接时跳过 roadLatLngs[0] 防重复
-        return this.dedupeRoute([...partialToNode, ...roadLatLngs.slice(1)]);
+        const merged = [...partialToNode];
+        for (let i = 1; i < roadLatLngs.length; i++) {
+            const pt = roadLatLngs[i];
+            const prevLng = merged.length > 0 ? merged[merged.length - 1].lng : pt.lng;
+            merged.push({ ...pt, lng: unwrapLongitudeNear(pt.lng, prevLng) });
+        }
+        return this.dedupeRoute(merged);
     }
 
     private polylineLengthDeg(route: { lat: number; lng: number }[]): number {
