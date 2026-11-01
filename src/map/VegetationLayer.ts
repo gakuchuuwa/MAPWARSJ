@@ -20,9 +20,9 @@ const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
 const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
-const CITY_CLEAR_PX = 46;
-/** 战略道路穿过密林时的半幅净空（px，SAMPLE_ZOOM=9 下约 11.5px，形成 23px 宽的 DE 式林间驿道走廊） */
-const ROAD_CLEAR_PX = 11.5;
+const CITY_CLEAR_PX = 64;
+/** 战略道路穿过密林时的半幅净空（px，SAMPLE_ZOOM=9 下约 13.5px，形成 27px 宽的 DE 式林间驿道走廊） */
+const ROAD_CLEAR_PX = 13.5;
 const ROAD_BUCKET_PX = 64;
 /** 画布四周离屏余量（px）：平移期间直接由 mapPane GPU 硬件变换同步移动，消除每帧亚像素重采样闪烁 */
 const CANVAS_PAD_PX = 160;
@@ -426,40 +426,44 @@ function forestClusterWeight(
     if (NON_VEGETATION_TILES.has(tile) || biome === 13) return 0;
 
     const isForestTile = BASE_FOREST_TILES.has(tile);
-    // 黄土高原（tile === 'ds2'）天然海拔 900~1800m，不能只靠 elev >= 165m 一概视为密林真山；
-    // 只有真正具有树冠郁闭（canopy >= 22）或陇山/六盘山/吕梁山高脊（elev >= 1750m）才算山林，其余黄土塬沟仅疏林成簇。
+    // 黄土高原（tile === 'ds2'）天然海拔 900~1800m：只有真正具有树冠郁闭（canopy >= 22）或陇山/六盘山/吕梁山高脊（elev >= 1750m）才算山林；
+    // 其余黄土梁峁塬面完全留白（不撒零碎小树丛，仅靠河岸护岸林带点缀）。
     const isLoessTableland = tile === 'ds2' && canopyDensity < 22 && (elev === null || elev < 1750);
     const isMountainOrHill = !isLoessTableland && elev !== null && elev >= 165;
     const hasRealCanopy = canopyDensity >= 22 || isForestTile;
 
-    // 🔴 2026-10-31 ~ 2026-11-01 森林模型结合真实山形地貌（修复「辽河平地长满树、赫图阿拉/白狼山真山反而秃光」）：
-    //    1. 森林模型 < 0.40 的历史农垦区直接留白；
-    //    2. 山地丘陵（elev >= 165m）或真林区（canopy >= 22 / 森林底图）：顺应山脉走势连绵成林，
-    //       取消「noiseVal < 0.38 一刀切砍光整座山脉」的正弦波门控，使长白山余脉（赫图阿拉/萨尔浒）、医巫闾山脊、辽西山地真正披林；
-    //    3. 黄土高原沟壑塬面（isLoessTableland）：仅在阴坡深沟（noiseVal >= 0.56）散落疏林小丛，露出黄土梁峁底色；
-    //    4. 低平冲积平原（elev < 165m 且 canopy < 22 且非森林底图，如辽河平原腹地）：保持开阔平川沃野，不画大坨平地树斑。
+    // 🔴 2026-11-01 专业战略地图「疏可跑马、密不透风 + 亮出山脊骨架」口径：
+    //    1. 森林模型 < 0.40 的历史农垦区、黄土高原梁峁塬面（isLoessTableland）、无郁闭度的开阔平川全部留白；
+    //    2. 高陡山脊线（elev >= 1950m 且非高郁闭深林）自动留白露石，让秦岭、太行、陇山等主脊线的岩石褶皱与阴阳坡光影完整亮出；
+    //    3. 山地森林面积控制在山体的 35%~45%（noiseGate = 0.42~0.55 + 高脊递增门槛）：树木抱团聚在山麓、山谷与阴坡山坳，不把整座山糊成绿毯。
     if (forestCover !== null) {
         if (forestCover < FOREST_COVER_THRESHOLD) return 0;
-        if (isLoessTableland) {
-            if (noiseVal < 0.56) return 0;
-            return 0.16 + 0.12 * ((noiseVal - 0.56) / 0.44);
-        }
-        if (!isMountainOrHill && !hasRealCanopy) {
-            // 平原低地且无森林郁闭度：仅在极高噪声峰顶偶留零星小树丛，绝不铺满平川
-            if (noiseVal < 0.76) return 0;
-            return 0.22 * ((noiseVal - 0.76) / 0.24);
-        }
+        if (isLoessTableland) return 0;
+        if (!isMountainOrHill && !hasRealCanopy) return 0;
+
+        // 高山裸岩主脊线留白：海拔 >= 1950m 且无强卫星树冠（canopy < 32）的陡脊直接露石
+        if (elev !== null && elev >= 1950 && canopyDensity < 32) return 0;
+
+        const ridgePenalty = elev !== null && elev > 1300
+            ? Math.min(0.16, ((elev - 1300) / 800) * 0.14)
+            : 0;
+        const baseNoiseGate = canopyDensity >= 55
+            ? 0.42
+            : canopyDensity >= 28
+                ? 0.48
+                : 0.54;
+        const noiseGate = Math.min(0.68, baseNoiseGate + ridgePenalty);
+        if (noiseVal < noiseGate) return 0;
+
         const norm = Math.min(1, (forestCover - FOREST_COVER_THRESHOLD) / (1 - FOREST_COVER_THRESHOLD));
-        const terrainBoost = isMountainOrHill ? Math.min(0.24, (elev! - 165) / 900) : 0;
-        const canopyBoost = Math.min(0.22, canopyDensity / 220);
-        // 山林内部仅在 noiseVal < 0.20 留出少量自然林间空地，其余顺山势连成林海
-        if (noiseVal < 0.20 && canopyDensity < 45) return 0;
-        const nFactor = 0.65 + 0.35 * Math.max(0, (noiseVal - 0.15) / 0.85);
-        return Math.min(1, (0.34 + 0.42 * norm + terrainBoost + canopyBoost) * nFactor);
+        const canopyBoost = Math.min(0.20, canopyDensity / 220);
+        const clusterSpan = (noiseVal - noiseGate) / Math.max(0.15, 1 - noiseGate);
+        return Math.min(1, (0.28 + 0.44 * norm + canopyBoost) * (0.55 + 0.45 * clusterSpan));
     }
 
     const isForestBiome = RESOLVE_FOREST_BIOMES.has(biome);
     if (!isForestBiome && !isForestTile) return 0;
+    if (isLoessTableland) return 0;
 
     let baseWeight = 0;
     if (isForestTile) {
@@ -468,11 +472,11 @@ function forestClusterWeight(
     } else if (isForestBiome) {
         if (canopyDensity < 22 && !isMountainOrHill) return 0;
         const norm = Math.min(1.0, Math.max(0.15, (canopyDensity - 15) / 55));
-        baseWeight = 0.24 + 0.56 * norm;
+        baseWeight = 0.24 + 0.52 * norm;
     }
 
-    if (noiseVal < 0.26) return 0;
-    const clusterFactor = 0.60 + 0.40 * ((noiseVal - 0.26) / 0.74);
+    if (noiseVal < 0.48) return 0;
+    const clusterFactor = 0.55 + 0.45 * ((noiseVal - 0.48) / 0.52);
 
     return baseWeight * clusterFactor;
 }
@@ -1101,7 +1105,7 @@ export class VegetationLayer {
                 if (ptLatLng.lat < -58 || ptLatLng.lat > 75) continue;
 
                 // 据点避让统一在 SAMPLE_ZOOM 世界像素坐标系下计算，彻底杜绝因平移/缩放亚像素取整导致的城周树木闪现
-                if (visibleCities.some((c) => Math.hypot(c.wx - px, c.wy - py) < (c.isForestHunting ? 24 : CITY_CLEAR_PX))) continue;
+                if (visibleCities.some((c) => Math.hypot(c.wx - px, c.wy - py) < (c.isForestHunting ? 34 : CITY_CLEAR_PX))) continue;
 
                 const water = waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng);
                 if (water === true) continue;
@@ -1217,39 +1221,37 @@ export class VegetationLayer {
                 const isDenseCanopy = !isSparseEco && clusterWeight >= 0.34;
 
                 const count = isDenseCanopy
-                    ? (clusterWeight >= 0.48 ? (hash(gx, gy, 53) > 0.35 ? 5 : 4) : 4)
-                    : (clusterWeight >= 0.26 ? 3 : 2);
+                    ? (clusterWeight >= 0.56 ? 4 : 3)
+                    : (clusterWeight >= 0.26 ? 2 : 1);
 
                 // DE 同团树种内聚：2×2 格共享主树种抽签（使竹林成片、松林成带、桦林成林），伴生树 25% 概率混入本区次要树种
                 const clumpCellX = Math.floor(gx / (TREE_GRID_STEP * 2));
                 const clumpCellY = Math.floor(gy / (TREE_GRID_STEP * 2));
                 const clumpRoll = hash(clumpCellX, clumpCellY, 67);
+                const quadRot = Math.floor(hash(gx, gy, 59) * 4);
 
                 let placedInCell = 0;
                 for (let i = 0; i < count; i++) {
                     let curPx = px;
                     let curPy = py;
                     if (isDenseCanopy) {
-                        // 密林按 2×2 子象限（每象限 23×23px）均匀布点 + 随机抖动，使格内间距与跨格间距完全一致，消除「46px 网格一撮一撮」的团块缝隙
-                        if (i < 4) {
-                            const qx = i & 1;
-                            const qy = (i >> 1) & 1;
-                            const halfStep = TREE_GRID_STEP * 0.5;
-                            curPx = gx + (qx + 0.5) * halfStep + (hash(gx, gy, i * 17 + 31) - 0.5) * (halfStep * 0.72);
-                            curPy = gy + (qy + 0.5) * halfStep + (hash(gx, gy, i * 19 + 32) - 0.5) * (halfStep * 0.72);
-                        } else {
-                            curPx = px + (hash(gx, gy, 97) - 0.5) * 14;
-                            curPy = py + (hash(gx, gy, 99) - 0.5) * 12;
-                        }
+                        // 密林按 2×2 子象限（每象限 23×23px）旋转抽样 3~4 株 + 随机抖动，既消除 46px 网格缝，又避免 5 棵树挤成一团绿球
+                        const qIdx = (i + quadRot) & 3;
+                        const qx = qIdx & 1;
+                        const qy = (qIdx >> 1) & 1;
+                        const halfStep = TREE_GRID_STEP * 0.5;
+                        curPx = gx + (qx + 0.5) * halfStep + (hash(gx, gy, i * 17 + 31) - 0.5) * (halfStep * 0.72);
+                        curPy = gy + (qy + 0.5) * halfStep + (hash(gx, gy, i * 19 + 32) - 0.5) * (halfStep * 0.72);
                     } else if (i > 0) {
                         const baseAng = hash(gx, gy, 31) * Math.PI * 2 + (i - 1) * ((Math.PI * 2) / Math.max(1, count - 1));
                         const ang = baseAng + (hash(gx, gy, i * 17 + 31) - 0.5) * 0.52;
-                        const dist = 7.0 + hash(gx, gy, i * 19 + 32) * 5.5;
+                        const dist = 7.5 + hash(gx, gy, i * 19 + 32) * 5.5;
                         curPx += Math.cos(ang) * dist;
                         curPy += Math.sin(ang) * dist * 0.74;
                     }
 
-                    // 战略官道/栈道走廊退让：树干落进道路净空带（11.5px）内则自动让路，露出林间古道
+                    // 单株树干级城郊避让与战略官道退让：确保城墙四周 64px 净空圈与林间古道干干净净
+                    if (visibleCities.some((c) => Math.hypot(c.wx - curPx, c.wy - curPy) < (c.isForestHunting ? 32 : CITY_CLEAR_PX - 4))) continue;
                     if (distSqToRoad(curPx, curPy) < ROAD_CLEAR_PX * ROAD_CLEAR_PX) continue;
 
                     const curLatLng = this.map.unproject([curPx, curPy], SAMPLE_ZOOM);

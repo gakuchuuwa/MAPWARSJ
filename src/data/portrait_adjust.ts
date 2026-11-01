@@ -1717,7 +1717,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -35
         },
-        "/assets/TIBET/supi_xinuoluo.png": {
+        "/assets/TIBET/__闲置__TIBET_06.png": {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": -8
@@ -3632,7 +3632,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/PERSIAN/safawei_aisimaier.png": {
+        "/assets/PERSIAN/__闲置__PERSIAN_03.png": {
             "scale": 1.03,
             "offsetX": 7,
             "offsetY": 2
@@ -5187,7 +5187,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/SLAVIC/gesake_hemeili.png": {
+        "/assets/SLAVIC/__闲置__SLAVIC_10.png": {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 19
@@ -7042,7 +7042,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/PERSIAN/kerman_bam_yagebu.png": {
+        "/assets/PERSIAN/__闲置__PERSIAN_02.png": {
             "scale": 0.88,
             "offsetX": 0,
             "offsetY": -7
@@ -7372,7 +7372,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 3,
             "offsetY": -5
         },
-        "/assets/INDIA/zhelouqi_pulitewei.png": {
+        "/assets/INDIA/__闲置__INDIA_06.png": {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": -11
@@ -7857,7 +7857,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/INDIA/xinde_nieakusi.png": {
+        "/assets/INDIA/__闲置__INDIA_05.png": {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 6
@@ -8307,7 +8307,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 1,
             "offsetY": 12
         },
-        "/assets/LITHUANIANS/litaowan_algirdas.png": {
+        "/assets/LITHUANIANS/__闲置__LITHUANIANS_01.png": {
             "scale": 0.9,
             "offsetX": 5,
             "offsetY": -22
@@ -8492,7 +8492,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 16,
             "offsetY": 1
         },
-        "/assets/BYZANTINE/bfe_nikephoros_ii.png": {
+        "/assets/BYZANTINE/__闲置__BYZANTINE_01.png": {
             "scale": 1.14,
             "offsetX": 11,
             "offsetY": 24
@@ -8762,7 +8762,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 13,
             "offsetY": 28
         },
-        "/assets/LATIN/bfe_doria.png": {
+        "/assets/LATIN/__闲置__LATIN_25.png": {
             "scale": 0.88,
             "offsetX": 0,
             "offsetY": -14

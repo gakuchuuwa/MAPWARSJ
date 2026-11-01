@@ -1,0 +1,57 @@
+[
+  {
+    "folder": "ATHENIANS",
+    "from": "bfe2_antiphilus.png",
+    "to": "__闲置__ATHENIANS_01.png"
+  },
+  {
+    "folder": "BYZANTINE",
+    "from": "bfe_nikephoros_ii.png",
+    "to": "__闲置__BYZANTINE_01.png"
+  },
+  {
+    "folder": "BYZANTINE",
+    "from": "gen_nikephoros_phokas.png",
+    "to": "__闲置__BYZANTINE_02.png"
+  },
+  {
+    "folder": "INDIA",
+    "from": "xinde_nieakusi.png",
+    "to": "__闲置__INDIA_05.png"
+  },
+  {
+    "folder": "INDIA",
+    "from": "zhelouqi_pulitewei.png",
+    "to": "__闲置__INDIA_06.png"
+  },
+  {
+    "folder": "LATIN",
+    "from": "bfe_doria.png",
+    "to": "__闲置__LATIN_25.png"
+  },
+  {
+    "folder": "LITHUANIANS",
+    "from": "litaowan_algirdas.png",
+    "to": "__闲置__LITHUANIANS_01.png"
+  },
+  {
+    "folder": "PERSIAN",
+    "from": "kerman_bam_yagebu.png",
+    "to": "__闲置__PERSIAN_02.png"
+  },
+  {
+    "folder": "PERSIAN",
+    "from": "safawei_aisimaier.png",
+    "to": "__闲置__PERSIAN_03.png"
+  },
+  {
+    "folder": "SLAVIC",
+    "from": "gesake_hemeili.png",
+    "to": "__闲置__SLAVIC_10.png"
+  },
+  {
+    "folder": "TIBET",
+    "from": "supi_xinuoluo.png",
+    "to": "__闲置__TIBET_06.png"
+  }
+]
