@@ -275,7 +275,8 @@ export function stepTacticalAnimals(
             const spd0 = Math.hypot(an.vx, an.vy) || de.run;
             an.x += (an.fleeDX / fd) * spd0 * dt;
             an.y += (an.fleeDY / fd) * spd0 * dt;
-            if (de.kind === 'prey' || de.kind === 'danger' || de.kind === 'livestock') { an.homeX = an.x; an.homeY = an.y; }
+            an.homeX = an.x;
+            an.homeY = an.y;
             an.dir = dir8(an.fleeDX, an.fleeDY);
             if (an.fleeTimer <= 0) {
                 an.wanderX = an.x;
@@ -287,6 +288,8 @@ export function stepTacticalAnimals(
             if (distHome > (de.kind === 'livestock' ? HOME_LEASH : HOME_BACK)) {
                 mx = an.homeX - an.x;
                 my = an.homeY - an.y;
+                an.wanderX = an.homeX;
+                an.wanderY = an.homeY;
                 spd = de.walk;
                 want = 'walk';
             } else {
@@ -333,7 +336,7 @@ export function stepTacticalAnimals(
             an.dir = dir8(mx, my);
         }
 
-        if (fleeing && de.kind === 'prey') {
+        if (fleeing && !an.aquatic) {
             if (an.x <= X0 || an.x >= X1) { an.fleeDX = 0; an.fleeDY = an.fleeDY >= 0 ? 1 : -1; }
             else if (an.y <= Y0 || an.y >= Y1) { an.fleeDX = an.fleeDX >= 0 ? 1 : -1; an.fleeDY = 0; }
         }

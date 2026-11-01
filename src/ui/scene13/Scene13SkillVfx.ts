@@ -110,12 +110,12 @@ const easeOut = (p: number) => 1 - (1 - p) ** 3;
 
 // ── 1. 六计专属手绘图标（256×256 内部全不透明 PNG）＋ 离屏发光印章池 ──
 const SIX_ICON_URLS: Record<TacticalSixSet, string> = {
-    gongzhan: '/SUCAI_FX/SIX_ICONS/gongzhan.png?v=gongzhan5',
-    shengzhan: '/SUCAI_FX/SIX_ICONS/shengzhan.png?v=opaque2',
-    dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=opaque2',
-    hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=opaque2',
-    bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=opaque2',
-    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=baizhan5',
+    gongzhan: '/SUCAI_FX/SIX_ICONS/gongzhan.png?v=six6',
+    shengzhan: '/SUCAI_FX/SIX_ICONS/shengzhan.png?v=six6',
+    dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=six6',
+    hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=six6',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=six6',
+    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six6',
 };
 
 const sixRawImages = new Map<TacticalSixSet, HTMLImageElement>();
