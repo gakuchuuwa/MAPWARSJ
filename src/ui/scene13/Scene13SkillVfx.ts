@@ -1070,6 +1070,537 @@ function drawTopOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     drawPatronBurst(ctx, v, p, lift);
 }
 
+/**
+ * ── 7. 【新版 DE 原生 Flipbook 序列帧 ＋ 官方厚涂图标勋章体系】（与旧版并存，旧版代码一行未删） ──
+ * 支持三种运行模式（默认 'new'，也可随时在控制台切换 `window.__SKILL_VFX_MODE = 'old' | 'new' | 'both'`）：
+ *   - 'new'  : 使用 AoE2 DE 原生 `/SUCAI_FX/` 序列帧（GROUND_STRIKE / EXPLODING_BOLT / IMPACT_DUST /UNIT_DUST / TREBUCHET_SMOKE / BLOOD）＋ `/de-techtree/icons/Tech/` 官方手绘油画图标勋章
+ *   - 'old'  : 使用上方完整保留的旧版古法金石矢量特效
+ *   - 'both' : 新旧两套同时叠加对比
+ */
+export type SkillVfxRenderMode = 'new' | 'old' | 'both';
+let currentSkillVfxMode: SkillVfxRenderMode = 'new';
+
+export function setSkillVfxRenderMode(mode: SkillVfxRenderMode): void {
+    currentSkillVfxMode = mode;
+}
+
+function getActiveSkillVfxMode(): SkillVfxRenderMode {
+    const winMode = typeof window !== 'undefined' ? (window as any).__SKILL_VFX_MODE : undefined;
+    if (winMode === 'old' || winMode === 'new' || winMode === 'both') return winMode;
+    return currentSkillVfxMode;
+}
+
+interface DeFlipbookSpec {
+    url: string;
+    frames: number;
+    boxW: number;
+    boxH: number;
+    anchorX: number;
+    anchorY: number;
+    screenBlend?: boolean;
+}
+
+const DE_FLIPBOOK_SPECS: Record<string, DeFlipbookSpec> = {
+    GROUND_STRIKE: {
+        url: '/SUCAI_FX/GROUND_STRIKE/fly_0.png',
+        frames: 8,
+        boxW: 554,
+        boxH: 299,
+        anchorX: 268,
+        anchorY: 162,
+        screenBlend: true, // 黑底发光震地裂纹序列帧，用 screen 滤色混合自动去黑底
+    },
+    EXPLODING_BOLT: {
+        url: '/SUCAI_FX/EXPLODING_BOLT/fly_0.png',
+        frames: 10,
+        boxW: 379,
+        boxH: 198,
+        anchorX: 190,
+        anchorY: 96,
+    },
+    IMPACT_DUST: {
+        url: '/SUCAI_FX/IMPACT_DUST/dir00/fly_0.png',
+        frames: 8,
+        boxW: 135,
+        boxH: 78,
+        anchorX: 27,
+        anchorY: 39,
+    },
+    UNIT_DUST: {
+        url: '/SUCAI_FX/DUST/UNIT_DUST/fly_0.png',
+        frames: 8,
+        boxW: 59,
+        boxH: 58,
+        anchorX: 24,
+        anchorY: 28,
+    },
+    TREBUCHET_SMOKE: {
+        url: '/SUCAI_FX/IMPACT_TREBUCHET_SMOKE/fly_0.png',
+        frames: 10,
+        boxW: 353,
+        boxH: 464,
+        anchorX: 191,
+        anchorY: 252,
+    },
+    BLOOD: {
+        url: '/SUCAI_FX/BLOOD/dir00/fly_0.png',
+        frames: 8,
+        boxW: 202,
+        boxH: 116,
+        anchorX: 83,
+        anchorY: 56,
+    },
+};
+
+const flipbookImageCache = new Map<string, HTMLImageElement>();
+const flipbookLoading = new Set<string>();
+
+function getFlipbookImage(key: keyof typeof DE_FLIPBOOK_SPECS): HTMLImageElement | null {
+    const cached = flipbookImageCache.get(key);
+    if (cached) return cached;
+    if (typeof Image === 'undefined') return null;
+    if (!flipbookLoading.has(key)) {
+        flipbookLoading.add(key);
+        const spec = DE_FLIPBOOK_SPECS[key];
+        const img = new Image();
+        img.onload = () => {
+            flipbookLoading.delete(key);
+            flipbookImageCache.set(key, img);
+        };
+        img.onerror = () => {
+            flipbookLoading.delete(key);
+        };
+        img.src = spec.url;
+    }
+    return null;
+}
+
+/**
+ * 绘制一帧 AoE2 DE 原生 Flipbook 序列帧切片
+ */
+function drawDeFlipbookFrame(
+    ctx: CanvasRenderingContext2D,
+    key: keyof typeof DE_FLIPBOOK_SPECS,
+    normProgress: number,
+    x: number,
+    y: number,
+    scaleX = 1.0,
+    scaleY = scaleX,
+    alpha = 1.0,
+    flipX = false,
+): boolean {
+    const spec = DE_FLIPBOOK_SPECS[key];
+    const img = getFlipbookImage(key);
+    if (!spec || !img || alpha <= 0.01) return false;
+
+    const frameIdx = Math.max(0, Math.min(spec.frames - 1, Math.floor(clamp01(normProgress) * spec.frames)));
+    const sx = frameIdx * spec.boxW;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    if (spec.screenBlend) {
+        ctx.globalCompositeOperation = 'screen';
+    }
+    ctx.translate(x, y);
+    ctx.scale(flipX ? -scaleX : scaleX, scaleY);
+    ctx.drawImage(
+        img,
+        sx,
+        0,
+        spec.boxW,
+        spec.boxH,
+        -spec.anchorX,
+        -spec.anchorY,
+        spec.boxW,
+        spec.boxH,
+    );
+    ctx.restore();
+    return true;
+}
+
+/**
+ * 六计专属手绘古战场金石冷兵器透明抠图图标（256×256 统一规格）：
+ * - gongzhan (攻战·振己威): 朱砂赤铜鎏金血槽阔剑
+ * - shengzhan (胜战·固己防): 古青铜包边苍玉重装塔盾
+ * - dizhan (敌战·伏兵偷袭): 雄狮浮雕古铜箍黑牛角战号 + 金色音波
+ * - hunzhan (混战·乱敌阵): 青铜残片与暮色紫烟双螺旋迷魂涡流
+ * - bingzhan (并战·夺敌兵): 琥珀鎏金与寒铁靛青双回旋箭头环抱青铜虎符
+ * - baizhan (败战·减敌兵): 三支俯冲黑羽破甲铁箭携暗殷红血风
+ */
+const DE_TECH_ICON_URLS: Record<TacticalSixSet, string> = {
+    gongzhan: '/SUCAI_FX/SIX_ICONS/gongzhan.png',
+    shengzhan: '/SUCAI_FX/SIX_ICONS/shengzhan.png',
+    dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png',
+    hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png',
+    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png',
+};
+
+const deTechRawImages = new Map<TacticalSixSet, HTMLImageElement>();
+const deTechLoading = new Set<TacticalSixSet>();
+const deMedallionCache = new Map<string, HTMLCanvasElement>();
+
+function getDeMedallionBadge(six: TacticalSixSet, paid = false): HTMLCanvasElement | null {
+    const cacheKey = `${six}_${paid ? 1 : 0}`;
+    const existing = deMedallionCache.get(cacheKey);
+    if (existing) return existing;
+
+    const rawImg = deTechRawImages.get(six);
+    if (!rawImg) {
+        if (typeof Image !== 'undefined' && !deTechLoading.has(six)) {
+            deTechLoading.add(six);
+            const img = new Image();
+            img.onload = () => {
+                deTechLoading.delete(six);
+                deTechRawImages.set(six, img);
+            };
+            img.onerror = () => {
+                deTechLoading.delete(six);
+            };
+            img.src = DE_TECH_ICON_URLS[six];
+        }
+        return null;
+    }
+
+    // 预烘焙 128×128 独立镂空剪影图标（无死板圆框裁切，完整保留剑尖、盾角、号角流苏、虎符与三羽箭轮廓）
+    const SIZE = 128;
+    const PAD = 8;
+    const DRAW_S = SIZE - PAD * 2;
+    const cv = document.createElement('canvas');
+    cv.width = SIZE;
+    cv.height = SIZE;
+    const g = cv.getContext('2d')!;
+
+    g.save();
+    // 1. 底部深邃冷兵器投影，确保在亮黄土地、绿草、雪地与水面上都棱角分明
+    g.shadowColor = paid ? 'rgba(255, 196, 72, 0.85)' : 'rgba(8, 6, 4, 0.92)';
+    g.shadowBlur = paid ? 10 : 7;
+    g.shadowOffsetX = 0;
+    g.shadowOffsetY = paid ? 0 : 2.5;
+    g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
+
+    // 2. 二次叠绘本体增强暗部接触阴影与金属锐度
+    g.shadowColor = 'rgba(0, 0, 0, 0.85)';
+    g.shadowBlur = 3.5;
+    g.shadowOffsetY = 1.5;
+    g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
+    g.restore();
+
+    deMedallionCache.set(cacheKey, cv);
+    return cv;
+}
+
+/**
+ * 新版地面层：采用 DE 原生 `GROUND_STRIKE` 震地裂纹冲击波、`EXPLODING_BOLT` 烈焰环、`IMPACT_DUST` 破土扬尘序列帧
+ */
+function drawGroundOneDeFlipbook(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
+    const fade = holdFade(p);
+    const scale = tierScale(v);
+    const x = v.x, y = v.y - lift(v.x, v.y);
+    const col = COLOR[v.six];
+    const halo = getSoftGroundHalo(col);
+
+    ctx.save();
+
+    // 1. 柔和矿物色地气底晕
+    const expandP = clamp01(p * 1.45);
+    const e = easeOut(expandP);
+    const baseRx = (62 + e * (v.six === 'hunzhan' ? 175 : 205)) * scale;
+    const baseRy = baseRx * 0.48;
+    ctx.globalAlpha = fade * 0.58;
+    drawStamp(ctx, halo, x, y, baseRx, baseRy);
+
+    // 2. DE 原生 GROUND_STRIKE 震地裂纹冲击波（播放两波：主爆发波 + 余震波）
+    const strikeP1 = clamp01(p * 1.65);
+    if (strikeP1 < 1) {
+        drawDeFlipbookFrame(ctx, 'GROUND_STRIKE', strikeP1, x, y, 0.72 * scale, 0.68 * scale, fade * 0.88);
+    }
+    const strikeP2 = clamp01((p - 0.22) * 1.55);
+    if (p >= 0.22 && strikeP2 < 1) {
+        drawDeFlipbookFrame(ctx, 'GROUND_STRIKE', strikeP2, x, y, 0.92 * scale, 0.86 * scale, fade * 0.72, true);
+    }
+
+    // 3. 各计专属 DE 地面序列帧
+    if (v.six === 'gongzhan') {
+        // 攻战：阵心与冲锋前锋爆开 EXPLODING_BOLT 炽烈冲击环 + 沿冲锋方向推进的 IMPACT_DUST 铁蹄扬尘
+        const dx = Math.cos(v.angle), dy = Math.sin(v.angle);
+        const boltP = clamp01(p * 1.5);
+        if (boltP < 1) {
+            drawDeFlipbookFrame(ctx, 'EXPLODING_BOLT', boltP, x, y, 0.85 * scale, 0.78 * scale, fade * 0.82);
+        }
+        for (let k = 0; k < 4; k++) {
+            const delay = k * 0.12;
+            const dp = clamp01((p - delay) / 0.55);
+            if (p < delay || dp >= 1) continue;
+            const dist = (k * 48 + easeOut(dp) * 42) * scale;
+            const gx = x + dx * dist;
+            const gy = y + dy * dist * 0.65;
+            drawDeFlipbookFrame(ctx, 'IMPACT_DUST', dp, gx, gy, 1.05 * scale, 0.95 * scale, fade * 0.85, k % 2 === 1);
+        }
+    } else if (v.six === 'shengzhan') {
+        // 胜战：8 处重盾顿地激起 8 团真实 IMPACT_DUST 扬尘序列帧
+        const rx = (64 + e * 124) * scale;
+        const ry = rx * 0.48;
+        const dp = clamp01(p * 1.45);
+        for (let k = 0; k < 8; k++) {
+            const ang = k * (TAU / 8);
+            const sx = x + Math.cos(ang) * rx;
+            const sy = y + Math.sin(ang) * ry;
+            drawDeFlipbookFrame(ctx, 'IMPACT_DUST', dp, sx, sy, 0.85 * scale, 0.80 * scale, fade * 0.80, k % 2 === 0);
+        }
+    } else if (v.six === 'dizhan') {
+        // 敌战：伏兵出兵代表点破土扬起真实 IMPACT_DUST 尘暴
+        const totalPts = v.points.length;
+        const maxClusters = Math.min(totalPts, 6);
+        for (let c = 0; c < maxClusters; c++) {
+            const idx = Math.floor((c + 0.5) * totalPts / maxClusters);
+            const pt = v.points[idx];
+            const py = pt.y - lift(pt.x, pt.y);
+            const delay = c * 0.06;
+            const dp = clamp01((p - delay) / 0.68);
+            if (p >= delay && dp < 1) {
+                drawDeFlipbookFrame(ctx, 'IMPACT_DUST', dp, pt.x, py, 1.18 * scale, 1.08 * scale, fade * 0.90, c % 2 === 1);
+            }
+        }
+    } else if (v.six === 'baizhan') {
+        // 败战：箭雨落点扬起真实 UNIT_DUST 尘土
+        const useTargets = v.targets.length > 0;
+        const srcLen = useTargets ? v.targets.length : v.points.length;
+        const pn = Math.min(srcLen, 28);
+        for (let i = 0; i < pn; i++) {
+            const idx = Math.floor(i * srcLen / pn);
+            const pt = useTargets ? v.targets[idx] : v.points[idx];
+            const py = pt.y - lift(pt.x, pt.y);
+            const delay = ((i * 0.618034) % 1) * 0.35;
+            const localP = clamp01((p - delay) / (1 - delay));
+            if (localP >= 0.28) {
+                const ip = clamp01((localP - 0.28) / 0.52);
+                if (ip < 1) {
+                    drawDeFlipbookFrame(ctx, 'UNIT_DUST', ip, pt.x, py, 1.15 * scale, 1.05 * scale, fade * 0.78, i % 2 === 0);
+                }
+            }
+        }
+    }
+
+    ctx.restore();
+}
+
+/**
+ * 新版上层大场面：用 DE 原生序列帧（EXPLODING_BOLT / TREBUCHET_SMOKE / IMPACT_DUST / BLOOD）＋ DE 官方厚涂油画勋章替代手画简笔画
+ */
+function drawTopOneDeFlipbook(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
+    const expandP = clamp01(p * 1.38);
+    const e = easeOut(expandP);
+    const fade = holdFade(p);
+    const scale = tierScale(v);
+    const cx = v.x, cy = v.y - lift(v.x, v.y) - 14;
+    const badge = getDeMedallionBadge(v.six, v.paid) ?? getColdWeaponIcon(
+        v.six === 'gongzhan' ? 'swords'
+            : v.six === 'shengzhan' ? 'shield'
+            : v.six === 'dizhan' ? 'banner'
+            : v.six === 'hunzhan' ? 'dizzy'
+            : v.six === 'bingzhan' ? 'defect'
+            : 'slashKill',
+        v.paid,
+    );
+
+    ctx.save();
+
+    if (v.six === 'gongzhan') {
+        // 【攻战·振己威】冲锋前锋 EXPLODING_BOLT 炽烈战气波 + 破阵滚滚烟尘 + 阵心 DE 官方厚涂铁剑勋章
+        const dx = Math.cos(v.angle), dy = Math.sin(v.angle);
+        const px = -dy, py = dx;
+        for (let k = 0; k < 3; k++) {
+            const delay = k * 0.14;
+            const bp = clamp01((p - delay) / 0.62);
+            if (p >= delay && bp < 1) {
+                const adv = (32 + k * 52 + easeOut(bp) * 44) * scale;
+                const bx = cx + dx * adv;
+                const by = cy + dy * adv * 0.65;
+                drawDeFlipbookFrame(ctx, 'EXPLODING_BOLT', bp, bx, by, (0.62 + k * 0.12) * scale, (0.52 + k * 0.10) * scale, fade * 0.85);
+            }
+        }
+        // 冲锋队列脚下扬起 UNIT_DUST 疾行尘烟
+        for (let i = 0; i < 6; i++) {
+            const off = (i - 2.5) * 32 * scale;
+            const waveP = (p * 1.6 + (i % 3) * 0.25) % 1;
+            const travel = easeOut(waveP) * 110 * scale;
+            const sx = cx + px * off + dx * (travel - 40);
+            const sy = cy + py * off * 0.6 + dy * (travel - 40) * 0.65;
+            drawDeFlipbookFrame(ctx, 'UNIT_DUST', waveP, sx, sy, 1.25 * scale, 1.15 * scale, fade * 0.78, i % 2 === 1);
+        }
+        const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
+        ctx.globalAlpha = fade * 0.98;
+        drawStamp(ctx, badge, cx, cy - 30 - e * 12 * scale, 38 * scale * pulse);
+    } else if (v.six === 'dizhan') {
+        // 【敌战·伏兵偷袭】伏兵出兵口腾起 TREBUCHET_SMOKE 与 IMPACT_DUST 漫天黄尘 + DE 征召军令勋章（彻底告别简笔画蓝三角旗）
+        const dropOffset = (1 - easeOut(Math.min(1, p * 3.2))) * 36 * scale;
+        drawDeFlipbookFrame(ctx, 'IMPACT_DUST', clamp01(p * 1.4), cx, cy + 4, 1.35 * scale, 1.20 * scale, fade * 0.88);
+        ctx.globalAlpha = fade * 0.98;
+        drawStamp(ctx, badge, cx, cy - 36 * scale - dropOffset, 38 * scale);
+
+        const totalPts = v.points.length;
+        const maxClusters = Math.min(totalPts, 6);
+        for (let c = 0; c < maxClusters; c++) {
+            const idx = Math.floor((c + 0.5) * totalPts / maxClusters);
+            const pt = v.points[idx];
+            const y = pt.y - lift(pt.x, pt.y);
+            const sp = clamp01((p - c * 0.05) * 1.35);
+            drawDeFlipbookFrame(ctx, 'TREBUCHET_SMOKE', sp, pt.x, y + 6, 0.42 * scale, 0.38 * scale, fade * 0.72, c % 2 === 1);
+            drawDeFlipbookFrame(ctx, 'IMPACT_DUST', sp, pt.x, y + 2, 1.10 * scale, 1.0 * scale, fade * 0.86, c % 2 === 0);
+            ctx.globalAlpha = fade * 0.95;
+            drawStamp(ctx, badge, pt.x, y - (30 + e * 12) * scale, 23 * scale);
+        }
+    } else if (v.six === 'shengzhan') {
+        // 【胜战·固己防】8 枚 DE 官方厚涂重装钢甲勋章绕阵顿地 + 真实踏阵扬尘 + 温润苍玉回血十字升腾
+        const x = v.x, y = v.y - lift(v.x, v.y);
+        const rx = (64 + e * 124) * scale;
+        const ry = rx * 0.48;
+        const slamDrop = (1 - easeOut(Math.min(1, p * 3.5))) * 36 * scale;
+        for (let k = 0; k < 8; k++) {
+            const ang = k * (TAU / 8) + p * 0.32;
+            const sx = x + Math.cos(ang) * rx;
+            const sy = y + Math.sin(ang) * ry - 12 * scale - slamDrop;
+            ctx.globalAlpha = fade * 0.95;
+            drawStamp(ctx, badge, sx, sy, 24 * scale);
+        }
+        const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
+        ctx.globalAlpha = fade * 0.98;
+        drawStamp(ctx, badge, x, y - 36 * scale - slamDrop, 38 * scale * pulse);
+
+        const plusOffsets = [
+            { dx: 0, dy: -0.58, s: 1.40 },
+            { dx: -0.46, dy: -0.24, s: 1.12 },
+            { dx: 0.46, dy: -0.24, s: 1.12 },
+            { dx: -0.28, dy: -0.78, s: 1.02 },
+            { dx: 0.28, dy: -0.78, s: 1.02 },
+        ];
+        for (let i = 0; i < plusOffsets.length; i++) {
+            const po = plusOffsets[i];
+            const rise = (p * 1.45 + i * 0.16) % 1;
+            const px = x + po.dx * rx;
+            const py = y + po.dy * ry - 14 * scale - rise * 34 * scale;
+            ctx.globalAlpha = fade * (1 - rise * 0.42) * 0.92;
+            drawHealPlus(ctx, px, py, 12 * po.s * scale, 4.5 * po.s * scale, COLOR.shengzhan, '#e6f2ea');
+        }
+    } else if (v.six === 'hunzhan') {
+        // 【混战·乱敌阵】6 柱 DE 原生 TREBUCHET_SMOKE 滚滚浓烟与 IMPACT_DUST 席卷敌阵 + DE 纵火勋章
+        for (let i = 0; i < 6; i++) {
+            const ang = i * (TAU / 6) + p * 1.8;
+            const rad = (36 + (i % 2) * 34 + e * 42) * scale;
+            const sx = cx + Math.cos(ang) * rad;
+            const sy = cy + Math.sin(ang) * rad * 0.52;
+            const sp = (p * 1.45 + i * 0.15) % 1;
+            drawDeFlipbookFrame(ctx, 'TREBUCHET_SMOKE', sp, sx, sy + 14, 0.52 * scale, 0.46 * scale, fade * 0.78, i % 2 === 1);
+            drawDeFlipbookFrame(ctx, 'IMPACT_DUST', sp, sx, sy + 6, 1.15 * scale, 1.05 * scale, fade * 0.82, i % 2 === 0);
+        }
+        const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
+        ctx.globalAlpha = fade * 0.98;
+        drawStamp(ctx, badge, cx, cy - 26 * scale, 38 * scale * pulse);
+    } else if (v.six === 'bingzhan') {
+        // 【并战·夺敌兵】DE 救赎天降金光勋章 + 虎符金箭飞入敌阵 + 倒戈兵脚下爆开 GROUND_STRIKE 金色震波
+        const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
+        ctx.globalAlpha = fade * 0.98;
+        drawStamp(ctx, badge, cx, cy - 20 * scale, 38 * scale * pulse);
+
+        const n = Math.min(v.targets.length, 16);
+        for (let i = 0; i < n; i++) {
+            const m = v.targets[Math.floor(i * v.targets.length / n)];
+            if (m.hp <= 0) continue;
+            const my = m.y - lift(m.x, m.y) - 18;
+            const cpx = (cx + m.x) * 0.5;
+            const cpy = Math.min(cy, my) - 64 - (i % 3) * 16;
+
+            const t = clamp01(p * 1.65);
+            const u = 1 - t;
+            const px = u * u * cx + 2 * u * t * cpx + t * t * m.x;
+            const py = u * u * cy + 2 * u * t * cpy + t * t * my;
+            const tx = 2 * u * (cpx - cx) + 2 * t * (m.x - cpx);
+            const ty = 2 * u * (cpy - cy) + 2 * t * (my - cpy);
+            const tLen = Math.hypot(tx, ty) || 1;
+            const tailX = px - (tx / tLen) * 22;
+            const tailY = py - (ty / tLen) * 22;
+
+            ctx.globalAlpha = fade * 0.94;
+            drawWarArrow(ctx, tailX, tailY, px, py, 1.25, true);
+
+            if (t >= 0.85 && i % 2 === 0) {
+                const hitP = clamp01((p - 0.50) * 2.0);
+                drawDeFlipbookFrame(ctx, 'UNIT_DUST', hitP, m.x, my + 18, 1.15 * scale, 1.05 * scale, fade * 0.82, i % 2 === 0);
+            }
+        }
+    } else {
+        // 【败战·减敌兵】漫天黑羽箭雨齐射 + 命中敌兵爆开 DE 原生 BLOOD 飙血序列帧 + 插地箭杆留存 + DE 锥子箭勋章
+        const useTargets = v.targets.length > 0;
+        const srcLen = useTargets ? v.targets.length : v.points.length;
+        const n = Math.min(srcLen, 64);
+        const unitScale = v.paid ? 1.26 : 1.12;
+        const uFallX = -96 * unitScale;
+        const uFallY = -240 * unitScale;
+
+        for (let k = 0; k < 44; k++) {
+            const delay = ((k * 0.381966) % 1) * 0.52;
+            if (p < delay) continue;
+            const lp = clamp01((p - delay) / 0.36);
+            const ang = k * 2.39996;
+            const rad = Math.sqrt((k + 0.5) / 44) * 185 * scale;
+            const tx = cx + Math.cos(ang) * rad;
+            const ty = cy + Math.sin(ang) * rad * 0.5;
+            if (lp < 1) {
+                const tipX = tx + uFallX * (1 - lp);
+                const tipY = ty + uFallY * (1 - lp);
+                ctx.globalAlpha = fade * 0.90;
+                drawWarArrow(ctx, tipX + uFallX * 0.16, tipY + uFallY * 0.16, tipX, tipY, 1.25 * scale, v.paid);
+            } else {
+                ctx.globalAlpha = fade * 0.72;
+                drawWarArrow(ctx, tx + uFallX * 0.11, ty + uFallY * 0.11, tx, ty, 1.04 * scale, v.paid);
+            }
+        }
+
+        for (let i = 0; i < n; i++) {
+            const idx = Math.floor(i * srcLen / n);
+            const pt = useTargets ? v.targets[idx] : v.points[idx];
+            const py = pt.y - lift(pt.x, pt.y) - 8;
+            const delay = ((i * 0.618034) % 1) * 0.35;
+            if (p < delay) continue;
+            const localP = clamp01((p - delay) / (1 - delay));
+            const fallFrac = 0.28;
+
+            if (localP < fallFrac) {
+                const fp = localP / fallFrac;
+                const hx = pt.x + uFallX * (1 - fp);
+                const hy = py + uFallY * (1 - fp);
+                ctx.globalAlpha = (0.72 + fp * 0.26) * fade;
+                drawWarArrow(ctx, hx + uFallX * 0.18, hy + uFallY * 0.18, hx, hy, 1.30 * unitScale, v.paid);
+            } else {
+                const ip = (localP - fallFrac) / (1 - fallFrac);
+                // 命中飙起 DE 原生 BLOOD 8 帧溅血序列帧（替代手画红色 ✕ 贴纸）
+                if (ip < 0.72 && i % 2 === 0) {
+                    drawDeFlipbookFrame(
+                        ctx,
+                        'BLOOD',
+                        clamp01(ip / 0.72),
+                        pt.x,
+                        py - 6,
+                        0.48 * unitScale,
+                        0.48 * unitScale,
+                        fade * 0.90,
+                        i % 4 === 0,
+                    );
+                }
+                ctx.globalAlpha = fade * 0.90;
+                drawWarArrow(ctx, pt.x + uFallX * 0.13, py + 4 + uFallY * 0.13, pt.x, py + 4, 1.14 * unitScale, v.paid);
+            }
+        }
+
+        const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
+        ctx.globalAlpha = fade * 0.96;
+        drawStamp(ctx, badge, cx, cy - 32 * scale, 36 * scale * pulse);
+    }
+
+    drawPatronBurst(ctx, v, p, lift);
+    ctx.restore();
+}
+
 export function drawScene13SkillCastVfx(
     ctx: CanvasRenderingContext2D,
     effects: readonly Scene13SkillVfx[],
@@ -1079,15 +1610,24 @@ export function drawScene13SkillCastVfx(
 ): void {
     if (!effects.length) return;
     const nowSec = nowMs * 0.001;
+    const mode = getActiveSkillVfxMode();
     ctx.save();
     for (const v of effects) {
         registerSkillCastMeta(v, nowSec);
         const p = clamp01((nowMs - v.startMs) / (v.dur * 1000));
         if (p >= 1) continue;
-        ctx.save();
-        if (layer === 'ground') drawGroundOne(ctx, v, p, lift);
-        else drawTopOne(ctx, v, p, lift);
-        ctx.restore();
+        if (mode === 'old' || mode === 'both') {
+            ctx.save();
+            if (layer === 'ground') drawGroundOne(ctx, v, p, lift);
+            else drawTopOne(ctx, v, p, lift);
+            ctx.restore();
+        }
+        if (mode === 'new' || mode === 'both') {
+            ctx.save();
+            if (layer === 'ground') drawGroundOneDeFlipbook(ctx, v, p, lift);
+            else drawTopOneDeFlipbook(ctx, v, p, lift);
+            ctx.restore();
+        }
     }
     ctx.restore();
 }
@@ -1108,20 +1648,23 @@ export function drawScene13SkillStatusVfx(
         && !states[0].frenzy && !states[0].shield && !states[0].panic
         && !states[1].frenzy && !states[1].shield && !states[1].panic) return;
 
+    const mode = getActiveSkillVfxMode();
+    const useNewBadge = mode === 'new' || mode === 'both';
+
     ctx.save();
     ctx.lineCap = 'round';
 
-    const swordsStd = getColdWeaponIcon('swords', false);
-    const swordsPaid = getColdWeaponIcon('swords', true);
-    const shieldStd = getColdWeaponIcon('shield', false);
-    const shieldPaid = getColdWeaponIcon('shield', true);
-    const bannerStd = getColdWeaponIcon('banner', false);
-    const bannerPaid = getColdWeaponIcon('banner', true);
-    const dizzyStd = getColdWeaponIcon('dizzy', false);
-    const dizzyPaid = getColdWeaponIcon('dizzy', true);
-    const defectStd = getColdWeaponIcon('defect', false);
+    const swordsStd = (useNewBadge && getDeMedallionBadge('gongzhan', false)) || getColdWeaponIcon('swords', false);
+    const swordsPaid = (useNewBadge && getDeMedallionBadge('gongzhan', true)) || getColdWeaponIcon('swords', true);
+    const shieldStd = (useNewBadge && getDeMedallionBadge('shengzhan', false)) || getColdWeaponIcon('shield', false);
+    const shieldPaid = (useNewBadge && getDeMedallionBadge('shengzhan', true)) || getColdWeaponIcon('shield', true);
+    const bannerStd = (useNewBadge && getDeMedallionBadge('dizhan', false)) || getColdWeaponIcon('banner', false);
+    const bannerPaid = (useNewBadge && getDeMedallionBadge('dizhan', true)) || getColdWeaponIcon('banner', true);
+    const dizzyStd = (useNewBadge && getDeMedallionBadge('hunzhan', false)) || getColdWeaponIcon('dizzy', false);
+    const dizzyPaid = (useNewBadge && getDeMedallionBadge('hunzhan', true)) || getColdWeaponIcon('dizzy', true);
+    const defectStd = (useNewBadge && getDeMedallionBadge('bingzhan', false)) || getColdWeaponIcon('defect', false);
 
-    const ICON_R = 11.5;
+    const ICON_R = 12.0;
 
     for (const m of men) {
         if (m.hp <= 0) continue;
@@ -1132,21 +1675,21 @@ export function drawScene13SkillStatusVfx(
         const tier = sideCastTier[m.f];
         const y = m.y - lift(m.x, m.y);
         const pulse = 0.5 + 0.5 * Math.sin(nowSec * 5.8 + m.zid * 0.73);
-        const iconR = m.hero ? ICON_R * 1.22 : ICON_R;
+        const iconR = m.hero ? ICON_R * 1.25 : ICON_R;
 
-        // 【攻】振己威持续期：头顶疏朗「战刀 + ▲▲」图标（无脚下弹簧圈）
+        // 【攻】振己威持续期：头顶疏朗图标（无脚下弹簧圈）
         if (st.frenzy > 0 && !m.siegeW) {
             const fadeOut = clamp01(st.frenzy / 0.8);
             const hy = y - 27 - pulse * 2.5;
-            ctx.globalAlpha = (0.86 + pulse * 0.12) * fadeOut;
+            ctx.globalAlpha = (0.88 + pulse * 0.12) * fadeOut;
             drawStamp(ctx, tier.frenzyPaid ? swordsPaid : swordsStd, m.x, hy, iconR);
         }
 
-        // 【胜】固己防持续期：头顶疏朗「古青铜重盾」图标（前 2.4 秒伴随飘升苍玉 + 号）
+        // 【胜】固己防持续期：头顶疏朗重甲/重盾勋章（前 2.4 秒伴随飘升苍玉 + 号）
         if (st.shield > 0 && !m.siegeW) {
             const fadeOut = clamp01(st.shield / 0.8);
             const hy = y - 27 - pulse * 2.0;
-            ctx.globalAlpha = (0.88 + pulse * 0.10) * fadeOut;
+            ctx.globalAlpha = (0.90 + pulse * 0.10) * fadeOut;
             drawStamp(ctx, tier.shieldPaid ? shieldPaid : shieldStd, m.x, hy, iconR);
 
             const sinceCast = Math.max(0, nowSec - tier.shieldCastSec);
@@ -1154,29 +1697,29 @@ export function drawScene13SkillStatusVfx(
                 const hpP = sinceCast / 2.4;
                 const hpFade = hpP < 0.65 ? 1 : (1 - hpP) / 0.35;
                 ctx.globalAlpha = hpFade * fadeOut * 0.92;
-                drawHealPlus(ctx, m.x + 11, hy - hpP * 11, 6.5, 2.8, COLOR.shengzhan, '#e6f2ea');
+                drawHealPlus(ctx, m.x + 12, hy - hpP * 11, 6.5, 2.8, COLOR.shengzhan, '#e6f2ea');
             }
         }
 
-        // 【混】乱敌阵持续期：头顶疏朗旋转「暮色瘴烟螺旋」
+        // 【混】乱敌阵持续期：头顶疏朗勋章（旧版螺旋旋转，新版厚涂火把勋章脉冲微晃）
         if (st.panic > 0 && !m.march && !m.hero && !m.siegeW) {
             const fadeOut = clamp01(st.panic / 0.8);
             const hy = y - 27;
             ctx.save();
             ctx.translate(m.x, hy);
-            ctx.rotate(nowSec * 3.8 + m.zid);
-            ctx.globalAlpha = (0.85 + pulse * 0.12) * fadeOut;
+            ctx.rotate(useNewBadge ? Math.sin(nowSec * 6.5 + m.zid) * 0.18 : (nowSec * 3.8 + m.zid));
+            ctx.globalAlpha = (0.88 + pulse * 0.12) * fadeOut;
             drawStamp(ctx, tier.panicPaid ? dizzyPaid : dizzyStd, 0, 0, iconR);
             ctx.restore();
         }
 
-        // 【敌】伏兵生力军（头顶疏朗「松烟青令旗」） & 【并】倒戈兵（头顶疏朗「虎符倒戈易帜双箭」）
+        // 【敌】伏兵生力军 & 【并】倒戈兵
         if (hasUnitTags) {
             const tag = unitSkillTags.get(m);
             if (tag && nowSec < tag.untilSec) {
                 const rem = clamp01((tag.untilSec - nowSec) / 1.0);
                 const hy = y - 27 - pulse * 2.0;
-                ctx.globalAlpha = (0.88 + pulse * 0.10) * rem;
+                ctx.globalAlpha = (0.90 + pulse * 0.10) * rem;
                 if (tag.six === 'dizhan') {
                     drawStamp(ctx, tag.paid ? bannerPaid : bannerStd, m.x, hy, iconR);
                 } else {

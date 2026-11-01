@@ -11,6 +11,7 @@ export interface RiverWorkerResponse {
     data: Uint8ClampedArray;
     waves?: Float32Array | null;
     ripples?: Float32Array | null;
+    cacheKey?: string;
 }
 const tiles = new Map<string, WaterTileMask>();
 const MAX_TILES_CACHE = 320;
@@ -102,6 +103,26 @@ function borderHasLand(tile: WaterTileMask, dx: number, dy: number): boolean {
     return false;
 }
 
+/** 计算 tile 当前在 tiles 中已就绪、且交界 32px 带内含陆地的邻块位掩码 */
+function computeCoastalNeighborMask(tile: WaterTileMask): number {
+    const worldWidth = 2 ** tile.z;
+    let bits = 0;
+    let bit = 1;
+    for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+            if (dx !== 0 || dy !== 0) {
+                const nx = ((tile.x + dx) % worldWidth + worldWidth) % worldWidth;
+                const nb = tiles.get(`${tile.z}/${nx}/${tile.y + dy}`);
+                if (nb && (borderHasLand(tile, dx, dy) || borderHasLand(nb, -dx, -dy))) {
+                    bits |= bit;
+                }
+            }
+            bit <<= 1;
+        }
+    }
+    return bits;
+}
+
 self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number } | { rebindId: number; x: number; y: number; z: number }>) => {
     if ('removeId' in e.data) {
         return;
@@ -112,6 +133,28 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
         if (existing) {
             existing.id = e.data.rebindId;
             putTile(key, existing);
+            // 若该瓦片上次在缓存中生成时邻块尚未到齐，如今含岸线的邻块已补齐，立即重绘消除跨块硬边
+            if (existing.depthT !== undefined && existing.renderedNeighborMask !== computeCoastalNeighborMask(existing)) {
+                const texture = await loadStrategicWaterTexture();
+                if (tiles.get(key) === existing) {
+                    existing.renderedNeighborMask = computeCoastalNeighborMask(existing);
+                    let data: Uint8ClampedArray;
+                    let waves: Float32Array | null = null;
+                    let ripples: Float32Array | null = null;
+                    if (existing.mask.some(v => v !== 0)) {
+                        const res = renderStrategicWater(existing, tiles, texture);
+                        data = res.data;
+                        waves = res.waves;
+                        ripples = res.ripples;
+                    } else {
+                        data = new Uint8ClampedArray(existing.width * existing.height * 4);
+                    }
+                    const transferList: Transferable[] = [data.buffer];
+                    if (waves && waves.buffer) transferList.push(waves.buffer);
+                    if (ripples && ripples.buffer) transferList.push(ripples.buffer);
+                    self.postMessage({ id: existing.id, cacheKey: key, data, waves, ripples }, transferList as any);
+                }
+            }
         }
         return;
     }
@@ -133,6 +176,9 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
         mask[i] = w;
         if (w) hasWater = true;
     }
+    // 先把 ESRI 掩膜同步挂进 tiles（depthT 仍为 undefined），让并发先算完水深的邻块第一帧就能读到本块岸线
+    const tile: WaterTileMask = { id, width, height, x, y, z, mask, coverage: null };
+    putTile(keyOf(tile), tile);
     // 🔴 有本地地形瓦片时，用它的 512px 覆盖率覆盖 ESRI 二值掩膜（形状与底图一致、边缘带抗锯齿）
     let coverage: Uint8Array | null = null;
     try {
@@ -148,7 +194,7 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
             if (w) hasWater = true;
         }
     }
-    const tile: WaterTileMask = { id, width, height, x, y, z, mask, coverage };
+    tile.coverage = coverage;
     putTile(keyOf(tile), tile);
     // 先等水深算好再画第一次：避免「先平色、后变深」的闪烁与新旧块混排
     const [texture, depthT] = await Promise.all([
@@ -167,7 +213,7 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
         if (!neighbor) continue;
         // 邻块水深还没算好（undefined）就先别画它，等它自己算完再画 —— 否则会先出一块平色，再变深，拼成方块
         if (neighbor.depthT === undefined) continue;
-        if (!isSelf && !borderHasLand(tile, -dx, -dy) && !borderHasLand(neighbor, dx, dy)) {
+        if (!isSelf && !borderHasLand(tile, dx, dy) && !borderHasLand(neighbor, -dx, -dy)) {
             continue;
         }
         let data: Uint8ClampedArray;
@@ -184,7 +230,8 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
         const transferList: Transferable[] = [data.buffer];
         if (waves && waves.buffer) transferList.push(waves.buffer);
         if (ripples && ripples.buffer) transferList.push(ripples.buffer);
-        self.postMessage({ id: neighbor.id, data, waves, ripples }, transferList as any);
+        neighbor.renderedNeighborMask = computeCoastalNeighborMask(neighbor);
+        self.postMessage({ id: neighbor.id, cacheKey: keyOf(neighbor), data, waves, ripples }, transferList as any);
     }
 };
 

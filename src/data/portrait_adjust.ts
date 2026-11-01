@@ -9461,6 +9461,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": 1
+        },
+        "/assets/CENTRAL/sui_yuwenshu.png": {
+            "scale": 1.37,
+            "offsetX": 0,
+            "offsetY": 46
         }
     },
     "folderGuides": {

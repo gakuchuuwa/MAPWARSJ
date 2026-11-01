@@ -14,6 +14,7 @@ interface RiverWorkerResponse {
     data: Uint8ClampedArray;
     waves?: Float32Array | null;
     ripples?: Float32Array | null;
+    cacheKey?: string;
 }
 
 interface WaterTileCacheEntry {
@@ -73,9 +74,19 @@ export class RiverOverlayLayer extends L.GridLayer {
     }
 
     private handleWorkerMessage(e: MessageEvent<RiverWorkerResponse>) {
-        const { id, data, waves, ripples } = e.data;
+        const { id, data, waves, ripples, cacheKey: respCacheKey } = e.data;
         const task = this.pendingTiles.get(id);
 
+        if (!task) {
+            if (respCacheKey && this.tileCache.has(respCacheKey)) {
+                // 瓦片已滑出视口卸载，但邻块补齐后重绘出了完整边缘：同步刷新缓存，防止回看时复现硬边
+                const activeWaves = waves && waves.length > 0 ? waves : null;
+                const activeRipples = ripples && ripples.length > 0 ? ripples : null;
+                const imgData = new ImageData(data as any, 256, 256);
+                this.cachePut(respCacheKey, { imgData, waves: activeWaves, ripples: activeRipples });
+            }
+            return;
+        }
         if (task) {
             const { ctx, tile, done, cacheKey } = task;
             const activeWaves = waves && waves.length > 0 ? waves : null;

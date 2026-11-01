@@ -78,6 +78,8 @@ export interface WaterTileMask {
      * 全图每块用同一份数据、同一种算法 → 块与块之间天然连续，没有「这块深、那块浅」的方块。取不到为 null → 平色。
      */
     depthT?: Float32Array | null;
+    /** 上次渲染时已就绪的 8 邻域位掩码，用于缓存重绑时检测是否有新邻块补齐 */
+    renderedNeighborMask?: number;
 }
 
 export interface StrategicWaterResult {
@@ -265,9 +267,16 @@ export function renderStrategicWater(
             // 🔴 封闭浅水（湖/塘）与近岸浅海：离岸越近越浅，26px（≈70km）外才恢复真实水深。
             //    用「离岸距离」这个连续量判定，不用逐瓦片洪泛 —— 逐块判定会在瓦片边界留下色块跳变。
             //    湖心那块「深蓝补丁」就是 z6 高程的假水深，这里压平后整片湖读作浅青。
-            if (dist < 26) {
-                const shallowCap = 0.14 + 0.36 * Math.pow(dist / 26, 1.15);
-                effD = Math.min(effD, shallowCap);
+            if (dist < 30) {
+                const shallowCap = 0.14 + 0.36 * Math.pow(Math.min(1, dist / 26), 1.15);
+                const capped = Math.min(effD, shallowCap);
+                // dist 18~30px 间用 smoothstep 平滑放开上限回到真实水深 effD，消除深海岛屿外圈 dist=26 处 0.50→d 的跳变硬边
+                const releaseT = dist <= 18 ? 0 : (dist - 18) / 12;
+                const release = releaseT * releaseT * (3 - 2 * releaseT);
+                effD = capped + (effD - capped) * release;
+
+
+
             }
 
             // 近岸浅滩过渡带：收窄至离岸 reach (6~10px)，在海岸边缘平滑压浅，避免浅水区过大（dist >= 11 时必在 reach 外，省去三角函数）

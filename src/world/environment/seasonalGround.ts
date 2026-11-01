@@ -36,6 +36,26 @@ function smoothstep(edge0: number, edge1: number, x: number): number {
 }
 
 /**
+ * 连续平滑区间权重：在 [min, max] 内部为 1，两侧各以 feather 宽度做 C¹ smoothstep 羽化过渡，彻底消除任何经纬度或干湿度硬切边
+ */
+function smoothBand(x: number, min: number, max: number, feather: number): number {
+    return smoothstep(min - feather, min + feather, x) * (1 - smoothstep(max - feather, max + feather, x));
+}
+
+function smoothBox(
+    lat: number,
+    lng: number,
+    latMin: number,
+    latMax: number,
+    lngMin: number,
+    lngMax: number,
+    featherLat: number,
+    featherLng: number,
+): number {
+    return smoothBand(lat, latMin, latMax, featherLat) * smoothBand(lng, lngMin, lngMax, featherLng);
+}
+
+/**
  * 南半球权重：北纬 >= +5° 为 0（北半球四季），南纬 <= -5° 为 1（南半球季节反转），赤道 [-5°, +5°] 平滑过渡
  */
 export function southernHemisphereWeight(lat: number): number {
@@ -53,46 +73,65 @@ export function localSeasonAtLat(calendarSeason: CalendarSeason4, lat: number): 
 }
 
 /**
- * 判断某经纬度是否属于地中海型「夏干冬润」气候区
- * （环地中海、加利福尼亚、智利中部、南非好望角、西南澳）
+ * 地中海型「夏干冬润」气候连续空间权重（0..1，边界 2.5°~3.5° 宽幅羽化，绝无网格硬切边）
  */
-export function isMediterraneanClimateAt(lat: number, lng: number, zone?: EnvZoneId): boolean {
-    const z = zone ?? resolveEnvZoneId(lat, lng);
-    if (z === 'MED') return true;
-    // 加利福尼亚沿岸
-    if (lat >= 32 && lat <= 41 && lng >= -124.5 && lng <= -117) return true;
-    // 智利中部（圣地亚哥谷地）
-    if (lat >= -38 && lat <= -31 && lng >= -73.5 && lng <= -69.8) return true;
-    // 南非开普敦地区
-    if (lat >= -35 && lat <= -32 && lng >= 17.5 && lng <= 21.5) return true;
-    // 澳大利亚西南部与阿德莱德
-    if (lat >= -36 && lat <= -31 && ((lng >= 114.5 && lng <= 120) || (lng >= 136 && lng <= 140))) return true;
-    return false;
+export function mediterraneanWeightAt(lat: number, lng: number, aridity = 0.4, sandiness = 0.1): number {
+    const medBasin =
+        smoothBox(lat, lng, 31.0, 43.5, -9.5, 36.5, 3.0, 3.5) *
+        (1 - smoothBox(lat, lng, 28.0, 33.0, 24.0, 35.0, 2.0, 2.5) * 0.75);
+    const california = smoothBox(lat, lng, 32.5, 40.5, -124.0, -117.5, 2.5, 2.5);
+    const chile = smoothBox(lat, lng, -37.5, -31.5, -73.5, -70.0, 2.5, 1.8);
+    const cape = smoothBox(lat, lng, -35.0, -32.0, 17.5, 21.5, 2.0, 2.0);
+    const swAus = smoothBox(lat, lng, -35.5, -31.0, 114.5, 139.0, 2.5, 3.0);
+    const geoW = Math.max(medBasin, california, chile, cape, swAus);
+    if (geoW <= 0.001) return 0;
+    const climateW = smoothBand(aridity, 0.14, 0.68, 0.14) * (1 - smoothstep(0.32, 0.52, sandiness));
+    return clamp01(geoW * climateW);
 }
 
 /**
- * 判断某经纬度是否属于热带季风 / 稀树草原「旱雨两季」气候区
- * （印度次大陆、中南半岛旱雨区、非洲萨赫勒—东非—南非稀树草原、南美利亚诺斯/塞拉多、北澳季风草原）
+ * 热带季风 / 稀树草原「旱雨两季」连续空间权重（0..1，纬度与干湿度全程宽幅 smoothstep 羽化）
+ */
+export function tropicalSavannaWeightAt(lat: number, _lng: number, aridity: number, sandiness: number): number {
+    const absLat = Math.abs(lat);
+    // 纬度在 7.5°..22.5° 为核心，两侧各以 4.5°（约 500km）平滑羽化至 0，彻底消除 27.5°N 水平断层与柯本网格锯齿
+    const latW = smoothBand(absLat, 7.5, 22.5, 4.5);
+    if (latW <= 0.001) return 0;
+    // 半湿润至半干旱（0.22..0.62）为季风草原核心，向极湿雨林和极旱沙漠两侧各以 0.15 宽度平滑衰减
+    const aridW = smoothBand(aridity, 0.22, 0.62, 0.15);
+    const sandW = 1 - smoothstep(0.26, 0.46, sandiness);
+    return clamp01(latW * aridW * sandW);
+}
+
+/**
+ * 亚热带湿润常绿季风区连续空间权重（0..1）
+ */
+function subtropicalHumidWeightAt(lat: number, aridity: number, sandiness: number): number {
+    const absLat = Math.abs(lat);
+    const latW = smoothBand(absLat, 20.0, 30.5, 4.0);
+    if (latW <= 0.001) return 0;
+    const humidW = (1 - smoothstep(0.24, 0.42, aridity)) * (1 - smoothstep(0.22, 0.40, sandiness));
+    return clamp01(latW * humidW);
+}
+
+/**
+ * 判断某经纬度是否属于地中海型「夏干冬润」气候区（供战术地图单点主副草地判定）
+ */
+export function isMediterraneanClimateAt(lat: number, lng: number, _zone?: EnvZoneId): boolean {
+    return mediterraneanWeightAt(lat, lng, 0.4, 0.1) >= 0.35;
+}
+
+/**
+ * 判断某经纬度是否属于热带季风 / 稀树草原「旱雨两季」气候区（供战术地图单点主副草地判定）
  */
 export function isTropicalMonsoonOrSavannaAt(
     lat: number,
     lng: number,
     aridity: number,
     sandiness: number,
-    zone?: EnvZoneId,
+    _zone?: EnvZoneId,
 ): boolean {
-    if (sandiness > 0.46 || aridity > 0.80) return false;
-    const absLat = Math.abs(lat);
-    if (absLat > 27.5) return false;
-    // 赤道常绿雨林核心（亚马逊核心、刚果盆地核心、马来群岛赤道带）四季常青
-    if (absLat < 7.5 && aridity < 0.18) return false;
-    const z = zone ?? resolveEnvZoneId(lat, lng);
-    if (z === 'SAS') return absLat <= 27.5 && aridity >= 0.12 && aridity <= 0.76;
-    if (z === 'AFR') return absLat >= 5 && absLat <= 26 && aridity >= 0.16 && aridity <= 0.78;
-    if (z === 'SEA') return absLat >= 9 && absLat <= 23.5 && aridity >= 0.15;
-    if (z === 'AUS') return lat >= -23.5 && lat <= -10.5 && aridity <= 0.76;
-    if (z === 'NEO' || z === 'AND') return absLat >= 5 && absLat <= 24 && aridity >= 0.15 && aridity <= 0.76;
-    return absLat >= 8 && absLat <= 24.5 && aridity >= 0.18 && aridity <= 0.75;
+    return tropicalSavannaWeightAt(lat, lng, aridity, sandiness) >= 0.35;
 }
 
 const NEUTRAL_MOD: SeasonalGroundModulation = {
@@ -122,195 +161,8 @@ function lerpMod(a: SeasonalGroundModulation, b: SeasonalGroundModulation, t: nu
     };
 }
 
-/**
- * 计算指定当地季节（0春 1夏 2秋 3冬）在该经纬度与气候参数下的地表色彩与干湿调制
- */
-function computeLocalSeasonModulation(
-    localSeason: CalendarSeason4,
-    lat: number,
-    lng: number,
-    aridity: number,
-    sandiness: number,
-    zone?: EnvZoneId,
-): SeasonalGroundModulation {
-    // 1. 极旱真荒漠（撒哈拉、塔克拉玛干、阿拉伯腹地等）终年黄沙不变
-    const desertMute = smoothstep(0.36, 0.55, sandiness) * 0.85 + smoothstep(0.72, 0.88, aridity) * 0.65;
-    const vegWeight = clamp01(1 - desertMute);
-    if (vegWeight < 0.02) {
-        return { ...NEUTRAL_MOD, localSeason };
-    }
-
-    const absLat = Math.abs(lat);
-    // 2. 赤道核心常绿雨林（|lat| < 8° 且极湿润）终年常绿
-    if (absLat < 8.5 && aridity < 0.18) {
-        const eqFade = smoothstep(5.0, 8.5, absLat);
-        if (eqFade < 0.05) {
-            return { ...NEUTRAL_MOD, localSeason };
-        }
-    }
-
-    const z = zone ?? resolveEnvZoneId(lat, lng);
-
-    // 3. 地中海气候（夏干暖金褐 · 冬春润泽返青）
-    if (isMediterraneanClimateAt(lat, lng, z)) {
-        const w = vegWeight;
-        if (localSeason === 3) {
-            // 当地冬季：温和多雨，冬草返青苍翠
-            return {
-                rMul: 1 - 0.08 * w,
-                gMul: 1 + 0.065 * w,
-                bMul: 1 - 0.035 * w,
-                targetR: 94,
-                targetG: 128,
-                targetB: 72,
-                targetMix: 0.22 * w,
-                dryBias: -0.18 * w,
-                localSeason,
-            };
-        }
-        if (localSeason === 0) {
-            // 当地春季：春草繁茂青翠
-            return {
-                rMul: 1 - 0.06 * w,
-                gMul: 1 + 0.06 * w,
-                bMul: 1 - 0.045 * w,
-                targetR: 104,
-                targetG: 134,
-                targetB: 74,
-                targetMix: 0.18 * w,
-                dryBias: -0.15 * w,
-                localSeason,
-            };
-        }
-        if (localSeason === 1) {
-            // 当地夏季：副高控制，盛夏干黄麦褐
-            return {
-                rMul: 1 + 0.075 * w,
-                gMul: 1 - 0.025 * w,
-                bMul: 1 - 0.11 * w,
-                targetR: 164,
-                targetG: 140,
-                targetB: 88,
-                targetMix: 0.22 * w,
-                dryBias: 0.20 * w,
-                localSeason,
-            };
-        }
-        // 当地秋季：秋雨初至，半黄半绿过渡
-        return {
-            rMul: 1 + 0.02 * w,
-            gMul: 1 + 0.01 * w,
-            bMul: 1 - 0.04 * w,
-            targetR: 138,
-            targetG: 130,
-            targetB: 86,
-            targetMix: 0.12 * w,
-            dryBias: 0.06 * w,
-            localSeason,
-        };
-    }
-
-    // 4. 热带季风与稀树草原（旱季枯黄褐 · 雨季葱茏返青）
-    if (isTropicalMonsoonOrSavannaAt(lat, lng, aridity, sandiness, z)) {
-        const w = vegWeight * smoothstep(5.5, 11.0, absLat);
-        if (localSeason === 1 || localSeason === 2) {
-            // 雨季（当地夏、秋）：雨水丰沛，草原与季风林返青
-            const wetStrength = localSeason === 1 ? 1.0 : 0.78;
-            const sw = w * wetStrength;
-            return {
-                rMul: 1 - 0.09 * sw,
-                gMul: 1 + 0.07 * sw,
-                bMul: 1 - 0.045 * sw,
-                targetR: 90,
-                targetG: 126,
-                targetB: 68,
-                targetMix: 0.22 * sw,
-                dryBias: -0.20 * sw,
-                localSeason,
-            };
-        }
-        // 旱季（当地冬、春）：草木干涸枯褐
-        const dryStrength = localSeason === 0 ? 1.0 : 0.85;
-        const sw = w * dryStrength;
-        return {
-            rMul: 1 + 0.08 * sw,
-            gMul: 1 - 0.035 * sw,
-            bMul: 1 - 0.12 * sw,
-            targetR: 162,
-            targetG: 134,
-            targetB: 84,
-            targetMix: 0.23 * sw,
-            dryBias: 0.20 * sw,
-            localSeason,
-        };
-    }
-
-    // 5. 亚热带常绿季风区（江南、华南、云贵、美东南、巴拉那流域等：20°..31°，湿润）
-    const isSubtropicalHumid =
-        absLat >= 19 && absLat <= 31.5 && aridity < 0.36 && (z === 'EAS' || z === 'SWM' || z === 'SEA' || z === 'NAM' || z === 'NEO' || z === 'AND');
-    if (isSubtropicalHumid) {
-        const w = vegWeight;
-        if (localSeason === 0) {
-            // 春：新绿温润明朗
-            return {
-                rMul: 1 - 0.03 * w,
-                gMul: 1 + 0.045 * w,
-                bMul: 1 - 0.045 * w,
-                targetR: 104,
-                targetG: 134,
-                targetB: 76,
-                targetMix: 0.12 * w,
-                dryBias: -0.10 * w,
-                localSeason,
-            };
-        }
-        if (localSeason === 1) {
-            // 夏：浓郁深苍翠
-            return {
-                rMul: 1 - 0.055 * w,
-                gMul: 1 + 0.035 * w,
-                bMul: 1 - 0.025 * w,
-                targetR: 84,
-                targetG: 120,
-                targetB: 68,
-                targetMix: 0.14 * w,
-                dryBias: -0.14 * w,
-                localSeason,
-            };
-        }
-        if (localSeason === 2) {
-            // 秋：晚稻与秋林泛暖金橄榄色
-            return {
-                rMul: 1 + 0.065 * w,
-                gMul: 1 - 0.01 * w,
-                bMul: 1 - 0.095 * w,
-                targetR: 152,
-                targetG: 134,
-                targetB: 80,
-                targetMix: 0.17 * w,
-                dryBias: 0.12 * w,
-                localSeason,
-            };
-        }
-        // 冬：亚热带冬日清冷苍绿（微降饱和度）
-        return {
-            rMul: 1 - 0.015 * w,
-            gMul: 1 - 0.04 * w,
-            bMul: 1 - 0.015 * w,
-            targetR: 110,
-            targetG: 116,
-            targetB: 96,
-            targetMix: 0.15 * w,
-            dryBias: 0.08 * w,
-            localSeason,
-        };
-    }
-
-    // 6. 温带平原、温带森林、大陆性草原与高寒草甸（华北、黄土、塞北、东北、日本、西欧、东欧、北美、潘帕斯等）
-    const tempLatWeight = smoothstep(18, 30, absLat);
-    const w = vegWeight * Math.max(0.35, tempLatWeight);
+function buildTemperateMod(localSeason: CalendarSeason4, w: number, aridity: number): SeasonalGroundModulation {
     if (localSeason === 0) {
-        // 当地春季：春芽嫩绿（生机明显但不发荧光）
         return {
             rMul: 1 - 0.035 * w,
             gMul: 1 + 0.052 * w,
@@ -324,7 +176,6 @@ function computeLocalSeasonModulation(
         };
     }
     if (localSeason === 1) {
-        // 当地夏季：夏草浓郁深翠（与春季的嫩绿形成清晰冷暖/深浅对比）
         return {
             rMul: 1 - 0.065 * w,
             gMul: 1 + 0.042 * w,
@@ -338,8 +189,7 @@ function computeLocalSeasonModulation(
         };
     }
     if (localSeason === 2) {
-        // 当地秋季：沉稳饱满的秋日暖金褐/橄榄金（既有鲜明的金秋氛围，又压住明度不变成刺眼亮黄沙漠）
-        const steppeBoost = aridity >= 0.22 && aridity <= 0.68 ? 1.12 : 1.0;
+        const steppeBoost = 1.0 + 0.12 * smoothBand(aridity, 0.24, 0.64, 0.10);
         const aw = clamp01(w * steppeBoost);
         return {
             rMul: 1 + 0.095 * aw,
@@ -353,7 +203,6 @@ function computeLocalSeasonModulation(
             localSeason,
         };
     }
-    // 当地冬季（未被积雪完全覆盖的温带无雪/薄雪区）：鲜明的冬枯霜褐感
     return {
         rMul: 1 + 0.020 * w,
         gMul: 1 - 0.065 * w,
@@ -365,6 +214,200 @@ function computeLocalSeasonModulation(
         dryBias: 0.20 * w,
         localSeason,
     };
+}
+
+function buildSubtropicalMod(localSeason: CalendarSeason4, w: number): SeasonalGroundModulation {
+    if (localSeason === 0) {
+        return {
+            rMul: 1 - 0.030 * w,
+            gMul: 1 + 0.045 * w,
+            bMul: 1 - 0.045 * w,
+            targetR: 104,
+            targetG: 134,
+            targetB: 76,
+            targetMix: 0.12 * w,
+            dryBias: -0.10 * w,
+            localSeason,
+        };
+    }
+    if (localSeason === 1) {
+        return {
+            rMul: 1 - 0.055 * w,
+            gMul: 1 + 0.035 * w,
+            bMul: 1 - 0.025 * w,
+            targetR: 84,
+            targetG: 120,
+            targetB: 68,
+            targetMix: 0.14 * w,
+            dryBias: -0.14 * w,
+            localSeason,
+        };
+    }
+    if (localSeason === 2) {
+        return {
+            rMul: 1 + 0.065 * w,
+            gMul: 1 - 0.010 * w,
+            bMul: 1 - 0.095 * w,
+            targetR: 152,
+            targetG: 134,
+            targetB: 80,
+            targetMix: 0.17 * w,
+            dryBias: 0.12 * w,
+            localSeason,
+        };
+    }
+    return {
+        rMul: 1 - 0.015 * w,
+        gMul: 1 - 0.040 * w,
+        bMul: 1 - 0.015 * w,
+        targetR: 110,
+        targetG: 116,
+        targetB: 96,
+        targetMix: 0.15 * w,
+        dryBias: 0.08 * w,
+        localSeason,
+    };
+}
+
+function buildSavannaMod(localSeason: CalendarSeason4, w: number): SeasonalGroundModulation {
+    if (localSeason === 1) {
+        // 雨季盛期（当地夏季）：季风雨水充沛，草原返青苍翠
+        return {
+            rMul: 1 - 0.085 * w,
+            gMul: 1 + 0.065 * w,
+            bMul: 1 - 0.040 * w,
+            targetR: 88,
+            targetG: 124,
+            targetB: 68,
+            targetMix: 0.20 * w,
+            dryBias: -0.18 * w,
+            localSeason,
+        };
+    }
+    if (localSeason === 2) {
+        // 雨季退却（当地秋季）：由绿转暖金橄榄，与亚热带/温带秋季同向自然衔接，杜绝南北反向撞色
+        return {
+            rMul: 1 + 0.055 * w,
+            gMul: 1 - 0.010 * w,
+            bMul: 1 - 0.085 * w,
+            targetR: 148,
+            targetG: 132,
+            targetB: 80,
+            targetMix: 0.18 * w,
+            dryBias: 0.12 * w,
+            localSeason,
+        };
+    }
+    // 旱季（当地冬、春）：草木干涸暖褐
+    const dryStrength = localSeason === 0 ? 1.0 : 0.85;
+    const sw = w * dryStrength;
+    return {
+        rMul: 1 + 0.075 * sw,
+        gMul: 1 - 0.030 * sw,
+        bMul: 1 - 0.110 * sw,
+        targetR: 158,
+        targetG: 132,
+        targetB: 84,
+        targetMix: 0.21 * sw,
+        dryBias: 0.18 * sw,
+        localSeason,
+    };
+}
+
+function buildMediterraneanMod(localSeason: CalendarSeason4, w: number): SeasonalGroundModulation {
+    if (localSeason === 3) {
+        return {
+            rMul: 1 - 0.080 * w,
+            gMul: 1 + 0.065 * w,
+            bMul: 1 - 0.035 * w,
+            targetR: 94,
+            targetG: 128,
+            targetB: 72,
+            targetMix: 0.22 * w,
+            dryBias: -0.18 * w,
+            localSeason,
+        };
+    }
+    if (localSeason === 0) {
+        return {
+            rMul: 1 - 0.060 * w,
+            gMul: 1 + 0.060 * w,
+            bMul: 1 - 0.045 * w,
+            targetR: 104,
+            targetG: 134,
+            targetB: 74,
+            targetMix: 0.18 * w,
+            dryBias: -0.15 * w,
+            localSeason,
+        };
+    }
+    if (localSeason === 1) {
+        return {
+            rMul: 1 + 0.075 * w,
+            gMul: 1 - 0.025 * w,
+            bMul: 1 - 0.110 * w,
+            targetR: 164,
+            targetG: 140,
+            targetB: 88,
+            targetMix: 0.22 * w,
+            dryBias: 0.20 * w,
+            localSeason,
+        };
+    }
+    return {
+        rMul: 1 + 0.020 * w,
+        gMul: 1 + 0.010 * w,
+        bMul: 1 - 0.040 * w,
+        targetR: 138,
+        targetG: 130,
+        targetB: 86,
+        targetMix: 0.12 * w,
+        dryBias: 0.06 * w,
+        localSeason,
+    };
+}
+
+/**
+ * 计算指定当地季节（0春 1夏 2秋 3冬）在该经纬度与气候参数下的地表色彩与干湿调制
+ * 全程采用连续 smoothstep 空间权重与干湿度插值，不使用任何离散网格或布尔硬切边。
+ */
+function computeLocalSeasonModulation(
+    localSeason: CalendarSeason4,
+    lat: number,
+    lng: number,
+    aridity: number,
+    sandiness: number,
+    _zone?: EnvZoneId,
+): SeasonalGroundModulation {
+    // 1. 极旱真荒漠（撒哈拉、塔克拉玛干、塔尔沙漠核心、阿拉伯腹地等）连续平滑衰减至中性黄沙
+    const desertMute = smoothstep(0.34, 0.56, sandiness) * 0.88 + smoothstep(0.68, 0.88, aridity) * 0.72;
+    // 2. 赤道核心常绿雨林（|lat| < 9° 且极湿润）连续平滑衰减至四季常青
+    const absLat = Math.abs(lat);
+    const eqEvergreen = (1 - smoothstep(4.5, 9.5, absLat)) * (1 - smoothstep(0.14, 0.28, aridity));
+    const vegWeight = clamp01((1 - desertMute) * (1 - eqEvergreen));
+    if (vegWeight < 0.005) {
+        return { ...NEUTRAL_MOD, localSeason };
+    }
+
+    const tempLatW = vegWeight * (0.45 + 0.55 * smoothstep(14, 28, absLat));
+    let mod = buildTemperateMod(localSeason, tempLatW, aridity);
+
+    const subtropW = subtropicalHumidWeightAt(lat, aridity, sandiness);
+    if (subtropW > 0.001) {
+        mod = lerpMod(mod, buildSubtropicalMod(localSeason, vegWeight), subtropW);
+    }
+
+    const savW = tropicalSavannaWeightAt(lat, lng, aridity, sandiness);
+    if (savW > 0.001) {
+        mod = lerpMod(mod, buildSavannaMod(localSeason, vegWeight), savW);
+    }
+
+    const medW = mediterraneanWeightAt(lat, lng, aridity, sandiness);
+    if (medW > 0.001) {
+        mod = lerpMod(mod, buildMediterraneanMod(localSeason, vegWeight), medW);
+    }
+
+    return mod;
 }
 
 /**
