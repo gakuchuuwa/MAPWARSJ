@@ -489,7 +489,7 @@ export interface FactionGeneral {
 
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     latin_empire: [
-        { generalId: 'latin_empire_diaili', factionId: 'latin_empire', cityId: 'city_rhodes', generalName: '蒂埃里', portrait: '', eliteName: '拉丁骑士', eliteTier: 3 },   // 🔴 [2026-11-01 补将·移将] 1205 秋拉丁军残部约140骑士驻鲁西翁，由佛兰德骑士蒂埃里统领，1206-01-31 出城迎战卡洛扬阵亡（尼基塔斯《历史》）｜鲁西翁＝拜占庭据点，将属法兰克系→按③移将：同文化(FRANKS)最近据点罗得城（513km）
+        { generalId: 'latin_empire_diaili', factionId: 'latin_empire', cityId: 'city_bruges', generalName: '蒂埃里', portrait: '', eliteName: '佛兰德骑士', eliteTier: 3 },   // 🔴 [2026-11-01 补将·移将] 1205 秋拉丁军残部约140骑士驻鲁西翁，由佛兰德骑士蒂埃里统领，1206-01-31 出城迎战卡洛扬阵亡（尼基塔斯《历史》）｜鲁西翁＝拜占庭据点，将属法兰克系→按③移将：同文化(FRANKS)最近据点罗得城（513km）
     ],
     anjou: [
         { generalId: 'anjou_luyisanshi', factionId: 'anjou', cityId: 'city_avignon', generalName: '路易三世', portrait: '', eliteName: '安茹骑士', eliteTier: 3 },   // 🔴 [2026-11-01 补将·移将] 1432 安茹的路易三世入居科森扎城堡为治所至 1434 卒（安茹朝编年）｜科森扎＝拉丁据点，将属法兰西安茹→按③移将：同文化(FRANKS)最近据点阿维尼翁（1081km）
@@ -18984,6 +18984,7 @@ if (import.meta.hot) {
 
 
 }
+
 
 
 
