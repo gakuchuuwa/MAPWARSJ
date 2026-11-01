@@ -73,19 +73,19 @@ export function localSeasonAtLat(calendarSeason: CalendarSeason4, lat: number): 
 }
 
 /**
- * 地中海型「夏干冬润」气候连续空间权重（0..1，边界 2.5°~3.5° 宽幅羽化，绝无网格硬切边）
+ * 地中海型「夏干冬润」气候连续空间权重（0..1，边界 3.0°~4.0° 宽幅羽化，绝无网格硬切边）
  */
 export function mediterraneanWeightAt(lat: number, lng: number, aridity = 0.4, sandiness = 0.1): number {
     const medBasin =
-        smoothBox(lat, lng, 31.0, 43.5, -9.5, 36.5, 3.0, 3.5) *
-        (1 - smoothBox(lat, lng, 28.0, 33.0, 24.0, 35.0, 2.0, 2.5) * 0.75);
-    const california = smoothBox(lat, lng, 32.5, 40.5, -124.0, -117.5, 2.5, 2.5);
-    const chile = smoothBox(lat, lng, -37.5, -31.5, -73.5, -70.0, 2.5, 1.8);
-    const cape = smoothBox(lat, lng, -35.0, -32.0, 17.5, 21.5, 2.0, 2.0);
-    const swAus = smoothBox(lat, lng, -35.5, -31.0, 114.5, 139.0, 2.5, 3.0);
+        smoothBox(lat, lng, 31.0, 43.5, -9.5, 36.5, 3.2, 3.8) *
+        (1 - smoothBox(lat, lng, 28.0, 33.0, 24.0, 35.0, 2.2, 2.8) * 0.75);
+    const california = smoothBox(lat, lng, 32.5, 40.5, -124.0, -117.5, 2.8, 2.8);
+    const chile = smoothBox(lat, lng, -37.5, -31.5, -73.5, -70.0, 2.8, 2.0);
+    const cape = smoothBox(lat, lng, -35.0, -32.0, 17.5, 21.5, 2.2, 2.2);
+    const swAus = smoothBox(lat, lng, -35.5, -31.0, 114.5, 139.0, 2.8, 3.2);
     const geoW = Math.max(medBasin, california, chile, cape, swAus);
     if (geoW <= 0.001) return 0;
-    const climateW = smoothBand(aridity, 0.14, 0.68, 0.14) * (1 - smoothstep(0.32, 0.52, sandiness));
+    const climateW = smoothBand(aridity, 0.12, 0.70, 0.22) * (1 - smoothstep(0.25, 0.65, sandiness));
     return clamp01(geoW * climateW);
 }
 
@@ -94,12 +94,10 @@ export function mediterraneanWeightAt(lat: number, lng: number, aridity = 0.4, s
  */
 export function tropicalSavannaWeightAt(lat: number, _lng: number, aridity: number, sandiness: number): number {
     const absLat = Math.abs(lat);
-    // 纬度在 7.5°..22.5° 为核心，两侧各以 4.5°（约 500km）平滑羽化至 0，彻底消除 27.5°N 水平断层与柯本网格锯齿
-    const latW = smoothBand(absLat, 7.5, 22.5, 4.5);
+    const latW = smoothBand(absLat, 7.5, 22.0, 5.5);
     if (latW <= 0.001) return 0;
-    // 半湿润至半干旱（0.22..0.62）为季风草原核心，向极湿雨林和极旱沙漠两侧各以 0.15 宽度平滑衰减
-    const aridW = smoothBand(aridity, 0.22, 0.62, 0.15);
-    const sandW = 1 - smoothstep(0.26, 0.46, sandiness);
+    const aridW = smoothBand(aridity, 0.20, 0.62, 0.26);
+    const sandW = 1 - smoothstep(0.20, 0.65, sandiness);
     return clamp01(latW * aridW * sandW);
 }
 
@@ -108,9 +106,9 @@ export function tropicalSavannaWeightAt(lat: number, _lng: number, aridity: numb
  */
 function subtropicalHumidWeightAt(lat: number, aridity: number, sandiness: number): number {
     const absLat = Math.abs(lat);
-    const latW = smoothBand(absLat, 20.0, 30.5, 4.0);
+    const latW = smoothBand(absLat, 19.5, 30.5, 5.0);
     if (latW <= 0.001) return 0;
-    const humidW = (1 - smoothstep(0.24, 0.42, aridity)) * (1 - smoothstep(0.22, 0.40, sandiness));
+    const humidW = (1 - smoothstep(0.18, 0.56, aridity)) * (1 - smoothstep(0.16, 0.52, sandiness));
     return clamp01(latW * humidW);
 }
 
@@ -164,53 +162,53 @@ function lerpMod(a: SeasonalGroundModulation, b: SeasonalGroundModulation, t: nu
 function buildTemperateMod(localSeason: CalendarSeason4, w: number, aridity: number): SeasonalGroundModulation {
     if (localSeason === 0) {
         return {
-            rMul: 1 - 0.035 * w,
-            gMul: 1 + 0.052 * w,
-            bMul: 1 - 0.055 * w,
-            targetR: 106,
+            rMul: 1 - 0.032 * w,
+            gMul: 1 + 0.048 * w,
+            bMul: 1 - 0.048 * w,
+            targetR: 108,
             targetG: 136,
-            targetB: 76,
-            targetMix: 0.16 * w,
+            targetB: 78,
+            targetMix: 0.15 * w,
             dryBias: -0.12 * w,
             localSeason,
         };
     }
     if (localSeason === 1) {
         return {
-            rMul: 1 - 0.065 * w,
-            gMul: 1 + 0.042 * w,
-            bMul: 1 - 0.030 * w,
-            targetR: 84,
+            rMul: 1 - 0.060 * w,
+            gMul: 1 + 0.040 * w,
+            bMul: 1 - 0.028 * w,
+            targetR: 86,
             targetG: 122,
             targetB: 68,
-            targetMix: 0.18 * w,
+            targetMix: 0.17 * w,
             dryBias: -0.16 * w,
             localSeason,
         };
     }
     if (localSeason === 2) {
-        const steppeBoost = 1.0 + 0.12 * smoothBand(aridity, 0.24, 0.64, 0.10);
+        const steppeBoost = 1.0 + 0.10 * smoothBand(aridity, 0.22, 0.66, 0.18);
         const aw = clamp01(w * steppeBoost);
         return {
-            rMul: 1 + 0.095 * aw,
-            gMul: 1 - 0.022 * aw,
-            bMul: 1 - 0.14 * aw,
+            rMul: 1 + 0.088 * aw,
+            gMul: 1 - 0.020 * aw,
+            bMul: 1 - 0.130 * aw,
             targetR: 156,
             targetG: 132,
             targetB: 78,
-            targetMix: 0.25 * aw,
+            targetMix: 0.24 * aw,
             dryBias: 0.22 * aw,
             localSeason,
         };
     }
     return {
         rMul: 1 + 0.020 * w,
-        gMul: 1 - 0.065 * w,
-        bMul: 1 - 0.075 * w,
+        gMul: 1 - 0.060 * w,
+        bMul: 1 - 0.070 * w,
         targetR: 134,
         targetG: 122,
         targetB: 100,
-        targetMix: 0.25 * w,
+        targetMix: 0.23 * w,
         dryBias: 0.20 * w,
         localSeason,
     };
@@ -219,12 +217,12 @@ function buildTemperateMod(localSeason: CalendarSeason4, w: number, aridity: num
 function buildSubtropicalMod(localSeason: CalendarSeason4, w: number): SeasonalGroundModulation {
     if (localSeason === 0) {
         return {
-            rMul: 1 - 0.030 * w,
-            gMul: 1 + 0.045 * w,
-            bMul: 1 - 0.045 * w,
-            targetR: 104,
+            rMul: 1 - 0.028 * w,
+            gMul: 1 + 0.042 * w,
+            bMul: 1 - 0.042 * w,
+            targetR: 106,
             targetG: 134,
-            targetB: 76,
+            targetB: 78,
             targetMix: 0.12 * w,
             dryBias: -0.10 * w,
             localSeason,
@@ -232,10 +230,10 @@ function buildSubtropicalMod(localSeason: CalendarSeason4, w: number): SeasonalG
     }
     if (localSeason === 1) {
         return {
-            rMul: 1 - 0.055 * w,
+            rMul: 1 - 0.052 * w,
             gMul: 1 + 0.035 * w,
-            bMul: 1 - 0.025 * w,
-            targetR: 84,
+            bMul: 1 - 0.024 * w,
+            targetR: 86,
             targetG: 120,
             targetB: 68,
             targetMix: 0.14 * w,
@@ -245,9 +243,9 @@ function buildSubtropicalMod(localSeason: CalendarSeason4, w: number): SeasonalG
     }
     if (localSeason === 2) {
         return {
-            rMul: 1 + 0.065 * w,
+            rMul: 1 + 0.062 * w,
             gMul: 1 - 0.010 * w,
-            bMul: 1 - 0.095 * w,
+            bMul: 1 - 0.090 * w,
             targetR: 152,
             targetG: 134,
             targetB: 80,
@@ -257,11 +255,11 @@ function buildSubtropicalMod(localSeason: CalendarSeason4, w: number): SeasonalG
         };
     }
     return {
-        rMul: 1 - 0.015 * w,
-        gMul: 1 - 0.040 * w,
-        bMul: 1 - 0.015 * w,
-        targetR: 110,
-        targetG: 116,
+        rMul: 1 - 0.010 * w,
+        gMul: 1 - 0.038 * w,
+        bMul: 1 - 0.018 * w,
+        targetR: 114,
+        targetG: 118,
         targetB: 96,
         targetMix: 0.15 * w,
         dryBias: 0.08 * w,
@@ -270,46 +268,58 @@ function buildSubtropicalMod(localSeason: CalendarSeason4, w: number): SeasonalG
 }
 
 function buildSavannaMod(localSeason: CalendarSeason4, w: number): SeasonalGroundModulation {
+    if (localSeason === 0) {
+        // 春季过渡：温润橄榄嫩绿，与毗邻亚热带/温带春季同色向自然衔接，彻底消除干湿交界处绿黄反向硬切
+        return {
+            rMul: 1 - 0.020 * w,
+            gMul: 1 + 0.032 * w,
+            bMul: 1 - 0.035 * w,
+            targetR: 112,
+            targetG: 134,
+            targetB: 78,
+            targetMix: 0.11 * w,
+            dryBias: -0.06 * w,
+            localSeason,
+        };
+    }
     if (localSeason === 1) {
         // 雨季盛期（当地夏季）：季风雨水充沛，草原返青苍翠
         return {
-            rMul: 1 - 0.085 * w,
-            gMul: 1 + 0.065 * w,
-            bMul: 1 - 0.040 * w,
+            rMul: 1 - 0.068 * w,
+            gMul: 1 + 0.052 * w,
+            bMul: 1 - 0.032 * w,
             targetR: 88,
             targetG: 124,
             targetB: 68,
-            targetMix: 0.20 * w,
-            dryBias: -0.18 * w,
+            targetMix: 0.18 * w,
+            dryBias: -0.16 * w,
             localSeason,
         };
     }
     if (localSeason === 2) {
-        // 雨季退却（当地秋季）：由绿转暖金橄榄，与亚热带/温带秋季同向自然衔接，杜绝南北反向撞色
+        // 雨季退却（当地秋季）：由绿转暖金橄榄，与亚热带/温带秋季同向自然衔接
         return {
-            rMul: 1 + 0.055 * w,
-            gMul: 1 - 0.010 * w,
-            bMul: 1 - 0.085 * w,
-            targetR: 148,
+            rMul: 1 + 0.058 * w,
+            gMul: 1 - 0.012 * w,
+            bMul: 1 - 0.088 * w,
+            targetR: 150,
             targetG: 132,
             targetB: 80,
             targetMix: 0.18 * w,
-            dryBias: 0.12 * w,
+            dryBias: 0.14 * w,
             localSeason,
         };
     }
-    // 旱季（当地冬、春）：草木干涸暖褐
-    const dryStrength = localSeason === 0 ? 1.0 : 0.85;
-    const sw = w * dryStrength;
+    // 旱季（当地冬季）：草木干涸暖褐，与温带冬枯同向过渡
     return {
-        rMul: 1 + 0.075 * sw,
-        gMul: 1 - 0.030 * sw,
-        bMul: 1 - 0.110 * sw,
-        targetR: 158,
-        targetG: 132,
-        targetB: 84,
-        targetMix: 0.21 * sw,
-        dryBias: 0.18 * sw,
+        rMul: 1 + 0.032 * w,
+        gMul: 1 - 0.045 * w,
+        bMul: 1 - 0.065 * w,
+        targetR: 138,
+        targetG: 124,
+        targetB: 94,
+        targetMix: 0.19 * w,
+        dryBias: 0.16 * w,
         localSeason,
     };
 }
@@ -317,59 +327,59 @@ function buildSavannaMod(localSeason: CalendarSeason4, w: number): SeasonalGroun
 function buildMediterraneanMod(localSeason: CalendarSeason4, w: number): SeasonalGroundModulation {
     if (localSeason === 3) {
         return {
-            rMul: 1 - 0.080 * w,
-            gMul: 1 + 0.065 * w,
-            bMul: 1 - 0.035 * w,
-            targetR: 94,
+            rMul: 1 - 0.068 * w,
+            gMul: 1 + 0.055 * w,
+            bMul: 1 - 0.032 * w,
+            targetR: 96,
             targetG: 128,
-            targetB: 72,
-            targetMix: 0.22 * w,
-            dryBias: -0.18 * w,
+            targetB: 74,
+            targetMix: 0.20 * w,
+            dryBias: -0.16 * w,
             localSeason,
         };
     }
     if (localSeason === 0) {
         return {
-            rMul: 1 - 0.060 * w,
-            gMul: 1 + 0.060 * w,
-            bMul: 1 - 0.045 * w,
+            rMul: 1 - 0.050 * w,
+            gMul: 1 + 0.052 * w,
+            bMul: 1 - 0.042 * w,
             targetR: 104,
             targetG: 134,
-            targetB: 74,
-            targetMix: 0.18 * w,
-            dryBias: -0.15 * w,
+            targetB: 76,
+            targetMix: 0.17 * w,
+            dryBias: -0.14 * w,
             localSeason,
         };
     }
     if (localSeason === 1) {
         return {
-            rMul: 1 + 0.075 * w,
-            gMul: 1 - 0.025 * w,
-            bMul: 1 - 0.110 * w,
-            targetR: 164,
-            targetG: 140,
-            targetB: 88,
-            targetMix: 0.22 * w,
-            dryBias: 0.20 * w,
+            rMul: 1 + 0.068 * w,
+            gMul: 1 - 0.022 * w,
+            bMul: 1 - 0.098 * w,
+            targetR: 160,
+            targetG: 138,
+            targetB: 86,
+            targetMix: 0.20 * w,
+            dryBias: 0.18 * w,
             localSeason,
         };
     }
     return {
-        rMul: 1 + 0.020 * w,
-        gMul: 1 + 0.010 * w,
-        bMul: 1 - 0.040 * w,
-        targetR: 138,
+        rMul: 1 + 0.025 * w,
+        gMul: 1 + 0.005 * w,
+        bMul: 1 - 0.045 * w,
+        targetR: 140,
         targetG: 130,
-        targetB: 86,
-        targetMix: 0.12 * w,
-        dryBias: 0.06 * w,
+        targetB: 84,
+        targetMix: 0.14 * w,
+        dryBias: 0.08 * w,
         localSeason,
     };
 }
 
 /**
  * 计算指定当地季节（0春 1夏 2秋 3冬）在该经纬度与气候参数下的地表色彩与干湿调制
- * 全程采用连续 smoothstep 空间权重与干湿度插值，不使用任何离散网格或布尔硬切边。
+ * 全程采用连续宽幅 smoothstep 空间权重与干湿度插值，不使用任何离散网格或陡峭阈值。
  */
 function computeLocalSeasonModulation(
     localSeason: CalendarSeason4,
@@ -379,17 +389,21 @@ function computeLocalSeasonModulation(
     sandiness: number,
     _zone?: EnvZoneId,
 ): SeasonalGroundModulation {
-    // 1. 极旱真荒漠（撒哈拉、塔克拉玛干、塔尔沙漠核心、阿拉伯腹地等）连续平滑衰减至中性黄沙
-    const desertMute = smoothstep(0.34, 0.56, sandiness) * 0.88 + smoothstep(0.68, 0.88, aridity) * 0.72;
+    // 1. 从湿润草林 → 半干旱草原 → 极旱真荒漠（撒哈拉、塔克拉玛干、塔尔、阿拉伯、河套戈壁等）全程宽幅连续平滑衰减，
+    //    避免在 aridity 0.2↔0.8 交界处（如灵州/平凉、阿杰梅尔、孟加拉）形成陡峭的黄绿台阶
+    const desertMute = clamp01(
+        smoothstep(0.08, 0.78, sandiness) * 0.86 +
+        smoothstep(0.18, 0.88, aridity) * 0.82,
+    );
     // 2. 赤道核心常绿雨林（|lat| < 9° 且极湿润）连续平滑衰减至四季常青
     const absLat = Math.abs(lat);
-    const eqEvergreen = (1 - smoothstep(4.5, 9.5, absLat)) * (1 - smoothstep(0.14, 0.28, aridity));
+    const eqEvergreen = (1 - smoothstep(4.5, 9.5, absLat)) * (1 - smoothstep(0.14, 0.32, aridity));
     const vegWeight = clamp01((1 - desertMute) * (1 - eqEvergreen));
     if (vegWeight < 0.005) {
         return { ...NEUTRAL_MOD, localSeason };
     }
 
-    const tempLatW = vegWeight * (0.45 + 0.55 * smoothstep(14, 28, absLat));
+    const tempLatW = vegWeight * (0.48 + 0.52 * smoothstep(14, 28, absLat));
     let mod = buildTemperateMod(localSeason, tempLatW, aridity);
 
     const subtropW = subtropicalHumidWeightAt(lat, aridity, sandiness);

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将文化表（generalId → 建筑文化）。由 tools/gen-general-culture.mts 生成。
  *
  * 🔴 [2026-10-19 主人令「必须给每个武将单独添加一个文化属性，才能对应上军团」]
@@ -1516,7 +1516,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yuan_cj_d_lishuo': 'HUGUANG',   // 唐国｜李愬｜据点 襄阳
     'yuan_d_daulashah': 'XIANBEI',   // 大元｜倒剌沙｜据点 上都
     'yuan_d_hubilie': 'XIANBEI',   // 大元｜忽必烈｜据点 上都
-    'yuan_d_manzihaiya': 'JIANGNAN',   // 东晋｜蛮子海牙｜据点 姑孰
+    'yuan_d_manzihaiya': 'XIANBEI',   // 元｜蛮子海牙｜据点 上都（元将属漠南，非江南）
     'yuan_d_tuotuo': 'MONGOL',   // 蒙古｜脱脱｜据点 买卖城（蔑儿乞色楞格渊源；2026-10-24 由北京 WEI 迁出）
     'yuchi_weichiyao': 'WESTERN',   // 尉迟｜尉迟曜｜据点 于阗
     'yue_d_lusu': 'HUGUANG',   // 孙吴｜鲁肃｜据点 巴陵

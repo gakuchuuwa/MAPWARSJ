@@ -4481,7 +4481,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_subotai',
+        commanderUnit: 'hero_lubu',
         slots: [
             { type: 'hero_yuanshao', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
@@ -4498,7 +4498,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_kotyankhan',
+        commanderUnit: 'hero_genghiskhan',
         slots: [
             { type: 'khan', count: 3 },
             { type: 'elite_keshik', count: 4 },

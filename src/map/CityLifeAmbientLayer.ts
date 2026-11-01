@@ -153,7 +153,7 @@ const WRECK_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const RESOURCE_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const BUILDING_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const TREE_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
-const PLOT_SCALE_BASE = 0.44;
+const PLOT_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 type SeasonalPlotKind = 'dry_farm' | 'rice_farm' | 'pasture';
 const FARM_BY_SEASON = ['FARM_SPRING', 'FARM_SUMMER', 'FARM_AUTUMN', 'FARM_WINTER'] as const;
 const RFARM_BY_SEASON = ['RFARM_SPRING', 'RFARM_SUMMER', 'RFARM_AUTUMN', 'RFARM_WINTER'] as const;
@@ -167,12 +167,14 @@ const SEASONAL_PLOT_BY_KIND: Readonly<Record<SeasonalPlotKind, readonly [string,
  *  草场一块一只牲畜、牧羊人站南块；农田一块一个农夫，南块那个是组合主人（建筑跟他走）；
  *  🔴 2026-10-28 主人令：农田四块里随机一块改养猪（主人身上记 pigCell），该块不派农夫、只放一头猪；
  *     四块地皮一律不变，仍是同一种农田皮，不铺牧场。 */
-const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -18], [-27, 0], [27, 0], [0, 18]];
+const PLOT_DX = Math.round(60 * STRATEGIC_SPRITE_SCALE);
+const PLOT_DY = Math.round(40 * STRATEGIC_SPRITE_SCALE);
+const PLOT_CELL_OFFSETS: readonly (readonly [number, number])[] = [[0, -PLOT_DY], [-PLOT_DX, 0], [PLOT_DX, 0], [0, PLOT_DY]];
 /** 同一渔场主船之外的帮手船相对主船的 zoom 9 像素落点：北、西、东（船比农夫大，间距放宽） */
 const FISHING_BOAT_OFFSETS: readonly (readonly [number, number])[] = [[0, -46], [-60, -18], [60, -18]];
 const PLOT_LEADER_CELL = 3;
 /** 牲畜在自己那块草场内来回的半程（zoom 9 像素），不出本块 */
-const PASTURE_WANDER_PX = 7;
+const PASTURE_WANDER_PX = Math.round(18 * STRATEGIC_SPRITE_SCALE);
 /** 农田 / 水田 / 草场整块地皮内允许的最大高差（米）；超过就是山地，不铺 */
 const PLOT_MAX_RELIEF_M = 250;
 /** 地皮选址最远半径（经度度数；纬度方向再 ×0.85 ≈ 0.9° ≈ 100 km） */
@@ -1010,7 +1012,7 @@ export class CityLifeAmbientLayer {
                 bushLib: pal.bushLib,
                 isBamboo: pal.isBamboo,
                 variant: Math.floor(h3 * 100),
-                scaleJitter: 0.78 + h1 * 0.22,
+                scaleJitter: 1,
             });
         }
 
@@ -2289,7 +2291,7 @@ export class CityLifeAmbientLayer {
         if (actor.isSeaFishing || actor.damagePreset === 'sea_shipwreck') {
             // 海中渔船战损：播放 DE 原版渔船破裂沉没动画（SHP_FISHING_SHIP:sink）+ 海面漂浮沉船残骸水花（SHIP_SINK_SMALL）
             const shipScale = SHIP_SCALE_BASE * zoomFactor;
-            this.drawDirectionalCorpse('SUCAI', 'SHIP_SINK_SMALL', 'idle', 0, elapsed * 0.7, pt.x, pt.y + 2 * zoomFactor, shipScale * 0.95, damageAlpha * 0.85);
+            this.drawDirectionalCorpse('SUCAI', 'SHIP_SINK_SMALL', 'idle', 0, elapsed * 0.7, pt.x, pt.y + 2 * zoomFactor, shipScale, damageAlpha * 0.85);
             this.drawDirectionalCorpse('SUCAI', 'SHP_FISHING_SHIP', 'sink', facing, elapsed, pt.x, pt.y, shipScale, damageAlpha);
             return;
         }
@@ -2306,22 +2308,22 @@ export class CityLifeAmbientLayer {
 
         if (actor.damagePreset === 'animal_loss') {
             // 战争损失沿用统一的白骨与牧场残骸，不改变猎捕组合的 DE 死亡／腐烂流程。
-            this.drawStripSprite('SUCAI_BATTLEFIELD', 'FENCE_RUBBLE', actor.damageVariant, pt.x - 10 * zoomFactor, pt.y - 5 * zoomFactor, wreckScale * 0.9, damageAlpha * 0.92);
-            this.drawStripSprite('SUCAI_BATTLEFIELD', 'ANIMAL_SKELETON', actor.damageVariant, pt.x + 12 * zoomFactor + ox * 0.4, pt.y + 6 * zoomFactor + oy * 0.4, wreckScale * 0.88, damageAlpha * 0.95);
+            this.drawStripSprite('SUCAI_BATTLEFIELD', 'FENCE_RUBBLE', actor.damageVariant, pt.x - 10 * zoomFactor, pt.y - 5 * zoomFactor, wreckScale, damageAlpha * 0.92);
+            this.drawStripSprite('SUCAI_BATTLEFIELD', 'ANIMAL_SKELETON', actor.damageVariant, pt.x + 12 * zoomFactor + ox * 0.4, pt.y + 6 * zoomFactor + oy * 0.4, wreckScale, damageAlpha * 0.95);
             return;
         }
 
         if (actor.damagePreset === 'broken_cart_and_bones') {
             this.drawStripSprite('SUCAI_BATTLEFIELD', 'CART_BROKEN', actor.damageVariant, pt.x - 6 * zoomFactor, pt.y - 3 * zoomFactor, wreckScale, damageAlpha);
-            this.drawStripSprite('SUCAI_BATTLEFIELD', 'SKELETON_CIVILIAN', actor.damageVariant, pt.x + 14 * zoomFactor, pt.y + 7 * zoomFactor, wreckScale * 0.95, damageAlpha);
+            this.drawStripSprite('SUCAI_BATTLEFIELD', 'SKELETON_CIVILIAN', actor.damageVariant, pt.x + 14 * zoomFactor, pt.y + 7 * zoomFactor, wreckScale, damageAlpha);
             this.drawDirectionalCorpse('SUCAI', 'VIL_MALE_VILLAGER', 'death', facing, elapsed, pt.x + ox, pt.y + oy, corpseScale, damageAlpha * 0.95);
             return;
         }
 
         if (actor.damagePreset === 'rubble_and_corpse') {
-            this.drawStripSprite('SUCAI_BATTLEFIELD', 'BARRICADE_RUBBLE_A', actor.damageVariant, pt.x, pt.y - 2 * zoomFactor, wreckScale * 0.82, damageAlpha * 0.92);
+            this.drawStripSprite('SUCAI_BATTLEFIELD', 'BARRICADE_RUBBLE_A', actor.damageVariant, pt.x, pt.y - 2 * zoomFactor, wreckScale, damageAlpha * 0.92);
             this.drawDirectionalCorpse('SUCAI', 'VIL_MALE_VILLAGER', 'death', facing, elapsed, pt.x + 8 * zoomFactor, pt.y + 5 * zoomFactor, corpseScale, damageAlpha);
-            this.drawStripSprite('SUCAI_BATTLEFIELD', 'SKELETON_CIVILIAN', actor.damageVariant + 3, pt.x - 12 * zoomFactor, pt.y + 6 * zoomFactor, wreckScale * 0.9, damageAlpha * 0.9);
+            this.drawStripSprite('SUCAI_BATTLEFIELD', 'SKELETON_CIVILIAN', actor.damageVariant + 3, pt.x - 12 * zoomFactor, pt.y + 6 * zoomFactor, wreckScale, damageAlpha * 0.9);
             return;
         }
 
@@ -2360,7 +2362,7 @@ export class CityLifeAmbientLayer {
         }
 
         // 1. 先绘制渔猎民族据点周围的四季树林、灌丛浆果与战时砍伐/焚毁断木树桩
-        const treeBaseScale = TREE_SCALE_BASE * Math.pow(1.35, zoom - 9);
+        const treeBaseScale = TREE_SCALE_BASE * zoomFactor;
         for (const [cityId, st] of cityState.entries()) {
             if (st.viewAlpha <= 0.01) continue;
             const forestProps = this.forestByCity.get(cityId);
@@ -2381,7 +2383,7 @@ export class CityLifeAmbientLayer {
                     this.drawStripSprite('SUCAI_NATURE', stumpName, fp.variant, pt.x - 10 * zoomFactor, pt.y + 3 * zoomFactor, RESOURCE_SCALE_BASE * zoomFactor, damageAlpha);
                     this.drawStripSprite('SUCAI_NATURE', felledName, fp.variant, pt.x + 4 * zoomFactor, pt.y + 2 * zoomFactor, RESOURCE_SCALE_BASE * zoomFactor, damageAlpha);
                     if (fp.variant % 2 === 0) {
-                        this.drawHuntingTree('DEAD_TREE', fp.variant, pt.x - 6 * zoomFactor, pt.y - 2 * zoomFactor, treeBaseScale * fp.scaleJitter * 0.85, damageAlpha * 0.88);
+                        this.drawHuntingTree('DEAD_TREE', fp.variant, pt.x - 6 * zoomFactor, pt.y - 2 * zoomFactor, treeBaseScale, damageAlpha * 0.88);
                     }
                 }
 
@@ -2393,8 +2395,8 @@ export class CityLifeAmbientLayer {
                     const fpNextSeason = (fpSeason + 1) % 4;
                     const curTree = trees[fpSeason];
                     const nextTree = trees[fpNextSeason];
-                    const mainScale = treeBaseScale * fp.scaleJitter;
-                    const subScale = mainScale * 0.78;
+                    const mainScale = treeBaseScale;
+                    const subScale = treeBaseScale;
                     const nextReady = curTree !== nextTree && !!this.stripAssetFor('SUCAI_NATURE', nextTree);
                     if (curTree === nextTree || !nextReady || seasonBlend <= 0.002) {
                         this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainScale, peaceAlpha);
@@ -2536,8 +2538,8 @@ export class CityLifeAmbientLayer {
                             'SUCAI_BUILDING',
                             actor.buildingResource,
                             actor.damageVariant,
-                            // 城外生产建筑与据点内建筑同比例系（BUILDING_SCALE_BASE = 0.22，磨坊与同代民居同宽约 52px，不压过城池）
-                            groupPt.x + side * (actor.seasonalPlot ? 74 : 52) * zoomFactor,
+                            // 城外生产建筑间距随 STRATEGIC_SPRITE_SCALE 同比例联动，改一处系数整体同步缩放
+                            groupPt.x + side * Math.round((actor.seasonalPlot ? 195 : 136) * STRATEGIC_SPRITE_SCALE) * zoomFactor,
                             groupPt.y - 5 * zoomFactor,
                             BUILDING_SCALE_BASE * zoomFactor,
                             peaceFinalAlpha

@@ -8383,7 +8383,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 成名战规则] 蛮子海牙＝元将（1355 采石矶被常遇春击败）→ 上都·元朝；普将；立绘留空
+        // 🔴 [2026-10-20 成名战规则] 蛮子海牙＝元将（1355 采石矶被常遇春击败）→ 姑孰·江南；文化随据点＝JIANGNAN；普将；立绘留空
 
 
 
@@ -17096,7 +17096,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'danyang_huanwen', factionId: 'dongjin', cityId: 'city_jiuzi', generalName: '桓温', portrait: '/assets/JIANGNAN/danyang_huanwen.png', eliteName: '桓家北伐', eliteTier: 3 },
 
         { generalId: 'bfe3_13', factionId: 'chuguo', cityId: 'city_shouxian', generalName: '项燕', portrait: '/assets/JIANGNAN/bfe3_13.png', legionName: '古典时代华夏军团' , eliteName: '楚甲士', eliteTier: 2},
-        { generalId: 'yuan_d_manzihaiya', factionId: 'yuan_d', cityId: 'city_jiuzi', legionName: '城堡时代江南军团', generalName: '蛮子海牙', portrait: '/assets/XIANBEI/yuan_d_manzihaiya.png', eliteName: '江南郡兵', eliteTier: 4 },
+        { generalId: 'yuan_d_manzihaiya', factionId: 'yuan_d', cityId: 'city_shangdu', generalName: '蛮子海牙', portrait: '/assets/XIANBEI/yuan_d_manzihaiya.png', eliteName: '漠南骑手', eliteTier: 4 },
     ],
     nan_liang: [
         { generalId: 'xiao_d_xiaoyan', factionId: 'nan_liang', cityId: 'city_xiangyang', legionName: '封建时代中原军团', generalName: '萧衍', portrait: '/assets/CENTRAL/xiao_d_xiaoyan.png', eliteName: '南齐锐卒', eliteTier: 3 },

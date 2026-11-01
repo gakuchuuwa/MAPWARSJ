@@ -16,7 +16,7 @@ import { plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
 import { localSeasonAtLat } from '../world/environment/seasonalGround';
 import { VECTOR_ROAD_DATA } from '../data/VectorRoadData';
-import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
+import { strategicSpriteScale } from './strategicSpriteScale';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
@@ -832,7 +832,7 @@ export class VegetationLayer {
         const baseBlend = this.sampledGameSeason === gameSeason
             ? Math.min(1, Math.max(0, seasonBlend()))
             : 0;
-        const treeBaseScale = STRATEGIC_SPRITE_SCALE * Math.pow(1.35, zoom - SAMPLE_ZOOM);
+        const treeBaseScale = strategicSpriteScale(zoom);
         const W = this.canvas.width, H = this.canvas.height;
         const topLeftX = this.canvasTopLeft.x;
         const topLeftY = this.canvasTopLeft.y;
@@ -1290,12 +1290,8 @@ export class VegetationLayer {
                     if (!preloadAsset(asset)) pendingImages++;
                     if (assetNext !== asset && !preloadAsset(assetNext)) pendingImages++;
 
-                    // 主树挺拔饱满，内圈伴生树厚实相拥，外圈跨格树略收敛，形成 DE 经典林冠高低层次
-                    const jitter = isDenseCanopy
-                        ? (i === 0
-                            ? 0.88 + hash(gx, gy, 71) * 0.16
-                            : (i <= 1 ? 0.74 + hash(gx, gy, i * 23 + 71) * 0.16 : 0.66 + hash(gx, gy, i * 23 + 71) * 0.16))
-                        : (i === 0 ? 0.84 + hash(gx, gy, 71) * 0.16 : 0.64 + hash(gx, gy, i * 23 + 71) * 0.16);
+                    // DE 原生精灵帧内已自带不同高矮树形变体，严格保持 jitter = 1，不额外缩放破坏 DE 比例
+                    const jitter = 1;
                     const variant = Math.floor(hash(gx, gy, i * 37 + 89) * 100);
                     drawCommands.push({
                         lat: curLatLng.lat,

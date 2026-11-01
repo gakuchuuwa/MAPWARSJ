@@ -9466,6 +9466,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.37,
             "offsetX": 0,
             "offsetY": 46
+        },
+        "/assets/XIANBEI/bfe_yibula.png": {
+            "scale": 1.18,
+            "offsetX": -2,
+            "offsetY": -10
         }
     },
     "folderGuides": {
