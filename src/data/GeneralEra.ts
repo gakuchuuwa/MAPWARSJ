@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将时代表（generalId → 四时代）——**只作兜底/原值**（游戏内取时代走 `FactionEra.getGeneralEra()`：势力年段 × 该将成名战年/登场年）。
  *
  * 由 GENERAL_CENTURIES（成名世纪=辉煌年代）派生，不做生卒/寿命。
@@ -1827,6 +1827,86 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'wuzhou_wangwenjin': 'feudal', // 汪文进
     'liusong_tanshao': 'feudal', // 檀韶
     'han_d_sunang': 'antiquity', // 孙卬
+    'tang_malin': 'feudal', // 马璘（补将）
+    'tang_duanxiushi': 'feudal', // 段秀实（补将）
+    'hou_liang_liuzhijun': 'feudal', // 刘知俊（补将）
+    'song_weisheng': 'castle', // 魏胜（补将）
+    'tang_litongjie': 'feudal', // 李同捷（补将）
+    'han_d_gengkui': 'antiquity', // 耿夔（补将）
+    'han_d_cuishi': 'antiquity', // 崔寔（补将）
+    'liao_d_yelniehu': 'feudal', // 耶律聂呼（补将）
+    'tang_zhanggongjin': 'feudal', // 张公谨（补将）
+    'han_d_lianfan': 'antiquity', // 廉范（补将）
+    'han_d_jiazong': 'antiquity', // 贾宗（补将）
+    'han_d_wangbiao': 'antiquity', // 王彪（补将）
+    'tang_luoyi': 'feudal', // 骆怡（补将）
+    'tang_zhaorongguo': 'feudal', // 赵荣国（补将）
+    'han_d_yiquanguo': 'antiquity', // 义渠安国（补将）
+    'adiyabeina_yizhatesi': 'antiquity', // 伊扎特斯（补将）
+    'mazhaer_xiongyatilasiluo': 'castle', // 匈雅提拉斯洛（补将）
+    'xila_hagenong': 'antiquity', // 哈格农（补将）
+    'xila_nixiyasi': 'antiquity', // 尼西亚斯（补将）
+    'xila_feiluokelisi': 'antiquity', // 菲洛克利斯（补将）
+    'baizanting_peiteluonasi': 'feudal', // 佩特罗纳斯（补将）
+    'bolan_aoboerqike': 'castle', // 奥波尔奇克（补将）
+    'bolan_laishenqinsiji': 'imperial', // 莱什琴斯基（补将）
+    'ruidian_si_mona': 'imperial', // 默纳（补将）
+    'ruidian_si_lili': 'imperial', // 利利（补将）
+    'luosi_siweinieerde': 'feudal', // 斯维涅尔德（补将）
+    'eluosi_diguo_pashenkefu': 'imperial', // 帕什科夫（补将）
+    'eluosi_diguo_bieketuofu': 'imperial', // 别克托夫（补将）
+    'gesake_bulawen': 'imperial', // 布拉温（补将）
+    'litaowan_weishennieweiciji': 'imperial', // 维什涅韦茨基（补将）
+    'litaowan_dashenkeweiqi': 'imperial', // 达什克维奇（补将）
+    'moerdaweiya_lepushenneiyanu': 'castle', // 勒普什内亚努（补将）
+    'moerdaweiya_lupu': 'castle', // 卢普（补将）
+    'putaoya_meineisaisi': 'castle', // 梅内塞斯（补将）
+    'suolun_mabudai': 'imperial', // 玛布岱（补将）
+    'manzhou_d_sabusu': 'imperial', // 萨布素（补将）
+    'joseon_shenla': 'imperial', // 申砬（补将）
+    'joseon_liyi': 'imperial', // 李镒（补将）
+    'joseon_jinxie': 'imperial', // 金澥（补将）
+    'shunga_danatipo': 'antiquity', // 达那提婆（补将）
+    'mowoer_sadatehan': 'imperial', // 萨达特汗（补将）
+    'cueva_panjiyake': 'imperial', // 潘基亚科（补将）
+    'han_d_wangji': 'antiquity', // 王吉（补将）
+    'tang_baizhizhen': 'feudal', // 白志贞（补将）
+    'qianshu_wangzongshou': 'feudal', // 王宗寿（补将）
+    'tang_changhe': 'feudal', // 常何（补将）
+    'tang_ligaoqian': 'feudal', // 李高迁（补将）
+    'dali_gaoliangcheng': 'castle', // 高量成（补将）
+    'tang_chendaci': 'feudal', // 陈大慈（补将）
+    'shu_wangsi': 'antiquity', // 王嗣（补将）
+    'tang_xianyushuming': 'feudal', // 鲜于叔明（补将）
+    'tang_guyanhui': 'feudal', // 顾彦晖（补将）
+    'manzhou_d_dongtianbi': 'imperial', // 董天弼（补将）
+    'tang_zhangchengjian': 'feudal', // 张丞简（补将）
+    'tang_xiechongben': 'feudal', // 谢崇本（补将）
+    'song_xielin': 'castle', // 谢麟（补将）
+    'song_zhangjianhou': 'castle', // 张建侯（补将）
+    'wuyue_caogui': 'feudal', // 曹圭（补将）
+    'wuyue_caoxin': 'feudal', // 曹信（补将）
+    'tang_tianjun': 'feudal', // 田頵（补将）
+    'tang_qinyan': 'feudal', // 秦彦（补将）
+    'chalkidike_lasiteniesi': 'antiquity', // 拉斯特涅斯
+    'chalkidike_outikelatesi': 'antiquity', // 欧提克拉特斯
+    'naxos_lgedamisi': 'antiquity', // 吕格达米斯
+    'phokis_feiluomoluosi': 'antiquity', // 菲洛墨洛斯
+    'phokis_aonuomakusi': 'antiquity', // 奥诺马库斯
+    'wuguobu_hunchang': 'feudal', // 浑敞
+    'jienei_keyikongboluo': 'feudal', // 科伊孔博罗
+    'balti_alixieerhan': 'imperial', // 阿里谢尔汗
+    'qingyuan_yijun_ounanxi': 'castle', // 欧南喜
+    'zhenghe_yijun_huanghua': 'castle', // 黄华
+    'latin_empire_diaili': 'castle', // 蒂埃里
+    'anjou_luyisanshi': 'castle', // 路易三世
+    'pisa_manfuleidi': 'castle', // 曼弗雷迪
+    'aqimeinide_aerxitesi': 'antiquity', // 阿尔西特斯
+    'baizanting_likaliao': 'castle', // 利卡里奥
+    'lagoniya_kelierlidasi': 'antiquity', // 克利尔里达斯
+    'gaolu_wulixi': 'imperial', // 乌里希
+    'yinggelan_yuehanjifade': 'castle', // 约翰吉法德
+
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

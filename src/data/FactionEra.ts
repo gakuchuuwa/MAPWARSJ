@@ -707,7 +707,15 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yue': [{ from: -9999, era: 'antiquity' }, { from: 560, era: 'feudal' }], // 越国｜按现存名将成名年推定：–∞起古典 → 560起封建
     'zhao': [{ from: -9999, era: 'antiquity' }, { from: 621, era: 'feudal' }], // 赵国｜按现存名将成名年推定：–∞起古典 → 621起封建
     'zhuluo': [{ from: -9999, era: 'antiquity' }, { from: 993, era: 'feudal' }], // 朱罗｜按现存名将成名年推定：–∞起古典 → 993起封建
-    'pattani': [{ from: -9999, era: 'imperial' }], // 北大年｜16-17世纪北大年苏丹国（帝国）
+    'pattani': [{ from: -9999, era: 'imperial' }], // 北大年｜16-17世纪北大年苏丹国（帝国）    'chalkidike': [{ from: -9999, era: 'antiquity' }], // 卡尔基季基同盟
+    'naxos': [{ from: -9999, era: 'antiquity' }], // 纳克索斯
+    'phokis': [{ from: -9999, era: 'antiquity' }], // 福基斯
+    'wuguobu': [{ from: -9999, era: 'feudal' }], // 五国部
+    'balti': [{ from: -9999, era: 'imperial' }], // 巴尔蒂
+    'qingyuan_yijun': [{ from: -9999, era: 'castle' }], // 清远义军
+    'zhenghe_yijun': [{ from: -9999, era: 'castle' }], // 政和义军    'latin_empire': [{ from: -9999, era: 'castle' }], // 拉丁帝国
+    'anjou': [{ from: -9999, era: 'castle' }], // 安茹
+    'pisa': [{ from: -9999, era: 'castle' }], // 比萨共和国
 };
 
 

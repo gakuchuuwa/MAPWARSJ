@@ -1146,7 +1146,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'qiemo_anmoshenpan': 'WESTERN',   // 且末｜安末深盘｜据点 播仙
     'qiepantuo_luozhentan': 'CENTRAL_ASIA',   // 护密｜罗真檀｜据点 护密
     'qifu_d_qifuchipan': 'XIANBEI',   // 乞伏｜乞伏炽磐｜据点 枹罕
-    'qiliqiya_pangpei': 'ORIE',   // 奇里乞亚｜庞培｜据点 阿达纳
+    'qiliqiya_pangpei': 'ROMA',   // 罗马｜庞培｜据点 罗马城（罗马将，文化非近东）
     'qin_simacuo': 'CENTRAL',   // 秦国｜司马错｜据点 长安
     'qincha_baqiman': 'CUMAN',   // 库曼｜巴奇曼｜据点 萨克辛
     'qing_quduan': 'CENTRAL',   // 宋国｜曲端｜据点 合水

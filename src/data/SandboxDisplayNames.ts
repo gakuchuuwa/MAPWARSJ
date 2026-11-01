@@ -849,7 +849,15 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'ghana_diguo': '加纳',
 'yalan': '亚兰',
     gepids: '革皮',
-    kalbids: '卡比',
+    kalbids: '卡比',    'chalkidike': '卡基',   // 卡尔基季基同盟
+    'naxos': '纳克',   // 纳克索斯
+    'phokis': '福基',   // 福基斯
+    'wuguobu': '五国',   // 五国部
+    'balti': '巴尔',   // 巴尔蒂
+    'qingyuan_yijun': '清远',   // 清远义军
+    'zhenghe_yijun': '政和',   // 政和义军    'latin_empire': '拉丁',   // 拉丁帝国
+    'anjou': '安茹',   // 安茹
+    'pisa': '比萨',   // 比萨共和国
 };
 
 // @ts-ignore

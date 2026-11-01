@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将生卒年表（generalId → { 生年 birth, 卒年 death[, 登场年 debut] }）。
  * 登场年默认 = 生年 + 20（20 岁登场），由 `getGeneralDebutYear` 推算，不重复存。
  *
@@ -1835,6 +1835,86 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     wuzhou_wangwenjin: { birth: 570, death: 620, kaoju: '推定' },  // 汪文进
     liusong_tanshao: { birth: 370, death: 430, kaoju: '推定' },  // 檀韶
     han_d_sunang: { birth: -230, death: -166, kaoju: '推定' },  // 孙卬
+    tang_malin: { birth: 721, death: 777, kaoju: '推定' },  // 马璘
+    tang_duanxiushi: { birth: 719, death: 783, kaoju: '推定' },  // 段秀实
+    hou_liang_liuzhijun: { birth: 860, death: 917, kaoju: '推定' },  // 刘知俊
+    song_weisheng: { birth: 1120, death: 1164, kaoju: '推定' },  // 魏胜
+    tang_litongjie: { birth: 800, death: 829, kaoju: '推定' },  // 李同捷
+    han_d_gengkui: { birth: 40, death: 110, kaoju: '推定' },  // 耿夔
+    han_d_cuishi: { birth: 103, death: 170, kaoju: '推定' },  // 崔寔
+    liao_d_yelniehu: { birth: 1070, death: 1117, kaoju: '推定' },  // 耶律聂呼
+    tang_zhanggongjin: { birth: 594, death: 632, kaoju: '推定' },  // 张公谨
+    han_d_lianfan: { birth: 30, death: 92, kaoju: '推定' },  // 廉范
+    han_d_jiazong: { birth: 20, death: 90, kaoju: '推定' },  // 贾宗
+    han_d_wangbiao: { birth: 40, death: 110, kaoju: '推定' },  // 王彪
+    tang_luoyi: { birth: 770, death: 830, kaoju: '推定' },  // 骆怡
+    tang_zhaorongguo: { birth: 780, death: 840, kaoju: '推定' },  // 赵荣国
+    han_d_yiquanguo: { birth: -110, death: -50, kaoju: '推定' },  // 义渠安国
+    adiyabeina_yizhatesi: { birth: 1, death: 54, kaoju: '推定' },  // 伊扎特斯
+    mazhaer_xiongyatilasiluo: { birth: 1431, death: 1457, kaoju: '推定' },  // 匈雅提拉斯洛
+    xila_hagenong: { birth: -470, death: -410, kaoju: '推定' },  // 哈格农
+    xila_nixiyasi: { birth: -470, death: -413, kaoju: '推定' },  // 尼西亚斯
+    xila_feiluokelisi: { birth: -460, death: -405, kaoju: '推定' },  // 菲洛克利斯
+    baizanting_peiteluonasi: { birth: 790, death: 865, kaoju: '推定' },  // 佩特罗纳斯
+    bolan_aoboerqike: { birth: 1326, death: 1401, kaoju: '推定' },  // 奥波尔奇克
+    bolan_laishenqinsiji: { birth: 1677, death: 1766, kaoju: '推定' },  // 莱什琴斯基
+    ruidian_si_mona: { birth: 1658, death: 1720, kaoju: '推定' },  // 默纳
+    ruidian_si_lili: { birth: 1680, death: 1740, kaoju: '推定' },  // 利利
+    luosi_siweinieerde: { birth: 920, death: 980, kaoju: '推定' },  // 斯维涅尔德
+    eluosi_diguo_pashenkefu: { birth: 1610, death: 1670, kaoju: '推定' },  // 帕什科夫
+    eluosi_diguo_bieketuofu: { birth: 1600, death: 1661, kaoju: '推定' },  // 别克托夫
+    gesake_bulawen: { birth: 1660, death: 1708, kaoju: '推定' },  // 布拉温
+    litaowan_weishennieweiciji: { birth: 1516, death: 1563, kaoju: '推定' },  // 维什涅韦茨基
+    litaowan_dashenkeweiqi: { birth: 1490, death: 1536, kaoju: '推定' },  // 达什克维奇
+    moerdaweiya_lepushenneiyanu: { birth: 1500, death: 1568, kaoju: '推定' },  // 勒普什内亚努
+    moerdaweiya_lupu: { birth: 1595, death: 1661, kaoju: '推定' },  // 卢普
+    putaoya_meineisaisi: { birth: 1380, death: 1437, kaoju: '推定' },  // 梅内塞斯
+    suolun_mabudai: { birth: 1640, death: 1700, kaoju: '推定' },  // 玛布岱
+    manzhou_d_sabusu: { birth: 1634, death: 1701, kaoju: '推定' },  // 萨布素
+    joseon_shenla: { birth: 1546, death: 1592, kaoju: '推定' },  // 申砬
+    joseon_liyi: { birth: 1541, death: 1592, kaoju: '推定' },  // 李镒
+    joseon_jinxie: { birth: 1540, death: 1592, kaoju: '推定' },  // 金澥
+    shunga_danatipo: { birth: -80, death: -20, kaoju: '推定' },  // 达那提婆
+    mowoer_sadatehan: { birth: 1680, death: 1739, kaoju: '推定' },  // 萨达特汗
+    cueva_panjiyake: { birth: 1490, death: 1530, kaoju: '推定' },  // 潘基亚科
+    han_d_wangji: { birth: -175, death: -120, kaoju: '推定' },  // 王吉
+    tang_baizhizhen: { birth: 730, death: 795, kaoju: '推定' },  // 白志贞
+    qianshu_wangzongshou: { birth: 860, death: 920, kaoju: '推定' },  // 王宗寿
+    tang_changhe: { birth: 588, death: 653, kaoju: '推定' },  // 常何
+    tang_ligaoqian: { birth: 585, death: 655, kaoju: '推定' },  // 李高迁
+    dali_gaoliangcheng: { birth: 1100, death: 1170, kaoju: '推定' },  // 高量成
+    tang_chendaci: { birth: 650, death: 720, kaoju: '推定' },  // 陈大慈
+    shu_wangsi: { birth: 190, death: 250, kaoju: '推定' },  // 王嗣
+    tang_xianyushuming: { birth: 715, death: 787, kaoju: '推定' },  // 鲜于叔明
+    tang_guyanhui: { birth: 850, death: 897, kaoju: '推定' },  // 顾彦晖
+    manzhou_d_dongtianbi: { birth: 1720, death: 1773, kaoju: '推定' },  // 董天弼
+    tang_zhangchengjian: { birth: 700, death: 760, kaoju: '推定' },  // 张丞简
+    tang_xiechongben: { birth: 850, death: 900, kaoju: '推定' },  // 谢崇本
+    song_xielin: { birth: 1020, death: 1090, kaoju: '推定' },  // 谢麟
+    song_zhangjianhou: { birth: 1060, death: 1120, kaoju: '推定' },  // 张建侯
+    wuyue_caogui: { birth: 850, death: 910, kaoju: '推定' },  // 曹圭
+    wuyue_caoxin: { birth: 830, death: 900, kaoju: '推定' },  // 曹信
+    tang_tianjun: { birth: 850, death: 903, kaoju: '推定' },  // 田頵
+    tang_qinyan: { birth: 840, death: 890, kaoju: '推定' },  // 秦彦
+    chalkidike_lasiteniesi: { birth: -400, death: -348, kaoju: '推定' },  // 拉斯特涅斯
+    chalkidike_outikelatesi: { birth: -400, death: -340, kaoju: '推定' },  // 欧提克拉特斯
+    naxos_lgedamisi: { birth: -580, death: -520, kaoju: '推定' },  // 吕格达米斯
+    phokis_feiluomoluosi: { birth: -400, death: -354, kaoju: '推定' },  // 菲洛墨洛斯
+    phokis_aonuomakusi: { birth: -390, death: -352, kaoju: '推定' },  // 奥诺马库斯
+    wuguobu_hunchang: { birth: 980, death: 1050, kaoju: '推定' },  // 浑敞
+    jienei_keyikongboluo: { birth: 1180, death: 1250, kaoju: '推定' },  // 科伊孔博罗
+    balti_alixieerhan: { birth: 1550, death: 1625, kaoju: '推定' },  // 阿里谢尔汗
+    qingyuan_yijun_ounanxi: { birth: 1245, death: 1284, kaoju: '推定' },  // 欧南喜
+    zhenghe_yijun_huanghua: { birth: 1230, death: 1284, kaoju: '推定' },  // 黄华
+    latin_empire_diaili: { birth: 1170, death: 1206, kaoju: '推定' },  // 蒂埃里
+    anjou_luyisanshi: { birth: 1403, death: 1434, kaoju: '推定' },  // 路易三世
+    pisa_manfuleidi: { birth: 1260, death: 1325, kaoju: '推定' },  // 曼弗雷迪
+    aqimeinide_aerxitesi: { birth: -380, death: -334, kaoju: '推定' },  // 阿尔西特斯
+    baizanting_likaliao: { birth: 1240, death: 1300, kaoju: '推定' },  // 利卡里奥
+    lagoniya_kelierlidasi: { birth: -460, death: -400, kaoju: '推定' },  // 克利尔里达斯
+    gaolu_wulixi: { birth: 1810, death: 1880, kaoju: '推定' },  // 乌里希
+    yinggelan_yuehanjifade: { birth: 1230, death: 1299, kaoju: '推定' },  // 约翰吉法德
+
 };
 
 /** 生年（未收录返回 null） */

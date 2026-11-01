@@ -1501,6 +1501,86 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'wuzhou_wangwenjin': 7,
     'liusong_tanshao': 5,
     'han_d_sunang': -2,
+    'tang_malin': 8,   // 马璘
+    'tang_duanxiushi': 8,   // 段秀实
+    'hou_liang_liuzhijun': 10,   // 刘知俊
+    'song_weisheng': 12,   // 魏胜
+    'tang_litongjie': 9,   // 李同捷
+    'han_d_gengkui': 1,   // 耿夔
+    'han_d_cuishi': 2,   // 崔寔
+    'liao_d_yelniehu': 12,   // 耶律聂呼
+    'tang_zhanggongjin': 7,   // 张公谨
+    'han_d_lianfan': 1,   // 廉范
+    'han_d_jiazong': 1,   // 贾宗
+    'han_d_wangbiao': 1,   // 王彪
+    'tang_luoyi': 9,   // 骆怡
+    'tang_zhaorongguo': 9,   // 赵荣国
+    'han_d_yiquanguo': -1,   // 义渠安国
+    'adiyabeina_yizhatesi': 1,   // 伊扎特斯
+    'mazhaer_xiongyatilasiluo': 15,   // 匈雅提拉斯洛
+    'xila_hagenong': -5,   // 哈格农
+    'xila_nixiyasi': -5,   // 尼西亚斯
+    'xila_feiluokelisi': -5,   // 菲洛克利斯
+    'baizanting_peiteluonasi': 9,   // 佩特罗纳斯
+    'bolan_aoboerqike': 14,   // 奥波尔奇克
+    'bolan_laishenqinsiji': 18,   // 莱什琴斯基
+    'ruidian_si_mona': 18,   // 默纳
+    'ruidian_si_lili': 18,   // 利利
+    'luosi_siweinieerde': 10,   // 斯维涅尔德
+    'eluosi_diguo_pashenkefu': 17,   // 帕什科夫
+    'eluosi_diguo_bieketuofu': 17,   // 别克托夫
+    'gesake_bulawen': 18,   // 布拉温
+    'litaowan_weishennieweiciji': 16,   // 维什涅韦茨基
+    'litaowan_dashenkeweiqi': 16,   // 达什克维奇
+    'moerdaweiya_lepushenneiyanu': 16,   // 勒普什内亚努
+    'moerdaweiya_lupu': 17,   // 卢普
+    'putaoya_meineisaisi': 15,   // 梅内塞斯
+    'suolun_mabudai': 17,   // 玛布岱
+    'manzhou_d_sabusu': 17,   // 萨布素
+    'joseon_shenla': 16,   // 申砬
+    'joseon_liyi': 16,   // 李镒
+    'joseon_jinxie': 16,   // 金澥
+    'shunga_danatipo': -1,   // 达那提婆
+    'mowoer_sadatehan': 18,   // 萨达特汗
+    'cueva_panjiyake': 16,   // 潘基亚科
+    'han_d_wangji': -2,   // 王吉
+    'tang_baizhizhen': 8,   // 白志贞
+    'qianshu_wangzongshou': 9,   // 王宗寿
+    'tang_changhe': 7,   // 常何
+    'tang_ligaoqian': 7,   // 李高迁
+    'dali_gaoliangcheng': 12,   // 高量成
+    'tang_chendaci': 8,   // 陈大慈
+    'shu_wangsi': 3,   // 王嗣
+    'tang_xianyushuming': 8,   // 鲜于叔明
+    'tang_guyanhui': 9,   // 顾彦晖
+    'manzhou_d_dongtianbi': 18,   // 董天弼
+    'tang_zhangchengjian': 8,   // 张丞简
+    'tang_xiechongben': 9,   // 谢崇本
+    'song_xielin': 11,   // 谢麟
+    'song_zhangjianhou': 12,   // 张建侯
+    'wuyue_caogui': 9,   // 曹圭
+    'wuyue_caoxin': 9,   // 曹信
+    'tang_tianjun': 9,   // 田頵
+    'tang_qinyan': 9,   // 秦彦
+    'chalkidike_lasiteniesi': -4,   // 拉斯特涅斯
+    'chalkidike_outikelatesi': -4,   // 欧提克拉特斯
+    'naxos_lgedamisi': -6,   // 吕格达米斯
+    'phokis_feiluomoluosi': -4,   // 菲洛墨洛斯
+    'phokis_aonuomakusi': -4,   // 奥诺马库斯
+    'wuguobu_hunchang': 11,   // 浑敞
+    'jienei_keyikongboluo': 13,   // 科伊孔博罗
+    'balti_alixieerhan': 17,   // 阿里谢尔汗
+    'qingyuan_yijun_ounanxi': 13,   // 欧南喜
+    'zhenghe_yijun_huanghua': 13,   // 黄华
+    'latin_empire_diaili': 13,   // 蒂埃里
+    'anjou_luyisanshi': 15,   // 路易三世
+    'pisa_manfuleidi': 14,   // 曼弗雷迪
+    'aqimeinide_aerxitesi': -4,   // 阿尔西特斯
+    'baizanting_likaliao': 13,   // 利卡里奥
+    'lagoniya_kelierlidasi': -5,   // 克利尔里达斯
+    'gaolu_wulixi': 19,   // 乌里希
+    'yinggelan_yuehanjifade': 13,   // 约翰吉法德
+
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

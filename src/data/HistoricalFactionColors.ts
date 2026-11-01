@@ -740,6 +740,13 @@ wuzhou_yijun: '#6B7A2E', // 婺州义军·汪文进
     mahan: '#8B5A2B', // 马韩
     daquyue: '#A93F55', // 大瞿越
     yuenan: '#8E3B5C', // 越南
+    chalkidike: '#8A5CF6',   // 卡尔基季基同盟
+    naxos: '#C2410C',   // 纳克索斯
+    phokis: '#0F766E',   // 福基斯
+    wuguobu: '#7C2D12',   // 五国部
+    balti: '#4D7C0F',   // 巴尔蒂
+    qingyuan_yijun: '#9D174D',   // 清远义军
+    zhenghe_yijun: '#0C4A6E',   // 政和义军
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
@@ -833,4 +840,6 @@ export const FLAG_TEXT_BLACK_STYLE_FACTIONS: ReadonlySet<string> = new Set(['han
 if (import.meta.hot) {
     // @ts-ignore
     import.meta.hot.accept();
-}
+}    latin_empire: '#5B21B6',   // 拉丁帝国
+    anjou: '#B45309',   // 安茹
+    pisa: '#047857',   // 比萨共和国

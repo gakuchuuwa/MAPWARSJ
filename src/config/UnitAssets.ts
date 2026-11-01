@@ -23,12 +23,12 @@ export const SPRITE_PATHS = {
         'siam_nalixuan': '/assets/KHMER/siam_nalixuan.png',
         'shang_fuhao': '/assets/CENTRAL/shang_fuhao.png',
         'pizhou_lvbu': '/assets/CENTRAL/pizhou_lvbu.png',
-        'xianyu_hanxin': '/assets/WEI/xianyu_hanxin.png',    // 韩信（generalId 已更新）
-        'wei_wuqi': '/assets/WEI/wei_wuqi.png',
+        'xianyu_hanxin': '/assets/CENTRAL/xianyu_hanxin.png',    // 韩信（generalId 已更新）
+        'wei_wuqi': '/assets/CENTRAL/wei_wuqi.png',
         'manzhou_nuerhachi': '/assets/NORTHEAST/manzhou_nuerhachi.png',
         'xinluo_jinyuxin': '/assets/KOREA/xinluo_jinyuxin.png',
         'seljuq_sangjiaer': '/assets/SASANIAN/seljuq_sangjiaer.png',
-        'zaoyang_d_menggong': '/assets/CENTRAL/zaoyang_d_menggong.png',
+        'zaoyang_d_menggong': '/assets/JIANGNAN/zaoyang_d_menggong.png',
     },
     PHALANX: {
         FLAG: {

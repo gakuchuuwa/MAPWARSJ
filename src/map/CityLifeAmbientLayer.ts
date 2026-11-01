@@ -6,7 +6,7 @@ import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { hasWorldBaseData, loadWorldBaseData, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
-import { STRATEGIC_ACTOR_SCALE, STRATEGIC_SPRITE_SCALE, STRATEGIC_TREE_SCALE, STRATEGIC_WONDER_SCALE } from './strategicSpriteScale';
+import { STRATEGIC_ACTOR_SCALE, STRATEGIC_SPRITE_SCALE, STRATEGIC_TREE_SCALE } from './strategicSpriteScale';
 import { registerHumanPresence } from './strategicPresence';
 import { plantAllowedAt, plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
@@ -151,7 +151,7 @@ const SHIP_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const FISH_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const WRECK_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const RESOURCE_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
-const BUILDING_SCALE_BASE = STRATEGIC_WONDER_SCALE;
+const BUILDING_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const TREE_SCALE_BASE = STRATEGIC_TREE_SCALE;
 const PLOT_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 type SeasonalPlotKind = 'dry_farm' | 'rice_farm' | 'pasture';
@@ -2536,6 +2536,9 @@ export class CityLifeAmbientLayer {
                         );
                     }
                     if (actor.buildingResource) {
+                        const bSt = this.stripAssetFor('SUCAI_BUILDING', actor.buildingResource);
+                        // 1×1 小号毡帐/茅屋/围栏（YURT_B/C、DARK_PASTURE、HUT_A/B 原生仅 128~144px）按 2×2 标准大毡帐（YURT_A 204px）对齐底宽，避免牧场/猎场房屋比人还小
+                        const bNorm = bSt && bSt.boxW > 0 && bSt.boxW < 180 ? 204 / bSt.boxW : 1;
                         this.drawStripSprite(
                             'SUCAI_BUILDING',
                             actor.buildingResource,
@@ -2543,7 +2546,7 @@ export class CityLifeAmbientLayer {
                             // 城外生产建筑间距随 STRATEGIC_SPRITE_SCALE 同比例联动，改一处系数整体同步缩放
                             groupPt.x + side * Math.round((actor.seasonalPlot === 'pasture' ? 290 : actor.seasonalPlot ? 240 : 136) * STRATEGIC_SPRITE_SCALE) * zoomFactor,
                             groupPt.y - 5 * zoomFactor,
-                            BUILDING_SCALE_BASE * zoomFactor,
+                            BUILDING_SCALE_BASE * bNorm * zoomFactor,
                             peaceFinalAlpha
                         );
                     }
