@@ -802,6 +802,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'mari_ancient': 'city_anate',   // 幼发拉底马里（阿纳特）
 'jiaohuangguo': 'city_luoma',
 'yalan': 'city_damasikusi',
+  // 🔴 [2026-11-01] 三家起义政权补登记首都（消 batch-manager「缺 StartingCapitals」警告；本表登记用，不作开局依据）
+  'zhangchu': 'city_huaiyang',      // 张楚·陈胜 都 陈（宛丘＝陈国故都，《史记·陈涉世家》）
+  'desheng': 'city_yunyang',        // 德胜·刘通 据 郧阳 称汉王（成化荆襄流民起义）
+  'wuzhou_yijun': 'city_wuzhou',    // 婺州义军·汪文进 据 婺州（今金华）
 };
 
 // @ts-ignore
