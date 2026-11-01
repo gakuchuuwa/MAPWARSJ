@@ -151,96 +151,96 @@ function computeLocalSeasonModulation(
 
     const z = zone ?? resolveEnvZoneId(lat, lng);
 
-    // 3. 地中海气候（夏干金黄 · 冬春润泽返青）
+    // 3. 地中海气候（夏干暖金褐 · 冬春润泽返青）
     if (isMediterraneanClimateAt(lat, lng, z)) {
         const w = vegWeight;
         if (localSeason === 3) {
             // 当地冬季：温和多雨，冬草返青苍翠
             return {
-                rMul: 1 - 0.14 * w,
-                gMul: 1 + 0.11 * w,
-                bMul: 1 - 0.06 * w,
-                targetR: 98,
-                targetG: 132,
-                targetB: 68,
-                targetMix: 0.34 * w,
-                dryBias: -0.28 * w,
+                rMul: 1 - 0.08 * w,
+                gMul: 1 + 0.065 * w,
+                bMul: 1 - 0.035 * w,
+                targetR: 94,
+                targetG: 128,
+                targetB: 72,
+                targetMix: 0.22 * w,
+                dryBias: -0.18 * w,
                 localSeason,
             };
         }
         if (localSeason === 0) {
-            // 当地春季：春草繁茂鲜绿
+            // 当地春季：春草繁茂青翠
             return {
-                rMul: 1 - 0.11 * w,
-                gMul: 1 + 0.10 * w,
-                bMul: 1 - 0.08 * w,
-                targetR: 108,
-                targetG: 140,
-                targetB: 70,
-                targetMix: 0.30 * w,
-                dryBias: -0.24 * w,
+                rMul: 1 - 0.06 * w,
+                gMul: 1 + 0.06 * w,
+                bMul: 1 - 0.045 * w,
+                targetR: 104,
+                targetG: 134,
+                targetB: 74,
+                targetMix: 0.18 * w,
+                dryBias: -0.15 * w,
                 localSeason,
             };
         }
         if (localSeason === 1) {
-            // 当地夏季：副高控制，盛夏焦黄干涸
+            // 当地夏季：副高控制，盛夏干黄麦褐
             return {
-                rMul: 1 + 0.10 * w,
-                gMul: 1 - 0.03 * w,
-                bMul: 1 - 0.18 * w,
-                targetR: 196,
-                targetG: 162,
+                rMul: 1 + 0.075 * w,
+                gMul: 1 - 0.025 * w,
+                bMul: 1 - 0.11 * w,
+                targetR: 164,
+                targetG: 140,
                 targetB: 88,
-                targetMix: 0.32 * w,
-                dryBias: 0.30 * w,
+                targetMix: 0.22 * w,
+                dryBias: 0.20 * w,
                 localSeason,
             };
         }
         // 当地秋季：秋雨初至，半黄半绿过渡
         return {
             rMul: 1 + 0.02 * w,
-            gMul: 1 + 0.02 * w,
-            bMul: 1 - 0.06 * w,
-            targetR: 152,
-            targetG: 142,
-            targetB: 84,
-            targetMix: 0.16 * w,
+            gMul: 1 + 0.01 * w,
+            bMul: 1 - 0.04 * w,
+            targetR: 138,
+            targetG: 130,
+            targetB: 86,
+            targetMix: 0.12 * w,
             dryBias: 0.06 * w,
             localSeason,
         };
     }
 
-    // 4. 热带季风与稀树草原（旱季枯黄 · 雨季返青）
+    // 4. 热带季风与稀树草原（旱季枯黄褐 · 雨季葱茏返青）
     if (isTropicalMonsoonOrSavannaAt(lat, lng, aridity, sandiness, z)) {
         const w = vegWeight * smoothstep(5.5, 11.0, absLat);
         if (localSeason === 1 || localSeason === 2) {
-            // 雨季（当地夏、秋）：雨水丰沛，草原与季风林葱茏返青
+            // 雨季（当地夏、秋）：雨水丰沛，草原与季风林返青
             const wetStrength = localSeason === 1 ? 1.0 : 0.78;
             const sw = w * wetStrength;
             return {
-                rMul: 1 - 0.15 * sw,
-                gMul: 1 + 0.12 * sw,
-                bMul: 1 - 0.08 * sw,
-                targetR: 92,
-                targetG: 132,
-                targetB: 62,
-                targetMix: 0.35 * sw,
-                dryBias: -0.30 * sw,
+                rMul: 1 - 0.09 * sw,
+                gMul: 1 + 0.07 * sw,
+                bMul: 1 - 0.045 * sw,
+                targetR: 90,
+                targetG: 126,
+                targetB: 68,
+                targetMix: 0.22 * sw,
+                dryBias: -0.20 * sw,
                 localSeason,
             };
         }
-        // 旱季（当地冬、春）：大地干涸枯黄
+        // 旱季（当地冬、春）：草木干涸枯褐
         const dryStrength = localSeason === 0 ? 1.0 : 0.85;
         const sw = w * dryStrength;
         return {
-            rMul: 1 + 0.12 * sw,
-            gMul: 1 - 0.05 * sw,
-            bMul: 1 - 0.20 * sw,
-            targetR: 188,
-            targetG: 146,
-            targetB: 78,
-            targetMix: 0.34 * sw,
-            dryBias: 0.28 * sw,
+            rMul: 1 + 0.08 * sw,
+            gMul: 1 - 0.035 * sw,
+            bMul: 1 - 0.12 * sw,
+            targetR: 162,
+            targetG: 134,
+            targetB: 84,
+            targetMix: 0.23 * sw,
+            dryBias: 0.20 * sw,
             localSeason,
         };
     }
@@ -251,118 +251,118 @@ function computeLocalSeasonModulation(
     if (isSubtropicalHumid) {
         const w = vegWeight;
         if (localSeason === 0) {
-            // 春：新绿明快
+            // 春：新绿温润明朗
             return {
-                rMul: 1 - 0.05 * w,
-                gMul: 1 + 0.07 * w,
-                bMul: 1 - 0.07 * w,
-                targetR: 112,
-                targetG: 144,
-                targetB: 72,
-                targetMix: 0.18 * w,
-                dryBias: -0.15 * w,
+                rMul: 1 - 0.03 * w,
+                gMul: 1 + 0.045 * w,
+                bMul: 1 - 0.045 * w,
+                targetR: 104,
+                targetG: 134,
+                targetB: 76,
+                targetMix: 0.12 * w,
+                dryBias: -0.10 * w,
                 localSeason,
             };
         }
         if (localSeason === 1) {
-            // 夏：浓郁苍翠
+            // 夏：浓郁深苍翠
             return {
-                rMul: 1 - 0.07 * w,
-                gMul: 1 + 0.05 * w,
-                bMul: 1 - 0.04 * w,
-                targetR: 86,
-                targetG: 126,
-                targetB: 64,
-                targetMix: 0.16 * w,
-                dryBias: -0.20 * w,
+                rMul: 1 - 0.055 * w,
+                gMul: 1 + 0.035 * w,
+                bMul: 1 - 0.025 * w,
+                targetR: 84,
+                targetG: 120,
+                targetB: 68,
+                targetMix: 0.14 * w,
+                dryBias: -0.14 * w,
                 localSeason,
             };
         }
         if (localSeason === 2) {
-            // 秋：晚稻与秋林微泛金黄暖意
+            // 秋：晚稻与秋林泛暖金橄榄色
             return {
-                rMul: 1 + 0.09 * w,
-                gMul: 1 + 0.01 * w,
-                bMul: 1 - 0.15 * w,
-                targetR: 178,
-                targetG: 152,
-                targetB: 76,
-                targetMix: 0.24 * w,
-                dryBias: 0.18 * w,
+                rMul: 1 + 0.065 * w,
+                gMul: 1 - 0.01 * w,
+                bMul: 1 - 0.095 * w,
+                targetR: 152,
+                targetG: 134,
+                targetB: 80,
+                targetMix: 0.17 * w,
+                dryBias: 0.12 * w,
                 localSeason,
             };
         }
         // 冬：亚热带冬日清冷苍绿（微降饱和度）
         return {
-            rMul: 1 - 0.02 * w,
-            gMul: 1 - 0.05 * w,
-            bMul: 1 - 0.02 * w,
-            targetR: 116,
-            targetG: 122,
+            rMul: 1 - 0.015 * w,
+            gMul: 1 - 0.04 * w,
+            bMul: 1 - 0.015 * w,
+            targetR: 110,
+            targetG: 116,
             targetB: 96,
-            targetMix: 0.20 * w,
-            dryBias: 0.10 * w,
+            targetMix: 0.15 * w,
+            dryBias: 0.08 * w,
             localSeason,
         };
     }
 
-    // 6. 温带平原、温带森林、大陆性草原与高寒草甸（华北、黄土、塞北、东北、西欧、东欧、北美、潘帕斯、巴塔哥尼亚等）
+    // 6. 温带平原、温带森林、大陆性草原与高寒草甸（华北、黄土、塞北、东北、日本、西欧、东欧、北美、潘帕斯等）
     const tempLatWeight = smoothstep(18, 30, absLat);
     const w = vegWeight * Math.max(0.35, tempLatWeight);
     if (localSeason === 0) {
-        // 当地春季：春芽嫩绿（草木萌发，嫩黄绿生机）
+        // 当地春季：春芽嫩绿（生机明显但不发荧光）
         return {
-            rMul: 1 - 0.05 * w,
-            gMul: 1 + 0.08 * w,
-            bMul: 1 - 0.10 * w,
-            targetR: 118,
-            targetG: 148,
-            targetB: 72,
-            targetMix: 0.24 * w,
-            dryBias: -0.16 * w,
+            rMul: 1 - 0.035 * w,
+            gMul: 1 + 0.052 * w,
+            bMul: 1 - 0.055 * w,
+            targetR: 106,
+            targetG: 136,
+            targetB: 76,
+            targetMix: 0.16 * w,
+            dryBias: -0.12 * w,
             localSeason,
         };
     }
     if (localSeason === 1) {
-        // 当地夏季：夏草苍翠（丰茂深绿，草原返青）
+        // 当地夏季：夏草浓郁深翠（与春季的嫩绿形成清晰冷暖/深浅对比）
         return {
-            rMul: 1 - 0.09 * w,
-            gMul: 1 + 0.06 * w,
-            bMul: 1 - 0.06 * w,
-            targetR: 92,
-            targetG: 132,
-            targetB: 66,
-            targetMix: 0.22 * w,
-            dryBias: -0.22 * w,
+            rMul: 1 - 0.065 * w,
+            gMul: 1 + 0.042 * w,
+            bMul: 1 - 0.030 * w,
+            targetR: 84,
+            targetG: 122,
+            targetB: 68,
+            targetMix: 0.18 * w,
+            dryBias: -0.16 * w,
             localSeason,
         };
     }
     if (localSeason === 2) {
-        // 当地秋季：秋草金黄（北方草原、温带平原与山林化作金黄琥珀色）
-        const steppeBoost = aridity >= 0.22 && aridity <= 0.68 ? 1.15 : 1.0;
+        // 当地秋季：沉稳饱满的秋日暖金褐/橄榄金（既有鲜明的金秋氛围，又压住明度不变成刺眼亮黄沙漠）
+        const steppeBoost = aridity >= 0.22 && aridity <= 0.68 ? 1.12 : 1.0;
         const aw = clamp01(w * steppeBoost);
         return {
-            rMul: 1 + 0.16 * aw,
-            gMul: 1 - 0.02 * aw,
-            bMul: 1 - 0.24 * aw,
-            targetR: 194,
-            targetG: 154,
-            targetB: 74,
-            targetMix: 0.42 * aw,
-            dryBias: 0.36 * aw,
+            rMul: 1 + 0.095 * aw,
+            gMul: 1 - 0.022 * aw,
+            bMul: 1 - 0.14 * aw,
+            targetR: 156,
+            targetG: 132,
+            targetB: 78,
+            targetMix: 0.25 * aw,
+            dryBias: 0.22 * aw,
             localSeason,
         };
     }
-    // 当地冬季（未被积雪完全覆盖的温带无雪/薄雪区，如关中、江淮、西欧平原、潘帕斯草原）：冬枯霜褐
+    // 当地冬季（未被积雪完全覆盖的温带无雪/薄雪区）：鲜明的冬枯霜褐感
     return {
-        rMul: 1 + 0.03 * w,
-        gMul: 1 - 0.09 * w,
-        bMul: 1 - 0.12 * w,
-        targetR: 146,
-        targetG: 132,
-        targetB: 102,
-        targetMix: 0.36 * w,
-        dryBias: 0.28 * w,
+        rMul: 1 + 0.020 * w,
+        gMul: 1 - 0.065 * w,
+        bMul: 1 - 0.075 * w,
+        targetR: 134,
+        targetG: 122,
+        targetB: 100,
+        targetMix: 0.25 * w,
+        dryBias: 0.20 * w,
         localSeason,
     };
 }
@@ -422,9 +422,9 @@ export function applySeasonalGroundToPixel(
 
     const mixW = mod.targetMix * organicWeight;
     if (mixW > 0.001) {
-        // 保持原本纹理的明暗细节（luma ratio），只朝季节目标色相偏移
+        // 保持原本纹理的明暗细节（luma ratio），只朝季节目标色相偏移（去掉旧版 * 1.15 的过曝提亮）
         const targetLuma = Math.max(1, 0.299 * mod.targetR + 0.587 * mod.targetG + 0.114 * mod.targetB);
-        const detailScale = clamp01(luma / targetLuma * 0.65 + 0.35 * (luma / 128)) * 1.15;
+        const detailScale = clamp01(luma / targetLuma * 0.72 + 0.28 * (luma / 128)) * 1.02;
         const tr = mod.targetR * detailScale;
         const tg = mod.targetG * detailScale;
         const tb = mod.targetB * detailScale;

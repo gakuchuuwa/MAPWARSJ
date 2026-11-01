@@ -20,7 +20,7 @@ import { localSeasonAtLat } from '../../world/environment/seasonalGround';
 import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { canSpawnDeepSeaWhaleOrNessie } from '../../map/MarineLifeLayer';
-import { applyDeCityToGround } from './Scene13CityLayout';
+import { applyDeCityToGround, decloneBattlefieldRocks } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { queryWinterSnow } from './WorldBaseMap';
 import { setCachedViennaMapData } from './Scene13SpriteCache';
@@ -580,12 +580,16 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                         if (onFoundation(sx, sy)) continue;
                         this.ensureNatureAsset(asset);
                         const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
+                        // 解耦岩石/草木的 frame 与 flip 空间哈希（修复原 hash % 6 与 hash % 2 奇偶同相导致特定石形永远固定单侧朝向，以及烘焙 ob.rot=0 锁死第 0 帧的问题）
+                        const isNaturalDecor = /^(ROCK|MINE_STONE|FORAGE|BUSH|SHRUB|FLOWER|GRASS|WEED|PLANT|UNDERBRUSH|FERNPATCH|CACTUS|HEATHER|REEDS|WATER_LILY)/.test(asset);
+                        const frameHash = Math.abs(Math.round(ob.x * 19 + ob.y * 29 + 7));
+                        const flipHash = Math.abs(Math.round(ob.x * 37 + ob.y * 53 + 11));
                         const spr: DecorSprite = {
                             asset,
-                            frame: ob.rot !== undefined ? Math.round(ob.rot) : hash,
+                            frame: (!isNaturalDecor && ob.rot !== undefined) ? Math.round(ob.rot) : frameHash,
                             x: sx,
                             y: sy,
-                            flip: (hash % 2 === 0),
+                            flip: (flipHash % 2 === 0),
                             layer: 'world',
                             z: 0,
                             lift,
@@ -766,6 +770,7 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
             }
             applyDeCityToGround.call(this);
             runMicroDecor?.();
+            decloneBattlefieldRocks.call(this);
             spawnTacticalNessie.call(this, glLayer, VW, VH);
             if (!this.deCity) {
                 for (const sp of this.decorSprites) {
@@ -1085,19 +1090,27 @@ function populateBattlefieldMicroDecor(
     const allPlain = [...shuffle(screenPlainSpots), ...shuffle(midPlainSpots)];
 
     // 1. 高地斜坡与山梁伴生岩石+灌木簇（④ 高地斜坡透出土石肌理与伴生石块）
+    //    先把底图烘焙与 applyDeCityToGround 已放的岩石纳入间距表，杜绝贴着既有石头再塞一块
     const rockCands = [...sortedSlopes, ...allPlain];
     const placedRocks: Array<{ x: number; y: number }> = [];
+    for (const sp of this.decorSprites) {
+        if (/^(ROCK|MINE_STONE)/.test(sp.asset)) {
+            placedRocks.push({ x: sp.x, y: sp.y });
+        }
+    }
     const targetRocks = isField ? 14 : 6;
-    const minRockGap = isField ? 320 : 360;
+    const minRockGap = isField ? 380 : 440;
     const rockPool = validSolid.length > 0 ? validSolid : ['ROCK1', 'ROCK2'];
     const isArid = /^(des|pal|qs|ds5|pal1)/i.test(baseTerrain);
 
+    let microRocksAdded = 0;
     for (const rs of rockCands) {
-        if (placedRocks.length >= targetRocks) break;
+        if (microRocksAdded >= targetRocks) break;
         if (placedRocks.some((p) => Math.hypot(p.x - rs.x, (p.y - rs.y) * 1.5) < minRockGap)) continue;
         const rockAsset = rockPool[Math.floor(mRnd() * rockPool.length)];
         if (pushMicro(rockAsset, rs.x, rs.y, 0.86 + mRnd() * 0.16, 0)) {
             placedRocks.push({ x: rs.x, y: rs.y });
+            microRocksAdded++;
             const compPool = validFlat.length > 0 ? validFlat : (isArid ? ['GRASS_DRY'] : ['SHRUB_GREEN', 'GRASS_GREEN']);
             const comp1 = compPool[Math.floor(mRnd() * compPool.length)];
             pushMicro(comp1, rs.x + (mRnd() < 0.5 ? -24 : 24), rs.y + 10, 0.78, -1);

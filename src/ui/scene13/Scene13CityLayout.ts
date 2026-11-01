@@ -504,7 +504,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             if (Math.hypot(x - sp.x, (y - sp.y) * 1.5) < 320) return false;
         }
         this.ensureNatureAsset(asset);
-        this.decorSprites.push({
+        const sp: DecorSprite = {
             asset,
             frame,
             x,
@@ -519,7 +519,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             obstructionContactSec: 0,
             obstructionTouched: false,
             obstructionDisabled: true,
-        });
+        };
+        (sp as any).cityOutskirts = true;
+        this.decorSprites.push(sp);
         return true;
     };
 
@@ -584,12 +586,21 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const validSolid = decorSet.solid.filter((a) => decorFits(a, decorCtx));
     const validScatter = decorSet.scatter.filter((a) => decorFits(a, decorCtx));
 
+    // 先把底图烘焙进来的既有岩石/采石点纳入间距检测表，防止城郊补石贴在既有石头旁
+    const placedRocks: Array<{ x: number; y: number }> = [];
+    for (const sp of this.decorSprites) {
+        if (/^(ROCK|MINE_STONE)/.test(sp.asset)) {
+            placedRocks.push({ x: sp.x, y: sp.y });
+        }
+    }
+
     // (2a) 高崖地标险石（Cliff Landmark）：立于山梁高点
     if (highSpots.length > 0) {
         const peakSpot = [...highSpots].sort((a, b) => b.elev - a.elev)[0];
-        if (peakSpot) {
+        if (peakSpot && !placedRocks.some((p) => Math.hypot(p.x - peakSpot.x, (p.y - peakSpot.y) * 1.5) < 420)) {
             const rfAsset = landmarkRocks[Math.floor(mRnd() * landmarkRocks.length)];
-            if (pushSafeDecor(rfAsset, peakSpot.x, peakSpot.y, 1.10, 0, mRnd() < 0.5)) {
+            if (pushSafeDecor(rfAsset, peakSpot.x, peakSpot.y, 1.04 + mRnd() * 0.12, Math.floor(mRnd() * 12), mRnd() < 0.5)) {
+                placedRocks.push({ x: peakSpot.x, y: peakSpot.y });
                 // 🔴 [2026-10-21 主人令「请全部和DE保持一致」] 山巅孤树也按 DE 地形/气候主题取树种：
                 //    DE 地形登记的树 > DE 主题主树 > 兜底（沙漠图给棕榈/枯木，不给松树）
                 const peakTree = deTerrainSeasonalTree(terrainAtCell(peakSpot.gx, peakSpot.gy), calSeason, isSnow)
@@ -605,15 +616,16 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     // (2b) 岩伴草灌微景群（DE SOLID_OBJECT + second_object SOLID_UNDERBRUSH + SOLID_SURROUND）：
     //      在交战圈侧翼坡地与平原布置 12~14 处主岩伴生灌木与碎石（保持间距 ≥ 520px）
     const rockCandidates = [...shuffledMidSlope, ...shuffledMidPlain];
-    const placedRocks: Array<{ x: number; y: number }> = [];
     const targetRockGroups = isPassType ? 14 : 12;
+    let outskirtsRockGroups = 0;
     for (const rs of rockCandidates) {
-        if (placedRocks.length >= targetRockGroups) break;
+        if (outskirtsRockGroups >= targetRockGroups) break;
         if (placedRocks.some((p) => Math.hypot(p.x - rs.x, (p.y - rs.y) * 1.5) < 520)) continue;
         const rockPool = validSolid.length > 0 ? validSolid : ['ROCK1', 'ROCK2'];
         const rockAsset = rockPool[Math.floor(mRnd() * rockPool.length)];
-        if (pushSafeDecor(rockAsset, rs.x, rs.y, 0.88 + mRnd() * 0.14, Math.floor(mRnd() * 6), mRnd() < 0.5)) {
+        if (pushSafeDecor(rockAsset, rs.x, rs.y, 0.86 + mRnd() * 0.18, Math.floor(mRnd() * 12), mRnd() < 0.5)) {
             placedRocks.push({ x: rs.x, y: rs.y });
+            outskirtsRockGroups++;
             const companionPool = validFlat.length > 0 ? validFlat : (isArid ? ['GRASS_DRY'] : ['SHRUB_GREEN', 'GRASS_GREEN']);
             const comp1 = companionPool[Math.floor(mRnd() * companionPool.length)];
             pushSafeDecor(comp1, rs.x + (mRnd() < 0.5 ? -24 : 24), rs.y + 10, 0.76, Math.floor(mRnd() * 4), mRnd() < 0.5, -1);
@@ -676,7 +688,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     for (const ms of mineCandidates) {
         if (minesPlaced >= 2) break;
         if (ms.dist >= minHillDistCells + 3 && ms.dist <= 36) {
-            if (pushSafeDecor('MINE_STONE', ms.x, ms.y, 1.02, 0, mRnd() < 0.5)) {
+            if (placedRocks.some((p) => Math.hypot(p.x - ms.x, (p.y - ms.y) * 1.5) < 480)) continue;
+            if (pushSafeDecor('MINE_STONE', ms.x, ms.y, 0.96 + mRnd() * 0.12, Math.floor(mRnd() * 7), mRnd() < 0.5)) {
+                placedRocks.push({ x: ms.x, y: ms.y });
                 minesPlaced++;
             }
         }
@@ -1411,6 +1425,175 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
 
     for (const sp of this.decorSprites) {
         sp.lift = (sp.asset.startsWith('BUILDING') || sp.asset === '') ? undefined : gl.elevationLiftAt(sp.x, sp.y, W, H);
+    }
+
+    decloneBattlefieldRocks.call(this);
+}
+
+/** 各岩石素材的静态帧数表（_meta.json 尚未异步就绪时用于精确计算 frame % nFrames 视觉签名） */
+const ROCK_KNOWN_FRAMES: Record<string, number> = {
+    ROCK1: 6,
+    ROCK2: 6,
+    ROCK3: 6,
+    ROCK_FORMATION1: 4,
+    ROCK_FORMATION2: 2,
+    ROCK_FORMATION3: 1,
+    ROCK_LIMESTONE: 4,
+    ROCK_MOSSY: 9,
+    ROCK_JUNGLE: 6,
+    ROCK_PILLAR: 4,
+    ROCK_SNOW: 12,
+    ROCK_BEACH: 8,
+    ROCK_SEA1: 1,
+    ROCK_SEA2: 6,
+    MINE_STONE: 7,
+};
+
+/**
+ * 战场岩石泊松盘疏化与邻域蓝噪声去重（Blue-Noise Variant & Orientation De-duplication）：
+ *   1. 跨通道汇总底图烘焙（requestGroundLayerGL）、城郊三层微景（applyDeCityToGround）、首屏近郊微景（populateBattlefieldMicroDecor）
+ *      放入的全部岩石（ROCK* / MINE_STONE）；
+ *   2. 泊松盘最小间距裁剪：若两块非城内岩石等轴距离 < 290px（挨得太近），自动剔除后置冗余石块及其紧邻伴生草丛；
+ *   3. 邻域反克隆与朝向错开：在 960px 视野邻域内，利用 (asset, frame, flip, scale) 多维自由度（如 ROCK1+ROCK2 共 12 种石形 × 左右翻转 = 24 种轮廓）
+ *      通过蓝噪声能量函数选取最优形态，确保邻近石头绝不撞同款同朝向，且近邻石头自动左右反向、尺度错落。
+ */
+export function decloneBattlefieldRocks(this: Scene13WarLayer): void {
+    const isRockSprite = (sp: DecorSprite): boolean =>
+        !(sp as any).cityInterior && /^(ROCK|MINE_STONE)/.test(sp.asset);
+
+    // ── 第一步：泊松盘过近石块疏化（消除多通道叠加导致的紧贴双石） ──
+    const keptRocks: DecorSprite[] = [];
+    const removedRockPositions: Array<{ x: number; y: number }> = [];
+    for (const sp of this.decorSprites) {
+        if (!isRockSprite(sp)) continue;
+        const minGap = sp.asset === 'MINE_STONE' ? 250 : 290;
+        const tooClose = keptRocks.some((k) => Math.hypot(sp.x - k.x, (sp.y - k.y) * 1.45) < minGap);
+        if (tooClose) {
+            removedRockPositions.push({ x: sp.x, y: sp.y });
+        } else {
+            keptRocks.push(sp);
+        }
+    }
+    if (removedRockPositions.length > 0) {
+        const keepRockSet = new Set(keptRocks);
+        this.decorSprites = this.decorSprites.filter((sp) => {
+            if (isRockSprite(sp)) return keepRockSet.has(sp);
+            // 同步清理被剔除石块脚下紧贴（34px 内）的伴生微草丛
+            if (/^(GRASS_|SHRUB_|FLOWER_|WEED|PLANT|UNDERBRUSH|FERNPATCH|BUSH_GREEN)/.test(sp.asset)) {
+                if (removedRockPositions.some((r) => Math.hypot(sp.x - r.x, (sp.y - r.y) * 1.45) < 34)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
+    if (keptRocks.length <= 1) return;
+
+    const getFrameCount = (asset: string): number => ROCK_KNOWN_FRAMES[asset] ?? 6;
+
+    // 按屏幕空间从上到下、从左到右确定性排序
+    const sortedRocks = [...keptRocks].sort((a, b) => (a.y - b.y) || (a.x - b.x));
+    const placed: Array<{ sp: DecorSprite; asset: string; frameMod: number; flip: boolean; scale: number }> = [];
+
+    for (let idx = 0; idx < sortedRocks.length; idx++) {
+        const r = sortedRocks[idx];
+        const posHash = Math.abs(Math.round(r.x * 31 + r.y * 57 + idx * 19));
+
+        // 查找 960px 等轴视野半径内的已处理邻石
+        const neighbors: Array<{ asset: string; frameMod: number; flip: boolean; scale: number; dist: number }> = [];
+        for (const p of placed) {
+            const dist = Math.hypot(r.x - p.sp.x, (r.y - p.sp.y) * 1.4);
+            if (dist < 960) {
+                neighbors.push({
+                    asset: p.asset,
+                    frameMod: p.frameMod,
+                    flip: p.flip,
+                    scale: p.scale,
+                    dist: Math.max(60, dist),
+                });
+            }
+        }
+        neighbors.sort((a, b) => a.dist - b.dist);
+
+        // ROCK1 与 ROCK2 互为同气候通用石块姐妹图集（合计 12 种石形 × 2 朝向 = 24 种外观）
+        const candidateAssets = (r.asset === 'ROCK1' || r.asset === 'ROCK2')
+            ? (posHash % 2 === 0 ? ['ROCK1', 'ROCK2'] : ['ROCK2', 'ROCK1'])
+            : [r.asset];
+
+        let bestAsset = r.asset;
+        let bestFrame = (r.frame ?? 0) % getFrameCount(r.asset);
+        let bestFlip = !!r.flip;
+        let bestScore = -Infinity;
+
+        for (const candAsset of candidateAssets) {
+            const nFrames = getFrameCount(candAsset);
+            for (let f = 0; f < nFrames; f++) {
+                const frameIdx = (f + posHash) % nFrames;
+                for (const fl of [false, true]) {
+                    let score = 0;
+                    // 微小确定性扰动打散全局分布，同时优先保留无冲突的原设定
+                    if (candAsset === r.asset) score += 0.25;
+                    if (frameIdx === (r.frame ?? 0) % nFrames) score += 0.15;
+                    if (fl === !!r.flip) score += 0.10;
+                    score += (((posHash * 17 + frameIdx * 13 + (fl ? 7 : 0)) % 29) / 290);
+
+                    for (let ni = 0; ni < neighbors.length; ni++) {
+                        const nb = neighbors[ni];
+                        const sameAsset = nb.asset === candAsset;
+                        const sameShape = sameAsset && nb.frameMod === frameIdx;
+                        const sameFlip = nb.flip === fl;
+
+                        // 严禁完全同款同朝向（克隆石）
+                        if (sameShape && sameFlip) {
+                            score -= 50000 / nb.dist;
+                        }
+                        // 820px 内严禁同款石形（即便水平镜像，近距离两块同轮廓巨石也优先换别的帧或姐妹图集）
+                        if (sameShape && nb.dist < 820) {
+                            score -= 12000 / nb.dist;
+                        }
+                        // 最近邻石（600px 内）优先采取相反的水平朝向（flip 交替）
+                        if (ni === 0 && nb.dist < 600 && sameFlip) {
+                            score -= 900 / nb.dist;
+                        }
+                        // 520px 内鼓励 ROCK1 / ROCK2 交替混搭
+                        if (sameAsset && nb.dist < 520 && candidateAssets.length > 1) {
+                            score -= 260 / nb.dist;
+                        }
+                    }
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestAsset = candAsset;
+                        bestFrame = frameIdx;
+                        bestFlip = fl;
+                    }
+                }
+            }
+        }
+
+        if (bestAsset !== r.asset) {
+            this.ensureNatureAsset(bestAsset);
+            r.asset = bestAsset;
+        }
+        r.frame = bestFrame;
+        r.flip = bestFlip;
+
+        // 邻近岩石尺度微调错落（0.84 ~ 1.05），避免两块邻石大小完全一致
+        const baseScale = r.scale ?? 0.94;
+        if (neighbors.length > 0 && neighbors[0].dist < 640 && Math.abs(baseScale - neighbors[0].scale) < 0.06) {
+            r.scale = neighbors[0].scale >= 0.94
+                ? Math.max(0.84, 0.85 + ((posHash % 7) * 0.01))
+                : Math.min(1.06, 0.99 + ((posHash % 7) * 0.01));
+        }
+
+        placed.push({
+            sp: r,
+            asset: r.asset,
+            frameMod: bestFrame,
+            flip: bestFlip,
+            scale: r.scale ?? 0.94,
+        });
     }
 }
 

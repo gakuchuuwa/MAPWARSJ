@@ -9446,6 +9446,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.09,
             "offsetX": 20,
             "offsetY": -6
+        },
+        "/assets/TURKS/gen_mustafa_pasha.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/SPARTANS/bfe2_cleombrotus_i.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/LITHUANIANS/litaowan_ostrogski.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 1
         }
     },
     "folderGuides": {
