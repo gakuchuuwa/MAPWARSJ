@@ -59,7 +59,7 @@ const WORKER_POOL_SIZE = 3;
  * 让 9↔10 来回切换第二次起直接命中，既省网络也省 Worker 计算。
  * 单块 256×256 RGBA ≈ 256KB，满载约 60MB。
  */
-const TILE_CACHE_MAX = 140;
+const TILE_CACHE_MAX = 260;
 
 export class HillshadeLayer extends L.GridLayer {
     private zFactor: number;
@@ -234,13 +234,21 @@ export class HillshadeLayer extends L.GridLayer {
 
         try {
             const _t0 = performance.now();
+            const st = this.computeSeasonState();
+            this.currentSeason = st.season;
+            this.currentSeasonBlend = st.blend;
             this.paintTileCanvas(ctx, size.x, size.y, bitmap, summerBitmap, autumnBitmap, winterBitmap);
             if (e.data.isCoarseFallback) {
-                // 粗高程远景兜底已上屏（无缝同色系过渡），不写入高清缓存，后台静默重拉高清瓦片替换
-                bitmap.close();
-                summerBitmap?.close();
-                autumnBitmap?.close();
-                winterBitmap?.close();
+                // 粗高程远景兜底已上屏：保留在瓦片节点上供四季切换实时重绘（严禁立即 close 否则换季时该瓦片卡在旧季节），
+                // 等高清瓦片返回或瓦片卸载时再释放
+                if (tile.isConnected) {
+                    this.attachTileBitmaps(tile, bitmap, summerBitmap, autumnBitmap, winterBitmap, true);
+                } else {
+                    bitmap.close();
+                    summerBitmap?.close();
+                    autumnBitmap?.close();
+                    winterBitmap?.close();
+                }
                 if (retryCount < 4) {
                     const nextRetry = retryCount + 1;
                     const delayMs = 2000 * nextRetry;
@@ -250,6 +258,7 @@ export class HillshadeLayer extends L.GridLayer {
                     }, delayMs);
                 }
             } else {
+                this.attachTileBitmaps(tile, bitmap, summerBitmap, autumnBitmap, winterBitmap, false);
                 this.cachePut(cacheKey, bitmap, summerBitmap, autumnBitmap, winterBitmap);
             }
             perfDoctor.note('HillshadeLayer.handleWorkerMessage(山体瓦片上屏)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:handleWorkerMessage');
@@ -262,6 +271,49 @@ export class HillshadeLayer extends L.GridLayer {
             winterBitmap?.close();
         }
         done(undefined, tile);
+    }
+
+    /** 将当前瓦片的四季位图挂载到 DOM 节点，确保粗高程过渡期或缓存淘汰边缘仍能 100% 同步换季 */
+    private attachTileBitmaps(
+        tile: HTMLCanvasElement,
+        spring: ImageBitmap,
+        summer?: ImageBitmap,
+        autumn?: ImageBitmap,
+        winter?: ImageBitmap,
+        ownedByTile: boolean = false,
+    ): void {
+        const prev = (tile as any).__hsBmps as {
+            spring?: ImageBitmap;
+            summer?: ImageBitmap;
+            autumn?: ImageBitmap;
+            winter?: ImageBitmap;
+            ownedByTile?: boolean;
+        } | undefined;
+        if (prev?.ownedByTile) {
+            if (prev.spring && prev.spring !== spring) prev.spring.close();
+            if (prev.summer && prev.summer !== summer) prev.summer.close();
+            if (prev.autumn && prev.autumn !== autumn) prev.autumn.close();
+            if (prev.winter && prev.winter !== winter) prev.winter.close();
+        }
+        (tile as any).__hsBmps = { spring, summer, autumn, winter, ownedByTile };
+    }
+
+    private releaseTileOwnedBitmaps(tile: HTMLCanvasElement | undefined): void {
+        if (!tile) return;
+        const prev = (tile as any).__hsBmps as {
+            spring?: ImageBitmap;
+            summer?: ImageBitmap;
+            autumn?: ImageBitmap;
+            winter?: ImageBitmap;
+            ownedByTile?: boolean;
+        } | undefined;
+        if (prev?.ownedByTile) {
+            prev.spring?.close();
+            prev.summer?.close();
+            prev.autumn?.close();
+            prev.winter?.close();
+        }
+        delete (tile as any).__hsBmps;
     }
 
     /** 山体浮雕试验的适用瓦片：只在战略档位 zoom7~12 生效 */
@@ -285,7 +337,7 @@ export class HillshadeLayer extends L.GridLayer {
      *    预取侧的版本号落后（v3 vs v6）就再也判不出「这块已经算好了」，每次切 zoom 都白发一轮请求。
      */
     private tileCacheKey(z: number, x: number, y: number, isRelief: boolean, isValley: boolean): string {
-        return `${z}/${x}/${y}:${isRelief ? 'relief_4season_v20' : 'std_4season_v11'}:${isValley ? 'valley_nile_v1' : 'v0'}${isRelief && this.terraceExp ? ':terrace7_v1' : ''}`;
+        return `${z}/${x}/${y}:${isRelief ? 'relief_4season_v21' : 'std_4season_v12'}:${isValley ? 'valley_nile_v1' : 'v0'}${isRelief && this.terraceExp ? ':terrace7_v1' : ''}`;
     }
 
     /** LRU 读：命中则移到队尾标记为最近使用 */
@@ -298,7 +350,7 @@ export class HillshadeLayer extends L.GridLayer {
         return hit;
     }
 
-    /** LRU 写：超上限则淘汰最久未用的一块并释放其显存 */
+    /** LRU 写：超上限则淘汰最久未用的一块并释放其显存（保护当前挂载在视口中的活跃瓦片不被淘汰） */
     private cachePut(
         key: string,
         bitmap: ImageBitmap,
@@ -328,22 +380,38 @@ export class HillshadeLayer extends L.GridLayer {
             this.winterTileCache.set(key, winterBitmap);
         }
 
-        while (this.tileCache.size > TILE_CACHE_MAX) {
-            const oldestKey = this.tileCache.keys().next().value as string | undefined;
-            if (oldestKey === undefined) break;
-            this.tileCache.get(oldestKey)?.close();
-            this.tileCache.delete(oldestKey);
-            this.summerTileCache.get(oldestKey)?.close();
-            this.summerTileCache.delete(oldestKey);
-            this.autumnTileCache.get(oldestKey)?.close();
-            this.autumnTileCache.delete(oldestKey);
-            this.winterTileCache.get(oldestKey)?.close();
-            this.winterTileCache.delete(oldestKey);
+        if (this.tileCache.size > TILE_CACHE_MAX) {
+            const activeKeys = new Set<string>();
+            const tilesObj = (this as any)._tiles as Record<string, { el?: HTMLElement }> | undefined;
+            if (tilesObj) {
+                for (const k in tilesObj) {
+                    const el = tilesObj[k]?.el as any;
+                    if (el?.isConnected && el.__hsCacheKey) activeKeys.add(el.__hsCacheKey);
+                }
+            }
+            for (const candKey of this.tileCache.keys()) {
+                if (this.tileCache.size <= TILE_CACHE_MAX) break;
+                if (activeKeys.has(candKey)) continue;
+                this.tileCache.get(candKey)?.close();
+                this.tileCache.delete(candKey);
+                this.summerTileCache.get(candKey)?.close();
+                this.summerTileCache.delete(candKey);
+                this.autumnTileCache.get(candKey)?.close();
+                this.autumnTileCache.delete(candKey);
+                this.winterTileCache.get(candKey)?.close();
+                this.winterTileCache.delete(candKey);
+            }
         }
     }
 
     /** 参数变了 → 旧位图全部作废 */
     private clearTileCache(): void {
+        const tilesObj = (this as any)._tiles as Record<string, { el?: HTMLElement }> | undefined;
+        if (tilesObj) {
+            for (const k in tilesObj) {
+                this.releaseTileOwnedBitmaps(tilesObj[k]?.el as HTMLCanvasElement | undefined);
+            }
+        }
         for (const bmp of this.tileCache.values()) bmp.close();
         this.tileCache.clear();
         for (const bmp of this.summerTileCache.values()) bmp.close();
@@ -429,12 +497,17 @@ export class HillshadeLayer extends L.GridLayer {
             const tile = tilesObj[key]?.el as HTMLCanvasElement | undefined;
             if (!tile || !tile.isConnected) continue;
             const cacheKey = (tile as any).__hsCacheKey as string | undefined;
-            if (!cacheKey) continue;
-            const springBmp = this.tileCache.get(cacheKey);
+            const attached = (tile as any).__hsBmps as {
+                spring?: ImageBitmap;
+                summer?: ImageBitmap;
+                autumn?: ImageBitmap;
+                winter?: ImageBitmap;
+            } | undefined;
+            const springBmp = (cacheKey ? this.tileCache.get(cacheKey) : undefined) ?? attached?.spring;
             if (!springBmp) continue;
-            const summerBmp = this.summerTileCache.get(cacheKey);
-            const autumnBmp = this.autumnTileCache.get(cacheKey);
-            const winterBmp = this.winterTileCache.get(cacheKey);
+            const summerBmp = (cacheKey ? this.summerTileCache.get(cacheKey) : undefined) ?? attached?.summer;
+            const autumnBmp = (cacheKey ? this.autumnTileCache.get(cacheKey) : undefined) ?? attached?.autumn;
+            const winterBmp = (cacheKey ? this.winterTileCache.get(cacheKey) : undefined) ?? attached?.winter;
             if (!summerBmp && !autumnBmp && !winterBmp) continue;
             const ctx = tile.getContext('2d');
             if (!ctx) continue;
@@ -653,6 +726,10 @@ export class HillshadeLayer extends L.GridLayer {
                 const freshAutumn = this.autumnTileCache.get(cacheKey);
                 const freshWinter = this.winterTileCache.get(cacheKey);
                 try {
+                    const st = this.computeSeasonState();
+                    this.currentSeason = st.season;
+                    this.currentSeasonBlend = st.blend;
+                    this.attachTileBitmaps(tile, fresh, freshSummer, freshAutumn, freshWinter, false);
                     this.paintTileCanvas(ctx, size.x, size.y, fresh, freshSummer, freshAutumn, freshWinter);
                 } catch (err) {
                     // 兜底：绘制异常时重算，同样不留空白瓦片
@@ -668,6 +745,12 @@ export class HillshadeLayer extends L.GridLayer {
         // 未命中缓存（需网络请求 + Worker 计算）：先铺上无缝「未探索灰雾」遮罩，算完后自动拨雾显现地形
         this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
         return tile;
+    }
+
+    protected _removeTile(key: string): void {
+        const tile = (this as any)._tiles?.[key]?.el as HTMLCanvasElement | undefined;
+        this.releaseTileOwnedBitmaps(tile);
+        (L.GridLayer.prototype as any)._removeTile?.call(this, key);
     }
 
     /**

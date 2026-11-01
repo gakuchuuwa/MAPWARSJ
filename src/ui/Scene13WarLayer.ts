@@ -814,7 +814,7 @@ export class Scene13WarLayer {
         targets: WarMan[],
         points: Scene13SkillVfxPoint[],
     ): void {
-        const dur = six === 'dizhan' || six === 'hunzhan' || six === 'bingzhan' || six === 'baizhan' ? 3.0 : 2.8;
+        const dur = SKILL_CAM_SEC;
         const dir = this.advanceVec[f];
         this.skillVfx.push({
             six, side: f, x, y,
@@ -1421,12 +1421,6 @@ export class Scene13WarLayer {
         } else if (six === 'hunzhan') {
             if (scopedControl === null) {
                 for (const m of this.men) if (m.f === ef && m.hp > 0 && !m.march && !m.hero && !m.siegeW) vfxTargets.push(m);
-                this.skillFrenzyTimer[ef] = 0;
-                this.skillShieldTimer[ef] = 0;
-                if (this.playerSetup?.side === ef) {
-                    this.playerSixFrenzyTimer = 0;
-                    this.playerSixShieldTimer = 0;
-                }
                 this.skillPanicTimer[ef] = SKILL_PANIC_SEC;
             } else {
                 const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.march && !m.hero && !m.siegeW);
@@ -1461,6 +1455,7 @@ export class Scene13WarLayer {
                 lastPickedKey = m.key;
                 if (m.key && !needSprite.has(m.key)) { needSprite.add(m.key); this.ensureType(m.key, f); }
                 m.f = f;
+                m.flag = true;
                 m.playerPanicTimer = 0;
                 let assignedLane = sharedLaneByKey.get(m.key);
                 if (assignedLane === undefined) {
@@ -1484,22 +1479,33 @@ export class Scene13WarLayer {
             }
             if (scopedControl === null && quotaPop > 0) {
                 const taken = this.drainSidePool(ef, quotaPop, true, lastPickedKey);
-                if (taken.length > 0) this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key), vfxTargets);
+                if (taken.length > 0) {
+                    this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key), vfxTargets);
+                    for (const u of vfxTargets) u.flag = true;
+                }
             }
         }
         let vfxX = scopedControl !== null ? refX : camX;
         let vfxY = scopedControl !== null ? refY : camY;
-        if (vfxTargets.length > 0) {
+        if (six === 'dizhan') {
+            if (vfxPoints.length > 0) {
+                vfxX = vfxPoints.reduce((a, p) => a + p.x, 0) / vfxPoints.length;
+                vfxY = vfxPoints.reduce((a, p) => a + p.y, 0) / vfxPoints.length;
+            } else if (vfxTargets.length > 0) {
+                vfxX = vfxTargets.reduce((a, u) => a + u.x, 0) / vfxTargets.length;
+                vfxY = vfxTargets.reduce((a, u) => a + u.y, 0) / vfxTargets.length;
+            }
+        } else if (vfxTargets.length > 0) {
             [vfxX, vfxY] = this.denseClusterCenter(vfxTargets, vfxX, vfxY);
         }
-        if (this.useGroundGL && this.userInteractingTimer <= 0 && (viewer !== null || this.camSwitchLockTimer <= 0)) {
+        if (this.useGroundGL && this.userInteractingTimer <= 0) {
             const hm = this.heroMan;
             const nearHero = scopedControl !== null && hm && hm.hp > 0 && Math.hypot(vfxX - hm.x, vfxY - hm.y) < 150;
             if (!nearHero) {
                 this.skillCamTimer = SKILL_CAM_SEC;
                 this.skillCamX = vfxX;
                 this.skillCamY = vfxY;
-                this.skillCamFollowUnits = six === 'dizhan' ? vfxTargets.slice() : [];
+                this.skillCamFollowUnits = [];
             }
         }
         this.spawnSkillVfx(f, six, vfxX, vfxY, viewer !== null, vfxTargets, vfxPoints);
@@ -6133,8 +6139,8 @@ export class Scene13WarLayer {
      * 🔴 [2026-10-27 主人令「按大城/中城/险要/小城/城寨设不同保底时间」「城墙不要保底…整体时间下调」]
      *    保底改由 CITY_TYPE_GATE_FLOOR_SEC 按据点类型取；**城墙不设保底**（非城门在这里直接 return）。
      * 🔴 [2026-11-01] 同表再按**门材质**分三档（木栅/篱笆门 · 石城门 · 加固城门），
-     *    现行值见 Scene13CombatMath.CITY_TYPE_GATE_FLOOR_SEC（大城 18/22/11、中城 15/18/9、
-     *    险要 12/14/7、小城 9/11/5、城寨 5/5/3 秒）；本函数只按 maxHp 认出三档。
+     *    现行值见 Scene13CombatMath.CITY_TYPE_GATE_FLOOR_SEC（大城 26/32/15、中城 20/24/12、
+     *    险要 20/24/11、小城 14/16/9、城寨 8/9/6 秒）；本函数只按 maxHp 认出三档。
      *    （城内建筑的保底在 onDefBuildingHit，按占地 + 城型倍率。）
      */
     private applyWallGateFloor(b: WarBuilding): void {
@@ -6148,9 +6154,9 @@ export class Scene13WarLayer {
                 ? (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? row.fortified
                     : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? row.wood
                         : row.stone)
-                : (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? 20
-                    : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? 8
-                        : 14);
+                : (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? 24
+                    : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? 11
+                        : 20);
         }
         const minHp = b.maxHp * (1 - (this.battleSec - b.hitAt) / floorSec);
         if (b.hp < minHp) b.hp = minHp;
@@ -8863,7 +8869,7 @@ export class Scene13WarLayer {
                     const desiredPanY = (this.worldCY - targetFocusY) * this.tacticalZoom;
                     const returnFrac = this.camSwitchLockTimer > 0 ? (1 - this.camSwitchLockTimer / CAM_HOLD_SEC) : 1;
                     const camSpeed = this.skillCamTimer > 0
-                        ? 2.8
+                        ? 4.2
                         : (this.camSwitchLockTimer > 0 ? (0.45 + 1.05 * returnFrac * returnFrac) : 1.5);
                     const smooth = Math.min(1.0, camSpeed * dt);
                     this.tacticalPanX += (desiredPanX - this.tacticalPanX) * smooth;

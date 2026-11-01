@@ -28,6 +28,7 @@ import { OrientationSystem } from '../core/OrientationSystem';
 import { getCityRegion, type RegionType } from './RegionSystem';
 import { resolveCastleAsset } from '../config/deCastleAssets';
 import { DE_SPRITE_ANCHOR, DE_SPRITE_BOX_W } from './battlefield/deSpriteSizes';
+import { STRATEGIC_CITY_BUILDING_SCALE } from '../map/strategicSpriteScale';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { isWonderFounded } from '../data/wonderFoundedYears';
@@ -237,6 +238,12 @@ function cityBuildingSrc(style: string, b: string, age: string): string {
 function cityBuildingScale(b: string, fallback: number): number {
     return isYurtItem(b) ? MONGOL_YURT_SCALE : (DE_BUILDING_SCALES[b] || fallback);
 }
+/** 战略地图据点内单栋建筑统一按 DE 原生框宽 × STRATEGIC_CITY_BUILDING_SCALE（0.10，放大 4 倍后即 0.40） */
+function strategicCityBldgWidthFromSrc(src: string, fallbackPx: number): number {
+    const m = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(src);
+    const boxW = m ? DE_SPRITE_BOX_W[m[1]] : undefined;
+    return boxW ? boxW * STRATEGIC_CITY_BUILDING_SCALE : fallbackPx;
+}
 
 /**
  * 🔴 [2026-10-11 主人令「你先把所有都改为1.0」＋「DE 这么设定，一定是设计好的」] **战术侧专用**的 DE 原生尺寸表。
@@ -293,7 +300,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
 
     if (centerCastle) {
         const castleDir = resolveCastleAsset('YURT', factionId, region, cityId);
-        const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「毡帐系（YURT）险要走的是另一个 0.56，也改为0.54，全世界统一」] 0.56 → 0.54（毡帐系中心城堡，与全库城堡口径统一）
+        const cW = strategicCityBldgWidthFromSrc(`/SUCAI_BUILDING/${castleDir}/preview.png`, baseSize * 0.54);   // 🔴 [2026-10-12 主人令「毡帐系（YURT）险要走的是另一个 0.56，也改为0.54，全世界统一」] 0.56 → 0.54（毡帐系中心城堡，与全库城堡口径统一）
         const cgW = cW * 1.6;
         const cgH = cgW * 0.58;
         const cFlip = cityBuildingFlip(cityId, 'center');
@@ -306,7 +313,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
     } else {
         // 中间 1 个（随机，可能是帐篷或瞭望塔）
         const centerY = items[0];
-        const centerW = sizeOf(centerY, true);
+        const centerW = strategicCityBldgWidthFromSrc(srcOf(centerY), sizeOf(centerY, true));
         const centerGroundW = centerW * 2.3;
         const centerGroundH = centerGroundW * 0.58;
         parts.push(
@@ -328,7 +335,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
         const r = (centerCastle ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize * spread;
         const x = Math.cos(angle) * r;
         const yy = Math.sin(angle) * r * 0.58;
-        const yw = sizeOf(y, false);
+        const yw = strategicCityBldgWidthFromSrc(srcOf(y), sizeOf(y, false));
         const zIndex = Math.round(100 + yy);
 
         const bGroundW = yw * 2.3;
@@ -687,11 +694,11 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     // 中间 1 个建筑（随机选，居中）；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = centerCastle ? 'CASTLE' : ring[0];
-    // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画（否则沿用战略压缩值）
-    const centerW = nw(centerCastle ? 'CASTLE' : centerB) ?? (baseSize * (centerCastle ? 0.54 : cityBuildingScale(centerB, 0.4)));   // 🔴 [2026-10-12 主人令「全世界统一」] 城堡兜底 0.55 → 0.54（与评估页同口径）
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
     const castleDir = centerCastle ? resolveCastleAsset(style, factionId, region, cityId, buildingStyle) : null;
     const centerImgSrc = castleDir ? `/SUCAI_BUILDING/${castleDir}/preview.png` : cityBuildingSrc(style, centerB, 'AGE2');
+    // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画；战略地图统一按 DE 原生框宽 × 0.10（放大 4 倍后即 0.40）
+    const centerW = nw(centerCastle ? 'CASTLE' : centerB) ?? strategicCityBldgWidthFromSrc(centerImgSrc, baseSize * (centerCastle ? 0.54 : cityBuildingScale(centerB, 0.4)));
     parts.push(
         `<img src="${centerImgSrc}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;" />`
     );
@@ -713,7 +720,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         const r = bNative ? Math.min(rRaw, wallInnerR - bNative / 2) : rRaw;
         const x = Math.cos(angle) * r;
         const y = Math.sin(angle) * r * 0.58;                     // 等轴压缩（0.58 = 2.5D 地面纵横比）
-        const bW = bNative ?? (baseSize * cityBuildingScale(b, 0.32));
+        const bSrc = cityBuildingSrc(style, b, 'AGE2');
+        const bW = bNative ?? strategicCityBldgWidthFromSrc(bSrc, baseSize * cityBuildingScale(b, 0.32));
         const zIndex = Math.round(100 + y);                       // 动态深度
         const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
 
@@ -932,7 +940,7 @@ function buildDeStockadeStackHtml(
     // 中心建筑
     if (hasCenterBldg) {
         const centerB = ring[0];
-        const centerW = native?.spriteW?.[centerB] ?? (baseSize * (DE_STOCKADE_SCALES[centerB] || 0.25));   // 🔴 [2026-10-11 战术侧 1.0] 城寨中心建筑按素材原生宽
+        const centerW = native?.spriteW?.[centerB] ?? strategicCityBldgWidthFromSrc(`/SUCAI_BUILDING/${centerB}/preview.png`, baseSize * (DE_STOCKADE_SCALES[centerB] || 0.25));   // 🔴 [2026-10-11 战术侧 1.0] 城寨中心建筑按素材原生宽
         const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;
         parts.push(
             `<img src="/SUCAI_BUILDING/${centerB}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,calc(-50% - 15%))${centerFlip ? ' scaleX(-1)' : ''};z-index:100;" />`
@@ -973,7 +981,7 @@ function buildDeStockadeStackHtml(
             x = Math.cos(angle) * r;
             y = Math.sin(angle) * r * 0.58;
         }
-        const bW = native?.spriteW?.[b] ?? (baseSize * (DE_STOCKADE_SCALES[b] || 0.25));   // 🔴 [2026-10-11 战术侧 1.0] 城寨环周建筑按素材原生宽
+        const bW = native?.spriteW?.[b] ?? strategicCityBldgWidthFromSrc(`/SUCAI_BUILDING/${b}/preview.png`, baseSize * (DE_STOCKADE_SCALES[b] || 0.25));   // 🔴 [2026-10-11 战术侧 1.0] 城寨环周建筑按素材原生宽
         const zIndex = Math.round(100 + y);
         const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1;
 
@@ -1136,7 +1144,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     // 🔴 [2026-10-18 主人定] 漠北险要战略版：城心也换成蒙古包（战术侧走上面按格摆放，城心同样是包）。
     if (isMobeiStyle(buildingStyle)) {
         const yurtDir = 'YURT_H';
-        const centerW = baseSize * 0.46;
+        const centerW = strategicCityBldgWidthFromSrc(`/SUCAI_BUILDING/${yurtDir}/preview.png`, baseSize * 0.46);
         const centerFlip = cityBuildingFlip(cityId, 'center');
         parts.push(
             `<img src="/SUCAI_BUILDING/${yurtDir}/preview.png" style="position:absolute;left:50%;top:calc(50% - 8px);width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:150;" />`
@@ -1147,7 +1155,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         // 🔴 [2026-10-11 战术侧 1.0] 中心城堡按素材原生宽（险要的 CHIN_CASTLE_AGE3 盒宽 492 等）
         // 🔴 [2026-10-11 主人「你别乱改 PASS，你给我改回来」] **已回退**：中心城堡曾被我改成「按素材原生宽」——
         //    与城墙步距不同源，同样会造成比例错位。回到原始公式。
-        const centerW = (native?.spriteW?.[castleDir] ?? null) ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「改为0.54看看」] 0.56 → 0.54（战略地图；战术侧仍走素材原生宽）
+        const centerW = (native?.spriteW?.[castleDir] ?? null) ?? strategicCityBldgWidthFromSrc(`/SUCAI_BUILDING/${castleDir}/preview.png`, baseSize * 0.54);   // 🔴 [2026-10-12 主人令「改为0.54看看」] 0.56 → 0.54（战略地图；战术侧仍走素材原生宽）
         const centerFlip = cityBuildingFlip(cityId, 'center');
         const cOffsetY = -8;
         const castleZ = Math.round(500 + cOffsetY);
@@ -1301,8 +1309,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
-            // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
-            const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.48 → 0.54（中城中心城堡；战术侧已在上面提前 return（buildDeCityGridHtml），这里只剩战略版）
+            const cW = strategicCityBldgWidthFromSrc(`/SUCAI_BUILDING/${castleDir}/preview.png`, baseSize * 0.54);
             const zIndex = Math.round(500 + slot.y);
             const cFlip = cityBuildingFlip(cityId, 'center');
             parts.push(
@@ -1311,7 +1318,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
         } else {
             const b = centerCastle ? pool[otherIdx++] : pool[i];
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画，否则沿用统一 0.32
-            const bW = nativeW(native, b, 'AGE3') ?? (baseSize * (isYurtItem(b) ? MONGOL_YURT_SCALE : 0.32) * AUTO);
+            const bSrc = cityBuildingSrc(style, b, 'AGE3');
+            const bW = nativeW(native, b, 'AGE3') ?? strategicCityBldgWidthFromSrc(bSrc, baseSize * (isYurtItem(b) ? MONGOL_YURT_SCALE : 0.32) * AUTO);
             const zIndex = Math.round(500 + slot.y);
             const bFlip = cityBuildingFlip(cityId, `bldg_${i}_${b}`); // 独立随机镜像
 
@@ -1464,8 +1472,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
-            // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
-            const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.48 → 0.54（大城中心城堡；战术侧已在上面提前 return（buildDeBigCityGridHtml），这里只剩战略版）
+            const cW = strategicCityBldgWidthFromSrc(`/SUCAI_BUILDING/${castleDir}/preview.png`, baseSize * 0.54);
             const zIndex = Math.round(500 + slot.y);
             const cFlip = cityBuildingFlip(cityId, 'center');
             parts.push(
@@ -1474,7 +1481,8 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         } else {
             const [b, age] = (centerCastle ? pool[otherIdx++] : pool[i]) as [string, 'AGE2' | 'AGE3'];
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画，否则沿用统一 0.32
-            const bW = nativeW(native, b, age) ?? (baseSize * 0.32 * AUTO);
+            const bSrc = cityBuildingSrc(style, b, age);
+            const bW = nativeW(native, b, age) ?? strategicCityBldgWidthFromSrc(bSrc, baseSize * 0.32 * AUTO);
             const zIndex = Math.round(500 + slot.y);
             const bFlip = cityBuildingFlip(cityId, `medium_ring_${i}_${b}`); // 独立随机镜像
 

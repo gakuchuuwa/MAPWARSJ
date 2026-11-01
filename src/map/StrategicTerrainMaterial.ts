@@ -141,6 +141,93 @@ function groundNoise(lat: number, lng: number, cells: number): number {
     return a * (1 - fy) + b * fy;
 }
 
+/**
+ * 战略地表专用的有机多环高斯气候采样：
+ * 1) 对采样经纬度施加跨瓦片连续的双频确定性域扭曲（Domain Warping，±0.22° 中波 + ±0.09° 细波），
+ *    彻底打碎 world-base.png（0.1667°/px）横平竖直的阶梯方块折角（┐┐┐），化为自然蜿蜒的地理交界；
+ * 2) 以 5×5 高斯核（σ = 1.15 气候像素 ≈ 38km，过渡带全宽 ≈ 70km）平滑加权周围气候格，
+ *    使荒漠—草原—森林—积雪交界自然羽化，且共享边经纬度输入完全一致、跨瓦片零接缝。
+ */
+function warpClimateCoords(lat: number, lng: number): [number, number] {
+    const poleMute = Math.max(0, Math.min(1, (84 - Math.abs(lat)) / 8));
+    if (poleMute <= 0) return [lat, lng];
+    const dLat = ((groundNoise(lat + 19.3, lng - 41.7, 240) - 0.5) * 0.44
+        + (groundNoise(lat - 53.1, lng + 83.9, 720) - 0.5) * 0.18) * poleMute;
+    const dLng = ((groundNoise(lat - 71.9, lng + 29.3, 240) - 0.5) * 0.44
+        + (groundNoise(lat + 37.7, lng - 67.1, 720) - 0.5) * 0.18) * poleMute;
+    const wLat = Math.max(-89.9, Math.min(89.9, lat + dLat));
+    const wLng = ((lng + dLng + 540) % 360) - 180;
+    return [wLat, wLng];
+}
+
+function sampleSmoothClimateMaterials(
+    lat: number, lng: number, width: number, height: number,
+    lookup: (lat: number, lng: number) => string | null,
+): Map<string, number> {
+    const [wLat, wLng] = warpClimateCoords(lat, lng);
+    const px = (wLng + 180) / 360 * width - 0.5;
+    const py = (90 - wLat) / 180 * height - 0.5;
+    const x0 = Math.round(px), y0 = Math.round(py);
+    const result = new Map<string, number>();
+    let totalW = 0;
+    const inv2Sigma2 = 1 / (2 * 1.15 * 1.15);
+    for (let dy = -2; dy <= 2; dy++) {
+        const y = Math.max(0, Math.min(height - 1, y0 + dy));
+        const dyDist = (y0 + dy) - py;
+        const sampleLat = 90 - (y + 0.5) / height * 180;
+        for (let dx = -2; dx <= 2; dx++) {
+            const x = ((x0 + dx) % width + width) % width;
+            const dxDist = (x0 + dx) - px;
+            const d2 = dxDist * dxDist + dyDist * dyDist;
+            if (d2 > 6.25) continue;
+            const w = Math.exp(-d2 * inv2Sigma2);
+            const name = lookup(sampleLat, (x + 0.5) / width * 360 - 180);
+            if (name && w > 0) {
+                result.set(name, (result.get(name) ?? 0) + w);
+                totalW += w;
+            }
+        }
+    }
+    if (totalW > 0) {
+        for (const [k, v] of result) result.set(k, v / totalW);
+    }
+    return result;
+}
+
+function sampleSmoothWinterWeights(
+    lat: number, lng: number, width: number, height: number,
+): { snow: number; deep: number; sparse: number } {
+    const [wLat, wLng] = warpClimateCoords(lat, lng);
+    const px = (wLng + 180) / 360 * width - 0.5;
+    const py = (90 - wLat) / 180 * height - 0.5;
+    const x0 = Math.round(px), y0 = Math.round(py);
+    let snow = 0, deep = 0, sparse = 0, totalW = 0;
+    const inv2Sigma2 = 1 / (2 * 1.15 * 1.15);
+    for (let dy = -2; dy <= 2; dy++) {
+        const y = Math.max(0, Math.min(height - 1, y0 + dy));
+        const dyDist = (y0 + dy) - py;
+        const sampleLat = 90 - (y + 0.5) / height * 180;
+        for (let dx = -2; dx <= 2; dx++) {
+            const x = ((x0 + dx) % width + width) % width;
+            const dxDist = (x0 + dx) - px;
+            const d2 = dxDist * dxDist + dyDist * dyDist;
+            if (d2 > 6.25) continue;
+            const w = Math.exp(-d2 * inv2Sigma2);
+            const wf = queryWinterSnow(sampleLat, (x + 0.5) / width * 360 - 180);
+            totalW += w;
+            if (wf === 1 || wf === 2 || wf === 3) snow += w;
+            if (wf === 2) deep += w;
+            if (wf === 4) sparse += w;
+        }
+    }
+    if (totalW > 0) {
+        snow /= totalW;
+        deep /= totalW;
+        sparse /= totalW;
+    }
+    return { snow, deep, sparse };
+}
+
 /** 只调整战略地图温带地表的视觉混合，不改世界查找表及战术地形。 */
 export function varyTemperateMaterials(
     materials: Map<string, number>, lat: number, lng: number,
@@ -297,15 +384,18 @@ export function blendMaterialGrid(
     }
     const wPix = new Float32Array(T);
     const texs = texList.map(m => m[level]);
+    const rows = Math.max(2, Math.round(grid.length / columns));
+    const stepX = Math.max(1, Math.round(width / Math.max(1, columns - 1)));
+    const stepY = Math.max(1, Math.round(height / Math.max(1, rows - 1)));
 
     for (let y = 0; y < height; y++) {
-        const gy = Math.floor(y / STEP), fy = (y % STEP) / STEP;
+        const gy = Math.min(rows - 2, Math.floor(y / stepY)), fy = Math.min(1, Math.max(0, (y - gy * stepY) / stepY));
         const by0 = Math.floor(y / BOMB_STEP), bfy = (y % BOMB_STEP) / BOMB_STEP;
         const rowA = ay.near[y] * size, rowB = by.near[y] * size;
         const rowA0 = ay.i0[y] * size, rowA1 = ay.i1[y] * size, fAy = ay.f[y];
         const rowB0 = by.i0[y] * size, rowB1 = by.i1[y] * size, fBy = by.f[y];
         for (let x = 0; x < width; x++) {
-            const gx = Math.floor(x / STEP), fx = (x % STEP) / STEP;
+            const gx = Math.min(columns - 2, Math.floor(x / stepX)), fx = Math.min(1, Math.max(0, (x - gx * stepX) / stepX));
             const n00 = (gy * columns + gx) * T, n10 = n00 + T, n01 = n00 + columns * T, n11 = n01 + T;
             const c00 = (1 - fx) * (1 - fy), c10 = fx * (1 - fy), c01 = (1 - fx) * fy, c11 = fx * fy;
             let weight = 0;
@@ -395,8 +485,8 @@ export const CLIMATE_CLASS: Readonly<Record<string, { arid: number; sand: number
     for: { arid: 0.1, sand: 0 }, underbrush_leaves: { arid: 0.1, sand: 0 }, sh4: { arid: 0, sand: 0 },
     gr3: { arid: 0.2, sand: 0 }, qs2: { arid: 0.2, sand: 0 }, gr4: { arid: 0.35, sand: 0 },
     gr7: { arid: 0.5, sand: 0 }, gr5: { arid: 0.6, sand: 0 }, rck: { arid: 0.7, sand: 0 },
-    ds4: { arid: 0.75, sand: 0 }, gravel_default: { arid: 0.8, sand: 0 }, ds2: { arid: 0.8, sand: 0.25 },
-    ds5: { arid: 0.9, sand: 0.1 }, pal: { arid: 1, sand: 1 }, pal1: { arid: 1, sand: 1 }, qs: { arid: 1, sand: 1 },
+    ds4: { arid: 0.75, sand: 0.15 }, gravel_default: { arid: 0.8, sand: 0.20 }, ds2: { arid: 0.8, sand: 0.35 },
+    ds5: { arid: 0.9, sand: 0.45 }, pal: { arid: 1, sand: 1 }, pal1: { arid: 1, sand: 1 }, qs: { arid: 1, sand: 1 },
 };
 
 /** 查询任意经纬度的战略气候干旱度 arid 与沙地度 sand（0..1） */
@@ -605,8 +695,9 @@ export async function createTerrainMaterial(
 ): Promise<TerrainMaterial | null> {
     if (!await loadWorld()) return null;
     const origin = coords ? materialOriginForTile(coords.z, coords.x, coords.y) : { gx9: 0, gy9: 0, scale: 1 };
-    const columns = Math.ceil(width / STEP) + 1;
-    const rows = Math.ceil(height / STEP) + 1;
+    const NODE_STEP = 32;
+    const columns = Math.ceil(width / NODE_STEP) + 1;
+    const rows = Math.ceil(height / NODE_STEP) + 1;
     const northY = Math.asinh(Math.tan(bounds.north * Math.PI / 180));
     const southY = Math.asinh(Math.tan(bounds.south * Math.PI / 180));
     const nodes: Map<string, number>[] = [];
@@ -614,13 +705,13 @@ export async function createTerrainMaterial(
     const nodeWinterDeep: number[] = [];
     const nodeWinterSparse: number[] = [];
     for (let y = 0; y < rows; y++) {
-        const lat = Math.atan(Math.sinh(northY + (southY - northY) * y * STEP / height)) * 180 / Math.PI;
+        const lat = Math.atan(Math.sinh(northY + (southY - northY) * y * NODE_STEP / height)) * 180 / Math.PI;
         for (let x = 0; x < columns; x++) {
-            const lng = bounds.west + (bounds.east - bounds.west) * x * STEP / width;
-            const climate = sampleClimateMaterials(lat, lng, worldWidth, worldHeight,
+            const lng = bounds.west + (bounds.east - bounds.west) * x * NODE_STEP / width;
+            const climate = sampleSmoothClimateMaterials(lat, lng, worldWidth, worldHeight,
                 (sampleLat, sampleLng) => queryBaseTile({ lat: sampleLat, lng: sampleLng, isSiege: false, isWinter: false }));
             nodes.push(varyTemperateMaterials(climate, lat, lng));
-            const ww = sampleWinterWeights(lat, lng, worldWidth, worldHeight);
+            const ww = sampleSmoothWinterWeights(lat, lng, worldWidth, worldHeight);
             nodeWinterSnow.push(ww.snow);
             nodeWinterDeep.push(ww.deep);
             nodeWinterSparse.push(ww.sparse);
@@ -661,13 +752,16 @@ function classOf(node: Map<string, number>, key: 'arid' | 'sand', fallback: numb
     return weight > 0 ? sum / weight : fallback;
 }
 
-/** 节点值按与气候贴图相同的 STEP 网格双线性插值到逐像素（相邻瓦片共用边上节点，无接缝） */
+/** 节点值按与气候贴图相同的网格双线性插值到逐像素（相邻瓦片共用边上节点，无接缝） */
 function interpolateNodes(values: number[], columns: number, width: number, height: number): Float32Array {
     const out = new Float32Array(width * height);
+    const rows = Math.max(2, Math.round(values.length / columns));
+    const stepX = Math.max(1, Math.round(width / Math.max(1, columns - 1)));
+    const stepY = Math.max(1, Math.round(height / Math.max(1, rows - 1)));
     for (let y = 0; y < height; y++) {
-        const gy = Math.floor(y / STEP), fy = (y % STEP) / STEP;
+        const gy = Math.min(rows - 2, Math.floor(y / stepY)), fy = Math.min(1, Math.max(0, (y - gy * stepY) / stepY));
         for (let x = 0; x < width; x++) {
-            const gx = Math.floor(x / STEP), fx = (x % STEP) / STEP;
+            const gx = Math.min(columns - 2, Math.floor(x / stepX)), fx = Math.min(1, Math.max(0, (x - gx * stepX) / stepX));
             const i = gy * columns + gx;
             const top = values[i] * (1 - fx) + (fx > 0 ? values[i + 1] * fx : 0);
             const bottom = fy > 0 ? values[i + columns] * (1 - fx) + (fx > 0 ? values[i + columns + 1] * fx : 0) : 0;

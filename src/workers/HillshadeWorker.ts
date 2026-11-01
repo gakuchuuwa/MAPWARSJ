@@ -7,12 +7,7 @@ import { buildWaterMask, isDefectGrayTile } from '../world/land-sea/WaterMask';
 import { createTerrainMaterial, getMaterialBytes, type TerrainMaterial, type TerrainRuleTexture } from '../map/StrategicTerrainMaterial';
 import type { RiverSegmentsMessage } from '../map/RiverStripData';
 import { NILE_ALLUVIAL_POLYGONS, NILE_VALLEY_EXP_BOUNDS, type NileAlluvialPolygon } from '../data/HistoricalRegions';
-import {
-    applySeasonalGroundToPixel,
-    computeSeasonalGroundModulation,
-    resolveEnvZoneId,
-    type EnvZoneId,
-} from '../world/environment/seasonalGround';
+import { applySeasonalGroundToPixel, computeSeasonalGroundModulation } from '../world/environment/seasonalGround';
 
 interface PreparedNilePolygon extends NileAlluvialPolygon {
     minLat: number;
@@ -1100,13 +1095,11 @@ function renderHillshade(
             // （旧版整块瓦片用中心经度，经度相关的抬升在瓦片交界处会断开。）
             const snowlineW = snowlineAt(rowLat, tileBounds ? tileBounds.west : tileCenterLng);
             const snowlineE = snowlineAt(rowLat, tileBounds ? tileBounds.east : tileCenterLng);
-            let curZone: EnvZoneId | undefined = undefined;
 
             for (let x = 0; x < width; x++) {
                 const idx = (yM + x) * 4;
                 const rowSnowline = snowlineW + (snowlineE - snowlineW) * (x + 0.5) / width;
                 const pixLng = tileBounds ? (tileWestLng + (x + 0.5) * rowLngStep) : tileCenterLng;
-                if ((x & 15) === 0) curZone = resolveEnvZoneId(rowLat, pixLng);
 
                 // X Neighbors
                 const xL = (x === 0 ? 0 : x - 1);
@@ -1380,14 +1373,14 @@ function renderHillshade(
                     const pixLng = tileBounds ? tileBounds.west + (tileBounds.east - tileBounds.west) * (x + 0.5) / width : tileCenterLng;
                     const duneWave = 0.5 + 0.5 * Math.sin((pixLng * 1.35 + rowLat * 0.85) * 9.0 + Math.sin((pixLng * 0.6 - rowLat * 1.1) * 4.5) * 1.4);
                     const ergMask = 0.22 + 0.78 * rampWorker(patch * 0.68 + duneWave * 0.32, 0.24, 0.78);
-                    const desert = sandiness > 0.25 && colorZ < 2600
-                        ? rampWorker(sandiness, 0.25, 0.88) * ergMask * 0.52 * snowFade * rampWorker(colorZ, 35, 130) : 0;
+                    const desert = sandiness > 0.12 && colorZ < 2600
+                        ? rampWorker(sandiness, 0.12, 0.88) * ergMask * 0.50 * snowFade * rampWorker(colorZ, 35, 130) : 0;
                     if (desert > 0 && sampleTex(absLat < 34 ? texDes : texPm2, p)) {
                         r += (TX[0] - r) * desert; g += (TX[1] - g) * desert; b += (TX[2] - b) * desert;
                     }
                     // ③ 热带稀树草原：南北回归线附近、半干旱、2000m 以下
-                    const savanna = absLat < 24 && colorZ < 2000 && sandiness < 0.5
-                        ? (1 - rampWorker(absLat, 18, 24)) * Math.max(0, 1 - Math.abs(aridity - 0.55) / 0.35) * (0.25 + 0.25 * patch) : 0;
+                    const savanna = absLat < 24 && colorZ < 2000 && sandiness < 0.65
+                        ? (1 - rampWorker(absLat, 16, 24)) * Math.max(0, 1 - Math.abs(aridity - 0.55) / 0.42) * (0.24 + 0.24 * patch) : 0;
                     if (savanna > 0 && mix2(texPc1, 1 - patch, texPc2, patch, p)) {
                         r += (TX[0] - r) * savanna; g += (TX[1] - g) * savanna; b += (TX[2] - b) * savanna;
                     }
@@ -1398,10 +1391,10 @@ function renderHillshade(
                 const pilot = 1;
                 if (pilot > 0 && isLand && colorZ > 0 && colorZ < 700 && snowFade > 0.35) {
                     const cropW = pilot
-                        * (1 - rampWorker(aridity, 0.42, 0.64))     // 干草原 / 荒漠不铺田
+                        * (1 - rampWorker(aridity, 0.32, 0.72))     // 干草原 / 荒漠平滑淡出，不留硬边
                         * (1 - rampWorker(colorZ, 420, 700))       // 高原台地让给海拔色阶
                         * (1 - rampWorker(slopeGrad, 0.030, 0.070))// 坡地让给晕渲
-                        * (1 - rampWorker(sandiness, 0.18, 0.50)); // 沙地不铺田
+                        * (1 - rampWorker(sandiness, 0.10, 0.58)); // 沙地平滑淡出
                     if (cropW > 0.002) {
                         const plng = tileWestLng + rowLngStep * (x + 0.5);
                         // ① 大块干湿（≈0.5°格）：偏干→土黄，偏湿→青绿
@@ -1831,16 +1824,17 @@ function renderHillshade(
                 };
 
                 const rockMute = 1 - vegMask;
+                const hasSeasonalMod = vegMask > 0.002 && typeof applySeasonalGroundToPixel === 'function';
                 // ── 日历春 0（北半球春芽嫩绿 · 南半球秋草金黄 · 地中海春润青翠 · 萨瓦纳旱末微黄） ──
-                const [spR, spG, spB] = vegMask > 0.002
-                    ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(0, rowLat, pixLng, aridity, sandiness, curZone), rockMute)
+                const [spR, spG, spB] = hasSeasonalMod
+                    ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(0, rowLat, pixLng, aridity, sandiness), rockMute)
                     : [preSnowR, preSnowG, preSnowB];
                 shadeAndWriteSeason(spR, spG, spB, 0, rowSnowline, output);
 
                 // ── 日历夏 1（北半球盛夏苍翠 · 地中海盛夏焦黄干涸 · 萨瓦纳雨季返青 · 南半球严冬积雪/霜枯） ──
                 if (summerOutput) {
-                    let [suR, suG, suB] = vegMask > 0.002
-                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(1, rowLat, pixLng, aridity, sandiness, curZone), rockMute)
+                    let [suR, suG, suB] = hasSeasonalMod
+                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(1, rowLat, pixLng, aridity, sandiness), rockMute)
                         : [preSnowR, preSnowG, preSnowB];
                     const shWinterW = rowLat < -1.0 ? rampWorker(-rowLat, 1.0, 7.0) : 0;
                     let suSnowW = 0;
@@ -1848,7 +1842,7 @@ function renderHillshade(
                     if (shWinterW > 0.002) {
                         [suR, suG, suB, suSnowW, suSnowline] = applyLocalWinterSnowAndIce(suR, suG, suB, shWinterW);
                     }
-                    if (Math.abs(suR - spR) < 0.4 && Math.abs(suG - spG) < 0.4 && Math.abs(suB - spB) < 0.4 && suSnowW <= 0.002) {
+                    if (Math.abs(suR - spR) < 0.25 && Math.abs(suG - spG) < 0.25 && Math.abs(suB - spB) < 0.25 && suSnowW <= 0.002) {
                         summerOutput[idx] = output[idx];
                         summerOutput[idx + 1] = output[idx + 1];
                         summerOutput[idx + 2] = output[idx + 2];
@@ -1856,9 +1850,9 @@ function renderHillshade(
                     } else {
                         shadeAndWriteSeason(suR, suG, suB, suSnowW, suSnowline, summerOutput);
                         if (seasonDiff && !seasonDiff.summer) {
-                            if (Math.abs(summerOutput[idx] - output[idx]) >= 2 ||
-                                Math.abs(summerOutput[idx + 1] - output[idx + 1]) >= 2 ||
-                                Math.abs(summerOutput[idx + 2] - output[idx + 2]) >= 2) {
+                            if (Math.abs(summerOutput[idx] - output[idx]) >= 1 ||
+                                Math.abs(summerOutput[idx + 1] - output[idx + 1]) >= 1 ||
+                                Math.abs(summerOutput[idx + 2] - output[idx + 2]) >= 1) {
                                 seasonDiff.summer = true;
                             }
                         }
@@ -1867,10 +1861,10 @@ function renderHillshade(
 
                 // ── 日历秋 2（北半球温带平原/森林与北方草原秋草金黄 · 南半球春芽嫩绿） ──
                 if (autumnOutput) {
-                    const [auR, auG, auB] = vegMask > 0.002
-                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(2, rowLat, pixLng, aridity, sandiness, curZone), rockMute)
+                    const [auR, auG, auB] = hasSeasonalMod
+                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(2, rowLat, pixLng, aridity, sandiness), rockMute)
                         : [preSnowR, preSnowG, preSnowB];
-                    if (Math.abs(auR - spR) < 0.4 && Math.abs(auG - spG) < 0.4 && Math.abs(auB - spB) < 0.4) {
+                    if (Math.abs(auR - spR) < 0.25 && Math.abs(auG - spG) < 0.25 && Math.abs(auB - spB) < 0.25) {
                         autumnOutput[idx] = output[idx];
                         autumnOutput[idx + 1] = output[idx + 1];
                         autumnOutput[idx + 2] = output[idx + 2];
@@ -1878,9 +1872,9 @@ function renderHillshade(
                     } else {
                         shadeAndWriteSeason(auR, auG, auB, 0, rowSnowline, autumnOutput);
                         if (seasonDiff && !seasonDiff.autumn) {
-                            if (Math.abs(autumnOutput[idx] - output[idx]) >= 2 ||
-                                Math.abs(autumnOutput[idx + 1] - output[idx + 1]) >= 2 ||
-                                Math.abs(autumnOutput[idx + 2] - output[idx + 2]) >= 2) {
+                            if (Math.abs(autumnOutput[idx] - output[idx]) >= 1 ||
+                                Math.abs(autumnOutput[idx + 1] - output[idx + 1]) >= 1 ||
+                                Math.abs(autumnOutput[idx + 2] - output[idx + 2]) >= 1) {
                                 seasonDiff.autumn = true;
                             }
                         }
@@ -1889,8 +1883,8 @@ function renderHillshade(
 
                 // ── 日历冬 3（北半球寒冬皑皑白雪/霜褐枯草/河湖冰封 · 地中海冬雨返青 · 萨瓦纳旱季枯黄 · 南半球盛夏苍翠） ──
                 if (winterOutput) {
-                    let [wiR, wiG, wiB] = vegMask > 0.002
-                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(3, rowLat, pixLng, aridity, sandiness, curZone), rockMute)
+                    let [wiR, wiG, wiB] = hasSeasonalMod
+                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(3, rowLat, pixLng, aridity, sandiness), rockMute)
                         : [preSnowR, preSnowG, preSnowB];
                     const nhWinterW = rowLat > -3.0 ? rampWorker(rowLat, -3.0, 4.0) : 0;
                     let wiSnowW = 0;
@@ -1898,7 +1892,7 @@ function renderHillshade(
                     if (nhWinterW > 0.002) {
                         [wiR, wiG, wiB, wiSnowW, wiSnowline] = applyLocalWinterSnowAndIce(wiR, wiG, wiB, nhWinterW);
                     }
-                    if (Math.abs(wiR - spR) < 0.4 && Math.abs(wiG - spG) < 0.4 && Math.abs(wiB - spB) < 0.4 && wiSnowW <= 0.002) {
+                    if (Math.abs(wiR - spR) < 0.25 && Math.abs(wiG - spG) < 0.25 && Math.abs(wiB - spB) < 0.25 && wiSnowW <= 0.002) {
                         winterOutput[idx] = output[idx];
                         winterOutput[idx + 1] = output[idx + 1];
                         winterOutput[idx + 2] = output[idx + 2];
@@ -1906,9 +1900,9 @@ function renderHillshade(
                     } else {
                         shadeAndWriteSeason(wiR, wiG, wiB, wiSnowW, wiSnowline, winterOutput);
                         if (seasonDiff && !seasonDiff.winter) {
-                            if (Math.abs(winterOutput[idx] - output[idx]) >= 2 ||
-                                Math.abs(winterOutput[idx + 1] - output[idx + 1]) >= 2 ||
-                                Math.abs(winterOutput[idx + 2] - output[idx + 2]) >= 2) {
+                            if (Math.abs(winterOutput[idx] - output[idx]) >= 1 ||
+                                Math.abs(winterOutput[idx + 1] - output[idx + 1]) >= 1 ||
+                                Math.abs(winterOutput[idx + 2] - output[idx + 2]) >= 1) {
                                 seasonDiff.winter = true;
                             }
                         }
@@ -2128,8 +2122,8 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
         let riverStrip: Float32Array | null = null;
         if (material && req.tileBounds) {
             let maxArid = 0;
-            for (let i = 0; i < material.arid.length; i += 64) if (material.arid[i] > maxArid) maxArid = material.arid[i];
-            if (maxArid >= 0.6 && await waitRivers()) riverStrip = computeRiverStrip(req.tileBounds, req.width, req.height);
+            for (let i = 0; i < material.arid.length; i += 53) if (material.arid[i] > maxArid) maxArid = material.arid[i];
+            if (maxArid >= 0.50 && await waitRivers()) riverStrip = computeRiverStrip(req.tileBounds, req.width, req.height);
         }
         const renderStart = performance.now();
         const useSeasonalColor = !!req.params.useElevationColor;

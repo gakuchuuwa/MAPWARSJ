@@ -12,8 +12,10 @@
  *        水牛/黄牛约 29×20px（严格为房屋的 1/3）、村民站立约 17px/挥锄 30px（严格为房屋的 1/4~1/3）、
  *        商队车马约 30×25px，100% 还原 DE 原生相对比例。
  */
-export const STRATEGIC_SPRITE_SCALE = 0.38;
-export const STRATEGIC_ARMY_SCALE = 0.7;
+export const STRATEGIC_SPRITE_SCALE = 0.40;
+/** 据点城墙内单栋建筑平时比例（= STRATEGIC_SPRITE_SCALE / 4 = 0.10；放大 4 倍后即 0.40，与城外建筑 100% 同大） */
+export const STRATEGIC_CITY_BUILDING_SCALE = STRATEGIC_SPRITE_SCALE / 4;
+export const STRATEGIC_ARMY_SCALE = 0.70;
 
 /** zoom → 二级大地图素材统一缩放：zoom 9 为基准（0.38），每级 ×2（与地图投影同步）。 */
 export function strategicSpriteScale(zoom: number): number {

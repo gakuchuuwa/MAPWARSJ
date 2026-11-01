@@ -38,6 +38,73 @@ const COLOR: Record<TacticalSixSet, string> = {
     baizhan: '#f03240',
 };
 
+interface SkillPalette {
+    main: string;
+    light: string;
+    core: string;
+    rgba0: string;
+    rgbaMid: string;
+    rgbaHigh: string;
+    rgbaEdge: string;
+}
+
+const PALETTE: Record<TacticalSixSet, SkillPalette> = {
+    gongzhan: {
+        main: '#ff6a24',
+        light: '#ff9e5e',
+        core: '#fff7d6',
+        rgba0: 'rgba(255,106,36,0)',
+        rgbaMid: 'rgba(255,106,36,0.26)',
+        rgbaHigh: 'rgba(255,106,36,0.76)',
+        rgbaEdge: 'rgba(255,168,100,0.58)',
+    },
+    shengzhan: {
+        main: '#26f065',
+        light: '#8affb3',
+        core: '#eafff0',
+        rgba0: 'rgba(38,240,101,0)',
+        rgbaMid: 'rgba(38,240,101,0.24)',
+        rgbaHigh: 'rgba(38,240,101,0.75)',
+        rgbaEdge: 'rgba(120,255,168,0.55)',
+    },
+    dizhan: {
+        main: '#52ccff',
+        light: '#9be8ff',
+        core: '#ebfbff',
+        rgba0: 'rgba(82,204,255,0)',
+        rgbaMid: 'rgba(82,204,255,0.26)',
+        rgbaHigh: 'rgba(82,204,255,0.76)',
+        rgbaEdge: 'rgba(155,232,255,0.58)',
+    },
+    hunzhan: {
+        main: '#b572ff',
+        light: '#df9eff',
+        core: '#fff0ff',
+        rgba0: 'rgba(181,114,255,0)',
+        rgbaMid: 'rgba(181,114,255,0.26)',
+        rgbaHigh: 'rgba(181,114,255,0.76)',
+        rgbaEdge: 'rgba(223,158,255,0.58)',
+    },
+    bingzhan: {
+        main: '#3b9eff',
+        light: '#8ac5ff',
+        core: '#eef7ff',
+        rgba0: 'rgba(59,158,255,0)',
+        rgbaMid: 'rgba(59,158,255,0.26)',
+        rgbaHigh: 'rgba(59,158,255,0.76)',
+        rgbaEdge: 'rgba(138,197,255,0.58)',
+    },
+    baizhan: {
+        main: '#f03240',
+        light: '#ff7b24',
+        core: '#ffeaad',
+        rgba0: 'rgba(240,50,64,0)',
+        rgbaMid: 'rgba(240,50,64,0.28)',
+        rgbaHigh: 'rgba(240,50,64,0.78)',
+        rgbaEdge: 'rgba(255,123,36,0.58)',
+    },
+};
+
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
 const easeOut = (p: number) => 1 - (1 - p) ** 3;
 
@@ -77,8 +144,8 @@ function getSixSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElem
         return null;
     }
 
-    const SIZE = 128;
-    const PAD = 8;
+    const SIZE = 256;
+    const PAD = 10;
     const DRAW_S = SIZE - PAD * 2;
     const cv = document.createElement('canvas');
     cv.width = SIZE;
@@ -86,15 +153,15 @@ function getSixSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElem
     const g = cv.getContext('2d')!;
 
     g.save();
-    g.shadowColor = paid ? 'rgba(255, 208, 72, 0.90)' : 'rgba(8, 6, 4, 0.92)';
-    g.shadowBlur = paid ? 11 : 7;
+    g.shadowColor = paid ? 'rgba(255, 212, 72, 0.96)' : 'rgba(0, 0, 0, 0.96)';
+    g.shadowBlur = paid ? 18 : 14;
     g.shadowOffsetX = 0;
-    g.shadowOffsetY = paid ? 0 : 2.5;
+    g.shadowOffsetY = paid ? 0 : 4;
     g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
 
-    g.shadowColor = 'rgba(0, 0, 0, 0.85)';
-    g.shadowBlur = 3.5;
-    g.shadowOffsetY = 1.5;
+    g.shadowColor = 'rgba(0, 0, 0, 0.92)';
+    g.shadowBlur = 7;
+    g.shadowOffsetY = 2;
     g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
     g.restore();
 
@@ -160,7 +227,6 @@ function drawStamp(
 }
 
 // ── 2. 锥形弯月刀罡与两头尖裂空斩刃（Tapered Crescent & Blade Mesh） ──
-/** 绘制两头尖锐如针、腰部饱满宽厚的弯月刀罡（外层饱和刀气＋内芯白炽刀锋） */
 function drawTaperedCrescent(
     ctx: CanvasRenderingContext2D,
     cx: number,
@@ -205,7 +271,6 @@ function drawTaperedCrescent(
     ctx.fill();
 }
 
-/** 绘制两头尖锐、中间宽厚的直线裂空斩刃 */
 function drawTaperedSlash(
     ctx: CanvasRenderingContext2D,
     x1: number,
@@ -247,7 +312,6 @@ function ellipse(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number
     ctx.ellipse(x, y, Math.max(0.1, rx), Math.max(0.1, ry), 0, 0, TAU);
 }
 
-/** 绘制高对比翠绿十字 `+` 号（外层翠绿荧光＋内芯高亮白绿） */
 function drawHealPlus(
     ctx: CanvasRenderingContext2D,
     cx: number,
@@ -268,26 +332,72 @@ function drawHealPlus(
     drawCross(arm * 0.78, thick * 0.48);
 }
 
-// ── 3. 状态追踪：让持续类与瞬发类的「全军大阵＋单兵特效」时间严格一致，并记住是否打赏 ──
-const INSTANT_SYNC_SEC = 4.2;
+// ── 3. 状态追踪与叠加规则：「技能叠加时，保留前一个色彩，上后一个技能的贴图」 ──
+const INSTANT_SYNC_SEC = 4.5;
+
 interface UnitSkillTag {
-    six: 'dizhan' | 'bingzhan';
+    six: 'dizhan' | 'bingzhan' | 'baizhan';
     untilSec: number;
+    seq: number;
     paid: boolean;
     playerCast: boolean;
 }
+
 const unitSkillTags = new WeakMap<WarMan, UnitSkillTag>();
 const taggedCastVfx = new WeakSet<Scene13SkillVfx>();
+const castColorMap = new WeakMap<Scene13SkillVfx, TacticalSixSet>();
 let unitTagActiveUntilSec = 0;
+let globalCastSeq = 0;
 
-/** 记录双方当前生效的持续技是否由观众/打赏触发，供持续 15~20 秒的全军大阵与单兵鎏金强化读取 */
-const sideCastTier: [
-    { frenzyPaid: boolean; frenzyPlayer: boolean; shieldPaid: boolean; shieldPlayer: boolean; panicPaid: boolean; panicPlayer: boolean },
-    { frenzyPaid: boolean; frenzyPlayer: boolean; shieldPaid: boolean; shieldPlayer: boolean; panicPaid: boolean; panicPlayer: boolean },
-] = [
-    { frenzyPaid: false, frenzyPlayer: false, shieldPaid: false, shieldPlayer: false, panicPaid: false, panicPlayer: false },
-    { frenzyPaid: false, frenzyPlayer: false, shieldPaid: false, shieldPlayer: false, panicPaid: false, panicPlayer: false },
+interface SideCastState {
+    frenzyPaid: boolean;
+    frenzyPlayer: boolean;
+    frenzySeq: number;
+    shieldPaid: boolean;
+    shieldPlayer: boolean;
+    shieldSeq: number;
+    panicPaid: boolean;
+    panicPlayer: boolean;
+    panicSeq: number;
+    instantSix: 'dizhan' | 'bingzhan' | 'baizhan' | null;
+    instantUntilSec: number;
+    instantSeq: number;
+}
+
+const sideCastTier: [SideCastState, SideCastState] = [
+    {
+        frenzyPaid: false, frenzyPlayer: false, frenzySeq: 0,
+        shieldPaid: false, shieldPlayer: false, shieldSeq: 0,
+        panicPaid: false, panicPlayer: false, panicSeq: 0,
+        instantSix: null, instantUntilSec: 0, instantSeq: 0,
+    },
+    {
+        frenzyPaid: false, frenzyPlayer: false, frenzySeq: 0,
+        shieldPaid: false, shieldPlayer: false, shieldSeq: 0,
+        panicPaid: false, panicPlayer: false, panicSeq: 0,
+        instantSix: null, instantUntilSec: 0, instantSeq: 0,
+    },
 ];
+
+let latestSideStates: [Scene13SkillVisualState, Scene13SkillVisualState] = [
+    { frenzy: 0, shield: 0, panic: 0 },
+    { frenzy: 0, shield: 0, panic: 0 },
+];
+
+/** 查询某一方当前正在生效的所有技能（按释放先后 seq 升序排列） */
+function getSideActiveSkills(side: 0 | 1, nowSec: number, excludeSix?: TacticalSixSet): Array<{ six: TacticalSixSet; seq: number }> {
+    const st = latestSideStates[side];
+    const meta = sideCastTier[side];
+    const list: Array<{ six: TacticalSixSet; seq: number }> = [];
+    if (st.frenzy > 0 && excludeSix !== 'gongzhan') list.push({ six: 'gongzhan', seq: meta.frenzySeq });
+    if (st.shield > 0 && excludeSix !== 'shengzhan') list.push({ six: 'shengzhan', seq: meta.shieldSeq });
+    if (st.panic > 0 && excludeSix !== 'hunzhan') list.push({ six: 'hunzhan', seq: meta.panicSeq });
+    if (meta.instantSix && nowSec < meta.instantUntilSec && excludeSix !== meta.instantSix) {
+        list.push({ six: meta.instantSix, seq: meta.instantSeq });
+    }
+    list.sort((a, b) => a.seq - b.seq);
+    return list;
+}
 
 function registerSkillCastMeta(v: Scene13SkillVfx, nowSec: number): void {
     if (taggedCastVfx.has(v)) return;
@@ -295,23 +405,43 @@ function registerSkillCastMeta(v: Scene13SkillVfx, nowSec: number): void {
     const paid = v.paid === true;
     const player = v.playerCast === true;
     const ef: 0 | 1 = v.side === 0 ? 1 : 0;
+    const targetSide: 0 | 1 = (v.six === 'hunzhan' || v.six === 'baizhan') ? ef : v.side;
+
+    // 检查受影响方是否已有正在生效的前序技能：若有，则本次叠加释放保留前一个技能的色彩，贴图用本次新技能
+    const prevActive = getSideActiveSkills(targetSide, nowSec, v.six);
+    const prevColorSix = prevActive.length > 0 ? prevActive[prevActive.length - 1].six : v.six;
+    castColorMap.set(v, prevColorSix);
+
+    const seq = ++globalCastSeq;
+    const meta = sideCastTier[targetSide];
 
     if (v.six === 'gongzhan') {
-        sideCastTier[v.side].frenzyPaid = paid;
-        sideCastTier[v.side].frenzyPlayer = player;
+        meta.frenzyPaid = paid;
+        meta.frenzyPlayer = player;
+        meta.frenzySeq = seq;
     } else if (v.six === 'shengzhan') {
-        sideCastTier[v.side].shieldPaid = paid;
-        sideCastTier[v.side].shieldPlayer = player;
+        meta.shieldPaid = paid;
+        meta.shieldPlayer = player;
+        meta.shieldSeq = seq;
     } else if (v.six === 'hunzhan') {
-        sideCastTier[ef].panicPaid = paid;
-        sideCastTier[ef].panicPlayer = player;
-    } else if (v.six === 'dizhan' || v.six === 'bingzhan') {
+        meta.panicPaid = paid;
+        meta.panicPlayer = player;
+        meta.panicSeq = seq;
+    } else if (v.six === 'dizhan' || v.six === 'bingzhan' || v.six === 'baizhan') {
         const untilSec = nowSec + INSTANT_SYNC_SEC;
         if (untilSec > unitTagActiveUntilSec) unitTagActiveUntilSec = untilSec;
+        meta.instantSix = v.six;
+        meta.instantUntilSec = untilSec;
+        meta.instantSeq = seq;
         for (const m of v.targets) {
-            unitSkillTags.set(m, { six: v.six, untilSec, paid, playerCast: player });
+            unitSkillTags.set(m, { six: v.six, untilSec, seq, paid, playerCast: player });
         }
     }
+}
+
+function getCastPalette(v: Scene13SkillVfx): SkillPalette {
+    const colorSix = castColorMap.get(v) ?? v.six;
+    return PALETTE[colorSix];
 }
 
 function tierScale(v: Scene13SkillVfx): number {
@@ -324,13 +454,14 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     const fade = (1 - p) ** 1.3;
     const scale = tierScale(v);
     const x = v.x, y = v.y - lift(v.x, v.y);
-    const col = COLOR[v.six];
+    const pal = getCastPalette(v);
+    const col = pal.main;
     const glow = getGlowStamp(col);
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
 
-    // 1. 中心柔和能量光垫（抗推流压缩的大色块底光）
+    // 1. 中心柔和能量光垫
     const baseRx = (32 + e * (v.six === 'hunzhan' ? 140 : 168)) * scale;
     const baseRy = baseRx * 0.48;
     ctx.globalAlpha = fade * (v.paid ? 0.42 : 0.28);
@@ -349,7 +480,6 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     ellipse(ctx, x, y, baseRx * 0.65, baseRy * 0.65);
     ctx.stroke();
 
-    // 打赏付费专属：地面双层帝王鎏金圣辉扩散震波
     if (v.paid) {
         ctx.strokeStyle = '#ffd700';
         ctx.lineWidth = 4;
@@ -358,10 +488,10 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
         ctx.stroke();
     }
 
-    // 3. 单兵／阵口地面发光环
+    // 3. 阵口／落点地面发光环
     if (v.six === 'dizhan') {
         const pn = Math.min(v.points.length, 32);
-        ctx.strokeStyle = '#9be8ff';
+        ctx.strokeStyle = pal.light;
         for (let i = 0; i < pn; i++) {
             const pt = v.points[i];
             const py = pt.y - lift(pt.x, pt.y);
@@ -373,59 +503,22 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     } else if (v.six === 'baizhan') {
         const useTargets = v.targets.length > 0;
         const srcLen = useTargets ? v.targets.length : v.points.length;
-        const pn = Math.min(srcLen, 140);
+        const pn = Math.min(srcLen, 160);
+        ctx.strokeStyle = v.paid ? '#ffd700' : col;
+        ctx.lineWidth = 2.4;
         for (let i = 0; i < pn; i++) {
             const idx = Math.floor(i * srcLen / pn);
             const pt = useTargets ? v.targets[idx] : v.points[idx];
             const py = pt.y - lift(pt.x, pt.y);
-            // 与上层流星下坠错峰同步：前半段地面预警收缩圈，撞击瞬间爆开火环
-            const delay = ((i * 0.618034) % 1) * 0.42;
-            const localP = clamp01((p - delay) / (1 - delay));
-            const fallFrac = 0.42;
-            if (localP < fallFrac) {
-                const fp = localP / fallFrac;
-                ctx.strokeStyle = COLOR.baizhan;
-                ctx.globalAlpha = fade * (0.25 + fp * 0.45);
-                ctx.lineWidth = 1.8;
-                ellipse(ctx, pt.x, py, (18 - fp * 8) * scale, (9 - fp * 4) * scale);
-                ctx.stroke();
-            } else {
-                const ip = (localP - fallFrac) / (1 - fallFrac);
-                const ie = easeOut(ip);
-                const ifade = (1 - ip) ** 1.25;
-                ctx.globalAlpha = ifade * 0.52;
-                drawStamp(ctx, glow, pt.x, py, (16 + ie * 12) * scale, (9 + ie * 6) * scale);
-                ctx.strokeStyle = COLOR.baizhan;
-                ctx.globalAlpha = ifade * 0.95;
-                ctx.lineWidth = 3.2 * (1 - ip * 0.4);
-                ellipse(ctx, pt.x, py, 8 + ie * 20, 4 + ie * 10);
-                ctx.stroke();
-                ctx.strokeStyle = v.paid ? '#ffe580' : '#ffeaad';
-                ctx.globalAlpha = ifade * 0.85;
-                ctx.lineWidth = 1.8;
-                ellipse(ctx, pt.x, py, 4 + ie * 11, 2 + ie * 5.5);
-                ctx.stroke();
-            }
-        }
-    }
-
-    if (v.six !== 'baizhan' && v.targets.length > 0) {
-        const tn = Math.min(v.targets.length, 220);
-        ctx.strokeStyle = v.paid ? '#ffe074' : col;
-        ctx.lineWidth = 2.2;
-        ctx.globalAlpha = fade * 0.72;
-        for (let i = 0; i < tn; i++) {
-            const m = v.targets[Math.floor(i * v.targets.length / tn)];
-            if (m.hp <= 0) continue;
-            const my = m.y - lift(m.x, m.y);
-            ellipse(ctx, m.x, my, 10 + e * 9, 5 + e * 4.5);
+            ctx.globalAlpha = fade * 0.78;
+            ellipse(ctx, pt.x, py, 11 + e * 7, 5.5 + e * 3.5);
             ctx.stroke();
         }
     }
     ctx.restore();
 }
 
-// ── 5. 释放瞬间上层大特效（Top Layer：最早的高亮色彩特效 ＋ 六计专属手绘镂空图标） ──
+// ── 5. 释放瞬间上层大特效（Top Layer：动画色彩取 getCastPalette，贴图取当前释放技能） ──
 function drawAttack(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
     const e = easeOut(p);
     const fade = 1 - p;
@@ -433,11 +526,12 @@ function drawAttack(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     const cx = v.x, cy = v.y - lift(v.x, v.y) - 12;
     const dx = Math.cos(v.angle), dy = Math.sin(v.angle);
     const px = -dy, py = dx;
+    const pal = getCastPalette(v);
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
 
-    // 1. 3 道巨型锥形赤金弯月破阵刀罡（两头如针、腰部饱满、白炽内芯）
+    // 1. 3 道巨型锥形弯月破阵刀罡
     ctx.save();
     ctx.translate(cx + dx * (e * 78 * scale - 18), cy + dy * (e * 78 * scale - 18));
     ctx.rotate(v.angle);
@@ -452,14 +546,14 @@ function drawAttack(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
             r,
             thick,
             Math.PI * (0.92 - k * 0.08),
-            k === 0 && v.paid ? '#ffd700' : COLOR.gongzhan,
-            '#fff8d6',
+            k === 0 && v.paid ? '#ffd700' : pal.main,
+            pal.core,
         );
     }
     ctx.restore();
 
-    // 2. 9 道锥形破阵火矛疾刺贯穿军阵
-    const flare = getFlareStamp(COLOR.gongzhan);
+    // 2. 9 道锥形破阵光矛疾刺贯穿军阵
+    const flare = getFlareStamp(pal.main);
     for (let i = 0; i < 9; i++) {
         const off = (i - 4) * 18 * scale;
         const travel = e * (92 + (i % 3) * 24) * scale;
@@ -469,7 +563,7 @@ function drawAttack(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
         const ex = sx + dx * len;
         const ey = sy + dy * len;
         ctx.globalAlpha = fade * (0.75 + (i % 2) * 0.22);
-        drawTaperedSlash(ctx, sx, sy, ex, ey, (4.5 - (i % 3) * 0.8) * scale, COLOR.gongzhan, '#fff5c0');
+        drawTaperedSlash(ctx, sx, sy, ex, ey, (4.5 - (i % 3) * 0.8) * scale, pal.main, pal.core);
         if (i % 2 === 0) {
             ctx.globalAlpha = fade * 0.85;
             drawStamp(ctx, flare, ex, ey, 11 * scale);
@@ -482,8 +576,8 @@ function drawAttack(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     if (badge) {
         ctx.save();
         const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
-        ctx.globalAlpha = Math.min(1, fade * 1.25);
-        drawStamp(ctx, badge, cx, cy - 28 - e * 12 * scale, 44 * scale * pulse);
+        ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
+        drawStamp(ctx, badge, cx, cy - 36 - e * 12 * scale, 108 * scale * pulse);
         ctx.restore();
     }
 }
@@ -493,18 +587,19 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     const fade = 1 - p;
     const scale = tierScale(v);
     const cx = v.x, cy = v.y - lift(v.x, v.y);
-    const flare = getFlareStamp(COLOR.dizhan);
+    const pal = getCastPalette(v);
+    const flare = getFlareStamp(pal.main);
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineCap = 'round';
 
-    // 1. 前线军阵中心：巨型冰蓝聚兵通天光柱（外层冰蓝＋内芯纯白高亮）
+    // 1. 前线军阵中心：巨型聚兵通天光柱
     const mainH = (130 + 80 * easeOut(Math.min(1, p * 2))) * scale;
     const mainGrad = ctx.createLinearGradient(0, cy - mainH, 0, cy);
-    mainGrad.addColorStop(0, 'rgba(82,204,255,0)');
-    mainGrad.addColorStop(0.45, 'rgba(82,204,255,0.75)');
-    mainGrad.addColorStop(1, 'rgba(235,250,255,0.98)');
+    mainGrad.addColorStop(0, pal.rgba0);
+    mainGrad.addColorStop(0.45, pal.rgbaHigh);
+    mainGrad.addColorStop(1, '#ffffff');
     ctx.globalAlpha = fade * 0.92;
     ctx.strokeStyle = mainGrad;
     ctx.lineWidth = (30 - p * 12) * scale;
@@ -513,7 +608,6 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     ctx.lineTo(cx, cy);
     ctx.stroke();
 
-    // 光柱白炽内芯
     ctx.lineWidth = (11 - p * 4) * scale;
     ctx.globalAlpha = fade * 0.95;
     ctx.beginPath();
@@ -521,9 +615,8 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     ctx.lineTo(cx, cy);
     ctx.stroke();
 
-    // 底部星芒爆发 + 3 层上升号令光环
     drawStamp(ctx, flare, cx, cy - 8, 28 * scale, 16 * scale);
-    ctx.strokeStyle = v.paid ? '#ffe885' : '#b8efff';
+    ctx.strokeStyle = v.paid ? '#ffe885' : pal.light;
     for (let k = 0; k < 3; k++) {
         const rise = (p * 1.45 + k * 0.33) % 1;
         const ry = cy - rise * 92 * scale;
@@ -534,16 +627,16 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
         ctx.stroke();
     }
 
-    // 2. 后方各出兵口：生力军天降光柱群
+    // 2. 各伏兵锚点：生力军天降光柱群
     const n = Math.min(v.points.length, 24);
     for (let i = 0; i < n; i++) {
         const pt = v.points[i];
         const y = pt.y - lift(pt.x, pt.y);
         const h = (72 + 64 * easeOut(Math.min(1, p * 2))) * scale;
         const grad = ctx.createLinearGradient(0, y - h, 0, y);
-        grad.addColorStop(0, 'rgba(150,230,255,0)');
-        grad.addColorStop(0.5, 'rgba(82,204,255,0.78)');
-        grad.addColorStop(1, 'rgba(255,255,255,0.96)');
+        grad.addColorStop(0, pal.rgba0);
+        grad.addColorStop(0.5, pal.rgbaHigh);
+        grad.addColorStop(1, '#ffffff');
         ctx.globalAlpha = fade * 0.9;
         ctx.strokeStyle = grad;
         ctx.lineWidth = (10 - p * 4) * scale;
@@ -559,8 +652,8 @@ function drawReinforce(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
     if (badge) {
         ctx.save();
         const dropOffset = (1 - easeOut(Math.min(1, p * 3.2))) * 32 * scale;
-        ctx.globalAlpha = Math.min(1, fade * 1.25);
-        drawStamp(ctx, badge, cx, cy - 38 * scale - dropOffset, 44 * scale);
+        ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
+        drawStamp(ctx, badge, cx, cy - 48 * scale - dropOffset, 108 * scale);
         ctx.restore();
     }
 }
@@ -571,16 +664,17 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     const scale = tierScale(v);
     const x = v.x, y = v.y - lift(v.x, v.y) + 28;
     const r = (68 + e * 128) * scale;
-    const flare = getFlareStamp(COLOR.shengzhan);
+    const pal = getCastPalette(v);
+    const flare = getFlareStamp(pal.main);
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
 
-    // 1. 全军巨型翠绿回血无敌穹顶（径向渐变通透能量罩）
+    // 1. 全军巨型回血无敌穹顶（色彩跟随 getCastPalette：叠加时保留前一个技能色彩）
     const domeGrad = ctx.createRadialGradient(x, y - r * 0.35, r * 0.15, x, y, r);
-    domeGrad.addColorStop(0, 'rgba(220,255,232,0.06)');
-    domeGrad.addColorStop(0.65, 'rgba(38,240,101,0.24)');
-    domeGrad.addColorStop(1, 'rgba(120,255,168,0.55)');
+    domeGrad.addColorStop(0, 'rgba(255,255,255,0.06)');
+    domeGrad.addColorStop(0.65, pal.rgbaMid);
+    domeGrad.addColorStop(1, pal.rgbaEdge);
     ctx.globalAlpha = fade * 0.85;
     ctx.fillStyle = domeGrad;
     ctx.beginPath();
@@ -590,7 +684,7 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
 
     // 穹顶高亮外弧 + 白炽内芯弧
     ctx.globalAlpha = fade * 0.95;
-    ctx.strokeStyle = COLOR.shengzhan;
+    ctx.strokeStyle = pal.main;
     ctx.lineWidth = (7 - p * 2.5) * scale;
     ctx.beginPath();
     ctx.arc(x, y, r, Math.PI, TAU);
@@ -602,9 +696,8 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     ctx.arc(x, y, r, Math.PI + 0.03, TAU - 0.03);
     ctx.stroke();
 
-    // 穹顶内层翠绿满血光弧 + 升腾绿色 + 号群
     ctx.globalAlpha = fade * 0.82;
-    ctx.strokeStyle = '#8affb3';
+    ctx.strokeStyle = pal.light;
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(x, y, Math.max(1, r - 18 * scale), Math.PI + 0.1, TAU - 0.1);
@@ -621,7 +714,7 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
         const px = x + po.dx * r;
         const py = y + po.dy * r - e * 22 * scale;
         ctx.globalAlpha = fade * 0.95;
-        drawHealPlus(ctx, px, py, 12 * po.s * scale, 4.2 * po.s * scale, COLOR.shengzhan, '#eafff0');
+        drawHealPlus(ctx, px, py, 12 * po.s * scale, 4.2 * po.s * scale, pal.main, pal.core);
     }
 
     drawStamp(ctx, flare, x, y - r * 0.65, 24 * scale);
@@ -633,8 +726,8 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
         ctx.save();
         const slamDrop = (1 - easeOut(Math.min(1, p * 3.5))) * 32 * scale;
         const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
-        ctx.globalAlpha = Math.min(1, fade * 1.25);
-        drawStamp(ctx, badge, x, y - 64 * scale - slamDrop, 44 * scale * pulse);
+        ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
+        drawStamp(ctx, badge, x, y - 76 * scale - slamDrop, 108 * scale * pulse);
         ctx.restore();
     }
 }
@@ -644,7 +737,8 @@ function drawPanic(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number,
     const e = easeOut(p);
     const fade = 1 - p;
     const scale = tierScale(v);
-    const glow = getGlowStamp(COLOR.hunzhan);
+    const pal = getCastPalette(v);
+    const glow = getGlowStamp(pal.main);
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
@@ -664,8 +758,8 @@ function drawPanic(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number,
             r,
             (9 - i * 1.1) * scale,
             Math.PI * 1.22,
-            i % 2 === 0 ? COLOR.hunzhan : '#df9eff',
-            '#fff0ff',
+            i % 2 === 0 ? pal.main : pal.light,
+            pal.core,
         );
         ctx.rotate(a * 0.25);
     }
@@ -675,10 +769,10 @@ function drawPanic(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number,
     const badge = getSixSkillIconBadge('hunzhan', v.paid);
     if (badge) {
         ctx.save();
-        ctx.translate(x, y - 22 * scale);
+        ctx.translate(x, y - 30 * scale);
         ctx.rotate(p * TAU * 1.15);
-        ctx.globalAlpha = Math.min(1, fade * 1.25);
-        drawStamp(ctx, badge, 0, 0, 44 * scale);
+        ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
+        drawStamp(ctx, badge, 0, 0, 108 * scale);
         ctx.restore();
     }
 }
@@ -688,15 +782,16 @@ function drawConvert(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: numbe
     const fade = 1 - p;
     const scale = tierScale(v);
     const x = v.x, y = v.y - lift(v.x, v.y) - 14;
+    const pal = getCastPalette(v);
     const goldFlare = getFlareStamp('#ffd76a');
-    const purpleGlow = getGlowStamp(COLOR.bingzhan);
+    const mainGlow = getGlowStamp(pal.main);
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
 
-    // 1. 全军重心：紫金阴阳策反大漩涡（锥形双色弯月环绕＋中心星芒）
+    // 1. 全军重心：阴阳策反大漩涡
     ctx.globalAlpha = fade * 0.55;
-    drawStamp(ctx, purpleGlow, x, y, 85 * scale, 50 * scale);
+    drawStamp(ctx, mainGlow, x, y, 85 * scale, 50 * scale);
     drawStamp(ctx, goldFlare, x, y, 28 * scale);
 
     ctx.save();
@@ -714,7 +809,7 @@ function drawConvert(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: numbe
             r,
             (8 - i * 1.1) * scale,
             Math.PI * 1.25,
-            i % 2 ? '#ffd76a' : COLOR.bingzhan,
+            i % 2 ? '#ffd76a' : pal.main,
             '#ffffff',
         );
         ctx.restore();
@@ -731,7 +826,7 @@ function drawConvert(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: numbe
         const cpx = (x + m.x) * 0.5;
         const cpy = Math.min(y, my) - 52 - (i % 3) * 14;
         ctx.globalAlpha = fade * 0.72;
-        ctx.strokeStyle = i % 2 ? '#ffd76a' : COLOR.bingzhan;
+        ctx.strokeStyle = i % 2 ? '#ffd76a' : pal.main;
         ctx.lineWidth = 2.6;
         ctx.beginPath();
         ctx.moveTo(x, y);
@@ -752,217 +847,71 @@ function drawConvert(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: numbe
     if (badge) {
         ctx.save();
         const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
-        ctx.globalAlpha = Math.min(1, fade * 1.25);
-        drawStamp(ctx, badge, x, y - 22 * scale, 44 * scale * pulse);
+        ctx.globalAlpha = (p < 0.72 ? 1 : (1 - p) / 0.28);
+        drawStamp(ctx, badge, x, y - 30 * scale, 108 * scale * pulse);
         ctx.restore();
     }
 }
 
 function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
+    const e = easeOut(p);
     const fade = 1 - p;
     const scale = tierScale(v);
     const cx = v.x;
-    const cy = v.y - lift(v.x, v.y) - 8;
-    const redFlare = getFlareStamp(COLOR.baizhan);
-    const orangeGlow = getGlowStamp('#ff5e1a');
-    const redGlow = getGlowStamp(COLOR.baizhan);
+    const cy = v.y - lift(v.x, v.y) - 12;
+    const pal = getCastPalette(v);
+    const mainGlow = getGlowStamp(pal.main);
 
     const useTargets = v.targets.length > 0;
     const srcLen = useTargets ? v.targets.length : v.points.length;
     const n = Math.min(srcLen, 140);
-    const unitScale = v.paid ? 1.2 : 1;
 
-    // 流星斜掠向量（从高空斜劈而下，带真实天象倾角）
-    const fallVecX = -110 * scale;
-    const fallVecY = -260 * scale;
-
+    // 1. 阵心动画色彩层：高对比赤红（或叠加前序技能色彩）能量光环与破阵气浪
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = fade * 0.52;
+    drawStamp(ctx, mainGlow, cx, cy, (88 + e * 42) * scale, (50 + e * 24) * scale);
 
-    // 1. 敌阵中心主陨星下坠（前 38% 拖曳巨型赤金火尾极速砸落，撞地后炸开巨型火云与飞溅火流星）
-    const mainFallEnd = 0.38;
-    if (p < mainFallEnd) {
-        const mp = p / mainFallEnd;
-        const headX = cx + fallVecX * (1 - mp);
-        const headY = cy + fallVecY * (1 - mp);
-        const tailX = headX + fallVecX * 0.55;
-        const tailY = headY + fallVecY * 0.55;
+    ctx.strokeStyle = pal.main;
+    ctx.lineWidth = (5.5 - p * 2.0) * scale;
+    ctx.globalAlpha = fade * 0.92;
+    ellipse(ctx, cx, cy + 8, (56 + e * 105) * scale, (28 + e * 52) * scale);
+    ctx.stroke();
 
-        ctx.globalAlpha = 0.95;
-        drawTaperedSlash(ctx, tailX, tailY, headX, headY, 16 * scale, COLOR.baizhan, '#ffeaad');
-        drawTaperedSlash(
-            ctx,
-            headX + fallVecX * 0.32,
-            headY + fallVecY * 0.32,
-            headX,
-            headY,
-            10 * scale,
-            '#ff7b24',
-            '#ffffff',
-        );
-        drawStamp(ctx, orangeGlow, headX, headY, 38 * scale);
-        drawStamp(ctx, redFlare, headX, headY, 26 * scale);
-    } else {
-        const ip = (p - mainFallEnd) / (1 - mainFallEnd);
-        const ie = easeOut(ip);
-        const ifade = (1 - ip) ** 1.2;
-        ctx.globalAlpha = ifade * 0.65;
-        drawStamp(ctx, redGlow, cx, cy, (75 + ie * 65) * scale, (42 + ie * 36) * scale);
-        ctx.globalAlpha = ifade * 0.95;
-        drawStamp(ctx, redFlare, cx, cy - ie * 14, (34 - ip * 14) * scale);
-        // 主陨星撞地飞溅的 8 颗火流星余烬
-        for (let k = 0; k < 8; k++) {
-            const ang = k * (TAU / 8) + 0.35;
-            const dist = ie * (45 + (k % 3) * 28) * scale;
-            const sx = cx + Math.cos(ang) * dist;
-            const sy = cy + Math.sin(ang) * dist * 0.52 - Math.sin(ip * Math.PI) * (26 + (k % 2) * 14);
-            ctx.globalAlpha = ifade * 0.88;
-            drawStamp(ctx, redFlare, sx, sy, (11 - ip * 5) * scale);
-        }
-    }
-
-    // 2. 漫天流星雨锁定每一名折损敌兵：错峰斜坠 ➔ 贯顶砸落 ➔ 爆裂火球与星芒
-    const uFallX = -72 * unitScale;
-    const uFallY = -185 * unitScale;
-    for (let i = 0; i < n; i++) {
-        const idx = Math.floor(i * srcLen / n);
-        const pt = useTargets ? v.targets[idx] : v.points[idx];
-        const py = pt.y - lift(pt.x, pt.y) - 10;
-
-        // 黄金分割错峰（0~0.42），与 SKILL_KILL_SPREAD_SEC 分批倒下节奏呼应
-        const delay = ((i * 0.618034) % 1) * 0.42;
-        if (p < delay) continue;
-        const localP = clamp01((p - delay) / (1 - delay));
-        const fallFrac = 0.42;
-
-        if (localP < fallFrac) {
-            // 流星下坠阶段：高空斜劈火尾 + 白炽流星头
-            const fp = localP / fallFrac;
-            const hx = pt.x + uFallX * (1 - fp);
-            const hy = py + uFallY * (1 - fp);
-            const tx = hx + uFallX * 0.52;
-            const ty = hy + uFallY * 0.52;
-
-            ctx.globalAlpha = (0.55 + fp * 0.45) * fade;
-            drawTaperedSlash(
-                ctx,
-                tx,
-                ty,
-                hx,
-                hy,
-                5.4 * unitScale,
-                v.paid ? '#ffae38' : COLOR.baizhan,
-                '#fff4cc',
-            );
-            ctx.globalAlpha = 0.95 * fade;
-            drawStamp(ctx, orangeGlow, hx, hy, 14 * unitScale);
-            drawStamp(ctx, redFlare, hx, hy, 10.5 * unitScale);
-        } else {
-            // 陨石命中爆裂阶段：冲击火球 + 冲天火柱 + 飞溅火星
-            const ip = (localP - fallFrac) / (1 - fallFrac);
-            const ie = easeOut(ip);
-            const ifade = (1 - ip) ** 1.3;
-
-            ctx.globalAlpha = ifade * 0.68;
-            drawStamp(ctx, redGlow, pt.x, py, (22 + ie * 10) * unitScale, (14 + ie * 6) * unitScale);
-
-            // 命中瞬间向上反冲的烈焰火舌
-            const pillarH = (32 - ip * 16) * unitScale;
-            ctx.globalAlpha = ifade * 0.94;
-            drawTaperedSlash(
-                ctx,
-                pt.x,
-                py - pillarH,
-                pt.x,
-                py + 6 * unitScale,
-                4.6 * unitScale * (1 - ip * 0.35),
-                '#ff6a24',
-                '#fff5dc',
-            );
-
-            ctx.globalAlpha = ifade * 0.95;
-            drawStamp(ctx, redFlare, pt.x, py - 4, (13 - ip * 5) * unitScale);
-
-            if (i % 2 === 0) {
-                const sparkX = pt.x + Math.sin(i * 2.3 + ip * 5) * (6 + ie * 14);
-                const sparkY = py - 10 - ie * (22 + (i % 7) * 3);
-                ctx.globalAlpha = ifade * 0.85;
-                drawStamp(ctx, redFlare, sparkX, sparkY, (7.5 - ip * 3) * unitScale);
-            }
-        }
-    }
+    ctx.strokeStyle = pal.light;
+    ctx.lineWidth = 2.6 * scale;
+    ctx.globalAlpha = fade * 0.78;
+    ellipse(ctx, cx, cy + 8, (36 + e * 72) * scale, (18 + e * 36) * scale);
+    ctx.stroke();
     ctx.restore();
 
-    // 3. 阵心浮现「败战·三支黑羽破甲箭」专属手绘图标
+    // 2. 受创敌兵头顶与阵心：显示「败战·箭雨」专属手绘贴图（即使士兵阵亡倒地仍在原位完整显示）
     const badge = getSixSkillIconBadge('baizhan', v.paid);
     if (badge) {
+        const iconAlpha = p < 0.72 ? 1 : (1 - p) / 0.28;
+        const dropOffset = (1 - easeOut(Math.min(1, p * 3.8))) * 36;
+        const ICON_R = 14.5;
+
         ctx.save();
-        const pulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
-        ctx.globalAlpha = Math.min(1, fade * 1.25);
-        drawStamp(ctx, badge, cx, cy - 32 * scale, 44 * scale * pulse);
-        ctx.restore();
-    }
-}
-
-function drawTargetGlow(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
-    if (v.six === 'baizhan') return;
-    const n = Math.min(v.targets.length, 220);
-    if (n === 0) return;
-    const fade = 1 - p;
-    const e = easeOut(p);
-    const col = COLOR[v.six];
-    const badge = getSixSkillIconBadge(v.six, v.paid);
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.lineCap = 'round';
-
-    for (let i = 0; i < n; i++) {
-        const m = v.targets[Math.floor(i * v.targets.length / n)];
-        if (m.hp <= 0) continue;
-        const y = m.y - lift(m.x, m.y);
-
-        // 1. 单兵脚下高对比发光环（打赏付费额外嵌套亮金内环）
-        ctx.strokeStyle = col;
-        ctx.globalAlpha = fade * 0.9;
-        ctx.lineWidth = 2.6;
-        ellipse(ctx, m.x, y, 10 + e * 8, 5 + e * 4);
-        ctx.stroke();
-
-        if (v.paid) {
-            ctx.strokeStyle = '#ffe680';
-            ctx.lineWidth = 1.6;
-            ellipse(ctx, m.x, y, 7 + e * 5, 3.5 + e * 2.5);
-            ctx.stroke();
-        }
-    }
-    ctx.restore();
-
-    // 2. 单兵头顶显示对应六计手绘图标
-    if (badge) {
-        ctx.save();
+        ctx.globalAlpha = iconAlpha;
         for (let i = 0; i < n; i++) {
-            if (i % 3 !== 0) continue;
-            const m = v.targets[Math.floor(i * v.targets.length / n)];
-            if (m.hp <= 0) continue;
-            const y = m.y - lift(m.x, m.y);
-            const hy = y - 24 - e * 4;
-            ctx.globalAlpha = fade * 0.95;
-            if (v.six === 'hunzhan') {
-                ctx.save();
-                ctx.translate(m.x, hy);
-                ctx.rotate(p * 6 + m.zid);
-                drawStamp(ctx, badge, 0, 0, 14);
-                ctx.restore();
-            } else {
-                drawStamp(ctx, badge, m.x, hy, 14);
-            }
+            if (i % 2 !== 0) continue;
+            const idx = Math.floor(i * srcLen / n);
+            const pt = useTargets ? v.targets[idx] : v.points[idx];
+            const py = pt.y - lift(pt.x, pt.y);
+            const pulse = 0.5 + 0.5 * Math.sin(p * TAU * 3 + i * 0.73);
+            const hy = py - 28 - dropOffset - pulse * 2.0;
+            drawStamp(ctx, badge, pt.x, hy, ICON_R);
         }
+
+        // 阵心大号「败战·箭雨」贴图
+        const mainPulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
+        drawStamp(ctx, badge, cx, cy - 42 * scale - dropOffset * 0.6, 108 * scale * mainPulse);
         ctx.restore();
     }
 }
 
-/** 观众献计／打赏付费天降神威特效（三档排面差距） */
+/** 观众献计／打赏付费天降神威特效 */
 function drawPatronBurst(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number, lift: Lift): void {
     if (!v.playerCast) return;
     const e = easeOut(p);
@@ -974,7 +923,6 @@ function drawPatronBurst(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: n
     ctx.globalCompositeOperation = 'lighter';
 
     if (v.paid) {
-        // 打赏付费专属：贯穿屏幕顶端的「帝王鎏金天降神柱」＋ 双层金龙震波 ＋ 环绕上升金星
         const beamH = 260;
         const grad = ctx.createLinearGradient(0, y - beamH, 0, y);
         grad.addColorStop(0, 'rgba(255,215,0,0)');
@@ -989,7 +937,6 @@ function drawPatronBurst(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: n
         ctx.lineTo(x, y);
         ctx.stroke();
 
-        // 双层鎏金扩张光环
         ctx.strokeStyle = '#ffd700';
         ctx.lineWidth = 4.5;
         ctx.globalAlpha = fade * 0.96;
@@ -1001,7 +948,6 @@ function drawPatronBurst(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: n
         ellipse(ctx, x, y, 30 + e * 135, 15 + e * 66);
         ctx.stroke();
 
-        // 8 颗环绕升腾的打赏金星芒
         for (let k = 0; k < 8; k++) {
             const ang = k * (TAU / 8) + p * 4;
             const r = 36 + e * 120;
@@ -1011,7 +957,6 @@ function drawPatronBurst(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: n
             drawStamp(ctx, goldFlare, sx, sy, 14);
         }
     } else {
-        // 免费弹幕积分：单层金色认主扫光环
         ctx.globalAlpha = fade * 0.92;
         ctx.strokeStyle = '#ffd76a';
         ctx.lineWidth = 3.5;
@@ -1028,7 +973,6 @@ function drawTopOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     else if (v.six === 'hunzhan') drawPanic(ctx, v, p, lift);
     else if (v.six === 'bingzhan') drawConvert(ctx, v, p, lift);
     else drawDefeat(ctx, v, p, lift);
-    drawTargetGlow(ctx, v, p, lift);
     drawPatronBurst(ctx, v, p, lift);
 }
 
@@ -1054,7 +998,54 @@ export function drawScene13SkillCastVfx(
     ctx.restore();
 }
 
-// ── 6. 持续阶段的单兵特效（最早的高亮脚下光圈 ＋ 头顶六计手绘镂空图标） ──
+// ── 6. 持续阶段的单兵特效（叠加规则：保留前一个技能的动画色彩，上后一个技能的贴图） ──
+interface ActiveUnitSkillEntry {
+    six: TacticalSixSet;
+    seq: number;
+    rem: number;
+    paid: boolean;
+}
+
+function resolveUnitSkillLayers(
+    m: WarMan,
+    st: Scene13SkillVisualState,
+    tier: SideCastState,
+    nowSec: number,
+    hasUnitTags: boolean,
+): { colorEntry: ActiveUnitSkillEntry; iconEntry: ActiveUnitSkillEntry; hasShieldHeal: boolean } | null {
+    const active: ActiveUnitSkillEntry[] = [];
+    if (st.frenzy > 0 && !m.siegeW) {
+        active.push({ six: 'gongzhan', seq: tier.frenzySeq, rem: st.frenzy, paid: tier.frenzyPaid });
+    }
+    if (st.shield > 0 && !m.siegeW) {
+        active.push({ six: 'shengzhan', seq: tier.shieldSeq, rem: st.shield, paid: tier.shieldPaid });
+    }
+    if (st.panic > 0 && !m.march && !m.hero && !m.siegeW) {
+        active.push({ six: 'hunzhan', seq: tier.panicSeq, rem: st.panic, paid: tier.panicPaid });
+    }
+    if (hasUnitTags) {
+        const tag = unitSkillTags.get(m);
+        if (tag && nowSec < tag.untilSec) {
+            active.push({ six: tag.six, seq: tag.seq, rem: tag.untilSec - nowSec, paid: tag.paid });
+        }
+    }
+    if (active.length === 0) return null;
+    if (active.length === 1) {
+        return {
+            colorEntry: active[0],
+            iconEntry: active[0],
+            hasShieldHeal: st.shield > 0 && !m.siegeW,
+        };
+    }
+    active.sort((a, b) => a.seq - b.seq);
+    // 叠加规则：保留前一个仍在生效的技能色彩（active[length - 2]），换上后一个最新释放的技能贴图（active[length - 1]）
+    return {
+        colorEntry: active[active.length - 2],
+        iconEntry: active[active.length - 1],
+        hasShieldHeal: st.shield > 0 && !m.siegeW,
+    };
+}
+
 export function drawScene13SkillStatusVfx(
     ctx: CanvasRenderingContext2D,
     men: readonly WarMan[],
@@ -1064,23 +1055,17 @@ export function drawScene13SkillStatusVfx(
     unitStateOf?: (m: WarMan) => Scene13SkillVisualState,
     hasExtraActive = false,
 ): void {
+    latestSideStates = [
+        { frenzy: states[0].frenzy, shield: states[0].shield, panic: states[0].panic },
+        { frenzy: states[1].frenzy, shield: states[1].shield, panic: states[1].panic },
+    ];
     const hasUnitTags = nowSec < unitTagActiveUntilSec;
     if (!hasUnitTags
         && !hasExtraActive
         && !states[0].frenzy && !states[0].shield && !states[0].panic
         && !states[1].frenzy && !states[1].shield && !states[1].panic) return;
 
-    const gongBadgeStd = getSixSkillIconBadge('gongzhan', false);
-    const gongBadgePaid = getSixSkillIconBadge('gongzhan', true);
-    const shengBadgeStd = getSixSkillIconBadge('shengzhan', false);
-    const shengBadgePaid = getSixSkillIconBadge('shengzhan', true);
-    const diBadgeStd = getSixSkillIconBadge('dizhan', false);
-    const diBadgePaid = getSixSkillIconBadge('dizhan', true);
-    const hunBadgeStd = getSixSkillIconBadge('hunzhan', false);
-    const hunBadgePaid = getSixSkillIconBadge('hunzhan', true);
-    const bingBadgeStd = getSixSkillIconBadge('bingzhan', false);
-
-    // 1. 先用 lighter 叠加层绘制最早的高亮脚下光圈与胜战回血 + 号
+    // 1. 先用 lighter 叠加层绘制单兵脚下动画色彩光圈（叠加时保留前一个技能色彩）
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineCap = 'round';
@@ -1089,124 +1074,63 @@ export function drawScene13SkillStatusVfx(
         if (m.hp <= 0) continue;
         const st = unitStateOf ? unitStateOf(m) : states[m.f];
         const tier = sideCastTier[m.f];
+        const resolved = resolveUnitSkillLayers(m, st, tier, nowSec, hasUnitTags);
+        if (!resolved) continue;
+
+        const { colorEntry, hasShieldHeal } = resolved;
+        const pal = PALETTE[colorEntry.six];
+        const fadeOut = clamp01(colorEntry.rem / 1.0);
         const y = m.y - lift(m.x, m.y);
         const pulse = 0.5 + 0.5 * Math.sin(nowSec * 7 + m.zid * 0.73);
 
-        if (st.frenzy > 0 && !m.siegeW) {
-            const fadeOut = clamp01(st.frenzy / 1.0);
-            ctx.globalAlpha = (0.34 + pulse * 0.22) * fadeOut;
-            ctx.strokeStyle = tier.frenzyPaid && pulse > 0.55 ? '#ffd700' : COLOR.gongzhan;
-            ctx.lineWidth = 2.3;
-            ellipse(ctx, m.x, y, 10.5 + pulse * 2.5, 5.2 + pulse);
-            ctx.stroke();
-        }
+        ctx.globalAlpha = (0.36 + pulse * 0.22) * fadeOut;
+        ctx.strokeStyle = colorEntry.paid && pulse > 0.55 ? '#ffd700' : pal.main;
+        ctx.lineWidth = 2.4;
+        ellipse(ctx, m.x, y, 10.5 + pulse * 2.2, 5.2 + pulse);
+        ctx.stroke();
 
-        if (st.shield > 0 && !m.siegeW) {
-            const fadeOut = clamp01(st.shield / 1.0);
-            ctx.globalAlpha = (0.36 + pulse * 0.22) * fadeOut;
-            ctx.strokeStyle = tier.shieldPaid && pulse > 0.55 ? '#ffe680' : COLOR.shengzhan;
-            ctx.lineWidth = 2.3;
-            ellipse(ctx, m.x, y, 10.5 + pulse * 2, 5.2 + pulse);
-            ctx.stroke();
-            if (m.zid % 2 === 0) {
-                const rise = ((nowSec * 1.4 + m.zid * 0.37) % 1);
-                const hy = y - 18 - rise * 9;
-                ctx.globalAlpha = (0.68 + (1 - rise) * 0.28) * fadeOut;
-                drawHealPlus(ctx, m.x + 10, hy, 5.2 + pulse * 1.0, 2.2, COLOR.shengzhan, '#eafff0');
-            }
-        }
-
-        if (st.panic > 0 && !m.march && !m.hero && !m.siegeW) {
-            const fadeOut = clamp01(st.panic / 1.0);
-            ctx.globalAlpha = (0.34 + pulse * 0.22) * fadeOut;
-            ctx.strokeStyle = tier.panicPaid && pulse > 0.55 ? '#ffe680' : COLOR.hunzhan;
-            ctx.lineWidth = 2.3;
-            ellipse(ctx, m.x, y, 10.5 + pulse * 2, 5.2 + pulse);
-            ctx.stroke();
-        }
-
-        if (hasUnitTags) {
-            const tag = unitSkillTags.get(m);
-            if (tag && nowSec < tag.untilSec) {
-                const rem = clamp01((tag.untilSec - nowSec) / 1.2);
-                if (tag.six === 'dizhan') {
-                    ctx.globalAlpha = (0.36 + pulse * 0.22) * rem;
-                    ctx.strokeStyle = tag.paid && pulse > 0.5 ? '#ffd700' : COLOR.dizhan;
-                    ctx.lineWidth = 2.3;
-                    ellipse(ctx, m.x, y, 10.5 + pulse * 2, 5.2 + pulse);
-                    ctx.stroke();
-                } else {
-                    ctx.globalAlpha = (0.38 + pulse * 0.24) * rem;
-                    ctx.strokeStyle = pulse > 0.5 ? '#ffd76a' : COLOR.bingzhan;
-                    ctx.lineWidth = 2.4;
-                    ellipse(ctx, m.x, y, 10.5 + pulse * 2, 5.2 + pulse);
-                    ctx.stroke();
-                }
-            }
+        if (hasShieldHeal && m.zid % 2 === 0) {
+            const rise = ((nowSec * 1.4 + m.zid * 0.37) % 1);
+            const hy = y - 18 - rise * 9;
+            ctx.globalAlpha = (0.68 + (1 - rise) * 0.28) * fadeOut;
+            drawHealPlus(ctx, m.x + 10, hy, 5.2 + pulse * 1.0, 2.2, pal.main, pal.core);
         }
     }
     ctx.restore();
 
-    // 2. 再用正常混合模式（source-over）在士兵头顶绘制六计专属手绘镂空图标
+    // 2. 再用正常混合模式（source-over）在士兵头顶绘制单张六计专属手绘镂空贴图（叠加时上后一个技能的贴图）
     ctx.save();
-    const ICON_R = 14.0;
+    const ICON_R = 14.5;
     for (const m of men) {
         if (m.hp <= 0) continue;
         if (!m.hero && (m.zid % 2) !== 0) continue;
 
         const st = unitStateOf ? unitStateOf(m) : states[m.f];
         const tier = sideCastTier[m.f];
+        const resolved = resolveUnitSkillLayers(m, st, tier, nowSec, hasUnitTags);
+        if (!resolved) continue;
+
+        const { iconEntry } = resolved;
+        const badge = getSixSkillIconBadge(iconEntry.six, iconEntry.paid);
+        if (!badge) continue;
+
+        const fadeOut = clamp01(iconEntry.rem / 1.0);
         const y = m.y - lift(m.x, m.y);
         const pulse = 0.5 + 0.5 * Math.sin(nowSec * 7 + m.zid * 0.73);
-        const iconR = m.hero ? ICON_R * 1.2 : ICON_R;
+        const iconR = m.hero ? ICON_R * 1.22 : ICON_R;
 
-        if (st.frenzy > 0 && !m.siegeW) {
-            const badge = tier.frenzyPaid ? gongBadgePaid : gongBadgeStd;
-            if (badge) {
-                const fadeOut = clamp01(st.frenzy / 1.0);
-                const hy = y - 26 - pulse * 2.5;
-                ctx.globalAlpha = (0.88 + pulse * 0.12) * fadeOut;
-                drawStamp(ctx, badge, m.x, hy, iconR);
-            }
-        }
-
-        if (st.shield > 0 && !m.siegeW) {
-            const badge = tier.shieldPaid ? shengBadgePaid : shengBadgeStd;
-            if (badge) {
-                const fadeOut = clamp01(st.shield / 1.0);
-                const hy = y - 26 - pulse * 2.0;
-                ctx.globalAlpha = (0.90 + pulse * 0.10) * fadeOut;
-                drawStamp(ctx, badge, m.x, hy, iconR);
-            }
-        }
-
-        if (st.panic > 0 && !m.march && !m.hero && !m.siegeW) {
-            const badge = tier.panicPaid ? hunBadgePaid : hunBadgeStd;
-            if (badge) {
-                const fadeOut = clamp01(st.panic / 1.0);
-                const hy = y - 26;
-                ctx.save();
-                ctx.translate(m.x, hy);
-                ctx.rotate(nowSec * 3.2 + m.zid);
-                ctx.globalAlpha = (0.88 + pulse * 0.12) * fadeOut;
-                drawStamp(ctx, badge, 0, 0, iconR);
-                ctx.restore();
-            }
-        }
-
-        if (hasUnitTags) {
-            const tag = unitSkillTags.get(m);
-            if (tag && nowSec < tag.untilSec) {
-                const rem = clamp01((tag.untilSec - nowSec) / 1.2);
-                const hy = y - 26 - pulse * 2.0;
-                ctx.globalAlpha = (0.90 + pulse * 0.10) * rem;
-                const badge = tag.six === 'dizhan'
-                    ? (tag.paid ? diBadgePaid : diBadgeStd)
-                    : bingBadgeStd;
-                if (badge) {
-                    drawStamp(ctx, badge, m.x, hy, iconR);
-                }
-            }
+        if (iconEntry.six === 'hunzhan') {
+            const hy = y - 28;
+            ctx.save();
+            ctx.translate(m.x, hy);
+            ctx.rotate(nowSec * 3.2 + m.zid);
+            ctx.globalAlpha = fadeOut;
+            drawStamp(ctx, badge, 0, 0, iconR);
+            ctx.restore();
+        } else {
+            const hy = y - 28 - pulse * 2.0;
+            ctx.globalAlpha = fadeOut;
+            drawStamp(ctx, badge, m.x, hy, iconR);
         }
     }
     ctx.restore();

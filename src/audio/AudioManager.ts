@@ -158,13 +158,13 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     battle_victory: sound('battle', 'battle_victory', 0.5, 1800),
     battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
     general_skill: sound('battle', 'general_skill', 0.45, 1800),
-    // 六计释放均复用本地已校准素材，不新增下载；每种音色对应六计的战场图形。
-    skill_gongzhan: sounds('battle', ['melee_hit_5', 'melee_hit_10', 'melee_hit_11', 'melee_hit_12'], 0.70, 0),
-    skill_shengzhan: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.65, 0),
-    skill_dizhan: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.65, 0),
-    skill_hunzhan: sounds('battle', ['flamethrower_fire_4', 'flamethrower_fire_5'], 0.65, 0),
-    skill_bingzhan: sound('battle', 'general_skill', 0.65, 0),
-    skill_baizhan: sounds('battle', ['siege_impact_3', 'siege_impact_4', 'building_collapse_1'], 0.70, 0),
+    // 战术六计释放音效（帝国时代2 DE 原版音效提取并按 -15 LUFS 校准）
+    skill_gongzhan: sounds('battle', ['skill_gongzhan_1', 'skill_gongzhan_2'], 0.85, 0),
+    skill_shengzhan: sounds('battle', ['skill_shengzhan_1', 'skill_shengzhan_2'], 0.85, 0),
+    skill_dizhan: sounds('battle', ['skill_dizhan_1', 'skill_dizhan_2'], 0.85, 0),
+    skill_hunzhan: sounds('battle', ['skill_hunzhan_1', 'skill_hunzhan_2'], 0.85, 0),
+    skill_bingzhan: sounds('battle', ['skill_bingzhan_1', 'skill_bingzhan_2'], 0.85, 0),
+    skill_baizhan: sounds('battle', ['skill_baizhan_1', 'skill_baizhan_2'], 0.85, 0),
     // 海战音效（2026-08-19：帝国时代2 DE 战斗音效，多源随机变奏）
     naval_arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.65, 250),
     naval_cannon_fire: sounds('battle', ['naval_cannon_fire_1', 'naval_cannon_fire_2', 'naval_cannon_fire_3', 'naval_cannon_fire_4', 'naval_cannon_fire_5', 'naval_cannon_fire_6'], 0.85, 400),
@@ -1008,18 +1008,18 @@ export class AudioManager {
         return true;
     }
 
-    /** 战术六计：玩家／观众正常响度，武将自己释放压低，不与视觉主次颠倒。 */
+    /** 战术六计释放音效：按六计一一对应播放 DE 专属释放音。 */
     public playScene13SkillSfx(six: TacticalSixSet, playerCast: boolean): boolean {
         const keys: Record<TacticalSixSet, SoundKey> = {
             gongzhan: 'skill_gongzhan',
-            shengzhan: 'skill_dizhan',   // [2026-10-27] 胜/敌效果对调，音效跟效果走
-            dizhan: 'skill_shengzhan',
+            shengzhan: 'skill_shengzhan',
+            dizhan: 'skill_dizhan',
             hunzhan: 'skill_hunzhan',
             bingzhan: 'skill_bingzhan',
             baizhan: 'skill_baizhan',
         };
         // 释放音立刻起声：短音效若再淡入 200ms，最有辨识度的开头会被吃掉。
-        return this.play(keys[six], { fadeInMs: 0, volumeScale: playerCast ? 1 : 0.45 });
+        return this.play(keys[six], { fadeInMs: 0, volumeScale: playerCast ? 1 : 0.85 });
     }
 
     /** 跟拍军团释放武将技时的短音效（非跟拍军团不播） */

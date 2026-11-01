@@ -1228,8 +1228,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -17
         },
         "/assets/JIANGNAN/shanyue_sunce.png": {
-            "scale": 0.95,
-            "offsetX": 0,
+            "scale": 0.99,
+            "offsetX": 3,
             "offsetY": -26
         },
         "/assets/JIANGNAN/wan_liuyuan.png": {
@@ -9471,6 +9471,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": -2,
             "offsetY": -10
+        },
+        "/assets/JIANGNAN/bfe3_70.png": {
+            "scale": 1.22,
+            "offsetX": 12,
+            "offsetY": 20
         }
     },
     "folderGuides": {
