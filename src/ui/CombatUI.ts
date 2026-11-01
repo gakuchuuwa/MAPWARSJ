@@ -2455,9 +2455,9 @@ export class CombatUI {
         const THEME_OF: Record<TacticalSixSet, { color: string; bg: string; border: string; glow: string }> = {
             gongzhan: { color: '#FFEADB', bg: 'linear-gradient(135deg, rgba(155, 58, 12, 0.96), rgba(58, 18, 6, 0.96))', border: '#f97316', glow: 'rgba(249, 115, 22, 0.7)' },
             shengzhan: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(22, 115, 52, 0.96), rgba(6, 44, 18, 0.96))', border: '#22c55e', glow: 'rgba(34, 197, 94, 0.7)' },
-            dizhan: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(12, 102, 125, 0.96), rgba(6, 34, 50, 0.96))', border: '#06b6d4', glow: 'rgba(6, 182, 212, 0.7)' },
+            dizhan: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(12, 82, 138, 0.96), rgba(6, 30, 56, 0.96))', border: '#38bdf8', glow: 'rgba(56, 189, 248, 0.7)' },
             hunzhan: { color: '#F3E8FF', bg: 'linear-gradient(135deg, rgba(102, 34, 136, 0.96), rgba(34, 8, 50, 0.96))', border: '#a855f7', glow: 'rgba(168, 85, 247, 0.7)' },
-            bingzhan: { color: '#DBEAFE', bg: 'linear-gradient(135deg, rgba(24, 68, 138, 0.96), rgba(6, 22, 50, 0.96))', border: '#3b82f6', glow: 'rgba(59, 130, 246, 0.7)' },
+            bingzhan: { color: '#FEF9C3', bg: 'linear-gradient(135deg, rgba(145, 108, 10, 0.96), rgba(52, 36, 4, 0.96))', border: '#eab308', glow: 'rgba(234, 179, 8, 0.7)' },
             baizhan: { color: '#FEE2E2', bg: 'linear-gradient(135deg, rgba(138, 24, 24, 0.96), rgba(50, 6, 6, 0.96))', border: '#ef4444', glow: 'rgba(239, 68, 68, 0.7)' },
         };
 
@@ -3234,9 +3234,9 @@ export class CombatUI {
                 const SIX_STYLES: Record<string, { color: string; bg: string; border: string; glow: string }> = {
                     攻: { color: '#FFEADB', bg: 'linear-gradient(135deg, rgba(140, 60, 10, 0.95), rgba(50, 15, 5, 0.95))', border: 'rgba(249, 115, 22, 0.85)', glow: 'rgba(249, 115, 22, 0.5)' },
                     胜: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(20, 100, 45, 0.95), rgba(5, 40, 15, 0.95))', border: 'rgba(34, 197, 94, 0.85)', glow: 'rgba(34, 197, 94, 0.5)' },
-                    敌: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(10, 90, 110, 0.95), rgba(5, 30, 45, 0.95))', border: 'rgba(6, 182, 212, 0.85)', glow: 'rgba(6, 182, 212, 0.5)' },
+                    敌: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(10, 75, 125, 0.95), rgba(5, 28, 50, 0.95))', border: 'rgba(56, 189, 248, 0.85)', glow: 'rgba(56, 189, 248, 0.5)' },
                     混: { color: '#F3E8FF', bg: 'linear-gradient(135deg, rgba(90, 30, 120, 0.95), rgba(30, 5, 45, 0.95))', border: 'rgba(168, 85, 247, 0.85)', glow: 'rgba(168, 85, 247, 0.5)' },
-                    并: { color: '#DBEAFE', bg: 'linear-gradient(135deg, rgba(20, 60, 120, 0.95), rgba(5, 20, 45, 0.95))', border: 'rgba(59, 130, 246, 0.85)', glow: 'rgba(59, 130, 246, 0.5)' },
+                    并: { color: '#FEF9C3', bg: 'linear-gradient(135deg, rgba(135, 100, 10, 0.95), rgba(48, 34, 4, 0.95))', border: 'rgba(234, 179, 8, 0.85)', glow: 'rgba(234, 179, 8, 0.5)' },
                     败: { color: '#FEE2E2', bg: 'linear-gradient(135deg, rgba(120, 20, 20, 0.95), rgba(45, 5, 5, 0.95))', border: 'rgba(239, 68, 68, 0.85)', glow: 'rgba(239, 68, 68, 0.5)' },
                 };
                 const st = SIX_STYLES[char] ?? {

@@ -9501,6 +9501,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": 19
+        },
+        "/assets/BYZANTINE/bfe_ypsilantis.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 14
         }
     },
     "folderGuides": {

@@ -31,10 +31,10 @@ type Lift = (x: number, y: number) => number;
 const TAU = Math.PI * 2;
 const COLOR: Record<TacticalSixSet, string> = {
     gongzhan: '#ff6a24',
-    dizhan: '#52ccff',
     shengzhan: '#26f065',
+    dizhan: '#38bdf8',
     hunzhan: '#b572ff',
-    bingzhan: '#3b9eff',
+    bingzhan: '#ffd228',
     baizhan: '#f03240',
 };
 
@@ -68,12 +68,12 @@ const PALETTE: Record<TacticalSixSet, SkillPalette> = {
         rgbaEdge: 'rgba(120,255,168,0.55)',
     },
     dizhan: {
-        main: '#52ccff',
+        main: '#38bdf8',
         light: '#9be8ff',
         core: '#ebfbff',
-        rgba0: 'rgba(82,204,255,0)',
-        rgbaMid: 'rgba(82,204,255,0.26)',
-        rgbaHigh: 'rgba(82,204,255,0.76)',
+        rgba0: 'rgba(56,189,248,0)',
+        rgbaMid: 'rgba(56,189,248,0.26)',
+        rgbaHigh: 'rgba(56,189,248,0.76)',
         rgbaEdge: 'rgba(155,232,255,0.58)',
     },
     hunzhan: {
@@ -86,13 +86,13 @@ const PALETTE: Record<TacticalSixSet, SkillPalette> = {
         rgbaEdge: 'rgba(223,158,255,0.58)',
     },
     bingzhan: {
-        main: '#3b9eff',
-        light: '#8ac5ff',
-        core: '#eef7ff',
-        rgba0: 'rgba(59,158,255,0)',
-        rgbaMid: 'rgba(59,158,255,0.26)',
-        rgbaHigh: 'rgba(59,158,255,0.76)',
-        rgbaEdge: 'rgba(138,197,255,0.58)',
+        main: '#ffd228',
+        light: '#ffe875',
+        core: '#fffbe6',
+        rgba0: 'rgba(255,210,40,0)',
+        rgbaMid: 'rgba(255,210,40,0.28)',
+        rgbaHigh: 'rgba(255,210,40,0.78)',
+        rgbaEdge: 'rgba(255,232,117,0.58)',
     },
     baizhan: {
         main: '#f03240',
@@ -334,26 +334,6 @@ function drawTaperedSlash(
 function ellipse(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number, ry: number): void {
     ctx.beginPath();
     ctx.ellipse(x, y, Math.max(0.1, rx), Math.max(0.1, ry), 0, 0, TAU);
-}
-
-function drawHealPlus(
-    ctx: CanvasRenderingContext2D,
-    cx: number,
-    cy: number,
-    arm: number,
-    thick: number,
-    outerColor = '#26f065',
-    coreColor = '#eafff0',
-): void {
-    const drawCross = (a: number, t: number) => {
-        const h = t * 0.5;
-        ctx.fillRect(cx - a, cy - h, a * 2, t);
-        ctx.fillRect(cx - h, cy - a, t, a * 2);
-    };
-    ctx.fillStyle = outerColor;
-    drawCross(arm, thick);
-    ctx.fillStyle = coreColor;
-    drawCross(arm * 0.78, thick * 0.48);
 }
 
 // ── 3. 状态追踪与叠加规则：「技能叠加时，保留前一个色彩，上后一个技能的贴图」 ──
@@ -728,20 +708,6 @@ function drawShield(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     ctx.beginPath();
     ctx.arc(x, y, Math.max(1, r - 18 * scale), Math.PI + 0.1, TAU - 0.1);
     ctx.stroke();
-
-    const plusOffsets = [
-        { dx: 0, dy: -0.62, s: 1.35 },
-        { dx: -0.42, dy: -0.38, s: 0.95 },
-        { dx: 0.42, dy: -0.38, s: 0.95 },
-        { dx: -0.22, dy: -0.78, s: 0.8 },
-        { dx: 0.22, dy: -0.78, s: 0.8 },
-    ];
-    for (const po of plusOffsets) {
-        const px = x + po.dx * r;
-        const py = y + po.dy * r - e * 22 * scale;
-        ctx.globalAlpha = fade * 0.95;
-        drawHealPlus(ctx, px, py, 12 * po.s * scale, 4.2 * po.s * scale, pal.main, pal.core);
-    }
 
     drawStamp(ctx, flare, x, y - r * 0.65, 24 * scale);
     ctx.restore();
@@ -1157,7 +1123,7 @@ function resolveUnitSkillLayers(
     tier: SideCastState,
     nowSec: number,
     hasUnitTags: boolean,
-): { colorEntry: ActiveUnitSkillEntry; iconEntry: ActiveUnitSkillEntry; hasShieldHeal: boolean } | null {
+): { colorEntry: ActiveUnitSkillEntry; iconEntry: ActiveUnitSkillEntry } | null {
     const active: ActiveUnitSkillEntry[] = [];
     if (st.frenzy > 0 && !m.siegeW) {
         active.push({ six: 'gongzhan', seq: tier.frenzySeq, rem: st.frenzy, paid: tier.frenzyPaid });
@@ -1179,7 +1145,6 @@ function resolveUnitSkillLayers(
         return {
             colorEntry: active[0],
             iconEntry: active[0],
-            hasShieldHeal: st.shield > 0 && !m.siegeW,
         };
     }
     active.sort((a, b) => a.seq - b.seq);
@@ -1187,7 +1152,6 @@ function resolveUnitSkillLayers(
     return {
         colorEntry: active[active.length - 2],
         iconEntry: active[active.length - 1],
-        hasShieldHeal: st.shield > 0 && !m.siegeW,
     };
 }
 
@@ -1210,19 +1174,20 @@ export function drawScene13SkillStatusVfx(
         && !states[0].frenzy && !states[0].shield && !states[0].panic
         && !states[1].frenzy && !states[1].shield && !states[1].panic) return;
 
-    // 1. 先用 lighter 叠加层绘制单兵脚下动画色彩光圈（叠加时保留前一个技能色彩）
+    // 1. 先用 lighter 叠加层绘制单兵脚下动画色彩小圈（叠加时保留前一个技能色彩）
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineCap = 'round';
 
     for (const m of men) {
         if (m.hp <= 0) continue;
+        if (!m.hero && (m.zid % 2) !== 0) continue;
         const st = unitStateOf ? unitStateOf(m) : states[m.f];
         const tier = sideCastTier[m.f];
         const resolved = resolveUnitSkillLayers(m, st, tier, nowSec, hasUnitTags);
         if (!resolved) continue;
 
-        const { colorEntry, hasShieldHeal } = resolved;
+        const { colorEntry } = resolved;
         const pal = PALETTE[colorEntry.six];
         const fadeOut = clamp01(colorEntry.rem / 1.0);
         const y = m.y - lift(m.x, m.y);
@@ -1233,17 +1198,10 @@ export function drawScene13SkillStatusVfx(
         ctx.lineWidth = 2.4;
         ellipse(ctx, m.x, y, 10.5 + pulse * 2.2, 5.2 + pulse);
         ctx.stroke();
-
-        if (hasShieldHeal && m.zid % 2 === 0) {
-            const rise = ((nowSec * 1.4 + m.zid * 0.37) % 1);
-            const hy = y - 18 - rise * 9;
-            ctx.globalAlpha = (0.68 + (1 - rise) * 0.28) * fadeOut;
-            drawHealPlus(ctx, m.x + 10, hy, 5.2 + pulse * 1.0, 2.2, pal.main, pal.core);
-        }
     }
     ctx.restore();
 
-    // 2. 再用正常混合模式（source-over）在士兵头顶绘制单张六计专属手绘镂空贴图（叠加时上后一个技能的贴图）
+    // 2. 再用正常混合模式（source-over）在士兵头顶绘制单张六计专属小图标（叠加时上后一个技能的贴图）
     ctx.save();
     const ICON_R = 14.5;
     for (const m of men) {
