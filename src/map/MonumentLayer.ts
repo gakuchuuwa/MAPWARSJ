@@ -7,7 +7,7 @@ import { CITIES_V2 } from '../data/cities_v2';
 import { deHashString } from '../systems/cityWallShared';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { DE_SPRITE_BOX_W } from '../systems/battlefield/deSpriteSizes';
-import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
+import { STRATEGIC_CITY_BUILDING_SCALE } from './strategicSpriteScale';
 
 /** 奇观 monument 数据（原 MonumentData 类型内联，野外奇观已全部转城内奇观挂靠据点） */
 interface MonumentData {
@@ -207,7 +207,7 @@ export class MonumentLayer {
         //    据点显隐切换）就会换个方向；改后按 `deHashString(id + '|mirror')` 落定
         //    （带每局会话种子，见 GameApp 的 `setCityStyleSessionSeed`）→ **每局随机、局内稳定、按 id 可复现**。
         const mirror = (deHashString(mon.id + '|mirror') & 1) === 1;
-        const w = (DE_SPRITE_BOX_W[mon.assetKey] ?? 160) * STRATEGIC_SPRITE_SCALE;
+        const w = (DE_SPRITE_BOX_W[mon.assetKey] ?? 480) * STRATEGIC_CITY_BUILDING_SCALE;
         const h = w;
         const groundW = w * 1.6;
         const groundH = groundW * 0.58;

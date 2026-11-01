@@ -9481,6 +9481,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 16
+        },
+        "/assets/JIANGNAN/ming_shenyourong.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/JIANGNAN/longwu_zhengzhilong.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -25
         }
     },
     "folderGuides": {
