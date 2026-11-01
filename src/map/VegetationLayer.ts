@@ -15,6 +15,7 @@ import { FOREST_COVER_THRESHOLD, forestCoverAt } from '../world/environment/fore
 import { plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
 import { VECTOR_ROAD_DATA } from '../data/VectorRoadData';
+import { STRATEGIC_TREE_SCALE } from './strategicSpriteScale';
 
 const PANE = 'vegetationPane';
 const SAMPLE_ZOOM = 9;
@@ -31,8 +32,6 @@ const CANVAS_REPAINT_DRIFT_PX = 96;
 /** 两次重建之间的最小间隔（ms）。跟拍军团时 GameAppLoop 每帧 setView → 每帧 moveend，
  *  不节流的话整层色块每帧重画。 */
 const MIN_RENDER_INTERVAL_MS = 200;
-/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。与民生层树木（45px）及 DE 兵模比例（0.7）对齐，消除细碎豆芽感。 */
-const TREE_BASE_PX = 40;
 /** 战略树木保持饱满通透的色彩质感，同时留出微透余量与地形自然融合。 */
 const TREE_OPACITY = 0.94;
 /** 树根处的轻微接地阴影，只用于消除贴图悬浮感，避免在浅色地表留下脏黑斑。 */
@@ -832,28 +831,29 @@ export class VegetationLayer {
         const baseBlend = this.sampledGameSeason === gameSeason
             ? Math.min(1, Math.max(0, seasonBlend()))
             : 0;
-        const hScale = TREE_BASE_PX * Math.pow(1.35, zoom - SAMPLE_ZOOM);
+        const treeBaseScale = STRATEGIC_TREE_SCALE * Math.pow(1.35, zoom - SAMPLE_ZOOM);
         const W = this.canvas.width, H = this.canvas.height;
         const topLeftX = this.canvasTopLeft.x;
         const topLeftY = this.canvasTopLeft.y;
 
-        const items: { x: number; y: number; h: number; c: TreeDrawCommand }[] = [];
+        const items: { x: number; y: number; s: number; c: TreeDrawCommand }[] = [];
         if (LAST_DRAWN_ASSET.size > LAST_DRAWN_MAX) LAST_DRAWN_ASSET.clear();   // 防无限增长
         for (const c of this.trees) {
             // 使用整数 Layer 像素坐标减去整数 canvasTopLeft，保证每棵树在画布上的根部坐标恒为整数，平移重绘零亚像素跳变
             const layerPt = this.map.latLngToLayerPoint([c.lat, c.lng]);
             const x = layerPt.x - topLeftX;
             const y = layerPt.y - topLeftY;
-            const h = hScale * c.jitter;
-            if (x < -h * 2 || x > W + h * 2 || y < -h * 2 || y > H + h * 2) continue;
-            items.push({ x, y, h, c });
+            const s = treeBaseScale * c.jitter;
+            const pad = 380 * s;
+            if (x < -pad || x > W + pad || y < -pad || y > H + pad) continue;
+            items.push({ x, y, s, c });
         }
         items.sort((a, b) => a.y - b.y || a.x - b.x);
 
         const drawTreeAsset = (
             asset: string,
             variant: number,
-            it: { x: number; y: number; h: number },
+            it: { x: number; y: number; s: number },
             alpha: number,
         ): string | null => {
             if (alpha <= 0.002) return null;
@@ -865,10 +865,12 @@ export class VegetationLayer {
                 // 🔴 若该树种第 0 帧被剔除（如 PINE / SNOW_PINE 的 preview.png 是第 0 帧枯木棍），绝不回退画 preview.png
                 const prevImg = meta.frames.includes(0) ? treeImage(asset, this.onTreeImageReady) : null;
 
-                const h = Math.round(it.h);
-                const w = Math.round(it.h * (meta.boxW / meta.boxH));
-                const dx = it.x - Math.round(w * (meta.anchorX / meta.boxW));
-                const dy = it.y - Math.round(h * (meta.anchorY / meta.boxH));
+                // 🔴 2026-11-01 主人令「让素材的显示大小都和 DE 一致，所有素材显示大小比例一致」：
+                //    直接按 DE 原生 boxW × boxH 乘统一缩放系数 it.s，保留乔木、竹林、灌木、仙人掌各自的 DE 原生高矮胖瘦比例。
+                const w = Math.round(meta.boxW * it.s);
+                const h = Math.round(meta.boxH * it.s);
+                const dx = it.x - Math.round(meta.anchorX * it.s);
+                const dy = it.y - Math.round(meta.anchorY * it.s);
 
                 if (framesImg) {
                     const frameIdx = meta.frames[variant % meta.frames.length];
@@ -882,11 +884,11 @@ export class VegetationLayer {
                 }
                 return null;   // 两张都没就绪：由调用方用「上一次画成的图」兜底，绝不留空
             }
-            // 兜底：未配置元数据的资产按底部居中对齐
+            // 兜底：未配置元数据的资产按原生尺寸等比缩放、底部居中对齐
             const im = treeImage(asset, this.onTreeImageReady);
             if (im) {
-                const h = Math.round(it.h);
-                const w = Math.round(it.h * (im.naturalWidth / im.naturalHeight));
+                const w = Math.round(im.naturalWidth * it.s);
+                const h = Math.round(im.naturalHeight * it.s);
                 ctx.drawImage(im, it.x - Math.round(w / 2), it.y - h, w, h);
                 return asset;
             }

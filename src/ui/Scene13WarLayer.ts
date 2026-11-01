@@ -814,7 +814,7 @@ export class Scene13WarLayer {
         targets: WarMan[],
         points: Scene13SkillVfxPoint[],
     ): void {
-        const dur = six === 'dizhan' || six === 'hunzhan' || six === 'bingzhan' || six === 'baizhan' ? 1.8 : 1.5;
+        const dur = six === 'dizhan' || six === 'hunzhan' || six === 'bingzhan' || six === 'baizhan' ? 3.0 : 2.8;
         const dir = this.advanceVec[f];
         this.skillVfx.push({
             six, side: f, x, y,

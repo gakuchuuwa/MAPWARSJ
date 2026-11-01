@@ -6,7 +6,11 @@ import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { TREE_METAS } from './VegetationLayer';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { hasWorldBaseData, loadWorldBaseData, queryWinterSnow } from '../ui/scene13/WorldBaseMap';
-import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
+import {
+    STRATEGIC_SPRITE_SCALE,
+    STRATEGIC_BUILDING_SCALE,
+    STRATEGIC_TREE_SCALE,
+} from './strategicSpriteScale';
 import { registerHumanPresence } from './strategicPresence';
 import { plantAllowedAt, plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
@@ -141,17 +145,18 @@ const MAX_ZOOM = 10;
 const PLOT_PANE_ZINDEX = 330;  // 生产方式地皮（农田、水田、牧场等）位于矢量河流(335)与水域河流(340)下层，不遮挡河流
 const PANE_ZINDEX = 568;       // 高于陆地动物(560)/植被(565)，低于商队(570)/攻城底层军团(580)/据点(610)/主军团(620)
 /**
- * 🔴 2026-10-31 主人令「把生产方式，陆海空动物的显示比例统一，大小对齐 DE」：
- *   村民、家畜/猎物、渔船、鱼群、尸体与沉船残骸一律用**同一个 DE 基准**（STRATEGIC_SPRITE_SCALE＝军团 0.7），
- *   不再各写一套 0.42 / 0.48 / 0.46 / 0.44。DE 素材本来就是同一世界像素，同系数即 DE 原比例。
- *   地皮（0.58）、建筑（0.22）、树丛（0.36 等）是场景件、不是活物，另按布局标定，不在这一族。
+ * 🔴 2026-10-31 ~ 2026-11-01 主人令「把生产方式，陆海空动物的显示比例统一，大小对齐 DE」「让素材的显示大小都和 DE 一致，所有素材显示大小比例一致」：
+ *   1. 村民、家畜/猎物、渔船、鱼群、地面采集物/矿石、尸体与沉船残骸一律用同一个 DE 基准（STRATEGIC_SPRITE_SCALE＝0.7）；
+ *   2. 城外生产建筑与伴生树木一律直接乘 DE 原生像素（STRATEGIC_BUILDING_SCALE＝0.22 / STRATEGIC_TREE_SCALE＝0.20，与战略据点内建筑同比例系，且房屋与磨坊同文化同代）。
  */
 const VILLAGER_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const ANIMAL_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const SHIP_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const FISH_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
 const WRECK_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
-const HUNTING_TREE_BASE_PX = 45;   // 🔴 2026-10-31 随活物同比例 ×1.67（原 27）：人放大后树不能比人矮
+const RESOURCE_SCALE_BASE = STRATEGIC_SPRITE_SCALE;
+const BUILDING_SCALE_BASE = STRATEGIC_BUILDING_SCALE;
+const TREE_SCALE_BASE = STRATEGIC_TREE_SCALE;
 type SeasonalPlotKind = 'dry_farm' | 'rice_farm' | 'pasture';
 const FARM_BY_SEASON = ['FARM_SPRING', 'FARM_SUMMER', 'FARM_AUTUMN', 'FARM_WINTER'] as const;
 const RFARM_BY_SEASON = ['RFARM_SPRING', 'RFARM_SUMMER', 'RFARM_AUTUMN', 'RFARM_WINTER'] as const;
@@ -1267,13 +1272,15 @@ export class CityLifeAmbientLayer {
             const buildingVariant = Math.floor(strHash01(yk, i * 17 + 302) * 4);
             if (buildingRoll < (isFarmer ? 0.55 : 0.38)) {
                 if (isFarmer) {
+                    const bAge = buildingVariant % 2 === 0 ? 2 : 3;
                     if (buildingVariant < 2) {
-                        const millAge = buildingVariant % 2 === 0 ? 2 : 3;
                         buildingResource = deStyle && deStyle !== 'YURT'
-                            ? `${deStyle}_MILL_AGE${millAge}`
+                            ? `${deStyle}_MILL_AGE${bAge}`
                             : 'DARK_MILL_AGE1';
                     } else {
-                        buildingResource = buildingVariant === 2 ? 'HUT_A' : 'DARK_HOUSE_AGE1';
+                        buildingResource = deStyle && deStyle !== 'YURT'
+                            ? `${deStyle}_HOUSE_AGE${bAge}`
+                            : 'DARK_HOUSE_AGE1';
                     }
                 } else if (dir === 'VIL_MALE_SHEPHERD') {
                     buildingResource = ['DARK_PASTURE', 'YURT_A', 'YURT_B', 'YURT_C'][buildingVariant];
@@ -1282,7 +1289,7 @@ export class CityLifeAmbientLayer {
                 } else if (dir === 'VIL_MALE_HUNTER' || dir === 'VIL_MALE_FORAGER') {
                     buildingResource = ['HUT_A', 'HUT_B', 'HUT_C'][buildingVariant % 3];
                 } else if (dir === 'VIL_MALE_MINER') {
-                    buildingResource = buildingVariant % 2 === 0 ? 'HUT_D' : 'DARK_HOUSE_AGE1';
+                    buildingResource = buildingVariant % 2 === 0 ? 'GREEK_MINING_CAMP_AGE2' : 'THRACIAN_MINING_CAMP_AGE2';
                 }
             }
 
@@ -2206,8 +2213,8 @@ export class CityLifeAmbientLayer {
         targetCtx.restore();
     }
 
-    /** 绘制渔猎据点的单棵季节性树木（严格对齐树根锚点） */
-    private drawHuntingTree(treeName: string, variant: number, px: number, py: number, targetH: number, alpha: number): void {
+    /** 绘制渔猎据点的单棵季节性树木（直接按 DE 原生 boxW × boxH 等比缩放，严格对齐树根锚点） */
+    private drawHuntingTree(treeName: string, variant: number, px: number, py: number, scale: number, alpha: number): void {
         if (alpha <= 0.01) return;
         const st = this.stripAssetFor('SUCAI_NATURE', treeName);
         if (!st || !st.sheet || !st.sheet.complete || !st.sheet.naturalWidth) return;
@@ -2218,10 +2225,10 @@ export class CityLifeAmbientLayer {
             ? validFrames[variant % validFrames.length]
             : (variant % Math.max(1, st.frames));
 
-        const h = Math.round(targetH);
-        const w = Math.round(targetH * (st.boxW / st.boxH));
-        const dx = Math.round(px) - Math.round(w * (st.anchorX / st.boxW));
-        const dy = Math.round(py) - Math.round(h * (st.anchorY / st.boxH));
+        const w = Math.round(st.boxW * scale);
+        const h = Math.round(st.boxH * scale);
+        const dx = Math.round(px) - Math.round(st.anchorX * scale);
+        const dy = Math.round(py) - Math.round(st.anchorY * scale);
 
         this.ctx.save();
         this.ctx.imageSmoothingEnabled = true;
@@ -2353,7 +2360,7 @@ export class CityLifeAmbientLayer {
         }
 
         // 1. 先绘制渔猎民族据点周围的四季树林、灌丛浆果与战时砍伐/焚毁断木树桩
-        const treeBaseH = HUNTING_TREE_BASE_PX * Math.pow(1.35, zoom - 9);
+        const treeBaseScale = TREE_SCALE_BASE * Math.pow(1.35, zoom - 9);
         for (const [cityId, st] of cityState.entries()) {
             if (st.viewAlpha <= 0.01) continue;
             const forestProps = this.forestByCity.get(cityId);
@@ -2365,16 +2372,16 @@ export class CityLifeAmbientLayer {
 
                 const peaceAlpha = st.viewAlpha * st.peaceAlpha;
                 const damageAlpha = st.viewAlpha * st.damageBlend;
-                const bushScale = 0.60 * zoomFactor;   // 🔴 2026-10-31 随活物同比例（原 0.36）
+                const bushScale = RESOURCE_SCALE_BASE * zoomFactor;
 
                 // 战火破坏态：树林渐变为被砍倒的断木（FELLED_GENERIC）、树桩（STUMP_GENERIC）与焦枯死树（DEAD_TREE）
                 if (damageAlpha > 0.01) {
                     const felledName = fp.isBamboo ? 'FELLED_LUSH_BAMBOO' : 'FELLED_GENERIC';
                     const stumpName = fp.isBamboo ? 'STUMP_LUSH_BAMBOO' : 'STUMP_GENERIC';
-                    this.drawStripSprite('SUCAI_NATURE', stumpName, fp.variant, pt.x - 10 * zoomFactor, pt.y + 3 * zoomFactor, 0.48 * zoomFactor, damageAlpha);
-                    this.drawStripSprite('SUCAI_NATURE', felledName, fp.variant, pt.x + 4 * zoomFactor, pt.y + 2 * zoomFactor, 0.42 * zoomFactor, damageAlpha);
+                    this.drawStripSprite('SUCAI_NATURE', stumpName, fp.variant, pt.x - 10 * zoomFactor, pt.y + 3 * zoomFactor, RESOURCE_SCALE_BASE * zoomFactor, damageAlpha);
+                    this.drawStripSprite('SUCAI_NATURE', felledName, fp.variant, pt.x + 4 * zoomFactor, pt.y + 2 * zoomFactor, RESOURCE_SCALE_BASE * zoomFactor, damageAlpha);
                     if (fp.variant % 2 === 0) {
-                        this.drawHuntingTree('DEAD_TREE', fp.variant, pt.x - 6 * zoomFactor, pt.y - 2 * zoomFactor, treeBaseH * fp.scaleJitter * 0.85, damageAlpha * 0.88);
+                        this.drawHuntingTree('DEAD_TREE', fp.variant, pt.x - 6 * zoomFactor, pt.y - 2 * zoomFactor, treeBaseScale * fp.scaleJitter * 0.85, damageAlpha * 0.88);
                     }
                 }
 
@@ -2384,19 +2391,19 @@ export class CityLifeAmbientLayer {
                     const trees = [fp.springTree, fp.summerTree, fp.autumnTree, fp.winterTree];
                     const curTree = trees[season];
                     const nextTree = trees[nextSeason];
-                    const mainH = treeBaseH * fp.scaleJitter;
-                    const subH = mainH * 0.78;
+                    const mainScale = treeBaseScale * fp.scaleJitter;
+                    const subScale = mainScale * 0.78;
                     const nextReady = curTree !== nextTree && !!this.stripAssetFor('SUCAI_NATURE', nextTree);
                     if (curTree === nextTree || !nextReady || seasonBlend <= 0.002) {
-                        this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha);
-                        this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha);
+                        this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainScale, peaceAlpha);
+                        this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subScale, peaceAlpha);
                     } else {
                         const a1 = (1 - seasonBlend) * 0.95;
                         const a2 = (1 - (1 - 0.95) / Math.max(0.05, 1 - a1)) / 0.95;
-                        this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha * (1 - seasonBlend));
-                        this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha * (1 - seasonBlend));
-                        this.drawHuntingTree(nextTree, fp.variant, pt.x, pt.y, mainH, peaceAlpha * a2);
-                        this.drawHuntingTree(nextTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subH, peaceAlpha * a2);
+                        this.drawHuntingTree(curTree, fp.variant, pt.x, pt.y, mainScale, peaceAlpha * (1 - seasonBlend));
+                        this.drawHuntingTree(curTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subScale, peaceAlpha * (1 - seasonBlend));
+                        this.drawHuntingTree(nextTree, fp.variant, pt.x, pt.y, mainScale, peaceAlpha * a2);
+                        this.drawHuntingTree(nextTree, fp.variant + 2, pt.x - 12 * zoomFactor, pt.y + 4 * zoomFactor, subScale, peaceAlpha * a2);
                     }
                 }
             }
@@ -2516,7 +2523,7 @@ export class CityLifeAmbientLayer {
                             actor.damageVariant,
                             groupPt.x - side * 15 * zoomFactor,
                             groupPt.y + 5 * zoomFactor,
-                            0.48 * zoomFactor,
+                            RESOURCE_SCALE_BASE * zoomFactor,
                             peaceFinalAlpha
                         );
                     }
@@ -2525,12 +2532,10 @@ export class CityLifeAmbientLayer {
                             'SUCAI_BUILDING',
                             actor.buildingResource,
                             actor.damageVariant,
-                            // 四块地皮东西两块中心在 ±35，有地皮的组合把建筑挪到地皮外侧，不压人和牲畜。
-                            // 🔴 2026-10-31 建筑随活物同比例放大（0.22→0.42，磨坊≈1.3 个农夫高，DE 原比例），
-                            //    所以有地皮时的横向偏移同步外移 62→85、无地皮 28→60，建筑内沿都不压人。
-                            groupPt.x + side * (actor.seasonalPlot ? 85 : 60) * zoomFactor,
-                            groupPt.y - 7 * zoomFactor,
-                            0.42 * zoomFactor,
+                            // 城外生产建筑与据点内建筑同比例系（BUILDING_SCALE_BASE = 0.22，磨坊与同代民居同宽约 52px，不压过城池）
+                            groupPt.x + side * (actor.seasonalPlot ? 68 : 42) * zoomFactor,
+                            groupPt.y - 5 * zoomFactor,
+                            BUILDING_SCALE_BASE * zoomFactor,
                             peaceFinalAlpha
                         );
                     }
@@ -2545,7 +2550,7 @@ export class CityLifeAmbientLayer {
                         actor.damageVariant,
                         dockPt.x,
                         dockPt.y - 5 * zoomFactor,
-                        0.42 * zoomFactor,   // 与生产建筑同一比例（原 0.22），船坞不小于渔船
+                        BUILDING_SCALE_BASE * zoomFactor,
                         peaceFinalAlpha
                     );
                 }

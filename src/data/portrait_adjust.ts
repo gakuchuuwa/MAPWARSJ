@@ -4618,7 +4618,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -1
         },
         "/assets/KHITAN/qifu_d_qifuchipan.png": {
-            "scale": 0.96,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -5
         },
@@ -9088,7 +9088,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/KHITAN/bfe3_44.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -9436,6 +9436,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 8,
             "offsetY": -20
+        },
+        "/assets/MAGYAR/bfe_bulcsu.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL/han_fengting.png": {
+            "scale": 1.09,
+            "offsetX": 20,
+            "offsetY": -6
         }
     },
     "folderGuides": {
