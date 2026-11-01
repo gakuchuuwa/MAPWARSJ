@@ -9416,6 +9416,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 0,
             "offsetY": -25
+        },
+        "/assets/JAPAN/bfe_todo_takakage.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/JAPAN/otomo_sorin.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/KOREA/bfe3_31.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/WEI/gen_yang_hao.png": {
+            "scale": 1.16,
+            "offsetX": 8,
+            "offsetY": -20
         }
     },
     "folderGuides": {
