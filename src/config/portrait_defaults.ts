@@ -550,7 +550,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'keerkezi': _zhongyaPortraitPool,
     'khoja': _zhongyaPortraitPool,
     'kokand': _zhongyaPortraitPool,
-    'mamon': _zhongyaPortraitPool,
     'saman': _zhongyaPortraitPool,
     'seljuq': _zhongyaPortraitPool,
     'shi_clan': _zhongyaPortraitPool,

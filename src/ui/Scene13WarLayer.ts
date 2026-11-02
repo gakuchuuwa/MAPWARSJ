@@ -5101,7 +5101,9 @@ export class Scene13WarLayer {
                         seen++;
                         if (dd < 1e-4) { ox += (Math.random() - .5); oy += (Math.random() - .5); continue; }
                         const inv = 1 / Math.sqrt(dd);
-                        ox += dx * inv; oy += dy * inv;
+                        // DE 站定交战的前排单位作为硬障碍（0x141078070），主要由后排移动单位绕行，前排自身少吃后排走路友军的推挤以稳住弧线阵面
+                        const wNbr = (m.st !== 0 && o.f === m.f && o.st === 0) ? 0.25 : 1.0;
+                        ox += dx * inv * wNbr; oy += dy * inv * wNbr;
                     }
                 }
             }
@@ -8167,14 +8169,22 @@ export class Scene13WarLayer {
                 }
                 if (!inReach) {
                     m.st = 0;
-                    // 绕着目标散开：瞄目标**周围一圈**上属于自己的那个点，不是目标本人那一个点。
-                    // 角度由 jx/jy 推出（出生时定死，终身不变），所以每个兵稳定从同一个方位围上去。
-                    // 停手判据仍看「离目标本人多远」（inReach），所以偏移不会让人够不着。见 CHASE_RING。
-                    const ra = Math.atan2(m.jy, m.jx);
-                    // 🔴 [2026-10-20] 野战阵位拴绳：围上去的那个点横向收回本兵的带内（目标在带内够得着才收，见 leashPoint）
-                    const rawChase = 'sprite' in foe
-                        ? { x: foe.x, y: foe.y }
-                        : this.leashPoint(m, { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING }, REACH);
+                    // 🔴 [2026-11-02 对齐 DE 0x140B72010 + 0x141060090 接触环包抄]
+                    //    原实现用出生定死的随机方位角 atan2(m.jy, m.jx)，导致左翼来的兵可能瞄准敌人右后方而横穿人群；
+                    //    现改为按「当前自身相对目标的来向角」取目标外围接触环上的点（并照常走 leashPoint 保持本路拴绳），
+                    //    当后排兵被前排挡住向侧翼滑开时，来向角随之绕目标自然旋转，一进 REACH 即停步挥砍。
+                    let rawChase: { x: number; y: number };
+                    if ('sprite' in foe) {
+                        rawChase = { x: foe.x, y: foe.y };
+                    } else {
+                        const afDx = m.x - foe.x, afDy = m.y - foe.y;
+                        const afD = Math.hypot(afDx, afDy);
+                        const baseAng = afD > 1e-3 ? Math.atan2(afDy, afDx) : Math.atan2(m.jy, m.jx);
+                        const fanBias = afD > REACH + 35 ? ((m.zid % 7) - 3) * 0.1 : 0;
+                        const ra = baseAng + fanBias;
+                        const ringR = Math.min(CHASE_RING, Math.max(this.radiusOf(m.key) + this.radiusOf(foe.key) + 2, REACH * 0.65));
+                        rawChase = this.leashPoint(m, { x: foe.x + Math.cos(ra) * ringR, y: foe.y + Math.sin(ra) * ringR }, REACH);
+                    }
                     const chasePt = isGuard
                         ? rawChase
                         : (('sprite' in foe && !foe.bld) ? rawChase : (this.gateExit(m, this.flowRedirect(m, rawChase)) ?? rawChase));
@@ -8182,37 +8192,55 @@ export class Scene13WarLayer {
                     const fdy = chasePt.y - m.y;
                     const fd = Math.hypot(fdx, fdy);
                     const invFd = fd > 1e-4 ? 1 / fd : 0;
-                    // ── 前方被己方兵挡住 → **绕过去**，不是站着等 ──────────────────────
-                    // 🔴 [2026-08-17 主人拍板] 「战场上被挡着就站 2 秒」不成立，人会绕。
-                    //    帝国时代的弧形阵面就是这么长出来的：每个兵有自己的占地，被前面的人挡住时
-                    //    寻路把他从侧面带过去，一层层绕不过去的就沿接触面铺开 = 弧形。
-                    //    我们没有寻路，用最省的等效做法：**沿垂直方向侧滑**。
-                    //    绕行方向按本兵固定（取自 jy 的符号），不每帧现挑 —— 现挑会左右摇摆，又是一种抖。
-                    //    绕开之后下一帧自然判定不堵，立刻恢复直冲。
+                    // ── 前方被己方兵挡住 → 比较左右两翼拥挤度，往更空的一侧绕过去（DE 0x141056D40 / 0x141060090）──
                     const ux = fdx * invFd, uy = fdy * invFd;
+                    const rm = this.radiusOf(m.key);
                     const px = m.x + ux * CELL_S, py = m.y + uy * CELL_S;
                     const bcx = (px / CELL_S) | 0, bcy = (py / CELL_S) | 0;
                     let blocked = false;
-                    for (let gx = bcx - 1; gx <= bcx + 1 && !blocked; gx++) {
-                        for (let gy = bcy - 1; gy <= bcy + 1 && !blocked; gy++) {
+                    let costPos = 0, costNeg = 0;
+                    for (let gx = bcx - 1; gx <= bcx + 1; gx++) {
+                        for (let gy = bcy - 1; gy <= bcy + 1; gy++) {
                             const a = this.gs.get(HKEY(gx, gy));
                             if (!a) continue;
                             for (const o of a) {
                                 if (o === m || o.f !== m.f || o.hp <= 0) continue;
+                                const ro = this.radiusOf(o.key);
+                                const rr = rm + ro;
+                                const dx = o.x - m.x, dy = o.y - m.y;
+                                const fwd = dx * ux + dy * uy;
+                                const lat = dx * (-uy) + dy * ux;
+                                if (fwd > -rm * 0.5 && fwd < rr + 42 && Math.abs(lat) < rr + 38) {
+                                    const w = (o.st !== 0 ? 2.0 : 1.0) * (1 - Math.min(1, Math.abs(lat) / (rr + 38)));
+                                    if (lat >= 0) costPos += w;
+                                    else costNeg += w;
+                                }
                                 const odx = px - o.x, ody = py - o.y;
-                                const rr = this.radiusOf(m.key) + this.radiusOf(o.key);
-                                if (odx * odx + ody * ody < rr * rr) { blocked = true; break; }
+                                if (odx * odx + ody * ody < rr * rr) {
+                                    blocked = true;
+                                    if (lat > 1) costPos += 0.8;
+                                    else if (lat < -1) costNeg += 0.8;
+                                }
                             }
                         }
                     }
-                    if (blocked) m.avoidT = 0.28;
-                    else m.avoidT = Math.max(0, (m.avoidT ?? 0) - dt);
-                    const avoiding = blocked || (m.avoidT ?? 0) > 0;
+                    const prevAvoid = m.avoidT ?? 0;
+                    const prevAbs = Math.abs(prevAvoid);
+                    let side: 1 | -1 = prevAbs > 0 ? (prevAvoid >= 0 ? 1 : -1) : (m.jy >= 0 ? 1 : -1);
+                    if (blocked) {
+                        if (prevAbs <= 0.05) {
+                            side = costPos < costNeg - 0.05 ? 1 : costNeg < costPos - 0.05 ? -1 : (m.jy >= 0 ? 1 : -1);
+                        }
+                        m.avoidT = side * 0.28;
+                    } else if (prevAbs > 0) {
+                        const nextAbs = Math.max(0, prevAbs - dt);
+                        m.avoidT = nextAbs > 0 ? side * nextAbs : 0;
+                    }
+                    const avoiding = blocked || Math.abs(m.avoidT ?? 0) > 0;
                     let mvx = ux, mvy = uy;
                     if (avoiding) {
                         // 🔴 **绕行必须保留前进分量**：纯侧滑=全军绕圈不接敌，实测步兵对镜 184s→467s、
                         //    骑兵 159s→260s（war_sim 扫 SLIDE_W=0/0.35/0.6/1）。取 0.4 一档实测与不绕行持平甚至略快。
-                        const side = m.jy >= 0 ? 1 : -1;      // 本兵固定绕行侧，避免左右摇摆
                         const bx = ux * (1 - SLIDE_W) + (-uy * side) * SLIDE_W;
                         const by = uy * (1 - SLIDE_W) + (ux * side) * SLIDE_W;
                         const bl = Math.hypot(bx, by) || 1;

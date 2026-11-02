@@ -1031,7 +1031,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'maikelan_punong': 'PERSIAN',   // 麦克兰｜普农｜据点 特尔巴特
     'malin_abulhasan': 'BERBER',   // 伊德里斯王朝｜阿布哈桑｜据点 非斯
     'malli_malavapala': 'PURU',   // 马利｜摩罗波罗｜据点 马里斯
-    'mamon_mameng': 'CENTRAL_ASIA',   // 马蒙王朝｜马蒙｜据点 达尔甘
+    'mamon_mameng': 'CENTRAL_ASIA',   // 花剌子模｜马蒙｜据点 玉龙杰赤
     'mamuluke_baibaisi': 'ORIE',   // 马穆鲁克｜拜巴尔斯｜据点 阿音贾鲁特
     'manghuti_weidaer': 'MONGOL',   // 蒙古｜畏答儿｜据点 乌利洪
     'mangshi_mangshiwang': 'CENTRAL_ASIA',   // 土库曼｜恰格里｜据点 曼格什拉克

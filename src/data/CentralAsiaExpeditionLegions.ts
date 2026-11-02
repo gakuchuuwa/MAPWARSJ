@@ -31,7 +31,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     yada: { name: '嚈哒重骑', tier: 2 },
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
     wugu_d: { name: '乌古斯弓骑', tier: 3 },
-    mamon: { name: '呼罗珊之剑', tier: 2 },
     shi_clan: { name: '柘枝胡骑', tier: 4 },
   badakhshan: { name: '达克游骑', tier: 4 },     // 法扎巴德·达克边防
   xianhai: { name: '咸海骁锐', tier: 4 },        // 养吉干·花剌子模北境

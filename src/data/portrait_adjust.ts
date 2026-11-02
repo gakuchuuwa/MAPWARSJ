@@ -9606,6 +9606,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/SLAVIC/nuogai_wotehuofusiji_v2.png": {
+            "scale": 1.3,
+            "offsetX": 5,
+            "offsetY": 21
+        },
+        "/assets/CUMAN/gesake_khmelnytsky.png": {
+            "scale": 1.2,
+            "offsetX": 2,
+            "offsetY": 10
         }
     },
     "folderGuides": {

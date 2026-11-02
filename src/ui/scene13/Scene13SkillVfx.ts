@@ -115,7 +115,7 @@ const SIX_ICON_URLS: Record<TacticalSixSet, string> = {
     dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=six6',
     hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=six6',
     bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=six6',
-    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six6',
+    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six7',
 };
 
 const sixRawImages = new Map<TacticalSixSet, HTMLImageElement>();

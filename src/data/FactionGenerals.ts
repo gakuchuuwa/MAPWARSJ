@@ -9747,6 +9747,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'huarazim_jalal', cityId: 'city_urgench', legionName: '城堡时代河中军团', generalName: '扎兰丁', portrait: '/assets/CENTRAL_ASIA/huarazim_jalal.png', eliteName: '花剌子模', eliteTier: 2 },
+        // 🔴 [2026-11-02 主人令] 马蒙＝玉龙杰赤的花剌子模沙（马蒙·伊本·穆罕默德，卒 997，995 灭卡特的阿夫里格王朝）；当时国号就是「花剌子模」，「马蒙王朝」是后人叫法 → 并入花剌子模势力（同势力不打架）；保留原军团与精锐
+        { generalId: 'mamon_mameng', cityId: 'city_urgench', legionName: '封建时代图兰军团', generalName: '马蒙', portrait: '/assets/CENTRAL_ASIA/mamon_mameng.png', eliteName: '河中骑兵', eliteTier: 4 },
 
 
 
@@ -9902,7 +9904,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    mamon: { generalId: 'mamon_mameng', cityId: 'city_dargan', generalName: '马蒙', portrait: '/assets/CENTRAL_ASIA/mamon_mameng.png', eliteName: '河中骑兵', eliteTier: 4 },
 
 
 

@@ -3122,7 +3122,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_542', ownerName: '郝昭', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'casualty', index: 542,
-        displayName: '陈仓据守', sourceQuote: '坚守营寨消耗敌军，如廉颇长平之战等多将皆有。',
+        displayName: '深沟高垒', sourceQuote: '《史记·淮阴侯列传》：“深沟高垒，坚营勿与战。”通用守御：坚守营寨消耗敌军，如廉颇长平、王坚钓鱼城等多将皆有。',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 1.25, engineStatus: 'ready',
     },

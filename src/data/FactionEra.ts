@@ -355,7 +355,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'malai': [{ from: -9999, era: 'castle' }], // 马来
     'mallabhum': [{ from: -9999, era: 'imperial' }], // 末罗王国
     'malli': [{ from: -9999, era: 'antiquity' }], // 马利
-    'mamon': [{ from: -9999, era: 'feudal' }], // 马蒙王朝
     'mamuluke': [{ from: -9999, era: 'castle' }], // 马穆鲁克
     'manding': [{ from: -9999, era: 'castle' }], // 马里
     'mangshi': [{ from: -9999, era: 'feudal' }], // 土库曼

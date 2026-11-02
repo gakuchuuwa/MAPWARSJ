@@ -449,10 +449,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代图兰军团",
         legionType: "sub",
     },
-    "mamon": {
-        legionName: "封建时代图兰军团",
-        legionType: "sub",
-    },
     "keerkezi": {
         legionName: "封建时代图兰军团",
         legionType: "sub",

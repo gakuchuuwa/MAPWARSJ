@@ -453,7 +453,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'hepan': 'city_hepancheng',
 
     // ── 2026-05-28 新增：马蒙(达尔甘城)、古兹根(法里亚布城)、傣(勐泐城)、泰沅(清坎城)、帕銮(素可泰)、罗斛(呵叻城) ──
-'mamon': 'city_dargan',
     'dai': 'city_mengle',
 'taiyuan': 'city_chingkham',
     'luohu': 'city_khorat',

@@ -356,7 +356,6 @@ export class CityAssetManager {
 'hepan': '喝槃',
 
         // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──
-'mamon': '马朝',
         'dai': '傣',
 'taiyuan': '泰沅',
         'luohu': '罗斛',

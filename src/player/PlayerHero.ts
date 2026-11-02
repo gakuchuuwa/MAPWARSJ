@@ -479,7 +479,7 @@ export class PlayerHero {
 
     /**
      * 🔴 [2026-11-02 主人报「环球，航行，有回头路」] 目的地在西边还不够 —— 最短路可能先往东绕一大段。
-     * 抽 30 个候选逐条看路线：往东走的经度合计（回头量）不超过 max(1.5°, 往西量的 10%) 才算顺路，
+     * 抽 30 个候选逐条看路线：往东走的经度合计（回头量）不超过 max(3°, 往西量的 15%) 才算顺路（沿海岸线的小弯不算回头），
      * 顺路的按「往西量 − 4×回头量」排序；一条顺路的都没有，就取回头量最少的。
      */
     private rankWestLegs(
@@ -502,11 +502,14 @@ export class PlayerHero {
                 if (d > 0) east += d; else west -= d;
                 prev = p.lng;
             }
-            scored.push({ city, path, west, east, ok: west > east && east <= Math.max(1.5, west * 0.1) });
+            scored.push({ city, path, west, east, ok: west > east && east <= Math.max(3, west * 0.15) });
         }
         const ok = scored.filter((s) => s.ok).sort((a, b) => (b.west - 4 * b.east) - (a.west - 4 * a.east));
         if (ok.length > 0) return ok;
-        return scored.filter((s) => s.west > s.east).sort((a, b) => a.east - b.east);
+        const westish = scored.filter((s) => s.west > s.east).sort((a, b) => a.east - b.east);
+        if (westish.length > 0) return westish;
+        // 实在没有净往西的（困在路网死角）：也得走，取净回头最少的，免得原地不动
+        return scored.sort((a, b) => (a.east - a.west) - (b.east - b.west));
     }
     /**
      * 切换自动模式的玩法（百岁 / 剧本 / 乱斗）。

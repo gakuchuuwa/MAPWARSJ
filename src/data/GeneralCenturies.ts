@@ -482,7 +482,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'kumisi_aerpu': 11,                                  // 阿尔普 · kumisi · 达姆甘
     'shahelude_weisitamu': 6,                            // 维斯塔姆 · shahelude · 比斯塔姆（6世纪萨珊叛乱割据）
     'maer_d_bahelamuchubin': 6,                         // 巴赫拉姆 · maer_d · 彭迪
-    'mamon_mameng': 10,                                  // 马蒙 · mamon · 达尔甘
+    'mamon_mameng': 10,                                  // 马蒙 · huarazim · 玉龙杰赤
     'midi_daiaokaisi': -7,                               // 戴奥凯斯 · midi · 哈马丹
     'muer_mujier': 12,                                   // 穆吉尔 · muer · 马尔夫鲁德
     'najie_minande': -2,                                 // 米南德 · najie · 顶骨城
