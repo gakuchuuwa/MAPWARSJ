@@ -1,4 +1,4 @@
-﻿import * as L from 'leaflet';
+import * as L from 'leaflet';
 import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from './cityDeStyle';
 import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, STYLE_TO_STOCKADE_FENCE, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, normalizeStockadeCorner, buildStockadeCurveRing, stockadeCurveShape,
     // 🔴 [2026-10-02] 六形制的几何**全部收进共享模块**（围栏编辑器也要用同一份）：直边三款从这里 import 回来，
@@ -305,7 +305,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
         const cgH = cgW * 0.58;
         const cFlip = cityBuildingFlip(cityId, 'center');
         parts.push(
-            `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${cgW.toFixed(1)}px;height:${cgH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
+            `<img class="city-ground-base" src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${cgW.toFixed(1)}px;height:${cgH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
         );
         parts.push(
             `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${cW.toFixed(1)}px;transform:translate(-50%,-65%)${cFlip ? ' scaleX(-1)' : ''};z-index:100;" />`
@@ -317,7 +317,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
         const centerGroundW = centerW * 2.3;
         const centerGroundH = centerGroundW * 0.58;
         parts.push(
-            `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
+            `<img class="city-ground-base" src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
         );
         parts.push(`<img src="${srcOf(centerY)}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-58%);z-index:100;" />`);
     }
@@ -342,7 +342,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
         const bGroundH = bGroundW * 0.58;
 
         parts.push(
-            `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
+            `<img class="city-ground-base" src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${bGroundW.toFixed(1)}px;height:${bGroundH.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px));z-index:${zIndex - 1};opacity:0.92;pointer-events:none;" />`
         );
         parts.push(`<img src="${srcOf(y)}" style="position:absolute;left:50%;top:50%;width:${yw.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${yy.toFixed(1)}px - 15%));z-index:${zIndex};" />`);
     });
@@ -427,7 +427,7 @@ function buildFeatheredGroundDiv(
     const encoded = encodeURIComponent(svg).replace(/[()']/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase());
     const maskUrl = `url(data:image/svg+xml;utf8,${encoded})`;
     const tileH = tileW * 0.58;
-    return `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);z-index:${zIndex};pointer-events:none;background-image:url(${tileUrl});background-repeat:repeat;background-position:50% 50%;background-size:${tileW.toFixed(1)}px ${tileH.toFixed(1)}px;opacity:0.95;-webkit-mask-image:${maskUrl};mask-image:${maskUrl};-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;"></div>`;
+    return `<div class="city-ground-base" style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);z-index:${zIndex};pointer-events:none;background-image:url(${tileUrl});background-repeat:repeat;background-position:50% 50%;background-size:${tileW.toFixed(1)}px ${tileH.toFixed(1)}px;opacity:0.95;-webkit-mask-image:${maskUrl};mask-image:${maskUrl};-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;"></div>`;
 }
 
 function featheredPolygonGroundDiv(
@@ -1794,6 +1794,30 @@ export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: s
                 : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native));
 }
 
+/**
+ * 将 `buildCityStackInnerHtml` 产出的完整栈拆成「底图层（groundHtml）」与「建筑/城墙层（buildingHtml）」，
+ * 供战略地图把据点底图放到 `cityGroundPane`（z-index 332，在矢量河流 335 之下），
+ * 而把建筑与城墙留在 `cityPane`（z-index 610，在矢量河流之上）。
+ */
+function splitCityStackGroundHtml(stackHtml: string): { groundHtml: string; buildingHtml: string } {
+    const wrapperMatch = /^<div style="position:relative;width:\d+px;height:\d+px;">/.exec(stackHtml);
+    if (!wrapperMatch || !stackHtml.endsWith('</div>')) {
+        return { groundHtml: '', buildingHtml: stackHtml };
+    }
+    const openTag = wrapperMatch[0];
+    const groundPieces: string[] = [];
+    const groundRegex = /<div class="city-ground-base"[^>]*><\/div>|<img class="city-ground-base"[^>]*\/>/g;
+    const buildingHtml = stackHtml.replace(groundRegex, (m) => {
+        groundPieces.push(m);
+        return '';
+    });
+    if (groundPieces.length === 0) {
+        return { groundHtml: '', buildingHtml: stackHtml };
+    }
+    const groundHtml = `${openTag}${groundPieces.join('')}</div>`;
+    return { groundHtml, buildingHtml };
+}
+
 export class TerritorySystem {
     private map: GameMap;
     private factionManager: FactionManager;
@@ -1841,7 +1865,13 @@ export class TerritorySystem {
 
         const leafletMap = map.getLeafletMap();
 
-        // Create dedicated panes for city markers (z-index 610) and labels (z-index 660)
+        // Create dedicated panes for city ground (z-index 332, below vectorRiverPane 335), city markers (z-index 610) and labels (z-index 660)
+        if (!leafletMap.getPane('cityGroundPane')) {
+            leafletMap.createPane('cityGroundPane');
+            const gp = leafletMap.getPane('cityGroundPane')!;
+            gp.style.zIndex = '332';
+            gp.style.pointerEvents = 'none';
+        }
         if (!leafletMap.getPane('cityPane')) {
             leafletMap.createPane('cityPane');
             leafletMap.getPane('cityPane')!.style.zIndex = '610';
@@ -2271,7 +2301,11 @@ export class TerritorySystem {
                 const isUpgradeCrossFade = wasSpriteShown && spriteNow;
                 if (isUpgradeCrossFade) {
                     const oldMarker = this.cityMarkers.get(city.id);
-                    if (oldMarker) crossFadeOutMarkers.add(oldMarker);
+                    if (oldMarker) {
+                        crossFadeOutMarkers.add(oldMarker);
+                        const oldGround = (oldMarker as any)._groundMarker as L.Marker | undefined;
+                        if (oldGround) crossFadeOutMarkers.add(oldGround);
+                    }
                 }
                 this.renderSingleCity(
                     city,
@@ -2295,7 +2329,11 @@ export class TerritorySystem {
         tempLayerGroup.eachLayer((l) => markerLayers.push(l));
 
         const keptLayers = new Set<L.Layer>();
-        for (const m of tempCityMarkers.values()) keptLayers.add(m);
+        for (const m of tempCityMarkers.values()) {
+            keptLayers.add(m);
+            const gm = (m as any)._groundMarker as L.Marker | undefined;
+            if (gm) keptLayers.add(gm);
+        }
         for (const l of tempCityLabels.values()) keptLayers.add(l);
 
         // 仅卸载不再显示的旧 marker/label（保留的 marker 原地不动；升级叠化中的旧城延迟渐隐卸载）
@@ -2323,7 +2361,9 @@ export class TerritorySystem {
             }
             window.setTimeout(() => {
                 if (this.layerGroup.hasLayer(oldMarker)) {
-                    this.layerGroup.removeLayer(oldMarker);
+                    const oldGround = (oldMarker as any)._groundMarker as L.Marker | undefined;
+            if (oldGround) this.layerGroup.removeLayer(oldGround);
+            this.layerGroup.removeLayer(oldMarker);
                 }
             }, 1220);
         }
@@ -2338,6 +2378,9 @@ export class TerritorySystem {
             root?.classList.add('city-under-siege');
             // [2026-08-10 13 城图 6 折] 13 战斗场景中全量重绘的 marker 补 scene13-zoom
             if (this.map.getLeafletMap().getZoom() >= 13) root?.classList.add('scene13-zoom');
+            const groundRoot = ((marker as any)?._groundMarker as L.Marker | undefined)?.getElement()?.querySelector('.city-image-container');
+            groundRoot?.classList.add('city-under-siege');
+            if (this.map.getLeafletMap().getZoom() >= 13) groundRoot?.classList.add('scene13-zoom');
         }
         this.updateCityScales(true);
     }
@@ -3051,6 +3094,14 @@ export class TerritorySystem {
                      pointer-events: none;
                  ">${flagBodyHtml}</div>` : '';
 
+        const canRenderCityStack = this.showCityTextures && TerritorySystem.hasCitySprite(city);
+        const fullStackHtml = (canRenderCityStack && deStyle)
+            ? buildCityStackInnerHtml(city, baseSize, deStyle, centerCastle, useStoneWall, cityRegion)
+            : '';
+        const { groundHtml: groundStackInnerHtml, buildingHtml: buildingStackInnerHtml } = fullStackHtml
+            ? splitCityStackGroundHtml(fullStackHtml)
+            : { groundHtml: '', buildingHtml: '' };
+
         const icon = L.divIcon({
             className: 'city-icon',
             html: `<div class="city-image-container ${containerClass}" style="
@@ -3066,7 +3117,7 @@ export class TerritorySystem {
                      ">` : ''}
                      ${(this.showCityTextures && TerritorySystem.hasCitySprite(city)) ? `<div class="city-building-stack${stackAnimClass}" style="display: inline-block;">${settlementMirror ? '<div style="display:inline-block;transform:scaleX(-1);">' : ''}
                           ${(deStyle
-                              ? buildCityStackInnerHtml(city, baseSize, deStyle, centerCastle, useStoneWall, cityRegion)
+                              ? buildingStackInnerHtml
                               : (city.image
                                   ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
                                       width: ${baseSize}px; height: auto;
@@ -3089,9 +3140,14 @@ export class TerritorySystem {
         }).addTo(targetLayerGroup);
 
         if (isEditorMode) {
+            marker.on('drag', (e: any) => {
+                const newPos = e.target.getLatLng();
+                ((marker as any)._groundMarker as L.Marker | undefined)?.setLatLng(newPos);
+            });
             marker.on('dragend', (e: any) => {
                 const newPos = e.target.getLatLng();
-                window.dispatchEvent(new CustomEvent('city-dragend', {
+                ((marker as any)._groundMarker as L.Marker | undefined)?.setLatLng(newPos);
+            window.dispatchEvent(new CustomEvent('city-dragend', {
                     detail: { city: city, lat: newPos.lat, lng: newPos.lng }
                 }));
             });
@@ -3108,6 +3164,29 @@ export class TerritorySystem {
             }
         });
 
+        if (canRenderCityStack && groundStackInnerHtml) {
+            const groundIcon = L.divIcon({
+                className: 'city-icon city-ground-icon',
+                html: `<div class="city-image-container ${containerClass}" style="
+                         display: flex; flex-direction: column; justify-content: center; align-items: center;
+                         width: ${baseSize}px; height: ${baseSize + 80}px;
+                         transform-origin: center ${(baseSize + 80) / 2 + 4}px; position: relative;
+                         pointer-events: none;
+                         ${ghostStyle}
+                     ">
+                         <div class="city-building-stack${stackAnimClass}" style="display: inline-block;">${settlementMirror ? '<div style="display:inline-block;transform:scaleX(-1);">' : ''}${groundStackInnerHtml}${settlementMirror ? '</div>' : ''}</div>
+                     </div>`,
+                iconSize: [baseSize, baseSize + 80],
+                iconAnchor: [baseSize / 2, (baseSize + 80) / 2]
+            });
+            const groundMarker = L.marker([displayLat, displayLng], {
+                icon: groundIcon,
+                interactive: false,
+                pane: 'cityGroundPane'
+            }).addTo(targetLayerGroup);
+            (marker as any)._groundMarker = groundMarker;
+        }
+
         markersMap.set(city.id, marker);
 
         // 攻城放大状态跟随 DOM 重建（2026-07-18）：别处占城增量重绘重建本城 marker 时补回 class，
@@ -3117,6 +3196,9 @@ export class TerritorySystem {
             root?.classList.add('city-under-siege');
             // [2026-08-10 13 城图 6 折] 13 战斗场景中重建的 marker 补 scene13-zoom
             if (this.map.getLeafletMap().getZoom() >= 13) root?.classList.add('scene13-zoom');
+            const groundRoot = ((marker as any)?._groundMarker as L.Marker | undefined)?.getElement()?.querySelector('.city-image-container');
+            groundRoot?.classList.add('city-under-siege');
+            if (this.map.getLeafletMap().getZoom() >= 13) groundRoot?.classList.add('scene13-zoom');
         }
 
         scheduleCityMarkerTerrainSample(city.id, displayLat, displayLng, (id) => this.getCityImageContainer(id));
@@ -3331,6 +3413,8 @@ export class TerritorySystem {
         const oldMarker = this.cityMarkers.get(city.id);
         const oldLabel = this.cityLabels.get(city.id);
         if (oldMarker) {
+            const oldGround = (oldMarker as any)._groundMarker as L.Marker | undefined;
+            if (oldGround) this.layerGroup.removeLayer(oldGround);
             this.layerGroup.removeLayer(oldMarker);
             this.cityMarkers.delete(city.id);
         }
@@ -3395,6 +3479,10 @@ export class TerritorySystem {
         } else {
             root.classList.remove('city-under-siege');
         }
+        const groundRoot = ((marker as any)._groundMarker as L.Marker | undefined)?.getElement()?.querySelector('.city-image-container');
+        if (groundRoot) {
+            groundRoot.classList.toggle('city-under-siege', enabled);
+        }
     }
 
     /** 跟拍军团停驻时据点建筑放大（class city-garrisoned，与攻城放大互不相干）；marker 不存在时不做事 */
@@ -3403,6 +3491,8 @@ export class TerritorySystem {
         if (!root) return;
         if (enabled) root.classList.add('city-garrisoned');
         else root.classList.remove('city-garrisoned');
+        const groundRoot = ((this.cityMarkers.get(cityId) as any)?._groundMarker as L.Marker | undefined)?.getElement()?.querySelector('.city-image-container');
+        groundRoot?.classList.toggle('city-garrisoned', enabled);
     }
 
     /** 该据点是否处于攻城建筑放大态（仅跟拍军团参战那场会开） */
@@ -3535,10 +3625,16 @@ export class TerritorySystem {
             const marker13 = this.cityMarkers.get(cityId);
             const root13 = marker13?.getElement()?.querySelector('.city-image-container');
             root13?.classList.toggle('scene13-zoom', scene13);
+            const groundRoot13 = ((marker13 as any)?._groundMarker as L.Marker | undefined)?.getElement()?.querySelector('.city-image-container');
+            groundRoot13?.classList.toggle('scene13-zoom', scene13);
         }
 
         // [PERF] 用 CSS 自定义属性驱动全部 marker 缩放，替代 600+ 次 forEach DOM 写。
         // .city-image-container { transform: scale(var(--city-scale, 1)); }
+        const cityGroundPane = this.map.getLeafletMap().getPane('cityGroundPane');
+        if (cityGroundPane) {
+            cityGroundPane.style.setProperty('--city-scale', String(scale));
+        }
         const cityPane = this.map.getLeafletMap().getPane('cityPane');
         if (cityPane) {
             cityPane.style.setProperty('--city-scale', String(scale));
@@ -3559,6 +3655,8 @@ export class TerritorySystem {
         const hideInfra = isMacroMapZoom(zoom);
 
         // 据点旗（cityPane）：zoom ≤ 7 宏观视图隐藏，zoom ≥ 8 显示
+        const cityGroundPane = leafletMap.getPane('cityGroundPane');
+        if (cityGroundPane) cityGroundPane.style.display = (floorZoom >= 8) ? '' : 'none';
         const cityPane = leafletMap.getPane('cityPane');
         if (cityPane) cityPane.style.display = (floorZoom >= 8) ? '' : 'none';
 
@@ -3598,10 +3696,14 @@ export class TerritorySystem {
     // [NEW] Control City Pane Opacity & Interaction (for Road Editor)
     public setCityOpacity(opacity: number, interactable: boolean) {
         const leafMap = this.map.getLeafletMap();
+        const cityGroundPane = leafMap.getPane('cityGroundPane');
         const cityPane = leafMap.getPane('cityPane');
         const labelsPane = leafMap.getPane('labelsPane');
 
         const opacityStr = opacity.toString();
+        if (cityGroundPane) {
+            cityGroundPane.style.opacity = opacityStr;
+        }
         // [FIX] Use !important when disabling interaction to override Leaflet's internal marker styles
         const pointerEvents = interactable ? 'auto' : 'none';
         const priority = interactable ? '' : 'important';

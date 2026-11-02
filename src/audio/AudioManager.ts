@@ -583,7 +583,6 @@ korea_a: 0.646,  // -17.2 LUFS
     berber_b: 0.700,  // -17.9 LUFS
     ethiopians_a: 0.596,  // -16.5 LUFS
     ethiopians_b: 0.653,  // -17.3 LUFS
-    greece_a: 0.684,  // -17.7 LUFS
     inca_a: 0.676,  // -17.6 LUFS
     athenians_a: 0.794,  // -19.0 LUFS
     athenians_b: 0.708,  // -18.0 LUFS
@@ -696,7 +695,9 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     GEORGIANS: ['de_GEORGIANS', 'georgians_a', 'georgians_b'],
     GERMANIC: ['de_GERMANIC', 'drakkar_drums', 'germanic_a'],
     GOTHS: ['de_GOTHS', 'goths_a', 'goths_b'],
-    GREECE: ['GREECE', 'fallen_army', 'greece_a'],
+    // 🔴 [2026-11-02 主人令「删除希腊布祖基琴 Hasapika [greece_a]」]
+    //    greece_a 已连同 .aud 文件删除，GREECE 池由 3 首降为 2 首（GREECE + fallen_army）。
+    GREECE: ['GREECE', 'fallen_army'],
     GURJARAS: ['de_GURJARAS', 'gurjaras_a', 'gurjaras_b'],
     HUNS: ['de_HUNS', 'huns_a', 'huns_b'],
     INCA: ['de_INCA', 'ANDE', 'inca_a'],

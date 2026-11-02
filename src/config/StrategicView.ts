@@ -43,6 +43,7 @@ export const MACRO_HIDDEN_INFRA_PANES = [
 
 /** 仅 zoom ≤ 7 时额外隐藏据点与城名 */
 export const FACTION_ONLY_HIDDEN_PANES = [
+    'cityGroundPane',
     'cityPane',
     'labelsPane',
 ] as const;

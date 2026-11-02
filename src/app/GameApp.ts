@@ -1179,6 +1179,14 @@ export class GameApp {
             hasViewerRename: () => this.live.hasActiveViewerRename(),
             onVetoViewerRename: () => this.live.vetoPlayerName(),
             setCompanionPanelsExpanded: (expanded) => {
+                // 🔴 [2026-11-02 主人令「环球和航行模式，自动把控制，控将，军情，军团全部最小化」]
+                if (this.playerHero?.isTourMode()) {
+                    this.cameraFollowUI.closeList();
+                    this.brawlFeedPanel?.setExpanded(false);
+                    this.gameTimeHUD?.setCollapsed(true, false);
+                    this.livePanel.setCollapsed(true);
+                    return;
+                }
                 // 🔴 [2026-09-24 主人定] 剧本期：军团/军情两块不显示（CSS 藏）也不展开（免得白刷列表）。
                 // 🔴 [2026-09-26 主人两道令] 先令「把右下角的信息面板也隐藏」，随即报障
                 //    「你把信息面板的展开按钮也给隐藏啦，我怎么开打呀」，再澄清「我说的隐藏是最小化，
@@ -1220,6 +1228,25 @@ export class GameApp {
 
         this.cameraFollowUI.setPlayerHero(hero);
         hero.onChange(() => this.cameraFollowUI.refreshPlayerFollow());
+        // 🔴 [2026-11-02 主人令「环球和航行模式，自动把控制，控将，军情，军团全部最小化」]
+        const minimizeTourPanels = () => {
+            this.cameraFollowUI.closeList();
+            this.brawlFeedPanel?.setExpanded(false);
+            this.gameTimeHUD?.setCollapsed(true, false);
+            this.livePanel.setCollapsed(true);
+        };
+        let lastPlayMode = hero.playMode;
+        hero.onChange(() => {
+            if (hero.playMode !== lastPlayMode) {
+                lastPlayMode = hero.playMode;
+                if (hero.isTourMode()) {
+                    minimizeTourPanels();
+                }
+            }
+        });
+        if (hero.isTourMode()) {
+            minimizeTourPanels();
+        }
         // 不在此处 followPlayer：镜头默认自由，主角移动时才跟随（PlayerHero 的 followCamera/releaseCamera）
         const lMap = this.map.getLeafletMap();
         lMap.setView([spawnPos.lat, spawnPos.lng], lMap.getZoom(), { animate: false });

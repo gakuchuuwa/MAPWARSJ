@@ -39,11 +39,23 @@ export class ViewerLivePanel {
         this.toggleBtn = document.createElement('button');
         this.toggleBtn.type = 'button';
         this.toggleBtn.style.cssText = `
-            flex-shrink:0; padding:2px 8px;
-            background:linear-gradient(180deg, rgba(38,30,22,0.95) 0%, rgba(22,17,12,0.98) 100%);
-            border:1px solid rgba(212,175,55,0.5); border-radius:4px;
-            color:#dfc28c; font-family:${FONT}; font-size:12px; font-weight:700;
-            cursor:pointer; white-space:nowrap; user-select:none;`;
+            flex-shrink:0; height:20px; padding:0 8px;
+            background:linear-gradient(180deg, rgba(32,25,18,0.96) 0%, rgba(18,14,10,0.98) 100%);
+            border:1px solid rgba(212,175,55,0.45); border-radius:4px;
+            color:#dfc28c; font-family:${FONT}; font-size:11px; font-weight:700;
+            display:inline-flex; align-items:center; justify-content:center; gap:4px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.45);
+            cursor:pointer; white-space:nowrap; user-select:none; transition:all 0.2s ease;`;
+        this.toggleBtn.addEventListener('mouseenter', () => {
+            this.toggleBtn.style.color = '#ffd700';
+            this.toggleBtn.style.borderColor = 'rgba(255, 215, 0, 0.85)';
+            this.toggleBtn.style.background = 'rgba(45, 36, 26, 0.98)';
+        });
+        this.toggleBtn.addEventListener('mouseleave', () => {
+            this.toggleBtn.style.color = '#dfc28c';
+            this.toggleBtn.style.borderColor = 'rgba(212, 175, 55, 0.45)';
+            this.toggleBtn.style.background = 'linear-gradient(180deg, rgba(32,25,18,0.96) 0%, rgba(18,14,10,0.98) 100%)';
+        });
         this.toggleBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             this.collapsed = !this.collapsed;
@@ -70,26 +82,54 @@ export class ViewerLivePanel {
         this.render();
     }
 
+    public setCollapsed(collapsed: boolean): void {
+        if (this.collapsed === collapsed) return;
+        this.collapsed = collapsed;
+        this.syncCollapsedState();
+        this.render();
+    }
+
     private syncCollapsedState(): void {
         this.body.style.display = this.collapsed ? 'none' : 'block';
         this.dev.style.display = !this.collapsed && this.devOpen ? 'block' : 'none';
         if (this.collapsed) {
-            this.toggleBtn.innerHTML = `📢 <span style="color:#ffd700;">弹幕控将</span> ${this.inScene13Bar ? '▼ 展开' : '▲ 展开'}`;
-            this.toggleBtn.title = '展开弹幕控制面板';
+            this.toggleBtn.innerHTML = this.inScene13Bar ? '<span>▼</span><span>控将</span>' : '<span>▲</span><span>控将</span>';
+            this.toggleBtn.title = '展开控将面板';
+            if (!this.inScene13Bar) {
+                this.root.style.background = 'transparent';
+                this.root.style.border = 'none';
+                this.root.style.borderRadius = '0';
+                this.root.style.padding = '0';
+                this.root.style.boxShadow = 'none';
+            }
         } else {
-            this.toggleBtn.innerHTML = this.inScene13Bar ? '▲ 收起' : '▼ 收起';
-            this.toggleBtn.title = '收起弹幕控制面板';
+            this.toggleBtn.innerHTML = this.inScene13Bar ? '<span>▲</span><span>收起</span>' : '<span>▼</span><span>收起</span>';
+            this.toggleBtn.title = '收起控将面板';
+            if (!this.inScene13Bar) {
+                this.root.style.background = 'linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%)';
+                this.root.style.border = '1px solid rgba(212,175,55,0.65)';
+                this.root.style.borderRadius = '8px';
+                this.root.style.padding = '4px 14px';
+                this.root.style.boxShadow = '0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22)';
+            }
         }
     }
 
     private applyStrategicBottomStyle(): void {
+        const bg = this.collapsed
+            ? 'transparent'
+            : 'linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%)';
+        const border = this.collapsed ? 'none' : '1px solid rgba(212,175,55,0.65)';
+        const radius = this.collapsed ? '0' : '8px';
+        const pad = this.collapsed ? '0' : '4px 14px';
+        const shadow = this.collapsed ? 'none' : '0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22)';
+
         this.root.style.cssText = `
             position:fixed; left:50%; bottom:6px; top:auto; transform:translateX(-50%); transform-origin:bottom center;
             z-index:10054; width:max-content; max-width:94vw; display:block;
-            background:linear-gradient(180deg, rgba(28,22,16,0.94) 0%, rgba(12,10,8,0.96) 100%);
-            border:1px solid rgba(212,175,55,0.65); border-radius:8px;
-            padding:4px 14px; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
-            box-shadow:0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22);
+            background:${bg}; border:${border}; border-radius:${radius};
+            padding:${pad}; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
+            box-shadow:${shadow};
             pointer-events:auto; user-select:none;`;
         this.dev.style.cssText = `display:${!this.collapsed && this.devOpen ? 'block' : 'none'}; width:380px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
     }
@@ -147,7 +187,9 @@ export class ViewerLivePanel {
         const centerX = Math.round((leftEdge + rightEdge) / 2);
         let scale = Math.round(Math.max(1, window.innerWidth / DESIGN_WIDTH) * 100) / 100;
         const naturalWidth = this.root.offsetWidth;
-        if (naturalWidth > 0 && naturalWidth * scale > availWidth) {
+        if (this.collapsed) {
+            scale = 1;
+        } else if (naturalWidth > 0 && naturalWidth * scale > availWidth) {
             scale = Math.max(0.65, Math.floor((availWidth / naturalWidth) * 100) / 100);
         }
         this.root.style.left = `${centerX}px`;

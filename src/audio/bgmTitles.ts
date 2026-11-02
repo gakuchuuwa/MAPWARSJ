@@ -131,7 +131,6 @@ export const BGM_TITLES: Record<string, string> = {
     germanic_a: '条顿勇士 中世纪十字军',
     goths_a: '条顿堡森林之战',
     goths_b: '战鼓 Horde',
-    greece_a: '希腊布祖基琴 Hasapika',
     gurjaras_a: '卡玛查琴 Sakar Khan',
     gurjaras_b: '拉贾斯坦口弦 Morchang',
     helmet_to_helmet: 'Helmet To Helmet(暂停)',

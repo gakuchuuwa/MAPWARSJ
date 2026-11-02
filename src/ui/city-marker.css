@@ -39,6 +39,10 @@
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
 }
 
+.city-ground-icon .city-image-container .city-building-stack {
+    filter: none;
+}
+
 /*
  * 渐变描边：与 VectorRiverLayer 河流水色一致（#3E7FAF / 描边 #2E4A5F）
  * filter 无法真渐变：仅左右+下方分向描边，不用 0 0 模糊（避免顶部光晕）
