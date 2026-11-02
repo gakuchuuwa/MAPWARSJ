@@ -1031,6 +1031,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'satsuma_daojinjiajiu': 16,                          // 岛津家久 · satsuma · 鹿儿岛城
     'shimotsuke_yudougongguanggang': 16,                 // 宇都宫广纲 · shimotsuke · 宇都宫城
     'so_zongyizhi': 16,                                  // 宗义智 · so · 金石城
+    'goto_xuanya': 16,                                  // 五岛玄雅 · goto · 五岛（文禄·庆长之役从军、1603 立福江藩）
+    'omura_sumitada': 16,                               // 大村纯忠 · omura · 长崎（1571 开港、1580 献港）
     'suwa_d_zoufanglaizhong': 16,                        // 诹访赖重 · suwa_d · 高岛
     'taira_pingzhisheng': 12,                            // 平知盛 · taira · 赤间关
     'totomi_jiujingzhongci': 16,                         // 酒井忠次 · totomi · 浜松城

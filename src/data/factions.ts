@@ -460,6 +460,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'ryukyu', name: '琉球' },
     { id: 'so', name: '对马' },
+      { id: 'goto', name: '五岛' },
+      { id: 'omura', name: '大村' },
     { id: 'kakizaki', name: '松前' },
     { id: 'fujiwara', name: '奥州' },
     // 🔴 [2026-09-19 主人定「另立源氏/镰仓势力，要符合历史」] **源氏（镰仓殿）**

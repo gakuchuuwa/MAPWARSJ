@@ -475,6 +475,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'siam': [{ from: -9999, era: 'imperial' }], // 暹罗
     'sijitai': [{ from: -9999, era: 'antiquity' }], // 斯基泰
     'so': [{ from: -9999, era: 'imperial' }], // 对马
+    'goto': [{ from: -9999, era: 'imperial' }], // 五岛｜宇久氏/五岛氏（战国—江户水军大名，1592 文禄之役、1603 福江藩）＝帝国时代；JAPAN × 帝国＝帝国时代武家军团
+    'omura': [{ from: -9999, era: 'imperial' }], // 大村｜大村氏（肥前领主，1571 长崎开港、1580 献长崎予耶稣会）＝帝国时代；JAPAN × 帝国＝帝国时代武家军团
     'sou': [{ from: -9999, era: 'antiquity' }], // 越嶲夷
     'sui': [{ from: -9999, era: 'feudal' }], // 隋国
     'suke': [{ from: -9999, era: 'castle' }], // 素可泰

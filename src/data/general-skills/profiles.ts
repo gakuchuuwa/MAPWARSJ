@@ -310,6 +310,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     so_zongyizhi: { generalId: 'so_zongyizhi', tier: 'ordinary', tacticalSkillId: 'ts_066', advantageSkillId: 'ts_066', balanceSkillId: 'ts_467', disadvantageSkillId: 'ts_565', atkAdvantageSkillId: 'ts_066', atkBalanceSkillId: 'ts_467', atkDisadvantageSkillId: 'ts_565', defAdvantageSkillId: 'ts_673', defBalanceSkillId: 'ts_1111', defDisadvantageSkillId: 'ts_422', aptitude: 'leverage' , attackStyle: 'attack'},
+    goto_xuanya: { generalId: 'goto_xuanya', tier: 'ordinary', tacticalSkillId: 'ts_066', advantageSkillId: 'ts_066', balanceSkillId: 'ts_467', disadvantageSkillId: 'ts_565', atkAdvantageSkillId: 'ts_066', atkBalanceSkillId: 'ts_467', atkDisadvantageSkillId: 'ts_565', defAdvantageSkillId: 'ts_673', defBalanceSkillId: 'ts_1111', defDisadvantageSkillId: 'ts_422', aptitude: 'leverage' , attackStyle: 'attack'},
+    omura_sumitada: { generalId: 'omura_sumitada', tier: 'ordinary', tacticalSkillId: 'ts_066', advantageSkillId: 'ts_066', balanceSkillId: 'ts_467', disadvantageSkillId: 'ts_565', atkAdvantageSkillId: 'ts_066', atkBalanceSkillId: 'ts_467', atkDisadvantageSkillId: 'ts_565', defAdvantageSkillId: 'ts_673', defBalanceSkillId: 'ts_1111', defDisadvantageSkillId: 'ts_422', aptitude: 'leverage' , attackStyle: 'attack'},
 
 
 

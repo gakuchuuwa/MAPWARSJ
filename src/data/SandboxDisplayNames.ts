@@ -236,6 +236,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dayue': '大越',
     'ryukyu': '琉球',
     'so': '对马',
+    'goto': '五',
+    'omura': '大村',
     'gaya': '伽倻',
     'chosokabe': '土佐',
 'xingliao': '兴辽',

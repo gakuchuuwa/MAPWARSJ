@@ -266,7 +266,10 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_wang_ji: { birth: 1378, death: 1460, kaoju: '推定' },  // 王骥（明兵部尚书）
     gen_vasili_iii: { birth: 1479, death: 1533 },          // 瓦西里三世（莫斯科大公）
     gen_atahualpa: { birth: 1502, death: 1533 },           // 阿塔瓦尔帕（印加末帝）
-    gen_valdivia: { birth: 1497, death: 1553 },            // 瓦尔迪维亚（智利征服者）
+    gen_valdivia: { birth: 1497, death: 1553 },
+    yinggelan_yuehansimisi: { birth: 1580, death: 1631 },
+    yinggelan_henlimogen: { birth: 1635, death: 1688 },            // 亨利·摩根（牙买加副总督兼私掠司令）            // 约翰·史密斯（詹姆斯敦总督）
+    xibanya_jialai: { birth: 1528, death: 1583 },            // 加赖（布宜诺斯艾利斯奠基者）            // 瓦尔迪维亚（智利征服者）
     gen_medinaceli: { birth: 1500, death: 1574, kaoju: '推定' }, // 梅迪纳科利公爵
     gen_chen_youliang: { birth: 1320, death: 1363, kaoju: '推定' }, // 陈友谅（陈汉皇帝）
     gen_razadarit: { birth: 1368, death: 1421 },           // 罗娑陀利（勃固孟王）
@@ -851,6 +854,8 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     kakizaki_liqiqingguang: { birth: 1548, death: 1616 },  // 蛎崎庆广
     ayinu_hushemoquan: { birth: 1410, death: 1457, kaoju: '推定' },  // 胡奢魔犬
     so_zongyizhi: { birth: 1568, death: 1615 },  // 宗义智
+    goto_xuanya: { birth: 1548, death: 1612 },  // 五岛玄雅（宇久玄雅→大濱玄雅→五岛玄雅；福江藩初代藩主）
+    omura_sumitada: { birth: 1533, death: 1585 },  // 大村纯忠（肥前大村氏当主，吉利支丹大名，1571 长崎开港）
     taira_pingzhisheng: { birth: 1152, death: 1185 },  // 平知盛
     lelang_wangqi: { birth: 205, death: 265, kaoju: '推定' },  // 王颀
     anmei_yuwandaqin: { birth: 1470, death: 1537, kaoju: '推定' },  // 与湾大亲

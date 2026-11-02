@@ -2496,12 +2496,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     yinggelan: [
-        { generalId: 'yinggelan_yuehanjifade', factionId: 'yinggelan', cityId: 'city_geluosite', generalName: '约翰吉法德', portrait: '/assets/BRITONS/yinggelan_yuehanjifade.png', eliteName: '边区戍兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将·移将] 1282 任布伊尔斯城堡守将，12-11 出兵伊尔丰桥设伏，卢埃林阵亡（《布鲁特诸王编年史》）｜布伊尔斯＝凯尔特据点、将属英格兰→③ 就近 BRITONS 据点格洛斯特（86km）
+                // 约翰·史密斯（1580–1631，弗吉尼亚殖民地开拓者与詹姆斯敦总督）→ 詹姆斯敦（BRITONS）
+                // 亨利·摩根（1635–1688，私掠舰队司令、牙买加副总督）→ 皇家港（BRITONS）
+        { generalId: 'yinggelan_henlimogen', factionId: 'yinggelan', cityId: 'city_portroyal', generalName: '亨利摩根', portrait: '/assets/BRITONS/yinggelan_henlimogen.png', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
+{ generalId: 'yinggelan_yuehansimisi', factionId: 'yinggelan', cityId: 'city_jamestown', generalName: '约翰史密斯', portrait: '/assets/BRITONS/yinggelan_yuehansimisi.png', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
+{ generalId: 'yinggelan_yuehanjifade', factionId: 'yinggelan', cityId: 'city_geluosite', generalName: '约翰吉法德', portrait: '/assets/BRITONS/yinggelan_yuehanjifade.png', eliteName: '边区戍兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将·移将] 1282 任布伊尔斯城堡守将，12-11 出兵伊尔丰桥设伏，卢埃林阵亡（《布鲁特诸王编年史》）｜布伊尔斯＝凯尔特据点、将属英格兰→③ 就近 BRITONS 据点格洛斯特（86km）
         // 🔴 [2026-10-24 主人令] 弗农＝英国海军上将（1741 卡塔赫纳围攻指挥官）；城库无牙买加/皇家港，
         //    按「无合适据点取离战场最近的同风格城」改挂新阿姆斯特丹（SAXONS，3375km；比温彻斯特 8420km 近）；军团不变。
         // 🔴 [2026-10-25 主人令「全面修复」] 弗农＝英国海军上将，原挂新阿姆斯特丹（日耳曼文化）与本人文化不符；
         //    按「无合适据点取离事发地（卡塔赫纳）最近的同风格城」改挂坎佩尔（BRITONS，7769km，最近的同文化城）。
-        { generalId: 'gen_vernon', cityId: 'city_kanpeier', generalName: '弗农', portrait: '/assets/BRITONS/gen_vernon.png', eliteName: '英格兰骑士', eliteTier: 3 },
+        { generalId: 'gen_vernon', cityId: 'city_portroyal', generalName: '弗农', portrait: '/assets/BRITONS/gen_vernon.png', eliteName: '英格兰骑士', eliteTier: 3 },
 
 
 
@@ -7302,6 +7306,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     so: { generalId: 'so_zongyizhi', cityId: 'city_tsushima', generalName: '宗义智', portrait: '/assets/JAPAN/so_zongyizhi.png', eliteName: '日本足轻', eliteTier: 4 },
+    goto: { generalId: 'goto_xuanya', cityId: 'city_goto', generalName: '五岛玄雅', portrait: '', eliteName: '日本足轻', eliteTier: 4 },
+    omura: { generalId: 'omura_sumitada', cityId: 'city_nagasaki', generalName: '大村纯忠', portrait: '', eliteName: '日本足轻', eliteTier: 4 },
 
 
 
@@ -15911,7 +15917,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_valdivia', cityId: 'city_lima', generalName: '瓦尔迪维亚', portrait: '/assets/SPANISH/gen_valdivia.png', legionName: '帝国时代西班牙方阵军团', eliteName: '征服者骑', eliteTier: 3 },
+        { generalId: 'gen_valdivia', cityId: 'city_valparaiso', generalName: '瓦尔迪维亚', portrait: '/assets/SPANISH/gen_valdivia.png', legionName: '帝国时代西班牙方阵军团', eliteName: '征服者骑', eliteTier: 3 },
 
 
 
@@ -15923,7 +15929,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'xibanya_orellana', factionId: 'xibanya', cityId: 'city_lima', generalName: '弗朗西斯科', portrait: '/assets/SPANISH/xibanya_orellana.png', eliteName: '征服者火枪', eliteTier: 3 },
+                // 加赖（胡安·德·加赖，1528–1583，拉普拉塔副总督，1580年重建布宜诺斯艾利斯定居点）→ 布宜诺斯艾利斯（SPANISH）
+        { generalId: 'xibanya_jialai', factionId: 'xibanya', cityId: 'city_buenosaires', generalName: '加赖', portrait: '/assets/SPANISH/xibanya_jialai.png', eliteName: '西班牙民兵', eliteTier: 4, legionName: '帝国时代西班牙方阵军团' },
+{ generalId: 'xibanya_orellana', factionId: 'xibanya', cityId: 'city_lima', generalName: '弗朗西斯科', portrait: '/assets/SPANISH/xibanya_orellana.png', eliteName: '征服者火枪', eliteTier: 3 },
         { generalId: 'xibanya_gonzalo', factionId: 'xibanya', cityId: 'city_lima', generalName: '贡萨洛', portrait: '/assets/SPANISH/xibanya_gonzalo.png', eliteName: '征服者骑', eliteTier: 3 },
     ],  // 利马·征服印加的西班牙征服者
 

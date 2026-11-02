@@ -750,7 +750,7 @@ export class GameMap {
                 div.style.fontFamily = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
                 div.style.color = '#5b7a66';
                 div.style.maxHeight = '85vh';
-                div.style.width = '150px';
+                div.style.width = '168px';
                 div.style.overflowY = 'auto';
                 
                 let html = `
@@ -792,6 +792,18 @@ export class GameMap {
                 }
 
                 html += `
+                    <div style="font-weight:bold;margin-bottom:2px;font-size:12px;color:#1d3326;">🏯 据点搜索</div>
+                    <div style="position:relative;width:100%;">
+                        <input type="text" id="inp-city-search" placeholder="输入据点名（如 瓦尔帕莱索、长安）" style="padding:6px;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-family:inherit;font-size:12px;color:#1d3326;background:rgba(255,255,255,0.6);width:100%;box-sizing:border-box;">
+                        <div id="city-search-dropdown" style="display:none;position:absolute;left:0;top:100%;width:100%;max-height:160px;overflow-y:auto;background:rgba(255,255,255,0.96);border:1px solid rgba(125,111,90,0.5);border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,0.18);z-index:1000;margin-top:2px;"></div>
+                    </div>
+                    <div style="display:flex;gap:6px;margin-top:4px;">
+                        <button id="btn-city-search" style="flex:1;padding:6px;cursor:pointer;background:transparent;color:#1d3326;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-weight:bold;font-family:inherit;transition:all 0.2s;">🔍 定位据点 (ZOOM 9)</button>
+                    </div>
+                    <div id="city-search-result" style="font-size:11px;color:#5c3e21;background:rgba(255,255,255,0.6);border-left:3px solid #1b5e20;padding:4px 6px;border-radius:3px;line-height:1.4;display:none;margin-top:4px;"></div>
+
+                    <hr style="margin:4px 0;width:100%;border:0;border-top:1px dashed rgba(125, 111, 90, 0.4);">
+
                     <div style="font-weight:bold;margin-bottom:2px;font-size:12px;color:#666;">📍 坐标搜索</div>
                     <input type="text" id="inp-coord-search" placeholder="lat, lng（如 37.2833, 34.7833）" style="padding:6px;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-family:inherit;font-size:12px;color:#1d3326;background:rgba(255,255,255,0.6);width:100%;box-sizing:border-box;">
                     <div style="display:flex;gap:6px;margin-top:4px;">
@@ -1027,6 +1039,104 @@ export class GameMap {
             const chkRiver = document.getElementById('chk-river') as HTMLInputElement;
 
             // 📍 坐标搜索：输入 lat, lng 跳转到 ZOOM 9 并标记定位（带波纹高亮、最近据点与距离提示）
+            // ── 据点搜索功能 ──
+            const btnCitySearch = document.getElementById('btn-city-search');
+            const inpCitySearch = document.getElementById('inp-city-search') as HTMLInputElement | null;
+            const cityDropdown = document.getElementById('city-search-dropdown');
+            const citySearchResult = document.getElementById('city-search-result');
+
+            const locateCity = (city: (typeof CITIES_V2)[number]) => {
+                if (!city) return;
+                if (cityDropdown) cityDropdown.style.display = 'none';
+                if (inpCitySearch) inpCitySearch.value = city.name;
+
+                const typeMap: Record<string, string> = {
+                    mega: '超级大都会',
+                    metropolis: '大都会',
+                    large_city: '大城',
+                    medium_city: '中城',
+                    small_city: '小城',
+                    stockade: '城寨',
+                    pass: '险要/关隘',
+                };
+                const typeText = typeMap[city.type] ?? city.type;
+
+                // 纯净飞行定位：直接将镜头平移至目标据点，绝不向地图添加任何标记或图标
+                this.map.flyTo([city.lat, city.lng], 9, { duration: 1.0 });
+
+                if (citySearchResult) {
+                    citySearchResult.style.display = 'block';
+                    citySearchResult.innerHTML = `<b>${city.name}</b> (${typeText})<br>文化: <b>${city.buildingStyle}</b><br>坐标: ${city.lat.toFixed(4)}, ${city.lng.toFixed(4)}`;
+                }
+            };
+
+            if (inpCitySearch && cityDropdown) {
+                const renderDropdown = (matches: typeof CITIES_V2) => {
+                    if (matches.length === 0) {
+                        cityDropdown.style.display = 'none';
+                        cityDropdown.innerHTML = '';
+                        return;
+                    }
+                    cityDropdown.innerHTML = matches.slice(0, 10).map((c) => `
+                        <div class="city-search-item" data-id="${c.id}" style="padding:5px 8px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);font-size:12px;color:#1d3326;transition:background 0.15s;">
+                            <b>${c.name}</b> <span style="font-size:10px;color:#888;">[${c.buildingStyle}]</span>
+                        </div>
+                    `).join('');
+                    cityDropdown.style.display = 'block';
+
+                    cityDropdown.querySelectorAll('.city-search-item').forEach((el) => {
+                        el.addEventListener('mouseenter', () => (el as HTMLElement).style.background = 'rgba(46,125,50,0.12)');
+                        el.addEventListener('mouseleave', () => (el as HTMLElement).style.background = 'transparent');
+                        el.addEventListener('click', () => {
+                            const cid = el.getAttribute('data-id');
+                            const target = CITIES_V2.find((c) => c.id === cid);
+                            if (target) locateCity(target);
+                        });
+                    });
+                };
+
+                inpCitySearch.addEventListener('input', () => {
+                    const kw = inpCitySearch.value.trim().toLowerCase();
+                    if (!kw) {
+                        cityDropdown.style.display = 'none';
+                        return;
+                    }
+                    const matches = CITIES_V2.filter((c) =>
+                        c.name.toLowerCase().includes(kw) || c.id.toLowerCase().includes(kw),
+                    );
+                    renderDropdown(matches);
+                });
+
+                const doSearch = () => {
+                    const kw = inpCitySearch.value.trim().toLowerCase();
+                    if (!kw) return;
+                    const exact = CITIES_V2.find((c) => c.name.toLowerCase() === kw || c.id.toLowerCase() === kw);
+                    if (exact) {
+                        locateCity(exact);
+                        return;
+                    }
+                    const matched = CITIES_V2.find((c) => c.name.toLowerCase().includes(kw) || c.id.toLowerCase().includes(kw));
+                    if (matched) {
+                        locateCity(matched);
+                        return;
+                    }
+                    alert(`未找到名称或ID包含【${kw}】的据点`);
+                };
+
+                if (btnCitySearch) btnCitySearch.addEventListener('click', doSearch);
+                inpCitySearch.addEventListener('keydown', (e: any) => {
+                    if (e.key === 'Enter') doSearch();
+                    if (e.key === 'Escape') cityDropdown.style.display = 'none';
+                });
+
+                document.addEventListener('click', (e: MouseEvent) => {
+                    if (!inpCitySearch.contains(e.target as Node) && !cityDropdown.contains(e.target as Node)) {
+                        cityDropdown.style.display = 'none';
+                    }
+                });
+            }
+
+
             const btnCoordSearch = document.getElementById('btn-coord-search');
             const btnCoordClear = document.getElementById('btn-coord-search-clear');
             const inpCoordSearch = document.getElementById('inp-coord-search') as HTMLInputElement | null;

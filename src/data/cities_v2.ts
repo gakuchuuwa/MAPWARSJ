@@ -1658,7 +1658,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     },
     {
         id: 'city_katsuyama', name: '胜山馆', factionId: 'kakizaki',
-        lat: 41.4306, lng: 140.1083, type: 'pass', troops: 10000, tier: 4,
+        lat: 41.8008, lng: 140.0994, type: 'pass', troops: 10000, tier: 4,
         
         note: '胜山馆；松前关隘', region: 'JAPAN_IMPERIAL',
         buildingStyle: 'JAPAN' },
@@ -2196,7 +2196,56 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_huashixia', name: '花石峡', factionId: 'tang', lat: 35.196235, lng: 98.907166, type: 'stockade', region: 'HEXI', buildingStyle: 'KHITAN', troops: 10000, mirror: true, note: '黑齿常之河源军大破吐蕃' },
 
     // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
-    { id: 'city_wendeng', name: '文登', factionId: 'tang', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', buildingStyle: 'WEI', troops: 10000, note: '苏定方神丘道行军伐百济，自城山济海（《玉海·卷一八一》引《通鉴》；原注「神灭军」按史正之）；推算：城居 1 万（文登，登州属县 1 万）→ 小城' } ];
+    { id: 'city_wendeng', name: '文登', factionId: 'tang', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', buildingStyle: 'WEI', troops: 10000, note: '苏定方神丘道行军伐百济，自城山济海（《玉海·卷一八一》引《通鉴》；原注「神灭军」按史正之）；推算：城居 1 万（文登，登州属县 1 万）→ 小城' },
+    {
+        id: 'city_valparaiso',
+        name: '瓦尔帕莱索',
+        factionId: 'xibanya',
+        lat: -33.04,
+        lng: -71.62,
+        type: 'stockade',
+        troops: 10000,
+        region: 'INCA',
+        buildingStyle: 'SPANISH',
+        note: '瓦尔帕莱索(Valparaíso)，1544年巴尔迪维亚定为智利首府圣地亚哥对外海港，南美太平洋白银北运与大航海绕行麦哲伦海峡咽喉枢纽；按2026-10-25标准：≤1700年常住<1万且无合围石墙包砖体系 → 城寨',
+    },
+    {
+        id: 'city_buenosaires',
+        name: '布宜诺斯艾利斯',
+        factionId: 'xibanya',
+        lat: -34.60,
+        lng: -58.38,
+        type: 'stockade',
+        troops: 10000,
+        region: 'INCA',
+        buildingStyle: 'SPANISH',
+        note: '布宜诺斯艾利斯(Buenos Aires)，1536年门多萨初建、1580年加赖重建，拉普拉塔河出海咽喉与南美大西洋贸易枢纽；按2026-10-25标准：≤1700年常住约4000~5000人<1万且城防仅夯土土垒堡垒 → 城寨',
+    },
+    {
+        id: 'city_jamestown',
+        name: '詹姆斯敦',
+        factionId: 'yinggelan',
+        lat: 37.21,
+        lng: -76.78,
+        type: 'stockade',
+        troops: 10000,
+        region: 'AMERICA',
+        buildingStyle: 'BRITONS',
+        note: '詹姆斯敦(Jamestown)，1607年英格兰在北美首个永久定居点与弗吉尼亚殖民地首府，切萨皮克湾烟草跨洋贸易发源地；按2026-10-25标准：≤1700年常住数百人<1万且城防仅木栅三角形堡垒 → 城寨',
+    },
+    {
+        id: 'city_portroyal',
+        name: '皇家港',
+        factionId: 'yinggelan',
+        lat: 17.94,
+        lng: -76.84,
+        type: 'small_city',
+        troops: 10000,
+        region: 'AMERICA',
+        buildingStyle: 'BRITONS',
+        note: '皇家港(Port Royal)，17世纪西印度群岛英格兰殖民首府与加勒比海十字路口枢纽，走私贸易与私掠总基地；按2026-10-25标准：1692年地震前常住约6500~8000人<1万，但具备查理堡等全石砌红砖包合围海防要塞体系 → 小城',
+    },
+];
 
 // ============================================================
 // 汇总导出
@@ -2764,6 +2813,9 @@ buildingStyle: 'KOREA', troops: 10000,
 
     { id: 'city_yuanzhishi', name: '原之辻', factionId: 'yizhi', lat: 33.791, lng: 129.703, type: 'stockade', region: 'JAPAN_ANTIQUITY', buildingStyle: 'JAPAN', troops: 10000, note: '壹岐国府旧址' },
     { id: 'city_taizaifu', name: '太宰府', factionId: 'shoni', lat: 33.51, lng: 130.52, type: 'small_city', troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN' , note: '按 2026-10-25 标准：城居 1.5（奈良时代 Farris 推定）；1471 年 1 以上 → 小城' },
+    { id: 'city_goto', name: '五岛', factionId: 'goto', lat: 32.6955, lng: 128.841, type: 'stockade', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '福江（江川城）；五岛氏（宇久氏）居城，中世土垒海城无石垣 → 城寨（2026-10-25 标准③末行）；史为遣唐使寄泊地「值嘉岛那留浦」所在（《续日本纪》838 年）' },
+    { id: 'city_nagasaki', name: '长崎', factionId: 'omura', lat: 32.7555, lng: 129.8777, type: 'stockade', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '1571 年葡萄牙人开港；1580 年大村纯忠将长崎献予耶稣会，成为南蛮贸易与丝割符的枢纽；17 世纪城居不足 1 万 → 城寨（2026-10-25 标准③）' },
+    { id: 'city_aomen', name: '澳门', factionId: 'putaoya', lat: 22.1975, lng: 113.5438, type: 'stockade', region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', troops: 10000, note: '1557 年葡人获准居留，澳门议事亭（1583）自治；澳门—长崎、澳门—马六甲—果阿为葡萄牙东方航线两翼。17 世纪常住数千 → 城寨（2026-10-25 标准③）' },
 
     { id: 'city_chijianguan', name: '赤间关', factionId: 'heishi', lat: 33.95, lng: 130.93, type: 'pass', troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '赤间关（赤間関＝今下关）＝关门海峡的渡口关所 → 险要（2026-10-25 标准②：渡口型关所）' },
 

@@ -744,10 +744,11 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_ulugh_muhammad': 'CENTRAL_ASIA',   // 保加尔｜兀鲁黑｜据点 喀山
     'gen_uqba': 'BERBER',   // 阿格拉布｜奥克巴｜据点 凯鲁万
     'gen_urdaneta': 'SPANISH',   // 新西班牙｜乌尔达内塔｜据点 阿卡普尔科
-    'gen_valdivia': 'SPANISH',   // 西班牙｜瓦尔迪维亚｜据点 利马
+    'gen_valdivia': 'SPANISH',
+    'xibanya_jialai': 'SPANISH',   // 西班牙｜加赖｜据点 布宜诺斯艾利斯   // 西班牙｜瓦尔迪维亚｜据点 瓦尔帕莱索
     'gen_vasili_iii': 'SLAVIC',   // 莫斯公国｜瓦西里三世｜据点 莫斯科
     'gen_velazquez': 'SPANISH',   // 西属古巴｜贝拉斯克斯｜据点 哈瓦那
-    'gen_vernon': 'BRITONS',   // 英格兰｜弗农｜据点 坎佩尔（2026-10-25 改挂最近同文化城）
+    'gen_vernon': 'BRITONS',   // 英格兰｜弗农｜据点 皇家港（2026-10-25 改挂最近同文化城）
     'gen_villaret': 'FRANKS',   // 多德卡尼斯｜维拉雷｜据点 罗得城
     'gen_vlad_impaler': 'SLAVIC',   // 瓦拉几亚｜弗拉德三世｜据点 特尔戈维
     'gen_vladimir_andreyevich': 'SLAVIC',   // 谢尔公国｜勇者弗拉基｜据点 谢尔普霍夫
@@ -1814,4 +1815,4 @@ for (const generalId of Object.keys(GENERAL_CULTURE)) {
 export function getGeneralCulture(generalId: string | null | undefined): BuildingStyle | undefined {
     if (!generalId) return undefined;
     return getGeneralCityCulture(generalId) ?? GENERAL_CULTURE[generalId];
-}
+}

@@ -41,6 +41,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代平安军团",
         legionType: "region",
     },
+    "omura": {
+        legionName: "帝国时代武家军团",
+        legionType: "region",
+    },
+    "goto": {
+        legionName: "帝国时代武家军团",
+        legionType: "region",
+    },
     "qiufu": {
         legionName: "起义军",
         legionType: "sub",
