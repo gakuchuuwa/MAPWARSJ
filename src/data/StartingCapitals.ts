@@ -700,6 +700,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'suomunate': 'city_suomunate',
     'zhuluo': 'city_tanjiawuer',
     'sengjialuo': 'city_anulade',
+    'yaqi': 'city_yaqi',
+    'zhamolin': 'city_guli',
     'puxiangyindu': 'city_guoa',
     'pandiya': 'city_madula',
     'liaozu': 'city_wanxiang',

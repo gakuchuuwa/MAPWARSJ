@@ -16244,6 +16244,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'sengjialuo_mahinda_v', cityId: 'city_anulade', generalName: '摩哂陀五世', portrait: '/assets/INDIA/sengjialuo_mahinda_v.png', eliteName: '印度步兵', eliteTier: 4 },
+        { generalId: 'sengjialuo_boluojialuoliu', factionId: 'sengjialuo', cityId: 'city_jiale', generalName: '波罗迦罗摩六世', portrait: '/assets/INDIA/sengjialuo_boluojialuoliu.png', eliteName: '锡兰长弓手', eliteTier: 3 },
 
 
 

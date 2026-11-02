@@ -434,6 +434,9 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_malta: -800,         // 前8世纪腓尼基人在此建阿恩（梅利特）殖民城（英文维基 Mdina）
     city_xibo: -1200,         // 约前12世纪推罗腓尼基人建港城希波（英文维基 Hippo Regius） 🔴 [2026-10-19 复核] 推罗腓尼基人约前12 世纪在此定居成港城（英文维基 Hippo Regius），取世纪起点 -1200（约）。
     city_anulade: -437,       // 《大史》载公元前437年建城，遗址更早即有人居（英文维基 Anuradhapura）
+    city_yaqi: 1205,          // 亚齐：1205年4月22日苏丹约翰·沙阿始建班达亚齐城（英文维基 Banda Aceh）
+    city_jiale: 1344,         // 加勒：1344年伊本·白图泰游记已详记 Qali 港，1409年郑和立三语碑（英文维基 Galle）
+    city_guli: 1124,          // 古里：1124年埃拉迪王朝建立卡利卡特城，后为萨穆里王朝都城（英文维基 Kozhikode）
     city_mailuoe: -590,       // 前6世纪库施王阿斯佩尔塔迁都于此，前4世纪仍为都城（英文维基 Meroë）
     city_aolinpiya: -776,     // 传统以公元前776年首届奥林匹亚赛会为始，时为宙斯圣地（英文维基 Olympia, Greece）
     city_waerna: -425,        // 公元前425年已入提洛同盟贡册，公元前339年腓力二世围攻未克，公元前335年降于亚历山大（英文维基 Varna, Bulgaria）

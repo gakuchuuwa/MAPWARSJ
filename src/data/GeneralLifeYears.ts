@@ -1916,6 +1916,9 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     lagoniya_kelierlidasi: { birth: -460, death: -400, kaoju: '推定' },  // 克利尔里达斯
     gaolu_wulixi: { birth: 1810, death: 1880, kaoju: '推定' },  // 乌里希
     yinggelan_yuehanjifade: { birth: 1230, death: 1299, kaoju: '推定' },  // 约翰吉法德
+    yaqi_yisikanda: { birth: 1583, death: 1636 },  // 伊斯坎达尔（亚齐苏丹国）
+    sengjialuo_boluojialuoliu: { birth: 1391, death: 1467 },  // 波罗迦罗摩六世（僧伽罗/科提）
+    zhamolin_kunhali: { birth: 1500, death: 1580, kaoju: '推定' },  // 昆哈利（古里萨穆里海军）
 
 };
 

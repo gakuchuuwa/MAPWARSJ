@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-28T02:58:13.660Z",
+ "generatedAt": "2026-11-02T08:20:16.929Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16090,6 +16090,48 @@
    "reliefM": 158,
    "cliffs": 0,
    "top": "Grass 89.6% · Forest, Dry South American 10.2% · Jungle 0.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_yaqi",
+   "file": "site_city_yaqi.json",
+   "bytes": 342105,
+   "koppen": "Af",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 427,
+   "waterPct": 3,
+   "reliefM": 27,
+   "cliffs": 0,
+   "top": "Dry Grass 84.3% · Forest, Lush Bamboo 6.6% · Water, Shallow 3% · Beach 2.8%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_guli",
+   "file": "site_city_guli.json",
+   "bytes": 312233,
+   "koppen": "Am",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 2569,
+   "waterPct": 17.8,
+   "reliefM": 34,
+   "cliffs": 0,
+   "top": "Dry Grass 72.2% · Water, Shallow 17.8% · Forest, Lush Bamboo 5.5% · Bamboo 2.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_jiale",
+   "file": "site_city_jiale.json",
+   "bytes": 331871,
+   "koppen": "Af",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 692,
+   "waterPct": 4.8,
+   "reliefM": 61,
+   "cliffs": 0,
+   "top": "Dry Grass 83.6% · Forest, Lush Bamboo 6.2% · Water, Shallow 4.8% · Bamboo 2.2%",
    "verify": "ok"
   }
  ],

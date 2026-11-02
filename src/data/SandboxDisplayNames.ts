@@ -862,7 +862,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhenghe_yijun': '政和',   // 政和义军
     'latin_empire': '拉丁',   // 拉丁帝国
     'anjou': '安茹',   // 安茹
-    'pisa': '比萨',   // 比萨共和国
+    'pisa': '比萨',
+    'yaqi': '亚齐',
+    'zhamolin': '古里',   // 比萨共和国
 };
 
 // @ts-ignore

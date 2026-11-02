@@ -62,6 +62,7 @@ interface Creature {
     lat: number;
     lng: number;
     frame: number;
+    mirror: boolean;
     spawnedAt: number;
     expiresAt: number;
     lastFrameAt: number;
@@ -367,6 +368,10 @@ export class MarineLifeLayer extends L.Layer {
         if (kind === 'WHALE' || kind === 'NESSIE') {
             if (!canSpawnDeepSeaWhaleOrNessie(spawnLat, spawnLng)) kind = 'DOLPHIN';
         }
+        // 🔴 [2026-11-02 主人令「同屏不要出现两只海怪」] 场上有存活海怪时，新刷出的海怪降级为鲸鱼或海豚
+        if (kind === 'NESSIE' && this.creatures.some(c => c.kind === 'NESSIE')) {
+            kind = canSpawnDeepSeaWhaleOrNessie(spawnLat, spawnLng) ? 'WHALE' : 'DOLPHIN';
+        }
 
         this.creatures.push({
             id: this.nextCreatureId++,
@@ -374,6 +379,7 @@ export class MarineLifeLayer extends L.Layer {
             lat: spawnLat,
             lng: spawnLng,
             frame: Math.floor(Math.random() * ASSETS[kind].frames),
+            mirror: Math.random() < 0.5,
             spawnedAt: now,
             expiresAt: now + 16000 + Math.random() * 10000,
             lastFrameAt: now,
@@ -415,7 +421,13 @@ export class MarineLifeLayer extends L.Layer {
             const fadeOut = Math.min(1, Math.max(0, (c.expiresAt - now) / 1500));
             g.save();
             g.globalAlpha = fadeIn * fadeOut;
-            g.drawImage(img, sx, sy, a.boxW, a.boxH, p.x - ax, p.y - ay, w, h);
+            if (c.mirror) {
+                g.translate(p.x, p.y);
+                g.scale(-1, 1);
+                g.drawImage(img, sx, sy, a.boxW, a.boxH, -ax, -ay, w, h);
+            } else {
+                g.drawImage(img, sx, sy, a.boxW, a.boxH, p.x - ax, p.y - ay, w, h);
+            }
             g.restore();
         }
     }

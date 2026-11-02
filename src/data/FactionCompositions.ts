@@ -2473,6 +2473,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代爪哇军团",
         legionType: "region",
     },
+    "yaqi": {
+        legionName: "近世时代马来军团",
+        legionType: "region",
+    },
+    "zhamolin": {
+        legionName: "中世纪时代泰米尔军团",
+        legionType: "region",
+    },
     "sengjialuo": {
         legionName: "古典时代泰米尔军团",
         legionType: "region",

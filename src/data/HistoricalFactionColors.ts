@@ -793,7 +793,9 @@ export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Objec
     pattani: '#D4AF37', // 北大年·北大年苏丹国（金黄）
     latin_empire: '#5B21B6',   // 拉丁帝国
     anjou: '#B45309',   // 安茹
-    pisa: '#047857',   // 比萨共和国
+    pisa: '#047857',
+    yaqi: '#137547',   // 亚齐苏丹国
+    zhamolin: '#9C3828',   // 扎莫林（古里）   // 比萨共和国
  ..._FIXED });
 
 export const RESERVED_FACTION_COLOR_HEXES: ReadonlySet<string> = new Set(

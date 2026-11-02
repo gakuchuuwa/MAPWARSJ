@@ -577,7 +577,8 @@ korea_a: 0.646,  // -17.2 LUFS
     // 🔴 [2026-10-18 主人令「删除，越南独弦琴 Dan Bau [vietnamese_a]」] vietnamese_a 已删除：
     //    文件 public/bgm/vietnamese_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.VIETNAMESE 同步移除。
     vietnamese_b: 0.668,  // -17.5 LUFS
-    malay_a: 0.716,  // -18.1 LUFS
+    // 🔴 [2026-11-02 主人令「马来加美兰 Joget [malay_a]删除这个背景音乐」] malay_a 已删除：
+    //    文件 public/bgm/malay_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.MALAY 同步移除。
     malay_b: 0.708,  // -18.0 LUFS
     berber_a: 0.603,  // -16.6 LUFS
     berber_b: 0.700,  // -17.9 LUFS
@@ -714,7 +715,8 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     LITHUANIANS: ['de_LITHUANIANS', 'lithuanians_a'],
     MACEDONIAN: ['de_MACEDONIAN', 'macedonian_a', 'macedonian_b'],
     MAGYAR: ['de_MAGYAR', 'magyar_a', 'magyar_b'],
-    MALAY: ['de_MALAY', 'malay_a', 'malay_b'],
+    // 🔴 [2026-11-02 主人令] malay_a（马来加美兰 Joget）已连同 .aud 文件删除。
+    MALAY: ['de_MALAY', 'malay_b'],
     MAPUCHE: ['de_MAPUCHE', 'mapuche_a', 'mapuche_b'],
     MAYANS: ['de_MAYANS', 'mayans_b'],
     MONGOL: ['de_MONGOL', 'STEPPE', 'mongol_a'],

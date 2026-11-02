@@ -1198,7 +1198,10 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'satsuma_daojinjiajiu': 'JAPAN',   // 岛津｜岛津家久｜据点 鹿儿岛城
     'seljuq_sangjiaer': 'SASANIAN',   // 塞尔柱｜桑贾尔｜据点 木鹿
     'sengjialuo_dutugamo': 'INDIA',   // 僧伽罗｜杜图伽摩尼｜据点 阿努拉德
-    'sengjialuo_mahinda_v': 'INDIA',   // 僧伽罗｜摩哂陀五世｜据点 阿努拉德
+    'sengjialuo_mahinda_v': 'INDIA',
+    'sengjialuo_boluojialuoliu': 'INDIA',
+    'yaqi_yisikanda': 'MALAY',
+    'zhamolin_kunhali': 'INDIA',   // 僧伽罗｜摩哂陀五世｜据点 阿努拉德
     'shache_xian_suoche_shachexian': 'WESTERN',   // 莎车｜莎车贤｜据点 渠莎
     'shahelude_weisitamu': 'PERSIAN',   // 沙赫鲁德｜维斯塔姆｜据点 比斯塔姆
     'shaiyue_aerpade': 'MAGYAR',   // 喀尔巴阡｜阿尔帕德｜据点 布达佩斯

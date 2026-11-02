@@ -152,7 +152,6 @@ export const BGM_TITLES: Record<string, string> = {
     macedonian_b: '远方号角',
     magyar_a: '钦巴隆扬琴 匈牙利',
     magyar_b: '塔罗加托管',
-    malay_a: '马来加美兰 Joget',
     malay_b: '马来传统器乐 Joget',
     manqing: '满清 江山风雨情(暂停)',
     mapuche_a: '马普切特鲁特鲁卡',

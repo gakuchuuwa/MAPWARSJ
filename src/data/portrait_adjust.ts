@@ -9528,7 +9528,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/KHMER/taiyuan_menglai.png": {
-            "scale": 1.13,
+            "scale": 1.17,
             "offsetX": -5,
             "offsetY": -19
         },

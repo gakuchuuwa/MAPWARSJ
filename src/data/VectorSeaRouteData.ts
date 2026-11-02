@@ -133,35 +133,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "阿努拉德-马六甲",
-                type: "sea",
-                id: "sea_city_anulade_city_malacca_1787915776458",
-                startConnection: "city_anulade",
-                endConnection: "city_malacca"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [80.3956, 8.3533],
-                    [81.75, 9],
-                    [82.25, 7.83333],
-                    [82.08333, 6.5],
-                    [81.9, 5.9],
-                    [85.9479, 6.1983],
-                    [90, 6.4664],
-                    [94.32645, 6.15712],
-                    [98.12813, 5.81173],
-                    [99.76381, 4.08452],
-                    [100.6, 3.2],
-                    [101.3128, 2.58917],
-                    [102, 2],
-                    [102.25, 2.19],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "巴拿马-利马",
                 type: "sea",
                 id: "sea_city_banama_city_lima_1787915847565",
@@ -654,36 +625,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [43.75, 12.16667],
                     [43.91667, 11.5],
                     [43.4731, 11.3533],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "普里-阿努拉德",
-                type: "sea",
-                id: "sea_city_puli_city_anulade_20261024",
-                startConnection: "city_puli",
-                endConnection: "city_anulade"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [85.831, 19.81],
-                    [86.33333, 19.58333],
-                    [85.33333, 19.08333],
-                    [84.33333, 17.91667],
-                    [83.33333, 17.08333],
-                    [82.75, 16.5],
-                    [81.66667, 15.91667],
-                    [80.58333, 15.33333],
-                    [80.58333, 14],
-                    [80.58333, 12.83333],
-                    [80.25, 11.83333],
-                    [80.25, 10.33333],
-                    [80.66667, 10.25],
-                    [81.75, 9],
-                    [80.3956, 8.3533],
                 ]
             }
         },
@@ -2733,26 +2674,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "海阳-澎湖",
-                type: "sea",
-                id: "sea_city_haiyang_city_penghu_1788088774936",
-                startConnection: "city_haiyang",
-                endConnection: "city_penghu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [116.6394, 23.6697],
-                    [117, 23],
-                    [118.20346, 22.93094],
-                    [118.72413, 23.58266],
-                    [119.5, 23.5],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "鹿儿岛城-金石馆",
                 type: "sea",
                 id: "sea_city_satsuma_city_tsushima_20261024",
@@ -2912,27 +2833,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-10.08333, 39.83333],
                     [-9.91667, 38.5],
                     [-9.13, 38.72],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "海阳-刺桐",
-                type: "sea",
-                id: "sea_city_haiyang_city_qingjingsi_20261024",
-                startConnection: "city_haiyang",
-                endConnection: "city_qingjingsi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [116.6394, 23.6697],
-                    [117.16667, 23.08333],
-                    [118, 23.41667],
-                    [119, 24.25],
-                    [119.16667, 24.58333],
-                    [118.5833, 24.9],
                 ]
             }
         },
@@ -3817,30 +3717,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "海阳-番禺",
-                type: "sea",
-                id: "sea_city_haiyang_city_panyu_20261024",
-                startConnection: "city_haiyang",
-                endConnection: "city_panyu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [116.6394, 23.6697],
-                    [117.16667, 23.08333],
-                    [116.5, 22.58333],
-                    [115.83333, 22.25],
-                    [115, 22.25],
-                    [113.85544, 22.03473],
-                    [113.69339, 22.23826],
-                    [113.68515, 22.70399],
-                    [113.26, 23.12],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "骏府-姬路城",
                 type: "sea",
                 id: "sea_city_junfucheng_city_himeji_20261024",
@@ -4708,32 +4584,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "帕加鲁荣-巴达维亚",
-                type: "sea",
-                id: "sea_city_pagaruyung_city_batavia_20261024",
-                startConnection: "city_pagaruyung",
-                endConnection: "city_batavia"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [100.621, -0.471],
-                    [99.9646, -1.05463],
-                    [101.92017, -4.11633],
-                    [104, -7],
-                    [104.82827, -6.59257],
-                    [105.42481, -6.29892],
-                    [105.75454, -5.97923],
-                    [105.86421, -5.89354],
-                    [106.09995, -5.81737],
-                    [106.86813, -5.91658],
-                    [106.8133, -6.1352],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "卡布弗里乌-萨尔瓦多",
                 type: "sea",
                 id: "sea_city_kabufoliwu_city_salvador_1788856085585",
@@ -4903,32 +4753,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-83.5, 23.58333],
                     [-82.83333, 23.58333],
                     [-82.38, 23.13],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "帕加鲁荣-卡拉桑",
-                type: "sea",
-                id: "sea_city_pagaruyung_city_kalasan_1788081172999",
-                startConnection: "city_pagaruyung",
-                endConnection: "city_kalasan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [100.621, -0.471],
-                    [99.9646, -1.05463],
-                    [101.92017, -4.11633],
-                    [104, -7],
-                    [105.16667, -7.41667],
-                    [106, -7.75],
-                    [106.83333, -7.75],
-                    [107.33333, -8.08333],
-                    [109.33333, -8.08333],
-                    [110.16667, -8.58333],
-                    [110.445, -7.756],
                 ]
             }
         },
@@ -6321,34 +6145,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "帕加鲁扬-阿努拉德",
-                type: "sea",
-                id: "sea_city_pagaruyung_city_anulade_1793200000000",
-                startConnection: "city_pagaruyung",
-                endConnection: "city_anulade"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [100.621, -0.471],
-                    [100.35, -0.95],
-                    [100, -1],
-                    [98.5, 0.5],
-                    [96.5, 2.5],
-                    [94.8, 4.5],
-                    [90, 5.5],
-                    [85, 6],
-                    [81.5, 6],
-                    [80.2, 5.9],
-                    [79.75, 7],
-                    [79.75, 8],
-                    [80.3956, 8.3533],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "因弗内斯-达纳德",
                 type: "sea",
                 id: "sea_city_yinfeineisi_city_dunadd_1793200000000",
@@ -6476,30 +6272,229 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "阿努拉德-果阿",
+                name: "澎湖-番禺",
                 type: "sea",
-                id: "sea_city_anulade_city_guoa_1793608800000",
-                startConnection: "city_anulade",
+                id: "sea_city_penghu_city_panyu_1793607994458",
+                startConnection: "city_penghu",
+                endConnection: "city_panyu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [119.5, 23.5],
+                    [118.72413, 23.58267],
+                    [118.03049, 22.69152],
+                    [117, 23],
+                    [115.44388, 22.30394],
+                    [114.1, 21.7],
+                    [113.69339, 22.23826],
+                    [113.68515, 22.70399],
+                    [113.26, 23.12],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "龙溪-澎湖",
+                type: "sea",
+                id: "sea_city_zhangzhou_city_penghu_1793608020997",
+                startConnection: "city_zhangzhou",
+                endConnection: "city_penghu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [117.65, 24.51],
+                    [118.13736, 24.39213],
+                    [118.72413, 23.58267],
+                    [119.5, 23.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "古里-索姆纳特",
+                type: "sea",
+                id: "sea_city_guli_city_suomunate_1793608167941",
+                startConnection: "city_guli",
+                endConnection: "city_suomunate"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [75.78, 11.25],
+                    [75.08333, 11.33333],
+                    [74.41667, 12.16667],
+                    [73.91667, 14.16667],
+                    [73.25, 15.33333],
+                    [72.75, 16.33333],
+                    [72.75, 17.16667],
+                    [72.41667, 18.33333],
+                    [72.4, 19],
+                    [72.37793, 20.06625],
+                    [70.86456, 20.17715],
+                    [70.4014, 20.8878],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "马六甲-亚齐",
+                type: "sea",
+                id: "sea_city_malacca_city_yaqi_1793608265015",
+                startConnection: "city_malacca",
+                endConnection: "city_yaqi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [102.25, 2.19],
+                    [102, 2],
+                    [101.3128, 2.58917],
+                    [100.6, 3.2],
+                    [99.76381, 4.08452],
+                    [98.66667, 4.58333],
+                    [98.25, 5.33333],
+                    [97.83333, 5.75],
+                    [96.5, 5.75],
+                    [96.16667, 6.08333],
+                    [95.32, 5.55],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚齐-加勒",
+                type: "sea",
+                id: "sea_city_yaqi_city_jiale_1793608277413",
+                startConnection: "city_yaqi",
+                endConnection: "city_jiale"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [95.32, 5.55],
+                    [96.16667, 6.08333],
+                    [96.5, 5.75],
+                    [97.83333, 5.75],
+                    [98.12813, 5.81173],
+                    [94.32645, 6.15712],
+                    [90, 6.4664],
+                    [85.9479, 6.1983],
+                    [81.9, 5.9],
+                    [80.1, 5.8],
+                    [80.21, 6.05],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "加勒-古里",
+                type: "sea",
+                id: "sea_city_jiale_city_guli_1793608286402",
+                startConnection: "city_jiale",
+                endConnection: "city_guli"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [80.21, 6.05],
+                    [79.83333, 5.58333],
+                    [79.41667, 6.66667],
+                    [79.25, 6.83333],
+                    [79.16667, 8.75],
+                    [78.41667, 8.16667],
+                    [78, 7.75],
+                    [76.83333, 7.75],
+                    [76.08333, 8.5],
+                    [75.75, 9.16667],
+                    [75.41667, 10.33333],
+                    [75.78, 11.25],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "古里-果阿",
+                type: "sea",
+                id: "sea_city_guli_city_guoa_1793608294122",
+                startConnection: "city_guli",
                 endConnection: "city_guoa"
             },
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [80.3956, 8.3533],
-                    [79.7, 8.2],
-                    [79.2, 7.8],
-                    [78.5, 7.5],
-                    [77.8, 7.3],
-                    [77.2, 7.4],
-                    [76.5, 7.8],
-                    [76.0, 8.5],
-                    [75.6, 9.5],
-                    [75.0, 10.8],
-                    [74.5, 12.0],
-                    [74.0, 13.5],
-                    [73.5, 14.8],
+                    [75.78, 11.25],
+                    [75.08333, 11.33333],
+                    [74.41667, 12.16667],
+                    [73.91667, 14.16667],
                     [73.25, 15.33333],
                     [73.9117, 15.5023],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚齐-直通",
+                type: "sea",
+                id: "sea_city_yaqi_city_thaton_1793608420396",
+                startConnection: "city_yaqi",
+                endConnection: "city_thaton"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [95.32, 5.55],
+                    [96.16667, 6.08333],
+                    [96.5, 5.75],
+                    [97.83333, 5.75],
+                    [98.58333, 6.33333],
+                    [97.75, 7.16667],
+                    [97.08333, 8.16667],
+                    [97.08333, 9.16667],
+                    [97.25, 10.16667],
+                    [97.41667, 11.16667],
+                    [96.91667, 12.16667],
+                    [97.58333, 13.33333],
+                    [97.25, 13.83333],
+                    [97.25, 15.16667],
+                    [97.08333, 15.83333],
+                    [97.6333, 16.5333],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "吉大港-直通",
+                type: "sea",
+                id: "sea_city_jidagang_city_thaton_1793608445061",
+                startConnection: "city_jidagang",
+                endConnection: "city_thaton"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [91.8325, 22.335],
+                    [91.33333, 21.75],
+                    [91.75, 20.66667],
+                    [92, 20.25],
+                    [92.91667, 19.33333],
+                    [92.91667, 18.66667],
+                    [93.58333, 17.83333],
+                    [93.75, 17.33333],
+                    [93.75, 15.66667],
+                    [94.33333, 15.41667],
+                    [95.83333, 15.41667],
+                    [97.08333, 15.83333],
+                    [97.6333, 16.5333],
                 ]
             }
         },
