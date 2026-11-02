@@ -11,6 +11,9 @@ import type { BuildingStyle } from './cities_v2';
 import { getGeneralCityCulture } from './generalCultureResolve';
 
 export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
+    'ayoubu_lulu': 'ORIE',   // 阿尤布｜鲁鲁｜据点 苏伊士
+    'gaolu_labuerdonei': 'FRANKS',   // 法兰西｜拉布尔多内｜据点 毛里求斯
+    'hulumusi_ata': 'ORIE',   // 忽鲁谟斯｜阿塔｜据点 霍尔木兹
     'putaoya_danuowa': 'PORTUGUESE',   // 葡萄牙｜若昂达诺瓦｜据点 圣赫勒拿
     'yinggelan_yuehansimisi': 'BRITONS',
     'yinggelan_henlimogen': 'BRITONS',

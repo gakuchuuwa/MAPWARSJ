@@ -4007,6 +4007,8 @@ export class VectorRoadEditor implements IEditor {
             // [2026-05-30 新] 名称过期: 道路 name 字段跟 startCity/endCity 当前 name 不匹配
             nameMismatch: [] as Array<{ id: string; oldName: string; expectedName: string; startName: string; endName: string }>,
             duplicates: [] as Array<{ keepId: string; deleteId: string; keepName: string; deleteName: string; reason: string; overlapPoints: number; ratioA: number; ratioB: number }>,
+            // 据点压在 A-C 道路中间, 却不是这条路的端点 (B 忘了连路)
+            cityOnRoad: [] as Array<{ roadId: string; roadName: string; startName: string; endName: string; cityId: string; cityName: string; distKm: number }>,
         };
 
         // ───── 端点完整性检查 ─────
@@ -4209,6 +4211,9 @@ export class VectorRoadEditor implements IEditor {
             }
         }
 
+        // ───── 据点压在别的路中间却没连上 (A-C 之间有 B，B 忘了连路) ─────
+        issues.cityOnRoad = this.findCitiesOnRoads();
+
         const totalRoads = features.length;
         const orphanCities = this.getOrphanCities();
         const singleRoadCities = this.getSingleRoadCities();
@@ -4222,7 +4227,8 @@ export class VectorRoadEditor implements IEditor {
             issues.sameStartEnd.length + issues.tooFewPoints.length +
             issues.duplicates.length +
             issues.staleStretchLines.length +
-            issues.endpointDrift.length;
+            issues.endpointDrift.length +
+            issues.cityOnRoad.length;
 
         // ───── 控制台分组打印 ─────
         console.group(`🔍 [全面审查] ${totalRoads} 条路 · 问题 ${totalIssues} 项 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length} · 未连路战场 ${unlinkedBattlefields.length}`);
@@ -4271,6 +4277,13 @@ export class VectorRoadEditor implements IEditor {
             console.group(`🚶 端点漂移 (轻微, 非超长直线) [${issues.endpointDrift.length}]`);
             issues.endpointDrift.forEach(i => console.log(
                 `  ${i.name} · ${i.whichEnd === 'start' ? '起' : '终'}点 ${i.cityName} 漂移 ${i.driftKm}km [${i.id}]`
+            ));
+            console.groupEnd();
+        }
+        if (issues.cityOnRoad.length) {
+            console.group(`🏙️ 据点压在路中间却没连上 [${issues.cityOnRoad.length}] → 把这条路在该据点处断开, 或补 A-B / B-C`);
+            issues.cityOnRoad.forEach(i => console.log(
+                `  ${i.startName} ↔ ${i.endName} 途经 ${i.cityName} (离路 ${i.distKm}km) [路 ${i.roadId}] [城 ${i.cityId}]`
             ));
             console.groupEnd();
         }
@@ -4508,6 +4521,17 @@ export class VectorRoadEditor implements IEditor {
             });
             html += section('❌ 坐标点 < 2', '#607d8b', issues.tooFewPoints.length, fewPtsItems);
 
+            // 据点压在别的路中间却没连上：定位到这条路，点开就能看到 B 在哪
+            const onRoadItems = issues.cityOnRoad.slice(0, 80).map((i: any) => {
+                allProblemIds.push(i.roadId);
+                return {
+                    html: `<span style="background:rgba(0,188,212,0.4);color:#fff;border-radius:8px;padding:2px 10px;font-size:12px;font-weight:bold;margin-right:8px;">${i.distKm} km</span>`
+                        + `<b>${i.startName}</b> ↔ <b>${i.endName}</b> 途经 <b style="color:#4dd0e1">${i.cityName}</b> 却没连 <span style="color:#666;font-size:11px;">[路 ${i.roadId}] [城 ${i.cityId}]</span>`,
+                    roadId: i.roadId,
+                };
+            });
+            html += section('🏙️ 据点压在路中间却没连上 (A-C 之间有 B, B 忘了连路)', '#00bcd4', issues.cityOnRoad.length, onRoadItems);
+
             // 孤儿城：没有任何道路连接的据点（信息项，非道路错误）
             const orphanItems = orphanCities.slice(0, 80).map(c => ({
                 html: `<b>${c.name}</b> · (${c.lat.toFixed(2)}, ${c.lng.toFixed(2)}) <span style="color:#666;font-size:11px;">[${c.id}]</span>`,
@@ -4683,6 +4707,83 @@ export class VectorRoadEditor implements IEditor {
         return counts;
     }
 
+
+    /** 据点离路多近算「压在路上」(km)。据点间距 ≥40km，4km 内基本就是路穿过城 */
+    private static readonly CITY_ON_ROAD_KM = 4;
+
+    /**
+     * 找出「压在别的路中间却不是该路端点」的据点：A-C 之间有 B，B 忘了连路。
+     * 用 0.25° 网格把据点分桶，每段只查附近桶，不做 据点×线段 全对比。
+     */
+    private findCitiesOnRoads(): Array<{ roadId: string; roadName: string; startName: string; endName: string; cityId: string; cityName: string; distKm: number }> {
+        const limitKm = VectorRoadEditor.CITY_ON_ROAD_KM;
+        const CELL = 0.25;
+        const key = (cx: number, cy: number) => `${cx},${cy}`;
+        const grid = new Map<string, typeof CITIES>();
+        for (const c of CITIES) {
+            const k = key(Math.floor(c.lng / CELL), Math.floor(c.lat / CELL));
+            const arr = grid.get(k);
+            if (arr) arr.push(c); else grid.set(k, [c] as any);
+        }
+        const padDeg = limitKm / 111 + 0.01;
+        const out: ReturnType<VectorRoadEditor['findCitiesOnRoads']> = [];
+
+        for (const f of VECTOR_ROAD_DATA.features) {
+            if (!f?.properties || !f.geometry) continue;
+            const coords = f.geometry.coordinates as [number, number][];
+            if (coords.length < 2) continue;
+            const startId = f.properties.startConnection;
+            const endId = f.properties.endConnection;
+            const best = new Map<string, number>();
+
+            for (let i = 0; i < coords.length - 1; i++) {
+                const [lngA, latA] = coords[i];
+                const [lngB, latB] = coords[i + 1];
+                const x0 = Math.floor((Math.min(lngA, lngB) - padDeg) / CELL);
+                const x1 = Math.floor((Math.max(lngA, lngB) + padDeg) / CELL);
+                const y0 = Math.floor((Math.min(latA, latB) - padDeg) / CELL);
+                const y1 = Math.floor((Math.max(latA, latB) + padDeg) / CELL);
+                for (let cx = x0; cx <= x1; cx++) {
+                    for (let cy = y0; cy <= y1; cy++) {
+                        const cell = grid.get(key(cx, cy));
+                        if (!cell) continue;
+                        for (const c of cell) {
+                            if (c.id === startId || c.id === endId) continue;
+                            const d = this.pointToSegmentKm(c.lat, c.lng, latA, lngA, latB, lngB);
+                            if (d > limitKm) continue;
+                            const prev = best.get(c.id);
+                            if (prev === undefined || d < prev) best.set(c.id, d);
+                        }
+                    }
+                }
+            }
+            if (best.size === 0) continue;
+
+            const roadName = f.properties.name || '(未命名)';
+            const startName = findEndpoint(startId)?.name ?? '?';
+            const endName = findEndpoint(endId)?.name ?? '?';
+            for (const [cityId, d] of best) {
+                const city = CITIES.find(c => c.id === cityId);
+                out.push({
+                    roadId: f.properties.id, roadName, startName, endName,
+                    cityId, cityName: city?.name ?? cityId, distKm: Math.round(d * 10) / 10,
+                });
+            }
+        }
+        return out;
+    }
+
+    /** 点到线段的最短距离 (km)，局部等距投影，几十 km 内够准 */
+    private pointToSegmentKm(pLat: number, pLng: number, aLat: number, aLng: number, bLat: number, bLng: number): number {
+        const kx = 111.32 * Math.cos(pLat * Math.PI / 180);
+        const ky = 110.57;
+        const ax = (aLng - pLng) * kx, ay = (aLat - pLat) * ky;
+        const bx = (bLng - pLng) * kx, by = (bLat - pLat) * ky;
+        const dx = bx - ax, dy = by - ay;
+        const len2 = dx * dx + dy * dy;
+        const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2));
+        return Math.hypot(ax + t * dx, ay + t * dy);
+    }
 
     /** 没有任何道路 start/end 连接的据点 */
     private getOrphanCities(): Array<{ id: string; name: string; lat: number; lng: number }> {

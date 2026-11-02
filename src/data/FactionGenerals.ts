@@ -488,6 +488,11 @@ export interface FactionGeneral {
 
 
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
+    hulumusi: [
+        // 阿塔（约1450–1512，Khwaja Ata，忽鲁谟斯首相兼守城总指挥，1507年率军民修筑要塞保卫霍尔木兹海峡）→ 霍尔木兹（ORIE）
+        { generalId: 'hulumusi_ata', factionId: 'hulumusi', cityId: 'city_hormuz', generalName: '阿塔', portrait: '/assets/ORIE/hulumusi_ata.png', eliteName: '阿拉伯步兵', eliteTier: 4, legionName: '城堡时代撒拉森军团' },
+    ],
+
     bolinixiya: [
         // 波马雷（约1742–1803，波马雷一世，统一大溪地与周边群岛建立波马雷王朝）→ 大溪地（MALAY）
         { generalId: 'bolinixiya_baomalei', factionId: 'bolinixiya', cityId: 'city_tahiti', generalName: '波马雷', portrait: '/assets/MALAY/bolinixiya_baomalei.png', eliteName: '马来矛兵', eliteTier: 4, legionName: '帝国时代马六甲军团' },
@@ -746,7 +751,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'gen_cortes', factionId: 'xinxibanya', cityId: 'city_veracruz', generalName: '科尔特斯', portrait: '/assets/SPANISH/tuotuonake_keertesi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
-        { generalId: 'xinxibanya_laijiasipi', factionId: 'xinxibanya', cityId: 'city_cebu', generalName: '莱加斯皮', portrait: '', eliteName: '西班牙民兵', eliteTier: 4, legionName: '帝国时代西班牙征服军团' },
+        { generalId: 'xinxibanya_laijiasipi', factionId: 'xinxibanya', cityId: 'city_cebu', generalName: '莱加斯皮', portrait: '', eliteName: '征服者', eliteTier: 3, legionName: '帝国时代西班牙征服军团' },
 
 
 
@@ -2393,6 +2398,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     gaolu: [
+        { generalId: 'gaolu_dipaerkai', factionId: 'gaolu', cityId: 'city_martinique', generalName: '迪帕尔凯', portrait: '', eliteName: '法兰西守备', eliteTier: 4 },   // 1635 设防马提尼克、首任总督（1606–1658）
         { generalId: 'gaolu_wulixi', factionId: 'gaolu', cityId: 'city_bali', generalName: '乌里希', portrait: '/assets/FRANKS/gaolu_wulixi.png', eliteName: '阿尔萨斯兵', eliteTier: 3 },   // 🔴 [2026-11-01 补将·移将] 1870 斯特拉斯堡围城战法军守将，自 8 月守至 9 月 28 日城陷｜斯特拉斯堡＝日耳曼据点、将属法兰西→② 移回势力起源地巴黎（同文化 FRANKS）
         // 🔴 [2026-10-20 成名战规则] 劳多尼耶＝法国胡格诺首领（1565 卡罗琳堡被杀）→ 巴黎（FRANKS）；帝国时代法兰西军团；立绘留空
         { generalId: 'gen_laudonniere', cityId: 'city_bali', generalName: '劳多尼耶', portrait: '/assets/FRANKS/gen_laudonniere.png', legionName: '帝国时代法兰西军团', eliteName: '法兰克民兵', eliteTier: 4 },
@@ -2506,7 +2512,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
                 // 亨利·摩根（1635–1688，私掠舰队司令、牙买加副总督）→ 皇家港（BRITONS）
         { generalId: 'yinggelan_henlimogen', factionId: 'yinggelan', cityId: 'city_portroyal', generalName: '亨利摩根', portrait: '/assets/BRITONS/yinggelan_henlimogen.png', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
 { generalId: 'yinggelan_yuehansimisi', factionId: 'yinggelan', cityId: 'city_jamestown', generalName: '约翰史密斯', portrait: '/assets/BRITONS/yinggelan_yuehansimisi.png', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
-        { generalId: 'yinggelan_delake', factionId: 'yinggelan', cityId: 'city_plymouth', generalName: '德雷克', portrait: '', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
+        { generalId: 'yinggelan_dai', factionId: 'yinggelan', cityId: 'city_madras', generalName: '戴', portrait: '', eliteName: '西帕依', eliteTier: 4, legionName: '帝国时代大不列颠军团' },   // 弗朗西斯·戴 1639 建圣乔治堡（马德拉斯管区）
+        { generalId: 'yinggelan_angjier', factionId: 'yinggelan', cityId: 'city_mumbai', generalName: '昂吉尔', portrait: '', eliteName: '西帕依', eliteTier: 4, legionName: '帝国时代大不列颠军团' },   // 杰拉德·昂吉尔 1668 孟买首任总督
+        { generalId: 'yinggelan_chanuoke', factionId: 'yinggelan', cityId: 'city_kolkata', generalName: '查诺克', portrait: '', eliteName: '西帕依', eliteTier: 4, legionName: '帝国时代大不列颠军团' },   // 乔布·查诺克 1690 建加尔各答（孟加拉管区）
+        { generalId: 'yinggelan_delake', factionId: 'yinggelan', cityId: 'city_plymouth', generalName: '德雷克', portrait: '', eliteName: '德雷克船队', eliteTier: 2, legionName: '帝国时代大不列颠军团' },
 { generalId: 'yinggelan_yuehanjifade', factionId: 'yinggelan', cityId: 'city_geluosite', generalName: '约翰吉法德', portrait: '/assets/BRITONS/yinggelan_yuehanjifade.png', eliteName: '边区戍兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将·移将] 1282 任布伊尔斯城堡守将，12-11 出兵伊尔丰桥设伏，卢埃林阵亡（《布鲁特诸王编年史》）｜布伊尔斯＝凯尔特据点、将属英格兰→③ 就近 BRITONS 据点格洛斯特（86km）
         // 🔴 [2026-10-24 主人令] 弗农＝英国海军上将（1741 卡塔赫纳围攻指挥官）；城库无牙买加/皇家港，
         //    按「无合适据点取离战场最近的同风格城」改挂新阿姆斯特丹（SAXONS，3375km；比温彻斯特 8420km 近）；军团不变。
@@ -2834,6 +2843,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     
         { generalId: 'gen_clovis_i', legionName: '封建时代法兰克军团', factionId: 'falanji', cityId: 'city_bali', generalName: '克洛维', portrait: '/assets/FRANKS/gen_clovis_i.png', eliteName: '法兰克战团', eliteTier: 2 },
         { generalId: 'bfe3_46', factionId: 'gaolu', cityId: 'city_bali', generalName: '维钦托利', portrait: '/assets/FRANKS/bfe3_46.png', legionName: '古典时代高卢军团' , eliteName: '高卢战团', eliteTier: 3},
+        { generalId: 'gaolu_labuerdonei', factionId: 'gaolu', cityId: 'city_mauritius', generalName: '拉布尔多内', portrait: '', legionName: '帝国时代法兰西军团', eliteName: '法兰西民兵', eliteTier: 4 },
+
 
 
 
@@ -2978,6 +2989,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     putaoya: [
+        { generalId: 'putaoya_suosa', factionId: 'putaoya', cityId: 'city_aomen', generalName: '索萨', portrait: '', eliteName: '澳门守备', eliteTier: 4 },   // 1554 与广东海道副使汪柏达成协议、1557 葡人入居澳门
+        { generalId: 'putaoya_almeida', factionId: 'putaoya', cityId: 'city_kelunpo', generalName: '阿尔梅达', portrait: '', eliteName: '锡兰守备', eliteTier: 4 },   // 洛伦索·德·阿尔梅达 1505 登陆锡兰、建商站，1518 科伦坡要塞
 
 
 
@@ -7317,8 +7330,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     so: { generalId: 'so_zongyizhi', cityId: 'city_tsushima', generalName: '宗义智', portrait: '/assets/JAPAN/so_zongyizhi.png', eliteName: '日本足轻', eliteTier: 4 },
-    goto: { generalId: 'goto_xuanya', cityId: 'city_goto', generalName: '五岛玄雅', portrait: '', eliteName: '日本足轻', eliteTier: 4 },
-    omura: { generalId: 'omura_sumitada', cityId: 'city_nagasaki', generalName: '大村纯忠', portrait: '', eliteName: '日本足轻', eliteTier: 4 },
+    goto: { generalId: 'goto_xuanya', cityId: 'city_goto', generalName: '五岛玄雅', portrait: '', eliteName: '五岛水军', eliteTier: 4 },
+    omura: { generalId: 'omura_sumitada', cityId: 'city_nagasaki', generalName: '大村纯忠', portrait: '', eliteName: '大村众', eliteTier: 4 },
 
 
 
@@ -15078,6 +15091,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bfe_aulax', factionId: 'ayoubu', cityId: 'city_antiejiya', generalName: '奥拉克斯', portrait: '/assets/ORIE/bfe_aulax.png', eliteName: '安条克守军', eliteTier: 4 },
+        { generalId: 'ayoubu_lulu', factionId: 'ayoubu', cityId: 'city_suez', generalName: '鲁鲁', portrait: '', legionName: '城堡时代马穆鲁克军团', eliteName: '阿尤布禁卫', eliteTier: 3 },
+
     ],
 
 
@@ -15400,6 +15415,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     mowoer: [
+        { generalId: 'zhamolin_trimumpala', factionId: 'zhamolin', cityId: 'city_cochin', generalName: '特里穆帕拉', portrait: '', eliteName: '柯枝兵', eliteTier: 4 },   // 柯枝王 Trimumpara Raja，1498 达伽马到访、1503–1504 柯枝保卫战抗扎莫林
+        { generalId: 'mowoer_mukelabuhan', factionId: 'mowoer', cityId: 'city_surat', generalName: '穆卡拉布汗', portrait: '', eliteName: '古吉拉特兵', eliteTier: 4 },   // 1610 年代苏拉特莫卧儿总督，1615 接待托马斯·罗使团
 
 
 
@@ -17109,10 +17126,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     voc: [
+        { generalId: 'voc_coen', factionId: 'voc', cityId: 'city_banda', generalName: '科恩', portrait: '', eliteName: '东印度守备', eliteTier: 4 },   // 扬·彼得松·科恩 1621 率军征服班达群岛、独占肉豆蔻
         { generalId: 'bfe_coyett', cityId: 'city_tainan', generalName: '揆一', portrait: '/assets/JIANGNAN/bfe_coyett.png' , legionName: '帝国时代两江军团', eliteName: '荷兰守备', eliteTier: 4},
-        { generalId: 'voc_speult', factionId: 'voc', cityId: 'city_ambon', generalName: '斯佩尔特', portrait: '', eliteName: '马来兵', eliteTier: 4, legionName: '帝国时代马六甲军团' },
+        { generalId: 'voc_speult', factionId: 'voc', cityId: 'city_ambon', generalName: '斯佩尔特', portrait: '', eliteName: '东印度守备', eliteTier: 4, legionName: '帝国时代马六甲军团' },
     ],
-    wandan: { generalId: 'wandan_ageng', cityId: 'city_wandan', generalName: '阿贡', portrait: '', eliteName: '马来兵', eliteTier: 4, legionName: '帝国时代马六甲军团' },
+    wandan: { generalId: 'wandan_ageng', cityId: 'city_wandan', generalName: '阿贡', portrait: '', eliteName: '万丹军', eliteTier: 4, legionName: '帝国时代马六甲军团' },
 
 
 

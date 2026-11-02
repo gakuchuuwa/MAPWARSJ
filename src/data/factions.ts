@@ -8,6 +8,7 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
+  { id: 'hulumusi', name: '忽鲁谟斯' },   // 霍尔木兹王国（波斯湾咽喉·郑和四次下西洋驻泊贸易古国）
   { id: 'bolinixiya', name: '波利尼西亚' },   // 大溪地·波马雷王朝／波利尼西亚群岛（社会群岛）
   // ── 2026-11-01 C 档移将：新建史有政权（武将按同文化据点落位）──
   { id: 'latin_empire', name: '拉丁帝国' },   // 拉丁帝国 1204–1261，都君士坦丁堡（第四次十字军所建）
@@ -29,6 +30,7 @@ export const FACTIONS: Faction[] = [
     { id: 'kilwa', name: '基尔瓦苏丹国' },      // 基尔瓦·斯瓦希里海岸霸主（约957–1513）
     { id: 'mombasa', name: '蒙巴萨苏丹国' },    // 蒙巴萨·斯瓦希里城邦（1502 后脱离基尔瓦）
     { id: 'mogadishu', name: '摩加迪沙苏丹国' },// 摩加迪沙·索马里城邦（10–16世纪）
+    { id: 'malindi', name: '马林迪苏丹国' },  // 马林迪·斯瓦希里海岸城邦（1414 遣使明朝，献麒麟长颈鹿）
     { id: 'zuraid', name: '祖拉伊德' },         // 亚丁·祖拉伊德王朝（都城亚丁，1083–1174）
 
   { id: 'ayinu_ezo', name: '阿伊努' },

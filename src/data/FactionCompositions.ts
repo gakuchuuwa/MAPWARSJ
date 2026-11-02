@@ -2485,6 +2485,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "近世时代马来军团",
         legionType: "region",
     },
+    "malindi": {
+        legionName: "城堡时代埃塞俄比亚军团",
+        legionType: "region",
+    },
     "zhamolin": {
         legionName: "中世纪时代泰米尔军团",
         legionType: "region",

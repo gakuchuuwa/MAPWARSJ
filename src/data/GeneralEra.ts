@@ -1251,6 +1251,15 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'so_zongyizhi': 'imperial',
     'goto_xuanya': 'imperial',
     'omura_sumitada': 'imperial',
+    'zhamolin_trimumpala': 'imperial',
+    'putaoya_suosa': 'imperial',
+    'putaoya_almeida': 'imperial',
+    'voc_coen': 'imperial',
+    'mowoer_mukelabuhan': 'imperial',
+    'yinggelan_dai': 'imperial',
+    'yinggelan_angjier': 'imperial',
+    'yinggelan_chanuoke': 'imperial',
+    'gaolu_dipaerkai': 'imperial',
     'wandan_ageng': 'imperial',
     'voc_speult': 'imperial',
     'yinggelan_delake': 'imperial',
@@ -1917,6 +1926,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'baizanting_likaliao': 'castle', // 利卡里奥
     'lagoniya_kelierlidasi': 'antiquity', // 克利尔里达斯
     'gaolu_wulixi': 'imperial', // 乌里希
+    'gaolu_labuerdonei': 'imperial', // 拉布尔多内
+    'ayoubu_lulu': 'castle', // 鲁鲁（阿尤布水军都督）
     'yinggelan_yuehanjifade': 'castle', // 约翰吉法德
 
 };

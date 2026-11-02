@@ -23,6 +23,7 @@
  *     靠势力色＋旗形区分，不再强求全局唯一。非中国政权仍守全局唯一。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+    'hulumusi': '忽',
     'bolinixiya': '波',
     'pattani': '年',
     'kilwa': '基',
@@ -31,6 +32,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'mari_ancient': '马里', // 幼发拉底马里王国
     'mombasa': '蒙',
     'mogadishu': '摩',
+    'malindi': '迪',
     'zuraid': '祖',
 
   // ── [2026-08-26 全面检查旗号] 实际旗号 = 本表登记优先，未登记则取势力名前两字

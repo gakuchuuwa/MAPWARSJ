@@ -792,6 +792,7 @@ export const HISTORICAL_FACTION_COLORS: Readonly<Record<string, string>> = Objec
     kilwa: '#C79A3B', // 2026-10-24 环非洲新势力
     mombasa: '#2E8B57', // 2026-10-24 环非洲新势力
     mogadishu: '#1F7A6B', // 2026-10-24 环非洲新势力
+    malindi: '#8F6B3F', // 马林迪（斯瓦希里海岸，赭）
     zuraid: '#6A5ACD', // 2026-10-24 环非洲新势力
     pattani: '#D4AF37', // 北大年·北大年苏丹国（金黄）
     latin_empire: '#5B21B6',   // 拉丁帝国

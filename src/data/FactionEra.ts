@@ -64,6 +64,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     // ══════ 二、单时代势力（整段一个时代）══════
     'kilwa': [{ from: -9999, era: 'castle' }], // 基尔瓦苏丹国｜斯瓦希里海岸（约 957–1513），苏莱曼哈桑
     'mogadishu': [{ from: -9999, era: 'castle' }], // 摩加迪沙苏丹国｜索马里城邦（10–16 世纪），阿布伯克尔
+    'malindi': [{ from: -9999, era: 'castle' }], // 马林迪｜斯瓦希里城邦（1414 遣使明朝）＝城堡段；ETHIOPIANS × 城堡＝城堡时代埃塞俄比亚军团
+    'hulumusi': [{ from: -9999, era: 'castle' }], // 忽鲁谟斯｜霍尔木兹王国（13–17 世纪，扼波斯湾口；郑和四至忽鲁谟斯）＝城堡段（既有缺口补齐）
     'zuraid': [{ from: -9999, era: 'castle' }], // 祖拉伊德｜亚丁王朝（1083–1174），亚西尔
     'aboerleiya': [{ from: -9999, era: 'castle' }], // 阿尔博雷亚
     'adal': [{ from: -9999, era: 'imperial' }], // 阿达尔

@@ -857,6 +857,15 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     so_zongyizhi: { birth: 1568, death: 1615 },  // 宗义智
     goto_xuanya: { birth: 1548, death: 1612 },  // 五岛玄雅（宇久玄雅→大濱玄雅→五岛玄雅；福江藩初代藩主）
     omura_sumitada: { birth: 1533, death: 1585 },  // 大村纯忠（肥前大村氏当主，吉利支丹大名，1571 长崎开港）
+    zhamolin_trimumpala: { birth: 1450, death: 1520, kaoju: '推定' },  // 柯枝王 Trimumpara Raja（1498–1504 在位）
+    putaoya_suosa: { birth: 1500, death: 1570, kaoju: '推定' },  // 索萨（Leonel de Sousa，1554 澳门协议）
+    putaoya_almeida: { birth: 1480, death: 1508 },  // 洛伦索·德·阿尔梅达（1505 锡兰）
+    voc_coen: { birth: 1587, death: 1629 },  // 扬·彼得松·科恩（1621 班达）
+    mowoer_mukelabuhan: { birth: 1560, death: 1620, kaoju: '推定' },  // 穆卡拉布汗（苏拉特总督）
+    yinggelan_dai: { birth: 1605, death: 1673 },  // 弗朗西斯·戴（1639 马德拉斯）
+    yinggelan_angjier: { birth: 1635, death: 1677 },  // 杰拉德·昂吉尔（1668 孟买）
+    yinggelan_chanuoke: { birth: 1630, death: 1693 },  // 乔布·查诺克（1690 加尔各答）
+    gaolu_dipaerkai: { birth: 1606, death: 1658 },  // 迪帕尔凯（1635 马提尼克）
     wandan_ageng: { birth: 1631, death: 1692 },  // 苏丹阿贡·蒂尔塔亚萨（万丹苏丹 1651–1683，抗荷）
     voc_speult: { birth: 1580, death: 1636, kaoju: '推定' },  // 赫尔曼·范·斯佩尔特（安汶总督 1618–1625）
     yinggelan_delake: { birth: 1540, death: 1596 },  // 德雷克（Francis Drake，1577–1580 环球，普利茅斯市长）
@@ -1932,6 +1941,8 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     dayue_chenqingyu: { birth: 1240, death: 1339, kaoju: '推定' },  // 陈庆余（大越云屯水战主将）
     siam_zhengxin: { birth: 1734, death: 1782 },  // 郑信（吞武里大帝达信）
     maidina_kuerdi: { birth: 1470, death: 1517, kaoju: '推定' },  // 库尔迪（吉达守将侯赛因·库尔迪）
+    gaolu_labuerdonei: { birth: 1699, death: 1753 },  // 拉布尔多内（毛里求斯路易港奠基人）
+    ayoubu_lulu: { birth: 1140, death: 1200, kaoju: '推定' },  // 鲁鲁（阿尤布红海水师都督·苏伊士保卫战）
 
 };
 
