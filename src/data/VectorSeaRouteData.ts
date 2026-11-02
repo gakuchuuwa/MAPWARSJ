@@ -56,6 +56,91 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
     "type": "FeatureCollection",
     "features": [
         {
+            type: "Feature",
+            properties: {
+                name: "萨尔瓦多-安格拉",
+                type: "sea",
+                id: "sea_city_salvador_city_angra_1793628006860",
+                startConnection: "city_salvador",
+                endConnection: "city_angra",
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-38.51, -12.97],
+                    [-36.00, -8.00],
+                    [-33.00, -2.00],
+                    [-30.00, 8.00],
+                    [-28.50, 20.00],
+                    [-27.22, 38.66]
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "里贝拉-萨尔瓦多",
+                type: "sea",
+                id: "sea_city_ribeira_city_salvador_1793627996848",
+                startConnection: "city_ribeira",
+                endConnection: "city_salvador",
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-23.60, 14.92],
+                    [-27.00, 10.00],
+                    [-31.00, 3.00],
+                    [-34.00, -4.00],
+                    [-36.50, -9.00],
+                    [-38.51, -12.97]
+                ],
+            },
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "里贝拉-开普敦",
+                "type": "sea",
+                "id": "sea_city_ribeira_city_cape_town_1793627343079",
+                "startConnection": "city_ribeira",
+                "endConnection": "city_cape_town"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        -23.51,
+                        14.92
+                    ],
+                    [
+                        -22.0,
+                        5.0
+                    ],
+                    [
+                        -18.0,
+                        -5.0
+                    ],
+                    [
+                        -12.0,
+                        -18.0
+                    ],
+                    [
+                        -2.0,
+                        -28.0
+                    ],
+                    [
+                        8.0,
+                        -33.0
+                    ],
+                    [
+                        18.4239,
+                        -33.9253
+                    ]
+                ]
+            }
+        },
+        {
             "type": "Feature",
             "properties": {
                 "name": "威尼斯-干地亚要塞",
@@ -593,84 +678,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [
                         -0.12,
                         51.5
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "诺夫哥罗德-里加",
-                "type": "sea",
-                "id": "sea_city_nuofugeerdede_city_liga_1793625339140",
-                "startConnection": "city_nuofugeerdede",
-                "endConnection": "city_liga"
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [
-                        31.27,
-                        58.52
-                    ],
-                    [
-                        31.4,
-                        59.6
-                    ],
-                    [
-                        30.5,
-                        60.1
-                    ],
-                    [
-                        28,
-                        59.9
-                    ],
-                    [
-                        25.5,
-                        59.5
-                    ],
-                    [
-                        24.1,
-                        56.95
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "诺夫哥罗德-塔林",
-                "type": "sea",
-                "id": "sea_city_nuofugeerdede_city_talin_1793625339140",
-                "startConnection": "city_nuofugeerdede",
-                "endConnection": "city_talin"
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [
-                        31.27,
-                        58.52
-                    ],
-                    [
-                        31.4,
-                        59.6
-                    ],
-                    [
-                        30.5,
-                        60
-                    ],
-                    [
-                        28,
-                        59.8
-                    ],
-                    [
-                        26,
-                        59.6
-                    ],
-                    [
-                        24.75,
-                        59.43
                     ]
                 ]
             }
@@ -2191,84 +2198,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [
                         -76.78,
                         37.21
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "塞维利亚-加的斯",
-                "type": "sea",
-                "id": "sea_city_seville_city_jiadisi_1793622538282",
-                "startConnection": "city_seville",
-                "endConnection": "city_jiadisi"
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [
-                        -5.98,
-                        37.38
-                    ],
-                    [
-                        -6.1,
-                        37.15
-                    ],
-                    [
-                        -6.3536,
-                        36.7784
-                    ],
-                    [
-                        -6.32,
-                        36.62
-                    ],
-                    [
-                        -6.28,
-                        36.52
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "塞维利亚-安格拉",
-                "type": "sea",
-                "id": "sea_city_seville_city_angra_1793622538282",
-                "startConnection": "city_seville",
-                "endConnection": "city_angra"
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [
-                        -5.98,
-                        37.38
-                    ],
-                    [
-                        -6.4,
-                        37
-                    ],
-                    [
-                        -8,
-                        36.8
-                    ],
-                    [
-                        -11,
-                        37.2
-                    ],
-                    [
-                        -17,
-                        37.9
-                    ],
-                    [
-                        -22,
-                        38.3
-                    ],
-                    [
-                        -27.22,
-                        38.66
                     ]
                 ]
             }
@@ -18456,6 +18385,313 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [
                         102.25,
                         2.19
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "马六甲-巴达维亚",
+                "type": "sea",
+                "id": "sea_city_malacca_city_batavia_1793630000001",
+                "startConnection": "city_malacca",
+                "endConnection": "city_batavia"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        102.25,
+                        2.19
+                    ],
+                    [
+                        102,
+                        2
+                    ],
+                    [
+                        103.6,
+                        1.1
+                    ],
+                    [
+                        103.76347,
+                        1.25989
+                    ],
+                    [
+                        104.14585,
+                        1.2493
+                    ],
+                    [
+                        105.25,
+                        1.5
+                    ],
+                    [
+                        105.25,
+                        0.33333
+                    ],
+                    [
+                        106.08333,
+                        -0.5
+                    ],
+                    [
+                        106.41667,
+                        -1.16667
+                    ],
+                    [
+                        106.66667,
+                        -1.91667
+                    ],
+                    [
+                        107.25128,
+                        -2.4986
+                    ],
+                    [
+                        107.29248,
+                        -3.59018
+                    ],
+                    [
+                        106.8,
+                        -5.2
+                    ],
+                    [
+                        106.86813,
+                        -5.91658
+                    ],
+                    [
+                        106.8133,
+                        -6.1352
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "里斯本-特尔德",
+                "type": "sea",
+                "id": "sea_city_lisiben_city_telde_1793630000002",
+                "startConnection": "city_lisiben",
+                "endConnection": "city_telde"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        -9.13,
+                        38.72
+                    ],
+                    [
+                        -9.99896,
+                        38.21927
+                    ],
+                    [
+                        -11.13864,
+                        37.41734
+                    ],
+                    [
+                        -11.90023,
+                        36.88145
+                    ],
+                    [
+                        -12.60854,
+                        36.13452
+                    ],
+                    [
+                        -12.83978,
+                        35.47013
+                    ],
+                    [
+                        -13.11489,
+                        34.6797
+                    ],
+                    [
+                        -13.32875,
+                        34.06524
+                    ],
+                    [
+                        -13.9051,
+                        32.4093
+                    ],
+                    [
+                        -15.17212,
+                        29.3375
+                    ],
+                    [
+                        -15.14581,
+                        28.53833
+                    ],
+                    [
+                        -15.42,
+                        28.0
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "安格拉-加的斯",
+                "type": "sea",
+                "id": "sea_city_angra_city_jiadisi_1793630000003",
+                "startConnection": "city_angra",
+                "endConnection": "city_jiadisi"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        -27.22,
+                        38.66
+                    ],
+                    [
+                        -26.43285,
+                        38.16695
+                    ],
+                    [
+                        -22.3269,
+                        37.85262
+                    ],
+                    [
+                        -20.00093,
+                        37.7832
+                    ],
+                    [
+                        -17.2095,
+                        37.669
+                    ],
+                    [
+                        -14.37038,
+                        37.35903
+                    ],
+                    [
+                        -12.26245,
+                        37.12889
+                    ],
+                    [
+                        -11.64446,
+                        37.06142
+                    ],
+                    [
+                        -9.35241,
+                        36.81118
+                    ],
+                    [
+                        -8.22701,
+                        36.72279
+                    ],
+                    [
+                        -7.09486,
+                        36.63735
+                    ],
+                    [
+                        -6.28,
+                        36.52
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "宁波-长崎",
+                "type": "sea",
+                "id": "sea_city_qingyuan_zj_city_nagasaki_1793630000004",
+                "startConnection": "city_qingyuan_zj",
+                "endConnection": "city_nagasaki"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        121.54,
+                        29.87
+                    ],
+                    [
+                        121.92627,
+                        30.25432
+                    ],
+                    [
+                        121.61333,
+                        30.42956
+                    ],
+                    [
+                        122.66922,
+                        30.93227
+                    ],
+                    [
+                        122.9,
+                        31.3
+                    ],
+                    [
+                        128.9,
+                        31.4
+                    ],
+                    [
+                        129.35303,
+                        32.50976
+                    ],
+                    [
+                        129.8777,
+                        32.7555
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "宁波-金海",
+                "type": "sea",
+                "id": "sea_city_qingyuan_zj_city_gimhae_1793630000005",
+                "startConnection": "city_qingyuan_zj",
+                "endConnection": "city_gimhae"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        121.54,
+                        29.87
+                    ],
+                    [
+                        121.92627,
+                        30.25432
+                    ],
+                    [
+                        121.61333,
+                        30.42956
+                    ],
+                    [
+                        122.66922,
+                        30.93227
+                    ],
+                    [
+                        122.9,
+                        31.3
+                    ],
+                    [
+                        126.39941,
+                        32.50436
+                    ],
+                    [
+                        127.63316,
+                        32.92518
+                    ],
+                    [
+                        128.0145,
+                        33.05486
+                    ],
+                    [
+                        129.10062,
+                        34.04667
+                    ],
+                    [
+                        128.91632,
+                        34.76192
+                    ],
+                    [
+                        128.88,
+                        35.23
                     ]
                 ]
             }
