@@ -1170,7 +1170,7 @@ export class VectorRoadEditor implements IEditor {
                 { routePreference: 'land_first' }
             );
             let leg: [number, number][];
-            if (best && best.coordinates.length >= 2 && !this.isExtremeDetour(this.calculatePathLength(best.coordinates as [number, number][]), direct)) {
+            if (best && best.coordinates.length >= 2 && !this.isExtremeDetour(this.calculatePathLength(best.coordinates as [number, number][]), direct, a, b)) {
                 leg = best.coordinates as [number, number][];
                 best.edgeKeys.forEach(k => edgeKeys.add(k));
             } else {
@@ -1331,6 +1331,8 @@ export class VectorRoadEditor implements IEditor {
             //    必须排在 bridgeEndpointGaps(80) 之前：那一步会给断头加边，加完它就不再是「度=1 的断头」了。
             this.bridgeEndpointToRoad(10);
             this.bridgeEndpointGaps(80);
+            // 🔴 [2026-11-02] 连通分量级浅海陆桥与窄海峡桥接（斯里兰卡保克海峡、达达尼尔海峡、琼州海峡、墨西拿海峡等）
+            this.bridgeShallowStraitsAndComponents(45, 12);
             // 水系断口就近连通，「水路为主」才走得通
             this.bridgeWaterGaps(40);
             // 港口接驳必须在 bridgeEndpointGaps 之后：那之前陆路节点还没补全
@@ -2052,6 +2054,160 @@ export class VectorRoadEditor implements IEditor {
         console.log(`🔗 [EndpointBridge] ${endpoints.length} endpoints, bridged ${bridged} pairs (≤${maxDistKm}km)`);
     }
 
+    /**
+     * 🔴 [2026-11-02 主人「有的时候两个据点之间有浅海就连不上道路，例如斯里兰卡，例如君士坦丁堡」]
+     * 连通分量级浅海陆桥 & 窄海峡渡口桥接：
+     * 1. 计算纯陆路连通分量（Connected Components），对不同连通分量之间距离 ≤ maxComponentGapKm（默认 45km）的节点对，
+     *    在每对连通分量最窄的唯一咽喉处补桥（如斯里兰卡罗摩桥 30.8km、琼州海峡 28.7km、墨西拿海峡 10.4km、间宫海峡 8.2km 等）：
+     *    - 纯陆上断口（度 ≥ 2 导致未被端点桥接覆盖）以 ×1.5 权重接通；
+     *    - 跨浅海/窄海峡咽喉以 ×3.0 高权重接通（同分量内部绝不走水，跨岛/跨海峡必走最窄渡口）。
+     * 2. 对同一连通分量内部隔着极窄海峡（≤ maxFerryKm，默认 12km，如达达尼尔海峡 7.3km、博斯普鲁斯海峡南口 11km）
+     *    但陆路图上距离 ≥ 25 步的两岸节点，在最窄处补一条海峡渡口边（×2.5 权重），同时 12km 上限确保绝不横穿宽海湾（如伊兹密特湾/马尔马拉海）。
+     */
+    private bridgeShallowStraitsAndComponents(maxComponentGapKm: number = 45, maxFerryKm: number = 12): void {
+        const comp = new Int32Array(this.geoNodes.length);
+        let cidCounter = 0;
+
+        for (const node of this.geoNodes) {
+            if (this.seaNodeIds.has(node.id) || comp[node.id] !== 0) continue;
+            const adj = this.geoAdj.get(node.id);
+            if (!adj || !adj.some(e => !e.isWater && !e.isSea)) continue;
+            cidCounter++;
+            const queue: number[] = [node.id];
+            comp[node.id] = cidCounter;
+            while (queue.length > 0) {
+                const u = queue.pop()!;
+                for (const e of this.geoAdj.get(u) ?? []) {
+                    if (e.isWater || e.isSea || this.seaNodeIds.has(e.to)) continue;
+                    if (comp[e.to] === 0) {
+                        comp[e.to] = cidCounter;
+                        queue.push(e.to);
+                    }
+                }
+            }
+        }
+
+        // 1) 不同连通分量之间：找每对分量在 ≤ maxComponentGapKm 内的最短节点对
+        const CELL = 0.2;
+        const cgrid = new Map<string, number[]>();
+        for (const node of this.geoNodes) {
+            if (comp[node.id] === 0) continue;
+            const k = `${Math.floor(node.lng / CELL)}_${Math.floor(node.lat / CELL)}`;
+            let b = cgrid.get(k);
+            if (!b) { b = []; cgrid.set(k, b); }
+            b.push(node.id);
+        }
+
+        const rings = Math.ceil(maxComponentGapKm / 22);
+        const compBest = new Map<string, { d: number; u: number; v: number }>();
+        for (const node of this.geoNodes) {
+            const c1 = comp[node.id];
+            if (c1 === 0) continue;
+            const cx = Math.floor(node.lng / CELL), cy = Math.floor(node.lat / CELL);
+            for (let dx = -rings; dx <= rings; dx++) {
+                for (let dy = -rings; dy <= rings; dy++) {
+                    const bucket = cgrid.get(`${cx + dx}_${cy + dy}`);
+                    if (!bucket) continue;
+                    for (const oid of bucket) {
+                        const c2 = comp[oid];
+                        if (c2 === 0 || c1 >= c2) continue;
+                        const o = this.geoNodes[oid];
+                        const d = this.haversine(node.lat, node.lng, o.lat, o.lng);
+                        if (d <= maxComponentGapKm) {
+                            const pk = `${c1}_${c2}`;
+                            const prev = compBest.get(pk);
+                            if (!prev || d < prev.d) compBest.set(pk, { d, u: node.id, v: oid });
+                        }
+                    }
+                }
+            }
+        }
+
+        let compLandBridged = 0;
+        let compStraitBridged = 0;
+        for (const { d, u, v } of compBest.values()) {
+            const nu = this.geoNodes[u], nv = this.geoNodes[v];
+            const overWater = this.isOverWater(nu.lng, nu.lat, nv.lng, nv.lat) || this.crossesSeaLane(nu.lng, nu.lat, nv.lng, nv.lat);
+            const penalty = overWater ? 3.0 : 1.5;
+            const weight = d * penalty;
+            if (!isFinite(weight) || weight < 0.01) continue;
+            const coords: [number, number][] = [[nu.lng, nu.lat], [nv.lng, nv.lat]];
+            this.geoAdj.get(u)!.push({ from: u, to: v, weight, coords });
+            this.geoAdj.get(v)!.push({ from: v, to: u, weight, coords: [coords[1], coords[0]] });
+            if (overWater) compStraitBridged++;
+            else compLandBridged++;
+        }
+
+        // 2) 同一连通分量内部的极窄海峡渡口（≤ maxFerryKm，如达达尼尔海峡、博斯普鲁斯南口）
+        const FCELL = 0.1;
+        const fgrid = new Map<string, number[]>();
+        for (const node of this.geoNodes) {
+            if (comp[node.id] === 0) continue;
+            const k = `${Math.floor(node.lng / FCELL)}_${Math.floor(node.lat / FCELL)}`;
+            let b = fgrid.get(k);
+            if (!b) { b = []; fgrid.set(k, b); }
+            b.push(node.id);
+        }
+
+        const nearOnLandRoad = (from: number, maxSteps: number): Set<number> => {
+            const seen = new Set<number>([from]);
+            let frontier = [from];
+            for (let step = 0; step < maxSteps && frontier.length > 0; step++) {
+                const next: number[] = [];
+                for (const x of frontier) {
+                    for (const e of this.geoAdj.get(x) ?? []) {
+                        if (!e.isWater && !e.isSea && !seen.has(e.to)) {
+                            seen.add(e.to);
+                            next.push(e.to);
+                        }
+                    }
+                }
+                frontier = next;
+            }
+            return seen;
+        };
+
+        const ferryCands: { d: number; u: number; v: number }[] = [];
+        for (const node of this.geoNodes) {
+            if (comp[node.id] === 0) continue;
+            const landDeg = (this.geoAdj.get(node.id) ?? []).filter(e => !e.isWater && !e.isSea).length;
+            if (landDeg !== 1) continue;
+            const cx = Math.floor(node.lng / FCELL), cy = Math.floor(node.lat / FCELL);
+            let best: { d: number; oid: number } | null = null;
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (const oid of fgrid.get(`${cx + dx}_${cy + dy}`) ?? []) {
+                        if (oid === node.id) continue;
+                        const o = this.geoNodes[oid];
+                        const d = this.haversine(node.lat, node.lng, o.lat, o.lng);
+                        if (d <= maxFerryKm && (!best || d < best.d)) {
+                            if (this.isOverWater(node.lng, node.lat, o.lng, o.lat) || this.crossesSeaLane(node.lng, node.lat, o.lng, o.lat)) {
+                                best = { d, oid };
+                            }
+                        }
+                    }
+                }
+            }
+            if (best) ferryCands.push({ d: best.d, u: node.id, v: best.oid });
+        }
+
+        ferryCands.sort((a, b) => a.d - b.d);
+        let narrowFerryCount = 0;
+        for (const { d, u, v } of ferryCands) {
+            const own = nearOnLandRoad(u, 25);
+            if (own.has(v)) continue;
+            const nu = this.geoNodes[u], nv = this.geoNodes[v];
+            const weight = d * 2.5;
+            if (!isFinite(weight) || weight < 0.01) continue;
+            const coords: [number, number][] = [[nu.lng, nu.lat], [nv.lng, nv.lat]];
+            this.geoAdj.get(u)!.push({ from: u, to: v, weight, coords });
+            this.geoAdj.get(v)!.push({ from: v, to: u, weight, coords: [coords[1], coords[0]] });
+            narrowFerryCount++;
+        }
+
+        console.log(`🌉 [StraitBridge] 跨海/浅海连通桥 ${compStraitBridged} 处 (≤${maxComponentGapKm}km), 陆路分量断口 ${compLandBridged} 处, 窄海峡渡口 ${narrowFerryCount} 处 (≤${maxFerryKm}km)`);
+    }
+
     // ===== 在 GeoJSON 图上寻路 =====
 
     private generatePath(): void {
@@ -2438,14 +2594,27 @@ export class VectorRoadEditor implements IEditor {
         }
 
         // 删掉半径内的点等于从城直接拉直线过去：这条直线跨海就不删（沿岸绕湾的路必须留着）
+        // 从远到近退一步找最远且不跨水、不穿航线的截断点，既清掉城内折角又绝不拉成穿海直线
         const [sLng, sLat] = coords[0];
         const [eLng, eLat] = coords[coords.length - 1];
-        if (this.isOverWater(sLng, sLat, coords[firstOutsideIdx][0], coords[firstOutsideIdx][1])) firstOutsideIdx = 1;
-        if (this.isOverWater(coords[lastOutsideIdx][0], coords[lastOutsideIdx][1], eLng, eLat)) lastOutsideIdx = coords.length - 2;
+        while (firstOutsideIdx > 1 && (
+            this.isOverWater(sLng, sLat, coords[firstOutsideIdx][0], coords[firstOutsideIdx][1]) ||
+            this.crossesSeaLane(sLng, sLat, coords[firstOutsideIdx][0], coords[firstOutsideIdx][1])
+        )) {
+            firstOutsideIdx--;
+        }
+        while (lastOutsideIdx < coords.length - 2 && (
+            this.isOverWater(coords[lastOutsideIdx][0], coords[lastOutsideIdx][1], eLng, eLat) ||
+            this.crossesSeaLane(coords[lastOutsideIdx][0], coords[lastOutsideIdx][1], eLng, eLat)
+        )) {
+            lastOutsideIdx++;
+        }
 
         // 如果路径非常短，或者起终点的清理半径发生重叠，保留首尾
         if (firstOutsideIdx > lastOutsideIdx) {
-            return this.isOverWater(sLng, sLat, eLng, eLat) ? coords : [coords[0], coords[coords.length - 1]];
+            return (this.isOverWater(sLng, sLat, eLng, eLat) || this.crossesSeaLane(sLng, sLat, eLng, eLat))
+                ? coords
+                : [coords[0], coords[coords.length - 1]];
         }
 
         result.push(coords[0]);
@@ -2808,15 +2977,35 @@ export class VectorRoadEditor implements IEditor {
 
     /**
      * 城/战场接进路网用的近邻节点：城到节点那段直线跨海的不要（伊兹密特湾对岸的路口离得再近也不能直接连）。
-     * 先多取几名再筛；全被筛掉（孤岛、掩膜没就绪）就照旧用最近的。
+     * 优先选接有真实陆路边（!isWater && !isSea）的节点；若城自身坐标在掩膜上紧贴水面，按涉水公里数最少排序兜底。
      */
     private findAccessGeoNodes(lat: number, lng: number, k: number): { id: number; dist: number }[] {
-        const pool = this.findKNearestGeoNodes(lat, lng, k * 4);
-        const dry = pool.filter(n => {
+        const pool = this.findKNearestGeoNodes(lat, lng, k * 6);
+        const hasLandEdge = (id: number): boolean => {
+            const adj = this.geoAdj.get(id);
+            return !!adj && adj.some(e => !e.isWater && !e.isSea);
+        };
+        const roadPool = pool.filter(n => hasLandEdge(n.id));
+        const basePool = roadPool.length > 0 ? roadPool : pool;
+        const dry = basePool.filter(n => {
             const node = this.geoNodes[n.id];
-            return !this.isOverWater(lng, lat, node.lng, node.lat);
+            return !this.isOverWater(lng, lat, node.lng, node.lat)
+                && !this.crossesSeaLane(lng, lat, node.lng, node.lat);
         });
-        return (dry.length > 0 ? dry : pool).slice(0, k);
+        if (dry.length > 0) return dry.slice(0, k);
+        // 海岸/岛屿据点自身坐标在掩膜上紧贴水面时，按涉水最少排序取最近节点（仍拦跨航线对岸点）
+        const nonCross = basePool.filter(n => {
+            const node = this.geoNodes[n.id];
+            return !this.crossesSeaLane(lng, lat, node.lng, node.lat);
+        });
+        const fallback = (nonCross.length > 0 ? nonCross : basePool).slice();
+        fallback.sort((a, b) => {
+            const na = this.geoNodes[a.id], nb = this.geoNodes[b.id];
+            const wa = this.waterKmAlong(lng, lat, na.lng, na.lat);
+            const wb = this.waterKmAlong(lng, lat, nb.lng, nb.lat);
+            return (wa - wb) || (a.dist - b.dist);
+        });
+        return fallback.slice(0, k);
     }
 
     // ===== 参考层 =====
@@ -2947,9 +3136,24 @@ export class VectorRoadEditor implements IEditor {
         return `🔀 [${idx + 1}/${total}] ${candidate.label} ${candidate.totalDistance.toFixed(0)}km · 水路${waterPct}% · 绕行${detour}x`;
     }
 
-    /** 极端绕行判定（中短程 >2.4× 或任意 >4×） */
-    private isExtremeDetour(pathLen: number, directDist: number): boolean {
+    /**
+     * 极端绕行判定（常规中短程 >2.4× 或长途 >4.0×；
+     * 若起终点球面直线跨越海湾/海峡/浅海，陆路需绕海湾或经海峡咽喉通行，放宽至 4.5× / 5.5×）。
+     */
+    private isExtremeDetour(
+        pathLen: number,
+        directDist: number,
+        startPt?: { lat: number; lng: number },
+        endPt?: { lat: number; lng: number }
+    ): boolean {
         const detourRatio = pathLen / Math.max(1, directDist);
+        const crossesWater = startPt && endPt && (
+            this.waterKmAlong(startPt.lng, startPt.lat, endPt.lng, endPt.lat) > 2.0 ||
+            this.crossesSeaLane(startPt.lng, startPt.lat, endPt.lng, endPt.lat)
+        );
+        if (crossesWater) {
+            return (directDist <= 400 && detourRatio > 4.5) || detourRatio > 5.5;
+        }
         return (directDist <= 400 && detourRatio > 2.4) || detourRatio > 4.0;
     }
 
@@ -3138,7 +3342,7 @@ export class VectorRoadEditor implements IEditor {
             if (!best || !best.coordinates || best.coordinates.length < 2) break;
 
             const actualLen = this.calculatePathLength(best.coordinates as [number, number][]);
-            if (this.isExtremeDetour(actualLen, directDist)) break;
+            if (this.isExtremeDetour(actualLen, directDist, startCity, endCity)) break;
 
             const waterRatio = this.computeWaterRatioFromEdgeKeys(best.edgeKeys);
             const detourRatio = actualLen / Math.max(1, directDist);
@@ -5128,7 +5332,9 @@ export class VectorRoadEditor implements IEditor {
             }
 
             const detour = bestPathDist / Math.max(dist, 1);
-            if (detour > VectorRoadEditor.MAX_DETOUR_RATIO) {
+            const crossesWater = this.waterKmAlong(a.lng, a.lat, b.lng, b.lat) > 2.0 || this.crossesSeaLane(a.lng, a.lat, b.lng, b.lat);
+            const maxDetour = crossesWater ? 4.5 : VectorRoadEditor.MAX_DETOUR_RATIO;
+            if (detour > maxDetour) {
                 rejectedDetour++;
                 if (sampleRejects.length < 5) sampleRejects.push(`${a.name}↔${b.name} (${detour.toFixed(1)}×绕行)`);
                 continue;

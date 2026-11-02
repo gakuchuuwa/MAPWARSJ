@@ -1232,44 +1232,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "马杜赖-普里",
-                type: "sea",
-                id: "sea_city_madula_city_puli_20261024",
-                startConnection: "city_madula",
-                endConnection: "city_puli"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [78.12, 9.93],
-                    [78.66667, 8.75],
-                    [79.16667, 8.75],
-                    [79.25, 6.83333],
-                    [79.41667, 6.16667],
-                    [79.83333, 5.58333],
-                    [81.16667, 5.75],
-                    [82.08333, 6.5],
-                    [82.25, 7.83333],
-                    [81.75, 9],
-                    [80.66667, 10.25],
-                    [80.25, 10.33333],
-                    [80.25, 11.83333],
-                    [80.75, 13],
-                    [80.58333, 14],
-                    [80.58333, 15.33333],
-                    [81.66667, 15.91667],
-                    [82.75, 16.5],
-                    [83.33333, 17.08333],
-                    [84.33333, 17.91667],
-                    [85.33333, 19.08333],
-                    [86.33333, 19.58333],
-                    [85.831, 19.81],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "圣胡利安港-圣维森特",
                 type: "sea",
                 id: "sea_city_sanjulian_city_saovicente_1788797637995",
@@ -4828,33 +4790,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "马杜赖-果阿",
-                type: "sea",
-                id: "sea_city_madula_city_guoa_20261024",
-                startConnection: "city_madula",
-                endConnection: "city_guoa"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [78.12, 9.93],
-                    [78.66667, 8.75],
-                    [78, 7.75],
-                    [76.83333, 7.75],
-                    [76.08333, 8.5],
-                    [75.75, 9.16667],
-                    [75.41667, 10.33333],
-                    [75.08333, 11.33333],
-                    [74.41667, 12.16667],
-                    [73.91667, 14.16667],
-                    [73.25, 15.33333],
-                    [73.9117, 15.5023],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "拉巴特-特尔德",
                 type: "sea",
                 id: "sea_city_labate_city_telde_1788230437267",
@@ -5110,39 +5045,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [63.33333, 24.75],
                     [64.83333, 24.75],
                     [65.51, 25.51],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "马杜赖-索姆纳特",
-                type: "sea",
-                id: "sea_city_madula_city_suomunate_20261024",
-                startConnection: "city_madula",
-                endConnection: "city_suomunate"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [78.12, 9.93],
-                    [78.66667, 8.75],
-                    [78, 7.75],
-                    [76.83333, 7.75],
-                    [76.08333, 8.5],
-                    [75.75, 9.16667],
-                    [75.41667, 10.33333],
-                    [75.08333, 11.33333],
-                    [74.41667, 12.16667],
-                    [73.91667, 14.16667],
-                    [73.25, 15.33333],
-                    [72.75, 16.33333],
-                    [72.75, 17.16667],
-                    [72.41667, 18.33333],
-                    [72.4, 19],
-                    [72.37793, 20.06625],
-                    [70.86456, 20.17714],
-                    [70.4014, 20.8878],
                 ]
             }
         },
@@ -6413,27 +6315,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [26.7, 40.4],
                     [26.4, 40.2],
                     [26.2389, 39.9575],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "阿努拉德-马杜拉",
-                type: "sea",
-                id: "sea_city_anulade_city_madula_1793200000000",
-                startConnection: "city_anulade",
-                endConnection: "city_madula"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [80.3956, 8.3533],
-                    [79.85, 8.9],
-                    [79.2, 8.7],
-                    [78.6, 8.9],
-                    [78.2, 8.8],
-                    [78.12, 9.93],
                 ]
             }
         },

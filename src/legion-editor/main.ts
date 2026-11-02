@@ -3862,7 +3862,7 @@ function renderEditPanel(row: FactionLegionRow): void {
     <!-- 第二步 · 阵型 -->
     <div class="le-wizard-step">
       <div class="le-step-no">第二步</div>
-      <div class="le-step-title">阵型选择（七阵体系 · 全阵型 9 人 · 精锐主力优先 4 档）</div>
+      <div class="le-step-title">阵型选择（七阵体系 · 全阵型 9 人）</div>
       <div class="le-mode-grid" style="grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));">
         <div class="le-mode-btn ${mode === 'square' ? 'active' : ''}" data-mode="square">
           <div>3+3+3 方阵</div>

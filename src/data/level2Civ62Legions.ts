@@ -3655,7 +3655,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    评级：【高级】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（特诺奇蒂特兰、特斯科科；特斯科科湖防波石堤巨型水闸要塞、特诺奇蒂特兰断桥湖泊防御石垒；两指浸盐致密防箭棉甲（Ichcahuipilli）、重型黑曜石刺枪、大航海早期特诺奇蒂特兰保卫战湖堤绝命阻击反攻大阵）
     //    英雄队（第 10 队·主将队）：hero_cunhambebe / hero_arariboiamelee　— 按 248 主将表取，不进三排兵种编制
-    // 🔴 [2026-10-26 主人令「象兵战车不能同队，都必须是2档」] 中排 4 档是远程位，豹勇士(步兵)→玛雅羽箭手(美洲羽饰弓手样)
+    // 🔴 [2026-10-26 主人令「象兵战车不能同队，都必须是2档」] 中排换成玛雅羽箭手(美洲羽饰弓手样)，豹勇士(步兵)换下
     {
         name: '帝国时代特诺奇军团', civ: '阿兹特克', age: 'imperial', deStyle: 'MESO', region: 'AMERICA' as RegionType,
         buildingStyle: 'AMERICA',
