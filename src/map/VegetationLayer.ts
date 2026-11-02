@@ -16,6 +16,7 @@ import { plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
 import { localSeasonAtLat } from '../world/environment/seasonalGround';
 import { VECTOR_ROAD_DATA } from '../data/VectorRoadData';
+import { getStrategicRiverFeatures } from './StrategicRiverProximity';
 import { strategicTreeScale } from './strategicSpriteScale';
 
 const PANE = 'vegetationPane';
@@ -25,6 +26,10 @@ const MAX_ZOOM = 10;
 const CITY_CLEAR_PX = 74;
 /** 战略道路穿过密林时的半幅净空（px，SAMPLE_ZOOM=9 下约 16px，形成 32px 宽的 DE 式林间驿道走廊） */
 const ROAD_CLEAR_PX = 16;
+/** 矢量河流穿过密林时的半幅河道净空（px，SAMPLE_ZOOM=9 下约 16px，让干支流把大片森林自然切开） */
+const RIVER_CLEAR_PX = 16;
+/** 矢量河流两岸护岸散树簇外扩半径（px，河道净空外侧 16~48px 在开阔平川间断生成三两棵护岸树簇） */
+const RIVER_RIPARIAN_PX = 48;
 const ROAD_BUCKET_PX = 64;
 /** 画布四周离屏余量（px）：平移期间直接由 mapPane GPU 硬件变换同步移动，消除每帧亚像素重采样闪烁 */
 const CANVAS_PAD_PX = 160;
@@ -435,12 +440,15 @@ function forestClusterWeight(
     // 其余黄土梁峁塬面完全留白（不撒零碎小树丛，仅靠河岸护岸林带点缀）。
     const isLoessTableland = tile === 'ds2' && canopyDensity < 22 && (elev === null || elev < 1750);
     const isMountainOrHill = !isLoessTableland && elev !== null && elev >= 165;
-    const hasRealCanopy = canopyDensity >= 22 || isForestTile;
+    const hasRealCanopy = canopyDensity >= 20 || isForestTile || (forestCover !== null && forestCover >= 0.68 && canopyDensity >= 12);
 
-    // 🔴 2026-11-01 专业战略地图「疏可跑马、密不透风 + 亮出山脊骨架」口径：
+    // 🔴 2026-11-01 ~ 2026-11-02 专业战略地图「大片深林连冠成海 + 河流道路劈开林海 + 林缘几棵散树成簇 + 亮出高山脊骨」口径：
     //    1. 森林模型 < 0.40 的历史农垦区、黄土高原梁峁塬面（isLoessTableland）、无郁闭度的开阔平川全部留白；
-    //    2. 高陡山脊线（elev >= 1950m 且非高郁闭深林）自动留白露石，让秦岭、太行、陇山等主脊线的岩石褶皱与阴阳坡光影完整亮出；
-    //    3. 山地森林面积控制在山体的 35%~45%（noiseGate = 0.42~0.55 + 高脊递增门槛）：树木抱团聚在山麓、山谷与阴坡山坳，不把整座山糊成绿毯。
+    //    2. 著名大片原始森林（亚马孙雨林、刚果雨林、东南亚雨林、西伯利亚/北欧泰加林、东北大小兴安岭、黑森林/比亚沃维耶扎等：
+    //       canopy >= 65 且 forestCover >= 0.68，或热带雨林/泰加林 forestCover >= 0.72 且 canopy >= 42）放宽 noiseGate 至 0.20，
+    //       铺出连绵壮阔的林海，再由矢量河流网与战略道路自然切分成块；
+    //    3. 高陡山脊线（elev >= 1950m 且非高郁闭深林）自动留白露石，让秦岭、太行、陇山等主脊线的岩石褶皱与阴阳坡光影完整亮出；
+    //    4. 林缘外圈（noiseGate - 0.07 <= noiseVal < noiseGate）保留 1~2 株零星树簇，形成「几棵树聚在一起」的自然林缘过渡。
     if (forestCover !== null) {
         if (forestCover < FOREST_COVER_THRESHOLD) return 0;
         if (isLoessTableland) return 0;
@@ -449,21 +457,38 @@ function forestClusterWeight(
         // 高山裸岩主脊线留白：海拔 >= 1950m 且无强卫星树冠（canopy < 32）的陡脊直接露石
         if (elev !== null && elev >= 1950 && canopyDensity < 32) return 0;
 
+        const isPrimevalMegaForest =
+            (canopyDensity >= 65 && forestCover >= 0.68) ||
+            ((biome === 1 || biome === 6) && forestCover >= 0.72 && canopyDensity >= 42);
+        const isLargeContinuousForest =
+            isPrimevalMegaForest ||
+            (canopyDensity >= 45 && forestCover >= 0.58) ||
+            isForestTile;
+
         const ridgePenalty = elev !== null && elev > 1300
             ? Math.min(0.16, ((elev - 1300) / 800) * 0.14)
             : 0;
-        const baseNoiseGate = canopyDensity >= 55
-            ? 0.42
-            : canopyDensity >= 28
-                ? 0.48
-                : 0.54;
+        const baseNoiseGate = isPrimevalMegaForest
+            ? 0.20
+            : isLargeContinuousForest
+                ? 0.30
+                : canopyDensity >= 28
+                    ? 0.42
+                    : 0.50;
         const noiseGate = Math.min(0.68, baseNoiseGate + ridgePenalty);
-        if (noiseVal < noiseGate) return 0;
+        // 林缘外圈 0.07 带宽：生成 1~2 棵抱团的散树簇（几棵树在一起），避免大片森林边缘像刀切一样齐整
+        const fringeGate = Math.max(0.12, noiseGate - 0.07);
+        if (noiseVal < fringeGate) return 0;
+        if (noiseVal < noiseGate) {
+            const fringeT = (noiseVal - fringeGate) / Math.max(0.01, noiseGate - fringeGate);
+            return 0.19 + 0.10 * fringeT;
+        }
 
         const norm = Math.min(1, (forestCover - FOREST_COVER_THRESHOLD) / (1 - FOREST_COVER_THRESHOLD));
-        const canopyBoost = Math.min(0.20, canopyDensity / 220);
+        const canopyBoost = Math.min(0.24, canopyDensity / 200);
         const clusterSpan = (noiseVal - noiseGate) / Math.max(0.15, 1 - noiseGate);
-        return Math.min(1, (0.28 + 0.44 * norm + canopyBoost) * (0.55 + 0.45 * clusterSpan));
+        const coreFloor = isPrimevalMegaForest ? 0.42 : (isLargeContinuousForest ? 0.34 : 0.28);
+        return Math.min(1, (coreFloor + 0.44 * norm + canopyBoost) * (0.58 + 0.42 * clusterSpan));
     }
 
     const isForestBiome = RESOLVE_FOREST_BIOMES.has(biome);
@@ -475,13 +500,14 @@ function forestClusterWeight(
         const canopy = Math.max(0, Math.min(1, canopyDensity / 100));
         baseWeight = Math.max(0.35, canopy);
     } else if (isForestBiome) {
-        if (canopyDensity < 22 && !isMountainOrHill) return 0;
+        if (canopyDensity < 20 && !isMountainOrHill) return 0;
         const norm = Math.min(1.0, Math.max(0.15, (canopyDensity - 15) / 55));
-        baseWeight = 0.24 + 0.52 * norm;
+        baseWeight = 0.26 + 0.54 * norm;
     }
 
-    if (noiseVal < 0.48) return 0;
-    const clusterFactor = 0.55 + 0.45 * ((noiseVal - 0.48) / 0.52);
+    const fallbackGate = canopyDensity >= 65 ? 0.22 : (canopyDensity >= 45 ? 0.32 : 0.46);
+    if (noiseVal < fallbackGate) return 0;
+    const clusterFactor = 0.55 + 0.45 * ((noiseVal - fallbackGate) / (1 - fallbackGate));
 
     return baseWeight * clusterFactor;
 }
@@ -723,6 +749,10 @@ export class VegetationLayer {
         map.on('move', this.onCanvasFollow);
         map.on('resize', this.onResize);
         window.addEventListener('land-sea-tiles-updated', this.onTerrainReady);
+        window.addEventListener('strategic-rivers-ready', () => {
+            this.lastRenderKey = '';
+            this.scheduleRender();
+        });
         this.resize();
         this.render();
         void loadStrategicForestMask().then((ready) => {
@@ -1130,6 +1160,72 @@ export class VegetationLayer {
             return best;
         };
 
+        // 🔴 [2026-11-02 主人令「矢量河流道路分开森林 + 多铺亚马孙等大片森林」]
+        //    构建视口内矢量河流中心线的世界像素空间哈希桶（SAMPLE_ZOOM），让干支流像《全面战争》一样把成片林海清晰切开，
+        //    并在河道净空带外侧（16~48px）为开阔河谷提供护岸散树簇加成。
+        const riverBuckets = new Map<string, Array<[number, number, number, number]>>();
+        for (const entry of getStrategicRiverFeatures()) {
+            const [minLng, minLat, maxLng, maxLat] = entry.bbox;
+            if (maxLng < rLngMin || minLng > rLngMax || maxLat < rLatMin || minLat > rLatMax) continue;
+            for (const line of entry.lines) {
+                if (line.length < 2) continue;
+                let prevWpt: { x: number; y: number } | null = null;
+                let prevIn = false;
+                for (let k = 0; k < line.length; k++) {
+                    const [lng, lat] = line[k];
+                    const curIn = lat >= rLatMin && lat <= rLatMax && lng >= rLngMin && lng <= rLngMax;
+                    if (!curIn && !prevIn) {
+                        prevWpt = null;
+                        prevIn = false;
+                        continue;
+                    }
+                    const wpt = this.map.project([lat, lng], SAMPLE_ZOOM);
+                    if (prevWpt === null && k > 0) {
+                        const [pLng, pLat] = line[k - 1];
+                        prevWpt = this.map.project([pLat, pLng], SAMPLE_ZOOM);
+                    }
+                    if (prevWpt !== null) {
+                        const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - RIVER_RIPARIAN_PX) / ROAD_BUCKET_PX);
+                        const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + RIVER_RIPARIAN_PX) / ROAD_BUCKET_PX);
+                        const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - RIVER_RIPARIAN_PX) / ROAD_BUCKET_PX);
+                        const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + RIVER_RIPARIAN_PX) / ROAD_BUCKET_PX);
+                        const seg: [number, number, number, number] = [prevWpt.x, prevWpt.y, wpt.x, wpt.y];
+                        for (let by = by0; by <= by1; by++) {
+                            for (let bx = bx0; bx <= bx1; bx++) {
+                                const key = `${bx},${by}`;
+                                let arr = riverBuckets.get(key);
+                                if (!arr) {
+                                    arr = [];
+                                    riverBuckets.set(key, arr);
+                                }
+                                arr.push(seg);
+                            }
+                        }
+                    }
+                    prevWpt = wpt;
+                    prevIn = curIn;
+                }
+            }
+        }
+        const distSqToRiver = (tx: number, ty: number): number => {
+            const segs = riverBuckets.get(`${Math.floor(tx / ROAD_BUCKET_PX)},${Math.floor(ty / ROAD_BUCKET_PX)}`);
+            if (!segs) return Infinity;
+            let best = Infinity;
+            for (const [x1, y1, x2, y2] of segs) {
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const lenSq = dx * dx + dy * dy;
+                let t = lenSq > 1e-6 ? ((tx - x1) * dx + (ty - y1) * dy) / lenSq : 0;
+                if (t < 0) t = 0;
+                else if (t > 1) t = 1;
+                const ddx = tx - (x1 + t * dx);
+                const ddy = ty - (y1 + t * dy);
+                const dSq = ddx * ddx + ddy * ddy;
+                if (dSq < best) best = dSq;
+            }
+            return best;
+        };
+
         for (let gy = yMin; gy <= yMax; gy += TREE_GRID_STEP) {
             for (let gx = xMin; gx <= xMax; gx += TREE_GRID_STEP) {
                 // 有机微抖动：打破网格机械感
@@ -1221,7 +1317,12 @@ export class VegetationLayer {
                     noiseVal >= 0.44
                 ) {
                     const R_STEP = 0.022;
+                    const riverDistSq = distSqToRiver(px, py);
+                    const nearVectorRiverBank =
+                        riverDistSq >= RIVER_CLEAR_PX * RIVER_CLEAR_PX &&
+                        riverDistSq <= RIVER_RIPARIAN_PX * RIVER_RIPARIAN_PX;
                     const nearRiver =
+                        nearVectorRiverBank ||
                         waterSampler.isWaterSync(ptLatLng.lat + R_STEP, ptLatLng.lng) === true ||
                         waterSampler.isWaterSync(ptLatLng.lat - R_STEP, ptLatLng.lng) === true ||
                         waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng + R_STEP) === true ||
@@ -1285,9 +1386,10 @@ export class VegetationLayer {
                         curPy += Math.sin(ang) * dist * 0.74;
                     }
 
-                    // 单株树干级城郊避让与战略官道退让：确保城墙四周 64px 净空圈与林间古道干干净净
+                    // 单株树干级城郊避让、战略官道退让与矢量河流退让：确保城墙净空圈、林间古道与河谷水道干干净净
                     if (visibleCities.some((c) => Math.hypot(c.wx - curPx, c.wy - curPy) < (c.isForestHunting ? 32 : CITY_CLEAR_PX - 4))) continue;
                     if (distSqToRoad(curPx, curPy) < ROAD_CLEAR_PX * ROAD_CLEAR_PX) continue;
+                    if (distSqToRiver(curPx, curPy) < RIVER_CLEAR_PX * RIVER_CLEAR_PX) continue;
 
                     const curLatLng = this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
 

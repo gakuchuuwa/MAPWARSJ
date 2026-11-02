@@ -1,9 +1,14 @@
-interface RiverFeatureIndex {
+export interface RiverFeatureIndex {
     bbox: [number, number, number, number];
     lines: ReadonlyArray<ReadonlyArray<readonly [number, number]>>;
 }
 
 let riverIndex: RiverFeatureIndex[] = [];
+
+/** 供战略植被层等只读消费已缓存的矢量河流中心线（按 bbox 裁剪后做河道林间走廊退让）。 */
+export function getStrategicRiverFeatures(): ReadonlyArray<RiverFeatureIndex> {
+    return riverIndex;
+}
 
 function collectLines(coords: unknown, out: Array<Array<readonly [number, number]>>): void {
     if (!Array.isArray(coords) || coords.length === 0) return;
@@ -35,6 +40,9 @@ export function setStrategicRiverProximityData(geojson: any): void {
         next.push({ bbox: [minLng, minLat, maxLng, maxLat], lines });
     }
     riverIndex = next;
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('strategic-rivers-ready'));
+    }
 }
 
 function pointSegmentDistanceKm(
