@@ -137,9 +137,9 @@ export class PlayerHUD {
     private createPanel(): void {
         const panel = document.createElement('div');
         panel.id = 'player-hero-panel';
-        // 顶部玩家面板常驻展开，不加 is-collapsed
+        // 顶部玩家面板常驻展开，不加 is-collapsed；z-index 高于底部对话覆盖层（10060），确保弹对话时顶部栏仍可点击
         panel.style.cssText = `
-            position:fixed; left:0; right:0; top:0; z-index:10003;
+            position:fixed; left:0; right:0; top:0; z-index:10065;
             width:100%; padding:4px 12px; box-sizing:border-box;
             color:#f5e6c8; font-family:${FONT}; font-size:12px; line-height:1.35;
             background:rgba(20,16,12,0.95);
@@ -311,7 +311,7 @@ export class PlayerHUD {
         this.scheduleNextCyclePhase();
     }
 
-    public refresh(): void {
+    public refresh(force = false): void {
         if (!this.panel || !this.body) return;
         // 🔴 [2026-09-24 主人定] 剧本期不显示军团/军情面板（CSS body.script-period 藏），乱斗期照旧。
         //    每秒对齐一次：剧本打完自动切乱斗时，两块面板随之回来。
@@ -358,8 +358,10 @@ export class PlayerHUD {
         }
         this.panel.style.display = inScene13 ? 'none' : 'block';
         if (this.panel.style.display === 'none') return;
-        // 用户正在操作面板：先不重建（重建会把打开的下拉框、正要点的按钮整个换掉）
-        if (this.isUserInteracting()) { this.refreshPending = true; return; }
+        // 用户正在操作面板：后台定时/外部回调先不重建（重建会把打开的下拉框、正要点的按钮整个换掉）；
+        // 但用户亲手点击面板按钮（force=true）时必须立即刷新，否则按钮文案不更新、闭包停在旧状态。
+        if (!force && this.isUserInteracting()) { this.refreshPending = true; return; }
+        this.refreshPending = false;
 
         const hero = this.hero;
         const rank = hero.getRank();
@@ -426,7 +428,7 @@ export class PlayerHUD {
                 return;
             }
             hero.rename(mod.name);
-            this.refresh();
+            this.refresh(true);
         });
         secLeft.appendChild(renameBtn);
 
@@ -439,7 +441,7 @@ export class PlayerHUD {
             vetoBtn.style.cssText = 'cursor:pointer; background:rgba(120,32,32,0.85); border:1px solid rgba(235,110,110,0.65); color:#ffd8d8; font-size:10.5px; padding:1px 5px; border-radius:4px; line-height:1.2; font-family:inherit;';
             vetoBtn.addEventListener('click', () => {
                 this.deps.onVetoViewerRename?.();
-                this.refresh();
+                this.refresh(true);
             });
             secLeft.appendChild(vetoBtn);
         }
@@ -591,11 +593,13 @@ export class PlayerHUD {
             box-shadow:inset 0 1px 0 rgba(255,235,180,0.1), 0 1px 3px rgba(0,0,0,0.35);
         `;
         modeBtn.addEventListener('click', () => {
-            const next = modes[(curIdx + 1) % modes.length][0];
+            const idx = Math.max(0, modes.findIndex(([m]) => m === hero.playMode));
+            const next = modes[(idx + 1) % modes.length][0];
             hero.setPlayMode(next);
             // 自动/环球/航行＝镜头跟随玩家；休息＝取消跟随
             if (next === 'rest') this.deps.releaseCamera?.();
             else this.deps.followCamera?.();
+            this.refresh(true);
         });
         secControls.appendChild(modeBtn);
 
@@ -618,7 +622,10 @@ export class PlayerHUD {
             if (hero.autoPlan === val) opt.selected = true;
             planSel.appendChild(opt);
         }
-        planSel.addEventListener('change', () => hero.setAutoPlan(planSel.value as PlayerAutoPlan));
+        planSel.addEventListener('change', () => {
+            hero.setAutoPlan(planSel.value as PlayerAutoPlan);
+            this.refresh(true);
+        });
         secControls.appendChild(planSel);
 
         // 📅 跳年（🔴 [2026-10-20 主人令]「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代」）
@@ -656,7 +663,7 @@ export class PlayerHUD {
                 }
                 this.notify(`已跳到${got < 0 ? `公元前${-got}` : `公元${got}`}年`);
                 yearInput.blur();
-                this.refresh();
+                this.refresh(true);
             };
             yearInput.addEventListener('keydown', (e) => {
                 e.stopPropagation();   // 输入数字时不触发全局快捷键
@@ -688,8 +695,9 @@ export class PlayerHUD {
                 transition:all 0.2s ease;
             `;
             speedBtn.addEventListener('click', () => {
-                this.deps.setSpeed!(fast ? 1 : 10);
-                this.refresh();
+                const nowFast = this.deps.getSpeed!() >= 10;
+                this.deps.setSpeed!(nowFast ? 1 : 10);
+                this.refresh(true);
             });
             secControls.appendChild(speedBtn);
         }

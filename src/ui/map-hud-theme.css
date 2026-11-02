@@ -164,7 +164,7 @@ body:has(#event-display.event-panel.is-collapsed) {
     font-variant-numeric: tabular-nums;
     transition: none !important;
     transform: translateY(0) !important;
-    z-index: 10003;
+    z-index: 10065;
 }
 
 #player-hero-panel.is-collapsed {

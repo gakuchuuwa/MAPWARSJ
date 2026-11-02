@@ -172,6 +172,6 @@ export class HeroSpriteDrawer {
         const y = center.y - this.BASE_H * scale - 6;
         const fontPx = Math.max(10, Math.round(12 * Math.max(0.8, scale)));
         const sprite = this.getLabelSprite(name, fontPx);
-        ctx.drawImage(sprite, Math.round(center.x - sprite.width / 2), Math.round(y - sprite.height + 2));
+        ctx.drawImage(sprite, center.x - sprite.width / 2, y - sprite.height + 2);
     }
 }

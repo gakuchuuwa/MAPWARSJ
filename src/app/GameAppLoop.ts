@@ -6,6 +6,7 @@ import { marchStutterProbe } from '../debug/MarchStutterProbe';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { GameConfig } from '../config/GameConfig';
 import { resolveFactionCulture66 } from '../systems/CultureRegion';
+import { getGlobalUnitRenderer } from '../map/UnitRenderer';
 import type { GameApp } from './GameApp';
 
 
@@ -724,6 +725,8 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
         if (!battleSceneTickedThisFrame && app.battleScene?.isActive?.() && !app.combatUI?.isCorrectorOpen()) {
             app.battleScene.tick();
         }
+        // 在本帧玩家/军团位移与镜头跟随全部完成后同步驱动战略画布重绘，消除双 rAF 逆序导致的 1 帧滞后与抖动
+        getGlobalUnitRenderer()?.tickFromGameLoop(timestamp);
     } catch (error) {
         console.error('❌ Game Loop Error:', error);
     }

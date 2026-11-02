@@ -376,12 +376,32 @@ export class PlayerQuestSystem {
         //    播报继续念，每次续路都把镜头拽回玩家（travelTo* 会 followCamera），画路时一点据点就被拉走。
         let lastAuto = deps.hero.autoMode;
         let lastPlan = deps.hero.autoPlan;
+        let lastPlayMode = deps.hero.playMode;
         deps.hero.onChange(() => {
-            const auto = deps.hero.autoMode, plan = deps.hero.autoPlan;
+            const auto = deps.hero.autoMode, plan = deps.hero.autoPlan, mode = deps.hero.playMode;
             const turnedOffAuto = lastAuto && !auto;
             const toMelee = lastPlan === 'script' && plan !== 'script';
             const planChanged = lastPlan !== plan;
-            lastAuto = auto; lastPlan = plan;
+            const modeChanged = lastPlayMode !== mode;
+            lastAuto = auto; lastPlan = plan; lastPlayMode = mode;
+            if (modeChanged) {
+                // 切换到休息/环球/航行：关闭可能正弹着的武将接任务对话框（防 3 秒倒计时自动把人拽回入伍）
+                if (mode !== 'auto') this.deps.closeDialogue();
+                // 切换到环球/航行：若当前已随军入伍，先自动离队并清除离队 9 秒停顿，立即启程环游
+                if (mode === 'globe' || mode === 'sail') {
+                    this.abortScriptJourney();
+                    if (deps.hero.isAttached()) this.leaveHost();
+                    deps.hero.clearHold();
+                    this.deps.ensureUnpaused();
+                    deps.hero.kickTourNow();
+                    return;
+                }
+                if (mode === 'auto') {
+                    deps.hero.clearHold();
+                    this.deps.ensureUnpaused();
+                    window.setTimeout(() => this.tick(), 0);
+                }
+            }
             if (turnedOffAuto || toMelee) this.abortScriptJourney();
             // 🔴 切玩法 = 「告辞过谁」这一轮作废（新玩法下重新按规矩找下一位）
             else if (planChanged) this.declinedGenerals.clear();

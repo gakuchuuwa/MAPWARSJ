@@ -1,4 +1,4 @@
-﻿import { drawUnitLabel } from './UnitLabelCache';
+import { drawUnitLabel } from './UnitLabelCache';
 import { PLAYER_FALLBACK_HERO_KEY } from '../player/PlayerConfig';
 import L from 'leaflet';
 import { GameMap } from './GameMap';
@@ -838,11 +838,47 @@ export class GlobalUnitRenderer {
         L.DomUtil.setPosition(this.canvasLow, topLeft);
     }
 
+    /**
+     * 亚像素级浮点屏幕投影（绕过 Leaflet `latLngToContainerPoint` → `latLngToLayerPoint`
+     * 内部的 `this.project(latlng)._round()` 整数取整）：
+     * 跟随镜头 `followPanStep` 通过 `_rawPanBy` 做浮点亚像素平移，若单位坐标被 `_round()`
+     * 取整到整像素，两者相减会产生 ±0.5px 锯齿阶梯抖动。
+     */
+    private latLngToContainerPointSubpixel(lat: number, lng: number): L.Point {
+        const projected = this.map.project([lat, lng], this.map.getZoom());
+        const origin = this.map.getPixelOrigin();
+        const panePos = (this.map as unknown as { _getMapPanePos?: () => L.Point })._getMapPanePos?.()
+            ?? L.DomUtil.getPosition(this.map.getPane('mapPane')!);
+        return new L.Point(
+            projected.x - origin.x + (panePos?.x ?? 0),
+            projected.y - origin.y + (panePos?.y ?? 0),
+        );
+    }
+
+    /** 是否已交由主循环 `tickGameAppFrame` 尾声同步驱动（消除双 rAF 逆序导致的 1 帧滞后与抖动） */
+    private drivenByGameLoop = false;
+
+    private scheduleNextFrame(): void {
+        if (!this.drivenByGameLoop && this.isRunning) {
+            requestAnimationFrame(this.animate.bind(this));
+        }
+    }
+
+    /**
+     * 由 `GameAppLoop.tickGameAppFrame` 在每帧逻辑与镜头跟随更新完毕后同步调用，
+     * 确保本帧 `updateCanvasPosition` 与单位绘制使用的是本帧最新的玩家/军团坐标与镜头位移。
+     */
+    public tickFromGameLoop(timestamp: number): void {
+        this.drivenByGameLoop = true;
+        if (!this.isRunning) return;
+        this.animate(timestamp, true);
+    }
+
     public start(): void {
         if (this.isRunning) return;
         this.isRunning = true;
         this.lastTime = performance.now();
-        requestAnimationFrame(this.animate.bind(this));
+        this.scheduleNextFrame();
     }
 
     public stop(): void {
@@ -935,14 +971,15 @@ export class GlobalUnitRenderer {
         return false;
     }
 
-    private animate(time: number): void {
+    private animate(time: number, fromGameLoop = false): void {
         if (!this.isRunning) return;
+        if (this.drivenByGameLoop && !fromGameLoop) return;
         // 独立战场已经覆盖战略地图时，保留上一帧，不再重画屏下的军团与标签。
         // 更新时间戳并保留重绘标记，退出战场后正常接回，避免累积整场的动画时差。
         if (this.map.getContainer().style.visibility === 'hidden') {
             this.lastTime = time;
             this.mapNeedsRedraw = true;
-            requestAnimationFrame(this.animate.bind(this));
+            this.scheduleNextFrame();
             return;
         }
 
@@ -1001,7 +1038,7 @@ export class GlobalUnitRenderer {
                 this.ctxLow.clearRect(0, 0, this.canvasLow.width, this.canvasLow.height);
             }
             endCanvasTiming();
-            requestAnimationFrame(this.animate.bind(this));
+            this.scheduleNextFrame();
             return;
         }
 
@@ -1058,13 +1095,15 @@ export class GlobalUnitRenderer {
 
             const isVisible = (unit as any).visible !== false;
             const inView = isVisible && this.isUnitInContainerView(unit);
-            const animating =
+            const wasAnimating =
                 unit.isMoving || unit.isAttacking || (unit as any).isBattling;
 
-            if (isVisible && (inView || animating)) {
+            if (isVisible && (inView || wasAnimating)) {
                 this.updateUnitState(unit);
             }
 
+            const animating =
+                unit.isMoving || unit.isAttacking || (unit as any).isBattling;
             if (animating) {
                 hasActiveAnimation = true;
             }
@@ -1098,7 +1137,7 @@ export class GlobalUnitRenderer {
             this.idlePollAccumulator += deltaTime;
             if (this.idlePollAccumulator < GlobalUnitRenderer.IDLE_POLL_INTERVAL_MS) {
                 endCanvasTiming();
-                requestAnimationFrame(this.animate.bind(this));
+                this.scheduleNextFrame();
                 return;
             }
             this.idlePollAccumulator = 0;
@@ -1106,7 +1145,7 @@ export class GlobalUnitRenderer {
                 this.mapNeedsRedraw = true;
             }
             endCanvasTiming();
-            requestAnimationFrame(this.animate.bind(this));
+            this.scheduleNextFrame();
             return;
         }
 
@@ -1261,7 +1300,7 @@ export class GlobalUnitRenderer {
         }
         endCanvasTiming();
 
-        requestAnimationFrame(this.animate.bind(this));
+        this.scheduleNextFrame();
     }
 
     private updateUnitState(unit: IAnimatedUnit): void {
@@ -1294,11 +1333,15 @@ export class GlobalUnitRenderer {
         // Check if unit is moving
         const last = unit.lastPosition;
         const posChanged = isValidMapCoord(last)
-            && (Math.abs(currentPos.lat - last.lat) > 0.0001
-                || Math.abs(currentPos.lng - last.lng) > 0.0001);
+            && (Math.abs(currentPos.lat - last.lat) > 0.000001
+                || Math.abs(currentPos.lng - last.lng) > 0.000001);
 
-        if (unit.id?.startsWith('army_editor_preview_')) {
-            // ArmyEditor strictly controls its own isMoving state
+        if (unit.id?.startsWith('army_editor_preview_') || (unit as any).isPlayerHero) {
+            // ArmyEditor and PlayerHero strictly control their own isMoving state;
+            // if PlayerHero also moved significantly since last frame, ensure isMoving is true.
+            if ((unit as any).isPlayerHero && posChanged) {
+                unit.isMoving = true;
+            }
         } else {
             if (posChanged) unit.isMoving = true;
             else unit.isMoving = false; // Or let unit decide.
@@ -2294,8 +2337,8 @@ export class GlobalUnitRenderer {
 
         const unitPos = unit.getPosition();
         if (!isValidMapCoord(unitPos)) return;
-        // Base center point
-        let centerPoint = this.map.latLngToContainerPoint([unitPos.lat, unitPos.lng]);
+        // Base center point（亚像素浮点投影，避免 latLngToContainerPoint 内部 _round() 造成 ±0.5px 阶梯抖动）
+        let centerPoint = this.latLngToContainerPointSubpixel(unitPos.lat, unitPos.lng);
 
         // 常态军团画在真实坐标；攻城外推与纯舰队野战双鱼导演仅改变渲染点，不改逻辑坐标。
         // 下面 scale 仅供贴图/方阵尺寸计算使用（不参与定位）。
@@ -2411,7 +2454,9 @@ export class GlobalUnitRenderer {
                     const maxStep = GlobalUnitRenderer.NAVAL_TURN_RATE_DEG_S * Math.PI / 180 * dt;
                     currentAngle += Math.abs(eased) > maxStep ? Math.sign(diff) * maxStep : eased;
                 } else {
-                    currentAngle += diff * 0.2;
+                    const dtMs = Math.min(100, Math.max(1, this.frameDeltaMs));
+                    const turnAlpha = 1 - Math.pow(1 - 0.2, dtMs / (1000 / 60));
+                    currentAngle += diff * turnAlpha;
                 }
 
                 // Normalize
@@ -2636,14 +2681,14 @@ export class GlobalUnitRenderer {
                     //    16px 永远凑不够 → 航迹不再更新，后随船沿旧航迹直线外推，拐弯时不跟着拐。
                     const prev = this.navalTrailLast.get(unit.id);
                     //    两端都用逻辑坐标换算（不用 centerPoint：攻城外推会给它加一段视觉偏移）。
-                    const prevPt = prev ? this.map.latLngToContainerPoint([prev.lat, prev.lng]) : null;
-                    const curPt = this.map.latLngToContainerPoint([unitPos.lat, unitPos.lng]);
+                    const prevPt = prev ? this.latLngToContainerPointSubpixel(prev.lat, prev.lng) : null;
+                    const curPt = this.latLngToContainerPointSubpixel(unitPos.lat, unitPos.lng);
                     if (!prevPt || Math.hypot(curPt.x - prevPt.x, curPt.y - prevPt.y) >= GlobalUnitRenderer.NAVAL_TRAIL_SAMPLE_PX) {
                         NavalPhalanxStateManager.pushTrail(unit.id, unitPos.lat, unitPos.lng);
                         this.navalTrailLast.set(unit.id, { lat: unitPos.lat, lng: unitPos.lng });
                     }
                     navalTrail = (NavalPhalanxStateManager.getState(unit.id)?.trail ?? []).map(p => {
-                        const c = this.map.latLngToContainerPoint([p.lat, p.lng]);
+                        const c = this.latLngToContainerPointSubpixel(p.lat, p.lng);
                         return { x: c.x, y: c.y };
                     });
                 }
@@ -2690,7 +2735,7 @@ export class GlobalUnitRenderer {
                             const ll = this.map.containerPointToLatLng(L.point(point.x, point.y));
                             return { x: ll.lng, y: ll.lat };
                         },
-                        toScreen: point => this.map.latLngToContainerPoint([point.y, point.x]),
+                        toScreen: point => this.latLngToContainerPointSubpixel(point.y, point.x),
                     },
                     // 🔴 [2026-09-23 主人报「船队的船朝向有问题，请参考陆军的长蛇阵」]
                     //    剧本模式行军纵队：船队与陆军同一个规矩（每艘船朝自己脚下的航迹切线）。
@@ -2755,7 +2800,7 @@ export class GlobalUnitRenderer {
                     false,
                     unit.currentBattleType !== null,
                     (lat: number, lng: number) => {
-                        const point = this.map.latLngToContainerPoint([lat, lng]);
+                        const point = this.latLngToContainerPointSubpixel(lat, lng);
                         return { x: point.x, y: point.y };
                     },
                     (x: number, y: number) => {

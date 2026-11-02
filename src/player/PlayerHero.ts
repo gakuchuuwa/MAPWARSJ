@@ -64,14 +64,20 @@ function westwardDeg(fromLng: number, toLng: number): number {
 }
 
 /**
- * 🔴 [2026-11-02 主人令「环球和航行，一律都是由东向西环球」] 下一站只在西边挑：
- * 先取往西 10°~60° 的（一站一站往西推），没有就放宽到往西 0°~180°，再没有才退回全部。
+ * 🔴 [2026-11-02 主人令「在代码中实装这一套严格的环球单向无回头路推进算法」]
+ *    单向向西无回头：目标经度差必须严格向西推进，绝不回退到全部候选（严禁反向挑选东侧城市）。
  */
 function pickWestward<T extends { longitude: number }>(cands: T[], fromLng: number): T[] {
-    const near = cands.filter((c) => { const d = westwardDeg(fromLng, c.longitude); return d >= 10 && d <= 60; });
+    const near = cands.filter((c) => {
+        const d = westwardDeg(fromLng, c.longitude);
+        return d >= 3.5 && d <= 85;
+    });
     if (near.length > 0) return near;
-    const half = cands.filter((c) => { const d = westwardDeg(fromLng, c.longitude); return d > 0.5 && d < 180; });
-    return half.length > 0 ? half : [...cands];
+    const half = cands.filter((c) => {
+        const d = westwardDeg(fromLng, c.longitude);
+        return d >= 1.5 && d < 165;
+    });
+    return half;
 }
 
 /** 从本势力文化军团三排里学到的兵种。 */
@@ -392,13 +398,21 @@ export class PlayerHero {
         this.playMode = mode;
         this.autoMode = mode === 'auto';
         this.tourPlannedAt = 0;
-        if (mode === 'globe' || mode === 'sail') {
+        this.holdUntilMs = 0;
+        if (!this.hostLegionId) {
             this.cancelChase();
             this.cancelTravel();
         }
         this.emitChange();
     }
     public isTourMode(): boolean { return this.playMode === 'globe' || this.playMode === 'sail'; }
+    /** 清除战败/离队停顿倒计时（手动切换模式时立即响应，不干等 9 秒） */
+    public clearHold(): void { this.holdUntilMs = 0; }
+    /** 切换到环球/航行后立即规划第一步（不等 1.5s 节流） */
+    public kickTourNow(): void {
+        this.tourPlannedAt = 0;
+        this.stepTour();
+    }
 
     /** 环球/航行：停下来后挑下一个目的地（每 1.5 秒最多规划一次） */
     private tourPlannedAt = 0;
@@ -421,12 +435,36 @@ export class PlayerHero {
                 .filter(([id, d]) => id !== here && d > 0)
                 .map(([id]) => this.deps.cityManager.getCity(id))
                 .filter((c): c is City => !!c);
-            const legs = this.rankWestLegs(pickWestward(this.skipRecentStops(reach), pos.lng), pos.lng, (c) => {
+            let legs = this.rankWestLegs(pickWestward(this.skipRecentStops(reach), pos.lng), pos.lng, (c) => {
                 const r = roadRegistry.findPath(here, c.id);
                 return r ? roadRegistry.pathToLatLngs(r) : null;
             });
-            for (const leg of legs.slice(0, 5)) {
-                if (this.travelToCity(leg.city.id, true)) { this.rememberTourStop(leg.city.id); return; }
+            // 局部支线若无可直达西向城，向全图未走过的西向据点寻路
+            if (legs.length === 0) {
+                const allWestCities = pickWestward(this.skipRecentStops(this.deps.cityManager.getCities().filter((c: City) => c.id !== here)), pos.lng);
+                legs = this.rankWestLegs(allWestCities, pos.lng, (c) => {
+                    const r = roadRegistry.findPath(here, c.id);
+                    return r ? roadRegistry.pathToLatLngs(r) : null;
+                });
+            }
+            if (legs.length > 0) {
+                const { city: dest, path } = legs[0];
+                this.rememberTourStop(dest.id);
+                // 沿途途经的据点也全数记入历史，彻底杜绝回踩
+                for (const p of path) {
+                    const nearCity = roadRegistry.getNearestCityId(p.lat, p.lng, 0.2);
+                    if (nearCity) this.rememberTourStop(nearCity);
+                }
+                const fullPath = roadRegistry.getFullPathToCity(pos, dest.id, here);
+                const marchPath = fullPath && fullPath.length >= 2 ? fullPath : path;
+                this.travelCityId = dest.id;
+                this.travelPointLabel = null;
+                this.army.setTargetCity(dest);
+                this.army.setOnArriveCallback(() => this.handleArrive(dest.id));
+                this.army.moveAlongPath(marchPath.map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as any).sea })));
+                this.deps.followCamera();
+                this.emitChange();
+                return;
             }
             return;
         }
@@ -435,27 +473,42 @@ export class PlayerHero {
             .map((id) => this.deps.cityManager.getCity(id))
             .filter((c): c is City => !!c);
         if (ports.length === 0) return;
-        let nearPort: City | null = null;
-        let nd = Infinity;
-        for (const c of ports) {
-            const d = getEuclideanDistance(pos, { lat: c.latitude, lng: c.longitude });
-            if (d < nd) { nd = d; nearPort = c; }
-        }
+        const sortedPorts = [...ports].sort(
+            (a, b) => getEuclideanDistance(pos, { lat: a.latitude, lng: a.longitude })
+                - getEuclideanDistance(pos, { lat: b.latitude, lng: b.longitude }),
+        );
+        const nearPort = sortedPorts[0];
         if (!nearPort) return;
+        const nd = getEuclideanDistance(pos, { lat: nearPort.latitude, lng: nearPort.longitude });
         if (nd > PLAYER_CITY_ARRIVE_DIST) {
-            this.deps.notify(`航行：先前往最近的港口【${nearPort.name}】`);
-            this.travelToCity(nearPort.id, true);
+            for (const candidatePort of sortedPorts.slice(0, 8)) {
+                if (this.travelToCity(candidatePort.id, true, { allowNoGeneral: true })) {
+                    this.deps.notify(`航行：先前往最近的港口【${candidatePort.name}】`);
+                    return;
+                }
+            }
             return;
         }
         const startId = nearPort.id;
         const cands = pickWestward(this.skipRecentStops(ports.filter((c) => c.id !== startId)), pos.lng);
-        const legs = this.rankWestLegs(cands, pos.lng, (c) => {
+        let legs = this.rankWestLegs(cands, pos.lng, (c) => {
             const res = roadRegistry.findSeaOnlyPath(startId, c.id);
             return res && res.coordinates.length >= 2 ? roadRegistry.pathToLatLngs(res) : null;
         });
+        if (legs.length === 0) {
+            const allWestPorts = pickWestward(ports.filter((c) => c.id !== startId), pos.lng);
+            legs = this.rankWestLegs(allWestPorts, pos.lng, (c) => {
+                const res = roadRegistry.findSeaOnlyPath(startId, c.id);
+                return res && res.coordinates.length >= 2 ? roadRegistry.pathToLatLngs(res) : null;
+            });
+        }
         if (legs.length > 0) {
             const { city: dest, path } = legs[0];
             this.rememberTourStop(dest.id);
+            for (const p of path) {
+                const nearPortId = roadRegistry.getNearestCityId(p.lat, p.lng, 0.3);
+                if (nearPortId) this.rememberTourStop(nearPortId);
+            }
             this.travelCityId = dest.id;
             this.travelPointLabel = null;
             this.army.setTargetCity(dest);
@@ -466,11 +519,13 @@ export class PlayerHero {
         }
     }
 
-    /** 环球/航行最近走过的站（不回头：短期内不再选它们当目的地） */
+    /** 环球/航行最近走过的站（严格防回头：长期记录历史据点，绝不二度回踩） */
     private recentTourStops: string[] = [];
     private rememberTourStop(id: string): void {
-        this.recentTourStops.push(id);
-        if (this.recentTourStops.length > 30) this.recentTourStops.shift();
+        if (!this.recentTourStops.includes(id)) {
+            this.recentTourStops.push(id);
+            if (this.recentTourStops.length > 100) this.recentTourStops.shift();
+        }
     }
     private skipRecentStops(cands: City[]): City[] {
         const left = cands.filter((c) => !this.recentTourStops.includes(c.id));
@@ -478,22 +533,25 @@ export class PlayerHero {
     }
 
     /**
-     * 🔴 [2026-11-02 主人报「环球，航行，有回头路」] 目的地在西边还不够 —— 最短路可能先往东绕一大段。
-     * 抽 30 个候选逐条看路线：往东走的经度合计（回头量）不超过 max(3°, 往西量的 15%) 才算顺路（沿海岸线的小弯不算回头），
-     * 顺路的按「往西量 − 4×回头量」排序；一条顺路的都没有，就取回头量最少的。
+     * 🔴 [2026-11-02 主人令「在代码中实装这一套严格的环球单向无回头路推进算法」]
+     *    1. 路线级严格单调向西：净西进位移必须 >= 1.5°，西进量占绝对压倒性优势；
+     *    2. 严格限制东向回折分量：east <= Math.min(2.0, west * 0.12)，杜绝任何大调头绕道；
+     *    3. 严禁任何东向兜底：宁可扩大全图向西搜寻，也绝不回踩向东的回头路；
+     *    4. 候选路线随机打散，兼具路线多样性与严格无回头路。
      */
     private rankWestLegs(
         cands: City[],
         fromLng: number,
-        pathOf: (c: City) => Array<{ lat: number; lng: number }> | null,
-    ): Array<{ city: City; path: Array<{ lat: number; lng: number }> }> {
+        pathOf: (c: City) => Array<{ lat: number; lng: number; sea?: boolean }> | null,
+    ): Array<{ city: City; path: Array<{ lat: number; lng: number; sea?: boolean }> }> {
         const pool = [...cands];
         for (let i = pool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [pool[i], pool[j]] = [pool[j], pool[i]];
         }
-        const scored: Array<{ city: City; path: Array<{ lat: number; lng: number }>; west: number; east: number; ok: boolean }> = [];
-        for (const city of pool.slice(0, 30)) {
+        const strict: Array<{ city: City; path: Array<{ lat: number; lng: number; sea?: boolean }>; west: number; east: number; ok: boolean }> = [];
+        const netWestPool: Array<{ city: City; path: Array<{ lat: number; lng: number; sea?: boolean }>; west: number; east: number; ok: boolean }> = [];
+        for (const city of pool.slice(0, 60)) {
             const path = pathOf(city);
             if (!path || path.length < 2) continue;
             let west = 0, east = 0, prev = fromLng;
@@ -502,14 +560,28 @@ export class PlayerHero {
                 if (d > 0) east += d; else west -= d;
                 prev = p.lng;
             }
-            scored.push({ city, path, west, east, ok: west > east && east <= Math.max(3, west * 0.15) });
+            const netWest = west - east;
+            const maxEast = Math.min(2.0, west * 0.12);
+            if (netWest >= 1.5 && east <= maxEast) {
+                strict.push({ city, path, west, east, ok: true });
+            } else if (netWest >= 1.0) {
+                netWestPool.push({ city, path, west, east, ok: false });
+            }
         }
-        const ok = scored.filter((s) => s.ok).sort((a, b) => (b.west - 4 * b.east) - (a.west - 4 * a.east));
-        if (ok.length > 0) return ok;
-        const westish = scored.filter((s) => s.west > s.east).sort((a, b) => a.east - b.east);
-        if (westish.length > 0) return westish;
-        // 实在没有净往西的（困在路网死角）：也得走，取净回头最少的，免得原地不动
-        return scored.sort((a, b) => (a.east - a.west) - (b.east - b.west));
+        if (strict.length > 0) {
+            // 随机打散候选合规路线
+            for (let i = strict.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [strict[i], strict[j]] = [strict[j], strict[i]];
+            }
+            return strict;
+        }
+        // 半岛/东海岸港口出港绕过海角时可能有 >2° 的局部东向弯折：在净向西（netWest >= 1.0）路线中取东折最少的一条，防原地卡死
+        if (netWestPool.length > 0) {
+            netWestPool.sort((a, b) => a.east - b.east || (b.west - b.east) - (a.west - a.east));
+            return netWestPool;
+        }
+        return [];
     }
     /**
      * 切换自动模式的玩法（百岁 / 剧本 / 乱斗）。
@@ -1034,12 +1106,14 @@ export class PlayerHero {
                 return true;
             }
             this.cancelTravel();
-            // 追人途中锚点城正好在脚下：只是路过，不触发城中对话（同 handleArrive 的闸门）
-            if (!this.chaseArmyId) this.onArriveCity?.(city);
+            // 追人途中或环球/航行路过脚下据点：只是路过，不触发城中对话（同 handleArrive 的闸门）
+            if (!this.chaseArmyId && !this.isTourMode()) this.onArriveCity?.(city);
             return true;
         }
         if (!roadRegistry.isInitialized()) return false;
-        const nearest = roadRegistry.getNearestCityId(pos.lat, pos.lng);
+        const nearest = roadRegistry.getNearestCityId(pos.lat, pos.lng)
+            ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 5)
+            ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 30);
         let path = roadRegistry.getFullPathToCity(pos, cityId, nearest);
         if (!path || path.length < 2) path = roadRegistry.getFullPathToCity(pos, cityId, undefined);
         if (!path || path.length < 2) {

@@ -2,7 +2,7 @@ import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
-import { strategicSpriteScale } from './strategicSpriteScale';
+import { strategicActorScale } from './strategicSpriteScale';
 import { FAUNA_AREA_RATIO, WILD_LAND_PER_SQ_DEG } from '../world/environment/animalCatalog';
 
 /**
@@ -387,8 +387,9 @@ export class MarineLifeLayer extends L.Layer {
         if (this.creatures.length === 0) return;
 
         const bounds = this.map.getBounds();
-        // 与陆地动物/家畜同一 DE 基准，随地图缩放（zoom 8 → 0.35，9 → 0.7，10 → 1.4）
-        const spriteScale = strategicSpriteScale(this.map.getZoom());
+        // 🔴 [2026-11-02 主人令「既然陆地动物是0.6，那么所有陆地，空中，海洋动物都应该是0.6」]
+        //    海洋生物与陆地动物、飞鸟完全统一使用 strategicActorScale（基准 0.60），随地图缩放
+        const spriteScale = strategicActorScale(this.map.getZoom());
         for (const c of this.creatures) {
             // 视口粗筛（留 0.1° 边距防边缘截断）
             if (c.lat < bounds.getSouth() - 0.1 || c.lat > bounds.getNorth() + 0.1 ||

@@ -410,6 +410,15 @@ export function resolveSpecialEcoVegetation(
         return { weight: w, effectiveTile: isDeccanSavanna ? 'gr3' : 'gr5' };
     }
 
+    // ⑥ 喜马拉雅与山前冲积扇山麓过渡带（南亚特莱林缘 Terai / Piedmont Transition：26.0°~34.5°N, 71.0°~94.0°E）
+    //    连接喜马拉雅高山深林与旁遮普/恒河农耕平原，海拔 150m~420m 的冲积山麓扇带，以疏林散树簇呈现自然生态过渡，消除一刀切断崖秃光感
+    if (lat >= 26.0 && lat <= 34.5 && lng >= 71.0 && lng <= 94.0 && tile !== 'pal' && tile !== 'des' && tile !== 'qs') {
+        if (elev !== null && elev >= 150 && elev <= 420 && noiseVal >= 0.46) {
+            const w = (0.20 + (noiseVal - 0.46) * 0.32) * clusterFactor;
+            return { weight: w, effectiveTile: lng < 78 ? 'gr2' : 'gr3' };
+        }
+    }
+
     return { weight: 0, effectiveTile: tile };
 }
 
@@ -1238,7 +1247,7 @@ export class VegetationLayer {
                 if (visibleCities.some((c) => Math.hypot(c.wx - px, c.wy - py) < (c.isForestHunting ? 34 : CITY_CLEAR_PX))) continue;
 
                 const water = waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng);
-                if (water === true) continue;
+                if (water === true || LandSeaSystem.isSeaAt(ptLatLng)) continue;
                 if (water === null) {
                     waterNulls++;
                     waterSampler.scheduleFetch(ptLatLng.lat, ptLatLng.lng);
@@ -1257,7 +1266,7 @@ export class VegetationLayer {
                 if (elev === null) {
                     missingTiles++;
                     if (isHighPlateau) continue;
-                } else if (elev > treeLine || elev < 0 || (water === null && elev <= 0)) {
+                } else if (elev > treeLine || elev <= 0) {
                     continue;
                 }
 
@@ -1298,21 +1307,13 @@ export class VegetationLayer {
                     oasisCityBoost,
                 );
 
-                if (specialEco.weight <= 0) {
-                    if (NON_VEGETATION_TILES.has(tile)) continue;
-                    if (forestBiome === 13) continue; // 荒漠生态群系坚决不长树
-                    // elev 可能为 null（上面「低地先放行」那条分支），按低地兜底取值，与该分支意图一致
-                    if (huntingCityBoost <= 0 && !isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
-                }
-
-                const treeTile = specialEco.weight > 0 ? specialEco.effectiveTile : tile;
-                // 🔴 [2026-11-01 主人令「把战略战术同源的河岸护岸树一并落地」]
-                //    内陆河岸护岸林带：在本来有潜在森林的温带/亚热带/地中海平川河谷（即便周围农田因开垦使 forestCover < 0.40），
-                //    紧贴河道两岸（邻格 0.022°≈2.4km 有水且海拔 > 3m 非海岸）按噪声场间断保留河岸护岸树丛，与战术地图河岸树严格一致。
+                // 🔴 [2026-11-01 ~ 2026-11-02 主人令「平原河流与山麓过渡带进行适度精细化优化」]
+                //    内陆平原大河护岸林带：在温带/亚热带/热带农耕大平原（即便周围农田因开垦使 forestCover < 0.40），
+                //    紧贴河道两岸（邻格 0.022°≈2.4km 有水或邻近矢量河流中心线 16~52px 且海拔 > 3m 非海岸）按噪声场间断保留河岸护岸散树丛。
                 let riparianBoost = 0;
                 if (
                     (elev === null || (elev > 3 && elev < treeLine)) &&
-                    RESOLVE_FOREST_BIOMES.has(forestBiome) &&
+                    forestBiome !== 13 &&
                     !NON_VEGETATION_TILES.has(tile) &&
                     noiseVal >= 0.44
                 ) {
@@ -1320,7 +1321,7 @@ export class VegetationLayer {
                     const riverDistSq = distSqToRiver(px, py);
                     const nearVectorRiverBank =
                         riverDistSq >= RIVER_CLEAR_PX * RIVER_CLEAR_PX &&
-                        riverDistSq <= RIVER_RIPARIAN_PX * RIVER_RIPARIAN_PX;
+                        riverDistSq <= (RIVER_RIPARIAN_PX + 4) * (RIVER_RIPARIAN_PX + 4);
                     const nearRiver =
                         nearVectorRiverBank ||
                         waterSampler.isWaterSync(ptLatLng.lat + R_STEP, ptLatLng.lng) === true ||
@@ -1328,9 +1329,23 @@ export class VegetationLayer {
                         waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng + R_STEP) === true ||
                         waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng - R_STEP) === true;
                     if (nearRiver) {
-                        riparianBoost = 0.14 + 0.18 * ((noiseVal - 0.44) / 0.56);
+                        riparianBoost = 0.16 + 0.18 * ((noiseVal - 0.44) / 0.56);
                     }
                 }
+
+                if (specialEco.weight <= 0 && riparianBoost <= 0) {
+                    if (NON_VEGETATION_TILES.has(tile)) continue;
+                    if (forestBiome === 13) continue; // 荒漠生态群系坚决不长树
+                    // elev 可能为 null（上面「低地先放行」那条分支），按低地兜底取值，与该分支意图一致
+                    if (huntingCityBoost <= 0 && !isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
+                }
+
+                let treeTile = specialEco.weight > 0 ? specialEco.effectiveTile : tile;
+                if (riparianBoost > 0 && specialEco.weight <= 0 && (ptLatLng.lat >= 20 && ptLatLng.lat <= 35 && ptLatLng.lng >= 68 && ptLatLng.lng <= 95)) {
+                    // 南亚河流河岸散树
+                    treeTile = ptLatLng.lng < 78 ? 'gr2' : 'gr3';
+                }
+
                 const naturalForestWeight = forestClusterWeight(
                     forestBiome,
                     tile,
@@ -1350,9 +1365,9 @@ export class VegetationLayer {
                 if (clusterWeight < 0.32 && hash(gx, gy, 46) > (clusterWeight - 0.18) / 0.14) continue;   // 林缘软过渡
                 if (clusterWeight >= 0.32 && clusterWeight < 0.44 && hash(gx, gy, 47) > 0.85) continue;   // 林缘浅带偶有小林隙
 
-                // 区分「郁闭密林」与「稀树草原/绿洲/河岸疏林」
+                // 区分「郁闭密林」与「稀树草原/绿洲/河岸疏林/山麓林缘」
                 const isSparseEco =
-                    (specialEco.weight > 0 && naturalForestWeight < 0.34 && (treeTile === 'sv1' || treeTile === 'sv2' || treeTile === 'du1' || treeTile === 'des')) ||
+                    (specialEco.weight > 0 && naturalForestWeight < 0.34 && (treeTile === 'sv1' || treeTile === 'sv2' || treeTile === 'du1' || treeTile === 'des' || treeTile === 'gr2' || treeTile === 'gr3')) ||
                     (riparianBoost > 0 && naturalForestWeight < 0.28 && huntingCityBoost < 0.28);
                 const isDenseCanopy = !isSparseEco && clusterWeight >= 0.36;
 
@@ -1392,6 +1407,34 @@ export class VegetationLayer {
                     if (distSqToRiver(curPx, curPy) < RIVER_CLEAR_PX * RIVER_CLEAR_PX) continue;
 
                     const curLatLng = this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
+
+                    // 🔴 [2026-11-02 修「有的树进海了」]
+                    //    1. 单株树偏移后重新校验落点水体与海洋：严禁密林子树抖动或象限抽样甩进海水/湖泊
+                    //    2. 校验树根接地处（curPx, curPy）的海拔，<= 0m 直接剔除
+                    //    3. 岸线安全边距检测（低海拔/近海区 8px 退让）：杜绝岸边悬崖林木半身探入海湾
+                    const curWater = waterSampler.isWaterSync(curLatLng.lat, curLatLng.lng);
+                    if (curWater === true || LandSeaSystem.isSeaAt(curLatLng)) continue;
+
+                    const curElev = LandSeaSystem.getElevationAtMapPixel(
+                        curPx, curPy, SAMPLE_ZOOM, curLatLng.lat, curLatLng.lng,
+                    );
+                    if (curElev !== null && curElev <= 0) continue;
+
+                    if (curElev === null || curElev < 80) {
+                        const COAST_MARGIN_PX = 8;
+                        const pE = this.map.unproject([curPx + COAST_MARGIN_PX, curPy], SAMPLE_ZOOM);
+                        const pW = this.map.unproject([curPx - COAST_MARGIN_PX, curPy], SAMPLE_ZOOM);
+                        const pS = this.map.unproject([curPx, curPy + COAST_MARGIN_PX], SAMPLE_ZOOM);
+                        const pN = this.map.unproject([curPx, curPy - COAST_MARGIN_PX], SAMPLE_ZOOM);
+                        if (
+                            LandSeaSystem.isSeaAt(pE) ||
+                            LandSeaSystem.isSeaAt(pW) ||
+                            LandSeaSystem.isSeaAt(pS) ||
+                            LandSeaSystem.isSeaAt(pN)
+                        ) {
+                            continue;
+                        }
+                    }
 
                     // 🔴 2026-10-31 ~ 2026-11-01 主人令「植被符合区域，战略和战术保持一致」「按真实的地理，历史模拟」：
                     //    树种从植物总表本区主树种按权重取，四季物候（温带落叶阔叶冬枯/覆雪、常绿与针叶冬青/披雪、荒漠枯木）

@@ -6473,5 +6473,35 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "阿努拉德-果阿",
+                type: "sea",
+                id: "sea_city_anulade_city_guoa_1793608800000",
+                startConnection: "city_anulade",
+                endConnection: "city_guoa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [80.3956, 8.3533],
+                    [79.7, 8.2],
+                    [79.2, 7.8],
+                    [78.5, 7.5],
+                    [77.8, 7.3],
+                    [77.2, 7.4],
+                    [76.5, 7.8],
+                    [76.0, 8.5],
+                    [75.6, 9.5],
+                    [75.0, 10.8],
+                    [74.5, 12.0],
+                    [74.0, 13.5],
+                    [73.5, 14.8],
+                    [73.25, 15.33333],
+                    [73.9117, 15.5023],
+                ]
+            }
+        },
     ]
 };
