@@ -125,12 +125,13 @@ export class ViewerLivePanel {
         const shadow = this.collapsed ? 'none' : '0 4px 16px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,225,130,0.22)';
 
         this.root.style.cssText = `
-            position:fixed; left:50%; bottom:6px; top:auto; transform:translateX(-50%); transform-origin:bottom center;
+            position:fixed; left:50%; bottom:0; top:auto; transform:translateX(-50%); transform-origin:bottom center;
             z-index:10054; width:max-content; max-width:94vw; display:block;
             background:${bg}; border:${border}; border-radius:${radius};
             padding:${pad}; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
             box-shadow:${shadow};
             pointer-events:auto; user-select:none;`;
+        this.contentRow.style.alignItems = 'flex-end';
         this.dev.style.cssText = `display:${!this.collapsed && this.devOpen ? 'block' : 'none'}; width:380px; margin:0 auto 8px; padding-bottom:8px; border-bottom:1px dashed rgba(212,175,55,0.4); font-size:13px; line-height:1.5; text-align:left;`;
     }
 
@@ -141,6 +142,7 @@ export class ViewerLivePanel {
             border-left:1px solid rgba(212,175,55,0.45);
             color:#f5e6c8; font-family:${FONT}; font-size:${FS_S13.sub}px; line-height:1.2;
             pointer-events:auto; user-select:none;`;
+        this.contentRow.style.alignItems = 'center';
         this.dev.style.cssText = `display:${!this.collapsed && this.devOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 8px); right:0; width:380px; padding:10px 12px; background:rgba(18,14,10,0.96); border:1px solid rgba(212,175,55,0.6); border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.7); font-size:13px; line-height:1.5; text-align:left; z-index:10060; white-space:normal;`;
     }
 
@@ -164,7 +166,7 @@ export class ViewerLivePanel {
             this.syncCollapsedState();
             document.body.appendChild(this.root);
         }
-        let bottomPx = 6;
+        let bottomPx = 0;
         const combatCenter = document.querySelector<HTMLElement>('.combat-center');
         if (combatCenter && combatCenter.style.display !== 'none' && combatCenter.offsetHeight > 0) {
             const top = combatCenter.getBoundingClientRect().top;

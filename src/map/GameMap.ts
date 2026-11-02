@@ -16,6 +16,7 @@ import { CITIES_V2 } from '../data/cities_v2';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { VegetationLayer } from './VegetationLayer';
 import { MarineLifeLayer, registerMarineLifeLayer } from './MarineLifeLayer';
+import { WeatherLayer } from './WeatherLayer';
 import { setAnimalAmbientLayerVisible, setLandAnimalVisible, setFlyingAnimalVisible } from './AnimalAmbientLayer';
 import { setTradeTrafficLayerVisible } from './TradeTrafficLayer';
 import { isMacroMapZoom } from '../config/StrategicView';
@@ -91,6 +92,7 @@ export class GameMap {
     private battlefieldLayer: BattlefieldLayer | null = null;
     private vegetationLayer: VegetationLayer | null = null;
     private marineLifeLayer: MarineLifeLayer | null = null;
+    private weatherLayer: WeatherLayer | null = null;
     private cityCaptureRenderer: CityCaptureRenderer | null = null;
     private searchCoordMarker: L.Marker | null = null;
     private isVectorRiverEnabled: boolean = true; // [FIX] Track explicit enabled state
@@ -234,6 +236,7 @@ export class GameMap {
         this.vegetationLayer = new VegetationLayer(this.map);
         this.marineLifeLayer = new MarineLifeLayer().addTo(this.map);
         registerMarineLifeLayer(this.marineLifeLayer);
+        this.weatherLayer = new WeatherLayer().addTo(this.map);
 
         if (import.meta.env.DEV) {
             this.addStyleControl();

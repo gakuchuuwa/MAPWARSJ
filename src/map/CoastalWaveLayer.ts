@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
 import type { RiverOverlayLayer } from './RiverOverlayLayer';
+import { getSeaStormWaveBoostAt } from './WeatherLayer';
 
 /**
  * CoastalWaveLayer - 战略地图开阔水面细纹与海岸潮汐层
@@ -124,6 +125,8 @@ export class CoastalWaveLayer extends L.Layer {
         const t = now / 1000;
         const cw = this.canvas.width;
         const ch = this.canvas.height;
+        const center = map.getCenter();
+        const stormBoost = getSeaStormWaveBoostAt(center.lat, center.lng, now);
 
         for (let ti = 0; ti < activeTiles.length; ti++) {
             const { waves, ripples, coords } = activeTiles[ti];
@@ -134,9 +137,10 @@ export class CoastalWaveLayer extends L.Layer {
             // 视口粗裁剪
             if (tx > cw || tx + 256 < 0 || ty > ch || ty + 256 < 0) continue;
 
-            if (ripples) this.drawSeaRipples(g, ripples, tx, ty, t, cw, ch);
+            if (ripples) this.drawSeaRipples(g, ripples, tx, ty, t, cw, ch, stormBoost);
             if (!waves) continue;
             const len = waves.length;
+            const waveSpeed = 0.28 * (1 + stormBoost * 1.15);
             for (let i = 0; i < len; i += 6) {
                 const px = waves[i];
                 const py = waves[i + 1];
@@ -148,44 +152,49 @@ export class CoastalWaveLayer extends L.Layer {
                 const sy = ty + py;
                 if (sx < -10 || sx > cw + 10 || sy < -10 || sy > ch + 10) continue;
 
-                // 两组波浪交错循环（周期约 3.6 秒，缓慢悠扬）
-                const basePhase = (t * 0.28 + noise * 0.35 + (px * 0.02 + py * 0.03)) % 1;
+                // 两组波浪交错循环（周期约 3.6 秒，暴风雨时急促翻涌）
+                const basePhase = (t * waveSpeed + noise * 0.35 + (px * 0.02 + py * 0.03)) % 1;
                 const phase1 = basePhase < 0 ? basePhase + 1 : basePhase;
                 const phase2 = (phase1 + 0.5) % 1;
 
                 const angle = Math.atan2(ny, nx) + Math.PI / 2;
 
-                this.drawWaveCrest(g, sx, sy, nx, ny, phase1, angle);
-                this.drawWaveCrest(g, sx, sy, nx, ny, phase2, angle);
+                this.drawWaveCrest(g, sx, sy, nx, ny, phase1, angle, stormBoost);
+                this.drawWaveCrest(g, sx, sy, nx, ny, phase2, angle, stormBoost);
             }
         }
     }
 
-    /** 开阔海面：细波峰有慢速推进与呼吸，但不整片闪烁、不盖成白色网格。 */
+    /** 开阔海面：细波峰有慢速推进与呼吸，暴风雨时涌浪翻滚、白沫加亮。 */
     private drawSeaRipples(
         g: CanvasRenderingContext2D,
         ripples: Float32Array,
         tx: number, ty: number, t: number,
         cw: number, ch: number,
+        stormBoost: number,
     ): void {
         // 四档亮度共用 Path2D：每块瓦片最多 8 次 stroke，而不是每根波纹两次。
         const paths = [new Path2D(), new Path2D(), new Path2D(), new Path2D()];
+        const rippleFreq = 0.16 * (1 + stormBoost * 1.35);
+        const travelScale = 4.0 * (1 + stormBoost * 0.85);
+        const halfScale = 1 + stormBoost * 0.45;
+        const liftScale = 1 + stormBoost * 0.90;
         for (let i = 0; i < ripples.length; i += 5) {
             const px = ripples[i], py = ripples[i + 1];
             const sx = tx + px, sy = ty + py;
             if (sx < -20 || sx > cw + 20 || sy < -20 || sy > ch + 20) continue;
 
-            const phase = (t * 0.16 + ripples[i + 2]) % 1;
+            const phase = (t * rippleFreq + ripples[i + 2]) % 1;
             const crest = Math.sin(phase * Math.PI);
-            if (crest < 0.18) continue;
+            if (crest < 0.18 - stormBoost * 0.06) continue;
             const bucket = Math.min(3, Math.floor(crest * 4));
             const angle = ripples[i + 4];
             const dx = Math.cos(angle), dy = Math.sin(angle);
             const nx = -dy, ny = dx;
-            const travel = (phase - 0.5) * 4.0;
+            const travel = (phase - 0.5) * travelScale;
             const wx = sx - nx * travel, wy = sy - ny * travel;
-            const half = ripples[i + 3] * (0.38 + crest * 0.12);
-            const lift = 0.35 + crest * 0.45;
+            const half = ripples[i + 3] * (0.38 + crest * 0.12) * halfScale;
+            const lift = (0.35 + crest * 0.45) * liftScale;
             const path = paths[bucket];
             path.moveTo(wx - dx * half, wy - dy * half);
             path.quadraticCurveTo(wx + nx * lift, wy + ny * lift, wx + dx * half, wy + dy * half);
@@ -194,14 +203,16 @@ export class CoastalWaveLayer extends L.Layer {
         g.save();
         g.lineCap = 'round';
         g.lineJoin = 'round';
+        const troughAlphaMul = 0.040 * (1 + stormBoost * 1.2);
+        const crestAlphaMul = 0.18 * (1 + stormBoost * 1.15);
         for (let bucket = 0; bucket < paths.length; bucket++) {
             const strength = (bucket + 1) / paths.length;
             // 稍宽的深蓝波谷托住细亮波峰，海面有体积感但不靠高曝白光。
-            g.strokeStyle = `rgba(8, 45, 72, ${(0.040 * strength).toFixed(3)})`;
-            g.lineWidth = 1.65;
+            g.strokeStyle = `rgba(8, 45, 72, ${(troughAlphaMul * strength).toFixed(3)})`;
+            g.lineWidth = 1.65 + stormBoost * 0.65;
             g.stroke(paths[bucket]);
-            g.strokeStyle = `rgba(183, 221, 227, ${(0.18 * strength).toFixed(3)})`;
-            g.lineWidth = 0.72;
+            g.strokeStyle = `rgba(195, 232, 242, ${(crestAlphaMul * strength).toFixed(3)})`;
+            g.lineWidth = 0.72 + stormBoost * 0.42;
             g.stroke(paths[bucket]);
         }
         g.restore();
@@ -212,28 +223,29 @@ export class CoastalWaveLayer extends L.Layer {
         sx: number, sy: number,
         nx: number, ny: number,
         phase: number, angle: number,
+        stormBoost: number,
     ): void {
         // 向岸微推，末段随碎沫淡化。
-        const travel = (1 - phase) * 2.8;
+        const travel = (1 - phase) * (2.8 + stormBoost * 2.2);
         const wx = sx - nx * travel;
         const wy = sy - ny * travel;
 
         const crest = Math.sin(phase * Math.PI);
-        const alpha = Math.pow(crest, 3.0) * 0.20;
+        const alpha = Math.pow(crest, 3.0) * (0.20 + stormBoost * 0.18);
         if (alpha < 0.015) return;
 
         const dx = Math.cos(angle), dy = Math.sin(angle);
-        const half = 1.8 + phase * 1.2;
+        const half = (1.8 + phase * 1.2) * (1 + stormBoost * 0.45);
         g.save();
         g.lineCap = 'round';
         g.beginPath();
         g.moveTo(wx - dx * half, wy - dy * half);
-        g.quadraticCurveTo(wx + nx * 0.45, wy + ny * 0.45, wx + dx * half, wy + dy * half);
+        g.quadraticCurveTo(wx + nx * (0.45 + stormBoost * 0.35), wy + ny * (0.45 + stormBoost * 0.35), wx + dx * half, wy + dy * half);
         g.strokeStyle = `rgba(22, 93, 111, ${(alpha * 0.45).toFixed(3)})`;
-        g.lineWidth = 1.5;
+        g.lineWidth = 1.5 + stormBoost * 0.5;
         g.stroke();
         g.strokeStyle = `rgba(244, 252, 250, ${alpha.toFixed(3)})`;
-        g.lineWidth = 0.65;
+        g.lineWidth = 0.65 + stormBoost * 0.35;
         g.stroke();
         g.restore();
     }

@@ -53,6 +53,14 @@ export type SoundKey =
     | 'melee_hit'
     | 'death_infantry'
     | 'death_horse'
+    // 战略地图动态天气环境音效（DE 原版环境音 + 风雨雷电合成）
+    | 'weather_storm_loop'
+    | 'weather_rain_loop'
+    | 'weather_blizzard_loop'
+    | 'weather_sandstorm_loop'
+    | 'weather_fog_loop'
+    | 'weather_wind_loop'
+    | 'weather_thunder'
     | 'bgm_main';
 
 interface SoundDefinition {
@@ -247,6 +255,14 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     melee_hit: sounds('battle', ['melee_hit_1', 'melee_hit_2', 'melee_hit_3', 'melee_hit_4', 'melee_hit_5', 'melee_hit_6', 'melee_hit_7', 'melee_hit_8', 'melee_hit_9', 'melee_hit_10', 'melee_hit_11', 'melee_hit_12'], 0.35, 150),
     death_infantry: sounds('battle', ['death_infantry_1', 'death_infantry_2', 'death_infantry_3', 'death_infantry_4', 'death_infantry_5', 'death_infantry_6'], 0.4, 300),
     death_horse: sounds('battle', ['death_horse_1', 'death_horse_2', 'death_horse_3', 'death_horse_4', 'death_horse_5'], 0.35, 400),
+    // 战略地图动态天气环境音（DE 原版风浪雪漠环境音 + 雨声/雷鸣，衬托不盖过 BGM 与行军音）
+    weather_storm_loop: sound('battle', 'weather_storm_loop', 0.46, 0),
+    weather_rain_loop: sound('battle', 'weather_rain_loop', 0.38, 0),
+    weather_blizzard_loop: sound('battle', 'weather_blizzard_loop', 0.42, 0),
+    weather_sandstorm_loop: sound('battle', 'weather_sandstorm_loop', 0.42, 0),
+    weather_fog_loop: sound('battle', 'weather_fog_loop', 0.34, 0),
+    weather_wind_loop: sound('battle', 'weather_wind_loop', 0.32, 0),
+    weather_thunder: sounds('battle', ['weather_thunder_1', 'weather_thunder_2', 'weather_thunder_3'], 0.56, 2200),
     bgm_main: { category: 'bgm', sources: ['/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 
@@ -896,8 +912,7 @@ export class AudioManager {
         }
     }
 
-    /**
-     * 场景层的循环音效开关（13 演出用）。内部就是 startLoop/stopLoop，
+    /** 场景层的循环音效开关（13 演出用）。内部就是 startLoop/stopLoop，
      * 只是把它们暴露给场景 —— 那两个原本只由 syncFollowedLegionAudio 驱动（行军/交战底噪），
      * 而 13 有自己的节奏：接触才起、退场就停，跟大地图的跟拍状态无关。
      * 幂等：重复 start 不会叠播（startLoop 内部判 audio.paused）。
@@ -908,6 +923,51 @@ export class AudioManager {
 
     public stopSceneLoop(key: SoundKey): void {
         this.stopLoop(key);
+    }
+
+    /**
+     * 战略地图天气环境循环音同步：随当前视口主导天气气团的强度平滑起停与缩放音量，
+     * 进入战术模式（13）时自动静音避让战斗音效。
+     */
+    private weatherLoopKey: SoundKey | null = null;
+    private weatherStrengthScale = 1;
+
+    public syncWeatherAudio(loopKey: SoundKey | null, strength: number): void {
+        const allWeatherLoops: SoundKey[] = [
+            'weather_storm_loop',
+            'weather_rain_loop',
+            'weather_blizzard_loop',
+            'weather_sandstorm_loop',
+            'weather_fog_loop',
+            'weather_wind_loop',
+        ];
+        const inScene13 = (window as any).game?.scene13War?.isActive?.() === true;
+        if (!this.settings.enabled || inScene13 || !loopKey || strength < 0.08) {
+            if (this.weatherLoopKey !== null) {
+                for (const k of allWeatherLoops) this.stopLoop(k);
+                this.weatherLoopKey = null;
+                this.weatherStrengthScale = 1;
+            }
+            return;
+        }
+        const nextScale = Math.max(0.15, Math.min(1, strength * 1.15));
+        if (this.weatherLoopKey !== loopKey) {
+            for (const k of allWeatherLoops) {
+                if (k !== loopKey) this.stopLoop(k);
+            }
+            this.weatherLoopKey = loopKey;
+            this.weatherStrengthScale = nextScale;
+            this.startLoop(loopKey);
+            return;
+        }
+        if (Math.abs(this.weatherStrengthScale - nextScale) >= 0.05) {
+            this.weatherStrengthScale = nextScale;
+            const audio = this.loopCache.get(loopKey);
+            const def = SOUND_DEFINITIONS[loopKey];
+            if (audio && def && this.wantedLoops.has(loopKey) && !this.gamePaused) {
+                this.setVolume(audio, this.resolveVolume(def, loopKey), 250);
+            }
+        }
     }
 
     public unlock(): void {
@@ -1671,7 +1731,10 @@ export class AudioManager {
             return clamp01(this.getSpeechVolume() * 0.85);
         }
         const categoryVolume = this.settings.categoryVolume[definition.category] ?? 1;
-        const base = this.settings.masterVolume * categoryVolume * (definition.volume ?? 1);
+        const weatherScale = (key && key.startsWith('weather_') && key.endsWith('_loop'))
+            ? this.weatherStrengthScale
+            : 1;
+        const base = this.settings.masterVolume * categoryVolume * (definition.volume ?? 1) * weatherScale;
         return clamp01(base * this.duckFactor(definition.category, key));
     }
 
