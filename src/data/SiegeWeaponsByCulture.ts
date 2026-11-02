@@ -172,7 +172,7 @@ export function generalSiegeAge(generalId: string): SiegeAge | null {
     if (era) return era;
     const century = (GENERAL_CENTURIES as Record<string, number>)[generalId];
     if (century != null) {
-        // 🔴 [2026-10-16 主人定真边界] 古典 ≤476 / 封建 476–1050 / 城堡 1050–1500 / 帝国 1500–1914。
+        // 🔴 [2026-10-16 主人定真边界] 古典 ≤476 / 封建 476–1050 / 城堡 1050–1500 / 帝国 1500–1900。
         //    世纪 5、11、20 都骑跨边界，**正经判据是势力时代（getGeneralEra，2026-10-25 起时代归势力）**；
         //    这里只是缺档案时的兜底，按世纪粗档走（世纪5 兜底给封建，仅当该将势力时代与 GENERAL_ERA 都解不出）。
         if (century <= 4) return 'antiquity';

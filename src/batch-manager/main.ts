@@ -1119,7 +1119,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
                 <option value="antiquity">古典时代 (≤476)</option>
                 <option value="feudal" selected>封建时代 (476-1050)</option>
                 <option value="castle">城堡时代 (1050-1500)</option>
-                <option value="imperial">帝王时代 (1500-1914)</option>
+                <option value="imperial">帝王时代 (1500-1900)</option>
               </select>
             </label>
           </div>
@@ -1326,7 +1326,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
                 <option value="antiquity" ${row!.era === 'antiquity' ? 'selected' : ''}>古典时代 (≤476)</option>
                 <option value="feudal" ${row!.era === 'feudal' ? 'selected' : ''}>封建时代 (476-1050)</option>
                 <option value="castle" ${row!.era === 'castle' ? 'selected' : ''}>城堡时代 (1050-1500)</option>
-                <option value="imperial" ${row!.era === 'imperial' ? 'selected' : ''}>帝王时代 (1500-1914)</option>
+                <option value="imperial" ${row!.era === 'imperial' ? 'selected' : ''}>帝王时代 (1500-1900)</option>
               </select>
             </label>
           </div>
@@ -2251,7 +2251,7 @@ function factionHasMissingPortrait(fid: string): boolean {
 }
 
 /** 四时代年段（全局定义，2026-10-25 主人令） */
-const ERA_BANDS_TEXT = '古典＝起始–476｜封建＝476–1050｜城堡＝1050–1500｜帝国＝1500–1914';
+const ERA_BANDS_TEXT = '古典＝起始–476｜封建＝476–1050｜城堡＝1050–1500｜帝国＝1500–1900';
 
 /** 该势力在 FACTION_ERA 里登记了吗（panshu 叛军＝特殊势力，不挂时代） */
 function factionHasEra(factionId: string): boolean {

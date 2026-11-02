@@ -2,7 +2,7 @@
  * 武将时代表（generalId → 四时代）——**只作兜底/原值**（游戏内取时代走 `FactionEra.getGeneralEra()`：势力年段 × 该将成名战年/登场年）。
  *
  * 由 GENERAL_CENTURIES（成名世纪=辉煌年代）派生，不做生卒/寿命。
- * 世纪→时代（🔴 2026-10-16 主人定真边界）：**古典 ≤476 ｜ 封建 476–1050 ｜ 城堡 1050–1500 ｜ 帝国 1500–1914**；公元前=古典。
+ * 世纪→时代（🔴 2026-10-16 主人定真边界）：**古典 ≤476 ｜ 封建 476–1050 ｜ 城堡 1050–1500 ｜ 帝国 1500–1900**；公元前=古典。
  *    世纪只是粗档，凡世纪横跨边界的（世纪5 被 476 劈开、世纪11 被 1050 劈开、世纪20 被 1914 截断）一律按**该将成名年**逐位精化，不许拿世纪整数切。
  *
  * ⚠️ 世纪-5(401-500) 骑跨 476 —— 已按主人 2026-10-16 令「**以登场年（生年+20，debut 字段优先，且不晚于卒年）为准**」逐将精化：
@@ -116,7 +116,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bosi_puluosi_liukong': 'antiquity',
     'bozhou_d_yujin': 'antiquity',
     'bulabante_yuehanyishi': 'castle',
-    'bulat_beiduanchaer': 'feudal',
+    'bulat_beiduanchaer': 'castle',
     'buriat_tumenjiergale': 'imperial',
     'buyi_d_weichaoyuan': 'imperial',
     'cai_lishuo': 'antiquity',
@@ -129,7 +129,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'chahar_yantiemuer': 'castle',
     'champa_zhipenge': 'castle',
     'changshaguo_xinqiji': 'castle',
-    'changshan_yangyanzhao': 'feudal',
+    'changshan_yangyanzhao': 'castle',
     'chanzhou_chairong': 'feudal',
     'chaozhou_d_mafa': 'castle',
     'chatigangren_wumeide': 'imperial',
@@ -143,10 +143,10 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'chenli_d_zuoxianwang': 'castle',
     'chenzhou_d_zhanghao': 'feudal',
     'cheshihou_angui': 'antiquity',
-    'chijin_qiewangshijia': 'castle',
+    'chijin_qiewangshijia': 'imperial',
     'chile_hulvjin': 'feudal',
     'chimei_fanchong': 'antiquity',
-    'chizhou_changyuchun': 'castle',
+    'chizhou_changyuchun': 'imperial',
     'choros_tuohuan': 'castle',
     'chosokabe_changzongwobuyuanqin': 'imperial',
     'chu_d_lukang': 'antiquity',
@@ -169,7 +169,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'dalung_sangjiwen': 'castle',
     'dang_d_zhuwen': 'feudal',
     'dangchang_liangmiding': 'feudal',
-    'dangxiang_liyuanhao': 'feudal',
+    'dangxiang_liyuanhao': 'castle',
     'dangzhou_qiangduan': 'antiquity',
     'danluo_jintongjing': 'castle',
     'danmai_abusalong': 'castle',
@@ -206,7 +206,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'donghui_nanlv': 'antiquity',
     'dongping_langtan': 'imperial',
     'dongsheng_weishang': 'antiquity',
-    'dongshengwei_wangyue': 'castle',
+    'dongshengwei_wangyue': 'imperial',
     'dongxia_puxianwannu': 'castle',
     'dongxian_sunbin': 'antiquity',
     'dongxu_mangruiti': 'imperial',
@@ -297,7 +297,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'habusibao_eugene': 'imperial',
     'gesake_khmelnytsky': 'imperial',
     'bfe_vetilius': 'antiquity',
-    'bfe_chelyadnin': 'imperial',
+    'bfe_chelyadnin': 'castle',
     'bfe_mustafa_ii': 'imperial',
     'bfe_perozes': 'feudal',
     'bfe_mansfeld': 'imperial',
@@ -364,7 +364,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_bohemond': 'castle',
     'gen_joanofarc': 'castle',
     'gen_edward_longshanks': 'castle',
-    'gen_robert_guiscard': 'feudal',   // 🔴 [2026-10-19 主人令] 登场年 1035（生年 1015＋20）< 1050 → 封建（原写城堡）
+    'gen_robert_guiscard': 'castle',   // 🔴 [2026-10-19 主人令] 登场年 1035（生年 1015＋20）< 1050 → 封建（原写城堡）
     'gen_yodit': 'feudal',
     'gen_osman_i': 'castle',
     'gen_carpini': 'castle',
@@ -530,14 +530,14 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_laudonniere': 'imperial',
     'gen_suleiman': 'imperial',
     // 🔴 [2026-10-25 校正「成名世纪→时代」] 这 4 位明将属 2026-10-20 成名战批次，原按「明＝城堡」默认写成 castle，
-    //    但明帝国时代＝1500–1914：仇鸾成名 1550 庚戌之变（16 世纪）、杨镐 1619 萨尔浒、洪承畴 1641 松锦、汪乔年 1642 襄城（皆 17 世纪）
+    //    但明帝国时代＝1500–1900：仇鸾成名 1550 庚戌之变（16 世纪）、杨镐 1619 萨尔浒、洪承畴 1641 松锦、汪乔年 1642 襄城（皆 17 世纪）
     //    → 一律 imperial（同时代 吴三桂／李成梁／袁崇焕 已都是 imperial）。军团随「时代×据点文化」自动改。
     'gen_qiu_luan': 'imperial',
     'gen_yang_hao': 'imperial',
     'gen_hong_chengchou': 'imperial',
     'gen_wang_qiaonian': 'imperial',
-    'gen_nikan': 'castle',
-    'gen_wang_ji': 'castle',
+    'gen_nikan': 'imperial',
+    'gen_wang_ji': 'imperial',
     'gen_vasili_iii': 'imperial',
     'gen_atahualpa': 'imperial',
     'gen_valdivia': 'imperial',
@@ -547,7 +547,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_medinaceli': 'imperial',
     'gen_chen_youliang': 'castle',
     'gen_razadarit': 'castle',
-    'gen_wang_tong': 'castle',
+    'gen_wang_tong': 'imperial',
     'gen_louis_xi': 'castle',
     'gen_beg_arslan': 'castle',
     'gen_muhammad_xii': 'castle',
@@ -555,11 +555,11 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_ibrahim_lodi': 'imperial',
     'gen_boucicaut': 'castle',
     'gen_suffolk': 'castle',
-    'gen_wangzhen': 'castle',
+    'gen_wangzhen': 'imperial',
     'gen_constantine_xi': 'castle',
     'gen_toghus_temur': 'castle',
     'gen_si_lunfa': 'castle',
-    'gen_li_jinglong': 'castle',
+    'gen_li_jinglong': 'imperial',
     'gen_bayezid_i': 'castle',
     'gen_vukasin': 'castle',
     'gen_mamai': 'castle',
@@ -567,7 +567,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_abu_yahya': 'castle',
     'gen_pietro_tiepolo': 'castle',
     'gen_kutlug_buga': 'castle',
-    'gen_ali_ibn_yusuf': 'feudal',
+    'gen_ali_ibn_yusuf': 'castle',
     'gen_kusaila': 'feudal',
     'malin_abulhasan': 'castle',
     'zhao_gerong': 'feudal',
@@ -597,26 +597,26 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yelusalengwg_amalric': 'castle',
     'baizanting_isaac_ii': 'castle',
     'baizanting_alexios_v': 'castle',
-    'liao_d_tianzuodi': 'castle',
+    'liao_d_tianzuodi': 'feudal',
     'song_zhangjun': 'castle',
     'jiazini_khusrau_malik': 'castle',
     'gaer_sigtrygg': 'feudal',
     'suomunate_bhima_i': 'feudal',
-    'song_renfu': 'feudal',
+    'song_renfu': 'castle',
     'luoma_diguo_leo_ix': 'castle',
     'tubo_muzheng': 'castle',
     'womaya_yahya': 'castle',
     'sailiugu_yaghi': 'castle',
     'sengjialuo_mahinda_v': 'feudal',
     'liao_d_handewei': 'feudal',
-    'song_peiji': 'feudal',
+    'song_peiji': 'castle',
     'duonaobaojia_samuel': 'feudal',
     'jiazini_masud': 'feudal',
     'liao_d_xiaoduli': 'feudal',
     'bohai_dayinzhuan': 'feudal',
     'liao_d_xiaopaiya': 'feudal',
     'xin_liuchong': 'feudal',
-    'song_zhaoguangyi': 'feudal',
+    'song_zhaoguangyi': 'castle',
     'song_wangbing': 'castle',
     'dang_d_pangshigu': 'feudal',
     'liang_d_wangjingren': 'feudal',
@@ -644,7 +644,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'rierman_odoacer': 'antiquity',
     'yidou_qixin': 'feudal',
     'maidina_ali': 'feudal',
-    'sashan_bahram_vi': 'antiquity',
+    'sashan_bahram_vi': 'feudal',
     'tujue_wusumishi': 'feudal',
     'tubo_xinuoluo': 'feudal',
     'tang_limi': 'feudal',
@@ -794,7 +794,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_vlad_impaler': 'castle',
     'gen_vladimir_andreyevich': 'castle',
     'gen_vladimir_monomakh': 'castle',
-    'gen_vyacheslav_tartu': 'castle',
+    'gen_vyacheslav_tartu': 'feudal',
     'gen_vyshnevetsky': 'imperial',
     'gen_vytautas_great': 'castle',
     'gen_wifred_hairy': 'feudal',
@@ -815,7 +815,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gonggu_gonggudaozhu': 'castle',
     'gongsun_d_gongsundu': 'antiquity',
     'gongtang_gongtangcang': 'imperial',
-    'goryeo_jianghanzan': 'feudal',
+    'goryeo_jianghanzan': 'castle',
     'gouding_wubo': 'antiquity',
     'gualani_nicolas': 'imperial',
     'guangping_ruanwenzhang': 'imperial',
@@ -849,11 +849,11 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'heishui_nishuli': 'feudal',
     'hejian_gongsunzan': 'antiquity',
     // 🔴 [2026-10-16 主人令「能添加属性就自己添加」] 以下 8 位原来不在本表 → 武将套不上二级军团，现按成名/登场年代补入。
-    //    定档口径同本表头：古典 ≤476 ｜ 封建 476–1050 ｜ 城堡 1050–1500 ｜ 帝国 1500–1914。
+    //    定档口径同本表头：古典 ≤476 ｜ 封建 476–1050 ｜ 城堡 1050–1500 ｜ 帝国 1500–1900。
     //    赫卡尼亚·阿尔塔巴佐斯（Artabazos II，赫勒斯滂弗里吉亚总督，抗阿尔塔薛西斯三世、后随亚历山大，卒约前325）→ 古典。把握：高
     'hekaniya_artabazos': 'antiquity',
     'helian_helianbobo': 'antiquity',
-    'heng1_yangye': 'feudal',
+    'heng1_yangye': 'castle',
     'heng_hetengjiao': 'imperial',
     'hepan_gaoxianzhi': 'feudal',
     // 赫斯提亚·伊阿宋（前4世纪希腊）→ 古典。⚠️ 身份待核：库内卒年 -324 与费莱的伊阿宋（卒前370）不符，但两读都在古典
@@ -865,11 +865,11 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'higo_d_juchiwuguang': 'castle',
     'hongirad_dexuechan': 'castle',
     'hongnong_jun_yangsu': 'feudal',
-    'hongzhou_zhuwenzheng': 'castle',
+    'hongzhou_zhuwenzheng': 'imperial',
     'hor_chisang': 'imperial',
     'houliao_yelvliuge': 'castle',
-    'hu_d_husansheng': 'castle',
-    'huai_zhuyuanzhang': 'castle',
+    'hu_d_husansheng': 'imperial',
+    'huai_zhuyuanzhang': 'imperial',
     'huaiyang_zhouyafu': 'antiquity',
     'huan_zhongshidao': 'castle',
     'huang_d_sunshuao': 'antiquity',
@@ -895,7 +895,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'jialedi_nibujianisa': 'antiquity',
     'jiang_s_huanggai': 'antiquity',
     'jiantang_sangjiejia': 'imperial',
-    'jianzhou_nvzhen_limanzhu': 'castle',
+    'jianzhou_nvzhen_limanzhu': 'imperial',
     'jiaodong_tiandan': 'antiquity',
     'jiashi_jiashiwang_d': 'antiquity',
     'jiashi_wangxuance': 'feudal',
@@ -911,12 +911,12 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'jilizhou_chengmingzhen': 'feudal',
     'jiluo_d_douxian': 'antiquity',
     'jin_xianzhen': 'antiquity',
-    'jinan_tiexuan': 'castle',
+    'jinan_tiexuan': 'imperial',
     'jinchuan_g_shaluoben': 'imperial',
     'jinchuan_jinchuanyiyuan': 'imperial',
     'jing_dingbuling': 'feudal',
     'jingcheng_d_yuyouzhao': 'castle',
-    'jingdong_taohong': 'castle',
+    'jingdong_taohong': 'imperial',
     'jingjiang_qushisi': 'imperial',
     'jingmen_zhaoyun': 'antiquity',
     'jingpozu_zaodan': 'imperial',
@@ -1055,7 +1055,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     // 麦克兰·普农（10–11世纪马克兰地方首领，库内 950–1015，成名 <1050）→ 封建。⚠️ 身份待核
     'maikelan_punong': 'feudal',
     'emesene_xierkuhe': 'castle',
-    'mamon_mameng': 'feudal',
+    'mamon_mameng': 'castle',
     'mamuluke_baibaisi': 'castle',
     'manghuti_weidaer': 'castle',
     'mangshi_mangshiwang': 'feudal',
@@ -1066,7 +1066,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'maomingan_suoetu': 'imperial',
     'mazhaer_majiashi': 'castle',
     'meitai_hagenba': 'imperial',
-    'mengcheng_d_gaoqiong': 'feudal',
+    'mengcheng_d_gaoqiong': 'castle',
     'menggu_d_chengjisihan': 'castle',
     'mengtainiya_radu_iii': 'castle',
     'mengwu_hebulehan': 'castle',
@@ -1078,7 +1078,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'miaomin_shiliudeng': 'imperial',
     'midi_daiaokaisi': 'antiquity',
     'min_wangshenzhi': 'feudal',
-    'ming_d_zhudi': 'castle',
+    'ming_d_zhudi': 'imperial',
     'ming_zheng_zhengchenggong': 'imperial',
     'mingzheng_jianzandechang': 'imperial',
     'mino_dagujiji': 'imperial',
@@ -1115,14 +1115,14 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'ningkou_liling': 'antiquity',
     'nong2_nongzhigao': 'castle',
     'nongzhigao_huangshimi': 'castle',
-    'nuergan_kangwang': 'castle',
+    'nuergan_kangwang': 'imperial',
     'nuowei_halaer': 'feudal',
     'nuoyan_d_sanyinnuoyan': 'imperial',
     'nvguo_mojie': 'feudal',
     'ogodei_chuoermahan': 'castle',
     'oirat_ming_gaerdan': 'imperial',
     'ongut_alawusi': 'castle',
-    'osman_mehmed_ii': 'castle',
+    'osman_mehmed_ii': 'imperial',
     'osumi_ganfujianxu': 'imperial',
     'otomo_d_lihuadaoxue': 'imperial',
     'ouyang_ouyangwei': 'feudal',
@@ -1139,7 +1139,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'pazhu_redangunsangpa': 'castle',
     'pelianci_hengli2': 'castle',
     'pinghai_laihuer': 'feudal',
-    'pingnan_muying': 'castle',
+    'pingnan_muying': 'imperial',
     'pingyuan_yanzhenqing': 'feudal',
     'pisha_weichisheng': 'feudal',
     'pishan_daihu': 'antiquity',
@@ -1154,7 +1154,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'qi_d_qijiguang': 'imperial',
     'qi_simarangju': 'antiquity',
     'qian_d_yudayou': 'imperial',
-    'qian_songjingyang': 'feudal',
+    'qian_songjingyang': 'castle',
     'qianhui_baiyanhu': 'imperial',
     'qianzhong_wubayue': 'imperial',
     'qianzhou_lisheng': 'feudal',
@@ -1178,7 +1178,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'quanrong_yiquhai': 'antiquity',
     'quanzhou_liucongxiao': 'feudal',
     'quli_chentang': 'antiquity',
-    'ran_d_ranshouzhong': 'castle',
+    'ran_d_ranshouzhong': 'imperial',
     'ranwei_d_ranmin': 'antiquity',
     'ribale_faheerdaolai': 'feudal',
     'rouran_shelun': 'antiquity',
@@ -1212,7 +1212,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'shaiyue_aerpade': 'feudal',
     'shang_fuhao': 'antiquity',
     'shangzhou_shangyang': 'antiquity',
-    'shanrong_lanyu': 'castle',
+    'shanrong_lanyu': 'imperial',
     'shanshan_weituqi': 'antiquity',
     'shanyue_sunce': 'antiquity',
     'shanzhou_wangzhongsi': 'feudal',
@@ -1253,7 +1253,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'omura_sumitada': 'imperial',
     'zhamolin_trimumpala': 'imperial',
     'putaoya_suosa': 'imperial',
-    'putaoya_almeida': 'imperial',
+    'putaoya_almeida': 'castle',
     'voc_coen': 'imperial',
     'mowoer_mukelabuhan': 'imperial',
     'yinggelan_dai': 'imperial',
@@ -1267,7 +1267,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'sogdian_dewasitiqi': 'feudal',
     'sogdian_aokexiate': 'antiquity',
     'song2_houjunji': 'feudal',
-    'song_zhaokuangyin': 'feudal',
+    'song_zhaokuangyin': 'castle',
     'sou_gaodingyuan': 'antiquity',
     'spurgyal_dariniansai': 'feudal',
     'ssangseong_cuiying': 'castle',
@@ -1355,7 +1355,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'wuji_yilizhi': 'antiquity',
     'wula_buzhantai': 'imperial',
     'wulaertu_ajishenti': 'antiquity',
-    'wulaertu_ashot3': 'feudal',
+    'wulaertu_ashot3': 'antiquity',
     'wulaertu_guo_saerdu': 'antiquity',
     'wuli_d_celeng': 'imperial',
     'wuliangha_subutai': 'castle',
@@ -1389,7 +1389,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'kanan_azemier': 'antiquity',
     'feilisidin_batisi': 'antiquity',
     'xiayang_d_dengyu': 'antiquity',
-    'xiazhou_lijiqian': 'feudal',
+    'xiazhou_lijiqian': 'castle',
     'xibanya_pisaluo': 'imperial',
     'xibanya_aerwa': 'imperial',
     'wende_johnfriedrich': 'imperial',
@@ -1437,7 +1437,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xiye_zihe': 'antiquity',
     'xiyindu_batuoluome': 'castle',
     'xiyuduhu_banchao': 'antiquity',
-    'xuan_xuda': 'castle',
+    'xuan_xuda': 'imperial',
     'xuantu_yuangaisuwen': 'feudal',
     'xueyantuo_yinan': 'feudal',
     'xushouhui_zhaopusheng': 'castle',
@@ -1458,7 +1458,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yangzhou_wangping': 'antiquity',
     'yanqi_longtuqizhi': 'feudal',
     'yansui_wangwei': 'imperial',
-    'yanzhou_zhongshiheng': 'feudal',
+    'yanzhou_zhongshiheng': 'castle',
     'yao_liuyuan': 'antiquity',
     'yaoluoge_yaoluogepusa': 'feudal',
     'yaozhou_limaozhen': 'feudal',
@@ -1467,13 +1467,13 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yehe_jintaiji': 'imperial',
     'yel_yelvxiuge': 'feudal',
     'yelang_duotong': 'antiquity',
-    'yeli_yeliwangrong': 'feudal',
+    'yeli_yeliwangrong': 'castle',
     'yeren_nvzhen_boke': 'imperial',
     'yezongliu_yezongliu': 'castle',
-    'yi_yuqian': 'castle',
-    'ming_yanghong': 'castle',   // 杨洪（1381–1451）明前期，同于谦按城堡时代
+    'yi_yuqian': 'imperial',
+    'ming_yanghong': 'imperial',   // 杨洪（1381–1451）明前期，同于谦按城堡时代
     'hou_zhou_guowei': 'feudal',   // 郭威（904–954）五代，同柴荣按封建时代
-    'song_lijilong': 'feudal',     // 李继隆（950–1005）北宋前期，同赵匡胤按封建时代
+    'song_lijilong': 'castle',     // 李继隆（950–1005）北宋前期，同赵匡胤按封建时代
     'yidier_yidiewang': 'feudal',
     'yidou_luxun': 'antiquity',
     'yiduhu_baershu': 'castle',
@@ -1490,7 +1490,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yingzhou_liuyan': 'feudal',
     'yingzhou_ying_d_muronghuang': 'antiquity',
     'yipilusi_piluoshi': 'antiquity',
-    'yisatisi_yisatisi': 'antiquity',
+    'yisatisi_yisatisi': 'castle',
     'yisatisi_falukezhade': 'feudal',
     'yiwu_hanshen': 'castle',
     'yiyang_d_mengzongzheng': 'castle',
@@ -1522,7 +1522,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'zhao_lianpo': 'antiquity',
     'zhaowu_timuermieli': 'castle',
     'zhasaketu_zhasakesubadi': 'imperial',
-    'zhe_d_zheyuqing': 'feudal',
+    'zhe_d_zheyuqing': 'castle',
     'zhen_zhenxuan': 'feudal',
     'zhengzhou_chenqingzhi': 'feudal',
     'zhong_xiexuan': 'antiquity',
@@ -1531,7 +1531,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'zhou_jifa': 'antiquity',
     'zhuang_d_washifuren': 'imperial',
     'zhuerqi_sachabieqi': 'castle',
-    'zhuluo_lajindela': 'feudal',
+    'zhuluo_lajindela': 'antiquity',
     'zhuluo_lajialajia': 'feudal',
     'zhuoshi_gaopian': 'feudal',
     'zhuozhou_anlushan': 'feudal',
@@ -1541,7 +1541,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'zizhou_wangjian': 'feudal',
     'zu_d_yuanchonghuan': 'imperial',
     'zubu_mogusi': 'castle',
-    'zuo_d_wufu': 'castle',
+    'zuo_d_wufu': 'imperial',
     'panfeiliya_apollonios': 'antiquity',
     'baihaliye_djedkhonsu': 'antiquity',
     'kuida_chakar': 'castle',
@@ -1620,7 +1620,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'dusong_zhangru': 'castle',   // 张濡｜独松关·南宋（1275）
     'xianxia_zhengcai': 'imperial',   // 郑彩｜仙霞关·隆武（1646）
     'tianjing_wangliang': 'antiquity',   // 王梁｜天井关·东汉
-    'zijing_hanqing': 'castle',   // 韩青｜紫荆关·明（1449）
+    'zijing_hanqing': 'imperial',   // 韩青｜紫荆关·明（1449）
     'ningwu_zhouyuji': 'imperial',   // 周遇吉｜宁武关·明（1644）
     'tang_guoyuanzhen': 'feudal',   // 郭元振｜赤亭关·唐（700 赤亭大捷）
     'putaoya_afonso': 'castle',   // 阿方索｜布拉干萨·葡萄牙（15 世纪）
@@ -1628,7 +1628,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'guyan_jiaolian': 'imperial',   // 焦琏｜古严关·南明
     'yumen_suoban': 'antiquity',   // 索班｜玉门关·东汉
     'yangguan_lixi': 'antiquity',   // 李息｜阳关·西汉
-    'wusheng_dongxian': 'feudal',   // 董先｜武胜关·南宋
+    'wusheng_dongxian': 'castle',   // 董先｜武胜关·南宋
     'bfe_rusa_i': 'antiquity',   // 鲁萨一世（2026-10-25 按史补）
     'bfe_qijie': 'antiquity',   // 骑劫（2026-10-25 按史补）
     'bfe_chuzi': 'antiquity',   // 触子（2026-10-25 按史补）
@@ -1653,7 +1653,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_leo_phokas': 'feudal',   // 利奥福卡斯（2026-10-25 按史补）
     'bfe_bulcsu': 'feudal',   // 布尔丘（2026-10-25 按史补）
     'bfe_liurenshan': 'feudal',   // 刘仁赡（2026-10-25 按史补）
-    'bfe_chengong': 'feudal',   // 陈珙（2026-10-25 按史补）
+    'bfe_chengong': 'castle',   // 陈珙（2026-10-25 按史补）
     'bfe_muhammad_ghur': 'castle',   // 穆罕默德古尔（2026-10-25 按史补）
     'bfe_youxian': 'castle',   // 游显（2026-10-25 按史补）
     'bfe_umar': 'castle',   // 乌马儿（2026-10-25 按史补）
@@ -1661,7 +1661,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_kniprode': 'castle',   // 克尼普罗德（2026-10-25 按史补）
     'bfe_suleiman_pasha': 'castle',   // 苏莱曼帕夏（2026-10-25 按史补）
     'bfe_frederick_iii': 'castle',   // 腓特烈三世（2026-10-25 按史补）
-    'bfe_yibula': 'imperial',   // 亦不剌（2026-10-25 按史补）
+    'bfe_yibula': 'castle',   // 亦不剌（2026-10-25 按史补）
     'bfe_takayutpi': 'imperial',   // 多迦逾毕（2026-10-25 按史补）
     'bfe_mingyiswa': 'imperial',   // 明耶苏瓦（2026-10-25 按史补）
     'bfe_potocki': 'imperial',   // 波托茨基（2026-10-25 按史补）
@@ -1673,11 +1673,11 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe_quzhisheng': 'feudal',   // 麴智盛（2026-10-25 按史补）
     'bfe_arslan_shah': 'castle',   // 阿尔斯兰沙（2026-10-25 按史补）
     'bfe_bogislaw_i': 'castle',   // 博吉斯拉夫（2026-10-25 按史补）
-    'bfe_wanggeon': 'feudal',   // 王建（2026-10-25 按史补）
+    'bfe_wanggeon': 'castle',   // 王建（2026-10-25 按史补）
     'bfe_oda_nobuhide': 'imperial',   // 织田信秀（2026-10-25 按史补）
-    'bfe_liuping': 'feudal',   // 刘平（2026-10-25 按史补）
+    'bfe_liuping': 'castle',   // 刘平（2026-10-25 按史补）
     'bfe_taobao': 'antiquity',   // 桃豹（2026-10-25 按史补）
-    'bfe_ashina_duzhi': 'feudal',   // 阿史那都支（2026-10-25 按史补）
+    'bfe_ashina_duzhi': 'antiquity',   // 阿史那都支（2026-10-25 按史补）
     'bfe_achaemenes': 'antiquity',   // 阿凯门尼斯（2026-10-25 按史补）
     'bfe_huyan_wang': 'antiquity',   // 呼衍王（2026-10-25 按史补）
     'bfe_ukita_hideie': 'imperial',   // 宇喜多秀家（2026-10-25 按史补）
@@ -1706,7 +1706,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'dulan_muzaffarkhan': 'imperial',   // 2026-10-25 成名战敌将（随势力时代）
     'qin_hengyi': 'antiquity',   // 2026-10-25 成名战敌将（随势力时代）
     'dajin_wanyaneke': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'kuman_tugorkan': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
+    'kuman_tugorkan': 'antiquity',   // 2026-10-25 成名战敌将（随势力时代）
     'baizanting_diaofeilusi': 'feudal',   // 2026-10-25 成名战敌将（随势力时代）
     'zhelouqi_puliteweilajie': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
     'baojian_herman': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
@@ -1809,7 +1809,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bogendi_jacqueline': 'castle',
     'jiaohuangguo_leoi': 'castle',
     'nanchou_kitabatake': 'castle',
-    'sashan_shah': 'antiquity',
+    'sashan_shah': 'feudal',
     'abasi_imam': 'feudal',
     'gaolu_bureau': 'castle',
     'gaolu_lorrain': 'castle',
@@ -1841,11 +1841,11 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'shu_haopu': 'antiquity', // 郝普
     'wu_taohuang': 'antiquity', // 陶璜
     'han_d_wuyang': 'antiquity', // 吴阳
-    'tuoba_weijingxin': 'feudal', // 韦敬欣
+    'tuoba_weijingxin': 'antiquity', // 韦敬欣
     'zhangchu_chensheng': 'antiquity', // 陈胜
     'desheng_liutong': 'castle', // 刘通
     'wuzhou_wangwenjin': 'feudal', // 汪文进
-    'liusong_tanshao': 'feudal', // 檀韶
+    'liusong_tanshao': 'antiquity', // 檀韶
     'han_d_sunang': 'antiquity', // 孙卬
     'tang_malin': 'feudal', // 马璘（补将）
     'tang_duanxiushi': 'feudal', // 段秀实（补将）
@@ -1927,10 +1927,25 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'lagoniya_kelierlidasi': 'antiquity', // 克利尔里达斯
     'gaolu_wulixi': 'imperial', // 乌里希
     'gaolu_labuerdonei': 'imperial', // 拉布尔多内
-    'bolinixiya_huotumatua': 'feudal', // 霍图玛图阿（复活节岛始祖国王）
-    'ayoubu_lulu': 'castle', // 鲁鲁（阿尤布水军都督）
+    'bolinixiya_huotumatua': 'imperial', // 霍图玛图阿（复活节岛始祖国王）
+    'bolinixiya_momo': 'imperial', // 莫莫（图伊汤加帝国第10代国王）
+    'bolinixiya_kameihameiha': 'imperial', // 卡美哈梅哈（夏威夷王国开国国王）
+    'ayoubu_lulu': 'feudal', // 鲁鲁（阿尤布水军都督）
     'yinggelan_yuehanjifade': 'castle', // 约翰吉法德
 
+
+    // ── 2026-11-03 补登记（原缺行；值＝势力时代）──
+    'hulumusi_ata': 'castle',   // 阿塔
+    'bolinixiya_baomalei': 'imperial',   // 波马雷
+    'putaoya_danuowa': 'castle',   // 若昂达诺瓦
+    'siam_zhengxin': 'imperial',   // 郑信
+    'dayue_chenqingyu': 'castle',   // 陈庆余
+    'gen_harkhuf': 'antiquity',   // 哈尔库夫
+    'maidina_kuerdi': 'feudal',   // 库尔迪
+    'gen_atoc': 'castle',   // 阿托克
+    'gen_uaxaclajuun': 'feudal',   // 十八兔
+    'sengjialuo_boluojialuoliu': 'feudal',   // 波罗迦罗摩六世
+    'xingelana_beierweierde': 'imperial',   // 贝尔韦尔德
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

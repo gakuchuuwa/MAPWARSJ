@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -23,17 +23,17 @@
  *     靠势力色＋旗形区分，不再强求全局唯一。非中国政权仍守全局唯一。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
-    'hulumusi': '忽',
-    'bolinixiya': '波',
-    'pattani': '年',
-    'kilwa': '基',
+    'hulumusi': '忽鲁',
+    'bolinixiya': '波利',
+    'pattani': '北大',
+    'kilwa': '基尔',
     'handong': '汉东', // 刘黑闼汉东王
     'douxia': '夏', // 窦建德·夏
     'mari_ancient': '马里', // 幼发拉底马里王国
-    'mombasa': '蒙',
-    'mogadishu': '摩',
-    'malindi': '迪',
-    'zuraid': '祖',
+    'mombasa': '蒙巴',
+    'mogadishu': '摩加',
+    'malindi': '林迪', // 「马林」已被马林苏丹国占用
+    'zuraid': '祖拉',
 
   // ── [2026-08-26 全面检查旗号] 实际旗号 = 本表登记优先，未登记则取势力名前两字
   //    （见 CityAssetManager.getProcessedFlagText）。全量比对 957 个有城势力：
@@ -187,7 +187,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yada': '厌抵',
 'guishuang': '贵霜',
 'juandu': '捐毒',
-  sai: '塞',
+  sai: '塞种',
   'sijitai': '斯基',
 
     'shuizhen': '水真',
@@ -213,7 +213,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'helian': '赫连',
 'xiongnu': '匈奴',
 'xianbei': '鲜卑',
-    'jie': '羯',
+    'jie': '羯族',
 'tuoba': '拓跋',
 'yuwen': '宇文',
 'chen': '陈',
@@ -239,7 +239,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dayue': '大越',
     'ryukyu': '琉球',
     'so': '对马',
-    'goto': '五',
+    'goto': '五岛',
     'omura': '大村',
     'wandan': '万丹',
     'gaya': '伽倻',
@@ -351,7 +351,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'shuntian': '天地',
 'bailian': '白莲',
 'chimei': '赤眉',
-        'zhangchu': '楚',   // 张楚·陈胜
+        'zhangchu': '张楚',   // 张楚·陈胜
         'desheng': '德胜',
         'wuzhou_yijun': '婺义',
     'gurkha': '廓喀',
@@ -390,7 +390,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'geluolu': '葛逻',
     'yuchi': '尉迟',
 'an': '乌兹',
-'shi_clan': '石',
+'shi_clan': '石氏',
 
     
 'huyan': '呼衍',
@@ -404,8 +404,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'tsangpa': '藏巴',
 'ganden': '甘丹',
 'supi': '苏毗',
-'khon': '昆',
-    'lang_clan': '朗',
+'khon': '萨迦',
+    'lang_clan': '帕竹',
     'karmapa': '噶玛',
     // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力旗号 ──
     'ava': '阿瓦',
@@ -413,7 +413,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'meitai': '曼尼',
     'hantawadi': '汉达',
     'pyu': '骠',
-    'mon': '孟',
+    'mon': '孟族',
 'ming_zheng': '明郑',
     'xiou': '西瓯',
     'paiwan': '排湾',
@@ -473,7 +473,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'hepan': '喝槃',
 
     // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──
-    'dai': '傣',
+    'dai': '傣族',
 'taiyuan': '泰沅',
     'luohu': '罗斛',
 
@@ -750,7 +750,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhuluo': '朱罗',
     'sengjialuo': '僧伽',
     'pandiya': '潘地',
-    'liaozu': '寮',
+    'liaozu': '寮族',
     'kushi': '库施',
     'aimala': '艾马',
     'aolisha': '东恒',
@@ -776,7 +776,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tomara_gwalior': '托摩',
     'qutb_shahi': '库特',
     'minangkabau': '米南',
-    'tutul_xiu': '休',
+    'tutul_xiu': '休族',
     'odrysian_late': '塞乌',  // [2026-10-24] 原一字「奥」；「奥德」已被 aodesuosi 占用 → 取其王都塞乌托波利（塞乌特斯三世所建）之「塞乌」
     'aswaka': '斯瓦', // 🔴 [2026-09-19 主人指出审计警告] 原登记「阿斯」与 asikanani(阿斯坎尼) 撞车；「阿瓦」又撞 ava(阿瓦王国) → 取其所居**斯瓦特**河谷之「斯瓦」
     'julushi': '居鲁', // 居鲁士城（公元前329年居鲁士城围攻守方）：势力名前两字，全库不撞
@@ -863,7 +863,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chalkidike': '卡基',   // 卡尔基季基同盟
     'naxos': '纳克',   // 纳克索斯
     'phokis': '福基',   // 福基斯
-    'wuguobu': '五国',   // 五国部
+    'wuguobu': '五部',   // 五国部（旗号不含「国」）
     'balti': '巴尔',   // 巴尔蒂
     'qingyuan_yijun': '清远',   // 清远义军
     'zhenghe_yijun': '政和',   // 政和义军

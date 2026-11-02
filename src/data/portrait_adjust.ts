@@ -9646,6 +9646,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 7,
             "offsetY": -19
+        },
+        "/assets/WESTERN/bfe_guangde.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

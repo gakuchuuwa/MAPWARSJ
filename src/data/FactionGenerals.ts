@@ -498,7 +498,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bolinixiya_baomalei', factionId: 'bolinixiya', cityId: 'city_tahiti', generalName: '波马雷', portrait: '/assets/MALAY/bolinixiya_baomalei.png', eliteName: '大溪地武士', eliteTier: 4, legionName: '帝国时代马六甲军团' },
         // 🔴 [2026-10-25 主人定「B」无文字时代传说人物入将] 霍图·玛图阿：拉帕努伊（复活节岛）口述史载首位最高阿里伊国王；史源转述、传说成分；普将；立绘留空
         { generalId: 'bolinixiya_huotumatua', factionId: 'bolinixiya', cityId: 'city_rapanui', generalName: '霍图玛图阿', portrait: '/assets/MALAY/bolinixiya_huotumatua.png', legionName: '封建时代波利尼西亚军团', eliteName: '拉帕努伊兵', eliteTier: 4 },
-
+        // 莫莫（约1100–1170，Tuʻi Tonga Momo，图伊汤加帝国第10代国王，组建远洋双体战舟舰队将汤加海上霸权扩至萨摩亚与斐济）→ 穆阿（MALAY）
+        { generalId: 'bolinixiya_momo', factionId: 'bolinixiya', cityId: 'city_mua', generalName: '莫莫', portrait: '/assets/MALAY/bolinixiya_momo.png', legionName: '城堡时代室利佛逝军团', eliteName: '汤加海兵', eliteTier: 4 },
+        // 卡美哈梅哈（1758–1819，Kamehameha I，夏威夷王国开国国王，率军在努阿努悬崖之战征服瓦胡岛统一夏威夷群岛）→ 火奴鲁鲁（MALAY）
+        { generalId: 'bolinixiya_kameihameiha', factionId: 'bolinixiya', cityId: 'city_honolulu', generalName: '卡美哈梅哈', portrait: '/assets/MALAY/bolinixiya_kameihameiha.png', legionName: '帝国时代马六甲军团', eliteName: '夏威夷勇士', eliteTier: 4 },
     ],
 
     latin_empire: [

@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-02T15:05:10.128Z",
+ "generatedAt": "2026-11-02T16:57:06.770Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16608,6 +16608,34 @@
    "reliefM": 266,
    "cliffs": 0,
    "top": "Grass 91.6% · Forest, Dry South American 8.2% · Jungle 0.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_mua",
+   "file": "site_city_mua.json",
+   "bytes": 285648,
+   "koppen": "Af",
+   "theme": "NEOTROPICAL_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 5472,
+   "waterPct": 38,
+   "reliefM": 26,
+   "cliffs": 0,
+   "top": "Jungle Grass 50.2% · Water, Shallow 38% · Jungle 7.8% · Rainforest 2.4%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_honolulu",
+   "file": "site_city_honolulu.json",
+   "bytes": 286465,
+   "koppen": "Aw",
+   "theme": "NEOTROPICAL_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 1822,
+   "waterPct": 12.7,
+   "reliefM": 148,
+   "cliffs": 0,
+   "top": "Jungle Grass 75.2% · Water, Shallow 12.7% · Jungle 5.8% · Beach 3.9%",
    "verify": "ok"
   }
  ],

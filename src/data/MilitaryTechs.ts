@@ -71,7 +71,7 @@ export interface TechEffect {
     bonusClass?: number;
 }
 
-/** 四时代（与四时代文化体系同一把尺）：古典 ≤476 / 封建 476–1050 / 城堡 1050–1500 / 帝国 1500–1914 */
+/** 四时代（与四时代文化体系同一把尺）：古典 ≤476 / 封建 476–1050 / 城堡 1050–1500 / 帝国 1500–1900 */
 export type TechEra = 'antiquity' | 'feudal' | 'castle' | 'imperial';
 
 export interface MilitaryTech {

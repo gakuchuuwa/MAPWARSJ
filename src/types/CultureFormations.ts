@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Culture Formations
  * 15 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
@@ -1061,7 +1061,7 @@ export function getFactionLegionComposition(
  * 该建筑文化 × 该时代那一格的二级军团名（264 格里的唯一一支）。
  * 该文化缺这一时代（HUNS/MUISCA/MAPUCHE/TUPI 共 7 格）→ 取同文化**最近时代**兜底。
  */
-function findLegionNameByCultureAndEra(buildingStyle: string, age: string): string | null {
+export function findLegionNameByCultureAndEra(buildingStyle: string, age: string): string | null {
     const candidates = LEVEL_2_CIV_62_LEGIONS.filter((l) => String(l.buildingStyle) === String(buildingStyle));
     if (candidates.length === 0) return null;
     const exact = candidates.find((l) => l.age === age);

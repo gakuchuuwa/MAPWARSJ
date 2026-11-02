@@ -20,6 +20,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'putaoya_azanbuya': 'PORTUGUESE',
     'bolinixiya_baomalei': 'MALAY',
     'bolinixiya_huotumatua': 'MALAY',   // 波利尼西亚｜霍图玛图阿｜据点 复活节岛
+    'bolinixiya_momo': 'MALAY',   // 波利尼西亚｜莫莫｜据点 穆阿
+    'bolinixiya_kameihameiha': 'MALAY',   // 波利尼西亚｜卡美哈梅哈｜据点 火奴鲁鲁
     'gen_atoc': 'INCA',
     'gen_uaxaclajuun': 'MAYANS',
     'gen_harkhuf': 'ORIE',

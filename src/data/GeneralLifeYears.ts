@@ -1943,7 +1943,22 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     maidina_kuerdi: { birth: 1470, death: 1517, kaoju: '推定' },  // 库尔迪（吉达守将侯赛因·库尔迪）
     gaolu_labuerdonei: { birth: 1699, death: 1753 },  // 拉布尔多内（毛里求斯路易港奠基人）
     bolinixiya_huotumatua: { birth: 950, death: 1020, kaoju: '推定' },  // 霍图玛图阿（拉帕努伊始祖国王·传说成分）
+    bolinixiya_momo: { birth: 1100, death: 1170, kaoju: '推定' },  // 莫莫（图伊汤加帝国第10代国王）
+    bolinixiya_kameihameiha: { birth: 1758, death: 1819 },  // 卡美哈梅哈（夏威夷王国开国国王卡美哈梅哈一世）
     ayoubu_lulu: { birth: 1140, death: 1200, kaoju: '推定' },  // 鲁鲁（阿尤布红海水师都督·苏伊士保卫战）
+
+    // ── 2026-11-03 补生卒／登场年（此 10 人原无任何年份，时代只能取势力首段）──
+    // 有史事锚点的按锚点年定 debut；生卒史无明载的一律 kaoju:'推定'
+    hulumusi_ata: { birth: 1470, death: 1530, debut: 1507, kaoju: '推定' },          // 阿塔（霍尔木兹守将；1507 阿尔布克尔克来攻，见 docs/AGENTS/精锐五级制-2026-11-01.md）
+    bolinixiya_baomalei: { birth: 1742, death: 1803, debut: 1788, kaoju: '推定' },  // 波马雷一世（大溪地；生年有 1742/1753 异说，卒 1803；1788 前后崛起）
+    kilwa_suleiman: { birth: 1270, death: 1340, debut: 1320, kaoju: '推定' },       // 苏莱曼·本·哈桑（基尔瓦苏丹，亲征索法拉；1331 伊本·白图泰至其子哈桑朝）
+    mogadishu_abubakr: { birth: 1290, death: 1355, debut: 1331, kaoju: '推定' },    // 阿布·伯克尔（摩加迪沙苏丹；1331 伊本·白图泰谒见）
+    zuraid_yasir: { birth: 1125, death: 1185, debut: 1173, kaoju: '推定' },         // 亚西尔·本·比拉勒（祖拉伊德维齐尔·亚丁执政；1173 亚丁解围）
+    putaoya_danuowa: { birth: 1460, death: 1509, debut: 1501 },                      // 若昂·达诺瓦（约1460–1509；1501 率第三支印度舰队，1502 发现圣赫勒拿）
+    mozambique_ataide: { birth: 1560, death: 1620, debut: 1607, kaoju: '推定' },    // 阿泰德（葡属莫桑比克守将；1607/08 两退荷兰舰队）
+    yisatisi_yisatisi: { birth: 1240, death: 1300, debut: 1270, kaoju: '推定' },    // 伊萨提斯（亚兹德，伊利汗国时期）
+    xingelana_beierweierde: { birth: 1610, death: 1680, debut: 1668, kaoju: '推定' }, // 贝尔韦尔德（波托贝洛守将；1668 亨利·摩根袭港）
+    gen_xiao_xian: { birth: 583, death: 621, debut: 617 },                           // 萧铣（583–621；617 起兵称梁帝，621 被李孝恭平）
 
 };
 

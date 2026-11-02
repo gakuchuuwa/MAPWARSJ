@@ -172,12 +172,14 @@ const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
     city_sanjulian: ['city_hagatna', 'city_valparaiso'],
     city_valparaiso: ['city_lima', 'city_rapanui'],
     city_rapanui: ['city_tahiti'],
-    city_tahiti: ['city_hagatna'],
+    city_tahiti: ['city_mua', 'city_honolulu', 'city_hagatna'],
+    city_mua: ['city_deernate', 'city_batavia', 'city_hagatna'],
+    city_honolulu: ['city_hagatna'],
 
     // 麦哲伦—马尼拉大帆船太平洋—香料群岛航线
-    city_lima: ['city_acapulco'],
+    city_lima: ['city_acapulco', 'city_rapanui'],
     city_banama: ['city_acapulco'],
-    city_acapulco: ['city_hagatna'],
+    city_acapulco: ['city_hagatna', 'city_honolulu'],
     city_hagatna: ['city_manila'],
     city_manila: ['city_acapulco', 'city_panyu', 'city_huoluo', 'city_cebu'],
     city_cebu: ['city_deernate'],
