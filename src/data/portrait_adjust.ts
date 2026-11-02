@@ -9512,7 +9512,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/NORTHEAST/gen_zengguofan.png": {
+        "/assets/JIANGNAN/gen_zengguofan.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 18
@@ -9527,15 +9527,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 8
         },
-        "/assets/KHMER/taiyuan_menglai.png": {
+        "/assets/MALAY/taiyuan_menglai.png": {
             "scale": 1.17,
             "offsetX": -5,
             "offsetY": -19
-        },
-        "/assets/MALAY/taiyuan_menglai.png": {
-            "scale": 0.84,
-            "offsetX": 0,
-            "offsetY": 8
         },
         "/assets/MALAY/gen_rajah_hijau.png": {
             "scale": 1.02,
@@ -9567,7 +9562,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -5,
             "offsetY": -3
         },
-        "/assets/CENTRAL/tiele_qibiheli.png": {
+        "/assets/MONGOL/tiele_qibiheli.png": {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 16

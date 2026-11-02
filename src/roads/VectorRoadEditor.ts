@@ -3981,7 +3981,12 @@ export class VectorRoadEditor implements IEditor {
      */
     private connectDistanceKm: number = 250;
 
-    private detectAllIssues(): void {
+    private async detectAllIssues(): Promise<void> {
+        // 「一条陆路都没有」要靠海陆掩膜排除岛上的城；路网图还没建时掩膜可能没载，这里先补载
+        if (!this.landMaskReady) {
+            this.setStatus('⏳ 载入海陆掩膜...');
+            this.landMaskReady = await loadLandMask(`${import.meta.env.BASE_URL || '/'}${LAND_MASK_PATH}`);
+        }
         const features = VECTOR_ROAD_DATA.features;
         const validCityIds = ALL_ENDPOINT_IDS();   // 据点 + 战场，都是合法端点
 
@@ -4009,6 +4014,8 @@ export class VectorRoadEditor implements IEditor {
             duplicates: [] as Array<{ keepId: string; deleteId: string; keepName: string; deleteName: string; reason: string; overlapPoints: number; ratioA: number; ratioB: number }>,
             // 据点压在 A-C 道路中间, 却不是这条路的端点 (B 忘了连路)
             cityOnRoad: [] as Array<{ roadId: string; roadName: string; startName: string; endName: string; cityId: string; cityName: string; distKm: number }>,
+            // 一条陆路都没有, 但 500km 内有别的据点 (该连陆路却没连)
+            noLandRoad: [] as Array<{ cityId: string; cityName: string; seaCount: number; nearId: string; nearName: string; nearKm: number }>,
         };
 
         // ───── 端点完整性检查 ─────
@@ -4213,6 +4220,7 @@ export class VectorRoadEditor implements IEditor {
 
         // ───── 据点压在别的路中间却没连上 (A-C 之间有 B，B 忘了连路) ─────
         issues.cityOnRoad = this.findCitiesOnRoads();
+        issues.noLandRoad = this.findCitiesWithoutLandRoad();
 
         const totalRoads = features.length;
         const orphanCities = this.getOrphanCities();
@@ -4228,7 +4236,8 @@ export class VectorRoadEditor implements IEditor {
             issues.duplicates.length +
             issues.staleStretchLines.length +
             issues.endpointDrift.length +
-            issues.cityOnRoad.length;
+            issues.cityOnRoad.length +
+            issues.noLandRoad.length;
 
         // ───── 控制台分组打印 ─────
         console.group(`🔍 [全面审查] ${totalRoads} 条路 · 问题 ${totalIssues} 项 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length} · 未连路战场 ${unlinkedBattlefields.length}`);
@@ -4284,6 +4293,13 @@ export class VectorRoadEditor implements IEditor {
             console.group(`🏙️ 据点压在路中间却没连上 [${issues.cityOnRoad.length}] → 把这条路在该据点处断开, 或补 A-B / B-C`);
             issues.cityOnRoad.forEach(i => console.log(
                 `  ${i.startName} ↔ ${i.endName} 途经 ${i.cityName} (离路 ${i.distKm}km) [路 ${i.roadId}] [城 ${i.cityId}]`
+            ));
+            console.groupEnd();
+        }
+        if (issues.noLandRoad.length) {
+            console.group(`🚫 一条陆路都没有, 但 ${VectorRoadEditor.NO_LAND_ROAD_NEIGHBOR_KM}km 内有据点 [${issues.noLandRoad.length}]`);
+            issues.noLandRoad.forEach(i => console.log(
+                `  ${i.cityName} [${i.cityId}] 海路 ${i.seaCount} 条 · 最近 ${i.nearName} ${i.nearKm}km`
             ));
             console.groupEnd();
         }
@@ -4532,6 +4548,14 @@ export class VectorRoadEditor implements IEditor {
             });
             html += section('🏙️ 据点压在路中间却没连上 (A-C 之间有 B, B 忘了连路)', '#00bcd4', issues.cityOnRoad.length, onRoadItems);
 
+            // 一条陆路都没有，但附近有据点：定位到这座据点
+            const noLandItems = issues.noLandRoad.slice(0, 80).map((i: any) => ({
+                html: `<span style="background:rgba(255,87,34,0.4);color:#fff;border-radius:8px;padding:2px 10px;font-size:12px;font-weight:bold;margin-right:8px;">${i.nearKm} km</span>`
+                    + `<b>${i.cityName}</b> · 陆路 0 条${i.seaCount > 0 ? ` · 海路 ${i.seaCount} 条` : ''} · 最近据点 <b>${i.nearName}</b> <span style="color:#666;font-size:11px;">[${i.cityId}]</span>`,
+                cityId: i.cityId,
+            }));
+            html += citySection(`🚫 一条陆路都没有 (${VectorRoadEditor.NO_LAND_ROAD_NEIGHBOR_KM}km 内有据点)`, '#ff5722', issues.noLandRoad.length, noLandItems);
+
             // 孤儿城：没有任何道路连接的据点（信息项，非道路错误）
             const orphanItems = orphanCities.slice(0, 80).map(c => ({
                 html: `<b>${c.name}</b> · (${c.lat.toFixed(2)}, ${c.lng.toFixed(2)}) <span style="color:#666;font-size:11px;">[${c.id}]</span>`,
@@ -4575,7 +4599,11 @@ export class VectorRoadEditor implements IEditor {
 
             // 把问题路 id 列表存到编辑器, 供 [◀ 上问题/下问题 ▶] 用；点项（未连路战场、孤儿城）排在后面
             this.problemRoadIds = allProblemIds;
-            this.problemPointIds = [...unlinkedBattlefields.map((b) => b.id), ...orphanCities.map((c) => c.id)];
+            this.problemPointIds = [
+                ...issues.noLandRoad.map((i: any) => i.cityId),
+                ...unlinkedBattlefields.map((b) => b.id),
+                ...orphanCities.map((c) => c.id),
+            ];
 
             if (totalIssues > 0) {
                 html += `
@@ -4783,6 +4811,92 @@ export class VectorRoadEditor implements IEditor {
         const len2 = dx * dx + dy * dy;
         const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2));
         return Math.hypot(ax + t * dx, ay + t * dy);
+    }
+
+    /** 附近多远内有据点，就认为这座城该有陆路 (km) */
+    private static readonly NO_LAND_ROAD_NEIGHBOR_KM = 300;
+
+    /**
+     * 一条陆路都没有、但 NO_LAND_ROAD_NEIGHBOR_KM 内有别的据点的城（只连海路的也算）。
+     * 只认「同一块陆地上」的邻城：从城所在陆地沿海陆掩膜洪水填充，邻城落在填到的格子里才算。
+     * 岛上的城到不了大陆，本来就修不了陆路，不报；隔着海湾的同一大陆邻城照样算。
+     * 掩膜没载到时没法分岛，宁可不报（避免一片岛城误报）。
+     */
+    private findCitiesWithoutLandRoad(): Array<{ cityId: string; cityName: string; seaCount: number; nearId: string; nearName: string; nearKm: number }> {
+        const limitKm = VectorRoadEditor.NO_LAND_ROAD_NEIGHBOR_KM;
+        if (!this.landMaskReady) return [];
+        const breakdown = this.getCityConnectionBreakdown();
+        const out: ReturnType<VectorRoadEditor['findCitiesWithoutLandRoad']> = [];
+        for (const c of CITIES) {
+            const b = breakdown.get(c.id);
+            if (b && b.land > 0) continue;
+            const sameLand = this.landRegionAround(c.lat, c.lng, limitKm);
+            let near: (typeof CITIES)[number] | null = null;
+            let nearKm = Infinity;
+            for (const o of CITIES) {
+                if (o.id === c.id) continue;
+                if (Math.abs(o.lat - c.lat) > limitKm / 110) continue;   // 先按纬度粗筛
+                const d = this.haversine(c.lat, c.lng, o.lat, o.lng);
+                if (d > limitKm || d >= nearKm) continue;
+                if (!sameLand(o.lat, o.lng)) continue;
+                nearKm = d; near = o;
+            }
+            if (!near || nearKm > limitKm) continue;
+            out.push({
+                cityId: c.id, cityName: c.name, seaCount: b?.sea ?? 0,
+                nearId: near.id, nearName: near.name, nearKm: Math.round(nearKm),
+            });
+        }
+        return out.sort((a, b) => a.nearKm - b.nearKm);
+    }
+
+    /**
+     * 以 (lat,lng) 为中心、半径 radiusKm 的方框里，沿海陆掩膜洪水填充出这座城所在的那块陆地，
+     * 返回「某点是否在这块陆地上」的判定。沿海城的坐标常落在水格上，起点 / 查询点都就近 2 格找陆地。
+     */
+    private landRegionAround(lat: number, lng: number, radiusKm: number): (qLat: number, qLng: number) => boolean {
+        const STEP = 0.03;   // ≈ 掩膜分辨率 (180°/6000)
+        const halfLat = radiusKm / 111;
+        const halfLng = Math.min(180, radiusKm / (111 * Math.max(0.1, Math.cos(lat * Math.PI / 180))));
+        const nx = Math.ceil(2 * halfLng / STEP) + 1;
+        const ny = Math.ceil(2 * halfLat / STEP) + 1;
+        const lng0 = lng - halfLng, lat0 = lat - halfLat;
+        const cellOf = (qLat: number, qLng: number): [number, number] =>
+            [Math.round((qLng - lng0) / STEP), Math.round((qLat - lat0) / STEP)];
+        const inBox = (x: number, y: number) => x >= 0 && y >= 0 && x < nx && y < ny;
+        const landAt = (x: number, y: number) => isLand(lat0 + y * STEP, lng0 + x * STEP);
+        const filled = new Uint8Array(nx * ny);
+        const nearestLand = (x: number, y: number, test: (x: number, y: number) => boolean): number => {
+            for (let r = 0; r <= 2; r++) {
+                for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+                    const xx = x + dx, yy = y + dy;
+                    if (inBox(xx, yy) && test(xx, yy)) return yy * nx + xx;
+                }
+            }
+            return -1;
+        };
+
+        const [sx, sy] = cellOf(lat, lng);
+        const start = nearestLand(sx, sy, landAt);
+        if (start < 0) return () => false;
+        const stack = [start];
+        filled[start] = 1;
+        while (stack.length) {
+            const i = stack.pop()!;
+            const x = i % nx, y = (i - x) / nx;
+            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                const xx = x + dx, yy = y + dy;
+                if (!inBox(xx, yy)) continue;
+                const j = yy * nx + xx;
+                if (filled[j] || !landAt(xx, yy)) continue;
+                filled[j] = 1;
+                stack.push(j);
+            }
+        }
+        return (qLat, qLng) => {
+            const [qx, qy] = cellOf(qLat, qLng);
+            return nearestLand(qx, qy, (x, y) => filled[y * nx + x] === 1) >= 0;
+        };
     }
 
     /** 没有任何道路 start/end 连接的据点 */

@@ -12,6 +12,7 @@ import L from 'leaflet';
 import { CityManager } from '../world/CityManager';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { SEA_ROUTE_DATA, SeaRouteFeature } from '../data/VectorSeaRouteData';
+import { VECTOR_ROAD_DATA } from '../data/VectorRoadData';
 import { IEditor } from '../editors/UnifiedEditorManager';
 import { unwrapLongitudePath } from '../utils/GeoLongitude';
 
@@ -41,6 +42,9 @@ interface SeaEdge { from: number; to: number; weight: number; dist: number; coor
  *    否则面板上显示的航程会是个带系数的假数。
  */
 const OPEN_SEA_PENALTY = 1.5;
+/** 每个港口（连了海路的城）应有的海路条数 */
+const PORT_SEA_ROUTE_MIN = 2;
+const PORT_SEA_ROUTE_MAX = 8;
 
 /**
  * 🔴 [2026-10-13 主人问「为什么道路编辑器中有的海路会横穿陆地」，授权全权修复]
@@ -303,6 +307,7 @@ export class SeaRouteEditor implements IEditor {
         this.panel.appendChild(this.createButton('📋 导出', '#2196f3', () => this.exportToClipboard()));
         this.panel.appendChild(this.createButton('💾 保存', '#4caf50', () => this.saveToFile()));
         this.panel.appendChild(this.createButton('🗑️ 删除', '#f44336', () => this.deleteSelectedRoute()));
+        this.panel.appendChild(this.createButton('🔍 海路审查', '#00bcd4', () => this.showAuditModal()));
 
         (host ?? document.body).appendChild(this.panel);
     }
@@ -835,15 +840,147 @@ export class SeaRouteEditor implements IEditor {
         let routeId = this.selectedRouteId;
         if (!routeId && this.routeSelect && this.routeSelect.value) routeId = this.routeSelect.value;
         if (!routeId) { this.setStatus('⚠️ 请先从下拉列表选择要删除的海路'); return; }
-        const feature = SEA_ROUTE_DATA.features.find(f => f.properties.id === routeId);
-        const name = feature?.properties.name || '未命名海路';
-        if (!confirm(`确定要删除海路 "${name}" 吗？删除后记得点保存。`)) return;
-        SEA_ROUTE_DATA.features.splice(SEA_ROUTE_DATA.features.findIndex(f => f.properties.id === routeId), 1);
+        this.deleteRoute(routeId);
+    }
+
+    /** 删一条海路（确认后只改内存，记得点 💾 保存）；返回是否真删了 */
+    private deleteRoute(routeId: string): boolean {
+        const idx = SEA_ROUTE_DATA.features.findIndex(f => f.properties.id === routeId);
+        if (idx < 0) return false;
+        const name = SEA_ROUTE_DATA.features[idx].properties.name || '未命名海路';
+        if (!confirm(`确定要删除海路 "${name}" 吗？删除后记得点保存。`)) return false;
+        SEA_ROUTE_DATA.features.splice(idx, 1);
         this.removeRouteLayer(routeId);
-        this.selectedRouteId = null;
+        if (this.selectedRouteId === routeId) this.selectedRouteId = null;
         if (this.routeSelect) this.routeSelect.value = '';
         this.updateRouteSelect();
         this.setStatus(`🗑️ 已删除 "${name}"，请点击保存以持久化`);
+        return true;
+    }
+
+    // ===== 海路审查 =====
+
+    /** 两城之间已有陆路、又画了海路 → 海路多余 */
+    private findLandSeaDuplicates(): Array<{ routeId: string; name: string; aName: string; bName: string }> {
+        const key = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
+        const landPairs = new Set<string>();
+        for (const f of VECTOR_ROAD_DATA.features) {
+            const p = f?.properties;
+            if (p?.startConnection && p?.endConnection) landPairs.add(key(p.startConnection, p.endConnection));
+        }
+        const out: Array<{ routeId: string; name: string; aName: string; bName: string }> = [];
+        for (const f of SEA_ROUTE_DATA.features) {
+            const p = f?.properties;
+            if (!p?.startConnection || !p?.endConnection) continue;
+            if (!landPairs.has(key(p.startConnection, p.endConnection))) continue;
+            out.push({
+                routeId: p.id, name: p.name || '未命名海路',
+                aName: this.cityName(p.startConnection), bName: this.cityName(p.endConnection),
+            });
+        }
+        return out;
+    }
+
+    /** 港口 = 连了至少 1 条海路的城；海路条数不在 2–8 的报出来 */
+    private findPortsWithBadRouteCount(): Array<{ cityId: string; name: string; count: number }> {
+        const counts = new Map<string, number>();
+        for (const f of SEA_ROUTE_DATA.features) {
+            for (const id of [f?.properties?.startConnection, f?.properties?.endConnection]) {
+                if (id) counts.set(id, (counts.get(id) ?? 0) + 1);
+            }
+        }
+        const out: Array<{ cityId: string; name: string; count: number }> = [];
+        for (const [cityId, count] of counts) {
+            if (count >= PORT_SEA_ROUTE_MIN && count <= PORT_SEA_ROUTE_MAX) continue;
+            out.push({ cityId, name: this.cityName(cityId), count });
+        }
+        return out.sort((a, b) => b.count - a.count);
+    }
+
+    private cityName(id: string): string {
+        return CITIES.find(c => c.id === id)?.name ?? id;
+    }
+
+    private locateCity(cityId: string): void {
+        const c = CITIES.find(x => x.id === cityId);
+        if (c) this.map.setView([c.lat, c.lng], 9);
+    }
+
+    private locateRoute(routeId: string): void {
+        const f = SEA_ROUTE_DATA.features.find(x => x.properties.id === routeId);
+        if (!f || f.geometry.coordinates.length === 0) return;
+        const latLngs = f.geometry.coordinates.map(([lng, lat]) => [lat, lng] as [number, number]);
+        this.map.fitBounds(L.latLngBounds(latLngs), { padding: [60, 60] });
+        this.selectRoute(routeId);
+        if (this.routeSelect) this.routeSelect.value = routeId;
+    }
+
+    private showAuditModal(): void {
+        document.querySelectorAll('#sea-audit-modal').forEach(el => el.remove());
+        const dups = this.findLandSeaDuplicates();
+        const badPorts = this.findPortsWithBadRouteCount();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'sea-audit-modal';
+        overlay.style.cssText = `
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 20000;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Microsoft YaHei', sans-serif;
+        `;
+        const ok = dups.length === 0 && badPorts.length === 0;
+        const rowStyle = (color: string) => `padding:8px 12px;border-left:3px solid ${color};margin:4px 0;background:rgba(255,255,255,0.03);border-radius:4px;display:flex;align-items:center;gap:8px;`;
+        const btnStyle = (bg: string) => `background:${bg};color:#fff;border:none;border-radius:4px;padding:3px 10px;cursor:pointer;font-size:12px;`;
+        const dupRows = dups.map(d => `
+            <div style="${rowStyle('#e91e63')}">
+                <span style="flex:1;"><b>${d.aName}</b> ↔ <b>${d.bName}</b> 已有陆路，海路 <b style="color:#ff80a0">${d.name}</b> 重复 <span style="color:#666;font-size:11px;">[${d.routeId}]</span></span>
+                <button class="sea-audit-route" data-id="${d.routeId}" style="${btnStyle('#00bcd4')}">👁 看</button>
+                <button class="sea-audit-del" data-id="${d.routeId}" style="${btnStyle('#f44336')}">🗑 删海路</button>
+            </div>`).join('');
+        const portRows = badPorts.map(p => `
+            <div style="${rowStyle('#ff9800')}">
+                <span style="flex:1;"><b>${p.name}</b> · 海路 <b style="color:#ffb74d">${p.count}</b> 条 ${p.count < PORT_SEA_ROUTE_MIN ? '太少' : '太多'} <span style="color:#666;font-size:11px;">[${p.cityId}]</span></span>
+                <button class="sea-audit-city" data-id="${p.cityId}" style="${btnStyle('#00bcd4')}">👁 看</button>
+            </div>`).join('');
+        const section = (title: string, color: string, count: number, rows: string) => count === 0 ? '' : `
+            <div style="margin-bottom:18px;">
+                <div style="font-size:15px;font-weight:bold;color:${color};margin-bottom:6px;">${title}
+                    <span style="background:${color};color:#000;border-radius:10px;padding:1px 8px;font-size:12px;margin-left:6px;">${count}</span></div>
+                ${rows}
+            </div>`;
+
+        overlay.innerHTML = `
+            <div style="background:#0f1e2e;color:#d0e4f7;width:80vw;max-width:900px;max-height:80vh;border-radius:14px;
+                        border:2px solid rgba(41,182,246,0.5);display:flex;flex-direction:column;overflow:hidden;">
+                <div style="padding:16px 22px;border-bottom:1px solid rgba(41,182,246,0.3);display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="font-size:19px;font-weight:bold;color:${ok ? '#4caf50' : '#ff9800'};">${ok ? '✅' : '⚠'} 海路审查</div>
+                        <div style="font-size:13px;color:#9ab;margin-top:4px;">海路 ${SEA_ROUTE_DATA.features.length} 条 · 陆海重复 ${dups.length} · 港口海路数不在 ${PORT_SEA_ROUTE_MIN}–${PORT_SEA_ROUTE_MAX} 条 ${badPorts.length}</div>
+                    </div>
+                    <button class="sea-audit-close" style="background:rgba(255,255,255,0.1);color:#d0e4f7;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;">✕ 关闭</button>
+                </div>
+                <div style="flex:1;overflow-y:auto;padding:14px 22px;font-size:13px;line-height:1.6;">
+                    ${ok ? `<div style="text-align:center;padding:40px;color:#4caf50;font-size:16px;">✓ 无陆海重复 ✓ 所有港口海路 ${PORT_SEA_ROUTE_MIN}–${PORT_SEA_ROUTE_MAX} 条</div>` : ''}
+                    ${section('🔁 陆海重复：两城已有陆路，海路多余', '#e91e63', dups.length, dupRows)}
+                    ${section(`⚓ 港口海路数不在 ${PORT_SEA_ROUTE_MIN}–${PORT_SEA_ROUTE_MAX} 条`, '#ff9800', badPorts.length, portRows)}
+                    ${dups.length ? '<div style="color:#9ab;font-size:12px;margin-top:8px;">删完记得点 💾 保存。删海路会让港口海路数变少，删后列表会自动重算。</div>' : ''}
+                </div>
+            </div>`;
+        document.body.appendChild(overlay);
+
+        const close = () => overlay.remove();
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+        overlay.querySelector('.sea-audit-close')?.addEventListener('click', close);
+        overlay.querySelectorAll<HTMLElement>('.sea-audit-route').forEach(b => b.addEventListener('click', () => {
+            close();
+            this.locateRoute(b.dataset.id || '');
+        }));
+        overlay.querySelectorAll<HTMLElement>('.sea-audit-city').forEach(b => b.addEventListener('click', () => {
+            close();
+            this.locateCity(b.dataset.id || '');
+        }));
+        overlay.querySelectorAll<HTMLElement>('.sea-audit-del').forEach(b => b.addEventListener('click', () => {
+            if (this.deleteRoute(b.dataset.id || '')) this.showAuditModal();   // 删完重开，计数跟着更新
+        }));
     }
 
     private generateTypeScriptContent(): string {
