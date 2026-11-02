@@ -80,6 +80,92 @@ function pickWestward<T extends { longitude: number }>(cands: T[], fromLng: numb
     return half;
 }
 
+/**
+ * 历史远洋大航海主干针路网（郑和下西洋 + 达·伽马好望角印度航线 + 麦哲伦—埃尔卡诺环球航线 + 哥伦布大西洋航线 + 马尼拉大帆船航线）：
+ * - 占婆（阇槃）直航满剌加（马六甲）或龙牙门（淡马锡/新加坡），不绕进暹罗湾（吞武里）；
+ * - 锡兰（加勒）—古里（卡利卡特）/果阿横渡印度洋直抵阿丹（亚丁）或木骨都束（摩加迪沙）、慢八撒（蒙巴萨），不钻入波斯湾（巴士拉/奥拉/卡拉奇）与红海死胡同；
+ * - 沿斯瓦希里海岸（蒙巴萨—基尔瓦—莫桑比克）南下好望角（开普敦），北上佛得角（里贝拉），跨大西洋经里约（瓜纳巴拉）至麦哲伦海峡（圣胡利安港），横渡太平洋至阿加尼亚（关岛）—马尼拉，再返航广州（番禺）/泉州（刺桐）或经香料群岛（德尔纳特）—爪哇（巴达维亚）重返好望角。
+ */
+const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
+    // 东亚沿海汇入下西洋起点
+    city_edo: ['city_junfucheng'],
+    city_kamakura: ['city_junfucheng', 'city_okafu'],
+    city_junfucheng: ['city_himeji'],
+    city_himeji: ['city_noshima', 'city_okafu'],
+    city_okafu: ['city_akaogicheng'],
+    city_noshima: ['city_songshan'],
+    city_songshan: ['city_funei', 'city_chijianguan'],
+    city_chijianguan: ['city_yuanzhishi'],
+    city_funei: ['city_satsuma'],
+    city_satsuma: ['city_akaogicheng', 'city_tsushima'],
+    city_akaogicheng: ['city_akakinagusuku'],
+    city_akakinagusuku: ['city_shuri'],
+    city_shuri: ['city_qingyuan_zj', 'city_diaoyudao'],
+    city_diaoyudao: ['city_mengjia'],
+    city_mengjia: ['city_fuzhou'],
+    city_yuanzhishi: ['city_taizaifu'],
+    city_taizaifu: ['city_qingyuan_zj'],
+    city_shanghai: ['city_hangzhou', 'city_taizhou_zj'],
+    city_hangzhou: ['city_qingyuan_zj'],
+    city_qingyuan_zj: ['city_taizhou_zj'],
+    city_taizhou_zj: ['city_qingjingsi'],
+    city_fuzhou: ['city_zhangzhou'],
+    city_zhangzhou: ['city_penghu'],
+    city_penghu: ['city_qingjingsi'],
+
+    // 郑和下西洋主干（泉州—广州—占婆—新加坡/马六甲—亚齐—锡兰—古里—阿丹/木骨都束—慢八撒）
+    city_qingjingsi: ['city_panyu'],
+    city_panyu: ['city_dupan'],
+    city_dupan: ['city_malacca', 'city_danmaxi'],
+    city_danmaxi: ['city_sanfoqi'],
+    city_sanfoqi: ['city_malacca'],
+    city_malacca: ['city_yaqi'],
+    city_yaqi: ['city_jiale'],
+    city_jiale: ['city_guli'],
+    city_guli: ['city_mogadishu', 'city_aden'],
+    city_guoa: ['city_mombasa', 'city_aden'],
+    city_aden: ['city_mogadishu'],
+    city_mogadishu: ['city_mombasa'],
+    city_mombasa: ['city_kilwa'],
+    city_kilwa: ['city_mozambique'],
+    city_mozambique: ['city_cape_town'],
+    city_batavia: ['city_cape_town'],
+
+    // 达·伽马 & 麦哲伦大西洋—南美航线（及西欧/加勒比汇入线）
+    city_cape_town: ['city_ribeira', 'city_luanda'],
+    city_luanda: ['city_ribeira'],
+    city_ribeira: ['city_guanabara'],
+    city_lundun: ['city_kanpeier', 'city_calais'],
+    city_calais: ['city_bordeaux'],
+    city_kanpeier: ['city_bordeaux'],
+    city_bordeaux: ['city_boertu'],
+    city_boertu: ['city_lisiben'],
+    city_lisiben: ['city_labate'],
+    city_jiadisi: ['city_telde'],
+    city_labate: ['city_telde'],
+    city_telde: ['city_ribeira'],
+    city_angra: ['city_lisiben'],
+    city_veracruz: ['city_katachena', 'city_havana'],
+    city_havana: ['city_shengaogusiding'],
+    city_shengaogusiding: ['city_shengduomingge'],
+    city_katachena: ['city_shengduomingge'],
+    city_shengduomingge: ['city_telde'],
+    city_salvador: ['city_guanabara'],
+    city_guanabara: ['city_sanjulian'],
+    city_sanjulian: ['city_hagatna', 'city_lima'],
+
+    // 麦哲伦—马尼拉大帆船太平洋—香料群岛航线
+    city_lima: ['city_acapulco'],
+    city_banama: ['city_acapulco'],
+    city_acapulco: ['city_hagatna'],
+    city_hagatna: ['city_manila'],
+    city_manila: ['city_panyu', 'city_tainan', 'city_huoluo'],
+    city_tainan: ['city_penghu'],
+    city_huoluo: ['city_deernate'],
+    city_deernate: ['city_teluowulan'],
+    city_teluowulan: ['city_batavia'],
+};
+
 /** 从本势力文化军团三排里学到的兵种。 */
 export interface LearnedUnit {
     /** 兵种 key（UNIT_ASSETS / WAR_TYPES 同名） */
@@ -490,20 +576,68 @@ export class PlayerHero {
             return;
         }
         const startId = nearPort.id;
-        const cands = pickWestward(this.skipRecentStops(ports.filter((c) => c.id !== startId)), pos.lng);
-        let legs = this.rankWestLegs(cands, pos.lng, (c) => {
-            const res = roadRegistry.findSeaOnlyPath(startId, c.id);
-            return res && res.coordinates.length >= 2 ? roadRegistry.pathToLatLngs(res) : null;
-        });
-        if (legs.length === 0) {
-            const allWestPorts = pickWestward(ports.filter((c) => c.id !== startId), pos.lng);
-            legs = this.rankWestLegs(allWestPorts, pos.lng, (c) => {
+        let chosenDest: City | null = null;
+        let chosenPath: Array<{ lat: number; lng: number; sea?: boolean }> | null = null;
+
+        // 1. 若当前已在历史大航海针路主干港口上，严格沿郑和/达·伽马/麦哲伦/大帆船主航线推进（不绕暹罗湾、不进波斯湾与红海内腹）
+        const nextHubIds = HISTORICAL_SAIL_NEXT[startId];
+        if (nextHubIds && nextHubIds.length > 0) {
+            const freshIds = nextHubIds.filter((id) => !this.recentTourStops.includes(id));
+            const poolIds = freshIds.length > 0 ? freshIds : nextHubIds;
+            const shuffled = [...poolIds].sort(() => Math.random() - 0.5);
+            for (const targetId of shuffled) {
+                const targetCity = this.deps.cityManager.getCity(targetId);
+                if (!targetCity) continue;
+                const res = roadRegistry.findSeaOnlyPath(startId, targetId);
+                if (res && res.coordinates.length >= 2) {
+                    chosenDest = targetCity;
+                    chosenPath = roadRegistry.pathToLatLngs(res);
+                    break;
+                }
+            }
+        }
+
+        // 2. 若当前处于支线/内海港口（如地中海、波罗的海、黑海、波斯湾、暹罗湾等），先寻纯海路驶向最近的历史远洋主干港口汇入主航线
+        if (!chosenDest || !chosenPath) {
+            const hubPorts = ports
+                .filter((c) => c.id !== startId && !!HISTORICAL_SAIL_NEXT[c.id])
+                .sort(
+                    (a, b) => getEuclideanDistance(pos, { lat: a.latitude, lng: a.longitude })
+                        - getEuclideanDistance(pos, { lat: b.latitude, lng: b.longitude }),
+                );
+            for (const hub of hubPorts.slice(0, 12)) {
+                const res = roadRegistry.findSeaOnlyPath(startId, hub.id);
+                if (res && res.coordinates.length >= 2) {
+                    chosenDest = hub;
+                    chosenPath = roadRegistry.pathToLatLngs(res);
+                    break;
+                }
+            }
+        }
+
+        // 3. 兜底：从剩余港口中按净向西规则选路
+        if (!chosenDest || !chosenPath) {
+            const cands = pickWestward(this.skipRecentStops(ports.filter((c) => c.id !== startId)), pos.lng);
+            let legs = this.rankWestLegs(cands, pos.lng, (c) => {
                 const res = roadRegistry.findSeaOnlyPath(startId, c.id);
                 return res && res.coordinates.length >= 2 ? roadRegistry.pathToLatLngs(res) : null;
             });
+            if (legs.length === 0) {
+                const allWestPorts = pickWestward(ports.filter((c) => c.id !== startId), pos.lng);
+                legs = this.rankWestLegs(allWestPorts, pos.lng, (c) => {
+                    const res = roadRegistry.findSeaOnlyPath(startId, c.id);
+                    return res && res.coordinates.length >= 2 ? roadRegistry.pathToLatLngs(res) : null;
+                });
+            }
+            if (legs.length > 0) {
+                chosenDest = legs[0].city;
+                chosenPath = legs[0].path;
+            }
         }
-        if (legs.length > 0) {
-            const { city: dest, path } = legs[0];
+
+        if (chosenDest && chosenPath) {
+            const dest = chosenDest;
+            const path = chosenPath;
             this.rememberTourStop(dest.id);
             for (const p of path) {
                 const nearPortId = roadRegistry.getNearestCityId(p.lat, p.lng, 0.3);

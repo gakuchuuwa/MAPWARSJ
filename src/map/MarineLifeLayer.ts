@@ -18,9 +18,7 @@ const PANE = 'marineLifePane';
  *    原来固定「最多 2 只、10 秒补 1 只」，全是海的画面也只有 2 只，远低于 DE。
  *    每只存活约 21 秒，补充间隔 = 21 秒 ÷ 目标数，才能维持到目标数。
  */
-const CREATURE_LIFE_MS = 21_000;
-const MIN_TRIGGER_INTERVAL_MS = 350;
-const MAX_TRIGGER_INTERVAL_MS = 6_000;
+const MIN_TRIGGER_INTERVAL_MS = 200;
 const MAX_CREATURES_CAP = 12;          // 封顶防满屏（zoom 9 全海面约 8–10 处，丰富海面生机）
 const SEA_FRACTION_SAMPLE_MS = 1_000;  // 水面比例每 1.0 秒重算一次（4×4 采样）
 const FPS = 15;
@@ -57,8 +55,7 @@ type CreatureKind =
     | 'DORADO_FISH'
     | 'SALMON_FISH'
     | 'SNAPPER_FISH'
-    | 'SHORE_FISH'
-    | 'SEA_ROCK2';
+    | 'SHORE_FISH';
 
 /**
  * 🔴 2026-10-31 主人令「陆海空动物的显示比例统一，大小对齐 DE」：海洋生物原先是「固定屏幕像素」
@@ -97,10 +94,6 @@ const ASSETS: Record<CreatureKind, CreatureAsset> = {
         url: '/SUCAI_RESOURCE/SHORE_FISH/frames.png', frames: 90, cols: 90, boxW: 36, boxH: 52, anchorX: 32, anchorY: 40,
         underwater: { url: '/SUCAI_RESOURCE/SHORE_FISH_UNDERWATER/frames.png', frames: 90, cols: 90, boxW: 84, boxH: 48, anchorX: 56, anchorY: 20 },
     },
-    // 海中拍浪暗礁（DE n_rock_sea2，6 帧浪花拍击礁石）
-    SEA_ROCK2: {
-        url: '/SUCAI_RESOURCE/SEA_ROCK2/frames.png', frames: 6, cols: 6, boxW: 136, boxH: 76, anchorX: 68, anchorY: 48, fps: 6,
-    },
 };
 
 interface Creature {
@@ -110,8 +103,6 @@ interface Creature {
     lng: number;
     frame: number;
     mirror: boolean;
-    spawnedAt: number;
-    expiresAt: number;
     lastFrameAt: number;
 }
 
@@ -293,26 +284,27 @@ export class MarineLifeLayer extends L.Layer {
         if (!this.map || !this.ctx) return;
         const zoom = this.map.getZoom();
         if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) {
-            this.render(now);
+            this.render();
             return;
         }
 
-        // 清理过期或已随着船只/镜头平移被甩出视口外的生物（防止高速航行时屏幕后方的旧生物占满名额导致前方海面空旷）
+        // 🔴 [2026-11-02 主人令「海洋中元素，希望改成常驻不渐隐（只要在视野内就一直存在，移出视野才回收）」]
+        //    视野内常驻不按时间消失，仅当镜头/船只平移使其移出视口外时才回收
         if (this.creatures.length > 0) {
             const keepBounds = this.map.getBounds().pad(0.25);
-            this.creatures = this.creatures.filter(c => now <= c.expiresAt
-                && keepBounds.contains([c.lat, c.lng])
+            this.creatures = this.creatures.filter(c => keepBounds.contains([c.lat, c.lng])
                 && isOpenOcean(c.lat, c.lng)
                 && (LandSeaSystem.isSeaAt(L.latLng(c.lat, c.lng)) || LandSeaSystem.getSampler().getElevationSync(c.lat, c.lng) === null));
         }
 
-        // 尝试生成新生物（缺额较大时加快补齐，跟船航行时海面始终有生机）
+        // 视口内海洋生物不足目标数时及时补齐
         const target = this.targetCreatureCount(now);
         const deficit = target - this.creatures.length;
-        const baseInterval = Math.min(MAX_TRIGGER_INTERVAL_MS, Math.max(MIN_TRIGGER_INTERVAL_MS, CREATURE_LIFE_MS / Math.max(1, target)));
-        const interval = deficit >= 3 ? MIN_TRIGGER_INTERVAL_MS : baseInterval;
-        if (deficit > 0 && now - this.lastTriggerAt >= interval) {
-            this.tryTrigger(now);
+        if (deficit > 0 && now - this.lastTriggerAt >= MIN_TRIGGER_INTERVAL_MS) {
+            const batch = Math.min(deficit, 3);
+            for (let i = 0; i < batch; i++) {
+                this.tryTrigger(now);
+            }
         }
 
         // 推进各生物动画帧
@@ -325,7 +317,7 @@ export class MarineLifeLayer extends L.Layer {
             }
         }
 
-        this.render(now);
+        this.render();
     }
 
     private seaFraction = 0;
@@ -419,10 +411,9 @@ export class MarineLifeLayer extends L.Layer {
         const isWarmSea = Math.abs(spawnLat) < 42;
         let kind: CreatureKind;
         const r = Math.random();
-        if (isShallowShelf && r < 0.28) {
-            // 浅海大陆架与近岸：浪花拍击暗礁、红鲷鱼群、近岸鱼群
-            if (r < 0.10) kind = 'SEA_ROCK2';
-            else if (r < 0.20) kind = isWarmSea ? 'SNAPPER_FISH' : 'SALMON_FISH';
+        if (isShallowShelf && r < 0.22) {
+            // 浅海大陆架与近岸：红鲷鱼群、鲑鱼群、近岸鱼群（已按主人令移除海中礁石 SEA_ROCK2）
+            if (r < 0.12) kind = isWarmSea ? 'SNAPPER_FISH' : 'SALMON_FISH';
             else kind = 'SHORE_FISH';
         } else if (isWarmSea) {
             if (r < 0.18) kind = 'WHALE';
@@ -458,13 +449,11 @@ export class MarineLifeLayer extends L.Layer {
             lng: spawnLng,
             frame: Math.floor(Math.random() * ASSETS[kind].frames),
             mirror: Math.random() < 0.5,
-            spawnedAt: now,
-            expiresAt: now + 16000 + Math.random() * 10000,
             lastFrameAt: now,
         });
     }
 
-    private render(now = performance.now()): void {
+    private render(): void {
         if (!this.map || !this.ctx) return;
         const g = this.ctx;
         g.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -487,11 +476,7 @@ export class MarineLifeLayer extends L.Layer {
 
             const p = this.map.latLngToContainerPoint(L.latLng(c.lat, c.lng));
 
-            // 生成与消失平滑淡入淡出
-            const fadeIn = Math.min(1, Math.max(0, (now - c.spawnedAt) / 1200));
-            const fadeOut = Math.min(1, Math.max(0, (c.expiresAt - now) / 1500));
             g.save();
-            g.globalAlpha = fadeIn * fadeOut;
 
             // 1. 若有水下潜游鱼群层（_UNDERWATER），先按同锚点绘制水下鱼群影
             if (a.underwater) {
