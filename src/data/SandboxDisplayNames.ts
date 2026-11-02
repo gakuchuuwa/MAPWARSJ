@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -263,7 +263,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'qifu_d': '乞伏',
 
     // 2026-05-25 两晋核对追加势力
-'murong': '慕容',
+'murong': '燕',
     'erzhu': '尔朱',
 
 

@@ -1,4 +1,4 @@
-// 城墙锚点字典 + 围墙判断（共享模块）：主游戏 TerritorySystem.ts 与测试页 _citytest.html 都 import 此文件。
+﻿// 城墙锚点字典 + 围墙判断（共享模块）：主游戏 TerritorySystem.ts 与测试页 _citytest.html 都 import 此文件。
 // 改一处两边自动同步 —— 🔴 [2026-09-11 主人定「根治」，杜绝两处复制漂移]。
 
 /** 确定性字符串哈希（**全项目唯一一份**）：TerritorySystem / Scene13WarLayer / 评估页 _citytest.html 共用。
@@ -1227,6 +1227,11 @@ export const SMALL_CITY_STONE_BY_STYLE: Record<string, boolean> = {
 //     保持其独立系统的木栅口径，不能被顺手改成石墙。
 const SMALL_CITY_WOOD_OVERRIDE = new Set(['JAPAN', 'SLAVIC', 'POLES', 'LITHUANIANS', 'NORTHEAST', 'MALAY', 'MONGOL', 'MOBEI_MONGOL']);
 
+// 🔴 [2026-11-02 主人令「太宰府改为有石墙，类型不变」] **逐城石墙例外**：木栅风格里的个别城按史实给石墙。
+//   太宰府（city_taizaifu，buildingStyle=JAPAN、城型仍是 small_city）＝大宰府政厅与观世音寺一带的条坊都市，
+//   外围有大野城/基肄城石垒与水城土堤，按主人令改石墙；只改材质，不改城型。其余日本小城照旧木栅。
+const SMALL_CITY_STONE_BY_CITY = new Set(['city_taizaifu']);
+
 export function smallCityUsesStoneWall(
     deStyle: string | undefined | null,
     rawStyle?: string | null,
@@ -1234,6 +1239,8 @@ export function smallCityUsesStoneWall(
     /** 据点 id（逐城例外用；不传则退化为按风格/区域判，行为与加此参数前一致） */
     cityId?: string | null,
 ): boolean {
+    // 逐城例外优先（目前只有太宰府）
+    if (cityId && SMALL_CITY_STONE_BY_CITY.has(cityId)) return true;
     // 🔴 [2026-10-19 主人令] 只看建筑风格：只有 JAPAN/SLAVIC/POLES/LITHUANIANS/NORTHEAST/MALAY 用木栅，其余全石墙。
     if (rawStyle) return !SMALL_CITY_WOOD_OVERRIDE.has(rawStyle);
     // 无 rawStyle 的旧调用（战场等）沿用母体规则
@@ -1349,7 +1356,7 @@ export function resolveTacticalWallSetup(
     }
 
     if (cityType === 'small_city') {
-        // 🔴 [2026-10-05] 传 cityId：逐城石墙例外（维也纳等，见 SMALL_CITY_STONE_BY_CITY）
+        // 传 cityId：逐城石墙例外（见 SMALL_CITY_STONE_BY_CITY，目前＝太宰府 2026-11-02）
         if (smallCityUsesStoneWall(buildingStyle, rawBuildingStyle, regionCulture, cityId)) {
             return {
                 wallMat: 'STONE',

@@ -6308,7 +6308,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_87', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容评', portrait: '/assets/XIANBEI/bfe3_87.png', eliteName: '漠南骑手', eliteTier: 4 },
         { generalId: 'bfe3_71', factionId: 'yuan_shao', cityId: 'city_anyang', generalName: '袁绍', portrait: '/assets/CENTRAL/bfe3_71.png', legionName: '古典时代华夏军团' , eliteName: '大戟士', eliteTier: 2},   // 按史：大戟士为袁绍帐下重甲步兵；界桥先登由麴义亲统，先登营归麴义，不再主将混挂（《后汉书·袁绍传》裴注《英雄记》）。
         { generalId: 'bfe3_88', factionId: 'fushi', cityId: 'city_anyang', generalName: '苻融', portrait: '/assets/CENTRAL/bfe3_88.png', legionName: '古典时代华夏军团' , eliteName: '前秦卫军', eliteTier: 3},
     ],
@@ -8382,7 +8381,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'murong_murongke', cityId: 'city_jicheng', generalName: '慕容恪', portrait: '/assets/XIANBEI/murong_murongke.png', eliteName: '慕容铁骑', eliteTier: 2 },
+        { generalId: 'murong_murongke', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容恪', portrait: '/assets/XIANBEI/murong_murongke.png', eliteName: '慕容铁骑', eliteTier: 2 },
         { generalId: 'dingzhou_d_murongchui', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容垂', portrait: '/assets/XIANBEI/dingzhou_d_murongchui.png', eliteName: '慕容铁骑', eliteTier: 2 },
 
 
@@ -8412,6 +8411,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        { generalId: 'bfe3_87', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容评', portrait: '/assets/XIANBEI/bfe3_87.png', eliteName: '漠南骑手', eliteTier: 4 },
+        { generalId: 'bfe3_90', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容超', portrait: '/assets/XIANBEI/bfe3_90.png', eliteName: '漠南骑手', eliteTier: 4 },
+        { generalId: 'bfe_murongbao', factionId: 'murong', cityId: 'city_zhongshan', generalName: '慕容宝', portrait: '/assets/WEI/bfe_murongbao.png', eliteName: '中山铁骑', eliteTier: 3 },
     ],
 
 
@@ -11480,7 +11482,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     qi: [
         { generalId: 'qi_tianji', factionId: 'qi', cityId: 'city_linzi', generalName: '田忌', portrait: '/assets/CENTRAL/qi_tianji.png', eliteName: '齐技击', eliteTier: 2 },   // 🔴 [2026-10-25 按史] 成名战敌将；齐主将，前341 马陵之战；据点临淄（CENTRAL）；库已有孙膑为军师，敌将取主帅田忌（敌方主帅口径更硬）；用势力精锐齐之技击
-        { generalId: 'bfe3_90', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容超', portrait: '/assets/XIANBEI/bfe3_90.png', eliteName: '漠南骑手', eliteTier: 4 },
         { generalId: 'bfe3_58', cityId: 'city_linzi', generalName: '张步', portrait: '/assets/CENTRAL/bfe3_58.png', legionName: '古典时代华夏军团', eliteName: '中原郡兵', eliteTier: 4 },
         { generalId: 'bfe2_bao_shuya', cityId: 'city_linzi', generalName: '鲍叔牙', portrait: '/assets/CENTRAL/bfe2_bao_shuya.png', legionName: '古典时代华夏军团', eliteName: '中原郡兵', eliteTier: 4 },
         { generalId: 'qi_simarangju', cityId: 'city_linzi', generalName: '司马穰苴', portrait: '/assets/CENTRAL/qi_simarangju.png' , legionName: '先秦军团', eliteName: '中原郡兵', eliteTier: 4 },
@@ -17186,7 +17187,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'zhuozhou_anlushan', factionId: 'da_yan', cityId: 'city_fanyang', generalName: '安禄山', portrait: '/assets/WEI/zhuozhou_anlushan.png', eliteName: '范阳铁骑', eliteTier: 2 },
         { generalId: 'zhuozhou_shisiming', factionId: 'da_yan', cityId: 'city_fanyang', generalName: '史思明', portrait: '/assets/WEI/zhuozhou_shisiming.png', eliteName: '范阳铁骑', eliteTier: 2 },
 
-        { generalId: 'bfe_murongbao', factionId: 'da_yan', cityId: 'city_zhongshan', generalName: '慕容宝', portrait: '/assets/WEI/bfe_murongbao.png', eliteName: '中山铁骑', eliteTier: 3 },
     ],
     hou_liang: [
     { generalId: 'hou_liang_liuzhijun', factionId: 'hou_liang', cityId: 'city_shayuan', generalName: '刘知俊', portrait: '/assets/CENTRAL/hou_liang_liuzhijun.png', eliteName: '同华牙兵', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 同州匡国军节度使 904—907、忠武军 907—909

@@ -9616,6 +9616,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": 2,
             "offsetY": 10
+        },
+        "/assets/WEI/__闲置__daming_13.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -35
+        },
+        "/assets/JIANGNAN/qingyuan_yijun_ounanxi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {

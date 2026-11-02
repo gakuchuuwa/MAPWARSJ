@@ -115,7 +115,7 @@ const SIX_ICON_URLS: Record<TacticalSixSet, string> = {
     dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=six9',
     hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=six8',
     bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=six6',
-    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six11',
+    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six12',
 };
 
 const sixRawImages = new Map<TacticalSixSet, HTMLImageElement>();
@@ -124,12 +124,12 @@ const sixBadgeCache = new Map<string, HTMLCanvasElement>();
 
 // ── 1.1 六计状态头顶小特效专属图标（无火焰纯器物版）──
 const SIX_SMALL_ICON_URLS: Record<TacticalSixSet, string> = {
-    gongzhan: '/SUCAI_FX/SIX_ICONS/small/gongzhan.png?v=small6',
-    shengzhan: '/SUCAI_FX/SIX_ICONS/small/shengzhan.png?v=small6',
-    dizhan: '/SUCAI_FX/SIX_ICONS/small/dizhan.png?v=small6',
-    hunzhan: '/SUCAI_FX/SIX_ICONS/small/hunzhan.png?v=small6',
-    bingzhan: '/SUCAI_FX/SIX_ICONS/small/bingzhan.png?v=small6',
-    baizhan: '/SUCAI_FX/SIX_ICONS/small/baizhan.png?v=small6',
+    gongzhan: '/SUCAI_FX/SIX_ICONS/small/gongzhan.png?v=small10',
+    shengzhan: '/SUCAI_FX/SIX_ICONS/small/shengzhan.png?v=small10',
+    dizhan: '/SUCAI_FX/SIX_ICONS/small/dizhan.png?v=small10',
+    hunzhan: '/SUCAI_FX/SIX_ICONS/small/hunzhan.png?v=small10',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/small/bingzhan.png?v=small10',
+    baizhan: '/SUCAI_FX/SIX_ICONS/small/baizhan.png?v=small10',
 };
 
 const sixSmallRawImages = new Map<TacticalSixSet, HTMLImageElement>();
@@ -1282,18 +1282,19 @@ export function drawScene13SkillStatusVfx(
         const y = m.y - lift(m.x, m.y);
         const pulse = 0.5 + 0.5 * Math.sin(nowSec * 7 + m.zid * 0.73);
         const iconR = m.hero ? ICON_R * 1.22 : ICON_R;
+        const baseAlpha = m.hero ? 0.90 : 0.80;
 
         if (iconEntry.six === 'hunzhan') {
             const hy = y - 28;
             ctx.save();
             ctx.translate(m.x, hy);
             ctx.rotate(nowSec * 3.2 + m.zid);
-            ctx.globalAlpha = fadeOut;
+            ctx.globalAlpha = baseAlpha * fadeOut;
             drawStamp(ctx, badge, 0, 0, iconR);
             ctx.restore();
         } else {
             const hy = y - 28 - pulse * 2.0;
-            ctx.globalAlpha = fadeOut;
+            ctx.globalAlpha = baseAlpha * fadeOut;
             drawStamp(ctx, badge, m.x, hy, iconR);
         }
     }

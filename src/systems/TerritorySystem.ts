@@ -1,4 +1,4 @@
-import * as L from 'leaflet';
+﻿import * as L from 'leaflet';
 import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from './cityDeStyle';
 import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, STYLE_TO_STOCKADE_FENCE, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, normalizeStockadeCorner, buildStockadeCurveRing, stockadeCurveShape,
     // 🔴 [2026-10-02] 六形制的几何**全部收进共享模块**（围栏编辑器也要用同一份）：直边三款从这里 import 回来，
@@ -1769,7 +1769,7 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
 
     // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
     const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
-    // 🔴 [2026-10-05] 传 city.id：逐城石墙例外（维也纳）
+    // 传 city.id：逐城石墙例外（SMALL_CITY_STONE_BY_CITY，目前＝太宰府）
     useStoneWall = smallCityUsesStoneWall(deStyle, city.buildingStyle, cityRegion, city.id);
     return { cityRegion, centerCastle, deStyle, useStoneWall };
 }
@@ -2873,7 +2873,7 @@ export class TerritorySystem {
             ? isJapan
             : (isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city');
         const deStyle = resolveCityDeBuildingStyle(bf.id, cityType, region, bf.lat, bf.lng, undefined);
-        // 🔴 [2026-10-05] 传 bf.id：逐城石墙例外（维也纳）
+        // 传 bf.id：逐城石墙例外（同上）
         useStoneWall = smallCityUsesStoneWall(deStyle, undefined, region, bf.id);
         const faction = factionId ?? '';
         if (deStyle) {

@@ -2832,8 +2832,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 40.08,
         targetLng: 113.3,
         myTroops: 40000,
-        enemyFactionId: 'da_yan',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
-        enemyFactionName: '后燕',
+        enemyFactionId: 'murong',   // 🔴 [2026-11-02 按史] 395 参合陂燕军＝慕容氏燕国（原误挂安禄山的大燕）
+        enemyFactionName: '慕容燕',
         enemyGeneralId: 'bfe_murongbao',   // 🔴 [2026-10-25 按史] 395 参合陂燕军主帅＝太子慕容宝（慕容垂在中山患病）
         enemyTroops: 50000,
         introLines: [
