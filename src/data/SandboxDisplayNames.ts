@@ -635,8 +635,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dulan_d': '杜兰',
 'xisi': '锡斯',
   huluo: '呼罗',
-'wuyue': '吴越',
-'yuezhi': '月氏',
+'wuyue': '吴越',
   'minyue': '闽越',
 'funan': '扶南',
   'lancang': '澜沧',
@@ -661,6 +660,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'pajiama': '帕加',
       'luomu': '罗姆',
       'osman': '奥斯',
+'yinduxila': '印希',
+
+'asakaini': '阿萨',
+
 'sailiugu': '塞琉',
 'womaya': '倭马',
     'xibolai': '以色',

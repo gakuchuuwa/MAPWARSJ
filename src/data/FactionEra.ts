@@ -222,7 +222,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'fuyu': [{ from: -9999, era: 'antiquity' }], // 夫余
     'galangdiba': [{ from: -9999, era: 'imperial' }], // 波密
     'gaochang': [{ from: -9999, era: 'feudal' }], // 麴氏
-    'gaoche': [{ from: -9999, era: 'antiquity' }], // 高车
+    'gaoche': [{ from: -9999, era: 'feudal' }], // 高车（敕勒）450–505，多数年在 476 后 → 封建（2026-11-03 主人定）
     'gaogouli': [{ from: -9999, era: 'feudal' }], // 高句丽
     'gaoqi_d': [{ from: -9999, era: 'feudal' }], // 北齐
     'gar_kham': [{ from: -9999, era: 'imperial' }], // 德司
@@ -312,7 +312,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'kazakh': [{ from: -9999, era: 'imperial' }], // 哈萨
     'keerjisi': [{ from: -9999, era: 'feudal' }], // 科尔基斯
     'keerkezi': [{ from: -9999, era: 'feudal' }], // 柯尔克孜
-    'keernuwaye': [{ from: -9999, era: 'antiquity' }], // 康沃尔
+    'keernuwaye': [{ from: -9999, era: 'feudal' }], // 康沃尔（5 世纪末不列颠地方政权）→ 封建（2026-11-03 主人定）
     'keerqin': [{ from: -9999, era: 'imperial' }], // 科尔沁
     'keluodiya': [{ from: -9999, era: 'imperial' }], // 克罗地亚
     'kepantuo': [{ from: -9999, era: 'feudal' }], // 渴盘陀
@@ -339,7 +339,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'liang_shuofang': [{ from: -9999, era: 'feudal' }], // 大梁
     'liaozu': [{ from: -9999, era: 'imperial' }], // 寮族
     'linshihong': [{ from: -9999, era: 'feudal' }], // 干越
-    'liusong': [{ from: -9999, era: 'antiquity' }], // 刘宋
+    'liusong': [{ from: -9999, era: 'feudal' }], // 刘宋（420–479）＝封建时代（2026-11-03 主人定，原误判古典）
     'liuzhen': [{ from: -9999, era: 'feudal' }], // 六镇
     'longwu': [{ from: -9999, era: 'imperial' }], // 隆武
     'loulan': [{ from: -9999, era: 'antiquity' }], // 楼兰
@@ -523,7 +523,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'tujishi': [{ from: -9999, era: 'feudal' }], // 突骑施
     'tujue': [{ from: -9999, era: 'feudal' }], // 突厥
     'tumed': [{ from: -9999, era: 'imperial' }], // 土默特
-    'tuoba': [{ from: -9999, era: 'antiquity' }], // 拓跋
+    'tuoba': [{ from: -9999, era: 'feudal' }], // 拓跋魏｜北魏（386–534）＝封建时代；势力名 2026-11-03 主人定为「拓跋魏」
     'tuolemi': [{ from: -9999, era: 'antiquity' }], // 托勒密
     'tuomengde': [{ from: -9999, era: 'castle' }], // 托蒙德
     'tuoming': [{ from: -9999, era: 'imperial' }], // 清真
@@ -596,7 +596,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xushouhui': [{ from: -9999, era: 'castle' }], // 天完
     'yada': [{ from: -9999, era: 'antiquity' }], // 嚈哒
     'yan': [{ from: -9999, era: 'antiquity' }], // 燕国
-    'yanda': [{ from: -9999, era: 'antiquity' }], // 阿尔洪
+    'yanda': [{ from: -9999, era: 'feudal' }], // 阿尔洪（约 455–515）→ 封建（2026-11-03 主人定）
     'yang_aner': [{ from: -9999, era: 'antiquity' }], // 天顺
     'yang_bozhou': [{ from: -9999, era: 'imperial' }], // 播州杨氏
     'yangguan': [{ from: -9999, era: 'antiquity' }], // 西凉
@@ -624,8 +624,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yizhi': [{ from: -9999, era: 'antiquity' }], // 一支
     'yuan_d': [{ from: -9999, era: 'castle' }], // 大元
     'yuan_shao': [{ from: -9999, era: 'antiquity' }], // 袁绍
-    'yuenan': [{ from: -9999, era: 'imperial' }], // 越南
-    'yuezhi': [{ from: -9999, era: 'antiquity' }], // 月氏｜按史秦汉之际居敦煌祁连间＝古典时代
+    'yuenan': [{ from: -9999, era: 'imperial' }], // 越南
     'yumi': [{ from: -9999, era: 'antiquity' }], // 扜弥
     'yun': [{ from: -9999, era: 'antiquity' }], // 允戎
     'yuwen': [{ from: -9999, era: 'feudal' }], // 宇文
@@ -675,7 +674,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'kelimiya': [{ from: -9999, era: 'castle' }, { from: 1486, era: 'imperial' }], // 热那亚共和国｜按现存名将成名年推定：–∞起城堡 → 1486起帝国
     'kelite': [{ from: -9999, era: 'castle' }, { from: 1639, era: 'imperial' }], // 威尼斯共和国｜按现存名将成名年推定：–∞起城堡 → 1639起帝国
     'kongque': [{ from: -9999, era: 'antiquity' }, { from: 435, era: 'feudal' }], // 孔雀帝国｜按现存名将成名年推定：–∞起古典 → 435起封建
-    'kuman_oleshky': [{ from: -9999, era: 'antiquity' }, { from: 1200, era: 'castle' }], // 库曼｜按现存名将成名年推定：–∞起古典 → 1200起城堡
+    'kuman_oleshky': [{ from: -9999, era: 'castle' }], // 库曼｜库曼人 11–13 世纪 → 城堡（2026-11-03 主人定「库曼算城堡」）
     'kumoxi': [{ from: -9999, era: 'feudal' }, { from: 1095, era: 'castle' }], // 库莫奚｜按现存名将成名年推定：–∞起封建 → 1095起城堡
     'leangongguo': [{ from: -9999, era: 'feudal' }, { from: 1191, era: 'castle' }], // 莱昂｜按现存名将成名年推定：–∞起封建 → 1191起城堡
     'liren': [{ from: -9999, era: 'feudal' }, { from: 1480, era: 'imperial' }], // 俚族｜按现存名将成名年推定：–∞起封建 → 1480起帝国
@@ -696,6 +695,10 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'ruidian_si': [{ from: -9999, era: 'feudal' }, { from: 1230, era: 'castle' }, { from: 1570, era: 'imperial' }], // 瑞典｜按现存名将成名年推定：–∞起封建 → 1230起城堡 → 1570起帝国
     'ryukyu': [{ from: -9999, era: 'castle' }, { from: 1490, era: 'imperial' }], // 琉球｜按现存名将成名年推定：–∞起城堡 → 1490起帝国
     'safawei_d': [{ from: -9999, era: 'castle' }, { from: 1510, era: 'imperial' }], // 萨法维｜按现存名将成名年推定：–∞起城堡 → 1510起帝国
+    'yinduxila': [{ from: -9999, era: 'antiquity' }], // 印度希腊王国（约前 180–前 10）＝古典时代
+
+    'asakaini': [{ from: -9999, era: 'antiquity' }], // 阿萨凯尼（前 4 世纪斯瓦特河谷）＝古典时代
+
     'sailiugu': [{ from: -9999, era: 'antiquity' }, { from: 1050, era: 'castle' }], // 塞琉古｜按现存名将成名年推定：–∞起古典 → 1050起城堡
     'salai': [{ from: -9999, era: 'castle' }, { from: 1540, era: 'imperial' }], // 萨莱诺盖｜按现存名将成名年推定：–∞起城堡 → 1540起帝国
     'seleisi': [{ from: -9999, era: 'antiquity' }, { from: 917, era: 'feudal' }], // 色雷斯｜按现存名将成名年推定：–∞起古典 → 917起封建

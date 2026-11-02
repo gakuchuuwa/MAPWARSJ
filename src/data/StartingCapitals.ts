@@ -587,8 +587,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'shanshan': 'city_loulan',
 
 'wuyue': 'city_hangzhou',
-    // ── 2026-06-29 新增：邵州 ──
-'yuezhi': 'city_shandan',
+    // ── 2026-06-29 新增：邵州 ──
     'minyue': 'city_chongan',
 'funan': 'city_piyetuo',
 'lancang': 'city_langbolabang',

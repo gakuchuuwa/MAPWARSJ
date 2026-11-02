@@ -371,12 +371,15 @@ wuzhou_yijun: '#6B7A2E', // 婺州义军·汪文进
     'aiji': '#D09B2C',
     'xibolai': '#245580',
     'womaya': '#E4E0D6',
+    'yinduxila': '#3D7A6E', // 印度希腊王国（旁遮普青绿）
+
+    'asakaini': '#7A6234', // 阿萨凯尼（斯瓦特山堡土黄）
+
     'sailiugu': '#8A2035',
 
     // ── 2026-07-27 新增据点势力专属史地配色 ──
     'wuyue': '#2A6B56',
-    'minyue': '#1E6852',
-    'yuezhi': '#D8A840',
+    'minyue': '#1E6852',
     'funan': '#C26E28',
     'lancang': '#E09A18',
     'liaozu': '#3F9F2F', // 万象·寮族军团（暗绿，压低战象大面积玩家色亮度）

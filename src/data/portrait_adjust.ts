@@ -4012,11 +4012,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/INDIA/__闲置__CENTRAL_ASIA_29.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": 11
-        },
         "/assets/WEST_ASIA/__闲置__CENTRAL_ASIA_30.png": {
             "scale": 1.05,
             "offsetX": 0,
@@ -9651,6 +9646,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/INDIA/zhamolin_trimumpala.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 11
         }
     },
     "folderGuides": {

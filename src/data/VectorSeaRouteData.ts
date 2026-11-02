@@ -17,14 +17,13 @@ export interface SeaRouteFeature {
 }
 
 export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeature[] } = {
-    type: "FeatureCollection",
+    type: 'FeatureCollection',
     features: [
         {
             type: "Feature",
             properties: {
                 name: "长崎-承天",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nagasaki_city_tainan_1793630766053",
                 startYear: 1604,
                 endYear: 2000,
@@ -48,7 +47,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.58333, 27.66667],
                     [121.58333, 27.33333],
                     [121.41667, 27.16667],
-                    [121.08333, 27.0],
+                    [121.08333, 27],
                     [120.91667, 26.16667],
                     [120.5, 26.08333],
                     [120.25, 25.83333],
@@ -58,7 +57,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.33882, 24.44886],
                     [120, 23.91253],
                     [119.87732, 23.01402],
-                    [120.2, 22.99]
+                    [120.2, 22.99],
                 ]
             }
         },
@@ -67,7 +66,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "承天-北大年",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_tainan_city_pattani_1793630766053",
                 startYear: 1604,
                 endYear: 2000,
@@ -90,7 +88,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [109.75891, 12.14675],
                     [109.58333, 11.83333],
                     [109.58333, 11.33333],
-                    [109.25, 11.0],
+                    [109.25, 11],
                     [109.25, 10.16667],
                     [108.5, 10.08333],
                     [108.41667, 10.33333],
@@ -98,13 +96,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [107.16667, 9.91667],
                     [106.91667, 9.5],
                     [107.08333, 9.16667],
-                    [107.0, 8.25],
+                    [107, 8.25],
                     [107.3207, 7.6091],
                     [104.76456, 6.12006],
                     [103.53364, 5.51118],
                     [102.42416, 6.32349],
                     [101.60568, 6.96323],
-                    [101.25, 6.867]
+                    [101.25, 6.867],
                 ]
             }
         },
@@ -113,7 +111,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "萨尔瓦多-安格拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_salvador_city_angra_1793628006860",
                 startYear: -3000,
                 endYear: 2000,
@@ -154,7 +151,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-30.00149, 36.4483],
                     [-30.00087, 37.92401],
                     [-27.5647, 38.1907],
-                    [-27.22, 38.66]
+                    [-27.22, 38.66],
                 ]
             }
         },
@@ -163,7 +160,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "里贝拉-萨尔瓦多",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_ribeira_city_salvador_1793627996848",
                 startYear: -3000,
                 endYear: 2000,
@@ -195,7 +191,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-35.91667, -10.66667],
                     [-36.91667, -11.5],
                     [-37.58333, -12.83333],
-                    [-38.51, -12.97]
+                    [-38.51, -12.97],
                 ]
             }
         },
@@ -204,7 +200,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "里贝拉-开普敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_ribeira_city_cape_town_1793627343079",
                 startYear: -3000,
                 endYear: 2000,
@@ -221,12 +216,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-17, 11],
                     [-16.60583, 11.64148],
                     [-16.91667, 11.83333],
-                    [-16.91667, 11.0],
+                    [-16.91667, 11],
                     [-16.66667, 10.75],
                     [-15.33333, 10.41667],
                     [-14.41667, 9.5],
                     [-14.33333, 9.08333],
-                    [-14.0, 9.08333],
+                    [-14, 9.08333],
                     [-13.75, 8.83333],
                     [-13.75, 7.83333],
                     [-13.58333, 7.66667],
@@ -240,20 +235,20 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-8.83333, 4.25],
                     [-8.5, 4.25],
                     [-8.33333, 4.08333],
-                    [-7.0, 4.08333],
+                    [-7, 4.08333],
                     [-6.5, 4.41667],
                     [-5.66667, 4.58333],
                     [-5.5, 4.75],
                     [-4.5, 4.75],
                     [-4.33333, 4.91667],
-                    [-4.0, 4.91667],
+                    [-4, 4.91667],
                     [-3.83333, 4.75],
                     [-3.16667, 4.75],
                     [-2.66667, 4.41667],
                     [-1.66667, 4.41667],
                     [-1.16667, 4.75],
                     [-0.33333, 4.91667],
-                    [0.0, 5.25],
+                    [0, 5.25],
                     [0.33333, 5.25],
                     [0.5, 5.41667],
                     [1.16667, 5.41667],
@@ -266,15 +261,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [4.91667, 4.5],
                     [5.5, 3.91667],
                     [6.83333, 3.91667],
-                    [7.0, 4.08333],
-                    [8.0, 4.08333],
-                    [8.0, 2.91667],
-                    [9.0, 2.91667],
+                    [7, 4.08333],
+                    [8, 4.08333],
+                    [8, 2.91667],
+                    [9, 2.91667],
                     [9.16667, 3.08333],
-                    [9.25, 3.0],
+                    [9.25, 3],
                     [9.25, 2.33333],
                     [8.75, 1.33333],
-                    [8.75, 0.0],
+                    [8.75, 0],
                     [8.25, -0.16667],
                     [8.25, -1.16667],
                     [9.08333, -2.66667],
@@ -286,40 +281,40 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [12.75, -8.33333],
                     [12.41667, -8.66667],
                     [12.41667, -9.33333],
-                    [13.25, -11.0],
+                    [13.25, -11],
                     [13.25, -11.66667],
                     [12.41667, -12.33333],
                     [12.41667, -12.5],
                     [12.08333, -12.83333],
                     [12.08333, -13.33333],
-                    [11.75, -14.0],
-                    [11.58333, -15.0],
+                    [11.75, -14],
+                    [11.58333, -15],
                     [11.25, -15.33333],
                     [11.25, -18.33333],
                     [12.25, -19.66667],
                     [13.08333, -21.5],
                     [13.91667, -22.66667],
                     [13.91667, -24.5],
-                    [14.25, -25.0],
-                    [14.25, -26.0],
+                    [14.25, -25],
+                    [14.25, -26],
                     [14.41667, -26.16667],
                     [14.41667, -26.66667],
                     [14.58333, -26.83333],
                     [14.75, -27.66667],
                     [15.83333, -28.91667],
-                    [16.08333, -29.0],
+                    [16.08333, -29],
                     [16.08333, -29.16667],
                     [16.41667, -29.5],
                     [16.41667, -29.83333],
-                    [16.58333, -30.0],
+                    [16.58333, -30],
                     [16.58333, -30.33333],
-                    [16.91667, -31.0],
-                    [17.75, -32.0],
+                    [16.91667, -31],
+                    [17.75, -32],
                     [17.66667, -32.25],
                     [17.41667, -32.33333],
                     [17.41667, -33.33333],
                     [17.75, -33.83333],
-                    [18.4239, -33.9253]
+                    [18.4239, -33.9253],
                 ]
             }
         },
@@ -328,7 +323,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "威尼斯-干地亚要塞",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_venice_city_knossos_1793625541112",
                 startYear: -3000,
                 endYear: 2000,
@@ -339,11 +333,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [12.31, 45.44],
-                    [13.0, 45.08333],
+                    [13, 45.08333],
                     [13.5, 44.41667],
                     [13.66667, 44.41667],
                     [14.33333, 43.75],
-                    [15.0, 43.41667],
+                    [15, 43.41667],
                     [15.25, 43.16667],
                     [15.25, 42.83333],
                     [15.41667, 42.66667],
@@ -360,14 +354,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.82344, 39.77362],
                     [18.66667, 39.41667],
                     [18.83333, 39.75],
-                    [19.0, 39.41667],
+                    [19, 39.41667],
                     [19.16667, 39.41667],
                     [19.91667, 38.66667],
                     [19.91667, 37.83333],
                     [20.08333, 37.5],
                     [20.58333, 37.16667],
                     [20.66667, 36.91667],
-                    [21.0, 36.91667],
+                    [21, 36.91667],
                     [21.33333, 36.41667],
                     [21.4687, 36.57999],
                     [21.93546, 36.48611],
@@ -379,7 +373,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.13447, 35.86884],
                     [24.17981, 35.68909],
                     [24.32334, 35.67641],
-                    [25.13, 35.33]
+                    [25.13, 35.33],
                 ]
             }
         },
@@ -388,7 +382,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "威尼斯-亚历山大",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_venice_city_yalishanda_1793625541112",
                 startYear: -3000,
                 endYear: 2000,
@@ -399,11 +392,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [12.31, 45.44],
-                    [13.0, 45.08333],
+                    [13, 45.08333],
                     [13.5, 44.41667],
                     [13.66667, 44.41667],
                     [14.33333, 43.75],
-                    [15.0, 43.41667],
+                    [15, 43.41667],
                     [15.25, 43.16667],
                     [15.25, 42.83333],
                     [15.41667, 42.66667],
@@ -420,21 +413,21 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.82344, 39.77362],
                     [18.66667, 39.41667],
                     [18.83333, 39.75],
-                    [19.0, 39.41667],
+                    [19, 39.41667],
                     [19.16667, 39.41667],
                     [19.91667, 38.66667],
                     [19.91667, 37.83333],
                     [20.08333, 37.5],
                     [20.58333, 37.16667],
                     [20.66667, 36.91667],
-                    [21.0, 36.91667],
+                    [21, 36.91667],
                     [21.33333, 36.41667],
                     [21.83333, 36.41667],
-                    [22.0, 36.08333],
+                    [22, 36.08333],
                     [22.33333, 36.08333],
                     [22.5, 35.75],
                     [22.75, 35.66667],
-                    [23.08333, 35.0],
+                    [23.08333, 35],
                     [23.41667, 34.83333],
                     [23.41667, 34.66667],
                     [23.66667, 34.41667],
@@ -449,7 +442,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [28.59571, 32.64027],
                     [29.26535, 31.80941],
                     [29.45505, 31.78833],
-                    [29.8925, 31.1975]
+                    [29.8925, 31.1975],
                 ]
             }
         },
@@ -458,7 +451,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "威尼斯-阿卡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_venice_city_ake_1793625541112",
                 startYear: -3000,
                 endYear: 2000,
@@ -469,11 +461,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [12.31, 45.44],
-                    [13.0, 45.08333],
+                    [13, 45.08333],
                     [13.5, 44.41667],
                     [13.66667, 44.41667],
                     [14.33333, 43.75],
-                    [15.0, 43.41667],
+                    [15, 43.41667],
                     [15.25, 43.16667],
                     [15.25, 42.83333],
                     [15.41667, 42.66667],
@@ -490,21 +482,21 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.82344, 39.77362],
                     [18.66667, 39.41667],
                     [18.83333, 39.75],
-                    [19.0, 39.41667],
+                    [19, 39.41667],
                     [19.16667, 39.41667],
                     [19.91667, 38.66667],
                     [19.91667, 37.83333],
                     [20.08333, 37.5],
                     [20.58333, 37.16667],
                     [20.66667, 36.91667],
-                    [21.0, 36.91667],
+                    [21, 36.91667],
                     [21.33333, 36.41667],
                     [21.83333, 36.41667],
-                    [22.0, 36.08333],
+                    [22, 36.08333],
                     [22.33333, 36.08333],
                     [22.5, 35.75],
                     [22.75, 35.66667],
-                    [23.08333, 35.0],
+                    [23.08333, 35],
                     [23.41667, 34.83333],
                     [23.41667, 34.66667],
                     [23.66667, 34.41667],
@@ -523,7 +515,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [33.06251, 33.30419],
                     [33.8998, 33.16007],
                     [34.8, 33],
-                    [35.06889, 32.92139]
+                    [35.06889, 32.92139],
                 ]
             }
         },
@@ -532,7 +524,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "威尼斯-法马古斯塔",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_venice_city_famagusta_1793625541112",
                 startYear: -3000,
                 endYear: 2000,
@@ -543,11 +534,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [12.31, 45.44],
-                    [13.0, 45.08333],
+                    [13, 45.08333],
                     [13.5, 44.41667],
                     [13.66667, 44.41667],
                     [14.33333, 43.75],
-                    [15.0, 43.41667],
+                    [15, 43.41667],
                     [15.25, 43.16667],
                     [15.25, 42.83333],
                     [15.41667, 42.66667],
@@ -564,21 +555,21 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.82344, 39.77362],
                     [18.66667, 39.41667],
                     [18.83333, 39.75],
-                    [19.0, 39.41667],
+                    [19, 39.41667],
                     [19.16667, 39.41667],
                     [19.91667, 38.66667],
                     [19.91667, 37.83333],
                     [20.08333, 37.5],
                     [20.58333, 37.16667],
                     [20.66667, 36.91667],
-                    [21.0, 36.91667],
+                    [21, 36.91667],
                     [21.33333, 36.41667],
                     [21.83333, 36.41667],
-                    [22.0, 36.08333],
+                    [22, 36.08333],
                     [22.33333, 36.08333],
                     [22.5, 35.75],
                     [22.75, 35.66667],
-                    [23.08333, 35.0],
+                    [23.08333, 35],
                     [23.41667, 34.83333],
                     [23.41667, 34.66667],
                     [23.66667, 34.41667],
@@ -590,8 +581,8 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [27.66667, 35.58333],
                     [28.16667, 35.58333],
                     [28.66667, 36.08333],
-                    [29.0, 35.75],
-                    [30.0, 35.75],
+                    [29, 35.75],
+                    [30, 35.75],
                     [30.16667, 35.91667],
                     [30, 36],
                     [30.19267, 35.61243],
@@ -602,7 +593,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [32.8814, 34.5083],
                     [33.04003, 34.50677],
                     [33.45725, 34.50758],
-                    [33.94, 35.12]
+                    [33.94, 35.12],
                 ]
             }
         },
@@ -611,7 +602,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "法马古斯塔-贝鲁特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_famagusta_city_beirut_1793625541112",
                 startYear: -3000,
                 endYear: 2000,
@@ -625,7 +615,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.6809, 34.7191],
                     [34.88963, 34.51037],
                     [35.02537, 34.51063],
-                    [35.5, 33.89]
+                    [35.5, 33.89],
                 ]
             }
         },
@@ -634,7 +624,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "热那亚-君士坦丁堡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_genoa_city_junshitandingbao_1793625541112",
                 startYear: -3000,
                 endYear: 2000,
@@ -702,7 +691,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [28.44948, 40.80582],
                     [28.50154, 40.82216],
                     [28.67532, 40.95765],
-                    [28.97, 41.01]
+                    [28.97, 41.01],
                 ]
             }
         },
@@ -711,7 +700,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "热那亚-卡法",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_genoa_city_kafa_1793625541112",
                 startYear: -3000,
                 endYear: 2000,
@@ -794,7 +782,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [33.16667, 44.08333],
                     [34.5, 44.08333],
                     [34.83333, 44.41667],
-                    [35.38, 45.03]
+                    [35.38, 45.03],
                 ]
             }
         },
@@ -803,7 +791,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "吕贝克-卑尔根",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_lubeck_city_beiergen_1793625339140",
                 startYear: -3000,
                 endYear: 2000,
@@ -835,7 +822,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [4.2, 60.2],
                     [4.94449, 60.14093],
                     [5.21101, 60.18129],
-                    [5.32, 60.39]
+                    [5.32, 60.39],
                 ]
             }
         },
@@ -844,7 +831,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "汉堡-卑尔根",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hamburg_city_beiergen_1793625339140",
                 startYear: -3000,
                 endYear: 2000,
@@ -876,7 +862,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [4.2, 60.2],
                     [4.94449, 60.14093],
                     [5.21101, 60.18129],
-                    [5.32, 60.39]
+                    [5.32, 60.39],
                 ]
             }
         },
@@ -885,7 +871,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "布鲁日-汉堡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_bruges_city_hamburg_1793625339140",
                 startYear: -3000,
                 endYear: 2000,
@@ -910,7 +895,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [9.49619, 53.71004],
                     [9.53558, 53.63315],
                     [9.63292, 53.58365],
-                    [9.99, 53.55]
+                    [9.99, 53.55],
                 ]
             }
         },
@@ -919,7 +904,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "布鲁日-伦敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_bruges_city_lundun_1793625339140",
                 startYear: -3000,
                 endYear: 2000,
@@ -940,7 +924,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [0.3441, 51.45],
                     [0.3126, 51.4722],
                     [0.2137, 51.4867],
-                    [-0.12, 51.5]
+                    [-0.12, 51.5],
                 ]
             }
         },
@@ -949,7 +933,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "上海-冶城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shanghai_city_fuzhou_1793624747116",
                 startYear: -3000,
                 endYear: 2000,
@@ -962,7 +945,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.47, 31.23],
                     [122.25, 31.5],
                     [123.08333, 31.33333],
-                    [123.08333, 31.0],
+                    [123.08333, 31],
                     [123.25, 30.83333],
                     [123.25, 30.16667],
                     [122.58333, 29.33333],
@@ -972,11 +955,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.58333, 27.66667],
                     [121.58333, 27.33333],
                     [121.41667, 27.16667],
-                    [121.08333, 27.0],
+                    [121.08333, 27],
                     [120.91667, 26.16667],
                     [120.5, 26.08333],
                     [120.25, 25.83333],
-                    [119.3, 26.07]
+                    [119.3, 26.07],
                 ]
             }
         },
@@ -985,7 +968,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "冶城-阇槃",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_fuzhou_city_dupan_1793624747116",
                 startYear: -3000,
                 endYear: 2000,
@@ -1001,14 +983,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.75, 24.83333],
                     [119.66667, 24.58333],
                     [119.16667, 24.58333],
-                    [119.0, 24.25],
+                    [119, 24.25],
                     [118.5, 24.08333],
-                    [118.0, 23.41667],
+                    [118, 23.41667],
                     [117.16667, 23.08333],
                     [116.83333, 22.58333],
                     [116.5, 22.58333],
                     [115.83333, 22.25],
-                    [115.0, 22.25],
+                    [115, 22.25],
                     [114.5, 21.58333],
                     [114.1, 21.7],
                     [110.3832, 18.3614],
@@ -1017,12 +999,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [107.83333, 17.08333],
                     [108.41667, 16.83333],
                     [108.91667, 16.33333],
-                    [109.0, 15.91667],
+                    [109, 15.91667],
                     [109.41667, 15.83333],
                     [109.41667, 14.83333],
                     [109.58333, 14.66667],
                     [109.58333, 14.16667],
-                    [109.11, 13.93]
+                    [109.11, 13.93],
                 ]
             }
         },
@@ -1031,7 +1013,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马六甲-加勒",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_malacca_city_jiale_1793624747116",
                 startYear: -3000,
                 endYear: 2000,
@@ -1052,7 +1033,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [85.9479, 6.1983],
                     [81.9, 5.9],
                     [80.1, 5.8],
-                    [80.21, 6.05]
+                    [80.21, 6.05],
                 ]
             }
         },
@@ -1061,7 +1042,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "小葛兰-加勒",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_quilon_city_jiale_1793624747116",
                 startYear: -3000,
                 endYear: 2000,
@@ -1075,7 +1055,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [77, 8],
                     [78.86886, 6.67493],
                     [80.1, 5.8],
-                    [80.21, 6.05]
+                    [80.21, 6.05],
                 ]
             }
         },
@@ -1084,7 +1064,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "古里-霍尔木兹",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_guli_city_hormuz_1793624747116",
                 startYear: -3000,
                 endYear: 2000,
@@ -1113,17 +1092,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [72.25, 20.5],
                     [72.16667, 20.75],
                     [71.5, 20.41667],
-                    [70.0, 20.41667],
-                    [68.41667, 22.0],
+                    [70, 20.41667],
+                    [68.41667, 22],
                     [68.41667, 22.66667],
                     [68.16667, 22.75],
                     [67.66667, 23.41667],
                     [67.16667, 23.41667],
-                    [67.0, 23.58333],
+                    [67, 23.58333],
                     [66.66667, 24.41667],
                     [66.08333, 24.5],
-                    [66.0, 25.08333],
-                    [65.0, 24.91667],
+                    [66, 25.08333],
+                    [65, 24.91667],
                     [64.83333, 24.75],
                     [63.33333, 24.75],
                     [63.16667, 24.91667],
@@ -1140,7 +1119,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [57.1, 25.5],
                     [56.93153, 25.96196],
                     [56.76306, 26.42211],
-                    [56.45, 27.1]
+                    [56.45, 27.1],
                 ]
             }
         },
@@ -1149,7 +1128,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "亚丁-吉达",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aden_city_jida_1793624747116",
                 startYear: -3000,
                 endYear: 2000,
@@ -1168,7 +1146,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [41.00098, 17.09879],
                     [38.573, 20.80747],
                     [39.00147, 21.47352],
-                    [39.19, 21.49]
+                    [39.19, 21.49],
                 ]
             }
         },
@@ -1177,7 +1155,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "布拉瓦-马林迪",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_barawa_city_malindi_1793624747116",
                 startYear: -3000,
                 endYear: 2000,
@@ -1189,15 +1166,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [44.03, 1.1],
                     [44.83333, 1.25],
-                    [42.58333, -1.0],
+                    [42.58333, -1],
                     [42.58333, -1.16667],
                     [42.08333, -1.66667],
                     [42.08333, -1.83333],
                     [41.33333, -2.58333],
                     [41.16667, -2.58333],
-                    [41.0, -2.91667],
-                    [40.58333, -3.0],
-                    [40.1169, -3.2192]
+                    [41, -2.91667],
+                    [40.58333, -3],
+                    [40.1169, -3.2192],
                 ]
             }
         },
@@ -1206,7 +1183,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "伦敦-埃尔米纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_lundun_city_elmina_1793624450219",
                 startYear: -3000,
                 endYear: 2000,
@@ -1254,17 +1230,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-9.5, 43],
                     [-9.34623, 42.26961],
                     [-9.30497, 42.07359],
-                    [-9.41667, 42.0],
-                    [-9.25, 41.0],
+                    [-9.41667, 42],
+                    [-9.25, 41],
                     [-9.41667, 40.83333],
                     [-9.41667, 40.33333],
-                    [-9.58333, 40.0],
+                    [-9.58333, 40],
                     [-10.08333, 39.83333],
                     [-10.08333, 39.16667],
-                    [-9.91667, 39.0],
+                    [-9.91667, 39],
                     [-9.91667, 38.5],
                     [-9.75, 38.16667],
-                    [-9.41667, 38.0],
+                    [-9.41667, 38],
                     [-9.45209, 37.78159],
                     [-9.25, 36.8],
                     [-9.19853, 36.47228],
@@ -1288,7 +1264,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-16.91667, 23.16667],
                     [-16.91667, 22.83333],
                     [-17.41667, 22.5],
-                    [-17.41667, 22.0],
+                    [-17.41667, 22],
                     [-17.58333, 21.83333],
                     [-17.58333, 20.5],
                     [-17.16667, 20.41667],
@@ -1305,16 +1281,16 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-17.83333, 15.25],
                     [-18.08333, 15.16667],
                     [-18.08333, 14.5],
-                    [-17.41667, 14.0],
+                    [-17.41667, 14],
                     [-17.25, 13.66667],
                     [-17.25, 12.16667],
                     [-16.91667, 11.83333],
-                    [-16.91667, 11.0],
+                    [-16.91667, 11],
                     [-16.66667, 10.75],
                     [-15.33333, 10.41667],
                     [-14.41667, 9.5],
                     [-14.33333, 9.08333],
-                    [-14.0, 9.08333],
+                    [-14, 9.08333],
                     [-13.75, 8.83333],
                     [-13.75, 7.83333],
                     [-13.58333, 7.66667],
@@ -1328,19 +1304,19 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-8.83333, 4.25],
                     [-8.5, 4.25],
                     [-8.33333, 4.08333],
-                    [-7.0, 4.08333],
+                    [-7, 4.08333],
                     [-6.5, 4.41667],
                     [-5.66667, 4.58333],
                     [-5.5, 4.75],
                     [-4.5, 4.75],
                     [-4.33333, 4.91667],
-                    [-4.0, 4.91667],
+                    [-4, 4.91667],
                     [-3.83333, 4.75],
                     [-3.16667, 4.75],
                     [-2.66667, 4.41667],
                     [-1.66667, 4.41667],
                     [-1.16667, 4.75],
-                    [-1.35, 5.08]
+                    [-1.35, 5.08],
                 ]
             }
         },
@@ -1349,7 +1325,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "皇家港-伦敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_portroyal_city_lundun_1793624439340",
                 startYear: -3000,
                 endYear: 2000,
@@ -1441,7 +1416,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [0.3441, 51.45],
                     [0.3126, 51.4722],
                     [0.2137, 51.4867],
-                    [-0.12, 51.5]
+                    [-0.12, 51.5],
                 ]
             }
         },
@@ -1450,7 +1425,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "埃尔米纳-马提尼克",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_elmina_city_martinique_1793624439340",
                 startYear: -3000,
                 endYear: 2000,
@@ -1466,13 +1440,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-2.66667, 4.41667],
                     [-3.16667, 4.75],
                     [-3.83333, 4.75],
-                    [-4.0, 4.91667],
+                    [-4, 4.91667],
                     [-4.33333, 4.91667],
                     [-4.5, 4.75],
                     [-5.5, 4.75],
                     [-5.66667, 4.58333],
                     [-6.5, 4.41667],
-                    [-7.0, 4.08333],
+                    [-7, 4.08333],
                     [-8.33333, 4.08333],
                     [-8.5, 4.25],
                     [-8.83333, 4.25],
@@ -1486,12 +1460,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-13.58333, 7.66667],
                     [-13.75, 7.83333],
                     [-13.75, 8.83333],
-                    [-14.0, 9.08333],
+                    [-14, 9.08333],
                     [-14.33333, 9.08333],
                     [-14.41667, 9.5],
                     [-15.33333, 10.41667],
                     [-16.66667, 10.75],
-                    [-16.91667, 11.0],
+                    [-16.91667, 11],
                     [-16.91667, 11.83333],
                     [-16.60583, 11.64148],
                     [-17, 11],
@@ -1513,7 +1487,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-59.5983, 12.9955],
                     [-59.77936, 13.31747],
                     [-61.1818, 14.45841],
-                    [-61.07, 14.6]
+                    [-61.07, 14.6],
                 ]
             }
         },
@@ -1522,7 +1496,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马提尼克-南特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_martinique_city_nantes_1793624439340",
                 startYear: -3000,
                 endYear: 2000,
@@ -1575,13 +1548,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-5.5, 48.91667],
                     [-5.58333, 48.16667],
                     [-5.33333, 47.75],
-                    [-5.0, 47.75],
+                    [-5, 47.75],
                     [-4.83333, 47.41667],
                     [-4.16667, 47.41667],
                     [-3.75, 47.16667],
                     [-3.66667, 46.91667],
-                    [-3.0, 46.91667],
-                    [-1.55, 47.21]
+                    [-3, 46.91667],
+                    [-1.55, 47.21],
                 ]
             }
         },
@@ -1590,7 +1563,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "埃尔米纳-皇家港",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_elmina_city_portroyal_1793624330720",
                 startYear: -3000,
                 endYear: 2000,
@@ -1606,13 +1578,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-2.66667, 4.41667],
                     [-3.16667, 4.75],
                     [-3.83333, 4.75],
-                    [-4.0, 4.91667],
+                    [-4, 4.91667],
                     [-4.33333, 4.91667],
                     [-4.5, 4.75],
                     [-5.5, 4.75],
                     [-5.66667, 4.58333],
                     [-6.5, 4.41667],
-                    [-7.0, 4.08333],
+                    [-7, 4.08333],
                     [-8.33333, 4.08333],
                     [-8.5, 4.25],
                     [-8.83333, 4.25],
@@ -1626,12 +1598,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-13.58333, 7.66667],
                     [-13.75, 7.83333],
                     [-13.75, 8.83333],
-                    [-14.0, 9.08333],
+                    [-14, 9.08333],
                     [-14.33333, 9.08333],
                     [-14.41667, 9.5],
                     [-15.33333, 10.41667],
                     [-16.66667, 10.75],
-                    [-16.91667, 11.0],
+                    [-16.91667, 11],
                     [-16.91667, 11.83333],
                     [-16.60583, 11.64148],
                     [-17, 11],
@@ -1659,10 +1631,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-62.83333, 11.91667],
                     [-63.5, 11.91667],
                     [-63.66667, 11.75],
-                    [-64.0, 11.75],
+                    [-64, 11.75],
                     [-64.08333, 12.16667],
                     [-64.33333, 12.41667],
-                    [-65.0, 12.41667],
+                    [-65, 12.41667],
                     [-66.04574, 12.53772],
                     [-67.75638, 13.49523],
                     [-68.31646, 13.75983],
@@ -1672,7 +1644,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-72.24986, 15.66547],
                     [-75.90058, 16.9584],
                     [-76.79993, 17.8742],
-                    [-76.84, 17.94]
+                    [-76.84, 17.94],
                 ]
             }
         },
@@ -1681,7 +1653,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "南特-埃尔米纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nantes_city_elmina_1793624237890",
                 startYear: -3000,
                 endYear: 2000,
@@ -1704,17 +1675,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-9.5, 43],
                     [-9.34623, 42.26961],
                     [-9.30497, 42.07359],
-                    [-9.41667, 42.0],
-                    [-9.25, 41.0],
+                    [-9.41667, 42],
+                    [-9.25, 41],
                     [-9.41667, 40.83333],
                     [-9.41667, 40.33333],
-                    [-9.58333, 40.0],
+                    [-9.58333, 40],
                     [-10.08333, 39.83333],
                     [-10.08333, 39.16667],
-                    [-9.91667, 39.0],
+                    [-9.91667, 39],
                     [-9.91667, 38.5],
                     [-9.75, 38.16667],
-                    [-9.41667, 38.0],
+                    [-9.41667, 38],
                     [-9.45209, 37.78159],
                     [-9.25, 36.8],
                     [-9.19853, 36.47228],
@@ -1738,7 +1709,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-16.91667, 23.16667],
                     [-16.91667, 22.83333],
                     [-17.41667, 22.5],
-                    [-17.41667, 22.0],
+                    [-17.41667, 22],
                     [-17.58333, 21.83333],
                     [-17.58333, 20.5],
                     [-17.16667, 20.41667],
@@ -1755,16 +1726,16 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-17.83333, 15.25],
                     [-18.08333, 15.16667],
                     [-18.08333, 14.5],
-                    [-17.41667, 14.0],
+                    [-17.41667, 14],
                     [-17.25, 13.66667],
                     [-17.25, 12.16667],
                     [-16.91667, 11.83333],
-                    [-16.91667, 11.0],
+                    [-16.91667, 11],
                     [-16.66667, 10.75],
                     [-15.33333, 10.41667],
                     [-14.41667, 9.5],
                     [-14.33333, 9.08333],
-                    [-14.0, 9.08333],
+                    [-14, 9.08333],
                     [-13.75, 8.83333],
                     [-13.75, 7.83333],
                     [-13.58333, 7.66667],
@@ -1778,19 +1749,19 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-8.83333, 4.25],
                     [-8.5, 4.25],
                     [-8.33333, 4.08333],
-                    [-7.0, 4.08333],
+                    [-7, 4.08333],
                     [-6.5, 4.41667],
                     [-5.66667, 4.58333],
                     [-5.5, 4.75],
                     [-4.5, 4.75],
                     [-4.33333, 4.91667],
-                    [-4.0, 4.91667],
+                    [-4, 4.91667],
                     [-3.83333, 4.75],
                     [-3.16667, 4.75],
                     [-2.66667, 4.41667],
                     [-1.66667, 4.41667],
                     [-1.16667, 4.75],
-                    [-1.35, 5.08]
+                    [-1.35, 5.08],
                 ]
             }
         },
@@ -1799,7 +1770,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "圣赫勒拿-开普敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_sainthelena_city_cape_town_1793624062136",
                 startYear: 1659,
                 endYear: 2000,
@@ -1819,7 +1789,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [13.9085, -32.5342],
                     [18, -35],
                     [17.91667, -34.66667],
-                    [18.4239, -33.9253]
+                    [18.4239, -33.9253],
                 ]
             }
         },
@@ -1828,7 +1798,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "伦敦-圣赫勒拿",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_lundun_city_sainthelena_1793624035963",
                 startYear: 1659,
                 endYear: 2000,
@@ -1876,17 +1845,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-9.5, 43],
                     [-9.34623, 42.26961],
                     [-9.30497, 42.07359],
-                    [-9.41667, 42.0],
-                    [-9.25, 41.0],
+                    [-9.41667, 42],
+                    [-9.25, 41],
                     [-9.41667, 40.83333],
                     [-9.41667, 40.33333],
-                    [-9.58333, 40.0],
+                    [-9.58333, 40],
                     [-10.08333, 39.83333],
                     [-10.08333, 39.16667],
-                    [-9.91667, 39.0],
+                    [-9.91667, 39],
                     [-9.91667, 38.5],
                     [-9.75, 38.16667],
-                    [-9.41667, 38.0],
+                    [-9.41667, 38],
                     [-9.45209, 37.78159],
                     [-9.25, 36.8],
                     [-9.19853, 36.47228],
@@ -1910,7 +1879,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-16.91667, 23.16667],
                     [-16.91667, 22.83333],
                     [-17.41667, 22.5],
-                    [-17.41667, 22.0],
+                    [-17.41667, 22],
                     [-17.58333, 21.83333],
                     [-17.58333, 20.5],
                     [-17.16667, 20.41667],
@@ -1927,7 +1896,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-17.83333, 15.25],
                     [-18.08333, 15.16667],
                     [-18.08333, 14.5],
-                    [-17.41667, 14.0],
+                    [-17.41667, 14],
                     [-17.25, 13.66667],
                     [-17.25, 12.16667],
                     [-16.91667, 11.83333],
@@ -1940,7 +1909,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-7.5827, -12.5384],
                     [-5.02809, -15.14288],
                     [-5.7249, -15.8556],
-                    [-5.71, -15.96]
+                    [-5.71, -15.96],
                 ]
             }
         },
@@ -1949,7 +1918,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿姆斯特丹-汉堡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_amsterdam_city_hamburg_1793623961504",
                 startYear: -3000,
                 endYear: 2000,
@@ -1972,7 +1940,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [9.49619, 53.71004],
                     [9.53558, 53.63315],
                     [9.63292, 53.58365],
-                    [9.99, 53.55]
+                    [9.99, 53.55],
                 ]
             }
         },
@@ -1981,7 +1949,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿姆斯特丹-伦敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_amsterdam_city_lundun_1793623961504",
                 startYear: -3000,
                 endYear: 2000,
@@ -2006,7 +1973,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [0.3441, 51.45],
                     [0.3126, 51.4722],
                     [0.2137, 51.4867],
-                    [-0.12, 51.5]
+                    [-0.12, 51.5],
                 ]
             }
         },
@@ -2015,7 +1982,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿姆斯特丹-特尔德",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_amsterdam_city_telde_1793623961504",
                 startYear: -3000,
                 endYear: 2000,
@@ -2060,17 +2026,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-9.5, 43],
                     [-9.34623, 42.26961],
                     [-9.30497, 42.07359],
-                    [-9.41667, 42.0],
-                    [-9.25, 41.0],
+                    [-9.41667, 42],
+                    [-9.25, 41],
                     [-9.41667, 40.83333],
                     [-9.41667, 40.33333],
-                    [-9.58333, 40.0],
+                    [-9.58333, 40],
                     [-10.08333, 39.83333],
                     [-10.08333, 39.16667],
-                    [-9.91667, 39.0],
+                    [-9.91667, 39],
                     [-9.91667, 38.5],
                     [-9.75, 38.16667],
-                    [-9.41667, 38.0],
+                    [-9.41667, 38],
                     [-9.45209, 37.78159],
                     [-9.75303, 37.68369],
                     [-10.33931, 37.49296],
@@ -2087,7 +2053,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-13.9051, 32.4093],
                     [-15.17212, 29.3375],
                     [-15.14581, 28.53833],
-                    [-15.42, 28.0]
+                    [-15.42, 28],
                 ]
             }
         },
@@ -2096,7 +2062,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "长崎-巴达维亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nagasaki_city_batavia_1793623961504",
                 startYear: 1641,
                 endYear: 2000,
@@ -2116,7 +2081,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [128.75, 29.66667],
                     [128.75, 29.33333],
                     [128.41667, 29.16667],
-                    [128.41667, 28.0],
+                    [128.41667, 28],
                     [129.2791, 28.64405],
                     [128.19466, 27.13286],
                     [127.58898, 26.40071],
@@ -2130,10 +2095,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.46317, 21.81541],
                     [121.41667, 21.5],
                     [121.25, 21.16667],
-                    [121.25, 20.0],
+                    [121.25, 20],
                     [120.91667, 19.83333],
                     [120.66667, 19.08333],
-                    [120.08333, 19.0],
+                    [120.08333, 19],
                     [120.08333, 18.66667],
                     [119.91667, 18.5],
                     [119.91667, 17.33333],
@@ -2142,10 +2107,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.25, 15.5],
                     [119.58333, 14.83333],
                     [119.58333, 13.5],
-                    [119.91667, 13.0],
+                    [119.91667, 13],
                     [119.41667, 12.83333],
                     [119.25, 12.5],
-                    [119.25, 12.0],
+                    [119.25, 12],
                     [118.75, 11.66667],
                     [118.75, 11.16667],
                     [118.08333, 10.5],
@@ -2157,7 +2122,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [115.75, 7.16667],
                     [115.66667, 6.75],
                     [115.08333, 6.66667],
-                    [115.08333, 6.0],
+                    [115.08333, 6],
                     [114.91667, 5.66667],
                     [114.5, 5.58333],
                     [113.83333, 5.08333],
@@ -2177,16 +2142,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [107.29248, -3.59018],
                     [106.8, -5.2],
                     [106.86813, -5.91658],
-                    [106.8133, -6.1352]
+                    [106.8133, -6.1352],
                 ]
             }
         },
         {
             type: "Feature",
             properties: {
-                name: "班达-安汶",
+                name: "班达奈拉-安汶",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_banda_city_ambon_1793623961504",
                 startYear: -3000,
                 endYear: 2000,
@@ -2201,29 +2165,28 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [130.58333, -5.16667],
                     [130.41667, -6.5],
                     [129.91667, -6.66667],
-                    [129.91667, -7.0],
+                    [129.91667, -7],
                     [130.16667, -7.25],
                     [130.33333, -6.91667],
                     [130.66667, -6.91667],
                     [131.16667, -6.25],
                     [131.91667, -6.16667],
-                    [131.41667, -6.0],
+                    [131.41667, -6],
                     [131.41667, -5.16667],
                     [130.66667, -4.25],
                     [130.41667, -4.33333],
                     [130.33333, -4.91667],
                     [129.33333, -4.91667],
                     [129.25, -4.16667],
-                    [128.1814, -3.6954]
+                    [128.1814, -3.6954],
                 ]
             }
         },
         {
             type: "Feature",
             properties: {
-                name: "班达-万丹",
+                name: "班达奈拉-万丹",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_banda_city_wandan_1793623961504",
                 startYear: -3000,
                 endYear: 2000,
@@ -2237,12 +2200,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [129.83085, -5.11207],
                     [129.41667, -5.83333],
                     [129.33333, -6.25],
-                    [129.0, -6.25],
+                    [129, -6.25],
                     [128.5, -6.58333],
                     [128.16667, -6.58333],
                     [127.83333, -7.08333],
                     [127.66667, -6.91667],
-                    [127.0, -6.91667],
+                    [127, -6.91667],
                     [126.83333, -7.08333],
                     [125.5, -7.08333],
                     [125.25, -7.5],
@@ -2255,7 +2218,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [111.76248, -5.63684],
                     [106.8, -5.2],
                     [106.86813, -5.91658],
-                    [106.15, -6.0333]
+                    [106.15, -6.0333],
                 ]
             }
         },
@@ -2264,7 +2227,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "苏拉特-索姆纳特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_surat_city_suomunate_1793623961504",
                 startYear: 1615,
                 endYear: 2000,
@@ -2277,8 +2239,8 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [72.8311, 21.1702],
                     [72.16667, 20.75],
                     [71.5, 20.41667],
-                    [70.0, 20.41667],
-                    [70.4014, 20.8878]
+                    [70, 20.41667],
+                    [70.4014, 20.8878],
                 ]
             }
         },
@@ -2287,7 +2249,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马德拉斯-加勒",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_madras_city_jiale_1793623961504",
                 startYear: 1639,
                 endYear: 2000,
@@ -2302,7 +2263,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [80.25, 11.83333],
                     [80.25, 10.33333],
                     [80.66667, 10.25],
-                    [81.75, 9.0],
+                    [81.75, 9],
                     [81.75, 8.5],
                     [82.25, 7.83333],
                     [82.25, 6.66667],
@@ -2310,9 +2271,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [82.08333, 6.16667],
                     [81.5, 5.75],
                     [81.16667, 5.75],
-                    [81.0, 5.58333],
+                    [81, 5.58333],
                     [79.83333, 5.58333],
-                    [80.21, 6.05]
+                    [80.21, 6.05],
                 ]
             }
         },
@@ -2321,7 +2282,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马德拉斯-普里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_madras_city_puli_1793623961504",
                 startYear: 1639,
                 endYear: 2000,
@@ -2332,9 +2292,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [80.2707, 13.0827],
-                    [80.75, 13.0],
+                    [80.75, 13],
                     [80.75, 13.83333],
-                    [80.58333, 14.0],
+                    [80.58333, 14],
                     [80.58333, 15.33333],
                     [81.33333, 15.41667],
                     [81.66667, 15.91667],
@@ -2346,7 +2306,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [84.33333, 17.91667],
                     [85.33333, 19.08333],
                     [86.33333, 19.58333],
-                    [85.831, 19.81]
+                    [85.831, 19.81],
                 ]
             }
         },
@@ -2355,7 +2315,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "加尔各答-吉大港",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kolkata_city_jidagang_1793623961504",
                 startYear: 1690,
                 endYear: 2000,
@@ -2370,7 +2329,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [89.66667, 21.41667],
                     [90.83333, 21.41667],
                     [91.33333, 21.75],
-                    [91.8325, 22.335]
+                    [91.8325, 22.335],
                 ]
             }
         },
@@ -2379,7 +2338,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安汶-巴达维亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_ambon_city_batavia_1793622841294",
                 startYear: -3000,
                 endYear: 2000,
@@ -2390,15 +2348,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [128.1814, -3.6954],
-                    [129.0, -4.08333],
+                    [129, -4.08333],
                     [126.16667, -4.25],
-                    [125.75, -4.0],
+                    [125.75, -4],
                     [125.41667, -3.5],
                     [125.33333, -2.25],
-                    [125.0, -2.25],
+                    [125, -2.25],
                     [124.83333, -2.41667],
                     [124.16667, -2.41667],
-                    [124.0, -2.58333],
+                    [124, -2.58333],
                     [124.12504, -2.15395],
                     [123.7366, -2.96762],
                     [123.4994, -5.08944],
@@ -2411,7 +2369,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [111.76248, -5.63684],
                     [106.8, -5.2],
                     [106.86813, -5.91658],
-                    [106.8133, -6.1352]
+                    [106.8133, -6.1352],
                 ]
             }
         },
@@ -2420,7 +2378,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安汶-德尔纳特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_ambon_city_deernate_1793622841294",
                 startYear: -3000,
                 endYear: 2000,
@@ -2431,15 +2388,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [128.1814, -3.6954],
-                    [129.0, -4.08333],
+                    [129, -4.08333],
                     [126.16667, -4.25],
-                    [125.75, -4.0],
+                    [125.75, -4],
                     [125.41667, -3.5],
                     [125.33333, -2.25],
-                    [125.0, -2.25],
+                    [125, -2.25],
                     [124.83333, -2.41667],
                     [124.16667, -2.41667],
-                    [124.0, -2.58333],
+                    [124, -2.58333],
                     [124.12504, -2.15395],
                     [124.33933, -0.33143],
                     [124.33333, 0.08333],
@@ -2448,7 +2405,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [125.66667, 0.58333],
                     [126.33333, 0.58333],
                     [126.5, 0.91667],
-                    [127.3832, 0.7852]
+                    [127.3832, 0.7852],
                 ]
             }
         },
@@ -2457,7 +2414,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "万丹-特罗武兰",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_wandan_city_teluowulan_1793622841294",
                 startYear: -3000,
                 endYear: 2000,
@@ -2473,7 +2429,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [110.1639, -6.3711],
                     [110.88501, -6.2607],
                     [112.65655, -6.78054],
-                    [112.37, -7.55]
+                    [112.37, -7.55],
                 ]
             }
         },
@@ -2482,7 +2438,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "万丹-亚齐",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_wandan_city_yaqi_1793622841294",
                 startYear: -3000,
                 endYear: 2000,
@@ -2499,12 +2454,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [104.82827, -6.59257],
                     [104, -7],
                     [101.92017, -4.11633],
-                    [101.75, -4.0],
+                    [101.75, -4],
                     [101.5, -3.91667],
                     [101.33333, -4.41667],
                     [100.66667, -4.41667],
                     [100.58333, -3.83333],
-                    [100.0, -3.75],
+                    [100, -3.75],
                     [99.58333, -3.33333],
                     [99.41667, -2.83333],
                     [99.08333, -2.5],
@@ -2512,24 +2467,24 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [98.5, -2.08333],
                     [98.25, -1.83333],
                     [98.08333, -1.5],
-                    [98.08333, -1.0],
+                    [98.08333, -1],
                     [97.75, -0.83333],
                     [97.75, 0.16667],
-                    [97.0, 0.41667],
+                    [97, 0.41667],
                     [96.75, 0.66667],
-                    [96.58333, 1.0],
+                    [96.58333, 1],
                     [96.58333, 1.66667],
                     [95.83333, 1.91667],
                     [95.25, 2.33333],
                     [95.16667, 2.58333],
                     [94.91667, 2.66667],
-                    [95.0, 3.58333],
+                    [95, 3.58333],
                     [95.66667, 3.58333],
                     [95.83333, 3.41667],
                     [95.91667, 3.5],
                     [94.91667, 4.5],
                     [94.75, 4.83333],
-                    [95.32, 5.55]
+                    [95.32, 5.55],
                 ]
             }
         },
@@ -2538,7 +2493,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "宿务-德尔纳特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_cebu_city_deernate_1793622662964",
                 startYear: -3000,
                 endYear: 2000,
@@ -2568,10 +2522,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [125.58333, 1.66667],
                     [125.66667, 1.41667],
                     [125.91667, 1.5],
-                    [126.0, 1.91667],
+                    [126, 1.91667],
                     [126.66667, 1.91667],
                     [126.83333, 1.41667],
-                    [127.3832, 0.7852]
+                    [127.3832, 0.7852],
                 ]
             }
         },
@@ -2580,7 +2534,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "宿务-阿加尼亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_cebu_city_hagatna_1793622662964",
                 startYear: -3000,
                 endYear: 2000,
@@ -2602,7 +2555,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [135.0002, 10.0367],
                     [140, 10],
                     [144.61578, 13.49113],
-                    [144.75, 13.4757]
+                    [144.75, 13.4757],
                 ]
             }
         },
@@ -2611,7 +2564,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "长崎-五岛",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nagasaki_city_goto_1793621738977",
                 startYear: -3000,
                 endYear: 2000,
@@ -2623,7 +2575,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [129.8777, 32.7555],
                     [129.35303, 32.50976],
-                    [128.841, 32.6955]
+                    [128.841, 32.6955],
                 ]
             }
         },
@@ -2632,7 +2584,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "长崎-澳门",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nagasaki_city_aomen_1793621738977",
                 startYear: -3000,
                 endYear: 2000,
@@ -2656,7 +2607,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.58333, 27.66667],
                     [121.58333, 27.33333],
                     [121.41667, 27.16667],
-                    [121.08333, 27.0],
+                    [121.08333, 27],
                     [120.91667, 26.16667],
                     [120.5, 26.08333],
                     [120.25, 25.83333],
@@ -2664,18 +2615,18 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.75, 24.83333],
                     [119.66667, 24.58333],
                     [119.16667, 24.58333],
-                    [119.0, 24.25],
+                    [119, 24.25],
                     [118.5, 24.08333],
-                    [118.0, 23.41667],
+                    [118, 23.41667],
                     [117.16667, 23.08333],
                     [116.83333, 22.58333],
                     [116.5, 22.58333],
                     [115.83333, 22.25],
-                    [115.0, 22.25],
+                    [115, 22.25],
                     [114.5, 21.58333],
                     [114.1, 21.7],
                     [113.85544, 22.03473],
-                    [113.5438, 22.1975]
+                    [113.5438, 22.1975],
                 ]
             }
         },
@@ -2684,7 +2635,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "澳门-马六甲",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aomen_city_malacca_1793621738977",
                 startYear: -3000,
                 endYear: 2000,
@@ -2703,7 +2653,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [109.75891, 12.14675],
                     [109.58333, 11.83333],
                     [109.58333, 11.33333],
-                    [109.25, 11.0],
+                    [109.25, 11],
                     [109.25, 10.16667],
                     [108.5, 10.08333],
                     [108.41667, 10.33333],
@@ -2711,7 +2661,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [107.16667, 9.91667],
                     [106.91667, 9.5],
                     [107.08333, 9.16667],
-                    [107.0, 8.25],
+                    [107, 8.25],
                     [107.3207, 7.6091],
                     [104.48229, 1.34131],
                     [104.14585, 1.2493],
@@ -2720,7 +2670,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [103.65807, 1.19777],
                     [103.6, 1.1],
                     [102, 2],
-                    [102.25, 2.19]
+                    [102.25, 2.19],
                 ]
             }
         },
@@ -2729,7 +2679,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "五岛-金石馆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_goto_city_tsushima_1793621394840",
                 startYear: -3000,
                 endYear: 2000,
@@ -2743,7 +2692,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [128.41667, 33.33333],
                     [128.41667, 33.66667],
                     [128.75, 33.83333],
-                    [129.2892, 34.2031]
+                    [129.2892, 34.2031],
                 ]
             }
         },
@@ -2752,7 +2701,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安格拉-里斯本",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_angra_city_lisiben_1787682181628",
                 startYear: -3000,
                 endYear: 2000,
@@ -2774,7 +2722,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-11.13864, 37.41734],
                     [-10.70267, 37.72411],
                     [-9.99896, 38.21927],
-                    [-9.13, 38.72]
+                    [-9.13, 38.72],
                 ]
             }
         },
@@ -2783,7 +2731,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "巴拿马-利马",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_banama_city_lima_1787915847565",
                 startYear: -3000,
                 endYear: 2000,
@@ -2796,9 +2743,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-79.4858, 9.0056],
                     [-79.5, 7.91667],
                     [-78.91667, 7.83333],
-                    [-78.58333, 7.0],
+                    [-78.58333, 7],
                     [-77.91667, 6.16667],
-                    [-78.08333, 6.0],
+                    [-78.08333, 6],
                     [-78.08333, 5.16667],
                     [-77.91667, 4.83333],
                     [-78.08333, 4.66667],
@@ -2806,11 +2753,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-78.33333, 3.41667],
                     [-78.66667, 3.41667],
                     [-78.83333, 3.08333],
-                    [-79.08333, 3.0],
+                    [-79.08333, 3],
                     [-79.25, 2.33333],
-                    [-79.58333, 2.0],
+                    [-79.58333, 2],
                     [-79.66667, 1.58333],
-                    [-80.0, 1.58333],
+                    [-80, 1.58333],
                     [-80.58333, 1.16667],
                     [-80.58333, 0.5],
                     [-80.91667, 0.16667],
@@ -2821,7 +2768,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-81.41667, -1.66667],
                     [-81.58333, -1.83333],
                     [-81.58333, -2.5],
-                    [-80.91667, -3.0],
+                    [-80.91667, -3],
                     [-81.75, -3.83333],
                     [-81.75, -5.5],
                     [-81.58333, -5.66667],
@@ -2833,20 +2780,19 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-79.41667, -8.66667],
                     [-79.25, -9.33333],
                     [-78.91667, -9.66667],
-                    [-78.41667, -11.0],
+                    [-78.41667, -11],
                     [-78.08333, -11.33333],
                     [-78.08333, -11.66667],
                     [-77.75, -11.83333],
-                    [-77.04, -12.05]
+                    [-77.04, -12.05],
                 ]
             }
         },
         {
             type: "Feature",
             properties: {
-                name: "雅典-诺索斯",
+                name: "雅典-干地亚要塞",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yadian_city_knossos_1788082742241",
                 startYear: -3000,
                 endYear: 2000,
@@ -2866,17 +2812,16 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.37519, 36.4354],
                     [24.58347, 36.41804],
                     [24.7862, 36.11617],
-                    [24.75, 36.0],
-                    [25.13, 35.33]
+                    [24.75, 36],
+                    [25.13, 35.33],
                 ]
             }
         },
         {
             type: "Feature",
             properties: {
-                name: "亚历山大-诺索斯",
+                name: "亚历山大-干地亚要塞",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yalishanda_city_knossos_1788082853199",
                 startYear: -3000,
                 endYear: 2000,
@@ -2898,7 +2843,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [26.86193, 34.79145],
                     [26.3941, 35.3719],
                     [25.82673, 35.71936],
-                    [25.13, 35.33]
+                    [25.13, 35.33],
                 ]
             }
         },
@@ -2907,7 +2852,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "君士坦丁堡-瓦尔纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_junshitandingbao_city_waerna_1788229242071",
                 startYear: -3000,
                 endYear: 2000,
@@ -2922,7 +2866,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [29.08662, 42.53606],
                     [29.07768, 42.78849],
                     [28.43871, 43.02266],
-                    [27.915, 43.214]
+                    [27.915, 43.214],
                 ]
             }
         },
@@ -2931,7 +2875,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿加尼亚-马尼拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hagatna_city_manila_1791846231447",
                 startYear: -3000,
                 endYear: 2000,
@@ -2963,7 +2906,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [120.72464, 13.63531],
                     [120.50217, 13.91141],
                     [120.53513, 14.26239],
-                    [120.9804, 14.5904]
+                    [120.9804, 14.5904],
                 ]
             }
         },
@@ -2972,7 +2915,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿加尼亚-阿卡普尔科",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hagatna_city_acapulco_1791846815760",
                 startYear: -3000,
                 endYear: 2000,
@@ -3024,12 +2966,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-132.11738, 40.04519],
                     [-130, 40],
                     [-123.77812, 37.98446],
-                    [-123.58333, 38.0],
+                    [-123.58333, 38],
                     [-123.5, 37.58333],
                     [-123.08333, 37.5],
                     [-122.91667, 36.83333],
                     [-122.41667, 36.5],
-                    [-122.41667, 36.0],
+                    [-122.41667, 36],
                     [-121.91667, 35.66667],
                     [-121.91667, 35.5],
                     [-121.25, 34.83333],
@@ -3037,24 +2979,24 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-120.91667, 33.83333],
                     [-120.66667, 33.58333],
                     [-120.08333, 33.5],
-                    [-120.0, 32.91667],
+                    [-120, 32.91667],
                     [-119.16667, 32.91667],
                     [-118.83333, 32.41667],
                     [-118.16667, 32.41667],
-                    [-118.0, 32.91667],
+                    [-118, 32.91667],
                     [-117.7702, 32.6652],
                     [-117.75, 32.16667],
-                    [-116.91667, 31.0],
+                    [-116.91667, 31],
                     [-116.91667, 30.66667],
                     [-116.58333, 30.5],
                     [-116.58333, 30.16667],
-                    [-116.25, 30.0],
+                    [-116.25, 30],
                     [-116.25, 29.5],
-                    [-116.0, 29.25],
-                    [-115.41667, 29.0],
+                    [-116, 29.25],
+                    [-115.41667, 29],
                     [-116.08333, 28.66667],
-                    [-116.08333, 28.0],
-                    [-114.91667, 27.0],
+                    [-116.08333, 28],
+                    [-114.91667, 27],
                     [-114.83333, 26.75],
                     [-114.16667, 26.41667],
                     [-113.66667, 26.41667],
@@ -3064,12 +3006,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-112.5, 24.25],
                     [-112.16667, 23.91667],
                     [-111.66667, 23.91667],
-                    [-111.0, 23.25],
+                    [-111, 23.25],
                     [-109.7, 22.5],
                     [-106.48994, 20.103],
                     [-103.40332, 17.98396],
                     [-99.9, 16.5],
-                    [-99.92, 16.85]
+                    [-99.92, 16.85],
                 ]
             }
         },
@@ -3078,7 +3020,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "君士坦丁堡-特拉布宗",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_junshitandingbao_city_telabuzong_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3096,7 +3037,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [36.7369, 41.7184],
                     [38.4316, 41.4112],
                     [39.44912, 41.42386],
-                    [39.73, 41.0]
+                    [39.73, 41],
                 ]
             }
         },
@@ -3105,7 +3046,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "利马-阿卡普尔科",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_lima_city_acapulco_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3119,7 +3059,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-77.75, -11.83333],
                     [-78.08333, -11.66667],
                     [-78.08333, -11.33333],
-                    [-78.41667, -11.0],
+                    [-78.41667, -11],
                     [-78.91667, -9.66667],
                     [-79.25, -9.33333],
                     [-79.41667, -8.66667],
@@ -3131,7 +3071,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-81.58333, -5.66667],
                     [-81.75, -5.5],
                     [-81.75, -3.83333],
-                    [-80.91667, -3.0],
+                    [-80.91667, -3],
                     [-81.58333, -2.5],
                     [-81.58333, -1.83333],
                     [-81.41667, -1.66667],
@@ -3142,11 +3082,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-80.91667, 0.16667],
                     [-80.58333, 0.5],
                     [-80.58333, 1.16667],
-                    [-80.0, 1.58333],
+                    [-80, 1.58333],
                     [-79.66667, 1.58333],
-                    [-79.58333, 2.0],
+                    [-79.58333, 2],
                     [-79.25, 2.33333],
-                    [-79.08333, 3.0],
+                    [-79.08333, 3],
                     [-78.83333, 3.08333],
                     [-78.66667, 3.41667],
                     [-78.33333, 3.41667],
@@ -3154,31 +3094,31 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-78.08333, 4.66667],
                     [-77.91667, 4.83333],
                     [-78.08333, 5.16667],
-                    [-78.08333, 6.0],
+                    [-78.08333, 6],
                     [-77.91667, 6.16667],
-                    [-78.58333, 7.0],
+                    [-78.58333, 7],
                     [-78.91667, 7.83333],
                     [-79.5, 7.91667],
                     [-79.58333, 7.16667],
-                    [-80.0, 7.08333],
+                    [-80, 7.08333],
                     [-80.16667, 6.91667],
                     [-82.16667, 6.91667],
                     [-82.33333, 7.08333],
                     [-82.66667, 7.08333],
                     [-82.75, 7.5],
-                    [-83.0, 7.75],
+                    [-83, 7.75],
                     [-83.33333, 7.75],
                     [-83.66667, 8.08333],
-                    [-84.0, 8.08333],
+                    [-84, 8.08333],
                     [-84.41667, 8.5],
                     [-84.5, 9.08333],
                     [-84.83333, 9.08333],
-                    [-85.0, 9.25],
+                    [-85, 9.25],
                     [-85.66667, 9.25],
-                    [-86.0, 9.58333],
+                    [-86, 9.58333],
                     [-86.16667, 9.58333],
-                    [-86.41667, 10.0],
-                    [-86.41667, 11.0],
+                    [-86.41667, 10],
+                    [-86.41667, 11],
                     [-86.66667, 11.25],
                     [-86.83333, 11.25],
                     [-87.25, 11.66667],
@@ -3186,24 +3126,24 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-88.33333, 12.75],
                     [-89.33333, 12.91667],
                     [-89.5, 13.1],
-                    [-90.0, 13.08333],
+                    [-90, 13.08333],
                     [-90.83333, 13.58333],
                     [-91.83333, 13.58333],
                     [-92.5, 14.08333],
                     [-92.66667, 14.08333],
                     [-94.16667, 15.58333],
                     [-94.5, 15.75],
-                    [-95.0, 15.75],
+                    [-95, 15.75],
                     [-95.16667, 15.58333],
                     [-95.5, 15.58333],
                     [-96.16667, 15.25],
-                    [-97.0, 15.25],
+                    [-97, 15.25],
                     [-97.16667, 15.41667],
                     [-98.16667, 15.58333],
                     [-98.66667, 15.91667],
-                    [-99.0, 15.91667],
+                    [-99, 15.91667],
                     [-99.33333, 16.25],
-                    [-99.92, 16.85]
+                    [-99.92, 16.85],
                 ]
             }
         },
@@ -3212,7 +3152,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "海牙-新阿姆斯特丹",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hague_city_newamsterdam_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3281,7 +3220,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-68.86057, 40.54129],
                     [-68.91015, 40.52259],
                     [-69.44828, 40.61035],
-                    [-69.58333, 41.0],
+                    [-69.58333, 41],
                     [-71.16667, 40.91667],
                     [-71.33333, 40.75],
                     [-71.66667, 40.75],
@@ -3289,7 +3228,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-72.66667, 40.41667],
                     [-72.83333, 40.25],
                     [-73.5, 40.25],
-                    [-74.01, 40.71]
+                    [-74.01, 40.71],
                 ]
             }
         },
@@ -3298,7 +3237,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "贝雷尼斯-塞拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_beileinisi_city_zeila_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3312,11 +3250,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [35.75, 24.66667],
                     [36.08333, 24.5],
                     [36.16667, 24.08333],
-                    [36.58333, 24.0],
+                    [36.58333, 24],
                     [36.58333, 23.33333],
                     [36.41667, 23.16667],
                     [37.25, 22.5],
-                    [37.25, 22.0],
+                    [37.25, 22],
                     [37.58333, 21.66667],
                     [37.58333, 21.33333],
                     [37.75, 21.16667],
@@ -3337,13 +3275,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [43.3, 12.7],
                     [43.74659, 12.40439],
                     [44.97253, 12.71001],
-                    [46.0, 13.08333],
+                    [46, 13.08333],
                     [45.66667, 12.75],
                     [45.5, 12.75],
                     [45.33333, 12.41667],
                     [43.75, 12.16667],
                     [43.91667, 11.5],
-                    [43.4731, 11.3533]
+                    [43.4731, 11.3533],
                 ]
             }
         },
@@ -3352,7 +3290,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "韦拉克鲁斯-卡塔赫纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_veracruz_city_katachena_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3370,7 +3307,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-94.16667, 18.91667],
                     [-93.33333, 18.91667],
                     [-92.66667, 19.25],
-                    [-92.0, 19.25],
+                    [-92, 19.25],
                     [-91.66667, 19.41667],
                     [-91.25, 19.83333],
                     [-91.25, 20.16667],
@@ -3378,7 +3315,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-90.91667, 21.5],
                     [-90.16667, 21.91667],
                     [-89.16667, 21.91667],
-                    [-89.0, 22.08333],
+                    [-89, 22.08333],
                     [-86.5036, 22.10091],
                     [-86.11065, 21.85698],
                     [-85.9021, 21.64977],
@@ -3388,7 +3325,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-81.30559, 12.63985],
                     [-80, 9.75],
                     [-76.11059, 10.25031],
-                    [-75.5442, 10.4266]
+                    [-75.5442, 10.4266],
                 ]
             }
         },
@@ -3397,7 +3334,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "汉堡-伦敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hamburg_city_lundun_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3433,7 +3369,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [0.3441, 51.45],
                     [0.3126, 51.4722],
                     [0.2137, 51.4867],
-                    [-0.12, 51.5]
+                    [-0.12, 51.5],
                 ]
             }
         },
@@ -3442,7 +3378,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "罗安达-开普敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_luanda_city_cape_town_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3456,40 +3391,40 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [12.75, -8.33333],
                     [12.41667, -8.66667],
                     [12.41667, -9.33333],
-                    [13.25, -11.0],
+                    [13.25, -11],
                     [13.25, -11.66667],
                     [12.41667, -12.33333],
                     [12.41667, -12.5],
                     [12.08333, -12.83333],
                     [12.08333, -13.33333],
-                    [11.75, -14.0],
-                    [11.58333, -15.0],
+                    [11.75, -14],
+                    [11.58333, -15],
                     [11.25, -15.33333],
                     [11.25, -18.33333],
                     [12.25, -19.66667],
                     [13.08333, -21.5],
                     [13.91667, -22.66667],
                     [13.91667, -24.5],
-                    [14.25, -25.0],
-                    [14.25, -26.0],
+                    [14.25, -25],
+                    [14.25, -26],
                     [14.41667, -26.16667],
                     [14.41667, -26.66667],
                     [14.58333, -26.83333],
                     [14.75, -27.66667],
                     [15.83333, -28.91667],
-                    [16.08333, -29.0],
+                    [16.08333, -29],
                     [16.08333, -29.16667],
                     [16.41667, -29.5],
                     [16.41667, -29.83333],
-                    [16.58333, -30.0],
+                    [16.58333, -30],
                     [16.58333, -30.33333],
-                    [16.91667, -31.0],
-                    [17.75, -32.0],
+                    [16.91667, -31],
+                    [17.75, -32],
                     [17.66667, -32.25],
                     [17.41667, -32.33333],
                     [17.41667, -33.33333],
                     [17.75, -33.83333],
-                    [18.4239, -33.9253]
+                    [18.4239, -33.9253],
                 ]
             }
         },
@@ -3498,7 +3433,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "开普敦-莫桑比克",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_cape_town_city_mozambique_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3510,26 +3444,26 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [18.4239, -33.9253],
                     [18.66667, -34.75],
-                    [19.0, -35.08333],
+                    [19, -35.08333],
                     [20.5, -35.08333],
                     [20.83333, -34.75],
                     [22.16667, -34.75],
                     [22.5, -34.41667],
-                    [24.0, -34.41667],
+                    [24, -34.41667],
                     [24.16667, -34.58333],
                     [25.16667, -34.58333],
                     [25.33333, -34.41667],
-                    [26.0, -34.41667],
+                    [26, -34.41667],
                     [26.16667, -34.25],
-                    [27.0, -34.08333],
-                    [28.0, -33.58333],
-                    [30.91667, -31.0],
-                    [31.41667, -30.0],
+                    [27, -34.08333],
+                    [28, -33.58333],
+                    [30.91667, -31],
+                    [31.41667, -30],
                     [32.75, -28.83333],
                     [33.08333, -27.5],
                     [33.25, -27.33333],
                     [33.25, -25.83333],
-                    [34.0, -25.41667],
+                    [34, -25.41667],
                     [34.83333, -25.25],
                     [35.58333, -24.83333],
                     [35.91667, -24.16667],
@@ -3541,7 +3475,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [35.25, -20.16667],
                     [35.75, -19.83333],
                     [35.75, -19.66667],
-                    [36.0, -19.41667],
+                    [36, -19.41667],
                     [36.66667, -19.25],
                     [37.5, -18.08333],
                     [38.83333, -17.41667],
@@ -3551,7 +3485,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [40.41667, -16.33333],
                     [40.91667, -15.83333],
                     [41.08333, -15.16667],
-                    [40.74, -15.03]
+                    [40.74, -15.03],
                 ]
             }
         },
@@ -3560,7 +3494,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "蒙巴萨-摩加迪沙",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mombasa_city_mogadishu_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3572,54 +3505,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [39.6667, -4.05],
                     [40.58333, -3.33333],
-                    [40.58333, -3.0],
-                    [41.0, -2.91667],
+                    [40.58333, -3],
+                    [41, -2.91667],
                     [41.16667, -2.58333],
                     [41.33333, -2.58333],
                     [42.08333, -1.83333],
                     [42.08333, -1.66667],
                     [42.58333, -1.16667],
-                    [42.58333, -1.0],
+                    [42.58333, -1],
                     [44.83333, 1.25],
                     [45.37353, 1.96617],
-                    [45.3419, 2.0392]
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "摩加迪沙-亚丁",
-                type: "sea",
-                color: "#00ffff",
-                id: "sea_city_mogadishu_city_aden_20261024",
-                startYear: -3000,
-                endYear: 2000,
-                startConnection: "city_mogadishu",
-                endConnection: "city_aden"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
                     [45.3419, 2.0392],
-                    [45.37353, 1.96617],
-                    [44.83333, 1.25],
-                    [46.16667, 1.91667],
-                    [48.08333, 3.83333],
-                    [48.41667, 4.5],
-                    [49.25, 5.5],
-                    [49.75, 6.83333],
-                    [50.08333, 7.16667],
-                    [50.08333, 7.5],
-                    [50.58333, 8.0],
-                    [50.91667, 8.83333],
-                    [51.25, 9.16667],
-                    [50.8379, 8.3029],
-                    [52.3, 11.6],
-                    [50.85615, 12.88403],
-                    [45, 12],
-                    [44.97253, 12.71001],
-                    [45.0187, 12.7855]
                 ]
             }
         },
@@ -3628,7 +3524,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "亚丁-果阿",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aden_city_guoa_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3640,21 +3535,21 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [45.0187, 12.7855],
                     [45.66667, 12.75],
-                    [46.0, 13.08333],
+                    [46, 13.08333],
                     [47.16667, 13.08333],
                     [47.33333, 13.25],
                     [47.66667, 13.25],
-                    [48.0, 13.58333],
+                    [48, 13.58333],
                     [48.66667, 13.58333],
-                    [49.0, 13.75],
+                    [49, 13.75],
                     [49.83333, 14.41667],
                     [50.33333, 14.41667],
                     [50.83333, 14.75],
                     [51.83333, 14.91667],
                     [52.58333, 15.33333],
                     [52.58333, 15.83333],
-                    [53.0, 16.25],
-                    [54.0, 16.41667],
+                    [53, 16.25],
+                    [54, 16.41667],
                     [54.16667, 16.58333],
                     [55.16667, 16.58333],
                     [55.5, 16.75],
@@ -3676,7 +3571,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [72.91667, 16.16667],
                     [72.91667, 15.66667],
                     [73.25, 15.33333],
-                    [73.9117, 15.5023]
+                    [73.9117, 15.5023],
                 ]
             }
         },
@@ -3685,7 +3580,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "羊河-特洛伊",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yanghe_city_teluoyi_1788855191771",
                 startYear: -3000,
                 endYear: 2000,
@@ -3699,7 +3593,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [26.76819, 40.44068],
                     [26.2, 40.1],
                     [26.14362, 39.99293],
-                    [26.2389, 39.9575]
+                    [26.2389, 39.9575],
                 ]
             }
         },
@@ -3708,7 +3602,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "提洛-希马鲁塔",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_tiluo_city_chimarros_1788854828374",
                 startYear: -3000,
                 endYear: 2000,
@@ -3720,7 +3613,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [25.27, 37.39],
                     [25.16928, 37.45968],
-                    [25.53, 36.965]
+                    [25.53, 36.965],
                 ]
             }
         },
@@ -3729,7 +3622,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "原之辻-太宰府",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yuanzhishi_city_taizaifu_1788229798481",
                 startYear: -3000,
                 endYear: 2000,
@@ -3741,7 +3633,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [129.703, 33.791],
                     [130.2594, 33.6615],
-                    [130.52, 33.51]
+                    [130.52, 33.51],
                 ]
             }
         },
@@ -3750,7 +3642,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "澎湖-承天",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_penghu_city_tainan_1788088777974",
                 startYear: -3000,
                 endYear: 2000,
@@ -3762,7 +3653,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [119.5, 23.5],
                     [120, 23.00931],
-                    [120.2, 22.99]
+                    [120.2, 22.99],
                 ]
             }
         },
@@ -3771,7 +3662,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安提瓦里-拉古萨",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_antiwali_city_ragusa_1788855037959",
                 startYear: -3000,
                 endYear: 2000,
@@ -3783,7 +3673,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [19.1, 42.1],
                     [18.56222, 42.23605],
-                    [18.09, 42.65]
+                    [18.09, 42.65],
                 ]
             }
         },
@@ -3792,7 +3682,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "星主厅-鸣梁",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_xingzhuting_city_jindo_1788088176027",
                 startYear: -3000,
                 endYear: 2000,
@@ -3804,16 +3693,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [126.5215, 33.5131],
                     [126.64315, 33.73542],
-                    [126.263, 34.487]
+                    [126.263, 34.487],
                 ]
             }
         },
         {
             type: "Feature",
             properties: {
-                name: "金海-金石城",
+                name: "金海-金石馆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_gimhae_city_tsushima_1788088410176",
                 startYear: -3000,
                 endYear: 2000,
@@ -3825,7 +3713,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [128.88, 35.23],
                     [128.91632, 34.76192],
-                    [129.2892, 34.2031]
+                    [129.2892, 34.2031],
                 ]
             }
         },
@@ -3834,7 +3722,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "府内-松山",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_funei_city_songshan_1788088416168",
                 startYear: -3000,
                 endYear: 2000,
@@ -3846,7 +3733,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [131.61, 33.24],
                     [131.99468, 33.41758],
-                    [132.7505, 33.8185]
+                    [132.7505, 33.8185],
                 ]
             }
         },
@@ -3855,7 +3742,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡里斯托斯-提洛",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kalisituosi_city_tiluo_1788854826943",
                 startYear: -3000,
                 endYear: 2000,
@@ -3868,7 +3754,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.42, 38.01],
                     [24.49098, 37.48278],
                     [24.83076, 37.26906],
-                    [25.27, 37.39]
+                    [25.27, 37.39],
                 ]
             }
         },
@@ -3877,7 +3763,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "威尼斯-拉文纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_venice_city_ravenna_1791967923785",
                 startYear: -3000,
                 endYear: 2000,
@@ -3889,7 +3774,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [12.31, 45.44],
                     [12.77551, 45.12442],
-                    [12.2, 44.41]
+                    [12.2, 44.41],
                 ]
             }
         },
@@ -3898,7 +3783,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "赤间关-原之辻",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_chijianguan_city_yuanzhishi_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -3910,7 +3794,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [130.93, 33.95],
                     [130.1, 34.3],
-                    [129.703, 33.791]
+                    [129.703, 33.791],
                 ]
             }
         },
@@ -3919,7 +3803,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "能岛城-姬路城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_noshima_city_himeji_1789831666285",
                 startYear: -3000,
                 endYear: 2000,
@@ -3934,7 +3817,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [134.00574, 34.41824],
                     [134.05799, 34.5339],
                     [134.51523, 34.7292],
-                    [134.6939, 34.8394]
+                    [134.6939, 34.8394],
                 ]
             }
         },
@@ -3943,7 +3826,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡那封-都柏林",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kanafeng_city_dublin_1788853642625",
                 startYear: -3000,
                 endYear: 2000,
@@ -3956,7 +3838,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-4.27, 53.14],
                     [-5.0819, 52.78393],
                     [-5.73355, 52.91713],
-                    [-6.26, 53.34]
+                    [-6.26, 53.34],
                 ]
             }
         },
@@ -3965,7 +3847,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "加莱-伦敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_calais_city_lundun_1790256986117",
                 startYear: -3000,
                 endYear: 2000,
@@ -3984,7 +3865,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [0.3441, 51.45],
                     [0.3126, 51.4722],
                     [0.2137, 51.4867],
-                    [-0.12, 51.5]
+                    [-0.12, 51.5],
                 ]
             }
         },
@@ -3993,7 +3874,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "休达-加的斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_xiuta_city_jiadisi_1788228414421",
                 startYear: -3000,
                 endYear: 2000,
@@ -4006,7 +3886,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-5.31, 35.89],
                     [-5.75, 35.95],
                     [-6.6, 36.6],
-                    [-6.28, 36.52]
+                    [-6.28, 36.52],
                 ]
             }
         },
@@ -4015,7 +3895,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "哥本哈根-罗斯托克",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_gebenhagen_city_rostock_1788229509809",
                 startYear: -3000,
                 endYear: 2000,
@@ -4027,7 +3906,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [12.57, 55.68],
                     [12.65064, 54.92473],
-                    [12.13, 54.09]
+                    [12.13, 54.09],
                 ]
             }
         },
@@ -4036,7 +3915,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "哈利卡纳苏斯-克拉佐美奈",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_halikanasu_city_kelazuomeinai_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -4049,7 +3927,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [27.43, 37.03],
                     [26.93833, 37.24336],
                     [26.54165, 37.6889],
-                    [26.77, 38.36]
+                    [26.77, 38.36],
                 ]
             }
         },
@@ -4058,7 +3936,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "镰仓-骏府",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kamakura_city_junfucheng_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -4071,7 +3948,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [139.5503, 35.3195],
                     [139.19128, 34.6558],
                     [138.86718, 34.45606],
-                    [138.38, 34.97]
+                    [138.38, 34.97],
                 ]
             }
         },
@@ -4080,7 +3957,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "赤尾木城-鹿儿岛城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_akaogicheng_city_satsuma_1788088600872",
                 startYear: -3000,
                 endYear: 2000,
@@ -4090,12 +3966,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [131.0, 30.73],
+                    [131, 30.73],
                     [130.61714, 30.92991],
                     [130.60547, 31.10939],
                     [130.1001, 31.18461],
                     [129.982, 31.49192],
-                    [130.5583, 31.6003]
+                    [130.5583, 31.6003],
                 ]
             }
         },
@@ -4104,7 +3980,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "金海-原之辻",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_gimhae_city_yuanzhishi_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -4117,7 +3992,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [128.88, 35.23],
                     [128.91632, 34.76192],
                     [129.10062, 34.04667],
-                    [129.703, 33.791]
+                    [129.703, 33.791],
                 ]
             }
         },
@@ -4126,7 +4001,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "顺天-金石馆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_suncheon_k_city_tsushima_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -4140,7 +4014,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [127.82044, 34.71001],
                     [128.16925, 34.40691],
                     [129.10062, 34.04667],
-                    [129.2892, 34.2031]
+                    [129.2892, 34.2031],
                 ]
             }
         },
@@ -4149,7 +4023,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "钓鱼岛-平良",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_diaoyudao_city_gugudao_1788088655001",
                 startYear: -3000,
                 endYear: 2000,
@@ -4164,7 +4037,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [124.60555, 25.9109],
                     [124.58889, 24.80933],
                     [125.18921, 25.02588],
-                    [125.281, 24.805]
+                    [125.281, 24.805],
                 ]
             }
         },
@@ -4173,7 +4046,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "提洛-以弗所",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_tiluo_city_yifusuo_1788854839791",
                 startYear: -3000,
                 endYear: 2000,
@@ -4189,7 +4061,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [25.65789, 37.82153],
                     [25.76963, 37.90562],
                     [25.93489, 38.02998],
-                    [27.34, 37.94]
+                    [27.34, 37.94],
                 ]
             }
         },
@@ -4198,7 +4070,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "澎湖-刺桐",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_penghu_city_qingjingsi_1788088771773",
                 startYear: -3000,
                 endYear: 2000,
@@ -4211,7 +4082,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.5, 23.5],
                     [118.98005, 23.94994],
                     [119.33882, 24.44886],
-                    [118.5833, 24.9]
+                    [118.5833, 24.9],
                 ]
             }
         },
@@ -4220,7 +4091,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "根城-白老",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_genjo_city_bailao_1788229843402",
                 startYear: -3000,
                 endYear: 2000,
@@ -4233,8 +4103,8 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [141.4644, 40.5047],
                     [141.75, 41.16667],
                     [141.75, 41.83333],
-                    [141.58333, 42.0],
-                    [141.36, 42.55]
+                    [141.58333, 42],
+                    [141.36, 42.55],
                 ]
             }
         },
@@ -4243,7 +4113,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "杭州-上海",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hangzhou_city_shanghai_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -4256,7 +4125,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [120.16, 30.25],
                     [121.06934, 30.52441],
                     [121.61333, 30.42956],
-                    [121.47, 31.23]
+                    [121.47, 31.23],
                 ]
             }
         },
@@ -4265,7 +4134,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "杭州-宁波",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hangzhou_city_qingyuan_zj_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -4279,7 +4147,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.06934, 30.52441],
                     [121.61333, 30.42956],
                     [121.92627, 30.25432],
-                    [121.54, 29.87]
+                    [121.54, 29.87],
                 ]
             }
         },
@@ -4288,7 +4156,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "以弗所-希马鲁塔",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yifusuo_city_chimarros_1788854801970",
                 startYear: -3000,
                 endYear: 2000,
@@ -4302,7 +4169,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [25.93489, 38.02998],
                     [25.76963, 37.90562],
                     [25.94945, 37.4041],
-                    [25.53, 36.965]
+                    [25.53, 36.965],
                 ]
             }
         },
@@ -4311,7 +4178,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿克曼-奥列什基",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_akeman_city_oleshky_1792351849601",
                 startYear: -3000,
                 endYear: 2000,
@@ -4322,10 +4188,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [30.34, 46.19],
-                    [31.0, 45.91667],
+                    [31, 45.91667],
                     [31.5, 45.91667],
                     [31.91667, 45.66667],
-                    [32.72, 46.61]
+                    [32.72, 46.61],
                 ]
             }
         },
@@ -4334,7 +4200,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "江户城-骏府",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_edo_city_junfucheng_1788229823105",
                 startYear: -3000,
                 endYear: 2000,
@@ -4352,7 +4217,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [139.3, 35],
                     [139.19128, 34.6558],
                     [138.86718, 34.45606],
-                    [138.38, 34.97]
+                    [138.38, 34.97],
                 ]
             }
         },
@@ -4361,7 +4226,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "艋舺-冶城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mengjia_city_fuzhou_1788088660630",
                 startYear: -3000,
                 endYear: 2000,
@@ -4375,7 +4239,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.27533, 25.24394],
                     [120, 25.7],
                     [119.85947, 26.0284],
-                    [119.3, 26.07]
+                    [119.3, 26.07],
                 ]
             }
         },
@@ -4384,7 +4248,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "奥林索斯-特洛伊",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aolinsuosi_city_teluoyi_1788855088815",
                 startYear: -3000,
                 endYear: 2000,
@@ -4401,7 +4264,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.74807, 39.76929],
                     [25.01478, 39.76395],
                     [25.3211, 39.7578],
-                    [26.2389, 39.9575]
+                    [26.2389, 39.9575],
                 ]
             }
         },
@@ -4410,7 +4273,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "推罗-加沙",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_tuile_city_jiasa_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -4424,7 +4286,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.41667, 33.16667],
                     [34.41667, 32.83333],
                     [34.08333, 32.16667],
-                    [34.4668, 31.5017]
+                    [34.4668, 31.5017],
                 ]
             }
         },
@@ -4433,7 +4295,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "莫约罗-宗谷",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_moyoro_city_zonggu_1788229995712",
                 startYear: -3000,
                 endYear: 2000,
@@ -4447,7 +4308,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [144.16667, 44.58333],
                     [143.5, 44.91667],
                     [142.91667, 45.33333],
-                    [141.93, 45.5]
+                    [141.93, 45.5],
                 ]
             }
         },
@@ -4456,7 +4317,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "塔兰托-科孚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_talanduo_city_kefu_1788228875492",
                 startYear: -3000,
                 endYear: 2000,
@@ -4473,7 +4333,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.82344, 39.77362],
                     [18.66667, 39.41667],
                     [18.83333, 39.75],
-                    [19.92, 39.62]
+                    [19.92, 39.62],
                 ]
             }
         },
@@ -4482,7 +4342,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "科洛西-阿卡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kolossi_city_ake_1788082845695",
                 startYear: -3000,
                 endYear: 2000,
@@ -4498,7 +4357,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [33.98256, 34.29017],
                     [34.34367, 33.49617],
                     [34.8, 33],
-                    [35.06889, 32.92139]
+                    [35.06889, 32.92139],
                 ]
             }
         },
@@ -4507,7 +4366,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "奥列什基-赫尔松涅斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_oleshky_city_heersongniesi_1792351881034",
                 startYear: -3000,
                 endYear: 2000,
@@ -4522,7 +4380,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [31.91667, 45.16667],
                     [32.16667, 44.91667],
                     [32.66667, 44.91667],
-                    [33.49, 44.61]
+                    [33.49, 44.61],
                 ]
             }
         },
@@ -4531,7 +4389,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "星主厅-顺天",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_xingzhuting_city_suncheon_k_1788088180781",
                 startYear: -3000,
                 endYear: 2000,
@@ -4546,7 +4403,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [127.10358, 33.55513],
                     [127.83333, 33.75],
                     [128.16667, 34.25],
-                    [127.4991, 34.9652]
+                    [127.4991, 34.9652],
                 ]
             }
         },
@@ -4555,7 +4412,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "蓬莱-卑沙城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_dengzhou_city_beishacheng_1788088062728",
                 startYear: -3000,
                 endYear: 2000,
@@ -4566,9 +4422,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [120.72, 37.82],
-                    [120.0, 38.25],
+                    [120, 38.25],
                     [120.41667, 38.83333],
-                    [121.95923, 39.44469]
+                    [121.95923, 39.44469],
                 ]
             }
         },
@@ -4577,7 +4433,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "迦太基-卡利亚里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jiataji_city_cagliari_1788228318164",
                 startYear: -3000,
                 endYear: 2000,
@@ -4595,7 +4450,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [10.31151, 38.06561],
                     [10.29394, 38.23221],
                     [9.65, 38.9],
-                    [9.12, 39.22]
+                    [9.12, 39.22],
                 ]
             }
         },
@@ -4604,7 +4459,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "梅西纳-马耳他",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_messina_city_malta_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -4619,7 +4473,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [15.58333, 36.66667],
                     [15.33333, 36.25],
                     [14.91667, 36.16667],
-                    [14.44, 35.9]
+                    [14.44, 35.9],
                 ]
             }
         },
@@ -4628,7 +4482,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "山海关-漂渝津",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shanhaiguan_city_piaoyujin_1788088076445",
                 startYear: -3000,
                 endYear: 2000,
@@ -4638,14 +4491,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [119.8, 40.0],
+                    [119.8, 40],
                     [119.66667, 39.41667],
                     [119.25, 38.83333],
                     [118.91667, 38.66667],
                     [119.16667, 38.58333],
                     [118.97114, 38.55545],
                     [117.85034, 38.89103],
-                    [117.6, 39.02]
+                    [117.6, 39.02],
                 ]
             }
         },
@@ -4654,7 +4507,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "平良-首里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_gugudao_city_shuri_1788088593522",
                 startYear: -3000,
                 endYear: 2000,
@@ -4667,7 +4519,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [125.281, 24.805],
                     [125.18921, 25.02588],
                     [127.37571, 25.98507],
-                    [127.72, 26.22]
+                    [127.72, 26.22],
                 ]
             }
         },
@@ -4676,7 +4528,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "那不勒斯-巴勒莫",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_naples_city_palermo_1788228775414",
                 startYear: -3000,
                 endYear: 2000,
@@ -4691,7 +4542,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [13.8276, 39.76812],
                     [13.74365, 39.48094],
                     [13.55399, 38.8321],
-                    [13.36, 38.11]
+                    [13.36, 38.11],
                 ]
             }
         },
@@ -4700,7 +4551,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿克曼-赫尔松涅斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_akeman_city_heersongniesi_1788229213515",
                 startYear: -3000,
                 endYear: 2000,
@@ -4711,13 +4561,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [30.34, 46.19],
-                    [31.0, 45.91667],
+                    [31, 45.91667],
                     [31.5, 45.91667],
                     [31.91667, 45.66667],
                     [31.91667, 45.16667],
                     [32.16667, 44.91667],
                     [32.66667, 44.91667],
-                    [33.49, 44.61]
+                    [33.49, 44.61],
                 ]
             }
         },
@@ -4726,7 +4576,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "那不勒斯-梅西纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_naples_city_messina_1787581955270",
                 startYear: -3000,
                 endYear: 2000,
@@ -4740,7 +4589,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [14.26711, 40.45576],
                     [14.47965, 40.14513],
                     [15.4, 38.8],
-                    [15.55, 38.19]
+                    [15.55, 38.19],
                 ]
             }
         },
@@ -4749,7 +4598,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "奥拉-卡拉奇",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aola_city_kalaqi_1790766686317",
                 startYear: -3000,
                 endYear: 2000,
@@ -4760,11 +4608,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [65.51, 25.51],
-                    [65.0, 24.91667],
-                    [66.0, 25.08333],
+                    [65, 24.91667],
+                    [66, 25.08333],
                     [66.08333, 24.5],
                     [66.66667, 24.41667],
-                    [67.01, 24.86]
+                    [67.01, 24.86],
                 ]
             }
         },
@@ -4773,7 +4621,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "姬路城-冈丰城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_himeji_city_okafu_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -4789,7 +4636,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [134.85992, 34.09816],
                     [134.89563, 33.79969],
                     [134.23645, 33.10535],
-                    [133.5756, 33.5972]
+                    [133.5756, 33.5972],
                 ]
             }
         },
@@ -4798,7 +4645,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "赤木名城-赤尾木城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_akakinagusuku_city_akaogicheng_1788088599310",
                 startYear: -3000,
                 endYear: 2000,
@@ -4814,7 +4660,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [130.33333, 29.91667],
                     [130.83333, 29.91667],
                     [131.41667, 30.33333],
-                    [131.0, 30.73]
+                    [131, 30.73],
                 ]
             }
         },
@@ -4823,7 +4669,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "白主-莫约罗",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_baizhu_city_moyoro_1788229972331",
                 startYear: -3000,
                 endYear: 2000,
@@ -4840,7 +4685,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [142.91667, 45.33333],
                     [143.5, 44.91667],
                     [144.16667, 44.58333],
-                    [144.27, 44.02]
+                    [144.27, 44.02],
                 ]
             }
         },
@@ -4849,7 +4694,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卑沙城-山海关",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_beishacheng_city_shanhaiguan_1788088057501",
                 startYear: -3000,
                 endYear: 2000,
@@ -4864,7 +4708,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [120.41667, 39.33333],
                     [120.75, 39.66667],
                     [120.66667, 39.91667],
-                    [119.8, 40.0]
+                    [119.8, 40],
                 ]
             }
         },
@@ -4873,7 +4717,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "迦太基-巴勒莫",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jiataji_city_palermo_1788228315671",
                 startYear: -3000,
                 endYear: 2000,
@@ -4891,7 +4734,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [11.76629, 37.92976],
                     [12.09994, 38.19647],
                     [12.74353, 38.24357],
-                    [13.36, 38.11]
+                    [13.36, 38.11],
                 ]
             }
         },
@@ -4900,7 +4743,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "邓纳德-都柏林",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_dunadd_city_dublin_1792485069547",
                 startYear: -3000,
                 endYear: 2000,
@@ -4917,7 +4759,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-5.2, 54.8],
                     [-5.24769, 54.66648],
                     [-5.48998, 53.98807],
-                    [-6.26, 53.34]
+                    [-6.26, 53.34],
                 ]
             }
         },
@@ -4926,7 +4768,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "义安-珠崖",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yian_city_yazhou_1788856705035",
                 startYear: -3000,
                 endYear: 2000,
@@ -4940,7 +4781,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [105.98511, 18.91148],
                     [107.28149, 18.71389],
                     [108.4606, 18.4135],
-                    [108.98987, 18.43269]
+                    [108.98987, 18.43269],
                 ]
             }
         },
@@ -4949,7 +4790,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马耳他-的黎波里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_malta_city_deliboli_1788228978936",
                 startYear: -3000,
                 endYear: 2000,
@@ -4963,7 +4803,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [14.5047, 35.73491],
                     [13.78788, 34.44135],
                     [13.1, 33.2],
-                    [13.19, 32.88]
+                    [13.19, 32.88],
                 ]
             }
         },
@@ -4972,7 +4812,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "奥林索斯-克拉佐美奈",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aolinsuosi_city_kelazuomeinai_1788855106263",
                 startYear: -3000,
                 endYear: 2000,
@@ -4995,7 +4834,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [26.02296, 38.88948],
                     [26.28903, 38.78757],
                     [26.53194, 38.69413],
-                    [26.77, 38.36]
+                    [26.77, 38.36],
                 ]
             }
         },
@@ -5004,7 +4843,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "鹿儿岛城-金石馆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_satsuma_city_tsushima_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5020,7 +4858,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [129.74304, 32.46111],
                     [129.28711, 33.14215],
                     [129.32756, 33.4999],
-                    [129.2892, 34.2031]
+                    [129.2892, 34.2031],
                 ]
             }
         },
@@ -5029,7 +4867,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡那封-邓纳德",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kanafeng_city_dunadd_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5050,7 +4887,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-5.44556, 54.99099],
                     [-5.85457, 55.30911],
                     [-6.20178, 55.42278],
-                    [-5.4875, 56.0914]
+                    [-5.4875, 56.0914],
                 ]
             }
         },
@@ -5059,7 +4896,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安提瓦里-科孚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_antiwali_city_kefu_1788855035200",
                 startYear: -3000,
                 endYear: 2000,
@@ -5071,7 +4907,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [19.1, 42.1],
                     [18.91667, 41.5],
-                    [18.75, 41.0],
+                    [18.75, 41],
                     [18.74992, 41.04907],
                     [18.80516, 40.69977],
                     [18.82715, 40.56068],
@@ -5080,7 +4916,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.9, 40.1],
                     [19.21967, 39.7878],
                     [19.78558, 39.23512],
-                    [19.92, 39.62]
+                    [19.92, 39.62],
                 ]
             }
         },
@@ -5089,7 +4925,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "首里-赤木名城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shuri_city_akakinagusuku_1788088596517",
                 startYear: -3000,
                 endYear: 2000,
@@ -5103,7 +4938,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [127.83691, 25.98027],
                     [128.55131, 26.83368],
                     [129.92444, 28.48586],
-                    [129.674, 28.454]
+                    [129.674, 28.454],
                 ]
             }
         },
@@ -5112,7 +4947,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卑沙城-漂渝津",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_beishacheng_city_piaoyujin_1788088052998",
                 startYear: -3000,
                 endYear: 2000,
@@ -5124,14 +4958,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [121.95923, 39.44469],
                     [120.41667, 38.83333],
-                    [120.0, 38.25],
+                    [120, 38.25],
                     [119.75, 38.16667],
-                    [119.75, 38.0],
+                    [119.75, 38],
                     [119.66667, 37.91667],
                     [119.16667, 38.58333],
                     [118.97114, 38.55545],
                     [117.85034, 38.89103],
-                    [117.6, 39.02]
+                    [117.6, 39.02],
                 ]
             }
         },
@@ -5140,7 +4974,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "皮岛-蓬莱",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_pidao_city_dengzhou_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5157,7 +4990,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [122.33333, 38.75],
                     [121.83333, 38.41667],
                     [121.33333, 38.41667],
-                    [120.72, 37.82]
+                    [120.72, 37.82],
                 ]
             }
         },
@@ -5166,7 +4999,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "波尔图-里斯本",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_boertu_city_lisiben_1788230414749",
                 startYear: -3000,
                 endYear: 2000,
@@ -5179,12 +5011,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-8.62, 41.15],
                     [-9.41667, 40.83333],
                     [-9.41667, 40.33333],
-                    [-9.58333, 40.0],
+                    [-9.58333, 40],
                     [-10.08333, 39.83333],
                     [-10.08333, 39.16667],
-                    [-9.91667, 39.0],
+                    [-9.91667, 39],
                     [-9.91667, 38.5],
-                    [-9.13, 38.72]
+                    [-9.13, 38.72],
                 ]
             }
         },
@@ -5193,7 +5025,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "塔林-斯德哥尔摩",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_talin_city_sidedegelmo_1791964396680",
                 startYear: -3000,
                 endYear: 2000,
@@ -5209,7 +5040,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [22.19298, 59.66959],
                     [19.91128, 59.31207],
                     [19.61991, 58.97703],
-                    [18.06, 59.32]
+                    [18.06, 59.32],
                 ]
             }
         },
@@ -5218,7 +5049,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿尔及尔-巴伦西亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aerjier_city_valencia_1788228170790",
                 startYear: -3000,
                 endYear: 2000,
@@ -5235,7 +5065,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [0.75, 38.9],
                     [0.67618, 38.99085],
                     [0.28404, 38.99402],
-                    [-0.37, 39.47]
+                    [-0.37, 39.47],
                 ]
             }
         },
@@ -5244,7 +5074,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "休达-拉巴特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_xiuta_city_labate_1788230430319",
                 startYear: -3000,
                 endYear: 2000,
@@ -5259,7 +5088,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-8.01885, 34.5073],
                     [-7.7875, 34.07647],
                     [-7.1, 34.4],
-                    [-6.822, 34.024]
+                    [-6.822, 34.024],
                 ]
             }
         },
@@ -5268,7 +5097,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "塔兰托-锡拉库萨",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_talanduo_city_syracuse_1788228883605",
                 startYear: -3000,
                 endYear: 2000,
@@ -5286,7 +5114,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [16.04394, 37.81419],
                     [15.9, 37.7],
                     [15.346, 37.1486],
-                    [15.28, 37.07]
+                    [15.28, 37.07],
                 ]
             }
         },
@@ -5295,7 +5123,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安布拉基亚-安提瓦里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_anbulajiya_city_antiwali_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5319,9 +5146,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.82715, 40.56068],
                     [18.80516, 40.69977],
                     [18.74992, 41.04907],
-                    [18.75, 41.0],
+                    [18.75, 41],
                     [18.91667, 41.5],
-                    [19.1, 42.1]
+                    [19.1, 42.1],
                 ]
             }
         },
@@ -5330,7 +5157,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿克曼-瓦尔纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_akeman_city_waerna_1788229227224",
                 startYear: -3000,
                 endYear: 2000,
@@ -5342,13 +5168,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [30.34, 46.19],
                     [30.58333, 45.5],
-                    [30.58333, 45.0],
+                    [30.58333, 45],
                     [30.16667, 44.91667],
                     [29.83333, 44.41667],
                     [29.33333, 44.41667],
                     [28.91667, 43.66667],
                     [28.91667, 43.16667],
-                    [27.915, 43.214]
+                    [27.915, 43.214],
                 ]
             }
         },
@@ -5357,7 +5183,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "钓鱼岛-首里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_diaoyudao_city_shuri_1788088591571",
                 startYear: -3000,
                 endYear: 2000,
@@ -5371,7 +5196,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [123.83333, 25.41667],
                     [124.60555, 25.9109],
                     [127.37571, 25.98507],
-                    [127.72, 26.22]
+                    [127.72, 26.22],
                 ]
             }
         },
@@ -5380,7 +5205,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "冈丰城-赤尾木城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_okafu_city_akaogicheng_1788088438644",
                 startYear: -3000,
                 endYear: 2000,
@@ -5396,7 +5220,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [132.16667, 32.41667],
                     [131.75, 31.66667],
                     [131.50085, 31.37474],
-                    [131.0, 30.73]
+                    [131, 30.73],
                 ]
             }
         },
@@ -5405,7 +5229,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "根城-胜山馆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_genjo_city_katsuyama_1788229840080",
                 startYear: -3000,
                 endYear: 2000,
@@ -5422,7 +5245,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [140.35254, 41.36364],
                     [139.74422, 41.25918],
                     [138.91667, 41.16667],
-                    [140.0994, 41.8008]
+                    [140.0994, 41.8008],
                 ]
             }
         },
@@ -5431,7 +5254,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "青叶馆-根城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_xiantai_city_genjo_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5443,13 +5265,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [140.87, 38.27],
                     [141.41667, 37.83333],
-                    [141.91667, 38.0],
+                    [141.91667, 38],
                     [141.91667, 38.5],
                     [142.41667, 39.16667],
-                    [142.41667, 40.0],
+                    [142.41667, 40],
                     [142.25, 40.16667],
                     [142.25, 40.66667],
-                    [141.4644, 40.5047]
+                    [141.4644, 40.5047],
                 ]
             }
         },
@@ -5458,7 +5280,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "里加-斯德哥尔摩",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_liga_city_sidedegelmo_1791964390898",
                 startYear: -3000,
                 endYear: 2000,
@@ -5474,7 +5295,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [21.60461, 57.70708],
                     [20.6, 58.2],
                     [19.61991, 58.97703],
-                    [18.06, 59.32]
+                    [18.06, 59.32],
                 ]
             }
         },
@@ -5483,7 +5304,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "皮岛-开城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_pidao_city_kaesong_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5501,7 +5321,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [124.33333, 37.41667],
                     [125.25, 37.33333],
                     [125.5, 37.4],
-                    [126.55, 37.97]
+                    [126.55, 37.97],
                 ]
             }
         },
@@ -5510,7 +5330,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "波尔多-坎佩尔",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_bordeaux_city_kanpeier_1787911327972",
                 startYear: -3000,
                 endYear: 2000,
@@ -5526,10 +5345,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-1.91667, 45.83333],
                     [-2.5, 46.41667],
                     [-2.83333, 46.41667],
-                    [-3.0, 46.91667],
+                    [-3, 46.91667],
                     [-3.66667, 46.91667],
                     [-3.75, 47.16667],
-                    [-4.103, 47.995]
+                    [-4.103, 47.995],
                 ]
             }
         },
@@ -5538,7 +5357,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "罗马-卡利亚里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_luoma_city_cagliari_1788228676707",
                 startYear: -3000,
                 endYear: 2000,
@@ -5556,7 +5374,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [10.64076, 40.44194],
                     [10.14268, 39.66677],
                     [9.65, 38.9],
-                    [9.12, 39.22]
+                    [9.12, 39.22],
                 ]
             }
         },
@@ -5565,7 +5383,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "海门-珠崖",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hepu_city_yazhou_1788088912400",
                 startYear: -3000,
                 endYear: 2000,
@@ -5584,7 +5401,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [108.08333, 19.66667],
                     [108.08333, 18.5],
                     [108.4606, 18.4135],
-                    [108.98987, 18.43269]
+                    [108.98987, 18.43269],
                 ]
             }
         },
@@ -5593,7 +5410,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "临海-宁波",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_taizhou_zj_city_qingyuan_zj_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5611,7 +5427,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [122.87891, 30.34936],
                     [121.61333, 30.42956],
                     [121.92627, 30.25432],
-                    [121.54, 29.87]
+                    [121.54, 29.87],
                 ]
             }
         },
@@ -5620,7 +5436,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "科洛西-亚历山大",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kolossi_city_yalishanda_1788082849543",
                 startYear: -3000,
                 endYear: 2000,
@@ -5643,7 +5458,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [30.40838, 32.31607],
                     [30.32611, 32.17597],
                     [30.07251, 31.74408],
-                    [29.8925, 31.1975]
+                    [29.8925, 31.1975],
                 ]
             }
         },
@@ -5652,7 +5467,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "赫尔松涅斯-瓦尔纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_heersongniesi_city_waerna_1788229217887",
                 startYear: -3000,
                 endYear: 2000,
@@ -5670,7 +5484,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [29.33333, 44.41667],
                     [28.91667, 43.66667],
                     [28.91667, 43.16667],
-                    [27.915, 43.214]
+                    [27.915, 43.214],
                 ]
             }
         },
@@ -5679,7 +5493,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "汉堡-海牙",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hamburg_city_hague_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5702,7 +5515,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [6.38405, 53.68551],
                     [4.9, 53.5],
                     [4.30839, 52.51398],
-                    [4.3, 52.07]
+                    [4.3, 52.07],
                 ]
             }
         },
@@ -5711,7 +5524,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "钓鱼岛-艋舺",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_diaoyudao_city_mengjia_1788088648016",
                 startYear: -3000,
                 endYear: 2000,
@@ -5727,7 +5539,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.91874, 25.79681],
                     [121.50604, 25.42015],
                     [121.27533, 25.24394],
-                    [121.5, 25.03]
+                    [121.5, 25.03],
                 ]
             }
         },
@@ -5736,7 +5548,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "罗斯托克-哥德堡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_rostock_city_gothenburg_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5757,7 +5568,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [10.77316, 57.13748],
                     [10.69437, 57.37065],
                     [10.7333, 57.8],
-                    [11.97, 57.7]
+                    [11.97, 57.7],
                 ]
             }
         },
@@ -5766,7 +5577,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "特拉布宗-潘提卡彭",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_telabuzong_city_pantika_1788229306131",
                 startYear: -3000,
                 endYear: 2000,
@@ -5776,18 +5586,18 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [39.73, 41.0],
+                    [39.73, 41],
                     [39.44912, 41.42386],
                     [38.84336, 42.13432],
                     [38.77977, 42.20891],
                     [37.82738, 43.3259],
                     [37.58425, 43.61106],
                     [38.19048, 43.78095],
-                    [38.0, 44.08333],
+                    [38, 44.08333],
                     [37.66667, 44.08333],
-                    [37.0, 44.41667],
+                    [37, 44.41667],
                     [36.66667, 44.75],
-                    [36.47, 45.36]
+                    [36.47, 45.36],
                 ]
             }
         },
@@ -5796,7 +5606,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "格但斯克-哥本哈根",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_gdansk_city_gebenhagen_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5808,10 +5617,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [18.64, 54.35],
                     [19.16667, 54.91667],
-                    [19.0, 55.25],
+                    [19, 55.25],
                     [16.66667, 55.25],
                     [16.5, 55.08333],
-                    [16.0, 55.08333],
+                    [16, 55.08333],
                     [15.75, 54.83333],
                     [15.32442, 54.52058],
                     [15.03342, 54.92793],
@@ -5821,7 +5630,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [13.22981, 55.25281],
                     [12.97485, 55.2581],
                     [12.68255, 55.30558],
-                    [12.57, 55.68]
+                    [12.57, 55.68],
                 ]
             }
         },
@@ -5830,7 +5639,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "上海-临海",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shanghai_city_taizhou_zj_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5843,13 +5651,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.47, 31.23],
                     [122.25, 31.5],
                     [123.08333, 31.33333],
-                    [123.08333, 31.0],
+                    [123.08333, 31],
                     [123.25, 30.83333],
                     [123.25, 30.16667],
                     [122.58333, 29.33333],
                     [122.58333, 28.66667],
                     [122.25, 28.5],
-                    [121.42, 28.66]
+                    [121.42, 28.66],
                 ]
             }
         },
@@ -5858,7 +5666,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "海康-番禺",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_haikang_city_panyu_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5881,7 +5688,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [113.69339, 22.23826],
                     [113.75341, 22.47214],
                     [113.68515, 22.70399],
-                    [113.26, 23.12]
+                    [113.26, 23.12],
                 ]
             }
         },
@@ -5890,7 +5697,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "胜山馆-宗谷",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_katsuyama_city_zonggu_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -5905,13 +5711,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [139.33333, 43.08333],
                     [139.75, 43.33333],
                     [139.75, 43.66667],
-                    [140.0, 43.91667],
-                    [140.91667, 44.0],
+                    [140, 43.91667],
+                    [140.91667, 44],
                     [140.75, 44.16667],
                     [140.75, 44.66667],
                     [140.41667, 45.16667],
                     [141.58164, 45.79551],
-                    [141.93, 45.5]
+                    [141.93, 45.5],
                 ]
             }
         },
@@ -5920,7 +5726,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "奥里斯塔诺-热那亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_oristano_city_genoa_1792767190662",
                 startYear: -3000,
                 endYear: 2000,
@@ -5936,10 +5741,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [7.75, 41.5],
                     [8.08333, 41.66667],
                     [8.08333, 42.83333],
-                    [9.0, 43.58333],
+                    [9, 43.58333],
                     [9.41667, 43.66667],
-                    [9.0, 43.91667],
-                    [8.94, 44.4]
+                    [9, 43.91667],
+                    [8.94, 44.4],
                 ]
             }
         },
@@ -5948,7 +5753,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡法-特拉布宗",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kafa_city_telabuzong_1788229297236",
                 startYear: -3000,
                 endYear: 2000,
@@ -5961,16 +5765,16 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [35.38, 45.03],
                     [35.83333, 44.75],
                     [36.66667, 44.75],
-                    [37.0, 44.41667],
+                    [37, 44.41667],
                     [37.66667, 44.08333],
-                    [38.0, 44.08333],
+                    [38, 44.08333],
                     [38.19048, 43.78095],
                     [37.58425, 43.61106],
                     [37.82738, 43.3259],
                     [38.77977, 42.20891],
                     [38.84336, 42.13432],
                     [39.44912, 41.42386],
-                    [39.73, 41.0]
+                    [39.73, 41],
                 ]
             }
         },
@@ -5979,7 +5783,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "奥里斯塔诺-巴塞罗那",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_oristano_city_barcelona_1792767174297",
                 startYear: -3000,
                 endYear: 2000,
@@ -6001,7 +5804,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [4.0018, 40.53698],
                     [3.45052, 40.81707],
                     [2.98328, 41.05446],
-                    [2.17, 41.38]
+                    [2.17, 41.38],
                 ]
             }
         },
@@ -6010,7 +5813,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "骏府-姬路城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_junfucheng_city_himeji_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -6031,7 +5833,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [134.85992, 34.09816],
                     [134.393, 34.38878],
                     [134.67041, 34.7433],
-                    [134.6939, 34.8394]
+                    [134.6939, 34.8394],
                 ]
             }
         },
@@ -6040,7 +5842,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "的黎波里-锡拉库萨",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_deliboli_city_syracuse_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -6056,7 +5857,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [15.11619, 33.52585],
                     [14.7, 36],
                     [15.11696, 36.33357],
-                    [15.28, 37.07]
+                    [15.28, 37.07],
                 ]
             }
         },
@@ -6065,7 +5866,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "圣维森特-卡布弗里乌",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_saovicente_city_kabufoliwu_1788856078051",
                 startYear: -3000,
                 endYear: 2000,
@@ -6079,12 +5879,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-46.33333, -24.41667],
                     [-45.5, -24.41667],
                     [-45.33333, -24.25],
-                    [-45.0, -24.25],
+                    [-45, -24.25],
                     [-44.66667, -23.75],
                     [-43.83333, -23.58333],
                     [-43.66667, -23.41667],
                     [-41.66667, -23.41667],
-                    [-42.03, -22.88]
+                    [-42.03, -22.88],
                 ]
             }
         },
@@ -6093,7 +5893,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "拉古萨-拉文纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_ragusa_city_ravenna_1788855050388",
                 startYear: -3000,
                 endYear: 2000,
@@ -6120,8 +5919,8 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [13.83333, 44.08333],
                     [13.66667, 44.08333],
                     [13.33333, 44.41667],
-                    [13.0, 44.41667],
-                    [12.2, 44.41]
+                    [13, 44.41667],
+                    [12.2, 44.41],
                 ]
             }
         },
@@ -6130,7 +5929,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "牡丹社-平良",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mudan_city_gugudao_1788088791195",
                 startYear: -3000,
                 endYear: 2000,
@@ -6148,7 +5946,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [123.97797, 24.46965],
                     [124.58889, 24.80933],
                     [125.18921, 25.02588],
-                    [125.281, 24.805]
+                    [125.281, 24.805],
                 ]
             }
         },
@@ -6157,7 +5955,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "威尼斯-拉古萨",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_venice_city_ragusa_1788229383577",
                 startYear: -3000,
                 endYear: 2000,
@@ -6168,11 +5965,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [12.31, 45.44],
-                    [13.0, 45.08333],
+                    [13, 45.08333],
                     [13.5, 44.41667],
                     [13.66667, 44.41667],
                     [14.33333, 43.75],
-                    [15.0, 43.41667],
+                    [15, 43.41667],
                     [15.25, 43.16667],
                     [15.25, 42.83333],
                     [15.41667, 42.66667],
@@ -6184,7 +5981,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [16.3202, 43.08481],
                     [16.61125, 42.76362],
                     [17.84558, 42.42964],
-                    [18.09, 42.65]
+                    [18.09, 42.65],
                 ]
             }
         },
@@ -6193,7 +5990,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马特鲁港-佩鲁西姆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_matelugang_city_peiluximu_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -6207,11 +6003,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [27.66667, 31.91667],
                     [28.33333, 31.58333],
                     [28.83333, 31.58333],
-                    [29.0, 31.41667],
+                    [29, 31.41667],
                     [30.33333, 32.08333],
                     [32.16667, 32.08333],
                     [32.5, 31.75],
-                    [32.55, 31.04]
+                    [32.55, 31.04],
                 ]
             }
         },
@@ -6220,7 +6016,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "珠崖-海康",
                 type: "sea",
-                color: "#00ffff",
                 id: "road_city_yazhou_city_haikang_1780866737564",
                 startYear: -3000,
                 endYear: 2000,
@@ -6242,16 +6037,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [111.58333, 20.33333],
                     [110.91667, 20.66667],
                     [110.91667, 20.83333],
-                    [110.08, 20.91]
+                    [110.08, 20.91],
                 ]
             }
         },
         {
             type: "Feature",
             properties: {
-                name: "江户城-青叶城",
+                name: "江户城-青叶馆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_edo_city_xiantai_1788229831946",
                 startYear: -3000,
                 endYear: 2000,
@@ -6270,13 +6064,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [139.6167, 34.42538],
                     [139.91667, 34.5],
                     [140.5, 34.75],
-                    [141.0, 35.41667],
+                    [141, 35.41667],
                     [141.25, 35.5],
                     [141.25, 36.16667],
                     [141.08333, 36.5],
                     [141.41667, 36.83333],
                     [141.41667, 37.83333],
-                    [140.87, 38.27]
+                    [140.87, 38.27],
                 ]
             }
         },
@@ -6285,7 +6079,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "班加西-干地亚要塞",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_banjiaxi_city_knossos_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -6304,7 +6097,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [23.33997, 35.76326],
                     [24.17981, 35.68909],
                     [24.32334, 35.67641],
-                    [25.13, 35.33]
+                    [25.13, 35.33],
                 ]
             }
         },
@@ -6313,7 +6106,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "圣彼得堡-斯德哥尔摩",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shengpidebao_city_sidedegelmo_1787916465357",
                 startYear: -3000,
                 endYear: 2000,
@@ -6334,7 +6126,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [22.19298, 59.66959],
                     [19.91128, 59.31207],
                     [19.61991, 58.97703],
-                    [18.06, 59.32]
+                    [18.06, 59.32],
                 ]
             }
         },
@@ -6343,7 +6135,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "邓纳德-利默里克",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_dunadd_city_limerick_1792485054176",
                 startYear: -3000,
                 endYear: 2000,
@@ -6358,9 +6149,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-6.65444, 55.69857],
                     [-7.2886, 56.2687],
                     [-7.33333, 56.08333],
-                    [-7.08333, 56.0],
+                    [-7.08333, 56],
                     [-7.83333, 55.91667],
-                    [-8.0, 55.75],
+                    [-8, 55.75],
                     [-8.66667, 55.75],
                     [-9.08333, 55.5],
                     [-9.33333, 54.75],
@@ -6378,7 +6169,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-9.31413, 52.57845],
                     [-9.09085, 52.63593],
                     [-8.94522, 52.66832],
-                    [-8.6957, 52.6664]
+                    [-8.6957, 52.6664],
                 ]
             }
         },
@@ -6387,7 +6178,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "班加西-马耳他",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_malta_city_banjiaxi_1788228984837",
                 startYear: -3000,
                 endYear: 2000,
@@ -6402,7 +6192,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [19.48165, 34.23144],
                     [17.67975, 34.8979],
                     [14.7, 36],
-                    [14.44, 35.9]
+                    [14.44, 35.9],
                 ]
             }
         },
@@ -6411,7 +6201,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿尔及尔-休达",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aerjier_city_xiuta_1788228157971",
                 startYear: -3000,
                 endYear: 2000,
@@ -6432,7 +6221,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-3.5, 35.91667],
                     [-3.66667, 35.75],
                     [-4.5, 35.75],
-                    [-5.31, 35.89]
+                    [-5.31, 35.89],
                 ]
             }
         },
@@ -6441,7 +6230,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "囊哈儿-宗谷",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nanghar_city_zonggu_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -6456,7 +6244,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [141, 49],
                     [140.89813, 45.8379],
                     [141.58164, 45.79551],
-                    [141.93, 45.5]
+                    [141.93, 45.5],
                 ]
             }
         },
@@ -6465,7 +6253,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "热那亚-巴塞罗那",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_genoa_city_barcelona_1788228736094",
                 startYear: -3000,
                 endYear: 2000,
@@ -6483,13 +6270,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [5.83333, 42.58333],
                     [5.66667, 42.75],
                     [5.16667, 42.75],
-                    [5.0, 42.91667],
-                    [4.0, 43.08333],
+                    [5, 42.91667],
+                    [4, 43.08333],
                     [3.58333, 42.83333],
                     [3.58333, 41.66667],
                     [3.33333, 41.41667],
                     [2.33333, 40.91667],
-                    [2.17, 41.38]
+                    [2.17, 41.38],
                 ]
             }
         },
@@ -6498,7 +6285,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "利默里克-坎佩尔",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_limerick_city_kanpeier_1788230317551",
                 startYear: -3000,
                 endYear: 2000,
@@ -6527,7 +6313,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-5.5943, 48.761],
                     [-5.5, 48.6667],
                     [-5, 48],
-                    [-4.103, 47.995]
+                    [-4.103, 47.995],
                 ]
             }
         },
@@ -6536,7 +6322,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "哥本哈根-里加",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_gebenhagen_city_liga_1787918238317",
                 startYear: -3000,
                 endYear: 2000,
@@ -6560,7 +6345,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [21.60461, 57.70708],
                     [22.6593, 57.8769],
                     [23.99414, 57.11239],
-                    [24.1, 56.95]
+                    [24.1, 56.95],
                 ]
             }
         },
@@ -6569,7 +6354,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "奥拉-索姆纳特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aola_city_suomunate_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -6580,18 +6364,18 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [65.51, 25.51],
-                    [65.0, 24.91667],
-                    [66.0, 25.08333],
+                    [65, 24.91667],
+                    [66, 25.08333],
                     [66.08333, 24.5],
                     [66.66667, 24.41667],
-                    [67.0, 23.58333],
+                    [67, 23.58333],
                     [67.16667, 23.41667],
                     [67.66667, 23.41667],
                     [68.16667, 22.75],
                     [68.41667, 22.66667],
-                    [68.41667, 22.0],
-                    [70.0, 20.41667],
-                    [70.4014, 20.8878]
+                    [68.41667, 22],
+                    [70, 20.41667],
+                    [70.4014, 20.8878],
                 ]
             }
         },
@@ -6600,7 +6384,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "波尔多-波尔图",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_bordeaux_city_boertu_1788230411252",
                 startYear: -3000,
                 endYear: 2000,
@@ -6616,20 +6399,20 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-2.16667, 43.91667],
                     [-3.16667, 43.91667],
                     [-3.33333, 44.08333],
-                    [-4.0, 44.08333],
+                    [-4, 44.08333],
                     [-4.16667, 43.91667],
                     [-4.83333, 43.91667],
-                    [-5.0, 44.08333],
-                    [-7.0, 44.08333],
+                    [-5, 44.08333],
+                    [-7, 44.08333],
                     [-7.16667, 44.25],
                     [-8.5, 44.25],
                     [-8.83333, 43.91667],
                     [-9.33333, 43.91667],
                     [-9.75, 43.66667],
                     [-9.75, 42.66667],
-                    [-9.41667, 42.0],
-                    [-9.25, 41.0],
-                    [-8.62, 41.15]
+                    [-9.41667, 42],
+                    [-9.25, 41],
+                    [-8.62, 41.15],
                 ]
             }
         },
@@ -6638,7 +6421,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "吉大港-丹塔普拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jidagang_city_danta_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -6659,7 +6441,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [86.33333, 19.58333],
                     [85.33333, 19.08333],
                     [84.33333, 17.91667],
-                    [84.0, 18.4]
+                    [84, 18.4],
                 ]
             }
         },
@@ -6668,7 +6450,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马尼拉-承天",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_manila_city_tainan_1787917644227",
                 startYear: -3000,
                 endYear: 2000,
@@ -6685,7 +6466,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [120, 19],
                     [120, 22.1],
                     [120.14099, 22.70211],
-                    [120.2, 22.99]
+                    [120.2, 22.99],
                 ]
             }
         },
@@ -6694,7 +6475,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "爱丁堡-都柏林",
                 type: "sea",
-                color: "#00ffff",
                 id: "road_city_aidingbao_city_dublin_1785580896181",
                 startYear: -3000,
                 endYear: 2000,
@@ -6731,7 +6511,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-5.2, 54.8],
                     [-5.24769, 54.66648],
                     [-5.48998, 53.98807],
-                    [-6.26, 53.34]
+                    [-6.26, 53.34],
                 ]
             }
         },
@@ -6740,7 +6520,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "德尔纳特-霍洛",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_deernate_city_huoluo_1787917619435",
                 startYear: -3000,
                 endYear: 2000,
@@ -6753,7 +6532,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [127.3832, 0.7852],
                     [126.83333, 1.41667],
                     [126.66667, 1.91667],
-                    [126.0, 1.91667],
+                    [126, 1.91667],
                     [125.91667, 1.5],
                     [125.66667, 1.41667],
                     [125.58333, 1.66667],
@@ -6774,7 +6553,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [123.16667, 6.91667],
                     [122.75, 6.83333],
                     [122.58333, 6.16667],
-                    [121.0008, 6.0531]
+                    [121.0008, 6.0531],
                 ]
             }
         },
@@ -6783,7 +6562,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "霍洛-马尼拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_huoluo_city_manila_1787917632932",
                 startYear: -3000,
                 endYear: 2000,
@@ -6810,7 +6588,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.93774, 13.89274],
                     [120.2728, 14.09763],
                     [120.53513, 14.26239],
-                    [120.9804, 14.5904]
+                    [120.9804, 14.5904],
                 ]
             }
         },
@@ -6819,7 +6597,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "加莱-波尔多",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_calais_city_bordeaux_1788230407457",
                 startYear: -3000,
                 endYear: 2000,
@@ -6852,18 +6629,18 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-5.5, 48.91667],
                     [-5.58333, 48.16667],
                     [-5.33333, 47.75],
-                    [-5.0, 47.75],
+                    [-5, 47.75],
                     [-4.83333, 47.41667],
                     [-4.16667, 47.41667],
                     [-3.75, 47.16667],
                     [-3.66667, 46.91667],
-                    [-3.0, 46.91667],
+                    [-3, 46.91667],
                     [-2.83333, 46.41667],
                     [-2.5, 46.41667],
                     [-1.91667, 45.83333],
                     [-1.75, 45.5],
                     [-1.75, 44.66667],
-                    [-0.57, 44.83]
+                    [-0.57, 44.83],
                 ]
             }
         },
@@ -6872,7 +6649,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡布弗里乌-萨尔瓦多",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kabufoliwu_city_salvador_1788856085585",
                 startYear: -3000,
                 endYear: 2000,
@@ -6886,7 +6662,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-41.33333, -22.58333],
                     [-40.58333, -22.33333],
                     [-40.58333, -21.5],
-                    [-40.08333, -21.0],
+                    [-40.08333, -21],
                     [-39.75, -20.16667],
                     [-39.41667, -19.83333],
                     [-39.41667, -18.66667],
@@ -6897,7 +6673,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-38.75, -16.66667],
                     [-38.58333, -16.5],
                     [-38.58333, -13.5],
-                    [-38.51, -12.97]
+                    [-38.51, -12.97],
                 ]
             }
         },
@@ -6906,7 +6682,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阇槃-番禺",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_dupan_city_panyu_1788088985342",
                 startYear: -3000,
                 endYear: 2000,
@@ -6921,7 +6696,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [109.58333, 14.66667],
                     [109.41667, 14.83333],
                     [109.41667, 15.83333],
-                    [109.0, 15.91667],
+                    [109, 15.91667],
                     [108.91667, 16.33333],
                     [108.41667, 16.83333],
                     [107.83333, 17.08333],
@@ -6935,7 +6710,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [113.69339, 22.23826],
                     [113.75341, 22.47214],
                     [113.68515, 22.70399],
-                    [113.26, 23.12]
+                    [113.26, 23.12],
                 ]
             }
         },
@@ -6944,7 +6719,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "巴士拉-奥拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_bashila_city_aola_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -6959,10 +6733,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [49.16667, 29.75],
                     [49.5, 29.75],
                     [49.75, 29.5],
-                    [49.75, 29.0],
-                    [50.0, 28.91667],
+                    [49.75, 29],
+                    [50, 28.91667],
                     [50.58333, 28.33333],
-                    [51.0, 27.41667],
+                    [51, 27.41667],
                     [51.4475, 27.5435],
                     [52.36675, 27.08314],
                     [53.3693, 26.5789],
@@ -6987,7 +6761,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [63.16667, 24.91667],
                     [63.33333, 24.75],
                     [64.83333, 24.75],
-                    [65.51, 25.51]
+                    [65.51, 25.51],
                 ]
             }
         },
@@ -6996,7 +6770,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "圣奥古斯丁-圣多明各",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shengaogusiding_city_shengduomingge_1787917913579",
                 startYear: -3000,
                 endYear: 2000,
@@ -7016,10 +6789,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-79.41667, 27.16667],
                     [-79.16667, 27.25],
                     [-78.83333, 27.75],
-                    [-78.0, 27.75],
+                    [-78, 27.75],
                     [-77.83333, 27.58333],
                     [-77.5, 27.58333],
-                    [-76.58333, 27.0],
+                    [-76.58333, 27],
                     [-76.58333, 26.16667],
                     [-76.33333, 26.08333],
                     [-75.75, 25.5],
@@ -7027,10 +6800,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-75.5, 25.25],
                     [-74.83333, 24.58333],
                     [-74.08333, 24.5],
-                    [-74.0, 23.58333],
+                    [-74, 23.58333],
                     [-73.33333, 23.58333],
                     [-73.25, 23.16667],
-                    [-73.0, 22.91667],
+                    [-73, 22.91667],
                     [-72.5, 22.91667],
                     [-72.33333, 22.41667],
                     [-71.5, 22.41667],
@@ -7040,7 +6813,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-68.61511, 17.95261],
                     [-69.23035, 18.32846],
                     [-69.86206, 18.39623],
-                    [-69.8868, 18.4715]
+                    [-69.8868, 18.4715],
                 ]
             }
         },
@@ -7049,7 +6822,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "巴拿马-阿卡普尔科",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_banama_city_acapulco_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -7062,25 +6834,25 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-79.4858, 9.0056],
                     [-79.5, 7.91667],
                     [-79.58333, 7.16667],
-                    [-80.0, 7.08333],
+                    [-80, 7.08333],
                     [-80.16667, 6.91667],
                     [-82.16667, 6.91667],
                     [-82.33333, 7.08333],
                     [-82.66667, 7.08333],
                     [-82.75, 7.5],
-                    [-83.0, 7.75],
+                    [-83, 7.75],
                     [-83.33333, 7.75],
                     [-83.66667, 8.08333],
-                    [-84.0, 8.08333],
+                    [-84, 8.08333],
                     [-84.41667, 8.5],
                     [-84.5, 9.08333],
                     [-84.83333, 9.08333],
-                    [-85.0, 9.25],
+                    [-85, 9.25],
                     [-85.66667, 9.25],
-                    [-86.0, 9.58333],
+                    [-86, 9.58333],
                     [-86.16667, 9.58333],
-                    [-86.41667, 10.0],
-                    [-86.41667, 11.0],
+                    [-86.41667, 10],
+                    [-86.41667, 11],
                     [-86.66667, 11.25],
                     [-86.83333, 11.25],
                     [-87.25, 11.66667],
@@ -7088,24 +6860,24 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-88.33333, 12.75],
                     [-89.33333, 12.91667],
                     [-89.5, 13.1],
-                    [-90.0, 13.08333],
+                    [-90, 13.08333],
                     [-90.83333, 13.58333],
                     [-91.83333, 13.58333],
                     [-92.5, 14.08333],
                     [-92.66667, 14.08333],
                     [-94.16667, 15.58333],
                     [-94.5, 15.75],
-                    [-95.0, 15.75],
+                    [-95, 15.75],
                     [-95.16667, 15.58333],
                     [-95.5, 15.58333],
                     [-96.16667, 15.25],
-                    [-97.0, 15.25],
+                    [-97, 15.25],
                     [-97.16667, 15.41667],
                     [-98.16667, 15.58333],
                     [-98.66667, 15.91667],
-                    [-99.0, 15.91667],
+                    [-99, 15.91667],
                     [-99.33333, 16.25],
-                    [-99.92, 16.85]
+                    [-99.92, 16.85],
                 ]
             }
         },
@@ -7114,7 +6886,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "维斯比-柯尼斯堡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_weishibi_city_kenisibao_1793004975800",
                 startYear: -3000,
                 endYear: 2000,
@@ -7131,7 +6902,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.59543, 55.77274],
                     [19, 55],
                     [19.94139, 54.61513],
-                    [20.51, 54.71]
+                    [20.51, 54.71],
                 ]
             }
         },
@@ -7140,7 +6911,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "格但斯克-维斯比",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_gdansk_city_weishibi_1793004982465",
                 startYear: -3000,
                 endYear: 2000,
@@ -7157,7 +6927,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.54802, 55.85921],
                     [18.11853, 56.64503],
                     [17.7037, 57.39903],
-                    [18.29, 57.64]
+                    [18.29, 57.64],
                 ]
             }
         },
@@ -7166,7 +6936,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "北大年-淡马锡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_pattani_city_danmaxi_1793119449342",
                 startYear: -3000,
                 endYear: 2000,
@@ -7180,7 +6949,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [101.91667, 7.16667],
                     [102.33333, 6.75],
                     [102.5, 6.75],
-                    [103.0, 6.25],
+                    [103, 6.25],
                     [103.33333, 6.25],
                     [103.58333, 5.5],
                     [104.08333, 5.16667],
@@ -7192,7 +6961,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [104.91667, 2.16667],
                     [104.66667, 2.08333],
                     [104.48229, 1.34131],
-                    [103.85, 1.29]
+                    [103.85, 1.29],
                 ]
             }
         },
@@ -7201,7 +6970,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "洞海城-刺桐",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_donghai_city_qingjingsi_1793164989422",
                 startYear: -3000,
                 endYear: 2000,
@@ -7219,16 +6987,16 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [110.3832, 18.3614],
                     [114.1, 21.7],
                     [114.5, 21.58333],
-                    [115.0, 22.25],
+                    [115, 22.25],
                     [115.83333, 22.25],
                     [116.5, 22.58333],
                     [116.83333, 22.58333],
                     [117.16667, 23.08333],
-                    [118.0, 23.41667],
+                    [118, 23.41667],
                     [118.5, 24.08333],
-                    [119.0, 24.25],
+                    [119, 24.25],
                     [119.16667, 24.58333],
-                    [118.5833, 24.9]
+                    [118.5833, 24.9],
                 ]
             }
         },
@@ -7237,7 +7005,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "府内-星主厅",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_funei_city_xingzhuting_1793164989439",
                 startYear: -3000,
                 endYear: 2000,
@@ -7259,7 +7026,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [127.63316, 32.92518],
                     [127.10358, 33.55513],
                     [126.64315, 33.73542],
-                    [126.5215, 33.5131]
+                    [126.5215, 33.5131],
                 ]
             }
         },
@@ -7268,7 +7035,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "赤间关-顺天",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_chijianguan_city_suncheon_k_1793164989456",
                 startYear: -3000,
                 endYear: 2000,
@@ -7284,7 +7050,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [129.10062, 34.04667],
                     [128.16925, 34.40691],
                     [127.82044, 34.71001],
-                    [127.4991, 34.9652]
+                    [127.4991, 34.9652],
                 ]
             }
         },
@@ -7293,7 +7059,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "镰仓-冈丰城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kamakura_city_okafu_1793164989473",
                 startYear: -3000,
                 endYear: 2000,
@@ -7310,7 +7075,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [135.88989, 33.32823],
                     [135.1, 33.2],
                     [134.23645, 33.10535],
-                    [133.5756, 33.5972]
+                    [133.5756, 33.5972],
                 ]
             }
         },
@@ -7319,7 +7084,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "冶城-牡丹社",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_fuzhou_city_mudan_1793164989488",
                 startYear: -3000,
                 endYear: 2000,
@@ -7337,7 +7101,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.87732, 23.01402],
                     [120.14099, 22.70211],
                     [120.28931, 22.33685],
-                    [120.8333, 22.2]
+                    [120.8333, 22.2],
                 ]
             }
         },
@@ -7346,7 +7110,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "推罗-佩鲁西姆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_tuile_city_peiluximu_1793164989506",
                 startYear: -3000,
                 endYear: 2000,
@@ -7362,7 +7125,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.08333, 32.16667],
                     [33.66667, 31.75],
                     [32.5, 31.75],
-                    [32.55, 31.04]
+                    [32.55, 31.04],
                 ]
             }
         },
@@ -7371,7 +7134,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "加沙-拉塔基亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jiasa_city_latajiya_1793164989523",
                 startYear: -3000,
                 endYear: 2000,
@@ -7385,10 +7147,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.08333, 32.16667],
                     [34.41667, 32.83333],
                     [34.41667, 33.16667],
-                    [34.91667, 34.0],
+                    [34.91667, 34],
                     [34.91667, 34.33333],
-                    [35.41667, 35.0],
-                    [35.79, 35.52]
+                    [35.41667, 35],
+                    [35.79, 35.52],
                 ]
             }
         },
@@ -7397,7 +7159,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿卡-亚历山大",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_ake_city_yalishanda_1793164989541",
                 startYear: -3000,
                 endYear: 2000,
@@ -7414,7 +7175,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [32.88603, 32.33766],
                     [32.1, 31.7],
                     [30.07251, 31.74408],
-                    [29.8925, 31.1975]
+                    [29.8925, 31.1975],
                 ]
             }
         },
@@ -7423,7 +7184,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马特鲁港-罗得城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_matelugang_city_rhodes_1793164989558",
                 startYear: -3000,
                 endYear: 2000,
@@ -7450,7 +7210,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [27.74596, 35.13191],
                     [27.33718, 35.93162],
                     [27.2, 36.2],
-                    [28.22, 36.44]
+                    [28.22, 36.44],
                 ]
             }
         },
@@ -7459,7 +7219,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "米利都-雅典",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_miletus_city_yadian_1793164989569",
                 startYear: -3000,
                 endYear: 2000,
@@ -7489,7 +7248,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.15979, 37.35615],
                     [23.9657, 37.5496],
                     [23.88591, 37.61615],
-                    [23.72, 37.98]
+                    [23.72, 37.98],
                 ]
             }
         },
@@ -7498,7 +7257,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "米利都-佩鲁西姆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_miletus_city_peiluximu_1793164989588",
                 startYear: -3000,
                 endYear: 2000,
@@ -7525,7 +7283,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [30.766, 32.92511],
                     [32.1, 31.7],
                     [32.39076, 31.72772],
-                    [32.55, 31.04]
+                    [32.55, 31.04],
                 ]
             }
         },
@@ -7534,7 +7292,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "塔林-柯尼斯堡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_talin_city_kenisibao_1793164989629",
                 startYear: -3000,
                 endYear: 2000,
@@ -7553,7 +7310,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [20.31196, 55.76764],
                     [19, 55],
                     [19.94139, 54.61513],
-                    [20.51, 54.71]
+                    [20.51, 54.71],
                 ]
             }
         },
@@ -7562,7 +7319,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "圣彼得堡-柯尼斯堡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shengpidebao_city_kenisibao_1793164989650",
                 startYear: -3000,
                 endYear: 2000,
@@ -7586,7 +7342,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [20.31196, 55.76764],
                     [19, 55],
                     [19.94139, 54.61513],
-                    [20.51, 54.71]
+                    [20.51, 54.71],
                 ]
             }
         },
@@ -7595,7 +7351,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "哥德堡-什切青",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_gothenburg_city_shiqieqing_1793164989667",
                 startYear: -3000,
                 endYear: 2000,
@@ -7621,7 +7376,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [13.9, 55],
                     [14.18155, 54.66213],
                     [14.4, 54.4],
-                    [14.55, 53.43]
+                    [14.55, 53.43],
                 ]
             }
         },
@@ -7630,7 +7385,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "什切青-里加",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shiqieqing_city_liga_1793164989692",
                 startYear: -3000,
                 endYear: 2000,
@@ -7645,7 +7399,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [15.32442, 54.52058],
                     [15.75, 54.83333],
                     [15.41667, 54.83333],
-                    [15.58333, 55.0],
+                    [15.58333, 55],
                     [15.66667, 55.75],
                     [16.83333, 55.91667],
                     [16.74077, 55.93291],
@@ -7655,7 +7409,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [21.60461, 57.70708],
                     [22.6593, 57.8769],
                     [23.99414, 57.11239],
-                    [24.1, 56.95]
+                    [24.1, 56.95],
                 ]
             }
         },
@@ -7664,7 +7418,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡法-君士坦丁堡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kafa_city_junshitandingbao_1793164989723",
                 startYear: -3000,
                 endYear: 2000,
@@ -7685,7 +7438,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [30.01163, 43.80814],
                     [29.59641, 42.5965],
                     [29.13243, 41.24245],
-                    [28.97, 41.01]
+                    [28.97, 41.01],
                 ]
             }
         },
@@ -7694,7 +7447,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "希波-奥里斯塔诺",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_xibo_city_oristano_1793164989738",
                 startYear: -3000,
                 endYear: 2000,
@@ -7713,7 +7465,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [7.531, 38.98023],
                     [7.54593, 39.7413],
                     [7.98426, 40.28064],
-                    [8.59, 39.9]
+                    [8.59, 39.9],
                 ]
             }
         },
@@ -7722,7 +7474,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "布佳亚-卡利亚里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_bujiaya_city_cagliari_1793164989770",
                 startYear: -3000,
                 endYear: 2000,
@@ -7741,7 +7492,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [7.51979, 38.4088],
                     [8.4301, 38.6096],
                     [8.9959, 38.8624],
-                    [9.12, 39.22]
+                    [9.12, 39.22],
                 ]
             }
         },
@@ -7750,7 +7501,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "布佳亚-巴伦西亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_bujiaya_city_valencia_1793164989786",
                 startYear: -3000,
                 endYear: 2000,
@@ -7775,7 +7525,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [1.12207, 39.25894],
                     [0.82913, 39.29394],
                     [0.387, 39.34676],
-                    [-0.37, 39.47]
+                    [-0.37, 39.47],
                 ]
             }
         },
@@ -7784,7 +7534,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "羊河-潘提卡彭",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yanghe_city_pantika_1793165311224",
                 startYear: -3000,
                 endYear: 2000,
@@ -7819,7 +7568,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [35.33333, 44.41667],
                     [35.83333, 44.75],
                     [36.66667, 44.75],
-                    [36.47, 45.36]
+                    [36.47, 45.36],
                 ]
             }
         },
@@ -7828,7 +7577,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡里斯托斯-罗得城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kalisituosi_city_rhodes_1793165311235",
                 startYear: -3000,
                 endYear: 2000,
@@ -7848,7 +7596,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [26.63587, 37.00899],
                     [27.00278, 36.54711],
                     [27.40186, 36.52023],
-                    [28.22, 36.44]
+                    [28.22, 36.44],
                 ]
             }
         },
@@ -7857,7 +7605,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "里贝拉-特尔德",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_ribeira_city_telde_1793285956303",
                 startYear: -3000,
                 endYear: 2000,
@@ -7872,7 +7619,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-20.5422, 18.0164],
                     [-18, 21],
                     [-15.12817, 27.99925],
-                    [-15.42, 28.0]
+                    [-15.42, 28],
                 ]
             }
         },
@@ -7881,7 +7628,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "特尔德-加的斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_telde_city_jiadisi_1793285978510",
                 startYear: -3000,
                 endYear: 2000,
@@ -7891,29 +7637,29 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [-15.42, 28.0],
+                    [-15.42, 28],
                     [-14.83333, 28.58333],
                     [-14.58333, 29.16667],
                     [-14.08333, 29.66667],
-                    [-14.0, 29.91667],
+                    [-14, 29.91667],
                     [-13.16667, 29.91667],
                     [-13.08333, 28.66667],
                     [-13.41667, 28.5],
                     [-13.16667, 28.41667],
-                    [-13.0, 28.58333],
-                    [-12.0, 28.75],
+                    [-13, 28.58333],
+                    [-12, 28.75],
                     [-11.33333, 29.41667],
                     [-11.16667, 29.41667],
                     [-10.41667, 30.16667],
                     [-10.41667, 31.83333],
                     [-9.75, 32.66667],
-                    [-9.75, 33.0],
-                    [-9.0, 33.75],
+                    [-9.75, 33],
+                    [-9, 33.75],
                     [-7.66667, 34.25],
                     [-7.08333, 34.83333],
                     [-6.58333, 35.83333],
-                    [-6.58333, 36.0],
-                    [-6.28, 36.52]
+                    [-6.58333, 36],
+                    [-6.28, 36.52],
                 ]
             }
         },
@@ -7922,7 +7668,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安格拉-哈瓦那",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_angra_city_havana_1793100000000",
                 startYear: -3000,
                 endYear: 2000,
@@ -7983,7 +7728,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-81.825, 24.2187],
                     [-82.06567, 24.07713],
                     [-82.47828, 23.8344],
-                    [-82.38, 23.13]
+                    [-82.38, 23.13],
                 ]
             }
         },
@@ -7992,7 +7737,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "利默里克-安格拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_limerick_city_angra_1793100000000",
                 startYear: -3000,
                 endYear: 2000,
@@ -8031,7 +7775,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-20.72917, 39.32709],
                     [-22.3269, 37.85262],
                     [-26.43285, 38.16695],
-                    [-27.22, 38.66]
+                    [-27.22, 38.66],
                 ]
             }
         },
@@ -8040,7 +7784,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "龙溪-澎湖",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_zhangzhou_city_penghu_1793608020997",
                 startYear: -3000,
                 endYear: 2000,
@@ -8054,7 +7797,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [118.13736, 24.39213],
                     [118.34681, 24.018],
                     [118.72413, 23.58266],
-                    [119.5, 23.5]
+                    [119.5, 23.5],
                 ]
             }
         },
@@ -8063,7 +7806,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "古里-索姆纳特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_guli_city_suomunate_1793608167941",
                 startYear: -3000,
                 endYear: 2000,
@@ -8089,7 +7831,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [72.4, 19],
                     [72.37793, 20.06625],
                     [70.86456, 20.17714],
-                    [70.4014, 20.8878]
+                    [70.4014, 20.8878],
                 ]
             }
         },
@@ -8098,7 +7840,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马六甲-亚齐",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_malacca_city_yaqi_1793608265015",
                 startYear: -3000,
                 endYear: 2000,
@@ -8119,7 +7860,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [97.83333, 5.75],
                     [96.5, 5.75],
                     [96.16667, 6.08333],
-                    [95.32, 5.55]
+                    [95.32, 5.55],
                 ]
             }
         },
@@ -8128,7 +7869,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "加勒-古里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jiale_city_guli_1793608286402",
                 startYear: -3000,
                 endYear: 2000,
@@ -8146,13 +7886,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [79.16667, 8.75],
                     [78.66667, 8.75],
                     [78.41667, 8.16667],
-                    [78.0, 7.75],
+                    [78, 7.75],
                     [76.83333, 7.75],
                     [76.08333, 8.5],
                     [75.75, 9.16667],
                     [75.75, 9.83333],
                     [75.41667, 10.33333],
-                    [75.78, 11.25]
+                    [75.78, 11.25],
                 ]
             }
         },
@@ -8161,7 +7901,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "亚齐-直通",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yaqi_city_thaton_1793608420396",
                 startYear: -3000,
                 endYear: 2000,
@@ -8182,26 +7921,26 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [99.16667, 6.08333],
                     [98.83333, 6.08333],
                     [98.58333, 6.33333],
-                    [98.58333, 7.0],
+                    [98.58333, 7],
                     [97.75, 7.16667],
-                    [97.75, 8.0],
+                    [97.75, 8],
                     [97.08333, 8.16667],
                     [97.08333, 9.16667],
                     [97.41667, 9.66667],
-                    [97.41667, 10.0],
+                    [97.41667, 10],
                     [97.25, 10.16667],
                     [97.25, 10.83333],
                     [97.41667, 11.16667],
                     [96.91667, 11.5],
                     [96.91667, 12.16667],
                     [97.25, 12.66667],
-                    [97.25, 13.0],
+                    [97.25, 13],
                     [97.58333, 13.33333],
                     [97.25, 13.83333],
                     [97.25, 15.16667],
                     [97.08333, 15.33333],
                     [97.08333, 15.83333],
-                    [97.6333, 16.5333]
+                    [97.6333, 16.5333],
                 ]
             }
         },
@@ -8210,7 +7949,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿达纳-安提俄基亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_adana_city_antiejiya_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -8220,9 +7958,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [35.3213, 37.0],
+                    [35.3213, 37],
                     [35.7, 35.9],
-                    [36.16, 36.2]
+                    [36.16, 36.2],
                 ]
             }
         },
@@ -8231,7 +7969,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "拉塔基亚-阿达纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_latajiya_city_adana_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -8244,7 +7981,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [35.79, 35.52],
                     [35.25, 36.16667],
                     [34.91667, 36.16667],
-                    [35.3213, 37.0]
+                    [35.3213, 37],
                 ]
             }
         },
@@ -8253,7 +7990,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "瀑池-汉城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_haeju_city_hanseong_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -8265,7 +8001,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [125.71, 38.03],
                     [125.91156, 36.89719],
-                    [126.98, 37.52]
+                    [126.98, 37.52],
                 ]
             }
         },
@@ -8274,7 +8010,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "泗沘-汉城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_sabi_city_hanseong_1788088207516",
                 startYear: -3000,
                 endYear: 2000,
@@ -8288,7 +8023,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [126.47186, 36.018],
                     [125.87585, 36.49639],
                     [125.91156, 36.89719],
-                    [126.98, 37.52]
+                    [126.98, 37.52],
                 ]
             }
         },
@@ -8297,7 +8032,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "瀑池-泗沘",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_haeju_city_sabi_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -8310,7 +8044,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [125.71, 38.03],
                     [125.87585, 36.49639],
                     [126.47186, 36.018],
-                    [126.94977, 36.25535]
+                    [126.94977, 36.25535],
                 ]
             }
         },
@@ -8319,7 +8053,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "特洛伊-佩拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_teluoyi_city_salonica_1788855194386",
                 startYear: -3000,
                 endYear: 2000,
@@ -8336,7 +8069,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.50296, 39.7951],
                     [23.38416, 39.9129],
                     [22.87197, 40.25275],
-                    [22.5192, 40.76]
+                    [22.5192, 40.76],
                 ]
             }
         },
@@ -8345,7 +8078,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "鸣梁-泗沘",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jindo_city_sabi_1788088191410",
                 startYear: -3000,
                 endYear: 2000,
@@ -8359,7 +8091,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [125.57373, 34.15273],
                     [125.77423, 35.75097],
                     [126.47186, 36.018],
-                    [126.94977, 36.25535]
+                    [126.94977, 36.25535],
                 ]
             }
         },
@@ -8368,7 +8100,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "佩拉-雅典",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_salonica_city_yadian_1788855123167",
                 startYear: -3000,
                 endYear: 2000,
@@ -8392,7 +8123,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.1578, 37.5703],
                     [24.06365, 37.6215],
                     [23.88591, 37.61615],
-                    [23.72, 37.98]
+                    [23.72, 37.98],
                 ]
             }
         },
@@ -8401,7 +8132,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "文登-开城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_wendeng_city_kaesong_1788088151382",
                 startYear: -3000,
                 endYear: 2000,
@@ -8416,7 +8146,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [122.72342, 36.84163],
                     [123.38706, 37.22935],
                     [125.5, 37.4],
-                    [126.55, 37.97]
+                    [126.55, 37.97],
                 ]
             }
         },
@@ -8425,7 +8155,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "耽摩栗底-吉大港",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_danmoledi_city_jidagang_1787912080523",
                 startYear: -3000,
                 endYear: 2000,
@@ -8441,7 +8170,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [89.66667, 21.41667],
                     [90.83333, 21.41667],
                     [91.33333, 21.75],
-                    [91.8325, 22.335]
+                    [91.8325, 22.335],
                 ]
             }
         },
@@ -8450,7 +8179,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "淡马锡-巨港",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_danmaxi_city_sanfoqi_1788932625811",
                 startYear: -3000,
                 endYear: 2000,
@@ -8464,7 +8192,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [104.48229, 1.34131],
                     [105.0066, 1.12676],
                     [105.06324, -2.16898],
-                    [104.75, -2.99]
+                    [104.75, -2.99],
                 ]
             }
         },
@@ -8473,7 +8201,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "文登-鸣梁",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_wendeng_city_jindo_1788088162610",
                 startYear: -3000,
                 endYear: 2000,
@@ -8489,7 +8216,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [122.78393, 35.31884],
                     [123.25249, 35.16549],
                     [125.57373, 34.15273],
-                    [126.263, 34.487]
+                    [126.263, 34.487],
                 ]
             }
         },
@@ -8498,7 +8225,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "巴达维亚-巨港",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_batavia_city_sanfoqi_1792485737963",
                 startYear: -3000,
                 endYear: 2000,
@@ -8515,7 +8241,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [105.90519, -2.89234],
                     [105.68628, -2.34565],
                     [105.06324, -2.16898],
-                    [104.75, -2.99]
+                    [104.75, -2.99],
                 ]
             }
         },
@@ -8524,7 +8250,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "丹塔普拉-耽摩栗底",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_danta_city_danmoledi_1792486086113",
                 startYear: -3000,
                 endYear: 2000,
@@ -8534,11 +8259,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [84.0, 18.4],
+                    [84, 18.4],
                     [84.9566, 18.5238],
                     [88, 21],
                     [87.93869, 21.68423],
-                    [87.92, 22.28]
+                    [87.92, 22.28],
                 ]
             }
         },
@@ -8547,7 +8272,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "特罗武兰-霍洛",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_teluowulan_city_huoluo_1788852927214",
                 startYear: -3000,
                 endYear: 2000,
@@ -8574,14 +8298,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.25, 1.5],
                     [118.91667, 1.83333],
                     [118.91667, 2.66667],
-                    [118.25, 3.0],
+                    [118.25, 3],
                     [118.25, 3.66667],
                     [119.16667, 3.91667],
                     [119.33333, 4.25],
                     [120.16667, 4.41667],
                     [120.5, 4.75],
-                    [121.0, 4.91667],
-                    [121.0008, 6.0531]
+                    [121, 4.91667],
+                    [121.0008, 6.0531],
                 ]
             }
         },
@@ -8590,7 +8314,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "特罗武兰-德尔纳特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_teluowulan_city_deernate_20261024",
                 startYear: -3000,
                 endYear: 2000,
@@ -8614,9 +8337,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [126.89981, -2.02724],
                     [126.80749, -0.84101],
                     [126.75, -1.16667],
-                    [126.58333, -1.0],
+                    [126.58333, -1],
                     [126.58333, 0.5],
-                    [127.3832, 0.7852]
+                    [127.3832, 0.7852],
                 ]
             }
         },
@@ -8625,7 +8348,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "文登-上海",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_wendeng_city_shanghai_1793100000000",
                 startYear: -3000,
                 endYear: 2000,
@@ -8643,13 +8365,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [120.66667, 35.58333],
                     [120.33333, 35.41667],
                     [120.08333, 35.16667],
-                    [120.08333, 35.0],
+                    [120.08333, 35],
                     [120.58333, 34.83333],
                     [121.25, 33.5],
                     [121.25, 33.16667],
                     [122.25, 32.33333],
                     [122.25, 31.5],
-                    [121.47, 31.23]
+                    [121.47, 31.23],
                 ]
             }
         },
@@ -8658,7 +8380,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "爱丁堡-因弗内斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aidingbao_city_yinfeineisi_1793609000000",
                 startYear: -3000,
                 endYear: 2000,
@@ -8675,7 +8396,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-2.0756, 57.7461],
                     [-2.95282, 57.75367],
                     [-3.4434, 57.7579],
-                    [-4.22, 57.48]
+                    [-4.22, 57.48],
                 ]
             }
         },
@@ -8684,7 +8405,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安提俄基亚-科洛西",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_antiejiya_city_kolossi_1793609000001",
                 startYear: -3000,
                 endYear: 2000,
@@ -8702,7 +8422,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.9808, 34.78634],
                     [34.6809, 34.7191],
                     [33.87014, 34.53733],
-                    [32.934, 34.664]
+                    [32.934, 34.664],
                 ]
             }
         },
@@ -8711,7 +8431,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "普里-加勒",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_puli_city_jiale_1793609000003",
                 startYear: -3000,
                 endYear: 2000,
@@ -8733,15 +8452,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [81.66667, 15.91667],
                     [81.33333, 15.41667],
                     [80.58333, 15.33333],
-                    [80.58333, 14.0],
+                    [80.58333, 14],
                     [80.75, 13.83333],
-                    [80.75, 13.0],
+                    [80.75, 13],
                     [80.58333, 12.83333],
                     [80.58333, 12.33333],
                     [80.25, 11.83333],
                     [80.25, 10.33333],
                     [80.66667, 10.25],
-                    [81.75, 9.0],
+                    [81.75, 9],
                     [81.75, 8.5],
                     [82.25, 7.83333],
                     [82.25, 6.66667],
@@ -8749,9 +8468,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [82.08333, 6.16667],
                     [81.5, 5.75],
                     [81.16667, 5.75],
-                    [81.0, 5.58333],
+                    [81, 5.58333],
                     [79.83333, 5.58333],
-                    [80.21, 6.05]
+                    [80.21, 6.05],
                 ]
             }
         },
@@ -8760,7 +8479,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "龙溪-冶城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_zhangzhou_city_fuzhou_1793609000005",
                 startYear: -3000,
                 endYear: 2000,
@@ -8780,7 +8498,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.8205, 25.23697],
                     [120, 25.7],
                     [119.85947, 26.0284],
-                    [119.3, 26.07]
+                    [119.3, 26.07],
                 ]
             }
         },
@@ -8789,7 +8507,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "哥德堡-海牙",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_gothenburg_city_hague_1793609000006",
                 startYear: -3000,
                 endYear: 2000,
@@ -8806,7 +8523,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [9.75477, 57.87865],
                     [8.01733, 57.3946],
                     [7.5683, 57.2695],
-                    [7.58333, 57.0],
+                    [7.58333, 57],
                     [7.58333, 55.33333],
                     [7.75, 55.16667],
                     [7.75, 54.83333],
@@ -8819,7 +8536,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [4.66667, 53.91667],
                     [4.08333, 53.33333],
                     [4.08333, 52.83333],
-                    [4.3, 52.07]
+                    [4.3, 52.07],
                 ]
             }
         },
@@ -8828,7 +8545,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "博尔贡-爱丁堡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_boergong_city_aidingbao_1787901926201",
                 startYear: -3000,
                 endYear: 2000,
@@ -8846,7 +8562,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [0.4829, 58.27507],
                     [-1.4, 57.3],
                     [-2.3, 56.3],
-                    [-3.18, 55.95]
+                    [-3.18, 55.95],
                 ]
             }
         },
@@ -8855,7 +8571,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "博尔贡-因弗内斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_boergong_city_yinfeineisi_1793005344597",
                 startYear: -3000,
                 endYear: 2000,
@@ -8875,7 +8590,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-2.87431, 58.64991],
                     [-2.95282, 57.75367],
                     [-3.4434, 57.7579],
-                    [-4.22, 57.48]
+                    [-4.22, 57.48],
                 ]
             }
         },
@@ -8884,7 +8599,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "尼科西亚-阿达纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nikexiya_city_adana_1787916343649",
                 startYear: -3000,
                 endYear: 2000,
@@ -8899,7 +8613,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.05184, 36.08319],
                     [34.67155, 36.25003],
                     [34.74115, 36.26877],
-                    [35.3213, 37.0]
+                    [35.3213, 37],
                 ]
             }
         },
@@ -8908,7 +8622,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "尼科西亚-安提俄基亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nikexiya_city_antiejiya_1787916352381",
                 startYear: -3000,
                 endYear: 2000,
@@ -8925,7 +8638,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.80612, 35.86689],
                     [34.99157, 35.87376],
                     [35.7, 35.9],
-                    [36.16, 36.2]
+                    [36.16, 36.2],
                 ]
             }
         },
@@ -8934,7 +8647,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "亚拉-圣多明各",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yala_city_shengduomingge_1792484957049",
                 startYear: -3000,
                 endYear: 2000,
@@ -8948,18 +8660,18 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-77.16667, 19.58333],
                     [-74.66667, 19.58333],
                     [-74.5, 19.75],
-                    [-74.0, 19.75],
+                    [-74, 19.75],
                     [-73.9, 20],
                     [-74.69623, 18.9156],
                     [-75, 18.5],
                     [-74.33333, 17.75],
                     [-72.33333, 17.75],
-                    [-72.0, 17.08333],
+                    [-72, 17.08333],
                     [-71.33333, 17.08333],
                     [-70.75, 17.66667],
                     [-70.66667, 17.91667],
                     [-69.83333, 17.91667],
-                    [-69.8868, 18.4715]
+                    [-69.8868, 18.4715],
                 ]
             }
         },
@@ -8968,7 +8680,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "义安-云屯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yian_city_yuntun_1793609500001",
                 startYear: -3000,
                 endYear: 2000,
@@ -8979,11 +8690,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [105.68, 18.67],
-                    [106.25, 19.0],
+                    [106.25, 19],
                     [106.25, 19.5],
                     [106.83333, 19.91667],
-                    [107.0, 20.25],
-                    [106.68, 20.86]
+                    [107, 20.25],
+                    [106.68, 20.86],
                 ]
             }
         },
@@ -8992,7 +8703,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "云屯-海门",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_yuntun_city_hepu_1793609500002",
                 startYear: -3000,
                 endYear: 2000,
@@ -9003,13 +8713,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [106.68, 20.86],
-                    [107.0, 20.25],
+                    [107, 20.25],
                     [107.25, 20.16667],
                     [107.33333, 19.75],
-                    [108.0, 19.75],
+                    [108, 19.75],
                     [108.08333, 20.66667],
                     [108.5, 21.25],
-                    [109.207, 21.663]
+                    [109.207, 21.663],
                 ]
             }
         },
@@ -9018,7 +8728,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "淡马锡-吞武里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_danmaxi_city_tunwuli_1793609500005",
                 startYear: -3000,
                 endYear: 2000,
@@ -9040,14 +8749,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [104.08333, 5.16667],
                     [103.58333, 5.5],
                     [103.33333, 6.25],
-                    [103.0, 6.25],
+                    [103, 6.25],
                     [102.42416, 6.32349],
                     [101.60568, 6.96323],
                     [100.6823, 7.3179],
                     [100.70304, 11.88841],
                     [100.70618, 12.57333],
                     [100.60043, 12.9711],
-                    [100.53, 13.68]
+                    [100.53, 13.68],
                 ]
             }
         },
@@ -9056,7 +8765,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "吉达-贝雷尼斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jida_city_beileinisi_1793609500006",
                 startYear: -3000,
                 endYear: 2000,
@@ -9075,15 +8783,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [37.75, 21.16667],
                     [37.58333, 21.33333],
                     [37.58333, 21.66667],
-                    [37.25, 22.0],
+                    [37.25, 22],
                     [37.25, 22.5],
                     [36.41667, 23.16667],
                     [36.58333, 23.33333],
-                    [36.58333, 24.0],
+                    [36.58333, 24],
                     [36.16667, 24.08333],
                     [36.08333, 24.5],
                     [35.75, 24.66667],
-                    [35.48, 23.91]
+                    [35.48, 23.91],
                 ]
             }
         },
@@ -9092,7 +8800,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "吉达-塞拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jida_city_zeila_1793609500007",
                 startYear: -3000,
                 endYear: 2000,
@@ -9111,13 +8818,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [43.3, 12.7],
                     [43.74659, 12.40439],
                     [44.97253, 12.71001],
-                    [46.0, 13.08333],
+                    [46, 13.08333],
                     [45.66667, 12.75],
                     [45.5, 12.75],
                     [45.33333, 12.41667],
                     [43.75, 12.16667],
                     [43.91667, 11.5],
-                    [43.4731, 11.3533]
+                    [43.4731, 11.3533],
                 ]
             }
         },
@@ -9126,7 +8833,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "罗马-希波",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_luoma_city_xibo_1793609600001",
                 startYear: -3000,
                 endYear: 2000,
@@ -9149,7 +8855,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [8.33393, 37.98181],
                     [8.14715, 37.8515],
                     [7.5, 37.4],
-                    [7.76, 36.9]
+                    [7.76, 36.9],
                 ]
             }
         },
@@ -9158,7 +8864,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "普里-直通",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_puli_city_thaton_1793609600002",
                 startYear: -3000,
                 endYear: 2000,
@@ -9180,11 +8885,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [91.41667, 21.16667],
                     [91.75, 20.66667],
                     [91.75, 20.33333],
-                    [92.0, 20.25],
+                    [92, 20.25],
                     [92.66667, 19.41667],
                     [92.91667, 19.33333],
                     [92.91667, 18.66667],
-                    [93.58333, 18.0],
+                    [93.58333, 18],
                     [93.58333, 17.83333],
                     [93.91667, 17.66667],
                     [93.75, 17.33333],
@@ -9196,7 +8901,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [96.5, 16.08333],
                     [96.83333, 16.08333],
                     [97.08333, 15.83333],
-                    [97.6333, 16.5333]
+                    [97.6333, 16.5333],
                 ]
             }
         },
@@ -9205,7 +8910,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "吉大港-直通",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jidagang_city_thaton_1793609600004",
                 startYear: -3000,
                 endYear: 2000,
@@ -9220,11 +8924,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [91.41667, 21.16667],
                     [91.75, 20.66667],
                     [91.75, 20.33333],
-                    [92.0, 20.25],
+                    [92, 20.25],
                     [92.66667, 19.41667],
                     [92.91667, 19.33333],
                     [92.91667, 18.66667],
-                    [93.58333, 18.0],
+                    [93.58333, 18],
                     [93.58333, 17.83333],
                     [93.91667, 17.66667],
                     [93.75, 17.33333],
@@ -9236,7 +8940,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [96.5, 16.08333],
                     [96.83333, 16.08333],
                     [97.08333, 15.83333],
-                    [97.6333, 16.5333]
+                    [97.6333, 16.5333],
                 ]
             }
         },
@@ -9245,7 +8949,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "里斯本-拉巴特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_lisiben_city_labate_1793609600005",
                 startYear: -3000,
                 endYear: 2000,
@@ -9256,7 +8959,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [-9.13, 38.72],
-                    [-9.41667, 38.0],
+                    [-9.41667, 38],
                     [-9.45209, 37.78159],
                     [-9.25, 36.8],
                     [-9.063, 36.45175],
@@ -9269,7 +8972,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-8.01885, 34.5073],
                     [-7.7875, 34.07647],
                     [-7.1, 34.4],
-                    [-6.822, 34.024]
+                    [-6.822, 34.024],
                 ]
             }
         },
@@ -9278,7 +8981,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "里贝拉-瓜纳巴拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_ribeira_city_guanabara_1793609700001",
                 startYear: -3000,
                 endYear: 2000,
@@ -9321,13 +9023,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-39.41667, -18.66667],
                     [-39.41667, -19.83333],
                     [-39.75, -20.16667],
-                    [-40.08333, -21.0],
+                    [-40.08333, -21],
                     [-40.58333, -21.5],
                     [-40.58333, -22.33333],
                     [-41.33333, -22.58333],
                     [-41.66667, -23.41667],
                     [-43.66667, -23.41667],
-                    [-43.2, -22.9]
+                    [-43.2, -22.9],
                 ]
             }
         },
@@ -9336,7 +9038,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "萨尔瓦多-圣维森特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_salvador_city_saovicente_1793609700002",
                 startYear: -3000,
                 endYear: 2000,
@@ -9357,7 +9058,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-39.41667, -18.66667],
                     [-39.41667, -19.83333],
                     [-39.75, -20.16667],
-                    [-40.08333, -21.0],
+                    [-40.08333, -21],
                     [-40.58333, -21.5],
                     [-40.58333, -22.33333],
                     [-41.33333, -22.58333],
@@ -9365,11 +9066,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-43.66667, -23.41667],
                     [-43.83333, -23.58333],
                     [-44.66667, -23.75],
-                    [-45.0, -24.25],
+                    [-45, -24.25],
                     [-45.33333, -24.25],
                     [-45.5, -24.41667],
                     [-46.33333, -24.41667],
-                    [-46.39, -23.96]
+                    [-46.39, -23.96],
                 ]
             }
         },
@@ -9378,7 +9079,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马六甲-巨港",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_malacca_city_sanfoqi_1793609800001",
                 startYear: -3000,
                 endYear: 2000,
@@ -9398,7 +9098,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [104.48229, 1.34131],
                     [105.0066, 1.12676],
                     [105.06324, -2.16898],
-                    [104.75, -2.99]
+                    [104.75, -2.99],
                 ]
             }
         },
@@ -9407,7 +9107,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "吞武里-阇槃",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_tunwuli_city_dupan_1793609800003",
                 startYear: -3000,
                 endYear: 2000,
@@ -9424,15 +9123,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [102.04102, 9.16096],
                     [102.41667, 9.66667],
                     [102.91667, 9.5],
-                    [103.0, 8.91667],
+                    [103, 8.91667],
                     [103.83333, 8.91667],
                     [103.91667, 9.16667],
                     [104.16667, 9.25],
                     [104.33333, 8.25],
                     [105.33333, 8.25],
-                    [106.0, 8.91667],
+                    [106, 8.91667],
                     [106.16667, 8.25],
-                    [107.0, 8.25],
+                    [107, 8.25],
                     [107.08333, 9.16667],
                     [106.91667, 9.5],
                     [107.16667, 9.91667],
@@ -9440,12 +9139,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [108.41667, 10.33333],
                     [108.5, 10.08333],
                     [109.25, 10.16667],
-                    [109.25, 11.0],
+                    [109.25, 11],
                     [109.58333, 11.33333],
                     [109.58333, 11.83333],
-                    [109.75, 12.0],
-                    [109.75, 14.0],
-                    [109.11, 13.93]
+                    [109.75, 12],
+                    [109.75, 14],
+                    [109.11, 13.93],
                 ]
             }
         },
@@ -9454,7 +9153,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "希马鲁塔-干地亚要塞",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_chimarros_city_knossos_1793609800004",
                 startYear: -3000,
                 endYear: 2000,
@@ -9470,8 +9168,8 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [24.53513, 36.49003],
                     [24.58347, 36.41804],
                     [24.7862, 36.11617],
-                    [24.75, 36.0],
-                    [25.13, 35.33]
+                    [24.75, 36],
+                    [25.13, 35.33],
                 ]
             }
         },
@@ -9480,7 +9178,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "赤间关-松山",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_chijianguan_city_songshan_1793609800005",
                 startYear: -3000,
                 endYear: 2000,
@@ -9494,7 +9191,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [131.21246, 33.79513],
                     [131.9, 33.75],
                     [132.14905, 33.68093],
-                    [132.7505, 33.8185]
+                    [132.7505, 33.8185],
                 ]
             }
         },
@@ -9503,7 +9200,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "加莱-海牙",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_calais_city_hague_1793609800006",
                 startYear: -3000,
                 endYear: 2000,
@@ -9517,7 +9213,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [2.3601, 51.6089],
                     [2.9, 51.9],
                     [3.35483, 51.94548],
-                    [4.3, 52.07]
+                    [4.3, 52.07],
                 ]
             }
         },
@@ -9526,7 +9222,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "斯德哥尔摩-维斯比",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_sidedegelmo_city_weishibi_1793609800007",
                 startYear: -3000,
                 endYear: 2000,
@@ -9539,7 +9234,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [18.06, 59.32],
                     [19.61991, 58.97703],
                     [18.82824, 58.35186],
-                    [18.29, 57.64]
+                    [18.29, 57.64],
                 ]
             }
         },
@@ -9548,7 +9243,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡里斯托斯-特洛伊",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kalisituosi_city_teluoyi_1793609800008",
                 startYear: -3000,
                 endYear: 2000,
@@ -9567,7 +9261,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [25.58451, 39.23956],
                     [25.62606, 39.33697],
                     [25.73717, 39.28142],
-                    [26.2389, 39.9575]
+                    [26.2389, 39.9575],
                 ]
             }
         },
@@ -9576,7 +9270,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡里斯托斯-克拉佐美奈",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kalisituosi_city_kelazuomeinai_1793609800009",
                 startYear: -3000,
                 endYear: 2000,
@@ -9593,7 +9286,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [26.15799, 38.71648],
                     [26.28903, 38.78757],
                     [26.53194, 38.69413],
-                    [26.77, 38.36]
+                    [26.77, 38.36],
                 ]
             }
         },
@@ -9602,7 +9295,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "哈利卡纳苏斯-提洛",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_halikanasu_city_tiluo_1793609800010",
                 startYear: -3000,
                 endYear: 2000,
@@ -9622,7 +9314,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [25.65789, 37.82153],
                     [25.42036, 37.64279],
                     [25.17263, 37.48348],
-                    [25.27, 37.39]
+                    [25.27, 37.39],
                 ]
             }
         },
@@ -9631,7 +9323,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "山海关-文登",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shanhaiguan_city_wendeng_1793609800011",
                 startYear: -3000,
                 endYear: 2000,
@@ -9641,12 +9332,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [119.8, 40.0],
+                    [119.8, 40],
                     [119.7875, 39.8014],
                     [120.33306, 39.22055],
                     [120.8861, 38.6268],
                     [122.1825, 37.8155],
-                    [122.05, 37.2]
+                    [122.05, 37.2],
                 ]
             }
         },
@@ -9655,7 +9346,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安提俄基亚-推罗",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_antiejiya_city_tuile_1793609800013",
                 startYear: -3000,
                 endYear: 2000,
@@ -9673,7 +9363,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [35.29151, 34.51115],
                     [35.2, 34.2],
                     [35.11553, 33.9496],
-                    [35.1962, 33.2709]
+                    [35.1962, 33.2709],
                 ]
             }
         },
@@ -9682,7 +9372,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "蓬莱-漂渝津",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_dengzhou_city_piaoyujin_1793609800014",
                 startYear: -3000,
                 endYear: 2000,
@@ -9697,7 +9386,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.16667, 38.58333],
                     [118.97114, 38.55545],
                     [117.85034, 38.89103],
-                    [117.6, 39.02]
+                    [117.6, 39.02],
                 ]
             }
         },
@@ -9706,7 +9395,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "鸣梁-原之辻",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jindo_city_yuanzhishi_1793609800015",
                 startYear: -3000,
                 endYear: 2000,
@@ -9722,7 +9410,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [127.63316, 32.92518],
                     [128.0145, 33.05486],
                     [129.32756, 33.4999],
-                    [129.703, 33.791]
+                    [129.703, 33.791],
                 ]
             }
         },
@@ -9731,7 +9419,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "冶城-临海",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_fuzhou_city_taizhou_zj_1793609800016",
                 startYear: -3000,
                 endYear: 2000,
@@ -9745,13 +9432,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [120.25, 25.83333],
                     [120.5, 26.08333],
                     [120.91667, 26.16667],
-                    [121.08333, 27.0],
+                    [121.08333, 27],
                     [121.41667, 27.16667],
                     [121.58333, 27.33333],
                     [121.58333, 27.66667],
                     [122.25, 28.16667],
                     [122.25, 28.5],
-                    [121.42, 28.66]
+                    [121.42, 28.66],
                 ]
             }
         },
@@ -9760,7 +9447,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿尔及尔-巴塞罗那",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aerjier_city_barcelona_1793609800017",
                 startYear: -3000,
                 endYear: 2000,
@@ -9781,7 +9467,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [2.4306, 40.39785],
                     [2.44086, 40.53118],
                     [2.45166, 40.67152],
-                    [2.17, 41.38]
+                    [2.17, 41.38],
                 ]
             }
         },
@@ -9790,7 +9476,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "尼科西亚-罗得城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nikexiya_city_rhodes_1793609800018",
                 startYear: -3000,
                 endYear: 2000,
@@ -9806,10 +9491,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [30.90509, 35.93966],
                     [30, 36],
                     [30.16667, 35.91667],
-                    [30.0, 35.75],
-                    [29.0, 35.75],
+                    [30, 35.75],
+                    [29, 35.75],
                     [28.66667, 36.08333],
-                    [28.22, 36.44]
+                    [28.22, 36.44],
                 ]
             }
         },
@@ -9818,7 +9503,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "热那亚-罗马",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_genoa_city_luoma_1793609800019",
                 startYear: -3000,
                 endYear: 2000,
@@ -9839,7 +9523,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [10.65432, 41.7219],
                     [10.83087, 41.6132],
                     [11.0842, 41.45723],
-                    [12.49, 41.9]
+                    [12.49, 41.9],
                 ]
             }
         },
@@ -9848,7 +9532,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "巴勒莫-锡拉库萨",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_palermo_city_syracuse_1793609800020",
                 startYear: -3000,
                 endYear: 2000,
@@ -9866,7 +9549,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [12.15475, 37.39393],
                     [13.34884, 37.00419],
                     [15.2, 36.4],
-                    [15.28, 37.07]
+                    [15.28, 37.07],
                 ]
             }
         },
@@ -9875,7 +9558,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡法-奥列什基",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kafa_city_oleshky_1793609800021",
                 startYear: -3000,
                 endYear: 2000,
@@ -9895,7 +9577,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [32.16667, 44.91667],
                     [31.91667, 45.16667],
                     [31.91667, 45.66667],
-                    [32.72, 46.61]
+                    [32.72, 46.61],
                 ]
             }
         },
@@ -9904,7 +9586,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿尔及尔-希波",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aerjier_city_xibo_1793609800022",
                 startYear: -3000,
                 endYear: 2000,
@@ -9920,7 +9601,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [5.33333, 37.25],
                     [5.83333, 37.58333],
                     [7.83333, 37.58333],
-                    [7.76, 36.9]
+                    [7.76, 36.9],
                 ]
             }
         },
@@ -9929,7 +9610,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "迦太基-马耳他",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_jiataji_city_malta_1793609800023",
                 startYear: -3000,
                 endYear: 2000,
@@ -9948,7 +9628,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [12.23823, 36.87638],
                     [12.93129, 36.52734],
                     [13.90701, 36.03593],
-                    [14.44, 35.9]
+                    [14.44, 35.9],
                 ]
             }
         },
@@ -9957,7 +9637,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "上海-星主厅",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shanghai_city_xingzhuting_1793609800024",
                 startYear: -3000,
                 endYear: 2000,
@@ -9972,7 +9651,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [122.9, 31.3],
                     [125.34383, 32.98374],
                     [126.03516, 33.45436],
-                    [126.5215, 33.5131]
+                    [126.5215, 33.5131],
                 ]
             }
         },
@@ -9981,7 +9660,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "科洛西-佩鲁西姆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kolossi_city_peiluximu_1793609800025",
                 startYear: -3000,
                 endYear: 2000,
@@ -9999,7 +9677,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [32.54355, 32.43925],
                     [32.1, 31.7],
                     [32.39076, 31.72772],
-                    [32.55, 31.04]
+                    [32.55, 31.04],
                 ]
             }
         },
@@ -10008,7 +9686,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "府内-鹿儿岛城",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_funei_city_satsuma_1793609800026",
                 startYear: -3000,
                 endYear: 2000,
@@ -10028,7 +9705,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [130.60547, 31.10939],
                     [130.1001, 31.18461],
                     [129.982, 31.49192],
-                    [130.5583, 31.6003]
+                    [130.5583, 31.6003],
                 ]
             }
         },
@@ -10037,7 +9714,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "那不勒斯-奥里斯塔诺",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_naples_city_oristano_1793609800027",
                 startYear: -3000,
                 endYear: 2000,
@@ -10064,7 +9740,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [8.21901, 41.14977],
                     [7.56627, 40.77794],
                     [7.98426, 40.28064],
-                    [8.59, 39.9]
+                    [8.59, 39.9],
                 ]
             }
         },
@@ -10073,7 +9749,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安布拉基亚-梅西纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_anbulajiya_city_messina_1793609800028",
                 startYear: -3000,
                 endYear: 2000,
@@ -10097,7 +9772,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [16.04394, 37.81419],
                     [15.6982, 37.89279],
                     [15.55717, 38.03218],
-                    [15.55, 38.19]
+                    [15.55, 38.19],
                 ]
             }
         },
@@ -10106,7 +9781,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "蓬莱-泗沘",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_dengzhou_city_sabi_1793609800029",
                 startYear: -3000,
                 endYear: 2000,
@@ -10124,7 +9798,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [123.38706, 37.22935],
                     [125.81543, 36.08906],
                     [126.47186, 36.018],
-                    [126.94977, 36.25535]
+                    [126.94977, 36.25535],
                 ]
             }
         },
@@ -10133,7 +9807,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "柯尼斯堡-罗斯托克",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kenisibao_city_rostock_1793609800030",
                 startYear: -3000,
                 endYear: 2000,
@@ -10152,7 +9825,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [13.52214, 54.88886],
                     [12.86107, 54.6949],
                     [12.2, 54.5],
-                    [12.13, 54.09]
+                    [12.13, 54.09],
                 ]
             }
         },
@@ -10161,7 +9834,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "什切青-维斯比",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shiqieqing_city_weishibi_1793609800031",
                 startYear: -3000,
                 endYear: 2000,
@@ -10176,11 +9848,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [15.32442, 54.52058],
                     [15.75, 54.83333],
                     [15.41667, 54.83333],
-                    [15.58333, 55.0],
+                    [15.58333, 55],
                     [15.66667, 55.75],
                     [16.83333, 55.91667],
                     [17.5, 56.91667],
-                    [18.29, 57.64]
+                    [18.29, 57.64],
                 ]
             }
         },
@@ -10189,7 +9861,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "宁波-首里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_qingyuan_zj_city_shuri_1793609800033",
                 startYear: -3000,
                 endYear: 2000,
@@ -10207,7 +9878,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [124.89169, 29.08143],
                     [125.52859, 28.38821],
                     [127.58898, 26.40071],
-                    [127.72, 26.22]
+                    [127.72, 26.22],
                 ]
             }
         },
@@ -10216,7 +9887,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "锡拉库萨-雅典",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_syracuse_city_yadian_1793609800034",
                 startYear: -3000,
                 endYear: 2000,
@@ -10236,7 +9906,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [23.44932, 36.07632],
                     [23.6, 36.5],
                     [23.63671, 37.63947],
-                    [23.72, 37.98]
+                    [23.72, 37.98],
                 ]
             }
         },
@@ -10245,7 +9915,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "爱丁堡-哥本哈根",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aidingbao_city_gebenhagen_1793609800035",
                 startYear: -3000,
                 endYear: 2000,
@@ -10272,7 +9941,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [12.40912, 56.33738],
                     [12.62973, 56.06389],
                     [12.75, 55.9],
-                    [12.57, 55.68]
+                    [12.57, 55.68],
                 ]
             }
         },
@@ -10281,7 +9950,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "刺桐-番禺",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_qingjingsi_city_panyu_1793616000001",
                 startYear: -3000,
                 endYear: 2000,
@@ -10293,21 +9961,21 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [118.5833, 24.9],
                     [119.16667, 24.58333],
-                    [119.0, 24.25],
+                    [119, 24.25],
                     [118.5, 24.08333],
-                    [118.0, 23.41667],
+                    [118, 23.41667],
                     [117.16667, 23.08333],
                     [116.83333, 22.58333],
                     [116.5, 22.58333],
                     [115.83333, 22.25],
-                    [115.0, 22.25],
+                    [115, 22.25],
                     [114.5, 21.58333],
                     [114.1, 21.7],
                     [113.85544, 22.03473],
                     [113.69339, 22.23826],
                     [113.75341, 22.47214],
                     [113.68515, 22.70399],
-                    [113.26, 23.12]
+                    [113.26, 23.12],
                 ]
             }
         },
@@ -10316,7 +9984,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马尼拉-番禺",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_manila_city_panyu_1793616000002",
                 startYear: -3000,
                 endYear: 2000,
@@ -10337,7 +10004,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [113.69339, 22.23826],
                     [113.75341, 22.47214],
                     [113.68515, 22.70399],
-                    [113.26, 23.12]
+                    [113.26, 23.12],
                 ]
             }
         },
@@ -10346,7 +10013,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "洞海城-珠崖",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_donghai_city_yazhou_1793616000003",
                 startYear: -3000,
                 endYear: 2000,
@@ -10360,7 +10026,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [106.94641, 17.72776],
                     [107.58362, 17.92648],
                     [108.56568, 17.96511],
-                    [108.98987, 18.43269]
+                    [108.98987, 18.43269],
                 ]
             }
         },
@@ -10369,7 +10035,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阇槃-淡马锡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_dupan_city_danmaxi_1793616000004",
                 startYear: -3000,
                 endYear: 2000,
@@ -10380,11 +10045,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [109.11, 13.93],
-                    [109.75, 14.0],
-                    [109.75, 12.0],
+                    [109.75, 14],
+                    [109.75, 12],
                     [109.58333, 11.83333],
                     [109.58333, 11.33333],
-                    [109.25, 11.0],
+                    [109.25, 11],
                     [109.25, 10.16667],
                     [108.5, 10.08333],
                     [108.41667, 10.33333],
@@ -10392,10 +10057,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [107.16667, 9.91667],
                     [106.91667, 9.5],
                     [107.08333, 9.16667],
-                    [107.0, 8.25],
+                    [107, 8.25],
                     [107.3207, 7.6091],
                     [104.48229, 1.34131],
-                    [103.85, 1.29]
+                    [103.85, 1.29],
                 ]
             }
         },
@@ -10404,7 +10069,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阇槃-马六甲",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_dupan_city_malacca_1793616000005",
                 startYear: -3000,
                 endYear: 2000,
@@ -10415,11 +10079,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [109.11, 13.93],
-                    [109.75, 14.0],
-                    [109.75, 12.0],
+                    [109.75, 14],
+                    [109.75, 12],
                     [109.58333, 11.83333],
                     [109.58333, 11.33333],
-                    [109.25, 11.0],
+                    [109.25, 11],
                     [109.25, 10.16667],
                     [108.5, 10.08333],
                     [108.41667, 10.33333],
@@ -10427,7 +10091,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [107.16667, 9.91667],
                     [106.91667, 9.5],
                     [107.08333, 9.16667],
-                    [107.0, 8.25],
+                    [107, 8.25],
                     [107.3207, 7.6091],
                     [104.48229, 1.34131],
                     [104.14585, 1.2493],
@@ -10436,7 +10100,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [103.65807, 1.19777],
                     [103.6, 1.1],
                     [102, 2],
-                    [102.25, 2.19]
+                    [102.25, 2.19],
                 ]
             }
         },
@@ -10445,7 +10109,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "北大年-巨港",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_pattani_city_sanfoqi_1793616000006",
                 startYear: -3000,
                 endYear: 2000,
@@ -10459,7 +10122,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [101.91667, 7.16667],
                     [102.33333, 6.75],
                     [102.5, 6.75],
-                    [103.0, 6.25],
+                    [103, 6.25],
                     [103.33333, 6.25],
                     [103.58333, 5.5],
                     [104.08333, 5.16667],
@@ -10473,7 +10136,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [104.48229, 1.34131],
                     [105.0066, 1.12676],
                     [105.06324, -2.16898],
-                    [104.75, -2.99]
+                    [104.75, -2.99],
                 ]
             }
         },
@@ -10482,7 +10145,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "古里-亚丁",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_guli_city_aden_1793616000008",
                 startYear: -3000,
                 endYear: 2000,
@@ -10518,23 +10180,23 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [55.5, 16.75],
                     [55.16667, 16.58333],
                     [54.16667, 16.58333],
-                    [54.0, 16.41667],
-                    [53.0, 16.25],
+                    [54, 16.41667],
+                    [53, 16.25],
                     [52.58333, 15.83333],
                     [52.58333, 15.33333],
                     [51.83333, 14.91667],
                     [50.83333, 14.75],
                     [50.33333, 14.41667],
                     [49.83333, 14.41667],
-                    [49.0, 13.75],
+                    [49, 13.75],
                     [48.66667, 13.58333],
-                    [48.0, 13.58333],
+                    [48, 13.58333],
                     [47.66667, 13.25],
                     [47.33333, 13.25],
                     [47.16667, 13.08333],
-                    [46.0, 13.08333],
+                    [46, 13.08333],
                     [45.66667, 12.75],
-                    [45.0187, 12.7855]
+                    [45.0187, 12.7855],
                 ]
             }
         },
@@ -10543,7 +10205,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "古里-摩加迪沙",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_guli_city_mogadishu_1793616000009",
                 startYear: -3000,
                 endYear: 2000,
@@ -10564,33 +10225,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [65.0002, 10.0367],
                     [64.69686, 10.03447],
                     [64.30325, 10.03158],
-                    [62.0601, 10.5802],
-                    [60.82573, 10.86698],
-                    [59.894, 11.08346],
-                    [55.0415, 12.74752],
-                    [54.91667, 13.0],
-                    [54.91667, 12.33333],
-                    [54.66667, 12.08333],
-                    [53.66667, 11.91667],
-                    [53.5, 11.75],
-                    [51.83333, 11.75],
-                    [51.66667, 11.91667],
-                    [51.58333, 11.83333],
-                    [51.75, 10.16667],
-                    [51.25, 10.0],
-                    [51.25, 9.16667],
-                    [50.91667, 8.83333],
-                    [50.58333, 8.0],
-                    [50.08333, 7.5],
-                    [50.08333, 7.16667],
-                    [49.75, 6.83333],
-                    [49.25, 5.5],
-                    [48.41667, 4.5],
-                    [48.08333, 3.83333],
-                    [46.16667, 1.91667],
-                    [44.83333, 1.25],
-                    [45.37353, 1.96617],
-                    [45.3419, 2.0392]
+                    [60, 10],
+                    [57.13337, 7.18448],
+                    [56.17013, 6.2239],
+                    [53.07862, 3.11951],
+                    [50, -1e-05],
+                    [47.81255, 0.74572],
+                    [45.85235, 1.73275],
+                    [45.3419, 2.0392],
                 ]
             }
         },
@@ -10599,7 +10241,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "果阿-蒙巴萨",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_guoa_city_mombasa_1793616000010",
                 startYear: -3000,
                 endYear: 2000,
@@ -10626,39 +10267,16 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [64.5965, 15.0326],
                     [62.4181, 12.5389],
                     [60.82573, 10.86698],
-                    [59.894, 11.08346],
-                    [55.0415, 12.74752],
-                    [54.91667, 13.0],
-                    [54.91667, 12.33333],
-                    [54.66667, 12.08333],
-                    [53.66667, 11.91667],
-                    [53.5, 11.75],
-                    [51.83333, 11.75],
-                    [51.66667, 11.91667],
-                    [51.58333, 11.83333],
-                    [51.75, 10.16667],
-                    [51.25, 10.0],
-                    [51.25, 9.16667],
-                    [50.91667, 8.83333],
-                    [50.58333, 8.0],
-                    [50.08333, 7.5],
-                    [50.08333, 7.16667],
-                    [49.75, 6.83333],
-                    [49.25, 5.5],
-                    [48.41667, 4.5],
-                    [48.08333, 3.83333],
-                    [46.16667, 1.91667],
-                    [44.83333, 1.25],
-                    [42.58333, -1.0],
-                    [42.58333, -1.16667],
-                    [42.08333, -1.66667],
-                    [42.08333, -1.83333],
-                    [41.33333, -2.58333],
-                    [41.16667, -2.58333],
-                    [41.0, -2.91667],
-                    [40.58333, -3.0],
-                    [40.58333, -3.33333],
-                    [39.6667, -4.05]
+                    [60, 10],
+                    [57.13337, 7.18448],
+                    [56.17013, 6.2239],
+                    [53.07862, 3.11951],
+                    [50, -1e-05],
+                    [47.05822, -1.28],
+                    [40.3, -4.2],
+                    [40.08333, -4.16667],
+                    [40.25, -4.5],
+                    [39.6667, -4.05],
                 ]
             }
         },
@@ -10667,7 +10285,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "特尔德-圣多明各",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_telde_city_shengduomingge_1793616000012",
                 startYear: -3000,
                 endYear: 2000,
@@ -10677,7 +10294,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [-15.42, 28.0],
+                    [-15.42, 28],
                     [-15.66667, 28.75],
                     [-15.83333, 29.08333],
                     [-16.83333, 29.08333],
@@ -10710,7 +10327,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-67.83333, 17.75],
                     [-69.16667, 17.75],
                     [-69.33333, 18.08333],
-                    [-69.8868, 18.4715]
+                    [-69.8868, 18.4715],
                 ]
             }
         },
@@ -10719,7 +10336,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "临海-刺桐",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_taizhou_zj_city_qingjingsi_1793616000013",
                 startYear: -3000,
                 endYear: 2000,
@@ -10735,7 +10351,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [121.58333, 27.66667],
                     [121.58333, 27.33333],
                     [121.41667, 27.16667],
-                    [121.08333, 27.0],
+                    [121.08333, 27],
                     [120.91667, 26.16667],
                     [120.5, 26.08333],
                     [120.25, 25.83333],
@@ -10743,7 +10359,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.75, 24.83333],
                     [119.66667, 24.58333],
                     [119.16667, 24.58333],
-                    [118.5833, 24.9]
+                    [118.5833, 24.9],
                 ]
             }
         },
@@ -10752,7 +10368,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "囊哈儿-白主",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_nanghar_city_baizhu_1793616000020",
                 startYear: -3000,
                 endYear: 2000,
@@ -10770,7 +10385,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [143.02002, 45.70618],
                     [142.58333, 45.83333],
                     [142.66667, 46.08333],
-                    [142.52, 46.71]
+                    [142.52, 46.71],
                 ]
             }
         },
@@ -10779,7 +10394,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "利马-瓦尔帕莱索",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_lima_city_valparaiso_20261102",
                 startYear: -3000,
                 endYear: 2000,
@@ -10794,7 +10408,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-76.91667, -13.33333],
                     [-76.91667, -14.16667],
                     [-76.41667, -14.83333],
-                    [-76.41667, -15.0],
+                    [-76.41667, -15],
                     [-75.75, -15.5],
                     [-75.66667, -15.75],
                     [-75.16846, -15.91907],
@@ -10804,7 +10418,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-73.5, -16.91667],
                     [-72.83333, -17.08333],
                     [-72.33333, -17.58333],
-                    [-72.0, -17.58333],
+                    [-72, -17.58333],
                     [-71.83333, -18.08333],
                     [-71.66667, -18.08333],
                     [-70.91667, -18.66667],
@@ -10812,7 +10426,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-70.75, -19.33333],
                     [-70.75, -22.5],
                     [-71.08333, -22.66667],
-                    [-71.08333, -25.0],
+                    [-71.08333, -25],
                     [-71.25, -25.16667],
                     [-71.25, -26.5],
                     [-71.58333, -27.16667],
@@ -10821,9 +10435,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-71.75, -28.16667],
                     [-72.08333, -28.5],
                     [-72.08333, -29.83333],
-                    [-72.25, -30.0],
+                    [-72.25, -30],
                     [-72.08333, -32.5],
-                    [-71.62, -33.04]
+                    [-71.62, -33.04],
                 ]
             }
         },
@@ -10832,7 +10446,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "圣维森特-布宜诺斯艾利斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_saovicente_city_buenosaires_20261102",
                 startYear: -3000,
                 endYear: 2000,
@@ -10846,7 +10459,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-46.33333, -24.41667],
                     [-46.83333, -24.91667],
                     [-47.33333, -25.08333],
-                    [-48.08333, -26.0],
+                    [-48.08333, -26],
                     [-48.28903, -26.18132],
                     [-47.9, -27.8],
                     [-49.5, -30.5],
@@ -10855,7 +10468,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-51.3026, -33.4208],
                     [-54.6, -35.25],
                     [-56.5, -35.1],
-                    [-58.38, -34.6]
+                    [-58.38, -34.6],
                 ]
             }
         },
@@ -10864,7 +10477,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "太宰府-五岛",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_taizaifu_city_goto_1793621542686",
                 startYear: -3000,
                 endYear: 2000,
@@ -10881,7 +10493,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [129.32756, 33.4999],
                     [129.28711, 33.14215],
                     [129.35303, 32.50976],
-                    [128.841, 32.6955]
+                    [128.841, 32.6955],
                 ]
             }
         },
@@ -10890,7 +10502,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "五岛-宁波",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_goto_city_qingyuan_zj_1793621551391",
                 startYear: -3000,
                 endYear: 2000,
@@ -10910,7 +10521,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [122.13501, 30.48418],
                     [121.61333, 30.42956],
                     [121.92627, 30.25432],
-                    [121.54, 29.87]
+                    [121.54, 29.87],
                 ]
             }
         },
@@ -10919,7 +10530,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "皇家港-亚拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_portroyal_city_yala_20261102",
                 startYear: -3000,
                 endYear: 2000,
@@ -10937,7 +10547,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-77.948, 19.715],
                     [-78.58162, 20.24204],
                     [-77.34924, 20.47848],
-                    [-76.85, 20.35]
+                    [-76.85, 20.35],
                 ]
             }
         },
@@ -10946,7 +10556,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "皇家港-波多韦洛",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_portroyal_city_portobelo_20261102",
                 startYear: -3000,
                 endYear: 2000,
@@ -10963,7 +10572,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-77.16329, 14.77309],
                     [-77.63872, 13.97598],
                     [-80, 9.75],
-                    [-79.6644, 9.5544]
+                    [-79.6644, 9.5544],
                 ]
             }
         },
@@ -10972,7 +10581,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "里贝拉-埃尔米纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_ribeira_city_elmina_20261102",
                 startYear: -3000,
                 endYear: 2000,
@@ -10989,12 +10597,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-17, 11],
                     [-16.60583, 11.64148],
                     [-16.91667, 11.83333],
-                    [-16.91667, 11.0],
+                    [-16.91667, 11],
                     [-16.66667, 10.75],
                     [-15.33333, 10.41667],
                     [-14.41667, 9.5],
                     [-14.33333, 9.08333],
-                    [-14.0, 9.08333],
+                    [-14, 9.08333],
                     [-13.75, 8.83333],
                     [-13.75, 7.83333],
                     [-13.58333, 7.66667],
@@ -11008,19 +10616,19 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-8.83333, 4.25],
                     [-8.5, 4.25],
                     [-8.33333, 4.08333],
-                    [-7.0, 4.08333],
+                    [-7, 4.08333],
                     [-6.5, 4.41667],
                     [-5.66667, 4.58333],
                     [-5.5, 4.75],
                     [-4.5, 4.75],
                     [-4.33333, 4.91667],
-                    [-4.0, 4.91667],
+                    [-4, 4.91667],
                     [-3.83333, 4.75],
                     [-3.16667, 4.75],
                     [-2.66667, 4.41667],
                     [-1.66667, 4.41667],
                     [-1.16667, 4.75],
-                    [-1.35, 5.08]
+                    [-1.35, 5.08],
                 ]
             }
         },
@@ -11029,7 +10637,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "埃尔米纳-罗安达",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_elmina_city_luanda_20261102",
                 startYear: -3000,
                 endYear: 2000,
@@ -11042,7 +10649,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-1.35, 5.08],
                     [-1.16667, 4.75],
                     [-0.33333, 4.91667],
-                    [0.0, 5.25],
+                    [0, 5.25],
                     [0.33333, 5.25],
                     [0.5, 5.41667],
                     [1.16667, 5.41667],
@@ -11055,15 +10662,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [4.91667, 4.5],
                     [5.5, 3.91667],
                     [6.83333, 3.91667],
-                    [7.0, 4.08333],
-                    [8.0, 4.08333],
-                    [8.0, 2.91667],
-                    [9.0, 2.91667],
+                    [7, 4.08333],
+                    [8, 4.08333],
+                    [8, 2.91667],
+                    [9, 2.91667],
                     [9.16667, 3.08333],
-                    [9.25, 3.0],
+                    [9.25, 3],
                     [9.25, 2.33333],
                     [8.75, 1.33333],
-                    [8.75, 0.0],
+                    [8.75, 0],
                     [8.25, -0.16667],
                     [8.25, -1.16667],
                     [9.08333, -2.66667],
@@ -11073,7 +10680,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [12.25, -7.16667],
                     [12.41667, -7.83333],
                     [12.75, -8.33333],
-                    [13.2344, -8.8383]
+                    [13.2344, -8.8383],
                 ]
             }
         },
@@ -11082,7 +10689,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "埃尔米纳-萨尔瓦多",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_elmina_city_salvador_20261102",
                 startYear: -3000,
                 endYear: 2000,
@@ -11098,13 +10704,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-2.66667, 4.41667],
                     [-3.16667, 4.75],
                     [-3.83333, 4.75],
-                    [-4.0, 4.91667],
+                    [-4, 4.91667],
                     [-4.33333, 4.91667],
                     [-4.5, 4.75],
                     [-5.5, 4.75],
                     [-5.66667, 4.58333],
                     [-6.5, 4.41667],
-                    [-7.0, 4.08333],
+                    [-7, 4.08333],
                     [-6.47095, 4.53809],
                     [-7.5, 3.5],
                     [-10, -2e-05],
@@ -11120,7 +10726,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-33.21157, -11.57728],
                     [-36.2, -13],
                     [-38.11157, -13.18112],
-                    [-38.51, -12.97]
+                    [-38.51, -12.97],
                 ]
             }
         },
@@ -11129,7 +10735,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "开普敦-毛里求斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_cape_town_city_mauritius_1793623000001",
                 startYear: -3000,
                 endYear: 2000,
@@ -11141,12 +10746,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [18.4239, -33.9253],
                     [18.66667, -34.75],
-                    [19.0, -35.08333],
+                    [19, -35.08333],
                     [20.5, -35.08333],
                     [20.83333, -34.75],
                     [22.16667, -34.75],
                     [22.5, -34.41667],
-                    [24.0, -34.41667],
+                    [24, -34.41667],
                     [24.16667, -34.58333],
                     [25.16667, -34.58333],
                     [25.33333, -34.41667],
@@ -11158,7 +10763,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [48.1, -26.4],
                     [56.11975, -21.76769],
                     [57.45426, -20.01898],
-                    [57.5, -20.16]
+                    [57.5, -20.16],
                 ]
             }
         },
@@ -11167,7 +10772,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "毛里求斯-巴达维亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mauritius_city_batavia_1793623000002",
                 startYear: -3000,
                 endYear: 2000,
@@ -11179,7 +10783,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [57.5, -20.16],
                     [56.75, -20.66667],
-                    [57.0, -20.91667],
+                    [57, -20.91667],
                     [57.83333, -20.91667],
                     [58, -20.7],
                     [63.44823, -20.38258],
@@ -11201,7 +10805,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [105.86421, -5.89354],
                     [106.09995, -5.81737],
                     [106.86813, -5.91658],
-                    [106.8133, -6.1352]
+                    [106.8133, -6.1352],
                 ]
             }
         },
@@ -11210,7 +10814,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "毛里求斯-莫桑比克",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mauritius_city_mozambique_1793623000003",
                 startYear: -3000,
                 endYear: 2000,
@@ -11240,76 +10843,8 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [40.91667, -11.66667],
                     [40.91667, -13.66667],
                     [41.25, -14.16667],
-                    [41.25, -15.0],
-                    [40.74, -15.03]
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "吉达-苏伊士",
-                type: "sea",
-                color: "#00ffff",
-                id: "sea_city_jida_city_suez_1793625000001",
-                startYear: -3000,
-                endYear: 2000,
-                startConnection: "city_jida",
-                endConnection: "city_suez"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [39.19, 21.49],
-                    [38.58333, 21.33333],
-                    [38.25, 21.5],
-                    [38.25, 22.16667],
-                    [38.41667, 22.33333],
-                    [38.25, 22.5],
-                    [38.25, 23.0],
-                    [38.08333, 23.33333],
-                    [37.66667, 23.75],
-                    [36.91667, 24.0],
-                    [36.91667, 24.16667],
-                    [36.58333, 24.5],
-                    [36.58333, 25.0],
-                    [36.33333, 25.25],
-                    [35.91667, 25.33333],
-                    [35.91667, 26.0],
-                    [35.75, 26.33333],
-                    [34.83333, 27.41667],
-                    [32.55, 29.97]
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "贝雷尼斯-苏伊士",
-                type: "sea",
-                color: "#00ffff",
-                id: "sea_city_beileinisi_city_suez_1793625000002",
-                startYear: -3000,
-                endYear: 2000,
-                startConnection: "city_beileinisi",
-                endConnection: "city_suez"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [35.48, 23.91],
-                    [35.75, 24.66667],
-                    [35.75, 24.83333],
-                    [35.25, 25.33333],
-                    [35.25, 25.66667],
-                    [35.08333, 25.83333],
-                    [35.25, 26.0],
-                    [35.25, 26.66667],
-                    [34.66667, 26.75],
-                    [34.41667, 27.0],
-                    [34.5, 27.41667],
-                    [34.83333, 27.41667],
-                    [32.55, 29.97]
+                    [41.25, -15],
+                    [40.74, -15.03],
                 ]
             }
         },
@@ -11318,7 +10853,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "科伦坡-亚齐",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kelunpo_city_yaqi_1793626000001",
                 startYear: -3000,
                 endYear: 2000,
@@ -11342,7 +10876,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [97.83333, 5.75],
                     [96.5, 5.75],
                     [96.16667, 6.08333],
-                    [95.32, 5.55]
+                    [95.32, 5.55],
                 ]
             }
         },
@@ -11351,7 +10885,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "霍尔木兹-巴士拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hormuz_city_bashila_1793627000001",
                 startYear: -3000,
                 endYear: 2000,
@@ -11370,15 +10903,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [53.3693, 26.5789],
                     [52.36675, 27.08314],
                     [51.4475, 27.5435],
-                    [51.0, 27.41667],
+                    [51, 27.41667],
                     [50.58333, 28.33333],
-                    [50.0, 28.91667],
-                    [49.75, 29.0],
+                    [50, 28.91667],
+                    [49.75, 29],
                     [49.75, 29.5],
                     [49.5, 29.75],
                     [49.16667, 29.75],
                     [48.75, 29.5],
-                    [47.78, 30.5]
+                    [47.78, 30.5],
                 ]
             }
         },
@@ -11387,7 +10920,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "霍尔木兹-卡拉奇",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_hormuz_city_kalaqi_1793627000002",
                 startYear: -3000,
                 endYear: 2000,
@@ -11414,11 +10946,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [63.16667, 24.91667],
                     [63.33333, 24.75],
                     [64.83333, 24.75],
-                    [65.0, 24.91667],
-                    [66.0, 25.08333],
+                    [65, 24.91667],
+                    [66, 25.08333],
                     [66.08333, 24.5],
                     [66.66667, 24.41667],
-                    [67.01, 24.86]
+                    [67.01, 24.86],
                 ]
             }
         },
@@ -11427,7 +10959,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "龙溪-马尼拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_zhangzhou_city_manila_1793628000001",
                 startYear: -3000,
                 endYear: 2000,
@@ -11449,7 +10980,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [119.4, 17],
                     [119.9, 14.4],
                     [120.53513, 14.26239],
-                    [120.9804, 14.5904]
+                    [120.9804, 14.5904],
                 ]
             }
         },
@@ -11458,7 +10989,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "德尔纳特-巴达维亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_deernate_city_batavia_1793628000002",
                 startYear: -3000,
                 endYear: 2000,
@@ -11470,7 +11000,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [127.3832, 0.7852],
                     [126.58333, 0.5],
-                    [126.58333, -1.0],
+                    [126.58333, -1],
                     [126.75, -1.16667],
                     [126.80749, -0.84101],
                     [126.89981, -2.02724],
@@ -11485,7 +11015,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [111.76248, -5.63684],
                     [106.8, -5.2],
                     [106.86813, -5.91658],
-                    [106.8133, -6.1352]
+                    [106.8133, -6.1352],
                 ]
             }
         },
@@ -11494,7 +11024,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "宁波-太宰府",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_qingyuan_zj_city_taizaifu_1793629000001",
                 startYear: -3000,
                 endYear: 2000,
@@ -11518,7 +11047,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [129.87247, 33.69664],
                     [130.26049, 33.71574],
                     [130.2594, 33.6615],
-                    [130.52, 33.51]
+                    [130.52, 33.51],
                 ]
             }
         },
@@ -11527,7 +11056,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马尼拉-宿务",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_manila_city_cebu_1793629000002",
                 startYear: -3000,
                 endYear: 2000,
@@ -11552,7 +11080,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [124.18121, 10.94793],
                     [124.17463, 10.80791],
                     [124.15787, 10.45135],
-                    [123.8854, 10.3157]
+                    [123.8854, 10.3157],
                 ]
             }
         },
@@ -11561,7 +11089,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "吕贝克-维斯比",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_lubeck_city_weishibi_1793629000003",
                 startYear: -3000,
                 endYear: 2000,
@@ -11583,7 +11110,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [16.74077, 55.93291],
                     [16.83333, 55.91667],
                     [17.5, 56.91667],
-                    [18.29, 57.64]
+                    [18.29, 57.64],
                 ]
             }
         },
@@ -11592,7 +11119,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "加尔各答-马六甲",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kolkata_city_malacca_1793629000005",
                 startYear: -3000,
                 endYear: 2000,
@@ -11612,7 +11138,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [100.6, 3.2],
                     [101.3128, 2.58917],
                     [102, 2],
-                    [102.25, 2.19]
+                    [102.25, 2.19],
                 ]
             }
         },
@@ -11621,7 +11147,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马六甲-巴达维亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_malacca_city_batavia_1793630000001",
                 startYear: -3000,
                 endYear: 2000,
@@ -11647,14 +11172,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [105.25, 0.33333],
                     [105.25, -0.33333],
                     [106.08333, -0.5],
-                    [106.08333, -1.0],
+                    [106.08333, -1],
                     [106.41667, -1.16667],
                     [106.66667, -1.91667],
                     [107.25128, -2.4986],
                     [107.29248, -3.59018],
                     [106.8, -5.2],
                     [106.86813, -5.91658],
-                    [106.8133, -6.1352]
+                    [106.8133, -6.1352],
                 ]
             }
         },
@@ -11663,7 +11188,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "里斯本-特尔德",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_lisiben_city_telde_1793630000002",
                 startYear: -3000,
                 endYear: 2000,
@@ -11689,7 +11213,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-13.9051, 32.4093],
                     [-15.17212, 29.3375],
                     [-15.14581, 28.53833],
-                    [-15.42, 28.0]
+                    [-15.42, 28],
                 ]
             }
         },
@@ -11698,7 +11222,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "安格拉-加的斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_angra_city_jiadisi_1793630000003",
                 startYear: -3000,
                 endYear: 2000,
@@ -11720,7 +11243,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-9.25, 36.8],
                     [-8.22701, 36.72279],
                     [-7.09486, 36.63735],
-                    [-6.28, 36.52]
+                    [-6.28, 36.52],
                 ]
             }
         },
@@ -11729,7 +11252,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "宁波-长崎",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_qingyuan_zj_city_nagasaki_1793630000004",
                 startYear: -3000,
                 endYear: 2000,
@@ -11748,7 +11270,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [122.9, 31.3],
                     [128.9, 31.4],
                     [129.35303, 32.50976],
-                    [129.8777, 32.7555]
+                    [129.8777, 32.7555],
                 ]
             }
         },
@@ -11757,7 +11279,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "宁波-金海",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_qingyuan_zj_city_gimhae_1793630000005",
                 startYear: -3000,
                 endYear: 2000,
@@ -11781,7 +11302,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [129.35303, 33.72434],
                     [129.10062, 34.04667],
                     [128.91632, 34.76192],
-                    [128.88, 35.23]
+                    [128.88, 35.23],
                 ]
             }
         },
@@ -11790,7 +11311,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "瓦尔帕莱索-复活节岛",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_valparaiso_city_rapanui_1793632000001",
                 startYear: -3000,
                 endYear: 2000,
@@ -11812,7 +11332,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-100, -30],
                     [-107.24653, -27.42404],
                     [-109.47189, -27.20579],
-                    [-109.36, -27.11]
+                    [-109.36, -27.11],
                 ]
             }
         },
@@ -11821,7 +11341,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "复活节岛-大溪地",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_rapanui_city_tahiti_1793632000002",
                 startYear: -3000,
                 endYear: 2000,
@@ -11842,7 +11361,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-135.03194, -25.2466],
                     [-140, -20],
                     [-149.7, -17.4],
-                    [-149.43, -17.65]
+                    [-149.43, -17.65],
                 ]
             }
         },
@@ -11851,7 +11370,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "瓦尔帕莱索-大溪地",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_valparaiso_city_tahiti_1793632000003",
                 startYear: -3000,
                 endYear: 2000,
@@ -11881,7 +11399,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-135.03194, -25.2466],
                     [-140, -20],
                     [-149.7, -17.4],
-                    [-149.43, -17.65]
+                    [-149.43, -17.65],
                 ]
             }
         },
@@ -11890,7 +11408,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "普利茅斯-詹姆斯敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_plymouth_city_jamestown_1793632000004",
                 startYear: -3000,
                 endYear: 2000,
@@ -11939,7 +11456,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-68.86057, 40.54129],
                     [-68.91015, 40.52259],
                     [-69.44828, 40.61035],
-                    [-69.58333, 41.0],
+                    [-69.58333, 41],
                     [-71.16667, 40.91667],
                     [-71.33333, 40.75],
                     [-71.66667, 40.75],
@@ -11953,9 +11470,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-74.33333, 38.91667],
                     [-74.5, 38.58333],
                     [-74.75, 38.5],
-                    [-74.75, 38.0],
-                    [-75.41667, 37.0],
-                    [-76.78, 37.21]
+                    [-74.75, 38],
+                    [-75.41667, 37],
+                    [-76.78, 37.21],
                 ]
             }
         },
@@ -11964,7 +11481,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "普利茅斯-波尔多",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_plymouth_city_bordeaux_1793632000005",
                 startYear: -3000,
                 endYear: 2000,
@@ -11981,18 +11497,18 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-5.5, 48.91667],
                     [-5.58333, 48.16667],
                     [-5.33333, 47.75],
-                    [-5.0, 47.75],
+                    [-5, 47.75],
                     [-4.83333, 47.41667],
                     [-4.16667, 47.41667],
                     [-3.75, 47.16667],
                     [-3.66667, 46.91667],
-                    [-3.0, 46.91667],
+                    [-3, 46.91667],
                     [-2.83333, 46.41667],
                     [-2.5, 46.41667],
                     [-1.91667, 45.83333],
                     [-1.75, 45.5],
                     [-1.75, 44.66667],
-                    [-0.57, 44.83]
+                    [-0.57, 44.83],
                 ]
             }
         },
@@ -12001,7 +11517,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "普利茅斯-加的斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_plymouth_city_jiadisi_1793632000006",
                 startYear: -3000,
                 endYear: 2000,
@@ -12034,23 +11549,23 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-9.5, 43],
                     [-9.34623, 42.26961],
                     [-9.30497, 42.07359],
-                    [-9.41667, 42.0],
-                    [-9.25, 41.0],
+                    [-9.41667, 42],
+                    [-9.25, 41],
                     [-9.41667, 40.83333],
                     [-9.41667, 40.33333],
-                    [-9.58333, 40.0],
+                    [-9.58333, 40],
                     [-10.08333, 39.83333],
                     [-10.08333, 39.16667],
-                    [-9.91667, 39.0],
+                    [-9.91667, 39],
                     [-9.91667, 38.5],
                     [-9.75, 38.16667],
-                    [-9.41667, 38.0],
+                    [-9.41667, 38],
                     [-9.41667, 36.83333],
                     [-8.5, 36.75],
                     [-8.33333, 36.58333],
                     [-7.5, 36.58333],
                     [-7.16667, 36.75],
-                    [-6.28, 36.52]
+                    [-6.28, 36.52],
                 ]
             }
         },
@@ -12059,7 +11574,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "伦敦-詹姆斯敦",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_lundun_city_jamestown_1793632000007",
                 startYear: -3000,
                 endYear: 2000,
@@ -12133,7 +11647,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-68.86057, 40.54129],
                     [-68.91015, 40.52259],
                     [-69.44828, 40.61035],
-                    [-69.58333, 41.0],
+                    [-69.58333, 41],
                     [-71.16667, 40.91667],
                     [-71.33333, 40.75],
                     [-71.66667, 40.75],
@@ -12147,9 +11661,9 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-74.33333, 38.91667],
                     [-74.5, 38.58333],
                     [-74.75, 38.5],
-                    [-74.75, 38.0],
-                    [-75.41667, 37.0],
-                    [-76.78, 37.21]
+                    [-74.75, 38],
+                    [-75.41667, 37],
+                    [-76.78, 37.21],
                 ]
             }
         },
@@ -12158,7 +11672,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿姆斯特丹-新阿姆斯特丹",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_amsterdam_city_newamsterdam_1793632000008",
                 startYear: -3000,
                 endYear: 2000,
@@ -12229,7 +11742,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-68.86057, 40.54129],
                     [-68.91015, 40.52259],
                     [-69.44828, 40.61035],
-                    [-69.58333, 41.0],
+                    [-69.58333, 41],
                     [-71.16667, 40.91667],
                     [-71.33333, 40.75],
                     [-71.66667, 40.75],
@@ -12237,43 +11750,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-72.66667, 40.41667],
                     [-72.83333, 40.25],
                     [-73.5, 40.25],
-                    [-74.01, 40.71]
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "布拉瓦-亚丁",
-                type: "sea",
-                color: "#00ffff",
-                id: "sea_city_barawa_city_aden_1793632000009",
-                startYear: -3000,
-                endYear: 2000,
-                startConnection: "city_barawa",
-                endConnection: "city_aden"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [44.03, 1.1],
-                    [44.83333, 1.25],
-                    [46.16667, 1.91667],
-                    [48.08333, 3.83333],
-                    [48.41667, 4.5],
-                    [49.25, 5.5],
-                    [49.75, 6.83333],
-                    [50.08333, 7.16667],
-                    [50.08333, 7.5],
-                    [50.58333, 8.0],
-                    [50.91667, 8.83333],
-                    [51.25, 9.16667],
-                    [50.8379, 8.3029],
-                    [52.3, 11.6],
-                    [50.85615, 12.88403],
-                    [45, 12],
-                    [44.97253, 12.71001],
-                    [45.0187, 12.7855]
+                    [-74.01, 40.71],
                 ]
             }
         },
@@ -12282,7 +11759,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马林迪-古里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_malindi_city_guli_1793632000010",
                 startYear: -3000,
                 endYear: 2000,
@@ -12293,39 +11769,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [40.1169, -3.2192],
-                    [40.58333, -3.0],
-                    [41.0, -2.91667],
-                    [41.16667, -2.58333],
-                    [41.33333, -2.58333],
-                    [42.08333, -1.83333],
-                    [42.08333, -1.66667],
-                    [42.58333, -1.16667],
-                    [42.58333, -1.0],
-                    [44.83333, 1.25],
-                    [46.16667, 1.91667],
-                    [48.08333, 3.83333],
-                    [48.41667, 4.5],
-                    [49.25, 5.5],
-                    [49.75, 6.83333],
-                    [50.08333, 7.16667],
-                    [50.08333, 7.5],
-                    [50.58333, 8.0],
-                    [50.91667, 8.83333],
-                    [51.25, 9.16667],
-                    [51.25, 10.0],
-                    [51.75, 10.16667],
-                    [51.58333, 11.83333],
-                    [51.66667, 11.91667],
-                    [51.83333, 11.75],
-                    [53.5, 11.75],
-                    [53.66667, 11.91667],
-                    [54.66667, 12.08333],
-                    [54.91667, 12.33333],
-                    [54.91667, 13.0],
-                    [55.0415, 12.74752],
-                    [59.894, 11.08346],
-                    [60.82573, 10.86698],
-                    [62.0601, 10.5802],
+                    [40.58333, -3.33333],
+                    [40.08333, -4.16667],
+                    [40.3, -4.2],
+                    [47.05822, -1.28],
+                    [50, -1e-05],
+                    [53.07862, 3.11951],
+                    [56.17013, 6.2239],
+                    [57.13337, 7.18448],
+                    [60, 10],
                     [64.30325, 10.03158],
                     [64.69686, 10.03447],
                     [65.0002, 10.0367],
@@ -12336,7 +11788,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [74.77844, 12.81716],
                     [74.41667, 12.16667],
                     [75.08333, 11.33333],
-                    [75.78, 11.25]
+                    [75.78, 11.25],
                 ]
             }
         },
@@ -12345,7 +11797,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "基尔瓦-马林迪",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kilwa_city_malindi_1793632000011",
                 startYear: -3000,
                 endYear: 2000,
@@ -12360,67 +11811,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [39.91667, -8.5],
                     [40.25, -8.16667],
                     [40.25, -7.16667],
-                    [39.91667, -7.0],
+                    [39.91667, -7],
                     [39.91667, -5.83333],
                     [40.25, -5.5],
                     [40.25, -4.5],
                     [40.08333, -4.16667],
                     [40.58333, -3.33333],
-                    [40.1169, -3.2192]
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "基尔瓦-亚丁",
-                type: "sea",
-                color: "#00ffff",
-                id: "sea_city_kilwa_city_aden_1793632000012",
-                startYear: -3000,
-                endYear: 2000,
-                startConnection: "city_kilwa",
-                endConnection: "city_aden"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [39.5128, -8.96],
-                    [39.91667, -8.83333],
-                    [39.91667, -8.5],
-                    [40.25, -8.16667],
-                    [40.25, -7.16667],
-                    [39.91667, -7.0],
-                    [39.91667, -5.83333],
-                    [40.25, -5.5],
-                    [40.25, -4.5],
-                    [40.08333, -4.16667],
-                    [40.58333, -3.33333],
-                    [40.58333, -3.0],
-                    [41.0, -2.91667],
-                    [41.16667, -2.58333],
-                    [41.33333, -2.58333],
-                    [42.08333, -1.83333],
-                    [42.08333, -1.66667],
-                    [42.58333, -1.16667],
-                    [42.58333, -1.0],
-                    [44.83333, 1.25],
-                    [46.16667, 1.91667],
-                    [48.08333, 3.83333],
-                    [48.41667, 4.5],
-                    [49.25, 5.5],
-                    [49.75, 6.83333],
-                    [50.08333, 7.16667],
-                    [50.08333, 7.5],
-                    [50.58333, 8.0],
-                    [50.91667, 8.83333],
-                    [51.25, 9.16667],
-                    [50.8379, 8.3029],
-                    [52.3, 11.6],
-                    [50.85615, 12.88403],
-                    [45, 12],
-                    [44.97253, 12.71001],
-                    [45.0187, 12.7855]
+                    [40.1169, -3.2192],
                 ]
             }
         },
@@ -12429,7 +11826,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "苏拉特-霍尔木兹",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_surat_city_hormuz_1793632000013",
                 startYear: -3000,
                 endYear: 2000,
@@ -12442,17 +11838,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [72.8311, 21.1702],
                     [72.16667, 20.75],
                     [71.5, 20.41667],
-                    [70.0, 20.41667],
-                    [68.41667, 22.0],
+                    [70, 20.41667],
+                    [68.41667, 22],
                     [68.41667, 22.66667],
                     [68.16667, 22.75],
                     [67.66667, 23.41667],
                     [67.16667, 23.41667],
-                    [67.0, 23.58333],
+                    [67, 23.58333],
                     [66.66667, 24.41667],
                     [66.08333, 24.5],
-                    [66.0, 25.08333],
-                    [65.0, 24.91667],
+                    [66, 25.08333],
+                    [65, 24.91667],
                     [64.83333, 24.75],
                     [63.33333, 24.75],
                     [63.16667, 24.91667],
@@ -12469,7 +11865,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [57.1, 25.5],
                     [56.93153, 25.96196],
                     [56.76306, 26.42211],
-                    [56.45, 27.1]
+                    [56.45, 27.1],
                 ]
             }
         },
@@ -12478,7 +11874,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "苏拉特-亚丁",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_surat_city_aden_1793632000014",
                 startYear: -3000,
                 endYear: 2000,
@@ -12491,17 +11886,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [72.8311, 21.1702],
                     [72.16667, 20.75],
                     [71.5, 20.41667],
-                    [70.0, 20.41667],
-                    [68.41667, 22.0],
+                    [70, 20.41667],
+                    [68.41667, 22],
                     [68.41667, 22.66667],
                     [68.16667, 22.75],
                     [67.66667, 23.41667],
                     [67.16667, 23.41667],
-                    [67.0, 23.58333],
+                    [67, 23.58333],
                     [66.66667, 24.41667],
                     [66.08333, 24.5],
-                    [66.0, 25.08333],
-                    [65.0, 24.91667],
+                    [66, 25.08333],
+                    [65, 24.91667],
                     [64.83333, 24.75],
                     [63.33333, 24.75],
                     [63.16667, 24.91667],
@@ -12516,7 +11911,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [58.08333, 19.66667],
                     [58.25, 19.5],
                     [58.25, 18.83333],
-                    [58.0, 18.58333],
+                    [58, 18.58333],
                     [57.33333, 18.58333],
                     [56.91667, 18.16667],
                     [56.75, 17.16667],
@@ -12524,23 +11919,23 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [55.5, 16.75],
                     [55.16667, 16.58333],
                     [54.16667, 16.58333],
-                    [54.0, 16.41667],
-                    [53.0, 16.25],
+                    [54, 16.41667],
+                    [53, 16.25],
                     [52.58333, 15.83333],
                     [52.58333, 15.33333],
                     [51.83333, 14.91667],
                     [50.83333, 14.75],
                     [50.33333, 14.41667],
                     [49.83333, 14.41667],
-                    [49.0, 13.75],
+                    [49, 13.75],
                     [48.66667, 13.58333],
-                    [48.0, 13.58333],
+                    [48, 13.58333],
                     [47.66667, 13.25],
                     [47.33333, 13.25],
                     [47.16667, 13.08333],
-                    [46.0, 13.08333],
+                    [46, 13.08333],
                     [45.66667, 12.75],
-                    [45.0187, 12.7855]
+                    [45.0187, 12.7855],
                 ]
             }
         },
@@ -12549,7 +11944,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "孟买-卡拉奇",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mumbai_city_kalaqi_1793632000015",
                 startYear: -3000,
                 endYear: 2000,
@@ -12566,15 +11960,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [72.25, 20.5],
                     [72.16667, 20.75],
                     [71.5, 20.41667],
-                    [70.0, 20.41667],
-                    [68.41667, 22.0],
+                    [70, 20.41667],
+                    [68.41667, 22],
                     [68.41667, 22.66667],
                     [68.16667, 22.75],
                     [67.66667, 23.41667],
                     [67.16667, 23.41667],
-                    [67.0, 23.58333],
+                    [67, 23.58333],
                     [66.66667, 24.41667],
-                    [67.01, 24.86]
+                    [67.01, 24.86],
                 ]
             }
         },
@@ -12583,7 +11977,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "孟买-古里",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mumbai_city_guli_1793632000016",
                 startYear: -3000,
                 endYear: 2000,
@@ -12605,7 +11998,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [73.91667, 14.16667],
                     [74.41667, 12.16667],
                     [75.08333, 11.33333],
-                    [75.78, 11.25]
+                    [75.78, 11.25],
                 ]
             }
         },
@@ -12614,7 +12007,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "柯枝-果阿",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_cochin_city_guoa_1793632000017",
                 startYear: -3000,
                 endYear: 2000,
@@ -12633,7 +12025,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [73.91667, 14.16667],
                     [73.58333, 14.5],
                     [73.25, 15.33333],
-                    [73.9117, 15.5023]
+                    [73.9117, 15.5023],
                 ]
             }
         },
@@ -12642,7 +12034,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "柯枝-科伦坡",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_cochin_city_kelunpo_1793632000018",
                 startYear: -3000,
                 endYear: 2000,
@@ -12657,12 +12048,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [75.75, 9.16667],
                     [76.08333, 8.5],
                     [76.83333, 7.75],
-                    [78.0, 7.75],
+                    [78, 7.75],
                     [78.41667, 8.16667],
                     [78.66667, 8.75],
                     [79.16667, 8.75],
                     [79.25, 6.83333],
-                    [79.8612, 6.9271]
+                    [79.8612, 6.9271],
                 ]
             }
         },
@@ -12671,7 +12062,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "小葛兰-亚齐",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_quilon_city_yaqi_1793632000019",
                 startYear: -3000,
                 endYear: 2000,
@@ -12696,7 +12086,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [97.83333, 5.75],
                     [96.5, 5.75],
                     [96.16667, 6.08333],
-                    [95.32, 5.55]
+                    [95.32, 5.55],
                 ]
             }
         },
@@ -12705,7 +12095,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "科伦坡-果阿",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_kelunpo_city_guoa_1793632000020",
                 startYear: -3000,
                 endYear: 2000,
@@ -12720,7 +12109,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [79.16667, 8.75],
                     [78.66667, 8.75],
                     [78.41667, 8.16667],
-                    [78.0, 7.75],
+                    [78, 7.75],
                     [76.83333, 7.75],
                     [76.08333, 8.5],
                     [75.75, 9.16667],
@@ -12732,7 +12121,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [73.91667, 14.16667],
                     [73.58333, 14.5],
                     [73.25, 15.33333],
-                    [73.9117, 15.5023]
+                    [73.9117, 15.5023],
                 ]
             }
         },
@@ -12741,7 +12130,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "贝鲁特-亚历山大",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_beirut_city_yalishanda_1793632000021",
                 startYear: -3000,
                 endYear: 2000,
@@ -12759,7 +12147,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [32.88603, 32.33766],
                     [32.1, 31.7],
                     [30.07251, 31.74408],
-                    [29.8925, 31.1975]
+                    [29.8925, 31.1975],
                 ]
             }
         },
@@ -12768,7 +12156,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "澳门-马尼拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_aomen_city_manila_1793632000022",
                 startYear: -3000,
                 endYear: 2000,
@@ -12786,7 +12173,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [118.16186, 16.90825],
                     [119.9, 14.4],
                     [120.53513, 14.26239],
-                    [120.9804, 14.5904]
+                    [120.9804, 14.5904],
                 ]
             }
         },
@@ -12795,7 +12182,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "能岛城-骏府",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_noshima_city_junfucheng_1793636173078",
                 startYear: -3000,
                 endYear: 2000,
@@ -12817,7 +12203,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [137.16667, 33.91667],
                     [137.33333, 34.25],
                     [138.5, 34.25],
-                    [138.38, 34.97]
+                    [138.38, 34.97],
                 ]
             }
         },
@@ -12826,7 +12212,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "白老-青叶馆",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_bailao_city_xiantai_1793636210893",
                 startYear: -3000,
                 endYear: 2000,
@@ -12837,17 +12222,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [141.36, 42.55],
-                    [141.58333, 42.0],
+                    [141.58333, 42],
                     [141.75, 41.83333],
                     [141.75, 41.16667],
                     [142.25, 40.66667],
                     [142.25, 40.16667],
-                    [142.41667, 40.0],
+                    [142.41667, 40],
                     [142.41667, 39.16667],
                     [141.91667, 38.5],
-                    [141.91667, 38.0],
+                    [141.91667, 38],
                     [141.41667, 37.83333],
-                    [140.87, 38.27]
+                    [140.87, 38.27],
                 ]
             }
         },
@@ -12856,7 +12241,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "复活节岛-利马",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_rapanui_city_lima_1793637224681",
                 startYear: -3000,
                 endYear: 2000,
@@ -12880,7 +12264,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-85.00019, -15.17039],
                     [-80, -10],
                     [-77.7, -12],
-                    [-77.04, -12.05]
+                    [-77.04, -12.05],
                 ]
             }
         },
@@ -12889,7 +12273,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "瓦尔帕莱索-圣胡利安港",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_valparaiso_city_sanjulian_1793637367410",
                 startYear: -3000,
                 endYear: 2000,
@@ -12903,20 +12286,20 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-72.25, -33.33333],
                     [-72.58333, -33.66667],
                     [-72.58333, -34.33333],
-                    [-73.08333, -35.0],
+                    [-73.08333, -35],
                     [-73.08333, -35.33333],
-                    [-73.41667, -36.0],
+                    [-73.41667, -36],
                     [-74.08333, -36.5],
                     [-74.25, -36.83333],
                     [-74.41667, -38.66667],
-                    [-73.91667, -39.0],
+                    [-73.91667, -39],
                     [-73.91667, -39.33333],
                     [-74.25, -39.5],
                     [-74.41667, -41.16667],
                     [-74.75, -41.83333],
                     [-74.75, -42.5],
                     [-74.91667, -42.66667],
-                    [-74.91667, -43.0],
+                    [-74.91667, -43],
                     [-75.41667, -43.16667],
                     [-75.41667, -43.83333],
                     [-75.25, -44.16667],
@@ -12932,38 +12315,38 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-76.25, -49.5],
                     [-76.08333, -49.66667],
                     [-76.08333, -50.83333],
-                    [-75.91667, -51.0],
+                    [-75.91667, -51],
                     [-75.91667, -51.83333],
-                    [-75.58333, -52.0],
+                    [-75.58333, -52],
                     [-75.58333, -52.66667],
                     [-75.25, -52.83333],
                     [-75.08333, -53.33333],
                     [-74.66667, -53.75],
-                    [-74.0, -54.08333],
+                    [-74, -54.08333],
                     [-73.5, -54.75],
                     [-72.83333, -54.75],
                     [-72.5, -55.08333],
-                    [-72.0, -55.08333],
+                    [-72, -55.08333],
                     [-71.66667, -55.41667],
                     [-70.66667, -55.58333],
-                    [-70.0, -55.91667],
+                    [-70, -55.91667],
                     [-69.83333, -56.25],
                     [-69.16667, -56.25],
-                    [-69.0, -55.91667],
+                    [-69, -55.91667],
                     [-68.66667, -55.91667],
                     [-68.33333, -56.25],
                     [-66.83333, -56.25],
-                    [-66.41667, -56.0],
+                    [-66.41667, -56],
                     [-66.41667, -55.66667],
                     [-65.83333, -55.25],
                     [-63.83333, -55.25],
-                    [-63.41667, -55.0],
+                    [-63.41667, -55],
                     [-63.41667, -54.33333],
                     [-63.83333, -54.08333],
                     [-64.5, -54.08333],
                     [-64.66667, -54.25],
                     [-64.83333, -54.08333],
-                    [-66.0, -54.08333],
+                    [-66, -54.08333],
                     [-67.5, -53.25],
                     [-68.08333, -52.33333],
                     [-68.08333, -51.83333],
@@ -12972,7 +12355,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-68.5, -50.58333],
                     [-67.66667, -50.41667],
                     [-67.41667, -50.16667],
-                    [-67.72, -49.31]
+                    [-67.72, -49.31],
                 ]
             }
         },
@@ -12981,7 +12364,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "圣胡利安港-布宜诺斯艾利斯",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_sanjulian_city_buenosaires_1793637407760",
                 startYear: -3000,
                 endYear: 2000,
@@ -12997,23 +12379,23 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-65.41667, -48.16667],
                     [-65.41667, -46.66667],
                     [-66.33333, -46.58333],
-                    [-67.08333, -46.0],
+                    [-67.08333, -46],
                     [-66.66667, -45.58333],
                     [-66.16667, -45.58333],
-                    [-66.0, -45.41667],
+                    [-66, -45.41667],
                     [-65.16667, -45.41667],
-                    [-65.08333, -45.0],
+                    [-65.08333, -45],
                     [-64.91667, -44.83333],
                     [-64.91667, -43.83333],
-                    [-64.0, -43.25],
+                    [-64, -43.25],
                     [-63.66667, -43.25],
-                    [-63.25, -43.0],
+                    [-63.25, -43],
                     [-63.25, -41.83333],
                     [-63.5, -41.58333],
                     [-64.58333, -41.5],
                     [-62.5, -41.41667],
                     [-62.33333, -41.25],
-                    [-62.0, -41.25],
+                    [-62, -41.25],
                     [-61.75, -40.83333],
                     [-61.75, -39.66667],
                     [-61.16667, -39.25],
@@ -13022,7 +12404,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-58.83333, -39.08333],
                     [-58.66667, -38.91667],
                     [-58.16667, -38.91667],
-                    [-58.0, -38.75],
+                    [-58, -38.75],
                     [-57.33333, -38.58333],
                     [-57.25, -38.16667],
                     [-56.75, -37.83333],
@@ -13030,7 +12412,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-57.1, -38.25],
                     [-54.6, -35.25],
                     [-56.5, -35.1],
-                    [-58.38, -34.6]
+                    [-58.38, -34.6],
                 ]
             }
         },
@@ -13039,7 +12421,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "布宜诺斯艾利斯-瓦尔帕莱索",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_buenosaires_city_valparaiso_1793637415948",
                 startYear: -3000,
                 endYear: 2000,
@@ -13063,32 +12444,32 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-62.61842, -50.79931],
                     [-63.1847, -53.7546],
                     [-63.41667, -54.33333],
-                    [-63.41667, -55.0],
+                    [-63.41667, -55],
                     [-63.83333, -55.25],
                     [-65.83333, -55.25],
                     [-66.41667, -55.66667],
-                    [-66.41667, -56.0],
+                    [-66.41667, -56],
                     [-66.83333, -56.25],
                     [-68.33333, -56.25],
                     [-68.66667, -55.91667],
-                    [-69.0, -55.91667],
+                    [-69, -55.91667],
                     [-69.16667, -56.25],
                     [-69.83333, -56.25],
-                    [-70.0, -55.91667],
+                    [-70, -55.91667],
                     [-70.66667, -55.58333],
                     [-71.66667, -55.41667],
-                    [-72.0, -55.08333],
+                    [-72, -55.08333],
                     [-72.5, -55.08333],
                     [-72.83333, -54.75],
                     [-73.5, -54.75],
-                    [-74.0, -54.08333],
+                    [-74, -54.08333],
                     [-74.66667, -53.75],
                     [-75.08333, -53.33333],
                     [-75.25, -52.83333],
                     [-75.58333, -52.66667],
-                    [-75.58333, -52.0],
+                    [-75.58333, -52],
                     [-75.91667, -51.83333],
-                    [-75.91667, -51.0],
+                    [-75.91667, -51],
                     [-76.08333, -50.83333],
                     [-76.08333, -49.66667],
                     [-76.25, -49.5],
@@ -13104,24 +12485,24 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-75.25, -44.16667],
                     [-75.41667, -43.83333],
                     [-75.41667, -43.16667],
-                    [-74.91667, -43.0],
+                    [-74.91667, -43],
                     [-74.91667, -42.66667],
                     [-74.75, -42.5],
                     [-74.75, -41.83333],
                     [-74.41667, -41.16667],
                     [-74.25, -39.5],
                     [-73.91667, -39.33333],
-                    [-73.91667, -39.0],
+                    [-73.91667, -39],
                     [-74.41667, -38.66667],
                     [-74.25, -36.83333],
                     [-74.08333, -36.5],
-                    [-73.41667, -36.0],
+                    [-73.41667, -36],
                     [-73.08333, -35.33333],
-                    [-73.08333, -35.0],
+                    [-73.08333, -35],
                     [-72.58333, -34.33333],
                     [-72.58333, -33.66667],
                     [-72.25, -33.33333],
-                    [-71.62, -33.04]
+                    [-71.62, -33.04],
                 ]
             }
         },
@@ -13130,7 +12511,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "布宜诺斯艾利斯-瓜纳巴拉",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_buenosaires_city_guanabara_1793637454656",
                 startYear: -3000,
                 endYear: 2000,
@@ -13149,17 +12529,17 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-49.5, -30.5],
                     [-47.9, -27.8],
                     [-48.28903, -26.18132],
-                    [-48.08333, -26.0],
+                    [-48.08333, -26],
                     [-47.33333, -25.08333],
                     [-46.83333, -24.91667],
                     [-46.33333, -24.41667],
                     [-45.5, -24.41667],
                     [-45.33333, -24.25],
-                    [-45.0, -24.25],
+                    [-45, -24.25],
                     [-44.66667, -23.75],
                     [-43.83333, -23.58333],
                     [-43.66667, -23.41667],
-                    [-43.2, -22.9]
+                    [-43.2, -22.9],
                 ]
             }
         },
@@ -13168,7 +12548,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "瓜纳巴拉-萨尔瓦多",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_guanabara_city_salvador_1793637474050",
                 startYear: -3000,
                 endYear: 2000,
@@ -13184,7 +12563,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-41.33333, -22.58333],
                     [-40.58333, -22.33333],
                     [-40.58333, -21.5],
-                    [-40.08333, -21.0],
+                    [-40.08333, -21],
                     [-39.75, -20.16667],
                     [-39.41667, -19.83333],
                     [-39.41667, -18.66667],
@@ -13195,7 +12574,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-38.75, -16.66667],
                     [-38.58333, -16.5],
                     [-38.58333, -13.5],
-                    [-38.51, -12.97]
+                    [-38.51, -12.97],
                 ]
             }
         },
@@ -13204,7 +12583,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "萨尔瓦多-马提尼克",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_salvador_city_martinique_1793637489099",
                 startYear: -3000,
                 endYear: 2000,
@@ -13226,20 +12604,20 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-34.41667, -8.16667],
                     [-34.41667, -6.5],
                     [-34.58333, -6.33333],
-                    [-34.91667, -5.0],
+                    [-34.91667, -5],
                     [-35.16667, -4.58333],
                     [-36.5, -4.58333],
                     [-36.83333, -4.41667],
                     [-38.83333, -2.75],
                     [-39.83333, -2.25],
-                    [-41.0, -2.25],
+                    [-41, -2.25],
                     [-41.33333, -2.41667],
                     [-41.5, -2.25],
                     [-42.16667, -2.25],
                     [-42.66667, -1.91667],
                     [-43.16667, -1.91667],
                     [-43.33333, -1.75],
-                    [-44.0, -1.75],
+                    [-44, -1.75],
                     [-44.25, -1.16667],
                     [-44.66667, -0.75],
                     [-45.16667, -0.75],
@@ -13247,15 +12625,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-46.16667, -0.41667],
                     [-46.33333, -0.25],
                     [-46.83333, -0.25],
-                    [-47.0, -0.08333],
+                    [-47, -0.08333],
                     [-47.83333, -0.08333],
                     [-48.5, 0.41667],
-                    [-49.0, 0.41667],
+                    [-49, 0.41667],
                     [-49.33333, 0.91667],
-                    [-49.58333, 1.0],
+                    [-49.58333, 1],
                     [-49.58333, 2.16667],
                     [-49.83333, 2.41667],
-                    [-50.0, 2.41667],
+                    [-50, 2.41667],
                     [-50.16667, 2.75],
                     [-50.41667, 2.83333],
                     [-50.75, 3.5],
@@ -13272,23 +12650,23 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-58.08333, 7.5],
                     [-58.08333, 7.83333],
                     [-58.83333, 8.58333],
-                    [-59.0, 8.58333],
+                    [-59, 8.58333],
                     [-59.66667, 9.08333],
                     [-60.16667, 9.08333],
-                    [-60.58333, 10.0],
+                    [-60.58333, 10],
                     [-60.58333, 10.66667],
-                    [-60.08333, 11.0],
+                    [-60.08333, 11],
                     [-60.08333, 11.66667],
                     [-60.33333, 11.91667],
-                    [-61.0, 11.91667],
+                    [-61, 11.91667],
                     [-61.16667, 11.75],
                     [-61.25, 11.83333],
                     [-61.08333, 12.33333],
                     [-60.75, 12.66667],
                     [-60.75, 13.33333],
                     [-60.58333, 13.5],
-                    [-60.58333, 14.0],
-                    [-61.07, 14.6]
+                    [-60.58333, 14],
+                    [-61.07, 14.6],
                 ]
             }
         },
@@ -13297,7 +12675,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马提尼克-圣多明各",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_martinique_city_shengduomingge_1793637495069",
                 startYear: -3000,
                 endYear: 2000,
@@ -13309,7 +12686,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [-61.07, 14.6],
                     [-61.58333, 14.33333],
-                    [-61.91667, 15.0],
+                    [-61.91667, 15],
                     [-61.91667, 15.5],
                     [-62.25, 15.66667],
                     [-62.25, 16.33333],
@@ -13323,7 +12700,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-67.83333, 17.75],
                     [-69.16667, 17.75],
                     [-69.33333, 18.08333],
-                    [-69.8868, 18.4715]
+                    [-69.8868, 18.4715],
                 ]
             }
         },
@@ -13332,7 +12709,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "马提尼克-卡塔赫纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_martinique_city_katachena_1793637504272",
                 startYear: -3000,
                 endYear: 2000,
@@ -13355,18 +12731,18 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-70, 13],
                     [-71.04216, 12.74246],
                     [-70.91667, 12.66667],
-                    [-71.0, 12.91667],
+                    [-71, 12.91667],
                     [-72.33333, 12.91667],
                     [-72.75, 12.66667],
                     [-72.75, 12.5],
-                    [-73.0, 12.25],
+                    [-73, 12.25],
                     [-73.66667, 11.91667],
                     [-74.5, 11.91667],
                     [-74.83333, 11.58333],
                     [-75.33333, 11.58333],
-                    [-76.08333, 11.0],
+                    [-76.08333, 11],
                     [-75.73154, 10.8897],
-                    [-75.5442, 10.4266]
+                    [-75.5442, 10.4266],
                 ]
             }
         },
@@ -13375,7 +12751,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "圣多明各-皇家港",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shengduomingge_city_portroyal_1793637518932",
                 startYear: -3000,
                 endYear: 2000,
@@ -13392,7 +12767,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-73, 17.3],
                     [-75.40828, 17.8011],
                     [-76.47034, 17.7016],
-                    [-76.84, 17.94]
+                    [-76.84, 17.94],
                 ]
             }
         },
@@ -13401,7 +12776,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "皇家港-哈瓦那",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_portroyal_city_havana_1793637541611",
                 startYear: -3000,
                 endYear: 2000,
@@ -13423,7 +12797,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-84.16667, 23.25],
                     [-83.5, 23.58333],
                     [-82.83333, 23.58333],
-                    [-82.38, 23.13]
+                    [-82.38, 23.13],
                 ]
             }
         },
@@ -13432,7 +12806,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "皇家港-卡塔赫纳",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_portroyal_city_katachena_1793637551888",
                 startYear: -3000,
                 endYear: 2000,
@@ -13450,7 +12823,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-77.63872, 13.97598],
                     [-80, 9.75],
                     [-76.11059, 10.25031],
-                    [-75.5442, 10.4266]
+                    [-75.5442, 10.4266],
                 ]
             }
         },
@@ -13459,7 +12832,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "卡塔赫纳-波多韦洛",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_katachena_city_portobelo_1793637560461",
                 startYear: -3000,
                 endYear: 2000,
@@ -13472,7 +12844,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-75.5442, 10.4266],
                     [-76.11059, 10.25031],
                     [-80, 9.75],
-                    [-79.6644, 9.5544]
+                    [-79.6644, 9.5544],
                 ]
             }
         },
@@ -13481,7 +12853,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "波多韦洛-哈瓦那",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_portobelo_city_havana_1793637571398",
                 startYear: -3000,
                 endYear: 2000,
@@ -13505,7 +12876,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-84.16667, 23.25],
                     [-83.5, 23.58333],
                     [-82.83333, 23.58333],
-                    [-82.38, 23.13]
+                    [-82.38, 23.13],
                 ]
             }
         },
@@ -13514,7 +12885,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "韦拉克鲁斯-哈瓦那",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_veracruz_city_havana_1793637595027",
                 startYear: -3000,
                 endYear: 2000,
@@ -13532,7 +12902,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-94.16667, 18.91667],
                     [-93.33333, 18.91667],
                     [-92.66667, 19.25],
-                    [-92.0, 19.25],
+                    [-92, 19.25],
                     [-91.66667, 19.41667],
                     [-91.25, 19.83333],
                     [-91.25, 20.16667],
@@ -13540,7 +12910,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-90.91667, 21.5],
                     [-90.16667, 21.91667],
                     [-89.16667, 21.91667],
-                    [-89.0, 22.08333],
+                    [-89, 22.08333],
                     [-86.5036, 22.10091],
                     [-86.11065, 21.85698],
                     [-85.98025, 21.86964],
@@ -13551,7 +12921,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-84.16667, 23.25],
                     [-83.5, 23.58333],
                     [-82.83333, 23.58333],
-                    [-82.38, 23.13]
+                    [-82.38, 23.13],
                 ]
             }
         },
@@ -13560,7 +12930,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "哈瓦那-圣奥古斯丁",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_havana_city_shengaogusiding_1793637599403",
                 startYear: -3000,
                 endYear: 2000,
@@ -13592,7 +12961,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-80.4402, 28.4472],
                     [-80.7948, 29.0791],
                     [-81.1137, 29.9152],
-                    [-81.313, 29.897]
+                    [-81.313, 29.897],
                 ]
             }
         },
@@ -13601,7 +12970,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "圣奥古斯丁-新阿姆斯特丹",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_shengaogusiding_city_newamsterdam_1793637608707",
                 startYear: -3000,
                 endYear: 2000,
@@ -13618,20 +12986,20 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-80.33333, 31.91667],
                     [-79.66667, 32.25],
                     [-79.16667, 32.75],
-                    [-79.0, 32.75],
+                    [-79, 32.75],
                     [-78.5, 33.41667],
                     [-78.16667, 33.58333],
                     [-77.66667, 33.58333],
                     [-77.33333, 34.08333],
-                    [-77.0, 34.25],
+                    [-77, 34.25],
                     [-76.16667, 34.25],
-                    [-76.0, 34.58333],
+                    [-76, 34.58333],
                     [-75.83333, 34.58333],
                     [-75.08333, 35.16667],
                     [-75.08333, 36.16667],
                     [-75.41667, 36.66667],
-                    [-75.41667, 37.0],
-                    [-74.75, 38.0],
+                    [-75.41667, 37],
+                    [-74.75, 38],
                     [-74.75, 38.5],
                     [-74.5, 38.58333],
                     [-74.33333, 38.91667],
@@ -13639,7 +13007,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-73.75, 39.33333],
                     [-73.75, 39.83333],
                     [-73.5, 40.25],
-                    [-74.01, 40.71]
+                    [-74.01, 40.71],
                 ]
             }
         },
@@ -13648,7 +13016,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "大溪地-穆阿",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_tahiti_city_mua_1793638000002",
                 startYear: -3000,
                 endYear: 2000,
@@ -13666,16 +13033,16 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-165.08606, -15.28948],
                     [-170.7, -14.4],
                     [-173.0562, -17.715],
-                    [-174.0, -17.58333],
-                    [-173.91667, -18.0],
+                    [-174, -17.58333],
+                    [-173.91667, -18],
                     [-173.58333, -18.16667],
-                    [-173.58333, -19.0],
+                    [-173.58333, -19],
                     [-173.91667, -19.16667],
-                    [-173.91667, -20.0],
+                    [-173.91667, -20],
                     [-174.25, -20.33333],
                     [-174.25, -20.66667],
-                    [-174.58333, -21.0],
-                    [-175.12, -21.18]
+                    [-174.58333, -21],
+                    [-175.12, -21.18],
                 ]
             }
         },
@@ -13684,7 +13051,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "大溪地-火奴鲁鲁",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_tahiti_city_honolulu_1793638000003",
                 startYear: -3000,
                 endYear: 2000,
@@ -13707,7 +13073,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-153.70144, 16.45091],
                     [-155.9729, 19.02317],
                     [-157.67, 21.1667],
-                    [-157.86, 21.31]
+                    [-157.86, 21.31],
                 ]
             }
         },
@@ -13716,7 +13082,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "大溪地-阿加尼亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_tahiti_city_hagatna_1793638000004",
                 startYear: -3000,
                 endYear: 2000,
@@ -13751,7 +13116,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [155.0002, 10.0367],
                     [150, 10],
                     [145.07234, 13.73285],
-                    [144.75, 13.4757]
+                    [144.75, 13.4757],
                 ]
             }
         },
@@ -13760,7 +13125,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "阿卡普尔科-火奴鲁鲁",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_acapulco_city_honolulu_1793638000005",
                 startYear: -3000,
                 endYear: 2000,
@@ -13795,7 +13159,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-151.9295, 21.3505],
                     [-156.7991, 21.3673],
                     [-157.3227, 21.3337],
-                    [-157.86, 21.31]
+                    [-157.86, 21.31],
                 ]
             }
         },
@@ -13804,7 +13168,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "火奴鲁鲁-阿加尼亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_honolulu_city_hagatna_1793638000006",
                 startYear: -3000,
                 endYear: 2000,
@@ -13832,7 +13195,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [149.7634, 16.5262],
                     [147.90479, 15.41947],
                     [145.07234, 13.73285],
-                    [144.75, 13.4757]
+                    [144.75, 13.4757],
                 ]
             }
         },
@@ -13841,7 +13204,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "穆阿-德尔纳特",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mua_city_deernate_1793638000007",
                 startYear: -3000,
                 endYear: 2000,
@@ -13852,15 +13214,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [-175.12, -21.18],
-                    [-174.58333, -21.0],
+                    [-174.58333, -21],
                     [-174.25, -20.66667],
                     [-174.25, -20.33333],
-                    [-173.91667, -20.0],
+                    [-173.91667, -20],
                     [-173.91667, -19.16667],
-                    [-173.58333, -19.0],
+                    [-173.58333, -19],
                     [-173.58333, -18.16667],
-                    [-173.91667, -18.0],
-                    [-174.0, -17.58333],
+                    [-173.91667, -18],
+                    [-174, -17.58333],
                     [-173.0562, -17.715],
                     [-175.5, -21],
                     [-180, -20],
@@ -13879,28 +13241,28 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [162.75, -10.33333],
                     [162.66667, -11.25],
                     [161.66667, -11.25],
-                    [161.0, -10.91667],
+                    [161, -10.91667],
                     [160.75, -10.66667],
                     [160.66667, -10.25],
                     [159.33333, -10.08333],
                     [159.08333, -9.83333],
-                    [159.0, -9.41667],
+                    [159, -9.41667],
                     [158.33333, -9.41667],
                     [158.16667, -9.08333],
                     [156.83333, -9.08333],
                     [156.5, -8.58333],
                     [156.08333, -8.5],
-                    [156.0, -7.41667],
+                    [156, -7.41667],
                     [155.83333, -7.75],
                     [155.08333, -7.66667],
                     [155.08333, -7.16667],
                     [154.58333, -6.83333],
                     [154.58333, -6.66667],
-                    [154.08333, -6.0],
-                    [154.08333, -5.0],
+                    [154.08333, -6],
+                    [154.08333, -5],
                     [153.58333, -4.66667],
                     [153.5, -4.41667],
-                    [153.41667, -5.0],
+                    [153.41667, -5],
                     [153.16667, -5.25],
                     [152.5, -5.25],
                     [152.41667, -5.66667],
@@ -13919,13 +13281,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [141.5, -2.08333],
                     [139.5, -1.58333],
                     [139.08333, -1.33333],
-                    [139.0, -1.08333],
+                    [139, -1.08333],
                     [137.33333, -0.91667],
                     [137.16667, -1.08333],
                     [136.83333, -0.58333],
                     [136.5, -0.58333],
                     [136.33333, -0.25],
-                    [136.0, -0.25],
+                    [136, -0.25],
                     [135.5, 0.08333],
                     [134.83333, 0.08333],
                     [134.75, -0.33333],
@@ -13938,19 +13300,19 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [131.5, 1.58333],
                     [130.75, 1.5],
                     [130.75, 1.16667],
-                    [130.58333, 1.0],
+                    [130.58333, 1],
                     [130.5, 0.58333],
                     [130.16667, 0.91667],
                     [129.5, 0.91667],
                     [129.33333, 0.58333],
-                    [129.25, 1.0],
+                    [129.25, 1],
                     [129.08333, 1.16667],
-                    [129.0, 3.08333],
-                    [128.0, 3.08333],
+                    [129, 3.08333],
+                    [128, 3.08333],
                     [127.33333, 2.75],
                     [126.91667, 2.16667],
                     [126.83333, 1.41667],
-                    [127.3832, 0.7852]
+                    [127.3832, 0.7852],
                 ]
             }
         },
@@ -13959,7 +13321,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "穆阿-巴达维亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mua_city_batavia_1793638000008",
                 startYear: -3000,
                 endYear: 2000,
@@ -13970,15 +13331,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [-175.12, -21.18],
-                    [-174.58333, -21.0],
+                    [-174.58333, -21],
                     [-174.25, -20.66667],
                     [-174.25, -20.33333],
-                    [-173.91667, -20.0],
+                    [-173.91667, -20],
                     [-173.91667, -19.16667],
-                    [-173.58333, -19.0],
+                    [-173.58333, -19],
                     [-173.58333, -18.16667],
-                    [-173.91667, -18.0],
-                    [-174.0, -17.58333],
+                    [-173.91667, -18],
+                    [-174, -17.58333],
                     [-173.0562, -17.715],
                     [-175.5, -21],
                     [-180, -20],
@@ -13987,14 +13348,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [167.7, -23],
                     [167.16667, -23.25],
                     [166.5, -23.25],
-                    [166.25, -23.0],
+                    [166.25, -23],
                     [166.16667, -22.58333],
                     [165.83333, -22.58333],
                     [165.5, -22.25],
                     [164.5, -21.75],
                     [164.33333, -21.41667],
                     [163.91667, -21.16667],
-                    [163.91667, -21.0],
+                    [163.91667, -21],
                     [163.66667, -20.75],
                     [163.5, -20.9],
                     [160, -20],
@@ -14018,7 +13379,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [111.76248, -5.63684],
                     [106.8, -5.2],
                     [106.86813, -5.91658],
-                    [106.8133, -6.1352]
+                    [106.8133, -6.1352],
                 ]
             }
         },
@@ -14027,7 +13388,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "穆阿-阿加尼亚",
                 type: "sea",
-                color: "#00ffff",
                 id: "sea_city_mua_city_hagatna_1793638000009",
                 startYear: -3000,
                 endYear: 2000,
@@ -14038,15 +13398,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [-175.12, -21.18],
-                    [-174.58333, -21.0],
+                    [-174.58333, -21],
                     [-174.25, -20.66667],
                     [-174.25, -20.33333],
-                    [-173.91667, -20.0],
+                    [-173.91667, -20],
                     [-173.91667, -19.16667],
-                    [-173.58333, -19.0],
+                    [-173.58333, -19],
                     [-173.58333, -18.16667],
-                    [-173.91667, -18.0],
-                    [-174.0, -17.58333],
+                    [-173.91667, -18],
+                    [-174, -17.58333],
                     [-173.0562, -17.715],
                     [-175.5, -21],
                     [-180, -20],
@@ -14065,9 +13425,1178 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [152.14803, 7.88358],
                     [150, 10],
                     [145.07234, 13.73285],
-                    [144.75, 13.4757]
+                    [144.75, 13.4757],
                 ]
             }
-        }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "摩加迪沙-亚丁",
+                type: "sea",
+                id: "sea_city_mogadishu_city_aden_1793639766415",
+                startConnection: "city_mogadishu",
+                endConnection: "city_aden"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [45.3419, 2.0392],
+                    [45.85235, 1.73275],
+                    [49.4, 5],
+                    [50.8379, 8.3029],
+                    [52.3, 11.6],
+                    [50.85615, 12.88403],
+                    [45, 12],
+                    [44.97253, 12.71001],
+                    [45.0187, 12.7855],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚丁-布拉瓦",
+                type: "sea",
+                id: "sea_city_aden_city_barawa_1793639780711",
+                startConnection: "city_aden",
+                endConnection: "city_barawa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [45.0187, 12.7855],
+                    [44.97253, 12.71001],
+                    [45, 12],
+                    [50.85615, 12.88403],
+                    [52.3, 11.6],
+                    [50.8379, 8.3029],
+                    [49.4, 5],
+                    [45.85235, 1.73275],
+                    [45.37353, 1.96617],
+                    [44.83333, 1.25],
+                    [44.03, 1.1],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "马林迪-柯枝",
+                type: "sea",
+                id: "sea_city_malindi_city_cochin_1793650000001",
+                startConnection: "city_malindi",
+                endConnection: "city_cochin"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [40.1169, -3.2192],
+                    [40.58333, -3.33333],
+                    [40.08333, -4.16667],
+                    [40.3, -4.2],
+                    [47.05822, -1.28],
+                    [50, -1e-05],
+                    [53.07862, 3.11951],
+                    [56.17013, 6.2239],
+                    [57.13337, 7.18448],
+                    [60, 10],
+                    [64.30325, 10.03158],
+                    [64.69686, 10.03447],
+                    [65.0002, 10.0367],
+                    [65.12677, 10.03577],
+                    [70, 10],
+                    [75.3, 9.7],
+                    [76.19568, 9.87686],
+                    [76.24, 9.97],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "蒙巴萨-古里",
+                type: "sea",
+                id: "sea_city_mombasa_city_guli_1793650000002",
+                startConnection: "city_mombasa",
+                endConnection: "city_guli"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [39.6667, -4.05],
+                    [40.25, -4.5],
+                    [40.08333, -4.16667],
+                    [40.3, -4.2],
+                    [47.05822, -1.28],
+                    [50, -1e-05],
+                    [53.07862, 3.11951],
+                    [56.17013, 6.2239],
+                    [57.13337, 7.18448],
+                    [60, 10],
+                    [64.30325, 10.03158],
+                    [64.69686, 10.03447],
+                    [65.0002, 10.0367],
+                    [65.12677, 10.03577],
+                    [70, 10],
+                    [75.3, 9.7],
+                    [74.13352, 12.77336],
+                    [74.77844, 12.81716],
+                    [74.41667, 12.16667],
+                    [75.08333, 11.33333],
+                    [75.78, 11.25],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "蒙巴萨-柯枝",
+                type: "sea",
+                id: "sea_city_mombasa_city_cochin_1793650000003",
+                startConnection: "city_mombasa",
+                endConnection: "city_cochin"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [39.6667, -4.05],
+                    [40.25, -4.5],
+                    [40.08333, -4.16667],
+                    [40.3, -4.2],
+                    [47.05822, -1.28],
+                    [50, -1e-05],
+                    [53.07862, 3.11951],
+                    [56.17013, 6.2239],
+                    [57.13337, 7.18448],
+                    [60, 10],
+                    [64.30325, 10.03158],
+                    [64.69686, 10.03447],
+                    [65.0002, 10.0367],
+                    [65.12677, 10.03577],
+                    [70, 10],
+                    [75.3, 9.7],
+                    [76.19568, 9.87686],
+                    [76.24, 9.97],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "马林迪-索姆纳特",
+                type: "sea",
+                id: "sea_city_malindi_city_suomunate_1793650000004",
+                startConnection: "city_malindi",
+                endConnection: "city_suomunate"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [40.1169, -3.2192],
+                    [40.58333, -3.0],
+                    [41.0, -2.91667],
+                    [41.16667, -2.58333],
+                    [41.33333, -2.58333],
+                    [42.08333, -1.83333],
+                    [42.08333, -1.66667],
+                    [42.58333, -1.16667],
+                    [42.58333, -1.0],
+                    [44.83333, 1.25],
+                    [45.37353, 1.96617],
+                    [45.85235, 1.73275],
+                    [49.4, 5],
+                    [50.8379, 8.3029],
+                    [52.3, 11.6],
+                    [53.61885, 13.30001],
+                    [56.8103, 14.56763],
+                    [59.44496, 15.64493],
+                    [61.54, 16.2661],
+                    [62.6071, 16.5514],
+                    [64.76639, 17.1287],
+                    [66.25793, 17.52748],
+                    [67.79511, 17.91161],
+                    [70, 20],
+                    [69.59246, 20.80933],
+                    [70.4014, 20.8878],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "马林迪-苏拉特",
+                type: "sea",
+                id: "sea_city_malindi_city_surat_1793650000005",
+                startConnection: "city_malindi",
+                endConnection: "city_surat"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [40.1169, -3.2192],
+                    [40.58333, -3.0],
+                    [41.0, -2.91667],
+                    [41.16667, -2.58333],
+                    [41.33333, -2.58333],
+                    [42.08333, -1.83333],
+                    [42.08333, -1.66667],
+                    [42.58333, -1.16667],
+                    [42.58333, -1.0],
+                    [44.83333, 1.25],
+                    [45.37353, 1.96617],
+                    [45.85235, 1.73275],
+                    [49.4, 5],
+                    [50.8379, 8.3029],
+                    [52.3, 11.6],
+                    [53.61885, 13.30001],
+                    [56.8103, 14.56763],
+                    [59.44496, 15.64493],
+                    [61.54, 16.2661],
+                    [62.6071, 16.5514],
+                    [64.76639, 17.1287],
+                    [66.25793, 17.52748],
+                    [67.79511, 17.91161],
+                    [70, 20],
+                    [70.86456, 20.17714],
+                    [72.37793, 20.06625],
+                    [72.62787, 20.98965],
+                    [72.8311, 21.1702],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "摩加迪沙-索姆纳特",
+                type: "sea",
+                id: "sea_city_mogadishu_city_suomunate_1793650000006",
+                startConnection: "city_mogadishu",
+                endConnection: "city_suomunate"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [45.3419, 2.0392],
+                    [45.85235, 1.73275],
+                    [49.4, 5],
+                    [50.8379, 8.3029],
+                    [52.3, 11.6],
+                    [53.61885, 13.30001],
+                    [56.8103, 14.56763],
+                    [59.44496, 15.64493],
+                    [61.54, 16.2661],
+                    [62.6071, 16.5514],
+                    [64.76639, 17.1287],
+                    [66.25793, 17.52748],
+                    [67.79511, 17.91161],
+                    [70, 20],
+                    [69.59246, 20.80933],
+                    [70.4014, 20.8878],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "摩加迪沙-苏拉特",
+                type: "sea",
+                id: "sea_city_mogadishu_city_surat_1793650000007",
+                startConnection: "city_mogadishu",
+                endConnection: "city_surat"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [45.3419, 2.0392],
+                    [45.85235, 1.73275],
+                    [49.4, 5],
+                    [50.8379, 8.3029],
+                    [52.3, 11.6],
+                    [53.61885, 13.30001],
+                    [56.8103, 14.56763],
+                    [59.44496, 15.64493],
+                    [61.54, 16.2661],
+                    [62.6071, 16.5514],
+                    [64.76639, 17.1287],
+                    [66.25793, 17.52748],
+                    [67.79511, 17.91161],
+                    [70, 20],
+                    [70.86456, 20.17714],
+                    [72.37793, 20.06625],
+                    [72.62787, 20.98965],
+                    [72.8311, 21.1702],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "摩加迪沙-卡拉奇",
+                type: "sea",
+                id: "sea_city_mogadishu_city_kalaqi_1793650000008",
+                startConnection: "city_mogadishu",
+                endConnection: "city_kalaqi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [45.3419, 2.0392],
+                    [45.85235, 1.73275],
+                    [49.4, 5],
+                    [50.8379, 8.3029],
+                    [52.3, 11.6],
+                    [53.61885, 13.30001],
+                    [56.87603, 17.38386],
+                    [58.19183, 18.74251],
+                    [59, 20],
+                    [62.37598, 21.44044],
+                    [64.44705, 22.8425],
+                    [66.6, 24.3],
+                    [67.01, 24.86],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "摩加迪沙-霍尔木兹",
+                type: "sea",
+                id: "sea_city_mogadishu_city_hormuz_1793650000009",
+                startConnection: "city_mogadishu",
+                endConnection: "city_hormuz"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [45.3419, 2.0392],
+                    [45.85235, 1.73275],
+                    [49.4, 5],
+                    [50.8379, 8.3029],
+                    [52.3, 11.6],
+                    [53.61885, 13.30001],
+                    [56.87603, 17.38386],
+                    [58.19183, 18.74251],
+                    [59, 20],
+                    [60.4, 22.7],
+                    [59, 24],
+                    [57.1, 25.5],
+                    [56.93153, 25.96196],
+                    [56.76306, 26.42211],
+                    [56.45, 27.1],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚丁-霍尔木兹",
+                type: "sea",
+                id: "sea_city_aden_city_hormuz_1793650000010",
+                startConnection: "city_aden",
+                endConnection: "city_hormuz"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [45.0187, 12.7855],
+                    [44.97253, 12.71001],
+                    [45, 12],
+                    [49.5581, 14.1436],
+                    [54.2, 16.2],
+                    [56.87603, 17.38386],
+                    [58.19183, 18.74251],
+                    [59, 20],
+                    [60.4, 22.7],
+                    [59, 24],
+                    [57.1, 25.5],
+                    [56.93153, 25.96196],
+                    [56.76306, 26.42211],
+                    [56.45, 27.1],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "马林迪-霍尔木兹",
+                type: "sea",
+                id: "sea_city_malindi_city_hormuz_1793650000011",
+                startConnection: "city_malindi",
+                endConnection: "city_hormuz"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [40.1169, -3.2192],
+                    [40.58333, -3.0],
+                    [41.0, -2.91667],
+                    [41.16667, -2.58333],
+                    [41.33333, -2.58333],
+                    [42.08333, -1.83333],
+                    [42.08333, -1.66667],
+                    [42.58333, -1.16667],
+                    [42.58333, -1.0],
+                    [44.83333, 1.25],
+                    [45.37353, 1.96617],
+                    [45.85235, 1.73275],
+                    [49.4, 5],
+                    [50.8379, 8.3029],
+                    [52.3, 11.6],
+                    [53.61885, 13.30001],
+                    [56.87603, 17.38386],
+                    [58.19183, 18.74251],
+                    [59, 20],
+                    [60.4, 22.7],
+                    [59, 24],
+                    [57.1, 25.5],
+                    [56.93153, 25.96196],
+                    [56.76306, 26.42211],
+                    [56.45, 27.1],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "摩加迪沙-塞拉",
+                type: "sea",
+                id: "sea_city_mogadishu_city_zeila_1793650000012",
+                startConnection: "city_mogadishu",
+                endConnection: "city_zeila"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [45.3419, 2.0392],
+                    [45.85235, 1.73275],
+                    [49.4, 5],
+                    [50.8379, 8.3029],
+                    [52.3, 11.6],
+                    [50.85615, 12.88403],
+                    [45, 12],
+                    [44.97253, 12.71001],
+                    [46.0, 13.08333],
+                    [45.66667, 12.75],
+                    [45.5, 12.75],
+                    [45.33333, 12.41667],
+                    [43.75, 12.16667],
+                    [43.91667, 11.5],
+                    [43.4731, 11.3533],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "塞拉-亚丁",
+                type: "sea",
+                id: "sea_city_zeila_city_aden_1793650000013",
+                startConnection: "city_zeila",
+                endConnection: "city_aden"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [43.4731, 11.3533],
+                    [43.91667, 11.5],
+                    [43.75, 12.16667],
+                    [45.33333, 12.41667],
+                    [45.0187, 12.7855],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "莫桑比克-马林迪",
+                type: "sea",
+                id: "sea_city_mozambique_city_malindi_1793650000014",
+                startConnection: "city_mozambique",
+                endConnection: "city_malindi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [40.74, -15.03],
+                    [41.25, -15.0],
+                    [41.25, -14.16667],
+                    [40.91667, -13.66667],
+                    [40.91667, -11.66667],
+                    [41.08333, -11.5],
+                    [41.08333, -10.5],
+                    [40.75, -9.83333],
+                    [40.08333, -9.5],
+                    [40.08333, -9.0],
+                    [39.91667, -8.83333],
+                    [39.91667, -8.5],
+                    [40.25, -8.16667],
+                    [40.25, -7.16667],
+                    [39.91667, -7.0],
+                    [39.91667, -5.83333],
+                    [40.25, -5.5],
+                    [40.25, -4.5],
+                    [40.08333, -4.16667],
+                    [40.58333, -3.33333],
+                    [40.1169, -3.2192],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "莫桑比克-蒙巴萨",
+                type: "sea",
+                id: "sea_city_mozambique_city_mombasa_1793650000015",
+                startConnection: "city_mozambique",
+                endConnection: "city_mombasa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [40.74, -15.03],
+                    [41.25, -15.0],
+                    [41.25, -14.16667],
+                    [40.91667, -13.66667],
+                    [40.91667, -11.66667],
+                    [41.08333, -11.5],
+                    [41.08333, -10.5],
+                    [40.75, -9.83333],
+                    [40.08333, -9.5],
+                    [40.08333, -9.0],
+                    [39.91667, -8.83333],
+                    [39.91667, -8.5],
+                    [40.25, -8.16667],
+                    [40.25, -7.16667],
+                    [39.91667, -7.0],
+                    [39.91667, -5.83333],
+                    [40.25, -5.5],
+                    [40.25, -4.5],
+                    [39.6667, -4.05],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "基尔瓦-布拉瓦",
+                type: "sea",
+                id: "sea_city_kilwa_city_barawa_1793650000016",
+                startConnection: "city_kilwa",
+                endConnection: "city_barawa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [39.5128, -8.96],
+                    [39.91667, -8.83333],
+                    [39.91667, -8.5],
+                    [40.25, -8.16667],
+                    [40.25, -7.16667],
+                    [39.91667, -7.0],
+                    [39.91667, -5.83333],
+                    [40.25, -5.5],
+                    [40.25, -4.5],
+                    [40.08333, -4.16667],
+                    [40.58333, -3.33333],
+                    [40.58333, -3.0],
+                    [41.0, -2.91667],
+                    [41.16667, -2.58333],
+                    [41.33333, -2.58333],
+                    [42.08333, -1.83333],
+                    [42.08333, -1.66667],
+                    [42.58333, -1.16667],
+                    [42.58333, -1.0],
+                    [44.83333, 1.25],
+                    [44.03, 1.1],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "蒙巴萨-布拉瓦",
+                type: "sea",
+                id: "sea_city_mombasa_city_barawa_1793650000017",
+                startConnection: "city_mombasa",
+                endConnection: "city_barawa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [39.6667, -4.05],
+                    [40.58333, -3.33333],
+                    [40.58333, -3.0],
+                    [41.0, -2.91667],
+                    [41.16667, -2.58333],
+                    [41.33333, -2.58333],
+                    [42.08333, -1.83333],
+                    [42.08333, -1.66667],
+                    [42.58333, -1.16667],
+                    [42.58333, -1.0],
+                    [44.83333, 1.25],
+                    [44.03, 1.1],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚齐-加勒",
+                type: "sea",
+                id: "sea_city_yaqi_city_jiale_1793660000003",
+                startConnection: "city_yaqi",
+                endConnection: "city_jiale"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [95.32, 5.55],
+                    [96.16667, 6.08333],
+                    [96.5, 5.75],
+                    [97.83333, 5.75],
+                    [98.25, 5.33333],
+                    [98.66667, 4.58333],
+                    [98.76709, 3.87522],
+                    [98.12813, 5.81173],
+                    [94.32645, 6.15712],
+                    [90, 6.4664],
+                    [85.9479, 6.1983],
+                    [81.9, 5.9],
+                    [80.1, 5.8],
+                    [80.21, 6.05],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "圣赫勒拿-里贝拉",
+                type: "sea",
+                id: "sea_city_sainthelena_city_ribeira_1793660000004",
+                startConnection: "city_sainthelena",
+                endConnection: "city_ribeira"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-5.71, -15.96],
+                    [-5.7249, -15.8556],
+                    [-5.02809, -15.14288],
+                    [-7.5827, -12.5384],
+                    [-10, -10],
+                    [-9.9997, -5.0004],
+                    [-10, -2e-05],
+                    [-13.4277, 5.5302],
+                    [-17, 11],
+                    [-19.9826, 13.0051],
+                    [-21.7491, 14.17299],
+                    [-23, 15],
+                    [-23.6, 14.92],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "圣赫勒拿-萨尔瓦多",
+                type: "sea",
+                id: "sea_city_sainthelena_city_salvador_1793660000005",
+                startConnection: "city_sainthelena",
+                endConnection: "city_salvador"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-5.71, -15.96],
+                    [-5.7249, -15.8556],
+                    [-6.62518, -16.72836],
+                    [-10, -20],
+                    [-12.08867, -20.02891],
+                    [-15.0004, -20.0692],
+                    [-20, -20],
+                    [-25.0004, -20.0692],
+                    [-30, -20],
+                    [-33.1245, -16.4971],
+                    [-34.76584, -14.63076],
+                    [-36.2, -13],
+                    [-38.11157, -13.18112],
+                    [-38.51, -12.97],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "圣赫勒拿-罗安达",
+                type: "sea",
+                id: "sea_city_sainthelena_city_luanda_1793660000006",
+                startConnection: "city_sainthelena",
+                endConnection: "city_luanda"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-5.71, -15.96],
+                    [-5.7249, -15.8556],
+                    [-5.02809, -15.14288],
+                    [-1.10048, -11.1256],
+                    [0, -10],
+                    [3.73965, -9.72029],
+                    [6.0084, -9.5506],
+                    [7.40747, -9.42203],
+                    [7.60149, -9.4042],
+                    [12, -9],
+                    [13.07373, -8.55929],
+                    [13.2344, -8.8383],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "拉巴特-特尔德",
+                type: "sea",
+                id: "sea_city_labate_city_telde_1793660000009",
+                startConnection: "city_labate",
+                endConnection: "city_telde"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-6.822, 34.024],
+                    [-7.1, 34.4],
+                    [-7.7875, 34.07647],
+                    [-8.75106, 33.62303],
+                    [-10.1, 31.8],
+                    [-12.19439, 29.15645],
+                    [-15.14581, 28.53833],
+                    [-15.42, 28.0],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "复活节岛-穆阿",
+                type: "sea",
+                id: "sea_city_rapanui_city_mua_1793660000010",
+                startConnection: "city_rapanui",
+                endConnection: "city_mua"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-109.36, -27.11],
+                    [-109.99922, -27.23997],
+                    [-110, -30],
+                    [-112.91761, -30.05455],
+                    [-115.0005, -30.0935],
+                    [-120, -30],
+                    [-125.0005, -30.0935],
+                    [-130, -30],
+                    [-135.0005, -30.0935],
+                    [-140, -30],
+                    [-145.0005, -30.0935],
+                    [-150, -30],
+                    [-155.33156, -24.65833],
+                    [-158.20811, -21.77632],
+                    [-159.21455, -20.76911],
+                    [-160, -20],
+                    [-162.5937, -17.5438],
+                    [-165.08606, -15.28948],
+                    [-170.7, -14.4],
+                    [-173.0562, -17.715],
+                    [-174.0, -17.58333],
+                    [-173.91667, -18.0],
+                    [-173.58333, -18.16667],
+                    [-173.58333, -19.0],
+                    [-173.91667, -19.16667],
+                    [-173.91667, -20.0],
+                    [-174.25, -20.33333],
+                    [-174.25, -20.66667],
+                    [-174.58333, -21.0],
+                    [-175.12, -21.18],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "火奴鲁鲁-穆阿",
+                type: "sea",
+                id: "sea_city_honolulu_city_mua_1793660000011",
+                startConnection: "city_honolulu",
+                endConnection: "city_mua"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-157.86, 21.31],
+                    [-157.67, 21.1667],
+                    [-159.12452, 16.52065],
+                    [-159.30865, 16.02879],
+                    [-161.09647, 11.25314],
+                    [-161.5613, 10.01146],
+                    [-162.47307, 7.57594],
+                    [-163.85003, 3.89777],
+                    [-165.30921, -2e-05],
+                    [-166.59888, -3.44502],
+                    [-168.50379, -8.53344],
+                    [-169.00401, -9.86964],
+                    [-169.05541, -10.00693],
+                    [-169.32009, -10.71397],
+                    [-170.66323, -14.17078],
+                    [-170.48035, -14.2737],
+                    [-170.7, -14.4],
+                    [-173.0562, -17.715],
+                    [-174.0, -17.58333],
+                    [-173.91667, -18.0],
+                    [-173.58333, -18.16667],
+                    [-173.58333, -19.0],
+                    [-173.91667, -19.16667],
+                    [-173.91667, -20.0],
+                    [-174.25, -20.33333],
+                    [-174.25, -20.66667],
+                    [-174.58333, -21.0],
+                    [-175.12, -21.18],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "火奴鲁鲁-马尼拉",
+                type: "sea",
+                id: "sea_city_honolulu_city_manila_1793660000012",
+                startConnection: "city_honolulu",
+                endConnection: "city_manila"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-157.86, 21.31],
+                    [-157.67, 21.1667],
+                    [-163.8579, 20.6917],
+                    [-168.60211, 20.15743],
+                    [-170, 20],
+                    [-180, 20],
+                    [173.7409, 19.8573],
+                    [167.5, 19.5],
+                    [163.7561, 19.7883],
+                    [160, 20],
+                    [155.70732, 20.05942],
+                    [155.0004, 20.0692],
+                    [150, 20],
+                    [146.43696, 19.21615],
+                    [143.7676, 18.6289],
+                    [141.46856, 18.03938],
+                    [140.04302, 17.67385],
+                    [139.99963, 17.66272],
+                    [137.6401, 17.0577],
+                    [136.61043, 16.75839],
+                    [134.12315, 16.03538],
+                    [131.6188, 15.3074],
+                    [131.32922, 15.21408],
+                    [129.99923, 14.78548],
+                    [125.7, 13.4],
+                    [124.32678, 12.94032],
+                    [124.16336, 12.49155],
+                    [123.90655, 12.47815],
+                    [123.6525, 12.77564],
+                    [123.36822, 12.63364],
+                    [122.01099, 13.05681],
+                    [121.52254, 13.36827],
+                    [120.72464, 13.63531],
+                    [120.50217, 13.91141],
+                    [120.53513, 14.26239],
+                    [120.9804, 14.5904],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "巴拿马-大溪地",
+                type: "sea",
+                id: "sea_city_banama_city_tahiti_1793660000013",
+                startConnection: "city_banama",
+                endConnection: "city_tahiti"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-79.4858, 9.0056],
+                    [-79.5, 7.91667],
+                    [-79.58333, 7.16667],
+                    [-80.0, 7.08333],
+                    [-80.16667, 6.91667],
+                    [-82.16667, 6.91667],
+                    [-82.8605, 7.2437],
+                    [-81.4, 6.9],
+                    [-82.67532, 6.40923],
+                    [-85.7423, 5.22779],
+                    [-89.23845, 3.85204],
+                    [-90.59584, 3.31301],
+                    [-92.51153, 2.54764],
+                    [-93.9491, 1.9733],
+                    [-100, -2e-05],
+                    [-103.44408, -1.85114],
+                    [-105.37031, -2.62353],
+                    [-106.83363, -3.20824],
+                    [-108.67778, -3.93844],
+                    [-109.99973, -4.46188],
+                    [-114.02527, -6.02932],
+                    [-117.17705, -7.22806],
+                    [-119.9999, -8.2819],
+                    [-121.27723, -8.74812],
+                    [-124.87176, -10.03576],
+                    [-128.7072, -11.35757],
+                    [-129.99971, -11.78736],
+                    [-130.87646, -12.0789],
+                    [-132.47803, -12.60007],
+                    [-136.33888, -13.808],
+                    [-139.99922, -14.87763],
+                    [-144.14727, -16.01159],
+                    [-145.1692, -16.2871],
+                    [-149.7, -17.4],
+                    [-149.43, -17.65],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "圣胡利安港-复活节岛",
+                type: "sea",
+                id: "sea_city_sanjulian_city_rapanui_1793660000014",
+                startConnection: "city_sanjulian",
+                endConnection: "city_rapanui"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-67.72, -49.31],
+                    [-67.41667, -50.16667],
+                    [-67.66667, -50.41667],
+                    [-68.5, -50.58333],
+                    [-68.75, -50.83333],
+                    [-68.41667, -51.5],
+                    [-68.08333, -51.83333],
+                    [-68.08333, -52.33333],
+                    [-67.5, -53.25],
+                    [-66.0, -54.08333],
+                    [-64.83333, -54.08333],
+                    [-64.66667, -54.25],
+                    [-64.5, -54.08333],
+                    [-63.83333, -54.08333],
+                    [-63.41667, -54.33333],
+                    [-63.1847, -53.7546],
+                    [-64.97864, -54.52108],
+                    [-65.25879, -55.54107],
+                    [-66.39587, -55.89072],
+                    [-66.95812, -55.98361],
+                    [-67.46704, -55.99838],
+                    [-68.3081, -55.98479],
+                    [-69.19441, -55.8687],
+                    [-69.5695, -55.77376],
+                    [-71.385, -55.3608],
+                    [-73.3059, -54.6046],
+                    [-75.10148, -52.58762],
+                    [-79.99916, -50.973],
+                    [-80.6501, -50.75841],
+                    [-82.731, -50.0724],
+                    [-82.87804, -50],
+                    [-87.48025, -47.73394],
+                    [-89.5334, -46.723],
+                    [-89.99786, -46.44128],
+                    [-93.73005, -44.17753],
+                    [-95.5514, -43.0728],
+                    [-100, -40],
+                    [-104.99998, -35.38573],
+                    [-105.3071, -35.1023],
+                    [-110, -30],
+                    [-109.99922, -27.23997],
+                    [-109.36, -27.11],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "詹姆斯敦-哈瓦那",
+                type: "sea",
+                id: "sea_city_jamestown_city_havana_1793670000001",
+                startConnection: "city_jamestown",
+                endConnection: "city_havana"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-76.78, 37.21],
+                    [-76.44287, 36.93562],
+                    [-76.26984, 36.99926],
+                    [-76.0085, 36.9585],
+                    [-75.9599, 36.9485],
+                    [-75.8067, 36.8468],
+                    [-75.7447, 36.809],
+                    [-75.3372, 36.6311],
+                    [-75.0737, 35.8144],
+                    [-75.1, 35.6],
+                    [-75.37711, 35.08511],
+                    [-76.31071, 33.35045],
+                    [-76.97004, 32.12539],
+                    [-77.02072, 32.03122],
+                    [-77.32224, 31.47098],
+                    [-77.5634, 31.0229],
+                    [-77.65575, 30.79921],
+                    [-77.83826, 30.35715],
+                    [-78.07096, 29.79353],
+                    [-78.43417, 28.98661],
+                    [-78.76985, 28.35715],
+                    [-78.89969, 28.16392],
+                    [-79.3211, 27.4491],
+                    [-79.3328, 26.7372],
+                    [-79.5356, 26.0942],
+                    [-79.815, 25.7903],
+                    [-79.9482, 25.3329],
+                    [-80.0286, 25.1157],
+                    [-80.3533, 24.7537],
+                    [-80.79708, 24.51333],
+                    [-81.825, 24.2187],
+                    [-82.06567, 24.07713],
+                    [-82.47828, 23.8344],
+                    [-82.38, 23.13],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "詹姆斯敦-圣多明各",
+                type: "sea",
+                id: "sea_city_jamestown_city_shengduomingge_1793670000002",
+                startConnection: "city_jamestown",
+                endConnection: "city_shengduomingge"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-76.78, 37.21],
+                    [-76.44287, 36.93562],
+                    [-76.26984, 36.99926],
+                    [-76.0085, 36.9585],
+                    [-75.9599, 36.9485],
+                    [-75.8067, 36.8468],
+                    [-75.7447, 36.809],
+                    [-75.3372, 36.6311],
+                    [-75.01318, 36.0928],
+                    [-74.99447, 36.06171],
+                    [-74.84525, 35.81381],
+                    [-74.81704, 35.76695],
+                    [-74.7806, 35.70642],
+                    [-74.77298, 35.69375],
+                    [-74.70717, 35.58443],
+                    [-74.63378, 35.4625],
+                    [-74.38547, 35.04998],
+                    [-74.14548, 34.6513],
+                    [-73.97401, 34.36643],
+                    [-73.84014, 34.14402],
+                    [-72.89759, 32.57816],
+                    [-72.59746, 32.05921],
+                    [-72.30616, 31.50517],
+                    [-72.12936, 31.16891],
+                    [-71.80212, 30.5465],
+                    [-71.61926, 30.19872],
+                    [-71.56145, 30.08877],
+                    [-71.25282, 29.50177],
+                    [-70.68516, 28.4221],
+                    [-70.327, 27.7409],
+                    [-70.03234, 27.12265],
+                    [-69.57137, 26.15543],
+                    [-69.4289, 24.8776],
+                    [-69.29711, 23.59989],
+                    [-69.13304, 22.00925],
+                    [-69.00858, 20.80263],
+                    [-68.9, 19.75],
+                    [-67.95, 18.5],
+                    [-68.61511, 17.95261],
+                    [-69.23035, 18.32846],
+                    [-69.86206, 18.39623],
+                    [-69.8868, 18.4715],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "珠崖-阇槃",
+                type: "sea",
+                id: "sea_city_yazhou_city_dupan_1793670000003",
+                startConnection: "city_yazhou",
+                endConnection: "city_dupan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [108.98987, 18.43269],
+                    [108.56568, 17.96511],
+                    [109, 16.1],
+                    [109.27924, 15.11645],
+                    [109.62488, 13.8927],
+                    [109.11, 13.93],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "丹塔普拉-科伦坡",
+                type: "sea",
+                id: "sea_city_danta_city_kelunpo_1793670000004",
+                startConnection: "city_danta",
+                endConnection: "city_kelunpo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [84.0, 18.4],
+                    [84.16667, 17.91667],
+                    [83.65646, 17.41398],
+                    [83.45929, 15.27182],
+                    [82.99832, 12.03245],
+                    [82.25, 7.25],
+                    [81.9, 5.9],
+                    [80.1, 5.8],
+                    [79.82666, 6.42448],
+                    [79.8612, 6.9271],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "能岛城-赤间关",
+                type: "sea",
+                id: "sea_city_noshima_city_chijianguan_1793670000005",
+                startConnection: "city_noshima",
+                endConnection: "city_chijianguan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [133.08109, 34.18238],
+                    [133.04787, 34.072],
+                    [132.94487, 34.16977],
+                    [132.78096, 34.0696],
+                    [132.72926, 33.95532],
+                    [132.58369, 33.90063],
+                    [132.14905, 33.68093],
+                    [131.9, 33.75],
+                    [131.21246, 33.79513],
+                    [130.93, 33.95],
+                ]
+            }
+        },
     ]
 };

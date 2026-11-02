@@ -3392,7 +3392,7 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     //    坐标取维基数据 Pir Sar 34.82,72.88 —— 英文维基百科 Aornos 条目正文记该岩在印度河上游峡谷湾上、
     //    Gunangar Shamshi Khel 之西，条目所附照片说明即 Shangla 县，与这一点反查所得一致。
     //    间距：--probe 实测最近马萨加 79.94 km（≥40 km，无需特批）。
-    { id: 'city_aonuosiyan', name: '奥诺斯岩', factionId: 'guishuang', lat: 34.82, lng: 72.88, type: 'stockade', troops: 10000, stockadeShape: 'oval', stockadeFence: 'FENCE',
+    { id: 'city_aonuosiyan', name: '奥诺斯岩', factionId: 'asakaini', lat: 34.82, lng: 72.88, type: 'stockade', troops: 10000, stockadeShape: 'oval', stockadeFence: 'FENCE',
         note: '奥诺斯岩，希腊语意为无鸟之地，印度河上游峡谷湾上的崖顶岩堡；公元前326年春为亚历山大所取，是他一生最后一次围城。守军是斯瓦特河谷溃散下来的阿斯瓦卡人众。史料：英文维基百科 Aornos 条目、Cophen campaign 的 Siege of Aornus 节。🔴 [2026-09-30 主人新定：**险要 = 关隘／要塞／堡垒／兵家必争之地 ＋ 有石头城墙**；两条同时满足才 PASS，缺一归城市档] 崖顶**岩堡**（守军是溃散兵众、非城镇），人口算不出来 ⇒ 绝壁岩堡是**天然山险**，史料（英维 Siege of the Sogdian Rock、阿里安 IV.18–19）只写绝壁、山顶有泉有木，**未载石头城墙** ⇒ 不算险要，归城市档；人口算不出来 ⇒ **城寨**。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：本场守方 **6000**（不大于 1 万）→ 不算 PASS。', region: 'PURU', buildingStyle: 'PURU' },
     { id: 'city_baishawa', name: '白沙瓦', factionId: 'guishuang', lat: 34.01, lng: 71.52, type: 'medium_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '白沙瓦；罽宾（迦腻色迦贵霜都，犍陀罗核心）。🔴 [2026-10-05 主人令「建筑风格必须当地」] 白沙瓦在**犍陀罗／旁遮普文化圈**（印度河以西，与 100km 外的阿托克同为普鲁故地）→ 挂普鲁 PURU（一级 PURU）；旧值 INDIA 是南印度达罗毗荼，与本地不符。；按 2026-10-25 标准：城居 5–10 → 中城' },
 
@@ -3536,7 +3536,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── 2026-06-20 新增：阿巴尔·尼沙布尔 ──
     { id: 'city_nishabuer', name: '尼沙布尔', factionId: 'sashan', lat: 36.2133, lng: 58.7958, type: 'medium_city', tier: 1, region: 'PERSIAN', buildingStyle: 'SASANIAN', troops: 10000, note: '萨珊省治，呼罗珊枢纽。🔴 [2026-10-22 按史] 尼沙普尔为萨珊沙普尔一世所建／重建（3 世纪），萨珊呼罗珊省治；SASANIAN 分支「封建时代霍拉桑军团」描述点名尼沙普尔、梅尔夫；PERSIAN 分支为阿契美尼德／法尔斯链，尼沙普尔无阿契美尼德层 → 原 PERSIAN 改 SASANIAN。；按 2026-10-25 标准：城居 10–15 → 中城' },
     // —— 2026-06-20 新增：那竭国·顶骨城 ——
-    { id: 'city_dinggucheng', name: '难揭', factionId: 'guishuang', lat: 34.43, lng: 70.45, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU', stockadeShape: 'rect', stockadeFence: 'HARDWOOD', note: '🔴 [2026-10-05 主人令「建筑风格必须当地／判不出就跟最近的确据点走」] 难揭（那揭罗曷，今阿富汗贾拉拉巴德）属**犍陀罗／罽宾**文化圈，400km 内确据点 白沙瓦（109km）、马萨加（147km）、阿托克（191km）、奥诺斯岩（227km）皆是 PURU → 挂 PURU（一级 PURU）；旧值 INDIA（南印度达罗毗荼）与本地不符。' },
+    { id: 'city_dinggucheng', name: '难揭', factionId: 'yinduxila', lat: 34.43, lng: 70.45, type: 'stockade', troops: 10000, region: 'PURU', buildingStyle: 'PURU', stockadeShape: 'rect', stockadeFence: 'HARDWOOD', note: '🔴 [2026-10-05 主人令「建筑风格必须当地／判不出就跟最近的确据点走」] 难揭（那揭罗曷，今阿富汗贾拉拉巴德）属**犍陀罗／罽宾**文化圈，400km 内确据点 白沙瓦（109km）、马萨加（147km）、阿托克（191km）、奥诺斯岩（227km）皆是 PURU → 挂 PURU（一级 PURU）；旧值 INDIA（南印度达罗毗荼）与本地不符。' },
 
     // —— 2026-06-20 新增：旁遮普·阿托克 ——
     { id: 'city_atuoke', name: '阿托克', factionId: 'xike', lat: 33.7666, lng: 72.3608, type: 'pass', region: 'PURU', buildingStyle: 'PURU', troops: 10000, note: '印度河阿托克要塞；兰季特·辛格旁遮普帝国西北锁钥，哈里·辛格扼开伯尔隘口。🔴 [2026-10-05 主人令「建筑风格必须当地」] 阿托克在**旁遮普**（印度河渡口，今巴基斯坦），是普鲁（Puru／Paurava，旁遮普）故地，也是 62 类「普鲁」的据点（城堡 PURU_CASTLE_AGE3）→ 挂 PURU（一级 PURU）；旧值 SIKH→INDIA（南印度达罗毗荼）与本地不符。' },
@@ -3629,7 +3629,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     { id: 'city_qingchi', name: '清池', factionId: 'you', lat: 38.3, lng: 116.83, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '推算：城居 1.5 万（清池，唐沧州治 1.5 万）→ 小城' },
-    { id: 'city_shandan', name: '删丹', factionId: 'yuezhi', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：月氏随畜移徙与匈奴同俗，归漠南 XIANBEI）' },
+    { id: 'city_shandan', name: '删丹', factionId: 'ganzhou_huihu', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：月氏随畜移徙与匈奴同俗，归漠南 XIANBEI）' },
 
     { id: 'city_chongan', name: '崇安', factionId: 'minyue', lat: 27.76, lng: 118.02, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '推算：城居 1.5 万（崇安，宋县，同期县城 1–2 万）→ 小城' },
     { id: 'city_piyetuo', name: '毗耶陀', factionId: 'funan', lat: 11.66, lng: 104.93, type: 'small_city', troops: 10000, region: 'SEASIA_ANTIQUITY', buildingStyle: 'KHMER', mirror: true , note: '推算：城居 1 万（毗耶陀，东南亚古国都 1 万）→ 小城' },

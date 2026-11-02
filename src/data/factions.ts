@@ -336,7 +336,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jie', name: '羯族' }, // 代表后赵/前赵，避免旗号重名
 
 
-    { id: 'tuoba', name: '拓跋北魏' },
+    { id: 'tuoba', name: '拓跋魏' },
  // 代表北魏，避免旗号重名
     { id: 'yuwen', name: '宇文北周' },
 
@@ -1448,14 +1448,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'shanshan', name: '鄯善' },
 
-    { id: 'wuyue', name: '吴越' },
-
-
-
-
-
-
-    { id: 'yuezhi', name: '月氏' },
+    { id: 'wuyue', name: '吴越' },
 
     { id: 'minyue', name: '闽越' },
     { id: 'funan', name: '扶南' },
@@ -1503,6 +1496,10 @@ export const FACTIONS: Faction[] = [
     { id: 'ldiya', name: '吕底亚' },
     { id: 'pajiama', name: '帕加马' },
       { id: 'luomu', name: '罗姆' },
+    { id: 'yinduxila', name: '印度希腊王国' },   // 2026-11-03 新建：弥兰王（米南德）之印度-希腊王国
+
+    { id: 'asakaini', name: '阿萨凯尼' },       // 2026-11-03 新建：斯瓦特河谷—奥诺斯岩的阿萨凯尼人
+
     { id: 'sailiugu', name: '塞琉古帝国' },
     { id: 'womaya', name: '倭马亚' },
     { id: 'xibolai', name: '以色列' },

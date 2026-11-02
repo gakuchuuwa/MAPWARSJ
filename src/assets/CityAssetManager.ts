@@ -523,8 +523,7 @@ export class CityAssetManager {
 'wugu_d': '乌古',
         'kumoxi': '奚',
 'shanshan': '鄯善',
-'wuyue': '吴越',
-'yuezhi': '月氏',
+'wuyue': '吴越',
         'minyue': '闽越',
 'funan': '扶南',
 'lancang': '澜沧',
@@ -548,6 +547,10 @@ export class CityAssetManager {
         'luomu': '罗姆',
         'osman': '奥斯',
 'baizanting': '拜占',
+'yinduxila': '印希',
+
+'asakaini': '阿萨',
+
 'sailiugu': '塞琉',
 'womaya': '倭马',
         'xibolai': '以色',
