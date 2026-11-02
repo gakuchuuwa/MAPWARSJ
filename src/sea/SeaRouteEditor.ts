@@ -654,21 +654,7 @@ export class SeaRouteEditor implements IEditor {
 
     /** 视线拉直（只动航线网那一段，两端接驳线不动）：从每个点跳到最远的「直线全在水上、≤SHORTCUT_MAX_KM」的点 */
     private straighten(coords: [number, number][]): [number, number][] {
-        if (coords.length <= 4) return coords;
-        const mid = coords.slice(1, -1);
-        const out: [number, number][] = [mid[0]];
-        let i = 0;
-        while (i < mid.length - 1) {
-            let j = mid.length - 1;
-            while (j > i + 1) {
-                const a = mid[i], b = mid[j];
-                if (this.haversine(a[1], a[0], b[1], b[0]) <= SHORTCUT_MAX_KM && this.landKm(a, b) === 0) break;
-                j--;
-            }
-            out.push(mid[j]);
-            i = j;
-        }
-        return [coords[0], ...out, coords[coords.length - 1]];
+        return coords;
     }
 
     private generateSeaPath(): void {

@@ -168,8 +168,17 @@ export class LandSeaSystem {
      * 是否已远离海岸线进入纯海域（半径 radiusDeg 内全部采样点均为海）。
      * 只要半径内仍有一点是陆地（即尚在海岸线缓冲距离内），返回 false —— 陆上行人不切换为船。
      */
+    private static probeAndFetch(lat: number, lng: number): 'sea' | 'land' | 'pending' {
+        const res = this.probeLandSea(lat, lng);
+        if (res === 'pending') {
+            this.sampler.scheduleFetch(lat, lng);
+            this.waterSampler.scheduleFetch(lat, lng);
+        }
+        return res;
+    }
+
     static isOpenSeaBeyondCoast(lat: number, lng: number, radiusDeg = this.COAST_BUFFER_DEG): boolean {
-        if (!this.isSeaAt({ lat, lng })) return false;
+        if (this.probeAndFetch(lat, lng) !== 'sea') return false;
         const cosLat = Math.max(0.2, Math.cos(lat * Math.PI / 180));
         const rHalf = radiusDeg * 0.5;
         const dlngHalf = rHalf / cosLat;
@@ -181,17 +190,17 @@ export class LandSeaSystem {
             [radiusDeg, dlngFull], [radiusDeg, -dlngFull], [-radiusDeg, dlngFull], [-radiusDeg, -dlngFull],
         ];
         for (const [dlat, dln] of rings) {
-            if (!this.isSeaAt({ lat: lat + dlat, lng: lng + dln })) return false;
+            if (this.probeAndFetch(lat + dlat, lng + dln) !== 'sea') return false;
         }
         return true;
     }
 
     /**
-     * 是否已远离海岸线进入纯内陆（半径 radiusDeg 内全部采样点均为陆）。
-     * 只要半径内仍有一点是海（即尚在海岸线缓冲距离内），返回 false —— 海上船只不因擦岸切换为人。
+     * 是否已远离海岸线进入纯内陆（半径 radiusDeg 内全部采样点均为确认陆地 'land'）。
+     * 只要半径内仍有一点是海或瓦片未加载（'pending'），返回 false —— 海上船只绝不因擦岸或远洋瓦片未到而切换为人。
      */
     static isInlandBeyondCoast(lat: number, lng: number, radiusDeg = this.COAST_BUFFER_DEG): boolean {
-        if (this.isSeaAt({ lat, lng })) return false;
+        if (this.probeAndFetch(lat, lng) !== 'land') return false;
         const cosLat = Math.max(0.2, Math.cos(lat * Math.PI / 180));
         const rHalf = radiusDeg * 0.5;
         const dlngHalf = rHalf / cosLat;
@@ -203,7 +212,7 @@ export class LandSeaSystem {
             [radiusDeg, dlngFull], [radiusDeg, -dlngFull], [-radiusDeg, dlngFull], [-radiusDeg, -dlngFull],
         ];
         for (const [dlat, dln] of rings) {
-            if (this.isSeaAt({ lat: lat + dlat, lng: lng + dln })) return false;
+            if (this.probeAndFetch(lat + dlat, lng + dln) !== 'land') return false;
         }
         return true;
     }

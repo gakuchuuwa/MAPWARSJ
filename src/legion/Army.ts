@@ -1164,10 +1164,10 @@ export class Army implements IBattleUnit {
                 this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
                 return;
             }
-            // 尚未登船（岸上/贴岸行走）：在海岸线缓冲距离内（周边仍有陆地）保持行人形态不切换；
-            // 只有真正离开海岸线一段距离进入纯海域、且前方连续海路够长才登船。
-            const openSea = LandSeaSystem.isOpenSeaBeyondCoast(pos.lat, pos.lng);
-            if (openSea && this.seaStretchAheadDeg() >= Army.SEA_FLIP_CONFIRM_DEG) {
+            // 尚未登船（港口岸上/刚离港）：走在海路上（legSea === true）且前方连续海路够长时，
+            // 只要脚下中心点已离开陆地（下水），当刻登船（登船后受海岸线缓冲带保护，近岸/岛链航行绝不会再变回骑兵）。
+            const centerLand = LandSeaSystem.probeLandSea(pos.lat, pos.lng) === 'land';
+            if (!centerLand && this.seaStretchAheadDeg() >= Army.SEA_FLIP_CONFIRM_DEG) {
                 this.isOnSea = true;
             }
             this.seaFlipDist = 0;

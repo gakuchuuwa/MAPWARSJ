@@ -18,7 +18,11 @@ const PANE = 'marineLifePane';
  *    原来固定「最多 2 只、10 秒补 1 只」，全是海的画面也只有 2 只，远低于 DE。
  *    每只存活约 21 秒，补充间隔 = 21 秒 ÷ 目标数，才能维持到目标数。
  */
-const MIN_TRIGGER_INTERVAL_MS = 200;
+const CREATURE_LIFE_MS = 21_000;
+const MIN_TRIGGER_INTERVAL_MS = 1_200; // 至少间隔 1.2 秒逐只出现，避免一窝蜂蹦出来
+const MAX_TRIGGER_INTERVAL_MS = 6_000;
+const FADE_IN_MS = 1_800;              // 1.8 秒平滑渐显
+const FADE_OUT_MS = 2_200;             // 2.2 秒平滑渐隐
 const MAX_CREATURES_CAP = 12;          // 封顶防满屏（zoom 9 全海面约 8–10 处，丰富海面生机）
 const SEA_FRACTION_SAMPLE_MS = 1_000;  // 水面比例每 1.0 秒重算一次（4×4 采样）
 const FPS = 15;
@@ -103,6 +107,8 @@ interface Creature {
     lng: number;
     frame: number;
     mirror: boolean;
+    spawnedAt: number;
+    expiresAt: number;
     lastFrameAt: number;
 }
 
@@ -284,27 +290,26 @@ export class MarineLifeLayer extends L.Layer {
         if (!this.map || !this.ctx) return;
         const zoom = this.map.getZoom();
         if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) {
-            this.render();
+            this.render(now);
             return;
         }
 
-        // 🔴 [2026-11-02 主人令「海洋中元素，希望改成常驻不渐隐（只要在视野内就一直存在，移出视野才回收）」]
-        //    视野内常驻不按时间消失，仅当镜头/船只平移使其移出视口外时才回收
+        // 清理到期（渐隐完毕）或移出视野外的海洋生物
         if (this.creatures.length > 0) {
             const keepBounds = this.map.getBounds().pad(0.25);
-            this.creatures = this.creatures.filter(c => keepBounds.contains([c.lat, c.lng])
+            this.creatures = this.creatures.filter(c => now <= c.expiresAt
+                && keepBounds.contains([c.lat, c.lng])
                 && isOpenOcean(c.lat, c.lng)
                 && (LandSeaSystem.isSeaAt(L.latLng(c.lat, c.lng)) || LandSeaSystem.getSampler().getElevationSync(c.lat, c.lng) === null));
         }
 
-        // 视口内海洋生物不足目标数时及时补齐
+        // 视口内海洋生物不足目标数时按自然间隔逐只生成（避免同时蹦出一批）
         const target = this.targetCreatureCount(now);
         const deficit = target - this.creatures.length;
-        if (deficit > 0 && now - this.lastTriggerAt >= MIN_TRIGGER_INTERVAL_MS) {
-            const batch = Math.min(deficit, 3);
-            for (let i = 0; i < batch; i++) {
-                this.tryTrigger(now);
-            }
+        const baseInterval = Math.min(MAX_TRIGGER_INTERVAL_MS, Math.max(MIN_TRIGGER_INTERVAL_MS, CREATURE_LIFE_MS / Math.max(1, target)));
+        const interval = deficit >= 3 ? MIN_TRIGGER_INTERVAL_MS : baseInterval;
+        if (deficit > 0 && now - this.lastTriggerAt >= interval) {
+            this.tryTrigger(now);
         }
 
         // 推进各生物动画帧
@@ -317,7 +322,7 @@ export class MarineLifeLayer extends L.Layer {
             }
         }
 
-        this.render();
+        this.render(now);
     }
 
     private seaFraction = 0;
@@ -449,11 +454,13 @@ export class MarineLifeLayer extends L.Layer {
             lng: spawnLng,
             frame: Math.floor(Math.random() * ASSETS[kind].frames),
             mirror: Math.random() < 0.5,
+            spawnedAt: now,
+            expiresAt: now + 16_000 + Math.random() * 10_000,
             lastFrameAt: now,
         });
     }
 
-    private render(): void {
+    private render(now = performance.now()): void {
         if (!this.map || !this.ctx) return;
         const g = this.ctx;
         g.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -476,7 +483,14 @@ export class MarineLifeLayer extends L.Layer {
 
             const p = this.map.latLngToContainerPoint(L.latLng(c.lat, c.lng));
 
+            // 平滑渐显与渐隐（smoothstep 缓入缓出）
+            const tIn = Math.min(1, Math.max(0, (now - c.spawnedAt) / FADE_IN_MS));
+            const tOut = Math.min(1, Math.max(0, (c.expiresAt - now) / FADE_OUT_MS));
+            const fadeIn = tIn * tIn * (3 - 2 * tIn);
+            const fadeOut = tOut * tOut * (3 - 2 * tOut);
+
             g.save();
+            g.globalAlpha = fadeIn * fadeOut;
 
             // 1. 若有水下潜游鱼群层（_UNDERWATER），先按同锚点绘制水下鱼群影
             if (a.underwater) {

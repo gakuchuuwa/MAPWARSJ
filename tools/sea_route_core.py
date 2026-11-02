@@ -109,22 +109,8 @@ def route_land_km(coords):
 
 
 def straighten(coords):
-    """视线拉直（只动航线网那一段，两端接驳线不动）：从每个点出发，跳到最远的「直线全在水上、≤SHORTCUT_MAX_KM」的点"""
-    if len(coords) <= 4:
-        return coords
-    mid = coords[1:-1]
-    out = [mid[0]]
-    i = 0
-    while i < len(mid) - 1:
-        j = len(mid) - 1
-        while j > i + 1:
-            a, b = mid[i], mid[j]
-            if haversine(a[1], a[0], b[1], b[0]) <= SHORTCUT_MAX_KM and land_km(a, b) == 0:
-                break
-            j -= 1
-        out.append(mid[j])
-        i = j
-    return [coords[0]] + out + [coords[-1]]
+    """严格贴合编辑器「🌊 航线网」底图节点与边，不做切弦拉直简化"""
+    return coords
 
 
 def path_km(coords):

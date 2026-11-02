@@ -15419,7 +15419,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     mowoer: [
         { generalId: 'zhamolin_trimumpala', factionId: 'zhamolin', cityId: 'city_cochin', generalName: '特里穆帕拉', portrait: '/assets/INDIA/zhamolin_trimumpala.png', eliteName: '柯枝兵', eliteTier: 4 },   // 柯枝王 Trimumpara Raja，1498 达伽马到访、1503–1504 柯枝保卫战抗扎莫林
-        { generalId: 'mowoer_mukelabuhan', factionId: 'mowoer', cityId: 'city_surat', generalName: '穆卡拉布汗', portrait: '', eliteName: '古吉拉特兵', eliteTier: 4 },   // 1610 年代苏拉特莫卧儿总督，1615 接待托马斯·罗使团
+        { generalId: 'mowoer_mukelabuhan', factionId: 'mowoer', cityId: 'city_surat', generalName: '穆卡拉布汗', portrait: '/assets/GURJARAS/mowoer_mukelabuhan.png', eliteName: '古吉拉特兵', eliteTier: 4 },   // 1610 年代苏拉特莫卧儿总督，1615 接待托马斯·罗使团
 
 
 
@@ -17129,7 +17129,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     voc: [
-        { generalId: 'voc_coen', factionId: 'voc', cityId: 'city_banda', generalName: '科恩', portrait: '', eliteName: '东印度守备', eliteTier: 4 },   // 扬·彼得松·科恩 1621 率军征服班达群岛、独占肉豆蔻
+        { generalId: 'voc_coen', factionId: 'voc', cityId: 'city_banda', generalName: '科恩', portrait: '/assets/MALAY/voc_coen.png', eliteName: '东印度守备', eliteTier: 4 },   // 扬·彼得松·科恩 1621 率军征服班达群岛、独占肉豆蔻
         { generalId: 'bfe_coyett', cityId: 'city_tainan', generalName: '揆一', portrait: '/assets/JIANGNAN/bfe_coyett.png' , legionName: '帝国时代两江军团', eliteName: '荷兰守备', eliteTier: 4},
         { generalId: 'voc_speult', factionId: 'voc', cityId: 'city_ambon', generalName: '斯佩尔特', portrait: '/assets/MALAY/voc_speult.png', eliteName: '东印度守备', eliteTier: 4, legionName: '帝国时代马六甲军团' },
     ],
