@@ -817,6 +817,13 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'latin_empire': 'city_junshitandingbao',   // 拉丁帝国
   'anjou': 'city_naples',   // 安茹
   'pisa': 'city_pisa',   // 比萨共和国
+  // ── [2026-11-03 补登记] 校验提示缺 StartingCapitals 的六家（本表只作登记，开局仍走 meleeRandomOwners 随机分城）──
+  'hulumusi': 'city_hormuz',     // 忽鲁谟斯·霍尔木兹
+  'bolinixiya': 'city_tahiti',   // 波利尼西亚·大溪地
+  'malindi': 'city_malindi',     // 马林迪苏丹国·马林迪
+  'goto': 'city_goto',           // 五岛·五岛（宇久氏·五岛氏水军）
+  'omura': 'city_nagasaki',      // 大村·长崎（肥前吉利支丹大名）
+  'wandan': 'city_wandan'        // 万丹·万丹（胡椒港）
 };
 
 // @ts-ignore

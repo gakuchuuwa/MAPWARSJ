@@ -168,7 +168,9 @@ const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
     city_saovicente: ['city_buenosaires'],
     city_buenosaires: ['city_sanjulian'],
     city_sanjulian: ['city_hagatna', 'city_valparaiso'],
-    city_valparaiso: ['city_lima'],
+    city_valparaiso: ['city_lima', 'city_rapanui'],
+    city_rapanui: ['city_tahiti'],
+    city_tahiti: ['city_valparaiso'],
 
     // 麦哲伦—马尼拉大帆船太平洋—香料群岛航线
     city_lima: ['city_acapulco'],

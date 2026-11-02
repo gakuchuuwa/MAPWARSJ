@@ -5,6 +5,7 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import type { CalendarSeason4 } from '../world/environment/seasonalGround';
 import {
     WEATHER_SPECS,
+    canSustainSnowAt,
     pickWeightedWeather,
     resolveWeatherPoolAt,
     type WeatherKind,
@@ -227,12 +228,8 @@ export class WeatherLayer extends L.Layer {
         const timeA = this.cellTimeAlpha(cell, now);
         if (timeA <= 0.001) return 0;
         // 🔴 [2026-11-02 优化] 雨雪分界线阻断：降雪与暴风雪气团绝不侵入亚热带/南方温暖视口
-        if (cell.kind === 'SNOW' || cell.kind === 'BLIZZARD') {
-            const absLat = Math.abs(lat);
-            const calendarSeason = this.getCalendarSeason();
-            if ((absLat < 33 && calendarSeason !== 3) || absLat < 24) {
-                return 0;
-            }
+        if ((cell.kind === 'SNOW' || cell.kind === 'BLIZZARD') && !canSustainSnowAt(lat, lng, this.getCalendarSeason())) {
+            return 0;
         }
         const cosLat = Math.max(0.25, Math.cos((lat * Math.PI) / 180));
         const dLat = lat - cell.lat;

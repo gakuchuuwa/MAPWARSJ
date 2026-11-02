@@ -19,6 +19,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yinggelan_henlimogen': 'BRITONS',
     'putaoya_azanbuya': 'PORTUGUESE',
     'bolinixiya_baomalei': 'MALAY',
+    'bolinixiya_huotumatua': 'MALAY',   // 波利尼西亚｜霍图玛图阿｜据点 复活节岛
     'gen_atoc': 'INCA',
     'gen_uaxaclajuun': 'MAYANS',
     'gen_harkhuf': 'ORIE',

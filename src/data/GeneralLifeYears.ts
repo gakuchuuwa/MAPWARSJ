@@ -1942,6 +1942,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     siam_zhengxin: { birth: 1734, death: 1782 },  // 郑信（吞武里大帝达信）
     maidina_kuerdi: { birth: 1470, death: 1517, kaoju: '推定' },  // 库尔迪（吉达守将侯赛因·库尔迪）
     gaolu_labuerdonei: { birth: 1699, death: 1753 },  // 拉布尔多内（毛里求斯路易港奠基人）
+    bolinixiya_huotumatua: { birth: 950, death: 1020, kaoju: '推定' },  // 霍图玛图阿（拉帕努伊始祖国王·传说成分）
     ayoubu_lulu: { birth: 1140, death: 1200, kaoju: '推定' },  // 鲁鲁（阿尤布红海水师都督·苏伊士保卫战）
 
 };

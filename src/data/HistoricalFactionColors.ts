@@ -750,6 +750,9 @@ wuzhou_yijun: '#6B7A2E', // 婺州义军·汪文进
     balti: '#4D7C0F',   // 巴尔蒂
     qingyuan_yijun: '#9D174D',   // 清远义军
     zhenghe_yijun: '#0C4A6E',   // 政和义军
+    // ── 2026-11-03 补势力色（校验提示「缺 HistoricalFactionColors」的两家）──
+    hulumusi: '#00838F',   // 忽鲁谟斯（霍尔木兹王国·扼波斯湾口的商港，无专属尚色→按史地取海湾深青；含「霍」字青碧之色）
+    bolinixiya: '#C2185B', // 波利尼西亚（波马雷王朝旗为红白红三横条，取旗面绛红）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

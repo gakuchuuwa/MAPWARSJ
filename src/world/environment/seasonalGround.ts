@@ -94,10 +94,10 @@ export function mediterraneanWeightAt(lat: number, lng: number, aridity = 0.4, s
  */
 export function tropicalSavannaWeightAt(lat: number, _lng: number, aridity: number, sandiness: number): number {
     const absLat = Math.abs(lat);
-    const latW = smoothBand(absLat, 7.5, 22.0, 5.5);
+    const latW = smoothBand(absLat, 7.5, 23.5, 5.5);
     if (latW <= 0.001) return 0;
-    const aridW = smoothBand(aridity, 0.20, 0.62, 0.26);
-    const sandW = 1 - smoothstep(0.20, 0.65, sandiness);
+    const aridW = smoothBand(aridity, 0.0, 0.80, 0.25);
+    const sandW = 1 - smoothstep(0.25, 0.70, sandiness);
     return clamp01(latW * aridW * sandW);
 }
 
@@ -390,10 +390,10 @@ function computeLocalSeasonModulation(
     _zone?: EnvZoneId,
 ): SeasonalGroundModulation {
     // 1. 从湿润草林 → 半干旱草原 → 极旱真荒漠（撒哈拉、塔克拉玛干、塔尔、阿拉伯、河套戈壁等）全程宽幅连续平滑衰减，
-    //    避免在 aridity 0.2↔0.8 交界处（如灵州/平凉、阿杰梅尔、孟加拉）形成陡峭的黄绿台阶
+    //    仅在真荒漠（高沙度 pal/qs/pal1/ds5）压制季节色彩，使黄土高原（ds2）与巴蜀/恒河红壤（ds4）保留自然四季变化
     const desertMute = clamp01(
-        smoothstep(0.08, 0.78, sandiness) * 0.86 +
-        smoothstep(0.18, 0.88, aridity) * 0.82,
+        smoothstep(0.36, 0.88, sandiness) * 0.68 +
+        smoothstep(0.62, 0.96, aridity) * 0.42,
     );
     // 2. 赤道核心常绿雨林（|lat| < 9° 且极湿润）连续平滑衰减至四季常青
     const absLat = Math.abs(lat);

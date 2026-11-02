@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-02T13:20:03.956Z",
+ "generatedAt": "2026-11-02T15:05:10.128Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16594,6 +16594,20 @@
    "reliefM": 136,
    "cliffs": 0,
    "top": "Grass 3 85.8% · Forest, Mediterranean 5.5% · Water, Shallow 3% · Pine Forest 2.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_rapanui",
+   "file": "site_city_rapanui.json",
+   "bytes": 303027,
+   "koppen": "Cfa",
+   "theme": "NEOTROPICAL_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 266,
+   "cliffs": 0,
+   "top": "Grass 91.6% · Forest, Dry South American 8.2% · Jungle 0.2%",
    "verify": "ok"
   }
  ],

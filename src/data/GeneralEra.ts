@@ -1927,6 +1927,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'lagoniya_kelierlidasi': 'antiquity', // 克利尔里达斯
     'gaolu_wulixi': 'imperial', // 乌里希
     'gaolu_labuerdonei': 'imperial', // 拉布尔多内
+    'bolinixiya_huotumatua': 'feudal', // 霍图玛图阿（复活节岛始祖国王）
     'ayoubu_lulu': 'castle', // 鲁鲁（阿尤布水军都督）
     'yinggelan_yuehanjifade': 'castle', // 约翰吉法德
 
