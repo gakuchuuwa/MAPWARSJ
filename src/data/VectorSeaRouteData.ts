@@ -58,6 +58,49 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
+                name: "长崎-承天",
+                type: "sea",
+                id: "sea_city_nagasaki_city_tainan_1793630766053",
+                startConnection: "city_nagasaki",
+                endConnection: "city_tainan",
+                startYear: 1604,
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [129.8777, 32.7555],
+                    [128.00, 30.00],
+                    [125.00, 27.00],
+                    [122.50, 24.50],
+                    [120.20, 22.99]
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "承天-北大年",
+                type: "sea",
+                id: "sea_city_tainan_city_pattani_1793630766053",
+                startConnection: "city_tainan",
+                endConnection: "city_pattani",
+                startYear: 1604,
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [120.20, 22.99],
+                    [117.00, 20.00],
+                    [113.00, 15.00],
+                    [109.00, 10.00],
+                    [105.00, 7.50],
+                    [101.25, 6.867]
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
                 name: "萨尔瓦多-安格拉",
                 type: "sea",
                 id: "sea_city_salvador_city_angra_1793628006860",
