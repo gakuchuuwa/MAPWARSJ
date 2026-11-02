@@ -191,6 +191,8 @@ export class PlayerHero {
      *  🔴 [2026-10-05 主人令] 开局默认**关闭**（原 2026-09-09「开局默认自动」作废）：
      *     先选好乱斗还是剧本（autoPlan），再手动点「🤖 自动」，之后才按所选模式的逻辑自动运行。 */
     public autoMode = true;
+    /** 玩家面板四选一模式（autoMode 仅在 'auto' 时为真，保持旧读取口径不变） */
+    public playMode: PlayerPlayMode = 'auto';
     /** 🔴 [2026-10-22] 故事块：已触发过的块 id（只触发一次的不再弹）、剧情标记（随存档保存） */
     public storyDone: string[] = [];
     public storyFlags: string[] = [];
@@ -360,9 +362,83 @@ export class PlayerHero {
     }
     public getHostLegionId(): string | null { return this.hostLegionId; }
     public setAutoMode(on: boolean): void {
-        if (this.autoMode === on) return;
-        this.autoMode = on;
+        this.setPlayMode(on ? 'auto' : 'rest');
+    }
+    /**
+     * 🔴 [2026-11-02 主人令] 玩家面板「自动」改为四选一：自动 / 休息 / 环球 / 航行。
+     *   · auto  自动找武将、入伍、接战（原「自动」开）；rest 纯手动（原「自动」关）；
+     *   · globe 环球：只在世界各据点间旅行，不找武将、不触发城中对话，水陆路皆可；
+     *   · sail  航行：只走海路坐船在港口间环游，不上陆地（不在港口时先走到最近的港口）。
+     */
+    public setPlayMode(mode: PlayerPlayMode): void {
+        if (this.playMode === mode) return;
+        this.playMode = mode;
+        this.autoMode = mode === 'auto';
+        this.tourPlannedAt = 0;
+        if (mode === 'globe' || mode === 'sail') {
+            this.cancelChase();
+            this.cancelTravel();
+        }
         this.emitChange();
+    }
+    public isTourMode(): boolean { return this.playMode === 'globe' || this.playMode === 'sail'; }
+
+    /** 环球/航行：停下来后挑下一个目的地（每 1.5 秒最多规划一次） */
+    private tourPlannedAt = 0;
+    private stepTour(): void {
+        if (!this.isTourMode() || this.hostLegionId || this.isHeld()) return;
+        if (this.travelCityId || this.chaseArmyId || !this.army.isIdle()) return;
+        const now = performance.now();
+        if (now - this.tourPlannedAt < 1500) return;
+        this.tourPlannedAt = now;
+        if (!roadRegistry.isInitialized()) return;
+        const pos = this.army.getPosition();
+        const here = roadRegistry.getNearestCityId(pos.lat, pos.lng);
+        if (!here) return;
+        if (this.playMode === 'globe') {
+            const dists = roadRegistry.getRoadDistancesKmFrom(here);
+            const reach = [...dists.entries()]
+                .filter(([id, d]) => id !== here && d > 0 && this.deps.cityManager.getCity(id))
+                .sort((a, b) => b[1] - a[1]);
+            if (reach.length === 0) return;
+            const far = reach.slice(0, Math.max(1, Math.ceil(reach.length / 3)));
+            const pick = far[Math.floor(Math.random() * far.length)][0];
+            this.travelToCity(pick, true);
+            return;
+        }
+        // 航行：先确保站在港口
+        const ports = roadRegistry.getSeaPortIds()
+            .map((id) => this.deps.cityManager.getCity(id))
+            .filter((c): c is City => !!c);
+        if (ports.length === 0) return;
+        let nearPort: City | null = null;
+        let nd = Infinity;
+        for (const c of ports) {
+            const d = getEuclideanDistance(pos, { lat: c.latitude, lng: c.longitude });
+            if (d < nd) { nd = d; nearPort = c; }
+        }
+        if (!nearPort) return;
+        if (nd > PLAYER_CITY_ARRIVE_DIST) {
+            this.deps.notify(`航行：先前往最近的港口【${nearPort.name}】`);
+            this.travelToCity(nearPort.id, true);
+            return;
+        }
+        const startId = nearPort.id;
+        const cands = ports.filter((c) => c.id !== startId);
+        for (let i = 0; i < 12 && cands.length > 0; i++) {
+            const dest = cands.splice(Math.floor(Math.random() * cands.length), 1)[0];
+            const res = roadRegistry.findSeaOnlyPath(startId, dest.id);
+            if (!res || res.coordinates.length < 2) continue;
+            const path = roadRegistry.pathToLatLngs(res);
+            this.travelCityId = dest.id;
+            this.travelPointLabel = null;
+            this.army.setTargetCity(dest);
+            this.army.setOnArriveCallback(() => this.handleArrive(dest.id));
+            this.army.moveAlongPath(path.map((p) => ({ lat: p.lat, lng: p.lng, sea: true })));
+            this.deps.followCamera();
+            this.emitChange();
+            return;
+        }
     }
     /**
      * 切换自动模式的玩法（百岁 / 剧本 / 乱斗）。
@@ -1061,6 +1137,8 @@ export class PlayerHero {
         this.army.setTargetCity(null);
         // 追人途中：锚点城只是路上的一站，不谈事；下一帧 stepChase 会继续往军团那边走
         if (this.chaseArmyId) { this.emitChange(); return; }
+        // 环球/航行：路过即走，不触发城中对话，下一帧 stepTour 挑下一站
+        if (this.isTourMode()) { this.deps.releaseCamera(); this.emitChange(); return; }
         const city = this.deps.cityManager.getCity(cityId);
         this.deps.releaseCamera();
         this.emitChange();
@@ -1128,6 +1206,7 @@ export class PlayerHero {
             this.army.update(dt);
             // 追将领：每帧续航（军团在动，锚点跟着变；够近了就会面）
             if (this.chaseArmyId) this.stepChase();
+            this.stepTour();
         }
         if (this.army.isOnSea) {
             // 🔴 [2026-09-09 修] 原来写死 MERCHANT_SHIP（商船），与「初始海上兵模是独木舟」的定案不符。

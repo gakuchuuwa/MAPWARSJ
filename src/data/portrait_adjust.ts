@@ -8162,11 +8162,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/KHITAN/__闲置__KHITAN_02.png": {
-            "scale": 1.24,
-            "offsetX": 11,
-            "offsetY": 24
-        },
         "/assets/KHITAN/bfe3_67.png": {
             "scale": 1.14,
             "offsetX": 15,
@@ -9512,7 +9507,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 24,
             "offsetY": -22
         },
-        "/assets/NORTHEAST/83c82c03-92da-417b-a742-89e220b5d7c5.png": {
+        "/assets/NORTHEAST/__多余__NORTHEAST_01.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 18
@@ -9562,7 +9557,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -9
         },
-        "/assets/CENTRAL/9da2d658-08f8-439e-8289-209161d597d7.png": {
+        "/assets/CENTRAL/__多余__CENTRAL_03.png": {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 16
@@ -9576,6 +9571,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 16
+        },
+        "/assets/KHITAN/ganzhou_huihu_yeluohu.png": {
+            "scale": 1.24,
+            "offsetX": 11,
+            "offsetY": 24
+        },
+        "/assets/BASHU/tang_zhangchengjian.png": {
+            "scale": 1.02,
+            "offsetX": 19,
+            "offsetY": -31
+        },
+        "/assets/BASHU/han_d_wangji.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -9
         }
     },
     "folderGuides": {

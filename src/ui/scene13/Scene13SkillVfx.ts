@@ -122,6 +122,69 @@ const sixRawImages = new Map<TacticalSixSet, HTMLImageElement>();
 const sixLoading = new Set<TacticalSixSet>();
 const sixBadgeCache = new Map<string, HTMLCanvasElement>();
 
+// ── 1.1 六计状态头顶小特效专属图标（无火焰纯器物版）──
+const SIX_SMALL_ICON_URLS: Record<TacticalSixSet, string> = {
+    gongzhan: '/SUCAI_FX/SIX_ICONS/small/gongzhan.png?v=small1',
+    shengzhan: '/SUCAI_FX/SIX_ICONS/small/shengzhan.png?v=small1',
+    dizhan: '/SUCAI_FX/SIX_ICONS/small/dizhan.png?v=small1',
+    hunzhan: '/SUCAI_FX/SIX_ICONS/small/hunzhan.png?v=small1',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/small/bingzhan.png?v=small1',
+    baizhan: '/SUCAI_FX/SIX_ICONS/small/baizhan.png?v=small1',
+};
+
+const sixSmallRawImages = new Map<TacticalSixSet, HTMLImageElement>();
+const sixSmallLoading = new Set<TacticalSixSet>();
+const sixSmallBadgeCache = new Map<string, HTMLCanvasElement>();
+
+function getSixSmallSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElement | null {
+    const cacheKey = `${six}_${paid ? 1 : 0}`;
+    const existing = sixSmallBadgeCache.get(cacheKey);
+    if (existing) return existing;
+
+    const rawImg = sixSmallRawImages.get(six);
+    if (!rawImg) {
+        if (typeof Image !== 'undefined' && !sixSmallLoading.has(six)) {
+            sixSmallLoading.add(six);
+            const img = new Image();
+            img.onload = () => {
+                sixSmallLoading.delete(six);
+                sixSmallRawImages.set(six, img);
+            };
+            img.onerror = () => {
+                sixSmallLoading.delete(six);
+            };
+            img.src = SIX_SMALL_ICON_URLS[six];
+        }
+        return null;
+    }
+
+    const SIZE = 256;
+    const PAD = 10;
+    const DRAW_S = SIZE - PAD * 2;
+    const cv = document.createElement('canvas');
+    cv.width = SIZE;
+    cv.height = SIZE;
+    const g = cv.getContext('2d')!;
+
+    g.save();
+    g.shadowColor = paid ? 'rgba(255, 212, 72, 0.96)' : 'rgba(0, 0, 0, 0.96)';
+    g.shadowBlur = paid ? 18 : 14;
+    g.shadowOffsetX = 0;
+    g.shadowOffsetY = paid ? 0 : 4;
+    g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
+
+    g.shadowColor = 'rgba(0, 0, 0, 0.92)';
+    g.shadowBlur = 7;
+    g.shadowOffsetY = 2;
+    g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
+    g.restore();
+
+    g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
+
+    sixSmallBadgeCache.set(cacheKey, cv);
+    return cv;
+}
+
 function getSixSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElement | null {
     const cacheKey = `${six}_${paid ? 1 : 0}`;
     const existing = sixBadgeCache.get(cacheKey);
@@ -1212,7 +1275,7 @@ export function drawScene13SkillStatusVfx(
         if (!resolved) continue;
 
         const { iconEntry } = resolved;
-        const badge = getSixSkillIconBadge(iconEntry.six, iconEntry.paid);
+        const badge = getSixSmallSkillIconBadge(iconEntry.six, iconEntry.paid) ?? getSixSkillIconBadge(iconEntry.six, iconEntry.paid);
         if (!badge) continue;
 
         const fadeOut = clamp01(iconEntry.rem / 1.0);

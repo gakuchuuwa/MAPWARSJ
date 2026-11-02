@@ -589,6 +589,41 @@ export class RoadRegistry {
         return this.buildPathResult(startNodeId, endNodeId, cached.distances, cached.prev);
     }
 
+    /** 有海路相连的城（港口）。玩家「航行 / 环球」模式选目的地用。 */
+    public getSeaPortIds(): string[] {
+        const out: string[] = [];
+        for (const [id, list] of this.adjacencyList) {
+            if (this.nodes.get(id)?.type === 'city' && list.some((e) => e.isSea)) out.push(id);
+        }
+        return out;
+    }
+
+    /** 只走海路边的最短路（航行模式：不上陆地）。起终点须是港口，不通返回 null。 */
+    public findSeaOnlyPath(startNodeId: string, endNodeId: string): PathResult | null {
+        if (!this.adjacencyList.has(startNodeId) || !this.adjacencyList.has(endNodeId)) return null;
+        const dist = new Map<string, number>([[startNodeId, 0]]);
+        const prev = new Map<string, { nodeId: string; edge: GraphEdge }>();
+        const visited = new Set<string>();
+        const pq = new DijkstraMinHeap();
+        pq.push({ nodeId: startNodeId, dist: 0 });
+        while (pq.size > 0) {
+            const { nodeId: cur } = pq.pop()!;
+            if (visited.has(cur)) continue;
+            visited.add(cur);
+            if (cur === endNodeId) break;
+            for (const edge of this.adjacencyList.get(cur) || []) {
+                if (!edge.isSea || visited.has(edge.to)) continue;
+                const nd = (dist.get(cur) ?? Infinity) + edge.weight;
+                if (nd < (dist.get(edge.to) ?? Infinity)) {
+                    dist.set(edge.to, nd);
+                    prev.set(edge.to, { nodeId: cur, edge });
+                    pq.push({ nodeId: edge.to, dist: nd });
+                }
+            }
+        }
+        return this.buildPathResult(startNodeId, endNodeId, dist, prev);
+    }
+
     /**
      * 两个节点之间**直接连着的那条路**（剧本行军专用）。
      * 最短路会为了省几公里绕开主人新画的直连路（例：兹拉卡塔—比斯塔姆 176 公里 < 经达姆甘 158 公里，寻路永远不走它）；
