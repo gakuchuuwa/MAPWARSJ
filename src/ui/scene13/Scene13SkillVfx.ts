@@ -124,12 +124,12 @@ const sixBadgeCache = new Map<string, HTMLCanvasElement>();
 
 // ── 1.1 六计状态头顶小特效专属图标（无火焰纯器物版）──
 const SIX_SMALL_ICON_URLS: Record<TacticalSixSet, string> = {
-    gongzhan: '/SUCAI_FX/SIX_ICONS/small/gongzhan.png?v=small10',
-    shengzhan: '/SUCAI_FX/SIX_ICONS/small/shengzhan.png?v=small10',
-    dizhan: '/SUCAI_FX/SIX_ICONS/small/dizhan.png?v=small10',
-    hunzhan: '/SUCAI_FX/SIX_ICONS/small/hunzhan.png?v=small10',
-    bingzhan: '/SUCAI_FX/SIX_ICONS/small/bingzhan.png?v=small10',
-    baizhan: '/SUCAI_FX/SIX_ICONS/small/baizhan.png?v=small10',
+    gongzhan: '/SUCAI_FX/SIX_ICONS/small/gongzhan.png?v=small12',
+    shengzhan: '/SUCAI_FX/SIX_ICONS/small/shengzhan.png?v=small12',
+    dizhan: '/SUCAI_FX/SIX_ICONS/small/dizhan.png?v=small12',
+    hunzhan: '/SUCAI_FX/SIX_ICONS/small/hunzhan.png?v=small12',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/small/bingzhan.png?v=small12',
+    baizhan: '/SUCAI_FX/SIX_ICONS/small/baizhan.png?v=small12',
 };
 
 const sixSmallRawImages = new Map<TacticalSixSet, HTMLImageElement>();
@@ -167,15 +167,25 @@ function getSixSmallSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanva
     const g = cv.getContext('2d')!;
 
     g.save();
-    g.shadowColor = paid ? 'rgba(255, 212, 72, 0.96)' : 'rgba(0, 0, 0, 0.96)';
-    g.shadowBlur = paid ? 18 : 14;
+    g.shadowColor = paid ? 'rgba(255, 212, 72, 0.98)' : 'rgba(0, 0, 0, 0.98)';
+    g.shadowBlur = paid ? 16 : 12;
     g.shadowOffsetX = 0;
-    g.shadowOffsetY = paid ? 0 : 4;
+    g.shadowOffsetY = paid ? 0 : 3;
     g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
 
-    g.shadowColor = 'rgba(0, 0, 0, 0.92)';
-    g.shadowBlur = 7;
-    g.shadowOffsetY = 2;
+    // 紧贴外轮廓的深色描边，确保半透明时外圈依然清晰分明
+    g.shadowColor = 'rgba(0, 0, 0, 0.95)';
+    g.shadowBlur = 3;
+    for (const [ox, oy] of [[-2, 0], [2, 0], [0, -2], [0, 2]]) {
+        g.shadowOffsetX = ox;
+        g.shadowOffsetY = oy;
+        g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
+    }
+    g.restore();
+
+    // 掏空图标内部的黑色阴影底，只保留外圈描边，使半透明渲染时图标内部真正透出战场地面而非透出黑影
+    g.save();
+    g.globalCompositeOperation = 'destination-out';
     g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
     g.restore();
 
@@ -233,6 +243,14 @@ function getSixSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElem
 
     sixBadgeCache.set(cacheKey, cv);
     return cv;
+}
+
+// 模块初始化时预加载全部六计大小图标，确保首次释放技能时第一帧即可就绪显示
+if (typeof Image !== 'undefined') {
+    for (const six of ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan', 'bingzhan', 'baizhan'] as const) {
+        getSixSkillIconBadge(six, false);
+        getSixSmallSkillIconBadge(six, false);
+    }
 }
 
 // DE 吴国精锐火焰弓箭手火箭抛射物素材（/SUCAI/PROJ_ARROW_FIRE/fly_0.png：11 帧，单帧 20×20，anchor 6×10）
@@ -400,7 +418,8 @@ function ellipse(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number
 }
 
 // ── 3. 状态追踪与叠加规则：「技能叠加时，保留前一个色彩，上后一个技能的贴图」 ──
-const INSTANT_SYNC_SEC = 4.5;
+// 与攻战计（10s）、胜战计（10s）、混战计（15s）统一：敌战计伏兵与并战计倒戈兵头顶小图标持续 12 秒（扣除大特效演出后仍清晰展示）
+const INSTANT_SYNC_SEC = 12.0;
 
 interface UnitSkillTag {
     six: 'dizhan' | 'bingzhan' | 'baizhan';
@@ -1282,21 +1301,11 @@ export function drawScene13SkillStatusVfx(
         const y = m.y - lift(m.x, m.y);
         const pulse = 0.5 + 0.5 * Math.sin(nowSec * 7 + m.zid * 0.73);
         const iconR = m.hero ? ICON_R * 1.22 : ICON_R;
-        const baseAlpha = m.hero ? 0.90 : 0.80;
+        const baseAlpha = m.hero ? 0.85 : 0.74;
 
-        if (iconEntry.six === 'hunzhan') {
-            const hy = y - 28;
-            ctx.save();
-            ctx.translate(m.x, hy);
-            ctx.rotate(nowSec * 3.2 + m.zid);
-            ctx.globalAlpha = baseAlpha * fadeOut;
-            drawStamp(ctx, badge, 0, 0, iconR);
-            ctx.restore();
-        } else {
-            const hy = y - 28 - pulse * 2.0;
-            ctx.globalAlpha = baseAlpha * fadeOut;
-            drawStamp(ctx, badge, m.x, hy, iconR);
-        }
+        const hy = y - 28 - pulse * 2.0;
+        ctx.globalAlpha = baseAlpha * fadeOut;
+        drawStamp(ctx, badge, m.x, hy, iconR);
     }
     ctx.restore();
 }

@@ -9053,7 +9053,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/ATHENIANS/yadian_gongguo_otto.png": {
-            "scale": 0.94,
+            "scale": 0.9,
             "offsetX": 0,
             "offsetY": -6
         },
@@ -9626,6 +9626,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -15
+        },
+        "/assets/BURMESE/bfe_mingyiswa.png": {
+            "scale": 0.94,
+            "offsetX": -6,
+            "offsetY": -20
         }
     },
     "folderGuides": {
