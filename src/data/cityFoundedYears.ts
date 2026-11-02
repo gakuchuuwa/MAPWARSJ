@@ -437,6 +437,9 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_yaqi: 1205,          // 亚齐：1205年4月22日苏丹约翰·沙阿始建班达亚齐城（英文维基 Banda Aceh）
     city_jiale: 1344,         // 加勒：1344年伊本·白图泰游记已详记 Qali 港，1409年郑和立三语碑（英文维基 Galle）
     city_guli: 1124,          // 古里：1124年埃拉迪王朝建立卡利卡特城，后为萨穆里王朝都城（英文维基 Kozhikode）
+    city_yuntun: 1149,        // 云屯：1149年越南李朝英宗正式设云屯庄商港，为大越法定海贸门户（英文维基 Vân Đồn district）
+    city_tunwuli: 1557,       // 吞武里：16世纪阿瑜陀耶王朝于湄南河口吞武里设海关与海防要塞，1767年为吞武里王朝都城（英文维基 Thonburi）
+    city_jida: 646,           // 吉达：公元646年第三任哈里发奥斯曼正式定吉达为麦加红海外港（英文维基 Jeddah）
     city_mailuoe: -590,       // 前6世纪库施王阿斯佩尔塔迁都于此，前4世纪仍为都城（英文维基 Meroë）
     city_aolinpiya: -776,     // 传统以公元前776年首届奥林匹亚赛会为始，时为宙斯圣地（英文维基 Olympia, Greece）
     city_waerna: -425,        // 公元前425年已入提洛同盟贡册，公元前339年腓力二世围攻未克，公元前335年降于亚历山大（英文维基 Varna, Bulgaria）

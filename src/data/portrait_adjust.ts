@@ -9631,6 +9631,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": -6,
             "offsetY": -20
+        },
+        "/assets/JIANGNAN/wuyue_caoxin.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -22
         }
     },
     "folderGuides": {

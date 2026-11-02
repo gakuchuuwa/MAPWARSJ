@@ -3764,6 +3764,10 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-10-25 主人令「全面修复」印度据点文化] 阿努拉德普勒＝斯里兰卡僧伽罗圣都（无专属 66 文化，取最近南印建筑圈）→ INDIA；原标 PURU
     { id: 'city_anulade', name: '阿努拉德', factionId: 'sengjialuo', lat: 8.3533, lng: 80.3956, type: 'medium_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '阿努拉德普勒(Anuradhapura)，斯里兰卡僧伽罗王朝千年佛教圣都与灌溉枢纽（圣菩提树/鲁梵维利萨亚塔）；杜图伽摩尼击溃南印度泰米尔埃拉兰统一全岛光复圣都；按 2026-10-25 标准：城居 7–8 → 中城' },
     { id: 'city_jiale', name: '加勒', factionId: 'sengjialuo', lat: 6.05, lng: 80.21, type: 'small_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '加勒(Galle/别罗里/锡兰山)，斯里兰卡西南大商港，郑和七下西洋在此立《三语碑》(1409年)，科提王国对外主港；城内居民约1–2万；按 2026-10-25 标准：城居 1–2 → 小城' },
+    // 🔴 [2026-11-02 主人令「请添加这三个据点，然后把昇龙，阿瑜陀耶，麦加的港口属性取消，删除海路」]
+    { id: 'city_yuntun', name: '云屯', factionId: 'dayue', lat: 20.86, lng: 106.68, type: 'small_city', troops: 10000, region: 'VIETNAMESE', buildingStyle: 'VIETNAMESE', note: '云屯港与白藤江入海口(Vân Đồn/海防门户)，1149年李英宗正式设云屯商港，为李、陈、后黎三朝唯一法定对外海贸门户；1288年陈兴道、陈庆余于云屯—白藤江海口全歼元朝乌马儿水军与张文虎粮船队；按 2026-10-25 标准：城居 1–2 → 小城' },
+    { id: 'city_tunwuli', name: '吞武里', factionId: 'siam', lat: 13.68, lng: 100.53, type: 'small_city', troops: 10000, region: 'SEAS', buildingStyle: 'KHMER', note: '吞武里(Thonburi/曼谷海口)，阿瑜陀耶王朝扼守湄南河入海口的海防重镇与对外海关港，1688年曼谷围城战所在地，1767年郑信建立吞武里王朝都城；按 2026-10-25 标准：城居 2–5 → 小城' },
+    { id: 'city_jida', name: '吉达', factionId: 'maidina', lat: 21.49, lng: 39.19, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '吉达(Jeddah)，公元646年第三任哈里发奥斯曼正式定为麦加红海外港，千年朝觐门户与红海第一商港；1517年吉达守将侯赛因·库尔迪筑石砖城墙并率红海舰队击退葡萄牙远征舰队；按 2026-10-25 标准：城居 1–2 → 小城' },
     // ── [2026-08-28] 奇观周边补据点（19座，对应原野外奇观）──
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「SEAS」推出的二级与史实不符 → 归 KHMER：万象：澜沧（寮）王国都城，同圈
     { id: 'city_wanxiang', name: '万象', factionId: 'liaozu', lat: 17.976, lng: 102.636, type: 'small_city', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'KHMER', note: '澜沧王国后期首都，塔銮所在地；推算：城居 1 万（万象，澜沧王国都城 1 万）→ 小城' },

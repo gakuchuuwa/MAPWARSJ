@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-02T08:20:16.929Z",
+ "generatedAt": "2026-11-02T09:31:52.953Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16132,6 +16132,48 @@
    "reliefM": 61,
    "cliffs": 0,
    "top": "Dry Grass 83.6% · Forest, Lush Bamboo 6.2% · Water, Shallow 4.8% · Bamboo 2.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_yuntun",
+   "file": "site_city_yuntun.json",
+   "bytes": 324374,
+   "koppen": "Cwa",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 1641,
+   "waterPct": 11.4,
+   "reliefM": 22,
+   "cliffs": 0,
+   "top": "Dry Grass 74.6% · Water, Shallow 11.4% · Forest, Lush Bamboo 5.9% · Beach 5.7%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_tunwuli",
+   "file": "site_city_tunwuli.json",
+   "bytes": 314530,
+   "koppen": "Aw",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 2214,
+   "waterPct": 15.4,
+   "reliefM": 73,
+   "cliffs": 0,
+   "top": "Dry Grass 72% · Water, Shallow 15.4% · Forest, Lush Bamboo 5.9% · Beach 2.5%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_jida",
+   "file": "site_city_jida.json",
+   "bytes": 235123,
+   "koppen": "BWh",
+   "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
+   "water": "none",
+   "waterCells": 168,
+   "waterPct": 1.2,
+   "reliefM": 72,
+   "cliffs": 0,
+   "top": "Desert 88.2% · Palm Desert 6% · Forest, Birch 2.2% · Beach 2.2%",
    "verify": "ok"
   }
  ],

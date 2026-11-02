@@ -6267,6 +6267,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     siam: [
         { generalId: 'siam_nalixuan', cityId: 'city_ayutthaya', generalName: '纳黎萱', portrait: '/assets/KHMER/siam_nalixuan.png', eliteName: '高棉战象', eliteTier: 2 },
         { generalId: 'bfe_mahathammaracha', factionId: 'siam', cityId: 'city_ayutthaya', generalName: '玛欣他拉', portrait: '/assets/KHMER/bfe_mahathammaracha.png', eliteName: '暹罗战象', eliteTier: 4 },
+        { generalId: 'siam_zhengxin', factionId: 'siam', cityId: 'city_tunwuli', generalName: '郑信', portrait: '/assets/KHMER/siam_zhengxin.png', eliteName: '暹罗战象', eliteTier: 4 },
     ],
 
 
@@ -11024,6 +11025,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'dayue_chenguojun', cityId: 'city_shenglong', generalName: '陈国峻', portrait: '/assets/VIETNAMESE/dayue_chenguojun.png', eliteName: '陈朝象兵', eliteTier: 2 },
+        { generalId: 'dayue_chenqingyu', factionId: 'dayue', cityId: 'city_yuntun', generalName: '陈庆余', portrait: '/assets/VIETNAMESE/dayue_chenqingyu.png', eliteName: '陈朝弓手', eliteTier: 4 },
 
 
 
@@ -15651,6 +15653,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'maidina_ali', cityId: 'city_maidina', generalName: '阿里', portrait: '/assets/ORIE/maidina_ali.png', eliteName: '圣门卫队', eliteTier: 3 },
+        { generalId: 'maidina_kuerdi', factionId: 'maidina', cityId: 'city_jida', generalName: '库尔迪', portrait: '/assets/ORIE/maidina_kuerdi.png', eliteName: '阿拉伯步兵', eliteTier: 4 },
 
 
 

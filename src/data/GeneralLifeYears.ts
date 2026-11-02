@@ -1919,6 +1919,9 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     yaqi_yisikanda: { birth: 1583, death: 1636 },  // 伊斯坎达尔（亚齐苏丹国）
     sengjialuo_boluojialuoliu: { birth: 1391, death: 1467 },  // 波罗迦罗摩六世（僧伽罗/科提）
     zhamolin_kunhali: { birth: 1500, death: 1580, kaoju: '推定' },  // 昆哈利（古里萨穆里海军）
+    dayue_chenqingyu: { birth: 1240, death: 1339, kaoju: '推定' },  // 陈庆余（大越云屯水战主将）
+    siam_zhengxin: { birth: 1734, death: 1782 },  // 郑信（吞武里大帝达信）
+    maidina_kuerdi: { birth: 1470, death: 1517, kaoju: '推定' },  // 库尔迪（吉达守将侯赛因·库尔迪）
 
 };
 
