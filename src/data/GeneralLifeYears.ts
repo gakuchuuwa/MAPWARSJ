@@ -267,9 +267,10 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_vasili_iii: { birth: 1479, death: 1533 },          // 瓦西里三世（莫斯科大公）
     gen_atahualpa: { birth: 1502, death: 1533 },           // 阿塔瓦尔帕（印加末帝）
     gen_valdivia: { birth: 1497, death: 1553 },
+    putaoya_azanbuya: { birth: 1432, death: 1518 },            // 阿赞布雅（埃尔米纳要塞建立者）
     yinggelan_yuehansimisi: { birth: 1580, death: 1631 },
     yinggelan_henlimogen: { birth: 1635, death: 1688 },            // 亨利·摩根（牙买加副总督兼私掠司令）            // 约翰·史密斯（詹姆斯敦总督）
-    xibanya_jialai: { birth: 1528, death: 1583 },            // 加赖（布宜诺斯艾利斯奠基者）            // 瓦尔迪维亚（智利征服者）
+    xibanya_jialai: { birth: 1528, death: 1583 },            // 比斯卡伊诺（蒙特雷湾命名者与航海家）            // 加赖（布宜诺斯艾利斯奠基者）            // 瓦尔迪维亚（智利征服者）
     gen_medinaceli: { birth: 1500, death: 1574, kaoju: '推定' }, // 梅迪纳科利公爵
     gen_chen_youliang: { birth: 1320, death: 1363, kaoju: '推定' }, // 陈友谅（陈汉皇帝）
     gen_razadarit: { birth: 1368, death: 1421 },           // 罗娑陀利（勃固孟王）
@@ -856,6 +857,10 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     so_zongyizhi: { birth: 1568, death: 1615 },  // 宗义智
     goto_xuanya: { birth: 1548, death: 1612 },  // 五岛玄雅（宇久玄雅→大濱玄雅→五岛玄雅；福江藩初代藩主）
     omura_sumitada: { birth: 1533, death: 1585 },  // 大村纯忠（肥前大村氏当主，吉利支丹大名，1571 长崎开港）
+    wandan_ageng: { birth: 1631, death: 1692 },  // 苏丹阿贡·蒂尔塔亚萨（万丹苏丹 1651–1683，抗荷）
+    voc_speult: { birth: 1580, death: 1636, kaoju: '推定' },  // 赫尔曼·范·斯佩尔特（安汶总督 1618–1625）
+    yinggelan_delake: { birth: 1540, death: 1596 },  // 德雷克（Francis Drake，1577–1580 环球，普利茅斯市长）
+    xinxibanya_laijiasipi: { birth: 1502, death: 1572 },  // 莱加斯皮（1565 宿务建城、1571 马尼拉建城）
     taira_pingzhisheng: { birth: 1152, death: 1185 },  // 平知盛
     lelang_wangqi: { birth: 205, death: 265, kaoju: '推定' },  // 王颀
     anmei_yuwandaqin: { birth: 1470, death: 1537, kaoju: '推定' },  // 与湾大亲

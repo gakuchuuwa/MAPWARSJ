@@ -11,6 +11,11 @@ import type { BuildingStyle } from './cities_v2';
 import { getGeneralCityCulture } from './generalCultureResolve';
 
 export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
+    'putaoya_danuowa': 'PORTUGUESE',   // 葡萄牙｜若昂达诺瓦｜据点 圣赫勒拿
+    'yinggelan_yuehansimisi': 'BRITONS',
+    'yinggelan_henlimogen': 'BRITONS',
+    'putaoya_azanbuya': 'PORTUGUESE',
+    'bolinixiya_baomalei': 'MALAY',
     'gen_atoc': 'INCA',
     'gen_uaxaclajuun': 'MAYANS',
     'gen_harkhuf': 'ORIE',
@@ -745,7 +750,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_uqba': 'BERBER',   // 阿格拉布｜奥克巴｜据点 凯鲁万
     'gen_urdaneta': 'SPANISH',   // 新西班牙｜乌尔达内塔｜据点 阿卡普尔科
     'gen_valdivia': 'SPANISH',
-    'xibanya_jialai': 'SPANISH',   // 西班牙｜加赖｜据点 布宜诺斯艾利斯   // 西班牙｜瓦尔迪维亚｜据点 瓦尔帕莱索
+    'xibanya_jialai': 'SPANISH',   // 西班牙｜比斯卡伊诺｜据点 蒙特雷   // 西班牙｜加赖｜据点 布宜诺斯艾利斯   // 西班牙｜瓦尔迪维亚｜据点 瓦尔帕莱索
     'gen_vasili_iii': 'SLAVIC',   // 莫斯公国｜瓦西里三世｜据点 莫斯科
     'gen_velazquez': 'SPANISH',   // 西属古巴｜贝拉斯克斯｜据点 哈瓦那
     'gen_vernon': 'BRITONS',   // 英格兰｜弗农｜据点 皇家港（2026-10-25 改挂最近同文化城）

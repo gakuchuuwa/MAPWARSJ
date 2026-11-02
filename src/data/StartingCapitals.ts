@@ -80,7 +80,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
   'pufaerci': 'city_heidelberg',
   'hansa': 'city_hamburg',
-  'batawei': 'city_utrecht',
+  'batawei': 'city_hague',
   'weijing_york': 'city_york',
   'aquidan': 'city_bordeaux',
   'puluowangsi': 'city_avignon',

@@ -488,6 +488,11 @@ export interface FactionGeneral {
 
 
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
+    bolinixiya: [
+        // 波马雷（约1742–1803，波马雷一世，统一大溪地与周边群岛建立波马雷王朝）→ 大溪地（MALAY）
+        { generalId: 'bolinixiya_baomalei', factionId: 'bolinixiya', cityId: 'city_tahiti', generalName: '波马雷', portrait: '/assets/MALAY/bolinixiya_baomalei.png', eliteName: '马来矛兵', eliteTier: 4, legionName: '帝国时代马六甲军团' },
+    ],
+
     latin_empire: [
         { generalId: 'latin_empire_diaili', factionId: 'latin_empire', cityId: 'city_bruges', generalName: '蒂埃里', portrait: '/assets/BURGUNDIANS/latin_empire_diaili.png', eliteName: '佛兰德骑士', eliteTier: 3 },   // 🔴 [2026-11-01 补将·移将] 1205 秋拉丁军残部约140骑士驻鲁西翁，由佛兰德骑士蒂埃里统领，1206-01-31 出城迎战卡洛扬阵亡（尼基塔斯《历史》）｜鲁西翁＝拜占庭据点，将属法兰克系→按③移将：同文化(FRANKS)最近据点罗得城（513km）
     ],
@@ -741,6 +746,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'gen_cortes', factionId: 'xinxibanya', cityId: 'city_veracruz', generalName: '科尔特斯', portrait: '/assets/SPANISH/tuotuonake_keertesi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
+        { generalId: 'xinxibanya_laijiasipi', factionId: 'xinxibanya', cityId: 'city_cebu', generalName: '莱加斯皮', portrait: '', eliteName: '西班牙民兵', eliteTier: 4, legionName: '帝国时代西班牙征服军团' },
 
 
 
@@ -1980,7 +1986,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    batawei: { generalId: 'gen_civilis', cityId: 'city_utrecht', generalName: '西维利斯', portrait: '/assets/GERMANIC/batawei_xiweilisi.png', eliteName: '巴达维卫队', eliteTier: 3 },
+    batawei: { generalId: 'gen_civilis', cityId: 'city_hague', generalName: '西维利斯', portrait: '/assets/GERMANIC/batawei_xiweilisi.png', eliteName: '巴达维卫队', eliteTier: 3 },
 
 
 
@@ -2500,6 +2506,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
                 // 亨利·摩根（1635–1688，私掠舰队司令、牙买加副总督）→ 皇家港（BRITONS）
         { generalId: 'yinggelan_henlimogen', factionId: 'yinggelan', cityId: 'city_portroyal', generalName: '亨利摩根', portrait: '/assets/BRITONS/yinggelan_henlimogen.png', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
 { generalId: 'yinggelan_yuehansimisi', factionId: 'yinggelan', cityId: 'city_jamestown', generalName: '约翰史密斯', portrait: '/assets/BRITONS/yinggelan_yuehansimisi.png', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
+        { generalId: 'yinggelan_delake', factionId: 'yinggelan', cityId: 'city_plymouth', generalName: '德雷克', portrait: '', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
 { generalId: 'yinggelan_yuehanjifade', factionId: 'yinggelan', cityId: 'city_geluosite', generalName: '约翰吉法德', portrait: '/assets/BRITONS/yinggelan_yuehanjifade.png', eliteName: '边区戍兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将·移将] 1282 任布伊尔斯城堡守将，12-11 出兵伊尔丰桥设伏，卢埃林阵亡（《布鲁特诸王编年史》）｜布伊尔斯＝凯尔特据点、将属英格兰→③ 就近 BRITONS 据点格洛斯特（86km）
         // 🔴 [2026-10-24 主人令] 弗农＝英国海军上将（1741 卡塔赫纳围攻指挥官）；城库无牙买加/皇家港，
         //    按「无合适据点取离战场最近的同风格城」改挂新阿姆斯特丹（SAXONS，3375km；比温彻斯特 8420km 近）；军团不变。
@@ -2979,7 +2986,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    { generalId: 'putaoya_meineisaisi', factionId: 'putaoya', cityId: 'city_xiuta', generalName: '梅内塞斯', portrait: '/assets/PORTUGUESE/putaoya_meineisaisi.png', eliteName: '圣胡利安骑', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 1415 首任休达守将，1419 率守军解围
+            // 阿赞布雅（1432–1518，葡萄牙航海指挥官，1482年建立埃尔米纳城堡并任首任总督）→ 埃尔米纳（PORTUGUESE）
+                // 若昂·达·诺瓦（约1460–1509，葡萄牙航海指挥官，1502年发现圣赫勒拿岛并开辟回航航路）→ 圣赫勒拿（PORTUGUESE）
+        { generalId: 'putaoya_danuowa', factionId: 'putaoya', cityId: 'city_sainthelena', generalName: '若昂达诺瓦', portrait: '/assets/PORTUGUESE/putaoya_danuowa.png', eliteName: '葡萄牙兵', eliteTier: 4, legionName: '城堡时代葡萄牙王国军团' },
+{ generalId: 'putaoya_azanbuya', factionId: 'putaoya', cityId: 'city_elmina', generalName: '阿赞布雅', portrait: '/assets/PORTUGUESE/putaoya_azanbuya.png', eliteName: '葡萄牙兵', eliteTier: 4, legionName: '城堡时代葡萄牙王国军团' },
+{ generalId: 'putaoya_meineisaisi', factionId: 'putaoya', cityId: 'city_xiuta', generalName: '梅内塞斯', portrait: '/assets/PORTUGUESE/putaoya_meineisaisi.png', eliteName: '圣胡利安骑', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 1415 首任休达守将，1419 率守军解围
         { generalId: 'gen_afonso_henriques', eliteName: '奥利克军', eliteTier: 2, cityId: 'city_coimbra', generalName: '阿方索一世', portrait: '/assets/PORTUGUESE/gen_afonso_henriques.png' }, // 1139 奥利克战役葡萄牙本部
         { generalId: 'gen_henry_navigator', factionId: 'putaoya', cityId: 'city_lisiben', generalName: '恩里克', portrait: '/assets/PORTUGUESE/gen_henry_navigator.png', eliteName: '葡萄牙兵', eliteTier: 4 },
 
@@ -15930,7 +15941,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
                 // 加赖（胡安·德·加赖，1528–1583，拉普拉塔副总督，1580年重建布宜诺斯艾利斯定居点）→ 布宜诺斯艾利斯（SPANISH）
-        { generalId: 'xibanya_jialai', factionId: 'xibanya', cityId: 'city_buenosaires', generalName: '加赖', portrait: '/assets/SPANISH/xibanya_jialai.png', eliteName: '西班牙民兵', eliteTier: 4, legionName: '帝国时代西班牙方阵军团' },
+{ generalId: 'xibanya_jialai', factionId: 'xibanya', cityId: 'city_buenosaires', generalName: '加赖', portrait: '/assets/SPANISH/xibanya_jialai.png', eliteName: '西班牙民兵', eliteTier: 4, legionName: '帝国时代西班牙方阵军团' },
 { generalId: 'xibanya_orellana', factionId: 'xibanya', cityId: 'city_lima', generalName: '弗朗西斯科', portrait: '/assets/SPANISH/xibanya_orellana.png', eliteName: '征服者火枪', eliteTier: 3 },
         { generalId: 'xibanya_gonzalo', factionId: 'xibanya', cityId: 'city_lima', generalName: '贡萨洛', portrait: '/assets/SPANISH/xibanya_gonzalo.png', eliteName: '征服者骑', eliteTier: 3 },
     ],  // 利马·征服印加的西班牙征服者
@@ -17097,7 +17108,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    voc: { generalId: 'bfe_coyett', cityId: 'city_tainan', generalName: '揆一', portrait: '/assets/JIANGNAN/bfe_coyett.png' , legionName: '帝国时代两江军团', eliteName: '荷兰守备', eliteTier: 4},
+    voc: [
+        { generalId: 'bfe_coyett', cityId: 'city_tainan', generalName: '揆一', portrait: '/assets/JIANGNAN/bfe_coyett.png' , legionName: '帝国时代两江军团', eliteName: '荷兰守备', eliteTier: 4},
+        { generalId: 'voc_speult', factionId: 'voc', cityId: 'city_ambon', generalName: '斯佩尔特', portrait: '', eliteName: '马来兵', eliteTier: 4, legionName: '帝国时代马六甲军团' },
+    ],
+    wandan: { generalId: 'wandan_ageng', cityId: 'city_wandan', generalName: '阿贡', portrait: '', eliteName: '马来兵', eliteTier: 4, legionName: '帝国时代马六甲军团' },
 
 
 

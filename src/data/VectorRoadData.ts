@@ -38088,8 +38088,8 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             properties: {
                 name: "乌特勒支-科隆",
                 type: "road",
-                id: "road_city_utrecht_city_kelong_1785580649475",
-                startConnection: "city_utrecht",
+                id: "road_city_amsterdam_city_kelong_1785580649475",
+                startConnection: "city_amsterdam",
                 endConnection: "city_kelong"
             },
             geometry: {
@@ -38148,8 +38148,8 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             properties: {
                 name: "乌特勒支-不莱梅",
                 type: "road",
-                id: "road_city_utrecht_city_bremen_1785580656176",
-                startConnection: "city_utrecht",
+                id: "road_city_amsterdam_city_bremen_1785580656176",
+                startConnection: "city_amsterdam",
                 endConnection: "city_bremen"
             },
             geometry: {
@@ -38335,9 +38335,9 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             properties: {
                 name: "海牙-乌特勒支",
                 type: "road",
-                id: "road_city_hague_city_utrecht_1785580969727",
+                id: "road_city_hague_city_amsterdam_1785580969727",
                 startConnection: "city_hague",
-                endConnection: "city_utrecht"
+                endConnection: "city_amsterdam"
             },
             geometry: {
                 type: "LineString",

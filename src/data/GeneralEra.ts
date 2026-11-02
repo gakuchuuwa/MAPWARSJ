@@ -1251,6 +1251,10 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'so_zongyizhi': 'imperial',
     'goto_xuanya': 'imperial',
     'omura_sumitada': 'imperial',
+    'wandan_ageng': 'imperial',
+    'voc_speult': 'imperial',
+    'yinggelan_delake': 'imperial',
+    'xinxibanya_laijiasipi': 'imperial',
     'sogdian_dewasitiqi': 'feudal',
     'sogdian_aokexiate': 'antiquity',
     'song2_houjunji': 'feudal',
@@ -1867,7 +1871,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'litaowan_dashenkeweiqi': 'imperial', // 达什克维奇（补将）
     'moerdaweiya_lepushenneiyanu': 'castle', // 勒普什内亚努（补将）
     'moerdaweiya_lupu': 'castle', // 卢普（补将）
-    'putaoya_meineisaisi': 'castle', // 梅内塞斯（补将）
+    'putaoya_meineisaisi': 'castle',
+    'putaoya_azanbuya': 'castle', // 梅内塞斯（补将）
     'suolun_mabudai': 'imperial', // 玛布岱（补将）
     'manzhou_d_sabusu': 'imperial', // 萨布素（补将）
     'joseon_shenla': 'imperial', // 申砬（补将）

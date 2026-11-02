@@ -8,6 +8,7 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
+  { id: 'bolinixiya', name: '波利尼西亚' },   // 大溪地·波马雷王朝／波利尼西亚群岛（社会群岛）
   // ── 2026-11-01 C 档移将：新建史有政权（武将按同文化据点落位）──
   { id: 'latin_empire', name: '拉丁帝国' },   // 拉丁帝国 1204–1261，都君士坦丁堡（第四次十字军所建）
   { id: 'anjou', name: '安茹' },   // 安茹王朝（那不勒斯 1266–1442、安茹支系）
@@ -1673,6 +1674,7 @@ export const FACTIONS: Faction[] = [
   { id: 'gujarat', name: '古吉拉特苏丹国' },  // 艾哈迈达巴德
   { id: 'arakan', name: '阿拉干' },  // 妙乌
   { id: 'voc', name: '荷兰东印度公司' },  // 巴达维亚
+  { id: 'wandan', name: '万丹' },  // 万丹苏丹国（爪哇西端胡椒港）
   { id: 'kosala', name: '拘萨罗' },  // 舍卫城
   { id: 'kalinga', name: '羯陵伽' },  // 丹塔普拉
   { id: 'anga', name: '鸯伽' },  // 瞻波

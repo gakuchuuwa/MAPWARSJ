@@ -533,6 +533,10 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'utsunomiya': [{ from: -9999, era: 'imperial' }], // 宇都宫
     'vidin_tsardom': [{ from: -9999, era: 'castle' }], // 维丁国
     'voc': [{ from: -9999, era: 'imperial' }], // 荷兰东印度公司
+    'wandan': [{ from: -9999, era: 'imperial' }], // 万丹｜万丹苏丹国（1527–1682，胡椒大港）＝帝国时代；MALAY × 帝国＝帝国时代马六甲军团
+    'bolinixiya': [{ from: -9999, era: 'imperial' }], // 波利尼西亚｜波马雷王朝（约 1742–1803，波马雷一世统一大溪地）＝帝国段；MALAY × 帝国（工作区遗留缺口，顺手补齐）
+    'yaqi': [{ from: -9999, era: 'imperial' }], // 亚齐苏丹国｜1496–1903，盛期 16–17 世纪争马六甲海峡（既有缺口补齐）
+    'zhamolin': [{ from: -9999, era: 'imperial' }], // 扎莫林（科泽科德/卡利卡特）｜1498 达伽马到访，15–16 世纪马拉巴尔胡椒港（既有缺口补齐）
     'walajiyia': [{ from: -9999, era: 'castle' }], // 瓦拉几亚
     'wei': [{ from: -9999, era: 'antiquity' }], // 魏国
     'weiershigongguo': [{ from: -9999, era: 'castle' }], // 威尔士公国

@@ -23,6 +23,7 @@
  *     靠势力色＋旗形区分，不再强求全局唯一。非中国政权仍守全局唯一。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+    'bolinixiya': '波',
     'pattani': '年',
     'kilwa': '基',
     'handong': '汉东', // 刘黑闼汉东王
@@ -238,6 +239,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'so': '对马',
     'goto': '五',
     'omura': '大村',
+    'wandan': '万丹',
     'gaya': '伽倻',
     'chosokabe': '土佐',
 'xingliao': '兴辽',
@@ -855,7 +857,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'ghana_diguo': '加纳',
 'yalan': '亚兰',
     gepids: '革皮',
-    kalbids: '卡比',    'chalkidike': '卡基',   // 卡尔基季基同盟
+    kalbids: '卡比',
+    'chalkidike': '卡基',   // 卡尔基季基同盟
     'naxos': '纳克',   // 纳克索斯
     'phokis': '福基',   // 福基斯
     'wuguobu': '五国',   // 五国部

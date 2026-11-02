@@ -61,7 +61,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     // ── 罗马帝国欧洲城 ──
     city_teerier: -16,          // 特里尔，公元前16年罗马（奥古斯都）建
     city_sitelasibao: -12,      // 斯特拉斯堡，公元前12年罗马建
-    city_utrecht: -47,          // 乌特勒支，约公元前47年罗马要塞
+    city_amsterdam: 1275,     // 阿姆斯特丹，1275 年通行税特许状首见（原乌特勒支前 47 罗马要塞，已被替换）
     city_jiemu: -46,            // 杰姆（蒂斯德鲁斯），约公元前46年罗马
 
     // ── 匈奴 / 印度 / 东非 ──

@@ -1033,6 +1033,10 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'so_zongyizhi': 16,                                  // 宗义智 · so · 金石城
     'goto_xuanya': 16,                                  // 五岛玄雅 · goto · 五岛（文禄·庆长之役从军、1603 立福江藩）
     'omura_sumitada': 16,                               // 大村纯忠 · omura · 长崎（1571 开港、1580 献港）
+    'wandan_ageng': 17,                                 // 阿贡 · wandan · 万丹（1651–1683 抗荷）
+    'voc_speult': 17,                                   // 斯佩尔特 · voc · 安汶（1623 安汶事件）
+    'yinggelan_delake': 16,                             // 德雷克 · yinggelan · 普利茅斯（1577–80 环球）
+    'xinxibanya_laijiasipi': 16,                        // 莱加斯皮 · xinxibanya · 宿务（1565 建城）
     'suwa_d_zoufanglaizhong': 16,                        // 诹访赖重 · suwa_d · 高岛
     'taira_pingzhisheng': 12,                            // 平知盛 · taira · 赤间关
     'totomi_jiujingzhongci': 16,                         // 酒井忠次 · totomi · 浜松城

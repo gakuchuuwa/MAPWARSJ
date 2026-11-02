@@ -2558,6 +2558,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代缅甸军团",
         legionType: "sub",
     },
+    "wandan": {
+        legionName: "帝国时代马六甲军团",
+        legionType: "region",
+    },
     "voc": {
         legionName: "帝国时代两江军团",
         legionType: "sub",
