@@ -56,161 +56,624 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
     "type": "FeatureCollection",
     "features": [
         {
-            type: "Feature",
-            properties: {
-                name: "吕贝克-汉堡",
-                type: "sea",
-                id: "sea_city_lubeck_city_hamburg_1793625339140",
-                startConnection: "city_lubeck",
-                endConnection: "city_hamburg",
+            "type": "Feature",
+            "properties": {
+                "name": "威尼斯-干地亚要塞",
+                "type": "sea",
+                "id": "sea_city_venice_city_knossos_1793625541112",
+                "startConnection": "city_venice",
+                "endConnection": "city_knossos"
             },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [10.69, 53.87],
-                    [10.3, 53.8],
-                    [9.99, 53.55]
-                ],
-            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        12.31,
+                        45.44
+                    ],
+                    [
+                        15,
+                        43
+                    ],
+                    [
+                        18,
+                        40
+                    ],
+                    [
+                        21,
+                        37.5
+                    ],
+                    [
+                        25.13,
+                        35.33
+                    ]
+                ]
+            }
         },
         {
-            type: "Feature",
-            properties: {
-                name: "吕贝克-罗斯托克",
-                type: "sea",
-                id: "sea_city_lubeck_city_rostock_1793625339140",
-                startConnection: "city_lubeck",
-                endConnection: "city_rostock",
+            "type": "Feature",
+            "properties": {
+                "name": "威尼斯-亚历山大",
+                "type": "sea",
+                "id": "sea_city_venice_city_yalishanda_1793625541112",
+                "startConnection": "city_venice",
+                "endConnection": "city_yalishanda"
             },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [10.69, 53.87],
-                    [11.2, 54],
-                    [11.7, 54.1],
-                    [12.13, 54.09]
-                ],
-            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        12.31,
+                        45.44
+                    ],
+                    [
+                        15,
+                        42
+                    ],
+                    [
+                        18,
+                        38
+                    ],
+                    [
+                        22,
+                        34
+                    ],
+                    [
+                        26,
+                        32
+                    ],
+                    [
+                        29.89,
+                        31.2
+                    ]
+                ]
+            }
         },
         {
-            type: "Feature",
-            properties: {
-                name: "吕贝克-卑尔根",
-                type: "sea",
-                id: "sea_city_lubeck_city_beiergen_1793625339140",
-                startConnection: "city_lubeck",
-                endConnection: "city_beiergen",
+            "type": "Feature",
+            "properties": {
+                "name": "威尼斯-阿卡",
+                "type": "sea",
+                "id": "sea_city_venice_city_ake_1793625541112",
+                "startConnection": "city_venice",
+                "endConnection": "city_ake"
             },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [10.69, 53.87],
-                    [10, 55],
-                    [8, 57],
-                    [5.5, 59],
-                    [5.32, 60.39]
-                ],
-            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        12.31,
+                        45.44
+                    ],
+                    [
+                        16,
+                        42
+                    ],
+                    [
+                        20,
+                        38
+                    ],
+                    [
+                        25,
+                        35
+                    ],
+                    [
+                        30,
+                        33.5
+                    ],
+                    [
+                        35.07,
+                        32.92
+                    ]
+                ]
+            }
         },
         {
-            type: "Feature",
-            properties: {
-                name: "汉堡-卑尔根",
-                type: "sea",
-                id: "sea_city_hamburg_city_beiergen_1793625339140",
-                startConnection: "city_hamburg",
-                endConnection: "city_beiergen",
+            "type": "Feature",
+            "properties": {
+                "name": "威尼斯-法马古斯塔",
+                "type": "sea",
+                "id": "sea_city_venice_city_famagusta_1793625541112",
+                "startConnection": "city_venice",
+                "endConnection": "city_famagusta"
             },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [9.99, 53.55],
-                    [8.5, 55.5],
-                    [6.5, 57.5],
-                    [5.32, 60.39]
-                ],
-            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        12.31,
+                        45.44
+                    ],
+                    [
+                        16,
+                        42.5
+                    ],
+                    [
+                        20,
+                        39
+                    ],
+                    [
+                        26,
+                        36.5
+                    ],
+                    [
+                        30,
+                        35.5
+                    ],
+                    [
+                        33.94,
+                        35.12
+                    ]
+                ]
+            }
         },
         {
-            type: "Feature",
-            properties: {
-                name: "布鲁日-汉堡",
-                type: "sea",
-                id: "sea_city_bruges_city_hamburg_1793625339140",
-                startConnection: "city_bruges",
-                endConnection: "city_hamburg",
+            "type": "Feature",
+            "properties": {
+                "name": "法马古斯塔-贝鲁特",
+                "type": "sea",
+                "id": "sea_city_famagusta_city_beirut_1793625541112",
+                "startConnection": "city_famagusta",
+                "endConnection": "city_beirut"
             },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [3.22, 51.21],
-                    [4, 52.5],
-                    [5.5, 53.5],
-                    [7.5, 53.8],
-                    [9.99, 53.55]
-                ],
-            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        33.94,
+                        35.12
+                    ],
+                    [
+                        34.5,
+                        34.5
+                    ],
+                    [
+                        35,
+                        34.2
+                    ],
+                    [
+                        35.5,
+                        33.89
+                    ]
+                ]
+            }
         },
         {
-            type: "Feature",
-            properties: {
-                name: "布鲁日-伦敦",
-                type: "sea",
-                id: "sea_city_bruges_city_lundun_1793625339140",
-                startConnection: "city_bruges",
-                endConnection: "city_lundun",
+            "type": "Feature",
+            "properties": {
+                "name": "贝鲁特-阿卡",
+                "type": "sea",
+                "id": "sea_city_beirut_city_ake_1793625541112",
+                "startConnection": "city_beirut",
+                "endConnection": "city_ake"
             },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [3.22, 51.21],
-                    [2, 51.5],
-                    [1, 51.6],
-                    [-0.12, 51.5]
-                ],
-            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        35.5,
+                        33.89
+                    ],
+                    [
+                        35.3,
+                        33.4
+                    ],
+                    [
+                        35.07,
+                        32.92
+                    ]
+                ]
+            }
         },
         {
-            type: "Feature",
-            properties: {
-                name: "诺夫哥罗德-里加",
-                type: "sea",
-                id: "sea_city_nuofugeerdede_city_liga_1793625339140",
-                startConnection: "city_nuofugeerdede",
-                endConnection: "city_liga",
+            "type": "Feature",
+            "properties": {
+                "name": "热那亚-君士坦丁堡",
+                "type": "sea",
+                "id": "sea_city_genoa_city_junshitandingbao_1793625541112",
+                "startConnection": "city_genoa",
+                "endConnection": "city_junshitandingbao"
             },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [31.27, 58.52],
-                    [31.4, 59.6],
-                    [30.5, 60.1],
-                    [28, 59.9],
-                    [25.5, 59.5],
-                    [24.1, 56.95]
-                ],
-            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        8.94,
+                        44.4
+                    ],
+                    [
+                        12,
+                        42.5
+                    ],
+                    [
+                        16,
+                        40
+                    ],
+                    [
+                        20,
+                        38
+                    ],
+                    [
+                        24,
+                        38.5
+                    ],
+                    [
+                        28.97,
+                        41.01
+                    ]
+                ]
+            }
         },
         {
-            type: "Feature",
-            properties: {
-                name: "诺夫哥罗德-塔林",
-                type: "sea",
-                id: "sea_city_nuofugeerdede_city_talin_1793625339140",
-                startConnection: "city_nuofugeerdede",
-                endConnection: "city_talin",
+            "type": "Feature",
+            "properties": {
+                "name": "热那亚-卡法",
+                "type": "sea",
+                "id": "sea_city_genoa_city_kafa_1793625541112",
+                "startConnection": "city_genoa",
+                "endConnection": "city_kafa"
             },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [31.27, 58.52],
-                    [31.4, 59.6],
-                    [30.5, 60],
-                    [28, 59.8],
-                    [26, 59.6],
-                    [24.75, 59.43]
-                ],
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        8.94,
+                        44.4
+                    ],
+                    [
+                        12,
+                        43
+                    ],
+                    [
+                        16,
+                        41
+                    ],
+                    [
+                        20,
+                        39
+                    ],
+                    [
+                        24,
+                        39.5
+                    ],
+                    [
+                        28,
+                        41.5
+                    ],
+                    [
+                        31,
+                        43
+                    ],
+                    [
+                        35.38,
+                        45.03
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "圣胡利安港-阿加尼亚",
+                "type": "sea",
+                "id": "sea_city_sanjulian_city_hagatna_1793625431478",
+                "startConnection": "city_sanjulian",
+                "endConnection": "city_hagatna",
+                "startYear": 1520
             },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        -67.72,
+                        -49.31
+                    ],
+                    [
+                        -75.0,
+                        -52.0
+                    ],
+                    [
+                        -80.0,
+                        -45.0
+                    ],
+                    [
+                        -90.0,
+                        -35.0
+                    ],
+                    [
+                        -110.0,
+                        -20.0
+                    ],
+                    [
+                        -140.0,
+                        0.0
+                    ],
+                    [
+                        -170.0,
+                        10.0
+                    ],
+                    [
+                        175.0,
+                        12.0
+                    ],
+                    [
+                        160.0,
+                        13.0
+                    ],
+                    [
+                        144.75,
+                        13.4757
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "吕贝克-汉堡",
+                "type": "sea",
+                "id": "sea_city_lubeck_city_hamburg_1793625339140",
+                "startConnection": "city_lubeck",
+                "endConnection": "city_hamburg"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        10.69,
+                        53.87
+                    ],
+                    [
+                        10.3,
+                        53.8
+                    ],
+                    [
+                        9.99,
+                        53.55
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "吕贝克-罗斯托克",
+                "type": "sea",
+                "id": "sea_city_lubeck_city_rostock_1793625339140",
+                "startConnection": "city_lubeck",
+                "endConnection": "city_rostock"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        10.69,
+                        53.87
+                    ],
+                    [
+                        11.2,
+                        54
+                    ],
+                    [
+                        11.7,
+                        54.1
+                    ],
+                    [
+                        12.13,
+                        54.09
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "吕贝克-卑尔根",
+                "type": "sea",
+                "id": "sea_city_lubeck_city_beiergen_1793625339140",
+                "startConnection": "city_lubeck",
+                "endConnection": "city_beiergen"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        10.69,
+                        53.87
+                    ],
+                    [
+                        10,
+                        55
+                    ],
+                    [
+                        8,
+                        57
+                    ],
+                    [
+                        5.5,
+                        59
+                    ],
+                    [
+                        5.32,
+                        60.39
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "汉堡-卑尔根",
+                "type": "sea",
+                "id": "sea_city_hamburg_city_beiergen_1793625339140",
+                "startConnection": "city_hamburg",
+                "endConnection": "city_beiergen"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        9.99,
+                        53.55
+                    ],
+                    [
+                        8.5,
+                        55.5
+                    ],
+                    [
+                        6.5,
+                        57.5
+                    ],
+                    [
+                        5.32,
+                        60.39
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "布鲁日-汉堡",
+                "type": "sea",
+                "id": "sea_city_bruges_city_hamburg_1793625339140",
+                "startConnection": "city_bruges",
+                "endConnection": "city_hamburg"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        3.22,
+                        51.21
+                    ],
+                    [
+                        4,
+                        52.5
+                    ],
+                    [
+                        5.5,
+                        53.5
+                    ],
+                    [
+                        7.5,
+                        53.8
+                    ],
+                    [
+                        9.99,
+                        53.55
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "布鲁日-伦敦",
+                "type": "sea",
+                "id": "sea_city_bruges_city_lundun_1793625339140",
+                "startConnection": "city_bruges",
+                "endConnection": "city_lundun"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        3.22,
+                        51.21
+                    ],
+                    [
+                        2,
+                        51.5
+                    ],
+                    [
+                        1,
+                        51.6
+                    ],
+                    [
+                        -0.12,
+                        51.5
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "诺夫哥罗德-里加",
+                "type": "sea",
+                "id": "sea_city_nuofugeerdede_city_liga_1793625339140",
+                "startConnection": "city_nuofugeerdede",
+                "endConnection": "city_liga"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        31.27,
+                        58.52
+                    ],
+                    [
+                        31.4,
+                        59.6
+                    ],
+                    [
+                        30.5,
+                        60.1
+                    ],
+                    [
+                        28,
+                        59.9
+                    ],
+                    [
+                        25.5,
+                        59.5
+                    ],
+                    [
+                        24.1,
+                        56.95
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "诺夫哥罗德-塔林",
+                "type": "sea",
+                "id": "sea_city_nuofugeerdede_city_talin_1793625339140",
+                "startConnection": "city_nuofugeerdede",
+                "endConnection": "city_talin"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        31.27,
+                        58.52
+                    ],
+                    [
+                        31.4,
+                        59.6
+                    ],
+                    [
+                        30.5,
+                        60
+                    ],
+                    [
+                        28,
+                        59.8
+                    ],
+                    [
+                        26,
+                        59.6
+                    ],
+                    [
+                        24.75,
+                        59.43
+                    ]
+                ]
+            }
         },
         {
             "type": "Feature",
@@ -17011,272 +17474,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             "type": "Feature",
             "properties": {
-                "name": "圣胡利安港-大溪地",
-                "type": "sea",
-                "id": "sea_city_sanjulian_city_tahiti_20261102",
-                "startConnection": "city_sanjulian",
-                "endConnection": "city_tahiti"
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [
-                        -67.73,
-                        -49.3
-                    ],
-                    [
-                        -67.41667,
-                        -49.83333
-                    ],
-                    [
-                        -68.75,
-                        -50.83333
-                    ],
-                    [
-                        -68.08333,
-                        -51.83333
-                    ],
-                    [
-                        -68.08333,
-                        -52.33333
-                    ],
-                    [
-                        -67.5,
-                        -53.25
-                    ],
-                    [
-                        -66,
-                        -54.08333
-                    ],
-                    [
-                        -63.83333,
-                        -54.08333
-                    ],
-                    [
-                        -63.41667,
-                        -55
-                    ],
-                    [
-                        -63.83333,
-                        -55.25
-                    ],
-                    [
-                        -65.83333,
-                        -55.25
-                    ],
-                    [
-                        -66.83333,
-                        -56.25
-                    ],
-                    [
-                        -68.3081,
-                        -55.98479
-                    ],
-                    [
-                        -69.5695,
-                        -55.77376
-                    ],
-                    [
-                        -71.385,
-                        -55.3608
-                    ],
-                    [
-                        -74.56792,
-                        -55.00982
-                    ],
-                    [
-                        -76.31593,
-                        -54.81706
-                    ],
-                    [
-                        -79.99621,
-                        -54.41124
-                    ],
-                    [
-                        -83.45437,
-                        -54.0299
-                    ],
-                    [
-                        -86.45022,
-                        -53.69955
-                    ],
-                    [
-                        -89.99716,
-                        -53.30843
-                    ],
-                    [
-                        -97.63403,
-                        -52.46631
-                    ],
-                    [
-                        -120,
-                        -50
-                    ],
-                    [
-                        -124.88793,
-                        -45.40261
-                    ],
-                    [
-                        -130,
-                        -40
-                    ],
-                    [
-                        -134.99998,
-                        -35.38573
-                    ],
-                    [
-                        -140,
-                        -30
-                    ],
-                    [
-                        -142.7074,
-                        -26.9977
-                    ],
-                    [
-                        -144.58134,
-                        -24.85619
-                    ],
-                    [
-                        -145.4507,
-                        -23.8627
-                    ],
-                    [
-                        -147.9606,
-                        -20.7955
-                    ],
-                    [
-                        -149.71157,
-                        -17.92755
-                    ],
-                    [
-                        -149.43,
-                        -17.65
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "大溪地-阿加尼亚",
-                "type": "sea",
-                "id": "sea_city_tahiti_city_hagatna_20261102",
-                "startConnection": "city_tahiti",
-                "endConnection": "city_hagatna"
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [
-                        -149.43,
-                        -17.65
-                    ],
-                    [
-                        -149.7,
-                        -17.4
-                    ],
-                    [
-                        -150.51597,
-                        -17.27376
-                    ],
-                    [
-                        -156.23357,
-                        -16.38681
-                    ],
-                    [
-                        -159.99933,
-                        -15.80283
-                    ],
-                    [
-                        -165.08606,
-                        -15.28948
-                    ],
-                    [
-                        -167.5827,
-                        -12.5384
-                    ],
-                    [
-                        -168.33889,
-                        -11.74433
-                    ],
-                    [
-                        -169.32009,
-                        -10.71397
-                    ],
-                    [
-                        -170,
-                        -10
-                    ],
-                    [
-                        -172.5336,
-                        -7.5167
-                    ],
-                    [
-                        -175.0384,
-                        -5.019
-                    ],
-                    [
-                        -177.524,
-                        -2.5119
-                    ],
-                    [
-                        -180,
-                        -2e-05
-                    ],
-                    [
-                        176.5503,
-                        0.5509
-                    ],
-                    [
-                        173.1,
-                        1.1
-                    ],
-                    [
-                        169.8471,
-                        3.3302
-                    ],
-                    [
-                        166.5842,
-                        5.5582
-                    ],
-                    [
-                        164.76421,
-                        6.79234
-                    ],
-                    [
-                        163.3043,
-                        7.7823
-                    ],
-                    [
-                        160,
-                        10
-                    ],
-                    [
-                        158.37531,
-                        10.01193
-                    ],
-                    [
-                        155.0002,
-                        10.0367
-                    ],
-                    [
-                        150,
-                        10
-                    ],
-                    [
-                        145.07234,
-                        13.73285
-                    ],
-                    [
-                        144.75,
-                        13.4757
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
                 "name": "开普敦-毛里求斯",
                 "type": "sea",
                 "id": "sea_city_cape_town_city_mauritius_1793623000001",
@@ -17834,6 +18031,431 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [
                         67.0,
                         24.86
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "龙溪-马尼拉",
+                "type": "sea",
+                "id": "sea_city_zhangzhou_city_manila_1793628000001",
+                "startConnection": "city_zhangzhou",
+                "endConnection": "city_manila"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        117.65,
+                        24.51
+                    ],
+                    [
+                        118.13736,
+                        24.39213
+                    ],
+                    [
+                        118.34681,
+                        24.018
+                    ],
+                    [
+                        118.20346,
+                        22.93094
+                    ],
+                    [
+                        117.43799,
+                        21.92254
+                    ],
+                    [
+                        118.30257,
+                        19.77188
+                    ],
+                    [
+                        118.7349,
+                        18.68728
+                    ],
+                    [
+                        119.03879,
+                        17.90926
+                    ],
+                    [
+                        119.4,
+                        17
+                    ],
+                    [
+                        119.9,
+                        14.4
+                    ],
+                    [
+                        120.53513,
+                        14.26239
+                    ],
+                    [
+                        120.98,
+                        14.6
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "德尔纳特-巴达维亚",
+                "type": "sea",
+                "id": "sea_city_deernate_city_batavia_1793628000002",
+                "startConnection": "city_deernate",
+                "endConnection": "city_batavia"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        127.38,
+                        0.78
+                    ],
+                    [
+                        126.58333,
+                        0.5
+                    ],
+                    [
+                        126.58333,
+                        -1.0
+                    ],
+                    [
+                        126.89981,
+                        -2.02724
+                    ],
+                    [
+                        125.1,
+                        -3.7
+                    ],
+                    [
+                        123.4994,
+                        -5.08944
+                    ],
+                    [
+                        122.47284,
+                        -6.14055
+                    ],
+                    [
+                        120.98144,
+                        -5.67065
+                    ],
+                    [
+                        119.10549,
+                        -5.879
+                    ],
+                    [
+                        116.95,
+                        -5.4
+                    ],
+                    [
+                        114.1,
+                        -4.57975
+                    ],
+                    [
+                        113.75605,
+                        -4.4807
+                    ],
+                    [
+                        111.76248,
+                        -5.63684
+                    ],
+                    [
+                        106.8,
+                        -5.2
+                    ],
+                    [
+                        106.86813,
+                        -5.91658
+                    ],
+                    [
+                        106.81,
+                        -6.13
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "宁波-太宰府",
+                "type": "sea",
+                "id": "sea_city_qingyuan_zj_city_taizaifu_1793629000001",
+                "startConnection": "city_qingyuan_zj",
+                "endConnection": "city_taizaifu"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        121.54,
+                        29.87
+                    ],
+                    [
+                        121.92627,
+                        30.25432
+                    ],
+                    [
+                        121.61333,
+                        30.42956
+                    ],
+                    [
+                        122.66922,
+                        30.93227
+                    ],
+                    [
+                        122.9,
+                        31.3
+                    ],
+                    [
+                        126.39941,
+                        32.50436
+                    ],
+                    [
+                        127.63316,
+                        32.92518
+                    ],
+                    [
+                        128.0145,
+                        33.05486
+                    ],
+                    [
+                        129.32756,
+                        33.4999
+                    ],
+                    [
+                        129.87247,
+                        33.69664
+                    ],
+                    [
+                        130.26049,
+                        33.71574
+                    ],
+                    [
+                        130.2594,
+                        33.6615
+                    ],
+                    [
+                        130.52,
+                        33.51
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "马尼拉-宿务",
+                "type": "sea",
+                "id": "sea_city_manila_city_cebu_1793629000002",
+                "startConnection": "city_manila",
+                "endConnection": "city_cebu"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        120.9804,
+                        14.5904
+                    ],
+                    [
+                        120.53513,
+                        14.26239
+                    ],
+                    [
+                        120.50217,
+                        13.91141
+                    ],
+                    [
+                        120.72464,
+                        13.63531
+                    ],
+                    [
+                        121.52254,
+                        13.36827
+                    ],
+                    [
+                        121.9146,
+                        12.83122
+                    ],
+                    [
+                        122.1892,
+                        12.65345
+                    ],
+                    [
+                        122.2315,
+                        12.46479
+                    ],
+                    [
+                        123.07777,
+                        11.78805
+                    ],
+                    [
+                        124.10706,
+                        11.2902
+                    ],
+                    [
+                        124.15787,
+                        10.45135
+                    ],
+                    [
+                        123.8854,
+                        10.3157
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "吕贝克-维斯比",
+                "type": "sea",
+                "id": "sea_city_lubeck_city_weishibi_1793629000003",
+                "startConnection": "city_lubeck",
+                "endConnection": "city_weishibi"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        10.69,
+                        53.87
+                    ],
+                    [
+                        11.66199,
+                        54.43491
+                    ],
+                    [
+                        13.52214,
+                        54.88886
+                    ],
+                    [
+                        14.37466,
+                        55.22903
+                    ],
+                    [
+                        16.20997,
+                        55.95455
+                    ],
+                    [
+                        17.5,
+                        56.91667
+                    ],
+                    [
+                        18.29,
+                        57.64
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "君士坦丁堡-卡法",
+                "type": "sea",
+                "id": "sea_city_junshitandingbao_city_kafa_1793629000004",
+                "startConnection": "city_junshitandingbao",
+                "endConnection": "city_kafa"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        28.97,
+                        41.01
+                    ],
+                    [
+                        29.13243,
+                        41.24245
+                    ],
+                    [
+                        29.59641,
+                        42.5965
+                    ],
+                    [
+                        30.01163,
+                        43.80814
+                    ],
+                    [
+                        30.11441,
+                        44.09065
+                    ],
+                    [
+                        32.27253,
+                        44.12585
+                    ],
+                    [
+                        33.16667,
+                        44.08333
+                    ],
+                    [
+                        34.83333,
+                        44.41667
+                    ],
+                    [
+                        35.38,
+                        45.03
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "加尔各答-马六甲",
+                "type": "sea",
+                "id": "sea_city_kolkata_city_malacca_1793629000005",
+                "startConnection": "city_kolkata",
+                "endConnection": "city_malacca"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        88.3639,
+                        22.5726
+                    ],
+                    [
+                        87.93869,
+                        21.68423
+                    ],
+                    [
+                        88,
+                        21
+                    ],
+                    [
+                        89.72741,
+                        18.84889
+                    ],
+                    [
+                        93.63865,
+                        14.54917
+                    ],
+                    [
+                        98.12813,
+                        5.81173
+                    ],
+                    [
+                        99.76381,
+                        4.08452
+                    ],
+                    [
+                        100.6,
+                        3.2
+                    ],
+                    [
+                        101.3128,
+                        2.58917
+                    ],
+                    [
+                        102,
+                        2
+                    ],
+                    [
+                        102.25,
+                        2.19
                     ]
                 ]
             }

@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-02T13:04:22.073Z",
+ "generatedAt": "2026-11-02T13:20:03.956Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16538,6 +16538,62 @@
    "reliefM": 35,
    "cliffs": 0,
    "top": "Desert 76.1% · Water, Shallow 10.8% · Palm Desert 8% · Beach 2.7%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_lubeck",
+   "file": "site_city_lubeck.json",
+   "bytes": 311409,
+   "koppen": "Cfb",
+   "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 1714,
+   "waterPct": 11.9,
+   "reliefM": 25,
+   "cliffs": 0,
+   "top": "Grass 2 71.6% · Water, Shallow 11.9% · Beach 8.3% · Forest 5%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_beiergen",
+   "file": "site_city_beiergen.json",
+   "bytes": 268815,
+   "koppen": "Cfb",
+   "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 3496,
+   "waterPct": 24.3,
+   "reliefM": 352,
+   "cliffs": 0,
+   "top": "Grass 2 64.5% · Water, Shallow 24.3% · Beach 4.9% · Forest 4.1%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_famagusta",
+   "file": "site_city_famagusta.json",
+   "bytes": 274426,
+   "koppen": "Csa",
+   "theme": "PALAEARCTIC_EUROPE_MEDITERRANEAN",
+   "water": "WorldCover",
+   "waterCells": 2583,
+   "waterPct": 17.9,
+   "reliefM": 27,
+   "cliffs": 0,
+   "top": "Grass 3 70.3% · Water, Shallow 17.9% · Forest, Mediterranean 5.4% · Pine Forest 2.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_beirut",
+   "file": "site_city_beirut.json",
+   "bytes": 294508,
+   "koppen": "Csa",
+   "theme": "PALAEARCTIC_EUROPE_MEDITERRANEAN",
+   "water": "WorldCover",
+   "waterCells": 427,
+   "waterPct": 3,
+   "reliefM": 136,
+   "cliffs": 0,
+   "top": "Grass 3 85.8% · Forest, Mediterranean 5.5% · Water, Shallow 3% · Pine Forest 2.2%",
    "verify": "ok"
   }
  ],

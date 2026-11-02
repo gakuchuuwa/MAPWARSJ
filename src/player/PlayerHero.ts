@@ -107,10 +107,10 @@ const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
     city_taizaifu: ['city_qingyuan_zj'],
     city_shanghai: ['city_hangzhou', 'city_taizhou_zj'],
     city_hangzhou: ['city_qingyuan_zj'],
-    city_qingyuan_zj: ['city_taizhou_zj'],
+    city_qingyuan_zj: ['city_taizhou_zj', 'city_taizaifu'],
     city_taizhou_zj: ['city_qingjingsi'],
     city_fuzhou: ['city_zhangzhou'],
-    city_zhangzhou: ['city_penghu'],
+    city_zhangzhou: ['city_manila', 'city_penghu'],
     city_penghu: ['city_qingjingsi'],
 
     // 郑和下西洋主干（泉州—广州—占婆—新加坡/马六甲—亚齐—锡兰—古里—阿丹/木骨都束—慢八撒）
@@ -167,8 +167,7 @@ const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
     city_guanabara: ['city_saovicente'],
     city_saovicente: ['city_buenosaires'],
     city_buenosaires: ['city_sanjulian'],
-    city_sanjulian: ['city_tahiti', 'city_valparaiso'],
-    city_tahiti: ['city_hagatna'],
+    city_sanjulian: ['city_hagatna', 'city_valparaiso'],
     city_valparaiso: ['city_lima'],
 
     // 麦哲伦—马尼拉大帆船太平洋—香料群岛航线
@@ -176,10 +175,11 @@ const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
     city_banama: ['city_acapulco'],
     city_acapulco: ['city_hagatna'],
     city_hagatna: ['city_manila'],
-    city_manila: ['city_acapulco', 'city_panyu', 'city_huoluo'],
+    city_manila: ['city_acapulco', 'city_panyu', 'city_huoluo', 'city_cebu'],
+    city_cebu: ['city_deernate'],
     city_tainan: ['city_penghu', 'city_zhangzhou'],
     city_huoluo: ['city_deernate'],
-    city_deernate: ['city_teluowulan'],
+    city_deernate: ['city_batavia', 'city_teluowulan'],
     city_teluowulan: ['city_batavia'],
 };
 
