@@ -368,9 +368,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -30
         },
         "/assets/KHMER/champa_zhipenge.png": {
-            "scale": 0.93,
+            "scale": 0.97,
             "offsetX": 0,
-            "offsetY": -20
+            "offsetY": -3
         },
         "/assets/KHMER/luohu_ganmuding.png": {
             "scale": 0.82,

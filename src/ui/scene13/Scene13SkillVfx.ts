@@ -112,10 +112,10 @@ const easeOut = (p: number) => 1 - (1 - p) ** 3;
 const SIX_ICON_URLS: Record<TacticalSixSet, string> = {
     gongzhan: '/SUCAI_FX/SIX_ICONS/gongzhan.png?v=six6',
     shengzhan: '/SUCAI_FX/SIX_ICONS/shengzhan.png?v=six6',
-    dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=six6',
-    hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=six6',
+    dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=six9',
+    hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=six8',
     bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=six6',
-    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six8',
+    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six11',
 };
 
 const sixRawImages = new Map<TacticalSixSet, HTMLImageElement>();
@@ -124,12 +124,12 @@ const sixBadgeCache = new Map<string, HTMLCanvasElement>();
 
 // ── 1.1 六计状态头顶小特效专属图标（无火焰纯器物版）──
 const SIX_SMALL_ICON_URLS: Record<TacticalSixSet, string> = {
-    gongzhan: '/SUCAI_FX/SIX_ICONS/small/gongzhan.png?v=small1',
-    shengzhan: '/SUCAI_FX/SIX_ICONS/small/shengzhan.png?v=small1',
-    dizhan: '/SUCAI_FX/SIX_ICONS/small/dizhan.png?v=small1',
-    hunzhan: '/SUCAI_FX/SIX_ICONS/small/hunzhan.png?v=small1',
-    bingzhan: '/SUCAI_FX/SIX_ICONS/small/bingzhan.png?v=small1',
-    baizhan: '/SUCAI_FX/SIX_ICONS/small/baizhan.png?v=small1',
+    gongzhan: '/SUCAI_FX/SIX_ICONS/small/gongzhan.png?v=small6',
+    shengzhan: '/SUCAI_FX/SIX_ICONS/small/shengzhan.png?v=small6',
+    dizhan: '/SUCAI_FX/SIX_ICONS/small/dizhan.png?v=small6',
+    hunzhan: '/SUCAI_FX/SIX_ICONS/small/hunzhan.png?v=small6',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/small/bingzhan.png?v=small6',
+    baizhan: '/SUCAI_FX/SIX_ICONS/small/baizhan.png?v=small6',
 };
 
 const sixSmallRawImages = new Map<TacticalSixSet, HTMLImageElement>();

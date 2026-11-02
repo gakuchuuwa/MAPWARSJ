@@ -1361,12 +1361,9 @@ export class Scene13WarLayer {
                     .slice(0, Math.max(1, anchorLimit));
             if (anchors.length > 0) for (const a of anchors) vfxPoints.push({ x: a.x, y: a.y });
             else for (const sp of this.spawns) if (sp.f === f && !sp.playerElite) vfxPoints.push({ x: sp.x, y: sp.y });
-            // 🔴 [2026-10-30 主人令「敌战计，增兵偷袭，优先三排中移速快的兵种。同移速再随机」]
-            //    武将放计（及玩家没有自选兵模时）伏兵全用本方三排里移速最快的那一种；玩家自选兵模照旧用自己的。
+            // 🔴 [2026-11-02 主人令「敌战计，出的偷袭兵，应该优先近战，其次才是速度块的。排除象兵，速度太慢。」]
             const fastKey = this.fastestSixRowKey(f);
-            const customKeys = scopedControl !== null && this.playerSetup?.unitKey
-                ? [this.playerSetup.unitKey]
-                : (fastKey ? [fastKey] : undefined);
+            const customKeys = fastKey ? [fastKey] : undefined;
             this.spawnImmediateSkillReinforcements(f, addTotalPop, customKeys, vfxTargets, true, anchors);
         } else if (six === 'baizhan') {
             const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10));
@@ -9121,18 +9118,66 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-10-30 主人令「敌战计，增兵偷袭，优先三排中移速快的兵种。同移速再随机」]
-     * 本方三排里移速（WAR_TYPES.spd）最快的兵种；并列最快的随机取一个。
+     * 🔴 [2026-11-02 主人令「敌战计，出的偷袭兵，应该优先近战，其次才是速度块的。排除象兵，速度太慢。」「如果都是只有战象远程，就排除战象，然后优先投掷，其次弩手，弓手。」]
+     * 选兵顺序：
+     *   ① 先排除象兵（护甲类 5 / 名称或键含象）；
+     *   ② 按兵种大类排优先级：0 近战（贴身白刃） → 1 投掷（标枪/掷斧/飞刀/飞轮/投石索/掷弹） → 2 弩手 → 3 弓手及其他远程；
+     *   ③ 在最高优先档内取移速（spd）最快的兵种，同移速随机取一个。
      */
     private fastestSixRowKey(side: 0 | 1): string | undefined {
         const keys = this.sixRowKeys(side);
         if (keys.length === 0) return undefined;
-        let best = -Infinity;
+        const isElephant = (k: string): boolean => {
+            const st = this.statsFor(k, side);
+            return k.toLowerCase().includes('elephant')
+                || st.name.includes('象')
+                || (st.armorTags?.includes(5) ?? false);
+        };
+        const tierOf = (k: string): number => {
+            const st = this.statsFor(k, side);
+            if (st.rng <= 65 && st.cls !== 'ranged') return 0; // 近战最优先
+            const proj = PROJ_TYPE[k];
+            if (
+                proj === 'PROJ_SPEAR'
+                || proj === 'PROJ_THROWING_AXE'
+                || proj === 'PROJ_DART'
+                || proj === 'PROJ_SLING'
+                || proj === 'PROJ_CHAKRAM'
+                || proj === 'PROJ_CHAKRAM_ELITE'
+                || proj === 'PROJ_GRENADE'
+                || st.name.includes('掷')
+                || st.name.includes('标枪')
+                || st.name.includes('飞刀')
+                || st.name.includes('投石手')
+            ) return 1; // 远程兜底第一顺位：投掷兵
+            if (
+                proj === 'PROJ_CROSSBOW'
+                || proj === 'PROJ_BOLT'
+                || proj === 'PROJ_WAR_WAGON'
+                || k.includes('crossbow')
+                || k.includes('chukonu')
+                || k.includes('arbalest')
+                || st.name.includes('弩')
+            ) return 2; // 远程兜底第二顺位：弩手
+            return 3;   // 远程兜底第三顺位：弓手及其他远程
+        };
+
+        const nonElephant = keys.filter((k) => !isElephant(k));
+        const pool = nonElephant.length > 0 ? nonElephant : keys;
+
+        let bestTier = Infinity;
+        for (const k of pool) {
+            const t = tierOf(k);
+            if (t < bestTier) bestTier = t;
+        }
+        const candidates = pool.filter((k) => tierOf(k) === bestTier);
+
+        let bestSpd = -Infinity;
         let top: string[] = [];
-        for (const k of keys) {
+        for (const k of candidates) {
             const spd = this.statsFor(k, side).spd;
-            if (spd > best) { best = spd; top = [k]; }
-            else if (spd === best) top.push(k);
+            if (spd > bestSpd) { bestSpd = spd; top = [k]; }
+            else if (spd === bestSpd) top.push(k);
         }
         return top[Math.floor(Math.random() * top.length)];
     }
