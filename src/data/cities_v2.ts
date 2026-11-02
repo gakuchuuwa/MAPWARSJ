@@ -1658,7 +1658,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     },
     {
         id: 'city_katsuyama', name: '胜山馆', factionId: 'kakizaki',
-        lat: 41.8008, lng: 140.0994, type: 'pass', troops: 10000, tier: 4,
+        lat: 41.4306, lng: 140.1083, type: 'pass', troops: 10000, tier: 4,
         
         note: '胜山馆；松前关隘', region: 'JAPAN_IMPERIAL',
         buildingStyle: 'JAPAN' },
@@ -3804,6 +3804,8 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'gualani', lat: -25.695, lng: -54.437, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'TUPI', note: '伊瓜苏河大瀑布，名称源自图皮—瓜拉尼语“大水”；瓜拉尼人传统地域，卡韦萨·德·巴卡1542年到达并记载；1626年附近建立圣玛利亚伊瓜苏聚落，原址尚未可靠定位；定级依据§6.2：该点无城市人口（长屋村类比600–1000人，低置信），人口不足一万 → 按规则判城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：巴拿马城：西班牙殖民地
     { id: 'city_banama', name: '巴拿马', factionId: 'xingelana', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址；推算：城居 1 万（老巴拿马城，1519 建 1 万）→ 小城' },
+    // 🔴 [2026-11-02 主人令「添加波多韦洛据点」] 圣费利佩-德波多韦洛：西属美洲珍宝船队大西洋白银大帆船装船要塞港
+    { id: 'city_portobelo', name: '波多韦洛', factionId: 'xingelana', lat: 9.5544, lng: -79.6644, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '圣费利佩-德波多韦洛(San Felipe de Portobelo)，1597年菲利普二世敕建，西属南美珍宝船队白银大帆船装船港，巴拿马地峡皇家之路大西洋端点，波多韦洛商展举办地；联合国教科文组织加勒比海防要塞遗址；定级依据§6.2：平时为海防要塞驻军与海关（约 0.2–0.3 万，商展期多为短期流动客商），常住人口不足一万 → 按规则判城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：圣多明各：西班牙美洲第一城
     { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xinxibanya', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫；推算：城居 1 万（圣多明各，1496 建 1 万）→ 小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：卡塔赫纳（哥伦比亚）：西班牙殖民地

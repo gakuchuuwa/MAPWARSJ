@@ -1429,6 +1429,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xindu_bahelamuhan': 'PURU',   // 信度｜巴赫拉姆汗｜据点 卡拉奇
     'xingan_hailancha': 'NORTHEAST',   // 大清｜海兰察｜据点 北京
     'xingelana_dawila': 'SPANISH',   // 新格拉纳达｜达维拉｜据点 巴拿马
+    'xingelana_beierweierde': 'SPANISH',   // 新格拉纳达｜贝尔韦尔德｜据点 波多韦洛
     'xinggu_cuanxi': 'BASHU',   // 爨族｜爨习｜据点 罗雄
     'xingliao_dayanlin': 'KOREA',   // 兴辽｜大延琳｜据点 龙湾
     'xingwei_hanba': 'BURMESE',   // 兴威｜罕拔｜据点 木邦

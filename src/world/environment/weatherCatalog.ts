@@ -35,7 +35,7 @@ export const WEATHER_SPECS: Readonly<Record<WeatherKind, WeatherSpec>> = {
     SEA_STORM: {
         kind: 'SEA_STORM',
         durationMs: [28_000, 46_000],
-        radiusDeg: [2.2, 4.2],
+        radiusDeg: [2.0, 3.0],
         driftDegPerSec: 0.035,
         windAngleRad: 0.38,
         waveBoost: 1.0,
@@ -67,7 +67,7 @@ export const WEATHER_SPECS: Readonly<Record<WeatherKind, WeatherSpec>> = {
     SNOW: {
         kind: 'SNOW',
         durationMs: [28_000, 48_000],
-        radiusDeg: [2.4, 4.4],
+        radiusDeg: [2.0, 3.2],
         driftDegPerSec: 0.020,
         windAngleRad: 0.18,
         waveBoost: 0.10,
@@ -116,7 +116,8 @@ export function resolveWeatherPoolAt(q: {
     // 1. 海域天气池：海上暴风雨、季风骤雨、海雾、高纬海雪
     if (isSea) {
         const pool: WeatherCandidate[] = [];
-        const isHighLatColdSea = absLat >= 48 || (localSeason === 3 && absLat >= 38 && wf >= 1);
+        // 🔴 [2026-11-02 优化] 海雪与海上暴雪仅限于极地高纬寒洋（absLat >= 48° 或冬季 absLat >= 42° 极寒海域），中低纬海洋（东海、南海、地中海等）终年不下雪
+        const isHighLatColdSea = absLat >= 48 || (localSeason === 3 && absLat >= 42 && wf >= 1);
         if (isHighLatColdSea) {
             pool.push({ kind: 'SEA_STORM', weight: 4 });
             pool.push({ kind: 'BLIZZARD', weight: localSeason === 3 ? 4 : 2 });
@@ -129,7 +130,7 @@ export function resolveWeatherPoolAt(q: {
             pool.push({ kind: 'DRIZZLE_MIST', weight: 2 });
             pool.push({ kind: 'SEA_FOG', weight: 2 });
         } else {
-            // 温带海域（地中海、东海、北海、大西洋、日本海等）
+            // 温带海域（地中海、东海、日本海南部、大西洋中低纬等）：终年不下雪，以海暴、骤雨、海雾、烟雨为主
             pool.push({ kind: 'SEA_STORM', weight: 5 });
             pool.push({ kind: 'MONSOON_SQUALL', weight: 3 });
             pool.push({ kind: 'SEA_FOG', weight: 3 });
@@ -153,15 +154,24 @@ export function resolveWeatherPoolAt(q: {
         return pool;
     }
 
-    // 3. 寒冷降雪态（当地冬季且属于降雪带 wf>=1，或高寒苔原冰原 ET=29/EF=30，或高海拔雪山）
+    // 3. 寒冷降雪态：
+    // 🔴 [2026-11-02 优化] 彻底修复「南方平原/沿海春天下雪」Bug：
+    //    ① 秦淮以南及亚热带（absLat < 33°N 且海拔 < 3200m）：春(0)、夏(1)、秋(2)绝对不下雪！
+    //    ② 春秋降雪仅限极地苔原冰原（koppen >= 29）、终年雪山（highAltSnow）、或高纬大陆极寒带（absLat >= 48° 且 wf === 2）；
+    //    ③ 华南、岭南及热带（absLat < 24°N 且海拔 < 2200m）：终年无雪；
+    //    ④ 南方平原冬季（localSeason === 3 且 absLat < 32°N）：至多偶有轻柔小雪（SNOW），绝无塞外暴风雪（BLIZZARD）。
+    const isSubtropicalOrTropical = absLat < 33 && !highAltSnow;
+    const isTropicalWarm = absLat < 24 && (elevM ?? 0) < 2200;
+
     const isSnowCondition =
-        koppen >= 29 ||
-        highAltSnow ||
-        (localSeason === 3 && (wf >= 1 || koppen >= 17)) ||
-        ((localSeason === 0 || localSeason === 2) && (wf === 2 || koppen >= 25));
+        !isTropicalWarm &&
+        (highAltSnow || koppen >= 29 ||
+        (!isSubtropicalOrTropical && localSeason === 3 && (wf >= 1 || koppen >= 17)) ||
+        (!isSubtropicalOrTropical && (localSeason === 0 || localSeason === 2) && absLat >= 48 && (wf === 2 || koppen >= 27)) ||
+        (isSubtropicalOrTropical && localSeason === 3 && absLat >= 28 && wf >= 1));
 
     if (isSnowCondition) {
-        const isSevereCold = wf === 2 || koppen >= 25 || highAltSnow || absLat >= 46;
+        const isSevereCold = !isSubtropicalOrTropical && (wf === 2 || koppen >= 25 || highAltSnow || absLat >= 46);
         return isSevereCold
             ? [
                 { kind: 'BLIZZARD', weight: 5 },
@@ -170,8 +180,8 @@ export function resolveWeatherPoolAt(q: {
             ]
             : [
                 { kind: 'SNOW', weight: 6 },
-                { kind: 'BLIZZARD', weight: 2 },
-                { kind: 'DRIZZLE_MIST', weight: 2 },
+                { kind: 'DRIZZLE_MIST', weight: 3 },
+                { kind: 'SEA_FOG', weight: 2 },
             ];
     }
 

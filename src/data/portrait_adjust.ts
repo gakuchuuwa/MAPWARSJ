@@ -8968,7 +8968,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/SLAVIC/luosi_svyatopolk.png": {
-            "scale": 0.92,
+            "scale": 0.9,
             "offsetX": 5,
             "offsetY": -23
         },

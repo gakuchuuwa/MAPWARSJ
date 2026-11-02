@@ -16599,6 +16599,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'xingelana_dawila', cityId: 'city_banama', generalName: '达维拉', portrait: '/assets/SPANISH/xingelana_dawila.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
         { generalId: 'jialebi_brasilesuo', factionId: 'xingelana', cityId: 'city_katachena', generalName: '布拉斯莱索', portrait: '/assets/SPANISH/jialebi_brasilesuo.png', eliteName: '征服者骑', eliteTier: 3 },
+        { generalId: 'xingelana_beierweierde', factionId: 'xingelana', cityId: 'city_portobelo', generalName: '贝尔韦尔德', portrait: '', legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
 
 
 

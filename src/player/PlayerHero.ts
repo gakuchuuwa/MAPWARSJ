@@ -146,6 +146,7 @@ const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
     city_telde: ['city_ribeira'],
     city_angra: ['city_lisiben'],
     city_veracruz: ['city_katachena', 'city_havana'],
+    city_portobelo: ['city_katachena', 'city_havana'],
     city_havana: ['city_shengaogusiding'],
     city_shengaogusiding: ['city_shengduomingge'],
     city_katachena: ['city_shengduomingge'],

@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-02T09:31:52.953Z",
+ "generatedAt": "2026-11-02T11:38:10.607Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16174,6 +16174,20 @@
    "reliefM": 72,
    "cliffs": 0,
    "top": "Desert 88.2% · Palm Desert 6% · Forest, Birch 2.2% · Beach 2.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_portobelo",
+   "file": "site_city_portobelo.json",
+   "bytes": 292090,
+   "koppen": "Am",
+   "theme": "NEOTROPICAL_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 4941,
+   "waterPct": 34.3,
+   "reliefM": 3170,
+   "cliffs": 0,
+   "top": "Jungle Grass 52.5% · Water, Shallow 34.3% · Jungle 7.8% · Beach 2.9%",
    "verify": "ok"
   }
  ],
