@@ -9636,6 +9636,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -22
+        },
+        "/assets/MUISCA/cueva_panjiyake.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/MAYANS/mayapan_hunac_ceel.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -33
+        },
+        "/assets/MAYANS/gen_pakal.png": {
+            "scale": 1.04,
+            "offsetX": 7,
+            "offsetY": -19
         }
     },
     "folderGuides": {

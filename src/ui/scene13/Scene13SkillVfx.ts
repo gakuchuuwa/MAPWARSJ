@@ -108,14 +108,14 @@ const PALETTE: Record<TacticalSixSet, SkillPalette> = {
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
 const easeOut = (p: number) => 1 - (1 - p) ** 3;
 
-// ── 1. 六计专属手绘图标（256×256 内部全不透明 PNG）＋ 离屏发光印章池 ──
+// ── 1. 六计专属手绘图标（1024×1024 超高清内部全不透明 PNG）＋ 离屏发光印章池 ──
 const SIX_ICON_URLS: Record<TacticalSixSet, string> = {
-    gongzhan: '/SUCAI_FX/SIX_ICONS/gongzhan.png?v=six6',
-    shengzhan: '/SUCAI_FX/SIX_ICONS/shengzhan.png?v=six6',
-    dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=six9',
-    hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=six8',
-    bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=six6',
-    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six12',
+    gongzhan: '/SUCAI_FX/SIX_ICONS/gongzhan.png?v=six_hd1024',
+    shengzhan: '/SUCAI_FX/SIX_ICONS/shengzhan.png?v=six_hd1024',
+    dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=six_hd1024',
+    hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=six_hd1024',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=six_hd1024',
+    baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six_hd1024',
 };
 
 const sixRawImages = new Map<TacticalSixSet, HTMLImageElement>();
@@ -217,24 +217,26 @@ function getSixSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElem
         return null;
     }
 
-    const SIZE = 256;
-    const PAD = 10;
+    const SIZE = 1024;
+    const PAD = 28;
     const DRAW_S = SIZE - PAD * 2;
     const cv = document.createElement('canvas');
     cv.width = SIZE;
     cv.height = SIZE;
     const g = cv.getContext('2d')!;
+    g.imageSmoothingEnabled = true;
+    g.imageSmoothingQuality = 'high';
 
     g.save();
     g.shadowColor = paid ? 'rgba(255, 212, 72, 0.96)' : 'rgba(0, 0, 0, 0.96)';
-    g.shadowBlur = paid ? 18 : 14;
+    g.shadowBlur = paid ? 56 : 44;
     g.shadowOffsetX = 0;
-    g.shadowOffsetY = paid ? 0 : 4;
+    g.shadowOffsetY = paid ? 0 : 12;
     g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
 
     g.shadowColor = 'rgba(0, 0, 0, 0.92)';
-    g.shadowBlur = 7;
-    g.shadowOffsetY = 2;
+    g.shadowBlur = 22;
+    g.shadowOffsetY = 6;
     g.drawImage(rawImg, PAD, PAD, DRAW_S, DRAW_S);
     g.restore();
 
@@ -328,6 +330,8 @@ function drawStamp(
     rx: number,
     ry = rx,
 ): void {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(stamp, x - rx, y - ry, rx * 2, ry * 2);
 }
 

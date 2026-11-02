@@ -19,10 +19,10 @@ const PANE = 'marineLifePane';
  *    每只存活约 21 秒，补充间隔 = 21 秒 ÷ 目标数，才能维持到目标数。
  */
 const CREATURE_LIFE_MS = 21_000;
-const MIN_TRIGGER_INTERVAL_MS = 2_000;
-const MAX_TRIGGER_INTERVAL_MS = 10_000;
-const MAX_CREATURES_CAP = 10;          // 封顶防满屏（zoom 9 全海面约 6–8 只，海战 zoom 10 画面更小、更少）
-const SEA_FRACTION_SAMPLE_MS = 1_500;  // 水面比例每 1.5 秒重算一次（4×4 采样）
+const MIN_TRIGGER_INTERVAL_MS = 350;
+const MAX_TRIGGER_INTERVAL_MS = 6_000;
+const MAX_CREATURES_CAP = 12;          // 封顶防满屏（zoom 9 全海面约 8–10 处，丰富海面生机）
+const SEA_FRACTION_SAMPLE_MS = 1_000;  // 水面比例每 1.0 秒重算一次（4×4 采样）
 const FPS = 15;
 const MIN_ZOOM = 8;
 const MAX_ZOOM = 10;
@@ -35,9 +35,30 @@ interface CreatureAsset {
     boxH: number;
     anchorX: number;
     anchorY: number;
+    underwater?: {
+        url: string;
+        frames: number;
+        cols: number;
+        boxW: number;
+        boxH: number;
+        anchorX: number;
+        anchorY: number;
+    };
+    fps?: number;
 }
 
-type CreatureKind = 'DOLPHIN' | 'WHALE' | 'BOX_TURTLES' | 'NESSIE' | 'TUNA_FISH' | 'MARLIN_FISH';
+type CreatureKind =
+    | 'DOLPHIN'
+    | 'WHALE'
+    | 'BOX_TURTLES'
+    | 'NESSIE'
+    | 'TUNA_FISH'
+    | 'MARLIN_FISH'
+    | 'DORADO_FISH'
+    | 'SALMON_FISH'
+    | 'SNAPPER_FISH'
+    | 'SHORE_FISH'
+    | 'SEA_ROCK2';
 
 /**
  * 🔴 2026-10-31 主人令「陆海空动物的显示比例统一，大小对齐 DE」：海洋生物原先是「固定屏幕像素」
@@ -51,9 +72,35 @@ const ASSETS: Record<CreatureKind, CreatureAsset> = {
     WHALE:       { url: '/SUCAI_RESOURCE/WHALE/frames.png',       frames: 241, cols: 25, boxW: 212, boxH: 115, anchorX: 113, anchorY: 59 },
     BOX_TURTLES: { url: '/SUCAI_RESOURCE/BOX_TURTLES/frames.png', frames: 180, cols: 30, boxW: 76,  boxH: 41,  anchorX: 35,  anchorY: 17 },
     NESSIE:      { url: '/SUCAI_RESOURCE/NESSIE/frames.png',      frames: 180, cols: 30, boxW: 256, boxH: 222, anchorX: 98,  anchorY: 58 },
-    // 跃水鱼（DE a_fish_tuna / a_fish_marlin1，单行横条 cols = frames）
-    TUNA_FISH:   { url: '/SUCAI_RESOURCE/TUNA_FISH/frames.png',   frames: 91,  cols: 91, boxW: 96,  boxH: 92,  anchorX: 56,  anchorY: 84 },
-    MARLIN_FISH: { url: '/SUCAI_RESOURCE/MARLIN_FISH/frames.png', frames: 61,  cols: 61, boxW: 80,  boxH: 120, anchorX: 24,  anchorY: 120 },
+    // 跃水鱼群（水下潜游鱼群影 _UNDERWATER + 水上跃鱼浪花双层同锚点合成）
+    TUNA_FISH: {
+        url: '/SUCAI_RESOURCE/TUNA_FISH/frames.png', frames: 91, cols: 91, boxW: 96, boxH: 92, anchorX: 56, anchorY: 84,
+        underwater: { url: '/SUCAI_RESOURCE/TUNA_FISH_UNDERWATER/frames.png', frames: 91, cols: 91, boxW: 128, boxH: 80, anchorX: 68, anchorY: 32 },
+    },
+    MARLIN_FISH: {
+        url: '/SUCAI_RESOURCE/MARLIN_FISH/frames.png', frames: 61, cols: 61, boxW: 80, boxH: 120, anchorX: 24, anchorY: 120,
+        underwater: { url: '/SUCAI_RESOURCE/MARLIN_FISH_UNDERWATER/frames.png', frames: 61, cols: 61, boxW: 124, boxH: 104, anchorX: 68, anchorY: 40 },
+    },
+    DORADO_FISH: {
+        url: '/SUCAI_RESOURCE/DORADO_FISH/frames.png', frames: 180, cols: 180, boxW: 72, boxH: 92, anchorX: 34, anchorY: 74,
+        underwater: { url: '/SUCAI_RESOURCE/DORADO_FISH_UNDERWATER/frames.png', frames: 180, cols: 180, boxW: 136, boxH: 84, anchorX: 58, anchorY: 38 },
+    },
+    SALMON_FISH: {
+        url: '/SUCAI_RESOURCE/SALMON_FISH/frames.png', frames: 91, cols: 91, boxW: 104, boxH: 140, anchorX: 48, anchorY: 116,
+        underwater: { url: '/SUCAI_RESOURCE/SALMON_FISH_UNDERWATER/frames.png', frames: 91, cols: 91, boxW: 112, boxH: 76, anchorX: 52, anchorY: 32 },
+    },
+    SNAPPER_FISH: {
+        url: '/SUCAI_RESOURCE/SNAPPER_FISH/frames.png', frames: 91, cols: 91, boxW: 72, boxH: 36, anchorX: 28, anchorY: 44,
+        underwater: { url: '/SUCAI_RESOURCE/SNAPPER_FISH_UNDERWATER/frames.png', frames: 91, cols: 91, boxW: 116, boxH: 72, anchorX: 56, anchorY: 36 },
+    },
+    SHORE_FISH: {
+        url: '/SUCAI_RESOURCE/SHORE_FISH/frames.png', frames: 90, cols: 90, boxW: 36, boxH: 52, anchorX: 32, anchorY: 40,
+        underwater: { url: '/SUCAI_RESOURCE/SHORE_FISH_UNDERWATER/frames.png', frames: 90, cols: 90, boxW: 84, boxH: 48, anchorX: 56, anchorY: 20 },
+    },
+    // 海中拍浪暗礁（DE n_rock_sea2，6 帧浪花拍击礁石）
+    SEA_ROCK2: {
+        url: '/SUCAI_RESOURCE/SEA_ROCK2/frames.png', frames: 6, cols: 6, boxW: 136, boxH: 76, anchorX: 68, anchorY: 48, fps: 6,
+    },
 };
 
 interface Creature {
@@ -217,6 +264,16 @@ export class MarineLifeLayer extends L.Layer {
                     }
                 }
             } catch { /* 用硬编码兜底 */ }
+            if (a.underwater) {
+                const uw = a.underwater;
+                const uim = new Image();
+                await new Promise<void>((resolve) => {
+                    uim.onload = () => resolve();
+                    uim.onerror = () => resolve();
+                    uim.src = uw.url;
+                });
+                this.imgs.set(`${kind}_UW`, uim);
+            }
         }));
         this.ready = true;
     }
@@ -240,28 +297,30 @@ export class MarineLifeLayer extends L.Layer {
             return;
         }
 
-        // 清理过期生物
+        // 清理过期或已随着船只/镜头平移被甩出视口外的生物（防止高速航行时屏幕后方的旧生物占满名额导致前方海面空旷）
         if (this.creatures.length > 0) {
-            // 🔴 [2026-10-13 主人报「沙地中出现海洋生物」] 存活期内点位若不再是海（或位于内陆盆地里海/死海）就立刻撤掉
-            // 🔴 2026-10-31 主人令「在屏幕期间不要无缘无故消失」：海拔瓦片暂时不在缓存时 isSeaAt 按「陆」返回，
-            //    原来会把正在跃水的海豚当场删掉（无渐隐）；现在只有海拔已知且确实不是海才撤，到期的走渲染里的 1.5 秒渐隐。
-            this.creatures = this.creatures.filter(c => now <= c.expiresAt && isOpenOcean(c.lat, c.lng)
+            const keepBounds = this.map.getBounds().pad(0.25);
+            this.creatures = this.creatures.filter(c => now <= c.expiresAt
+                && keepBounds.contains([c.lat, c.lng])
+                && isOpenOcean(c.lat, c.lng)
                 && (LandSeaSystem.isSeaAt(L.latLng(c.lat, c.lng)) || LandSeaSystem.getSampler().getElevationSync(c.lat, c.lng) === null));
         }
 
-        // 尝试生成新生物
+        // 尝试生成新生物（缺额较大时加快补齐，跟船航行时海面始终有生机）
         const target = this.targetCreatureCount(now);
-        const interval = Math.min(MAX_TRIGGER_INTERVAL_MS, Math.max(MIN_TRIGGER_INTERVAL_MS, CREATURE_LIFE_MS / Math.max(1, target)));
-        if (this.creatures.length < target && now - this.lastTriggerAt >= interval) {
+        const deficit = target - this.creatures.length;
+        const baseInterval = Math.min(MAX_TRIGGER_INTERVAL_MS, Math.max(MIN_TRIGGER_INTERVAL_MS, CREATURE_LIFE_MS / Math.max(1, target)));
+        const interval = deficit >= 3 ? MIN_TRIGGER_INTERVAL_MS : baseInterval;
+        if (deficit > 0 && now - this.lastTriggerAt >= interval) {
             this.tryTrigger(now);
         }
 
         // 推进各生物动画帧
-        const frameInterval = 1000 / FPS;
         for (const c of this.creatures) {
+            const a = ASSETS[c.kind];
+            const frameInterval = 1000 / (a.fps ?? FPS);
             if (now - c.lastFrameAt > frameInterval) {
                 c.lastFrameAt = now;
-                const a = ASSETS[c.kind];
                 c.frame = (c.frame + 1) % a.frames;
             }
         }
@@ -302,18 +361,24 @@ export class MarineLifeLayer extends L.Layer {
         let spawnLng = 0;
         let found = false;
 
-        // 优先 1：检查是否有正在跟拍且航行在大洋海面上的舰队
+        // 优先 1：检查是否有正在视野内航行在大洋海面上的玩家船只或跟拍舰队（50% 概率优先伴航生成）
         const followedId = getFollowedArmyId();
-        const game = (window as any).game as { legionManager?: { getLegionById(id: string): { getPosition(): { lat: number; lng: number } } | undefined } } | undefined;
+        const game = (window as any).game as {
+            legionManager?: { getLegionById(id: string): { getPosition(): { lat: number; lng: number } } | undefined };
+            playerManager?: { getPosition?(): { lat: number; lng: number } | null };
+        } | undefined;
         const army = followedId ? game?.legionManager?.getLegionById(followedId) : null;
-        const armyPos = army?.getPosition();
+        const playerPos = game?.playerManager?.getPosition?.() ?? null;
+        const bounds = this.map.getBounds();
+        const shipPos = (army?.getPosition())
+            ?? (playerPos && bounds.contains([playerPos.lat, playerPos.lng]) ? playerPos : null);
 
-        if (armyPos && Number.isFinite(armyPos.lat) && Number.isFinite(armyPos.lng) && isOpenOcean(armyPos.lat, armyPos.lng) && LandSeaSystem.isSeaAt(L.latLng(armyPos.lat, armyPos.lng))) {
+        if (shipPos && Math.random() < 0.55 && Number.isFinite(shipPos.lat) && Number.isFinite(shipPos.lng) && isOpenOcean(shipPos.lat, shipPos.lng) && LandSeaSystem.isSeaAt(L.latLng(shipPos.lat, shipPos.lng))) {
             for (let i = 0; i < 12; i++) {
                 const ang = Math.random() * Math.PI * 2;
-                const d = 0.04 + Math.random() * 0.08;
-                const tLat = armyPos.lat + Math.sin(ang) * d;
-                const tLng = armyPos.lng + Math.cos(ang) * d;
+                const d = 0.05 + Math.random() * 0.18;
+                const tLat = shipPos.lat + Math.sin(ang) * d;
+                const tLng = shipPos.lng + Math.cos(ang) * d;
                 if (isOpenOcean(tLat, tLng) && LandSeaSystem.isSeaAtMajority(tLat, tLng, MARINE_SPAWN_RADIUS_DEG)) {
                     spawnLat = tLat;
                     spawnLng = tLng;
@@ -325,7 +390,6 @@ export class MarineLifeLayer extends L.Layer {
 
         // 优先 2：视野内的大洋开阔海面自然撒点
         if (!found) {
-            const bounds = this.map.getBounds();
             const minLat = bounds.getSouth();
             const maxLat = bounds.getNorth();
             const minLng = bounds.getWest();
@@ -345,22 +409,36 @@ export class MarineLifeLayer extends L.Layer {
 
         if (!found) return;
 
-        // 暖温海域（|lat| < 42°，如地中海、南洋、红海、波斯湾、加勒比、东海）支持海龟；全海域支持抹香鲸、尼斯湖水怪与海豚
+        // 防止同屏点位过于拥挤（彼此至少间隔 0.06°）
+        if (this.creatures.some(c => Math.hypot(c.lat - spawnLat, c.lng - spawnLng) < 0.06)) {
+            return;
+        }
+
+        const elev = LandSeaSystem.getSampler().getElevationSync(spawnLat, spawnLng);
+        const isShallowShelf = elev !== null && elev > -95 && elev < -2;
         const isWarmSea = Math.abs(spawnLat) < 42;
         let kind: CreatureKind;
         const r = Math.random();
-        if (isWarmSea) {
-            if (r < 0.24) kind = 'WHALE';
-            else if (r < 0.36) kind = 'NESSIE';
-            else if (r < 0.60) kind = 'DOLPHIN';
-            else if (r < 0.70) kind = 'MARLIN_FISH';   // 剑鱼：暖海
-            else if (r < 0.80) kind = 'TUNA_FISH';
-            else kind = 'BOX_TURTLES'; // 20% 概率出现海龟游弋
+        if (isShallowShelf && r < 0.28) {
+            // 浅海大陆架与近岸：浪花拍击暗礁、红鲷鱼群、近岸鱼群
+            if (r < 0.10) kind = 'SEA_ROCK2';
+            else if (r < 0.20) kind = isWarmSea ? 'SNAPPER_FISH' : 'SALMON_FISH';
+            else kind = 'SHORE_FISH';
+        } else if (isWarmSea) {
+            if (r < 0.18) kind = 'WHALE';
+            else if (r < 0.26) kind = 'NESSIE';
+            else if (r < 0.46) kind = 'DOLPHIN';
+            else if (r < 0.58) kind = 'DORADO_FISH';   // 鲯鳅鱼群（水下潜游鱼影 + 跃水）
+            else if (r < 0.68) kind = 'MARLIN_FISH';   // 旗鱼/剑鱼群
+            else if (r < 0.78) kind = 'TUNA_FISH';     // 金枪鱼群
+            else if (r < 0.86) kind = 'SNAPPER_FISH';  // 红鲷鱼群
+            else kind = 'BOX_TURTLES';                 // 海龟游弋
         } else {
-            // 高纬寒温带海域（含北海/苏格兰外海等）：抹香鲸、尼斯湖水怪、海豚与金枪鱼
-            if (r < 0.38) kind = 'WHALE';
-            else if (r < 0.55) kind = 'NESSIE';
-            else if (r < 0.80) kind = 'DOLPHIN';
+            // 高纬寒温带海域：抹香鲸、海怪、海豚、鲑鱼群、金枪鱼群
+            if (r < 0.28) kind = 'WHALE';
+            else if (r < 0.38) kind = 'NESSIE';
+            else if (r < 0.62) kind = 'DOLPHIN';
+            else if (r < 0.82) kind = 'SALMON_FISH';
             else kind = 'TUNA_FISH';
         }
         // 🔴 [2026-11-01 主人令] 鲸鱼与海怪只出现在远岸深海区（水深 ≥200m 且周围 ~60km 无岛屿/浅滩）；
@@ -408,6 +486,39 @@ export class MarineLifeLayer extends L.Layer {
             if (!img) continue;
 
             const p = this.map.latLngToContainerPoint(L.latLng(c.lat, c.lng));
+
+            // 生成与消失平滑淡入淡出
+            const fadeIn = Math.min(1, Math.max(0, (now - c.spawnedAt) / 1200));
+            const fadeOut = Math.min(1, Math.max(0, (c.expiresAt - now) / 1500));
+            g.save();
+            g.globalAlpha = fadeIn * fadeOut;
+
+            // 1. 若有水下潜游鱼群层（_UNDERWATER），先按同锚点绘制水下鱼群影
+            if (a.underwater) {
+                const uw = a.underwater;
+                const uwImg = this.imgs.get(`${c.kind}_UW`);
+                if (uwImg && uwImg.naturalWidth > 0) {
+                    const uwW = uw.boxW * spriteScale;
+                    const uwH = uw.boxH * spriteScale;
+                    const uwCols = uw.cols || Math.max(1, Math.round(uwImg.naturalWidth / uw.boxW));
+                    const uwFrame = c.frame % uw.frames;
+                    const uwSx = (uwFrame % uwCols) * uw.boxW;
+                    const uwSy = Math.floor(uwFrame / uwCols) * uw.boxH;
+                    const uwAx = (uw.anchorX / uw.boxW) * uwW;
+                    const uwAy = (uw.anchorY / uw.boxH) * uwH;
+                    if (c.mirror) {
+                        g.save();
+                        g.translate(p.x, p.y);
+                        g.scale(-1, 1);
+                        g.drawImage(uwImg, uwSx, uwSy, uw.boxW, uw.boxH, -uwAx, -uwAy, uwW, uwH);
+                        g.restore();
+                    } else {
+                        g.drawImage(uwImg, uwSx, uwSy, uw.boxW, uw.boxH, p.x - uwAx, p.y - uwAy, uwW, uwH);
+                    }
+                }
+            }
+
+            // 2. 绘制水上跃鱼/鲸豚破水/浪花层
             const w = a.boxW * spriteScale;
             const h = a.boxH * spriteScale;
             const cols = a.cols || Math.max(1, Math.round(img.naturalWidth / a.boxW));
@@ -415,12 +526,6 @@ export class MarineLifeLayer extends L.Layer {
             const sy = Math.floor(c.frame / cols) * a.boxH;
             const ax = (a.anchorX / a.boxW) * w;
             const ay = (a.anchorY / a.boxH) * h;
-
-            // 生成与消失平滑淡入淡出
-            const fadeIn = Math.min(1, Math.max(0, (now - c.spawnedAt) / 1200));
-            const fadeOut = Math.min(1, Math.max(0, (c.expiresAt - now) / 1500));
-            g.save();
-            g.globalAlpha = fadeIn * fadeOut;
             if (c.mirror) {
                 g.translate(p.x, p.y);
                 g.scale(-1, 1);
