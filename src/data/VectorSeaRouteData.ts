@@ -293,32 +293,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "圣胡利安港-阿加尼亚",
-                type: "sea",
-                id: "sea_city_sanjulian_city_hagatna_1793625431478",
-                startConnection: "city_sanjulian",
-                endConnection: "city_hagatna",
-                startYear: 1520
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-67.72, -49.31],
-                    [-75, -52],
-                    [-80, -45],
-                    [-90, -35],
-                    [-110, -20],
-                    [-140, 0],
-                    [-170, 10],
-                    [175, 12],
-                    [160, 13],
-                    [144.75, 13.4757],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "吕贝克-汉堡",
                 type: "sea",
                 id: "sea_city_lubeck_city_hamburg_1793625339140",
@@ -1228,71 +1202,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "普利茅斯-瓜纳巴拉",
-                type: "sea",
-                id: "sea_city_plymouth_city_guanabara_1793622662964",
-                startConnection: "city_plymouth",
-                endConnection: "city_guanabara"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-4.1427, 50.3755],
-                    [-7.5, 48],
-                    [-13, 44],
-                    [-20, 38],
-                    [-29, 28],
-                    [-37, 10],
-                    [-40.5, -12],
-                    [-43.2, -22.9],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "普利茅斯-詹姆斯敦",
-                type: "sea",
-                id: "sea_city_plymouth_city_jamestown_1793622662964",
-                startConnection: "city_plymouth",
-                endConnection: "city_jamestown"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-4.1427, 50.3755],
-                    [-11, 48.5],
-                    [-25, 44],
-                    [-45, 40],
-                    [-62, 38],
-                    [-76.78, 37.21],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "科伦坡-果阿",
-                type: "sea",
-                id: "sea_city_kelunpo_city_guoa_1793622380458",
-                startConnection: "city_kelunpo",
-                endConnection: "city_guoa"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [79.8612, 6.9271],
-                    [79.3, 7.6],
-                    [78.4, 9.2],
-                    [76.8, 12],
-                    [74.8, 14.5],
-                    [73.9117, 15.5023],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "科伦坡-加勒",
                 type: "sea",
                 id: "sea_city_kelunpo_city_jiale_1793622380458",
@@ -2061,26 +1970,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [45, 12],
                     [44.97253, 12.71001],
                     [45.0187, 12.7855],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "亚丁-塞拉",
-                type: "sea",
-                id: "sea_city_aden_city_zeila_20261024",
-                startConnection: "city_aden",
-                endConnection: "city_zeila"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [45.0187, 12.7855],
-                    [45.33333, 12.41667],
-                    [43.75, 12.16667],
-                    [43.91667, 11.5],
-                    [43.4731, 11.3533],
                 ]
             }
         },

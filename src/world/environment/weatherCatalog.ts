@@ -133,7 +133,7 @@ export function canSustainSnowAt(
         return wf >= 1 || koppen >= 17 || absLat >= 35;
     }
     if (localSeason === 0 || localSeason === 2) {
-        return absLat >= 48 && (wf === 2 || wf === 3 || koppen >= 27 || zone === 'SIB' || zone === 'ARC');
+        return absLat >= 48 && (wf === 2 || wf === 3 || koppen >= 27 || zone === 'SIB');
     }
     return absLat >= 66;
 }
@@ -323,14 +323,15 @@ export function resolveWeatherPoolAt(q: {
 
     if (isSnowCondition) {
         // 塞外暴风雪（BLIZZARD）仅限：深雪/寒温带雪林（wf=2/3）、亚寒带泰加林（koppen>=27）、
-        // 或冬季稳定积雪（wf=1）的大陆性严寒区（D类气候 koppen>=21，或东北 NEB / 欧亚草原 STP / 北亚 SIB / 中东欧 CEU）
+        // 或冬季稳定积雪（wf=1）的塞外/高纬大陆性严寒区（koppen>=23，或塞外 absLat>=40.2，或东北 NEB / 欧亚草原 STP / 北亚 SIB / 中东欧 CEU）
         const isSevereCold =
             !isSubtropicalOrTropical &&
             (wf === 2 ||
                 wf === 3 ||
                 koppen >= 27 ||
                 (wf === 1 &&
-                    (koppen >= 21 ||
+                    (koppen >= 23 ||
+                        (koppen >= 21 && absLat >= 40.2) ||
                         zone === 'NEB' ||
                         zone === 'STP' ||
                         zone === 'SIB' ||
@@ -343,8 +344,8 @@ export function resolveWeatherPoolAt(q: {
                 { kind: 'SEA_FOG', weight: 2 },
             ];
         }
-        // 塞北/黄土高原北部长城沿线（LOE / WAH 且 wf=1 的半干旱寒区，如大同、晋阳、安定、朔州、怛罗斯）：瑞雪为主，偶有塞上风雪
-        if (!isSubtropicalOrTropical && wf === 1 && (zone === 'LOE' || zone === 'WAH' || koppen === 7)) {
+        // 塞北/幽燕/黄土高原北部长城沿线（LOE / WAH 或幽燕 absLat>=38.5 且 wf=1，如北京/蓟城、大同、晋阳、安定、真定、怛罗斯）：瑞雪为主，偶有北方寒潮风雪
+        if (!isSubtropicalOrTropical && wf === 1 && (zone === 'LOE' || zone === 'WAH' || koppen === 7 || absLat >= 38.5)) {
             return [
                 { kind: 'SNOW', weight: 6 },
                 { kind: 'BLIZZARD', weight: 2 },
@@ -386,13 +387,15 @@ export function resolveWeatherPoolAt(q: {
     }
 
     // 6. 半干旱草原与黄土高原（欧亚草原 STP、西亚高原草原 WAH、黄土高原 LOE、或热带半干旱草原 BSh=6）：
-    //    排除华北平原（NCP）、西欧（WEU）、中东欧（CEU）等农耕湿润/半湿润区
+    //    排除华北平原（NCP）、西欧（WEU）、中东欧（CEU）以及黑海沿岸等温带湿润区（Cfa=14, Cfb=15）
+    const isHumidOceanicOrSubtropical = koppen === 14 || koppen === 15 || koppen === 16;
     const isSteppeOrLoess =
-        zone === 'STP' ||
-        zone === 'WAH' ||
-        zone === 'LOE' ||
-        koppen === 6 ||
-        (koppen === 7 && zone !== 'NCP' && zone !== 'WEU' && zone !== 'CEU' && zone !== 'NEB');
+        !isHumidOceanicOrSubtropical &&
+        (zone === 'STP' ||
+            zone === 'WAH' ||
+            zone === 'LOE' ||
+            koppen === 6 ||
+            (koppen === 7 && zone !== 'NCP' && zone !== 'WEU' && zone !== 'CEU' && zone !== 'NEB'));
 
     if (isSteppeOrLoess) {
         // 黄土高原（LOE）：关中河洛温润带 vs 塞上黄土高原

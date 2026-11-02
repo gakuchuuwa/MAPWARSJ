@@ -159,6 +159,56 @@ export class LandSeaSystem {
     }
 
     /**
+     * 海岸线不切换缓冲距离（度，0.15° ≈ 16.5km）：
+     * 距离海岸线此范围内属于海陆过渡带，人/船保持原形态不切换，防止沿海岸行走时频繁横跳。
+     */
+    static readonly COAST_BUFFER_DEG = 0.15;
+
+    /**
+     * 是否已远离海岸线进入纯海域（半径 radiusDeg 内全部采样点均为海）。
+     * 只要半径内仍有一点是陆地（即尚在海岸线缓冲距离内），返回 false —— 陆上行人不切换为船。
+     */
+    static isOpenSeaBeyondCoast(lat: number, lng: number, radiusDeg = this.COAST_BUFFER_DEG): boolean {
+        if (!this.isSeaAt({ lat, lng })) return false;
+        const cosLat = Math.max(0.2, Math.cos(lat * Math.PI / 180));
+        const rHalf = radiusDeg * 0.5;
+        const dlngHalf = rHalf / cosLat;
+        const dlngFull = radiusDeg / cosLat;
+        const rings: Array<[number, number]> = [
+            [rHalf, 0], [-rHalf, 0], [0, dlngHalf], [0, -dlngHalf],
+            [rHalf, dlngHalf], [rHalf, -dlngHalf], [-rHalf, dlngHalf], [-rHalf, -dlngHalf],
+            [radiusDeg, 0], [-radiusDeg, 0], [0, dlngFull], [0, -dlngFull],
+            [radiusDeg, dlngFull], [radiusDeg, -dlngFull], [-radiusDeg, dlngFull], [-radiusDeg, -dlngFull],
+        ];
+        for (const [dlat, dln] of rings) {
+            if (!this.isSeaAt({ lat: lat + dlat, lng: lng + dln })) return false;
+        }
+        return true;
+    }
+
+    /**
+     * 是否已远离海岸线进入纯内陆（半径 radiusDeg 内全部采样点均为陆）。
+     * 只要半径内仍有一点是海（即尚在海岸线缓冲距离内），返回 false —— 海上船只不因擦岸切换为人。
+     */
+    static isInlandBeyondCoast(lat: number, lng: number, radiusDeg = this.COAST_BUFFER_DEG): boolean {
+        if (this.isSeaAt({ lat, lng })) return false;
+        const cosLat = Math.max(0.2, Math.cos(lat * Math.PI / 180));
+        const rHalf = radiusDeg * 0.5;
+        const dlngHalf = rHalf / cosLat;
+        const dlngFull = radiusDeg / cosLat;
+        const rings: Array<[number, number]> = [
+            [rHalf, 0], [-rHalf, 0], [0, dlngHalf], [0, -dlngHalf],
+            [rHalf, dlngHalf], [rHalf, -dlngHalf], [-rHalf, dlngHalf], [-rHalf, -dlngHalf],
+            [radiusDeg, 0], [-radiusDeg, 0], [0, dlngFull], [0, -dlngFull],
+            [radiusDeg, dlngFull], [radiusDeg, -dlngFull], [-radiusDeg, dlngFull], [-radiusDeg, -dlngFull],
+        ];
+        for (const [dlat, dln] of rings) {
+            if (this.isSeaAt({ lat: lat + dlat, lng: lng + dln })) return false;
+        }
+        return true;
+    }
+
+    /**
      * 调试可视化专用：**不读写 resultCache、不触发拉瓦片**的海陆探测。
      *
      * 为什么不能直接用 isSeaAt：分界线图层一屏要采上万点，每点都是不同的缓存键，

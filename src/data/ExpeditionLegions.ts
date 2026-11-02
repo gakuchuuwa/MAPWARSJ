@@ -71,6 +71,19 @@ export interface EliteLegionConfig {
   tier: EliteTier;
 }
 
+/**
+ * 精锐五级制的**档位名**（唯一口径，2026-11-03 主人定）。
+ * T0 传奇｜T1 战略｜T2 战术｜T3 知名｜T4 存在 —— UI 一律显示这五个词，不显示 T0/T1 之类代号；
+ * 旧称「天神军／王者师／劲锐旅／精英团／戍卫营」已废。
+ */
+export const ELITE_TIER_LABELS = ['传奇', '战略', '战术', '知名', '存在'] as const;
+
+/** 档位数字 → 档位名（越界回落空串，调用方自行兜底） */
+export function getEliteTierDisplayName(tier: EliteTier | number | null | undefined): string {
+  if (tier === null || tier === undefined) return '';
+  return (ELITE_TIER_LABELS as readonly string[])[tier] ?? '';
+}
+
 /** 数据录入：factionId → 番号（14 区表合并，供审计与推导 cityId 映射） */
 const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
   ...JAPAN_EXPEDITION_ELITE_LEGIONS,
@@ -156,7 +169,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   yezongliu_yezongliu: { name: '处州矿兵', tier: 3 },       // 叶宗留：明正统矿徒结党，火器与坑道战术，转战浙闽赣（T3 知名）
   tan_d_qinhou: { name: '慈利蛮兵', tier: 3 },              // 覃垕：元末明初湘西土家劲卒，扼守天险绝壁（T3 知名）
   boren_ada: { name: '都掌蛮兵', tier: 3 },                 // 阿大：万历都掌僰人精锐，据守九丝山悬崖，死斗至灭亡（T3 知名）
-  sou_gaodingyuan: { name: '越嶲叟兵', tier: 3 },           // 高定元：三国南中夷兵主力，山地攀爬与步战特色（T3 知名）
+  sou_gaodingyuan: { name: '越嶲叟兵', tier: 4 },           // 高定元：三国南中夷兵主力，山地攀爬与步战特色（T3 知名）
   bfe_xu_hai: { name: '明山倭兵', tier: 3 },                 // 徐海：嘉靖大倭寇主力，纵横江浙（T3 知名）
   qianzhong_wubayue: { name: '平陇苗兵', tier: 3 },         // 吴八月：乾嘉苗变中坚，平陇营寨防守战法突出（T3 知名）
   qianhui_baiyanhu: { name: '陕回骑兵', tier: 3 },           // 白彦虎：同治陕甘回民起事核心，长途奔袭与骑战辨识度高（T3 知名）
@@ -186,25 +199,25 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   linhu_mafang: { name: '山西镇骑', tier: 3 },   // 马芳｜明｜偏头关｜旧档 山西镇骑 原样沿用：马芳镇山西、大同，以骑兵屡破俺答（《明史·卷二一一·马芳传》）。
   yi_yuqian: { name: '十团营', tier: 3 },   // 于谦｜明｜北京｜旧档「易州戍兵」与其据点北京、事迹不合，改；《明史·卷一七〇·于谦传》土木变后选京营精锐十万分十营团操，号十团营。
   linyu_wusangui: { name: '夷丁突骑', tier: 2 },   // 吴三桂｜明｜山海关｜旧档 夷丁突骑 原样沿用：吴三桂镇山海关，收夷丁为突骑，为关宁军锋（《明史·卷三〇九·流贼传》）。
-  jinzhou_lichengliang: { name: '辽东铁骑', tier: 1 },   // 李成梁｜明｜徒河｜旧档 辽东铁骑 原样沿用：李成梁镇辽东，以家丁铁骑屡破土蛮诸部（《明史·卷二三八·李成梁传》）。
+  jinzhou_lichengliang: { name: '辽东铁骑', tier: 2 },   // 李成梁｜明｜徒河｜旧档 辽东铁骑 原样沿用：李成梁镇辽东，以家丁铁骑屡破土蛮诸部（《明史·卷二三八·李成梁传》）。
   shanrong_lanyu: { name: '蓟镇标营', tier: 3 },   // 蓝玉｜明｜无终｜旧档 蓟镇标营 原样沿用：蓝玉北征出大宁、驻蓟州一线，捕鱼儿海大捷（《明史·卷一三二·蓝玉传》）。
   xuan_xuda: { name: '宣大劲骑', tier: 1 },   // 徐达｜明｜北京｜旧档 宣大劲骑 原样沿用：徐达统北伐诸军出宣府、大同，骑兵为锋（《明史·卷一二五·徐达传》）。
   yansui_wangwei: { name: '榆林铁骑', tier: 4 },   // 王威｜明｜榆林｜旧档 榆林铁骑 原样沿用：王威为延绥总兵，镇榆林（《明史·卷二六三·王威传》）。
   jinan_tiexuan: { name: '神牌弩手', tier: 2 },   // 铁铉｜明｜历下｜旧档 神牌弩手 原样沿用：铁铉守济南，悬太祖神牌、以弩矢拒燕军（《明史·卷一四二·铁铉传》）。
   sunqin_sunchuanting: { name: '督标秦军', tier: 3 },   // 孙传庭｜明｜潼关｜旧档 督标秦军 原样沿用：孙传庭以陕西总督练秦兵、守潼关（《明史·卷二六二·孙传庭传》）。
   suzhou_d_shikefa: { name: '江北四镇', tier: 3 },   // 史可法｜明｜淮安｜旧档《武将百科》定「江北四镇」T3；《明史·卷二百七十四·史可法传》载其督师淮扬、节制江北四镇（高杰、刘泽清、刘良佐、黄得功），与其据点淮安相符，原样沿之。
-  huai_zhuyuanzhang: { name: '淮西子弟', tier: 3 },   // 朱元璋｜明｜金陵｜旧档定「淮西子弟」T3；《明史·卷一·太祖本纪》载起兵濠梁，所部徐达、汤和等皆淮西旧籍，即其本部，原样沿之。
+  huai_zhuyuanzhang: { name: '淮西子弟', tier: 2 },   // 朱元璋｜明｜金陵｜旧档定「淮西子弟」T3；《明史·卷一·太祖本纪》载起兵濠梁，所部徐达、汤和等皆淮西旧籍，即其本部，原样沿之。
   luming_luxiangsheng: { name: '天雄军', tier: 2 },   // 卢象升｜明｜大名｜旧档定「天雄军」T2；《明史·卷二百六十一·卢象升传》载其知大名府、整饬大名道，练天雄军保卫大名府，名动天下，原样沿之。
   ran_d_ranshouzhong: { name: '酉阳土兵', tier: 4 },   // 冉守忠｜明｜秀山｜旧档定「酉阳土兵」T4；冉氏世袭酉阳宣抚司土官，秀山为其辖地（《明史·四川土司传》重庆酉阳宣抚司），所部土兵即本部，原样沿之。
-  tujia_d_qinliangyu: { name: '白杆兵', tier: 2 },   // 秦良玉｜明｜石柱｜旧档定「白杆兵」T2；《明史·卷二百七十·秦良玉传》载石柱白杆兵以白杆长枪著名，浑河、重庆诸战皆用，原样沿之。
+  tujia_d_qinliangyu: { name: '白杆兵', tier: 1 },   // 秦良玉｜明｜石柱｜旧档定「白杆兵」T2；《明史·卷二百七十·秦良玉传》载石柱白杆兵以白杆长枪著名，浑河、重庆诸战皆用，原样沿之。
   mu_lijiang_muzeng: { name: '丽江土兵', tier: 3 },   // 木增｜明｜大研｜旧档定「丽江土兵」T3；木氏世袭丽江土知府，所部纳西土兵（《明史·云南土司传》丽江府），与其据点大研相符，原样沿之。
-  pingnan_muying: { name: '云南卫军', tier: 4 },   // 沐英｜明｜滇池｜考据（旧档无）：《明史·卷一百二十六·沐英传》载洪武十四年从傅友德平云南、十五年留镇，二十一年定边府以三行火铳破思伦发象阵；其本部即云南都司卫所军，故定「云南卫军」，属常规建制地方部曲，T4。
+  pingnan_muying: { name: '云南卫军', tier: 3 },   // 沐英｜明｜滇池｜考据（旧档无）：《明史·卷一百二十六·沐英传》载洪武十四年从傅友德平云南、十五年留镇，二十一年定边府以三行火铳破思伦发象阵；其本部即云南都司卫所军，故定「云南卫军」，属常规建制地方部曲，T4。
   hani_d_zhebi: { name: '思陀甸兵', tier: 4 },   // 遮比｜明｜思陀｜旧档定「思陀甸兵」T4；遮比为临安路思陀甸长官司哈尼土官（《明史·云南土司传》），思陀即其世守之地，部众即甸兵，原样沿之。
   dayu_wangshouren: { name: '南赣标军', tier: 3 },   // 王守仁｜明｜南康｜旧档定「南赣标军」T3；《明史·卷一百九十五·王守仁传》载其巡抚南赣、平漳南横水浰头诸寨，所统即南赣抚标，原样沿之。
   fang_guozhen_fangguozhen: { name: '甬江水营', tier: 4 },   // 卢镗｜明｜宁波｜旧档定「甬江水营」T4；卢镗嘉靖间镇宁波、统定海水师抗倭（维基「卢镗」条、《明史》抗倭诸传），甬江即其驻地，原样沿之。
   xiang_d_xiangdakun: { name: '散毛土兵', tier: 4 },   // 覃大旺｜明｜散毛关｜旧档定「散毛土兵」T4；覃氏世袭施州卫散毛宣抚司土官，来凤即散毛故地（《明史·湖广土司传》），所部土兵即本部，原样沿之。
   chizhou_changyuchun: { name: '九华伏兵', tier: 3 },   // 常遇春｜明｜大通｜旧档定「九华伏兵」T3；《明史·卷一百二十五·常遇春传》载其从朱元璋战池州、九华山一带，大通即池州江岸，时地相符，原样沿之。
-  dongshengwei_wangyue: { name: '九边夜不收', tier: 2 },   // 王越｜明｜榆林｜旧档定「九边夜不收」T2；《明史·卷一百七十一·王越传》载其三出塞袭鞑靼（红盐池、威宁海），夜不收为九边哨探锐卒，榆林属延绥镇，原样沿之。
+  dongshengwei_wangyue: { name: '九边夜不收', tier: 3 },   // 王越｜明｜榆林｜旧档定「九边夜不收」T2；《明史·卷一百七十一·王越传》载其三出塞袭鞑靼（红盐池、威宁海），夜不收为九边哨探锐卒，榆林属延绥镇，原样沿之。
   zu_d_yuanchonghuan: { name: '关宁铁骑', tier: 1 },   // 袁崇焕｜明｜宁远城｜旧档定「关宁铁骑」T1；《明史·卷二百五十九·袁崇焕传》载其守宁远、抚练关宁军，宁远即其驻地，原样沿之。
   nuergan_kangwang: { name: '奴儿干卫军', tier: 3 },   // 康旺｜明｜特林｜旧档定「奴儿干卫军」T3；康旺任奴儿干都司都指挥使、驻特林（《明史·卷九十·兵志》卫所及永宁寺碑），与其据点相符，原样沿之。
   jingdong_taohong: { name: '景东象卫', tier: 4 },   // 陶洪｜明｜银生城｜旧档定「景东象卫」T4；陶氏世袭景东府土知府，银生城即景东（《明史·云南土司传》景东府），土司旧有象阵，原样沿之。
@@ -334,7 +347,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_sergey_belgorod: { name: '别尔哥团', tier: 4 },   // 谢尔盖｜俄｜别尔哥罗德｜旧档无；1596 年筑别尔哥罗德要塞，别尔哥罗德团（Белгородский полк）戍别尔哥罗德防线以御鞑靼（维基「Белгород」）。
   eguo_zasekin: { name: '萨拉托夫团', tier: 4 },   // 扎谢金｜俄｜萨拉托夫｜旧档无；扎谢金 1590 年筑萨拉托夫要塞，驻萨拉托夫团扼伏尔加河渡口（维基「Саратов」）。
   qin_hengyi: { name: '陷队之士', tier: 2 },   // 桓齮｜秦｜长安｜旧档无；《商君书·境内》载秦军攻城有「陷队之士」（面十八人）即先登陷阵之敢死队；桓齮前234攻赵平阳、杀赵将扈辄斩首十万（《史记·秦始皇本纪》），正为攻城陷阵之用。
-  wazhai_zhanghan: { name: '骊山刑徒', tier: 3 },   // 章邯｜秦｜长安｜旧档 骊山刑徒 原样沿用：二世二年周文兵至戏，章邯请赦骊山徒、人奴产子悉发以击楚军，大破之（《史记·秦始皇本纪》《项羽本纪》），其军即骊山刑徒，据点在长安。
+  wazhai_zhanghan: { name: '骊山刑徒', tier: 2 },   // 章邯｜秦｜长安｜旧档 骊山刑徒 原样沿用：二世二年周文兵至戏，章邯请赦骊山徒、人奴产子悉发以击楚军，大破之（《史记·秦始皇本纪》《项羽本纪》），其军即骊山刑徒，据点在长安。
   ruo_wangjian: { name: '秦之锐士', tier: 1 },   // 王翦｜秦｜长安｜旧档 秦之锐士 原样沿用：《荀子·议兵》称「秦之锐士」不可当，王翦将秦兵六十万灭楚（《史记·白起王翦列传》），番号与秦军本体相符。
   shangzhou_shangyang: { name: '商州锐士', tier: 4 },   // 商鞅｜秦｜商邑｜旧档 商州锐士 原样沿用：商鞅破魏后封於商十五邑、号商君，据点即商邑（《史记·商君列传》）；锐士为变法后秦卒之称（《荀子·议兵》）。
   baiyang_mengtian: { name: '长城军', tier: 3 },   // 蒙恬｜秦｜肤施｜🔴 [2026-11-02 主人令] 长城烽火卫 → 长城军，档位照原 T3 不改；按史：蒙恬率三十万众北逐匈奴、筑长城、守上郡十余年（《史记·蒙恬列传》），「长城军」即其所统长城—上郡边防之众，据点在肤施（上郡治所）。
@@ -376,7 +389,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   khoshut_lhasang: { name: '达木蒙古', tier: 3 },   // 拉藏｜和硕｜逻些｜旧档无；1642 年固始汗入藏后以当雄（达木）驻蒙古骑兵、置达木八旗护卫拉萨，为和硕特汗王直辖（百度百科「达木蒙古」；维基「拉藏汗」记 1717 年拉萨城破败死）。
   gen_lobsang_danjin: { name: '青海和硕特', tier: 4 },   // 罗卜藏丹津｜和硕｜当雄｜旧档无；维基「罗卜藏丹津」记其为固始汗之孙、达什巴图尔之子，驻安多（青海）东部，1723 年会盟赛罕托罗海、联合青海蒙古各部反清。
   dulan_dashibatuer: { name: '青海归锋', tier: 3 },   // 达什巴图尔｜和硕｜台吉乃尔｜用本项目《武将百科》旧档 wikiElite＝青海归锋、wikiTier＝3；达什巴图尔为青海和硕特首领、固始汗第十子，1697 年率青海诸台吉归附清朝封和硕亲王，与旧档相合。
-  bfe3_68: { name: '幽州突骑', tier: 3 },   // 严纲｜幽｜北京｜《后汉书·耿弇传》「渔阳、上谷突骑，天下所闻」；《三国志·公孙瓒传》严纲为瓒所署冀州刺史，率幽州突骑为前锋，界桥之战为麴义所破。
+  bfe3_68: { name: '幽州突骑', tier: 1 },   // 严纲｜幽｜北京｜《后汉书·耿弇传》「渔阳、上谷突骑，天下所闻」；《三国志·公孙瓒传》严纲为瓒所署冀州刺史，率幽州突骑为前锋，界桥之战为麴义所破。
   cangzhou_liurengong: { name: '定霸都', tier: 4 },   // 刘仁恭｜幽｜北京｜《旧五代史·刘仁恭传》仁恭据幽州，简军中壮士为亲军，号「定霸都」；旧档与本条相符，原样沿用。
   yuzhou_zuti: { name: '中流击楫军', tier: 3 },   // 祖逖｜晋｜雍丘｜《晋书·祖逖传》逖渡江中流击楫立誓北复中原，部曲号「中流击楫军」，镇雍丘；旧档时代地点均合，原样沿用。
   danyang_huanwen: { name: '姑孰护卫', tier: 2 },   // 桓温｜晋｜姑孰｜《晋书·桓温传》温镇姑孰、遥控朝政，其牙门亲兵为「姑孰护卫」；旧档与东晋、江南镇所相符，原样沿用。
@@ -415,7 +428,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   erzhu_erzhuzhao: { name: '契胡突骑', tier: 3 },   // 尔朱兆｜尔朱｜秀容川｜《魏书·卷七五·尔朱兆传》：尔朱氏本秀容川契胡酋帅，世统契胡部众为骑兵，尔朱兆继尔朱荣领其众，532 年韩陵山败于高欢；番号取本族固有军号。
   wu_fuchai: { name: '姑苏舟师', tier: 3 },   // 夫差｜吴｜姑苏｜《左传·哀公九年》吴城邗、沟通江淮以通粮道，《国语·吴语》载夫差率舟师北上黄池争盟；吴以姑苏为都，舟师即其本土特色军种。
   gen_li_xiucheng: { name: '苏福枪船', tier: 3 },   // 李秀成｜太平｜金陵｜李秀成 1860 年克苏州、置苏福省，统苏南水乡枪船水师及洋枪队为苏浙战场尖兵（《李秀成自述》；罗尔纲《太平天国史》）；据点在金陵，同为太平天国苏浙根本。
-  totomi_jiujingzhongci: { name: '三河武士', tier: 2 },   // 酒井忠次｜德川｜浜松城｜用本项目《武将百科》旧档 wikiElite＝三河武士、wikiTier＝2；酒井忠次为三河谱代重臣、德川四天王，1572 年三方原、1575 年长篠统三河众作战（《三河物语》），浜松城即其封地。
+  totomi_jiujingzhongci: { name: '三河武士', tier: 3 },   // 酒井忠次｜德川｜浜松城｜用本项目《武将百科》旧档 wikiElite＝三河武士、wikiTier＝2；酒井忠次为三河谱代重臣、德川四天王，1572 年三方原、1575 年长篠统三河众作战（《三河物语》），浜松城即其封地。
   osumi_ganfujianxu: { name: '九州防人', tier: 3 },   // 肝付兼续｜岛津｜赤尾木城｜用本项目《武将百科》旧档 wikiElite＝九州防人、wikiTier＝3；肝付兼续为大隅南部豪族，据赤尾木城与岛津氏争大隅，统九州南部国人众（维基「肝付兼续」；《岛津氏历代记》）。
   taira_pingzhisheng: { name: '平家水军', tier: 3 },   // 平知盛｜平｜赤间关｜用本项目《武将百科》旧档 wikiElite＝平家水军、wikiTier＝3；平知盛为平家水军总督，1185 年坛之浦之战统率平家战船（《平家物语》；《吾妻镜》），赤间关即战场所在。
   gen_dinhle: { name: '义安戍卒', tier: 4 },   // 丁礼｜瞿越｜义安｜丁礼（1385–1427）为 15 世纪大越将领，镇义安（驩州），地当林邑北界，戍守州兵即其本军（《大越史记全书·本纪》；据点注「南越王坐镇驩州抗击林邑」）。
@@ -432,7 +445,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   huige_gulipeiluo: { name: '回纥精骑', tier: 1 },       // 骨力裴罗：统一回纥诸部、建汗国之本部精骑（《旧唐书·回纥传》）。
   kazakh_hasimu: { name: '哈萨克骑', tier: 1 },          // 哈斯木汗：哈萨克汗国中兴，本部骑兵长期为野战主力（《哈萨克汗国史》）。
   aba_shapuer: { name: '萨珊重装骑', tier: 1 },          // 沙普尔：萨珊重装骑兵为对罗马战争主力（《萨珊帝国史》）。
-  delan_sulun: { name: '帕提亚铁骑', tier: 1 },          // 苏伦：卡莱之战以帕提亚骑射与铁甲骑歼克拉苏军（普鲁塔克《克拉苏传》）。
+  delan_sulun: { name: '帕提亚铁骑', tier: 2 },          // 苏伦：卡莱之战以帕提亚骑射与铁甲骑歼克拉苏军（普鲁塔克《克拉苏传》）。
   ansxi_surena: { name: '卡莱弓骑', tier: 2 },           // 苏莱纳（成名战敌将条目）：卡莱战场的帕提亚骑射兵，以机动弓骑配合铁甲骑破敌（普鲁塔克《克拉苏传》）。
   ansxi_aershake: { name: '帕尼精骑', tier: 2 },         // 阿尔沙克：率帕尼部骑众入主安息、奠定建国武力；与后世苏伦所统帕提亚铁骑分号。
   bfe_meherdates: { name: '帕提亚王卫', tier: 4 },       // 梅哈尔达特：安息王族争位者，所部为王位战争中的本部王卫，不共享卡莱主帅的高级番号。
@@ -442,13 +455,13 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   shazhou_zhangyichao: { name: '归义精骑', tier: 1 },    // 张议潮：归义军收复河西十一州，长期镇戍敦煌（《旧唐书·张议潮传》）。
   xiyuduhu_banchao: { name: '西域都护军', tier: 1 },     // 班超：以西域都护本部长期经营西域、击破莎车与龟兹（《后汉书·班超传》）。
   jiluo_d_douxian: { name: '北征突骑', tier: 1 },        // 窦宪：稽落山大破北匈奴、燕然勒功之北征主力（《后汉书·窦宪传》）。
-  chanzhou_chairong: { name: '殿前诸班', tier: 1 },      // 柴荣：高平战后整练殿前诸班，为后周南征北伐核心（《旧五代史·周世宗纪》）。
+  chanzhou_chairong: { name: '殿前诸班', tier: 2 },      // 柴荣：高平战后整练殿前诸班，为后周南征北伐核心（《旧五代史·周世宗纪》）。
   taiping_shidakai: { name: '太平军', tier: 1 },         // 石达开：太平军本部屡为西征主力；「石敢当」是其称誉，不是部队番号（《太平天国史》）。
   you_gengyan: { name: '上谷突骑', tier: 1 },            // 耿弇：上谷突骑随其平定河北、齐地，为东汉中兴野战军（《后汉书·耿弇传》）。
   wuwu_d_lvmeng: { name: '楼船军', tier: 1 },            // 吕蒙：统孙吴水军袭取荆州，改写三方局势（《三国志·吴书·吕蒙传》）。
   yingzhou_ying_d_muronghuang: { name: '黄龙兵', tier: 1 }, // 慕容皝：前燕都龙城，黄龙兵为其辽东经略与建国主力（《晋书·慕容皝载记》）。
   hejian_gongsunzan: { name: '白马义从', tier: 2 },      // 公孙瓒：亲统白马义从驰骋幽冀；上谷突骑归耿弇，不再错挂（《后汉书·公孙瓒传》）。
-  yangzhou_wangping: { name: '无当飞军', tier: 2 },      // 王平：统无当飞军，兴势之战拒曹爽大军（《三国志·蜀书·王平传》）。
+  yangzhou_wangping: { name: '无当飞军', tier: 1 },      // 王平：统无当飞军，兴势之战拒曹爽大军（《三国志·蜀书·王平传》）。
   huizhou_zhugeliang: { name: '元戎弩兵', tier: 2 },     // 诸葛亮：损益连弩称元戎，北伐军弩兵为战术特色（《三国志·蜀书·诸葛亮传》裴注《魏氏春秋》）。
   xianyu_hanxin: { name: '轻勇骑', tier: 2 },            // 韩信：井陉以二千轻骑袭赵垒，为背水阵决胜奇兵（《史记·淮阴侯列传》）。
   qu_d_quyi: { name: '先登营', tier: 2 },                // 麴义：界桥以八百先登伏强弩破白马义从（《后汉书·袁绍传》）。
@@ -471,7 +484,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   qingqiang_jiangwei: { name: '冉駹突骑', tier: 3 },     // 姜维：经营陇右、汶山羌胡地区，所统含冉駹等蜀边部众（《三国志·蜀书·姜维传》）。
   yueyi_zhangyi: { name: '牦牛戍锋', tier: 3 },          // 张嶷：镇越嶲、定牦牛道，南中戍兵为其本部（《三国志·蜀书·张嶷传》）。
   nanzhong_mazhong: { name: '兴古戍锋', tier: 3 },       // 马忠：镇南中、守兴古，所统南中戍兵（《三国志·蜀书·马忠传》）。
-  huaiyang_zhouyafu: { name: '细柳营', tier: 3 },        // 周亚夫：细柳营军纪著名，后统军平七国之乱（《史记·绛侯周勃世家》）。
+  huaiyang_zhouyafu: { name: '细柳营', tier: 1 },        // 周亚夫：细柳营军纪著名，后统军平七国之乱（《史记·绛侯周勃世家》）。
   ruzhou_sunjian: { name: '赤帻先锋', tier: 3 },         // 孙坚：赤帻为标识，常率先登陷阵（《三国志·吴书·孙破虏传》裴注《吴书》）。
   jiang_s_huanggai: { name: '零陵蒙冲', tier: 3 },       // 黄盖：镇零陵、领孙吴水军，赤壁献策火攻（《三国志·吴书·黄盖传》）。
   hao_d_weirui: { name: '钟离护卫', tier: 3 },           // 韦睿：钟离之战统梁军破魏，所部具水军与工事先筑特色（《梁书·韦睿传》）。
@@ -548,7 +561,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   ouyang_ouyangwei: { name: '庐陵蛮兵', tier: 4 },
   fu2_zhoudi: { name: '临川郡兵', tier: 4 },
   muer_mujier: { name: '呼罗珊义从', tier: 4 },
-  baha_gaiwamu: { name: '巴哈尔兹铁卫', tier: 4 },
+  baha_gaiwamu: { name: '巴哈尔兹卫', tier: 4 },
   jibin_jianisejia: { name: '迦毕试梵骑', tier: 2 },
   yaoluoge_yaoluogepusa: { name: '娑陵鹰骑', tier: 4 },
   guzgan_abuhalisi: { name: '古兹根卫队', tier: 4 },

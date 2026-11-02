@@ -123,6 +123,7 @@ const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
     city_yaqi: ['city_jiale'],
     city_jiale: ['city_guli'],
     city_guli: ['city_mogadishu', 'city_aden'],
+    city_cochin: ['city_mogadishu', 'city_aden', 'city_mombasa'],
     city_guoa: ['city_mombasa', 'city_hormuz'],
     city_hormuz: ['city_aden', 'city_bashila', 'city_kalaqi'],
     city_kalaqi: ['city_hormuz'],
@@ -140,20 +141,21 @@ const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
 
     // 达·伽马 & 麦哲伦大西洋—南美航线（及西欧/加勒比汇入线）
     city_cape_town: ['city_sainthelena', 'city_luanda'],
-    city_sainthelena: ['city_ribeira'],
+    // 圣赫勒拿：东印度公司/葡萄牙印度航线归航补给站，向西至亚速尔（印度航线归途）、里斯本、佛得角、巴西
+    city_sainthelena: ['city_ribeira', 'city_angra', 'city_lisiben', 'city_salvador'],
     city_luanda: ['city_elmina'],
-    city_ribeira: ['city_elmina', 'city_guanabara'],
+    city_ribeira: ['city_elmina', 'city_guanabara', 'city_salvador'],   // 卡布拉尔1500年由佛得角西南横渡至巴西
     city_lundun: ['city_kanpeier', 'city_calais'],
     city_calais: ['city_bordeaux'],
     city_kanpeier: ['city_bordeaux'],
     city_bordeaux: ['city_boertu'],
     city_boertu: ['city_lisiben'],
-    city_lisiben: ['city_labate'],
+    city_lisiben: ['city_labate', 'city_angra'],
     city_jiadisi: ['city_telde'],
     city_labate: ['city_telde'],
     city_telde: ['city_ribeira'],
     city_elmina: ['city_salvador', 'city_luanda'],
-    city_angra: ['city_lisiben'],
+    city_angra: ['city_lisiben', 'city_havana'],   // 西班牙宝船队归途经亚速尔，去程自加勒比
     city_veracruz: ['city_katachena', 'city_havana'],
     city_portobelo: ['city_katachena', 'city_havana'],
     city_newamsterdam: ['city_jamestown'],
@@ -170,7 +172,7 @@ const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
     city_sanjulian: ['city_hagatna', 'city_valparaiso'],
     city_valparaiso: ['city_lima', 'city_rapanui'],
     city_rapanui: ['city_tahiti'],
-    city_tahiti: ['city_valparaiso'],
+    city_tahiti: ['city_hagatna'],
 
     // 麦哲伦—马尼拉大帆船太平洋—香料群岛航线
     city_lima: ['city_acapulco'],
@@ -601,16 +603,18 @@ export class PlayerHero {
         // 1. 若当前已在历史大航海针路主干港口上，严格沿郑和/达·伽马/麦哲伦/大帆船主航线推进（不绕暹罗湾、不进波斯湾与红海内腹）
         const nextHubIds = HISTORICAL_SAIL_NEXT[startId];
         if (nextHubIds && nextHubIds.length > 0) {
+            // 只走没去过、且净向西的针路边；全走过就放弃针路，交给下面的向西规则，绝不回踩
             const freshIds = nextHubIds.filter((id) => !this.recentTourStops.includes(id));
-            const poolIds = freshIds.length > 0 ? freshIds : nextHubIds;
-            const shuffled = [...poolIds].sort(() => Math.random() - 0.5);
+            const shuffled = [...freshIds].sort(() => Math.random() - 0.5);
             for (const targetId of shuffled) {
                 const targetCity = this.deps.cityManager.getCity(targetId);
                 if (!targetCity) continue;
                 const res = roadRegistry.findSeaOnlyPath(startId, targetId);
                 if (res && res.coordinates.length >= 2) {
+                    const p = roadRegistry.pathToLatLngs(res);
+                    if (!this.isWestwardPath(p, pos.lng)) continue;
                     chosenDest = targetCity;
-                    chosenPath = roadRegistry.pathToLatLngs(res);
+                    chosenPath = p;
                     break;
                 }
             }
@@ -619,7 +623,8 @@ export class PlayerHero {
         // 2. 若当前处于支线/内海港口（如地中海、波罗的海、黑海、波斯湾、暹罗湾等），先寻纯海路驶向最近的历史远洋主干港口汇入主航线
         if (!chosenDest || !chosenPath) {
             const hubPorts = ports
-                .filter((c) => c.id !== startId && !!HISTORICAL_SAIL_NEXT[c.id])
+                .filter((c) => c.id !== startId && !!HISTORICAL_SAIL_NEXT[c.id] && !this.recentTourStops.includes(c.id)
+                    && westwardDeg(pos.lng, c.longitude) >= 1.5 && westwardDeg(pos.lng, c.longitude) < 165)
                 .sort(
                     (a, b) => getEuclideanDistance(pos, { lat: a.latitude, lng: a.longitude })
                         - getEuclideanDistance(pos, { lat: b.latitude, lng: b.longitude }),
@@ -627,8 +632,10 @@ export class PlayerHero {
             for (const hub of hubPorts.slice(0, 12)) {
                 const res = roadRegistry.findSeaOnlyPath(startId, hub.id);
                 if (res && res.coordinates.length >= 2) {
+                    const p = roadRegistry.pathToLatLngs(res);
+                    if (!this.isWestwardPath(p, pos.lng)) continue;
                     chosenDest = hub;
-                    chosenPath = roadRegistry.pathToLatLngs(res);
+                    chosenPath = p;
                     break;
                 }
             }
@@ -674,10 +681,20 @@ export class PlayerHero {
 
     /** 环球/航行最近走过的站（严格防回头：长期记录历史据点，绝不二度回踩） */
     private recentTourStops: string[] = [];
+    /** 整条路线净向西且东折有限（与 rankWestLegs 同口径但略松，供针路表用） */
+    private isWestwardPath(path: Array<{ lng: number }>, fromLng: number): boolean {
+        let west = 0, east = 0, prev = fromLng;
+        for (const p of path) {
+            const d = ((p.lng - prev + 540) % 360) - 180;
+            if (d > 0) east += d; else west -= d;
+            prev = p.lng;
+        }
+        return west - east >= 1.0 && east <= Math.max(3.0, west * 0.2);
+    }
     private rememberTourStop(id: string): void {
         if (!this.recentTourStops.includes(id)) {
             this.recentTourStops.push(id);
-            if (this.recentTourStops.length > 100) this.recentTourStops.shift();
+            if (this.recentTourStops.length > 600) this.recentTourStops.shift();
         }
     }
     private skipRecentStops(cands: City[]): City[] {

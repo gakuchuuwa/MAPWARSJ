@@ -778,7 +778,7 @@ export class Army implements IBattleUnit {
         // [FIX] Track position BEFORE moving for renderer interpolation / direction
         this.lastPosition = { lat: this.position.lat, lng: this.position.lng };
 
-        if (this.isOnSea) {
+        if (this.isOnSea && this.currentLegSea() !== false) {
             this.advanceNaval(moveDist, finalSpeed, deltaTime);
             this.syncSpatialRegistry();
             this.updateMarkerPosition();
@@ -964,8 +964,8 @@ export class Army implements IBattleUnit {
             //   到港上岸仍走 updateTerrainSpeed 原有的到站迟滞（≈3 秒，见 SiegeManager 到港注释）。
             //   ⚠️ 奔敌城的最后一段由 LegionMarchPath.trimPathFromEnd 插了一个不带 sea 标记的收尾点，
             //      `destination.sea` 不是 true ⇒ 走的就是本闸（与 2026-10-11 行为一致，非新改动）。
-            if (this.destination?.sea !== true) {
-                // 船队抵岸：改为陆军登陆，踏上 (nextLat, nextLng) 陆地并立即切换为陆军形态继续进发
+            if (this.destination?.sea !== true && LandSeaSystem.isInlandBeyondCoast(nextLat, nextLng)) {
+                // 船队抵岸且已深入海岸线缓冲带以内：改为陆军登陆，踏上 (nextLat, nextLng) 陆地并切换为陆军形态继续进发
                 this.position.lat = nextLat;
                 this.position.lng = nextLng;
                 this.lastDirection = targetHeading;
@@ -1103,23 +1103,47 @@ export class Army implements IBattleUnit {
         const legSea = this.currentLegSea();
         this.prevLegSea = legSea;
         if (legSea === false) {
-            // 陆路标记：整段锁死陆军形态（绝不在陆路上变舰队）。
-            this.isOnSea = false;
-            this.seaFlipDist = 0;
-            this.seaFlipElapsed = 0;
+            // 🔴 [2026-11-03 海岸线一段距离不切换]
+            //   陆上行人走陆路：保持陆军形态。
+            //   若是海上船只刚进沿岸陆路（仍在海岸线缓冲带内）：若前方短期内还会再下海，或上岸连续走得还不够远，
+            //   在海岸线缓冲带内先不切换为人，避免海边港口「海路→短陆路→海路」人船来回切换；
+            //   一旦离开海岸线进入内陆，或沿纯陆路走满确认距离且前方不再紧接海路，即上岸为人。
+            if (!this.isOnSea) {
+                this.seaFlipDist = 0;
+                this.seaFlipElapsed = 0;
+                this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
+                return;
+            }
+            if (LandSeaSystem.isInlandBeyondCoast(pos.lat, pos.lng)) {
+                this.isOnSea = false;
+                this.seaFlipDist = 0;
+                this.seaFlipElapsed = 0;
+                this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
+                return;
+            }
+            this.seaFlipDist += step;
+            if (step <= 1e-9) {
+                this.seaFlipElapsed += Math.max(0, deltaTime);
+            } else {
+                this.seaFlipElapsed = 0;
+            }
+            if (
+                !this.hasSeaLegAheadWithinDeg(Army.SEA_FLIP_CONFIRM_DEG * 2)
+                && (this.seaFlipDist >= Army.SEA_FLIP_CONFIRM_DEG || this.seaFlipElapsed >= Army.SEA_FLIP_CONFIRM_SEC)
+            ) {
+                this.isOnSea = false;
+                this.seaFlipDist = 0;
+                this.seaFlipElapsed = 0;
+            }
             this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
             return;
         }
         if (legSea === true) {
-            const centerLand = LandSeaSystem.probeLandSea(pos.lat, pos.lng) === 'land';
             if (this.isOnSea) {
-                // 已是舰队：只有「连续压在大块陆地上」才上岸，掠过港口/岸线不动形态。
-                if (centerLand) {
+                // 已是舰队：在海岸线缓冲距离内（周边仍有海）绝不上岸；只有真正深入内陆超出海岸缓冲带且累计够远才上岸。
+                const deepInland = LandSeaSystem.isInlandBeyondCoast(pos.lat, pos.lng);
+                if (deepInland) {
                     this.seaFlipDist += step;
-                    // 时间闸只作「原地不动」的兜底：船贴岸转弯时会低速蠕行
-                    // （advanceNaval 的 turnLimitedAdvance），若时间项照常累计，3 秒在海上速度下
-                    // ≈66km，会远早于 22km 距离闸满足 → 又出现一次短促海→陆→海（底比斯-特洛伊）。
-                    // 有位移的帧只认距离闸；真原地不动（被按住/驻留/blocked）才走 3 秒兜底。
                     if (step <= 1e-9) {
                         this.seaFlipElapsed += Math.max(0, deltaTime);
                     } else {
@@ -1140,30 +1164,37 @@ export class Army implements IBattleUnit {
                 this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
                 return;
             }
-            // 尚未登船（港口岸上/刚离港）：前方连续海路够长且脚下不是陆地 → 当刻登船。
-            if (!centerLand && this.seaStretchAheadDeg() >= Army.SEA_FLIP_CONFIRM_DEG) {
+            // 尚未登船（岸上/贴岸行走）：在海岸线缓冲距离内（周边仍有陆地）保持行人形态不切换；
+            // 只有真正离开海岸线一段距离进入纯海域、且前方连续海路够长才登船。
+            const openSea = LandSeaSystem.isOpenSeaBeyondCoast(pos.lat, pos.lng);
+            if (openSea && this.seaStretchAheadDeg() >= Army.SEA_FLIP_CONFIRM_DEG) {
                 this.isOnSea = true;
-                this.seaFlipDist = 0;
-                this.seaFlipElapsed = 0;
-                this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
-                return;
             }
-            // 海路标记太短（岸边那段）/ 脚下还是陆地 → 落到下面的掩膜判定（带迟滞）
+            this.seaFlipDist = 0;
+            this.seaFlipElapsed = 0;
+            this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
+            return;
         }
 
-        const rawSea = LandSeaSystem.isSeaAtMajority(pos.lat, pos.lng);
-        if (rawSea === this.isOnSea) {
-            // 判定与当前状态一致 → 清零（稳定态不累积，真正下海/上岸时无额外延迟）
+        // 未走固定路网（或到站停驻）：海岸线缓冲带内保持原形态不切换，只有完全脱离海岸缓冲带才累计翻转
+        const wantFlip = this.isOnSea
+            ? LandSeaSystem.isInlandBeyondCoast(pos.lat, pos.lng)
+            : LandSeaSystem.isOpenSeaBeyondCoast(pos.lat, pos.lng);
+        if (!wantFlip) {
             this.seaFlipDist = 0;
             this.seaFlipElapsed = 0;
         } else {
             this.seaFlipDist += step;
-            this.seaFlipElapsed += Math.max(0, deltaTime);
+            if (step <= 1e-9) {
+                this.seaFlipElapsed += Math.max(0, deltaTime);
+            } else {
+                this.seaFlipElapsed = 0;
+            }
             if (
                 this.seaFlipDist >= Army.SEA_FLIP_CONFIRM_DEG
                 || this.seaFlipElapsed >= Army.SEA_FLIP_CONFIRM_SEC
             ) {
-                this.isOnSea = rawSea;
+                this.isOnSea = !this.isOnSea;
                 this.seaFlipDist = 0;
                 this.seaFlipElapsed = 0;
             }
@@ -1207,6 +1238,24 @@ export class Army implements IBattleUnit {
             if (next) deg += Math.hypot(next.lat - queue[i].lat, shortestLongitudeDelta(queue[i].lng, next.lng));
         }
         return deg;
+    }
+
+    /** 前方 maxDeg（度）行程内是否还会踏上海路段（防止沿海短陆路夹在两段海路之间导致下船又上船） */
+    private hasSeaLegAheadWithinDeg(maxDeg: number): boolean {
+        const dest = this.destination as { lat: number; lng: number; sea?: boolean } | null;
+        if (!dest) return false;
+        if (dest.sea === true) return true;
+        const queue = this.pathQueue as Array<{ lat: number; lng: number; sea?: boolean }>;
+        let acc = Math.hypot(dest.lat - this.position.lat, shortestLongitudeDelta(this.position.lng, dest.lng));
+        let prev = dest;
+        for (let i = 0; i < queue.length; i++) {
+            if (acc > maxDeg) return false;
+            const pt = queue[i];
+            if (pt.sea === true) return true;
+            acc += Math.hypot(pt.lat - prev.lat, shortestLongitudeDelta(prev.lng, pt.lng));
+            prev = pt;
+        }
+        return false;
     }
 
     /** 海/陆形态确定之后的共同收尾：船型锁 → 速度目标 → 平滑 → 同步渲染层。 */

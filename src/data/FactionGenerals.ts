@@ -490,14 +490,14 @@ export interface FactionGeneral {
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     hulumusi: [
         // 阿塔（约1450–1512，Khwaja Ata，忽鲁谟斯首相兼守城总指挥，1507年率军民修筑要塞保卫霍尔木兹海峡）→ 霍尔木兹（ORIE）
-        { generalId: 'hulumusi_ata', factionId: 'hulumusi', cityId: 'city_hormuz', generalName: '阿塔', portrait: '/assets/ORIE/hulumusi_ata.png', eliteName: '阿拉伯步兵', eliteTier: 4, legionName: '城堡时代撒拉森军团' },
+        { generalId: 'hulumusi_ata', factionId: 'hulumusi', cityId: 'city_hormuz', generalName: '阿塔', portrait: '/assets/ORIE/hulumusi_ata.png', eliteName: '霍尔木兹兵', eliteTier: 4, legionName: '城堡时代撒拉森军团' },
     ],
 
     bolinixiya: [
         // 波马雷（约1742–1803，波马雷一世，统一大溪地与周边群岛建立波马雷王朝）→ 大溪地（MALAY）
-        { generalId: 'bolinixiya_baomalei', factionId: 'bolinixiya', cityId: 'city_tahiti', generalName: '波马雷', portrait: '/assets/MALAY/bolinixiya_baomalei.png', eliteName: '马来矛兵', eliteTier: 4, legionName: '帝国时代马六甲军团' },
+        { generalId: 'bolinixiya_baomalei', factionId: 'bolinixiya', cityId: 'city_tahiti', generalName: '波马雷', portrait: '/assets/MALAY/bolinixiya_baomalei.png', eliteName: '大溪地武士', eliteTier: 4, legionName: '帝国时代马六甲军团' },
         // 🔴 [2026-10-25 主人定「B」无文字时代传说人物入将] 霍图·玛图阿：拉帕努伊（复活节岛）口述史载首位最高阿里伊国王；史源转述、传说成分；普将；立绘留空
-        { generalId: 'bolinixiya_huotumatua', factionId: 'bolinixiya', cityId: 'city_rapanui', generalName: '霍图玛图阿', portrait: '', legionName: '封建时代波利尼西亚军团', eliteName: '拉帕努伊勇士', eliteTier: 4 },
+        { generalId: 'bolinixiya_huotumatua', factionId: 'bolinixiya', cityId: 'city_rapanui', generalName: '霍图玛图阿', portrait: '', legionName: '封建时代波利尼西亚军团', eliteName: '拉帕努伊兵', eliteTier: 4 },
 
     ],
 
@@ -2513,7 +2513,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yinggelan: [
                 // 约翰·史密斯（1580–1631，弗吉尼亚殖民地开拓者与詹姆斯敦总督）→ 詹姆斯敦（BRITONS）
                 // 亨利·摩根（1635–1688，私掠舰队司令、牙买加副总督）→ 皇家港（BRITONS）
-        { generalId: 'yinggelan_henlimogen', factionId: 'yinggelan', cityId: 'city_portroyal', generalName: '亨利摩根', portrait: '/assets/BRITONS/yinggelan_henlimogen.png', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
+        { generalId: 'yinggelan_henlimogen', factionId: 'yinggelan', cityId: 'city_portroyal', generalName: '亨利摩根', portrait: '/assets/BRITONS/yinggelan_henlimogen.png', eliteName: '牙买加私掠', eliteTier: 2, legionName: '帝国时代大不列颠军团' },
 { generalId: 'yinggelan_yuehansimisi', factionId: 'yinggelan', cityId: 'city_jamestown', generalName: '约翰史密斯', portrait: '/assets/BRITONS/yinggelan_yuehansimisi.png', eliteName: '边区戍兵', eliteTier: 4, legionName: '帝国时代大不列颠军团' },
         { generalId: 'yinggelan_dai', factionId: 'yinggelan', cityId: 'city_madras', generalName: '戴', portrait: '', eliteName: '西帕依', eliteTier: 4, legionName: '帝国时代大不列颠军团' },   // 弗朗西斯·戴 1639 建圣乔治堡（马德拉斯管区）
         { generalId: 'yinggelan_angjier', factionId: 'yinggelan', cityId: 'city_mumbai', generalName: '昂吉尔', portrait: '', eliteName: '西帕依', eliteTier: 4, legionName: '帝国时代大不列颠军团' },   // 杰拉德·昂吉尔 1668 孟买首任总督
@@ -7476,7 +7476,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         // 🔴 [2026-10-25 主人令「程名振史实该放营州（营州都督兼东夷都护），朝阳改为河朔文化」] 据点 长安→朝阳（唐营州，治柳城）；文化随据点＝河朔，军团按「封建×河朔」自动取，不再手写中原军团
-        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_wugucheng', generalName: '程名振', portrait: '/assets/KOREA/jilizhou_chengmingzhen.png', eliteName: '高句丽弩手', eliteTier: 4  },   // 按史：程名振任营州都督兼东夷都护，镇营州（《旧唐书·卷八三·程务挺传附》）
+        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_wugucheng', generalName: '程名振', portrait: '/assets/KOREA/jilizhou_chengmingzhen.png', eliteName: '营州铁骑', eliteTier: 3  },   // 按史：程名振任营州都督兼东夷都护，镇营州（《旧唐书·卷八三·程务挺传附》）
 
 
 
@@ -17231,7 +17231,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_taobao', factionId: 'hou_zhao', cityId: 'city_xingtai', generalName: '桃豹', portrait: '/assets/WEI/bfe_taobao.png', eliteName: '后赵突骑', eliteTier: 3 },
     ],
     da_yan: [
-        { generalId: 'dayan_cuiqianyou', factionId: 'da_yan', cityId: 'city_luoyang', generalName: '崔乾祐', portrait: '/assets/CENTRAL/dayan_cuiqianyou.png', eliteName: '中原郡兵', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 成名战敌将；安禄山旧将，756 灵宝西原设伏破唐军；据点洛阳（CENTRAL，大燕国都）；用势力精锐曳落河
+        { generalId: 'dayan_cuiqianyou', factionId: 'da_yan', cityId: 'city_luoyang', generalName: '崔乾祐', portrait: '/assets/CENTRAL/dayan_cuiqianyou.png', eliteName: '曳落河', eliteTier: 2 },   // 🔴 [2026-10-25 按史] 成名战敌将；安禄山旧将，756 灵宝西原设伏破唐军；据点洛阳（CENTRAL，大燕国都）；用势力精锐曳落河
         { generalId: 'bfe_yin_ziqi', factionId: 'da_yan', cityId: 'city_fanyang', generalName: '尹子奇', portrait: '/assets/WEI/bfe_yin_ziqi.png', legionName: '封建时代河朔军团', eliteName: '河朔骑兵', eliteTier: 4 },
         { generalId: 'zhuozhou_anlushan', factionId: 'da_yan', cityId: 'city_fanyang', generalName: '安禄山', portrait: '/assets/WEI/zhuozhou_anlushan.png', eliteName: '范阳铁骑', eliteTier: 2 },
         { generalId: 'zhuozhou_shisiming', factionId: 'da_yan', cityId: 'city_fanyang', generalName: '史思明', portrait: '/assets/WEI/zhuozhou_shisiming.png', eliteName: '范阳铁骑', eliteTier: 2 },
@@ -17248,7 +17248,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     han_zhao: [
-        { generalId: 'shizhou_liucong', factionId: 'han_zhao', cityId: 'city_linfen', legionName: '古典时代华夏军团', generalName: '刘聪', portrait: '/assets/CENTRAL/shizhou_liucong.png', eliteName: '中原郡兵', eliteTier: 4 },
+        { generalId: 'shizhou_liucong', factionId: 'han_zhao', cityId: 'city_linfen', legionName: '古典时代华夏军团', generalName: '刘聪', portrait: '/assets/CENTRAL/shizhou_liucong.png', eliteName: '匈奴控弦', eliteTier: 3 },
 
     
         { generalId: 'yao_liuyuan', factionId: 'han_zhao', cityId: 'city_linfen', legionName: '古典时代华夏军团', generalName: '刘渊', portrait: '/assets/CENTRAL/yao_liuyuan.png', eliteName: '中原郡兵', eliteTier: 4 },

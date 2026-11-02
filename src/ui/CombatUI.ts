@@ -68,7 +68,7 @@ import {
 } from '../combat/GeneralSkillCombat';
 import {getGeneralProfile} from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
-import { getCityEliteConfig, getLegionEliteLegionName, getCityEliteLegionName, getExpeditionEliteLegionName } from '../data/ExpeditionLegions';
+import { getCityEliteConfig, getLegionEliteLegionName, getCityEliteLegionName, getExpeditionEliteLegionName, getEliteTierDisplayName } from '../data/ExpeditionLegions';
 import type { Army } from '../legion/Army';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
@@ -348,12 +348,11 @@ function getLegionEliteBadgeName(unit: IBattleUnit): string {
     return raw;
 }
 
-/** 精锐五级 → 二字标签（2026-07-16）。按 unit 所属据点查精锐，不依赖 army.isElite */
+/** 精锐五级 → 二字标签。档位名统一走 ExpeditionLegions.getEliteTierDisplayName（T0 传奇｜T1 战略｜T2 战术｜T3 知名｜T4 存在）。按 unit 所属据点查精锐，不依赖 army.isElite */
 function getEliteTierLabel(unit: IBattleUnit): string | null {
     const tier = getUnitEliteTier(unit);
     if (tier !== null) {
-        const LABELS = ['天神军', '王者师', '劲锐旅', '精英团', '戍卫营'];
-        return LABELS[tier] ?? null;
+        return getEliteTierDisplayName(tier) || null;
     }
     // fallback：从 entity 的 cityId 直接查精锐 config
     const entity = unit.getEntity?.() as { homeCityId?: string; getSourceCityId?: () => string | null } | undefined;
@@ -361,8 +360,7 @@ function getEliteTierLabel(unit: IBattleUnit): string | null {
     if (cityId) {
         const config = getCityEliteConfig(cityId);
         if (config?.tier !== undefined) {
-            const LABELS = ['天神军', '王者师', '劲锐旅', '精英团', '戍卫营'];
-            return LABELS[config.tier] ?? null;
+            return getEliteTierDisplayName(config.tier) || null;
         }
     }
     return null;

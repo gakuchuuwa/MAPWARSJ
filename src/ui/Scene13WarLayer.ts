@@ -54,7 +54,7 @@ import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { getGeneralProfile } from '../data/GeneralSkills';
 import { getFactionGeneral, getFactionIdOfGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
-import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig, getGeneralEliteConfig } from '../data/ExpeditionLegions';
+import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig, getGeneralEliteConfig, getEliteTierDisplayName } from '../data/ExpeditionLegions';
 import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 import { getGameMode } from '../data/generalOnStage';
 
@@ -843,7 +843,8 @@ export class Scene13WarLayer {
                 hasGeneral: !this.skirmish,
                 generalId: this.sideGeneralId[f],
                 isFamous: this.sideIsFamous[f],
-                eliteTier: this.sideEliteTier[f] !== null ? (`T${this.sideEliteTier[f]}`) : null,
+                // 🔴 [2026-11-03] 档位名走五级制（传奇/战略/战术/知名/存在），不再显示 T0–T4 代号
+                eliteTier: this.sideEliteTier[f] !== null ? (getEliteTierDisplayName(this.sideEliteTier[f]!) || null) : null,
                 rateMult: this.skillRateMult[f],
                 gauge: this.skillGauge[f],
                 ratePerSec: this.skillRatePerSec[f],
