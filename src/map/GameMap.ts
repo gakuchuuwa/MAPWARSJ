@@ -224,7 +224,7 @@ export class GameMap {
         this.map.createPane('vectorRiverPane');
         const vectorRiverPane = this.map.getPane('vectorRiverPane');
         if (vectorRiverPane) {
-            vectorRiverPane.style.zIndex = '335'; // 低于 riverPane(340)
+            vectorRiverPane.style.zIndex = '335'; // 低于 riverPane(340)与据点(610)，贴合地面
             vectorRiverPane.style.opacity = '1.0';
             vectorRiverPane.style.filter = '';
         }

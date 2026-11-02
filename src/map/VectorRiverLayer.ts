@@ -139,14 +139,16 @@ export class VectorRiverLayer extends L.FeatureGroup {
         // 1. 轻微的同色系河岸过渡，避免深描边把河流画成绳索。
         const border = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getBorderStyle(feature, 9),
-            pane: pane
+            pane: pane,
+            interactive: false,
         });
         (border as any).riverType = 'border';
 
         // 2. 河流主体从海、湖基色派生；窄河保持干净，不铺海浪纹理。
         const water = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getWaterStyle(feature, 9),
-            pane: pane
+            pane: pane,
+            interactive: false,
         });
         (water as any).riverType = 'water';
 

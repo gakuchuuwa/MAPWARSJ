@@ -2547,9 +2547,10 @@ export class CityLifeAmbientLayer {
                             'SUCAI_BUILDING',
                             actor.buildingResource,
                             actor.damageVariant,
-                            // 城外生产建筑间距随 STRATEGIC_SPRITE_SCALE 同比例联动，改一处系数整体同步缩放
-                            groupPt.x + side * Math.round((actor.seasonalPlot === 'pasture' ? 290 : actor.seasonalPlot ? 240 : 136) * STRATEGIC_SPRITE_SCALE) * zoomFactor,
-                            groupPt.y - 5 * zoomFactor,
+                            // 🔴 [2026-11-02 主人令「生产方式中的建筑，可以放到地的中间。例如四块田地，房屋放四个中间。但是显示还是随机显示1-4块田」]
+                            //    主人固定在南块 [0, +PLOT_DY]，四块地皮的几何正中心即 (groupPt.x, groupPt.y + (-PLOT_DY + 4) * zoomFactor)。
+                            groupPt.x,
+                            groupPt.y + (-PLOT_DY + 4) * zoomFactor,
                             BUILDING_SCALE_BASE * bNorm * zoomFactor,
                             peaceFinalAlpha
                         );
