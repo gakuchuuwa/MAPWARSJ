@@ -3394,7 +3394,7 @@ export class PlayerQuestSystem {
         // 若玩家已加入势力（isAttached），则全程跟随武将，不触发战场事件。
         // 🔴 [2026-09-17 主人定]「剧本和乱斗模式分开……乱斗模式的话，玩家不去战场。」
         //    乱斗模式下整条战场分支不走，直接去找武将入伍。切模式时已出发的行程由 setAutoPlan 掐掉。
-        if (!this.quest && !this.deps.hero.isAttached() && this.deps.hero.autoPlan !== 'script' && this.deps.hero.isTraveling()) {
+        if (!this.quest && !this.deps.hero.isAttached() && this.deps.hero.autoPlan !== 'script' && !this.deps.hero.isTourMode() && this.deps.hero.isTraveling()) {
             const targetCityId = this.deps.hero.getTravelCityId();
             const chaseArmyId = this.deps.hero.getChaseArmyId();
             // 🔴 [2026-10-25] 正去远距成名战的接任务城（被攻的城）时，那城本来就可能没有在场武将，

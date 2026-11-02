@@ -1,7 +1,7 @@
 /**
  * PlayerHUD —— 玩家面板（右侧）、据点对话框、提示条。纯 DOM，不碰引擎。
  */
-import type { PlayerHero, PlayerAutoPlan } from './PlayerHero';
+import type { PlayerHero, PlayerAutoPlan, PlayerPlayMode } from './PlayerHero';
 import type { PlayerQuestSystem } from './PlayerQuestSystem';
 import type { DialoguePayload } from './PlayerQuestSystem';
 import { heroKeyForRank, nextRankAfter, PLAYER_RANKS } from './PlayerConfig';
@@ -567,27 +567,31 @@ export class PlayerHUD {
         const secControls = document.createElement('div');
         secControls.className = 'player-hud-section';
 
-        // 🤖 自动模式
-        const autoLabel = document.createElement('label');
-        autoLabel.className = 'player-hud-chip';
-        autoLabel.style.cssText = `
-            display:inline-flex; align-items:center; gap:4px; cursor:pointer; font-size:11px; font-weight:700; user-select:none;
+        // 🤖 玩法切换：一个按钮，点一下换下一个（自动 → 休息 → 环球 → 航行 → 自动）
+        const modes: Array<[PlayerPlayMode, string, string]> = [
+            ['auto', '🤖 自动', '自动寻找武将、自动入伍随军、自动接战'],
+            ['rest', '💤 休息', '纯手动操作，不自动行动'],
+            ['globe', '🌍 环球', '只环球旅行，不找武将，水陆路皆可'],
+            ['sail', '⛵ 航行', '只坐船环游世界，不上陆地'],
+        ];
+        const curIdx = Math.max(0, modes.findIndex(([m]) => m === hero.playMode));
+        const [, curText, curTip] = modes[curIdx];
+        const active = hero.playMode !== 'rest';
+        const modeBtn = document.createElement('button');
+        modeBtn.type = 'button';
+        modeBtn.className = 'player-hud-chip';
+        modeBtn.textContent = curText;
+        modeBtn.title = `${curTip}（点击切换到「${modes[(curIdx + 1) % modes.length][1]}」）`;
+        modeBtn.style.cssText = `
+            cursor:pointer; font-family:inherit; font-size:11px; font-weight:700; line-height:20px;
             height:22px; padding:0 7px; border-radius:4px; box-sizing:border-box;
-            background:${hero.autoMode ? 'linear-gradient(180deg, rgba(46,58,42,0.88), rgba(24,32,22,0.94))' : 'linear-gradient(180deg, rgba(38,31,22,0.88), rgba(22,18,13,0.94))'};
-            color:${hero.autoMode ? '#8ce0aa' : '#b9ab95'};
-            border:1px solid ${hero.autoMode ? 'rgba(124,212,160,0.48)' : 'rgba(204,174,116,0.32)'};
+            background:${active ? 'linear-gradient(180deg, rgba(46,58,42,0.88), rgba(24,32,22,0.94))' : 'linear-gradient(180deg, rgba(38,31,22,0.88), rgba(22,18,13,0.94))'};
+            color:${active ? '#8ce0aa' : '#b9ab95'};
+            border:1px solid ${active ? 'rgba(124,212,160,0.48)' : 'rgba(204,174,116,0.32)'};
             box-shadow:inset 0 1px 0 rgba(255,235,180,0.1), 0 1px 3px rgba(0,0,0,0.35);
-            transition:all 0.2s ease;
         `;
-        autoLabel.title = '开：自动寻找武将、自动入伍随军、自动接战；关：纯手动操作';
-        const autoCheck = document.createElement('input');
-        autoCheck.type = 'checkbox';
-        autoCheck.checked = hero.autoMode;
-        autoCheck.style.cssText = 'cursor:pointer; accent-color:#c8a858; margin:0; width:12px; height:12px;';
-        autoCheck.addEventListener('change', () => hero.setAutoMode(autoCheck.checked));
-        autoLabel.appendChild(autoCheck);
-        autoLabel.appendChild(document.createTextNode('自动'));
-        secControls.appendChild(autoLabel);
+        modeBtn.addEventListener('click', () => hero.setPlayMode(modes[(curIdx + 1) % modes.length][0]));
+        secControls.appendChild(modeBtn);
 
         // 📜/⚔️ 自动模式玩法
         const planSel = document.createElement('select');

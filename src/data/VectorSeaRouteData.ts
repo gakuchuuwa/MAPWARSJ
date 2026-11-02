@@ -6075,5 +6075,79 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "牡丹-澎湖",
+                type: "sea",
+                id: "sea_city_mudan_city_penghu_1793000000000",
+                startConnection: "city_mudan",
+                endConnection: "city_penghu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [120.8333, 22.2],
+                    [120.9, 21.9],
+                    [120.4, 21.9],
+                    [120, 22.6],
+                    [119.6, 23.2],
+                    [119.5, 23.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "罗斯托克-汉堡",
+                type: "sea",
+                id: "sea_city_rostock_city_hamburg_1793000000000",
+                startConnection: "city_rostock",
+                endConnection: "city_hamburg"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [12.13, 54.09],
+                    [12.3, 54.6],
+                    [12.9, 55],
+                    [12.86, 55.6],
+                    [12.65, 56.05],
+                    [12.2, 56.5],
+                    [11.5, 57.3],
+                    [10.7, 57.85],
+                    [9.5, 58],
+                    [8, 57.7],
+                    [7.6, 57.2],
+                    [7.5, 56],
+                    [7.7, 55],
+                    [7.8, 54.5],
+                    [8.1, 54],
+                    [8.7, 53.98],
+                    [9.3, 53.85],
+                    [9.99, 53.55],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "丹塔-普里",
+                type: "sea",
+                id: "sea_city_danta_city_puli_1793000000000",
+                startConnection: "city_danta",
+                endConnection: "city_puli"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [84, 18.4],
+                    [84.6, 18.2],
+                    [85.3, 18.9],
+                    [86, 19.5],
+                    [85.831, 19.81],
+                ]
+            }
+        },
     ]
 };

@@ -598,6 +598,30 @@ export class RoadRegistry {
         return out;
     }
 
+    /** 主海路网的港口：只取海路连通的最大一片（里海这类孤立湖区的港口排除在外）。 */
+    public getMainSeaPortIds(): string[] {
+        const ports = this.getSeaPortIds();
+        const seen = new Set<string>();
+        let best: string[] = [];
+        for (const start of ports) {
+            if (seen.has(start)) continue;
+            const comp: string[] = [];
+            const stack = [start];
+            seen.add(start);
+            while (stack.length > 0) {
+                const cur = stack.pop()!;
+                if (this.nodes.get(cur)?.type === 'city') comp.push(cur);
+                for (const e of this.adjacencyList.get(cur) || []) {
+                    if (!e.isSea || seen.has(e.to)) continue;
+                    seen.add(e.to);
+                    stack.push(e.to);
+                }
+            }
+            if (comp.length > best.length) best = comp;
+        }
+        return best;
+    }
+
     /** 只走海路边的最短路（航行模式：不上陆地）。起终点须是港口，不通返回 null。 */
     public findSeaOnlyPath(startNodeId: string, endNodeId: string): PathResult | null {
         if (!this.adjacencyList.has(startNodeId) || !this.adjacencyList.has(endNodeId)) return null;

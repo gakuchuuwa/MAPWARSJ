@@ -56,6 +56,7 @@ import { moderateLiveName } from '../live/LiveNameModeration';
 
 /** 自动模式的三套玩法：乱斗模式（现行开局默认，全部武将恒在场）、百岁模式（按登场年～百岁出现）、剧本模式（按历史顺序去战场）（主人 2026-10-18 定；🔴 2026-10-24 主人令恢复百岁默认）。 */
 export type PlayerAutoPlan = 'centenarian' | 'script' | 'melee';
+export type PlayerPlayMode = 'auto' | 'rest' | 'globe' | 'sail';
 
 /** 从本势力文化军团三排里学到的兵种。 */
 export interface LearnedUnit {
@@ -406,8 +407,8 @@ export class PlayerHero {
             this.travelToCity(pick, true);
             return;
         }
-        // 航行：先确保站在港口
-        const ports = roadRegistry.getSeaPortIds()
+        // 航行：先确保站在港口（只认主海路网的港口，里海等孤立湖区不去，免得困在里面出不来）
+        const ports = roadRegistry.getMainSeaPortIds()
             .map((id) => this.deps.cityManager.getCity(id))
             .filter((c): c is City => !!c);
         if (ports.length === 0) return;

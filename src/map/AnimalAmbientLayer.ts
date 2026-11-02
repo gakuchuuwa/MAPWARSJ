@@ -80,7 +80,14 @@ const NO_RUN_SPECIES: ReadonlySet<string> = new Set([
     // run 素材过大（象 37MB、水怪 82MB 解码）也按无 run 处理，控内存
     'ELEPHANT', 'NESSIE',
 ]);
-const LAND_FLEE_RADIUS_DEG = 0.18;  // 军团/玩家进入 ≈65px 就受惊
+// 🔴 [2026-11-02 主人令「战略地图上，军团来了以后，动物会逃走，不是碰到后逃走，是看到就逃走」]
+//    原 LAND_FLEE_RADIUS_DEG = 0.18°（zoom 9 下仅 ≈65px）只从军团中心点算，而 10 队军团的前排与主将队
+//    本身就伸出中心前方 ≈100~125px（0.28°~0.34°），导致前锋士兵已经踩到动物身上才触发逃跑。
+//    现改为「看到即逃」：拉大军团/玩家的视野受惊半径，并在 collectThreats 中同时把军团前锋探点与行军纵队纳入威胁源。
+const LAND_FLEE_RADIUS_DEG = 0.65;  // 默认受惊视野半径（zoom 9 下 ≈240px，看到军团过来就逃走，不等碰到）
+const LEGION_SIGHT_RADIUS_DEG = 0.72; // 军团大队人马旌旗醒目，动物老远（距前锋外缘 ≈180~220px）看到即逃
+const LEGION_VANGUARD_OFFSET_DEG = 0.24; // 军团前锋（主将队+前排）在中心前方的偏移量
+const PLAYER_SIGHT_RADIUS_DEG = 0.52; // 独行玩家单骑受惊视野半径（≈190px）
 const LAND_STEP_MIN_DEG = 0.07;     // 一次随机走动的最短距离 ≈25px（🔴 多动：0.055→0.07）
 const LAND_STEP_MAX_DEG = 0.24;     // 最长 ≈90px（原 0.19）
 const LAND_LEASH_DEG = 0.46;        // 离出生格超过 ≈170px 就往回走（步长变大，圈同步放宽）
@@ -221,6 +228,12 @@ const LAND_SCATTER_RADIUS_DEG = 0.06;
  *   ④ 离出生格超过 ≈150px（0.42°）就往回走，绝不整场跑丢。
  * 纯函数、无 DOM 依赖，便于离线核查。
  */
+/** 逃跑遇水或据点禁区时的绕行偏转角（弧度：±25°、±50°、±75°、±105°、±135°、±160°） */
+const FLEE_STEER_ANGLES = [
+    0.436, -0.436, 0.873, -0.873, 1.309, -1.309,
+    1.833, -1.833, 2.356, -2.356, 2.793, -2.793,
+] as const;
+
 export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly LandThreat[], opts: LandStepOptions): void {
     const { isSea, rand } = opts;
     const canWalk = opts.canWalk !== false;
@@ -231,13 +244,31 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
     // 水面与据点圈一律当作走不进去的障碍
     const blocked = (p: Pt): boolean => isSea(p) || (opts.nearCity ? opts.nearCity(p) : false);
 
-    // ① 找最近的威胁
+    // 给定理想逃跑单位向量 (dx, dy)，若前方受阻则向两侧偏转寻找干地逃跑方向
+    const pickClearFleeDir = (dx: number, dy: number, probeDist: number): { dx: number; dy: number } | null => {
+        const directPt = { lat: e.pos.lat + dy * probeDist, lng: e.pos.lng + dx * probeDist };
+        if (!blocked(directPt)) return { dx, dy };
+        const preferSign = (Math.floor(e.phase) % 2 === 0) ? 1 : -1;
+        for (const baseAng of FLEE_STEER_ANGLES) {
+            const ang = baseAng * preferSign;
+            const ca = Math.cos(ang), sa = Math.sin(ang);
+            const rdx = dx * ca - dy * sa;
+            const rdy = dx * sa + dy * ca;
+            const cand = { lat: e.pos.lat + rdy * probeDist, lng: e.pos.lng + rdx * probeDist };
+            if (!blocked(cand)) return { dx: rdx, dy: rdy };
+        }
+        return null;
+    };
+
+    // ① 找最近的威胁（看到即逃：自身或所属兽群中心进入视野半径即受惊）
     let threat: LandThreat | null = null;
     let threatDist = Infinity;
-    // 各威胁按自己的受惊半径判（军团 / 玩家大、商队中、村民小），取进入半径的最近一个
     for (const t of threats) {
-        const d = Math.hypot(t.lat - e.pos.lat, t.lng - e.pos.lng);
-        if (d < (t.r ?? LAND_FLEE_RADIUS_DEG) && d < threatDist) { threatDist = d; threat = t; }
+        const r = t.r ?? LAND_FLEE_RADIUS_DEG;
+        const dSelf = Math.hypot(t.lat - e.pos.lat, t.lng - e.pos.lng);
+        const dHerd = e.herd ? Math.hypot(t.lat - e.home.lat, t.lng - e.home.lng) : Infinity;
+        const d = Math.min(dSelf, dHerd);
+        if (d < r && dSelf < threatDist) { threatDist = dSelf; threat = t; }
     }
     if (threat) {
         let dx = e.pos.lng - threat.lng;
@@ -249,9 +280,22 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
         } else {
             dx /= len; dy /= len;
         }
-        e.fleeDX = dx;
-        e.fleeDY = dy;
-        e.fleeTimer = 1.6 + rand() * 1.6;
+        const probe = Math.max(0.05, fleeSpeed * Math.max(dt, 0.05) * 2);
+        // 若已在绕岸/绕城逃跑且直逃方向被挡，而当前逃跑方向畅通，则保持当前绕行方向继续跑，不在岸边原地卡死
+        const curClear = e.fleeTimer > 0 && (e.fleeDX !== 0 || e.fleeDY !== 0)
+            && !blocked({ lat: e.pos.lat + e.fleeDY * probe, lng: e.pos.lng + e.fleeDX * probe })
+            && (e.fleeDX * dx + e.fleeDY * dy > -0.35);
+        if (!curClear) {
+            const steered = pickClearFleeDir(dx, dy, probe);
+            if (steered) {
+                e.fleeDX = steered.dx;
+                e.fleeDY = steered.dy;
+            } else {
+                e.fleeDX = dx;
+                e.fleeDY = dy;
+            }
+        }
+        e.fleeTimer = Math.max(e.fleeTimer, 1.8 + rand() * 1.4);
         e.target = null;
     }
 
@@ -346,17 +390,40 @@ export function stepLandEntry(e: AnimalEntry, dt: number, threats: readonly Land
     }
 
     if (speed > 0) {
-        const next = { lat: e.pos.lat + vy * speed * dt, lng: e.pos.lng + vx * speed * dt };
+        const stepDist = speed * dt;
+        const next = { lat: e.pos.lat + vy * stepDist, lng: e.pos.lng + vx * stepDist };
         e.seaTimer -= dt;
-        const check = e.seaTimer <= 0;
-        if (check) e.seaTimer = LAND_SEA_CHECK_SEC;
-        // 据点圈每帧都判（走 O(9) 个桶，代价极低），保证一只也踏不进去；水面仍按 0.25 秒复查
+        const check = e.action === 'run' || e.seaTimer <= 0;
+        if (e.seaTimer <= 0) e.seaTimer = LAND_SEA_CHECK_SEC;
+        // 据点圈每帧都判（走 O(9) 个桶，代价极低），逃跑中也实时判海并在岸边自动偏转绕跑
         const intoCity = opts.nearCity ? opts.nearCity(next) : false;
         if (!intoCity && (!check || !isSea(next))) {
             e.pos = next;
             e.facing = landDir8(vy, vx);
+            // 逃跑离开原位后同步更新落脚点 home，避免逃完又回头往军团怀里走
+            if (e.action === 'run') {
+                e.home = { lat: next.lat, lng: next.lng };
+            }
+        } else if (e.action === 'run') {
+            // 逃跑途中碰到岸线或据点禁区：尝试偏转方向沿岸/沿圈外继续跑，不停在原地发呆
+            const steered = pickClearFleeDir(vx, vy, Math.max(stepDist, 0.04));
+            if (steered) {
+                e.fleeDX = steered.dx;
+                e.fleeDY = steered.dy;
+                const altNext = { lat: e.pos.lat + steered.dy * stepDist, lng: e.pos.lng + steered.dx * stepDist };
+                if (!blocked(altNext)) {
+                    e.pos = altNext;
+                    e.facing = landDir8(steered.dy, steered.dx);
+                    e.home = { lat: altNext.lat, lng: altNext.lng };
+                }
+            } else {
+                e.target = null;
+                e.fleeTimer = 0;
+                e.action = 'idle';
+                e.timer = 0.6 + rand() * 1.0;
+            }
         } else {
-            // 踩到水面、或走进据点 0.30° 圈：停步、清目标、回头
+            // 闲逛踩到水面、或走进据点圈：停步、清目标、回头
             e.target = null;
             e.fleeTimer = 0;
             e.action = 'idle';
@@ -576,6 +643,8 @@ export class AnimalAmbientLayer {
         const inUse = new Set<string>();
         for (const e of this.entries) {
             inUse.add(`${e.dir}:idle`);
+            if (!NO_WALK_SPECIES.has(e.dir)) inUse.add(`${e.dir}:walk`);
+            if (!NO_RUN_SPECIES.has(e.dir)) inUse.add(`${e.dir}:run`);
             if (e.action !== 'idle') inUse.add(`${e.dir}:${e.action}`);
         }
         for (const b of this.birds) {
@@ -701,6 +770,8 @@ export class AnimalAmbientLayer {
                             const facing = Math.floor(hash01(col, row, 6 + salt) * 8) % 8;
                             const phase = Math.floor(hash01(col, row, 7 + salt) * 1000);
                             this.loadAsset(dir, 'idle', false);
+                            if (!NO_WALK_SPECIES.has(dir)) this.loadAsset(dir, 'walk', false);
+                            if (!NO_RUN_SPECIES.has(dir)) this.loadAsset(dir, 'run', false);
                             // 起始相位错开：不让整屏动物同时起步（决策计时器 0~3 秒随机）
                             const seed = hash01(col, row, 9 + k * 17);
                             this.entries.push({
@@ -779,27 +850,78 @@ export class AnimalAmbientLayer {
                 }
             }
         }
+
+        // 同群警报联动：群内只要有一只看到军团开始奔逃，同群其余个体立即同步朝同一方向逃离，并对齐群中心 home
+        const herdFlee = new Map<string, { dx: number; dy: number; timer: number; sumLat: number; sumLng: number; count: number }>();
+        for (const e of this.entries) {
+            if (!e.herd || e.fadingOut || e.doomed) continue;
+            const info = herdFlee.get(e.herd);
+            if (!info) {
+                herdFlee.set(e.herd, {
+                    dx: e.fleeTimer > 0 ? e.fleeDX : 0,
+                    dy: e.fleeTimer > 0 ? e.fleeDY : 0,
+                    timer: e.fleeTimer,
+                    sumLat: e.pos.lat,
+                    sumLng: e.pos.lng,
+                    count: 1,
+                });
+            } else {
+                info.sumLat += e.pos.lat;
+                info.sumLng += e.pos.lng;
+                info.count++;
+                if (e.fleeTimer > info.timer) {
+                    info.timer = e.fleeTimer;
+                    info.dx = e.fleeDX;
+                    info.dy = e.fleeDY;
+                }
+            }
+        }
+        for (const e of this.entries) {
+            if (!e.herd || e.fadingOut || e.doomed) continue;
+            const info = herdFlee.get(e.herd);
+            if (!info) continue;
+            if (info.timer > 0 && e.fleeTimer <= 0 && (info.dx !== 0 || info.dy !== 0)) {
+                e.fleeDX = info.dx;
+                e.fleeDY = info.dy;
+                e.fleeTimer = info.timer;
+                e.target = null;
+                e.action = 'run';
+                e.facing = landDir8(info.dy, info.dx);
+            }
+            if (info.count > 1) {
+                e.home = { lat: info.sumLat / info.count, lng: info.sumLng / info.count };
+            }
+        }
     }
 
-    /** 危机来源：所有军团（玩家跟随的那支也在其中）。0.3 秒缓存一次，平移地图时不重复取。 */
+    /** 危机来源：所有军团（含前锋与队尾探点）及玩家、商队、村民。60ms 缓存一次，行军靠近时零延迟触发受惊。 */
     private threatCache: LandThreat[] = [];
     private threatCacheAt = 0;
     private collectThreats(): LandThreat[] {
         const now = performance.now();
-        if (now - this.threatCacheAt < 300) return this.threatCache;
+        if (now - this.threatCacheAt < 60) return this.threatCache;
         this.threatCacheAt = now;
         const out: LandThreat[] = [];
         const game = (window as any).game;
         const armies = game?.legionManager?.getArmies?.() ?? [];
         for (const a of armies) {
-            if (!a || a.isDestroyed) continue;
+            if (!a || a.isDestroyed || a.visible === false) continue;
             const p = a.getPosition?.();
-            if (p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) out.push({ lat: p.lat, lng: p.lng });
+            if (!p || !Number.isFinite(p.lat) || !Number.isFinite(p.lng)) continue;
+            out.push({ lat: p.lat, lng: p.lng, r: LEGION_SIGHT_RADIUS_DEG });
+            // 军团 10 队方阵/纵队的前锋（主将队+前排）与队尾各自伸出中心约 0.24°，一并作为视野威胁源，确保前锋还没靠近动物就已被看见
+            const dirRad = typeof a.lastDirection === 'number' && Number.isFinite(a.lastDirection) ? a.lastDirection : 0;
+            const fLat = Math.cos(dirRad) * LEGION_VANGUARD_OFFSET_DEG;
+            const fLng = Math.sin(dirRad) * LEGION_VANGUARD_OFFSET_DEG;
+            out.push({ lat: p.lat + fLat, lng: p.lng + fLng, r: LEGION_SIGHT_RADIUS_DEG });
+            out.push({ lat: p.lat - fLat, lng: p.lng - fLng, r: LEGION_SIGHT_RADIUS_DEG * 0.85 });
         }
         // 🔴 2026-10-31 主人令「动物碰到人和军团经过的时候要逃跑」：
         //    玩家脱离大军单独行动时不在军团列表里，单独加；村民、商队从人类活动登记取（半径各自带）
         const hero = game?.playerHero?.getPosition?.();
-        if (hero && Number.isFinite(hero.lat) && Number.isFinite(hero.lng)) out.push({ lat: hero.lat, lng: hero.lng });
+        if (hero && Number.isFinite(hero.lat) && Number.isFinite(hero.lng)) {
+            out.push({ lat: hero.lat, lng: hero.lng, r: PLAYER_SIGHT_RADIUS_DEG });
+        }
         for (const p of collectHumanPresence()) out.push(p);
         this.threatCache = out;
         return out;

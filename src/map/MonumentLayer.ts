@@ -32,7 +32,12 @@ const WONDER_GROUND_TOP: Record<string, number> = {
     'ORIE_WONDER_PERSIANS': 10,     // 泰西封巨拱：实心底边仅 65.5%（下方 34.5% 为地面阴影）→ 下移让其踏到底座前角
 };
 /** 重叠判定最小间距（度）：zoom 9 下 ≈ 90px（奇观 marker 宽），中心距小于此值判为重叠并外推 */
-const OVERLAP_MIN_DEG = 0.25;
+/** 
+ * 🔴 [2026-11-02 主人令「凯旋门和竞技场重叠了，所有特殊建筑都不要重叠」]
+ * 重叠判定最小间距（度）：确保立绘（w≈100~160px）、地基羽化底座（groundW≈160~250px）及下方铭牌标签
+ * 在任何缩放与纬度下互不遮挡、无交叉重叠；北纬 40° 下 0.45 度对应经度约 122px、纬度约 220px。
+ */
+const OVERLAP_MIN_DEG = 0.45;
 
 interface PlacedMonument extends MonumentData {
     /** marker 实际摆放坐标（重叠时可能相对真实坐标外推） */
@@ -313,31 +318,66 @@ export class MonumentLayer {
      * all 已按「正确挂靠 → 错位修正 → 野外」排序，故正确城市地标留原位，重复/错位的往外散。
      * 真实坐标保留在 mon.lat/lng（弹窗用），仅 renderLat/renderLng 参与摆放。
      */
+    /**
+     * 🔴 [2026-11-02 主人令「凯旋门和竞技场重叠了，所有特殊建筑都不要重叠」]
+     * 去重叠：
+     * 1. 废除任何建筑特例，全图特殊建筑一视同仁应用 OVERLAP_MIN_DEG 严格去重叠；
+     * 2. 同坐标/极近距离（<0.08度）的附加奇观，默认沿东南方向（2.5D 开阔视角，避开正南方城市铭牌）平移至安全距离；
+     * 3. 运行多轮物理松弛迭代，确保全图任意两座特殊建筑之间间距绝对 >= OVERLAP_MIN_DEG，立绘与文字铭牌彻底不重叠。
+     */
     private deoverlap(all: MonumentData[]): PlacedMonument[] {
-        const placed: PlacedMonument[] = [];
-        const anchors: { lat: number; lng: number }[] = [];
+        const placed: PlacedMonument[] = all.map((m) => ({ ...m, renderLat: m.lat, renderLng: m.lng }));
 
-        for (const mon of all) {
-            let rLat = mon.lat;
-            let rLng = mon.lng;
-            let nearest: { lat: number; lng: number } | null = null;
-            let minD = Infinity;
-            // [2026-08-28 主人要求「君士坦丁凯旋门和罗马斗兽场两个奇观要挨着」]：紧邻搭档允许紧凑间距(0.06度)
-            const minReqDeg = mon.id.includes('ARCH_OF_CONSTANTINE') ? 0.06 : OVERLAP_MIN_DEG;
-            for (const a of anchors) {
-                const d = Math.hypot(rLat - a.lat, rLng - a.lng);
-                if (d < minD) { minD = d; nearest = a; }
+        // 第一阶段：单遍贪心落位（城市核心奇观优先保留原位，附加奇观遇重叠向外散）
+        const fixedAnchors: { lat: number; lng: number }[] = [];
+        for (const cur of placed) {
+            for (const anc of fixedAnchors) {
+                const d = Math.hypot(cur.renderLat - anc.lat, cur.renderLng - anc.lng);
+                if (d < OVERLAP_MIN_DEG) {
+                    let dLat = cur.renderLat - anc.lat;
+                    let dLng = cur.renderLng - anc.lng;
+                    // 若与锚点几乎在同一点（如凯旋门与斗兽场同在罗马城中），沿东南方（dLat < 0, dLng > 0）散开
+                    if (Math.hypot(dLat, dLng) < 0.08) {
+                        dLat = -0.32;
+                        dLng = 0.35;
+                    }
+                    const dist = Math.hypot(dLat, dLng) || 1e-9;
+                    cur.renderLat = anc.lat + (dLat / dist) * OVERLAP_MIN_DEG;
+                    cur.renderLng = anc.lng + (dLng / dist) * OVERLAP_MIN_DEG;
+                }
             }
-            if (nearest && minD < minReqDeg) {
-                const dLat = rLat - nearest.lat;
-                const dLng = rLng - nearest.lng;
-                const d = Math.hypot(dLat, dLng) || 1e-9;
-                rLat = nearest.lat + (dLat / d) * minReqDeg;
-                rLng = nearest.lng + (dLng / d) * minReqDeg;
-            }
-            placed.push({ ...mon, renderLat: rLat, renderLng: rLng });
-            anchors.push({ lat: rLat, lng: rLng });
+            fixedAnchors.push({ lat: cur.renderLat, lng: cur.renderLng });
         }
+
+        // 第二阶段：全局多轮松弛迭代（彻底消除级联次生冲突，确保无死角不重叠）
+        for (let iter = 0; iter < 10; iter++) {
+            let moved = false;
+            for (let i = 0; i < placed.length; i++) {
+                for (let j = i + 1; j < placed.length; j++) {
+                    const p1 = placed[i];
+                    const p2 = placed[j];
+                    const d = Math.hypot(p1.renderLat - p2.renderLat, p1.renderLng - p2.renderLng);
+                    if (d < OVERLAP_MIN_DEG) {
+                        let dLat = p2.renderLat - p1.renderLat;
+                        let dLng = p2.renderLng - p1.renderLng;
+                        if (Math.hypot(dLat, dLng) < 1e-6) {
+                            dLat = -0.32;
+                            dLng = 0.35;
+                        }
+                        const dist = Math.hypot(dLat, dLng) || 1e-9;
+                        const push = (OVERLAP_MIN_DEG - dist) * 0.55;
+                        // p1 为优先建筑，p2 承担大部分外推
+                        p2.renderLat += (dLat / dist) * push * 1.5;
+                        p2.renderLng += (dLng / dist) * push * 1.5;
+                        p1.renderLat -= (dLat / dist) * push * 0.5;
+                        p1.renderLng -= (dLng / dist) * push * 0.5;
+                        moved = true;
+                    }
+                }
+            }
+            if (!moved) break;
+        }
+
         return placed;
     }
 

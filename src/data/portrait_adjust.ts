@@ -4713,7 +4713,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 32
         },
         "/assets/SICILIANS/gen_frederic_ii.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 21
         },
@@ -9586,6 +9586,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": -9
+        },
+        "/assets/LATIN/gen_pietro_tiepolo.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 42
+        },
+        "/assets/LATIN/pisa_manfuleidi.png": {
+            "scale": 0.88,
+            "offsetX": 1,
+            "offsetY": -13
+        },
+        "/assets/SICILIANS/bfe_landi.png": {
+            "scale": 1.24,
+            "offsetX": 24,
+            "offsetY": 0
         }
     },
     "folderGuides": {
