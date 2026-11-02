@@ -435,7 +435,6 @@ interface UnitSkillTag {
 
 const unitSkillTags = new WeakMap<WarMan, UnitSkillTag>();
 const taggedCastVfx = new WeakSet<Scene13SkillVfx>();
-const castColorMap = new WeakMap<Scene13SkillVfx, TacticalSixSet>();
 let unitTagActiveUntilSec = 0;
 let globalCastSeq = 0;
 
@@ -449,9 +448,6 @@ interface SideCastState {
     panicPaid: boolean;
     panicPlayer: boolean;
     panicSeq: number;
-    instantSix: 'dizhan' | 'bingzhan' | 'baizhan' | null;
-    instantUntilSec: number;
-    instantSeq: number;
 }
 
 const sideCastTier: [SideCastState, SideCastState] = [
@@ -459,35 +455,13 @@ const sideCastTier: [SideCastState, SideCastState] = [
         frenzyPaid: false, frenzyPlayer: false, frenzySeq: 0,
         shieldPaid: false, shieldPlayer: false, shieldSeq: 0,
         panicPaid: false, panicPlayer: false, panicSeq: 0,
-        instantSix: null, instantUntilSec: 0, instantSeq: 0,
     },
     {
         frenzyPaid: false, frenzyPlayer: false, frenzySeq: 0,
         shieldPaid: false, shieldPlayer: false, shieldSeq: 0,
         panicPaid: false, panicPlayer: false, panicSeq: 0,
-        instantSix: null, instantUntilSec: 0, instantSeq: 0,
     },
 ];
-
-let latestSideStates: [Scene13SkillVisualState, Scene13SkillVisualState] = [
-    { frenzy: 0, shield: 0, panic: 0 },
-    { frenzy: 0, shield: 0, panic: 0 },
-];
-
-/** 查询某一方当前正在生效的所有技能（按释放先后 seq 升序排列） */
-function getSideActiveSkills(side: 0 | 1, nowSec: number, excludeSix?: TacticalSixSet): Array<{ six: TacticalSixSet; seq: number }> {
-    const st = latestSideStates[side];
-    const meta = sideCastTier[side];
-    const list: Array<{ six: TacticalSixSet; seq: number }> = [];
-    if (st.frenzy > 0 && excludeSix !== 'gongzhan') list.push({ six: 'gongzhan', seq: meta.frenzySeq });
-    if (st.shield > 0 && excludeSix !== 'shengzhan') list.push({ six: 'shengzhan', seq: meta.shieldSeq });
-    if (st.panic > 0 && excludeSix !== 'hunzhan') list.push({ six: 'hunzhan', seq: meta.panicSeq });
-    if (meta.instantSix && nowSec < meta.instantUntilSec && excludeSix !== meta.instantSix) {
-        list.push({ six: meta.instantSix, seq: meta.instantSeq });
-    }
-    list.sort((a, b) => a.seq - b.seq);
-    return list;
-}
 
 function registerSkillCastMeta(v: Scene13SkillVfx, nowSec: number): void {
     if (taggedCastVfx.has(v)) return;
@@ -496,11 +470,6 @@ function registerSkillCastMeta(v: Scene13SkillVfx, nowSec: number): void {
     const player = v.playerCast === true;
     const ef: 0 | 1 = v.side === 0 ? 1 : 0;
     const targetSide: 0 | 1 = (v.six === 'hunzhan' || v.six === 'baizhan') ? ef : v.side;
-
-    // 检查受影响方是否已有正在生效的前序技能：若有，则本次叠加释放保留前一个技能的色彩，贴图用本次新技能
-    const prevActive = getSideActiveSkills(targetSide, nowSec, v.six);
-    const prevColorSix = prevActive.length > 0 ? prevActive[prevActive.length - 1].six : v.six;
-    castColorMap.set(v, prevColorSix);
 
     const seq = ++globalCastSeq;
     const meta = sideCastTier[targetSide];
@@ -517,23 +486,17 @@ function registerSkillCastMeta(v: Scene13SkillVfx, nowSec: number): void {
         meta.panicPaid = paid;
         meta.panicPlayer = player;
         meta.panicSeq = seq;
-    } else if (v.six === 'dizhan' || v.six === 'bingzhan' || v.six === 'baizhan') {
+    } else if (v.six === 'dizhan' || v.six === 'bingzhan') {
         const untilSec = nowSec + INSTANT_SYNC_SEC;
         if (untilSec > unitTagActiveUntilSec) unitTagActiveUntilSec = untilSec;
-        meta.instantSix = v.six;
-        meta.instantUntilSec = untilSec;
-        meta.instantSeq = seq;
-        if (v.six !== 'baizhan') {
-            for (const m of v.targets) {
-                unitSkillTags.set(m, { six: v.six, untilSec, seq, paid, playerCast: player });
-            }
+        for (const m of v.targets) {
+            unitSkillTags.set(m, { six: v.six, untilSec, seq, paid, playerCast: player });
         }
     }
 }
 
 function getCastPalette(v: Scene13SkillVfx): SkillPalette {
-    const colorSix = castColorMap.get(v) ?? v.six;
-    return PALETTE[colorSix];
+    return PALETTE[v.six];
 }
 
 function tierScale(v: Scene13SkillVfx): number {
@@ -1234,10 +1197,10 @@ function resolveUnitSkillLayers(
         };
     }
     active.sort((a, b) => a.seq - b.seq);
-    // 叠加规则：保留前一个仍在生效的技能色彩（active[length - 2]），换上后一个最新释放的技能贴图（active[length - 1]）
+    const latest = active[active.length - 1];
     return {
-        colorEntry: active[active.length - 2],
-        iconEntry: active[active.length - 1],
+        colorEntry: latest,
+        iconEntry: latest,
     };
 }
 
@@ -1250,10 +1213,6 @@ export function drawScene13SkillStatusVfx(
     unitStateOf?: (m: WarMan) => Scene13SkillVisualState,
     hasExtraActive = false,
 ): void {
-    latestSideStates = [
-        { frenzy: states[0].frenzy, shield: states[0].shield, panic: states[0].panic },
-        { frenzy: states[1].frenzy, shield: states[1].shield, panic: states[1].panic },
-    ];
     const hasUnitTags = nowSec < unitTagActiveUntilSec;
     if (!hasUnitTags
         && !hasExtraActive

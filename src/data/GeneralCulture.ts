@@ -1330,7 +1330,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tumed_andahan': 'XIANBEI',   // 土默特｜俺答｜据点 归化城
     'tumengken_tumengken': 'MONGOL',   // 喀尔喀｜图蒙肯｜据点 拜达里克
     'tuoba_tuobagui': 'XIANBEI',   // 拓跋｜拓跋珪｜据点 大同
-    'tuoba_yuanying': 'CENTRAL',   // 武周｜元英｜据点 洛阳
+    'tuoba_yuanying': 'WEI',   // 拓跋魏｜元英｜据点 中山（中山王封地，河朔文化）
     'tuolemi_tuolemi': 'ORIE',   // 托勒密｜托勒密一世｜据点 亚历山大
     'tuomengde_aobulaien': 'CELTS',   // 托蒙德｜奥布赖恩｜据点 利默里克
     'tuoming_tuomin': 'WESTERN',   // 清真｜妥明｜据点 迪化城

@@ -87,106 +87,241 @@ function pickWestward<T extends { longitude: number }>(cands: T[], fromLng: numb
  * - 沿斯瓦希里海岸（蒙巴萨—基尔瓦—莫桑比克）南下好望角（开普敦），北上佛得角（里贝拉），跨大西洋经里约（瓜纳巴拉）至麦哲伦海峡（圣胡利安港），横渡太平洋至阿加尼亚（关岛）—马尼拉，再返航广州（番禺）/泉州（刺桐）或经香料群岛（德尔纳特）—爪哇（巴达维亚）重返好望角。
  */
 const HISTORICAL_SAIL_NEXT: Record<string, string[]> = {
-    // 东亚沿海汇入下西洋起点
+    city_nanghar: ['city_zonggu', 'city_baizhu'],
+    city_baizhu: ['city_moyoro'],
+    city_moyoro: ['city_zonggu'],
+    city_zonggu: ['city_katsuyama'],
+    city_bailao: ['city_genjo', 'city_xiantai'],
+    city_katsuyama: ['city_genjo'],
+    city_genjo: ['city_xiantai'],
+    city_xiantai: ['city_edo'],
     city_edo: ['city_junfucheng'],
     city_kamakura: ['city_junfucheng', 'city_okafu'],
-    city_junfucheng: ['city_himeji'],
+    city_junfucheng: ['city_himeji', 'city_noshima'],
     city_himeji: ['city_noshima', 'city_okafu'],
     city_okafu: ['city_akaogicheng'],
-    city_noshima: ['city_songshan'],
+    city_noshima: ['city_chijianguan'],
     city_songshan: ['city_funei', 'city_chijianguan'],
-    city_chijianguan: ['city_yuanzhishi'],
-    city_funei: ['city_satsuma'],
-    city_satsuma: ['city_akaogicheng', 'city_tsushima'],
+    city_chijianguan: ['city_yuanzhishi', 'city_suncheon_k'],
+    city_funei: ['city_satsuma', 'city_xingzhuting'],
+    city_satsuma: ['city_akaogicheng'],
     city_akaogicheng: ['city_akakinagusuku'],
     city_akakinagusuku: ['city_shuri'],
-    city_shuri: ['city_qingyuan_zj', 'city_diaoyudao'],
+    city_shuri: ['city_qingyuan_zj', 'city_diaoyudao', 'city_gugudao'],
+    city_gugudao: ['city_diaoyudao', 'city_mudan'],
     city_diaoyudao: ['city_mengjia'],
     city_mengjia: ['city_fuzhou'],
-    city_yuanzhishi: ['city_taizaifu'],
-    city_taizaifu: ['city_qingyuan_zj'],
-    city_shanghai: ['city_hangzhou', 'city_taizhou_zj'],
+    city_mudan: ['city_fuzhou'],
+    city_yuanzhishi: ['city_taizaifu', 'city_jindo'],
+    city_taizaifu: ['city_qingyuan_zj', 'city_goto'],
+    city_goto: ['city_qingyuan_zj', 'city_nagasaki'],
+    city_nagasaki: ['city_qingyuan_zj', 'city_tainan', 'city_aomen', 'city_batavia'],
+    city_gimhae: ['city_qingyuan_zj', 'city_tsushima'],
+    city_tsushima: ['city_goto', 'city_satsuma', 'city_suncheon_k'],
+    city_suncheon_k: ['city_xingzhuting'],
+    city_xingzhuting: ['city_shanghai'],
+    city_hanseong: ['city_haeju', 'city_sabi'],
+    city_haeju: ['city_sabi'],
+    city_sabi: ['city_jindo'],
+    city_jindo: ['city_wendeng', 'city_xingzhuting'],
+    city_kaesong: ['city_pidao', 'city_wendeng'],
+    city_pidao: ['city_dengzhou'],
+    city_shanhaiguan: ['city_piaoyujin', 'city_beishacheng', 'city_wendeng'],
+    city_piaoyujin: ['city_beishacheng', 'city_dengzhou'],
+    city_beishacheng: ['city_dengzhou'],
+    city_dengzhou: ['city_sabi'],
+    city_wendeng: ['city_shanghai'],
+    city_shanghai: ['city_hangzhou', 'city_taizhou_zj', 'city_fuzhou'],
     city_hangzhou: ['city_qingyuan_zj'],
-    city_qingyuan_zj: ['city_taizhou_zj', 'city_taizaifu', 'city_nagasaki', 'city_gimhae'],
-    city_taizhou_zj: ['city_qingjingsi'],
-    city_fuzhou: ['city_zhangzhou'],
-    city_zhangzhou: ['city_manila', 'city_penghu'],
-    city_penghu: ['city_qingjingsi'],
-
-    // 郑和下西洋主干（泉州—广州—占婆—新加坡/马六甲—亚齐—锡兰—古里—阿丹/木骨都束—慢八撒）
-    city_qingjingsi: ['city_panyu'],
-    city_panyu: ['city_dupan'],
+    city_qingyuan_zj: ['city_taizhou_zj'],
+    city_taizhou_zj: ['city_qingjingsi', 'city_fuzhou'],
+    city_fuzhou: ['city_zhangzhou', 'city_dupan'],
+    city_zhangzhou: ['city_penghu', 'city_manila'],
+    city_penghu: ['city_qingjingsi', 'city_tainan'],
+    city_tainan: ['city_manila', 'city_pattani'],
+    city_qingjingsi: ['city_panyu', 'city_donghai'],
+    city_panyu: ['city_dupan', 'city_haikang'],
+    city_aomen: ['city_malacca', 'city_manila'],
+    city_haikang: ['city_yazhou'],
+    city_yuntun: ['city_yian', 'city_hepu'],
+    city_hepu: ['city_yazhou'],
+    city_yian: ['city_yazhou'],
+    city_donghai: ['city_yazhou'],
+    city_yazhou: ['city_dupan'],
     city_dupan: ['city_malacca', 'city_danmaxi'],
+    city_tunwuli: ['city_danmaxi'],
+    city_pattani: ['city_danmaxi', 'city_sanfoqi'],
     city_danmaxi: ['city_sanfoqi'],
-    city_sanfoqi: ['city_malacca'],
-    city_malacca: ['city_yaqi', 'city_batavia'],
-    city_yaqi: ['city_jiale'],
-    city_jiale: ['city_guli'],
-    city_guli: ['city_mogadishu', 'city_aden'],
-    city_cochin: ['city_mogadishu', 'city_aden', 'city_mombasa'],
-    city_guoa: ['city_mombasa', 'city_hormuz'],
-    city_hormuz: ['city_aden', 'city_bashila', 'city_kalaqi'],
-    city_kalaqi: ['city_hormuz'],
-    city_bashila: ['city_hormuz'],
-    city_aden: ['city_mogadishu', 'city_hormuz', 'city_jida'],
-    city_kelunpo: ['city_yaqi'],
-    city_jida: ['city_suez'],
-    city_suez: ['city_jida'],
-    city_mogadishu: ['city_mombasa'],
-    city_mombasa: ['city_kilwa'],
-    city_kilwa: ['city_mozambique'],
-    city_mozambique: ['city_cape_town'],
+    city_sanfoqi: ['city_malacca', 'city_batavia'],
+    city_valparaiso: ['city_rapanui', 'city_tahiti', 'city_lima'],
+    city_lima: ['city_rapanui', 'city_acapulco', 'city_banama'],
+    city_banama: ['city_tahiti', 'city_acapulco'],
+    city_acapulco: ['city_honolulu', 'city_hagatna'],
+    city_rapanui: ['city_tahiti', 'city_mua'],
+    city_tahiti: ['city_mua', 'city_honolulu', 'city_hagatna'],
+    city_honolulu: ['city_mua', 'city_hagatna', 'city_manila'],
+    city_mua: ['city_deernate', 'city_batavia', 'city_hagatna'],
+    city_hagatna: ['city_manila', 'city_cebu'],
+    city_manila: ['city_panyu', 'city_cebu', 'city_huoluo'],
+    city_cebu: ['city_deernate'],
+    city_huoluo: ['city_teluowulan', 'city_deernate'],
+    city_deernate: ['city_batavia', 'city_teluowulan', 'city_ambon'],
+    city_ambon: ['city_batavia', 'city_banda'],
+    city_banda: ['city_wandan'],
+    city_teluowulan: ['city_wandan'],
+    city_wandan: ['city_yaqi'],
+    city_malacca: ['city_yaqi', 'city_jiale', 'city_batavia'],
     city_batavia: ['city_mauritius'],
     city_mauritius: ['city_cape_town'],
-
-    // 达·伽马 & 麦哲伦大西洋—南美航线（及西欧/加勒比汇入线）
-    city_cape_town: ['city_sainthelena', 'city_luanda'],
-    // 圣赫勒拿：东印度公司/葡萄牙印度航线归航补给站，向西至亚速尔（印度航线归途）、里斯本、佛得角、巴西
-    city_sainthelena: ['city_ribeira', 'city_angra', 'city_lisiben', 'city_salvador'],
-    city_luanda: ['city_elmina'],
-    city_ribeira: ['city_elmina', 'city_guanabara', 'city_salvador'],   // 卡布拉尔1500年由佛得角西南横渡至巴西
-    city_lundun: ['city_kanpeier', 'city_calais'],
+    city_jidagang: ['city_kolkata', 'city_danmoledi', 'city_danta'],
+    city_danmoledi: ['city_danta'],
+    city_danta: ['city_kelunpo'],
+    city_kolkata: ['city_malacca'],
+    city_thaton: ['city_puli', 'city_yaqi'],
+    city_puli: ['city_madras', 'city_jiale'],
+    city_madras: ['city_jiale'],
+    city_yaqi: ['city_jiale', 'city_kelunpo', 'city_quilon'],
+    city_jiale: ['city_guli'],
+    city_kelunpo: ['city_cochin', 'city_guoa'],
+    city_quilon: ['city_jiale'],
+    city_cochin: ['city_malindi', 'city_mombasa', 'city_guoa'],
+    city_guli: ['city_malindi', 'city_mombasa', 'city_mogadishu', 'city_aden'],
+    city_guoa: ['city_mombasa', 'city_aden'],
+    city_mumbai: ['city_guli', 'city_kalaqi'],
+    city_surat: ['city_malindi', 'city_mogadishu', 'city_aden'],
+    city_suomunate: ['city_malindi', 'city_mogadishu', 'city_surat'],
+    city_bashila: ['city_hormuz', 'city_aola'],
+    city_aola: ['city_kalaqi', 'city_suomunate'],
+    city_kalaqi: ['city_mogadishu', 'city_hormuz'],
+    city_hormuz: ['city_mogadishu', 'city_malindi', 'city_aden'],
+    city_beileinisi: ['city_jida', 'city_zeila'],
+    city_jida: ['city_zeila', 'city_aden'],
+    city_zeila: ['city_aden', 'city_mogadishu'],
+    city_aden: ['city_mogadishu', 'city_barawa'],
+    city_mogadishu: ['city_mombasa'],
+    city_barawa: ['city_malindi', 'city_mombasa', 'city_kilwa'],
+    city_kilwa: ['city_malindi'],
+    city_malindi: ['city_mozambique'],
+    city_mombasa: ['city_mozambique'],
+    city_mozambique: ['city_cape_town'],
+    city_cape_town: ['city_sainthelena', 'city_luanda', 'city_ribeira'],
+    city_luanda: ['city_sainthelena', 'city_elmina'],
+    city_sainthelena: ['city_ribeira', 'city_salvador'],
+    city_elmina: ['city_ribeira', 'city_salvador', 'city_martinique', 'city_portroyal'],
+    city_ribeira: ['city_salvador', 'city_guanabara'],
+    city_shengpidebao: ['city_sidedegelmo', 'city_kenisibao'],
+    city_talin: ['city_sidedegelmo', 'city_kenisibao'],
+    city_liga: ['city_sidedegelmo', 'city_shiqieqing', 'city_gebenhagen'],
+    city_sidedegelmo: ['city_weishibi'],
+    city_kenisibao: ['city_weishibi', 'city_rostock'],
+    city_gdansk: ['city_weishibi', 'city_gebenhagen'],
+    city_weishibi: ['city_lubeck', 'city_shiqieqing'],
+    city_shiqieqing: ['city_gothenburg'],
+    city_gebenhagen: ['city_rostock', 'city_aidingbao'],
+    city_rostock: ['city_gothenburg'],
+    city_gothenburg: ['city_hague'],
+    city_beiergen: ['city_hamburg'],
+    city_lubeck: ['city_beiergen'],
+    city_hamburg: ['city_amsterdam', 'city_hague', 'city_bruges', 'city_lundun'],
+    city_bruges: ['city_lundun'],
+    city_amsterdam: ['city_newamsterdam', 'city_telde', 'city_lundun'],
+    city_hague: ['city_newamsterdam', 'city_calais'],
+    city_boergong: ['city_aidingbao', 'city_yinfeineisi'],
+    city_yinfeineisi: ['city_aidingbao'],
+    city_aidingbao: ['city_dublin'],
+    city_kanafeng: ['city_dublin', 'city_dunadd'],
+    city_dublin: ['city_dunadd'],
+    city_dunadd: ['city_limerick'],
+    city_limerick: ['city_angra', 'city_kanpeier'],
+    city_lundun: ['city_portroyal', 'city_jamestown', 'city_sainthelena', 'city_calais'],
     city_calais: ['city_bordeaux'],
+    city_plymouth: ['city_jamestown', 'city_jiadisi', 'city_bordeaux'],
     city_kanpeier: ['city_bordeaux'],
     city_bordeaux: ['city_boertu'],
+    city_nantes: ['city_martinique', 'city_elmina'],
     city_boertu: ['city_lisiben'],
-    city_lisiben: ['city_labate', 'city_angra'],
-    city_jiadisi: ['city_telde'],
+    city_lisiben: ['city_angra', 'city_telde', 'city_labate'],
+    city_jiadisi: ['city_angra', 'city_telde'],
     city_labate: ['city_telde'],
-    city_telde: ['city_ribeira'],
-    city_elmina: ['city_salvador', 'city_luanda'],
-    city_angra: ['city_lisiben', 'city_havana'],   // 西班牙宝船队归途经亚速尔，去程自加勒比
-    city_veracruz: ['city_katachena', 'city_havana'],
-    city_portobelo: ['city_katachena', 'city_havana'],
-    city_newamsterdam: ['city_jamestown'],
-    city_jamestown: ['city_shengaogusiding'],
-    city_havana: ['city_shengaogusiding'],
-    city_shengaogusiding: ['city_shengduomingge'],
-    city_katachena: ['city_portroyal'],
-    city_portroyal: ['city_shengduomingge'],
-    city_shengduomingge: ['city_telde'],
-    city_salvador: ['city_guanabara'],
-    city_guanabara: ['city_saovicente'],
+    city_telde: ['city_ribeira', 'city_shengduomingge'],
+    city_angra: ['city_havana', 'city_salvador'],
+    city_telabuzong: ['city_kafa', 'city_junshitandingbao'],
+    city_pantika: ['city_yanghe'],
+    city_kafa: ['city_junshitandingbao', 'city_genoa'],
+    city_oleshky: ['city_akeman', 'city_heersongniesi'],
+    city_heersongniesi: ['city_waerna'],
+    city_akeman: ['city_waerna'],
+    city_waerna: ['city_junshitandingbao'],
+    city_junshitandingbao: ['city_genoa'],
+    city_yanghe: ['city_teluoyi'],
+    city_teluoyi: ['city_salonica', 'city_aolinsuosi', 'city_kalisituosi'],
+    city_aolinsuosi: ['city_kelazuomeinai'],
+    city_kelazuomeinai: ['city_kalisituosi'],
+    city_halikanasu: ['city_tiluo'],
+    city_yifusuo: ['city_tiluo', 'city_chimarros'],
+    city_tiluo: ['city_kalisituosi', 'city_chimarros'],
+    city_chimarros: ['city_knossos'],
+    city_kalisituosi: ['city_rhodes'],
+    city_salonica: ['city_yadian'],
+    city_miletus: ['city_yadian'],
+    city_latajiya: ['city_adana', 'city_jiasa'],
+    city_adana: ['city_nikexiya', 'city_antiejiya'],
+    city_jiasa: ['city_tuile'],
+    city_tuile: ['city_peiluximu', 'city_antiejiya'],
+    city_antiejiya: ['city_kolossi', 'city_nikexiya'],
+    city_nikexiya: ['city_rhodes'],
+    city_rhodes: ['city_matelugang'],
+    city_matelugang: ['city_peiluximu'],
+    city_peiluximu: ['city_kolossi'],
+    city_famagusta: ['city_beirut', 'city_venice'],
+    city_beirut: ['city_yalishanda'],
+    city_ake: ['city_yalishanda', 'city_venice'],
+    city_kolossi: ['city_yalishanda'],
+    city_yalishanda: ['city_knossos', 'city_venice'],
+    city_knossos: ['city_banjiaxi', 'city_yadian', 'city_venice'],
+    city_yadian: ['city_syracuse'],
+    city_banjiaxi: ['city_malta'],
+    city_ravenna: ['city_venice', 'city_ragusa'],
+    city_venice: ['city_ragusa'],
+    city_ragusa: ['city_antiwali'],
+    city_antiwali: ['city_kefu', 'city_anbulajiya'],
+    city_kefu: ['city_talanduo'],
+    city_talanduo: ['city_syracuse'],
+    city_anbulajiya: ['city_messina'],
+    city_syracuse: ['city_palermo', 'city_deliboli'],
+    city_deliboli: ['city_malta'],
+    city_malta: ['city_jiataji', 'city_messina'],
+    city_messina: ['city_naples'],
+    city_naples: ['city_palermo', 'city_oristano'],
+    city_palermo: ['city_jiataji'],
+    city_jiataji: ['city_cagliari'],
+    city_genoa: ['city_barcelona', 'city_oristano', 'city_luoma'],
+    city_luoma: ['city_xibo', 'city_cagliari'],
+    city_oristano: ['city_barcelona', 'city_xibo'],
+    city_cagliari: ['city_bujiaya'],
+    city_bujiaya: ['city_valencia'],
+    city_valencia: ['city_aerjier'],
+    city_barcelona: ['city_aerjier'],
+    city_xibo: ['city_aerjier'],
+    city_aerjier: ['city_xiuta'],
+    city_xiuta: ['city_jiadisi', 'city_labate'],
+    city_newamsterdam: ['city_shengaogusiding'],
+    city_jamestown: ['city_havana', 'city_shengduomingge'],
+    city_shengaogusiding: ['city_havana', 'city_shengduomingge'],
+    city_veracruz: ['city_havana', 'city_katachena'],
+    city_havana: ['city_portobelo', 'city_portroyal'],
+    city_portobelo: ['city_katachena', 'city_portroyal'],
+    city_yala: ['city_portroyal', 'city_shengduomingge'],
+    city_portroyal: ['city_shengduomingge', 'city_katachena'],
+    city_katachena: ['city_martinique'],
+    city_shengduomingge: ['city_martinique'],
+    city_martinique: ['city_salvador'],
+    city_salvador: ['city_guanabara', 'city_saovicente', 'city_kabufoliwu'],
+    city_kabufoliwu: ['city_saovicente'],
+    city_guanabara: ['city_buenosaires'],
     city_saovicente: ['city_buenosaires'],
-    city_buenosaires: ['city_sanjulian'],
-    city_sanjulian: ['city_hagatna', 'city_valparaiso'],
-    city_valparaiso: ['city_lima', 'city_rapanui'],
-    city_rapanui: ['city_tahiti'],
-    city_tahiti: ['city_mua', 'city_honolulu', 'city_hagatna'],
-    city_mua: ['city_deernate', 'city_batavia', 'city_hagatna'],
-    city_honolulu: ['city_hagatna'],
-
-    // 麦哲伦—马尼拉大帆船太平洋—香料群岛航线
-    city_lima: ['city_acapulco', 'city_rapanui'],
-    city_banama: ['city_acapulco'],
-    city_acapulco: ['city_hagatna', 'city_honolulu'],
-    city_hagatna: ['city_manila'],
-    city_manila: ['city_acapulco', 'city_panyu', 'city_huoluo', 'city_cebu'],
-    city_cebu: ['city_deernate'],
-    city_tainan: ['city_penghu', 'city_zhangzhou'],
-    city_huoluo: ['city_deernate'],
-    city_deernate: ['city_batavia', 'city_teluowulan'],
-    city_teluowulan: ['city_batavia'],
+    city_buenosaires: ['city_sanjulian', 'city_valparaiso'],
+    city_sanjulian: ['city_valparaiso', 'city_rapanui'],
 };
 
 /** 从本势力文化军团三排里学到的兵种。 */
@@ -539,6 +674,7 @@ export class PlayerHero {
                 ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 5)
                 ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 30);
             if (!here) return;
+            this.rememberTourStop(here);
             const dists = roadRegistry.getRoadDistancesKmFrom(here);
             const reach = [...dists.entries()]
                 .filter(([id, d]) => id !== here && d > 0)
@@ -599,30 +735,33 @@ export class PlayerHero {
             return;
         }
         const startId = nearPort.id;
+        this.rememberTourStop(startId);
         let chosenDest: City | null = null;
         let chosenPath: Array<{ lat: number; lng: number; sea?: boolean }> | null = null;
 
-        // 1. 若当前已在历史大航海针路主干港口上，严格沿郑和/达·伽马/麦哲伦/大帆船主航线推进（不绕暹罗湾、不进波斯湾与红海内腹）
+        // 1. 全海域 235 个港口均已纳入大航海单向针路网（太平洋·印度洋·大西洋全覆盖，0局部死循环，红海只出不进）
         const nextHubIds = HISTORICAL_SAIL_NEXT[startId];
         if (nextHubIds && nextHubIds.length > 0) {
-            // 只走没去过、且净向西的针路边；全走过就放弃针路，交给下面的向西规则，绝不回踩
-            const freshIds = nextHubIds.filter((id) => !this.recentTourStops.includes(id));
+            let freshIds = nextHubIds.filter((id) => !this.recentTourStops.includes(id));
+            if (freshIds.length === 0) {
+                // 已完成整圈环球航行回到该港，清空旧足迹开始下一圈环球
+                this.recentTourStops = [startId];
+                freshIds = [...nextHubIds];
+            }
             const shuffled = [...freshIds].sort(() => Math.random() - 0.5);
             for (const targetId of shuffled) {
                 const targetCity = this.deps.cityManager.getCity(targetId);
                 if (!targetCity) continue;
                 const res = roadRegistry.findSeaOnlyPath(startId, targetId);
                 if (res && res.coordinates.length >= 2) {
-                    const p = roadRegistry.pathToLatLngs(res);
-                    if (!this.isWestwardPath(p, pos.lng)) continue;
                     chosenDest = targetCity;
-                    chosenPath = p;
+                    chosenPath = roadRegistry.pathToLatLngs(res);
                     break;
                 }
             }
         }
 
-        // 2. 若当前处于支线/内海港口（如地中海、波罗的海、黑海、波斯湾、暹罗湾等），先寻纯海路驶向最近的历史远洋主干港口汇入主航线
+        // 2. 若当前处于未登记港口，先寻纯海路驶向最近的远洋针路港口汇入主航线
         if (!chosenDest || !chosenPath) {
             const hubPorts = ports
                 .filter((c) => c.id !== startId && !!HISTORICAL_SAIL_NEXT[c.id] && !this.recentTourStops.includes(c.id)
@@ -667,10 +806,6 @@ export class PlayerHero {
             const dest = chosenDest;
             const path = chosenPath;
             this.rememberTourStop(dest.id);
-            for (const p of path) {
-                const nearPortId = roadRegistry.getNearestCityId(p.lat, p.lng, 0.3);
-                if (nearPortId) this.rememberTourStop(nearPortId);
-            }
             this.travelCityId = dest.id;
             this.travelPointLabel = null;
             this.army.setTargetCity(dest);

@@ -2474,10 +2474,34 @@ function serverInsertIntoStructure(text: string, keyword: string, line: string, 
 
     let scan = closeIdx - 1;
     while (scan > 0 && /\s/.test(text[scan])) scan--;
-    const lastCh = text[scan];
+    // 🔴 [2026-11-03] 最后一行带 `// 注释` 时，逗号要补在注释前面：原来补在行尾，逗号被吃进注释，
+    //    StartingCapitals.ts 因此整份解析失败（`'wandan': 'city_wandan'  // 万丹…,`）。
+    const lineStart = text.lastIndexOf('\n', scan) + 1;
+    const commentAt = findLineCommentStart(text.slice(lineStart, scan + 1));
+    let codeEnd = commentAt >= 0 ? lineStart + commentAt - 1 : scan;
+    while (codeEnd > 0 && /\s/.test(text[codeEnd])) codeEnd--;
+    const lastCh = text[codeEnd];
     const needsComma = lastCh !== ',' && lastCh !== openCh;
-    const newSegment = `${needsComma ? ',' : ''}${lineEnding}${indent}${line}`;
-    return text.slice(0, scan + 1) + newSegment + text.slice(scan + 1);
+    const withComma = needsComma ? text.slice(0, codeEnd + 1) + ',' + text.slice(codeEnd + 1) : text;
+    const insertAt = scan + 1 + (needsComma ? 1 : 0);
+    return withComma.slice(0, insertAt) + `${lineEnding}${indent}${line}` + withComma.slice(insertAt);
+}
+
+/** 一行里 `//` 行注释的起点（跳过引号里的 `//`，如 URL）；没有返回 -1 */
+function findLineCommentStart(lineText: string): number {
+    let quote: string | null = null;
+    for (let i = 0; i < lineText.length; i++) {
+        const ch = lineText[i];
+        if (quote) {
+            if (ch === '\\') i++;
+            else if (ch === quote) quote = null;
+        } else if (ch === '\'' || ch === '"' || ch === '`') {
+            quote = ch;
+        } else if (ch === '/' && lineText[i + 1] === '/') {
+            return i;
+        }
+    }
+    return -1;
 }
 
 /**

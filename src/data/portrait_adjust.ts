@@ -9323,7 +9323,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/ORIE/xibolai_youdamajiabi.png": {
-            "scale": 1.18,
+            "scale": 1.22,
             "offsetX": -17,
             "offsetY": 29
         },
@@ -9651,6 +9651,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 11
+        },
+        "/assets/ORIE/bfe3_23.png": {
+            "scale": 1.1,
+            "offsetX": 9,
+            "offsetY": 19
+        },
+        "/assets/MAGYAR/mazhaer_charles_i.png": {
+            "scale": 1.16,
+            "offsetX": 31,
+            "offsetY": 43
+        },
+        "/assets/SLAVIC/luosi_siweinieerde.png": {
+            "scale": 0.98,
+            "offsetX": 8,
+            "offsetY": -8
+        },
+        "/assets/SLAVIC/moerdaweiya_lepushenneiyanu.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/SLAVIC/bfe_smolensk_voivode.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 23
         }
     },
     "folderGuides": {
