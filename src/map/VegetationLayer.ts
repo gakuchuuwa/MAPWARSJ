@@ -127,6 +127,11 @@ interface TreeDrawCommand {
     variant: number;
     /** 是否属于成团密林的主树节点 */
     inGrove?: boolean;
+    /** SAMPLE_ZOOM 下的世界像素坐标（采样时算一次，paint 不再逐树 latLngToLayerPoint） */
+    wx: number;
+    wy: number;
+    /** 树位键（经纬度 5 位小数），paint 里「上一次画成的贴图」备忘用，采样时算一次 */
+    posKey: string;
 }
 
 /** 战略地图树贴图缓存：树名 → preview.png（DE 单棵成品图，第 0 帧） */
@@ -596,6 +601,10 @@ function getTreeLine(lat: number, lng?: number): number {
 }
 
 const TREE_GRID_STEP = 46;
+/** 采样窗对齐粒度（格距整数倍）：跟拍平移每走这么远才整层重采样一次 */
+const RESAMPLE_CHUNK_PX = TREE_GRID_STEP * 4;
+/** 换季渐变期 paint 的最短间隔（≈30fps）：原来每帧整层重画 5000 棵树×2 */
+const BLEND_PAINT_MIN_INTERVAL_MS = 33;
 /** 单次重建最多保留的树数（兼顾密林连冠咬合与大视口 60FPS 拖动流畅度） */
 const MAX_TREES_PER_RENDER = 5000;
 
@@ -684,12 +693,16 @@ export class VegetationLayer {
         }
     };
     private readonly onTerrainReady = () => {
+        // 🔴 [2026-11-02 主人报「玩家移动有点卡」] 跟拍行军时新瓦片一批批到，原来每批都把整层作废重采样
+        //    （实测重采样里强制的占 16/19）。上一次采样若高程/水域全齐，新瓦片改变不了结果 → 不必重算。
+        if (!this.lastRenderIncomplete) return;
         if (this.terrainReadyTimer !== null) return;
+        // 合并窗 250 → 500ms：行军进新区时瓦片是一批批到的，合并成更少的几次重采样
         this.terrainReadyTimer = window.setTimeout(() => {
             this.terrainReadyTimer = null;
             this.lastRenderKey = '';
             this.scheduleRender(0);
-        }, 250);
+        }, 500);
     };
 
     constructor(map: L.Map) {
@@ -755,6 +768,7 @@ export class VegetationLayer {
         if (this.seasonTimer !== null || this.rafId !== null) return;
 
         let isRafActive = false;
+        let lastBlendPaintAt = 0;
 
         const rafLoop = () => {
             if (!this.visible) {
@@ -772,7 +786,12 @@ export class VegetationLayer {
             }
             const blend = seasonBlend();
             if (blend > 0) {
-                this.paint();
+                // 5 秒渐变不需要 60fps 整层重画：≈30fps 足够平滑，paint 次数减半
+                const now = performance.now();
+                if (now - lastBlendPaintAt >= BLEND_PAINT_MIN_INTERVAL_MS) {
+                    lastBlendPaintAt = now;
+                    this.paint();
+                }
                 this.rafId = requestAnimationFrame(rafLoop);
             } else {
                 isRafActive = false;
@@ -839,11 +858,14 @@ export class VegetationLayer {
 
         const items: { x: number; y: number; s: number; c: TreeDrawCommand }[] = [];
         if (LAST_DRAWN_ASSET.size > LAST_DRAWN_MAX) LAST_DRAWN_ASSET.clear();   // 防无限增长
+        // 🔴 [2026-11-02 主人报「玩家移动有点卡」] 不再逐树 latLngToLayerPoint（每棵新建 LatLng/Point）：
+        //    采样时已存 SAMPLE_ZOOM 世界像素，按缩放比换算后同样取整（与 latLngToLayerPoint 的 _round 一致）。
+        const zoomScale = this.map.getZoomScale(this.map.getZoom(), SAMPLE_ZOOM);
+        const origin = this.map.getPixelOrigin();
         for (const c of this.trees) {
             // 使用整数 Layer 像素坐标减去整数 canvasTopLeft，保证每棵树在画布上的根部坐标恒为整数，平移重绘零亚像素跳变
-            const layerPt = this.map.latLngToLayerPoint([c.lat, c.lng]);
-            const x = layerPt.x - topLeftX;
-            const y = layerPt.y - topLeftY;
+            const x = Math.round(c.wx * zoomScale) - origin.x - topLeftX;
+            const y = Math.round(c.wy * zoomScale) - origin.y - topLeftY;
             const s = treeBaseScale * c.jitter;
             const pad = 380 * s;
             if (x < -pad || x > W + pad || y < -pad || y > H + pad) continue;
@@ -900,7 +922,7 @@ export class VegetationLayer {
         //    不再叠加额外黑椭圆底荫（截图中会外露成黑圆斑/膏药印），靠 40px DE 饱满树冠自身层叠咬合，保持树根与地表干净通透融合。
         for (const it of items) {
             /** 树位键（经纬度 5 位小数）：给「上一帧画成的贴图」备忘用，四季之间坐标绝对不变 */
-            const posKey = `${Math.round(it.c.lat * 1e5)},${Math.round(it.c.lng * 1e5)}`;
+            const posKey = it.c.posKey;
 
             // 每棵树基于经纬度哈希做秒级错峰（0~0.60 秒）：整片林在 5 秒窗口内依次换装覆雪/融雪
             let treeBlend = baseBlend;
@@ -969,6 +991,8 @@ export class VegetationLayer {
     }
 
     private lastTreeCount = 0;
+    /** 上一次采样有高程/水域瓦片没到（true = 新瓦片到了要重采样；开局为 true） */
+    private lastRenderIncomplete = true;
 
     private renderInner(): void {
         if (!this.visible) { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); return; }
@@ -988,10 +1012,16 @@ export class VegetationLayer {
         const bounds = this.map.getBounds();
         const nw = this.map.project(bounds.getNorthWest(), SAMPLE_ZOOM);
         const se = this.map.project(bounds.getSouthEast(), SAMPLE_ZOOM);
-        const xMin = Math.floor((nw.x - CANVAS_PAD_PX) / TREE_GRID_STEP) * TREE_GRID_STEP;
-        const xMax = Math.ceil((se.x + CANVAS_PAD_PX) / TREE_GRID_STEP) * TREE_GRID_STEP;
-        const yMin = Math.floor((nw.y - CANVAS_PAD_PX) / TREE_GRID_STEP) * TREE_GRID_STEP;
-        const yMax = Math.ceil((se.y + CANVAS_PAD_PX) / TREE_GRID_STEP) * TREE_GRID_STEP;
+        // 🔴 [2026-11-02 主人报「玩家移动有点卡」] 采样窗按 RESAMPLE_CHUNK_PX（=4 格）外扩对齐，
+        //    原来按 1 格（46px）对齐 → 跟拍每走 46px 就整层重采样一次（实测 4.6 次/秒、单次最长 75ms）。
+        //    CHUNK 是格距整数倍，树位网格不变，同一棵树位置/树种完全不变，只是重采样频率降到约 1/4。
+        const xMin = Math.floor((nw.x - CANVAS_PAD_PX) / RESAMPLE_CHUNK_PX) * RESAMPLE_CHUNK_PX;
+        const xMax = Math.ceil((se.x + CANVAS_PAD_PX) / RESAMPLE_CHUNK_PX) * RESAMPLE_CHUNK_PX;
+        const yMin = Math.floor((nw.y - CANVAS_PAD_PX) / RESAMPLE_CHUNK_PX) * RESAMPLE_CHUNK_PX;
+        const yMax = Math.ceil((se.y + CANVAS_PAD_PX) / RESAMPLE_CHUNK_PX) * RESAMPLE_CHUNK_PX;
+        // 抽稀比例只按原窗口（视口 + 余量）内的树算，外扩那圈不挤占配额，也不随外扩宽窄让屏内树忽多忽少
+        const coreXMin = nw.x - CANVAS_PAD_PX, coreXMax = se.x + CANVAS_PAD_PX;
+        const coreYMin = nw.y - CANVAS_PAD_PX, coreYMax = se.y + CANVAS_PAD_PX;
 
         const gameSeason = currentGameSeason();
         const season = currentTreeSeason();
@@ -1004,6 +1034,7 @@ export class VegetationLayer {
         // 🔴 [2026-09-18 修消失] 禁止在此处提前 clearRect：旧树必须持续显示在画布上，直到 paint() 原子绘制新树！
 
         let missingTiles = 0;
+        let waterNulls = 0;
         let pendingImages = 0;
         let drawnTrees = 0;
         const drawCommands: TreeDrawCommand[] = [];
@@ -1113,6 +1144,7 @@ export class VegetationLayer {
                 const water = waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng);
                 if (water === true) continue;
                 if (water === null) {
+                    waterNulls++;
                     waterSampler.scheduleFetch(ptLatLng.lat, ptLatLng.lng);
                 }
 
@@ -1293,6 +1325,7 @@ export class VegetationLayer {
                     // DE 原生精灵帧内已自带不同高矮树形变体，严格保持 jitter = 1，不额外缩放破坏 DE 比例
                     const jitter = 1;
                     const variant = Math.floor(hash(gx, gy, i * 37 + 89) * 100);
+                    const wpt = this.map.project(curLatLng, SAMPLE_ZOOM);
                     drawCommands.push({
                         lat: curLatLng.lat,
                         lng: curLatLng.lng,
@@ -1301,6 +1334,9 @@ export class VegetationLayer {
                         assetNext,
                         variant,
                         inGrove: isDenseCanopy && placedInCell === 0,
+                        wx: wpt.x,
+                        wy: wpt.y,
+                        posKey: `${Math.round(curLatLng.lat * 1e5)},${Math.round(curLatLng.lng * 1e5)}`,
                     });
                     placedInCell++;
                 }
@@ -1317,8 +1353,12 @@ export class VegetationLayer {
         //   那会让镜头移到另一片区域时整批留下旧树、新视口该长的树反而不画（旧树又多在屏外＝等于少画树），
         //   故收窄回上面这条原判据：只在「新采样为空」时兜底。
         // 🔴 [2026-10-31] 单次重建树数封顶：超出时按树位哈希等比抽稀（保留林区形状），防大视口拖动时 paint 过重
-        if (drawCommands.length > MAX_TREES_PER_RENDER) {
-            const keep = MAX_TREES_PER_RENDER / drawCommands.length;
+        let coreCount = 0;
+        for (const c of drawCommands) {
+            if (c.wx >= coreXMin && c.wx <= coreXMax && c.wy >= coreYMin && c.wy <= coreYMax) coreCount++;
+        }
+        if (coreCount > MAX_TREES_PER_RENDER) {
+            const keep = MAX_TREES_PER_RENDER / coreCount;
             const thinned = drawCommands.filter((c) => hash(Math.round(c.lat * 1e4), Math.round(c.lng * 1e4), 77) < keep);
             drawCommands.length = 0;
             drawCommands.push(...thinned);
@@ -1330,7 +1370,10 @@ export class VegetationLayer {
         drawnTrees = this.trees.length;
 
         this.lastTreeCount = drawnTrees;
-        if (pendingImages > 0) this.lastRenderKey = '';
+        this.lastRenderIncomplete = missingTiles > 0 || waterNulls > 0;
+        // 🔴 [2026-11-02] 贴图未解码不再作废采样键：这些树已在 drawCommands 里，贴图一到 onTreeImageReady 会 paint 补画；
+        //    原来只要有一张没到，下一次 moveend 就整层重采样一次（跟拍时 ≈ 每秒数次）。
+        void pendingImages;
 
         if (missingTiles > 0) {
             if (this.retryKey !== key) { this.retryKey = key; this.retryCount = 0; }

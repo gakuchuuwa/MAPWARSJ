@@ -1060,8 +1060,9 @@ export class GameApp {
             cityManager: this.cityManager,
             getLegionById: (id) => legionManager.getLegionById(id),
             notify: (msg) => this.playerHUD?.notify(msg),
-            followCamera: () => this.cameraFollowUI.followPlayer(),
-            releaseCamera: () => this.cameraFollowUI.cancelFollow(),
+            // 🔴 [2026-11-02 主人令] 镜头跟随跟玩法走：自动/环球/航行一直跟随（到站、停下都不松开），休息不跟随
+            followCamera: () => { if (hero.playMode !== 'rest') this.cameraFollowUI.followPlayer(); },
+            releaseCamera: () => { if (hero.playMode === 'rest') this.cameraFollowUI.cancelFollow(); },
             getYear: () => this.timeSystem.getYear(),
             getSeason: () => this.timeSystem.getSeason() as number,
         }, spawnPos);

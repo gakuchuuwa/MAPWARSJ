@@ -71,6 +71,7 @@
 | [H. 战略行军一顿一顿（进行中）](#h) | 缩放窗口内长任务 50~322ms 连片，**归因未定** | 待探针自动 dump |
 | [I. 玩家移动时战略画面卡](#i) | `getImageData` 独占 46% CPU（瓦片解码漏 `willReadFrequently`）+ 抠绿 PNG 往返 + 旗号文字集中生成 | 长任务 20365 → **6513ms**；最坏 712 → **313ms** |
 | [J. 战术模式很肉·一顿一顿](#j) | DE 素材白跑抠绿：判据 0 命中，却付 PNG 重编码 + 二次解码，单线程 Worker 串行排队 | 一场 39.4s 攻城战 `frames:0`、退场 `pending:78` → 跳过空操作 |
+| [L. 玩家移动有点卡·植被层重采样过勤](#l) | 采样窗按 1 格（46px）对齐 + 每批地形瓦片 / 未解码贴图都强制整层重采样；paint 逐树 `latLngToLayerPoint` | 重采样合计 993–1190 → **448–662ms/12s**，单次最长 75 → **≤32ms**；单次 paint 约 −35% |
 | [K. 跟拍把 `moveend` 打成每帧事件](#k) | 跟拍每帧 `panBy` → Leaflet 每帧完整 fire `moveend`，15 个「按移动结束写」的监听器每秒跑 38 遍 | 冗余工作 **−84%**（moveend 351→55、监听器 129→21ms）；⚠️ **帧间隔无可测改善**，见下 |
 
 ---
@@ -620,3 +621,31 @@ startRegionalBattle 总计          峰值 109.4ms
 不一定真省。要动需要先做 A/B 实测。
 
 探针：`scratch/audit_battle_init.mjs`、`scratch/audit_ui_cb.mjs`、`scratch/audit_ai_tick.mjs`。
+
+<a id="l"></a>
+## L. 玩家移动有点卡 —— 植被层重采样过勤（2026-11-02）
+
+**主人原话**：「玩家在地图上移动有点卡，可以优化吗？」
+
+**量法**：无头 Chrome 独立开一局（不碰主人的局），玩家切「🌍 环球」（不入伍、不打仗、一直走），
+zoom9 跟拍，CPU Profile 按「最近的项目源码帧」归因 + 包住 `VegetationLayer.paint/renderInner` 计次计时。
+⚠️ 开局位置随机、各次地区树量不同，只能比同量级地区；无头 `(program)` 原生开销约占 60%，不代表真机。
+
+**归因**（移动 15 秒）：植被层 `drawTreeAsset/paint/renderInner` 合计约 1.6s（≈10%）为项目代码第一；
+`WorldMiniMap.applyView` 593ms（10-26 已节流，未再动）。重采样 renderInner 每 12 秒 54–66 次，分类：
+**强制（采样键被清空）占大头**，按视口移动触发的反而少。
+
+**三个根因与修法**（`src/map/VegetationLayer.ts`）：
+1. 采样窗按 1 格（46px）对齐 → 每走 46px 整层重采样。改按 `RESAMPLE_CHUNK_PX = 4 格` 外扩对齐（格距整数倍，树位网格不变）；
+   抽稀比例只按原窗口内树数算，外扩那圈不挤配额。
+2. `land-sea-tiles-updated` 每批都清采样键 → 改为只在上一次采样**确有高程/水域缺失**（`lastRenderIncomplete`）时才重算，合并窗 250→500ms；
+   `pendingImages>0` 不再清键（树已在 drawCommands，贴图到了 `onTreeImageReady` 会补画）。
+3. paint 逐树 `latLngToLayerPoint` + 逐树拼 posKey 字符串 → 采样时存 SAMPLE_ZOOM 世界像素 `wx/wy` 与 `posKey`，
+   paint 按 `getZoomScale` 换算后同样取整。**逐树比对 0 像素差**（2814 / 1804 / 1667 棵）。
+4. 换季渐变 5 秒内每帧整层重画 → 限到约 30fps（`BLEND_PAINT_MIN_INTERVAL_MS = 33`）。画面观感待主人确认。
+
+**前 → 后**（同量级地区，每 12 秒）：renderInner 合计 993–1190 → **448–662ms**，单次最长 32–75 → **19–32ms**；
+单次 paint 5.9/10.7 → **3.6/7.1ms**。
+
+**顺带修的功能缺陷**：环球模式在偏远处（昆仑山北麓）0.5° 内没有接路据点 → 每 1.5 秒静默放弃、永远不出发。
+`PlayerHero.stepTour` 改为 0.5° → 5° → 30° 逐级放宽，目的地规划失败换下一个。

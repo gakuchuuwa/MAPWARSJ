@@ -563,7 +563,7 @@ export class PlayerHUD {
 
         singleRow.appendChild(secMid);
 
-        // ── 3. 控制区：自动模式、剧本/乱斗下拉、跟随视角 ──
+        // ── 3. 控制区：玩法切换（含镜头跟随）、剧本/乱斗下拉 ──
         const secControls = document.createElement('div');
         secControls.className = 'player-hud-section';
 
@@ -590,7 +590,13 @@ export class PlayerHUD {
             border:1px solid ${active ? 'rgba(124,212,160,0.48)' : 'rgba(204,174,116,0.32)'};
             box-shadow:inset 0 1px 0 rgba(255,235,180,0.1), 0 1px 3px rgba(0,0,0,0.35);
         `;
-        modeBtn.addEventListener('click', () => hero.setPlayMode(modes[(curIdx + 1) % modes.length][0]));
+        modeBtn.addEventListener('click', () => {
+            const next = modes[(curIdx + 1) % modes.length][0];
+            hero.setPlayMode(next);
+            // 自动/环球/航行＝镜头跟随玩家；休息＝取消跟随
+            if (next === 'rest') this.deps.releaseCamera?.();
+            else this.deps.followCamera?.();
+        });
         secControls.appendChild(modeBtn);
 
         // 📜/⚔️ 自动模式玩法
@@ -688,32 +694,7 @@ export class PlayerHUD {
             secControls.appendChild(speedBtn);
         }
 
-        // 🎥 跟随视角
-        if (this.deps.followCamera) {
-            const followBtn = document.createElement('button');
-            followBtn.type = 'button';
-            followBtn.className = 'player-hud-pill-btn';
-            const isF = this.deps.isFollowing?.() ?? false;
-            followBtn.textContent = isF ? '🎥 跟随中' : '🎥 跟随';
-            followBtn.title = isF ? '正在跟随玩家视角（点击取消）' : '点击对准并跟随玩家';
-            followBtn.style.cssText = `
-                cursor:pointer; font-size:11px; font-weight:700; padding:0 7px; height:22px; border-radius:4px; font-family:inherit; line-height:20px; box-sizing:border-box;
-                background:${isF ? 'linear-gradient(180deg, rgba(42,58,40,0.92), rgba(22,32,20,0.96))' : 'linear-gradient(180deg, rgba(42,34,24,0.9), rgba(24,19,14,0.95))'};
-                color:${isF ? '#8ce0aa' : '#dfc28c'};
-                border:1px solid ${isF ? 'rgba(124,212,160,0.52)' : 'rgba(212,175,55,0.38)'};
-                box-shadow:inset 0 1px 0 rgba(255,235,180,0.12), 0 1px 3px rgba(0,0,0,0.35);
-                transition:all 0.2s ease;
-            `;
-            followBtn.addEventListener('click', () => {
-                if (this.deps.isFollowing?.()) {
-                    this.deps.releaseCamera?.();
-                } else {
-                    this.deps.followCamera?.();
-                }
-                this.refresh();
-            });
-            secControls.appendChild(followBtn);
-        }
+        // 🔴 [2026-11-02 主人令] 「🎥 跟随」按钮已删：镜头跟随并入玩法切换（自动/环球/航行＝跟随，休息＝不跟随）
 
         singleRow.appendChild(secControls);
 

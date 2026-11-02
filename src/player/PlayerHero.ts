@@ -394,17 +394,21 @@ export class PlayerHero {
         this.tourPlannedAt = now;
         if (!roadRegistry.isInitialized()) return;
         const pos = this.army.getPosition();
-        const here = roadRegistry.getNearestCityId(pos.lat, pos.lng);
-        if (!here) return;
         if (this.playMode === 'globe') {
+            // 偏远处（昆仑山、海上）0.5° 内常常没有接了路的据点 → 逐级放宽，否则永远出不了门
+            const here = roadRegistry.getNearestCityId(pos.lat, pos.lng)
+                ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 5)
+                ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 30);
+            if (!here) return;
             const dists = roadRegistry.getRoadDistancesKmFrom(here);
             const reach = [...dists.entries()]
                 .filter(([id, d]) => id !== here && d > 0 && this.deps.cityManager.getCity(id))
                 .sort((a, b) => b[1] - a[1]);
-            if (reach.length === 0) return;
             const far = reach.slice(0, Math.max(1, Math.ceil(reach.length / 3)));
-            const pick = far[Math.floor(Math.random() * far.length)][0];
-            this.travelToCity(pick, true);
+            for (let i = 0; i < 5 && far.length > 0; i++) {
+                const pick = far.splice(Math.floor(Math.random() * far.length), 1)[0][0];
+                if (this.travelToCity(pick, true)) return;
+            }
             return;
         }
         // 航行：先确保站在港口（只认主海路网的港口，里海等孤立湖区不去，免得困在里面出不来）
