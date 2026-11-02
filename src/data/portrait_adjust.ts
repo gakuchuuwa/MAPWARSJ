@@ -9601,6 +9601,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.24,
             "offsetX": 24,
             "offsetY": 0
+        },
+        "/assets/CENTRAL/bfe_xiangliang.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -3
         }
     },
     "folderGuides": {
