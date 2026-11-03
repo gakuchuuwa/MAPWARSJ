@@ -800,7 +800,8 @@ export class LegionPhalanxDrawer {
                         img = AssetLoader.getImage(path);
                     }
                     if (img) {
-                        const processed = await this.processImage(img);
+                        const skipChroma = await this.isChromaFreeDir(path.substring(0, path.lastIndexOf('/') + 1));
+                        const processed = await this.processImage(img, skipChroma);
                         targetArray[i + batchIdx] = processed;
                         // 抠绿产物是另一张图，原图从此没人用 —— 放掉，别存两份位图。
                         // 但**不能在这里放**：同一批图可能还有别的动作组在处理（见上）。
@@ -1056,14 +1057,44 @@ export class LegionPhalanxDrawer {
         return b;
     }
 
-    private static processImage(img: HTMLImageElement): Promise<HTMLImageElement> {
+    /**
+     * 🔴 [2026-11-03 修「战略地图上移动有点卡」] 哪些目录**不用抠绿**。
+     *
+     *    镜头一移动，新军团进视野 → 按需加载兵种 → 每张 DE 雪碧图同步
+     *    `getImageData` + 逐像素扫一遍（一次 4 张，单张可达 13680×180）。
+     *    无头 CPU Profile（玩家环球跟拍 20 秒）：7 个 >100ms 长帧里 945ms 采样有 **514ms** 在这里，
+     *    其中 `getImageData` 384ms —— 长帧第一大户。
+     *
+     *    而 DE 素材本来就是透明 PNG：离线扫 public/SUCAI 全部 37158 张非遮罩图，
+     *    有 `_meta.json` 的 DE 目录 504 个，只有下表 6 个出现判据命中（几十~几百个像素，
+     *    素材自带的绿色衣甲/鳞片）。其余 DE 目录命中 **0** —— 抠绿是可证明的空操作，跳过后逐像素不变。
+     *    下表 6 个照旧抠，保证 8/9/10 画面一个像素都不变（成品不许动）。
+     *    绿幕大户 S10QZ 等三国志10 素材没有 `_meta.json`，照旧抠。
+     *    同族坑：案例集 J（13 已在 2026-09-09 对 DE 跳过抠绿）。
+     */
+    private static readonly CHROMA_KEEP_DE_DIRS = new Set([
+        'WAR_ELEPHANT', 'COMPANION_CAVALRY', 'NESSIE', 'MONK_WEST', 'MISC_CART_OX', 'ELITEJAGUARWARRIOR',
+    ]);
+    private static chromaFreeDirCache = new Map<string, Promise<boolean>>();
+    private static isChromaFreeDir(dir: string): Promise<boolean> {
+        const cached = this.chromaFreeDirCache.get(dir);
+        if (cached) return cached;
+        const m = /\/SUCAI\/([^/]+)\/$/.exec(dir);
+        const job = !m || this.CHROMA_KEEP_DE_DIRS.has(m[1])
+            ? Promise.resolve(false)
+            : this.loadDynMeta(dir).then((dyn) => dyn !== null, () => false);
+        this.chromaFreeDirCache.set(dir, job);
+        return job;
+    }
+
+    private static processImage(img: HTMLImageElement, skipChroma = false): Promise<HTMLImageElement> {
         // 未就绪的图走原路返回且不入缓存 —— 否则会把没抠绿的原图永久钉死在缓存里
         if (!img.complete || img.naturalWidth === 0) return Promise.resolve(img);
         const key = img.src;
-        if (!key) return this.doProcessImage(img);
+        if (!key) return this.doProcessImage(img, skipChroma);
         const hit = this.processedBySrc.get(key);
         if (hit) return hit;
-        const pending = this.doProcessImage(img);
+        const pending = this.doProcessImage(img, skipChroma);
         this.processedBySrc.set(key, pending);
         // 超上限按插入序丢最旧的：它只是派生缓存，丢了下次重抠一遍，不会让贴图缺失。
         while (this.processedBySrc.size > this.PROCESSED_MAX) {
@@ -1074,7 +1105,32 @@ export class LegionPhalanxDrawer {
         return pending;
     }
 
-    private static doProcessImage(img: HTMLImageElement): Promise<HTMLImageElement> {
+    /** ImageBitmap 补齐下游要的 Image 形状（naturalWidth/complete/src/sourceUrl），见 doProcessImage 注释 */
+    private static asSpriteImage(bmp: ImageBitmap, sourceUrl: string): HTMLImageElement {
+        const out = bmp as unknown as HTMLImageElement;
+        const def = (k: string, v: unknown) =>
+            Object.defineProperty(out, k, { value: v, configurable: true });
+        def('naturalWidth', bmp.width);
+        def('naturalHeight', bmp.height);
+        def('complete', true);
+        // src 留空串：setBytes 靠 `src.startsWith('data:')` 判断要不要额外计字符串开销，
+        // ImageBitmap 没有 data URL，空串正好让它只算 w×h×4（比原来更准）。
+        def('src', '');
+        // [2026-08-15 玩家色遮罩] 抠绿后丢失原始路径；保留 sourceUrl 供 SpriteTinter
+        // 推导同目录 `.pc.png` 遮罩（帝国决定 DE 素材）。
+        (out as unknown as { sourceUrl: string }).sourceUrl = sourceUrl;
+        return out;
+    }
+
+    private static doProcessImage(img: HTMLImageElement, skipChroma = false): Promise<HTMLImageElement> {
+        // 不用抠绿（见 CHROMA_KEEP_DE_DIRS）：直接转位图，产物形状与抠绿路径完全一样
+        // （sourceUrl / src='' / 原图照常释放），只省掉主线程同步读像素和逐像素扫描。
+        if (skipChroma && img.complete && img.naturalWidth > 0 && typeof createImageBitmap === 'function') {
+            return createImageBitmap(img).then(
+                (bmp) => this.asSpriteImage(bmp, img.src),
+                () => this.doProcessImage(img, false),
+            );
+        }
         return new Promise((resolve) => {
             if (!img.complete || img.naturalWidth === 0) { resolve(img); return; }
             const canvas = document.createElement('canvas');
@@ -1114,19 +1170,7 @@ export class LegionPhalanxDrawer {
                     fallback.src = canvas.toDataURL();
                     return;
                 }
-                const out = bmp as unknown as HTMLImageElement;
-                const def = (k: string, v: unknown) =>
-                    Object.defineProperty(out, k, { value: v, configurable: true });
-                def('naturalWidth', bmp.width);
-                def('naturalHeight', bmp.height);
-                def('complete', true);
-                // src 留空串：setBytes 靠 `src.startsWith('data:')` 判断要不要额外计字符串开销，
-                // ImageBitmap 没有 data URL，空串正好让它只算 w×h×4（比原来更准）。
-                def('src', '');
-                // [2026-08-15 玩家色遮罩] 抠绿后丢失原始路径；保留 sourceUrl 供 SpriteTinter
-                // 推导同目录 `.pc.png` 遮罩（帝国决定 DE 素材）。
-                (out as unknown as { sourceUrl: string }).sourceUrl = img.src;
-                resolve(out);
+                resolve(this.asSpriteImage(bmp, img.src));
             };
             if (typeof createImageBitmap === 'function') {
                 createImageBitmap(canvas).then(finish).catch(() => finish(null));

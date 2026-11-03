@@ -1045,6 +1045,76 @@ export class RoadRegistry {
     }
 
     /**
+     * 路线上每个点各自最近的接路据点，口径与 getNearestCityId 完全一致（逐点结果相同）。
+     * 🔴 [2026-11-03 修「战略地图上移动有点卡」] 环球每规划一段，要对路线上**每个点**找最近据点；
+     *    逐点调 getNearestCityId = 点数 × 全部节点，无头 Profile 一次长帧里占 443ms。
+     *    这里先扫一遍节点、按路线外包框（外扩 maxDistDeg）筛出候选并分格，再逐点只比邻格候选。
+     *    距离公式不变，并列时按原遍历序取先者，所以选中的也是同一个
+     *    （无头实测 300 条真实路线 / 180 万个点逐点 0 差异）。
+     *    外包框跨日界线时退回逐点全扫。
+     */
+    public getNearestCityIdsAlongPath(
+        points: ReadonlyArray<{ lat: number; lng: number }>, maxDistDeg: number,
+    ): Array<string | undefined> {
+        if (points.length === 0) return [];
+        let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity, maxAbsLat = 0;
+        for (const p of points) {
+            if (p.lat < minLat) minLat = p.lat;
+            if (p.lat > maxLat) maxLat = p.lat;
+            if (p.lng < minLng) minLng = p.lng;
+            if (p.lng > maxLng) maxLng = p.lng;
+            if (Math.abs(p.lat) > maxAbsLat) maxAbsLat = Math.abs(p.lat);
+        }
+        const lngPad = maxDistDeg / Math.max(Math.cos(maxAbsLat * Math.PI / 180), 1e-6);
+        if (maxLng - minLng > 180 || minLng - lngPad < -180 || maxLng + lngPad > 180) {
+            return points.map((p) => this.findNearestCityId(p.lat, p.lng, maxDistDeg));
+        }
+        // 候选再按 maxDistDeg × lngPad 分格：够得着的据点一定在点所在格的 3×3 邻格里。
+        // 记下原遍历序号，等距时取序号小的 = 与逐点全扫「先遇到的胜出」一致。
+        const originLat = minLat - maxDistDeg, originLng = minLng - lngPad;
+        const cellOf = (la: number, ln: number) =>
+            `${Math.floor((la - originLat) / maxDistDeg)},${Math.floor((ln - originLng) / lngPad)}`;
+        const grid = new Map<string, Array<{ id: string; node: GraphNode; order: number }>>();
+        let order = 0;
+        for (const [id, node] of this.nodes) {
+            if (node.type !== 'city') continue;
+            if (node.lat < minLat - maxDistDeg || node.lat > maxLat + maxDistDeg) continue;
+            if (node.lng < minLng - lngPad || node.lng > maxLng + lngPad) continue;
+            const edges = this.adjacencyList.get(id);
+            if (!edges || edges.length === 0) continue;
+            const key = cellOf(node.lat, node.lng);
+            let cell = grid.get(key);
+            if (!cell) { cell = []; grid.set(key, cell); }
+            cell.push({ id, node, order: order++ });
+        }
+        return points.map(({ lat, lng }) => {
+            let nearest: string | undefined;
+            let minDist = Infinity;
+            let minOrder = Infinity;
+            const ci = Math.floor((lat - originLat) / maxDistDeg);
+            const cj = Math.floor((lng - originLng) / lngPad);
+            for (let di = -1; di <= 1; di++) {
+                for (let dj = -1; dj <= 1; dj++) {
+                    const cell = grid.get(`${ci + di},${cj + dj}`);
+                    if (!cell) continue;
+                    for (const c of cell) {
+                        const dLat = c.node.lat - lat;
+                        const dLng = shortestLongitudeDelta(lng, c.node.lng) * Math.cos(lat * Math.PI / 180);
+                        const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+                        if (dist >= maxDistDeg) continue;
+                        if (dist < minDist || (dist === minDist && c.order < minOrder)) {
+                            minDist = dist;
+                            minOrder = c.order;
+                            nearest = c.id;
+                        }
+                    }
+                }
+            }
+            return nearest;
+        });
+    }
+
+    /**
      * 🔴 [2026-09-16 主人报障「无路可达【波斯门战役】」]
      * 取离目标最近的路网据点**坐标**（找不到返回 null）。
      * 用途：战场不是据点、不在路网上（见 Battlefields.ts），像波斯门那样深在扎格罗斯山里、

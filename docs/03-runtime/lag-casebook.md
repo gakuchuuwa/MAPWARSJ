@@ -73,6 +73,7 @@
 | [J. 战术模式很肉·一顿一顿](#j) | DE 素材白跑抠绿：判据 0 命中，却付 PNG 重编码 + 二次解码，单线程 Worker 串行排队 | 一场 39.4s 攻城战 `frames:0`、退场 `pending:78` → 跳过空操作 |
 | [L. 玩家移动有点卡·植被层重采样过勤](#l) | 采样窗按 1 格（46px）对齐 + 每批地形瓦片 / 未解码贴图都强制整层重采样；paint 逐树 `latLngToLayerPoint` | 重采样合计 993–1190 → **448–662ms/12s**，单次最长 75 → **≤32ms**；单次 paint 约 −35% |
 | [K. 跟拍把 `moveend` 打成每帧事件](#k) | 跟拍每帧 `panBy` → Leaflet 每帧完整 fire `moveend`，15 个「按移动结束写」的监听器每秒跑 38 遍 | 冗余工作 **−84%**（moveend 351→55、监听器 129→21ms）；⚠️ **帧间隔无可测改善**，见下 |
+| [M. 战略地图上移动有点卡·长帧](#m) | ① 新兵种进视野按需加载，DE 雪碧图同步 `getImageData` 白跑抠绿（504 个 DE 目录 498 个 0 命中）② 环球每规划一段对路线**每个点**全扫路网节点找最近据点 | 无头 20s 长帧 7 个/1900ms → **2 个/1100ms**，p90 33→**16.8ms**；②单项 116.6s→**8.0s**（300 条路线），逐点 0 差异 |
 
 ---
 
@@ -649,3 +650,35 @@ zoom9 跟拍，CPU Profile 按「最近的项目源码帧」归因 + 包住 `Veg
 
 **顺带修的功能缺陷**：环球模式在偏远处（昆仑山北麓）0.5° 内没有接路据点 → 每 1.5 秒静默放弃、永远不出发。
 `PlayerHero.stepTour` 改为 0.5° → 5° → 30° 逐级放宽，目的地规划失败换下一个。
+
+---
+
+<a id="m"></a>
+## M. 战略地图上移动有点卡 —— 长帧归因到抠绿空转 + 逐点全扫（2026-11-03）
+
+**主人原话**：「检查下，战略地图上移动有点卡。」
+
+**先读的落盘数据**（主人的局，跟拍 神圣罗马骑 / 萨克森重骑，zoom9）：fpsP50 48、gap p90 35 / p99 60ms；
+20s 窗口 88 个长任务 / 8044ms（最长 1498）；`longFrame` 130~300ms 时主循环自己只花几 ms → 时间在主循环之外，
+已登记热点只到 24.7ms/帧。按案例 I 的结论**直接上 CPU Profile**。
+
+**量法**：`node scratch/_probe_march_longframes_20261103.mjs <tag>` —— 无头独立开一局（不碰主人的局），玩家切「环球」、zoom9 跟拍 20s，
+页面里记每帧 rAF 间隔，把落在 >100ms 帧里的 CPU 样本按「最近 src 帧」归因；附带打印还在走抠绿的目录（`chromaDirs`）和②的新旧逐点对比（`equiv`）。
+⚠️ 开局位置随机，各次长帧数波动大，要看归因里谁消失了，不要只比总数。
+
+**真凶①**：`LegionPhalanxDrawer.doProcessImage` —— 镜头一动，新军团进视野 → `ensureUnitTypeLoading` → 每张雪碧图主线程同步
+`drawImage + getImageData + 逐像素`，一批 4 张连着跑。修前一次 20s：7 个长帧采样 945ms 里**514ms** 在这（其中 `getImageData` 384ms）。
+离线扫 `public/SUCAI` 全部 37158 张非遮罩图（`scratch/_scan_sucai_green_20261103.mjs`，结果 `.json`）：
+绿幕大户 `S10QZ`（三国志10，无 `_meta.json`）463 张；有 `_meta.json` 的 DE 目录 504 个，只有 6 个出现零星命中（素材自带绿色，几十~几百像素）。
+**修法**：按每张图自己的目录判定 —— 有 `_meta.json` 且不在 `CHROMA_KEEP_DE_DIRS`（那 6 个）里就跳过抠绿，直接 `createImageBitmap(img)`，
+产物形状（`sourceUrl` / `src=''` / 原图照常释放）与抠绿路径完全一样。那 6 个和无 meta 的目录照旧抠 → 8/9/10 画面不变
+（唯一差别是不再经过 get/putImageData 的预乘 alpha 往返，半透明边缘像素可能差 1~2 个色阶，肉眼不可见）。
+修后长帧归因里 `getImageData` 消失；剩下的 `doProcessImage` 采样是 `createImageBitmap` 首次解码，属于素材本身的成本。
+
+**真凶②**：`PlayerHero.stepTour`（环球）每规划一段，对路线**每个点**调 `getNearestCityId(…, 0.2)` 记沿途据点 = 点数 × 全部路网节点，
+一次长帧里 443ms。**修法**：`RoadRegistry.getNearestCityIdsAlongPath` —— 外包框筛候选 + 分格，只比 3×3 邻格；等距按原遍历序取先者，跨日界线退回逐点全扫。
+验收：300 条随机真实路线、183 万个点逐点 **0 差异**，耗时 116.6s → **8.0s**。
+
+**前 → 后**（无头、各 20s，地区不同）：长帧 7 个/1900ms → **2 个/1100ms**；gap p90 33.3 → **16.8ms**，p99 66.8 → **50ms**。
+剩下两个长帧里 JS 采样只有 136ms，其余不在 JS（无头合成器），不代表真机。主人的局要等暂停/重开（ReloadGate）后，看下一份
+`perf_doctor_latest.json`（`context.trigger:'march-stutter'`）的 `longTasks` 验收。

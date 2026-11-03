@@ -697,8 +697,7 @@ export class PlayerHero {
                 const { city: dest, path } = legs[0];
                 this.rememberTourStop(dest.id);
                 // 沿途途经的据点也全数记入历史，彻底杜绝回踩
-                for (const p of path) {
-                    const nearCity = roadRegistry.getNearestCityId(p.lat, p.lng, 0.2);
+                for (const nearCity of roadRegistry.getNearestCityIdsAlongPath(path, 0.2)) {
                     if (nearCity) this.rememberTourStop(nearCity);
                 }
                 const fullPath = roadRegistry.getFullPathToCity(pos, dest.id, here);
