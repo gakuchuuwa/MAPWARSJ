@@ -115,7 +115,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     // 🔴 [2026-08-19 主人定] 忍者 spd 55→115：全表骑兵统一 130、近战 40~55，原来的 55 是步兵档，
     //    绕后奇袭要走很长一段才接敌，慢得看不出突击感。取 115 = 骑兵的 88%，「比骑兵慢一点」。
     //    与 DE 原型也对得上：AoE2 的 Ninja 速度 1.5，比骑士 1.35 还快，本来就是高机动刺客。
-    ninja: { name: '日本忍者特殊', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.8, spd: 44, dmgType: 'melee', bonus: { 21: 2, 29: 2, 36: 9 }, armorTags: [1, 31] },
+    ninja: { name: '日本忍者特殊', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.8, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2, 36: 9 }, armorTags: [1, 31] },
     liao_dao: { name: '契丹辽刀手', cls: 'melee', sz: 1, hp: 75, atk: 9, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 40, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     elite_liao_dao: { name: '契丹辽刀手精锐', cls: 'melee', sz: 1, hp: 85, atk: 13, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 40, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
     fire_lancer: { name: '南宋火矛手', cls: 'melee', sz: 1, hp: 65, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 5: 5, 8: 5, 16: 4, 21: 1, 30: 4 }, armorTags: [29, 1, 31, 23] },

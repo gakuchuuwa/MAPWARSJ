@@ -74,18 +74,16 @@ export interface FieldYieldCheckInput {
 }
 
 /**
- * 「野战余威受降」判定：
- * 该据点刚在野战中被这个势力打掉武将 + 守方这一仗无将 + 攻方兵力 ≥ 守军 5 倍 + 非关隘 + 乱斗/百岁模式。
+ * 「野战余威受降」判定（2026-11-03 主人定「如果刚野战完的，再去打据点，且无武将，可以100%获得。避免无效战争」）：
+ * 刚野战打赢 + 守方这一仗无将 + 乱斗/百岁模式 → 100% 直接获得据点。
  */
 export function canYieldCityFromFieldDefeat(input: FieldYieldCheckInput): boolean {
     return !!input.gameMode
         && FIELD_YIELD_GAME_MODES.has(input.gameMode)
         && !input.isFirstBattleSiege
-        && input.cityType !== 'pass'
         && !!input.fieldDefeatWinnerFactionId
         && input.fieldDefeatWinnerFactionId === input.attackerFactionId
         && !input.defenderHasGeneral
-        && input.attackerTroops > 0
-        && input.attackerTroops >= input.defenderTroops * FIELD_YIELD_ATTACKER_TROOP_MULTIPLE;
+        && input.attackerTroops > 0;
 }
 

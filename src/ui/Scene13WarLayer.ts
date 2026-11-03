@@ -136,7 +136,7 @@ const SKILL_FRENZY_ATKSPD = 1.5;    // 【攻】攻速倍率
 const SKILL_FRENZY_MOVE = 2.0;      // 【攻】移速倍率
 const SKILL_SHIELD_SEC = 10;        // 【胜】持续（10秒：释放瞬间回满血 + 10秒内无敌）
 const SKILL_SHIELD_TAKEN = 0;       // 【胜】受伤倍率（0＝无敌）
-const SKILL_PANIC_SEC = 15;         // 【混】乱敌阵持续（15秒，2026-10-31 主人令改 15 秒）
+const SKILL_PANIC_SEC = 10;         // 【混】乱敌阵持续（10秒，2026-11-03 主人令改 10 秒）
 const SKILL_PANIC_TAKEN = 2.5;      // 【混】混乱中受伤倍率（2026-11-03 主人定）
 const SKILL_PANIC_MOVE = 0.85;      // 【混】混乱中移速倍率（保持四散乱跑的混乱感，同时略慢于追兵）
 
@@ -586,6 +586,8 @@ export class Scene13WarLayer {
     private skillShieldTimer: [number, number] = [0, 0];
     /** 【混】乱敌阵持续倒计时（秒）：该侧（受害方）士兵陷入混乱——胡乱走动（守城站岗的原地发愣）、不攻击、受一切伤害 ×2 */
     private skillPanicTimer: [number, number] = [0, 0];
+    /** 【混】乱敌阵每秒掉血占自身最大生命的比例（由全场在场敌兵平摊「全军初始总兵力 10%」的血量除以 10 秒算出） */
+    private skillPanicBleedRate: [number, number] = [0.03, 0.03];
     /** 玩家（观众）按官职局部释放六计时的持续计时（斥候本人 / 探马本队 / 先锋本排；将军及以上仍走全军计时） */
     private playerSixFrenzyTimer = 0;
     private playerSixShieldTimer = 0;
@@ -1363,7 +1365,7 @@ export class Scene13WarLayer {
                     .slice(0, Math.max(1, anchorLimit));
             if (anchors.length > 0) for (const a of anchors) vfxPoints.push({ x: a.x, y: a.y });
             else for (const sp of this.spawns) if (sp.f === f && !sp.playerElite) vfxPoints.push({ x: sp.x, y: sp.y });
-            // 🔴 [2026-11-02 主人令「敌战计，出的偷袭兵，应该优先近战，其次才是速度块的。排除象兵，速度太慢。」]
+            // 🔴 [2026-11-03 主人令「敌战计请改为增兵是速度快的优先吧，把近战优先取消。」]
             const fastKey = this.fastestSixRowKey(f);
             const customKeys = fastKey ? [fastKey] : undefined;
             this.spawnImmediateSkillReinforcements(f, addTotalPop, customKeys, vfxTargets, true, anchors);
@@ -1423,15 +1425,18 @@ export class Scene13WarLayer {
                 this.playerSixFrenzyTimer = 0;
                 this.playerSixShieldTimer = 0;
             }
+            const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
+            const livingPop = Math.max(1, enemyLiving.reduce((sum, m) => sum + Math.max(1, m.pop || 1), 0));
+            const totalBleedFrac = Math.min(1.0, Math.max(0.10, (this.initPool[ef] * 0.10) / livingPop));
+            this.skillPanicBleedRate[ef] = totalBleedFrac / SKILL_PANIC_SEC;
             if (scopedControl === null) {
-                for (const m of this.men) if (m.f === ef && m.hp > 0 && !m.hero && !m.siegeW) { m.march = false; vfxTargets.push(m); }
+                for (const m of enemyLiving) { m.march = false; vfxTargets.push(m); }
                 this.skillPanicTimer[ef] = SKILL_PANIC_SEC;
             } else {
-                const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
                 enemyLiving.sort((m1, m2) => ((m1.x - refX) ** 2 + (m1.y - refY) ** 2) - ((m2.x - refX) ** 2 + (m2.y - refY) ** 2));
                 const minCount = scopedControl === 'none' ? 3 : scopedControl === 'one' ? 8 : 20;
                 const limit = Math.max(minCount, Math.round(enemyLiving.length * scopeRatio));
-                // 混乱的人数仍按范围，倍数加在持续时间上（15 秒 × 倍数）
+                // 混乱的人数仍按范围，倍数加在持续时间上（10 秒 × 倍数）
                 const panicSec = SKILL_PANIC_SEC * boost;
                 for (let i = 0; i < Math.min(limit, enemyLiving.length); i++) {
                     const m = enemyLiving[i];
@@ -7796,20 +7801,16 @@ export class Scene13WarLayer {
             const stats = wt;
             // 地形细分减速（水域减20% ×0.8、树林减30% ×0.7、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
             const spdK = this.terrainSpeedAt(m.x, m.y) * (this.unitHasFrenzy(m) ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
-            // 【混】乱阵：处于混乱期的敌军胡乱走动 15 秒并持续掉血（期间停止攻击，受一切伤害 ×2.5）；
+            // 【混】乱阵：处于混乱期的敌军胡乱走动 10 秒并持续掉血（期间停止攻击，受一切伤害 ×2.5）；
             //    守城站岗的兵原地发愣、不还手、不离岗，同样持续掉血
             if (this.unitHasPanic(m)) {
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
                 m.lock = 0;
-                const bleedRate = 0.032 + ((m.zid * 7) % 11) * 0.005;   // 每秒掉 3.2%~8.2% 最大生命（15 秒内陆续阵亡约四成在场兵 ≈ 总兵力 10%，其余重伤）
-                m.hp -= stats.hp * bleedRate * dt * this.shieldTakenMul(m);
-                if (m.hp <= 0) {
-                    m.hp = 0;
-                    (m as WarMan & { forceCorpse?: boolean }).forceCorpse = true;
-                    this.onManKilled(m, null);
-                    continue;
+                const bleedRate = this.skillPanicBleedRate[m.f] ?? (0.30 / SKILL_PANIC_SEC);   // 全场在场敌兵在 10 秒内平摊掉「全军初始总兵力 10%」的血量，最多扣至一丝血（0.01），须被攻击才死
+                if (m.hp > 0.01) {
+                    m.hp = Math.max(0.01, m.hp - stats.hp * bleedRate * dt * this.shieldTakenMul(m));
                 }
                 if (isGuard) {
                     m.tx = m.x; m.ty = m.y;
@@ -9142,11 +9143,11 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-11-02 主人令「敌战计，出的偷袭兵，应该优先近战，其次才是速度块的。排除象兵，速度太慢。」「如果都是只有战象远程，就排除战象，然后优先投掷，其次弩手，弓手。」]
+     * 🔴 [2026-11-03 主人令「敌战计请改为增兵是速度快的优先吧，把近战优先取消。」「移速相同，优先近战」]
      * 选兵顺序：
      *   ① 先排除象兵（护甲类 5 / 名称或键含象）；
-     *   ② 按兵种大类排优先级：0 近战（贴身白刃） → 1 投掷（标枪/掷斧/飞刀/飞轮/投石索/掷弹） → 2 弩手 → 3 弓手及其他远程；
-     *   ③ 在最高优先档内取移速（spd）最快的兵种，同移速随机取一个。
+     *   ② 先取移速（spd）最快的兵种；
+     *   ③ 若最高移速有多个兵种并列，优先近战，再从中随机取一个。
      */
     private fastestSixRowKey(side: 0 | 1): string | undefined {
         const keys = this.sixRowKeys(side);
@@ -9157,53 +9158,24 @@ export class Scene13WarLayer {
                 || st.name.includes('象')
                 || (st.armorTags?.includes(5) ?? false);
         };
-        const tierOf = (k: string): number => {
+        const isMelee = (k: string): boolean => {
             const st = this.statsFor(k, side);
-            if (st.rng <= 65 && st.cls !== 'ranged') return 0; // 近战最优先
-            const proj = PROJ_TYPE[k];
-            if (
-                proj === 'PROJ_SPEAR'
-                || proj === 'PROJ_THROWING_AXE'
-                || proj === 'PROJ_DART'
-                || proj === 'PROJ_SLING'
-                || proj === 'PROJ_CHAKRAM'
-                || proj === 'PROJ_CHAKRAM_ELITE'
-                || proj === 'PROJ_GRENADE'
-                || st.name.includes('掷')
-                || st.name.includes('标枪')
-                || st.name.includes('飞刀')
-                || st.name.includes('投石手')
-            ) return 1; // 远程兜底第一顺位：投掷兵
-            if (
-                proj === 'PROJ_CROSSBOW'
-                || proj === 'PROJ_BOLT'
-                || proj === 'PROJ_WAR_WAGON'
-                || k.includes('crossbow')
-                || k.includes('chukonu')
-                || k.includes('arbalest')
-                || st.name.includes('弩')
-            ) return 2; // 远程兜底第二顺位：弩手
-            return 3;   // 远程兜底第三顺位：弓手及其他远程
+            return st.rng <= 65 && st.cls !== 'ranged';
         };
 
         const nonElephant = keys.filter((k) => !isElephant(k));
         const pool = nonElephant.length > 0 ? nonElephant : keys;
 
-        let bestTier = Infinity;
-        for (const k of pool) {
-            const t = tierOf(k);
-            if (t < bestTier) bestTier = t;
-        }
-        const candidates = pool.filter((k) => tierOf(k) === bestTier);
-
         let bestSpd = -Infinity;
         let top: string[] = [];
-        for (const k of candidates) {
+        for (const k of pool) {
             const spd = this.statsFor(k, side).spd;
             if (spd > bestSpd) { bestSpd = spd; top = [k]; }
             else if (spd === bestSpd) top.push(k);
         }
-        return top[Math.floor(Math.random() * top.length)];
+        const meleeTop = top.filter((k) => isMelee(k));
+        const finalPool = meleeTop.length > 0 ? meleeTop : top;
+        return finalPool[Math.floor(Math.random() * finalPool.length)];
     }
 
     /**

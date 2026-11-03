@@ -125,7 +125,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     // ── 威慑类 ──
 
-    str_19: { id: 'str_19', grid: 'S⑲', displayName: '不战而屈', effect: 'intimidate_instant_win', magnitude: 0.05, engineStatus: 'ready', category: 'deterrence', note: '兵力优势时不战占城：概率 = 兵力比 × 5%，封顶 25%（2026-10-24 主人定，原定值 5%）' },
+    str_19: { id: 'str_19', grid: 'S⑲', displayName: '不战而屈', effect: 'intimidate_instant_win', magnitude: 0.50, engineStatus: 'ready', category: 'deterrence', note: '兵力优势时不战占城：概率 50%（2026-11-03 主人定）' },
 
     // 【2026-07-31 改名】原名「先声夺人」与战术技 ts_021 完全重名。
     //   ts_021 已挂《左传·襄公二十六年》「先人有夺人之心」的出处，且它作用于【开局阶段】，

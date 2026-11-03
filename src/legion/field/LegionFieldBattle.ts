@@ -370,6 +370,12 @@ function startFieldBattleBetween(
         //    🔴 [2026-10-24 下午 主人「你觉得百岁模式也该是这样」] 乱斗 ＋ 百岁都记（剧本不记）。
         const fieldDefeatMode = getGameMode();
         if (winnerFactionId && !!fieldDefeatMode && FIELD_YIELD_GAME_MODES.has(fieldDefeatMode)) {
+            // [2026-11-03 主人定] 刚野战完的军团再去打无武将据点 → 100% 直接获得据点
+            for (const winnerLegion of allLegions) {
+                if (!winnerLegion.isDestroyed && winnerLegion.getTroops() > 0 && winnerLegion.getFactionId() === winnerFactionId) {
+                    (winnerLegion as { justWonFieldBattle?: boolean }).justWonFieldBattle = true;
+                }
+            }
             for (const defeated of deps.getArmies()) {
                 if (defeated.getFactionId() === winnerFactionId) continue;
                 if (!fieldBattleField.hasParticipant(defeated.id)) continue;

@@ -9686,6 +9686,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": 23,
             "offsetY": -11
+        },
+        "/assets/XIANBEI/gen_toghus_temur.png": {
+            "scale": 1.22,
+            "offsetX": 22,
+            "offsetY": 17
         }
     },
     "folderGuides": {

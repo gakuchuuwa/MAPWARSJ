@@ -21,6 +21,7 @@ import { isScriptPeriod } from '../events/scriptPeriod';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getGameMode } from '../data/generalOnStage';
 import { getCityFieldDefeat, consumeCityFieldDefeat, canYieldCityFromFieldDefeat } from '../legion/FieldDefeatRecord';
+import { getGeneralCulture } from '../data/GeneralCulture';
 
 const siegeLog = (...args: unknown[]) => gameLog('siege', ...args);
 import { LegionType, getDefaultLegionTypeForFaction } from '../types/UnitTypes';
@@ -1281,18 +1282,17 @@ export class SiegeManager {
             emitFollowedGeneralStrategicMapFx(army, 'pre_battle_intimidate', pos.lat, pos.lng, 'pulse');
         }
 
-        // ── 乱斗·野战余威：刚被野战打掉武将的据点 → 守方无将 + 兵力悬殊 → 不战而下（确定性受降）──
-        // 🔴 [2026-10-24 主人令] 前提：上一仗是野战，打掉了这个据点的武将（记录见 FieldDefeatRecord）。
-        //    只乱斗模式、只城池/城寨（关隘险要照打）；守方这一仗只要有一个将出场就必须打。
-        //    记录只供该据点的下一场攻城用：这场攻城一开（不论哪方来）就取走，用掉即失效。
+        // ── 乱斗·野战余威（2026-11-03 主人定「如果刚野战完的，再去打据点，且无武将，可以100%获得。避免无效战争」）──
+        const defenderHasGeneral = defenderUnits.some((u) => !!u.generalId);
+        const justWonFieldBattle = !!(army as { justWonFieldBattle?: boolean }).justWonFieldBattle;
+        (army as { justWonFieldBattle?: boolean }).justWonFieldBattle = false;
         const fieldDefeat = getCityFieldDefeat(targetCity.id);
-        if (fieldDefeat) {
-            const defenderHasGeneral = defenderUnits.some((u) => !!u.generalId);
-            // 兵力按**这一仗双方实际参战单位**算（城驻军 + 附近守方援军／主攻军 + 附近攻方援军）
+        if (fieldDefeat || justWonFieldBattle) {
             const myTroops = attackerUnits.reduce((sum, u) => sum + (u.troops || 0), 0);
             const enemyTroops = defenderUnits.reduce((sum, u) => sum + (u.troops || 0), 0);
+            const effectiveWinnerFaction = justWonFieldBattle ? army.getFactionId() : fieldDefeat?.winnerFactionId;
             if (canYieldCityFromFieldDefeat({
-                fieldDefeatWinnerFactionId: fieldDefeat.winnerFactionId,
+                fieldDefeatWinnerFactionId: effectiveWinnerFaction,
                 attackerFactionId: army.getFactionId(),
                 defenderHasGeneral,
                 attackerTroops: myTroops,
@@ -1303,8 +1303,7 @@ export class SiegeManager {
             })) {
                 consumeCityFieldDefeat(targetCity.id);
                 siegeLog(
-                    `[野战余威] ${army.name} 兵临【${targetCity.name}】：该据点武将刚在野战中被击败、`
-                    + `守军 ${enemyTroops} ≤ 攻方 ${myTroops} 的 1/5、无将镇守 → 不战而下`
+                    `[野战余威] ${army.name} 刚野战获胜兵临无将据点【${targetCity.name}】 → 100% 不战而下`
                 );
 
                 // 清协同军团战斗态（已调过 setCombatState(true) 的附近攻守军团）
@@ -1343,20 +1342,37 @@ export class SiegeManager {
             }
         }
 
-        // ── 威慑·不战而屈：兵力优势时概率跳过战斗直接占城（剧情成名战攻城禁止跳过战斗！）──
-        if (!isFirstBattleSiege && generalHasStrategicEffect(army, 'intimidate_instant_win')) {
+        // ── 同文化无将5倍兵力100%投降 / 威慑·不战而屈（50%） / 优势兵力攻无将据点（30%）：跳过战斗直接占城（剧情成名战攻城禁止跳过战斗！）──
+        if (!isFirstBattleSiege) {
             const myTroops = army.getTroops();
             const enemyTroops = targetCity.troops;
             if (myTroops > enemyTroops) {
-                // 🔴 [2026-10-24 主人定] 5% 定值太低（实际观感约千分之五）：改按兵力比放大 ——
-                //    每 1 倍兵力 5%（基础幅度仍读 catalog 的 magnitude），封顶 25%：越悬殊越望风而降。
-                const base = getGeneralStrategicMagnitude(army, 'intimidate_instant_win', 0.05);
+                const originCityId = army.homeCityId ?? army.getSourceCityId();
+                const myCulture = getGeneralCulture(army.generalId) ?? (originCityId ? this.cityManager.getCity(originCityId)?.buildingStyle : undefined);
+                const isSameCulture5xNoGeneral =
+                    !defenderHasGeneral &&
+                    !!myCulture &&
+                    myCulture === (targetCity as { buildingStyle?: string }).buildingStyle &&
+                    myTroops >= enemyTroops * 5;
+                const hasStr19 = generalHasStrategicEffect(army, 'intimidate_instant_win');
                 const ratio = myTroops / Math.max(1, enemyTroops);
-                const chance = scaleIntimidateChance(base, ratio);
-                if (Math.random() < chance) {
-                    siegeLog(`[威慑] 不战而屈触发！${army.name} 不战而胜，占【${targetCity.name}】（兵力比 ${ratio.toFixed(2)}，概率 ${(chance * 100).toFixed(1)}%）`);
-                    const pos = army.getPosition();
-                    emitFollowedGeneralStrategicMapFx(army, 'intimidate_instant_win', pos.lat, pos.lng, 'pulse');
+                const chance = isSameCulture5xNoGeneral
+                    ? 1.0
+                    : hasStr19
+                        ? scaleIntimidateChance(getGeneralStrategicMagnitude(army, 'intimidate_instant_win', 0.50), ratio)
+                        : !defenderHasGeneral
+                            ? 0.30
+                            : 0;
+                if (chance > 0 && (chance >= 1.0 || Math.random() < chance)) {
+                    if (isSameCulture5xNoGeneral) {
+                        siegeLog(`[威慑] 同文化5倍兵力望风归附！${army.name} 不战占领无将据点【${targetCity.name}】（兵力比 ${ratio.toFixed(2)}，100% 投降）`);
+                    } else if (hasStr19) {
+                        siegeLog(`[威慑] 不战而屈触发！${army.name} 不战而胜，占【${targetCity.name}】（兵力比 ${ratio.toFixed(2)}，概率 ${(chance * 100).toFixed(0)}%）`);
+                        const pos = army.getPosition();
+                        emitFollowedGeneralStrategicMapFx(army, 'intimidate_instant_win', pos.lat, pos.lng, 'pulse');
+                    } else {
+                        siegeLog(`[威慑] 优势兵力免战！${army.name} 兵临无将据点【${targetCity.name}】直接占领（兵力比 ${ratio.toFixed(2)}，概率 30%）`);
+                    }
 
                     // 清协同军团战斗态（已调过 setCombatState(true) 的附近攻守军团）
                     nearbyDefenderLegions.forEach((l) => l.clearExternalCombatState());
