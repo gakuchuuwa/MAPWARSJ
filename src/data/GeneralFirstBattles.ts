@@ -116,7 +116,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 37.9,
         targetLng: 12.85,
         myTroops: 10000,
-        enemyFactionId: 'xixiliwangguo',
+        enemyFactionId: 'liangxixili',
         enemyFactionName: '两西西里',
         enemyGeneralId: 'bfe_landi',
         enemyTroops: 10000,
@@ -2943,7 +2943,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 117.38,
         myTroops: 50000,
         enemyFactionId: 'tuoba',
-        enemyFactionName: '北魏',
+        enemyFactionName: '拓跋魏',
         enemyGeneralId: 'tuoba_yuanying',   // 🔴 [2026-10-20 成名战规则] 钟离之战北魏主帅元英
         enemyTroops: 50000,
         introLines: [
@@ -3033,7 +3033,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLng: 113.17,
         myTroops: 10000,
         enemyFactionId: 'tuoba',
-        enemyFactionName: '北魏',
+        enemyFactionName: '拓跋魏',
         enemyGeneralId: 'bfe_yangyu',   // 🔴 [2026-10-25 按史] 529 守荥阳＝东南道大都督杨昱（尔朱荣在晋阳/洛阳一线）
         enemyTroops: 10000,
         introLines: [
@@ -5682,7 +5682,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.6525,
         targetLng: 66.9714,
         myTroops: 50000,
-        enemyFactionId: 'liao_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
+        enemyFactionId: 'xiliao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '西喀喇汗国',
         enemyGeneralId: 'xiliao_uthman',   // 🔴 [2026-10-20 成名战规则] 1212 撒马尔罕西喀喇汗末王奥斯曼
         enemyTroops: 40000,

@@ -9,6 +9,7 @@
 export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   shaodang: { name: '湟中义从羌', tier: 3 },  // 东汉经典羌族从军制度，兵种名号极具特色，升T2
     tubo: { name: '吐蕃大纛军', tier: 1 },
+  guge: { name: '古格甲兵', tier: 3 },        // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   xiangxiong: { name: '象雄武士', tier: 3 },  // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   gar_kham: { name: '德格骁骑', tier: 4 },    // 德格·康巴朵康先锋骑（§12 #7）（缺乏极其著名的战术高光，降T3）
   khoshut: { name: '和硕特铁骑', tier: 1 },   // 当雄·固始汗武力统一雪域的战略主力

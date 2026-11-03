@@ -17,6 +17,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
     xianbei: { name: '鲜卑弓骑', tier: 4 },
   dongxia: { name: '东夏锐卒', tier: 4 },       // 曷苏馆·蒲鲜万奴东夏国
     haixi_nvzhen: { name: '海西甲骑', tier: 3 }, // 与建州死磕的“海西女真”主力，代表了满洲统一前长达百年的激烈内战，升入T3知名
+    houliao: { name: '咸平契骑', tier: 3 },
     suolun: { name: '索伦骑', tier: 3 },
     wula: { name: '乌拉国兵', tier: 4 },
   wure: { name: '兀惹部卒', tier: 4 },          // 乌舍城·乌昭度兀惹部

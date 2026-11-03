@@ -42,6 +42,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'kelite': 'city_knossos',
   'leangongguo': 'city_salamanca',
   'xixiliwangguo': 'city_palermo',
+    'liangxixili': 'city_palermo',
     'gepids': 'city_budapeisi',   // 蒂萨河/潘诺尼亚（今布达佩斯一带）
     'kalbids': 'city_palermo',
 
@@ -230,6 +231,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'manzhou_d': 'city_shenyang',
 'ming_d': 'city_beijing',
 'liao_d': 'city_linhuang',
+'houliao': 'city_xianping',
+'xiliao': 'city_suiye',
 'gongsun_d': 'city_liaoyang',
 'murong': 'city_jicheng',
 'kong_d': 'city_qufu',
@@ -242,6 +245,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'rouran': 'city_saierwusu',
     'baiji': 'city_sabi',
 'tubo': 'city_luoxie',
+'guge': 'city_zhaburang2',
     'tujue': 'city_otuken',
 
 'dayue': 'city_shenglong',
@@ -502,6 +506,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'duerbote': 'city_tuokexun',
     'kaerka': 'city_duluohe',
 'huihu': 'city_woluduocheng',
+    'ganzhou_huihu': 'city_zhangye',   // 🔴 [2026-11-01] 甘州回鹘都甘州（张掖）
 'wuzhumuqin': 'city_wuliyasitai',
 'zhadalan': 'city_kuoyitian',
     'zhuerqi': 'city_sangguer',
@@ -568,6 +573,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'aolitai': 'city_lanbaqiya',
     'shiyuzu': 'city_aola',
 'yangguan': 'city_yangguan',
+'xiliangjun': 'city_luoyang',   // 西凉军·董卓据洛阳
 'xihai_d': 'city_fusicheng',
 'wugu_d': 'city_zhande',
     

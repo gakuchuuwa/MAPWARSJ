@@ -1225,6 +1225,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+    liangxixili: [
+        // 🔴 [2026-10-25 补B] 兰迪（Landi，两西西里将军；1860 卡拉塔菲米 败于加里波第）｜势力 两西西里｜据点 巴勒莫（SICILIANS 文化）｜普将｜精锐「西西里线列」T4｜立绘留空
+        { generalId: 'bfe_landi', factionId: 'liangxixili', cityId: 'city_palermo', generalName: '兰迪', portrait: '/assets/SICILIANS/bfe_landi.png', eliteName: '西西里线列', eliteTier: 4 },
+    ],
+
     xixiliwangguo: [
 
 
@@ -1295,9 +1301,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 liangxixili 并入：同一系政权、彼此没打过仗
-        // 🔴 [2026-10-25 补B] 兰迪（Landi，两西西里将军；1860 卡拉塔菲米 败于加里波第）｜势力 两西西里｜据点 巴勒莫（SICILIANS 文化）｜普将｜精锐「西西里线列」T4｜立绘留空
-        { generalId: 'bfe_landi', factionId: 'xixiliwangguo', cityId: 'city_palermo', generalName: '兰迪', portrait: '/assets/SICILIANS/bfe_landi.png', eliteName: '西西里线列', eliteTier: 4 },
     ],
 
 
@@ -5905,6 +5908,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+    guge: [
+        { generalId: 'guge_chizhaxichabade', factionId: 'guge', cityId: 'city_zhaburang2', generalName: '扎西查巴', portrait: '/assets/TIBET/guge_chizhaxichabade.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
+        { generalId: 'ali_gandancaiwang', factionId: 'ganden', cityId: 'city_gadake', generalName: '甘丹才旺', portrait: '/assets/TIBET/ali_gandancaiwang.png', eliteName: '和硕特骑', eliteTier: 3 },
+    ],
+
     tubo: [
 
 
@@ -6030,9 +6039,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 guge 并入：同一系政权、彼此没打过仗
-        { generalId: 'guge_chizhaxichabade', factionId: 'tubo', cityId: 'city_zhaburang2', generalName: '扎西查巴', portrait: '/assets/TIBET/guge_chizhaxichabade.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
-        { generalId: 'ali_gandancaiwang', factionId: 'tubo', cityId: 'city_gadake', generalName: '甘丹才旺', portrait: '/assets/TIBET/ali_gandancaiwang.png', eliteName: '和硕特骑', eliteTier: 3 },
     ],
 
 
@@ -6342,6 +6348,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    // 🔴 [2026-11-03 主人令「历史上称他们是西凉军…就叫西凉军，旗号董。和西凉势力也是分开的」]
+    //    董卓、华雄原挂西凉（yangguan＝李暠西凉国，400 年）—— 不是他们的政权；汉末董卓集团史称西凉军，单独成势力
+    xiliangjun: [
+        { generalId: 'lushui_dongzhuo', factionId: 'xiliangjun', cityId: 'city_luoyang', generalName: '董卓', portrait: '/assets/CENTRAL/lushui_dongzhuo.png', eliteName: '飞熊军', eliteTier: 2 },
+        { generalId: 'bfe3_69', factionId: 'xiliangjun', cityId: 'city_guangchengguan', generalName: '华雄', portrait: '/assets/CENTRAL/bfe3_69.png' , eliteName: '飞熊军', eliteTier: 2},
+    ],
+
     han_d: [
     { generalId: 'han_d_gengkui', factionId: 'han_d', cityId: 'city_guyangsai', generalName: '耿夔', portrait: '/assets/XIANBEI/han_d_gengkui.png', eliteName: '五原边骑', eliteTier: 2 },   // 🔴 [2026-11-01 空据点补将] 东汉五原太守；随窦宪破北匈奴，金微山之战
     { generalId: 'han_d_cuishi', factionId: 'han_d', cityId: 'city_guyangsai', generalName: '崔寔', portrait: '/assets/XIANBEI/han_d_cuishi.png', eliteName: '五原戍卒', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 桓帝时出为五原太守，整厉士马、严烽候
@@ -6634,8 +6647,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'lushui_dongzhuo', factionId: 'yangguan', cityId: 'city_luoyang', generalName: '董卓', portrait: '/assets/CENTRAL/lushui_dongzhuo.png', eliteName: '飞熊军', eliteTier: 2 },
-        { generalId: 'bfe3_69', factionId: 'yangguan', cityId: 'city_guangchengguan', generalName: '华雄', portrait: '/assets/CENTRAL/bfe3_69.png' , eliteName: '飞熊军', eliteTier: 2},
 
 
 
@@ -8098,6 +8109,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+    xiliao: [
+        { generalId: 'xiliao_yelvdashi', factionId: 'xiliao', cityId: 'city_emil', generalName: '耶律大石', portrait: '/assets/CENTRAL_ASIA/xiliao_yelvdashi.png', eliteName: '契丹铁骑', eliteTier: 2 },
+    ],
+
+    // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+    houliao: [
+        { generalId: 'houliao_yelvliuge', factionId: 'houliao', cityId: 'city_xianping', generalName: '耶律留哥', portrait: '/assets/NORTHEAST/houliao_yelvliuge.png', eliteName: '辽东骑兵', eliteTier: 3 },
+    ],
+
     liao_d: [
 
 
@@ -8207,12 +8228,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 xiliao 并入：同一政权（延续/殖民地/汗族）并成一个势力
-        { generalId: 'xiliao_yelvdashi', factionId: 'liao_d', cityId: 'city_emil', generalName: '耶律大石', portrait: '/assets/CENTRAL_ASIA/xiliao_yelvdashi.png', eliteName: '契丹铁骑', eliteTier: 2 },
         // 🔴 [2026-10-20 成名战规则] 奥斯曼＝西喀喇汗末王（1212 撒马尔罕被花剌子模摩诃末攻灭）；西喀喇汗无独立势力，按其宗主西辽挂靠并报告；普将；封建×中亚＝封建时代河中军团；立绘留空
         { generalId: 'xiliao_uthman', factionId: 'liao_d', cityId: 'city_suiye', generalName: '奥斯曼', portrait: '/assets/CENTRAL_ASIA/xiliao_uthman.png', eliteName: '河中骑兵', eliteTier: 4 },
-        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 houliao 并入：同一政权（延续/殖民地/汗族）并成一个势力
-        { generalId: 'houliao_yelvliuge', factionId: 'liao_d', cityId: 'city_xianping', generalName: '耶律留哥', portrait: '/assets/NORTHEAST/houliao_yelvliuge.png', eliteName: '辽东骑兵', eliteTier: 3 },
     ],
 
 
@@ -8977,6 +8994,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-11-01 主人令「河西不足最低线 10，请处理」·按史补]
     //    甘州回鹘（河西回鹘）可汗夜落纥，据甘州（张掖，HEXI 河西文化）；894–1036 立国，屡拒西夏，1036 亡于李元昊。
     //    普将（四闸：区域政权、史载实胜不细，存疑列普将）；精锐「回鹘铁骑」T3（风土之兵，控丝路咽喉）；立绘留空。
+    // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+    ganzhou_huihu: [
+        { generalId: 'ganzhou_huihu_yeluohu', factionId: 'ganzhou_huihu', cityId: 'city_zhangye', generalName: '夜落纥', portrait: '/assets/KHITAN/ganzhou_huihu_yeluohu.png', eliteName: '回鹘铁骑', eliteTier: 3 },
+        { generalId: 'yuezhi_xihou', factionId: 'ganzhou_huihu', cityId: 'city_shandan', generalName: '黄头', portrait: '/assets/XIANBEI/yuezhi_xihou.png', eliteName: '漠南骑手', eliteTier: 4 },   // 🔴 [2026-11-03 主人点头] 月氏已并入贵霜；黄头＝黄头回鹘部首领（10 世纪河西），改挂甘州回鹘，据点删丹·XIANBEI
+    ],
+
     huihu: [
 
 
@@ -9039,9 +9062,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 ganzhou_huihu 并入：同一系政权、彼此没打过仗
-        { generalId: 'ganzhou_huihu_yeluohu', factionId: 'huihu', cityId: 'city_zhangye', generalName: '夜落纥', portrait: '/assets/KHITAN/ganzhou_huihu_yeluohu.png', eliteName: '回鹘铁骑', eliteTier: 3 },
-        { generalId: 'yuezhi_xihou', factionId: 'huihu', cityId: 'city_shandan', generalName: '黄头', portrait: '/assets/XIANBEI/yuezhi_xihou.png', eliteName: '漠南骑手', eliteTier: 4 },   // 🔴 [2026-11-03 主人点头] 月氏已并入贵霜；黄头＝黄头回鹘部首领（10 世纪河西），改挂甘州回鹘，据点删丹·XIANBEI
     ],
 
 

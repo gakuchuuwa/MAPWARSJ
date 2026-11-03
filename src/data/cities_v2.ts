@@ -1368,7 +1368,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
-    { id: 'city_suiye', name: '碎叶', factionId: 'liao_d', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 10000, region: 'KARA_KHITAN', buildingStyle: 'CENTRAL_ASIA' , note: '按 2026-10-25 标准：城居 2–3 → 小城' },
+    { id: 'city_suiye', name: '碎叶', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 10000, region: 'KARA_KHITAN', buildingStyle: 'CENTRAL_ASIA' , note: '按 2026-10-25 标准：城居 2–3 → 小城' },
 
 
     { id: 'city_nieduo', name: '孽多', factionId: 'xiaobolu', lat: 35.92, lng: 74.3, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处；推算：城居 0.8 万（孽多，小勃律山城 0.8 万）→ 城寨' },
@@ -3102,7 +3102,7 @@ buildingStyle: 'WESTERN', troops: 10000,
     { id: 'city_yumi', name: '阿赫雅尔', factionId: 'yumi', lat: 36.85, lng: 81.65, type: 'small_city', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '扜弥国王都常备军；推算：城居 1 万（阿赫雅尔（扜弥），塔里木绿洲城 1 万）→ 小城' },
     { id: 'city_keliyashankou', name: '阿什库尔', factionId: 'yuchi', lat: 35.45, lng: 81.1, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '尉迟曜于阗王助唐守克里雅山口。🔴 [2026-10-24 按史] 建筑风格 TIBET→WESTERN：阿什库尔（克里雅山口，于阗南山）属**于阗**（尉迟氏于阗王）疆域，于阗是塔里木南道绿洲城郭（同 100km 内于阗、固玛、麻扎塔格皆 WESTERN），青藏藏式不符；无将驻守。' },
     { id: 'city_longmucuo', name: '龙木错', factionId: 'xiangxiong', lat: 34.572168, lng: 80.348511, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '赤松德赞征羊同驻龙木错' },
-    { id: 'city_gadake', name: '噶大克', factionId: 'tubo', lat: 31.940459, lng: 80.139771, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_gadake', name: '噶大克', factionId: 'guge', lat: 31.940459, lng: 80.139771, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
     { id: 'city_payangyi', name: '帕羊驿', factionId: 'supi', lat: 30.140235, lng: 83.281860, type: 'stockade', region: 'TIBET',
@@ -3155,7 +3155,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_puticheng', name: '菩提营', factionId: 'xiaobolu', lat: 35.3, lng: 75.64, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_kajier', name: '喀吉尔', factionId: 'tang', lat: 34.55, lng: 76.13, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '李玄策调克什米尔兵为唐征吐蕃' },
-    { id: 'city_zhaburang2', name: '札布让', factionId: 'tubo', lat: 31.496599, lng: 79.799194, type: 'stockade', region: 'TIBET',
+    { id: 'city_zhaburang2', name: '札布让', factionId: 'guge', lat: 31.496599, lng: 79.799194, type: 'stockade', region: 'TIBET',
 buildingStyle: 'TIBET', troops: 10000,
         note: '札布让；古格小城',
     },
@@ -3288,7 +3288,7 @@ buildingStyle: 'KOREA', troops: 10000,
     { id: 'city_wushecheng', name: '乌舍寨', factionId: 'wula', lat: 45.821125, lng: 128.161011, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
-    { id: 'city_xianping', name: '咸平', factionId: 'liao_d', lat: 42.579367, lng: 124.07959, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'NORTHEAST', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_xianping', name: '咸平', factionId: 'houliao', lat: 42.579367, lng: 124.07959, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'NORTHEAST', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_xupin', name: '恤品', factionId: 'dongxia', lat: 42.994587, lng: 129.828186, type: 'stockade', troops: 10000, region: 'JURCHEN', buildingStyle: 'NORTHEAST' , note: '按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
 
@@ -3629,7 +3629,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     { id: 'city_qingchi', name: '清池', factionId: 'you', lat: 38.3, lng: 116.83, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '推算：城居 1.5 万（清池，唐沧州治 1.5 万）→ 小城' },
-    { id: 'city_shandan', name: '删丹', factionId: 'huihu', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：月氏随畜移徙与匈奴同俗，归漠南 XIANBEI）' },
+    { id: 'city_shandan', name: '删丹', factionId: 'ganzhou_huihu', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：月氏随畜移徙与匈奴同俗，归漠南 XIANBEI）' },
 
     { id: 'city_chongan', name: '崇安', factionId: 'minyue', lat: 27.76, lng: 118.02, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '推算：城居 1.5 万（崇安，宋县，同期县城 1–2 万）→ 小城' },
     { id: 'city_piyetuo', name: '毗耶陀', factionId: 'funan', lat: 11.66, lng: 104.93, type: 'small_city', troops: 10000, region: 'SEASIA_ANTIQUITY', buildingStyle: 'KHMER', mirror: true , note: '推算：城居 1 万（毗耶陀，东南亚古国都 1 万）→ 小城' },

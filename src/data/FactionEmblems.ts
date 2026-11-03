@@ -75,6 +75,7 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     scotland: 'SCOTLAND_SALTIRE',   // 苏格兰·圣安德鲁斜十字
     weiershigongguo: 'WALES_DRAGON',   // 威尔士公国·红龙
     xixiliwangguo: 'SICILY_TRINACRIA',   // 西西里·三曲腿
+    'liangxixili': 'SICILY_TRINACRIA',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
     ruishi: 'SWISS_CROSS',   // 瑞士·白十字
     didi: 'FLANDERS_LION',   // 佛兰德·狮
     bulietani: 'BRITTANY_ERMINE',   // 布列塔尼·貂纹
@@ -214,6 +215,7 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     // ── 2026-10-26 大势力史实旗面第七批（3 家；甘丹无可靠专属图案，保留字旗）──
     kaerka: 'KHALKHA_SOYOMBO',   // 喀尔喀·索永布（札那巴札尔1686年创制；1911年博克多汗国旗）
     tubo: 'TIBETAN_ROYAL_TOMB_LION',   // 吐蕃·琼结藏王陵蹲坐石狮（7—9世纪王陵实物，非后世雪狮旗）
+    'guge': 'TIBETAN_ROYAL_TOMB_LION',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
     kuman_oleshky: 'CUMAN_STONE_BABA',   // 库曼·12世纪草原石雕（尖帽、捧杯祖先像，非格莱塔木加）
     // ── 2026-10-26 大势力史实旗面第八批（4 家）────────────────────────────
     aiaoniya: 'IONIA_EPHESUS_BEE',   // 爱奥尼亚·以弗所蜜蜂（前6—前4世纪城邦钱币，四翼俯视形制）

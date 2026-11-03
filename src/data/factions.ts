@@ -39,6 +39,7 @@ export const FACTIONS: Faction[] = [
   { id: 'kelite', name: '威尼斯共和国' },  // 干地亚要塞·威尼斯海外领地
   { id: 'leangongguo', name: '莱昂' },
   { id: 'xixiliwangguo', name: '西西里' },
+    { id: 'liangxixili', name: '两西西里' },
 
   { id: 'yipilusi', name: '伊庇鲁斯' },
   { id: 'lagoniya', name: '斯巴达' },  // 别名：斯巴达本土（Laconia，斯巴达城邦所在地）
@@ -369,6 +370,8 @@ export const FACTIONS: Faction[] = [
     { id: 'ming_d', name: '大明' },
 
     { id: 'liao_d', name: '大辽' },
+    { id: 'houliao', name: '耶律东辽' },
+    { id: 'xiliao', name: '哈剌契丹' },
 
 
 
@@ -449,6 +452,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'baiji', name: '百济' },
     { id: 'tubo', name: '吐蕃' },
+    { id: 'guge', name: '古格' },
 
     { id: 'tujue', name: '突厥' },
 
@@ -923,8 +927,8 @@ export const FACTIONS: Faction[] = [
 
     // ── 自动补充：cities_v2 使用但 factions.ts 缺失的势力 ──
     { id: 'bandun', name: '板楯' },                      // 板楯蛮(巴人分支/鱼涪津/岷江渡口)
-    { id: 'seljuq', name: '塞尔柱' },      // 桑贾尔·木鹿
-    { id: 'osman', name: '奥斯曼' },      // 穆罕默德二世·布尔萨
+    { id: 'seljuq', name: '塞尔柱帝国' },      // 桑贾尔·木鹿｜🔴 [2026-11-03 主人令「势力绝对不能用人名，不然播报就乱了」] 与武将塞尔柱重名 → 史称全称
+    { id: 'osman', name: '奥斯曼帝国' },      // 穆罕默德二世·布尔萨｜🔴 [2026-11-03] 与武将奥斯曼重名 → 史称全称
     // 阮氏(安南权阀/占城/广南)
     // 党项部族(拓跋氏/玛曲/黄河第一弯)
     // 雅隆部落(吐蕃前身/雅砻河谷/悉补野氏)
@@ -1104,6 +1108,7 @@ export const FACTIONS: Faction[] = [
     { id: 'duerbote', name: '杜尔伯特' },
     { id: 'kaerka', name: '喀尔喀' },
     { id: 'huihu', name: '回鹘' },
+    { id: 'ganzhou_huihu', name: '甘州回鹘' },
     // 🔴 [2026-11-01 主人令「expedition:coverage 河西不足最低线 10，请处理」] 按史补：甘州回鹘（河西回鹘）
     //    894–1036 年据甘州（张掖）立国，控丝路咽喉，屡败西夏，1036 年为李元昊所灭；
     //    《宋史·回鹘传》《辽史》皆称「甘州回鹘」，是历史统称，非自造名。
@@ -1422,6 +1427,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'yangguan', name: '西凉' },
+    { id: 'xiliangjun', name: '西凉军' },   // 🔴 [2026-11-03 主人令「历史上称他们是西凉军…就叫西凉军，旗号董。和西凉势力也是分开的」] 董卓、华雄（汉末凉州兵集团，与东汉朝廷、关东诸侯交战）；西凉（yangguan）是李暠的西凉国
 
 
 
@@ -1499,7 +1505,7 @@ export const FACTIONS: Faction[] = [
     { id: 'tuolemi', name: '托勒密' },
     { id: 'jialedi', name: '迦勒底' },
     { id: 'paermila', name: '帕尔米拉' },
-    { id: 'abasi', name: '阿拔斯' },
+    { id: 'abasi', name: '阿拔斯王朝' },   // 🔴 [2026-11-03] 与武将阿拔斯重名 → 史称全称
     { id: 'xikesuosi', name: '喜克索斯' },
     { id: 'yashu', name: '亚述' },
 
@@ -1587,7 +1593,7 @@ export const FACTIONS: Faction[] = [
     { id: 'sanfoqi', name: '三佛齐' },        // 巨港·室利佛逝王国（苏门答腊海上佛教贸易帝国）
     { id: 'medang', name: '马打蓝' },        // 卡拉桑·马打蓝王国（古爪哇 Medang，赛伦德拉王朝建卡拉桑）
     { id: 'ternate', name: '特尔纳特' },        // 德尔纳特·特尔纳特苏丹国（丁香群岛/马鲁古，巴布拉1570-1583）
-    { id: 'sulu', name: '苏禄' },        // 霍洛·苏禄苏丹国（苏禄群岛，东王朝贡大明）
+    { id: 'sulu', name: '苏禄苏丹国' },        // 🔴 [2026-11-03] 与武将苏禄（突骑施）重名 → 史称全称｜霍洛·苏禄苏丹国（苏禄群岛，东王朝贡大明）
     { id: 'gurjara', name: '瞿折罗' },        // 帕坦·瞿折罗（古吉拉特）
     { id: 'suomunate', name: '索兰基' },     // 索姆纳特·印度教十二光辉林伽之首
     { id: 'zhuluo', name: '朱罗' },        // 坦贾武尔·朱罗王朝（南印度海权帝国）

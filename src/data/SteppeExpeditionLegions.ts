@@ -9,6 +9,7 @@
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     liao_d: { name: '皮室军', tier: 1 },
+    xiliao: { name: '斡耳朵亲卫', tier: 1 },
     menggu_d: { name: '怯薛宿卫', tier: 0 },
     yuan_d: { name: '秃鲁花军', tier: 3 },
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）

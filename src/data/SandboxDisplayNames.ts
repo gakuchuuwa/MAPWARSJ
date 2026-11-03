@@ -49,6 +49,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   kelite: '威共',  // 威尼斯共和国（干地亚要塞）
   leangongguo: '莱昂',
   xixiliwangguo: '西西',
+  'liangxixili': '西西',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 
   yipilusi: '伊庇',
   lagoniya: '斯巴',
@@ -226,12 +227,15 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'manzhou_d': '清',
 'ming_d': '明',
 'liao_d': '辽',
+'houliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+'xiliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'kong_d': '鲁',
 
     'sushen': '肃慎',
 'rouran': '柔然',
     'baiji': '百济',
 'tubo': '吐蕃',
+'guge': '吐蕃',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
     'tujue': '突厥',
 
 'dayue': '大越',
@@ -519,6 +523,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'duerbote': '杜尔',
     'kaerka': '喀尔',
 'huihu': '回鹘',
+'ganzhou_huihu': '回鹘',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'wuzhumuqin': '乌珠',
 'zhadalan': '扎答',
     'zhuerqi': '主儿',
@@ -613,6 +618,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'bailong': '白龙',
     'kepantuo': '渴盘',
 'yangguan': '凉',   // 🔴 [2026-10-28 主人令「势力名字用东南西北上下的，旗帜用一个国号字」] 西凉国号「凉」（史称西凉）→ 凉
+'xiliangjun': '董',   // 🔴 [2026-11-03 主人令「就叫西凉军，旗号董」] 董卓集团无国号无称号，旗号用董
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
 'wugu_d': '乌古',
     xierhe: '锡尔',

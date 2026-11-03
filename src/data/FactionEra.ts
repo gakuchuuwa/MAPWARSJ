@@ -44,8 +44,11 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'dangxiang': [{ from: -9999, era: 'castle' }], // 大夏｜大夏·西夏（982–1227）＝城堡时代大夏军团（铁鹞子冷锻重甲/山讹）
     'goryeo': [{ from: -9999, era: 'castle' }], // 高丽｜高丽（918–1392）＝城堡时代高丽军团（三别抄/别武班）
     'liao_d': [{ from: -9999, era: 'feudal' }], // 大辽｜大辽（907–1125）＝封建时代漠南军团（皮室具装铁骑/铁林军）
+    'houliao': [{ from: -9999, era: 'castle' }], // 东辽
+    'xiliao': [{ from: -9999, era: 'castle' }], // 西辽
     'manzhou_d': [{ from: -9999, era: 'imperial' }], // 大清｜大清（1616–1912，含建州女真）＝帝国时代八旗军团
     'xixiliwangguo': [{ from: -9999, era: 'castle' }], // 西西里｜古典＝叙拉古城邦（阿加索克利）；476 后＝城堡时代诺曼军团
+    'liangxixili': [{ from: -9999, era: 'imperial' }], // 两西西里王国（1816–1861）
     'abasi': [{ from: -9999, era: 'feudal' }], // 阿拔斯｜阿拔斯（750–1258）：封建＝哈里发军团（四大哈里发—阿拔斯黄金时代）；1050 塞尔柱入主巴格达 → 城堡时代撒拉森军团
     'womaya': [{ from: -9999, era: 'feudal' }], // 倭马亚｜倭马亚（661–1031）：封建＝哈里发军团；1050 后泰法/穆拉比特 → 城堡时代撒拉森军团
     'sashan': [{ from: -9999, era: 'antiquity' }], // 萨珊｜萨珊（224–476）：古典时代萨珊军团；476 后（卑路斯一世起）→ 封建时代霍拉桑军团
@@ -267,6 +270,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'huarazim': [{ from: -9999, era: 'castle' }], // 花剌子模
     'hui': [{ from: -9999, era: 'antiquity' }], // 濊族
     'huihu': [{ from: -9999, era: 'feudal' }], // 回鹘
+    'ganzhou_huihu': [{ from: 894, era: 'feudal' }],
     // 🔴 [2026-11-01 按史] 甘州回鹘｜894 年（唐昭宗乾宁元年）据甘州立国—1036 年为西夏所灭，全段封建
     'huite': [{ from: -9999, era: 'imperial' }], // 辉特
     'huluo': [{ from: -9999, era: 'castle' }], // 古尔
@@ -585,6 +589,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yang_aner': [{ from: -9999, era: 'antiquity' }], // 天顺
     'yang_bozhou': [{ from: -9999, era: 'imperial' }], // 播州杨氏
     'yangguan': [{ from: -9999, era: 'antiquity' }], // 西凉
+    'xiliangjun': [{ from: -9999, era: 'antiquity' }], // 西凉军（董卓，汉末 189–192）
     'liangzhou': [{ from: -9999, era: 'antiquity' }], // 凉州（汉末凉州之乱）
     'yangwu': [{ from: -9999, era: 'feudal' }], // 杨吴
     'yanqi': [{ from: -9999, era: 'feudal' }], // 焉耆
@@ -609,7 +614,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yizhi': [{ from: -9999, era: 'antiquity' }], // 一支
     'yuan_d': [{ from: -9999, era: 'castle' }], // 大元
     'yuan_shao': [{ from: -9999, era: 'antiquity' }], // 袁绍
-    'yuenan': [{ from: -9999, era: 'imperial' }], // 越南
+    'yuenan': [{ from: -9999, era: 'imperial' }], // 越南
     'yumi': [{ from: -9999, era: 'antiquity' }], // 扜弥
     'yun': [{ from: -9999, era: 'antiquity' }], // 允戎
     'yuwen': [{ from: -9999, era: 'feudal' }], // 宇文
@@ -693,6 +698,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'suomunate': [{ from: -9999, era: 'castle' }], // 索兰基｜按现存名将成名年推定：–∞起封建 → 1163起城堡
     'talasike': [{ from: -9999, era: 'castle' }], // 塔拉斯科｜按现存名将成名年推定：–∞起城堡 → 1505起帝国
     'tubo': [{ from: -9999, era: 'feudal' }], // 吐蕃｜按现存名将成名年推定：–∞起古典 → 530起封建 → 1050起城堡
+    'guge': [{ from: -9999, era: 'feudal' }], // 古格
     'wende': [{ from: -9999, era: 'feudal' }], // 萨克森｜–∞起古典（罗马时期撒克逊人）→ 476起封建 → 993起城堡 → 1500起帝国
     'wulaertu': [{ from: -9999, era: 'castle' }], // 亚美尼亚｜古典→953 封建→1140 城堡→1500 帝国
     'xigete': [{ from: -9999, era: 'feudal' }], // 西哥特｜按现存名将成名年推定：–∞起古典 → 708起封建 → 1085起城堡

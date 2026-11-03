@@ -153,6 +153,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     huluo: 'GURJ_CASTLE_AGE3',             // 古尔
     // ── 青藏 ──
     tubo: 'TIBET_CASTLE_AGE3',             // 吐蕃
+    guge: 'TIBET_CASTLE_AGE3',             // 古格
     xiangxiong: 'TIBET_CASTLE_AGE3',       // 象雄
     ladakh: 'TIBET_CASTLE_AGE3',           // 拉达克
     supi: 'TIBET_CASTLE_AGE3',             // 苏毗

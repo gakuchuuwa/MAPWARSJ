@@ -15,6 +15,7 @@ import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCit
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getCityEliteLegionName, getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { getFactionGeneral, getFactionIdOfGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { FACTIONS } from '../data/factions';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { ALL_BRANCHES_MAP, CULTURE_62_GROUPS, LAYER3_CUSTOM_GROUPS, resolveCityHierarchy } from '../systems/CultureHierarchy';
@@ -2196,7 +2197,10 @@ export class PlayerQuestSystem {
             (fb.enemyGeneralId ? getGeneralRecordByGeneralId(fb.enemyGeneralId) : null) ??
             (enemyFactionId !== 'panshu' ? getFactionGeneral(enemyFactionId) : null);
         const enemyGeneralId = existingEnemyGen?.generalId;
-        const enemyDisplayName = existingEnemyGen?.generalName ?? `${fb.enemyFactionName}军`;
+        // 🔴 [2026-11-03 主人令「北魏和拓跋魏合并」] 同一势力只许一个名字：按敌势力 id 取现行势力名，
+        //    成名战表里抄的 enemyFactionName（北魏/北宋/唐朝…旧称）只在势力不存在时兜底
+        const enemyFactionName = FACTIONS.find((f) => f.id === fb.enemyFactionId)?.name ?? fb.enemyFactionName;
+        const enemyDisplayName = existingEnemyGen?.generalName ?? `${enemyFactionName}军`;
         // 兜底势力 `panshu` 没有武将/军团，军团名按敌将或敌势力泛称拼，不再叫「起义军团」
         // （旧「叛军用起义军团」口径已由 2026-10-24「叛军和起义军完全是两回事」＋ 2026-10-25 删起义势力作废）。
         const enemyLegionName = existingEnemyGen

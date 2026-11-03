@@ -10,6 +10,7 @@
  *
  * 【仅正规势力】叛军（panshu，特殊势力）不在此表；叛军无 hex 势力色，见 RebelFlagConstants / CityAssetManager。
  */
+import { getLineageRoot } from './FactionLineage';
 
 const _FIXED: Record<string, string> = {
     // ── 2026-10-25 按史补势力 ──
@@ -117,6 +118,7 @@ const _FIXED: Record<string, string> = {
     // ── 青藏精锐远征势力（2026-06-11；hex 全局唯一）──
     shaodang: '#8A7060', // 烧当·湟中义从羌（河湟褐）
     tubo: '#4A2868', // 吐蕃·却杰军（雪域深紫）
+    'guge': '#4A2868',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
     xiangxiong: '#7A5848', // 象雄·武士（苯教铜褐）
     gar_kham: '#8A4840', // 德司·康巴骁骑（康区赭）
     khoshut: '#B0A898', // 和硕特·铁骑（卫拉特浅灰）
@@ -186,6 +188,8 @@ wuzhou_yijun: '#6B7A2E', // 婺州义军·汪文进
     // ── 黑·水德尚黑 / 契丹黑旗 ──
     qin: '#1C1C1C', // 秦
     liao_d: '#302E28', // 大辽·皮室军（上京临潢）
+    'houliao': '#302E28',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+    'xiliao': '#302E28',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
     yuwen: '#25675B', // 宇文·北周（木德尚青）
 
     // ── 补全中城随机势力专属色（2026-06-12） ──
@@ -323,6 +327,7 @@ wuzhou_yijun: '#6B7A2E', // 婺州义军·汪文进
     'duerbote': '#D02C26', // 自动分配 (邻域相斥)
     'kaerka': '#C4A030', // 喀尔喀·黄旗（与准噶尔黑对举）
     'huihu': '#C24A2E', // 回鹘·可汗朱红袍
+    'ganzhou_huihu': '#C24A2E',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
     'wuzhumuqin': '#49A198', // 自动分配 (邻域相斥)
     'zhadalan': '#5D833A', // 自动分配 (邻域相斥)
     'zhuerqi': '#81BBAE', // 自动分配 (邻域相斥)
@@ -358,6 +363,7 @@ wuzhou_yijun: '#6B7A2E', // 婺州义军·汪文进
     bailong: '#5D6E7F',
     kepantuo: '#627384',
     yangguan: '#6C7D8E',
+    xiliangjun: '#5A2A3C', // 西凉军·董卓（深酱紫红，与阳关灰蓝/前凉土黄/凉州深褐区分）
     shanshan: '#768798',
     hantawadi: '#8FA0B1',
     wuling: '#A3B4C5',
@@ -495,6 +501,7 @@ wuzhou_yijun: '#6B7A2E', // 婺州义军·汪文进
     'bulietani': '#4A4A55', // 布列塔尼·雷恩（布列塔尼深灰蓝）
     'leangongguo': '#6A3D9E', // 莱昂·萨拉曼卡（莱昂狮旗紫）
     'xixiliwangguo': '#D4880B', // 西西里王国·巴勒莫（诺曼金）
+    'liangxixili': '#D4880B',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
     'aboerleiya': '#A63A32', // 阿尔博雷亚·奥里斯塔诺（判官国纹章银底红树，取树红）
     // 日耳曼
     'falanji': '#1E4E79', // 法兰克·科隆（法兰克深蓝）
@@ -747,6 +754,8 @@ function assertUniqueFixedColors(map: Record<string, string>): void {
     for (const [fid, hex] of Object.entries(map)) {
         const key = hex.toUpperCase();
         const prev = hexOwner.get(key);
+        // 🔴 [2026-11-03 主人令「没有打过仗的，可以旗号，颜色一致」] 同系政权（FactionLineage）放行同色
+        if (prev && getLineageRoot(prev) === getLineageRoot(fid)) continue;
         if (prev) {
             throw new Error(
                 `[HistoricalFactionColors] hex 重复: ${fid} 与 ${prev} 均为 ${hex}`,

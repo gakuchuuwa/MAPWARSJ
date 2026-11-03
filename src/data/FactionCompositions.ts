@@ -483,6 +483,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代吐蕃军团",
         legionType: "region",
     },
+    "guge": {
+        legionName: "封建时代吐蕃军团",
+        legionType: "region",
+    },
     "qifu_d": {
         legionName: "古典时代漠南游牧军团",
         legionType: "sub",
@@ -948,6 +952,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代漠南军团",
         legionType: "sub",
     },
+    "houliao": {
+        legionName: "城堡时代女真军团",
+        legionType: "sub",
+    },
+    "xiliao": {
+        legionName: "城堡时代河中军团",
+        legionType: "sub",
+    },
     "kumoxi": {
         legionName: "封建时代漠南军团",
         legionType: "sub",
@@ -1173,6 +1185,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "xixiliwangguo": {
         legionName: "城堡时代诺曼军团",
         legionType: "sub",
+    },
+    "liangxixili": {
+        legionName: "帝国时代西西里军团",
+        legionType: "region",
     },
     // 🔴 [2026-10-24 主人授权新增] 撒丁阿尔博雷亚判官国：同文化（SICILIANS）× 城堡时代
     "aboerleiya": {
@@ -1418,6 +1434,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yangguan": {
         legionName: "古典时代凉州军团",
+        legionType: "sub",
+    },
+    "xiliangjun": {
+        legionName: "古典时代华夏军团",
         legionType: "sub",
     },
     "xinluo": {
@@ -1764,6 +1784,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "huihu": {
         legionName: "封建时代突厥军团",
+        legionType: "sub",
+    },
+    "ganzhou_huihu": {
+        legionName: "封建时代河西军团",
         legionType: "sub",
     },
     // 🔴 [2026-11-01 按史] 甘州回鹘＝封建时代 × 河西文化（据点张掖 buildingStyle HEXI）→ 封建时代河西军团

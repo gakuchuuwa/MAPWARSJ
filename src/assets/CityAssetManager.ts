@@ -170,12 +170,15 @@ export class CityAssetManager {
 'manzhou_d': '清',
 'ming_d': '明',
 'liao_d': '辽',
+'houliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
+'xiliao': '辽',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
 'kong_d': '鲁',
         'sushen': '肃慎',
 'guishuang': '贵霜',
 'rouran': '柔然',
         'baiji': '百济',
 'tubo': '吐蕃',
+'guge': '吐蕃',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
         'tujue': '突厥',
 'dayue': '大越',
         'ryukyu': '琉球',
@@ -418,6 +421,7 @@ export class CityAssetManager {
         'duerbote': '杜尔',
         'kaerka': '喀尔',
 'huihu': '回鹘',
+'ganzhou_huihu': '回鹘',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
         // 🔴 [2026-11-01] 甘州回鹘（河西回鹘）：登记表只登记旗号、值＝旗号（与 SANDBOX_DISPLAY_NAMES 一致）
 'wuzhumuqin': '乌珠',
 'zhadalan': '扎答',
@@ -512,6 +516,7 @@ export class CityAssetManager {
 'bailong': '白龙',
         'kepantuo': '渴盘',
 'yangguan': '凉',
+'xiliangjun': '董',
         // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
 'wugu_d': '乌古',
         'kumoxi': '奚',
@@ -808,6 +813,7 @@ export class CityAssetManager {
         'xigete': '哥特',
         'xila': '雅典',
         'xixiliwangguo': '西西',
+        'liangxixili': '西西',  // 🔴 [2026-11-03 主人令「还是单独算势力吧，没有打过仗的，可以旗号，颜色一致」] 同系政权单独成势力，旗号/颜色随本家
         'yasuer': '亚速',
         'yidelisi': '伊德',
         'yinggelan': '英',
