@@ -502,7 +502,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
             legionName: '帝国时代南洋军团',
             eliteName: '波纳佩海兵',
             eliteTier: 4,
-            portrait: ''
+            portrait: '/assets/MALAY/bolinixiya_yisuokelekeer.png'
         },
         // 波马雷（约1742–1803，波马雷一世，统一大溪地与周边群岛建立波马雷王朝）→ 大溪地（MALAY）
         { generalId: 'bolinixiya_baomalei', factionId: 'bolinixiya', cityId: 'city_tahiti', generalName: '波马雷', portrait: '/assets/MALAY/bolinixiya_baomalei.png', eliteName: '大溪地武士', eliteTier: 4 },
@@ -2515,7 +2515,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
             legionName: '城堡时代英格兰军团',
             eliteName: '边区戍兵',
             eliteTier: 4,
-            portrait: ''
+            portrait: '/assets/BRITONS/yinggelan_samosi.png'
         },
                 // 约翰·史密斯（1580–1631，弗吉尼亚殖民地开拓者与詹姆斯敦总督）→ 詹姆斯敦（BRITONS）
                 // 亨利·摩根（1635–1688，私掠舰队司令、牙买加副总督）→ 皇家港（BRITONS）

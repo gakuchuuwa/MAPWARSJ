@@ -9208,9 +9208,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 42
         },
         "/assets/BRITONS/yinggelan_warenne.png": {
-            "scale": 1.28,
+            "scale": 1.32,
             "offsetX": 0,
-            "offsetY": 47
+            "offsetY": 51
         },
         "/assets/CENTRAL/bfe_wangyan.png": {
             "scale": 1.13,
@@ -10476,6 +10476,101 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 14
+        },
+        "/assets/BRITONS/gen_suffolk.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 27
+        },
+        "/assets/BRITONS/gen_vernon.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 47
+        },
+        "/assets/BRITONS/weiershi_arthur.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -24
+        },
+        "/assets/BRITONS/weiershi_mordred.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/BRITONS/yinggelan_clare.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/BRITONS/yinggelan_delake.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/BRITONS/yinggelan_gawain.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/BRITONS/yinggelan_friartuck.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/BRITONS/yinggelan_fastolf.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/BRITONS/yinggelan_henlimogen.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/BRITONS/yinggelan_henryii.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/BRITONS/yinggelan_lancelot.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/BRITONS/yinggelan_lionheart.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/BRITONS/yinggelan_littlejohn.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/BRITONS/yinggelan_nottingham.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/BRITONS/yinggelan_robinhood.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/BRITONS/yinggelan_tristan.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/BRITONS/yinggelan_yuehansimisi.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/BRITONS/yinggelan_yuehanjifade.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 21
         }
     },
     "folderGuides": {
