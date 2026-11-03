@@ -541,6 +541,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'zhamolin': [{ from: -9999, era: 'imperial' }], // 扎莫林（科泽科德/卡利卡特）｜1498 达伽马到访，15–16 世纪马拉巴尔胡椒港（既有缺口补齐）
     'walajiyia': [{ from: -9999, era: 'castle' }], // 瓦拉几亚
     'wei': [{ from: -9999, era: 'antiquity' }], // 魏国
+    'caowei': [{ from: -9999, era: 'antiquity' }], // 曹魏
     'weiershigongguo': [{ from: -9999, era: 'castle' }], // 威尔士公国
     'weijing_york': [{ from: -9999, era: 'feudal' }], // 约维克
     'weili': [{ from: -9999, era: 'antiquity' }], // 尉犁

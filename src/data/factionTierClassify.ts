@@ -44,7 +44,7 @@ const TIER2_ETHNIC_SEED = new Set([
 ]);
 
 const TIER1_REGIME = new Set([
-    'han_d', 'shu', 'wu', 'wei', 'qin', 'chu', 'tang', 'song', 'ming_d',
+    'han_d', 'shu', 'wu', 'wei', 'caowei', 'qin', 'chu', 'tang', 'song', 'ming_d',
     'yuan_d', 'manzhou_d', 'dajin', 'jin', 'shang', 'xiezhou', 'liao_d', 'sui',
     'nanzhao', 'dali', 'goryeo', 'joseon', 'bohai', 'baiji', 'xinluo',
     'gaogouli', 'yamato', 'dayue', 'tubo', 'dangxiang', 'siam', 'chenla',

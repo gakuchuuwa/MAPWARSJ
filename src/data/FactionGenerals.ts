@@ -5236,7 +5236,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     wuzhou_d: [
-        { generalId: 'bfe3_76', cityId: 'city_luoyang', generalName: '曹爽', portrait: '/assets/CENTRAL/bfe3_76.png', factionId: 'wei', eliteName: '武卫营', eliteTier: 4  },   // 按史：曹爽弟曹训为武卫将军，尽据禁兵（《三国志·卷九·曹爽传》）
+        { generalId: 'bfe3_76', cityId: 'city_luoyang', generalName: '曹爽', portrait: '/assets/CENTRAL/bfe3_76.png', factionId: 'caowei', eliteName: '武卫营', eliteTier: 4  },   // 按史：曹爽弟曹训为武卫将军，尽据禁兵（《三国志·卷九·曹爽传》）
         { generalId: 'wuzhou_d_wuzetian', factionId: 'wuzhou_d', cityId: 'city_luoyang', generalName: '武则天', portrait: '/assets/CENTRAL/wuzhou_d_wuzetian.png', eliteName: '河朔骑兵', eliteTier: 4 },
         { generalId: 'bfe_prince_chao', cityId: 'city_luoyang', generalName: '王子朝', portrait: '/assets/CENTRAL/bfe_prince_chao.png', factionId: 'zhou', eliteName: '河朔骑兵', eliteTier: 4 },
         // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 成名战回补安置按史实复核：元英＝北魏中山王，507 钟离之战时北魏已于 494 年迁都洛阳，大同（平城）已非都城 → 放洛阳（wuzhou_d，风格 CENTRAL）；仍挂本政权 tuoba
@@ -6749,7 +6749,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'guzhu_tianyu', factionId: 'wei', cityId: 'city_beijing', generalName: '田豫', portrait: '/assets/WEI/guzhu_tianyu.png', eliteName: '辽西威锋', eliteTier: 3  },   // 按史：田豫持节护乌丸校尉、威震辽西；恢复旧档专属番号，乌桓突骑独归蹋顿（《三国志·田豫传》）
+        { generalId: 'guzhu_tianyu', factionId: 'caowei', cityId: 'city_beijing', generalName: '田豫', portrait: '/assets/WEI/guzhu_tianyu.png', eliteName: '辽西威锋', eliteTier: 3  },   // 按史：田豫持节护乌丸校尉、威震辽西；恢复旧档专属番号，乌桓突骑独归蹋顿（《三国志·田豫传》）
 
 
 
@@ -6759,7 +6759,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'cao_d_caocao', factionId: 'wei', cityId: 'city_xuchang', generalName: '曹操', portrait: '/assets/CENTRAL/cao_d_caocao.png', eliteName: '虎豹骑', eliteTier: 1  },   // 按史：曹操亲军虎豹骑，「纯所督虎豹骑，皆天下骁锐」（《三国志·卷九·曹纯传》裴注《魏书》）
+        { generalId: 'cao_d_caocao', factionId: 'caowei', cityId: 'city_xuchang', generalName: '曹操', portrait: '/assets/CENTRAL/cao_d_caocao.png', eliteName: '虎豹骑', eliteTier: 1  },   // 按史：曹操亲军虎豹骑，「纯所督虎豹骑，皆天下骁锐」（《三国志·卷九·曹纯传》裴注《魏书》）
 
 
 
@@ -6789,7 +6789,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'bozhou_d_yujin', factionId: 'wei', cityId: 'city_xiangyang', generalName: '于禁', portrait: '/assets/JIANGNAN/bozhou_d_yujin.png', eliteName: '七军', eliteTier: 4  },   // 按史：于禁督七军救樊城，「禁等七军皆没」（《三国志·卷一七·于禁传》）
+        { generalId: 'bozhou_d_yujin', factionId: 'caowei', cityId: 'city_xiangyang', generalName: '于禁', portrait: '/assets/JIANGNAN/bozhou_d_yujin.png', eliteName: '七军', eliteTier: 4  },   // 按史：于禁督七军救樊城，「禁等七军皆没」（《三国志·卷一七·于禁传》）
 
 
 
@@ -6799,7 +6799,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'wudu_dengai', factionId: 'wei', cityId: 'city_ganquanyi', generalName: '邓艾', portrait: '/assets/BASHU/wudu_dengai.png', eliteName: '陇右兵', eliteTier: 2  },   // 按史：邓艾自阴平道行无人之地七百余里灭蜀（《三国志·卷二八·邓艾传》）
+        { generalId: 'wudu_dengai', factionId: 'caowei', cityId: 'city_ganquanyi', generalName: '邓艾', portrait: '/assets/BASHU/wudu_dengai.png', eliteName: '陇右兵', eliteTier: 2  },   // 按史：邓艾自阴平道行无人之地七百余里灭蜀（《三国志·卷二八·邓艾传》）
 
 
 
@@ -6809,7 +6809,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'huang_d_sunshuao', factionId: 'wei', cityId: 'city_huangchuan', generalName: '贾逵', portrait: '/assets/JIANGNAN/huang_d_sunshuao.png', eliteName: '豫州兵', eliteTier: 4  },   // 按史：贾逵为豫州刺史，石亭多设旗鼓（《三国志·卷一五·贾逵传》）
+        { generalId: 'huang_d_sunshuao', factionId: 'caowei', cityId: 'city_huangchuan', generalName: '贾逵', portrait: '/assets/JIANGNAN/huang_d_sunshuao.png', eliteName: '豫州兵', eliteTier: 4  },   // 按史：贾逵为豫州刺史，石亭多设旗鼓（《三国志·卷一五·贾逵传》）
 
 
 
@@ -6819,7 +6819,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'lelang_wangqi', factionId: 'wei', cityId: 'city_xicheng', generalName: '王颀', portrait: '/assets/KOREA/lelang_wangqi.png', eliteName: '乐浪兵', eliteTier: 4  },   // 按史：王颀以玄菟太守从毌丘俭征高句丽，据点在乐浪境，取郡兵建制（《三国志·卷二八·毌丘俭传》）
+        { generalId: 'lelang_wangqi', factionId: 'caowei', cityId: 'city_xicheng', generalName: '王颀', portrait: '/assets/KOREA/lelang_wangqi.png', eliteName: '乐浪兵', eliteTier: 4  },   // 按史：王颀以玄菟太守从毌丘俭征高句丽，据点在乐浪境，取郡兵建制（《三国志·卷二八·毌丘俭传》）
 
 
 
@@ -6831,9 +6831,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 主人令「张郃、王经、强端（三国魏）、王衍（西晋）、项梁（秦末楚），请修复」]
         //    与战国魏／春秋晋／战国楚同名的势力编制指针是三级「先秦军团」，这三家后世武将不跟先秦指针，
         //    按格位（势力时代 × 据点文化）手写古典军团 —— 与曹操／曹爽／司马懿／于禁／邓艾同口径。
-        { generalId: 'bfe_zhanghe', factionId: 'wei', cityId: 'city_anyang', generalName: '张郃', portrait: '/assets/CENTRAL/bfe_zhanghe.png', eliteName: '河北突骑', eliteTier: 2 },
-        { generalId: 'bfe_wangjing', factionId: 'wei', cityId: 'city_lintao', generalName: '王经', portrait: '/assets/CENTRAL/bfe_wangjing.png', eliteName: '雍州戍兵', eliteTier: 4 },
-        { generalId: 'wei_xuchu', factionId: 'wei', cityId: 'city_qiaojun', generalName: '许褚', portrait: '/assets/CENTRAL/wei_xuchu.png', eliteName: '虎卫军', eliteTier: 3 },   // 谯国谯人，汉末率宗族数千家坚壁于谯，后为曹操宿卫（镇守谯县）
+        { generalId: 'bfe_zhanghe', factionId: 'caowei', cityId: 'city_anyang', generalName: '张郃', portrait: '/assets/CENTRAL/bfe_zhanghe.png', eliteName: '河北突骑', eliteTier: 2 },
+        { generalId: 'bfe_wangjing', factionId: 'caowei', cityId: 'city_lintao', generalName: '王经', portrait: '/assets/CENTRAL/bfe_wangjing.png', eliteName: '雍州戍兵', eliteTier: 4 },
+        { generalId: 'wei_xuchu', factionId: 'caowei', cityId: 'city_qiaojun', generalName: '许褚', portrait: '/assets/CENTRAL/wei_xuchu.png', eliteName: '虎卫军', eliteTier: 3 },   // 谯国谯人，汉末率宗族数千家坚壁于谯，后为曹操宿卫（镇守谯县）
     ],
 
 
@@ -11296,7 +11296,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'qiuchi_yangnandang', cityId: 'city_qiuchi', generalName: '杨难当', portrait: '/assets/BASHU/qiuchi_yangnandang.png', eliteName: '巴蜀弩士', eliteTier: 4 },
         // 🔴 [2026-10-25 主人令] 三国魏非先秦武将：不跟「先秦军团」指针，按格位（阴平 BASHU × 古典）取巴蜀军团
-        { generalId: 'dangzhou_qiangduan', factionId: 'wei', cityId: 'city_dangchang', generalName: '强端', portrait: '/assets/BASHU/dangzhou_qiangduan.png', eliteName: '阴平氐兵', eliteTier: 4  },   // 按史：阴平氐强端斩吴兰传其首（《三国志·卷一·武帝纪》）
+        { generalId: 'dangzhou_qiangduan', factionId: 'caowei', cityId: 'city_dangchang', generalName: '强端', portrait: '/assets/BASHU/dangzhou_qiangduan.png', eliteName: '阴平氐兵', eliteTier: 4  },   // 按史：阴平氐强端斩吴兰传其首（《三国志·卷一·武帝纪》）
 
 
 
@@ -13616,7 +13616,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'bfe3_17', cityId: 'city_fushi', generalName: '王离', portrait: '/assets/CENTRAL/bfe3_17.png', factionId: 'qin', eliteName: '秦锐士', eliteTier: 1 },
         { generalId: 'bfe2_pang_juan', factionId: 'wei', cityId: 'city_bianliang', generalName: '庞涓', portrait: '/assets/CENTRAL/bfe2_pang_juan.png', eliteName: '魏国精甲', eliteTier: 2 },
-        { generalId: 'caoren', factionId: 'wei', cityId: 'city_nanyang', generalName: '曹仁', portrait: '/assets/CENTRAL/caoren.png', eliteName: '征南铁骑', eliteTier: 2  },   // 按史：曹仁为魏征南将军驻宛城、守樊城拒关羽，「仁人马数千守城」沉白马盟誓（《三国志·卷九·曹仁传》）
+        { generalId: 'caoren', factionId: 'caowei', cityId: 'city_nanyang', generalName: '曹仁', portrait: '/assets/CENTRAL/caoren.png', eliteName: '征南铁骑', eliteTier: 2  },   // 按史：曹仁为魏征南将军驻宛城、守樊城拒关羽，「仁人马数千守城」沉白马盟誓（《三国志·卷九·曹仁传》）
         { generalId: 'shang_weiwuji', factionId: 'wei', cityId: 'city_bianliang', generalName: '魏无忌', portrait: '/assets/CENTRAL/shang_weiwuji.png' , eliteName: '信陵门客', eliteTier: 2 },
         // 🔴 [2026-10-24 险要补将·镇守] 张濡＝南宋独松关守将，德祐元年（1275）元军破关被执（《独松关之战》）；普将；精锐「独松戍卒」T4
         { generalId: 'dusong_zhangru', generalName: '张濡', factionId: 'song', cityId: 'city_dusong', portrait: '/assets/JIANGNAN/song_zhangru.png', eliteName: '独松戍卒', eliteTier: 4 },
@@ -17336,7 +17336,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     yangwu: [
-        { generalId: 'lu_zhangliao', factionId: 'wei', cityId: 'city_hefei', generalName: '张辽', portrait: '/assets/JIANGNAN/lu_zhangliao.png', eliteName: '逍遥精骑', eliteTier: 2  },   // 按史：张辽屯合肥，夜募敢从之士八百破孙权十万（《三国志·卷一七·张辽传》）
+        { generalId: 'lu_zhangliao', factionId: 'caowei', cityId: 'city_hefei', generalName: '张辽', portrait: '/assets/JIANGNAN/lu_zhangliao.png', eliteName: '逍遥精骑', eliteTier: 2  },   // 按史：张辽屯合肥，夜募敢从之士八百破孙权十万（《三国志·卷一七·张辽传》）
 
     
         { generalId: 'bfe_sun_ru', cityId: 'city_yangzhou', generalName: '孙儒', portrait: '/assets/JIANGNAN/bfe_sun_ru.png', factionId: 'tang', eliteName: '淮南军', eliteTier: 3  },   // 按史：孙儒据扬州自称淮南节度使，统淮南镇兵（《资治通鉴》卷二五七、二五八）
@@ -17345,7 +17345,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'bfe3_28', factionId: 'wu', cityId: 'city_yangzhou', generalName: '刘濞', portrait: '/assets/JIANGNAN/bfe3_28.png' , eliteName: '吴楚步卒', eliteTier: 3},
         { generalId: 'bfe3_70', cityId: 'city_changzhou', generalName: '刘繇', portrait: '/assets/JIANGNAN/bfe3_70.png', factionId: 'han_d' , eliteName: '大汉材官', eliteTier: 2 },
-        { generalId: 'yin_yuejin', factionId: 'wei', cityId: 'city_hefei', generalName: '乐进', portrait: '/assets/JIANGNAN/yin_yuejin.png', eliteName: '江南郡兵', eliteTier: 4 },
+        { generalId: 'yin_yuejin', factionId: 'caowei', cityId: 'city_hefei', generalName: '乐进', portrait: '/assets/JIANGNAN/yin_yuejin.png', eliteName: '江南郡兵', eliteTier: 4 },
     ],
     nantang: [
         { generalId: 'tingzhou_d_chenmin', factionId: 'song', cityId: 'city_ruijin', generalName: '陈敏', portrait: '/assets/JIANGNAN/tingzhou_d_chenmin.png', eliteName: '江南郡兵', eliteTier: 4 },

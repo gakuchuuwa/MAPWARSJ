@@ -302,6 +302,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'wei', name: '魏国' },
+    { id: 'caowei', name: '曹魏' },
     { id: 'han', name: '韩国' },
     { id: 'han_d', name: '刘汉' },
     { id: 'handong', name: '汉东' },   // 2026-10-25 按史补：刘黑闼汉东王（622 洺水之战敌将）

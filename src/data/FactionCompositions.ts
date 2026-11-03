@@ -673,6 +673,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "先秦军团",
         legionType: "sub",
     },
+    "caowei": {
+        legionName: "古典时代华夏军团",
+        legionType: "sub",
+    },
     "yan": {
         legionName: "古典时代太行军团",
     },

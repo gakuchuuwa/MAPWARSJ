@@ -393,7 +393,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     },
     { id: 'city_shunchang', name: '顺昌', factionId: 'song', lat: 32.9, lng: 115.81, type: 'small_city', troops: 10000, region: 'SONG', buildingStyle: 'CENTRAL' , note: '推算：城居 1.2 万（同期县级城居量级 1–2 万（类比推算））→ 小城' },
 
-    { id: 'city_qiaojun', name: '谯县', factionId: 'wei', lat: 33.88, lng: 115.77, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '推算：城居 3 万（谯县，汉沛国大县（曹氏故里），同期大县 2–3 万）→ 小城' },
+    { id: 'city_qiaojun', name: '谯县', factionId: 'caowei', lat: 33.88, lng: 115.77, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '推算：城居 3 万（谯县，汉沛国大县（曹氏故里），同期大县 2–3 万）→ 小城' },
 
 
 
@@ -1099,7 +1099,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
 
 
-    { id: 'city_ganquanyi', name: '武都', factionId: 'wei', lat: 33.4293, lng: 105.1419, type: 'small_city', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' , note: '推算：城居 1.5 万（武都＝武都郡治，同期郡城 1–2 万）→ 小城' },
+    { id: 'city_ganquanyi', name: '武都', factionId: 'caowei', lat: 33.4293, lng: 105.1419, type: 'small_city', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' , note: '推算：城居 1.5 万（武都＝武都郡治，同期郡城 1–2 万）→ 小城' },
 
 
 
@@ -1986,7 +1986,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
 buildingStyle: 'CENTRAL', troops: 10000,
         note: '新郑；韩国小城；推算：城居 2.5 万（新郑＝韩国都，同期国都 2–3 万）→ 小城',
     },
-    { id: 'city_xuchang', name: '许昌', factionId: 'wei', lat: 34.02, lng: 113.85, type: 'small_city', region: 'CENTRAL',
+    { id: 'city_xuchang', name: '许昌', factionId: 'caowei', lat: 34.02, lng: 113.85, type: 'small_city', region: 'CENTRAL',
 buildingStyle: 'CENTRAL', troops: 10000,
         note: '许昌；许国都，曹魏五都之一；按 2026-10-25 标准：城居 3–5 → 小城',
     },
@@ -2911,7 +2911,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
     { id: 'city_tuhe', name: '徒河', factionId: 'ming_d', lat: 41.12, lng: 121.14, type: 'small_city', troops: 10000, region: 'WEI', buildingStyle: 'WEI' , note: '推算：城居 1 万（徒河，汉辽西属县，同期县城 1 万上下）→ 小城' },
 
-    { id: 'city_feiru', name: '肥如', factionId: 'wei', lat: 39.89, lng: 118.89, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '推算：城居 1 万（肥如，燕/汉县 1 万）→ 小城' },
+    { id: 'city_feiru', name: '肥如', factionId: 'caowei', lat: 39.89, lng: 118.89, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '推算：城居 1 万（肥如，燕/汉县 1 万）→ 小城' },
 
     { id: 'city_wuzhong', name: '无终', factionId: 'ming_d', lat: 39.95, lng: 117.4, type: 'small_city', troops: 10000, region: 'WEI', buildingStyle: 'WEI', note: '🔴 [2026-10-18 按史] 无终（今天津蓟州，春秋无终国／右北平）在河北，属河朔；项目 WEI 分支即「河朔」。建筑为战国早期燕赵北境夯土台基、木骨泥墙与板瓦聚落，故挂 WEI／河朔。；推算：城居 1 万（无终，战国燕北境聚落，同期 1 万上下）→ 小城' },
 
@@ -3066,7 +3066,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
     { id: 'city_douweihunhe', name: '都尉溷河', factionId: 'kereyid', lat: 47.859243, lng: 103.96637, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
-    { id: 'city_xicheng', name: '息谷', factionId: 'wei', lat: 39.62, lng: 125.66, type: 'stockade', troops: 10000, region: 'GOJOSEON', buildingStyle: 'KOREA', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_xicheng', name: '息谷', factionId: 'caowei', lat: 39.62, lng: 125.66, type: 'stockade', troops: 10000, region: 'GOJOSEON', buildingStyle: 'KOREA', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_qudiaoalan', name: '曲雕阿兰', factionId: 'menggu_d', lat: 47.146753, lng: 109.204102, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL' , note: '推算：城居 0.5 万（曲雕阿兰，蒙古会盟地 0.5 万）→ 城寨' },
 
@@ -3561,7 +3561,7 @@ buildingStyle: 'BASHU', troops: 10000,
     // ── 2026-06-12 新增：夏顿@廷布 ──
     { id: 'city_tingbu', name: '廷布', factionId: 'xiadun', lat: 27.472, lng: 89.639, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
-    { id: 'city_huangchuan', name: '弋阳', factionId: 'wei', lat: 32.131, lng: 115.051, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '推算：城居 1.2 万（弋阳，同期县城 1–1.5 万）→ 小城' },
+    { id: 'city_huangchuan', name: '弋阳', factionId: 'caowei', lat: 32.131, lng: 115.051, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '推算：城居 1.2 万（弋阳，同期县城 1–1.5 万）→ 小城' },
 
     { id: 'city_yongqiu', name: '雍丘', factionId: 'dongjin', lat: 34.55, lng: 114.78, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '推算：城居 1.5 万（雍丘，汉县，同期县城 1–2 万）→ 小城' },
 

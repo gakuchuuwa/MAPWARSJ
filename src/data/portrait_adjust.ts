@@ -4253,7 +4253,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/TIBET/gling_gesaer.png": {
-            "scale": 1.09,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": -16
         },

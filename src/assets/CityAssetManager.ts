@@ -149,6 +149,8 @@ export class CityAssetManager {
         'yan': '燕',
 'zhao': '赵',
 'wei': '魏',
+
+'caowei': '魏',
 'han': '韩',
 'han_d': '汉',
 'juqu_d': '沮渠',

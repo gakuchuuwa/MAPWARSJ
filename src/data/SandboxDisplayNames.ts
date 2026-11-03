@@ -204,6 +204,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yan': '燕',
 'zhao': '赵',
 'wei': '魏',
+
+'caowei': '魏', // 三国曹魏（与战国魏同字重旗，靠势力色区分）
 'han': '韩',
 'han_d': '汉',
     'shu': '汉',

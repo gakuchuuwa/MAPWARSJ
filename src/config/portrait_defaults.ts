@@ -582,6 +582,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'shen': _zhongyuanPortraitPool,
     'tianxiong': _zhongyuanPortraitPool,
     'wei': _xianqinPortraitPool,
+    'caowei': _zhongyuanPortraitPool,
     'xiezhou': _zhongyuanPortraitPool,
     'zhao': _xianqinPortraitPool,
     'zhou': _xianqinPortraitPool,

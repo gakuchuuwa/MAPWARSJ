@@ -119,6 +119,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     wu: 'WU_CASTLE_AGE3',
     sunwu_d: 'WU_CASTLE_AGE3',             // 孙吴
     wei: 'WEI_CASTLE_AGE3',
+    caowei: 'WEI_CASTLE_AGE3',             // 曹魏
     ranwei_d: 'WEI_CASTLE_AGE3',           // 冉魏
     // ── 东北亚 ──
     gaogouli: 'KORE_CASTLE_AGE3',
