@@ -211,7 +211,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'feierganna': [{ from: -9999, era: 'castle' }], // 费尔干纳
     'feilisidin': [{ from: -9999, era: 'antiquity' }], // 非利士
     'feiyaka': [{ from: -9999, era: 'imperial' }], // 费雅喀
-    'fodejiao': [{ from: -9999, era: 'castle' }], // 葡属佛得角
     'foluolida': [{ from: -9999, era: 'imperial' }], // 西属佛罗里达
     'fuguo': [{ from: -9999, era: 'feudal' }], // 附国
     'fujiwara': [{ from: -9999, era: 'castle' }], // 奥州
@@ -421,7 +420,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'pulei': [{ from: -9999, era: 'antiquity' }], // 蒲类
     'puluowangsi': [{ from: -9999, era: 'castle' }], // 普罗旺斯
     'pusikefu_gongheguo': [{ from: -9999, era: 'castle' }], // 伟利卡亚
-    'puxiangyindu': [{ from: -9999, era: 'imperial' }], // 葡属印度
     // 🔴 [2026-11-01 补缺格] 骠族｜按史分段：古典＝骠国城邦期（毗湿奴城前 200–室利差罗 4–5 世纪为都）→ 476 起封建（室利差罗盛期至骠国 9 世纪）
     'pyu': [{ from: -9999, era: 'feudal' }],
     'qi': [{ from: -9999, era: 'antiquity' }], // 齐国
@@ -529,7 +527,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'tuoming': [{ from: -9999, era: 'imperial' }], // 清真
     'tuosikana': [{ from: -9999, era: 'castle' }], // 托斯卡纳
     'tupi': [{ from: -9999, era: 'imperial' }], // 图皮
-    'tupinijin': [{ from: -9999, era: 'imperial' }], // 葡属巴西
     'tutul_xiu': [{ from: -9999, era: 'feudal' }], // 休族
     'uesugi': [{ from: -9999, era: 'imperial' }], // 上杉
     'utsunomiya': [{ from: -9999, era: 'imperial' }], // 宇都宫

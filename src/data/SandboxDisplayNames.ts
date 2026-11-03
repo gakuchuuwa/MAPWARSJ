@@ -38,8 +38,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   // ── [2026-08-26 全面检查旗号] 实际旗号 = 本表登记优先，未登记则取势力名前两字
   //    （见 CityAssetManager.getProcessedFlagText）。全量比对 957 个有城势力：
   //    未登记 4 个（本轮新增的大西洋航线势力）+ 撞车 3 组，一并收口，现全部唯一。
-  fodejiao: '葡佛',  // [2026-08-26] 佛得角
-  tupinijin: '葡属',  // 葡属巴西（圣维森特）
   taino: '古巴',  // 西属古巴（哈瓦那）
     taino_d: '泰诺',  // 泰诺（古巴东部亚拉）
   guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
@@ -750,7 +748,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'medang': '马打',
     'ternate': '特尔',
     'sulu': '苏禄',
-    'puxiangyindu': '葡印',
     'gurjara': '瞿折',
     'suomunate': '索兰',
     'zhuluo': '朱罗',

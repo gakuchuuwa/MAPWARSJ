@@ -126,7 +126,6 @@ export const FACTIONS: Faction[] = [
     // 🔴 [2026-10-25 主人令「按区域代表补四时代」] 阿瓦尔汗国（567–822，潘诺尼亚；封建时代潘诺尼亚军团的执政者）
     { id: 'awaer', name: '阿瓦尔' },
   { id: 'putaoya', name: '葡萄牙' },
-  { id: 'puxiangyindu', name: '葡属印度' },
 
   { id: 'habusibao', name: '哈布斯堡' },
   { id: 'boximiya', name: '波西米亚' },
@@ -1549,8 +1548,6 @@ export const FACTIONS: Faction[] = [
     { id: 'salai', name: '萨莱诺盖' }, // 埃迪古所建诺盖汗国以萨莱楚克为都（原名与据点名相同，违 §266）
     { id: 'mangshi', name: '土库曼' }, // 曼格什拉克为乌古斯／土库曼牧地，恰格里贝格出自其中（原名与据点名相同，违 §266）,
     { id: 'aztec', name: '阿兹特克' },        // 特诺奇提特兰·阿兹特克帝国
-    { id: 'fodejiao', name: '葡属佛得角' },  // 别名：Cabo Verde，葡属西非外海群岛，首府里贝拉格兰德
-  { id: 'tupinijin', name: '葡属巴西' },  // 圣维森特·1532 葡属巴西首座永久拓殖镇
   { id: 'taino', name: '西属古巴' },  // 哈瓦那·1519 贝拉斯克斯西属古巴殖民首府
   { id: 'taino_d', name: '泰诺' },     // 亚拉·古巴东部泰诺人村落（哈土依；区别于西班牙殖民的西属古巴）
   { id: 'guanche', name: '关切人' },  // 别名：加那利群岛原住民（Guanches），柏柏尔系

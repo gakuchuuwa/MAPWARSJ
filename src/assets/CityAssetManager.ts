@@ -628,7 +628,6 @@ export class CityAssetManager {
         'medang': '马打',
         'ternate': '特尔',
         'sulu': '苏禄',
-        'puxiangyindu': '葡印',
         'gurjara': '瞿折',
         'suomunate': '索兰',
         'zhuluo': '朱罗',
@@ -780,7 +779,6 @@ export class CityAssetManager {
         'didi': '佛兰',
         'falanji': '弗兰',
         'koln': '科隆',   // 🔴 [2026-10-28 主人批立] 科隆大主教区（新势力，与 SandboxDisplayNames 同步）
-        'fodejiao': '葡佛',
         'gaolu': '法',
         'gesake': '哥萨',
         'guanche': '关切',
@@ -818,7 +816,6 @@ export class CityAssetManager {
         'teweier_gongguo': '特维',
         'tiaodun_qishi': '条顿',
         'tuosikana': '托斯',
-        'tupinijin': '葡属',
         'weijing_york': '约维',
         'xideweina': '波洛',
         'xierhe': '锡尔',

@@ -3043,6 +3043,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'luanda_novais', generalName: '诺瓦伊斯', cityId: 'city_luanda', factionId: 'putaoya', eliteName: '黑战军', eliteTier: 4, portrait: '/assets/PORTUGUESE/putaoya_nuowayisi.png' },
         // 🔴 [2026-10-24 险要补将·镇守] 阿方索＝布拉干萨公爵（若昂一世之子），以布拉干萨城堡为世袭驻守根基；普将；精锐「葡萄牙卫队」T4
         { generalId: 'putaoya_afonso', generalName: '阿方索', factionId: 'putaoya', cityId: 'city_braganca', portrait: '/assets/PORTUGUESE/putaoya_afangsuo.png', eliteName: '葡萄牙卫队', eliteTier: 4 },
+        // 🔴 [2026-11-03 主人令「葡印，葡属，葡佛等势力，应该都是葡萄牙一个势力。用一个旗帜。按历史。」]
+        //    原葡属印度（果阿）、葡属佛得角（里贝拉）、葡属巴西（萨尔瓦多、圣维森特）三个势力并入葡萄牙；武将的军团、精锐照旧
+        { generalId: 'puxiangyindu_albukeerke', factionId: 'putaoya', cityId: 'city_guoa', generalName: '阿尔布克尔克', portrait: '/assets/PORTUGUESE/puxiangyindu_albukeerke.png', legionName: '帝国时代葡萄牙风琴军团', eliteName: '葡萄牙方阵', eliteTier: 3 },
+        { generalId: 'gen_noli', factionId: 'putaoya', cityId: 'city_ribeira', generalName: '诺利', portrait: '/assets/PORTUGUESE/gen_noli.png', eliteName: '葡萄牙兵', eliteTier: 4 },
+        { generalId: 'gen_martim_afonso', factionId: 'putaoya', cityId: 'city_saovicente', generalName: '马丁阿方索', portrait: '/assets/PORTUGUESE/tupinijin_madingafangsuo.png', legionName: '帝国时代葡萄牙风琴军团', eliteName: '葡萄牙兵', eliteTier: 4 },
+        { generalId: 'gen_tome_sousa', factionId: 'putaoya', cityId: 'city_salvador', generalName: '托梅', portrait: '/assets/PORTUGUESE/gen_tome_sousa.png', legionName: '帝国时代葡萄牙军团', eliteName: '葡萄牙兵', eliteTier: 4 },
     ],
 
 
@@ -8279,7 +8285,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     xiongnu: [
-        { generalId: 'xiongnu_hunxiewang', factionId: 'xiongnu', cityId: 'city_toumancheng', generalName: '浑邪王', portrait: '/assets/XIANBEI/xiongnu_hunxiewang.png', eliteName: '漠南骑手', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 成名战敌将；匈奴浑邪王，前121 河西败后降汉；据点姑臧（KHITAN，浑邪王驻牧地）；王号即其名（本名未传，沿用项目口径）；用势力精锐鸣镝精骑
+        { generalId: 'xiongnu_hunxiewang', factionId: 'xiongnu', cityId: 'city_toumancheng', generalName: '浑邪王', portrait: '/assets/XIANBEI/xiongnu_hunxiewang.png', eliteName: '漠南骑手', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 成名战敌将；匈奴浑邪王，前121 河西败后降汉；据点姑臧（HEXI，浑邪王驻牧地）；王号即其名（本名未传，沿用项目口径）；用势力精锐鸣镝精骑
         { generalId: 'xiongnu_yizhixie', factionId: 'xiongnu', cityId: 'city_toumancheng', generalName: '伊稚斜单于', portrait: '/assets/XIANBEI/xiongnu_yizhixie.png', eliteName: '漠南骑手', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 成名战敌将；匈奴单于前126-前114，前119 漠北战败；据点头曼城（XIANBEI）；用势力精锐鸣镝精骑
 
 
@@ -16304,7 +16310,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    puxiangyindu: { generalId: 'puxiangyindu_albukeerke', cityId: 'city_guoa', generalName: '阿尔布克尔克', portrait: '/assets/PORTUGUESE/puxiangyindu_albukeerke.png', legionName: '帝国时代葡萄牙风琴军团', eliteName: '葡萄牙方阵', eliteTier: 3 },
 
 
 
@@ -16320,26 +16325,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    tupinijin: [
-
-
-
-
-
-
-
-
-        { generalId: 'gen_martim_afonso', cityId: 'city_saovicente', generalName: '马丁阿方索', portrait: '/assets/PORTUGUESE/tupinijin_madingafangsuo.png', factionId: 'putaoya', legionName: '帝国时代葡萄牙风琴军团', eliteName: '葡萄牙兵', eliteTier: 4 },
-        { generalId: 'gen_tome_sousa', factionId: 'tupinijin', cityId: 'city_salvador', generalName: '托梅', portrait: '/assets/PORTUGUESE/gen_tome_sousa.png', eliteName: '葡萄牙兵', eliteTier: 4 },
-
-
-
-
-
-
-
-
-    ],
 
 
 
@@ -16426,7 +16411,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    fodejiao: { generalId: 'gen_noli', cityId: 'city_ribeira', generalName: '诺利', portrait: '/assets/PORTUGUESE/gen_noli.png', eliteName: '葡萄牙兵', eliteTier: 4 },
 
 
 

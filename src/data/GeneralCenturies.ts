@@ -1254,16 +1254,16 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_cuauhtemoc':                    16,    // 库奥特莫克 · aztec · 阿兹特克抵抗西班牙末代君主（1520-1521成名）
     'gen_lautaro':                       16,    // 劳塔罗 · mapuche · 马普切抗西班牙反殖民统帅（1553年图卡佩尔战役）
     'gen_arariboia':                     16,    // 阿拉里博亚 · tupi · 图皮南巴部落酋长（16世纪）
-    'gen_tibirica':                      16,    // 蒂巴里萨 · tupinijin · 巴西图皮尼金酋长（16世纪）
+    'gen_tibirica':                      16,    // 蒂巴里萨 · 巴西图皮尼金酋长（16世纪）
     'gen_chicomacatl':                   16,    // 奇科马卡特 · tuotuonake · 托托纳克胖酋长联络科尔特斯（1519年）
     'gen_hatuey':                        16,    // 哈土依 · taino · 加勒比泰诺人反抗西班牙首领（1511年）
     'gen_bentejui':                      15,    // 本特胡伊 · guanche · 加那利柏柏尔关切人抵抗卡斯蒂利亚首领（1483年）
     'gen_hurao':                         17,    // 胡劳 · chamorro · 关岛查莫罗反抗西班牙首领（1671年围攻阿加尼亚）
-    'gen_noli':                          15,    // 诺利 · fodejiao · 佛得角航海探险总督（1462年成名）
+    'gen_noli':                          15,    // 诺利 · putaoya · 佛得角航海探险总督（1462年成名）
     'gen_tome_sousa':                    16,    // 托梅·德·索萨 · baiyiya · 葡萄牙首任巴西总督建立萨尔瓦多（1549年）
     'gen_cortes':                        16,    // 科尔特斯 · tuotuonake · 1519 韦拉克鲁斯登陆、征服阿兹特克
     'gen_velazquez':                     16,    // 贝拉斯克斯 · taino · 1519 哈瓦那建城、古巴征服
-    'gen_martim_afonso':                 16,    // 马丁阿方索 · tupinijin · 1532 圣维森特建镇
+    'gen_martim_afonso':                 16,    // 马丁阿方索 · putaoya · 1532 圣维森特建镇
     'gen_morosini':                      17,    // 莫罗西尼 · kelite · 1669 干地亚守城
     'gen_caffa_consul':                  14,    // 斯夸尔 · kelimiya · 热那亚卡法领事（Squarciafico 家族）
     'gen_nur_ad_din':                    12,    // 努尔丁 · antiaokegongguo · 叙利亚抗十字军

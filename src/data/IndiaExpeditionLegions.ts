@@ -19,7 +19,6 @@ export const INDIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     suomunate: { name: '湿婆卫士', tier: 4 },   // 索姆纳特·库马拉帕拉：印度教湿婆神庙守军（编）
     aolisha: { name: '奥里萨战象', tier: 3 },
     sengjialuo: { name: '僧伽罗象军', tier: 1 },   // 阿努拉德·杜图伽摩尼：重装战象主力，公元前161年击败埃拉兰统一全岛
-    puxiangyindu: { name: '果阿远征军', tier: 1 },   // 果阿·阿尔布克尔克：葡属印度大航海正规远征主力，横跨印度洋护卫商船要塞（1510-1961）
     tomara_gwalior: { name: '拉其普特', tier: 3 },
     qutb_shahi: { name: '德干战象军', tier: 3 },
     mallabhum: { name: '马拉布姆军', tier: 4 },

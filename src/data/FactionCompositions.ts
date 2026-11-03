@@ -2070,14 +2070,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代古吉拉特军团",
         legionType: "sub",
     },
-    "puxiangyindu": {
-        legionName: "帝国时代葡萄牙军团",
-        legionType: "sub",
-    },
-    "tupinijin": {
-        legionName: "帝国时代葡萄牙军团",
-        legionType: "sub",
-    },
     "taino_d": {
         legionName: "帝国时代塔莫约军团",
         legionType: "sub",
@@ -2088,10 +2080,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "chamorro": {
         legionName: "帝国时代马六甲军团",
-        legionType: "sub",
-    },
-    "fodejiao": {
-        legionName: "城堡时代葡萄牙王国军团",
         legionType: "sub",
     },
     "liaozu": {
