@@ -9676,6 +9676,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 23
+        },
+        "/assets/TIBET/tubo_lunmangre.png": {
+            "scale": 1.17,
+            "offsetX": 19,
+            "offsetY": 27
+        },
+        "/assets/BASHU/shu_wangsi.png": {
+            "scale": 1.2,
+            "offsetX": 23,
+            "offsetY": -11
         }
     },
     "folderGuides": {
