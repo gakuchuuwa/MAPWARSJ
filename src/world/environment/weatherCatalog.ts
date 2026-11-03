@@ -115,8 +115,9 @@ export function canSustainSnowAt(
     const wf = queryWinterSnow(lat, lng) ?? 0;
     const zone = envZoneAt(lat, lng);
     const tile = queryBaseTile({ lat, lng, isSiege: false, isWinter: false });
+    const elev = elevM ?? 0;
     const isAlpineOrPolar =
-        (elevM ?? 0) >= 2700 ||
+        elev >= 2700 ||
         koppen >= 29 ||
         zone === 'TIB' ||
         zone === 'ARC' ||
@@ -124,13 +125,22 @@ export function canSustainSnowAt(
 
     if (isAlpineOrPolar) {
         if (localSeason === 1) {
-            return koppen >= 29 || zone === 'TIB' || zone === 'ARC' || (elevM ?? 0) >= 3200;
+            return koppen >= 29 || zone === 'TIB' || zone === 'ARC' || elev >= 3200;
         }
         return true;
     }
-    if (absLat < 24 && (elevM ?? 0) < 2200) return false;
+    // 热带低地、无雪热荒漠、地中海夏干冬雨低地：终年不具备降雪条件
+    if (absLat < 24 && elev < 2200) return false;
+    if ((koppen === 4 || zone === 'HDS') && wf === 0 && elev < 1500) return false;
+    if ((zone === 'MED' || koppen === 8 || koppen === 9 || koppen === 10) && wf === 0 && elev < 1500) {
+        return false;
+    }
+    // 华南、岭南、江南南缘及亚热带无雪区（|lat| < 28° 或 |lat| < 33° 且 wf=0）冬季只下雨不下雪
+    if (absLat < 28 && elev < 2000) return false;
+    if (absLat < 33 && wf === 0 && elev < 1500) return false;
+
     if (localSeason === 3) {
-        return wf >= 1 || koppen >= 17 || absLat >= 35;
+        return wf >= 1 || koppen >= 17 || elev >= 1500;
     }
     if (localSeason === 0 || localSeason === 2) {
         return absLat >= 48 && (wf === 2 || wf === 3 || koppen >= 27 || zone === 'SIB');
@@ -184,6 +194,14 @@ export function resolveWeatherPoolAt(q: {
                 { kind: 'SEA_FOG', weight: 4 },
                 { kind: 'DRIZZLE_MIST', weight: 3 },
                 { kind: 'SNOW', weight: 2 },
+            ];
+        }
+        // 热带/副热带干旱沙漠内海（红海、波斯湾等热荒漠环绕海域）：离岸风沙、海雾与海面风暴，无季风连绵暴雨
+        if ((zone === 'HDS' || koppen === 4) && absLat < 31) {
+            return [
+                { kind: 'SANDSTORM', weight: 5 },
+                { kind: 'SEA_FOG', weight: 3 },
+                { kind: 'SEA_STORM', weight: 2 },
             ];
         }
         // 热带与副热带大洋：夏秋台风/飓风雷暴高发，冬春信风阵雨与海雾
@@ -273,11 +291,10 @@ export function resolveWeatherPoolAt(q: {
         tile === 'pal' || tile === 'qs' || tile === 'pal1' || tile === 'ds5' || tile === 'des';
     const isDesert = koppen === 4 || koppen === 5 || zone === 'CAD' || zone === 'HDS' || isTrueDesertTile;
     if (isDesert) {
-        // 热带/副热带无雪热荒漠（撒哈拉、阿拉伯、塔尔、叙利亚大漠 wf=0）
+        // 热带/副热带无雪热荒漠（撒哈拉、阿拉伯、塔尔、叙利亚大漠 wf=0）：大漠黄沙，绝不下烟雨或飞雪
         if ((koppen === 4 || zone === 'HDS') && wf === 0) {
             return [
-                { kind: 'SANDSTORM', weight: 7 },
-                { kind: 'DRIZZLE_MIST', weight: 1 },
+                { kind: 'SANDSTORM', weight: 10 },
             ];
         }
         // 温带冷荒漠与戈壁冬季（中亚、河西走廊、准噶尔、塔里木）
@@ -285,35 +302,39 @@ export function resolveWeatherPoolAt(q: {
             if (wf === 1 || wf === 2 || wf === 3) {
                 // 冬季稳定积雪冷荒漠/天山北麓/准噶尔/河西东段（如姑臧、迪化、北庭、也迷里）：冬雪寒潮为主，兼有寒漠风沙
                 return [
-                    { kind: 'SNOW', weight: 5 },
+                    { kind: 'SNOW', weight: 6 },
                     { kind: 'BLIZZARD', weight: 3 },
                     { kind: 'SANDSTORM', weight: 2 },
                 ];
             }
             if (wf === 4 || koppen === 5) {
-                // 塔里木/罗布泊/敦煌/张掖等极旱雨影盆地冬季（零星残雪 flag=4）：风沙与小雪交错
+                // 塔里木/罗布泊/敦煌/张掖等极旱雨影盆地冬季（零星残雪 flag=4）：风沙与寒雪交错，无液态细雨
                 return [
                     { kind: 'SANDSTORM', weight: 5 },
-                    { kind: 'SNOW', weight: 3 },
-                    { kind: 'DRIZZLE_MIST', weight: 1 },
+                    { kind: 'SNOW', weight: 4 },
                 ];
             }
         }
         return [
-            { kind: 'SANDSTORM', weight: 7 },
-            { kind: 'DRIZZLE_MIST', weight: 1 },
+            { kind: 'SANDSTORM', weight: 10 },
         ];
     }
 
     // 4. 寒冷降雪态（温带/寒温带冬季降雪，以及西伯利亚/泰加林春秋降雪）：
     //    - 秦淮以南及亚热带（|lat| < 33°）：春夏秋绝对不下雪；冬季仅 |lat| >= 28° 且 wf >= 1（如江淮金陵、合肥、襄阳）有瑞雪；
     //    - 华南、岭南及热带低地（|lat| < 24°）：终年无雪；
-    //    - 西欧温带海洋性气候（Cfb，wf=4 零星小雪过渡带）与华北/关中/江淮冬季只下柔雪（SNOW），不出塞外白毛风暴雪（BLIZZARD）。
+    //    - 地中海气候低地（MED / Csa/Csb 且 wf=0）：夏干冬雨，冬季只下雨不下雪；
+    //    - 秦淮以北冬季稳定降雪区（wf=1/2/3 或 koppen>=17）：冬季降水一律为瑞雪/风雪（配寒雾），不在隆冬下液态细雨。
     const isSubtropicalOrTropical = absLat < 33;
     const isTropicalWarm = absLat < 24 && (elevM ?? 0) < 2200;
+    const isMediterraneanLowland =
+        (zone === 'MED' || koppen === 8 || koppen === 9 || koppen === 10) &&
+        wf === 0 &&
+        (elevM ?? 0) < 1500;
 
     const isSnowCondition =
         !isTropicalWarm &&
+        !isMediterraneanLowland &&
         ((!isSubtropicalOrTropical && localSeason === 3 && (wf >= 1 || koppen >= 17)) ||
             (!isSubtropicalOrTropical &&
                 (localSeason === 0 || localSeason === 2) &&
@@ -352,7 +373,14 @@ export function resolveWeatherPoolAt(q: {
                 { kind: 'SEA_FOG', weight: 2 },
             ];
         }
-        // 温带温和降雪区（西欧 Cfb、华北平原 NCP、关中洛阳、江淮金陵/襄阳、日本本州等）：漫天瑞雪与烟雨寒雾
+        // 秦淮以北冬季稳定降雪区（华北平原 NCP、关中洛阳、中欧、本州北部等 wf=1/2/3 或 D 气候）：冬季漫天瑞雪与寒雾，不下液态烟雨
+        if (!isSubtropicalOrTropical && localSeason === 3 && (wf === 1 || wf === 2 || wf === 3 || koppen >= 17)) {
+            return [
+                { kind: 'SNOW', weight: 8 },
+                { kind: 'SEA_FOG', weight: 2 },
+            ];
+        }
+        // 亚热带北缘冬季瑞雪过渡带（江淮金陵/合肥/襄阳 absLat 28°~33°）与西欧海洋性零星小雪带（wf=4）：瑞雪与寒雨薄雾交织
         return [
             { kind: 'SNOW', weight: 6 },
             { kind: 'DRIZZLE_MIST', weight: 3 },
@@ -490,4 +518,56 @@ export function pickWeightedWeather(pool: readonly WeatherCandidate[], roll01: n
         if (r <= 0) return item.kind;
     }
     return pool[pool.length - 1].kind;
+}
+
+/**
+ * 校验并按地域气候与当前季节矫正天气类型（用于气团跨气候带漂移、季节切换或战略↔战术同步）：
+ * - 若战术地图地表已是积雪/冰原（isSnowGround=true），降水一律转为降雪/暴风雪（绝不在雪地上淋液态大雨）；
+ * - 若当前为 SNOW/BLIZZARD 但该坐标当前季节不具备降雪条件（如转入春季、或进入南方/地中海/热荒漠），自动切换为当地主天气；
+ * - 若季节更替导致当前气团 kind 不再属于当地该季节候选池（如北方入冬后原秋雨气团、或入春后原冬雪气团），自动平滑转化为当季主导天气。
+ */
+export function coerceWeatherKindForLocation(
+    currentKind: WeatherKind,
+    q: {
+        lat: number;
+        lng: number;
+        isSea: boolean;
+        elevM?: number | null;
+        calendarSeason: CalendarSeason4;
+        isSnowGround?: boolean;
+    },
+): WeatherKind {
+    const pool = resolveWeatherPoolAt(q);
+    if (q.isSnowGround) {
+        if (currentKind === 'SNOW' || currentKind === 'BLIZZARD' || currentKind === 'SEA_FOG') {
+            return currentKind;
+        }
+        return pool.some((c) => c.kind === 'BLIZZARD') ? 'BLIZZARD' : 'SNOW';
+    }
+    if (
+        (currentKind === 'SNOW' || currentKind === 'BLIZZARD') &&
+        !canSustainSnowAt(q.lat, q.lng, q.calendarSeason, q.elevM)
+    ) {
+        let best = pool[0]?.kind ?? 'DRIZZLE_MIST';
+        let bestW = -1;
+        for (const item of pool) {
+            if (item.kind !== 'SNOW' && item.kind !== 'BLIZZARD' && item.weight > bestW) {
+                bestW = item.weight;
+                best = item.kind;
+            }
+        }
+        return best;
+    }
+    if (pool.some((c) => c.kind === currentKind)) {
+        return currentKind;
+    }
+    let best = pool[0]?.kind ?? 'DRIZZLE_MIST';
+    let bestW = -1;
+    for (const item of pool) {
+        if (item.weight > bestW) {
+            bestW = item.weight;
+            best = item.kind;
+        }
+    }
+    return best;
 }

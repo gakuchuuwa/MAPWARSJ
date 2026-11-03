@@ -2316,7 +2316,7 @@ export class CombatUI {
 
         const SIX_LIST: { key: TacticalSixSet; char: string; sub: string; tip: string }[] = [
             { key: 'gongzhan', char: '攻', sub: '振威', tip: '【攻】振己威：10秒内全军伤害+50%、攻速+50%、移速翻倍\n点击钦定/取消下次释放' },
-            { key: 'shengzhan', char: '胜', sub: '无敌', tip: '【胜】固己防：场上全军立即回满血，且10秒内无敌\n点击钦定/取消下次释放' },
+            { key: 'shengzhan', char: '胜', sub: '无敌', tip: '【胜】固己防：解除己方混乱，10秒内全军无敌并持续涨全军10%总血量（残血回满、满血突破上限）\n点击钦定/取消下次释放' },
             { key: 'dizhan', char: '敌', sub: '偷袭', tip: '【敌】伏兵偷袭：立即征召10%初始兵力作为伏兵从敌方斜后方杀出\n点击钦定/取消下次释放' },
             { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵：驱散敌方已生效的增益，令敌军混乱10秒（四处乱跑、无法攻击、持续掉全军10%总血量，且受到伤害×2.5）\n点击钦定/取消下次释放' },
             { key: 'bingzhan', char: '并', sub: '夺兵', tip: '【并】夺敌兵：策反敌方总兵力10%倒戈为己方（先取前线在场兵，不够从敌方下一波继续）\n点击钦定/取消下次释放' },

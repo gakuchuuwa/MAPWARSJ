@@ -138,7 +138,7 @@ const SKILL_SHIELD_SEC = 10;        // 【胜】持续（10秒：释放瞬间回
 const SKILL_SHIELD_TAKEN = 0;       // 【胜】受伤倍率（0＝无敌）
 const SKILL_PANIC_SEC = 10;         // 【混】乱敌阵持续（10秒，2026-11-03 主人令改 10 秒）
 const SKILL_PANIC_TAKEN = 2.5;      // 【混】混乱中受伤倍率（2026-11-03 主人定）
-const SKILL_PANIC_MOVE = 0.85;      // 【混】混乱中移速倍率（保持四散乱跑的混乱感，同时略慢于追兵）
+const SKILL_PANIC_MOVE = 1.35;      // 【混】混乱中移速倍率（2026-11-03 主人令「提高混乱程度，让士兵散的更开些」）
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
 //   六计**没有克制**：这只是 AI 武将的放计顺序，回应的计不加任何效果，界面也不写「拆招 / 破」。
@@ -1399,11 +1399,20 @@ export class Scene13WarLayer {
                 this.playerSixFrenzyTimer = SKILL_FRENZY_SEC;
             }
         } else if (six === 'shengzhan') {
+            const allyLiving = this.men.filter((m) => m.f === f && m.hp > 0 && !m.siegeW);
+            const livingPop = Math.max(1, allyLiving.reduce((sum, m) => sum + Math.max(1, m.pop || 1), 0));
+            const totalHealFrac = Math.min(1.0, Math.max(0.15, (this.initPool[f] * 0.10) / livingPop));
             if (scopedControl === null) {
+                this.skillPanicTimer[f] = 0;
                 for (const m of this.men) {
                     if (m.f === f && m.hp > 0) {
-                        const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
-                        if (m.hp < maxHp) m.hp = maxHp;
+                        m.playerPanicTimer = 0;
+                        if (!m.siegeW) {
+                            const baseMaxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
+                            const targetHp = Math.max(baseMaxHp, m.hp + baseMaxHp * totalHealFrac);
+                            m.skillMaxHp = targetHp;
+                            m.skillHealPerSec = Math.max(0, (targetHp - m.hp) / SKILL_SHIELD_SEC);
+                        }
                         vfxTargets.push(m);
                     }
                 }
@@ -1411,8 +1420,13 @@ export class Scene13WarLayer {
             } else {
                 for (const m of this.men) {
                     if (m.hp > 0 && this.playerLiveAffects(m)) {
-                        const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
-                        if (m.hp < maxHp) m.hp = maxHp;
+                        m.playerPanicTimer = 0;
+                        if (!m.siegeW) {
+                            const baseMaxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
+                            const targetHp = Math.max(baseMaxHp, m.hp + baseMaxHp * totalHealFrac * boost);
+                            m.skillMaxHp = targetHp;
+                            m.skillHealPerSec = Math.max(0, (targetHp - m.hp) / SKILL_SHIELD_SEC);
+                        }
                         vfxTargets.push(m);
                     }
                 }
@@ -1928,7 +1942,7 @@ export class Scene13WarLayer {
     }
 
     /** 玩家本人的最大血量：历史峰值 + 当场科技/军团血量修正。出生、重整与 HUD 只走这里。 */
-    private heroMaxHp(key: string, f: number): number {
+    public heroMaxHp(key: string, f: number): number {
         return Math.max(1, Math.round(this.statsFor(key, f, true).hp * HERO_HP_MULT));
     }
 
@@ -7765,6 +7779,15 @@ export class Scene13WarLayer {
             //      （现在只有上面的 `deploying` 列阵渐显 2.5 秒会让人站住）。
             //    · 墙的坍塌规则现行（2026-10-20 令）：不再定时自动塌；墙打到随机破口档即塌，城门倒 → 门旁至城垛一段同塌
             //      （见 `collapseOneWall` / `collapseGateSideSegment`）；攻城武器照旧优先砸最近的门/墙。
+            // 【胜】固己防：10 秒无敌期间，全军真实血量（m.hp）持续往上涨（对称混战计，折合己方全军初始 10% 总血量）
+            if (this.unitHasShield(m) && !m.siegeW) {
+                const baseMaxHp = m.hero ? this.heroMaxHp(m.key, m.f) : this.statsFor(m.key, m.f).hp;
+                const capHp = Math.max(baseMaxHp, m.skillMaxHp ?? baseMaxHp);
+                const healPerSec = m.skillHealPerSec ?? ((capHp - m.hp) / SKILL_SHIELD_SEC);
+                if (m.hp < capHp && healPerSec > 0) {
+                    m.hp = Math.min(capHp, m.hp + healPerSec * dt);
+                }
+            }
             // [2026-09-05 玩家] 玩家有键盘输入 → 本帧只走不打；受控编队「待命」= 不动、够得着照打
             if (m.hero && this.stepHeroInput(m, dt)) continue;
             // 玩家的点地面令：走到就作废（之后归队/索敌照旧接管）

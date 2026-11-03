@@ -1212,6 +1212,7 @@ export function drawScene13SkillStatusVfx(
     nowSec: number,
     unitStateOf?: (m: WarMan) => Scene13SkillVisualState,
     hasExtraActive = false,
+    unitMaxHpOf?: (m: WarMan) => number,
 ): void {
     const hasUnitTags = nowSec < unitTagActiveUntilSec;
     if (!hasUnitTags
@@ -1219,7 +1220,7 @@ export function drawScene13SkillStatusVfx(
         && !states[0].frenzy && !states[0].shield && !states[0].panic
         && !states[1].frenzy && !states[1].shield && !states[1].panic) return;
 
-    // 1. 先用 lighter 叠加层绘制单兵脚下动画色彩小圈（叠加时保留前一个技能色彩）
+    // 1. 先用 lighter 叠加层绘制单兵脚下动画色彩小圈
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineCap = 'round';
@@ -1245,7 +1246,10 @@ export function drawScene13SkillStatusVfx(
     }
     ctx.restore();
 
-    // 2. 再用正常混合模式（source-over）在士兵头顶绘制单张六计专属小图标（叠加时上后一个技能的贴图）
+    // 2. 再用正常混合模式（source-over）在士兵头顶绘制：
+    //    · 【混】乱敌阵（10秒）：去掉小图标，改为每个士兵头顶 DE 风格红色真实血槽（持续掉真血）
+    //    · 【胜】固己防（10秒）：去掉小图标，改为每个士兵头顶 DE 风格绿色真实血槽（持续涨真血）
+    //    · 其余四计：保留单张六计专属小图标
     ctx.save();
     const ICON_R = 14.5;
     for (const m of men) {
@@ -1257,11 +1261,48 @@ export function drawScene13SkillStatusVfx(
         if (!resolved) continue;
 
         const { iconEntry } = resolved;
+        const y = m.y - lift(m.x, m.y);
+
+        if (iconEntry.six === 'hunzhan' || iconEntry.six === 'shengzhan') {
+            const isHeal = iconEntry.six === 'shengzhan';
+            const maxHp = Math.max(1, unitMaxHpOf ? unitMaxHpOf(m) : (m.skillMaxHp ?? 100));
+            const hpRatio = clamp01(m.hp / maxHp);
+            const bw = m.hero ? 36 : 28;
+            const bh = m.hero ? 5 : 4;
+            const x0 = Math.round(m.x - bw * 0.5);
+            const y0 = Math.round(y - (m.hero ? 35 : 28) - bh * 0.5);
+            const fillW = Math.max(1, Math.min(bw, Math.round(bw * hpRatio)));
+            const topH = Math.ceil(bh * 0.5);
+            const fadeOut = clamp01(iconEntry.rem / 0.6);
+
+            ctx.globalAlpha = 0.96 * fadeOut;
+            if (iconEntry.paid) {
+                ctx.fillStyle = '#ffd700';
+                ctx.fillRect(x0 - 2, y0 - 2, bw + 4, bh + 4);
+            }
+            // DE 1px 纯黑外框
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x0 - 1, y0 - 1, bw + 2, bh + 2);
+            // 空血槽底色（掉血暗红底 / 涨血暗绿底）
+            ctx.fillStyle = isHeal ? '#0a2612' : '#3b070b';
+            ctx.fillRect(x0, y0, bw, bh);
+            // 真实血量双层高光条（DE 立体血槽）
+            ctx.fillStyle = isHeal ? '#28f568' : '#ff2a3c';
+            ctx.fillRect(x0, y0, fillW, topH);
+            ctx.fillStyle = isHeal ? '#11ad40' : '#c80e20';
+            ctx.fillRect(x0, y0 + topH, fillW, bh - topH);
+            // 涨跌游标亮边（未满格时高亮当前正在掉血/涨血的切口边缘）
+            if (fillW > 1 && fillW < bw) {
+                ctx.fillStyle = isHeal ? '#c4ffd6' : '#ffa3ad';
+                ctx.fillRect(x0 + fillW - 2, y0, 2, bh);
+            }
+            continue;
+        }
+
         const badge = getSixSmallSkillIconBadge(iconEntry.six, iconEntry.paid) ?? getSixSkillIconBadge(iconEntry.six, iconEntry.paid);
         if (!badge) continue;
 
         const fadeOut = clamp01(iconEntry.rem / 1.0);
-        const y = m.y - lift(m.x, m.y);
         const pulse = 0.5 + 0.5 * Math.sin(nowSec * 7 + m.zid * 0.73);
         const iconR = m.hero ? ICON_R * 1.22 : ICON_R;
         const baseAlpha = m.hero ? 0.85 : 0.74;

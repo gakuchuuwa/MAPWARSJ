@@ -61,6 +61,51 @@ const WORKER_POOL_SIZE = 3;
  */
 const TILE_CACHE_MAX = 260;
 
+/**
+ * 玩家在战略地图移动时，跨过 256px 瓦片边界会同时触发 6~12 块缓存命中或 Worker 批量回传。
+ * 采用与 TileDecoder.ts 同口径的双路驱动（requestAnimationFrame + 后台标签页 setTimeout 兜底）帧预算队列，
+ * 将单帧瓦片画布合成与 Leaflet DOM 挂载严格控制在 ~2.0ms 以内（每帧保底至少上屏 1 块），优先保证玩家移动丝滑不卡。
+ */
+const TILE_COMMIT_BUDGET_MS = 2.0;
+
+type PendingTileTask = {
+    ctx: CanvasRenderingContext2D;
+    tile: HTMLCanvasElement;
+    done: L.DoneCallback;
+    cacheKey: string;
+    modeVersion: number;
+    coords: L.Coords;
+    size: L.Point;
+    bounds: { north: number; south: number; east: number; west: number };
+    isExpTile: boolean;
+    isValleyTile: boolean;
+    retryCount: number;
+};
+
+type TileCommitJob =
+    | {
+        kind: 'worker';
+        task: PendingTileTask;
+        bitmap: ImageBitmap;
+        summerBitmap?: ImageBitmap;
+        autumnBitmap?: ImageBitmap;
+        winterBitmap?: ImageBitmap;
+        isCoarseFallback?: boolean;
+    }
+    | {
+        kind: 'cache';
+        coords: L.Coords;
+        size: L.Point;
+        bounds: { north: number; south: number; east: number; west: number };
+        ctx: CanvasRenderingContext2D;
+        tile: HTMLCanvasElement;
+        done: L.DoneCallback;
+        cacheKey: string;
+        isExpTile: boolean;
+        isValleyTile: boolean;
+        modeVersion: number;
+    };
+
 export class HillshadeLayer extends L.GridLayer {
     private zFactor: number;
     private shadowOpacity: number;
@@ -80,19 +125,12 @@ export class HillshadeLayer extends L.GridLayer {
     private workerRenderSamples = 0;
     private rrIndex: number = 0; // Worker 轮询下标
     private msgIdCounter: number = 0;
-    private pendingTiles: Map<number, {
-        ctx: CanvasRenderingContext2D;
-        tile: HTMLCanvasElement;
-        done: L.DoneCallback;
-        cacheKey: string;
-        modeVersion: number;
-        coords: L.Coords;
-        size: L.Point;
-        bounds: { north: number; south: number; east: number; west: number };
-        isExpTile: boolean;
-        isValleyTile: boolean;
-        retryCount: number;
-    }> = new Map();
+    private pendingTiles: Map<number, PendingTileTask> = new Map();
+    private commitQueue: TileCommitJob[] = [];
+    private commitScheduled = false;
+    private commitRafId: number | null = null;
+    private commitTimerId: number | null = null;
+    private activeCacheKeysScratch: Set<string> = new Set();
     /** LRU：Map 迭代序即插入序，命中时删了重插即「最近使用」（日历春季 0 主位图） */
     private tileCache: Map<string, ImageBitmap> = new Map();
     /** 日历夏季(1)瓦片位图缓存（夏草苍翠 / 地中海夏干焦黄 / 热带雨季返青 / 南半球冬雪与冬枯） */
@@ -232,43 +270,131 @@ export class HillshadeLayer extends L.GridLayer {
             return;
         }
 
-        try {
-            const _t0 = performance.now();
-            const st = this.computeSeasonState();
-            this.currentSeason = st.season;
-            this.currentSeasonBlend = st.blend;
-            this.paintTileCanvas(ctx, size.x, size.y, bitmap, summerBitmap, autumnBitmap, winterBitmap);
-            if (e.data.isCoarseFallback) {
-                // 粗高程远景兜底已上屏：保留在瓦片节点上供四季切换实时重绘（严禁立即 close 否则换季时该瓦片卡在旧季节），
-                // 等高清瓦片返回或瓦片卸载时再释放
-                if (tile.isConnected) {
-                    this.attachTileBitmaps(tile, bitmap, summerBitmap, autumnBitmap, winterBitmap, true);
-                } else {
-                    bitmap.close();
-                    summerBitmap?.close();
-                    autumnBitmap?.close();
-                    winterBitmap?.close();
-                }
-                if (retryCount < 4) {
-                    const nextRetry = retryCount + 1;
-                    const delayMs = 2000 * nextRetry;
-                    setTimeout(() => {
-                        if (!tile.isConnected || task.modeVersion !== this.modeVersion) return;
-                        this.dispatchTile(coords, size, bounds, ctx, tile, () => {}, cacheKey, isExpTile, isValleyTile, nextRetry);
-                    }, delayMs);
-                }
-            } else {
-                this.attachTileBitmaps(tile, bitmap, summerBitmap, autumnBitmap, winterBitmap, false);
-                this.cachePut(cacheKey, bitmap, summerBitmap, autumnBitmap, winterBitmap);
+        this.commitQueue.push({
+            kind: 'worker',
+            task,
+            bitmap,
+            summerBitmap,
+            autumnBitmap,
+            winterBitmap,
+            isCoarseFallback: e.data.isCoarseFallback,
+        });
+        this.scheduleCommitDrain();
+    }
+
+    private scheduleCommitDrain(): void {
+        if (this.commitScheduled) return;
+        this.commitScheduled = true;
+        const run = () => {
+            if (this.commitRafId !== null) {
+                cancelAnimationFrame(this.commitRafId);
+                this.commitRafId = null;
             }
-            perfDoctor.note('HillshadeLayer.handleWorkerMessage(山体瓦片上屏)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:handleWorkerMessage');
+            if (this.commitTimerId !== null) {
+                window.clearTimeout(this.commitTimerId);
+                this.commitTimerId = null;
+            }
+            this.drainCommitQueue();
+        };
+        this.commitRafId = requestAnimationFrame(run);
+        // 后台标签页 rAF 暂停时由 setTimeout 兜底推进，避免切回前台时堆积突刺
+        this.commitTimerId = window.setTimeout(run, 100);
+    }
+
+    private drainCommitQueue(): void {
+        this.commitScheduled = false;
+        if (this.commitQueue.length === 0) return;
+
+        const frameStart = performance.now();
+        const st = this.computeSeasonState();
+        this.currentSeason = st.season;
+        this.currentSeasonBlend = st.blend;
+
+        while (this.commitQueue.length > 0) {
+            const job = this.commitQueue.shift()!;
+            this.executeCommitJob(job);
+            if (performance.now() - frameStart >= TILE_COMMIT_BUDGET_MS) {
+                break;
+            }
+        }
+
+        if (this.commitQueue.length > 0) {
+            this.scheduleCommitDrain();
+        }
+    }
+
+    private executeCommitJob(job: TileCommitJob): void {
+        if (job.kind === 'worker') {
+            const { task, bitmap, summerBitmap, autumnBitmap, winterBitmap, isCoarseFallback } = job;
+            if (task.modeVersion !== this.modeVersion) {
+                bitmap.close();
+                summerBitmap?.close();
+                autumnBitmap?.close();
+                winterBitmap?.close();
+                task.done(undefined, task.tile);
+                return;
+            }
+            const { ctx, tile, done, cacheKey, coords, size, bounds, isExpTile, isValleyTile, retryCount } = task;
+            try {
+                const _t0 = performance.now();
+                if (isCoarseFallback) {
+                    if (tile.isConnected) {
+                        this.paintTileCanvas(ctx, size.x, size.y, bitmap, summerBitmap, autumnBitmap, winterBitmap);
+                        this.attachTileBitmaps(tile, bitmap, summerBitmap, autumnBitmap, winterBitmap, true);
+                    } else {
+                        bitmap.close();
+                        summerBitmap?.close();
+                        autumnBitmap?.close();
+                        winterBitmap?.close();
+                    }
+                    if (retryCount < 4) {
+                        const nextRetry = retryCount + 1;
+                        const delayMs = 2000 * nextRetry;
+                        setTimeout(() => {
+                            if (!tile.isConnected || task.modeVersion !== this.modeVersion) return;
+                            this.dispatchTile(coords, size, bounds, ctx, tile, () => {}, cacheKey, isExpTile, isValleyTile, nextRetry);
+                        }, delayMs);
+                    }
+                } else {
+                    if (tile.isConnected) {
+                        this.paintTileCanvas(ctx, size.x, size.y, bitmap, summerBitmap, autumnBitmap, winterBitmap);
+                        this.attachTileBitmaps(tile, bitmap, summerBitmap, autumnBitmap, winterBitmap, false);
+                    }
+                    this.cachePut(cacheKey, bitmap, summerBitmap, autumnBitmap, winterBitmap);
+                }
+                perfDoctor.note('HillshadeLayer.handleWorkerMessage(山体瓦片上屏)', performance.now() - _t0, 'src/map/HillshadeLayer.ts:handleWorkerMessage');
+            } catch (err) {
+                console.warn('[Hillshade] 位图绘制失败:', err);
+                bitmap.close();
+                summerBitmap?.close();
+                autumnBitmap?.close();
+                winterBitmap?.close();
+            }
+            done(undefined, tile);
+            return;
+        }
+
+        // job.kind === 'cache'
+        const { coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, modeVersion } = job;
+        if (modeVersion !== this.modeVersion || !tile.isConnected) {
+            done(undefined, tile);
+            return;
+        }
+        const fresh = this.cacheGet(cacheKey);
+        if (!fresh) {
+            this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
+            return;
+        }
+        const freshSummer = this.summerTileCache.get(cacheKey);
+        const freshAutumn = this.autumnTileCache.get(cacheKey);
+        const freshWinter = this.winterTileCache.get(cacheKey);
+        try {
+            this.attachTileBitmaps(tile, fresh, freshSummer, freshAutumn, freshWinter, false);
+            this.paintTileCanvas(ctx, size.x, size.y, fresh, freshSummer, freshAutumn, freshWinter);
         } catch (err) {
-            // 异常兜底：保持灰雾并释放位图
-            console.warn('[Hillshade] 位图绘制失败:', err);
-            bitmap.close();
-            summerBitmap?.close();
-            autumnBitmap?.close();
-            winterBitmap?.close();
+            console.warn('[Hillshade] 缓存位图绘制失败，改为重算:', err);
+            this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
+            return;
         }
         done(undefined, tile);
     }
@@ -381,7 +507,8 @@ export class HillshadeLayer extends L.GridLayer {
         }
 
         if (this.tileCache.size > TILE_CACHE_MAX) {
-            const activeKeys = new Set<string>();
+            const activeKeys = this.activeCacheKeysScratch;
+            activeKeys.clear();
             const tilesObj = (this as any)._tiles as Record<string, { el?: HTMLElement }> | undefined;
             if (tilesObj) {
                 for (const k in tilesObj) {
@@ -389,8 +516,9 @@ export class HillshadeLayer extends L.GridLayer {
                     if (el?.isConnected && el.__hsCacheKey) activeKeys.add(el.__hsCacheKey);
                 }
             }
+            const targetSize = TILE_CACHE_MAX - 12;
             for (const candKey of this.tileCache.keys()) {
-                if (this.tileCache.size <= TILE_CACHE_MAX) break;
+                if (this.tileCache.size <= targetSize) break;
                 if (activeKeys.has(candKey)) continue;
                 this.tileCache.get(candKey)?.close();
                 this.tileCache.delete(candKey);
@@ -401,11 +529,37 @@ export class HillshadeLayer extends L.GridLayer {
                 this.winterTileCache.get(candKey)?.close();
                 this.winterTileCache.delete(candKey);
             }
+            activeKeys.clear();
         }
+    }
+
+    private clearCommitQueue(): void {
+        if (this.commitRafId !== null) {
+            cancelAnimationFrame(this.commitRafId);
+            this.commitRafId = null;
+        }
+        if (this.commitTimerId !== null) {
+            window.clearTimeout(this.commitTimerId);
+            this.commitTimerId = null;
+        }
+        this.commitScheduled = false;
+        for (const job of this.commitQueue) {
+            if (job.kind === 'worker') {
+                job.bitmap.close();
+                job.summerBitmap?.close();
+                job.autumnBitmap?.close();
+                job.winterBitmap?.close();
+                job.task.done(undefined, job.task.tile);
+            } else {
+                job.done(undefined, job.tile);
+            }
+        }
+        this.commitQueue.length = 0;
     }
 
     /** 参数变了 → 旧位图全部作废 */
     private clearTileCache(): void {
+        this.clearCommitQueue();
         const tilesObj = (this as any)._tiles as Record<string, { el?: HTMLElement }> | undefined;
         if (tilesObj) {
             for (const k in tilesObj) {
@@ -704,41 +858,25 @@ export class HillshadeLayer extends L.GridLayer {
         const cacheKey = this.tileCacheKey(coords.z, coords.x, coords.y, isExpTile, isValleyTile);
         (tile as any).__hsCacheKey = cacheKey;
 
-        // ── 缓存命中：来回切 zoom 时的常见路径，无网络、无 Worker、无像素回读 ──
+        // ── 缓存命中：来回切 zoom 或沿途往返时的常见路径，无网络、无 Worker、无像素回读 ──
+        // 统一排入 2.0ms 帧预算队列分帧上屏，避免玩家跨越 256px 瓦片边界时 6~12 块缓存瓦片在同一帧微任务内扎堆 drawImage + DOM 挂载导致主线程卡顿
         const cached = this.cacheGet(cacheKey);
         if (cached) {
             this.statCacheHits++;
-            // done() 必须异步：Leaflet 在 createTile 返回后才把该瓦片登记进 _tiles
-            queueMicrotask(() => {
-                // [FIX 2026-07-28] 不能用上面捕获的 cached 引用画图。
-                // 微任务这一跳之间，位图可能已经被 close() 掉：
-                //   · 缩放 → applyHillshadeForZoom → setParams → clearTileCache() 释放全部位图
-                //   · 新瓦片入缓存 → cachePut 触发 LRU 淘汰，close 掉最久未用的一块
-                // 对已释放的 ImageBitmap 调 drawImage 会抛
-                // InvalidStateError: The image source is detached。
-                // 改为重新查一次缓存：条目还在 ⇒ 位图必定有效（淘汰是「close + 删键」成对做的）。
-                const fresh = this.cacheGet(cacheKey);
-                if (!fresh) {
-                    this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
-                    return;
-                }
-                const freshSummer = this.summerTileCache.get(cacheKey);
-                const freshAutumn = this.autumnTileCache.get(cacheKey);
-                const freshWinter = this.winterTileCache.get(cacheKey);
-                try {
-                    const st = this.computeSeasonState();
-                    this.currentSeason = st.season;
-                    this.currentSeasonBlend = st.blend;
-                    this.attachTileBitmaps(tile, fresh, freshSummer, freshAutumn, freshWinter, false);
-                    this.paintTileCanvas(ctx, size.x, size.y, fresh, freshSummer, freshAutumn, freshWinter);
-                } catch (err) {
-                    // 兜底：绘制异常时重算，同样不留空白瓦片
-                    console.warn('[Hillshade] 缓存位图绘制失败，改为重算:', err);
-                    this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile, 0);
-                    return;
-                }
-                done(undefined, tile);
+            this.commitQueue.push({
+                kind: 'cache',
+                coords,
+                size,
+                bounds,
+                ctx,
+                tile,
+                done,
+                cacheKey,
+                isExpTile,
+                isValleyTile,
+                modeVersion: this.modeVersion,
             });
+            this.scheduleCommitDrain();
             return tile;
         }
 

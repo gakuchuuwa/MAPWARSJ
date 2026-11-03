@@ -9696,6 +9696,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.3,
             "offsetX": 0,
             "offsetY": 20
+        },
+        "/assets/TUPI/gen_hatuey.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 26
         }
     },
     "folderGuides": {

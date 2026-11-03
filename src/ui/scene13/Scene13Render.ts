@@ -667,6 +667,7 @@ export function render(this: Scene13WarLayer): void {
         flagTick * 0.001,
         (m) => this.getUnitSkillVisualState(m),
         this.hasExtraPlayerSkillVisuals(),
+        (m) => Math.max(m.hero ? this.heroMaxHp(m.key, m.f) : this.statsFor(m.key, m.f).hp, m.skillMaxHp ?? 0),
     );
     drawScene13SkillCastVfx(ctx, this.skillVfx, 'top', (x, y) => this.elevationLiftAt(x, y), flagTick);
     if (hasTransform) ctx.restore();

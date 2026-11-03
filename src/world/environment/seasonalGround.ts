@@ -498,6 +498,351 @@ export function applySeasonalGroundToPixel(
 }
 
 /**
+ * 战略地图瓦片（HillshadeWorker）按行预计算的纬度气候权重上下文，
+ * 避免同一行 256 个像素 × 4 个季节重复计算仅依赖 rowLat 的 smoothstep。
+ */
+export interface SeasonalRowContext {
+    lat: number;
+    absLat: number;
+    shW: number;
+    eqLatW: number;
+    tempLatFactor: number;
+    subtropLatW: number;
+    savLatW: number;
+    medBasinLatA: number;
+    medBasinLatB: number;
+    californiaLat: number;
+    chileLat: number;
+    capeLat: number;
+    swAusLat: number;
+    hasMedLat: boolean;
+}
+
+export function createSeasonalRowContext(): SeasonalRowContext {
+    return {
+        lat: 0,
+        absLat: 0,
+        shW: 0,
+        eqLatW: 0,
+        tempLatFactor: 0,
+        subtropLatW: 0,
+        savLatW: 0,
+        medBasinLatA: 0,
+        medBasinLatB: 0,
+        californiaLat: 0,
+        chileLat: 0,
+        capeLat: 0,
+        swAusLat: 0,
+        hasMedLat: false,
+    };
+}
+
+export function updateSeasonalRowContext(rowLat: number, ctx: SeasonalRowContext): void {
+    const absLat = Math.abs(rowLat);
+    ctx.lat = rowLat;
+    ctx.absLat = absLat;
+    ctx.shW = smoothstep(5, -5, rowLat);
+    ctx.eqLatW = 1 - smoothstep(4.5, 9.5, absLat);
+    ctx.tempLatFactor = 0.48 + 0.52 * smoothstep(14, 28, absLat);
+    ctx.subtropLatW = smoothBand(absLat, 19.5, 30.5, 5.0);
+    ctx.savLatW = smoothBand(absLat, 7.5, 23.5, 5.5);
+
+    const medBasinLatA = smoothBand(rowLat, 31.0, 43.5, 3.2);
+    const medBasinLatB = smoothBand(rowLat, 28.0, 33.0, 2.2);
+    const californiaLat = smoothBand(rowLat, 32.5, 40.5, 2.8);
+    const chileLat = smoothBand(rowLat, -37.5, -31.5, 2.8);
+    const capeLat = smoothBand(rowLat, -35.0, -32.0, 2.2);
+    const swAusLat = smoothBand(rowLat, -35.5, -31.0, 2.8);
+
+    ctx.medBasinLatA = medBasinLatA;
+    ctx.medBasinLatB = medBasinLatB;
+    ctx.californiaLat = californiaLat;
+    ctx.chileLat = chileLat;
+    ctx.capeLat = capeLat;
+    ctx.swAusLat = swAusLat;
+    ctx.hasMedLat = (medBasinLatA + californiaLat + chileLat + capeLat + swAusLat) > 0;
+}
+
+// 4 个当地季节 × 7 个调制参数 [rMul, gMul, bMul, targetR, targetG, targetB, targetMix] 的零分配暂存区
+const LOCAL_SEASON_MODS_SCRATCH = new Float64Array(28);
+
+function writeLocalSeasonMod(
+    localSeason: CalendarSeason4,
+    tempLatW: number,
+    tempAw2: number,
+    vegWeight: number,
+    subtropW: number,
+    savW: number,
+    medW: number,
+    out: Float64Array,
+    base: number,
+): void {
+    let rMul: number, gMul: number, bMul: number;
+    let targetR: number, targetG: number, targetB: number, targetMix: number;
+
+    // 1. Temperate base
+    if (localSeason === 0) {
+        rMul = 1 - 0.032 * tempLatW;
+        gMul = 1 + 0.048 * tempLatW;
+        bMul = 1 - 0.048 * tempLatW;
+        targetR = 108; targetG = 136; targetB = 78;
+        targetMix = 0.15 * tempLatW;
+    } else if (localSeason === 1) {
+        rMul = 1 - 0.060 * tempLatW;
+        gMul = 1 + 0.040 * tempLatW;
+        bMul = 1 - 0.028 * tempLatW;
+        targetR = 86; targetG = 122; targetB = 68;
+        targetMix = 0.17 * tempLatW;
+    } else if (localSeason === 2) {
+        rMul = 1 + 0.088 * tempAw2;
+        gMul = 1 - 0.020 * tempAw2;
+        bMul = 1 - 0.130 * tempAw2;
+        targetR = 156; targetG = 132; targetB = 78;
+        targetMix = 0.24 * tempAw2;
+    } else {
+        rMul = 1 + 0.020 * tempLatW;
+        gMul = 1 - 0.060 * tempLatW;
+        bMul = 1 - 0.070 * tempLatW;
+        targetR = 134; targetG = 122; targetB = 100;
+        targetMix = 0.23 * tempLatW;
+    }
+
+    // 2. Subtropical humid lerp
+    if (subtropW > 0.001) {
+        const u = 1 - subtropW;
+        let brMul: number, bgMul: number, bbMul: number, bTR: number, bTG: number, bTB: number, bTM: number;
+        if (localSeason === 0) {
+            brMul = 1 - 0.028 * vegWeight; bgMul = 1 + 0.042 * vegWeight; bbMul = 1 - 0.042 * vegWeight;
+            bTR = 106; bTG = 134; bTB = 78; bTM = 0.12 * vegWeight;
+        } else if (localSeason === 1) {
+            brMul = 1 - 0.052 * vegWeight; bgMul = 1 + 0.035 * vegWeight; bbMul = 1 - 0.024 * vegWeight;
+            bTR = 86; bTG = 120; bTB = 68; bTM = 0.14 * vegWeight;
+        } else if (localSeason === 2) {
+            brMul = 1 + 0.062 * vegWeight; bgMul = 1 - 0.010 * vegWeight; bbMul = 1 - 0.090 * vegWeight;
+            bTR = 152; bTG = 134; bTB = 80; bTM = 0.17 * vegWeight;
+        } else {
+            brMul = 1 - 0.010 * vegWeight; bgMul = 1 - 0.038 * vegWeight; bbMul = 1 - 0.018 * vegWeight;
+            bTR = 114; bTG = 118; bTB = 96; bTM = 0.15 * vegWeight;
+        }
+        rMul = rMul * u + brMul * subtropW;
+        gMul = gMul * u + bgMul * subtropW;
+        bMul = bMul * u + bbMul * subtropW;
+        targetR = targetR * u + bTR * subtropW;
+        targetG = targetG * u + bTG * subtropW;
+        targetB = targetB * u + bTB * subtropW;
+        targetMix = targetMix * u + bTM * subtropW;
+    }
+
+    // 3. Tropical savanna lerp
+    if (savW > 0.001) {
+        const u = 1 - savW;
+        let brMul: number, bgMul: number, bbMul: number, bTR: number, bTG: number, bTB: number, bTM: number;
+        if (localSeason === 0) {
+            brMul = 1 - 0.020 * vegWeight; bgMul = 1 + 0.032 * vegWeight; bbMul = 1 - 0.035 * vegWeight;
+            bTR = 112; bTG = 134; bTB = 78; bTM = 0.11 * vegWeight;
+        } else if (localSeason === 1) {
+            brMul = 1 - 0.068 * vegWeight; bgMul = 1 + 0.052 * vegWeight; bbMul = 1 - 0.032 * vegWeight;
+            bTR = 88; bTG = 124; bTB = 68; bTM = 0.18 * vegWeight;
+        } else if (localSeason === 2) {
+            brMul = 1 + 0.058 * vegWeight; bgMul = 1 - 0.012 * vegWeight; bbMul = 1 - 0.088 * vegWeight;
+            bTR = 150; bTG = 132; bTB = 80; bTM = 0.18 * vegWeight;
+        } else {
+            brMul = 1 + 0.032 * vegWeight; bgMul = 1 - 0.045 * vegWeight; bbMul = 1 - 0.065 * vegWeight;
+            bTR = 138; bTG = 124; bTB = 94; bTM = 0.19 * vegWeight;
+        }
+        rMul = rMul * u + brMul * savW;
+        gMul = gMul * u + bgMul * savW;
+        bMul = bMul * u + bbMul * savW;
+        targetR = targetR * u + bTR * savW;
+        targetG = targetG * u + bTG * savW;
+        targetB = targetB * u + bTB * savW;
+        targetMix = targetMix * u + bTM * savW;
+    }
+
+    // 4. Mediterranean lerp
+    if (medW > 0.001) {
+        const u = 1 - medW;
+        let brMul: number, bgMul: number, bbMul: number, bTR: number, bTG: number, bTB: number, bTM: number;
+        if (localSeason === 3) {
+            brMul = 1 - 0.068 * vegWeight; bgMul = 1 + 0.055 * vegWeight; bbMul = 1 - 0.032 * vegWeight;
+            bTR = 96; bTG = 128; bTB = 74; bTM = 0.20 * vegWeight;
+        } else if (localSeason === 0) {
+            brMul = 1 - 0.050 * vegWeight; bgMul = 1 + 0.052 * vegWeight; bbMul = 1 - 0.042 * vegWeight;
+            bTR = 104; bTG = 134; bTB = 76; bTM = 0.17 * vegWeight;
+        } else if (localSeason === 1) {
+            brMul = 1 + 0.068 * vegWeight; bgMul = 1 - 0.022 * vegWeight; bbMul = 1 - 0.098 * vegWeight;
+            bTR = 160; bTG = 138; bTB = 86; bTM = 0.20 * vegWeight;
+        } else {
+            brMul = 1 + 0.025 * vegWeight; bgMul = 1 + 0.005 * vegWeight; bbMul = 1 - 0.045 * vegWeight;
+            bTR = 140; bTG = 130; bTB = 84; bTM = 0.14 * vegWeight;
+        }
+        rMul = rMul * u + brMul * medW;
+        gMul = gMul * u + bgMul * medW;
+        bMul = bMul * u + bbMul * medW;
+        targetR = targetR * u + bTR * medW;
+        targetG = targetG * u + bTG * medW;
+        targetB = targetB * u + bTB * medW;
+        targetMix = targetMix * u + bTM * medW;
+    }
+
+    out[base] = rMul;
+    out[base + 1] = gMul;
+    out[base + 2] = bMul;
+    out[base + 3] = targetR;
+    out[base + 4] = targetG;
+    out[base + 5] = targetB;
+    out[base + 6] = targetMix;
+}
+
+/**
+ * 零堆分配批量计算单像素的春(0)·夏(1)·秋(2)·冬(3)四季地表反照率 RGB，
+ * 写入长度为 12 的 Float64Array `[spR,spG,spB, suR,suG,suB, auR,auG,auB, wiR,wiG,wiB]`。
+ * 数学结果与逐季调用 `applySeasonalGroundToPixel(..., computeSeasonalGroundModulation(s, ...))` 100% 逐位一致。
+ */
+export function applyFourSeasonsToPixelFast(
+    r: number,
+    g: number,
+    b: number,
+    rowCtx: SeasonalRowContext,
+    lng: number,
+    aridity: number,
+    sandiness: number,
+    rockWeight: number,
+    outRGB12: Float64Array,
+): void {
+    const landW = clamp01(1 - rockWeight * 0.85);
+    if (landW <= 0.001) {
+        outRGB12[0] = r; outRGB12[1] = g; outRGB12[2] = b;
+        outRGB12[3] = r; outRGB12[4] = g; outRGB12[5] = b;
+        outRGB12[6] = r; outRGB12[7] = g; outRGB12[8] = b;
+        outRGB12[9] = r; outRGB12[10] = g; outRGB12[11] = b;
+        return;
+    }
+
+    const desertMute = clamp01(
+        smoothstep(0.36, 0.88, sandiness) * 0.68 +
+        smoothstep(0.62, 0.96, aridity) * 0.42,
+    );
+    const eqEvergreen = rowCtx.eqLatW * (1 - smoothstep(0.14, 0.32, aridity));
+    const vegWeight = clamp01((1 - desertMute) * (1 - eqEvergreen));
+    if (vegWeight < 0.005) {
+        const cr = r < 0 ? 0 : r > 255 ? 255 : r;
+        const cg = g < 0 ? 0 : g > 255 ? 255 : g;
+        const cb = b < 0 ? 0 : b > 255 ? 255 : b;
+        outRGB12[0] = cr; outRGB12[1] = cg; outRGB12[2] = cb;
+        outRGB12[3] = cr; outRGB12[4] = cg; outRGB12[5] = cb;
+        outRGB12[6] = cr; outRGB12[7] = cg; outRGB12[8] = cb;
+        outRGB12[9] = cr; outRGB12[10] = cg; outRGB12[11] = cb;
+        return;
+    }
+
+    // 1. 像素级气候空间权重（只算 1 次，复用于全部 4 个季节）
+    const tempLatW = vegWeight * rowCtx.tempLatFactor;
+    const steppeBoost = 1.0 + 0.10 * smoothBand(aridity, 0.22, 0.66, 0.18);
+    const tempAw2 = clamp01(tempLatW * steppeBoost);
+
+    const subtropW = rowCtx.subtropLatW <= 0.001
+        ? 0
+        : clamp01(rowCtx.subtropLatW * ((1 - smoothstep(0.18, 0.56, aridity)) * (1 - smoothstep(0.16, 0.52, sandiness))));
+
+    const savW = rowCtx.savLatW <= 0.001
+        ? 0
+        : clamp01(rowCtx.savLatW * smoothBand(aridity, 0.0, 0.80, 0.25) * (1 - smoothstep(0.25, 0.70, sandiness)));
+
+    let medW = 0;
+    if (rowCtx.hasMedLat) {
+        const medBasin =
+            (rowCtx.medBasinLatA * smoothBand(lng, -9.5, 36.5, 3.8)) *
+            (1 - (rowCtx.medBasinLatB * smoothBand(lng, 24.0, 35.0, 2.8)) * 0.75);
+        const california = rowCtx.californiaLat * smoothBand(lng, -124.0, -117.5, 2.8);
+        const chile = rowCtx.chileLat * smoothBand(lng, -73.5, -70.0, 2.0);
+        const cape = rowCtx.capeLat * smoothBand(lng, 17.5, 21.5, 2.2);
+        const swAus = rowCtx.swAusLat * smoothBand(lng, 114.5, 139.0, 3.2);
+        const geoW = Math.max(medBasin, california, chile, cape, swAus);
+        if (geoW > 0.001) {
+            const climateW = smoothBand(aridity, 0.12, 0.70, 0.22) * (1 - smoothstep(0.25, 0.65, sandiness));
+            medW = clamp01(geoW * climateW);
+        }
+    }
+
+    // 2. 一次性写出 4 个当地季节调制参数
+    writeLocalSeasonMod(0, tempLatW, tempAw2, vegWeight, subtropW, savW, medW, LOCAL_SEASON_MODS_SCRATCH, 0);
+    writeLocalSeasonMod(1, tempLatW, tempAw2, vegWeight, subtropW, savW, medW, LOCAL_SEASON_MODS_SCRATCH, 7);
+    writeLocalSeasonMod(2, tempLatW, tempAw2, vegWeight, subtropW, savW, medW, LOCAL_SEASON_MODS_SCRATCH, 14);
+    writeLocalSeasonMod(3, tempLatW, tempAw2, vegWeight, subtropW, savW, medW, LOCAL_SEASON_MODS_SCRATCH, 21);
+
+    // 3. 像素级有机植被响应权重（只算 1 次）
+    const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+    const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+    const greenDominance = clamp01((g - r * 0.72) / 48);
+    const organicWeight = clamp01(0.45 + 0.55 * Math.max(greenDominance, clamp01(chroma / 55))) * landW;
+    const shW = rowCtx.shW;
+
+    // 4. 合成北半球日历四季 s = 0..3
+    for (let s = 0; s < 4; s++) {
+        let mRMul: number, mGMul: number, mBMul: number;
+        let mTR: number, mTG: number, mTB: number, mTM: number;
+
+        if (shW <= 0.001) {
+            const b0 = s * 7;
+            mRMul = LOCAL_SEASON_MODS_SCRATCH[b0];
+            mGMul = LOCAL_SEASON_MODS_SCRATCH[b0 + 1];
+            mBMul = LOCAL_SEASON_MODS_SCRATCH[b0 + 2];
+            mTR = LOCAL_SEASON_MODS_SCRATCH[b0 + 3];
+            mTG = LOCAL_SEASON_MODS_SCRATCH[b0 + 4];
+            mTB = LOCAL_SEASON_MODS_SCRATCH[b0 + 5];
+            mTM = LOCAL_SEASON_MODS_SCRATCH[b0 + 6];
+        } else if (shW >= 0.999) {
+            const b1 = ((s + 2) & 3) * 7;
+            mRMul = LOCAL_SEASON_MODS_SCRATCH[b1];
+            mGMul = LOCAL_SEASON_MODS_SCRATCH[b1 + 1];
+            mBMul = LOCAL_SEASON_MODS_SCRATCH[b1 + 2];
+            mTR = LOCAL_SEASON_MODS_SCRATCH[b1 + 3];
+            mTG = LOCAL_SEASON_MODS_SCRATCH[b1 + 4];
+            mTB = LOCAL_SEASON_MODS_SCRATCH[b1 + 5];
+            mTM = LOCAL_SEASON_MODS_SCRATCH[b1 + 6];
+        } else {
+            const b0 = s * 7;
+            const b1 = ((s + 2) & 3) * 7;
+            const u = 1 - shW;
+            mRMul = LOCAL_SEASON_MODS_SCRATCH[b0] * u + LOCAL_SEASON_MODS_SCRATCH[b1] * shW;
+            mGMul = LOCAL_SEASON_MODS_SCRATCH[b0 + 1] * u + LOCAL_SEASON_MODS_SCRATCH[b1 + 1] * shW;
+            mBMul = LOCAL_SEASON_MODS_SCRATCH[b0 + 2] * u + LOCAL_SEASON_MODS_SCRATCH[b1 + 2] * shW;
+            mTR = LOCAL_SEASON_MODS_SCRATCH[b0 + 3] * u + LOCAL_SEASON_MODS_SCRATCH[b1 + 3] * shW;
+            mTG = LOCAL_SEASON_MODS_SCRATCH[b0 + 4] * u + LOCAL_SEASON_MODS_SCRATCH[b1 + 4] * shW;
+            mTB = LOCAL_SEASON_MODS_SCRATCH[b0 + 5] * u + LOCAL_SEASON_MODS_SCRATCH[b1 + 5] * shW;
+            mTM = LOCAL_SEASON_MODS_SCRATCH[b0 + 6] * u + LOCAL_SEASON_MODS_SCRATCH[b1 + 6] * shW;
+        }
+
+        const rMul = 1 + (mRMul - 1) * organicWeight;
+        const gMul = 1 + (mGMul - 1) * organicWeight;
+        const bMul = 1 + (mBMul - 1) * organicWeight;
+
+        let nr = r * rMul;
+        let ng = g * gMul;
+        let nb = b * bMul;
+
+        const mixW = mTM * organicWeight;
+        if (mixW > 0.001) {
+            const targetLuma = Math.max(1, 0.299 * mTR + 0.587 * mTG + 0.114 * mTB);
+            const detailScale = clamp01(luma / targetLuma * 0.72 + 0.28 * (luma / 128)) * 1.02;
+            const tr = mTR * detailScale;
+            const tg = mTG * detailScale;
+            const tb = mTB * detailScale;
+            const oneMinusMix = 1 - mixW;
+            nr = nr * oneMinusMix + tr * mixW;
+            ng = ng * oneMinusMix + tg * mixW;
+            nb = nb * oneMinusMix + tb * mixW;
+        }
+
+        const outIdx = s * 3;
+        outRGB12[outIdx] = nr < 0 ? 0 : nr > 255 ? 255 : nr;
+        outRGB12[outIdx + 1] = ng < 0 ? 0 : ng > 255 ? 255 : ng;
+        outRGB12[outIdx + 2] = nb < 0 ? 0 : nb > 255 ? 255 : nb;
+    }
+}
+
+/**
  * 战术地面 WebGL 着色器（Scene13GroundLayerGL）实时四季同步 Uniform 参数
  */
 export interface TacticalSeasonalGroundUniforms {

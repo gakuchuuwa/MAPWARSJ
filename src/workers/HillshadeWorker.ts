@@ -7,7 +7,13 @@ import { buildWaterMask, isDefectGrayTile } from '../world/land-sea/WaterMask';
 import { createTerrainMaterial, getMaterialBytes, type TerrainMaterial, type TerrainRuleTexture } from '../map/StrategicTerrainMaterial';
 import type { RiverSegmentsMessage } from '../map/RiverStripData';
 import { NILE_ALLUVIAL_POLYGONS, NILE_VALLEY_EXP_BOUNDS, type NileAlluvialPolygon } from '../data/HistoricalRegions';
-import { applySeasonalGroundToPixel, computeSeasonalGroundModulation } from '../world/environment/seasonalGround';
+import {
+    applyFourSeasonsToPixelFast,
+    applySeasonalGroundToPixel,
+    computeSeasonalGroundModulation,
+    createSeasonalRowContext,
+    updateSeasonalRowContext,
+} from '../world/environment/seasonalGround';
 
 interface PreparedNilePolygon extends NileAlluvialPolygon {
     minLat: number;
@@ -667,6 +673,16 @@ function computeRiverStrip(bounds: { north: number; south: number; west: number;
 }
 
 const TX = new Float64Array(3);
+const SEASON_RGB12 = new Float64Array(12);
+const WINTER_OUT5 = new Float64Array(5);
+const SEASON_ROW_CTX = createSeasonalRowContext();
+// 5 层平原值噪声（nBig, nA, nB, nC, nD）的 X 轴预计算表（按列 x=0..255 只算一次，整块瓦片 256 行复用）
+const WN_IX0 = new Int32Array(256), WN_UX0 = new Float64Array(256);
+const WN_IX1 = new Int32Array(256), WN_UX1 = new Float64Array(256);
+const WN_IX2 = new Int32Array(256), WN_UX2 = new Float64Array(256);
+const WN_IX3 = new Int32Array(256), WN_UX3 = new Float64Array(256);
+const WN_IX4 = new Int32Array(256), WN_UX4 = new Float64Array(256);
+
 const rampWorker = (v: number, a: number, b: number) => {
     const t = Math.max(0, Math.min(1, (v - a) / (b - a)));
     return t * t * (3 - 2 * t);
@@ -1078,6 +1094,19 @@ function renderHillshade(
     // 逐像素经度（地表纹理试点用）：与 tileBounds 严格线性，相邻瓦片共用同一条边，跨瓦片连续
     const rowLngStep = tileBounds ? (tileBounds.east - tileBounds.west) / width : 0;
     const tileWestLng = tileBounds ? tileBounds.west : 0;
+    const getZ = (baseIdx: number) => (data[baseIdx] * 256 + data[baseIdx + 1] + data[baseIdx + 2] * 0.00390625) - 32768;
+    const canFastSeason = typeof applyFourSeasonsToPixelFast === 'function';
+    const useFastWorldNoise = width <= 256;
+    if (useFastWorldNoise && params.useElevationColor) {
+        for (let x = 0; x < width; x++) {
+            const plng = tileWestLng + rowLngStep * (x + 0.5);
+            const x0 = plng * 2.1 + 13.7; const ix0 = Math.floor(x0); const fx0 = x0 - ix0; WN_IX0[x] = ix0; WN_UX0[x] = fx0 * fx0 * (3 - 2 * fx0);
+            const x1 = plng * 5.7 + 71.1; const ix1 = Math.floor(x1); const fx1 = x1 - ix1; WN_IX1[x] = ix1; WN_UX1[x] = fx1 * fx1 * (3 - 2 * fx1);
+            const x2 = plng * 17.3 + 11.3; const ix2 = Math.floor(x2); const fx2 = x2 - ix2; WN_IX2[x] = ix2; WN_UX2[x] = fx2 * fx2 * (3 - 2 * fx2);
+            const x3 = plng * 61.0 + 91.7; const ix3 = Math.floor(x3); const fx3 = x3 - ix3; WN_IX3[x] = ix3; WN_UX3[x] = fx3 * fx3 * (3 - 2 * fx3);
+            const x4 = plng * 190.0 + 37.9; const ix4 = Math.floor(x4); const fx4 = x4 - ix4; WN_IX4[x] = ix4; WN_UX4[x] = fx4 * fx4 * (3 - 2 * fx4);
+        }
+    }
     if (params.useElevationColor) {
         // --- COLORED RENDERING PATH ---
         // 【2026-07-19 主人定：移除近岸晕染】原有 4 环扩散预计算每瓦片约 200 万次数组读取，
@@ -1091,10 +1120,25 @@ function renderHillshade(
             const noiseYRow = (y & 255) * 256;
 
             const rowLat = rowLatRad(y) * 180 / Math.PI;
+            updateSeasonalRowContext(rowLat, SEASON_ROW_CTX);
+            const shWinterW = rowLat < -1.0 ? rampWorker(-rowLat, 1.0, 7.0) : 0;
+            const nhWinterW = rowLat > -3.0 ? rampWorker(rowLat, -3.0, 4.0) : 0;
             // 雪线按瓦片东西两边的经度各算一次、逐像素插值：相邻瓦片共用同一条边，跨瓦片连续。
             // （旧版整块瓦片用中心经度，经度相关的抬升在瓦片交界处会断开。）
             const snowlineW = snowlineAt(rowLat, tileBounds ? tileBounds.west : tileCenterLng);
             const snowlineE = snowlineAt(rowLat, tileBounds ? tileBounds.east : tileCenterLng);
+
+            // 5 层平原值噪声的 Y 轴行预计算与相邻像素格点哈希缓存
+            const ny0 = rowLat * 2.1 + 5.3; const iy0 = Math.floor(ny0); const fy0 = ny0 - iy0; const uy0 = fy0 * fy0 * (3 - 2 * fy0);
+            const ny1 = rowLat * 5.7 + 29.9; const iy1 = Math.floor(ny1); const fy1 = ny1 - iy1; const uy1 = fy1 * fy1 * (3 - 2 * fy1);
+            const ny2 = rowLat * 17.3 + 47.2; const iy2 = Math.floor(ny2); const fy2 = ny2 - iy2; const uy2 = fy2 * fy2 * (3 - 2 * fy2);
+            const ny3 = rowLat * 61.0 + 3.1; const iy3 = Math.floor(ny3); const fy3 = ny3 - iy3; const uy3 = fy3 * fy3 * (3 - 2 * fy3);
+            const ny4 = rowLat * 190.0 + 83.4; const iy4 = Math.floor(ny4); const fy4 = ny4 - iy4; const uy4 = fy4 * fy4 * (3 - 2 * fy4);
+            let prevIx0 = -2147483648, a0 = 0, b0 = 0, c0 = 0, d0 = 0;
+            let prevIx1 = -2147483648, a1 = 0, b1 = 0, c1 = 0, d1 = 0;
+            let prevIx2 = -2147483648, a2 = 0, b2 = 0, c2 = 0, d2 = 0;
+            let prevIx3 = -2147483648, a3 = 0, b3 = 0, c3 = 0, d3 = 0;
+            let prevIx4 = -2147483648, a4 = 0, b4 = 0, c4 = 0, d4 = 0;
 
             for (let x = 0; x < width; x++) {
                 const idx = (yM + x) * 4;
@@ -1104,10 +1148,6 @@ function renderHillshade(
                 // X Neighbors
                 const xL = (x === 0 ? 0 : x - 1);
                 const xR = (x === width - 1 ? width - 1 : x + 1);
-
-                // Fetch Z logic inlined or helper (helper optimizes poorly in some JS engines but keeps code dry)
-                // Inlining for max perf in worker
-                const getZ = (baseIdx: number) => (data[baseIdx] * 256 + data[baseIdx + 1] + data[baseIdx + 2] * 0.00390625) - 32768;
 
                 /* 🔴 [2026-09-17 主人报障「瓦片之间有浅色横竖线，新蔡、寿春周围平坦区尤其明显」]
                  * 真凶就是下面这组邻域取值的**边界钳制**（xL/xR/yT/yB 在边缘取自己）：
@@ -1396,19 +1436,97 @@ function renderHillshade(
                         * (1 - rampWorker(slopeGrad, 0.030, 0.070))// 坡地让给晕渲
                         * (1 - rampWorker(sandiness, 0.10, 0.58)); // 沙地平滑淡出
                     if (cropW > 0.002) {
-                        const plng = tileWestLng + rowLngStep * (x + 0.5);
+                        let nBig: number, nA: number, nB: number, nC: number, nD: number;
+                        if (useFastWorldNoise) {
+                            const ix0 = WN_IX0[x];
+                            if (ix0 !== prevIx0) {
+                                if (ix0 === prevIx0 + 1) {
+                                    a0 = b0; c0 = d0;
+                                    b0 = worldHash(ix0 + 1, iy0); d0 = worldHash(ix0 + 1, iy0 + 1);
+                                } else {
+                                    a0 = worldHash(ix0, iy0); b0 = worldHash(ix0 + 1, iy0);
+                                    c0 = worldHash(ix0, iy0 + 1); d0 = worldHash(ix0 + 1, iy0 + 1);
+                                }
+                                prevIx0 = ix0;
+                            }
+                            const ux0 = WN_UX0[x];
+                            const ab0 = a0 + (b0 - a0) * ux0, cd0 = c0 + (d0 - c0) * ux0;
+                            nBig = ab0 + (cd0 - ab0) * uy0;
+
+                            const ix1 = WN_IX1[x];
+                            if (ix1 !== prevIx1) {
+                                if (ix1 === prevIx1 + 1) {
+                                    a1 = b1; c1 = d1;
+                                    b1 = worldHash(ix1 + 1, iy1); d1 = worldHash(ix1 + 1, iy1 + 1);
+                                } else {
+                                    a1 = worldHash(ix1, iy1); b1 = worldHash(ix1 + 1, iy1);
+                                    c1 = worldHash(ix1, iy1 + 1); d1 = worldHash(ix1 + 1, iy1 + 1);
+                                }
+                                prevIx1 = ix1;
+                            }
+                            const ux1 = WN_UX1[x];
+                            const ab1 = a1 + (b1 - a1) * ux1, cd1 = c1 + (d1 - c1) * ux1;
+                            nA = ab1 + (cd1 - ab1) * uy1;
+
+                            const ix2 = WN_IX2[x];
+                            if (ix2 !== prevIx2) {
+                                if (ix2 === prevIx2 + 1) {
+                                    a2 = b2; c2 = d2;
+                                    b2 = worldHash(ix2 + 1, iy2); d2 = worldHash(ix2 + 1, iy2 + 1);
+                                } else {
+                                    a2 = worldHash(ix2, iy2); b2 = worldHash(ix2 + 1, iy2);
+                                    c2 = worldHash(ix2, iy2 + 1); d2 = worldHash(ix2 + 1, iy2 + 1);
+                                }
+                                prevIx2 = ix2;
+                            }
+                            const ux2 = WN_UX2[x];
+                            const ab2 = a2 + (b2 - a2) * ux2, cd2 = c2 + (d2 - c2) * ux2;
+                            nB = ab2 + (cd2 - ab2) * uy2;
+
+                            const ix3 = WN_IX3[x];
+                            if (ix3 !== prevIx3) {
+                                if (ix3 === prevIx3 + 1) {
+                                    a3 = b3; c3 = d3;
+                                    b3 = worldHash(ix3 + 1, iy3); d3 = worldHash(ix3 + 1, iy3 + 1);
+                                } else {
+                                    a3 = worldHash(ix3, iy3); b3 = worldHash(ix3 + 1, iy3);
+                                    c3 = worldHash(ix3, iy3 + 1); d3 = worldHash(ix3 + 1, iy3 + 1);
+                                }
+                                prevIx3 = ix3;
+                            }
+                            const ux3 = WN_UX3[x];
+                            const ab3 = a3 + (b3 - a3) * ux3, cd3 = c3 + (d3 - c3) * ux3;
+                            nC = ab3 + (cd3 - ab3) * uy3;
+
+                            const ix4 = WN_IX4[x];
+                            if (ix4 !== prevIx4) {
+                                if (ix4 === prevIx4 + 1) {
+                                    a4 = b4; c4 = d4;
+                                    b4 = worldHash(ix4 + 1, iy4); d4 = worldHash(ix4 + 1, iy4 + 1);
+                                } else {
+                                    a4 = worldHash(ix4, iy4); b4 = worldHash(ix4 + 1, iy4);
+                                    c4 = worldHash(ix4, iy4 + 1); d4 = worldHash(ix4 + 1, iy4 + 1);
+                                }
+                                prevIx4 = ix4;
+                            }
+                            const ux4 = WN_UX4[x];
+                            const ab4 = a4 + (b4 - a4) * ux4, cd4 = c4 + (d4 - c4) * ux4;
+                            nD = ab4 + (cd4 - ab4) * uy4;
+                        } else {
+                            const plng = tileWestLng + rowLngStep * (x + 0.5);
+                            nBig = worldNoise(plng * 2.1 + 13.7, rowLat * 2.1 + 5.3);
+                            nA = worldNoise(plng * 5.7 + 71.1, rowLat * 5.7 + 29.9);
+                            nB = worldNoise(plng * 17.3 + 11.3, rowLat * 17.3 + 47.2);
+                            nC = worldNoise(plng * 61.0 + 91.7, rowLat * 61.0 + 3.1);
+                            nD = worldNoise(plng * 190.0 + 37.9, rowLat * 190.0 + 83.4);
+                        }
                         // ① 大块干湿（≈0.5°格）：偏干→土黄，偏湿→青绿
-                        const nBig = worldNoise(plng * 2.1 + 13.7, rowLat * 2.1 + 5.3);
                         const dry = (nBig - 0.5) * 2 * cropW;
                         r += 18 * dry * 0.60;
                         g += 12 * dry * 0.35;
                         b -= 15 * dry * 0.55;
                         // ② 草土肌理：四层**平滑**噪声（值噪声双线性，天然没有硬边/方块），
                         //    ~0.18° 中斑 → ~0.06° 细斑 → ~0.016° 颗粒 → ~0.005° 细砂（1~2px）
-                        const nA = worldNoise(plng * 5.7 + 71.1, rowLat * 5.7 + 29.9);
-                        const nB = worldNoise(plng * 17.3 + 11.3, rowLat * 17.3 + 47.2);
-                        const nC = worldNoise(plng * 61.0 + 91.7, rowLat * 61.0 + 3.1);
-                        const nD = worldNoise(plng * 190.0 + 37.9, rowLat * 190.0 + 83.4);
                         const mott = (nA - 0.5) * 0.50 + (nB - 0.5) * 0.34 + (nC - 0.5) * 0.08 + (nD - 0.5) * 0.03;
                         const lum = 1 + mott * 0.20 * cropW;
                         r *= lum; g *= lum; b *= lum;
@@ -1713,20 +1831,26 @@ function renderHillshade(
                     targetBuf[idx + 3] = 255;
                 };
 
-                // 当地冬季积雪/残雪/冰封叠加（北半球在日历冬 3 触发，南半球在日历夏 1 触发）
+                // 当地冬季积雪/残雪/冰封叠加（北半球在日历冬 3 触发，南半球在日历夏 1 触发），结果写入 WINTER_OUT5
                 const applyLocalWinterSnowAndIce = (
                     inR: number,
                     inG: number,
                     inB: number,
                     hemisphereW: number,
-                ): [number, number, number, number, number] => {
-                    if (hemisphereW <= 0.002) return [inR, inG, inB, 0, rowSnowline];
+                ): void => {
+                    if (hemisphereW <= 0.002) {
+                        WINTER_OUT5[0] = inR; WINTER_OUT5[1] = inG; WINTER_OUT5[2] = inB;
+                        WINTER_OUT5[3] = 0; WINTER_OUT5[4] = rowSnowline;
+                        return;
+                    }
                     const wSnow = (matWinterSnow ? matWinterSnow[p] : 0) * hemisphereW;
                     const wDeep = (matWinterDeep ? matWinterDeep[p] : 0) * hemisphereW;
                     const wSparse = (matWinterSparse ? matWinterSparse[p] : 0) * hemisphereW;
                     const winterSnowline = rowSnowline - 420 * rampWorker(absLat, 22, 38) * hemisphereW;
                     if (wSnow <= 0.002 && wSparse <= 0.002 && zC <= winterSnowline - 250) {
-                        return [inR, inG, inB, 0, rowSnowline];
+                        WINTER_OUT5[0] = inR; WINTER_OUT5[1] = inG; WINTER_OUT5[2] = inB;
+                        WINTER_OUT5[3] = 0; WINTER_OUT5[4] = rowSnowline;
+                        return;
                     }
                     let wr = inR, wg = inG, wb = inB;
                     let effSnowW = 0;
@@ -1820,27 +1944,33 @@ function renderHillshade(
                             }
                         }
                     }
-                    return [wr, wg, wb, effSnowW, winterSnowline];
+                    WINTER_OUT5[0] = wr; WINTER_OUT5[1] = wg; WINTER_OUT5[2] = wb;
+                    WINTER_OUT5[3] = effSnowW; WINTER_OUT5[4] = winterSnowline;
                 };
 
                 const rockMute = 1 - vegMask;
-                const hasSeasonalMod = vegMask > 0.002 && typeof applySeasonalGroundToPixel === 'function';
+                const hasSeasonalMod = vegMask > 0.002 && canFastSeason;
+                if (hasSeasonalMod) {
+                    applyFourSeasonsToPixelFast(preSnowR, preSnowG, preSnowB, SEASON_ROW_CTX, pixLng, aridity, sandiness, rockMute, SEASON_RGB12);
+                } else {
+                    SEASON_RGB12[0] = preSnowR; SEASON_RGB12[1] = preSnowG; SEASON_RGB12[2] = preSnowB;
+                    SEASON_RGB12[3] = preSnowR; SEASON_RGB12[4] = preSnowG; SEASON_RGB12[5] = preSnowB;
+                    SEASON_RGB12[6] = preSnowR; SEASON_RGB12[7] = preSnowG; SEASON_RGB12[8] = preSnowB;
+                    SEASON_RGB12[9] = preSnowR; SEASON_RGB12[10] = preSnowG; SEASON_RGB12[11] = preSnowB;
+                }
                 // ── 日历春 0（北半球春芽嫩绿 · 南半球秋草金黄 · 地中海春润青翠 · 萨瓦纳旱末微黄） ──
-                const [spR, spG, spB] = hasSeasonalMod
-                    ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(0, rowLat, pixLng, aridity, sandiness), rockMute)
-                    : [preSnowR, preSnowG, preSnowB];
+                const spR = SEASON_RGB12[0], spG = SEASON_RGB12[1], spB = SEASON_RGB12[2];
                 shadeAndWriteSeason(spR, spG, spB, 0, rowSnowline, output);
 
                 // ── 日历夏 1（北半球盛夏苍翠 · 地中海盛夏焦黄干涸 · 萨瓦纳雨季返青 · 南半球严冬积雪/霜枯） ──
                 if (summerOutput) {
-                    let [suR, suG, suB] = hasSeasonalMod
-                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(1, rowLat, pixLng, aridity, sandiness), rockMute)
-                        : [preSnowR, preSnowG, preSnowB];
-                    const shWinterW = rowLat < -1.0 ? rampWorker(-rowLat, 1.0, 7.0) : 0;
+                    let suR = SEASON_RGB12[3], suG = SEASON_RGB12[4], suB = SEASON_RGB12[5];
                     let suSnowW = 0;
                     let suSnowline = rowSnowline;
                     if (shWinterW > 0.002) {
-                        [suR, suG, suB, suSnowW, suSnowline] = applyLocalWinterSnowAndIce(suR, suG, suB, shWinterW);
+                        applyLocalWinterSnowAndIce(suR, suG, suB, shWinterW);
+                        suR = WINTER_OUT5[0]; suG = WINTER_OUT5[1]; suB = WINTER_OUT5[2];
+                        suSnowW = WINTER_OUT5[3]; suSnowline = WINTER_OUT5[4];
                     }
                     if (Math.abs(suR - spR) < 0.25 && Math.abs(suG - spG) < 0.25 && Math.abs(suB - spB) < 0.25 && suSnowW <= 0.002) {
                         summerOutput[idx] = output[idx];
@@ -1861,9 +1991,7 @@ function renderHillshade(
 
                 // ── 日历秋 2（北半球温带平原/森林与北方草原秋草金黄 · 南半球春芽嫩绿） ──
                 if (autumnOutput) {
-                    const [auR, auG, auB] = hasSeasonalMod
-                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(2, rowLat, pixLng, aridity, sandiness), rockMute)
-                        : [preSnowR, preSnowG, preSnowB];
+                    const auR = SEASON_RGB12[6], auG = SEASON_RGB12[7], auB = SEASON_RGB12[8];
                     if (Math.abs(auR - spR) < 0.25 && Math.abs(auG - spG) < 0.25 && Math.abs(auB - spB) < 0.25) {
                         autumnOutput[idx] = output[idx];
                         autumnOutput[idx + 1] = output[idx + 1];
@@ -1883,14 +2011,13 @@ function renderHillshade(
 
                 // ── 日历冬 3（北半球寒冬皑皑白雪/霜褐枯草/河湖冰封 · 地中海冬雨返青 · 萨瓦纳旱季枯黄 · 南半球盛夏苍翠） ──
                 if (winterOutput) {
-                    let [wiR, wiG, wiB] = hasSeasonalMod
-                        ? applySeasonalGroundToPixel(preSnowR, preSnowG, preSnowB, computeSeasonalGroundModulation(3, rowLat, pixLng, aridity, sandiness), rockMute)
-                        : [preSnowR, preSnowG, preSnowB];
-                    const nhWinterW = rowLat > -3.0 ? rampWorker(rowLat, -3.0, 4.0) : 0;
+                    let wiR = SEASON_RGB12[9], wiG = SEASON_RGB12[10], wiB = SEASON_RGB12[11];
                     let wiSnowW = 0;
                     let wiSnowline = rowSnowline;
                     if (nhWinterW > 0.002) {
-                        [wiR, wiG, wiB, wiSnowW, wiSnowline] = applyLocalWinterSnowAndIce(wiR, wiG, wiB, nhWinterW);
+                        applyLocalWinterSnowAndIce(wiR, wiG, wiB, nhWinterW);
+                        wiR = WINTER_OUT5[0]; wiG = WINTER_OUT5[1]; wiB = WINTER_OUT5[2];
+                        wiSnowW = WINTER_OUT5[3]; wiSnowline = WINTER_OUT5[4];
                     }
                     if (Math.abs(wiR - spR) < 0.25 && Math.abs(wiG - spG) < 0.25 && Math.abs(wiB - spB) < 0.25 && wiSnowW <= 0.002) {
                         winterOutput[idx] = output[idx];
@@ -1924,8 +2051,6 @@ function renderHillshade(
 
                 const xL = (x === 0 ? 0 : x - 1);
                 const xR = (x === width - 1 ? width - 1 : x + 1);
-
-                const getZ = (baseIdx: number) => (data[baseIdx] * 256 + data[baseIdx + 1] + data[baseIdx + 2] * 0.00390625) - 32768;
 
                 const zTL = getZ((yT + xL) * 4);
                 const zT = getZ((yT + x) * 4);

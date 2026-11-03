@@ -159,6 +159,10 @@ export interface WarMan {
     panicTurnT?: number;
     /** 玩家按官职局部释放【混】时的单兵混乱剩余秒数（武将全军【混】仍走阵营级 skillPanicTimer） */
     playerPanicTimer?: number;
+    /** 【胜】固己防：10秒真实涨血后的生命上限（用于真实涨血封顶与头顶血槽分母） */
+    skillMaxHp?: number;
+    /** 【胜】固己防：10秒内每秒真实增加的生命值 */
+    skillHealPerSec?: number;
     /** 最近一次碰撞阻挡本单位的装饰物精灵 */
     lastObsSprite?: DecorSprite | null;
     /** 最近一次被装饰物碰撞阻挡的时刻（battleSec）；与 blockedAt（只记敌方城墙）分开计 */
