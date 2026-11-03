@@ -1598,6 +1598,12 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gaolu_wulixi': 19,   // 乌里希
     'yinggelan_yuehanjifade': 13,   // 约翰吉法德
 
+    'mulabite_abubakr': 11,   // 阿布贝克尔
+    'inca_apocamac': 15,   // 阿波卡马克
+    'xibanya_cordoba': 16,   // 科尔多瓦
+    'xibanya_jufre': 16,   // 胡弗雷
+    'putaoya_raposo': 17,   // 拉波索
+    'ayoubu_turanshah': 12,   // 图兰沙
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

@@ -1915,6 +1915,12 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'hou_liang_liuzhijun': 'CENTRAL',   // 刘知俊｜据点 长宁
     'qianshu_wangzongshou': 'BASHU',   // 王宗寿｜据点 南充
     'liusong_tanshao': 'CENTRAL',   // 檀韶｜据点 琅琊
+    'mulabite_abubakr': 'BERBER',   // 阿布贝克尔｜据点 塔加扎
+    'inca_apocamac': 'INCA',   // 阿波卡马克｜据点 阿塔卡马
+    'xibanya_cordoba': 'SPANISH',   // 科尔多瓦｜据点 尼加拉瓜
+    'xibanya_jufre': 'SPANISH',   // 胡弗雷｜据点 门多萨
+    'putaoya_raposo': 'PORTUGUESE',   // 拉波索｜据点 圣保罗
+    'ayoubu_turanshah': 'ORIE',   // 图兰沙｜据点 萨那
 };
 
 // [2026-10-26 主人令新增湖广] 同步迁入五省据点的武将兜底文化；其余文化项保持原值。

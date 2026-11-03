@@ -10426,6 +10426,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": -3,
             "offsetY": -5
+        },
+        "/assets/NORTHEAST/dajin_wanyanchengyu.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/POLES/gen_jogaila.png": {
+            "scale": 1.18,
+            "offsetX": 45,
+            "offsetY": 18
         }
     },
     "folderGuides": {

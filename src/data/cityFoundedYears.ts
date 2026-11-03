@@ -475,5 +475,11 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_ahmedabad: 1411,   // 艾哈迈达巴德
     city_miaowu: 1430,   // 妙乌
     city_batavia: 400,   // 巴达维亚：同址巽他普拉为塔鲁玛迦拉都城；普尔纳跋摩 395–434 在位，取约 400 年
+    city_taghaza: 1000,       // 塔加扎：11世纪柏柏尔商道盐矿聚落成型（阿尔·巴克里等早期阿拉伯地理志记西撒哈拉盐矿）
+    city_atacama: 1180,       // 阿塔卡马：约12世纪阿塔卡马人筑基托尔普卡拉山堡（英文维基 Pukará de Quitor）
+    city_nicaragua: 1524,     // 尼加拉瓜：1524年弗朗西斯科·埃尔南德斯·德·科尔多瓦建格拉纳达与莱昂城
+    city_mendoza: 1561,       // 门多萨：1561年3月2日建城（英文维基 Mendoza, Argentina）
+    city_saopaulo: 1554,      // 圣保罗：1554年1月25日耶稣会士建圣保罗·德·皮拉蒂宁加（英文维基 São Paulo）
+    city_sanaa: -200,         // 萨那：前2世纪萨巴铭文已载萨那（Sha'oub/Sanaa）为设防都会（英文维基 Sanaa）
 };
 

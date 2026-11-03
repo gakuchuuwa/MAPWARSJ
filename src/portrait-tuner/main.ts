@@ -26,6 +26,8 @@ import {
     type PortraitAdjustValues,
     type PortraitFolderGuide,
 } from '../data/portrait_adjust';
+import { HUGUANG_CITY_IDS } from '../data/cities_v2';
+import { ALL_BRANCHES_MAP, toCulture66 } from '../systems/CultureHierarchy';
 
 type ImageEntry = { path: string; hash: string };
 type CatalogEntry = { folder: string; label: string; images: ImageEntry[] };
@@ -68,7 +70,7 @@ function serialize<T>(task: () => Promise<T>): Promise<T> {
     return run;
 }
 
-type GeneralEntry = { generalId: string; generalName: string; factionId: string; portrait: string; region: string; cityName: string };
+type GeneralEntry = { generalId: string; generalName: string; factionId: string; portrait: string; region: string; cityName: string; portraitFolder: string; cultureLabel: string };
 let generals: GeneralEntry[] = [];
 let selectedGeneralId = '';
 
@@ -850,38 +852,46 @@ async function loadGenerals(): Promise<void> {
         if (!res.ok) return;
         const data = await res.json();
 
-        // 构建 factionId → cityId → region 查找链
+        // 构建 cityId → 据点文化 → 立绘文件夹 查找链
         const capitals: Record<string, string> = data.capitals ?? {};
-        const cityById: Map<string, { name: string; region?: string }> = new Map(
-            (data.cities ?? []).map((c: any) => [c.id, { name: c.name, region: c.region }]),
+        const cityById: Map<string, { name: string; region?: string; buildingStyle?: string }> = new Map(
+            (data.cities ?? []).map((c: any) => [c.id, { name: c.name, region: c.region, buildingStyle: c.buildingStyle }]),
         );
-
-        const REGION_LABELS: Record<string, string> = {
-            CENTRAL: '中原', NORTH: '北方', JIANGNAN: '江南', BASHU: '川蜀',
-            KOREA: '朝鲜', JAPAN: '日本', XIYU: '西域', QINGZANG: '青藏',
-            DIANMIAN: '滇缅', CENTRAL_ASIA: '中亚',
-        };
 
         // 🔴 [2026-09-16 修「缺多将势力非首位武将」] 优先用 allGenerals（含多将数组全部对象）；
         //    服务端还没这个字段时回退到 generals（每势力首位）。
-        const rawGenerals: Array<{ generalId: string; generalName: string; portrait: string; factionId: string }> =
+        const rawGenerals: Array<{ generalId: string; generalName: string; portrait: string; factionId: string; cityId?: string }> =
             (data.allGenerals && data.allGenerals.length > 0)
                 ? data.allGenerals
-                : Object.entries((data.generals ?? {}) as Record<string, { generalId: string; generalName: string; portrait: string }>)
+                : Object.entries((data.generals ?? {}) as Record<string, { generalId: string; generalName: string; portrait: string; cityId?: string }>)
                     .map(([factionId, g]) => ({ ...g, factionId }));
         generals = rawGenerals
             .map((g) => {
-                const cityId = capitals[g.factionId];
+                const cityId = g.cityId || capitals[g.factionId] || '';
                 const city = cityId ? cityById.get(cityId) : null;
-                const rawRegion = city?.region ?? '';
-                const region = (REGION_LABELS[rawRegion] ?? rawRegion) || '未知';
+                const rawStyle = (cityId && HUGUANG_CITY_IDS.has(cityId))
+                    ? 'HUGUANG'
+                    : (city?.buildingStyle || city?.region || 'CENTRAL');
+                const cultureKey = toCulture66(rawStyle);
+                const portraitFolder = cultureKey === 'HEXI'
+                    ? 'KHITAN'
+                    : cultureKey === 'HUGUANG'
+                        ? 'JIANGNAN'
+                        : cultureKey;
+                const branch = ALL_BRANCHES_MAP[cultureKey];
+                const cultureLabel = branch
+                    ? branch.label.replace(/^[^\s]+\s+/, '').replace(/（.*$/, '').trim()
+                    : cultureKey;
+                const region = `${portraitFolder} · ${cultureLabel}`;
                 return {
                     generalId: g.generalId,
                     generalName: g.generalName,
                     factionId: g.factionId,
                     portrait: g.portrait,
                     region,
-                    cityName: city?.name ?? (cityId ?? ''),
+                    cityName: city?.name ?? cityId,
+                    portraitFolder,
+                    cultureLabel,
                 };
             })
             .sort((a, b) => {
@@ -913,13 +923,16 @@ function renderGeneralOptions(): void {
     els.genSelect.innerHTML = Array.from(groups.entries())
         .map(([region, gens]) => {
             const opts = gens
-                .map((g) => `<option value="${g.generalId}">${g.generalName}（${g.generalId}）</option>`)
+                .map((g) => `<option value="${g.generalId}">${g.generalName} [${g.portraitFolder}]（${g.generalId}）</option>`)
                 .join('');
             return `<optgroup label="${region}（${gens.length} 将）">${opts}</optgroup>`;
         })
         .join('');
 
     if (list.some((g) => g.generalId === selectedGeneralId)) {
+        els.genSelect.value = selectedGeneralId;
+    } else if (q && list.length > 0) {
+        selectedGeneralId = list[0].generalId;
         els.genSelect.value = selectedGeneralId;
     } else {
         selectedGeneralId = '';
@@ -930,7 +943,7 @@ function renderGeneralOptions(): void {
 function updateBindPanel(): void {
     const gen = generals.find((g) => g.generalId === selectedGeneralId);
     els.genCurrent.innerHTML = gen
-        ? `当前立绘：<code>${gen.portrait || '(无)'}</code>`
+        ? `应属文件夹：<strong style="color:#f5d78e;">${gen.portraitFolder}</strong>（<code>/assets/${gen.portraitFolder}/</code> · ${gen.cultureLabel}${gen.cityName ? ` · ${gen.cityName}` : ''}）<br>当前立绘：<code>${gen.portrait || '(无)'}</code>`
         : '';
     if (gen?.portrait) {
         els.genPortrait.innerHTML = `<img src="${gen.portrait}" alt="${gen.generalName}" />`;
@@ -967,7 +980,7 @@ async function bindSelectedImageToGeneralInner(): Promise<void> {
         }
     }
     // 跨文化区提醒：选中图与武将当前文化区夹不同时先确认（仍就地引用、不移动文件）
-    const genFolder = ((gen.portrait || '').match(/^\/assets\/([^/]+)\//) || [])[1];
+    const genFolder = ((gen.portrait || '').match(/^\/assets\/([^/]+)\//) || [])[1] || gen.portraitFolder;
     const imgFolder = (selectedImage.match(/^\/assets\/([^/]+)\//) || [])[1];
     if (genFolder && imgFolder && genFolder.toLowerCase() !== imgFolder.toLowerCase()) {
         const ok = window.confirm(

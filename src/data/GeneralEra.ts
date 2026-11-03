@@ -1946,6 +1946,12 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_uaxaclajuun': 'feudal',   // 十八兔
     'sengjialuo_boluojialuoliu': 'feudal',   // 波罗迦罗摩六世
     'xingelana_beierweierde': 'imperial',   // 贝尔韦尔德
+    'mulabite_abubakr': 'castle',   // 阿布贝克尔
+    'inca_apocamac': 'castle',   // 阿波卡马克
+    'xibanya_cordoba': 'imperial',   // 科尔多瓦
+    'xibanya_jufre': 'imperial',   // 胡弗雷
+    'putaoya_raposo': 'castle',   // 拉波索
+    'ayoubu_turanshah': 'castle',   // 图兰沙
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

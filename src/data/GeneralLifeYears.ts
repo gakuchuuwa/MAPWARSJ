@@ -1960,6 +1960,12 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     xingelana_beierweierde: { birth: 1610, death: 1680, debut: 1668, kaoju: '推定' }, // 贝尔韦尔德（波托贝洛守将；1668 亨利·摩根袭港）
     gen_xiao_xian: { birth: 583, death: 621, debut: 617 },                           // 萧铣（583–621；617 起兵称梁帝，621 被李孝恭平）
 
+    mulabite_abubakr: { birth: 1020, death: 1087, debut: 1054, kaoju: '推定' },   // 阿布贝克尔（穆拉比特埃米尔，卒1087，1054统兵经略撒哈拉盐道）
+    inca_apocamac: { birth: 1435, death: 1495, debut: 1470, kaoju: '推定' },      // 阿波卡马克（图帕克·印加·尤潘基南征阿塔卡马与智利先锋）
+    xibanya_cordoba: { birth: 1475, death: 1526, debut: 1517, kaoju: '推定' },    // 弗朗西斯科·埃尔南德斯·德·科尔多瓦（尼加拉瓜开拓者，卒1526）
+    xibanya_jufre: { birth: 1516, death: 1578, debut: 1541 },                     // 胡安·胡弗雷（1516–1578，库约总督、门多萨重建者）
+    putaoya_raposo: { birth: 1598, death: 1658, debut: 1628 },                    // 安东尼奥·拉波索·塔瓦雷斯（1598–1658，圣保罗旗队统帅）
+    ayoubu_turanshah: { birth: 1130, death: 1180, debut: 1164, kaoju: '推定' },   // 图兰沙（萨拉丁长兄，卒1180，1173–1174远征也门萨那）
 };
 
 /** 生年（未收录返回 null） */
