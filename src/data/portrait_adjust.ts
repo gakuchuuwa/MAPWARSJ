@@ -9691,6 +9691,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 22,
             "offsetY": 17
+        },
+        "/assets/WEI/tuoba_yuanying.png": {
+            "scale": 1.3,
+            "offsetX": 0,
+            "offsetY": 20
         }
     },
     "folderGuides": {
