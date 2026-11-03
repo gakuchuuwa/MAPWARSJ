@@ -8,7 +8,6 @@
  * - 依据 史料/古代精锐部队.md §6 #1–3、#5–12、#14–19
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-    ashina: { name: '金山突厥兵', tier: 3 },
     liao_d: { name: '皮室军', tier: 1 },
     menggu_d: { name: '怯薛宿卫', tier: 0 },
     yuan_d: { name: '秃鲁花军', tier: 3 },
@@ -27,7 +26,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   xiajiasi: { name: '黠戛斯锐卒', tier: 1 }, // 彻底摧毁回鹘汗国的“终结者”，改变漠北与西域历史格局的战略力量，升入T1战略
     xibo_d: { name: '锡伯箭手', tier: 3 },
   tatar: { name: '塔塔儿勇士', tier: 4 },
-    huyan: { name: '呼衍精骑', tier: 4 },
     choros: { name: '萨吾尔鹘骑', tier: 3 },
   duolu: { name: '咄陆部铁骑', tier: 4 },              // 缺乏知名度支撑，降T3
   kaerka: { name: '喀尔喀重骑', tier: 4 },
@@ -59,8 +57,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     //    jinzhang xiemian baojiaer yidier fuerjia nuogai bashekeer salai mangshi
     xierhe: { name: '毡的弓骑', tier: 3 },            // 哲德·乌古斯后钦察要城：毡的(Jand)乌古斯骑射，T3知名
     tuerhute: { name: '鹰娑川铁骑', tier: 3 },
-    ashide: { name: '阿史德骑', tier: 4 },
-    xiliao: { name: '斡耳朵亲卫', tier: 1 },
     helian: { name: '铁弗宿卫', tier: 3 },
     bayegu: { name: '拔野古骑', tier: 4 },
     wuzhumuqin: { name: '赛堪骑兵', tier: 4 },

@@ -30,7 +30,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'zuraid': 'city_aden',
 
   // ── [2026-08-26] 大西洋航线七势力（1 势力 = 1 据点）──
-  'taino': 'city_havana',
   'taino_d': 'city_yala', // 泰诺（古巴东部亚拉）
   'guanche': 'city_telde',
   'yasuer': 'city_angra',
@@ -128,7 +127,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'yili': 'city_budapeisi',
     'daqiya': 'city_sofia',
     'qiajia': 'city_kamanniya',
-    'liangxixili': 'city_palermo',
     'arevaci': 'city_numantia',
     'taluma': 'city_batavia',
 'mazhaer': 'city_budapeisi',
@@ -380,7 +378,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     'gaoche': 'city_junjishan',
 
-'huyan': 'city_naomaohu',
 'hongirad': 'city_erguna',
 'choros': 'city_dzungar_basin',
 
@@ -400,7 +397,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kangju': 'city_kanka',
     'geluolu': 'city_almaliq',
 'shi_clan': 'city_tashkent',
-'guge': 'city_zhaburang2',
 'ladakh': 'city_leh',
 'tsangpa': 'city_sangzhuzi',
 'ganden': 'city_heizong',
@@ -413,7 +409,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'dongxu': 'city_dongxu_old',
     'meitai': 'city_kangla',
     'pyu': 'city_srikshetra',
-    'ganzhou_huihu': 'city_zhangye',   // 🔴 [2026-11-01] 甘州回鹘都甘州（张掖）
     'mon': 'city_thaton',
 'ming_zheng': 'city_tainan',
     'xiou': 'city_bushan',
@@ -523,7 +518,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'danluo': 'city_xingzhuting',
     'hui': 'city_heseluo',
     'wure': 'city_niman',
-'houliao': 'city_xianping',
     'sunite': 'city_saihantala',
 'dayuzi': 'city_sailan',
     'keerqin': 'city_daerhan',
@@ -539,10 +533,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // -- 2026-05-31 补齐遗漏势力 --
 'bailian': 'city_junzhou',
 'chimei': 'city_ju',
-'ashide': 'city_heishacheng',
 'yanqi': 'city_yanqi',
 'qifu_d': 'city_fuhan',
-'xiliao': 'city_suiye',
     'khoshut': 'city_dangxiong',
     'qiepantuo': 'city_humicheng',
     'eluoke': 'city_nuotuoluo',
@@ -556,7 +548,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'tianxiong': 'city_daming',
     'huangwang': 'city_xianxia',
 'yehe': 'city_bamiancheng',
-'ashina': 'city_naiman',
 'wula': 'city_wushecheng',
 'bayegu': 'city_jiluoshan',
     'ketagalan': 'city_mengjia',
@@ -663,9 +654,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'talasike': 'city_tzintzuntzan',
     'tailuona': 'city_teyuna',
     'teweierqie': 'city_sanjulian',
-    'xinnidelan': 'city_newamsterdam',
-    'xinfalanxi': 'city_quebec',
-    'xinxibanya': 'city_acapulco',
     'manzheboyi': 'city_teluowulan',
     'zhelouqi': 'city_ajiemier',
     'suosuo': 'city_kumubi',
@@ -708,7 +696,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'aolisha': 'city_puli',
     'kanata': 'city_hengbi',
     'adile': 'city_bijiabuer',
-    'foluolida': 'city_shengaogusiding',
     'yilisi': 'city_aolinpiya',
     'nuowei': 'city_boergong',
     'keernuwaye': 'city_kanpeier',
@@ -745,7 +732,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'cueva': 'city_comagre',
   'gujarat': 'city_ahmedabad',
   'arakan': 'city_miaowu',
-  'voc': 'city_batavia',
   'kosala': 'city_sheweicheng',
   'kalinga': 'city_danta',
   'anga': 'city_zhanbo',

@@ -720,23 +720,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    xinnidelan: { generalId: 'gen_stuyvesant', cityId: 'city_newamsterdam', generalName: '斯泰弗森特', portrait: '/assets/GERMANIC/gen_stuyvesant.png', eliteName: '日耳曼民兵', eliteTier: 4 },
-
-
-
-
-
-
-
-    xinfalanxi: { generalId: 'gen_champlain', cityId: 'city_quebec', generalName: '尚普兰', portrait: '/assets/FRANKS/gen_champlain.png', eliteName: '法兰克民兵', eliteTier: 4 },
-
-
-
-
-
-
-
-    xinxibanya: [
 
 
 
@@ -745,28 +728,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_urdaneta', cityId: 'city_acapulco', generalName: '乌尔达内塔', portrait: '/assets/SPANISH/gen_urdaneta.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
-        { generalId: 'xiyindu_batuoluome', factionId: 'xinxibanya', cityId: 'city_shengduomingge', generalName: '巴托洛梅', portrait: '/assets/SPANISH/xiyindu_batuoluome.png', eliteName: '西班牙民兵', eliteTier: 4 },
 
 
 
 
 
 
-
-
-    
-        { generalId: 'gen_cortes', factionId: 'xinxibanya', cityId: 'city_veracruz', generalName: '科尔特斯', portrait: '/assets/SPANISH/tuotuonake_keertesi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
-        { generalId: 'xinxibanya_laijiasipi', factionId: 'xinxibanya', cityId: 'city_cebu', generalName: '莱加斯皮', portrait: '/assets/MALAY/xinxibanya_laijiasipi.png', eliteName: '征服者', eliteTier: 3, legionName: '帝国时代西班牙征服军团' },
-
-
-
-
-
-
-
-
-    ],
 
 
 
@@ -1328,6 +1295,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 liangxixili 并入：同一系政权、彼此没打过仗
+        // 🔴 [2026-10-25 补B] 兰迪（Landi，两西西里将军；1860 卡拉塔菲米 败于加里波第）｜势力 两西西里｜据点 巴勒莫（SICILIANS 文化）｜普将｜精锐「西西里线列」T4｜立绘留空
+        { generalId: 'bfe_landi', factionId: 'xixiliwangguo', cityId: 'city_palermo', generalName: '兰迪', portrait: '/assets/SICILIANS/bfe_landi.png', eliteName: '西西里线列', eliteTier: 4 },
     ],
 
 
@@ -1812,6 +1782,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     nidelan: [
         { generalId: 'gen_william_silent', cityId: 'city_hague', generalName: '威廉奥兰治', portrait: '/assets/GERMANIC/nidelan_weilian.png', eliteName: '日耳曼民兵', eliteTier: 4 },
         { generalId: 'capetown_riebeeck', generalName: '里贝克', cityId: 'city_cape_town', factionId: 'nidelan', eliteName: '开普守军', eliteTier: 4, portrait: '/assets/GERMANIC/nidelan_yangfanlibeike.png' },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 voc 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'voc_coen', factionId: 'nidelan', cityId: 'city_banda', generalName: '科恩', portrait: '/assets/MALAY/voc_coen.png', eliteName: '东印度守备', eliteTier: 4 },   // 扬·彼得松·科恩 1621 率军征服班达群岛、独占肉豆蔻
+        { generalId: 'bfe_coyett', factionId: 'nidelan', cityId: 'city_tainan', generalName: '揆一', portrait: '/assets/JIANGNAN/bfe_coyett.png' , eliteName: '荷兰守备', eliteTier: 4},
+        { generalId: 'voc_speult', factionId: 'nidelan', cityId: 'city_ambon', generalName: '斯佩尔特', portrait: '/assets/MALAY/voc_speult.png', eliteName: '东印度守备', eliteTier: 4 },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 xinnidelan 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'gen_stuyvesant', factionId: 'nidelan', cityId: 'city_newamsterdam', generalName: '斯泰弗森特', portrait: '/assets/GERMANIC/gen_stuyvesant.png', eliteName: '日耳曼民兵', eliteTier: 4 },
     ],
 
 
@@ -2498,6 +2474,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gaolu_bureau', factionId: 'gaolu', cityId: 'city_bali', generalName: '让彼罗', portrait: '/assets/FRANKS/gaolu_bureau.png', eliteName: '法兰西炮队', eliteTier: 2 },
         { generalId: 'gaolu_lorrain', factionId: 'gaolu', cityId: 'city_bali', generalName: '让德洛兰', portrait: '/assets/FRANKS/gaolu_lorrain.png', eliteName: '攻城工匠', eliteTier: 4 },
         { generalId: 'gaolu_jeannehachette', factionId: 'gaolu', cityId: 'city_bali', generalName: '让娜阿谢', portrait: '/assets/FRANKS/gaolu_jeannehachette.png', eliteName: '博韦民兵', eliteTier: 4 },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 xinfalanxi 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'gen_champlain', factionId: 'gaolu', cityId: 'city_quebec', generalName: '尚普兰', portrait: '/assets/FRANKS/gen_champlain.png', eliteName: '法兰克民兵', eliteTier: 4 },
     ],
 
 
@@ -3048,7 +3026,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'puxiangyindu_albukeerke', factionId: 'putaoya', cityId: 'city_guoa', generalName: '阿尔布克尔克', portrait: '/assets/PORTUGUESE/puxiangyindu_albukeerke.png', legionName: '帝国时代葡萄牙风琴军团', eliteName: '葡萄牙方阵', eliteTier: 3 },
         { generalId: 'gen_noli', factionId: 'putaoya', cityId: 'city_ribeira', generalName: '诺利', portrait: '/assets/PORTUGUESE/gen_noli.png', eliteName: '葡萄牙兵', eliteTier: 4 },
         { generalId: 'gen_martim_afonso', factionId: 'putaoya', cityId: 'city_saovicente', generalName: '马丁阿方索', portrait: '/assets/PORTUGUESE/tupinijin_madingafangsuo.png', legionName: '帝国时代葡萄牙风琴军团', eliteName: '葡萄牙兵', eliteTier: 4 },
-        { generalId: 'gen_tome_sousa', factionId: 'putaoya', cityId: 'city_salvador', generalName: '托梅', portrait: '/assets/PORTUGUESE/gen_tome_sousa.png', legionName: '帝国时代葡萄牙军团', eliteName: '葡萄牙兵', eliteTier: 4 },
+        { generalId: 'gen_tome_sousa', factionId: 'putaoya', cityId: 'city_salvador', generalName: '托梅', portrait: '/assets/PORTUGUESE/gen_tome_sousa.png', eliteName: '葡萄牙兵', eliteTier: 4 },
     ],
 
 
@@ -3383,10 +3361,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     qiajia: [
         // 🔴 [2026-10-25 补B] 阿迦穆罕默德（1742–1797，恺加王朝建立者；1795 克尔察尼西大破格鲁吉亚）｜势力 恺加｜据点 卡曼尼亚（PERSIAN 文化）｜名将｜精锐「恺加骑兵」T1｜立绘留空｜成名战待补
         { generalId: 'bfe_agha_mohammad', factionId: 'qiajia', cityId: 'city_kamanniya', generalName: '阿迦穆罕默德', portrait: '/assets/PERSIAN/bfe_agha_mohammad.png', eliteName: '恺加骑兵', eliteTier: 1 },
-    ],
-    liangxixili: [
-        // 🔴 [2026-10-25 补B] 兰迪（Landi，两西西里将军；1860 卡拉塔菲米 败于加里波第）｜势力 两西西里｜据点 巴勒莫（SICILIANS 文化）｜普将｜精锐「西西里线列」T4｜立绘留空
-        { generalId: 'bfe_landi', factionId: 'liangxixili', cityId: 'city_palermo', generalName: '兰迪', portrait: '/assets/SICILIANS/bfe_landi.png', eliteName: '西西里线列', eliteTier: 4 },
     ],
     arevaci: [
         // 🔴 [2026-10-25 补B] 雷图格诺斯（？–前133，凯尔特伊比利亚阿雷瓦西人统帅；努曼提亚守城抗罗马二十年，前133 城破殉城）｜势力 阿雷瓦西｜据点 努曼提亚（SPANISH 文化，梅塞塔高原）｜普将｜精锐「努曼提亚兵」T4｜立绘留空
@@ -6056,6 +6030,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 guge 并入：同一系政权、彼此没打过仗
+        { generalId: 'guge_chizhaxichabade', factionId: 'tubo', cityId: 'city_zhaburang2', generalName: '扎西查巴', portrait: '/assets/TIBET/guge_chizhaxichabade.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
+        { generalId: 'ali_gandancaiwang', factionId: 'tubo', cityId: 'city_gadake', generalName: '甘丹才旺', portrait: '/assets/TIBET/ali_gandancaiwang.png', eliteName: '和硕特骑', eliteTier: 3 },
     ],
 
 
@@ -7947,7 +7924,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    houliao: { generalId: 'houliao_yelvliuge', cityId: 'city_xianping', generalName: '耶律留哥', portrait: '/assets/NORTHEAST/houliao_yelvliuge.png', eliteName: '辽东骑兵', eliteTier: 3 },
 
 
 
@@ -8058,7 +8034,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    ashina: { generalId: 'ashina_ashinayandou', cityId: 'city_naiman', generalName: '阿史那燕都', portrait: '/assets/CENTRAL_ASIA/ashina_ashinayandou.png', eliteName: '河中骑兵', eliteTier: 4 },
 
 
 
@@ -8232,6 +8207,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 xiliao 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'xiliao_yelvdashi', factionId: 'liao_d', cityId: 'city_emil', generalName: '耶律大石', portrait: '/assets/CENTRAL_ASIA/xiliao_yelvdashi.png', eliteName: '契丹铁骑', eliteTier: 2 },
+        // 🔴 [2026-10-20 成名战规则] 奥斯曼＝西喀喇汗末王（1212 撒马尔罕被花剌子模摩诃末攻灭）；西喀喇汗无独立势力，按其宗主西辽挂靠并报告；普将；封建×中亚＝封建时代河中军团；立绘留空
+        { generalId: 'xiliao_uthman', factionId: 'liao_d', cityId: 'city_suiye', generalName: '奥斯曼', portrait: '/assets/CENTRAL_ASIA/xiliao_uthman.png', eliteName: '河中骑兵', eliteTier: 4 },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 houliao 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'houliao_yelvliuge', factionId: 'liao_d', cityId: 'city_xianping', generalName: '耶律留哥', portrait: '/assets/NORTHEAST/houliao_yelvliuge.png', eliteName: '辽东骑兵', eliteTier: 3 },
     ],
 
 
@@ -8407,6 +8388,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bfe_touman', factionId: 'xiongnu', cityId: 'city_toumancheng', generalName: '头曼', portrait: '/assets/XIANBEI/bfe_touman.png', eliteName: '匈奴控弦', eliteTier: 3 },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 huyan 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'huyan_peicen', factionId: 'xiongnu', cityId: 'city_naomaohu', generalName: '呼衍蒲奴', portrait: '/assets/CENTRAL_ASIA/huyan_peicen.png', eliteName: '河中骑兵', eliteTier: 4 },
+        { generalId: 'bfe_huyan_wang', factionId: 'xiongnu', cityId: 'city_toumancheng', generalName: '呼衍王', portrait: '/assets/XIANBEI/bfe_huyan_wang.png', eliteName: '北匈奴骑', eliteTier: 3 },
     ],
 
 
@@ -8781,6 +8765,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'bfe_ashina_duzhi', factionId: 'xijue', cityId: 'city_suiye', generalName: '阿史那都支', portrait: '/assets/CENTRAL_ASIA/bfe_ashina_duzhi.png', eliteName: '十姓铁骑', eliteTier: 4 },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 ashina 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'ashina_ashinayandou', factionId: 'tujue', cityId: 'city_naiman', generalName: '阿史那燕都', portrait: '/assets/CENTRAL_ASIA/ashina_ashinayandou.png', eliteName: '河中骑兵', eliteTier: 4 },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 ashide 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'ashide_ashidejieli', factionId: 'tujue', cityId: 'city_heishacheng', generalName: '阿史德颉利', portrait: '/assets/MONGOL/ashide_ashidejieli.png', eliteName: '蒙古骑手', eliteTier: 4 },
     ],
 
 
@@ -8803,7 +8791,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    ashide: { generalId: 'ashide_ashidejieli', cityId: 'city_heishacheng', generalName: '阿史德颉利', portrait: '/assets/MONGOL/ashide_ashidejieli.png', eliteName: '蒙古骑手', eliteTier: 4 },
 
 
 
@@ -8904,10 +8891,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    huyan: [
-        { generalId: 'huyan_peicen', cityId: 'city_naomaohu', generalName: '呼衍蒲奴', portrait: '/assets/CENTRAL_ASIA/huyan_peicen.png', eliteName: '河中骑兵', eliteTier: 4 },
-        { generalId: 'bfe_huyan_wang', factionId: 'huyan', cityId: 'city_toumancheng', generalName: '呼衍王', portrait: '/assets/XIANBEI/bfe_huyan_wang.png', eliteName: '北匈奴骑', eliteTier: 3 },
-    ],
 
 
 
@@ -8994,13 +8977,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-11-01 主人令「河西不足最低线 10，请处理」·按史补]
     //    甘州回鹘（河西回鹘）可汗夜落纥，据甘州（张掖，HEXI 河西文化）；894–1036 立国，屡拒西夏，1036 亡于李元昊。
     //    普将（四闸：区域政权、史载实胜不细，存疑列普将）；精锐「回鹘铁骑」T3（风土之兵，控丝路咽喉）；立绘留空。
-    ganzhou_huihu: [
-
-        { generalId: 'ganzhou_huihu_yeluohu', cityId: 'city_zhangye', generalName: '夜落纥', portrait: '/assets/KHITAN/ganzhou_huihu_yeluohu.png', eliteName: '回鹘铁骑', eliteTier: 3 },
-
-        { generalId: 'yuezhi_xihou', factionId: 'ganzhou_huihu', cityId: 'city_shandan', generalName: '黄头', portrait: '/assets/XIANBEI/yuezhi_xihou.png', eliteName: '漠南骑手', eliteTier: 4 },   // 🔴 [2026-11-03 主人点头] 月氏已并入贵霜；黄头＝黄头回鹘部首领（10 世纪河西），改挂甘州回鹘，据点删丹·XIANBEI
-
-    ],
     huihu: [
 
 
@@ -9063,6 +9039,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 ganzhou_huihu 并入：同一系政权、彼此没打过仗
+        { generalId: 'ganzhou_huihu_yeluohu', factionId: 'huihu', cityId: 'city_zhangye', generalName: '夜落纥', portrait: '/assets/KHITAN/ganzhou_huihu_yeluohu.png', eliteName: '回鹘铁骑', eliteTier: 3 },
+        { generalId: 'yuezhi_xihou', factionId: 'huihu', cityId: 'city_shandan', generalName: '黄头', portrait: '/assets/XIANBEI/yuezhi_xihou.png', eliteName: '漠南骑手', eliteTier: 4 },   // 🔴 [2026-11-03 主人点头] 月氏已并入贵霜；黄头＝黄头回鹘部首领（10 世纪河西），改挂甘州回鹘，据点删丹·XIANBEI
     ],
 
 
@@ -9424,39 +9403,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    xiliao: [
-
-
-
-
-
-
-
-        { generalId: 'xiliao_yelvdashi', cityId: 'city_emil', generalName: '耶律大石', portrait: '/assets/CENTRAL_ASIA/xiliao_yelvdashi.png', eliteName: '契丹铁骑', eliteTier: 2 },
-
-
-
-
-
-
-
-        // 🔴 [2026-10-20 成名战规则] 奥斯曼＝西喀喇汗末王（1212 撒马尔罕被花剌子模摩诃末攻灭）；西喀喇汗无独立势力，按其宗主西辽挂靠并报告；普将；封建×中亚＝封建时代河中军团；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'xiliao_uthman', cityId: 'city_suiye', generalName: '奥斯曼', portrait: '/assets/CENTRAL_ASIA/xiliao_uthman.png', eliteName: '河中骑兵', eliteTier: 4 },
-
-
-
-
-
-
-
-    ],
 
 
 
@@ -10397,26 +10343,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    guge: [
-
-
-
-
-
-
-
-
-        { generalId: 'guge_chizhaxichabade', cityId: 'city_zhaburang2', generalName: '扎西查巴', portrait: '/assets/TIBET/guge_chizhaxichabade.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
-        { generalId: 'ali_gandancaiwang', factionId: 'ganden', cityId: 'city_gadake', generalName: '甘丹才旺', portrait: '/assets/TIBET/ali_gandancaiwang.png', eliteName: '和硕特骑', eliteTier: 3 },
-
-
-
-
-
-
-
-
-    ],
 
 
 
@@ -15984,6 +15910,15 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_sundjata', eliteName: '飞刀女兵', eliteTier: 3, cityId: 'city_niani', generalName: '松迪亚塔', portrait: '/assets/AFRICA/manding_songdiyata.png' },
         // 🔴 [2026-10-24 中城补将·镇守] 法尔巴·穆萨＝马里帝国廷巴克图太守（1353 年伊本·白图泰到廷巴克图时见到的守臣，见《伊本·白图泰游记》、英文维基 History of Timbuktu）；「法尔巴」为马里官称，按规矩只留本名「穆萨」；守土之臣、无胜绩 → 普将；城堡×非洲＝城堡时代马里军团；立绘留空
         { generalId: 'manding_musa', generalName: '穆萨', cityId: 'city_timbuktu', portrait: '/assets/AFRICA/manding_musa.png', eliteName: '法拉里卫队', eliteTier: 4 },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 taino 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'gen_velazquez', factionId: 'xibanya', cityId: 'city_havana', generalName: '贝拉斯克斯', portrait: '/assets/SPANISH/taino_beilasikesi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 foluolida 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'foluolida_meinendeshi', factionId: 'xibanya', cityId: 'city_shengaogusiding', generalName: '梅嫩德斯', portrait: '/assets/SPANISH/foluolida_meinendeshi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙方阵', eliteTier: 2 },
+        // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 xinxibanya 并入：同一政权（延续/殖民地/汗族）并成一个势力
+        { generalId: 'gen_urdaneta', factionId: 'xibanya', cityId: 'city_acapulco', generalName: '乌尔达内塔', portrait: '/assets/SPANISH/gen_urdaneta.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
+        { generalId: 'xiyindu_batuoluome', factionId: 'xibanya', cityId: 'city_shengduomingge', generalName: '巴托洛梅', portrait: '/assets/SPANISH/xiyindu_batuoluome.png', eliteName: '西班牙民兵', eliteTier: 4 },
+        { generalId: 'gen_cortes', factionId: 'xibanya', cityId: 'city_veracruz', generalName: '科尔特斯', portrait: '/assets/SPANISH/tuotuonake_keertesi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
+        { generalId: 'xinxibanya_laijiasipi', factionId: 'xibanya', cityId: 'city_cebu', generalName: '莱加斯皮', portrait: '/assets/MALAY/xinxibanya_laijiasipi.png', eliteName: '征服者', eliteTier: 3, legionName: '帝国时代西班牙征服军团' },
     ],
 
     // 🔴 [2026-10-24 中城补将] 明彬＝阿拉干王（1531—1554）；妙乌（BURMESE）守城：1535 逐退葡萄牙火枪队、1547 开闸水淹东吁围军，筑石墙深壕、创孟加拉湾水师；帝国×缅甸＝帝国时代缅甸军团；名将；立绘留空
@@ -16331,23 +16266,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    taino: [
-
-
-
-
-
-
-
-        { generalId: 'gen_velazquez', cityId: 'city_havana', generalName: '贝拉斯克斯', portrait: '/assets/SPANISH/taino_beilasikesi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
-
-
-
-
-
-
-
-    ],
 
 
 
@@ -16479,7 +16397,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    foluolida: { generalId: 'foluolida_meinendeshi', cityId: 'city_shengaogusiding', generalName: '梅嫩德斯', portrait: '/assets/SPANISH/foluolida_meinendeshi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙方阵', eliteTier: 2 },
 
 
 
@@ -17114,11 +17031,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    voc: [
-        { generalId: 'voc_coen', factionId: 'voc', cityId: 'city_banda', generalName: '科恩', portrait: '/assets/MALAY/voc_coen.png', eliteName: '东印度守备', eliteTier: 4 },   // 扬·彼得松·科恩 1621 率军征服班达群岛、独占肉豆蔻
-        { generalId: 'bfe_coyett', cityId: 'city_tainan', generalName: '揆一', portrait: '/assets/JIANGNAN/bfe_coyett.png' , eliteName: '荷兰守备', eliteTier: 4},
-        { generalId: 'voc_speult', factionId: 'voc', cityId: 'city_ambon', generalName: '斯佩尔特', portrait: '/assets/MALAY/voc_speult.png', eliteName: '东印度守备', eliteTier: 4 },
-    ],
     wandan: { generalId: 'wandan_ageng', cityId: 'city_wandan', generalName: '阿贡', portrait: '/assets/MALAY/wandan_ageng.png', eliteName: '万丹军', eliteTier: 4 },
 
 

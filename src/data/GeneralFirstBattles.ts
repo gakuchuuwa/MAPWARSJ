@@ -116,7 +116,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 37.9,
         targetLng: 12.85,
         myTroops: 10000,
-        enemyFactionId: 'liangxixili',
+        enemyFactionId: 'xixiliwangguo',
         enemyFactionName: '两西西里',
         enemyGeneralId: 'bfe_landi',
         enemyTroops: 10000,
@@ -1918,7 +1918,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 43.6,
         targetLng: 93,
         myTroops: 30000,
-        enemyFactionId: 'huyan',
+        enemyFactionId: 'xiongnu',
         enemyFactionName: '北匈奴',
         enemyGeneralId: 'bfe_huyan_wang',   // 🔴 [2026-10-25 按史] 73 蒲类海对手是北匈奴呼衍王（库中「呼衍蒲奴」为混拼）
         enemyTroops: 35000,
@@ -5682,7 +5682,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.6525,
         targetLng: 66.9714,
         myTroops: 50000,
-        enemyFactionId: 'xiliao',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
+        enemyFactionId: 'liao_d',   // 🔴 [2026-10-25 按史] 敌将档案势力对齐（旗号/军团/势力色随史）
         enemyFactionName: '西喀喇汗国',
         enemyGeneralId: 'xiliao_uthman',   // 🔴 [2026-10-20 成名战规则] 1212 撒马尔罕西喀喇汗末王奥斯曼
         enemyTroops: 40000,
@@ -8196,7 +8196,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 22.99,
         targetLng: 120.2,
         myTroops: 20000,
-        enemyFactionId: 'voc',
+        enemyFactionId: 'nidelan',
         enemyFactionName: '荷兰东印度公司',
         enemyGeneralId: 'bfe_coyett',
         enemyTroops: 10000,

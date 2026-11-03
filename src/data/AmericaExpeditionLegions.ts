@@ -8,8 +8,6 @@
 export const AMERICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     aztec: { name: '美洲豹武士', tier: 3 },  // 特诺奇提特兰·库奥特莫克：阿兹特克美洲豹武士（荣冠战争核心）
     maya: { name: '羽箭手', tier: 4 },       // 蒂卡尔·亚斯纳昌：玛雅贵族羽箭手
-    taino: { name: '西印度矛兵', tier: 2 },       // 哈瓦那·贝拉斯克斯：西班牙加勒比海防长矛守军
-    foluolida: { name: '西班牙方阵', tier: 3 },
     gualani: { name: '传教区军', tier: 2 },
     xingelana: { name: '地峡征服者', tier: 3 },
     taino_d: { name: '泰诺勇士', tier: 4 },   // 亚拉·哈土依：泰诺人武士（无具名精锐，抗西班牙殖民；不得回落图皮的图皮战士）
@@ -19,8 +17,5 @@ export const AMERICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     talasike: { name: '塔拉斯科兵', tier: 3 },  // 钦聪灿·齐齐潘达夸雷：普雷佩查铜制武器军，1470年代大破阿兹特克入侵
     tailuona: { name: '泰罗纳战士', tier: 3 },  // 特尤纳·库查西克：泰罗纳失落之城武士，抗西班牙殖民
     teweierqie: { name: '特维尔战士', tier: 3 },  // 圣胡利安港·比格：特维尔切(阿奥尼肯)巴塔哥尼亚猎手
-    xinnidelan: { name: '新尼守军', tier: 4 },  // 新阿姆斯特丹·斯泰弗森特：荷兰西印度公司殖民地守军
-    xinfalanxi: { name: '新法民兵', tier: 4 },  // 魁北克·尚普兰：新法兰西殖民民兵
-    xinxibanya: { name: '迭戈守军', tier: 4 },  // 阿卡普尔科·乌尔达内塔：1617年圣迭戈堡防海盗守军
     cueva: { name: '库埃瓦弓手', tier: 4 },   // 科马格雷·达连酋长 库纳：科马格雷·库纳：达连酋邦的毒箭弓手，1514年抗西班牙征服者
 };

@@ -19,5 +19,4 @@ export const MALAY_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     //    但**无明确战术大捷记录** ⇒ 按 v3 五级制落 **T3 知名**（文化辨识度／兵种特色，而非战术战绩）。
     chamorro: { name: '马图阿武士', tier: 3 },   // 阿加尼亚·胡劳：查莫罗 Matua 阶层武士（拉特石时期）
     maynila: { name: '汤多武士', tier: 4 },   // 汤多·拉者苏莱曼三世：马尼拉土邦武士，1571年抗西班牙
-    voc: { name: '荷兰守备', tier: 4 },   // 巴达维亚·揆一：东印度公司守备军，1661年守热兰遮城
 };

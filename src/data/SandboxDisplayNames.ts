@@ -38,7 +38,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   // ── [2026-08-26 全面检查旗号] 实际旗号 = 本表登记优先，未登记则取势力名前两字
   //    （见 CityAssetManager.getProcessedFlagText）。全量比对 957 个有城势力：
   //    未登记 4 个（本轮新增的大西洋航线势力）+ 撞车 3 组，一并收口，现全部唯一。
-  taino: '古巴',  // 西属古巴（哈瓦那）
     taino_d: '泰诺',  // 泰诺（古巴东部亚拉）
   guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
   yasuer: '亚速',  // [2026-08-26] 葡属亚速尔群岛，首府安格拉
@@ -158,7 +157,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yili': '伊里',
     'daqiya': '达契',
     'qiajia': '恺加',
-    'liangxixili': '两西',
     'arevaci': '阿雷',
     'taluma': '塔鲁',
 'mazhaer': '匈',  // [2026-10-24 主人令「哪些单字合适就用单字」] 中文通行国名简称单字
@@ -179,7 +177,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'awaer': '瓦尔',   // 阿瓦尔
 
   heishui: '黑水',
-'fushi': '苻',
+'fushi': '秦',  // 🔴 [2026-11-03 主人令「势力用历史上的公认称呼，旗号用简称」] 国号秦，不用姓
   fuguo: '附',
 
 'yada': '厌抵',
@@ -207,15 +205,15 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'han': '韩',
 'han_d': '汉',
     'shu': '汉',
-'juqu_d': '沮渠',
-'tufa_d': '秃发',
+'juqu_d': '凉',  // 🔴 [2026-11-03] 北凉国号凉，不用姓
+'tufa_d': '凉',  // 🔴 [2026-11-03] 南凉国号凉，不用姓
 'qiuchi': '仇池',
-'helian': '赫连',
+'helian': '夏',  // 🔴 [2026-11-03] 国号夏，不用姓
 'xiongnu': '匈奴',
 'xianbei': '鲜卑',
     'jie': '羯族',
-'tuoba': '拓跋',
-'yuwen': '宇文',
+'tuoba': '魏',  // 🔴 [2026-11-03] 北魏国号魏，不用姓
+'yuwen': '周',  // 🔴 [2026-11-03] 北周国号周，不用姓
 'chen': '陈',
 'sui': '隋',
     'tang': '唐',
@@ -266,7 +264,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xinluo': '新罗',
     'luoyue': '骆越',
     'ba': '巴',
-'qifu_d': '乞伏',
+'qifu_d': '秦',  // 🔴 [2026-11-03] 西秦国号秦，不用姓
 
     // 2026-05-25 两晋核对追加势力
 'murong': '燕',
@@ -303,7 +301,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-25 北宋辽金势力 ──
 'goryeo': '高丽',
 'nongzhigao': '邕',
-'fangla': '方',
+'fangla': '圣公',  // 🔴 [2026-11-03] 方腊自号圣公，不用姓
 
     // ── 2026-05-25 北宋辽金势力 v2 ──
 'yang_aner': '登',
@@ -383,23 +381,18 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
 'kala': '喀汗',
-'xiliao': '辽',   // 🔴 [2026-10-28 主人令「势力名字用东南西北上下的，旗帜用一个国号字」] 西辽国号「辽」（史称西辽/哈剌契丹）→ 辽
 'sogdian': '粟特',
     'suogediyana': '索格',
     'kangju': '康居',
     'geluolu': '葛逻',
-    'yuchi': '尉迟',
+    'yuchi': '于阗',  // 🔴 [2026-11-03] 国名于阗，不用姓
 'an': '乌兹',
 'shi_clan': '石氏',
 
     
-'huyan': '呼衍',
-'ashina': '史那',
-'ashide': '史德',
 'hongirad': '弘吉',
 'choros': '萨吾',
     // ── 2026-05-26 新增：青藏高原势力旗号（18个）──
-'guge': '古格',
 'ladakh': '玛域',
 'tsangpa': '藏巴',
 'ganden': '甘丹',
@@ -427,7 +420,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-27 新增：汪、向、覃、冉、储 ──
 
     // ── 自动补全剩余的特殊势力映射，防止显示英文 ──
-'cen_d': '岑',
+'cen_d': '田',  // 🔴 [2026-11-03] 地名田州，不用姓
     // ── 2026-05-27 补充：旗号文字缺失的14个势力 ──
     'weili': '尉犁',
     'pishan': '皮山',
@@ -524,9 +517,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yiwu': '伊吾',
 'pulei': '蒲类',
     'duerbote': '杜尔',
-    // 🔴 [2026-11-03 主人令「甘州回鹘，不许用甘鹘，太不伦不类了…如果是汉字文化就用一个字甘，如果是民族文化就用回鹘」]
-    //    首府张掖＝河西走廊文化（HEXI，同文化凉州旗号单字「凉」）＝汉字文化 → 一字「甘」（删丹为漠南文化，一势力一旗按首府）
-    'ganzhou_huihu': '甘',
     'kaerka': '喀尔',
 'huihu': '回鹘',
 'wuzhumuqin': '乌珠',
@@ -540,7 +530,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qianhui': '回',   // 🔴 [2026-10-28] 势力改名「回军→回民」，旗号用简称单字「回」（库里无重）
     'miaomin': '苗',
     'zhongxiang': '鼎',
-    'yang_bozhou': '杨',
+    'yang_bozhou': '播',  // 🔴 [2026-11-03] 地名播州，不用姓
     'she': '奢安',
     'tan_d': '土家',
     'wumeng': '越蛮',
@@ -569,7 +559,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'suwa_d': '诹访',
     'hui': '濊',
     'wure': '兀惹',
-'houliao': '辽',   // 🔴 [2026-10-28 主人令「例如东辽，这种的旗帜应该用一个辽字」] 东辽国号「辽」，旗号写国号一字
     'sunite': '苏尼',
 'dayuzi': '玉兹',
     'weiwuer': '乌第',
@@ -604,7 +593,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'konbaung': '贡榜',
 'tianxiong': '魏博',
     'yun': '允',
-    'huangwang': '黄',
+    'huangwang': '齐',  // 🔴 [2026-11-03] 黄巢国号大齐，不用姓
     'basha_d': '巴沙',
 'yehe': '叶赫',
     
@@ -612,7 +601,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'bayegu': '拔野',
     'ketagalan': '凯达',
 'suke': '素可',  // [2026-10-24 主人令「哪些单字合适就用单字」] 音译名无通行单字简称，不截一字
-'gaochang': '麴',
+'gaochang': '高昌',  // 🔴 [2026-11-03] 国名高昌，不用姓
 'chuyue': '处月',
     'baidi': '白狄',
     'huite': '辉特',
@@ -717,9 +706,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'mapuche': '马普',
     'muisca': '穆伊',
     'tupi': '图皮',
-    'xinnidelan': '新尼',
-    'xinfalanxi': '新法',
-    'xinxibanya': '新西',
     'manzheboyi': '满者',
     'zhelouqi': '乔汉',
     'suosuo': '索索',
@@ -759,7 +745,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'aolisha': '东恒',
     'kanata': '维查',
     'adile': '比贾',
-    'foluolida': '西佛',
     'yilisi': '埃利',
     'nuowei': '挪威',
     'keernuwaye': '康沃',
@@ -789,7 +774,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // 🔴 [2026-09-19 主人指出审计警告「缺旗号」] 伊予源氏（松山，守将源义经）的旗号。
     //    规则（本文件头）：未登记则取**势力名前两字** = 「源氏」—— 实测**未与任何势力撞车**
     //    （genji 源氏本家登记的是「源」，取源氏姓氏；原「镰仓」与据点名「镰仓」严格相等，违反三者防重 §12.1），故这里把默认值显式登记下来，消掉审计警告。
-    'genji_iyo': '源氏',
+    'genji_iyo': '伊予',  // 🔴 [2026-11-03] 地名伊予，不用姓
     'dasaleiti': '达萨',
     'kapaduoxiya': '卡帕',
 
@@ -806,14 +791,13 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   maynila: '马尼',  // 马尼拉土邦
   gujarat: '古苏',  // 古吉拉特
   arakan: '若开',  // 阿拉干
-  voc: '荷印',  // 荷兰东印度公司
   kosala: '拘萨',  // 拘萨罗
   kalinga: '羯陵',  // 羯陵伽
   anga: '鸯伽',  // 鸯伽
   shunga: '巽伽',  // 巽伽
   antigonid: '安提',  // 安提柯
 'hou_han': '汉',
-'yuan_shao': '袁',
+'yuan_shao': '冀',  // 🔴 [2026-11-03] 地盘冀州，不用姓
 'hou_jin': '晋',
 'hou_zhao': '赵',
 'da_yan': '燕',  // 🔴 [2026-11-03 主人令「按建议改」] 「大」是尊称，旗号写国号字

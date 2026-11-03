@@ -94,10 +94,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'aosiruowen': [{ from: -9999, era: 'antiquity' }], // 奥斯若恩
     'aquidan': [{ from: -9999, era: 'castle' }], // 阿奎丹
     'arakan': [{ from: -9999, era: 'imperial' }], // 阿拉干
-    'ashide': [{ from: -9999, era: 'feudal' }], // 阿史德
     'ashikaga': [{ from: -9999, era: 'castle' }], // 室町
     'yamato': [{ from: -9999, era: 'feudal' }], // 大和（大和朝廷·平安时代；坂上田村麻吕 758–811）
-    'ashina': [{ from: -9999, era: 'feudal' }], // 阿史那
     'asikanani': [{ from: -9999, era: 'castle' }], // 勃兰登堡藩侯国
     'aswaka': [{ from: -9999, era: 'antiquity' }], // 阿斯瓦卡
     'ava': [{ from: -9999, era: 'castle' }], // 阿瓦王国
@@ -155,7 +153,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yili': [{ from: -9999, era: 'antiquity' }], // 伊利里亚（巴托起义，前 6 年）
     'daqiya': [{ from: -9999, era: 'antiquity' }], // 达契亚（布雷比斯塔）
     'qiajia': [{ from: -9999, era: 'imperial' }], // 恺加王朝（1796 起）
-    'liangxixili': [{ from: -9999, era: 'imperial' }], // 两西西里王国（1816–1861）
     'arevaci': [{ from: -9999, era: 'antiquity' }], // 阿雷瓦西（凯尔特伊比利亚部落，努曼提亚）
     'taluma': [{ from: -9999, era: 'antiquity' }], // 塔鲁玛迦拉（西爪哇，5 世纪）
     'cheshihou': [{ from: -9999, era: 'antiquity' }], // 乌垒
@@ -211,7 +208,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'feierganna': [{ from: -9999, era: 'castle' }], // 费尔干纳
     'feilisidin': [{ from: -9999, era: 'antiquity' }], // 非利士
     'feiyaka': [{ from: -9999, era: 'imperial' }], // 费雅喀
-    'foluolida': [{ from: -9999, era: 'imperial' }], // 西属佛罗里达
     'fuguo': [{ from: -9999, era: 'feudal' }], // 附国
     'fujiwara': [{ from: -9999, era: 'castle' }], // 奥州
     'fulandesi': [{ from: -9999, era: 'castle' }], // 阿图瓦
@@ -237,7 +233,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'gouding': [{ from: -9999, era: 'antiquity' }], // 句町
     'gualani': [{ from: -9999, era: 'imperial' }], // 瓜拉尼
     'guanche': [{ from: -9999, era: 'castle' }], // 关切人
-    'guge': [{ from: -9999, era: 'feudal' }], // 古格
     'guishuang': [{ from: -9999, era: 'antiquity' }], // 贵霜
     'guiyi': [{ from: -9999, era: 'feudal' }], // 归义
     'gujarat': [{ from: -9999, era: 'imperial' }], // 古吉拉特苏丹国
@@ -268,17 +263,14 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'hou_qin': [{ from: -9999, era: 'antiquity' }], // 后秦
     'hou_zhao': [{ from: -9999, era: 'antiquity' }], // 后赵
     'hou_zhou': [{ from: -9999, era: 'feudal' }], // 后周
-    'houliao': [{ from: -9999, era: 'castle' }], // 东辽
     'huangwang': [{ from: -9999, era: 'feudal' }], // 黄王
     'huarazim': [{ from: -9999, era: 'castle' }], // 花剌子模
     'hui': [{ from: -9999, era: 'antiquity' }], // 濊族
     'huihu': [{ from: -9999, era: 'feudal' }], // 回鹘
     // 🔴 [2026-11-01 按史] 甘州回鹘｜894 年（唐昭宗乾宁元年）据甘州立国—1036 年为西夏所灭，全段封建
-    'ganzhou_huihu': [{ from: 894, era: 'feudal' }],
     'huite': [{ from: -9999, era: 'imperial' }], // 辉特
     'huluo': [{ from: -9999, era: 'castle' }], // 古尔
     'huohengsuolun': [{ from: -9999, era: 'castle' }], // 勃兰登堡-普鲁士
-    'huyan': [{ from: -9999, era: 'antiquity' }], // 呼衍
     'iga_d': [{ from: -9999, era: 'imperial' }], // 伊贺
     'imagawa': [{ from: -9999, era: 'imperial' }], // 今川
     'jialatai': [{ from: -9999, era: 'antiquity' }], // 加拉太
@@ -494,7 +486,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'suzidaer': [{ from: -9999, era: 'castle' }], // 苏兹达尔
     'tailuona': [{ from: -9999, era: 'imperial' }], // 泰罗纳
     'taimier': [{ from: -9999, era: 'imperial' }], // 马拉塔
-    'taino': [{ from: -9999, era: 'imperial' }], // 西属古巴
     'taino_d': [{ from: -9999, era: 'imperial' }], // 泰诺
     'taiping': [{ from: -9999, era: 'imperial' }], // 太平
     'taiyuan': [{ from: -9999, era: 'castle' }], // 泰沅
@@ -531,7 +522,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'uesugi': [{ from: -9999, era: 'imperial' }], // 上杉
     'utsunomiya': [{ from: -9999, era: 'imperial' }], // 宇都宫
     'vidin_tsardom': [{ from: -9999, era: 'castle' }], // 维丁国
-    'voc': [{ from: -9999, era: 'imperial' }], // 荷兰东印度公司
     'wandan': [{ from: -9999, era: 'imperial' }], // 万丹｜万丹苏丹国（1527–1682，胡椒大港）＝帝国时代；MALAY × 帝国＝帝国时代马六甲军团
     'bolinixiya': [{ from: -9999, era: 'imperial' }], // 波利尼西亚｜波马雷王朝（约 1742–1803，波马雷一世统一大溪地）＝帝国段；MALAY × 帝国（工作区遗留缺口，顺手补齐）
     'yaqi': [{ from: -9999, era: 'imperial' }], // 亚齐苏丹国｜1496–1903，盛期 16–17 世纪争马六甲海峡（既有缺口补齐）
@@ -578,13 +568,10 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xike': [{ from: -9999, era: 'imperial' }], // 锡克帝国
     'xikesuosi': [{ from: -9999, era: 'antiquity' }], // 喜克索斯
     'xila': [{ from: -9999, era: 'antiquity' }], // 雅典
-    'xiliao': [{ from: -9999, era: 'castle' }], // 西辽
-    'xinfalanxi': [{ from: -9999, era: 'imperial' }], // 新法兰西
     'xingelana': [{ from: -9999, era: 'imperial' }], // 新格拉纳达
     'xingliao': [{ from: -9999, era: 'feudal' }], // 兴辽
     'xingwei': [{ from: -9999, era: 'castle' }], // 兴威
     'xinluo': [{ from: -9999, era: 'feudal' }], // 新罗
-    'xinnidelan': [{ from: -9999, era: 'imperial' }], // 新尼德兰
     'xiongnu': [{ from: -9999, era: 'antiquity' }], // 匈奴
     'xiongren': [{ from: -9999, era: 'antiquity' }], // 匈人
     'awaer': [{ from: -9999, era: 'feudal' }], // 阿瓦尔汗国（567–822，潘诺尼亚）
@@ -710,7 +697,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'wulaertu': [{ from: -9999, era: 'castle' }], // 亚美尼亚｜古典→953 封建→1140 城堡→1500 帝国
     'xigete': [{ from: -9999, era: 'feudal' }], // 西哥特｜按现存名将成名年推定：–∞起古典 → 708起封建 → 1085起城堡
     'xijue': [{ from: -9999, era: 'feudal' }], // 十箭｜按现存名将成名年推定：–∞起古典 → 660起封建
-    'xinxibanya': [{ from: -9999, era: 'imperial' }], // 新西班牙｜按现存名将成名年推定：–∞起城堡 → 1505起帝国
     'xisi': [{ from: -9999, era: 'feudal' }], // 萨法尔王朝｜按现存名将成名年推定：–∞起古典 → 860起封建
     'yilihanguo_d': [{ from: -9999, era: 'castle' }], // 伊利汗国｜按现存名将成名年推定：–∞起封建 → 1258起城堡
     'you': [{ from: -9999, era: 'antiquity' }], // 幽州｜按现存名将成名年推定：–∞起古典 → 868起封建

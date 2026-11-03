@@ -198,7 +198,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     MAMLUKS: 'mamuluke',
     CRUSADERS: 'yelusalengwg',
     RUS: 'liulike',
-    KARA_KHITAN: 'xiliao',
+    KARA_KHITAN: 'liao_d',
     TIMURID: 'tiemuer',
     DELHI: 'deli',
     CASTILE: 'kasidiliya',

@@ -433,7 +433,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'gar_kham': _tuboPortraitPool,
     'gling': _tuboPortraitPool,
     'golog': _tuboPortraitPool,
-    'guge': _tuboPortraitPool,
     'hor': _tuboPortraitPool,
     'jinchuan_g': _tuboPortraitPool,
     'karmapa': _tuboPortraitPool,
@@ -455,7 +454,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'xianlingqiang': _tuboPortraitPool,
     'xiaobolu': _tuboPortraitPool,
     // 草原 61 势力
-    'ashide': _caoyuanPortraitPool,
     'chagatai': _caoyuanPortraitPool,
     'cheshihou': _xiyuPortraitPool,
     'choros': _caoyuanPortraitPool,
@@ -464,7 +462,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'hongirad': _caoyuanPortraitPool,
 
     'huihu': _caoyuanPortraitPool,
-    'huyan': _caoyuanPortraitPool,
     'kaerka': _caoyuanPortraitPool,
     'kereyid': _caoyuanPortraitPool,
     'liao_d': _caoyuanPortraitPool,
@@ -501,7 +498,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'fuyu': _dongbeiPortraitPool,
     'gongsun_d': _dongbeiPortraitPool,
     'haixi_nvzhen': _dongbeiPortraitPool,
-    'houliao': _dongbeiPortraitPool,
     'keerqin': _dongbeiPortraitPool,
     'kuye': _dongbeiPortraitPool,
     'manzhou_d': _manqingPortraitPool,
@@ -535,8 +531,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     // 中亚 31 势力
     'an': _zhongyaPortraitPool,
     'anushidgin': _zhongyaPortraitPool,
-    'ashina': _zhongyaPortraitPool,
-    'xiliao': _zhongyaPortraitPool,
     'badakhshan': _zhongyaPortraitPool,
     'dayuan': _zhongyaPortraitPool,
     'dayuzi': _zhongyaPortraitPool,

@@ -437,10 +437,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代图兰军团",
         legionType: "sub",
     },
-    "huyan": {
-        legionName: "古典时代粟特军团",
-        legionType: "sub",
-    },
     "baidi": {
         legionName: "古典时代漠南游牧军团",
         legionType: "sub",
@@ -497,10 +493,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "xihai_d": {
         legionName: "封建时代漠南军团",
-        legionType: "region",
-    },
-    "guge": {
-        legionName: "封建时代吐蕃军团",
         legionType: "region",
     },
     "supi": {
@@ -839,10 +831,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "zhuerqi": {
         legionName: "城堡时代蒙古军团",
-        legionType: "sub",
-    },
-    "houliao": {
-        legionName: "城堡时代女真军团",
         legionType: "sub",
     },
     "xianhai": {
@@ -1191,10 +1179,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代诺曼军团",
         legionType: "sub",
     },
-    "liangxixili": {
-        legionName: "帝国时代西西里军团",
-        legionType: "region",
-    },
     "kalbids": {
         legionName: "封建时代埃米尔军团",
         legionType: "region",
@@ -1334,10 +1318,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "wusun": {
         legionName: "古典时代粟特军团",
-        legionType: "sub",
-    },
-    "xiliao": {
-        legionName: "城堡时代河中军团",
         legionType: "sub",
     },
     "kanata": {
@@ -1534,20 +1514,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     // 🔴 [2026-10-18 按史] 美洲欧洲殖民城按其建城者/驻将挂欧洲军团，不再挂特诺奇/塔莫约等土著军团。
     //    新阿姆斯特丹（荷兰）无 DUTCH 三级军团，按建城者低地日耳曼落 SAXONS 帝国时代萨克森军团。
-    "xinnidelan": {
-    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 首府新阿姆斯特丹改日耳曼文化（GERMANIC）；帝国段 → 德意志佣兵军团
-        legionName: "帝国时代普鲁士帝国军团",
-        legionType: "sub",
-    },
     //    魁北克（新法兰西）无帝国时代法国殖民军团，按 FRANKS 帝国时代落重装骑兵军团。
-    "xinfalanxi": {
-        legionName: "帝国时代法兰西军团",
-        legionType: "sub",
-    },
-    "xinxibanya": {
-        legionName: "帝国时代西班牙征服军团",
-        legionType: "sub",
-    },
     //    圣多明各 1496 属城堡时代；西班牙城堡时代落圣地亚哥骑士团。
     "manzheboyi": {
         legionName: "城堡时代爪哇军团",
@@ -1779,20 +1746,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代肃慎军团",
         legionType: "sub",
     },
-    "ashina": {
-        legionName: "封建时代图兰军团",
-        legionType: "sub",
-    },
     "geluolu": {
         legionName: "封建时代图兰军团",
         legionType: "sub",
     },
     "tujue": {
-        legionName: "封建时代突厥军团",
-        legionType: "sub",
-    },
-    "ashide": {
-    // 🔴 [2026-10-25 主人令「军团＝势力时代×据点文化」] 突厥阿史德部·漠南文化封建档＝突厥军团
         legionName: "封建时代突厥军团",
         legionType: "sub",
     },
@@ -1809,10 +1767,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     // 🔴 [2026-11-01 按史] 甘州回鹘＝封建时代 × 河西文化（据点张掖 buildingStyle HEXI）→ 封建时代河西军团
-    "ganzhou_huihu": {
-        legionName: "封建时代河西军团",
-        legionType: "sub",
-    },
     "pulei": {
         legionName: "古典时代西域军团",
         legionType: "sub",
@@ -2074,10 +2028,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代塔莫约军团",
         legionType: "sub",
     },
-    "taino": {
-        legionName: "帝国时代西班牙征服军团",
-        legionType: "sub",
-    },
     "chamorro": {
         legionName: "帝国时代马六甲军团",
         legionType: "sub",
@@ -2096,10 +2046,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "adile": {
         legionName: "帝国时代科罗曼德尔军团",
-        legionType: "sub",
-    },
-    "foluolida": {
-        legionName: "帝国时代西班牙征服军团",
         legionType: "sub",
     },
     "yilisi": {
@@ -2557,10 +2503,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "wandan": {
         legionName: "帝国时代马六甲军团",
         legionType: "region",
-    },
-    "voc": {
-        legionName: "帝国时代马六甲军团",
-        legionType: "sub",
     },
     "kosala": {
         legionName: "古典时代孔雀军团",

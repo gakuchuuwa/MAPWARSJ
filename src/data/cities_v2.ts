@@ -1368,7 +1368,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
-    { id: 'city_suiye', name: '碎叶', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 10000, region: 'KARA_KHITAN', buildingStyle: 'CENTRAL_ASIA' , note: '按 2026-10-25 标准：城居 2–3 → 小城' },
+    { id: 'city_suiye', name: '碎叶', factionId: 'liao_d', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 10000, region: 'KARA_KHITAN', buildingStyle: 'CENTRAL_ASIA' , note: '按 2026-10-25 标准：城居 2–3 → 小城' },
 
 
     { id: 'city_nieduo', name: '孽多', factionId: 'xiaobolu', lat: 35.92, lng: 74.3, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处；推算：城居 0.8 万（孽多，小勃律山城 0.8 万）→ 城寨' },
@@ -1421,7 +1421,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000, mirror: true,
     // 第三类：蒙古草原部落
     { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
-    { id: 'city_naiman', name: '金微山', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_naiman', name: '金微山', factionId: 'tujue', lat: 47.64, lng: 88.29, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_fuhai', name: '福海', factionId: 'naiman', lat: 47.036450, lng: 87.352295, type: 'stockade', region: 'STEPPE',
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：福海：乃蛮小城，归鞑靼（中亚草原）
@@ -2849,7 +2849,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_litangzong', name: '理塘宗', factionId: 'ganden', lat: 30.0000, lng: 100.2700, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '康巴骁骑招抚理塘' },
 
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
-    { id: 'city_heishacheng', name: '黑沙牙帐', factionId: 'ashide', lat: 43.5, lng: 96.6, type: 'stockade', troops: 10000, region: 'TURKS', buildingStyle: 'MONGOL', note: '🔴 [2026-10-24 按史] 建筑风格 CENTRAL_ASIA→MONGOL：黑沙牙帐是蒙古高原—阿尔泰间的游牧王帐（突厥阿史德部牙帐），建筑形态是塞外王帐石堡，不是中亚定居城（赫拉特式）；与同属突厥的燕然山（MONGOL）同口径 → 阿史德颉利（封建）军团随之为「封建时代突厥军团」。' },
+    { id: 'city_heishacheng', name: '黑沙牙帐', factionId: 'tujue', lat: 43.5, lng: 96.6, type: 'stockade', troops: 10000, region: 'TURKS', buildingStyle: 'MONGOL', note: '🔴 [2026-10-24 按史] 建筑风格 CENTRAL_ASIA→MONGOL：黑沙牙帐是蒙古高原—阿尔泰间的游牧王帐（突厥阿史德部牙帐），建筑形态是塞外王帐石堡，不是中亚定居城（赫拉特式）；与同属突厥的燕然山（MONGOL）同口径 → 阿史德颉利（封建）军团随之为「封建时代突厥军团」。' },
 
 
     { id: 'city_beiluocheng', name: '孛罗营', factionId: 'duolu', lat: 44.9, lng: 82.07, type: 'stockade', region: 'TURKS',
@@ -2901,7 +2901,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：淖毛湖：哈密北境回部（维吾尔）牧地，归鞑靼（中亚）
-    { id: 'city_naomaohu', name: '淖毛湖', factionId: 'huyan', lat: 43.279321, lng: 94.713135, type: 'stockade', troops: 10000, region: 'STEPPE_ANTIQUITY', buildingStyle: 'CENTRAL_ASIA', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_naomaohu', name: '淖毛湖', factionId: 'xiongnu', lat: 43.279321, lng: 94.713135, type: 'stockade', troops: 10000, region: 'STEPPE_ANTIQUITY', buildingStyle: 'CENTRAL_ASIA', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_jiluoshan', name: '稽落山', factionId: 'bayegu', lat: 44.97439, lng: 99.113159, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MONGOL', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
@@ -2930,10 +2930,10 @@ buildingStyle: 'KOREA', troops: 10000,
     { id: 'city_nagasaki', name: '长崎', factionId: 'omura', lat: 32.7555, lng: 129.8777, type: 'stockade', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '1571 年葡萄牙人开港；1580 年大村纯忠将长崎献予耶稣会，成为南蛮贸易与丝割符的枢纽；17 世纪城居不足 1 万 → 城寨（2026-10-25 标准③）' },
     { id: 'city_aomen', name: '澳门', factionId: 'putaoya', lat: 22.1975, lng: 113.5438, type: 'stockade', region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', troops: 10000, note: '1557 年葡人获准居留，澳门议事亭（1583）自治；澳门—长崎、澳门—马六甲—果阿为葡萄牙东方航线两翼。17 世纪常住数千 → 城寨（2026-10-25 标准③）' },
     { id: 'city_kelunpo', name: '科伦坡', factionId: 'putaoya', lat: 6.9271, lng: 79.8612, type: 'stockade', region: 'INDIA', buildingStyle: 'PORTUGUESE', troops: 10000, note: '1505 洛伦索·德·阿尔梅达登陆，1518 葡建要塞与商站，1597 起为葡属锡兰首府（1656 荷夺）；果阿—马六甲之间的必经中继。17 世纪城居数千 → 城寨（2026-10-25 标准③末行）' },
-    { id: 'city_cebu', name: '宿务', factionId: 'xinxibanya', lat: 10.3157, lng: 123.8854, type: 'stockade', region: 'MALAY', buildingStyle: 'MALAY', troops: 10000, note: '1521 麦哲伦抵宿务（拉者胡马邦受洗）；1565 莱加斯皮建西班牙首个定居点（圣佩德罗堡初为木栅，1738 才改石构）。当地建筑＝马来式高脚屋与木栅堡，故 MALAY；16 世纪城居不足 1 万 → 城寨（2026-10-25 标准③）' },
+    { id: 'city_cebu', name: '宿务', factionId: 'xibanya', lat: 10.3157, lng: 123.8854, type: 'stockade', region: 'MALAY', buildingStyle: 'MALAY', troops: 10000, note: '1521 麦哲伦抵宿务（拉者胡马邦受洗）；1565 莱加斯皮建西班牙首个定居点（圣佩德罗堡初为木栅，1738 才改石构）。当地建筑＝马来式高脚屋与木栅堡，故 MALAY；16 世纪城居不足 1 万 → 城寨（2026-10-25 标准③）' },
     { id: 'city_plymouth', name: '普利茅斯', factionId: 'yinggelan', lat: 50.3755, lng: -4.1427, type: 'small_city', region: 'BRITONS', buildingStyle: 'BRITONS', troops: 10000, note: '德文郡军商两用港；1580 德雷克环球归来以此为母港并任市长；1620 五月花号自此启航。16 世纪城居约 0.7 万（不足 1 万）但有石砌城墙 → 小城（2026-10-25 标准③末行）' },
-    { id: 'city_ambon', name: '安汶', factionId: 'voc', lat: -3.6954, lng: 128.1814, type: 'stockade', region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', troops: 10000, note: '安汶岛（Ambon）：1512 葡人建堡，1605 荷兰东印度公司夺取，此后两百年为丁香贸易中心与 VOC 香料总部；1623 安汶事件。当地建筑＝马来式水寨与木栅堡，故 MALAY；17 世纪城居不足 1 万 → 城寨（2026-10-25 标准③）' },
-    { id: 'city_banda', name: '班达奈拉', factionId: 'voc', lat: -4.5213, lng: 129.9054, type: 'stockade', region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', troops: 10000, note: '班达群岛（Banda Naira）：世界唯一的肉豆蔻产地；1609 荷兰东印度公司建堡，1621 科恩屠岛后 VOC 独占近两百年。当地建筑＝马来式木石聚落，故 MALAY；岛域狭小、查无 ≤1700 年城居确数 → 按 2026-10-25 标准③末行置城寨。🔴 [2026-11-02 主人令] 知名据点可以无镇守将，本据点暂不配将' },
+    { id: 'city_ambon', name: '安汶', factionId: 'nidelan', lat: -3.6954, lng: 128.1814, type: 'stockade', region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', troops: 10000, note: '安汶岛（Ambon）：1512 葡人建堡，1605 荷兰东印度公司夺取，此后两百年为丁香贸易中心与 VOC 香料总部；1623 安汶事件。当地建筑＝马来式水寨与木栅堡，故 MALAY；17 世纪城居不足 1 万 → 城寨（2026-10-25 标准③）' },
+    { id: 'city_banda', name: '班达奈拉', factionId: 'nidelan', lat: -4.5213, lng: 129.9054, type: 'stockade', region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', troops: 10000, note: '班达群岛（Banda Naira）：世界唯一的肉豆蔻产地；1609 荷兰东印度公司建堡，1621 科恩屠岛后 VOC 独占近两百年。当地建筑＝马来式木石聚落，故 MALAY；岛域狭小、查无 ≤1700 年城居确数 → 按 2026-10-25 标准③末行置城寨。🔴 [2026-11-02 主人令] 知名据点可以无镇守将，本据点暂不配将' },
     { id: 'city_wandan', name: '万丹', factionId: 'wandan', lat: -6.0333, lng: 106.1500, type: 'stockade', region: 'SEASIA_IMPERIAL', buildingStyle: 'MALAY', troops: 10000, note: '万丹（Banten）：1527 万丹苏丹国建城，16–17 世纪胡椒大港，1596 荷兰首航抵达，1682 荷兰征服。当地建筑＝马来式木石港口城，故 MALAY；查无 ≤1700 年城居确数 → 按 2026-10-25 标准③末行置城寨' },
 
     { id: 'city_chijianguan', name: '赤间关', factionId: 'heishi', lat: 33.95, lng: 130.93, type: 'pass', troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN', note: '赤间关（赤間関＝今下关）＝关门海峡的渡口关所 → 险要（2026-10-25 标准②：渡口型关所）' },
@@ -3102,7 +3102,7 @@ buildingStyle: 'WESTERN', troops: 10000,
     { id: 'city_yumi', name: '阿赫雅尔', factionId: 'yumi', lat: 36.85, lng: 81.65, type: 'small_city', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '扜弥国王都常备军；推算：城居 1 万（阿赫雅尔（扜弥），塔里木绿洲城 1 万）→ 小城' },
     { id: 'city_keliyashankou', name: '阿什库尔', factionId: 'yuchi', lat: 35.45, lng: 81.1, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '尉迟曜于阗王助唐守克里雅山口。🔴 [2026-10-24 按史] 建筑风格 TIBET→WESTERN：阿什库尔（克里雅山口，于阗南山）属**于阗**（尉迟氏于阗王）疆域，于阗是塔里木南道绿洲城郭（同 100km 内于阗、固玛、麻扎塔格皆 WESTERN），青藏藏式不符；无将驻守。' },
     { id: 'city_longmucuo', name: '龙木错', factionId: 'xiangxiong', lat: 34.572168, lng: 80.348511, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '赤松德赞征羊同驻龙木错' },
-    { id: 'city_gadake', name: '噶大克', factionId: 'guge', lat: 31.940459, lng: 80.139771, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_gadake', name: '噶大克', factionId: 'tubo', lat: 31.940459, lng: 80.139771, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
     { id: 'city_payangyi', name: '帕羊驿', factionId: 'supi', lat: 30.140235, lng: 83.281860, type: 'stockade', region: 'TIBET',
@@ -3155,7 +3155,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_puticheng', name: '菩提营', factionId: 'xiaobolu', lat: 35.3, lng: 75.64, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_kajier', name: '喀吉尔', factionId: 'tang', lat: 34.55, lng: 76.13, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '李玄策调克什米尔兵为唐征吐蕃' },
-    { id: 'city_zhaburang2', name: '札布让', factionId: 'guge', lat: 31.496599, lng: 79.799194, type: 'stockade', region: 'TIBET',
+    { id: 'city_zhaburang2', name: '札布让', factionId: 'tubo', lat: 31.496599, lng: 79.799194, type: 'stockade', region: 'TIBET',
 buildingStyle: 'TIBET', troops: 10000,
         note: '札布让；古格小城',
     },
@@ -3288,7 +3288,7 @@ buildingStyle: 'KOREA', troops: 10000,
     { id: 'city_wushecheng', name: '乌舍寨', factionId: 'wula', lat: 45.821125, lng: 128.161011, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
-    { id: 'city_xianping', name: '咸平', factionId: 'houliao', lat: 42.579367, lng: 124.07959, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'NORTHEAST', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_xianping', name: '咸平', factionId: 'liao_d', lat: 42.579367, lng: 124.07959, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'NORTHEAST', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_xupin', name: '恤品', factionId: 'dongxia', lat: 42.994587, lng: 129.828186, type: 'stockade', troops: 10000, region: 'JURCHEN', buildingStyle: 'NORTHEAST' , note: '按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
 
@@ -3629,7 +3629,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     { id: 'city_qingchi', name: '清池', factionId: 'you', lat: 38.3, lng: 116.83, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '推算：城居 1.5 万（清池，唐沧州治 1.5 万）→ 小城' },
-    { id: 'city_shandan', name: '删丹', factionId: 'ganzhou_huihu', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：月氏随畜移徙与匈奴同俗，归漠南 XIANBEI）' },
+    { id: 'city_shandan', name: '删丹', factionId: 'huihu', lat: 38.78, lng: 101.08, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史：月氏随畜移徙与匈奴同俗，归漠南 XIANBEI）' },
 
     { id: 'city_chongan', name: '崇安', factionId: 'minyue', lat: 27.76, lng: 118.02, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '推算：城居 1.5 万（崇安，宋县，同期县城 1–2 万）→ 小城' },
     { id: 'city_piyetuo', name: '毗耶陀', factionId: 'funan', lat: 11.66, lng: 104.93, type: 'small_city', troops: 10000, region: 'SEASIA_ANTIQUITY', buildingStyle: 'KHMER', mirror: true , note: '推算：城居 1 万（毗耶陀，东南亚古国都 1 万）→ 小城' },
@@ -3886,11 +3886,11 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_chanchan', name: '昌昌', factionId: 'qimu', lat: -8.11, lng: -79.07, type: 'medium_city', troops: 10000, region: 'CHIMU', buildingStyle: 'INCA', note: '奇穆王国都城，前哥伦布时期美洲最大土坯城；按 2026-10-25 标准：城居 6–10 → 中城' },
     { id: 'city_tzintzuntzan', name: '钦聪灿', factionId: 'talasike', lat: 19.63, lng: -101.58, type: 'small_city', troops: 10000, region: 'TARASCAN', buildingStyle: 'AMERICA', note: '塔拉斯科(普雷佩查)王国都城，「蜂鸟之地」；按 2026-10-25 标准：城居 2.5–4 → 小城' },
     // 🔴 [2026-10-18 主人令] 新阿姆斯特丹按建城者（荷兰西印度公司）定 SAXONS（低地日耳曼/北海砖木要塞）；旧注释「归 BRITONS」作废。
-    { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'xinnidelan', lat: 40.71, lng: -74.01, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'GERMANIC', note: '荷兰西印度公司1626年建城，新尼德兰首府；1664年英夺改称纽约；推算：城居 0.5 万（新阿姆斯特丹，1626 建 0.5 万）→ 城寨' },
+    { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'nidelan', lat: 40.71, lng: -74.01, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'GERMANIC', note: '荷兰西印度公司1626年建城，新尼德兰首府；1664年英夺改称纽约；推算：城居 0.5 万（新阿姆斯特丹，1626 建 0.5 万）→ 城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「WEST」推出的二级与史实不符 → 归 FRANKS：魁北克：法兰西殖民地（新法兰西）
-    { id: 'city_quebec', name: '魁北克', factionId: 'xinfalanxi', lat: 46.81, lng: -71.21, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'FRANKS', note: '尚普兰1608年建城，新法兰西首府，法属北美毛皮贸易枢纽；推算：城居 0.5 万（魁北克，1608 建 0.5 万）→ 城寨' },
+    { id: 'city_quebec', name: '魁北克', factionId: 'gaolu', lat: 46.81, lng: -71.21, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'FRANKS', note: '尚普兰1608年建城，新法兰西首府，法属北美毛皮贸易枢纽；推算：城居 0.5 万（魁北克，1608 建 0.5 万）→ 城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：阿卡普尔科：西班牙殖民地（马尼拉大帆船港）
-    { id: 'city_acapulco', name: '阿卡普尔科', factionId: 'xinxibanya', lat: 16.85, lng: -99.92, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '新西班牙太平洋大港，1565年起马尼拉大帆船美洲终点；1617年建圣迭戈堡防海盗；推算：城居 0.5 万（阿卡普尔科，马尼拉帆船终点 0.5 万）→ 城寨' },
+    { id: 'city_acapulco', name: '阿卡普尔科', factionId: 'xibanya', lat: 16.85, lng: -99.92, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '新西班牙太平洋大港，1565年起马尼拉大帆船美洲终点；1617年建圣迭戈堡防海盗；推算：城居 0.5 万（阿卡普尔科，马尼拉帆船终点 0.5 万）→ 城寨' },
     { id: 'city_teyuna', name: '特尤纳', factionId: 'tailuona', lat: 11.04, lng: -73.93, type: 'stockade', troops: 10000, region: 'TAIRONA', buildingStyle: 'INCA', note: '泰罗纳石阶山城（失落之城），圣玛尔塔内华达山；定级依据§6.2：特尤纳为聚落/山城（Buritaca-200，35ha、169级石台地、约1000座房屋），按城市判级；人口推测2,000–8,000未达1万 → 城寨' },
     // 🔴 [2026-10-18 按史] 圣胡利安港历史上从未建过欧洲永久石造城郭/要塞，仅麦哲伦等临时泥木锚地；真实长期实体建筑为特维尔切木骨皮蒙营帐，故取南安第斯 MAPUCHE（无 TEHUELCHE 分支）。
     { id: 'city_sanjulian', name: '圣胡利安港', factionId: 'teweierqie', lat: -49.31, lng: -67.72, type: 'stockade', troops: 10000, region: 'TEHUELCHE', buildingStyle: 'MAPUCHE', note: '1520 麦哲伦在此首遇特维尔切人，巴塔哥尼亚之名由此而来；推算：城居 0.1 万（圣胡利安港，1520 麦哲伦越冬锚地 0.1 万）→ 城寨' },
@@ -3907,11 +3907,11 @@ buildingStyle: 'TIBET', troops: 10000,
     //  依据：西班牙「珍宝船队」(Flota de Indias) 与葡萄牙大西洋航线的历史必经节点。
     //  去程借东北信风走加那利，东返借西风带走亚速尔 —— 两条不同航线，各设一个中继。
     // 🔴 [2026-10-18 按史] 韦拉克鲁斯真实建成的实体是西班牙圣胡安德乌卢阿珊瑚石星形棱堡、防御石墙与西属美洲殖民巴洛克建筑群 → SPANISH；不因驻将奇科马卡特为托托纳克人而降为 AMERICA。
-    { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'xinxibanya', lat: 19.19, lng: -96.14, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km；推算：城居 0.8 万（韦拉克鲁斯，1519 建港 0.8 万）→ 城寨' },
+    { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'xibanya', lat: 19.19, lng: -96.14, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km；推算：城居 0.8 万（韦拉克鲁斯，1519 建港 0.8 万）→ 城寨' },
     // 🔴 [2026-10-18 按史] 哈瓦那真实建成的实体是莫罗城堡、皇家军队城堡、拉卡瓦尼亚堡与西班牙殖民街区，西欧文艺复兴转古典主义砖石海防要塞城 → SPANISH；不因驻将哈土依为泰诺人而降为 AMERICA。
     // 🔴 [2026-10-20 主人令「武将文化一定要符合建筑风格，不然套的军团都是错的」] 古巴东部泰诺人村落「亚拉」：给泰诺反抗领袖哈土依一个建筑风格对口（TUPI 热带美洲原住民茅草村落）的据点
     { id: 'city_yala', name: '亚拉', factionId: 'taino_d', lat: 20.35, lng: -76.85, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'TUPI', note: '古巴东部泰诺人村落（Yara 一带，1510 年代西班牙征服古巴时泰诺反抗活动区；哈土依 1512 被西班牙烧死）' },
-    { id: 'city_havana', name: '哈瓦那', factionId: 'taino', lat: 23.13, lng: -82.38, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人；按 2026-10-25 标准：城居 0.8–1.5 → 小城' },
+    { id: 'city_havana', name: '哈瓦那', factionId: 'xibanya', lat: 23.13, lng: -82.38, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人；按 2026-10-25 标准：城居 0.8–1.5 → 小城' },
     { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'BERBER', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系。🔴 [2026-10-24 按史] 建筑风格 AFRICA→BERBER：关切人（Guanches）是**柏柏尔人**的一支（语言属柏柏尔语族），加那利石屋—土堡与柏柏尔卡斯巴同系；AFRICA（西非马里泥土城）不符。无将驻守。；推算：城居 0.3 万（特尔德，大加那利关切人王城 0.3 万）→ 城寨' },
     { id: 'city_angra', name: '安格拉', factionId: 'yasuer', lat: 38.66, lng: -27.22, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌；推算：城居 0.3 万（安格拉，亚速尔中继港 0.3 万）→ 城寨' },
     { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 10000, region: 'INCA', buildingStyle: 'SPANISH', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府。🔴 [2026-10-18 主人令] 建筑风格按建城者定为 SPANISH；旧「风格必须当地」令作废。；推算：城居 2 万（利马，秘鲁总督区首府 2 万）→ 小城' },
@@ -3956,7 +3956,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_hengbi', name: '亨比', factionId: 'kanata', lat: 15.335, lng: 76.460, type: 'big_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '毗奢耶那伽罗帝国都城，14-16世纪世界最大城市之一；按 2026-10-25 标准：城居 50–60 万 → 大城' },
     { id: 'city_bijiabuer', name: '比贾布尔', factionId: 'adile', lat: 16.830, lng: 75.736, type: 'medium_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '比贾布尔苏丹国都，戈尔贡巴兹；按 2026-10-25 标准：城居 10–20 → 中城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：圣奥古斯丁（佛罗里达）：西班牙殖民地
-    { id: 'city_shengaogusiding', name: '圣奥古斯丁', factionId: 'foluolida', lat: 29.897, lng: -81.313, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西班牙1565年建的美洲最古欧洲殖民城；定级依据§6.2：17世纪中叶城内500–600人、世纪末>1400人，人口不足一万 → 按规则判城寨' },
+    { id: 'city_shengaogusiding', name: '圣奥古斯丁', factionId: 'xibanya', lat: 29.897, lng: -81.313, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西班牙1565年建的美洲最古欧洲殖民城；定级依据§6.2：17世纪中叶城内500–600人、世纪末>1400人，人口不足一万 → 按规则判城寨' },
     { id: 'city_deerfei', name: '德尔斐', factionId: 'xila', lat: 38.482, lng: 22.501, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '阿波罗神谕圣地；定级依据§6.2：城居人口无可靠数字（学界定性小城邦），人口不足一万 → 按规则判城寨' },
     { id: 'city_aolinpiya', name: '奥林匹亚', factionId: 'yilisi', lat: 37.639, lng: 21.631, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '古代奥运圣地；定级依据§6.2：圣地无常住城市（仅祭司官吏工匠），人口不足一万 → 按规则判城寨' },
     { id: 'city_boergong', name: '博尔贡', factionId: 'nuowei', lat: 61.047, lng: 7.812, type: 'stockade', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '挪威松恩峡湾木板教堂；定级依据§6.2：中世纪人口无数字（木板教堂所在村落仅教堂+数座农庄），人口不足一万 → 按规则判城寨' },
@@ -3987,7 +3987,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-11-02 主人令「添加波多韦洛据点」] 圣费利佩-德波多韦洛：西属美洲珍宝船队大西洋白银大帆船装船要塞港
     { id: 'city_portobelo', name: '波多韦洛', factionId: 'xingelana', lat: 9.5544, lng: -79.6644, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '圣费利佩-德波多韦洛(San Felipe de Portobelo)，1597年菲利普二世敕建，西属南美珍宝船队白银大帆船装船港，巴拿马地峡皇家之路大西洋端点，波多韦洛商展举办地；联合国教科文组织加勒比海防要塞遗址；定级依据§6.2：平时为海防要塞驻军与海关（约 0.2–0.3 万，商展期多为短期流动客商），常住人口不足一万 → 按规则判城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：圣多明各：西班牙美洲第一城
-    { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xinxibanya', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫；推算：城居 1 万（圣多明各，1496 建 1 万）→ 小城' },
+    { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xibanya', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫；推算：城居 1 万（圣多明各，1496 建 1 万）→ 小城' },
     { id: 'city_martinique', name: '马提尼克', factionId: 'gaolu', lat: 14.60, lng: -61.07, type: 'stockade', region: 'AMERICA', buildingStyle: 'FRANKS', troops: 10000, startYear: 1635, note: '马提尼克（Martinique）法兰西堡（Fort-Royal／Fort-de-France）：1635 年迪帕尔凯奉埃斯南布克之命设防，法属安的列斯核心与三角贸易的加勒比落点；17 世纪城居数百至数千 → 城寨（2026-10-25 标准③）。建筑按殖民新建城的实际建成层，故 FRANKS（与魁北克同例）' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：卡塔赫纳（哥伦比亚）：西班牙殖民地
     { id: 'city_katachena', name: '卡塔赫纳', factionId: 'xingelana', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队；推算：城居 1.2 万（卡塔赫纳·德·印迪亚斯，1533 建城 1.2 万）→ 小城' },
@@ -4043,7 +4043,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_comagre', name: '科马格雷', factionId: 'cueva', lat: 8.95, lng: -78.15, type: 'stockade', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 科马格雷（Comagre），达连地区库埃瓦（Cueva）酋邦酋长的村落，巴尔沃亚1510年所访。定级依据：无史料人口 → 城寨；位置取达连地区库埃瓦酋邦区域的约数，待主人核。归属：势力「库埃瓦」。' },
     { id: 'city_ahmedabad', name: '艾哈迈达巴德', factionId: 'gujarat', lat: 23.0225, lng: 72.5714, type: 'medium_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'GURJARAS', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 艾哈迈达巴德（Ahmedabad），1411年艾哈迈德沙一世所建，古吉拉特苏丹国都城，16世纪城居数十万。定级依据：16世纪城内人口估计数十万，达10万门槛、未达50万 → 中城。归属：势力「古吉拉特」（古吉拉特苏丹国）。' },
     { id: 'city_miaowu', name: '妙乌', factionId: 'arakan', lat: 20.5925, lng: 93.1953, type: 'medium_city', troops: 10000, region: 'BURMESE', buildingStyle: 'BURMESE', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 妙乌（Mrauk-U），1430年建，阿拉干王国都城，17世纪为孟加拉湾贸易大港，城居估计十余万。定级依据：17世纪城居估计达10万、未达50万 → 中城。归属：势力「阿拉干」（1666年吉大港守军）。' },
-    { id: 'city_batavia', name: '巴达维亚', factionId: 'voc', lat: -6.1352, lng: 106.8133, type: 'small_city', troops: 10000, region: 'JAVANESE', buildingStyle: 'MALAY', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 巴达维亚（Batavia），1619年荷兰东印度公司（VOC）建于雅加达旧址的亚洲总部，17世纪中叶城居约两三万。定级依据：人口过万、未达10万 → 小城；建筑风格看据点当地（爪哇）。归属：势力「荷兰东印度公司」（热兰遮城长官揆一的主公）。' },
+    { id: 'city_batavia', name: '巴达维亚', factionId: 'nidelan', lat: -6.1352, lng: 106.8133, type: 'small_city', troops: 10000, region: 'JAVANESE', buildingStyle: 'MALAY', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 巴达维亚（Batavia），1619年荷兰东印度公司（VOC）建于雅加达旧址的亚洲总部，17世纪中叶城居约两三万。定级依据：人口过万、未达10万 → 小城；建筑风格看据点当地（爪哇）。归属：势力「荷兰东印度公司」（热兰遮城长官揆一的主公）。' },
     // 🔴 [2026-10-25 主人令「全面修复」印度据点文化] 舍卫城＝拘萨罗国都、恒河北印 → MUGHAL；原标 INDIA（南印）
     { id: 'city_sheweicheng', name: '舍卫城', factionId: 'kosala', lat: 27.5112, lng: 82.0388, type: 'stockade', troops: 10000, region: 'MUGHAL', buildingStyle: 'MUGHAL', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 舍卫城（Sāvatthī/Śrāvastī），拘萨罗国都，波斯匿王所居，佛陀常居祇园精舍之地。定级依据：无确切人口史料 → 城寨。归属：势力「拘萨罗」。' },
     { id: 'city_danta', name: '丹塔普拉', factionId: 'kalinga', lat: 18.4, lng: 84, type: 'stockade', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', note: '🔴 [2026-10-20 主人令「看武将，以武将来定义势力」「起义军有自己称呼的就要自己的势力城市」] 丹塔普拉（Dantapura），羯陵伽国古都，佛牙传说所在，方位取奥里萨南部沿海约数，待主人核。定级依据：无史料人口 → 城寨。归属：势力「羯陵伽」。' },

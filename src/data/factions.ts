@@ -164,7 +164,6 @@ export const FACTIONS: Faction[] = [
     // 🔴 [2026-10-25 补B] 恺加（阿迦·穆罕默德 1796 建）
     { id: 'qiajia', name: '恺加' },
     // 🔴 [2026-10-25 补B] 两西西里（兰迪 1860）
-    { id: 'liangxixili', name: '两西西里' },
     // 🔴 [2026-10-25 补B] 阿雷瓦西（凯尔特伊比利亚部落，努曼提亚）
     { id: 'arevaci', name: '阿雷瓦西' },
     // 🔴 [2026-10-25 补B] 塔鲁玛迦拉（西爪哇，5 世纪梵文碑铭）
@@ -800,7 +799,6 @@ export const FACTIONS: Faction[] = [
 
 
     // ── 2026-06-17 新增：喀喇契丹（西辽·虎思/碎叶故地）──
-    { id: 'xiliao', name: '哈剌契丹' },
 
 
     { id: 'jiazini', name: '伽色尼' },      // 伽色尼王朝(哥疾宁/马哈茂德), Ghaznavid
@@ -832,14 +830,11 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 新增：漠北草原部落/氏族势力 ──
     // 贝加尔湖绿 - 丁零(贝加尔湖以南/高车前身)
-    { id: 'huyan', name: '呼衍匈奴' },
 
                 // 草原灰褐 - 呼衍氏(匈奴四大氏族/河南地)
             // 柔然紫 - 郁久闾氏(柔然王族/弱水畔)
-    { id: 'ashina', name: '阿史那突厥' },
 
               // 草原绿灰 - 阿史那氏
-    { id: 'ashide', name: '阿史德突厥' },
               // 草原绿 - 阿史德氏(突厥别部)
 
           // 黄金家族褐 - 孛儿只斤氏(蒙古黄金家族/斡难河源)
@@ -862,7 +857,6 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 新增：青藏高原势力（24个）──
     // 第一类：高原帝国与割据强权
-    { id: 'guge', name: '古格' },
     { id: 'ladakh', name: '玛域' },
 
     { id: 'tsangpa', name: '藏巴汗' },
@@ -1113,7 +1107,6 @@ export const FACTIONS: Faction[] = [
     // 🔴 [2026-11-01 主人令「expedition:coverage 河西不足最低线 10，请处理」] 按史补：甘州回鹘（河西回鹘）
     //    894–1036 年据甘州（张掖）立国，控丝路咽喉，屡败西夏，1036 年为李元昊所灭；
     //    《宋史·回鹘传》《辽史》皆称「甘州回鹘」，是历史统称，非自造名。
-    { id: 'ganzhou_huihu', name: '甘州回鹘' },
 
 
     { id: 'wuzhumuqin', name: '乌珠穆沁' },
@@ -1217,7 +1210,6 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 徒河·锦州卫·辽东铁骑（旗号锦≠据点名徒河）──
 
     { id: 'wure', name: '兀惹' },
-    { id: 'houliao', name: '耶律东辽' },
 
 
 
@@ -1448,7 +1440,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'shanshan', name: '鄯善' },
 
-    { id: 'wuyue', name: '吴越' },
+    { id: 'wuyue', name: '吴越' },
 
     { id: 'minyue', name: '闽越' },
     { id: 'funan', name: '扶南' },
@@ -1548,7 +1540,6 @@ export const FACTIONS: Faction[] = [
     { id: 'salai', name: '萨莱诺盖' }, // 埃迪古所建诺盖汗国以萨莱楚克为都（原名与据点名相同，违 §266）
     { id: 'mangshi', name: '土库曼' }, // 曼格什拉克为乌古斯／土库曼牧地，恰格里贝格出自其中（原名与据点名相同，违 §266）,
     { id: 'aztec', name: '阿兹特克' },        // 特诺奇提特兰·阿兹特克帝国
-  { id: 'taino', name: '西属古巴' },  // 哈瓦那·1519 贝拉斯克斯西属古巴殖民首府
   { id: 'taino_d', name: '泰诺' },     // 亚拉·古巴东部泰诺人村落（哈土依；区别于西班牙殖民的西属古巴）
   { id: 'guanche', name: '关切人' },  // 别名：加那利群岛原住民（Guanches），柏柏尔系
   { id: 'chamorro', name: '查莫罗' },  // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 马里亚纳群岛原住民（Chamorro），主邑阿加尼亚；此处民族发源核心，故以民族命名（旗号「查」）
@@ -1564,9 +1555,6 @@ export const FACTIONS: Faction[] = [
     { id: 'talasike', name: '塔拉斯科' },        // 钦聪灿·塔拉斯科(普雷佩查)王国
     { id: 'tailuona', name: '泰罗纳' },        // 特尤纳·泰罗纳
     { id: 'teweierqie', name: '特维尔切' },        // 圣胡利安港·特维尔切(阿奥尼肯)
-    { id: 'xinnidelan', name: '新尼德兰' },        // 新阿姆斯特丹·荷兰西印度公司北美殖民地
-    { id: 'xinfalanxi', name: '新法兰西' },        // 魁北克·法属北美殖民地（尚普兰）
-    { id: 'xinxibanya', name: '新西班牙' },        // 阿卡普尔科·西班牙新西班牙总督区（马尼拉大帆船美洲终点）
     { id: 'manzheboyi', name: '满者伯夷' },        // 特罗武兰·满者伯夷王朝（加查马达）
     { id: 'zhelouqi', name: '乔汉' },        // 阿杰梅尔·乔汉(遮娄其)王朝（普里特维）
     { id: 'suosuo', name: '索索' },        // 库姆比萨利赫·索索帝国（苏曼古鲁）
@@ -1611,7 +1599,6 @@ export const FACTIONS: Faction[] = [
     { id: 'aolisha', name: '东恒伽' },
     { id: 'kanata', name: '维查耶纳伽尔' },
     { id: 'adile', name: '比贾布尔' },
-    { id: 'foluolida', name: '西属佛罗里达' },
     { id: 'yilisi', name: '埃利斯' },
     { id: 'nuowei', name: '挪威' },
     { id: 'keernuwaye', name: '康沃尔' },
@@ -1670,7 +1657,6 @@ export const FACTIONS: Faction[] = [
   { id: 'maynila', name: '马尼拉土邦' },  // 汤多
   { id: 'gujarat', name: '古吉拉特苏丹国' },  // 艾哈迈达巴德
   { id: 'arakan', name: '阿拉干' },  // 妙乌
-  { id: 'voc', name: '荷兰东印度公司' },  // 巴达维亚
   { id: 'wandan', name: '万丹' },  // 万丹苏丹国（爪哇西端胡椒港）
   { id: 'kosala', name: '拘萨罗' },  // 舍卫城
   { id: 'kalinga', name: '羯陵伽' },  // 丹塔普拉

@@ -179,8 +179,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     yadian_gongguo: 'ATHENS_LA_ROCHE',   // 雅典公国·德拉罗什五红四点纹章
     shiwaben: 'SWABIA_LIONS',   // 施瓦本·霍亨斯陶芬三狮（菲利普1197年印章）
     jialixiya: 'GALICIA_LION',   // 加利西亚—沃伦·狮（14世纪上半叶地域标志）
-    xinnidelan: 'NEW_NETHERLAND_BEAVER',   // 新尼德兰·海狸与伯爵冠（新尼德兰省印章）
-    voc: 'VOC_MONOGRAM',   // 荷兰东印度公司·VOC交织字母（17世纪旗帜、瓷器、火炮）
     // ── 2026-10-26 日本史实家纹补绘（5 家）────────────────────────────────
     uesugi: 'UESUGI_SASA',   // 上杉·竹轮笹叶对雀（《见闻诸家纹》）
     utsunomiya: 'UTSUNOMIYA_TOMOE',   // 宇都宫·右三巴（《见闻诸家纹》，与琉球左三巴分开）
@@ -236,7 +234,6 @@ export const FACTION_EMBLEM: Readonly<Record<string, string>> = {
     gurjara: 'GURJARA_PRATIHARA_ADIVARAHA',   // 瞿折罗·人猪身Varaha（850—900年Adivaraha银币）
     qiajia: 'QAJAR_LION_SUN_SWORD',   // 恺加·立狮持剑与升日（卡扎尔王室标志，区别于萨法维无剑狮日）
     luomu: 'RUM_KUBADABAD_EAGLE',   // 罗姆·库巴达巴德宫双头鹰（1220年代王宫砖饰）
-    liangxixili: 'TWO_SICILIES_LESSER_ARMS',   // 两西西里·1816—1830年小纹章（奔马、三曲腿与三鸢尾分区盾）
     shahi: 'SHAHI_RECUMBENT_NANDI',   // 沙希·卧瘤牛、鞍布与臀部三叉记（jital银币）
     antigonid: 'ANTIGONID_PAN_SHIELD',   // 安提柯·潘神马其顿盾与弯月星纹（戈纳塔斯钱币）
     gesake: 'ZAPOROZHIAN_HOST_SEAL',   // 哥萨克·1595年扎波罗热军团印的肩枪哥萨克

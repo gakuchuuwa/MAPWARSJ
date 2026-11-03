@@ -263,7 +263,6 @@ const FACTION_NAVAL_SHIP_OVERRIDE: Record<string, NavalShipAssetId> = {
     maqidun: 'WAR_LEMBOS',         // 马其顿·佩拉：腓力五世大批装备伦博斯突击舰，与伊利里亚同制
     kejila: 'ELITE_LEMBOS',        // 科孚：亚得里亚-伊利里亚海域精锐伦博斯快船
     jialebi: 'ELITE_CARAVEL',      // 卡塔赫纳：西班牙珍宝船队要塞，应西班牙精锐卡拉维尔
-    foluolida: 'ELITE_CARAVEL',    // 佛罗里达·圣奥古斯丁：梅嫩德斯·西班牙海军上将，应西班牙精锐卡拉维尔
     xiyindu: 'ELITE_CARAVEL',      // 西印度·圣多明各：哥伦布殖民总督要塞，应西班牙精锐卡拉维尔
     xingelana: 'ELITE_CARAVEL',    // 新格拉纳达·巴拿马：卡斯蒂利亚殖民总督要塞，应西班牙精锐卡拉维尔
     baiyiya: 'CARAVEL',            // 巴西·萨尔瓦多：葡属巴西都督府，军团「索萨远征队」= 葡王室远征队，应葡萄牙卡拉维尔
