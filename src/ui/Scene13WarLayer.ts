@@ -137,7 +137,8 @@ const SKILL_FRENZY_MOVE = 2.0;      // 【攻】移速倍率
 const SKILL_SHIELD_SEC = 10;        // 【胜】持续（10秒：释放瞬间回满血 + 10秒内无敌）
 const SKILL_SHIELD_TAKEN = 0;       // 【胜】受伤倍率（0＝无敌）
 const SKILL_PANIC_SEC = 15;         // 【混】乱敌阵持续（15秒，2026-10-31 主人令改 15 秒）
-const SKILL_PANIC_TAKEN = 2;        // 【混】混乱中受伤倍率
+const SKILL_PANIC_TAKEN = 2.5;      // 【混】混乱中受伤倍率（2026-11-03 主人定）
+const SKILL_PANIC_MOVE = 0.25;      // 【混】混乱中移速倍率（原地慢速乱转，防跑出近战圈带着我方来回跑）
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
 //   六计**没有克制**：这只是 AI 武将的放计顺序，回应的计不加任何效果，界面也不写「拆招 / 破」。
@@ -1416,6 +1417,12 @@ export class Scene13WarLayer {
                 this.playerSixShieldTimer = SKILL_SHIELD_SEC;
             }
         } else if (six === 'hunzhan') {
+            this.skillFrenzyTimer[ef] = 0;
+            this.skillShieldTimer[ef] = 0;
+            if ( this.playerSetup && this.playerSetup.side === ef) {
+                this.playerSixFrenzyTimer = 0;
+                this.playerSixShieldTimer = 0;
+            }
             if (scopedControl === null) {
                 for (const m of this.men) if (m.f === ef && m.hp > 0 && !m.hero && !m.siegeW) { m.march = false; vfxTargets.push(m); }
                 this.skillPanicTimer[ef] = SKILL_PANIC_SEC;
@@ -1435,7 +1442,7 @@ export class Scene13WarLayer {
                 if (vfxTargets.length > 0) this.playerSixPanicMaxTimer = panicSec;
             }
         } else if (six === 'bingzhan') {
-            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.05));
+            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10));
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 4 : 1;
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeAmount));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW && !this.spawns[m.lane]?.commander);
@@ -7806,21 +7813,22 @@ export class Scene13WarLayer {
                     m.panicAng = (m.panicAng !== undefined && m.stuckT > 0.25)
                         ? m.panicAng + Math.PI * (0.65 + Math.random() * 0.7)
                         : Math.random() * Math.PI * 2;
-                    m.panicTurnT = 0.85 + Math.random() * 0.75;
+                    m.panicTurnT = 0.35 + Math.random() * 0.30;
                     m.stuckT = 0;
                 } else {
                     m.panicTurnT -= dt;
                 }
                 const ux = Math.cos(m.panicAng);
                 const uy = Math.sin(m.panicAng);
-                const step = stats.spd * spdK * this.uphillSpeedK(m.x, m.y, ux, uy) * dt;
+                const panicSpdK = this.terrainSpeedAt(m.x, m.y) * SKILL_PANIC_MOVE;
+                const step = stats.spd * panicSpdK * this.uphillSpeedK(m.x, m.y, ux, uy) * dt;
                 if (step > 0) {
                     m.x += ux * step;
                     m.y += uy * step;
                     m.walked = true;   // 朝向由 step 末尾按实际位移定（DE 口径）
                 }
-                m.tx = m.x + ux * 60;
-                m.ty = m.y + uy * 60;
+                m.tx = m.x + ux * 20;
+                m.ty = m.y + uy * 20;
                 if (m.fadeT > 0) m.fadeT -= dt;
                 m.ph += dt * (m.idlePose ? (8 / LOOP_WINDOW_IDLE_SEC) : 8);
                 continue;
