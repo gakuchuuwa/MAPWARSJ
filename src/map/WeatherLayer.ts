@@ -6,6 +6,7 @@ import type { CalendarSeason4 } from '../world/environment/seasonalGround';
 import {
     WEATHER_SPECS,
     canSustainSnowAt,
+    coerceWeatherKindForLocation,
     pickWeightedWeather,
     resolveWeatherPoolAt,
     type WeatherKind,
@@ -67,6 +68,14 @@ interface FogPuff {
     phase: number;
 }
 
+export interface TacticalWeatherContext {
+    lat: number;
+    lng: number;
+    elevM?: number | null;
+    isSea?: boolean;
+    isSnowGround?: boolean;
+}
+
 let activeWeatherLayer: WeatherLayer | null = null;
 
 /**
@@ -79,6 +88,28 @@ export function getSeaStormWaveBoostAt(lat: number, lng: number, now = performan
 
 export function setWeatherLayerVisible(visible: boolean): void {
     activeWeatherLayer?.setVisible(visible);
+}
+
+/**
+ * 战术地图（Scene13）开场同步天气：
+ * - 若战略地图在该坐标已有活跃气团，直接继承并按当前战场气候/季节/雪地状态校准；
+ * - 若战略地图在该处尚无活跃气团，立即按当地真实气候带与季节生成同源天气气团，使战略与战术天气无缝一致。
+ */
+export function syncTacticalWeatherAt(q: TacticalWeatherContext, now = performance.now()): void {
+    activeWeatherLayer?.ensureTacticalWeatherAt(q, now);
+}
+
+/**
+ * 战术地图（Scene13）每帧同步绘制天气与音效（复用 WeatherLayer 零 GC 粒子池与同一气团状态）
+ */
+export function renderTacticalWeather(
+    ctx: CanvasRenderingContext2D,
+    cw: number,
+    ch: number,
+    q: TacticalWeatherContext,
+    now = performance.now(),
+): void {
+    activeWeatherLayer?.renderTactical(ctx, cw, ch, q, now);
 }
 
 export class WeatherLayer extends L.Layer {
@@ -224,11 +255,22 @@ export class WeatherLayer extends L.Layer {
         return fadeIn * fadeOut;
     }
 
-    private cellStrengthAt(cell: WeatherCell, lat: number, lng: number, now: number): number {
+    private cellStrengthAt(
+        cell: WeatherCell,
+        lat: number,
+        lng: number,
+        now: number,
+        elevM?: number | null,
+        isSnowGround?: boolean,
+    ): number {
         const timeA = this.cellTimeAlpha(cell, now);
         if (timeA <= 0.001) return 0;
         // 🔴 [2026-11-02 优化] 雨雪分界线阻断：降雪与暴风雪气团绝不侵入亚热带/南方温暖视口
-        if ((cell.kind === 'SNOW' || cell.kind === 'BLIZZARD') && !canSustainSnowAt(lat, lng, this.getCalendarSeason())) {
+        if (
+            !isSnowGround &&
+            (cell.kind === 'SNOW' || cell.kind === 'BLIZZARD') &&
+            !canSustainSnowAt(lat, lng, this.getCalendarSeason(), elevM)
+        ) {
             return 0;
         }
         const cosLat = Math.max(0.25, Math.cos((lat * Math.PI) / 180));
@@ -242,9 +284,17 @@ export class WeatherLayer extends L.Layer {
         return timeA * spatial;
     }
 
+    private isTacticalOverlayActive(): boolean {
+        const war = (window as any).game?.scene13War;
+        return !!(war && (war.active || war.lingering));
+    }
+
     private tick = (now: number): void => {
         this.rafId = requestAnimationFrame(this.tick);
         if (!this.map || !this.ctx || !this.visible || now - this.lastRenderAt < FRAME_MS) return;
+        // 战术地图处于前景时，由 Scene13Render 调用 renderTactical 驱动同一套天气与粒子，战略画布暂停重复绘制
+        if (this.isTacticalOverlayActive()) return;
+
         const dt = this.lastTickAt > 0 ? Math.min(0.1, (now - this.lastTickAt) / 1000) : 1 / 30;
         this.lastTickAt = now;
         this.lastRenderAt = now;
@@ -266,13 +316,25 @@ export class WeatherLayer extends L.Layer {
         const bounds = this.map.getBounds();
         const keepBounds = bounds.pad(1.5);
         const center = this.map.getCenter();
+        const centerIsSea = LandSeaSystem.isSeaAt(L.latLng(center.lat, center.lng));
+        const centerElevM = LandSeaSystem.getSampler().getElevationSync(center.lat, center.lng);
+        const calendarSeason = this.getCalendarSeason();
 
-        // 1. 推进现有天气气团漂移与闪电计时，清理过期或远离视口的气团
+        // 1. 推进现有天气气团漂移、季节/地域自适应校准与闪电计时，清理过期或远离视口的气团
         this.cells = this.cells.filter((c) => {
             if (now >= c.expiresAt) return false;
             c.lat += c.vLat * dt;
             c.lng += c.vLng * dt;
             if (!keepBounds.contains([c.lat, c.lng])) return false;
+
+            // 季节更替或气团跨气候带漂移时，自动校准为符合当前视口地域与季节的真实天气（如北方入冬转雪、入春化雨）
+            c.kind = coerceWeatherKindForLocation(c.kind, {
+                lat: center.lat,
+                lng: center.lng,
+                isSea: centerIsSea,
+                elevM: centerElevM,
+                calendarSeason,
+            });
 
             if (c.kind === 'SEA_STORM' && now >= c.nextLightningAt) {
                 c.lightningEndAt = now + 220 + Math.random() * 160;
@@ -280,8 +342,8 @@ export class WeatherLayer extends L.Layer {
                 c.lightningSeed = Math.floor(Math.random() * 10000);
                 c.lightningOffsetX = (Math.random() - 0.5) * 0.55;
                 c.lightningOffsetY = (Math.random() - 0.5) * 0.35;
-                const s = this.cellStrengthAt(c, center.lat, center.lng, now);
-                if (this.visible && s > 0.14 && !(window as any).game?.scene13War?.isActive?.()) {
+                const s = this.cellStrengthAt(c, center.lat, center.lng, now, centerElevM);
+                if (this.visible && s > 0.14) {
                     audioManager.play('weather_thunder', { volumeScale: Math.min(1, 0.35 + s * 0.65) });
                 }
             }
@@ -290,18 +352,34 @@ export class WeatherLayer extends L.Layer {
 
         // 2. 若当前视口内尚无活跃气团，按自然节律在当前视野附近生成符合当地气候与季节的天气气团
         const hasActiveInView = this.cells.some(
-            (c) => this.cellStrengthAt(c, center.lat, center.lng, now) > 0.15,
+            (c) => this.cellStrengthAt(c, center.lat, center.lng, now, centerElevM) > 0.15,
         );
         if (!hasActiveInView && this.cells.length < 2 && now >= this.nextSpawnAllowedAt) {
-            this.spawnWeatherCellForView(now, center.lat, center.lng);
+            this.spawnWeatherCellForView(now, center.lat, center.lng, {
+                isSea: centerIsSea,
+                elevM: centerElevM,
+            });
             // 下一次气团生成间隔：留出晴朗窗口期（约 9~16 秒晴空后迎来下一场区域天气）
             this.nextSpawnAllowedAt = now + 32_000 + Math.random() * 12_000;
         }
     }
 
-    private spawnWeatherCellForView(now: number, centerLat: number, centerLng: number): void {
-        const isSea = LandSeaSystem.isSeaAt(L.latLng(centerLat, centerLng));
-        const elevM = LandSeaSystem.getSampler().getElevationSync(centerLat, centerLng);
+    private spawnWeatherCellForView(
+        now: number,
+        centerLat: number,
+        centerLng: number,
+        opts?: {
+            isSea?: boolean;
+            elevM?: number | null;
+            isSnowGround?: boolean;
+            warmStart?: boolean;
+        },
+    ): WeatherCell {
+        const isSea = opts?.isSea ?? LandSeaSystem.isSeaAt(L.latLng(centerLat, centerLng));
+        const elevM =
+            opts?.elevM !== undefined
+                ? opts.elevM
+                : LandSeaSystem.getSampler().getElevationSync(centerLat, centerLng);
         const calendarSeason = this.getCalendarSeason();
 
         const pool = resolveWeatherPoolAt({
@@ -311,7 +389,15 @@ export class WeatherLayer extends L.Layer {
             elevM,
             calendarSeason,
         });
-        const kind = pickWeightedWeather(pool, Math.random());
+        const rawKind = pickWeightedWeather(pool, Math.random());
+        const kind = coerceWeatherKindForLocation(rawKind, {
+            lat: centerLat,
+            lng: centerLng,
+            isSea,
+            elevM,
+            calendarSeason,
+            isSnowGround: opts?.isSnowGround,
+        });
         const spec = WEATHER_SPECS[kind];
 
         const dur = spec.durationMs[0] + Math.random() * (spec.durationMs[1] - spec.durationMs[0]);
@@ -320,11 +406,13 @@ export class WeatherLayer extends L.Layer {
         const windAngle = spec.windAngleRad * windSign + (Math.random() - 0.5) * 0.08;
         const driftDir = Math.random() * Math.PI * 2;
 
-        // 气团中心略偏离视野正中，随风自然掠过视野
-        const offsetLat = (Math.random() - 0.5) * 0.35;
-        const offsetLng = (Math.random() - 0.5) * 0.45;
+        // 气团中心略偏离视野正中（战术暖启动时紧贴战场中心），随风自然掠过视野
+        const spread = opts?.warmStart ? 0.12 : 0.35;
+        const offsetLat = (Math.random() - 0.5) * spread;
+        const offsetLng = (Math.random() - 0.5) * spread * 1.25;
+        const spawnedAt = opts?.warmStart ? now - FADE_IN_MS * 0.72 : now;
 
-        this.cells.push({
+        const cell: WeatherCell = {
             id: this.nextCellId++,
             kind,
             lat: centerLat + offsetLat,
@@ -333,14 +421,144 @@ export class WeatherLayer extends L.Layer {
             vLat: Math.sin(driftDir) * spec.driftDegPerSec,
             vLng: Math.cos(driftDir) * spec.driftDegPerSec,
             windAngle,
-            spawnedAt: now,
+            spawnedAt,
             expiresAt: now + dur,
             nextLightningAt: now + 2_200 + Math.random() * 3_500,
             lightningEndAt: 0,
             lightningSeed: Math.floor(Math.random() * 10000),
             lightningOffsetX: 0,
             lightningOffsetY: 0,
+        };
+        this.cells.push(cell);
+        return cell;
+    }
+
+    /**
+     * 进场战术战场时：确保 (lat, lng) 处存在与战略地图同源且符合当地气候/季节的天气气团
+     */
+    public ensureTacticalWeatherAt(q: TacticalWeatherContext, now = performance.now()): void {
+        const isSea = q.isSea ?? LandSeaSystem.isSeaAt(L.latLng(q.lat, q.lng));
+        const elevM =
+            q.elevM !== undefined && q.elevM !== null
+                ? q.elevM
+                : LandSeaSystem.getSampler().getElevationSync(q.lat, q.lng);
+        const calendarSeason = this.getCalendarSeason();
+
+        let matched: WeatherCell | null = null;
+        let bestS = 0;
+        for (const c of this.cells) {
+            if (now >= c.expiresAt) continue;
+            c.kind = coerceWeatherKindForLocation(c.kind, {
+                lat: q.lat,
+                lng: q.lng,
+                isSea,
+                elevM,
+                calendarSeason,
+                isSnowGround: q.isSnowGround,
+            });
+            const s = this.cellStrengthAt(c, q.lat, q.lng, now, elevM, q.isSnowGround);
+            if (s > bestS) {
+                bestS = s;
+                matched = c;
+            }
+        }
+
+        if (matched && bestS > 0.12) {
+            if (matched.expiresAt - now < 28_000) {
+                matched.expiresAt = now + 34_000;
+            }
+            return;
+        }
+
+        this.spawnWeatherCellForView(now, q.lat, q.lng, {
+            isSea,
+            elevM,
+            isSnowGround: q.isSnowGround,
+            warmStart: true,
         });
+        this.nextSpawnAllowedAt = now + 32_000 + Math.random() * 12_000;
+    }
+
+    /**
+     * 战术地图（Scene13）每帧同步演进并绘制当前战场天气
+     */
+    public renderTactical(
+        g: CanvasRenderingContext2D,
+        cw: number,
+        ch: number,
+        q: TacticalWeatherContext,
+        now = performance.now(),
+    ): void {
+        if (!this.visible) return;
+        const isSea = q.isSea ?? LandSeaSystem.isSeaAt(L.latLng(q.lat, q.lng));
+        const elevM =
+            q.elevM !== undefined && q.elevM !== null
+                ? q.elevM
+                : LandSeaSystem.getSampler().getElevationSync(q.lat, q.lng);
+        const calendarSeason = this.getCalendarSeason();
+
+        const dt = this.lastTickAt > 0 ? Math.min(0.1, Math.max(0, (now - this.lastTickAt) / 1000)) : 1 / 60;
+        this.lastTickAt = now;
+        this.lastRenderAt = now;
+
+        this.cells = this.cells.filter((c) => {
+            if (now >= c.expiresAt) return false;
+            c.lat += c.vLat * dt;
+            c.lng += c.vLng * dt;
+            c.kind = coerceWeatherKindForLocation(c.kind, {
+                lat: q.lat,
+                lng: q.lng,
+                isSea,
+                elevM,
+                calendarSeason,
+                isSnowGround: q.isSnowGround,
+            });
+            if (c.kind === 'SEA_STORM' && now >= c.nextLightningAt) {
+                c.lightningEndAt = now + 220 + Math.random() * 160;
+                c.nextLightningAt = now + 3_800 + Math.random() * 5_200;
+                c.lightningSeed = Math.floor(Math.random() * 10000);
+                c.lightningOffsetX = (Math.random() - 0.5) * 0.55;
+                c.lightningOffsetY = (Math.random() - 0.5) * 0.35;
+                const s = this.cellStrengthAt(c, q.lat, q.lng, now, elevM, q.isSnowGround);
+                if (this.visible && s > 0.14) {
+                    audioManager.play('weather_thunder', { volumeScale: Math.min(1, 0.35 + s * 0.65) });
+                }
+            }
+            return true;
+        });
+
+        let bestCell: WeatherCell | null = null;
+        let bestStrength = 0;
+        for (const cell of this.cells) {
+            const s = this.cellStrengthAt(cell, q.lat, q.lng, now, elevM, q.isSnowGround);
+            if (s > bestStrength) {
+                bestStrength = s;
+                bestCell = cell;
+            }
+        }
+
+        if (!bestCell || bestStrength <= 0.08) {
+            if (now >= this.nextSpawnAllowedAt || this.cells.length === 0) {
+                bestCell = this.spawnWeatherCellForView(now, q.lat, q.lng, {
+                    isSea,
+                    elevM,
+                    isSnowGround: q.isSnowGround,
+                    warmStart: false,
+                });
+                this.nextSpawnAllowedAt = now + 32_000 + Math.random() * 12_000;
+                bestStrength = this.cellStrengthAt(bestCell, q.lat, q.lng, now, elevM, q.isSnowGround);
+            }
+        }
+
+        if (!bestCell || bestStrength <= 0.01) {
+            audioManager.syncWeatherAudio(null, 0);
+            return;
+        }
+
+        const cx = cw * 0.5;
+        const cy = ch * 0.42;
+        const radiusPx = Math.max(cw, ch) * 0.85;
+        this.drawCellAndSyncAudio(g, bestCell, bestStrength, cx, cy, radiusPx, cw, ch, now);
     }
 
     private render(now: number): void {
@@ -358,11 +576,12 @@ export class WeatherLayer extends L.Layer {
         }
 
         const center = this.map.getCenter();
+        const centerElevM = LandSeaSystem.getSampler().getElevationSync(center.lat, center.lng);
         // 选取当前视口中心主导的天气气团
         let bestCell: WeatherCell | null = null;
         let bestStrength = 0;
         for (const cell of this.cells) {
-            const s = this.cellStrengthAt(cell, center.lat, center.lng, now);
+            const s = this.cellStrengthAt(cell, center.lat, center.lng, now, centerElevM);
             if (s > bestStrength) {
                 bestStrength = s;
                 bestCell = cell;
@@ -376,23 +595,36 @@ export class WeatherLayer extends L.Layer {
         const cellPt = this.map.latLngToContainerPoint([bestCell.lat, bestCell.lng]);
         const edgePt = this.map.latLngToContainerPoint([bestCell.lat + bestCell.radiusDeg, bestCell.lng]);
         const radiusPx = Math.max(Math.min(cw, ch) * 0.75, Math.abs(edgePt.y - cellPt.y));
-        const t = now / 1000;
+        this.drawCellAndSyncAudio(g, bestCell, bestStrength, cellPt.x, cellPt.y, radiusPx, cw, ch, now);
+    }
 
+    private drawCellAndSyncAudio(
+        g: CanvasRenderingContext2D,
+        bestCell: WeatherCell,
+        bestStrength: number,
+        cx: number,
+        cy: number,
+        radiusPx: number,
+        cw: number,
+        ch: number,
+        now: number,
+    ): void {
+        const t = now / 1000;
         let loopKey: SoundKey | null = null;
         let audioStrength = bestStrength;
         switch (bestCell.kind) {
             case 'SEA_STORM':
                 loopKey = 'weather_storm_loop';
-                this.drawSeaStorm(g, bestCell, bestStrength, cellPt.x, cellPt.y, radiusPx, cw, ch, t, now);
+                this.drawSeaStorm(g, bestCell, bestStrength, cx, cy, radiusPx, cw, ch, t, now);
                 break;
             case 'MONSOON_SQUALL':
                 loopKey = 'weather_rain_loop';
-                this.drawRainWeather(g, bestCell, bestStrength, cellPt.x, cellPt.y, radiusPx, cw, ch, t, true);
+                this.drawRainWeather(g, bestCell, bestStrength, cx, cy, radiusPx, cw, ch, t, true);
                 break;
             case 'DRIZZLE_MIST':
                 loopKey = 'weather_rain_loop';
                 audioStrength = bestStrength * 0.65;
-                this.drawRainWeather(g, bestCell, bestStrength, cellPt.x, cellPt.y, radiusPx, cw, ch, t, false);
+                this.drawRainWeather(g, bestCell, bestStrength, cx, cy, radiusPx, cw, ch, t, false);
                 break;
             case 'SEA_FOG':
                 loopKey = 'weather_fog_loop';
@@ -409,7 +641,7 @@ export class WeatherLayer extends L.Layer {
                 break;
             case 'SANDSTORM':
                 loopKey = 'weather_sandstorm_loop';
-                this.drawSandstorm(g, bestCell, bestStrength, cellPt.x, cellPt.y, radiusPx, cw, ch, t);
+                this.drawSandstorm(g, bestCell, bestStrength, cx, cy, radiusPx, cw, ch, t);
                 break;
         }
         audioManager.syncWeatherAudio(loopKey, audioStrength);

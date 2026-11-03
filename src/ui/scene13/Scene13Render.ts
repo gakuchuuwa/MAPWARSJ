@@ -14,6 +14,7 @@ import {
     CHARGE_CYCLE, FADE_IN, FLAG_FALL, FLAG_POLE_LIFT, FLAG_POLE_RATIO, FLAG_SCALE, FLEE_DUR, UNIT_PX,
 } from './Scene13CombatMath';
 import { LegionFlagDrawer } from '../../map/legion/LegionFlagDrawer';
+import { renderTacticalWeather } from '../../map/WeatherLayer';
 import { TAC_MAP_HALF_W, TAC_MAP_HALF_H } from './Scene13GroundLayerGL';
 import { WAR_TYPES } from '../../data/WarTypes';
 import { animalDeOf } from './Scene13Animals';
@@ -681,6 +682,10 @@ export function render(this: Scene13WarLayer): void {
             this.perfTint.push(performance.now() - _tt0);
             if (this.perfTint.length > 1800) this.perfTint.shift();
         }
+    }
+    // 战略↔战术天气同步层：复用战略地图 WeatherLayer 同一气团与零 GC 粒子池，按战场真实气候与季节绘制雨雪风沙与闪电
+    if (this.useGroundGL) {
+        renderTacticalWeather(ctx, cv.width, cv.height, this.getTacticalWeatherContext());
     }
     this.perfStats.tGL = +_tGL.toFixed(2);
     this.perfStats.tCull = +_tCull.toFixed(2);

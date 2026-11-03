@@ -98,6 +98,30 @@ export interface WeatherCandidate {
 }
 
 /**
+ * 查询冬季降雪标志（优先读取 world-base.png 的 queryWinterSnow；若首屏异步加载尚未就绪，则按柯本气候带与自然区精确回退）
+ */
+function resolveWinterSnowFlagAt(lat: number, lng: number, koppen: number, zone: string): number {
+    const raw = queryWinterSnow(lat, lng);
+    if (raw !== null) return raw;
+    const absLat = Math.abs(lat);
+    if (zone === 'ARC' || zone === 'SIB' || koppen >= 27) return 2;
+    if (
+        zone === 'TIB' ||
+        zone === 'NEB' ||
+        koppen >= 17 ||
+        ((zone === 'STP' || zone === 'CEU') && absLat >= 40)
+    ) {
+        return 1;
+    }
+    if ((zone === 'CAD' || koppen === 5) && absLat >= 36) return 4;
+    if ((zone === 'LOE' || zone === 'NCP' || zone === 'WAH' || zone === 'STP' || zone === 'CEU') && absLat >= 33) {
+        return absLat >= 37.5 ? 1 : 4;
+    }
+    if (zone === 'EAS' && absLat >= 29.5 && absLat < 33 && lng >= 111) return 4;
+    return 0;
+}
+
+/**
  * 判定指定坐标与日历季节是否具备降雪气候条件（供 WeatherLayer 阻断越界雪团使用，统一收口在内容层）
  * - 自动按南北半球转换当地季节 localSeason；
  * - 青藏高寒（TIB）、北极（ARC）、高山苔原冰原（ET/EF）及高海拔雪山（>=2700m 或 gravel_default）允许高寒降雪；
@@ -112,8 +136,8 @@ export function canSustainSnowAt(
     const localSeason = localSeasonAtLat(calendarSeason, lat);
     const absLat = Math.abs(lat);
     const koppen = koppenClassIdAt(lat, lng) ?? 14;
-    const wf = queryWinterSnow(lat, lng) ?? 0;
     const zone = envZoneAt(lat, lng);
+    const wf = resolveWinterSnowFlagAt(lat, lng, koppen, zone);
     const tile = queryBaseTile({ lat, lng, isSiege: false, isWinter: false });
     const elev = elevM ?? 0;
     const isAlpineOrPolar =
@@ -162,8 +186,8 @@ export function resolveWeatherPoolAt(q: {
     const localSeason = localSeasonAtLat(calendarSeason, lat);
     const absLat = Math.abs(lat);
     const koppen = koppenClassIdAt(lat, lng) ?? 14;
-    const wf = queryWinterSnow(lat, lng) ?? 0;
     const zone = envZoneAt(lat, lng);
+    const wf = resolveWinterSnowFlagAt(lat, lng, koppen, zone);
     const tile = queryBaseTile({ lat, lng, isSiege: false, isWinter: false });
     const highAltSnow = (elevM ?? 0) >= 2700;
 
@@ -373,14 +397,14 @@ export function resolveWeatherPoolAt(q: {
                 { kind: 'SEA_FOG', weight: 2 },
             ];
         }
-        // 秦淮以北冬季稳定降雪区（华北平原 NCP、关中洛阳、中欧、本州北部等 wf=1/2/3 或 D 气候）：冬季漫天瑞雪与寒雾，不下液态烟雨
-        if (!isSubtropicalOrTropical && localSeason === 3 && (wf === 1 || wf === 2 || wf === 3 || koppen >= 17)) {
+        // 秦淮以北冬季降雪区（华北平原 NCP、关中洛阳 LOE、中欧 CEU、本州北部等）：冬季漫天瑞雪与寒雾，不下液态烟雨
+        if (!isSubtropicalOrTropical && localSeason === 3 && zone !== 'WEU') {
             return [
                 { kind: 'SNOW', weight: 8 },
                 { kind: 'SEA_FOG', weight: 2 },
             ];
         }
-        // 亚热带北缘冬季瑞雪过渡带（江淮金陵/合肥/襄阳 absLat 28°~33°）与西欧海洋性零星小雪带（wf=4）：瑞雪与寒雨薄雾交织
+        // 亚热带北缘冬季瑞雪过渡带（江淮金陵/合肥/襄阳 absLat 28°~33°）与西欧海洋性零星小雪带（WEU wf=4）：瑞雪与寒雨薄雾交织
         return [
             { kind: 'SNOW', weight: 6 },
             { kind: 'DRIZZLE_MIST', weight: 3 },

@@ -9701,6 +9701,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 26
+        },
+        "/assets/MONGOL/__闲置__STEPPE_87.png": {
+            "scale": 1.2,
+            "offsetX": 5,
+            "offsetY": -9
         }
     },
     "folderGuides": {

@@ -21,6 +21,7 @@ import { expandCompositionSlots } from '../types/LegionComposition';
 import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
 import { LegionFlagDrawer } from '../map/legion/LegionFlagDrawer';
+import { syncTacticalWeatherAt, type TacticalWeatherContext } from '../map/WeatherLayer';
 import { type RegionType } from '../systems/RegionSystem';
 import { resolveCastleAsset } from '../config/deCastleAssets';
 import { CITIES_V2 } from '../data/cities_v2';
@@ -138,7 +139,7 @@ const SKILL_SHIELD_SEC = 10;        // 【胜】持续（10秒：释放瞬间回
 const SKILL_SHIELD_TAKEN = 0;       // 【胜】受伤倍率（0＝无敌）
 const SKILL_PANIC_SEC = 10;         // 【混】乱敌阵持续（10秒，2026-11-03 主人令改 10 秒）
 const SKILL_PANIC_TAKEN = 2.5;      // 【混】混乱中受伤倍率（2026-11-03 主人定）
-const SKILL_PANIC_MOVE = 1.35;      // 【混】混乱中移速倍率（2026-11-03 主人令「提高混乱程度，让士兵散的更开些」）
+const SKILL_PANIC_MOVE = 1.1;       // 【混】混乱中移速倍率（2026-11-03 主人令「不要增加这么高的移速，增加一点就行。1.1倍吧。」）
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
 //   六计**没有克制**：这只是 AI 武将的放计顺序，回应的计不加任何效果，界面也不写「拆招 / 破」。
@@ -1459,6 +1460,26 @@ export class Scene13WarLayer {
                     vfxTargets.push(m);
                 }
                 if (vfxTargets.length > 0) this.playerSixPanicMaxTimer = panicSec;
+            }
+            if (vfxTargets.length > 0) {
+                const laneSum = new Map<number, { sx: number; sy: number; n: number }>();
+                let gsx = 0, gsy = 0;
+                for (const m of vfxTargets) {
+                    gsx += m.x; gsy += m.y;
+                    const entry = laneSum.get(m.lane);
+                    if (entry) { entry.sx += m.x; entry.sy += m.y; entry.n++; }
+                    else laneSum.set(m.lane, { sx: m.x, sy: m.y, n: 1 });
+                }
+                const gcx = gsx / vfxTargets.length, gcy = gsy / vfxTargets.length;
+                for (const m of vfxTargets) {
+                    const le = laneSum.get(m.lane);
+                    const cx = le && le.n > 1 ? le.sx / le.n : gcx;
+                    const cy = le && le.n > 1 ? le.sy / le.n : gcy;
+                    const outAng = Math.atan2(m.y - cy, m.x - cx);
+                    m.panicAng = outAng + (Math.random() - 0.5) * 2.2;
+                    m.panicTurnT = 0.75 + Math.random() * 0.75;
+                    m.stuckT = 0;
+                }
             }
         } else if (six === 'bingzhan') {
             const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10));
@@ -2960,6 +2981,7 @@ export class Scene13WarLayer {
             this.environmentPlan = resolveEnvironmentClimate(envInput);
             const __envMs = performance.now() - __e0;
             this.sceneSeason = this.environmentPlan.season;
+            syncTacticalWeatherAt(this.getTacticalWeatherContext());
             // [2026-09-03 主人定] 时段色调：按环境种子确定性抽时段，叠季节/群系/纬度偏色，每场看起来都不一样
             {
                 const grade = resolveTimeOfDay({
@@ -3027,6 +3049,24 @@ export class Scene13WarLayer {
             this.active = false;
             this.forceResultByRatio(1);
         }
+    }
+
+    /** 获取当前战术战场的地域与季节天气上下文（供战略↔战术天气同步使用） */
+    public getTacticalWeatherContext(): TacticalWeatherContext {
+        const rec = this.defenderCityRecord();
+        const lat = rec?.lat ?? (rec as any)?.latitude ?? this.centerLat ?? 30;
+        const lng = rec?.lng ?? (rec as any)?.longitude ?? this.centerLng ?? 110;
+        const elevM = this.environmentPlan?.elevationM ?? null;
+        const grass = this.environmentPlan?.groundTiles?.grass ?? this.environmentPlan?.baseTerrain ?? '';
+        const isSnowGround =
+            grass === 'sno' ||
+            grass === 'sn2' ||
+            grass === 'snf' ||
+            grass === 'snd' ||
+            grass === 'ic3' ||
+            grass === 'ice';
+        // 水军野战留在战略地图，进入 Scene13 的均为陆战或海岸据点攻城战，一律按陆地据点真实气候带判定天气
+        return { lat, lng, elevM, isSea: false, isSnowGround };
     }
 
     /**
@@ -5070,8 +5110,9 @@ export class Scene13WarLayer {
                 m.sepY = 0;
                 continue;
             }
+            const mPanic = this.unitHasPanic(m);
             // 🔴 [2026-10-03 主人选定 A] 归队后已站定在槽位上的队员：同样清零推挤（理由见本函数头注）
-            if (m.lane >= 0 && !m.foe) {
+            if (!mPanic && m.lane >= 0 && !m.foe) {
                 const L = laneLeaders.get(m.lane);
                 if (L === m && !this.marching && !m.siegeW && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane)
                     && (m.tx - m.x) ** 2 + (m.ty - m.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS) {
@@ -5097,7 +5138,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-13 主人报「大军自动行进时左右或上下晃」/ 2026-10-18 修「行进过程中频繁改变朝向、颤抖」]
             //    已处于本队归队编队中的领队、队员与玩家不吃**本队队友**的推挤（同上面「站定队员清零」）：
             //    防止本队内部边走边推领队或槽位间距小于两倍半径时「推开→拉回槽位→朝向反转」每帧往复颤抖；别队与敌兵照常推，交战照旧。
-            const laneFollow = m.lane >= 0 && !m.foe && !m.march && !this.heroOrderPending(m) && laneLeaders.has(m.lane)
+            const laneFollow = !mPanic && m.lane >= 0 && !m.foe && !m.march && !this.heroOrderPending(m) && laneLeaders.has(m.lane)
                 && (m === laneLeaders.get(m.lane) || (m.noFoeSec ?? 0) >= LANE_REGROUP_SEC);   // 🔴 [2026-10-27] 玩家与士兵同一口径，不再单列
             let ox = 0, oy = 0, seen = 0, nearest2 = Infinity, minGap = SEP_DIST;
             // 🔴 [2026-10-14 修·推挤偏右下] 原为 `seen < 6` 截断：扫描从左上往右下，左/上的邻居先数满、右/下的常被漏掉
@@ -5113,13 +5154,13 @@ export class Scene13WarLayer {
                         if (laneFollow && o.lane === m.lane) continue;
                         const dx = m.x - o.x, dy = m.y - o.y;
                         const dd = dx * dx + dy * dy;
-                        const gap = rm + this.radiusOf(o.key);      // 这一对的最小间距
+                        const gap = (rm + this.radiusOf(o.key)) * (mPanic ? 1.85 : 1.0);      // 混乱时排斥间距放大，让士兵散得更开
                         if (dd >= gap * gap) continue;
                         // 🔴 [2026-10-20 主人报「军团移动的时候，还是会因为拥挤，产生士兵颤抖」]
                         //    两个**都在走路**的己方兵互推：推开→各自朝目标走回→再推开，每帧往复 = 颤抖。
                         //    走路的兵不再吃同样在走路的己方兵的推挤（站着的/交战的/敌兵照常推）；
                         //    几乎叠在一起（距离 < 间距 40%，即重叠超过六成）时仍推开，防叠成一团。
-                        if (m.st === 0 && !m.idlePose && o.f === m.f && o.st === 0 && !o.idlePose && !o.guardPost
+                        if (!mPanic && m.st === 0 && !m.idlePose && o.f === m.f && o.st === 0 && !o.idlePose && !o.guardPost
                             && dd > (gap * 0.4) * (gap * 0.4)) continue;
                         if (dd < nearest2) { nearest2 = dd; minGap = gap; }
                         seen++;
@@ -5149,7 +5190,7 @@ export class Scene13WarLayer {
             //    实测（war_sim，SEED 7/11）：平移 12.4→9.3 px/人·秒、推力方向反转 13.2%→11.4%，
             //    用时 266→266s **持平**。
             //    ⚠️ 别再往下调：SEP_FIGHT=0.2 实测 SEED 7 直接打满 900s（推力太小散不开、打不到人）。
-            const fightMul = m.st !== 0 ? SEP_FIGHT : 1;
+            const fightMul = m.st !== 0 ? SEP_FIGHT : (mPanic ? 1.65 : 1);
             const mul = depth * fightMul / this.massOf(m.key);
             const vx = ox / l * push * mul, vy = oy / l * push * mul;
             m.sepX += (vx - m.sepX) * SEP_SMOOTH;
@@ -7841,14 +7882,35 @@ export class Scene13WarLayer {
                     m.ph += dt * (8 / LOOP_WINDOW_IDLE_SEC);
                     continue;
                 }
-                if (m.panicAng === undefined || m.panicTurnT === undefined || m.panicTurnT <= 0 || m.stuckT > 0.25) {
-                    m.panicAng = (m.panicAng !== undefined && m.stuckT > 0.25)
+                if (m.panicAng === undefined || m.panicTurnT === undefined || m.panicTurnT <= 0 || m.stuckT > 0.20) {
+                    // 换向时叠加强烈的向外扩散分量（远离周围同伴密集中心）+ 大角度随机乱窜，让混乱士兵四散奔逃不再扎堆
+                    let rx = 0, ry = 0;
+                    const gx0 = (m.x / CELL_S) | 0, gy0 = (m.y / CELL_S) | 0;
+                    for (let gx = gx0 - 2; gx <= gx0 + 2; gx++) {
+                        for (let gy = gy0 - 2; gy <= gy0 + 2; gy++) {
+                            const cellArr = this.gs.get(HKEY(gx, gy));
+                            if (!cellArr) continue;
+                            for (const o of cellArr) {
+                                if (o === m || o.hp <= 0) continue;
+                                const dx = m.x - o.x, dy = m.y - o.y;
+                                const d2 = dx * dx + dy * dy;
+                                if (d2 > 1e-3 && d2 < 140 * 140) {
+                                    const inv = 1 / Math.sqrt(d2);
+                                    rx += dx * inv; ry += dy * inv;
+                                }
+                            }
+                        }
+                    }
+                    const hasRepel = rx * rx + ry * ry > 0.04;
+                    const baseAng = (m.panicAng !== undefined && m.stuckT > 0.20)
                         ? m.panicAng + Math.PI * (0.65 + Math.random() * 0.7)
-                        : Math.random() * Math.PI * 2;
-                    m.panicTurnT = 0.65 + Math.random() * 0.65;
+                        : (hasRepel ? Math.atan2(ry, rx) + (Math.random() - 0.5) * 2.1 : Math.random() * Math.PI * 2);
+                    m.panicAng = baseAng;
+                    m.panicTurnT = 0.45 + Math.random() * 0.55;
                     m.stuckT = 0;
                 } else {
                     m.panicTurnT -= dt;
+                    m.panicAng += Math.sin(this.battleSec * 6.5 + m.zid * 1.73) * 1.8 * dt;
                 }
                 const ux = Math.cos(m.panicAng);
                 const uy = Math.sin(m.panicAng);
