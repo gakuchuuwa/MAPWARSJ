@@ -138,7 +138,7 @@ const SKILL_SHIELD_SEC = 10;        // 【胜】持续（10秒：释放瞬间回
 const SKILL_SHIELD_TAKEN = 0;       // 【胜】受伤倍率（0＝无敌）
 const SKILL_PANIC_SEC = 15;         // 【混】乱敌阵持续（15秒，2026-10-31 主人令改 15 秒）
 const SKILL_PANIC_TAKEN = 2.5;      // 【混】混乱中受伤倍率（2026-11-03 主人定）
-const SKILL_PANIC_MOVE = 0.25;      // 【混】混乱中移速倍率（原地慢速乱转，防跑出近战圈带着我方来回跑）
+const SKILL_PANIC_MOVE = 0.85;      // 【混】混乱中移速倍率（保持四散乱跑的混乱感，同时略慢于追兵）
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
 //   六计**没有克制**：这只是 AI 武将的放计顺序，回应的计不加任何效果，界面也不写「拆招 / 破」。
@@ -7796,13 +7796,21 @@ export class Scene13WarLayer {
             const stats = wt;
             // 地形细分减速（水域减20% ×0.8、树林减30% ×0.7、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
             const spdK = this.terrainSpeedAt(m.x, m.y) * (this.unitHasFrenzy(m) ? SKILL_FRENZY_MOVE : 1.0) * (m.hero ? HERO_SPEED_MULT : 1);
-            // 【混】乱阵：处于混乱期的敌军胡乱走动 15 秒（每隔 0.85~1.6 秒或受阻时随机换向，期间停止攻击，受一切伤害 ×2）；
-            //    守城站岗的兵原地发愣、不还手、不离岗
+            // 【混】乱阵：处于混乱期的敌军胡乱走动 15 秒并持续掉血（期间停止攻击，受一切伤害 ×2.5）；
+            //    守城站岗的兵原地发愣、不还手、不离岗，同样持续掉血
             if (this.unitHasPanic(m)) {
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
                 m.lock = 0;
+                const bleedRate = 0.032 + ((m.zid * 7) % 11) * 0.005;   // 每秒掉 3.2%~8.2% 最大生命（15 秒内陆续阵亡约四成在场兵 ≈ 总兵力 10%，其余重伤）
+                m.hp -= stats.hp * bleedRate * dt * this.shieldTakenMul(m);
+                if (m.hp <= 0) {
+                    m.hp = 0;
+                    (m as WarMan & { forceCorpse?: boolean }).forceCorpse = true;
+                    this.onManKilled(m, null);
+                    continue;
+                }
                 if (isGuard) {
                     m.tx = m.x; m.ty = m.y;
                     if (m.fadeT > 0) m.fadeT -= dt;
@@ -7813,7 +7821,7 @@ export class Scene13WarLayer {
                     m.panicAng = (m.panicAng !== undefined && m.stuckT > 0.25)
                         ? m.panicAng + Math.PI * (0.65 + Math.random() * 0.7)
                         : Math.random() * Math.PI * 2;
-                    m.panicTurnT = 0.35 + Math.random() * 0.30;
+                    m.panicTurnT = 0.65 + Math.random() * 0.65;
                     m.stuckT = 0;
                 } else {
                     m.panicTurnT -= dt;
@@ -7827,8 +7835,8 @@ export class Scene13WarLayer {
                     m.y += uy * step;
                     m.walked = true;   // 朝向由 step 末尾按实际位移定（DE 口径）
                 }
-                m.tx = m.x + ux * 20;
-                m.ty = m.y + uy * 20;
+                m.tx = m.x + ux * 60;
+                m.ty = m.y + uy * 60;
                 if (m.fadeT > 0) m.fadeT -= dt;
                 m.ph += dt * (m.idlePose ? (8 / LOOP_WINDOW_IDLE_SEC) : 8);
                 continue;
@@ -7902,9 +7910,14 @@ export class Scene13WarLayer {
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > (REACH + 18) ** 2) ? this.blockedWall(m) : null;
             const wallStuck = !!wallStuckBw && wallStuckBw.f !== m.f;
             // 🔴 [2026-10-30 主人定「先把当前目标打掉，再去下一个目标」] 锁住目标就打到底，去掉中途因分队偏差/身后入城者强制打断换人的旧分支
+            //    例外：当目标处于【混】乱跑状态且跑出近战挥刀范围时，就近改砍身边的混乱敌兵，不再死追同一个人满场来回跑
+            const panicFoeRan = m.next <= 0 && stats.rng <= 65 && m.foe && !('sprite' in m.foe)
+                && this.unitHasPanic(m.foe)
+                && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > (REACH + 24) ** 2;
             const keep = this.canKeepTarget(m, SIGHT)
                 && !(m.siegeW && m.foe && !('sprite' in m.foe) && m.next <= 0)
-                && !wallStuck;
+                && !wallStuck
+                && !panicFoeRan;
             // 被墙顶住时也不回头锁墙后放箭的人（否则又锁回墙后目标、继续贴墙干顶）
             const hb = (m.siegeW && this.battleType === 'siege') || wallStuck ? null : this.recentAttacker(m, SIGHT);   // 🔴 [2026-10-12] 攻城武器不回头打人，只认城门/箭塔/中心建筑
             const reactWhileChasing = keep && previousTarget && hb
@@ -8101,7 +8114,9 @@ export class Scene13WarLayer {
                 //    刚被推出攻击距离、但还没退出 1.2 倍的兵，既不追也不打，**站住保持原姿势**，
                 //    等真的被拉开了才转身去追。伤害一分不多给（迟滞带里本来就够不着，不结算）。
                 const engaged = m.st !== 0;                       // m.st 此刻仍是上一帧的值
-                const inReach = fd2 < REACH * REACH || touchingFoeBld;   // 严格：出手/扣血用这个（贴住宽体城门/建筑碰撞框同样算够着）
+                const panicExtraReach = (stats.rng <= 65 && !('sprite' in foe) && this.unitHasPanic(foe)) ? 24 : 0;
+                const effReach = REACH + panicExtraReach;
+                const inReach = fd2 < effReach * effReach || touchingFoeBld;   // 严格：出手/扣血用这个（贴住宽体城门/建筑碰撞框同样算够着）
                 // 🔴 [2026-08-17 再修] 迟滞带宽度取「20% 射程」与「25px」的**较小值**。
                 //    原来只按比例算，远程兵会宽得离谱：射程 400 的火焰弓，400~480px 之间
                 //    既不放箭也不挪窝 —— 主人反馈「离敌军很近还在待命」就有这一份。

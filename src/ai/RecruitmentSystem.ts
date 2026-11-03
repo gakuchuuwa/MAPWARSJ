@@ -525,15 +525,23 @@ export class RecruitmentSystem {
         let candidates: SpawnCandidate[];
 
         if (visibleLegionCount < 2) {
-            // 同屏不足 2 支 → 优先在屏内挑选兵多的敌对据点刷兵；屏内无合格据点才回落全图
-            const followedFactionId = this.getFollowedFactionId();
+            // 同屏不足 2 支 → 优先在屏内挑选兵多的敌对据点刷兵；打不过跟随军团则留在城里等待攒兵
+            const followed = this.legionManager.getFollowedLegion();
+            const followedFactionId = followed?.getFactionId?.() ?? null;
+            const followedTroops = followed && !followed.isDestroyed ? followed.getTroops() : 0;
             const allCandidates = this.collectSpawnCandidates(cities);
-            const viewportCandidates = allCandidates.filter(
+            const viewportEnemyCandidates = allCandidates.filter(
                 (c) => c.inViewport && (!followedFactionId || c.city.factionId !== followedFactionId)
             );
-            candidates = viewportCandidates.length > 0
-                ? viewportCandidates
-                : this.buildSpawnPlan(cities);
+            if (viewportEnemyCandidates.length > 0) {
+                candidates = followedTroops > 0
+                    ? viewportEnemyCandidates.filter(
+                        (c) => c.armySize * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO >= followedTroops
+                    )
+                    : viewportEnemyCandidates;
+            } else {
+                candidates = this.buildSpawnPlan(cities);
+            }
         } else {
             // 全图谁兵多谁组建军团
             candidates = this.buildSpawnPlan(cities);
@@ -542,7 +550,7 @@ export class RecruitmentSystem {
 
         let spawnedThisSeason = 0;
 
-        for (const { city, armySize } of candidates) {
+        for (const { city, armySize, inViewport } of candidates) {
             if (spawnedThisSeason >= perSeasonCap) break;
             if (this.legionManager.getActiveLegionCount() >= maxLegions) {
                 break;
@@ -550,6 +558,9 @@ export class RecruitmentSystem {
 
             const newLegion = this.spawnCandidate(city, armySize);
             if (!newLegion) continue;
+            if (inViewport && visibleLegionCount < 2) {
+                (newLegion as { spawnedInViewport?: boolean }).spawnedInViewport = true;
+            }
 
             spawnedThisSeason++;
             const n = this.legionManager.getActiveLegionCount();

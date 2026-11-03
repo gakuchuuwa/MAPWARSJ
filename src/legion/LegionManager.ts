@@ -642,6 +642,11 @@ export class LegionManager {
         return this.siegeManager?.hasActiveSiegeAt?.(cityId) ?? false;
     }
 
+    /** 若该军团正参与某座城的攻城战，返回该城 id；否则返回 null */
+    public getActiveSiegeCityIdForArmy(army: Army): string | null {
+        return this.siegeManager?.getActiveSiegeCityIdForArmy?.(army) ?? null;
+    }
+
     /** 残兵撤回本城：本城守城战进行中则作为守方加入，成功返回 true */
     public tryJoinCityDefense(army: Army, cityId: string): boolean {
         return this.siegeManager?.tryJoinCityDefense?.(army, cityId) ?? false;

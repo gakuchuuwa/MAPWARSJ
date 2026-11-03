@@ -154,11 +154,24 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
     }
     const myPos = ctx.army.getPosition();
     const ePos = enemy.getPosition();
-    if (getEuclideanDistance(myPos, ePos) > abandonR) {
+    const isFollowedTarget = enemy === ctx.legionManager?.getFollowedLegion?.();
+    if (!isFollowedTarget && getEuclideanDistance(myPos, ePos) > abandonR) {
         markTargetCooldown(ctx, `army:${huntId}`, 'hunt_out_of_range');
         clearHuntTarget(ctx);
         ctx.army.stopMovement?.(false);
         return null;
+    }
+
+    // 若追击对象正在攻打某座非己方城池，直接转为攻打该城（走第三方攻城排队坐收渔翁之利）
+    const siegeCityId = ctx.legionManager?.getActiveSiegeCityIdForArmy?.(enemy);
+    if (siegeCityId) {
+        const siegeCity = ctx.cityManager.getCity(siegeCityId);
+        if (siegeCity && siegeCity.factionId !== ctx.army.getFactionId()) {
+            setStrategicTarget(ctx, siegeCity.id, { lat: siegeCity.latitude, lng: siegeCity.longitude });
+            clearHuntTarget(ctx);
+            ctx.army.stopMovement?.(false);
+            return null;
+        }
     }
 
     // 对方交战中 → 打不起来，只能等残局。计时防止永久趴窝：
@@ -231,6 +244,31 @@ function pickNearbyEnemyLegion(
     const myPos = ctx.army.getPosition();
     const myFaction = ctx.army.getFactionId();
     const myTroops = Math.max(1, ctx.army.getTroops());
+
+    // 同屏优先锁定跟随军团（同屏保底刷出、或选新目标时与跟随军团同屏）
+    if (!corridorTarget) {
+        const followed = ctx.legionManager?.getFollowedLegion?.();
+        if (
+            followed &&
+            followed !== ctx.army &&
+            !followed.isDestroyed &&
+            followed.getTroops() > 0 &&
+            followed.getFactionId() !== myFaction &&
+            !excludeTargetIds.has(`army:${followed.id}`) &&
+            followed.getTroops() <= myTroops * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO
+        ) {
+            const spawnedInVp = !!(ctx.army as { spawnedInViewport?: boolean }).spawnedInViewport;
+            const bounds = typeof window !== 'undefined'
+                ? (window as any).game?.map?.getLeafletMap?.()?.getBounds?.()
+                : null;
+            const fPos = followed.getPosition();
+            const bothInVp = !!bounds && bounds.contains([myPos.lat, myPos.lng]) && bounds.contains([fPos.lat, fPos.lng]);
+            if (spawnedInVp || bothInVp) {
+                return followed;
+            }
+        }
+    }
+
     const registry = ctx.legionManager?.getSpatialRegistry?.();
     if (!registry?.getArmiesInRadius) return null;
 
@@ -503,6 +541,10 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
 
     // 关键：已锁定据点时 EnsureTarget 不会再进 FindTarget，同屏新刷敌军团会被无视。
     // 非收复的攻城途中，若寻敌半径内出现可打敌军团 → 挂起城目标并立刻改追（城 id 保留，勿 stopMovement 空窗卡死）。
+    // 目标城正处于攻城战中（前去坐收渔翁之利）→ 保持向该城进军，不被途中其他野战目标拉走
+    if (ctx.legionManager.isCityBeingSieged(city.id)) {
+        return true;
+    }
     const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx), city);
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();
@@ -644,7 +686,22 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     //    注意：这是优先级不是频率 —— 半径 0.8°(≈89km) 内多数时候没有敌军团，
     //    实机约 90% 的战斗是攻城战（见 AGENTS.md「战斗构成：90% 是攻城战」）。
     const nearbyEnemy = pickNearbyEnemyLegion(ctx, excludeTargetIds);
+    (ctx.army as { spawnedInViewport?: boolean }).spawnedInViewport = false;
     if (nearbyEnemy) {
+        const siegeCityId = ctx.legionManager?.getActiveSiegeCityIdForArmy?.(nearbyEnemy);
+        const siegeCity = siegeCityId ? ctx.cityManager.getCity(siegeCityId) : undefined;
+        if (siegeCity && siegeCity.factionId !== myFaction && siegeCity.id !== lastDrawCityId && !excludeTargetIds.has(siegeCity.id)) {
+            setStrategicTarget(ctx, siegeCity.id, { lat: siegeCity.latitude, lng: siegeCity.longitude });
+            clearHuntTarget(ctx);
+            ctx.army.setTargetCity(null);
+            ctx.army.stopMovement?.();
+            btLog(
+                ctx,
+                `opportunistic:${siegeCity.id}`,
+                `[AI] ${ctx.army.name} 趁【${nearbyEnemy.name}】攻打【${siegeCity.name}】，前往坐收渔翁之利`
+            );
+            return BTStatus.SUCCESS;
+        }
         const ePos = nearbyEnemy.getPosition();
         // 🔴 [2026-10-30 主人令「打赢接着打」] 无城目标时起的追击，把对方老家挂起为城目标：
         //    追击路线本就通往对方所在那一带，观众看到的是「去打 A 城」；

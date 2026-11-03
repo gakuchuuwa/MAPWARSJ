@@ -114,7 +114,7 @@ const SIX_ICON_URLS: Record<TacticalSixSet, string> = {
     shengzhan: '/SUCAI_FX/SIX_ICONS/shengzhan.png?v=six_hd1024',
     dizhan: '/SUCAI_FX/SIX_ICONS/dizhan.png?v=six_hd1024',
     hunzhan: '/SUCAI_FX/SIX_ICONS/hunzhan.png?v=six_hd1024',
-    bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=six_hd1024',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/bingzhan.png?v=six_hd1024_ge',
     baizhan: '/SUCAI_FX/SIX_ICONS/baizhan.png?v=six_hd1024',
 };
 
@@ -128,7 +128,7 @@ const SIX_SMALL_ICON_URLS: Record<TacticalSixSet, string> = {
     shengzhan: '/SUCAI_FX/SIX_ICONS/small/shengzhan.png?v=small12',
     dizhan: '/SUCAI_FX/SIX_ICONS/small/dizhan.png?v=small12',
     hunzhan: '/SUCAI_FX/SIX_ICONS/small/hunzhan.png?v=small12',
-    bingzhan: '/SUCAI_FX/SIX_ICONS/small/bingzhan.png?v=small12',
+    bingzhan: '/SUCAI_FX/SIX_ICONS/small/bingzhan.png?v=small13_ge',
     baizhan: '/SUCAI_FX/SIX_ICONS/small/baizhan.png?v=small12',
 };
 
