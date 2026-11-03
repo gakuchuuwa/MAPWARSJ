@@ -1636,7 +1636,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     mulabite: [
         // 阿布·贝克尔·本·奥马尔（Abu Bakr ibn Umar，约1020—1087）：穆拉比特王朝埃米尔，统率撒哈拉南路大军经塔加扎盐道南征加纳帝国（按史：《Rawd al-Qirtas》；四闸缺具名名将对阵 → 普将）
-        { generalId: 'mulabite_abubakr', factionId: 'mulabite', cityId: 'city_taghaza', generalName: '阿布贝克尔', portrait: '', legionName: '城堡时代摩尔军团', eliteName: '柏柏尔骑手', eliteTier: 4 },
+        { generalId: 'mulabite_abubakr', factionId: 'mulabite', cityId: 'city_taghaza', generalName: '阿布贝克尔', portrait: '/assets/BERBER/mulabite_abubakr.png', legionName: '城堡时代摩尔军团', eliteName: '柏柏尔骑手', eliteTier: 4 },
 
 
 
@@ -2979,7 +2979,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     putaoya: [
         // 安东尼奥·拉波索·塔瓦雷斯（António Raposo Tavares，1598—1658）：葡萄牙圣保罗旗队（Bandeirantes）统帅，1628年自圣保罗率军远征伊瓜苏/瓜伊拉并横穿南美内陆（按史：巴西旗队史；对手无具名主帅 → 普将）
-        { generalId: 'putaoya_raposo', factionId: 'putaoya', cityId: 'city_saopaulo', generalName: '拉波索', portrait: '', legionName: '城堡时代葡萄牙王国军团', eliteName: '葡萄牙兵', eliteTier: 4 },
+        { generalId: 'putaoya_raposo', factionId: 'putaoya', cityId: 'city_saopaulo', generalName: '拉波索', portrait: '/assets/PORTUGUESE/putaoya_raposo.png', legionName: '城堡时代葡萄牙王国军团', eliteName: '葡萄牙兵', eliteTier: 4 },
         { generalId: 'putaoya_suosa', factionId: 'putaoya', cityId: 'city_aomen', generalName: '索萨', portrait: '/assets/PORTUGUESE/putaoya_suosa.png', eliteName: '澳门守备', eliteTier: 4 },   // 1554 与广东海道副使汪柏达成协议、1557 葡人入居澳门
         { generalId: 'putaoya_almeida', factionId: 'putaoya', cityId: 'city_kelunpo', generalName: '阿尔梅达', portrait: '/assets/PORTUGUESE/putaoya_almeida.png', eliteName: '锡兰守备', eliteTier: 4 },   // 洛伦索·德·阿尔梅达 1505 登陆锡兰、建商站，1518 科伦坡要塞
 
@@ -15021,7 +15021,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ayoubu: [
         // 穆阿扎姆·图兰沙（Al-Mu'azzam Turan-Shah，约1130—1180）：萨拉丁长兄，1173—1174年统军远征也门，攻取萨那与亚丁、开创阿尤布也门支系（按史：伊本·阿西尔《全史》；地方割据战 → 普将）
-        { generalId: 'ayoubu_turanshah', factionId: 'ayoubu', cityId: 'city_sanaa', generalName: '图兰沙', portrait: '', legionName: '城堡时代撒拉森军团', eliteName: '阿拉伯步兵', eliteTier: 4 },
+        { generalId: 'ayoubu_turanshah', factionId: 'ayoubu', cityId: 'city_sanaa', generalName: '图兰沙', portrait: '/assets/ORIE/ayoubu_turanshah.png', legionName: '城堡时代撒拉森军团', eliteName: '阿拉伯步兵', eliteTier: 4 },
 
 
 
@@ -15752,7 +15752,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     inca: [
         // 阿波·卡马克（Apo Camac，约1435—1495）：印加帝国南征先锋统帅，奉图帕克·印加·尤潘基之命率军穿越阿塔卡马沙漠经略智利（按史：萨米恩托《印加史》；四闸缺具名对手 → 普将）
-        { generalId: 'inca_apocamac', factionId: 'inca', cityId: 'city_atacama', generalName: '阿波卡马克', portrait: '', legionName: '城堡时代印加军团', eliteName: '印加民兵', eliteTier: 4 },
+        { generalId: 'inca_apocamac', factionId: 'inca', cityId: 'city_atacama', generalName: '阿波卡马克', portrait: '/assets/INCA/inca_apocamac.png', legionName: '城堡时代印加军团', eliteName: '印加民兵', eliteTier: 4 },
         { generalId: 'gen_atoc', factionId: 'inca', cityId: 'city_tumebamba', generalName: '阿托克', portrait: '/assets/INCA/gen_atoc.png', eliteName: '卡尼亚里军', eliteTier: 2 },
 
 
@@ -15898,9 +15898,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     xibanya: [
         // 弗朗西斯科·埃尔南德斯·德·科尔多瓦（Francisco Hernández de Córdoba，约1475—1526）：西班牙征服者，1524年率军开拓尼加拉瓜地峡、建格拉纳达与莱昂城并驻防（按史：奥维耶多《西印第安通史》；无大战役大捷 → 普将）
-        { generalId: 'xibanya_cordoba', factionId: 'xibanya', cityId: 'city_nicaragua', generalName: '科尔多瓦', portrait: '', legionName: '帝国时代西班牙方阵军团', eliteName: '西班牙民兵', eliteTier: 4 },
+        { generalId: 'xibanya_cordoba', factionId: 'xibanya', cityId: 'city_nicaragua', generalName: '科尔多瓦', portrait: '/assets/SPANISH/xibanya_cordoba.png', legionName: '帝国时代西班牙方阵军团', eliteName: '西班牙民兵', eliteTier: 4 },
         // 胡安·胡弗雷（Juan Jufré，1516—1578）：西班牙征服者、库约省总督，1562年翻越安第斯山重建并镇守门多萨城（按史：智利与库约殖民档案；无独立野战大捷 → 普将）
-        { generalId: 'xibanya_jufre', factionId: 'xibanya', cityId: 'city_mendoza', generalName: '胡弗雷', portrait: '', legionName: '帝国时代西班牙方阵军团', eliteName: '西班牙民兵', eliteTier: 4 },
+        { generalId: 'xibanya_jufre', factionId: 'xibanya', cityId: 'city_mendoza', generalName: '胡弗雷', portrait: '/assets/SPANISH/xibanya_jufre.png', legionName: '帝国时代西班牙方阵军团', eliteName: '西班牙民兵', eliteTier: 4 },
         // 🔴 [2026-10-25 主人令「有知名度高的将领先加」] 阿尔瓦公爵（1507–1582，西属尼德兰总督 1567–1573，驻布鲁塞尔）；势力 西班牙；据点 布鲁塞尔（BURGUNDIANS，西属尼德兰总督府）；名将；精锐「尼德兰枪兵」T2；立绘留空
         { generalId: 'xibanya_aerwa', factionId: 'xibanya', cityId: 'city_bulusaier', generalName: '阿尔瓦公爵', portrait: '/assets/BURGUNDIANS/xibanya_aerwa.png', eliteName: '尼德兰枪兵', eliteTier: 2 },   // 🔴 [2026-10-25] 西班牙势力指针＝三级海外军团（西班牙征服），欧洲本土须手写二级军团长：布鲁塞尔＝BURGUNDIANS×帝国
 

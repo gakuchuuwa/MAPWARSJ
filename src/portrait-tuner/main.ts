@@ -693,6 +693,7 @@ function bindEvents(): void {
                 }
             }
             selectedFolder = nextFolder;
+            try { localStorage.setItem('pt_selected_folder', selectedFolder); } catch { /* ignore */ }
             const cat = portraitCatalog.find((c) => c.folder === selectedFolder);
             selectedImage = cat?.images[0]?.path ?? '';
             loadDraftForSelected();
@@ -700,11 +701,18 @@ function bindEvents(): void {
         });
     });
 
-    els.search.addEventListener('input', () => renderGrid());
+    els.search.addEventListener('input', () => {
+        try { localStorage.setItem('pt_file_search', els.search.value); } catch { /* ignore */ }
+        renderGrid();
+    });
 
-    els.genSearch.addEventListener('input', () => renderGeneralOptions());
+    els.genSearch.addEventListener('input', () => {
+        try { localStorage.setItem('pt_gen_search', els.genSearch.value); } catch { /* ignore */ }
+        renderGeneralOptions();
+    });
     els.genSelect.addEventListener('change', () => {
         selectedGeneralId = els.genSelect.value;
+        try { localStorage.setItem('pt_selected_general_id', selectedGeneralId); } catch { /* ignore */ }
         updateBindPanel();
     });
     els.bindBtn.addEventListener('click', () => { void bindSelectedImageToGeneral(); });
@@ -825,8 +833,12 @@ async function loadCatalogFromServer(): Promise<void> {
     portraitCatalog = await res.json();
     if (portraitCatalog.length === 0) throw new Error('未扫描到任何立绘 PNG');
 
-    selectedFolder = portraitCatalog[0].folder;
-    selectedImage = portraitCatalog[0].images[0]?.path ?? '';
+    const savedFolder = selectedFolder || (() => { try { return localStorage.getItem('pt_selected_folder') ?? ''; } catch { return ''; } })();
+    const matchedCat = portraitCatalog.find((c) => c.folder === savedFolder) ?? portraitCatalog[0];
+    selectedFolder = matchedCat.folder;
+    if (!matchedCat.images.some((img) => img.path === selectedImage)) {
+        selectedImage = matchedCat.images[0]?.path ?? '';
+    }
 }
 
 async function loadAdjustFromServer(): Promise<void> {
@@ -937,6 +949,7 @@ function renderGeneralOptions(): void {
     } else {
         selectedGeneralId = '';
     }
+    try { localStorage.setItem('pt_selected_general_id', selectedGeneralId); } catch { /* ignore */ }
     updateBindPanel();
 }
 
@@ -1105,6 +1118,11 @@ async function reportOrphanAdjustKeys(): Promise<void> {
 }
 
 async function boot(): Promise<void> {
+    try {
+        els.genSearch.value = localStorage.getItem('pt_gen_search') ?? '';
+        selectedGeneralId = localStorage.getItem('pt_selected_general_id') ?? '';
+        els.search.value = localStorage.getItem('pt_file_search') ?? '';
+    } catch { /* ignore */ }
     bindEvents();
 
     await loadCatalogFromServer();

@@ -10436,6 +10436,46 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 45,
             "offsetY": 18
+        },
+        "/assets/BERBER/mulabite_abubakr.png": {
+            "scale": 1.21,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/INCA/inca_huayna.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": -34
+        },
+        "/assets/SPANISH/xibanya_cordoba.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/ORIE/abasi_imam.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/ORIE/图兰沙.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/ORIE/ayoubu_turanshah.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/PORTUGUESE/拉波索.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/PORTUGUESE/putaoya_raposo.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 14
         }
     },
     "folderGuides": {
