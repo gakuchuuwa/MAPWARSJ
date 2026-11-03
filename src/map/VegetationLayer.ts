@@ -12,6 +12,7 @@ import {
 } from './StrategicForestMask';
 import { loadLandUseMask } from './LandUseMask';
 import { FOREST_COVER_THRESHOLD, forestCoverAt } from '../world/environment/forestModel';
+import { envZoneAt } from '../world/environment/envZones';
 import { plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
 import { localSeasonAtLat } from '../world/environment/seasonalGround';
@@ -24,12 +25,14 @@ const SAMPLE_ZOOM = 9;
 const MIN_ZOOM = 9;
 const MAX_ZOOM = 10;
 const CITY_CLEAR_PX = 74;
-/** 战略道路穿过密林时的半幅净空（px，SAMPLE_ZOOM=9 下约 16px，形成 32px 宽的 DE 式林间驿道走廊） */
-const ROAD_CLEAR_PX = 16;
-/** 矢量河流穿过密林时的半幅河道净空（px，SAMPLE_ZOOM=9 下约 16px，让干支流把大片森林自然切开） */
-const RIVER_CLEAR_PX = 16;
-/** 矢量河流两岸护岸散树簇外扩半径（px，河道净空外侧 16~48px 在开阔平川间断生成三两棵护岸树簇） */
-const RIVER_RIPARIAN_PX = 48;
+/** 战略道路穿过森林时的半幅净空（px，SAMPLE_ZOOM=9 下 20px，全幅 40px 林间走廊） */
+const ROAD_CLEAR_PX = 20;
+/** 矢量河流穿过森林时的半幅河道净空（px，SAMPLE_ZOOM=9 下 20px，全幅 40px 河谷走廊） */
+const RIVER_CLEAR_PX = 20;
+/** 水域掩膜（宽阔大河、湖泊、水路）岸线净空半径（px，SAMPLE_ZOOM=9 下 12px 内不长树） */
+const WATER_CLEAR_PX = 12;
+/** 无森林区域在道路/河道旁检测并贴岸生成少量植被的采样半径（px，树位紧贴路边/河岸 13~19px） */
+const CORRIDOR_DETECT_PX = 34;
 const ROAD_BUCKET_PX = 64;
 /** 画布四周离屏余量（px）：平移期间直接由 mapPane GPU 硬件变换同步移动，消除每帧亚像素重采样闪烁 */
 const CANVAS_PAD_PX = 160;
@@ -1129,10 +1132,10 @@ export class VegetationLayer {
                     prevWpt = this.map.project([pLat, pLng], SAMPLE_ZOOM);
                 }
                 if (prevWpt !== null) {
-                    const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - ROAD_CLEAR_PX) / ROAD_BUCKET_PX);
-                    const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + ROAD_CLEAR_PX) / ROAD_BUCKET_PX);
-                    const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - ROAD_CLEAR_PX) / ROAD_BUCKET_PX);
-                    const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + ROAD_CLEAR_PX) / ROAD_BUCKET_PX);
+                    const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - ROAD_SPARSE_PX) / ROAD_BUCKET_PX);
+                    const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + ROAD_SPARSE_PX) / ROAD_BUCKET_PX);
+                    const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - ROAD_SPARSE_PX) / ROAD_BUCKET_PX);
+                    const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + ROAD_SPARSE_PX) / ROAD_BUCKET_PX);
                     const seg: [number, number, number, number] = [prevWpt.x, prevWpt.y, wpt.x, wpt.y];
                     for (let by = by0; by <= by1; by++) {
                         for (let bx = bx0; bx <= bx1; bx++) {
@@ -1169,9 +1172,8 @@ export class VegetationLayer {
             return best;
         };
 
-        // 🔴 [2026-11-02 主人令「矢量河流道路分开森林 + 多铺亚马孙等大片森林」]
-        //    构建视口内矢量河流中心线的世界像素空间哈希桶（SAMPLE_ZOOM），让干支流像《全面战争》一样把成片林海清晰切开，
-        //    并在河道净空带外侧（16~48px）为开阔河谷提供护岸散树簇加成。
+        // 🔴 [2026-11-02 ~ 2026-11-03 主人令「道路两边和水路两边，只有少量植被，没有森林，为了不让森林连成大片面积，加宽；没有森林的区域在道路或河道旁添加少量植被；沙漠少量或无，植被和地域对应」]
+        //    构建视口内矢量河流中心线的世界像素空间哈希桶（SAMPLE_ZOOM），加宽道路与水路两侧的疏林退让走廊，并在无林区按地域与地形点缀少量路旁/河岸植被。
         const riverBuckets = new Map<string, Array<[number, number, number, number]>>();
         for (const entry of getStrategicRiverFeatures()) {
             const [minLng, minLat, maxLng, maxLat] = entry.bbox;
@@ -1194,10 +1196,10 @@ export class VegetationLayer {
                         prevWpt = this.map.project([pLat, pLng], SAMPLE_ZOOM);
                     }
                     if (prevWpt !== null) {
-                        const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - RIVER_RIPARIAN_PX) / ROAD_BUCKET_PX);
-                        const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + RIVER_RIPARIAN_PX) / ROAD_BUCKET_PX);
-                        const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - RIVER_RIPARIAN_PX) / ROAD_BUCKET_PX);
-                        const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + RIVER_RIPARIAN_PX) / ROAD_BUCKET_PX);
+                        const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - RIVER_SPARSE_PX) / ROAD_BUCKET_PX);
+                        const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + RIVER_SPARSE_PX) / ROAD_BUCKET_PX);
+                        const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - RIVER_SPARSE_PX) / ROAD_BUCKET_PX);
+                        const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + RIVER_SPARSE_PX) / ROAD_BUCKET_PX);
                         const seg: [number, number, number, number] = [prevWpt.x, prevWpt.y, wpt.x, wpt.y];
                         for (let by = by0; by <= by1; by++) {
                             for (let bx = bx0; bx <= bx1; bx++) {
@@ -1235,6 +1237,24 @@ export class VegetationLayer {
             return best;
         };
 
+        /** SAMPLE_ZOOM=9 下指定像素半径圆周上是否触及水域掩膜（用于宽阔大河、湖泊、水路两岸净空与疏林退让） */
+        const hasWaterWithinPx = (lat: number, lng: number, radiusPx: number): boolean => {
+            const dLng = radiusPx * 0.002746582;
+            const dLat = dLng * Math.max(0.15, Math.cos(lat * Math.PI / 180));
+            const dLngD = dLng * 0.7071;
+            const dLatD = dLat * 0.7071;
+            return (
+                waterSampler.isWaterSync(lat + dLat, lng) === true ||
+                waterSampler.isWaterSync(lat - dLat, lng) === true ||
+                waterSampler.isWaterSync(lat, lng + dLng) === true ||
+                waterSampler.isWaterSync(lat, lng - dLng) === true ||
+                waterSampler.isWaterSync(lat + dLatD, lng + dLngD) === true ||
+                waterSampler.isWaterSync(lat + dLatD, lng - dLngD) === true ||
+                waterSampler.isWaterSync(lat - dLatD, lng + dLngD) === true ||
+                waterSampler.isWaterSync(lat - dLatD, lng - dLngD) === true
+            );
+        };
+
         for (let gy = yMin; gy <= yMax; gy += TREE_GRID_STEP) {
             for (let gx = xMin; gx <= xMax; gx += TREE_GRID_STEP) {
                 // 有机微抖动：打破网格机械感
@@ -1269,6 +1289,22 @@ export class VegetationLayer {
                 } else if (elev > treeLine || elev <= 0) {
                     continue;
                 }
+
+                // 道路、矢量河道与宽阔水路距离判定（加宽净空带与两侧「无森林、仅少量植被」走廊带）
+                const roadDistSq = distSqToRoad(px, py);
+                const riverDistSq = distSqToRiver(px, py);
+                const inRoadClear = roadDistSq < ROAD_CLEAR_PX * ROAD_CLEAR_PX;
+                const inWaterMaskClear = hasWaterWithinPx(ptLatLng.lat, ptLatLng.lng, WATER_CLEAR_PX);
+                const inRiverClear = riverDistSq < RIVER_CLEAR_PX * RIVER_CLEAR_PX || inWaterMaskClear;
+                if (inRoadClear || inRiverClear) continue;
+
+                const inRoadSparse = roadDistSq <= ROAD_SPARSE_PX * ROAD_SPARSE_PX;
+                const nearWaterwayBank =
+                    (elev === null || elev > 2) &&
+                    (hasWaterWithinPx(ptLatLng.lat, ptLatLng.lng, 40) ||
+                        hasWaterWithinPx(ptLatLng.lat, ptLatLng.lng, WATER_SPARSE_PX));
+                const inRiverSparse = riverDistSq <= RIVER_SPARSE_PX * RIVER_SPARSE_PX || nearWaterwayBank;
+                const inCorridorSparse = inRoadSparse || inRiverSparse;
 
                 // 检查是否处于渔猎民族据点周围 0.36°（约 40km）林带内，或干旱区绿洲重镇周围 0.10°~0.28° 绿洲林带内
                 let huntingCityBoost = 0;
@@ -1307,45 +1343,6 @@ export class VegetationLayer {
                     oasisCityBoost,
                 );
 
-                // 🔴 [2026-11-01 ~ 2026-11-02 主人令「平原河流与山麓过渡带进行适度精细化优化」]
-                //    内陆平原大河护岸林带：在温带/亚热带/热带农耕大平原（即便周围农田因开垦使 forestCover < 0.40），
-                //    紧贴河道两岸（邻格 0.022°≈2.4km 有水或邻近矢量河流中心线 16~52px 且海拔 > 3m 非海岸）按噪声场间断保留河岸护岸散树丛。
-                let riparianBoost = 0;
-                if (
-                    (elev === null || (elev > 3 && elev < treeLine)) &&
-                    forestBiome !== 13 &&
-                    !NON_VEGETATION_TILES.has(tile) &&
-                    noiseVal >= 0.44
-                ) {
-                    const R_STEP = 0.022;
-                    const riverDistSq = distSqToRiver(px, py);
-                    const nearVectorRiverBank =
-                        riverDistSq >= RIVER_CLEAR_PX * RIVER_CLEAR_PX &&
-                        riverDistSq <= (RIVER_RIPARIAN_PX + 4) * (RIVER_RIPARIAN_PX + 4);
-                    const nearRiver =
-                        nearVectorRiverBank ||
-                        waterSampler.isWaterSync(ptLatLng.lat + R_STEP, ptLatLng.lng) === true ||
-                        waterSampler.isWaterSync(ptLatLng.lat - R_STEP, ptLatLng.lng) === true ||
-                        waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng + R_STEP) === true ||
-                        waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng - R_STEP) === true;
-                    if (nearRiver) {
-                        riparianBoost = 0.16 + 0.18 * ((noiseVal - 0.44) / 0.56);
-                    }
-                }
-
-                if (specialEco.weight <= 0 && riparianBoost <= 0) {
-                    if (NON_VEGETATION_TILES.has(tile)) continue;
-                    if (forestBiome === 13) continue; // 荒漠生态群系坚决不长树
-                    // elev 可能为 null（上面「低地先放行」那条分支），按低地兜底取值，与该分支意图一致
-                    if (huntingCityBoost <= 0 && !isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
-                }
-
-                let treeTile = specialEco.weight > 0 ? specialEco.effectiveTile : tile;
-                if (riparianBoost > 0 && specialEco.weight <= 0 && (ptLatLng.lat >= 20 && ptLatLng.lat <= 35 && ptLatLng.lng >= 68 && ptLatLng.lng <= 95)) {
-                    // 南亚河流河岸散树
-                    treeTile = ptLatLng.lng < 78 ? 'gr2' : 'gr3';
-                }
-
                 const naturalForestWeight = forestClusterWeight(
                     forestBiome,
                     tile,
@@ -1354,26 +1351,82 @@ export class VegetationLayer {
                     forestCoverAt(ptLatLng.lat, ptLatLng.lng, gameYear, elev),
                     elev,
                 );
-                const clusterWeight = Math.max(
-                    huntingCityBoost,
-                    specialEco.weight,
-                    riparianBoost,
-                    naturalForestWeight,
-                );
+
+                // 🔴 [2026-11-03 主人令]
+                //    1. 森林区内的道路两边和水路两边：加宽退让带（ROAD_SPARSE_PX=76、RIVER_SPARSE_PX=82、WATER_SPARSE_PX=68），
+                //       带内绝不生成成片森林，只留少量单株植被（约 18%~22% 格点保留 1 棵），把大片森林清晰切开；
+                //    2. 没有森林的区域：在道路或河道旁边添加少量植被（单株散生，与地域植物对应）；
+                //    3. 因地形设计，沙漠少量或者无：流沙/盐壳/冰雪绝对无（0），沙质荒漠道路旁无（0）、河道旁少量（约 14%），半干旱戈壁路旁极少量（约 8%）。
+                const envZone = envZoneAt(ptLatLng.lat, ptLatLng.lng);
+                const isBareUnvegetated =
+                    tile === 'qs' || tile === 'pal1' || tile === 'sno' || tile === 'sn2' ||
+                    tile === 'snd' || tile === 'ice' || tile === 'ic3' || tile === 'rck' || tile === 'gravel_default';
+                const isHardDesert = tile === 'pal' || tile === 'des' || forestBiome === 13;
+                const isSemiDesert = !isHardDesert && (tile === 'ds5' || envZone === 'HDS' || envZone === 'CAD');
+
+                let corridorBoost = 0;
+                const hasForestHere = naturalForestWeight >= 0.18 || specialEco.weight >= 0.18 || huntingCityBoost >= 0.18;
+                if (inCorridorSparse && !isBareUnvegetated && (elev === null || (elev > 2 && elev < treeLine))) {
+                    if (hasForestHere) {
+                        // 林区内的道路与水路两侧：禁止成林，仅保留约 18%~22% 格点的单株植被，彻底断开连片森林
+                        const forestCorridorKeep = inRiverSparse ? 0.22 : 0.18;
+                        if (hash(gx, gy, 83) >= forestCorridorKeep) continue;
+                        corridorBoost = 0.34;
+                    } else {
+                        // 无森林区域的道路旁或河道旁：按地形（沙漠少量或无）添加少量地域对应植被
+                        let nonForestKeep = 0;
+                        if (isHardDesert) {
+                            // 沙漠腹地/荒漠：道路旁无（0），河道/水路旁少量（14%）
+                            nonForestKeep = inRiverSparse ? 0.14 : 0;
+                        } else if (isSemiDesert) {
+                            // 半干旱戈壁/冷荒漠边缘：道路旁极少量（8%），河道旁少量（18%）
+                            nonForestKeep = inRiverSparse ? 0.18 : 0.08;
+                        } else {
+                            // 温带/亚热带/热带无林平原、农耕区与草原：道路旁 22%、河道旁 28% 点缀少量单株植被
+                            nonForestKeep = inRiverSparse ? 0.28 : 0.22;
+                        }
+                        if (nonForestKeep > 0 && hash(gx, gy, 84) < nonForestKeep) {
+                            corridorBoost = 0.34;
+                        }
+                    }
+                }
+
+                if (specialEco.weight <= 0 && corridorBoost <= 0) {
+                    if (NON_VEGETATION_TILES.has(tile)) continue;
+                    if (forestBiome === 13) continue; // 荒漠生态群系坚决不长树
+                    // elev 可能为 null（上面「低地先放行」那条分支），按低地兜底取值，与该分支意图一致
+                    if (huntingCityBoost <= 0 && !isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
+                }
+
+                let treeTile = specialEco.weight > 0 ? specialEco.effectiveTile : tile;
+                if (corridorBoost > 0 && specialEco.weight <= 0 && (ptLatLng.lat >= 20 && ptLatLng.lat <= 35 && ptLatLng.lng >= 68 && ptLatLng.lng <= 95)) {
+                    // 南亚河道/道路旁散树
+                    treeTile = ptLatLng.lng < 78 ? 'gr2' : 'gr3';
+                }
+
+                const clusterWeight = inCorridorSparse
+                    ? corridorBoost
+                    : Math.max(
+                        huntingCityBoost,
+                        specialEco.weight,
+                        naturalForestWeight,
+                    );
                 // 🔴 [2026-10-21 ~ 2026-11-01 主人令「密林连冠成海 + 疏林/绿洲保持成簇 + 战略道路自动留出林间走廊，分布摆放学习 DE」]
                 if (clusterWeight < 0.18) continue;
-                if (clusterWeight < 0.32 && hash(gx, gy, 46) > (clusterWeight - 0.18) / 0.14) continue;   // 林缘软过渡
-                if (clusterWeight >= 0.32 && clusterWeight < 0.44 && hash(gx, gy, 47) > 0.85) continue;   // 林缘浅带偶有小林隙
+                if (!inCorridorSparse && clusterWeight < 0.32 && hash(gx, gy, 46) > (clusterWeight - 0.18) / 0.14) continue;   // 林缘软过渡
+                if (!inCorridorSparse && clusterWeight >= 0.32 && clusterWeight < 0.44 && hash(gx, gy, 47) > 0.85) continue;   // 林缘浅带偶有小林隙
 
-                // 区分「郁闭密林」与「稀树草原/绿洲/河岸疏林/山麓林缘」
+                // 区分「郁闭密林」与「稀树草原/绿洲/道路水路两侧疏植/山麓林缘」：道路与水路两侧一律禁止密林，只放单株（count = 1）
                 const isSparseEco =
-                    (specialEco.weight > 0 && naturalForestWeight < 0.34 && (treeTile === 'sv1' || treeTile === 'sv2' || treeTile === 'du1' || treeTile === 'des' || treeTile === 'gr2' || treeTile === 'gr3')) ||
-                    (riparianBoost > 0 && naturalForestWeight < 0.28 && huntingCityBoost < 0.28);
+                    inCorridorSparse ||
+                    (specialEco.weight > 0 && naturalForestWeight < 0.34 && (treeTile === 'sv1' || treeTile === 'sv2' || treeTile === 'du1' || treeTile === 'des' || treeTile === 'gr2' || treeTile === 'gr3'));
                 const isDenseCanopy = !isSparseEco && clusterWeight >= 0.36;
 
-                const count = isDenseCanopy
-                    ? (clusterWeight >= 0.56 ? 3 : 2)
-                    : (clusterWeight >= 0.28 ? 2 : 1);
+                const count = inCorridorSparse
+                    ? 1
+                    : isDenseCanopy
+                        ? (clusterWeight >= 0.56 ? 3 : 2)
+                        : (clusterWeight >= 0.28 ? 2 : 1);
 
                 // DE 同团树种内聚：2×2 格共享主树种抽签（使竹林成片、松林成带、桦林成林），伴生树 25% 概率混入本区次要树种
                 const clumpCellX = Math.floor(gx / (TREE_GRID_STEP * 2));
@@ -1409,11 +1462,17 @@ export class VegetationLayer {
                     const curLatLng = this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
 
                     // 🔴 [2026-11-02 修「有的树进海了」]
-                    //    1. 单株树偏移后重新校验落点水体与海洋：严禁密林子树抖动或象限抽样甩进海水/湖泊
+                    //    1. 单株树偏移后重新校验落点水体、水道岸线净空与海洋：严禁密林子树抖动或象限抽样甩进海水/湖泊/河道
                     //    2. 校验树根接地处（curPx, curPy）的海拔，<= 0m 直接剔除
                     //    3. 岸线安全边距检测（低海拔/近海区 8px 退让）：杜绝岸边悬崖林木半身探入海湾
                     const curWater = waterSampler.isWaterSync(curLatLng.lat, curLatLng.lng);
-                    if (curWater === true || LandSeaSystem.isSeaAt(curLatLng)) continue;
+                    if (
+                        curWater === true ||
+                        LandSeaSystem.isSeaAt(curLatLng) ||
+                        hasWaterWithinPx(curLatLng.lat, curLatLng.lng, WATER_CLEAR_PX)
+                    ) {
+                        continue;
+                    }
 
                     const curElev = LandSeaSystem.getElevationAtMapPixel(
                         curPx, curPy, SAMPLE_ZOOM, curLatLng.lat, curLatLng.lng,
@@ -1436,9 +1495,9 @@ export class VegetationLayer {
                         }
                     }
 
-                    // 🔴 2026-10-31 ~ 2026-11-01 主人令「植被符合区域，战略和战术保持一致」「按真实的地理，历史模拟」：
-                    //    树种从植物总表本区主树种按权重取，四季物候（温带落叶阔叶冬枯/覆雪、常绿与针叶冬青/披雪、荒漠枯木）
-                    //    完全由与战术共用的 seasonalDeTree(base, s, isSnow) 统一决定，不再在战略层把枯树/冬枝强行改成灌木或松树。
+                    // 🔴 2026-10-31 ~ 2026-11-03 主人令「植被符合区域，战略和战术保持一致」「因地形设计，沙漠少量或者无。植被要和地域对应」：
+                    //    树种从植物总表本区主树种按权重取；沙漠/戈壁/干旱区与低地河道旁严守地域地形对应（不落高山云杉/松树），
+                    //    四季物候完全由与战术共用的 seasonalDeTree(base, s, isSnow) 统一决定。
                     const isPermSnowTile = tile === 'sno' || tile === 'sn2' || tile === 'snf' || tile === 'snd' || tile === 'ic3' || tile === 'ice';
                     const wf = queryWinterSnow(curLatLng.lat, curLatLng.lng);
                     const isAlpineWinterSnow = elev !== null && Math.abs(curLatLng.lat) >= 26 && elev >= treeLine - 350;
@@ -1448,10 +1507,31 @@ export class VegetationLayer {
                     const speciesRoll = (i === 0 || hash(gx, gy, i * 29 + 61) < 0.75)
                         ? clumpRoll
                         : hash(gx, gy, i * 13 + 71);
+                    let baseSpecies = plantTreeAt(curLatLng.lat, curLatLng.lng, speciesRoll);
+                    if ((isHardDesert || isSemiDesert) && (elev === null || elev < 1350)) {
+                        // 沙漠/戈壁/低地荒漠护栏：剔除高山云杉/松/温带乔木，严格对应各荒漠区的绿洲/旱生树种
+                        if (envZone === 'HDS') {
+                            baseSpecies = inRiverSparse ? (speciesRoll < 0.70 ? 'PALM' : 'ACACIA') : (speciesRoll < 0.55 ? 'ACACIA' : 'BUSH_TREE_A');
+                        } else if (envZone === 'CAD') {
+                            baseSpecies = inRiverSparse ? (speciesRoll < 0.65 ? 'WILLOW' : 'BUSH_TREE_A') : 'BUSH_TREE_A';
+                        } else if (envZone === 'AFR' || envZone === 'AUS') {
+                            baseSpecies = 'ACACIA';
+                        } else if (baseSpecies === 'PINE' || baseSpecies === 'SPRUCE' || baseSpecies === 'ASIAN_PINE' || baseSpecies === 'OAK' || baseSpecies === 'BIRCH_GREEN') {
+                            baseSpecies = inRiverSparse ? 'WILLOW' : 'BUSH_TREE_A';
+                        }
+                    } else if (
+                        inRiverSparse &&
+                        (elev === null || elev < 650) &&
+                        (envZone === 'NCP' || envZone === 'LOE' || envZone === 'EAS' || envZone === 'STP' || envZone === 'WEU' || envZone === 'CEU') &&
+                        hash(gx, gy, 85) < 0.35
+                    ) {
+                        // 温带/亚热带低地水路与河道旁适度混入本区原生垂柳（WILLOW），呈现自然河岸风貌
+                        baseSpecies = 'WILLOW';
+                    }
                     const resolveStrategicTreeForSeason = (s: TreeSeason): string => {
                         const localS = localSeasonAtLat(s, curLatLng.lat);
                         const isSnow = isPermSnowTile || (localS === 3 && hasWinterSnowGround);
-                        return seasonalDeTree(plantTreeAt(curLatLng.lat, curLatLng.lng, speciesRoll), localS, isSnow);
+                        return seasonalDeTree(baseSpecies, localS, isSnow);
                     };
                     const asset = resolveStrategicTreeForSeason(season);
                     const assetNext = resolveStrategicTreeForSeason(nextSeason);
