@@ -220,12 +220,15 @@ export function resolveWeatherPoolAt(q: {
                 { kind: 'SNOW', weight: 2 },
             ];
         }
-        // 热带/副热带干旱沙漠内海（红海、波斯湾等热荒漠环绕海域）：离岸风沙、海雾与海面风暴，无季风连绵暴雨
+        // 热带/副热带干旱内海与海峡（红海、亚丁湾、波斯湾等，zone=HDS 或 koppen=4）：
+        // 按史（《厄立特里亚海航行记》Periplus Maris Erythraei、伊本·马吉德《航海原则与规则全书》Kitab al-Fawa'id）：
+        // 红海、亚丁湾、波斯湾航海气象以季风大风/海暴（SEA_STORM，如红海北风与亚丁湾西南季风巨浪）及上升流海雾（SEA_FOG）为主，
+        // 少连绵季风豪雨，海面上不出现陆地贴地跃移飞沙的大漠沙尘暴（SANDSTORM 仅限陆地荒漠）。
         if ((zone === 'HDS' || koppen === 4) && absLat < 31) {
             return [
-                { kind: 'SANDSTORM', weight: 5 },
-                { kind: 'SEA_FOG', weight: 3 },
-                { kind: 'SEA_STORM', weight: 2 },
+                { kind: 'SEA_STORM', weight: 5 },
+                { kind: 'SEA_FOG', weight: 4 },
+                { kind: 'DRIZZLE_MIST', weight: 1 },
             ];
         }
         // 热带与副热带大洋：夏秋台风/飓风雷暴高发，冬春信风阵雨与海雾
