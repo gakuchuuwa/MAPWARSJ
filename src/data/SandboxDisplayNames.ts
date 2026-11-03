@@ -225,7 +225,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'min': '闽',
 'shatuo': '沙陀',
 'bohai': '渤海',
-'dangxiang': '大夏',
+'dangxiang': '夏',  // 🔴 [2026-11-03 主人令「按建议改」] 「大」是尊称，旗号写国号字
 'menggu_d': '蒙古',
 'manzhou_d': '清',
 'ming_d': '明',
@@ -322,7 +322,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tatar': '塔塔',
 'ongut': '汪古',
 'xushouhui': '天完',
-    'zhangshicheng': '大周',
+    'zhangshicheng': '周',  // 🔴 [2026-11-03 主人令「按建议改」] 「大」是尊称，旗号写国号字
 
     // ── 2026-05-25 明朝势力 ──
     'dengmaoqi': '铲平',
@@ -526,8 +526,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yiwu': '伊吾',
 'pulei': '蒲类',
     'duerbote': '杜尔',
-    // 🔴 [2026-11-01] 甘州回鹘（河西回鹘）：旗号「甘鹘」，2 字、不含「州/国」，与「回鹘」区分
-    'ganzhou_huihu': '甘鹘',
+    // 🔴 [2026-11-03 主人令「甘州回鹘，不许用甘鹘，太不伦不类了…如果是汉字文化就用一个字甘，如果是民族文化就用回鹘」]
+    //    首府张掖＝河西走廊文化（HEXI，同文化凉州旗号单字「凉」）＝汉字文化 → 一字「甘」（删丹为漠南文化，一势力一旗按首府）
+    'ganzhou_huihu': '甘',
     'kaerka': '喀尔',
 'huihu': '回鹘',
 'wuzhumuqin': '乌珠',
@@ -637,7 +638,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dulan_d': '杜兰',
 'xisi': '锡斯',
   huluo: '呼罗',
-'wuyue': '吴越',
+'wuyue': '吴越',
   'minyue': '闽越',
 'funan': '扶南',
   'lancang': '澜沧',
@@ -818,7 +819,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yuan_shao': '袁',
 'hou_jin': '晋',
 'hou_zhao': '赵',
-'da_yan': '大燕',
+'da_yan': '燕',  // 🔴 [2026-11-03 主人令「按建议改」] 「大」是尊称，旗号写国号字
 'hou_liang': '梁',
 'han_zhao': '汉',
 'dongjin': '晋',
@@ -837,8 +838,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'machu': '楚',
 'nanhan': '汉',
 'fangguozhen': '浙东',
-'liang_shuofang': '大梁',
-'qianliang': '前凉',
+'liang_shuofang': '梁',  // 🔴 [2026-11-03 主人令「按建议改」] 「大」是尊称，旗号写国号字
+'qianliang': '凉',  // 🔴 [2026-11-03 主人令「前凉旗号应该用凉，和其他凉用颜色区分」] 国号「凉」，与阳关、凉州同字重旗，靠势力色区分
 'liangzhou': '凉',
 'dangchang_guo': '宕昌',
 'sanada': '真田',

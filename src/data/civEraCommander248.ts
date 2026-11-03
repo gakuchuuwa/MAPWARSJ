@@ -90,7 +90,7 @@ export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
 
 /** 据点建筑风格键 → 文化名（二级 62 + 三级 5 = 67）。一级母体键（ASIA / SLAV / WEST …）不在这里。 */
 const STYLE_KEY_TO_CIV: Readonly<Record<string, string>> = {
-    JAPAN: '日本', CENTRAL: '中原', WEI: '河朔', JIANGNAN: '江南', HUGUANG: '湖广', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
+    JAPAN: '日本', CENTRAL: '中原', WEI: '河朔', JIANGNAN: '江南', HUGUANG: '湖广', BASHU: '巴蜀', HEXI: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
     GERMANIC: '条顿', FRANKS: '法兰克', BURGUNDIANS: '勃艮第', BRITONS: '不列颠', CELTS: '凯尔特', VIKINGS: '维京', GOTHS: '哥特',
     BYZANTINE: '拜占庭', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚', POLES: '波兰', BOHEMIANS: '波希米亚', MAGYAR: '马扎尔', SLAVIC: '斯拉夫', LITHUANIANS: '立陶宛', BULGARIANS: '保加利亚',
     LATIN: '意大利', ROMA: '罗马', SICILIANS: '西西里', SPANISH: '西班牙', PORTUGUESE: '葡萄牙', ORIE: '撒拉森',

@@ -11,6 +11,7 @@ import {
 } from './RebelFlagConstants';
 import { getAllFactionFlagTemplatePaths, getFactionFlagTemplatePath } from '../data/FactionTier';
 import { getFactionEmblemKey } from '../data/FactionEmblems';
+import { toFlagText } from '../data/FlagOneChar';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { appendBootPlaceholderFlagRulesByFaction, setFactionFlagStyleRule, setRebelFlagStyleRule } from './FlagStyleInjector';
 import { notifyFactionFlagReady as dispatchFactionFlagReady } from './factionFlagNotify';
@@ -1964,10 +1965,11 @@ export class CityAssetManager {
         const eraName = cityName ?? getEraFactionDisplayName(factionId);
 
         // 🔴 [2026-10-24 试水] 乱斗/剧本下，登记了纹章图案的势力不画汉字，直接贴烘焙好的 4×6 图案雪碧图；
-        //   百岁模式有「时代名旗号」覆盖（eraName != null）时仍画文字，保持原口径。
+        //   🔴 [2026-11-03 主人「所有模式的势力都一样」「照旧画势力纹章」] 百岁模式武将不在场（eraName != null）
+        //   也画势力纹章，不再改写时代名文字。
         //   表见 src/data/FactionEmblems.ts（删条目即回退汉字；生成/查缓存/军团旗共用本 spec）。
         const emblemKey = getFactionEmblemKey(factionId);
-        if (emblemKey && eraName == null) {
+        if (emblemKey) {
             const useWhiteEmblem = this.resolveFlagTextIsDark(factionId);
             return {
                 factionId,
@@ -1989,12 +1991,9 @@ export class CityAssetManager {
             textToRender = (factionName && factionName !== '未知势力') ? factionName : factionId;
         }
 
-        // 旗号仅显示前两字（AGENTS.md：旗面 1–2 汉字）
-        // 🔴 [2026-11-03 主人令「XX族旗号改为前一个字，例如傣族→傣」] 以「族」结尾的名字去掉「族」字
+        // 旗号仅显示前两字（AGENTS.md：旗面 1–2 汉字）；「X州/X国/X族/X氏…」能否缩成一字见 FlagOneChar.ts
         if (textToRender && textToRender !== 'RANDOM') {
-            const chars = Array.from(textToRender);
-            if (chars.length > 1 && chars[chars.length - 1] === '族') chars.pop();
-            textToRender = chars.slice(0, 2).join('');
+            textToRender = toFlagText(textToRender, factionId, buildingStyle);
         }
 
         // §10.2.1：浅旗黑字白边，深旗白字黑边

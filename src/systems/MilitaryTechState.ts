@@ -85,7 +85,6 @@ const TECH_CULTURE_PARENT: Record<string, TechCulture> = {
     MONGOL: 'STEPPE',
     MOBEI_MONGOL: 'STEPPE',
     YURT: 'STEPPE',
-    KHITAN: 'NORTHEAST',
     XIANBEI: 'NORTHEAST',
     NORTHEAST: 'NORTHEAST',
     CENTRAL: 'CENTRAL',
@@ -113,7 +112,7 @@ const TECH_CULTURE_PARENT: Record<string, TechCulture> = {
     // 旧区域名兼容映射
     STEPPE: 'STEPPE',
     NORTH: 'CENTRAL',
-    HEXI: 'WESTERN',
+    HEXI: 'NORTHEAST',
     WEST_ASIA: 'ORIE',
     ANDE: 'ANDE',
     GREEK: 'GREEK',
@@ -138,7 +137,7 @@ const LEGACY_TO_66_CULTURE: Record<string, TechCulture> = {
     CELTS_FEUDAL: 'CELTS',
     GREEK: 'SPARTANS',
     NORTH: 'WEI',
-    HEXI: 'KHITAN',
+    KHITAN: 'HEXI',
     TIMURID: 'CENTRAL_ASIA',
     OTTOMAN: 'TURKS',
 };

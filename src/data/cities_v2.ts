@@ -53,7 +53,7 @@ export type BuildingStyle =
     | 'YURT'
     /** [2026-09-16 主人定] 62 二级文明（有独特城堡）；建筑文化共 62 + 5 = 67 种（一级 16 母体是另一套据点分类，不作建筑文化）。
      *  重名 5 个（EAST/ORIE/PERSIAN/PURU/THRACIAN）已在上方母体里，此处不再重复。 */
-    | 'JAPAN' | 'CENTRAL' | 'WEI' | 'JIANGNAN' | 'BASHU' | 'KHITAN' | 'NORTHEAST' | 'MONGOL' | 'KOREA'
+    | 'JAPAN' | 'CENTRAL' | 'WEI' | 'JIANGNAN' | 'BASHU' | 'HEXI' | 'NORTHEAST' | 'MONGOL' | 'KOREA'
     // 🔴 [2026-09-18 主人定「每座据点都必须是一级 16 中的一种，其次必须是二级 62+3 中的一种」]
     //    补 CELTS 凯尔特：本联合类型**原先漏了它**（与 cityDeStyle.REGION_TO_DE_STYLE 漏同一项同源），
     //    于是全项目没有任何据点能写 buildingStyle='CELTS'，DE 的凯尔特城堡素材长期闲置。
@@ -477,12 +477,12 @@ buildingStyle: 'JIANGNAN', troops: 10000, mirror: true,
     { id: 'city_longxi', name: '襄武', factionId: 'han_d', lat: 35.032229, lng: 104.587097, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '推算：城居 1.5 万（襄武＝陇西郡治，同期郡城 1–2 万）→ 小城' },
 
 
-    { id: 'city_wuwei', name: '姑臧', factionId: 'qianliang', lat: 37.93, lng: 102.64, type: 'medium_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' , note: '按 2026-10-25 标准：城居 10–15 → 中城' },
+    { id: 'city_wuwei', name: '姑臧', factionId: 'qianliang', lat: 37.93, lng: 102.64, type: 'medium_city', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI' , note: '按 2026-10-25 标准：城居 10–15 → 中城' },
 
 
-    { id: 'city_zhangye', name: '张掖', factionId: 'han_d', lat: 38.93, lng: 100.45, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' , note: '按 2026-10-25 标准：城居 3–5 → 小城' },
+    { id: 'city_zhangye', name: '张掖', factionId: 'han_d', lat: 38.93, lng: 100.45, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI' , note: '按 2026-10-25 标准：城居 3–5 → 小城' },
 
-    { id: 'city_jiuquan', name: '嘉峪关', factionId: 'ming_d', lat: 39.7822, lng: 98.3414, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '明洪武五年（1372）宋国公冯胜建关：黄土夯筑、外城包砖，守河西走廊咽喉；关城防区并无万人居民城 → 险要（2026-10-25 标准②：名字带关＋有墙）' },
+    { id: 'city_jiuquan', name: '嘉峪关', factionId: 'ming_d', lat: 39.7822, lng: 98.3414, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '明洪武五年（1372）宋国公冯胜建关：黄土夯筑、外城包砖，守河西走廊咽喉；关城防区并无万人居民城 → 险要（2026-10-25 标准②：名字带关＋有墙）' },
 
 
 
@@ -542,11 +542,11 @@ buildingStyle: 'WESTERN', tier: 1,
         lat: 40.14, lng: 94.66,
         type: 'small_city',
         region: 'KHITAN',
-        buildingStyle: 'KHITAN',
+        buildingStyle: 'HEXI',
         troops: 10000,
         note: '敦煌；沙州小城；定级依据§6.2：敦煌非关隘/要塞/堡垒（唐沙州治敦煌县），按城市判级；《旧唐书·地理志》沙州旧领二县户4,265、口16,250（全州，非城居），城居过万未达10万 → 小城。按史＋依据：https://zh.wikisource.org/wiki/舊唐書/卷40',
     },
-    { id: 'city_lanzhou', name: '皋兰', factionId: 'han_d', lat: 36.062422, lng: 103.765869, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' , note: '按 2026-10-25 标准：城居 2–4 → 小城' },
+    { id: 'city_lanzhou', name: '皋兰', factionId: 'han_d', lat: 36.062422, lng: 103.765869, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI' , note: '按 2026-10-25 标准：城居 2–4 → 小城' },
 
 
     { id: 'city_ledu', name: '浇河', factionId: 'tubo', lat: 35.7264, lng: 101.2061, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'TIBET', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-30 按史归青藏吐蕃河湟据点）' },
@@ -939,7 +939,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     // 沙图阿满 — 叛军 (清军哨卡)
 
     // 星星峡 — 叛军 (丝路关隘)
-    { id: 'city_xingxingxia', name: '五峰燧', factionId: 'tang', lat: 41.611382, lng: 95.267944, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '🔴 [2026-10-18 按史] 五峰燧为汉唐—明代河西走廊夯土板筑夹芦苇红柳的烽燧军台；与嘉峪关同属河西，项目无 HEXI 独立分支，用 KHITAN（标签「河西（边墙要塞）」）作河西边墙代理，键名旧、非辽式。' },
+    { id: 'city_xingxingxia', name: '五峰燧', factionId: 'tang', lat: 41.611382, lng: 95.267944, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '🔴 [2026-10-18 按史] 五峰燧为汉唐—明代河西走廊夯土板筑夹芦苇红柳的烽燧军台；与嘉峪关同属河西，项目无 HEXI 独立分支，用 HEXI（标签「河西（边墙要塞）」）作河西边墙代理，键名旧、非辽式。' },
 
     // 赤亭 — 叛军 (吐鲁番绿洲)
     { id: 'city_chiting', name: '赤亭关', factionId: 'gaochang', lat: 42.85, lng: 91.5, type: 'pass', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', note: '定级依据§6.2：唐西州赤亭守捉/赤亭城（今鄯善七克台古城），关隘＋夯土城墙遗址 → 险要' },
@@ -965,10 +965,10 @@ buildingStyle: 'CENTRAL', troops: 10000,
 buildingStyle: 'WESTERN', troops: 10000,
         note: '英吉沙尔；叶尔羌小城',
     },
-    { id: 'city_yumenguan', name: '玉门关', factionId: 'guiyi', lat: 40.35, lng: 93.86, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '定级依据§6.2：汉玉门关（小方盘城），夯土城墙 → 险要' },
+    { id: 'city_yumenguan', name: '玉门关', factionId: 'guiyi', lat: 40.35, lng: 93.86, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '定级依据§6.2：汉玉门关（小方盘城），夯土城墙 → 险要' },
 
 
-    { id: 'city_yangguan', name: '阳关', factionId: 'yangguan', lat: 39.92, lng: 94.06, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', mirror: true, note: '定级依据§6.2：汉阳关（敦煌西南，与玉门关合称「二关」），关隘＋关城堡垒（夯土），约 900 年毁，今存阳关遗址/烽燧 → 险要' },
+    { id: 'city_yangguan', name: '阳关', factionId: 'yangguan', lat: 39.92, lng: 94.06, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', mirror: true, note: '定级依据§6.2：汉阳关（敦煌西南，与玉门关合称「二关」），关隘＋关城堡垒（夯土），约 900 年毁，今存阳关遗址/烽燧 → 险要' },
 
 
 
@@ -978,7 +978,7 @@ buildingStyle: 'WESTERN', troops: 10000,
 
     // ── 2026-06-18 新增：李靖@恶阳岭（贞观四年定襄夜袭）──
     { id: 'city_eyangling', name: '恶阳岭', factionId: 'tang', lat: 39.910000, lng: 111.650000, type: 'stockade', troops: 10000, region: 'NORTH', buildingStyle: 'XIANBEI', mirror: true, note: '贞观四年李靖三千骑出恶阳岭夜袭定襄城（《旧唐书·李靖传》）；清水河南缘，距盛乐≥50km' },
-    { id: 'city_jilusai', name: '鸡鹿塞', factionId: 'han_d', lat: 40.46, lng: 106.26, type: 'pass', troops: 10000, region: 'XIANBEI', buildingStyle: 'KHITAN', note: '鸡鹿塞＝西汉朔方郡关门石塞（巴彦淖尔磴口哈隆格乃峡谷口，石垒遗迹存），守出塞通道 → 险要（2026-10-25 标准②）' },
+    { id: 'city_jilusai', name: '鸡鹿塞', factionId: 'han_d', lat: 40.46, lng: 106.26, type: 'pass', troops: 10000, region: 'XIANBEI', buildingStyle: 'HEXI', note: '鸡鹿塞＝西汉朔方郡关门石塞（巴彦淖尔磴口哈隆格乃峡谷口，石垒遗迹存），守出塞通道 → 险要（2026-10-25 标准②）' },
 
 
 
@@ -1516,9 +1516,9 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
 
-    { id: 'city_chijin', name: '赤金堡', factionId: 'ming_d', lat: 40.000221, lng: 97.437744, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', mirror: true, note: '🔴 [2026-10-18 按史] 赤金堡为明代西北卫所夯土外包砖实心关堡；与嘉峪关同属河西，项目无 HEXI/MING 独立分支，用 KHITAN（标签「河西（边墙要塞）」）作河西边墙代理，键名旧、非辽式。' },
+    { id: 'city_chijin', name: '赤金堡', factionId: 'ming_d', lat: 40.000221, lng: 97.437744, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', mirror: true, note: '🔴 [2026-10-18 按史] 赤金堡为明代西北卫所夯土外包砖实心关堡；与嘉峪关同属河西，项目无 HEXI/MING 独立分支，用 HEXI（标签「河西（边墙要塞）」）作河西边墙代理，键名旧、非辽式。' },
 
-    { id: 'city_dafeichuan', name: '大非川', factionId: 'xihai_d', lat: 36.1379, lng: 100.7611, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', note: '🔴 [2026-10-24 主人授权 按史] 建筑风格 KHITAN（河西边墙）→TIBET（青藏藏式）：大非川在青海共和（青藏高原东缘、吐谷浑故地），670 年唐蕃大非川之战吐蕃论钦陵大破薛仁贵于此，本地建筑属青藏系；原 KHITAN 会把吐蕃名将带成河西军团。' },
+    { id: 'city_dafeichuan', name: '大非川', factionId: 'xihai_d', lat: 36.1379, lng: 100.7611, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', note: '🔴 [2026-10-24 主人授权 按史] 建筑风格 HEXI（河西边墙）→TIBET（青藏藏式）：大非川在青海共和（青藏高原东缘、吐谷浑故地），670 年唐蕃大非川之战吐蕃论钦陵大破薛仁贵于此，本地建筑属青藏系；原 HEXI 会把吐蕃名将带成河西军团。' },
 
 
 
@@ -1744,7 +1744,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
     { id: 'city_hanhai', name: '瀚海', factionId: 'gaoche', lat: 44.144832, lng: 103.697205, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MONGOL', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
-    { id: 'city_keyimen', name: '克夷门', factionId: 'dangxiang', lat: 39.289647, lng: 106.776123, type: 'pass', troops: 10000, region: 'TANGUT', buildingStyle: 'KHITAN', note: '克夷门＝西夏都城兴庆府门户（贺兰山口；1209 蒙古攻西夏克夷门之战主战场）→ 险要（2026-10-25 标准②）' },
+    { id: 'city_keyimen', name: '克夷门', factionId: 'dangxiang', lat: 39.289647, lng: 106.776123, type: 'pass', troops: 10000, region: 'TANGUT', buildingStyle: 'HEXI', note: '克夷门＝西夏都城兴庆府门户（贺兰山口；1209 蒙古攻西夏克夷门之战主战场）→ 险要（2026-10-25 标准②）' },
 
 
     // ── 2026-05-26 新增：西域/中亚城池（14个）──
@@ -1773,7 +1773,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     // === 第二类：雪域土著与古老强族 ===
     { id: 'city_buerhanbuda', name: '白海堡', factionId: 'tubo', lat: 34.9100, lng: 98.2100, type: 'pass', region: 'HEXI',
-buildingStyle: 'KHITAN', troops: 10000,
+buildingStyle: 'HEXI', troops: 10000,
         note: '白海堡；多弥关隘',
     },
     { id: 'city_mapangyongcuo', name: '玛旁雍错', factionId: 'supi', lat: 30.814997, lng: 81.430664, type: 'stockade', region: 'TIBET',
@@ -2193,7 +2193,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // ── 2026-05-28 新增：工布(江达宗) ──
     // [2026-05-29] 原 gongbu 势力已删, 暂归叛军
     // ── 2026-05-28 新增：果洛(花石峡)、察哈尔(多伦) ──
-    { id: 'city_huashixia', name: '花石峡', factionId: 'tang', lat: 35.196235, lng: 98.907166, type: 'stockade', region: 'HEXI', buildingStyle: 'KHITAN', troops: 10000, mirror: true, note: '黑齿常之河源军大破吐蕃' },
+    { id: 'city_huashixia', name: '花石峡', factionId: 'tang', lat: 35.196235, lng: 98.907166, type: 'stockade', region: 'HEXI', buildingStyle: 'HEXI', troops: 10000, mirror: true, note: '黑齿常之河源军大破吐蕃' },
 
     // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
     { id: 'city_wendeng', name: '文登', factionId: 'tang', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', buildingStyle: 'WEI', troops: 10000, note: '苏定方神丘道行军伐百济，自城山济海（《玉海·卷一八一》引《通鉴》；原注「神灭军」按史正之）；推算：城居 1 万（文登，登州属县 1 万）→ 小城' },
@@ -2736,7 +2736,7 @@ buildingStyle: 'NORTHEAST', troops: 10000, tier: 4,
         note: '普禄；费雅喀小城',
     },
     // ── 2026-05-28 新增：伊勒巴斯(希瓦)、南杰(日土宗) ──
-    { id: 'city_dadoubagu', name: '大斗拔谷', factionId: 'han_d', lat: 38.0011, lng: 100.9125, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）', mirror: true },
+    { id: 'city_dadoubagu', name: '大斗拔谷', factionId: 'han_d', lat: 38.0011, lng: 100.9125, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）', mirror: true },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：希瓦：花剌子模希瓦汗国，中亚
     { id: 'city_khiva', name: '希瓦', factionId: 'anushidgin', lat: 41.564038, lng: 60.710449, type: 'small_city', troops: 10000, region: 'CENTRAL_ASIA_CASTLE', buildingStyle: 'CENTRAL_ASIA', mirror: true , note: '按 2026-10-25 标准：城居 1–2 → 小城' },
@@ -2752,7 +2752,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_sanlongsha', name: '三陇沙', factionId: 'bailong', lat: 40.4, lng: 92.5, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'han_d', lat: 40.413414, lng: 99.434509, type: 'pass', region: 'KHITAN',
-buildingStyle: 'KHITAN', troops: 10000, mirror: true,
+buildingStyle: 'HEXI', troops: 10000, mirror: true,
         note: '肩水金关；浑邪关隘',
     },//镜像
 
@@ -2870,7 +2870,7 @@ buildingStyle: 'WESTERN', troops: 10000, mirror: true,
     },
 
 
-    { id: 'city_jinchangcheng', name: '晋昌', factionId: 'tang', lat: 40.5346, lng: 95.820007, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_jinchangcheng', name: '晋昌', factionId: 'tang', lat: 40.5346, lng: 95.820007, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_jieshuangna', name: '羯霜那', factionId: 'jie', lat: 40.124284, lng: 65.341187, type: 'stockade', region: 'CENTRAL_ASIA',
 buildingStyle: 'CENTRAL_ASIA', troops: 10000,
@@ -2889,7 +2889,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
     },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：轮台：汉轮台屯田、西域都护地，塔里木
-    { id: 'city_luntai', name: '轮台', factionId: 'han_d', lat: 41.77, lng: 84.25, type: 'small_city', troops: 10000, region: 'KHITAN', buildingStyle: 'KHITAN' , note: '推算：城居 1.2 万（轮台，汉西域屯田城，同期 1–1.5 万）→ 小城' },
+    { id: 'city_luntai', name: '轮台', factionId: 'han_d', lat: 41.77, lng: 84.25, type: 'small_city', troops: 10000, region: 'KHITAN', buildingStyle: 'HEXI' , note: '推算：城居 1.2 万（轮台，汉西域屯田城，同期 1–1.5 万）→ 小城' },
 
     { id: 'city_duluohe', name: '推河堡', factionId: 'kaerka', lat: 45.826868, lng: 101.878967, type: 'pass', region: 'STEPPE_IMPERIAL',
 buildingStyle: 'MONGOL', troops: 10000,
@@ -2984,17 +2984,17 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_linrong', name: '临戎', factionId: 'han_d', lat: 40.3, lng: 107, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
-    { id: 'city_aowei', name: '媪围', factionId: 'han_d', lat: 37.396289, lng: 104.111938, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_aowei', name: '媪围', factionId: 'han_d', lat: 37.396289, lng: 104.111938, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
     { id: 'city_mingsha', name: '鸣沙', factionId: 'dangxiang', lat: 37.51, lng: 105.18, type: 'stockade', region: 'HEXI',
-buildingStyle: 'KHITAN', troops: 10000,
+buildingStyle: 'HEXI', troops: 10000,
         note: '鸣沙；应理小城',
     },
-    { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 10000, region: 'TANGUT', buildingStyle: 'KHITAN' , note: '按 2026-10-25 标准：城居 10–20 → 中城' },
+    { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 10000, region: 'TANGUT', buildingStyle: 'HEXI' , note: '按 2026-10-25 标准：城居 10–20 → 中城' },
 
 
-    { id: 'city_lingju', name: '令居', factionId: 'han_d', lat: 36.73, lng: 103.26, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_lingju', name: '令居', factionId: 'han_d', lat: 36.73, lng: 103.26, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
 
@@ -3424,11 +3424,11 @@ buildingStyle: 'CENTRAL', troops: 10000,
         note: '方渠；环州小城；推算：城居 0.8 万（方渠，环州小城 0.8 万）→ 城寨',
     },
     { id: 'city_jingsai', name: '静塞', factionId: 'tang', lat: 37.448637, lng: 106.674500, type: 'pass', region: 'HEXI',
-buildingStyle: 'KHITAN', troops: 10000, mirror: true,
+buildingStyle: 'HEXI', troops: 10000, mirror: true,
         note: '静塞；静塞关隘。定级依据§6.2：关隘性质但未查得石砖夯土关墙实证 → 按规则不列险要，落城寨',
     },//镜像
     { id: 'city_lingzhou', name: '回乐', factionId: 'tang', lat: 37.998341, lng: 106.295471, type: 'small_city', region: 'HEXI',
-buildingStyle: 'KHITAN', troops: 10000,
+buildingStyle: 'HEXI', troops: 10000,
         note: '回乐；灵武小城；推算：城居 1.5 万（回乐，灵武郡治 1.5 万）→ 小城',
     },
     { id: 'city_nuergan', name: '特林', factionId: 'ming_d', lat: 52.92, lng: 139.77, type: 'stockade', region: 'JURCHEN', buildingStyle: 'NORTHEAST', troops: 10000, note: '明奴儿干都司；康旺；旗面「都卫」避与据点名 §4.1 防重；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },
@@ -3469,7 +3469,7 @@ buildingStyle: 'MONGOL', troops: 10000,
         // 🔴 [2026-09-18 主人定] 原 'SEAS' 只是一级母体、无二级/三级 → 按真实地理历史归**高棉 KHMER**：
         //    三菩在柬埔寨磅湛一带、水真腊（真腊南境）故地，吴哥高棉文化圈。
         buildingStyle: 'KHMER' },
-    { id: 'city_juyansai', name: '遮虏障', factionId: 'han_d', lat: 41.8942, lng: 101.044, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '李陵五千步卒浚稽山血战匈奴八万骑' },
+    { id: 'city_juyansai', name: '遮虏障', factionId: 'han_d', lat: 41.8942, lng: 101.044, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '李陵五千步卒浚稽山血战匈奴八万骑' },
 
 
 
@@ -3621,7 +3621,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_fengtian', name: '奉天', factionId: 'tang', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, note: '李晟神策军收复长安；推算：城居 2 万（奉天＝唐奉天县，同期县城 1.5–2.5 万）→ 小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：它乾城：东汉西域都护治所，塔里木
-    { id: 'city_taqian', name: '它乾城', factionId: 'han_d', lat: 41.875, lng: 83.59, type: 'small_city', troops: 10000, region: 'KHITAN', buildingStyle: 'KHITAN', mirror: true , note: '按 2026-10-25 标准：东汉西域都护治所它乾城，城居约 1 万 → 小城' },
+    { id: 'city_taqian', name: '它乾城', factionId: 'han_d', lat: 41.875, lng: 83.59, type: 'small_city', troops: 10000, region: 'KHITAN', buildingStyle: 'HEXI', mirror: true , note: '按 2026-10-25 标准：东汉西域都护治所它乾城，城居约 1 万 → 小城' },
 
     { id: 'city_shaozhou', name: '邵州', factionId: 'machu', lat: 27.24, lng: 111.47, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '推算：城居 2 万（邵州州治，同期州城 1.5–2.5 万）→ 小城' },
 
@@ -3652,7 +3652,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_tanzhong', name: '潭中', factionId: 'tang', lat: 24.28, lng: 109.41, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' , note: '推算：城居 1.2 万（潭中，汉县，同期县城 1–1.5 万）→ 小城' },
     { id: 'city_yunyang', name: '郧阳', factionId: 'ming_d', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 10000, region: 'MING', buildingStyle: 'CENTRAL' , note: '推算：城居 1.5 万（郧阳，明郧阳府 1.5 万）→ 小城' },
     { id: 'city_zhongshan', name: '中山', factionId: 'murong', lat: 38.4708, lng: 115.0626, type: 'medium_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '按 2026-10-25 标准：城居 5–8 → 中城' },
-    { id: 'city_ledou', name: '乐都', factionId: 'tang', lat: 36.49, lng: 102.37, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）', mirror: true },
+    { id: 'city_ledou', name: '乐都', factionId: 'tang', lat: 36.49, lng: 102.37, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）', mirror: true },
 
 
 
@@ -3661,13 +3661,13 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_yunzhongcheng', name: '君子津', factionId: 'han_d', lat: 40.2732, lng: 111.1404, type: 'stockade', troops: 10000, region: 'CENTRAL', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
-    { id: 'city_haomen', name: '浩门', factionId: 'manzhou_d', lat: 37.464, lng: 101.4258, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_haomen', name: '浩门', factionId: 'manzhou_d', lat: 37.464, lng: 101.4258, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
     { id: 'city_yulin', name: '榆林', factionId: 'ming_d', lat: 38.3567, lng: 109.7644, type: 'small_city', troops: 10000, region: 'WEI', buildingStyle: 'WEI' , note: '推算：城居 2 万（榆林，明榆林卫 2 万）→ 小城' },
-    { id: 'city_jingbianbao', name: '靖边堡', factionId: 'dangxiang', lat: 37.5685, lng: 108.8608, type: 'stockade', troops: 10000, region: 'TANGUT', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
-    { id: 'city_quyancheng', name: '朐衍', factionId: 'han_d', lat: 37.7794, lng: 107.4078, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_jingbianbao', name: '靖边堡', factionId: 'dangxiang', lat: 37.5685, lng: 108.8608, type: 'stockade', troops: 10000, region: 'TANGUT', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_quyancheng', name: '朐衍', factionId: 'han_d', lat: 37.7794, lng: 107.4078, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_lishi', name: '离石', factionId: 'han_zhao', lat: 37.48, lng: 111.09, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '推算：城居 1 万（离石，汉县/西河郡 1 万）→ 小城' },
-    { id: 'city_chiwubao', name: '赤乌堡', factionId: 'han_d', lat: 37.477, lng: 102.8815, type: 'stockade', troops: 10000, region: 'CENTRAL', buildingStyle: 'KHITAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_chiwubao', name: '赤乌堡', factionId: 'han_d', lat: 37.477, lng: 102.8815, type: 'stockade', troops: 10000, region: 'CENTRAL', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 
     { id: 'city_wulihong', name: '乌利洪', factionId: 'menggu_d', lat: 49.53, lng: 112.54, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },

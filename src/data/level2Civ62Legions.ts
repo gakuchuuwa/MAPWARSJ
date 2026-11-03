@@ -596,7 +596,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
         name: '古典时代凉州军团', civ: '河西', age: 'antiquity', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
-        buildingStyle: 'KHITAN',
+        buildingStyle: 'HEXI',
         castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
         formationMode: 'crane_wing',
         shipId: 'DEMO_RAFT',
@@ -613,7 +613,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
         name: '封建时代河西军团', civ: '河西', age: 'feudal', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
-        buildingStyle: 'KHITAN',
+        buildingStyle: 'HEXI',
         castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
         formationMode: 'crescent',
         shipId: 'DEMO_RAFT',
@@ -630,7 +630,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
         name: '城堡时代大夏军团', civ: '河西', age: 'castle', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
-        buildingStyle: 'KHITAN',
+        buildingStyle: 'HEXI',
         castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
@@ -647,7 +647,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
         name: '帝国时代陕甘军团', civ: '河西', age: 'imperial', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
-        buildingStyle: 'KHITAN',
+        buildingStyle: 'HEXI',
         castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
         formationMode: 'crescent',
         shipId: 'DEMO_RAFT',

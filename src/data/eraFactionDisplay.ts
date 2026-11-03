@@ -114,9 +114,9 @@ const ERA_DISPLAY_OVERRIDES: Readonly<Record<string, EraNameDef>> = {
     'JIANGNAN|castle': { name: '江南' },        // 城堡时代江南军团（原南宋军团）
     'WESTERN|antiquity': { name: '西域' },      // 古典时代西域军团（原塞种军团；地区/行政统称，不用族群名）
     'WESTERN|feudal': { name: '安西' },         // 封建时代安西军团（原回鹘军团；唐安西都护府，与静海同一类行政名）
-    'KHITAN|antiquity': { name: '凉州', flagText: '凉' },  // 古典时代凉州军团（原西凉军团）；旗面只写一个「凉」
+    'HEXI|antiquity': { name: '凉州', flagText: '凉' },  // 古典时代凉州军团（原西凉军团）；旗面只写一个「凉」
     // 🔴 [2026-10-20 主人令「城堡时代大夏旗号用夏」] 河西·城堡：势力名仍用国号正名「大夏」，旗面只写一个「夏」
-    'KHITAN|castle': { flagText: '夏' },       // 城堡时代大夏军团（党项西夏）→ 大夏；旗面只写「夏」
+    'HEXI|castle': { flagText: '夏' },       // 城堡时代大夏军团（党项西夏）→ 大夏；旗面只写「夏」
     'BASHU|castle': { name: '川峡' },           // 城堡时代川峡军团（原山城军团；北宋川峡四路，宋元巴蜀的行政区统称）
     'PERSIAN|antiquity': { name: '阿契美尼德' }, // 古典时代阿契美尼德军团（原长生／不死军团；长生军是部队番号，不能当军团名）
     'VIETNAMESE|feudal': { name: '静海' },      // 封建时代瞿越军团（原丁黎军团）

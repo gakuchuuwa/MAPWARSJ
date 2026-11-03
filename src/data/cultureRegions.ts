@@ -7,7 +7,7 @@
  */
 export const CULTURE_REGION: Readonly<Record<string, string>> = {
     JAPAN: '日本列岛', CENTRAL: '关中和黄河下游（关中平原—华北平原）', WEI: '河北—晋北', JIANGNAN: '长江下游及江浙、江西、海南、台湾等保留区域', HUGUANG: '湖北—湖南—广东—广西—福建', BASHU: '四川盆地',
-    KHITAN: '河西走廊', NORTHEAST: '东北地区', MONGOL: '蒙古高原', KOREA: '朝鲜半岛',
+    HEXI: '河西走廊', NORTHEAST: '东北地区', MONGOL: '蒙古高原', KOREA: '朝鲜半岛',
     GERMANIC: '中欧—日耳曼尼亚', FRANKS: '高卢（法国北部）', BURGUNDIANS: '罗讷河—勃艮第', BRITONS: '英格兰',
     CELTS: '不列颠西部（爱尔兰—苏格兰—威尔士）', VIKINGS: '斯堪的纳维亚',
     GOTHS: '维斯瓦河—黑海北岸', SAXONS: '下萨克森—易北河下游',

@@ -866,7 +866,7 @@ export const STOCKADE_FENCE_BY_STYLE66: Record<string, StockadeFenceKey> = {
     CENTRAL_ASIA: 'ARCHAIC',  // 鞑靼/中亚：草原车营与土坯木栅混合
     CUMAN: 'ARCHAIC',         // 库曼：草原车营/横木营垒
     MAGYAR: 'ARCHAIC',        // 马扎尔：szekérvár 车营/横木营垒
-    KHITAN: 'ARCHAIC',        // 河西：荒漠戈壁缺大木，横木框架夹夯土、胡杨平切
+    HEXI: 'ARCHAIC',        // 河西：荒漠戈壁缺大木，横木框架夹夯土、胡杨平切
     MAYANS: 'ARCHAIC',        // 玛雅：前哥伦布石木过渡，石构/灰浆核心+横木架搭、平截挡栏
     AMERICA: 'ARCHAIC',       // 阿兹特克/中美：石木过渡，横木架搭防护
     INCA: 'ARCHAIC',          // 印加：前哥伦布石木过渡，石构核心+横木挡栏

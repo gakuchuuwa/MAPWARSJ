@@ -21,7 +21,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     qianliang: { name: '凉州大马', tier: 1 },   // 前凉｜统帅 张轨｜T1 乘 1.4｜西域诸国震服，数次长途出击大破汉赵、后赵
     liangzhou: { name: '凉州羌骑', tier: 4 },   // 凉州（汉末凉州之乱）｜统帅 王国｜T4 真实存在：凉州叛军以羌胡骑兵为骨干（《后汉书·董卓列传》 湟中义从、凉州羌胡）
     // 🔴 [2026-11-01 主人令「expedition:coverage 河西 8 条不足最低线 10，请处理」]
-    //    按「番号随据点文化归区」迁入：西凉（yangguan）都敦煌、据阳关，二城 buildingStyle 均 KHITAN（河西文化），
+    //    按「番号随据点文化归区」迁入：西凉（yangguan）都敦煌、据阳关，二城 buildingStyle 均 HEXI（河西文化），
     //    番号却挂在中原区表 —— 属文化错位，迁回河西。中原区移出后仍 29 条（远高于 10 条线）。
     //    史实：李暠 400 年建西凉于敦煌，405 年迁酒泉，与北凉争河西；「西凉锐骑」即其本部骑军（《晋书·凉武昭王李玄盛传》）。
     yangguan: { name: '西凉锐骑', tier: 2 },

@@ -308,7 +308,7 @@ const CULTURE_TO_CATEGORY: Readonly<Record<string, LivelihoodCategory>> = {
     TURKS: 'nomadic_steppe',
 
     // 4. 丝路绿洲与荒原驼牧（8）—— 铺设 DE 牧场四季图（pc2→pc3→pm1→pm2）
-    KHITAN: 'nomadic_oasis',
+    HEXI: 'nomadic_oasis',
     CENTRAL_ASIA: 'nomadic_oasis',
     WESTERN: 'nomadic_oasis',
     PERSIAN: 'nomadic_oasis',
@@ -358,7 +358,7 @@ const PASTORAL_ANIMAL_POOLS: Readonly<Record<string, readonly string[]>> = {
     HUNS: ['HORSE', 'SHEEP', 'GOAT'],
     CUMAN: ['HORSE', 'SHEEP', 'GOAT'],
     TURKS: ['HORSE', 'SHEEP', 'GOAT'],
-    KHITAN: ['HORSE', 'SHEEP', 'GOAT', 'DROMEDARY'],
+    HEXI: ['HORSE', 'SHEEP', 'GOAT', 'DROMEDARY'],
     CENTRAL_ASIA: ['DROMEDARY', 'HORSE', 'SHEEP', 'GOAT'],
     WESTERN: ['DROMEDARY', 'HORSE', 'SHEEP', 'GOAT'],
     PERSIAN: ['SHEEP', 'SHEEP', 'GOAT'],

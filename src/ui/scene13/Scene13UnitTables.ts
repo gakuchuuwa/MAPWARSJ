@@ -780,16 +780,21 @@ export const MARCH_SP_DEPTH_MAX = 48;
 export const ROW_DEPTH = 280;
 /** 🔴 [2026-10-14 同上] 同一排相邻两队的队距（px）。原为「窗口高×0.8÷4，夹在 300~320」，取 300 */
 export const COL_SPACING = 300;
-/** 本兵种的列阵槽位间距：两倍半径 + 4px 余量，下限为 MARCH_SP（同一出兵口恒为同一兵种）。 */
+/** 本兵种的列阵横向槽位间距（左右列距）：两倍半径 + 4px 余量，下限为 MARCH_SP（同一出兵口恒为同一兵种）。 */
 export function marchSpacingOf(key: string): number {
-    // 🔴 [2026-11-03 主人令「大象的阵型排列有点密集，导致重影，稍微散开一点」「顺便看看战车有这个问题吗」]
-    //    战象（帧宽 108~144px）与战车（帧宽 104~164px）体积宽大，原 30px 间距导致前后左右严重叠影，统一拉开至 46px
-    if (isElephantOrChariotUnitKey(key)) return 46;
+    // 🔴 [2026-11-03 主人令「46太大了，你是不是没有改前后，只改了左右？」]
+    //    左右 9 列：列距从原 30 微调至 34（不撑宽横排）；重影主因在前后排距（机身长 108~164px 而仅 3 排），由 marchDepthSpacingOf 拉开
+    if (isElephantOrChariotUnitKey(key)) return 34;
     // 🔴 [2026-10-12 主人选方案 2「大体型兵种在 DE 里本来就是挤着走的，叠一点不难看」]
     //    9 列 × 两倍半径（40~44）宽达 396px，压进隔壁队（出兵口只隔 300）⇒ 大体型列距收到 30（宽约 284），允许互叠
     if (popCostOf(key) >= 2) return 30;
     const r = UNIT_RADIUS[key] ?? 8;
     return Math.max(MARCH_SP, r * 2 + 4);
+}
+/** 本兵种的列阵纵深槽位间距（前后排距）：战象与战车机身前后长（108~164px）且每队仅 2~3 排，单独拉开前后排距消除重影。 */
+export function marchDepthSpacingOf(key: string): number {
+    if (isElephantOrChariotUnitKey(key)) return 60;
+    return Math.min(marchSpacingOf(key), MARCH_SP_DEPTH_MAX);
 }
 
 export const UNIT_RADIUS: Record<string, number> = {

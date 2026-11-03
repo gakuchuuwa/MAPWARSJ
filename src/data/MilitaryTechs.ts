@@ -184,7 +184,8 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },   // 🔴 [2026-10-13 治本] 枪兵族按权威表已归 **6**（`UnitClasses.ts`），46 是 DE 空类 ⇒ 删除
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
         ],
-        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'HUGUANG', 'HEXI', 'WESTERN', 'TIBET', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
+        // 🔴 [2026-11-03 KHITAN→HEXI 改名] 原写的 'HEXI' 因旧换算表 HEXI→KHITAN 从未对河西生效，改名后会突然生效 → 去掉以保持原行为
+        cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'HUGUANG', 'WESTERN', 'TIBET', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
     // ── 骑兵马铠线：骑兵12（含象、车）；🔴 不含弓骑36 ───────────────────────
@@ -307,7 +308,8 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         basis: '蒙古式拇指扣弦＋扳指，骑射速率跃升',
         // DE 还含 accuracy+100%，我们的五维没有命中率字段，故只落装填
         effects: [{ attr: 'reload', op: 'mul', value: 0.85, classes: [0, 36] }],
-        cultures: ['CENTRAL', 'NORTH', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', 'PERSIAN', ],
+        // 🔴 [2026-11-03 KHITAN→HEXI 改名] 同上：原 'HEXI' 从未对河西生效，去掉以保持原行为
+        cultures: ['CENTRAL', 'NORTH', 'WESTERN', 'TIBET', 'STEPPE', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'parthian_tactics', name: '帕提亚战术', de: 'Parthian Tactics', year: -53,
@@ -724,14 +726,14 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 2, classes: [6, 0] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6, 0] },
         ],
-        cultures: ['KHITAN', 'XIANBEI'],
+        cultures: ['HEXI', 'XIANBEI'],
     },
     {
         id: 'ordo_cavalry', name: '斡鲁朵骑兵', de: 'Ordo Cavalry', year: 947,
         era: 'feudal',
         basis: '辽朝宫帐斡鲁朵皮室铁骑（DE tech 1007），骑兵生命值 +30',
         effects: [{ attr: 'hp', op: 'add', value: 30, classes: [12, 36, 47] }],
-        cultures: ['KHITAN', 'XIANBEI'],
+        cultures: ['HEXI', 'XIANBEI'],
     },
     {
         id: 'thunderclap_bombs', name: '霹雳炸弹', de: 'Thunderclap Bombs', year: 1126,

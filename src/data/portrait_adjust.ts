@@ -10411,6 +10411,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 22,
             "offsetY": -29
+        },
+        "/assets/KHITAN/bfe3_45.png": {
+            "scale": 1.22,
+            "offsetX": 26,
+            "offsetY": 17
+        },
+        "/assets/TIBET/khoshut_lhasang.png": {
+            "scale": 0.97,
+            "offsetX": -3,
+            "offsetY": 0
+        },
+        "/assets/BENGALIS/gen_shashanka.png": {
+            "scale": 1.02,
+            "offsetX": -3,
+            "offsetY": -5
         }
     },
     "folderGuides": {

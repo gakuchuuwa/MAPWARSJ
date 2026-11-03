@@ -274,7 +274,7 @@ export class GameConfig {
         /**
          * 陆地行军不减兵文化（66 文化键）：
          *   · 欧亚草原游牧核心系：MONGOL（漠北蒙古）、XIANBEI（漠南鲜卑）、HUNS（匈人）、
-         *     CUMAN（库曼）、CENTRAL_ASIA（中亚）、KHITAN（契丹/河西）、TURKS（突厥/奥斯曼）
+         *     CUMAN（库曼）、CENTRAL_ASIA（中亚）、HEXI（河西走廊）、TURKS（突厥/奥斯曼）
          *   · 东欧草原与北非大漠游牧系：MAGYAR（马扎尔）、BERBER（柏柏尔）
          */
         LAND_IMMUNE_CULTURES: [
@@ -283,7 +283,7 @@ export class GameConfig {
             'HUNS',
             'CUMAN',
             'CENTRAL_ASIA',
-            'KHITAN',
+            'HEXI',
             'TURKS',
             'MAGYAR',
             'BERBER',
@@ -291,7 +291,7 @@ export class GameConfig {
     };
     /**
      * 67 文化专属战略特性（2026-10-18 主人定：文化 100% 归属大战略层，不进战斗八环；67 文化一文化一特性）：
-     *   ① 陆行不减兵（9）：MONGOL, XIANBEI, HUNS, CUMAN, CENTRAL_ASIA, KHITAN, TURKS, MAGYAR, BERBER（见 MARCH_ATTRITION.LAND_IMMUNE_CULTURES）
+     *   ① 陆行不减兵（9）：MONGOL, XIANBEI, HUNS, CUMAN, CENTRAL_ASIA, HEXI, TURKS, MAGYAR, BERBER（见 MARCH_ATTRITION.LAND_IMMUNE_CULTURES）
      *   ② 海行不减兵（7）：VIKINGS, DANES, VARANGIANS, MALAY, PORTUGUESE, SPANISH, ATHENIANS（见 MARCH_ATTRITION.NAVAL_IMMUNE_CULTURES）
      *   ③ 山地行军专精（10）：TIBET, BASHU, INCA, MUISCA, MAPUCHE, ARMENIANS, GEORGIANS, THRACIAN, ETHIOPIANS, CELTS（山地行军不减速，见 MOUNTAIN_MARCH_IMMUNE_CULTURES）
      *   ④ 渡海/水网机动（7）：JIANGNAN, HUGUANG, JAPAN, SAXONS, SICILIANS, LATIN, VIETNAMESE（海上移速 ×1.25，见 SEA_SPEED_BONUS_CULTURES）

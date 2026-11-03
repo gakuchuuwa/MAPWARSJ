@@ -76,7 +76,7 @@ import {
     RANGED_TYPES, WALL_GATE_STATS, deBuildingStats, SIGHT_MAP, DE_FORMATION_LAYOUT, LAYOUT,
     SIDE_LANES, COMMANDER_CELL, bldFootprintSide, DE_DYN_DIRS, REGION_BUILDING_STYLE,
     FACTION_BUILDING_STYLE,
-    marchFilesOf, MARCH_SP, MARCH_SP_DEPTH_MAX, ROW_DEPTH, COL_SPACING, marchSpacingOf,
+    marchFilesOf, MARCH_SP, MARCH_SP_DEPTH_MAX, ROW_DEPTH, COL_SPACING, marchSpacingOf, marchDepthSpacingOf,
     UNIT_RADIUS, LOOP_WINDOW_IDLE_SEC,
 } from './scene13/Scene13UnitTables';
 
@@ -1174,7 +1174,7 @@ export class Scene13WarLayer {
             const slotIdx = s.slotN++;
             const files = marchFilesOf(s.key);
             const sp = marchSpacingOf(s.key);
-            const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+            const spDep = marchDepthSpacingOf(s.key);
             const dep = ((slotIdx / files) | 0) * spDep;
             const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
             let spawnX: number, spawnY: number;
@@ -1375,7 +1375,7 @@ export class Scene13WarLayer {
             const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10));
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 6 : 1;
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeAmount));
-            const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
+            const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW && (m.defectInvulnTimer ?? 0) <= 0);
             // 🔴 [2026-10-30 主人令「败战计，减兵，随机一个三排兵种，伤害集中，不够再用第二兵种凑数」]
             //    取代 10-27 的「远程→步兵→骑兵」顺序；主将队仍排在最后（见 orderSixVictimsByRowType）。
             const ordered = this.orderSixVictimsByRowType(enemyLiving, ef, scopedControl !== null ? { x: refX, y: refY } : null);
@@ -1476,8 +1476,23 @@ export class Scene13WarLayer {
                     const le = laneSum.get(m.lane);
                     const cx = le && le.n > 1 ? le.sx / le.n : gcx;
                     const cy = le && le.n > 1 ? le.sy / le.n : gcy;
-                    const outAng = Math.atan2(m.y - cy, m.x - cx);
-                    m.panicAng = outAng + (Math.random() - 0.5) * 2.2;
+                    let vx = m.x - cx, vy = m.y - cy;
+                    const vl = Math.hypot(vx, vy) || 1;
+                    vx /= vl; vy /= vl;
+                    // 有墙时远离贴近的城墙/城门散开，不朝墙里乱窜
+                    for (const wb of this.wallGates) {
+                        if (!this.wallStanding(wb)) continue;
+                        const wdx = m.x - wb.x, wdy = m.y - wb.y;
+                        const wd2 = wdx * wdx + wdy * wdy;
+                        if (wd2 > 1e-3 && wd2 < 180 * 180) {
+                            const wd = Math.sqrt(wd2);
+                            const wWeight = (180 - wd) / 45;
+                            vx += (wdx / wd) * wWeight;
+                            vy += (wdy / wd) * wWeight;
+                        }
+                    }
+                    const outAng = Math.atan2(vy, vx);
+                    m.panicAng = outAng + (Math.random() - 0.5) * 1.8;
                     m.panicTurnT = 0.75 + Math.random() * 0.75;
                     m.stuckT = 0;
                 }
@@ -1503,6 +1518,7 @@ export class Scene13WarLayer {
                 m.f = f;
                 m.flag = true;
                 m.playerPanicTimer = 0;
+                m.defectInvulnTimer = SKILL_DEFECT_INVULN_SEC;
                 let assignedLane = sharedLaneByKey.get(m.key);
                 if (assignedLane === undefined) {
                     const nl = myLanes.reduce<typeof myLanes[number] | null>((best, sp) =>
@@ -1522,12 +1538,16 @@ export class Scene13WarLayer {
             if (converted.length > 0) {
                 const set = new Set(converted);
                 for (const o of this.men) if (o.foe && set.has(o.foe as WarMan)) o.foe = null;
+                this.skillKillQueue = this.skillKillQueue.filter((item) => !set.has(item.m));
             }
             if (scopedControl === null && quotaPop > 0) {
                 const taken = this.drainSidePool(ef, quotaPop, true, lastPickedKey);
                 if (taken.length > 0) {
                     this.spawnImmediateSkillReinforcements(f, taken.reduce((a, t) => a + t.pop, 0), taken.map((t) => t.key), vfxTargets);
-                    for (const u of vfxTargets) u.flag = true;
+                    for (const u of vfxTargets) {
+                        u.flag = true;
+                        u.defectInvulnTimer = SKILL_DEFECT_INVULN_SEC;
+                    }
                 }
             }
         }
@@ -1869,7 +1889,7 @@ export class Scene13WarLayer {
         // 玩家置于本队方阵第 2 排（rank 1）正中列真实槽位，与普通士兵共用完全相同的排阵格点、随机抖动(jx/jy)、守城城外标记(outside1)与城内驻守点(guardPost)
         const files = marchFilesOf(heroPort.key);
         const sp = marchSpacingOf(heroPort.key);
-        const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+        const spDep = marchDepthSpacingOf(heroPort.key);
         const heroDep = spDep;
         const heroSlotY = (Math.floor(files / 2) - (files - 1) / 2) * sp;
         let uFwd = this.advanceVec[f];
@@ -2003,8 +2023,9 @@ export class Scene13WarLayer {
     }
     private frenzyDmgMul(m: WarMan): number { return 1 + (SKILL_FRENZY_DMG - 1) * this.frenzyK(m); }
     private frenzyAtkSpdMul(m: WarMan): number { return 1 + (SKILL_FRENZY_ATKSPD - 1) * this.frenzyK(m); }
-    /** 【胜】受伤倍率：玩家献计按倍数叠乘（×3 ⇒ 0.4³ ≈ 0.06） */
+    /** 【胜】受伤倍率：玩家献计按倍数叠乘（×3 ⇒ 0.4³ ≈ 0.06）；【并】倒戈后 3 秒内无敌（0） */
     private shieldTakenMul(m: WarMan): number {
+        if ((m.defectInvulnTimer ?? 0) > 0) return 0;
         const player = this.playerSixShieldTimer > 0 && this.playerLiveAffects(m) ? this.playerSixBoost : 0;
         const general = (this.skillShieldTimer?.[m.f] ?? 0) > 0 ? 1 : 0;
         const k = Math.max(player, general);
@@ -2072,7 +2093,7 @@ export class Scene13WarLayer {
             if (port) {
                 const files = marchFilesOf(port.key);
                 const sp = marchSpacingOf(port.key);
-                const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+                const spDep = marchDepthSpacingOf(port.key);
                 m.dep = spDep;
                 m.slotY = (Math.floor(files / 2) - (files - 1) / 2) * sp;
             }
@@ -4946,7 +4967,7 @@ export class Scene13WarLayer {
                 // 🔴 [2026-10-12 主人「现在的方阵有问题，是前后长，应该是左右长」「先试A」]
                 //    原「行距取列距 2 倍」（2026-10-11）实测（scratch 探针，攻城战弋阳）：方阵纵深 82 / 横向 41，
                 //    前后是左右的 2 倍，且同排兵上下叠成竖线、排间露空 ⇒ 看着「一条一条」。改为行距＝列距。
-                const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+                const spDep = marchDepthSpacingOf(s.key);
                 // 🔴 [2026-10-11 主人令「你看看以前的13战术模式是如何排列的」]
                 //    旧 13 的排法（`!useFieldPlan` 那条路）就是：**每队 = rank×spDep 行 × slotY 列，
                 //    整块贴在出兵口、向后方排开**（`spawnX = s.x ± dep`、`spawnY = s.y + slotY`）。
@@ -6969,9 +6990,9 @@ export class Scene13WarLayer {
         return [dx / TAC_TILE_W + dy / TAC_TILE_H, dy / TAC_TILE_H - dx / TAC_TILE_W];
     }
 
-    /** 城门集合与城墙外圈范围（每场建一次） */
+    /** 城门集合与城墙外圈范围（每场建一次；异步城池 buildDeCity 落地后自动重算） */
     private ensureGateInfo(): void {
-        if (this.gateSpriteSet && this.ringBox !== undefined) return;
+        if (this.gateSpriteSet && this.ringBox !== undefined && (this.ringBox !== null || this.wallGates.length === 0) && (this.wallBySprite?.size ?? 0) >= this.wallGates.length) return;
         this.gateSpriteSet = new Set();
         this.wallBySprite = new Map();
         for (const g of this.wallGates) { this.wallBySprite.set(g.sprite, g); if (g.extraSprites) for (const sp of g.extraSprites) this.wallBySprite.set(sp, g); }
@@ -7035,7 +7056,7 @@ export class Scene13WarLayer {
         for (const s of this.spawns) {
             if (s.f !== 1 || s.outFwd === undefined) continue;
             const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / marchFilesOf(s.key)));
-            const depMax = (ranks - 1) * Math.min(marchSpacingOf(s.key), MARCH_SP_DEPTH_MAX);
+            const depMax = (ranks - 1) * marchDepthSpacingOf(s.key);
             rear = Math.min(rear, s.outFwd - depMax - this.radiusOf(s.key));
         }
         if (!Number.isFinite(rear)) rear = -this.rowDepth - 180;
@@ -7496,6 +7517,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-12] 占地按 DE 原生一格（96×48）换算：物件素材按原生像素画，原用旧网格 64×32 ⇒ 碰撞框只有画面的 2/3
         const TILE_W = TAC_TILE_W, TILE_H = TAC_TILE_H;
         this.ensureGateInfo();
+        const isPanicked = this.unitHasPanic(m);
         // 每轮按「最大穿透深度」优先解算：当士兵沿共线相邻墙段（W1→W2）贴墙滑行时，
         // 先由正对的墙面（penX 较小但 min(penX,penY) 最大）把士兵推出墙外表面，此时已不再与 W2 重叠；
         // 避免先碰到 W2 的内部接缝侧边（penY 极小 < penX）而被沿墙面反向弹回，造成贴墙移动时在接缝处高频卡顿闪动。
@@ -7504,8 +7526,8 @@ export class Scene13WarLayer {
             let bestDepth = 0;
             let bestMapX = 0, bestMapY = 0, bestLimitX = 0, bestLimitY = 0;
             for (const object of activeObstructions) {
-                if (m.f === 1 && this.gateSpriteSet?.has(object)) continue;   // 🔴 [2026-10-12] 守方从自己城门进出
-                if (WALL_PASS_TYPES.has(m.key) && (this.wallBySprite?.has(object) || this.gateSpriteSet?.has(object))) continue;   // 🔴 [2026-10-13 主人令] 穿墙特种兵可以穿墙
+                if (!isPanicked && m.f === 1 && this.gateSpriteSet?.has(object)) continue;   // 🔴 [2026-10-12] 守方从自己城门进出（混乱中不可穿墙/门）
+                if (!isPanicked && WALL_PASS_TYPES.has(m.key) && (this.wallBySprite?.has(object) || this.gateSpriteSet?.has(object))) continue;   // 🔴 [2026-10-13 主人令] 穿墙特种兵可以穿墙（混乱中不穿墙）
                 const obstruction = object.obstruction!;
                 const dx = px - object.x, dy = py - object.y;
                 const mapX = dx / TILE_W + dy / TILE_H;
@@ -7542,15 +7564,20 @@ export class Scene13WarLayer {
             }
             if (!bestObj) break;
             let mapX = bestMapX, mapY = bestMapY;
+            const prevDx = m.prevX - bestObj.x, prevDy = m.prevY - bestObj.y;
+            const prevMapX = prevDx / TILE_W + prevDy / TILE_H;
+            const prevMapY = prevDy / TILE_H - prevDx / TILE_W;
             const penX = bestLimitX - Math.abs(mapX);
             const penY = bestLimitY - Math.abs(mapY);
             const stableSign = (m.zid & 1) ? 1 : -1;
-            if (penX < penY) {
-                const sign = Math.abs(mapX) > 0.01 ? Math.sign(mapX) : stableSign;
-                mapX = sign * bestLimitX;
+            const signX = Math.abs(prevMapX) > 0.02 ? Math.sign(prevMapX) : (Math.abs(mapX) > 0.01 ? Math.sign(mapX) : stableSign);
+            const signY = Math.abs(prevMapY) > 0.02 ? Math.sign(prevMapY) : (Math.abs(mapY) > 0.01 ? Math.sign(mapY) : stableSign);
+            const enteredFromX = Math.abs(prevMapX) >= bestLimitX - 0.05 && Math.abs(prevMapY) < bestLimitY - 0.05;
+            const enteredFromY = Math.abs(prevMapY) >= bestLimitY - 0.05 && Math.abs(prevMapX) < bestLimitX - 0.05;
+            if (enteredFromX || (!enteredFromY && penX < penY)) {
+                mapX = signX * bestLimitX;
             } else {
-                const sign = Math.abs(mapY) > 0.01 ? Math.sign(mapY) : stableSign;
-                mapY = sign * bestLimitY;
+                mapY = signY * bestLimitY;
             }
             const wb = this.wallBySprite?.get(bestObj);
             if (wb && wb.f !== m.f) {
@@ -7562,6 +7589,35 @@ export class Scene13WarLayer {
             m.lastObsAt = this.battleSec;
             px = bestObj.x + (mapX - mapY) * (TILE_W / 2);
             py = bestObj.y + (mapX + mapY) * (TILE_H / 2);
+        }
+        // 有城墙时严禁混乱士兵（或被推挤的士兵）穿墙瞬移进出城内
+        if (this.ringBox && this.wallGates.length > 0) {
+            const r = this.ringBox;
+            const [pa, pb] = this.tileAB(m.prevX, m.prevY);
+            const [ca, cb] = this.tileAB(px, py);
+            const prevIn = pa > r.a0 && pa < r.a1 && pb > r.b0 && pb < r.b1;
+            const curIn = ca > r.a0 && ca < r.a1 && cb > r.b0 && cb < r.b1;
+            if (prevIn !== curIn) {
+                let blockedCross = false;
+                if (isPanicked) {
+                    blockedCross = this.wallGates.some((w) => this.wallStanding(w));
+                } else if (!WALL_PASS_TYPES.has(m.key)) {
+                    for (const w of this.wallGates) {
+                        if (!this.wallStanding(w)) continue;
+                        if (m.f === 1 && w.key === 'STONE_GATE') continue;
+                        const d2 = (px - w.x) ** 2 + (py - w.y) ** 2;
+                        const pd2 = (m.prevX - w.x) ** 2 + (m.prevY - w.y) ** 2;
+                        if (d2 < 95 * 95 || pd2 < 95 * 95) { blockedCross = true; break; }
+                    }
+                }
+                if (blockedCross) {
+                    px = m.prevX;
+                    py = m.prevY;
+                    if (m.panicAng !== undefined) {
+                        m.panicAng += Math.PI + (Math.random() - 0.5) * 0.6;
+                    }
+                }
+            }
         }
         m.x = px;
         m.y = py;
@@ -7728,7 +7784,7 @@ export class Scene13WarLayer {
             // 阵列几何：出生槽位 = 第 rank 排（间距 spDep）× 第 file 列（间距 sp），
             // 每批每口 50 个精灵（SIDE_CAP ÷ SIDE_LANES = 500 ÷ 10）→ 排数 = 50 ÷ 列数
             const sp = marchSpacingOf(m.key);
-            const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);   // 与出兵排阵同一式（行距＝列距）
+            const spDep = marchDepthSpacingOf(m.key);   // 与出兵排阵同一式（行距＝列距）
             const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / marchFilesOf(m.key)));
             const depC = ((ranks - 1) / 2) * spDep;
             const ey = m.slotY / sp;
@@ -7789,6 +7845,7 @@ export class Scene13WarLayer {
             this.releaseReservedTarget(m);
             if (m.hp <= 0) continue;
             if ((m.dirCd ?? 0) > 0) m.dirCd = Math.max(0, (m.dirCd ?? 0) - dt);
+            if ((m.defectInvulnTimer ?? 0) > 0) m.defectInvulnTimer = Math.max(0, (m.defectInvulnTimer ?? 0) - dt);
             // 开场列阵待命：静止渐显，不索敌、不移动、不攻击（主人 2026-08-16）
             if (deploying) {
                 m.st = 0;
@@ -7884,7 +7941,7 @@ export class Scene13WarLayer {
                     continue;
                 }
                 if (m.panicAng === undefined || m.panicTurnT === undefined || m.panicTurnT <= 0 || m.stuckT > 0.20) {
-                    // 换向时叠加强烈的向外扩散分量（远离周围同伴密集中心）+ 大角度随机乱窜，让混乱士兵四散奔逃不再扎堆
+                    // 换向时叠加强烈的向外扩散分量（远离周围同伴密集中心与城墙）+ 大角度随机乱窜，让混乱士兵四散奔逃不再扎堆或撞墙
                     let rx = 0, ry = 0;
                     const gx0 = (m.x / CELL_S) | 0, gy0 = (m.y / CELL_S) | 0;
                     for (let gx = gx0 - 2; gx <= gx0 + 2; gx++) {
@@ -7902,10 +7959,23 @@ export class Scene13WarLayer {
                             }
                         }
                     }
+                    let wallRepel = false;
+                    for (const wb of this.wallGates) {
+                        if (!this.wallStanding(wb)) continue;
+                        const wdx = m.x - wb.x, wdy = m.y - wb.y;
+                        const wd2 = wdx * wdx + wdy * wdy;
+                        if (wd2 > 1e-3 && wd2 < 160 * 160) {
+                            const wd = Math.sqrt(wd2);
+                            const wWeight = ((160 - wd) / 28) * 3.5;
+                            rx += (wdx / wd) * wWeight;
+                            ry += (wdy / wd) * wWeight;
+                            wallRepel = true;
+                        }
+                    }
                     const hasRepel = rx * rx + ry * ry > 0.04;
-                    const baseAng = (m.panicAng !== undefined && m.stuckT > 0.20)
+                    const baseAng = (m.panicAng !== undefined && m.stuckT > 0.20 && !wallRepel)
                         ? m.panicAng + Math.PI * (0.65 + Math.random() * 0.7)
-                        : (hasRepel ? Math.atan2(ry, rx) + (Math.random() - 0.5) * 2.1 : Math.random() * Math.PI * 2);
+                        : (hasRepel ? Math.atan2(ry, rx) + (Math.random() - 0.5) * (wallRepel ? 1.2 : 2.1) : Math.random() * Math.PI * 2);
                     m.panicAng = baseAng;
                     m.panicTurnT = 0.45 + Math.random() * 0.55;
                     m.stuckT = 0;
@@ -7913,14 +7983,33 @@ export class Scene13WarLayer {
                     m.panicTurnT -= dt;
                     m.panicAng += Math.sin(this.battleSec * 6.5 + m.zid * 1.73) * 1.8 * dt;
                 }
-                const ux = Math.cos(m.panicAng);
-                const uy = Math.sin(m.panicAng);
+                let ux = Math.cos(m.panicAng);
+                let uy = Math.sin(m.panicAng);
                 const panicSpdK = this.terrainSpeedAt(m.x, m.y) * SKILL_PANIC_MOVE;
                 const step = stats.spd * panicSpdK * this.uphillSpeedK(m.x, m.y, ux, uy) * dt;
                 if (step > 0) {
-                    m.x += ux * step;
-                    m.y += uy * step;
-                    m.walked = true;   // 朝向由 step 末尾按实际位移定（DE 口径）
+                    const nx = m.x + ux * step;
+                    const ny = m.y + uy * step;
+                    let hitWall: WarBuilding | null = null;
+                    for (const wb of this.wallGates) {
+                        if (!this.wallStanding(wb)) continue;
+                        const curD2 = (m.x - wb.x) ** 2 + (m.y - wb.y) ** 2;
+                        const nextD2 = (nx - wb.x) ** 2 + (ny - wb.y) ** 2;
+                        if (nextD2 < 72 * 72 && nextD2 < curD2) {
+                            hitWall = wb;
+                            break;
+                        }
+                    }
+                    if (hitWall) {
+                        m.panicAng = Math.atan2(m.y - hitWall.y, m.x - hitWall.x) + (Math.random() - 0.5) * 1.1;
+                        m.panicTurnT = 0.45 + Math.random() * 0.45;
+                        ux = Math.cos(m.panicAng);
+                        uy = Math.sin(m.panicAng);
+                    } else {
+                        m.x = nx;
+                        m.y = ny;
+                        m.walked = true;   // 朝向由 step 末尾按实际位移定（DE 口径）
+                    }
                 }
                 m.tx = m.x + ux * 60;
                 m.ty = m.y + uy * 60;

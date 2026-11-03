@@ -10,7 +10,7 @@
  *   ① **以登场年为准，不以出生年**（登场年 = 生年＋20，`debut` 字段优先、不晚于卒年、
  *      跳过公元 0 年 —— 全项目唯一算法 `debutYearOf()`，见 `GeneralLifeYears.ts`）；
  *   ② **登场年 公元前 403 年（三家分晋）以前**；
- *   ③ 且属**中国（东亚系建筑文化：CENTRAL / WEI / JIANGNAN / BASHU / KHITAN / NORTHEAST）**——
+ *   ③ 且属**中国（东亚系建筑文化：CENTRAL / WEI / JIANGNAN / BASHU / HEXI / NORTHEAST）**——
  *      非中国的同期武将（列奥尼达／赫梯／埃及／亚述／苏美尔…）**不打此标签**，各归其文化军团。
  *
  * 与军团的关系：这 16 位所在势力在势力表里一致挂「先秦军团」（`FACTION_COMPOSITIONS`）。

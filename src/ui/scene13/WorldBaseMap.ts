@@ -154,7 +154,7 @@ export interface WorldBaseQuery {
 /** 66 种二/三级建筑风格 → 16 种一级建筑风格母体映射（无 DOM 依赖，供 Worker 与战术层同源调用） */
 const STYLE_TO_BASE16: Readonly<Record<string, string>> = {
     ASIA: 'ASIA', CENTRAL: 'ASIA', WEI: 'ASIA', BASHU: 'ASIA', JIANGNAN: 'ASIA',
-    NORTHEAST: 'ASIA', KOREA: 'ASIA', JAPAN: 'ASIA', KHITAN: 'ASIA', XIANBEI: 'ASIA', MONGOL: 'ASIA', YURT: 'ASIA',
+    NORTHEAST: 'ASIA', KOREA: 'ASIA', JAPAN: 'ASIA', HEXI: 'ASIA', XIANBEI: 'ASIA', MONGOL: 'ASIA', YURT: 'ASIA',
     WEST: 'WEST', FRANKS: 'WEST', GERMANIC: 'WEST', BRITONS: 'WEST', CELTS: 'WEST',
     BURGUNDIANS: 'WEST', GOTHS: 'WEST', VIKINGS: 'WEST', SAXONS: 'WEST', DANES: 'WEST', VARANGIANS: 'WEST',
     EAST: 'EAST', BYZANTINE: 'EAST', ARMENIANS: 'EAST', GEORGIANS: 'EAST',
@@ -226,7 +226,7 @@ export function refineBaseTileWithBuildingStyle(
 
     switch (base16) {
         case 'ASIA': {
-            if (sub === 'KHITAN') {
+            if (sub === 'HEXI') {
                 // 河西走廊 / 西夏塞上（lng < 106.5）：西段极旱绿洲（敦煌/玉门关/阳关/赤金堡）用戈壁沙砾 ds5/des，中东段（姑臧/赤乌堡/张掖/皋兰/枹罕/伏俟城）用西北黄土荒原 ds2（与东亚温带 gr2/ds3 严格区分）
                 if (lng < 106.5) {
                     if (isSiege) return (lng < 99.5 || isAridRaw) ? 'des' : 'ds2';

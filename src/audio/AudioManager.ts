@@ -722,7 +722,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     JAPAN: ['de_JAPAN', 'JAPAN', 'nobunaga', 'shogun_tsunami', 'shogun_shinobue', 'shogun_daimyo'],
     JIANGNAN: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
     HUGUANG: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
-    KHITAN: ['de_KHITAN', 'HEXI', 'khitan_a'],
+    HEXI: ['de_KHITAN', 'HEXI', 'khitan_a'],   // 河西；曲目文件名沿用 DE 契丹素材
     KHMER: ['de_KHMER', 'khmer_a', 'khmer_b'],
     KOREA: ['de_KOREA', 'KOREA', 'korea_a'],
     LATIN: ['de_LATIN', 'LATIN', 'ezios_family', 'latin_a'],

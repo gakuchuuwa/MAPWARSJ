@@ -1028,7 +1028,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             ? 'WINTER'
             : (calSeason === 0 ? 'SPRING' : calSeason === 2 ? 'AUTUMN' : calSeason === 3 ? 'WINTER' : 'SUMMER');
         const isNomadOutskirts = isYurtOrNomadCity
-            || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|KHITAN|TIBET)$/.test(cultStyle);
+            || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|HEXI|TIBET)$/.test(cultStyle);
         const isRiceOutskirts = !isNomadOutskirts && !isArid && !isSnow
             && (/^(JIANGNAN|HUGUANG|BASHU|KOREA|VIETNAMESE|BENGALIS|BURMESE|KHMER|PURU|INDIA|MUGHAL|DIANQIAN|JAPAN|MALAY|CHAMPA|JAVANESE|SIAMESE|MON)$/.test(cultStyle)
                 || deStyle === 'SEAS' || deStyle === 'PURU' || deStyle === 'INDI');

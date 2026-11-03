@@ -77,7 +77,7 @@ interface LegionRow {
 /** 🔴 [2026-10-25 主人令] 文化＝一片区域的文化（当地人的生活、建筑风格），不是政权/民族；
  *  下面写区域名只是便于理解，建筑风格键与素材不动，军团名也不强制改名。 */
 const STYLE_LABELS: Record<string, string> = {
-    JAPAN: '日本', CENTRAL: '中原', WEI: '河朔', JIANGNAN: '江南', HUGUANG: '湖广', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
+    JAPAN: '日本', CENTRAL: '中原', WEI: '河朔', JIANGNAN: '江南', HUGUANG: '湖广', BASHU: '巴蜀', HEXI: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
     GERMANIC: '条顿', FRANKS: '法兰克', BURGUNDIANS: '勃艮第', BRITONS: '不列颠', CELTS: '凯尔特', VIKINGS: '维京', GOTHS: '哥特', SAXONS: '撒克逊', VARANGIANS: '瓦良格', DANES: '丹麦',
     BYZANTINE: '拜占庭', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚',
     POLES: '波兰', BOHEMIANS: '波希米亚', MAGYAR: '马扎尔', SLAVIC: '斯拉夫', LITHUANIANS: '立陶宛', BULGARIANS: '保加利亚',

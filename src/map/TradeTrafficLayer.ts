@@ -148,7 +148,7 @@ function resolveLocalCulture(lat: number, lng: number): BuildingStyle | string {
 /** 1. 丝路·大漠·中东·北非驼商圈（双峰骆驼商车满/空 + 丝路胡商 + 骡驴驮车） */
 const SILK_CAMEL_STYLES = new Set<string>([
     'ORIE', 'WEST_ASIA', 'PERSIAN', 'SASANIAN', 'CENTRAL_ASIA', 'WESTERN', 'HEXI',
-    'MONGOL', 'STEPPE', 'XIANBEI', 'KHITAN', 'TURKS', 'CUMAN', 'HUNS', 'BERBER', 'MUGHAL',
+    'MONGOL', 'STEPPE', 'XIANBEI', 'HEXI', 'TURKS', 'CUMAN', 'HUNS', 'BERBER', 'MUGHAL',
 ]);
 
 /** 2. 古典地中海·黑海·高加索圈（马车满/空 + 古典地中海行商 + 骡车；东地中海/高加索兼通丝路骆驼） */
@@ -242,7 +242,7 @@ function shipDir(lat: number, lng: number): string {
         style === 'CENTRAL' || style === 'WEI' || style === 'JIANGNAN' || style === 'HUGUANG'
         || style === 'BASHU' || style === 'TIBET' || style === 'NORTHEAST' || style === 'KOREA'
         || style === 'JAPAN' || style === 'VIETNAMESE' || style === 'KHMER' || style === 'BURMESE'
-        || style === 'MALAY' || style === 'MONGOL' || style === 'XIANBEI' || style === 'KHITAN'
+        || style === 'MALAY' || style === 'MONGOL' || style === 'XIANBEI' || style === 'HEXI'
     ) {
         return pickBalanced(['JUNK', 'MERCHANT_SHIP', 'TRANSPORT_SHIP', 'CANOE'], shipUsageCount);
     }

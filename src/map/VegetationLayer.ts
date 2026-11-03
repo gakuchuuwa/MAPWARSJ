@@ -1095,7 +1095,7 @@ export class VegetationLayer {
                     wx: wpt.x,
                     wy: wpt.y,
                     isForestHunting: FOREST_HUNTING_STYLES.has(style),
-                    isOasisCity: OASIS_STYLES.has(style) || (style === 'KHITAN' && city.lng <= 107.0),
+                    isOasisCity: OASIS_STYLES.has(style) || (style === 'HEXI' && city.lng <= 107.0),
                 };
             });
 

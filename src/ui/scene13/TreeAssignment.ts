@@ -368,7 +368,7 @@ function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
         if (isAridDesertOrGobi || (sub === 'XIANBEI' && q.lng < 101.2 && q.lat >= 38.0)) return 'BUSH_TREE_A';
         return (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
     }
-    if (sub === 'KHITAN') {
+    if (sub === 'HEXI') {
         if (isAridDesertOrGobi || q.lng < 101.2) return 'BUSH_TREE_A';
         return q.lng < 112.0 ? 'BIRCH_GREEN' : 'OAK';
     }

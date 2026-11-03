@@ -477,7 +477,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代漠南游牧军团",
         legionType: "region",
     },
-    // 🔴 [2026-10-25 主人令] 大夏·西夏（982–1227）＝城堡时代（FACTION_ERA `dangxiang` 全段城堡）｜首府兴庆府 KHITAN 河西
+    // 🔴 [2026-10-25 主人令] 大夏·西夏（982–1227）＝城堡时代（FACTION_ERA `dangxiang` 全段城堡）｜首府兴庆府 HEXI 河西
     //    → 城堡时代大夏军团（铁鹞子冷锻重甲/山讹）。原挂「封建时代河西军团」早一档。
     "dangxiang": {
         legionName: "城堡时代大夏军团",
@@ -1808,7 +1808,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代突厥军团",
         legionType: "sub",
     },
-    // 🔴 [2026-11-01 按史] 甘州回鹘＝封建时代 × 河西文化（据点张掖 buildingStyle KHITAN）→ 封建时代河西军团
+    // 🔴 [2026-11-01 按史] 甘州回鹘＝封建时代 × 河西文化（据点张掖 buildingStyle HEXI）→ 封建时代河西军团
     "ganzhou_huihu": {
         legionName: "封建时代河西军团",
         legionType: "sub",

@@ -6682,12 +6682,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'xiyuduhu_banchao', factionId: 'han_d', cityId: 'city_taqian', generalName: '班超', portrait: '/assets/KHITAN/xiyuduhu_banchao.png', eliteName: '疏勒精兵', eliteTier: 3 },
         // 🔴 [2026-10-26 主人令「窦固是汉，是中原，怎么能放西域呢？河西也行呀」→「两人可以放到河西吗？」]
         //    窦固＝汉显亲侯、奉车都尉（扶风平陵人，《后汉书·窦融列传》附传）：屯凉州、永平十六年出酒泉塞、
-        //    十七年出敦煌昆仑塞（击车师）——河西是他实打实的屯驻与出征集合地，故归汉国、据点放**敦煌**（河西 KHITAN，通西域门户）。
+        //    十七年出敦煌昆仑塞（击车师）——河西是他实打实的屯驻与出征集合地，故归汉国、据点放**敦煌**（河西 HEXI，通西域门户）。
         { generalId: 'pulei_dougu', factionId: 'han_d', cityId: 'city_dunhuang', generalName: '窦固', portrait: '/assets/KHITAN/pulei_dougu.png', eliteName: '河西骑兵', eliteTier: 3 },
         // 🔴 [2026-10-26 主人令「耿恭是东汉戊己校尉（汉将）…现在挂车师不对…要改」→「两人可以放到河西吗？」]
         //    耿恭＝东汉戊己校尉（《后汉书·耿恭传》），永平十七年屯车师后部金满城、守疏勒城拒匈奴；建初元年血战突围，
         //    「三月至玉门」（玉门关属敦煌郡，河西）。他屯的汉式屯城（今奇台石城子一带）无独立据点 →
-        //    按 §2.1「无合适据点取离事发地最近的相同建筑风格据点」锚**玉门关**（河西 KHITAN，比敦煌更近；亦是他生还入关之地）。
+        //    按 §2.1「无合适据点取离事发地最近的相同建筑风格据点」锚**玉门关**（河西 HEXI，比敦煌更近；亦是他生还入关之地）。
         { generalId: 'chagatai_genggong', factionId: 'han_d', cityId: 'city_yumenguan', generalName: '耿恭', portrait: '/assets/KHITAN/chagatai_genggong.png', eliteName: '戊己屯军', eliteTier: 2 },
 
 
@@ -8986,7 +8986,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     // 🔴 [2026-11-01 主人令「河西不足最低线 10，请处理」·按史补]
-    //    甘州回鹘（河西回鹘）可汗夜落纥，据甘州（张掖，KHITAN 河西文化）；894–1036 立国，屡拒西夏，1036 亡于李元昊。
+    //    甘州回鹘（河西回鹘）可汗夜落纥，据甘州（张掖，HEXI 河西文化）；894–1036 立国，屡拒西夏，1036 亡于李元昊。
     //    普将（四闸：区域政权、史载实胜不细，存疑列普将）；精锐「回鹘铁骑」T3（风土之兵，控丝路咽喉）；立绘留空。
     ganzhou_huihu: [
 
@@ -13626,7 +13626,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_liuping', factionId: 'song', cityId: 'city_changan', generalName: '刘平', portrait: '/assets/CENTRAL/bfe_liuping.png', eliteName: '关中禁军', eliteTier: 4 },
         { generalId: 'song_bizaiyu', factionId: 'song', cityId: 'city_zhongli', generalName: '毕再遇', portrait: '/assets/CENTRAL/song_bizaiyu.png', eliteName: '敢死选锋', eliteTier: 3 },   // 南宋开禧北伐第一勇将，1206–1207 守盱眙、六合连破金军（镇守盱眙）
         { generalId: 'song_lixianzhong', factionId: 'song', cityId: 'city_xucheng', generalName: '李显忠', portrait: '/assets/CENTRAL/song_lixianzhong.png', eliteName: '淮西军', eliteTier: 2 },   // 南宋 1163 符离之战宋军主将（统兵于此）
-    ],
+    ],
 
 
 

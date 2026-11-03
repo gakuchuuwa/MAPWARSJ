@@ -72,7 +72,7 @@ export const CULTURE_62_GROUPS: readonly CultureGroup[] = [
             { key: 'WEI',       deStyle: 'ASIA', castle: 'WEI_CASTLE_AGE3',  label: '🏯 河朔（中原高台阙楼）' },
             { key: 'JIANGNAN',  deStyle: 'ASIA', castle: 'WU_CASTLE_AGE3',   label: '🏯 江南（江南水榭坞堡）' },
             { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',  label: '🏯 巴蜀（巴蜀剑阁木关）' },
-            { key: 'KHITAN',    deStyle: 'ASIA', castle: 'KHIT_CASTLE_AGE3', label: '🏯 河西（边墙要塞）' },
+            { key: 'HEXI',      deStyle: 'ASIA', castle: 'KHIT_CASTLE_AGE3', label: '🏯 河西（边墙要塞）' },
             { key: 'NORTHEAST', deStyle: 'ASIA', castle: 'JURC_CASTLE_AGE3', label: '🏯 白山黑水（居庸金代山城）' },
             // 🔴 [2026-10-05 主人定「二级里代表 DE 可玩文明 Mongols 蒙古的是 MONGOL，对应的文明就是漠北蒙古，
             //    蒙古起源就是漠北；然后三级新建一个漠南鲜卑」]
@@ -307,7 +307,7 @@ ALL_BRANCHES_MAP['NORTH'] = ALL_BRANCHES_MAP['CENTRAL'];
  *     · CultureBase16.HEXI = 'CENTRAL' → 经 REGION_TO_DE_STYLE['CENTRAL']='ASIA' 同样落到东亚
  *   留着它 → 玉门关/姑臧/青海 8 座在编辑器里显示成「中亚 CEAS · 西域」，
  *   而游戏里画的是东亚素材 + 契丹城堡 —— 「看着和游戏不一致」就是这么来的。
- *   清掉后：region='HEXI' 不再当分支，分支由 buildingStyle 决定（河西据点写的是 KHITAN 契丹）→
+ *   清掉后：region='HEXI' 不再当分支，分支由 buildingStyle 决定（河西据点写的是 HEXI＝河西走廊文化）→
  *   一级 由 toBase16Style(HEXI→CENTRAL→ASIA) 得【东亚】，与游戏完全一致。
  *   ⚠️ 未写 buildingStyle 的 HEXI 据点则由 REGION_TO_BRANCH['HEXI']='CENTRAL' 推出二级【中原】。 */
 ALL_BRANCHES_MAP['STEPPE'] = ALL_BRANCHES_MAP['MONGOL'];
@@ -414,9 +414,9 @@ const LEGACY_TO_CULTURE66: Record<string, string> = {
     CRUSADERS: 'FRANKS', DALI: 'BASHU', DELHI: 'MUGHAL', EGYPT: 'ORIE',
     FRENCH: 'FRANKS', GHANA: 'AFRICA', GOJOSEON: 'KOREA', GORYEO: 'KOREA',
     GREEK_MERCENARY: 'GREECE', HEBREWS: 'ORIE', HELLENIC: 'GREECE', HEPHTHALITES: 'CENTRAL_ASIA',
-    HEXI: 'KHITAN', HITTITES: 'ORIE', HRE: 'GERMANIC', HUAXIA_IMPERIAL: 'CENTRAL',
+    KHITAN: 'HEXI', HITTITES: 'ORIE', HRE: 'GERMANIC', HUAXIA_IMPERIAL: 'CENTRAL',
     ILKHANATE: 'PERSIAN', IMPERIAL_ROME: 'ROMA', IROQUOIS: 'AMERICA', ITALIANS: 'LATIN',
-    JAVANESE: 'MALAY', JOSEON: 'KOREA', JURCHEN: 'NORTHEAST', KARA_KHITAN: 'KHITAN',
+    JAVANESE: 'MALAY', JOSEON: 'KOREA', JURCHEN: 'NORTHEAST', KARA_KHITAN: 'HEXI',
     KHAZARS: 'CUMAN', KUSH: 'ETHIOPIANS', KUSHAN: 'CENTRAL_ASIA', LOMBARDS: 'LATIN',
     MAGNA_GRAECIA: 'GREECE', MAMLUKS: 'ORIE', MANCHU: 'NORTHEAST', MING: 'CENTRAL',
     MOHE: 'NORTHEAST', NABATAEANS: 'ORIE', NANZHAO: 'BASHU', NORTH: 'WEI',
@@ -425,7 +425,7 @@ const LEGACY_TO_CULTURE66: Record<string, string> = {
     SAFAVID: 'PERSIAN', SCOTLAND: 'CELTS', SCYTHIANS: 'CUMAN', SELJUQ: 'TURKS',
     SERBIA: 'SLAVIC', SIKH: 'INDIA', SOGDIANS: 'CENTRAL_ASIA', SONG: 'CENTRAL',
     SOUTHAM_IMPERIAL: 'INCA', SRIVIJAYA: 'MALAY', STEPPE: 'MONGOL', SWEDISH: 'VIKINGS',
-    TAIRONA: 'MUISCA', TANGUT: 'KHITAN', TARASCAN: 'AMERICA', TEHUELCHE: 'MAPUCHE',
+    TAIRONA: 'MUISCA', TANGUT: 'HEXI', TARASCAN: 'AMERICA', TEHUELCHE: 'MAPUCHE',
     TEUTONS: 'GERMANIC', TIMURID: 'CENTRAL_ASIA', UIGHUR: 'MONGOL', VANDALS: 'GOTHS',
     WEST_ASIA: 'TURKS', WUSUN: 'CENTRAL_ASIA', YARLUNG: 'TIBET',
 };
