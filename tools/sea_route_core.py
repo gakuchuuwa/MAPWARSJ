@@ -135,7 +135,9 @@ class SeaGraph:
             return idx[k]
 
         for f in feats:
-            src = f.get('properties', {}).get('source', 'marnet')
+            props = f.get('properties', {})
+            src = props.get('source', 'marnet')
+            passage = props.get('passage')
             g = f['geometry']
             for line in (g['coordinates'] if g['type'] == 'MultiLineString' else [g['coordinates']]):
                 for i in range(len(line) - 1):
@@ -146,7 +148,11 @@ class SeaGraph:
                     d = haversine(p[1], p[0], q[1], q[0])
                     if d < 0.01:
                         continue
-                    w = d * (OPEN_SEA_PENALTY if src == 'marnet' else 1.0) + land_km(p, q) * LAND_KM_COST
+                    # 咽喉海峡（passage：麦哲伦/博斯普鲁斯/达达尼尔/曼德等）水道窄于 0.03° 掩膜网格，按真实水路计价，不加远洋与掩膜误伤惩罚
+                    if passage:
+                        w = d
+                    else:
+                        w = d * (OPEN_SEA_PENALTY if src == 'marnet' else 1.0) + land_km(p, q) * LAND_KM_COST
                     self.adj[a].append((b, w, d))
                     self.adj[b].append((a, w, d))
         self._lat = np.radians(np.array([n[0] for n in self.nodes]))

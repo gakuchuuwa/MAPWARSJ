@@ -1431,10 +1431,10 @@ export class VectorRoadEditor implements IEditor {
 
         // === 注入海上航线网（独立节点空间，只经港口城与陆路相接）===
         if (geojsonSea) {
-            const addSeaLine = (line: [number, number][], source: string) => {
+            const addSeaLine = (line: [number, number][], source: string, passage?: string | null) => {
                 if (!line || line.length < 2) return;
-                // 远洋主干加惩罚，沿岸/接驳按真实里程 —— 与 SeaRouteEditor 同规矩
-                const discount = source === 'marnet' ? VectorRoadEditor.OPEN_SEA_PENALTY : 1.0;
+                // 远洋主干加惩罚，沿岸/接驳/海峡咽喉(passage)按真实里程 —— 与 SeaRouteEditor 同规矩
+                const discount = (source === 'marnet' && !passage) ? VectorRoadEditor.OPEN_SEA_PENALTY : 1.0;
                 for (let i = 0; i < line.length - 1; i++) {
                     const [lng1, lat1] = line[i];
                     const [lng2, lat2] = line[i + 1];
@@ -1450,8 +1450,9 @@ export class VectorRoadEditor implements IEditor {
                 const g = f?.geometry;
                 if (!g?.coordinates) continue;
                 const source: string = f?.properties?.source ?? 'marnet';
+                const passage: string | null = f?.properties?.passage ?? null;
                 const lines = g.type === 'MultiLineString' ? g.coordinates : [g.coordinates];
-                for (const line of lines) addSeaLine(line, source);
+                for (const line of lines) addSeaLine(line, source, passage);
             }
         }
 

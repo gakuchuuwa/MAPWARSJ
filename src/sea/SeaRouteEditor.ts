@@ -18,7 +18,14 @@ import { unwrapLongitudePath } from '../utils/GeoLongitude';
 
 interface SeaNode { id: number; lat: number; lng: number; }
 /** weight = 选路代价（含远洋惩罚）；dist = 真实公里数（显示用，绝不带惩罚） */
-interface SeaEdge { from: number; to: number; weight: number; dist: number; coords: [number, number][]; }
+interface SeaEdge { from: number; to: number; weight: number; dist: number; source: string; passage?: string | null; coords: [number, number][]; }
+
+interface SeaRouteCandidate {
+    label: string;
+    coordinates: [number, number][];
+    totalDistance: number;
+    edgeKeys?: Set<string>;
+}
 
 /**
  * 🔴 [2026-08-25 主人「你来定」] 远洋航段的选路惩罚系数。
@@ -157,11 +164,18 @@ export class SeaRouteEditor implements IEditor {
     private routePolylines: Map<string, L.Polyline> = new Map();
     private selectedRouteId: string | null = null;
 
+    // === 候选航线缓存与切换支持（与陆路编辑器一致） ===
+    private pathCandidates: SeaRouteCandidate[] = [];
+    private currentCandidateIdx = 0;
+    private switchRouteBtn: HTMLButtonElement | null = null;
+
     // === UI ===
     private panel: HTMLElement | null = null;
     private statusLabel: HTMLElement | null = null;
     private routeSelect: HTMLSelectElement | null = null;
     private routeFilter: HTMLInputElement | null = null;
+    private routeSort: HTMLSelectElement | null = null;
+    private routeSortMode: 'len_desc' | 'len_asc' | 'new' | 'old' | 'name' = 'len_desc';
 
     private cityClickHandler: ((city: any, e?: any) => void) | null = null;
 
@@ -206,6 +220,8 @@ export class SeaRouteEditor implements IEditor {
             this.statusLabel = null;
             this.routeSelect = null;
             this.routeFilter = null;
+            this.routeSort = null;
+            this.switchRouteBtn = null;
         }
     }
 
@@ -273,15 +289,50 @@ export class SeaRouteEditor implements IEditor {
         this.routeFilter = document.createElement('input');
         this.routeFilter.type = 'text';
         this.routeFilter.placeholder = '🔍 搜索海路...';
-        this.routeFilter.style.cssText = `background:#0f2a40;color:#d0e4f7;border:1px solid #2b5a7a;border-radius:6px;padding:8px 12px;font-size:13px;flex:0 0 150px;width:150px;outline:none;`;
+        this.routeFilter.style.cssText = `background:#0f2a40;color:#d0e4f7;border:1px solid #2b5a7a;border-radius:6px;padding:8px 12px;font-size:13px;flex:0 0 130px;width:130px;outline:none;`;
         this.routeFilter.addEventListener('input', () => this.updateRouteSelect());
+
+        this.routeSort = document.createElement('select');
+        this.routeSort.style.cssText = `background:#0f2a40;color:#80deea;border:1px solid #2b5a7a;border-radius:6px;padding:8px 10px;font-size:13px;flex-shrink:0;font-weight:bold;`;
+        this.routeSort.title = '已有海路排行/排序方式（长度排行、新建在前、最旧在前、按名称）';
+        for (const [value, label] of [
+            ['len_desc', '📏 长度排行(长→短)'],
+            ['len_asc', '📐 长度排行(短→长)'],
+            ['new', '🆕 新建在前'],
+            ['old', '🕰️ 最旧在前'],
+            ['name', '🔤 按名称'],
+        ] as const) {
+            const opt = document.createElement('option');
+            opt.value = value;
+            opt.textContent = label;
+            this.routeSort.appendChild(opt);
+        }
+        this.routeSort.value = this.routeSortMode;
+        this.routeSort.addEventListener('change', () => {
+            const sel = this.routeSort!;
+            this.routeSortMode = sel.value as 'len_desc' | 'len_asc' | 'new' | 'old' | 'name';
+            this.updateRouteSelect();
+            const shown = this.routeSelect ? this.routeSelect.options.length - 1 : 0;
+            this.setStatus(`🔀 海路排行：${sel.options[sel.selectedIndex]?.textContent ?? ''}（共 ${shown} 条）`);
+        });
 
         this.routeSelect = document.createElement('select');
         // 定宽同理：海路名长短不一（「卡塔赫纳-圣多明各」vs「阿卡-塞浦路斯」），
         // 用 min-width 会被选中项撑开，面板又跟着横跳。
-        this.routeSelect.style.cssText = `background:#0f2a40;color:#4fc3f7;border:1px solid #2b5a7a;border-radius:6px;padding:8px 12px;font-size:13px;flex:0 0 200px;width:200px;font-weight:bold;`;
+        this.routeSelect.style.cssText = `background:#0f2a40;color:#4fc3f7;border:1px solid #2b5a7a;border-radius:6px;padding:8px 12px;font-size:13px;flex:0 0 220px;width:220px;font-weight:bold;`;
         this.updateRouteSelect();
-        this.routeSelect.addEventListener('change', () => this.selectRoute(this.routeSelect!.value));
+        this.routeSelect.addEventListener('change', () => this.selectRoute(this.routeSelect!.value, true));
+
+        const prevRouteBtn = this.createButton('◀', '#5e35b1', () => this.selectAdjacentRoute(-1));
+        prevRouteBtn.title = '在当前排行列表中选上一条海路';
+        prevRouteBtn.style.padding = '8px 10px';
+        const nextRouteBtn = this.createButton('▶', '#5e35b1', () => this.selectAdjacentRoute(1));
+        nextRouteBtn.title = '在当前排行列表中选下一条海路';
+        nextRouteBtn.style.padding = '8px 10px';
+
+        this.switchRouteBtn = this.createButton('🔀 切换线路', '#009688', () => this.cycleCandidates());
+        this.switchRouteBtn.style.display = 'none';
+        this.switchRouteBtn.title = '在多条候选海路之间切换（沿岸/海峡主航线、备选绕行航道、远洋直航、大圆弧线）';
 
         const refToggle = document.createElement('label');
         refToggle.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;font-size:13px;';
@@ -297,7 +348,11 @@ export class SeaRouteEditor implements IEditor {
 
         this.panel.appendChild(this.statusLabel);
         this.panel.appendChild(this.routeFilter);
+        this.panel.appendChild(this.routeSort);
         this.panel.appendChild(this.routeSelect);
+        this.panel.appendChild(prevRouteBtn);
+        this.panel.appendChild(nextRouteBtn);
+        this.panel.appendChild(this.switchRouteBtn);
         this.panel.appendChild(refToggle);
         this.panel.appendChild(this.createButton('🔄 重选', '#ff5722', () => {
             this.selectRoute('');
@@ -329,19 +384,80 @@ export class SeaRouteEditor implements IEditor {
     private updateRouteSelect(): void {
         if (!this.routeSelect) return;
         const filterText = (this.routeFilter?.value || '').toLowerCase().trim();
+        const prevVal = this.routeSelect.value || this.selectedRouteId || '';
         this.routeSelect.innerHTML = '<option value="">-- 已有海路 --</option>';
-        const feats = SEA_ROUTE_DATA.features.slice().sort((a, b) =>
-            (b.geometry?.coordinates?.length || 0) - (a.geometry?.coordinates?.length || 0));
-        for (const f of feats) {
+
+        const stampOf = (id: string): number => {
+            const m = /_(\d{10,})$/.exec(id || '');
+            return m ? Number(m[1]) : 0;
+        };
+        const mode = this.routeSortMode;
+        const indexed = SEA_ROUTE_DATA.features.map((f, i) => ({
+            f,
+            i,
+            km: f?.geometry?.coordinates ? Math.round(this.calculatePathLength(f.geometry.coordinates)) : 0,
+        }));
+        indexed.sort((a, b) => {
+            const idA = a.f?.properties?.id ?? '';
+            const idB = b.f?.properties?.id ?? '';
+            switch (mode) {
+                case 'len_desc':
+                    return b.km - a.km || (b.f?.geometry?.coordinates?.length || 0) - (a.f?.geometry?.coordinates?.length || 0);
+                case 'len_asc':
+                    return a.km - b.km || (a.f?.geometry?.coordinates?.length || 0) - (b.f?.geometry?.coordinates?.length || 0);
+                case 'new': {
+                    const sA = stampOf(idA), sB = stampOf(idB);
+                    if (sA !== sB) return (sB || 0) - (sA || 0);
+                    return b.i - a.i;
+                }
+                case 'old': {
+                    const sA = stampOf(idA) || a.i, sB = stampOf(idB) || b.i;
+                    return sA - sB;
+                }
+                case 'name':
+                    return String(a.f?.properties?.name ?? '').localeCompare(String(b.f?.properties?.name ?? ''), 'zh-Hans');
+                default:
+                    return b.km - a.km;
+            }
+        });
+
+        for (const { f, km } of indexed) {
             if (!f || !f.properties || !f.geometry) continue;
             const name = (f.properties.name || '未命名').toLowerCase();
-            const id = f.properties.id.toLowerCase();
+            const id = (f.properties.id || '').toLowerCase();
             if (filterText && !name.includes(filterText) && !id.includes(filterText)) continue;
             const opt = document.createElement('option');
             opt.value = f.properties.id;
-            opt.textContent = `${f.properties.name || '未命名'} (${f.geometry.coordinates.length}点)`;
+            let when = '';
+            if (mode === 'new' || mode === 'old') {
+                const ms = stampOf(f.properties.id || '');
+                if (ms) {
+                    const d = new Date(ms);
+                    const p = (x: number) => String(x).padStart(2, '0');
+                    when = ` · ${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+                }
+            }
+            opt.textContent = `${f.properties.name || '未命名'} (${km}km · ${f.geometry.coordinates.length}点${when})`;
             this.routeSelect.appendChild(opt);
         }
+        if (prevVal && Array.from(this.routeSelect.options).some(o => o.value === prevVal)) {
+            this.routeSelect.value = prevVal;
+        }
+    }
+
+    /** 在当前排序/过滤后的海路下拉列表中循环切换上/下一条 */
+    private selectAdjacentRoute(delta: number): void {
+        if (!this.routeSelect) return;
+        const opts = Array.from(this.routeSelect.options).filter(o => o.value);
+        if (opts.length === 0) {
+            this.setStatus('⚠️ 当前列表中没有海路');
+            return;
+        }
+        const curIdx = opts.findIndex(o => o.value === (this.selectedRouteId || this.routeSelect!.value));
+        const nextIdx = curIdx < 0 ? (delta >= 0 ? 0 : opts.length - 1) : (curIdx + delta + opts.length) % opts.length;
+        const targetId = opts[nextIdx].value;
+        this.routeSelect.value = targetId;
+        this.selectRoute(targetId, true);
     }
 
     // ===== 城市选择 =====
@@ -442,28 +558,31 @@ export class SeaRouteEditor implements IEditor {
             return id;
         };
 
-        const addEdge = (a: number, b: number, coords: [number, number][], source: string): void => {
+        const addEdge = (a: number, b: number, coords: [number, number][], source: string, passage?: string | null): void => {
             if (a === b) return;
             const d = this.calculatePathLength(coords);
             if (!isFinite(d) || d < 0.01) return;
-            // 远洋主干加惩罚，沿岸/接驳按真实距离 —— 见 OPEN_SEA_PENALTY；穿陆加代价 —— 见 LAND_KM_COST
-            const w = (source === 'marnet' ? d * OPEN_SEA_PENALTY : d)
-                + this.landKm(coords[0], coords[coords.length - 1]) * LAND_KM_COST;
-            this.seaAdj.get(a)!.push({ from: a, to: b, weight: w, dist: d, coords });
-            this.seaAdj.get(b)!.push({ from: b, to: a, weight: w, dist: d, coords: [...coords].reverse() as [number, number][] });
+            // 咽喉海峡（passage：麦哲伦/博斯普鲁斯/达达尼尔/曼德等）水道窄于 0.03° 掩膜网格，按真实水路计价，不加远洋与掩膜误伤惩罚
+            const w = passage
+                ? d
+                : (source === 'marnet' ? d * OPEN_SEA_PENALTY : d)
+                    + this.landKm(coords[0], coords[coords.length - 1]) * LAND_KM_COST;
+            this.seaAdj.get(a)!.push({ from: a, to: b, weight: w, dist: d, source, passage, coords });
+            this.seaAdj.get(b)!.push({ from: b, to: a, weight: w, dist: d, source, passage, coords: [...coords].reverse() as [number, number][] });
         };
 
         for (const f of geojson.features || []) {
             const g = f?.geometry;
             if (!g || !g.coordinates) continue;
             const source: string = f?.properties?.source ?? 'marnet';
+            const passage: string | null = f?.properties?.passage ?? null;
             const lines = g.type === 'MultiLineString' ? g.coordinates : [g.coordinates];
             for (const line of lines) {
                 if (!line || line.length < 2) continue;
                 for (let i = 0; i < line.length - 1; i++) {
                     const [lng1, lat1] = line[i];
                     const [lng2, lat2] = line[i + 1];
-                    addEdge(getNode(lat1, lng1), getNode(lat2, lng2), [line[i], line[i + 1]], source);
+                    addEdge(getNode(lat1, lng1), getNode(lat2, lng2), [line[i], line[i + 1]], source, passage);
                 }
             }
         }
@@ -569,8 +688,18 @@ export class SeaRouteEditor implements IEditor {
         return out;
     }
 
+    private edgeKey(a: number, b: number): string {
+        return a < b ? `${a}_${b}` : `${b}_${a}`;
+    }
+
     /** 城→城海路（含两端城坐标）与真实公里；航线网上不连通返回 null */
-    private route(lat1: number, lng1: number, lat2: number, lng2: number): { coordinates: [number, number][]; totalDistance: number } | null {
+    private route(
+        lat1: number,
+        lng1: number,
+        lat2: number,
+        lng2: number,
+        opts?: { openSeaFactor?: number; penalizedEdges?: Set<string>; penaltyFactor?: number }
+    ): { coordinates: [number, number][]; totalDistance: number; edgeKeys: Set<string> } | null {
         const starts = this.portLinks(lat1, lng1);
         const ends = this.portLinks(lat2, lng2);
         const dist = new Map<number, number>();
@@ -611,6 +740,10 @@ export class SeaRouteEditor implements IEditor {
             dist.set(id, w);
             push({ nodeId: id, dist: w });
         }
+        const openSeaFactor = opts?.openSeaFactor;
+        const penalized = opts?.penalizedEdges;
+        const penaltyMult = opts?.penaltyFactor ?? 3.5;
+
         let bestCost = Infinity;
         let bestEnd: number | null = null;
         while (heap.length > 0) {
@@ -624,7 +757,14 @@ export class SeaRouteEditor implements IEditor {
                 bestEnd = cur.nodeId;
             }
             for (const e of this.seaAdj.get(cur.nodeId) || []) {
-                const nd = cur.dist + e.weight;
+                let ew = e.weight;
+                if (openSeaFactor !== undefined && e.source === 'marnet' && !e.passage) {
+                    ew = Math.max(e.dist, e.weight - e.dist * (OPEN_SEA_PENALTY - openSeaFactor));
+                }
+                if (penalized && penalized.has(this.edgeKey(e.from, e.to))) {
+                    ew *= penaltyMult;
+                }
+                const nd = cur.dist + ew;
                 if (nd < (dist.get(e.to) ?? Infinity)) {
                     dist.set(e.to, nd);
                     prev.set(e.to, cur.nodeId);
@@ -635,8 +775,14 @@ export class SeaRouteEditor implements IEditor {
         if (bestEnd === null) return null;
 
         const ids = [bestEnd];
+        const edgeKeys = new Set<string>();
         let c = bestEnd;
-        while (prev.has(c)) { c = prev.get(c)!; ids.push(c); }
+        while (prev.has(c)) {
+            const p = prev.get(c)!;
+            edgeKeys.add(this.edgeKey(c, p));
+            c = p;
+            ids.push(c);
+        }
         ids.reverse();
         const r5 = (v: number) => Math.round(v * 1e5) / 1e5;
         const pts: [number, number][] = [[r5(lng1), r5(lat1)]];
@@ -649,12 +795,112 @@ export class SeaRouteEditor implements IEditor {
         }
         // 🔴 显示的航程必须是**真实公里**（选路代价带远洋/穿陆惩罚，不能拿来当航程）
         const coordinates = this.straighten(ded);
-        return { coordinates, totalDistance: this.calculatePathLength(coordinates) };
+        return { coordinates, totalDistance: this.calculatePathLength(coordinates), edgeKeys };
     }
 
     /** 视线拉直（只动航线网那一段，两端接驳线不动）：从每个点跳到最远的「直线全在水上、≤SHORTCUT_MAX_KM」的点 */
     private straighten(coords: [number, number][]): [number, number][] {
         return coords;
+    }
+
+    /** 生成两港之间的多条候选海路（沿岸/海峡主航线、备选航道、远洋直航、大圆弧线），自动去重 */
+    private buildRouteCandidates(lat1: number, lng1: number, lat2: number, lng2: number): SeaRouteCandidate[] {
+        const out: SeaRouteCandidate[] = [];
+        const isSameRoute = (a: [number, number][], b: [number, number][]): boolean => {
+            if (a.length === b.length && a.every((p, i) => Math.abs(p[0] - b[i][0]) < 1e-4 && Math.abs(p[1] - b[i][1]) < 1e-4)) {
+                return true;
+            }
+            const midA = a[Math.floor(a.length / 2)];
+            const midB = b[Math.floor(b.length / 2)];
+            const dMid = this.haversine(midA[1], midA[0], midB[1], midB[0]);
+            const dLen = Math.abs(this.calculatePathLength(a) - this.calculatePathLength(b));
+            return dLen < 12 && dMid < 18;
+        };
+        const pushUnique = (cand: SeaRouteCandidate | null) => {
+            if (!cand || cand.coordinates.length < 2) return;
+            if (out.some(x => isSameRoute(x.coordinates, cand.coordinates))) return;
+            out.push(cand);
+        };
+
+        if (this.graphBuilt && this.seaNodes.length > 0) {
+            // 1. 沿岸/海峡主航线（默认：贴岸与咽喉海峡优先）
+            const primary = this.route(lat1, lng1, lat2, lng2);
+            if (primary) {
+                pushUnique({
+                    label: '🌊 沿岸/海峡主航线',
+                    coordinates: primary.coordinates,
+                    totalDistance: primary.totalDistance,
+                    edgeKeys: primary.edgeKeys,
+                });
+                // 2. 备选航道（惩罚首条中间 70% 的航段，自动找出绕合恩角/另一海峡的第二通道）
+                if (primary.edgeKeys.size > 2) {
+                    const allEdges = Array.from(primary.edgeKeys);
+                    const trim = Math.max(1, Math.floor(allEdges.length * 0.15));
+                    const midEdges = new Set(allEdges.slice(trim, Math.max(trim + 1, allEdges.length - trim)));
+                    const alt1 = this.route(lat1, lng1, lat2, lng2, { penalizedEdges: midEdges, penaltyFactor: 4.5 });
+                    if (alt1) {
+                        pushUnique({
+                            label: '🔀 备选航道',
+                            coordinates: alt1.coordinates,
+                            totalDistance: alt1.totalDistance,
+                            edgeKeys: alt1.edgeKeys,
+                        });
+                    }
+                }
+            }
+            // 3. 远洋直航（远洋主干 marnet 不加 1.5 倍惩罚）
+            const openSea = this.route(lat1, lng1, lat2, lng2, { openSeaFactor: 1.0 });
+            if (openSea) {
+                pushUnique({
+                    label: '⚓ 远洋直航',
+                    coordinates: openSea.coordinates,
+                    totalDistance: openSea.totalDistance,
+                    edgeKeys: openSea.edgeKeys,
+                });
+            }
+        }
+
+        // 4. 球面大圆弧线兜底（供跨洋或微调对比）
+        const gcCoords = this.greatCirclePath(lat1, lng1, lat2, lng2, 32);
+        pushUnique({
+            label: '🌐 大圆弧线',
+            coordinates: gcCoords,
+            totalDistance: this.calculatePathLength(gcCoords),
+        });
+
+        return out;
+    }
+
+    private syncSwitchRouteBtn(): void {
+        if (!this.switchRouteBtn) return;
+        if (this.pathCandidates.length > 1 && this.selectedRouteId) {
+            this.switchRouteBtn.style.display = '';
+            this.switchRouteBtn.textContent = `🔀 切换线路 (${this.currentCandidateIdx + 1}/${this.pathCandidates.length})`;
+        } else {
+            this.switchRouteBtn.style.display = 'none';
+        }
+    }
+
+    /** 在候选海路间循环切换（与陆地编辑器 cycleCandidates 体验一致） */
+    private cycleCandidates(): void {
+        if (!this.selectedRouteId || this.pathCandidates.length <= 1) {
+            this.setStatus('⚠️ 当前海路没有其他可切换的候选路线');
+            return;
+        }
+        const feat = SEA_ROUTE_DATA.features.find(f => f.properties.id === this.selectedRouteId);
+        if (!feat) return;
+
+        this.currentCandidateIdx = (this.currentCandidateIdx + 1) % this.pathCandidates.length;
+        const cand = this.pathCandidates[this.currentCandidateIdx];
+        feat.geometry.coordinates = cand.coordinates.map(([lng, lat]) => [lng, lat] as [number, number]);
+
+        this.renderRoute(this.selectedRouteId);
+        this.updateRouteSelect();
+        this.syncSwitchRouteBtn();
+        this.setStatus(
+            `🔀 [${this.currentCandidateIdx + 1}/${this.pathCandidates.length}] ${cand.label} | ` +
+            `${feat.properties.name} (${cand.totalDistance.toFixed(0)}km, ${cand.coordinates.length}点) | 记得点 💾 保存`
+        );
     }
 
     private generateSeaPath(): void {
@@ -669,23 +915,10 @@ export class SeaRouteEditor implements IEditor {
             return;
         }
 
-        const directDist = this.haversine(startCity.lat, startCity.lng, endCity.lat, endCity.lng);
-        const best = this.route(startCity.lat, startCity.lng, endCity.lat, endCity.lng);
-
-        let finalCoords: [number, number][];
-        let distStr: string;
-
-        if (best) {
-            // route() 已含两端城市坐标
-            finalCoords = best.coordinates;
-            distStr = `${best.totalDistance.toFixed(0)}km 海上航线`;
-        } else {
-            // 跨洋无既有航线 → 回退大圆航线（供手动微调）
-            finalCoords = this.greatCirclePath(
-                startCity.lat, startCity.lng, endCity.lat, endCity.lng, 32
-            );
-            distStr = `${directDist.toFixed(0)}km 大圆航线(请微调)`;
-        }
+        const cands = this.buildRouteCandidates(startCity.lat, startCity.lng, endCity.lat, endCity.lng);
+        const best = cands[0];
+        const finalCoords = best.coordinates;
+        const distStr = `${best.totalDistance.toFixed(0)}km · ${best.label}`;
 
         // 创建/覆盖两港之间的既有海路
         const dupIds = SEA_ROUTE_DATA.features
@@ -713,11 +946,15 @@ export class SeaRouteEditor implements IEditor {
         };
 
         SEA_ROUTE_DATA.features.push(newFeature);
+        this.selectedRouteId = routeId;
+        this.pathCandidates = cands;
+        this.currentCandidateIdx = 0;
         this.updateRouteSelect();
         this.renderRoute(routeId);
-        this.selectRoute(routeId);
+        this.syncSwitchRouteBtn();
 
-        this.setStatus(`✅ ${routeName} (${distStr}, ${finalCoords.length}点) | 记得点 💾 保存`);
+        const switchHint = cands.length > 1 ? ` · 可点 🔀 切换(${cands.length}条)` : '';
+        this.setStatus(`✅ ${routeName} (${distStr}, ${finalCoords.length}点)${switchHint} | 记得点 💾 保存`);
         this.clearCitySelection();
     }
 
@@ -762,19 +999,26 @@ export class SeaRouteEditor implements IEditor {
         const feature = SEA_ROUTE_DATA.features.find(f => f.properties.id === routeId);
         if (!feature) return;
         this.removeRouteLayer(routeId);
+        const isSelected = this.selectedRouteId === routeId;
         // 跨 180° 经线的海路先展开经度（与 RoadRegistry.loadSeaRoutes 同），否则会画成横贯全图的一条线
         // 地图开了 worldCopyJump（环游世界）：再在左右两个世界副本各画一份，拖过日期线后航线不断档
         const unwrapped = unwrapLongitudePath(feature.geometry.coordinates);
         const latLngs = [-360, 0, 360].map(off => unwrapped.map(([lng, lat]) => [lat, lng + off] as [number, number]));
         const polyline = L.polyline(latLngs, {
-            color: ROUTE_COLOR,
-            weight: 2.5,
-            opacity: 0.9,
-            dashArray: '10 6',
+            color: isSelected ? '#00e5ff' : ROUTE_COLOR,
+            weight: isSelected ? 4.5 : 2.5,
+            opacity: isSelected ? 1.0 : 0.9,
+            dashArray: isSelected ? undefined : '10 6',
             lineCap: 'round',
             lineJoin: 'round'
         }).addTo(this.map);
-        polyline.bindTooltip(feature.properties.name, { sticky: true });
+        const km = Math.round(this.calculatePathLength(feature.geometry.coordinates));
+        polyline.bindTooltip(`${feature.properties.name} (${km}km · ${feature.geometry.coordinates.length}点)`, { sticky: true });
+        polyline.on('click', (e: L.LeafletMouseEvent) => {
+            L.DomEvent.stopPropagation(e);
+            if (this.routeSelect) this.routeSelect.value = routeId;
+            this.selectRoute(routeId, false);
+        });
         this.routePolylines.set(routeId, polyline);
     }
 
@@ -788,9 +1032,53 @@ export class SeaRouteEditor implements IEditor {
         this.routePolylines.clear();
     }
 
-    private selectRoute(routeId: string): void {
+    private selectRoute(routeId: string, panToRoute: boolean = false): void {
+        const prevId = this.selectedRouteId;
         this.selectedRouteId = routeId || null;
-        if (routeId) this.setStatus(`📌 已选中海路，可删除或继续画新海路`);
+        if (prevId && prevId !== this.selectedRouteId) this.renderRoute(prevId);
+        if (!this.selectedRouteId) {
+            this.pathCandidates = [];
+            this.currentCandidateIdx = 0;
+            this.syncSwitchRouteBtn();
+            return;
+        }
+        this.renderRoute(this.selectedRouteId);
+        const feat = SEA_ROUTE_DATA.features.find(f => f.properties.id === this.selectedRouteId);
+        if (!feat) return;
+
+        // 为选中的既有海路计算可切换候选路线（保留原路线在第 1 位以便对比切换）
+        const sc = CITIES.find(c => c.id === feat.properties.startConnection);
+        const ec = CITIES.find(c => c.id === feat.properties.endConnection);
+        if (sc && ec && this.graphBuilt) {
+            const cands = this.buildRouteCandidates(sc.lat, sc.lng, ec.lat, ec.lng);
+            const curKm = this.calculatePathLength(feat.geometry.coordinates);
+            const matchIdx = cands.findIndex(c =>
+                Math.abs(c.totalDistance - curKm) < 12 && c.coordinates.length === feat.geometry.coordinates.length
+            );
+            if (matchIdx >= 0) {
+                this.pathCandidates = cands;
+                this.currentCandidateIdx = matchIdx;
+            } else {
+                this.pathCandidates = [
+                    { label: '📌 当前已存路线', coordinates: feat.geometry.coordinates.map(([x, y]) => [x, y] as [number, number]), totalDistance: curKm },
+                    ...cands,
+                ];
+                this.currentCandidateIdx = 0;
+            }
+        } else {
+            this.pathCandidates = [];
+            this.currentCandidateIdx = 0;
+        }
+        this.syncSwitchRouteBtn();
+
+        if (panToRoute && feat.geometry.coordinates.length > 0) {
+            const unwrapped = unwrapLongitudePath(feat.geometry.coordinates);
+            const latLngs = unwrapped.map(([lng, lat]) => [lat, lng] as [number, number]);
+            this.map.fitBounds(L.latLngBounds(latLngs), { padding: [60, 60] });
+        }
+        const km = Math.round(this.calculatePathLength(feat.geometry.coordinates));
+        const switchHint = this.pathCandidates.length > 1 ? ` · 可点 🔀 切换线路(${this.pathCandidates.length}条)` : '';
+        this.setStatus(`📌 ${feat.properties.name} (${km}km, ${feat.geometry.coordinates.length}点)${switchHint}`);
     }
 
     // ===== 保存 / 导出 / 删除 =====

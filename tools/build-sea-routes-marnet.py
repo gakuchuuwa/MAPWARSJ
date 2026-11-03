@@ -170,6 +170,11 @@ def main():
         if p in BLOCKED:
             dropped[p] += 1
             continue
+        # 麦哲伦海峡西半段（[-75.101482,-52.587619]→[-70.45,-52.7501]）源数据漏标 passage='chili'，补齐
+        coords = f.get('geometry', {}).get('coordinates', [])
+        if not p and f.get('geometry', {}).get('type') == 'LineString' and len(coords) >= 2:
+            if abs(coords[0][0] - (-75.101482)) < 0.01 and abs(coords[-1][0] - (-70.45)) < 0.01:
+                p = 'chili'
         kept.append({
             'type': 'Feature',
             # 保留 passage：将来要按年代开关某条海峡（封锁/结冰）就靠它

@@ -138,6 +138,21 @@ def main():
                 ring_linked = True
         if ring_linked:
             linked_rings += 1
+    # 麦哲伦海峡东西两口显式补齐 0 穿陆接驳边，并剔除横穿火地群岛 28.8km 陆地的那条坏接驳边
+    stitches = [
+        s for s in stitches
+        if not (abs(s['geometry']['coordinates'][0][0] - (-74.66667)) < 0.01
+                and abs(s['geometry']['coordinates'][0][1] - (-53.75)) < 0.01)
+    ]
+    for a, b in (
+        ([-75.25, -52.83333], [-75.10148, -52.58762]),   # 麦哲伦海峡西口（太平洋沿岸↔海峡西口，29km 全水）
+        ([-68.08333, -52.33333], [-68.0, -52.4]),         # 麦哲伦海峡东口（大西洋沿岸↔海峡东口，9km 全水）
+    ):
+        stitches.append({
+            'type': 'Feature',
+            'properties': {'source': 'stitch'},
+            'geometry': {'type': 'LineString', 'coordinates': [a, b]},
+        })
     print(f'接驳边 {len(stitches)} 条；{linked_rings}/{len(coastal)} 条沿岸环已接入主干')
 
     feats = marnet + coastal + stitches
