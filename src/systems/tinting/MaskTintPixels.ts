@@ -14,8 +14,8 @@ export function tintMaskPixels(main: Uint8ClampedArray, mask: Uint8ClampedArray,
     }
     const K = weak ? extraTint : 0;
     for (let i = 0; i < n; i += 4) {
-        const w = mask[i + 3] / 255;
-        if (w === 0) {
+        const ma = mask[i + 3];
+        if (ma === 0) {
             if (K > 0 && main[i + 3] > 16) {
                 const l0 = (0.299 * main[i] + 0.587 * main[i + 1] + 0.114 * main[i + 2]) / 255;
                 main[i] = Math.round(main[i] * (1 - K) + tint.r * l0 * K);
@@ -24,6 +24,7 @@ export function tintMaskPixels(main: Uint8ClampedArray, mask: Uint8ClampedArray,
             }
             continue;
         }
+        const w = ma / 255;
         const lum = 0.299 * main[i] + 0.587 * main[i + 1] + 0.114 * main[i + 2];
         const s = Math.min(255, lum * 2.2);
         main[i] = Math.round((tint.r * s / 255) * w + main[i] * (1 - w));

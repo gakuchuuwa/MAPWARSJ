@@ -1921,6 +1921,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xibanya_jufre': 'SPANISH',   // 胡弗雷｜据点 门多萨
     'putaoya_raposo': 'PORTUGUESE',   // 拉波索｜据点 圣保罗
     'ayoubu_turanshah': 'ORIE',   // 图兰沙｜据点 萨那
+    'bolinixiya_isokelekel': 'MALAY',   // 伊索克勒克尔｜据点 南马都尔
+    'yinggelan_somers': 'BRITONS',   // 萨默斯｜据点 百慕大
 };
 
 // [2026-10-26 主人令新增湖广] 同步迁入五省据点的武将兜底文化；其余文化项保持原值。

@@ -97,7 +97,7 @@ export class SpriteTinter {
     private static maskCache: Map<string, HTMLImageElement | 'none'> = new Map();
     /** 遮罩图缓存**字节**预算（理由同 TINTED_CACHE_MAX_BYTES：遮罩与主图同尺寸，条数上限一样失真）。 */
     /** 同上：实测单场顶死在 300MB 说明不够用，放到 700MB 让它装得下一整场。 */
-    private static readonly MASK_CACHE_MAX_BYTES = 700 * 1024 * 1024;
+    private static readonly MASK_CACHE_MAX_BYTES = 1000 * 1024 * 1024;
     /** 当前遮罩缓存已占字节。 */
     private static maskCacheBytes = 0;
     /**
@@ -157,7 +157,8 @@ export class SpriteTinter {
     private static tintWorker: Worker | null = null;
     private static workerFailed = false;
     private static workerJobId = 0;
-    private static workerJobs = new Map<number, { resolve: (bitmap: ImageBitmap) => void; reject: (error: Error) => void }>();
+    private static workerJobs = new Map<number, { resolve: (res: { bitmap: ImageBitmap; weak?: boolean }) => void; reject: (error: Error) => void }>();
+    private static failedTintKeys = new Set<string>();
     private static workerBusy = 0;
     private static workerWaiters: Array<{ key: string; resume: () => void }> = [];
     private static criticalTintKeys = new Set<string>();
@@ -171,7 +172,7 @@ export class SpriteTinter {
             if (!job) return;
             this.workerJobs.delete(data.id);
             if (data.error) job.reject(new Error(data.error));
-            else job.resolve(data.bitmap);
+            else job.resolve({ bitmap: data.bitmap, weak: data.weak });
         };
         worker.onerror = () => {
             this.workerFailed = true;
@@ -200,7 +201,7 @@ export class SpriteTinter {
          *   · 本缓存没有 touch → FIFO → churn **7835 evict / 2607 reAdd（33%）**。
          * 33% 的淘汰对象转头又被加回来 = 反复重下载/重解码同一批遮罩，纯烧 CPU，内存一分没省。
          * 同期 fps 从开局 59.9 一路劣化到 15，重载页面后立刻回 59.9 —— 抖动随运行时长累积。 */
-        if (mask !== undefined) { this.maskCache.delete(maskSrc); this.maskCache.set(maskSrc, mask); }
+        if (mask !== undefined) this.touchMask(maskSrc, mask);
         if (!mask) {
             const image = new Image();
             image.fetchPriority = this.criticalTintKeys.has(`${tintKeyOf(sprite)}_${factionId}`) ? 'high' : 'low';
@@ -239,13 +240,15 @@ export class SpriteTinter {
             maskBitmap = await createImageBitmap(mask);
             const worker = this.getTintWorker();
             const id = ++this.workerJobId;
-            const bitmap = await new Promise<ImageBitmap>((resolve, reject) => {
+            const knownWeak = this.weakCoverCache.get(maskSrc);
+            const { bitmap, weak } = await new Promise<{ bitmap: ImageBitmap; weak?: boolean }>((resolve, reject) => {
                 this.workerJobs.set(id, { resolve, reject });
                 try {
                     worker.postMessage({ id, sprite: mainBitmap, mask: maskBitmap, tint,
-                        weakCoverage: this.WEAK_PC_COVERAGE, extraTint: this.WEAK_EXTRA_TINT }, [mainBitmap!, maskBitmap!]);
+                        weakCoverage: this.WEAK_PC_COVERAGE, extraTint: this.WEAK_EXTRA_TINT, knownWeak }, [mainBitmap!, maskBitmap!]);
                 } catch (error) { this.workerJobs.delete(id); reject(error); }
             });
+            if (weak !== undefined) this.weakCoverCache.set(maskSrc, weak);
             // 可直接 drawImage 的位图，不再经历 PNG 编码 → 图片解码往返。
             const image = Object.assign(bitmap, { naturalWidth: bitmap.width, naturalHeight: bitmap.height,
                 complete: true as const, src: '' });
@@ -340,10 +343,49 @@ export class SpriteTinter {
         const flying = this.readyInflight.get(flightKey);
         if (flying) return flying;
         const job = this.tintReadyInWorker(originalSprite, factionId)
-            .catch(() => this.tintReadyUncached(originalSprite, factionId))
+            .catch(() => {
+                if (this.failedTintKeys.size > 2000) this.failedTintKeys.clear();
+                this.failedTintKeys.add(flightKey);
+                return this.tintReadyUncached(originalSprite, factionId);
+            })
             .finally(() => { this.readyInflight.delete(flightKey); this.criticalTintKeys.delete(flightKey); });
         this.readyInflight.set(flightKey, job);
         return job;
+    }
+
+    /**
+     * 战略地图后台 Worker 预染色入口（[2026-11-03] 消除新军团进视野 / 转向时主线程同步双次 getImageData 尖峰）：
+     *   · 已在 tintedSpriteCache 或无需 mask 染色 → 置顶 LRU 并返回 true（立即可画）；
+     *   · 尚未染色 → 投递到 SpriteTintWorker 后台线程异步生成 ImageBitmap 并返回 false。
+     */
+    public static ensureSpriteTintedInWorker(
+        sprite: HTMLImageElement | null | undefined,
+        factionId: string,
+        critical = false,
+    ): boolean {
+        if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return true;
+        if (!FactionTintSystem.shouldTint(factionId) || !FactionTintSystem.getTintColor(factionId)) return true;
+        if (this.workerFailed || typeof Worker === 'undefined' || typeof OffscreenCanvas === 'undefined'
+            || typeof createImageBitmap === 'undefined') return true;
+        const sourceUrl: string = (sprite as any).sourceUrl || sprite.src;
+        if (!sourceUrl) return true;
+        const dir = sourceUrl.slice(0, sourceUrl.lastIndexOf('/') + 1);
+        if (this.dirHasMask.get(dir) === false) return true;
+        const maskSrc = sourceUrl.replace(/\.png$/, '.pc.png');
+        const maskState = this.maskCache.get(maskSrc);
+        if (maskState !== undefined) this.touchMask(maskSrc, maskState);
+        if (maskState === 'none') return true;
+        const tintHex = FactionTintSystem.getTintHex(factionId);
+        const cacheKey = `mask:${tintKeyOf(sprite)}_${factionId}_${tintHex ?? 'raw'}`;
+        const cached = this.tintedSpriteCache.get(cacheKey);
+        if (cached && (cached as any).complete && ((cached as any).naturalWidth > 0 || (cached as any).width > 0)) {
+            this.touchTinted(cacheKey, cached);
+            return true;
+        }
+        const flightKey = `${tintKeyOf(sprite)}_${factionId}`;
+        if (this.failedTintKeys.has(flightKey)) return true;
+        void this.getTintedSpriteReady(sprite, factionId, critical);
+        return false;
     }
 
     /** getTintedSpriteReady 的实体（去重壳见上）。 */
@@ -359,6 +401,7 @@ export class SpriteTinter {
         if (this.dirHasMask.get(dir) !== false) {
             const maskSrc = sourceUrl.replace(/\.png$/, '.pc.png');
             const maskState = this.maskCache.get(maskSrc);
+        if (maskState !== undefined) this.touchMask(maskSrc, maskState);
             if (maskState && maskState !== 'none' && !maskState.complete) {
                 await new Promise<void>((resolve) => {
                     const done = () => resolve();
@@ -416,8 +459,21 @@ export class SpriteTinter {
         this.tintedSpriteCache.set(key, img);
     }
 
+    private static touchMask(key: string, val: HTMLImageElement | 'none'): void {
+        this.maskCache.delete(key);
+        this.maskCache.set(key, val);
+    }
+
     private static tintedCachePut(key: string, img: TintedSprite): void {
-        if (this.tintedSpriteCache.has(key)) return;
+        const existing = this.tintedSpriteCache.get(key);
+        if (existing) {
+            if (typeof HTMLCanvasElement !== 'undefined' && existing instanceof HTMLCanvasElement && !(img instanceof HTMLCanvasElement)) {
+                this.tintedCacheBytes += imgBytes(img) - imgBytes(existing);
+                this.tintedSpriteCache.delete(key);
+                this.tintedSpriteCache.set(key, img);
+            }
+            return;
+        }
         if (this.evictedTintKeys.delete(key)) this.churnStats.tintedReAdds++;
         let counted = imgBytes(img);
         this.tintedSpriteCache.set(key, img);
@@ -546,9 +602,10 @@ export class SpriteTinter {
         if (cached) return sprite;
 
         // 战术异步请求已接管同一张图，不让战略绘制入口重复在主线程染一次。
-        if (this.workerTintKeys.has(cacheKey)) return sprite;
+        // 若战略已上屏单位刚好在 Worker 处理途中需要该帧，不返回未染色灰图，允许走下方同步染色并在 Worker 完成后自动升级为 ImageBitmap。
 
         const maskState = this.maskCache.get(maskSrc);
+        if (maskState !== undefined) this.touchMask(maskSrc, maskState);
         if (maskState === 'none') {
             // 🔴 [2026-08-20] 分两种情况，别一律回亮度染色：
             //   ① **本目录别的图有遮罩、只有这一张缺** → 返回原图不染色。
@@ -868,6 +925,7 @@ export class SpriteTinter {
             seen.add(maskSrc);
 
             const existing = this.maskCache.get(maskSrc);
+            if (existing !== undefined) this.touchMask(maskSrc, existing);
             if (existing && existing !== 'none' && !existing.complete) {
                 promises.push(new Promise<void>(resolve => {
                     const done = () => resolve();

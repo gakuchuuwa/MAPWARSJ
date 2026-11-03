@@ -1952,6 +1952,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xibanya_jufre': 'imperial',   // 胡弗雷
     'putaoya_raposo': 'castle',   // 拉波索
     'ayoubu_turanshah': 'castle',   // 图兰沙
+    'bolinixiya_isokelekel': 'imperial',   // 伊索克勒克尔
+    'yinggelan_somers': 'castle',   // 萨默斯
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

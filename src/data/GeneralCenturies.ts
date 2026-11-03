@@ -1604,6 +1604,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xibanya_jufre': 16,   // 胡弗雷
     'putaoya_raposo': 17,   // 拉波索
     'ayoubu_turanshah': 12,   // 图兰沙
+    'bolinixiya_isokelekel': 17,   // 伊索克勒克尔
+    'yinggelan_somers': 17,   // 萨默斯
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

@@ -1966,6 +1966,8 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     xibanya_jufre: { birth: 1516, death: 1578, debut: 1541 },                     // 胡安·胡弗雷（1516–1578，库约总督、门多萨重建者）
     putaoya_raposo: { birth: 1598, death: 1658, debut: 1628 },                    // 安东尼奥·拉波索·塔瓦雷斯（1598–1658，圣保罗旗队统帅）
     ayoubu_turanshah: { birth: 1130, death: 1180, debut: 1164, kaoju: '推定' },   // 图兰沙（萨拉丁长兄，卒1180，1173–1174远征也门萨那）
+    bolinixiya_isokelekel: { birth: 1580, death: 1640, debut: 1610, kaoju: '推定' }, // 伊索克勒克尔（波纳佩征服者，推翻南马都尔绍德雷尔王朝）
+    yinggelan_somers: { birth: 1554, death: 1610, debut: 1595 },                     // 乔治·萨默斯（1554–1610，百慕大开拓者）
 };
 
 /** 生年（未收录返回 null） */

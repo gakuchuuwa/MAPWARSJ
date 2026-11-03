@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-03T11:43:29.919Z",
+ "generatedAt": "2026-11-03T14:58:49.976Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16720,6 +16720,34 @@
    "reliefM": 71,
    "cliffs": 0,
    "top": "Desert 91.7% · Palm Desert 5.8% · Forest, Birch 2.2% · Dragon Forest 0.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_nanmadol",
+   "file": "site_city_nanmadol.json",
+   "bytes": 283833,
+   "koppen": "Af",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 5472,
+   "waterPct": 38,
+   "reliefM": 68,
+   "cliffs": 0,
+   "top": "Dry Grass 50.9% · Water, Shallow 38% · Forest, Lush Bamboo 6.1% · Beach 2.9%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_bermuda",
+   "file": "site_city_bermuda.json",
+   "bytes": 255591,
+   "koppen": "Cfa",
+   "theme": "NEARCTIC_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 5472,
+   "waterPct": 38,
+   "reliefM": 62,
+   "cliffs": 0,
+   "top": "Dirt 3 47.7% · Water, Shallow 38% · Pine Forest 7% · Beach 3.9%",
    "verify": "ok"
   }
  ],

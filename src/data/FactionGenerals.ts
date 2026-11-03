@@ -494,6 +494,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
 
     bolinixiya: [
+        {
+            generalId: 'bolinixiya_isokelekel',
+            generalName: '伊索克勒克尔',
+            factionId: 'bolinixiya',
+            cityId: 'city_nanmadol',
+            legionName: '帝国时代南洋军团',
+            eliteName: '波纳佩海兵',
+            eliteTier: 4,
+            portrait: ''
+        },
         // 波马雷（约1742–1803，波马雷一世，统一大溪地与周边群岛建立波马雷王朝）→ 大溪地（MALAY）
         { generalId: 'bolinixiya_baomalei', factionId: 'bolinixiya', cityId: 'city_tahiti', generalName: '波马雷', portrait: '/assets/MALAY/bolinixiya_baomalei.png', eliteName: '大溪地武士', eliteTier: 4 },
         // 🔴 [2026-10-25 主人定「B」无文字时代传说人物入将] 霍图·玛图阿：拉帕努伊（复活节岛）口述史载首位最高阿里伊国王；史源转述、传说成分；普将；立绘留空
@@ -2497,6 +2507,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     yinggelan: [
+        {
+            generalId: 'yinggelan_somers',
+            generalName: '萨默斯',
+            factionId: 'yinggelan',
+            cityId: 'city_bermuda',
+            legionName: '城堡时代英格兰军团',
+            eliteName: '边区戍兵',
+            eliteTier: 4,
+            portrait: ''
+        },
                 // 约翰·史密斯（1580–1631，弗吉尼亚殖民地开拓者与詹姆斯敦总督）→ 詹姆斯敦（BRITONS）
                 // 亨利·摩根（1635–1688，私掠舰队司令、牙买加副总督）→ 皇家港（BRITONS）
         { generalId: 'yinggelan_henlimogen', factionId: 'yinggelan', cityId: 'city_portroyal', generalName: '亨利摩根', portrait: '/assets/BRITONS/yinggelan_henlimogen.png', eliteName: '牙买加私掠', eliteTier: 2 },

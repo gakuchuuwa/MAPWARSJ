@@ -891,7 +891,8 @@ export class LegionPhalanxDrawer {
             for (const p of pendingRelease) AssetLoader.release(p);
             pendingRelease.clear();
 
-            // 🔴 [2026-09-27 治愈时好时灰] 预加载该兵种全套 .pc.png 遮罩，确保大地图军团渲染时遮罩 100% 就绪
+            // 🔴 [2026-09-27 治愈时好时灰] 预加载该兵种主动作 .pc.png 遮罩，确保大地图军团渲染时遮罩 100% 就绪。
+            //    [2026-11-03] 不再把 draw 从不读取的 SECONDARY/TERTIARY 塞进遮罩缓存（避免挤爆 maskCache 引发淘汰抖动）。
             const allSprites: (HTMLImageElement | null | undefined)[] = [
                 ...cacheEntry.MOVE,
                 ...cacheEntry.IDLE,
@@ -901,14 +902,6 @@ export class LegionPhalanxDrawer {
                 ...cacheEntry.SHOOT,
                 ...cacheEntry.CHARGE,
             ];
-            if (cacheEntry.SECONDARY) {
-                const s = cacheEntry.SECONDARY;
-                allSprites.push(...s.MOVE, ...s.IDLE, ...s.ATTACK, ...s.DAMAGE, ...s.DEATH, ...s.SHOOT, ...s.CHARGE);
-            }
-            if (cacheEntry.TERTIARY) {
-                const t = cacheEntry.TERTIARY;
-                allSprites.push(...t.MOVE, ...t.IDLE, ...t.ATTACK, ...t.DAMAGE, ...t.DEATH, ...t.SHOOT);
-            }
             await SpriteTinter.preloadMasksForSprites(allSprites);
 
             this.unitSpriteCache.set(key, cacheEntry);
@@ -927,6 +920,40 @@ export class LegionPhalanxDrawer {
      */
     /** 每个兵种最近一次被绘制的时刻（LRU 淘汰用） */
     private static spriteLastUsed = new Map<string, number>();
+    /** 每个军团最近一次在屏幕上绘制的 tick（用于区分「刚进视野尚未上屏」与「已在屏幕中」） */
+    private static lastDrawnTick = new Map<string, number>();
+    /** 已在后台 Worker 预热过相邻朝向/状态的「兵种_势力_朝向」去重集（稳态 O(1) 零分配） */
+    private static prewarmedDirSet = new Set<string>();
+
+    /**
+     * 在后台 SpriteTintWorker 预热该兵种当前朝向（MOVE/IDLE/ATTACK/SHOOT/CHARGE）及相邻转向（dir±1）。
+     * 稳态同朝向 O(1) 直接返回；转向时自动提前 1 步在后台把下一朝向染成 ImageBitmap，消除主线程同步 applyMaskTint 尖峰。
+     */
+    public static prewarmUnitDirInWorker(
+        type: string,
+        set: { MOVE?: HTMLImageElement[]; IDLE?: HTMLImageElement[]; ATTACK?: HTMLImageElement[]; SHOOT?: HTMLImageElement[]; CHARGE?: HTMLImageElement[] } | undefined,
+        factionId: string,
+        dir: number,
+        mod = 8,
+    ): void {
+        if (!set || !factionId) return;
+        const d = ((dir % mod) + mod) % mod;
+        const warmKey = `${type}_${factionId}_${d}_${mod}`;
+        if (this.prewarmedDirSet.has(warmKey)) return;
+        if (this.prewarmedDirSet.size > 2000) this.prewarmedDirSet.clear();
+        this.prewarmedDirSet.add(warmKey);
+        const dNext = (d + 1) % mod;
+        const dPrev = (d + mod - 1) % mod;
+        SpriteTinter.ensureSpriteTintedInWorker(set.MOVE?.[d] || set.MOVE?.[0], factionId, false);
+        SpriteTinter.ensureSpriteTintedInWorker(set.IDLE?.[d] || set.IDLE?.[0], factionId, false);
+        SpriteTinter.ensureSpriteTintedInWorker(set.ATTACK?.[d] || set.ATTACK?.[0], factionId, false);
+        SpriteTinter.ensureSpriteTintedInWorker(set.SHOOT?.[d], factionId, false);
+        SpriteTinter.ensureSpriteTintedInWorker(set.CHARGE?.[d], factionId, false);
+        SpriteTinter.ensureSpriteTintedInWorker(set.MOVE?.[dNext], factionId, false);
+        SpriteTinter.ensureSpriteTintedInWorker(set.MOVE?.[dPrev], factionId, false);
+        SpriteTinter.ensureSpriteTintedInWorker(set.IDLE?.[dNext], factionId, false);
+        SpriteTinter.ensureSpriteTintedInWorker(set.IDLE?.[dPrev], factionId, false);
+    }
     /**
      * 兵种贴图集**字节预算**。
      *
@@ -1411,7 +1438,8 @@ export class LegionPhalanxDrawer {
             }
 
             let waitingForActualAssets = false;
-            for (const type of new Set(strategicSlotTypes)) {
+            const uniqueSlotTypes = new Set(strategicSlotTypes);
+            for (const type of uniqueSlotTypes) {
                 if (this.unitSpriteCache.has(type)) {
                     this.spriteLastUsed.set(type, performance.now());
                     continue;
@@ -1420,6 +1448,35 @@ export class LegionPhalanxDrawer {
                 waitingForActualAssets = true;
             }
             if (waitingForActualAssets) return;
+
+            // 🔴 [2026-11-03 消除新军团进视野 30~60ms 染色长帧]
+            //    · 尚未在屏幕上的新军团：先由后台 SpriteTintWorker 染好首帧贴图再上屏，主线程 0ms 染色、且首帧 100% 势力色不闪灰；
+            //    · 已在屏幕上的军团：绝不跳过绘制（不闪烁），同时由 prewarmUnitDirInWorker 提前在后台染好相邻朝向与状态。
+            const isCurrentlyOnScreen = tick - (this.lastDrawnTick.get(unitId) ?? -9999) <= 250;
+            let waitingForInitialTint = false;
+            for (const type of uniqueSlotTypes) {
+                const set = this.unitSpriteCache.get(type);
+                if (!set) continue;
+                const d = ((direction % 8) + 8) % 8;
+                if (!isCurrentlyOnScreen) {
+                    const imm = (state === 'MOVE'
+                        ? (set.MOVE[d] || set.MOVE[0])
+                        : state === 'ATTACK'
+                            ? ((set as any).SHOOT?.[d] || set.ATTACK[d] || set.ATTACK[0])
+                            : state === 'DAMAGE'
+                                ? (set.DAMAGE[d] || set.DAMAGE[0])
+                                : state === 'DEATH'
+                                    ? (set.DEATH[d] || set.DEATH[0])
+                                    : (set.IDLE[d] || set.IDLE[0])) || set.IDLE[d] || set.IDLE[0];
+                    const idleRef = set.IDLE[d] || set.IDLE[0];
+                    if (!SpriteTinter.ensureSpriteTintedInWorker(imm, factionId, true)) waitingForInitialTint = true;
+                    if (idleRef !== imm && !SpriteTinter.ensureSpriteTintedInWorker(idleRef, factionId, true)) waitingForInitialTint = true;
+                }
+                this.prewarmUnitDirInWorker(type, set as any, factionId, d, 8);
+            }
+            if (waitingForInitialTint) return;
+            if (this.lastDrawnTick.size > 1000) this.lastDrawnTick.clear();
+            this.lastDrawnTick.set(unitId, tick);
         }
 
         const displayedUnitAssetsId = denseFront
@@ -2481,6 +2538,8 @@ export class LegionPhalanxDrawer {
                 this.ensureUnitTypeLoading(typeId);
                 return;
             }
+            this.spriteLastUsed.set(typeId, performance.now());
+            this.prewarmUnitDirInWorker(typeId, set as any, factionId, direction, 16);
             // 🔴 DE 动态帧框（hotspot 对齐）：每向 box 尺寸不同，用 _meta.json 的 fw/fh/hx/hy + 统一缩放 s。
             //    S10DB 走正方形帧（旧逻辑）：frameH 每向一致，按高算 h。
             // 🔴 [2026-08-20 修复战船裁切] 战船是 16 向素材 → 元数据键统一走 metaDirFor(…, true)；

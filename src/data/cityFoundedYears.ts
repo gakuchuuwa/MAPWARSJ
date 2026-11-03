@@ -481,5 +481,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_mendoza: 1561,       // 门多萨：1561年3月2日建城（英文维基 Mendoza, Argentina）
     city_saopaulo: 1554,      // 圣保罗：1554年1月25日耶稣会士建圣保罗·德·皮拉蒂宁加（英文维基 São Paulo）
     city_sanaa: -200,         // 萨那：前2世纪萨巴铭文已载萨那（Sha'oub/Sanaa）为设防都会（英文维基 Sanaa）
+    city_nanmadol: 1180,      // 南马都尔：约12世纪末绍德雷尔王朝始筑玄武岩人工岛都城（英文维基 Nan Madol）
+    city_bermuda: 1609,       // 百慕大：1609年乔治·萨默斯舰队登陆定居、1612年建圣乔治镇（英文维基 Bermuda）
 };
 
