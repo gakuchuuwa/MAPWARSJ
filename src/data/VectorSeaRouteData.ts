@@ -25,10 +25,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "长崎-承天",
                 type: "sea",
                 id: "sea_city_nagasaki_city_tainan_1793630766053",
-                startYear: 1604,
-                endYear: 2000,
                 startConnection: "city_nagasaki",
-                endConnection: "city_tainan"
+                endConnection: "city_tainan",
+                startYear: 1604,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -67,10 +67,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "承天-北大年",
                 type: "sea",
                 id: "sea_city_tainan_city_pattani_1793630766053",
-                startYear: 1604,
-                endYear: 2000,
                 startConnection: "city_tainan",
-                endConnection: "city_pattani"
+                endConnection: "city_pattani",
+                startYear: 1604,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -112,10 +112,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "萨尔瓦多-安格拉",
                 type: "sea",
                 id: "sea_city_salvador_city_angra_1793628006860",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_salvador",
-                endConnection: "city_angra"
+                endConnection: "city_angra",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -132,7 +132,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-33.8, -5.25],
                     [-32.98395, -3.17208],
                     [-31.9046, -0.4237],
-                    [-31.73843, -1e-05],
+                    [-31.73843, -0.00001],
                     [-31.24364, 1.26157],
                     [-30.0115, 4.4032],
                     [-30.00027, 4.43144],
@@ -161,10 +161,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "里贝拉-萨尔瓦多",
                 type: "sea",
                 id: "sea_city_ribeira_city_salvador_1793627996848",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_ribeira",
-                endConnection: "city_salvador"
+                endConnection: "city_salvador",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -179,7 +179,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-29.6971, 3.3712],
                     [-30.00016, 2.73349],
                     [-30.87662, 0.88925],
-                    [-31.29923, -1e-05],
+                    [-31.29923, -0.00001],
                     [-31.746, -0.9401],
                     [-32.84909, -3.2547],
                     [-33.8, -5.25],
@@ -201,10 +201,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "里贝拉-开普敦",
                 type: "sea",
                 id: "sea_city_ribeira_city_cape_town_1793627343079",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_ribeira",
-                endConnection: "city_cape_town"
+                endConnection: "city_cape_town",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -324,10 +324,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "威尼斯-干地亚要塞",
                 type: "sea",
                 id: "sea_city_venice_city_knossos_1793625541112",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_venice",
-                endConnection: "city_knossos"
+                endConnection: "city_knossos",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -383,10 +383,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "威尼斯-亚历山大",
                 type: "sea",
                 id: "sea_city_venice_city_yalishanda_1793625541112",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_venice",
-                endConnection: "city_yalishanda"
+                endConnection: "city_yalishanda",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -452,10 +452,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "威尼斯-阿卡",
                 type: "sea",
                 id: "sea_city_venice_city_ake_1793625541112",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_venice",
-                endConnection: "city_ake"
+                endConnection: "city_ake",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -525,10 +525,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "威尼斯-法马古斯塔",
                 type: "sea",
                 id: "sea_city_venice_city_famagusta_1793625541112",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_venice",
-                endConnection: "city_famagusta"
+                endConnection: "city_famagusta",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -603,10 +603,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "法马古斯塔-贝鲁特",
                 type: "sea",
                 id: "sea_city_famagusta_city_beirut_1793625541112",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_famagusta",
-                endConnection: "city_beirut"
+                endConnection: "city_beirut",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -625,10 +625,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "热那亚-君士坦丁堡",
                 type: "sea",
                 id: "sea_city_genoa_city_junshitandingbao_1793625541112",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_genoa",
-                endConnection: "city_junshitandingbao"
+                endConnection: "city_junshitandingbao",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -701,10 +701,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "热那亚-卡法",
                 type: "sea",
                 id: "sea_city_genoa_city_kafa_1793625541112",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_genoa",
-                endConnection: "city_kafa"
+                endConnection: "city_kafa",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -792,10 +792,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "吕贝克-卑尔根",
                 type: "sea",
                 id: "sea_city_lubeck_city_beiergen_1793625339140",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_lubeck",
-                endConnection: "city_beiergen"
+                endConnection: "city_beiergen",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -832,10 +832,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "汉堡-卑尔根",
                 type: "sea",
                 id: "sea_city_hamburg_city_beiergen_1793625339140",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hamburg",
-                endConnection: "city_beiergen"
+                endConnection: "city_beiergen",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -872,10 +872,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "布鲁日-汉堡",
                 type: "sea",
                 id: "sea_city_bruges_city_hamburg_1793625339140",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_bruges",
-                endConnection: "city_hamburg"
+                endConnection: "city_hamburg",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -905,10 +905,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "布鲁日-伦敦",
                 type: "sea",
                 id: "sea_city_bruges_city_lundun_1793625339140",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_bruges",
-                endConnection: "city_lundun"
+                endConnection: "city_lundun",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -934,10 +934,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "上海-冶城",
                 type: "sea",
                 id: "sea_city_shanghai_city_fuzhou_1793624747116",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shanghai",
-                endConnection: "city_fuzhou"
+                endConnection: "city_fuzhou",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -969,10 +969,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "冶城-阇槃",
                 type: "sea",
                 id: "sea_city_fuzhou_city_dupan_1793624747116",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_fuzhou",
-                endConnection: "city_dupan"
+                endConnection: "city_dupan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1014,10 +1014,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马六甲-加勒",
                 type: "sea",
                 id: "sea_city_malacca_city_jiale_1793624747116",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_malacca",
-                endConnection: "city_jiale"
+                endConnection: "city_jiale",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1043,10 +1043,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "小葛兰-加勒",
                 type: "sea",
                 id: "sea_city_quilon_city_jiale_1793624747116",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_quilon",
-                endConnection: "city_jiale"
+                endConnection: "city_jiale",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1065,10 +1065,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "古里-霍尔木兹",
                 type: "sea",
                 id: "sea_city_guli_city_hormuz_1793624747116",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_guli",
-                endConnection: "city_hormuz"
+                endConnection: "city_hormuz",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1129,10 +1129,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "亚丁-吉达",
                 type: "sea",
                 id: "sea_city_aden_city_jida_1793624747116",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aden",
-                endConnection: "city_jida"
+                endConnection: "city_jida",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1156,10 +1156,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "布拉瓦-马林迪",
                 type: "sea",
                 id: "sea_city_barawa_city_malindi_1793624747116",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_barawa",
-                endConnection: "city_malindi"
+                endConnection: "city_malindi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1184,10 +1184,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "伦敦-埃尔米纳",
                 type: "sea",
                 id: "sea_city_lundun_city_elmina_1793624450219",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_lundun",
-                endConnection: "city_elmina"
+                endConnection: "city_elmina",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1326,10 +1326,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "皇家港-伦敦",
                 type: "sea",
                 id: "sea_city_portroyal_city_lundun_1793624439340",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_portroyal",
-                endConnection: "city_lundun"
+                endConnection: "city_lundun",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1426,10 +1426,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "埃尔米纳-马提尼克",
                 type: "sea",
                 id: "sea_city_elmina_city_martinique_1793624439340",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_elmina",
-                endConnection: "city_martinique"
+                endConnection: "city_martinique",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1497,10 +1497,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马提尼克-南特",
                 type: "sea",
                 id: "sea_city_martinique_city_nantes_1793624439340",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_martinique",
-                endConnection: "city_nantes"
+                endConnection: "city_nantes",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1564,10 +1564,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "埃尔米纳-皇家港",
                 type: "sea",
                 id: "sea_city_elmina_city_portroyal_1793624330720",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_elmina",
-                endConnection: "city_portroyal"
+                endConnection: "city_portroyal",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1654,10 +1654,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "南特-埃尔米纳",
                 type: "sea",
                 id: "sea_city_nantes_city_elmina_1793624237890",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_nantes",
-                endConnection: "city_elmina"
+                endConnection: "city_elmina",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1771,10 +1771,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "圣赫勒拿-开普敦",
                 type: "sea",
                 id: "sea_city_sainthelena_city_cape_town_1793624062136",
-                startYear: 1659,
-                endYear: 2000,
                 startConnection: "city_sainthelena",
-                endConnection: "city_cape_town"
+                endConnection: "city_cape_town",
+                startYear: 1659,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1799,10 +1799,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "伦敦-圣赫勒拿",
                 type: "sea",
                 id: "sea_city_lundun_city_sainthelena_1793624035963",
-                startYear: 1659,
-                endYear: 2000,
                 startConnection: "city_lundun",
-                endConnection: "city_sainthelena"
+                endConnection: "city_sainthelena",
+                startYear: 1659,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1903,7 +1903,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-16.60583, 11.64148],
                     [-17, 11],
                     [-13.4277, 5.5302],
-                    [-10, -2e-05],
+                    [-10, -0.00002],
                     [-9.9997, -5.0004],
                     [-10, -10],
                     [-7.5827, -12.5384],
@@ -1919,10 +1919,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿姆斯特丹-汉堡",
                 type: "sea",
                 id: "sea_city_amsterdam_city_hamburg_1793623961504",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_amsterdam",
-                endConnection: "city_hamburg"
+                endConnection: "city_hamburg",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1950,10 +1950,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿姆斯特丹-伦敦",
                 type: "sea",
                 id: "sea_city_amsterdam_city_lundun_1793623961504",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_amsterdam",
-                endConnection: "city_lundun"
+                endConnection: "city_lundun",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -1983,10 +1983,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿姆斯特丹-特尔德",
                 type: "sea",
                 id: "sea_city_amsterdam_city_telde_1793623961504",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_amsterdam",
-                endConnection: "city_telde"
+                endConnection: "city_telde",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2063,10 +2063,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "长崎-巴达维亚",
                 type: "sea",
                 id: "sea_city_nagasaki_city_batavia_1793623961504",
-                startYear: 1641,
-                endYear: 2000,
                 startConnection: "city_nagasaki",
-                endConnection: "city_batavia"
+                endConnection: "city_batavia",
+                startYear: 1641,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2152,10 +2152,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "班达奈拉-安汶",
                 type: "sea",
                 id: "sea_city_banda_city_ambon_1793623961504",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_banda",
-                endConnection: "city_ambon"
+                endConnection: "city_ambon",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2188,10 +2188,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "班达奈拉-万丹",
                 type: "sea",
                 id: "sea_city_banda_city_wandan_1793623961504",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_banda",
-                endConnection: "city_wandan"
+                endConnection: "city_wandan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2228,10 +2228,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "苏拉特-索姆纳特",
                 type: "sea",
                 id: "sea_city_surat_city_suomunate_1793623961504",
-                startYear: 1615,
-                endYear: 2000,
                 startConnection: "city_surat",
-                endConnection: "city_suomunate"
+                endConnection: "city_suomunate",
+                startYear: 1615,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2250,10 +2250,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马德拉斯-加勒",
                 type: "sea",
                 id: "sea_city_madras_city_jiale_1793623961504",
-                startYear: 1639,
-                endYear: 2000,
                 startConnection: "city_madras",
-                endConnection: "city_jiale"
+                endConnection: "city_jiale",
+                startYear: 1639,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2283,10 +2283,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马德拉斯-普里",
                 type: "sea",
                 id: "sea_city_madras_city_puli_1793623961504",
-                startYear: 1639,
-                endYear: 2000,
                 startConnection: "city_madras",
-                endConnection: "city_puli"
+                endConnection: "city_puli",
+                startYear: 1639,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2316,10 +2316,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "加尔各答-吉大港",
                 type: "sea",
                 id: "sea_city_kolkata_city_jidagang_1793623961504",
-                startYear: 1690,
-                endYear: 2000,
                 startConnection: "city_kolkata",
-                endConnection: "city_jidagang"
+                endConnection: "city_jidagang",
+                startYear: 1690,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2339,10 +2339,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安汶-巴达维亚",
                 type: "sea",
                 id: "sea_city_ambon_city_batavia_1793622841294",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_ambon",
-                endConnection: "city_batavia"
+                endConnection: "city_batavia",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2379,10 +2379,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安汶-德尔纳特",
                 type: "sea",
                 id: "sea_city_ambon_city_deernate_1793622841294",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_ambon",
-                endConnection: "city_deernate"
+                endConnection: "city_deernate",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2415,10 +2415,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "万丹-特罗武兰",
                 type: "sea",
                 id: "sea_city_wandan_city_teluowulan_1793622841294",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_wandan",
-                endConnection: "city_teluowulan"
+                endConnection: "city_teluowulan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2439,10 +2439,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "万丹-亚齐",
                 type: "sea",
                 id: "sea_city_wandan_city_yaqi_1793622841294",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_wandan",
-                endConnection: "city_yaqi"
+                endConnection: "city_yaqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2494,10 +2494,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "宿务-德尔纳特",
                 type: "sea",
                 id: "sea_city_cebu_city_deernate_1793622662964",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_cebu",
-                endConnection: "city_deernate"
+                endConnection: "city_deernate",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2535,10 +2535,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "宿务-阿加尼亚",
                 type: "sea",
                 id: "sea_city_cebu_city_hagatna_1793622662964",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_cebu",
-                endConnection: "city_hagatna"
+                endConnection: "city_hagatna",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2565,10 +2565,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "长崎-五岛",
                 type: "sea",
                 id: "sea_city_nagasaki_city_goto_1793621738977",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_nagasaki",
-                endConnection: "city_goto"
+                endConnection: "city_goto",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2585,10 +2585,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "长崎-澳门",
                 type: "sea",
                 id: "sea_city_nagasaki_city_aomen_1793621738977",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_nagasaki",
-                endConnection: "city_aomen"
+                endConnection: "city_aomen",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2636,10 +2636,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "澳门-马六甲",
                 type: "sea",
                 id: "sea_city_aomen_city_malacca_1793621738977",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aomen",
-                endConnection: "city_malacca"
+                endConnection: "city_malacca",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2680,10 +2680,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "五岛-金石馆",
                 type: "sea",
                 id: "sea_city_goto_city_tsushima_1793621394840",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_goto",
-                endConnection: "city_tsushima"
+                endConnection: "city_tsushima",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2702,10 +2702,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安格拉-里斯本",
                 type: "sea",
                 id: "sea_city_angra_city_lisiben_1787682181628",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_angra",
-                endConnection: "city_lisiben"
+                endConnection: "city_lisiben",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2732,10 +2732,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "巴拿马-利马",
                 type: "sea",
                 id: "sea_city_banama_city_lima_1787915847565",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_banama",
-                endConnection: "city_lima"
+                endConnection: "city_lima",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2794,10 +2794,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "雅典-干地亚要塞",
                 type: "sea",
                 id: "sea_city_yadian_city_knossos_1788082742241",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yadian",
-                endConnection: "city_knossos"
+                endConnection: "city_knossos",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2823,10 +2823,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "亚历山大-干地亚要塞",
                 type: "sea",
                 id: "sea_city_yalishanda_city_knossos_1788082853199",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yalishanda",
-                endConnection: "city_knossos"
+                endConnection: "city_knossos",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2853,10 +2853,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "君士坦丁堡-瓦尔纳",
                 type: "sea",
                 id: "sea_city_junshitandingbao_city_waerna_1788229242071",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_junshitandingbao",
-                endConnection: "city_waerna"
+                endConnection: "city_waerna",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2876,10 +2876,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿加尼亚-马尼拉",
                 type: "sea",
                 id: "sea_city_hagatna_city_manila_1791846231447",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hagatna",
-                endConnection: "city_manila"
+                endConnection: "city_manila",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -2916,10 +2916,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿加尼亚-阿卡普尔科",
                 type: "sea",
                 id: "sea_city_hagatna_city_acapulco_1791846815760",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hagatna",
-                endConnection: "city_acapulco"
+                endConnection: "city_acapulco",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3021,10 +3021,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "君士坦丁堡-特拉布宗",
                 type: "sea",
                 id: "sea_city_junshitandingbao_city_telabuzong_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_junshitandingbao",
-                endConnection: "city_telabuzong"
+                endConnection: "city_telabuzong",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3047,10 +3047,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "利马-阿卡普尔科",
                 type: "sea",
                 id: "sea_city_lima_city_acapulco_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_lima",
-                endConnection: "city_acapulco"
+                endConnection: "city_acapulco",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3153,10 +3153,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "海牙-新阿姆斯特丹",
                 type: "sea",
                 id: "sea_city_hague_city_newamsterdam_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hague",
-                endConnection: "city_newamsterdam"
+                endConnection: "city_newamsterdam",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3238,10 +3238,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "贝雷尼斯-塞拉",
                 type: "sea",
                 id: "sea_city_beileinisi_city_zeila_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_beileinisi",
-                endConnection: "city_zeila"
+                endConnection: "city_zeila",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3291,10 +3291,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "韦拉克鲁斯-卡塔赫纳",
                 type: "sea",
                 id: "sea_city_veracruz_city_katachena_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_veracruz",
-                endConnection: "city_katachena"
+                endConnection: "city_katachena",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3335,10 +3335,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "汉堡-伦敦",
                 type: "sea",
                 id: "sea_city_hamburg_city_lundun_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hamburg",
-                endConnection: "city_lundun"
+                endConnection: "city_lundun",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3379,10 +3379,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "罗安达-开普敦",
                 type: "sea",
                 id: "sea_city_luanda_city_cape_town_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_luanda",
-                endConnection: "city_cape_town"
+                endConnection: "city_cape_town",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3434,10 +3434,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "开普敦-莫桑比克",
                 type: "sea",
                 id: "sea_city_cape_town_city_mozambique_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_cape_town",
-                endConnection: "city_mozambique"
+                endConnection: "city_mozambique",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3495,10 +3495,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "蒙巴萨-摩加迪沙",
                 type: "sea",
                 id: "sea_city_mombasa_city_mogadishu_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mombasa",
-                endConnection: "city_mogadishu"
+                endConnection: "city_mogadishu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3525,10 +3525,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "亚丁-果阿",
                 type: "sea",
                 id: "sea_city_aden_city_guoa_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aden",
-                endConnection: "city_guoa"
+                endConnection: "city_guoa",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3581,10 +3581,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "羊河-特洛伊",
                 type: "sea",
                 id: "sea_city_yanghe_city_teluoyi_1788855191771",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yanghe",
-                endConnection: "city_teluoyi"
+                endConnection: "city_teluoyi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3603,10 +3603,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "提洛-希马鲁塔",
                 type: "sea",
                 id: "sea_city_tiluo_city_chimarros_1788854828374",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_tiluo",
-                endConnection: "city_chimarros"
+                endConnection: "city_chimarros",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3623,10 +3623,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "原之辻-太宰府",
                 type: "sea",
                 id: "sea_city_yuanzhishi_city_taizaifu_1788229798481",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yuanzhishi",
-                endConnection: "city_taizaifu"
+                endConnection: "city_taizaifu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3643,10 +3643,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "澎湖-承天",
                 type: "sea",
                 id: "sea_city_penghu_city_tainan_1788088777974",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_penghu",
-                endConnection: "city_tainan"
+                endConnection: "city_tainan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3663,10 +3663,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安提瓦里-拉古萨",
                 type: "sea",
                 id: "sea_city_antiwali_city_ragusa_1788855037959",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_antiwali",
-                endConnection: "city_ragusa"
+                endConnection: "city_ragusa",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3683,10 +3683,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "星主厅-鸣梁",
                 type: "sea",
                 id: "sea_city_xingzhuting_city_jindo_1788088176027",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_xingzhuting",
-                endConnection: "city_jindo"
+                endConnection: "city_jindo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3703,10 +3703,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "金海-金石馆",
                 type: "sea",
                 id: "sea_city_gimhae_city_tsushima_1788088410176",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_gimhae",
-                endConnection: "city_tsushima"
+                endConnection: "city_tsushima",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3723,10 +3723,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "府内-松山",
                 type: "sea",
                 id: "sea_city_funei_city_songshan_1788088416168",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_funei",
-                endConnection: "city_songshan"
+                endConnection: "city_songshan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3743,10 +3743,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡里斯托斯-提洛",
                 type: "sea",
                 id: "sea_city_kalisituosi_city_tiluo_1788854826943",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kalisituosi",
-                endConnection: "city_tiluo"
+                endConnection: "city_tiluo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3764,10 +3764,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "威尼斯-拉文纳",
                 type: "sea",
                 id: "sea_city_venice_city_ravenna_1791967923785",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_venice",
-                endConnection: "city_ravenna"
+                endConnection: "city_ravenna",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3784,10 +3784,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "赤间关-原之辻",
                 type: "sea",
                 id: "sea_city_chijianguan_city_yuanzhishi_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_chijianguan",
-                endConnection: "city_yuanzhishi"
+                endConnection: "city_yuanzhishi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3804,10 +3804,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "能岛城-姬路城",
                 type: "sea",
                 id: "sea_city_noshima_city_himeji_1789831666285",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_noshima",
-                endConnection: "city_himeji"
+                endConnection: "city_himeji",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3827,10 +3827,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡那封-都柏林",
                 type: "sea",
                 id: "sea_city_kanafeng_city_dublin_1788853642625",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kanafeng",
-                endConnection: "city_dublin"
+                endConnection: "city_dublin",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3848,10 +3848,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "加莱-伦敦",
                 type: "sea",
                 id: "sea_city_calais_city_lundun_1790256986117",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_calais",
-                endConnection: "city_lundun"
+                endConnection: "city_lundun",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3875,10 +3875,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "休达-加的斯",
                 type: "sea",
                 id: "sea_city_xiuta_city_jiadisi_1788228414421",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_xiuta",
-                endConnection: "city_jiadisi"
+                endConnection: "city_jiadisi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3896,10 +3896,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "哥本哈根-罗斯托克",
                 type: "sea",
                 id: "sea_city_gebenhagen_city_rostock_1788229509809",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_gebenhagen",
-                endConnection: "city_rostock"
+                endConnection: "city_rostock",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3916,10 +3916,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "哈利卡纳苏斯-克拉佐美奈",
                 type: "sea",
                 id: "sea_city_halikanasu_city_kelazuomeinai_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_halikanasu",
-                endConnection: "city_kelazuomeinai"
+                endConnection: "city_kelazuomeinai",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3937,10 +3937,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "镰仓-骏府",
                 type: "sea",
                 id: "sea_city_kamakura_city_junfucheng_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kamakura",
-                endConnection: "city_junfucheng"
+                endConnection: "city_junfucheng",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3958,10 +3958,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "赤尾木城-鹿儿岛城",
                 type: "sea",
                 id: "sea_city_akaogicheng_city_satsuma_1788088600872",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_akaogicheng",
-                endConnection: "city_satsuma"
+                endConnection: "city_satsuma",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -3981,10 +3981,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "金海-原之辻",
                 type: "sea",
                 id: "sea_city_gimhae_city_yuanzhishi_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_gimhae",
-                endConnection: "city_yuanzhishi"
+                endConnection: "city_yuanzhishi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4002,10 +4002,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "顺天-金石馆",
                 type: "sea",
                 id: "sea_city_suncheon_k_city_tsushima_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_suncheon_k",
-                endConnection: "city_tsushima"
+                endConnection: "city_tsushima",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4024,10 +4024,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "钓鱼岛-平良",
                 type: "sea",
                 id: "sea_city_diaoyudao_city_gugudao_1788088655001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_diaoyudao",
-                endConnection: "city_gugudao"
+                endConnection: "city_gugudao",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4047,10 +4047,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "提洛-以弗所",
                 type: "sea",
                 id: "sea_city_tiluo_city_yifusuo_1788854839791",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_tiluo",
-                endConnection: "city_yifusuo"
+                endConnection: "city_yifusuo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4071,10 +4071,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "澎湖-刺桐",
                 type: "sea",
                 id: "sea_city_penghu_city_qingjingsi_1788088771773",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_penghu",
-                endConnection: "city_qingjingsi"
+                endConnection: "city_qingjingsi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4092,10 +4092,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "根城-白老",
                 type: "sea",
                 id: "sea_city_genjo_city_bailao_1788229843402",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_genjo",
-                endConnection: "city_bailao"
+                endConnection: "city_bailao",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4114,10 +4114,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "杭州-上海",
                 type: "sea",
                 id: "sea_city_hangzhou_city_shanghai_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hangzhou",
-                endConnection: "city_shanghai"
+                endConnection: "city_shanghai",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4135,10 +4135,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "杭州-宁波",
                 type: "sea",
                 id: "sea_city_hangzhou_city_qingyuan_zj_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hangzhou",
-                endConnection: "city_qingyuan_zj"
+                endConnection: "city_qingyuan_zj",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4157,10 +4157,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "以弗所-希马鲁塔",
                 type: "sea",
                 id: "sea_city_yifusuo_city_chimarros_1788854801970",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yifusuo",
-                endConnection: "city_chimarros"
+                endConnection: "city_chimarros",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4179,10 +4179,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿克曼-奥列什基",
                 type: "sea",
                 id: "sea_city_akeman_city_oleshky_1792351849601",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_akeman",
-                endConnection: "city_oleshky"
+                endConnection: "city_oleshky",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4201,10 +4201,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "江户城-骏府",
                 type: "sea",
                 id: "sea_city_edo_city_junfucheng_1788229823105",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_edo",
-                endConnection: "city_junfucheng"
+                endConnection: "city_junfucheng",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4227,10 +4227,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "艋舺-冶城",
                 type: "sea",
                 id: "sea_city_mengjia_city_fuzhou_1788088660630",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mengjia",
-                endConnection: "city_fuzhou"
+                endConnection: "city_fuzhou",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4249,10 +4249,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "奥林索斯-特洛伊",
                 type: "sea",
                 id: "sea_city_aolinsuosi_city_teluoyi_1788855088815",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aolinsuosi",
-                endConnection: "city_teluoyi"
+                endConnection: "city_teluoyi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4274,10 +4274,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "推罗-加沙",
                 type: "sea",
                 id: "sea_city_tuile_city_jiasa_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_tuile",
-                endConnection: "city_jiasa"
+                endConnection: "city_jiasa",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4296,10 +4296,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "莫约罗-宗谷",
                 type: "sea",
                 id: "sea_city_moyoro_city_zonggu_1788229995712",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_moyoro",
-                endConnection: "city_zonggu"
+                endConnection: "city_zonggu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4318,10 +4318,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "塔兰托-科孚",
                 type: "sea",
                 id: "sea_city_talanduo_city_kefu_1788228875492",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_talanduo",
-                endConnection: "city_kefu"
+                endConnection: "city_kefu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4343,10 +4343,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "科洛西-阿卡",
                 type: "sea",
                 id: "sea_city_kolossi_city_ake_1788082845695",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kolossi",
-                endConnection: "city_ake"
+                endConnection: "city_ake",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4367,10 +4367,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "奥列什基-赫尔松涅斯",
                 type: "sea",
                 id: "sea_city_oleshky_city_heersongniesi_1792351881034",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_oleshky",
-                endConnection: "city_heersongniesi"
+                endConnection: "city_heersongniesi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4390,10 +4390,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "星主厅-顺天",
                 type: "sea",
                 id: "sea_city_xingzhuting_city_suncheon_k_1788088180781",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_xingzhuting",
-                endConnection: "city_suncheon_k"
+                endConnection: "city_suncheon_k",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4413,10 +4413,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "蓬莱-卑沙城",
                 type: "sea",
                 id: "sea_city_dengzhou_city_beishacheng_1788088062728",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_dengzhou",
-                endConnection: "city_beishacheng"
+                endConnection: "city_beishacheng",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4434,10 +4434,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "迦太基-卡利亚里",
                 type: "sea",
                 id: "sea_city_jiataji_city_cagliari_1788228318164",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jiataji",
-                endConnection: "city_cagliari"
+                endConnection: "city_cagliari",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4460,10 +4460,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "梅西纳-马耳他",
                 type: "sea",
                 id: "sea_city_messina_city_malta_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_messina",
-                endConnection: "city_malta"
+                endConnection: "city_malta",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4483,10 +4483,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "山海关-漂渝津",
                 type: "sea",
                 id: "sea_city_shanhaiguan_city_piaoyujin_1788088076445",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shanhaiguan",
-                endConnection: "city_piaoyujin"
+                endConnection: "city_piaoyujin",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4508,10 +4508,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "平良-首里",
                 type: "sea",
                 id: "sea_city_gugudao_city_shuri_1788088593522",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_gugudao",
-                endConnection: "city_shuri"
+                endConnection: "city_shuri",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4529,10 +4529,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "那不勒斯-巴勒莫",
                 type: "sea",
                 id: "sea_city_naples_city_palermo_1788228775414",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_naples",
-                endConnection: "city_palermo"
+                endConnection: "city_palermo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4552,10 +4552,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿克曼-赫尔松涅斯",
                 type: "sea",
                 id: "sea_city_akeman_city_heersongniesi_1788229213515",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_akeman",
-                endConnection: "city_heersongniesi"
+                endConnection: "city_heersongniesi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4577,10 +4577,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "那不勒斯-梅西纳",
                 type: "sea",
                 id: "sea_city_naples_city_messina_1787581955270",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_naples",
-                endConnection: "city_messina"
+                endConnection: "city_messina",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4599,10 +4599,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "奥拉-卡拉奇",
                 type: "sea",
                 id: "sea_city_aola_city_kalaqi_1790766686317",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aola",
-                endConnection: "city_kalaqi"
+                endConnection: "city_kalaqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4622,10 +4622,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "姬路城-冈丰城",
                 type: "sea",
                 id: "sea_city_himeji_city_okafu_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_himeji",
-                endConnection: "city_okafu"
+                endConnection: "city_okafu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4646,10 +4646,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "赤木名城-赤尾木城",
                 type: "sea",
                 id: "sea_city_akakinagusuku_city_akaogicheng_1788088599310",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_akakinagusuku",
-                endConnection: "city_akaogicheng"
+                endConnection: "city_akaogicheng",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4670,10 +4670,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "白主-莫约罗",
                 type: "sea",
                 id: "sea_city_baizhu_city_moyoro_1788229972331",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_baizhu",
-                endConnection: "city_moyoro"
+                endConnection: "city_moyoro",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4695,10 +4695,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卑沙城-山海关",
                 type: "sea",
                 id: "sea_city_beishacheng_city_shanhaiguan_1788088057501",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_beishacheng",
-                endConnection: "city_shanhaiguan"
+                endConnection: "city_shanhaiguan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4718,10 +4718,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "迦太基-巴勒莫",
                 type: "sea",
                 id: "sea_city_jiataji_city_palermo_1788228315671",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jiataji",
-                endConnection: "city_palermo"
+                endConnection: "city_palermo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4744,10 +4744,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "邓纳德-都柏林",
                 type: "sea",
                 id: "sea_city_dunadd_city_dublin_1792485069547",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_dunadd",
-                endConnection: "city_dublin"
+                endConnection: "city_dublin",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4769,10 +4769,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "义安-珠崖",
                 type: "sea",
                 id: "sea_city_yian_city_yazhou_1788856705035",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yian",
-                endConnection: "city_yazhou"
+                endConnection: "city_yazhou",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4791,10 +4791,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马耳他-的黎波里",
                 type: "sea",
                 id: "sea_city_malta_city_deliboli_1788228978936",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_malta",
-                endConnection: "city_deliboli"
+                endConnection: "city_deliboli",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4813,10 +4813,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "奥林索斯-克拉佐美奈",
                 type: "sea",
                 id: "sea_city_aolinsuosi_city_kelazuomeinai_1788855106263",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aolinsuosi",
-                endConnection: "city_kelazuomeinai"
+                endConnection: "city_kelazuomeinai",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4844,10 +4844,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "鹿儿岛城-金石馆",
                 type: "sea",
                 id: "sea_city_satsuma_city_tsushima_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_satsuma",
-                endConnection: "city_tsushima"
+                endConnection: "city_tsushima",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4868,10 +4868,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡那封-邓纳德",
                 type: "sea",
                 id: "sea_city_kanafeng_city_dunadd_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kanafeng",
-                endConnection: "city_dunadd"
+                endConnection: "city_dunadd",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4897,10 +4897,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安提瓦里-科孚",
                 type: "sea",
                 id: "sea_city_antiwali_city_kefu_1788855035200",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_antiwali",
-                endConnection: "city_kefu"
+                endConnection: "city_kefu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4926,10 +4926,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "首里-赤木名城",
                 type: "sea",
                 id: "sea_city_shuri_city_akakinagusuku_1788088596517",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shuri",
-                endConnection: "city_akakinagusuku"
+                endConnection: "city_akakinagusuku",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4948,10 +4948,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卑沙城-漂渝津",
                 type: "sea",
                 id: "sea_city_beishacheng_city_piaoyujin_1788088052998",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_beishacheng",
-                endConnection: "city_piaoyujin"
+                endConnection: "city_piaoyujin",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -4975,10 +4975,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "皮岛-蓬莱",
                 type: "sea",
                 id: "sea_city_pidao_city_dengzhou_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_pidao",
-                endConnection: "city_dengzhou"
+                endConnection: "city_dengzhou",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5000,10 +5000,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "波尔图-里斯本",
                 type: "sea",
                 id: "sea_city_boertu_city_lisiben_1788230414749",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_boertu",
-                endConnection: "city_lisiben"
+                endConnection: "city_lisiben",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5026,10 +5026,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "塔林-斯德哥尔摩",
                 type: "sea",
                 id: "sea_city_talin_city_sidedegelmo_1791964396680",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_talin",
-                endConnection: "city_sidedegelmo"
+                endConnection: "city_sidedegelmo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5050,10 +5050,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿尔及尔-巴伦西亚",
                 type: "sea",
                 id: "sea_city_aerjier_city_valencia_1788228170790",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aerjier",
-                endConnection: "city_valencia"
+                endConnection: "city_valencia",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5075,10 +5075,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "休达-拉巴特",
                 type: "sea",
                 id: "sea_city_xiuta_city_labate_1788230430319",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_xiuta",
-                endConnection: "city_labate"
+                endConnection: "city_labate",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5098,10 +5098,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "塔兰托-锡拉库萨",
                 type: "sea",
                 id: "sea_city_talanduo_city_syracuse_1788228883605",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_talanduo",
-                endConnection: "city_syracuse"
+                endConnection: "city_syracuse",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5124,10 +5124,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安布拉基亚-安提瓦里",
                 type: "sea",
                 id: "sea_city_anbulajiya_city_antiwali_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_anbulajiya",
-                endConnection: "city_antiwali"
+                endConnection: "city_antiwali",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5158,10 +5158,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿克曼-瓦尔纳",
                 type: "sea",
                 id: "sea_city_akeman_city_waerna_1788229227224",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_akeman",
-                endConnection: "city_waerna"
+                endConnection: "city_waerna",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5184,10 +5184,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "钓鱼岛-首里",
                 type: "sea",
                 id: "sea_city_diaoyudao_city_shuri_1788088591571",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_diaoyudao",
-                endConnection: "city_shuri"
+                endConnection: "city_shuri",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5206,10 +5206,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "冈丰城-赤尾木城",
                 type: "sea",
                 id: "sea_city_okafu_city_akaogicheng_1788088438644",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_okafu",
-                endConnection: "city_akaogicheng"
+                endConnection: "city_akaogicheng",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5230,10 +5230,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "根城-胜山馆",
                 type: "sea",
                 id: "sea_city_genjo_city_katsuyama_1788229840080",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_genjo",
-                endConnection: "city_katsuyama"
+                endConnection: "city_katsuyama",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5255,10 +5255,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "青叶馆-根城",
                 type: "sea",
                 id: "sea_city_xiantai_city_genjo_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_xiantai",
-                endConnection: "city_genjo"
+                endConnection: "city_genjo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5281,10 +5281,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "里加-斯德哥尔摩",
                 type: "sea",
                 id: "sea_city_liga_city_sidedegelmo_1791964390898",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_liga",
-                endConnection: "city_sidedegelmo"
+                endConnection: "city_sidedegelmo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5305,10 +5305,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "皮岛-开城",
                 type: "sea",
                 id: "sea_city_pidao_city_kaesong_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_pidao",
-                endConnection: "city_kaesong"
+                endConnection: "city_kaesong",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5331,10 +5331,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "波尔多-坎佩尔",
                 type: "sea",
                 id: "sea_city_bordeaux_city_kanpeier_1787911327972",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_bordeaux",
-                endConnection: "city_kanpeier"
+                endConnection: "city_kanpeier",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5358,10 +5358,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "罗马-卡利亚里",
                 type: "sea",
                 id: "sea_city_luoma_city_cagliari_1788228676707",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_luoma",
-                endConnection: "city_cagliari"
+                endConnection: "city_cagliari",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5384,10 +5384,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "海门-珠崖",
                 type: "sea",
                 id: "sea_city_hepu_city_yazhou_1788088912400",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hepu",
-                endConnection: "city_yazhou"
+                endConnection: "city_yazhou",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5411,10 +5411,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "临海-宁波",
                 type: "sea",
                 id: "sea_city_taizhou_zj_city_qingyuan_zj_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_taizhou_zj",
-                endConnection: "city_qingyuan_zj"
+                endConnection: "city_qingyuan_zj",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5437,10 +5437,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "科洛西-亚历山大",
                 type: "sea",
                 id: "sea_city_kolossi_city_yalishanda_1788082849543",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kolossi",
-                endConnection: "city_yalishanda"
+                endConnection: "city_yalishanda",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5468,10 +5468,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "赫尔松涅斯-瓦尔纳",
                 type: "sea",
                 id: "sea_city_heersongniesi_city_waerna_1788229217887",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_heersongniesi",
-                endConnection: "city_waerna"
+                endConnection: "city_waerna",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5494,10 +5494,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "汉堡-海牙",
                 type: "sea",
                 id: "sea_city_hamburg_city_hague_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hamburg",
-                endConnection: "city_hague"
+                endConnection: "city_hague",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5525,10 +5525,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "钓鱼岛-艋舺",
                 type: "sea",
                 id: "sea_city_diaoyudao_city_mengjia_1788088648016",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_diaoyudao",
-                endConnection: "city_mengjia"
+                endConnection: "city_mengjia",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5549,10 +5549,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "罗斯托克-哥德堡",
                 type: "sea",
                 id: "sea_city_rostock_city_gothenburg_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_rostock",
-                endConnection: "city_gothenburg"
+                endConnection: "city_gothenburg",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5578,10 +5578,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "特拉布宗-潘提卡彭",
                 type: "sea",
                 id: "sea_city_telabuzong_city_pantika_1788229306131",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_telabuzong",
-                endConnection: "city_pantika"
+                endConnection: "city_pantika",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5607,10 +5607,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "格但斯克-哥本哈根",
                 type: "sea",
                 id: "sea_city_gdansk_city_gebenhagen_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_gdansk",
-                endConnection: "city_gebenhagen"
+                endConnection: "city_gebenhagen",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5640,10 +5640,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "上海-临海",
                 type: "sea",
                 id: "sea_city_shanghai_city_taizhou_zj_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shanghai",
-                endConnection: "city_taizhou_zj"
+                endConnection: "city_taizhou_zj",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5667,10 +5667,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "海康-番禺",
                 type: "sea",
                 id: "sea_city_haikang_city_panyu_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_haikang",
-                endConnection: "city_panyu"
+                endConnection: "city_panyu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5698,10 +5698,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "胜山馆-宗谷",
                 type: "sea",
                 id: "sea_city_katsuyama_city_zonggu_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_katsuyama",
-                endConnection: "city_zonggu"
+                endConnection: "city_zonggu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5727,10 +5727,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "奥里斯塔诺-热那亚",
                 type: "sea",
                 id: "sea_city_oristano_city_genoa_1792767190662",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_oristano",
-                endConnection: "city_genoa"
+                endConnection: "city_genoa",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5754,10 +5754,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡法-特拉布宗",
                 type: "sea",
                 id: "sea_city_kafa_city_telabuzong_1788229297236",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kafa",
-                endConnection: "city_telabuzong"
+                endConnection: "city_telabuzong",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5784,10 +5784,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "奥里斯塔诺-巴塞罗那",
                 type: "sea",
                 id: "sea_city_oristano_city_barcelona_1792767174297",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_oristano",
-                endConnection: "city_barcelona"
+                endConnection: "city_barcelona",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5814,10 +5814,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "骏府-姬路城",
                 type: "sea",
                 id: "sea_city_junfucheng_city_himeji_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_junfucheng",
-                endConnection: "city_himeji"
+                endConnection: "city_himeji",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5843,10 +5843,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "的黎波里-锡拉库萨",
                 type: "sea",
                 id: "sea_city_deliboli_city_syracuse_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_deliboli",
-                endConnection: "city_syracuse"
+                endConnection: "city_syracuse",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5867,10 +5867,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "圣维森特-卡布弗里乌",
                 type: "sea",
                 id: "sea_city_saovicente_city_kabufoliwu_1788856078051",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_saovicente",
-                endConnection: "city_kabufoliwu"
+                endConnection: "city_kabufoliwu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5894,10 +5894,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "拉古萨-拉文纳",
                 type: "sea",
                 id: "sea_city_ragusa_city_ravenna_1788855050388",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_ragusa",
-                endConnection: "city_ravenna"
+                endConnection: "city_ravenna",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5930,10 +5930,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "牡丹社-平良",
                 type: "sea",
                 id: "sea_city_mudan_city_gugudao_1788088791195",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mudan",
-                endConnection: "city_gugudao"
+                endConnection: "city_gugudao",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5956,10 +5956,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "威尼斯-拉古萨",
                 type: "sea",
                 id: "sea_city_venice_city_ragusa_1788229383577",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_venice",
-                endConnection: "city_ragusa"
+                endConnection: "city_ragusa",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -5991,10 +5991,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马特鲁港-佩鲁西姆",
                 type: "sea",
                 id: "sea_city_matelugang_city_peiluximu_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_matelugang",
-                endConnection: "city_peiluximu"
+                endConnection: "city_peiluximu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6017,10 +6017,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "珠崖-海康",
                 type: "sea",
                 id: "road_city_yazhou_city_haikang_1780866737564",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yazhou",
-                endConnection: "city_haikang"
+                endConnection: "city_haikang",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6047,10 +6047,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "江户城-青叶馆",
                 type: "sea",
                 id: "sea_city_edo_city_xiantai_1788229831946",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_edo",
-                endConnection: "city_xiantai"
+                endConnection: "city_xiantai",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6080,10 +6080,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "班加西-干地亚要塞",
                 type: "sea",
                 id: "sea_city_banjiaxi_city_knossos_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_banjiaxi",
-                endConnection: "city_knossos"
+                endConnection: "city_knossos",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6107,10 +6107,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "圣彼得堡-斯德哥尔摩",
                 type: "sea",
                 id: "sea_city_shengpidebao_city_sidedegelmo_1787916465357",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shengpidebao",
-                endConnection: "city_sidedegelmo"
+                endConnection: "city_sidedegelmo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6136,10 +6136,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "邓纳德-利默里克",
                 type: "sea",
                 id: "sea_city_dunadd_city_limerick_1792485054176",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_dunadd",
-                endConnection: "city_limerick"
+                endConnection: "city_limerick",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6179,10 +6179,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "班加西-马耳他",
                 type: "sea",
                 id: "sea_city_malta_city_banjiaxi_1788228984837",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_banjiaxi",
-                endConnection: "city_malta"
+                endConnection: "city_malta",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6202,10 +6202,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿尔及尔-休达",
                 type: "sea",
                 id: "sea_city_aerjier_city_xiuta_1788228157971",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aerjier",
-                endConnection: "city_xiuta"
+                endConnection: "city_xiuta",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6231,10 +6231,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "囊哈儿-宗谷",
                 type: "sea",
                 id: "sea_city_nanghar_city_zonggu_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_nanghar",
-                endConnection: "city_zonggu"
+                endConnection: "city_zonggu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6254,10 +6254,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "热那亚-巴塞罗那",
                 type: "sea",
                 id: "sea_city_genoa_city_barcelona_1788228736094",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_genoa",
-                endConnection: "city_barcelona"
+                endConnection: "city_barcelona",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6286,10 +6286,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "利默里克-坎佩尔",
                 type: "sea",
                 id: "sea_city_limerick_city_kanpeier_1788230317551",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_limerick",
-                endConnection: "city_kanpeier"
+                endConnection: "city_kanpeier",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6323,10 +6323,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "哥本哈根-里加",
                 type: "sea",
                 id: "sea_city_gebenhagen_city_liga_1787918238317",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_gebenhagen",
-                endConnection: "city_liga"
+                endConnection: "city_liga",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6355,10 +6355,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "奥拉-索姆纳特",
                 type: "sea",
                 id: "sea_city_aola_city_suomunate_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aola",
-                endConnection: "city_suomunate"
+                endConnection: "city_suomunate",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6385,10 +6385,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "波尔多-波尔图",
                 type: "sea",
                 id: "sea_city_bordeaux_city_boertu_1788230411252",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_bordeaux",
-                endConnection: "city_boertu"
+                endConnection: "city_boertu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6422,10 +6422,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "吉大港-丹塔普拉",
                 type: "sea",
                 id: "sea_city_jidagang_city_danta_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jidagang",
-                endConnection: "city_danta"
+                endConnection: "city_danta",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6451,10 +6451,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马尼拉-承天",
                 type: "sea",
                 id: "sea_city_manila_city_tainan_1787917644227",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_manila",
-                endConnection: "city_tainan"
+                endConnection: "city_tainan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6476,10 +6476,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "爱丁堡-都柏林",
                 type: "sea",
                 id: "road_city_aidingbao_city_dublin_1785580896181",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aidingbao",
-                endConnection: "city_dublin"
+                endConnection: "city_dublin",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6521,10 +6521,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "德尔纳特-霍洛",
                 type: "sea",
                 id: "sea_city_deernate_city_huoluo_1787917619435",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_deernate",
-                endConnection: "city_huoluo"
+                endConnection: "city_huoluo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6563,10 +6563,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "霍洛-马尼拉",
                 type: "sea",
                 id: "sea_city_huoluo_city_manila_1787917632932",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_huoluo",
-                endConnection: "city_manila"
+                endConnection: "city_manila",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6598,10 +6598,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "加莱-波尔多",
                 type: "sea",
                 id: "sea_city_calais_city_bordeaux_1788230407457",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_calais",
-                endConnection: "city_bordeaux"
+                endConnection: "city_bordeaux",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6650,10 +6650,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡布弗里乌-萨尔瓦多",
                 type: "sea",
                 id: "sea_city_kabufoliwu_city_salvador_1788856085585",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kabufoliwu",
-                endConnection: "city_salvador"
+                endConnection: "city_salvador",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6683,10 +6683,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阇槃-番禺",
                 type: "sea",
                 id: "sea_city_dupan_city_panyu_1788088985342",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_dupan",
-                endConnection: "city_panyu"
+                endConnection: "city_panyu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6720,10 +6720,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "巴士拉-奥拉",
                 type: "sea",
                 id: "sea_city_bashila_city_aola_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_bashila",
-                endConnection: "city_aola"
+                endConnection: "city_aola",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6771,10 +6771,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "圣奥古斯丁-圣多明各",
                 type: "sea",
                 id: "sea_city_shengaogusiding_city_shengduomingge_1787917913579",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shengaogusiding",
-                endConnection: "city_shengduomingge"
+                endConnection: "city_shengduomingge",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6823,10 +6823,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "巴拿马-阿卡普尔科",
                 type: "sea",
                 id: "sea_city_banama_city_acapulco_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_banama",
-                endConnection: "city_acapulco"
+                endConnection: "city_acapulco",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6887,10 +6887,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "维斯比-柯尼斯堡",
                 type: "sea",
                 id: "sea_city_weishibi_city_kenisibao_1793004975800",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_weishibi",
-                endConnection: "city_kenisibao"
+                endConnection: "city_kenisibao",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6912,10 +6912,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "格但斯克-维斯比",
                 type: "sea",
                 id: "sea_city_gdansk_city_weishibi_1793004982465",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_gdansk",
-                endConnection: "city_weishibi"
+                endConnection: "city_weishibi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6937,10 +6937,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "北大年-淡马锡",
                 type: "sea",
                 id: "sea_city_pattani_city_danmaxi_1793119449342",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_pattani",
-                endConnection: "city_danmaxi"
+                endConnection: "city_danmaxi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -6971,10 +6971,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "洞海城-刺桐",
                 type: "sea",
                 id: "sea_city_donghai_city_qingjingsi_1793164989422",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_donghai",
-                endConnection: "city_qingjingsi"
+                endConnection: "city_qingjingsi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7006,10 +7006,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "府内-星主厅",
                 type: "sea",
                 id: "sea_city_funei_city_xingzhuting_1793164989439",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_funei",
-                endConnection: "city_xingzhuting"
+                endConnection: "city_xingzhuting",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7036,10 +7036,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "赤间关-顺天",
                 type: "sea",
                 id: "sea_city_chijianguan_city_suncheon_k_1793164989456",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_chijianguan",
-                endConnection: "city_suncheon_k"
+                endConnection: "city_suncheon_k",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7060,10 +7060,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "镰仓-冈丰城",
                 type: "sea",
                 id: "sea_city_kamakura_city_okafu_1793164989473",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kamakura",
-                endConnection: "city_okafu"
+                endConnection: "city_okafu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7085,10 +7085,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "冶城-牡丹社",
                 type: "sea",
                 id: "sea_city_fuzhou_city_mudan_1793164989488",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_fuzhou",
-                endConnection: "city_mudan"
+                endConnection: "city_mudan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7111,10 +7111,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "推罗-佩鲁西姆",
                 type: "sea",
                 id: "sea_city_tuile_city_peiluximu_1793164989506",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_tuile",
-                endConnection: "city_peiluximu"
+                endConnection: "city_peiluximu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7135,10 +7135,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "加沙-拉塔基亚",
                 type: "sea",
                 id: "sea_city_jiasa_city_latajiya_1793164989523",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jiasa",
-                endConnection: "city_latajiya"
+                endConnection: "city_latajiya",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7160,10 +7160,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿卡-亚历山大",
                 type: "sea",
                 id: "sea_city_ake_city_yalishanda_1793164989541",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_ake",
-                endConnection: "city_yalishanda"
+                endConnection: "city_yalishanda",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7185,10 +7185,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马特鲁港-罗得城",
                 type: "sea",
                 id: "sea_city_matelugang_city_rhodes_1793164989558",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_matelugang",
-                endConnection: "city_rhodes"
+                endConnection: "city_rhodes",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7220,10 +7220,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "米利都-雅典",
                 type: "sea",
                 id: "sea_city_miletus_city_yadian_1793164989569",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_miletus",
-                endConnection: "city_yadian"
+                endConnection: "city_yadian",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7258,10 +7258,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "米利都-佩鲁西姆",
                 type: "sea",
                 id: "sea_city_miletus_city_peiluximu_1793164989588",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_miletus",
-                endConnection: "city_peiluximu"
+                endConnection: "city_peiluximu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7293,10 +7293,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "塔林-柯尼斯堡",
                 type: "sea",
                 id: "sea_city_talin_city_kenisibao_1793164989629",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_talin",
-                endConnection: "city_kenisibao"
+                endConnection: "city_kenisibao",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7320,10 +7320,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "圣彼得堡-柯尼斯堡",
                 type: "sea",
                 id: "sea_city_shengpidebao_city_kenisibao_1793164989650",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shengpidebao",
-                endConnection: "city_kenisibao"
+                endConnection: "city_kenisibao",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7352,10 +7352,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "哥德堡-什切青",
                 type: "sea",
                 id: "sea_city_gothenburg_city_shiqieqing_1793164989667",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_gothenburg",
-                endConnection: "city_shiqieqing"
+                endConnection: "city_shiqieqing",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7386,10 +7386,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "什切青-里加",
                 type: "sea",
                 id: "sea_city_shiqieqing_city_liga_1793164989692",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shiqieqing",
-                endConnection: "city_liga"
+                endConnection: "city_liga",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7419,10 +7419,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡法-君士坦丁堡",
                 type: "sea",
                 id: "sea_city_kafa_city_junshitandingbao_1793164989723",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kafa",
-                endConnection: "city_junshitandingbao"
+                endConnection: "city_junshitandingbao",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7448,10 +7448,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "希波-奥里斯塔诺",
                 type: "sea",
                 id: "sea_city_xibo_city_oristano_1793164989738",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_xibo",
-                endConnection: "city_oristano"
+                endConnection: "city_oristano",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7475,10 +7475,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "布佳亚-卡利亚里",
                 type: "sea",
                 id: "sea_city_bujiaya_city_cagliari_1793164989770",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_bujiaya",
-                endConnection: "city_cagliari"
+                endConnection: "city_cagliari",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7502,10 +7502,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "布佳亚-巴伦西亚",
                 type: "sea",
                 id: "sea_city_bujiaya_city_valencia_1793164989786",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_bujiaya",
-                endConnection: "city_valencia"
+                endConnection: "city_valencia",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7535,10 +7535,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "羊河-潘提卡彭",
                 type: "sea",
                 id: "sea_city_yanghe_city_pantika_1793165311224",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yanghe",
-                endConnection: "city_pantika"
+                endConnection: "city_pantika",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7578,10 +7578,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡里斯托斯-罗得城",
                 type: "sea",
                 id: "sea_city_kalisituosi_city_rhodes_1793165311235",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kalisituosi",
-                endConnection: "city_rhodes"
+                endConnection: "city_rhodes",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7606,10 +7606,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "里贝拉-特尔德",
                 type: "sea",
                 id: "sea_city_ribeira_city_telde_1793285956303",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_ribeira",
-                endConnection: "city_telde"
+                endConnection: "city_telde",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7629,10 +7629,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "特尔德-加的斯",
                 type: "sea",
                 id: "sea_city_telde_city_jiadisi_1793285978510",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_telde",
-                endConnection: "city_jiadisi"
+                endConnection: "city_jiadisi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7669,10 +7669,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安格拉-哈瓦那",
                 type: "sea",
                 id: "sea_city_angra_city_havana_1793100000000",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_angra",
-                endConnection: "city_havana"
+                endConnection: "city_havana",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7738,10 +7738,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "利默里克-安格拉",
                 type: "sea",
                 id: "sea_city_limerick_city_angra_1793100000000",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_limerick",
-                endConnection: "city_angra"
+                endConnection: "city_angra",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7785,10 +7785,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "龙溪-澎湖",
                 type: "sea",
                 id: "sea_city_zhangzhou_city_penghu_1793608020997",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_zhangzhou",
-                endConnection: "city_penghu"
+                endConnection: "city_penghu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7807,10 +7807,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "古里-索姆纳特",
                 type: "sea",
                 id: "sea_city_guli_city_suomunate_1793608167941",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_guli",
-                endConnection: "city_suomunate"
+                endConnection: "city_suomunate",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7841,10 +7841,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马六甲-亚齐",
                 type: "sea",
                 id: "sea_city_malacca_city_yaqi_1793608265015",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_malacca",
-                endConnection: "city_yaqi"
+                endConnection: "city_yaqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7870,10 +7870,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "加勒-古里",
                 type: "sea",
                 id: "sea_city_jiale_city_guli_1793608286402",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jiale",
-                endConnection: "city_guli"
+                endConnection: "city_guli",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7902,10 +7902,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "亚齐-直通",
                 type: "sea",
                 id: "sea_city_yaqi_city_thaton_1793608420396",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yaqi",
-                endConnection: "city_thaton"
+                endConnection: "city_thaton",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7950,10 +7950,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿达纳-安提俄基亚",
                 type: "sea",
                 id: "sea_city_adana_city_antiejiya_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_adana",
-                endConnection: "city_antiejiya"
+                endConnection: "city_antiejiya",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7970,10 +7970,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "拉塔基亚-阿达纳",
                 type: "sea",
                 id: "sea_city_latajiya_city_adana_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_latajiya",
-                endConnection: "city_adana"
+                endConnection: "city_adana",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -7991,10 +7991,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "瀑池-汉城",
                 type: "sea",
                 id: "sea_city_haeju_city_hanseong_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_haeju",
-                endConnection: "city_hanseong"
+                endConnection: "city_hanseong",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8011,10 +8011,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "泗沘-汉城",
                 type: "sea",
                 id: "sea_city_sabi_city_hanseong_1788088207516",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_sabi",
-                endConnection: "city_hanseong"
+                endConnection: "city_hanseong",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8033,10 +8033,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "瀑池-泗沘",
                 type: "sea",
                 id: "sea_city_haeju_city_sabi_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_haeju",
-                endConnection: "city_sabi"
+                endConnection: "city_sabi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8054,10 +8054,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "特洛伊-佩拉",
                 type: "sea",
                 id: "sea_city_teluoyi_city_salonica_1788855194386",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_teluoyi",
-                endConnection: "city_salonica"
+                endConnection: "city_salonica",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8079,10 +8079,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "鸣梁-泗沘",
                 type: "sea",
                 id: "sea_city_jindo_city_sabi_1788088191410",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jindo",
-                endConnection: "city_sabi"
+                endConnection: "city_sabi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8101,10 +8101,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "佩拉-雅典",
                 type: "sea",
                 id: "sea_city_salonica_city_yadian_1788855123167",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_salonica",
-                endConnection: "city_yadian"
+                endConnection: "city_yadian",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8133,10 +8133,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "文登-开城",
                 type: "sea",
                 id: "sea_city_wendeng_city_kaesong_1788088151382",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_wendeng",
-                endConnection: "city_kaesong"
+                endConnection: "city_kaesong",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8156,10 +8156,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "耽摩栗底-吉大港",
                 type: "sea",
                 id: "sea_city_danmoledi_city_jidagang_1787912080523",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_danmoledi",
-                endConnection: "city_jidagang"
+                endConnection: "city_jidagang",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8180,10 +8180,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "淡马锡-巨港",
                 type: "sea",
                 id: "sea_city_danmaxi_city_sanfoqi_1788932625811",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_danmaxi",
-                endConnection: "city_sanfoqi"
+                endConnection: "city_sanfoqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8202,10 +8202,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "文登-鸣梁",
                 type: "sea",
                 id: "sea_city_wendeng_city_jindo_1788088162610",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_wendeng",
-                endConnection: "city_jindo"
+                endConnection: "city_jindo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8226,10 +8226,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "巴达维亚-巨港",
                 type: "sea",
                 id: "sea_city_batavia_city_sanfoqi_1792485737963",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_batavia",
-                endConnection: "city_sanfoqi"
+                endConnection: "city_sanfoqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8251,10 +8251,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "丹塔普拉-耽摩栗底",
                 type: "sea",
                 id: "sea_city_danta_city_danmoledi_1792486086113",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_danta",
-                endConnection: "city_danmoledi"
+                endConnection: "city_danmoledi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8273,10 +8273,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "特罗武兰-霍洛",
                 type: "sea",
                 id: "sea_city_teluowulan_city_huoluo_1788852927214",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_teluowulan",
-                endConnection: "city_huoluo"
+                endConnection: "city_huoluo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8315,10 +8315,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "特罗武兰-德尔纳特",
                 type: "sea",
                 id: "sea_city_teluowulan_city_deernate_20261024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_teluowulan",
-                endConnection: "city_deernate"
+                endConnection: "city_deernate",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8349,10 +8349,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "文登-上海",
                 type: "sea",
                 id: "sea_city_wendeng_city_shanghai_1793100000000",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_wendeng",
-                endConnection: "city_shanghai"
+                endConnection: "city_shanghai",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8381,10 +8381,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "爱丁堡-因弗内斯",
                 type: "sea",
                 id: "sea_city_aidingbao_city_yinfeineisi_1793609000000",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aidingbao",
-                endConnection: "city_yinfeineisi"
+                endConnection: "city_yinfeineisi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8406,10 +8406,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安提俄基亚-科洛西",
                 type: "sea",
                 id: "sea_city_antiejiya_city_kolossi_1793609000001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_antiejiya",
-                endConnection: "city_kolossi"
+                endConnection: "city_kolossi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8432,10 +8432,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "普里-加勒",
                 type: "sea",
                 id: "sea_city_puli_city_jiale_1793609000003",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_puli",
-                endConnection: "city_jiale"
+                endConnection: "city_jiale",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8480,10 +8480,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "龙溪-冶城",
                 type: "sea",
                 id: "sea_city_zhangzhou_city_fuzhou_1793609000005",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_zhangzhou",
-                endConnection: "city_fuzhou"
+                endConnection: "city_fuzhou",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8508,10 +8508,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "哥德堡-海牙",
                 type: "sea",
                 id: "sea_city_gothenburg_city_hague_1793609000006",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_gothenburg",
-                endConnection: "city_hague"
+                endConnection: "city_hague",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8546,10 +8546,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "博尔贡-爱丁堡",
                 type: "sea",
                 id: "sea_city_boergong_city_aidingbao_1787901926201",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_boergong",
-                endConnection: "city_aidingbao"
+                endConnection: "city_aidingbao",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8572,10 +8572,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "博尔贡-因弗内斯",
                 type: "sea",
                 id: "sea_city_boergong_city_yinfeineisi_1793005344597",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_boergong",
-                endConnection: "city_yinfeineisi"
+                endConnection: "city_yinfeineisi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8600,10 +8600,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "尼科西亚-阿达纳",
                 type: "sea",
                 id: "sea_city_nikexiya_city_adana_1787916343649",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_nikexiya",
-                endConnection: "city_adana"
+                endConnection: "city_adana",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8623,10 +8623,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "尼科西亚-安提俄基亚",
                 type: "sea",
                 id: "sea_city_nikexiya_city_antiejiya_1787916352381",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_nikexiya",
-                endConnection: "city_antiejiya"
+                endConnection: "city_antiejiya",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8648,10 +8648,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "亚拉-圣多明各",
                 type: "sea",
                 id: "sea_city_yala_city_shengduomingge_1792484957049",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yala",
-                endConnection: "city_shengduomingge"
+                endConnection: "city_shengduomingge",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8681,10 +8681,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "义安-云屯",
                 type: "sea",
                 id: "sea_city_yian_city_yuntun_1793609500001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yian",
-                endConnection: "city_yuntun"
+                endConnection: "city_yuntun",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8704,10 +8704,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "云屯-海门",
                 type: "sea",
                 id: "sea_city_yuntun_city_hepu_1793609500002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_yuntun",
-                endConnection: "city_hepu"
+                endConnection: "city_hepu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8729,10 +8729,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "淡马锡-吞武里",
                 type: "sea",
                 id: "sea_city_danmaxi_city_tunwuli_1793609500005",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_danmaxi",
-                endConnection: "city_tunwuli"
+                endConnection: "city_tunwuli",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8766,10 +8766,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "吉达-贝雷尼斯",
                 type: "sea",
                 id: "sea_city_jida_city_beileinisi_1793609500006",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jida",
-                endConnection: "city_beileinisi"
+                endConnection: "city_beileinisi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8801,10 +8801,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "吉达-塞拉",
                 type: "sea",
                 id: "sea_city_jida_city_zeila_1793609500007",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jida",
-                endConnection: "city_zeila"
+                endConnection: "city_zeila",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8834,10 +8834,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "罗马-希波",
                 type: "sea",
                 id: "sea_city_luoma_city_xibo_1793609600001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_luoma",
-                endConnection: "city_xibo"
+                endConnection: "city_xibo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8865,10 +8865,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "普里-直通",
                 type: "sea",
                 id: "sea_city_puli_city_thaton_1793609600002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_puli",
-                endConnection: "city_thaton"
+                endConnection: "city_thaton",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8911,10 +8911,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "吉大港-直通",
                 type: "sea",
                 id: "sea_city_jidagang_city_thaton_1793609600004",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jidagang",
-                endConnection: "city_thaton"
+                endConnection: "city_thaton",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8950,10 +8950,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "里斯本-拉巴特",
                 type: "sea",
                 id: "sea_city_lisiben_city_labate_1793609600005",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_lisiben",
-                endConnection: "city_labate"
+                endConnection: "city_labate",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -8982,10 +8982,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "里贝拉-瓜纳巴拉",
                 type: "sea",
                 id: "sea_city_ribeira_city_guanabara_1793609700001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_ribeira",
-                endConnection: "city_guanabara"
+                endConnection: "city_guanabara",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9000,7 +9000,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-29.6971, 3.3712],
                     [-30.00016, 2.73349],
                     [-30.87662, 0.88925],
-                    [-31.29923, -1e-05],
+                    [-31.29923, -0.00001],
                     [-31.746, -0.9401],
                     [-32.84909, -3.2547],
                     [-33.8, -5.25],
@@ -9039,10 +9039,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "萨尔瓦多-圣维森特",
                 type: "sea",
                 id: "sea_city_salvador_city_saovicente_1793609700002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_salvador",
-                endConnection: "city_saovicente"
+                endConnection: "city_saovicente",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9080,10 +9080,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马六甲-巨港",
                 type: "sea",
                 id: "sea_city_malacca_city_sanfoqi_1793609800001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_malacca",
-                endConnection: "city_sanfoqi"
+                endConnection: "city_sanfoqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9108,10 +9108,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "吞武里-阇槃",
                 type: "sea",
                 id: "sea_city_tunwuli_city_dupan_1793609800003",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_tunwuli",
-                endConnection: "city_dupan"
+                endConnection: "city_dupan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9154,10 +9154,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "希马鲁塔-干地亚要塞",
                 type: "sea",
                 id: "sea_city_chimarros_city_knossos_1793609800004",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_chimarros",
-                endConnection: "city_knossos"
+                endConnection: "city_knossos",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9179,10 +9179,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "赤间关-松山",
                 type: "sea",
                 id: "sea_city_chijianguan_city_songshan_1793609800005",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_chijianguan",
-                endConnection: "city_songshan"
+                endConnection: "city_songshan",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9201,10 +9201,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "加莱-海牙",
                 type: "sea",
                 id: "sea_city_calais_city_hague_1793609800006",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_calais",
-                endConnection: "city_hague"
+                endConnection: "city_hague",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9223,10 +9223,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "斯德哥尔摩-维斯比",
                 type: "sea",
                 id: "sea_city_sidedegelmo_city_weishibi_1793609800007",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_sidedegelmo",
-                endConnection: "city_weishibi"
+                endConnection: "city_weishibi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9244,10 +9244,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡里斯托斯-特洛伊",
                 type: "sea",
                 id: "sea_city_kalisituosi_city_teluoyi_1793609800008",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kalisituosi",
-                endConnection: "city_teluoyi"
+                endConnection: "city_teluoyi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9271,10 +9271,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡里斯托斯-克拉佐美奈",
                 type: "sea",
                 id: "sea_city_kalisituosi_city_kelazuomeinai_1793609800009",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kalisituosi",
-                endConnection: "city_kelazuomeinai"
+                endConnection: "city_kelazuomeinai",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9296,10 +9296,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "哈利卡纳苏斯-提洛",
                 type: "sea",
                 id: "sea_city_halikanasu_city_tiluo_1793609800010",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_halikanasu",
-                endConnection: "city_tiluo"
+                endConnection: "city_tiluo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9324,10 +9324,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "山海关-文登",
                 type: "sea",
                 id: "sea_city_shanhaiguan_city_wendeng_1793609800011",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shanhaiguan",
-                endConnection: "city_wendeng"
+                endConnection: "city_wendeng",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9347,10 +9347,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安提俄基亚-推罗",
                 type: "sea",
                 id: "sea_city_antiejiya_city_tuile_1793609800013",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_antiejiya",
-                endConnection: "city_tuile"
+                endConnection: "city_tuile",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9373,10 +9373,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "蓬莱-漂渝津",
                 type: "sea",
                 id: "sea_city_dengzhou_city_piaoyujin_1793609800014",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_dengzhou",
-                endConnection: "city_piaoyujin"
+                endConnection: "city_piaoyujin",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9396,10 +9396,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "鸣梁-原之辻",
                 type: "sea",
                 id: "sea_city_jindo_city_yuanzhishi_1793609800015",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jindo",
-                endConnection: "city_yuanzhishi"
+                endConnection: "city_yuanzhishi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9420,10 +9420,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "冶城-临海",
                 type: "sea",
                 id: "sea_city_fuzhou_city_taizhou_zj_1793609800016",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_fuzhou",
-                endConnection: "city_taizhou_zj"
+                endConnection: "city_taizhou_zj",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9448,10 +9448,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿尔及尔-巴塞罗那",
                 type: "sea",
                 id: "sea_city_aerjier_city_barcelona_1793609800017",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aerjier",
-                endConnection: "city_barcelona"
+                endConnection: "city_barcelona",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9477,10 +9477,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "尼科西亚-罗得城",
                 type: "sea",
                 id: "sea_city_nikexiya_city_rhodes_1793609800018",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_nikexiya",
-                endConnection: "city_rhodes"
+                endConnection: "city_rhodes",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9504,10 +9504,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "热那亚-罗马",
                 type: "sea",
                 id: "sea_city_genoa_city_luoma_1793609800019",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_genoa",
-                endConnection: "city_luoma"
+                endConnection: "city_luoma",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9533,10 +9533,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "巴勒莫-锡拉库萨",
                 type: "sea",
                 id: "sea_city_palermo_city_syracuse_1793609800020",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_palermo",
-                endConnection: "city_syracuse"
+                endConnection: "city_syracuse",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9559,10 +9559,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡法-奥列什基",
                 type: "sea",
                 id: "sea_city_kafa_city_oleshky_1793609800021",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kafa",
-                endConnection: "city_oleshky"
+                endConnection: "city_oleshky",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9587,10 +9587,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿尔及尔-希波",
                 type: "sea",
                 id: "sea_city_aerjier_city_xibo_1793609800022",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aerjier",
-                endConnection: "city_xibo"
+                endConnection: "city_xibo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9611,10 +9611,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "迦太基-马耳他",
                 type: "sea",
                 id: "sea_city_jiataji_city_malta_1793609800023",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_jiataji",
-                endConnection: "city_malta"
+                endConnection: "city_malta",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9638,10 +9638,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "上海-星主厅",
                 type: "sea",
                 id: "sea_city_shanghai_city_xingzhuting_1793609800024",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shanghai",
-                endConnection: "city_xingzhuting"
+                endConnection: "city_xingzhuting",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9661,10 +9661,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "科洛西-佩鲁西姆",
                 type: "sea",
                 id: "sea_city_kolossi_city_peiluximu_1793609800025",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kolossi",
-                endConnection: "city_peiluximu"
+                endConnection: "city_peiluximu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9687,10 +9687,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "府内-鹿儿岛城",
                 type: "sea",
                 id: "sea_city_funei_city_satsuma_1793609800026",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_funei",
-                endConnection: "city_satsuma"
+                endConnection: "city_satsuma",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9715,10 +9715,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "那不勒斯-奥里斯塔诺",
                 type: "sea",
                 id: "sea_city_naples_city_oristano_1793609800027",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_naples",
-                endConnection: "city_oristano"
+                endConnection: "city_oristano",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9750,10 +9750,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安布拉基亚-梅西纳",
                 type: "sea",
                 id: "sea_city_anbulajiya_city_messina_1793609800028",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_anbulajiya",
-                endConnection: "city_messina"
+                endConnection: "city_messina",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9782,10 +9782,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "蓬莱-泗沘",
                 type: "sea",
                 id: "sea_city_dengzhou_city_sabi_1793609800029",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_dengzhou",
-                endConnection: "city_sabi"
+                endConnection: "city_sabi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9808,10 +9808,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "柯尼斯堡-罗斯托克",
                 type: "sea",
                 id: "sea_city_kenisibao_city_rostock_1793609800030",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kenisibao",
-                endConnection: "city_rostock"
+                endConnection: "city_rostock",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9835,10 +9835,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "什切青-维斯比",
                 type: "sea",
                 id: "sea_city_shiqieqing_city_weishibi_1793609800031",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shiqieqing",
-                endConnection: "city_weishibi"
+                endConnection: "city_weishibi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9862,10 +9862,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "宁波-首里",
                 type: "sea",
                 id: "sea_city_qingyuan_zj_city_shuri_1793609800033",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_qingyuan_zj",
-                endConnection: "city_shuri"
+                endConnection: "city_shuri",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9888,10 +9888,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "锡拉库萨-雅典",
                 type: "sea",
                 id: "sea_city_syracuse_city_yadian_1793609800034",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_syracuse",
-                endConnection: "city_yadian"
+                endConnection: "city_yadian",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9916,10 +9916,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "爱丁堡-哥本哈根",
                 type: "sea",
                 id: "sea_city_aidingbao_city_gebenhagen_1793609800035",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aidingbao",
-                endConnection: "city_gebenhagen"
+                endConnection: "city_gebenhagen",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9951,10 +9951,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "刺桐-番禺",
                 type: "sea",
                 id: "sea_city_qingjingsi_city_panyu_1793616000001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_qingjingsi",
-                endConnection: "city_panyu"
+                endConnection: "city_panyu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -9985,10 +9985,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马尼拉-番禺",
                 type: "sea",
                 id: "sea_city_manila_city_panyu_1793616000002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_manila",
-                endConnection: "city_panyu"
+                endConnection: "city_panyu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10014,10 +10014,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "洞海城-珠崖",
                 type: "sea",
                 id: "sea_city_donghai_city_yazhou_1793616000003",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_donghai",
-                endConnection: "city_yazhou"
+                endConnection: "city_yazhou",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10036,10 +10036,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阇槃-淡马锡",
                 type: "sea",
                 id: "sea_city_dupan_city_danmaxi_1793616000004",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_dupan",
-                endConnection: "city_danmaxi"
+                endConnection: "city_danmaxi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10070,10 +10070,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阇槃-马六甲",
                 type: "sea",
                 id: "sea_city_dupan_city_malacca_1793616000005",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_dupan",
-                endConnection: "city_malacca"
+                endConnection: "city_malacca",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10110,10 +10110,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "北大年-巨港",
                 type: "sea",
                 id: "sea_city_pattani_city_sanfoqi_1793616000006",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_pattani",
-                endConnection: "city_sanfoqi"
+                endConnection: "city_sanfoqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10146,10 +10146,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "古里-亚丁",
                 type: "sea",
                 id: "sea_city_guli_city_aden_1793616000008",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_guli",
-                endConnection: "city_aden"
+                endConnection: "city_aden",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10206,10 +10206,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "古里-摩加迪沙",
                 type: "sea",
                 id: "sea_city_guli_city_mogadishu_1793616000009",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_guli",
-                endConnection: "city_mogadishu"
+                endConnection: "city_mogadishu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10229,7 +10229,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [57.13337, 7.18448],
                     [56.17013, 6.2239],
                     [53.07862, 3.11951],
-                    [50, -1e-05],
+                    [50, -0.00001],
                     [47.81255, 0.74572],
                     [45.85235, 1.73275],
                     [45.3419, 2.0392],
@@ -10242,10 +10242,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "果阿-蒙巴萨",
                 type: "sea",
                 id: "sea_city_guoa_city_mombasa_1793616000010",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_guoa",
-                endConnection: "city_mombasa"
+                endConnection: "city_mombasa",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10271,7 +10271,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [57.13337, 7.18448],
                     [56.17013, 6.2239],
                     [53.07862, 3.11951],
-                    [50, -1e-05],
+                    [50, -0.00001],
                     [47.05822, -1.28],
                     [40.3, -4.2],
                     [40.08333, -4.16667],
@@ -10286,10 +10286,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "特尔德-圣多明各",
                 type: "sea",
                 id: "sea_city_telde_city_shengduomingge_1793616000012",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_telde",
-                endConnection: "city_shengduomingge"
+                endConnection: "city_shengduomingge",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10337,10 +10337,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "临海-刺桐",
                 type: "sea",
                 id: "sea_city_taizhou_zj_city_qingjingsi_1793616000013",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_taizhou_zj",
-                endConnection: "city_qingjingsi"
+                endConnection: "city_qingjingsi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10369,10 +10369,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "囊哈儿-白主",
                 type: "sea",
                 id: "sea_city_nanghar_city_baizhu_1793616000020",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_nanghar",
-                endConnection: "city_baizhu"
+                endConnection: "city_baizhu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10395,10 +10395,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "利马-瓦尔帕莱索",
                 type: "sea",
                 id: "sea_city_lima_city_valparaiso_20261102",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_lima",
-                endConnection: "city_valparaiso"
+                endConnection: "city_valparaiso",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10447,10 +10447,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "圣维森特-布宜诺斯艾利斯",
                 type: "sea",
                 id: "sea_city_saovicente_city_buenosaires_20261102",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_saovicente",
-                endConnection: "city_buenosaires"
+                endConnection: "city_buenosaires",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10478,10 +10478,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "太宰府-五岛",
                 type: "sea",
                 id: "sea_city_taizaifu_city_goto_1793621542686",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_taizaifu",
-                endConnection: "city_goto"
+                endConnection: "city_goto",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10503,10 +10503,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "五岛-宁波",
                 type: "sea",
                 id: "sea_city_goto_city_qingyuan_zj_1793621551391",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_goto",
-                endConnection: "city_qingyuan_zj"
+                endConnection: "city_qingyuan_zj",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10531,10 +10531,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "皇家港-亚拉",
                 type: "sea",
                 id: "sea_city_portroyal_city_yala_20261102",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_portroyal",
-                endConnection: "city_yala"
+                endConnection: "city_yala",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10557,10 +10557,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "皇家港-波多韦洛",
                 type: "sea",
                 id: "sea_city_portroyal_city_portobelo_20261102",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_portroyal",
-                endConnection: "city_portobelo"
+                endConnection: "city_portobelo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10582,10 +10582,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "里贝拉-埃尔米纳",
                 type: "sea",
                 id: "sea_city_ribeira_city_elmina_20261102",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_ribeira",
-                endConnection: "city_elmina"
+                endConnection: "city_elmina",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10638,10 +10638,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "埃尔米纳-罗安达",
                 type: "sea",
                 id: "sea_city_elmina_city_luanda_20261102",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_elmina",
-                endConnection: "city_luanda"
+                endConnection: "city_luanda",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10690,10 +10690,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "埃尔米纳-萨尔瓦多",
                 type: "sea",
                 id: "sea_city_elmina_city_salvador_20261102",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_elmina",
-                endConnection: "city_salvador"
+                endConnection: "city_salvador",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10713,8 +10713,8 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-7, 4.08333],
                     [-6.47095, 4.53809],
                     [-7.5, 3.5],
-                    [-10, -2e-05],
-                    [-20, -2e-05],
+                    [-10, -0.00002],
+                    [-20, -0.00002],
                     [-21.78066, -1.80634],
                     [-22.4763, -2.512],
                     [-24.9621, -5.0193],
@@ -10736,10 +10736,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "开普敦-毛里求斯",
                 type: "sea",
                 id: "sea_city_cape_town_city_mauritius_1793623000001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_cape_town",
-                endConnection: "city_mauritius"
+                endConnection: "city_mauritius",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10773,10 +10773,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "毛里求斯-巴达维亚",
                 type: "sea",
                 id: "sea_city_mauritius_city_batavia_1793623000002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mauritius",
-                endConnection: "city_batavia"
+                endConnection: "city_batavia",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10815,10 +10815,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "毛里求斯-莫桑比克",
                 type: "sea",
                 id: "sea_city_mauritius_city_mozambique_1793623000003",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mauritius",
-                endConnection: "city_mozambique"
+                endConnection: "city_mozambique",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10854,10 +10854,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "科伦坡-亚齐",
                 type: "sea",
                 id: "sea_city_kelunpo_city_yaqi_1793626000001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kelunpo",
-                endConnection: "city_yaqi"
+                endConnection: "city_yaqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10886,10 +10886,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "霍尔木兹-巴士拉",
                 type: "sea",
                 id: "sea_city_hormuz_city_bashila_1793627000001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hormuz",
-                endConnection: "city_bashila"
+                endConnection: "city_bashila",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10921,10 +10921,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "霍尔木兹-卡拉奇",
                 type: "sea",
                 id: "sea_city_hormuz_city_kalaqi_1793627000002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_hormuz",
-                endConnection: "city_kalaqi"
+                endConnection: "city_kalaqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10960,10 +10960,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "龙溪-马尼拉",
                 type: "sea",
                 id: "sea_city_zhangzhou_city_manila_1793628000001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_zhangzhou",
-                endConnection: "city_manila"
+                endConnection: "city_manila",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -10990,10 +10990,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "德尔纳特-巴达维亚",
                 type: "sea",
                 id: "sea_city_deernate_city_batavia_1793628000002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_deernate",
-                endConnection: "city_batavia"
+                endConnection: "city_batavia",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11025,10 +11025,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "宁波-太宰府",
                 type: "sea",
                 id: "sea_city_qingyuan_zj_city_taizaifu_1793629000001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_qingyuan_zj",
-                endConnection: "city_taizaifu"
+                endConnection: "city_taizaifu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11057,10 +11057,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马尼拉-宿务",
                 type: "sea",
                 id: "sea_city_manila_city_cebu_1793629000002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_manila",
-                endConnection: "city_cebu"
+                endConnection: "city_cebu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11090,10 +11090,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "吕贝克-维斯比",
                 type: "sea",
                 id: "sea_city_lubeck_city_weishibi_1793629000003",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_lubeck",
-                endConnection: "city_weishibi"
+                endConnection: "city_weishibi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11120,10 +11120,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "加尔各答-马六甲",
                 type: "sea",
                 id: "sea_city_kolkata_city_malacca_1793629000005",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kolkata",
-                endConnection: "city_malacca"
+                endConnection: "city_malacca",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11148,10 +11148,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马六甲-巴达维亚",
                 type: "sea",
                 id: "sea_city_malacca_city_batavia_1793630000001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_malacca",
-                endConnection: "city_batavia"
+                endConnection: "city_batavia",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11189,10 +11189,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "里斯本-特尔德",
                 type: "sea",
                 id: "sea_city_lisiben_city_telde_1793630000002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_lisiben",
-                endConnection: "city_telde"
+                endConnection: "city_telde",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11223,10 +11223,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "安格拉-加的斯",
                 type: "sea",
                 id: "sea_city_angra_city_jiadisi_1793630000003",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_angra",
-                endConnection: "city_jiadisi"
+                endConnection: "city_jiadisi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11253,10 +11253,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "宁波-长崎",
                 type: "sea",
                 id: "sea_city_qingyuan_zj_city_nagasaki_1793630000004",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_qingyuan_zj",
-                endConnection: "city_nagasaki"
+                endConnection: "city_nagasaki",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11280,10 +11280,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "宁波-金海",
                 type: "sea",
                 id: "sea_city_qingyuan_zj_city_gimhae_1793630000005",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_qingyuan_zj",
-                endConnection: "city_gimhae"
+                endConnection: "city_gimhae",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11312,10 +11312,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "瓦尔帕莱索-复活节岛",
                 type: "sea",
                 id: "sea_city_valparaiso_city_rapanui_1793632000001",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_valparaiso",
-                endConnection: "city_rapanui"
+                endConnection: "city_rapanui",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11342,10 +11342,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "复活节岛-大溪地",
                 type: "sea",
                 id: "sea_city_rapanui_city_tahiti_1793632000002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_rapanui",
-                endConnection: "city_tahiti"
+                endConnection: "city_tahiti",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11371,10 +11371,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "瓦尔帕莱索-大溪地",
                 type: "sea",
                 id: "sea_city_valparaiso_city_tahiti_1793632000003",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_valparaiso",
-                endConnection: "city_tahiti"
+                endConnection: "city_tahiti",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11409,10 +11409,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "普利茅斯-詹姆斯敦",
                 type: "sea",
                 id: "sea_city_plymouth_city_jamestown_1793632000004",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_plymouth",
-                endConnection: "city_jamestown"
+                endConnection: "city_jamestown",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11482,10 +11482,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "普利茅斯-波尔多",
                 type: "sea",
                 id: "sea_city_plymouth_city_bordeaux_1793632000005",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_plymouth",
-                endConnection: "city_bordeaux"
+                endConnection: "city_bordeaux",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11518,10 +11518,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "普利茅斯-加的斯",
                 type: "sea",
                 id: "sea_city_plymouth_city_jiadisi_1793632000006",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_plymouth",
-                endConnection: "city_jiadisi"
+                endConnection: "city_jiadisi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11575,10 +11575,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "伦敦-詹姆斯敦",
                 type: "sea",
                 id: "sea_city_lundun_city_jamestown_1793632000007",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_lundun",
-                endConnection: "city_jamestown"
+                endConnection: "city_jamestown",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11673,10 +11673,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿姆斯特丹-新阿姆斯特丹",
                 type: "sea",
                 id: "sea_city_amsterdam_city_newamsterdam_1793632000008",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_amsterdam",
-                endConnection: "city_newamsterdam"
+                endConnection: "city_newamsterdam",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11760,10 +11760,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马林迪-古里",
                 type: "sea",
                 id: "sea_city_malindi_city_guli_1793632000010",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_malindi",
-                endConnection: "city_guli"
+                endConnection: "city_guli",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11773,7 +11773,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [40.08333, -4.16667],
                     [40.3, -4.2],
                     [47.05822, -1.28],
-                    [50, -1e-05],
+                    [50, -0.00001],
                     [53.07862, 3.11951],
                     [56.17013, 6.2239],
                     [57.13337, 7.18448],
@@ -11798,10 +11798,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "基尔瓦-马林迪",
                 type: "sea",
                 id: "sea_city_kilwa_city_malindi_1793632000011",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kilwa",
-                endConnection: "city_malindi"
+                endConnection: "city_malindi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11827,10 +11827,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "苏拉特-霍尔木兹",
                 type: "sea",
                 id: "sea_city_surat_city_hormuz_1793632000013",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_surat",
-                endConnection: "city_hormuz"
+                endConnection: "city_hormuz",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11875,10 +11875,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "苏拉特-亚丁",
                 type: "sea",
                 id: "sea_city_surat_city_aden_1793632000014",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_surat",
-                endConnection: "city_aden"
+                endConnection: "city_aden",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11945,10 +11945,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "孟买-卡拉奇",
                 type: "sea",
                 id: "sea_city_mumbai_city_kalaqi_1793632000015",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mumbai",
-                endConnection: "city_kalaqi"
+                endConnection: "city_kalaqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -11978,10 +11978,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "孟买-古里",
                 type: "sea",
                 id: "sea_city_mumbai_city_guli_1793632000016",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mumbai",
-                endConnection: "city_guli"
+                endConnection: "city_guli",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12008,10 +12008,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "柯枝-果阿",
                 type: "sea",
                 id: "sea_city_cochin_city_guoa_1793632000017",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_cochin",
-                endConnection: "city_guoa"
+                endConnection: "city_guoa",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12035,10 +12035,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "柯枝-科伦坡",
                 type: "sea",
                 id: "sea_city_cochin_city_kelunpo_1793632000018",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_cochin",
-                endConnection: "city_kelunpo"
+                endConnection: "city_kelunpo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12063,10 +12063,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "小葛兰-亚齐",
                 type: "sea",
                 id: "sea_city_quilon_city_yaqi_1793632000019",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_quilon",
-                endConnection: "city_yaqi"
+                endConnection: "city_yaqi",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12096,10 +12096,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "科伦坡-果阿",
                 type: "sea",
                 id: "sea_city_kelunpo_city_guoa_1793632000020",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_kelunpo",
-                endConnection: "city_guoa"
+                endConnection: "city_guoa",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12131,10 +12131,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "贝鲁特-亚历山大",
                 type: "sea",
                 id: "sea_city_beirut_city_yalishanda_1793632000021",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_beirut",
-                endConnection: "city_yalishanda"
+                endConnection: "city_yalishanda",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12157,10 +12157,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "澳门-马尼拉",
                 type: "sea",
                 id: "sea_city_aomen_city_manila_1793632000022",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_aomen",
-                endConnection: "city_manila"
+                endConnection: "city_manila",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12183,10 +12183,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "能岛城-骏府",
                 type: "sea",
                 id: "sea_city_noshima_city_junfucheng_1793636173078",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_noshima",
-                endConnection: "city_junfucheng"
+                endConnection: "city_junfucheng",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12213,10 +12213,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "白老-青叶馆",
                 type: "sea",
                 id: "sea_city_bailao_city_xiantai_1793636210893",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_bailao",
-                endConnection: "city_xiantai"
+                endConnection: "city_xiantai",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12242,10 +12242,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "复活节岛-利马",
                 type: "sea",
                 id: "sea_city_rapanui_city_lima_1793637224681",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_rapanui",
-                endConnection: "city_lima"
+                endConnection: "city_lima",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12274,10 +12274,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "瓦尔帕莱索-圣胡利安港",
                 type: "sea",
                 id: "sea_city_valparaiso_city_sanjulian_1793637367410",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_valparaiso",
-                endConnection: "city_sanjulian"
+                endConnection: "city_sanjulian",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12365,10 +12365,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "圣胡利安港-布宜诺斯艾利斯",
                 type: "sea",
                 id: "sea_city_sanjulian_city_buenosaires_1793637407760",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_sanjulian",
-                endConnection: "city_buenosaires"
+                endConnection: "city_buenosaires",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12422,10 +12422,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "布宜诺斯艾利斯-瓦尔帕莱索",
                 type: "sea",
                 id: "sea_city_buenosaires_city_valparaiso_1793637415948",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_buenosaires",
-                endConnection: "city_valparaiso"
+                endConnection: "city_valparaiso",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12512,10 +12512,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "布宜诺斯艾利斯-瓜纳巴拉",
                 type: "sea",
                 id: "sea_city_buenosaires_city_guanabara_1793637454656",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_buenosaires",
-                endConnection: "city_guanabara"
+                endConnection: "city_guanabara",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12549,10 +12549,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "瓜纳巴拉-萨尔瓦多",
                 type: "sea",
                 id: "sea_city_guanabara_city_salvador_1793637474050",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_guanabara",
-                endConnection: "city_salvador"
+                endConnection: "city_salvador",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12584,10 +12584,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "萨尔瓦多-马提尼克",
                 type: "sea",
                 id: "sea_city_salvador_city_martinique_1793637489099",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_salvador",
-                endConnection: "city_martinique"
+                endConnection: "city_martinique",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12676,10 +12676,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马提尼克-圣多明各",
                 type: "sea",
                 id: "sea_city_martinique_city_shengduomingge_1793637495069",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_martinique",
-                endConnection: "city_shengduomingge"
+                endConnection: "city_shengduomingge",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12710,10 +12710,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "马提尼克-卡塔赫纳",
                 type: "sea",
                 id: "sea_city_martinique_city_katachena_1793637504272",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_martinique",
-                endConnection: "city_katachena"
+                endConnection: "city_katachena",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12752,10 +12752,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "圣多明各-皇家港",
                 type: "sea",
                 id: "sea_city_shengduomingge_city_portroyal_1793637518932",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shengduomingge",
-                endConnection: "city_portroyal"
+                endConnection: "city_portroyal",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12777,10 +12777,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "皇家港-哈瓦那",
                 type: "sea",
                 id: "sea_city_portroyal_city_havana_1793637541611",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_portroyal",
-                endConnection: "city_havana"
+                endConnection: "city_havana",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12807,10 +12807,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "皇家港-卡塔赫纳",
                 type: "sea",
                 id: "sea_city_portroyal_city_katachena_1793637551888",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_portroyal",
-                endConnection: "city_katachena"
+                endConnection: "city_katachena",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12833,10 +12833,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "卡塔赫纳-波多韦洛",
                 type: "sea",
                 id: "sea_city_katachena_city_portobelo_1793637560461",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_katachena",
-                endConnection: "city_portobelo"
+                endConnection: "city_portobelo",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12854,10 +12854,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "波多韦洛-哈瓦那",
                 type: "sea",
                 id: "sea_city_portobelo_city_havana_1793637571398",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_portobelo",
-                endConnection: "city_havana"
+                endConnection: "city_havana",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12886,10 +12886,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "韦拉克鲁斯-哈瓦那",
                 type: "sea",
                 id: "sea_city_veracruz_city_havana_1793637595027",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_veracruz",
-                endConnection: "city_havana"
+                endConnection: "city_havana",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12931,10 +12931,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "哈瓦那-圣奥古斯丁",
                 type: "sea",
                 id: "sea_city_havana_city_shengaogusiding_1793637599403",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_havana",
-                endConnection: "city_shengaogusiding"
+                endConnection: "city_shengaogusiding",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -12971,10 +12971,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "圣奥古斯丁-新阿姆斯特丹",
                 type: "sea",
                 id: "sea_city_shengaogusiding_city_newamsterdam_1793637608707",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_shengaogusiding",
-                endConnection: "city_newamsterdam"
+                endConnection: "city_newamsterdam",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -13017,10 +13017,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "大溪地-穆阿",
                 type: "sea",
                 id: "sea_city_tahiti_city_mua_1793638000002",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_tahiti",
-                endConnection: "city_mua"
+                endConnection: "city_mua",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -13052,10 +13052,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "大溪地-火奴鲁鲁",
                 type: "sea",
                 id: "sea_city_tahiti_city_honolulu_1793638000003",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_tahiti",
-                endConnection: "city_honolulu"
+                endConnection: "city_honolulu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -13065,7 +13065,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-149.8519, -13.7006],
                     [-150, -10],
                     [-149.99988, -6.98233],
-                    [-150, -3e-05],
+                    [-150, -0.00003],
                     [-150.0003, 5.0004],
                     [-150, 10],
                     [-151.96135, 13.58901],
@@ -13083,10 +13083,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "大溪地-阿加尼亚",
                 type: "sea",
                 id: "sea_city_tahiti_city_hagatna_1793638000004",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_tahiti",
-                endConnection: "city_hagatna"
+                endConnection: "city_hagatna",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -13104,7 +13104,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-172.5336, -7.5167],
                     [-175.0384, -5.019],
                     [-177.524, -2.5119],
-                    [-180, -2e-05],
+                    [-180, -0.00002],
                     [176.5503, 0.5509],
                     [173.1, 1.1],
                     [169.8471, 3.3302],
@@ -13126,10 +13126,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "阿卡普尔科-火奴鲁鲁",
                 type: "sea",
                 id: "sea_city_acapulco_city_honolulu_1793638000005",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_acapulco",
-                endConnection: "city_honolulu"
+                endConnection: "city_honolulu",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -13169,10 +13169,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "火奴鲁鲁-阿加尼亚",
                 type: "sea",
                 id: "sea_city_honolulu_city_hagatna_1793638000006",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_honolulu",
-                endConnection: "city_hagatna"
+                endConnection: "city_hagatna",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -13205,10 +13205,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "穆阿-德尔纳特",
                 type: "sea",
                 id: "sea_city_mua_city_deernate_1793638000007",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mua",
-                endConnection: "city_deernate"
+                endConnection: "city_deernate",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -13322,10 +13322,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "穆阿-巴达维亚",
                 type: "sea",
                 id: "sea_city_mua_city_batavia_1793638000008",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mua",
-                endConnection: "city_batavia"
+                endConnection: "city_batavia",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -13389,10 +13389,10 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 name: "穆阿-阿加尼亚",
                 type: "sea",
                 id: "sea_city_mua_city_hagatna_1793638000009",
-                startYear: -3000,
-                endYear: 2000,
                 startConnection: "city_mua",
-                endConnection: "city_hagatna"
+                endConnection: "city_hagatna",
+                startYear: -3000,
+                endYear: 2000
             },
             geometry: {
                 type: "LineString",
@@ -13420,7 +13420,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [173.16233, -14.02836],
                     [170, -10],
                     [165.6454, -5.70086],
-                    [160, -2e-05],
+                    [160, -0.00002],
                     [155.01065, 5.04667],
                     [152.14803, 7.88358],
                     [150, 10],
@@ -13496,7 +13496,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [40.08333, -4.16667],
                     [40.3, -4.2],
                     [47.05822, -1.28],
-                    [50, -1e-05],
+                    [50, -0.00001],
                     [53.07862, 3.11951],
                     [56.17013, 6.2239],
                     [57.13337, 7.18448],
@@ -13529,7 +13529,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [40.08333, -4.16667],
                     [40.3, -4.2],
                     [47.05822, -1.28],
-                    [50, -1e-05],
+                    [50, -0.00001],
                     [53.07862, 3.11951],
                     [56.17013, 6.2239],
                     [57.13337, 7.18448],
@@ -13565,7 +13565,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [40.08333, -4.16667],
                     [40.3, -4.2],
                     [47.05822, -1.28],
-                    [50, -1e-05],
+                    [50, -0.00001],
                     [53.07862, 3.11951],
                     [56.17013, 6.2239],
                     [57.13337, 7.18448],
@@ -13594,14 +13594,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [40.1169, -3.2192],
-                    [40.58333, -3.0],
-                    [41.0, -2.91667],
+                    [40.58333, -3],
+                    [41, -2.91667],
                     [41.16667, -2.58333],
                     [41.33333, -2.58333],
                     [42.08333, -1.83333],
                     [42.08333, -1.66667],
                     [42.58333, -1.16667],
-                    [42.58333, -1.0],
+                    [42.58333, -1],
                     [44.83333, 1.25],
                     [45.37353, 1.96617],
                     [45.85235, 1.73275],
@@ -13635,14 +13635,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [40.1169, -3.2192],
-                    [40.58333, -3.0],
-                    [41.0, -2.91667],
+                    [40.58333, -3],
+                    [41, -2.91667],
                     [41.16667, -2.58333],
                     [41.33333, -2.58333],
                     [42.08333, -1.83333],
                     [42.08333, -1.66667],
                     [42.58333, -1.16667],
-                    [42.58333, -1.0],
+                    [42.58333, -1],
                     [44.83333, 1.25],
                     [45.37353, 1.96617],
                     [45.85235, 1.73275],
@@ -13829,14 +13829,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [40.1169, -3.2192],
-                    [40.58333, -3.0],
-                    [41.0, -2.91667],
+                    [40.58333, -3],
+                    [41, -2.91667],
                     [41.16667, -2.58333],
                     [41.33333, -2.58333],
                     [42.08333, -1.83333],
                     [42.08333, -1.66667],
                     [42.58333, -1.16667],
-                    [42.58333, -1.0],
+                    [42.58333, -1],
                     [44.83333, 1.25],
                     [45.37353, 1.96617],
                     [45.85235, 1.73275],
@@ -13876,7 +13876,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [50.85615, 12.88403],
                     [45, 12],
                     [44.97253, 12.71001],
-                    [46.0, 13.08333],
+                    [46, 13.08333],
                     [45.66667, 12.75],
                     [45.5, 12.75],
                     [45.33333, 12.41667],
@@ -13919,7 +13919,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [40.74, -15.03],
-                    [41.25, -15.0],
+                    [41.25, -15],
                     [41.25, -14.16667],
                     [40.91667, -13.66667],
                     [40.91667, -11.66667],
@@ -13927,12 +13927,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [41.08333, -10.5],
                     [40.75, -9.83333],
                     [40.08333, -9.5],
-                    [40.08333, -9.0],
+                    [40.08333, -9],
                     [39.91667, -8.83333],
                     [39.91667, -8.5],
                     [40.25, -8.16667],
                     [40.25, -7.16667],
-                    [39.91667, -7.0],
+                    [39.91667, -7],
                     [39.91667, -5.83333],
                     [40.25, -5.5],
                     [40.25, -4.5],
@@ -13955,7 +13955,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [40.74, -15.03],
-                    [41.25, -15.0],
+                    [41.25, -15],
                     [41.25, -14.16667],
                     [40.91667, -13.66667],
                     [40.91667, -11.66667],
@@ -13963,12 +13963,12 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [41.08333, -10.5],
                     [40.75, -9.83333],
                     [40.08333, -9.5],
-                    [40.08333, -9.0],
+                    [40.08333, -9],
                     [39.91667, -8.83333],
                     [39.91667, -8.5],
                     [40.25, -8.16667],
                     [40.25, -7.16667],
-                    [39.91667, -7.0],
+                    [39.91667, -7],
                     [39.91667, -5.83333],
                     [40.25, -5.5],
                     [40.25, -4.5],
@@ -13993,20 +13993,20 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [39.91667, -8.5],
                     [40.25, -8.16667],
                     [40.25, -7.16667],
-                    [39.91667, -7.0],
+                    [39.91667, -7],
                     [39.91667, -5.83333],
                     [40.25, -5.5],
                     [40.25, -4.5],
                     [40.08333, -4.16667],
                     [40.58333, -3.33333],
-                    [40.58333, -3.0],
-                    [41.0, -2.91667],
+                    [40.58333, -3],
+                    [41, -2.91667],
                     [41.16667, -2.58333],
                     [41.33333, -2.58333],
                     [42.08333, -1.83333],
                     [42.08333, -1.66667],
                     [42.58333, -1.16667],
-                    [42.58333, -1.0],
+                    [42.58333, -1],
                     [44.83333, 1.25],
                     [44.03, 1.1],
                 ]
@@ -14026,14 +14026,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [39.6667, -4.05],
                     [40.58333, -3.33333],
-                    [40.58333, -3.0],
-                    [41.0, -2.91667],
+                    [40.58333, -3],
+                    [41, -2.91667],
                     [41.16667, -2.58333],
                     [41.33333, -2.58333],
                     [42.08333, -1.83333],
                     [42.08333, -1.66667],
                     [42.58333, -1.16667],
-                    [42.58333, -1.0],
+                    [42.58333, -1],
                     [44.83333, 1.25],
                     [44.03, 1.1],
                 ]
@@ -14086,7 +14086,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-7.5827, -12.5384],
                     [-10, -10],
                     [-9.9997, -5.0004],
-                    [-10, -2e-05],
+                    [-10, -0.00002],
                     [-13.4277, 5.5302],
                     [-17, 11],
                     [-19.9826, 13.0051],
@@ -14171,7 +14171,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-10.1, 31.8],
                     [-12.19439, 29.15645],
                     [-15.14581, 28.53833],
-                    [-15.42, 28.0],
+                    [-15.42, 28],
                 ]
             }
         },
@@ -14207,15 +14207,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-165.08606, -15.28948],
                     [-170.7, -14.4],
                     [-173.0562, -17.715],
-                    [-174.0, -17.58333],
-                    [-173.91667, -18.0],
+                    [-174, -17.58333],
+                    [-173.91667, -18],
                     [-173.58333, -18.16667],
-                    [-173.58333, -19.0],
+                    [-173.58333, -19],
                     [-173.91667, -19.16667],
-                    [-173.91667, -20.0],
+                    [-173.91667, -20],
                     [-174.25, -20.33333],
                     [-174.25, -20.66667],
-                    [-174.58333, -21.0],
+                    [-174.58333, -21],
                     [-175.12, -21.18],
                 ]
             }
@@ -14240,7 +14240,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-161.5613, 10.01146],
                     [-162.47307, 7.57594],
                     [-163.85003, 3.89777],
-                    [-165.30921, -2e-05],
+                    [-165.30921, -0.00002],
                     [-166.59888, -3.44502],
                     [-168.50379, -8.53344],
                     [-169.00401, -9.86964],
@@ -14250,15 +14250,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-170.48035, -14.2737],
                     [-170.7, -14.4],
                     [-173.0562, -17.715],
-                    [-174.0, -17.58333],
-                    [-173.91667, -18.0],
+                    [-174, -17.58333],
+                    [-173.91667, -18],
                     [-173.58333, -18.16667],
-                    [-173.58333, -19.0],
+                    [-173.58333, -19],
                     [-173.91667, -19.16667],
-                    [-173.91667, -20.0],
+                    [-173.91667, -20],
                     [-174.25, -20.33333],
                     [-174.25, -20.66667],
-                    [-174.58333, -21.0],
+                    [-174.58333, -21],
                     [-175.12, -21.18],
                 ]
             }
@@ -14329,7 +14329,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-79.4858, 9.0056],
                     [-79.5, 7.91667],
                     [-79.58333, 7.16667],
-                    [-80.0, 7.08333],
+                    [-80, 7.08333],
                     [-80.16667, 6.91667],
                     [-82.16667, 6.91667],
                     [-82.8605, 7.2437],
@@ -14340,7 +14340,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-90.59584, 3.31301],
                     [-92.51153, 2.54764],
                     [-93.9491, 1.9733],
-                    [-100, -2e-05],
+                    [-100, -0.00002],
                     [-103.44408, -1.85114],
                     [-105.37031, -2.62353],
                     [-106.83363, -3.20824],
@@ -14361,63 +14361,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-145.1692, -16.2871],
                     [-149.7, -17.4],
                     [-149.43, -17.65],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "圣胡利安港-复活节岛",
-                type: "sea",
-                id: "sea_city_sanjulian_city_rapanui_1793660000014",
-                startConnection: "city_sanjulian",
-                endConnection: "city_rapanui"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-67.72, -49.31],
-                    [-67.41667, -50.16667],
-                    [-67.66667, -50.41667],
-                    [-68.5, -50.58333],
-                    [-68.75, -50.83333],
-                    [-68.41667, -51.5],
-                    [-68.08333, -51.83333],
-                    [-68.08333, -52.33333],
-                    [-67.5, -53.25],
-                    [-66.0, -54.08333],
-                    [-64.83333, -54.08333],
-                    [-64.66667, -54.25],
-                    [-64.5, -54.08333],
-                    [-63.83333, -54.08333],
-                    [-63.41667, -54.33333],
-                    [-63.1847, -53.7546],
-                    [-64.97864, -54.52108],
-                    [-65.25879, -55.54107],
-                    [-66.39587, -55.89072],
-                    [-66.95812, -55.98361],
-                    [-67.46704, -55.99838],
-                    [-68.3081, -55.98479],
-                    [-69.19441, -55.8687],
-                    [-69.5695, -55.77376],
-                    [-71.385, -55.3608],
-                    [-73.3059, -54.6046],
-                    [-75.10148, -52.58762],
-                    [-79.99916, -50.973],
-                    [-80.6501, -50.75841],
-                    [-82.731, -50.0724],
-                    [-82.87804, -50],
-                    [-87.48025, -47.73394],
-                    [-89.5334, -46.723],
-                    [-89.99786, -46.44128],
-                    [-93.73005, -44.17753],
-                    [-95.5514, -43.0728],
-                    [-100, -40],
-                    [-104.99998, -35.38573],
-                    [-105.3071, -35.1023],
-                    [-110, -30],
-                    [-109.99922, -27.23997],
-                    [-109.36, -27.11],
                 ]
             }
         },
@@ -14560,7 +14503,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [84.0, 18.4],
+                    [84, 18.4],
                     [84.16667, 17.91667],
                     [83.65646, 17.41398],
                     [83.45929, 15.27182],
