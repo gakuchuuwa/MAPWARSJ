@@ -140,6 +140,7 @@ const SKILL_SHIELD_TAKEN = 0;       // 【胜】受伤倍率（0＝无敌）
 const SKILL_PANIC_SEC = 10;         // 【混】乱敌阵持续（10秒，2026-11-03 主人令改 10 秒）
 const SKILL_PANIC_TAKEN = 2.5;      // 【混】混乱中受伤倍率（2026-11-03 主人定）
 const SKILL_PANIC_MOVE = 1.1;       // 【混】混乱中移速倍率（2026-11-03 主人令「不要增加这么高的移速，增加一点就行。1.1倍吧。」）
+const SKILL_DEFECT_INVULN_SEC = 3;  // 【并】倒戈士兵倒戈后无敌秒数（2026-11-03 主人令「并战计的倒戈士兵增加+3秒的倒戈后无敌。」）
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
 //   六计**没有克制**：这只是 AI 武将的放计顺序，回应的计不加任何效果，界面也不写「拆招 / 破」。
@@ -3416,7 +3417,7 @@ export class Scene13WarLayer {
     /** 出生递增序号（zid 分配源）：渲染 z-order 稳定排序用，见 WarMan.zid */
     private manSeq = 0;
     /** [PERF 2026-08-29] 渲染排序列表对象池：render 每帧原 new 700+ 个临时对象加剧 GC，改为复用。 */
-    visPool: Array<{ kind: 'unit' | 'environment'; y: number; sortY?: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; z: number; zid: number; sprite: DecorSprite | null }> = [];
+    visPool: Array<{ kind: 'unit' | 'environment'; y: number; sortY?: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; dizhan?: number; z: number; zid: number; sprite: DecorSprite | null }> = [];
     private diagEvents: Array<[number, string, unknown]> = [];
     private diagSent = false;
     /** [诊断 2026-10-25] 队级目标改派（updateLaneTargets 第二遍）统计：

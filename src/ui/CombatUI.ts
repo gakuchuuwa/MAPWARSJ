@@ -7150,7 +7150,8 @@ export class CombatUI {
             }
 
             rememberFacing(finalUrl);
-            const adjustKey = (side ? this.correctorPathForSide(side) : '') || finalUrl;
+            const staged = side ? this.portraitBindStaging.find((b) => b.side === side) : undefined;
+            const adjustKey = staged?.destPath || finalUrl;
             let loaded = false;
             const onLoad = () => {
                 if (loaded) return;
@@ -7158,7 +7159,8 @@ export class CombatUI {
                 img.onload = null;
                 img.onerror = null;
                 applyFacing();
-                applyPortraitAdjustToElement(img, (side ? this.correctorPathForSide(side) : '') || finalUrl, this.correctorData);
+                const curStaged = side ? this.portraitBindStaging.find((b) => b.side === side) : undefined;
+                applyPortraitAdjustToElement(img, curStaged?.destPath || finalUrl, this.correctorData);
             };
             img.onload = onLoad;
             if (!isRetry) {

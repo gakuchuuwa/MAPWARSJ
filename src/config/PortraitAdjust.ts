@@ -80,24 +80,60 @@ export function extractPortraitFolder(portraitPath: string): string | undefined 
     return m?.[1];
 }
 
+/** 去掉 URL 上可能附带的 ?v= / # 缓存参数 */
+function stripPortraitQuery(portraitPath: string): string {
+    if (!portraitPath) return '';
+    const q = portraitPath.search(/[?#]/);
+    return q >= 0 ? portraitPath.slice(0, q) : portraitPath;
+}
+
 /**
- * 调校读取优先级：① 立绘自身路径 → ② canonical 代表键（兜底）→ ③ 文件夹默认 → ④ 中性值。
+ * 在 images 表中按优先级查找单张调校：
+ * ① 立绘自身路径 → ② canonical 代表键（同内容兜底）→ ③ 大小写不敏感路径 → ④ 跨文件夹同文件名兜底（防跨文化夹搬迁后丢调校）
+ */
+function findPortraitImageAdjust(
+    portraitPath: string,
+    images: Record<string, PortraitAdjustValues> | undefined,
+): PortraitAdjustValues | undefined {
+    if (!images || !portraitPath) return undefined;
+    const clean = stripPortraitQuery(portraitPath);
+    if (!clean) return undefined;
+
+    if (images[clean]) return images[clean];
+    const canonical = toCanonicalPortraitPath(clean);
+    if (canonical !== clean && images[canonical]) return images[canonical];
+
+    const lowerClean = clean.toLowerCase();
+    const slashIdx = lowerClean.lastIndexOf('/');
+    const lowerSuffix = slashIdx >= 0 ? lowerClean.slice(slashIdx) : `/${lowerClean}`;
+    let basenameFallback: PortraitAdjustValues | undefined;
+    for (const [k, v] of Object.entries(images)) {
+        const lk = k.toLowerCase();
+        if (lk === lowerClean) return v;
+        if (basenameFallback === undefined && lk.endsWith(lowerSuffix)) {
+            basenameFallback = v;
+        }
+    }
+    return basenameFallback;
+}
+
+/**
+ * 调校读取优先级：① 立绘自身路径 → ② canonical 代表键（兜底）→ ③ 跨夹同名兜底 → ④ 文件夹默认 → ⑤ 中性值。
  *
  * 自身路径优先（2026-07-06 恢复 2026-06-27 定案）：每张立绘按自己的真实路径独立存一格，
  * 换图 / F2 绑图后调校永远落在该将领自己的槽位，绝不会因「内容去重」串到别人格子里
  * （旧的 canonical 优先会让内容相同的不同文件抢同一格 → 调好又变、变成别人的值）。
- * canonical 仅作兜底：自身路径无记录时才回退到代表键，让历史上按代表键存的旧数据仍生效。
+ * canonical 与跨夹同名仅作兜底：自身路径无记录时才回退，让历史上按代表键或旧文件夹存的数据仍生效。
  */
 export function resolvePortraitAdjust(
     portraitPath: string,
     data: PortraitAdjustData = DEFAULT_PORTRAIT_ADJUST,
 ): Required<PortraitAdjustValues> {
-    const canonical = toCanonicalPortraitPath(portraitPath);
-    const folder = extractPortraitFolder(portraitPath) ?? extractPortraitFolder(canonical);
+    const clean = stripPortraitQuery(portraitPath);
+    const canonical = toCanonicalPortraitPath(clean);
+    const folder = extractPortraitFolder(clean) ?? extractPortraitFolder(canonical);
     const folderAdj = folder ? data.folders?.[folder] : undefined;
-    // 自身路径优先（每张立绘独立），canonical 仅兜底历史按代表键存的旧数据
-    const imageAdj = data.images?.[portraitPath]
-        ?? (canonical !== portraitPath ? data.images?.[canonical] : undefined);
+    const imageAdj = findPortraitImageAdjust(clean, data.images);
 
     return {
         scale: imageAdj?.scale ?? folderAdj?.scale ?? PORTRAIT_ADJUST_NEUTRAL.scale,
@@ -106,13 +142,12 @@ export function resolvePortraitAdjust(
     };
 }
 
-/** 是否有单张覆盖：与 resolvePortraitAdjust 一致，自身路径优先、canonical 兜底 */
+/** 是否有单张覆盖：与 resolvePortraitAdjust 一致，自身路径优先、canonical 与跨夹同名兜底 */
 export function hasPortraitImageOverride(
     portraitPath: string,
     data: PortraitAdjustData = DEFAULT_PORTRAIT_ADJUST,
 ): boolean {
-    const images = data.images ?? {};
-    return portraitPath in images || toCanonicalPortraitPath(portraitPath) in images;
+    return findPortraitImageAdjust(portraitPath, data.images) !== undefined;
 }
 
 /** 缩放锚点：眼线 × 胸线交汇处（与调校尺一致；无 folderGuides 时用全局默认 24% / 50%） */

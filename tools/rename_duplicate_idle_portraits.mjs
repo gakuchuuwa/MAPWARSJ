@@ -41,7 +41,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
-import { migratePortraitAdjustKeys } from './lib/portrait_adjust_migrate.mjs';
+import { migratePortraitAdjustKeys, syncMovedAndDuplicatePortraitAdjust } from './lib/portrait_adjust_migrate.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ASSETS = path.join(ROOT, 'public/assets');
@@ -259,7 +259,18 @@ function main() {
         `（闲置 ${planCounts.闲置} / 多余 ${planCounts.多余}）` +
         ` | 重新哈希 ${hashed} 张 | 耗时 ${secs}s${DRY ? '（--dry-run 未改盘）' : ''}`,
     );
-    if (DRY || plan.length === 0) return;
+    if (DRY) return;
+    if (plan.length === 0) {
+        try {
+            const syncRes = syncMovedAndDuplicatePortraitAdjust(ROOT, candidates);
+            if (syncRes.synced > 0) {
+                console.log(`  🎯 跨夹/同内容调校自动补齐 ${syncRes.synced} 条`);
+            }
+        } catch (e) {
+            console.warn('  ⚠ 跨夹调校同步跳过:', e?.message ?? e);
+        }
+        return;
+    }
 
     // ── 5) 还原日志【先】落盘：改名前就有账，中途断电/崩溃也能靠它追回 ──
     const ts = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
@@ -330,6 +341,20 @@ function main() {
             (mig.overwritten > 0 ? `（顶掉 ${mig.overwritten} 条同名遗留值）` : '') +
             (mig.backupFile ? ` | 备份 ${path.relative(ROOT, mig.backupFile)}` : ''),
         );
+    }
+
+    try {
+        const renamedByOld = new Map(executed.map((mv) => [`${mv.folder}/${mv.from}`, mv.to]));
+        const latestCandidates = candidates.map((c) => {
+            const newName = renamedByOld.get(`${c.folder}/${c.file}`);
+            return newName ? { ...c, file: newName } : c;
+        });
+        const syncRes = syncMovedAndDuplicatePortraitAdjust(ROOT, latestCandidates);
+        if (syncRes.synced > 0) {
+            console.log(`  🎯 跨夹/同内容调校自动补齐 ${syncRes.synced} 条`);
+        }
+    } catch (e) {
+        console.warn('  ⚠ 跨夹调校同步跳过:', e?.message ?? e);
     }
 
     fs.writeFileSync(CACHE_PATH, JSON.stringify(nextCache), 'utf-8');

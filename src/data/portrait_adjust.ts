@@ -2138,9 +2138,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/BENGALIS/ahaomu_laqite.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
-            "offsetY": -14
+            "offsetY": -12
         },
         "/assets/BURMESE/jingpozu_zaodan.png": {
             "scale": 1.04,
@@ -6163,7 +6163,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -17
         },
         "/assets/BURMESE/ava_minye_kyawswa.png": {
-            "scale": 0.96,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": -17
         },
@@ -9706,6 +9706,711 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": 5,
             "offsetY": -9
+        },
+        "/assets/BURMESE/__闲置__DIANQIAN_23.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/BURMESE/__闲置__DIANQIAN_24.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/BURMESE/__闲置__DIANQIAN_25.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/BURMESE/__闲置__DIANQIAN_30.png": {
+            "scale": 1.04,
+            "offsetX": 13,
+            "offsetY": 19
+        },
+        "/assets/BURMESE/__闲置__DIANQIAN_35.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/BURMESE/__闲置__DIANQIAN_36.png": {
+            "scale": 0.82,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/BURMESE/__闲置__DIANQIAN_37.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/BYZANTINE/__闲置__WEST_ASIA_13.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/BYZANTINE/__闲置__WEST_ASIA_28.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/BYZANTINE/__闲置__WEST_ASIA_30.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/BYZANTINE/__闲置__WEST_ASIA_55.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/BYZANTINE/__闲置__WEST_ASIA_60.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/CENTRAL/bfe3_14.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/CENTRAL/__闲置__litang_05.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/CENTRAL/__闲置__litang_10.png": {
+            "scale": 1.07,
+            "offsetX": 11,
+            "offsetY": -5
+        },
+        "/assets/CENTRAL/__闲置__litang_11.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/CENTRAL/__闲置__litang_14.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/CENTRAL/__闲置__litang_15.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/CENTRAL/__闲置__litang_16.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/CENTRAL/__闲置__litang_17.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/CENTRAL/__闲置__liuhan_13.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/CENTRAL/__闲置__liuhan_16.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/CENTRAL/__闲置__liuhan_22.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -43
+        },
+        "/assets/CENTRAL/__闲置__liuhan_23.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -32
+        },
+        "/assets/CENTRAL/__闲置__liuhan_24.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/CENTRAL/__闲置__liuhan_26.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/CENTRAL/__闲置__liuhan_29.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -46
+        },
+        "/assets/CENTRAL/__闲置__liuhan_30.png": {
+            "scale": 1.02,
+            "offsetX": 9,
+            "offsetY": -30
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_04.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_08.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_10.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_11.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_14.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_15.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_16.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_18.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_19.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_20.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_22.png": {
+            "scale": 0.81,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/CENTRAL/__闲置__wuzhou_25.png": {
+            "scale": 0.85,
+            "offsetX": 0,
+            "offsetY": -45
+        },
+        "/assets/GREECE/__闲置__CENTRAL_ASIA_21.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/GREECE/__闲置__CENTRAL_ASIA_28.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/GREECE/__闲置__CENTRAL_ASIA_50.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GREECE/__闲置__CENTRAL_ASIA_61.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/GREECE/__闲置__GREEK_01.png": {
+            "scale": 1.44,
+            "offsetX": 0,
+            "offsetY": 58
+        },
+        "/assets/GREECE/__闲置__GREEK_02.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GREECE/__闲置__LATIN_04.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_07.png": {
+            "scale": 1.34,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_09.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_31.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_33.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_35.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_38.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 38
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_48.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_57.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_58.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_59.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_61.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_62.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/GREECE/__闲置__WEST_ASIA_63.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/GURJARAS/mowoer_mukelabuhan.png": {
+            "scale": 1.03,
+            "offsetX": -7,
+            "offsetY": -14
+        },
+        "/assets/JIANGNAN/__多余__JIANGNAN_01.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_15.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_16.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_17.png": {
+            "scale": 1,
+            "offsetX": 10,
+            "offsetY": 24
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_18.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_20.png": {
+            "scale": 1.32,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_21.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_22.png": {
+            "scale": 1.34,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_25.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_26.png": {
+            "scale": 0.97,
+            "offsetX": 14,
+            "offsetY": -13
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_27.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/JIANGNAN/__闲置__zhaosong_28.png": {
+            "scale": 0.81,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/KHITAN/__闲置__HEXI_05.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/KHITAN/__闲置__HEXI_07.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/KHITAN/__闲置__HEXI_09.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/KHITAN/__闲置__HEXI_10.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/KHITAN/__闲置__HEXI_14.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -45
+        },
+        "/assets/KHITAN/__闲置__HEXI_15.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/KHITAN/__闲置__HEXI_16.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/KHITAN/__闲置__HEXI_17.png": {
+            "scale": 1.24,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/KHITAN/__闲置__HEXI_18.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": -29
+        },
+        "/assets/KHITAN/__闲置__HEXI_19.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/KHITAN/__闲置__HEXI_20.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/LATIN/__闲置__WEST_ASIA_06.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/MALAY/__闲置__MALAY_02.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/MONGOL/__闲置__CENTRAL_ASIA_72.png": {
+            "scale": 1.25,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/MONGOL/__闲置__CENTRAL_ASIA_83.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/MONGOL/__闲置__STEPPE_46.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/MONGOL/__闲置__STEPPE_47.png": {
+            "scale": 1.05,
+            "offsetX": 4,
+            "offsetY": -7
+        },
+        "/assets/MONGOL/__闲置__STEPPE_48.png": {
+            "scale": 1.27,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/MONGOL/__闲置__STEPPE_49.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/MONGOL/__闲置__STEPPE_50.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/MONGOL/__闲置__STEPPE_63.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/MONGOL/__闲置__STEPPE_64.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/MONGOL/__闲置__STEPPE_69.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/MONGOL/__闲置__STEPPE_71.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/MONGOL/__闲置__STEPPE_78.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/MONGOL/__闲置__STEPPE_80.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/MONGOL/__闲置__STEPPE_81.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/MONGOL/__闲置__STEPPE_84.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/MONGOL/__闲置__STEPPE_88.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": 28
+        },
+        "/assets/MONGOL/__闲置__STEPPE_91.png": {
+            "scale": 1.05,
+            "offsetX": 1,
+            "offsetY": 4
+        },
+        "/assets/MONGOL/__闲置__STEPPE_92.png": {
+            "scale": 0.82,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/MONGOL/__闲置__STEPPE_93.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/MONGOL/__闲置__STEPPE_94.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/MONGOL/__闲置__STEPPE_95.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/MONGOL/__闲置__WEST_ASIA_20.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/NORTHEAST/__闲置__manqing_06.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -27
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_30.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": -62
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_05.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_08.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_11.png": {
+            "scale": 0.93,
+            "offsetX": -13,
+            "offsetY": 26
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_12.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_13.png": {
+            "scale": 0.82,
+            "offsetX": 10,
+            "offsetY": 9
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_17.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_20.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/VIETNAMESE/__闲置__LINGNAN_21.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/VIETNAMESE/__闲置__WESTERN_24.png": {
+            "scale": 0.84,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/WEI/__闲置__daming_09.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/WEI/__闲置__daming_11.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/WEI/__闲置__daming_12.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/WEI/__闲置__daming_14.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/WEI/__闲置__daming_16.png": {
+            "scale": 0.94,
+            "offsetX": 19,
+            "offsetY": 37
+        },
+        "/assets/WEI/__闲置__JIANGNAN_20.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/WEI/__闲置__JIANGNAN_21.png": {
+            "scale": 1.1,
+            "offsetX": 6,
+            "offsetY": 3
+        },
+        "/assets/WEI/__闲置__JIANGNAN_22.png": {
+            "scale": 1.25,
+            "offsetX": 0,
+            "offsetY": -78
+        },
+        "/assets/WEI/__闲置__JIANGNAN_23.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -43
+        },
+        "/assets/WEI/__闲置__NORTH_03.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/WEI/__闲置__NORTH_04.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -21
+        },
+        "/assets/WEI/__闲置__NORTH_05.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/WEI/__闲置__NORTH_06.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/WEI/__闲置__NORTH_08.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/xianqin/__闲置__yingqin_01.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/xianqin/__闲置__yingqin_04.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/xianqin/__闲置__yingqin_05.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/xianqin/__闲置__yingqin_06.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/xianqin/__闲置__yingqin_08.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/xianqin/__闲置__yingqin_09.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/xianqin/__闲置__yingqin_10.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/BURMESE/gen_razadarit.png": {
+            "scale": 1.12,
+            "offsetX": 22,
+            "offsetY": -29
         }
     },
     "folderGuides": {

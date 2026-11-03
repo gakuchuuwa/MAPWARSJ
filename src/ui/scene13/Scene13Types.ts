@@ -163,6 +163,8 @@ export interface WarMan {
     skillMaxHp?: number;
     /** 【胜】固己防：10秒内每秒真实增加的生命值 */
     skillHealPerSec?: number;
+    /** 【并】倒戈后无敌剩余秒数（3秒内免疫一切伤害） */
+    defectInvulnTimer?: number;
     /** 最近一次碰撞阻挡本单位的装饰物精灵 */
     lastObsSprite?: DecorSprite | null;
     /** 最近一次被装饰物碰撞阻挡的时刻（battleSec）；与 blockedAt（只记敌方城墙）分开计 */

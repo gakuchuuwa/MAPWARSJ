@@ -276,6 +276,92 @@ function getDeFireArrowImg(): HTMLImageElement | null {
 }
 getDeFireArrowImg();
 
+// DE 原生烟尘 Flipbook 序列帧素材（用于敌战计奇兵突袭的连续滚滚黄尘）
+interface DeDustFlipbookSpec {
+    url: string;
+    frames: number;
+    boxW: number;
+    boxH: number;
+    anchorX: number;
+    anchorY: number;
+}
+const DE_DUST_SPECS: Record<'UNIT_DUST' | 'UNIT_DUST_LIGHT' | 'IMPACT_DUST', DeDustFlipbookSpec> = {
+    UNIT_DUST: {
+        url: '/SUCAI_FX/DUST/UNIT_DUST/fly_0.png',
+        frames: 8,
+        boxW: 59,
+        boxH: 58,
+        anchorX: 24,
+        anchorY: 28,
+    },
+    UNIT_DUST_LIGHT: {
+        url: '/SUCAI_FX/DUST/UNIT_DUST_LIGHT/fly_0.png',
+        frames: 8,
+        boxW: 52,
+        boxH: 51,
+        anchorX: 20,
+        anchorY: 23,
+    },
+    IMPACT_DUST: {
+        url: '/SUCAI_FX/IMPACT_DUST/dir00/fly_0.png',
+        frames: 8,
+        boxW: 135,
+        boxH: 78,
+        anchorX: 27,
+        anchorY: 39,
+    },
+};
+const deDustImages = new Map<keyof typeof DE_DUST_SPECS, HTMLImageElement>();
+const deDustLoading = new Set<keyof typeof DE_DUST_SPECS>();
+
+function getDeDustImg(key: keyof typeof DE_DUST_SPECS): HTMLImageElement | null {
+    const cached = deDustImages.get(key);
+    if (cached) return cached;
+    if (typeof Image !== 'undefined' && !deDustLoading.has(key)) {
+        deDustLoading.add(key);
+        const img = new Image();
+        img.onload = () => {
+            deDustLoading.delete(key);
+            deDustImages.set(key, img);
+        };
+        img.onerror = () => {
+            deDustLoading.delete(key);
+        };
+        img.src = DE_DUST_SPECS[key].url;
+    }
+    return null;
+}
+
+if (typeof Image !== 'undefined') {
+    getDeDustImg('UNIT_DUST');
+    getDeDustImg('UNIT_DUST_LIGHT');
+    getDeDustImg('IMPACT_DUST');
+}
+
+function drawDeDustFrame(
+    ctx: CanvasRenderingContext2D,
+    key: keyof typeof DE_DUST_SPECS,
+    normProgress: number,
+    x: number,
+    y: number,
+    scaleX = 1.0,
+    scaleY = scaleX,
+    alpha = 1.0,
+    flipX = false,
+): void {
+    const spec = DE_DUST_SPECS[key];
+    const img = getDeDustImg(key);
+    if (!spec || !img || alpha <= 0.01) return;
+    const frameIdx = Math.max(0, Math.min(spec.frames - 1, Math.floor(clamp01(normProgress) * spec.frames)));
+    const sx = frameIdx * spec.boxW;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x, y);
+    ctx.scale(flipX ? -scaleX : scaleX, scaleY);
+    ctx.drawImage(img, sx, 0, spec.boxW, spec.boxH, -spec.anchorX, -spec.anchorY, spec.boxW, spec.boxH);
+    ctx.restore();
+}
+
 const glowStampCache = new Map<string, HTMLCanvasElement>();
 const flareStampCache = new Map<string, HTMLCanvasElement>();
 
@@ -543,7 +629,7 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
         ctx.stroke();
     }
 
-    // 3. 阵口／落点地面发光环
+    // 3. 阵口／落点地面发光环与连续扬尘
     if (v.six === 'dizhan') {
         const pn = Math.min(v.points.length, 32);
         ctx.strokeStyle = pal.light;
@@ -555,6 +641,32 @@ function drawGroundOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: num
             ellipse(ctx, pt.x, py, (16 + e * 28) * scale, (8 + e * 14) * scale);
             ctx.stroke();
         }
+        // 各伏兵集结锚点持续翻涌的多波次无缝 DE 扬尘（加大尘土连续性）
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        const dustClusters = Math.min(pn, 12);
+        for (let i = 0; i < dustClusters; i++) {
+            const pt = v.points[Math.floor((i + 0.5) * pn / dustClusters)];
+            const py = pt.y - lift(pt.x, pt.y);
+            for (let w = 0; w < 4; w++) {
+                const wp = (p * 2.2 + i * 0.19 + w * 0.25) % 1;
+                const bell = Math.sin(wp * Math.PI);
+                const ox = Math.cos(i * 1.7 + w * 2.1) * (10 + wp * 26) * scale;
+                const oy = Math.sin(i * 1.7 + w * 2.1) * (5 + wp * 13) * scale;
+                drawDeDustFrame(
+                    ctx,
+                    w % 2 === 0 ? 'IMPACT_DUST' : 'UNIT_DUST',
+                    wp,
+                    pt.x + ox,
+                    py + oy + 4,
+                    (w % 2 === 0 ? 1.15 : 1.55) * scale,
+                    (w % 2 === 0 ? 1.05 : 1.40) * scale,
+                    fade * bell * 0.85,
+                    (i + w) % 2 === 1,
+                );
+            }
+        }
+        ctx.restore();
     } else if (v.six === 'baizhan') {
         const useTargets = v.targets.length > 0;
         const srcLen = useTargets ? v.targets.length : v.points.length;
@@ -1136,6 +1248,87 @@ function drawTopOne(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     else drawDefeat(ctx, v, p, lift);
 }
 
+export function syncScene13SkillCastMeta(
+    effects: readonly Scene13SkillVfx[],
+    nowSec: number,
+): void {
+    for (const v of effects) {
+        registerSkillCastMeta(v, nowSec);
+    }
+}
+
+export function getDizhanUnitEffectRatio(m: WarMan, nowSec: number): number {
+    if (nowSec >= unitTagActiveUntilSec) return 0;
+    const tag = unitSkillTags.get(m);
+    if (!tag || tag.six !== 'dizhan' || nowSec >= tag.untilSec) return 0;
+    return clamp01((tag.untilSec - nowSec) / 1.2);
+}
+
+/**
+ * 敌战计伏兵单兵连续扬尘带（DE 原生 UNIT_DUST / UNIT_DUST_LIGHT 多相位紧密重叠流）：
+ * - 'under'：铺在兵模与残影脚底及身后的 7 团连续滚滚烟尘（间距约 7px，重叠度 >85%，彻底消除断续感）
+ * - 'over' ：掠过马蹄/脚踝外侧的 2 团轻薄浮尘，使本体与残影融于尘浪之中
+ */
+export function drawDizhanUnitContinuousDust(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    fwdX: number,
+    fwdY: number,
+    zid: number,
+    nowSec: number,
+    effectAlpha: number,
+    layer: 'under' | 'over',
+): void {
+    if (effectAlpha <= 0.01) return;
+    const sideX = -fwdY;
+    const sideY = fwdX;
+    if (layer === 'under') {
+        const PUFF_COUNT = 7;
+        for (let k = 0; k < PUFF_COUNT; k++) {
+            const phase = (nowSec * 3.5 + zid * 0.23 + k / PUFF_COUNT) % 1;
+            const bell = Math.sin(phase * Math.PI);
+            const backDist = 3 + phase * 50;
+            const laneSpread = ((k % 3) - 1) * (9 + phase * 7) + Math.sin(nowSec * 6 + zid + k * 1.9) * 3;
+            const px = x - fwdX * backDist + sideX * laneSpread;
+            const py = y - fwdY * backDist + sideY * laneSpread + 3;
+            const sc = 1.05 + phase * 0.48;
+            drawDeDustFrame(
+                ctx,
+                k % 2 === 0 ? 'UNIT_DUST' : 'UNIT_DUST_LIGHT',
+                phase,
+                px,
+                py,
+                sc,
+                sc * 0.92,
+                bell * 0.84 * effectAlpha,
+                (zid + k) % 2 === 1,
+            );
+        }
+    } else {
+        for (let k = 0; k < 2; k++) {
+            const phase = (nowSec * 3.8 + zid * 0.31 + k * 0.5) % 1;
+            const bell = Math.sin(phase * Math.PI);
+            const backDist = 6 + phase * 26;
+            const laneSpread = (k === 0 ? 1 : -1) * (7 + phase * 6);
+            const px = x - fwdX * backDist + sideX * laneSpread;
+            const py = y - fwdY * backDist + sideY * laneSpread + 2;
+            const sc = 0.92 + phase * 0.32;
+            drawDeDustFrame(
+                ctx,
+                'UNIT_DUST_LIGHT',
+                phase,
+                px,
+                py,
+                sc,
+                sc * 0.88,
+                bell * 0.42 * effectAlpha,
+                (zid + k) % 2 === 0,
+            );
+        }
+    }
+}
+
 export function drawScene13SkillCastVfx(
     ctx: CanvasRenderingContext2D,
     effects: readonly Scene13SkillVfx[],
@@ -1249,7 +1442,8 @@ export function drawScene13SkillStatusVfx(
     // 2. 再用正常混合模式（source-over）在士兵头顶绘制：
     //    · 【混】乱敌阵（10秒）：去掉小图标，改为每个士兵头顶 DE 风格红色真实血槽（持续掉真血）
     //    · 【胜】固己防（10秒）：去掉小图标，改为每个士兵头顶 DE 风格绿色真实血槽（持续涨真血）
-    //    · 其余四计：保留单张六计专属小图标
+    //    · 【敌】伏兵袭：取消头顶小图标号角（改由脚下连续滚滚黄尘＋多人冲锋残影体现千军万马突袭）
+    //    · 其余计策：保留单张六计专属小图标
     ctx.save();
     const ICON_R = 14.5;
     for (const m of men) {
@@ -1261,6 +1455,8 @@ export function drawScene13SkillStatusVfx(
         if (!resolved) continue;
 
         const { iconEntry } = resolved;
+        if (iconEntry.six === 'dizhan') continue;
+
         const y = m.y - lift(m.x, m.y);
 
         if (iconEntry.six === 'hunzhan' || iconEntry.six === 'shengzhan') {

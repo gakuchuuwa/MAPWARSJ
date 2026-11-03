@@ -96,6 +96,7 @@ export function migratePortraitAdjustKeys(root, moves, opts = {}) {
     const { head, entries, tail } = parseImages(text);
 
     const byKey = new Map(entries.map((e) => [e.key, e]));
+    const byBasename = new Map(entries.map((e) => [path.basename(e.key).toLowerCase(), e]));
     const remap = new Map();                       // from → to
     for (const mv of moves) {
         if (!mv) continue;
@@ -107,9 +108,10 @@ export function migratePortraitAdjustKeys(root, moves, opts = {}) {
     }
 
     // 先把要搬的值整体读出来，再统一写回 —— 顺序替换会让 a→b、b→c 串味
+    // 若文件先跨文件夹搬迁再解绑改名（旧键还在旧夹下），回退按同文件名查找，防调校断链
     const moving = new Map();
     for (const [from, to] of remap) {
-        const e = byKey.get(from);
+        const e = byKey.get(from) ?? byBasename.get(path.basename(from).toLowerCase());
         if (e) moving.set(to, { scale: e.scale, offsetX: e.offsetX, offsetY: e.offsetY });
     }
     if (moving.size === 0) return result;
@@ -145,5 +147,59 @@ export function migratePortraitAdjustKeys(root, moves, opts = {}) {
     if (opts.dryRun) return result;
     result.backupFile = backup(adjustPath);
     fs.writeFileSync(adjustPath, serializeImages(head, out, tail), 'utf-8');
+    return result;
+}
+
+/**
+ * 同步跨文件夹搬迁或同内容（SHA-256）副本的调校记录：
+ * 只给「磁盘现存但 portrait_adjust.ts 尚无自身键」的文件补齐调校（不删孤儿键、不覆盖已有键）。
+ * @param {string} root 仓库根目录
+ * @param {Array<{folder:string, file:string, sha:string}>} candidates 磁盘扫描列表
+ * @param {{dryRun?:boolean}} [opts]
+ * @returns {{synced:number, backupFile?:string}}
+ */
+export function syncMovedAndDuplicatePortraitAdjust(root, candidates, opts = {}) {
+    const result = { synced: 0 };
+    if (!candidates || candidates.length === 0) return result;
+
+    const adjustPath = path.join(root, 'src/data/portrait_adjust.ts');
+    if (!fs.existsSync(adjustPath)) return result;
+
+    const text = fs.readFileSync(adjustPath, 'utf-8');
+    const { head, entries, tail } = parseImages(text);
+
+    const byKey = new Map(entries.map((e) => [e.key, e]));
+    const byBasename = new Map(entries.map((e) => [path.basename(e.key).toLowerCase(), e]));
+    const bySha = new Map();
+    for (const c of candidates) {
+        const web = `/assets/${c.folder}/${c.file}`;
+        if (!bySha.has(c.sha)) bySha.set(c.sha, []);
+        bySha.get(c.sha).push(web);
+    }
+
+    for (const c of candidates) {
+        const web = `/assets/${c.folder}/${c.file}`;
+        if (byKey.has(web)) continue;
+
+        const sameShaPaths = bySha.get(c.sha) || [];
+        const shaHitPath = sameShaPaths.find((p) => byKey.has(p));
+        const srcEntry = (shaHitPath ? byKey.get(shaHitPath) : undefined)
+            ?? byBasename.get(c.file.toLowerCase());
+        if (!srcEntry) continue;
+
+        const added = {
+            key: web,
+            scale: srcEntry.scale,
+            offsetX: srcEntry.offsetX,
+            offsetY: srcEntry.offsetY,
+        };
+        entries.push(added);
+        byKey.set(web, added);
+        result.synced++;
+    }
+
+    if (result.synced === 0 || opts.dryRun) return result;
+    result.backupFile = backup(adjustPath);
+    fs.writeFileSync(adjustPath, serializeImages(head, entries, tail), 'utf-8');
     return result;
 }

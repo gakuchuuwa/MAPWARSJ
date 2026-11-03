@@ -525,7 +525,7 @@ export class CityAssetManager {
 'wugu_d': '乌古',
         'kumoxi': '奚',
 'shanshan': '鄯善',
-'wuyue': '吴越',
+'wuyue': '吴越',
         'minyue': '闽越',
 'funan': '扶南',
 'lancang': '澜沧',
@@ -1990,8 +1990,11 @@ export class CityAssetManager {
         }
 
         // 旗号仅显示前两字（AGENTS.md：旗面 1–2 汉字）
+        // 🔴 [2026-11-03 主人令「XX族旗号改为前一个字，例如傣族→傣」] 以「族」结尾的名字去掉「族」字
         if (textToRender && textToRender !== 'RANDOM') {
-            textToRender = Array.from(textToRender).slice(0, 2).join('');
+            const chars = Array.from(textToRender);
+            if (chars.length > 1 && chars[chars.length - 1] === '族') chars.pop();
+            textToRender = chars.slice(0, 2).join('');
         }
 
         // §10.2.1：浅旗黑字白边，深旗白字黑边

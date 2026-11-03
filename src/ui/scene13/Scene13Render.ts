@@ -11,7 +11,7 @@ import {
     PROJ_HIGH_ARC, PROJ_SCALE, PROJ_SCALE_OVERRIDE,
 } from './Scene13ProjectilesAndFx';
 import {
-    CHARGE_CYCLE, FADE_IN, FLAG_FALL, FLAG_POLE_LIFT, FLAG_POLE_RATIO, FLAG_SCALE, FLEE_DUR, UNIT_PX,
+    CHARGE_CYCLE, FADE_IN, FLAG_FALL, FLAG_POLE_LIFT, FLAG_POLE_RATIO, FLAG_SCALE, FLEE_DUR, UNIT_PX, faceAngleDeg,
 } from './Scene13CombatMath';
 import { LegionFlagDrawer } from '../../map/legion/LegionFlagDrawer';
 import { renderTacticalWeather } from '../../map/WeatherLayer';
@@ -22,7 +22,13 @@ import { gunpowderTrailSprite } from './Scene13SpriteCache';
 import { loopRate } from './Scene13UnitTables';
 import { syncDeCityGround } from './Scene13CityLayout';
 import { isGroundCoverVegetation } from './DecorFit';
-import { drawScene13SkillCastVfx, drawScene13SkillStatusVfx } from './Scene13SkillVfx';
+import {
+    drawDizhanUnitContinuousDust,
+    drawScene13SkillCastVfx,
+    drawScene13SkillStatusVfx,
+    getDizhanUnitEffectRatio,
+    syncScene13SkillCastMeta,
+} from './Scene13SkillVfx';
 import type { WarBank } from './Scene13Types';
 
 /** 该动作的「整组（8 向）都到齐」判定：倒戈兵的本方染色素材是分批到的，整组齐了才换色，免得一队人花斑 */
@@ -146,7 +152,7 @@ export function render(this: Scene13WarLayer): void {
         it.y = c.y - this.elevationLiftAt(c.x, c.y); it.sortY = it.y; it.x = c.x; it.f = c.f; it.key = c.key; it.dir = c.dir; it.set = 'die';
         it.fr = c.t;
         it.a = this.isWaterAt(c.x, c.y) ? (1 - 0.62 * Math.min(1, c.t / DEATH_ANIM)) : 1;
-        it.st = undefined; it.z = 0; it.zid = 0; it.sprite = null;
+        it.st = undefined; it.dizhan = 0; it.z = 0; it.zid = 0; it.sprite = null;
     }
     // 溃逃兵：跑动帧 + 反向移动 + 渐隐（主人 2026-08-16）
     for (const f of this.fleers) {
@@ -155,8 +161,10 @@ export function render(this: Scene13WarLayer): void {
         it.y = f.y - this.elevationLiftAt(f.x, f.y); it.sortY = it.y; it.x = f.x; it.f = f.f; it.key = f.key; it.dir = f.dir; it.set = 'move';
         it.fr = f.ph;
         it.a = Math.max(0, 1 - f.t / FLEE_DUR);
-        it.st = undefined; it.z = 0; it.zid = 0; it.sprite = null;
+        it.st = undefined; it.dizhan = 0; it.z = 0; it.zid = 0; it.sprite = null;
     }
+    const nowSecForUnits = _tFrameStart * 0.001;
+    syncScene13SkillCastMeta(this.skillVfx, nowSecForUnits);
     for (const m of this.men) {
         // 有冲锋组的兵种（象兵/弓骑）两处用冲锋帧（主人 2026-08-12 拍板「两者都要」）：
         //   ① 移动时**逐轮交替**：一轮移动、一轮冲锋（见 CHARGE_CYCLE）；
@@ -218,6 +226,7 @@ export function render(this: Scene13WarLayer): void {
             m.sortY = drawY;
         }
         it.y = drawY; it.sortY = m.sortY; it.x = m.x; it.f = m.f; it.key = m.key; it.dir = m.dir; it.set = set; it.fr = m.ph; it.a = fade; it.st = m.st;
+        it.dizhan = getDizhanUnitEffectRatio(m, nowSecForUnits);
         it.z = 0; it.zid = m.zid; it.sprite = null;
     }
     vis.length = vi;
@@ -288,6 +297,13 @@ export function render(this: Scene13WarLayer): void {
         LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideDisplayFactionId(m.f), FLAG_POLE_RATIO, FLAG_POLE_LIFT);
     }
 
+    const DIZHAN_GHOSTS: ReadonlyArray<{ back: number; side: number; alpha: number; frStep: number }> = [
+        { back: 38, side: 15, alpha: 0.35, frStep: 0.78 },
+        { back: 28, side: 2, alpha: 0.45, frStep: 0.56 },
+        { back: 20, side: -13, alpha: 0.54, frStep: 0.36 },
+        { back: 14, side: 11, alpha: 0.62, frStep: 0.18 },
+    ];
+
     for (const v of vis) {
         if (v.kind === 'environment') {
             const _td0 = performance.now();
@@ -321,6 +337,45 @@ export function render(this: Scene13WarLayer): void {
         const dm = b.dyn?.[drawSet]?.[v.dir];
         // 🔴 DE 素材 meta 未就绪：跳过本帧，S10DB 正方形假设（fh=84）会切错 DE 非正方形 strip（144px 等）
         if (!dm && b.isDE) continue;
+
+        const dizhanRatio = v.dizhan ?? 0;
+        let dizhanFwdX = 0;
+        let dizhanFwdY = 0;
+        let dizhanInWater = false;
+        if (dizhanRatio > 0.01) {
+            const rad = faceAngleDeg(v.dir) * (Math.PI / 180);
+            dizhanFwdX = Math.cos(rad);
+            dizhanFwdY = -Math.sin(rad);
+            const sideX = -dizhanFwdY;
+            const sideY = dizhanFwdX;
+            dizhanInWater = this.isWaterAt(v.x, v.y);
+
+            // 1. 先铺连续不断的 DE 滚滚扬尘底带（加大尘土连续性）
+            if (!dizhanInWater) {
+                drawDizhanUnitContinuousDust(ctx, v.x, v.y, dizhanFwdX, dizhanFwdY, v.zid, nowSecForUnits, dizhanRatio * v.a, 'under');
+            }
+
+            // 2. 绘制 4 道交错展开的冲锋残影（左后+右后+正后+外翼错步奔袭，视觉兵力密度翻 5 倍，「感觉人很多」）
+            const sideFlip = v.zid % 2 === 0 ? 1 : -1;
+            const s = UNIT_PX * (wt?.sz ?? 1) / 64;
+            const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
+            for (let g = 0; g < DIZHAN_GHOSTS.length; g++) {
+                const gh = DIZHAN_GHOSTS[g];
+                const jitter = Math.sin(nowSecForUnits * 8.5 + v.zid * 0.7 + g * 1.9) * 2.2;
+                const sideOff = gh.side * sideFlip + jitter;
+                const gx = v.x - dizhanFwdX * gh.back + sideX * sideOff;
+                const gy = v.y - dizhanFwdY * gh.back + sideY * sideOff;
+                const gFr = (fr + Math.max(1, Math.floor(n * gh.frStep))) % n;
+                ctx.globalAlpha = v.a * dizhanRatio * gh.alpha;
+                if (dm) {
+                    ctx.drawImage(img, gFr * dm.fw, 0, dm.fw, dm.fh, gx - dm.hx * s, gy - dm.hy * s, dm.fw * s, dm.fh * s);
+                } else {
+                    ctx.drawImage(img, gFr * b.fh, 0, b.fh, b.fh, gx - px / 2, gy - px * 0.9, px, px);
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
         if (v.a < 1) ctx.globalAlpha = v.a;
         if (dm) {
             // 🔴 AoE2 DE 动态帧框（hotspot 对齐，2026-08-15 定稿）：
@@ -337,6 +392,10 @@ export function render(this: Scene13WarLayer): void {
             ctx.drawImage(img, fr * b.fh, 0, b.fh, b.fh, v.x - px / 2, v.y - px * 0.9, px, px);
         }
         if (v.a < 1) ctx.globalAlpha = 1;
+
+        if (dizhanRatio > 0.01 && !dizhanInWater) {
+            drawDizhanUnitContinuousDust(ctx, v.x, v.y, dizhanFwdX, dizhanFwdY, v.zid, nowSecForUnits, dizhanRatio * v.a, 'over');
+        }
         _tDrawUnits += performance.now() - _tu0;
     }
 

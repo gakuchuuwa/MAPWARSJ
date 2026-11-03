@@ -755,8 +755,15 @@ export const SIEGE_WONDER_SCALE = 1.0;
 
 export const MARCH_FILES_DEFAULT = 10;   // 普通兵种 10 列（每队 50 人 = 10 列 × 5 排，左右长）
 export const MARCH_FILES_WAGON = 9;   // 大体型兵种 9 列（左右长）
+function isElephantOrChariotUnitKey(key: string): boolean {
+    return key.includes('elephant')
+        || key === 'sannahya' || key === 'elite_sannahya'
+        || key.includes('chariot')
+        || key.includes('wagon')
+        || key.includes('ratha');
+}
 export function marchFilesOf(key: string): number {
-    return popCostOf(key) >= 2 ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
+    return (popCostOf(key) >= 2 || isElephantOrChariotUnitKey(key)) ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
 }
 /**
  * 槽位间距基准（px）：步兵半径 8、骑兵 10，两两之和 16~20，24 够用。
@@ -775,6 +782,9 @@ export const ROW_DEPTH = 280;
 export const COL_SPACING = 300;
 /** 本兵种的列阵槽位间距：两倍半径 + 4px 余量，下限为 MARCH_SP（同一出兵口恒为同一兵种）。 */
 export function marchSpacingOf(key: string): number {
+    // 🔴 [2026-11-03 主人令「大象的阵型排列有点密集，导致重影，稍微散开一点」「顺便看看战车有这个问题吗」]
+    //    战象（帧宽 108~144px）与战车（帧宽 104~164px）体积宽大，原 30px 间距导致前后左右严重叠影，统一拉开至 46px
+    if (isElephantOrChariotUnitKey(key)) return 46;
     // 🔴 [2026-10-12 主人选方案 2「大体型兵种在 DE 里本来就是挤着走的，叠一点不难看」]
     //    9 列 × 两倍半径（40~44）宽达 396px，压进隔壁队（出兵口只隔 300）⇒ 大体型列距收到 30（宽约 284），允许互叠
     if (popCostOf(key) >= 2) return 30;
@@ -949,8 +959,8 @@ export const UNIT_RADIUS: Record<string, number> = {
     elite_obuch: 8.0,
     elite_organ_gun: 16.0,
     elite_plumed_archer: 8.0,
-    elite_ratha_melee: 10.0,
-    elite_ratha_ranged: 10.0,
+    elite_ratha_melee: 18.0,
+    elite_ratha_ranged: 18.0,
     elite_scythian_horse_archer: 10.0,
     elite_serjeant: 8.0,
     elite_shotel_warrior: 8.0,
@@ -961,7 +971,7 @@ export const UNIT_RADIUS: Record<string, number> = {
     elite_temple_guard: 8.0,
     elite_teutonic_knight: 8.0,
     elite_urumi_swordsman: 8.0,
-    elite_war_chariot: 10.0,
+    elite_war_chariot: 18.0,
     elite_war_dog: 8.0,
     elite_war_wagon: 18.0,
     elite_white_feather_guard: 8.0,
@@ -1053,6 +1063,8 @@ export const UNIT_RADIUS: Record<string, number> = {
     pikeman: 8.0,
     plumed_archer: 8.0,
     porus_elephant: 20.0,
+    hero_abrahaelephant: 20.0,
+    ox_wagon: 18.0,
     qizilbash_warrior: 10.0,
     ratha_melee: 18.0,
     ratha_ranged: 18.0,
