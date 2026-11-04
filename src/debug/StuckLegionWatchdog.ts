@@ -18,6 +18,8 @@ import type { Army } from '../legion/Army';
 const MOVE_EPS_DEG = 0.0005;
 /** 连续静止多少游戏秒判定为卡死 */
 const STUCK_SEC = 90;
+/** 「豁免」状态（战斗中/受阻/战后休整）也不能永远不动：超过此游戏秒同样落盘（2026-11-04 阿克苏姆卡 4 分钟未抓到） */
+const EXCUSED_STUCK_SEC = 180;
 /** 采样间隔（游戏秒）：不必每帧比 */
 const SAMPLE_SEC = 1;
 /** 同一批诊断的上报间隔（真实毫秒） */
@@ -107,14 +109,26 @@ export function tickStuckLegionWatchdog(armies: readonly Army[], deltaSec: numbe
 
         const prev = samples.get(army.id);
         const excused = army.getIsInCombat?.() || army.isPostBattleResting?.() || army.isBlocked?.();
-        if (!prev || excused || Math.hypot(pos.lat - prev.lat, pos.lng - prev.lng) >= MOVE_EPS_DEG) {
+        if (!prev || Math.hypot(pos.lat - prev.lat, pos.lng - prev.lng) >= MOVE_EPS_DEG) {
             samples.set(army.id, { lat: pos.lat, lng: pos.lng, stillSec: 0, reported: false });
             continue;
         }
 
         prev.stillSec += elapsed;
-        if (prev.stillSec >= STUCK_SEC) {
-            stuck.push(describe(army, prev.stillSec));
+        if (prev.stillSec >= (excused ? EXCUSED_STUCK_SEC : STUCK_SEC)) {
+            const info = describe(army, prev.stillSec);
+            if (excused) {
+                const lm = (window as unknown as { game?: { legionManager?: { getActiveSiegeCityIdForArmy?: (a: Army) => string | null } } })
+                    .game?.legionManager;
+                info.excusedBy = {
+                    inCombat: army.getIsInCombat?.() ?? null,
+                    battleType: (army as unknown as { currentBattleType?: string }).currentBattleType ?? null,
+                    activeSiegeCityId: lm?.getActiveSiegeCityIdForArmy?.(army) ?? null,
+                    blocked: army.isBlocked?.() ?? null,
+                    postBattleRest: army.isPostBattleResting?.() ?? null,
+                };
+            }
+            stuck.push(info);
             if (!prev.reported) {
                 prev.reported = true;
                 console.warn(

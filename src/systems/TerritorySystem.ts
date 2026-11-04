@@ -99,7 +99,8 @@ const _citySeedCache = new Map<string, number>();
 /** 🔴 [2026-10-20 主人令「所有城池，九建筑和防御塔朝向一律随机」]
  *  利用 32 位 Murmur3 avalanche 雪崩算法对每栋建筑与防御塔独立哈希，确保每栋建筑与每座防御塔各 50% 真正均匀随机朝向 */
 export function cityBuildingFlip(cityId: string, itemKey: string): boolean {
-    let h = deHashString(`${cityId}|orient|${itemKey}`);
+    if (_citySessionSeed === null) _citySessionSeed = Math.floor(Math.random() * 0xFFFFFFFF);
+    let h = deHashString(`${cityId}|${_citySessionSeed}|orient|${itemKey}`);
     h ^= h >>> 16;
     h = Math.imul(h, 0x85ebca6b);
     h ^= h >>> 13;
@@ -1260,35 +1261,55 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     //    9 栋＝城堡 + 8（每象限 2）；近 3 远 8（逐格核对：不重叠、不压大道、栋间 ≥ 1、离墙 2）。
     //    🔴 [2026-10-18 主人定] 漠北中城 9 栋全是蒙古包（城心也是包），走同一套 3×3 个位。
     if (native) {
-        // 🔴 [2026-10-12 主人令「假设所有建筑都是 4*4，建筑间距改为 2 格」] 城堡居中；其余 8 栋排成 3×3 方阵的外圈，
-        //    每个位一律按 4×4 算、位与位之间隔 2 格 ⇒ 位距 6 格（个位表序＝取建筑顺序）。
+        // 中城 9 组合街坊布局（2026-11-04 主人定）：
+        // 1. 中城墙圈 seg=8（墙在 -10 与 11，墙内仅 20×20 格），若放 3×2+房屋（6 格宽）会紧贴外墙，故按主人规则取消 3×2+房屋，
+        //    只保留 1 组「1 个磨坊（2×2）+ 3 个房屋（2×2）」5×5 田字组合，其余 3×2、3×3、4×4 建筑一律单独放；
+        // 2. 组合内两两留 1 格空地，9 个组合之间留 1~2 格空地，与外墙留 1~2 格通道。
+        const isPureMobeiMed = isMobeiStyle(buildingStyle) && !isMobeiHalfYurtCity(cityId);
+        let medRingEight: Array<[string, string]>;
+        if (isPureMobeiMed) {
+            medRingEight = pool.map((b): [string, string] => [b, 'AGE3']);
+        } else if (buildingStyle === 'XIANBEI' || isMobeiHalfYurtCity(cityId)) {
+            const deOther = DE_MEDIUM_CITY_POOL.filter((b) => b !== 'MILL' && b !== 'HOUSE');
+            const yPool = [...MONGOL_CITY_YURTS];
+            for (let i = deOther.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [deOther[i], deOther[j]] = [deOther[j], deOther[i]]; }
+            for (let i = yPool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [yPool[i], yPool[j]] = [yPool[j], yPool[i]]; }
+            const mixed = ['MILL', ...deOther.slice(0, 3), ...yPool.slice(0, 4)];
+            for (let i = mixed.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [mixed[i], mixed[j]] = [mixed[j], mixed[i]]; }
+            const millIdx = mixed.indexOf('MILL');
+            if (millIdx >= 6) { const sIdx = Math.floor(rnd() * 6); [mixed[millIdx], mixed[sIdx]] = [mixed[sIdx], mixed[millIdx]]; }
+            medRingEight = mixed.map((b): [string, string] => [b, 'AGE3']);
+        } else {
+            const restMed = DE_MEDIUM_CITY_POOL.filter((b) => b !== 'MILL' && b !== 'HOUSE');
+            for (let i = restMed.length - 1; i > 0; i--) {
+                const j = Math.floor(rnd() * (i + 1));
+                [restMed[i], restMed[j]] = [restMed[j], restMed[i]];
+            }
+            const chosenEight = ['MILL', ...restMed.slice(0, 7)];
+            for (let i = chosenEight.length - 1; i > 0; i--) {
+                const j = Math.floor(rnd() * (i + 1));
+                [chosenEight[i], chosenEight[j]] = [chosenEight[j], chosenEight[i]];
+            }
+            const millIdx = chosenEight.indexOf('MILL');
+            if (millIdx >= 6) {
+                const swapIdx = Math.floor(rnd() * 6);
+                [chosenEight[millIdx], chosenEight[swapIdx]] = [chosenEight[swapIdx], chosenEight[millIdx]];
+            }
+            medRingEight = chosenEight.map((b): [string, string] => [b, 'AGE3']);
+        }
         const LATTICE_PITCH = 4 + 2;
         const ringPos: ReadonlyArray<readonly [number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
         const slotCenters = [{ ci: 0.5, cj: 0.5, isCenter: true },
             ...ringPos.map(([bi, bj]) => ({ ci: 0.5 + bi * LATTICE_PITCH, cj: 0.5 + bj * LATTICE_PITCH, isCenter: false }))];
         return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
-            pool.map((b): [string, string] => [b, 'AGE3']), native, {
+            medRingEight, native, {
                 seg: 8, near: 3, far: 8, corner: false, slotCenters,
                 gateEdges: [true, true, true, true],   // 🔴 [2026-10-12 主人令「大中小城寨，一律改为四门吧」] 中城四门（原为随机双门/四门）
                 wallAnchors: isFortified
                     ? (DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'])
                     : (DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA']),
                 groundTile: cityGroundTile(buildingStyle, 'rd2'),
-                auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
-                    // 东西固定各 1 座
-                    { b: 'TOWER', age: 'AGE3', ci: -9, cj: 10 },
-                    { b: 'TOWER', age: 'AGE3', ci: 10, cj: -9 },
-                    // 南北各 1 座：一左一右对角互补（北在左则南在右，北在右则南在左，按城 50% 随机对角）
-                    ...(((deHashString(cityId + '|medium_tower_diag') & 1) === 0)
-                        ? [
-                            { b: 'TOWER', age: 'AGE3', ci: -9, cj: -5 }, // 北在左（西北）
-                            { b: 'TOWER', age: 'AGE3', ci: 10, cj: 6 },  // 南在右（东南）
-                        ]
-                        : [
-                            { b: 'TOWER', age: 'AGE3', ci: -5, cj: -9 }, // 北在右（东北）
-                            { b: 'TOWER', age: 'AGE3', ci: 6, cj: 10 },  // 南在左（西南）
-                        ]),
-                ],
+                enableMediumCityCompounds: !isPureMobeiMed,
             }, buildingStyle);
     }
 
@@ -1596,6 +1617,8 @@ interface CityGridSpec {
     auxBuildings?: ReadonlyArray<{ b: string; age: string; ci: number; cj: number }>;
     /** 大城 9 组合街坊模式（1磨坊+3房屋组合、3×2建筑+1房屋组合、3×3及4×4以上单独放，组合内外均留 ≥1 格空地） */
     enableBigCityCompounds?: boolean;
+    /** 中城 9 组合街坊模式（只保留 1磨坊+3房屋 5×5 组合，其余 3×2/3×3/4×4 一律单独放，组合内外均留 ≥1 格空地） */
+    enableMediumCityCompounds?: boolean;
 }
 
 function buildDeCityGridHtml(
@@ -1738,9 +1761,10 @@ function buildDeCityGridHtml(
     let otherIdx = 0;
     const compoundAuxList: Array<{ b: string; age: string; ci: number; cj: number }> = [];
     slots.forEach((slot, i) => {
+        const compRnd = deMulberry32(deHashString(`${cityId}|comp|${_citySessionSeed ?? 0}|${i}`));
         if (centerCastle && slot.isCenter && castleDirForCenter) {
             const cW = native.castleW ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「全世界统一」] 兜底 0.48 → 0.54（战术按格摆放；通常走 native.castleW 素材原生宽）
-            const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
+            const cFlip = cityBuildingFlip(cityId, 'center_castle');
             placeBuilding(castleDirForCenter, `/SUCAI_BUILDING/${castleDirForCenter}/preview.png`, cW, 4, slot.ci, slot.cj, cFlip);
         } else if (wonderSlotMap.has(i)) {
             const wDir = wonderSlotMap.get(i)!;
@@ -1761,36 +1785,94 @@ function buildDeCityGridHtml(
                 const bi = Math.sign(Math.round(slot.ci - 0.5));
                 const bj = Math.sign(Math.round(slot.cj - 0.5));
                 if (b === 'MILL' || b === 'HOUSE') {
-                    // 组合 A：1 个磨坊（2×2）+ 3 个房屋（2×2），排成 5×5 田字街坊（两两之间严格留 1 整格空地）
+                    // 组合 A：1 个磨坊（2×2）+ 3 个房屋（2×2），5×5 田字格 4 个角位完全随机洗牌（两两之间严格留 1 整格空地）
                     const i0 = bi < 0 ? -9 : bi > 0 ? 5 : -2;
                     const j0 = bj < 0 ? -9 : bj > 0 ? 5 : -2;
-                    placeBuilding(dir, src, bW, 2, i0 + 0.5, j0 + 0.5, bFlip);
+                    const corners4: Array<[number, number]> = [
+                        [i0 + 0.5, j0 + 0.5],
+                        [i0 + 3.5, j0 + 0.5],
+                        [i0 + 0.5, j0 + 3.5],
+                        [i0 + 3.5, j0 + 3.5],
+                    ];
+                    for (let k = corners4.length - 1; k > 0; k--) {
+                        const r = Math.floor(compRnd() * (k + 1));
+                        [corners4[k], corners4[r]] = [corners4[r], corners4[k]];
+                    }
+                    placeBuilding(dir, src, bW, 2, corners4[0][0], corners4[0][1], bFlip);
                     compoundAuxList.push(
-                        { b: 'HOUSE', age: 'AGE3', ci: i0 + 3.5, cj: j0 + 0.5 },
-                        { b: 'HOUSE', age: 'AGE3', ci: i0 + 0.5, cj: j0 + 3.5 },
-                        { b: 'HOUSE', age: 'AGE3', ci: i0 + 3.5, cj: j0 + 3.5 },
+                        { b: 'HOUSE', age: 'AGE3', ci: corners4[1][0], cj: corners4[1][1] },
+                        { b: 'HOUSE', age: 'AGE3', ci: corners4[2][0], cj: corners4[2][1] },
+                        { b: 'HOUSE', age: 'AGE3', ci: corners4[3][0], cj: corners4[3][1] },
                     );
                 } else if (b === 'BARRACKS' || b === 'ARCHERY_RANGE' || b === 'STABLE' || b === 'BLACKSMITH') {
-                    // 组合 B：3×2 建筑 + 1 个房屋（2×2），两者之间严格留 1 整格空地
-                    if (bi !== 0) {
+                    // 组合 B：3×2 建筑 + 1 个房屋（2×2），横竖朝向（四隅可横可竖）、主次前后顺序、侧向偏置全部随机，且严格留 1 整格空地
+                    const pairAlongI = bj === 0 ? true : bi === 0 ? false : (compRnd() < 0.5);
+                    const houseFirst = compRnd() < 0.5;
+                    const houseSideShift = compRnd() < 0.5 ? -0.5 : 0.5;
+                    if (pairAlongI) {
                         const i0 = bi < 0 ? -9 : 5;
-                        const cjMain = bj < 0 ? -7.0 : bj > 0 ? 7.0 : 0.0;
-                        const cjHouse = bj < 0 ? -6.5 : bj > 0 ? 7.5 : 0.5;
-                        placeBuilding(dir, src, bW, 3, i0 + 1.0, cjMain, bFlip);
-                        compoundAuxList.push({ b: 'HOUSE', age: 'AGE3', ci: i0 + 4.5, cj: cjHouse });
+                        const qBase = bj < 0 ? (compRnd() < 0.5 ? -7.0 : -6.0) : bj > 0 ? (compRnd() < 0.5 ? 6.0 : 7.0) : 0.0;
+                        const ciMain = houseFirst ? (i0 + 4.0) : (i0 + 1.0);
+                        const ciHouse = houseFirst ? (i0 + 0.5) : (i0 + 4.5);
+                        placeBuilding(dir, src, bW, 3, ciMain, qBase, bFlip);
+                        compoundAuxList.push({ b: 'HOUSE', age: 'AGE3', ci: ciHouse, cj: qBase + houseSideShift });
                     } else {
                         const j0 = bj < 0 ? -9 : 5;
-                        placeBuilding(dir, src, bW, 3, 0.0, j0 + 1.0, bFlip);
-                        compoundAuxList.push({ b: 'HOUSE', age: 'AGE3', ci: 0.5, cj: j0 + 4.5 });
+                        const qBase = bi < 0 ? (compRnd() < 0.5 ? -7.0 : -6.0) : bi > 0 ? (compRnd() < 0.5 ? 6.0 : 7.0) : 0.0;
+                        const cjMain = houseFirst ? (j0 + 4.0) : (j0 + 1.0);
+                        const cjHouse = houseFirst ? (j0 + 0.5) : (j0 + 4.5);
+                        placeBuilding(dir, src, bW, 3, qBase, cjMain, bFlip);
+                        compoundAuxList.push({ b: 'HOUSE', age: 'AGE3', ci: qBase + houseSideShift, cj: cjHouse });
                     }
                 } else {
-                    // 组合 C：3×3（修道院/攻城武器厂）及 4×4 以上（城镇中心/市场/大学）单独放
+                    // 组合 C：3×3（修道院/攻城武器厂）及 4×4 以上（城镇中心/市场/大学）单独放（3×3 在街坊内带随机微移）
+                    const iShift3 = compRnd() < 0.5 ? 0 : 1;
+                    const jShift3 = compRnd() < 0.5 ? 0 : 1;
                     const ciAlone = fp >= 4
                         ? (bi < 0 ? -6.5 : bi > 0 ? 7.5 : 0.5)
-                        : (bi < 0 ? -7.0 : bi > 0 ? 7.0 : 0.0);
+                        : (bi < 0 ? -7.0 + iShift3 : bi > 0 ? 6.0 + iShift3 : 0.0);
                     const cjAlone = fp >= 4
                         ? (bj < 0 ? -6.5 : bj > 0 ? 7.5 : 0.5)
-                        : (bj < 0 ? -7.0 : bj > 0 ? 7.0 : 0.0);
+                        : (bj < 0 ? -7.0 + jShift3 : bj > 0 ? 6.0 + jShift3 : 0.0);
+                    placeBuilding(dir, src, bW, fp, ciAlone, cjAlone, bFlip);
+                }
+            } else if (g.enableMediumCityCompounds && !slot.isCenter) {
+                const bi = Math.sign(Math.round(slot.ci - 0.5));
+                const bj = Math.sign(Math.round(slot.cj - 0.5));
+                if (b === 'MILL' || b === 'HOUSE') {
+                    // 中城只保留 1 个磨坊（2×2）+ 3 个房屋（2×2）田字组合（5×5 格，4 个角位完全随机洗牌，内部横竖各留 1 整格空地）
+                    const i0 = bi < 0 ? -8 : bi > 0 ? 5 : -2;
+                    const j0 = bj < 0 ? -8 : bj > 0 ? 5 : -2;
+                    const corners4: Array<[number, number]> = [
+                        [i0 + 0.5, j0 + 0.5],
+                        [i0 + 3.5, j0 + 0.5],
+                        [i0 + 0.5, j0 + 3.5],
+                        [i0 + 3.5, j0 + 3.5],
+                    ];
+                    for (let k = corners4.length - 1; k > 0; k--) {
+                        const r = Math.floor(compRnd() * (k + 1));
+                        [corners4[k], corners4[r]] = [corners4[r], corners4[k]];
+                    }
+                    placeBuilding(dir, src, bW, 2, corners4[0][0], corners4[0][1], bFlip);
+                    compoundAuxList.push(
+                        { b: 'HOUSE', age: 'AGE3', ci: corners4[1][0], cj: corners4[1][1] },
+                        { b: 'HOUSE', age: 'AGE3', ci: corners4[2][0], cj: corners4[2][1] },
+                        { b: 'HOUSE', age: 'AGE3', ci: corners4[3][0], cj: corners4[3][1] },
+                    );
+                } else {
+                    // 中城其余 3×2、3×3、4×4 建筑一律单独放（3×2/3×3 在街坊内带随机微移），与邻组及外墙均保持 1~2 整格净距
+                    const iShift3 = compRnd() < 0.5 ? 0 : 1;
+                    const jShift3 = compRnd() < 0.5 ? 0 : 1;
+                    const ciAlone = fp >= 4
+                        ? (bi < 0 ? -5.5 : bi > 0 ? 6.5 : 0.5)
+                        : fp === 3
+                            ? (bi < 0 ? -6.0 + iShift3 : bi > 0 ? 6.0 + iShift3 : 0.0)
+                            : (bi < 0 ? -5.5 : bi > 0 ? 6.5 : 0.5);
+                    const cjAlone = fp >= 4
+                        ? (bj < 0 ? -5.5 : bj > 0 ? 6.5 : 0.5)
+                        : fp === 3
+                            ? (bj < 0 ? -6.0 + jShift3 : bj > 0 ? 6.0 + jShift3 : 0.0)
+                            : (bj < 0 ? -5.5 : bj > 0 ? 6.5 : 0.5);
                     placeBuilding(dir, src, bW, fp, ciAlone, cjAlone, bFlip);
                 }
             } else {

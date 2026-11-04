@@ -364,7 +364,7 @@ function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
     if (sub === 'JAPAN') return (['PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'SNOW_PINE'] as const)[s];
     if (sub === 'KOREA') return 'SCENARIO_TREE_B';
     if (sub === 'NORTHEAST') return (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
-    if (sub === 'MONGOL' || sub === 'YURT' || sub === 'XIANBEI') {
+    if (sub === 'MONGOL' || sub === 'MOBEI_MONGOL' || sub === 'YURT' || sub === 'XIANBEI') {
         if (isAridDesertOrGobi || (sub === 'XIANBEI' && q.lng < 101.2 && q.lat >= 38.0)) return 'BUSH_TREE_A';
         return (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
     }
@@ -372,10 +372,10 @@ function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
         if (isAridDesertOrGobi || q.lng < 101.2) return 'BUSH_TREE_A';
         return q.lng < 112.0 ? 'BIRCH_GREEN' : 'OAK';
     }
-    if (sub === 'JIANGNAN') {
+    if (sub === 'JIANGNAN' || sub === 'HUGUANG') {
         return (q.lat >= 28.0 && (baseForBiome === 'gr4' || baseForBiome === 'qs2' || baseForBiome === 'sh4'))
             ? 'WILLOW'
-            : 'BAMBOO';
+            : (q.lat < 25.5 ? 'LUSH_BAMBOO' : 'BAMBOO');
     }
     if (sub === 'BASHU') return q.lat < 26.5 ? 'LUSH_BAMBOO' : 'BAMBOO';
     if (sub === 'CENTRAL' || sub === 'WEI' || sub === 'ASIA') {

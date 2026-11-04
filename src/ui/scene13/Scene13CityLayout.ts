@@ -19,7 +19,9 @@ import { pickTree, type TreeSeason } from './TreeAssignment';
 import { DE_MAP_THEMES, type DeMapThemeId } from './Scene13DeMapThemes';
 import { deTerrainSeasonalTree, seasonalDeTree } from './Scene13DeTrees';
 import { localSeasonAtLat } from '../../world/environment/seasonalGround';
-import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
+import { plantRegionalizeTree, plantTreeAt, ZONE_PLANTS } from '../../world/environment/plantCatalog';
+import { envZoneAt, type EnvZone } from '../../world/environment/envZones';
+import { forestCoverAt, forestPotentialAt } from '../../world/environment/forestModel';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { queryWinterSnow } from './WorldBaseMap';
 import { CITIES_V2 } from '../../data/cities_v2';
@@ -733,11 +735,12 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         pushSafeDecor('BATTLEFIELD:TORCH_A', torchSpot.x, torchSpot.y, 0.95, 0, false);
     }
 
-    // ── 大城 / 中城 / 小城 城内景观与街角细节（庭院绿植、内门火把、街角木桶与花坛，纯视觉点缀不挡路、不可摧毁） ──
+    // ── 大城 / 中城 / 小城 / 城寨 / 险要 城内景观与 67 文化专属植被（树种与数量严格对齐 67 文化及战略/战术环境模型） ──
     const defCityForInterior: any = this.defenderCityRecord();
     const interiorBldStyle = defCityForInterior?.buildingStyle ?? this.environmentPlan?.buildingStyle;
-    const isYurtOrNomadCity = this.buildingStyleFor(1) === 'YURT' || interiorBldStyle === 'MONGOL';
-    if (!isYurtOrNomadCity && (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade' || this.defenderCityType === 'pass')) {
+    const isYurtOrNomadCity = this.buildingStyleFor(1) === 'YURT' || interiorBldStyle === 'MONGOL' || interiorBldStyle === 'MOBEI_MONGOL' || interiorBldStyle === 'YURT';
+    const isWallLessYurtCamp = this.buildingStyleFor(1) === 'YURT' || interiorBldStyle === 'MOBEI_MONGOL' || interiorBldStyle === 'YURT';
+    if (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade' || this.defenderCityType === 'pass') {
         const TW = 96, TH = 48;
         const isoToWorld = (ci: number, cj: number): { x: number; y: number } => {
             let dx = (ci - cj) * (TW * 0.5);
@@ -745,12 +748,40 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             if (this.deCity?.mirror) dx = -dx;
             return { x: cx + dx, y: cy + dy };
         };
+        const worldToIso = (wx: number, wy: number): { ci: number; cj: number } => {
+            const u = ((wx - cx) * (this.deCity?.mirror ? -1 : 1)) / (TW * 0.5);
+            const v = (wy - cy) / (TH * 0.5);
+            return { ci: (v + u) * 0.5, cj: (v - u) * 0.5 };
+        };
+        // 提取已落位城内建筑与城墙的精确等轴网格包围盒，确保城内树木与装饰物绝不压占或紧贴任何建筑
+        const interiorBldBoxes: Array<{ ti: number; tj: number; halfS: number; isWall: boolean }> = [];
+        for (const sp of this.decorSprites) {
+            if (!sp.asset.startsWith('BUILDING:') || sp.asset.startsWith('BUILDING:SCEN_FLAG') || sp.asset === 'BUILDING:RUGS') continue;
+            const { ci: bti, cj: btj } = worldToIso(sp.x, sp.y);
+            const isWallPiece = /WALL|PALISADE|FENCE|GATE/.test(sp.asset);
+            const halfS = isWallPiece
+                ? 0.55
+                : /CASTLE|TOWN_CENTER|MARKET|UNIVERSITY|WONDER/.test(sp.asset)
+                    ? 2.0
+                    : /MONASTERY|SIEGE_WORKSHOP|BARRACKS|ARCHERY_RANGE|STABLE|BLACKSMITH/.test(sp.asset)
+                        ? 1.5
+                        : 1.0;
+            interiorBldBoxes.push({ ti: bti, tj: btj, halfS, isWall: isWallPiece });
+        }
+
         const placedInteriorPts: Array<{ x: number; y: number }> = [];
         const MIN_INTERIOR_DECOR_DIST = 92; // 城内装饰物之间的最小等轴间距（严禁挨着或重叠）
-        const pushInteriorDecor = (asset: string, ci: number, cj: number, scale: number, z = 0): void => {
+        const pushInteriorDecor = (asset: string, ci: number, cj: number, scale: number, z = 0, ignoreWalls = false): boolean => {
+            const padBld = 0.32;
+            const padWall = 0.25;
+            for (const b of interiorBldBoxes) {
+                if (b.isWall && ignoreWalls) continue;
+                const lim = b.halfS + (b.isWall ? padWall : padBld);
+                if (Math.abs(ci - b.ti) < lim && Math.abs(cj - b.tj) < lim) return false;
+            }
             const pt = isoToWorld(ci, cj);
             for (const p of placedInteriorPts) {
-                if (Math.hypot(pt.x - p.x, (pt.y - p.y) * 1.5) < MIN_INTERIOR_DECOR_DIST) return;
+                if (Math.hypot(pt.x - p.x, (pt.y - p.y) * 1.5) < MIN_INTERIOR_DECOR_DIST) return false;
             }
             placedInteriorPts.push({ x: pt.x, y: pt.y });
             const lift = gl.elevationLiftAt(pt.x, pt.y, W, H);
@@ -772,6 +803,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             };
             (sp as any).cityInterior = true;
             this.decorSprites.push(sp);
+            return true;
         };
         // ── 随机辅助：基于本城 mRnd 确定性洗牌（保证同一座城布局稳定不闪烁，但不同城池独一无二） ──
         const shuffleWithMSeed = <T>(arr: readonly T[]): T[] => {
@@ -785,31 +817,33 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             return list;
         };
 
-        // 1) 四座城门内侧迎宾立柱火把（TORCH_A / TORCH_B 随机混用，带微小位置与缩放抖动，保持每座城生动自然）
-        const baseGateTorchCoords: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
-            ? [[-2.0, -9.2], [9.8, -1.0], [3.0, 10.2], [-8.8, 2.0]]
-            : this.defenderCityType === 'medium_city'
-                ? [[-2.0, -8.2], [8.8, -1.0], [3.0, 9.2], [-7.8, 2.0]]
-                : this.defenderCityType === 'small_city'
-                    ? [[-2.0, -7.2], [7.8, -1.0], [3.0, 8.2], [-6.8, 2.0]]
-                    : this.defenderCityType === 'stockade'
-                        ? [[-2.0, -6.2], [6.8, -1.0], [3.0, 7.2], [-5.8, 2.0]]
-                        : [
-                            // 险要外围 8 座城门迎宾火把（每段外墙两门）
-                            [-11.2, 6.5], [-11.2, -5.5],
-                            [-5.5, -11.2], [6.5, -11.2],
-                            [12.2, -5.5], [12.2, 6.5],
-                            [6.5, 12.2], [-5.5, 12.2],
-                        ];
-        for (const [ti, tj] of baseGateTorchCoords) {
-            const tAsset = mRnd() < 0.5 ? 'BATTLEFIELD:TORCH_A' : 'BATTLEFIELD:TORCH_B';
-            const ji = (mRnd() - 0.5) * 0.22;
-            const jj = (mRnd() - 0.5) * 0.22;
-            pushInteriorDecor(tAsset, ti + ji, tj + jj, 0.88 + mRnd() * 0.08);
+        // 1) 四座城门内侧迎宾立柱火把（无墙毡帐营地跳过）
+        if (!isWallLessYurtCamp) {
+            const baseGateTorchCoords: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
+                ? [[-2.0, -9.2], [9.8, -1.0], [3.0, 10.2], [-8.8, 2.0]]
+                : this.defenderCityType === 'medium_city'
+                    ? [[-2.0, -8.2], [8.8, -1.0], [3.0, 9.2], [-7.8, 2.0]]
+                    : this.defenderCityType === 'small_city'
+                        ? [[-2.0, -7.2], [7.8, -1.0], [3.0, 8.2], [-6.8, 2.0]]
+                        : this.defenderCityType === 'stockade'
+                            ? [[-2.0, -6.2], [6.8, -1.0], [3.0, 7.2], [-5.8, 2.0]]
+                            : [
+                                // 险要外围 8 座城门迎宾火把（每段外墙两门）
+                                [-11.2, 6.5], [-11.2, -5.5],
+                                [-5.5, -11.2], [6.5, -11.2],
+                                [12.2, -5.5], [12.2, 6.5],
+                                [6.5, 12.2], [-5.5, 12.2],
+                            ];
+            for (const [ti, tj] of baseGateTorchCoords) {
+                const tAsset = mRnd() < 0.5 ? 'BATTLEFIELD:TORCH_A' : 'BATTLEFIELD:TORCH_B';
+                const ji = (mRnd() - 0.5) * 0.22;
+                const jj = (mRnd() - 0.5) * 0.22;
+                pushInteriorDecor(tAsset, ti + ji, tj + jj, 0.88 + mRnd() * 0.08, 0, true);
+            }
         }
 
         // 1b) 大城 / 中城：四座城门跨护城河桥头外侧迎宾火把与仪仗（东方/非欧洲城池门口律用立柱火把，不放西方木框竖旗）
-        if (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') {
+        if (!isWallLessYurtCamp && (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city')) {
             const deStyleForInterior = this.buildingStyleFor(1);
             const isWesternGateStyle = deStyleForInterior === 'WEST'
                 || deStyleForInterior === 'EAST'
@@ -842,7 +876,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     [-1.6, 12.8, 'BATTLEFIELD:TORCH_B', 0.86],
                 ];
             for (const [bi, bj, bAsset, bScale] of outerBridgeTorchAndFlags) {
-                pushInteriorDecor(bAsset, bi + (mRnd() - 0.5) * 0.16, bj + (mRnd() - 0.5) * 0.16, bScale);
+                pushInteriorDecor(bAsset, bi + (mRnd() - 0.5) * 0.16, bj + (mRnd() - 0.5) * 0.16, bScale, 0, true);
             }
         }
 
@@ -850,52 +884,265 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         const siteBaseTile = this.environmentPlan?.baseTerrain ?? 'gr1';
         const siteLat = defCityForInterior?.lat ?? this.centerLat ?? 30;
         const siteLng = defCityForInterior?.lng ?? this.centerLng ?? 110;
-        const isAridSite = /pal|des|ds5|qs|gravel|drt/.test(siteBaseTile) || (siteLat >= 34 && siteLng <= 104 && siteLng >= 75);
-        const isSnowSite = /sno|sn2|snf|snd|snr|ic3|ice/.test(siteBaseTile);
+        const isGobiTile = /^(ds5|qs|pal1)/i.test(siteBaseTile);
+        const isSandOrGobiTile = /^(des|pal|ds5|qs|pal1)/i.test(siteBaseTile);
+        const isAridSite = isSandOrGobiTile || /gravel|drt/.test(siteBaseTile);
+        const isSnowSite = isSnow;
 
-        // 2) 城内庭院园林树木（普通城市候选点随机抽选；严格契合地理树种与季节，兼顾主副乔灌木层次多样性）
-        const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
-        const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
-            ? rawCalSeason
-            : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
-        // 🔴 2026-10-31 植物总表：庭院树同样先合本区（不合的换成本区树种），再按季节换装
-        const courtyardTreeAsset = seasonalDeTree(plantRegionalizeTree(siteLat, siteLng, (themeLeadTree.length > 0 ? seasonalDeTree(themeLeadTree[0], calSeason, isSnow) : null)
-            ?? deTerrainSeasonalTree(terrainAtCell(cGx, cGy), calSeason, isSnow)
-            ?? (isAridSite ? 'PALM' : pickTree({
-                baseTile: siteBaseTile,
-                lat: siteLat,
-                lng: siteLng,
-                season: calSeason,
-                isSiege: true,
-                buildingStyle: interiorBldStyle,
-            })), mRnd()), calSeason, isSnow);
+        // 2) 🔴 [2026-11-04 主人令「根据67文化的不同，在城中添加对应的植被，和数量的多少。植被要和战略模式，战术模式保持一致」]
+        //    · 树种一致：按 67 文化各自的代表园林/乡土树种选候选池，再逐棵过 `plantRegionalizeTree(siteLat, siteLng, ...)`
+        //      与 `seasonalDeTree(..., calSeason, isSnow)`，保证城内每一棵树都与战略模式（`VegetationLayer` / `CityLifeAmbientLayer`
+        //      查 `ZONE_PLANTS[envZoneAt]`）和战术模式（`TreeAssignment.pickTree` + `Scene13DeTrees`）100% 同源一致；
+        //    · 数量一致：结合 67 文化的园林/森林繁茂度档位（江南/湖广/巴蜀/日本/南洋/雨林繁茂 > 东北/北欧/凯尔特山林 >
+        //      中原/河朔/西欧/地中海温带适中 > 波斯/天方/西域/青藏绿洲疏朗 > 塞外游牧极疏）与战略/战术同源的
+        //      `forestCoverAt` / `forestPotentialAt` 森林覆盖度，动态决定每座城内的乔灌木数量。
+        const styleKey = String(interiorBldStyle || this.buildingStyleFor(1) || 'CENTRAL').toUpperCase();
+        const CULTURE_VEG_TABLE: Readonly<Record<string, {
+            trees: readonly string[];
+            shrubs: readonly string[];
+            mult: number;
+            flowerbed: boolean;
+        }>> = {
+            // ── Tier 1：江南水乡、湖广、巴蜀、日本、百越、南洋、南亚季风与热带雨林文化（繁茂园林 · 系数 1.32~1.48） ──
+            JIANGNAN:     { trees: ['BAMBOO', 'WILLOW', 'PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH'], mult: 1.48, flowerbed: true },
+            HUGUANG:      { trees: ['BAMBOO', 'LUSH_BAMBOO', 'WILLOW', 'ASIAN_PINE', 'ASIAN_MAPLE_GREEN'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH'], mult: 1.45, flowerbed: true },
+            BASHU:        { trees: ['BAMBOO', 'LUSH_BAMBOO', 'ASIAN_PINE', 'ASIAN_MAPLE_GREEN'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH'], mult: 1.45, flowerbed: true },
+            JAPAN:        { trees: ['PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_PINE', 'BAMBOO'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH'], mult: 1.42, flowerbed: true },
+            VIETNAMESE:   { trees: ['LUSH_BAMBOO', 'BAMBOO', 'RAINFOREST', 'JUNGLE', 'WAX_PALM'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.45, flowerbed: true },
+            KHMER:        { trees: ['LUSH_BAMBOO', 'RAINFOREST', 'JUNGLE', 'WAX_PALM', 'PALM'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.48, flowerbed: true },
+            BURMESE:      { trees: ['LUSH_BAMBOO', 'RAINFOREST', 'JUNGLE', 'WAX_PALM'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.45, flowerbed: true },
+            MALAY:        { trees: ['WAX_PALM', 'RAINFOREST', 'JUNGLE', 'LUSH_BAMBOO', 'MANGROVE'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.48, flowerbed: false },
+            SEAS:         { trees: ['LUSH_BAMBOO', 'RAINFOREST', 'JUNGLE', 'WAX_PALM'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.45, flowerbed: true },
+            BENGALIS:     { trees: ['WAX_PALM', 'JUNGLE', 'RAINFOREST', 'BAMBOO', 'MANGROVE'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.42, flowerbed: true },
+            INDIA:        { trees: ['WAX_PALM', 'JUNGLE', 'BAMBOO', 'RAINFOREST', 'ACACIA'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.35, flowerbed: true },
+            INDI:         { trees: ['WAX_PALM', 'JUNGLE', 'BAMBOO', 'RAINFOREST', 'ACACIA'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.35, flowerbed: true },
+            MUGHAL:       { trees: ['WAX_PALM', 'CYPRESS', 'JUNGLE', 'BAMBOO', 'ACACIA'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.28, flowerbed: true },
+            MAYANS:       { trees: ['JUNGLE', 'RAINFOREST', 'WAX_PALM', 'PINE'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.45, flowerbed: false },
+            MESO:         { trees: ['JUNGLE', 'RAINFOREST', 'WAX_PALM', 'PINE'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.42, flowerbed: false },
+            TUPI:         { trees: ['BRAZILWOOD', 'RAINFOREST', 'JUNGLE', 'WAX_PALM'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.48, flowerbed: false },
+            MUISCA:       { trees: ['WAX_PALM', 'RAINFOREST', 'JUNGLE', 'MONKEY_PUZZLE'], shrubs: ['BUSH_GREEN', 'FERNPATCH', 'SHRUB_GREEN'], mult: 1.38, flowerbed: false },
+
+            // ── Tier 2：白山黑水、波罗的、北欧寒温带林、凯尔特与北美林地文化（山林葱郁 · 系数 1.15~1.28） ──
+            NORTHEAST:    { trees: ['BIRCH_GREEN', 'ASIAN_PINE', 'SPRUCE', 'OAK'], shrubs: ['BUSH_TREE_B', 'SHRUB_GREEN', 'FORAGE_BUSH'], mult: 1.28, flowerbed: false },
+            LITHUANIANS:  { trees: ['BIRCH_GREEN', 'PINE', 'SPRUCE', 'OAK'], shrubs: ['BUSH_TREE_B', 'SHRUB_GREEN', 'FORAGE_BUSH'], mult: 1.28, flowerbed: false },
+            VARANGIANS:   { trees: ['BIRCH_GREEN', 'PINE', 'SPRUCE', 'OAK'], shrubs: ['BUSH_TREE_B', 'SHRUB_GREEN', 'FORAGE_BUSH'], mult: 1.26, flowerbed: false },
+            VIKINGS:      { trees: ['BIRCH_GREEN', 'PINE', 'SPRUCE', 'OAK'], shrubs: ['SHRUB_GREEN', 'BUSH_TREE_B', 'FORAGE_BUSH'], mult: 1.18, flowerbed: false },
+            DANES:        { trees: ['BIRCH_GREEN', 'PINE', 'OAK', 'SPRUCE'], shrubs: ['SHRUB_GREEN', 'BUSH_TREE_B', 'FORAGE_BUSH'], mult: 1.18, flowerbed: false },
+            CELTS:        { trees: ['OAK', 'BIRCH_GREEN', 'PINE', 'SPRUCE'], shrubs: ['SHRUB_GREEN', 'FERNPATCH', 'FORAGE_BUSH'], mult: 1.22, flowerbed: false },
+            BRITONS:      { trees: ['OAK', 'BIRCH_GREEN', 'WILLOW', 'PINE'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH'], mult: 1.18, flowerbed: true },
+            SAXONS:       { trees: ['OAK', 'BIRCH_GREEN', 'WILLOW', 'PINE'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN', 'FERNPATCH'], mult: 1.18, flowerbed: true },
+            GERMANIC:     { trees: ['OAK', 'PINE', 'BIRCH_GREEN', 'SPRUCE'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN', 'FERNPATCH'], mult: 1.16, flowerbed: true },
+            GOTHS:        { trees: ['OAK', 'PINE', 'BIRCH_GREEN', 'CYPRESS'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 1.12, flowerbed: false },
+            AMERICA:      { trees: ['OAK', 'PINE', 'BIRCH_GREEN', 'SPRUCE', 'CACTUS'], shrubs: ['SHRUB_GREEN', 'BUSH_TREE_B', 'FORAGE_BUSH'], mult: 1.20, flowerbed: false },
+            MAPUCHE:      { trees: ['MONKEY_PUZZLE', 'GREEN_OAK', 'ACACIA'], shrubs: ['SHRUB_GREEN', 'FERNPATCH', 'FORAGE_BUSH'], mult: 1.16, flowerbed: false },
+            PURU:         { trees: ['ASIAN_PINE', 'WAX_PALM', 'BAMBOO', 'ACACIA'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 1.12, flowerbed: true },
+
+            // ── Tier 3：中原、河朔、高丽、西欧、东欧、地中海古典与安第斯文化（温带庭院 · 系数 0.92~1.12） ──
+            CENTRAL:      { trees: ['OAK', 'WILLOW', 'ASIAN_PINE', 'PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.06, flowerbed: true },
+            WEI:          { trees: ['OAK', 'ASIAN_PINE', 'WILLOW', 'BIRCH_GREEN'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN', 'BUSH_TREE_B'], mult: 0.98, flowerbed: true },
+            ASIA:         { trees: ['OAK', 'ASIAN_PINE', 'WILLOW', 'BAMBOO'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.05, flowerbed: true },
+            KOREA:        { trees: ['ASIAN_PINE', 'OAK', 'ASIAN_MAPLE_GREEN', 'BIRCH_GREEN', 'PEACH_BLOSSOM'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.12, flowerbed: true },
+            FRANKS:       { trees: ['OAK', 'SCENARIO_TREE_C', 'BIRCH_GREEN', 'PINE', 'WILLOW'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.08, flowerbed: true },
+            BURGUNDIANS:  { trees: ['OAK', 'SCENARIO_TREE_C', 'BIRCH_GREEN', 'PINE'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.08, flowerbed: true },
+            WEST:         { trees: ['OAK', 'SCENARIO_TREE_C', 'BIRCH_GREEN', 'PINE'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.06, flowerbed: true },
+            SLAVIC:       { trees: ['OAK', 'BIRCH_GREEN', 'PINE', 'SPRUCE'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN', 'BUSH_TREE_B'], mult: 1.05, flowerbed: false },
+            SLAV:         { trees: ['OAK', 'BIRCH_GREEN', 'PINE', 'SPRUCE'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN', 'BUSH_TREE_B'], mult: 1.05, flowerbed: false },
+            POLES:        { trees: ['OAK', 'BIRCH_GREEN', 'PINE', 'SPRUCE'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 1.06, flowerbed: true },
+            BOHEMIANS:    { trees: ['OAK', 'BIRCH_GREEN', 'PINE', 'SPRUCE'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 1.06, flowerbed: true },
+            MAGYAR:       { trees: ['OAK', 'BIRCH_GREEN', 'PINE', 'WILLOW'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 0.98, flowerbed: false },
+            ROMA:         { trees: ['ITALIAN_PINE', 'CYPRESS', 'OLIVE', 'GREEN_OAK'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.05, flowerbed: true },
+            LATIN:        { trees: ['ITALIAN_PINE', 'CYPRESS', 'OLIVE', 'GREEN_OAK'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.05, flowerbed: true },
+            SICILIANS:    { trees: ['OLIVE', 'ITALIAN_PINE', 'CYPRESS', 'PALM'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.02, flowerbed: true },
+            SPANISH:      { trees: ['OLIVE', 'ITALIAN_PINE', 'CYPRESS', 'GREEN_OAK'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.02, flowerbed: true },
+            PORTUGUESE:   { trees: ['OLIVE', 'ITALIAN_PINE', 'CYPRESS', 'GREEN_OAK', 'PALM'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.05, flowerbed: true },
+            MEDI:         { trees: ['ITALIAN_PINE', 'OLIVE', 'CYPRESS', 'GREEN_OAK'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.04, flowerbed: true },
+            GREECE:       { trees: ['OLIVE', 'CYPRESS', 'ITALIAN_PINE', 'GREEN_OAK'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 1.00, flowerbed: true },
+            GREEK:        { trees: ['OLIVE', 'CYPRESS', 'ITALIAN_PINE', 'GREEN_OAK'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 1.00, flowerbed: true },
+            ATHENIANS:    { trees: ['OLIVE', 'CYPRESS', 'ITALIAN_PINE', 'GREEN_OAK'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 1.02, flowerbed: true },
+            SPARTANS:     { trees: ['OLIVE', 'CYPRESS', 'GREEN_OAK', 'ITALIAN_PINE'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 0.96, flowerbed: false },
+            MACEDONIAN:   { trees: ['OLIVE', 'CYPRESS', 'OAK', 'PINE'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 0.98, flowerbed: true },
+            BYZANTINE:    { trees: ['CYPRESS', 'OLIVE', 'ITALIAN_PINE', 'OAK'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.04, flowerbed: true },
+            EAST:         { trees: ['CYPRESS', 'OLIVE', 'OAK', 'ITALIAN_PINE'], shrubs: ['BUSH_GREEN', 'SHRUB_GREEN'], mult: 1.02, flowerbed: true },
+            THRACIAN:     { trees: ['OAK', 'CYPRESS', 'OLIVE', 'PINE'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 1.00, flowerbed: false },
+            BULGARIANS:   { trees: ['OAK', 'CYPRESS', 'BIRCH_GREEN', 'PINE'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 1.00, flowerbed: false },
+            ARMENIANS:    { trees: ['OAK', 'CYPRESS', 'PINE', 'BIRCH_GREEN'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 0.94, flowerbed: false },
+            GEORGIANS:    { trees: ['OAK', 'CYPRESS', 'PINE', 'BIRCH_GREEN'], shrubs: ['SHRUB_GREEN', 'BUSH_GREEN'], mult: 0.98, flowerbed: false },
+            INCA:         { trees: ['MONKEY_PUZZLE', 'GREEN_OAK', 'ACACIA'], shrubs: ['SHRUB_GREEN', 'BUSH_TREE_A'], mult: 0.92, flowerbed: false },
+            ANDE:         { trees: ['MONKEY_PUZZLE', 'GREEN_OAK', 'ACACIA'], shrubs: ['SHRUB_GREEN', 'BUSH_TREE_A'], mult: 0.92, flowerbed: false },
+
+            // ── Tier 4：波斯四分园、天方绿洲、北非、萨凡纳、青藏与丝路绿洲文化（绿洲/高原疏朗 · 系数 0.58~0.78） ──
+            PERSIAN:      { trees: ['CYPRESS', 'PALM', 'OLIVE', 'OAK'], shrubs: ['SHRUB_GREEN', 'BUSH_TREE_A'], mult: 0.78, flowerbed: true },
+            SASANIAN:     { trees: ['CYPRESS', 'PALM', 'OLIVE', 'OAK'], shrubs: ['SHRUB_GREEN', 'BUSH_TREE_A'], mult: 0.76, flowerbed: true },
+            ORIE:         { trees: ['PALM', 'OLIVE', 'CYPRESS', 'ACACIA', 'DRAGON_TREE'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.65, flowerbed: true },
+            BERBER:       { trees: ['PALM', 'OLIVE', 'CYPRESS', 'ACACIA'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.65, flowerbed: true },
+            GURJARAS:     { trees: ['ACACIA', 'WAX_PALM', 'PALM', 'JUNGLE'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.78, flowerbed: true },
+            AFRICA:       { trees: ['BAOBAB', 'ACACIA', 'PALM', 'JUNGLE'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.72, flowerbed: false },
+            AFRI:         { trees: ['BAOBAB', 'ACACIA', 'PALM', 'JUNGLE'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.72, flowerbed: false },
+            ETHIOPIANS:   { trees: ['ACACIA', 'BAOBAB', 'PALM', 'JUNGLE'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.72, flowerbed: false },
+            TIBET:        { trees: ['CYPRESS', 'SPRUCE', 'ASIAN_PINE', 'BIRCH_GREEN'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.65, flowerbed: false },
+            WESTERN:      { trees: ['WILLOW', 'PALM', 'BUSH_TREE_A', 'SPRUCE'], shrubs: ['BUSH_TREE_A', 'GRASS_DRY'], mult: 0.58, flowerbed: false },
+            CENTRAL_ASIA: { trees: ['WILLOW', 'CYPRESS', 'PALM', 'BIRCH_GREEN', 'BUSH_TREE_A'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.68, flowerbed: true },
+            CEAS:         { trees: ['WILLOW', 'CYPRESS', 'PALM', 'BIRCH_GREEN', 'BUSH_TREE_A'], shrubs: ['BUSH_TREE_A', 'SHRUB_GREEN', 'GRASS_DRY'], mult: 0.68, flowerbed: true },
+            HEXI:         { trees: ['WILLOW', 'BUSH_TREE_A', 'ASIAN_PINE', 'BIRCH_GREEN', 'OAK'], shrubs: ['BUSH_TREE_A', 'GRASS_DRY', 'SHRUB_GREEN'], mult: 0.62, flowerbed: false },
+            TURKS:        { trees: ['CYPRESS', 'OAK', 'OLIVE', 'WILLOW', 'BUSH_TREE_A'], shrubs: ['SHRUB_GREEN', 'BUSH_TREE_A'], mult: 0.76, flowerbed: true },
+
+            // ── Tier 5：大漠游牧与塞外草原王帐文化（苍茫极疏 · 系数 0.35~0.42） ──
+            MONGOL:       { trees: ['BIRCH_GREEN', 'PINE', 'WILLOW', 'BUSH_TREE_A'], shrubs: ['BUSH_TREE_A', 'BUSH_TREE_B', 'GRASS_DRY'], mult: 0.38, flowerbed: false },
+            MOBEI_MONGOL: { trees: ['BIRCH_GREEN', 'PINE', 'BUSH_TREE_A', 'BUSH_TREE_B'], shrubs: ['BUSH_TREE_A', 'BUSH_TREE_B', 'GRASS_DRY'], mult: 0.35, flowerbed: false },
+            YURT:         { trees: ['BIRCH_GREEN', 'PINE', 'BUSH_TREE_A', 'BUSH_TREE_B'], shrubs: ['BUSH_TREE_A', 'BUSH_TREE_B', 'GRASS_DRY'], mult: 0.35, flowerbed: false },
+            XIANBEI:      { trees: ['BIRCH_GREEN', 'PINE', 'WILLOW', 'BUSH_TREE_A'], shrubs: ['BUSH_TREE_A', 'BUSH_TREE_B', 'GRASS_DRY'], mult: 0.42, flowerbed: false },
+            HUNS:         { trees: ['BIRCH_GREEN', 'OAK', 'PINE', 'BUSH_TREE_A'], shrubs: ['BUSH_TREE_B', 'BUSH_TREE_A', 'GRASS_DRY'], mult: 0.42, flowerbed: false },
+            CUMAN:        { trees: ['BIRCH_GREEN', 'PINE', 'WILLOW', 'BUSH_TREE_A'], shrubs: ['BUSH_TREE_B', 'BUSH_TREE_A', 'GRASS_DRY'], mult: 0.42, flowerbed: false },
+        };
+        const vegProfile = CULTURE_VEG_TABLE[styleKey] ?? CULTURE_VEG_TABLE.CENTRAL;
+
+        // 构建与战略模式（ZONE_PLANTS）和战术模式（pickTree + seasonalDeTree）完全一致的本城树种池
+        const leadPick = pickTree({
+            baseTile: siteBaseTile,
+            lat: siteLat,
+            lng: siteLng,
+            season: calSeason,
+            isSiege: true,
+            buildingStyle: styleKey,
+        });
+        const zoneId: EnvZone = envZoneAt(siteLat, siteLng);
+        const zoneMainTrees = ZONE_PLANTS[zoneId].main.map(([t]) => t);
+        const rawCandidateTrees = [leadPick, ...vegProfile.trees, ...zoneMainTrees];
+        const cityTreePool: string[] = [];
+        rawCandidateTrees.forEach((rawT, idx) => {
+            if (!rawT) return;
+            // 经过植物总表 plantRegionalizeTree 校验：合本环境区的文化树种保留，不合的自动换成本区主树种
+            let regTree = plantRegionalizeTree(siteLat, siteLng, rawT, ((idx * 0.27 + mRnd() * 0.19) % 1));
+            // 沙地/戈壁护栏：与战术模式 TreeAssignment.guardSandTree 保持一致
+            if (isSandOrGobiTile && !/^(PALM|ACACIA|DRAGON_TREE|CACTUS|BUSH_TREE_A|BUSH_TREE_B|DEAD_TREE)$/.test(regTree)) {
+                regTree = isGobiTile || siteLat >= 36.0 ? 'BUSH_TREE_A' : 'PALM';
+            }
+            if (regTree === 'DEAD_TREE') {
+                regTree = siteLat >= 35.0 ? 'BUSH_TREE_A' : 'PALM';
+            }
+            const seasonalTree = seasonalDeTree(regTree, calSeason, isSnow);
+            if (!cityTreePool.includes(seasonalTree)) {
+                cityTreePool.push(seasonalTree);
+            }
+        });
+        const courtyardTreeAsset = cityTreePool[0] ?? seasonalDeTree(plantTreeAt(siteLat, siteLng, mRnd()), calSeason, isSnow);
+
+        // 下层伴生灌木/竹丛/草本池：与战术地面 DecorFit 及气候严格一致
+        const cityShrubPool = vegProfile.shrubs.filter((sh) => {
+            if (isSnowSite && (sh === 'FERNPATCH' || sh === 'BUSH_GREEN' || sh === 'GRASS_DRY')) return false;
+            if (isAridSite && (sh === 'FERNPATCH' || sh === 'BUSH_GREEN')) return false;
+            return decorFits(sh, decorCtx) || /^BUSH_TREE_|^SHRUB_GREEN|^BUSH_GREEN|^GRASS_DRY/.test(sh);
+        });
+        if (cityShrubPool.length === 0) {
+            cityShrubPool.push(isAridSite ? 'BUSH_TREE_A' : (isSnowSite ? 'BUSH_TREE_B' : 'SHRUB_GREEN'));
+        }
+
+        // 结合战略/战术同源的森林覆盖模型（forestCoverAt / forestPotentialAt）与 22 环境区自然基底计算植被数量倍率
+        const ZONE_BASE_COVER: Readonly<Record<EnvZone, number>> = {
+            SEA: 0.90, SAS: 0.82, SWM: 0.88, EAS: 0.85, NEB: 0.85, NEO: 0.90, WEU: 0.78, CEU: 0.78, SIB: 0.82,
+            NCP: 0.58, MED: 0.56, AND: 0.55, NAM: 0.68, AFR: 0.52,
+            LOE: 0.38, STP: 0.32, TIB: 0.34, WAH: 0.36, AUS: 0.35,
+            CAD: 0.20, HDS: 0.18, ARC: 0.22,
+        };
+        const gameYear = this.techYearGetter?.() ?? this.techYear ?? 1000;
+        const fPot = forestPotentialAt(siteLat, siteLng);
+        const fCov = forestCoverAt(siteLat, siteLng, gameYear);
+        const zoneFallbackCover = ZONE_BASE_COVER[zoneId] ?? 0.55;
+        const envCover01 = (fPot !== null && fCov !== null)
+            ? (0.55 * fCov + 0.45 * fPot)
+            : zoneFallbackCover;
+        const envDensityFactor = (0.68 + 0.52 * envCover01)
+            * (isSandOrGobiTile ? 0.58 : isAridSite ? 0.74 : 1.0)
+            * (isSnowSite ? 0.78 : 1.0);
+        const totalVegMult = vegProfile.mult * envDensityFactor;
+
+        // 候选植树点：精准对齐 9 组合街区十字街道（±3.0 / 3.8）、城心城堡四角、内墙环道及街坊天井，由 pushInteriorDecor 自动避开一切建筑
         const treeCandidateSlots: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
             ? [
-                [-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5],
-                [-1.8, -4.8], [1.8, 4.8], [-4.8, 1.8], [4.8, -1.8],
-                [-8.8, -1.6], [9.8, 2.6], [-1.6, 9.8], [2.6, -8.8],
+                // 城心四角与十字街核心绿岛
+                [-2.8, -2.8], [3.8, 3.8], [-2.8, 3.8], [3.8, -2.8],
+                [-3.0, 0.5], [3.8, 0.5], [0.5, -3.0], [0.5, 3.8],
+                // 四条井字长街行道树位
+                [-3.0, -6.2], [3.8, -6.2], [-3.0, 7.2], [3.8, 7.2],
+                [-6.2, -3.0], [-6.2, 3.8], [7.2, -3.0], [7.2, 3.8],
+                // 街尾近墙游园位（避开四门 0.5）
+                [-3.0, -8.5], [3.8, -8.5], [-3.0, 9.5], [3.8, 9.5],
+                [-8.5, -3.0], [-8.5, 3.8], [9.5, -3.0], [9.5, 3.8],
+                // 四象限街坊天井位（若该象限为 4×4 大建筑则由碰撞检测自动跳过，若为 2×2 田字院或 3×3 独院则自然落入天井）
+                [-6.5, -6.5], [7.5, 7.5], [-6.5, 7.5], [7.5, -6.5],
+                [-4.5, -4.5], [5.5, 5.5], [-4.5, 5.5], [5.5, -4.5],
             ]
             : this.defenderCityType === 'medium_city'
-                ? [[-2.5, -2.5], [3.5, 3.5], [-2.5, 3.5], [3.5, -2.5], [0.6, -3.6], [-0.6, 3.6]]
+                ? [
+                    // 城心四角与十字街核心
+                    [-2.8, -2.8], [3.7, 3.7], [-2.8, 3.7], [3.7, -2.8],
+                    [-2.9, 0.5], [3.7, 0.5], [0.5, -2.9], [0.5, 3.7],
+                    // 井字街行道树位
+                    [-2.9, -5.6], [3.7, -5.6], [-2.9, 6.6], [3.7, 6.6],
+                    [-5.6, -2.9], [-5.6, 3.7], [6.6, -2.9], [6.6, 3.7],
+                    // 街尾与街坊天井位
+                    [-2.9, -7.5], [3.7, 8.5], [-7.5, 3.7], [8.5, -2.9],
+                    [-5.5, -5.5], [6.5, 6.5], [-5.5, 6.5], [6.5, -5.5],
+                    [-4.2, -7.2], [5.2, 8.2], [-7.2, 5.2], [8.2, -4.2],
+                ]
                 : this.defenderCityType === 'small_city'
-                    ? [[-2.2, -2.2], [3.2, 3.2], [-2.2, 3.2], [3.2, -2.2]]
-                    : [];
+                    ? [
+                        [-2.4, -2.4], [3.4, 3.4], [-2.4, 3.4], [3.4, -2.4],
+                        [-2.6, 0.5], [3.6, 0.5], [0.5, -2.6], [0.5, 3.6],
+                        [-5.4, -2.2], [6.4, 3.2], [-2.2, 6.4], [3.2, -5.4],
+                        [-5.4, 3.2], [6.4, -2.2], [-2.2, -5.4], [3.2, 6.4],
+                    ]
+                    : this.defenderCityType === 'stockade'
+                        ? [
+                            [-2.4, -2.4], [2.8, 2.8], [-2.4, 2.8], [2.8, -2.4],
+                            [-4.8, -1.8], [5.2, 1.8], [-1.8, 5.2], [1.8, -4.8],
+                            [-4.8, 2.2], [5.2, -2.2], [-2.2, -4.8], [2.2, 5.2],
+                        ]
+                        : [
+                            // 险要内城校场与夹道空隙
+                            [-2.6, -2.6], [3.6, 3.6], [-2.6, 3.6], [3.6, -2.6],
+                            [-2.8, 0.5], [3.8, 0.5], [0.5, -2.8], [0.5, 3.8],
+                        ];
         if (treeCandidateSlots.length > 0) {
-            const targetTreeCount = this.defenderCityType === 'big_city'
-                ? 5 + Math.floor(mRnd() * 3) // 5~7 棵
+            const baseCount = this.defenderCityType === 'big_city'
+                ? 7.5
                 : this.defenderCityType === 'medium_city'
-                    ? 3 + Math.floor(mRnd() * 2) // 3~4 棵
-                    : 1 + Math.floor(mRnd() * 2); // 1~2 棵
-            const pickedTreeSlots = shuffleWithMSeed(treeCandidateSlots).slice(0, targetTreeCount);
-            pickedTreeSlots.forEach(([ti, tj], idx) => {
-                const jx = (mRnd() - 0.5) * 0.28;
-                const jy = (mRnd() - 0.5) * 0.28;
-                // 第 1 棵固定当地代表乔木；后续树木有 40% 概率混搭下层园林小树/矮丛，形成自然错落的生态层次
-                const treeAsset = (idx > 0 && mRnd() < 0.40)
-                    ? (isAridSite ? 'BUSH_TREE_A' : (mRnd() < 0.5 ? 'BUSH_TREE_B' : 'SHRUB_GREEN'))
-                    : courtyardTreeAsset;
-                pushInteriorDecor(treeAsset, ti + jx, tj + jy, 0.74 + mRnd() * 0.16);
-            });
+                    ? 5.0
+                    : this.defenderCityType === 'small_city'
+                        ? 3.0
+                        : this.defenderCityType === 'stockade'
+                            ? 2.2
+                            : 1.4;
+            const maxCap = this.defenderCityType === 'big_city'
+                ? 15
+                : this.defenderCityType === 'medium_city'
+                    ? 10
+                    : this.defenderCityType === 'small_city'
+                        ? 6
+                        : this.defenderCityType === 'stockade'
+                            ? 5
+                            : 3;
+            const minCap = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') ? 1 : 0;
+            const targetTreeCount = Math.max(
+                minCap,
+                Math.min(maxCap, Math.round(baseCount * totalVegMult + (mRnd() - 0.35) * 1.2)),
+            );
+            const shuffledTreeSlots = shuffleWithMSeed(treeCandidateSlots);
+            let placedTrees = 0;
+            for (let sIdx = 0; sIdx < shuffledTreeSlots.length && placedTrees < targetTreeCount; sIdx++) {
+                const [ti, tj] = shuffledTreeSlots[sIdx];
+                const jx = (mRnd() - 0.5) * 0.24;
+                const jy = (mRnd() - 0.5) * 0.24;
+                // 主乔木占 70%（从本城文化+环境区合法树种池按权重轮转，保证主导树种鲜明且兼具同区伴生树），下层灌木占 30%
+                const useShrub = placedTrees > 0 && mRnd() < (totalVegMult < 0.55 ? 0.50 : 0.28);
+                const treeAsset = useShrub
+                    ? cityShrubPool[placedTrees % cityShrubPool.length]
+                    : cityTreePool[placedTrees === 0 ? 0 : (Math.floor(mRnd() * Math.min(cityTreePool.length, 3)))];
+                const scale = useShrub ? (0.72 + mRnd() * 0.14) : (0.76 + mRnd() * 0.16);
+                if (pushInteriorDecor(treeAsset, ti + jx, tj + jy, scale)) {
+                    placedTrees++;
+                }
+            }
         }
 
         // 3) 内部生活/军备/自然细节道具库（程序化随机摆放：种类、数量、点位与缩放全面多样化）
@@ -919,10 +1166,8 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 [-4.2, -3.6],  // 北侧寨墙内角
                 [4.2, 3.6],    // 南侧寨墙内角
             ];
-            // 候选道具池：混入残桩、倒木、野灌木、粮桶、碎石、破辎重车
-            const stockadeFlora = isAridSite
-                ? (mRnd() < 0.5 ? 'GRASS_DRY' : 'ROCK1')
-                : (mRnd() < 0.5 ? 'BUSH_GREEN' : 'SHRUB_GREEN');
+            // 候选道具池：混入残桩、倒木、67 文化对应灌木、粮桶、碎石、破辎重车
+            const stockadeFlora = cityShrubPool[0] ?? (isAridSite ? 'GRASS_DRY' : 'SHRUB_GREEN');
             const stockadePropsPool = [
                 'BARRELS',
                 stockadeFlora,
@@ -932,23 +1177,27 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 'ROCK1',
                 'ROCK2',
                 'BARRELS',
-                stockadeFlora,
+                cityShrubPool[1 % cityShrubPool.length] ?? stockadeFlora,
             ];
             const stockadeCount = 5 + Math.floor(mRnd() * 3); // 每座城寨随机 5~7 处装饰
-            const chosenSlots = shuffleWithMSeed(stockadeCandidates).slice(0, stockadeCount);
+            const chosenSlots = shuffleWithMSeed(stockadeCandidates);
             const shuffledPool = shuffleWithMSeed(stockadePropsPool);
-            chosenSlots.forEach(([pi, pj], idx) => {
-                const pAsset = shuffledPool[idx % shuffledPool.length];
-                const ji = (mRnd() - 0.5) * 0.28;
-                const jj = (mRnd() - 0.5) * 0.28;
+            let placedStockadeProps = 0;
+            for (let idx = 0; idx < chosenSlots.length && placedStockadeProps < stockadeCount; idx++) {
+                const [pi, pj] = chosenSlots[idx];
+                const pAsset = shuffledPool[placedStockadeProps % shuffledPool.length];
+                const ji = (mRnd() - 0.5) * 0.24;
+                const jj = (mRnd() - 0.5) * 0.24;
                 const pScale = pAsset === 'STUMP_GENERIC' ? (0.72 + mRnd() * 0.08)
                     : pAsset === 'FELLED_GENERIC' ? (0.75 + mRnd() * 0.10)
-                    : pAsset === 'BUSH_GREEN' ? (0.74 + mRnd() * 0.12)
+                    : pAsset === 'BUSH_GREEN' || pAsset === 'SHRUB_GREEN' || pAsset.startsWith('BUSH_TREE') ? (0.74 + mRnd() * 0.12)
                     : pAsset === 'BATTLEFIELD:CART_BROKEN' ? (0.80 + mRnd() * 0.10)
                     : pAsset.startsWith('ROCK') ? (0.68 + mRnd() * 0.12)
                     : (0.78 + mRnd() * 0.10); // BARRELS
-                pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale);
-            });
+                if (pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale)) {
+                    placedStockadeProps++;
+                }
+            }
         } else if (this.defenderCityType === 'pass') {
             // 险要（关隘）：双重石构城郭、瓮城夹道防线、内城校场细节与关外两翼险石拒马
             const deStylePass = this.buildingStyleFor(1);
@@ -994,7 +1243,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     : [
                         [-2.2, -3.2], [3.2, 4.2], [-3.2, 2.2], [4.2, -2.2],
                     ];
-            const passFlora = isAridSite ? 'GRASS_DRY' : (mRnd() < 0.5 ? 'BUSH_GREEN' : 'SHRUB_GREEN');
+            const passFlora = cityShrubPool[0] ?? (isAridSite ? 'GRASS_DRY' : 'SHRUB_GREEN');
             const passPropsPool = [
                 'BARRELS',
                 passSupplyCart,
@@ -1034,7 +1283,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const pt = isoToWorld(ci0, cj0);
                 if (gl.isWaterAt(pt.x, pt.y, W, H)) return;
                 const rAsset = passRockPool[Math.floor(mRnd() * passRockPool.length)];
-                pushInteriorDecor(rAsset, ci0, cj0, 0.82 + mRnd() * 0.22);
+                pushInteriorDecor(rAsset, ci0, cj0, 0.82 + mRnd() * 0.22, 0, true);
                 if (mRnd() < 0.45) {
                     const ang = mRnd() * Math.PI * 2;
                     const distC = 1.3 + mRnd() * 0.8;
@@ -1043,11 +1292,13 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                         ci0 + Math.cos(ang) * distC,
                         cj0 + Math.sin(ang) * distC,
                         0.74 + mRnd() * 0.14,
+                        0,
+                        true,
                     );
                 }
             });
-        } else {
-            // 普通城市（大/中/小）：都会/市井街景（宫苑花坛 FLOWERBED、商市绒毯 RUGS、满载商贸马车、货箱粮桶、仪仗战旗，去掉荒野乱石与破车）
+        } else if (!isYurtOrNomadCity) {
+            // 普通定居城市（大/中/小）：都会/市井街景（按 67 文化区分是否摆放宫苑花坛 FLOWERBED 与对应园林灌木、商市绒毯 RUGS、商贸马车、货箱粮桶）
             const deStyleCity = this.buildingStyleFor(1);
             const urbanCartAsset = (deStyleCity === 'ANDE' || deStyleCity === 'MESO')
                 ? 'TRADE:TRADE_CART_MESO/move_2'
@@ -1069,15 +1320,18 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                             : (deStyleCity === 'WEST' || deStyleCity === 'EAST')
                                 ? 'BUILDING:SCEN_FLAG_E'
                                 : 'BATTLEFIELD:TORCH_A';
+            const useFlowerbed = vegProfile.flowerbed && !isSnowSite && !isSandOrGobiTile;
 
-            // 大城 / 中城：城心城堡四角对称布置御苑花坛与仪仗旗（一角一物，绝不叠放挨着）
+            // 大城 / 中城：城心城堡四角对称布置御苑花坛（或本文化灌木）与仪仗旗（一角一物，绝不叠放挨着）
             if (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') {
                 const royalCorners: ReadonlyArray<readonly [number, number]> = [
-                    [-2.1, -2.1], [3.1, 3.1], [-2.1, 3.1], [3.1, -2.1],
+                    [-2.3, -2.3], [3.3, 3.3], [-2.3, 3.3], [3.3, -2.3],
                 ];
                 royalCorners.forEach(([ri, rj], rIdx) => {
-                    if (!isSnowSite && rIdx % 2 === 1) {
+                    if (rIdx % 2 === 1 && useFlowerbed) {
                         pushInteriorDecor('FLOWERBED', ri, rj, 0.84 + mRnd() * 0.08, -6);
+                    } else if (rIdx % 2 === 1 && !isSnowSite && totalVegMult >= 0.85) {
+                        pushInteriorDecor(cityShrubPool[0], ri, rj, 0.76 + mRnd() * 0.08);
                     } else {
                         pushInteriorDecor(urbanFlagAsset, ri, rj, 0.85);
                     }
@@ -1086,51 +1340,57 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
 
             const cityCandidates: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
                 ? [
-                    [-1.8, -6.5], [6.5, 1.8], [-6.5, -1.8], [1.8, 6.5],
-                    [-7.2, 1.5], [7.2, -1.5], [-1.5, 7.2], [1.5, -7.2],
-                    [-4.2, -4.2], [4.2, 4.2], [-4.2, 4.2], [4.2, -4.2],
-                    [-8.2, -4.2], [9.2, 5.2], [-4.2, 9.2], [5.2, -8.2],
+                    [-3.0, -4.5], [3.8, -4.5], [-3.0, 5.5], [3.8, 5.5],
+                    [-4.5, -3.0], [-4.5, 3.8], [5.5, -3.0], [5.5, 3.8],
+                    [-3.0, -7.5], [3.8, -7.5], [-3.0, 8.5], [3.8, 8.5],
+                    [-7.5, -3.0], [-7.5, 3.8], [8.5, -3.0], [8.5, 3.8],
                 ]
                 : this.defenderCityType === 'medium_city'
                     ? [
-                        [-1.8, -5.5], [5.5, 1.8], [-5.5, -1.8], [1.8, 5.5],
-                        [-6.2, 1.5], [6.2, -1.5], [-1.5, 6.2], [1.5, -6.2],
-                        [-3.6, -3.6], [4.6, 4.6], [-3.6, 4.6], [4.6, -3.6],
+                        [-2.9, -4.4], [3.7, -4.4], [-2.9, 5.4], [3.7, 5.4],
+                        [-4.4, -2.9], [-4.4, 3.7], [5.4, -2.9], [5.4, 3.7],
+                        [-2.9, -6.8], [3.7, 7.8], [-6.8, 3.7], [7.8, -2.9],
                     ]
                     : [
                         [-2.2, 2.4], [3.2, -1.4], [-1.8, -4.5], [4.5, 1.8],
                         [-4.5, -1.8], [1.8, 4.5], [-5.2, 1.5], [5.2, -1.5],
                         [-1.5, 5.2], [1.5, -5.2],
                     ];
+            const primaryShrub = cityShrubPool[0] ?? 'SHRUB_GREEN';
+            const secondaryShrub = cityShrubPool[1 % cityShrubPool.length] ?? primaryShrub;
             const cityPropsPool = [
                 'BARRELS',
                 'BARRELS',
                 'BUILDING:RUGS',
-                isSnowSite ? 'BARRELS' : 'FLOWERBED',
+                useFlowerbed ? 'FLOWERBED' : primaryShrub,
                 urbanCartAsset,
-                isAridSite ? 'BUILDING:RUGS' : 'BUSH_GREEN',
+                isAridSite ? 'BUILDING:RUGS' : primaryShrub,
                 'BARRELS',
-                isSnowSite ? 'SHRUB_GREEN' : 'FLOWERBED',
+                useFlowerbed ? 'FLOWERBED' : secondaryShrub,
             ];
             const cityPropCount = this.defenderCityType === 'big_city'
-                ? 8 + Math.floor(mRnd() * 3) // 8~10 个街坊市井细节
+                ? 7 + Math.floor(mRnd() * 3) // 7~9 个街坊市井细节
                 : this.defenderCityType === 'medium_city'
-                    ? 5 + Math.floor(mRnd() * 3) // 5~7 个
+                    ? 5 + Math.floor(mRnd() * 2) // 5~6 个
                     : 3 + Math.floor(mRnd() * 2); // 3~4 个
-            const chosenCitySlots = shuffleWithMSeed(cityCandidates).slice(0, cityPropCount);
+            const chosenCitySlots = shuffleWithMSeed(cityCandidates);
             const shuffledCityPool = shuffleWithMSeed(cityPropsPool);
-            chosenCitySlots.forEach(([pi, pj], idx) => {
-                const pAsset = shuffledCityPool[idx % shuffledCityPool.length];
-                const ji = (mRnd() - 0.5) * 0.25;
-                const jj = (mRnd() - 0.5) * 0.25;
+            let placedCityProps = 0;
+            for (let idx = 0; idx < chosenCitySlots.length && placedCityProps < cityPropCount; idx++) {
+                const [pi, pj] = chosenCitySlots[idx];
+                const pAsset = shuffledCityPool[placedCityProps % shuffledCityPool.length];
+                const ji = (mRnd() - 0.5) * 0.22;
+                const jj = (mRnd() - 0.5) * 0.22;
                 const isFlatProp = pAsset === 'FLOWERBED' || pAsset === 'BUILDING:RUGS';
-                const pScale = pAsset === 'BUSH_GREEN' || pAsset === 'SHRUB_GREEN' ? (0.74 + mRnd() * 0.12)
+                const pScale = pAsset === 'BUSH_GREEN' || pAsset === 'SHRUB_GREEN' || pAsset.startsWith('BUSH_TREE') || pAsset === 'FERNPATCH' ? (0.74 + mRnd() * 0.12)
                     : pAsset === 'FLOWERBED' ? (0.82 + mRnd() * 0.10)
                     : pAsset === 'BUILDING:RUGS' ? (0.84 + mRnd() * 0.10)
                     : pAsset.startsWith('TRADE:') ? (0.88 + mRnd() * 0.08)
                     : (0.80 + mRnd() * 0.10); // BARRELS
-                pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale, isFlatProp ? -6 : 0);
-            });
+                if (pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale, isFlatProp ? -6 : 0)) {
+                    placedCityProps++;
+                }
+            }
         }
     }
 

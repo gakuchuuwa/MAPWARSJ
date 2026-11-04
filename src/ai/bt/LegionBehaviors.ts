@@ -290,6 +290,10 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
         const siegeCity = ctx.cityManager.getCity(siegeCityId);
         if (siegeCity && siegeCity.factionId !== ctx.army.getFactionId()) {
             setStrategicTarget(ctx, siegeCity.id, { lat: siegeCity.latitude, lng: siegeCity.longitude });
+            // 🔴 [2026-11-04 修颤抖] 转攻城后必须把这支敌军拉黑一阵：否则同一 tick HasTarget 落到城目标，
+            //    pickNearbyEnemyLegion（直连道路例外）又把它挑回来改追 → 追击 → 又转攻城……
+            //    每帧 stopMovement + 重新寻路，军团原地颤抖、镜头跟着让据点也抖。
+            markTargetCooldown(ctx, `army:${huntId}`, 'hunt_to_siege');
             clearHuntTarget(ctx);
             ctx.army.stopMovement?.(false);
             return null;
@@ -683,6 +687,20 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx), city, targetBeingSieged);
     if (!nearbyEnemy && targetBeingSieged) {
         return true;
+    }
+    // 🔴 [2026-11-04 修颤抖] 该敌军正在攻城：追它等于去那座城（refreshHuntArmyTarget 会立刻转回攻城）。
+    //    就是本目标城 → 保持原路进军；是别的非己方城 → 直接改打那座城，不经过「追击」中转。
+    const enemySiegeCityId = nearbyEnemy ? ctx.legionManager.getActiveSiegeCityIdForArmy?.(nearbyEnemy) : null;
+    if (enemySiegeCityId) {
+        if (enemySiegeCityId === city.id) return true;
+        const siegeCity = ctx.cityManager.getCity(enemySiegeCityId);
+        if (siegeCity && siegeCity.factionId !== ctx.army.getFactionId()) {
+            setStrategicTarget(ctx, siegeCity.id, { lat: siegeCity.latitude, lng: siegeCity.longitude });
+            ctx.army.setTargetCity(null);
+            ctx.army.stopMovement?.(false);
+            return true;
+        }
+        // 正在打我方城：照旧追击（refreshHuntArmyTarget 不会转攻城，不会来回切）
     }
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();
