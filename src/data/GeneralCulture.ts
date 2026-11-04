@@ -1245,7 +1245,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'shixing_houandou': 'HUGUANG',   // 南越｜侯安都｜据点 横浦关
     'shiyuzu_aolaqiuzhang': 'PURU',   // 食鱼族｜阿波罗多洛斯｜据点 奥拉
     'shizhao_d_shihu': 'WEI',   // 后赵｜石虎｜据点 邢台
-    'shizhou_liucong': 'CENTRAL',   // 汉赵｜刘聪｜据点 临汾
+    'shizhou_liucong': 'WEI',   // 汉赵｜刘聪｜据点 临汾（2026-11-05 主人令：移回临汾，临汾已改河朔文化）
     'shu_liubei': 'BASHU',   // 蜀国｜刘备｜据点 成都
     'shuixi_anbangyan': 'BASHU',   // 罗甸｜安邦彦｜据点 毕节
     'shuizhen_qudaren': 'KHMER',   // 水真｜区大任｜据点 三菩
@@ -1487,7 +1487,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yanqi_longtuqizhi': 'WESTERN',   // 焉耆｜龙突骑支｜据点 员渠城
     'yansui_wangwei': 'WEI',   // 大明｜王威｜据点 榆林
     'yanzhou_zhongshiheng': 'CENTRAL',   // 汉国｜种世衡｜据点 方渠
-    'yao_liuyuan': 'CENTRAL',   // 汉赵｜刘渊｜据点 临汾
+    'yao_liuyuan': 'WEI',   // 汉赵｜刘渊｜据点 临汾（2026-11-05 主人令：临汾改河朔文化）
     'yaoluoge_yaoluogepusa': 'MONGOL',   // 回鹘｜药罗葛菩萨｜据点 娑陵
     'yaozhou_limaozhen': 'CENTRAL',   // 唐国｜李茂贞｜据点 金锁关
     'yarkand_abudulatifu': 'WESTERN',   // 叶尔羌｜拉提夫｜据点 英吉沙尔
@@ -1797,7 +1797,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ming_d_wuweizhong': 'HUGUANG',
     'longwu_zhengzhilong': 'HUGUANG',
     'ming_d_tanlun': 'WEI',
-    'han_zhao_liuyao': 'WEI',
+    'han_zhao_liuyao': 'XIANBEI',   // 汉赵｜刘曜｜据点 离石（2026-11-05 主人令：离石改漠南文化）
     'song_lixianzhong': 'CENTRAL',
     'taiping_yangxiuqing': 'HUGUANG',
     'han_lubode': 'HEXI',

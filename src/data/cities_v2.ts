@@ -1,4 +1,4 @@
-/**
+﻿/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -315,7 +315,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     },
         // ── 京同山川走廊 (北京→大同 的中城) ──
     // ── 晋陕走廊/汾河谷地 (大同→长安 的中城) ──
-    { id: 'city_linfen', name: '临汾', factionId: 'han_zhao', lat: 36.088, lng: 111.516724, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '按 2026-10-25 标准：城居 4–6 → 小城' },
+    { id: 'city_linfen', name: '临汾', factionId: 'han_zhao', lat: 36.088, lng: 111.516724, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'WEI' , note: '🔴 [2026-11-05 主人令「临汾保留河朔文化」] 临汾＝汉赵都城平阳（汾水下游、河东），本地建筑文化按河朔（WEI）判；留此的刘渊精锐「河朔骑兵」与据点文化一致。按 2026-10-25 标准：城居 4–6 → 小城' },
 
 
     // ── 太行山脉走廊/八陉周边中城 ──
@@ -3664,7 +3664,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_jingbianbao', name: '靖边堡', factionId: 'dangxiang', lat: 37.5685, lng: 108.8608, type: 'stockade', troops: 10000, region: 'TANGUT', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
     { id: 'city_quyancheng', name: '朐衍', factionId: 'han_d', lat: 37.7794, lng: 107.4078, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
-    { id: 'city_lishi', name: '离石', factionId: 'han_zhao', lat: 37.48, lng: 111.09, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' , note: '推算：城居 1 万（离石，汉县/西河郡 1 万）→ 小城' },
+    { id: 'city_lishi', name: '离石', factionId: 'han_zhao', lat: 37.48, lng: 111.09, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'XIANBEI' , note: '🔴 [2026-11-05 主人令「离石设计文化为漠南，刘聪也放离石」] 离石（今吕梁）汉属西河郡，东汉南匈奴内迁后单于庭与五部帅驻此（刘渊以左部帅起兵于此），本地建筑文化按漠南（XIANBEI＝匈奴/鲜卑泛称区）判；汉赵诸将（刘聪、刘曜）随据点取古典时代漠南游牧军团。推算：城居 1 万（离石，汉县/西河郡 1 万）→ 小城' },
     { id: 'city_chiwubao', name: '赤乌堡', factionId: 'han_d', lat: 37.477, lng: 102.8815, type: 'stockade', troops: 10000, region: 'CENTRAL', buildingStyle: 'HEXI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 

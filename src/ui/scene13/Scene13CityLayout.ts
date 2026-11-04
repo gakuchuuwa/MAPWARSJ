@@ -1044,7 +1044,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             LOE: 0.38, STP: 0.32, TIB: 0.34, WAH: 0.36, AUS: 0.35,
             CAD: 0.20, HDS: 0.18, ARC: 0.22,
         };
-        const gameYear = this.techYearGetter?.() ?? this.techYear ?? 1000;
+        const gameYear = Number((window as any).game?.timeSystem?.getYear?.() ?? (this as any).techYearGetter?.() ?? (this as any).techYear ?? 1000);
         const fPot = forestPotentialAt(siteLat, siteLng);
         const fCov = forestCoverAt(siteLat, siteLng, gameYear);
         const zoneFallbackCover = ZONE_BASE_COVER[zoneId] ?? 0.55;

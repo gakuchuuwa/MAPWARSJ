@@ -1,4 +1,4 @@
-import {FACTION_GENERALS, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
+﻿import {FACTION_GENERALS, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { FACTIONS } from '../data/factions';
 import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
@@ -3976,7 +3976,7 @@ export class CombatUI {
     }
 
     private resolveFactionLabel(factionId: string | null): string {
-        // 🔴 [2026-10-24 主人「叛军和起义军完全是两回事」] 势力名一律取真实登记名：
+        // 🔴 [2026-10-24 主人「叛军和义军完全是两回事」] 势力名一律取真实登记名：
         //   叛军 panshu 取「叛军」；旧代码曾把查不到的势力一律写成「叛军」，是错的。
         //   （旧 panjun「起义」占位势力已于 2026-10-25 删除，不存在「起义」这个势力。）
         const fm = (window as any).game?.factionManager;

@@ -1062,61 +1062,118 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
             ? PASS_RECT_MIRROR_RINGS
             : PASS_SQUARE_RINGS;
     const isMobeiPass = isMobeiStyle(buildingStyle);
+    const passCompRnd = deMulberry32(deHashString(`${cityId}|pass_compounds|${_citySessionSeed ?? 0}`));
+    // 4 组军事主建筑（从兵营、马厩、靶场、铁匠铺随机洗牌组合），各配 1 座四级高级箭塔（TOWER_AGE4）
+    const militaryPool: Array<'BARRACKS' | 'STABLE' | 'ARCHERY_RANGE' | 'BLACKSMITH'> = [
+        'BARRACKS', 'STABLE', 'BARRACKS', 'STABLE', 'ARCHERY_RANGE', 'BLACKSMITH',
+    ];
+    for (let k = militaryPool.length - 1; k > 0; k--) {
+        const r = Math.floor(passCompRnd() * (k + 1));
+        [militaryPool[k], militaryPool[r]] = [militaryPool[r], militaryPool[k]];
+    }
+    const fourMilBuildings = militaryPool.slice(0, 4);
     const passInnerBuildings: Array<[string, string]> = isMobeiPass
         ? (isMobeiHalfYurtCity(cityId)
             ? mixHalfYurtPool(DE_MEDIUM_CITY_POOL, deMulberry32(deHashString(cityId + '|pass_inner_mix'))).map((b): [string, string] => [b, 'AGE3'])
             : MOBEI_YURT_RING_NINE.map((y): [string, string] => [y, 'AGE3']))
         : [
-            // 4 座四级高级要塞石塔（AGE4 Keep）+ 2 座兵营 + 2 座马厩（与中心城堡共 9 栋，严格保持最小间距不挨着）
+            // 4 座四级高级箭塔（AGE4 Keep）+ 4 座军事建筑（与中心城堡共 9 个主槽位，另配 2 组 [2×2 房屋 + 中型箭塔 AGE3] 附属组合）
             ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'],
-            ['BARRACKS', 'AGE3'], ['STABLE', 'AGE3'], ['STABLE', 'AGE3'], ['BARRACKS', 'AGE3'],
+            [fourMilBuildings[0], 'AGE3'], [fourMilBuildings[1], 'AGE3'], [fourMilBuildings[2], 'AGE3'], [fourMilBuildings[3], 'AGE3'],
         ];
-    // 🔴 [2026-11-04 主人令「设计一个最小间距，不要挨着」]
-    //    内城 9 栋（中心城堡 + 4 座要塞塔 + 2 座兵营 + 2 座马厩）按四象限对角错位排布：
-    //    - 矩形（rect / rect_mirror）：4 角塔置于象限外角（±8.5, ±4.5），2 兵营 + 2 马厩置于象限内腹（±4.0, ±4.0），
-    //      角塔与兵营/马厩之间留足 ≥ 2 格净空，兵营/马厩与中心城堡对角净距 ≥ 2.86 格，跨十字关道净距 ≥ 6 格；
-    //    - 方形（square）：每个 6×6 象限内，要塞塔（2×2）与兵营/马厩（3×3）分居象限对角两端，
-    //      彼此中心距 4.95 格（屏幕水平间距 336px，净空 ≥ 2.45 格），距中心城堡净空 ≥ 3~4 格。
-    const passTowerSlots: ReadonlyArray<{ ci: number; cj: number }> = passShape === 'rect'
-        ? [
-            { ci: -8.5, cj: -4.5 },
-            { ci: 9.5, cj: -4.5 },
-            { ci: -8.5, cj: 5.5 },
-            { ci: 9.5, cj: 5.5 },
-        ]
-        : passShape === 'rect_mirror'
-            ? [
-                { ci: -4.5, cj: -8.5 },
-                { ci: 5.5, cj: -8.5 },
-                { ci: -4.5, cj: 9.5 },
-                { ci: 5.5, cj: 9.5 },
-            ]
-            : [
-                { ci: -2.5, cj: -6.5 },
-                { ci: 7.5, cj: -2.5 },
-                { ci: 3.5, cj: 7.5 },
-                { ci: -6.5, cj: 3.5 },
+    // 🔴 [2026-11-04 主人令「然后是险要，城堡是在中间吗？然后是4个建筑，各带一个高级箭塔。然后添加2组2*2的房屋带一个中型箭塔。同样是保持，最小间距1格。」「改为，2个房屋+2个中型箭塔组合」]
+    //    险要内城 7 组（共 17 栋建筑）精确网格排布：
+    //    · 中间：1 座中心城堡（4×4，严格居中在 (0.5, 0.5)，占格 [-1, 2]×[-1, 2]）；
+    //    · 四角 4 组「军事建筑（3×2）+ 1 座高级箭塔（TOWER_AGE4，2×2）」（共 8 栋）：每组内部留 1 整格空地；
+    //    · 两侧翼 2 组「2 座 2×2 房屋（HOUSE_AGE3）+ 2 座 2×2 中型箭塔（TOWER_AGE3）」（共 8 栋）：每组占 5×5 田字区块，4 个 2×2 角位之间均留 1 整格空地，位置随机洗牌；
+    //    · 所有组合之间、与中心城堡之间、与内圈石墙之间均保持 1~3 整格空地。
+    const passTowerSlots: Array<{ ci: number; cj: number }> = [];
+    const passGarrisonSlots: Array<{ ci: number; cj: number }> = [];
+    const passHouseTowerAux: Array<{ b: string; age: string; ci: number; cj: number }> = [];
+
+    if (passShape === 'rect' || passShape === 'rect_mirror') {
+        const isMir = passShape === 'rect_mirror';
+        const pushCoord = <T extends { ci: number; cj: number }>(arr: T[], u: number, v: number, extra?: Omit<T, 'ci' | 'cj'>): void => {
+            arr.push({ ...(extra as any), ci: isMir ? v : u, cj: isMir ? u : v });
+        };
+        // 矩形（20×12 可用格 u ∈ [-9, 10], v ∈ [-5, 6]）：
+        // 1) 上下四组「3×2 军事建筑 + 2×2 高级箭塔」：
+        //    · 左上/左下：军事建筑占 u ∈ [-3, -1], v ∈ [-5, -3] / [4, 6]（距中心城堡 v ∈ [-1, 2] 留 v=-2 / v=3 整 1 格空地，距中轴关道 u ∈ [0, 1] 留整 2 格空地）；
+        //      高级箭塔占 u ∈ [-8..-5]（随机 [-8,-7] 或 [-6,-5]）, v ∈ [-5, -4] / [5, 6]（与军事建筑隔 u=-4 整 1~3 格空地，与中路 5×5 田字格 v ∈ [-2, 2] 隔 v=-3 / v=3,4 整 1~2 格空地）；
+        //    · 右上/右下：军事建筑占 u ∈ [2, 4], v ∈ [-5, -3] / [4, 6]；高级箭塔占 u ∈ [6..9]（随机 [6,7] 或 [8,9]）, v ∈ [-5, -4] / [5, 6]（隔 u=5 整 1~3 格空地）。
+        const rectFourCorners: ReadonlyArray<{ milU: number; milV: number; towU0: number; towU1: number; towV: number }> = [
+            { milU: -2.0, milV: -4.0, towU0: -5.5, towU1: -7.5, towV: -4.5 },
+            { milU: 3.0,  milV: -4.0, towU0: 6.5,  towU1: 8.5,  towV: -4.5 },
+            { milU: -2.0, milV: 5.0,  towU0: -5.5, towU1: -7.5, towV: 5.5 },
+            { milU: 3.0,  milV: 5.0,  towU0: 6.5,  towU1: 8.5,  towV: 5.5 },
+        ];
+        for (const c of rectFourCorners) {
+            const towU = passCompRnd() < 0.5 ? c.towU0 : c.towU1;
+            pushCoord(passTowerSlots, towU, c.towV);
+            pushCoord(passGarrisonSlots, c.milU, c.milV);
+        }
+        // 2) 左右两翼 2 组「2 座 2×2 房屋 + 2 座 2×2 中型箭塔」：
+        //    分别占左翼 5×5 田字格 u ∈ [-9, -5], v ∈ [-2, 2] 与右翼 5×5 田字格 u ∈ [6, 10], v ∈ [-2, 2]，
+        //    距上下高级箭塔（v=-4 与 v=5）留 1~2 整格空地，距上下军事建筑（u=-3 与 u=4）留 u=-4 / u=5 整 1 格空地，距中心城堡留 3 整格空地。
+        const rectWingU0s = [-9, 6];
+        for (const wu0 of rectWingU0s) {
+            const corners4: Array<[number, number]> = [
+                [wu0 + 0.5, -1.5],
+                [wu0 + 3.5, -1.5],
+                [wu0 + 0.5, 1.5],
+                [wu0 + 3.5, 1.5],
             ];
-    const passGarrisonSlots: ReadonlyArray<{ ci: number; cj: number }> = passShape === 'rect'
-        ? [
-            { ci: -4.0, cj: -4.0 },
-            { ci: 5.0, cj: -4.0 },
-            { ci: -4.0, cj: 5.0 },
-            { ci: 5.0, cj: 5.0 },
-        ]
-        : passShape === 'rect_mirror'
-            ? [
-                { ci: -4.0, cj: -4.0 },
-                { ci: -4.0, cj: 5.0 },
-                { ci: 5.0, cj: -4.0 },
-                { ci: 5.0, cj: 5.0 },
-            ]
-            : [
-                { ci: -6.0, cj: -3.0 },
-                { ci: 4.0, cj: -6.0 },
-                { ci: -3.0, cj: 7.0 },
-                { ci: 7.0, cj: 4.0 },
+            for (let k = corners4.length - 1; k > 0; k--) {
+                const r = Math.floor(passCompRnd() * (k + 1));
+                [corners4[k], corners4[r]] = [corners4[r], corners4[k]];
+            }
+            pushCoord(passHouseTowerAux, corners4[0][0], corners4[0][1], { b: 'HOUSE', age: 'AGE3' });
+            pushCoord(passHouseTowerAux, corners4[1][0], corners4[1][1], { b: 'HOUSE', age: 'AGE3' });
+            pushCoord(passHouseTowerAux, corners4[2][0], corners4[2][1], { b: 'TOWER', age: 'AGE3' });
+            pushCoord(passHouseTowerAux, corners4[3][0], corners4[3][1], { b: 'TOWER', age: 'AGE3' });
+        }
+    } else {
+        // 方形（square，内圈 17×17，可用整数格 [-7, 8]×[-7, 8] 共 16×16 格）：随机沿 i 轴或 j 轴展开两翼
+        const swapAxes = passCompRnd() < 0.5;
+        const pushCoord = <T extends { ci: number; cj: number }>(arr: T[], u: number, v: number, extra?: Omit<T, 'ci' | 'cj'>): void => {
+            arr.push({ ...(extra as any), ci: swapAxes ? v : u, cj: swapAxes ? u : v });
+        };
+        // 四角 6×3 区块：u ∈ [-7, -2] / [3, 8]（6 格宽 = 3 格军事建筑 + 1 格空地 + 2 格高级箭塔），v ∈ [-7, -5] / [6, 8]（3 格深）
+        const sqCornerBlocks: ReadonlyArray<readonly [number, number]> = [
+            [-7, -7], [3, -7], [-7, 6], [3, 6],
+        ];
+        for (const [u0, v0] of sqCornerBlocks) {
+            const towerFirst = passCompRnd() < 0.5;
+            const vShiftTower = passCompRnd() < 0.5 ? 0 : 1;
+            const towerU = towerFirst ? (u0 + 0.5) : (u0 + 4.5);
+            const towerV = v0 + 0.5 + vShiftTower;
+            const milU = towerFirst ? (u0 + 4.0) : (u0 + 1.0);
+            const milV = v0 + 1.0;
+            pushCoord(passTowerSlots, towerU, towerV);
+            pushCoord(passGarrisonSlots, milU, milV);
+        }
+        // 两侧翼 2 组「2 座 2×2 房屋 + 2 座 2×2 中型箭塔」：每翼占 5×5 田字区块（u ∈ [-7, -3] 与 [4, 8]，v ∈ [-2, 2]），
+        // 4 个 2×2 角位随机洗牌放置 2 座房屋 + 2 座中型箭塔，组内两两之间隔 1 整格空地（u0+2 与 v=0），
+        // 距上下角组（v=-5 与 v=6）留 2~3 整格空地，距中心城堡（u ∈ [-1, 2]）留 u=-2 / u=3 整 1 格空地。
+        const sqWingU0s = [-7, 4];
+        for (const wu0 of sqWingU0s) {
+            const corners4: Array<[number, number]> = [
+                [wu0 + 0.5, -1.5],
+                [wu0 + 3.5, -1.5],
+                [wu0 + 0.5, 1.5],
+                [wu0 + 3.5, 1.5],
             ];
+            for (let k = corners4.length - 1; k > 0; k--) {
+                const r = Math.floor(passCompRnd() * (k + 1));
+                [corners4[k], corners4[r]] = [corners4[r], corners4[k]];
+            }
+            pushCoord(passHouseTowerAux, corners4[0][0], corners4[0][1], { b: 'HOUSE', age: 'AGE3' });
+            pushCoord(passHouseTowerAux, corners4[1][0], corners4[1][1], { b: 'HOUSE', age: 'AGE3' });
+            pushCoord(passHouseTowerAux, corners4[2][0], corners4[2][1], { b: 'TOWER', age: 'AGE3' });
+            pushCoord(passHouseTowerAux, corners4[3][0], corners4[3][1], { b: 'TOWER', age: 'AGE3' });
+        }
+    }
+
     const passSlotCenters = [
         { ci: 0.5, cj: 0.5, isCenter: true },
         ...passTowerSlots.map((t) => ({ ci: t.ci, cj: t.cj, isCenter: false })),
@@ -1130,6 +1187,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
             groundTile: cityGroundTile(buildingStyle, 'rd2'),
             buildingStyle: style === 'YURT' ? 'ASIA' : style,
             slotCenters: passSlotCenters,
+            auxBuildings: isMobeiPass ? undefined : passHouseTowerAux,
             outer: {
                 seg: passRings.outer.segI, segJ: passRings.outer.segJ,
                 wallAnchors: DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA'],
@@ -1701,8 +1759,8 @@ function buildDeCityGridHtml(
     /** 放一栋：给素材目录名 + 占地 s + 位中心 (ci,cj) + 是否镜像 */
     const placeBuilding = (dir: string, src: string, boxW: number, s: number, ci: number, cj: number, flip: boolean, isAux = false): void => {
         const effS = Math.max(s, /TOWER/.test(dir) ? 2 : s);
-        const a0i = Math.round(ci - (s - 1) / 2), a0j = Math.round(cj - (s - 1) / 2);   // 占地左上格（吸附到整格）
-        const ti = a0i + (s - 1) / 2, tj = a0j + (s - 1) / 2;                           // 占地中心（格坐标）
+        const a0i = Math.round(ci - (effS - 1) / 2), a0j = Math.round(cj - (effS - 1) / 2);   // 占地左上格（吸附到整格）
+        const ti = a0i + (effS - 1) / 2, tj = a0j + (effS - 1) / 2;                           // 占地中心（格坐标）
         const halfE = (effS - 1) / 2;
         const i0 = ti - halfE, i1 = ti + halfE, j0 = tj - halfE, j1 = tj + halfE;
         if (isAux) {

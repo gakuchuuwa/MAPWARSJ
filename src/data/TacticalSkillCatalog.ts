@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 战术技数据表（793 条，含通用池 49 + T0/T1/T2 名将专属 + 大批量配发技）
  * layer=tactical；战略技将来同表加 layer=strategic。
  * 本文件只定义数据，战斗挂钩见 TacticalSkillResolver.ts / GeneralSkillCombat.ts。

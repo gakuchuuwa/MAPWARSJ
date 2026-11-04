@@ -1043,9 +1043,11 @@ export class GlobalUnitRenderer {
         }
 
         // 1. Maintain Sorted Cache
+        let rebuilt = false;
         if (this.needsSort) {
             this.sortedUnitsCache = Array.from(this.units);
             this.needsSort = false;
+            rebuilt = true;
             this.viewDrawBatch = null;
             this.viewDrawBatchIdx = 0;
         }
@@ -1059,8 +1061,15 @@ export class GlobalUnitRenderer {
                 break;
             }
         }
-        if (anyMoved) {
-            this.sortedUnitsCache.sort((a, b) => b.getPosition().lat - a.getPosition().lat);
+        if (anyMoved || rebuilt) {
+            // 🔴 [2026-11-04 主人「军团是在尸体上层吗」] 尸体（阵亡军团）一律先画、垫在最底层，
+            //    活军团永远压在尸体上面；同类内再按纬度（北先南后）。原先只按纬度，南边的尸体会盖住北边的活军团。
+            this.sortedUnitsCache.sort((a, b) => {
+                const da = a.isDestroyed ? 0 : 1;
+                const db = b.isDestroyed ? 0 : 1;
+                if (da !== db) return da - db;
+                return b.getPosition().lat - a.getPosition().lat;
+            });
         }
 
         let hasActiveAnimation = false;

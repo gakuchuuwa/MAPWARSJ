@@ -1071,7 +1071,7 @@ export function findLegionNameByCultureAndEra(buildingStyle: string, age: string
  * 武将此刻该用的军团名。
  * 🔴 [2026-10-24 主人「军团分四个时代+66个文化。所有武将配哪个军团，先看武将是哪个时代，再看武将是哪个据点」]
  *   规则链：① 条目手写 `legionName`（三级军团/时代特例/海外军团）→ ② 细分时代（古典·先秦 17 位）→
- *   ③ 势力编制指向的三级军团（起义军等）→ ④ **时代 × 据点文化**的 264 格之一（自动，不需要写 legionName）→
+ *   ③ 势力编制指向的三级军团（盗贼团伙等）→ ④ **时代 × 据点文化**的 264 格之一（自动，不需要写 legionName）→
  *   ⑤ 势力编制兜底（无将该格缺失时）。据点文化由 `getGeneralCulture`（＝据点 buildingStyle）给。
  */
 export function getLegionNameOfGeneral(factionId: string, generalId?: string | null): string | undefined {
@@ -1080,7 +1080,7 @@ export function getLegionNameOfGeneral(factionId: string, generalId?: string | n
     // 再看武将属于哪个据点，据点属于哪个文化。来自动判定武将的军团。
     // 武将文化要和据点文化相同，武将时代要和势力时代相同。
 
-    // ① 特殊军团例外：起义军 / 苏丹亲兵等三级军团保留
+    // ① 特殊军团例外：盗贼团伙 / 苏丹亲兵等三级军团保留
     const named = getGeneralOwnLegionName(generalId);
     if (named && LEVEL_3_LEGION_MAP.has(named) && getLegionCompositionByName(named)) return named;
 

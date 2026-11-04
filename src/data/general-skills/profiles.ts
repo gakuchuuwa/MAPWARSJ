@@ -1,4 +1,4 @@
-/**
+﻿/**
 
  * 武将技 · 将领装配档案（从 GeneralSkills.ts 拆出，2026-07-13）
 
@@ -3202,7 +3202,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     baojialiya_mikhail: { generalId: 'baojialiya_mikhail', tier: 'ordinary', tacticalSkillId: 'ts_036',  atkAdvantageSkillId: 'ts_036',  atkBalanceSkillId: 'ts_1108',  atkDisadvantageSkillId: 'ts_711',  defAdvantageSkillId: 'ts_315',  defBalanceSkillId: 'ts_378',  defDisadvantageSkillId: 'ts_772', aptitude: 'reverse', attackStyle: 'defense' },   // 米哈伊尔：维尔布日德战死，普将
     yuan_d_tuotuo: { generalId: 'yuan_d_tuotuo', tier: 'ordinary', tacticalSkillId: 'ts_476',  atkAdvantageSkillId: 'ts_476',  atkBalanceSkillId: 'ts_529',  atkDisadvantageSkillId: 'ts_996',  defAdvantageSkillId: 'ts_997',  defBalanceSkillId: 'ts_1129',  defDisadvantageSkillId: 'ts_637', aptitude: 'create', attackStyle: 'attack' },   // 脱脱：高邮无功，普将
     yuan_d_manzihaiya: { generalId: 'yuan_d_manzihaiya', tier: 'ordinary', tacticalSkillId: 'ts_032',  atkAdvantageSkillId: 'ts_032',  atkBalanceSkillId: 'ts_1109',  atkDisadvantageSkillId: 'ts_585',  defAdvantageSkillId: 'ts_374',  defBalanceSkillId: 'ts_990',  defDisadvantageSkillId: 'ts_020', aptitude: 'reverse', attackStyle: 'defense' },   // 蛮子海牙：采石矶败，普将
-    zhao_gerong: { generalId: 'zhao_gerong', tier: 'famous', tacticalSkillId: 'ts_130', atkAdvantageSkillId: 'ts_130', atkBalanceSkillId: 'ts_675', atkDisadvantageSkillId: 'ts_601', defAdvantageSkillId: 'ts_669', defBalanceSkillId: 'ts_1110', defDisadvantageSkillId: 'ts_144', aptitude: 'create', attackStyle: 'attack' },   // 葛荣：河北起义军首领，名将
+    zhao_gerong: { generalId: 'zhao_gerong', tier: 'famous', tacticalSkillId: 'ts_130', atkAdvantageSkillId: 'ts_130', atkBalanceSkillId: 'ts_675', atkDisadvantageSkillId: 'ts_601', defAdvantageSkillId: 'ts_669', defBalanceSkillId: 'ts_1110', defDisadvantageSkillId: 'ts_144', aptitude: 'create', attackStyle: 'attack' },   // 葛荣：河北盗贼团伙首领，名将
     gen_ramiro_ii: { generalId: 'gen_ramiro_ii', tier: 'famous', tacticalSkillId: 'ts_039', atkAdvantageSkillId: 'ts_039', atkBalanceSkillId: 'ts_432', atkDisadvantageSkillId: 'ts_435', defAdvantageSkillId: 'ts_316', defBalanceSkillId: 'ts_1120', defDisadvantageSkillId: 'ts_107', aptitude: 'reverse', attackStyle: 'defense' },   // 拉米罗二世：莱昂国王，名将
     gen_kusaila: { generalId: 'gen_kusaila', tier: 'famous', tacticalSkillId: 'ts_051', atkAdvantageSkillId: 'ts_051', atkBalanceSkillId: 'ts_439', atkDisadvantageSkillId: 'ts_440', defAdvantageSkillId: 'ts_327', defBalanceSkillId: 'ts_1111', defDisadvantageSkillId: 'ts_122', aptitude: 'reverse', attackStyle: 'defense' },   // 库赛拉：柏柏尔抗阿拉伯名王
     malin_abulhasan: { generalId: 'malin_abulhasan', tier: 'famous', tacticalSkillId: 'ts_070', atkAdvantageSkillId: 'ts_070', atkBalanceSkillId: 'ts_453', atkDisadvantageSkillId: 'ts_450', defAdvantageSkillId: 'ts_330', defBalanceSkillId: 'ts_1130', defDisadvantageSkillId: 'ts_125', aptitude: 'reverse', attackStyle: 'attack' },   // 阿布哈桑：马林苏丹

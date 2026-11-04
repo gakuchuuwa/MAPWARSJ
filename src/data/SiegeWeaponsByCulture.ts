@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 攻城战前 30 秒的攻城武器发放（13 战术层用；引擎八环不读这里）。
  *
  * 🔴 [2026-09-18 主人定死 · 全军团攻城武器终极铁律]
@@ -1233,7 +1233,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'mangonel', 'mangonel', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '起义军': {
+    '盗贼团伙': {
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'petard', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon'],
     },

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 势力自定义军团方阵数据表 (Faction Legion Compositions)
  * 由独立军团编辑器 (http://localhost:5173/legion-editor.html) 生成与维护。
  *
@@ -35,7 +35,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     //    · 第二批（印度据点文化按 §五.2 归位后同步）：孔雀帝国/摩揭陀/迦尸/拘萨罗/鸯伽/巽伽→古典孔雀，
     //      戒日/瞿折罗→封建戒日，乔汉→城堡古吉拉特，锡克→帝国旁遮普，僧伽罗→古典泰米尔，奥里泰/食鱼族→古典贵霜。
     // 🔴 [2026-10-24] 恢复被并进旧占位势力 panjun 的各家政权（该占位势力已于 2026-10-25 按主人令删除；
-    //    起义军＝三级「起义军」；其余沿用原时代军团）
+    //    动乱番号＝三级「盗贼团伙」（原名「起义军」）；其余沿用原时代军团）
     // 🔴 [2026-10-25 主人令「加一个最知名的就可以了」] 大和（大和朝廷·封建时代）｜主将坂上田村麻吕（京都 JAPAN × 封建）＝封建时代平安军团
     "yamato": {
         legionName: "封建时代平安军团",
@@ -50,27 +50,27 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "qiufu": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "chendiaoyan": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "yezongliu": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "qianhui": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "miaomin": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "zhongxiang": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "yang_bozhou": {
@@ -118,7 +118,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "haikou": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "liuzhen": {
@@ -147,13 +147,13 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
 
     // 🔴 [2026-10-25 主人令「删除起义势力，哪有历史上哪有这个势力呀」] 原「起义（panjun）占位势力」条目已删除；
-    //    起义首领各自是独立势力（太平天国/大顺/大西…），军团照旧挂三级「起义军」。
+    //    起义首领各自是独立势力（太平天国/大顺/大西…），军团照旧挂三级「盗贼团伙」。
     "dashun": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "taiping": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     // 🔴 [2026-10-18 主人令「先两个」] 三级军团首次套用（口径：军团建筑文化 = 武将据点的建筑风格，且武将为帝国时代）：
@@ -322,11 +322,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "fangla": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "batawei": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "xianlingqiang": {
@@ -354,7 +354,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "tuoming": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "tuerhute": {
@@ -580,7 +580,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "bailian": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "manzhou_d": {
@@ -1425,7 +1425,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "daxi_ming": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "basha_d": {
@@ -1437,15 +1437,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "zhangshicheng": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "dengmaoqi": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "shuntian": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "dacheng": {
@@ -1924,7 +1924,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "yang_aner": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "wuling": {
@@ -1936,11 +1936,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "huangwang": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "linshihong": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "she_ethnic": {
@@ -2384,11 +2384,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "chimei": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "baibo": {
-        legionName: "起义军",
+        legionName: "盗贼团伙",
         legionType: "sub",
     },
     "shanshan": {

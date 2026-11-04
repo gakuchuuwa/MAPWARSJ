@@ -1,4 +1,4 @@
-import { City, CityType } from '../types/core';
+﻿import { City, CityType } from '../types/core';
 import { CITY_CONFIG } from '../config/CityConfig';
 import { FACTIONS } from '../data/factions';
 import { CityManager } from '../world/CityManager';
@@ -855,7 +855,7 @@ export class CityEditor implements IEditor {
 
     /** 玩家可见旗号（1–2 字）；叛军（panshu）无字旗 → 显示「无字」 */
     private getFlagLabel(factionId: string): string {
-        // 🔴 [2026-10-24 主人「叛军是旗帜上没有字」「叛军和起义军完全是两回事」]
+        // 🔴 [2026-10-24 主人「叛军是旗帜上没有字」「叛军和盗贼团伙完全是两回事」]
         //   叛军（panshu，特殊势力）＝无字旗（没有旗号）；历史起义首领的政权各自有自己的旗号（正常势力）。
         if (isBlankRebelFaction(factionId)) return '（无字）';
         return SANDBOX_DISPLAY_NAMES[factionId] || factionId;

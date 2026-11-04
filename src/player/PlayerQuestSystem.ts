@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PlayerQuestSystem —— 据点对话与两层任务（2026-09-05 主人定）。
  *
  * 抵达据点 → 看城中武将在不在（据点锚定武将，且此刻没随军在外）→ 对话：
@@ -2201,8 +2201,8 @@ export class PlayerQuestSystem {
         //    经典战表里抄的 enemyFactionName（北魏/北宋/唐朝…旧称）只在势力不存在时兜底
         const enemyFactionName = FACTIONS.find((f) => f.id === fb.enemyFactionId)?.name ?? fb.enemyFactionName;
         const enemyDisplayName = existingEnemyGen?.generalName ?? `${enemyFactionName}军`;
-        // 兜底势力 `panshu` 没有武将/军团，军团名按敌将或敌势力泛称拼，不再叫「起义军团」
-        // （旧「叛军用起义军团」口径已由 2026-10-24「叛军和起义军完全是两回事」＋ 2026-10-25 删起义势力作废）。
+        // 兜底势力 `panshu` 没有武将/军团，军团名按敌将或敌势力泛称拼，不再叫「盗贼团伙军团」
+        // （旧「叛军用动乱番号」口径已由 2026-10-24「叛军和义军完全是两回事」＋ 2026-10-25 删起义势力作废）。
         const enemyLegionName = existingEnemyGen
             ? `${enemyDisplayName}部`
             : enemyDisplayName;

@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/11/4 17:19:29（共 6 条）
+ * 生成时间：2026/11/4 19:45:54（共 6 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/CENTRAL/bfe3_14.png": "/assets/CENTRAL/__多余__CENTRAL_02.png",

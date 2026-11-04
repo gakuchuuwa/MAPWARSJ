@@ -5,7 +5,7 @@
  *
  * 🔴 [2026-10-20 主人最新令「这次改回来，以后就不要动三级军团了，省的误伤」] 三级军团一律不动：
  *   挂三级军团的武将保持原样，**只作参考报告，不再判「应改二级」**；旧「三级也查」判法作废。
- *   唯一例外仍是「帝国时代起义军团」（起义军铁律）。
+ *   唯一例外仍是「帝国时代盗贼团伙团」（盗贼团伙铁律）。
  * 🔴 [2026-10-20 主人设定] 西班牙线：帝国时代西班牙方阵军团＝欧洲武将；帝国时代西班牙征服军团（三级）＝美洲武将。
  * 用法：npx tsx --import ./tools/sim-preload.mjs tools/verify-general-legion.mts
  */
@@ -25,7 +25,7 @@ const l3 = new Set((LEVEL_3_LEGIONS as any[]).map((l) => l.name));
 const fname = (id: string) => (FACTIONS as any[]).find((f) => f.id === id)?.name ?? '';
 
 const problems: string[] = [];
-const UPRISING_LEGION = '起义军';   // 🔴 起义军铁律：一律算到三级起义军团，合规
+const UPRISING_LEGION = '盗贼团伙';   // 🔴 盗贼团伙铁律：一律算到三级盗贼团伙团，合规
 let total = 0, ok = 0, uprisingOk = 0, thirdKept = 0;
 for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
     for (const g of (Array.isArray(entry) ? entry : [entry]) as any[]) {
@@ -40,7 +40,7 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
         const want = byKey.get(`${culture}|${era}`);
         if (!want) { problems.push(`${who}｜${culture}×${era} 没有二级军团`); continue; }
         if (legion === UPRISING_LEGION && (FACTION_COMPOSITIONS as any)[gfid]?.legionName === UPRISING_LEGION) {
-            uprisingOk++;   // 起义军：军团口径按铁律，不按文化×时代
+            uprisingOk++;   // 盗贼团伙：军团口径按铁律，不按文化×时代
             continue;
         }
         // 🔴 [2026-10-20 主人令「姬发他们是先秦军团，编制却不对」] 细分标签「古典·先秦」武将：军团必须是其细分专属军团（古典时代先秦军团，战车＋步＋弓、无骑无弩，符合商周史实），
@@ -63,7 +63,7 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
         ok++;
     }
 }
-console.log({ 武将总数: total, 对应上: ok, 起义军合规: uprisingOk, 三级保留: thirdKept, 有问题: problems.length });
+console.log({ 武将总数: total, 对应上: ok, 盗贼团伙合规: uprisingOk, 三级保留: thirdKept, 有问题: problems.length });
 for (const p of problems) console.log('  ', p);
 process.exit(problems.length ? 1 : 0);
 

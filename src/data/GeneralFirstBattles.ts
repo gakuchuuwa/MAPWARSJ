@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将首次会面·历史经典战设定（GeneralFirstBattles）
  *
  * 规则：
