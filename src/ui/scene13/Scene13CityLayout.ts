@@ -8,7 +8,7 @@
  * 因此本模块用到的 Scene13WarLayer 成员不再是 private。
  */
 import type { Scene13WarLayer } from '../Scene13WarLayer';
-import type { DecorSprite } from './Scene13Types';
+import { PASS_VALLEY_DIRS_8, passValleyDirAngle, type DecorSprite } from './Scene13Types';
 import { TAC_TILE_W, TAC_TILE_H } from './Scene13GroundLayerGL';
 import { measureStrategicCity, strategicCityGroundElement } from './Scene13StrategicCity';
 import {
@@ -154,15 +154,16 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     // 🔴 [2026-10-13 主人令「护城河按史实区分，没有水的城不要挖」] 护城河要有水源：城郊 25km 内没有河 / 湖 / 海（waterKind === 'none'，
     //    即内陆干旱区的城）不挖——历史上这类城要么是干壕、要么根本无壕，凭空挖一圈水不符合地理。
     const moatOn = moatW > 0 && this.buildingStyleFor(1) !== 'YURT' && this.environmentPlan?.waterKind !== 'none';
+    const passRoadDir = this.defenderPassRoadDir ?? PASS_VALLEY_DIRS_8[(hash >>> 0) % PASS_VALLEY_DIRS_8.length];
     if (this.defenderCityType === 'pass') {
         // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形/镜像矩形：台地边界按对应双圈算（旧方形不传，走原算法一个像素不动）
-        // 🔴 [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」] 地形三选一：mound 多层高台 / plateau 整块矩形高台 / flat 抹平
-        gl.flattenPassTerraces(cx, cy, W, H, seedStr, this.wallGates, this.defBuildings,
+        // 🔴 [2026-11-04 主人令「你把险要改为二层了？我以前的险要是三层」「可以改为8个朝向随机凹地吗，每张图不一样」]
+        gl.flattenPassTerraces(cx, cy, W, H, `${seedStr}_${passRoadDir}`, this.wallGates, this.defBuildings,
             this.defenderPassShape && this.defenderPassShape !== 'square'
                 ? passRingHalfExtents(this.defenderPassShape)
                 : undefined,
             this.defenderPassTerrain ?? 'mound',
-            this.defenderPassRoadDir ?? 'ew');
+            passRoadDir);
     } else if (this.defenderCityType === 'stockade') {
         gl.flattenStockadeTerraces(cx, cy, W, H, seedStr, this.wallGates);
     } else {
@@ -546,7 +547,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             if (distCells < minHillDistCells + 1.2) continue;
             const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
             const item = { gx, gy, x: pt.x, y: pt.y, elev, dist: distCells };
-            if (elev >= 1.8 && (!isPassType || Math.abs(gy - cGy) >= 14.0)) {
+            const passAng = passValleyDirAngle(passRoadDir);
+            const passCrossV = Math.abs(-(gx - cGx) * Math.sin(passAng) + (gy - cGy) * Math.cos(passAng));
+            if (elev >= 1.8 && (!isPassType || passCrossV >= 12.5)) {
                 highSpots.push(item);
             } else if (elev >= 0.7 && elev < 1.8) {
                 midSlopeSpots.push(item);
@@ -1976,7 +1979,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             const distFromCityCenter = Math.hypot((pt.x - cx) / 1.15, (pt.y - cy) * 1.45);
             if (distFromCityCenter < 980) return false;
             if (this.defenderCityType === 'pass') {
-                if ((this.defenderPassRoadDir === 'ns' ? Math.abs(gx - cGx) : Math.abs(gy - cGy)) < 16.0) return false;
+                const passAng = passValleyDirAngle(passRoadDir);
+                const passCrossV = Math.abs(-(gx - cGx) * Math.sin(passAng) + (gy - cGy) * Math.cos(passAng));
+                if (passCrossV < 14.5) return false;
             }
             for (const sp of this.spawns) {
                 if (Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.5) < 700) return false;

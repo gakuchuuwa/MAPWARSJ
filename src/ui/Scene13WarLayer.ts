@@ -57,14 +57,16 @@ import { getGeneralProfile } from '../data/GeneralSkills';
 import { getFactionGeneral, getFactionIdOfGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig, getGeneralEliteConfig, getEliteTierDisplayName } from '../data/ExpeditionLegions';
-import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
+import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, thirtySixStratagemSetOf, THIRTY_SIX_BY_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 import { getGameMode } from '../data/generalOnStage';
 
-import type {
-    WarBuilding, ArrowTower, CityBuildingEntry, WarSpawn, WarMan, WarArrow,
-    ProjAsset, WarFallenFlag, SceneCloud, NatureMeta, NatureAsset, DecorSprite,
-    AnimalAction, TacticalAnimal, WarSlash, WarSpark, WarFx, FxDir, FxAsset,
-    WarCorpse, WarFleer, WarBank, Scene13WarInit, PassMountainConfig, Scene13SkirmishSpec,
+import {
+    PASS_VALLEY_DIRS_8,
+    type PassValleyDir,
+    type WarBuilding, type ArrowTower, type CityBuildingEntry, type WarSpawn, type WarMan, type WarArrow,
+    type ProjAsset, type WarFallenFlag, type SceneCloud, type NatureMeta, type NatureAsset, type DecorSprite,
+    type AnimalAction, type TacticalAnimal, type WarSlash, type WarSpark, type WarFx, type FxDir, type FxAsset,
+    type WarCorpse, type WarFleer, type WarBank, type Scene13WarInit, type PassMountainConfig, type Scene13SkirmishSpec,
 } from './scene13/Scene13Types';
 import type { Scene13SkillVfx, Scene13SkillVfxPoint, Scene13SkillVisualState } from './scene13/Scene13SkillVfx';
 export type { TechBrief, Scene13WarInit, PassMountainConfig } from './scene13/Scene13Types';
@@ -235,8 +237,8 @@ export class Scene13WarLayer {
     defenderPassLayoutShape: 'square' | 'rect' | 'rect_mirror' | null = null;
     /** 🔴 [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」] 险要地形：'flat'＝抹平、'plateau'＝整块矩形高台；null＝现状多层高台 */
     defenderPassTerrain: 'mound' | 'flat' | 'plateau' | null = null;
-    /** 🔴 [2026-10-21 主人令「把道路添加一个南北走向的」] 关隘山谷道路走向：'ew'＝东西走向（默认）、'ns'＝南北走向 */
-    defenderPassRoadDir: 'ew' | 'ns' | null = null;
+    /** 🔴 [2026-11-04 主人令「可以改为8个朝向随机凹地吗，每张图不一样」] 关隘山谷凹地朝向（8 朝向随机，兼容 'ew' / 'ns'） */
+    defenderPassRoadDir: PassValleyDir | null = null;
     /** 🔴 [2026-09-11 主人「和游戏同步」] 守方据点经**战略地图同一解析**得到的 DE 建筑风格前缀（null = 该据点无风格，走旧的两层）。 */
     private defenderMapStyle: string | null = null;
     men: WarMan[] = [];
@@ -1256,30 +1258,26 @@ export class Scene13WarLayer {
     /** 满槽释放指定六计：执行 6 大正交战场效果 + 通知 CombatUI 触发立绘脉冲与大字 Cut-in */
     private triggerScene13Skill(f: 0 | 1, six: TacticalSixSet): void {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
-        const roleTag = f === 0 ? '攻击' : '防御';
         const gid = this.sideGeneralId[f];
 
         // 挑选贴合该武将身份、攻守角色且与战术六计真实效果一致的四字技能名
         // （TacticalSkillCatalog.EFFECT_TO_SIX_SET 锁死给战略旧表，此处按 Scene13 实际技效匹配，防「回血固防喊迎头痛击、减敌兵喊退避疲敌」）
         const matchesScene13Effect = (name: string, baseEffect: string, targetSix: TacticalSixSet): boolean => {
+            // 🔴 [2026-11-04 主人报「播报中听到走为上计，但是放的是胜战计」「三十六计的所有技能，必须和六个战计对应好，因为这是历史」]
+            //    三十六计的计名**只认原书分套**（THIRTY_SIX_STRATAGEM_SET）：走为上计只出在败战计、声东击西只出在胜战计……
+            //    原来下面几张名单把三十六计按「像不像固守 / 伏兵 / 策反 / 乱阵」重新分了一遍（走为上计进了固守名单 ⇒ 被胜战计选中），已全部撤出名单。
+            const histSix = thirtySixStratagemSetOf(name);
+            if (histSix) return histSix === targetSix;
+            // 以下名单只管**非三十六计**的技能名
             const holdOrRetreatNames = new Set([
                 '步步为营', '固若金汤', '壁垒森严', '金城汤池', '据险持重',
-                '先据山险', '持重待疲', '休养生息', '据垒固守', '缓攻懈敌', '三舍避锋', '走为上计',
+                '先据山险', '持重待疲', '休养生息', '据垒固守', '缓攻懈敌', '三舍避锋',
             ]);
-            const ambushNames = new Set([
-                '暗度陈仓', '声东击西', '无中生有', '趁火打劫', '围魏救赵',
-                '调虎离山', '瞒天过海', '假道伐虢', '混水摸鱼', '李代桃僵',
-            ]);
-            const defectNames = new Set([
-                '反客为主', '借刀杀人', '顺手牵羊', '反间计', '远交近攻',
-                '笑里藏刀', '借尸还魂', '釜底抽薪', '擒贼擒王', '关门捉贼',
-            ]);
-            const panicNames = new Set([
-                '打草惊蛇', '指桑骂槐', '假痴不颠', '树上开花', '空城计',
-                '美人计', '连环计', '偷梁换柱', '抛砖引玉', '欲擒故纵',
-            ]);
+            const ambushNames = new Set<string>();
+            const defectNames = new Set<string>();
+            const panicNames = new Set<string>();
             const strikeNames = new Set([
-                '迎头痛击', '肉薄骨并', '上屋抽梯',
+                '迎头痛击', '肉薄骨并',
             ]);
             switch (targetSix) {
                 case 'gongzhan': // 【攻】振己威：全军狂暴加攻
@@ -1315,28 +1313,20 @@ export class Scene13WarLayer {
             return undefined;
         })() : undefined;
 
-        if (!pickedEntry) {
-            const candidates = TACTICAL_SKILL_ENTRIES_V1.filter(
-                (e) => (e.usageTag === roleTag || e.usageTag === '双行' || !e.usageTag)
-                    && matchesScene13Effect(e.displayName, e.baseEffect, six)
-                    && !e.ownerGeneralId,
-            );
-            const pool = candidates.length > 0
-                ? candidates
-                : TACTICAL_SKILL_ENTRIES_V1.filter((e) => matchesScene13Effect(e.displayName, e.baseEffect, six) && !e.ownerGeneralId);
-            if (pool.length > 0) {
-                pickedEntry = pool[Math.floor(Math.random() * pool.length)];
-            }
+        // 🔴 [2026-11-04 主人令「既然固定好了三十六计策，可以用它做保底，正好6*6，六个保底」]
+        //    武将自己没有对得上这一套的技能 ⇒ 从这一套战计的原书六计里抽一个（THIRTY_SIX_BY_SET）。
+        //    原保底是「全表无主技能按技效随机抽」再退到每套一个写死的名字（破釜沉舟 / 步步为营……），已由这六计取代。
+        //    同一方连着两次放同一套时，尽量不重复上一次的计名。
+        let skillName: string;
+        if (pickedEntry) {
+            skillName = pickedEntry.displayName;
+        } else {
+            const six6 = THIRTY_SIX_BY_SET[six];
+            const fresh = six6.filter((n) => n !== this.lastCastSkillName[f]);
+            const pool = fresh.length > 0 ? fresh : six6;
+            skillName = pool[Math.floor(Math.random() * pool.length)];
+            pickedEntry = TACTICAL_SKILL_ENTRIES_V1.find((e) => e.displayName === skillName && !e.ownerGeneralId);
         }
-        const fallbackNames: Record<TacticalSixSet, string> = {
-            gongzhan: f === 0 ? '破釜沉舟' : '绝地反击',
-            shengzhan: f === 0 ? '步步为营' : '固若金汤',
-            dizhan: f === 0 ? '暗度陈仓' : '奇兵袭营',
-            hunzhan: f === 0 ? '声东击西' : '疑兵之计',
-            bingzhan: f === 0 ? '策反倒戈' : '离间反戈',
-            baizhan: f === 0 ? '雷霆万钧' : '背水一战',
-        };
-        const skillName = pickedEntry?.displayName ?? fallbackNames[six];
         // 观众放的计：名字单独一行交给 CombatUI（原先拼成「某某 · 计名」一行，长名字会被屏幕边切掉）
         const viewer = this.viewerCaster;
         const skillId = pickedEntry?.id ?? `tac13_${six}`;
@@ -2373,7 +2363,9 @@ export class Scene13WarLayer {
         let lastX = 0, lastY = 0, downX = 0, downY = 0;
         const onDown = (e: MouseEvent) => {
             const canDrag = this.useGroundGL || this.tacticalZoom > 1.001;
-            if (e.button !== 0 || !this.active || !canDrag) return;
+            // 🔴 [2026-11-04 主人报「程序地图不能拖拽查看」] 原只认 active：攻城预览页（scratch/_siege_preview.html）与战后停留画面
+            //    处在 lingering（active=false）⇒ 滚轮能缩放、左键却拖不动。与滚轮同一判据：active 或 lingering 都可拖。
+            if (e.button !== 0 || (!this.active && !this.lingering) || !canDrag) return;
             const t = e.target as HTMLElement | null;
             if (!t || !(t === document.body || t === document.documentElement || t.id === 'map' || t.closest('#map') || t.tagName === 'CANVAS')) return;
             dragging = true; lastX = downX = e.clientX; lastY = downY = e.clientY;
@@ -2749,7 +2741,10 @@ export class Scene13WarLayer {
                 const passVisual = init.defenderPassShape ?? (passMirror ? mirrorPassShape(passBase) : passBase);
                 this.defenderPassShape = passVisual;
                 this.defenderPassLayoutShape = passMirror ? mirrorPassShape(passVisual) : passVisual;
-                this.defenderPassTerrain = init.defenderPassTerrain ?? (passVisual !== 'square' ? 'plateau' : null);
+                this.defenderPassTerrain = init.defenderPassTerrain ?? 'mound';
+                if (this.defenderCityType === 'pass' && !this.defenderPassRoadDir) {
+                    this.defenderPassRoadDir = PASS_VALLEY_DIRS_8[Math.floor(Math.random() * PASS_VALLEY_DIRS_8.length)];
+                }
                 const city: any = rec
                     ? { ...rec, mirror: passMirror, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type }
                     : { id: this.defenderCityId || 'siege_city', name: '城池', type: this.defenderCityType || 'medium_city', region: init.defenderRegion || 'CENTRAL', factionId: init.defenderFactionId ?? null, mirror: passMirror, latitude: init.defenderCityLat ?? init.centerLat ?? 30, longitude: init.defenderCityLng ?? init.centerLng ?? 110 };

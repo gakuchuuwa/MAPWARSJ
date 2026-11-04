@@ -2627,13 +2627,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代潘诺尼亚军团', civ: '匈人', age: 'feudal', deStyle: 'CEAS', region: 'HUNS' as RegionType,
         buildingStyle: 'HUNS',
         castleId: 'HUNS_CASTLE_AGE3', castleName: '匈奴/匈人 简易木石混合要塞',
-        formationMode: 'fish_scale',
+        formationMode: 'crescent',
         shipId: 'GALLEY',
         commanderUnit: 'hero_attila',
         slots: [
-            { type: 'eastern_swordsman', count: 3 },
-            { type: 'laminated_bowman', count: 4 },
+            { type: 'tarkan', count: 3 },
             { type: 'cav_archer', count: 2 },
+            { type: 'cav_archer_heavy', count: 4 },
         ],
     },
     // ── 匈人 · 帝国时代 · 帝国时代多瑙河军团　（本次新建）────────────────
@@ -2660,13 +2660,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代匈人军团', civ: '匈人', age: 'antiquity', deStyle: 'CEAS', region: 'HUNS' as RegionType,
         buildingStyle: 'HUNS',
         castleId: 'HUNS_CASTLE_AGE3', castleName: '匈奴/匈人 简易木石混合要塞',
-        formationMode: 'triangle',
+        formationMode: 'crescent',
         shipId: 'DEMO_RAFT',
         commanderUnit: 'hero_bledathehun',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_attila（主将队须为古典时代的英雄或精英兵）
         // 🔴 [2026-10-16 主人令] 匈人只有古典一档：4 档＝城堡精锐【匈奴答剌罕骑兵精锐】；无封建军团，普通档不另放。
         slots: [
-            { type: 'elite_tarkan', count: 2 },
-            { type: 'tarkan', count: 3 },
+            { type: 'elite_tarkan', count: 3 },
+            { type: 'scythian_scout', count: 2 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },

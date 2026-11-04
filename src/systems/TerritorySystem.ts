@@ -1116,28 +1116,28 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         ...passCorners.map(([bi, bj]) => ({ ci: passCornerI(bi), cj: passCornerJ(bj), isCenter: false })),
         ...passFlankSlots.map((fl) => ({ ci: fl.ci, cj: fl.cj, isCenter: false })),
     ];
-    // 🔴 [2026-11-04 主人令「多兵营，马厩挺好」] 险要内城两翼校场补设 2 座兵营 + 2 座马厩（3×3 占地，避开城堡、十字关道与 8 座箭塔）
+    // 🔴 [2026-11-04 主人令「多兵营，马厩挺好」] 险要内城第二层平台两翼校场补设 2 座兵营 + 2 座马厩（3×3 占地，避开第一层中心城堡高台、十字关道与 8 座箭塔）
     const passAuxGarrison: ReadonlyArray<{ b: string; age: string; ci: number; cj: number }> | undefined = isMobeiPass
         ? undefined
         : passShape === 'rect'
             ? [
-                { b: 'BARRACKS', age: 'AGE3', ci: -5, cj: -3 },
-                { b: 'STABLE', age: 'AGE3', ci: -5, cj: 4 },
-                { b: 'STABLE', age: 'AGE3', ci: 6, cj: -3 },
-                { b: 'BARRACKS', age: 'AGE3', ci: 6, cj: 4 },
+                { b: 'BARRACKS', age: 'AGE3', ci: -5.5, cj: -3.0 },
+                { b: 'STABLE', age: 'AGE3', ci: -5.5, cj: 4.0 },
+                { b: 'STABLE', age: 'AGE3', ci: 6.5, cj: -3.0 },
+                { b: 'BARRACKS', age: 'AGE3', ci: 6.5, cj: 4.0 },
             ]
             : passShape === 'rect_mirror'
                 ? [
-                    { b: 'BARRACKS', age: 'AGE3', ci: -3, cj: -5 },
-                    { b: 'STABLE', age: 'AGE3', ci: 4, cj: -5 },
-                    { b: 'STABLE', age: 'AGE3', ci: -3, cj: 6 },
-                    { b: 'BARRACKS', age: 'AGE3', ci: 4, cj: 6 },
+                    { b: 'BARRACKS', age: 'AGE3', ci: -3.0, cj: -5.5 },
+                    { b: 'STABLE', age: 'AGE3', ci: 4.0, cj: -5.5 },
+                    { b: 'STABLE', age: 'AGE3', ci: -3.0, cj: 6.5 },
+                    { b: 'BARRACKS', age: 'AGE3', ci: 4.0, cj: 6.5 },
                 ]
                 : [
-                    { b: 'BARRACKS', age: 'AGE3', ci: -4, cj: -4 },
-                    { b: 'STABLE', age: 'AGE3', ci: 5, cj: -4 },
-                    { b: 'STABLE', age: 'AGE3', ci: -4, cj: 5 },
-                    { b: 'BARRACKS', age: 'AGE3', ci: 5, cj: 5 },
+                    { b: 'BARRACKS', age: 'AGE3', ci: -4.5, cj: -4.5 },
+                    { b: 'STABLE', age: 'AGE3', ci: 5.5, cj: -4.5 },
+                    { b: 'STABLE', age: 'AGE3', ci: -4.5, cj: 5.5 },
+                    { b: 'BARRACKS', age: 'AGE3', ci: 5.5, cj: 5.5 },
                 ];
     const passGridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, !isMobeiStyle(buildingStyle), factionId, region,
         passInnerBuildings, native, {

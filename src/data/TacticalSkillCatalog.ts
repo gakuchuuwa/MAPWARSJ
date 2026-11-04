@@ -236,6 +236,45 @@ export const VARIANCE_EFFECTS: ReadonlySet<TacticalBaseEffect> = new Set<Tactica
     'recompute_comeback',
 ]);
 
+/**
+ * 🔴 [2026-11-04 主人令「三十六计的所有技能，必须和六个战计对应好，因为这是历史」]
+ * 《三十六计》原书六套 × 六计（按通行本次序）。凡技能名是三十六计之一，归哪一套**只认这张表**，
+ * 任何按技效 / 名字另分的类都不得改判（战术模式曾把「走为上计」归去胜战计）。
+ * 本文件 TACTICAL_SKILL_ENTRIES_V1 里的三十六计条目，其 baseEffect 经 EFFECT_TO_SIX_SET 归类与本表逐条一致（2026-11-04 核过 30 条）。
+ */
+export const THIRTY_SIX_STRATAGEM_SET: Readonly<Record<string, TacticalSixSet>> = {
+    // 第一套 胜战计
+    瞒天过海: 'shengzhan', 围魏救赵: 'shengzhan', 借刀杀人: 'shengzhan', 以逸待劳: 'shengzhan', 趁火打劫: 'shengzhan', 声东击西: 'shengzhan',
+    // 第二套 敌战计
+    无中生有: 'dizhan', 暗度陈仓: 'dizhan', 隔岸观火: 'dizhan', 笑里藏刀: 'dizhan', 李代桃僵: 'dizhan', 顺手牵羊: 'dizhan',
+    // 第三套 攻战计
+    打草惊蛇: 'gongzhan', 借尸还魂: 'gongzhan', 调虎离山: 'gongzhan', 欲擒故纵: 'gongzhan', 抛砖引玉: 'gongzhan', 擒贼擒王: 'gongzhan',
+    // 第四套 混战计
+    釜底抽薪: 'hunzhan', 浑水摸鱼: 'hunzhan', 混水摸鱼: 'hunzhan', 金蝉脱壳: 'hunzhan', 关门捉贼: 'hunzhan', 远交近攻: 'hunzhan', 假道伐虢: 'hunzhan',
+    // 第五套 并战计
+    偷梁换柱: 'bingzhan', 指桑骂槐: 'bingzhan', 假痴不癫: 'bingzhan', 假痴不颠: 'bingzhan', 上屋抽梯: 'bingzhan', 树上开花: 'bingzhan', 反客为主: 'bingzhan',
+    // 第六套 败战计
+    美人计: 'baizhan', 空城计: 'baizhan', 反间计: 'baizhan', 苦肉计: 'baizhan', 连环计: 'baizhan', 走为上: 'baizhan', 走为上计: 'baizhan',
+};
+
+/**
+ * 🔴 [2026-11-04 主人令「既然固定好了三十六计策，可以用它做保底，正好6*6，六个保底」]
+ * 每套战计的六计（原书次序、通行写法；混水摸鱼与技能表同字）。武将自己没有对得上这一套的技能时，从这六个里抽。
+ */
+export const THIRTY_SIX_BY_SET: Readonly<Record<TacticalSixSet, readonly string[]>> = {
+    shengzhan: ['瞒天过海', '围魏救赵', '借刀杀人', '以逸待劳', '趁火打劫', '声东击西'],
+    dizhan: ['无中生有', '暗度陈仓', '隔岸观火', '笑里藏刀', '李代桃僵', '顺手牵羊'],
+    gongzhan: ['打草惊蛇', '借尸还魂', '调虎离山', '欲擒故纵', '抛砖引玉', '擒贼擒王'],
+    hunzhan: ['釜底抽薪', '混水摸鱼', '金蝉脱壳', '关门捉贼', '远交近攻', '假道伐虢'],
+    bingzhan: ['偷梁换柱', '指桑骂槐', '假痴不癫', '上屋抽梯', '树上开花', '反客为主'],
+    baizhan: ['美人计', '空城计', '反间计', '苦肉计', '连环计', '走为上计'],
+};
+
+/** 技能名若是三十六计之一，返回它在原书里所属的那一套；不是三十六计返回 null */
+export function thirtySixStratagemSetOf(name: string): TacticalSixSet | null {
+    return THIRTY_SIX_STRATAGEM_SET[name] ?? null;
+}
+
 export function getTacticalSixSet(entry: TacticalSkillEntry): TacticalSixSet {
     return EFFECT_TO_SIX_SET[entry.baseEffect];
 }

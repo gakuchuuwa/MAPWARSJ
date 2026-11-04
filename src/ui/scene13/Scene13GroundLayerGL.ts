@@ -16,6 +16,7 @@
 import { DE_TERRAIN_MANIFEST, DE_TERRAIN_BLEND, type DeTerrainManifestItem } from '../../data/battlefield/deTerrainData';
 import type { Scene13GroundTiles } from './Scene13EnvironmentGenerator';
 import type { PassRingHalfExtents } from '../../systems/cityWallShared';
+import { passValleyDirAngle, type PassValleyDir } from './Scene13Types';
 import { resolveTacticalSeasonalGroundUniforms, type CalendarSeason4 } from '../../world/environment/seasonalGround';
 
 export const DE_TILE_W = 96, DE_TILE_H = 48, DE_ELEV_H = 24;
@@ -1637,7 +1638,7 @@ export class Scene13GroundLayerGL {
     outerHalfI: number,
     outerHalfJ: number,
     rnd: () => number,
-    roadDir: 'ew' | 'ns' = 'ew'
+    roadDir: PassValleyDir = 'e'
   ): void {
     const N = this.N;
     const V = N + 1;
@@ -1658,165 +1659,149 @@ export class Scene13GroundLayerGL {
     const isWet = (gx: number, gy: number) =>
       gx >= 0 && gx < N && gy >= 0 && gy < N && (this.smoothWater[gy * N + gx] ?? 0) >= 0.16;
 
-    // 峡谷山脚线：紧贴城关外圈两端（约 halfCorridor ± 12.0）
-    const halfCorridor = Math.max(11.8, (outerHalfI + outerHalfJ) * 0.5 - 0.2);
-    const p1 = rnd() * 6.28, p2 = rnd() * 6.28;
+    // 🔴 [2026-11-04 主人令「可以改为8个朝向随机凹地吗，每张图不一样」＋「你把险要改为二层了？我以前的险要是三层」]
+    // 1. 8 个朝向随机凹地：顺谷主轴角 θ = passValleyDirAngle(roadDir) + 每图微幅自然偏角；
+    //    在 (u, v) 旋转坐标系下，u 为顺谷轴（+u 为谷口微敞端、-u 为谷底收束端，确保 8 朝向正反各异），v 为横谷轴（两侧凸起山脉）；
+    // 2. 两翼凸起严格恢复三层阶梯高台（Tier 1: 3 级基座 -> Tier 2: 5 级中层高台 -> Tier 3: 7 级顶层主峰），
+    //    每层之间留足 3.2~4.0 格宽平顶台阶，彻底杜绝 clean_elevation 坡度约束削平第三层。
+    const baseTheta = passValleyDirAngle(roadDir) + (rnd() - 0.5) * 0.14;
+    const cosT = Math.cos(baseTheta), sinT = Math.sin(baseTheta);
+    const halfCorridor = Math.max(11.4, (outerHalfI + outerHalfJ) * 0.5 - 0.3);
+    const p0 = rnd() * 6.28, p1 = rnd() * 6.28, p2 = rnd() * 6.28, p3 = rnd() * 6.28, p4 = rnd() * 6.28;
+    const p5 = rnd() * 6.28, p6 = rnd() * 6.28, p7 = rnd() * 6.28, p8 = rnd() * 6.28;
+    const bendAmp = (rnd() - 0.5) * 4.2;
 
-    // ── 第一阶段：生成第一层广阔平顶高地基座（Level 2~3）──
+    // ── 第一阶段：按 8 朝向生成中央 0 级凹地与两侧三层阶梯高台基座（Tier 1: 3 级 -> Tier 2: 5 级 -> Tier 3: 7 级）──
     for (let gy = 0; gy < N; gy++) {
       for (let gx = 0; gx < N; gx++) {
         if (inPassProtect(gx, gy) || isWet(gx, gy)) continue;
 
+        const dx = gx - cgx, dy = gy - cgy;
+        const u = dx * cosT + dy * sinT;
+        const vRaw = -dx * sinT + dy * cosT;
+
+        // 远离关城核心后，凹地走廊带自然 S 形蜿蜒与朝向端（+u）微喇叭口张开，使 8 个朝向每张图轮廓各异
+        const uDamp = Math.min(1.0, Math.max(0.0, (Math.abs(u) - 10.0) / 16.0));
+        const vCenter = bendAmp * Math.sin(u * 0.05 + p0) * uDamp;
+        const v = vRaw - vCenter;
+        const flare = Math.max(-1.2, Math.min(2.6, (u / 32.0) * 2.2)) * uDamp;
+
+        const damp = Math.min(1.0, Math.max(0.22, Math.abs(u) / 13.5));
+        const jitterL = (2.1 * Math.sin(u * 0.13 + p1) + 1.3 * Math.cos(u * 0.27 + p2)) * damp;
+        const jitterR = (2.1 * Math.sin(u * 0.13 + p3) + 1.3 * Math.cos(u * 0.27 + p4)) * damp;
+
+        const footL = -(halfCorridor + flare) + jitterL;
+        const footR = (halfCorridor + flare) + jitterR;
+
         let dMountain = 0;
-        if (roadDir === 'ns') {
-          // 🔴 [2026-10-21 主人令「把道路添加一个南北走向的」]
-          // 南北走向：山谷与道路纵贯南北，高地位于东西两侧（West & East）
-          const distFromCenter = Math.abs(gy - cgy);
-          const damp = Math.min(1.0, Math.max(0.2, distFromCenter / 14.0));
-          const jitter = (2.0 * Math.sin(gy * 0.13 + p1) + 1.2 * Math.cos(gy * 0.27 + p2)) * damp;
-
-          const westFoot = (cgx - halfCorridor) + jitter;
-          const eastFoot = (cgx + halfCorridor) - jitter;
-
-          if (gx < westFoot) dMountain = westFoot - gx;
-          else if (gx > eastFoot) dMountain = gx - eastFoot;
-        } else {
-          // 东西走向（默认）：山谷与道路横贯东西，高地位于南北两翼（North & South）
-          const distFromCenter = Math.abs(gx - cgx);
-          const damp = Math.min(1.0, Math.max(0.2, distFromCenter / 14.0));
-          const jitter = (2.0 * Math.sin(gx * 0.13 + p1) + 1.2 * Math.cos(gx * 0.27 + p2)) * damp;
-
-          const northFoot = (cgy - halfCorridor) + jitter;
-          const southFoot = (cgy + halfCorridor) - jitter;
-
-          if (gy < northFoot) dMountain = northFoot - gy;
-          else if (gy > southFoot) dMountain = gy - southFoot;
+        let sideSign = 1;
+        if (v < footL) {
+          dMountain = footL - v;
+          sideSign = -1;
+        } else if (v > footR) {
+          dMountain = v - footR;
+          sideSign = 1;
         }
 
         if (dMountain <= 0) {
           tileElev[gy * N + gx] = 0;
         } else {
-          // 第一层平坦大高台（2~3 级广阔平顶台地）
-          if (dMountain <= 0.8) tileElev[gy * N + gx] = 1;
-          else if (dMountain <= 1.8) tileElev[gy * N + gx] = 2;
-          else tileElev[gy * N + gx] = 3; // 基础高台基座保持 3 级平顶
-        }
-      }
-    }
+          // 第一层凸起高台（Level 3 宽平顶基座）
+          let h = dMountain <= 0.85 ? 1 : dMountain <= 1.75 ? 2 : 3;
 
-    // ── 第二阶段：在高地上放高地（Tier 2: 4~5 级嵌套平顶高台）──
-    interface Mound { x: number; y: number; rx: number; ry: number; targetH: number; }
-    const tier2Mounds: Mound[] = [];
-
-    if (roadDir === 'ns') {
-      // 🔴 [2026-10-21 主人令「把道路添加一个南北走向的」]
-      // 西翼：在 cgx - 15 ~ cgx - 24 之间放置二级高台（Level 5）
-      const wTier2Y = [-34, -18, -2, 14, 30, 46];
-      for (const dy of wTier2Y) {
-        const my = Math.round(cgy + dy + (rnd() - 0.5) * 4);
-        const mx = Math.round(cgx - 17 - rnd() * 5);
-        if (mx >= 6 && mx < N - 6 && my >= 8 && my < N - 8) {
-          tier2Mounds.push({ x: mx, y: my, rx: 5 + Math.floor(rnd() * 3), ry: 8 + Math.floor(rnd() * 4), targetH: 5 });
-        }
-      }
-
-      // 东翼：在 cgx + 15 ~ cgx + 24 之间放置二级高台（Level 5）
-      const eTier2Y = [-38, -22, -6, 10, 26, 42];
-      for (const dy of eTier2Y) {
-        const my = Math.round(cgy + dy + (rnd() - 0.5) * 4);
-        const mx = Math.round(cgx + 17 + rnd() * 5);
-        if (mx >= 6 && mx < N - 6 && my >= 8 && my < N - 8) {
-          tier2Mounds.push({ x: mx, y: my, rx: 5 + Math.floor(rnd() * 3), ry: 8 + Math.floor(rnd() * 4), targetH: 5 });
-        }
-      }
-
-      // 关口近侧前哨山丘（关城上下两翼平视可见的高台上小高地）
-      tier2Mounds.push(
-        { x: Math.round(cgx - 13), y: Math.round(cgy - 18), rx: 4, ry: 6, targetH: 4 },
-        { x: Math.round(cgx - 13), y: Math.round(cgy + 18), rx: 4, ry: 6, targetH: 4 },
-        { x: Math.round(cgx + 13), y: Math.round(cgy - 18), rx: 4, ry: 6, targetH: 4 },
-        { x: Math.round(cgx + 13), y: Math.round(cgy + 18), rx: 4, ry: 6, targetH: 4 }
-      );
-    } else {
-      // 北翼：在 cgy - 15 ~ cgy - 24 之间放置 5 座二级高台（Level 5）
-      const nTier2X = [-34, -18, -2, 14, 30, 46];
-      for (const dx of nTier2X) {
-        const mx = Math.round(cgx + dx + (rnd() - 0.5) * 4);
-        const my = Math.round(cgy - 17 - rnd() * 5);
-        if (mx >= 8 && mx < N - 8 && my >= 6 && my < N - 6) {
-          tier2Mounds.push({ x: mx, y: my, rx: 8 + Math.floor(rnd() * 4), ry: 5 + Math.floor(rnd() * 3), targetH: 5 });
-        }
-      }
-
-      // 南翼：在 cgy + 15 ~ cgy + 24 之间放置 5 座二级高台（Level 5）
-      const sTier2X = [-38, -22, -6, 10, 26, 42];
-      for (const dx of sTier2X) {
-        const mx = Math.round(cgx + dx + (rnd() - 0.5) * 4);
-        const my = Math.round(cgy + 17 + rnd() * 5);
-        if (mx >= 8 && mx < N - 8 && my >= 6 && my < N - 6) {
-          tier2Mounds.push({ x: mx, y: my, rx: 8 + Math.floor(rnd() * 4), ry: 5 + Math.floor(rnd() * 3), targetH: 5 });
-        }
-      }
-
-      // 关口两翼近侧前哨山丘（关城左右两翼平视可见的高台上小高地）
-      tier2Mounds.push(
-        { x: Math.round(cgx - 18), y: Math.round(cgy - 13), rx: 6, ry: 4, targetH: 4 },
-        { x: Math.round(cgx + 18), y: Math.round(cgy - 13), rx: 6, ry: 4, targetH: 4 },
-        { x: Math.round(cgx - 18), y: Math.round(cgy + 13), rx: 6, ry: 4, targetH: 4 },
-        { x: Math.round(cgx + 18), y: Math.round(cgy + 13), rx: 6, ry: 4, targetH: 4 }
-      );
-    }
-
-    // 叠置第二层高台（内部全平为 4~5 级，边缘平滑跌落回 3 级基座）
-    for (const m of tier2Mounds) {
-      for (let dy = -m.ry; dy <= m.ry; dy++) {
-        for (let dx = -m.rx; dx <= m.rx; dx++) {
-          const gx = m.x + dx, gy = m.y + dy;
-          if (gx < 0 || gx >= N || gy < 0 || gy >= N) continue;
-          if (inPassProtect(gx, gy) || isWet(gx, gy)) continue;
-          const d = Math.hypot(dx / m.rx, dy / m.ry);
-          if (d > 1.0) continue;
-          let h = m.targetH;
-          if (d > 0.70) {
-            const t = (d - 0.70) / 0.30;
-            h = Math.round(m.targetH - t * (m.targetH - 3));
+          // 第二层凸起高台（Level 5 中层平顶台地：在一层台地上预留 ~2.8 格宽平顶台阶后拔起）
+          const wave2 = 1.3 * Math.sin(u * 0.11 + (sideSign < 0 ? p5 : p6)) + 0.8 * Math.cos(u * 0.23 + p2);
+          const dTier2 = dMountain - (4.5 + wave2);
+          if (dTier2 > 0) {
+            h = dTier2 <= 0.9 ? 4 : 5;
           }
-          if (h > tileElev[gy * N + gx]) {
-            tileElev[gy * N + gx] = h;
+
+          // 第三层凸起高台（Level 7 顶层绝顶主峰：在二层 5 级台地上再预留 ~3.2 格宽平顶台阶后拔起）
+          const wave3 = 1.4 * Math.sin(u * 0.09 + (sideSign < 0 ? p7 : p8)) + 0.9 * Math.cos(u * 0.19 + p4);
+          const dTier3 = dMountain - (8.3 + wave3);
+          if (dTier3 > 0) {
+            h = dTier3 <= 0.9 ? 6 : 7;
           }
+
+          tileElev[gy * N + gx] = h;
         }
       }
     }
 
-    // ── 第三阶段：在二级高台上再放第三层绝顶主峰（Tier 3: Level 7 最高峰，高地上再放高地）──
-    const tier3Summits: Mound[] = [];
-    // 在二级高台的核心，叠置 7 级平顶顶峰
-    for (let i = 0; i < tier2Mounds.length; i += 2) {
-      const m2 = tier2Mounds[i];
-      if (m2.targetH < 5) continue;
-      const offX = roadDir === 'ns' ? (m2.x < cgx ? -2 : 2) : 0;
-      const offY = roadDir === 'ns' ? 0 : (m2.y < cgy ? -2 : 2);
-      tier3Summits.push({
-        x: m2.x + offX,
-        y: m2.y + offY,
-        rx: Math.max(3, m2.rx - (roadDir === 'ns' ? 2 : 4)),
-        ry: Math.max(2, m2.ry - (roadDir === 'ns' ? 4 : 2)),
-        targetH: 7
+    // ── 第二阶段 & 第三阶段：沿 8 朝向山脊错落叠置二层（Level 5）与三层（Level 7）独立突出峰台，增强山体块面层次 ──
+    interface RotMound { u: number; v: number; ru: number; rv: number; targetH: number; }
+    const rotMounds: RotMound[] = [];
+    const uStepsL = [-40, -24, -8, 8, 24, 40];
+    const uStepsR = [-36, -20, -4, 12, 28, 44];
+
+    for (const uBase of uStepsL) {
+      const u0 = uBase + (rnd() - 0.5) * 5.0;
+      const v0 = -(halfCorridor + 6.2 + rnd() * 2.5);
+      const ru = 8.5 + rnd() * 3.5;
+      const rv = 4.8 + rnd() * 2.0;
+      rotMounds.push({ u: u0, v: v0, ru, rv, targetH: 5 });
+      rotMounds.push({
+        u: u0 + (rnd() - 0.5) * 2.0,
+        v: v0 - (2.6 + rnd() * 1.2),
+        ru: Math.max(4.5, ru - 2.5),
+        rv: Math.max(3.2, rv - 1.2),
+        targetH: 7,
       });
     }
 
-    for (const m of tier3Summits) {
-      for (let dy = -m.ry; dy <= m.ry; dy++) {
-        for (let dx = -m.rx; dx <= m.rx; dx++) {
-          const gx = m.x + dx, gy = m.y + dy;
-          if (gx < 0 || gx >= N || gy < 0 || gy >= N) continue;
-          if (inPassProtect(gx, gy) || isWet(gx, gy)) continue;
-          const d = Math.hypot(dx / m.rx, dy / m.ry);
+    for (const uBase of uStepsR) {
+      const u0 = uBase + (rnd() - 0.5) * 5.0;
+      const v0 = halfCorridor + 6.2 + rnd() * 2.5;
+      const ru = 8.5 + rnd() * 3.5;
+      const rv = 4.8 + rnd() * 2.0;
+      rotMounds.push({ u: u0, v: v0, ru, rv, targetH: 5 });
+      rotMounds.push({
+        u: u0 + (rnd() - 0.5) * 2.0,
+        v: v0 + (2.6 + rnd() * 1.2),
+        ru: Math.max(4.5, ru - 2.5),
+        rv: Math.max(3.2, rv - 1.2),
+        targetH: 7,
+      });
+    }
+
+    // 关城两翼近侧前哨台（首屏视野内清晰展现高台叠高台）
+    for (const su of [-16, 16]) {
+      for (const sv of [-1, 1]) {
+        rotMounds.push({
+          u: su + (rnd() - 0.5) * 3.0,
+          v: sv * (halfCorridor + 4.2),
+          ru: 6.0,
+          rv: 3.8,
+          targetH: 5,
+        });
+        rotMounds.push({
+          u: su + (rnd() - 0.5) * 2.0,
+          v: sv * (halfCorridor + 7.4),
+          ru: 4.5,
+          rv: 3.0,
+          targetH: 7,
+        });
+      }
+    }
+
+    for (let gy = 0; gy < N; gy++) {
+      for (let gx = 0; gx < N; gx++) {
+        if (inPassProtect(gx, gy) || isWet(gx, gy)) continue;
+        if (tileElev[gy * N + gx] < 3) continue;
+        const dx = gx - cgx, dy = gy - cgy;
+        const u = dx * cosT + dy * sinT;
+        const uDamp = Math.min(1.0, Math.max(0.0, (Math.abs(u) - 10.0) / 16.0));
+        const v = (-dx * sinT + dy * cosT) - bendAmp * Math.sin(u * 0.05 + p0) * uDamp;
+        for (const m of rotMounds) {
+          const du = u - m.u, dv = v - m.v;
+          if (Math.abs(du) > m.ru || Math.abs(dv) > m.rv) continue;
+          const d = Math.hypot(du / m.ru, dv / m.rv);
           if (d > 1.0) continue;
+          const baseH = m.targetH === 7 ? 5 : 3;
           let h = m.targetH;
-          if (d > 0.65) {
-            const t = (d - 0.65) / 0.35;
-            h = Math.round(m.targetH - t * 2.0);
+          if (d > 0.72) {
+            const t = (d - 0.72) / 0.28;
+            h = Math.round(m.targetH - t * (m.targetH - baseH));
           }
           if (h > tileElev[gy * N + gx]) {
             tileElev[gy * N + gx] = h;
@@ -2522,8 +2507,9 @@ export class Scene13GroundLayerGL {
     /** 🔴 [2026-10-20 主人令] 地形：'mound'＝现状多层阶梯高台；'flat'＝抹平城坐平地；
      *  'plateau'＝整块矩形高台（整座外圈城正好坐在同一块平顶高台上，内外圈同高、城堡也在同一高地上）。 */
     terrain: 'mound' | 'flat' | 'plateau' = 'mound',
-    /** 🔴 [2026-10-21 主人令「把道路添加一个南北走向的」] 山谷道路走向：'ew' 东西（默认）/ 'ns' 南北 */
-    roadDir: 'ew' | 'ns' = 'ew',
+    /** 🔴 [2026-10-21 主人令「把道路添加一个南北走向的」]
+     *  🔴 [2026-11-04 主人令「可以改为8个朝向随机凹地吗，每张图不一样」] 8 朝向随机凹地 */
+    roadDir: PassValleyDir = 'e',
   ): { castleLevel: number; innerLevel: number; outerLevel: number } {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return { castleLevel: 5, innerLevel: 3, outerLevel: 2 };
@@ -2640,10 +2626,10 @@ export class Scene13GroundLayerGL {
     //    3. 外城门外侧按有机缓坡跌落至 0 级谷底，远郊崇山环抱，完美再现居庸关「重关锁隘、内城高耸、外墙据谷」的险要形制。
     if (rect) {
       const PAD = 0.8;
-      const innerSlopeW = 2.4; // 夹道坡宽（内外墙间隔正好 4 格：PAD 0.8 + 坡宽 2.4 = 3.2，在到达外墙前降平）
-      const outerSlopeW = 3.5; // 外圈城墙脚外向谷底的缓坡
-      const innerPlateauH = 5.0; // 内城矩形高台高度（城堡与内城整片在 5 级平顶）
-      const outerGroundH = 2.0;  // 外围城墙高度（外墙稳立在 2 级下层地面）
+      const castleTop = 2.4;   // 第 1 层：中心城堡平顶高台半宽（6.5~7 级）
+      const castleFoot = 3.5;  // 第 1 层降到第 2 层内城平台的坡脚
+      const innerSlopeW = 2.4; // 第 2 层内城降到第 3 层外城的夹道坡宽（PAD 0.8 + 坡宽 2.4 = 3.2，到达外墙前降平）
+      const outerSlopeW = 3.5; // 第 3 层外圈城墙脚外向 0 级谷底的缓坡
       const R3 = Math.max(outerHalfI, outerHalfJ) + PAD;
       const maxCheck = R3 + outerSlopeW + 2;
       const phase1 = rnd() * 6.28, phase2 = rnd() * 6.28;
@@ -2658,27 +2644,36 @@ export class Scene13GroundLayerGL {
           const dOut = Math.max(Math.abs(di) - outerHalfI, Math.abs(dj) - outerHalfJ);
           if (dOut > maxCheck) continue;
 
+          const dCastle = Math.max(Math.abs(di), Math.abs(dj));
           const dIn = Math.max(Math.abs(di) - innerHalfI, Math.abs(dj) - innerHalfJ);
           const theta = Math.atan2(dj, di);
           const rJitter = 1.0 + deformAmp * Math.sin(2 * theta + phase1) + (deformAmp * 0.65) * Math.cos(3 * theta + phase2);
 
           let targetH = 0;
-          if (dIn <= PAD) {
-            // 1) 矩形高台顶面（5 级）：城堡、8 座箭塔、广场与内圈墙全在矩形高台面上（高地也是矩形，和内城同大）
-            targetH = innerPlateauH;
+          if (dCastle <= castleTop) {
+            // 1) 第 1 层：中心城堡顶台（6.5~7 级）
+            targetH = castleLevel;
+          } else if (dCastle <= castleFoot) {
+            // 1->2) 中心城堡顶台滑落至第 2 层内城矩形平台
+            const s = (dCastle - castleTop) / (castleFoot - castleTop);
+            const t = s * s * (3 - 2 * s);
+            targetH = castleLevel + (innerLevel - castleLevel) * t;
+          } else if (dIn <= PAD) {
+            // 2) 第 2 层：内城矩形高台（4.5~5 级），8 座箭塔、兵营、马厩与内圈墙稳立此层
+            targetH = innerLevel;
           } else if (dIn <= PAD + innerSlopeW) {
-            // 2) 内墙外侧向外城地面平滑滑落（5 级 → 2 级）
+            // 2->3) 内墙外侧向第 3 层外城平台平滑滑落
             const s = (dIn - PAD) / innerSlopeW;
             const t = s * s * (3 - 2 * s);
-            targetH = innerPlateauH + (outerGroundH - innerPlateauH) * t;
+            targetH = innerLevel + (outerLevel - innerLevel) * t;
           } else if (dOut <= PAD) {
-            // 3) 外城地面（2 级）：外围城墙与 8 座城门坐落在下边的平整地面（「这外围城墙都到下边了」）
-            targetH = outerGroundH;
+            // 3) 第 3 层：外城瓮城高台（3.0~3.5 级），外围城墙与 8 座城门稳立此层
+            targetH = outerLevel;
           } else {
             // 4) 外圈城门外侧：顺缓坡跌落回 0 级谷底（攻方仰攻）
             const s = Math.min(1, (dOut - PAD) / (outerSlopeW * rJitter));
             const t = s * s * (3 - 2 * s);
-            targetH = outerGroundH * (1 - t);
+            targetH = outerLevel * (1 - t);
           }
           const idx = y * V + x;
           if (targetH > this.cornerElev[idx]) this.cornerElev[idx] = targetH;
@@ -2687,7 +2682,7 @@ export class Scene13GroundLayerGL {
       this.generatePassGorgeTerrain(c.gx, c.gy, wallCenterI, wallCenterJ, outerHalfI, outerHalfJ, rnd, roadDir);
       this.updateCornerLight();
       this.elevDirty = true;
-      return { castleLevel: innerPlateauH, innerLevel: innerPlateauH, outerLevel: outerGroundH };
+      return { castleLevel, innerLevel, outerLevel };
     }
     // 3. 台地边缘按实际墙件 / 建筑位置定（曼哈顿距离 |dx|+|dy|：两圈城墙在地面格里都是菱形）
     // 🔴 [2026-10-15 主人令「险要的内墙、箭塔不平你来修」] 原写死 R1=4.0（+1.8 坡）/ R2=8.6 / R3=14.2，实测独松关：
@@ -2699,7 +2694,7 @@ export class Scene13GroundLayerGL {
       return q ? Math.abs(q.gx - cx) + Math.abs(q.gy - cy) : -1;
     };
     const PAD = 1.0;
-    let castleTop = 2.6, castleFoot = 4.1;     // 城堡平顶 / 降到内城的坡脚
+    let castleTop = 2.6, castleFoot = 3.9;     // 城堡平顶 / 降到内城的坡脚（保证第 1 层顶台清晰露出，不缩进城堡底座内）
     let innerEdge = 9.8, innerFoot = 11.1;     // 内城平台外缘 / 降到外城的坡脚
     let outerEdge = 14.0;                      // 外城平台外缘（往外是攻方仰攻坡）
     const wm = wallPts.map(manOf).filter(v => v >= 0).sort((a, b) => a - b);
@@ -2717,10 +2712,10 @@ export class Scene13GroundLayerGL {
         innerFoot = Math.min(innerFoot, outerEdge - 1.5);
       }
     }
-    const bm = bldPts.map(manOf).filter(v => v >= 1.5).sort((a, b) => a - b);   // 城堡在城心（< 1.5），其余是箭塔
+    const bm = bldPts.map(manOf).filter(v => v >= 4.8).sort((a, b) => a - b);   // 仅取外侧箭塔（>= 4.8），保住第 1 层中心城堡高台宽度
     if (bm.length) {
-      castleFoot = Math.max(2.0, bm[0] - PAD - 0.2);
-      castleTop = Math.max(1.6, Math.min(castleTop, castleFoot - 1.2));
+      castleFoot = Math.max(3.6, bm[0] - PAD - 0.2);
+      castleTop = Math.max(2.4, Math.min(castleTop, castleFoot - 1.1));
     }
     const R3 = outerEdge;
 

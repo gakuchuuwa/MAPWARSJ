@@ -616,8 +616,9 @@ export interface Scene13WarInit {
      *  'flat'＝把高台抹平（城坐平地，城外只留丘陵与大山）；不传＝现状多层高台。 */
     defenderPassTerrain?: 'mound' | 'flat' | 'plateau' | null;
     /** [2026-10-21 主人令「把道路添加一个南北走向的」]
-     *  关隘山谷与道路走向：'ew'＝东西走向（默认）、'ns'＝南北走向；不传＝东西走向。 */
-    defenderPassRoadDir?: 'ew' | 'ns' | null;
+     *  🔴 [2026-11-04 主人令「可以改为8个朝向随机凹地吗，每张图不一样」]
+     *  关隘山谷凹地朝向：支持 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | 'n' | 'ne' 8 个朝向（兼容旧 'ew' / 'ns'）；不传＝每场按 8 朝向随机。 */
+    defenderPassRoadDir?: PassValleyDir | null;
     /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观：守方城中央立奇观地标）。 */
     defenderCityId?: string | null;
     /** [2026-09-12] 剧本战斗标题（`fieldBattleData.title`，如「伊苏斯战役」）；战斗面板大标题直接用它。 */
@@ -656,6 +657,29 @@ export interface Scene13SkirmishSpec {
     defenderName?: string;
     /** 玩家本人在哪一方（0 攻 / 1 守）；不填＝玩家不上场。玩家不在军中也能上场 */
     playerSide?: 0 | 1;
+}
+
+export type PassValleyDir = 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | 'n' | 'ne' | 'ew' | 'ns';
+
+export const PASS_VALLEY_DIRS_8: readonly ('e' | 'se' | 's' | 'sw' | 'w' | 'nw' | 'n' | 'ne')[] = [
+    'e', 'se', 's', 'sw', 'w', 'nw', 'n', 'ne',
+];
+
+/** 将险要峡谷凹地朝向转换为格空间顺谷主轴弧度角 θ（0..2π，每隔 45° 一档） */
+export function passValleyDirAngle(dir?: PassValleyDir | null): number {
+    switch (dir) {
+        case 'se': return Math.PI * 0.25;
+        case 's':
+        case 'ns': return Math.PI * 0.50;
+        case 'sw': return Math.PI * 0.75;
+        case 'w': return Math.PI;
+        case 'nw': return Math.PI * 1.25;
+        case 'n': return Math.PI * 1.50;
+        case 'ne': return Math.PI * 1.75;
+        case 'e':
+        case 'ew':
+        default: return 0;
+    }
 }
 
 export interface PassMountainConfig {
