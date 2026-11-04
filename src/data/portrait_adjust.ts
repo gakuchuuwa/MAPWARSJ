@@ -4933,7 +4933,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/LATIN/jiatailuoniya_weifuleide.png": {
-            "scale": 1.08,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": 8
         },
@@ -9458,9 +9458,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 20
         },
         "/assets/SPANISH/gen_juan_i_castile.png": {
-            "scale": 1.04,
+            "scale": 1.14,
             "offsetX": 0,
-            "offsetY": 16
+            "offsetY": 17
         },
         "/assets/JIANGNAN/ming_shenyourong.png": {
             "scale": 1.04,

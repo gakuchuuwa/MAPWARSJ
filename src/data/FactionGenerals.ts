@@ -2999,7 +2999,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     putaoya: [
         // 安东尼奥·拉波索·塔瓦雷斯（António Raposo Tavares，1598—1658）：葡萄牙圣保罗旗队（Bandeirantes）统帅，1628年自圣保罗率军远征伊瓜苏/瓜伊拉并横穿南美内陆（按史：巴西旗队史；对手无具名主帅 → 普将）
-        { generalId: 'putaoya_raposo', factionId: 'putaoya', cityId: 'city_saopaulo', generalName: '拉波索', portrait: '/assets/PORTUGUESE/putaoya_raposo.png', legionName: '城堡时代葡萄牙王国军团', eliteName: '葡萄牙兵', eliteTier: 4 },
+        { generalId: 'putaoya_raposo', factionId: 'putaoya', cityId: 'city_saopaulo', generalName: '拉波索', portrait: '/assets/PORTUGUESE/putaoya_raposo.png', legionName: '城堡时代葡萄牙王国军团', eliteName: '班代兰特', eliteTier: 4 },
         { generalId: 'putaoya_suosa', factionId: 'putaoya', cityId: 'city_aomen', generalName: '索萨', portrait: '/assets/PORTUGUESE/putaoya_suosa.png', eliteName: '澳门守备', eliteTier: 4 },   // 1554 与广东海道副使汪柏达成协议、1557 葡人入居澳门
         { generalId: 'putaoya_almeida', factionId: 'putaoya', cityId: 'city_kelunpo', generalName: '阿尔梅达', portrait: '/assets/PORTUGUESE/putaoya_almeida.png', eliteName: '锡兰守备', eliteTier: 4 },   // 洛伦索·德·阿尔梅达 1505 登陆锡兰、建商站，1518 科伦坡要塞
 
@@ -3012,11 +3012,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
             // 阿赞布雅（1432–1518，葡萄牙航海指挥官，1482年建立埃尔米纳城堡并任首任总督）→ 埃尔米纳（PORTUGUESE）
                 // 若昂·达·诺瓦（约1460–1509，葡萄牙航海指挥官，1502年发现圣赫勒拿岛并开辟回航航路）→ 圣赫勒拿（PORTUGUESE）
-        { generalId: 'putaoya_danuowa', factionId: 'putaoya', cityId: 'city_sainthelena', generalName: '若昂达诺瓦', portrait: '/assets/PORTUGUESE/putaoya_danuowa.png', eliteName: '葡萄牙兵', eliteTier: 4 },
-{ generalId: 'putaoya_azanbuya', factionId: 'putaoya', cityId: 'city_elmina', generalName: '阿赞布雅', portrait: '/assets/PORTUGUESE/putaoya_azanbuya.png', eliteName: '葡萄牙兵', eliteTier: 4 },
+        { generalId: 'putaoya_danuowa', factionId: 'putaoya', cityId: 'city_sainthelena', generalName: '若昂达诺瓦', portrait: '/assets/PORTUGUESE/putaoya_danuowa.png', eliteName: '印度舰队', eliteTier: 4 },
+{ generalId: 'putaoya_azanbuya', factionId: 'putaoya', cityId: 'city_elmina', generalName: '阿赞布雅', portrait: '/assets/PORTUGUESE/putaoya_azanbuya.png', eliteName: '圣若热堡守军', eliteTier: 4 },
 { generalId: 'putaoya_meineisaisi', factionId: 'putaoya', cityId: 'city_xiuta', generalName: '梅内塞斯', portrait: '/assets/PORTUGUESE/putaoya_meineisaisi.png', eliteName: '圣胡利安骑', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 1415 首任休达守将，1419 率守军解围
         { generalId: 'gen_afonso_henriques', eliteName: '奥利克军', eliteTier: 2, cityId: 'city_coimbra', generalName: '阿方索一世', portrait: '/assets/PORTUGUESE/gen_afonso_henriques.png' }, // 1139 奥利克战役葡萄牙本部
-        { generalId: 'gen_henry_navigator', factionId: 'putaoya', cityId: 'city_lisiben', generalName: '恩里克', portrait: '/assets/PORTUGUESE/gen_henry_navigator.png', eliteName: '葡萄牙兵', eliteTier: 4 },
+        { generalId: 'gen_henry_navigator', factionId: 'putaoya', cityId: 'city_lisiben', generalName: '恩里克', portrait: '/assets/PORTUGUESE/gen_henry_navigator.png', eliteName: '基督骑士团', eliteTier: 4 },
 
 
 
@@ -3026,7 +3026,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'duluo_sangqiao', factionId: 'putaoya', cityId: 'city_boertu', generalName: '桑乔一世', portrait: '/assets/PORTUGUESE/duluo_sangqiao.png', eliteName: '葡萄牙兵', eliteTier: 4 },
+        { generalId: 'duluo_sangqiao', factionId: 'putaoya', cityId: 'city_boertu', generalName: '桑乔一世', portrait: '/assets/PORTUGUESE/duluo_sangqiao.png', eliteName: '市镇骑士', eliteTier: 4 },
 
 
 
@@ -3051,9 +3051,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-11-03 主人令「葡印，葡属，葡佛等势力，应该都是葡萄牙一个势力。用一个旗帜。按历史。」]
         //    原葡属印度（果阿）、葡属佛得角（里贝拉）、葡属巴西（萨尔瓦多、圣维森特）三个势力并入葡萄牙；武将的军团、精锐照旧
         { generalId: 'puxiangyindu_albukeerke', factionId: 'putaoya', cityId: 'city_guoa', generalName: '阿尔布克尔克', portrait: '/assets/PORTUGUESE/puxiangyindu_albukeerke.png', legionName: '帝国时代葡萄牙风琴军团', eliteName: '葡萄牙方阵', eliteTier: 3 },
-        { generalId: 'gen_noli', factionId: 'putaoya', cityId: 'city_ribeira', generalName: '诺利', portrait: '/assets/PORTUGUESE/gen_noli.png', eliteName: '葡萄牙兵', eliteTier: 4 },
-        { generalId: 'gen_martim_afonso', factionId: 'putaoya', cityId: 'city_saovicente', generalName: '马丁阿方索', portrait: '/assets/PORTUGUESE/tupinijin_madingafangsuo.png', legionName: '帝国时代葡萄牙风琴军团', eliteName: '葡萄牙兵', eliteTier: 4 },
-        { generalId: 'gen_tome_sousa', factionId: 'putaoya', cityId: 'city_salvador', generalName: '托梅', portrait: '/assets/PORTUGUESE/gen_tome_sousa.png', eliteName: '葡萄牙兵', eliteTier: 4 },
+        { generalId: 'gen_noli', factionId: 'putaoya', cityId: 'city_ribeira', generalName: '诺利', portrait: '/assets/PORTUGUESE/gen_noli.png', eliteName: '里贝拉守军', eliteTier: 4 },
+        { generalId: 'gen_martim_afonso', factionId: 'putaoya', cityId: 'city_saovicente', generalName: '马丁阿方索', portrait: '/assets/PORTUGUESE/tupinijin_madingafangsuo.png', legionName: '帝国时代葡萄牙风琴军团', eliteName: '殖民远征队', eliteTier: 4 },
+        { generalId: 'gen_tome_sousa', factionId: 'putaoya', cityId: 'city_salvador', generalName: '托梅', portrait: '/assets/PORTUGUESE/gen_tome_sousa.png', eliteName: '萨尔瓦多守军', eliteTier: 4 },
     ],
 
 
@@ -16387,7 +16387,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    yasuer: { generalId: 'gen_cipriano_figueiredo', cityId: 'city_angra', generalName: '西普里亚诺', portrait: '/assets/PORTUGUESE/gen_cipriano_figueiredo.png' , legionName: '帝国时代葡萄牙风琴军团', eliteName: '葡萄牙兵', eliteTier: 4 },
+    yasuer: { generalId: 'gen_cipriano_figueiredo', cityId: 'city_angra', generalName: '西普里亚诺', portrait: '/assets/PORTUGUESE/gen_cipriano_figueiredo.png' , legionName: '帝国时代葡萄牙风琴军团', eliteName: '特塞拉民团', eliteTier: 4 },
 
 
 

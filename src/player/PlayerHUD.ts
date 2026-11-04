@@ -67,7 +67,7 @@ export class PlayerHUD {
     private isUserInteracting(): boolean {
         if (this.pointerInPanel) return true;
         const ae = document.activeElement;
-        return !!(ae && this.panel?.contains(ae) && (ae.tagName === 'SELECT' || (ae.tagName === 'INPUT' && (ae as HTMLInputElement).type === 'number')));
+        return !!(ae && this.panel?.contains(ae) && (ae.tagName === 'SELECT' || ae.tagName === 'INPUT'));
     }
     private flushPendingRefresh(): void {
         if (this.refreshPending && !this.isUserInteracting()) {
@@ -373,16 +373,13 @@ export class PlayerHUD {
         const travelPoint = hero.getTravelPointLabel();
         const chasing = hero.isChasingArmy();
         const chaseName = hero.getChaseGeneralName();
-        const state = host
-            ? `随军 ${host.name}`
-            : chasing
-                ? `追击武将${chaseName ? `【${chaseName}】` : ''}`
-                : travelPoint
-                    ? `前往【${travelPoint}】`
-                    : travel ? `前往【${this.deps.getCityName(travel)}】` : '独行，点据点前往';
+        // 🔴 [2026-11-04 主人令「现在的玩家面板好像有两个目标信息，请整合为一个」]
+        //    原来「📍 动向」和「🎯 任务」常写同一件事（前往【X】／奔赴【X】），合成一条目标：
+        //    随军 → 军团当前目标；有任务 → 任务；否则 → 追击／前往／独行。
         const hostTargetText = host ? this.quests.getHostTargetText() : null;
-        const questText = hostTargetText
-            ?? (quest
+        const questText = host
+            ? (hostTargetText ?? `随军 ${host.name}`)
+            : quest
                 ? (quest.kind === 'restore'
                     ? `助${quest.generalName}复国【${quest.cityName}】`
                     // 🔴 [2026-09-19 主人定]「战场名称要写为XXX战役」——武将的那场史实战役照这条走，
@@ -392,9 +389,11 @@ export class PlayerHUD {
                         : quest.kind === 'first_battle' && quest.firstBattle
                             ? `随${quest.generalName}赴【${quest.firstBattle.battleName}】`
                             : `随${quest.generalName}攻【${quest.targetCityName}】`)
-                : travelPoint
-                    ? `奔赴【${travelPoint}】`
-                    : '到据点找武将');
+                : chasing
+                    ? `追击武将${chaseName ? `【${chaseName}】` : ''}`
+                    : travelPoint
+                        ? `前往【${travelPoint}】`
+                        : travel ? `前往【${this.deps.getCityName(travel)}】` : '独行，点据点前往';
         this.body.innerHTML = '';
 
         // ═══════════════════════════════════════════════════════════════
@@ -545,23 +544,56 @@ export class PlayerHUD {
         const secMid = document.createElement('div');
         secMid.className = 'player-hud-section-mid';
 
-        const stateSpan = document.createElement('span');
-        const stateColor = host ? '#f0b849' : '#f5e6c8';
-        stateSpan.style.cssText = `color:${stateColor}; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
-        stateSpan.title = host ? '随军出征中，军团解散前不可离开' : state;
-        stateSpan.textContent = `📍 ${state}`;
-        secMid.appendChild(stateSpan);
-
-        const sep3 = document.createElement('span');
-        sep3.className = 'player-hud-divider';
-        sep3.textContent = '|';
-        secMid.appendChild(sep3);
-
         const questSpan = document.createElement('span');
-        questSpan.style.cssText = `color:${(quest || host) ? '#f29b76' : '#ba9e7b'}; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
-        questSpan.title = `任务：${questText}`;
+        questSpan.style.cssText = `color:${host ? '#f0b849' : quest ? '#f29b76' : '#f5e6c8'}; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
+        questSpan.title = host ? `随军 ${host.name}：${questText}` : `目标：${questText}`;
         questSpan.textContent = `🎯 ${questText}`;
         secMid.appendChild(questSpan);
+
+        // 🤝 投奔（🔴 [2026-11-04 主人令「在玩家面板中添加投奔，然后可以输入武将，直接投奔这个武将」]）
+        const joinWrap = document.createElement('span');
+        joinWrap.style.cssText = 'display:inline-flex; align-items:center; gap:3px; flex-shrink:0;';
+        const joinInput = document.createElement('input');
+        joinInput.type = 'text';
+        joinInput.className = 'player-hud-join-input';
+        joinInput.placeholder = '武将名';
+        joinInput.title = '输入武将名后回车或点「投奔」：直接改道投奔该武将（全图武将都可选，需在场且满五千兵）';
+        joinInput.style.cssText = `
+            width:72px; height:22px; box-sizing:border-box; font-family:inherit; font-size:11px; font-weight:700;
+            color:#e8c77e; background:linear-gradient(180deg, rgba(42,34,24,0.94), rgba(24,19,14,0.96));
+            border:1px solid rgba(212,175,55,0.45); border-radius:4px; padding:0 4px; outline:none; user-select:text;
+        `;
+        const joinBtn = document.createElement('button');
+        joinBtn.type = 'button';
+        joinBtn.className = 'player-hud-pill-btn';
+        joinBtn.textContent = '🤝 投奔';
+        joinBtn.style.cssText = `
+            cursor:pointer; font-size:11px; font-weight:700; padding:0 7px; height:22px; border-radius:4px; font-family:inherit; line-height:20px; box-sizing:border-box;
+            background:linear-gradient(180deg, rgba(42,34,24,0.9), rgba(24,19,14,0.95)); color:#dfc28c;
+            border:1px solid rgba(212,175,55,0.38); box-shadow:inset 0 1px 0 rgba(255,235,180,0.12), 0 1px 3px rgba(0,0,0,0.35);
+        `;
+        const doJoin = () => {
+            const raw = joinInput.value.trim();
+            if (!raw) return;
+            const res = this.quests.joinGeneralByName(raw);
+            if (!res.ok) {
+                this.notify(res.reason);
+                return;
+            }
+            this.deps.followCamera?.();   // 投奔后已切回自动，镜头跟上
+            this.notify(`改道投奔【${res.generalName}】，目标【${res.cityName}】`);
+            joinInput.value = '';
+            joinInput.blur();
+            this.refresh(true);
+        };
+        joinInput.addEventListener('keydown', (e) => {
+            e.stopPropagation();   // 打字时不触发全局快捷键
+            if (e.key === 'Enter') doJoin();
+        });
+        joinBtn.addEventListener('click', doJoin);
+        joinWrap.appendChild(joinInput);
+        joinWrap.appendChild(joinBtn);
+        secMid.appendChild(joinWrap);
 
         singleRow.appendChild(secMid);
 

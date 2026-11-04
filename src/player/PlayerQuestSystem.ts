@@ -4455,37 +4455,96 @@ export class PlayerQuestSystem {
             generalId: targetGeneralId,
             generalName: targetGeneralName,
         };
+        if (this.routeToJoinGeneral(city, targetGeneralId, targetGeneralName)) {
+            return { ok: true, candidate: finalCandidate };
+        }
+        return { ok: false, reason: '当前位置无路可达该目标，未扣积分' };
+    }
+
+    /** 改道前往投奔指定武将：有在外军团就追军团，有经典战前线就去前线，否则去武将所在据点。成功返回 true。 */
+    private routeToJoinGeneral(city: City, generalId: string, generalName: string): boolean {
+        const hero = this.deps.hero;
         this.deps.closeDialogue();
-        this.preferredLiveGeneralId = targetGeneralId;
+        this.preferredLiveGeneralId = generalId;
         this.chaseCityId = null;
         this.pendingFrontGeneralId = null;
 
-        const army = this.armyOfGeneral(targetGeneralId);
+        const army = this.armyOfGeneral(generalId);
         if (army) {
             this.chaseCityId = city.id;
-            if (hero.travelToArmy(army.id, targetGeneralName)) {
-                return { ok: true, candidate: finalCandidate };
-            }
+            if (hero.travelToArmy(army.id, generalName)) return true;
             this.chaseCityId = null;
         }
-        const front = this.firstBattleFrontSpot(targetGeneralId);
+        const front = this.firstBattleFrontSpot(generalId);
         if (front) {
-            this.pendingFrontGeneralId = targetGeneralId;
+            this.pendingFrontGeneralId = generalId;
             const ok = front.kind === 'city'
                 ? hero.travelToCity(front.cityId, false, { allowNoGeneral: true })
                 : hero.travelToPoint(
                     { lat: front.lat, lng: front.lng },
                     front.label,
-                    () => this.onArriveFirstBattleFront(targetGeneralId),
+                    () => this.onArriveFirstBattleFront(generalId),
                 );
-            if (ok) return { ok: true, candidate: finalCandidate };
+            if (ok) return true;
             this.pendingFrontGeneralId = null;
         }
-        if (hero.travelToCity(city.id, false, { allowNoGeneral: true })) {
-            return { ok: true, candidate: finalCandidate };
-        }
+        if (hero.travelToCity(city.id, false, { allowNoGeneral: true })) return true;
         this.preferredLiveGeneralId = null;
-        return { ok: false, reason: '当前位置无路可达该目标，未扣积分' };
+        return false;
+    }
+
+    /**
+     * 🔴 [2026-11-04 主人令「在玩家面板中添加投奔，然后可以输入武将，直接投奔这个武将」]
+     *    主人在顶部玩家面板输入武将名，直接改道投奔：不受资历（官职）与文化范围限制，全图武将都可选。
+     *    先全名精确匹配，再包含匹配；在场且能出征（满五千兵）才行。若正随军（未开战），先离队再奔赴。
+     */
+    public joinGeneralByName(name: string): { ok: true; generalName: string; cityName: string } | { ok: false; reason: string } {
+        const hero = this.deps.hero;
+        const q = name.trim();
+        if (!q) return { ok: false, reason: '请输入武将名' };
+        if (hero.autoPlan === 'script') return { ok: false, reason: '剧本模式按史实推进，乱斗或百年模式可投奔' };
+        if (hero.getHostLegion()?.getIsInCombat()) return { ok: false, reason: '所随军团正在交战，战后再投奔' };
+
+        type Hit = { city: City; generalId: string; generalName: string; exact: boolean; ready: boolean };
+        const hits: Hit[] = [];
+        for (const c of this.deps.cityManager.getCities()) {
+            for (const g of getCityAnchoredGenerals(c.id)) {
+                const gName = getGeneralRecordByGeneralId(g.generalId)?.generalName ?? g.generalName;
+                if (!gName || !gName.includes(q)) continue;
+                hits.push({ city: c, generalId: g.generalId, generalName: gName, exact: gName === q, ready: this.isGeneralSortieReady(c, g.generalId) });
+            }
+        }
+        if (hits.length === 0) return { ok: false, reason: `没有找到武将「${q}」` };
+        const pool = hits.some((h) => h.exact) ? hits.filter((h) => h.exact) : hits;
+        const ready = pool.filter((h) => h.ready);
+        if (ready.length === 0) {
+            const h = pool[0];
+            return { ok: false, reason: isGeneralOnStage(h.generalId) ? `${h.generalName}兵力不足五千，暂不能出征` : `${h.generalName}当前不在场` };
+        }
+        // 同名多处：离玩家最近的优先
+        const me = hero.getPosition();
+        if (me && Number.isFinite(me.lat)) {
+            ready.sort((a, b) =>
+                PlayerQuestSystem.distKm(me, { lat: a.city.latitude, lng: a.city.longitude })
+                - PlayerQuestSystem.distKm(me, { lat: b.city.latitude, lng: b.city.longitude }));
+        }
+        const pick = ready[0];
+        if (hero.isAttached()) this.leaveHost();
+        // 观众竞价选的目标还没入伍就被主人改投：当场退回那位观众的积分（不然入伍成功会被算成他竞价成功）
+        if (this.preferredLiveGeneralId) {
+            const overriddenId = this.preferredLiveGeneralId;
+            this.preferredLiveGeneralId = null;
+            this.onLiveJoinResolved?.({ ok: false, factionId: null, generalId: overriddenId, reason: '主播已改投其他武将，积分已退回' });
+        }
+        // 🔴 [2026-11-04 主人令「先点休息，然后再选武将投奔，投奔后休息不恢复到自动」]
+        //    主人先点休息停下来再输名字；投奔一出发就切回自动（环球/航行到了据点也不谈事，同样切回）。
+        //    setPlayMode 会掐掉旧行程，所以必须在改道之前切。
+        if (hero.playMode !== 'auto') hero.setPlayMode('auto');
+        if (!this.routeToJoinGeneral(pick.city, pick.generalId, pick.generalName)) {
+            return { ok: false, reason: `当前位置无路可达${pick.generalName}` };
+        }
+        this.emitChange();
+        return { ok: true, generalName: pick.generalName, cityName: pick.city.name };
     }
 
     public clearForRestore(): void {
