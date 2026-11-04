@@ -12,6 +12,7 @@
  */
 
 import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getRegionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, resolveGeneralLegionName, resolveCityLegionName, resolveCityLegionComposition, type FormationMode } from '../types/CultureFormations';
+import { arrangeLegionRows } from '../types/LegionRowOrder';
 import { Scene13GroundLayerGL, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
@@ -3892,7 +3893,10 @@ export class Scene13WarLayer {
             const factionSlots = garrison?.slots ?? (factionId ? getFactionCompositionSlots(factionId, generalId) : null);
             const tier = factionSlots ? { slots: factionSlots } : getCultureTier(region as any, 50000);
             if (tier?.slots?.length) {
-                const types = expandCompositionSlots(tier.slots);
+                // 🔴 [2026-11-04 主人令「战略地图上主将和阵型的位置请和战术一致」] 三排先后与档数按占位/档位排序
+                //    （types/LegionRowOrder，战略 applyLegionCultureComposition 同读）
+                const arranged = arrangeLegionRows(tier.slots);
+                const types = expandCompositionSlots(arranged.formationMode ? arranged.slots : tier.slots);
                 // 三阵型展开均为 9 口
                 if (types.length === 9) {
                     // 🔴 防御：WAR_TYPES 没有的兵种（势力专属/新兵种）替换成轻步，防运行时 wt.cls 崩溃
@@ -3920,11 +3924,17 @@ export class Scene13WarLayer {
     /** 从编制槽位结构推断阵型（鱼鳞/三角/雁行）；与 slotsOf 用同一 tier，保证布局一致 */
     private formationModeOf(region: string, factionId?: string | null, generalId?: string | null, sideF?: 0 | 1): FormationMode {
         try {
+            // 🔴 [2026-11-04] 阵型 = 按占位/档位排序排好后的人数模式（与 slotsOf、战略地图同一口径）
+            if (!this.hasStageGeneral(generalId)) generalId = null;
+            const garrison = sideF === 1 && this.battleType === 'siege'
+                ? resolveCityLegionComposition(factionId, generalId, this.garrisonLegionCtx())
+                : null;
+            const srcSlots = garrison?.slots ?? (factionId ? getFactionCompositionSlots(factionId, generalId) : null)
+                ?? getCultureTier(region as any, 50000)?.slots;
+            const arrangedMode = srcSlots?.length ? arrangeLegionRows(srcSlots).formationMode : null;
+            if (arrangedMode) return arrangedMode;
             // 🔴 [2026-10-21 主人令] 守城：在场武将 → 武将的军团；无在场武将 → 当时年份 × 据点建筑风格（与 slotsOf 同源）
-            if (sideF === 1 && this.battleType === 'siege') {
-                const garrison = resolveCityLegionComposition(factionId, generalId, this.garrisonLegionCtx());
-                if (garrison?.formationMode) return garrison.formationMode;
-            }
+            if (garrison?.formationMode) return garrison.formationMode;
             if (factionId) {
                 // 🔴 [2026-09-14] 势力表只剩指针，阵型跟着它挂的那支军团走
                 const custom = getFactionLegionComposition(factionId, generalId);

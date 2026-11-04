@@ -4557,7 +4557,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'yangshao_zhoubo', factionId: 'han_d', cityId: 'city_changan', generalName: '周勃', portrait: '/assets/CENTRAL/yangshao_zhoubo.png', eliteName: '沛县子弟', eliteTier: 3 },
+        { generalId: 'yangshao_zhoubo', factionId: 'han_d', cityId: 'city_changan', generalName: '周勃', portrait: '/assets/CENTRAL/yangshao_zhoubo.png', eliteName: '汉北军', eliteTier: 3 },
 
 
 
@@ -4915,7 +4915,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'cai_lishuo', factionId: 'hou_zhao', cityId: 'city_xingtai', generalName: '石勒', portrait: '/assets/WEI/cai_lishuo.png', eliteName: '后赵铁骑', eliteTier: 2 },
+        { generalId: 'cai_lishuo', factionId: 'hou_zhao', cityId: 'city_xingtai', generalName: '石勒', portrait: '/assets/WEI/cai_lishuo.png', eliteName: '十八骑', eliteTier: 2 },
 
 
 
@@ -5311,7 +5311,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'yi_yuqian', factionId: 'ming_d', cityId: 'city_beijing', generalName: '于谦', portrait: '/assets/WEI/yi_yuqian.png', eliteName: '京营锐卒', eliteTier: 3 },
+        { generalId: 'yi_yuqian', factionId: 'ming_d', cityId: 'city_beijing', generalName: '于谦', portrait: '/assets/WEI/yi_yuqian.png', eliteName: '十团营', eliteTier: 3 },
         // 🔴 [2026-10-24 主人授权新增] 杨洪（1381–1451）＝明宣府镇总兵，正统年间镇守宣府，土木堡之变后独守宣府城（也先挟英宗至城下，洪闭门不纳）；宣化空缺（完颜承裕迁回会宁府）→ 按史补驻将。立绘留空
         { generalId: 'ming_yanghong', factionId: 'ming_d', cityId: 'city_xuanhua', generalName: '杨洪', portrait: '/assets/WEI/ming_yanghong.png', eliteName: '宣府铁骑', eliteTier: 3 },
         // 🔴 [2026-10-24 主人令「执行」] 郭威（904–954）＝后周太祖，后汉末以枢密使领邺都留守（邺都＝安阳），951 澶州兵变受拥立；库里原无此人。立绘留空
@@ -5388,7 +5388,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'sunqin_sunchuanting', factionId: 'ming_d', cityId: 'city_tongguan', generalName: '孙传庭', portrait: '/assets/CENTRAL/sunqin_sunchuanting.png', eliteName: '秦兵', eliteTier: 3 },
+        { generalId: 'sunqin_sunchuanting', factionId: 'ming_d', cityId: 'city_tongguan', generalName: '孙传庭', portrait: '/assets/CENTRAL/sunqin_sunchuanting.png', eliteName: '火车营', eliteTier: 3 },
 
 
 
@@ -5538,7 +5538,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'dayu_wangshouren', factionId: 'ming_d', cityId: 'city_qianzhou', generalName: '王守仁', portrait: '/assets/JIANGNAN/dayu_wangshouren.png', eliteName: '阳明乡兵', eliteTier: 3 },
+        { generalId: 'dayu_wangshouren', factionId: 'ming_d', cityId: 'city_qianzhou', generalName: '王守仁', portrait: '/assets/JIANGNAN/dayu_wangshouren.png', eliteName: '南赣标军', eliteTier: 3 },
         { generalId: 'dayu_liqianshi', factionId: 'nan_liang', cityId: 'city_qianzhou', generalName: '李迁仕', portrait: '/assets/JIANGNAN/dayu_liqianshi.png' , eliteName: '高州部曲', eliteTier: 4 },   // 🔴 李迁仕是高州刺史，部曲（原配「南赣标军」是明代的）
 
 
@@ -5599,7 +5599,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'chizhou_changyuchun', factionId: 'ming_d', cityId: 'city_datong2', generalName: '常遇春', portrait: '/assets/JIANGNAN/chizhou_changyuchun.png', eliteName: '前锋铁骑', eliteTier: 3 },
+        { generalId: 'chizhou_changyuchun', factionId: 'ming_d', cityId: 'city_datong2', generalName: '常遇春', portrait: '/assets/JIANGNAN/chizhou_changyuchun.png', eliteName: '五翼军', eliteTier: 3 },
 
 
 
@@ -5639,7 +5639,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'dongshengwei_wangyue', factionId: 'ming_d', cityId: 'city_yulin', generalName: '王越', portrait: '/assets/WEI/dongshengwei_wangyue.png', eliteName: '河套骑兵', eliteTier: 3 },
+        { generalId: 'dongshengwei_wangyue', factionId: 'ming_d', cityId: 'city_yulin', generalName: '王越', portrait: '/assets/WEI/dongshengwei_wangyue.png', eliteName: '九边夜不收', eliteTier: 3 },
 
 
 
@@ -6432,7 +6432,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'jingzhou_gs_huangfusong', factionId: 'han_d', cityId: 'city_hanguguan', generalName: '皇甫嵩', portrait: '/assets/CENTRAL/jingzhou_gs_huangfusong.png', eliteName: '西园八校', eliteTier: 2 },
+        { generalId: 'jingzhou_gs_huangfusong', factionId: 'han_d', cityId: 'city_hanguguan', generalName: '皇甫嵩', portrait: '/assets/CENTRAL/jingzhou_gs_huangfusong.png', eliteName: '北军五校', eliteTier: 2 },
 
 
 
@@ -6944,7 +6944,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'aisin_d_huangtaiji', factionId: 'manzhou_d', cityId: 'city_hetuala', generalName: '皇太极', portrait: '/assets/NORTHEAST/aisin_d_huangtaiji.png', eliteName: '八旗护军', eliteTier: 2 },
+        { generalId: 'aisin_d_huangtaiji', factionId: 'manzhou_d', cityId: 'city_hetuala', generalName: '皇太极', portrait: '/assets/NORTHEAST/aisin_d_huangtaiji.png', eliteName: '巴牙喇军', eliteTier: 1 },
 
 
 
@@ -6974,7 +6974,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'manzhou_nuerhachi', factionId: 'manzhou_d', cityId: 'city_salhu', generalName: '努尔哈赤', portrait: '/assets/NORTHEAST/manzhou_nuerhachi.png', eliteName: '八旗铁骑', eliteTier: 1 },
+        { generalId: 'manzhou_nuerhachi', factionId: 'manzhou_d', cityId: 'city_salhu', generalName: '努尔哈赤', portrait: '/assets/NORTHEAST/manzhou_nuerhachi.png', eliteName: '白甲兵', eliteTier: 1 },
 
 
 
@@ -7033,7 +7033,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_fuquan', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '福全', portrait: '/assets/NORTHEAST/bfe_fuquan.png', eliteName: '八旗护军', eliteTier: 2 },
+        { generalId: 'bfe_fuquan', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '福全', portrait: '/assets/NORTHEAST/bfe_fuquan.png', eliteName: '八旗骁骑', eliteTier: 3 },
         { generalId: 'bfe_zengguoquan', factionId: 'manzhou_d', cityId: 'city_changsha', generalName: '曾国荃', portrait: '/assets/JIANGNAN/bfe_zengguoquan.png', eliteName: '湘军吉字营', eliteTier: 2 },
         { generalId: 'bfe_wanggao', factionId: 'manzhou_d', cityId: 'city_hetuala', generalName: '王杲', portrait: '/assets/NORTHEAST/bfe_wanggao.png', eliteName: '建州骑兵', eliteTier: 4 },
         { generalId: 'adao_d_mafushou', factionId: 'manzhou_d', cityId: 'city_kungang', generalName: '马福寿', portrait: '/assets/WESTERN/adao_d_mafushou.png', eliteName: '昆岗军台营', eliteTier: 4 }   // [2026-10-31 键名订正：adao_d → manzhou_d]
@@ -10144,7 +10144,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'jinchuan_g_shaluoben', cityId: 'city_leweizhai', generalName: '莎罗奔', portrait: '/assets/TIBET/jinchuan_g_shaluoben.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
         { generalId: 'bfe_sonom', cityId: 'city_leweizhai', generalName: '索诺木', portrait: '/assets/TIBET/bfe_sonom.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
     
-        { generalId: 'agui', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '阿桂', portrait: '/assets/NORTHEAST/agui.png', eliteName: '八旗护军', eliteTier: 2 },
+        { generalId: 'agui', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '阿桂', portrait: '/assets/NORTHEAST/agui.png', eliteName: '健锐营', eliteTier: 2 },
 
 
 
@@ -10519,7 +10519,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_mingrui', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '明瑞', portrait: '/assets/NORTHEAST/gen_mingrui.png', eliteName: '八旗护军', eliteTier: 2 },
+        { generalId: 'gen_mingrui', factionId: 'manzhou_d', cityId: 'city_shenyang', generalName: '明瑞', portrait: '/assets/NORTHEAST/gen_mingrui.png', eliteName: '满洲护军', eliteTier: 4 },
     ],
 
 
@@ -11952,7 +11952,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'wuzhou_limu', factionId: 'zhao', cityId: 'city_wuzhousai', generalName: '李牧', portrait: '/assets/WEI/wuzhou_limu.png', eliteName: '赵边骑', eliteTier: 2 },
+        { generalId: 'wuzhou_limu', factionId: 'zhao', cityId: 'city_wuzhousai', generalName: '李牧', portrait: '/assets/WEI/wuzhou_limu.png', eliteName: '百金之士', eliteTier: 2 },
 
 
 
@@ -12108,7 +12108,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     yue: [
-        { generalId: 'yue_goujian', cityId: 'city_kuaiji', generalName: '勾践', portrait: '/assets/JIANGNAN/yue_goujian.png' , legionName: '先秦军团', eliteName: '越国死士', eliteTier: 2 },
+        { generalId: 'yue_goujian', cityId: 'city_kuaiji', generalName: '勾践', portrait: '/assets/JIANGNAN/yue_goujian.png' , legionName: '先秦军团', eliteName: '越君子军', eliteTier: 2 },
         { generalId: 'bfe_gao_zhihui', factionId: 'sui', cityId: 'city_kuaiji', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', eliteName: '江南郡兵', eliteTier: 4 },   // 2026-10-25 按史：隋越州反隋（同势力内战），原误挂越国
     ],
 
@@ -13065,7 +13065,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'heng1_yangye', factionId: 'song', cityId: 'city_yanmenguan', generalName: '杨业', portrait: '/assets/WEI/heng1_yangye.png', eliteName: '杨家将兵', eliteTier: 3 },
+        { generalId: 'heng1_yangye', factionId: 'song', cityId: 'city_yanmenguan', generalName: '杨业', portrait: '/assets/WEI/heng1_yangye.png', eliteName: '杨无敌军', eliteTier: 1 },
 
 
 
@@ -13211,7 +13211,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'zaoyang_d_menggong', factionId: 'song', cityId: 'city_zaoyang', generalName: '孟珙', portrait: '/assets/JIANGNAN/zaoyang_d_menggong.png', eliteName: '荆楚锐卒', eliteTier: 3 },
+        { generalId: 'zaoyang_d_menggong', factionId: 'song', cityId: 'city_zaoyang', generalName: '孟珙', portrait: '/assets/JIANGNAN/zaoyang_d_menggong.png', eliteName: '忠顺军', eliteTier: 1 },
 
 
 
@@ -13429,7 +13429,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'yiyang_d_mengzongzheng', factionId: 'song', cityId: 'city_zaoyang', generalName: '孟宗政', portrait: '/assets/JIANGNAN/yiyang_d_mengzongzheng.png', eliteName: '荆楚锐卒', eliteTier: 3 },
+        { generalId: 'yiyang_d_mengzongzheng', factionId: 'song', cityId: 'city_zaoyang', generalName: '孟宗政', portrait: '/assets/JIANGNAN/yiyang_d_mengzongzheng.png', eliteName: '忠顺军', eliteTier: 1 },
 
 
 
@@ -17159,7 +17159,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-24] 朱邪势力并入沙陀后，把原势力精锐番号「朱邪部兵」T3 落到本人条目（他 820 年生，早于李克用「鸦儿军」，不该借沙陀势力精锐）
         { generalId: 'zhuxie_zhuxiechixin', cityId: 'city_guanglu', generalName: '朱邪赤心', portrait: '/assets/XIANBEI/zhuxie_zhuxiechixin.png', eliteName: '朱邪部兵', eliteTier: 3 },
     
-        { generalId: 'yingzhou_d2_licunxu', factionId: 'shatuo', cityId: 'city_zhangguojuncheng', generalName: '李存勖', portrait: '/assets/WEI/yingzhou_d2_licunxu.png', eliteName: '河东铁骑', eliteTier: 2 },
+        { generalId: 'yingzhou_d2_licunxu', factionId: 'shatuo', cityId: 'city_zhangguojuncheng', generalName: '李存勖', portrait: '/assets/WEI/yingzhou_d2_licunxu.png', eliteName: '从马直', eliteTier: 2 },
 
     ],
     hou_han: [
@@ -17259,7 +17259,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'ruochu_doulian', factionId: 'chuguo', cityId: 'city_jingling', generalName: '鬬廉', portrait: '/assets/JIANGNAN/ruochu_doulian.png' , legionName: '先秦军团', eliteName: '荆楚兵', eliteTier: 4 },
 
     
-        { generalId: 'mi_chu_xionglv', factionId: 'chuguo', cityId: 'city_ying', generalName: '熊旅', portrait: '/assets/JIANGNAN/mi_chu_xionglv.png' , legionName: '先秦军团', eliteName: '楚甲士', eliteTier: 2 },
+        { generalId: 'mi_chu_xionglv', factionId: 'chuguo', cityId: 'city_ying', generalName: '熊旅', portrait: '/assets/JIANGNAN/mi_chu_xionglv.png' , legionName: '先秦军团', eliteName: '左广右广', eliteTier: 2 },
 
     
         { generalId: 'bfe2_zi_chang', factionId: 'chuguo', cityId: 'city_ying', generalName: '子常', portrait: '/assets/JIANGNAN/bfe2_zi_chang.png', eliteName: '荆楚兵', eliteTier: 4 },
@@ -17280,7 +17280,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     nanqi: [
-        { generalId: 'shanyue_sunce', factionId: 'sunwu_d', cityId: 'city_kuaiji', generalName: '孙策', portrait: '/assets/JIANGNAN/shanyue_sunce.png', eliteName: '江东突骑', eliteTier: 3 },
+        { generalId: 'shanyue_sunce', factionId: 'sunwu_d', cityId: 'city_kuaiji', generalName: '孙策', portrait: '/assets/JIANGNAN/shanyue_sunce.png', eliteName: '丹阳兵', eliteTier: 2 },
 
     ],
     yangwu: [

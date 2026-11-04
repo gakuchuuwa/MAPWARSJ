@@ -9,6 +9,7 @@ import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import {getCompositionTier, expandCompositionSlots} from '../../types/LegionComposition';
 import { WAR_TYPES } from '../../data/WarTypes';
 import type { FormationMode } from '../../types/CultureFormations';
+import { commanderRowOf } from '../../types/LegionRowOrder';
 import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, getFactionCultureRegion, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { needsSail, getSailDeltas, getSailPartDir, DE_STYLE_TO_SAIL_GROUP, type SailGroup } from '../../data/NavalSails';
 import { REGION_TO_DE_STYLE } from '../../systems/cityDeStyle';
@@ -104,6 +105,19 @@ const NAVAL_OARED_ANIMATED_SHIPS = new Set([
     'SHP_FLAGSHIP', 'HERO_FLAGSHIPOFNEARCHOS', 'hero_flagshipofnearchos',
 ]);
 
+/**
+ * 七阵型 9 格 + 第 10 格主将队。
+ * 🔴 [2026-11-04 主人令「战略地图上主将和阵型的位置请和战术一致。主将在2档之间。」]
+ * 站哪一排由 `commanderRowOf`（types/LegionRowOrder，战术 COMMANDER_CELL 同读）定：「2 档」那一排的两队正中；
+ * 方阵 3-3-3 无 2 档排 → r=-1 前排正中再往前（全阵矛头）。
+ */
+function withCommanderCell(mode: FormationMode, body: readonly { r: number; c: number }[]): readonly { r: number; c: number }[] {
+    const r = commanderRowOf(mode);
+    const pair = body.filter((p) => p.r === r);
+    const c = pair.length ? pair.reduce((sum, p) => sum + p.c, 0) / pair.length : 0;
+    return [...body, { r, c }];
+}
+
 export class LegionPhalanxDrawer {
 
     /** 骑兵格位内部小三角（6 人 1+2+3）：denseFront 时每个骑兵编队内部展开成楔形。
@@ -116,66 +130,59 @@ export class LegionPhalanxDrawer {
 
     /** 主阵·三角 2+3+4（9 格位）：尖端 2 在前（排 0），中 3，底边 4（排 2）。
      *  c 为横向偏移（半格步），r 为纵深排（0=最前）。2026-08-15 主人定：1-2-3 → 2+3+4。 */
-    private static readonly TRIANGLE_9_LAYOUT = [
+    private static readonly TRIANGLE_9_LAYOUT = withCommanderCell('triangle', [
         { r: 0, c: -0.5 }, { r: 0, c: 0.5 },
         { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 },
         { r: 2, c: -1.5 }, { r: 2, c: -0.5 }, { r: 2, c: 0.5 }, { r: 2, c: 1.5 },
-        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
-    ] as const;
+    ]);
 
     /** 主阵·雁行 4+3+2（9 格位）：宽面 4 顶前（排 0），中 3，后收 2（排 2）。
      *  2026-08-15 主人定：新增雁行阵（远程为主的两翼展开）。 */
-    private static readonly ECHELON_9_LAYOUT = [
+    private static readonly ECHELON_9_LAYOUT = withCommanderCell('echelon', [
         { r: 0, c: -1.5 }, { r: 0, c: -0.5 }, { r: 0, c: 0.5 }, { r: 0, c: 1.5 },
         { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 },
         { r: 2, c: -0.5 }, { r: 2, c: 0.5 },
-        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
-    ] as const;
+    ]);
 
     /** 主阵·鱼鳞 3+4+2（9 格位）：前排 3（排 0），中阔鳞叠 4（排 1），后收尾 2（排 2）。
      *  2026-08-18 主人定：鱼鳞阵升级为 3-4-2（前抵·鳞叠·尾收），前中后交错，后排2与前排3两翼对齐。 */
-    private static readonly FISH_SCALE_9_LAYOUT = [
+    private static readonly FISH_SCALE_9_LAYOUT = withCommanderCell('fish_scale', [
         { r: 0, c: -1 }, { r: 0, c: 0 }, { r: 0, c: 1 },
         { r: 1, c: -1.5 }, { r: 1, c: -0.5 }, { r: 1, c: 0.5 }, { r: 1, c: 1.5 },
         { r: 2, c: -1 }, { r: 2, c: 1 },
-        { r: 2, c: 0 },    // 第 10 队：主将队，安置在后排两组中间（2026-10-03 主人定）
-    ] as const;
+    ]);
 
     /** 主阵·鹤翼 2+4+3（9 格位）：前锋 2 引敌（排 0），中排两翼展开 4（排 1），后排中军托底 3（排 2）。
      *  2026-08-18 主人定：新增鹤翼阵（双锋引敌·两翼合围），前中后交错，双锋与后排两翼对齐。 */
-    private static readonly CRANE_WING_9_LAYOUT = [
+    private static readonly CRANE_WING_9_LAYOUT = withCommanderCell('crane_wing', [
         { r: 0, c: -1 }, { r: 0, c: 1 },
         { r: 1, c: -1.5 }, { r: 1, c: -0.5 }, { r: 1, c: 0.5 }, { r: 1, c: 1.5 },
         { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
-        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
-    ] as const;
+    ]);
 
     /** 主阵·方阵 3+3+3（9 格位）：前排 3（排 0），中排 3（排 1），后排 3（排 2）。
      *  2026-08-18 主人定：新增方阵（九宫等边·坚若磐石）。 */
-    private static readonly SQUARE_9_LAYOUT = [
+    private static readonly SQUARE_9_LAYOUT = withCommanderCell('square', [
         { r: 0, c: -1 }, { r: 0, c: 0 }, { r: 0, c: 1 },
         { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 },
         { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
-        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
-    ] as const;
+    ]);
 
     /** 主阵·偃月 3+2+4（9 格位）：前排 3（排 0），中窄 2（排 1），后排决胜 4（排 2）。
      *  2026-08-20 主人定：新增偃月阵（前阻中虚·后发制人）。 */
-    private static readonly CRESCENT_9_LAYOUT = [
+    private static readonly CRESCENT_9_LAYOUT = withCommanderCell('crescent', [
         { r: 0, c: -1 }, { r: 0, c: 0 }, { r: 0, c: 1 },
         { r: 1, c: -0.5 }, { r: 1, c: 0.5 },
         { r: 2, c: -1.5 }, { r: 2, c: -0.5 }, { r: 2, c: 0.5 }, { r: 2, c: 1.5 },
-        { r: 1, c: 0 },    // 第 10 队：主将队，安置在中排两组中间（2026-10-03 主人定）
-    ] as const;
+    ]);
 
     /** 主阵·衡轭 4+2+3（9 格位）：前排横推 4（排 0），中窄 2（排 1），后排托底 3（排 2）。
      *  2026-08-20 主人定：新增衡轭阵（前宽后稳·前线硬碰）。 */
-    private static readonly BALANCE_YOKE_9_LAYOUT = [
+    private static readonly BALANCE_YOKE_9_LAYOUT = withCommanderCell('balance_yoke', [
         { r: 0, c: -1.5 }, { r: 0, c: -0.5 }, { r: 0, c: 0.5 }, { r: 0, c: 1.5 },
         { r: 1, c: -0.5 }, { r: 1, c: 0.5 },
         { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
-        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
-    ] as const;
+    ]);
 
     private static readonly PURE_CAVALRY_LEGION_TYPES: LegionType[] = ['cavalry', 'archer_cavalry'];
 
@@ -2982,7 +2989,7 @@ export class LegionPhalanxDrawer {
         let originalY = 0;
 
         // --- FORMATION LOGIC ---
-        // 前 9 格三排编制 + 第 10 格主将队（r=-1：前排再往前一排）—— 2026-09-23 主人定 10 队
+        // 前 9 格三排编制 + 第 10 格主将队（站「2 档」那一排正中，方阵 r=-1 矛头，见 withCommanderCell）—— 2026-09-23 主人定 10 队
         const layout = index < 10 ? this.layoutOf(formationMode) : null;
         if (layout) {
             // 前中后三排等距：中排 y=0，前排 -spacingY，后排 +spacingY。

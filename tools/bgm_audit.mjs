@@ -23,7 +23,12 @@ const src = fs.readFileSync(path.join(ROOT, 'src/audio/AudioManager.ts'), 'utf-8
 const at = src.indexOf('const BGM_REGION_GAIN');
 const body = src.slice(src.indexOf('{', at) + 1, src.indexOf('};', at));
 const gain = {};
-for (const m of body.matchAll(/^\s+([A-Za-z_]+):\s*([0-9.]+),/gm)) gain[m[1]] = parseFloat(m[2]);
+// 注释里写着「主人」的条目 = 主人按听感特意调过（如 CENTRAL 降 2dB），偏离目标是故意的，只标注不算失败
+const ownerTuned = new Set();
+for (const m of body.matchAll(/^\s*([A-Za-z_]+):\s*([0-9.]+),(.*)$/gm)) {
+    gain[m[1]] = parseFloat(m[2]);
+    if (m[3].includes('主人')) ownerTuned.add(m[1]);
+}
 
 const files = fs.readdirSync(BGM_DIR).filter((f) => f.endsWith('.aud'));
 let bad = 0;
@@ -47,8 +52,9 @@ rows.sort((a, b) => b.off - a.off);
 console.log(`\n目标 ${TARGET} LUFS，容差 ±${TOL}dB\n`);
 console.log('曲目'.padEnd(24) + '实测'.padStart(8) + 'gain'.padStart(8) + '补偿后'.padStart(9) + '偏差'.padStart(8));
 for (const r of rows) {
-    const flag = Math.abs(r.off) > TOL ? '  ✗ 需重算 gain' : '';
-    if (flag) bad++;
+    const flag = Math.abs(r.off) <= TOL ? ''
+        : ownerTuned.has(r.key) ? '  · 主人按听感调过，不算' : '  ✗ 需重算 gain';
+    if (flag.includes('✗')) bad++;
     console.log(r.key.padEnd(24) + r.lufs.toFixed(1).padStart(8) + r.g.toFixed(3).padStart(8)
         + r.eff.toFixed(1).padStart(9) + `${r.off >= 0 ? '+' : ''}${r.off.toFixed(1)}`.padStart(8) + flag);
 }

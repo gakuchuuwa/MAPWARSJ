@@ -515,7 +515,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     tibet_b: 0.750,  // -18.5 LUFS
     puru_b: 0.668,  // -17.5 LUFS
     // 🔴 [2026-10-18 主人定「按66文化分曲子，每文化≥3首、符合文化、各自独立」] 98 首新曲
-korea_a: 0.646,  // -17.2 LUFS
+    korea_a: 0.646,  // -17.2 LUFS
     bashu_a: 0.569,  // -16.1 LUFS
     khitan_a: 0.631,  // -17.0 LUFS
     mongol_a: 0.700,  // -17.9 LUFS

@@ -319,18 +319,9 @@ export function getDefaultSlotsForMode(mode: FormationMode): CompositionSlot[] {
     ];
 }
 
-/** 七阵型各排格位数（唯一权威）。与 LegionPhalanxDrawer 的 *_9_LAYOUT 一一对应。
- *  🔴 渲染层按扁平 index 0..8 把 cultureSlots 填进布局表第 i 个格位 —— slots 自身不带分排信息，
- *  分排边界完全由阵型决定。所以 slots 的分组数必须与本表逐项相等，否则兵种跨排错位。 */
-export const FORMATION_ROW_COUNTS: Readonly<Record<FormationMode, readonly [number, number, number]>> = {
-    triangle:     [2, 3, 4],
-    echelon:      [4, 3, 2],
-    fish_scale:   [3, 4, 2],
-    crane_wing:   [2, 4, 3],
-    crescent:     [3, 2, 4],
-    balance_yoke: [4, 2, 3],
-    square:       [3, 3, 3],
-};
+/** 七阵型各排格位数：定义搬到 LegionRowOrder（与占位/档位排序、主将站位放一处），这里原样转出。 */
+export { FORMATION_ROW_COUNTS } from './LegionRowOrder';
+import { FORMATION_ROW_COUNTS, arrangeLegionRows } from './LegionRowOrder';
 
 /** slots 的分组数是否与该阵型的分排数逐项相等（不等 = 渲染时必然跨排错位） */
 export function slotsMatchFormation(slots: CompositionSlot[], mode: FormationMode): boolean {
@@ -1155,8 +1146,12 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
 
     const culture = region ?? army.cultureRegion ?? 'CENTRAL';
     const factionSlots = getFactionCompositionSlots(army.factionId, army.generalId);
-    const slots = factionSlots ?? getCultureTier(culture, army.getTroops())?.slots;
-    if (!slots) return;
+    const rawSlots = factionSlots ?? getCultureTier(culture, army.getTroops())?.slots;
+    if (!rawSlots) return;
+    // 🔴 [2026-11-04 主人令「战略地图上主将和阵型的位置请和战术一致」] 三排先后与档数一律按占位/档位排序
+    //    （types/LegionRowOrder，战术 Scene13WarLayer.slotsOf / formationModeOf 同读）；阵型 = 排好后的人数模式。
+    const arranged = arrangeLegionRows(rawSlots);
+    const slots = arranged.formationMode ? arranged.slots : rawSlots;
 
     // 🔴 [2026-09-23 主人定「战略，战术都改为10队」] 编制 9 队 + 主将队 1 队（src/data/generalHeroUnits.ts）
     const legionCommanderUnit = getFactionLegionComposition(army.factionId, army.generalId)?.commanderUnit ?? getRegionLegionComposition(culture)?.commanderUnit;
@@ -1172,7 +1167,9 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
 
     // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 鹤翼阵(步骑远) / 鱼鳞阵(2近1远) / 三角阵(骑+弓骑) / 雁行阵(2远1近) → 文化区默认
     const custom = getFactionLegionComposition(army.factionId, army.generalId);
-    if (custom?.formationMode) {
+    if (arranged.formationMode) {
+        army.formationMode = arranged.formationMode;
+    } else if (custom?.formationMode) {
         army.formationMode = custom.formationMode;
     } else if (isQin || isHan || isTang || isSong || isPer || isPol || isTeu || isSen) {
         army.formationMode = 'crane_wing';

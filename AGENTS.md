@@ -141,6 +141,8 @@
 - 主人给的编制装不下，**改程序，不改编制**。
 - 🔴 **三排排序（占位排序）**（2026-11-02 主人令「战象，战车，步兵，骑兵，投掷，弩手，弓手，弓骑，法术，火器。这是占位排序」）：越靠前越先接敌，顺序＝**战象 → 战车 → 步兵 → 骑兵 → 投掷 → 弩手 → 弓手 → 弓骑 → 法术 → 火器**；每个兵种**带着自己的档数走**，阵型按重排后的人数模式套。`slots[0]`＝前排、`[1]`＝中排、`[2]`＝后排；每排人数由 `FORMATION_ROW_COUNTS` 按阵型定（`triangle` 2-3-4、`crane_wing` 2-4-3、`echelon` 4-3-2、`balance_yoke` 4-2-3、`fish_scale` 3-4-2、`crescent` 3-2-4、`square` 3-3-3）。
 - 🔴 **档位排序**（2026-11-02 主人令「法术，战象，战车，火器，骑兵，弓骑，投掷，步兵，弩手，弓手，这是挡位排序」「前面是挡位少的」）：**越靠前档位越少**——排第一的拿 **2 档**，依次 3 档，**排最后的拿 4 档**；顺序＝**法术 → 战象 → 战车 → 火器 → 骑兵 → 弓骑 → 投掷 → 步兵 → 弩手 → 弓手**；阵型按重排后的人数模式改。
+- 🔴 **主将队站位**（2026-11-04 主人令「战略地图上主将和阵型的位置请和战术一致。主将在2档之间」）：第 10 队站在「2 档」那一排的两队正中；方阵 3-3-3 没有 2 档排，站前排正中再往前（矛头）。
+- 🔴 **两套排序与主将站位只有一处代码定义**：`src/types/LegionRowOrder.ts`（`ROW_PLACEMENT_ORDER` / `ROW_TIER_COUNT_ORDER` / `arrangeLegionRows` / `commanderRowOf`，`FORMATION_ROW_COUNTS` 也在这里）。战略方阵（`applyLegionCultureComposition`、`LegionPhalanxDrawer.withCommanderCell`）与战术（`Scene13WarLayer.slotsOf / formationModeOf`、`COMMANDER_CELL`）都读它；编制数据不合排序时运行时按它重排。审计：`npm run legion:row-order-audit`。
 - `light_riders` 已删，一律用 `light_cavalry`（素材保留）。
 - 军团不放攻城武器。
 

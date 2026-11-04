@@ -1,4 +1,5 @@
 import type { FormationMode } from '../../types/CultureFormations';
+import { commanderRowOf } from '../../types/LegionRowOrder';
 import type { RegionType } from '../../systems/RegionSystem';
 import type { WarType } from '../../data/WarTypes';
 import { popCostOf } from '../../data/UnitPopCost';
@@ -470,21 +471,24 @@ export const LAYOUT: Record<FormationMode, { col: number; row: number; cols: num
 };
 
 export const SIDE_LANES = 10;
-/** 
+/**
  * 各阵型第 10 口主将队/英雄队的站位：
  * 🔴 [2026-10-15 主人令]「英雄队的位置统一改为在2之间，除了3*3方阵」
- * 所有阵型（除方阵 3+3+3）都有一个「2 队」的排，英雄队统一放在那 2 队正中间；
+ * 🔴 [2026-11-04 主人令]「战略地图上主将和阵型的位置请和战术一致。主将在2档之间。」
+ * 站哪一排由 `commanderRowOf`（types/LegionRowOrder，战略方阵同读）定：「2 队」那一排，放在那 2 队正中间；
  * 方阵无 2 队排，保持 row -1 前排正中矛头位置。
  */
-export const COMMANDER_CELL: Record<FormationMode, { col: number; row: number; cols: number }> = {
-    triangle: { col: 0.5, row: 0, cols: 2 },     // 三角 2+3+4：前排 2 组（col 0/1）中间
-    crane_wing: { col: 1, row: 0, cols: 3 },     // 鹤翼 2+4+3：前排 2 组（col 0/2）中间
-    echelon: { col: 0.5, row: 2, cols: 2 },      // 雁行 4+3+2：后排 2 组（col 0/1）中间
-    square: { col: 0, row: -1, cols: 1 },        // 方阵 3+3+3：无 2 队，保持前排正中矛头
-    balance_yoke: { col: 0.5, row: 1, cols: 2 }, // 衡轭 4+2+3：中排 2 组（col 0/1）中间
-    fish_scale: { col: 1, row: 2, cols: 3 },     // 鱼鳞 3+4+2：后排 2 组（col 0/2）中间
-    crescent: { col: 0.5, row: 1, cols: 2 },     // 偃月 3+2+4：中排 2 组（col 0/1）中间
-};
+export const COMMANDER_CELL: Record<FormationMode, { col: number; row: number; cols: number }> = (() => {
+    const out = {} as Record<FormationMode, { col: number; row: number; cols: number }>;
+    for (const mode of Object.keys(LAYOUT) as FormationMode[]) {
+        const row = commanderRowOf(mode);
+        const pair = LAYOUT[mode].filter((c) => c.row === row);
+        out[mode] = pair.length
+            ? { col: pair.reduce((s, c) => s + c.col, 0) / pair.length, row, cols: pair[0].cols }
+            : { col: 0, row: -1, cols: 1 };
+    }
+    return out;
+})();
 
 /** 建筑占地边长档位（格）：与 TerritorySystem.deBuildingFootprint 对齐，城堡与世界奇观作为核心决胜建筑定为 5 档（28 秒保底） */
 export function bldFootprintSide(b: string): number {
