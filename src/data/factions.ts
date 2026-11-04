@@ -209,7 +209,7 @@ export const FACTIONS: Faction[] = [
   // ── 2026-08-04 新增：野地（沃罗涅日，狄野南疆要塞）──
   { id: 'moerdaweiya', name: '摩尔达维亚' },
   { id: 'walajiyia', name: '瓦拉几亚' },
-  { id: 'tiaodun_qishi', name: '条顿骑士' },
+  { id: 'tiaodun_qishi', name: '条顿骑士团' },
   { id: 'yelusalengwg', name: '耶路撒冷王国' },
         // 阿卡·十字军耶路撒冷王国（1191–1291 都城）
   { id: 'shengdian_qishi', name: '圣殿骑士团' },

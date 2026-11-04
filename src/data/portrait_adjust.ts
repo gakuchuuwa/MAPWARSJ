@@ -9333,9 +9333,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -33
         },
         "/assets/CENTRAL/bfe2_xun_linfu.png": {
-            "scale": 1.17,
-            "offsetX": 0,
-            "offsetY": 6
+            "scale": 1.21,
+            "offsetX": 21,
+            "offsetY": 9
         },
         "/assets/VIETNAMESE/__闲置__LINGNAN_16.png": {
             "scale": 0.92,
@@ -10581,6 +10581,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 14,
             "offsetY": -30
+        },
+        "/assets/CENTRAL/wei_xuchu.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": -9
         }
     },
     "folderGuides": {

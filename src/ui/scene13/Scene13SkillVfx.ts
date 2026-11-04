@@ -1056,6 +1056,10 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
     ctx.stroke();
     ctx.restore();
 
+    // 放计方在左（往右推进 cos(angle) >= 0）⇒ 箭雨从左往右射；放计方在右 ⇒ 箭雨从右往左射
+    const fromLeft = Math.cos(v.angle) >= 0;
+    const dirSign = fromLeft ? 1 : -1;
+
     // 2. 小特效：使用 DE 吴火焰弓箭手精锐的火箭（PROJ_ARROW_FIRE）作为漫天火箭雨从天而降
     const fireArrowImg = getDeFireArrowImg();
     if (fireArrowImg) {
@@ -1095,7 +1099,7 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
                 ty = cy + Math.sin(ang) * rad * 0.55;
             }
 
-            const sx = tx - FLIGHT_DX * (0.88 + h3 * 0.24);
+            const sx = tx - dirSign * FLIGHT_DX * (0.88 + h3 * 0.24);
             const sy = ty - FLIGHT_DY * (0.88 + h2 * 0.24);
 
             if (localP <= 1) {
@@ -1168,7 +1172,7 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
                 if (dx > maxDx) maxDx = dx;
             }
         }
-        const sideSign = Math.cos(v.angle) >= 0 ? -1 : 1;
+        const sideSign = fromLeft ? -1 : 1;
         const edgeSpan = Math.min(85, Math.max(28, sideSign < 0 ? -minDx : maxDx));
         const iconX = cx + sideSign * (edgeSpan + 116 * scale);
         const iconY = cy - 32 * scale;
@@ -1176,10 +1180,15 @@ function drawDefeat(ctx: CanvasRenderingContext2D, v: Scene13SkillVfx, p: number
         const iconAlpha = p < 0.72 ? 1 : (1 - p) / 0.28;
         const dropOffset = (1 - easeOut(Math.min(1, p * 3.8))) * 36;
         const mainPulse = 1 + 0.06 * Math.sin(p * Math.PI * 6);
+        const drawR = 108 * scale * mainPulse;
+        const drawY = iconY - dropOffset * 0.6;
 
         ctx.save();
         ctx.globalAlpha = iconAlpha;
-        drawStamp(ctx, badge, iconX, iconY - dropOffset * 0.6, 108 * scale * mainPulse);
+        ctx.translate(iconX, drawY);
+        // baizhan.png 原图箭尖朝左下（从右往左射）；左边放计时水平翻转，使其从左往右射
+        if (fromLeft) ctx.scale(-1, 1);
+        drawStamp(ctx, badge, 0, 0, drawR);
         ctx.restore();
     }
 }

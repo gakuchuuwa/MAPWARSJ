@@ -514,7 +514,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'mihran': [{ from: -9999, era: 'antiquity' }], // 米赫兰
     'wistahm': [{ from: -9999, era: 'antiquity' }], // 维斯塔姆
     'dongyang': [{ from: -9999, era: 'feudal' }], // 东扬
-    'tiaodun_qishi': [{ from: -9999, era: 'castle' }], // 条顿骑士
+    'tiaodun_qishi': [{ from: -9999, era: 'castle' }], // 条顿骑士团
     'tiemuer': [{ from: -9999, era: 'castle' }], // 图兰
     'tokugawa': [{ from: -9999, era: 'imperial' }], // 德川
     'tomara_gwalior': [{ from: -9999, era: 'imperial' }], // 托摩罗

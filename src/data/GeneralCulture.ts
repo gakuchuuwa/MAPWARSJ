@@ -751,7 +751,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_tzitzipandaquare': 'AMERICA',   // 塔拉斯科｜齐齐潘达夸雷｜据点 钦聪灿
     'gen_ugolino': 'LATIN',   // 阿诺｜乌戈里诺｜据点 比萨
     'gen_ulrich_augsburg': 'GERMANIC',   // 施瓦本｜乌尔里希｜据点 奥格斯堡
-    'gen_ulrich_jungingen': 'GERMANIC',   // 条顿骑士｜容金根｜据点 柯尼斯堡
+    'gen_ulrich_jungingen': 'GERMANIC',   // 条顿骑士团｜容金根｜据点 柯尼斯堡
     'gen_ulugh_muhammad': 'CENTRAL_ASIA',   // 保加尔｜兀鲁黑｜据点 喀山
     'gen_uqba': 'BERBER',   // 阿格拉布｜奥克巴｜据点 凯鲁万
     'gen_urdaneta': 'SPANISH',   // 新西班牙｜乌尔达内塔｜据点 阿卡普尔科
