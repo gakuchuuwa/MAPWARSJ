@@ -26,6 +26,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   baibo: { name: '白波黄巾', tier: 3 },     // 东汉末年最著名的黄巾军余部，护驾汉献帝东归，历史知名度极高，升入T3知名
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
     tianxiong: { name: '魏博牙兵', tier: 2 },
+    huaixi: { name: '淮西骡军', tier: 2 },   // 《资治通鉴》卷240「董重质将骡军守洄曲」
   dixiang: { name: '猪突豨勇', tier: 3 },   // 王莽新朝特种部队，极度奇葩、辨识度极高的历史番号，升入T3知名
   // 朱龙骑除名（无此番号）
   // ── 2026-06-16 新增：11大名关 ──

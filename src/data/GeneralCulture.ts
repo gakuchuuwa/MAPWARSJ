@@ -1610,7 +1610,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zhelouqi_puliteweilajie': 'GURJARAS',   // 经典战敌将｜据点 city_ajiemier
     'baojian_herman': 'GERMANIC',   // 经典战敌将｜据点 city_liga
     'qi_tianji': 'CENTRAL',   // 经典战敌将｜据点 city_linzi
-    'yuenan_ruanguangzuan': 'VIETNAMESE',   // 经典战敌将｜据点 city_hoalu
+    'yuenan_ruanguangzuan': 'VIETNAMESE',   // 经典战敌将｜据点 city_fuchun
     'osman_kapadan': 'TURKS',   // 经典战敌将｜据点 city_buersa
     'bfe_andronikos_komnenos': 'BYZANTINE',   // 经典战敌将｜据点 city_junshitandingbao
     'tujue_abo_dagan': 'MONGOL',   // 经典战敌将｜据点 city_toumancheng

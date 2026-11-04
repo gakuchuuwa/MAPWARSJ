@@ -1,4 +1,3 @@
-import { installFrameCap } from './app/FrameCap';
 import 'leaflet/dist/leaflet.css';
 import '../style.css';
 import './ui/map-hud-theme.css';
@@ -9,8 +8,6 @@ import {
     showGameAppRuntimeErrorBadge,
 } from './app/boot/GameAppBootUtils';
 import { registerMapwarWebMcpTools } from './webmcp/registerMapwarTools';
-
-installFrameCap();
 
 if (import.meta.env.DEV) {
     import('./debug/perfEarly');

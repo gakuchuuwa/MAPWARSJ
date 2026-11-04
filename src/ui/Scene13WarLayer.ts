@@ -9568,7 +9568,7 @@ export class Scene13WarLayer {
         // [性能探针 2026-08-18] step/render 分开计时，落盘时随诊断一起发（DEV 才采）
         if (import.meta.env.DEV) {
             const t0 = performance.now();
-            this.stepSubdivided(dt);
+            this.step(dt);
             const t1 = performance.now();
             render.call(this);
             const t2 = performance.now();
@@ -9593,18 +9593,9 @@ export class Scene13WarLayer {
                 if (this.spikeLog.length > 30) this.spikeLog.shift();
             }
         } else {
-            this.stepSubdivided(dt);
+            this.step(dt);
             render.call(this);
         }
-    }
-
-    /**
-     * 🔴 [2026-11-04 限帧 30fps，见 app/FrameCap.ts] 一帧的 dt 拆成不超过 1/60 秒的小步推进，
-     * 战斗结算的步长和每秒步数与 60 帧时一致；限帧只省画，不改仗怎么打。
-     */
-    private stepSubdivided(dt: number): void {
-        const n = Math.max(1, Math.ceil(dt * 60 - 1e-6));
-        for (let i = 0; i < n; i++) this.step(dt / n);
     }
 
     /**

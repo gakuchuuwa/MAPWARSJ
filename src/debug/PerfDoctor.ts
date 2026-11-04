@@ -299,12 +299,10 @@ export class PerfDoctor {
             for (const [, h] of this.hots) knownPerFrame += h.total / Math.max(1, h.n);
             const ltTotal = this.longTasks.reduce((a, b) => a + b.ms, 0);
 
-            // 🔴 [2026-11-04] 全局限帧（app/FrameCap.ts）时按目标帧率判，别把 30fps 当成卡顿
-            const capFps = (window as unknown as { __mapwarFrameCapFps?: number }).__mapwarFrameCapFps ?? 60;
-            if (fps < capFps * 0.75 || p90 > 2000 / capFps) {
+            if (fps < 45 || p90 > 33) {
                 out.push({
                     rule: 'frame-gap-dominant',
-                    severity: fps < capFps / 2 ? 'critical' : 'warn',
+                    severity: fps < 30 ? 'critical' : 'warn',
                     symptom: `真实帧率中位 ${fps.toFixed(0)}fps（帧间 p90 ${p90.toFixed(0)}ms / p99 ${p99.toFixed(0)}ms），`
                         + `而已登记热点每帧合计只有 ${knownPerFrame.toFixed(2)}ms。`
                         + '差额在**帧与帧之间**：GC 停顿、别的 rAF 循环、浏览器合成。'
@@ -540,7 +538,6 @@ export class PerfDoctor {
             env: this.env(),
             frames: this.frameGaps.length >= 10 ? {
                 fpsP50: +(1000 / this.q(this.frameGaps, 0.5)).toFixed(1),
-                frameCapFps: (window as unknown as { __mapwarFrameCapFps?: number }).__mapwarFrameCapFps ?? null,
                 gapP50ms: +this.q(this.frameGaps, 0.5).toFixed(1),
                 gapP90ms: +this.q(this.frameGaps, 0.9).toFixed(1),
                 gapP99ms: +this.q(this.frameGaps, 0.99).toFixed(1),

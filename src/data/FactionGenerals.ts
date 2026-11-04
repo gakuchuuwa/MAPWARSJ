@@ -1294,7 +1294,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gen_charles_i_naples', factionId: 'xixiliwangguo', cityId: 'city_naples', generalName: '卡洛', portrait: '/assets/LATIN/kanpaniya_kaluo.png', eliteName: '安茹骑士', eliteTier: 3 },
+        { generalId: 'gen_charles_i_naples', factionId: 'anjou', cityId: 'city_naples', generalName: '卡洛', portrait: '/assets/LATIN/kanpaniya_kaluo.png', eliteName: '安茹骑士', eliteTier: 3 },
 
 
 
@@ -4674,7 +4674,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     { generalId: 'tang_tianjun', factionId: 'tang', cityId: 'city_wanling', generalName: '田頵', portrait: '/assets/JIANGNAN/tang_tianjun.png', eliteName: '宣州牙兵', eliteTier: 2 },   // 🔴 [2026-11-01 空据点补将] 892—903 宁国军节度使，治宣州
     { generalId: 'tang_qinyan', factionId: 'tang', cityId: 'city_wanling', generalName: '秦彦', portrait: '/assets/JIANGNAN/tang_qinyan.png', eliteName: '宣歙镇兵', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 887 宣歙观察使据宣州
         { generalId: 'tang_qikerang', factionId: 'tang', cityId: 'city_tongguan', generalName: '齐克让', portrait: '/assets/CENTRAL/tang_qikerang.png', eliteName: '泰宁军', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 经典战敌将；泰宁节度使，880 守潼关败走；唐势力精锐玄甲军为李世民专属不可承，给本镇军号泰宁军 T4（史载藩镇名）；据点潼关（CENTRAL）
-        { generalId: 'bfe3_57', cityId: 'city_changan', generalName: '樊参', portrait: '/assets/CENTRAL/bfe3_57.png', factionId: 'han_d', eliteName: '河朔骑兵', eliteTier: 4 },
+        { generalId: 'bfe3_57', cityId: 'city_changan', generalName: '樊参', portrait: '/assets/CENTRAL/bfe3_57.png', factionId: 'gengshi', eliteName: '河朔骑兵', eliteTier: 4 },
         { generalId: 'bfe_li_song', cityId: 'city_changan', generalName: '李松', portrait: '/assets/CENTRAL/bfe_li_song.png', factionId: 'han_d', eliteName: '河朔骑兵', eliteTier: 4 },
         { generalId: 'bfe3_35', cityId: 'city_changan', generalName: '公孙敖', portrait: '/assets/CENTRAL/bfe3_35.png', factionId: 'han_d', eliteName: '河朔骑兵', eliteTier: 4 },
         { generalId: 'bfe3_56', cityId: 'city_changan', generalName: '王寻', portrait: '/assets/CENTRAL/bfe3_56.png', factionId: 'dixiang', eliteName: '河朔骑兵', eliteTier: 4 },
@@ -6787,7 +6787,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'bfe_wu_yuanji', cityId: 'city_xuanhu', generalName: '吴元济', portrait: '/assets/CENTRAL/bfe_wu_yuanji.png', factionId: 'tang', eliteName: '淮西军', eliteTier: 2  },   // 按史：淮西镇兵，铁城全歼高霞寓一路（《资治通鉴·卷二四〇》）
+        { generalId: 'bfe_wu_yuanji', cityId: 'city_xuanhu', generalName: '吴元济', portrait: '/assets/CENTRAL/bfe_wu_yuanji.png', factionId: 'huaixi', eliteName: '淮西骡军', eliteTier: 2  },   // 按史：淮西镇兵，铁城全歼高霞寓一路（《资治通鉴·卷二四〇》）
 
 
 
@@ -8524,7 +8524,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'yuan_d_daulashah', cityId: 'city_shangdu', generalName: '倒剌沙', portrait: '/assets/XIANBEI/yuan_d_daulashah.png', eliteName: '漠南骑手', eliteTier: 4 },
+        { generalId: 'yuan_d_daulashah', factionId: 'shangdu', cityId: 'city_shangdu', generalName: '倒剌沙', portrait: '/assets/XIANBEI/yuan_d_daulashah.png', eliteName: '漠南骑手', eliteTier: 4 },
 
 
 
@@ -10087,7 +10087,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe_jaya_prakash', cityId: 'city_kathmandu', generalName: '普拉卡什', portrait: '/assets/TIBET/bfe_jaya_prakash.png' , eliteName: '廓尔喀兵', eliteTier: 3},
+        { generalId: 'bfe_jaya_prakash', factionId: 'malla', cityId: 'city_kathmandu', generalName: '普拉卡什', portrait: '/assets/TIBET/bfe_jaya_prakash.png' , eliteName: '廓尔喀兵', eliteTier: 3},
 
 
 
@@ -10840,7 +10840,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     longwu: [
         { generalId: 'longwu_huangdaozhou', cityId: 'city_jianning', generalName: '黄道周', portrait: '/assets/JIANGNAN/longwu_huangdaozhou.png', eliteName: '荆楚兵', eliteTier: 4 },
-        { generalId: 'bfe3_75', cityId: 'city_jianning', generalName: '刘胄', portrait: '/assets/JIANGNAN/bfe3_75.png', factionId: 'shu', eliteName: '荆楚兵', eliteTier: 4 },
+        { generalId: 'bfe3_75', cityId: 'city_jianning', generalName: '刘胄', portrait: '/assets/JIANGNAN/bfe3_75.png', factionId: 'sou', eliteName: '荆楚兵', eliteTier: 4 },
     
         { generalId: 'geng_gengjingzhong', factionId: 'manzhou_d', cityId: 'city_fuzhou', generalName: '耿精忠', portrait: '/assets/JIANGNAN/geng_gengjingzhong.png', eliteName: '靖南藩兵', eliteTier: 3  },   // 按史：耿精忠袭靖南王，藩下汉军藩兵（《清史稿·耿精忠传》）
 
@@ -12109,7 +12109,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     yue: [
         { generalId: 'yue_goujian', cityId: 'city_kuaiji', generalName: '勾践', portrait: '/assets/JIANGNAN/yue_goujian.png' , legionName: '先秦军团', eliteName: '越君子军', eliteTier: 2 },
-        { generalId: 'bfe_gao_zhihui', factionId: 'sui', cityId: 'city_kuaiji', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', eliteName: '江南郡兵', eliteTier: 4 },   // 2026-10-25 按史：隋越州反隋（同势力内战），原误挂越国
+        { generalId: 'bfe_gao_zhihui', factionId: 'dongyang', cityId: 'city_kuaiji', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', eliteName: '江南郡兵', eliteTier: 4 },   // 2026-10-25 按史：隋越州反隋（同势力内战），原误挂越国
     ],
 
 
@@ -14911,7 +14911,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'sashan_bahram_vi', cityId: 'city_feiluzhabade', generalName: '巴赫拉姆六世', portrait: '/assets/SASANIAN/sashan_bahram_vi.png', eliteName: '萨珊重骑', eliteTier: 3 },
+        { generalId: 'sashan_bahram_vi', factionId: 'mihran', cityId: 'city_feiluzhabade', generalName: '巴赫拉姆六世', portrait: '/assets/SASANIAN/sashan_bahram_vi.png', eliteName: '萨珊重骑', eliteTier: 3 },
 
 
 
@@ -14940,7 +14940,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'shahelude_weisitamu', factionId: 'sashan', cityId: 'city_bistam', generalName: '维斯塔姆', portrait: '/assets/PERSIAN/shahelude_weisitamu.png', eliteName: '萨珊铁甲', eliteTier: 2 },
+        { generalId: 'shahelude_weisitamu', factionId: 'wistahm', cityId: 'city_bistam', generalName: '维斯塔姆', portrait: '/assets/PERSIAN/shahelude_weisitamu.png', eliteName: '萨珊铁甲', eliteTier: 2 },
 
 
 
@@ -17441,14 +17441,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     daquyue: [
         { generalId: 'jing_dingbuling', eliteName: '丁朝禁卫', eliteTier: 4, factionId: 'daquyue', cityId: 'city_hoalu', generalName: '丁部领', portrait: '/assets/VIETNAMESE/jing_dingbuling.png' },   // 按史：丁朝宫廷禁卫为常规宿卫建制，缺独立战略大捷记录，依 v3 定 T4（《大越史记全书·丁纪》）。
-        { generalId: 'bfe_ngo_nhat_khanh', factionId: 'daquyue', cityId: 'city_hoalu', generalName: '吴日庆', portrait: '/assets/VIETNAMESE/bfe_ngo_nhat_khanh.png' , eliteName: '交趾乡兵', eliteTier: 4},
+        { generalId: 'bfe_ngo_nhat_khanh', factionId: 'shierShijun', cityId: 'city_hoalu', generalName: '吴日庆', portrait: '/assets/VIETNAMESE/bfe_ngo_nhat_khanh.png' , eliteName: '交趾乡兵', eliteTier: 4},
 
     
         { generalId: 'gen_dinhle', factionId: 'daquyue', cityId: 'city_yian', generalName: '丁礼', portrait: '/assets/VIETNAMESE/gen_dinhle.png', eliteName: '越南民兵', eliteTier: 4 },
 
     ],
     yuenan: [
-        { generalId: 'yuenan_ruanguangzuan', factionId: 'yuenan', cityId: 'city_hoalu', generalName: '阮光缵', portrait: '/assets/VIETNAMESE/yuenan_ruanguangzuan.png', eliteName: '越南民兵', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 经典战敌将；西山朝末帝 1783-1802；史实内战双方同属越南，按规则不新建势力；据点华闾（VIETNAMESE）；用势力精锐游击铳象
+        { generalId: 'yuenan_ruanguangzuan', factionId: 'xishan', cityId: 'city_fuchun', generalName: '阮光缵', portrait: '/assets/VIETNAMESE/yuenan_ruanguangzuan.png', eliteName: '越南民兵', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 经典战敌将；西山朝末帝 1783-1802；史实内战双方同属越南，按规则不新建势力；据点华闾（VIETNAMESE）；用势力精锐游击铳象
         { generalId: 'nguyen_guangnan_ruanfuying', factionId: 'yuenan', cityId: 'city_fuchun', generalName: '阮福映', portrait: '/assets/VIETNAMESE/nguyen_guangnan_ruanfuying.png', eliteName: '富春禁卫', eliteTier: 3 },   // 按史：富春为阮福映都城与亲军驻地，禁卫具政权与宫廷特色，不以泛称「游击铳象」抬作 T1（《大南实录》）。
 
     

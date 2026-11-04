@@ -150,6 +150,15 @@ zhangchu: '#7A2E6B', // 张楚·陈胜（与楚、马楚同字重旗，取紫褐
 desheng: '#2E6B7A', // 德胜·刘通
 wuzhou_yijun: '#6B7A2E', // 婺州义军·汪文进
     tianxiong: '#6A4838', // 魏博·牙兵（大名河朔褐）
+    huaixi: '#5B7F6A', // 淮西镇·骡军（蔡州，灰青绿）
+    gengshi: '#7A5C9E', // 更始
+    shierShijun: '#3E7C8C', // 十二使君
+    xishan: '#C47A9B', // 西山
+    malla: '#9A6B2F', // 加德满都
+    shangdu: '#6B8E5A', // 上都
+    mihran: '#8F5A7A', // 米赫兰
+    wistahm: '#A8884A', // 维斯塔姆
+    dongyang: '#5E6E9E', // 东扬
 
     // ── 北方精锐远征势力（2026-06-11；§2 全 12 + §1 偏北）──
     zhao: '#B83A3A', // 赵·赵边骑（三晋尚赤）

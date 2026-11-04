@@ -1384,6 +1384,42 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代中原军团",
         legionType: "sub",
     },
+    "huaixi": {
+        legionName: "封建时代中原军团",
+        legionType: "sub",
+    },
+    "gengshi": {
+        legionName: "古典时代华夏军团",
+        legionType: "sub",
+    },
+    "shierShijun": {
+        legionName: "封建时代瞿越军团",
+        legionType: "sub",
+    },
+    "xishan": {
+        legionName: "帝国时代安南军团",
+        legionType: "sub",
+    },
+    "malla": {
+        legionName: "帝国时代卫藏军团",
+        legionType: "sub",
+    },
+    "shangdu": {
+        legionName: "城堡时代漠南蒙古军团",
+        legionType: "sub",
+    },
+    "mihran": {
+        legionName: "古典时代萨珊军团",
+        legionType: "sub",
+    },
+    "wistahm": {
+        legionName: "古典时代萨珊军团",
+        legionType: "sub",
+    },
+    "dongyang": {
+        legionName: "封建时代江淮军团",
+        legionType: "sub",
+    },
     "qiuchi": {
         legionName: "古典时代巴蜀军团",
         legionType: "sub",

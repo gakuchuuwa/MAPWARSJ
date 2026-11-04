@@ -3333,7 +3333,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
 
-    { id: 'city_xuanhu', name: '悬瓠', factionId: 'tang', lat: 33.01, lng: 114.36, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '推算：城居 2 万（悬瓠＝豫州治，同期州城 1.5–2.5 万）→ 小城' },
+    { id: 'city_xuanhu', name: '悬瓠', factionId: 'huaixi', lat: 33.01, lng: 114.36, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' , note: '推算：城居 2 万（悬瓠＝豫州治，同期州城 1.5–2.5 万）→ 小城' },
 
 
 

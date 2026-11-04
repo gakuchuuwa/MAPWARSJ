@@ -505,6 +505,15 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'teweier_gongguo': [{ from: -9999, era: 'castle' }], // 特维公国
     'teweierqie': [{ from: -9999, era: 'imperial' }], // 特维尔切
     'tianxiong': [{ from: -9999, era: 'feudal' }], // 魏博
+    'huaixi': [{ from: -9999, era: 'feudal' }], // 淮西镇（中唐割据藩镇）
+    'gengshi': [{ from: -9999, era: 'antiquity' }], // 更始
+    'shierShijun': [{ from: -9999, era: 'feudal' }], // 十二使君
+    'xishan': [{ from: -9999, era: 'imperial' }], // 西山
+    'malla': [{ from: -9999, era: 'imperial' }], // 加德满都
+    'shangdu': [{ from: -9999, era: 'castle' }], // 上都
+    'mihran': [{ from: -9999, era: 'antiquity' }], // 米赫兰
+    'wistahm': [{ from: -9999, era: 'antiquity' }], // 维斯塔姆
+    'dongyang': [{ from: -9999, era: 'feudal' }], // 东扬
     'tiaodun_qishi': [{ from: -9999, era: 'castle' }], // 条顿骑士
     'tiemuer': [{ from: -9999, era: 'castle' }], // 图兰
     'tokugawa': [{ from: -9999, era: 'imperial' }], // 德川
