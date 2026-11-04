@@ -6293,9 +6293,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/MAGYAR/xiongyati_yannuoshi.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 10
+            "scale": 1.04,
+            "offsetX": 12,
+            "offsetY": 9
         },
         "/assets/GERMANIC/__多余__GERMANIC_02.png": {
             "scale": 0.98,
@@ -9660,10 +9660,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/MAGYAR/mazhaer_charles_i.png": {
             "scale": 1.16,
             "offsetX": 31,
-            "offsetY": 43
+            "offsetY": 45
         },
         "/assets/SLAVIC/luosi_siweinieerde.png": {
-            "scale": 0.98,
+            "scale": 0.94,
             "offsetX": 8,
             "offsetY": -8
         },

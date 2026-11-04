@@ -4776,6 +4776,7 @@ export class CombatUI {
             eliteName,
             opponentHasGeneral,
             audioUnitId,
+            syncNow: true,
         });
     }
 

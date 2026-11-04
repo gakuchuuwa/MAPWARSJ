@@ -206,6 +206,8 @@ export class SpeechAnnouncer {
     voice?: EdgeVoice;
     gapMs?: number;
     onStart?: () => void;
+    /** 战术模式六计：大字与技效同刻已亮，这句不再等 Cut-in 闸门，当场开口 */
+    syncNow?: boolean;
   }[] = [];
   private skillSpeaking = false;
   /** 播报会话：技能连播期间保持 ducking，避免句间音效/音乐脉冲 */
@@ -474,6 +476,16 @@ export class SpeechAnnouncer {
   /** 技能语音队列是否空闲（下一句入队时是否会附带技能音效） */
   public isSkillVoiceIdle(): boolean {
     return this.skillSpeakQueue.length === 0 && !this.skillSpeaking;
+  }
+
+  /**
+   * 🔴 [2026-11-04 主人令「六计释放的时间点和播报不同时，请同步」]
+   * 此刻入队的技能语音能不能当场开口：技能队列空闲、没有 S 级旁白、没有别的语音在念。
+   * 战术模式据此决定放计时机——语音放得出来才放计，技效、大字、语音三者同刻。语音关闭时一律放行。
+   */
+  public canStartSkillVoiceNow(): boolean {
+    if (!this.enabled) return true;
+    return this.isSkillVoiceIdle() && !this.isSTierBusy() && this.activeEdgeAudio === null;
   }
 
   /** 切换男声偏好，并试播一句 */
@@ -748,6 +760,48 @@ export class SpeechAnnouncer {
     this.speak(text);
   }
 
+  /**
+   * 🔴 [2026-11-04 主人令「跟随军团在战略地图出现15秒减员的时候，可以添加一段播报吗」]
+   * 跟拍军团断粮后第一次吃到 15 秒整跳减员时播一句；刷屏节流由 LegionManager 负责。
+   */
+  public announceMarchAttrition(opts: {
+    factionId: string;
+    generalId?: string | null;
+    generalName?: string | null;
+    eliteName?: string | null;
+  }): void {
+    if (!this.enabled) return;
+    const lead = this.marchAttritionLead(opts);
+    const text = `${lead}久离城邑，粮道不继，士卒饥疲，沿途逃散，日渐减员。`;
+    console.log("[Speech] 远输减员:", text);
+    this.speak(text);
+  }
+
+  /**
+   * 🔴 [2026-11-04 主人令「跟随军团在战略地图出现15秒连续减员，覆灭的时候，可以添加一段播报吗」]
+   * 跟拍军团被行军减员啃到归零、就此覆灭时播一句。
+   */
+  public announceMarchAttritionWipeout(opts: {
+    factionId: string;
+    generalId?: string | null;
+    generalName?: string | null;
+    eliteName?: string | null;
+  }): void {
+    if (!this.enabled) return;
+    const lead = this.marchAttritionLead(opts);
+    const text = `${lead}粮尽援绝，饥疲交加，士卒溃散殆尽，未见敌而全军覆没于道。`;
+    console.log("[Speech] 远输覆灭:", text);
+    this.speak(text);
+  }
+
+  /** 远输播报的主语：有将有精锐＝「某某所部某某军，」；否则＝「某国孤军，」 */
+  private marchAttritionLead(opts: { factionId: string; generalId?: string | null; generalName?: string | null; eliteName?: string | null }): string {
+    if (opts.generalName && opts.eliteName) {
+      return `${getGeneralNameForSpeech(opts.generalId ?? undefined, opts.generalName)}所部${opts.eliteName}，`;
+    }
+    return `${getFactionNameForSpeech(opts.factionId)}孤军，`;
+  }
+
   /** 援军参战：只有「武将+精锐」或「无将无精锐」两种；势取本场开局锁定值。 */
   public announceReinforcementJoin(opts: {
     factionId: string;
@@ -792,6 +846,8 @@ export class SpeechAnnouncer {
     /** 跟拍军团单位 id（用于技能音效；非跟拍不播） */
     audioUnitId?: string | null;
     onStart?: () => void;
+    /** 战术模式六计：与技效、大字同刻开口，不等 Cut-in 闸门 */
+    syncNow?: boolean;
   }): boolean {
     if (!this.enabled) return false;
     if (!opts.generalName || !opts.skillDisplayName) return false;
@@ -818,6 +874,7 @@ export class SpeechAnnouncer {
     this.skillSpeakQueue.push({
       text,
       skipGlobalNameReplace: true,
+      syncNow: opts.syncNow,
       onStart: () => {
         if (playSkillSfxOnStart && audioUnitId) {
           audioManager.playGeneralSkillSfx(audioUnitId);
@@ -833,7 +890,7 @@ export class SpeechAnnouncer {
    * 🔴 [2026-10-23 直播观众放计] 「感谢某某，蓝方放猛攻」——排进技能播报队列，跟大字 Cut-in 同一道闸，不与武将技抢话。
    * 🔴 [2026-10-30 主人令「要换一个声音，不要再用云健了」] 直播间观众互动统一用晓晓女声（zh-CN-XiaoxiaoNeural），与战争旁白男声云健区分开。
    */
-  public announceViewerSkill(viewerName: string, sideName: string, skillName: string, opts?: { onlyIfIdle?: boolean }): void {
+  public announceViewerSkill(viewerName: string, sideName: string, skillName: string, opts?: { onlyIfIdle?: boolean; syncNow?: boolean }): void {
     if (!this.enabled) return;
     if (opts?.onlyIfIdle && (this.skillSpeaking || this.skillSpeakQueue.length > 0 || this.isSpeaking())) return;
     this.skillSpeakQueue.push({
@@ -841,6 +898,7 @@ export class SpeechAnnouncer {
       skipGlobalNameReplace: true,
       voice: SpeechAnnouncer.VIEWER_LIVE_VOICE,
       gapMs: 350,
+      syncNow: opts?.syncNow,
     });
     this.drainSkillQueue();
   }
@@ -896,7 +954,8 @@ export class SpeechAnnouncer {
     // 🔴 [2026-10-20 主人令「不要语音比大字早一点念出来，宁可字早」]
     //    出队前先问 Cut-in 闸门：另一方大字还没收尾 → 这句语音连同它的大字一起等，绝不先开口。
     //    同时若当前正在播 S 级旁白或另一句语音，直播间晓晓提示也稍候再出队，既不打断旁白、也不会被 sTier 静默吞掉。
-    const gateWait = this.skillCutInGate ? this.skillCutInGate() : 0;
+    // 🔴 [2026-11-04] 战术模式六计（syncNow）的大字是和这句同刻弹出的，闸门正是它自己刚占的，不能再等自己。
+    const gateWait = (this.skillCutInGate && !this.skillSpeakQueue[0]?.syncNow) ? this.skillCutInGate() : 0;
     const busyWait = gateWait > 0 ? gateWait : (this.isSTierBusy() || this.activeEdgeAudio !== null ? 450 : 0);
     if (busyWait > 0) {
       if (!this.skillGateTimer) {

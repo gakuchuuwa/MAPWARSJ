@@ -1095,16 +1095,55 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         return b === 0 ? 0.5 : (b < 0 ? -5.0 : 6.0);
     };
     const passCorners: ReadonlyArray<readonly [number, number]> = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
-    const passFlanks: ReadonlyArray<readonly [number, number]> = [[0, -1], [-1, 0], [1, 0], [0, 1]];
+    // 4 座侧翼警戒箭塔：从内门中轴线 (0.5) 移到内门通道两侧夹角防位（偏开主路 2.5 格），彻底让出十字关道
+    const passFlankSlots: ReadonlyArray<{ ci: number; cj: number }> = passShape === 'rect'
+        ? [
+            { ci: -2.0, cj: -4.0 },
+            { ci: 3.0, cj: 5.0 },
+            { ci: -8.0, cj: 3.0 },
+            { ci: 9.0, cj: -2.0 },
+        ]
+        : passShape === 'rect_mirror'
+            ? [
+                { ci: -4.0, cj: -2.0 },
+                { ci: 5.0, cj: 3.0 },
+                { ci: 3.0, cj: -8.0 },
+                { ci: -2.0, cj: 9.0 },
+            ]
+            : [
+                { ci: -2.0, cj: -6.0 },
+                { ci: 3.0, cj: 7.0 },
+                { ci: -6.0, cj: 3.0 },
+                { ci: 7.0, cj: -2.0 },
+            ];
     const passSlotCenters = [
         { ci: 0.5, cj: 0.5, isCenter: true },
         ...passCorners.map(([bi, bj]) => ({ ci: passCornerI(bi), cj: passCornerJ(bj), isCenter: false })),
-        ...passFlanks.map(([bi, bj]) => ({
-            ci: bi === 0 ? 0.5 : passFlankAt(bi, 'i'),
-            cj: bj === 0 ? 0.5 : passFlankAt(bj, 'j'),
-            isCenter: false,
-        })),
+        ...passFlankSlots.map((fl) => ({ ci: fl.ci, cj: fl.cj, isCenter: false })),
     ];
+    // 🔴 [2026-11-04 主人令「多兵营，马厩挺好」] 险要内城两翼校场补设 2 座兵营 + 2 座马厩（3×3 占地，避开城堡、十字关道与 8 座箭塔）
+    const passAuxGarrison: ReadonlyArray<{ b: string; age: string; ci: number; cj: number }> | undefined = isMobeiPass
+        ? undefined
+        : passShape === 'rect'
+            ? [
+                { b: 'BARRACKS', age: 'AGE3', ci: -5, cj: -3 },
+                { b: 'STABLE', age: 'AGE3', ci: -5, cj: 4 },
+                { b: 'STABLE', age: 'AGE3', ci: 6, cj: -3 },
+                { b: 'BARRACKS', age: 'AGE3', ci: 6, cj: 4 },
+            ]
+            : passShape === 'rect_mirror'
+                ? [
+                    { b: 'BARRACKS', age: 'AGE3', ci: -3, cj: -5 },
+                    { b: 'STABLE', age: 'AGE3', ci: 4, cj: -5 },
+                    { b: 'STABLE', age: 'AGE3', ci: -3, cj: 6 },
+                    { b: 'BARRACKS', age: 'AGE3', ci: 4, cj: 6 },
+                ]
+                : [
+                    { b: 'BARRACKS', age: 'AGE3', ci: -4, cj: -4 },
+                    { b: 'STABLE', age: 'AGE3', ci: 5, cj: -4 },
+                    { b: 'STABLE', age: 'AGE3', ci: -4, cj: 5 },
+                    { b: 'BARRACKS', age: 'AGE3', ci: 5, cj: 5 },
+                ];
     const passGridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, !isMobeiStyle(buildingStyle), factionId, region,
         passInnerBuildings, native, {
             seg: passRings.inner.segI, segJ: passRings.inner.segJ, near: 0, far: 0, corner: false,
@@ -1113,6 +1152,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
             groundTile: cityGroundTile(buildingStyle, 'rd2'),
             buildingStyle: style === 'YURT' ? 'ASIA' : style,
             slotCenters: passSlotCenters,
+            auxBuildings: passAuxGarrison,
             outer: {
                 seg: passRings.outer.segI, segJ: passRings.outer.segJ,
                 wallAnchors: DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA'],
@@ -1428,6 +1468,13 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
                         { b: 'TOWER', age: 'AGE4', ci: -6, cj: -10 }, // 北在右（东北）
                         { b: 'TOWER', age: 'AGE4', ci: 7, cj: 11 },   // 南在左（西南）
                     ]),
+                // 大城外圈墙根与街角附属民居（2×2 占地，避开 9 主位、4 辅塔与十字主大道）
+                { b: 'HOUSE', age: 'AGE3', ci: -9.5, cj: -9.5 }, // 北内角街坊
+                { b: 'HOUSE', age: 'AGE3', ci: 10.5, cj: 10.5 }, // 南内角街坊
+                { b: 'HOUSE', age: 'AGE3', ci: -3.5, cj: -9.5 }, // 西北外沿街坊
+                { b: 'HOUSE', age: 'AGE3', ci: 10.5, cj: -3.5 }, // 东北外沿街坊
+                { b: 'HOUSE', age: 'AGE3', ci: -9.5, cj: 4.5 },  // 西南外沿街坊
+                { b: 'HOUSE', age: 'AGE3', ci: 4.5, cj: 10.5 },  // 东南外沿街坊
             ],
         }, buildingStyle);
     }
@@ -1602,6 +1649,19 @@ function buildDeCityGridHtml(
         ringCorner(ring.ai + ring.Li, ring.aj + ring.Lj),
         ringCorner(ring.ai, ring.aj + ring.Lj),
     ];
+    if (!g.noGround && outerRing) {
+        const outerCorners: Array<[number, number]> = [
+            ringCorner(outerRing.ai, outerRing.aj),
+            ringCorner(outerRing.ai + outerRing.Li, outerRing.aj),
+            ringCorner(outerRing.ai + outerRing.Li, outerRing.aj + outerRing.Lj),
+            ringCorner(outerRing.ai, outerRing.aj + outerRing.Lj),
+        ];
+        parts.push(featheredPolygonGroundDiv(
+            W, H, `/SUCAI_TERRAIN/${cityGroundTile(buildingStyle, 'sr2')}.png`, baseSize * 0.32 * AUTO * 2.3,
+            outerCorners,
+            TW * 0.65, 0.94, 8,
+        ));
+    }
     if (!g.noGround) parts.push(featheredPolygonGroundDiv(
         W, H, `/SUCAI_TERRAIN/${g.groundTile}.png`, baseSize * 0.32 * AUTO * 2.3,
         innerCorners,

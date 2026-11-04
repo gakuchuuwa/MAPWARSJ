@@ -609,6 +609,23 @@ export class Scene13WarLayer {
     private static readonly SKILL_CAST_GAP_SEC = 3.4;
     /** 下一次允许放技的真实时间（performance.now 毫秒） */
     private skillCastWallUntil: number = 0;
+    /**
+     * 🔴 [2026-11-04 主人令「六计释放的时间点，和播报不同时，请同步」]
+     * 旧病根：技效与大字同帧落下，语音却排在技能语音队列里——上一句没念完、旁白在念都要等，
+     * 还要等这一计自己刚占上的 Cut-in 闸门 3.2 秒，于是语音总比技效和大字晚约 3 秒以上。
+     * 现在放计前先问语音能否当场开口，能才放；语音卡住太久（超过下面这个真实毫秒数）就不再等，照放。
+     */
+    private static readonly SKILL_VOICE_WAIT_CAP_MS = 8000;
+    /** 开始等语音空闲的真实时间（0＝没在等） */
+    private skillVoiceWaitSince = 0;
+
+    /** 此刻放计，语音能不能和技效、大字同刻念出来 */
+    private skillVoiceReady(wallNow: number): boolean {
+        if (speechAnnouncer.canStartSkillVoiceNow()) { this.skillVoiceWaitSince = 0; return true; }
+        if (this.skillVoiceWaitSince <= 0) this.skillVoiceWaitSince = wallNow;
+        if (wallNow - this.skillVoiceWaitSince >= Scene13WarLayer.SKILL_VOICE_WAIT_CAP_MS) { this.skillVoiceWaitSince = 0; return true; }
+        return false;
+    }
 
     /** 初始化本场战术模式双方武将技集气槽与速率 */
     private initScene13SkillSystem(init: Scene13WarInit): void {
@@ -622,6 +639,7 @@ export class Scene13WarLayer {
         this.sideGeneralId = [rawAttGid, defGid];
         this.skillCastCooldown = 0;
         this.skillCastWallUntil = 0;
+        this.skillVoiceWaitSince = 0;
 
         const resolveEliteTier = (eliteName: string | null | undefined, factionId: string | null | undefined, cityId: string | null | undefined, isDef: boolean, generalId: string | null): number | null => {
             const cleanName = eliteName?.trim();
@@ -778,7 +796,8 @@ export class Scene13WarLayer {
         if (this.heroMan.hp <= 0) return 'wait';
         const targetSide: 0 | 1 = this.playerSetup.side ?? side;
         const wallNow = performance.now();
-        void wallNow;
+        // 两计不许同时放：上一计大字没收尾、或语音此刻念不出来，就稍后再试，保证技效、大字、语音同刻
+        if (wallNow < this.skillCastWallUntil || !this.skillVoiceReady(wallNow)) return 'wait';
         this.skillCastCooldown = Scene13WarLayer.SKILL_CAST_GAP_SEC;
         this.skillCastWallUntil = wallNow + Scene13WarLayer.SKILL_CAST_GAP_SEC * 1000;
         this.viewerCaster = { name: viewerName, paid };
@@ -904,7 +923,8 @@ export class Scene13WarLayer {
         const wallNow = performance.now();
         // 集满的计只在交战中放（与战斗音景同一判据，连续 MELEE_QUIET_SEC 秒没交战才算停）；没交战就攒着，不浪费
         const engaged = this.engagedQuietSec < MELEE_QUIET_SEC;
-        if (engaged && this.skillCastCooldown <= 0 && wallNow >= this.skillCastWallUntil) {
+        const anyFull = this.skillGauge[0] >= 100 || this.skillGauge[1] >= 100;
+        if (engaged && anyFull && this.skillCastCooldown <= 0 && wallNow >= this.skillCastWallUntil && this.skillVoiceReady(wallNow)) {
             for (const f of [0, 1] as const) {
                 if (this.skillGauge[f] >= 100) {
                     this.skillGauge[f] = 0;
@@ -1193,6 +1213,7 @@ export class Scene13WarLayer {
                     s.x - uFwd.x * dep + uSide.x * slotY,
                     s.y - uFwd.y * dep + uSide.y * slotY,
                 );
+                if (s.f === 1 && this.battleType === 'siege' && this.deCity) [spawnX, spawnY] = this.settleCitySpawn(spawnX, spawnY, manKey);
             }
             const tgt = ambushOn
                 ? { x: efx, y: efy }
@@ -1922,6 +1943,8 @@ export class Scene13WarLayer {
             hx = B.x + B.fwd.x * (heroPort.outFwd! - heroDep) + B.side.x * (heroPort.outSide! + heroSlotY);
             hy = B.y + B.fwd.y * (heroPort.outFwd! - heroDep) + B.side.y * (heroPort.outSide! + heroSlotY);
             this.holdLanes.add(heroPort.lane);
+        } else if (f === 1 && this.battleType === 'siege' && this.deCity) {
+            [hx, hy] = this.settleCitySpawn(hx, hy, setup.heroKey);   // 城内出生不压墙、不进建筑
         }
         const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
         const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
@@ -2125,7 +2148,9 @@ export class Scene13WarLayer {
         // 优先在仍有在场本队士兵或仍有后备兵源的本方出兵口复活并归队
         this.syncHeroToLiveSquad();
         const _port = (m.lane >= 0 ? this.spawns[m.lane] : undefined) ?? this.spawnBases[m.f] ?? { x: this.worldCX, y: this.worldCY };
-        const [x, y] = [_port.x, _port.y];
+        const [x, y] = (m.f === 1 && this.battleType === 'siege' && this.deCity)
+            ? this.settleCitySpawn(_port.x, _port.y, m.key)   // 城内复活不压墙、不进建筑
+            : [_port.x, _port.y];
         m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
         m.dir = this.dir8(this.advanceVec[m.f].x, this.advanceVec[m.f].y);   // 🔴 [2026-10-11 主人「复活点还保留旧13？全删」] 朝向随本方八方向推进向量，不再写死左右(2/6)
@@ -5072,6 +5097,8 @@ export class Scene13WarLayer {
                     spawnX = B.x + F.x * s.outFwd! + S.x * s.outSide! - F.x * dep + S.x * slotY;
                     spawnY = B.y + F.y * s.outFwd! + S.y * s.outSide! - F.y * dep + S.y * slotY;
                     this.holdLanes.add(s.lane);
+                } else if (s.f === 1 && this.battleType === 'siege' && this.deCity) {
+                    [spawnX, spawnY] = this.settleCitySpawn(spawnX, spawnY, s.key);   // 城内出生不压墙、不进建筑
                 }
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 士兵落位不再避水（原三步避水已删）
                 this.men.push({
@@ -7076,6 +7103,41 @@ export class Scene13WarLayer {
         return [dx / TAC_TILE_W + dy / TAC_TILE_H, dy / TAC_TILE_H - dx / TAC_TILE_W];
     }
 
+    /**
+     * 🔴 [2026-11-04 主人报「守军刷新出来的时候，会刷到墙里」] 城内出兵口在九栋建筑上（四角箭塔贴着城墙），
+     *    一队 50 人从口往后排方阵 ⇒ 后几排压到城墙上、甚至排到墙外。城内守军出生点统一过这一道：
+     *    ① 夹回城墙圈内侧（离墙线留出墙件半厚 + 身位）；② 推出城内建筑的占地框。城外列阵的第一波不走这里。
+     */
+    private settleCitySpawn(x: number, y: number, key: string): [number, number] {
+        if (this.battleType !== 'siege' || !this.siegeWithWalls) return [x, y];
+        this.ensureGateInfo();
+        const r = this.ringBox;
+        if (!r) return [x, y];
+        const rad = this.radiusOf(key) / 40;
+        let [a, b] = this.tileAB(x, y);
+        const M = 0.95 + rad + 0.3;
+        if (r.a1 - r.a0 > 2 * M) a = Math.min(r.a1 - M, Math.max(r.a0 + M, a));
+        if (r.b1 - r.b0 > 2 * M) b = Math.min(r.b1 - M, Math.max(r.b0 + M, b));
+        for (let pass = 0; pass < 4; pass++) {
+            let moved = false;
+            for (const sp of this.decorSprites) {
+                const ob = sp.obstruction;
+                if (sp.layer !== 'world' || !ob || sp.obstructionDisabled || sp.destroyed) continue;
+                const [sa, sb] = this.tileAB(sp.x, sp.y);
+                const da = a - sa, db = b - sb;
+                const la = ob.x + rad + 0.05, lb = ob.y + rad + 0.05;
+                if (Math.abs(da) >= la || Math.abs(db) >= lb) continue;
+                // 往离城心近的那一侧推（不往墙外推）
+                const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
+                if (la - Math.abs(da) < lb - Math.abs(db)) a = sa + (Math.abs(da) > 0.01 ? Math.sign(da) : Math.sign(am - sa) || 1) * la;
+                else b = sb + (Math.abs(db) > 0.01 ? Math.sign(db) : Math.sign(bm - sb) || 1) * lb;
+                moved = true;
+            }
+            if (!moved) break;
+        }
+        return [this.worldCX + (a - b) * (TAC_TILE_W / 2), this.worldCY + (a + b) * (TAC_TILE_H / 2)];
+    }
+
     /** 城门集合与城墙外圈范围（每场建一次；异步城池 buildDeCity 落地后自动重算） */
     private ensureGateInfo(): void {
         if (this.gateSpriteSet && this.ringBox !== undefined && (this.ringBox !== null || this.wallGates.length === 0) && (this.wallBySprite?.size ?? 0) >= this.wallGates.length) return;
@@ -7688,12 +7750,33 @@ export class Scene13WarLayer {
                 if (isPanicked) {
                     blockedCross = this.wallGates.some((w) => this.wallStanding(w));
                 } else if (!WALL_PASS_TYPES.has(m.key)) {
+                    // 🔴 [2026-11-04 主人报「守军攻击的时候，会卡在城门」] 原判据：跨墙线时离**任何**立着的墙段 < 95px 就弹回。
+                    //    城门碰撞体沿门线只跨 ±80px，紧挨的墙段离门中心约 107px ⇒ 守军偏离门中线 30px 左右就离墙段 < 95px，
+                    //    被当成「穿墙」弹回，只剩正中一条缝过得去 ⇒ 全挤在门口。
+                    //    改为：看跨线处**离哪一件最近**——最近的是本方城门（守方能过）就放行；最近的是墙段且 < 95px 才挡。
+                    const mx = (px + m.prevX) / 2, my = (py + m.prevY) / 2;
+                    let nearest: WarBuilding | null = null, nd2 = 95 * 95;
                     for (const w of this.wallGates) {
                         if (!this.wallStanding(w)) continue;
-                        if (m.f === 1 && w.key === 'STONE_GATE') continue;
-                        const d2 = (px - w.x) ** 2 + (py - w.y) ** 2;
-                        const pd2 = (m.prevX - w.x) ** 2 + (m.prevY - w.y) ** 2;
-                        if (d2 < 95 * 95 || pd2 < 95 * 95) { blockedCross = true; break; }
+                        const pts = w.extraSprites ? [w.sprite, ...w.extraSprites] : [w.sprite];
+                        for (const s of pts) {
+                            const d2 = (mx - s.x) ** 2 + (my - s.y) ** 2;
+                            if (d2 < nd2) { nd2 = d2; nearest = w; }
+                        }
+                    }
+                    blockedCross = !!nearest && !(m.f === 1 && nearest.key === 'STONE_GATE');
+                    // 🔴 [2026-11-04 主人报「守军刷新出来会刷到墙里，不动的时候一直在闪」] 上一帧本就嵌在墙件碰撞框里的守军
+                    //    （出生点压在墙上），被推出墙时可能跨过墙线 ⇒ 若照样弹回，就每帧「推出→弹回」卡在墙里闪。这种情况放行。
+                    if (blockedCross && m.f === 1) {
+                        for (const object of activeObstructions) {
+                            if (!this.wallBySprite?.has(object)) continue;
+                            const ob = object.obstruction!;
+                            const dx = m.prevX - object.x, dy = m.prevY - object.y;
+                            if (Math.abs(dx / TILE_W + dy / TILE_H) < ob.x + unitTileRadius && Math.abs(dy / TILE_H - dx / TILE_W) < ob.y + unitTileRadius) {
+                                blockedCross = false;
+                                break;
+                            }
+                        }
                     }
                 }
                 if (blockedCross) {

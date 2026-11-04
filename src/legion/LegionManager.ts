@@ -55,6 +55,8 @@ import {
     getLegionTypeForCulture,
 } from '../types/CultureFormations';
 import { gameLog } from '../utils/GameLogger';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { FollowResupplySystem } from './FollowResupplySystem';
 import { tickDeploy } from './DeployGate';
 import { tickStuckLegionWatchdog } from '../debug/StuckLegionWatchdog';
@@ -1155,13 +1157,43 @@ export class LegionManager {
 
         // ③ 扣减（15 秒整跳）：整跳即飘小字，只飘跟拍军团（脉冲/大字是技能专属，主人裁定）
         const loss = tickMarchAttrition(army, deltaTime);
-        if (loss > 0 && army.id === getFollowedArmyId()) {
+        const isFollowed = loss > 0 && army.id === getFollowedArmyId();
+        if (isFollowed) {
             const pos = army.getPosition();
             spawnMapFloatingSmallText(pos.lat, pos.lng, `-${loss} 远输减员`, '#ff5555');
         }
-        if (loss > 0 && army.getTroops() <= 0 && !army.isDestroyed) {
+        const wipedOut = loss > 0 && army.getTroops() <= 0 && !army.isDestroyed;
+        // 🔴 [2026-11-04 主人令] 跟拍军团远输减员 / 因减员覆灭各播一句（在 destroy 之前取将名与精锐番号）
+        if (isFollowed) this.announceFollowedMarchAttrition(army, wipedOut);
+        if (wipedOut) {
             army.destroy();
         }
+    }
+
+    /** 同一军团远输减员播报的最短间隔（真实毫秒）：断粮一段只在第一跳播一句，补给后再断粮也至少隔这么久 */
+    private static readonly MARCH_ATTRITION_SPEECH_GAP_MS = 120000;
+    private readonly marchAttritionSpokenAt = new Map<string, number>();
+
+    private announceFollowedMarchAttrition(army: Army, wipedOut: boolean): void {
+        const genRec = army.generalId ? getGeneralRecordByGeneralId(army.generalId) : null;
+        const opts = {
+            factionId: army.getFactionId(),
+            generalId: army.generalId ?? null,
+            generalName: genRec?.generalName ?? null,
+            eliteName: getLegionEliteLegionName(army) ?? null,
+        };
+        if (wipedOut) {
+            this.marchAttritionSpokenAt.delete(army.id);
+            speechAnnouncer.announceMarchAttritionWipeout(opts);
+            return;
+        }
+        // 只在这一段断粮的第一跳开口，此后每 15 秒一跳只飘字不再念，免得刷屏
+        if (army.attritionChunkCount !== 1) return;
+        const now = Date.now();
+        const last = this.marchAttritionSpokenAt.get(army.id) ?? 0;
+        if (now - last < LegionManager.MARCH_ATTRITION_SPEECH_GAP_MS) return;
+        this.marchAttritionSpokenAt.set(army.id, now);
+        speechAnnouncer.announceMarchAttrition(opts);
     }
 
     /** 来犯减兵锚定之城：行军 targetCity，或已开打攻城战之 siegeCityId */

@@ -265,26 +265,48 @@ function featherGroundClipPaths(root: HTMLElement, W: number, H: number): void {
 function extendFourGateRoadsOnGround(root: HTMLElement, W: number, H: number, cityType: string): void {
     if (W <= 0 || H <= 0) return;
     const isBig = cityType === 'big_city';
+    const isPass = cityType === 'pass';
     const TW = 96, TH = 48;
     const innerRX = Math.max(0, (W - 400) / 2);
     const innerRY = innerRX / 2;
-    const half = innerRX / TW;
-    if (half < 4) return;
+    const defaultHalf = innerRX / TW;
+    if (defaultHalf < 4) return;
     const padX = 960, padY = 560;
     const MW = W + padX * 2, MH = H + padY * 2;
     const cx = MW / 2, dcy = MH / 2 + TH / 2;
     const shrink = 0.93, blurMain = TW * 0.5, blurRoad = 30;
 
-    // 城内至城外的等轴格坐标 (u 沿路向外, v 横向跨路)：u0(城内主街衔接) → uGate(城门) → uBridge(跨过护城河桥) → uEnd(城外远端渐隐)
-    const u0 = half * 0.66;
-    const uGate = half;
-    const uBridge = half + (isBig ? 5.6 : 4.8);
-    const uEnd = half + (isBig ? 14.5 : 12.0);
-    const w0 = isBig ? 2.35 : 2.05;
-    const wBridge = isBig ? 1.52 : 1.32;
-    const wEnd = isBig ? 0.88 : 0.75;
-    const tGate = ((uGate - u0) / (uEnd - u0) * 100).toFixed(1);
-    const tBridge = ((uBridge - u0) / (uEnd - u0) * 100).toFixed(1);
+    // 优先从 rd1/rd2 地基层的原始 SVG 遮罩提取内圈四角顶点，从而精确兼容矩形/镜像矩形险要 (Li ≠ Lj)
+    let halfI = defaultHalf;
+    let halfJ = defaultHalf;
+    let shiftedDiamondPts: string | null = null;
+    for (const node of Array.from(root.querySelectorAll<HTMLElement>('div'))) {
+        const st = node.getAttribute('style') ?? '';
+        if (!st.includes('SUCAI_TERRAIN/rd') || !st.includes('mask-image')) continue;
+        const mSvg = /data:image\/svg\+xml;utf8,([^"')\s]+)/.exec(st);
+        if (!mSvg) continue;
+        try {
+            const decoded = decodeURIComponent(mSvg[1]);
+            const mPoly = /<polygon\s+points="([^"]+)"/.exec(decoded);
+            if (mPoly) {
+                const pairs = mPoly[1].trim().split(/\s+/).map((p) => p.split(',').map(Number));
+                if (pairs.length === 4 && pairs.every((p) => p.length === 2 && Number.isFinite(p[0]) && Number.isFinite(p[1]))) {
+                    const hi = Math.abs(pairs[1][0] - pairs[0][0]) / (TW * shrink);
+                    const hj = Math.abs(pairs[0][0] - pairs[3][0]) / (TW * shrink);
+                    if (hi >= 3.5 && hj >= 3.5) {
+                        halfI = hi;
+                        halfJ = hj;
+                        shiftedDiamondPts = pairs
+                            .map(([px, py]) => `${(px + padX).toFixed(1)},${(py + padY).toFixed(1)}`)
+                            .join(' ');
+                    }
+                }
+            }
+        } catch {
+            // ignore decode errors and use default square diamond
+        }
+        break;
+    }
 
     const toPt = (di: number, dj: number): string =>
         `${(cx + (di - dj) * (TW / 2)).toFixed(1)},${(dcy + (di + dj) * (TH / 2)).toFixed(1)}`;
@@ -303,18 +325,31 @@ function extendFourGateRoadsOnGround(root: HTMLElement, W: number, H: number, ci
     ];
     const roadPolys: string[] = [];
 
+    const w0 = isBig ? 2.35 : 2.05;
+    const wBridge = isBig ? 1.52 : (isPass ? 1.48 : 1.32);
+    const wEnd = isBig ? 0.88 : 0.75;
+
     dirs.forEach(([axis, sign, sx, sy], idx) => {
+        const halfAxis = axis === 'i' ? halfI : halfJ;
+        // 城内至城外的等轴格坐标 (u 沿路向外, v 横向跨路)：u0(城内主街衔接) → uGate(内城门) → uBridge(跨护城河桥/外瓮城) → uEnd(城外远端渐隐)
+        const u0 = halfAxis * 0.64;
+        const uGate = halfAxis;
+        const uBridge = halfAxis + (isBig ? 5.6 : isPass ? 5.4 : 4.8);
+        const uEnd = halfAxis + (isBig ? 14.5 : isPass ? 14.0 : 12.0);
+        const tGate = ((uGate - u0) / (uEnd - u0) * 100).toFixed(1);
+        const tBridge = ((uBridge - u0) / (uEnd - u0) * 100).toFixed(1);
+
         // 梯度轴严格垂直于等轴城墙边 (sx, 2·sy)，从城门起即逐段柔和衰减，与两侧 30px 高斯羽化共同融入原野地表
         const gx1 = cx + sx * (96 * u0) / 5, gy1 = dcy + sy * (192 * u0) / 5;
         const gx2 = cx + sx * (96 * uEnd) / 5, gy2 = dcy + sy * (192 * uEnd) / 5;
         defs.push(
             `<linearGradient id="rg${idx}" gradientUnits="userSpaceOnUse" x1="${gx1.toFixed(1)}" y1="${gy1.toFixed(1)}" x2="${gx2.toFixed(1)}" y2="${gy2.toFixed(1)}">` +
-            `<stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>` +
-            `<stop offset="${tGate}%" stop-color="#ffffff" stop-opacity="0.92"/>` +
-            `<stop offset="${tBridge}%" stop-color="#e0e0e0" stop-opacity="0.64"/>` +
-            `<stop offset="72%" stop-color="#b0b0b0" stop-opacity="0.32"/>` +
-            `<stop offset="88%" stop-color="#606060" stop-opacity="0.12"/>` +
-            `<stop offset="100%" stop-color="#000000" stop-opacity="0"/>` +
+            `<stop offset="0%" stop-opacity="1" stop-color="#ffffff"/>` +
+            `<stop offset="${tGate}%" stop-opacity="0.92" stop-color="#ffffff"/>` +
+            `<stop offset="${tBridge}%" stop-opacity="0.68" stop-color="#e0e0e0"/>` +
+            `<stop offset="72%" stop-opacity="0.34" stop-color="#b0b0b0"/>` +
+            `<stop offset="88%" stop-opacity="0.12" stop-color="#606060"/>` +
+            `<stop offset="100%" stop-opacity="0" stop-color="#000000"/>` +
             `</linearGradient>`
         );
         const pt = (u: number, v: number): string =>
@@ -332,7 +367,7 @@ function extendFourGateRoadsOnGround(root: HTMLElement, W: number, H: number, ci
         roadPolys.push(`<polygon points="${polyPts}" fill="url(#rg${idx})"/>`);
     });
 
-    const diamondPts = [
+    const diamondPts = shiftedDiamondPts ?? [
         `${cx.toFixed(1)},${(dcy - innerRY * shrink).toFixed(1)}`,
         `${(cx + innerRX * shrink).toFixed(1)},${dcy.toFixed(1)}`,
         `${cx.toFixed(1)},${(dcy + innerRY * shrink).toFixed(1)}`,
@@ -362,7 +397,7 @@ export function strategicCityGroundElement(c: StrategicCityHtml, cityType?: stri
         if (BUILDING_RE.test(im.getAttribute('src') ?? '')) im.remove();
     }
     featherGroundClipPaths(el, c.width, c.height);
-    if (cityType === 'big_city' || cityType === 'medium_city') {
+    if (cityType === 'big_city' || cityType === 'medium_city' || cityType === 'pass') {
         extendFourGateRoadsOnGround(el, c.width, c.height, cityType);
     }
     document.body.appendChild(el);

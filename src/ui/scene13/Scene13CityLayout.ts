@@ -349,8 +349,8 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         }
     }
     const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
-    const hasGateRoads = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') && ringLm > 0;
-    const roadMaxU = ringLm / 2 + (this.defenderCityType === 'big_city' ? 14.5 : 12.0);
+    const hasGateRoads = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') && ringLm > 0;
+    const roadMaxU = ringLm / 2 + (this.defenderCityType === 'big_city' ? 14.5 : this.defenderCityType === 'pass' ? 13.5 : 12.0);
     const roadMaxV = this.defenderCityType === 'big_city' ? 2.1 : 1.8;
     const inGateRoad = (x: number, y: number): boolean => {
         if (!hasGateRoads) return false;
@@ -361,7 +361,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const cityCell = gl.screenToCell(cx, cy, W, H);
     const baseFlatCells = ringLm > 0 ? ringLm / 2 + (this.defenderCityType === 'big_city' ? 9.5 : 7.5) : rCells + 5.5;
     const minHillDistCells = this.defenderCityType === 'pass'
-        ? baseFlatCells + 4.5
+        ? (ringLm > 0 ? ringLm / 2 + 3.2 : baseFlatCells)
         : this.defenderCityType === 'stockade'
             ? baseFlatCells + 3.0
             : baseFlatCells;
@@ -742,7 +742,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             if (this.deCity?.mirror) dx = -dx;
             return { x: cx + dx, y: cy + dy };
         };
-        const pushInteriorDecor = (asset: string, ci: number, cj: number, scale: number): void => {
+        const pushInteriorDecor = (asset: string, ci: number, cj: number, scale: number, z = 0): void => {
             const pt = isoToWorld(ci, cj);
             const lift = gl.elevationLiftAt(pt.x, pt.y, W, H);
             this.ensureNatureAsset(asset);
@@ -753,7 +753,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 y: pt.y,
                 flip: mRnd() < 0.5,
                 layer: 'world',
-                z: 0,
+                z,
                 lift,
                 scale,
                 obstruction: undefined,
@@ -799,6 +799,36 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             pushInteriorDecor(tAsset, ti + ji, tj + jj, 0.88 + mRnd() * 0.08);
         }
 
+        // 1b) 大城 / 中城：四座城门跨护城河桥头外侧守城战旗与迎宾火把（避开 [0..1] 主大道，立于门桥两侧）
+        if (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') {
+            const deStyleForInterior = this.buildingStyleFor(1);
+            const interiorFlagAsset = (deStyleForInterior === 'GREEK' || deStyleForInterior === 'THRACIAN' || deStyleForInterior === 'MEDI')
+                ? 'BUILDING:SCEN_FLAG_R'
+                : (deStyleForInterior === 'ANDE' || deStyleForInterior === 'MESO')
+                    ? 'BUILDING:SCEN_FLAG_RITUAL_A'
+                    : 'BUILDING:SCEN_FLAG_D';
+            const outerBridgeTorchAndFlags: ReadonlyArray<readonly [number, number, string, number]> = this.defenderCityType === 'big_city'
+                ? [
+                    [-12.8, -1.6, interiorFlagAsset, 0.86],
+                    [-12.8, 2.6, 'BATTLEFIELD:TORCH_A', 0.88],
+                    [13.8, -1.6, 'BATTLEFIELD:TORCH_B', 0.88],
+                    [13.8, 2.6, interiorFlagAsset, 0.86],
+                    [-1.6, -12.8, 'BATTLEFIELD:TORCH_A', 0.88],
+                    [2.6, -12.8, interiorFlagAsset, 0.86],
+                    [-1.6, 13.8, interiorFlagAsset, 0.86],
+                    [2.6, 13.8, 'BATTLEFIELD:TORCH_B', 0.88],
+                ]
+                : [
+                    [-11.8, -1.6, interiorFlagAsset, 0.84],
+                    [12.8, 2.6, interiorFlagAsset, 0.84],
+                    [2.6, -11.8, 'BATTLEFIELD:TORCH_A', 0.86],
+                    [-1.6, 12.8, 'BATTLEFIELD:TORCH_B', 0.86],
+                ];
+            for (const [bi, bj, bAsset, bScale] of outerBridgeTorchAndFlags) {
+                pushInteriorDecor(bAsset, bi + (mRnd() - 0.5) * 0.16, bj + (mRnd() - 0.5) * 0.16, bScale);
+            }
+        }
+
         // ── 地理气候环境感知：严格契合历史地理地貌（干旱荒漠/戈壁、高寒雪原、温带山岳与湿润丘陵） ──
         const siteBaseTile = this.environmentPlan?.baseTerrain ?? 'gr1';
         const siteLat = defCityForInterior?.lat ?? this.centerLat ?? 30;
@@ -823,7 +853,11 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 buildingStyle: interiorBldStyle,
             })), mRnd()), calSeason, isSnow);
         const treeCandidateSlots: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
-            ? [[-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5], [-1.8, -4.8], [1.8, 4.8], [-4.8, 1.8], [4.8, -1.8]]
+            ? [
+                [-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5],
+                [-1.8, -4.8], [1.8, 4.8], [-4.8, 1.8], [4.8, -1.8],
+                [-8.8, -1.6], [9.8, 2.6], [-1.6, 9.8], [2.6, -8.8],
+            ]
             : this.defenderCityType === 'medium_city'
                 ? [[-2.5, -2.5], [3.5, 3.5], [-2.5, 3.5], [3.5, -2.5], [0.6, -3.6], [-0.6, 3.6]]
                 : this.defenderCityType === 'small_city'
@@ -831,9 +865,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     : [];
         if (treeCandidateSlots.length > 0) {
             const targetTreeCount = this.defenderCityType === 'big_city'
-                ? 3 + Math.floor(mRnd() * 3) // 3~5 棵
+                ? 5 + Math.floor(mRnd() * 3) // 5~7 棵
                 : this.defenderCityType === 'medium_city'
-                    ? 2 + Math.floor(mRnd() * 2) // 2~3 棵
+                    ? 3 + Math.floor(mRnd() * 2) // 3~4 棵
                     : 1 + Math.floor(mRnd() * 2); // 1~2 棵
             const pickedTreeSlots = shuffleWithMSeed(treeCandidateSlots).slice(0, targetTreeCount);
             pickedTreeSlots.forEach(([ti, tj], idx) => {
@@ -899,66 +933,90 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale);
             });
         } else if (this.defenderCityType === 'pass') {
-            // 险要（关隘）：双重石构城郭、瓮城夹道防线与内城要塞细节
-            // 候选点位涵盖：瓮城夹道（两圈城墙之间走廊）、外门内侧防区、内廷营防死角
-            // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形双圈（内 21×13 / 外 29×21）的夹道在 i 向 −12.5 / j 向 ±8.5：
-            //    方形那组里的 [±9.5~10.5, 0.5] 在矩形下会落回内城里压内墙 ⇒ 矩形换一组按 inner/outer 半长中点算的点位。
-            // 🔴 [2026-10-20 主人令「再做一个镜像的矩形」] rect_mirror 把 i/j 两轴对调（内 13×21 / 外 21×29），夹道点位同步对调。
-            // 🔴 [2026-10-20 主人令「据点的有镜像的，请随机」] 夹道点位按**建筑布局形制**算（未镜像）；
-            //    镜像由 `isoToWorld` 里的 `deCity.mirror` 负责（dx 取反），所以这里不能用视觉形制。
-            const passCandidates: ReadonlyArray<readonly [number, number]> = this.defenderPassLayoutShape === 'rect'
+            // 险要（关隘）：双重石构城郭、瓮城夹道防线、内城校场细节与关外两翼险石拒马
+            const deStylePass = this.buildingStyleFor(1);
+            const passFlagAsset = (deStylePass === 'GREEK' || deStylePass === 'THRACIAN' || deStylePass === 'MEDI')
+                ? 'BUILDING:SCEN_FLAG_R'
+                : (deStylePass === 'ANDE' || deStylePass === 'MESO')
+                    ? 'BUILDING:SCEN_FLAG_RITUAL_A'
+                    : 'BUILDING:SCEN_FLAG_D';
+            const passSupplyCart = (deStylePass === 'ANDE' || deStylePass === 'MESO')
+                ? 'TRADE:TRADE_CART_MESO/move_2'
+                : (deStylePass === 'ORIE' || deStylePass === 'PERSIAN')
+                    ? 'TRADE:TRADE_CART_ORIE/move_2'
+                    : (deStylePass === 'WEST' || deStylePass === 'EAST' || deStylePass === 'CEAS' || deStylePass === 'SLAV' || deStylePass === 'MEDI' || deStylePass === 'GREEK' || deStylePass === 'THRACIAN')
+                        ? 'TRADE:TRADE_CART_WEST/move_2'
+                        : (deStylePass === 'AFRI' || deStylePass === 'INDI' || deStylePass === 'PURU' || deStylePass === 'SEAS')
+                            ? 'TRADE:TRADE_CART_AFRI/move_2'
+                            : 'TRADE:TRADE_CART_ASIA/move_2';
+
+            // 1) 瓮城杀伤区：四座内城门外侧夹道两翼成对布置拒马与战旗（让开 0.5 关道中线）
+            const barbicanGateFlanks: ReadonlyArray<readonly [number, number]> = this.defenderPassLayoutShape === 'rect'
                 ? [
-                    // 瓮城夹道四边中点（i 半长内 10.5→外 14.5 取 12.5、j 半长 6.5→10.5 取 8.5）
-                    [-12, 0.5], [13, 0.5], [0.5, -8], [0.5, 9],
-                    // 夹道四角
-                    [-12, -8], [13, -8], [-12, 9], [13, 9],
-                    // 夹道长边中段
-                    [-6, -8], [7, -8], [-6, 9], [7, 9],
-                    // 内城要塞四隅与城堡夹道（与方形同一组，矩形内城中心不变）
-                    [-2.2, 2.2], [3.2, -2.2], [-2.2, -2.2], [3.2, 3.2],
+                    [-12.0, -2.0], [-12.0, 3.0], [13.0, -2.0], [13.0, 3.0],
+                    [-2.0, -8.0], [3.0, -8.0], [-2.0, 9.0], [3.0, 9.0],
                 ]
                 : this.defenderPassLayoutShape === 'rect_mirror'
                     ? [
-                        // 镜像矩形：夹道在 j 向 −12.5 / i 向 ±8.5
-                        [-8, 0.5], [9, 0.5], [0.5, -12], [0.5, 13],
-                        [-8, -12], [9, -12], [-8, 13], [9, 13],
-                        [-8, -6], [9, -6], [-8, 7], [9, 7],
-                        [-2.2, 2.2], [3.2, -2.2], [-2.2, -2.2], [3.2, 3.2],
+                        [-8.0, -2.0], [-8.0, 3.0], [9.0, -2.0], [9.0, 3.0],
+                        [-2.0, -12.0], [3.0, -12.0], [-2.0, 13.0], [3.0, 13.0],
                     ]
                     : [
-                    // 瓮城夹道四面走廊（内墙与外墙之间空当）
-                    [-9.5, 0.5],   // 西夹道中
-                    [10.5, 0.5],   // 东夹道中
-                    [0.5, -9.5],   // 北夹道中
-                    [0.5, 10.5],   // 南夹道中
-                    [-8.5, -4.5],  // 西北夹道
-                    [8.5, 4.5],    // 东南夹道
-                    [-4.5, -8.5],  // 东北夹道偏北
-                    [4.5, 8.5],    // 西南夹道偏南
-                    [-8.5, 4.5],   // 西南夹道偏西
-                    [8.5, -4.5],   // 东北夹道偏东
-                    [-4.5, 8.5],   // 西南夹道走廊
-                    [4.5, -8.5],   // 东北夹道走廊
-                    // 内城要塞四隅与城堡夹道
-                    [-2.2, 2.2],   // 内城西侧
-                    [3.2, -2.2],   // 内城东侧
-                    [-2.2, -2.2],  // 内城北空隙
-                    [3.2, 3.2],    // 内城南空隙
-                ];
-            // 军备防御道具池：拒马、礌石擂石、战备粮箱粮桶、破损辎重车、城根荒野灌木
+                        [-9.8, -2.0], [-9.8, 3.0], [10.8, -2.0], [10.8, 3.0],
+                        [-2.0, -9.8], [3.0, -9.8], [-2.0, 10.8], [3.0, 10.8],
+                    ];
+            barbicanGateFlanks.forEach(([fi, fj], fIdx) => {
+                pushInteriorDecor('BATTLEFIELD:STAKE_BARRICADE', fi + (mRnd() - 0.5) * 0.2, fj + (mRnd() - 0.5) * 0.2, 0.86 + mRnd() * 0.08);
+                if (fIdx % 2 === 0) {
+                    pushInteriorDecor(passFlagAsset, fi + (fi < 0 ? -0.45 : 0.45), fj + (fj < 0 ? -0.45 : 0.45), 0.85);
+                }
+            });
+
+            // 2) 内城中枢城堡四角：布置要塞战旗与火把立柱
+            const passCastleCorners: ReadonlyArray<readonly [number, number]> = [
+                [-2.2, -2.2], [3.2, 3.2], [-2.2, 3.2], [3.2, -2.2],
+            ];
+            passCastleCorners.forEach(([ci0, cj0], cIdx) => {
+                pushInteriorDecor(cIdx % 2 === 0 ? passFlagAsset : 'BATTLEFIELD:TORCH_A', ci0, cj0, 0.86);
+            });
+
+            // 3) 瓮城夹道与内城校场军备细节（避开 0.5 关道与兵营/马厩占地）
+            const passCandidates: ReadonlyArray<readonly [number, number]> = this.defenderPassLayoutShape === 'rect'
+                ? [
+                    // 夹道四角与长边中段
+                    [-12, -8], [13, -8], [-12, 9], [13, 9],
+                    [-6, -8], [7, -8], [-6, 9], [7, 9],
+                    [-12, -5], [13, -5], [-12, 6], [13, 6],
+                    // 内城校场边角空隙（避开 (-5,-3)/(-5,4)/(6,-3)/(6,4) 的兵营马厩）
+                    [-7.5, -1.5], [8.5, 2.5], [-2.2, -3.5], [3.2, 4.5],
+                ]
+                : this.defenderPassLayoutShape === 'rect_mirror'
+                    ? [
+                        [-8, -12], [9, -12], [-8, 13], [9, 13],
+                        [-8, -6], [9, -6], [-8, 7], [9, 7],
+                        [-5, -12], [-5, 13], [6, -12], [6, 13],
+                        [-1.5, -7.5], [2.5, 8.5], [-3.5, -2.2], [4.5, 3.2],
+                    ]
+                    : [
+                        [-9.5, -4.5], [10.5, 5.5], [-4.5, -9.5], [5.5, 10.5],
+                        [-9.5, 5.5], [10.5, -4.5], [-4.5, 10.5], [5.5, -9.5],
+                        [-9.5, -9.5], [10.5, -9.5], [-9.5, 10.5], [10.5, 10.5],
+                        [-2.2, -3.2], [3.2, 4.2], [-3.2, 2.2], [4.2, -2.2],
+                    ];
             const passFlora = isAridSite ? 'GRASS_DRY' : (mRnd() < 0.5 ? 'BUSH_GREEN' : 'SHRUB_GREEN');
             const passPropsPool = [
                 'BATTLEFIELD:STAKE_BARRICADE',
                 'BATTLEFIELD:STAKE_BARRICADE',
+                'BARRELS',
+                'BARRELS',
+                passSupplyCart,
+                'BATTLEFIELD:CART_BROKEN',
                 'ROCK1',
                 'ROCK2',
-                'BARRELS',
-                'BARRELS',
-                'BATTLEFIELD:CART_BROKEN',
                 passFlora,
-                isAridSite ? 'ROCK2' : 'SHRUB_GREEN',
+                'BARRELS',
             ];
-            const passPropCount = 7 + Math.floor(mRnd() * 3); // 7~9 处细节
+            const passPropCount = 10 + Math.floor(mRnd() * 3); // 10~12 处细节
             const chosenPassSlots = shuffleWithMSeed(passCandidates).slice(0, passPropCount);
             const shuffledPassPool = shuffleWithMSeed(passPropsPool);
             chosenPassSlots.forEach(([pi, pj], idx) => {
@@ -966,26 +1024,84 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const ji = (mRnd() - 0.5) * 0.25;
                 const jj = (mRnd() - 0.5) * 0.25;
                 const pScale = pAsset === 'BATTLEFIELD:STAKE_BARRICADE' ? (0.85 + mRnd() * 0.10)
+                    : pAsset.startsWith('TRADE:') ? (0.86 + mRnd() * 0.08)
                     : pAsset === 'BATTLEFIELD:CART_BROKEN' ? (0.80 + mRnd() * 0.10)
                     : pAsset.startsWith('BUSH') || pAsset.startsWith('SHRUB') ? (0.74 + mRnd() * 0.12)
                     : pAsset.startsWith('ROCK') ? (0.72 + mRnd() * 0.14)
                     : (0.80 + mRnd() * 0.10); // BARRELS
                 pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale);
             });
+
+            // 4) 关城外围两翼近侧险石断崖与前哨鹿砦（默认 100% 视野可见，避开四向关道）
+            const outerFlankCrags: ReadonlyArray<readonly [number, number]> = this.defenderPassLayoutShape === 'rect'
+                ? [
+                    [-6.5, -13.0], [7.5, -13.0], [-6.5, 14.0], [7.5, 14.0],
+                    [-17.0, -5.5], [18.0, 6.5], [-17.0, 6.5], [18.0, -5.5],
+                ]
+                : this.defenderPassLayoutShape === 'rect_mirror'
+                    ? [
+                        [-13.0, -6.5], [-13.0, 7.5], [14.0, -6.5], [14.0, 7.5],
+                        [-5.5, -17.0], [6.5, 18.0], [6.5, -17.0], [-5.5, 18.0],
+                    ]
+                    : [
+                        [-15.2, -5.5], [16.2, 6.5], [-5.5, -15.2], [6.5, 16.2],
+                        [-15.2, 6.5], [16.2, -5.5], [-5.5, 16.2], [6.5, -15.2],
+                    ];
+            const cragRockAsset = isAridSite ? 'ROCK_FORMATION_DESERT' : (isSnowSite ? 'ROCK_FORMATION_SNOW' : 'ROCK_FORMATION');
+            outerFlankCrags.forEach(([ci0, cj0], cIdx) => {
+                const pt = isoToWorld(ci0, cj0);
+                if (gl.isWaterAt(pt.x, pt.y, W, H)) return;
+                pushInteriorDecor(cIdx % 2 === 0 ? cragRockAsset : 'ROCK1', ci0, cj0, 0.92 + mRnd() * 0.14);
+                pushInteriorDecor(courtyardTreeAsset, ci0 + 0.85, cj0 - 0.55, 0.80 + mRnd() * 0.12);
+                if (cIdx % 2 === 1) {
+                    pushInteriorDecor('BATTLEFIELD:STAKE_BARRICADE', ci0 - 0.65, cj0 + 0.55, 0.86);
+                }
+            });
         } else {
-            // 普通城市（大/中/小）：后勤粮桶、街角野灌木、破损辎重车、碎石杂物
+            // 普通城市（大/中/小）：都会/市井街景（宫苑花坛 FLOWERBED、商市绒毯 RUGS、满载商贸马车、货箱粮桶、仪仗战旗，去掉荒野乱石与破车）
+            const deStyleCity = this.buildingStyleFor(1);
+            const urbanCartAsset = (deStyleCity === 'ANDE' || deStyleCity === 'MESO')
+                ? 'TRADE:TRADE_CART_MESO/move_2'
+                : (deStyleCity === 'ORIE' || deStyleCity === 'PERSIAN')
+                    ? 'TRADE:TRADE_CART_ORIE/move_2'
+                    : (deStyleCity === 'WEST' || deStyleCity === 'EAST' || deStyleCity === 'CEAS' || deStyleCity === 'SLAV' || deStyleCity === 'MEDI' || deStyleCity === 'GREEK' || deStyleCity === 'THRACIAN')
+                        ? 'TRADE:TRADE_CART_WEST/move_2'
+                        : (deStyleCity === 'AFRI' || deStyleCity === 'INDI' || deStyleCity === 'PURU' || deStyleCity === 'SEAS')
+                            ? 'TRADE:TRADE_CART_AFRI/move_2'
+                            : 'TRADE:TRADE_CART_ASIA/move_2';
+            const urbanFlagAsset = (deStyleCity === 'GREEK' || deStyleCity === 'THRACIAN' || deStyleCity === 'MEDI')
+                ? 'BUILDING:SCEN_FLAG_R'
+                : (deStyleCity === 'ANDE' || deStyleCity === 'MESO')
+                    ? 'BUILDING:SCEN_FLAG_RITUAL_A'
+                    : 'BUILDING:SCEN_FLAG_E';
+
+            // 大城 / 中城：城心城堡四角对称布置御苑花坛与仪仗旗（不压十字大道）
+            if (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') {
+                const royalCorners: ReadonlyArray<readonly [number, number]> = [
+                    [-2.1, -2.1], [3.1, 3.1], [-2.1, 3.1], [3.1, -2.1],
+                ];
+                royalCorners.forEach(([ri, rj], rIdx) => {
+                    if (!isSnowSite) {
+                        pushInteriorDecor('FLOWERBED', ri, rj, 0.84 + mRnd() * 0.08, -6);
+                    }
+                    if (this.defenderCityType === 'big_city' || (rIdx % 2 === 0)) {
+                        pushInteriorDecor(urbanFlagAsset, ri + (ri < 0 ? -0.35 : 0.35), rj + (rj < 0 ? -0.35 : 0.35), 0.85);
+                    }
+                });
+            }
+
             const cityCandidates: ReadonlyArray<readonly [number, number]> = this.defenderCityType === 'big_city'
                 ? [
-                    [-2.2, 3.2], [3.2, -2.2], [-2.2, -2.2], [3.2, 3.2],
                     [-1.8, -6.5], [6.5, 1.8], [-6.5, -1.8], [1.8, 6.5],
                     [-7.2, 1.5], [7.2, -1.5], [-1.5, 7.2], [1.5, -7.2],
                     [-4.2, -4.2], [4.2, 4.2], [-4.2, 4.2], [4.2, -4.2],
+                    [-8.2, -4.2], [9.2, 5.2], [-4.2, 9.2], [5.2, -8.2],
                 ]
                 : this.defenderCityType === 'medium_city'
                     ? [
-                        [-2.2, 2.6], [3.2, -1.6], [-2.2, -2.2], [3.2, 2.2],
                         [-1.8, -5.5], [5.5, 1.8], [-5.5, -1.8], [1.8, 5.5],
                         [-6.2, 1.5], [6.2, -1.5], [-1.5, 6.2], [1.5, -6.2],
+                        [-3.6, -3.6], [4.6, 4.6], [-3.6, 4.6], [4.6, -3.6],
                     ]
                     : [
                         [-2.2, 2.4], [3.2, -1.4], [-1.8, -4.5], [4.5, 1.8],
@@ -995,15 +1111,17 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             const cityPropsPool = [
                 'BARRELS',
                 'BARRELS',
-                'BUSH_GREEN',
-                'BATTLEFIELD:CART_BROKEN',
-                'ROCK1',
-                'ROCK2',
+                'BUILDING:RUGS',
+                isSnowSite ? 'BARRELS' : 'FLOWERBED',
+                urbanCartAsset,
+                isAridSite ? 'BUILDING:RUGS' : 'BUSH_GREEN',
+                'BARRELS',
+                isSnowSite ? 'SHRUB_GREEN' : 'FLOWERBED',
             ];
             const cityPropCount = this.defenderCityType === 'big_city'
-                ? 6 + Math.floor(mRnd() * 3) // 6~8 个
+                ? 8 + Math.floor(mRnd() * 3) // 8~10 个街坊市井细节
                 : this.defenderCityType === 'medium_city'
-                    ? 4 + Math.floor(mRnd() * 3) // 4~6 个
+                    ? 5 + Math.floor(mRnd() * 3) // 5~7 个
                     : 3 + Math.floor(mRnd() * 2); // 3~4 个
             const chosenCitySlots = shuffleWithMSeed(cityCandidates).slice(0, cityPropCount);
             const shuffledCityPool = shuffleWithMSeed(cityPropsPool);
@@ -1011,11 +1129,17 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const pAsset = shuffledCityPool[idx % shuffledCityPool.length];
                 const ji = (mRnd() - 0.5) * 0.25;
                 const jj = (mRnd() - 0.5) * 0.25;
-                const pScale = pAsset === 'BUSH_GREEN' ? (0.74 + mRnd() * 0.12)
-                    : pAsset === 'BATTLEFIELD:CART_BROKEN' ? (0.80 + mRnd() * 0.10)
-                    : pAsset.startsWith('ROCK') ? (0.68 + mRnd() * 0.12)
+                const isFlatProp = pAsset === 'FLOWERBED' || pAsset === 'BUILDING:RUGS';
+                const pScale = pAsset === 'BUSH_GREEN' || pAsset === 'SHRUB_GREEN' ? (0.74 + mRnd() * 0.12)
+                    : pAsset === 'FLOWERBED' ? (0.82 + mRnd() * 0.10)
+                    : pAsset === 'BUILDING:RUGS' ? (0.84 + mRnd() * 0.10)
+                    : pAsset.startsWith('TRADE:') ? (0.88 + mRnd() * 0.08)
                     : (0.80 + mRnd() * 0.10); // BARRELS
-                pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale);
+                pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale, isFlatProp ? -6 : 0);
+                // 绒毯货摊旁伴生一组货桶，形成街坊市集摊位感
+                if (pAsset === 'BUILDING:RUGS') {
+                    pushInteriorDecor('BARRELS', pi + ji + 0.32, pj + jj - 0.24, 0.76 + mRnd() * 0.08, 0);
+                }
             });
         }
     }
@@ -1144,8 +1268,21 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         const chargeLen = Math.hypot(chargeDx, chargeDy) || 1;
         const chargeUx = chargeDx / chargeLen, chargeUy = chargeDy / chargeLen;
 
+        const passExt = this.defenderCityType === 'pass'
+            ? passRingHalfExtents(this.defenderPassShape ?? 'square')
+            : null;
+        const isInsideWallOrMoatRing = (px: number, py: number): boolean => {
+            if (ringLm <= 0) return inCity(px, py);
+            const u = (px - cx) / (TAC_TILE_W / 2), v = (py - cy) / (TAC_TILE_H / 2);
+            const ci = (u + v) / 2 - 0.5, cj = (v - u) / 2 - 0.5;
+            const halfI = passExt ? passExt.outerHalfI : ringLm / 2;
+            const halfJ = passExt ? passExt.outerHalfJ : ringLm / 2;
+            const clearMargin = moatOn ? (1.85 + moatW + 1.05) : 1.75;
+            return Math.abs(ci) <= halfI + clearMargin && Math.abs(cj) <= halfJ + clearMargin;
+        };
+
         const isPointDryAndOpen = (px: number, py: number): boolean => {
-            if (inCity(px, py) || inGateRoad(px, py)) return false;
+            if (isInsideWallOrMoatRing(px, py) || inGateRoad(px, py)) return false;
             if (gl.isWaterAt(px, py, W, H) || (inMoat && inMoat(px, py))) return false;
             const cCell = gl.screenToCell(px, py, W, H);
             if (!cCell) return false;
@@ -1211,7 +1348,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             });
         };
 
-        const innerDist = minHillDistCells + (moatOn ? 2.2 : 1.3);
+        const innerDist = ringLm > 0
+            ? (ringLm / 2 + (moatOn ? moatW + 2.6 : 1.9))
+            : (minHillDistCells + (moatOn ? 2.2 : 1.3));
         const outerDist = minHillDistCells + 18.0;
         const hamletCandidates: Array<{ gx: number; gy: number; x: number; y: number; flankScore: number }> = [];
         const outpostCandidates: Array<{ gx: number; gy: number; x: number; y: number }> = [];
@@ -1223,7 +1362,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const distCells = Math.hypot(gx - cGx, gy - cGy);
                 if (distCells < innerDist || distCells > outerDist + 8) continue;
                 const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
-                if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) continue;
+                if (isInsideWallOrMoatRing(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) continue;
                 if (isNearAnySpawn(pt.x, pt.y, 460)) continue;
 
                 // 计算到攻方主冲锋轴线的横向偏离与前后投影
@@ -1247,7 +1386,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                         const nScreen = gl.cellToScreen(gx + 0.5 + dx, gy + 0.5 + dy, W, H);
                         if (nd >= 0.54 && !gl.isMoatAt(nScreen.x, nScreen.y, W, H) && !waterPt) {
                             waterPt = nScreen;
-                        } else if (nd <= 0.12 && !inCity(nScreen.x, nScreen.y) && !landPt) {
+                        } else if (nd <= 0.12 && !isInsideWallOrMoatRing(nScreen.x, nScreen.y) && !landPt) {
                             landPt = nScreen;
                         }
                     }

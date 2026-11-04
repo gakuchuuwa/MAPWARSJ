@@ -109,6 +109,8 @@ interface CityLifeActor {
     plotCells?: number[];            // 地皮实际铺了哪几块（PLOT_CELL_OFFSETS 下标，1~4 块）；只记在组合主人身上
     pigCell?: number;                // 农田四块里改养猪的那一块（PLOT_CELL_OFFSETS 下标）；该块不派农夫、只放一头猪，地皮仍是农田
     buildingResource?: string; // 组合内随机建筑：磨坊／牧栏／毡帐／小屋等
+    /** 🔴 [2026-11-04 主人令「生产方式的建筑朝向……改为随机镜像，可以多样化」] 建筑是否左右镜像（按据点＋年份＋槽位的固定哈希，不随帧、不随刷新变） */
+    buildingMirror?: boolean;
     lib: 'SUCAI' | 'SUCAI_ANIMAL';
     dir: string;
     homePos: Pt;               // 田间/牧场/林间/海上渔场劳作点
@@ -1107,6 +1109,7 @@ export class CityLifeAmbientLayer {
                     const buildingResource = wantsDock
                         ? `${deStyle && deStyle !== 'YURT' ? deStyle : 'WEST'}_DOCK_AGE2`
                         : undefined;
+                    const buildingMirror = strHash01(yk, i * 17 + 303) < 0.5;
 
                     list.push({
                         id: `${yk}_life_${i}`,
@@ -1116,6 +1119,7 @@ export class CityLifeAmbientLayer {
                         isSeaFishing: true,
                         fishResource,
                         buildingResource,
+                        buildingMirror,
                         lib: 'SUCAI',
                         dir: 'SHP_FISHING_SHIP',
                         homePos: seaSpot.homePos,
@@ -1295,6 +1299,7 @@ export class CityLifeAmbientLayer {
                     buildingResource = buildingVariant % 2 === 0 ? 'GREEK_MINING_CAMP_AGE2' : 'THRACIAN_MINING_CAMP_AGE2';
                 }
             }
+            const buildingMirror = strHash01(yk, i * 17 + 303) < 0.5;
 
             list.push({
                 id: `${yk}_life_${i}`,
@@ -1309,6 +1314,7 @@ export class CityLifeAmbientLayer {
                 seasonalPlot: plotKind,
                 plotCells,
                 buildingResource,
+                buildingMirror,
                 lib: 'SUCAI',
                 dir,
                 homePos,
@@ -2189,7 +2195,8 @@ export class CityLifeAmbientLayer {
         py: number,
         scale: number,
         alpha: number,
-        targetCtx: CanvasRenderingContext2D = this.ctx
+        targetCtx: CanvasRenderingContext2D = this.ctx,
+        mirror = false
     ): void {
         if (alpha <= 0.01) return;
         const st = this.stripAssetFor(folder, name);
@@ -2206,17 +2213,24 @@ export class CityLifeAmbientLayer {
         targetCtx.imageSmoothingEnabled = true;
         targetCtx.imageSmoothingQuality = 'high';
         targetCtx.globalAlpha = Math.max(0, Math.min(1, alpha));
-        targetCtx.drawImage(
-            st.sheet,
-            sx,
-            0,
-            st.boxW,
-            st.boxH,
-            dx,
-            dy,
-            w,
-            h
-        );
+        if (mirror) {
+            // 以锚点竖线为轴左右翻转：落脚点不动，只换朝向
+            targetCtx.translate(Math.round(px), 0);
+            targetCtx.scale(-1, 1);
+            targetCtx.drawImage(st.sheet, sx, 0, st.boxW, st.boxH, -Math.round(st.anchorX * scale), dy, w, h);
+        } else {
+            targetCtx.drawImage(
+                st.sheet,
+                sx,
+                0,
+                st.boxW,
+                st.boxH,
+                dx,
+                dy,
+                w,
+                h
+            );
+        }
         targetCtx.restore();
     }
 
@@ -2552,7 +2566,9 @@ export class CityLifeAmbientLayer {
                             groupPt.x,
                             groupPt.y + (-PLOT_DY + 4) * zoomFactor,
                             BUILDING_SCALE_BASE * bNorm * zoomFactor,
-                            peaceFinalAlpha
+                            peaceFinalAlpha,
+                            this.ctx,
+                            actor.buildingMirror === true
                         );
                     }
                 }
@@ -2567,7 +2583,9 @@ export class CityLifeAmbientLayer {
                         dockPt.x,
                         dockPt.y - 5 * zoomFactor,
                         BUILDING_SCALE_BASE * zoomFactor,
-                        peaceFinalAlpha
+                        peaceFinalAlpha,
+                        this.ctx,
+                        actor.buildingMirror === true
                     );
                 }
 

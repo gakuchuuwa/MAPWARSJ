@@ -1082,7 +1082,7 @@ export class ViewerLive {
         this.save();
         this.lastFreeCastAt = now;
         const skillName = this.war()!.lastSkillNameOf(side);
-        speechAnnouncer.announceViewerSkill(head.viewer, this.sideFaction(side) || this.sideName(side), skillName);
+        speechAnnouncer.announceViewerSkill(head.viewer, this.sideFaction(side) || this.sideName(side), skillName, { syncNow: true });
         this.note(`${head.viewer} 助玩家施展【${skillName}】`);
         this.report({ viewer: head.viewer, side, six: head.six, paid: false, outcome: 'cast', skillName });
         this.fulfillWanted(head.uid, head.viewer);
