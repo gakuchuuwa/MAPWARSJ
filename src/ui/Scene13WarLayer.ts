@@ -4177,21 +4177,24 @@ export class Scene13WarLayer {
         const isBuilding = asset.startsWith('BUILDING:') || isAnim;
         const isBattlefield = asset.startsWith('BATTLEFIELD:');
         const isAnimal = asset.startsWith('ANIMAL:');
+        const isTrade = asset.startsWith('TRADE:');
         const isResource = asset.startsWith('RESOURCE:');
-        const base = isBattlefield ? BATTLEFIELD_BASE_URL : (isBuilding ? BUILDING_BASE_URL : (isAnimal ? ANIMAL_BASE_URL : (isResource ? '/SUCAI_RESOURCE/' : NATURE_BASE_URL)));
-        const name = isBattlefield ? asset.slice('BATTLEFIELD:'.length) : (isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : (isAnimal ? asset.slice('ANIMAL:'.length) : (isResource ? asset.slice('RESOURCE:'.length) : asset))));
-        if (isAnimal) {
+        const base = isBattlefield ? BATTLEFIELD_BASE_URL : (isBuilding ? BUILDING_BASE_URL : (isAnimal ? ANIMAL_BASE_URL : (isTrade ? '/SUCAI_TRADE/' : (isResource ? '/SUCAI_RESOURCE/' : NATURE_BASE_URL))));
+        const name = isBattlefield ? asset.slice('BATTLEFIELD:'.length) : (isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : (isAnimal ? asset.slice('ANIMAL:'.length) : (isTrade ? asset.slice('TRADE:'.length) : (isResource ? asset.slice('RESOURCE:'.length) : asset)))));
+        if (isAnimal || isTrade) {
             // 🔴 [2026-10-13 主人令「动物要会动」] 支持动物各种动作与朝向（ANIMAL:<species>/<action>_<dir>）
+            // 🔴 [2026-11-04] 同步支持 SUCAI_TRADE 商贸船车静态陈设（TRADE:<species>/<action>_<dir>）
             const slashIdx = name.indexOf('/');
             const species = slashIdx >= 0 ? name.slice(0, slashIdx) : name;
             const actDirStr = slashIdx >= 0 ? name.slice(slashIdx + 1) : '';
+            const metaKey = isTrade ? ('TRADE:' + species) : species;
             const getMeta = async () => {
-                if (this.animalMetaCache[species]) return this.animalMetaCache[species];
+                if (this.animalMetaCache[metaKey]) return this.animalMetaCache[metaKey];
                 try {
                     const r = await fetch(base + species + '/_meta.json');
                     if (r.ok) {
                         const j = await r.json();
-                        this.animalMetaCache[species] = j;
+                        this.animalMetaCache[metaKey] = j;
                         return j;
                     }
                 } catch {}
@@ -4210,27 +4213,27 @@ export class Scene13WarLayer {
                         actName = actDirStr;
                     }
                 } else {
-                    actName = m.idle ? 'idle' : (m.hover ? 'hover' : (m.fly ? 'fly' : 'walk'));
+                    actName = m.idle ? 'idle' : (m.move ? 'move' : (m.hover ? 'hover' : (m.fly ? 'fly' : 'walk')));
                 }
-                const actMeta = m[actName];
+                const actMeta = m[actName] ?? m.idle ?? m.move;
                 const d = actMeta?.dirs?.[String(dirNum)] ?? actMeta?.dirs?.[dirNum] ?? actMeta?.dirs?.['0'] ?? actMeta?.dirs?.[0];
                 const finalMeta: NatureMeta = {
                     box_w: d?.fw ?? 40,
                     box_h: d?.fh ?? 40,
                     anchor_x: d?.hx ?? 20,
                     anchor_y: d?.hy ?? 35,
-                    frames: actMeta?.frames ?? 1,
+                    frames: isTrade ? 1 : (actMeta?.frames ?? 1),
                     // 🔴 2026-10-31 主人报「尼斯湖水怪动作太快、动画没解析全」：
                     //    DE 原生 180 帧的水怪素材被降采样（src_frames=180），
                     //    仍按 15fps 播就是 DE 的倍增速；这里把原生帧数带上，播放端按比例还原速度。
-                    src_frames: actMeta?.src_frames ?? actMeta?.frames ?? 1,
+                    src_frames: isTrade ? 1 : (actMeta?.src_frames ?? actMeta?.frames ?? 1),
                     // 多行网格（水怪 90 帧＝45 列 × 2 行，横条宽度才不超浏览器上限）
                     cols: actMeta?.cols ?? 0,
                 };
                 na.meta = finalMeta;
                 // 🔴 2026-10-31 主人问「尼斯湖水怪的动画帧数对吗」：DE 水怪只有一套动画，walk/run 与 idle 是同一份帧。
                 //    素材只留 idle_<dir>.png，三个动作共用同一张图（按 URL 复用同一 Image，三个动作只解码一份，省 3 倍内存）。
-                const fileAct = m.sharedActions ? 'idle' : actName;
+                const fileAct = (m.sharedActions && !isTrade) ? 'idle' : actName;
                 const url = base + species + '/' + fileAct + '_' + dirNum + '.png';
                 let im = this.animalImgCache.get(url);
                 if (!im) {
@@ -4252,7 +4255,7 @@ export class Scene13WarLayer {
             im.src = base + name + '/' + file;
             fetch(base + name + '/_meta.json')
                 .then((r) => (r.ok ? r.json() : null))
-                .then((m) => { if (m) { if (isBattlefield && !useFenceStrip) m.frames = 1; na.meta = m as NatureMeta; } })
+                .then((m) => { if (m) { if ((isBattlefield && !useFenceStrip) || (isBuilding && !isAnim)) m.frames = 1; na.meta = m as NatureMeta; } })
                 .catch(() => {});
         }
     }
@@ -4400,8 +4403,8 @@ export class Scene13WarLayer {
             const speedFactor = downsampled ? m.frames / srcFrames : 1;
             const fps = baseFps * speedFactor;
             fr = Math.floor(this.battleSec * fps + s.frame) % m.frames;
-        } else if (s.asset.startsWith('RESOURCE:') && /FISH|TURTLES/.test(s.asset) && m.frames > 1) {
-            // 🔴 [2026-10-30] 水生资源（近岸鱼群跃水 / 海龟游弋）按 DE 15fps 循环播放，s.frame 作随机相位
+        } else if (s.asset.startsWith('RESOURCE:') && /FISH|TURTLES|DOLPHIN|WHALE/.test(s.asset) && m.frames > 1) {
+            // 🔴 [2026-10-30] 水生资源（近岸鱼群跃水 / 海龟游弋 / 海豚与巨鲸巡游）按 DE 15fps 循环播放，s.frame 作随机相位
             fr = Math.floor(this.battleSec * 15 + s.frame) % m.frames;
         } else {
             fr = m.frames > 0 ? (s.frame % m.frames) : 0;

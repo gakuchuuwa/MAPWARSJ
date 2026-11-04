@@ -308,15 +308,20 @@ const GROUND_COVER_NAMES = new Set([
     'WEED', 'PLANT', 'PLANT_DEAD', 'PLANT_JUNGLE', 'PLANT_RAINFOREST',
     'UNDERBRUSH', 'UNDERBRUSH_JUNGLE', 'UNDERBRUSH_RAINFOREST', 'FERNPATCH',
     'BUSH_GREEN', 'SHRUB_GREEN', 'HEATHER', 'CACTUS',
-    'REEDS', 'WATER_LILY', 'KELP_SEAWEEDS',
+    'REEDS', 'WATER_LILY', 'KELP_SEAWEEDS', 'RUGS',
+    'DECAL_PATH_1', 'DECAL_PATH_2', 'DECAL_PATH_3', 'DECAL_PATH_4',
+    'DECAL_CRACK', 'DECAL_CRATER', 'DECAL_ICE',
 ]);
 
-const GROUND_COVER_PREFIXES = ['GRASS_', 'FLOWER', 'FALLEN_LEAVES', 'FORAGE_'];
+const GROUND_COVER_PREFIXES = [
+    'GRASS_', 'FLOWER', 'FALLEN_LEAVES', 'FORAGE_',
+    'RESOURCE:FARM_', 'RESOURCE:RFARM_', 'RESOURCE:PASTURE_',
+    'RESOURCE:SALT_', 'RESOURCE:SULFUR_CRATER', 'RESOURCE:WATER_LILY',
+];
 
-/** 这个素材是不是「贴地植被」（草/花/灌丛/蕨/芦苇/水草/落叶）——是则画在士兵层之下，永不遮兵。 */
+/** 这个素材是不是「贴地植被」（草/花/灌丛/蕨/芦苇/水草/落叶/农田与地质贴花）——是则画在士兵层之下，永不遮兵。 */
 export function isGroundCoverVegetation(asset: string): boolean {
     if (!asset) return false;
-    if (asset.includes(':')) return false;   // ANIMAL: / RESOURCE: / BUILDING: 等非自然植被
     if (GROUND_COVER_NAMES.has(asset)) return true;
     for (const p of GROUND_COVER_PREFIXES) if (asset.startsWith(p)) return true;
     return false;

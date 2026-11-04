@@ -20,7 +20,7 @@ import { localSeasonAtLat } from '../../world/environment/seasonalGround';
 import { plantRegionalizeTree } from '../../world/environment/plantCatalog';
 import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { canSpawnDeepSeaWhaleOrNessie } from '../../map/MarineLifeLayer';
-import { applyDeCityToGround, decloneBattlefieldRocks } from './Scene13CityLayout';
+import { applyDeCityToGround, decloneBattlefieldRocks, getClimateMountainPool } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
 import { queryWinterSnow } from './WorldBaseMap';
 import { setCachedViennaMapData } from './Scene13SpriteCache';
@@ -825,9 +825,14 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
 
 /**
  * 在战术战场南北两翼安全区（避开城墙、护城河、四门大道、水体、营地出生点与中央主交战走廊）
- * 点缀 DE 古战场军事遗存（SUCAI_BATTLEFIELD）：
+ * 点缀 DE 古战场军事遗存与野战专属五大类场景元素：
  *   · 攻城战：倒毁攻城器械残骸（投石机/石炮/冲车/弩炮）、破损拒马木栅残骸、战地火把
- *   · 野战：古战场骸骨、断车、破损拒马木栅残骸
+ *   · 野战（五大类丰富元素）：
+ *       1) 地域文明古迹、祭坛与英雄雕像（按文化匹配：秦汉唐断垣/佛像、古罗马废墟/凯旋门/剧场/亚历山大雕像、两河遗址/拜火教圣火坛、桑奇大塔/印度古迹、安第斯古迹/美洲聚落、多神教祭坛、城堡/教堂废墟）
+ *       2) 古道驿迹与受阻商旅辎重车队（古道贴花 + 地域空商车/骡车 + 破车 + 拒马木障 + 火把）
+ *       3) 荒野斥候前哨、猎人茅屋 / 美洲聚落 / 游牧毡帐与林边伐木点（哨站 + 茅屋/聚落 + 树桩/倒木 + 野果丛）
+ *       4) 江河海滩沉船、荒野渡口栈桥船坞与浅滩礁石鱼群（战船/商船沉船残骸、海岸搁浅巨鲸、渡口船坞+停泊小舟、水中礁石与鱼群）
+ *       5) 远翼大山、特种地质奇观与惨烈古战场遗骸（高地远山、野生金矿/石矿/采石坑、地表裂隙/弹坑/盐壳/硫磺口、战车与攻城器残骸、战场白骨与荒冢）
  */
 export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13GroundLayerGL, VW: number, VH: number): void {
     const seedStr = `${this.defenderCityId || 'field'}_${Math.round((this.centerLat ?? 30) * 100)}_${Math.round((this.centerLng ?? 110) * 100)}_${this.battleType}`;
@@ -849,10 +854,10 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     const roadMaxV = 3.2;
 
     const placedPts: Array<{ x: number; y: number }> = [];
-    const isSafeSpot = (sx: number, sy: number): boolean => {
-        if (sx < 360 || sx > VW - 360 || sy < 180 || sy > VH - 180) return false;
+    const isSafeSpot = (sx: number, sy: number, minGap = 240, corridorHalfH = 340): boolean => {
+        if (sx < 320 || sx > VW - 320 || sy < 150 || sy > VH - 150) return false;
         // 避开中央部队冲锋与交战主走廊
-        if (Math.abs(sy - cy) < 360) return false;
+        if (Math.abs(sy - cy) < corridorHalfH) return false;
         // 攻城战避开城池、护城河及四门大道
         if (this.deCity) {
             if (((sx - cx) / (rx + 180)) ** 2 + ((sy - cy) / (ry + 110)) ** 2 < 1.0) return false;
@@ -867,27 +872,38 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         const wc = glLayer.screenToCell(sx, sy, VW, VH);
         if (!wc || glLayer.getWaterDensityAt(wc.gx, wc.gy) >= 0.18) return false;
         for (const sp of this.spawns) {
-            if (Math.hypot(sx - sp.x, (sy - sp.y) * 1.4) < 340) return false;
+            if (Math.hypot(sx - sp.x, (sy - sp.y) * 1.4) < 360) return false;
         }
         for (const p of placedPts) {
-            if (Math.hypot(sx - p.x, (sy - p.y) * 1.4) < 260) return false;
+            if (Math.hypot(sx - p.x, (sy - p.y) * 1.4) < minGap) return false;
         }
         return true;
     };
 
-    const pushRelic = (asset: string, sx: number, sy: number, flip: boolean): void => {
-        placedPts.push({ x: sx, y: sy });
+    const pushRelic = (
+        asset: string,
+        sx: number,
+        sy: number,
+        flip: boolean,
+        scale = 1.0,
+        z = 0,
+        frame = 0,
+        recordPt = true,
+    ): void => {
+        if (recordPt) placedPts.push({ x: sx, y: sy });
         const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
         this.ensureNatureAsset(asset);
         this.decorSprites.push({
             asset,
-            frame: 0,
+            frame,
             x: sx,
             y: sy,
             flip,
+            scale,
             layer: 'world',
-            z: 0,
+            z,
             lift,
+            indestructible: true,
             obstruction: undefined,
             obstructionContactSec: 0,
             obstructionTouched: false,
@@ -895,14 +911,20 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         });
     };
 
-    const pickSafeFlankSpot = (xMinFrac: number, xMaxFrac: number, preferSouth: boolean): { x: number; y: number } | null => {
-        for (let attempt = 0; attempt < 24; attempt++) {
+    const pickSafeFlankSpot = (
+        xMinFrac: number,
+        xMaxFrac: number,
+        preferSouth: boolean,
+        minGap = 240,
+        corridorHalfH = 340,
+    ): { x: number; y: number } | null => {
+        for (let attempt = 0; attempt < 32; attempt++) {
             const south = (attempt % 2 === 0) ? preferSouth : !preferSouth;
             const sx = VW * (xMinFrac + rnd() * (xMaxFrac - xMinFrac));
             const sy = south
-                ? VH * (0.70 + rnd() * 0.16)
-                : VH * (0.14 + rnd() * 0.16);
-            if (isSafeSpot(sx, sy)) return { x: sx, y: sy };
+                ? VH * (0.68 + rnd() * 0.20)
+                : VH * (0.12 + rnd() * 0.20);
+            if (isSafeSpot(sx, sy, minGap, corridorHalfH)) return { x: sx, y: sy };
         }
         return null;
     };
@@ -914,6 +936,8 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             'BATTLEFIELD:DECAY_ONAGER',
             'BATTLEFIELD:DECAY_BATTERING_RAM',
             'BATTLEFIELD:DECAY_SCORPION',
+            'BATTLEFIELD:DECAY_SIEGE_TOWER',
+            'BATTLEFIELD:DECAY_BOMBARD_CANNON',
         ];
         const barricadeWrecks = [
             'BATTLEFIELD:BARRICADE_RUBBLE_A',
@@ -924,45 +948,355 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         ];
         const torches = ['BATTLEFIELD:TORCH_A', 'BATTLEFIELD:TORCH_B'];
 
-        const wreckCount = 2;
+        const wreckCount = 3;
         for (let i = 0; i < wreckCount; i++) {
-            const pt = pickSafeFlankSpot(0.24, 0.72, i % 2 === 0);
+            const pt = pickSafeFlankSpot(0.22, 0.76, i % 2 === 0);
             if (!pt) continue;
             const asset = siegeWrecks[Math.floor(rnd() * siegeWrecks.length)];
             pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
         }
-        const rubbleCount = 2 + Math.floor(rnd() * 2);
+        const rubbleCount = 3 + Math.floor(rnd() * 2);
         for (let i = 0; i < rubbleCount; i++) {
-            const pt = pickSafeFlankSpot(0.20, 0.78, i % 2 === 1);
+            const pt = pickSafeFlankSpot(0.18, 0.80, i % 2 === 1);
             if (!pt) continue;
             const asset = barricadeWrecks[Math.floor(rnd() * barricadeWrecks.length)];
             pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
         }
-        const torchCount = 2;
+        const torchCount = 3;
         for (let i = 0; i < torchCount; i++) {
-            const pt = pickSafeFlankSpot(0.26, 0.74, i % 2 === 0);
+            const pt = pickSafeFlankSpot(0.24, 0.76, i % 2 === 0);
             if (!pt) continue;
             const asset = torches[Math.floor(rnd() * torches.length)];
             pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
         }
-    } else {
+        return;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // 野战地图（battleType !== 'siege'）：五大类 DE 荒野与古战场生态元素
+    // ══════════════════════════════════════════════════════════════════════════
+    const defRec: any = this.defenderCityRecord();
+    const mapLat = defRec?.lat ?? this.centerLat ?? 30;
+    const mapLng = defRec?.lng ?? this.centerLng ?? 110;
+    const deStyle = this.buildingStyleFor(1);
+    const cultStyle = String(defRec?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? '');
+    const baseTerrain = String(this.environmentPlan?.baseTerrain ?? 'gr2');
+    const isSnow = glLayer.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(baseTerrain);
+    const isArid = /^(des|pal|qs|ds5|pal1)/i.test(baseTerrain);
+    const elevM = this.environmentPlan?.elevationM ?? 0;
+    const elevBand = this.environmentPlan?.elevationBand;
+
+    // 文化圈归类（严格遵守「美洲是聚落」与各文明史实风貌）
+    const isAmericas = deStyle === 'ANDE' || deStyle === 'MESO'
+        || /^(AMERICA|ANDE|MAYANS|INCA|MUISCA|TUPI|MAPUCHE|CHIMU|TARASCAN|TAIRONA|TEHUELCHE|IROQUOIS|NORTHAM_IMPERIAL|SOUTHAM_IMPERIAL)$/.test(cultStyle);
+    const isNomad = !isAmericas && (deStyle === 'YURT'
+        || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|HEXI|TIBET)$/.test(cultStyle));
+    const isEastAsia = !isAmericas && !isNomad && (deStyle === 'ASIA'
+        || /^(CENTRAL|WEI|JIANGNAN|HUGUANG|BASHU|NORTHEAST|KOREA|JAPAN)$/.test(cultStyle));
+    const isIndosphere = !isAmericas && (deStyle === 'INDI' || deStyle === 'PURU' || deStyle === 'SEAS'
+        || /^(INDIA|PURU|BENGALIS|GURJARAS|BURMESE|KHMER|VIETNAMESE|MALAY|CHAMPA|JAVANESE|SIAMESE|MON|DIANQIAN)$/.test(cultStyle));
+    const isGrecoRoman = !isAmericas && (deStyle === 'GREEK' || deStyle === 'THRACIAN' || deStyle === 'MEDI'
+        || /^(ROMA|BYZANTINE|GREECE|GREEK|ATHENIANS|SPARTANS|MACEDONIAN|THRACIAN|SICILIANS|ITALIANS)$/.test(cultStyle));
+    const isMiddleEast = !isAmericas && (deStyle === 'ORIE' || deStyle === 'PERSIAN'
+        || /^(ORIE|WEST_ASIA|PERSIAN|SASANIAN|CENTRAL_ASIA|WESTERN|BERBER|MUGHAL|ARMENIANS|GEORGIANS)$/.test(cultStyle));
+    const isPaganNorth = !isAmericas && /^(CELTS|VIKINGS|DANES|VARANGIANS|GOTHS|GERMANIC|SLAVIC|LITHUANIANS)$/.test(cultStyle);
+
+    // ── 0. 野战远翼大山（高地/山地野战在南北远翼高台布置 1~2 座 DE 大山，避开中央冲锋走廊与营地） ──
+    {
+        const mountainPool = getClimateMountainPool.call(this, isSnow);
+        const N = glLayer.data?.width ?? 120;
+        const hillCands: Array<{ x: number; y: number; elev: number }> = [];
+        for (let gy = 5; gy <= N - 5; gy += 3) {
+            for (let gx = 5; gx <= N - 5; gx += 3) {
+                const pt = glLayer.cellToScreen(gx + 0.5, gy + 0.5, VW, VH);
+                if (Math.abs(pt.y - cy) < 520) continue; // 严禁遮挡中央野战交战走廊
+                if (!isSafeSpot(pt.x, pt.y, 600, 520)) continue;
+                const el = glLayer.elevationLevelAt(pt.x, pt.y, VW, VH);
+                if (el >= 1.6) hillCands.push({ x: pt.x, y: pt.y, elev: el });
+            }
+        }
+        hillCands.sort((a, b) => b.elev - a.elev || (rnd() - 0.5));
+        const maxMountains = (elevM >= 450 || elevBand === 'mountain' || elevBand === 'alpine' || elevBand === 'high_alpine') ? 2 : 1;
+        let mPlaced = 0;
+        for (const hc of hillCands) {
+            if (mPlaced >= maxMountains) break;
+            if (placedPts.some((p) => Math.hypot(p.x - hc.x, (p.y - hc.y) * 1.5) < 950)) continue;
+            const mAsset = mountainPool[Math.floor(rnd() * mountainPool.length)];
+            pushRelic(mAsset, hc.x, hc.y, rnd() < 0.5, 1.85, 0, 0, true);
+            mPlaced++;
+        }
+    }
+
+    // ── 1. 地域文明古迹、祭坛与英雄雕像（2~3 处，立于南北两翼高地或林间空地） ──
+    {
+        const monumentPool: string[] = isAmericas
+            ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BATTLEFIELD:ANDEAN_RUINS', 'BUILDING:PAGAN_SHRINE', 'BUILDING:SETTLEMENT']
+            : isEastAsia
+                ? ['BUILDING:SCEN_CHINESE_RUINS', 'BUILDING:SCEN_BUDDHA_STATUE', 'BATTLEFIELD:CHINESE_RUINS']
+                : isIndosphere
+                    ? ['BUILDING:SANCHI_STUPA', 'BUILDING:SCEN_INDIAN_RUINS', 'BUILDING:SCEN_PURU_RUINS', 'BUILDING:SCEN_BUDDHA_STATUE', 'BATTLEFIELD:INDIAN_RUINS']
+                    : isGrecoRoman
+                        ? ['BUILDING:SCEN_ROMAN_RUINS', 'BUILDING:ARCH_OF_CONSTANTINE', 'BUILDING:AMPHITHEATRE', 'BUILDING:SCEN_STATUE_ALEXANDER', 'BUILDING:SCEN_STATUE_GREEK_HERO', 'BUILDING:SCEN_STATUE_ARES_MARBLE', 'BUILDING:SCEN_HERO_SHRINE', 'BATTLEFIELD:ROMAN_RUINS']
+                        : isMiddleEast
+                            ? ['BUILDING:SCEN_MESOPOTAMIAN_RUINS', 'BATTLEFIELD:MESOPOTAMIAN_TOMB', 'BUILDING:SCEN_FIRE_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS', 'BATTLEFIELD:MESOPOTAMIAN_RUINS']
+                            : (isNomad || isPaganNorth)
+                                ? ['BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS', 'BATTLEFIELD:ANCIENT_RUINS', 'BUILDING:SCEN_HERO_SHRINE']
+                                : ['BUILDING:SCEN_CASTLE_RUINS', 'BUILDING:SCEN_CHURCH_RUINS', 'BUILDING:SCEN_MEDI_RUINS', 'BATTLEFIELD:CASTLE_RUINS', 'BATTLEFIELD:CHURCH_RUINS'];
+
+        const targetMonuments = 2 + Math.floor(rnd() * 2); // 2~3 处
+        for (let i = 0; i < targetMonuments; i++) {
+            const pt = pickSafeFlankSpot(0.18, 0.82, i % 2 === 0, 420, 380);
+            if (!pt) continue;
+            glLayer.carveFoundation(pt.x, pt.y, VW, VH, 1.8);
+            const mAsset = monumentPool[(i + Math.floor(rnd() * monumentPool.length)) % monumentPool.length];
+            const mScale = mAsset.includes('AMPHITHEATRE') || mAsset.includes('ARCH_OF_CONSTANTINE') || mAsset.includes('SANCHI_STUPA')
+                ? 0.72
+                : 0.82 + rnd() * 0.08;
+            pushRelic(mAsset, pt.x, pt.y, rnd() < 0.5, mScale, 0, 0, true);
+            // 古迹旁伴生火把与残石
+            if (isSafeSpot(pt.x + 38, pt.y + 16, 40, 340)) {
+                pushRelic(rnd() < 0.5 ? 'BATTLEFIELD:TORCH_A' : 'BATTLEFIELD:TORCH_B', pt.x + 38, pt.y + 16, false, 0.86, 0, 0, false);
+            }
+            if (isSafeSpot(pt.x - 36, pt.y + 14, 40, 340)) {
+                pushRelic(isArid ? 'ROCK3' : 'ROCK1', pt.x - 36, pt.y + 14, rnd() < 0.5, 0.76, 0, Math.floor(rnd() * 6), false);
+            }
+        }
+    }
+
+    // ── 2. 古道驿迹与受阻商旅辎重车队（2~3 处，古道贴花 + 地域空商车/骡车 + 破木车 + 拒马 + 火把） ──
+    {
+        const emptyCartAsset = isAmericas
+            ? 'TRADE:TRADE_CART_MESO_EMPTY/move_2'
+            : (isMiddleEast || isNomad)
+                ? 'TRADE:TRADE_CART_ORIE_EMPTY/move_2'
+                : (isGrecoRoman || deStyle === 'WEST' || deStyle === 'EAST' || deStyle === 'CEAS' || deStyle === 'SLAV')
+                    ? 'TRADE:TRADE_CART_WEST_EMPTY/move_2'
+                    : (isIndosphere || deStyle === 'AFRI')
+                        ? 'TRADE:TRADE_CART_AFRI_EMPTY/move_2'
+                        : 'TRADE:TRADE_CART_ASIA_EMPTY/move_2';
+        const caravanCount = 2 + Math.floor(rnd() * 2); // 2~3 处
+        const pathDecals = ['DECAL_PATH_1', 'DECAL_PATH_2', 'DECAL_PATH_3', 'DECAL_PATH_4'];
+        for (let i = 0; i < caravanCount; i++) {
+            const pt = pickSafeFlankSpot(0.20, 0.80, i % 2 === 1, 380, 350);
+            if (!pt) continue;
+            // 脚下铺古道痕迹贴花（z = -6 贴地层，不挡兵）
+            const pathAsset = pathDecals[(i + Math.floor(rnd() * pathDecals.length)) % pathDecals.length];
+            pushRelic(pathAsset, pt.x, pt.y, rnd() < 0.5, 0.95, -6, 0, false);
+            if (isSafeSpot(pt.x + 56, pt.y + 24, 30, 330)) {
+                pushRelic(pathDecals[(i + 1) % pathDecals.length], pt.x + 56, pt.y + 24, rnd() < 0.5, 0.90, -6, 0, false);
+            }
+            // 主商车 + 伴生骡车/破车 + 路障火把
+            pushRelic(emptyCartAsset, pt.x, pt.y, rnd() < 0.5, 0.84, 0, 0, true);
+            if (isSafeSpot(pt.x + 48, pt.y + 20, 40, 330)) {
+                const secondCart = (!isAmericas && rnd() < 0.55) ? 'TRADE:MULE_CART/move_4' : 'BATTLEFIELD:CART_BROKEN';
+                pushRelic(secondCart, pt.x + 48, pt.y + 20, rnd() < 0.5, 0.82, 0, 0, false);
+            }
+            if (isSafeSpot(pt.x - 38, pt.y + 14, 40, 330)) {
+                pushRelic('BATTLEFIELD:BARRICADE_A', pt.x - 38, pt.y + 14, rnd() < 0.5, 0.84, 0, 0, false);
+            }
+            if (isSafeSpot(pt.x + 24, pt.y - 18, 40, 330)) {
+                pushRelic('BATTLEFIELD:TORCH_A', pt.x + 24, pt.y - 18, false, 0.86, 0, 0, false);
+            }
+        }
+    }
+
+    // ── 3. 荒野斥候前哨、猎人茅屋 / 美洲聚落 / 游牧毡帐与林边伐木点（3~4 处） ──
+    {
+        // (3a) 两翼制高点斥候哨岗（1~2 座 OUTPOST / FORTIFIED_OUTPOST + 拒马 + 火把）
+        const outpostCount = 2;
+        for (let i = 0; i < outpostCount; i++) {
+            const pt = pickSafeFlankSpot(0.22, 0.78, i % 2 === 0, 420, 370);
+            if (!pt) continue;
+            glLayer.carveFoundation(pt.x, pt.y, VW, VH, 1.5);
+            const opAsset = (i === 0 && !isNomad) ? 'BUILDING:FORTIFIED_OUTPOST' : 'BUILDING:OUTPOST';
+            pushRelic(opAsset, pt.x, pt.y, rnd() < 0.5, 0.80, 0, 0, true);
+            if (isSafeSpot(pt.x + 28, pt.y + 12, 30, 340)) {
+                pushRelic('BATTLEFIELD:TORCH_A', pt.x + 28, pt.y + 12, false, 0.85, 0, 0, false);
+            }
+            if (isSafeSpot(pt.x - 28, pt.y + 14, 30, 340)) {
+                pushRelic('BATTLEFIELD:STAKE_BARRICADE', pt.x - 28, pt.y + 14, rnd() < 0.5, 0.84, 0, 0, false);
+            }
+        }
+
+        // (3b) 荒野猎人茅屋 / 美洲聚落（SETTLEMENT） / 游牧牧棚与林边伐木营（2 处）
+        const wildernessDwellingPool = isAmericas
+            ? ['BUILDING:SETTLEMENT', 'BUILDING:DARK_SETTLEMENT_AGE1']
+            : isNomad
+                ? ['BUILDING:YURT_E', 'BUILDING:YURT_F', 'BUILDING:DARK_PASTURE']
+                : [
+                    'BUILDING:HUT_A', 'BUILDING:HUT_B', 'BUILDING:HUT_C', 'BUILDING:HUT_D',
+                    'BUILDING:HUT_E', 'BUILDING:HUT_F', 'BUILDING:HUT_G',
+                    (deStyle === 'GREEK' || deStyle === 'MEDI' || deStyle === 'WEST')
+                        ? 'BUILDING:GREEK_LUMBER_CAMP_AGE2'
+                        : 'BUILDING:THRACIAN_LUMBER_CAMP_AGE2',
+                ];
+        for (let i = 0; i < 2; i++) {
+            const pt = pickSafeFlankSpot(0.16, 0.84, i % 2 === 1, 420, 380);
+            if (!pt) continue;
+            glLayer.carveFoundation(pt.x, pt.y, VW, VH, 1.8);
+            const dwAsset = wildernessDwellingPool[Math.floor(rnd() * wildernessDwellingPool.length)];
+            pushRelic(dwAsset, pt.x, pt.y, rnd() < 0.5, 0.76 + rnd() * 0.05, 0, 0, true);
+            // 伴生树桩、倒木与野果丛
+            if (isSafeSpot(pt.x + 42, pt.y + 16, 30, 340)) {
+                pushRelic('STUMP_GENERIC', pt.x + 42, pt.y + 16, rnd() < 0.5, 0.80, 0, 0, false);
+            }
+            if (isSafeSpot(pt.x - 44, pt.y + 18, 30, 340)) {
+                pushRelic('FELLED_GENERIC', pt.x - 44, pt.y + 18, rnd() < 0.5, 0.80, 0, 0, false);
+            }
+            if (!isSnow && isSafeSpot(pt.x + 32, pt.y - 22, 30, 340)) {
+                pushRelic('FORAGE_BUSH', pt.x + 32, pt.y - 22, rnd() < 0.5, 0.82, 0, Math.floor(rnd() * 4), false);
+            }
+        }
+    }
+
+    // ── 4. 江河海滩沉船、荒野渡口栈桥船坞与浅滩礁石鱼群（临水野战地图自动检测水岸线布置） ──
+    {
+        const N = glLayer.data?.width ?? 120;
+        const shoreSpots: Array<{ x: number; y: number; waterX: number; waterY: number }> = [];
+        for (let gy = 6; gy <= N - 6; gy += 3) {
+            for (let gx = 6; gx <= N - 6; gx += 3) {
+                const wDens = glLayer.getWaterDensityAt(gx, gy);
+                if (wDens < 0.24 || wDens > 0.66) continue;
+                const pt = glLayer.cellToScreen(gx + 0.5, gy + 0.5, VW, VH);
+                if (Math.abs(pt.y - cy) < 280) continue; // 避开正中渡河主冲锋线
+                if (this.spawns.some((sp) => Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.4) < 380)) continue;
+                let wPt: { x: number; y: number } | null = null;
+                let hasLand = false;
+                for (const [dx, dy] of [[-2, 0], [2, 0], [0, -2], [0, 2]] as const) {
+                    const nd = glLayer.getWaterDensityAt(gx + dx, gy + dy);
+                    if (nd >= 0.55 && !wPt) wPt = glLayer.cellToScreen(gx + 0.5 + dx, gy + 0.5 + dy, VW, VH);
+                    if (nd <= 0.12) hasLand = true;
+                }
+                if (wPt && hasLand) {
+                    shoreSpots.push({ x: pt.x, y: pt.y, waterX: wPt.x, waterY: wPt.y });
+                }
+            }
+        }
+        if (shoreSpots.length > 0) {
+            shoreSpots.sort(() => rnd() - 0.5);
+            // (4a) 荒野古渡口栈桥船坞 + 停泊舟船 + 鱼群（1 处）
+            if (!isNomad) {
+                const ferrySpot = shoreSpots[0];
+                const dockAsset = deStyle === 'YURT'
+                    ? 'BUILDING:ASIA_DOCK_AGE2'
+                    : (deStyle === 'THRACIAN' && rnd() < 0.5)
+                        ? 'BUILDING:THRACIAN_SHIPYARD_AGE2'
+                        : `BUILDING:${deStyle}_DOCK_AGE2`;
+                const boatAsset = (isAmericas || deStyle === 'AFRI')
+                    ? 'TRADE:CANOE/idle_2'
+                    : (isEastAsia || deStyle === 'SEAS')
+                        ? 'TRADE:JUNK/idle_2'
+                        : (deStyle === 'WEST' || deStyle === 'CEAS' || deStyle === 'EAST' || deStyle === 'SLAV')
+                            ? 'TRADE:TRADE_COG/idle_2'
+                            : 'TRADE:MERCHANT_SHIP/idle_2';
+                pushRelic(dockAsset, ferrySpot.x, ferrySpot.y, rnd() < 0.5, 0.76, 0, 0, true);
+                pushRelic(
+                    boatAsset,
+                    (ferrySpot.x + ferrySpot.waterX) * 0.5,
+                    (ferrySpot.y + ferrySpot.waterY) * 0.5,
+                    rnd() < 0.5,
+                    0.74,
+                    0,
+                    0,
+                    false,
+                );
+                pushRelic('RESOURCE:SHORE_FISH', ferrySpot.waterX, ferrySpot.waterY, false, 0.85, -1, Math.floor(rnd() * 12), false);
+            }
+
+            // (4b) 浅滩战船/商船沉船残骸、海岸搁浅巨鲸与礁石（2~3 处）
+            const wreckPool = [
+                'BATTLEFIELD:GALLEY_WRECK',
+                'BATTLEFIELD:CATAPULT_SHIP_WRECK',
+                'BATTLEFIELD:TRADE_SHIP_WRECK',
+                'BATTLEFIELD:SHIPWRECK_A',
+                'BATTLEFIELD:SHIPWRECK_B',
+            ];
+            if (this.environmentPlan?.waterKind === 'sea') {
+                wreckPool.push('BATTLEFIELD:BEACHED_WHALE');
+            }
+            let wrecksPlaced = 0;
+            for (let si = 1; si < shoreSpots.length && wrecksPlaced < 3; si++) {
+                const ws = shoreSpots[si];
+                if (placedPts.some((p) => Math.hypot(p.x - ws.x, (p.y - ws.y) * 1.4) < 380)) continue;
+                const wAsset = wreckPool[Math.floor(rnd() * wreckPool.length)];
+                pushRelic(wAsset, ws.x, ws.y, rnd() < 0.5, 0.86 + rnd() * 0.10, 0, 0, true);
+                // 伴生水中礁石与鱼群/海龟
+                pushRelic(
+                    rnd() < 0.5 ? 'RESOURCE:SEA_ROCK1' : 'RESOURCE:SEA_ROCK2',
+                    ws.waterX,
+                    ws.waterY,
+                    rnd() < 0.5,
+                    0.82,
+                    0,
+                    Math.floor(rnd() * 4),
+                    false,
+                );
+                wrecksPlaced++;
+            }
+        }
+    }
+
+    // ── 5. 野生矿脉采石坑、特种地质奇观与惨烈古战场遗骸（6~8 处） ──
+    {
+        // (5a) 荒野裸露矿脉与采矿点（1~2 处：金矿/石矿 + 露天采石坑 + 美洲聚落/旧大陆矿车）
+        for (let i = 0; i < 2; i++) {
+            const pt = pickSafeFlankSpot(0.20, 0.80, i % 2 === 0, 420, 360);
+            if (!pt) continue;
+            const oreAsset = i === 0 ? 'MINE_GOLD' : 'MINE_STONE';
+            pushRelic(oreAsset, pt.x, pt.y, rnd() < 0.5, 0.90, 0, Math.floor(rnd() * 6), true);
+            if (isSafeSpot(pt.x + 36, pt.y - 16, 30, 340)) {
+                pushRelic('RESOURCE:QUARRY', pt.x + 36, pt.y - 16, rnd() < 0.5, 0.84, -1, 0, false);
+            }
+            if (isSafeSpot(pt.x - 54, pt.y + 18, 40, 340)) {
+                const dropAsset = isAmericas
+                    ? 'BUILDING:DARK_SETTLEMENT_AGE1'
+                    : 'TRADE:MULE_CART/move_6';
+                pushRelic(dropAsset, pt.x - 54, pt.y + 18, rnd() < 0.5, 0.76, 0, 0, false);
+            }
+        }
+
+        // (5b) 特种地质（地表裂隙 DECAL_CRACK、弹坑 DECAL_CRATER、荒漠盐壳 SALT_CRACK、高山硫磺口 SULFUR_CRATER）
+        for (let i = 0; i < 2; i++) {
+            const pt = pickSafeFlankSpot(0.22, 0.78, i % 2 === 1, 320, 340);
+            if (!pt) continue;
+            const geoAsset = isArid
+                ? (rnd() < 0.5 ? 'RESOURCE:SALT_CRACK' : 'DECAL_CRACK')
+                : (elevM >= 800 && rnd() < 0.45)
+                    ? 'RESOURCE:SULFUR_CRATER'
+                    : (rnd() < 0.5 ? 'DECAL_CRATER' : 'DECAL_CRACK');
+            pushRelic(geoAsset, pt.x, pt.y, rnd() < 0.5, 0.90, -6, 0, true);
+        }
+
+        // (5c) 惨烈古战场残骸与白骨荒冢（5~6 处）
         const fieldRelics = [
             'BATTLEFIELD:SKELETON_BATTLEFIELD',
             'BATTLEFIELD:SKELETON_SOLDIER',
+            'BATTLEFIELD:ANIMAL_SKELETON',
             'BATTLEFIELD:IMPALED_CORPSE',
+            'BATTLEFIELD:DECAY_WAR_CHARIOT',
+            'BATTLEFIELD:DECAY_TREBUCHET_PACKED',
+            'BATTLEFIELD:DECAY_SCORPION',
+            'BATTLEFIELD:DECAY_SIEGE_BALLISTA',
+            'BATTLEFIELD:FENCE_BROKEN_A',
+            'BATTLEFIELD:FENCE_BROKEN_B',
             'BATTLEFIELD:BARRICADE_RUBBLE_A',
             'BATTLEFIELD:BARRICADE_RUBBLE_B',
             'BATTLEFIELD:BARRICADE_RUBBLE_C',
             'BATTLEFIELD:CART_BROKEN',
         ];
-        const relicCount = 3 + Math.floor(rnd() * 2);
+        if (decorFits('GRAVES', { lat: mapLat, lng: mapLng, season: this.sceneSeason, winterSnow: isSnow, isSiege: false })) {
+            fieldRelics.push('GRAVES');
+        }
+        const relicCount = 5 + Math.floor(rnd() * 3); // 5~7 处
         for (let i = 0; i < relicCount; i++) {
-            const pt = pickSafeFlankSpot(0.22, 0.78, i % 2 === 0);
+            const pt = pickSafeFlankSpot(0.18, 0.82, i % 2 === 0, 260, 340);
             if (!pt) continue;
             const asset = fieldRelics[Math.floor(rnd() * fieldRelics.length)];
-            pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
+            pushRelic(asset, pt.x, pt.y, rnd() < 0.5, 0.88 + rnd() * 0.10, 0, Math.floor(rnd() * 6), true);
         }
     }
+
+    glLayer.flushFoundation();
 }
 
 /**
@@ -974,7 +1308,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
 export function pruneWetBarricades(this: Scene13WarLayer, glLayer: Scene13GroundLayerGL, VW: number, VH: number): void {
     const before = this.decorSprites.length;
     this.decorSprites = this.decorSprites.filter((sp) => {
-        if (!/STAKE_BARRICADE|BARRICADE_RUBBLE/.test(String(sp.asset))) return true;
+        if (!/STAKE_BARRICADE|BARRICADE_RUBBLE|BARRICADE_|FENCE_BROKEN/.test(String(sp.asset))) return true;
         const c = glLayer.screenToCell(sp.x, sp.y, VW, VH);
         if (!c) return false;
         const gx = Math.round(c.gx), gy = Math.round(c.gy);

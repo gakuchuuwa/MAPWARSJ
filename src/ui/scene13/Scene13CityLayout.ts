@@ -1020,27 +1020,55 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         }
     }
 
-    // ── DE 式城郊附郭村落、农田/草场与前哨望楼（纯视觉无碰撞，避开攻方主冲锋线、城门大道、护城河与水域） ──
+    // ── DE 式城郊附郭生态建筑群（农田+磨坊/聚落+民居、游牧牧场、河海船坞、林缘伐木场、山麓采矿场、要道哨岗） ──
+    //    纯视觉无碰撞，避开攻方主冲锋线、城门大道、护城河与出生营地
     {
         const deStyle = this.buildingStyleFor(1);
         const cultStyle = String(defCityForInterior?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? '');
         const seasonTag = isSnow
             ? 'WINTER'
             : (calSeason === 0 ? 'SPRING' : calSeason === 2 ? 'AUTUMN' : calSeason === 3 ? 'WINTER' : 'SUMMER');
-        const isNomadOutskirts = isYurtOrNomadCity
-            || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|HEXI|TIBET)$/.test(cultStyle);
-        const isRiceOutskirts = !isNomadOutskirts && !isArid && !isSnow
+        // 🔴 [2026-11-04 主人令「美洲是聚落」] 美洲文明（ANDE / MESO 及美洲各文化区）在 DE 中以「聚落」（SETTLEMENT）
+        //    统一充当农田、林边、矿边的资源建筑，不放旧大陆磨坊/伐木场/采矿场。
+        const isAmericasOutskirts = deStyle === 'ANDE' || deStyle === 'MESO'
+            || /^(AMERICA|ANDE|MAYANS|INCA|MUISCA|TUPI|MAPUCHE|CHIMU|TARASCAN|TAIRONA|TEHUELCHE|IROQUOIS|NORTHAM_IMPERIAL|SOUTHAM_IMPERIAL)$/.test(cultStyle);
+        const isNomadOutskirts = !isAmericasOutskirts && (isYurtOrNomadCity
+            || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|HEXI|TIBET)$/.test(cultStyle));
+        const isSlavFolwark = !isAmericasOutskirts && !isNomadOutskirts
+            && (deStyle === 'SLAV' || /^(POLES|SLAVIC|LITHUANIANS|BOHEMIANS)$/.test(cultStyle));
+        const isRiceOutskirts = !isNomadOutskirts && !isAmericasOutskirts && !isArid && !isSnow
             && (/^(JIANGNAN|HUGUANG|BASHU|KOREA|VIETNAMESE|BENGALIS|BURMESE|KHMER|PURU|INDIA|MUGHAL|DIANQIAN|JAPAN|MALAY|CHAMPA|JAVANESE|SIAMESE|MON)$/.test(cultStyle)
                 || deStyle === 'SEAS' || deStyle === 'PURU' || deStyle === 'INDI');
         const plotAsset = isNomadOutskirts
             ? `RESOURCE:PASTURE_${seasonTag}`
             : (isRiceOutskirts ? `RESOURCE:RFARM_${seasonTag}` : `RESOURCE:FARM_${seasonTag}`);
         const useAge3 = this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city';
-        const millAsset = isNomadOutskirts
-            ? 'BUILDING:DARK_PASTURE'
-            : (this.defenderCityType === 'stockade'
-                ? 'BUILDING:DARK_MILL_AGE1'
-                : `BUILDING:${deStyle}_MILL_${useAge3 ? 'AGE3' : 'AGE2'}`);
+        const americanSettlementAsset = this.defenderCityType === 'stockade'
+            ? 'BUILDING:DARK_SETTLEMENT_AGE1'
+            : 'BUILDING:SETTLEMENT';
+        const millAsset = isAmericasOutskirts
+            ? americanSettlementAsset
+            : isNomadOutskirts
+                ? 'BUILDING:DARK_PASTURE'
+                : (this.defenderCityType === 'stockade'
+                    ? 'BUILDING:DARK_MILL_AGE1'
+                    : (isSlavFolwark && mRnd() < 0.55)
+                        ? 'BUILDING:FOLWARK'
+                        : `BUILDING:${deStyle}_MILL_${useAge3 ? 'AGE3' : 'AGE2'}`);
+        const lumberCampAsset = isAmericasOutskirts
+            ? americanSettlementAsset
+            : isNomadOutskirts
+                ? 'TRADE:MULE_CART/move_2'
+                : (deStyle === 'GREEK' || deStyle === 'MEDI' || deStyle === 'WEST' || deStyle === 'ORIE' || deStyle === 'PERSIAN')
+                    ? 'BUILDING:GREEK_LUMBER_CAMP_AGE2'
+                    : 'BUILDING:THRACIAN_LUMBER_CAMP_AGE2';
+        const miningCampAsset = isAmericasOutskirts
+            ? americanSettlementAsset
+            : isNomadOutskirts
+                ? 'TRADE:MULE_CART/move_6'
+                : (deStyle === 'GREEK' || deStyle === 'MEDI' || deStyle === 'WEST' || deStyle === 'ORIE' || deStyle === 'PERSIAN')
+                    ? 'BUILDING:GREEK_MINING_CAMP_AGE2'
+                    : 'BUILDING:THRACIAN_MINING_CAMP_AGE2';
         const housePool = isNomadOutskirts
             ? ['BUILDING:YURT_E', 'BUILDING:YURT_F', 'BUILDING:YURT_G', 'BUILDING:YURT_H']
             : (this.defenderCityType === 'stockade'
@@ -1048,6 +1076,15 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 : useAge3
                     ? [`BUILDING:${deStyle}_HOUSE_AGE3`, `BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`]
                     : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE2`]);
+        const villageCartAsset = isAmericasOutskirts
+            ? 'TRADE:TRADE_CART_MESO_EMPTY/move_2'
+            : isNomadOutskirts || deStyle === 'ORIE' || deStyle === 'PERSIAN'
+                ? 'TRADE:TRADE_CART_ORIE_EMPTY/move_2'
+                : (deStyle === 'WEST' || deStyle === 'EAST' || deStyle === 'CEAS' || deStyle === 'SLAV' || deStyle === 'MEDI' || deStyle === 'GREEK' || deStyle === 'THRACIAN')
+                    ? 'TRADE:TRADE_CART_WEST_EMPTY/move_2'
+                    : (deStyle === 'AFRI' || deStyle === 'INDI' || deStyle === 'PURU' || deStyle === 'SEAS')
+                        ? 'TRADE:TRADE_CART_AFRI_EMPTY/move_2'
+                        : 'TRADE:TRADE_CART_ASIA_EMPTY/move_2';
 
         // 计算攻方营心 → 城心的主冲锋走廊，确保附郭村落落点分布在侧翼或城后，不堵主冲锋线
         const atkSpawns = this.spawns.filter((s) => s.f === 0);
@@ -1068,6 +1105,13 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             if (!cCell) return false;
             if (gl.getWaterDensityAt(cCell.gx, cCell.gy) >= 0.12) return false;
             return true;
+        };
+
+        const isNearAnySpawn = (px: number, py: number, minDist = 520): boolean => {
+            for (const sp of this.spawns) {
+                if (Math.hypot(px - sp.x, (py - sp.y) * 1.5) < minDist) return true;
+            }
+            return false;
         };
 
         const pushOutskirtsSprite = (
@@ -1113,33 +1157,63 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         };
 
         const innerDist = minHillDistCells + (moatOn ? 2.4 : 1.4);
-        const outerDist = minHillDistCells + 13.5;
+        const outerDist = minHillDistCells + 16.5;
         const hamletCandidates: Array<{ gx: number; gy: number; x: number; y: number; flankScore: number }> = [];
         const outpostCandidates: Array<{ gx: number; gy: number; x: number; y: number }> = [];
+        const dockCandidates: Array<{ gx: number; gy: number; x: number; y: number; waterX: number; waterY: number; landX: number; landY: number }> = [];
+        const mineSiteCandidates: Array<{ gx: number; gy: number; x: number; y: number; elev: number }> = [];
 
         for (let gy = 6; gy <= N - 6; gy += 2) {
             for (let gx = 6; gx <= N - 6; gx += 2) {
                 const distCells = Math.hypot(gx - cGx, gy - cGy);
-                if (distCells < innerDist || distCells > outerDist) continue;
+                if (distCells < innerDist || distCells > outerDist + 8) continue;
                 const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
-                if (!isPointDryAndOpen(pt.x, pt.y)) continue;
-                const elev0 = gl.elevationLevelAt(pt.x, pt.y, W, H);
-                if (elev0 > 1.25) continue;
-                // 避开所有出生营地
-                let nearSpawn = false;
-                for (const sp of this.spawns) {
-                    if (Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.5) < 520) {
-                        nearSpawn = true;
-                        break;
-                    }
-                }
-                if (nearSpawn) continue;
+                if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) continue;
+                if (isNearAnySpawn(pt.x, pt.y, 500)) continue;
 
                 // 计算到攻方主冲锋轴线的横向偏离与前后投影
                 const relX = pt.x - atkCen.x, relY = pt.y - atkCen.y;
                 const along = relX * chargeUx + relY * chargeUy;
                 const perp = Math.abs(-relX * chargeUy + relY * chargeUx);
                 const onMainChargeLine = along > 0 && along < chargeLen + 120 && perp < 380;
+
+                // 水岸船坞候选：位于自然河岸/海岸交界处（非护城河），一侧深水、一侧干岸
+                const wDens = gl.getWaterDensityAt(gx, gy);
+                if (
+                    !onMainChargeLine
+                    && !(inMoat && inMoat(pt.x, pt.y))
+                    && !gl.isMoatAt(pt.x, pt.y, W, H)
+                    && wDens >= 0.22 && wDens <= 0.65
+                ) {
+                    let waterPt: { x: number; y: number } | null = null;
+                    let landPt: { x: number; y: number } | null = null;
+                    for (const [dx, dy] of [[-2, 0], [2, 0], [0, -2], [0, 2], [-2, -2], [2, 2]] as const) {
+                        const nd = gl.getWaterDensityAt(gx + dx, gy + dy);
+                        const nScreen = gl.cellToScreen(gx + 0.5 + dx, gy + 0.5 + dy, W, H);
+                        if (nd >= 0.58 && !gl.isMoatAt(nScreen.x, nScreen.y, W, H) && !waterPt) {
+                            waterPt = nScreen;
+                        } else if (nd <= 0.10 && !inCity(nScreen.x, nScreen.y) && !landPt) {
+                            landPt = nScreen;
+                        }
+                    }
+                    if (waterPt && landPt) {
+                        dockCandidates.push({
+                            gx, gy, x: pt.x, y: pt.y,
+                            waterX: waterPt.x, waterY: waterPt.y,
+                            landX: landPt.x, landY: landPt.y,
+                        });
+                    }
+                }
+
+                if (!isPointDryAndOpen(pt.x, pt.y)) continue;
+                const elev0 = gl.elevationLevelAt(pt.x, pt.y, W, H);
+
+                // 矿场候选：侧翼坡地或山脚外围（距离适中且不踩冲锋主路）
+                if (!onMainChargeLine && perp >= 280 && distCells >= innerDist + 1.5 && elev0 >= 0.3 && elev0 <= 1.8) {
+                    mineSiteCandidates.push({ gx, gy, x: pt.x, y: pt.y, elev: elev0 });
+                }
+
+                if (elev0 > 1.25 || distCells > outerDist) continue;
 
                 // 哨楼候选：可在外围侧前方或关隘谷口两侧（不踩主路中心）
                 if (distCells >= innerDist + 1.0 && perp >= 220) {
@@ -1165,21 +1239,27 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             }
         }
 
-        hamletCandidates.sort((a, b) => b.flankScore - a.flankScore);
-        const targetHamlets = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city')
-            ? 2
-            : (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade')
-                ? 1
-                : 0;
         const placedCenters: Array<{ x: number; y: number }> = [];
+
+        // ── (A) 附郭农庄 / 美洲聚落农田 / 游牧牧场（含磨坊/聚落/庄园/畜牧棚 + 农田/草场/葡萄园 + 房屋 + 商车/粮桶） ──
+        hamletCandidates.sort((a, b) => b.flankScore - a.flankScore);
+        const targetHamlets = this.defenderCityType === 'big_city'
+            ? 3
+            : this.defenderCityType === 'medium_city'
+                ? 2
+                : (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade')
+                    ? 2
+                    : 0;
+        const canUseVineyard = !isSnow && !isArid && !isNomadOutskirts && !isAmericasOutskirts
+            && (deStyle === 'MEDI' || deStyle === 'GREEK' || deStyle === 'WEST' || deStyle === 'THRACIAN');
 
         for (const cand of hamletCandidates) {
             if (placedCenters.length >= targetHamlets) break;
-            if (placedCenters.some((p) => Math.hypot(p.x - cand.x, (p.y - cand.y) * 1.5) < 560)) continue;
+            if (placedCenters.some((p) => Math.hypot(p.x - cand.x, (p.y - cand.y) * 1.5) < 520)) continue;
             placedCenters.push({ x: cand.x, y: cand.y });
 
             const vx = cand.x, vy = cand.y;
-            clearTreesInRadius(vx, vy, 230);
+            clearTreesInRadius(vx, vy, 240);
             gl.carveFoundation(vx, vy, W, H, 2.8);
 
             // 1) 连片等轴农田 / 牧草场贴片（z = -6 贴地绘制，绝不挡兵模与房屋）
@@ -1190,19 +1270,24 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 [64, 32],
                 [-64, 32],
                 [0, 64],
+                [128, 64],
             ];
             let plotsPlaced = 0;
-            const maxPlots = this.defenderCityType === 'big_city' ? 4 : 3;
+            const maxPlots = this.defenderCityType === 'big_city' ? 5 : 4;
             for (const [dx, dy] of diamondOffsets) {
                 if (plotsPlaced >= maxPlots) break;
                 const px = fx0 + dx, py = fy0 + dy;
                 if (!isPointDryAndOpen(px, py)) continue;
                 gl.carveFoundation(px, py, W, H, 1.5);
-                pushOutskirtsSprite(plotAsset, px, py, 1.0, -6, false, 0);
+                if (canUseVineyard && plotsPlaced === maxPlots - 1 && mRnd() < 0.65) {
+                    pushOutskirtsSprite('RESOURCE:VINEYARD', px, py, 0.90, -1, mRnd() < 0.5, 0);
+                } else {
+                    pushOutskirtsSprite(plotAsset, px, py, 1.0, -6, false, 0);
+                }
                 plotsPlaced++;
             }
 
-            // 2) 磨坊 / 蓄牧棚居中
+            // 2) 磨坊 / 庄园 / 美洲聚落 / 畜牧棚居中
             pushOutskirtsSprite(millAsset, vx, vy, 0.78 + mRnd() * 0.04, 0, mRnd() < 0.5, 0);
 
             // 3) 2~3 间同风格民居 / 毡帐错落环绕
@@ -1223,25 +1308,174 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 hPlaced++;
             }
 
-            // 4) 村口生活小景（粮桶/木车 + 迎风火把）
-            if (isPointDryAndOpen(vx - fieldSide * 44, vy + 24)) {
-                pushOutskirtsSprite(mRnd() < 0.5 ? 'BARRELS' : 'BATTLEFIELD:CART_BROKEN', vx - fieldSide * 44, vy + 24, 0.78, 0, mRnd() < 0.5, 0);
+            // 4) 村口生活小景（文化商车 / 粮桶 / 破木车 + 迎风火把）
+            if (isPointDryAndOpen(vx - fieldSide * 46, vy + 24)) {
+                const cartOrBarrel = mRnd() < 0.55 ? villageCartAsset : (isNomadOutskirts ? 'BATTLEFIELD:CART_BROKEN' : 'BARRELS');
+                pushOutskirtsSprite(cartOrBarrel, vx - fieldSide * 46, vy + 24, 0.78, 0, mRnd() < 0.5, 0);
             }
             if (isPointDryAndOpen(vx + fieldSide * 36, vy - 18)) {
                 pushOutskirtsSprite('BATTLEFIELD:TORCH_A', vx + fieldSide * 36, vy - 18, 0.86, 0, false, 0);
             }
         }
 
-        // 5) 城郊前哨望楼（Outpost / Fortified Outpost）：立于外围要道侧翼或关隘谷口前哨
+        // ── (B) 河边 / 海边船坞（Dock + 停泊舟船 + 近岸鱼群 + 岸上货桶/火把） ──
+        if (dockCandidates.length > 0 && !isNomadOutskirts) {
+            dockCandidates.sort(() => mRnd() - 0.5);
+            const targetDocks = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') ? 2 : 1;
+            const dockAsset = deStyle === 'YURT'
+                ? 'BUILDING:ASIA_DOCK_AGE2'
+                : (deStyle === 'THRACIAN' && mRnd() < 0.5)
+                    ? 'BUILDING:THRACIAN_SHIPYARD_AGE2'
+                    : `BUILDING:${deStyle}_DOCK_AGE2`;
+            const mooredBoatAsset = (isAmericasOutskirts || deStyle === 'AFRI')
+                ? 'TRADE:CANOE/idle_2'
+                : (deStyle === 'ASIA' || deStyle === 'SEAS')
+                    ? 'TRADE:JUNK/idle_2'
+                    : (deStyle === 'WEST' || deStyle === 'CEAS' || deStyle === 'EAST' || deStyle === 'SLAV')
+                        ? 'TRADE:TRADE_COG/idle_2'
+                        : 'TRADE:MERCHANT_SHIP/idle_2';
+            let docksPlaced = 0;
+            for (const dc of dockCandidates) {
+                if (docksPlaced >= targetDocks) break;
+                if (placedCenters.some((p) => Math.hypot(p.x - dc.x, (p.y - dc.y) * 1.5) < 480)) continue;
+                placedCenters.push({ x: dc.x, y: dc.y });
+                clearTreesInRadius(dc.x, dc.y, 140);
+                pushOutskirtsSprite(dockAsset, dc.x, dc.y, 0.78, 0, mRnd() < 0.5, 0);
+                // 水面一侧停泊舟船与鱼群
+                pushOutskirtsSprite(
+                    mooredBoatAsset,
+                    (dc.x + dc.waterX) * 0.5,
+                    (dc.y + dc.waterY) * 0.5,
+                    0.76,
+                    0,
+                    mRnd() < 0.5,
+                    0,
+                );
+                pushOutskirtsSprite('RESOURCE:SHORE_FISH', dc.waterX, dc.waterY, 0.85, -1, false, Math.floor(mRnd() * 12));
+                // 陆岸一侧摆货桶与火把
+                if (isPointDryAndOpen(dc.landX, dc.landY)) {
+                    pushOutskirtsSprite(isAmericasOutskirts ? 'BATTLEFIELD:TORCH_B' : 'BARRELS', dc.landX, dc.landY, 0.78, 0, mRnd() < 0.5, 0);
+                }
+                docksPlaced++;
+            }
+        }
+
+        // ── (C) 森林旁边的伐木场（Lumber Camp / 美洲聚落 / 游牧驴车 + 树桩 + 倒木） ──
+        {
+            const forestTrees: Array<{ x: number; y: number }> = [];
+            for (const sp of this.decorSprites) {
+                if ((sp as any).cityOutskirts || (sp as any).cityInterior) continue;
+                if (!TREE_FILTER_RE.test(sp.asset)) continue;
+                const spCell = gl.screenToCell(sp.x, sp.y, W, H);
+                if (!spCell) continue;
+                const dCells = Math.hypot(spCell.gx - cGx, spCell.gy - cGy);
+                if (dCells >= innerDist && dCells <= outerDist + 10) {
+                    forestTrees.push({ x: sp.x, y: sp.y });
+                }
+            }
+            if (forestTrees.length >= 4) {
+                const shuffledTrees = shuffle(forestTrees);
+                const targetLumber = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') ? 2 : 1;
+                let lumberPlaced = 0;
+                const edgeOffsets: ReadonlyArray<readonly [number, number]> = [
+                    [108, 42], [-108, 42], [108, -42], [-108, -42], [0, 76], [0, -76],
+                ];
+                for (let ti = 0; ti < shuffledTrees.length && lumberPlaced < targetLumber; ti++) {
+                    const tr = shuffledTrees[ti];
+                    // 确保这是一片成林的树（半径 240px 内至少有 3 棵树）
+                    let nearbyTrees = 0;
+                    for (const other of forestTrees) {
+                        if (Math.hypot(other.x - tr.x, (other.y - tr.y) * 1.5) < 240) {
+                            nearbyTrees++;
+                            if (nearbyTrees >= 3) break;
+                        }
+                    }
+                    if (nearbyTrees < 3) continue;
+
+                    for (const [ox, oy] of edgeOffsets) {
+                        const lx = tr.x + ox, ly = tr.y + oy;
+                        if (!isPointDryAndOpen(lx, ly) || isNearAnySpawn(lx, ly, 480)) continue;
+                        const relX = lx - atkCen.x, relY = ly - atkCen.y;
+                        const along = relX * chargeUx + relY * chargeUy;
+                        const perp = Math.abs(-relX * chargeUy + relY * chargeUx);
+                        if (along > 0 && along < chargeLen + 120 && perp < 360) continue;
+                        if (placedCenters.some((p) => Math.hypot(p.x - lx, (p.y - ly) * 1.5) < 460)) continue;
+                        // 候选点本身必须在林外空地上（72px 内无大树压顶）
+                        if (forestTrees.some((ft) => Math.hypot(ft.x - lx, (ft.y - ly) * 1.5) < 72)) continue;
+
+                        placedCenters.push({ x: lx, y: ly });
+                        gl.carveFoundation(lx, ly, W, H, 1.8);
+                        pushOutskirtsSprite(lumberCampAsset, lx, ly, 0.78, 0, mRnd() < 0.5, 0);
+                        // 伴生伐木树桩与倒木
+                        const sx1 = (lx + tr.x) * 0.5 + 18, sy1 = (ly + tr.y) * 0.5 - 8;
+                        const sx2 = (lx + tr.x) * 0.5 - 22, sy2 = (ly + tr.y) * 0.5 + 12;
+                        if (isPointDryAndOpen(sx1, sy1)) {
+                            pushOutskirtsSprite('STUMP_GENERIC', sx1, sy1, 0.82, 0, mRnd() < 0.5, 0);
+                        }
+                        if (isPointDryAndOpen(sx2, sy2)) {
+                            pushOutskirtsSprite('FELLED_GENERIC', sx2, sy2, 0.82, 0, mRnd() < 0.5, 0);
+                        }
+                        if (isPointDryAndOpen(lx - ox * 0.35, ly + 22)) {
+                            pushOutskirtsSprite('STUMP_GENERIC', lx - ox * 0.35, ly + 22, 0.76, 0, mRnd() < 0.5, 0);
+                        }
+                        lumberPlaced++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // ── (D) 山麓矿脉与采矿场（Mining Camp / 美洲聚落 / 游牧驴车 + 金矿/石矿/采石坑 + 矿车） ──
+        if (mineSiteCandidates.length > 0) {
+            mineSiteCandidates.sort(() => mRnd() - 0.5);
+            const targetMiningCamps = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') ? 2 : 1;
+            let miningPlaced = 0;
+            for (const mc of mineSiteCandidates) {
+                if (miningPlaced >= targetMiningCamps) break;
+                if (placedCenters.some((p) => Math.hypot(p.x - mc.x, (p.y - mc.y) * 1.5) < 480)) continue;
+                const campX = mc.x + (mc.x >= cx ? -78 : 78);
+                const campY = mc.y + 24;
+                if (!isPointDryAndOpen(campX, campY) || isNearAnySpawn(campX, campY, 480)) continue;
+
+                placedCenters.push({ x: mc.x, y: mc.y });
+                clearTreesInRadius(mc.x, mc.y, 160);
+                gl.carveFoundation(mc.x, mc.y, W, H, 2.0);
+                gl.carveFoundation(campX, campY, W, H, 1.8);
+
+                // 金矿 / 石矿 + 露天采石坑伴生
+                const primaryOre = (miningPlaced === 0 || mRnd() < 0.6) ? 'MINE_GOLD' : 'MINE_STONE';
+                pushOutskirtsSprite(primaryOre, mc.x, mc.y, 0.92, 0, mRnd() < 0.5, Math.floor(mRnd() * 6));
+                if (isPointDryAndOpen(mc.x + 38, mc.y - 18)) {
+                    pushOutskirtsSprite(
+                        mRnd() < 0.5 ? 'RESOURCE:QUARRY' : primaryOre,
+                        mc.x + 38,
+                        mc.y - 18,
+                        0.85,
+                        -1,
+                        mRnd() < 0.5,
+                        Math.floor(mRnd() * 4),
+                    );
+                }
+                // 采矿场 / 美洲聚落 / 游牧驴车
+                pushOutskirtsSprite(miningCampAsset, campX, campY, 0.78, 0, mRnd() < 0.5, 0);
+                if (isPointDryAndOpen(campX + 36, campY + 14)) {
+                    const oreCart = isAmericasOutskirts ? 'BATTLEFIELD:CART_BROKEN' : 'TRADE:MULE_CART/move_4';
+                    pushOutskirtsSprite(oreCart, campX + 36, campY + 14, 0.76, 0, mRnd() < 0.5, 0);
+                }
+                miningPlaced++;
+            }
+        }
+
+        // ── (E) 城郊前哨望楼（Outpost / Fortified Outpost）：立于外围要道侧翼或关隘谷口前哨 ──
         outpostCandidates.sort(() => mRnd() - 0.5);
-        const targetOutposts = (this.defenderCityType === 'big_city' || this.defenderCityType === 'pass') ? 2 : 1;
+        const targetOutposts = (this.defenderCityType === 'big_city' || this.defenderCityType === 'pass') ? 3 : 2;
         const outpostAsset = (this.defenderCityType === 'big_city' || this.defenderCityType === 'pass') && !isNomadOutskirts
             ? 'BUILDING:FORTIFIED_OUTPOST'
             : 'BUILDING:OUTPOST';
         let outpostsPlaced = 0;
         for (const oc of outpostCandidates) {
             if (outpostsPlaced >= targetOutposts) break;
-            if (placedCenters.some((p) => Math.hypot(p.x - oc.x, (p.y - oc.y) * 1.5) < 460)) continue;
+            if (placedCenters.some((p) => Math.hypot(p.x - oc.x, (p.y - oc.y) * 1.5) < 440)) continue;
             placedCenters.push({ x: oc.x, y: oc.y });
             clearTreesInRadius(oc.x, oc.y, 130);
             gl.carveFoundation(oc.x, oc.y, W, H, 1.6);
@@ -1251,7 +1485,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             }
             if (isPointDryAndOpen(oc.x - 26, oc.y + 14)) {
                 pushOutskirtsSprite(
-                    this.defenderCityType === 'pass' ? 'BATTLEFIELD:STAKE_BARRICADE' : 'BARRELS',
+                    this.defenderCityType === 'pass' ? 'BATTLEFIELD:STAKE_BARRICADE' : (isNomadOutskirts ? 'BATTLEFIELD:BARRICADE_A' : 'BARRELS'),
                     oc.x - 26,
                     oc.y + 14,
                     0.82,
