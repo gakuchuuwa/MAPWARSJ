@@ -95,7 +95,7 @@ import {
 
 import {
     COLLAPSE_ANIM_DUR, HERO_ATTACK_RATE, HERO_HP_MULT, HERO_DAMAGE_TAKEN, HERO_SPEED_MULT, HERO_DAMAGE_MULT, dmgVs,
-    HUSSITE_SECONDARY_SHOT, UNIT_PX, DE_RULER_K, AIM_JITTER, CHASE_RING, STALL_GUARD_ENFORCE,
+    HUSSITE_SECONDARY_SHOT, UNIT_PX, DE_RULER_K, DE_TILE_PX, AIM_JITTER, CHASE_RING, STALL_GUARD_ENFORCE,
     MELEE_QUIET_SEC, NO_KILL_SEC, HARD_STOP_SEC, BATTLE_LIMIT_SEC, BLD_MIN_DESTROY_BASE,
     BLD_MIN_DESTROY_PER_SIDE, CITY_TYPE_GATE_FLOOR_SEC, CITY_TYPE_BLD_FLOOR_MULT, FLOW_SUB, PASS_INSIDE_DAMAGE_TAKEN, REMNANT_FRAC,
     DEF_WALL_GAP, SIEGE_FIELD_GAP, CLOUD_BASE_URL, CLOUD_FILES, CLOUD_COUNT_MIN,
@@ -164,8 +164,23 @@ const HERO_CLICK_STALL_SEC = 1.5;
 const HERO_CLICK_PROGRESS_PX = 10;
 /** 守方据点建筑（箭塔 / 城堡 / 城内建筑）射击的抛射物：DE 火焰弓箭手 / 火箭车同款火箭（2026-11-04 主人令「射击才用火箭连射」） */
 const DEF_BLD_PROJ = 'PROJ_ARROW_FIRE';
-/** 守方建筑一轮连发火箭数：照 DE 火箭车一轮 5 支（PROJ_VOLLEY.rocket_cart）；只是演出，伤害仍按单发结算 */
-const DEF_BLD_VOLLEY = 5;
+/** 守方建筑一轮齐射里各弓手松弦的随机错开上限（秒）：几人差不多同时放，不是同一点等间隔连发（2026-11-04 主人令） */
+const DEF_BLD_RELEASE_JITTER = 0.4;
+/** 城堡 / 奇观一轮齐射支数（驻守弓手最多） */
+const DEF_BLD_SHOOTERS_CASTLE = 5;
+/**
+ * 守方建筑一轮齐射支数 = 里面的弓手数：照 DE「驻军越多箭越多」按建筑大小分档
+ * （2026-11-04 与主人议定）：城堡/奇观 5、城镇中心 4、兵营/靶场/马厩/市场/修道院/大学/攻城工坊 3、
+ * 箭塔/哨站/铁匠铺 2、民居/磨坊/毡帐等小建筑 1。
+ */
+function defBuildingShooters(name: string): number {
+    const n = name.toUpperCase();
+    if (n.includes('CASTLE') || n.includes('WONDER') || n.includes('KREPOST')) return DEF_BLD_SHOOTERS_CASTLE;
+    if (n.includes('TOWN_CENTER')) return 4;
+    if (/BARRACKS|ARCHERY_RANGE|STABLE|MARKET|MONASTERY|UNIVERSITY|SIEGE_WORKSHOP/.test(n)) return 3;
+    if (/TOWER|OUTPOST|BLACKSMITH/.test(n)) return 2;
+    return 1;
+}
 /** 【败】折损的兵在这么多秒内随火箭雨陆续倒下（见 stepSkillKills） */
 const SKILL_KILL_SPREAD_SEC = 2.4;
 /** 每帧最多烙进地面的尸体数（见 stepCorpses）：【败】一次几百具时分摊到后续几帧 */
@@ -6426,7 +6441,7 @@ export class Scene13WarLayer {
 
     /**
      * 🔴 [2026-08-29 主人需求] 城墙内侧并列箭塔开火：
-     *    找射程内最近的攻方士兵（f=0），冷却到点火箭连射（pushDefBuildingVolley，2026-11-04 起改火箭）+
+     *    找射程内最近的攻方士兵（f=0），冷却到点齐射火箭（fireDefBuildingVolley，2026-11-04 起）+
      *    🔴 [主人需求] 真实穿透伤害（一发 = atk，照 DE 箭塔科技 5/6/7、城堡 11）。
      *    塔在 30 秒随机切成破损/残骸（或保持完整继续射）后才停止射击。
      */
@@ -6439,7 +6454,7 @@ export class Scene13WarLayer {
         for (const b of this.cityBuildings) this.stepCityBuildingShoot(b, dt);
     }
 
-    /** 单座塔/城堡：找射程内最近攻方士兵，冷却到点火箭连射 + 真实穿透伤害。 */
+    /** 单座塔/城堡：射程内有攻方士兵就按装填齐射一轮火箭，每支真实穿透伤害（见 fireDefBuildingVolley）。 */
     private stepTowerShoot(t: ArrowTower, dt: number): void {
         if (t.down || t.sprite.destroyed || t.sprite.collapse) return;   // 已塌不再射
         // 🔴 塔贴图未加载（素材不存在/未就绪）→ 不画也不射（看不见的塔开火更假）
@@ -6448,79 +6463,84 @@ export class Scene13WarLayer {
         t.cd -= dt;
         if (t.cd > 0) return;
         // 塔顶开火点：贴图锚点在塔基，抬到塔身上部
-        const fireX = t.x;
-        const fireY = t.y - UNIT_PX * 0.8;
-        const towerElev = this.elevationLevelAt(t.x, t.y);
-        // 射程内最近的攻方士兵（受高地平滑射程加成：每高 1 级射程 +5%，最高 +35%）
-        let foe: WarMan | null = null, bd = Infinity;
-        for (const m of this.men) {
-            if (m.f === 0 && m.hp > 0) {
-                const foeElev = this.elevationLevelAt(m.x, m.y);
-                const dElev = towerElev - foeElev;
-                const elevRangeMul = dElev > 0.2 ? (1.0 + Math.min(7, dElev) * 0.05) : 1.0;
-                const effRange = t.range * DE_RULER_K * elevRangeMul;   // 塔档按旧尺（1 格 = 40px）记数，换到地图尺
-                const d = (m.x - fireX) * (m.x - fireX) + (m.y - fireY) * (m.y - fireY);
-                if (d <= effRange * effRange && d < bd) { bd = d; foe = m; }
-            }
-        }
-        if (!foe) { t.cd = 0.25; return; }   // 无攻方/射程外，稍后再看
-        // 🔴 [主人需求] 真实伤害：穿透，一发 = atk（DE 箭塔科技 5/6/7、城堡 11）；
-        //    吃守方八环 sideBonus[1] · 白热化，以及 DE 高地伤害倍率（高打低 +25%、低打高 -25%）。
-        //    箭塔是远程：不计围攻人数、不吃围殴加成（见 isRangedWeapon）。
-        const target = this.statsFor(foe.key, foe.f, !('sprite' in foe) && foe.hero === true);
-        const dmg = Math.max(1, t.atk - target.pierceArmor);
-        const foeElev = this.elevationLevelAt(foe.x, foe.y);
-        const dElev = towerElev - foeElev;
-        const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
-        const towerSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
-            * this.shieldTakenMul(foe) * this.playerLiveTakenMul(foe);
-        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * towerSkillMul
-            * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
-        // 🔴 [2026-09-09 修] 原来这里直接 pushCorpse：玩家被箭塔射死会**变成尸体永久离场**，
-        //    而不是走落马重整（heroDown）。攻城战守方满墙箭塔，这条路正是「玩家一直死」的大头。
-        if (foe.hp <= 0) {
-            if (foe.hero) this.heroDown(foe);
-            else this.pushCorpse(foe);
-        }
-        this.pushDefBuildingVolley(fireX, fireY, t.y, foe);
+        const isCastle = this.castleTowers.includes(t);
+        const name = t.sprite.asset.replace(/^BUILDING:/, '');
+        const shooters = isCastle ? DEF_BLD_SHOOTERS_CASTLE : defBuildingShooters(name);
+        if (!this.fireDefBuildingVolley(t.x, t.y, UNIT_PX * 0.8, t.range, t.atk, shooters, name)) { t.cd = 0.25; return; }
         // 【攻】振己威：攻速加成（装填缩短），与士兵同口径
         t.cd = t.reload / (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_ATKSPD : 1.0);
     }
 
     /**
-     * 🔴 [2026-11-04 主人令「所有据点的建筑都可以射击，射击才用火箭连射，这样可以显的防御不光是摆设」]
-     *    箭塔 / 城堡 / 城内建筑共用这一处出弹：一轮连发 DEF_BLD_VOLLEY 支火箭（PROJ_ARROW_FIRE，
-     *    即 DE 火焰弓箭手 / 火箭车的火箭素材），每支间隔 PROJ_VOLLEY_DELAY 依次射出。
-     *    只是演出：伤害仍由调用方按 DE 箭塔单发结算一次（与火箭车「连发只是视觉」同口径）。
+     * 🔴 [2026-11-04 主人令「所有据点的建筑都可以射击，射击才用火箭连射」+ 同日「不要做连续一个点射 5 箭，
+     *    除了弩不符合历史」] 守方建筑一轮齐射 = **建筑里几名弓手各从一个射口放一支火箭**：
+     *    · 射口沿建筑上沿横向排开（按占地宽度），不是同一点连发；
+     *    · 几支差不多同时松弦，每支随机错开 0~DEF_BLD_RELEASE_JITTER 秒；
+     *    · 每支各挑射程内一个攻方兵（可重复挑中同一人），落点各自独立；
+     *    · 每支单独结算一次 DE 箭塔穿透伤害（射中谁伤谁，画面与伤害一致）。
+     *    支数 = 里面的弓手数，照 DE「驻军越多箭越多」按建筑大小定（defBuildingShooters）。
+     *    箭塔 / 城堡 / 城内建筑三条射击路共用这一处。射程内无敌返回 false。
      */
-    private pushDefBuildingVolley(fireX: number, fireY: number, baseY: number, foe: WarMan): void {
-        const ax = foe.x - fireX, ay = foe.y - fireY;
-        const ad = Math.hypot(ax, ay) || 1;
-        const startLift = this.elevationLiftAt(fireX, baseY);
-        const endLift = this.elevationLiftAt(foe.x, foe.y);
+    private fireDefBuildingVolley(baseX: number, baseY: number, lift: number, range: number, atk: number, shooters: number, name: string): boolean {
+        const fireY = baseY - lift;
+        const srcElev = this.elevationLevelAt(baseX, baseY);
+        // 射程内全部攻方士兵（受高地平滑射程加成：每高 1 级射程 +5%，最高 +35%）
+        const inRange: WarMan[] = [];
+        for (const m of this.men) {
+            if (m.f !== 0 || m.hp <= 0) continue;
+            const dElev = srcElev - this.elevationLevelAt(m.x, m.y);
+            const elevRangeMul = dElev > 0.2 ? (1.0 + Math.min(7, dElev) * 0.05) : 1.0;
+            const effRange = range * DE_RULER_K * elevRangeMul;   // 塔档按旧尺（1 格 = 40px）记数，换到地图尺
+            if ((m.x - baseX) ** 2 + (m.y - fireY) ** 2 <= effRange * effRange) inRange.push(m);
+        }
+        if (inRange.length === 0) return false;
+        // 射口横向排开：占地边长（格）× 地图尺的 0.7 作为射口总宽，单个弓手居中
+        const span = shooters > 1 ? bldFootprintSide(name) * DE_TILE_PX * 0.7 : 0;
+        const startLift = this.elevationLiftAt(baseX, baseY);
         const speed = PROJ_SPEED_PX[DEF_BLD_PROJ] ?? PROJ_SPEED_PX.PROJ_ARROW ?? 440;
-        for (let v = 0; v < DEF_BLD_VOLLEY; v++) {
+        const frenzy = this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0;
+        for (let i = 0; i < shooters; i++) {
+            const alive = inRange.filter((m) => m.hp > 0);
+            if (alive.length === 0) break;
+            const foe = alive[(Math.random() * alive.length) | 0];
+            const fx = baseX + (shooters > 1 ? (i / (shooters - 1) - 0.5) * span : 0);
+            const fy = fireY + (Math.random() - 0.5) * UNIT_PX * 0.2;
+            // 真实伤害：穿透，一发 = atk（DE 箭塔科技 5/6/7、城堡 11）；吃守方八环 sideBonus[1] · 白热化，
+            // 以及 DE 高地伤害倍率（高打低 +25%、低打高 -25%）。远程：不计围攻人数、不吃围殴加成。
+            const target = this.statsFor(foe.key, foe.f, !('sprite' in foe) && foe.hero === true);
+            const dmg = Math.max(1, atk - target.pierceArmor);
+            const dElev = srcElev - this.elevationLevelAt(foe.x, foe.y);
+            const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
+            const skillMul = frenzy * this.panicTakenMul(foe) * this.shieldTakenMul(foe) * this.playerLiveTakenMul(foe);
+            foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * skillMul
+                * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
+            // 🔴 [2026-09-09] 玩家被射倒走落马重整（heroDown），不变尸体永久离场
+            if (foe.hp <= 0) {
+                if (foe.hero) this.heroDown(foe);
+                else this.pushCorpse(foe);
+            }
+            const ax = foe.x - fx, ay = foe.y - fy;
+            const ad = Math.hypot(ax, ay) || 1;
             this.arrows.push({
-                x: fireX, y: fireY,
+                x: fx, y: fy,
                 dx: ax / ad, dy: ay / ad, len: ad,
                 t: 0, dur: ad / speed, f: 1, proj: DEF_BLD_PROJ,
-                delay: v * PROJ_VOLLEY_DELAY,
-                towerFlight: { startLift, endLift },
+                delay: Math.random() * DEF_BLD_RELEASE_JITTER,
+                towerFlight: { startLift, endLift: this.elevationLiftAt(foe.x, foe.y) },
             });
         }
+        return true;
     }
 
     /**
      * 🔴 [2026-09-16 主人定「战术模式中防守方所有没有坍塌的建筑都可以射箭」]：
-     *    普通未坍塌建筑（兵营/磨坊/民居/马厩/TC等）火箭连射（2026-11-04 起），攻击/射程/装填与城墙内侧箭塔同档。
-     *    🔴 [2026-10-15 主人令「九建筑和箭塔一样的攻击效果和特效」]：从窗台冷箭（单发攻 2~3、射程 240、装填 3.2s）
-     *    改为与箭塔同款（瞭望 5/320/2.2、警戒 6/360/2.0、高级 7/400/1.8）+ 三连发。
+     *    普通未坍塌建筑（兵营/磨坊/民居/马厩/TC等）齐射火箭（2026-11-04 起，见 fireDefBuildingVolley），
+     *    攻击/射程/装填与城墙内侧箭塔同档（瞭望 5/320/2.2、警戒 6/360/2.0、高级 7/400/1.8）。
      *    关键规则：坍塌即停火。未坍塌时正常射击；一旦切为残骸或被投石车砸毁，立即熄火！
-     *    （注：城堡已在 castleTowers 中以三连发重火力射击，这里跳过 CASTLE 避免重复）。
+     *    （注：旧版城池的城堡已在 castleTowers 中射击，这里跳过避免重复）。
      */
     private stepCityBuildingShoot(b: CityBuildingEntry, dt: number): void {
         // 城堡已在 castleTowers 独立射击（旧版城池才有），跳过；新版城池里城堡只登记为普通建筑，照常射
-        // 🔴 [2026-10-14 主人令「九建筑都会射箭」] 原来凡是城堡一律跳过 ⇒ 新版城池的中心城堡一箭不射
         if (b.name.includes('CASTLE') && this.castleTowers.some((c) => c.sprite === b.sprite)) return;
         if (this.arrowTowers.some((t) => t.sprite === b.sprite)) return;
         // 坍塌即停火：已销毁、正在倒塌、或已切成 RUBBLE 残骸，立即停止射击
@@ -6533,43 +6553,11 @@ export class Scene13WarLayer {
         if (b.cd > 0) return;
 
         // 窗台/屋檐开火点：贴图锚点在底基，抬到建筑中上部
-        const fireX = b.sprite.x;
-        const fireY = b.sprite.y - UNIT_PX * 0.6;
-        const baseRange = (b.range ?? 320) * DE_RULER_K; // 与箭塔同档（瞭望 320 / 警戒 360 / 高级 400，旧尺记数，换到地图尺）
-        const bldElev = this.elevationLevelAt(fireX, b.sprite.y);
-
-        // 寻找射程内最近的攻方士兵（受高地平滑射程加成）
-        let foe: WarMan | null = null, bd = Infinity;
-        for (const m of this.men) {
-            if (m.f === 0 && m.hp > 0) {
-                const foeElev = this.elevationLevelAt(m.x, m.y);
-                const dElev = bldElev - foeElev;
-                const elevRangeMul = dElev > 0.2 ? (1.0 + Math.min(7, dElev) * 0.05) : 1.0;
-                const effRange = baseRange * elevRangeMul;
-                const d = (m.x - fireX) * (m.x - fireX) + (m.y - fireY) * (m.y - fireY);
-                if (d <= effRange * effRange && d < bd) { bd = d; foe = m; }
-            }
+        const shooters = defBuildingShooters(b.name);
+        if (!this.fireDefBuildingVolley(b.sprite.x, b.sprite.y, UNIT_PX * 0.6, b.range ?? 320, b.atk ?? 5, shooters, b.name)) {
+            b.cd = 0.3;   // 无目标或超出射程，稍后再寻
+            return;
         }
-        if (!foe) { b.cd = 0.3; return; } // 无目标或超出射程，稍后再寻
-
-        // 真实伤害：与箭塔同档（瞭望 5 / 警戒 6 / 高级 7，受 DE 高地伤害倍率影响）
-        const atk = b.atk ?? 5;
-        const target = this.statsFor(foe.key, foe.f, !('sprite' in foe) && foe.hero === true);
-        const dmg = Math.max(1, atk - target.pierceArmor);
-        const foeElev = this.elevationLevelAt(foe.x, foe.y);
-        const dElev = bldElev - foeElev;
-        const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
-        const bldSkillMul = (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_DMG : 1.0) * this.panicTakenMul(foe)
-            * this.shieldTakenMul(foe) * this.playerLiveTakenMul(foe);
-        // 建筑射箭是远程：不计围攻人数、不吃围殴加成（见 isRangedWeapon）
-        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * this.attritionMul() * bldSkillMul
-            * (foe.hero ? HERO_DAMAGE_TAKEN : 1);
-        if (foe.hp <= 0) {
-            if (foe.hero) this.heroDown(foe);
-            else this.pushCorpse(foe);
-        }
-
-        this.pushDefBuildingVolley(fireX, fireY, b.sprite.y, foe);
         // 【攻】振己威：攻速加成（装填缩短），与士兵同口径
         b.cd = (b.reload ?? 2.2) / (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_ATKSPD : 1.0);
     }

@@ -10601,6 +10601,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": -16,
             "offsetY": 29
+        },
+        "/assets/TURKS/bfe_suleiman_pasha.png": {
+            "scale": 1.1,
+            "offsetX": 9,
+            "offsetY": -19
         }
     },
     "folderGuides": {

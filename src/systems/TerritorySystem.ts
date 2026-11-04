@@ -1409,35 +1409,53 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     // 🔴 [2026-10-12 主人「大城可以添加所有建筑……一样一种」] 战术侧大城：建筑池 12 种**一样一栋**（另加城心城堡＝13 栋）；
     //    战略地图仍是上面的 9 栋（主人「总体不能超过 9 个」那条只管战略，不动）。16 种风格 12 种素材均齐（已逐一核对）。
     if (native) {
-        const full: Array<[string, string]> = isMobeiStyle(buildingStyle)
-            ? pool.map(([b]): [string, string] => [b, 'AGE3'])
-            : [...pool];
-        for (let i = full.length - 1; i > 0; i--) {
-            const j = Math.floor(rnd() * (i + 1));
-            [full[i], full[j]] = [full[j], full[i]];
+        // 大城 9 组合街坊布局（2026-11-04 主人定）：
+        // 1. 中心城堡（4×4）单独放；
+        // 2. 周圈 8 个组合位：必含 城镇中心（4×4 单独）、市场（4×4 单独）、大学（4×4 单独）、磨坊（2×2，配 3 个房屋组成「1磨坊+3房屋」组合），
+        //    其余 4 个组合位从 3×2 建筑（兵营/靶场/马厩/铁匠铺，各配 +1 房屋）与 3×3 建筑（修道院/攻城武器厂，单独放）中随机抽取；
+        // 3. 组合内每栋建筑之间至少留 1 格空地，9 个组合之间至少留 1~2 格空地。
+        let ringEight: Array<[string, string]>;
+        if (isMobeiStyle(buildingStyle)) {
+            ringEight = pool.map(([b]): [string, string] => [b, 'AGE3']).slice(0, 9);
+        } else {
+            const mustFour: Array<[string, string]> = [
+                ['TOWN_CENTER', 'AGE4'],
+                ['MARKET', 'AGE4'],
+                ['UNIVERSITY', 'AGE4'],
+                ['MILL', 'AGE3'],
+            ];
+            const mustKeys = new Set(mustFour.map(([b]) => b));
+            const restCandidates: Array<[string, string]> = DE_IMPERIAL_CITY_POOL
+                .filter(([b]) => !mustKeys.has(b) && b !== 'HOUSE');
+            if (isMunanStyle(buildingStyle)) {
+                for (const y of MONGOL_CITY_YURTS) restCandidates.push([y, 'AGE3']);
+            }
+            for (let i = restCandidates.length - 1; i > 0; i--) {
+                const j = Math.floor(rnd() * (i + 1));
+                [restCandidates[i], restCandidates[j]] = [restCandidates[j], restCandidates[i]];
+            }
+            ringEight = [...mustFour, ...restCandidates.slice(0, 4)];
+            for (let i = ringEight.length - 1; i > 0; i--) {
+                const j = Math.floor(rnd() * (i + 1));
+                [ringEight[i], ringEight[j]] = [ringEight[j], ringEight[i]];
+            }
+            // 确保磨坊组合位于前 6 个槽位内（即使该城有 1~2 座特殊建筑奇观占槽，1磨坊+3房屋组合也必定登场）
+            const millIdx = ringEight.findIndex(([b]) => b === 'MILL');
+            if (millIdx >= 6) {
+                const swapIdx = Math.floor(rnd() * 6);
+                [ringEight[millIdx], ringEight[swapIdx]] = [ringEight[swapIdx], ringEight[millIdx]];
+            }
         }
-        // 大城：每段 11 ⇒ 角到角 27；13 栋＝城堡 + 12（每象限 3）；近 3.5 远 9（逐格核对：离墙 2、栋间 ≥ 1）
-        // 🔴 [2026-10-12 主人令「大城先把城中建筑改为 9 个，然后间隔为 3」] 城堡 + 8 栋（取洗牌后建筑池前 8 种）；
-        //    每个位按 4×4 算、位与位隔 3 格 ⇒ 位距 7 格，排成 3×3 方阵（同中城排法）。
-        // 🔴 [2026-10-12 主人令「战术模式中，大中小城寨，一律改为四门吧」] 大城本来就是四门（`gateEdges` 四边皆门），
-        //    这一处**数值未动**，只按新令补记依据：大城／中城／小城／城寨四条战术路线现在一律四门。
         const BIG_PITCH = 4 + 3;
         const bigRingPos: ReadonlyArray<readonly [number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
         const bigSlotCenters = [{ ci: 0.5, cj: 0.5, isCenter: true },
             ...bigRingPos.map(([bi, bj]) => ({ ci: 0.5 + bi * BIG_PITCH, cj: 0.5 + bj * BIG_PITCH, isCenter: false }))];
         return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
-            full.slice(0, isMobeiStyle(buildingStyle) ? 9 : 8), native, {
+            ringEight, native, {
             seg: 9, near: 3.5, far: 9, corner: true, slotCenters: bigSlotCenters, gateEdges: [true, true, true, true],
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],
             groundTile: cityGroundTile(buildingStyle, 'rd1'),
-            auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
-                // 东西固定各 1 座（四角内侧，与 3×3 主建筑方阵保持 ≥ 2 格净距）
-                { b: 'TOWER', age: 'AGE4', ci: -10, cj: 11 },
-                { b: 'TOWER', age: 'AGE4', ci: 11, cj: -10 },
-                // 南北各 1 座：置于南北内角（-10,-10 与 11,11），与主位 (-6.5,-6.5)/(7.5,7.5) 双轴对角错开，绝不挨着
-                { b: 'TOWER', age: 'AGE4', ci: -10, cj: -10 },
-                { b: 'TOWER', age: 'AGE4', ci: 11, cj: 11 },
-            ],
+            enableBigCityCompounds: !isMobeiStyle(buildingStyle),
         }, buildingStyle);
     }
 
@@ -1529,9 +1547,9 @@ const DE_ISO_TILE_W = 96, DE_ISO_TILE_H = 48;
  *  城镇中心/市场/大学/攻城武器厂/城堡 2.0→4×4；兵营/靶场/马厩/铁匠铺/修道院 1.5→3×3；房屋/磨坊 1.0→2×2；箭塔 0.5→1×1。
  *  蒙古包取 2×2；表里没有的取 3×3。 */
 function deBuildingFootprint(b: string): number {
-    if (b.includes('CASTLE') || b.includes('TOWN_CENTER') || b.includes('MARKET') || b.includes('UNIVERSITY') || b.includes('SIEGE_WORKSHOP')) return 4;
+    if (b.includes('CASTLE') || b.includes('TOWN_CENTER') || b.includes('MARKET') || b.includes('UNIVERSITY')) return 4;
     if (b.includes('WONDER')) return 5;
-    if (b.includes('BARRACKS') || b.includes('ARCHERY_RANGE') || b.includes('STABLE') || b.includes('BLACKSMITH') || b.includes('MONASTERY')) return 3;
+    if (b.includes('BARRACKS') || b.includes('ARCHERY_RANGE') || b.includes('STABLE') || b.includes('BLACKSMITH') || b.includes('MONASTERY') || b.includes('SIEGE_WORKSHOP')) return 3;
     if (b.includes('HOUSE') || b.includes('MILL') || b.startsWith('YURT_')) return 2;
     if (b.includes('TOWER') || b.includes('OUTPOST')) return 1;
     return 3;
@@ -1576,6 +1594,8 @@ interface CityGridSpec {
     noGround?: boolean;
     /** 战术侧城内附属点缀建筑（四角防御塔、大城街坊民居；带 data-aux="1" 不占守军 9 个出兵槽位） */
     auxBuildings?: ReadonlyArray<{ b: string; age: string; ci: number; cj: number }>;
+    /** 大城 9 组合街坊模式（1磨坊+3房屋组合、3×2建筑+1房屋组合、3×3及4×4以上单独放，组合内外均留 ≥1 格空地） */
+    enableBigCityCompounds?: boolean;
 }
 
 function buildDeCityGridHtml(
@@ -1666,9 +1686,8 @@ function buildDeCityGridHtml(
             for (const b of placedBldBoxes) {
                 const iTouch = i0 <= b.i1 + MIN_BLD_CELL_GAP && b.i0 <= i1 + MIN_BLD_CELL_GAP;
                 const jTouch = j0 <= b.j1 + MIN_BLD_CELL_GAP && b.j0 <= j1 + MIN_BLD_CELL_GAP;
-                const centerDist = Math.hypot(ti - b.ti, tj - b.tj);
-                if ((iTouch && jTouch) || centerDist < (effS + b.effS) * 0.5 + 1.1) {
-                    return; // 违反最小建筑间距，跳过摆放，杜绝建筑挨着
+                if (iTouch && jTouch) {
+                    return; // 违反最小建筑间距（边缘不足 1 整格空地），跳过摆放，杜绝建筑挨着
                 }
             }
         }
@@ -1717,6 +1736,7 @@ function buildDeCityGridHtml(
     }
 
     let otherIdx = 0;
+    const compoundAuxList: Array<{ b: string; age: string; ci: number; cj: number }> = [];
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter && castleDirForCenter) {
             const cW = native.castleW ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「全世界统一」] 兜底 0.48 → 0.54（战术按格摆放；通常走 native.castleW 素材原生宽）
@@ -1736,13 +1756,53 @@ function buildDeCityGridHtml(
             const dir = dirOf(src);
             const bW = (g.rawDirNames ? native.spriteW?.[b] : (nativeW(native, b, age) ?? DE_SPRITE_BOX_W[dir])) ?? (baseSize * 0.32 * AUTO);
             const bFlip = cityBuildingFlip(cityId, `big_ring_${i}_${b}`);
-            placeBuilding(dir, src, bW, deBuildingFootprint(b), slot.ci, slot.cj, bFlip);
+            const fp = deBuildingFootprint(b);
+            if (g.enableBigCityCompounds && !slot.isCenter) {
+                const bi = Math.sign(Math.round(slot.ci - 0.5));
+                const bj = Math.sign(Math.round(slot.cj - 0.5));
+                if (b === 'MILL' || b === 'HOUSE') {
+                    // 组合 A：1 个磨坊（2×2）+ 3 个房屋（2×2），排成 5×5 田字街坊（两两之间严格留 1 整格空地）
+                    const i0 = bi < 0 ? -9 : bi > 0 ? 5 : -2;
+                    const j0 = bj < 0 ? -9 : bj > 0 ? 5 : -2;
+                    placeBuilding(dir, src, bW, 2, i0 + 0.5, j0 + 0.5, bFlip);
+                    compoundAuxList.push(
+                        { b: 'HOUSE', age: 'AGE3', ci: i0 + 3.5, cj: j0 + 0.5 },
+                        { b: 'HOUSE', age: 'AGE3', ci: i0 + 0.5, cj: j0 + 3.5 },
+                        { b: 'HOUSE', age: 'AGE3', ci: i0 + 3.5, cj: j0 + 3.5 },
+                    );
+                } else if (b === 'BARRACKS' || b === 'ARCHERY_RANGE' || b === 'STABLE' || b === 'BLACKSMITH') {
+                    // 组合 B：3×2 建筑 + 1 个房屋（2×2），两者之间严格留 1 整格空地
+                    if (bi !== 0) {
+                        const i0 = bi < 0 ? -9 : 5;
+                        const cjMain = bj < 0 ? -7.0 : bj > 0 ? 7.0 : 0.0;
+                        const cjHouse = bj < 0 ? -6.5 : bj > 0 ? 7.5 : 0.5;
+                        placeBuilding(dir, src, bW, 3, i0 + 1.0, cjMain, bFlip);
+                        compoundAuxList.push({ b: 'HOUSE', age: 'AGE3', ci: i0 + 4.5, cj: cjHouse });
+                    } else {
+                        const j0 = bj < 0 ? -9 : 5;
+                        placeBuilding(dir, src, bW, 3, 0.0, j0 + 1.0, bFlip);
+                        compoundAuxList.push({ b: 'HOUSE', age: 'AGE3', ci: 0.5, cj: j0 + 4.5 });
+                    }
+                } else {
+                    // 组合 C：3×3（修道院/攻城武器厂）及 4×4 以上（城镇中心/市场/大学）单独放
+                    const ciAlone = fp >= 4
+                        ? (bi < 0 ? -6.5 : bi > 0 ? 7.5 : 0.5)
+                        : (bi < 0 ? -7.0 : bi > 0 ? 7.0 : 0.0);
+                    const cjAlone = fp >= 4
+                        ? (bj < 0 ? -6.5 : bj > 0 ? 7.5 : 0.5)
+                        : (bj < 0 ? -7.0 : bj > 0 ? 7.0 : 0.0);
+                    placeBuilding(dir, src, bW, fp, ciAlone, cjAlone, bFlip);
+                }
+            } else {
+                placeBuilding(dir, src, bW, fp, slot.ci, slot.cj, bFlip);
+            }
         }
     });
 
-    if (g.auxBuildings) {
+    const allAux = [...compoundAuxList, ...(g.auxBuildings ?? [])];
+    if (allAux.length > 0) {
         const bStyle = g.buildingStyle ?? style;
-        g.auxBuildings.forEach((aux, ai) => {
+        allAux.forEach((aux, ai) => {
             const src = g.rawDirNames ? `/SUCAI_BUILDING/${aux.b}/preview.png` : cityBuildingSrc(bStyle, aux.b, aux.age);
             const dir = dirOf(src);
             const bW = (g.rawDirNames ? native.spriteW?.[aux.b] : (nativeW(native, aux.b, aux.age) ?? DE_SPRITE_BOX_W[dir])) ?? (baseSize * 0.32 * AUTO);

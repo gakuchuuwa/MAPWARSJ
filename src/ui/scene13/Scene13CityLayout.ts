@@ -2729,7 +2729,7 @@ export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
         this.ensureDestrAssetsFor(arrowTowerAsset);
         // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
         this.ensureProj('PROJ_ARROW');
-        this.ensureProj('PROJ_ARROW_FIRE');   // 守方建筑火箭连射（见 Scene13WarLayer.pushDefBuildingVolley）
+        this.ensureProj('PROJ_ARROW_FIRE');   // 守方建筑齐射火箭（见 Scene13WarLayer.fireDefBuildingVolley）
         // 🔴 塔塌尘土特效预载（塌墙时才播；开战前并入首批，遇不到"30 秒尘土才加载"的冻结）
         this.ensureFx('FX_WALL_DUST');
         const towerProfile = arrowTowerAsset.includes('_TOWER_AGE4') ? { range: 400, reload: 1.8, atk: 7 }
