@@ -4264,7 +4264,50 @@ export class Scene13WarLayer {
             });
         } else {
             const im = new Image();
-            im.onload = () => { na.img = im; };
+            im.onload = () => {
+                // 🔴 [2026-11-04 主人令「道路应该在尸体下方，应该和地图融合，有渐变。」]
+                //    DECAL_PATH_1~4 原始贴图为硬边深褐泥条；加载时离屏做高斯边缘羽化 + 椭圆径向渐隐遮罩，
+                //    使道路两侧与两端平滑渐隐融入地表草地/沙地/雪地，不再有生硬切边。
+                if (/^DECAL_PATH_\d+$/.test(name) && im.naturalWidth > 0 && im.naturalHeight > 0) {
+                    const w = im.naturalWidth, h = im.naturalHeight;
+                    const cv = document.createElement('canvas');
+                    cv.width = w;
+                    cv.height = h;
+                    const ctx = cv.getContext('2d');
+                    const maskCv = document.createElement('canvas');
+                    maskCv.width = w;
+                    maskCv.height = h;
+                    const mctx = maskCv.getContext('2d');
+                    if (ctx && mctx) {
+                        ctx.drawImage(im, 0, 0);
+                        // 1) 轮廓高斯模糊内缩羽化：消除原始贴图外沿 1px 硬切锯齿，让路沿与地表平滑过渡
+                        mctx.filter = 'blur(7px)';
+                        mctx.drawImage(im, 0, 0);
+                        mctx.filter = 'none';
+                        ctx.globalCompositeOperation = 'destination-in';
+                        ctx.drawImage(maskCv, 0, 0);
+                        ctx.drawImage(maskCv, 0, 0);
+                        // 2) 椭圆径向渐变遮罩：中心半透明透出底层草地肌理，两端平滑渐隐至 0
+                        mctx.clearRect(0, 0, w, h);
+                        mctx.save();
+                        mctx.translate(w * 0.5, h * 0.5);
+                        mctx.scale(w * 0.5, h * 0.5);
+                        const grad = mctx.createRadialGradient(0, 0, 0.08, 0, 0, 0.98);
+                        grad.addColorStop(0.0, 'rgba(255,255,255,0.58)');
+                        grad.addColorStop(0.48, 'rgba(255,255,255,0.44)');
+                        grad.addColorStop(0.78, 'rgba(255,255,255,0.18)');
+                        grad.addColorStop(1.0, 'rgba(255,255,255,0)');
+                        mctx.fillStyle = grad;
+                        mctx.fillRect(-1.1, -1.1, 2.2, 2.2);
+                        mctx.restore();
+                        ctx.drawImage(maskCv, 0, 0);
+                        ctx.globalCompositeOperation = 'source-over';
+                        na.img = cv as unknown as HTMLImageElement;
+                        return;
+                    }
+                }
+                na.img = im;
+            };
             // BATTLEFIELD 素材用 preview.png 单帧（DECAY_* 攻城器械残骸 frames.png 达 480~960 帧超宽 strip，整图 drawImage 会失败）；
             // FENCE_RUBBLE（DE b_scen_fence_rubble）仅 5 帧（500×60px，对应 NE/SE/CORNER/GATE/POST 五向），加载 frames.png 按朝向切片。
             const useFenceStrip = isBattlefield && name === 'FENCE_RUBBLE';

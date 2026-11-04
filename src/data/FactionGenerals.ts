@@ -2998,6 +2998,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     putaoya: [
+        // 🔴 [2026-11-04 主人令「按历史修复」] 原势力「亚速尔（yasuer，葡属大西洋群岛，非政权）」已删，西普里亚诺改挂葡萄牙；据点安格拉同步改归葡萄牙
+        { factionId: 'putaoya', generalId: 'gen_cipriano_figueiredo', cityId: 'city_angra', generalName: '西普里亚诺', portrait: '/assets/PORTUGUESE/gen_cipriano_figueiredo.png' , legionName: '帝国时代葡萄牙风琴军团', eliteName: '特塞拉民团', eliteTier: 4 },
         // 安东尼奥·拉波索·塔瓦雷斯（António Raposo Tavares，1598—1658）：葡萄牙圣保罗旗队（Bandeirantes）统帅，1628年自圣保罗率军远征伊瓜苏/瓜伊拉并横穿南美内陆（按史：巴西旗队史；对手无具名主帅 → 普将）
         { generalId: 'putaoya_raposo', factionId: 'putaoya', cityId: 'city_saopaulo', generalName: '拉波索', portrait: '/assets/PORTUGUESE/putaoya_raposo.png', legionName: '城堡时代葡萄牙王国军团', eliteName: '班代兰特', eliteTier: 4 },
         { generalId: 'putaoya_suosa', factionId: 'putaoya', cityId: 'city_aomen', generalName: '索萨', portrait: '/assets/PORTUGUESE/putaoya_suosa.png', eliteName: '澳门守备', eliteTier: 4 },   // 1554 与广东海道副使汪柏达成协议、1557 葡人入居澳门
@@ -8524,7 +8526,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'yuan_d_daulashah', factionId: 'shangdu', cityId: 'city_shangdu', generalName: '倒剌沙', portrait: '/assets/XIANBEI/yuan_d_daulashah.png', eliteName: '漠南骑手', eliteTier: 4 },
+        { generalId: 'yuan_d_daulashah', factionId: 'yuan_d', cityId: 'city_shangdu', generalName: '倒剌沙', portrait: '/assets/XIANBEI/yuan_d_daulashah.png', eliteName: '漠南骑手', eliteTier: 4 },   // 🔴 [2026-11-04 主人令「按历史修复」] 上都朝廷不是独立政权（元朝内战一方），势力并入大元，武将随本家；据点上都本来就是大元的城
 
 
 
@@ -10409,7 +10411,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    daca: { generalId: 'daca_dacajilong', cityId: 'city_basu', generalName: '达擦济咙', portrait: '/assets/TIBET/daca_dacajilong.png', eliteName: '吐蕃骑兵', eliteTier: 4 }, // 八宿宗
+    // 🔴 [2026-11-04 主人令「寺院土司势力：割据且有史称才独立」] 原「八宿寺(daca)」不是割据政权：八宿宗是甘丹颇章（西藏地方政府）辖下的宗，由达擦（功德林）活佛任宗本，属寺院领主而非独立势力 → 势力已并入甘丹颇章(ganden)，武将达到擦济咙改挂 ganden（条目已移入 ganden 数组）
 
 
 
@@ -12499,6 +12501,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'gongtang_gongtangcang', factionId: 'ganden', cityId: 'city_jimai', generalName: '贡唐仓', portrait: '/assets/TIBET/gongtang_gongtangcang.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
+        // 🔴 [2026-11-04 主人令「寺院土司势力：割据且有史称才独立」] 由原「八宿寺(daca)」「达隆(dalung)」并入：两处都只是甘丹颇章辖下的宗（宗本由寺院活佛兼领），不是割据政权
+        { generalId: 'daca_dacajilong', factionId: 'ganden', cityId: 'city_basu', generalName: '达擦济咙', portrait: '/assets/TIBET/daca_dacajilong.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
+        { generalId: 'dalung_sangjiwen', factionId: 'ganden', cityId: 'city_riwoche', generalName: '桑吉温', portrait: '/assets/TIBET/dalung_sangjiwen.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
 
 
 
@@ -12514,7 +12519,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    dalung: { generalId: 'dalung_sangjiwen', cityId: 'city_riwoche', generalName: '桑吉温', portrait: '/assets/TIBET/dalung_sangjiwen.png', eliteName: '吐蕃骑兵', eliteTier: 4 },
+    // 🔴 [2026-11-04 主人令「寺院土司势力：割据且有史称才独立」] 原「达隆(dalung)」条目实为类乌齐寺（达隆噶举支系）桑吉温，类乌齐宗亦为甘丹颇章辖下宗、寺院领主 → 并入甘丹颇章(ganden)，武将改挂 ganden（条目已移入 ganden 数组）
 
 
 
@@ -14940,7 +14945,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'shahelude_weisitamu', factionId: 'wistahm', cityId: 'city_bistam', generalName: '维斯塔姆', portrait: '/assets/PERSIAN/shahelude_weisitamu.png', eliteName: '萨珊铁甲', eliteTier: 2 },
+        { generalId: 'shahelude_weisitamu', factionId: 'sashan', cityId: 'city_bistam', generalName: '维斯塔姆', portrait: '/assets/PERSIAN/shahelude_weisitamu.png', eliteName: '萨珊铁甲', eliteTier: 2 },
 
 
 
@@ -15971,6 +15976,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'xiyindu_batuoluome', factionId: 'xibanya', cityId: 'city_shengduomingge', generalName: '巴托洛梅', portrait: '/assets/SPANISH/xiyindu_batuoluome.png', eliteName: '西班牙民兵', eliteTier: 4 },
         { generalId: 'gen_cortes', factionId: 'xibanya', cityId: 'city_veracruz', generalName: '科尔特斯', portrait: '/assets/SPANISH/tuotuonake_keertesi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
         // 🔴 [2026-11-04 主人令「武将文化必须史定、不许从据点反抄」＋「同人一个身份」] 莱加斯皮＝米格尔·洛佩斯·德·莱加斯皮（西班牙巴斯克，1502–1572）。原在此另挂一条普将条目并被贴成 MALAY（跟着宿务的 buildingStyle 走）。宿务是马来式高脚屋／木栅堡据点，据点文化 MALAY 本身没错，不许为迁就武将改据点文化；西班牙人按史判 SPANISH，故唯一身份并入塞维利亚的 xishudongyin_lijiasipi（SPANISH／名将／西班牙方阵 T2，1565 宿务建城、1571 马尼拉建城事迹照旧）。宿务按 2026-11-02「知名据点可以无镇守将」留空，不再配将。
+        // 🔴 [2026-11-04 主人令「按历史修复」] 原势力「新格拉纳达（总督区）」已并入西班牙：三将随本家改挂 xibanya（据点巴拿马/卡塔赫纳/波多韦洛本来就是西属美洲城，城归属同步改为西班牙）
+        { generalId: 'xingelana_dawila', factionId: 'xibanya', cityId: 'city_banama', generalName: '达维拉', portrait: '/assets/SPANISH/xingelana_dawila.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
+        { generalId: 'jialebi_brasilesuo', factionId: 'xibanya', cityId: 'city_katachena', generalName: '布拉斯莱索', portrait: '/assets/SPANISH/jialebi_brasilesuo.png', eliteName: '征服者骑', eliteTier: 3 },
+        { generalId: 'xingelana_beierweierde', factionId: 'xibanya', cityId: 'city_portobelo', generalName: '贝尔韦尔德', portrait: '/assets/SPANISH/xingelana_beierweierde.png', legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
     ],
 
     // 🔴 [2026-10-24 中城补将] 明彬＝阿拉干王（1531—1554）；妙乌（BURMESE）守城：1535 逐退葡萄牙火枪队、1547 开闸水淹东吁围军，筑石墙深壕、创孟加拉湾水师；帝国×缅甸＝帝国时代缅甸军团；名将；立绘留空
@@ -16387,7 +16396,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    yasuer: { generalId: 'gen_cipriano_figueiredo', cityId: 'city_angra', generalName: '西普里亚诺', portrait: '/assets/PORTUGUESE/gen_cipriano_figueiredo.png' , legionName: '帝国时代葡萄牙风琴军团', eliteName: '特塞拉民团', eliteTier: 4 },
+    // 🔴 [2026-11-04 主人令「按历史修复」] 原「亚速尔（yasuer）」势力条目已并入上方 putaoya 数组（西普里亚诺改挂葡萄牙）
 
 
 
@@ -16582,27 +16591,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    xingelana: [
-
-
-
-
-
-
-
-
-        { generalId: 'xingelana_dawila', cityId: 'city_banama', generalName: '达维拉', portrait: '/assets/SPANISH/xingelana_dawila.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
-        { generalId: 'jialebi_brasilesuo', factionId: 'xingelana', cityId: 'city_katachena', generalName: '布拉斯莱索', portrait: '/assets/SPANISH/jialebi_brasilesuo.png', eliteName: '征服者骑', eliteTier: 3 },
-        { generalId: 'xingelana_beierweierde', factionId: 'xingelana', cityId: 'city_portobelo', generalName: '贝尔韦尔德', portrait: '/assets/SPANISH/xingelana_beierweierde.png', legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
-
-
-
-
-
-
-
-
-    ],
+    // 🔴 [2026-11-04 主人令「按历史修复」] 原「新格拉纳达（xingelana）」势力数组已删：达维拉、布拉斯莱索、贝尔韦尔德三将已并入上方 xibanya 数组（城也改归西班牙）
 
 
 
@@ -17326,8 +17315,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     liang_shuofang: [
-        { generalId: 'gen_xiao_xian', factionId: 'liang_shuofang', cityId: 'city_ying', generalName: '萧铣', portrait: '/assets/JIANGNAN/gen_xiao_xian.png', eliteName: '八万御营', eliteTier: 2 },
-        { generalId: 'kang_liangshidou', factionId: 'liang_shuofang', cityId: 'city_tongwancheng', generalName: '梁师都', portrait: '/assets/XIANBEI/kang_liangshidou.png', eliteName: '漠南骑手', eliteTier: 4 },
+        { generalId: 'gen_xiao_xian', factionId: 'liang_shuofang', cityId: 'city_ying', generalName: '萧铣', portrait: '/assets/JIANGNAN/gen_xiao_xian.png', eliteName: '八万御营', eliteTier: 2 },   // 鸣凤（萧铣，国号梁，都江陵，617–621；据《旧唐书·萧铣传》）
+        { generalId: 'kang_liangshidou', factionId: 'liangshidu', cityId: 'city_tongwancheng', generalName: '梁师都', portrait: '/assets/XIANBEI/kang_liangshidou.png', eliteName: '漠南骑手', eliteTier: 4 },   // 🔴 [2026-11-04 主人令「按历史修复」] 梁师都（国号梁、年号永隆、据朔方统万城，617–628）从「大梁」拆出单立一家（liangshidu）；依据《旧唐书·梁师都传》
 
     ],
     qianliang: [

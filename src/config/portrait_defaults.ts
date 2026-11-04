@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 战斗 UI 立绘 — **三级分配规则（AGENTS.md §十三，AI 必读）**
  *
  * ① **武将**：专属立绘（文件存在）→ 政权专夹 → 据点/出兵文化区夹。
@@ -425,8 +425,8 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     // 吐蕃 53 势力
     'anding_wei': _tuboPortraitPool,
     'bailang': _tuboPortraitPool,
-    'daca': _tuboPortraitPool,
-    'dalung': _tuboPortraitPool,
+    // 🔴 [2026-11-04] 'daca' 已并入甘丹颇章，立绘池登记删除
+    // 🔴 [2026-11-04] 'dalung' 已并入甘丹颇章，立绘池登记删除
     'dong': _tuboPortraitPool,
     'galangdiba': _tuboPortraitPool,
     'ganden': _tuboPortraitPool,
@@ -583,9 +583,8 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'shierShijun': _zhongyuanPortraitPool,
     'xishan': _zhongyuanPortraitPool,
     'malla': _zhongyuanPortraitPool,
-    'shangdu': _zhongyuanPortraitPool,
+    // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'／'wistahm' 势力已删，立绘池登记一并删除
     'mihran': _zhongyuanPortraitPool,
-    'wistahm': _zhongyuanPortraitPool,
     'dongyang': _zhongyuanPortraitPool,
     'wei': _xianqinPortraitPool,
     'caowei': _zhongyuanPortraitPool,
@@ -666,7 +665,8 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'machu': _jiangnanPortraitPool,
     'nanhan': _jiangnanPortraitPool,
     'fangguozhen': _jiangnanPortraitPool,
-    'liang_shuofang': _caoyuanPortraitPool,
+    'liang_shuofang': _jiangnanPortraitPool,   // 鸣凤（萧铣，江陵）
+    'liangshidu': _caoyuanPortraitPool,        // 永隆（梁师都，朔方统万城）
     'qianliang': _hexiPortraitPool,
     'dangchang_guo': _tuboPortraitPool,
     'sanada': _ribenPortraitPool,

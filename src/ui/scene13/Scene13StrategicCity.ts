@@ -273,17 +273,18 @@ function extendFourGateRoadsOnGround(root: HTMLElement, W: number, H: number, ci
     const padX = 960, padY = 560;
     const MW = W + padX * 2, MH = H + padY * 2;
     const cx = MW / 2, dcy = MH / 2 + TH / 2;
-    const shrink = 0.93, blurMain = TW * 0.5, blurRoad = 12;
+    const shrink = 0.93, blurMain = TW * 0.5, blurRoad = 30;
 
     // 城内至城外的等轴格坐标 (u 沿路向外, v 横向跨路)：u0(城内主街衔接) → uGate(城门) → uBridge(跨过护城河桥) → uEnd(城外远端渐隐)
     const u0 = half * 0.66;
     const uGate = half;
-    const uBridge = half + (isBig ? 6.2 : 5.2);
+    const uBridge = half + (isBig ? 5.6 : 4.8);
     const uEnd = half + (isBig ? 14.5 : 12.0);
     const w0 = isBig ? 2.35 : 2.05;
-    const wBridge = isBig ? 1.68 : 1.44;
-    const wEnd = isBig ? 1.28 : 1.10;
-    const tSolid = ((uBridge - u0) / (uEnd - u0) * 100).toFixed(1);
+    const wBridge = isBig ? 1.52 : 1.32;
+    const wEnd = isBig ? 0.88 : 0.75;
+    const tGate = ((uGate - u0) / (uEnd - u0) * 100).toFixed(1);
+    const tBridge = ((uBridge - u0) / (uEnd - u0) * 100).toFixed(1);
 
     const toPt = (di: number, dj: number): string =>
         `${(cx + (di - dj) * (TW / 2)).toFixed(1)},${(dcy + (di + dj) * (TH / 2)).toFixed(1)}`;
@@ -298,20 +299,21 @@ function extendFourGateRoadsOnGround(root: HTMLElement, W: number, H: number, ci
 
     const defs: string[] = [
         `<filter id="f" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="${blurMain.toFixed(1)}"/></filter>`,
-        `<filter id="rf" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${blurRoad.toFixed(1)}"/></filter>`,
+        `<filter id="rf" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="${blurRoad.toFixed(1)}"/></filter>`,
     ];
     const roadPolys: string[] = [];
 
     dirs.forEach(([axis, sign, sx, sy], idx) => {
-        // 梯度轴严格垂直于等轴城墙边 (sx, 2·sy)，使道路横截面等高线与城门/桥面平行
+        // 梯度轴严格垂直于等轴城墙边 (sx, 2·sy)，从城门起即逐段柔和衰减，与两侧 30px 高斯羽化共同融入原野地表
         const gx1 = cx + sx * (96 * u0) / 5, gy1 = dcy + sy * (192 * u0) / 5;
         const gx2 = cx + sx * (96 * uEnd) / 5, gy2 = dcy + sy * (192 * uEnd) / 5;
         defs.push(
             `<linearGradient id="rg${idx}" gradientUnits="userSpaceOnUse" x1="${gx1.toFixed(1)}" y1="${gy1.toFixed(1)}" x2="${gx2.toFixed(1)}" y2="${gy2.toFixed(1)}">` +
             `<stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>` +
-            `<stop offset="${tSolid}%" stop-color="#ffffff" stop-opacity="1"/>` +
-            `<stop offset="74%" stop-color="#d8d8d8" stop-opacity="0.78"/>` +
-            `<stop offset="90%" stop-color="#707070" stop-opacity="0.34"/>` +
+            `<stop offset="${tGate}%" stop-color="#ffffff" stop-opacity="0.92"/>` +
+            `<stop offset="${tBridge}%" stop-color="#e0e0e0" stop-opacity="0.64"/>` +
+            `<stop offset="72%" stop-color="#b0b0b0" stop-opacity="0.32"/>` +
+            `<stop offset="88%" stop-color="#606060" stop-opacity="0.12"/>` +
             `<stop offset="100%" stop-color="#000000" stop-opacity="0"/>` +
             `</linearGradient>`
         );

@@ -2799,7 +2799,7 @@ buildingStyle: 'JAPAN', troops: 10000, tier: 4,
     },
 
     // ── 2026-05-28 新增：康区藏族土司/部落据点 ──
-    { id: 'city_riwoche', name: '类乌齐', factionId: 'dalung', lat: 31.3600, lng: 96.5000, type: 'stockade', region: 'TIBET_CASTLE',
+    { id: 'city_riwoche', name: '类乌齐', factionId: 'ganden', lat: 31.3600, lng: 96.5000, type: 'stockade', region: 'TIBET_CASTLE',
 buildingStyle: 'TIBET', troops: 10000, tier: 4,
         note: '类乌齐；达隆小城',
     },
@@ -2817,7 +2817,7 @@ buildingStyle: 'BASHU', troops: 10000, tier: 4,
     },
     // ── 2026-05-28 新增：波密(博窝/西藏) ──
     // ── 2026-05-28 新增：达擦(八宿宗/达察呼图克图/家族) ──
-    { id: 'city_basu', name: '八宿宗', factionId: 'daca', lat: 30.185461, lng: 97.283936, type: 'stockade', region: 'TIBET_IMPERIAL',
+    { id: 'city_basu', name: '八宿宗', factionId: 'ganden', lat: 30.185461, lng: 97.283936, type: 'stockade', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
         note: '八宿宗；达擦小城',
     },
@@ -2979,7 +2979,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_fushi', name: '肤施', factionId: 'song', lat: 36.59, lng: 109.48, type: 'small_city', troops: 10000, region: 'SONG', buildingStyle: 'CENTRAL' , note: '推算：城居 1.5 万（肤施，延安府治 1.5 万）→ 小城' },
 
 
-    { id: 'city_changze', name: '长泽', factionId: 'liang_shuofang', lat: 39.1, lng: 107.98, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI', note: '定级依据§6.2：长泽非关隘（隋朔方郡属县、唐820宥州治），按城市判级；人口查无可靠估计，落最小城档 → 城寨' },
+    { id: 'city_changze', name: '长泽', factionId: 'liangshidu', lat: 39.1, lng: 107.98, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI', note: '定级依据§6.2：长泽非关隘（隋朔方郡属县、唐820宥州治），按城市判级；人口查无可靠估计，落最小城档 → 城寨。🔴 [2026-11-04 按历史修复] 长泽位于朔方（夏州）境，属梁师都「永隆」政权（原误挂「大梁」）' },
 
     { id: 'city_linrong', name: '临戎', factionId: 'han_d', lat: 40.3, lng: 107, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
@@ -3913,7 +3913,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_yala', name: '亚拉', factionId: 'taino_d', lat: 20.35, lng: -76.85, type: 'stockade', troops: 10000, region: 'AMERICA', buildingStyle: 'TUPI', note: '古巴东部泰诺人村落（Yara 一带，1510 年代西班牙征服古巴时泰诺反抗活动区；哈土依 1512 被西班牙烧死）' },
     { id: 'city_havana', name: '哈瓦那', factionId: 'xibanya', lat: 23.13, lng: -82.38, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人；按 2026-10-25 标准：城居 0.8–1.5 → 小城' },
     { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'BERBER', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系。🔴 [2026-10-24 按史] 建筑风格 AFRICA→BERBER：关切人（Guanches）是**柏柏尔人**的一支（语言属柏柏尔语族），加那利石屋—土堡与柏柏尔卡斯巴同系；AFRICA（西非马里泥土城）不符。无将驻守。；推算：城居 0.3 万（特尔德，大加那利关切人王城 0.3 万）→ 城寨' },
-    { id: 'city_angra', name: '安格拉', factionId: 'yasuer', lat: 38.66, lng: -27.22, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌；推算：城居 0.3 万（安格拉，亚速尔中继港 0.3 万）→ 城寨' },
+    { id: 'city_angra', name: '安格拉', factionId: 'putaoya', lat: 38.66, lng: -27.22, type: 'stockade', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌；推算：城居 0.3 万（安格拉，亚速尔中继港 0.3 万）→ 城寨。🔴 [2026-11-04 按历史修复] 亚速尔是葡萄牙属地、非独立政权，据点归葡萄牙（原误挂 yasuer）' },
     { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 10000, region: 'INCA', buildingStyle: 'SPANISH', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府。🔴 [2026-10-18 主人令] 建筑风格按建城者定为 SPANISH；旧「风格必须当地」令作废。；推算：城居 2 万（利马，秘鲁总督区首府 2 万）→ 小城' },
     { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'medium_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', note: '定级依据§6.2：廷巴克图非关隘/要塞/堡垒（撒哈拉南缘泥砖商贸城，无石墙），按城市判级；中世纪盛期人口峰值约10万（英文维基 Timbuktu 引 World History Encyclopedia），按「约10万也算中城」→ 中城。按史＋依据：https://en.wikipedia.org/wiki/Timbuktu' },
 
@@ -3983,14 +3983,14 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_suojiamosuo', name: '索加莫索', factionId: 'yilaka', lat: 5.715, lng: -72.933, type: 'stockade', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '古称苏阿莫斯/苏加穆西，穆伊斯卡伊拉卡最高祭司驻地与太阳崇拜中心；太阳神庙于1537年被西班牙士兵焚毁；定级依据§6.2：圣地非常住城（超地方政治体400–700人，朝圣者定期聚集不常住；Fajardo 2016），人口不足一万 → 按规则判城寨' },
     { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'gualani', lat: -25.695, lng: -54.437, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'TUPI', note: '伊瓜苏河大瀑布，名称源自图皮—瓜拉尼语“大水”；瓜拉尼人传统地域，卡韦萨·德·巴卡1542年到达并记载；1626年附近建立圣玛利亚伊瓜苏聚落，原址尚未可靠定位；定级依据§6.2：该点无城市人口（长屋村类比600–1000人，低置信），人口不足一万 → 按规则判城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：巴拿马城：西班牙殖民地
-    { id: 'city_banama', name: '巴拿马', factionId: 'xingelana', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址；推算：城居 1 万（老巴拿马城，1519 建 1 万）→ 小城' },
+    { id: 'city_banama', name: '巴拿马', factionId: 'xibanya', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址；推算：城居 1 万（老巴拿马城，1519 建 1 万）→ 小城' },
     // 🔴 [2026-11-02 主人令「添加波多韦洛据点」] 圣费利佩-德波多韦洛：西属美洲珍宝船队大西洋白银大帆船装船要塞港
-    { id: 'city_portobelo', name: '波多韦洛', factionId: 'xingelana', lat: 9.5544, lng: -79.6644, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '圣费利佩-德波多韦洛(San Felipe de Portobelo)，1597年菲利普二世敕建，西属南美珍宝船队白银大帆船装船港，巴拿马地峡皇家之路大西洋端点，波多韦洛商展举办地；联合国教科文组织加勒比海防要塞遗址；定级依据§6.2：平时为海防要塞驻军与海关（约 0.2–0.3 万，商展期多为短期流动客商），常住人口不足一万 → 按规则判城寨' },
+    { id: 'city_portobelo', name: '波多韦洛', factionId: 'xibanya', lat: 9.5544, lng: -79.6644, type: 'stockade', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '圣费利佩-德波多韦洛(San Felipe de Portobelo)，1597年菲利普二世敕建，西属南美珍宝船队白银大帆船装船港，巴拿马地峡皇家之路大西洋端点，波多韦洛商展举办地；联合国教科文组织加勒比海防要塞遗址；定级依据§6.2：平时为海防要塞驻军与海关（约 0.2–0.3 万，商展期多为短期流动客商），常住人口不足一万 → 按规则判城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：圣多明各：西班牙美洲第一城
     { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xibanya', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫；推算：城居 1 万（圣多明各，1496 建 1 万）→ 小城' },
     { id: 'city_martinique', name: '马提尼克', factionId: 'gaolu', lat: 14.60, lng: -61.07, type: 'stockade', region: 'AMERICA', buildingStyle: 'FRANKS', troops: 10000, startYear: 1635, note: '马提尼克（Martinique）法兰西堡（Fort-Royal／Fort-de-France）：1635 年迪帕尔凯奉埃斯南布克之命设防，法属安的列斯核心与三角贸易的加勒比落点；17 世纪城居数百至数千 → 城寨（2026-10-25 标准③）。建筑按殖民新建城的实际建成层，故 FRANKS（与魁北克同例）' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：卡塔赫纳（哥伦比亚）：西班牙殖民地
-    { id: 'city_katachena', name: '卡塔赫纳', factionId: 'xingelana', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队；推算：城居 1.2 万（卡塔赫纳·德·印迪亚斯，1533 建城 1.2 万）→ 小城' },
+    { id: 'city_katachena', name: '卡塔赫纳', factionId: 'xibanya', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队；推算：城居 1.2 万（卡塔赫纳·德·印迪亚斯，1533 建城 1.2 万）→ 小城' },
     { id: 'city_lalibeila', name: '拉利贝拉', factionId: 'zhagewei', lat: 12.033689, lng: 39.043350, type: 'stockade', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '古称罗哈，扎格维王朝国王拉利贝拉营建“新耶路撒冷”的中世纪宗教中心；贝特·阿曼努埃尔等十一座岩石教堂所在地；定级依据§6.2：中世纪城居人口无可靠数字（现代镇区8484/17367），人口不足一万 → 按规则判城寨' },
     { id: 'city_zeila', name: '塞拉', factionId: 'adal', lat: 11.3533, lng: 43.4731, type: 'stockade', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '【建筑风格代理】阿达尔/泽拉属东非索马里，66 文化无斯瓦希里/索马里分支，取最近东非分支埃塞俄比亚（代理，非精确）；泽拉/塞拉(Zeila)，阿达尔苏丹国早期首都与亚丁湾第一出口海港，红海-索马里贸易枢纽；格拉尼(艾哈迈德·格拉尼)1520年代由此起兵圣战，席卷埃塞俄比亚高原大部；推算：城居 0.3 万（泽拉，阿达尔港镇 0.3 万）→ 城寨' },
     { id: 'city_dasijiliweng', name: '达斯基利翁', factionId: 'aqimeinide', lat: 40.1322, lng: 28.0504, type: 'stockade', troops: 10000, region: 'ACHAEMENIDS', buildingStyle: 'PERSIAN', note: '阿契美尼德波斯赫勒斯滂-弗里吉亚总督要塞，阿尔西提斯总督治所；按 2026-10-25 标准：非军事设施(或人口<1万/查不到且无石砖城郭) → 城寨' },

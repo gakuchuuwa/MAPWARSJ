@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 沙盒模式：势力 id → 首都 cityId（1 势力 = 1 据点）。
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
@@ -32,7 +32,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   // ── [2026-08-26] 大西洋航线七势力（1 势力 = 1 据点）──
   'taino_d': 'city_yala', // 泰诺（古巴东部亚拉）
   'guanche': 'city_telde',
-  'yasuer': 'city_angra',
+  // 🔴 [2026-11-04 主人令「按历史修复」] 'yasuer'（亚速尔）非政权，首府登记删除（并入葡萄牙）
   // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 太平洋：查莫罗（主邑阿加尼亚）
   'chamorro': 'city_hagatna',
 
@@ -476,14 +476,14 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
 
     // ── 2026-05-28 新增：康区藏族土司/部落 ──
-    'dalung': 'city_riwoche',
+    // 🔴 [2026-11-04] 'dalung' 已并入甘丹颇章，首府登记删除
     'gar_kham': 'city_derge',
     'kongsa': 'city_ganzi',
 
     // ── 2026-05-28 新增：波密(博窝) ──
 
     // ── 2026-05-28 新增：达擦(八宿宗/康区) ──
-    'daca': 'city_basu',
+    // 🔴 [2026-11-04] 'daca' 已并入甘丹颇章，首府登记删除
 
     // ── 2026-05-28 新增：景东(银生城/云南) ──
 
@@ -556,9 +556,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'shierShijun': 'city_hoalu',
 'xishan': 'city_fuchun',
 'malla': 'city_kathmandu',
-'shangdu': 'city_shangdu',
+// 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'（上都朝廷）与 'wistahm'（维斯塔姆）都不是政权，首府登记删除（并入大元／萨珊）
 'mihran': 'city_feiluzhabade',
-'wistahm': 'city_bistam',
 'dongyang': 'city_kuaiji',
     'huangwang': 'city_xianxia',
 'yehe': 'city_bamiancheng',
@@ -720,7 +719,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'ghana_diguo': 'city_kumubi',
 'muwaxide': 'city_labate',
     'yilaka': 'city_suojiamosuo',
-    'xingelana': 'city_banama',
+    // 🔴 [2026-11-04 主人令「按历史修复」] 'xingelana'（新格拉纳达总督区）并入西班牙，首府登记删除
     'gualani': 'city_yiguasu',
     'bulu': 'city_meng',
 'mallabhum': 'city_bishnupur',
@@ -775,7 +774,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'machu': 'city_changsha',
 'nanhan': 'city_panyu',
 'fangguozhen': 'city_wenzhou',
-'liang_shuofang': 'city_changze',
+'liang_shuofang': 'city_ying',   // 鸣凤（萧铣）都江陵（city_ying＝江陵）
+'liangshidu': 'city_changze',    // 永隆（梁师都）据朔方，长泽在夏州境内
 'qianliang': 'city_wuwei',
 'liangzhou': 'city_wuwei',   // 凉州（汉末凉州之乱）治姑臧；与「前凉」同城不同政权（据点代表一片地区）
 'dangchang_guo': 'city_diezhou',

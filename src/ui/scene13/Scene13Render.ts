@@ -130,10 +130,13 @@ export function render(this: Scene13WarLayer): void {
             it.y = sprite.y - (sprite.lift !== undefined ? sprite.lift : this.elevationLiftAt(sprite.x, sprite.y));
             it.sortY = it.y - 12;   // 环境对象等效排序 y 上提 12px（严格传递序：近墙 12px 内恒保证人压在墙前，消除非传递 3-cycle 抖动）
             // 🔴 [2026-10-31 主人令「这些植被应该在士兵脚下，下层，不要遮挡士兵」]
-            //    贴地植被（草 / 花丛 / 灌丛 / 蕨 / 芦苇 / 落叶）是 DE 的地面贴花：一律走地面层（z=-10），
-            //    在排序里整组排到最前，先画、永远在士兵之下；只有树、岩石、建筑才按脚点 y 与单位抢遮挡。
-            //    判据见 DecorFit.isGroundCoverVegetation。
-            it.z = (sprite.layer === 'ground' || isGroundCoverVegetation(sprite.asset)) ? -10 : sprite.z;
+            // 🔴 [2026-11-04 主人令「道路应该在尸体下方，应该和地图融合，有渐变。」]
+            //    贴地道路（DECAL_PATH_*）走最底层（z=-12），贴地植被（草 / 花丛 / 灌丛 / 蕨 / 芦苇 / 落叶）走地面层（z=-10），
+            //    与农田/弹坑（z=-6）共同归入 aFlat(z<=-5)，在已烙印尸体（this.ground）与倒地尸体（this.corpses）之前先画，
+            //    保证道路永远在尸体与士兵下方。
+            it.z = /^DECAL_PATH_/.test(sprite.asset)
+                ? -12
+                : ((sprite.layer === 'ground' || isGroundCoverVegetation(sprite.asset)) ? -10 : sprite.z);
             it.zid = 0;
             it.sprite = sprite;
             decorDrawnCount++;
@@ -143,8 +146,6 @@ export function render(this: Scene13WarLayer): void {
     this.perfStats.decorTotal = this.decorSprites.length;
     this.perfStats.decorDrawn = decorDrawnCount;
     this.perfStats.decorCulled = this.decorSprites.length - decorDrawnCount;
-    // 已烙的尸体：一张图搞定（在所有活人之下）
-    if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, this.worldCX - TAC_MAP_HALF_W, this.worldCY - TAC_MAP_HALF_H);
     // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
     for (const c of this.corpses) {
         const it = take();
@@ -240,6 +241,7 @@ export function render(this: Scene13WarLayer): void {
         const aFlat = a.kind === 'environment' && a.z <= -5 ? 0 : 1;
         const bFlat = b.kind === 'environment' && b.z <= -5 ? 0 : 1;
         if (aFlat !== bFlat) return aFlat - bFlat;
+        if (aFlat === 0 && a.z !== b.z) return a.z - b.z;
         const dy = (a.sortY ?? a.y) - (b.sortY ?? b.y);
         if (Math.abs(dy) > 0.01) return dy;
         const dz = (a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0);
@@ -259,6 +261,18 @@ export function render(this: Scene13WarLayer): void {
         for (const b of birds) vis[w++] = b;
     }
     _tSort = performance.now() - _tsort0;
+
+    // 1) 先画所有地面贴花层（z <= -5：道路 DECAL_PATH_*、贴地花草、农田、弹坑裂隙），确保道路等永远在尸体下方
+    let flatEndIdx = 0;
+    while (flatEndIdx < vis.length && vis[flatEndIdx].kind === 'environment' && vis[flatEndIdx].z <= -5) {
+        const _td0 = performance.now();
+        this.drawDecorSprite(ctx, vis[flatEndIdx].sprite!, vis[flatEndIdx].y);
+        _tDrawDecor += performance.now() - _td0;
+        flatEndIdx++;
+    }
+
+    // 2) 再画已烙的尸体：一张图搞定（压在道路、农田、地面贴花之上，且在所有活人、立面建筑、树木之下）
+    if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, this.worldCX - TAC_MAP_HALF_W, this.worldCY - TAC_MAP_HALF_H);
 
     // 六计地面层：冲击光圈、增援/溃逃落点放在士兵之下，不遮兵模。
     drawScene13SkillCastVfx(ctx, this.skillVfx, 'ground', (x, y) => this.elevationLiftAt(x, y), performance.now());
@@ -310,7 +324,8 @@ export function render(this: Scene13WarLayer): void {
         { back: 28,  side: -2,  alpha: 0.78, frStep: 0.08 },
     ];
 
-    for (const v of vis) {
+    for (let vi2 = flatEndIdx; vi2 < vis.length; vi2++) {
+        const v = vis[vi2];
         if (v.kind === 'environment') {
             const _td0 = performance.now();
             this.drawDecorSprite(ctx, v.sprite!, v.y);

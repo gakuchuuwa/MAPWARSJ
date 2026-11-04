@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -42,9 +42,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   //    未登记 4 个（本轮新增的大西洋航线势力）+ 撞车 3 组，一并收口，现全部唯一。
     taino_d: '泰诺',  // 泰诺（古巴东部亚拉）
   guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
-  yasuer: '亚速',  // [2026-08-26] 葡属亚速尔群岛，首府安格拉
+  // 🔴 [2026-11-04 主人令「按历史修复」] 原 'yasuer'（亚速尔，葡属、非政权）已并入葡萄牙，旗号登记删除
   chamorro: '查莫',  // 查莫罗（关岛·阿加尼亚）；[2026-10-24] 音译名不截一字
-
   ayinu_ezo: '阿伊',   // 🔴 [2026-09-12] 原「虾夷」与 ayinu(虾夷)撞旗 → 按势力名「阿伊努」取前两字「阿伊」
 
   boootiya: '底比',
@@ -115,7 +114,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   qiernigeweifu_gongguo: '切尔',
   jialixiya: '哈尔',
   pusikefu_gongheguo: '普斯',
-  ouka: '奥卡',
+  ouka: '梁赞',   // 🔴 [2026-11-04 按历史修复] 势力改「梁赞」，旗号「梁赞」
   xideweina: '波洛',
   jinzhang: '金帐',
   baojiaer: '不里',  // [2026-08-26 旗号去重] 伏尔加保加尔：「保加」与保加利亚(特尔诺沃)撞；《元史》作「不里阿耳」
@@ -352,7 +351,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yarkand': '叶尔',
 'khoja': '和卓',
 'jinchuan_g': '金川',
-'shuntian': '天地',
+'shuntian': '顺',   // 🔴 [2026-11-04 主人令「按历史修复」] 势力改名「顺天」（林爽文建元顺天），旗号取年号首字「顺」
 'bailian': '白莲',
 'chimei': '赤眉',
         'zhangchu': '张楚',   // 张楚·陈胜
@@ -397,7 +396,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     
 'hongirad': '弘吉',
-'choros': '萨吾',
+'choros': '瓦剌',   // 🔴 [2026-11-04 按历史修复] 势力改「瓦剌」，旗号随改
     // ── 2026-05-26 新增：青藏高原势力旗号（18个）──
 'ladakh': '玛域',
 'tsangpa': '藏巴',
@@ -426,7 +425,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-27 新增：汪、向、覃、冉、储 ──
 
     // ── 自动补全剩余的特殊势力映射，防止显示英文 ──
-'cen_d': '田',  // 🔴 [2026-11-03] 地名田州，不用姓
+'cen_d': '岑',  // 🔴 [2026-11-04 按历史修复] 势力改「岑氏」（家族），旗号用姓氏「岑」
     // ── 2026-05-27 补充：旗号文字缺失的14个势力 ──
     'weili': '尉犁',
     'pishan': '皮山',
@@ -493,14 +492,14 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
 
     // ── 2026-05-28 新增：康区藏族土司/部落 ──
-    'dalung': '达隆',
-    'gar_kham': '德司',
+    // 🔴 [2026-11-04] 'dalung'（并入甘丹颇章）旗号登记删除
+    'gar_kham': '德格',   // 🔴 [2026-11-04 按历史修复] 势力改「德格土司」，旗号「德格」
     'kongsa': '孔萨',
 
     // ── 2026-05-28 新增：波密(博窝) ──
 
     // ── 2026-05-28 新增：达擦(八宿宗/康区) ──
-    'daca': '达擦',
+    // 🔴 [2026-11-04] 'daca'（并入甘丹颇章）旗号登记删除
 
     // ── 2026-05-28 新增：景东(银生城/云南) ──
 
@@ -508,14 +507,14 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'hor': '霍尔',
 
     // ── 2026-05-28 新增：董(囊谦宗/玉树) ──
-    'dong': '隆庆',
+    'dong': '囊谦',   // 🔴 [2026-11-04 按历史修复] 势力改「囊谦土司」，旗号「囊谦」
 
     // ── 2026-05-28 新增：白狼(巴塘宗/康区) ──
 'bailang': '白狼',
 
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
 'duolu': '咄陆',
-'tiemuer': '图兰',
+'tiemuer': '帖木',   // 🔴 [2026-11-04 按历史修复] 势力改「帖木儿帝国」，旗号「帖木」
 'kawusi': '卡乌',
     'keerkezi': '柯尔',
     'yiduhu': '亦都',
@@ -594,7 +593,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
     'buriat': '布里',
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
-    'xianhai': '咸海',
+    'xianhai': '叶护',   // 🔴 [2026-11-04 按历史修复] 势力改「乌古斯叶护」，旗号「叶护」
 'yanda': '白匈',
 'anxi': '安西',
 'konbaung': '贡榜',
@@ -604,10 +603,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'shierShijun': '使君',
 'xishan': '西山',  // 🔴 [2026-11-04 主人「用西不太好，太泛指；不行就用西山」] 西山朝国号虽亦称大越，但与阮福映（越）同场内战，旗号用西山区分
 'malla': '玛拉',
-'shangdu': '上都',
+// 🔴 [2026-11-04 主人令「按历史修复」] shangdu／wistahm 两个势力已删（都不是政权：两都之战的元内一方、萨珊末期权臣本人），并入大元／萨珊，旗号登记同时删除
 'mihran': '米赫',
-'wistahm': '维斯',
-'dongyang': '东扬',
+'dongyang': '会稽',   // 🔴 [2026-11-04 按历史修复] 势力改「会稽义军」，旗号「会稽」
     'yun': '允',
     'huangwang': '齐',  // 🔴 [2026-11-03] 黄巢国号大齐，不用姓
     'basha_d': '巴沙',
@@ -770,7 +768,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jienei': '杰内',
 'muwaxide': '穆瓦',
     'yilaka': '伊拉',
-    'xingelana': '新格',
+    // 🔴 [2026-11-04 主人令「按历史修复」] xingelana（新格拉纳达总督区）已并入西班牙，旗号登记删除
     'gualani': '瓜拉',
     'bulu': '波罗',
     'kanan': '推罗',
@@ -836,7 +834,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'machu': '楚',
 'nanhan': '汉',
 'fangguozhen': '浙东',
-'liang_shuofang': '梁',  // 🔴 [2026-11-03 主人令「按建议改」] 「大」是尊称，旗号写国号字
+'liang_shuofang': '梁',  // 🔴 [2026-11-04] 势力改「鸣凤」（萧铣政权，国号梁），旗号仍写国号字「梁」
+'liangshidu': '梁',      // 🔴 [2026-11-04 主人令「按历史修复」] 梁师都政权（国号梁、年号永隆）单立一家，与萧铣同国号，按 10-28「同一国号同字重旗」也写「梁」，靠势力色＋旗形区分
 'qianliang': '凉',  // 🔴 [2026-11-03 主人令「前凉旗号应该用凉，和其他凉用颜色区分」] 国号「凉」，与阳关、凉州同字重旗，靠势力色区分
 'liangzhou': '凉',
 'dangchang_guo': '宕昌',

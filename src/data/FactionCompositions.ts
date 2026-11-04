@@ -2679,6 +2679,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "liang_shuofang": {
+        // 🔴 [2026-11-04 按历史修复] 势力改为「鸣凤」（萧铣，都江陵/HUGUANG），指针按主将军团（封建×荆湘）对齐
+        legionName: "封建时代荆湘军团",
+        legionType: "sub",
+    },
+    "liangshidu": {
+        // 🔴 [2026-11-04 按历史修复] 永隆（梁师都，据朔方统万城/XIANBEI），指针按主将军团（封建×漠南）对齐
         legionName: "封建时代漠南军团",
         legionType: "sub",
     },

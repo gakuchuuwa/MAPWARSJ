@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将首次会面·历史经典战设定（GeneralFirstBattles）
  *
  * 规则：
@@ -6107,7 +6107,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.9,
         targetLng: 116.41,
         myTroops: 30000,
-        enemyFactionId: 'shangdu',
+        enemyFactionId: 'yuan_d',   // 🔴 [2026-11-04 主人令「按历史修复」] 上都朝廷并入大元：两都之战是元朝内战，按「史实内战双方可同属一个势力」写 yuan_d（不再单立 shangdu）
         enemyFactionName: '上都倒剌沙军',
         enemyGeneralId: 'yuan_d_daulashah',   // 🔴 [2026-10-20 经典战规则] 1328 两都之战元上都派倒剌沙
         enemyTroops: 45000,

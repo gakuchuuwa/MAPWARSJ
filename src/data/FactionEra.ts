@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 势力时代表（factionId → 年份段 → 四时代）。
  *
  * 🔴 2026-10-25 主人令：「武将有生卒登场年，势力有时代」「按史分年段」「这样能保证一个势力的人，都是一个军团」。
@@ -167,13 +167,13 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'chosokabe': [{ from: -9999, era: 'imperial' }], // 土佐
     'chuguo': [{ from: -9999, era: 'antiquity' }], // 楚国
     'chuyue': [{ from: -9999, era: 'feudal' }], // 处月
-    'daca': [{ from: -9999, era: 'imperial' }], // 达擦
+    // 🔴 [2026-11-04] 'daca'（八宿寺）已并入甘丹颇章，时代随本家
     'dacheng': [{ from: -9999, era: 'imperial' }], // 大成
     'dada_ming': [{ from: -9999, era: 'castle' }], // 鞑靼
     'dai': [{ from: -9999, era: 'castle' }], // 傣族
     'dajin': [{ from: -9999, era: 'castle' }], // 大金
     'dalriada': [{ from: -9999, era: 'feudal' }], // 达尔里阿达
-    'dalung': [{ from: -9999, era: 'castle' }], // 达隆
+    // 🔴 [2026-11-04] 'dalung'（类乌齐宗）已并入甘丹颇章，时代随本家
     'damolaweiya': [{ from: -9999, era: 'feudal' }], // 大摩拉维亚
     'dangchang_guo': [{ from: -9999, era: 'feudal' }], // 宕昌
     'daniebo': [{ from: -9999, era: 'castle' }], // 斯摩公国
@@ -331,7 +331,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'lancang': [{ from: -9999, era: 'castle' }], // 澜沧
     'lang_clan': [{ from: -9999, era: 'castle' }], // 帕竹朗
     'ldiya': [{ from: -9999, era: 'antiquity' }], // 吕底亚
-    'liang_shuofang': [{ from: -9999, era: 'feudal' }], // 大梁
+    'liang_shuofang': [{ from: -9999, era: 'feudal' }], // 鸣凤（萧铣，国号梁，617–621，封建段）
+    'liangshidu': [{ from: -9999, era: 'feudal' }], // 永隆（梁师都，国号梁，617–628，封建段）
     'liaozu': [{ from: -9999, era: 'imperial' }], // 寮族
     'linshihong': [{ from: -9999, era: 'feudal' }], // 干越
     'liusong': [{ from: -9999, era: 'feudal' }], // 刘宋（420–479）＝封建时代（2026-11-03 主人定，原误判古典）
@@ -510,9 +511,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'shierShijun': [{ from: -9999, era: 'feudal' }], // 十二使君
     'xishan': [{ from: -9999, era: 'imperial' }], // 西山
     'malla': [{ from: -9999, era: 'imperial' }], // 加德满都
-    'shangdu': [{ from: -9999, era: 'castle' }], // 上都
+    // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'（上都）与 'wistahm'（维斯塔姆）两个势力已删，并入大元／萨珊，时代随本家
     'mihran': [{ from: -9999, era: 'antiquity' }], // 米赫兰
-    'wistahm': [{ from: -9999, era: 'antiquity' }], // 维斯塔姆
     'dongyang': [{ from: -9999, era: 'feudal' }], // 东扬
     'tiaodun_qishi': [{ from: -9999, era: 'castle' }], // 条顿骑士团
     'tiemuer': [{ from: -9999, era: 'castle' }], // 图兰
@@ -581,7 +581,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'xike': [{ from: -9999, era: 'imperial' }], // 锡克帝国
     'xikesuosi': [{ from: -9999, era: 'antiquity' }], // 喜克索斯
     'xila': [{ from: -9999, era: 'antiquity' }], // 雅典
-    'xingelana': [{ from: -9999, era: 'imperial' }], // 新格拉纳达
+    // 🔴 [2026-11-04 主人令「按历史修复」] 'xingelana'（新格拉纳达总督区）已并入西班牙，时代随西班牙
     'xingliao': [{ from: -9999, era: 'feudal' }], // 兴辽
     'xingwei': [{ from: -9999, era: 'castle' }], // 兴威
     'xinluo': [{ from: -9999, era: 'feudal' }], // 新罗
@@ -604,7 +604,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'yanqi': [{ from: -9999, era: 'feudal' }], // 焉耆
     'yarkand': [{ from: -9999, era: 'imperial' }], // 叶尔羌
     'yashu': [{ from: -9999, era: 'antiquity' }], // 亚述
-    'yasuer': [{ from: -9999, era: 'imperial' }], // 亚速尔
+    // 🔴 [2026-11-04 主人令「按历史修复」] 'yasuer'（亚速尔，葡属群岛）已并入葡萄牙，时代随葡萄牙
     'yehe': [{ from: -9999, era: 'imperial' }], // 叶赫
     'yelang': [{ from: -9999, era: 'antiquity' }], // 夜郎
     'yelusalengwg': [{ from: -9999, era: 'castle' }], // 耶路撒冷王国
