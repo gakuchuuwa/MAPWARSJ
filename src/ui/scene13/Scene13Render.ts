@@ -293,15 +293,20 @@ export function render(this: Scene13WarLayer): void {
     const flagTick = performance.now();
     for (const m of this.men) {
         if (!m.flag) continue;
-        // 🔴 [2026-10-26] 旗杆也用**显示势力**：panshu 占位侧（史实内战成名战）要举主将自己的旗，不再是叛军无字旗。
+        // 🔴 [2026-10-26] 旗杆也用**显示势力**：panshu 占位侧（史实内战经典战）要举主将自己的旗，不再是叛军无字旗。
         LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideDisplayFactionId(m.f), FLAG_POLE_RATIO, FLAG_POLE_LIFT);
     }
 
+    // 敌战计向后排开的纵深队列残影（由远及近 8 阶，正后列与半步交错列层层向后铺开 168px，把一排兵衬托出后面跟着整片大军压上的纵深感）
     const DIZHAN_GHOSTS: ReadonlyArray<{ back: number; side: number; alpha: number; frStep: number }> = [
-        { back: 38, side: 15, alpha: 0.35, frStep: 0.78 },
-        { back: 28, side: 2, alpha: 0.45, frStep: 0.56 },
-        { back: 20, side: -13, alpha: 0.54, frStep: 0.36 },
-        { back: 14, side: 11, alpha: 0.62, frStep: 0.18 },
+        { back: 168, side: -13, alpha: 0.28, frStep: 0.87 },
+        { back: 148, side: 3,   alpha: 0.36, frStep: 0.75 },
+        { back: 128, side: 14,  alpha: 0.43, frStep: 0.63 },
+        { back: 108, side: -3,  alpha: 0.50, frStep: 0.51 },
+        { back: 88,  side: -14, alpha: 0.58, frStep: 0.39 },
+        { back: 68,  side: 4,   alpha: 0.65, frStep: 0.28 },
+        { back: 48,  side: 13,  alpha: 0.72, frStep: 0.17 },
+        { back: 28,  side: -2,  alpha: 0.78, frStep: 0.08 },
     ];
 
     for (const v of vis) {
@@ -341,13 +346,32 @@ export function render(this: Scene13WarLayer): void {
         const dizhanRatio = v.dizhan ?? 0;
         let dizhanFwdX = 0;
         let dizhanFwdY = 0;
+        let dizhanSideX = 0;
+        let dizhanSideY = 0;
         let dizhanInWater = false;
+        const drawDizhanGhostRank = (g: number) => {
+            const gh = DIZHAN_GHOSTS[g];
+            const sideFlip = v.zid % 2 === 0 ? 1 : -1;
+            const s = UNIT_PX * (wt?.sz ?? 1) / 64;
+            const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
+            const jitter = Math.sin(nowSecForUnits * 7.5 + v.zid * 0.7 + g * 1.6) * 1.4;
+            const sideOff = gh.side * sideFlip + jitter;
+            const gx = v.x - dizhanFwdX * gh.back + dizhanSideX * sideOff;
+            const gy = v.y - dizhanFwdY * gh.back + dizhanSideY * sideOff;
+            const gFr = (fr + Math.max(1, Math.floor(n * gh.frStep))) % n;
+            ctx.globalAlpha = v.a * dizhanRatio * gh.alpha;
+            if (dm) {
+                ctx.drawImage(img, gFr * dm.fw, 0, dm.fw, dm.fh, gx - dm.hx * s, gy - dm.hy * s, dm.fw * s, dm.fh * s);
+            } else {
+                ctx.drawImage(img, gFr * b.fh, 0, b.fh, b.fh, gx - px / 2, gy - px * 0.9, px, px);
+            }
+        };
         if (dizhanRatio > 0.01) {
             const rad = faceAngleDeg(v.dir) * (Math.PI / 180);
             dizhanFwdX = Math.cos(rad);
             dizhanFwdY = -Math.sin(rad);
-            const sideX = -dizhanFwdY;
-            const sideY = dizhanFwdX;
+            dizhanSideX = -dizhanFwdY;
+            dizhanSideY = dizhanFwdX;
             dizhanInWater = this.isWaterAt(v.x, v.y);
 
             // 1. 先铺连续不断的 DE 滚滚扬尘底带（加大尘土连续性）
@@ -355,25 +379,13 @@ export function render(this: Scene13WarLayer): void {
                 drawDizhanUnitContinuousDust(ctx, v.x, v.y, dizhanFwdX, dizhanFwdY, v.zid, nowSecForUnits, dizhanRatio * v.a, 'under');
             }
 
-            // 2. 绘制 4 道交错展开的冲锋残影（左后+右后+正后+外翼错步奔袭，视觉兵力密度翻 5 倍，「感觉人很多」）
-            const sideFlip = v.zid % 2 === 0 ? 1 : -1;
-            const s = UNIT_PX * (wt?.sz ?? 1) / 64;
-            const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
-            for (let g = 0; g < DIZHAN_GHOSTS.length; g++) {
-                const gh = DIZHAN_GHOSTS[g];
-                const jitter = Math.sin(nowSecForUnits * 8.5 + v.zid * 0.7 + g * 1.9) * 2.2;
-                const sideOff = gh.side * sideFlip + jitter;
-                const gx = v.x - dizhanFwdX * gh.back + sideX * sideOff;
-                const gy = v.y - dizhanFwdY * gh.back + sideY * sideOff;
-                const gFr = (fr + Math.max(1, Math.floor(n * gh.frStep))) % n;
-                ctx.globalAlpha = v.a * dizhanRatio * gh.alpha;
-                if (dm) {
-                    ctx.drawImage(img, gFr * dm.fw, 0, dm.fw, dm.fh, gx - dm.hx * s, gy - dm.hy * s, dm.fw * s, dm.fh * s);
-                } else {
-                    ctx.drawImage(img, gFr * b.fh, 0, b.fh, b.fh, gx - px / 2, gy - px * 0.9, px, px);
+            // 2. 向后排开的多排纵深队列残影（当后方在屏幕上方即 dizhanFwdY >= 0 时先画后排再画本体，保证前后遮挡正确）
+            if (dizhanFwdY >= 0) {
+                for (let g = 0; g < DIZHAN_GHOSTS.length; g++) {
+                    drawDizhanGhostRank(g);
                 }
+                ctx.globalAlpha = 1;
             }
-            ctx.globalAlpha = 1;
         }
 
         if (v.a < 1) ctx.globalAlpha = v.a;
@@ -393,8 +405,17 @@ export function render(this: Scene13WarLayer): void {
         }
         if (v.a < 1) ctx.globalAlpha = 1;
 
-        if (dizhanRatio > 0.01 && !dizhanInWater) {
-            drawDizhanUnitContinuousDust(ctx, v.x, v.y, dizhanFwdX, dizhanFwdY, v.zid, nowSecForUnits, dizhanRatio * v.a, 'over');
+        if (dizhanRatio > 0.01) {
+            // 当后方在屏幕下方（向上冲锋 dizhanFwdY < 0）时，后排 y 更大，在本体之后由近及远绘制以保持正确遮挡
+            if (dizhanFwdY < 0) {
+                for (let g = DIZHAN_GHOSTS.length - 1; g >= 0; g--) {
+                    drawDizhanGhostRank(g);
+                }
+                ctx.globalAlpha = 1;
+            }
+            if (!dizhanInWater) {
+                drawDizhanUnitContinuousDust(ctx, v.x, v.y, dizhanFwdX, dizhanFwdY, v.zid, nowSecForUnits, dizhanRatio * v.a, 'over');
+            }
         }
         _tDrawUnits += performance.now() - _tu0;
     }

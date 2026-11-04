@@ -1588,36 +1588,36 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zu_d_yuanchonghuan': 'WEI',   // 大明｜袁崇焕｜据点 宁远城（2026-10-25 宁远城按史改 WEI 河朔，随据点同步）
     'zubu_mogusi': 'MONGOL',   // 阻卜｜磨古斯｜据点 特尔浑
     'zuo_d_wufu': 'BASHU',   // 唐国｜吴复｜据点 清溪关
-    'bfe_sinan_pasha': 'TURKS',   // 成名战敌将｜据点 city_aidiernei
-    'bfe_qutlugh_khwaja': 'CENTRAL_ASIA',   // 成名战敌将｜据点 city_almaliq
-    'khoshut_lhasang': 'TIBET',   // 成名战敌将｜据点 city_luoxie
-    'yuan_nahachu': 'XIANBEI',   // 成名战敌将｜据点 city_yingchang
-    'baiji_shenjian': 'KOREA',   // 成名战敌将｜据点 city_jeonju
-    'dayan_cuiqianyou': 'CENTRAL',   // 成名战敌将｜据点 city_luoyang
-    'ethiopia_lebnadengel': 'ETHIOPIANS',   // 成名战敌将｜据点 city_fasil_fort
-    'houhan_lishouzhen': 'CENTRAL',   // 成名战敌将｜据点 city_tongguan
-    'dulan_azimuhan': 'PURU',   // 成名战敌将｜据点 city_baishawa
-    'buni_mathos': 'BERBER',   // 成名战敌将｜据点 city_jiataji
-    'tang_qikerang': 'CENTRAL',   // 成名战敌将｜据点 city_tongguan
-    'xiongnu_hunxiewang': 'XIANBEI',   // 成名战敌将｜据点 city_wuwei
-    'khon_wangzun': 'TIBET',   // 成名战敌将｜据点 city_sajia
-    'ansxi_surena': 'CENTRAL_ASIA',   // 成名战敌将｜据点 city_nisa
-    'dulan_muzaffarkhan': 'PURU',   // 成名战敌将｜据点 city_malisi
-    'qin_hengyi': 'CENTRAL',   // 成名战敌将｜据点 city_changan
-    'dajin_wanyaneke': 'NORTHEAST',   // 成名战敌将｜据点 city_huining
-    'kuman_tugorkan': 'CUMAN',   // 成名战敌将｜据点 city_oleshky
-    'baizanting_diaofeilusi': 'BYZANTINE',   // 成名战敌将｜据点 city_junshitandingbao
-    'zhelouqi_puliteweilajie': 'GURJARAS',   // 成名战敌将｜据点 city_ajiemier
-    'baojian_herman': 'GERMANIC',   // 成名战敌将｜据点 city_liga
-    'qi_tianji': 'CENTRAL',   // 成名战敌将｜据点 city_linzi
-    'yuenan_ruanguangzuan': 'VIETNAMESE',   // 成名战敌将｜据点 city_hoalu
-    'osman_kapadan': 'TURKS',   // 成名战敌将｜据点 city_buersa
-    'bfe_andronikos_komnenos': 'BYZANTINE',   // 成名战敌将｜据点 city_junshitandingbao
-    'tujue_abo_dagan': 'MONGOL',   // 成名战敌将｜据点 city_toumancheng
-    'xiongnu_yizhixie': 'XIANBEI',   // 成名战敌将｜据点 city_toumancheng
-    'luosi_svyatopolk': 'SLAVIC',   // 成名战敌将｜据点 city_jifu
-    'shu_masu': 'BASHU',   // 成名战敌将｜据点 city_chengdu
-    'dajin_wanyan_zhongde': 'NORTHEAST',   // 成名战敌将｜据点 city_xuanhu（蔡州＝悬瓠同一城）
+    'bfe_sinan_pasha': 'TURKS',   // 经典战敌将｜据点 city_aidiernei
+    'bfe_qutlugh_khwaja': 'CENTRAL_ASIA',   // 经典战敌将｜据点 city_almaliq
+    'khoshut_lhasang': 'TIBET',   // 经典战敌将｜据点 city_luoxie
+    'yuan_nahachu': 'XIANBEI',   // 经典战敌将｜据点 city_yingchang
+    'baiji_shenjian': 'KOREA',   // 经典战敌将｜据点 city_jeonju
+    'dayan_cuiqianyou': 'CENTRAL',   // 经典战敌将｜据点 city_luoyang
+    'ethiopia_lebnadengel': 'ETHIOPIANS',   // 经典战敌将｜据点 city_fasil_fort
+    'houhan_lishouzhen': 'CENTRAL',   // 经典战敌将｜据点 city_tongguan
+    'dulan_azimuhan': 'PURU',   // 经典战敌将｜据点 city_baishawa
+    'buni_mathos': 'BERBER',   // 经典战敌将｜据点 city_jiataji
+    'tang_qikerang': 'CENTRAL',   // 经典战敌将｜据点 city_tongguan
+    'xiongnu_hunxiewang': 'XIANBEI',   // 经典战敌将｜据点 city_wuwei
+    'khon_wangzun': 'TIBET',   // 经典战敌将｜据点 city_sajia
+    'ansxi_surena': 'CENTRAL_ASIA',   // 经典战敌将｜据点 city_nisa
+    'dulan_muzaffarkhan': 'PURU',   // 经典战敌将｜据点 city_malisi
+    'qin_hengyi': 'CENTRAL',   // 经典战敌将｜据点 city_changan
+    'dajin_wanyaneke': 'NORTHEAST',   // 经典战敌将｜据点 city_huining
+    'kuman_tugorkan': 'CUMAN',   // 经典战敌将｜据点 city_oleshky
+    'baizanting_diaofeilusi': 'BYZANTINE',   // 经典战敌将｜据点 city_junshitandingbao
+    'zhelouqi_puliteweilajie': 'GURJARAS',   // 经典战敌将｜据点 city_ajiemier
+    'baojian_herman': 'GERMANIC',   // 经典战敌将｜据点 city_liga
+    'qi_tianji': 'CENTRAL',   // 经典战敌将｜据点 city_linzi
+    'yuenan_ruanguangzuan': 'VIETNAMESE',   // 经典战敌将｜据点 city_hoalu
+    'osman_kapadan': 'TURKS',   // 经典战敌将｜据点 city_buersa
+    'bfe_andronikos_komnenos': 'BYZANTINE',   // 经典战敌将｜据点 city_junshitandingbao
+    'tujue_abo_dagan': 'MONGOL',   // 经典战敌将｜据点 city_toumancheng
+    'xiongnu_yizhixie': 'XIANBEI',   // 经典战敌将｜据点 city_toumancheng
+    'luosi_svyatopolk': 'SLAVIC',   // 经典战敌将｜据点 city_jifu
+    'shu_masu': 'BASHU',   // 经典战敌将｜据点 city_chengdu
+    'dajin_wanyan_zhongde': 'NORTHEAST',   // 经典战敌将｜据点 city_xuanhu（蔡州＝悬瓠同一城）
     'halapeng_yiba': 'BURMESE',   // 孟族｜伊巴｜据点 清坎寨
     'yuan_shidielibisi': 'KOREA',   // 大元｜石迭里必思｜据点 星主厅（耽罗）
     'muwaxide_axatafu': 'BERBER',   // 穆瓦希德｜阿夏塔夫｜据点 拉巴特

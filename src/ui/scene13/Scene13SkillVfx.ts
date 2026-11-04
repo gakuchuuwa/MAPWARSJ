@@ -137,6 +137,7 @@ const sixSmallLoading = new Set<TacticalSixSet>();
 const sixSmallBadgeCache = new Map<string, HTMLCanvasElement>();
 
 function getSixSmallSkillIconBadge(six: TacticalSixSet, paid = false): HTMLCanvasElement | null {
+    if (six === 'dizhan' || six === 'hunzhan' || six === 'shengzhan') return null;
     const cacheKey = `${six}_${paid ? 1 : 0}`;
     const existing = sixSmallBadgeCache.get(cacheKey);
     if (existing) return existing;
@@ -1284,15 +1285,15 @@ export function drawDizhanUnitContinuousDust(
     const sideX = -fwdY;
     const sideY = fwdX;
     if (layer === 'under') {
-        const PUFF_COUNT = 7;
+        const PUFF_COUNT = 9;
         for (let k = 0; k < PUFF_COUNT; k++) {
-            const phase = (nowSec * 3.5 + zid * 0.23 + k / PUFF_COUNT) % 1;
+            const phase = (nowSec * 3.2 + zid * 0.23 + k / PUFF_COUNT) % 1;
             const bell = Math.sin(phase * Math.PI);
-            const backDist = 3 + phase * 50;
-            const laneSpread = ((k % 3) - 1) * (9 + phase * 7) + Math.sin(nowSec * 6 + zid + k * 1.9) * 3;
+            const backDist = 6 + phase * 172;
+            const laneSpread = ((k % 3) - 1) * (10 + phase * 8) + Math.sin(nowSec * 6 + zid + k * 1.9) * 3;
             const px = x - fwdX * backDist + sideX * laneSpread;
             const py = y - fwdY * backDist + sideY * laneSpread + 3;
-            const sc = 1.05 + phase * 0.48;
+            const sc = 1.08 + phase * 0.52;
             drawDeDustFrame(
                 ctx,
                 k % 2 === 0 ? 'UNIT_DUST' : 'UNIT_DUST_LIGHT',
@@ -1306,14 +1307,14 @@ export function drawDizhanUnitContinuousDust(
             );
         }
     } else {
-        for (let k = 0; k < 2; k++) {
-            const phase = (nowSec * 3.8 + zid * 0.31 + k * 0.5) % 1;
+        for (let k = 0; k < 3; k++) {
+            const phase = (nowSec * 3.6 + zid * 0.31 + k / 3) % 1;
             const bell = Math.sin(phase * Math.PI);
-            const backDist = 6 + phase * 26;
-            const laneSpread = (k === 0 ? 1 : -1) * (7 + phase * 6);
+            const backDist = 10 + phase * 135;
+            const laneSpread = ((k % 3) - 1) * (9 + phase * 6);
             const px = x - fwdX * backDist + sideX * laneSpread;
             const py = y - fwdY * backDist + sideY * laneSpread + 2;
-            const sc = 0.92 + phase * 0.32;
+            const sc = 0.94 + phase * 0.35;
             drawDeDustFrame(
                 ctx,
                 'UNIT_DUST_LIGHT',

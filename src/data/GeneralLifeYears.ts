@@ -383,11 +383,11 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     erzhu_erzhuzhao: { birth: 500, death: 533, kaoju: '推定' },   // 尔朱兆
     gaoqi_d_xiaogui: { birth: 500, death: 556, kaoju: '推定' },   // 萧轨
     yuwen_yuwenxian: { birth: 544, death: 578 },                  // 宇文宪
-    // 🔴 2026-10-20 成名战补敌将
+    // 🔴 2026-10-20 经典战补敌将
     sashan_khosrow_ii: { birth: 570, death: 628, kaoju: '推定' },   // 霍斯劳二世（萨珊末代雄主）
     sui_yuwenshu: { birth: 546, death: 616 },                      // 宇文述（隋，萨水主帅）
     tujue_xielikehan: { birth: 580, death: 634, kaoju: '推定' },    // 颉利可汗（东突厥末代大可汗）
-    // 🔴 2026-10-20 成名战补敌将（生卒史料不全者按「推定」）
+    // 🔴 2026-10-20 经典战补敌将（生卒史料不全者按「推定」）
     sashan_beilusi: { birth: 440, death: 484, kaoju: '推定' },        // 卑路斯一世（484 赫拉特之战战死）
     luoma_xiageliwusi: { birth: 430, death: 487, kaoju: '推定' },     // 西阿格里乌斯（486 苏瓦松战败，487 被杀）
     tuoba_yuanying: { birth: 460, death: 510, kaoju: '推定' },        // 元英（北魏中山王）

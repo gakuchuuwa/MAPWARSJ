@@ -89,8 +89,8 @@ type Scene13GateUnit = { troops?: number; generalId?: string | null; unitType?: 
 
 /**
  * 🔴 [2026-10-31 主人令「对手是叛军为什么还进入战术模式了？战术模式双方必须是武将」]
- *    这一方是不是「真武将」：有实名武将（军团 generalId／成名战守将／城池守将），且不是叛军（panshu，无主状态、没有武将）。
- *    进战术模式的**硬门槛**，剧本战、成名战、普通战一律适用（原来剧本/成名战会绕过武将判定）。
+ *    这一方是不是「真武将」：有实名武将（军团 generalId／经典战守将／城池守将），且不是叛军（panshu，无主状态、没有武将）。
+ *    进战术模式的**硬门槛**，剧本战、经典战、普通战一律适用（原来剧本/经典战会绕过武将判定）。
  */
 function sideHasRealGeneral(u: Scene13GateUnit): boolean {
     if (isBlankRebelFaction(u.factionId) && !isStoryOrFirstBattleUnit(u)) return false;

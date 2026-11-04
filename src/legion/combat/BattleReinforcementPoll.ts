@@ -50,7 +50,7 @@ export function legionMatchesFaction(legion: Army, fId: string | null | undefine
 
 /**
  * 同势力合并的唯一判据：开战瞬间（攻城/野战）与战斗中途轮询共用这一个函数。
- * 规则：同势力、在开战圈内、没在别的战斗里 → 合并；只豁免剧本/成名战专属军团。
+ * 规则：同势力、在开战圈内、没在别的战斗里 → 合并；只豁免剧本/经典战专属军团。
  * @param battleField 中途轮询时传入（防重复编入、守方按在场守军认旗）；开战瞬间战场未建，不传
  */
 export function isEligibleReinforcement(

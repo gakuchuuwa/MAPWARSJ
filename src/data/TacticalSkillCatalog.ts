@@ -324,7 +324,7 @@ const ENHANCE: TacticalSkillEntry[] = [
         displayName: '一鼓作气', sourceQuote: '《左传·庄公十年》：“夫战，勇气也。一鼓作气，再而衰，三而竭。”',
         baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 0.5, engineStatus: 'ready',
-        note: '出征成名战×1.25（桥接 ally_mult_1_2 + first_sortie 门控）；契合名将远征成名战爆发看点',
+        note: '出征首战×1.25（桥接 ally_mult_1_2 + first_sortie 门控）；契合名将远征首战爆发看点',
     },
     {
         id: 'ts_815', ownerName: '三十六计', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 815,

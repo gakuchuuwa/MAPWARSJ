@@ -684,7 +684,7 @@ export class LegionManager {
             armyAny.isFirstBattleFieldEnemy
         ) return 'skipped';
 
-        // 成名战攻城专属锁定：成名战攻城军团只攻指定成名战目标城，且成名战锁定中的目标城不允许非成名战军团抢攻
+        // 经典战攻城专属锁定：经典战攻城军团只攻指定经典战目标城，且经典战锁定中的目标城不允许非经典战军团抢攻
         if (armyAny.isFirstBattleHero && armyAny.firstBattleTargetCityId && targetCity.id !== armyAny.firstBattleTargetCityId) {
             return 'skipped';
         }

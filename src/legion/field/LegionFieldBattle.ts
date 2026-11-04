@@ -121,7 +121,7 @@ export function tryEngageFieldBattle(
     if (army.scriptMarchExempt) return false;
 
     const armyAny = army as any;
-    // 成名战攻城军团（有明确成名战攻城目标城）不主动触发任何野战
+    // 经典战攻城军团（有明确经典战攻城目标城）不主动触发任何野战
     if (
         armyAny.isFirstBattleSiegeEnemy ||
         (armyAny.isFirstBattleHero && armyAny.firstBattleTargetCityId && !armyAny.forceFirstBattleField)
@@ -152,14 +152,14 @@ export function tryEngageFieldBattle(
         if (otherArmy.scriptMarchExempt) continue;
 
         const otherAny = otherArmy as any;
-        // 成名战攻城军团不能被第三方拖入野战
+        // 经典战攻城军团不能被第三方拖入野战
         if (
             otherAny.isFirstBattleSiegeEnemy ||
             (otherAny.isFirstBattleHero && otherAny.firstBattleTargetCityId && !otherAny.forceFirstBattleField)
         ) {
             continue;
         }
-        // 成名战野战配对锁定：玩家成名战军团与成名战专属敌军只能互相交战，绝不允许第三方军团截胡
+        // 经典战野战配对锁定：玩家经典战军团与经典战专属敌军只能互相交战，绝不允许第三方军团截胡
         if (armyAny.isFirstBattleHero && armyAny.firstBattlePairEnemyId && otherArmy.id !== armyAny.firstBattlePairEnemyId) {
             continue;
         }
@@ -256,7 +256,7 @@ function startFieldBattleBetween(
     if (!attFaction || !defFaction || attFaction === defFaction) return;
 
     // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 播报里的势力名取**显示势力**：
-    //    成名战「同势力→无字叛军 panshu 占位」时不许播成「叛军」，要播武将自己的势力（判定仍用 getFactionId）。
+    //    经典战「同势力→无字叛军 panshu 占位」时不许播成「叛军」，要播武将自己的势力（判定仍用 getFactionId）。
     const displayFactionOf = (l: Army): string =>
         (l as unknown as { getDisplayFactionId?: () => string }).getDisplayFactionId?.() ?? l.getFactionId();
 
@@ -320,8 +320,8 @@ function startFieldBattleBetween(
     const attName = deps.getCityManager().getFactionName(attFaction);
     const defName = deps.getCityManager().getFactionName(defFaction);
     // 🔴 [2026-10-27 主人令「成名战战败，应该军队战败，玩家脱离势力，去下一家」]
-    //    原来这里把成名战写死成「我方必胜」（`firstBattlePreset`）——战术里打输了也被判成打赢，
-    //    军团照旧发奖励、继续打下一座城。现在成名战**不预设胜负**：打输就是打输，按战败收场
+    //    原来这里把经典战写死成「我方必胜」（`firstBattlePreset`）——战术里打输了也被判成打赢，
+    //    军团照旧发奖励、继续打下一座城。现在经典战**不预设胜负**：打输就是打输，按战败收场
     //    （见 PlayerQuestSystem.failFirstBattle）。剧本 21 场写死胜负的历史战役走 isScriptArmy 那条链路，不受影响。
     const firstBattlePreset: 'attacker_win' | 'defender_win' | undefined = undefined;
     const firstBattleTitle = (firstBattleHero as { firstBattleTitle?: string } | null)?.firstBattleTitle;

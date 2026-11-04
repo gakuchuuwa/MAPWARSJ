@@ -81,10 +81,10 @@ export function assignSiegeGarrisonTier(
     // 清理旧缓存（防连战残留）
     clearSiegeGarrisonBoost(city);
 
-    // 武将首次会面·历史成名战攻城：若指定了成名战敌将，则强制由该成名战敌将守城（不受锚点城或冷却限制）
+    // 武将首次会面·历史经典战攻城：若指定了经典战敌将，则强制由该经典战敌将守城（不受锚点城或冷却限制）
     const fbDefenderId = (city as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId;
     if (fbDefenderId) {
-        // 🔴 保留 _firstBattleDefenderGeneralId 直至成名战结算（由 PlayerQuestSystem.cleanupFirstBattleState 清理），防中途重判/援军 reconcile 丢失成名战守将
+        // 🔴 保留 _firstBattleDefenderGeneralId 直至经典战结算（由 PlayerQuestSystem.cleanupFirstBattleState 清理），防中途重判/援军 reconcile 丢失经典战守将
         const fbDefender = getGeneralRecordByGeneralId(fbDefenderId);
         if (fbDefender) {
             city._siegeGarrisonGeneralId = fbDefender.generalId;
@@ -98,7 +98,7 @@ export function assignSiegeGarrisonTier(
         return;
     }
 
-    // 守城成名战（玩家随武将守城）：主将与精锐已由守城成名战军团承担，城防不再叠挂同城第二名武将
+    // 守城经典战（玩家随武将守城）：主将与精锐已由守城经典战军团承担，城防不再叠挂同城第二名武将
     const fbHeroLegion = defendingLegions.find((l) => (l as { isFirstBattleHero?: boolean }).isFirstBattleHero);
     if (fbHeroLegion) {
         const eliteName = getCityEliteLegionName(city.id, fbHeroLegion.generalId ?? undefined);

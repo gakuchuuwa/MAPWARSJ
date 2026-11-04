@@ -492,7 +492,7 @@ export class CameraFollowUI {
         }
 
         // 🔴 [2026-10-26 主人令「军团排行榜中，不要显示叛军的信息，没有意义」] 势力一律取**显示势力**
-        //    （武将自己的势力）：成名战「敌势力＝本方势力」时引擎拿 panshu 占位，显示层不许出现「叛军」。
+        //    （武将自己的势力）：经典战「敌势力＝本方势力」时引擎拿 panshu 占位，显示层不许出现「叛军」。
         const displayFactionIdOf = (a: any): string =>
             (a.getDisplayFactionId?.() ?? '') || (a.getFactionId?.() ?? '');
         // 按所属势力据点数降序（据点相同按 factionId 字典序，避免兵力波动导致频繁跳动）

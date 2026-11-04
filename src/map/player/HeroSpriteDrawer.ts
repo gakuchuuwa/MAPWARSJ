@@ -58,7 +58,6 @@ export class HeroSpriteDrawer {
             this.drawLabel(ctx, center, name, scale);
             return;
         }
-        if (factionId) LegionPhalanxDrawer.prewarmUnitDirInWorker(key, assets, factionId, d, 8);
         const img = factionId ? SpriteTinter.getTintedSprite(raw, factionId) : raw;
         const dynEntry = assets.dyn?.[setName];
         const dynDir = dynEntry?.dirs?.[String(d)];

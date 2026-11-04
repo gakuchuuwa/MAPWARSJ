@@ -10457,7 +10457,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/ORIE/图兰沙.png": {
+        "/assets/ORIE/__多余__ORIE_01.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -14
@@ -10467,7 +10467,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/PORTUGUESE/拉波索.png": {
+        "/assets/PORTUGUESE/__多余__PORTUGUESE_01.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 14

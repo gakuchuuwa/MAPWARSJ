@@ -51,7 +51,7 @@ export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event' | 'first_
 
 /**
  * 🔴 [2026-10-25 主人令「不新增出发点，攻城战就去攻打的城，野战就去战场，防守战就原地」]
- * 远距成名战（武将本城→战场 >300km）的接任务地点 —— **不新增任何地图实体**：
+ * 远距经典战（武将本城→战场 >300km）的接任务地点 —— **不新增任何地图实体**：
  *   · 攻城战攻方＝去被攻的那座城（targetCityId）；
  *   · 野战（不论攻守）＝去战场坐标（targetLat/targetLng）；
  *   · 守城战守方＝原地（返回 null，走旧的城中对话）。
@@ -138,7 +138,7 @@ export interface PlayerQuest {
         /** 终局一路（战场 → 终局落点）：没有战斗，抵达即结束；只有末场战后才会有 */
         terminal?: boolean;
     };
-    /** 武将首次会面·历史成名战状态 */
+    /** 武将首次会面·历史经典战状态 */
     firstBattle?: {
         battleName: string;
         battleType: 'field' | 'siege';
@@ -151,9 +151,9 @@ export interface PlayerQuest {
         enemyFactionId: string;
         enemyTroops: number;
         enemyGeneralId?: string;
-        /** 野战成名战打赢后按史实指定的奖励据点 */
+        /** 野战经典战打赢后按史实指定的奖励据点 */
         rewardCityId?: string;
-        /** 野战成名战：敌军等攻方抵达战场才生成（生成前为 true） */
+        /** 野战经典战：敌军等攻方抵达战场才生成（生成前为 true） */
         enemySpawnPending?: boolean;
         enemyLegionName?: string;
         enemyPortrait?: string;
@@ -217,10 +217,10 @@ export const ENLIST_OPTION_LABEL = '⚔ 入伍随军';
 /**
  * 🔴 [2026-10-27 主人令「所有成名战攻守双方兵力必须上万；不上万的兵力不能算经典战役、也不算成名战
  *    （斯巴达三百不能只放三百）；但不要超过六万，不然打的时间太长」]
- * 成名战兵力一律夹进 `[FIRST_BATTLE_MIN_TROOPS, FIRST_BATTLE_MAX_TROOPS]`：
+ * 经典战兵力一律夹进 `[FIRST_BATTLE_MIN_TROOPS, FIRST_BATTLE_MAX_TROOPS]`：
  *   ① 先按**原有比例整体缩放**——史书里的强弱比（10 万 vs 5 万）要保住；
  *   ② 比例太极端（如凑川 800 : 30000，整体缩放任一边都会破区间）时退化为**各自夹取**，
- *      宁可丢强弱比，也绝不出现几百人的「成名战」、也不会超过上限拖时间。
+ *      宁可丢强弱比，也绝不出现几百人的「经典战」、也不会超过上限拖时间。
  * 🔴 [2026-10-29 主人令「为了开局不那么逆天，所有成名战兵力都改为最多 2 万」] 上限现为 2 万（见 GameConfig）。
  */
 export function clampFirstBattleTroops(my: number, enemy: number): { myTroops: number; enemyTroops: number } {
@@ -363,7 +363,7 @@ export class PlayerQuestSystem {
             if (c.factionId) this.initialFaction.set(c.id, c.factionId);
         }
         deps.hero.onArriveCity = (city) => this.onArrive(city);
-        // 🔴 [2026-10-21 主人令「不要让他出城，还要处理出了城的问题」] 进行中的成名战预置敌将不许被据点掷出去领兵
+        // 🔴 [2026-10-21 主人令「不要让他出城，还要处理出了城的问题」] 进行中的经典战预置敌将不许被据点掷出去领兵
         setReservedGeneralIdsProvider(() => {
             const id = this.quest?.kind === 'first_battle' ? this.quest.firstBattle?.enemyGeneralId : undefined;
             return id ? new Set([id]) : new Set<string>();
@@ -553,7 +553,7 @@ export class PlayerQuestSystem {
 
     /**
      * 一据点多武将选人（2026-10-19 主人定「一个据点，一个势力，可以多个武将，一个武将一支精锐」）：
-     * 从据点的全部在场武将中挑出最合适与玩家会面的一位（优先尚未拜访、尚未打成名战、名将）。
+     * 从据点的全部在场武将中挑出最合适与玩家会面的一位（优先尚未拜访、尚未打经典战、名将）。
      */
     private pickCityGeneralForPlayer(
         cityId: string,
@@ -621,8 +621,8 @@ export class PlayerQuestSystem {
         this.headingToEventGeneralId = null;
         const hero = this.deps.hero;
         if (hero.isAttached()) return;
-        // 🔴 [2026-10-25 主人令「攻城战就去攻打的城」] 远距成名战：玩家自己走到了被攻的城（接任务点）
-        //    → 先弹这位名将的成名战，不让该城的守将抢先。
+        // 🔴 [2026-10-25 主人令「攻城战就去攻打的城」] 远距经典战：玩家自己走到了被攻的城（接任务点）
+        //    → 先弹这位名将的经典战，不让该城的守将抢先。
         if (this.pendingFrontGeneralId) {
             const frontGid = this.pendingFrontGeneralId;
             const spot = this.firstBattleFrontSpot(frontGid);
@@ -636,7 +636,7 @@ export class PlayerQuestSystem {
         this.headingTargetGeneralId = null;
         // 🔴 [2026-09-09 主人定「找武将：认人不认城，如果武将出征，就直接去找出征的武将」]
         //    哪怕这座城是一据点多武将（城里还有别的留守副将），只要玩家原本要找的这位主将（intended）
-        //    已经率军出征在外，就优先追去他军中会面，绝不因为城里还有别人或有远距成名战而放弃追击。
+        //    已经率军出征在外，就优先追去他军中会面，绝不因为城里还有别人或有远距经典战而放弃追击。
         const intendedArmy = intended ? this.armyOfGeneral(intended.generalId) : null;
         if (intended && intendedArmy) {
             this.chaseCityId = city.id;
@@ -648,8 +648,8 @@ export class PlayerQuestSystem {
         const g = (intended && !intendedArmy) ? intended : this.generalInCity(city.id);
         if (!g) {
             const anchored = intended;
-            // 🔴 [2026-10-25 主人令「不去武将所在点」] 他本人没带军团在外，且成名战场离本城 >300km：
-            //    本城只指路（去被攻的城／去战场），不在这儿原地触发成名战。
+            // 🔴 [2026-10-25 主人令「不去武将所在点」] 他本人没带军团在外，且经典战场离本城 >300km：
+            //    本城只指路（去被攻的城／去战场），不在这儿原地触发经典战。
             if (anchored && this.firstBattleFrontSpot(anchored.generalId)) {
                 const fb = this.hasPendingFirstBattle(anchored.generalId);
                 if (fb) {
@@ -713,10 +713,10 @@ export class PlayerQuestSystem {
             }
         }
 
-        // 武将首次会面·历史成名战：第一次找到武将时触发真实历史场景对话，配备历史兵力直奔战场
+        // 武将首次会面·历史经典战：第一次找到武将时触发真实历史场景对话，配备历史兵力直奔战场
         const fb = this.hasPendingFirstBattle(g.generalId);
         if (fb) {
-            // 🔴 [2026-10-25 主人令「不去武将所在点」] 成名战场离本城 >300km → 他已在打仗的地方，
+            // 🔴 [2026-10-25 主人令「不去武将所在点」] 经典战场离本城 >300km → 他已在打仗的地方，
             //    本城不再原地触发，只把玩家指过去（攻城战＝被攻的城；野战＝战场）。
             if (this.firstBattleFrontSpot(g.generalId)) {
                 this.showFirstBattleFrontRedirect(city, g, portrait, this.deps.cityManager.getFactionName(original), fb);
@@ -1771,7 +1771,7 @@ export class PlayerQuestSystem {
     private pickCampaignTarget(city: City, myFactionId?: string): City | null {
         const faction = myFactionId ?? city.factionId;
         const myStyle = city.buildingStyle;
-        // 🔴 [2026-10-29 主人报「据点还是蜀国，姜维却可以无限穿插」] 成名战打完以战场旁的据点为起点找下一个目标，
+        // 🔴 [2026-10-29 主人报「据点还是蜀国，姜维却可以无限穿插」] 经典战打完以战场旁的据点为起点找下一个目标，
         //    起点本身若是敌城（洮西之战后的武都＝魏城、四周全是蜀城），原来会把它排除在外、往远处找，
         //    军团就绕过眼前的敌城在己方境内穿行。起点是敌城就先打它。
         if (city.factionId && city.factionId !== faction) return city;
@@ -1949,7 +1949,7 @@ export class PlayerQuestSystem {
         this.emitChange();
     }
 
-    // ── 武将首次会面·历史成名战（2026-10-18 主人定）────────────────────
+    // ── 武将首次会面·历史经典战（2026-10-18 主人定）────────────────────
     private hasPendingFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {
         if (!generalId) return null;
         if (this.deps.hero.autoPlan === 'script') return null;
@@ -1959,7 +1959,7 @@ export class PlayerQuestSystem {
 
     /**
      * 🔴 [2026-10-25 主人令「不新增出发点，攻城战就去攻打的城，野战就去战场，防守战就原地」]
-     * **远距成名战的接任务地点**（只判 >300km 的；300km 以内照旧去武将本城接、短线行军过去）：
+     * **远距经典战的接任务地点**（只判 >300km 的；300km 以内照旧去武将本城接、短线行军过去）：
      *   · 守城战（siege/defender）→ null（原地，他本就在城里守）；
      *   · 攻城战攻方 → 被攻的那座城（targetCityId）；
      *   · 野战（攻守都算）→ 战场坐标（targetLat/targetLng）。
@@ -1996,7 +1996,7 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 玩家走到「野战战场」这个点（不是据点）：在这儿接该将成名战。
+     * 玩家走到「野战战场」这个点（不是据点）：在这儿接该将经典战。
      * 🔴 [2026-10-25 主人令] 野战就去战场 —— 军团就地就位，不再把玩家瞬移回本城。
      */
     private onArriveFirstBattleFront(generalId: string): void {
@@ -2007,7 +2007,7 @@ export class PlayerQuestSystem {
         if (!fb || !home) return;
         const rec = getGeneralRecordByGeneralId(generalId);
         // 🔴 [2026-10-29 主人「现在好像有两段对话，是不是重复了」] 在本城那段已经答应「前往会合」，
-        //    到了前线不再问第二遍（原来这里又弹一次成名战对话），直接会合开拔。
+        //    到了前线不再问第二遍（原来这里又弹一次经典战对话），直接会合开拔。
         const generalName = rec?.generalName ?? '将军';
         const spotLabel = this.firstBattleFrontSpot(generalId)?.label ?? home.name;
         this.deps.notify(`⚔ 于【${spotLabel}】与${generalName}会合，同赴${fb.battleName}`);
@@ -2015,7 +2015,7 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 武将已率军赴前线：在他的本城只**指路**（去被攻的城／去战场），不在原地接成名战。
+     * 武将已率军赴前线：在他的本城只**指路**（去被攻的城／去战场），不在原地接经典战。
      * 否则玩家跑到本城接任务，又会被旧逻辑把整支军团瞬移到战场。
      */
     private showFirstBattleFrontRedirect(
@@ -2030,7 +2030,7 @@ export class PlayerQuestSystem {
             this.showFirstBattleDialogue(city, g, portrait, factionName, fb, null);
             return;
         }
-        // 成名战的史实台词并到这一段里讲完：到了前线不再弹第二段对话（见 onArriveFirstBattleFront）
+        // 经典战的史实台词并到这一段里讲完：到了前线不再弹第二段对话（见 onArriveFirstBattleFront）
         const generalLines = fb.introLines.filter((l) => l.speaker === 'general').map((l) => l.text);
         const gather = `某已传令三军向【${spot.label}】集结，壮士先往【${spot.label}】与某会合，同赴此战。`;
         this.deps.showDialogue({
@@ -2049,7 +2049,7 @@ export class PlayerQuestSystem {
         });
     }
 
-    /** 玩家出发去远距成名战的接任务点（攻城＝被攻的城；野战＝战场坐标） */
+    /** 玩家出发去远距经典战的接任务点（攻城＝被攻的城；野战＝战场坐标） */
     private travelToFirstBattleFront(generalId: string): void {
         this.deps.closeDialogue();
         const hero = this.deps.hero;
@@ -2119,7 +2119,7 @@ export class PlayerQuestSystem {
         this.headingToEventGeneralId = null;
 
         const myFactionId = getFactionIdOfGeneral(g.generalId) || existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
-        // 🔴 [2026-10-27 主人令] 成名战双方兵力必须上万；🔴 [2026-10-29] 上限改 2 万（见 clampFirstBattleTroops 头注）
+        // 🔴 [2026-10-27 主人令] 经典战双方兵力必须上万；🔴 [2026-10-29] 上限改 2 万（见 clampFirstBattleTroops 头注）
         const { myTroops, enemyTroops } = clampFirstBattleTroops(fb.myTroops, fb.enemyTroops);
 
         // 🔴 [2026-10-25 主人令「攻城战就去攻打的城，野战就去战场」] 会面在前线时，这位武将若已带兵在别处，
@@ -2190,7 +2190,7 @@ export class PlayerQuestSystem {
         }
         const isOnTheSpot = getEuclideanDistance(host.getPosition(), targetPos) <= 0.12;
 
-        // 🔴 [2026-10-25 主人令「删除起义势力」] 成名战敌势力与本方相同（史实内战）时的兜底改用「叛军」`panshu`
+        // 🔴 [2026-10-25 主人令「删除起义势力」] 经典战敌势力与本方相同（史实内战）时的兜底改用「叛军」`panshu`
         //    （特殊势力、无字旗），不再用已删除的起义占位势力 `panjun`。
         const enemyFactionId = fb.enemyFactionId !== myFactionId ? fb.enemyFactionId : 'panshu';
         const existingEnemyGen =
@@ -2198,7 +2198,7 @@ export class PlayerQuestSystem {
             (enemyFactionId !== 'panshu' ? getFactionGeneral(enemyFactionId) : null);
         const enemyGeneralId = existingEnemyGen?.generalId;
         // 🔴 [2026-11-03 主人令「北魏和拓跋魏合并」] 同一势力只许一个名字：按敌势力 id 取现行势力名，
-        //    成名战表里抄的 enemyFactionName（北魏/北宋/唐朝…旧称）只在势力不存在时兜底
+        //    经典战表里抄的 enemyFactionName（北魏/北宋/唐朝…旧称）只在势力不存在时兜底
         const enemyFactionName = FACTIONS.find((f) => f.id === fb.enemyFactionId)?.name ?? fb.enemyFactionName;
         const enemyDisplayName = existingEnemyGen?.generalName ?? `${enemyFactionName}军`;
         // 兜底势力 `panshu` 没有武将/军团，军团名按敌将或敌势力泛称拼，不再叫「起义军团」
@@ -2210,7 +2210,7 @@ export class PlayerQuestSystem {
         let enemyArmyId: string | undefined;
         if (effectiveBattleType === 'field') {
             // 🔴 [2026-10-21 主人令「防守方不需要显示，只等攻击方抵达后直接显示战术模式」]
-            //    野战成名战的敌军不再开局就摆在战场上等；攻方抵达战场时才生成（spawnFirstBattleFieldEnemy），随即接战进战术模式。
+            //    野战经典战的敌军不再开局就摆在战场上等；攻方抵达战场时才生成（spawnFirstBattleFieldEnemy），随即接战进战术模式。
             (host as Army & { forceFirstBattleField?: boolean }).forceFirstBattleField = true;
         } else if (role === 'defender') {
             const defendedCity = targetCity ?? city;
@@ -2237,7 +2237,7 @@ export class PlayerQuestSystem {
             if (enemyArmy) {
                 enemyArmy.setTroops(enemyTroops);
                 enemyArmy.isElite = true;
-                // 🔴 [2026-10-24 修「攻方卡片挂守方精锐」] 成名战敌军由拟名／战场人物挂帅，没有武将精锐档案；
+                // 🔴 [2026-10-24 修「攻方卡片挂守方精锐」] 经典战敌军由拟名／战场人物挂帅，没有武将精锐档案；
                 //    若按出身城兜底会拿被围城（守方）的精锐。与战场事件军团同一口径：番号按**本军势力**挂 eliteOverride。
                 const enemyElite = getExpeditionEliteConfig(enemyFactionId);
                 if (enemyElite) enemyArmy.eliteOverride = enemyElite;
@@ -2315,7 +2315,7 @@ export class PlayerQuestSystem {
                 ? `⚔️ 随【${g.generalName}】率军 ${myTroops} 于【${fb.targetName}】${roleLabel}（迎战 ${enemyDisplayName} ${enemyTroops} 军）`
                 : `⚔️ 随【${g.generalName}】率军 ${myTroops} 直奔【${fb.battleName}】（迎战 ${enemyDisplayName} ${enemyTroops} 军）`,
         );
-        gameLog('expedition', `[玩家] 武将历史成名战：${g.generalName}(${myTroops}, ${role}) ${roleLabel}【${fb.battleName}】vs ${enemyDisplayName}(${enemyTroops})`);
+        gameLog('expedition', `[玩家] 武将历史经典战：${g.generalName}(${myTroops}, ${role}) ${roleLabel}【${fb.battleName}】vs ${enemyDisplayName}(${enemyTroops})`);
         this.emitChange();
     }
 
@@ -2428,8 +2428,8 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 撤回已带兵在外的成名战敌将：兵力归还出身据点（同势力才还），军团解散。
-     * force=false 时正在战斗的不动（等抵达战场那一刻再强制撤）；成名战自己的敌军、玩家随军不碰。
+     * 撤回已带兵在外的经典战敌将：兵力归还出身据点（同势力才还），军团解散。
+     * force=false 时正在战斗的不动（等抵达战场那一刻再强制撤）；经典战自己的敌军、玩家随军不碰。
      */
     private recallEnemyGeneralFieldArmy(generalId: string, force: boolean): void {
         const lm = this.deps.legionManager;
@@ -2445,12 +2445,12 @@ export class PlayerQuestSystem {
         }
     }
 
-    /** 野战成名战：攻方抵达战场时才生成敌军，贴在攻方身边，接战即进战术模式 */
+    /** 野战经典战：攻方抵达战场时才生成敌军，贴在攻方身边，接战即进战术模式 */
     private spawnFirstBattleFieldEnemy(q: PlayerQuest, host: Army): void {
         const fbState = q.firstBattle;
         if (!fbState) return;
         fbState.enemySpawnPending = false;
-        // 🔴 [2026-10-21] 接任务时他在战斗中没撤成的，到这里强制撤掉，保证只有成名战这一个
+        // 🔴 [2026-10-21] 接任务时他在战斗中没撤成的，到这里强制撤掉，保证只有经典战这一个
         if (fbState.enemyGeneralId) this.recallEnemyGeneralFieldArmy(fbState.enemyGeneralId, true);
         const hPos = host.getPosition();
         const spawnPos = { lat: hPos.lat, lng: hPos.lng + 0.03 };
@@ -2468,7 +2468,7 @@ export class PlayerQuestSystem {
         if (!enemyArmy) return;
         enemyArmy.setTroops(fbState.enemyTroops);
         enemyArmy.isElite = true;
-        // 🔴 [2026-10-24 修「攻方卡片挂守方精锐」] 成名战敌军由拟名／战场人物挂帅，没有武将精锐档案；
+        // 🔴 [2026-10-24 修「攻方卡片挂守方精锐」] 经典战敌军由拟名／战场人物挂帅，没有武将精锐档案；
         //    若按出身城兜底会拿被攻城（守方）的精锐（例：葡萄牙攻伊瓜苏，攻方卡片显示「传教区军」）。
         //    与战场事件军团同一口径：番号按**本军势力**挂 eliteOverride，精锐不随被攻的城。
         const enemyElite = getExpeditionEliteConfig(fbState.enemyFactionId);
@@ -2525,7 +2525,7 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 成名战结束后衔接：无论成名战是野战/攻城、本地防守/进攻，打完后确保武将保有至少 10,000 兵力的出征军团，
+     * 经典战结束后衔接：无论经典战是野战/攻城、本地防守/进攻，打完后确保武将保有至少 10,000 兵力的出征军团，
      * 向下一座敌方据点发出普通行军命令；此后回援、收复和改选目标均按普通军团规则处理。
      */
     private completeFirstBattleAndContinueCampaign(q: PlayerQuest, host: Army): void {
@@ -2548,7 +2548,7 @@ export class PlayerQuestSystem {
         }
 
         // 🔴 [2026-10-29 主人令「按历史走，野战的后续要不要奖励据点，按历史走」] 推翻 10-20「所有野战剧情结束后要有据点奖励」：
-        //    野战成名战打赢后，只有史实记载这一仗拿下了某座城（数据里写了 rewardCityId，如牧野之战入朝歌）才给据点；
+        //    野战经典战打赢后，只有史实记载这一仗拿下了某座城（数据里写了 rewardCityId，如牧野之战入朝歌）才给据点；
         //    没写的一律不给，也不再「就近取一座」或把目标据点硬划过来（如洮西之战，姜维只是大破王经，并未夺城）。
         let fieldRewardCity: City | undefined;
         if (fbState?.battleType === 'field' && fbState.rewardCityId) {
@@ -2562,12 +2562,12 @@ export class PlayerQuestSystem {
                         { skipCaptureLog: true },
                     );
                     this.deps.notify(`🏆 【${fbState.battleName}】大捷，获得据点【${reward.name}】`);
-                    gameLog('expedition', `[玩家] 野战成名战奖励据点（按史）：${q.generalName} ${fbState.battleName} → ${reward.name}`);
+                    gameLog('expedition', `[玩家] 野战经典战奖励据点（按史）：${q.generalName} ${fbState.battleName} → ${reward.name}`);
                 }
             }
         }
 
-        // 确保成名战后出征军团兵力充足（至少 10,000 人），绝不因战损低于 5,000 而在本城解散
+        // 确保经典战后出征军团兵力充足（至少 10,000 人），绝不因战损低于 5,000 而在本城解散
         const minContinueTroops = Math.max(10000, Math.min(fbState?.myTroops ?? 20000, 20000));
         if (host.getTroops() < minContinueTroops) {
             host.setTroops(minContinueTroops);
@@ -2577,7 +2577,7 @@ export class PlayerQuestSystem {
         host.stopMovement(false);
         host.isRetreatingHome = false;
         host.weakCheckAfterBattle = false;
-        // 🔴 [2026-10-21 主人报「姬发每次打完剧情都卡，战术模式结束后立马又战术模式」] 成名战一打完就直扑邻近敌城，
+        // 🔴 [2026-10-21 主人报「姬发每次打完剧情都卡，战术模式结束后立马又战术模式」] 经典战一打完就直扑邻近敌城，
         //    前一场战术场景还没收干净，下一场攻城战的战术场景又进来 → 卡住。打完留一段休整（游戏秒），先让战术场景收尾再出征。
         host.startPostBattleRest();   // 用现有的战后驻留设定（GameConfig TIME.POST_BATTLE_REST），不另起时长
 
@@ -2614,8 +2614,8 @@ export class PlayerQuestSystem {
             };
             this.recordJoinAndAttach(q.factionId, host, q.generalId, this.deps.cityManager.getCity(q.cityId) ?? null);
             this.deps.kickLegionAi(host.id);
-            this.deps.notify(`🏆 【${fbState?.battleName ?? '成名战'}】大捷！随${q.generalName}建立出征军团，继续征讨【${nextTarget.name}】`);
-            gameLog('expedition', `[玩家] 成名战大捷转出征：${q.generalName}(${host.getTroops()}) → 继续攻打【${nextTarget.name}】`);
+            this.deps.notify(`🏆 【${fbState?.battleName ?? '经典战役'}】大捷！随${q.generalName}建立出征军团，继续征讨【${nextTarget.name}】`);
+            gameLog('expedition', `[玩家] 经典战大捷转出征：${q.generalName}(${host.getTroops()}) → 继续攻打【${nextTarget.name}】`);
             this.emitChange();
         } else {
             this.finishQuest(true);
@@ -2633,7 +2633,7 @@ export class PlayerQuestSystem {
         if (!fbState) return;
         const host = this.deps.legionManager.getLegionById(q.legionId);
         // 🔴 [2026-10-27 主人令「成名战战败后，军队依然可以继续下一个目标，这是不对的」]
-        //    野战、攻城（攻/守）的败方军团都是全军覆没 ⇒ 军团没了就是**成名战战败**，不许当成「打完了、接着下一个目标」。
+        //    野战、攻城（攻/守）的败方军团都是全军覆没 ⇒ 军团没了就是**经典战战败**，不许当成「打完了、接着下一个目标」。
         if (!host || host.isDestroyed || (host.getTroops() <= 0 && !host.getIsInCombat())) {
             this.failFirstBattle(q, host ?? null);
             return;
@@ -2699,7 +2699,7 @@ export class PlayerQuestSystem {
 
     /**
      * 🔴 [2026-10-27 主人令「成名战战败，应该军队战败，玩家脱离势力，去下一家」]
-     * 成名战「打赢」的判据只有两条，其余一律算战败：
+     * 经典战「打赢」的判据只有两条，其余一律算战败：
      *   · 攻城且我方是攻方 → **目标城已经拿到手**（300 秒未克的平局、被击退都算没打赢）；
      *   · 野战 / 守城 → **敌军那支军团被消灭**（不存在 / 已毁 / 兵力 0）。
      */
@@ -2712,7 +2712,7 @@ export class PlayerQuestSystem {
         return !enemy || enemy.isDestroyed || enemy.getTroops() <= 0;
     }
 
-    /** 成名战收场：打赢 → 大捷、奖励据点、随武将继续征讨；没打赢 → 战败（军团溃散、脱离势力、去下一家） */
+    /** 经典战收场：打赢 → 大捷、奖励据点、随武将继续征讨；没打赢 → 战败（军团溃散、脱离势力、去下一家） */
     private settleFirstBattle(q: PlayerQuest, host: Army): void {
         const fbState = q.firstBattle;
         if (!fbState || this.firstBattleWon(q, fbState)) {
@@ -2723,7 +2723,7 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 成名战战败：军队战败（军团溃散，绝不再去下一个目标）＋玩家脱离势力，随即去找下一家。
+     * 经典战战败：军队战败（军团溃散，绝不再去下一个目标）＋玩家脱离势力，随即去找下一家。
      * 这一位进「告辞」名单（同一条列表：接任务 / 切模式 / 读档就清空，不是永远不见他）。
      */
     private failFirstBattle(q: PlayerQuest, host: Army | null): void {
@@ -2755,8 +2755,8 @@ export class PlayerQuestSystem {
             host.destroy();
         }
         if (q.generalId) this.declinedGenerals.add(q.generalId);
-        this.deps.notify(`❌ 【${fbState?.battleName ?? '成名战'}】战败：${q.generalName}的军团被打散，你脱离${q.factionName}，另投他处`);
-        gameLog('expedition', `[玩家] 成名战战败：${q.generalName}【${fbState?.battleName ?? ''}】→ 军团战败，脱离 ${q.factionName}`);
+        this.deps.notify(`❌ 【${fbState?.battleName ?? '经典战役'}】战败：${q.generalName}的军团被打散，你脱离${q.factionName}，另投他处`);
+        gameLog('expedition', `[玩家] 经典战战败：${q.generalName}【${fbState?.battleName ?? ''}】→ 军团战败，脱离 ${q.factionName}`);
         this.postDefeatHunt = true;
         this.deps.hero.holdAfterDefeat();
         this.finishQuest(false, { silent: true });
@@ -3421,7 +3421,7 @@ export class PlayerQuestSystem {
         if (!this.quest && !this.deps.hero.isAttached() && this.deps.hero.autoPlan !== 'script' && !this.deps.hero.isTourMode() && this.deps.hero.isTraveling()) {
             const targetCityId = this.deps.hero.getTravelCityId();
             const chaseArmyId = this.deps.hero.getChaseArmyId();
-            // 🔴 [2026-10-25] 正去远距成名战的接任务城（被攻的城）时，那城本来就可能没有在场武将，
+            // 🔴 [2026-10-25] 正去远距经典战的接任务城（被攻的城）时，那城本来就可能没有在场武将，
             //    不许按「目标城无将」把行程掐掉。
             const frontSpot = this.pendingFrontGeneralId ? this.firstBattleFrontSpot(this.pendingFrontGeneralId) : null;
             const headingFrontCity = frontSpot?.kind === 'city' && frontSpot.cityId === targetCityId;
@@ -3584,7 +3584,7 @@ export class PlayerQuestSystem {
                 return;
             }
         }
-        // 🔴 [2026-10-25 主人令「不去武将所在点」] 他本人没率军在外，且成名战场离本城 >300km：
+        // 🔴 [2026-10-25 主人令「不去武将所在点」] 他本人没率军在外，且经典战场离本城 >300km：
         //    直接去**接任务点**（攻城战＝被攻的城；野战＝战场坐标），不跑他本城。
         if (g) {
             const front = this.firstBattleFrontSpot(g.generalId);
@@ -3615,8 +3615,8 @@ export class PlayerQuestSystem {
     /** 自动寻将选定的目标武将 ID（防止出发时记入 visitedGenerals 后，到城时在一据点多武将下换成了同城另一人） */
     private headingTargetGeneralId: string | null = null;
     /**
-     * 🔴 [2026-10-25 主人令] 玩家正去「远距成名战接任务点」途中 —— 那位的 generalId；
-     * 抵达触发点（被攻的城／战场坐标）时据此弹出**他的**成名战，而不是该地别人的对话。
+     * 🔴 [2026-10-25 主人令] 玩家正去「远距经典战接任务点」途中 —— 那位的 generalId；
+     * 抵达触发点（被攻的城／战场坐标）时据此弹出**他的**经典战，而不是该地别人的对话。
      */
     private pendingFrontGeneralId: string | null = null;
     /**
@@ -4061,7 +4061,7 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 🔴 [2026-10-25 主人令「300呀」] 远距成名战分界线（km）：武将本城→战场超过 300km，
+     * 🔴 [2026-10-25 主人令「300呀」] 远距经典战分界线（km）：武将本城→战场超过 300km，
      * 玩家就改去**接任务点**（攻城战＝被攻的城；野战＝战场），不再先跑去武将本城。
      * 与 2026-10-24「战场和出发点太远」那条旧摆位阈值同一条线。
      */
@@ -4082,7 +4082,7 @@ export class PlayerQuestSystem {
     /**
      * 刚**告辞**过的武将（🔴 2026-10-21 主人令「告辞之后换下一个人物接任务」）：
      *   剧本链（`checkAndTriggerNextBattlefield`）不再把他们当目标，免得下一拍又把玩家送回他跟前；
-     *   玩家**接下任何任务**（入伍/出征/复国/成名战）即清空 —— 告辞只是这一次不接，不是永远不见。
+     *   玩家**接下任何任务**（入伍/出征/复国/经典战）即清空 —— 告辞只是这一次不接，不是永远不见。
      */
     private readonly declinedGenerals = new Set<string>();
     /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（66 类走完清空、重开一轮）。 */
@@ -4212,7 +4212,7 @@ export class PlayerQuestSystem {
                 gameLog('expedition', `[玩家] 出征成功：${q.targetCityName}，奖战功 400`);
             }
         } else {
-            // silent：成名战战败那一路自己已经报了「战败 + 脱离势力」，这里不再补一条「出征失败」的自相矛盾提示
+            // silent：经典战战败那一路自己已经报了「战败 + 脱离势力」，这里不再补一条「出征失败」的自相矛盾提示
             if (!opts?.silent) {
                 this.deps.notify(q.kind === 'restore'
                     ? `❌ 义军解散，${q.factionName}复国失败`

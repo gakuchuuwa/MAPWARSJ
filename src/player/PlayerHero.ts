@@ -1376,8 +1376,8 @@ export class PlayerHero {
     public travelToCity(
         cityId: string,
         keepChase = false,
-        /** 🔴 [2026-10-25 主人令「攻城战就去攻打的城」] 远距成名战的接任务城（被攻的城）不一定有在场武将，
-         *  但玩家必须能自己走过去 —— 只给成名战触发流程开这个口子，不全局放开。 */
+        /** 🔴 [2026-10-25 主人令「攻城战就去攻打的城」] 远距经典战的接任务城（被攻的城）不一定有在场武将，
+         *  但玩家必须能自己走过去 —— 只给经典战触发流程开这个口子，不全局放开。 */
         opts?: { allowNoGeneral?: boolean },
     ): boolean {
         if (!keepChase) this.cancelChase();
@@ -1389,7 +1389,7 @@ export class PlayerHero {
         const city = this.deps.cityManager.getCity(cityId);
         if (!city) return false;
         // 🔴 [2026-10-18 主人定「玩家只能找在场的武将接任务」] 直接找据点武将时（非追击续航锚点城），目标据点必须有在场武将
-        // 🔴 [2026-10-25 主人令「攻城战就去攻打的城」] 例外：远距成名战的接任务城（被攻的城）由
+        // 🔴 [2026-10-25 主人令「攻城战就去攻打的城」] 例外：远距经典战的接任务城（被攻的城）由
         //    PlayerQuestSystem 显式传 allowNoGeneral 放行，只有这一条路能去「此刻无将」的城。
         if (!keepChase && !opts?.allowNoGeneral) {
             const start = getScriptEventStart();

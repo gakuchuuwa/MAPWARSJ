@@ -5,7 +5,7 @@
  *    · 时代归**势力**：一个势力在其同一段里只有一个时代 → 全势力的人走同一格（时代 × 据点文化）＝一支军团。
  *    · 时段只给「历史上确实换过军制」的政权（拜占庭军区→普罗尼亚、基辅罗斯→莫斯科、加齐突骑→苏丹亲兵…）；
  *      一朝一军的势力（宋＝宋军、大明＝明军、西夏＝铁鹞子、高丽＝三别班、辽＝皮室）整段只有一个时代。
- *    · 武将落在哪一段：取该将**成名战年（最知名那一战）**，无成名战年取登场年（生年+20，不晚于卒年）；两者皆无 → 保留 GeneralEra 原值。
+ *    · 武将落在哪一段：取该将**经典战年（最知名那一战）**，无经典战年取登场年（生年+20，不晚于卒年）；两者皆无 → 保留 GeneralEra 原值。
  *    · 段界依据见各条注释（"按史 + 依据"）；未手裁的势力按该势力现存名将的成名年推定，只约束新增武将，不改现有武将。
  *    · 势力误挂的个别武将（战场人物/错挂政权）
  *
@@ -735,7 +735,7 @@ export function getFactionEraAt(factionId: string | null | undefined, year: numb
     return era;
 }
 
-/** 判段用的年份：成名战年（最知名那一战）→ 登场年（生年+20，不晚于卒年） */
+/** 判段用的年份：经典战年（最知名那一战）→ 登场年（生年+20，不晚于卒年） */
 export function getGeneralEraYear(generalId: string | null | undefined): number | null {
     if (!generalId) return null;
     const fb = GENERAL_FIRST_BATTLES[generalId];

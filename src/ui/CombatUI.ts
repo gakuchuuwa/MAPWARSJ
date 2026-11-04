@@ -498,7 +498,7 @@ export class CombatUI {
     private defenderDisplayName = '';
     private attackerFactionId: string | null = null;
     private defenderFactionId: string | null = null;
-    /** 显示用势力：无字叛军 panshu 占位（成名战同势力时为了让两军开打）→ 回到武将自己的势力；只影响界面文字/势力名，不改攻防判定 */
+    /** 显示用势力：无字叛军 panshu 占位（经典战同势力时为了让两军开打）→ 回到武将自己的势力；只影响界面文字/势力名，不改攻防判定 */
     private attackerDisplayFactionId: string | null = null;
     private defenderDisplayFactionId: string | null = null;
     /** ZOOM 13 展示侧：true 时守方（跟随军团）在左、攻方在右；战斗语义仍保持攻/守不变。 */
@@ -1673,7 +1673,7 @@ export class CombatUI {
         this.applyBattleBarOrientation();
         this.attackerFactionId = init.attackerFactionId ?? null;
         this.defenderFactionId = init.defenderFactionId ?? null;
-        // 🔴 [2026-10-26] 显示势力：成名战同势力占位 panshu → 回到武将自己的势力（界面不许出现「武将 + 叛军」）
+        // 🔴 [2026-10-26] 显示势力：经典战同势力占位 panshu → 回到武将自己的势力（界面不许出现「武将 + 叛军」）
         this.attackerDisplayFactionId = this.displayFactionId(init.attackerFactionId, init.attackerGeneralId);
         this.defenderDisplayFactionId = this.displayFactionId(init.defenderFactionId, init.defenderGeneralId);
 
@@ -1767,7 +1767,7 @@ export class CombatUI {
 
         // 势力名与军团名显示
         // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 势力名一律取**显示势力**：
-        //    成名战同势力时引擎用 panshu 占位，界面回到武将自己的势力，绝不显示「叛军 + 武将」。
+        //    经典战同势力时引擎用 panshu 占位，界面回到武将自己的势力，绝不显示「叛军 + 武将」。
         const attFactionName = (window as any).game?.cityManager?.getFactionName?.(this.attackerDisplayFactionId ?? init.attackerFactionId) ?? '攻方';
         const defFactionName = (window as any).game?.cityManager?.getFactionName?.(this.defenderDisplayFactionId ?? init.defenderFactionId) ?? '守方';
         this.attackerDisplayName = attFactionName;
@@ -4216,7 +4216,7 @@ export class CombatUI {
             this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
         }, 600);
         // ③ 「XX 勝」弹出
-        // 🔴 [2026-10-26] 胜方势力名取显示势力：成名战同势力占位 panshu 时不许弹出「叛军 勝」。
+        // 🔴 [2026-10-26] 胜方势力名取显示势力：经典战同势力占位 panshu 时不许弹出「叛军 勝」。
         const winnerDisplayFactionId = winnerFactionId === this.attackerFactionId
             ? (this.attackerDisplayFactionId ?? winnerFactionId)
             : (this.defenderDisplayFactionId ?? winnerFactionId);
@@ -6979,7 +6979,7 @@ export class CombatUI {
         if (!factionId) return '';
 
         // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 无字叛军（panshu）只给「没有武将的据点」兜底：
-        //    带武将的部队一律显示武将自己的势力（成名战「同势力→panshu 占位」由此不再露出「叛军」）。
+        //    带武将的部队一律显示武将自己的势力（经典战「同势力→panshu 占位」由此不再露出「叛军」）。
         if (isBlankRebelFaction(factionId) && generalId) {
             factionId = getFactionIdOfGeneral(generalId) ?? factionId;
         }
@@ -6997,7 +6997,7 @@ export class CombatUI {
     /**
      * 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」]
      * 显示用势力：叛军 panshu 是「没有武将的据点」的兜底无主状态（无字旗、不能出征），
-     * 带武将的部队绝不能显示成叛军。成名战「敌势力＝本方势力（史实内战／缺对应政权）」时，
+     * 带武将的部队绝不能显示成叛军。经典战「敌势力＝本方势力（史实内战／缺对应政权）」时，
      * 引擎拿 panshu 当占位势力让两军能互相开打 —— 显示层回到武将自己的势力。
      */
     private displayFactionId(factionId: string | null | undefined, generalId?: string | null): string | null {

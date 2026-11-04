@@ -157,7 +157,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   oirat_ming_gaerdan: { name: '准噶尔铁骑', tier: 1 },
 
   // ── 2026-10-24 主人令「武将应该都有精锐」：起义／边疆起事首领（各家独立势力；旧 panjun 占位势力已于 2026-10-25 删除）原先没有势力精锐表可继承，
-  //    「一个武将一支精锐」逐位补齐。番号取该将本部的名号／族兵／成名战，3–5 字、全局不重名；
+  //    「一个武将一支精锐」逐位补齐。番号取该将本部的名号／族兵／经典战，3–5 字、全局不重名；
   //    分级严格对照精锐五级制 v3（T1 战略／T2 战术尖刀·硬战大捷／T3 文化符号·兵种特色／T4 常规建制·地方部曲）。 ──
   zhao_gerong: { name: '六镇义军', tier: 1 },               // 葛荣：六镇降户骨干，席卷河北数十万众，奠定北齐武力底色（T1 战略）
   zhongxiang_zhongxiang: { name: '洞庭车船', tier: 2 },      // 钟相：依阻洞庭湖，车船水战突击，屡破南宋官军水师（T2 战术）
@@ -446,7 +446,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   kazakh_hasimu: { name: '哈萨克骑', tier: 1 },          // 哈斯木汗：哈萨克汗国中兴，本部骑兵长期为野战主力（《哈萨克汗国史》）。
   aba_shapuer: { name: '萨珊重装骑', tier: 1 },          // 沙普尔：萨珊重装骑兵为对罗马战争主力（《萨珊帝国史》）。
   delan_sulun: { name: '帕提亚铁骑', tier: 2 },          // 苏伦：卡莱之战以帕提亚骑射与铁甲骑歼克拉苏军（普鲁塔克《克拉苏传》）。
-  ansxi_surena: { name: '卡莱弓骑', tier: 2 },           // 苏莱纳（成名战敌将条目）：卡莱战场的帕提亚骑射兵，以机动弓骑配合铁甲骑破敌（普鲁塔克《克拉苏传》）。
+  ansxi_surena: { name: '卡莱弓骑', tier: 2 },           // 苏莱纳（经典战敌将条目）：卡莱战场的帕提亚骑射兵，以机动弓骑配合铁甲骑破敌（普鲁塔克《克拉苏传》）。
   ansxi_aershake: { name: '帕尼精骑', tier: 2 },         // 阿尔沙克：率帕尼部骑众入主安息、奠定建国武力；与后世苏伦所统帕提亚铁骑分号。
   bfe_meherdates: { name: '帕提亚王卫', tier: 4 },       // 梅哈尔达特：安息王族争位者，所部为王位战争中的本部王卫，不共享卡莱主帅的高级番号。
   pangzha_halixinge: { name: '卡尔萨武士', tier: 1 },    // 哈里辛格：卡尔萨军为锡克帝国扩张与阿富汗战争主力（《锡克帝国史》）。
@@ -611,7 +611,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_fernando_iii: { name: '塞维利亚军', tier: 2 },       // 费尔南多三世：收复塞维利亚的围攻军。
   gen_ferdinand_ii: { name: '格拉纳达军', tier: 2 },       // 斐迪南二世：格拉纳达战争王军。
   gen_el_cid: { name: '瓦伦西亚军', tier: 2 },             // 熙德：据守瓦伦西亚的本部军。
-  gen_algirdas: { name: '立陶宛公军', tier: 3 },           // 奥尔格尔德：立陶宛大公国本部，与成名战条目分用战场番号。
+  gen_algirdas: { name: '立陶宛公军', tier: 3 },           // 奥尔格尔德：立陶宛大公国本部，与经典战条目分用战场番号。
   gen_vytautas_great: { name: '格伦瓦德军', tier: 2 },     // 维托夫特：1410 格伦瓦德会战立陶宛军。
   gen_kestutis: { name: '特拉凯军', tier: 3 },             // 科斯图提斯：特拉凯公国本部。
   gen_frederic_ii: { name: '西西里王军', tier: 3 },        // 腓特烈二世：西西里王国本部军。
@@ -683,7 +683,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   gen_pachacuti: { name: '库斯科军', tier: 2 },           // 帕查库提：库斯科击破昌卡之本部。
   danmai_abusalong: { name: '丹麦舰队', tier: 3 },        // 阿布萨隆：丹麦海岸与波罗的海征伐舰队。
   gen_akechi_mitsuhide: { name: '本能寺军', tier: 2 },    // 明智光秀：1582 本能寺奇袭本部。
-  zhelouqi_puliteweilajie: { name: '乔汉骑军', tier: 3 }, // 普里特维拉杰：乔汉王朝骑军，与成名战条目分号。
+  zhelouqi_puliteweilajie: { name: '乔汉骑军', tier: 3 }, // 普里特维拉杰：乔汉王朝骑军，与经典战条目分号。
   maidina_halide: { name: '雅尔穆克军', tier: 2 },        // 哈立德：636 雅尔穆克会战穆斯林军。
   maidina_ali: { name: '巴士拉军', tier: 3 },             // 阿里：656 巴士拉骆驼之战本部。
   gen_liu_guoxuan: { name: '东宁水师', tier: 3 },         // 刘国轩：明郑东宁水师，不占沈有容澎湖守军番号。
@@ -925,7 +925,7 @@ export function getLegionEliteConfig(army: LegionEliteLookup): EliteLegionConfig
     const genElite = getGeneralEliteConfig(army.generalId);
     if (genElite) return genElite;
     // 🔴 [2026-10-24 修「精锐跨势力外溢」（AGENTS 二-4：别国武将精锐不许随城错配）]
-    //    有将却查不到专属精锐（典型：成名战拟名／战场人物不在将领档）→ 精锐随**本军势力**取；
+    //    有将却查不到专属精锐（典型：经典战拟名／战场人物不在将领档）→ 精锐随**本军势力**取；
     //    不再按 homeCityId/sourceCityId 的据点兜底，否则攻方会顶替被攻城（守方）的精锐
     //    （实例：葡萄牙攻伊瓜苏，攻方卡片显示守方的「传教区军」）。
     const ownFactionElite = ALL_FACTION_ELITE_LEGIONS[army.getFactionId()];

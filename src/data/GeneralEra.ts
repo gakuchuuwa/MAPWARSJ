@@ -1,5 +1,5 @@
 /**
- * 武将时代表（generalId → 四时代）——**只作兜底/原值**（游戏内取时代走 `FactionEra.getGeneralEra()`：势力年段 × 该将成名战年/登场年）。
+ * 武将时代表（generalId → 四时代）——**只作兜底/原值**（游戏内取时代走 `FactionEra.getGeneralEra()`：势力年段 × 该将经典战年/登场年）。
  *
  * 由 GENERAL_CENTURIES（成名世纪=辉煌年代）派生，不做生卒/寿命。
  * 世纪→时代（🔴 2026-10-16 主人定真边界）：**古典 ≤476 ｜ 封建 476–1050 ｜ 城堡 1050–1500 ｜ 帝国 1500–1900**；公元前=古典。
@@ -429,7 +429,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bfe3_43': 'antiquity',
     'bfe3_44': 'antiquity',
     'bfe_ajibaldo': 'imperial',
-    // 🔴 [2026-10-24 按史] 成名战拟名／战场人物也要有时代，否则军团名落到势力编制兜底（1641 会显示「城堡时代」）。
+    // 🔴 [2026-10-24 按史] 经典战拟名／战场人物也要有时代，否则军团名落到势力编制兜底（1641 会显示「城堡时代」）。
     //    bfe_portuguese_officer ＝ 1641 姆博罗雷之战葡方主将 Manuel Pires（曼努埃尔·皮雷斯）→ 帝国时代。
     'bfe_portuguese_officer': 'imperial',
     'bfe2_dhanananda': 'antiquity',
@@ -529,7 +529,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_mustafa_pasha': 'imperial',
     'gen_laudonniere': 'castle',
     'gen_suleiman': 'imperial',
-    // 🔴 [2026-10-25 校正「成名世纪→时代」] 这 4 位明将属 2026-10-20 成名战批次，原按「明＝城堡」默认写成 castle，
+    // 🔴 [2026-10-25 校正「成名世纪→时代」] 这 4 位明将属 2026-10-20 经典战批次，原按「明＝城堡」默认写成 castle，
     //    但明帝国时代＝1500–1900：仇鸾成名 1550 庚戌之变（16 世纪）、杨镐 1619 萨尔浒、洪承畴 1641 松锦、汪乔年 1642 襄城（皆 17 世纪）
     //    → 一律 imperial（同时代 吴三桂／李成梁／袁崇焕 已都是 imperial）。军团随「时代×据点文化」自动改。
     'gen_qiu_luan': 'imperial',
@@ -656,11 +656,11 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'erzhu_erzhuzhao': 'feudal',
     'gaoqi_d_xiaogui': 'feudal',
     'yuwen_yuwenxian': 'feudal',
-    // 🔴 2026-10-20 成名战补敌将（霍斯劳二世/宇文述/颉利可汗，均按生年过 476 分界＝封建）
+    // 🔴 2026-10-20 经典战补敌将（霍斯劳二世/宇文述/颉利可汗，均按生年过 476 分界＝封建）
     'sashan_khosrow_ii': 'antiquity',
     'sui_yuwenshu': 'feudal',
     'tujue_xielikehan': 'feudal',
-    // 🔴 2026-10-20 成名战补敌将（时代按生年过 476 分界：440/430/460 古典，480 封建）
+    // 🔴 2026-10-20 经典战补敌将（时代按生年过 476 分界：440/430/460 古典，480 封建）
     'sashan_beilusi': 'antiquity',
     'luoma_xiageliwusi': 'antiquity',
     'tuoba_yuanying': 'feudal',
@@ -1689,37 +1689,37 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'feilisidin_geliya': 'antiquity',   // 歌利亚（2026-10-25 按史补）
     'haikou_maohaifeng': 'imperial',   // 毛海峰（王滶，2026-10-25 按史补）
     'handong_liuheita': 'feudal',   // 刘黑闼（2026-10-25 按史补）
-    'bfe_sinan_pasha': 'imperial',   // 2026-10-25 成名战敌将（随势力时代）
-    'bfe_qutlugh_khwaja': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'khoshut_lhasang': 'imperial',   // 2026-10-25 成名战敌将（随势力时代）
-    'yuan_nahachu': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'baiji_shenjian': 'feudal',   // 2026-10-25 成名战敌将（随势力时代）
-    'dayan_cuiqianyou': 'feudal',   // 2026-10-25 成名战敌将（随势力时代）
-    'ethiopia_lebnadengel': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'houhan_lishouzhen': 'feudal',   // 2026-10-25 成名战敌将（随势力时代）
-    'dulan_azimuhan': 'imperial',   // 2026-10-25 成名战敌将（随势力时代）
-    'buni_mathos': 'antiquity',   // 2026-10-25 成名战敌将（随势力时代）
-    'tang_qikerang': 'feudal',   // 2026-10-25 成名战敌将（随势力时代）
-    'xiongnu_hunxiewang': 'antiquity',   // 2026-10-25 成名战敌将（随势力时代）
-    'khon_wangzun': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'ansxi_surena': 'antiquity',   // 2026-10-25 成名战敌将（随势力时代）
-    'dulan_muzaffarkhan': 'imperial',   // 2026-10-25 成名战敌将（随势力时代）
-    'qin_hengyi': 'antiquity',   // 2026-10-25 成名战敌将（随势力时代）
-    'dajin_wanyaneke': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'kuman_tugorkan': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'baizanting_diaofeilusi': 'feudal',   // 2026-10-25 成名战敌将（随势力时代）
-    'zhelouqi_puliteweilajie': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'baojian_herman': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'qi_tianji': 'antiquity',   // 2026-10-25 成名战敌将（随势力时代）
-    'yuenan_ruanguangzuan': 'imperial',   // 2026-10-25 成名战敌将（随势力时代）
-    'osman_kapadan': 'imperial',   // 2026-10-25 成名战敌将（随势力时代）
-    'bfe_andronikos_komnenos': 'feudal',   // 2026-10-25 成名战敌将（随势力时代）
-    'tujue_abo_dagan': 'feudal',   // 2026-10-25 成名战敌将（随势力时代）
-    'xiongnu_yizhixie': 'antiquity',   // 2026-10-25 成名战敌将（随势力时代）
-    'luosi_svyatopolk': 'feudal',   // 2026-10-25 成名战敌将（随势力时代）
-    'shu_masu': 'antiquity',   // 2026-10-25 成名战敌将（随势力时代）
-    'dajin_wanyan_zhongde': 'castle',   // 2026-10-25 成名战敌将（随势力时代）
-    'halapeng_yiba': 'castle',   // 成名战敌将（孟族）
+    'bfe_sinan_pasha': 'imperial',   // 2026-10-25 经典战敌将（随势力时代）
+    'bfe_qutlugh_khwaja': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
+    'khoshut_lhasang': 'imperial',   // 2026-10-25 经典战敌将（随势力时代）
+    'yuan_nahachu': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
+    'baiji_shenjian': 'feudal',   // 2026-10-25 经典战敌将（随势力时代）
+    'dayan_cuiqianyou': 'feudal',   // 2026-10-25 经典战敌将（随势力时代）
+    'ethiopia_lebnadengel': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
+    'houhan_lishouzhen': 'feudal',   // 2026-10-25 经典战敌将（随势力时代）
+    'dulan_azimuhan': 'imperial',   // 2026-10-25 经典战敌将（随势力时代）
+    'buni_mathos': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
+    'tang_qikerang': 'feudal',   // 2026-10-25 经典战敌将（随势力时代）
+    'xiongnu_hunxiewang': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
+    'khon_wangzun': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
+    'ansxi_surena': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
+    'dulan_muzaffarkhan': 'imperial',   // 2026-10-25 经典战敌将（随势力时代）
+    'qin_hengyi': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
+    'dajin_wanyaneke': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
+    'kuman_tugorkan': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
+    'baizanting_diaofeilusi': 'feudal',   // 2026-10-25 经典战敌将（随势力时代）
+    'zhelouqi_puliteweilajie': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
+    'baojian_herman': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
+    'qi_tianji': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
+    'yuenan_ruanguangzuan': 'imperial',   // 2026-10-25 经典战敌将（随势力时代）
+    'osman_kapadan': 'imperial',   // 2026-10-25 经典战敌将（随势力时代）
+    'bfe_andronikos_komnenos': 'feudal',   // 2026-10-25 经典战敌将（随势力时代）
+    'tujue_abo_dagan': 'feudal',   // 2026-10-25 经典战敌将（随势力时代）
+    'xiongnu_yizhixie': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
+    'luosi_svyatopolk': 'feudal',   // 2026-10-25 经典战敌将（随势力时代）
+    'shu_masu': 'antiquity',   // 2026-10-25 经典战敌将（随势力时代）
+    'dajin_wanyan_zhongde': 'castle',   // 2026-10-25 经典战敌将（随势力时代）
+    'halapeng_yiba': 'castle',   // 经典战敌将（孟族）
     'yuan_shidielibisi': 'castle',
     'muwaxide_axatafu': 'castle',
     'gepids_cunimund': 'feudal',
