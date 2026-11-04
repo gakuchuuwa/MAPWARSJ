@@ -2368,7 +2368,7 @@ function runNameAudit(): void {
     if (!entityData) { showToast('数据未加载，请先刷新', true); return; }
     const ed = entityData; // 收窄引用（闭包内 entityData 不被 null 检查收窄）
     const problems: ValidationIssue[] = [];
-    const over5 = (s: string) => s.length > 5;  // 精锐番号 ≤5 字
+    const over5 = (s: string) => s.length > 6;  // 精锐番号 3–6 字（2026-11-04 主人改，原 ≤5）
     const over9 = (s: string) => s.length > 9;  // 武将/势力/据点 ≤9 字
     const facNameOf = (fid: string) => ed.factions.find(f => f.id === fid)?.name ?? fid;
 
@@ -2387,7 +2387,8 @@ function runNameAudit(): void {
     for (const [fid, e] of Object.entries(ed.elites)) {
         const n = e.name;
         if (!n) continue;
-        if (over5(n)) problems.push({ level: 'error', msg: `精锐番号超5字: "${n}"(${n.length}字) @ ${fid}（${facNameOf(fid)}）` });
+        if ([...n].length < 3) problems.push({ level: 'error', msg: `精锐番号不足3字: "${n}"(${[...n].length}字) @ ${fid}（${facNameOf(fid)}）` });
+        if (over5(n)) problems.push({ level: 'error', msg: `精锐番号超6字: "${n}"(${n.length}字) @ ${fid}（${facNameOf(fid)}）` });
         if (eliteByName.has(n)) problems.push({ level: 'error', msg: `精锐番号重复: "${n}" @ ${fid}（${facNameOf(fid)}） 与 ${eliteByName.get(n)}` });
         else eliteByName.set(n, fid);
     }

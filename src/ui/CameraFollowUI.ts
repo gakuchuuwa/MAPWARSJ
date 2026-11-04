@@ -522,24 +522,23 @@ export class CameraFollowUI {
             // 标题：武将名率军团名（武将在前）；精锐仅以朱砂高亮区分
             let titleHtml: string;
             if (generalRecord) {
-                const gColor = isEliteAndGeneral ? '#e9ad83' : '#dbb98b';
+                const gColor = isEliteAndGeneral ? '#ffcc66' : '#f2ece4';
+                const lColor = isEliteAndGeneral ? '#ff9e66' : '#dfd7ca';
                 titleHtml =
-                    `<span style="color:${gColor}; font-weight:800; font-size:14px;">${generalRecord.generalName}</span>` +
-                    `<span style="opacity:0.75; font-size:11px; margin:0 2px; color:#b8aa91; font-weight:bold;">率</span>${name}`;
+                    `<span style="color:${gColor}; font-weight:800; font-size:14px; text-shadow:0 1px 2px rgba(0,0,0,0.8);">${generalRecord.generalName}</span>` +
+                    `<span style="opacity:0.7; font-size:11px; margin:0 2px; color:#8c8477; font-weight:bold;">率</span>` +
+                    `<span style="color:${lColor}; font-weight:600;">${name}</span>`;
             } else {
-                titleHtml = name;
+                titleHtml = `<span style="color:#dfd7ca; font-weight:600;">${name}</span>`;
             }
 
-            let itemBg = isFollowed ? 'background: rgba(156,48,47,0.12); border-left: 3px solid #e9ad83;' : '';
-            let nameStyle = 'color: #eee3ce; font-weight: 700;';
+            let itemBg = isFollowed ? 'background: linear-gradient(90deg, rgba(235, 140, 45, 0.18), rgba(235, 140, 45, 0.04)); border-left: 3px solid #ffaa42;' : '';
+            let nameStyle = 'color: #f2ece4; font-weight: 700;';
 
             if (isEliteAndGeneral) {
                 if (!isFollowed) {
-                    itemBg = 'background: linear-gradient(to right, rgba(156,48,47,0.06), transparent);';
+                    itemBg = 'background: linear-gradient(to right, rgba(220, 90, 40, 0.08), transparent);';
                 }
-                nameStyle = 'color: #e9ad83; font-weight: 800;';
-            } else if (army.isElite) {
-                nameStyle = 'color: #d9bf8c; font-weight: 800;';
             }
 
             item.style.cssText = `
@@ -554,9 +553,14 @@ export class CameraFollowUI {
             `;
 
             const winStreak = (army as any).winStreak || 0;
-            const streakHtml = winStreak > 0
-                ? `<span style="display:inline-flex; flex-shrink:0; align-items:center; margin-left:6px; padding:0 5px; font-size:10px; font-weight:800; color:#e9ad83; background:rgba(156,48,47,0.1); border:1px solid rgba(156,48,47,0.4); border-radius:10px; line-height:1.3; vertical-align:middle;">🔥${winStreak}连胜</span>`
-                : '';
+            let streakHtml = '';
+            if (winStreak > 0) {
+                if (winStreak >= 5) {
+                    streakHtml = `<span style="display:inline-flex; flex-shrink:0; align-items:center; gap:2px; margin-left:6px; padding:1px 6px; font-size:10px; font-weight:800; color:#ffffff; background:linear-gradient(135deg, #e62e1b 0%, #ff7a18 100%); border:1px solid rgba(255,200,120,0.6); border-radius:10px; line-height:1.3; vertical-align:middle; box-shadow:0 0 8px rgba(230,46,27,0.5), inset 0 1px 0 rgba(255,255,255,0.3); text-shadow:0 1px 2px rgba(0,0,0,0.6);">🔥${winStreak}连胜</span>`;
+                } else {
+                    streakHtml = `<span style="display:inline-flex; flex-shrink:0; align-items:center; gap:2px; margin-left:6px; padding:1px 6px; font-size:10px; font-weight:800; color:#fff0e6; background:linear-gradient(135deg, rgba(225, 45, 30, 0.45), rgba(255, 115, 30, 0.35)); border:1px solid rgba(255, 95, 50, 0.6); border-radius:10px; line-height:1.3; vertical-align:middle; box-shadow:0 1px 4px rgba(225,45,30,0.25); text-shadow:0 1px 2px rgba(0,0,0,0.5);">🔥${winStreak}连胜</span>`;
+                }
+            }
 
             // 第一行：名次 + 军团名 + 连胜 + 军团兵力；第二行：势力色点 + 势力名 + 势力兵力 + 据点数
             // 🔴 连胜徽章移出 ellipsis span：长名军团的徽章曾被 overflow:hidden 裁掉（2026-09-03 修复「有的军团不显示连胜」）
@@ -564,35 +568,35 @@ export class CameraFollowUI {
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="flex:1; min-width:0; display:flex; align-items:center; ${nameStyle}">
                         <span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                            ${isFollowed ? '🎥 ' : ''}<span style="color:#a99b84; font-weight:normal; font-size:12px;">${idx + 1}.</span> ${titleHtml}
+                            ${isFollowed ? '🎥 ' : ''}<span style="color:#7d7568; font-weight:normal; font-size:12px;">${idx + 1}.</span> ${titleHtml}
                         </span>${streakHtml}
                     </span>
-                    <span style="color:#e9ad83; font-size:12px; font-weight:bold; margin-left:8px; white-space:nowrap; font-family:'JetBrains Mono', serif;">
+                    <span style="color:#ffe4a0; font-size:13px; font-weight:700; margin-left:8px; white-space:nowrap; font-variant-numeric:tabular-nums; font-family:'JetBrains Mono', 'Segoe UI', monospace; text-shadow:0 1px 2px rgba(0,0,0,0.8);">
                         ${this.formatTroops(troops)}
                     </span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px; color:#a8b8a1;">
-                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:5px; color:#c8bca6;">
-                        <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(0,0,0,0.15);"></span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px;">
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:5px; color:#aba294;">
+                        <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(0,0,0,0.2); box-shadow:0 0 3px rgba(0,0,0,0.5);"></span>
                         ${fName}
                     </span>
-                    <span style="margin-left:8px; white-space:nowrap; display:flex; align-items:center; gap:6px;">
-                        势力 ${this.formatTroops(fTotal.troops)}
-                        <span style="color:#e9ad83; font-size:11px; font-weight:bold; border:1px solid rgba(156,48,47,0.3); border-radius:10px; padding:0 6px; background:rgba(156,48,47,0.06);">🏯 ${fTotal.cities} 城</span>
+                    <span style="margin-left:8px; white-space:nowrap; display:flex; align-items:center; gap:6px; color:#8a8275;">
+                        势力 <span style="color:#c7beaf; font-weight:600; font-variant-numeric:tabular-nums;">${this.formatTroops(fTotal.troops)}</span>
+                        <span style="color:#8ed5f5; font-size:10px; font-weight:bold; border:1px solid rgba(75, 165, 215, 0.4); border-radius:10px; padding:0 6px; background:rgba(30, 85, 120, 0.25); box-shadow:0 1px 3px rgba(0,0,0,0.25);">🏯 ${fTotal.cities} 城</span>
                     </span>
                 </div>
             `;
 
             item.addEventListener('mouseenter', () => {
                 if (!isFollowed) {
-                    item.style.background = 'rgba(218,190,139,0.10)';
+                    item.style.background = 'rgba(255, 255, 255, 0.06)';
                     item.style.transform = 'translateX(2px)';
                 }
             });
             item.addEventListener('mouseleave', () => {
                 if (!isFollowed) {
                     item.style.background = isEliteAndGeneral 
-                        ? 'linear-gradient(to right, rgba(156,48,47,0.06), transparent)' 
+                        ? 'linear-gradient(to right, rgba(220, 90, 40, 0.08), transparent)' 
                         : 'transparent';
                     item.style.transform = 'none';
                 }
@@ -633,12 +637,12 @@ export class CameraFollowUI {
             const lName = topRecord.legionName;
             let pairTitle = '';
             if (gName && lName && gName !== lName) {
-                pairTitle = `<span style="color:#e9ad83; font-weight:bold;">${gName}</span><span style="opacity:0.6; font-size:10px; margin:0 1px;">率</span>${lName}`;
+                pairTitle = `<span style="color:#ffcc66; font-weight:bold;">${gName}</span><span style="opacity:0.65; font-size:10px; margin:0 1px; color:#8c8477;">率</span><span style="color:#f0eae1;">${lName}</span>`;
             } else {
-                pairTitle = `<span style="color:#e9ad83; font-weight:bold;">${gName || lName}</span>`;
+                pairTitle = `<span style="color:#ffcc66; font-weight:bold;">${gName || lName}</span>`;
             }
 
-            const stateTag = isAlive ? '' : `<span style="color:#e9ad83; font-size:9px; font-weight:bold; background:rgba(156,48,47,0.1); border:1px solid rgba(156,48,47,0.3); border-radius:3px; padding:0 2px; margin-left:3px; line-height:1; vertical-align:middle;" title="已阵亡覆灭">殁</span>`;
+            const stateTag = isAlive ? '' : `<span style="color:#ff8c8c; font-size:9px; font-weight:bold; background:rgba(180,30,20,0.25); border:1px solid rgba(230,60,40,0.45); border-radius:3px; padding:0 2px; margin-left:3px; line-height:1; vertical-align:middle;" title="已阵亡覆灭">殁</span>`;
 
             if (isAlive) {
                 isStreakClickable = true;
@@ -647,12 +651,12 @@ export class CameraFollowUI {
             }
 
             streakCardHtml = `
-                <div id="top-streak-card" style="flex:1.35; min-width:0; background:rgba(218,190,139,0.06); border:1px solid rgba(125,111,90,0.25); border-radius:6px; padding:5px 7px; box-sizing:border-box; ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该历史连胜王者' : '传奇历史最高纪录'}">
+                <div id="top-streak-card" style="flex:1.35; min-width:0; background:linear-gradient(135deg, rgba(180, 45, 25, 0.16), rgba(45, 25, 20, 0.45)); border:1px solid rgba(235, 75, 45, 0.32); border-radius:6px; padding:5px 7px; box-sizing:border-box; ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该历史连胜王者' : '传奇历史最高纪录'}">
                     <div style="display:flex; justify-content:space-between; align-items:center; line-height:1.3;">
-                        <span style="color:#e9ad83; font-size:11px; font-weight:bold; white-space:nowrap;">🔥 最高连胜</span>
-                        <span style="color:#e9ad83; font-weight:bold; font-size:10px; background:rgba(156,48,47,0.08); border:1px solid rgba(156,48,47,0.3); border-radius:10px; padding:0 5px; line-height:1.2; flex-shrink:0;">${topRecord.streak}连胜</span>
+                        <span style="color:#ff7847; font-size:11px; font-weight:bold; white-space:nowrap;">🔥 最高连胜</span>
+                        <span style="color:#ffffff; font-weight:800; font-size:10px; background:linear-gradient(135deg, #d83522, #f56c22); border:1px solid rgba(255, 140, 60, 0.55); border-radius:10px; padding:1px 6px; line-height:1.2; flex-shrink:0; box-shadow:0 1px 4px rgba(216,53,34,0.4);">${topRecord.streak}连胜</span>
                     </div>
-                    <div style="font-size:11px; color:#eee3ce; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.3;">
+                    <div style="font-size:11px; color:#f0eae1; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.3;">
                         ${pairTitle}${stateTag}
                     </div>
                 </div>
@@ -679,17 +683,17 @@ export class CameraFollowUI {
             const fTotal = factionTotals.get(topFid) ?? { troops: 0, cities: maxCities };
 
             factionCardHtml = `
-                <div style="flex:0.85; min-width:0; background:rgba(218,190,139,0.06); border:1px solid rgba(125,111,90,0.25); border-radius:6px; padding:5px 7px; box-sizing:border-box;">
+                <div style="flex:0.85; min-width:0; background:linear-gradient(135deg, rgba(30, 95, 135, 0.16), rgba(18, 28, 36, 0.45)); border:1px solid rgba(60, 150, 200, 0.32); border-radius:6px; padding:5px 7px; box-sizing:border-box;">
                     <div style="display:flex; justify-content:space-between; align-items:center; line-height:1.3;">
-                        <span style="color:#e4cd9c; font-size:11px; font-weight:bold; white-space:nowrap;">🏯 据点最多</span>
-                        <span style="color:#e9ad83; font-size:10px; font-weight:bold; border:1px solid rgba(156,48,47,0.3); border-radius:10px; padding:0 5px; background:rgba(156,48,47,0.08); line-height:1.2; flex-shrink:0;">${maxCities}城</span>
+                        <span style="color:#58bce8; font-size:11px; font-weight:bold; white-space:nowrap;">🏯 据点最多</span>
+                        <span style="color:#d6f2fe; font-size:10px; font-weight:bold; border:1px solid rgba(80, 185, 235, 0.45); border-radius:10px; padding:1px 6px; background:linear-gradient(135deg, rgba(28, 105, 155, 0.4), rgba(45, 150, 200, 0.3)); line-height:1.2; flex-shrink:0; box-shadow:0 1px 4px rgba(28,105,155,0.35);">${maxCities}城</span>
                     </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px; color:#a8b8a1; line-height:1.3;">
-                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:4px; color:#eee3ce; font-weight:bold;">
-                            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(0,0,0,0.15);"></span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px; color:#aba294; line-height:1.3;">
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:4px; color:#f0eee9; font-weight:bold;">
+                            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(0,0,0,0.2);"></span>
                             ${fName}
                         </span>
-                        <span style="font-size:10px; color:#e9ad83; font-weight:bold; margin-left:4px; flex-shrink:0;">
+                        <span style="font-size:10px; color:#ffe4a0; font-weight:bold; margin-left:4px; flex-shrink:0; font-variant-numeric:tabular-nums;">
                             ${this.formatTroops(fTotal.troops)}
                         </span>
                     </div>
@@ -709,12 +713,12 @@ export class CameraFollowUI {
             const streakCard = this.topStatsContainer.querySelector('#top-streak-card') as HTMLDivElement | null;
             if (streakCard) {
                 streakCard.addEventListener('mouseenter', () => {
-                    streakCard.style.background = 'rgba(218,190,139,0.15)';
-                    streakCard.style.borderColor = 'rgba(156,48,47,0.4)';
+                    streakCard.style.background = 'linear-gradient(135deg, rgba(210, 55, 30, 0.26), rgba(60, 30, 25, 0.55))';
+                    streakCard.style.borderColor = 'rgba(255, 100, 60, 0.55)';
                 });
                 streakCard.addEventListener('mouseleave', () => {
-                    streakCard.style.background = 'rgba(218,190,139,0.06)';
-                    streakCard.style.borderColor = 'rgba(255,255,255,0.7)';
+                    streakCard.style.background = 'linear-gradient(135deg, rgba(180, 45, 25, 0.16), rgba(45, 25, 20, 0.45))';
+                    streakCard.style.borderColor = 'rgba(235, 75, 45, 0.32)';
                 });
             }
         }
