@@ -8812,6 +8812,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'ashina_ashinayandou', factionId: 'tujue', cityId: 'city_naiman', generalName: '阿史那燕都', portrait: '/assets/CENTRAL_ASIA/ashina_ashinayandou.png', eliteName: '河中骑兵', eliteTier: 4 },
         // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 ashide 并入：同一政权（延续/殖民地/汗族）并成一个势力
         { generalId: 'ashide_ashidejieli', factionId: 'tujue', cityId: 'city_heishacheng', generalName: '阿史德颉利', portrait: '/assets/MONGOL/ashide_ashidejieli.png', eliteName: '蒙古骑手', eliteTier: 4 },
+        { generalId: 'tujue_xielikehan', generalName: '颉利可汗', portrait: '/assets/MONGOL/tujue_xielikehan.png' },
     ],
 
 

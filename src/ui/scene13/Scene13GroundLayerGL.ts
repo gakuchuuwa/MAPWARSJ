@@ -1666,7 +1666,7 @@ export class Scene13GroundLayerGL {
     //    每层之间留足 3.2~4.0 格宽平顶台阶，彻底杜绝 clean_elevation 坡度约束削平第三层。
     const baseTheta = passValleyDirAngle(roadDir) + (rnd() - 0.5) * 0.14;
     const cosT = Math.cos(baseTheta), sinT = Math.sin(baseTheta);
-    const halfCorridor = Math.max(11.4, (outerHalfI + outerHalfJ) * 0.5 - 0.3);
+    const halfCorridor = Math.max(10.0, (outerHalfI + outerHalfJ) * 0.5 - 0.2);
     const p0 = rnd() * 6.28, p1 = rnd() * 6.28, p2 = rnd() * 6.28, p3 = rnd() * 6.28, p4 = rnd() * 6.28;
     const p5 = rnd() * 6.28, p6 = rnd() * 6.28, p7 = rnd() * 6.28, p8 = rnd() * 6.28;
     const bendAmp = (rnd() - 0.5) * 4.2;
@@ -2565,8 +2565,8 @@ export class Scene13GroundLayerGL {
       minWallI = Math.min(minWallI, I); maxWallI = Math.max(maxWallI, I);
       minWallJ = Math.min(minWallJ, J); maxWallJ = Math.max(maxWallJ, J);
     }
-    let outerHalfI = rect ? rect.outerHalfI : 12.5;
-    let outerHalfJ = rect ? rect.outerHalfJ : 12.5;
+    let outerHalfI = rect ? rect.outerHalfI : 10.5;
+    let outerHalfJ = rect ? rect.outerHalfJ : 10.5;
     let innerHalfI = rect ? rect.innerHalfI : 8.5;
     let innerHalfJ = rect ? rect.innerHalfJ : 8.5;
     if (minWallI < maxWallI && minWallJ < maxWallJ) {
@@ -2575,8 +2575,8 @@ export class Scene13GroundLayerGL {
       // 🔴 严格按实测墙件尺寸定长/短轴半长（防止 I/J 方向反转导致高台与城池成十字交叉错位）
       outerHalfI = (maxWallI - minWallI) / 2;
       outerHalfJ = (maxWallJ - minWallJ) / 2;
-      innerHalfI = Math.max(2.0, outerHalfI - 4.0);
-      innerHalfJ = Math.max(2.0, outerHalfJ - 4.0);
+      innerHalfI = Math.max(2.0, outerHalfI - 2.0);
+      innerHalfJ = Math.max(2.0, outerHalfJ - 2.0);
     }
 
     // 🔴 [2026-10-20] 整块矩形高台：整座外圈城（内外圈墙）同在高台顶（5 级）
@@ -2625,11 +2625,11 @@ export class Scene13GroundLayerGL {
     //       外围城墙及 8 门稳立在山脚下平地上（「这外围城墙都到下边了」）；
     //    3. 外城门外侧按有机缓坡跌落至 0 级谷底，远郊崇山环抱，完美再现居庸关「重关锁隘、内城高耸、外墙据谷」的险要形制。
     if (rect) {
-      const PAD = 0.8;
+      const PAD = 0.55;
       const castleTop = 2.4;   // 第 1 层：中心城堡平顶高台半宽（6.5~7 级）
       const castleFoot = 3.5;  // 第 1 层降到第 2 层内城平台的坡脚
-      const innerSlopeW = 2.4; // 第 2 层内城降到第 3 层外城的夹道坡宽（PAD 0.8 + 坡宽 2.4 = 3.2，到达外墙前降平）
-      const outerSlopeW = 3.5; // 第 3 层外圈城墙脚外向 0 级谷底的缓坡
+      const innerSlopeW = 0.90; // 第 2 层内城降到第 3 层外城的阶梯坡宽（内外墙间距 2 格：PAD 0.55 + 坡宽 0.90 = 1.45，到达外墙前降平）
+      const outerSlopeW = 3.2; // 第 3 层外圈城墙脚外向 0 级谷底的缓坡
       const R3 = Math.max(outerHalfI, outerHalfJ) + PAD;
       const maxCheck = R3 + outerSlopeW + 2;
       const phase1 = rnd() * 6.28, phase2 = rnd() * 6.28;
@@ -2693,23 +2693,23 @@ export class Scene13GroundLayerGL {
       const q = this.screenToCell(p.x, p.y, W, H);
       return q ? Math.abs(q.gx - cx) + Math.abs(q.gy - cy) : -1;
     };
-    const PAD = 1.0;
+    const PAD = 0.55;
     let castleTop = 2.6, castleFoot = 3.9;     // 城堡平顶 / 降到内城的坡脚（保证第 1 层顶台清晰露出，不缩进城堡底座内）
-    let innerEdge = 9.8, innerFoot = 11.1;     // 内城平台外缘 / 降到外城的坡脚
-    let outerEdge = 14.0;                      // 外城平台外缘（往外是攻方仰攻坡）
+    let innerEdge = 9.0, innerFoot = 9.9;      // 内城平台外缘 / 降到外城的坡脚（紧挨内套，间距 2 格）
+    let outerEdge = 11.4;                      // 外城平台外缘（往外是攻方仰攻坡）
     const wm = wallPts.map(manOf).filter(v => v >= 0).sort((a, b) => a - b);
     if (wm.length >= 8) {
       let gi = 0, gap = 0;
       for (let i = 1; i < wm.length; i++) if (wm[i] - wm[i - 1] > gap) { gap = wm[i] - wm[i - 1]; gi = i; }
-      if (gap >= 1.5) {
+      if (gap >= 1.1) {
         const innerMax = wm[gi - 1], outerMin = wm[gi], outerMax = wm[wm.length - 1];
         innerEdge = innerMax + PAD;
-        innerFoot = Math.max(innerEdge + 0.8, outerMin - PAD);
-        outerEdge = outerMax + 1.0;
+        innerFoot = Math.max(innerEdge + 0.55, outerMin - PAD);
+        outerEdge = outerMax + 0.85;
       } else {
-        outerEdge = wm[wm.length - 1] + 1.0;   // 只有一圈墙：整圈放外城平台
-        innerEdge = Math.min(innerEdge, outerEdge - 3);
-        innerFoot = Math.min(innerFoot, outerEdge - 1.5);
+        outerEdge = wm[wm.length - 1] + 0.85;  // 只有一圈墙：整圈放外城平台
+        innerEdge = Math.min(innerEdge, outerEdge - 2.2);
+        innerFoot = Math.min(innerFoot, outerEdge - 1.1);
       }
     }
     const bm = bldPts.map(manOf).filter(v => v >= 4.8).sort((a, b) => a - b);   // 仅取外侧箭塔（>= 4.8），保住第 1 层中心城堡高台宽度

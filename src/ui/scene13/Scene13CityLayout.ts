@@ -350,8 +350,8 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         }
     }
     const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
-    const hasGateRoads = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') && ringLm > 0;
-    const roadMaxU = ringLm / 2 + (this.defenderCityType === 'big_city' ? 14.5 : this.defenderCityType === 'pass' ? 13.5 : 12.0);
+    const hasGateRoads = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') && ringLm > 0;
+    const roadMaxU = ringLm / 2 + (this.defenderCityType === 'big_city' ? 14.5 : 12.0);
     const roadMaxV = this.defenderCityType === 'big_city' ? 2.1 : 1.8;
     const inGateRoad = (x: number, y: number): boolean => {
         if (!hasGateRoads) return false;
@@ -745,8 +745,14 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             if (this.deCity?.mirror) dx = -dx;
             return { x: cx + dx, y: cy + dy };
         };
+        const placedInteriorPts: Array<{ x: number; y: number }> = [];
+        const MIN_INTERIOR_DECOR_DIST = 92; // 城内装饰物之间的最小等轴间距（严禁挨着或重叠）
         const pushInteriorDecor = (asset: string, ci: number, cj: number, scale: number, z = 0): void => {
             const pt = isoToWorld(ci, cj);
+            for (const p of placedInteriorPts) {
+                if (Math.hypot(pt.x - p.x, (pt.y - p.y) * 1.5) < MIN_INTERIOR_DECOR_DIST) return;
+            }
+            placedInteriorPts.push({ x: pt.x, y: pt.y });
             const lift = gl.elevationLiftAt(pt.x, pt.y, W, H);
             this.ensureNatureAsset(asset);
             const sp: DecorSprite = {
@@ -968,29 +974,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                             ? 'TRADE:TRADE_CART_AFRI/move_2'
                             : 'TRADE:TRADE_CART_ASIA/move_2';
 
-            // 1) 瓮城杀伤区：四座内城门外侧夹道两翼成对布置拒马与战旗（让开 0.5 关道中线）
-            const barbicanGateFlanks: ReadonlyArray<readonly [number, number]> = this.defenderPassLayoutShape === 'rect'
-                ? [
-                    [-12.0, -2.0], [-12.0, 3.0], [13.0, -2.0], [13.0, 3.0],
-                    [-2.0, -8.0], [3.0, -8.0], [-2.0, 9.0], [3.0, 9.0],
-                ]
-                : this.defenderPassLayoutShape === 'rect_mirror'
-                    ? [
-                        [-8.0, -2.0], [-8.0, 3.0], [9.0, -2.0], [9.0, 3.0],
-                        [-2.0, -12.0], [3.0, -12.0], [-2.0, 13.0], [3.0, 13.0],
-                    ]
-                    : [
-                        [-9.8, -2.0], [-9.8, 3.0], [10.8, -2.0], [10.8, 3.0],
-                        [-2.0, -9.8], [3.0, -9.8], [-2.0, 10.8], [3.0, 10.8],
-                    ];
-            barbicanGateFlanks.forEach(([fi, fj], fIdx) => {
-                pushInteriorDecor('BATTLEFIELD:STAKE_BARRICADE', fi + (mRnd() - 0.5) * 0.2, fj + (mRnd() - 0.5) * 0.2, 0.86 + mRnd() * 0.08);
-                if (fIdx % 2 === 0) {
-                    pushInteriorDecor(passFlagAsset, fi + (fi < 0 ? -0.45 : 0.45), fj + (fj < 0 ? -0.45 : 0.45), 0.85);
-                }
-            });
-
-            // 2) 内城中枢城堡四角：布置要塞战旗与火把立柱
+            // 1) 内城中枢城堡四角：布置要塞战旗与火把立柱（两套城墙之间紧挨，不摆放任何物品）
             const passCastleCorners: ReadonlyArray<readonly [number, number]> = [
                 [-2.2, -2.2], [3.2, 3.2], [-2.2, 3.2], [3.2, -2.2],
             ];
@@ -998,81 +982,68 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 pushInteriorDecor(cIdx % 2 === 0 ? passFlagAsset : 'BATTLEFIELD:TORCH_A', ci0, cj0, 0.86);
             });
 
-            // 3) 瓮城夹道与内城校场军备细节（避开 0.5 关道与兵营/马厩占地）
+            // 2) 内城校场军备细节（仅限内城校场，删除两套城墙之间的摆放物品）
             const passCandidates: ReadonlyArray<readonly [number, number]> = this.defenderPassLayoutShape === 'rect'
                 ? [
-                    // 夹道四角与长边中段
-                    [-12, -8], [13, -8], [-12, 9], [13, 9],
-                    [-6, -8], [7, -8], [-6, 9], [7, 9],
-                    [-12, -5], [13, -5], [-12, 6], [13, 6],
-                    // 内城校场边角空隙（避开 (-5,-3)/(-5,4)/(6,-3)/(6,4) 的兵营马厩）
                     [-7.5, -1.5], [8.5, 2.5], [-2.2, -3.5], [3.2, 4.5],
                 ]
                 : this.defenderPassLayoutShape === 'rect_mirror'
                     ? [
-                        [-8, -12], [9, -12], [-8, 13], [9, 13],
-                        [-8, -6], [9, -6], [-8, 7], [9, 7],
-                        [-5, -12], [-5, 13], [6, -12], [6, 13],
                         [-1.5, -7.5], [2.5, 8.5], [-3.5, -2.2], [4.5, 3.2],
                     ]
                     : [
-                        [-9.5, -4.5], [10.5, 5.5], [-4.5, -9.5], [5.5, 10.5],
-                        [-9.5, 5.5], [10.5, -4.5], [-4.5, 10.5], [5.5, -9.5],
-                        [-9.5, -9.5], [10.5, -9.5], [-9.5, 10.5], [10.5, 10.5],
                         [-2.2, -3.2], [3.2, 4.2], [-3.2, 2.2], [4.2, -2.2],
                     ];
             const passFlora = isAridSite ? 'GRASS_DRY' : (mRnd() < 0.5 ? 'BUSH_GREEN' : 'SHRUB_GREEN');
             const passPropsPool = [
-                'BATTLEFIELD:STAKE_BARRICADE',
-                'BATTLEFIELD:STAKE_BARRICADE',
-                'BARRELS',
                 'BARRELS',
                 passSupplyCart,
                 'BATTLEFIELD:CART_BROKEN',
-                'ROCK1',
-                'ROCK2',
                 passFlora,
-                'BARRELS',
             ];
-            const passPropCount = 10 + Math.floor(mRnd() * 3); // 10~12 处细节
-            const chosenPassSlots = shuffleWithMSeed(passCandidates).slice(0, passPropCount);
             const shuffledPassPool = shuffleWithMSeed(passPropsPool);
-            chosenPassSlots.forEach(([pi, pj], idx) => {
+            passCandidates.forEach(([pi, pj], idx) => {
                 const pAsset = shuffledPassPool[idx % shuffledPassPool.length];
                 const ji = (mRnd() - 0.5) * 0.25;
                 const jj = (mRnd() - 0.5) * 0.25;
-                const pScale = pAsset === 'BATTLEFIELD:STAKE_BARRICADE' ? (0.85 + mRnd() * 0.10)
-                    : pAsset.startsWith('TRADE:') ? (0.86 + mRnd() * 0.08)
+                const pScale = pAsset.startsWith('TRADE:') ? (0.86 + mRnd() * 0.08)
                     : pAsset === 'BATTLEFIELD:CART_BROKEN' ? (0.80 + mRnd() * 0.10)
                     : pAsset.startsWith('BUSH') || pAsset.startsWith('SHRUB') ? (0.74 + mRnd() * 0.12)
-                    : pAsset.startsWith('ROCK') ? (0.72 + mRnd() * 0.14)
                     : (0.80 + mRnd() * 0.10); // BARRELS
                 pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale);
             });
 
-            // 4) 关城外围两翼近侧险石断崖与前哨鹿砦（默认 100% 视野可见，避开四向关道）
-            const outerFlankCrags: ReadonlyArray<readonly [number, number]> = this.defenderPassLayoutShape === 'rect'
-                ? [
-                    [-6.5, -13.0], [7.5, -13.0], [-6.5, 14.0], [7.5, 14.0],
-                    [-17.0, -5.5], [18.0, 6.5], [-17.0, 6.5], [18.0, -5.5],
-                ]
-                : this.defenderPassLayoutShape === 'rect_mirror'
-                    ? [
-                        [-13.0, -6.5], [-13.0, 7.5], [14.0, -6.5], [14.0, 7.5],
-                        [-5.5, -17.0], [6.5, 18.0], [6.5, -17.0], [-5.5, 18.0],
-                    ]
-                    : [
-                        [-15.2, -5.5], [16.2, 6.5], [-5.5, -15.2], [6.5, 16.2],
-                        [-15.2, 6.5], [16.2, -5.5], [-5.5, 16.2], [6.5, -15.2],
-                    ];
+            // 3) 关城外围碎石与险石（随机抽选 2~5 处不对称散落点、大范围随机偏移与随机石种，破除固定对称感）
+            const pExt = passRingHalfExtents(this.defenderPassShape ?? 'square');
+            const ohI = pExt.outerHalfI, ohJ = pExt.outerHalfJ;
+            const rawCragZones: ReadonlyArray<readonly [number, number]> = [
+                [-(ohI + 3.2), -(ohJ + 2.4)], [ohI + 4.0, -(ohJ + 3.0)], [-(ohI + 2.8), ohJ + 4.2], [ohI + 3.5, ohJ + 3.6],
+                [-(ohI + 5.5), -1.2], [ohI + 6.2, 1.8], [-1.5, -(ohJ + 5.8)], [1.8, ohJ + 6.4],
+                [-(ohI + 4.8), ohJ - 1.5], [ohI + 5.2, -(ohJ - 1.8)], [-(ohI - 1.6), -(ohJ + 4.6)], [ohI - 1.2, ohJ + 5.0],
+                [-(ohI + 7.5), -(ohJ - 3.0)], [ohI + 8.0, ohJ - 2.5], [-(ohI - 2.8), ohJ + 7.2], [ohI - 2.5, -(ohJ + 7.6)],
+            ];
             const cragRockAsset = isAridSite ? 'ROCK_FORMATION_DESERT' : (isSnowSite ? 'ROCK_FORMATION_SNOW' : 'ROCK_FORMATION');
-            outerFlankCrags.forEach(([ci0, cj0], cIdx) => {
+            const passRockPool = [cragRockAsset, 'ROCK1', 'ROCK2', 'ROCK3'];
+            const targetCragCount = 2 + Math.floor(mRnd() * 4); // 每张图随机 2~5 处，不再八方对称满铺
+            const pickedCrags = shuffleWithMSeed(rawCragZones).slice(0, targetCragCount);
+            pickedCrags.forEach(([baseI, baseJ]) => {
+                const ci0 = baseI + (mRnd() - 0.5) * 3.4;
+                const cj0 = baseJ + (mRnd() - 0.5) * 3.4;
+                // 确保随机偏移后仍在城墙外至少 2.2 格以外
+                if (Math.abs(ci0 - 0.5) < ohI + 2.2 && Math.abs(cj0 - 0.5) < ohJ + 2.2) return;
                 const pt = isoToWorld(ci0, cj0);
                 if (gl.isWaterAt(pt.x, pt.y, W, H)) return;
-                pushInteriorDecor(cIdx % 2 === 0 ? cragRockAsset : 'ROCK1', ci0, cj0, 0.92 + mRnd() * 0.14);
-                pushInteriorDecor(courtyardTreeAsset, ci0 + 0.85, cj0 - 0.55, 0.80 + mRnd() * 0.12);
-                if (cIdx % 2 === 1) {
-                    pushInteriorDecor('BATTLEFIELD:STAKE_BARRICADE', ci0 - 0.65, cj0 + 0.55, 0.86);
+                const rAsset = passRockPool[Math.floor(mRnd() * passRockPool.length)];
+                pushInteriorDecor(rAsset, ci0, cj0, 0.82 + mRnd() * 0.22);
+                if (mRnd() < 0.45) {
+                    const ang = mRnd() * Math.PI * 2;
+                    const distC = 1.3 + mRnd() * 0.8;
+                    pushInteriorDecor(
+                        mRnd() < 0.5 ? passFlora : courtyardTreeAsset,
+                        ci0 + Math.cos(ang) * distC,
+                        cj0 + Math.sin(ang) * distC,
+                        0.74 + mRnd() * 0.14,
+                    );
                 }
             });
         } else {
@@ -1099,17 +1070,16 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                                 ? 'BUILDING:SCEN_FLAG_E'
                                 : 'BATTLEFIELD:TORCH_A';
 
-            // 大城 / 中城：城心城堡四角对称布置御苑花坛与仪仗旗（不压十字大道）
+            // 大城 / 中城：城心城堡四角对称布置御苑花坛与仪仗旗（一角一物，绝不叠放挨着）
             if (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') {
                 const royalCorners: ReadonlyArray<readonly [number, number]> = [
                     [-2.1, -2.1], [3.1, 3.1], [-2.1, 3.1], [3.1, -2.1],
                 ];
                 royalCorners.forEach(([ri, rj], rIdx) => {
-                    if (!isSnowSite) {
+                    if (!isSnowSite && rIdx % 2 === 1) {
                         pushInteriorDecor('FLOWERBED', ri, rj, 0.84 + mRnd() * 0.08, -6);
-                    }
-                    if (this.defenderCityType === 'big_city' || (rIdx % 2 === 0)) {
-                        pushInteriorDecor(urbanFlagAsset, ri + (ri < 0 ? -0.35 : 0.35), rj + (rj < 0 ? -0.35 : 0.35), 0.85);
+                    } else {
+                        pushInteriorDecor(urbanFlagAsset, ri, rj, 0.85);
                     }
                 });
             }
@@ -1160,10 +1130,6 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     : pAsset.startsWith('TRADE:') ? (0.88 + mRnd() * 0.08)
                     : (0.80 + mRnd() * 0.10); // BARRELS
                 pushInteriorDecor(pAsset, pi + ji, pj + jj, pScale, isFlatProp ? -6 : 0);
-                // 绒毯货摊旁伴生一组货桶，形成街坊市集摊位感
-                if (pAsset === 'BUILDING:RUGS') {
-                    pushInteriorDecor('BARRELS', pi + ji + 0.32, pj + jj - 0.24, 0.76 + mRnd() * 0.08, 0);
-                }
             });
         }
     }
@@ -1334,6 +1300,42 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             return false;
         };
 
+        // 🔴 [2026-11-04 主人令「设计一个最小间距，不要挨着」]
+        //    为所有城郊新增建筑、农田与道具建立统一的等轴半径包围盒与最小净距校验：
+        //    任意两栋建筑（或农田/矿点）之间必须保持充足净空（绝不挨着或叠压），违者自动跳过。
+        const placedOutskirtsItems: Array<{ x: number; y: number; r: number; isBld: boolean }> = [];
+        const outskirtsRadiusOf = (asset: string): { r: number; isBld: boolean } => {
+            if (/^DECAL_PATH/.test(asset)) return { r: 0, isBld: false };
+            if (/MARKET|MONASTERY|SETTLEMENT|FOLWARK|WOODEN_FORT|CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ|DOCK|SHIPYARD|POENARI_CASTLE/.test(asset)) {
+                return { r: 135, isBld: true };
+            }
+            if (/MILL|BLACKSMITH|HOUSE|HUT|YURT|LUMBER_CAMP|MINING_CAMP|CAMP_BARRACKS|GREEK_WAR_TENT|PAGODA|SHRINE|RUINS|TORII_GATE|OUTPOST|MADRASAH|MINARET|THOLOS|ARCH_OF_CONSTANTINE|SPHINX|PYRAMIDS|STONEHENGE|HALL_OF_HEROES|PASTURE/.test(asset) && asset.startsWith('BUILDING:')) {
+                return { r: 105, isBld: true };
+            }
+            if (/^RESOURCE:(?:FARM|RFARM|PASTURE|VINEYARD|QUARRY)/.test(asset)) {
+                return { r: 96, isBld: true };
+            }
+            if (/^MINE_/.test(asset)) {
+                return { r: 22, isBld: false };
+            }
+            return { r: 44, isBld: false };
+        };
+        const MIN_OUTSKIRTS_BLD_GAP = 55;  // 任意两座建筑外缘之间的最小净空像素（中心等轴距 ≥ r1 + r2 + 55 ≈ 265~325px）
+        const MIN_OUTSKIRTS_PROP_GAP = 28; // 建筑与装饰道具、或道具与道具之间的最小净空像素
+
+        const canPlaceOutskirtsAt = (asset: string, px: number, py: number): boolean => {
+            const { r, isBld } = outskirtsRadiusOf(asset);
+            if (r <= 0) return true;
+            const isOre = /^MINE_/.test(asset);
+            for (const item of placedOutskirtsItems) {
+                if (isOre && !item.isBld && item.r <= 24) continue; // 同矿脉簇内部矿石格允许拼合，但与采矿场/采石坑严格拉开
+                const isoDist = Math.hypot(px - item.x, (py - item.y) * 1.55);
+                const minGap = (isBld && item.isBld) ? MIN_OUTSKIRTS_BLD_GAP : MIN_OUTSKIRTS_PROP_GAP;
+                if (isoDist < r + item.r + minGap) return false;
+            }
+            return true;
+        };
+
         const pushOutskirtsSprite = (
             asset: string,
             px: number,
@@ -1342,7 +1344,12 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             z = 0,
             flip = mRnd() < 0.5,
             frame = 0,
-        ): void => {
+        ): boolean => {
+            if (!canPlaceOutskirtsAt(asset, px, py)) return false;
+            const { r, isBld } = outskirtsRadiusOf(asset);
+            if (r > 0) {
+                placedOutskirtsItems.push({ x: px, y: py, r, isBld });
+            }
             this.ensureNatureAsset(asset);
             const sp: DecorSprite = {
                 asset,
@@ -1361,6 +1368,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             };
             (sp as any).cityOutskirts = true;
             this.decorSprites.push(sp);
+            return true;
         };
 
         const clearTreesInRadius = (centerX: number, centerY: number, radPx: number): void => {
@@ -1486,76 +1494,71 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
 
         for (const cand of shuffledHamlets) {
             if (placedCenters.length >= targetHamlets) break;
-            if (isTooCloseOrAligned(cand.x, cand.y, 620)) continue;
+            if (isTooCloseOrAligned(cand.x, cand.y, 680)) continue;
             placedCenters.push({ x: cand.x, y: cand.y });
 
             const vx = cand.x, vy = cand.y;
-            clearTreesInRadius(vx, vy, 210);
+            clearTreesInRadius(vx, vy, 280);
             gl.carveFoundation(vx, vy, W, H, 2.5);
 
-            // 1) 2~4 块不规则散落农田 / 水稻田 / 牧草场贴片（z = -6 贴地绘制，绝不挡兵模与房屋）
-            const fieldSide = mRnd() < 0.5 ? 1 : -1;
-            const fx0 = vx + fieldSide * 82, fy0 = vy + 26;
-            const diamondOffsets: ReadonlyArray<readonly [number, number]> = [
-                [0, 0],
-                [66, 30],
-                [-60, 34],
-                [8, 64],
-            ];
-            let plotsPlaced = 0;
-            const maxPlots = this.defenderCityType === 'big_city' ? 4 : 3;
-            for (const [dx, dy] of diamondOffsets) {
-                if (plotsPlaced >= maxPlots) break;
-                const px = fx0 + dx, py = fy0 + dy;
-                if (!isPointDryAndOpen(px, py)) continue;
-                gl.carveFoundation(px, py, W, H, 1.4);
-                if (canUseVineyard && plotsPlaced === maxPlots - 1 && mRnd() < 0.5) {
-                    pushOutskirtsSprite('RESOURCE:VINEYARD', px, py, 0.90, -1, mRnd() < 0.5, 0);
-                } else {
-                    pushOutskirtsSprite(plotAsset, px, py, 1.0, -6, false, 0);
-                }
-                plotsPlaced++;
-            }
-
-            // 2) 磨坊 / 波兰庄园 / 美洲聚落 / 畜牧棚居中 + 村心泥径贴花
+            // 1) 磨坊 / 波兰庄园 / 美洲聚落 / 畜牧棚居中 + 村心泥径贴花（先放主建筑，确保主建筑基准点稳固）
             pushOutskirtsSprite('DECAL_PATH_1', vx, vy + 10, 0.95, -6, mRnd() < 0.5, 0);
             pushOutskirtsSprite(millAsset, vx, vy, 0.78 + mRnd() * 0.04, 0, mRnd() < 0.5, 0);
 
-            // 3) 另一侧围以 2~3 间同风格民居 / 茅屋 / 毡帐，构成完整的 DE 城外自然村落
-            const houseOffsets: ReadonlyArray<readonly [number, number]> = [
-                [-fieldSide * 86, -28],
-                [-fieldSide * 142, 8],
-                [-fieldSide * 30, -56],
+            // 2) 2~3 块散落农田 / 水稻田 / 牧草场贴片（距磨坊 ≥ 265px，彼此等轴间距 ≥ 260px，绝不挨着或叠压）
+            const fieldSide = mRnd() < 0.5 ? 1 : -1;
+            const diamondOffsets: ReadonlyArray<readonly [number, number]> = [
+                [fieldSide * 265, 25],
+                [fieldSide * 265, -155],
+                [fieldSide * 485, -65],
+                [fieldSide * 65, 175],
             ];
-            const houseCount = this.defenderCityType === 'big_city' ? 3 : 2;
-            let hPlaced = 0;
-            for (let hi = 0; hi < houseOffsets.length && hPlaced < houseCount; hi++) {
-                const hx = vx + houseOffsets[hi][0] + (mRnd() - 0.5) * 14;
-                const hy = vy + houseOffsets[hi][1] + (mRnd() - 0.5) * 10;
-                if (!isPointDryAndOpen(hx, hy)) continue;
-                gl.carveFoundation(hx, hy, W, H, 1.4);
-                const hAsset = housePool[(hi + Math.floor(mRnd() * housePool.length)) % housePool.length];
-                pushOutskirtsSprite(hAsset, hx, hy, 0.76 + mRnd() * 0.04, 0, mRnd() < 0.5, 0);
-                hPlaced++;
-            }
-
-            // 4) 村口伴生一簇 3 丛紧密聚拢的浆果丛（DE Forage Clump）/ 橄榄果树 + 1 辆农庄推车
-            if (!isSnow) {
-                const bx0 = vx - fieldSide * 88, by0 = vy + 46;
-                const fAsset = foragePool[Math.floor(mRnd() * foragePool.length)];
-                const bushClump: ReadonlyArray<readonly [number, number]> = [[0, 0], [28, 14], [-26, 14]];
-                for (let bi = 0; bi < bushClump.length; bi++) {
-                    const bx = bx0 + bushClump[bi][0], by = by0 + bushClump[bi][1];
-                    if (!isPointDryAndOpen(bx, by)) continue;
-                    if (canUseOliveTree && bi === 0 && mRnd() < 0.5) {
-                        pushOutskirtsSprite('RESOURCE:OLIVE_TREE', bx, by, 0.82, 0, mRnd() < 0.5, Math.floor(mRnd() * 12));
-                    } else {
-                        pushOutskirtsSprite(fAsset, bx, by, 0.84, -6, (bi % 2 === 0), bi % 4);
-                    }
+            let plotsPlaced = 0;
+            const maxPlots = this.defenderCityType === 'big_city' ? 3 : 2;
+            for (const [dx, dy] of diamondOffsets) {
+                if (plotsPlaced >= maxPlots) break;
+                const px = vx + dx, py = vy + dy;
+                if (!isPointDryAndOpen(px, py)) continue;
+                const pAsset = (canUseVineyard && plotsPlaced === maxPlots - 1 && mRnd() < 0.5)
+                    ? 'RESOURCE:VINEYARD'
+                    : plotAsset;
+                if (pushOutskirtsSprite(pAsset, px, py, pAsset === 'RESOURCE:VINEYARD' ? 0.90 : 1.0, pAsset === 'RESOURCE:VINEYARD' ? -1 : -6, false, 0)) {
+                    gl.carveFoundation(px, py, W, H, 1.4);
+                    plotsPlaced++;
                 }
             }
-            if (isPointDryAndOpen(vx - fieldSide * 48, vy + 22)) {
-                pushOutskirtsSprite(villageCartAsset, vx - fieldSide * 48, vy + 22, 0.78, 0, mRnd() < 0.5, 0);
+
+            // 3) 另一侧围以 2 间同风格民居 / 茅屋 / 毡帐（距磨坊及彼此等轴间距均 ≥ 275px，绝不挨着）
+            const houseOffsets: ReadonlyArray<readonly [number, number]> = [
+                [-fieldSide * 275, -45],
+                [-fieldSide * 255, 145],
+                [-fieldSide * 45, -185],
+            ];
+            const houseCount = this.defenderCityType === 'big_city' ? 2 : 2;
+            let hPlaced = 0;
+            for (let hi = 0; hi < houseOffsets.length && hPlaced < houseCount; hi++) {
+                const hx = vx + houseOffsets[hi][0] + (mRnd() - 0.5) * 12;
+                const hy = vy + houseOffsets[hi][1] + (mRnd() - 0.5) * 8;
+                if (!isPointDryAndOpen(hx, hy)) continue;
+                const hAsset = housePool[(hi + Math.floor(mRnd() * housePool.length)) % housePool.length];
+                if (pushOutskirtsSprite(hAsset, hx, hy, 0.76 + mRnd() * 0.04, 0, mRnd() < 0.5, 0)) {
+                    gl.carveFoundation(hx, hy, W, H, 1.4);
+                    hPlaced++;
+                }
+            }
+
+            // 4) 村口远端伴生果树/浆果与农庄推车（与磨坊和民居保持 ≥ 185px 净距）
+            if (!isSnow) {
+                const bx = vx - fieldSide * 145, by = vy + 125;
+                if (isPointDryAndOpen(bx, by)) {
+                    const fAsset = (canUseOliveTree && mRnd() < 0.5)
+                        ? 'RESOURCE:OLIVE_TREE'
+                        : foragePool[Math.floor(mRnd() * foragePool.length)];
+                    pushOutskirtsSprite(fAsset, bx, by, 0.84, fAsset === 'RESOURCE:OLIVE_TREE' ? 0 : -6, mRnd() < 0.5, 0);
+                }
+            }
+            if (isPointDryAndOpen(vx + fieldSide * 135, vy - 115)) {
+                pushOutskirtsSprite(villageCartAsset, vx + fieldSide * 135, vy - 115, 0.78, 0, mRnd() < 0.5, 0);
             }
         }
 
@@ -1578,30 +1581,25 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 ? ['RESOURCE:SHORE_FISH', 'RESOURCE:DORADO_FISH', 'RESOURCE:MARLIN_FISH', 'RESOURCE:TUNA_FISH', 'RESOURCE:SNAPPER_FISH', 'RESOURCE:BOX_TURTLES', 'RESOURCE:DOLPHIN']
                 : ['RESOURCE:SHORE_FISH', 'RESOURCE:SALMON_FISH', 'RESOURCE:PERCH_FISH', 'RESOURCE:BOX_TURTLES'];
             for (const dc of dockCandidates) {
-                if (isTooCloseOrAligned(dc.x, dc.y, 580)) continue;
+                if (isTooCloseOrAligned(dc.x, dc.y, 620)) continue;
+                const dAsset = pickUniqueOutskirts(dockPool);
+                if (!pushOutskirtsSprite(dAsset, dc.x, dc.y, 0.78, 0, mRnd() < 0.5, 0)) continue;
                 placedCenters.push({ x: dc.x, y: dc.y });
-                clearTreesInRadius(dc.x, dc.y, 130);
-                pushOutskirtsSprite(pickUniqueOutskirts(dockPool), dc.x, dc.y, 0.78, 0, mRnd() < 0.5, 0);
+                clearTreesInRadius(dc.x, dc.y, 160);
+                const wDx = dc.waterX - dc.x, wDy = dc.waterY - dc.y;
+                const wLen = Math.hypot(wDx, wDy) || 1;
+                const wUx = wDx / wLen, wUy = wDy / wLen;
                 pushOutskirtsSprite(
                     pickUniqueOutskirts(mooredBoatPool),
-                    (dc.x + dc.waterX) * 0.5,
-                    (dc.y + dc.waterY) * 0.5,
+                    dc.x + wUx * 225,
+                    dc.y + wUy * 155,
                     0.75,
                     0,
                     mRnd() < 0.5,
                     0,
                 );
                 const chosenFish = pickUniqueOutskirts(fishPool);
-                pushOutskirtsSprite(chosenFish, dc.waterX, dc.waterY, 0.85, -1, false, Math.floor(mRnd() * 12));
-                pushOutskirtsSprite(
-                    this.environmentPlan?.waterKind === 'sea' ? 'RESOURCE:OYSTERS' : 'RESOURCE:WATER_LILY',
-                    dc.waterX - 36,
-                    dc.waterY + 14,
-                    0.82,
-                    -6,
-                    mRnd() < 0.5,
-                    Math.floor(mRnd() * 4),
-                );
+                pushOutskirtsSprite(chosenFish, dc.x + wUx * 340, dc.y + wUy * 230, 0.85, -1, false, Math.floor(mRnd() * 12));
                 break;
             }
         }
@@ -1635,7 +1633,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const shuffledTrees = shuffle(forestTrees);
                 let lumberPlaced = 0;
                 const edgeOffsets: ReadonlyArray<readonly [number, number]> = [
-                    [104, 40], [-104, 40], [104, -40], [-104, -40], [0, 74], [0, -74],
+                    [210, 75], [-210, 75], [210, -75], [-210, -75], [0, 155], [0, -155],
                 ];
                 for (let ti = 0; ti < shuffledTrees.length && lumberPlaced < 1; ti++) {
                     const tr = shuffledTrees[ti];
@@ -1655,20 +1653,18 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                         const along = relX * chargeUx + relY * chargeUy;
                         const perp = Math.abs(-relX * chargeUy + relY * chargeUx);
                         if (along > 0 && along < chargeLen + 110 && perp < 350) continue;
-                        if (isTooCloseOrAligned(lx, ly, 580)) continue;
-                        if (forestTrees.some((ft) => Math.hypot(ft.x - lx, (ft.y - ly) * 1.5) < 70)) continue;
+                        if (isTooCloseOrAligned(lx, ly, 620)) continue;
+                        if (forestTrees.some((ft) => Math.hypot(ft.x - lx, (ft.y - ly) * 1.5) < 120)) continue;
+                        if (!pushOutskirtsSprite(lumberCampAsset, lx, ly, 0.78, 0, ox < 0, 0)) continue;
 
                         placedCenters.push({ x: lx, y: ly });
                         gl.carveFoundation(lx, ly, W, H, 1.8);
-                        pushOutskirtsSprite(lumberCampAsset, lx, ly, 0.78, 0, ox < 0, 0);
-                        const midX = (lx + tr.x) * 0.5, midY = (ly + tr.y) * 0.5;
                         const cutPts: ReadonlyArray<readonly [number, number, boolean]> = [
-                            [16, -8, true],
-                            [-18, 12, false],
-                            [26, 14, true],
+                            [ox > 0 ? -155 : 155, 45, true],
+                            [ox > 0 ? -135 : 135, -55, false],
                         ];
                         for (const [cxOff, cyOff, isStump] of cutPts) {
-                            const sx0 = midX + cxOff, sy0 = midY + cyOff;
+                            const sx0 = lx + cxOff, sy0 = ly + cyOff;
                             if (isPointDryAndOpen(sx0, sy0)) {
                                 const pool = isStump ? stumpPool : felledPool;
                                 pushOutskirtsSprite(pool[Math.floor(mRnd() * pool.length)], sx0, sy0, 0.80, 0, mRnd() < 0.5, 0);
@@ -1681,18 +1677,19 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             }
         }
 
-        // ── (D) 山麓矿脉簇与采矿场（4~5 格紧密拼合的 DE 金矿/石矿簇 Tile Clump + 采石坑 + 紧邻矿脉的采矿场/美洲聚落/游牧骡车） ──
+        // ── (D) 山麓矿脉簇与采矿场（DE 金矿/石矿簇 + 保持最小净距的采矿场与采石坑，绝不挨着） ──
         if (mineSiteCandidates.length > 0) {
             mineSiteCandidates.sort((a, b) => b.elev - a.elev || (mRnd() - 0.5));
             for (const mc of mineSiteCandidates) {
-                if (isTooCloseOrAligned(mc.x, mc.y, 580)) continue;
+                if (isTooCloseOrAligned(mc.x, mc.y, 620)) continue;
                 const campSide = mc.x >= cx ? -1 : 1;
-                const campX = mc.x + campSide * 84;
-                const campY = mc.y + 24;
+                const campX = mc.x + campSide * 245;
+                const campY = mc.y + 42;
                 if (!isPointDryAndOpen(campX, campY) || isNearAnySpawn(campX, campY, 460)) continue;
+                if (!canPlaceOutskirtsAt(miningCampAsset, campX, campY)) continue;
 
                 placedCenters.push({ x: mc.x, y: mc.y });
-                clearTreesInRadius(mc.x, mc.y, 160);
+                clearTreesInRadius(mc.x, mc.y, 220);
                 gl.carveFoundation(mc.x, mc.y, W, H, 2.0);
                 gl.carveFoundation(campX, campY, W, H, 1.6);
 
@@ -1700,29 +1697,27 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 const quarryAsset = mRnd() < 0.5 ? 'RESOURCE:QUARRY' : 'RESOURCE:QUARRY_B';
                 const clumpOffsets: ReadonlyArray<readonly [number, number]> = [
                     [0, 0],
-                    [34, 17],
-                    [-34, 17],
-                    [0, 34],
-                    [34, -17],
+                    [36, 18],
+                    [-36, 18],
+                    [0, 36],
                 ];
-                const oreCount = 4 + (mRnd() < 0.5 ? 1 : 0);
-                for (let oi = 0; oi < oreCount; oi++) {
+                for (let oi = 0; oi < clumpOffsets.length; oi++) {
                     const ox = mc.x + clumpOffsets[oi][0];
                     const oy = mc.y + clumpOffsets[oi][1];
                     pushOutskirtsSprite(primaryOre, ox, oy, 0.90, 0, (oi % 2 === 0), oi % 6);
                 }
-                if (isPointDryAndOpen(mc.x - campSide * 48, mc.y - 20)) {
-                    pushOutskirtsSprite(quarryAsset, mc.x - campSide * 48, mc.y - 20, 0.84, -1, mRnd() < 0.5, 0);
-                }
                 pushOutskirtsSprite(miningCampAsset, campX, campY, 0.78, 0, campSide < 0, 0);
-                if (isPointDryAndOpen(campX + campSide * 34, campY + 16)) {
-                    pushOutskirtsSprite('BARRELS', campX + campSide * 34, campY + 16, 0.78, 0, mRnd() < 0.5, 0);
+                if (isPointDryAndOpen(mc.x - campSide * 225, mc.y - 45)) {
+                    pushOutskirtsSprite(quarryAsset, mc.x - campSide * 225, mc.y - 45, 0.84, -1, mRnd() < 0.5, 0);
+                }
+                if (isPointDryAndOpen(campX + campSide * 155, campY + 35)) {
+                    pushOutskirtsSprite('BARRELS', campX + campSide * 155, campY + 35, 0.78, 0, mRnd() < 0.5, 0);
                 }
                 break;
             }
         }
 
-        // ── (E) 城郊前哨营塞（哨岗/木堡 + 本文化军营/营帐 + 朝向攻方来向的木栅拒马防线 + 战旗） ──
+        // ── (E) 城郊前哨营塞（哨岗/木堡 + 保持 ≥ 275px 间距的本文化军营/营帐 + 拒马防线 + 战旗） ──
         outpostCandidates.sort(() => mRnd() - 0.5);
         const targetOutposts = (this.defenderCityType === 'big_city' || this.defenderCityType === 'pass') ? 2 : 1;
         const outpostPool = isNomadOutskirts
@@ -1738,31 +1733,31 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         let outpostsPlaced = 0;
         for (const oc of outpostCandidates) {
             if (outpostsPlaced >= targetOutposts) break;
-            if (isTooCloseOrAligned(oc.x, oc.y, 580)) continue;
-            placedCenters.push({ x: oc.x, y: oc.y });
-            clearTreesInRadius(oc.x, oc.y, 135);
-            gl.carveFoundation(oc.x, oc.y, W, H, 1.6);
+            if (isTooCloseOrAligned(oc.x, oc.y, 620)) continue;
             const opAsset = pickUniqueOutskirts(outpostPool);
-            pushOutskirtsSprite(opAsset, oc.x, oc.y, 0.80, 0, mRnd() < 0.5, 0);
-            if (isPointDryAndOpen(oc.x - 62, oc.y - 20)) {
-                gl.carveFoundation(oc.x - 62, oc.y - 20, W, H, 1.3);
-                pushOutskirtsSprite(campTentOutskirts, oc.x - 62, oc.y - 20, 0.76, 0, mRnd() < 0.5, 0);
+            if (!pushOutskirtsSprite(opAsset, oc.x, oc.y, 0.80, 0, mRnd() < 0.5, 0)) continue;
+            placedCenters.push({ x: oc.x, y: oc.y });
+            clearTreesInRadius(oc.x, oc.y, 210);
+            gl.carveFoundation(oc.x, oc.y, W, H, 1.6);
+            const tentX = oc.x - 275, tentY = oc.y - 52;
+            if (isPointDryAndOpen(tentX, tentY) && pushOutskirtsSprite(campTentOutskirts, tentX, tentY, 0.76, 0, mRnd() < 0.5, 0)) {
+                gl.carveFoundation(tentX, tentY, W, H, 1.3);
             }
             const toAtkX = atkCen.x >= oc.x ? 1 : -1;
             const toAtkY = atkCen.y >= oc.y ? 1 : -1;
-            for (const [bxOff, byOff] of [[toAtkX * 48, toAtkY * 24], [toAtkX * 18, toAtkY * 38]] as const) {
+            for (const [bxOff, byOff] of [[toAtkX * 175, toAtkY * 72], [toAtkX * 75, toAtkY * 135]] as const) {
                 const bx = oc.x + bxOff, by = oc.y + byOff;
                 if (isPointDryAndOpen(bx, by)) {
                     pushOutskirtsSprite('BATTLEFIELD:STAKE_BARRICADE', bx, by, 0.84, 0, toAtkX < 0, 0);
                 }
             }
-            if (isPointDryAndOpen(oc.x + 28, oc.y - 14)) {
-                pushOutskirtsSprite(pickUniqueOutskirts(flagPool), oc.x + 28, oc.y - 14, 0.82, 0, mRnd() < 0.5, 0);
+            if (isPointDryAndOpen(oc.x + 165, oc.y - 68)) {
+                pushOutskirtsSprite(pickUniqueOutskirts(flagPool), oc.x + 165, oc.y - 68, 0.82, 0, mRnd() < 0.5, 0);
             }
             outpostsPlaced++;
         }
 
-        // ── (F) 城郊功能院落（关厢商贸集镇 + 城郊名胜古刹院落，全图成组布局、佛像最多 1 尊、严格遵循世界各地文化） ──
+        // ── (F) 城郊功能院落（关厢商贸集镇 + 城郊名胜古刹院落，严格保持建筑最小间距不挨着） ──
         if (this.defenderCityType !== 'pass') {
             const isJapanOutskirts = cultStyle === 'JAPAN';
             const defCityRec: any = this.defenderCityRecord();
@@ -1834,16 +1829,11 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             for (const sk of subCompounds) {
                 if (subPlaced >= maxSubCompounds) break;
                 for (const cand of shuffledHamlets) {
-                    if (isTooCloseOrAligned(cand.x, cand.y, 640)) continue;
-                    placedCenters.push({ x: cand.x, y: cand.y });
+                    if (isTooCloseOrAligned(cand.x, cand.y, 680)) continue;
                     const sx = cand.x, sy = cand.y;
-                    clearTreesInRadius(sx, sy, 165);
-                    gl.carveFoundation(sx, sy, W, H, 2.0);
 
                     if (sk === 'suburban_trade_post') {
-                        // DE 关厢商贸集镇：古道贴花 + 集市与铁匠铺并立 + 地毯货桶 + 道路上行进的商车与货郎
-                        pushOutskirtsSprite('DECAL_PATH_2', sx - 20, sy + 20, 0.94, -6, false, 0);
-                        pushOutskirtsSprite('DECAL_PATH_3', sx + 48, sy + 36, 0.92, -6, false, 0);
+                        // DE 关厢商贸集镇：集市与铁匠铺保持 ≥ 310px 等轴间距，绝不挨着
                         const marketBld = isNomadOutskirts
                             ? 'BUILDING:YURT_A'
                             : (this.defenderCityType === 'stockade'
@@ -1854,42 +1844,44 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                             : (this.defenderCityType === 'stockade'
                                 ? (isAmericasOutskirts ? 'BUILDING:SETTLEMENT' : 'BUILDING:HUT_E')
                                 : `BUILDING:${deStyle}_BLACKSMITH_${useAge3 ? 'AGE3' : 'AGE2'}`);
-                        pushOutskirtsSprite(pickUniqueOutskirts([marketBld]), sx, sy, 0.76, 0, mRnd() < 0.5, 0);
-                        if (isPointDryAndOpen(sx + 86, sy - 28)) {
-                            gl.carveFoundation(sx + 86, sy - 28, W, H, 1.5);
-                            pushOutskirtsSprite(pickUniqueOutskirts([smithBld]), sx + 86, sy - 28, 0.74, 0, mRnd() < 0.5, 0);
+                        if (!pushOutskirtsSprite(pickUniqueOutskirts([marketBld]), sx, sy, 0.76, 0, mRnd() < 0.5, 0)) continue;
+                        placedCenters.push({ x: sx, y: sy });
+                        clearTreesInRadius(sx, sy, 240);
+                        gl.carveFoundation(sx, sy, W, H, 2.0);
+                        pushOutskirtsSprite('DECAL_PATH_2', sx - 20, sy + 20, 0.94, -6, false, 0);
+                        pushOutskirtsSprite('DECAL_PATH_3', sx + 145, sy + 36, 0.92, -6, false, 0);
+                        const smX = sx + 305, smY = sy - 58;
+                        if (isPointDryAndOpen(smX, smY) && pushOutskirtsSprite(pickUniqueOutskirts([smithBld]), smX, smY, 0.74, 0, mRnd() < 0.5, 0)) {
+                            gl.carveFoundation(smX, smY, W, H, 1.5);
                         }
-                        if (isPointDryAndOpen(sx + 24, sy + 22)) {
-                            pushOutskirtsSprite('RUGS', sx + 24, sy + 22, 0.84, -6, mRnd() < 0.5, Math.floor(mRnd() * 4));
+                        if (isPointDryAndOpen(sx - 195, sy + 68)) {
+                            pushOutskirtsSprite(loadedCartAsset, sx - 195, sy + 68, 0.80, 0, mRnd() < 0.5, 0);
                         }
-                        if (isPointDryAndOpen(sx + 66, sy - 6)) {
-                            pushOutskirtsSprite('BARRELS', sx + 66, sy - 6, 0.78, 0, mRnd() < 0.5, 0);
-                        }
-                        if (isPointDryAndOpen(sx - 42, sy + 28)) {
-                            pushOutskirtsSprite(loadedCartAsset, sx - 42, sy + 28, 0.80, 0, mRnd() < 0.5, 0);
-                        }
-                        if (isPointDryAndOpen(sx + 16, sy + 44)) {
-                            pushOutskirtsSprite(merchantAsset, sx + 16, sy + 44, 0.84, 0, mRnd() < 0.5, 0);
+                        if (isPointDryAndOpen(sx + 135, sy + 115)) {
+                            pushOutskirtsSprite(merchantAsset, sx + 135, sy + 115, 0.84, 0, mRnd() < 0.5, 0);
                         }
                     } else {
-                        // DE 城郊名胜古刹院落（全图最多 1 处，佛像最多 1 尊，鸟居严格仅限日本）
+                        // DE 城郊名胜古刹院落（主殿与牌坊/雕像/花坛严格拉开间距，绝不挨着）
                         const tmAsset = pickUniqueOutskirts(templeMonumentPool);
                         const tmScale = /CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ/.test(tmAsset)
                             ? 0.68
                             : 0.78;
-                        pushOutskirtsSprite('DECAL_PATH_4', sx, sy + 28, 0.92, -6, false, 0);
-                        pushOutskirtsSprite(tmAsset, sx, sy, tmScale, 0, mRnd() < 0.5, 0);
+                        if (!pushOutskirtsSprite(tmAsset, sx, sy, tmScale, 0, mRnd() < 0.5, 0)) continue;
+                        placedCenters.push({ x: sx, y: sy });
+                        clearTreesInRadius(sx, sy, 230);
+                        gl.carveFoundation(sx, sy, W, H, 2.0);
+                        pushOutskirtsSprite('DECAL_PATH_4', sx, sy + 42, 0.92, -6, false, 0);
                         if (!isSnow) {
-                            if (isPointDryAndOpen(sx - 44, sy + 20)) {
-                                pushOutskirtsSprite('FLOWERBED', sx - 44, sy + 20, 0.84, -6, false, 0);
+                            if (isPointDryAndOpen(sx - 195, sy + 72)) {
+                                pushOutskirtsSprite('FLOWERBED', sx - 195, sy + 72, 0.84, -6, false, 0);
                             }
-                            if (isPointDryAndOpen(sx + 44, sy + 20)) {
-                                pushOutskirtsSprite('FLOWERBED', sx + 44, sy + 20, 0.84, -6, true, 1);
+                            if (isPointDryAndOpen(sx + 195, sy + 72)) {
+                                pushOutskirtsSprite('FLOWERBED', sx + 195, sy + 72, 0.84, -6, true, 1);
                             }
                         }
-                        if (isJapanOutskirts && tmAsset !== 'BUILDING:SCEN_BUDDHA_STATUE' && isPointDryAndOpen(sx, sy + 48)) {
-                            pushOutskirtsSprite('BUILDING:SCEN_TORII_GATE', sx, sy + 48, 0.76, 0, false, 0);
-                        } else if (isGrecoRomanOutskirts && isPointDryAndOpen(sx, sy + 46)) {
+                        if (isJapanOutskirts && tmAsset !== 'BUILDING:SCEN_BUDDHA_STATUE' && isPointDryAndOpen(sx, sy + 195)) {
+                            pushOutskirtsSprite('BUILDING:SCEN_TORII_GATE', sx, sy + 195, 0.76, 0, false, 0);
+                        } else if (isGrecoRomanOutskirts && isPointDryAndOpen(sx, sy + 185)) {
                             const greekStatues = [
                                 'BUILDING:SCEN_STATUE_ALEXANDER',
                                 'BUILDING:SCEN_STATUE_HEPHAISTION',
@@ -1897,7 +1889,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                                 'BUILDING:SCEN_STATUE_ARES_MARBLE',
                                 'BUILDING:SCEN_STATUE_ARES_PAINTED',
                             ];
-                            pushOutskirtsSprite(pickUniqueOutskirts(greekStatues), sx, sy + 46, 0.78, 0, mRnd() < 0.5, 0);
+                            pushOutskirtsSprite(pickUniqueOutskirts(greekStatues), sx, sy + 185, 0.78, 0, mRnd() < 0.5, 0);
                         }
                     }
                     subPlaced++;

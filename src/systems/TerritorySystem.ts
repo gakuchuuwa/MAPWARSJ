@@ -1066,79 +1066,61 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
             ? mixHalfYurtPool(DE_MEDIUM_CITY_POOL, deMulberry32(deHashString(cityId + '|pass_inner_mix'))).map((b): [string, string] => [b, 'AGE3'])
             : MOBEI_YURT_RING_NINE.map((y): [string, string] => [y, 'AGE3']))
         : [
-            // 4 角内城关键哨位：固定布设 4 座四级高级要塞石塔（AGE4 Keep）
+            // 4 座四级高级要塞石塔（AGE4 Keep）+ 2 座兵营 + 2 座马厩（与中心城堡共 9 栋，严格保持最小间距不挨着）
             ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'],
-            // 4 侧隘口侧翼哨位：固定布设 4 座三级警戒箭塔（AGE3 Guard Tower）
-            ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'],
+            ['BARRACKS', 'AGE3'], ['STABLE', 'AGE3'], ['STABLE', 'AGE3'], ['BARRACKS', 'AGE3'],
         ];
-    // 🔴 [2026-10-20] 4 角关键哨位与 4 侧翼隘口梯度排布：
-    //    彻底解决北侧箭塔被中央大城堡屋脊遮挡问题：
-    //    内墙 seg=6（角垛在 -8,-8），原角塔位仅 -5（距城心 5.5 格，被高耸城堡屋顶遮挡）；
-    //    现角塔前推至 -6.5 / 7.5（距城心 7 格，紧咬内城角垛），高度与视野彻底越过城堡屋脊，耸立于北城头；
-    //    4 侧翼哨位（东南西北正十字）分布在 -5.0 / 6.0，守护四向内门通道。
-    //    🔴 [2026-10-20] 矩形内圈（i −10…11 / j −6…7，圈心 0.5,0.5）沿用同一思路：角塔只留 2 格离墙、侧翼塔贴四门内侧 2 格。
-    //    注意矩形 i/j 两轴半长不同（10.5 / 6.5），角塔的 cj 必须用短轴值（−4 / 5），否则会掉到内外墙夹道的坡上。
-    //    🔴 [2026-10-20 镜像矩形] rect_mirror 把 i/j 两轴对调（内圈 i −6…7 / j −10…11）：塔位同步对调。
-    const passCornerI = (b: number): number => {
-        if (passShape === 'rect') return b < 0 ? -8 : 9;
-        if (passShape === 'rect_mirror') return b < 0 ? -4 : 5;
-        return b < 0 ? -6.5 : 7.5;
-    };
-    const passCornerJ = (b: number): number => {
-        if (passShape === 'rect') return b < 0 ? -4 : 5;
-        if (passShape === 'rect_mirror') return b < 0 ? -8 : 9;
-        return b < 0 ? -6.5 : 7.5;
-    };
-    const passCorners: ReadonlyArray<readonly [number, number]> = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
-    // 4 座侧翼警戒箭塔：从内门中轴线 (0.5) 移到内门通道两侧夹角防位（偏开主路 2.5 格），彻底让出十字关道
-    const passFlankSlots: ReadonlyArray<{ ci: number; cj: number }> = passShape === 'rect'
+    // 🔴 [2026-11-04 主人令「设计一个最小间距，不要挨着」]
+    //    内城 9 栋（中心城堡 + 4 座要塞塔 + 2 座兵营 + 2 座马厩）按四象限对角错位排布：
+    //    - 矩形（rect / rect_mirror）：4 角塔置于象限外角（±8.5, ±4.5），2 兵营 + 2 马厩置于象限内腹（±4.0, ±4.0），
+    //      角塔与兵营/马厩之间留足 ≥ 2 格净空，兵营/马厩与中心城堡对角净距 ≥ 2.86 格，跨十字关道净距 ≥ 6 格；
+    //    - 方形（square）：每个 6×6 象限内，要塞塔（2×2）与兵营/马厩（3×3）分居象限对角两端，
+    //      彼此中心距 4.95 格（屏幕水平间距 336px，净空 ≥ 2.45 格），距中心城堡净空 ≥ 3~4 格。
+    const passTowerSlots: ReadonlyArray<{ ci: number; cj: number }> = passShape === 'rect'
         ? [
-            { ci: -2.0, cj: -4.0 },
-            { ci: 3.0, cj: 5.0 },
-            { ci: -8.0, cj: 3.0 },
-            { ci: 9.0, cj: -2.0 },
+            { ci: -8.5, cj: -4.5 },
+            { ci: 9.5, cj: -4.5 },
+            { ci: -8.5, cj: 5.5 },
+            { ci: 9.5, cj: 5.5 },
         ]
         : passShape === 'rect_mirror'
             ? [
-                { ci: -4.0, cj: -2.0 },
-                { ci: 5.0, cj: 3.0 },
-                { ci: 3.0, cj: -8.0 },
-                { ci: -2.0, cj: 9.0 },
+                { ci: -4.5, cj: -8.5 },
+                { ci: 5.5, cj: -8.5 },
+                { ci: -4.5, cj: 9.5 },
+                { ci: 5.5, cj: 9.5 },
             ]
             : [
-                { ci: -2.0, cj: -6.0 },
-                { ci: 3.0, cj: 7.0 },
-                { ci: -6.0, cj: 3.0 },
-                { ci: 7.0, cj: -2.0 },
+                { ci: -2.5, cj: -6.5 },
+                { ci: 7.5, cj: -2.5 },
+                { ci: 3.5, cj: 7.5 },
+                { ci: -6.5, cj: 3.5 },
+            ];
+    const passGarrisonSlots: ReadonlyArray<{ ci: number; cj: number }> = passShape === 'rect'
+        ? [
+            { ci: -4.0, cj: -4.0 },
+            { ci: 5.0, cj: -4.0 },
+            { ci: -4.0, cj: 5.0 },
+            { ci: 5.0, cj: 5.0 },
+        ]
+        : passShape === 'rect_mirror'
+            ? [
+                { ci: -4.0, cj: -4.0 },
+                { ci: -4.0, cj: 5.0 },
+                { ci: 5.0, cj: -4.0 },
+                { ci: 5.0, cj: 5.0 },
+            ]
+            : [
+                { ci: -6.0, cj: -3.0 },
+                { ci: 4.0, cj: -6.0 },
+                { ci: -3.0, cj: 7.0 },
+                { ci: 7.0, cj: 4.0 },
             ];
     const passSlotCenters = [
         { ci: 0.5, cj: 0.5, isCenter: true },
-        ...passCorners.map(([bi, bj]) => ({ ci: passCornerI(bi), cj: passCornerJ(bj), isCenter: false })),
-        ...passFlankSlots.map((fl) => ({ ci: fl.ci, cj: fl.cj, isCenter: false })),
+        ...passTowerSlots.map((t) => ({ ci: t.ci, cj: t.cj, isCenter: false })),
+        ...passGarrisonSlots.map((g) => ({ ci: g.ci, cj: g.cj, isCenter: false })),
     ];
-    // 🔴 [2026-11-04 主人令「多兵营，马厩挺好」] 险要内城第二层平台两翼校场补设 2 座兵营 + 2 座马厩（3×3 占地，避开第一层中心城堡高台、十字关道与 8 座箭塔）
-    const passAuxGarrison: ReadonlyArray<{ b: string; age: string; ci: number; cj: number }> | undefined = isMobeiPass
-        ? undefined
-        : passShape === 'rect'
-            ? [
-                { b: 'BARRACKS', age: 'AGE3', ci: -5.5, cj: -3.0 },
-                { b: 'STABLE', age: 'AGE3', ci: -5.5, cj: 4.0 },
-                { b: 'STABLE', age: 'AGE3', ci: 6.5, cj: -3.0 },
-                { b: 'BARRACKS', age: 'AGE3', ci: 6.5, cj: 4.0 },
-            ]
-            : passShape === 'rect_mirror'
-                ? [
-                    { b: 'BARRACKS', age: 'AGE3', ci: -3.0, cj: -5.5 },
-                    { b: 'STABLE', age: 'AGE3', ci: 4.0, cj: -5.5 },
-                    { b: 'STABLE', age: 'AGE3', ci: -3.0, cj: 6.5 },
-                    { b: 'BARRACKS', age: 'AGE3', ci: 4.0, cj: 6.5 },
-                ]
-                : [
-                    { b: 'BARRACKS', age: 'AGE3', ci: -4.5, cj: -4.5 },
-                    { b: 'STABLE', age: 'AGE3', ci: 5.5, cj: -4.5 },
-                    { b: 'STABLE', age: 'AGE3', ci: -4.5, cj: 5.5 },
-                    { b: 'BARRACKS', age: 'AGE3', ci: 5.5, cj: 5.5 },
-                ];
     const passGridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, !isMobeiStyle(buildingStyle), factionId, region,
         passInnerBuildings, native, {
             seg: passRings.inner.segI, segJ: passRings.inner.segJ, near: 0, far: 0, corner: false,
@@ -1147,7 +1129,6 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
             groundTile: cityGroundTile(buildingStyle, 'rd2'),
             buildingStyle: style === 'YURT' ? 'ASIA' : style,
             slotCenters: passSlotCenters,
-            auxBuildings: passAuxGarrison,
             outer: {
                 seg: passRings.outer.segI, segJ: passRings.outer.segJ,
                 wallAnchors: DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA'],
@@ -1450,26 +1431,12 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],
             groundTile: cityGroundTile(buildingStyle, 'rd1'),
             auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
-                // 东西固定各 1 座
+                // 东西固定各 1 座（四角内侧，与 3×3 主建筑方阵保持 ≥ 2 格净距）
                 { b: 'TOWER', age: 'AGE4', ci: -10, cj: 11 },
                 { b: 'TOWER', age: 'AGE4', ci: 11, cj: -10 },
-                // 南北各 1 座：一左一右对角互补（北在左则南在右，北在右则南在左，按城 50% 随机对角）
-                ...(((deHashString(cityId + '|big_tower_diag') & 1) === 0)
-                    ? [
-                        { b: 'TOWER', age: 'AGE4', ci: -10, cj: -6 }, // 北在左（西北）
-                        { b: 'TOWER', age: 'AGE4', ci: 11, cj: 7 },   // 南在右（东南）
-                    ]
-                    : [
-                        { b: 'TOWER', age: 'AGE4', ci: -6, cj: -10 }, // 北在右（东北）
-                        { b: 'TOWER', age: 'AGE4', ci: 7, cj: 11 },   // 南在左（西南）
-                    ]),
-                // 大城外圈墙根与街角附属民居（2×2 占地，避开 9 主位、4 辅塔与十字主大道）
-                { b: 'HOUSE', age: 'AGE3', ci: -9.5, cj: -9.5 }, // 北内角街坊
-                { b: 'HOUSE', age: 'AGE3', ci: 10.5, cj: 10.5 }, // 南内角街坊
-                { b: 'HOUSE', age: 'AGE3', ci: -3.5, cj: -9.5 }, // 西北外沿街坊
-                { b: 'HOUSE', age: 'AGE3', ci: 10.5, cj: -3.5 }, // 东北外沿街坊
-                { b: 'HOUSE', age: 'AGE3', ci: -9.5, cj: 4.5 },  // 西南外沿街坊
-                { b: 'HOUSE', age: 'AGE3', ci: 4.5, cj: 10.5 },  // 东南外沿街坊
+                // 南北各 1 座：置于南北内角（-10,-10 与 11,11），与主位 (-6.5,-6.5)/(7.5,7.5) 双轴对角错开，绝不挨着
+                { b: 'TOWER', age: 'AGE4', ci: -10, cj: -10 },
+                { b: 'TOWER', age: 'AGE4', ci: 11, cj: 11 },
             ],
         }, buildingStyle);
     }
@@ -1684,10 +1651,28 @@ function buildDeCityGridHtml(
     for (const sl of slots) sl.y = (sl.ci + sl.cj) * TH / 2;
     if (!g.slotCenters) slots.sort((a, b) => a.y - b.y);   // 按屏幕 y 升序取建筑（与战略版同一取法）
 
+    /** 已落位建筑的网格包围盒（用于强制执行建筑之间的最小间距，严禁挨着） */
+    const placedBldBoxes: Array<{ i0: number; i1: number; j0: number; j1: number; ti: number; tj: number; effS: number }> = [];
+    const MIN_BLD_CELL_GAP = 1; // 任意两栋建筑占地边缘之间至少留出 1 整格空地（即 | edgeA - edgeB | >= 2）
+
     /** 放一栋：给素材目录名 + 占地 s + 位中心 (ci,cj) + 是否镜像 */
     const placeBuilding = (dir: string, src: string, boxW: number, s: number, ci: number, cj: number, flip: boolean, isAux = false): void => {
+        const effS = Math.max(s, /TOWER/.test(dir) ? 2 : s);
         const a0i = Math.round(ci - (s - 1) / 2), a0j = Math.round(cj - (s - 1) / 2);   // 占地左上格（吸附到整格）
         const ti = a0i + (s - 1) / 2, tj = a0j + (s - 1) / 2;                           // 占地中心（格坐标）
+        const halfE = (effS - 1) / 2;
+        const i0 = ti - halfE, i1 = ti + halfE, j0 = tj - halfE, j1 = tj + halfE;
+        if (isAux) {
+            for (const b of placedBldBoxes) {
+                const iTouch = i0 <= b.i1 + MIN_BLD_CELL_GAP && b.i0 <= i1 + MIN_BLD_CELL_GAP;
+                const jTouch = j0 <= b.j1 + MIN_BLD_CELL_GAP && b.j0 <= j1 + MIN_BLD_CELL_GAP;
+                const centerDist = Math.hypot(ti - b.ti, tj - b.tj);
+                if ((iTouch && jTouch) || centerDist < (effS + b.effS) * 0.5 + 1.1) {
+                    return; // 违反最小建筑间距，跳过摆放，杜绝建筑挨着
+                }
+            }
+        }
+        placedBldBoxes.push({ i0, i1, j0, j1, ti, tj, effS });
         const px = (ti - tj) * TW / 2, py = (ti + tj) * TH / 2;
         const anc = DE_SPRITE_ANCHOR[dir];
         const bh = anc ? anc[2] : boxW * 0.85;

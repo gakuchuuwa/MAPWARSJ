@@ -246,7 +246,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'baiji': 'city_sabi',
 'tubo': 'city_luoxie',
 'guge': 'city_zhaburang2',
-    'tujue': 'city_otuken',
+'tujue': 'city_otuken',
 
 'dayue': 'city_shenglong',
     'ryukyu': 'city_shuri',

@@ -1707,10 +1707,8 @@ buildingStyle: 'NORTHEAST', troops: 10000,
 buildingStyle: 'MONGOL', troops: 10000,
         note: '浚稽山；高车关隘',
     },
-    { id: 'city_otuken', name: '于都斤山', factionId: 'tujue', lat: 47.602542, lng: 101.230774, type: 'pass', region: 'STEPPE',
-buildingStyle: 'MONGOL', troops: 10000,
-        note: '于都斤山；突厥关隘',
-    },
+    { id: 'city_otuken', name: '于都斤山', factionId: 'tujue', lat: 47.602542, lng: 101.230774, type: 'stockade', troops: 20000, region: 'MONGOL', buildingStyle: 'MONGOL' },
+
     { id: 'city_yingchang', name: '应昌', factionId: 'yuan_d', lat: 43.385052, lng: 116.82312, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'XIANBEI', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
 

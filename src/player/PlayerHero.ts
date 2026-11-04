@@ -39,6 +39,7 @@ import {
     heroKeyForRank,
     factionlessAppearancePriority,
     PLAYER_START_SHIP_KEY,
+    PLAYER_BUILTIN_SHIP_KEYS,
     moveClassForHeroKey,
     type PlayerRankId,
     PLAYER_HERO_NAME,
@@ -435,7 +436,7 @@ export class PlayerHero {
      * 与陆上兵模同一套规矩：终身不回收，加入军团时若已到将军就把该军团的战船收进来并换上。
      * 没有任何一条时一律独木舟 —— 白身在海上就该是独木舟。
      */
-    public learnedShips: string[] = [];
+    public learnedShips: string[] = [...PLAYER_BUILTIN_SHIP_KEYS];
     /**
      * ⚠️ 已废弃：原「玩家亲手换过就不再自动换装」的隐式锁。
      * 字段只为读旧存档保留，不再参与任何判据。
@@ -646,6 +647,7 @@ export class PlayerHero {
         this.autoMode = mode === 'auto';
         this.tourPlannedAt = 0;
         this.holdUntilMs = 0;
+        this.tourTrail = [];   // 换模式后从当前位置重新起算路迹，免得旧路迹误判
         if (!this.hostLegionId) {
             this.cancelChase();
             this.cancelTravel();
@@ -704,6 +706,7 @@ export class PlayerHero {
                 }
                 const fullPath = roadRegistry.getFullPathToCity(pos, dest.id, here);
                 const marchPath = fullPath && fullPath.length >= 2 ? fullPath : path;
+                this.rememberTourTrail(marchPath);
                 this.travelCityId = dest.id;
                 this.travelPointLabel = null;
                 this.army.setTargetCity(dest);
@@ -808,6 +811,7 @@ export class PlayerHero {
             const dest = chosenDest;
             const path = chosenPath;
             this.rememberTourStop(dest.id);
+            this.rememberTourTrail(path);
             this.travelCityId = dest.id;
             this.travelPointLabel = null;
             this.army.setTargetCity(dest);
@@ -829,6 +833,53 @@ export class PlayerHero {
             prev = p.lng;
         }
         return west - east >= 1.0 && east <= Math.max(3.0, west * 0.2);
+    }
+    /**
+     * 环球/航行走过的路迹（最近 TOUR_TRAIL_LEGS 段，每段一组 0.1° 格）。
+     * 防回头只看目的地不够：从内陆城去更西的港口，路网常要原路退回进来时那个港口——
+     * 经度差不大就骗过了东西向检查。这里按「新路线是否压在旧路迹上」直接判回头路。
+     */
+    private tourTrail: Array<Set<string>> = [];
+    private static readonly TOUR_TRAIL_LEGS = 12;
+    private static trailCell(lat: number, lng: number): string {
+        return `${Math.round(lat * 10)},${Math.round((((lng + 540) % 360) - 180) * 10)}`;
+    }
+    private rememberTourTrail(path: ReadonlyArray<{ lat: number; lng: number }>): void {
+        const cells = new Set<string>();
+        for (let i = 1; i < path.length; i++) {
+            const a = path[i - 1], b = path[i];
+            const dLng = ((b.lng - a.lng + 540) % 360) - 180;
+            const n = Math.max(1, Math.ceil(Math.max(Math.abs(b.lat - a.lat), Math.abs(dLng)) / 0.05));
+            for (let k = 0; k <= n; k++) {
+                cells.add(PlayerHero.trailCell(a.lat + (b.lat - a.lat) * k / n, a.lng + dLng * k / n));
+            }
+        }
+        this.tourTrail.push(cells);
+        if (this.tourTrail.length > PlayerHero.TOUR_TRAIL_LEGS) this.tourTrail.shift();
+    }
+    /** 新路线压在旧路迹上的长度（度）；起点 0.3° 内不算（出城必然贴着进城那条路） */
+    private trailOverlapDeg(path: ReadonlyArray<{ lat: number; lng: number }>): number {
+        if (this.tourTrail.length === 0 || path.length < 2) return 0;
+        const s = path[0];
+        const onTrail = (lat: number, lng: number): boolean => {
+            if (Math.hypot(lat - s.lat, ((lng - s.lng + 540) % 360) - 180) < 0.3) return false;
+            const key = PlayerHero.trailCell(lat, lng);
+            for (const t of this.tourTrail) if (t.has(key)) return true;
+            return false;
+        };
+        let overlap = 0;
+        for (let i = 1; i < path.length; i++) {
+            const a = path[i - 1], b = path[i];
+            const dLng = ((b.lng - a.lng + 540) % 360) - 180;
+            const len = Math.hypot(b.lat - a.lat, dLng);
+            const n = Math.max(1, Math.ceil(len / 0.05));
+            let hit = 0;
+            for (let k = 0; k <= n; k++) {
+                if (onTrail(a.lat + (b.lat - a.lat) * k / n, a.lng + dLng * k / n)) hit++;
+            }
+            overlap += len * hit / (n + 1);
+        }
+        return overlap;
     }
     private rememberTourStop(id: string): void {
         if (!this.recentTourStops.includes(id)) {
@@ -858,8 +909,12 @@ export class PlayerHero {
             const j = Math.floor(Math.random() * (i + 1));
             [pool[i], pool[j]] = [pool[j], pool[i]];
         }
-        const strict: Array<{ city: City; path: Array<{ lat: number; lng: number; sea?: boolean }>; west: number; east: number; ok: boolean }> = [];
-        const netWestPool: Array<{ city: City; path: Array<{ lat: number; lng: number; sea?: boolean }>; west: number; east: number; ok: boolean }> = [];
+        type Leg = { city: City; path: Array<{ lat: number; lng: number; sea?: boolean }>; west: number; east: number; ok: boolean; overlap: number };
+        const strict: Leg[] = [];
+        const netWestPool: Leg[] = [];
+        const retraced: Leg[] = [];
+        /** 压旧路迹超过这个长度（度，约 30km）算走回头路；路口交叉、短暂并线不算 */
+        const MAX_RETRACE_DEG = 0.3;
         for (const city of pool.slice(0, 60)) {
             const path = pathOf(city);
             if (!path || path.length < 2) continue;
@@ -871,11 +926,13 @@ export class PlayerHero {
             }
             const netWest = west - east;
             const maxEast = Math.min(2.0, west * 0.12);
-            if (netWest >= 1.5 && east <= maxEast) {
-                strict.push({ city, path, west, east, ok: true });
-            } else if (netWest >= 1.0) {
-                netWestPool.push({ city, path, west, east, ok: false });
-            }
+            if (netWest < 1.0) continue;
+            const ok = netWest >= 1.5 && east <= maxEast;
+            const overlap = this.trailOverlapDeg(path);
+            const leg: Leg = { city, path, west, east, ok, overlap };
+            if (overlap > MAX_RETRACE_DEG) retraced.push(leg);
+            else if (ok) strict.push(leg);
+            else netWestPool.push(leg);
         }
         if (strict.length > 0) {
             // 随机打散候选合规路线
@@ -889,6 +946,11 @@ export class PlayerHero {
         if (netWestPool.length > 0) {
             netWestPool.sort((a, b) => a.east - b.east || (b.west - b.east) - (a.west - a.east));
             return netWestPool;
+        }
+        // 所有向西路线都要压旧路（死胡同支线、孤岛）：只能退而求其次，挑重走最短的一条，防原地卡死
+        if (retraced.length > 0) {
+            retraced.sort((a, b) => a.overlap - b.overlap || Number(b.ok) - Number(a.ok) || a.east - b.east);
+            return retraced;
         }
         return [];
     }
@@ -1777,6 +1839,8 @@ export class PlayerHero {
         this.selectedUnit = s.selectedUnit ?? -1;
         this.manualUnitPick = s.manualUnitPick ?? false;
         this.learnedShips = [...(s.learnedShips ?? [])];
+        // 旧存档没有内置船：补在末尾，不打乱已存的 selectedShip 下标
+        for (const k of PLAYER_BUILTIN_SHIP_KEYS) if (!this.learnedShips.includes(k)) this.learnedShips.push(k);
         this.selectedShip = s.selectedShip ?? -1;
         this.storyDone = [...(s.storyDone ?? [])];
         this.storyFlags = [...(s.storyFlags ?? [])];

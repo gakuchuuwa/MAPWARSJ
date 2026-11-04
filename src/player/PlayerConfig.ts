@@ -118,6 +118,9 @@ export const PLAYER_RANK_HERO_KEYS: Readonly<Partial<Record<PlayerRankId, string
  */
 export const PLAYER_START_SHIP_KEY = 'CANOE';
 
+/** 🔴 [2026-11-04 主人令]「给玩家的船模式中添加一个中国楼船，默认还是独木舟」：开局就可选，默认仍是独木舟。 */
+export const PLAYER_BUILTIN_SHIP_KEYS: readonly string[] = ['LOU_CHUAN'];
+
 export function heroKeyForRank(rankId: PlayerRankId): string {
     return PLAYER_RANK_HERO_KEYS[rankId] ?? PLAYER_FALLBACK_HERO_KEY;
 }

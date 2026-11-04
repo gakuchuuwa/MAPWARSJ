@@ -1,4 +1,4 @@
-﻿// 城墙锚点字典 + 围墙判断（共享模块）：主游戏 TerritorySystem.ts 与测试页 _citytest.html 都 import 此文件。
+// 城墙锚点字典 + 围墙判断（共享模块）：主游戏 TerritorySystem.ts 与测试页 _citytest.html 都 import 此文件。
 // 改一处两边自动同步 —— 🔴 [2026-09-11 主人定「根治」，杜绝两处复制漂移]。
 
 /** 确定性字符串哈希（**全项目唯一一份**）：TerritorySystem / Scene13WarLayer / 评估页 _citytest.html 共用。
@@ -1650,17 +1650,17 @@ export function buildCornerGateRectRingOnGrid(
  */
 export const PASS_SQUARE_RINGS = {
     inner: { segI: 6, segJ: 6 },    // Li 17 × Lj 17
-    outer: { segI: 10, segJ: 10 },  // Li 25 × Lj 25
+    outer: { segI: 8, segJ: 8 },    // Li 21 × Lj 21（紧挨内套，间距 2 格）
 } as const;
 export const PASS_RECT_RINGS = {
     inner: { segI: 8, segJ: 4 },    // Li 21 × Lj 13（长轴沿 i：屏幕 ↘）
-    outer: { segI: 12, segJ: 8 },   // Li 29 × Lj 21
+    outer: { segI: 10, segJ: 6 },   // Li 25 × Lj 17（紧挨内套，间距 2 格）
 } as const;
 /** 🔴 [2026-10-20 主人令「再做一个镜像的矩形」] 矩形镜像：长轴换到 j 方向（屏幕 ↙），
  *  即把上面长/短轴对调（内 13×21、外 21×29）；周长、件数、9 栋塔位规则完全同矩形，只是整体镜像过去。 */
 export const PASS_RECT_MIRROR_RINGS = {
     inner: { segI: 4, segJ: 8 },    // Li 13 × Lj 21
-    outer: { segI: 8, segJ: 12 },   // Li 21 × Lj 29
+    outer: { segI: 6, segJ: 10 },   // Li 17 × Lj 25（紧挨内套，间距 2 格）
 } as const;
 
 export interface PassRingHalfExtents {

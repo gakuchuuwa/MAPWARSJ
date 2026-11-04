@@ -265,7 +265,6 @@ function featherGroundClipPaths(root: HTMLElement, W: number, H: number): void {
 function extendFourGateRoadsOnGround(root: HTMLElement, W: number, H: number, cityType: string): void {
     if (W <= 0 || H <= 0) return;
     const isBig = cityType === 'big_city';
-    const isPass = cityType === 'pass';
     const TW = 96, TH = 48;
     const innerRX = Math.max(0, (W - 400) / 2);
     const innerRY = innerRX / 2;
@@ -326,16 +325,16 @@ function extendFourGateRoadsOnGround(root: HTMLElement, W: number, H: number, ci
     const roadPolys: string[] = [];
 
     const w0 = isBig ? 2.35 : 2.05;
-    const wBridge = isBig ? 1.52 : (isPass ? 1.48 : 1.32);
+    const wBridge = isBig ? 1.52 : 1.32;
     const wEnd = isBig ? 0.88 : 0.75;
 
     dirs.forEach(([axis, sign, sx, sy], idx) => {
         const halfAxis = axis === 'i' ? halfI : halfJ;
-        // 城内至城外的等轴格坐标 (u 沿路向外, v 横向跨路)：u0(城内主街衔接) → uGate(内城门) → uBridge(跨护城河桥/外瓮城) → uEnd(城外远端渐隐)
+        // 城内至城外的等轴格坐标 (u 沿路向外, v 横向跨路)：u0(城内主街衔接) → uGate(内城门) → uBridge(跨护城河桥) → uEnd(城外远端渐隐)
         const u0 = halfAxis * 0.64;
         const uGate = halfAxis;
-        const uBridge = halfAxis + (isBig ? 5.6 : isPass ? 5.4 : 4.8);
-        const uEnd = halfAxis + (isBig ? 14.5 : isPass ? 14.0 : 12.0);
+        const uBridge = halfAxis + (isBig ? 5.6 : 4.8);
+        const uEnd = halfAxis + (isBig ? 14.5 : 12.0);
         const tGate = ((uGate - u0) / (uEnd - u0) * 100).toFixed(1);
         const tBridge = ((uBridge - u0) / (uEnd - u0) * 100).toFixed(1);
 
@@ -397,7 +396,7 @@ export function strategicCityGroundElement(c: StrategicCityHtml, cityType?: stri
         if (BUILDING_RE.test(im.getAttribute('src') ?? '')) im.remove();
     }
     featherGroundClipPaths(el, c.width, c.height);
-    if (cityType === 'big_city' || cityType === 'medium_city' || cityType === 'pass') {
+    if (cityType === 'big_city' || cityType === 'medium_city') {
         extendFourGateRoadsOnGround(el, c.width, c.height, cityType);
     }
     document.body.appendChild(el);
