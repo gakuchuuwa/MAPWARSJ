@@ -226,7 +226,8 @@ export function render(this: Scene13WarLayer): void {
             m.sortY = drawY;
         }
         it.y = drawY; it.sortY = m.sortY; it.x = m.x; it.f = m.f; it.key = m.key; it.dir = m.dir; it.set = set; it.fr = m.ph; it.a = fade; it.st = m.st;
-        it.dizhan = getDizhanUnitEffectRatio(m, nowSecForUnits);
+        const mPanicked = (((this as any).skillPanicTimer?.[m.f] ?? 0) > 0 || (m.playerPanicTimer ?? 0) > 0) && !m.hero && !m.siegeW;
+        it.dizhan = mPanicked ? 0 : getDizhanUnitEffectRatio(m, nowSecForUnits);
         it.z = 0; it.zid = m.zid; it.sprite = null;
     }
     vis.length = vi;

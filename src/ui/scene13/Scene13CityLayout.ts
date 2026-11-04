@@ -1350,47 +1350,56 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 plotsPlaced++;
             }
 
-            // 2) 磨坊 / 波兰庄园 / 美洲聚落 / 畜牧棚居中
+            // 2) 磨坊 / 波兰庄园 / 美洲聚落 / 畜牧棚居中 + 村心泥径贴花
+            pushOutskirtsSprite('DECAL_PATH_1', vx, vy + 10, 0.95, -6, mRnd() < 0.5, 0);
             pushOutskirtsSprite(millAsset, vx, vy, 0.78 + mRnd() * 0.04, 0, mRnd() < 0.5, 0);
 
-            // 3) 1~2 间同风格民居 / 茅屋 / 毡帐自然散落（带随机微偏移，不排成队列）
+            // 3) 另一侧围以 2~3 间同风格民居 / 茅屋 / 毡帐，构成完整的 DE 城外自然村落
             const houseOffsets: ReadonlyArray<readonly [number, number]> = [
-                [-fieldSide * 88, -32],
-                [fieldSide * 68, -46],
+                [-fieldSide * 86, -28],
+                [-fieldSide * 142, 8],
+                [-fieldSide * 30, -56],
             ];
-            const houseCount = this.defenderCityType === 'big_city' ? 2 : 1;
+            const houseCount = this.defenderCityType === 'big_city' ? 3 : 2;
             let hPlaced = 0;
             for (let hi = 0; hi < houseOffsets.length && hPlaced < houseCount; hi++) {
-                const hx = vx + houseOffsets[hi][0] + (mRnd() - 0.5) * 22;
-                const hy = vy + houseOffsets[hi][1] + (mRnd() - 0.5) * 14;
+                const hx = vx + houseOffsets[hi][0] + (mRnd() - 0.5) * 14;
+                const hy = vy + houseOffsets[hi][1] + (mRnd() - 0.5) * 10;
                 if (!isPointDryAndOpen(hx, hy)) continue;
                 gl.carveFoundation(hx, hy, W, H, 1.4);
-                const hAsset = pickUniqueOutskirts(housePool);
-                pushOutskirtsSprite(hAsset, hx, hy, 0.76 + mRnd() * 0.05, 0, mRnd() < 0.5, 0);
+                const hAsset = housePool[(hi + Math.floor(mRnd() * housePool.length)) % housePool.length];
+                pushOutskirtsSprite(hAsset, hx, hy, 0.76 + mRnd() * 0.04, 0, mRnd() < 0.5, 0);
                 hPlaced++;
             }
 
-            // 4) 偶发伴生 1 处果木（橄榄树 / 果丛）或 1 辆空商车（二选一，不堆砌）
-            if (!isSnow && mRnd() < 0.5 && isPointDryAndOpen(vx + fieldSide * 118, vy - 18)) {
-                if (canUseOliveTree && mRnd() < 0.5) {
-                    pushOutskirtsSprite('RESOURCE:OLIVE_TREE', vx + fieldSide * 118, vy - 18, 0.82, 0, mRnd() < 0.5, Math.floor(mRnd() * 12));
-                } else {
-                    const fAsset = foragePool[Math.floor(mRnd() * foragePool.length)];
-                    pushOutskirtsSprite(fAsset, vx + fieldSide * 118, vy - 18, 0.84, -6, mRnd() < 0.5, Math.floor(mRnd() * 4));
+            // 4) 村口伴生一簇 3 丛紧密聚拢的浆果丛（DE Forage Clump）/ 橄榄果树 + 1 辆农庄推车
+            if (!isSnow) {
+                const bx0 = vx - fieldSide * 88, by0 = vy + 46;
+                const fAsset = foragePool[Math.floor(mRnd() * foragePool.length)];
+                const bushClump: ReadonlyArray<readonly [number, number]> = [[0, 0], [28, 14], [-26, 14]];
+                for (let bi = 0; bi < bushClump.length; bi++) {
+                    const bx = bx0 + bushClump[bi][0], by = by0 + bushClump[bi][1];
+                    if (!isPointDryAndOpen(bx, by)) continue;
+                    if (canUseOliveTree && bi === 0 && mRnd() < 0.5) {
+                        pushOutskirtsSprite('RESOURCE:OLIVE_TREE', bx, by, 0.82, 0, mRnd() < 0.5, Math.floor(mRnd() * 12));
+                    } else {
+                        pushOutskirtsSprite(fAsset, bx, by, 0.84, -6, (bi % 2 === 0), bi % 4);
+                    }
                 }
-            } else if (isPointDryAndOpen(vx - fieldSide * 52, vy + 24)) {
-                pushOutskirtsSprite(villageCartAsset, vx - fieldSide * 52, vy + 24, 0.78, 0, mRnd() < 0.5, 0);
+            }
+            if (isPointDryAndOpen(vx - fieldSide * 48, vy + 22)) {
+                pushOutskirtsSprite(villageCartAsset, vx - fieldSide * 48, vy + 22, 0.78, 0, mRnd() < 0.5, 0);
             }
         }
 
-        // ── (B) 河边 / 海边船坞或造船厂（随机抽选船坞/希腊造船厂/色雷斯造船厂 + 5 种舟船 + 全品种鱼群/海龟/海豚/牡蛎/睡莲） ──
+        // ── (B) 河边 / 海边船坞或造船厂（古希腊/色雷斯造船厂仅限古典地中海，其余文明严格使用本文化船坞 + 5 种舟船 + 全品种鱼群/海龟/海豚/牡蛎/睡莲） ──
         if (dockCandidates.length > 0 && !isNomadOutskirts) {
             dockCandidates.sort(() => mRnd() - 0.5);
             const dockPool = deStyle === 'YURT'
                 ? ['BUILDING:ASIA_DOCK_AGE2']
                 : isGrecoRomanOutskirts
                     ? [`BUILDING:${deStyle}_DOCK_AGE2`, 'BUILDING:GREEK_SHIPYARD_AGE2', 'BUILDING:THRACIAN_SHIPYARD_AGE2']
-                    : [`BUILDING:${deStyle}_DOCK_AGE2`, 'BUILDING:THRACIAN_SHIPYARD_AGE2'];
+                    : [`BUILDING:${deStyle}_DOCK_AGE2`];
             const mooredBoatPool = (isAmericasOutskirts || deStyle === 'AFRI')
                 ? ['TRADE:CANOE/idle_2', 'TRADE:TRANSPORT_SHIP/idle_2']
                 : (deStyle === 'ASIA' || deStyle === 'SEAS')
@@ -1455,22 +1464,22 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     forestTrees.push({ x: sp.x, y: sp.y });
                 }
             }
-            if (forestTrees.length >= 2) {
+            if (forestTrees.length >= 3) {
                 const shuffledTrees = shuffle(forestTrees);
                 let lumberPlaced = 0;
                 const edgeOffsets: ReadonlyArray<readonly [number, number]> = [
-                    [108, 42], [-108, 42], [108, -42], [-108, -42], [0, 76], [0, -76],
+                    [104, 40], [-104, 40], [104, -40], [-104, -40], [0, 74], [0, -74],
                 ];
                 for (let ti = 0; ti < shuffledTrees.length && lumberPlaced < 1; ti++) {
                     const tr = shuffledTrees[ti];
                     let nearbyTrees = 0;
                     for (const other of forestTrees) {
-                        if (Math.hypot(other.x - tr.x, (other.y - tr.y) * 1.5) < 250) {
+                        if (Math.hypot(other.x - tr.x, (other.y - tr.y) * 1.5) < 230) {
                             nearbyTrees++;
-                            if (nearbyTrees >= 2) break;
+                            if (nearbyTrees >= 3) break;
                         }
                     }
-                    if (nearbyTrees < 2) continue;
+                    if (nearbyTrees < 3) continue;
 
                     for (const [ox, oy] of edgeOffsets) {
                         const lx = tr.x + ox, ly = tr.y + oy;
@@ -1484,14 +1493,19 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
 
                         placedCenters.push({ x: lx, y: ly });
                         gl.carveFoundation(lx, ly, W, H, 1.8);
-                        pushOutskirtsSprite(lumberCampAsset, lx, ly, 0.78, 0, mRnd() < 0.5, 0);
-                        const sx1 = (lx + tr.x) * 0.5 + 18, sy1 = (ly + tr.y) * 0.5 - 8;
-                        const sx2 = (lx + tr.x) * 0.5 - 22, sy2 = (ly + tr.y) * 0.5 + 12;
-                        if (isPointDryAndOpen(sx1, sy1)) {
-                            pushOutskirtsSprite(pickUniqueOutskirts(stumpPool), sx1, sy1, 0.80, 0, mRnd() < 0.5, 0);
-                        }
-                        if (isPointDryAndOpen(sx2, sy2)) {
-                            pushOutskirtsSprite(pickUniqueOutskirts(felledPool), sx2, sy2, 0.80, 0, mRnd() < 0.5, 0);
+                        pushOutskirtsSprite(lumberCampAsset, lx, ly, 0.78, 0, ox < 0, 0);
+                        const midX = (lx + tr.x) * 0.5, midY = (ly + tr.y) * 0.5;
+                        const cutPts: ReadonlyArray<readonly [number, number, boolean]> = [
+                            [16, -8, true],
+                            [-18, 12, false],
+                            [26, 14, true],
+                        ];
+                        for (const [cxOff, cyOff, isStump] of cutPts) {
+                            const sx0 = midX + cxOff, sy0 = midY + cyOff;
+                            if (isPointDryAndOpen(sx0, sy0)) {
+                                const pool = isStump ? stumpPool : felledPool;
+                                pushOutskirtsSprite(pool[Math.floor(mRnd() * pool.length)], sx0, sy0, 0.80, 0, mRnd() < 0.5, 0);
+                            }
                         }
                         lumberPlaced++;
                         break;
@@ -1500,145 +1514,227 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             }
         }
 
-        // ── (D) 山麓矿脉与采矿场（Mining Camp / 美洲聚落 / 游牧骡车 + 金矿/石矿 + 采石坑 QUARRY/QUARRY_B） ──
+        // ── (D) 山麓矿脉簇与采矿场（4~5 格紧密拼合的 DE 金矿/石矿簇 Tile Clump + 采石坑 + 紧邻矿脉的采矿场/美洲聚落/游牧骡车） ──
         if (mineSiteCandidates.length > 0) {
             mineSiteCandidates.sort((a, b) => b.elev - a.elev || (mRnd() - 0.5));
             for (const mc of mineSiteCandidates) {
                 if (isTooCloseOrAligned(mc.x, mc.y, 580)) continue;
-                const campX = mc.x + (mc.x >= cx ? -76 : 76);
-                const campY = mc.y + 22;
+                const campSide = mc.x >= cx ? -1 : 1;
+                const campX = mc.x + campSide * 84;
+                const campY = mc.y + 24;
                 if (!isPointDryAndOpen(campX, campY) || isNearAnySpawn(campX, campY, 460)) continue;
 
                 placedCenters.push({ x: mc.x, y: mc.y });
-                clearTreesInRadius(mc.x, mc.y, 150);
-                gl.carveFoundation(mc.x, mc.y, W, H, 1.8);
+                clearTreesInRadius(mc.x, mc.y, 160);
+                gl.carveFoundation(mc.x, mc.y, W, H, 2.0);
                 gl.carveFoundation(campX, campY, W, H, 1.6);
 
                 const primaryOre = mRnd() < 0.55 ? 'MINE_GOLD' : 'MINE_STONE';
                 const quarryAsset = mRnd() < 0.5 ? 'RESOURCE:QUARRY' : 'RESOURCE:QUARRY_B';
-                pushOutskirtsSprite(primaryOre, mc.x, mc.y, 0.90, 0, mRnd() < 0.5, Math.floor(mRnd() * 6));
-                if (isPointDryAndOpen(mc.x + 42, mc.y - 18)) {
-                    pushOutskirtsSprite(quarryAsset, mc.x + 42, mc.y - 18, 0.84, -1, mRnd() < 0.5, 0);
+                const clumpOffsets: ReadonlyArray<readonly [number, number]> = [
+                    [0, 0],
+                    [34, 17],
+                    [-34, 17],
+                    [0, 34],
+                    [34, -17],
+                ];
+                const oreCount = 4 + (mRnd() < 0.5 ? 1 : 0);
+                for (let oi = 0; oi < oreCount; oi++) {
+                    const ox = mc.x + clumpOffsets[oi][0];
+                    const oy = mc.y + clumpOffsets[oi][1];
+                    pushOutskirtsSprite(primaryOre, ox, oy, 0.90, 0, (oi % 2 === 0), oi % 6);
                 }
-                pushOutskirtsSprite(miningCampAsset, campX, campY, 0.78, 0, mRnd() < 0.5, 0);
+                if (isPointDryAndOpen(mc.x - campSide * 48, mc.y - 20)) {
+                    pushOutskirtsSprite(quarryAsset, mc.x - campSide * 48, mc.y - 20, 0.84, -1, mRnd() < 0.5, 0);
+                }
+                pushOutskirtsSprite(miningCampAsset, campX, campY, 0.78, 0, campSide < 0, 0);
+                if (isPointDryAndOpen(campX + campSide * 34, campY + 16)) {
+                    pushOutskirtsSprite('BARRELS', campX + campSide * 34, campY + 16, 0.78, 0, mRnd() < 0.5, 0);
+                }
                 break;
             }
         }
 
-        // ── (E) 城郊前哨望楼 / 木堡 / 战地帅帐（从 Outpost / Fortified Outpost / Wooden Fort / War Tent 中随机挑 1~2 座分散单立） ──
+        // ── (E) 城郊前哨营塞（哨岗/木堡 + 本文化军营/营帐 + 朝向攻方来向的木栅拒马防线 + 战旗） ──
         outpostCandidates.sort(() => mRnd() - 0.5);
         const targetOutposts = (this.defenderCityType === 'big_city' || this.defenderCityType === 'pass') ? 2 : 1;
         const outpostPool = isNomadOutskirts
-            ? ['BUILDING:OUTPOST', 'BUILDING:GREEK_WAR_TENT']
-            : ['BUILDING:FORTIFIED_OUTPOST', 'BUILDING:OUTPOST', 'BUILDING:WOODEN_FORT', 'BUILDING:GREEK_WAR_TENT'];
+            ? ['BUILDING:OUTPOST']
+            : ['BUILDING:FORTIFIED_OUTPOST', 'BUILDING:OUTPOST', 'BUILDING:WOODEN_FORT'];
+        const campTentOutskirts = isGrecoRomanOutskirts
+            ? 'BUILDING:GREEK_WAR_TENT'
+            : isNomadOutskirts
+                ? 'BUILDING:YURT_A'
+                : isAmericasOutskirts
+                    ? 'BUILDING:HUT_A'
+                    : 'BUILDING:CAMP_BARRACKS';
         let outpostsPlaced = 0;
         for (const oc of outpostCandidates) {
             if (outpostsPlaced >= targetOutposts) break;
             if (isTooCloseOrAligned(oc.x, oc.y, 580)) continue;
             placedCenters.push({ x: oc.x, y: oc.y });
-            clearTreesInRadius(oc.x, oc.y, 120);
-            gl.carveFoundation(oc.x, oc.y, W, H, 1.5);
+            clearTreesInRadius(oc.x, oc.y, 135);
+            gl.carveFoundation(oc.x, oc.y, W, H, 1.6);
             const opAsset = pickUniqueOutskirts(outpostPool);
             pushOutskirtsSprite(opAsset, oc.x, oc.y, 0.80, 0, mRnd() < 0.5, 0);
-            if (mRnd() < 0.5 && isPointDryAndOpen(oc.x + 28, oc.y - 14)) {
+            if (isPointDryAndOpen(oc.x - 62, oc.y - 20)) {
+                gl.carveFoundation(oc.x - 62, oc.y - 20, W, H, 1.3);
+                pushOutskirtsSprite(campTentOutskirts, oc.x - 62, oc.y - 20, 0.76, 0, mRnd() < 0.5, 0);
+            }
+            const toAtkX = atkCen.x >= oc.x ? 1 : -1;
+            const toAtkY = atkCen.y >= oc.y ? 1 : -1;
+            for (const [bxOff, byOff] of [[toAtkX * 48, toAtkY * 24], [toAtkX * 18, toAtkY * 38]] as const) {
+                const bx = oc.x + bxOff, by = oc.y + byOff;
+                if (isPointDryAndOpen(bx, by)) {
+                    pushOutskirtsSprite('BATTLEFIELD:STAKE_BARRICADE', bx, by, 0.84, 0, toAtkX < 0, 0);
+                }
+            }
+            if (isPointDryAndOpen(oc.x + 28, oc.y - 14)) {
                 pushOutskirtsSprite(pickUniqueOutskirts(flagPool), oc.x + 28, oc.y - 14, 0.82, 0, mRnd() < 0.5, 0);
             }
             outpostsPlaced++;
         }
 
-        // ── (F) 城郊随机多样性散落点（从名胜古刹/佛像/古塔/鸟居/雕像、关厢草市、铁匠铺、独立行商驼队中随机挑 2 个不同类型分散落在远郊，绝不扎堆、佛像最多 1 尊） ──
+        // ── (F) 城郊功能院落（关厢商贸集镇 + 城郊名胜古刹院落，全图成组布局、佛像最多 1 尊、严格遵循世界各地文化） ──
         if (this.defenderCityType !== 'pass') {
+            const isJapanOutskirts = cultStyle === 'JAPAN';
+            const defCityRec: any = this.defenderCityRecord();
+            const outLat = defCityRec?.lat ?? this.centerLat ?? 30;
+            const outLng = defCityRec?.lng ?? this.centerLng ?? 110;
+            const isEgyptNileOutskirts = !isAmericasOutskirts && (
+                /^(EGYPT|NUBIA|AXUM|ETHIOPIA)$/.test(cultStyle)
+                || (outLat >= 10 && outLat <= 32 && outLng >= 24 && outLng <= 43)
+            );
             const templeMonumentPool: string[] = isAmericasOutskirts
-                ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BUILDING:PAGAN_SHRINE', `BUILDING:${deStyle}_MONASTERY_AGE3`]
+                ? (deStyle === 'ANDE'
+                    ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BUILDING:PAGAN_SHRINE', `BUILDING:${deStyle}_MONASTERY_AGE3`]
+                    : [`BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS'])
                 : isEastAsiaOutskirts
                     ? [
                         'BUILDING:SCEN_BUDDHA_STATUE',
                         'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_B', 'BUILDING:SCEN_PAGODA_C',
-                        'BUILDING:SCEN_PAGODA_D', 'BUILDING:SCEN_PAGODA_E', 'BUILDING:SCEN_TORII_GATE',
-                        'BUILDING:SCEN_CHINESE_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                        'BUILDING:SCEN_PAGODA_D', 'BUILDING:SCEN_PAGODA_E',
+                        ...(isJapanOutskirts ? [] : ['BUILDING:SCEN_CHINESE_RUINS']),
+                        `BUILDING:${deStyle}_MONASTERY_AGE3`,
                     ]
                     : isIndosphereOutskirts
-                        ? [
-                            'BUILDING:SCEN_BUDDHA_STATUE', 'BUILDING:SANCHI_STUPA', 'BUILDING:SCEN_REKHADEUL_TEMPLE',
-                            'BUILDING:GOL_GUMBAZ', 'BUILDING:SCEN_INDIAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
-                        ]
+                        ? (deStyle === 'SEAS'
+                            ? [
+                                'BUILDING:SCEN_BUDDHA_STATUE', 'BUILDING:SANCHI_STUPA', 'BUILDING:SCEN_REKHADEUL_TEMPLE',
+                                `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                            ]
+                            : [
+                                'BUILDING:SCEN_BUDDHA_STATUE', 'BUILDING:SANCHI_STUPA', 'BUILDING:SCEN_REKHADEUL_TEMPLE',
+                                'BUILDING:GOL_GUMBAZ', 'BUILDING:SCEN_INDIAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                            ])
                         : isGrecoRomanOutskirts
                             ? [
                                 'BUILDING:SCEN_ARCHAIC_THOLOS', 'BUILDING:ARCH_OF_CONSTANTINE', 'BUILDING:AMPHITHEATRE',
-                                'BUILDING:SCEN_COLOSSEUM', 'BUILDING:SCEN_HERO_SHRINE',
-                                'BUILDING:SCEN_STATUE_ALEXANDER', 'BUILDING:SCEN_STATUE_HEPHAISTION',
-                                'BUILDING:SCEN_STATUE_GREEK_HERO', 'BUILDING:SCEN_STATUE_ARES_MARBLE',
-                                'BUILDING:SCEN_STATUE_ARES_PAINTED', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                'BUILDING:SCEN_COLOSSEUM', 'BUILDING:SCEN_HERO_SHRINE', `BUILDING:${deStyle}_MONASTERY_AGE3`,
                             ]
-                            : isMiddleEastOutskirts
+                            : isEgyptNileOutskirts
                                 ? [
-                                    'BUILDING:SCEN_FIRE_SHRINE', 'BUILDING:SCEN_DOME_OF_THE_ROCK', 'BUILDING:MINARET_OF_JAM',
-                                    'BUILDING:SCEN_SANKORE_MADRASAH', 'BUILDING:GREAT_PYRAMID', 'BUILDING:SCEN_SPHINX',
+                                    'BUILDING:GREAT_PYRAMID', 'BUILDING:SCEN_SPHINX', 'BUILDING:SCEN_CUSHITE_PYRAMIDS',
+                                    `BUILDING:${deStyle}_MONASTERY_AGE3`,
                                 ]
                                 : deStyle === 'AFRI'
-                                    ? ['BUILDING:SCEN_CUSHITE_PYRAMIDS', 'BUILDING:SCEN_SANKORE_MADRASAH', 'BUILDING:GREAT_PYRAMID', 'BUILDING:AFRI_MONASTERY_AGE3']
-                                    : isNomadOutskirts
-                                        ? ['BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_HERO_SHRINE', 'BUILDING:SCEN_HALL_OF_HEROES']
-                                        : [
-                                            'BUILDING:SCEN_AACHEN_CATHEDRAL', 'BUILDING:QUIMPER_CATHEDRAL', 'BUILDING:POENARI_CASTLE',
-                                            'BUILDING:SCEN_STONEHENGE', 'BUILDING:SCEN_HALL_OF_HEROES', `BUILDING:${deStyle}_MONASTERY_AGE3`,
-                                        ];
+                                    ? ['BUILDING:SCEN_SANKORE_MADRASAH', 'BUILDING:SCEN_CUSHITE_PYRAMIDS', 'BUILDING:AFRI_MONASTERY_AGE3']
+                                    : deStyle === 'PERSIAN'
+                                        ? [
+                                            'BUILDING:SCEN_FIRE_SHRINE', 'BUILDING:MINARET_OF_JAM',
+                                            'BUILDING:SCEN_MESOPOTAMIAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                        ]
+                                        : isMiddleEastOutskirts
+                                            ? [
+                                                'BUILDING:SCEN_DOME_OF_THE_ROCK', 'BUILDING:MINARET_OF_JAM',
+                                                'BUILDING:SCEN_MESOPOTAMIAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                            ]
+                                            : isNomadOutskirts
+                                                ? ['BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_HERO_SHRINE', 'BUILDING:SCEN_HALL_OF_HEROES']
+                                                : (deStyle === 'SLAV' || deStyle === 'EAST')
+                                                    ? [
+                                                        'BUILDING:POENARI_CASTLE', 'BUILDING:SCEN_CASTLE_RUINS',
+                                                        'BUILDING:SCEN_CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                                    ]
+                                                    : [
+                                                        'BUILDING:SCEN_AACHEN_CATHEDRAL', 'BUILDING:QUIMPER_CATHEDRAL',
+                                                        'BUILDING:SCEN_STONEHENGE', 'BUILDING:SCEN_HALL_OF_HEROES', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                                    ];
 
-            typeSuburbanVariety: {
-                const subKinds = shuffle(['monument', 'suburban_market', 'suburban_smithy', 'traveling_merchant'] as const);
-                let subPlaced = 0;
-                for (const sk of subKinds) {
-                    if (subPlaced >= 2) break typeSuburbanVariety;
-                    for (const cand of shuffledHamlets) {
-                        if (isTooCloseOrAligned(cand.x, cand.y, 620)) continue;
-                        placedCenters.push({ x: cand.x, y: cand.y });
-                        const sx = cand.x, sy = cand.y;
-                        clearTreesInRadius(sx, sy, 150);
-                        gl.carveFoundation(sx, sy, W, H, 1.8);
+            const subCompounds = shuffle(['suburban_trade_post', 'sacred_shrine_compound'] as const);
+            const maxSubCompounds = this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' ? 2 : 1;
+            let subPlaced = 0;
+            for (const sk of subCompounds) {
+                if (subPlaced >= maxSubCompounds) break;
+                for (const cand of shuffledHamlets) {
+                    if (isTooCloseOrAligned(cand.x, cand.y, 640)) continue;
+                    placedCenters.push({ x: cand.x, y: cand.y });
+                    const sx = cand.x, sy = cand.y;
+                    clearTreesInRadius(sx, sy, 165);
+                    gl.carveFoundation(sx, sy, W, H, 2.0);
 
-                        if (sk === 'monument') {
-                            // 单立 1 处地标 / 佛像 / 古塔 / 雕像（绝不在旁边叠放第二尊佛像或雕像）
-                            const tmAsset = pickUniqueOutskirts(templeMonumentPool);
-                            const tmScale = /CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ/.test(tmAsset)
-                                ? 0.68
-                                : 0.78;
-                            pushOutskirtsSprite(tmAsset, sx, sy, tmScale, 0, mRnd() < 0.5, 0);
-                            if (!isSnow && mRnd() < 0.45 && isPointDryAndOpen(sx - 44, sy + 20)) {
-                                pushOutskirtsSprite('FLOWERBED', sx - 44, sy + 20, 0.84, -6, mRnd() < 0.5, Math.floor(mRnd() * 4));
+                    if (sk === 'suburban_trade_post') {
+                        // DE 关厢商贸集镇：古道贴花 + 集市与铁匠铺并立 + 地毯货桶 + 道路上行进的商车与货郎
+                        pushOutskirtsSprite('DECAL_PATH_2', sx - 20, sy + 20, 0.94, -6, false, 0);
+                        pushOutskirtsSprite('DECAL_PATH_3', sx + 48, sy + 36, 0.92, -6, false, 0);
+                        const marketBld = isNomadOutskirts
+                            ? 'BUILDING:YURT_A'
+                            : (this.defenderCityType === 'stockade'
+                                ? (isAmericasOutskirts ? 'BUILDING:DARK_SETTLEMENT_AGE1' : 'BUILDING:HUT_D')
+                                : `BUILDING:${deStyle}_MARKET_${useAge3 ? 'AGE3' : 'AGE2'}`);
+                        const smithBld = isNomadOutskirts
+                            ? 'BUILDING:YURT_B'
+                            : (this.defenderCityType === 'stockade'
+                                ? (isAmericasOutskirts ? 'BUILDING:SETTLEMENT' : 'BUILDING:HUT_E')
+                                : `BUILDING:${deStyle}_BLACKSMITH_${useAge3 ? 'AGE3' : 'AGE2'}`);
+                        pushOutskirtsSprite(pickUniqueOutskirts([marketBld]), sx, sy, 0.76, 0, mRnd() < 0.5, 0);
+                        if (isPointDryAndOpen(sx + 86, sy - 28)) {
+                            gl.carveFoundation(sx + 86, sy - 28, W, H, 1.5);
+                            pushOutskirtsSprite(pickUniqueOutskirts([smithBld]), sx + 86, sy - 28, 0.74, 0, mRnd() < 0.5, 0);
+                        }
+                        if (isPointDryAndOpen(sx + 24, sy + 22)) {
+                            pushOutskirtsSprite('RUGS', sx + 24, sy + 22, 0.84, -6, mRnd() < 0.5, Math.floor(mRnd() * 4));
+                        }
+                        if (isPointDryAndOpen(sx + 66, sy - 6)) {
+                            pushOutskirtsSprite('BARRELS', sx + 66, sy - 6, 0.78, 0, mRnd() < 0.5, 0);
+                        }
+                        if (isPointDryAndOpen(sx - 42, sy + 28)) {
+                            pushOutskirtsSprite(loadedCartAsset, sx - 42, sy + 28, 0.80, 0, mRnd() < 0.5, 0);
+                        }
+                        if (isPointDryAndOpen(sx + 16, sy + 44)) {
+                            pushOutskirtsSprite(merchantAsset, sx + 16, sy + 44, 0.84, 0, mRnd() < 0.5, 0);
+                        }
+                    } else {
+                        // DE 城郊名胜古刹院落（全图最多 1 处，佛像最多 1 尊，鸟居严格仅限日本）
+                        const tmAsset = pickUniqueOutskirts(templeMonumentPool);
+                        const tmScale = /CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ/.test(tmAsset)
+                            ? 0.68
+                            : 0.78;
+                        pushOutskirtsSprite('DECAL_PATH_4', sx, sy + 28, 0.92, -6, false, 0);
+                        pushOutskirtsSprite(tmAsset, sx, sy, tmScale, 0, mRnd() < 0.5, 0);
+                        if (!isSnow) {
+                            if (isPointDryAndOpen(sx - 44, sy + 20)) {
+                                pushOutskirtsSprite('FLOWERBED', sx - 44, sy + 20, 0.84, -6, false, 0);
                             }
-                        } else if (sk === 'suburban_market') {
-                            // 单立城郊草市 + 地毯（不叠铁匠铺与车队）
-                            const marketBld = isNomadOutskirts
-                                ? 'BUILDING:YURT_A'
-                                : (this.defenderCityType === 'stockade'
-                                    ? (isAmericasOutskirts ? 'BUILDING:DARK_SETTLEMENT_AGE1' : 'BUILDING:HUT_D')
-                                    : `BUILDING:${deStyle}_MARKET_${useAge3 ? 'AGE3' : 'AGE2'}`);
-                            pushOutskirtsSprite(pickUniqueOutskirts([marketBld]), sx, sy, 0.75, 0, mRnd() < 0.5, 0);
-                            if (isPointDryAndOpen(sx + 28, sy + 22)) {
-                                pushOutskirtsSprite('RUGS', sx + 28, sy + 22, 0.84, -6, mRnd() < 0.5, Math.floor(mRnd() * 4));
-                            }
-                        } else if (sk === 'suburban_smithy') {
-                            // 单立城郊铁匠铺 + 货桶
-                            const smithBld = isNomadOutskirts
-                                ? 'BUILDING:YURT_B'
-                                : (this.defenderCityType === 'stockade'
-                                    ? (isAmericasOutskirts ? 'BUILDING:SETTLEMENT' : 'BUILDING:HUT_E')
-                                    : `BUILDING:${deStyle}_BLACKSMITH_${useAge3 ? 'AGE3' : 'AGE2'}`);
-                            pushOutskirtsSprite(pickUniqueOutskirts([smithBld]), sx, sy, 0.75, 0, mRnd() < 0.5, 0);
-                            if (isPointDryAndOpen(sx - 34, sy + 18)) {
-                                pushOutskirtsSprite('BARRELS', sx - 34, sy + 18, 0.78, 0, mRnd() < 0.5, 0);
-                            }
-                        } else if (sk === 'traveling_merchant') {
-                            // 远郊小径上单独行进的商车与货郎
-                            pushOutskirtsSprite('DECAL_PATH_2', sx, sy, 0.90, -6, mRnd() < 0.5, 0);
-                            pushOutskirtsSprite(loadedCartAsset, sx, sy, 0.80, 0, mRnd() < 0.5, 0);
-                            if (isPointDryAndOpen(sx + 52, sy + 20)) {
-                                pushOutskirtsSprite(merchantAsset, sx + 52, sy + 20, 0.85, 0, mRnd() < 0.5, 0);
+                            if (isPointDryAndOpen(sx + 44, sy + 20)) {
+                                pushOutskirtsSprite('FLOWERBED', sx + 44, sy + 20, 0.84, -6, true, 1);
                             }
                         }
-                        subPlaced++;
-                        break;
+                        if (isJapanOutskirts && tmAsset !== 'BUILDING:SCEN_BUDDHA_STATUE' && isPointDryAndOpen(sx, sy + 48)) {
+                            pushOutskirtsSprite('BUILDING:SCEN_TORII_GATE', sx, sy + 48, 0.76, 0, false, 0);
+                        } else if (isGrecoRomanOutskirts && isPointDryAndOpen(sx, sy + 46)) {
+                            const greekStatues = [
+                                'BUILDING:SCEN_STATUE_ALEXANDER',
+                                'BUILDING:SCEN_STATUE_HEPHAISTION',
+                                'BUILDING:SCEN_STATUE_GREEK_HERO',
+                                'BUILDING:SCEN_STATUE_ARES_MARBLE',
+                                'BUILDING:SCEN_STATUE_ARES_PAINTED',
+                            ];
+                            pushOutskirtsSprite(pickUniqueOutskirts(greekStatues), sx, sy + 46, 0.78, 0, mRnd() < 0.5, 0);
+                        }
                     }
+                    subPlaced++;
+                    break;
                 }
             }
         }

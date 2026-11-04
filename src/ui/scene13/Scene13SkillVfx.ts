@@ -573,6 +573,11 @@ function registerSkillCastMeta(v: Scene13SkillVfx, nowSec: number): void {
         meta.panicPaid = paid;
         meta.panicPlayer = player;
         meta.panicSeq = seq;
+        for (const m of v.targets) {
+            if (unitSkillTags.get(m)?.six === 'dizhan') {
+                unitSkillTags.delete(m);
+            }
+        }
     } else if (v.six === 'dizhan' || v.six === 'bingzhan') {
         const untilSec = nowSec + INSTANT_SYNC_SEC;
         if (untilSec > unitTagActiveUntilSec) unitTagActiveUntilSec = untilSec;

@@ -138,36 +138,52 @@ function findArmyById(ctx: BTContext, armyId: string): Army | null {
 /** 直连道路最大追击半径（度，约 165km，覆盖常规城间直连道路，排除跨洋特长航线） */
 const CONNECTED_ROAD_HUNT_MAX_RADIUS = 1.5;
 
-/**
- * 本军脚下的「我方据点」：离本军最近的接路据点，且已归本阵营（如刚攻下的 B 据点）。
- * 不是我方据点时返回 undefined —— 直连道路优先只为守住自己刚占的城，行军途中路过敌城/中立城不触发，
- * 免得把 2026-08-06 的侧翼防拉扯过滤整片绕掉。
- */
-function getOwnStandCityId(ctx: BTContext): string | undefined {
+/** 本军所在路网位置：最近接路据点、是否我方据点、该据点的直连邻城。每次索敌只算一次。 */
+interface StandRoadInfo {
+    cityId: string;
+    isOwn: boolean;
+    neighbors: Set<string>;
+}
+
+function getStandRoadInfo(ctx: BTContext): StandRoadInfo | undefined {
     const myPos = ctx.army.getPosition();
     const cityId = roadRegistry.getNearestCityId(myPos.lat, myPos.lng);
     if (!cityId) return undefined;
     const city = ctx.cityManager.getCity(cityId);
-    return city && city.factionId === ctx.army.getFactionId() ? cityId : undefined;
+    return {
+        cityId,
+        isOwn: !!city && city.factionId === ctx.army.getFactionId(),
+        neighbors: new Set(roadRegistry.getConnectedCities(cityId)),
+    };
 }
 
 /**
- * 判断敌军团 enemy 是否正来打本军脚下的我方据点（ownStandCityId），或处在该据点的直连道路上。
- * 🔴 [2026-11-04 主人令「A军在前面攻占B据点后，接着去打C据点，后面有一支D军，紧跟着来打B据点，此时A军应该去打D军，先消灭能连接道路的出征军团」]
- * 只查该据点的邻接边，不逐敌军全量扫据点。
+ * 敌军团是否「近处且连着路」——是则先打军团、后打据点，不受行军走廊夹角/城距过滤。
+ * 🔴 [2026-11-04 主人令「不要同屏很近还连着路，明明有军团，却还去攻击据点……应该先打军团，军团是动的。
+ *     不要A军在前面打，D军在后面捡漏，A军也不知道回头」]（取代 2026-08-06 走廊过滤对这类敌军的拦截）
+ * 判据：
+ * ① 寻敌半径内，且敌军在本军最近据点的直连道路上、或敌军最近据点就是本军最近据点 / 其直连邻城；
+ * ② 本军站在我方据点（如刚攻下的 B）时放宽到 CONNECTED_ROAD_HUNT_MAX_RADIUS：
+ *    敌军正来打该据点、或在该据点的直连道路上（D 军来捡漏 B）。
  */
 function isEnemyOnConnectedRoad(
     myPos: { lat: number; lng: number },
     ePos: { lat: number; lng: number },
     enemy: Army,
-    ownStandCityId: string | undefined,
+    stand: StandRoadInfo | undefined,
 ): boolean {
-    if (!ownStandCityId) return false;
-    if (getEuclideanDistance(myPos, ePos) > CONNECTED_ROAD_HUNT_MAX_RADIUS) return false;
-    // 敌军正以该据点为行军目标（D 军来打 B）
-    if (enemy.getTargetCity()?.id === ownStandCityId) return true;
-    // 敌军坐标落在与该据点直连的道路折线上
-    return roadRegistry.findConnectedRoadNeighborForPoint(ownStandCityId, ePos, 0.25) !== null;
+    if (!stand) return false;
+    const d = getEuclideanDistance(myPos, ePos);
+    if (d <= GameConfig.AI.HUNT_ENEMY_LEGION_RADIUS) {
+        if (roadRegistry.findConnectedRoadNeighborForPoint(stand.cityId, ePos, 0.25)) return true;
+        const eNear = roadRegistry.getNearestCityId(ePos.lat, ePos.lng);
+        if (eNear && (eNear === stand.cityId || stand.neighbors.has(eNear))) return true;
+    }
+    if (stand.isOwn && d <= CONNECTED_ROAD_HUNT_MAX_RADIUS) {
+        if (enemy.getTargetCity()?.id === stand.cityId) return true;
+        if (roadRegistry.findConnectedRoadNeighborForPoint(stand.cityId, ePos, 0.25)) return true;
+    }
+    return false;
 }
 
 /**
@@ -260,7 +276,7 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
     const myPos = ctx.army.getPosition();
     const ePos = enemy.getPosition();
     const isFollowedTarget = enemy === ctx.legionManager?.getFollowedLegion?.();
-    const onConnectedRoad = isEnemyOnConnectedRoad(myPos, ePos, enemy, getOwnStandCityId(ctx));
+    const onConnectedRoad = isEnemyOnConnectedRoad(myPos, ePos, enemy, getStandRoadInfo(ctx));
     if (!isFollowedTarget && !onConnectedRoad && getEuclideanDistance(myPos, ePos) > abandonR) {
         markTargetCooldown(ctx, `army:${huntId}`, 'hunt_out_of_range');
         clearHuntTarget(ctx);
@@ -345,6 +361,7 @@ function pickNearbyEnemyLegion(
     ctx: BTContext,
     excludeTargetIds: Set<string>,
     corridorTarget?: { latitude: number; longitude: number },
+    connectedOnly = false,
 ): Army | null {
     const huntR = GameConfig.AI.HUNT_ENEMY_LEGION_RADIUS;
     const myPos = ctx.army.getPosition();
@@ -379,8 +396,8 @@ function pickNearbyEnemyLegion(
     if (!registry?.getArmiesInRadius) return null;
 
     // 只有站在我方据点（如刚攻下的 B）时才放宽扫描圈，平时仍按 huntR
-    const myStandCityId = getOwnStandCityId(ctx);
-    const scanR = myStandCityId ? Math.max(huntR, CONNECTED_ROAD_HUNT_MAX_RADIUS) : huntR;
+    const stand = getStandRoadInfo(ctx);
+    const scanR = stand?.isOwn ? Math.max(huntR, CONNECTED_ROAD_HUNT_MAX_RADIUS) : huntR;
     const nearby: Army[] = registry.getArmiesInRadius(myPos.lat, myPos.lng, scanR);
     let best: Army | null = null;
     let bestDist = Infinity;
@@ -406,15 +423,16 @@ function pickNearbyEnemyLegion(
 
         const ePos = other.getPosition();
         const d = getEuclideanDistance(myPos, ePos);
-        const onConnectedRoad = isEnemyOnConnectedRoad(myPos, ePos, other, myStandCityId);
+        const onConnectedRoad = isEnemyOnConnectedRoad(myPos, ePos, other, stand);
         if (d > huntR && !onConnectedRoad) continue;
+        if (connectedOnly && !onConnectedRoad) continue;
         // 打断路径的走廊过滤（2026-08-06 P2）：侧翼/身后/城后面的敌军不打断攻城。
         // 🔴 身后例外（2026-09-04 主人「前面的舰队应该掉头攻击后面的舰队」）：
         //    敌人在行军方向「身后」（与目标城方向夹角 >90°）且不绕远路（≤城距）时应掉头迎战，
         //    不能背着敌军赶路——否则身前先到、追兵贴脸的观感就是「蠢」。
         //    侧翼(45~90°)仍排除，保留 P2 的「拉扯」保护；贴身(<0.3°)源自 2026-09-02 仍放行。
         // 🔴 直连道路例外（2026-11-04 主人「应该先消灭能连接道路的出征军团呀」）：
-        //    处在本军当前据点直连道路上（或正来打该据点）的敌方出征军团，一律优先消灭，不受走廊夹角与城距限制。
+        //    近处且连着路的敌方出征军团（见 isEnemyOnConnectedRoad），一律优先消灭，不受走廊夹角与城距限制。
         if (corridorTarget && !onConnectedRoad && !isEnemyInMarchCorridor(myPos, ePos, corridorTarget)) {
             const angleDeg = directionAngleDeg(myPos, ePos, corridorTarget);
             const isBehind = angleDeg > 90;
@@ -660,10 +678,12 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     // 关键：已锁定据点时 EnsureTarget 不会再进 FindTarget，同屏新刷敌军团会被无视。
     // 非收复的攻城途中，若寻敌半径内出现可打敌军团 → 挂起城目标并立刻改追（城 id 保留，勿 stopMovement 空窗卡死）。
     // 目标城正处于攻城战中（前去坐收渔翁之利）→ 保持向该城进军，不被途中其他野战目标拉走
-    if (ctx.legionManager.isCityBeingSieged(city.id)) {
+    // 🔴 [2026-11-04] 但近处连着路的敌军团照样先打（「明明有军团，却还去攻击据点」不现实）
+    const targetBeingSieged = ctx.legionManager.isCityBeingSieged(city.id);
+    const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx), city, targetBeingSieged);
+    if (!nearbyEnemy && targetBeingSieged) {
         return true;
     }
-    const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx), city);
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();
         // 只测不拦（P2 待实机取数后再定，见 measureHuntDetour）

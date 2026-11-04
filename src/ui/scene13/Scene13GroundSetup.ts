@@ -946,78 +946,18 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         return chosen;
     };
 
-    if (this.battleType === 'siege') {
-        const siegeWrecks = [
-            'BATTLEFIELD:DECAY_TREBUCHET',
-            'BATTLEFIELD:DECAY_TREBUCHET_PACKED',
-            'BATTLEFIELD:DECAY_MANGONEL',
-            'BATTLEFIELD:DECAY_ONAGER',
-            'BATTLEFIELD:DECAY_SIEGE_ONAGER',
-            'BATTLEFIELD:DECAY_BATTERING_RAM',
-            'BATTLEFIELD:DECAY_CAPPED_RAM',
-            'BATTLEFIELD:DECAY_SIEGE_RAM',
-            'BATTLEFIELD:DECAY_SCORPION',
-            'BATTLEFIELD:DECAY_HEAVY_SCORPION',
-            'BATTLEFIELD:DECAY_SIEGE_BALLISTA',
-            'BATTLEFIELD:DECAY_SIEGE_TOWER',
-            'BATTLEFIELD:DECAY_BOMBARD_CANNON',
-            'BATTLEFIELD:DECAY_ORGAN_GUN',
-            'BATTLEFIELD:DECAY_HUSSITE_WAGON',
-            'BATTLEFIELD:DECAY_ROCKET_CART',
-            'BATTLEFIELD:DECAY_FLAMETHROWER',
-            'BATTLEFIELD:DECAY_WAR_CHARIOT',
-        ];
-        const barricadeAndCorpsePool = [
-            'BATTLEFIELD:BARRICADE_A',
-            'BATTLEFIELD:BARRICADE_B',
-            'BATTLEFIELD:BARRICADE_C',
-            'BATTLEFIELD:BARRICADE_D',
-            'BATTLEFIELD:BARRICADE_RUBBLE_A',
-            'BATTLEFIELD:BARRICADE_RUBBLE_B',
-            'BATTLEFIELD:BARRICADE_RUBBLE_C',
-            'BATTLEFIELD:BARRICADE_RUBBLE_D',
-            'BATTLEFIELD:FENCE_BROKEN_A',
-            'BATTLEFIELD:FENCE_BROKEN_B',
-            'BATTLEFIELD:STAKE_BARRICADE',
-            'BATTLEFIELD:SKELETON_BATTLEFIELD',
-            'BATTLEFIELD:SKELETON_SOLDIER',
-            'BATTLEFIELD:SKELETON_CIVILIAN',
-            'BATTLEFIELD:ANIMAL_SKELETON',
-            'BATTLEFIELD:IMPALED_CORPSE',
-            'BATTLEFIELD:IMPALED_CORPSE_ANT',
-            'BATTLEFIELD:GRAVES',
-            'BATTLEFIELD:TORCH_A',
-            'BATTLEFIELD:TORCH_B',
-        ];
-
-        const wreckCount = 3 + Math.floor(rnd() * 2);
-        for (let i = 0; i < wreckCount; i++) {
-            const pt = pickRandomScatterSpot(440, 520, 340);
-            if (!pt) continue;
-            const asset = pickUniqueFromPool(siegeWrecks);
-            pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
-            if (rnd() < 0.45 && isSafeSpot(pt.x + 26, pt.y + 12, 30, 480, 320)) {
-                pushRelic(rnd() < 0.5 ? 'DECAL_CRATER' : 'DECAL_CRACK', pt.x + 26, pt.y + 12, rnd() < 0.5, 0.88, -6, 0, false);
+    // 清理聚落用地范围内的散树（DE 建筑地基与农田上绝不长树穿模）
+    const FIELD_TREE_RE = /^(?!PLANT|UNDERBRUSH|ROCK|FORAGE|FALLEN_LEAVES|FELLED|STUMP|FLOWER|GRASS|WEED|SHRUB|BUSH_GREEN|RESOURCE:OLIVE_TREE).*(TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE|SPRUCE)/i;
+    const clearTreesInRadius = (cx0: number, cy0: number, rad: number): void => {
+        for (let i = this.decorSprites.length - 1; i >= 0; i--) {
+            const sp = this.decorSprites[i];
+            if (!FIELD_TREE_RE.test(sp.asset)) continue;
+            if (Math.hypot(sp.x - cx0, (sp.y - cy0) * 1.45) < rad) {
+                this.decorSprites.splice(i, 1);
             }
         }
-        const scatterCount = 4 + Math.floor(rnd() * 3);
-        for (let i = 0; i < scatterCount; i++) {
-            const pt = pickRandomScatterSpot(380, 500, 330);
-            if (!pt) continue;
-            const asset = pickUniqueFromPool(barricadeAndCorpsePool);
-            pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
-        }
-        return;
-    }
+    };
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // 野战地图（battleType !== 'siege'）：全量元素池随机分散布置（增加多样性、拒绝排队与扎堆）
-    // 🔴 [2026-11-04 主人令「摆放的种类太多，太整齐了。佛像有一个就好。」「删除的元素不是说不摆放了，只是分散，随机摆放，增加多样性。」]
-    //    · 保留全部古迹、宝塔、鸟居、佛像、雕像、集市、铁匠铺、修道院、商车、骡车、货郎、木堡、帅帐、哨岗、
-    //      农庄、聚落、茅屋、毡帐、伐木场、采矿场、采石坑、船坞、舟船、沉船、海怪、水产、地质裂隙及 18 种攻城残骸；
-    //    · 佛像（SCEN_BUDDHA_STATUE）及任何具体地标/雕像通过 pickUniqueFromPool 严格去重，全图最多出现 1 个，且绝不叠在古塔旁；
-    //    · 彻底打破水平条带与固定堆叠，改为在全图安全区随机分散撒点，每个点只放 1 处清爽景致，不同战局随机呈现不同组合。
-    // ══════════════════════════════════════════════════════════════════════════
     const defRec: any = this.defenderCityRecord();
     const mapLat = defRec?.lat ?? this.centerLat ?? 30;
     const mapLng = defRec?.lng ?? this.centerLng ?? 110;
@@ -1033,20 +973,110 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         ? 'WINTER'
         : (calSeason === 0 ? 'SPRING' : calSeason === 2 ? 'AUTUMN' : 'SUMMER');
 
-    // 文化圈归类（严格遵守「美洲是聚落」与各文明史实风貌）
+    // 文化圈归类（严格遵守「美洲是聚落」与世界各地 DE 文明史实风貌，绝不跨文明混放）
     const isAmericas = deStyle === 'ANDE' || deStyle === 'MESO'
         || /^(AMERICA|ANDE|MAYANS|INCA|MUISCA|TUPI|MAPUCHE|CHIMU|TARASCAN|TAIRONA|TEHUELCHE|IROQUOIS|NORTHAM_IMPERIAL|SOUTHAM_IMPERIAL)$/.test(cultStyle);
     const isNomad = !isAmericas && (deStyle === 'YURT'
         || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|HEXI|TIBET)$/.test(cultStyle));
     const isEastAsia = !isAmericas && !isNomad && (deStyle === 'ASIA'
         || /^(CENTRAL|WEI|JIANGNAN|HUGUANG|BASHU|NORTHEAST|KOREA|JAPAN)$/.test(cultStyle));
+    const isJapan = cultStyle === 'JAPAN';
     const isIndosphere = !isAmericas && (deStyle === 'INDI' || deStyle === 'PURU' || deStyle === 'SEAS'
         || /^(INDIA|PURU|BENGALIS|GURJARAS|BURMESE|KHMER|VIETNAMESE|MALAY|CHAMPA|JAVANESE|SIAMESE|MON|DIANQIAN)$/.test(cultStyle));
     const isGrecoRoman = !isAmericas && (deStyle === 'GREEK' || deStyle === 'THRACIAN' || deStyle === 'MEDI'
         || /^(ROMA|BYZANTINE|GREECE|GREEK|ATHENIANS|SPARTANS|MACEDONIAN|THRACIAN|SICILIANS|ITALIANS)$/.test(cultStyle));
     const isMiddleEast = !isAmericas && (deStyle === 'ORIE' || deStyle === 'PERSIAN'
         || /^(ORIE|WEST_ASIA|PERSIAN|SASANIAN|CENTRAL_ASIA|WESTERN|BERBER|MUGHAL|ARMENIANS|GEORGIANS)$/.test(cultStyle));
+    const isEgyptNile = !isAmericas && (
+        /^(EGYPT|NUBIA|AXUM|ETHIOPIA)$/.test(cultStyle)
+        || (mapLat >= 10 && mapLat <= 32 && mapLng >= 24 && mapLng <= 43)
+    );
     const isPaganNorth = !isAmericas && /^(CELTS|VIKINGS|DANES|VARANGIANS|GOTHS|GERMANIC|SLAVIC|LITHUANIANS)$/.test(cultStyle);
+    const isEurope = !isAmericas && (deStyle === 'WEST' || deStyle === 'EAST' || deStyle === 'CEAS' || deStyle === 'SLAV' || isGrecoRoman || isPaganNorth);
+
+    // 按文明圈严格过滤攻城器械残骸（美洲无旧大陆攻城车与火器；高丽火箭车仅限东亚；胡斯战车/风琴炮仅限欧洲；希腊火喷射器仅限东地中海/中东）
+    const siegeWrecks = isAmericas
+        ? [
+            'BATTLEFIELD:DECAY_BATTERING_RAM',
+            'BATTLEFIELD:DECAY_CAPPED_RAM',
+            'BATTLEFIELD:DECAY_SCORPION',
+            'BATTLEFIELD:CART_BROKEN',
+        ]
+        : [
+            'BATTLEFIELD:DECAY_TREBUCHET',
+            'BATTLEFIELD:DECAY_TREBUCHET_PACKED',
+            'BATTLEFIELD:DECAY_MANGONEL',
+            'BATTLEFIELD:DECAY_ONAGER',
+            'BATTLEFIELD:DECAY_SIEGE_ONAGER',
+            'BATTLEFIELD:DECAY_BATTERING_RAM',
+            'BATTLEFIELD:DECAY_CAPPED_RAM',
+            'BATTLEFIELD:DECAY_SIEGE_RAM',
+            'BATTLEFIELD:DECAY_SCORPION',
+            'BATTLEFIELD:DECAY_HEAVY_SCORPION',
+            'BATTLEFIELD:DECAY_SIEGE_BALLISTA',
+            'BATTLEFIELD:DECAY_SIEGE_TOWER',
+            ...(isEastAsia ? ['BATTLEFIELD:DECAY_ROCKET_CART', 'BATTLEFIELD:DECAY_WAR_CHARIOT', 'BATTLEFIELD:DECAY_BOMBARD_CANNON'] : []),
+            ...(isEurope ? ['BATTLEFIELD:DECAY_BOMBARD_CANNON', 'BATTLEFIELD:DECAY_ORGAN_GUN', 'BATTLEFIELD:DECAY_HUSSITE_WAGON'] : []),
+            ...(isGrecoRoman || isMiddleEast ? ['BATTLEFIELD:DECAY_FLAMETHROWER', 'BATTLEFIELD:DECAY_WAR_CHARIOT', 'BATTLEFIELD:DECAY_BOMBARD_CANNON'] : []),
+            ...(isIndosphere ? ['BATTLEFIELD:DECAY_WAR_CHARIOT', 'BATTLEFIELD:DECAY_BOMBARD_CANNON'] : []),
+        ];
+
+    if (this.battleType === 'siege') {
+        const barricadePool = [
+            'BATTLEFIELD:BARRICADE_A',
+            'BATTLEFIELD:BARRICADE_B',
+            'BATTLEFIELD:BARRICADE_C',
+            'BATTLEFIELD:BARRICADE_D',
+            'BATTLEFIELD:BARRICADE_RUBBLE_A',
+            'BATTLEFIELD:BARRICADE_RUBBLE_B',
+            'BATTLEFIELD:BARRICADE_RUBBLE_C',
+            'BATTLEFIELD:BARRICADE_RUBBLE_D',
+            'BATTLEFIELD:FENCE_BROKEN_A',
+            'BATTLEFIELD:FENCE_BROKEN_B',
+            'BATTLEFIELD:STAKE_BARRICADE',
+        ];
+        const corpsePool = [
+            'BATTLEFIELD:SKELETON_BATTLEFIELD',
+            'BATTLEFIELD:SKELETON_SOLDIER',
+            'BATTLEFIELD:SKELETON_CIVILIAN',
+            'BATTLEFIELD:ANIMAL_SKELETON',
+            'BATTLEFIELD:IMPALED_CORPSE',
+            ...(isGrecoRoman ? ['BATTLEFIELD:IMPALED_CORPSE_ANT'] : []),
+            'BATTLEFIELD:GRAVES',
+        ];
+
+        // DE 攻城战损现场：在城墙外围交战带成簇布置「损毁攻城器 + 弹坑焦土 + 破损拒马 + 阵亡白骨」
+        const wreckClusterCount = 3 + Math.floor(rnd() * 2);
+        for (let i = 0; i < wreckClusterCount; i++) {
+            const pt = pickRandomScatterSpot(460, 520, 340);
+            if (!pt) continue;
+            const wreckAsset = pickUniqueFromPool(siegeWrecks);
+            pushRelic(rnd() < 0.55 ? 'DECAL_CRATER' : 'DECAL_CRACK', pt.x, pt.y + 6, rnd() < 0.5, 0.92, -6, 0, false);
+            pushRelic(wreckAsset, pt.x, pt.y, rnd() < 0.5, 0.92, 0, 0, true);
+            if (isSafeSpot(pt.x + 48, pt.y + 20, 30, 480, 320)) {
+                pushRelic(pickUniqueFromPool(barricadePool), pt.x + 48, pt.y + 20, rnd() < 0.5, 0.88, 0, 0, false);
+            }
+            if (isSafeSpot(pt.x - 42, pt.y + 18, 30, 480, 320)) {
+                pushRelic(pickUniqueFromPool(corpsePool), pt.x - 42, pt.y + 18, rnd() < 0.5, 0.86, 0, 0, false);
+            }
+        }
+        return;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // 野战地图（battleType !== 'siege'）：严格按 AoE2:DE RMS 与战役造景法则生成
+    // 🔴 [2026-11-04 主人令「请按DE的摆法来设计地图。」「好的，世界各地文化的摆放也请注意。一律按DE的方式来。」]
+    //   1. 资源采集建筑严格依附自然资源（绝不悬空单摆）：
+    //      · 伐木场（Lumber Camp / 美洲聚落 / 游牧骡车）必须紧贴真实树林簇边缘，林口配树桩与原木；无林则不放。
+    //      · 采矿场（Mining Camp / 美洲聚落 / 游牧骡车）必须紧挨 4~5 格紧密拼合的金矿/石矿脉簇（Tile Clump）与采石坑。
+    //      · 船坞（Dock / Shipyard）必须跨在水陆交界岸线上，水面停泊本文化舟船、近岸成簇生成鱼群与水生植物。
+    //   2. 建筑按「DE 功能聚落（Functional Compound）」成组有机布局，并严格对应世界各文明（零跨文化混搭）：
+    //      · 农庄村落（Farming Village）：1 座磨坊/聚落/庄园 + 紧贴的 3~4 块等距网格农田 + 2~3 间本文化民居 + 成簇浆果/果树 + 泥径。
+    //      · 路边商贸集镇（Trade Post）：古道贴花 + 集市与铁匠铺并立 + 门口地毯/货桶 + 道路上行进的本文化商队马车与货郎。
+    //      · 军事前哨营塞（Military Outpost）：哨岗/木堡 + 本文化营帐 + 朝向战场的弧形木栅拒马防线 + 战旗与火把。
+    //      · 宗教圣地院落（Sacred Shrine）：全图最多 1 处（佛像最多 1 尊），本文明修道院/古塔/大佛/遗迹居中 + 石径 + 对称花坛/雕像（鸟居仅限日本）。
+    //   3. 古战场战损遗迹簇（本文明攻城器械残骸 + 焦土弹坑 + 破损拒马 + 白骨）集中在交战区外沿，不混入和平村落。
+    // ══════════════════════════════════════════════════════════════════════════
     const isRiceRegion = !isNomad && !isAmericas && !isArid && !isSnow
         && (/^(JIANGNAN|HUGUANG|BASHU|KOREA|VIETNAMESE|BENGALIS|BURMESE|KHMER|PURU|INDIA|MUGHAL|DIANQIAN|JAPAN|MALAY|CHAMPA|JAVANESE|SIAMESE|MON)$/.test(cultStyle)
             || deStyle === 'SEAS' || deStyle === 'PURU' || deStyle === 'INDI');
@@ -1059,7 +1089,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             ? ['BUILDING:SCEN_FLAG_RITUAL_A', 'BUILDING:SCEN_FLAG_N', 'BUILDING:SCEN_FLAG_U']
             : ['BUILDING:SCEN_FLAG_D', 'BUILDING:SCEN_FLAG_E', 'BUILDING:SCEN_FLAG_R', 'BUILDING:SCEN_FLAG_S'];
 
-    // ── 0. 野战远翼大山（高地/山地在远翼随机摆 1 座 DE 大山，避开中央交战区） ──
+    // ── 0. 野战远翼大山（高地/山地在远翼高台摆 1 座 DE 大山，避开中央交战区） ──
     if (elevM >= 350 || elevBand === 'mountain' || elevBand === 'alpine' || elevBand === 'high_alpine') {
         const mountainPool = getClimateMountainPool.call(this, isSnow);
         const N = glLayer.data?.width ?? 120;
@@ -1081,145 +1111,214 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         }
     }
 
-    // ── 1. 地域名胜地标、佛像、古塔、鸟居、神庙、奇观遗迹与英雄雕像池（单局随机挑 1~2 处，严格去重、绝不叠放，佛像最多 1 尊） ──
+    // ── 1. DE 林缘伐木场（必须紧贴地图上真实存在的成片树林边缘，绝不在空地上凭空单放） ──
     {
-        const monumentPool: string[] = isAmericas
-            ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BATTLEFIELD:ANDEAN_RUINS', 'BUILDING:PAGAN_SHRINE', `BUILDING:${deStyle}_MONASTERY_AGE3`]
-            : isEastAsia
-                ? [
-                    'BUILDING:SCEN_BUDDHA_STATUE',
-                    'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_B', 'BUILDING:SCEN_PAGODA_C',
-                    'BUILDING:SCEN_PAGODA_D', 'BUILDING:SCEN_PAGODA_E', 'BUILDING:SCEN_TORII_GATE',
-                    'BUILDING:SCEN_CHINESE_RUINS', 'BATTLEFIELD:CHINESE_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
-                ]
-                : isIndosphere
-                    ? [
-                        'BUILDING:SCEN_BUDDHA_STATUE', 'BUILDING:SANCHI_STUPA', 'BUILDING:SCEN_REKHADEUL_TEMPLE',
-                        'BUILDING:GOL_GUMBAZ', 'BUILDING:SCEN_INDIAN_RUINS', 'BUILDING:SCEN_PURU_RUINS',
-                        'BATTLEFIELD:INDIAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
-                    ]
-                    : isGrecoRoman
-                        ? [
-                            'BUILDING:SCEN_ROMAN_RUINS', 'BUILDING:ARCH_OF_CONSTANTINE', 'BUILDING:AMPHITHEATRE',
-                            'BUILDING:SCEN_COLOSSEUM', 'BUILDING:SCEN_ARCHAIC_THOLOS',
-                            'BUILDING:SCEN_STATUE_ALEXANDER', 'BUILDING:SCEN_STATUE_HEPHAISTION',
-                            'BUILDING:SCEN_STATUE_GREEK_HERO', 'BUILDING:SCEN_STATUE_ARES_MARBLE',
-                            'BUILDING:SCEN_STATUE_ARES_PAINTED', 'BUILDING:SCEN_HERO_SHRINE', 'BATTLEFIELD:ROMAN_RUINS',
-                        ]
-                        : (isMiddleEast || deStyle === 'AFRI')
-                            ? [
-                                'BUILDING:GREAT_PYRAMID', 'BUILDING:SCEN_SPHINX', 'BUILDING:SCEN_CUSHITE_PYRAMIDS',
-                                'BUILDING:SCEN_DOME_OF_THE_ROCK', 'BUILDING:MINARET_OF_JAM', 'BUILDING:SCEN_SANKORE_MADRASAH',
-                                'BUILDING:SCEN_MESOPOTAMIAN_RUINS', 'BUILDING:SCEN_MESOPOTAMIAN_TOMB',
-                                'BATTLEFIELD:MESOPOTAMIAN_TOMB', 'BUILDING:SCEN_FIRE_SHRINE',
-                                'BUILDING:SCEN_ANCIENT_RUINS', 'BATTLEFIELD:MESOPOTAMIAN_RUINS',
-                            ]
-                            : (isNomad || isPaganNorth)
-                                ? [
-                                    'BUILDING:SCEN_STONEHENGE', 'BUILDING:SCEN_HALL_OF_HEROES',
-                                    'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS',
-                                    'BATTLEFIELD:ANCIENT_RUINS', 'BUILDING:SCEN_HERO_SHRINE',
-                                ]
-                                : [
-                                    'BUILDING:SCEN_AACHEN_CATHEDRAL', 'BUILDING:QUIMPER_CATHEDRAL', 'BUILDING:POENARI_CASTLE',
-                                    'BUILDING:SCEN_STONEHENGE', 'BUILDING:SCEN_HALL_OF_HEROES',
-                                    'BUILDING:SCEN_CASTLE_RUINS', 'BUILDING:SCEN_CHURCH_RUINS', 'BUILDING:SCEN_MEDI_RUINS',
-                                    'BATTLEFIELD:CASTLE_RUINS', 'BATTLEFIELD:CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
-                                ];
+        const useBambooStump = !isSnow && (isEastAsia || isIndosphere);
+        const useBaobabStump = !isSnow && deStyle === 'AFRI';
+        const stumpPool = useBambooStump
+            ? ['STUMP_GENERIC', 'STUMP_BAMBOO', 'STUMP_LUSH_BAMBOO']
+            : useBaobabStump
+                ? ['STUMP_GENERIC', 'STUMP_BAOBAB']
+                : ['STUMP_GENERIC'];
+        const felledPool = useBambooStump
+            ? ['FELLED_GENERIC', 'FELLED_BAMBOO', 'FELLED_LUSH_BAMBOO']
+            : useBaobabStump
+                ? ['FELLED_GENERIC', 'FELLED_BAOBAB']
+                : ['FELLED_GENERIC'];
+        const lumCampAsset = isAmericas
+            ? 'BUILDING:SETTLEMENT'
+            : isNomad
+                ? 'TRADE:MULE_CART/move_2'
+                : (deStyle === 'GREEK' || deStyle === 'MEDI' || deStyle === 'WEST' || deStyle === 'ORIE' || deStyle === 'PERSIAN')
+                    ? 'BUILDING:GREEK_LUMBER_CAMP_AGE2'
+                    : 'BUILDING:THRACIAN_LUMBER_CAMP_AGE2';
 
-        // 每局随机放 1~2 处不重复的地标，相距 ≥ 850px 分处地图不同远角，绝不把佛像与宝塔叠在一起
-        const monumentCount = 1 + (rnd() < 0.55 ? 1 : 0);
-        let placedMonuments = 0;
-        let hasPagoda = false;
-        for (let i = 0; i < monumentCount; i++) {
-            const pt = pickRandomScatterSpot(620, 520, 350);
-            if (!pt) continue;
-            // 若前一个已选了某座古塔（SCEN_PAGODA_*），第二个不再选另一座古塔，保证同场种类不撞车
-            const filteredPool = hasPagoda ? monumentPool.filter((a) => !a.includes('SCEN_PAGODA_')) : monumentPool;
-            const mAsset = pickUniqueFromPool(filteredPool);
-            if (mAsset.includes('SCEN_PAGODA_')) hasPagoda = true;
-            glLayer.carveFoundation(pt.x, pt.y, VW, VH, 1.7);
-            const mScale = /AMPHITHEATRE|COLOSSEUM|ARCH_OF_CONSTANTINE|SANCHI_STUPA|CATHEDRAL|GREAT_PYRAMID|DOME_OF_THE_ROCK|GOL_GUMBAZ/.test(mAsset)
-                ? 0.68
-                : 0.80;
-            pushRelic(mAsset, pt.x, pt.y, rnd() < 0.5, mScale, 0, 0, true);
-            // 仅偶发伴生 1 丛花坛或 1 支火把（绝不伴生第二尊佛像或雕像）
-            if (!isSnow && rnd() < 0.45 && isSafeSpot(pt.x - 44, pt.y + 20, 35, 460, 310)) {
-                pushRelic('FLOWERBED', pt.x - 44, pt.y + 20, rnd() < 0.5, 0.84, -6, Math.floor(rnd() * 4), false);
+        const forestTrees: Array<{ x: number; y: number }> = [];
+        for (const sp of this.decorSprites) {
+            if (FIELD_TREE_RE.test(sp.asset)) forestTrees.push({ x: sp.x, y: sp.y });
+        }
+        if (forestTrees.length >= 4) {
+            const shuffledTrees = [...forestTrees];
+            for (let i = shuffledTrees.length - 1; i > 0; i--) {
+                const j = Math.floor(rnd() * (i + 1));
+                [shuffledTrees[i], shuffledTrees[j]] = [shuffledTrees[j], shuffledTrees[i]];
             }
-            placedMonuments++;
+            const edgeOffsets: ReadonlyArray<readonly [number, number]> = [
+                [102, 38], [-102, 38], [102, -38], [-102, -38], [0, 72], [0, -72],
+            ];
+            lumberSearch: for (const tr of shuffledTrees) {
+                // 确认该树属于成片树林簇（半径 220px 内至少有 3 棵树），不在孤立单棵散树旁建伐木场
+                let clusterCount = 0;
+                for (const other of forestTrees) {
+                    if (Math.hypot(other.x - tr.x, (other.y - tr.y) * 1.45) < 220) {
+                        clusterCount++;
+                        if (clusterCount >= 3) break;
+                    }
+                }
+                if (clusterCount < 3) continue;
+
+                for (const [ox, oy] of edgeOffsets) {
+                    const lx = tr.x + ox, ly = tr.y + oy;
+                    if (!isSafeSpot(lx, ly, 520, 480, 320)) continue;
+                    // 伐木场自身位置不能压在树林内部（距离最近树木 ≥ 68px，恰在林缘外 1.5 格）
+                    if (forestTrees.some((ft) => Math.hypot(ft.x - lx, (ft.y - ly) * 1.45) < 68)) continue;
+
+                    glLayer.carveFoundation(lx, ly, VW, VH, 1.8);
+                    pushRelic(lumCampAsset, lx, ly, ox < 0, 0.78, 0, 0, true);
+                    // 在伐木场与树林边缘之间的林口空地上集中摆放 2~3 个树桩与原木堆
+                    const midX = (lx + tr.x) * 0.5, midY = (ly + tr.y) * 0.5;
+                    const cutOffsets: ReadonlyArray<readonly [number, number, boolean]> = [
+                        [16, -10, true],
+                        [-18, 12, false],
+                        [28, 14, true],
+                    ];
+                    for (const [cxOff, cyOff, isStump] of cutOffsets) {
+                        const sx0 = midX + cxOff, sy0 = midY + cyOff;
+                        if (isSafeSpot(sx0, sy0, 24, 440, 290)) {
+                            const pool = isStump ? stumpPool : felledPool;
+                            pushRelic(pool[Math.floor(rnd() * pool.length)], sx0, sy0, rnd() < 0.5, 0.82, 0, 0, false);
+                        }
+                    }
+                    break lumberSearch;
+                }
+            }
         }
     }
 
-    // ── 2. 荒野农牧与民居聚落池（从磨坊/庄园/美洲聚落/畜牧棚、民房/茅屋/毡帐、果园/橄榄林中随机挑 2 处分散布置） ──
+    // ── 2. DE 矿脉簇与采矿营地（4~5 格紧密相连的金矿/石矿簇 Tile Clump + 采石坑 + 紧邻矿脉的采矿场） ──
     {
-        const plotAsset = isNomad
-            ? `RESOURCE:PASTURE_${seasonTag}`
-            : (isRiceRegion ? `RESOURCE:RFARM_${seasonTag}` : `RESOURCE:FARM_${seasonTag}`);
-        // (2a) 1 处开垦小农庄 / 美洲聚落 / 游牧草场
-        const farmSpot = pickRandomScatterSpot(560, 500, 340);
-        if (farmSpot) {
-            glLayer.carveFoundation(farmSpot.x, farmSpot.y, VW, VH, 2.0);
+        const mineSpot = pickRandomScatterSpot(560, 500, 340);
+        if (mineSpot) {
+            const mx = mineSpot.x, my = mineSpot.y;
+            clearTreesInRadius(mx, my, 150);
+            glLayer.carveFoundation(mx, my, VW, VH, 2.0);
+            const oreAsset = rnd() < 0.55 ? 'MINE_GOLD' : 'MINE_STONE';
+            const quarryAsset = rnd() < 0.5 ? 'RESOURCE:QUARRY' : 'RESOURCE:QUARRY_B';
+            const campSide = mx >= cx ? -1 : 1;
+            const campX = mx + campSide * 84;
+            const campY = my + 24;
+
+            // DE 标准等距紧凑矿脉簇（4~5 块矿石紧挨成团，绝不单颗散放）
+            const clumpOffsets: ReadonlyArray<readonly [number, number]> = [
+                [0, 0],
+                [34, 17],
+                [-34, 17],
+                [0, 34],
+                [34, -17],
+            ];
+            const tileCount = 4 + (rnd() < 0.5 ? 1 : 0);
+            for (let ti = 0; ti < tileCount; ti++) {
+                const ox = mx + clumpOffsets[ti][0];
+                const oy = my + clumpOffsets[ti][1];
+                pushRelic(oreAsset, ox, oy, (ti % 2 === 0), 0.90, 0, ti % 6, ti === 0);
+            }
+            // 伴生采石坑紧贴矿脉后侧
+            if (isSafeSpot(mx - campSide * 48, my - 20, 28, 440, 300)) {
+                pushRelic(quarryAsset, mx - campSide * 48, my - 20, rnd() < 0.5, 0.84, -1, 0, false);
+            }
+            // 采矿营地（美洲为聚落，游牧为骡车）紧贴矿脉一侧 1.5 格
+            if (isSafeSpot(campX, campY, 32, 440, 300)) {
+                glLayer.carveFoundation(campX, campY, VW, VH, 1.6);
+                const campAsset = isAmericas
+                    ? 'BUILDING:DARK_SETTLEMENT_AGE1'
+                    : isNomad
+                        ? 'TRADE:MULE_CART/move_6'
+                        : (deStyle === 'GREEK' || deStyle === 'MEDI' || deStyle === 'WEST' || deStyle === 'ORIE' || deStyle === 'PERSIAN')
+                            ? 'BUILDING:GREEK_MINING_CAMP_AGE2'
+                            : 'BUILDING:THRACIAN_MINING_CAMP_AGE2';
+                pushRelic(campAsset, campX, campY, campSide < 0, 0.78, 0, 0, false);
+                if (isSafeSpot(campX + campSide * 34, campY + 16, 24, 440, 300)) {
+                    pushRelic('BARRELS', campX + campSide * 34, campY + 16, rnd() < 0.5, 0.78, 0, 0, false);
+                }
+            }
+        }
+    }
+
+    // ── 3. DE 农庄村落聚落（1 座磨坊/聚落/庄园 + 紧贴的 3~4 块等距网格农田 + 2~3 间错落民居 + 成簇浆果丛/果树 + 农车） ──
+    {
+        const villageSpot = pickRandomScatterSpot(620, 520, 350);
+        if (villageSpot) {
+            const vx = villageSpot.x, vy = villageSpot.y;
+            clearTreesInRadius(vx, vy, 210);
+            glLayer.carveFoundation(vx, vy, VW, VH, 2.6);
+
+            const plotAsset = isNomad
+                ? `RESOURCE:PASTURE_${seasonTag}`
+                : (isRiceRegion ? `RESOURCE:RFARM_${seasonTag}` : `RESOURCE:FARM_${seasonTag}`);
             const millPool = isAmericas
                 ? ['BUILDING:SETTLEMENT', 'BUILDING:DARK_SETTLEMENT_AGE1']
                 : isNomad
-                    ? ['BUILDING:DARK_PASTURE', 'BUILDING:YURT_A', 'BUILDING:YURT_B']
+                    ? ['BUILDING:DARK_PASTURE', 'BUILDING:YURT_A']
                     : deStyle === 'SLAV'
-                        ? ['BUILDING:FOLWARK', 'BUILDING:DARK_MILL_AGE1', `BUILDING:${deStyle}_MILL_AGE2`]
-                        : ['BUILDING:DARK_MILL_AGE1', `BUILDING:${deStyle}_MILL_AGE2`, `BUILDING:${deStyle}_MILL_AGE3`];
-            const dwAsset = pickUniqueFromPool(millPool);
-            pushRelic(dwAsset, farmSpot.x, farmSpot.y, rnd() < 0.5, 0.76, 0, 0, true);
-            const side = rnd() < 0.5 ? 1 : -1;
-            const farmOffsets: ReadonlyArray<readonly [number, number]> = [
-                [side * 74, 26],
-                [side * 136, 56],
-                [-side * 58, 36],
+                        ? ['BUILDING:FOLWARK', `BUILDING:${deStyle}_MILL_AGE2`, 'BUILDING:DARK_MILL_AGE1']
+                        : [`BUILDING:${deStyle}_MILL_AGE2`, `BUILDING:${deStyle}_MILL_AGE3`, 'BUILDING:DARK_MILL_AGE1'];
+            const housePool = isAmericas
+                ? ['BUILDING:HUT_A', 'BUILDING:HUT_B', 'BUILDING:HUT_C', 'BUILDING:DARK_HOUSE_AGE1']
+                : isNomad
+                    ? ['BUILDING:YURT_B', 'BUILDING:YURT_C', 'BUILDING:YURT_D', 'BUILDING:YURT_E', 'BUILDING:YURT_F', 'BUILDING:YURT_G']
+                    : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`, 'BUILDING:DARK_HOUSE_AGE1', 'BUILDING:HUT_A', 'BUILDING:HUT_B'];
+
+            // 村心泥径贴花 + 磨坊/聚落居中
+            pushRelic('DECAL_PATH_1', vx, vy + 10, rnd() < 0.5, 0.95, -6, 0, false);
+            const millAsset = pickUniqueFromPool(millPool);
+            pushRelic(millAsset, vx, vy, rnd() < 0.5, 0.78, 0, 0, true);
+
+            // 一侧按 DE 等距菱形网格紧密排列 3~4 块农田 / 牧场 / 葡萄园（田块相连成片，围绕磨坊耕作）
+            const fieldSide = rnd() < 0.5 ? 1 : -1;
+            const fx0 = vx + fieldSide * 78, fy0 = vy + 24;
+            const farmGrid: ReadonlyArray<readonly [number, number]> = [
+                [0, 0],
+                [64, 30],
+                [-60, 32],
+                [4, 62],
             ];
-            const plotCount = 2 + (rnd() < 0.5 ? 1 : 0);
+            const plotCount = 3 + (rnd() < 0.5 ? 1 : 0);
             for (let fi = 0; fi < plotCount; fi++) {
-                const fx = farmSpot.x + farmOffsets[fi][0] + (rnd() - 0.5) * 12;
-                const fy = farmSpot.y + farmOffsets[fi][1] + (rnd() - 0.5) * 8;
-                if (isSafeSpot(fx, fy, 35, 440, 300)) {
-                    if (!isSnow && !isArid && !isNomad && !isAmericas && fi === plotCount - 1 && rnd() < 0.35) {
-                        pushRelic('RESOURCE:VINEYARD', fx, fy, rnd() < 0.5, 0.88, -1, 0, false);
+                const px = fx0 + farmGrid[fi][0];
+                const py = fy0 + farmGrid[fi][1];
+                if (!isSafeSpot(px, py, 28, 440, 290)) continue;
+                glLayer.carveFoundation(px, py, VW, VH, 1.4);
+                if (!isSnow && !isArid && !isNomad && !isAmericas && fi === plotCount - 1 && rnd() < 0.35) {
+                    pushRelic('RESOURCE:VINEYARD', px, py, rnd() < 0.5, 0.88, -1, 0, false);
+                } else {
+                    pushRelic(plotAsset, px, py, false, 0.98, -6, 0, false);
+                }
+            }
+
+            // 另一侧围以 2~3 间同文化民居/茅屋/毡帐，组成有生活气息的自然村落
+            const houseOffsets: ReadonlyArray<readonly [number, number]> = [
+                [-fieldSide * 86, -28],
+                [-fieldSide * 142, 8],
+                [-fieldSide * 32, -58],
+            ];
+            const houseCount = 2 + (rnd() < 0.45 ? 1 : 0);
+            for (let hi = 0; hi < houseCount; hi++) {
+                const hx = vx + houseOffsets[hi][0] + (rnd() - 0.5) * 12;
+                const hy = vy + houseOffsets[hi][1] + (rnd() - 0.5) * 8;
+                if (!isSafeSpot(hx, hy, 32, 440, 290)) continue;
+                glLayer.carveFoundation(hx, hy, VW, VH, 1.4);
+                pushRelic(housePool[(hi + Math.floor(rnd() * housePool.length)) % housePool.length], hx, hy, rnd() < 0.5, 0.76, 0, 0, false);
+            }
+
+            // 村口外缘伴生一簇 3 丛紧密聚拢的浆果丛（DE Forage Clump）或 2 棵橄榄果树
+            if (!isSnow) {
+                const bx0 = vx - fieldSide * 92, by0 = vy + 48;
+                const bushBase = foragePool[Math.floor(rnd() * foragePool.length)];
+                const clumpPts: ReadonlyArray<readonly [number, number]> = [[0, 0], [28, 14], [-26, 14]];
+                for (let bi = 0; bi < clumpPts.length; bi++) {
+                    const bx = bx0 + clumpPts[bi][0], by = by0 + clumpPts[bi][1];
+                    if (!isSafeSpot(bx, by, 22, 430, 285)) continue;
+                    if ((isGrecoRoman || isMiddleEast) && bi === 0 && rnd() < 0.5) {
+                        pushRelic('RESOURCE:OLIVE_TREE', bx, by, rnd() < 0.5, 0.82, 0, Math.floor(rnd() * 12), false);
                     } else {
-                        pushRelic(plotAsset, fx, fy, false, 0.96, -6, 0, false);
+                        pushRelic(bushBase, bx, by, (bi % 2 === 0), 0.84, -6, bi % 4, false);
                     }
                 }
             }
         }
-
-        // (2b) 1 处独立散落的荒野猎人茅屋 / 毡帐 / 美洲聚落 / 果木橄榄林
-        const hutSpot = pickRandomScatterSpot(520, 480, 330);
-        if (hutSpot) {
-            glLayer.carveFoundation(hutSpot.x, hutSpot.y, VW, VH, 1.6);
-            const hutPool = isAmericas
-                ? ['BUILDING:DARK_SETTLEMENT_AGE1', 'BUILDING:SETTLEMENT', 'BUILDING:HUT_A', 'BUILDING:HUT_B']
-                : isNomad
-                    ? [
-                        'BUILDING:YURT_C', 'BUILDING:YURT_D', 'BUILDING:YURT_E', 'BUILDING:YURT_F',
-                        'BUILDING:YURT_G', 'BUILDING:YURT_H', 'BUILDING:YURT_I', 'BUILDING:YURT_J',
-                        'BUILDING:YURT_K', 'BUILDING:YURT_L',
-                    ]
-                    : [
-                        'BUILDING:HUT_A', 'BUILDING:HUT_B', 'BUILDING:HUT_C', 'BUILDING:HUT_D',
-                        'BUILDING:HUT_E', 'BUILDING:HUT_F', 'BUILDING:HUT_G', 'BUILDING:DARK_HOUSE_AGE1',
-                        `BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`,
-                    ];
-            pushRelic(pickUniqueFromPool(hutPool), hutSpot.x, hutSpot.y, rnd() < 0.5, 0.76, 0, 0, true);
-            if (!isSnow && isSafeSpot(hutSpot.x + (rnd() < 0.5 ? 58 : -58), hutSpot.y + 18, 35, 440, 300)) {
-                const px2 = hutSpot.x + (rnd() < 0.5 ? 58 : -58), py2 = hutSpot.y + 18;
-                if ((isGrecoRoman || isMiddleEast) && rnd() < 0.5) {
-                    pushRelic('RESOURCE:OLIVE_TREE', px2, py2, rnd() < 0.5, 0.82, 0, Math.floor(rnd() * 12), false);
-                } else {
-                    const fg = foragePool[Math.floor(rnd() * foragePool.length)];
-                    pushRelic(fg, px2, py2, rnd() < 0.5, 0.82, -6, Math.floor(rnd() * 4), false);
-                }
-            }
-        }
     }
 
-    // ── 3. 荒野商贸、军塞、林矿随机散落池（把草市、铁匠铺、商车、货郎、木堡、帅帐、哨岗、伐木场、采矿场拆成独立单点随机抽取 3 处散落） ──
+    // ── 4. DE 功能院落池（从「路边商贸驿站」「军事前哨营塞」「宗教圣地院落」三类完整 DE 聚落中随机选 2 处分置不同侧翼） ──
     {
         const loadedCartAsset = isAmericas
             ? 'TRADE:TRADE_CART_MESO/move_2'
@@ -1250,126 +1349,205 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                         : (isIndosphere || deStyle === 'AFRI')
                             ? 'TRADE:MERCHANT_AFRI/move_4'
                             : 'TRADE:MERCHANT_ASIA/move_4';
-        const useBambooStump = !isSnow && (isEastAsia || isIndosphere);
-        const useBaobabStump = !isSnow && deStyle === 'AFRI';
-        const stumpPool = useBambooStump
-            ? ['STUMP_GENERIC', 'STUMP_BAMBOO', 'STUMP_LUSH_BAMBOO']
-            : useBaobabStump
-                ? ['STUMP_GENERIC', 'STUMP_BAOBAB']
-                : ['STUMP_GENERIC'];
-        const felledPool = useBambooStump
-            ? ['FELLED_GENERIC', 'FELLED_BAMBOO', 'FELLED_LUSH_BAMBOO']
-            : useBaobabStump
-                ? ['FELLED_GENERIC', 'FELLED_BAOBAB']
-                : ['FELLED_GENERIC'];
-        const pathDecals = ['DECAL_PATH_1', 'DECAL_PATH_2', 'DECAL_PATH_3', 'DECAL_PATH_4'];
 
-        // 6 种独立主题：每局随机洗牌抽 3 种，各自落在不同角落，互不堆叠
-        type ScatterNodeKind = 'wayside_bazaar' | 'traveling_caravan' | 'military_outpost' | 'lumber_site' | 'mining_site' | 'smithy_post';
-        const nodeKinds: ScatterNodeKind[] = [
-            'wayside_bazaar',
-            'traveling_caravan',
-            'military_outpost',
-            'lumber_site',
-            'mining_site',
-            'smithy_post',
-        ];
-        for (let i = nodeKinds.length - 1; i > 0; i--) {
+        // 严格按世界各文明划分宗教/遗迹地标池（绝不把埃及金字塔混入波斯/桑海，或把安第斯遗迹混入中美洲）
+        const monumentPool: string[] = isAmericas
+            ? (deStyle === 'ANDE'
+                ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BATTLEFIELD:ANDEAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE']
+                : [`BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS'])
+            : isEastAsia
+                ? [
+                    'BUILDING:SCEN_BUDDHA_STATUE',
+                    'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_B', 'BUILDING:SCEN_PAGODA_C',
+                    'BUILDING:SCEN_PAGODA_D', 'BUILDING:SCEN_PAGODA_E',
+                    ...(isJapan ? [] : ['BUILDING:SCEN_CHINESE_RUINS', 'BATTLEFIELD:CHINESE_RUINS']),
+                    `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                ]
+                : isIndosphere
+                    ? (deStyle === 'SEAS'
+                        ? [
+                            'BUILDING:SCEN_BUDDHA_STATUE', 'BUILDING:SANCHI_STUPA', 'BUILDING:SCEN_REKHADEUL_TEMPLE',
+                            `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                        ]
+                        : [
+                            'BUILDING:SCEN_BUDDHA_STATUE', 'BUILDING:SANCHI_STUPA', 'BUILDING:SCEN_REKHADEUL_TEMPLE',
+                            'BUILDING:GOL_GUMBAZ', 'BUILDING:SCEN_INDIAN_RUINS', 'BUILDING:SCEN_PURU_RUINS',
+                            'BATTLEFIELD:INDIAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                        ])
+                    : isGrecoRoman
+                        ? [
+                            'BUILDING:SCEN_ROMAN_RUINS', 'BUILDING:ARCH_OF_CONSTANTINE', 'BUILDING:AMPHITHEATRE',
+                            'BUILDING:SCEN_COLOSSEUM', 'BUILDING:SCEN_ARCHAIC_THOLOS',
+                            'BUILDING:SCEN_HERO_SHRINE', 'BATTLEFIELD:ROMAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                        ]
+                        : isEgyptNile
+                            ? [
+                                'BUILDING:GREAT_PYRAMID', 'BUILDING:SCEN_SPHINX', 'BUILDING:SCEN_CUSHITE_PYRAMIDS',
+                                `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                            ]
+                            : deStyle === 'AFRI'
+                                ? [
+                                    'BUILDING:SCEN_SANKORE_MADRASAH', 'BUILDING:SCEN_CUSHITE_PYRAMIDS',
+                                    'BUILDING:AFRI_MONASTERY_AGE3',
+                                ]
+                                : deStyle === 'PERSIAN'
+                                    ? [
+                                        'BUILDING:SCEN_FIRE_SHRINE', 'BUILDING:MINARET_OF_JAM',
+                                        'BUILDING:SCEN_MESOPOTAMIAN_RUINS', 'BUILDING:SCEN_MESOPOTAMIAN_TOMB',
+                                        'BATTLEFIELD:MESOPOTAMIAN_TOMB', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                    ]
+                                    : isMiddleEast
+                                        ? [
+                                            'BUILDING:SCEN_DOME_OF_THE_ROCK', 'BUILDING:MINARET_OF_JAM',
+                                            'BUILDING:SCEN_MESOPOTAMIAN_RUINS', 'BUILDING:SCEN_MESOPOTAMIAN_TOMB',
+                                            'BATTLEFIELD:MESOPOTAMIAN_TOMB', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                        ]
+                                        : (isNomad || isPaganNorth)
+                                            ? [
+                                                'BUILDING:SCEN_STONEHENGE', 'BUILDING:SCEN_HALL_OF_HEROES',
+                                                'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS',
+                                                'BATTLEFIELD:ANCIENT_RUINS', 'BUILDING:SCEN_HERO_SHRINE',
+                                            ]
+                                            : (deStyle === 'SLAV' || deStyle === 'EAST')
+                                                ? [
+                                                    'BUILDING:POENARI_CASTLE', 'BUILDING:SCEN_CASTLE_RUINS',
+                                                    'BUILDING:SCEN_CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                                ]
+                                                : [
+                                                    'BUILDING:SCEN_AACHEN_CATHEDRAL', 'BUILDING:QUIMPER_CATHEDRAL',
+                                                    'BUILDING:SCEN_CASTLE_RUINS', 'BUILDING:SCEN_CHURCH_RUINS', 'BUILDING:SCEN_MEDI_RUINS',
+                                                    `BUILDING:${deStyle}_MONASTERY_AGE3`,
+                                                ];
+
+        type CompoundKind = 'trade_post_compound' | 'military_outpost_compound' | 'sacred_shrine_compound';
+        const compoundKinds: CompoundKind[] = ['trade_post_compound', 'military_outpost_compound', 'sacred_shrine_compound'];
+        for (let i = compoundKinds.length - 1; i > 0; i--) {
             const j = Math.floor(rnd() * (i + 1));
-            [nodeKinds[i], nodeKinds[j]] = [nodeKinds[j], nodeKinds[i]];
+            [compoundKinds[i], compoundKinds[j]] = [compoundKinds[j], compoundKinds[i]];
         }
 
-        let nodesPlaced = 0;
-        for (const kind of nodeKinds) {
-            if (nodesPlaced >= 3) break;
-            const pt = pickRandomScatterSpot(540, 490, 330);
+        let compoundsPlaced = 0;
+        for (const cKind of compoundKinds) {
+            if (compoundsPlaced >= 2) break;
+            const pt = pickRandomScatterSpot(640, 520, 350);
             if (!pt) continue;
-            glLayer.carveFoundation(pt.x, pt.y, VW, VH, 1.7);
+            const sx = pt.x, sy = pt.y;
+            clearTreesInRadius(sx, sy, 175);
+            glLayer.carveFoundation(sx, sy, VW, VH, 2.2);
 
-            if (kind === 'wayside_bazaar') {
-                // 单座草市驿店（不再叠放多辆车与货郎）
-                const bld = isAmericas
+            if (cKind === 'trade_post_compound') {
+                // DE 路边商贸驿站：古道贴花 + 集市与铁匠铺并立 + 门口地毯货桶 + 道路上行进的商车与货郎
+                pushRelic('DECAL_PATH_2', sx - 24, sy + 20, false, 0.96, -6, 0, false);
+                pushRelic('DECAL_PATH_3', sx + 48, sy + 36, false, 0.94, -6, 0, false);
+                const marketBld = isAmericas
                     ? 'BUILDING:SETTLEMENT'
                     : isNomad
                         ? 'BUILDING:YURT_A'
                         : `BUILDING:${deStyle}_MARKET_${rnd() < 0.5 ? 'AGE2' : 'AGE3'}`;
-                pushRelic(pickUniqueFromPool([bld]), pt.x, pt.y, rnd() < 0.5, 0.74, 0, 0, true);
-                if (isSafeSpot(pt.x + 28, pt.y + 22, 30, 440, 300)) {
-                    pushRelic('RUGS', pt.x + 28, pt.y + 22, rnd() < 0.5, 0.84, -6, Math.floor(rnd() * 4), false);
-                }
-            } else if (kind === 'smithy_post') {
-                // 单座荒野铁匠铺或军械站
-                const bld = isAmericas
+                const smithBld = isAmericas
                     ? 'BUILDING:DARK_SETTLEMENT_AGE1'
                     : isNomad
                         ? 'BUILDING:YURT_B'
                         : `BUILDING:${deStyle}_BLACKSMITH_${rnd() < 0.5 ? 'AGE2' : 'AGE3'}`;
-                pushRelic(pickUniqueFromPool([bld]), pt.x, pt.y, rnd() < 0.5, 0.74, 0, 0, true);
-                if (isSafeSpot(pt.x - 36, pt.y + 18, 30, 440, 300)) {
-                    pushRelic('BARRELS', pt.x - 36, pt.y + 18, rnd() < 0.5, 0.78, 0, 0, false);
+                pushRelic(pickUniqueFromPool([marketBld]), sx, sy, rnd() < 0.5, 0.76, 0, 0, true);
+                if (isSafeSpot(sx + 88, sy - 28, 32, 440, 300)) {
+                    glLayer.carveFoundation(sx + 88, sy - 28, VW, VH, 1.5);
+                    pushRelic(pickUniqueFromPool([smithBld]), sx + 88, sy - 28, rnd() < 0.5, 0.74, 0, 0, false);
                 }
-            } else if (kind === 'traveling_caravan') {
-                // 古道上单独行进的商车或货郎（无大型建筑压顶）
-                const pDecal = pathDecals[Math.floor(rnd() * pathDecals.length)];
-                pushRelic(pDecal, pt.x, pt.y, rnd() < 0.5, 0.92, -6, 0, false);
-                const caravanActors = [loadedCartAsset, emptyCartAsset, merchantAsset, 'TRADE:MULE_CART/move_2'];
-                const mainActor = pickUniqueFromPool(caravanActors);
-                pushRelic(mainActor, pt.x, pt.y, rnd() < 0.5, 0.84, 0, 0, true);
-                if (isSafeSpot(pt.x + 56, pt.y + 22, 35, 440, 300)) {
-                    const secondActor = mainActor === merchantAsset ? loadedCartAsset : merchantAsset;
-                    pushRelic(secondActor, pt.x + 56, pt.y + 22, rnd() < 0.5, 0.82, 0, 0, false);
+                if (isSafeSpot(sx + 24, sy + 22, 24, 440, 300)) {
+                    pushRelic('RUGS', sx + 24, sy + 22, rnd() < 0.5, 0.84, -6, Math.floor(rnd() * 4), false);
                 }
-            } else if (kind === 'military_outpost') {
-                // 单座斥候哨楼 / 木堡 / 战地帅帐
-                const milPool = isNomad
-                    ? ['BUILDING:OUTPOST', 'BUILDING:GREEK_WAR_TENT']
-                    : ['BUILDING:OUTPOST', 'BUILDING:FORTIFIED_OUTPOST', 'BUILDING:WOODEN_FORT', 'BUILDING:GREEK_WAR_TENT'];
-                const opAsset = pickUniqueFromPool(milPool);
-                pushRelic(opAsset, pt.x, pt.y, rnd() < 0.5, 0.78, 0, 0, true);
-                if (isSafeSpot(pt.x + 30, pt.y - 14, 30, 440, 300)) {
-                    const flg = flagPool[Math.floor(rnd() * flagPool.length)];
-                    pushRelic(flg, pt.x + 30, pt.y - 14, rnd() < 0.5, 0.82, 0, 0, false);
+                if (isSafeSpot(sx + 68, sy - 6, 24, 440, 300)) {
+                    pushRelic('BARRELS', sx + 68, sy - 6, rnd() < 0.5, 0.78, 0, 0, false);
                 }
-            } else if (kind === 'lumber_site') {
-                // 林边伐木点（美洲用聚落）
-                const lumAsset = isAmericas
-                    ? 'BUILDING:SETTLEMENT'
+                if (isSafeSpot(sx - 44, sy + 30, 28, 440, 300)) {
+                    pushRelic(rnd() < 0.65 ? loadedCartAsset : emptyCartAsset, sx - 44, sy + 30, rnd() < 0.5, 0.82, 0, 0, false);
+                }
+                if (isSafeSpot(sx + 18, sy + 46, 28, 440, 300)) {
+                    pushRelic(isNomad ? 'TRADE:MULE_CART/move_2' : merchantAsset, sx + 18, sy + 46, rnd() < 0.5, 0.84, 0, 0, false);
+                }
+            } else if (cKind === 'military_outpost_compound') {
+                // DE 军事前哨营塞：哨岗/木堡 + 本文化军营/营帐 + 朝向战场的弧形木栅拒马防线 + 战旗与火把
+                const fortPool = isNomad
+                    ? ['BUILDING:OUTPOST']
+                    : ['BUILDING:FORTIFIED_OUTPOST', 'BUILDING:OUTPOST', 'BUILDING:WOODEN_FORT'];
+                const campTentAsset = isGrecoRoman
+                    ? 'BUILDING:GREEK_WAR_TENT'
                     : isNomad
-                        ? 'TRADE:MULE_CART/move_2'
-                        : (deStyle === 'GREEK' || deStyle === 'MEDI' || deStyle === 'WEST' || deStyle === 'ORIE' || deStyle === 'PERSIAN')
-                            ? 'BUILDING:GREEK_LUMBER_CAMP_AGE2'
-                            : 'BUILDING:THRACIAN_LUMBER_CAMP_AGE2';
-                pushRelic(lumAsset, pt.x, pt.y, rnd() < 0.5, 0.76, 0, 0, true);
-                if (isSafeSpot(pt.x + 44, pt.y - 16, 30, 440, 300)) {
-                    pushRelic(stumpPool[Math.floor(rnd() * stumpPool.length)], pt.x + 44, pt.y - 16, rnd() < 0.5, 0.80, 0, 0, false);
+                        ? 'BUILDING:YURT_A'
+                        : isAmericas
+                            ? 'BUILDING:HUT_A'
+                            : 'BUILDING:CAMP_BARRACKS';
+                const mainFort = pickUniqueFromPool(fortPool);
+                pushRelic(mainFort, sx, sy, rnd() < 0.5, 0.80, 0, 0, true);
+                if (isSafeSpot(sx - 66, sy - 22, 30, 440, 300)) {
+                    glLayer.carveFoundation(sx - 66, sy - 22, VW, VH, 1.4);
+                    pushRelic(campTentAsset, sx - 66, sy - 22, rnd() < 0.5, 0.76, 0, 0, false);
                 }
-                if (isSafeSpot(pt.x - 46, pt.y + 18, 30, 440, 300)) {
-                    pushRelic(felledPool[Math.floor(rnd() * felledPool.length)], pt.x - 46, pt.y + 18, rnd() < 0.5, 0.80, 0, 0, false);
+                // 朝向战场中心一侧布置 2~3 段相连的木栅拒马工事
+                const toCenterX = cx >= sx ? 1 : -1;
+                const toCenterY = cy >= sy ? 1 : -1;
+                const palisadeOffsets: ReadonlyArray<readonly [number, number]> = [
+                    [toCenterX * 52, toCenterY * 26],
+                    [toCenterX * 22, toCenterY * 42],
+                    [toCenterX * 76, toCenterY * 6],
+                ];
+                for (let pi = 0; pi < palisadeOffsets.length; pi++) {
+                    const px = sx + palisadeOffsets[pi][0], py = sy + palisadeOffsets[pi][1];
+                    if (isSafeSpot(px, py, 22, 430, 290)) {
+                        pushRelic(
+                            pi === 1 ? 'BATTLEFIELD:BARRICADE_A' : 'BATTLEFIELD:STAKE_BARRICADE',
+                            px,
+                            py,
+                            toCenterX < 0,
+                            0.84,
+                            0,
+                            0,
+                            false,
+                        );
+                    }
                 }
-            } else if (kind === 'mining_site') {
-                // 野生矿脉与采石坑 / 采矿场（美洲用聚落）
-                const oreAsset = rnd() < 0.5 ? 'MINE_GOLD' : 'MINE_STONE';
-                const quarryAsset = rnd() < 0.5 ? 'RESOURCE:QUARRY' : 'RESOURCE:QUARRY_B';
-                const campAsset = isAmericas
-                    ? 'BUILDING:DARK_SETTLEMENT_AGE1'
-                    : isNomad
-                        ? 'TRADE:MULE_CART/move_6'
-                        : (deStyle === 'GREEK' || deStyle === 'MEDI' || deStyle === 'WEST' || deStyle === 'ORIE' || deStyle === 'PERSIAN')
-                            ? 'BUILDING:GREEK_MINING_CAMP_AGE2'
-                            : 'BUILDING:THRACIAN_MINING_CAMP_AGE2';
-                pushRelic(oreAsset, pt.x, pt.y, rnd() < 0.5, 0.88, 0, Math.floor(rnd() * 6), true);
-                if (isSafeSpot(pt.x + 42, pt.y - 16, 30, 440, 300)) {
-                    pushRelic(quarryAsset, pt.x + 42, pt.y - 16, rnd() < 0.5, 0.84, -1, 0, false);
+                if (isSafeSpot(sx + 28, sy - 14, 24, 440, 300)) {
+                    pushRelic(flagPool[Math.floor(rnd() * flagPool.length)], sx + 28, sy - 14, rnd() < 0.5, 0.82, 0, 0, false);
                 }
-                if (isSafeSpot(pt.x - 64, pt.y + 22, 35, 440, 300)) {
-                    pushRelic(campAsset, pt.x - 64, pt.y + 22, rnd() < 0.5, 0.75, 0, 0, false);
+                if (isSafeSpot(sx - 28, sy + 20, 24, 440, 300)) {
+                    pushRelic('BATTLEFIELD:TORCH_A', sx - 28, sy + 20, rnd() < 0.5, 0.84, 0, 0, false);
+                }
+            } else {
+                // DE 宗教圣地院落（全图最多 1 处，佛像最多 1 尊，绝不叠放两座高塔或两尊佛像）
+                const mAsset = pickUniqueFromPool(monumentPool);
+                const mScale = /AMPHITHEATRE|COLOSSEUM|ARCH_OF_CONSTANTINE|SANCHI_STUPA|CATHEDRAL|GREAT_PYRAMID|DOME_OF_THE_ROCK|GOL_GUMBAZ/.test(mAsset)
+                    ? 0.68
+                    : 0.80;
+                pushRelic('DECAL_PATH_4', sx, sy + 28, false, 0.92, -6, 0, false);
+                pushRelic(mAsset, sx, sy, rnd() < 0.5, mScale, 0, 0, true);
+                if (!isSnow) {
+                    if (isSafeSpot(sx - 46, sy + 22, 24, 440, 300)) {
+                        pushRelic('FLOWERBED', sx - 46, sy + 22, false, 0.84, -6, 0, false);
+                    }
+                    if (isSafeSpot(sx + 46, sy + 22, 24, 440, 300)) {
+                        pushRelic('FLOWERBED', sx + 46, sy + 22, true, 0.84, -6, 1, false);
+                    }
+                }
+                // 神道鸟居（SCEN_TORII_GATE）严格仅限日本文化；希罗神庙前院配 1 尊古希腊英雄雕像
+                if (isJapan && mAsset !== 'BUILDING:SCEN_BUDDHA_STATUE' && isSafeSpot(sx, sy + 50, 28, 440, 300)) {
+                    pushRelic('BUILDING:SCEN_TORII_GATE', sx, sy + 50, false, 0.76, 0, 0, false);
+                } else if (isGrecoRoman && isSafeSpot(sx, sy + 46, 28, 440, 300)) {
+                    const greekStatues = [
+                        'BUILDING:SCEN_STATUE_ALEXANDER',
+                        'BUILDING:SCEN_STATUE_HEPHAISTION',
+                        'BUILDING:SCEN_STATUE_GREEK_HERO',
+                        'BUILDING:SCEN_STATUE_ARES_MARBLE',
+                        'BUILDING:SCEN_STATUE_ARES_PAINTED',
+                    ];
+                    pushRelic(pickUniqueFromPool(greekStatues), sx, sy + 46, rnd() < 0.5, 0.78, 0, 0, false);
                 }
             }
-            nodesPlaced++;
+            compoundsPlaced++;
         }
     }
 
-    // ── 4. 临水野战：渡口船坞/造船厂、停泊舟船、沉船/海怪巨鲸与全品种水产随机散落 ──
+    // ── 5. DE 岸线渡口船坞、近岸鱼群簇与远岸浅滩沉船礁石（仅在有河流/海洋的地图依水生成） ──
     {
         const N = glLayer.data?.width ?? 120;
         const shoreSpots: Array<{ x: number; y: number; waterX: number; waterY: number }> = [];
@@ -1394,14 +1572,19 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         }
         if (shoreSpots.length > 0) {
             shoreSpots.sort(() => rnd() - 0.5);
-            // (4a) 1 座古渡口船坞 / 造船厂 + 1 艘随机舟船 + 1 处随机水产
+            const aquaticPool = this.environmentPlan?.waterKind === 'sea'
+                ? ['RESOURCE:DORADO_FISH', 'RESOURCE:MARLIN_FISH', 'RESOURCE:TUNA_FISH', 'RESOURCE:SNAPPER_FISH', 'RESOURCE:SHORE_FISH', 'RESOURCE:BOX_TURTLES', 'RESOURCE:DOLPHIN', 'RESOURCE:WHALE', 'RESOURCE:OYSTERS']
+                : ['RESOURCE:SALMON_FISH', 'RESOURCE:PERCH_FISH', 'RESOURCE:SHORE_FISH', 'RESOURCE:BOX_TURTLES', 'RESOURCE:WATER_LILY'];
+
+            // (5a) 岸线渡口船坞 + 停泊本文化舟船 + 近岸成簇鱼群（古希腊/色雷斯造船厂仅限古典地中海，其余文明严格使用本文化 DOCK_AGE2）
             if (!isNomad) {
                 const ferrySpot = shoreSpots[0];
+                clearTreesInRadius(ferrySpot.x, ferrySpot.y, 120);
                 const dockPool = deStyle === 'YURT'
                     ? ['BUILDING:ASIA_DOCK_AGE2']
                     : isGrecoRoman
                         ? [`BUILDING:${deStyle}_DOCK_AGE2`, 'BUILDING:GREEK_SHIPYARD_AGE2', 'BUILDING:THRACIAN_SHIPYARD_AGE2']
-                        : [`BUILDING:${deStyle}_DOCK_AGE2`, 'BUILDING:THRACIAN_SHIPYARD_AGE2'];
+                        : [`BUILDING:${deStyle}_DOCK_AGE2`];
                 const boatPool = (isAmericas || deStyle === 'AFRI')
                     ? ['TRADE:CANOE/idle_2', 'TRADE:TRANSPORT_SHIP/idle_2']
                     : (isEastAsia || deStyle === 'SEAS')
@@ -1409,34 +1592,35 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                         : (deStyle === 'WEST' || deStyle === 'CEAS' || deStyle === 'EAST' || deStyle === 'SLAV')
                             ? ['TRADE:TRADE_COG/idle_2', 'TRADE:MERCHANT_SHIP/idle_2', 'TRADE:TRANSPORT_SHIP/idle_2']
                             : ['TRADE:MERCHANT_SHIP/idle_2', 'TRADE:TRANSPORT_SHIP/idle_2', 'TRADE:CANOE/idle_2'];
-                pushRelic(pickUniqueFromPool(dockPool), ferrySpot.x, ferrySpot.y, rnd() < 0.5, 0.76, 0, 0, true);
+                pushRelic(pickUniqueFromPool(dockPool), ferrySpot.x, ferrySpot.y, rnd() < 0.5, 0.78, 0, 0, true);
                 pushRelic(
                     pickUniqueFromPool(boatPool),
                     (ferrySpot.x + ferrySpot.waterX) * 0.5,
                     (ferrySpot.y + ferrySpot.waterY) * 0.5,
                     rnd() < 0.5,
-                    0.74,
+                    0.75,
                     0,
                     0,
                     false,
                 );
+                const fish1 = pickUniqueFromPool(aquaticPool);
+                pushRelic(fish1, ferrySpot.waterX, ferrySpot.waterY, false, fish1 === 'RESOURCE:WHALE' ? 0.72 : 0.85, fish1 === 'RESOURCE:WATER_LILY' || fish1 === 'RESOURCE:OYSTERS' ? -6 : -1, Math.floor(rnd() * 12), false);
             }
 
-            // (4b) 1~2 处浅滩沉船 / 搁浅巨鲸 / 利维坦骨架 + 随机水产鱼群/海龟/海豚/巨鲸/牡蛎/睡莲
-            const wreckPool = [
-                'BATTLEFIELD:GALLEY_WRECK',
-                'BATTLEFIELD:CATAPULT_SHIP_WRECK',
-                'BATTLEFIELD:TRADE_SHIP_WRECK',
-                'BATTLEFIELD:SHIPWRECK_A',
-                'BATTLEFIELD:SHIPWRECK_B',
-                'BATTLEFIELD:LEVIATHAN_WRECK',
-                'BATTLEFIELD:BEACHED_WHALE',
-            ];
-            const aquaticPool = this.environmentPlan?.waterKind === 'sea'
-                ? ['RESOURCE:DORADO_FISH', 'RESOURCE:MARLIN_FISH', 'RESOURCE:TUNA_FISH', 'RESOURCE:SNAPPER_FISH', 'RESOURCE:SHORE_FISH', 'RESOURCE:BOX_TURTLES', 'RESOURCE:DOLPHIN', 'RESOURCE:WHALE', 'RESOURCE:OYSTERS']
-                : ['RESOURCE:SALMON_FISH', 'RESOURCE:PERCH_FISH', 'RESOURCE:SHORE_FISH', 'RESOURCE:BOX_TURTLES', 'RESOURCE:WATER_LILY'];
+            // (5b) 远岸浅滩沉船残骸 + 海中礁石 + 伴生鱼群
+            const wreckPool = isAmericas
+                ? ['BATTLEFIELD:SHIPWRECK_A', 'BATTLEFIELD:SHIPWRECK_B', 'BATTLEFIELD:BEACHED_WHALE']
+                : [
+                    'BATTLEFIELD:GALLEY_WRECK',
+                    'BATTLEFIELD:CATAPULT_SHIP_WRECK',
+                    'BATTLEFIELD:TRADE_SHIP_WRECK',
+                    'BATTLEFIELD:SHIPWRECK_A',
+                    'BATTLEFIELD:SHIPWRECK_B',
+                    'BATTLEFIELD:LEVIATHAN_WRECK',
+                    'BATTLEFIELD:BEACHED_WHALE',
+                ];
             let wrecksPlaced = 0;
-            for (let si = 1; si < shoreSpots.length && wrecksPlaced < 2; si++) {
+            for (let si = 1; si < shoreSpots.length && wrecksPlaced < 1; si++) {
                 const ws = shoreSpots[si];
                 if (placedPts.some((p) => Math.hypot(p.x - ws.x, (p.y - ws.y) * 1.4) < 520)) continue;
                 const wAsset = pickUniqueFromPool(wreckPool);
@@ -1467,68 +1651,41 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         }
     }
 
-    // ── 5. 特种地质贴花与全品种古战场遗骸（从全部 18 种攻城残骸、白骨荒冢、路障、地质裂隙中随机挑 4~5 件散落各处，不扎堆） ──
+    // ── 6. DE 古战场战损遗迹簇（在交锋区外沿成组布置「本文明损毁攻城器械 + 地面弹坑裂隙 + 破损拒马/白骨」，绝不混进村落） ──
     {
+        const debrisCompanionPool = [
+            'BATTLEFIELD:BARRICADE_RUBBLE_A',
+            'BATTLEFIELD:BARRICADE_RUBBLE_B',
+            'BATTLEFIELD:BARRICADE_RUBBLE_C',
+            'BATTLEFIELD:BARRICADE_RUBBLE_D',
+            'BATTLEFIELD:FENCE_BROKEN_A',
+            'BATTLEFIELD:FENCE_BROKEN_B',
+            ...(isAmericas ? [] : ['BATTLEFIELD:CART_BROKEN']),
+            'BATTLEFIELD:SKELETON_BATTLEFIELD',
+            'BATTLEFIELD:SKELETON_SOLDIER',
+            'BATTLEFIELD:ANIMAL_SKELETON',
+            'BATTLEFIELD:IMPALED_CORPSE',
+            ...(isGrecoRoman ? ['BATTLEFIELD:IMPALED_CORPSE_ANT'] : []),
+            'BATTLEFIELD:GRAVES',
+            'BUILDING:SCEN_GRAVES',
+        ];
         const geoPool = isSnow
             ? ['DECAL_ICE', 'RESOURCE:SALT_ICE_DECAL', 'DECAL_CRACK']
             : isArid
                 ? ['RESOURCE:SALT_CRACK', 'RESOURCE:SULFUR_CRATER', 'DECAL_CRACK', 'DECAL_CRATER']
                 : ['DECAL_CRATER', 'DECAL_CRACK', 'RESOURCE:SULFUR_CRATER', 'RESOURCE:SALT_CRACK'];
-        const geoSpot = pickRandomScatterSpot(440, 460, 310);
-        if (geoSpot) {
-            pushRelic(pickUniqueFromPool(geoPool), geoSpot.x, geoSpot.y, rnd() < 0.5, 0.90, -6, 0, true);
-        }
 
-        const fieldRelics = [
-            'BATTLEFIELD:SKELETON_BATTLEFIELD',
-            'BATTLEFIELD:SKELETON_SOLDIER',
-            'BATTLEFIELD:SKELETON_CIVILIAN',
-            'BATTLEFIELD:ANIMAL_SKELETON',
-            'BATTLEFIELD:IMPALED_CORPSE',
-            'BATTLEFIELD:IMPALED_CORPSE_ANT',
-            'BATTLEFIELD:DECAY_WAR_CHARIOT',
-            'BATTLEFIELD:DECAY_TREBUCHET',
-            'BATTLEFIELD:DECAY_TREBUCHET_PACKED',
-            'BATTLEFIELD:DECAY_MANGONEL',
-            'BATTLEFIELD:DECAY_ONAGER',
-            'BATTLEFIELD:DECAY_SIEGE_ONAGER',
-            'BATTLEFIELD:DECAY_BATTERING_RAM',
-            'BATTLEFIELD:DECAY_CAPPED_RAM',
-            'BATTLEFIELD:DECAY_SIEGE_RAM',
-            'BATTLEFIELD:DECAY_SCORPION',
-            'BATTLEFIELD:DECAY_HEAVY_SCORPION',
-            'BATTLEFIELD:DECAY_SIEGE_BALLISTA',
-            'BATTLEFIELD:DECAY_SIEGE_TOWER',
-            'BATTLEFIELD:DECAY_BOMBARD_CANNON',
-            'BATTLEFIELD:DECAY_ORGAN_GUN',
-            'BATTLEFIELD:DECAY_HUSSITE_WAGON',
-            'BATTLEFIELD:DECAY_ROCKET_CART',
-            'BATTLEFIELD:DECAY_FLAMETHROWER',
-            'BATTLEFIELD:FENCE_BROKEN_A',
-            'BATTLEFIELD:FENCE_BROKEN_B',
-            'BATTLEFIELD:BARRICADE_A',
-            'BATTLEFIELD:BARRICADE_B',
-            'BATTLEFIELD:BARRICADE_C',
-            'BATTLEFIELD:BARRICADE_D',
-            'BATTLEFIELD:BARRICADE_RUBBLE_A',
-            'BATTLEFIELD:BARRICADE_RUBBLE_B',
-            'BATTLEFIELD:BARRICADE_RUBBLE_C',
-            'BATTLEFIELD:BARRICADE_RUBBLE_D',
-            'BATTLEFIELD:CART_BROKEN',
-            'BATTLEFIELD:GRAVES',
-            'BUILDING:SCEN_GRAVES',
-            'BATTLEFIELD:TORCH_A',
-            'BATTLEFIELD:TORCH_B',
-        ];
-        if (decorFits('GRAVES', { lat: mapLat, lng: mapLng, season: this.sceneSeason, winterSnow: isSnow, isSiege: false })) {
-            fieldRelics.push('GRAVES');
-        }
-        const relicCount = 3 + Math.floor(rnd() * 2); // 3~4 件不重复遗物分散在不同远角
-        for (let i = 0; i < relicCount; i++) {
-            const pt = pickRandomScatterSpot(460, 480, 320);
+        const wreckClusters = 2 + (rnd() < 0.5 ? 1 : 0);
+        for (let i = 0; i < wreckClusters; i++) {
+            const pt = pickRandomScatterSpot(480, 470, 315);
             if (!pt) continue;
-            const asset = pickUniqueFromPool(fieldRelics);
-            pushRelic(asset, pt.x, pt.y, rnd() < 0.5, 0.86 + rnd() * 0.08, 0, Math.floor(rnd() * 6), true);
+            const decalAsset = pickUniqueFromPool(geoPool);
+            const mainWreck = pickUniqueFromPool(siegeWrecks);
+            pushRelic(decalAsset, pt.x, pt.y + 6, rnd() < 0.5, 0.90, -6, 0, false);
+            pushRelic(mainWreck, pt.x, pt.y, rnd() < 0.5, 0.88, 0, 0, true);
+            if (isSafeSpot(pt.x + 44, pt.y + 18, 28, 450, 300)) {
+                pushRelic(pickUniqueFromPool(debrisCompanionPool), pt.x + 44, pt.y + 18, rnd() < 0.5, 0.86, 0, 0, false);
+            }
         }
     }
 
