@@ -544,7 +544,6 @@ const BGM_REGION_GAIN: Record<string, number> = {
     franks_b: 0.716,  // -18.1 LUFS
     burgundians_a: 0.631,  // -17.0 LUFS
     burgundians_b: 0.692,  // -17.8 LUFS
-    britons_a: 0.804,  // -19.1 LUFS
     britons_b: 0.676,  // -17.6 LUFS
     celts_a: 0.708,  // -18.0 LUFS
     celts_b: 0.603,  // -16.6 LUFS
@@ -697,7 +696,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     BENGALIS: ['de_BENGALIS', 'bengalis_a', 'bengalis_b'],
     BERBER: ['de_BERBER', 'berber_a', 'berber_b'],
     BOHEMIANS: ['de_BOHEMIANS', 'bohemians_a', 'bohemians_b'],
-    BRITONS: ['de_BRITONS', 'britons_a', 'britons_b'],
+    BRITONS: ['de_BRITONS', 'britons_b'],
     BULGARIANS: ['de_BULGARIANS', 'bulgarians_a', 'bulgarians_b'],
     BURGUNDIANS: ['de_BURGUNDIANS', 'burgundians_a', 'burgundians_b'],
     BURMESE: ['de_BURMESE', 'pugan', 'burmese_a'],

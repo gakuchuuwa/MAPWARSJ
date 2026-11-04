@@ -10591,6 +10591,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.21,
             "offsetX": 22,
             "offsetY": 17
+        },
+        "/assets/FRANKS/gen_raymond_berenguer_iv.png": {
+            "scale": 1.16,
+            "offsetX": 18,
+            "offsetY": 3
         }
     },
     "folderGuides": {

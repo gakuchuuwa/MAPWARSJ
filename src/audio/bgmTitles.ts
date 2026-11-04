@@ -36,7 +36,6 @@ export const BGM_TITLES: Record<string, string> = {
     berber_b: '柏柏尔手鼓 Bendir',
     bohemians_a: '摩拉维亚民间器乐',
     bohemians_b: '扬琴 捷克',
-    britons_a: '盎格鲁撒克逊竖琴',
     britons_b: '盎格鲁撒克逊里拉 Harvest Dance',
     bulgarian_war: '保加利亚战鼓',
     bulgarians_a: '保加利亚加伊达风笛',

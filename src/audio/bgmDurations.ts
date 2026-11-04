@@ -37,7 +37,6 @@ export const BGM_DURATIONS: Record<string, number> = {
     berber_b: 67,
     bohemians_a: 225,
     bohemians_b: 208,
-    britons_a: 227,
     britons_b: 62,
     bulgarian_war: 528,
     bulgarians_a: 230,
