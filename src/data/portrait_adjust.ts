@@ -2204,8 +2204,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/JIANGNAN/hao_d_weirui.png": {
             "scale": 1.01,
-            "offsetX": 6,
-            "offsetY": 3
+            "offsetX": 13,
+            "offsetY": 6
         },
         "/assets/LINGNAN/__闲置__LINGNAN_11.png": {
             "scale": 0.93,
@@ -3658,14 +3658,14 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 24
         },
         "/assets/PERSIAN/aqimeinide_daliushi.png": {
-            "scale": 0.91,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": 21
         },
         "/assets/PERSIAN/safawei_d_abasi.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -8
+            "scale": 1.11,
+            "offsetX": 13,
+            "offsetY": -9
         },
         "/assets/BYZANTINE/bendou_alikesai.png": {
             "scale": 1.04,
@@ -4193,8 +4193,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/PERSIAN/midi_daiaokaisi.png": {
-            "scale": 1.13,
-            "offsetX": 0,
+            "scale": 1.21,
+            "offsetX": -2,
             "offsetY": 18
         },
         "/assets/WEI/wuyuan_d_chengui.png": {
@@ -7738,7 +7738,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/SASANIAN/zhageluosi_guanjiang.png": {
-            "scale": 1.11,
+            "scale": 1.13,
             "offsetX": 0,
             "offsetY": -15
         },
@@ -8638,8 +8638,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 29
         },
         "/assets/CENTRAL/bfe3_13.png": {
-            "scale": 1.16,
-            "offsetX": 16,
+            "scale": 1.2,
+            "offsetX": 23,
             "offsetY": -4
         },
         "/assets/TIBET/bfe_jaya_prakash.png": {
@@ -10571,6 +10571,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 21
+        },
+        "/assets/TURKS/bfe_sinan_pasha.png": {
+            "scale": 1.1,
+            "offsetX": 8,
+            "offsetY": -7
+        },
+        "/assets/CENTRAL/song_bizaiyu.png": {
+            "scale": 1.03,
+            "offsetX": 14,
+            "offsetY": -30
         }
     },
     "folderGuides": {
