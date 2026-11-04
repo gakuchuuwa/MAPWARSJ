@@ -17,6 +17,7 @@ export const UNIT_LOOK_NOTES: Readonly<Record<string, string>> = {
     ninja: '中世纪·东亚·黑衣短刃刺客',
     samurai: '中世纪·东亚·大铠武士',
     samurai_elite: '中世纪·东亚·大铠长刀武士',
+    ronin: '中世纪·东亚·征服者版轻甲武士',
     fire_lancer: '中世纪·东亚·札甲火矛步兵',
     elite_fire_lancer: '中世纪·东亚·札甲火矛步兵',
     white_feather_guard: '古典·东亚·札甲长戟步兵',

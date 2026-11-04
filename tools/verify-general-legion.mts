@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将 ↔ 军团 对应校验：每位武将必须有 时代（势力时代 FACTION_ERA，按武将自己的势力）+ 文化（GENERAL_CULTURE），
  * 且他的军团（武将自己的 → 势力挂的）＝ 二级军团表里「该文化 × 该时代」那一支。
  * 🔴 [2026-10-19 主人令]「一个武将要有一个对应的军团」「必须给每个武将单独添加一个文化属性，才能对应上军团」
@@ -25,7 +25,9 @@ const l3 = new Set((LEVEL_3_LEGIONS as any[]).map((l) => l.name));
 const fname = (id: string) => (FACTIONS as any[]).find((f) => f.id === id)?.name ?? '';
 
 const problems: string[] = [];
-const UPRISING_LEGION = '盗贼团伙';   // 🔴 盗贼团伙铁律：一律算到三级盗贼团伙团，合规
+// 🔴 [2026-11-05 主人令「这些人可以取消吧，然后按势力，文化套军团」] 动乱番号「盗贼团伙」（原名「起义军」）不再由武将手写挂载，
+//    原 25 家动乱势力的武将一律改走「势力时代 × 据点文化」自动判定；三级军团本体照旧保留、不动。
+const UPRISING_LEGION = '盗贼团伙';   // 仍存在的三级番号（现无武将挂载，保留定义）
 let total = 0, ok = 0, uprisingOk = 0, thirdKept = 0;
 for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
     for (const g of (Array.isArray(entry) ? entry : [entry]) as any[]) {
@@ -63,7 +65,7 @@ for (const [fid, entry] of Object.entries(FACTION_GENERALS as any)) {
         ok++;
     }
 }
-console.log({ 武将总数: total, 对应上: ok, 盗贼团伙合规: uprisingOk, 三级保留: thirdKept, 有问题: problems.length });
+console.log({ 武将总数: total, 对应上: ok, 动乱番号残留: uprisingOk, 三级保留: thirdKept, 有问题: problems.length });
 for (const p of problems) console.log('  ', p);
 process.exit(problems.length ? 1 : 0);
 

@@ -93,6 +93,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     axe: { name: '蛮族兵', cls: 'melee', sz: 1, hp: 54, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 42, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     armored: { name: '藤甲兵', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 3, 29: 6 }, armorTags: [1, 31] },
     samurai: { name: '日本武士', cls: 'melee', sz: 1, hp: 70, atk: 10, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 40, dmgType: 'melee', bonus: { 19: 10, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    ronin: { name: '浪人', cls: 'melee', sz: 1, hp: 70, atk: 10, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 40, dmgType: 'melee', bonus: { 19: 10, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     samurai_elite: { name: '日本武士精锐', cls: 'melee', sz: 1, hp: 80, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 40, dmgType: 'melee', bonus: { 19: 12, 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
     elephant: { name: '南亚战象', cls: 'melee', sz: 1, aoe: true, hp: 450, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 32, dmgType: 'melee', bonus: { 11: 30, 13: 30 }, armorTags: [5, 8, 19, 31] },
     eastern_swordsman: { name: '穆斯林东方剑士特殊', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 36, dmgType: 'melee', bonus: { 29: 6 }, armorTags: [1, 31] },

@@ -1,4 +1,4 @@
-﻿/**
+/**
 
 
 
@@ -5231,7 +5231,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'fushi_wangmeng', factionId: 'fushi', cityId: 'city_changan', generalName: '王猛', portrait: '/assets/CENTRAL/fushi_wangmeng.png', eliteName: '前秦锐士', eliteTier: 3 },
         { generalId: 'zhuozhou_anshouzhong', factionId: 'da_yan', cityId: 'city_changan', generalName: '安守忠', portrait: '/assets/CENTRAL/zhuozhou_anshouzhong.png', eliteName: '河朔骑兵', eliteTier: 4 },
-        { generalId: 'tujue_xielikehan', factionId: 'tujue', cityId: 'city_yanran', generalName: '颉利可汗', portrait: '/assets/MONGOL/tujue_xielikehan.png', eliteName: '蒙古骑手', eliteTier: 4 },
+        // 🔴 [2026-11-05 主人令「颉利可汗归突厥、据点定燕然、删掉挂唐的重复条目」] 本行原挂在 tang 数组下（同人两处、身份字段不一致、其中一处无据点），现删去此条，唯一身份归入 tujue 数组：factionId=tujue、据点燕然山（city_yanran）
         { generalId: 'beidi_yaochang', eliteName: '关陇铁骑', eliteTier: 1, factionId: 'hou_qin', cityId: 'city_changan', generalName: '姚苌', portrait: '/assets/CENTRAL/beidi_yaochang.png' },
 
         // 🔴 [2026-10-24 险要补将·名将] 郭元振＝唐安西大都护、凉州都督；久视元年（700）吐蕃麹莽布支犯凉州，于赤亭大破之、斩获万余（《旧唐书·郭元振传》）；精锐「安西锐士」T3
@@ -8812,7 +8812,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'ashina_ashinayandou', factionId: 'tujue', cityId: 'city_naiman', generalName: '阿史那燕都', portrait: '/assets/CENTRAL_ASIA/ashina_ashinayandou.png', eliteName: '河中骑兵', eliteTier: 4 },
         // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 ashide 并入：同一政权（延续/殖民地/汗族）并成一个势力
         { generalId: 'ashide_ashidejieli', factionId: 'tujue', cityId: 'city_heishacheng', generalName: '阿史德颉利', portrait: '/assets/MONGOL/ashide_ashidejieli.png', eliteName: '蒙古骑手', eliteTier: 4 },
-        { generalId: 'tujue_xielikehan', generalName: '颉利可汗', portrait: '/assets/MONGOL/tujue_xielikehan.png' },
+        // 🔴 [2026-11-05 主人令「颉利可汗归突厥、据点定燕然、删掉挂唐的重复条目」] 唯一身份：东突厥颉利可汗，据燕然山（city_yanran，MONGOL 文化）；此前同一人还挂在 tang 数组下、且本条缺据点，今合并为一条
+        { generalId: 'tujue_xielikehan', factionId: 'tujue', cityId: 'city_yanran', generalName: '颉利可汗', portrait: '/assets/MONGOL/tujue_xielikehan.png', eliteName: '蒙古骑手', eliteTier: 4 },
     ],
 
 

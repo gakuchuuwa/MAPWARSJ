@@ -310,6 +310,7 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     sacred_band: 6,
     samurai: 6,
     samurai_elite: 6,
+    ronin: 6,
     sannahya: 12,
     sarmatian: 12,
     savar: 12,

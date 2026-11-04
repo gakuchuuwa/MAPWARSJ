@@ -12,6 +12,7 @@ export const UNIT_ICONS: Record<string, string> = {
     'ninja': '/de-techtree/icons/Unit/299.png',
     'samurai': '/de-techtree/icons/Unit/44.png',
     'samurai_elite': '/de-techtree/icons/Unit/483.png',
+    'ronin': '/de-techtree/icons/Unit/44.png',
     'fire_lancer': '/de-techtree/icons/Unit/457.png',
     'elite_fire_lancer': '/de-techtree/icons/Unit/458.png',
     'white_feather_guard': '/de-techtree/icons/Unit/434.png',

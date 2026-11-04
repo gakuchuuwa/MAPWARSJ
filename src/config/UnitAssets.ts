@@ -429,6 +429,15 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/death_${dir}.png`),
         },
+        // 【浪人】帝国时代2征服者版（非决定版）武士，8方向，由 graphics.drs 的 SLP 977/974/980/981 解出，2026-11-04
+        'ronin': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RONIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RONIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RONIN/idle_${dir}.png`),
+            // 原版武士无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RONIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RONIN/death_${dir}.png`),
+        },
         // 【朝鲜火焰弓箭手】Fire Archer（8方向，AoE2 DE SLD 素材，2026-08-15 朝鲜全决定版）
         'fire_archer': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_ARCHER/move_${dir}.png`),
