@@ -1,4 +1,4 @@
-﻿import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
+import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
 import { getEraFactionDisplayName, getEraFactionDisplayFlagText, getEraCityDisplayName, getEraCityDisplayFlagText } from '../data/eraFactionDisplay';
 import { FLAG_TEXT_WHITE_STYLE_FACTIONS, FLAG_TEXT_BLACK_STYLE_FACTIONS, HISTORICAL_FACTION_COLORS, FLAG_TEXT_LUM_THRESHOLD } from '../data/HistoricalFactionColors';
@@ -448,7 +448,7 @@ export class CityAssetManager {
         'shengmiao': '生苗',
         'buyi_d': '布依',
         'shuizu': '水',
-        'haikou': '寇',
+        'haikou': '倭',
         'liuzhen': '六镇',
 'you': '幽',
         'galangdiba': '波密',

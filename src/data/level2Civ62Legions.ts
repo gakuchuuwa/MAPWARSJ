@@ -877,8 +877,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FIRE_GALLEY',
         commanderUnit: 'hero_kitabatake',
         slots: [
-            { type: 'samurai', count: 2 },
-            { type: 'levy', count: 3 },
+            { type: 'mounted_samurai', count: 2 },
+            { type: 'samurai', count: 3 },
             { type: 'rattan_archer', count: 4 },
         ],
     },
@@ -2210,7 +2210,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'ONAGER_SHIP',
         commanderUnit: 'hero_belisarius',
         slots: [
-            { type: 'legionary', count: 3 },
+            { type: 'levy', count: 3 },
             { type: 'equites', count: 2 },
             { type: 'cretan_archer', count: 4 },
         ],

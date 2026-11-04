@@ -156,7 +156,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_sue_harutaka': 'JAPAN',   // 大内｜陶晴贤｜据点 山口
     'bfe_sun_ru': 'JIANGNAN',   // 杨吴｜孙儒｜据点 广陵
     'bfe_wu_yuanji': 'CENTRAL',   // 魏国｜吴元济｜据点 悬瓠
-    'bfe_xu_hai': 'JAPAN',      // 日本｜徐海｜据点 鹿儿岛城（萨摩巢穴）
+    'bfe_xu_hai': 'JIANGNAN',      // 江南｜徐海｜据点 嘉兴（2026-11-05 主人令：移嘉兴，原鹿儿岛城不合史）
     'bfe_yin_ziqi': 'WEI',   // 大燕｜尹子奇｜据点 范阳
     'bfe_zhu_chenhao': 'JIANGNAN',   // 唐国｜朱宸濠｜据点 豫章
     'bfe2_bao_shuya': 'CENTRAL',   // 齐国｜鲍叔牙｜据点 临淄
@@ -819,7 +819,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'guyashu_tigelate': 'ORIE',   // 阿舒尔｜提格拉特｜据点 亚述城
     'guzgan_abuhalisi': 'PERSIAN',   // 古兹根｜阿布哈里斯｜据点 法里亚布
     'guzhu_tianyu': 'WEI',   // 魏国｜田豫｜据点 北京
-    'haikou_wangzhi': 'JAPAN',      // 日本｜汪直｜据点 壹岐·原之辻（平户/五岛巢穴）
+    'haikou_wangzhi': 'JAPAN',      // 日本｜汪直｜据点 长崎（2026-11-05 主人令：移长崎，平户所在地，原挂对马·原之辻）
     'haixi_nvzhen_baiyindali': 'NORTHEAST',   // 海西｜拜音达里｜据点 辉发
     'hali_gedaerzi': 'PERSIAN',   // 萨洛尔｜戈达尔兹｜据点 萨拉赫斯
     'halikanasu_memnon': 'GREECE',   // 卡里亚｜门农｜据点 哈利卡纳苏斯

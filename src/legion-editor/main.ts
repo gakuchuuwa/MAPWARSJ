@@ -221,6 +221,8 @@ export interface DeUnitDef {
     age: UnitAge;
     pathPrefix: string;
     defaultScale?: number;
+    /** 素材版本：'aoc' = 帝国时代2征服者版（非决定版）；选兵弹窗里单独成一个页签，不混进其他大类页签 */
+    edition?: 'aoc';
 }
 
 export const DE_UNITS_CATALOG: DeUnitDef[] = [
@@ -233,7 +235,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'ninja', name: '日本忍者特殊', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/NINJA/' },
     { id: 'samurai', name: '日本武士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_DE/' },
     { id: 'samurai_elite', name: '日本武士精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_ELITE/' },
-    { id: 'ronin', name: '浪人', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/RONIN/' },
+    { id: 'ronin', name: '浪人', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/RONIN/', edition: 'aoc' },
     { id: 'fire_lancer', name: '南宋火矛手', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/FIRE_LANCER/' },
     { id: 'elite_fire_lancer', name: '南宋火矛手高级', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/ELITE_FIRE_LANCER/' },
     { id: 'white_feather_guard', name: '蜀白毦兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/WHITE_FEATHER_GUARD/' },
@@ -4855,7 +4857,9 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     overlay.className = 'le-modal-overlay';
 
     const isCommander = rowIdx === -1;
-    let currentTab: UnitCategory = isCommander ? 'hero' : 'infantry';
+    let currentTab: UnitCategory | 'aoc' = isCommander ? 'hero' : 'infantry';
+    /** 当前页签是否包含该兵种：'aoc' 页签只放征服者版素材，其余大类页签不放它们 */
+    const inTab = (u: DeUnitDef) => currentTab === 'aoc' ? u.edition === 'aoc' : (u.category === currentTab && u.edition !== 'aoc');
     let unitSearch = '';
     let isSearchComposing = false;
     let unitStatusFilter: 'all' | 'applied' | 'unapplied' = 'all';
@@ -4906,7 +4910,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
         const candidateUnits = DE_UNITS_CATALOG.filter(u => {
             if (!isAllowed(u)) return false;
             if (q) return true; // 搜索模式跨 tab
-            return u.category === currentTab;
+            return inTab(u);
         }).filter(u => currentSub === 'all' || getUnitSubcategory(u.id) === currentSub);
 
         const checkedUnits = candidateUnits.filter(isChecked);
@@ -4928,15 +4932,15 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             return false;
         }).sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') || a.id.localeCompare(b.id));
 
-        const subOptions = (SUBCATEGORY_BY_CATEGORY[currentTab] || []).filter(s => !isCommander || (s !== 'naval_hero' && s !== 'noncombat_hero'));
+        const subOptions = (SUBCATEGORY_BY_CATEGORY[currentTab === 'aoc' ? 'infantry' : currentTab] || []).filter(s => !isCommander || (s !== 'naval_hero' && s !== 'noncombat_hero'));
         const subCount = (s: SubCategory) => DE_UNITS_CATALOG.filter(u => isAllowed(u) && getUnitSubcategory(u.id) === s).length;
         const modalTabsHtml = isCommander
             ? `<div class="le-modal-tab active" data-cat="hero">👑 战斗英雄 (${DE_UNITS_CATALOG.filter(u => isAllowed(u) && u.category === 'hero').length})</div>`
             : CATEGORY_ORDER.map(c => {
-                const count = DE_UNITS_CATALOG.filter(u => u.category === c).length;
+                const count = DE_UNITS_CATALOG.filter(u => u.category === c && u.edition !== 'aoc').length;
                 const icon = c === 'infantry' ? '🛡️ ' : c === 'cavalry' ? '🐎 ' : c === 'ranged' ? '🏹 ' : c === 'siege' ? '⚙️ ' : c === 'naval' ? '🚢 ' : c === 'hero' ? '👑 ' : c === 'civilian' ? '🧺 ' : '🐾 ';
                 return `<div class="le-modal-tab ${currentTab === c ? 'active' : ''}" data-cat="${c}">${icon}${CATEGORY_LABEL[c]} (${count})</div>`;
-            }).join('');
+            }).join('') + `<div class="le-modal-tab ${currentTab === 'aoc' ? 'active' : ''}" data-cat="aoc">📜 征服者版 (${DE_UNITS_CATALOG.filter(u => u.edition === 'aoc').length})</div>`;
         overlay.innerHTML = `
         <div class="le-modal">
           <div class="le-modal-header">
@@ -4949,7 +4953,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
           <div style="display:flex;align-items:center;gap:8px;padding:8px 12px 0;">
             <span style="font-size:11px;color:#a89f8f;white-space:nowrap;">子分类:</span>
             <select id="le-unit-subfilter" class="le-select" style="flex:1;padding:2px 6px;font-size:12px;">
-              <option value="all">全部子类 (${DE_UNITS_CATALOG.filter(u => isAllowed(u) && u.category === currentTab).length})</option>
+              <option value="all">全部子类 (${DE_UNITS_CATALOG.filter(u => isAllowed(u) && inTab(u)).length})</option>
               ${subOptions.map(s => `<option value="${s}" ${currentSub === s ? 'selected' : ''}>${SUBCATEGORY_LABEL[s]} (${subCount(s)})</option>`).join('')}
             </select>
           </div>
@@ -5020,7 +5024,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
         overlay.querySelectorAll('.le-modal-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 e.stopPropagation();
-                currentTab = (tab as HTMLElement).dataset.cat as UnitCategory;
+                currentTab = (tab as HTMLElement).dataset.cat as UnitCategory | 'aoc';
                 currentSub = 'all';
                 renderModalContent();
             });

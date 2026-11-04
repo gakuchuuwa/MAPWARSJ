@@ -179,11 +179,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'AMERICA',
     },
     {
-        name: '盗贼团伙',
+        name: '海贼倭寇军团',
         formationMode: 'crescent',
         slots: [
             { type: 'bandit', count: 3 },
-            { type: 'mounted_samurai', count: 2 },
+            { type: 'ronin', count: 2 },
             { type: 'outlaw', count: 4 },
         ],
         regions: [],

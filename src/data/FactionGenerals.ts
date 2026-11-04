@@ -5611,7 +5611,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'haikou_wangzhi', factionId: 'haikou', cityId: 'city_yuanzhishi', generalName: '汪直', portrait: '/assets/JAPAN/haikou_wangzhi.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'haikou_wangzhi', factionId: 'haikou', cityId: 'city_nagasaki', generalName: '汪直', portrait: '/assets/JAPAN/haikou_wangzhi.png', eliteName: '日本足轻', eliteTier: 4, legionName: '海贼倭寇军团' },   // 🔴 [2026-11-05 主人令「要更贴史就移长崎」] 基地在日本平户（今长崎县），库里无平户 → 取最近的同文化据点长崎（原挂对马·原之辻）
 
 
 
@@ -12928,10 +12928,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     { generalId: 'wuyue_caogui', factionId: 'wuyue', cityId: 'city_jiaxing', generalName: '曹圭', portrait: '/assets/JIANGNAN/wuyue_caogui.png', eliteName: '嘉兴镇兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 吴越嘉兴都将，乾宁间固守拒淮人
     { generalId: 'wuyue_caoxin', factionId: 'wuyue', cityId: 'city_jiaxing', generalName: '曹信', portrait: '/assets/JIANGNAN/wuyue_caoxin.png', eliteName: '嘉兴乡兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 唐末移守嘉兴
         { generalId: 'wuyue_qianliu', cityId: 'city_hangzhou', generalName: '钱镠', portrait: '/assets/JIANGNAN/wuyue_qianliu.png', eliteName: '吴越水军', eliteTier: 3 },
-        { generalId: 'bfe_ajibaldo', factionId: 'haikou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JAPAN/bfe_ajibaldo.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'bfe_ajibaldo', factionId: 'haikou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JAPAN/bfe_ajibaldo.png', eliteName: '日本足轻', eliteTier: 4, legionName: '海贼倭寇军团' },
         { generalId: 'qian_d_yudayou', factionId: 'ming_d', cityId: 'city_qingyuan_zj', generalName: '俞大猷', portrait: '/assets/JIANGNAN/qian_d_yudayou.png', eliteName: '俞家军', eliteTier: 1 },
-        { generalId: 'bfe_xu_hai', cityId: 'city_satsuma', generalName: '徐海', portrait: '/assets/JAPAN/bfe_xu_hai.png', factionId: 'haikou', eliteName: '日本足轻', eliteTier: 4 },
-        { generalId: 'haikou_maohaifeng', factionId: 'haikou', cityId: 'city_qingyuan_zj', generalName: '毛海峰', portrait: '/assets/JIANGNAN/haikou_maohaifeng.png', eliteName: '岑港倭兵', eliteTier: 4 },   // 按史：王直养子王滶（毛海峰）1558 据舟山岑港抗官军（《明史纪事本末》卷五五、《倭变事略》）；T4 存在之兵（守港败亡，建制可考、无独立大捷/特色兵种）,   // 2026-10-25 按史补：王直养子王滶（本名毛海峰），1558 守舟山岑港，为俞大猷、戚继光所破（《倭变事略》）
+        { generalId: 'bfe_xu_hai', cityId: 'city_jiaxing', generalName: '徐海', portrait: '/assets/JAPAN/bfe_xu_hai.png', factionId: 'haikou', eliteName: '陈东倭兵', eliteTier: 4, legionName: '海贼倭寇军团' },   // 🔴 [2026-11-05 主人令「徐海移嘉兴（柘林/乍浦最近），精锐换成与据点同文化的倭兵」] 徐海据柘林、乍浦（今上海奉贤—平湖），与陈东同据柘林；原挂萨摩·鹿儿岛城＋「日本足轻」不合史，现移嘉兴（JIANGNAN）并沿用既有番号「陈东倭兵」T4（不新造番号）
+        { generalId: 'haikou_maohaifeng', factionId: 'haikou', cityId: 'city_qingyuan_zj', generalName: '毛海峰', portrait: '/assets/JIANGNAN/haikou_maohaifeng.png', eliteName: '岑港倭兵', eliteTier: 4, legionName: '海贼倭寇军团' },   // 按史：王直养子王滶（毛海峰）1558 据舟山岑港抗官军（《明史纪事本末》卷五五、《倭变事略》）；T4 存在之兵（守港败亡，建制可考、无独立大捷/特色兵种）,   // 2026-10-25 按史补：王直养子王滶（本名毛海峰），1558 守舟山岑港，为俞大猷、戚继光所破（《倭变事略》）
 
 
 
@@ -12961,7 +12961,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-25 按史修] 陈东（1500–1556）＝明嘉靖倭寇首领（徐海部），盘踞柘林（松江府华亭县，今上海奉贤）、攻乍浦与桐乡；
         //    原挂开封（中原）与史不符（开封是宋都，不是他的据点）。柘林属松江府 → 取同文化（江南）最近据点「上海」。
         //    精锐按「精锐可重复」逐将是具体番号（据点文化＝江南，对应）：陈东＝「陈东倭兵」，毛海峰＝「岑港倭兵」。
-        { generalId: 'bfe_chen_dong', factionId: 'haikou', cityId: 'city_shanghai', generalName: '陈东', portrait: '/assets/JIANGNAN/bfe_chen_dong.png', eliteName: '陈东倭兵', eliteTier: 4 },   // 按史：嘉靖大倭寇头目陈东部（与徐海、叶麻同伙，1556 被徐海缚献胡宗宪处死，《明史·胡宗宪传》/《倭变事略》）；T4 存在之兵（确有其部，无可考战术大捷/兵种特色）,
+        { generalId: 'bfe_chen_dong', factionId: 'haikou', cityId: 'city_shanghai', generalName: '陈东', portrait: '/assets/JIANGNAN/bfe_chen_dong.png', eliteName: '陈东倭兵', eliteTier: 4, legionName: '海贼倭寇军团' },   // 按史：嘉靖大倭寇头目陈东部（与徐海、叶麻同伙，1556 被徐海缚献胡宗宪处死，《明史·胡宗宪传》/《倭变事略》）；T4 存在之兵（确有其部，无可考战术大捷/兵种特色）,
 
 
 

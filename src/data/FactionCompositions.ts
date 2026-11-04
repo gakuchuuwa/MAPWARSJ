@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 势力自定义军团方阵数据表 (Faction Legion Compositions)
  * 由独立军团编辑器 (http://localhost:5173/legion-editor.html) 生成与维护。
  *
@@ -118,7 +118,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "haikou": {
-        legionName: "帝国时代武家军团",
+        // 🔴 [2026-11-05 主人令「海贼倭寇军团是个军团」] 势力指针指向三级军团「海贼倭寇军团」（全部 5 名倭寇武将已手写挂该番号）
+        legionName: "海贼倭寇军团",
         legionType: "sub",
     },
     "liuzhen": {

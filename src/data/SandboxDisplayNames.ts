@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -547,7 +547,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shengmiao': '生苗',
     'buyi_d': '布依',
     'shuizu': '水',
-    'haikou': '寇',
+    'haikou': '倭',   // 🔴 [2026-11-05 主人令「改成海贼倭寇」] 势力名改「海贼倭寇」，旗号取简称「倭」
     'liuzhen': '六镇',
 
 'you': '幽',
