@@ -1827,7 +1827,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'desheng_liutong': 'HUGUANG',   // 刘通｜据点 郧阳
     'wuzhou_wangwenjin': 'JIANGNAN',   // 汪文进｜据点 金华
     'zhangchu_chensheng': 'CENTRAL',   // 陈胜｜据点 宛丘
-    'xinxibanya_laijiasipi': 'MALAY',   // 莱加斯皮｜据点 宿务
     'adiyabeina_yizhatesi': 'ORIE',   // 伊扎特斯｜据点 阿尔贝拉
     'lagoniya_kelierlidasi': 'SPARTANS',   // 克利尔里达斯｜据点 斯巴达
     'xila_hagenong': 'ATHENIANS',   // 哈格农｜据点 安菲波利斯
@@ -1908,8 +1907,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zhamolin_trimumpala': 'INDIA',   // 特里穆帕拉｜据点 柯枝
     'mowoer_mukelabuhan': 'GURJARAS',   // 穆卡拉布汗｜据点 苏拉特
     'mowoer_sadatehan': 'MUGHAL',   // 萨达特汗｜据点 阿逾陀
-    'voc_coen': 'MALAY',   // 科恩｜据点 班达奈拉
-    'voc_speult': 'MALAY',   // 斯佩尔特｜据点 安汶
+    'voc_coen': 'GERMANIC',   // 科恩｜荷兰人｜据点 阿姆斯特丹（2026-11-04 按史定文化：班达奈拉 MALAY 不许挂荷兰将 → 移 VOC 总部）
+    'voc_speult': 'GERMANIC',   // 斯佩尔特｜荷兰人｜据点 阿姆斯特丹（2026-11-04 同上：安汶 MALAY → 移 VOC 总部）
     'wandan_ageng': 'MALAY',   // 阿贡｜据点 万丹
     'shunga_danatipo': 'MUGHAL',   // 达那提婆｜据点 阿逾陀
     'hou_liang_liuzhijun': 'CENTRAL',   // 刘知俊｜据点 长宁

@@ -9618,7 +9618,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/BURMESE/bfe_mingyiswa.png": {
-            "scale": 0.94,
+            "scale": 0.9,
             "offsetX": -6,
             "offsetY": -20
         },
@@ -10586,6 +10586,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": -9
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_70.png": {
+            "scale": 1.21,
+            "offsetX": 22,
+            "offsetY": 17
         }
     },
     "folderGuides": {

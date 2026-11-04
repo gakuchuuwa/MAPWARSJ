@@ -1263,7 +1263,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'wandan_ageng': 'imperial',
     'voc_speult': 'imperial',
     'yinggelan_delake': 'castle',
-    'xinxibanya_laijiasipi': 'imperial',
+    // 🔴 [2026-11-04] 'xinxibanya_laijiasipi' 已删除（同人并入 xishudongyin_lijiasipi）
     'sogdian_dewasitiqi': 'feudal',
     'sogdian_aokexiate': 'feudal',
     'song2_houjunji': 'feudal',

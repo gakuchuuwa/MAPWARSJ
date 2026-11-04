@@ -306,6 +306,8 @@ export class Scene13WarLayer {
     private laneStart: Map<number, number> | null = null;
     /** 🔴 [2026-10-14 主人令「最后一排背靠城墙……看到敌人再发起进攻，或者挨打发起进攻」] 城外列阵、还在原地待敌的守方队号；任何一人看到敌人或挨打，全军出击 */
     private holdLanes = new Set<number>();
+    /** 🔴 [2026-11-04 主人令] 攻城战中攻方使用并战计使城中守军倒戈：一旦发生，城内守军无需等城门被毁即可发起攻击 */
+    private defenderGarrisonDefected = false;
     /** 🔴 [2026-10-14 主人令「开战时把世界中心定死，之后不再读画布尺寸」] 世界坐标的中心（开战那一刻的画布中心）。
      *  城池、出兵口、地面格子、寻路图、战场边界都以它为原点；之后窗口缩放只影响「画到屏幕哪里」，不动世界坐标。 */
     worldCX = 960;
@@ -1530,11 +1532,24 @@ export class Scene13WarLayer {
                     }
                 }
                 if (assignedLane !== undefined) m.lane = assignedLane;
+                if (f === 0 && this.battleType === 'siege' && (m.guardPost || !m.outside1 || this.insideRing(m.x, m.y))) {
+                    this.defenderGarrisonDefected = true;
+                }
                 m.foe = null; m.fightT = 0; m.lock = 0; m.st = 0; m.march = false; m.port = null; m.guardPost = undefined;
                 m.tx = m.x; m.ty = m.y; m.claims = 0; m.claimsNext = 0; m.atkers = 0; m.atkNext = 0;
                 m.fadeT = FADE_IN; m.fadeMax = FADE_IN;
                 converted.push(m);
                 vfxTargets.push(m);
+            }
+            if (this.defenderGarrisonDefected) {
+                this.holdLanes.clear();
+                for (const u of this.men) {
+                    if (u.f === 1 && u.guardPost) {
+                        u.guardPost = undefined;
+                        u.stuckT = 0;
+                        u.aimT = 0;
+                    }
+                }
             }
             if (converted.length > 0) {
                 const set = new Set(converted);
@@ -3633,6 +3648,7 @@ export class Scene13WarLayer {
         this.laneStart = null;
         this.remnantLanes.clear();
         this.holdLanes.clear();
+        this.defenderGarrisonDefected = false;
         this.defOutsideBaseCache = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
@@ -4021,6 +4037,7 @@ export class Scene13WarLayer {
         this.laneStart = null;
         this.remnantLanes.clear();
         this.holdLanes.clear();
+        this.defenderGarrisonDefected = false;
         this.defOutsideBaseCache = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
@@ -4871,13 +4888,16 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 统一控制兵种朝向变更（带「换向前置确认」+「换向后冷却锁」双重防闪）：
-     *   1) 冷却锁（dirCd）：每次改变朝向后锁定 minHoldSec（默认 0.35s），冷却期内严禁再次换向；
-     *   2) 前置确认（pendingDir / pendingDirT）：需连续 confirmSec（默认 0.09s，约 5~6 帧）请求同一新方向才真正转身，
-     *      彻底过滤贴墙反弹、流场跨格、队友软推挤造成的 1~4 帧瞬时方向跳变；
+     * 统一控制兵种朝向变更：
+     *   1) 冷却锁（dirCd）：每次改变朝向后锁定 minHoldSec，冷却期内不再换向；
+     *   2) 前置确认（pendingDir / pendingDirT）：需连续 confirmSec 请求同一新方向才真正转身；
      *   3) 贴墙/受阻微移保护：处于移动状态（st===0）但上一帧实际位移极小（stepMax < 0.45px，被墙或队友顶住）时保持原朝向。
+     * 🔴 [2026-11-04 主人报「士兵改变朝向的反应有点慢」] 默认冷却与确认都改为 0（原 0.35s / 0.09s）。
+     *    DE 本体 empires2_x2_p1.dat 实读：1360 个活体单位里 1292 个 max_yaw_per_second_moving/stationary = FLT_MAX
+     *    （陆军全部转身不限速；只有船 3.927、渔船 7.854、投石机类 1.571 弧度/秒），也没有确认/冷却。
+     *    防闪只靠 dir8Hyst 的 36° 角度迟滞（与 10-21 行走分支同口径）。
      */
-    private commitManDir(m: WarMan, nextDir: number, dt: number, minHoldSec = 0.35, confirmSec = 0.09, standing = false): void {
+    private commitManDir(m: WarMan, nextDir: number, dt: number, minHoldSec = 0, confirmSec = 0, standing = false): void {
         if (nextDir === m.dir) {
             m.pendingDir = nextDir;
             m.pendingDirT = 0;
@@ -4906,7 +4926,7 @@ export class Scene13WarLayer {
         }
     }
 
-    private steerManDir(m: WarMan, dx: number, dy: number, dt: number, minHoldSec = 0.35, confirmSec = 0.09): void {
+    private steerManDir(m: WarMan, dx: number, dy: number, dt: number, minHoldSec = 0, confirmSec = 0): void {
         if (dx * dx + dy * dy < 1e-6) return;
         const nextDir = this.dir8Hyst(m.dir, dx, dy);
         this.commitManDir(m, nextDir, dt, minHoldSec, confirmSec);
@@ -5333,8 +5353,10 @@ export class Scene13WarLayer {
     }
 
     /** 🔴 [2026-10-18 主人令「第二波以后出门点还是9建筑，刷新后看城门是否被击毁，没有的话，原地待命，被击毁城门发起反攻」]
-     *  守方城门是否已被摧毁（任一城门被毁即算破门；无城门时按城墙缺口或无墙判） */
+     *  🔴 [2026-11-04 主人令「城中守军第二波发起进攻是要等城门被毁，添加一个条件，如果敌方使用并战计，让城中守军倒戈，守军也可以发起攻击」]
+     *  守方城门是否已被摧毁，或攻方使用并战计策反了城中守军（满足其一即解除城内驻守限制、发起攻击） */
     private isDefenderGateDestroyed(): boolean {
+        if (this.defenderGarrisonDefected) return true;
         if (this.wallGates.length === 0) return true;
         const gates = this.wallGates.filter(b => b.f === 1 && b.key === 'STONE_GATE');
         if (gates.length > 0) return gates.some(b => !this.wallStanding(b));

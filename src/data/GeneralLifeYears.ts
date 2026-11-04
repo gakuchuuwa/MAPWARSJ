@@ -869,7 +869,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     wandan_ageng: { birth: 1631, death: 1692 },  // 苏丹阿贡·蒂尔塔亚萨（万丹苏丹 1651–1683，抗荷）
     voc_speult: { birth: 1580, death: 1636, kaoju: '推定' },  // 赫尔曼·范·斯佩尔特（安汶总督 1618–1625）
     yinggelan_delake: { birth: 1540, death: 1596 },  // 德雷克（Francis Drake，1577–1580 环球，普利茅斯市长）
-    xinxibanya_laijiasipi: { birth: 1502, death: 1572 },  // 莱加斯皮（1565 宿务建城、1571 马尼拉建城）
+    // 🔴 [2026-11-04] xinxibanya_laijiasipi 已删除（同人并入 xishudongyin_lijiasipi，见 FactionGenerals 注释）
     taira_pingzhisheng: { birth: 1152, death: 1185 },  // 平知盛
     lelang_wangqi: { birth: 205, death: 265, kaoju: '推定' },  // 王颀
     anmei_yuwandaqin: { birth: 1470, death: 1537, kaoju: '推定' },  // 与湾大亲

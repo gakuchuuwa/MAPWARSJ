@@ -135,6 +135,111 @@ function findArmyById(ctx: BTContext, armyId: string): Army | null {
     return armies.find((a) => a.id === armyId) ?? null;
 }
 
+/** 直连道路最大追击半径（度，约 165km，覆盖常规城间直连道路，排除跨洋特长航线） */
+const CONNECTED_ROAD_HUNT_MAX_RADIUS = 1.5;
+
+/**
+ * 本军脚下的「我方据点」：离本军最近的接路据点，且已归本阵营（如刚攻下的 B 据点）。
+ * 不是我方据点时返回 undefined —— 直连道路优先只为守住自己刚占的城，行军途中路过敌城/中立城不触发，
+ * 免得把 2026-08-06 的侧翼防拉扯过滤整片绕掉。
+ */
+function getOwnStandCityId(ctx: BTContext): string | undefined {
+    const myPos = ctx.army.getPosition();
+    const cityId = roadRegistry.getNearestCityId(myPos.lat, myPos.lng);
+    if (!cityId) return undefined;
+    const city = ctx.cityManager.getCity(cityId);
+    return city && city.factionId === ctx.army.getFactionId() ? cityId : undefined;
+}
+
+/**
+ * 判断敌军团 enemy 是否正来打本军脚下的我方据点（ownStandCityId），或处在该据点的直连道路上。
+ * 🔴 [2026-11-04 主人令「A军在前面攻占B据点后，接着去打C据点，后面有一支D军，紧跟着来打B据点，此时A军应该去打D军，先消灭能连接道路的出征军团」]
+ * 只查该据点的邻接边，不逐敌军全量扫据点。
+ */
+function isEnemyOnConnectedRoad(
+    myPos: { lat: number; lng: number },
+    ePos: { lat: number; lng: number },
+    enemy: Army,
+    ownStandCityId: string | undefined,
+): boolean {
+    if (!ownStandCityId) return false;
+    if (getEuclideanDistance(myPos, ePos) > CONNECTED_ROAD_HUNT_MAX_RADIUS) return false;
+    // 敌军正以该据点为行军目标（D 军来打 B）
+    if (enemy.getTargetCity()?.id === ownStandCityId) return true;
+    // 敌军坐标落在与该据点直连的道路折线上
+    return roadRegistry.findConnectedRoadNeighborForPoint(ownStandCityId, ePos, 0.25) !== null;
+}
+
+/**
+ * 解析沿路追击 enemy 时的行军目标据点：
+ * - 若敌军最近据点与我军最近据点不同，直接朝敌军最近据点行军；
+ * - 若双方最近据点都是同一座城 B（如 A 军刚攻下 B 据点，D 军正沿某条连接道路逼近 B 且已过半程），
+ *   不能往 B 自己寻路（起点=终点会原地不动），必须取 D 军所在直连道路的对端据点迎头出击。
+ */
+function resolveHuntMarchCityId(ctx: BTContext, enemy: Army): string | undefined {
+    const myPos = ctx.army.getPosition();
+    const ePos = enemy.getPosition();
+    const myNearCityId = roadRegistry.getNearestCityId(myPos.lat, myPos.lng);
+    const eNearCityId = roadRegistry.getNearestCityId(ePos.lat, ePos.lng);
+
+    if (eNearCityId && eNearCityId !== myNearCityId) {
+        return eNearCityId;
+    }
+
+    const sharedCityId = eNearCityId ?? myNearCityId;
+    if (!sharedCityId) return undefined;
+
+    const sharedCity = ctx.cityManager.getCity(sharedCityId);
+    const enemyRoad = roadRegistry.findConnectedRoadNeighborForPoint(sharedCityId, ePos, 0.35);
+    if (enemyRoad) {
+        if (sharedCity) {
+            const myRoad = roadRegistry.findConnectedRoadNeighborForPoint(sharedCityId, myPos, 0.35);
+            const myDistToCity = getEuclideanDistance(myPos, {
+                lat: sharedCity.latitude,
+                lng: sharedCity.longitude,
+            });
+            const enemyDistToCity = getEuclideanDistance(ePos, {
+                lat: sharedCity.latitude,
+                lng: sharedCity.longitude,
+            });
+            // 双方在同一条直连道路上，且敌军比我军更靠近 B 城（敌军在我军与 B 城之间）→ 掉头回 B 城迎击
+            if (
+                myRoad &&
+                myRoad.neighborCityId === enemyRoad.neighborCityId &&
+                myDistToCity > enemyDistToCity &&
+                myDistToCity > SIEGE_REACH_RADIUS
+            ) {
+                return sharedCityId;
+            }
+        }
+        return enemyRoad.neighborCityId;
+    }
+
+    const enemyTargetId = enemy.getTargetCity()?.id;
+    if (enemyTargetId && enemyTargetId !== sharedCityId) {
+        return enemyTargetId;
+    }
+    const enemyOriginId = getArmyOriginCityId(enemy);
+    if (enemyOriginId && enemyOriginId !== sharedCityId) {
+        return enemyOriginId;
+    }
+
+    // 兜底：在 sharedCityId 的直连邻城中，挑离敌军坐标最近的一座作为迎击方向
+    const neighbors = roadRegistry.getConnectedCities(sharedCityId);
+    let bestNeighbor: string | undefined;
+    let bestDist = Infinity;
+    for (const nbId of neighbors) {
+        const nb = ctx.cityManager.getCity(nbId);
+        if (!nb) continue;
+        const d = getEuclideanDistance(ePos, { lat: nb.latitude, lng: nb.longitude });
+        if (d < bestDist) {
+            bestDist = d;
+            bestNeighbor = nbId;
+        }
+    }
+    return bestNeighbor ?? sharedCityId;
+}
+
 /** 追击目标是否仍有效；有效时刷新黑板坐标。失效时只清追击、保留挂起攻城目标。 */
 function refreshHuntArmyTarget(ctx: BTContext): Army | null {
     const huntId = getStrategicTargetArmyId(ctx);
@@ -155,7 +260,8 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
     const myPos = ctx.army.getPosition();
     const ePos = enemy.getPosition();
     const isFollowedTarget = enemy === ctx.legionManager?.getFollowedLegion?.();
-    if (!isFollowedTarget && getEuclideanDistance(myPos, ePos) > abandonR) {
+    const onConnectedRoad = isEnemyOnConnectedRoad(myPos, ePos, enemy, getOwnStandCityId(ctx));
+    if (!isFollowedTarget && !onConnectedRoad && getEuclideanDistance(myPos, ePos) > abandonR) {
         markTargetCooldown(ctx, `army:${huntId}`, 'hunt_out_of_range');
         clearHuntTarget(ctx);
         ctx.army.stopMovement?.(false);
@@ -272,9 +378,13 @@ function pickNearbyEnemyLegion(
     const registry = ctx.legionManager?.getSpatialRegistry?.();
     if (!registry?.getArmiesInRadius) return null;
 
-    const nearby: Army[] = registry.getArmiesInRadius(myPos.lat, myPos.lng, huntR);
+    // 只有站在我方据点（如刚攻下的 B）时才放宽扫描圈，平时仍按 huntR
+    const myStandCityId = getOwnStandCityId(ctx);
+    const scanR = myStandCityId ? Math.max(huntR, CONNECTED_ROAD_HUNT_MAX_RADIUS) : huntR;
+    const nearby: Army[] = registry.getArmiesInRadius(myPos.lat, myPos.lng, scanR);
     let best: Army | null = null;
     let bestDist = Infinity;
+    let bestOnConnectedRoad = false;
 
     for (const other of nearby) {
         if (!other || other === ctx.army || other.isDestroyed || other.getTroops() <= 0) continue;
@@ -296,13 +406,16 @@ function pickNearbyEnemyLegion(
 
         const ePos = other.getPosition();
         const d = getEuclideanDistance(myPos, ePos);
-        if (d > huntR) continue;
+        const onConnectedRoad = isEnemyOnConnectedRoad(myPos, ePos, other, myStandCityId);
+        if (d > huntR && !onConnectedRoad) continue;
         // 打断路径的走廊过滤（2026-08-06 P2）：侧翼/身后/城后面的敌军不打断攻城。
         // 🔴 身后例外（2026-09-04 主人「前面的舰队应该掉头攻击后面的舰队」）：
         //    敌人在行军方向「身后」（与目标城方向夹角 >90°）且不绕远路（≤城距）时应掉头迎战，
         //    不能背着敌军赶路——否则身前先到、追兵贴脸的观感就是「蠢」。
         //    侧翼(45~90°)仍排除，保留 P2 的「拉扯」保护；贴身(<0.3°)源自 2026-09-02 仍放行。
-        if (corridorTarget && !isEnemyInMarchCorridor(myPos, ePos, corridorTarget)) {
+        // 🔴 直连道路例外（2026-11-04 主人「应该先消灭能连接道路的出征军团呀」）：
+        //    处在本军当前据点直连道路上（或正来打该据点）的敌方出征军团，一律优先消灭，不受走廊夹角与城距限制。
+        if (corridorTarget && !onConnectedRoad && !isEnemyInMarchCorridor(myPos, ePos, corridorTarget)) {
             const angleDeg = directionAngleDeg(myPos, ePos, corridorTarget);
             const isBehind = angleDeg > 90;
             const close = d <= GameConfig.AI.HUNT_CLOSE_EXCEPTION_RADIUS;
@@ -322,7 +435,12 @@ function pickNearbyEnemyLegion(
             }
             // 身后且不绕远路 / 贴身：放行（掉头迎战），不 skip
         }
-        if (d < bestDist) {
+        // 直连道路上的出征敌军优先于普通圈内敌军；同级取距离最近者
+        if (
+            (onConnectedRoad && !bestOnConnectedRoad) ||
+            (onConnectedRoad === bestOnConnectedRoad && d < bestDist)
+        ) {
+            bestOnConnectedRoad = onConnectedRoad;
             bestDist = d;
             best = other;
         }
@@ -558,8 +676,9 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
         );
         setStrategicArmyTarget(ctx, nearbyEnemy.id, { lat: ePos.lat, lng: ePos.lng });
         ctx.army.setTargetCity(null);
-        // 沿路追击：取敌军最近路网城，路由过去（永不离开道路）
-        const huntCityId = roadRegistry.getNearestCityId(ePos.lat, ePos.lng);
+        ctx.army.stopMovement?.(false);
+        // 沿路追击：若敌我最近据点同为 B 城，取敌军所在直连道路的对端据点迎头出击（永不离开道路）
+        const huntCityId = resolveHuntMarchCityId(ctx, nearbyEnemy);
         if (huntCityId) {
             ctx.legionManager.moveLegionToCity(ctx.army, huntCityId);
         }
@@ -824,15 +943,14 @@ function chaseEnemyArmy(ctx: BTContext, enemy: Army): BTStatus {
         return BTStatus.FAILURE;
     }
 
-    // 沿路追击：取敌军最近路网城，路由过去
+    // 沿路追击：取敌军所在直连道路方向的路网城，路由过去
     if (!ctx.army.isIdle()) return BTStatus.SUCCESS;
 
-    const huntCityId = roadRegistry.getNearestCityId(ePos.lat, ePos.lng);
-    if (!huntCityId) {
+    const huntCityId = resolveHuntMarchCityId(ctx, enemy);
+    if (!huntCityId || !ctx.legionManager.moveLegionToCity(ctx.army, huntCityId)) {
         markMoveFailure(ctx, `army:${enemy.id}`, 'no_road');
         return BTStatus.FAILURE;
     }
-    ctx.legionManager.moveLegionToCity(ctx.army, huntCityId);
     ctx.lastMoveResult = 'success';
     btLog(
         ctx,

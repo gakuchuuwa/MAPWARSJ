@@ -1045,7 +1045,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'wandan_ageng': 17,                                 // 阿贡 · wandan · 万丹（1651–1683 抗荷）
     'voc_speult': 17,                                   // 斯佩尔特 · voc · 安汶（1623 安汶事件）
     'yinggelan_delake': 16,                             // 德雷克 · yinggelan · 普利茅斯（1577–80 环球）
-    'xinxibanya_laijiasipi': 16,                        // 莱加斯皮 · xinxibanya · 宿务（1565 建城）
+    // 🔴 [2026-11-04] 'xinxibanya_laijiasipi' 已删除（同人并入 xishudongyin_lijiasipi，16 世纪事迹不变）
     'suwa_d_zoufanglaizhong': 16,                        // 诹访赖重 · suwa_d · 高岛
     'taira_pingzhisheng': 12,                            // 平知盛 · taira · 赤间关
     'totomi_jiujingzhongci': 16,                         // 酒井忠次 · totomi · 浜松城

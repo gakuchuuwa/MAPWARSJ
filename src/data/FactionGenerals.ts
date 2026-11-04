@@ -1798,9 +1798,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_william_silent', cityId: 'city_hague', generalName: '威廉奥兰治', portrait: '/assets/GERMANIC/nidelan_weilian.png', eliteName: '日耳曼民兵', eliteTier: 4 },
         { generalId: 'capetown_riebeeck', generalName: '里贝克', cityId: 'city_cape_town', factionId: 'nidelan', eliteName: '开普守军', eliteTier: 4, portrait: '/assets/GERMANIC/nidelan_yangfanlibeike.png' },
         // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 voc 并入：同一政权（延续/殖民地/汗族）并成一个势力
-        { generalId: 'voc_coen', factionId: 'nidelan', cityId: 'city_banda', generalName: '科恩', portrait: '/assets/MALAY/voc_coen.png', eliteName: '东印度守备', eliteTier: 4 },   // 扬·彼得松·科恩 1621 率军征服班达群岛、独占肉豆蔻
+        { generalId: 'voc_coen', factionId: 'nidelan', cityId: 'city_amsterdam', generalName: '科恩', portrait: '/assets/MALAY/voc_coen.png', eliteName: '荷兰守备', eliteTier: 4 },   // 扬·彼得松·科恩（荷兰霍伦 1587–1629，VOC 总督）1621 率军征服班达群岛、独占肉豆蔻｜🔴 [2026-11-04 主人令「武将文化必须史定、不许从据点反抄」] 荷兰人＝GERMANIC；班达奈拉是 MALAY 据点，不能挂，移 VOC 总部阿姆斯特丹（GERMANIC）；精锐「东印度守备」成军地在东印度，随据点改「荷兰守备」（同番号同为 T4）
         { generalId: 'bfe_coyett', factionId: 'nidelan', cityId: 'city_tainan', generalName: '揆一', portrait: '/assets/JIANGNAN/bfe_coyett.png' , eliteName: '荷兰守备', eliteTier: 4},
-        { generalId: 'voc_speult', factionId: 'nidelan', cityId: 'city_ambon', generalName: '斯佩尔特', portrait: '/assets/MALAY/voc_speult.png', eliteName: '东印度守备', eliteTier: 4 },
+        { generalId: 'voc_speult', factionId: 'nidelan', cityId: 'city_amsterdam', generalName: '斯佩尔特', portrait: '/assets/MALAY/voc_speult.png', eliteName: '荷兰守备', eliteTier: 4 },   // 赫尔曼·范·斯佩尔特（荷兰人 约1580–1636，VOC 安汶总督 1618–1625，1623 安汶事件）｜🔴 [2026-11-04 主人令「武将文化必须史定、不许从据点反抄」] 荷兰人＝GERMANIC；安汶是 MALAY 据点，不能挂，移 VOC 总部阿姆斯特丹（GERMANIC）；精锐随据点改「荷兰守备」（同番号同为 T4）
         // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 xinnidelan 并入：同一政权（延续/殖民地/汗族）并成一个势力
         { generalId: 'gen_stuyvesant', factionId: 'nidelan', cityId: 'city_newamsterdam', generalName: '斯泰弗森特', portrait: '/assets/GERMANIC/gen_stuyvesant.png', eliteName: '日耳曼民兵', eliteTier: 4 },
     ],
@@ -15970,7 +15970,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_urdaneta', factionId: 'xibanya', cityId: 'city_acapulco', generalName: '乌尔达内塔', portrait: '/assets/SPANISH/gen_urdaneta.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
         { generalId: 'xiyindu_batuoluome', factionId: 'xibanya', cityId: 'city_shengduomingge', generalName: '巴托洛梅', portrait: '/assets/SPANISH/xiyindu_batuoluome.png', eliteName: '西班牙民兵', eliteTier: 4 },
         { generalId: 'gen_cortes', factionId: 'xibanya', cityId: 'city_veracruz', generalName: '科尔特斯', portrait: '/assets/SPANISH/tuotuonake_keertesi.png' , legionName: '帝国时代西班牙征服军团', eliteName: '西班牙民兵', eliteTier: 4 },
-        { generalId: 'xinxibanya_laijiasipi', factionId: 'xibanya', cityId: 'city_cebu', generalName: '莱加斯皮', portrait: '/assets/MALAY/xinxibanya_laijiasipi.png', eliteName: '征服者', eliteTier: 3, legionName: '帝国时代西班牙征服军团' },
+        // 🔴 [2026-11-04 主人令「武将文化必须史定、不许从据点反抄」＋「同人一个身份」] 莱加斯皮＝米格尔·洛佩斯·德·莱加斯皮（西班牙巴斯克，1502–1572）。原在此另挂一条普将条目并被贴成 MALAY（跟着宿务的 buildingStyle 走）。宿务是马来式高脚屋／木栅堡据点，据点文化 MALAY 本身没错，不许为迁就武将改据点文化；西班牙人按史判 SPANISH，故唯一身份并入塞维利亚的 xishudongyin_lijiasipi（SPANISH／名将／西班牙方阵 T2，1565 宿务建城、1571 马尼拉建城事迹照旧）。宿务按 2026-11-02「知名据点可以无镇守将」留空，不再配将。
     ],
 
     // 🔴 [2026-10-24 中城补将] 明彬＝阿拉干王（1531—1554）；妙乌（BURMESE）守城：1535 逐退葡萄牙火枪队、1547 开闸水淹东吁围军，筑石墙深壕、创孟加拉湾水师；帝国×缅甸＝帝国时代缅甸军团；名将；立绘留空

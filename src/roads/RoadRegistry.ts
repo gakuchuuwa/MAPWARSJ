@@ -980,6 +980,52 @@ export class RoadRegistry {
         return Array.from(connected);
     }
 
+    /**
+     * 判断坐标点 pos 是否落在与 cityId 直连的某条道路上（距离折线 ≤ maxDistDeg），
+     * 若命中则返回该直连道路的对端据点 ID（neighborCityId）及点到折线距离。
+     * 只遍历 cityId 的邻接边（通常 2~6 条），O(1) 开销。
+     */
+    public findConnectedRoadNeighborForPoint(
+        cityId: string,
+        pos: { lat: number; lng: number },
+        maxDistDeg: number = 0.25
+    ): { neighborCityId: string; distance: number } | null {
+        const edges = this.adjacencyList.get(cityId);
+        if (!edges || edges.length === 0) return null;
+        let best: { neighborCityId: string; distance: number } | null = null;
+
+        const checkEdge = (edge: GraphEdge, targetCityId: string) => {
+            const geom = this.edgeGeom(edge);
+            if (!geom) return;
+            const lower = RoadRegistry.bboxDist(pos, geom);
+            if (lower > maxDistDeg) return;
+            if (best !== null && lower >= best.distance) return;
+            const np = nearestPointOnPolyline(pos, geom.coords);
+            if (!np || np.distance > maxDistDeg) return;
+            if (best === null || np.distance < best.distance) {
+                best = { neighborCityId: targetCityId, distance: np.distance };
+            }
+        };
+
+        for (const edge of edges) {
+            if (edge.to === cityId) continue;
+            const toNode = this.nodes.get(edge.to);
+            if (toNode?.type === 'city') {
+                checkEdge(edge, edge.to);
+            } else if (toNode?.type === 'junction') {
+                const subEdges = this.adjacencyList.get(edge.to) || [];
+                for (const sub of subEdges) {
+                    if (sub.to === cityId) continue;
+                    if (this.nodes.get(sub.to)?.type === 'city') {
+                        checkEdge(edge, sub.to);
+                        checkEdge(sub, sub.to);
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
     /** 两城之间的道路距离 (km)；无连通路径时返回 null */
     public getRoadDistanceKm(startCityId: string, endCityId: string): number | null {
         if (!startCityId || !endCityId) return null;
