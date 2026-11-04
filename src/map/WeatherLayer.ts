@@ -30,6 +30,10 @@ const MAX_ZOOM = 12;
 const FRAME_MS = 1000 / 30;
 const FADE_IN_MS = 3_200;
 const FADE_OUT_MS = 3_800;
+/** 🔴 [2026-11-04 主人令「一次按一分钟，然后停5分钟」] 一团天气结束后晴多久才来下一团：5 分钟 ± 40 秒（真实秒）。
+ *  原为「上一团生成后 32~44 秒」，而一团本身就下 24~48 秒 ⇒ 约八成时间都有天气、一段接一段。 */
+const WEATHER_GAP_MS = 300_000;
+const WEATHER_GAP_JITTER_MS = 40_000;
 
 interface WeatherCell {
     id: number;
@@ -359,8 +363,6 @@ export class WeatherLayer extends L.Layer {
                 isSea: centerIsSea,
                 elevM: centerElevM,
             });
-            // 下一次气团生成间隔：留出晴朗窗口期（约 9~16 秒晴空后迎来下一场区域天气）
-            this.nextSpawnAllowedAt = now + 32_000 + Math.random() * 12_000;
         }
     }
 
@@ -430,6 +432,7 @@ export class WeatherLayer extends L.Layer {
             lightningOffsetY: 0,
         };
         this.cells.push(cell);
+        this.nextSpawnAllowedAt = cell.expiresAt + WEATHER_GAP_MS + (Math.random() * 2 - 1) * WEATHER_GAP_JITTER_MS;   // 这团下完再晴约 5 分钟
         return cell;
     }
 
@@ -463,12 +466,10 @@ export class WeatherLayer extends L.Layer {
             }
         }
 
-        if (matched && bestS > 0.12) {
-            if (matched.expiresAt - now < 28_000) {
-                matched.expiresAt = now + 34_000;
-            }
-            return;
-        }
+        // 🔴 [2026-11-04 主人令「一次按一分钟，然后停5分钟」] 战场上正下着 ⇒ 接着下完，不再续到 34 秒；
+        //    没在下 ⇒ 守同一个「下完晴 5 分钟」的节奏，晴期内不为开战硬造一场天气（原来每场仗进场都必有天气）
+        if (matched && bestS > 0.12) return;
+        if (now < this.nextSpawnAllowedAt) return;
 
         this.spawnWeatherCellForView(now, q.lat, q.lng, {
             isSea,
@@ -476,7 +477,6 @@ export class WeatherLayer extends L.Layer {
             isSnowGround: q.isSnowGround,
             warmStart: true,
         });
-        this.nextSpawnAllowedAt = now + 32_000 + Math.random() * 12_000;
     }
 
     /**
@@ -538,14 +538,13 @@ export class WeatherLayer extends L.Layer {
         }
 
         if (!bestCell || bestStrength <= 0.08) {
-            if (now >= this.nextSpawnAllowedAt || this.cells.length === 0) {
+            if (now >= this.nextSpawnAllowedAt) {
                 bestCell = this.spawnWeatherCellForView(now, q.lat, q.lng, {
                     isSea,
                     elevM,
                     isSnowGround: q.isSnowGround,
                     warmStart: false,
                 });
-                this.nextSpawnAllowedAt = now + 32_000 + Math.random() * 12_000;
                 bestStrength = this.cellStrengthAt(bestCell, q.lat, q.lng, now, elevM, q.isSnowGround);
             }
         }

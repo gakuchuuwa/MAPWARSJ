@@ -799,28 +799,36 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             pushInteriorDecor(tAsset, ti + ji, tj + jj, 0.88 + mRnd() * 0.08);
         }
 
-        // 1b) 大城 / 中城：四座城门跨护城河桥头外侧守城战旗与迎宾火把（避开 [0..1] 主大道，立于门桥两侧）
+        // 1b) 大城 / 中城：四座城门跨护城河桥头外侧迎宾火把与仪仗（东方/非欧洲城池门口律用立柱火把，不放西方木框竖旗）
         if (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') {
             const deStyleForInterior = this.buildingStyleFor(1);
-            const interiorFlagAsset = (deStyleForInterior === 'GREEK' || deStyleForInterior === 'THRACIAN' || deStyleForInterior === 'MEDI')
-                ? 'BUILDING:SCEN_FLAG_R'
-                : (deStyleForInterior === 'ANDE' || deStyleForInterior === 'MESO')
-                    ? 'BUILDING:SCEN_FLAG_RITUAL_A'
-                    : 'BUILDING:SCEN_FLAG_D';
+            const isWesternGateStyle = deStyleForInterior === 'WEST'
+                || deStyleForInterior === 'EAST'
+                || deStyleForInterior === 'SLAV'
+                || deStyleForInterior === 'MEDI'
+                || deStyleForInterior === 'GREEK'
+                || deStyleForInterior === 'THRACIAN';
+            const interiorGateSideAsset = !isWesternGateStyle
+                ? 'BATTLEFIELD:TORCH_B'
+                : (deStyleForInterior === 'GREEK' || deStyleForInterior === 'THRACIAN')
+                    ? 'BUILDING:SCEN_FLAG_MACEDONIAN'
+                    : (deStyleForInterior === 'SLAV' || deStyleForInterior === 'MEDI')
+                        ? 'BUILDING:SCEN_FLAG_D'
+                        : 'BUILDING:SCEN_FLAG_E';
             const outerBridgeTorchAndFlags: ReadonlyArray<readonly [number, number, string, number]> = this.defenderCityType === 'big_city'
                 ? [
-                    [-12.8, -1.6, interiorFlagAsset, 0.86],
+                    [-12.8, -1.6, interiorGateSideAsset, 0.86],
                     [-12.8, 2.6, 'BATTLEFIELD:TORCH_A', 0.88],
                     [13.8, -1.6, 'BATTLEFIELD:TORCH_B', 0.88],
-                    [13.8, 2.6, interiorFlagAsset, 0.86],
+                    [13.8, 2.6, interiorGateSideAsset, 0.86],
                     [-1.6, -12.8, 'BATTLEFIELD:TORCH_A', 0.88],
-                    [2.6, -12.8, interiorFlagAsset, 0.86],
-                    [-1.6, 13.8, interiorFlagAsset, 0.86],
+                    [2.6, -12.8, interiorGateSideAsset, 0.86],
+                    [-1.6, 13.8, interiorGateSideAsset, 0.86],
                     [2.6, 13.8, 'BATTLEFIELD:TORCH_B', 0.88],
                 ]
                 : [
-                    [-11.8, -1.6, interiorFlagAsset, 0.84],
-                    [12.8, 2.6, interiorFlagAsset, 0.84],
+                    [-11.8, -1.6, interiorGateSideAsset, 0.84],
+                    [12.8, 2.6, interiorGateSideAsset, 0.84],
                     [2.6, -11.8, 'BATTLEFIELD:TORCH_A', 0.86],
                     [-1.6, 12.8, 'BATTLEFIELD:TORCH_B', 0.86],
                 ];
@@ -935,11 +943,18 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         } else if (this.defenderCityType === 'pass') {
             // 险要（关隘）：双重石构城郭、瓮城夹道防线、内城校场细节与关外两翼险石拒马
             const deStylePass = this.buildingStyleFor(1);
-            const passFlagAsset = (deStylePass === 'GREEK' || deStylePass === 'THRACIAN' || deStylePass === 'MEDI')
-                ? 'BUILDING:SCEN_FLAG_R'
-                : (deStylePass === 'ANDE' || deStylePass === 'MESO')
-                    ? 'BUILDING:SCEN_FLAG_RITUAL_A'
-                    : 'BUILDING:SCEN_FLAG_D';
+            // 🔴 旗帜严格按外观区分文化：东方(ASIA)关口用火把或『漢』字战旗 SCEN_FLAG_N，绝不放西方十字/纹章木框竖旗(D/E/S/U)
+            const passFlagAsset = deStylePass === 'ASIA'
+                ? 'BATTLEFIELD:TORCH_B'
+                : (deStylePass === 'GREEK' || deStylePass === 'THRACIAN')
+                    ? 'BUILDING:SCEN_FLAG_MACEDONIAN'
+                    : (deStylePass === 'ANDE' || deStylePass === 'MESO' || deStylePass === 'YURT')
+                        ? 'BUILDING:SCEN_FLAG_RITUAL_A'
+                        : (deStylePass === 'SLAV' || deStylePass === 'MEDI')
+                            ? 'BUILDING:SCEN_FLAG_D'
+                            : (deStylePass === 'WEST' || deStylePass === 'EAST')
+                                ? 'BUILDING:SCEN_FLAG_E'
+                                : 'BATTLEFIELD:TORCH_B';
             const passSupplyCart = (deStylePass === 'ANDE' || deStylePass === 'MESO')
                 ? 'TRADE:TRADE_CART_MESO/move_2'
                 : (deStylePass === 'ORIE' || deStylePass === 'PERSIAN')
@@ -1069,11 +1084,17 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                         : (deStyleCity === 'AFRI' || deStyleCity === 'INDI' || deStyleCity === 'PURU' || deStyleCity === 'SEAS')
                             ? 'TRADE:TRADE_CART_AFRI/move_2'
                             : 'TRADE:TRADE_CART_ASIA/move_2';
-            const urbanFlagAsset = (deStyleCity === 'GREEK' || deStyleCity === 'THRACIAN' || deStyleCity === 'MEDI')
-                ? 'BUILDING:SCEN_FLAG_R'
-                : (deStyleCity === 'ANDE' || deStyleCity === 'MESO')
-                    ? 'BUILDING:SCEN_FLAG_RITUAL_A'
-                    : 'BUILDING:SCEN_FLAG_E';
+            const urbanFlagAsset = deStyleCity === 'ASIA'
+                ? 'BATTLEFIELD:TORCH_A'
+                : (deStyleCity === 'GREEK' || deStyleCity === 'THRACIAN')
+                    ? 'BUILDING:SCEN_FLAG_MACEDONIAN'
+                    : (deStyleCity === 'ANDE' || deStyleCity === 'MESO' || deStyleCity === 'YURT')
+                        ? 'BUILDING:SCEN_FLAG_RITUAL_A'
+                        : (deStyleCity === 'SLAV' || deStyleCity === 'MEDI')
+                            ? 'BUILDING:SCEN_FLAG_D'
+                            : (deStyleCity === 'WEST' || deStyleCity === 'EAST')
+                                ? 'BUILDING:SCEN_FLAG_E'
+                                : 'BATTLEFIELD:TORCH_A';
 
             // 大城 / 中城：城心城堡四角对称布置御苑花坛与仪仗旗（不压十字大道）
             if (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') {
@@ -1250,11 +1271,15 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         const foragePool = isAmericasOutskirts || isIndosphereOutskirts || deStyle === 'AFRI'
             ? ['FORAGE_PAPAYA', 'FORAGE_PINEAPPLE', 'FORAGE_FRUIT', 'FORAGE_BUSH']
             : ['FORAGE_FRUIT', 'FORAGE_BUSH'];
-        const flagPool = isGrecoRomanOutskirts
-            ? ['BUILDING:SCEN_FLAG_MACEDONIAN', 'BUILDING:SCEN_FLAG_R', 'BUILDING:SCEN_FLAG_S']
-            : isAmericasOutskirts || isNomadOutskirts
-                ? ['BUILDING:SCEN_FLAG_RITUAL_A', 'BUILDING:SCEN_FLAG_N', 'BUILDING:SCEN_FLAG_U']
-                : ['BUILDING:SCEN_FLAG_D', 'BUILDING:SCEN_FLAG_E', 'BUILDING:SCEN_FLAG_R', 'BUILDING:SCEN_FLAG_S'];
+        const flagPool = isEastAsiaOutskirts
+            ? ['BUILDING:SCEN_FLAG_N']
+            : isGrecoRomanOutskirts
+                ? ['BUILDING:SCEN_FLAG_MACEDONIAN', 'BUILDING:SCEN_FLAG_R']
+                : isAmericasOutskirts || isNomadOutskirts
+                    ? ['BUILDING:SCEN_FLAG_RITUAL_A']
+                    : (isMiddleEastOutskirts || isIndosphereOutskirts || deStyle === 'AFRI' || deStyle === 'CEAS')
+                        ? ['BUILDING:SCEN_FLAG_R']
+                        : ['BUILDING:SCEN_FLAG_D', 'BUILDING:SCEN_FLAG_E', 'BUILDING:SCEN_FLAG_S', 'BUILDING:SCEN_FLAG_U'];
 
         // 计算攻方营心 → 城心的主冲锋走廊，确保附郭村落落点分布在侧翼或城后，不堵主冲锋线
         const atkSpawns = this.spawns.filter((s) => s.f === 0);
@@ -2707,6 +2732,7 @@ export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
         this.ensureDestrAssetsFor(arrowTowerAsset);
         // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
         this.ensureProj('PROJ_ARROW');
+        this.ensureProj('PROJ_ARROW_FIRE');   // 守方建筑火箭连射（见 Scene13WarLayer.pushDefBuildingVolley）
         // 🔴 塔塌尘土特效预载（塌墙时才播；开战前并入首批，遇不到"30 秒尘土才加载"的冻结）
         this.ensureFx('FX_WALL_DUST');
         const towerProfile = arrowTowerAsset.includes('_TOWER_AGE4') ? { range: 400, reload: 1.8, atk: 7 }

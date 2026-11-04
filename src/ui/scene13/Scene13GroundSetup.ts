@@ -1083,11 +1083,15 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     const foragePool = isAmericas || isIndosphere || deStyle === 'AFRI'
         ? ['FORAGE_PAPAYA', 'FORAGE_PINEAPPLE', 'FORAGE_FRUIT', 'FORAGE_BUSH']
         : ['FORAGE_FRUIT', 'FORAGE_BUSH'];
-    const flagPool = isGrecoRoman
-        ? ['BUILDING:SCEN_FLAG_MACEDONIAN', 'BUILDING:SCEN_FLAG_R', 'BUILDING:SCEN_FLAG_S']
-        : isAmericas || isNomad || isPaganNorth
-            ? ['BUILDING:SCEN_FLAG_RITUAL_A', 'BUILDING:SCEN_FLAG_N', 'BUILDING:SCEN_FLAG_U']
-            : ['BUILDING:SCEN_FLAG_D', 'BUILDING:SCEN_FLAG_E', 'BUILDING:SCEN_FLAG_R', 'BUILDING:SCEN_FLAG_S'];
+    const flagPool = isEastAsia
+        ? ['BUILDING:SCEN_FLAG_N']
+        : isGrecoRoman
+            ? ['BUILDING:SCEN_FLAG_MACEDONIAN', 'BUILDING:SCEN_FLAG_R']
+            : isAmericas || isNomad || isPaganNorth
+                ? ['BUILDING:SCEN_FLAG_RITUAL_A']
+                : (isMiddleEast || isIndosphere || deStyle === 'AFRI' || deStyle === 'CEAS')
+                    ? ['BUILDING:SCEN_FLAG_R']
+                    : ['BUILDING:SCEN_FLAG_D', 'BUILDING:SCEN_FLAG_E', 'BUILDING:SCEN_FLAG_S', 'BUILDING:SCEN_FLAG_U'];
 
     // ── 0. 野战远翼大山（高地/山地在远翼高台摆 1 座 DE 大山，避开中央交战区） ──
     if (elevM >= 350 || elevBand === 'mountain' || elevBand === 'alpine' || elevBand === 'high_alpine') {

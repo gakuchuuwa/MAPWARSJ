@@ -4808,7 +4808,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/SLAVIC/bosiniya_tefuerteke.png": {
-            "scale": 1.12,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": 13
         },
@@ -5878,8 +5878,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/SLAVIC/gen_nikola_zrinski.png": {
-            "scale": 1.04,
-            "offsetX": 0,
+            "scale": 1.08,
+            "offsetX": 6,
             "offsetY": 3
         },
         "/assets/SLAVIC/dunhe_tatalinuofu.png": {
@@ -10596,6 +10596,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 18,
             "offsetY": 3
+        },
+        "/assets/HUNS/awaer_bayan.png": {
+            "scale": 1.2,
+            "offsetX": -16,
+            "offsetY": 29
         }
     },
     "folderGuides": {

@@ -160,6 +160,10 @@ const SIX_CYCLE_NEXT: Readonly<Record<TacticalSixSet, TacticalSixSet>> = {
 /** 玩家点地面令：连续这么多秒没往点上靠近 HERO_CLICK_PROGRESS_PX 像素就作废（走不到的令不许一直挂着） */
 const HERO_CLICK_STALL_SEC = 1.5;
 const HERO_CLICK_PROGRESS_PX = 10;
+/** 守方据点建筑（箭塔 / 城堡 / 城内建筑）射击的抛射物：DE 火焰弓箭手 / 火箭车同款火箭（2026-11-04 主人令「射击才用火箭连射」） */
+const DEF_BLD_PROJ = 'PROJ_ARROW_FIRE';
+/** 守方建筑一轮连发火箭数：照 DE 火箭车一轮 5 支（PROJ_VOLLEY.rocket_cart）；只是演出，伤害仍按单发结算 */
+const DEF_BLD_VOLLEY = 5;
 /** 【败】折损的兵在这么多秒内随火箭雨陆续倒下（见 stepSkillKills） */
 const SKILL_KILL_SPREAD_SEC = 2.4;
 /** 每帧最多烙进地面的尸体数（见 stepCorpses）：【败】一次几百具时分摊到后续几帧 */
@@ -6418,6 +6422,7 @@ export class Scene13WarLayer {
         });
         this.registerDefBuilding(sp, name, undefined, kind);
         this.ensureProj('PROJ_ARROW');
+        this.ensureProj(DEF_BLD_PROJ);   // 火箭连射素材开战前预载（中途懒加载会卡素材闸）
         // 🔴 开战前预载破损/残骸/倒塌动画素材（否则切形态时 pending>0 整场冻结）
         // 🔴 [2026-10-15 主人令「所有建筑和 DE 一致、蒙古包也先燃后塌」] 改走同族链+通用兜底预载：
         //    棚屋/蒙古包/哨站这些 DE 没有 destruction 素材的，也要在开战前把兜底素材备齐
@@ -6426,7 +6431,7 @@ export class Scene13WarLayer {
 
     /**
      * 🔴 [2026-08-29 主人需求] 城墙内侧并列箭塔开火：
-     *    找射程内最近的攻方士兵（f=0），冷却到点射三支箭（连弩三连发 + 塔顶开火火花）+
+     *    找射程内最近的攻方士兵（f=0），冷却到点火箭连射（pushDefBuildingVolley，2026-11-04 起改火箭）+
      *    🔴 [主人需求] 真实穿透伤害（一发 = atk，照 DE 箭塔科技 5/6/7、城堡 11）。
      *    塔在 30 秒随机切成破损/残骸（或保持完整继续射）后才停止射击。
      */
@@ -6439,7 +6444,7 @@ export class Scene13WarLayer {
         for (const b of this.cityBuildings) this.stepCityBuildingShoot(b, dt);
     }
 
-    /** 单座塔/城堡：找射程内最近攻方士兵，冷却到点连发 3 支箭 + 真实穿透伤害。 */
+    /** 单座塔/城堡：找射程内最近攻方士兵，冷却到点火箭连射 + 真实穿透伤害。 */
     private stepTowerShoot(t: ArrowTower, dt: number): void {
         if (t.down || t.sprite.destroyed || t.sprite.collapse) return;   // 已塌不再射
         // 🔴 塔贴图未加载（素材不存在/未就绪）→ 不画也不射（看不见的塔开火更假）
@@ -6482,29 +6487,37 @@ export class Scene13WarLayer {
             if (foe.hero) this.heroDown(foe);
             else this.pushCorpse(foe);
         }
-        const ax = foe.x - fireX, ay = foe.y - fireY;
-        const ad = Math.hypot(ax, ay) || 1;
-        // 🔴 [2026-08-29 主人需求] 攻击特效 = 诸葛连弩：一次连发 3 支（复用 WarArrow.delay 连发机制，
-        //    每支延迟 v × PROJ_VOLLEY_DELAY 依次射出，视觉上就是连弩的三连发）。
-        for (let v = 0; v < 3; v++) {
-            this.arrows.push({
-                x: fireX, y: fireY,
-                dx: ax / ad, dy: ay / ad, len: ad,
-                t: 0, dur: ad / (PROJ_SPEED_PX.PROJ_ARROW ?? 440), f: 1, proj: 'PROJ_ARROW',
-                delay: v * PROJ_VOLLEY_DELAY,
-                towerFlight: {
-                    startLift: this.elevationLiftAt(fireX, t.y),
-                    endLift: this.elevationLiftAt(foe.x, foe.y),
-                },
-            });
-        }
+        this.pushDefBuildingVolley(fireX, fireY, t.y, foe);
         // 【攻】振己威：攻速加成（装填缩短），与士兵同口径
         t.cd = t.reload / (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_ATKSPD : 1.0);
     }
 
     /**
+     * 🔴 [2026-11-04 主人令「所有据点的建筑都可以射击，射击才用火箭连射，这样可以显的防御不光是摆设」]
+     *    箭塔 / 城堡 / 城内建筑共用这一处出弹：一轮连发 DEF_BLD_VOLLEY 支火箭（PROJ_ARROW_FIRE，
+     *    即 DE 火焰弓箭手 / 火箭车的火箭素材），每支间隔 PROJ_VOLLEY_DELAY 依次射出。
+     *    只是演出：伤害仍由调用方按 DE 箭塔单发结算一次（与火箭车「连发只是视觉」同口径）。
+     */
+    private pushDefBuildingVolley(fireX: number, fireY: number, baseY: number, foe: WarMan): void {
+        const ax = foe.x - fireX, ay = foe.y - fireY;
+        const ad = Math.hypot(ax, ay) || 1;
+        const startLift = this.elevationLiftAt(fireX, baseY);
+        const endLift = this.elevationLiftAt(foe.x, foe.y);
+        const speed = PROJ_SPEED_PX[DEF_BLD_PROJ] ?? PROJ_SPEED_PX.PROJ_ARROW ?? 440;
+        for (let v = 0; v < DEF_BLD_VOLLEY; v++) {
+            this.arrows.push({
+                x: fireX, y: fireY,
+                dx: ax / ad, dy: ay / ad, len: ad,
+                t: 0, dur: ad / speed, f: 1, proj: DEF_BLD_PROJ,
+                delay: v * PROJ_VOLLEY_DELAY,
+                towerFlight: { startLift, endLift },
+            });
+        }
+    }
+
+    /**
      * 🔴 [2026-09-16 主人定「战术模式中防守方所有没有坍塌的建筑都可以射箭」]：
-     *    普通未坍塌建筑（兵营/磨坊/民居/马厩/TC等）连弩三连发，攻击/射程/装填与城墙内侧箭塔同档。
+     *    普通未坍塌建筑（兵营/磨坊/民居/马厩/TC等）火箭连射（2026-11-04 起），攻击/射程/装填与城墙内侧箭塔同档。
      *    🔴 [2026-10-15 主人令「九建筑和箭塔一样的攻击效果和特效」]：从窗台冷箭（单发攻 2~3、射程 240、装填 3.2s）
      *    改为与箭塔同款（瞭望 5/320/2.2、警戒 6/360/2.0、高级 7/400/1.8）+ 三连发。
      *    关键规则：坍塌即停火。未坍塌时正常射击；一旦切为残骸或被投石车砸毁，立即熄火！
@@ -6561,22 +6574,7 @@ export class Scene13WarLayer {
             else this.pushCorpse(foe);
         }
 
-        const ax = foe.x - fireX, ay = foe.y - fireY;
-        const ad = Math.hypot(ax, ay) || 1;
-        // 🔴 [2026-10-15 主人令「把城中九建筑的攻击特效一律改为和DE的箭塔一样」]：
-        //    与 stepTowerShoot 完全一致，发射 PROJ_ARROW 三连发，不再使用喷火特效
-        for (let v = 0; v < 3; v++) {
-            this.arrows.push({
-                x: fireX, y: fireY,
-                dx: ax / ad, dy: ay / ad, len: ad,
-                t: 0, dur: ad / (PROJ_SPEED_PX.PROJ_ARROW ?? 440), f: 1, proj: 'PROJ_ARROW',
-                delay: v * PROJ_VOLLEY_DELAY,
-                towerFlight: {
-                    startLift: this.elevationLiftAt(fireX, b.sprite.y),
-                    endLift: this.elevationLiftAt(foe.x, foe.y),
-                },
-            });
-        }
+        this.pushDefBuildingVolley(fireX, fireY, b.sprite.y, foe);
         // 【攻】振己威：攻速加成（装填缩短），与士兵同口径
         b.cd = (b.reload ?? 2.2) / (this.skillFrenzyTimer[1] > 0 ? SKILL_FRENZY_ATKSPD : 1.0);
     }

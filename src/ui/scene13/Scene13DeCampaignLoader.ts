@@ -877,11 +877,10 @@ export function populateDeCampaignObjects(
             if (isInsideAttackerCamp(pos.x, pos.y)) {
                 layer.registerDefBuilding(bldSp, famName, undefined, bldInfo.kind, 0);
                 layer.ensureDestrAssetsFor(famName);
-            } else if (bldInfo.shootCapable) {
-                layer.trackCityBuilding(bldSp, bldInfo.kind, famName);
             } else {
-                layer.registerDefBuilding(bldSp, famName, undefined, bldInfo.kind, 1);
-                layer.ensureDestrAssetsFor(famName);
+                // 🔴 [2026-11-04 主人令「所有据点的建筑都可以射击」] 守方一侧的建筑一律登记为射击建筑
+                //    （原来 shootCapable=false 的哨站 / 营帐只挨打不射）。
+                layer.trackCityBuilding(bldSp, bldInfo.kind, famName);
             }
             continue;
         }

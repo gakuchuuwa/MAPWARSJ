@@ -1089,11 +1089,6 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         if (passShape === 'rect_mirror') return b < 0 ? -8 : 9;
         return b < 0 ? -6.5 : 7.5;
     };
-    const passFlankAt = (b: number, axis: 'i' | 'j'): number => {
-        if (passShape === 'rect') return axis === 'i' ? (b < 0 ? -8 : 9) : (b < 0 ? -4 : 5);
-        if (passShape === 'rect_mirror') return axis === 'i' ? (b < 0 ? -4 : 5) : (b < 0 ? -8 : 9);
-        return b === 0 ? 0.5 : (b < 0 ? -5.0 : 6.0);
-    };
     const passCorners: ReadonlyArray<readonly [number, number]> = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
     // 4 座侧翼警戒箭塔：从内门中轴线 (0.5) 移到内门通道两侧夹角防位（偏开主路 2.5 格），彻底让出十字关道
     const passFlankSlots: ReadonlyArray<{ ci: number; cj: number }> = passShape === 'rect'
