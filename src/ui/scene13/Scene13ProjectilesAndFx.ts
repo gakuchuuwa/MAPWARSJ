@@ -1,5 +1,5 @@
 import type { WarType } from '../../data/WarTypes';
-import { UNIT_PX } from './Scene13CombatMath';
+import { UNIT_PX, DE_TILE_PX, DE_RULER_K } from './Scene13CombatMath';
 
 export const DEATH_ANIM = 3;
 export const ARROW_DUR = 0.42;
@@ -580,8 +580,8 @@ export const PROJ_VOLLEY: Record<string, number> = {
     heavy_rocket_cart: 5,
 };
 export const ORGAN_GUN_TYPES = new Set(['organ_gun', 'elite_organ_gun']);
-/** DE 当前数据：风琴炮 accuracy_dispersion = 0.6 格；项目 1 格 = 40px。 */
-export const ORGAN_GUN_DISPERSION_PX = 0.6 * 40;
+/** DE 当前数据：风琴炮 accuracy_dispersion = 0.6 格；1 格 = DE_TILE_PX。 */
+export const ORGAN_GUN_DISPERSION_PX = 0.6 * DE_TILE_PX;
 /** 连发每支箭的发射间隔（秒），诸葛弩 3/5 支依次射出。 */
 export const PROJ_VOLLEY_DELAY = 0.08;
 /** 抛射物飞行基准时长（秒）：火枪弹丸极速穿梭（0.22s），重弩矢沉重平射（0.49s，DE 速度 6.0 vs 普通箭 7.0/0.42s），重炮/石弹沉重高抛（0.65s），手榴弹（0.55s），其余标准羽箭（0.42s）。 */
@@ -593,8 +593,9 @@ export const PROJ_DUR: Record<string, number> = {
     PROJ_ROCK: 0.65,
     PROJ_GRENADE: 0.55,
 };
-/** DE 弹丸速度换算到战斗层：1 DE 格 = 40px；火枪弹丸适度调快 (750px/s)。 */
-export const PROJ_SPEED_PX: Record<string, number> = {
+/** DE 弹丸速度换算到战斗层：下表按旧尺（1 格 = 40px）记数，末尾统一乘 DE_RULER_K 换到地图尺；
+ *  射程同样乘了 DE_RULER_K，所以满射程飞行时间与 2026-11-04 换尺前一致。火枪弹丸适度调快。 */
+export const PROJ_SPEED_PX: Record<string, number> = Object.fromEntries(Object.entries({
     // 🔴 [2026-08-26 按 DE dat 实测补齐] 弩矢原本没进本表 → 走 PROJ_DUR 的**固定 0.49s**，
     //    等于「不论远近都飞同样久」，而 DE 弹丸是**恒定速度**、飞行时间随距离变。
     //    dat 实测（empires2_x2_p1.dat → type_50.projectile_unit_id → 弹丸单位 speed）：
@@ -628,7 +629,7 @@ export const PROJ_SPEED_PX: Record<string, number> = {
     //    🔴 [2026-09-16 主人定] 手推炮弹速提速至 680 px/s（17 格/秒），满射程飞行时间压缩至约 0.7 秒。
     PROJ_BOMBARD_BALL: 17 * 40,
     PROJ_GRENADE: 4.5 * 40,
-};
+}).map(([k, v]) => [k, v * DE_RULER_K]));
 /** DE 弹丸素材逐帧时长（秒）；未列出的单帧/定向素材不播放序列。 */
 export const PROJ_FRAME_DUR: Record<string, number> = {
     PROJ_BALL: 0.0155,
@@ -653,9 +654,10 @@ export const SUICIDE_TYPES = new Set(['petard', 'flaming_camel', 'saboteur']);
  *   取 8 会让墙与门都被**单发秒破**，那是新型攻城核武、不是爆破兵 —— 故不取。
  */
 export const SUICIDE_BLD_MULT = 1;
-/** 具有最小射程盲区的远程/器械单位（原版 DE：投石车 min range 3 格、巨投 min range 4 格；1 格 = 40px，与 rng 同换算）。
+/** 具有最小射程盲区的远程/器械单位（原版 DE：投石车 min range 3 格、巨投 min range 4 格）。
+ *  下表按旧尺（1 格 = 40px）记数，末尾乘 DE_RULER_K 换到地图尺，与 rng 同换算。
  *  🔴 [2026-09-18 主人定·攻城武器无法近身攻击] 远程重型攻城武器严禁近身肉搏，贴脸时伤害归零。 */
-export const MIN_RANGE_TYPES: Record<string, number> = {
+export const MIN_RANGE_TYPES: Record<string, number> = Object.fromEntries(Object.entries({
     // 投石车系列（DE 最小射程 3 格 = 120px）
     mangonel: 120,
     onager: 120,
@@ -693,7 +695,7 @@ export const MIN_RANGE_TYPES: Record<string, number> = {
     organ_gun: 40,
     elite_organ_gun: 40,
     grenadier: 40,
-};
+}).map(([k, v]) => [k, v * DE_RULER_K]));
 /** 火矛手（DE 充能喷火兵）：进战先喷 3 发低精度短程火枪弹，30 秒充能（AoE2 DE update 141935）。 */
 export const FIRE_LANCER_TYPES = new Set(['fire_lancer', 'elite_fire_lancer']);
 export const FIRE_LANCER_VOLLEY = 3;

@@ -5681,7 +5681,7 @@ function renderUnitStatsSection(u: DeUnitDef): string {
         ${box('远防', String(st.pierceArmor), 'DE pierce armor')}
         ${box('射程', st.rng > 0 ? `${rangeInTiles(st.rng)} 格` : '白刃', `DE max_range；表里存 ${st.rng}px = 格×40`)}
         ${box('射速', `${st.reload}s`, 'DE reload_time 装填时间，越小越快')}
-        ${box('移速', String(st.spd), 'px/秒；DE 五维不含移速，这是 13 自己的档位')}
+        ${box('移速', String(st.spd), 'DE 速度格/秒×40；战术里再按地图尺换算')}
         ${box('体型', `×${st.sz}`, '渲染尺寸倍率')}
       </div>
       <div style="font-size:12px;color:#a89f8f;line-height:1.9;margin-top:8px;">

@@ -6,6 +6,7 @@ import { toBase16, type Base16Culture } from '../systems/CultureBase16';
 import { ALL_BRANCHES_MAP, toCulture66 } from '../systems/CultureHierarchy';
 import { REGION_TO_BRANCH } from '../config/deCastleAssets';
 import { BGM_TITLES } from './bgmTitles';
+import { BGM_DURATIONS } from './bgmDurations';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
 
@@ -408,7 +409,6 @@ const BGM_REGION_GAIN: Record<string, number> = {
     victory: 0.589,  // -16.4 LUFS · （2026-08-04 通用随机曲）
     wuzhou: 0.7,  // -17.9 LUFS
     xianqin: 0.708,  // -18.0 LUFS
-    yingqin: 0.708,  // -18.0 LUFS
     zhaosong: 0.697,  // -17.87 LUFS · 兰陵王入阵曲（2026-09-15 裁前奏 37s 后重测）
     // 🔴 [2026-09-17 主人定] 新增 3 首 BGM，补齐 16 母体：
     ANDE: 0.596,      // 实测 -16.5 LUFS · 安第斯（梦之安魂曲 Lux Aeterna）
@@ -626,7 +626,7 @@ export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
     CENTRAL: [
         // DIANQIAN 已于 2026-09-17 删除（与 pugan 同曲，曲子留给 MALAY），见 BGM_REGION_GAIN 处注释
         'CENTRAL', 'JIANGNAN', 'BASHU', 'LINGNAN', 'HEXI', 'NORTH', 'NORTHEAST',
-        'JAPAN', 'KOREA', 'nobunaga', 'xianqin', 'yingqin', 'liuhan', 'wuzhou',
+        'JAPAN', 'KOREA', 'nobunaga', 'xianqin', 'liuhan', 'wuzhou',
         'zhaosong', 'daming', 'manqing'
     ],
     STEPPE: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN'],
@@ -738,7 +738,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     MONGOL: ['de_MONGOL', 'STEPPE', 'mongol_a'],
     MUGHAL: ['de_MUGHAL', 'mughal_a', 'mughal_b'],
     MUISCA: ['de_MUISCA', 'muisca_a', 'muisca_b'],
-    NORTHEAST: ['de_NORTHEAST', 'NORTHEAST', 'xianqin', 'yingqin'],
+    NORTHEAST: ['de_NORTHEAST', 'NORTHEAST', 'xianqin'],
     ORIE: ['de_ORIE', 'holy_land_battle', 'desert_war', 'ottoman_drums'],
     PERSIAN: ['de_PERSIAN', 'persian_b'],
     POLES: ['de_POLES', 'poles_a', 'poles_b'],
@@ -849,6 +849,12 @@ export class AudioManager {
      * 只留最后一次：BGM 本来就是「当前该放哪首」的单值状态，不是队列。
      */
     private lastBgmRequest: { portraitPath?: string; lat: number; lng: number; cultureRegion?: string | null } | null = null;
+    /**
+     * 🔴 [2026-11-04 主人要「F3 背景音乐做成下拉选项，可以自由选择音乐播放」]
+     * F3 手动选定的曲目夹；null = 自动（走原来的选曲逻辑）。
+     * 非 null 时：跟拍军团切换、进战术换曲都不换歌，这首放完重放同一首，直到选回自动。
+     */
+    private manualBgmFolder: string | null = null;
     /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
     private wantedLoops = new Set<SoundKey>();
     /** 正在播放的一次性音效及其定义（暂停、主音量和语音闪避时同步处理）*/
@@ -993,6 +999,10 @@ export class AudioManager {
      *    不换军团就永远没有下一次。
      */
     private flushPendingBgm(): void {
+        if (this.manualBgmFolder && this.settings.enabled && this.unlocked) {
+            this.playBgmFolder(this.manualBgmFolder);
+            return;
+        }
         const req = this.lastBgmRequest;
         if (!req) return;
         // 🔴 [2026-09-17] cultureRegion 必须一起补回：漏了它，补播这一次就退回按坐标 getRegion 取曲，
@@ -1467,6 +1477,11 @@ export class AudioManager {
         const branch = resolveBranch(cultureRegion);
         this.currentBgmPool = branchPool(branch);
         this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
+        // F3 手动选了曲 → 曲池照记（选回自动时生效），歌不换
+        if (this.manualBgmFolder) {
+            this.playBgmFolder(this.manualBgmFolder);
+            return;
+        }
         if (
             this.currentBgmPool.length > 0 &&
             this.currentBgmFolder !== '' &&
@@ -1498,7 +1513,39 @@ export class AudioManager {
      */
     public rerollBgm(): void {
         if (!this.settings.enabled || !this.unlocked) return;
+        if (this.manualBgmFolder) return;
         this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
+    }
+
+    /** F3 下拉框的曲目表：全部可播曲目（已滤掉版权暂停曲），曲名取 BGM_TITLES，时长取 BGM_DURATIONS（0 = 未知） */
+    public getBgmTrackList(): { folder: string; title: string; durationSec: number }[] {
+        return BGM_ROTATION_FOLDERS.map((folder) => ({
+            folder,
+            title: BGM_TITLES[folder] ?? folder,
+            durationSec: BGM_DURATIONS[folder] ?? 0,
+        }));
+    }
+
+    /** F3 手动选定的曲目夹；null = 自动 */
+    public getManualBgmFolder(): string | null {
+        return this.manualBgmFolder;
+    }
+
+    /**
+     * F3 下拉框选曲。传曲目夹 = 立即切到这首并锁定；传 null = 选回自动。
+     * 选回自动时不打断正在放的这首（原逻辑「有歌在放就绝不打断」），
+     * 放完按当前曲池洗牌接力；若当前势力曲池不含这首，按原逻辑立即切回势力曲。
+     */
+    public setManualBgm(folder: string | null): void {
+        if (folder && !AVAILABLE_BGM_FOLDERS.has(folder)) return;
+        this.manualBgmFolder = folder;
+        this.bgmShuffleQueue = [];
+        if (!this.settings.enabled || !this.unlocked) return;
+        if (folder) {
+            this.playBgmFolder(folder);
+        } else {
+            this.flushPendingBgm();
+        }
     }
 
     /**
@@ -1566,7 +1613,7 @@ export class AudioManager {
                 () => {
                     // 已被区域切歌 / 停歌替换 → 不接力
                     if (this.bgmAudio !== audio || !this.settings.enabled || !this.unlocked) return;
-                    this.playBgmFolder(this.nextRotationFolder(folder));
+                    this.playBgmFolder(this.manualBgmFolder ?? this.nextRotationFolder(folder));
                 },
                 { once: true },
             );

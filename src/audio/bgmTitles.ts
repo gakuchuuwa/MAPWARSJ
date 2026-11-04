@@ -206,7 +206,6 @@ export const BGM_TITLES: Record<string, string> = {
     xianbei_a: '蒙古战舞(纯音乐)',
     xianbei_b: 'Chono Borig 蒙古战乐',
     xianqin: '先秦 大秦',
-    yingqin: '赢秦 大秦',
     zhaosong: '赵宋 兰陵王入阵曲',
     western_b: '二胡 雨碎江南',
     persian_b: '波斯桑图尔琴 Chaharmezrab',

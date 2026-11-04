@@ -11,6 +11,8 @@
 //   数值来自本机 empires2_x2_p1.dat（genieutils 实测抽取，非精锐基础档）。
 //   相克废弃旧 C=1.8 全局系数，改用 DE 加成伤害（bonus）+ 近/远防减法自然涌现。
 //   移速 spd 也取自 DE（DE speed 格/秒 × 40 = px/秒，与 rng / collision_size 同一把尺）。
+//   🔴 [2026-11-04] 表里仍按「1 格 = 40px」记数（÷40 即 DE 原值）；战术层在 statsFor 里统一乘 DE_RULER_K
+//      换到地图尺（1 格 = 53.67px，见 Scene13CombatMath）。重装剑士 45→38、骑士高级 56→54 已改回 DE 值。
 //   🔴 [2026-10-09 主人令「唯一目标就是完美复刻 DE 的战术模式」] 此前 spd 是四个职业档常数
 //      （cav 130 / melee 55 / ranged 50 / 攻城象 40），实测比 DE 真值快 1.3~2.3 倍
 //      （骑兵 130 vs DE 中位 56，快 2.32 倍）——骑兵因此像瞬移包抄。现已全表对齐 DE。
@@ -356,12 +358,12 @@ export const WAR_TYPES: Record<string, WarType> = {
     winged_hussar: { name: '波兰翼骑兵高级', cls: 'cav', sz: 1, hp: 80, atk: 9, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 1.9, spd: 60, dmgType: 'melee', bonus: { 23: 4, 25: 14 }, armorTags: [8, 31] },
     woad_raider: { name: '凯尔特靛蓝突袭者', cls: 'melee', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 47, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     xolotl_warrior: { name: '阿兹特克索洛特尔骑兵高级', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 54, dmgType: 'melee', armorTags: [8, 31] },
-    longswordsman: {name:"重装剑士",cls:"melee",sz:1,hp:60,atk:9,meleeArmor:1,pierceArmor:1,rng:0,reload:2,spd:45,dmgType:"melee",bonus:{29:6,21:3},armorTags:[1,31]},
+    longswordsman: {name:"重装剑士",cls:"melee",sz:1,hp:60,atk:9,meleeArmor:1,pierceArmor:1,rng:0,reload:2,spd:38,dmgType:"melee",bonus:{29:6,21:3},armorTags:[1,31]},
     champi_warrior: { name: '蔷琵勇士',cls:"melee",sz:1,hp:55,atk:9,meleeArmor:0,pierceArmor:3,rng:0,reload:2,spd: 44,dmgType:"melee",bonus:{29:1,21:2,20:3},armorTags:[1,31]},
     champi_runner: { name: '蔷琵飞毛腿',cls:"melee",sz:1,hp:40,atk:5,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd: 44,dmgType:"melee",bonus:{29:1,20:2},armorTags:[1,31]},
     champi_scout: { name: '蔷琵斥候',cls:"melee",sz:1,hp:35,atk:3,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd: 44,dmgType:"melee",bonus:{29:3,8:1,30:1,20:2},armorTags:[1,31]},
     jian_swordman_unshielded: {name:"华夏双手步兵",cls:"melee",sz:1,hp:70,atk:11,meleeArmor:0,pierceArmor:2,rng:0,reload:2.0,spd: 38,dmgType:"melee",bonus:{21:2,15:4},armorTags:[1,19,29,31]},
-    cavalier: {name:"骑士高级",cls:"cav",sz:1,hp:120,atk:12,meleeArmor:2,pierceArmor:2,rng:0,reload:1.8,spd: 56,dmgType:"melee",armorTags:[8,31]},
+    cavalier: {name:"骑士高级",cls:"cav",sz:1,hp:120,atk:12,meleeArmor:2,pierceArmor:2,rng:0,reload:1.8,spd: 54,dmgType:"melee",armorTags:[8,31]},
     flamethrower: { name: '华夏喷火车特殊',cls:"ranged",sz:1,aoe:true,hp:160,atk:4,meleeArmor:2,pierceArmor:2,rng:200,reload:0.25,spd: 24,dmgType:"melee",bonus:{11:4,13:10},armorTags:[20,31]},
     helepolis: { name: '希腊破城塔特殊',cls:"ranged",sz:1,hp:350,atk:20,meleeArmor:-2,pierceArmor:100,rng:440,reload:5,spd:30,dmgType:"pierce",bonus:{16:50},armorTags:[20,17,31]},
     siege_tower: { name: '攻城塔', cls: 'ranged', sz: 1, hp: 220, atk: 6, meleeArmor: -2, pierceArmor: 100, rng: 240, reload: 4.0, spd: 24, dmgType: 'pierce', bonus: { 11: 6 }, armorTags: [20, 17, 31] },

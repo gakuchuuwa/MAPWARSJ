@@ -1,4 +1,5 @@
 import { TAC_MAP_HALF_W, TAC_MAP_HALF_H } from './Scene13GroundLayerGL';
+import { DE_TILE_PX } from './Scene13CombatMath';
 import type { AnimalAction, AnimalDe, AnimalKind, TacticalAnimal, WarMan } from './Scene13Types';
 import { animalAllowedAt } from '../../world/environment/animalCatalog';
 
@@ -105,7 +106,7 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
 /** 表展开成查表 */
 export const ANIMAL_DE: Record<string, AnimalDe> = {};
 for (const [sp, kind, walk, run, hp, atk, los, acts] of ANIMAL_DE_TABLE) {
-    ANIMAL_DE[sp] = { kind, walk, run, los: los * 40, hp, atk, reload: 2.0, acts };
+    ANIMAL_DE[sp] = { kind, walk, run, los: los * DE_TILE_PX, hp, atk, reload: 2.0, acts };
 }
 
 /**

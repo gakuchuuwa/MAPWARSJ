@@ -79,10 +79,16 @@ export class PerformanceMonitor {
     private visible = false;
     private overlayEl: HTMLDivElement | null = null;
     private contentEl: HTMLDivElement | null = null;
+    // 🔴 [2026-11-04 主人要「F3 背景音乐做成下拉选项」] 面板拆成三段：
+    //   contentTopEl（FPS 两行）→ BGM 段（bgmStatusEl 每帧重建 + 下拉框不重建）→ contentEl（其余）。
+    //   下拉框必须是不重建的元素：放进每帧 innerHTML 里，展开的下拉列表一帧就被销毁。
+    private contentTopEl: HTMLDivElement | null = null;
+    private bgmStatusEl: HTMLDivElement | null = null;
+    private bgmSelectEl: HTMLSelectElement | null = null;
 
     // 🔴 [2026-10-18] 「点 ♪ BGM 行复制曲名」的反馈状态。
     //   contentEl.innerHTML 每帧整块重建（endFrame → renderOverlay），行的 DOM 元素活不过一帧，
-    //   所以点击只能走 contentEl 上的 pointerdown 事件委托（contentEl 本身不重建）。
+    //   所以点击只能走 bgmStatusEl 上的 pointerdown 事件委托（bgmStatusEl 本身不重建）。
     private bgmCopyFlashUntil = 0;
     private bgmCopyFlashOk = false;
 
@@ -521,12 +527,8 @@ export class PerformanceMonitor {
 
     private createOverlay(): void {
         // 先检查是否已存在
-        let existing = document.getElementById('perf-monitor-overlay');
-        if (existing) {
-            this.overlayEl = existing as HTMLDivElement;
-            this.contentEl = this.overlayEl.querySelector('.perf-content') as HTMLDivElement;
-            return;
-        }
+        // 热更新留下的旧面板：其事件监听属于旧实例，直接拆掉重建
+        document.getElementById('perf-monitor-overlay')?.remove();
 
         const overlay = document.createElement('div');
         overlay.id = 'perf-monitor-overlay';
@@ -558,6 +560,36 @@ export class PerformanceMonitor {
             box-shadow: 0 4px 24px rgba(0,0,0,0.45);
         `;
 
+        const contentTop = document.createElement('div');
+        overlay.appendChild(contentTop);
+
+        const bgmStatus = document.createElement('div');
+        overlay.appendChild(bgmStatus);
+
+        const bgmPickRow = document.createElement('div');
+        bgmPickRow.style.cssText = 'margin:-2px 0 4px 0;font-size:11px;color:#888;';
+        const bgmSelect = document.createElement('select');
+        bgmSelect.style.cssText = 'font:inherit;font-size:11px;margin-left:4px;max-width:300px;'
+            + 'background:#2f2a22;color:#e8e0d0;border:1px solid #5a5042;border-radius:4px;padding:1px 4px;';
+        const autoOpt = document.createElement('option');
+        autoOpt.value = '';
+        autoOpt.textContent = '自动';
+        bgmSelect.appendChild(autoOpt);
+        for (const t of audioManager.getBgmTrackList()) {
+            const opt = document.createElement('option');
+            opt.value = t.folder;
+            const d = t.durationSec;
+            opt.textContent = d > 0 ? `${t.title}  ${Math.floor(d / 60)}:${String(d % 60).padStart(2, '0')}` : t.title;
+            bgmSelect.appendChild(opt);
+        }
+        bgmSelect.value = audioManager.getManualBgmFolder() ?? '';
+        bgmSelect.addEventListener('change', () => {
+            audioManager.setManualBgm(bgmSelect.value || null);
+            bgmSelect.blur();   // 交还键盘焦点，免得方向键/快捷键落在下拉框上
+        });
+        bgmPickRow.append('选曲', bgmSelect);
+        overlay.appendChild(bgmPickRow);
+
         const content = document.createElement('div');
         content.className = 'perf-content';
         overlay.appendChild(content);
@@ -576,6 +608,8 @@ export class PerformanceMonitor {
         copyBtn.addEventListener('click', (ev) => {
             ev.stopPropagation();
             const text = `${header.textContent}
+${contentTop.innerText}
+${bgmStatus.innerText}
 ${content.innerText}`;
             void navigator.clipboard.writeText(text).then(
                 () => { copyBtn.textContent = '✓ 已复制'; },
@@ -586,11 +620,14 @@ ${content.innerText}`;
         });
         header.appendChild(copyBtn);
 
-        overlay.insertBefore(header, content);
+        overlay.insertBefore(header, contentTop);
 
         document.body.appendChild(overlay);
         this.overlayEl = overlay;
         this.contentEl = content;
+        this.contentTopEl = contentTop;
+        this.bgmStatusEl = bgmStatus;
+        this.bgmSelectEl = bgmSelect;
     }
 
     /**
@@ -605,7 +642,7 @@ ${content.innerText}`;
      *   `closest()` 一定找得到，跟每帧重建无关。
      */
     private setupContentInteractions(): void {
-        const el = this.contentEl;
+        const el = this.bgmStatusEl;
         if (!el) return;
         el.addEventListener('pointerdown', (ev: PointerEvent) => {
             const target = ev.target as HTMLElement | null;
@@ -816,7 +853,7 @@ ${content.innerText}`;
             </div>`
             : '<div style="margin-bottom:4px;padding:3px 0;border-top:1px solid #333;font-size:11px;color:#666;">♪ BGM 未播放</div>';
 
-        const html = `
+        const topHtml = `
             ${bootHtml}
             <div style="display:flex;align-items:baseline;flex-wrap:nowrap;margin-bottom:4px;font-variant-numeric:tabular-nums;">
                 <span style="color:${fpsColor};font-weight:bold;font-size:15px;min-width:5.5em;text-align:right;">${s.fps.toFixed(1)}</span>
@@ -831,8 +868,9 @@ ${content.innerText}`;
                 P99 <span style="color:#ddd;">${s.frameP99.toFixed(1)}ms</span> ·
                 慢帧&gt;16ms <span style="color:${s.slowFrameRatio >= 0.25 ? '#FF9800' : '#bbb'};">${(s.slowFrameRatio * 100).toFixed(0)}%</span> ·
                 重卡&gt;50ms <span style="color:${s.hitchFrameRatio >= 0.08 ? '#f44336' : '#bbb'};">${(s.hitchFrameRatio * 100).toFixed(0)}%</span>
-            </div>
-            ${bgmHtml}
+            </div>`;
+
+        const html = `
             ${this.buildStutterLine(s)}
             ${this.buildRatioLine()}
             ${this.buildSlowFrameLine()}
@@ -872,6 +910,11 @@ ${content.innerText}`;
             </table>
         `;
 
+        if (this.contentTopEl) this.contentTopEl.innerHTML = topHtml;
+        if (this.bgmStatusEl) this.bgmStatusEl.innerHTML = bgmHtml;
+        // 控制台改了选曲也跟上；正在操作下拉框时不动它
+        const sel = this.bgmSelectEl;
+        if (sel && document.activeElement !== sel) sel.value = audioManager.getManualBgmFolder() ?? '';
         this.contentEl.innerHTML = html;
     }
 

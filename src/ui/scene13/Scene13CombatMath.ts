@@ -52,6 +52,17 @@ export const HUSSITE_SECONDARY_SHOT: WarType = {
 export const UNIT_PX = 64;
 
 /**
+ * 🔴 [2026-11-04 主人令「要和 DE 统一一致」] DE 一格在战术地图上的像素：地块 96×48 的等轴边长
+ * √(96²/4 + 48²/4) = 53.67（与墙碰撞、流场 STEP_PX 同一把尺）。
+ * 兵种表（WAR_TYPES 的 spd / rng / kite、SIGHT_MAP、MIN_RANGE_TYPES）仍按旧尺「1 格 = 40px」记数，
+ * 统一在 `Scene13WarLayer.statsFor` 等入口乘 DE_RULER_K 换到地图尺；表里的数仍可直接 ÷40 对 DE 本体核。
+ * 碰撞半径、阵型间距、近战贴身距离按兵模像素调，不走这把尺。
+ */
+export const TABLE_TILE_PX = 40;
+export const DE_TILE_PX = Math.hypot(96, 48) / 2;
+export const DE_RULER_K = DE_TILE_PX / TABLE_TILE_PX;
+
+/**
  * 落点散开半径（px）——每个兵出生时分到一个**固定**偏移，终身不变。
  */
 export const AIM_JITTER = 120;

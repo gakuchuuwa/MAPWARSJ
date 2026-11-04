@@ -92,7 +92,7 @@ import {
 
 import {
     COLLAPSE_ANIM_DUR, HERO_ATTACK_RATE, HERO_HP_MULT, HERO_DAMAGE_TAKEN, HERO_SPEED_MULT, HERO_DAMAGE_MULT, dmgVs,
-    HUSSITE_SECONDARY_SHOT, UNIT_PX, AIM_JITTER, CHASE_RING, STALL_GUARD_ENFORCE,
+    HUSSITE_SECONDARY_SHOT, UNIT_PX, DE_RULER_K, AIM_JITTER, CHASE_RING, STALL_GUARD_ENFORCE,
     MELEE_QUIET_SEC, NO_KILL_SEC, HARD_STOP_SEC, BATTLE_LIMIT_SEC, BLD_MIN_DESTROY_BASE,
     BLD_MIN_DESTROY_PER_SIDE, CITY_TYPE_GATE_FLOOR_SEC, CITY_TYPE_BLD_FLOOR_MULT, FLOW_SUB, PASS_INSIDE_DAMAGE_TAKEN, REMNANT_FRAC,
     DEF_WALL_GAP, SIEGE_FIELD_GAP, CLOUD_BASE_URL, CLOUD_FILES, CLOUD_COUNT_MIN,
@@ -2451,6 +2451,14 @@ export class Scene13WarLayer {
             const side: 0 | 1 = f === 0 ? 0 : 1;
             const techs = selectLegionTechs(y, this.sideTechCulture(side), this.sideTechSeed(side));
             v = applyTechsToStats(base, key, techs, SIGHT_MAP[key] ?? 160);
+            // 表与科技按旧尺（1 格 = 40px）算完，再统一换到地图尺（1 格 = DE_TILE_PX），见 DE_RULER_K 头注
+            v = {
+                ...v,
+                spd: v.spd * DE_RULER_K,
+                rng: v.rng * DE_RULER_K,
+                ...(v.kite !== undefined ? { kite: v.kite * DE_RULER_K } : {}),
+                ...(v.sight !== undefined ? { sight: v.sight * DE_RULER_K } : {}),
+            };
             if (this.sideHpMult[f] !== 1) v = { ...v, hp: Math.max(1, Math.round(v.hp * this.sideHpMult[f])) };
             this.techStats[f].set(cacheKey, v);
         }
@@ -6345,7 +6353,7 @@ export class Scene13WarLayer {
                 const foeElev = this.elevationLevelAt(m.x, m.y);
                 const dElev = towerElev - foeElev;
                 const elevRangeMul = dElev > 0.2 ? (1.0 + Math.min(7, dElev) * 0.05) : 1.0;
-                const effRange = t.range * elevRangeMul;
+                const effRange = t.range * DE_RULER_K * elevRangeMul;   // 塔档按旧尺（1 格 = 40px）记数，换到地图尺
                 const d = (m.x - fireX) * (m.x - fireX) + (m.y - fireY) * (m.y - fireY);
                 if (d <= effRange * effRange && d < bd) { bd = d; foe = m; }
             }
@@ -6414,7 +6422,7 @@ export class Scene13WarLayer {
         // 窗台/屋檐开火点：贴图锚点在底基，抬到建筑中上部
         const fireX = b.sprite.x;
         const fireY = b.sprite.y - UNIT_PX * 0.6;
-        const baseRange = b.range ?? 320; // 与箭塔同档（瞭望 320 / 警戒 360 / 高级 400）
+        const baseRange = (b.range ?? 320) * DE_RULER_K; // 与箭塔同档（瞭望 320 / 警戒 360 / 高级 400，旧尺记数，换到地图尺）
         const bldElev = this.elevationLevelAt(fireX, b.sprite.y);
 
         // 寻找射程内最近的攻方士兵（受高地平滑射程加成）
