@@ -10631,6 +10631,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.23,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/BURMESE/gen_binnya_dala.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 25
         }
     },
     "folderGuides": {
