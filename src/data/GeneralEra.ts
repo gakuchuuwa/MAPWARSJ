@@ -1866,6 +1866,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xibanya_hurtado_mendoza': 'imperial', // 赫塔多·门多萨
     'hojo_shimizuyasuhide': 'imperial', // 清水康英
     'sumuroyi_sumuroy': 'imperial', // 苏穆罗伊
+    'toyotomi_horiuchiujiyoshi': 'imperial', // 堀内氏善
     'han_d_sunang': 'antiquity', // 孙卬
     'tang_malin': 'feudal', // 马璘（补将）
     'tang_duanxiushi': 'feudal', // 段秀实（补将）

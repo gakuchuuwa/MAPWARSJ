@@ -1876,6 +1876,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     xibanya_hurtado_mendoza: { birth: 1535, death: 1609 },  // 赫塔多·门多萨
     hojo_shimizuyasuhide: { birth: 1520, death: 1595, kaoju: '推定' },  // 清水康英
     sumuroyi_sumuroy: { birth: 1620, death: 1650, kaoju: '推定' },  // 苏穆罗伊
+    toyotomi_horiuchiujiyoshi: { birth: 1549, death: 1615, kaoju: '推定' },  // 堀内氏善
     han_d_sunang: { birth: -230, death: -166, kaoju: '推定' },  // 孙卬
     tang_malin: { birth: 721, death: 777, kaoju: '推定' },  // 马璘
     tang_duanxiushi: { birth: 719, death: 783, kaoju: '推定' },  // 段秀实

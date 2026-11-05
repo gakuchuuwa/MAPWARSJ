@@ -2597,7 +2597,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 3,
             "offsetY": -21
         },
-        "/assets/CENTRAL/yao_liuyuan.png": {
+        "/assets/WEI/yao_liuyuan.png": {
             "scale": 1.09,
             "offsetX": 0,
             "offsetY": -7
@@ -6122,7 +6122,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/CENTRAL/shizhou_liucong.png": {
+        "/assets/WEI/shizhou_liucong.png": {
             "scale": 1.09,
             "offsetX": 10,
             "offsetY": -10

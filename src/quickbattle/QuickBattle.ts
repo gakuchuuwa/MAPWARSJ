@@ -430,6 +430,7 @@ class QuickBattle {
         go.className = 'qb-go';
         go.textContent = '⚔ 开战';
         go.addEventListener('click', () => this.launch());
+        this.goBtn = go;
         const reset = document.createElement('button');
         reset.type = 'button';
         reset.textContent = '全部清空（随机）';
@@ -500,7 +501,35 @@ class QuickBattle {
         return rand(pool) ?? null;
     }
 
+    // ── 循环播放：打完回选择画面，30 秒后自动再开一局 ──
+    // 🔴 [2026-11-05 主人令「战斗结束后，回到选择画面，给30秒选择时间，30秒后自动再开一局，循环播放」]
+
+    private static readonly AUTO_NEXT_SEC = 30;
+    private goBtn: HTMLButtonElement | null = null;
+    private countdownTimer: number | null = null;
+
+    private startCountdown(): void {
+        this.stopCountdown();
+        let left = QuickBattle.AUTO_NEXT_SEC;
+        const paint = () => { if (this.goBtn) this.goBtn.textContent = `⚔ 开战（${left} 秒后自动开战）`; };
+        paint();
+        this.countdownTimer = window.setInterval(() => {
+            left--;
+            if (left > 0) { paint(); return; }
+            this.stopCountdown();
+            this.launch();
+            if (!this.active) this.startCountdown();   // 这一局没开成（选择冲突等）：继续倒计时，循环不断
+        }, 1000);
+    }
+
+    private stopCountdown(): void {
+        if (this.countdownTimer !== null) window.clearInterval(this.countdownTimer);
+        this.countdownTimer = null;
+        if (this.goBtn) this.goBtn.textContent = '⚔ 开战';
+    }
+
     private launch(): void {
+        this.stopCountdown();
         if (this.active) { this.say('上一仗还没打完。', true); return; }
         if (!appReady(this.app)) { this.say('游戏还在加载，稍等。', true); return; }
         try {
@@ -512,6 +541,7 @@ class QuickBattle {
             this.say(`开战失败：${msg}`, true);
             this.cleanup();
             this.panel.classList.remove('qb-hidden');
+            this.startCountdown();
         }
     }
 
@@ -611,7 +641,7 @@ class QuickBattle {
             kind: 'siege', attacker, defender: null, city: saved, att, def,
             placeName: target.name, phase: 'engaging', startedAt: performance.now(),
         };
-        this.focus(attacker, { lat: target.latitude, lng: target.longitude });
+        this.focus(attacker, att.factionId, { lat: target.latitude, lng: target.longitude });
         this.app.timeSystem.setPaused(false);
         const r = lm.triggerSiege(attacker, target);
         if (r === 'skipped') throw new Error('引擎拒绝了这次攻城');
@@ -637,7 +667,7 @@ class QuickBattle {
             kind: 'field', attacker, defender, city: null, att, def,
             placeName: spot.label, phase: 'engaging', startedAt: performance.now(),
         };
-        this.focus(attacker, spot.att);
+        this.focus(attacker, att.factionId, spot.att);
         this.app.timeSystem.setPaused(false);
         attacker.moveAlongPath([{ lat: spot.def.lat, lng: spot.def.lng }]);
         this.announce();
@@ -671,9 +701,37 @@ class QuickBattle {
         return null;
     }
 
-    private focus(army: Army, at: { lat: number; lng: number }): void {
-        try { this.app.cameraFollowUI?.setFollow(army.id, army.name); } catch { /* 镜头失败不影响开战 */ }
+    /**
+     * 🔴 [2026-11-05 主人令「把探马者加入到攻击方，然后保持同样的跟随镜头」]
+     *    开战前探马者入攻方势力、入伍攻方军团（与游戏里投奔武将同一套 joinFaction + attachTo），
+     *    镜头跟玩家 —— 进战术模式后的跟拍与正常对局里「随军打仗」一模一样。
+     *    没有探马者（线上构建不建玩家）就退回跟拍攻方军团。
+     */
+    private focus(army: Army, factionId: string, at: { lat: number; lng: number }): void {
+        const hero = this.app.playerHero;
+        let joined = false;
+        if (hero) {
+            try {
+                if (hero.getHostLegionId()) hero.detach();
+                hero.joinFaction(factionId, null, true);
+                hero.attachTo(army);
+                this.app.cameraFollowUI?.followPlayerByUser();
+                joined = hero.getHostLegionId() === army.id;
+            } catch (e) {
+                console.warn('[即时战斗] 探马者入伍攻方失败，改为跟拍攻方军团', e);
+            }
+        }
+        if (!joined) {
+            try { this.app.cameraFollowUI?.setFollow(army.id, army.name); } catch { /* 镜头失败不影响开战 */ }
+        }
         try { this.app.map.getLeafletMap().setView([at.lat, at.lng], 9, { animate: false }); } catch { /* 同上 */ }
+    }
+
+    /** 打完：探马者离队（军团马上要撤） */
+    private releaseHero(): void {
+        const hero = this.app.playerHero;
+        if (!hero?.getHostLegionId()) return;
+        try { hero.detach(); } catch (e) { console.warn('[即时战斗] 探马者离队失败', e); }
     }
 
     private announce(): void {
@@ -841,9 +899,10 @@ class QuickBattle {
         }
         if (fought) this.report('finished', a, { result });
         this.cleanup();
-        if (fought) this.say(`上一仗结果：${result}。可以再选一场。`);
+        if (fought) this.say(`上一仗结果：${result}。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局（不选＝随机）。`);
         this.backdrop.say('');
         this.panel.classList.remove('qb-hidden');
+        this.startCountdown();
     }
 
     /** 撤掉本场军团、还原据点、暂停 */
@@ -851,6 +910,7 @@ class QuickBattle {
         const a = this.active;
         this.active = null;
         this.app.timeSystem.setPaused(true);
+        this.releaseHero();
         this.clearWorldLegions();
         if (a?.city) {
             const cm = this.app.cityManager;

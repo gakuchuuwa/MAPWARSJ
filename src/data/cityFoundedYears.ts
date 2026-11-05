@@ -441,6 +441,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_palapag: 1600,    // 1600 约（萨马岛耶稣会传教点，约数）
     city_kunlundao: 1702,    // 1702（英国东印度公司在昆仑岛筑堡，英文维基 Côn Đảo）
     city_nikoba: 1756,    // 1756（丹麦在楠考里港建弗雷德里克纳格殖民地，英文维基 Danish Nicobar Islands）
+    city_kushimoto: 1600,    // 1600 约（纪伊半岛最南端港口，建年不详，取约数）
     city_telabuzong: -756,    // 公元前756年米利都希腊殖民者建特拉佩祖斯（英文维基 Trabzon）
     city_amaxiya: -2000,      // 考古表明前2千纪赫梯人已在此定居，历经弗里吉亚、波斯，前4世纪末为本都王国都城（英文维基 Amasya）
     city_peierjiameng: -700,  // 前8世纪末已见定居遗存，前400/399年色诺芬《远征记》已载该城（英文维基 Pergamon）

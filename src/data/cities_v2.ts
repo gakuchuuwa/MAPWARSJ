@@ -4111,6 +4111,8 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-11-05 主人批准新建] 航行中转站（昆仑岛、尼科巴）
     { id: 'city_kunlundao', name: '昆仑岛', factionId: 'yuenan', lat: 8.69, lng: 106.61, type: 'stockade', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'VIETNAMESE', note: '🔴 [2026-11-05 主人批准新建] 昆仑岛（Côn Đảo，Pulo Condore）：南海南部淡水与候风岛，广南国（阮氏）属岛；1702 年英国东印度公司筑堡；人口待考 → 城寨；主人令 2026-11-05：无武将、离毗耶陀 378km >200km，作航线中转站' },
     { id: 'city_nikoba', name: '尼科巴', factionId: 'danmai', lat: 8.03, lng: 93.53, type: 'stockade', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '🔴 [2026-11-05 主人批准新建] 尼科巴（Nicobar，楠考里港，即翠蓝屿）：孟加拉湾淡水与椰果补给岛，1756 年丹麦殖民；人口待考 → 城寨；主人令 2026-11-05：无武将、离亚齐 339km >200km，作航线中转站' },
+    // 🔴 [2026-11-05 主人批准新建] 航行港口第七批（串本）
+    { id: 'city_kushimoto', name: '串本', factionId: 'toyotomi', lat: 33.47, lng: 135.78, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '🔴 [2026-11-05 主人批准新建] 串本（大岛港）：纪伊半岛最南端港口，绕行潮岬的候风停泊处，熊野水军活动海域；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」；离千早城 97km（≥50km）；主人令 2026-11-05 选堀内氏善为守将' },
 ].map((city): CityDataV2 => { const base = city as CityDataV2; return HUGUANG_CITY_IDS.has(base.id) ? { ...base, buildingStyle: 'HUGUANG' as const } : base; });
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

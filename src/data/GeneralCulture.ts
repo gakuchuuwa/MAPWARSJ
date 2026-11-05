@@ -1903,6 +1903,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xibanya_hurtado_mendoza': 'SPANISH',   // 赫塔多·门多萨｜据点 康塞普西翁
     'hojo_shimizuyasuhide': 'JAPAN',   // 清水康英｜据点 下田
     'sumuroyi_sumuroy': 'MALAY',   // 苏穆罗伊｜据点 帕拉帕格
+    'toyotomi_horiuchiujiyoshi': 'JAPAN',   // 堀内氏善｜据点 串本
     'han_d_sunang': 'CENTRAL',   // 孙卬｜据点 萧关
     'manzhou_d_sabusu': 'NORTHEAST',   // 萨布素｜据点 卜奎
     'manzhou_d_dongtianbi': 'BASHU',   // 董天弼｜据点 美诺寨

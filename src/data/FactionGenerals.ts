@@ -12950,7 +12950,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'wuyue_qianliu', cityId: 'city_hangzhou', generalName: '钱镠', portrait: '/assets/JIANGNAN/wuyue_qianliu.png', eliteName: '吴越水军', eliteTier: 3 },
         { generalId: 'bfe_ajibaldo', factionId: 'haikou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JAPAN/bfe_ajibaldo.png', eliteName: '日本足轻', eliteTier: 4, legionName: '海贼倭寇军团' },
         { generalId: 'qian_d_yudayou', factionId: 'ming_d', cityId: 'city_qingyuan_zj', generalName: '俞大猷', portrait: '/assets/JIANGNAN/qian_d_yudayou.png', eliteName: '俞家军', eliteTier: 1 },
-        { generalId: 'bfe_xu_hai', cityId: 'city_jiaxing', generalName: '徐海', portrait: '/assets/JAPAN/bfe_xu_hai.png', factionId: 'haikou', eliteName: '陈东倭兵', eliteTier: 4, legionName: '海贼倭寇军团' },   // 🔴 [2026-11-05 主人令「徐海移嘉兴（柘林/乍浦最近），精锐换成与据点同文化的倭兵」] 徐海据柘林、乍浦（今上海奉贤—平湖），与陈东同据柘林；原挂萨摩·鹿儿岛城＋「日本足轻」不合史，现移嘉兴（JIANGNAN）并沿用既有番号「陈东倭兵」T4（不新造番号）
+        { generalId: 'bfe_xu_hai', cityId: 'city_jiaxing', generalName: '徐海', portrait: '/assets/JIANGNAN/bfe_xu_hai.png', factionId: 'haikou', eliteName: '陈东倭兵', eliteTier: 4, legionName: '海贼倭寇军团' },   // 🔴 [2026-11-05 主人令「徐海移嘉兴（柘林/乍浦最近），精锐换成与据点同文化的倭兵」] 徐海据柘林、乍浦（今上海奉贤—平湖），与陈东同据柘林；原挂萨摩·鹿儿岛城＋「日本足轻」不合史，现移嘉兴（JIANGNAN）并沿用既有番号「陈东倭兵」T4（不新造番号）
         { generalId: 'haikou_maohaifeng', factionId: 'haikou', cityId: 'city_qingyuan_zj', generalName: '毛海峰', portrait: '/assets/JIANGNAN/haikou_maohaifeng.png', eliteName: '岑港倭兵', eliteTier: 4, legionName: '海贼倭寇军团' },   // 按史：王直养子王滶（毛海峰）1558 据舟山岑港抗官军（《明史纪事本末》卷五五、《倭变事略》）；T4 存在之兵（守港败亡，建制可考、无独立大捷/特色兵种）,   // 2026-10-25 按史补：王直养子王滶（本名毛海峰），1558 守舟山岑港，为俞大猷、戚继光所破（《倭变事略》）
 
 
@@ -17214,12 +17214,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     han_zhao: [
-        { generalId: 'shizhou_liucong', factionId: 'han_zhao', cityId: 'city_linfen', generalName: '刘聪', portrait: '/assets/CENTRAL/shizhou_liucong.png', eliteName: '匈奴控弦', eliteTier: 3 },   // 🔴 [2026-11-05 主人令「算了，还是移回来吧，如果是河朔军团就合理了」] 移回临汾：临汾已改河朔文化（WEI），刘聪随据点取古典时代太行军团（＝河朔军团），此前显示「中原军团」是因为临汾当时是 CENTRAL
+        { generalId: 'shizhou_liucong', factionId: 'han_zhao', cityId: 'city_linfen', generalName: '刘聪', portrait: '/assets/WEI/shizhou_liucong.png', eliteName: '匈奴控弦', eliteTier: 3 },   // 🔴 [2026-11-05 主人令「算了，还是移回来吧，如果是河朔军团就合理了」] 移回临汾：临汾已改河朔文化（WEI），刘聪随据点取古典时代太行军团（＝河朔军团），此前显示「中原军团」是因为临汾当时是 CENTRAL
 
     
-        { generalId: 'yao_liuyuan', factionId: 'han_zhao', cityId: 'city_linfen', generalName: '刘渊', portrait: '/assets/CENTRAL/yao_liuyuan.png', eliteName: '河朔骑兵', eliteTier: 4 },
+        { generalId: 'yao_liuyuan', factionId: 'han_zhao', cityId: 'city_linfen', generalName: '刘渊', portrait: '/assets/WEI/yao_liuyuan.png', eliteName: '河朔骑兵', eliteTier: 4 },
 
-        { generalId: 'han_zhao_liuyao', factionId: 'han_zhao', cityId: 'city_lishi', generalName: '刘曜', portrait: '/assets/WEI/han_zhao_liuyao.png', eliteName: '匈奴骑兵', eliteTier: 2 },   // 刘渊族子，304 年随起兵于离石，后为前赵皇帝（居住离石）
+        { generalId: 'han_zhao_liuyao', factionId: 'han_zhao', cityId: 'city_lishi', generalName: '刘曜', portrait: '/assets/XIANBEI/han_zhao_liuyao.png', eliteName: '匈奴骑兵', eliteTier: 2 },   // 刘渊族子，304 年随起兵于离石，后为前赵皇帝（居住离石）
     ],
     dongjin: [
         { generalId: 'zhong_xiexuan', factionId: 'dongjin', cityId: 'city_shouxian', generalName: '谢玄', portrait: '/assets/CENTRAL/zhong_xiexuan.png', eliteName: '北府兵', eliteTier: 0 },
@@ -17399,6 +17399,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     toyotomi: [
+        { generalId: 'toyotomi_horiuchiujiyoshi', factionId: 'toyotomi', cityId: 'city_kushimoto', generalName: '堀内氏善', portrait: '/assets/JAPAN/toyotomi_horiuchiujiyoshi.png', eliteName: '熊野水军', eliteTier: 3 },   // 🔴 [2026-11-05 补将] 熊野水军领袖、新宫城主，归丰臣秀吉，镇守纪伊南端海域（生卒年为主人令「编写大概」的估算）；普将
         { generalId: 'toyotomi_asai_chacha', factionId: 'toyotomi', cityId: 'city_osaka', generalName: '浅井茶茶', portrait: '/assets/JAPAN/toyotomi_asai_chacha.png', eliteName: '大坂浪人众', eliteTier: 4 }, // 🔴 [2026-11-05 主人令「丰臣家浅井茶茶，文化日本。请添加」] 补齐势力/据点/精锐：大坂城实际主政者（淀殿），1583–1615 居大坂城，主持 1615 大坂之阵守城；据点大阪（buildingStyle JAPAN）→ 文化 JAPAN；精锐「大坂浪人众」＝大坂之阵丰臣方以浪人众为守城骨干（《大坂之阵》诸书）
         { generalId: 'hashiba_fengchenxiuji', eliteName: '黄母衣众', eliteTier: 3, factionId: 'toyotomi', cityId: 'city_himeji', generalName: '丰臣秀吉', portrait: '/assets/JAPAN/hashiba_fengchenxiuji.png' },   // 按史：黄母衣众为秀吉马廻近卫与使番，具鲜明文化辨识度，但非独立战略野战主力，依 v3 定 T3。
         { generalId: 'gen_ishida_mitsunari', factionId: 'toyotomi', cityId: 'city_kyoto', generalName: '石田三成', portrait: '/assets/JAPAN/gen_ishida_mitsunari.png', eliteName: '佐和山众', eliteTier: 3 },

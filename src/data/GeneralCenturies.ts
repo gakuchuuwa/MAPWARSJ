@@ -1538,6 +1538,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xibanya_hurtado_mendoza': 16,   // 赫塔多·门多萨
     'hojo_shimizuyasuhide': 16,   // 清水康英
     'sumuroyi_sumuroy': 17,   // 苏穆罗伊
+    'toyotomi_horiuchiujiyoshi': 16,   // 堀内氏善
     'han_d_sunang': -2,
     'tang_malin': 8,   // 马璘
     'tang_duanxiushi': 8,   // 段秀实
