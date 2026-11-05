@@ -747,28 +747,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "小葛兰-加勒",
-                type: "sea",
-                id: "sea_city_quilon_city_jiale_1793624747116",
-                startConnection: "city_quilon",
-                endConnection: "city_jiale",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [76.6, 8.88],
-                    [77, 8],
-                    [78.86886, 6.67493],
-                    [80.1, 5.8],
-                    [80.21, 6.05],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "古里-霍尔木兹",
                 type: "sea",
                 id: "sea_city_guli_city_hormuz_1793624747116",
@@ -8312,38 +8290,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "科伦坡-亚齐",
-                type: "sea",
-                id: "sea_city_kelunpo_city_yaqi_1793626000001",
-                startConnection: "city_kelunpo",
-                endConnection: "city_yaqi",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [79.8612, 6.9271],
-                    [79.82666, 6.42448],
-                    [80.1, 5.8],
-                    [81.9, 5.9],
-                    [85.9479, 6.1983],
-                    [90, 6.4664],
-                    [94.32645, 6.15712],
-                    [98.12813, 5.81173],
-                    [98.76709, 3.87522],
-                    [98.66667, 4.58333],
-                    [98.25, 5.33333],
-                    [97.83333, 5.75],
-                    [96.5, 5.75],
-                    [96.16667, 6.08333],
-                    [95.32, 5.55],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "霍尔木兹-巴士拉",
                 type: "sea",
                 id: "sea_city_hormuz_city_bashila_1793627000001",
@@ -9003,94 +8949,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [74.41667, 12.16667],
                     [75.08333, 11.33333],
                     [75.78, 11.25],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "柯枝-果阿",
-                type: "sea",
-                id: "sea_city_cochin_city_guoa_1793632000017",
-                startConnection: "city_cochin",
-                endConnection: "city_guoa",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [76.24, 9.97],
-                    [75.75, 9.83333],
-                    [75.41667, 10.33333],
-                    [75.41667, 10.66667],
-                    [75.08333, 11.33333],
-                    [74.41667, 12.16667],
-                    [73.91667, 14.16667],
-                    [73.58333, 14.5],
-                    [73.25, 15.33333],
-                    [73.9117, 15.5023],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "柯枝-科伦坡",
-                type: "sea",
-                id: "sea_city_cochin_city_kelunpo_1793632000018",
-                startConnection: "city_cochin",
-                endConnection: "city_kelunpo",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [76.24, 9.97],
-                    [75.75, 9.83333],
-                    [75.75, 9.16667],
-                    [76.08333, 8.5],
-                    [76.83333, 7.75],
-                    [78, 7.75],
-                    [78.41667, 8.16667],
-                    [78.66667, 8.75],
-                    [79.16667, 8.75],
-                    [79.25, 6.83333],
-                    [79.8612, 6.9271],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "小葛兰-亚齐",
-                type: "sea",
-                id: "sea_city_quilon_city_yaqi_1793632000019",
-                startConnection: "city_quilon",
-                endConnection: "city_yaqi",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [76.6, 8.88],
-                    [77, 8],
-                    [78.86886, 6.67493],
-                    [80.1, 5.8],
-                    [81.9, 5.9],
-                    [85.9479, 6.1983],
-                    [90, 6.4664],
-                    [94.32645, 6.15712],
-                    [98.12813, 5.81173],
-                    [98.76709, 3.87522],
-                    [98.66667, 4.58333],
-                    [98.25, 5.33333],
-                    [97.83333, 5.75],
-                    [96.5, 5.75],
-                    [96.16667, 6.08333],
-                    [95.32, 5.55],
                 ]
             }
         },
@@ -10254,35 +10112,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [42.58333, -1],
                     [44.83333, 1.25],
                     [44.03, 1.1],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "亚齐-加勒",
-                type: "sea",
-                id: "sea_city_yaqi_city_jiale_1793660000003",
-                startConnection: "city_yaqi",
-                endConnection: "city_jiale"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [95.32, 5.55],
-                    [96.16667, 6.08333],
-                    [96.5, 5.75],
-                    [97.83333, 5.75],
-                    [98.25, 5.33333],
-                    [98.66667, 4.58333],
-                    [98.76709, 3.87522],
-                    [98.12813, 5.81173],
-                    [94.32645, 6.15712],
-                    [90, 6.4664],
-                    [85.9479, 6.1983],
-                    [81.9, 5.9],
-                    [80.1, 5.8],
-                    [80.21, 6.05],
                 ]
             }
         },
@@ -12650,33 +12479,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "马六甲-亚齐",
-                type: "sea",
-                id: "sea_city_malacca_city_yaqi_1793853923710",
-                startConnection: "city_malacca",
-                endConnection: "city_yaqi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [102.25, 2.19],
-                    [102, 2],
-                    [101.3128, 2.58917],
-                    [100.6, 3.2],
-                    [99.76381, 4.08452],
-                    [98.76709, 3.87522],
-                    [98.66667, 4.58333],
-                    [98.25, 5.33333],
-                    [97.83333, 5.75],
-                    [96.5, 5.75],
-                    [96.16667, 6.08333],
-                    [95.32, 5.55],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "亚齐-淡马锡",
                 type: "sea",
                 id: "sea_city_yaqi_city_danmaxi_1793853929544",
@@ -12699,34 +12501,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [102, 2],
                     [103.6, 1.1],
                     [103.85, 1.29],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "亚齐-尼科巴",
-                type: "sea",
-                id: "sea_city_yaqi_city_nikoba_1793853969783",
-                startConnection: "city_yaqi",
-                endConnection: "city_nikoba"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [95.32, 5.55],
-                    [96.16667, 6.08333],
-                    [96.5, 5.75],
-                    [97.83333, 5.75],
-                    [98.25, 5.33333],
-                    [98.66667, 4.58333],
-                    [98.76709, 3.87522],
-                    [98.12813, 5.81173],
-                    [94.32645, 6.15712],
-                    [94.16667, 6.41667],
-                    [94.25, 7.66667],
-                    [93.91667, 8],
-                    [93.53, 8.03],
                 ]
             }
         },
@@ -14968,6 +14742,178 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [100.70618, 12.57333],
                     [100.60043, 12.9711],
                     [100.53, 13.68],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "马六甲-尼科巴",
+                type: "sea",
+                id: "sea_city_malacca_city_nikoba_1793863632457",
+                startConnection: "city_malacca",
+                endConnection: "city_nikoba"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [102.25, 2.19],
+                    [102, 2],
+                    [101.3128, 2.58917],
+                    [100.6, 3.2],
+                    [99.76381, 4.08452],
+                    [98.12813, 5.81173],
+                    [94.32645, 6.15712],
+                    [94.16667, 6.41667],
+                    [94.25, 7.66667],
+                    [93.91667, 8],
+                    [93.53, 8.03],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "尼科巴-加勒",
+                type: "sea",
+                id: "sea_city_nikoba_city_jiale_1793863647617",
+                startConnection: "city_nikoba",
+                endConnection: "city_jiale"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [93.53, 8.03],
+                    [93.91667, 8],
+                    [94.25, 7.66667],
+                    [94.16667, 6.41667],
+                    [94.32645, 6.15712],
+                    [90, 6.4664],
+                    [85.9479, 6.1983],
+                    [81.9, 5.9],
+                    [80.1, 5.8],
+                    [80.21, 6.05],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "亚齐-科伦坡",
+                type: "sea",
+                id: "sea_city_yaqi_city_kelunpo_1793863664995",
+                startConnection: "city_yaqi",
+                endConnection: "city_kelunpo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [95.32, 5.55],
+                    [96.16667, 6.08333],
+                    [96.5, 5.75],
+                    [97.83333, 5.75],
+                    [98.25, 5.33333],
+                    [98.66667, 4.58333],
+                    [98.76709, 3.87522],
+                    [98.12813, 5.81173],
+                    [94.32645, 6.15712],
+                    [90, 6.4664],
+                    [85.9479, 6.1983],
+                    [81.9, 5.9],
+                    [80.1, 5.8],
+                    [79.82666, 6.42448],
+                    [79.8612, 6.9271],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "小葛兰-加勒",
+                type: "sea",
+                id: "sea_city_quilon_city_jiale_1793863694890",
+                startConnection: "city_quilon",
+                endConnection: "city_jiale"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [76.6, 8.88],
+                    [77, 8],
+                    [78.86886, 6.67493],
+                    [80.1, 5.8],
+                    [80.21, 6.05],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科伦坡-柯枝",
+                type: "sea",
+                id: "sea_city_kelunpo_city_cochin_1793863702505",
+                startConnection: "city_kelunpo",
+                endConnection: "city_cochin"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [79.8612, 6.9271],
+                    [79.25, 6.83333],
+                    [79.16667, 8.75],
+                    [78.66667, 8.75],
+                    [78.41667, 8.16667],
+                    [78, 7.75],
+                    [76.83333, 7.75],
+                    [76.08333, 8.5],
+                    [75.75, 9.16667],
+                    [75.75, 9.83333],
+                    [76.24, 9.97],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "小葛兰-古里",
+                type: "sea",
+                id: "sea_city_quilon_city_guli_1793863721276",
+                startConnection: "city_quilon",
+                endConnection: "city_guli"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [76.6, 8.88],
+                    [75.75, 9.16667],
+                    [75.75, 9.83333],
+                    [75.41667, 10.33333],
+                    [75.78, 11.25],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "柯枝-果阿",
+                type: "sea",
+                id: "sea_city_cochin_city_guoa_1793863729592",
+                startConnection: "city_cochin",
+                endConnection: "city_guoa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [76.24, 9.97],
+                    [75.75, 9.83333],
+                    [75.41667, 10.33333],
+                    [75.41667, 10.66667],
+                    [75.08333, 11.33333],
+                    [74.41667, 12.16667],
+                    [73.91667, 14.16667],
+                    [73.58333, 14.5],
+                    [73.25, 15.33333],
+                    [73.9117, 15.5023],
                 ]
             }
         },

@@ -1801,7 +1801,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     nidelan: [
         { generalId: 'gen_william_silent', cityId: 'city_hague', generalName: '威廉奥兰治', portrait: '/assets/GERMANIC/nidelan_weilian.png', eliteName: '日耳曼民兵', eliteTier: 4 },
-        { generalId: 'capetown_riebeeck', generalName: '里贝克', cityId: 'city_cape_town', factionId: 'nidelan', eliteName: '开普守军', eliteTier: 4, portrait: '/assets/GERMANIC/nidelan_yangfanlibeike.png' },
+        { generalId: 'capetown_riebeeck', generalName: '里贝克', cityId: 'city_cape_town', factionId: 'nidelan', eliteName: '好望堡守军', eliteTier: 4, portrait: '/assets/GERMANIC/nidelan_yangfanlibeike.png' },
         // 🔴 [2026-11-03 主人令「同一个政权只许一个势力」] 原势力 voc 并入：同一政权（延续/殖民地/汗族）并成一个势力
         { generalId: 'voc_coen', factionId: 'nidelan', cityId: 'city_amsterdam', generalName: '科恩', portrait: '/assets/GERMANIC/voc_coen.png', eliteName: '荷兰守备', eliteTier: 4 },   // 扬·彼得松·科恩（荷兰霍伦 1587–1629，VOC 总督）1621 率军征服班达群岛、独占肉豆蔻｜🔴 [2026-11-04 主人令「武将文化必须史定、不许从据点反抄」] 荷兰人＝GERMANIC；班达奈拉是 MALAY 据点，不能挂，移 VOC 总部阿姆斯特丹（GERMANIC）；精锐「东印度守备」成军地在东印度，随据点改「荷兰守备」（同番号同为 T4）
         { generalId: 'bfe_coyett', factionId: 'nidelan', cityId: 'city_tainan', generalName: '揆一', portrait: '/assets/JIANGNAN/bfe_coyett.png' , eliteName: '荷兰守备', eliteTier: 4},
@@ -3026,7 +3026,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
             // 阿赞布雅（1432–1518，葡萄牙航海指挥官，1482年建立埃尔米纳城堡并任首任总督）→ 埃尔米纳（PORTUGUESE）
                 // 若昂·达·诺瓦（约1460–1509，葡萄牙航海指挥官，1502年发现圣赫勒拿岛并开辟回航航路）→ 圣赫勒拿（PORTUGUESE）
-        { generalId: 'putaoya_danuowa', factionId: 'putaoya', cityId: 'city_sainthelena', generalName: '若昂达诺瓦', portrait: '/assets/PORTUGUESE/putaoya_danuowa.png', eliteName: '印度舰队', eliteTier: 4 },
+        { generalId: 'putaoya_danuowa', factionId: 'putaoya', cityId: 'city_sainthelena', generalName: '若昂达诺瓦', portrait: '/assets/PORTUGUESE/putaoya_danuowa.png', eliteName: '诺瓦船队', eliteTier: 4 },
 { generalId: 'putaoya_azanbuya', factionId: 'putaoya', cityId: 'city_elmina', generalName: '阿赞布雅', portrait: '/assets/PORTUGUESE/putaoya_azanbuya.png', eliteName: '圣若热堡守军', eliteTier: 4 },
 { generalId: 'putaoya_meineisaisi', factionId: 'putaoya', cityId: 'city_xiuta', generalName: '梅内塞斯', portrait: '/assets/PORTUGUESE/putaoya_meineisaisi.png', eliteName: '圣胡利安骑', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 1415 首任休达守将，1419 率守军解围
         { generalId: 'gen_afonso_henriques', eliteName: '奥利克军', eliteTier: 2, cityId: 'city_coimbra', generalName: '阿方索一世', portrait: '/assets/PORTUGUESE/gen_afonso_henriques.png' }, // 1139 奥利克战役葡萄牙本部
@@ -16393,7 +16393,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    guanche: { generalId: 'gen_bentejui', cityId: 'city_telde', generalName: '本特胡伊', portrait: '/assets/BERBER/gen_bentejui.png', eliteName: '柏柏尔骑手', eliteTier: 4 },
+    guanche: { generalId: 'gen_bentejui', cityId: 'city_telde', generalName: '本特胡伊', portrait: '/assets/BERBER/gen_bentejui.png', eliteName: '关切投石兵', eliteTier: 3 },
 
 
 

@@ -4,8 +4,8 @@
  *  · 环球（globe）：绝对优先陆路，按江户 → 里斯本的古代陆上商路走（东海道—山阳道—对马海峡—燕行路—辽西走廊—
  *    华北—河西走廊—塔里木—帕米尔—河中—呼罗珊—安纳托利亚—巴尔干—阿尔卑斯—比利牛斯—伊比利亚），
  *    陆路走不通的海峡、大洋（对马海峡、博斯普鲁斯、大西洋、太平洋）才换海路，最后沿大帆船航线回江户成环。
- *  · 航行（sail）：只走海路，按江户 → 东海 → 南海 → 印度洋 → 好望角 → 里斯本 → 巴西 → 麦哲伦海峡 → 太平洋东岸 →
- *    阿卡普尔科 → 马尼拉 → 江户 的大航海港口链成环。
+ *  · 航行（sail）：只走海路，按江户 → 东海 → 南海 → 印度洋 → 好望角 → 圣赫勒拿 → 巴西萨尔瓦多 → 麦哲伦海峡 → 太平洋东岸 →
+ *    阿卡普尔科 → 马尼拉 → 江户（不绕欧洲） 的大航海港口链成环。
  *
  * 链是环：走到末尾回到第 0 站。链上某站暂时到不了（例如新据点还没画路），玩家会自动跳到下一站，不会卡住。
  * `by` = 从上一站到本站走什么路：land 只走陆路，sea 只走海路；陆路不通时由调用方再退到「任意路」兜底。
@@ -18,12 +18,8 @@ export interface TourStop {
 const L = (id: string): TourStop => ({ id, by: 'land' });
 const S = (id: string): TourStop => ({ id, by: 'sea' });
 
-/** 环球后半段与航行共用的「里斯本以西」大西洋—太平洋港口链（均走海路） */
-const ATLANTIC_PACIFIC_SEA_TAIL: TourStop[] = [
-    S('city_jiadisi'),      // 加的斯
-    S('city_telde'),        // 加那利（拉斯帕尔马斯一带）
-    S('city_olinda'),       // 奥林达
-    S('city_salvador'),     // 萨尔瓦多
+/** 环球与航行共用：巴西以南 → 麦哲伦海峡 → 南美西岸 → 中美 → 太平洋（大帆船航线）→ 菲律宾 → 台湾 → 琉球 → 九州（均走海路） */
+const SOUTH_AMERICA_PACIFIC_SEA_TAIL: TourStop[] = [
     S('city_guanabara'),    // 里约
     S('city_buenosaires'),
     S('city_sanjulian'),
@@ -86,8 +82,9 @@ export const GLOBE_CHAIN: TourStop[] = [
     L('city_lyon'), L('city_avignon'), L('city_toulouse'), L('city_bayonne'), L('city_pamplona'),
     L('city_burgos'), L('city_madeli'), L('city_toledo'), L('city_merida'), L('city_badajoz'),
     L('city_evora'), L('city_lisiben'),
-    // 大西洋—太平洋海路回江户
-    ...ATLANTIC_PACIFIC_SEA_TAIL,
+    // 大西洋（葡萄牙巴西航线：里斯本 → 加那利 → 佛得角 → 巴伊亚，卡布拉尔 1500）—麦哲伦海峡—太平洋，海路回江户
+    S('city_telde'), S('city_ribeira'), S('city_salvador'),
+    ...SOUTH_AMERICA_PACIFIC_SEA_TAIL,
 ];
 
 /** 航行：纯海路港口环线（江户 → 好望角 → 里斯本 → 巴西 → 麦哲伦 → 阿卡普尔科 → 马尼拉 → 江户） */
@@ -107,10 +104,10 @@ export const SAIL_CHAIN: TourStop[] = [
     // 东非—好望角
     S('city_malindi'), S('city_mombasa'), S('city_kilwa'), S('city_mozambique'), S('city_sofala'),
     S('city_cape_town'),
-    // 南大西洋北上—里斯本
-    S('city_sainthelena'), S('city_ribeira'), S('city_angra'), S('city_lisiben'),
-    // 里斯本以西：大西洋—巴西—麦哲伦—南美西岸—中美—太平洋—菲律宾—台湾—琉球—九州
-    ...ATLANTIC_PACIFIC_SEA_TAIL,
+    // 横渡南大西洋：开普敦 → 圣赫勒拿 → 萨尔瓦多（葡萄牙印度船队回程，17 世纪下半叶起固定停靠巴伊亚）
+    S('city_sainthelena'), S('city_salvador'),
+    // 萨尔瓦多以南接麦哲伦航线 → 南美西岸 → 中美 → 太平洋大帆船航线 → 菲律宾 → 台湾 → 琉球 → 九州
+    ...SOUTH_AMERICA_PACIFIC_SEA_TAIL,
 ];
 
 export function getTourChain(mode: 'globe' | 'sail'): readonly TourStop[] {
