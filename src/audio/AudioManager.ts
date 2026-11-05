@@ -561,7 +561,8 @@ const BGM_REGION_GAIN: Record<string, number> = {
     poles_a: 0.692,  // -17.8 LUFS
     poles_b: 0.638,  // -17.1 LUFS
     bohemians_a: 0.575,  // -16.2 LUFS
-    bohemians_b: 0.676,  // -17.6 LUFS
+    // 🔴 [2026-11-05 主人令「删除背景音乐，扬琴 捷克 [bohemians_b]」] bohemians_b 已删除：
+    //    文件 public/bgm/bohemians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.BOHEMIANS 同步移除（3 首 → 2 首）。
     magyar_a: 0.617,  // -16.8 LUFS
     magyar_b: 0.661,  // -17.4 LUFS
     lithuanians_a: 0.708,  // -18.0 LUFS
@@ -697,7 +698,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     BASHU: ['de_BASHU', 'BASHU', 'bashu_a'],
     BENGALIS: ['de_BENGALIS', 'bengalis_a', 'bengalis_b'],
     BERBER: ['de_BERBER', 'berber_a', 'berber_b'],
-    BOHEMIANS: ['de_BOHEMIANS', 'bohemians_a', 'bohemians_b'],
+    BOHEMIANS: ['de_BOHEMIANS', 'bohemians_a'],
     BRITONS: ['de_BRITONS', 'britons_b'],
     BULGARIANS: ['de_BULGARIANS', 'bulgarians_a', 'bulgarians_b'],
     BURGUNDIANS: ['de_BURGUNDIANS', 'burgundians_a', 'burgundians_b'],

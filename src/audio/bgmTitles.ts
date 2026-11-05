@@ -35,7 +35,7 @@ export const BGM_TITLES: Record<string, string> = {
     berber_a: '圣地之战 中东',
     berber_b: '柏柏尔手鼓 Bendir',
     bohemians_a: '摩拉维亚民间器乐',
-    bohemians_b: '扬琴 捷克',
+    // 🔴 [2026-11-05 主人令「删除背景音乐，扬琴 捷克 [bohemians_b]」] bohemians_b（扬琴 捷克）已连同 .aud 文件删除
     britons_b: '盎格鲁撒克逊里拉 Harvest Dance',
     bulgarian_war: '保加利亚战鼓',
     bulgarians_a: '保加利亚加伊达风笛',

@@ -267,6 +267,9 @@ class QuickBattle {
         this.captureErrors();
         this.buildPanel();
         this.backdrop.say('');
+        // 打开页面第一次出选择画面也倒计时 30 秒自动开局（主人：「不是让你设计30秒开局吗」）
+        this.say(`${QuickBattle.AUTO_NEXT_SEC} 秒内可以选择，到时自动开局（不选＝随机）。`);
+        this.startCountdown();
         setInterval(() => this.watch(), 400);
         // 遮罩跟着战术画面走：选人、等进场、战术素材载入中、收场都盖住战略地图；战术画面开始淡入才撤。
         // 🔴 战术画布进场先全透明，等第一帧真正画出来（最多 10 秒）才淡入（Scene13WarLayer.entryFadePending）；
@@ -678,12 +681,26 @@ class QuickBattle {
         const cities = this.app.cityManager.getCities();
         const pool = region ? cities.filter((c) => getCityRegion(c) === region) : cities;
         const isLand = (p: { lat: number; lng: number }) => TerrainSpeedSystem.isLandAt(p);
+        // 🔴 [2026-11-05 主人令「野战不要选址到海上」] 战术层判水（Scene13EnvironmentGenerator.probeWater）
+        //    扫的是战场中心 8 个方向、最远 0.20° 的同心圆环：圈内只要一点是海，整张战场就按海岸图出。
+        //    只查两军与中点三个点不够，这里按同一套环扫（放宽到 0.25°），圈内有海就换地方。
+        const RING_DIST = [0, 0.005, 0.015, 0.035, 0.08, 0.14, 0.20, 0.25];
+        const seaNear = (p: { lat: number; lng: number }): boolean => {
+            for (const d of RING_DIST) {
+                for (let k = 0; k < 8; k++) {
+                    const ang = (k * Math.PI) / 4;
+                    if (!isLand({ lat: p.lat + d * Math.cos(ang), lng: p.lng + d * Math.sin(ang) })) return true;
+                    if (d === 0) break;
+                }
+            }
+            return false;
+        };
         const cm = this.app.cityManager;
         // 🔴 [2026-11-05 主人令「野战不要放大据点附近」] 野战离任何据点都要够远（约 50 公里），
         //    战场上不出现据点；找不到才逐步放宽（仍不贴城）
         const minGapSteps = [0.5, 0.4, 0.3];
         for (const minGap of minGapSteps) {
-            for (let tries = 0; tries < 60; tries++) {
+            for (let tries = 0; tries < 150; tries++) {
                 const c = rand(pool);
                 if (!c) return null;
                 const ang = Math.random() * Math.PI * 2;
@@ -691,7 +708,7 @@ class QuickBattle {
                 const mid = { lat: c.latitude + Math.sin(ang) * d, lng: c.longitude + Math.cos(ang) * d };
                 const a = { lat: mid.lat, lng: mid.lng - 0.03 };
                 const b = { lat: mid.lat, lng: mid.lng + 0.03 };
-                if (!isLand(a) || !isLand(b) || !isLand(mid)) continue;
+                if (!isLand(a) || !isLand(b) || seaNear(mid)) continue;
                 const near = cm.getNearestCity(null, { latitude: mid.lat, longitude: mid.lng });
                 if (near && Math.hypot(near.latitude - mid.lat, near.longitude - mid.lng) < minGap) continue;
                 const rname = CULTURE_NAMES[getCityRegion(c)] ?? '';
