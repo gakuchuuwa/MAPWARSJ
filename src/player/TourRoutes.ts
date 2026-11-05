@@ -1,9 +1,10 @@
 /**
  * 玩家「环球 / 航行」模式的知名商路链（2026-11-05 主人令）。
  *
- *  · 环球（globe）：绝对优先陆路，按江户 → 里斯本的古代陆上商路走（东海道—山阳道—对马海峡—燕行路—辽西走廊—
+ *  · 环球（globe）：绝对优先陆路，按江户 → 塞维利亚/加的斯的古代陆上商路走（东海道—山阳道—对马海峡—燕行路—辽西走廊—
  *    华北—河西走廊—塔里木—帕米尔—河中—呼罗珊—安纳托利亚—巴尔干—阿尔卑斯—比利牛斯—伊比利亚），
- *    陆路走不通的海峡、大洋（对马海峡、博斯普鲁斯、大西洋、太平洋）才换海路，最后沿大帆船航线回江户成环。
+ *    陆路走不通的海峡、大洋（对马海峡、博斯普鲁斯、大西洋、太平洋）才换海路：
+ *    大西洋走西班牙宝船队航线到韦拉克鲁斯，陆路穿墨西哥到阿卡普尔科，再沿大帆船航线回江户成环。
  *  · 航行（sail）：只走海路，按江户 → 东海 → 南海 → 印度洋 → 好望角 → 圣赫勒拿 → 巴西萨尔瓦多 → 麦哲伦海峡 → 太平洋东岸 →
  *    阿卡普尔科 → 马尼拉 → 江户（不绕欧洲） 的大航海港口链成环。
  *
@@ -18,7 +19,19 @@ export interface TourStop {
 const L = (id: string): TourStop => ({ id, by: 'land' });
 const S = (id: string): TourStop => ({ id, by: 'sea' });
 
-/** 环球与航行共用：巴西以南 → 麦哲伦海峡 → 南美西岸 → 中美 → 太平洋（大帆船航线）→ 菲律宾 → 台湾 → 琉球 → 九州（均走海路） */
+/** 大帆船航线（1565 起）：阿卡普尔科 → 关岛 → 萨马岛帕拉帕格（圣贝纳迪诺海峡口）→ 马尼拉 → 台湾 → 琉球 → 九州（均走海路） */
+const GALLEON_SEA_TAIL: TourStop[] = [
+    S('city_hagatna'),      // 阿加尼亚（乌马塔克）
+    S('city_palapag'),
+    S('city_manila'),
+    S('city_tainan'),       // 大员
+    S('city_mengjia'),      // 鸡笼一带
+    S('city_shuri'),        // 那霸
+    S('city_satsuma'),      // 坊津一带
+    S('city_akaogicheng'),  // 种子岛
+];
+
+/** 航行用：巴西以南 → 麦哲伦海峡 → 南美西岸 → 中美 → 太平洋（大帆船航线）→ 菲律宾 → 台湾 → 琉球 → 九州（均走海路） */
 const SOUTH_AMERICA_PACIFIC_SEA_TAIL: TourStop[] = [
     S('city_guanabara'),    // 里约
     S('city_buenosaires'),
@@ -33,17 +46,10 @@ const SOUTH_AMERICA_PACIFIC_SEA_TAIL: TourStop[] = [
     S('city_banama'),
     S('city_realejo'),
     S('city_acapulco'),
-    S('city_hagatna'),      // 阿加尼亚（乌马塔克）
-    S('city_palapag'),
-    S('city_manila'),
-    S('city_tainan'),       // 大员
-    S('city_mengjia'),      // 鸡笼一带
-    S('city_shuri'),        // 那霸
-    S('city_satsuma'),      // 坊津一带
-    S('city_akaogicheng'),  // 种子岛
+    ...GALLEON_SEA_TAIL,
 ];
 
-/** 环球：陆路优先的江户 → 里斯本商路，再沿海路回江户 */
+/** 环球：陆路优先的江户 → 加的斯商路，大西洋走海路，陆路穿墨西哥，太平洋海路回江户 */
 export const GLOBE_CHAIN: TourStop[] = [
     // 日本：东海道—山阳道
     S('city_edo'), L('city_hakone'), L('city_junfucheng'), L('city_hamamatsu'), L('city_atsuta'),
@@ -81,13 +87,16 @@ export const GLOBE_CHAIN: TourStop[] = [
     // 法国南部—比利牛斯—伊比利亚
     L('city_lyon'), L('city_avignon'), L('city_toulouse'), L('city_bayonne'), L('city_pamplona'),
     L('city_burgos'), L('city_madeli'), L('city_toledo'), L('city_merida'), L('city_badajoz'),
-    L('city_evora'), L('city_lisiben'),
-    // 大西洋（葡萄牙巴西航线：里斯本 → 加那利 → 佛得角 → 巴伊亚，卡布拉尔 1500）—麦哲伦海峡—太平洋，海路回江户
-    S('city_telde'), S('city_ribeira'), S('city_salvador'),
-    ...SOUTH_AMERICA_PACIFIC_SEA_TAIL,
+    L('city_seville'), L('city_jiadisi'),   // 塞维利亚—加的斯：西班牙「印度事务」出海港（里斯本不入环球链，免得折返）
+    // 大西洋（西班牙宝船队航线 Carrera de Indias：加的斯 → 加那利 → 加勒比哈瓦那 → 韦拉克鲁斯，哥伦布 1492 起）
+    S('city_telde'), S('city_havana'), S('city_veracruz'),
+    // 陆路穿墨西哥（中国之路 Camino de China）：韦拉克鲁斯 → 墨西哥城 → 阿卡普尔科
+    L('city_tenochtitlan'), L('city_acapulco'),
+    // 太平洋（马尼拉大帆船，1565 乌尔达内塔）→ 菲律宾 → 台湾 → 琉球 → 九州 → 江户
+    ...GALLEON_SEA_TAIL,
 ];
 
-/** 航行：纯海路港口环线（江户 → 好望角 → 里斯本 → 巴西 → 麦哲伦 → 阿卡普尔科 → 马尼拉 → 江户） */
+/** 航行：纯海路港口环线（江户 → 好望角 → 圣赫勒拿 → 巴西 → 麦哲伦 → 阿卡普尔科 → 马尼拉 → 江户） */
 export const SAIL_CHAIN: TourStop[] = [
     // 日本沿海与濑户内海
     S('city_edo'), S('city_kamakura'), S('city_shimoda'), S('city_toba'), S('city_kushimoto'), S('city_osaka'),

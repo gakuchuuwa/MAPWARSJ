@@ -10826,8 +10826,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'ryukyu_shangbazhi', cityId: 'city_shuri', generalName: '尚巴志', portrait: '/assets/JAPAN/ryukyu_shangbazhi.png', eliteName: '日本足轻', eliteTier: 4 },
-        { generalId: 'anmei_yuwandaqin', factionId: 'ryukyu', cityId: 'city_akakinagusuku', generalName: '与湾大亲', portrait: '/assets/JAPAN/anmei_yuwandaqin.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'ryukyu_shangbazhi', cityId: 'city_shuri', generalName: '尚巴志', portrait: '/assets/JAPAN/ryukyu_shangbazhi.png', eliteName: '中山按司兵', eliteTier: 4 },
+        { generalId: 'anmei_yuwandaqin', factionId: 'ryukyu', cityId: 'city_akakinagusuku', generalName: '与湾大亲', portrait: '/assets/JAPAN/anmei_yuwandaqin.png', eliteName: '奄美大亲兵', eliteTier: 4 },
 
 
 
@@ -10837,7 +10837,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'gonggu_gonggudaozhu', factionId: 'ryukyu', cityId: 'city_gugudao', generalName: '麻利芝', portrait: '/assets/JAPAN/gonggu_gonggudaozhu.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'gonggu_gonggudaozhu', factionId: 'ryukyu', cityId: 'city_gugudao', generalName: '麻利芝', portrait: '/assets/JAPAN/gonggu_gonggudaozhu.png', eliteName: '宫古按司兵', eliteTier: 4 },
 
 
 

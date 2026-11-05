@@ -171,7 +171,6 @@ export const BGM_DURATIONS: Record<string, number> = {
     portuguese_a: 164,
     portuguese_b: 163,
     pugan: 131,
-    puru_a: 171,
     puru_b: 240,
     rock_house_jail: 304,
     roma_a: 194,

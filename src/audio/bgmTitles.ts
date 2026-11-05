@@ -170,7 +170,6 @@ export const BGM_TITLES: Record<string, string> = {
     portuguese_a: '葡萄牙吉他 Verdes Anos',
     portuguese_b: '葡萄牙吉他 变奏',
     pugan: '蒲甘 The Furious Wild',
-    puru_a: '月护王 旃陀罗笈多 OST',
     rock_house_jail: 'Rock House Jail(暂停)',
     roma_a: '古罗马里拉琴',
     roma_b: '罗马战乐 鹰旗下',

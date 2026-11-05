@@ -531,7 +531,6 @@ const BGM_REGION_GAIN: Record<string, number> = {
     turks_a: 0.708,  // -18.0 LUFS
     turks_b: 0.724,  // -18.2 LUFS
     india_a: 0.724,  // -18.2 LUFS
-    puru_a: 0.638,  // -17.1 LUFS
     // 🔴 [2026-10-26 主人令「藏族长号(喇嘛) [tibet_a]，删除。」] tibet_a 已删除：
     //    文件 public/bgm/tibet_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.TIBET 同步移除（3 首 → 2 首，仍满足每文化 ≥2 首）。
     mughal_a: 0.684,  // -17.7 LUFS
@@ -745,7 +744,7 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     PERSIAN: ['de_PERSIAN', 'persian_b'],
     POLES: ['de_POLES', 'poles_a', 'poles_b'],
     PORTUGUESE: ['de_PORTUGUESE', 'portuguese_a', 'portuguese_b'],
-    PURU: ['de_PURU', 'puru_a', 'puru_b'],
+    PURU: ['de_PURU', 'puru_b'],
     ROMA: ['de_ROMA', 'roma_a', 'roma_b'],
     SASANIAN: ['de_SASANIAN', 'sasanian_a', 'sasanian_b'],
     SAXONS: ['de_SAXONS', 'saxons_a', 'saxons_b'],
