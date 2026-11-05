@@ -415,6 +415,19 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_ailiwen: -782,       // 公元前782年乌拉尔图王阿尔吉什提一世筑埃勒布尼要塞，为埃里温建城之始（英文维基 Yerevan、Erebuni Fortress）
     city_ani: 961,            // 阿尼，961 年巴格拉图尼王朝阿硕特三世迁都于此，城因之而兴（约；此前为要塞/聚落，英文维基 Ani）
     city_tushpa: -900,        // 前9世纪为乌拉尔图都城（今凡城），公元前331年为亚历山大所取（英文维基 Tushpa）
+    city_guangning: 1387,    // 1387 约（明洪武间置广宁卫，年份取约数）
+    city_anshicheng: -37,    // -37 约（高句丽立国年，安市城建年不详，取立国年）
+    city_burgos: 884,    // 884（迭戈·罗德里格斯建城，英文维基 Burgos）
+    city_turin: -28,    // -28 约（罗马奥古斯塔·陶里诺鲁姆殖民城）
+    city_evora: -57,    // -57 约（罗马自由尤利亚 Ebora，约数）
+    city_erzurum: 415,    // 415（东罗马建狄奥多西波利斯，英文维基 Erzurum）
+    city_bayonne: 300,    // 300 约（罗马 Lapurdum 筑城，约数）
+    city_badajoz: 875,    // 875（伊本·马尔万建城，英文维基 Badajoz）
+    city_pamplona: -74,    // -74（庞培建 Pompaelo）
+    city_nis: -300,    // -300 约（凯尔特—色雷斯 Naissus，约数）
+    city_sivas: -65,    // -65 约（庞培建大城 Megalopolis，后称塞巴斯泰亚，约数）
+    city_erzincan: -400,    // -400 约（亚美尼亚 Eriza，约数）
+    city_merida: -25,    // -25（奥古斯都建 Emerita Augusta）
     city_telabuzong: -756,    // 公元前756年米利都希腊殖民者建特拉佩祖斯（英文维基 Trabzon）
     city_amaxiya: -2000,      // 考古表明前2千纪赫梯人已在此定居，历经弗里吉亚、波斯，前4世纪末为本都王国都城（英文维基 Amasya）
     city_peierjiameng: -700,  // 前8世纪末已见定居遗存，前400/399年色诺芬《远征记》已载该城（英文维基 Pergamon）

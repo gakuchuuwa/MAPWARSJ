@@ -1855,6 +1855,19 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     desheng_liutong: { birth: 1400, death: 1466, kaoju: '推定' },  // 刘通
     wuzhou_wangwenjin: { birth: 570, death: 620, kaoju: '推定' },  // 汪文进
     liusong_tanshao: { birth: 370, death: 430, kaoju: '推定' },  // 檀韶
+    ming_d_wanghuazhen: { birth: 1565, death: 1632, kaoju: '推定' },  // 王化贞
+    gaogouli_yangwanchun: { birth: 600, death: 650, kaoju: '推定' },  // 杨万春
+    gen_fernan_gonzalez: { birth: 910, death: 970 },  // 费尔南·冈萨雷斯
+    safuyi_daen: { birth: 1669, death: 1741 },  // 道恩
+    gen_geraldo_sem_pavor: { birth: 1130, death: 1173, kaoju: '推定' },  // 无畏者吉拉尔多
+    osman_muhtar_pasha: { birth: 1839, death: 1919 },  // 穆赫塔尔帕夏
+    gaolu_tuweinuo: { birth: 1757, death: 1817 },  // 图韦诺
+    xibanya_menacho: { birth: 1766, death: 1811, kaoju: '推定' },  // 梅纳乔
+    gen_ignacio_loyola: { birth: 1491, death: 1556 },  // 罗耀拉
+    saierweiya_xingeliqi: { birth: 1770, death: 1809, kaoju: '推定' },  // 辛格利奇
+    xiwasi_burhandin: { birth: 1345, death: 1398 },  // 布尔汉丁
+    mengguqieke_bahramshah: { birth: 1150, death: 1225, kaoju: '推定' },  // 巴赫拉姆沙
+    malwan_ibn_marwan: { birth: 828, death: 889, kaoju: '推定' },  // 伊本·马尔万
     han_d_sunang: { birth: -230, death: -166, kaoju: '推定' },  // 孙卬
     tang_malin: { birth: 721, death: 777, kaoju: '推定' },  // 马璘
     tang_duanxiushi: { birth: 719, death: 783, kaoju: '推定' },  // 段秀实

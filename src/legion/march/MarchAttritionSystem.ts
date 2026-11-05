@@ -5,7 +5,7 @@
  *   攻下敌城后该城即己方城，途经即复位；战斗胜利 = 就地进行补给，亦复位）。
  *   · 计时：LegionManager 主循环每帧 += deltaTime（战斗中照走、扣减暂停；战后休整停表停扣）；
  *   · 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（不要求驻停，静止军团也生效）；
- *   · 整跳扣减：陆上超过 15 游戏秒、海上超过 30 游戏秒后，每 ATTRITION_CHUNK_SEC（15 游戏秒）
+ *   · 整跳扣减（2026-11-05 改）：免费期＝整跳间隔，陆普通 15 / 陆优势文化 60 / 海普通 30 / 海优势文化 120 秒，第 N 秒首减、此后每 N 秒一减，
  *     对当前兵力按连续跳数逐次加重（当前 15%、30%、45%……），允许归零；
  *   · 豁免：战斗中暂停扣减 / 战后休整停表 / str_13 以战养战全免；
  *   · 一视同仁：不分步骑水陆——同样的时间窗，速度快者走得更远，速度优势自动转为后勤优势
@@ -68,6 +68,14 @@ export function isArmyCultureExemptFromMarchAttrition(army: Army): boolean {
     return cfg.LAND_IMMUNE_CULTURES.includes(culture66);
 }
 
+/** 当前整跳间隔（游戏秒）：命中文化优势的陆 60 / 海 120，其余 15 */
+export function getMarchAttritionChunkSec(army: Army): number {
+    const cfg = GameConfig.MARCH_ATTRITION;
+    const advantage = isArmyCultureExemptFromMarchAttrition(army);
+    if (army.isOnSea) return advantage ? cfg.NAVAL_ADVANTAGE_CHUNK_SEC : cfg.NAVAL_ATTRITION_CHUNK_SEC;
+    return advantage ? cfg.LAND_ADVANTAGE_CHUNK_SEC : cfg.ATTRITION_CHUNK_SEC;
+}
+
 /** ③ 山地行军专精：命中 MOUNTAIN_MARCH_IMMUNE_CULTURES 的文化在山地行军如履平地（不减速） */
 export function isArmyCultureMountainMarchImmune(army: Army): boolean {
     const culture66 = resolveArmyCulture66Key(army);
@@ -123,13 +131,8 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     const troops = army.getTroops();
     if (troops <= 0) return 0;
 
-    // 文化特性豁免：海上不减兵文化在海上、陆地不减兵文化在陆地行军时自给自足，清零断粮计时并免扣兵
-    if (isArmyCultureExemptFromMarchAttrition(army)) {
-        army.timeSinceSupply = 0;
-        army.attritionChunkSec = 0;
-        army.attritionChunkCount = 0;
-        return 0;
-    }
+    // 文化优势（2026-11-05 主人改：豁免→减半）：优势文化照常断粮，只是间隔拉长（陆 60 秒 / 海 120 秒）
+    const chunkSec = getMarchAttritionChunkSec(army);
 
     // str_13 以战养战：行军减兵全免（写法照抄 Army.updateTerrainSpeed 查 mountain_march_immunity）
     if (generalHasStrategicEffect(army, 'march_attrition_immunity')) {
@@ -138,8 +141,9 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
         return 0;
     }
 
-    // 舰船载粮能力更强：海上免费补给期为 30 秒，陆上为 15 秒。
-    const freeSupplySec = army.isOnSea ? cfg.NAVAL_FREE_SUPPLY_SEC : cfg.FREE_SUPPLY_SEC;
+    // 🔴 [2026-11-05 主人定] 免费期＝整跳间隔：第 N 秒首减，之后每 N 秒一减
+    //    （陆普通 15 / 陆优势 60 / 海普通 30 / 海优势 120）。
+    const freeSupplySec = chunkSec;
     if (army.timeSinceSupply <= freeSupplySec) return 0;
 
     // 刚跨过免费期首帧：种子化为满 chunk，立刻触发第一次扣减（断粮即损，不等下一轮攒满）
@@ -152,12 +156,12 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     //    改判「本帧是否**刚**跨过免费窗」：只有跨过那一刻才种子化，此后一律正常累计。
     const justRanOut = army.timeSinceSupply - deltaTime <= freeSupplySec;
     if (justRanOut) {
-        army.attritionChunkSec = cfg.ATTRITION_CHUNK_SEC + deltaTime;
+        army.attritionChunkSec = chunkSec + deltaTime;
     } else {
         army.attritionChunkSec += deltaTime;
     }
-    if (army.attritionChunkSec < cfg.ATTRITION_CHUNK_SEC) return 0;
-    army.attritionChunkSec -= cfg.ATTRITION_CHUNK_SEC;
+    if (army.attritionChunkSec < chunkSec) return 0;
+    army.attritionChunkSec -= chunkSec;
     army.attritionChunkCount += 1;
     const escalatingRate = cfg.ATTRITION_CHUNK_RATE * army.attritionChunkCount;
     const loss = Math.min(

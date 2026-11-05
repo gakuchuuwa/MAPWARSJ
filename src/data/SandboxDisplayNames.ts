@@ -606,6 +606,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 // 🔴 [2026-11-04 主人令「按历史修复」] shangdu／wistahm 两个势力已删（都不是政权：两都之战的元内一方、萨珊末期权臣本人），并入大元／萨珊，旗号登记同时删除
 'mihran': '米赫',
 'dongyang': '会稽',   // 🔴 [2026-11-04 按历史修复] 势力改「会稽义军」，旗号「会稽」
+'xiwasi': '锡瓦',
+'mengguqieke': '门古',
+'malwan': '马尔',
     'yun': '允',
     'huangwang': '齐',  // 🔴 [2026-11-03] 黄巢国号大齐，不用姓
     'basha_d': '巴沙',

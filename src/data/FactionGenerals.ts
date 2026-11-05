@@ -488,6 +488,15 @@ export interface FactionGeneral {
 
 
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
+    xiwasi: [
+        { generalId: 'xiwasi_burhandin', factionId: 'xiwasi', cityId: 'city_sivas', generalName: '布尔汉丁', portrait: '/assets/TURKS/xiwasi_burhandin.png', eliteName: '锡城突骑', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 卡迪布尔汉丁，1381 年起以锡瓦斯称苏丹，镇守并扩张安纳托利亚中部；普将，待核实实名敌帅胜绩
+    ],
+    mengguqieke: [
+        { generalId: 'mengguqieke_bahramshah', factionId: 'mengguqieke', cityId: 'city_erzincan', generalName: '巴赫拉姆沙', portrait: '/assets/TURKS/mengguqieke_bahramshah.png', eliteName: '埃城突骑', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 门古切克埃尔津詹支君主（约 1155–1225），以埃尔津詹为治所；普将
+    ],
+    malwan: [
+        { generalId: 'malwan_ibn_marwan', factionId: 'malwan', cityId: 'city_merida', generalName: '伊本·马尔万', portrait: '/assets/ORIE/malwan_ibn_marwan.png', eliteName: '穆瓦拉德兵', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 穆瓦拉德首领，868 年据梅里达起事对抗科尔多瓦埃米尔，875 年建巴达霍斯；普将
+    ],
     hulumusi: [
         // 阿塔（约1450–1512，Khwaja Ata，忽鲁谟斯首相兼守城总指挥，1507年率军民修筑要塞保卫霍尔木兹海峡）→ 霍尔木兹（ORIE）
         { generalId: 'hulumusi_ata', factionId: 'hulumusi', cityId: 'city_hormuz', generalName: '阿塔', portrait: '/assets/ORIE/hulumusi_ata.png', eliteName: '霍尔木兹兵', eliteTier: 4 },
@@ -1854,7 +1863,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    safuyi: { generalId: 'safuyi_ameidi', cityId: 'city_shangbeili', generalName: '阿梅迪奥', portrait: '/assets/LATIN/safuyi_ameidi.png', eliteName: '意大利民兵', eliteTier: 4 },
+    safuyi: [
+        { generalId: 'safuyi_ameidi', cityId: 'city_shangbeili', generalName: '阿梅迪奥', portrait: '/assets/LATIN/safuyi_ameidi.png', eliteName: '意大利民兵', eliteTier: 4 },
+        { generalId: 'safuyi_daen', factionId: 'safuyi', cityId: 'city_turin', generalName: '道恩', portrait: '/assets/LATIN/safuyi_daen.png', eliteName: '都灵守军', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 1706 年都灵围城守将（奥军将领受萨伏依公爵委任守城），守住至解围；守将例外名将候选，先挂普将档
+    ],
 
 
 
@@ -2395,6 +2407,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     gaolu: [
+        { generalId: 'gaolu_tuweinuo', factionId: 'gaolu', cityId: 'city_bayonne', generalName: '图韦诺', portrait: '/assets/FRANKS/gaolu_tuweinuo.png', eliteName: '要塞守军', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 1814 年巴约讷要塞总督，坚守至战争结束；普将，待核实战役胜绩（法兰西势力按势力时代归城堡档）
         { generalId: 'gaolu_dipaerkai', factionId: 'gaolu', cityId: 'city_martinique', generalName: '迪帕尔凯', portrait: '/assets/FRANKS/gaolu_dipaerkai.png', eliteName: '法兰西守备', eliteTier: 4 },   // 1635 设防马提尼克、首任总督（1606–1658）
         { generalId: 'gaolu_wulixi', factionId: 'gaolu', cityId: 'city_bali', generalName: '乌里希', portrait: '/assets/FRANKS/gaolu_wulixi.png', eliteName: '阿尔萨斯兵', eliteTier: 3 },   // 🔴 [2026-11-01 补将·移将] 1870 斯特拉斯堡围城战法军守将，自 8 月守至 9 月 28 日城陷｜斯特拉斯堡＝日耳曼据点、将属法兰西→② 移回势力起源地巴黎（同文化 FRANKS）
         // 🔴 [2026-10-20 经典战规则] 劳多尼耶＝法国胡格诺首领（1565 卡罗琳堡被杀）→ 巴黎（FRANKS）；帝国时代法兰西军团；立绘留空
@@ -2674,6 +2687,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     saierweiya: [
+        { generalId: 'saierweiya_xingeliqi', factionId: 'saierweiya', cityId: 'city_nis', generalName: '辛格利奇', portrait: '/assets/MAGYAR/saierweiya_xingeliqi.png', eliteName: '车加尔义勇', eliteTier: 3 },   // 🔴 [2026-11-05 补将] 1809 年车加尔山战役塞尔维亚起义军指挥官，战死引爆火药桶；普将（战败殉职）
 
 
 
@@ -2998,6 +3012,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     putaoya: [
+        { generalId: 'gen_geraldo_sem_pavor', factionId: 'putaoya', cityId: 'city_evora', generalName: '无畏者吉拉尔多', portrait: '/assets/PORTUGUESE/gen_geraldo_sem_pavor.png', eliteName: '夜袭突击队', eliteTier: 2 },   // 🔴 [2026-11-05 补将] 1165 年夜袭夺埃武拉并镇守（英文维基 Geraldo Geraldes）；先挂普将档
         // 🔴 [2026-11-04 主人令「按历史修复」] 原势力「亚速尔（yasuer，葡属大西洋群岛，非政权）」已删，西普里亚诺改挂葡萄牙；据点安格拉同步改归葡萄牙
         { factionId: 'putaoya', generalId: 'gen_cipriano_figueiredo', cityId: 'city_angra', generalName: '西普里亚诺', portrait: '/assets/PORTUGUESE/gen_cipriano_figueiredo.png' , legionName: '帝国时代葡萄牙风琴军团', eliteName: '特塞拉民团', eliteTier: 4 },
         // 安东尼奥·拉波索·塔瓦雷斯（António Raposo Tavares，1598—1658）：葡萄牙圣保罗旗队（Bandeirantes）统帅，1628年自圣保罗率军远征伊瓜苏/瓜伊拉并横穿南美内陆（按史：巴西旗队史；对手无具名主帅 → 普将）
@@ -5261,6 +5276,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     ming_d: [
+        { generalId: 'ming_d_wanghuazhen', factionId: 'ming_d', cityId: 'city_guangning', generalName: '王化贞', portrait: '/assets/WEI/ming_d_wanghuazhen.png', eliteName: '广宁镇兵', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 辽东巡抚驻广宁，天启二年广宁之战主帅，普将（弃城败绩，无够格胜仗）
 
 
 
@@ -7450,6 +7466,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     gaogouli: [
+        { generalId: 'gaogouli_yangwanchun', factionId: 'gaogouli', cityId: 'city_anshicheng', generalName: '杨万春', portrait: '/assets/KOREA/gaogouli_yangwanchun.png', eliteName: '安市守军', eliteTier: 2 },   // 🔴 [2026-11-05 补将] 安市城主，645 年守城击退唐太宗（《旧唐书·东夷传》），守将例外名将候选；技能待另行设计，先挂普将档
 
 
 
@@ -9603,6 +9620,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     kasidiliya: [
+        { generalId: 'gen_ignacio_loyola', factionId: 'kasidiliya', cityId: 'city_pamplona', generalName: '罗耀拉', portrait: '/assets/SPANISH/gen_ignacio_loyola.png', eliteName: '堡垒守军', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 1521 年潘普洛纳城堡守军军官，守城负伤；普将（城破）
+        { generalId: 'xibanya_menacho', factionId: 'kasidiliya', cityId: 'city_badajoz', generalName: '梅纳乔', portrait: '/assets/SPANISH/xibanya_menacho.png', eliteName: '西班牙守军', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 1811 年巴达霍斯守将，守城战死；普将（城未守住）
+        { generalId: 'gen_fernan_gonzalez', factionId: 'kasidiliya', cityId: 'city_burgos', generalName: '费尔南·冈萨雷斯', portrait: '/assets/SPANISH/gen_fernan_gonzalez.png', eliteName: '伯国骑士', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 卡斯蒂利亚伯爵，以布尔戈斯为都，统一伯国并摆脱莱昂（10 世纪）；普将，待核实实名敌帅胜绩
 
 
 
@@ -13912,6 +13932,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     osman: [
+        { generalId: 'osman_muhtar_pasha', factionId: 'osman', cityId: 'city_erzurum', generalName: '穆赫塔尔帕夏', portrait: '/assets/TURKS/osman_muhtar_pasha.png', eliteName: '埃城守军', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 1877–78 俄土战争奥斯曼安纳托利亚军统帅，退守埃尔祖鲁姆；普将，待核实阿拉贾达格战役胜绩
         // 🔴 [2026-10-25 补B] 伊普西兰蒂斯（1792–1828，君士坦丁堡法纳尔希腊贵族、拜占庭政治遗产继承者；1821 率神圣军团打响反奥斯曼第一枪）｜势力 希腊王国｜据点 君士坦丁堡（BYZANTINE 文化，法纳尔区）｜普将｜精锐「神圣军团」T4｜立绘留空
         { generalId: 'bfe_ypsilantis', factionId: 'xilawangguo', cityId: 'city_junshitandingbao', generalName: '伊普西兰蒂斯', portrait: '/assets/BYZANTINE/bfe_ypsilantis.png', eliteName: '神圣军团', eliteTier: 4 },
         // 🔴 [2026-10-25 补B] 穆斯塔法二世（1664–1703，奥斯曼苏丹；1697 曾塔惨败）｜势力 奥斯曼｜据点 埃迪尔内（TURKS 文化）｜普将（实败）｜精锐「近卫军」T4｜立绘留空

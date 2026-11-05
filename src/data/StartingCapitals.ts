@@ -559,6 +559,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
 // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'（上都朝廷）与 'wistahm'（维斯塔姆）都不是政权，首府登记删除（并入大元／萨珊）
 'mihran': 'city_feiluzhabade',
 'dongyang': 'city_kuaiji',
+'xiwasi': 'city_sivas',
+'mengguqieke': 'city_erzincan',
+'malwan': 'city_merida',
     'huangwang': 'city_xianxia',
 'yehe': 'city_bamiancheng',
 'wula': 'city_wushecheng',

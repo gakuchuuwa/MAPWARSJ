@@ -1517,6 +1517,19 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'desheng_liutong': 15,
     'wuzhou_wangwenjin': 7,
     'liusong_tanshao': 5,
+    'ming_d_wanghuazhen': 17,   // 王化贞
+    'gaogouli_yangwanchun': 7,   // 杨万春
+    'gen_fernan_gonzalez': 10,   // 费尔南·冈萨雷斯
+    'safuyi_daen': 18,   // 道恩
+    'gen_geraldo_sem_pavor': 12,   // 无畏者吉拉尔多
+    'osman_muhtar_pasha': 19,   // 穆赫塔尔帕夏
+    'gaolu_tuweinuo': 19,   // 图韦诺
+    'xibanya_menacho': 19,   // 梅纳乔
+    'gen_ignacio_loyola': 16,   // 罗耀拉
+    'saierweiya_xingeliqi': 19,   // 辛格利奇
+    'xiwasi_burhandin': 14,   // 布尔汉丁
+    'mengguqieke_bahramshah': 12,   // 巴赫拉姆沙
+    'malwan_ibn_marwan': 9,   // 伊本·马尔万
     'han_d_sunang': -2,
     'tang_malin': 8,   // 马璘
     'tang_duanxiushi': 8,   // 段秀实

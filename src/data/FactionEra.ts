@@ -514,6 +514,9 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'（上都）与 'wistahm'（维斯塔姆）两个势力已删，并入大元／萨珊，时代随本家
     'mihran': [{ from: -9999, era: 'antiquity' }], // 米赫兰
     'dongyang': [{ from: -9999, era: 'feudal' }], // 东扬
+    'xiwasi': [{ from: -9999, era: 'castle' }], // 锡瓦斯苏丹国
+    'mengguqieke': [{ from: -9999, era: 'castle' }], // 门古切克王朝
+    'malwan': [{ from: -9999, era: 'feudal' }], // 马尔万政权
     'tiaodun_qishi': [{ from: -9999, era: 'castle' }], // 条顿骑士团
     'tiemuer': [{ from: -9999, era: 'castle' }], // 图兰
     'tokugawa': [{ from: -9999, era: 'imperial' }], // 德川

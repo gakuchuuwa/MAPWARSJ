@@ -1846,6 +1846,19 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'desheng_liutong': 'castle', // 刘通
     'wuzhou_wangwenjin': 'feudal', // 汪文进
     'liusong_tanshao': 'feudal', // 檀韶
+    'ming_d_wanghuazhen': 'imperial', // 王化贞
+    'gaogouli_yangwanchun': 'feudal', // 杨万春
+    'gen_fernan_gonzalez': 'castle', // 费尔南·冈萨雷斯
+    'safuyi_daen': 'castle', // 道恩
+    'gen_geraldo_sem_pavor': 'castle', // 无畏者吉拉尔多
+    'osman_muhtar_pasha': 'imperial', // 穆赫塔尔帕夏
+    'gaolu_tuweinuo': 'castle', // 图韦诺
+    'xibanya_menacho': 'imperial', // 梅纳乔
+    'gen_ignacio_loyola': 'castle', // 罗耀拉
+    'saierweiya_xingeliqi': 'castle', // 辛格利奇
+    'xiwasi_burhandin': 'castle', // 布尔汉丁
+    'mengguqieke_bahramshah': 'castle', // 巴赫拉姆沙
+    'malwan_ibn_marwan': 'feudal', // 伊本·马尔万
     'han_d_sunang': 'antiquity', // 孙卬
     'tang_malin': 'feudal', // 马璘（补将）
     'tang_duanxiushi': 'feudal', // 段秀实（补将）

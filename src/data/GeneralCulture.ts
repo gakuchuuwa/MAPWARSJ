@@ -1882,6 +1882,19 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'han_d_wangji': 'BASHU',   // 王吉｜据点 临邛
     'han_d_pengyue': 'CENTRAL',   // 彭越｜据点 定陶
     'han_d_wuyang': 'HUGUANG',   // 吴阳｜据点 沅陵
+    'ming_d_wanghuazhen': 'WEI',   // 王化贞｜据点 广宁
+    'gaogouli_yangwanchun': 'KOREA',   // 杨万春｜据点 安市城
+    'gen_fernan_gonzalez': 'SPANISH',   // 费尔南·冈萨雷斯｜据点 布尔戈斯
+    'safuyi_daen': 'LATIN',   // 道恩｜据点 都灵
+    'gen_geraldo_sem_pavor': 'PORTUGUESE',   // 无畏者吉拉尔多｜据点 埃武拉
+    'osman_muhtar_pasha': 'TURKS',   // 穆赫塔尔帕夏｜据点 埃尔祖鲁姆
+    'gaolu_tuweinuo': 'FRANKS',   // 图韦诺｜据点 巴约讷
+    'xibanya_menacho': 'SPANISH',   // 梅纳乔｜据点 巴达霍斯
+    'gen_ignacio_loyola': 'SPANISH',   // 罗耀拉｜据点 潘普洛纳
+    'saierweiya_xingeliqi': 'MAGYAR',   // 辛格利奇｜据点 尼什
+    'xiwasi_burhandin': 'TURKS',   // 布尔汉丁｜据点 锡瓦斯
+    'mengguqieke_bahramshah': 'TURKS',   // 巴赫拉姆沙｜据点 埃尔津詹
+    'malwan_ibn_marwan': 'ORIE',   // 伊本·马尔万｜据点 梅里达
     'han_d_sunang': 'CENTRAL',   // 孙卬｜据点 萧关
     'manzhou_d_sabusu': 'NORTHEAST',   // 萨布素｜据点 卜奎
     'manzhou_d_dongtianbi': 'BASHU',   // 董天弼｜据点 美诺寨

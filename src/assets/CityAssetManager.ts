@@ -496,6 +496,9 @@ export class CityAssetManager {
 // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'／'wistahm' 两个势力已删（非政权），旗面登记一并删除
 'mihran': '米赫',
 'dongyang': '会稽',
+'xiwasi': '锡瓦',
+'mengguqieke': '门古',
+'malwan': '马尔',
         'yun': '允',
         'huangwang': '齐',
         'basha_d': '巴沙',

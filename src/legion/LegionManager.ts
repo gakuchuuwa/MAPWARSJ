@@ -40,7 +40,6 @@ import {
     type LegionRoadMarchDeps,
 } from './march/LegionRoadMarch';
 import {
-    isArmyCultureExemptFromMarchAttrition,
     resetSupplyTimerIfNearOwnCity,
     tickMarchAttrition,
 } from './march/MarchAttritionSystem';
@@ -1141,11 +1140,8 @@ export class LegionManager {
         //    战后休整停表）
         //    🔴 [2026-09-11 主人定] 剧本行军豁免期间**连表也停**：否则豁免期照记断粮时长，
         //       剧本军团一解除豁免（抵达战场开打前那一刻）就会立刻吃到超高跳数的减员。
-        if (isArmyCultureExemptFromMarchAttrition(army)) {
-            army.timeSinceSupply = 0;
-            army.attritionChunkSec = 0;
-            army.attritionChunkCount = 0;
-        } else if (!(army.isPostBattleResting?.() ?? false)
+        //    文化优势不再豁免，只拉长整跳间隔（见 getMarchAttritionChunkSec）
+        if (!(army.isPostBattleResting?.() ?? false)
             && (!army.scriptMarchExempt || army.generalId === 'gen_alexander_great')) {
             army.timeSinceSupply += deltaTime;
         }
