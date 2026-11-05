@@ -67389,38 +67389,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "姬路城-⚔山崎战役",
-                type: "road",
-                id: "road_city_himeji_bf_fcam7_7_1793182986158",
-                startConnection: "city_himeji",
-                endConnection: "bf_fcam7_7"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [134.6939, 34.8394],
-                    [134.84708, 34.940511],
-                    [134.896573, 34.944635],
-                    [134.941942, 34.940511],
-                    [135.053302, 34.91164],
-                    [135.102795, 34.907515],
-                    [135.127541, 34.895142],
-                    [135.189407, 34.886893],
-                    [135.222403, 34.870396],
-                    [135.238901, 34.858022],
-                    [135.27602, 34.841525],
-                    [135.366758, 34.833276],
-                    [135.399753, 34.808529],
-                    [135.432748, 34.804405],
-                    [135.482241, 34.808529],
-                    [135.552357, 34.808529],
-                    [135.6811, 34.8925],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "姑衍山-⚔十三翼战役",
                 type: "road",
                 id: "road_city_guyanshan_bf_cam4_1_1793183031355",
@@ -73512,6 +73480,33 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [135.820444, 34.503322],
                     [135.766827, 34.495073],
                     [135.689392, 34.336668],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "姬路城-大阪",
+                type: "road",
+                id: "road_city_himeji_city_osaka_1793847982518",
+                startConnection: "city_himeji",
+                endConnection: "city_osaka"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [134.6939, 34.8394],
+                    [134.871827, 34.783783],
+                    [134.970813, 34.705419],
+                    [135.028555, 34.688921],
+                    [135.073924, 34.664174],
+                    [135.09867, 34.655926],
+                    [135.144039, 34.651801],
+                    [135.177034, 34.668299],
+                    [135.218278, 34.69717],
+                    [135.27602, 34.726041],
+                    [135.342011, 34.738414],
+                    [135.5262, 34.6873],
                 ]
             }
         },

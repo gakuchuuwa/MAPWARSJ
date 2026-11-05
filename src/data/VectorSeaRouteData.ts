@@ -13375,5 +13375,23 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "原之辻-金石馆",
+                type: "sea",
+                id: "sea_city_yuanzhishi_city_tsushima_1793848032336",
+                startConnection: "city_yuanzhishi",
+                endConnection: "city_tsushima"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [129.703, 33.791],
+                    [129.73488, 34.02455],
+                    [129.2892, 34.2031],
+                ]
+            }
+        },
     ]
 };
