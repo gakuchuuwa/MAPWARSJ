@@ -629,8 +629,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_koshamain', cityId: 'city_moyoro', generalName: '柯沙玛因', portrait: '/assets/JAPAN/gen_koshamain.png', eliteName: '日本足轻', eliteTier: 4 },
-        { generalId: 'ayinu_hushemoquan', factionId: 'ayinu_ezo', cityId: 'city_bailao', generalName: '胡奢魔犬', portrait: '/assets/JAPAN/ayinu_hushemoquan.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'gen_koshamain', cityId: 'city_moyoro', generalName: '柯沙玛因', portrait: '/assets/JAPAN/gen_koshamain.png', eliteName: '阿伊努弓手', eliteTier: 4 },
+        { generalId: 'ayinu_hushemoquan', factionId: 'ayinu_ezo', cityId: 'city_bailao', generalName: '胡奢魔犬', portrait: '/assets/JAPAN/ayinu_hushemoquan.png', eliteName: '阿伊努弓手', eliteTier: 4 },
 
 
 
@@ -5624,7 +5624,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'haikou_wangzhi', factionId: 'haikou', cityId: 'city_nagasaki', generalName: '汪直', portrait: '/assets/JAPAN/haikou_wangzhi.png', eliteName: '日本足轻', eliteTier: 4, legionName: '海贼倭寇军团' },   // 🔴 [2026-11-05 主人令「要更贴史就移长崎」] 基地在日本平户（今长崎县），库里无平户 → 取最近的同文化据点长崎（原挂对马·原之辻）
+        { generalId: 'haikou_wangzhi', factionId: 'haikou', cityId: 'city_nagasaki', generalName: '汪直', portrait: '/assets/JAPAN/haikou_wangzhi.png', eliteName: '嘉靖倭寇', eliteTier: 4, legionName: '海贼倭寇军团' },   // 🔴 [2026-11-05 主人令「要更贴史就移长崎」] 基地在日本平户（今长崎县），库里无平户 → 取最近的同文化据点长崎（原挂对马·原之辻）
 
 
 
@@ -7178,7 +7178,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     otomo_d: [
-        { generalId: 'otomo_d_lihuadaoxue', cityId: 'city_taizaifu', generalName: '立花道雪', portrait: '/assets/JAPAN/otomo_d_lihuadaoxue.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'otomo_d_lihuadaoxue', cityId: 'city_taizaifu', generalName: '立花道雪', portrait: '/assets/JAPAN/otomo_d_lihuadaoxue.png', eliteName: '大友足轻', eliteTier: 4 },
         { generalId: 'otomo_sorin', factionId: 'otomo_d', cityId: 'city_funei', generalName: '大友宗麟', portrait: '/assets/JAPAN/otomo_sorin.png', eliteName: '大友水军', eliteTier: 3 },   // 🔴 [2026-10-25 新增] 大友义镇/宗麟，丰后府内馆为本据（居住/镇守）；普将
     ],
 
@@ -7187,7 +7187,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    kaga_d: { generalId: 'kaga_d_xiajianlailian', cityId: 'city_jianghu', generalName: '下间赖廉', portrait: '/assets/JAPAN/kaga_d_xiajianlailian.png', eliteName: '日本足轻', eliteTier: 4 },
+    kaga_d: { generalId: 'kaga_d_xiajianlailian', cityId: 'city_jianghu', generalName: '下间赖廉', portrait: '/assets/JAPAN/kaga_d_xiajianlailian.png', eliteName: '一向一揆兵', eliteTier: 4 },
 
 
 
@@ -7202,7 +7202,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    suwa_d: { generalId: 'suwa_d_zoufanglaizhong', cityId: 'city_gaodao', generalName: '诹访赖重', portrait: '/assets/JAPAN/suwa_d_zoufanglaizhong.png', eliteName: '日本足轻', eliteTier: 4 },
+    suwa_d: { generalId: 'suwa_d_zoufanglaizhong', cityId: 'city_gaodao', generalName: '诹访赖重', portrait: '/assets/JAPAN/suwa_d_zoufanglaizhong.png', eliteName: '诹访足轻', eliteTier: 4 },
 
 
 
@@ -7353,7 +7353,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    fujiwara: { generalId: 'fujiwara_xiuheng', cityId: 'city_yanaginogosho', generalName: '藤原秀衡', portrait: '/assets/JAPAN/fujiwara_tengyuanxiuheng.png', eliteName: '日本足轻', eliteTier: 4 },
+    fujiwara: { generalId: 'fujiwara_xiuheng', cityId: 'city_yanaginogosho', generalName: '藤原秀衡', portrait: '/assets/JAPAN/fujiwara_tengyuanxiuheng.png', eliteName: '奥州骑射兵', eliteTier: 4 },
 
 
 
@@ -7361,14 +7361,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    kakizaki: { generalId: 'kakizaki_liqiqingguang', cityId: 'city_katsuyama', generalName: '蛎崎庆广', portrait: '/assets/JAPAN/kakizaki_liqiqingguang.png', eliteName: '日本足轻', eliteTier: 4 },
+    kakizaki: { generalId: 'kakizaki_liqiqingguang', cityId: 'city_katsuyama', generalName: '蛎崎庆广', portrait: '/assets/JAPAN/kakizaki_liqiqingguang.png', eliteName: '松前足轻', eliteTier: 4 },
 
 
 
 
 
 
-    so: { generalId: 'so_zongyizhi', cityId: 'city_tsushima', generalName: '宗义智', portrait: '/assets/JAPAN/so_zongyizhi.png', eliteName: '日本足轻', eliteTier: 4 },
+    so: { generalId: 'so_zongyizhi', cityId: 'city_tsushima', generalName: '宗义智', portrait: '/assets/JAPAN/so_zongyizhi.png', eliteName: '对马足轻', eliteTier: 4 },
     goto: { generalId: 'goto_xuanya', cityId: 'city_goto', generalName: '五岛玄雅', portrait: '/assets/JAPAN/goto_xuanya.png', eliteName: '五岛水军', eliteTier: 4 },
     omura: { generalId: 'omura_sumitada', cityId: 'city_nagasaki', generalName: '大村纯忠', portrait: '/assets/JAPAN/omura_sumitada.png', eliteName: '大村众', eliteTier: 4 },
 
@@ -12416,7 +12416,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    yizhi: { generalId: 'yizhi_beigou', cityId: 'city_yuanzhishi', generalName: '难升米', portrait: '/assets/JAPAN/yizhi_beigou.png', eliteName: '日本足轻', eliteTier: 4 },
+    yizhi: { generalId: 'yizhi_beigou', cityId: 'city_yuanzhishi', generalName: '难升米', portrait: '/assets/JAPAN/yizhi_beigou.png', eliteName: '邪马台兵', eliteTier: 4 },
 
 
 
@@ -12948,7 +12948,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     { generalId: 'wuyue_caogui', factionId: 'wuyue', cityId: 'city_jiaxing', generalName: '曹圭', portrait: '/assets/JIANGNAN/wuyue_caogui.png', eliteName: '嘉兴镇兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 吴越嘉兴都将，乾宁间固守拒淮人
     { generalId: 'wuyue_caoxin', factionId: 'wuyue', cityId: 'city_jiaxing', generalName: '曹信', portrait: '/assets/JIANGNAN/wuyue_caoxin.png', eliteName: '嘉兴乡兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 唐末移守嘉兴
         { generalId: 'wuyue_qianliu', cityId: 'city_hangzhou', generalName: '钱镠', portrait: '/assets/JIANGNAN/wuyue_qianliu.png', eliteName: '吴越水军', eliteTier: 3 },
-        { generalId: 'bfe_ajibaldo', factionId: 'haikou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JAPAN/bfe_ajibaldo.png', eliteName: '日本足轻', eliteTier: 4, legionName: '海贼倭寇军团' },
+        { generalId: 'bfe_ajibaldo', factionId: 'haikou', cityId: 'city_tsushima', generalName: '阿只拔都', portrait: '/assets/JAPAN/bfe_ajibaldo.png', eliteName: '高丽倭寇', eliteTier: 4, legionName: '海贼倭寇军团' },
         { generalId: 'qian_d_yudayou', factionId: 'ming_d', cityId: 'city_qingyuan_zj', generalName: '俞大猷', portrait: '/assets/JIANGNAN/qian_d_yudayou.png', eliteName: '俞家军', eliteTier: 1 },
         { generalId: 'bfe_xu_hai', cityId: 'city_jiaxing', generalName: '徐海', portrait: '/assets/JIANGNAN/bfe_xu_hai.png', factionId: 'haikou', eliteName: '陈东倭兵', eliteTier: 4, legionName: '海贼倭寇军团' },   // 🔴 [2026-11-05 主人令「徐海移嘉兴（柘林/乍浦最近），精锐换成与据点同文化的倭兵」] 徐海据柘林、乍浦（今上海奉贤—平湖），与陈东同据柘林；原挂萨摩·鹿儿岛城＋「日本足轻」不合史，现移嘉兴（JIANGNAN）并沿用既有番号「陈东倭兵」T4（不新造番号）
         { generalId: 'haikou_maohaifeng', factionId: 'haikou', cityId: 'city_qingyuan_zj', generalName: '毛海峰', portrait: '/assets/JIANGNAN/haikou_maohaifeng.png', eliteName: '岑港倭兵', eliteTier: 4, legionName: '海贼倭寇军团' },   // 按史：王直养子王滶（毛海峰）1558 据舟山岑港抗官军（《明史纪事本末》卷五五、《倭变事略》）；T4 存在之兵（守港败亡，建制可考、无独立大捷/特色兵种）,   // 2026-10-25 按史补：王直养子王滶（本名毛海峰），1558 守舟山岑港，为俞大猷、戚继光所破（《倭变事略》）
@@ -17370,14 +17370,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     amago: [
-        { generalId: 'izumo_shanzhonglujie', factionId: 'amago', cityId: 'city_izumo', generalName: '山中鹿介', portrait: '/assets/JAPAN/izumo_shanzhonglujie.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'izumo_shanzhonglujie', factionId: 'amago', cityId: 'city_izumo', generalName: '山中鹿介', portrait: '/assets/JAPAN/izumo_shanzhonglujie.png', eliteName: '尼子足轻', eliteTier: 4 },
 
     ],
     shimazu: [
         { generalId: 'satsuma_daojinjiajiu', factionId: 'shimazu', cityId: 'city_satsuma', generalName: '岛津家久', portrait: '/assets/JAPAN/satsuma_daojinjiajiu.png', eliteName: '萨摩武士', eliteTier: 3 },
 
     
-        { generalId: 'osumi_ganfujianxu', factionId: 'shimazu', cityId: 'city_akaogicheng', generalName: '肝付兼续', portrait: '/assets/JAPAN/osumi_ganfujianxu.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'osumi_ganfujianxu', factionId: 'shimazu', cityId: 'city_akaogicheng', generalName: '肝付兼续', portrait: '/assets/JAPAN/osumi_ganfujianxu.png', eliteName: '肝付足轻', eliteTier: 4 },
 
     ],
     mori: [
@@ -17387,7 +17387,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'iyo_d_cunshangwuji', eliteName: '村上水军', eliteTier: 1, factionId: 'mori', cityId: 'city_noshima', generalName: '村上武吉', portrait: '/assets/JAPAN/iyo_d_cunshangwuji.png' },   // 按史：能岛村上水军由村上武吉亲统，严岛等役为主力（《毛利家文书》）。
 
     
-        { generalId: 'jibei2_qingshuizongzhi', factionId: 'mori', cityId: 'city_guizhicheng', generalName: '清水宗治', portrait: '/assets/JAPAN/jibei2_qingshuizongzhi.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'jibei2_qingshuizongzhi', factionId: 'mori', cityId: 'city_guizhicheng', generalName: '清水宗治', portrait: '/assets/JAPAN/jibei2_qingshuizongzhi.png', eliteName: '毛利足轻', eliteTier: 4 },
 
     ],
     uesugi: [
@@ -17405,10 +17405,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_ishida_mitsunari', factionId: 'toyotomi', cityId: 'city_kyoto', generalName: '石田三成', portrait: '/assets/JAPAN/gen_ishida_mitsunari.png', eliteName: '佐和山众', eliteTier: 3 },
 
     
-        { generalId: 'aizu_pushengshixiang', factionId: 'toyotomi', cityId: 'city_tsuruga', generalName: '蒲生氏乡', portrait: '/assets/JAPAN/aizu_pushengshixiang.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'aizu_pushengshixiang', factionId: 'toyotomi', cityId: 'city_tsuruga', generalName: '蒲生氏乡', portrait: '/assets/JAPAN/aizu_pushengshixiang.png', eliteName: '丰臣足轻', eliteTier: 4 },
 
     
-        { generalId: 'mino_dagujiji', factionId: 'toyotomi', cityId: 'city_fuwa', generalName: '大谷吉继', portrait: '/assets/JAPAN/mino_dagujiji.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'mino_dagujiji', factionId: 'toyotomi', cityId: 'city_fuwa', generalName: '大谷吉继', portrait: '/assets/JAPAN/mino_dagujiji.png', eliteName: '丰臣足轻', eliteTier: 4 },
 
         { generalId: 'bfe_ukita_hideie', factionId: 'toyotomi', cityId: 'city_guizhicheng', generalName: '宇喜多秀家', portrait: '/assets/JAPAN/bfe_ukita_hideie.png', eliteName: '备前兵', eliteTier: 3 },
         { generalId: 'bfe_todo_takakage', factionId: 'toyotomi', cityId: 'city_songshan', generalName: '藤堂高虎', portrait: '/assets/JAPAN/bfe_todo_takakage.png', eliteName: '藤堂水军', eliteTier: 4 },
@@ -17416,7 +17416,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_ashina_yoshihiro', factionId: 'toyotomi', cityId: 'city_xiantai', generalName: '芦名义广', portrait: '/assets/JAPAN/bfe_ashina_yoshihiro.png', eliteName: '芦名骑马', eliteTier: 4 },
     ],
     utsunomiya: [
-        { generalId: 'shimotsuke_yudougongguanggang', factionId: 'utsunomiya', cityId: 'city_utsunomiya', generalName: '宇都宫广纲', portrait: '/assets/JAPAN/shimotsuke_yudougongguanggang.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'shimotsuke_yudougongguanggang', factionId: 'utsunomiya', cityId: 'city_utsunomiya', generalName: '宇都宫广纲', portrait: '/assets/JAPAN/shimotsuke_yudougongguanggang.png', eliteName: '宇都宫足轻', eliteTier: 4 },
 
     ],
     nanchou: [
@@ -17428,16 +17428,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'nanchou_kitabatake', factionId: 'nanchou', cityId: 'city_kyoto', generalName: '北畠显家', portrait: '/assets/JAPAN/nanchou_kitabatake.png', eliteName: '南朝武士', eliteTier: 3 },
     ],
     nanbu_shi: [
-        { generalId: 'nanbu_nanbuqingzheng', factionId: 'nanbu_shi', cityId: 'city_genjo', generalName: '南部晴政', portrait: '/assets/JAPAN/nanbu_nanbuqingzheng.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'nanbu_nanbuqingzheng', factionId: 'nanbu_shi', cityId: 'city_genjo', generalName: '南部晴政', portrait: '/assets/JAPAN/nanbu_nanbuqingzheng.png', eliteName: '南部足轻', eliteTier: 4 },
 
     ],
     shoni: [
-        { generalId: 'zhuqian_shaoerzineng', factionId: 'shoni', cityId: 'city_taizaifu', generalName: '少贰资能', portrait: '/assets/JAPAN/zhuqian_shaoerzineng.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'zhuqian_shaoerzineng', factionId: 'shoni', cityId: 'city_taizaifu', generalName: '少贰资能', portrait: '/assets/JAPAN/zhuqian_shaoerzineng.png', eliteName: '镰仓御家人', eliteTier: 4 },
 
     ],
     heishi: [
-        { generalId: 'taira_pingzhisheng', factionId: 'heishi', cityId: 'city_chijianguan', generalName: '平知盛', portrait: '/assets/JAPAN/taira_pingzhisheng.png', eliteName: '日本足轻', eliteTier: 4 },
-        { generalId: 'taira_pingzongsheng', factionId: 'heishi', cityId: 'city_chijianguan', generalName: '平宗盛', portrait: '/assets/JAPAN/taira_pingzongsheng.png', eliteName: '日本足轻', eliteTier: 4 },
+        { generalId: 'taira_pingzhisheng', factionId: 'heishi', cityId: 'city_chijianguan', generalName: '平知盛', portrait: '/assets/JAPAN/taira_pingzhisheng.png', eliteName: '平家武者', eliteTier: 4 },
+        { generalId: 'taira_pingzongsheng', factionId: 'heishi', cityId: 'city_chijianguan', generalName: '平宗盛', portrait: '/assets/JAPAN/taira_pingzongsheng.png', eliteName: '平家武者', eliteTier: 4 },
 
     ],
     imagawa: [
