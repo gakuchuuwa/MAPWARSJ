@@ -149,65 +149,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "威尼斯-干地亚要塞",
-                type: "sea",
-                id: "sea_city_venice_city_knossos_1793625541112",
-                startConnection: "city_venice",
-                endConnection: "city_knossos",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [12.31, 45.44],
-                    [13, 45.08333],
-                    [13.5, 44.41667],
-                    [13.66667, 44.41667],
-                    [14.33333, 43.75],
-                    [15, 43.41667],
-                    [15.25, 43.16667],
-                    [15.25, 42.83333],
-                    [15.41667, 42.66667],
-                    [15.30127, 42.75049],
-                    [16.43598, 41.9838],
-                    [16.76672, 41.76032],
-                    [17.11627, 41.52414],
-                    [17.3, 41.4],
-                    [17.33802, 41.38099],
-                    [17.55304, 41.19441],
-                    [18.10455, 40.74631],
-                    [18.18443, 40.6814],
-                    [18.9, 40.1],
-                    [18.82344, 39.77362],
-                    [18.66667, 39.41667],
-                    [18.83333, 39.75],
-                    [19, 39.41667],
-                    [19.16667, 39.41667],
-                    [19.91667, 38.66667],
-                    [19.91667, 37.83333],
-                    [20.08333, 37.5],
-                    [20.58333, 37.16667],
-                    [20.66667, 36.91667],
-                    [21, 36.91667],
-                    [21.33333, 36.41667],
-                    [21.4687, 36.57999],
-                    [21.93546, 36.48611],
-                    [22.119, 36.4492],
-                    [22.39158, 36.3728],
-                    [22.83815, 36.09734],
-                    [23.44932, 36.07632],
-                    [23.9, 35.95],
-                    [24.13447, 35.86884],
-                    [24.17981, 35.68909],
-                    [24.32334, 35.67641],
-                    [25.13, 35.33],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "威尼斯-亚历山大",
                 type: "sea",
                 id: "sea_city_venice_city_yalishanda_1793625541112",
@@ -3032,30 +2973,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "科洛西-阿卡",
-                type: "sea",
-                id: "sea_city_kolossi_city_ake_1788082845695",
-                startConnection: "city_kolossi",
-                endConnection: "city_ake",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [32.934, 34.664],
-                    [33.72957, 34.41595],
-                    [33.96072, 34.33817],
-                    [33.98256, 34.29017],
-                    [34.34367, 33.49617],
-                    [34.8, 33],
-                    [35.06889, 32.92139],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "星主厅-顺天",
                 type: "sea",
                 id: "sea_city_xingzhuting_city_suncheon_k_1788088180781",
@@ -3378,32 +3295,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [120.75, 39.66667],
                     [120.66667, 39.91667],
                     [119.8, 40],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "迦太基-巴勒莫",
-                type: "sea",
-                id: "sea_city_jiataji_city_palermo_1788228315671",
-                startConnection: "city_jiataji",
-                endConnection: "city_palermo",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [10.32, 36.85],
-                    [10.37303, 37.48209],
-                    [11, 37.5],
-                    [11.15172, 37.43849],
-                    [11.40294, 37.63931],
-                    [11.76629, 37.92976],
-                    [12.09994, 38.19647],
-                    [12.74353, 38.24357],
-                    [13.36, 38.11],
                 ]
             }
         },
@@ -4839,29 +4730,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-9.09085, 52.63593],
                     [-8.94522, 52.66832],
                     [-8.6957, 52.6664],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "班加西-马耳他",
-                type: "sea",
-                id: "sea_city_malta_city_banjiaxi_1788228984837",
-                startConnection: "city_banjiaxi",
-                endConnection: "city_malta",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [20.06, 32.11],
-                    [19.37171, 32.40892],
-                    [19.48165, 34.23144],
-                    [17.67975, 34.8979],
-                    [14.7, 36],
-                    [14.44, 35.9],
                 ]
             }
         },
@@ -8001,33 +7869,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [5.83333, 37.58333],
                     [7.83333, 37.58333],
                     [7.76, 36.9],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "迦太基-马耳他",
-                type: "sea",
-                id: "sea_city_jiataji_city_malta_1793609800023",
-                startConnection: "city_jiataji",
-                endConnection: "city_malta",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [10.32, 36.85],
-                    [10.37303, 37.48209],
-                    [11, 37.5],
-                    [11.15172, 37.43849],
-                    [11.69922, 37.14785],
-                    [12.00439, 36.99415],
-                    [12.23823, 36.87638],
-                    [12.93129, 36.52734],
-                    [13.90701, 36.03593],
-                    [14.44, 35.9],
                 ]
             }
         },
@@ -13083,6 +12924,454 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [35.06334, 35.60289],
                     [35.7, 35.9],
                     [36.16, 36.2],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "阿卡-科洛西",
+                type: "sea",
+                id: "sea_city_ake_city_kolossi_1793845428189",
+                startConnection: "city_ake",
+                endConnection: "city_kolossi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [35.06889, 32.92139],
+                    [34.8, 33],
+                    [34.34367, 33.49617],
+                    [33.98256, 34.29017],
+                    [33.96072, 34.33817],
+                    [33.72957, 34.41595],
+                    [32.934, 34.664],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科洛西-干地亚要塞",
+                type: "sea",
+                id: "sea_city_kolossi_city_knossos_1793845460041",
+                startConnection: "city_kolossi",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [32.934, 34.664],
+                    [32.8814, 34.5083],
+                    [31.76258, 34.51906],
+                    [30.7293, 34.5314],
+                    [29.49585, 34.62246],
+                    [29.1226, 34.6501],
+                    [28.88123, 34.65601],
+                    [28.70256, 34.66038],
+                    [27.85316, 34.92219],
+                    [27.49113, 35.03377],
+                    [26.3941, 35.3719],
+                    [25.82673, 35.71936],
+                    [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "干地亚要塞-威尼斯",
+                type: "sea",
+                id: "sea_city_knossos_city_venice_1793845498973",
+                startConnection: "city_knossos",
+                endConnection: "city_venice"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [25.13, 35.33],
+                    [24.32334, 35.67641],
+                    [24.17981, 35.68909],
+                    [24.13447, 35.86884],
+                    [23.9, 35.95],
+                    [23.44932, 36.07632],
+                    [22.83815, 36.09734],
+                    [22.39158, 36.3728],
+                    [22.119, 36.4492],
+                    [21.93546, 36.48611],
+                    [21.4687, 36.57999],
+                    [21.33333, 36.41667],
+                    [21, 36.91667],
+                    [20.66667, 36.91667],
+                    [20.58333, 37.16667],
+                    [20.08333, 37.5],
+                    [19.91667, 37.83333],
+                    [19.91667, 38.66667],
+                    [19.16667, 39.41667],
+                    [19, 39.41667],
+                    [18.83333, 39.75],
+                    [18.66667, 39.41667],
+                    [18.82344, 39.77362],
+                    [18.9, 40.1],
+                    [18.18443, 40.6814],
+                    [18.10455, 40.74631],
+                    [17.55304, 41.19441],
+                    [17.33802, 41.38099],
+                    [17.3, 41.4],
+                    [17.11627, 41.52414],
+                    [16.76672, 41.76032],
+                    [16.43598, 41.9838],
+                    [15.30127, 42.75049],
+                    [15.41667, 42.66667],
+                    [15.25, 42.83333],
+                    [15.25, 43.16667],
+                    [15, 43.41667],
+                    [14.33333, 43.75],
+                    [13.66667, 44.41667],
+                    [13.5, 44.41667],
+                    [13, 45.08333],
+                    [12.31, 45.44],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕尔马-巴伦西亚",
+                type: "sea",
+                id: "sea_city_palma_city_valencia_1793845928174",
+                startConnection: "city_palma",
+                endConnection: "city_valencia"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [2.65, 39.57],
+                    [1.47905, 39.38603],
+                    [1.29682, 39.42752],
+                    [0.85605, 39.42794],
+                    [0.32027, 39.42889],
+                    [-0.37, 39.47],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕尔马-巴塞罗那",
+                type: "sea",
+                id: "sea_city_palma_city_barcelona_1793845935777",
+                startConnection: "city_palma",
+                endConnection: "city_barcelona"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [2.65, 39.57],
+                    [2.4306, 40.39785],
+                    [2.44086, 40.53118],
+                    [2.45166, 40.67152],
+                    [2.17, 41.38],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕尔马-奥里斯塔诺",
+                type: "sea",
+                id: "sea_city_palma_city_oristano_1793845943291",
+                startConnection: "city_palma",
+                endConnection: "city_oristano"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [2.65, 39.57],
+                    [2.6156, 39.4248],
+                    [3.04918, 39.23478],
+                    [3.47985, 39.21663],
+                    [4.5091, 39.7329],
+                    [5.0654, 39.9966],
+                    [5.98363, 40.28348],
+                    [6.89893, 40.56944],
+                    [7.56627, 40.77794],
+                    [7.98426, 40.28064],
+                    [8.59, 39.9],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "卡利亚里-帕尔马",
+                type: "sea",
+                id: "sea_city_cagliari_city_palma_1793845951827",
+                startConnection: "city_cagliari",
+                endConnection: "city_palma"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [9.12, 39.22],
+                    [8.9959, 38.8624],
+                    [8.4301, 38.6096],
+                    [7.52511, 38.67996],
+                    [6.53642, 38.75682],
+                    [6.20357, 38.7827],
+                    [5.67459, 38.82382],
+                    [4.31545, 38.92949],
+                    [3.43986, 38.99756],
+                    [3.47985, 39.21663],
+                    [3.04918, 39.23478],
+                    [2.6156, 39.4248],
+                    [2.65, 39.57],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "阿尔及尔-帕尔马",
+                type: "sea",
+                id: "sea_city_aerjier_city_palma_1793845992597",
+                startConnection: "city_aerjier",
+                endConnection: "city_palma"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [3.05, 36.75],
+                    [2.97567, 37.48556],
+                    [2.42692, 38.74589],
+                    [2.26288, 39.12264],
+                    [2.65, 39.57],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕尔马-热那亚",
+                type: "sea",
+                id: "sea_city_palma_city_genoa_1793846017291",
+                startConnection: "city_palma",
+                endConnection: "city_genoa"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [2.65, 39.57],
+                    [2.5732, 40.32941],
+                    [2.88103, 40.37413],
+                    [2.91224, 40.39841],
+                    [3.06106, 40.51416],
+                    [3.11062, 40.5527],
+                    [3.28459, 40.68802],
+                    [3.45052, 40.81707],
+                    [4.07014, 41.299],
+                    [4.97592, 42.0035],
+                    [5.02094, 42.03851],
+                    [5.27625, 42.23708],
+                    [5.47517, 42.3918],
+                    [6, 42.8],
+                    [5.66667, 42.75],
+                    [5.83333, 42.58333],
+                    [6.66667, 42.58333],
+                    [7.33333, 43.25],
+                    [8.5, 43.58333],
+                    [8.66667, 43.91667],
+                    [8.94, 44.4],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕尔马-休达",
+                type: "sea",
+                id: "sea_city_palma_city_xiuta_1793846032681",
+                startConnection: "city_palma",
+                endConnection: "city_xiuta"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [2.65, 39.57],
+                    [1.47905, 39.38603],
+                    [1.26313, 39.24209],
+                    [0.88377, 38.98918],
+                    [0.86001, 38.97334],
+                    [0.75, 38.9],
+                    [0.30025, 38.48023],
+                    [0.25859, 38.44135],
+                    [-0.49153, 37.62704],
+                    [-0.58985, 37.51184],
+                    [-2.1, 36.6],
+                    [-2.50861, 36.6],
+                    [-3.465, 36.6],
+                    [-3.55979, 36.6],
+                    [-3.81155, 36.6],
+                    [-4.07028, 36.4887],
+                    [-4, 36.41667],
+                    [-4.75, 36],
+                    [-5.31, 35.89],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "帕尔马-迦太基",
+                type: "sea",
+                id: "sea_city_palma_city_jiataji_1793846066065",
+                startConnection: "city_palma",
+                endConnection: "city_jiataji"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [2.65, 39.57],
+                    [2.6156, 39.4248],
+                    [3.04918, 39.23478],
+                    [3.47985, 39.21663],
+                    [3.43986, 38.99756],
+                    [3.42935, 38.94201],
+                    [4.20082, 38.76637],
+                    [5.0023, 38.5839],
+                    [6.27767, 38.35342],
+                    [6.67306, 38.28196],
+                    [6.71084, 38.27513],
+                    [6.82242, 38.25497],
+                    [7.51432, 38.12993],
+                    [8.33393, 37.98181],
+                    [8.67674, 37.91986],
+                    [10.35893, 37.61585],
+                    [10.37303, 37.48209],
+                    [10.32, 36.85],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "迦太基-巴勒莫",
+                type: "sea",
+                id: "sea_city_jiataji_city_palermo_1793846077370",
+                startConnection: "city_jiataji",
+                endConnection: "city_palermo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [10.32, 36.85],
+                    [10.37303, 37.48209],
+                    [11, 37.5],
+                    [11.15172, 37.43849],
+                    [11.40294, 37.63931],
+                    [11.76629, 37.92976],
+                    [12.09994, 38.19647],
+                    [12.74354, 38.24357],
+                    [13.36, 38.11],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "迦太基-锡拉库萨",
+                type: "sea",
+                id: "sea_city_jiataji_city_syracuse_1793846096172",
+                startConnection: "city_jiataji",
+                endConnection: "city_syracuse"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [10.32, 36.85],
+                    [10.37303, 37.48209],
+                    [11, 37.5],
+                    [11.15172, 37.43849],
+                    [11.82784, 37.28319],
+                    [12.10145, 37.18168],
+                    [13.26382, 36.9071],
+                    [15.2, 36.4],
+                    [15.28, 37.07],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "马耳他-迦太基",
+                type: "sea",
+                id: "sea_city_malta_city_jiataji_1793846105038",
+                startConnection: "city_malta",
+                endConnection: "city_jiataji"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [14.44, 35.9],
+                    [13.90701, 36.03593],
+                    [12.93129, 36.52734],
+                    [12.23823, 36.87638],
+                    [12.00439, 36.99416],
+                    [11.69922, 37.14785],
+                    [11.15172, 37.43849],
+                    [11, 37.5],
+                    [10.37303, 37.48209],
+                    [10.32, 36.85],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "马耳他-干地亚要塞",
+                type: "sea",
+                id: "sea_city_malta_city_knossos_1793846113525",
+                startConnection: "city_malta",
+                endConnection: "city_knossos"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [14.44, 35.9],
+                    [14.7, 36],
+                    [16.08484, 36.05935],
+                    [16.72659, 36.08685],
+                    [17.97116, 36.14019],
+                    [19.55288, 36.20798],
+                    [21.84608, 36.13144],
+                    [22.37763, 36.11317],
+                    [22.78666, 35.76816],
+                    [22.86611, 35.80511],
+                    [23.33998, 35.76326],
+                    [24.17981, 35.68909],
+                    [24.32334, 35.67641],
+                    [25.13, 35.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "马耳他-班加西",
+                type: "sea",
+                id: "sea_city_malta_city_banjiaxi_1793846127197",
+                startConnection: "city_malta",
+                endConnection: "city_banjiaxi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [14.44, 35.9],
+                    [14.7, 36],
+                    [17.67975, 34.8979],
+                    [19.48165, 34.23144],
+                    [19.37171, 32.40892],
+                    [20.06, 32.11],
                 ]
             }
         },

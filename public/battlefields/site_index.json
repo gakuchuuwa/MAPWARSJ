@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-05T01:42:53.390Z",
+ "generatedAt": "2026-11-05T02:27:53.554Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16762,6 +16762,20 @@
    "reliefM": 121,
    "cliffs": 0,
    "top": "Dry Grass 76.4% · Water, Shallow 8.6% · Beach 6.7% · Forest, Autumn 4.8%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_parma",
+   "file": "site_city_parma.json",
+   "bytes": 333436,
+   "koppen": "Cfa",
+   "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 76,
+   "waterPct": 0.5,
+   "reliefM": 26,
+   "cliffs": 0,
+   "top": "Grass 2 89.9% · Forest 5% · Pine Forest 2.2% · Beach 1.2%",
    "verify": "ok"
   }
  ],

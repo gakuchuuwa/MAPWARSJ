@@ -17419,7 +17419,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     oda: [
-        { generalId: 'owari_zhitianxinchang', factionId: 'oda', cityId: 'city_kyoto', generalName: '织田信长', portrait: '/assets/JAPAN/owari_zhitianxinchang.png', eliteName: '铁炮队', eliteTier: 2 },
+        { generalId: 'owari_zhitianxinchang', generalName: '织田信长', portrait: '/assets/JAPAN/owari_zhitianxinchang.png' },
 
         { generalId: 'bfe_oda_nobuhide', factionId: 'oda', cityId: 'city_atsuta', generalName: '织田信秀', portrait: '/assets/JAPAN/bfe_oda_nobuhide.png', eliteName: '织田足轻', eliteTier: 4 },
     ],

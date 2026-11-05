@@ -337,6 +337,15 @@ function isStoryOrFirstBattleUnit(u: { getEntity?(): any } | null | undefined): 
 }
 
 /**
+ * 🔴 [2026-11-05 主人令「你不能直接进入战术模式，为什么非要卡在战略地图上？」]
+ *    即时战斗（src/quickbattle/QuickBattle.ts）起的军团带 `__quickBattle`：这一仗**不过进场门槛**
+ *    （战术模式开关 / 双方武将 / 兵力精锐），开打即进战术模式。普通对局没有这个标记，一个字不变。
+ */
+function isQuickBattleUnit(u: { getEntity?(): any } | null | undefined): boolean {
+    return u?.getEntity?.()?.__quickBattle === true;
+}
+
+/**
  * 🔴 [2026-10-04 主人定「按专业游戏设计」｜2026-10-19 强化] 玩家所在军团或首次随将剧情军团一开战，
  *    镜头无条件切回跟随玩家军团（解除停泊或其它军团跟拍）—— 确保首次随将触发剧情的战斗 100% 进入战术模式。
  */
@@ -383,10 +392,11 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    那条写的是「玩家入伍的仗不进 13，改弹大地图战斗面板观战」，但玩家开自动模式后
         //    基本一直在伍，等于战术模式永远进不去；与「随军必进 13」的定案也相冲。
         //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥5000 / 不都是海军 / 双方都有将+精锐）不变。
-        const eligible = tacticalModeOn(app) && bothSidesHaveRealGenerals([battle.attacker], [battle.defender])
+        const eligible = isQuickBattleUnit(battle.attacker) || isQuickBattleUnit(battle.defender)
+            || (tacticalModeOn(app) && bothSidesHaveRealGenerals([battle.attacker], [battle.defender])
             && (isBattlefieldEvent || (bigEnough && !bothNaval
             && (!!battle.attacker.generalId && !!battle.defender.generalId
-                && attHasElite && defHasElite)));
+                && attHasElite && defHasElite))));
         // 🔴 [2026-09-16] 「进不去战术模式」闸门归因：六道闸哪道拦的，直接落盘，别再靠猜。
         //    文档铁律：数字反常先加计数器问「每道闸各拦掉多少」。落 scene13_probe_log.jsonl（why=gateBlocked）。
         if (import.meta.env.DEV) {
@@ -491,8 +501,9 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             && allUnits.some(unitIsFortress);
         // 战场事件与武将首次剧情战进战术模式：HistoricalEventManager 设置 isScriptArmy，PlayerQuestSystem 设置 isFirstBattleMarch。
         // 攻城和野战共用此入口，不受普通战斗的兵力、将领、精锐门槛阻挡。
-        const eligible = tacticalModeOn(app) && bothSidesHaveRealGenerals(attackers, defenders)
-            && (isBattlefieldEvent || regionalMeetsScene13Gate(attackers, defenders));
+        const eligible = allUnits.some(isQuickBattleUnit)
+            || (tacticalModeOn(app) && bothSidesHaveRealGenerals(attackers, defenders)
+            && (isBattlefieldEvent || regionalMeetsScene13Gate(attackers, defenders)));
         if (eligible && (!battleField?.scene13Frozen || isBattlefieldEvent)) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];

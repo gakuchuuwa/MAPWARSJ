@@ -2542,6 +2542,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_avignon', name: '阿维尼翁', factionId: 'puluowangsi', lat: 43.94, lng: 4.8, type: 'small_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS' , note: '推算：城居 2 万（阿维尼翁（教廷驻地）1300 年前后 2 万上下）→ 小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：米兰：意大利，用意大利古典石堡
     { id: 'city_milan', name: '米兰', factionId: 'lunbadi', lat: 45.46, lng: 9.19, type: 'medium_city', troops: 10000, region: 'LOMBARDS', buildingStyle: 'LATIN', note: '伦巴第王国早期重镇与中世纪铁王冠要邑；按 2026-10-25 标准：城居 15–20 → 中城' },
+    { id: 'city_palma', name: '帕尔马', factionId: 'jiatailuoniya', lat: 39.57, lng: 2.65, type: 'small_city', troops: 10000, region: 'LATIN_FEUDAL', buildingStyle: 'LATIN', note: '2026-11-05 主人令添加；马略卡岛首府帕尔马（Palma de Mallorca）；离最近据点巴塞罗那约 205km' },
     { id: 'city_ravenna', name: '拉文纳', factionId: 'donggete', lat: 44.41, lng: 12.2, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '🔴 [2026-10-24 主人定「按建议改」] 风格保留 GOTHS：拉文纳虽以早期基督教/拜占庭马赛克（圣维塔莱等）著称，但 493–540 年为东哥特王国都城（狄奥多里克宫廷、阿里乌斯洗礼堂），本地政权段成立；旧审核提 MEDI 不取。改 BYZANTINE 会把狄奥多里克/奥多亚克/霍诺留三将带成非哥特文化，故维持。；推算：城居 2 万（都城/首府，同期同类都城 2 万）→ 小城' },
 
     { id: 'city_toledo', name: '托莱多', factionId: 'xigete', lat: 39.86, lng: -4.02, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'GOTHS', note: '🔴 [2026-10-05 主人令「建筑风格必须当地」] 托莱多是**西哥特王国都城**（554–711，托莱多公会议所在地，西哥特王冠还愿物出土地），也是 62 类「哥特」的据点（城堡 GOTH_CASTLE_AGE3）→ 挂 GOTHS（一级 WEST）。旧值 CASTILE／MEDI（卡斯蒂利亚—西班牙）是后来的政权。；按 2026-10-25 标准：城居 4–6 → 小城' },
@@ -2918,8 +2919,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
     { id: 'city_wugucheng', name: '乌骨城', factionId: 'gaogouli', lat: 40.7685, lng: 123.9395, type: 'pass', region: 'KOREA',
 buildingStyle: 'KOREA', troops: 10000,
-        note: '乌骨城；濊貊关隘',
-    },
+        note: '乌骨城；濊貊关隘', mirror: true },
     { id: 'city_shangzhou', name: '三白', factionId: 'joseon', lat: 36.41, lng: 128.16, type: 'stockade', troops: 10000, region: 'JOSEON', buildingStyle: 'KOREA', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     { id: 'city_yuanzhishi', name: '原之辻', factionId: 'yizhi', lat: 33.791, lng: 129.703, type: 'stockade', region: 'JAPAN_ANTIQUITY', buildingStyle: 'JAPAN', troops: 10000, note: '壹岐国府旧址' },
@@ -2943,7 +2943,8 @@ buildingStyle: 'JAPAN', troops: 10000,
     },
     { id: 'city_hamamatsu', name: '浜松城', factionId: 'tokugawa', lat: 34.71, lng: 137.73, type: 'small_city', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' , note: '推算：城居 2 万（浜松城，远江国城下町 2 万）→ 小城' },
 
-    { id: 'city_atsuta', name: '热田社', factionId: 'oda', lat: 35.12, lng: 136.95, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_atsuta', name: '宫宿', factionId: 'oda', lat: 35.12, lng: 136.95, type: 'stockade', troops: 20000, region: 'JAPAN', buildingStyle: 'JAPAN' },
+
     { id: 'city_xuanhua', name: '宣化', factionId: 'ming_d', lat: 40.609, lng: 115.052, type: 'medium_city', troops: 10000, region: 'WEI', buildingStyle: 'WEI' , note: '按 2026-10-25 标准：城居 5–8 → 中城' },
     { id: 'city_xinghe', name: '兴和城', factionId: 'yuan_d', lat: 41.15, lng: 114.7, type: 'pass', troops: 10000, region: 'STEPPE', buildingStyle: 'XIANBEI', note: '明兴和守御千户所/张北古城；元高原县·兴和路故地；明兴和守御千户所（军事设施）→ 险要 PASS；按 2026-10-25 标准：明兴和守御千户所（军事设施）→ 险要' },
 

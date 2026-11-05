@@ -28,6 +28,7 @@ import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { CULTURE_NAMES, getCityRegion, type RegionType } from '../systems/RegionSystem';
 import { TerrainSpeedSystem } from '../core/TerrainSpeedSystem';
 import { GameConfig } from '../config/GameConfig';
+import { releaseDeploy } from '../legion/DeployGate';
 
 // ───────────────────────────── 数据 ─────────────────────────────
 
@@ -204,6 +205,32 @@ interface ActiveBattle {
     lingerKicked?: boolean;
     /** 引擎里这一仗开打的时刻（用来判「开打了却没进战术画面」） */
     engineStartedAt?: number;
+    /** 已经补调过一次开战入口 */
+    retried?: boolean;
+    /** 战术画布开始淡入（真正看得见）的时刻 */
+    visibleAt?: number;
+}
+
+/** 盖住战略地图的深色底：即时战斗里只看得到选人面板和战术画面 */
+class Backdrop {
+    readonly el: HTMLDivElement;
+    private readonly msg: HTMLDivElement;
+    constructor() {
+        this.el = document.createElement('div');
+        this.el.id = 'quick-battle-backdrop';
+        // z-index 在战术画布（400）与各 HUD 之上、即时战斗面板（20050）之下；打仗时整块隐藏
+        this.el.style.cssText = 'position:fixed;inset:0;z-index:20040;display:flex;align-items:center;justify-content:center;'
+            + 'background:radial-gradient(ellipse at center,#2a2216 0%,#0d0b08 70%);';
+        this.msg = document.createElement('div');
+        this.msg.style.cssText = 'color:#f3d48a;font:600 20px "Noto Serif SC",serif;letter-spacing:2px;text-align:center;padding:0 24px';
+        this.el.appendChild(this.msg);
+        document.body.appendChild(this.el);
+    }
+    show(v: boolean): void {
+        const d = v ? 'flex' : 'none';
+        if (this.el.style.display !== d) this.el.style.display = d;
+    }
+    say(text: string): void { this.msg.textContent = text; }
 }
 
 /** 战术模式开关（调试面板 chk-tactical-mode）：GameAppCombatHooks.tacticalModeOn 每次开战都读它 */
@@ -228,7 +255,7 @@ class QuickBattle {
     /** 最近一条报错（开打却没进战术画面时，面板上直接写出来） */
     private lastError: { at: number; text: string } | null = null;
 
-    constructor(private readonly app: GameApp) {
+    constructor(private readonly app: GameApp, private readonly backdrop: Backdrop) {
         this.generals = collectGenerals();
         this.generalById = new Map(this.generals.map((g) => [g.generalId, g]));
         for (const f of FACTIONS) this.factionName.set(f.id, f.name);
@@ -239,7 +266,49 @@ class QuickBattle {
         this.clearWorldLegions();
         this.captureErrors();
         this.buildPanel();
+        this.backdrop.say('');
         setInterval(() => this.watch(), 400);
+        // 遮罩跟着战术画面走：选人、等进场、战术素材载入中、收场都盖住战略地图；战术画面开始淡入才撤。
+        // 🔴 战术画布进场先全透明，等第一帧真正画出来（最多 10 秒）才淡入（Scene13WarLayer.entryFadePending）；
+        //    只看「战术模式激活」就撤遮罩，载入这几秒露出的就是战略地图（2026-11-05 主人：「又回到战略了」）。
+        setInterval(() => {
+            const loading = this.warActive() && this.app.scene13War?.entryFadePending === true;
+            if (loading) this.backdrop.say('正在载入战术画面…');
+            this.backdrop.show(!this.warActive() || loading);
+        }, 100);
+    }
+
+    /** 开发期把每一场的经过写进 scratch/scene13_probe_log.jsonl（why=quickBattle），进不去时不用主人看日志 */
+    private report(stage: string, a: ActiveBattle | null, extra: Record<string, unknown> = {}): void {
+        if (!import.meta.env.DEV) return;
+        const cs = this.app.combatSystem;
+        const ids = a ? [a.attacker.id, ...(a.defender ? [a.defender.id] : [])] : [];
+        const body = {
+            at: new Date().toISOString(),
+            why: 'quickBattle',
+            stage,
+            kind: a?.kind,
+            place: a?.placeName,
+            att: a ? { g: a.att.general.generalId, f: a.att.factionId, troops: a.att.troops } : undefined,
+            def: a ? { g: a.def.general.generalId, f: a.def.factionId, troops: a.def.troops } : undefined,
+            chk: tacticalCheckbox()?.checked ?? null,
+            tacticalFlag: this.app.tacticalModeEnabled,
+            war: this.app.scene13War?.isActive?.() === true,
+            scene: this.app.battleScene?.isActive?.() === true,
+            followed: this.app.cameraFollowUI?.getFollowedArmyId?.() ?? null,
+            fields: cs.getActiveBattleFields().map((bf) => ({
+                type: bf.type, frozen: bf.scene13Frozen, over: bf.isOver,
+                ours: ids.some((id) => bf.hasParticipant(id)),
+            })),
+            battles: cs.getActiveBattles().map((b) => ({ frozen: b.scene13Frozen, over: b.isOver })),
+            lastError: this.lastError && a && this.lastError.at >= a.startedAt ? this.lastError.text : null,
+            ...extra,
+        };
+        void fetch('/api/scene13-probe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        }).catch(() => { /* 诊断落盘失败不影响对战 */ });
     }
 
     /** 记下报错原文：战术画面没起来时，面板上要能说清楚是哪里错了 */
@@ -284,6 +353,7 @@ class QuickBattle {
         }
         if (app.playerHero) app.playerHero.update = noop;
         if (app.playerQuests) app.playerQuests.tick = noop;
+        releaseDeploy();   // 开局集结待命（只闸移动）也放掉，野战两军不被拦在原地
         this.app.timeSystem.setPaused(true);
     }
 
@@ -436,9 +506,12 @@ class QuickBattle {
         try {
             this.launchInner();
         } catch (e) {
+            const msg = e instanceof Error ? e.message : String(e);
             console.error('[即时战斗] 开战失败', e);
-            this.say(`开战失败：${e instanceof Error ? e.message : String(e)}`, true);
+            this.report('launchError', this.active, { error: msg, stack: e instanceof Error ? e.stack?.slice(0, 1500) : undefined });
+            this.say(`开战失败：${msg}`, true);
             this.cleanup();
+            this.panel.classList.remove('qb-hidden');
         }
     }
 
@@ -513,7 +586,8 @@ class QuickBattle {
         applyLegionCultureComposition(army, army.cultureRegion ?? undefined);
         const tag = army as Army & Record<string, unknown>;
         tag.__scriptPinned = true;        // 行为树不接管
-        tag.isFirstBattleMarch = true;    // 按剧情战进战术模式（GameAppCombatHooks.isStoryOrFirstBattleUnit）
+        tag.isFirstBattleMarch = true;    // 剧情战口径：开战圈不并入第三方、行军不减兵
+        tag.__quickBattle = true;         // 开打即进战术模式，不过进场门槛（GameAppCombatHooks.isQuickBattleUnit）
         return army;
     }
 
@@ -574,17 +648,25 @@ class QuickBattle {
         const cities = this.app.cityManager.getCities();
         const pool = region ? cities.filter((c) => getCityRegion(c) === region) : cities;
         const isLand = (p: { lat: number; lng: number }) => TerrainSpeedSystem.isLandAt(p);
-        for (let tries = 0; tries < 40; tries++) {
-            const c = rand(pool);
-            if (!c) return null;
-            const ang = Math.random() * Math.PI * 2;
-            const d = tries < 30 ? 0.15 + Math.random() * 0.2 : 0;
-            const mid = { lat: c.latitude + Math.sin(ang) * d, lng: c.longitude + Math.cos(ang) * d };
-            const a = { lat: mid.lat, lng: mid.lng - 0.03 };
-            const b = { lat: mid.lat, lng: mid.lng + 0.03 };
-            if (!isLand(a) || !isLand(b) || !isLand(mid)) continue;
-            const rname = CULTURE_NAMES[getCityRegion(c)] ?? '';
-            return { att: a, def: b, label: `${c.name}附近（${rname}）` };
+        const cm = this.app.cityManager;
+        // 🔴 [2026-11-05 主人令「野战不要放大据点附近」] 野战离任何据点都要够远（约 50 公里），
+        //    战场上不出现据点；找不到才逐步放宽（仍不贴城）
+        const minGapSteps = [0.5, 0.4, 0.3];
+        for (const minGap of minGapSteps) {
+            for (let tries = 0; tries < 60; tries++) {
+                const c = rand(pool);
+                if (!c) return null;
+                const ang = Math.random() * Math.PI * 2;
+                const d = minGap + Math.random() * 0.6;
+                const mid = { lat: c.latitude + Math.sin(ang) * d, lng: c.longitude + Math.cos(ang) * d };
+                const a = { lat: mid.lat, lng: mid.lng - 0.03 };
+                const b = { lat: mid.lat, lng: mid.lng + 0.03 };
+                if (!isLand(a) || !isLand(b) || !isLand(mid)) continue;
+                const near = cm.getNearestCity(null, { latitude: mid.lat, longitude: mid.lng });
+                if (near && Math.hypot(near.latitude - mid.lat, near.longitude - mid.lng) < minGap) continue;
+                const rname = CULTURE_NAMES[getCityRegion(c)] ?? '';
+                return { att: a, def: b, label: `${c.name}一带野外（${rname}）` };
+            }
         }
         return null;
     }
@@ -599,6 +681,35 @@ class QuickBattle {
         const kindLabel = a.kind === 'siege' ? '攻城战' : '野战';
         this.say(`${kindLabel}·${a.placeName}：${this.fname(a.att.factionId)} ${a.att.general.generalName}（${a.att.troops}）vs ${this.fname(a.def.factionId)} ${a.def.general.generalName}（${a.def.troops}）`);
         this.panel.classList.add('qb-hidden');
+        this.backdrop.say('正在进入战术模式…');
+    }
+
+    /** 本场在引擎里的战场（区域战优先，其次 1v1） */
+    private findEngineBattle(a: ActiveBattle) {
+        const ids = [a.attacker.id, ...(a.defender ? [a.defender.id] : [])];
+        const cs = this.app.combatSystem;
+        const field = cs.getActiveBattleFields().find((bf) => !bf.isOver && ids.some((id) => bf.hasParticipant(id)));
+        const duel = field ? undefined : cs.getActiveBattles().find((b) => !b.isOver && ids.some((id) => b.attacker.id === id || b.defender.id === id));
+        return { field, duel };
+    }
+
+    /** 开打了却没进战术画面：按援军赶到同一条路，把开战入口对这一仗再调一次 */
+    private retryEnter(a: ActiveBattle): void {
+        const cs = this.app.combatSystem;
+        const { field, duel } = this.findEngineBattle(a);
+        try {
+            if (field) {
+                const att = field.getAttackerUnits();
+                const def = field.getDefenderUnits();
+                const title = field.customTitle
+                    ?? (field.type === 'siege' ? `${a.placeName} 攻防战` : `${this.fname(a.att.factionId)} 大战 ${this.fname(a.def.factionId)}`);
+                cs.onRegionalBattleStart?.(att, def, undefined, undefined, title, '', false, field);
+            } else if (duel) {
+                cs.onBattleStart?.(duel);
+            }
+        } catch (e) {
+            console.error('[即时战斗] 补调开战入口失败', e);
+        }
     }
 
     // ── 战况跟踪与收尾 ──
@@ -615,13 +726,24 @@ class QuickBattle {
         }
         this.clearWorldLegions(new Set([a.attacker, ...(a.defender ? [a.defender] : [])]));
         if (a.phase === 'engaging') {
-            if (this.warActive()) { a.phase = 'fighting'; return; }
-            // 引擎已经开打，正常 1 帧内就会进战术画面；4 秒还没进 = 卡在战略地图上，立刻收场并说清原因
+            if (this.warActive()) {
+                a.phase = 'fighting';
+                this.report('entered', a, { afterMs: Math.round(performance.now() - a.startedAt), retried: !!a.retried });
+                return;
+            }
+            // 引擎已经开打，正常同一帧就进战术画面：1.2 秒还没进 → 把开战入口再调一次；
+            // 4 秒还没进 → 收场，面板上写清原因（同时落盘 scratch，供排查）
             if (this.battleStillRunning(a)) {
                 a.engineStartedAt ??= performance.now();
-                if (performance.now() - a.engineStartedAt > 4000) {
+                const waited = performance.now() - a.engineStartedAt;
+                if (waited > 1200 && !a.retried) {
+                    a.retried = true;
+                    this.report('retry', a);
+                    this.retryEnter(a);
+                } else if (waited > 4000) {
                     const why = this.diagnose(a);
                     console.warn('[即时战斗] 开打了但没进战术画面：', why);
+                    this.report('stuck', a, { why });
                     this.say(`⚠ 这一仗已经开打，但没进战术画面：${why}。已收场，可以重来。`, true);
                     this.finish(false);
                 }
@@ -629,12 +751,17 @@ class QuickBattle {
             }
             if (performance.now() - a.startedAt > 45_000) {
                 const err = this.lastError && this.lastError.at >= a.startedAt ? `（开战后最近一条报错：${this.lastError.text}）` : '';
+                this.report('noContact', a);
                 this.say(`⚠ 45 秒内两军没接上战${err}。已收场，可以重来。`, true);
                 this.finish(false);
             }
             return;
         }
         if (!this.warActive()) { this.finish(true); return; }
+        if (!a.visibleAt && this.app.scene13War?.entryFadePending !== true) {
+            a.visibleAt = performance.now();
+            this.report('visible', a, { afterMs: Math.round(a.visibleAt - a.startedAt) });
+        }
         // 引擎已结算、战术画面却没收：正常对局里是「跟随军团阵亡 → 镜头切到别的军团」才收场，
         // 即时战斗地图上没有别的军团，会一直挂着（2026-11-05 实测攻方全灭后卡住）。
         // 结算后等 6 秒（看残局），再按 GameAppCombatHooks.onRegionalBattleEnd 同一套调用收场。
@@ -661,7 +788,7 @@ class QuickBattle {
         const cs = this.app.combatSystem;
         const frozen = cs.getActiveBattleFields().some((bf) => bf.scene13Frozen && ids.some((id) => bf.hasParticipant(id)))
             || cs.getActiveBattles().some((b) => b.scene13Frozen && ids.some((id) => b.attacker.id === id || b.defender.id === id));
-        reasons.push(frozen ? '游戏已判定进战术模式，但战术画面没启动起来' : '游戏没把这一仗判进战术模式');
+        reasons.push(frozen ? '游戏已判定进战术模式，但战术画面没启动起来' : '开战入口没有接手这一仗');
         if (this.lastError && this.lastError.at >= a.startedAt) reasons.push(`开战后最近一条报错：${this.lastError.text}`);
         return reasons.join('；');
     }
@@ -689,8 +816,10 @@ class QuickBattle {
                     : defAlive && !attAlive ? `守方 ${a.def.general.generalName} 胜` : '胜负未分';
             }
         }
+        if (fought) this.report('finished', a, { result });
         this.cleanup();
         if (fought) this.say(`上一仗结果：${result}。可以再选一场。`);
+        this.backdrop.say('');
         this.panel.classList.remove('qb-hidden');
     }
 
@@ -753,32 +882,25 @@ function appReady(app: GameApp): boolean {
         && a.aiController && a.recruitmentSystem && app.cameraFollowUI && a.saveManager);
 }
 
-/** 等游戏本体初始化完（军团管理器、战斗钩子都就位）再挂面板；等待期间先挂一行提示 */
+/** 等游戏本体初始化完（军团管理器、战斗钩子都就位）再挂面板；从一打开就用深色底盖住战略地图 */
 export function startQuickBattleMode(app: GameApp): void {
     document.title = 'MAPWAR·即时战斗';
-    const hint = document.createElement('div');
-    hint.id = 'quick-battle-hint';
-    hint.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20050;'
-        + 'background:rgba(18,16,12,.94);border:1px solid #b08d4a;border-radius:10px;padding:16px 28px;'
-        + 'color:#f3d48a;font:600 18px "Noto Serif SC",serif;pointer-events:none';
-    hint.textContent = '即时战斗：等游戏加载完…';
-    document.body.appendChild(hint);
+    const backdrop = new Backdrop();
+    backdrop.say('即时战斗：等游戏加载完…');
     const t0 = performance.now();
     const timer = setInterval(() => {
         if (!appReady(app)) {
-            if (performance.now() - t0 > 120_000) hint.textContent = '即时战斗：游戏两分钟还没加载完，请刷新页面';
+            if (performance.now() - t0 > 120_000) backdrop.say('即时战斗：游戏两分钟还没加载完，请刷新页面');
             return;
         }
         clearInterval(timer);
         try {
-            const qb = new QuickBattle(app);
+            const qb = new QuickBattle(app, backdrop);
             qb.init();
             (window as unknown as { quickBattle?: QuickBattle }).quickBattle = qb;
-            hint.remove();
         } catch (e) {
             console.error('[即时战斗] 面板初始化失败', e);
-            hint.style.color = '#ffb366';
-            hint.textContent = `即时战斗初始化失败：${e instanceof Error ? e.message : String(e)}`;
+            backdrop.say(`即时战斗初始化失败：${e instanceof Error ? e.message : String(e)}`);
         }
     }, 300);
 }
