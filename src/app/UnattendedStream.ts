@@ -29,7 +29,21 @@ export function isUnattendedStream(): boolean {
     return new URLSearchParams(window.location.search).get('stream') === '1';
 }
 
+/** 即时战斗（`?quickbattle=1`）＝「只有战术模式」的单独程序：不归直播那套接管 */
+export function isQuickBattleMode(): boolean {
+    return new URLSearchParams(window.location.search).has('quickbattle');
+}
+
 export function initUnattendedStream(app: GameApp, gameTimeHUD: GameTimeHUD): void {
+    // 🔴 [2026-11-05 即时战斗进不去] 自动开播会调 HistoricalEventManager.togglePlayback() **解开暂停**：
+    //    战术层靠「场景接管暂停」才被 GameAppLoop 推进（见 GameAppLoop 的 else if 分支），
+    //    暂停一解就改走战略分支 → scene13War.tick 不再被调用 → 画布一帧不画、进场淡入永远结束不了，
+    //    屏幕上一直是「正在载入战术画面…」（实测：开战后 2 秒改走战略分支）。
+    //    即时战斗本来就把 AI／募兵／任务全停了、地图上只留这一仗，自动开播在这里没有意义。
+    if (isQuickBattleMode()) {
+        gameLog('startup', '⚔ [即时战斗] 跳过自动开播（只有战术模式，不接管直播）');
+        return;
+    }
     const unattended = isUnattendedStream();
 
     gameLog('startup', unattended

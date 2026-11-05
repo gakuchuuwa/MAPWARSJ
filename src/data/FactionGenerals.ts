@@ -497,9 +497,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     mengguqieke: [
         { generalId: 'mengguqieke_bahramshah', factionId: 'mengguqieke', cityId: 'city_erzincan', generalName: '巴赫拉姆沙', portrait: '/assets/TURKS/mengguqieke_bahramshah.png', eliteName: '埃城突骑', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 门古切克埃尔津詹支君主（约 1155–1225），以埃尔津詹为治所；普将
     ],
-    malwan: [
-        { generalId: 'malwan_ibn_marwan', factionId: 'malwan', cityId: 'city_merida', generalName: '伊本·马尔万', portrait: '/assets/ORIE/malwan_ibn_marwan.png', eliteName: '穆瓦拉德兵', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 穆瓦拉德首领，868 年据梅里达起事对抗科尔多瓦埃米尔，875 年建巴达霍斯；普将
-    ],
     hulumusi: [
         // 阿塔（约1450–1512，Khwaja Ata，忽鲁谟斯首相兼守城总指挥，1507年率军民修筑要塞保卫霍尔木兹海峡）→ 霍尔木兹（ORIE）
         { generalId: 'hulumusi_ata', factionId: 'hulumusi', cityId: 'city_hormuz', generalName: '阿塔', portrait: '/assets/ORIE/hulumusi_ata.png', eliteName: '霍尔木兹兵', eliteTier: 4 },
@@ -14085,6 +14082,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     womaya: [
+        { generalId: 'malwan_ibn_marwan', factionId: 'womaya', cityId: 'city_merida', generalName: '伊本·马尔万', portrait: '/assets/ORIE/malwan_ibn_marwan.png', eliteName: '穆瓦拉德兵', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 穆瓦拉德首领，868 年据梅里达起事对抗科尔多瓦埃米尔，875 年建巴达霍斯；普将
         { generalId: 'bfe2_rezin', cityId: 'city_damasikusi', generalName: '利汛', portrait: '/assets/ORIE/bfe2_rezin.png', factionId: 'yalan', eliteName: '亚兰战车', eliteTier: 4 },   // 按史：亚兰-大马士革王国以战车兵著称（前 853 卡卡之战、前 732 亚兰亡于亚述）；普将 T4,
 
 

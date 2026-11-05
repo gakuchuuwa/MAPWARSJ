@@ -496,10 +496,9 @@ export class CityAssetManager {
 // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'／'wistahm' 两个势力已删（非政权），旗面登记一并删除
 'mihran': '米赫',
 // 🔴 [2026-11-05 按A执行] 'dongyang'（会稽义军）已并入隋国，旗面登记删除
-'xiwasi': '锡瓦',
+'xiwasi': '埃雷',
 'mengguqieke': '门古',
-'malwan': '马尔',
-'sumuroyi': '萨马',
+'sumuroyi': '米沙',
         'yun': '允',
         'huangwang': '齐',
         'basha_d': '巴沙',

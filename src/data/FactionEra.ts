@@ -270,7 +270,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'huarazim': [{ from: -9999, era: 'castle' }], // 花剌子模
     'hui': [{ from: -9999, era: 'antiquity' }], // 濊族
     'huihu': [{ from: -9999, era: 'feudal' }], // 回鹘
-    'ganzhou_huihu': [{ from: 894, era: 'feudal' }],
+    // 🔴 [2026-11-05 按史修复] 甘州回鹘史实起年为 894（唐昭宗乾宁元年据甘州立国），但 FACTION_ERA 的时代段**首段一律从 -9999 起**（全库口径，无年武将/无首战年者靠首段落段），故此处记 -9999；历史起讫年仍由 FactionLifeYears 记 894–1036
+    'ganzhou_huihu': [{ from: -9999, era: 'feudal' }],
     // 🔴 [2026-11-01 按史] 甘州回鹘｜894 年（唐昭宗乾宁元年）据甘州立国—1036 年为西夏所灭，全段封建
     'huite': [{ from: -9999, era: 'imperial' }], // 辉特
     'huluo': [{ from: -9999, era: 'castle' }], // 古尔
@@ -514,10 +515,9 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'（上都）与 'wistahm'（维斯塔姆）两个势力已删，并入大元／萨珊，时代随本家
     'mihran': [{ from: -9999, era: 'antiquity' }], // 米赫兰
     // 🔴 [2026-11-05 按A执行] 'dongyang'（会稽义军）已并入隋国，时代随本家
-    'xiwasi': [{ from: -9999, era: 'castle' }], // 锡瓦斯苏丹国
-    'mengguqieke': [{ from: -9999, era: 'castle' }], // 门古切克王朝
-    'malwan': [{ from: -9999, era: 'feudal' }], // 马尔万政权
-    'sumuroyi': [{ from: -9999, era: 'imperial' }], // 萨马起义军
+    'xiwasi': [{ from: -9999, era: 'castle' }], // 埃雷特纳
+    'mengguqieke': [{ from: -9999, era: 'castle' }], // 门古切克
+    'sumuroyi': [{ from: -9999, era: 'imperial' }], // 米沙鄢人
     'tiaodun_qishi': [{ from: -9999, era: 'castle' }], // 条顿骑士团
     'tiemuer': [{ from: -9999, era: 'castle' }], // 图兰
     'tokugawa': [{ from: -9999, era: 'imperial' }], // 德川

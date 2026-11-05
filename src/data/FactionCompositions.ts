@@ -1426,10 +1426,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代鲁姆塞尔柱军团",
         legionType: "sub",
     },
-    "malwan": {
-        legionName: "封建时代哈里发军团",
-        legionType: "sub",
-    },
     "sumuroyi": {
         legionName: "帝国时代马六甲军团",
         legionType: "sub",

@@ -718,12 +718,35 @@ class QuickBattle {
         return this.app.scene13War?.isActive?.() === true || this.app.battleScene?.isActive?.() === true;
     }
 
+    /**
+     * 战术画面在演的时候，大战略必须是「场景接管暂停」的状态。
+     *
+     * 🔴 [2026-11-05 进不去] GameAppLoop 只有在 `timeSystem.isGamePaused()` 为真、
+     *    且 `battleScene.isStrategyPausedByScene()` 为真时才会调 `scene13War.tick()`。
+     *    暂停一旦被别处解开（实测：无人值守直播的自动开播 togglePlayback），
+     *    主循环立刻改走战略分支 → tick/render 全线停摆 → 画布一直是全透明、
+     *    `entryFadePending` 永远是 true → 屏幕就停在「正在载入战术画面…」。
+     *    这里每 400ms 巡检一次，暂停被解开就按回场景接管态（BattleSceneLayer.tick 正常也做这件事）。
+     *    只动本页这一刻的暂停位，不写存档、不改大战略行为。
+     */
+    private keepSceneClock(): void {
+        if (!this.warActive()) return;
+        if (this.app.battleScene?.isStrategyPausedByScene?.() !== true) return;   // 场景自己没接管，不掺和
+        const ts = this.app.timeSystem;
+        if (ts.isGamePaused()) return;
+        ts.setPaused(true);
+        const a = this.active;
+        this.report('reTakePause', a);
+        console.warn('[即时战斗] 战术演出期间暂停被解开，已按回场景接管态（否则战术层不 tick、画面会卡在载入）');
+    }
+
     private watch(): void {
         const a = this.active;
         if (!a) {
             this.clearWorldLegions();
             return;
         }
+        this.keepSceneClock();
         this.clearWorldLegions(new Set([a.attacker, ...(a.defender ? [a.defender] : [])]));
         if (a.phase === 'engaging') {
             if (this.warActive()) {

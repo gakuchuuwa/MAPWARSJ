@@ -561,7 +561,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 // 🔴 [2026-11-05 按A执行] 'dongyang'（会稽义军）已并入隋国，首府登记删除
 'xiwasi': 'city_sivas',
 'mengguqieke': 'city_erzincan',
-'malwan': 'city_merida',
 'sumuroyi': 'city_palapag',
     'huangwang': 'city_xianxia',
 'yehe': 'city_bamiancheng',

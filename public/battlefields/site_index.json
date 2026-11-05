@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-05T04:13:42.161Z",
+ "generatedAt": "2026-11-05T04:23:34.629Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -17028,6 +17028,34 @@
    "reliefM": 211,
    "cliffs": 0,
    "top": "Grass 84.6% · Forest, Dry South American 10.1% · Water, Shallow 4.3% · Beach 0.8%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_kunlundao",
+   "file": "site_city_kunlundao.json",
+   "bytes": 295767,
+   "koppen": "Aw",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 4197,
+   "waterPct": 29.1,
+   "reliefM": 503,
+   "cliffs": 0,
+   "top": "Dry Grass 59.5% · Water, Shallow 29.1% · Forest, Lush Bamboo 6.1% · Beach 2.9%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_nikoba",
+   "file": "site_city_nikoba.json",
+   "bytes": 273958,
+   "koppen": "Am",
+   "theme": "INDOMALAYAN_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 5472,
+   "waterPct": 38,
+   "reliefM": 83,
+   "cliffs": 0,
+   "top": "Dry Grass 50% · Water, Shallow 38% · Forest, Lush Bamboo 5.6% · Beach 3.7%",
    "verify": "ok"
   }
  ],
