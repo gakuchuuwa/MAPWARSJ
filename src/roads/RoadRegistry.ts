@@ -622,6 +622,37 @@ export class RoadRegistry {
         return best;
     }
 
+    /**
+     * 只走陆路边的最短路（环球模式：绝对优先陆路，不上船）。不通返回 null。
+     * 🔴 [2026-11-05 主人令「环球模式优先陆路」] 最短路会为了省权重而改走海路（例：大阪→姬路走海 96km，陆路 127km），
+     *    环球的陆路段必须用本方法；海峡、大洋才允许走 findSeaOnlyPath。
+     */
+    public findLandOnlyPath(startNodeId: string, endNodeId: string): PathResult | null {
+        if (!this.adjacencyList.has(startNodeId) || !this.adjacencyList.has(endNodeId)) return null;
+        const dist = new Map<string, number>([[startNodeId, 0]]);
+        const prev = new Map<string, { nodeId: string; edge: GraphEdge }>();
+        const visited = new Set<string>();
+        const pq = new DijkstraMinHeap();
+        pq.push({ nodeId: startNodeId, dist: 0 });
+        while (pq.size > 0) {
+            const { nodeId: cur } = pq.pop()!;
+            if (visited.has(cur)) continue;
+            visited.add(cur);
+            if (cur === endNodeId) break;
+            for (const edge of this.adjacencyList.get(cur) || []) {
+                if (edge.isSea || visited.has(edge.to)) continue;
+                const nd = (dist.get(cur) ?? Infinity) + edge.weight;
+                if (nd < (dist.get(edge.to) ?? Infinity)) {
+                    dist.set(edge.to, nd);
+                    prev.set(edge.to, { nodeId: cur, edge });
+                    pq.push({ nodeId: edge.to, dist: nd });
+                }
+            }
+        }
+        if (!dist.has(endNodeId)) return null;
+        return this.buildPathResult(startNodeId, endNodeId, dist, prev);
+    }
+
     /** 只走海路边的最短路（航行模式：不上陆地）。起终点须是港口，不通返回 null。 */
     public findSeaOnlyPath(startNodeId: string, endNodeId: string): PathResult | null {
         if (!this.adjacencyList.has(startNodeId) || !this.adjacencyList.has(endNodeId)) return null;

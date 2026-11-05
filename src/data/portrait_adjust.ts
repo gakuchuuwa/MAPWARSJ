@@ -10661,6 +10661,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.17,
             "offsetX": 0,
             "offsetY": 17
+        },
+        "/assets/CENTRAL/liusong_tanshao.png": {
+            "scale": 1.31,
+            "offsetX": 33,
+            "offsetY": -8
+        },
+        "/assets/CENTRAL/tuoba_weijingxin.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/CENTRAL/song_weisheng.png": {
+            "scale": 1.07,
+            "offsetX": 5,
+            "offsetY": -7
         }
     },
     "folderGuides": {

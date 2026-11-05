@@ -1,0 +1,118 @@
+/**
+ * 玩家「环球 / 航行」模式的知名商路链（2026-11-05 主人令）。
+ *
+ *  · 环球（globe）：绝对优先陆路，按江户 → 里斯本的古代陆上商路走（东海道—山阳道—对马海峡—燕行路—辽西走廊—
+ *    华北—河西走廊—塔里木—帕米尔—河中—呼罗珊—安纳托利亚—巴尔干—阿尔卑斯—比利牛斯—伊比利亚），
+ *    陆路走不通的海峡、大洋（对马海峡、博斯普鲁斯、大西洋、太平洋）才换海路，最后沿大帆船航线回江户成环。
+ *  · 航行（sail）：只走海路，按江户 → 东海 → 南海 → 印度洋 → 好望角 → 里斯本 → 巴西 → 麦哲伦海峡 → 太平洋东岸 →
+ *    阿卡普尔科 → 马尼拉 → 江户 的大航海港口链成环。
+ *
+ * 链是环：走到末尾回到第 0 站。链上某站暂时到不了（例如新据点还没画路），玩家会自动跳到下一站，不会卡住。
+ * `by` = 从上一站到本站走什么路：land 只走陆路，sea 只走海路；陆路不通时由调用方再退到「任意路」兜底。
+ */
+export interface TourStop {
+    id: string;
+    by: 'land' | 'sea';
+}
+
+const L = (id: string): TourStop => ({ id, by: 'land' });
+const S = (id: string): TourStop => ({ id, by: 'sea' });
+
+/** 环球后半段与航行共用的「里斯本以西」大西洋—太平洋港口链（均走海路） */
+const ATLANTIC_PACIFIC_SEA_TAIL: TourStop[] = [
+    S('city_jiadisi'),      // 加的斯
+    S('city_telde'),        // 加那利（拉斯帕尔马斯一带）
+    S('city_olinda'),       // 奥林达
+    S('city_salvador'),     // 萨尔瓦多
+    S('city_guanabara'),    // 里约
+    S('city_buenosaires'),
+    S('city_sanjulian'),
+    S('city_felipe'),       // 菲利普王城（饥饿港）
+    S('city_valdivia'),
+    S('city_concepcion'),
+    S('city_valparaiso'),
+    S('city_arica'),
+    S('city_lima'),
+    S('city_guayaquil'),
+    S('city_banama'),
+    S('city_realejo'),
+    S('city_acapulco'),
+    S('city_hagatna'),      // 阿加尼亚（乌马塔克）
+    S('city_palapag'),
+    S('city_manila'),
+    S('city_tainan'),       // 大员
+    S('city_mengjia'),      // 鸡笼一带
+    S('city_shuri'),        // 那霸
+    S('city_satsuma'),      // 坊津一带
+    S('city_akaogicheng'),  // 种子岛
+];
+
+/** 环球：陆路优先的江户 → 里斯本商路，再沿海路回江户 */
+export const GLOBE_CHAIN: TourStop[] = [
+    // 日本：东海道—山阳道
+    S('city_edo'), L('city_hakone'), L('city_junfucheng'), L('city_hamamatsu'), L('city_atsuta'),
+    L('city_fuwa'), L('city_kyoto'), L('city_osaka'), L('city_himeji'), L('city_guizhicheng'),
+    L('city_yoshida'), L('city_yamaguchi'), L('city_chijianguan'), L('city_taizaifu'),
+    // 对马海峡（唯一不能绕开的海）
+    S('city_yuanzhishi'), S('city_tsushima'), S('city_gimhae'),
+    // 朝鲜：岭南大路—义州大路
+    L('city_shangzhou'), L('city_guoyuancheng'), L('city_hanseong'), L('city_kaesong'), L('city_pyongyang'),
+    L('city_xicheng'), L('city_longwan'),
+    // 辽东、辽西走廊、华北
+    L('city_wugucheng'), L('city_liaoyang'), L('city_guangning'), L('city_tuhe'),   // 安市城是高句丽山城、不在明代辽西驿道上，且与广宁之间尚无直连路，不入链
+    L('city_ningyuan'), L('city_shanhaiguan'), L('city_feiru'), L('city_wuzhong'), L('city_beijing'),
+    L('city_baoding'), L('city_zhending'), L('city_xingtai'), L('city_anyang'), L('city_luoyang'),
+    L('city_hanguguan'), L('city_tongguan'), L('city_changan'),
+    // 河西走廊—天山南麓
+    L('city_binzhou2'), L('city_xiaoguan'), L('city_lanzhou'), L('city_wuwei'), L('city_shandan'),
+    L('city_zhangye'), L('city_jiuquan'), L('city_jinchangcheng'), L('city_hamiwei'), L('city_gaochangcheng'),
+    L('city_tuokexun'), L('city_yanqi'), L('city_weili'), L('city_yiluolucheng'), L('city_bohuancheng'),
+    L('city_wosedecheng'), L('city_shule'),
+    // 帕米尔—费尔干纳—河中
+    L('city_yierkeshentan'), L('city_xiuxun'), L('city_aoshen'), L('city_kokand'), L('city_huzhan'),
+    L('city_jizhake'), L('city_samaerhan'), L('city_bukhara'), L('city_amucheng'),
+    // 呼罗珊大道
+    L('city_merv'), L('city_salahesi'), L('city_tusi'), L('city_nishabuer'), L('city_baihage'),
+    L('city_bistam'), L('city_damugan'), L('city_leiyi'), L('city_jiaziwen'), L('city_zanzhan'),
+    L('city_dabulishi'),
+    // 安纳托利亚东道
+    L('city_erzurum'), L('city_erzincan'), L('city_sivas'), L('city_amaxiya'), L('city_nixiya'),
+    // 博斯普鲁斯海峡 → 君士坦丁堡（路网里 尼凯亚—君士坦丁堡 已含渡口）
+    L('city_junshitandingbao'),
+    // 巴尔干军事大道—萨瓦河谷—北意大利
+    L('city_aidiernei'), L('city_plovdiv'), L('city_sofia'), L('city_nis'), L('city_belgrade'),
+    L('city_venice'), L('city_verona'), L('city_milan'), L('city_turin'), L('city_shangbeili'),
+    // 法国南部—比利牛斯—伊比利亚
+    L('city_lyon'), L('city_avignon'), L('city_toulouse'), L('city_bayonne'), L('city_pamplona'),
+    L('city_burgos'), L('city_madeli'), L('city_toledo'), L('city_merida'), L('city_badajoz'),
+    L('city_evora'), L('city_lisiben'),
+    // 大西洋—太平洋海路回江户
+    ...ATLANTIC_PACIFIC_SEA_TAIL,
+];
+
+/** 航行：纯海路港口环线（江户 → 好望角 → 里斯本 → 巴西 → 麦哲伦 → 阿卡普尔科 → 马尼拉 → 江户） */
+export const SAIL_CHAIN: TourStop[] = [
+    // 日本沿海与濑户内海
+    S('city_edo'), S('city_kamakura'), S('city_shimoda'), S('city_toba'), S('city_kushimoto'), S('city_osaka'),
+    S('city_himeji'), S('city_noshima'), S('city_chijianguan'), S('city_taizaifu'), S('city_yuanzhishi'),
+    S('city_nagasaki'),
+    // 东海与中国东南沿海
+    S('city_goto'), S('city_qingyuan_zj'), S('city_qingjingsi'), S('city_zhangzhou'), S('city_haiyang'),
+    S('city_aomen'),
+    // 南海
+    S('city_yazhou'), S('city_dupan'), S('city_kunlundao'), S('city_danmaxi'), S('city_malacca'),
+    // 孟加拉湾—印度西岸
+    S('city_yaqi'), S('city_nikoba'), S('city_jiale'), S('city_kelunpo'), S('city_cochin'),
+    S('city_guli'), S('city_guoa'),
+    // 东非—好望角
+    S('city_malindi'), S('city_mombasa'), S('city_kilwa'), S('city_mozambique'), S('city_sofala'),
+    S('city_cape_town'),
+    // 南大西洋北上—里斯本
+    S('city_sainthelena'), S('city_ribeira'), S('city_angra'), S('city_lisiben'),
+    // 里斯本以西：大西洋—巴西—麦哲伦—南美西岸—中美—太平洋—菲律宾—台湾—琉球—九州
+    ...ATLANTIC_PACIFIC_SEA_TAIL,
+];
+
+export function getTourChain(mode: 'globe' | 'sail'): readonly TourStop[] {
+    return mode === 'globe' ? GLOBE_CHAIN : SAIL_CHAIN;
+}

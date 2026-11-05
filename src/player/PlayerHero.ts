@@ -19,6 +19,7 @@ import type { GameMap } from '../map/GameMap';
 import { getCultureNavalShip } from '../types/NavalShipTiers';
 import type { City } from '../types/core';
 import { roadRegistry } from '../roads/RoadRegistry';
+import { getTourChain } from './TourRoutes';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
@@ -648,6 +649,8 @@ export class PlayerHero {
         this.tourPlannedAt = 0;
         this.holdUntilMs = 0;
         this.tourTrail = [];   // 换模式后从当前位置重新起算路迹，免得旧路迹误判
+        this.tourIdx = -1;     // 商路链序号重新定位
+        this.tourPrevId = '';
         if (!this.hostLegionId) {
             this.cancelChase();
             this.cancelTravel();
@@ -661,6 +664,86 @@ export class PlayerHero {
     public kickTourNow(): void {
         this.tourPlannedAt = 0;
         this.stepTour();
+    }
+
+    /** 商路链上当前所在站的序号（-1＝未定位） */
+    private tourIdx = -1;
+    /** 上一站（走回头路检测：新一段路若穿过上一站＝原路折返，跳过该站） */
+    private tourPrevId = '';
+    /**
+     * 按商路链（TourRoutes）规划下一段。成功发车返回 true；链完全走不通返回 false，由旧逻辑兜底。
+     *   · 站在链上 → 取链上下一个到得了的站（环形，到末尾回第 0 站）；
+     *   · 不在链上 → 先去最近的链站；
+     *   · 某段绕路过大（路程 > 直线 ×2 + 100km，说明这两站之间的路还没连好、会绕个大圈）→ 跳过那一站，
+     *     等主人把路画通后自动恢复，不会让玩家走冤枉路；
+     *   · 陆路段（by=land）只走陆路，陆路不通才退到任意路；海路段只走海路。
+     */
+    private planChainLeg(mode: 'globe' | 'sail', hereId: string, pos: { lat: number; lng: number }): boolean {
+        const chain = getTourChain(mode);
+        const n = chain.length;
+        if (n < 2) return false;
+        const cm = this.deps.cityManager;
+        let idx = -1;
+        if (this.tourIdx >= 0 && chain[this.tourIdx]?.id === hereId) idx = this.tourIdx;
+        else idx = chain.findIndex((s) => s.id === hereId);
+        const pathOf = (from: string, to: string, by: 'land' | 'sea') => {
+            let res = by === 'land' ? roadRegistry.findLandOnlyPath(from, to) : roadRegistry.findSeaOnlyPath(from, to);
+            if (!res && mode === 'globe') res = roadRegistry.findPath(from, to);
+            return res && res.coordinates.length >= 2 ? res : null;
+        };
+        if (idx < 0) {
+            const near = chain
+                .map((s, i) => ({ s, i, c: cm.getCity(s.id) }))
+                .filter((x): x is { s: typeof chain[number]; i: number; c: City } => !!x.c)
+                .sort((a, b) => getEuclideanDistance(pos, { lat: a.c.latitude, lng: a.c.longitude })
+                    - getEuclideanDistance(pos, { lat: b.c.latitude, lng: b.c.longitude }));
+            for (const x of near.slice(0, 8)) {
+                const res = pathOf(hereId, x.s.id, mode === 'sail' ? 'sea' : x.s.by);
+                if (!res) continue;
+                this.tourIdx = x.i;
+                this.launchTourLeg(x.c, res, mode === 'sail');
+                return true;
+            }
+            return false;
+        }
+        const hereCity = cm.getCity(hereId);
+        for (let k = 1; k < n; k++) {
+            const j = (idx + k) % n;
+            const stop = chain[j];
+            if (stop.id === hereId) continue;
+            const dest = cm.getCity(stop.id);
+            if (!dest) continue;
+            const res = pathOf(hereId, stop.id, stop.by);
+            if (!res) continue;
+            if (this.tourPrevId && res.nodes.slice(1, -1).includes(this.tourPrevId) && k < n - 1) continue;   // 穿过上一站＝折返
+            if (hereCity) {
+                const km = res.edges.reduce((t, e) => t + e.lengthKm, 0);
+                const straight = PlayerHero.greatCircleKm(hereCity.latitude, hereCity.longitude, dest.latitude, dest.longitude);
+                if (km > straight * 2 + 100 && k < n - 1) continue;
+            }
+            this.tourIdx = j;
+            this.tourPrevId = hereId;
+            this.launchTourLeg(dest, res, mode === 'sail');
+            return true;
+        }
+        return false;
+    }
+    private static greatCircleKm(la1: number, ln1: number, la2: number, ln2: number): number {
+        const r = Math.PI / 180;
+        const x = Math.sin((la2 - la1) * r / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin((ln2 - ln1) * r / 2) ** 2;
+        return 2 * 6371 * Math.asin(Math.sqrt(x));
+    }
+    private launchTourLeg(dest: City, res: NonNullable<ReturnType<typeof roadRegistry.findPath>>, forceSea: boolean): void {
+        const path = roadRegistry.pathToLatLngs(res);
+        this.rememberTourStop(dest.id);
+        this.rememberTourTrail(path);
+        this.travelCityId = dest.id;
+        this.travelPointLabel = null;
+        this.army.setTargetCity(dest);
+        this.army.setOnArriveCallback(() => this.handleArrive(dest.id));
+        this.army.moveAlongPath(path.map((p) => ({ lat: p.lat, lng: p.lng, sea: forceSea ? true : (p as any).sea })));
+        this.deps.followCamera();
+        this.emitChange();
     }
 
     /** 环球/航行：停下来后挑下一个目的地（每 1.5 秒最多规划一次） */
@@ -680,6 +763,8 @@ export class PlayerHero {
                 ?? roadRegistry.getNearestCityId(pos.lat, pos.lng, 30);
             if (!here) return;
             this.rememberTourStop(here);
+            // 🔴 [2026-11-05 主人令] 环球优先陆路、按知名商路链走（TourRoutes.GLOBE_CHAIN）；链走不通才退回旧的向西选址
+            if (this.planChainLeg('globe', here, pos)) return;
             const dists = roadRegistry.getRoadDistancesKmFrom(here);
             const reach = [...dists.entries()]
                 .filter(([id, d]) => id !== here && d > 0)
@@ -741,6 +826,8 @@ export class PlayerHero {
         }
         const startId = nearPort.id;
         this.rememberTourStop(startId);
+        // 🔴 [2026-11-05 主人令] 航行只走海路、按知名大航海港口链走（TourRoutes.SAIL_CHAIN）；链走不通才退回旧针路表
+        if (this.planChainLeg('sail', startId, pos)) return;
         let chosenDest: City | null = null;
         let chosenPath: Array<{ lat: number; lng: number; sea?: boolean }> | null = null;
 
