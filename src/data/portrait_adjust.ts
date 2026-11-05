@@ -4173,7 +4173,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/SASANIAN/asaibaijiang_xuliewu.png": {
-            "scale": 1.16,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -7898,9 +7898,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/PERSIAN/kuida_chakar.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": 0
+            "scale": 1.11,
+            "offsetX": 13,
+            "offsetY": 2
         },
         "/assets/BRITONS/gen_edward_longshanks.png": {
             "scale": 1.08,
@@ -10676,6 +10676,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 5,
             "offsetY": -7
+        },
+        "/assets/SASANIAN/__闲置__SASANIAN_01.png": {
+            "scale": 0.96,
+            "offsetX": 9,
+            "offsetY": -4
+        },
+        "/assets/PERSIAN/safawei_d_tahmasp.png": {
+            "scale": 0.92,
+            "offsetX": 13,
+            "offsetY": -40
         }
     },
     "folderGuides": {
