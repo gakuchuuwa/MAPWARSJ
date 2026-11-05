@@ -132,7 +132,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
         formationMode: 'balance_yoke',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_sheriffofnottingham',
+        commanderUnit: 'hero_lorddegraville',
         slots: [
             { type: 'longswordsman', count: 4 },
             { type: 'knight', count: 2 },
@@ -1153,7 +1153,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'crescent',
         shipId: 'WAR_HULK',
-        commanderUnit: 'hero_henryv',
+        commanderUnit: 'hero_sirjohnfastolf',
         slots: [
             { type: 'two_handed_swordsman', count: 3 },
             { type: 'cavalier', count: 2 },
@@ -1515,7 +1515,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'triangle',
         shipId: 'LONGBOAT',
-        commanderUnit: 'hero_ataulf',
+        commanderUnit: 'hero_einarpaunchshaker',
                 slots: [
             { type: 'norse_warrior', count: 2 },
             { type: 'berserk', count: 3 },
@@ -2242,7 +2242,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'crescent',
         shipId: 'CARRACK',
-        commanderUnit: 'hero_lahire',
+        commanderUnit: 'hero_guglielmoembriaco',
         slots: [
             { type: 'condottiero', count: 3 },
             { type: 'cavalier', count: 2 },
@@ -3428,7 +3428,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'VIET_CASTLE_AGE3', castleName: '越南 顺化京城多檐城门楼',
         formationMode: 'triangle',
         shipId: 'INCENDIARY_SHIP',
-        commanderUnit: 'hero_zhouyu',
+        commanderUnit: 'hero_luunhanchu',
         slots: [
             { type: 'white_feather_guard', count: 2 },
             { type: 'elite_chukonu', count: 3 },
@@ -3445,7 +3445,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'VIET_CASTLE_AGE3', castleName: '越南 顺化京城多檐城门楼',
         formationMode: 'crescent',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_luunhanchu',
+        commanderUnit: 'hero_letrien',
         slots: [
             { type: 'jian_swordsman', count: 3 },
             { type: 'imperial_skirmisher', count: 2 },
@@ -3566,7 +3566,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MAYA_CASTLE_AGE3', castleName: '玛雅 蒂卡尔石砌神庙要塞',
         formationMode: 'fish_scale',
         shipId: 'CANOE',
-        commanderUnit: 'hero_cuauhtemoc',
+        commanderUnit: 'hero_huaynacapac',
         slots: [
             { type: 'eagle_scout', count: 3 },
             { type: 'plumed_archer', count: 4 },
@@ -3681,7 +3681,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'INCA_CASTLE_AGE3', castleName: '印加 库斯科萨克萨瓦曼巨石堡',
         formationMode: 'fish_scale',
         shipId: 'CANOE',
-        commanderUnit: 'hero_topayupanqui',
+        commanderUnit: 'hero_cusiyupanqui',
         slots: [
             { type: 'elite_kamayuk', count: 3 },
             { type: 'champi_runner', count: 4 },
@@ -3917,7 +3917,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ETHI_CASTLE_AGE3', castleName: '埃塞俄比亚 阿克苏姆巨石柱堡',
         formationMode: 'triangle',
         shipId: 'BIREME',
-        commanderUnit: 'dagnajan_elephant',
+        commanderUnit: 'hero_yodit',
         slots: [
             { type: 'battle_elephant', count: 2 },
             { type: 'shotel_warrior', count: 3 },
@@ -4622,7 +4622,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HUGUANG_CASTLE_AGE3', castleName: '湖广 荆楚重楼要塞',
         formationMode: 'triangle',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_einarpaunchshaker',
+        commanderUnit: 'hero_dongzhuo',
         slots: [
             { type: 'jian_swordman_unshielded', count: 2 },
             { type: 'chukonu', count: 3 },
