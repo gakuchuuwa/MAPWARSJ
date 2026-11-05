@@ -5841,16 +5841,7 @@ function serverValidateEntities(): {
     }
 
     // 9.1 GENERAL_PROFILES 块内条目有品阶但无战术技（解析器会跳过，等同无武将技）
-    const generalIdToFaction = new Map(
-        Object.entries(data.generals).map(([fId, g]) => [g.generalId, fId]),
-    );
-    for (const gid of data.malformedProfiles ?? []) {
-        issues.push({
-            level: 'error',
-            msg: `武将档案 "${gid}" 在 GENERAL_PROFILES 内缺战术技（条目无效，战斗不触发武将技）`,
-            factionId: generalIdToFaction.get(gid),
-        });
-    }
+    // 【主人定 2026-11-05】战术技能全随机，不需要设定，缺战术技不再报错（原 9.1 已删，勿再加）。
 
     // 10. 缺精锐
     for (const f of data.factions) {
@@ -5885,9 +5876,7 @@ function serverValidateEntities(): {
     for (const [fId, g] of Object.entries(data.generals)) {
         const prof = data.profiles[g.generalId];
         if (!prof) continue;
-        if (!prof.tacticalSkillId?.trim()) {
-            issues.push({ level: 'error', msg: `武将 "${g.generalName}"(${g.generalId}) 缺战术技`, factionId: fId });
-        }
+        // 【主人定 2026-11-05】战术技全随机，不查「缺战术技」。
         // 2026-08-03 名将战略技全随机：不再要求名将档案佩戴战略技（运行时随机池分配），
         // 仅保留「普将不得有战略技」防旧数据残留。
         if (prof.tier === 'ordinary' && prof.strategicSkillId) {

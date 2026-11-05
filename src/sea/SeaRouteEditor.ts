@@ -1074,7 +1074,8 @@ export class SeaRouteEditor implements IEditor {
         if (panToRoute && feat.geometry.coordinates.length > 0) {
             const unwrapped = unwrapLongitudePath(feat.geometry.coordinates);
             const latLngs = unwrapped.map(([lng, lat]) => [lat, lng] as [number, number]);
-            this.map.fitBounds(L.latLngBounds(latLngs), { padding: [60, 60] });
+            // 只平移不缩放：缩放后陆路图层不跟着重算，会对不上
+            this.map.panTo(L.latLngBounds(latLngs).getCenter());
         }
         const km = Math.round(this.calculatePathLength(feat.geometry.coordinates));
         const switchHint = this.pathCandidates.length > 1 ? ` · 可点 🔀 切换线路(${this.pathCandidates.length}条)` : '';
@@ -1184,7 +1185,7 @@ export class SeaRouteEditor implements IEditor {
         const f = SEA_ROUTE_DATA.features.find(x => x.properties.id === routeId);
         if (!f || f.geometry.coordinates.length === 0) return;
         const latLngs = f.geometry.coordinates.map(([lng, lat]) => [lat, lng] as [number, number]);
-        this.map.fitBounds(L.latLngBounds(latLngs), { padding: [60, 60] });
+        this.map.panTo(L.latLngBounds(latLngs).getCenter());
         this.selectRoute(routeId);
         if (this.routeSelect) this.routeSelect.value = routeId;
     }

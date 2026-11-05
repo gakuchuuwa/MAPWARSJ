@@ -4120,6 +4120,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     ayoubu_turanshah: { generalId: 'ayoubu_turanshah', tier: 'ordinary', tacticalSkillId: 'ts_008', advantageSkillId: 'ts_008', balanceSkillId: 'ts_1101', disadvantageSkillId: 'ts_019', atkAdvantageSkillId: 'ts_008', atkBalanceSkillId: 'ts_1101', atkDisadvantageSkillId: 'ts_019', defAdvantageSkillId: 'ts_004', defBalanceSkillId: 'ts_024', defDisadvantageSkillId: 'ts_002', aptitude: 'leverage', attackStyle: 'attack' },   // 图兰沙·普将
     bolinixiya_isokelekel: { generalId: 'bolinixiya_isokelekel', tier: 'ordinary', tacticalSkillId: 'ts_008', advantageSkillId: 'ts_008', balanceSkillId: 'ts_1101', disadvantageSkillId: 'ts_019', atkAdvantageSkillId: 'ts_008', atkBalanceSkillId: 'ts_1101', atkDisadvantageSkillId: 'ts_019', defAdvantageSkillId: 'ts_004', defBalanceSkillId: 'ts_024', defDisadvantageSkillId: 'ts_002', aptitude: 'leverage', attackStyle: 'attack' },   // 伊索克勒克尔·普将
     yinggelan_somers: { generalId: 'yinggelan_somers', tier: 'ordinary', tacticalSkillId: 'ts_008', advantageSkillId: 'ts_008', balanceSkillId: 'ts_1101', disadvantageSkillId: 'ts_019', atkAdvantageSkillId: 'ts_008', atkBalanceSkillId: 'ts_1101', atkDisadvantageSkillId: 'ts_019', defAdvantageSkillId: 'ts_004', defBalanceSkillId: 'ts_024', defDisadvantageSkillId: 'ts_002', aptitude: 'leverage', attackStyle: 'balanced' },   // 萨默斯·普将
+    toyotomi_asai_chacha: { generalId: 'toyotomi_asai_chacha', tier: 'ordinary', tacticalSkillId: '', aptitude: 'leverage', attackStyle: 'defense' },
 };
 
 

@@ -17374,7 +17374,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     toyotomi: [
-        { generalId: 'toyotomi_asai_chacha', factionId: 'toyotomi', cityId: 'city_osaka', generalName: '浅井茶茶', portrait: '/assets/JAPAN/toyotomi_asai_chacha.png', eliteName: '大坂七手组', eliteTier: 3 }, // 🔴 [2026-11-05 依主人令改将] 大坂城实际主政者（淀殿），主持大坂城防与大坂之阵防御战（1583–1615 居大坂城）
+        { generalId: 'toyotomi_asai_chacha', generalName: '浅井茶茶', portrait: '/assets/JAPAN/toyotomi_asai_chacha.png' }, // 🔴 [2026-11-05 依主人令改将] 大坂城实际主政者（淀殿），主持大坂城防与大坂之阵防御战（1583–1615 居大坂城）
         { generalId: 'hashiba_fengchenxiuji', eliteName: '黄母衣众', eliteTier: 3, factionId: 'toyotomi', cityId: 'city_himeji', generalName: '丰臣秀吉', portrait: '/assets/JAPAN/hashiba_fengchenxiuji.png' },   // 按史：黄母衣众为秀吉马廻近卫与使番，具鲜明文化辨识度，但非独立战略野战主力，依 v3 定 T3。
         { generalId: 'gen_ishida_mitsunari', factionId: 'toyotomi', cityId: 'city_kyoto', generalName: '石田三成', portrait: '/assets/JAPAN/gen_ishida_mitsunari.png', eliteName: '佐和山众', eliteTier: 3 },
 

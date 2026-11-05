@@ -8,6 +8,7 @@ import {
     showGameAppRuntimeErrorBadge,
 } from './app/boot/GameAppBootUtils';
 import { registerMapwarWebMcpTools } from './webmcp/registerMapwarTools';
+import { startQuickBattleMode } from './quickbattle/QuickBattle';
 
 if (import.meta.env.DEV) {
     import('./debug/perfEarly');
@@ -74,9 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(() => registerMapwarWebMcpTools(app))
             .catch(showBootError);
         // 即时战斗：`/?quickbattle=1`（quick-battle.html 跳过来），单独开一场战术模式对战
-        if (new URLSearchParams(location.search).has('quickbattle')) {
-            void import('./quickbattle/QuickBattle').then((m) => m.startQuickBattleMode(app)).catch(showBootError);
-        }
+        //    静态 import：与游戏本体共用同一份模块实例（动态 import 在热更新后可能拿到另一份）
+        if (new URLSearchParams(location.search).has('quickbattle')) startQuickBattleMode(app);
     } catch (err) {
         showBootError(err);
     }

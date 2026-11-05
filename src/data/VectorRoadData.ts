@@ -20900,33 +20900,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "京都-千早城",
-                type: "road",
-                id: "road_city_kyoto_city_asuka_1781186199939",
-                startConnection: "city_kyoto",
-                endConnection: "city_asuka"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [135.77, 35.01],
-                    [135.655467, 34.882769],
-                    [135.614223, 34.862147],
-                    [135.593601, 34.783783],
-                    [135.610099, 34.738414],
-                    [135.626596, 34.676548],
-                    [135.626596, 34.647677],
-                    [135.622472, 34.618806],
-                    [135.634845, 34.552815],
-                    [135.614223, 34.503322],
-                    [135.589476, 34.470327],
-                    [135.689392, 34.336668],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "顺天-完山",
                 type: "road",
                 id: "road_city_suncheon_k_city_jeonju_1781202793903",
@@ -21490,28 +21463,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [107.23342895507814, 31.41126925248229],
                     [106.91482543945314, 31.73060399686179],
                     [106.75, 31.86],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "千早城-名张",
-                type: "road",
-                id: "road_city_asuka_city_nabari_1781251849483",
-                startConnection: "city_asuka",
-                endConnection: "city_nabari"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [135.689392, 34.336668],
-                    [135.746204, 34.4827],
-                    [135.808071, 34.499198],
-                    [135.828693, 34.523944],
-                    [135.853439, 34.606432],
-                    [135.88231, 34.614681],
-                    [136.108, 34.627],
                 ]
             }
         },
@@ -38302,23 +38253,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [27.460327148437504, 58.06335031814739],
                     [27.822875976562504, 57.84182732887097],
                     [28.33, 57.82],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "尤里耶夫-塔林",
-                type: "road",
-                id: "road_city_youliyefu_city_talin_1785581079213",
-                startConnection: "city_youliyefu",
-                endConnection: "city_talin"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [26.72, 58.37],
-                    [24.75, 59.43],
                 ]
             }
         },
@@ -73445,6 +73379,139 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [30.280284, 46.260565],
                     [30.340587, 46.242011],
                     [30.34, 46.19],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "尤里耶夫-塔林",
+                type: "road",
+                id: "road_city_youliyefu_city_talin_1793843755735",
+                startConnection: "city_youliyefu",
+                endConnection: "city_talin"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.72, 58.37],
+                    [26.488696, 58.440234],
+                    [26.451864, 58.450075],
+                    [26.417528, 58.464341],
+                    [26.379447, 58.485642],
+                    [26.338006, 58.514888],
+                    [26.253607, 58.591785],
+                    [26.219843, 58.616078],
+                    [26.169103, 58.637251],
+                    [26.102771, 58.646001],
+                    [26.024643, 58.644878],
+                    [25.974569, 58.656793],
+                    [25.893022, 58.707641],
+                    [25.870651, 58.716983],
+                    [25.837505, 58.725424],
+                    [25.8115, 58.738829],
+                    [25.778686, 58.77969],
+                    [25.75607, 58.832349],
+                    [25.708521, 58.88329],
+                    [25.665225, 58.916631],
+                    [25.649807, 58.933285],
+                    [25.610799, 58.999399],
+                    [25.579432, 59.025072],
+                    [25.558262, 59.029226],
+                    [25.504209, 59.024757],
+                    [25.469745, 59.030366],
+                    [25.415266, 59.067149],
+                    [25.389127, 59.095272],
+                    [25.349185, 59.119283],
+                    [25.339962, 59.12957],
+                    [25.324212, 59.158437],
+                    [25.209951, 59.159828],
+                    [25.162928, 59.166511],
+                    [25.117567, 59.180374],
+                    [25.074568, 59.200587],
+                    [25.034644, 59.226315],
+                    [24.999602, 59.256203],
+                    [24.936682, 59.320631],
+                    [24.75, 59.43],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大阪-⚔山崎战役",
+                type: "road",
+                id: "road_city_osaka_bf_fcam7_7_1793843783066",
+                startConnection: "city_osaka",
+                endConnection: "bf_fcam7_7"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.5262, 34.6873],
+                    [135.6811, 34.8925],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大阪-千早城",
+                type: "road",
+                id: "road_city_osaka_city_asuka_1793843789756",
+                startConnection: "city_osaka",
+                endConnection: "city_asuka"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.5262, 34.6873],
+                    [135.614223, 34.503322],
+                    [135.589476, 34.470327],
+                    [135.689392, 34.336668],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "京都-名张",
+                type: "road",
+                id: "road_city_kyoto_city_nabari_1793843873743",
+                startConnection: "city_kyoto",
+                endConnection: "city_nabari"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.77, 35.01],
+                    [135.7792, 34.87452],
+                    [135.812195, 34.812654],
+                    [135.81632, 34.754912],
+                    [135.803946, 34.701294],
+                    [135.81632, 34.639428],
+                    [136.108, 34.627],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "名张-千早城",
+                type: "road",
+                id: "road_city_nabari_city_asuka_1793843891454",
+                startConnection: "city_nabari",
+                endConnection: "city_asuka"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [136.108, 34.627],
+                    [135.923555, 34.602308],
+                    [135.853439, 34.606432],
+                    [135.820444, 34.503322],
+                    [135.766827, 34.495073],
+                    [135.689392, 34.336668],
                 ]
             }
         },

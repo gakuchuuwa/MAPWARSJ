@@ -1954,6 +1954,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'ayoubu_turanshah': 'castle',   // 图兰沙
     'bolinixiya_isokelekel': 'imperial',   // 伊索克勒克尔
     'yinggelan_somers': 'castle',   // 萨默斯
+    'toyotomi_asai_chacha': 'imperial',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

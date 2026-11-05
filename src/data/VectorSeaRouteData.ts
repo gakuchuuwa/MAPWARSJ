@@ -428,28 +428,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "法马古斯塔-贝鲁特",
-                type: "sea",
-                id: "sea_city_famagusta_city_beirut_1793625541112",
-                startConnection: "city_famagusta",
-                endConnection: "city_beirut",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [33.94, 35.12],
-                    [34.6809, 34.7191],
-                    [34.88963, 34.51037],
-                    [35.02537, 34.51063],
-                    [35.5, 33.89],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "热那亚-君士坦丁堡",
                 type: "sea",
                 id: "sea_city_genoa_city_junshitandingbao_1793625541112",
@@ -2912,28 +2890,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "阿克曼-奥列什基",
-                type: "sea",
-                id: "sea_city_akeman_city_oleshky_1792351849601",
-                startConnection: "city_akeman",
-                endConnection: "city_oleshky",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [30.34, 46.19],
-                    [31, 45.91667],
-                    [31.5, 45.91667],
-                    [31.91667, 45.66667],
-                    [32.72, 46.61],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "江户城-骏府",
                 type: "sea",
                 id: "sea_city_edo_city_junfucheng_1788229823105",
@@ -3094,29 +3050,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [34.34367, 33.49617],
                     [34.8, 33],
                     [35.06889, 32.92139],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "奥列什基-赫尔松涅斯",
-                type: "sea",
-                id: "sea_city_oleshky_city_heersongniesi_1792351881034",
-                startConnection: "city_oleshky",
-                endConnection: "city_heersongniesi",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [32.72, 46.61],
-                    [31.91667, 45.66667],
-                    [31.91667, 45.16667],
-                    [32.16667, 44.91667],
-                    [32.66667, 44.91667],
-                    [33.49, 44.61],
                 ]
             }
         },
@@ -6614,47 +6547,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "阿达纳-安提俄基亚",
-                type: "sea",
-                id: "sea_city_adana_city_antiejiya_20261024",
-                startConnection: "city_adana",
-                endConnection: "city_antiejiya",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [35.3213, 37],
-                    [35.7, 35.9],
-                    [36.16, 36.2],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "拉塔基亚-阿达纳",
-                type: "sea",
-                id: "sea_city_latajiya_city_adana_20261024",
-                startConnection: "city_latajiya",
-                endConnection: "city_adana",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [35.79, 35.52],
-                    [35.25, 36.16667],
-                    [34.91667, 36.16667],
-                    [35.3213, 37],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "瀑池-汉城",
                 type: "sea",
                 id: "sea_city_haeju_city_hanseong_20261024",
@@ -7258,54 +7150,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-2.95282, 57.75367],
                     [-3.4434, 57.7579],
                     [-4.22, 57.48],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "尼科西亚-阿达纳",
-                type: "sea",
-                id: "sea_city_nikexiya_city_adana_1787916343649",
-                startConnection: "city_nikexiya",
-                endConnection: "city_adana",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [33.38, 35.18],
-                    [33.79933, 35.82961],
-                    [34.05184, 36.08319],
-                    [34.67155, 36.25003],
-                    [34.74115, 36.26877],
-                    [35.3213, 37],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "尼科西亚-安提俄基亚",
-                type: "sea",
-                id: "sea_city_nikexiya_city_antiejiya_1787916352381",
-                startConnection: "city_nikexiya",
-                endConnection: "city_antiejiya",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [33.38, 35.18],
-                    [33.79933, 35.82961],
-                    [34.40477, 35.85203],
-                    [34.67849, 35.86217],
-                    [34.80612, 35.86689],
-                    [34.99157, 35.87376],
-                    [35.7, 35.9],
-                    [36.16, 36.2],
                 ]
             }
         },
@@ -8084,33 +7928,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "尼科西亚-罗得城",
-                type: "sea",
-                id: "sea_city_nikexiya_city_rhodes_1793609800018",
-                startConnection: "city_nikexiya",
-                endConnection: "city_rhodes",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [33.38, 35.18],
-                    [33, 35.8],
-                    [31.53935, 35.89738],
-                    [30.90509, 35.93966],
-                    [30, 36],
-                    [30.16667, 35.91667],
-                    [30, 35.75],
-                    [29, 35.75],
-                    [28.66667, 36.08333],
-                    [28.22, 36.44],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "热那亚-罗马",
                 type: "sea",
                 id: "sea_city_genoa_city_luoma_1793609800019",
@@ -8160,34 +7977,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [13.34884, 37.00419],
                     [15.2, 36.4],
                     [15.28, 37.07],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "卡法-奥列什基",
-                type: "sea",
-                id: "sea_city_kafa_city_oleshky_1793609800021",
-                startConnection: "city_kafa",
-                endConnection: "city_oleshky",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [35.38, 45.03],
-                    [34.83333, 44.41667],
-                    [34.5, 44.08333],
-                    [33.16667, 44.08333],
-                    [32.91667, 44.33333],
-                    [32.91667, 44.66667],
-                    [32.66667, 44.91667],
-                    [32.16667, 44.91667],
-                    [31.91667, 45.16667],
-                    [31.91667, 45.66667],
-                    [32.72, 46.61],
                 ]
             }
         },
@@ -9717,33 +9506,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-8.22701, 36.72279],
                     [-7.09486, 36.63735],
                     [-6.28, 36.52],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "宁波-长崎",
-                type: "sea",
-                id: "sea_city_qingyuan_zj_city_nagasaki_1793630000004",
-                startConnection: "city_qingyuan_zj",
-                endConnection: "city_nagasaki",
-                startYear: -3000,
-                endYear: 2000
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [121.54, 29.87],
-                    [121.92627, 30.25432],
-                    [121.61333, 30.42956],
-                    [122.13501, 30.48418],
-                    [122.29981, 30.8197],
-                    [122.66922, 30.93227],
-                    [122.9, 31.3],
-                    [128.9, 31.4],
-                    [129.35303, 32.50976],
-                    [129.8777, 32.7555],
                 ]
             }
         },
@@ -11942,31 +11704,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "能岛城-赤间关",
-                type: "sea",
-                id: "sea_city_noshima_city_chijianguan_1793670000005",
-                startConnection: "city_noshima",
-                endConnection: "city_chijianguan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [133.08109, 34.18238],
-                    [133.04787, 34.072],
-                    [132.94487, 34.16977],
-                    [132.78096, 34.0696],
-                    [132.72926, 33.95532],
-                    [132.58369, 33.90063],
-                    [132.14905, 33.68093],
-                    [131.9, 33.75],
-                    [131.21246, 33.79513],
-                    [130.93, 33.95],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "开普敦-基尔瓦",
                 type: "sea",
                 id: "sea_city_cape_town_city_kilwa_1793672889302",
@@ -12131,7 +11868,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [-85.83, 11.44],
-                    [-86.41667, 11.0],
+                    [-86.41667, 11],
                     [-86.66667, 11.25],
                     [-86.83333, 11.25],
                     [-87.25, 11.66667],
@@ -12139,22 +11876,22 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-88.33333, 12.75],
                     [-89.33333, 12.91667],
                     [-89.5, 13.1],
-                    [-90.0, 13.08333],
+                    [-90, 13.08333],
                     [-90.83333, 13.58333],
                     [-91.83333, 13.58333],
                     [-92.5, 14.08333],
                     [-92.66667, 14.08333],
                     [-94.16667, 15.58333],
                     [-94.5, 15.75],
-                    [-95.0, 15.75],
+                    [-95, 15.75],
                     [-95.16667, 15.58333],
                     [-95.5, 15.58333],
                     [-96.16667, 15.25],
-                    [-97.0, 15.25],
+                    [-97, 15.25],
                     [-97.16667, 15.41667],
                     [-98.16667, 15.58333],
                     [-98.66667, 15.91667],
-                    [-99.0, 15.91667],
+                    [-99, 15.91667],
                     [-99.33333, 16.25],
                     [-99.89, 16.86],
                 ]
@@ -12175,31 +11912,31 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [-85.83, 11.44],
-                    [-86.41667, 11.0],
-                    [-86.41667, 10.0],
+                    [-86.41667, 11],
+                    [-86.41667, 10],
                     [-86.16667, 9.58333],
-                    [-86.0, 9.58333],
+                    [-86, 9.58333],
                     [-85.66667, 9.25],
-                    [-85.0, 9.25],
+                    [-85, 9.25],
                     [-84.83333, 9.08333],
                     [-84.5, 9.08333],
                     [-84.41667, 8.5],
-                    [-84.0, 8.08333],
+                    [-84, 8.08333],
                     [-83.66667, 8.08333],
                     [-83.33333, 7.75],
-                    [-83.0, 7.75],
+                    [-83, 7.75],
                     [-82.75, 7.5],
                     [-82.66667, 7.08333],
                     [-82.33333, 7.08333],
                     [-82.16667, 6.91667],
                     [-80.16667, 6.91667],
-                    [-80.0, 7.08333],
+                    [-80, 7.08333],
                     [-79.58333, 7.16667],
                     [-79.5, 7.91667],
                     [-78.91667, 7.83333],
-                    [-78.58333, 7.0],
+                    [-78.58333, 7],
                     [-77.91667, 6.16667],
-                    [-78.08333, 6.0],
+                    [-78.08333, 6],
                     [-78.08333, 5.16667],
                     [-77.91667, 4.83333],
                     [-78.08333, 4.66667],
@@ -12207,11 +11944,11 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-78.33333, 3.41667],
                     [-78.66667, 3.41667],
                     [-78.83333, 3.08333],
-                    [-79.08333, 3.0],
+                    [-79.08333, 3],
                     [-79.25, 2.33333],
-                    [-79.58333, 2.0],
+                    [-79.58333, 2],
                     [-79.66667, 1.58333],
-                    [-80.0, 1.58333],
+                    [-80, 1.58333],
                     [-80.58333, 1.16667],
                     [-80.58333, 0.5],
                     [-80.91667, 0.16667],
@@ -12222,7 +11959,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-81.41667, -1.66667],
                     [-81.58333, -1.83333],
                     [-81.58333, -2.5],
-                    [-80.91667, -3.0],
+                    [-80.91667, -3],
                     [-81.75, -3.83333],
                     [-81.75, -5.5],
                     [-81.58333, -5.66667],
@@ -12234,7 +11971,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-79.41667, -8.66667],
                     [-79.25, -9.33333],
                     [-78.91667, -9.66667],
-                    [-78.41667, -11.0],
+                    [-78.41667, -11],
                     [-78.08333, -11.33333],
                     [-78.08333, -11.66667],
                     [-77.75, -11.83333],
@@ -12314,15 +12051,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [-175.12, -21.18],
-                    [-174.58333, -21.0],
+                    [-174.58333, -21],
                     [-174.25, -20.66667],
                     [-174.25, -20.33333],
-                    [-173.91667, -20.0],
+                    [-173.91667, -20],
                     [-173.91667, -19.16667],
-                    [-173.58333, -19.0],
+                    [-173.58333, -19],
                     [-173.58333, -18.16667],
-                    [-173.91667, -18.0],
-                    [-174.0, -17.58333],
+                    [-173.91667, -18],
+                    [-174, -17.58333],
                     [-173.0562, -17.715],
                     [-175.5, -21],
                     [-180, -20],
@@ -12336,7 +12073,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [173.16233, -14.02836],
                     [170, -10],
                     [165.6454, -5.70086],
-                    [160, -2e-05],
+                    [160, -0.00002],
                     [159.99994, 6.22793],
                     [158.18802, 7.32433],
                     [158.33, 6.84],
@@ -12363,16 +12100,16 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [156.8073, 6.85678],
                     [155.01065, 5.04667],
                     [152.13805, 2.15341],
-                    [150, -1e-05],
-                    [144.72974, -2e-05],
-                    [140, -2e-05],
+                    [150, -0.00001],
+                    [144.72974, -0.00002],
+                    [140, -0.00002],
                     [137.80151, -1.30726],
                     [137.33333, -0.91667],
                     [137.16667, -1.08333],
                     [136.83333, -0.58333],
                     [136.5, -0.58333],
                     [136.33333, -0.25],
-                    [136.0, -0.25],
+                    [136, -0.25],
                     [135.5, 0.08333],
                     [134.83333, 0.08333],
                     [134.75, -0.33333],
@@ -12385,15 +12122,15 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [131.5, 1.58333],
                     [130.75, 1.5],
                     [130.75, 1.16667],
-                    [130.58333, 1.0],
+                    [130.58333, 1],
                     [130.5, 0.58333],
                     [130.16667, 0.91667],
                     [129.5, 0.91667],
                     [129.33333, 0.58333],
-                    [129.25, 1.0],
+                    [129.25, 1],
                     [129.08333, 1.16667],
-                    [129.0, 3.08333],
-                    [128.0, 3.08333],
+                    [129, 3.08333],
+                    [128, 3.08333],
                     [127.33333, 2.75],
                     [126.91667, 2.16667],
                     [126.83333, 1.41667],
@@ -12451,7 +12188,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [-15.42, 28.0],
+                    [-15.42, 28],
                     [-15.66667, 28.75],
                     [-15.83333, 29.08333],
                     [-16.83333, 29.08333],
@@ -12803,14 +12540,14 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [-9.5, 43],
                     [-9.34623, 42.26961],
                     [-9.30497, 42.07359],
-                    [-9.41667, 42.0],
-                    [-9.25, 41.0],
+                    [-9.41667, 42],
+                    [-9.25, 41],
                     [-9.41667, 40.83333],
                     [-9.41667, 40.33333],
-                    [-9.58333, 40.0],
+                    [-9.58333, 40],
                     [-10.08333, 39.83333],
                     [-10.08333, 39.16667],
-                    [-9.91667, 39.0],
+                    [-9.91667, 39],
                     [-9.91667, 38.5],
                     [-9.13, 38.72],
                 ]
@@ -13038,7 +12775,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [71.14326, -6.07194],
                     [71.79936, -5.34172],
                     [72.84758, -4.17508],
-                    [76.59886, -2e-05],
+                    [76.59886, -0.00002],
                     [77.75432, 1.28598],
                     [79.10286, 2.78687],
                     [81.9, 5.9],
@@ -13065,32 +12802,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [135.04, 34.61],
                     [134.97, 34.61],
                     [134.67041, 34.7433],
-                    [134.6939, 34.8394]
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "大阪-能岛城",
-                type: "sea",
-                id: "sea_city_osaka_city_noshima_20261105",
-                startConnection: "city_osaka",
-                endConnection: "city_noshima"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [135.5262, 34.6873],
-                    [135.38, 34.65],
-                    [135.24, 34.58],
-                    [135.04, 34.61],
-                    [134.97, 34.61],
-                    [134.51523, 34.7292],
-                    [134.05799, 34.5339],
-                    [134.00574, 34.41824],
-                    [133.63495, 34.3321],
-                    [133.08109, 34.18238]
+                    [134.6939, 34.8394],
                 ]
             }
         },
@@ -13108,13 +12820,13 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [135.5262, 34.6873],
                     [135.38, 34.65],
-                    [135.20, 34.50],
+                    [135.2, 34.5],
                     [134.98, 34.38],
                     [134.98, 34.25],
                     [134.98627, 33.87498],
                     [134.89563, 33.79969],
                     [134.23645, 33.10535],
-                    [133.5756, 33.5972]
+                    [133.5756, 33.5972],
                 ]
             }
         },
@@ -13132,7 +12844,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 coordinates: [
                     [135.5262, 34.6873],
                     [135.38, 34.65],
-                    [135.20, 34.50],
+                    [135.2, 34.5],
                     [134.98, 34.38],
                     [134.98, 34.25],
                     [134.98627, 33.87498],
@@ -13142,7 +12854,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [137.16667, 33.91667],
                     [137.33333, 34.25],
                     [138.5, 34.25],
-                    [138.38, 34.97]
+                    [138.38, 34.97],
                 ]
             }
         },
@@ -13151,7 +12863,7 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
             properties: {
                 name: "大阪-江户城",
                 type: "sea",
-                id: "sea_city_osaka_city_edo_20261105",
+                id: "sea_city_osaka_city_edo_1793844686271",
                 startConnection: "city_osaka",
                 endConnection: "city_edo"
             },
@@ -13159,27 +12871,220 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 type: "LineString",
                 coordinates: [
                     [135.5262, 34.6873],
-                    [135.38, 34.65],
-                    [135.20, 34.50],
-                    [134.98, 34.38],
-                    [134.98, 34.25],
+                    [135.1, 34.37745],
+                    [134.85992, 34.09816],
                     [134.98627, 33.87498],
                     [135.2829, 33.47956],
                     [135.88989, 33.32823],
-                    [136.99351, 34.16275],
-                    [137.16667, 33.91667],
-                    [137.33333, 34.25],
-                    [138.5, 34.25],
+                    [138.28766, 34.51335],
                     [138.86718, 34.45606],
                     [139.19128, 34.6558],
-                    [139.3, 35.0],
+                    [139.3, 35],
                     [139.63623, 35.0165],
                     [139.79279, 35.23889],
                     [139.68567, 35.3661],
                     [139.84566, 35.49757],
-                    [139.8007, 35.75]
+                    [139.8007, 35.75],
                 ]
             }
-        }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大阪-能岛城",
+                type: "sea",
+                id: "sea_city_osaka_city_noshima_1793844766268",
+                startConnection: "city_osaka",
+                endConnection: "city_noshima"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.5262, 34.6873],
+                    [135.26367, 34.57669],
+                    [134.98077, 34.6253],
+                    [134.393, 34.38878],
+                    [134.00574, 34.41824],
+                    [133.63495, 34.3321],
+                    [133.08109, 34.18238],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "能岛城-赤间关",
+                type: "sea",
+                id: "sea_city_noshima_city_chijianguan_1793844772159",
+                startConnection: "city_noshima",
+                endConnection: "city_chijianguan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [133.08109, 34.18238],
+                    [133.04787, 34.072],
+                    [132.94487, 34.16977],
+                    [132.78096, 34.0696],
+                    [132.72926, 33.95532],
+                    [132.58369, 33.90063],
+                    [132.14905, 33.68093],
+                    [131.9, 33.75],
+                    [131.21246, 33.79513],
+                    [130.93, 33.95],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "赤间关-长崎",
+                type: "sea",
+                id: "sea_city_chijianguan_city_nagasaki_1793844813449",
+                startConnection: "city_chijianguan",
+                endConnection: "city_nagasaki"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [130.93, 33.95],
+                    [130.1, 34.3],
+                    [129.73488, 34.02455],
+                    [129.35303, 33.72434],
+                    [129.32756, 33.4999],
+                    [129.28711, 33.14215],
+                    [129.35303, 32.50976],
+                    [129.8777, 32.7555],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "长崎-宁波",
+                type: "sea",
+                id: "sea_city_nagasaki_city_qingyuan_zj_1793844881881",
+                startConnection: "city_nagasaki",
+                endConnection: "city_qingyuan_zj"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [129.8777, 32.7555],
+                    [129.35303, 32.50976],
+                    [128.9, 31.4],
+                    [122.9, 31.3],
+                    [122.66922, 30.93227],
+                    [122.29981, 30.81971],
+                    [122.13501, 30.48418],
+                    [121.61333, 30.42956],
+                    [121.92627, 30.25432],
+                    [121.54, 29.87],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "宁波-刺桐",
+                type: "sea",
+                id: "sea_city_qingyuan_zj_city_qingjingsi_1793844911163",
+                startConnection: "city_qingyuan_zj",
+                endConnection: "city_qingjingsi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [121.54, 29.87],
+                    [121.92627, 30.25432],
+                    [121.61333, 30.42956],
+                    [122.87891, 30.34936],
+                    [122.87521, 30.18194],
+                    [122.65252, 29.62363],
+                    [122.5573, 29.38397],
+                    [122.23938, 28.5797],
+                    [122.25, 28.16667],
+                    [121.58333, 27.66667],
+                    [121.58333, 27.33333],
+                    [121.41667, 27.16667],
+                    [121.08333, 27],
+                    [120.91667, 26.16667],
+                    [120.5, 26.08333],
+                    [120.25, 25.83333],
+                    [120.25, 25.16667],
+                    [119.75, 24.83333],
+                    [119.66667, 24.58333],
+                    [119.16667, 24.58333],
+                    [118.5833, 24.9],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "贝鲁特-法马古斯塔",
+                type: "sea",
+                id: "sea_city_beirut_city_famagusta_1793845116306",
+                startConnection: "city_beirut",
+                endConnection: "city_famagusta"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [35.5, 33.89],
+                    [35.02537, 34.51063],
+                    [34.88963, 34.51037],
+                    [34.6809, 34.7191],
+                    [33.94, 35.12],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科洛西-罗得城",
+                type: "sea",
+                id: "sea_city_kolossi_city_rhodes_1793845157295",
+                startConnection: "city_kolossi",
+                endConnection: "city_rhodes"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [32.934, 34.664],
+                    [32.8814, 34.5083],
+                    [32.42426, 34.62214],
+                    [31.96397, 34.8264],
+                    [31.57014, 35.00116],
+                    [30.82899, 35.33005],
+                    [30.19267, 35.61243],
+                    [29.63557, 35.85965],
+                    [28.24057, 36.47869],
+                    [28.22, 36.44],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "法马古斯塔-安提俄基亚",
+                type: "sea",
+                id: "sea_city_famagusta_city_antiejiya_1793845173983",
+                startConnection: "city_famagusta",
+                endConnection: "city_antiejiya"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [33.94, 35.12],
+                    [34.2, 35.2],
+                    [34.81852, 35.48864],
+                    [34.86385, 35.5098],
+                    [35.06334, 35.60289],
+                    [35.7, 35.9],
+                    [36.16, 36.2],
+                ]
+            }
+        },
     ]
 };
