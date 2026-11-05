@@ -172,7 +172,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        wei_wuqi: { generalId: 'wei_wuqi', tier: 'ordinary', tacticalSkillId: 'ts_036', advantageSkillId: 'ts_036', balanceSkillId: 'ts_053', disadvantageSkillId: 'ts_429', atkAdvantageSkillId: 'ts_036', atkBalanceSkillId: 'ts_053', atkDisadvantageSkillId: 'ts_429', defAdvantageSkillId: 'ts_564', defBalanceSkillId: 'ts_1120', defDisadvantageSkillId: 'ts_383', aptitude: 'create' , attackStyle: 'balanced'}, // 拔秦五城 + 阴晋守 → 双行；🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 锚阴晋之战史失秦帅（该战役降级）→普将
+        wei_wuqi: { generalId: 'wei_wuqi', tier: 'famous', tacticalSkillId: 'ts_036', advantageSkillId: 'ts_036', balanceSkillId: 'ts_053', disadvantageSkillId: 'ts_429', atkAdvantageSkillId: 'ts_036', atkBalanceSkillId: 'ts_053', atkDisadvantageSkillId: 'ts_429', defAdvantageSkillId: 'ts_564', defBalanceSkillId: 'ts_1120', defDisadvantageSkillId: 'ts_383', aptitude: 'create' , attackStyle: 'balanced'}, // 拔秦五城 + 阴晋守 → 双行；🔴 [2026-10-28 档位对齐] 🔴[2026-10-28 按分级标准降档] 锚阴晋之战史失秦帅（该战役降级）→普将；🔴 [2026-11-05 主人令] 魏武卒 T0 只许名将挂，吴起升回名将
 
 
 

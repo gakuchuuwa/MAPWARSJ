@@ -209,7 +209,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   huai_zhuyuanzhang: { name: '淮西子弟', tier: 2 },   // 朱元璋｜明｜金陵｜旧档定「淮西子弟」T3；《明史·卷一·太祖本纪》载起兵濠梁，所部徐达、汤和等皆淮西旧籍，即其本部，原样沿之。
   luming_luxiangsheng: { name: '天雄军', tier: 2 },   // 卢象升｜明｜大名｜旧档定「天雄军」T2；《明史·卷二百六十一·卢象升传》载其知大名府、整饬大名道，练天雄军保卫大名府，名动天下，原样沿之。
   ran_d_ranshouzhong: { name: '酉阳土兵', tier: 4 },   // 冉守忠｜明｜秀山｜旧档定「酉阳土兵」T4；冉氏世袭酉阳宣抚司土官，秀山为其辖地（《明史·四川土司传》重庆酉阳宣抚司），所部土兵即本部，原样沿之。
-  tujia_d_qinliangyu: { name: '白杆兵', tier: 1 },   // 秦良玉｜明｜石柱｜旧档定「白杆兵」T2；《明史·卷二百七十·秦良玉传》载石柱白杆兵以白杆长枪著名，浑河、重庆诸战皆用，原样沿之。
+  tujia_d_qinliangyu: { name: '白杆兵', tier: 2 },   // 秦良玉｜明｜石柱｜旧档定「白杆兵」T2；《明史·卷二百七十·秦良玉传》载石柱白杆兵以白杆长枪著名，浑河、重庆诸战皆用，原样沿之。
   mu_lijiang_muzeng: { name: '丽江土兵', tier: 3 },   // 木增｜明｜大研｜旧档定「丽江土兵」T3；木氏世袭丽江土知府，所部纳西土兵（《明史·云南土司传》丽江府），与其据点大研相符，原样沿之。
   pingnan_muying: { name: '云南卫军', tier: 3 },   // 沐英｜明｜滇池｜考据（旧档无）：《明史·卷一百二十六·沐英传》载洪武十四年从傅友德平云南、十五年留镇，二十一年定边府以三行火铳破思伦发象阵；其本部即云南都司卫所军，故定「云南卫军」，属常规建制地方部曲，T4。
   hani_d_zhebi: { name: '思陀甸兵', tier: 4 },   // 遮比｜明｜思陀｜旧档定「思陀甸兵」T4；遮比为临安路思陀甸长官司哈尼土官（《明史·云南土司传》），思陀即其世守之地，部众即甸兵，原样沿之。
@@ -243,7 +243,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   changshan_yangyanzhao: { name: '倒马寒锋', tier: 3 },   // 杨延昭｜宋｜倒马关｜旧档原样采用；《宋史·杨延昭传》杨延昭守遂城、倒马关一线，辽人惮之
   wangyan_wangyan: { name: '八字军', tier: 2 },   // 王彦｜宋｜安康｜旧档原样采用；《宋史·王彦传》部众面刺「赤心报国，誓杀金贼」八字，号八字军
   zhe_d_zheyuqing: { name: '折家将兵', tier: 3 },   // 折御卿｜宋｜府谷｜旧档原样采用；《宋史·折御卿传》府州折氏世领麟府蕃汉兵，御卿袭知府州
-  heng1_yangye: { name: '杨无敌军', tier: 1 },   // 杨业｜宋｜雁门关｜旧档原样采用；《宋史·杨业传》契丹畏之，号曰「杨无敌」，雁门之捷其部为锋
+  heng1_yangye: { name: '杨无敌军', tier: 2 },   // 杨业｜宋｜雁门关｜旧档原样采用；《宋史·杨业传》契丹畏之，号曰「杨无敌」，雁门之捷其部为锋
   xiangzhou_lvwenhuan: { name: '襄樊捍卫', tier: 3 },   // 吕文焕｜宋｜襄阳｜旧档原样采用；《宋史·吕文焕传》吕文焕守襄阳六年，襄樊城守之兵
   yingzhou_d_liuqi: { name: '顺昌锐士', tier: 2 },   // 刘锜｜宋｜顺昌｜《宋史纪事本末·卷十六》绍兴十年刘锜率所部及殿司卒守顺昌，大破金兀术铁浮图（wikiElite 空，自定）
   didao_wangshao: { name: '熙河蕃兵', tier: 1 },   // 王韶｜宋｜狄道｜旧档原样采用；《宋史·王韶传》熙河开边，招纳蕃部为兵，复河湟二千里
@@ -461,7 +461,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   wuwu_d_lvmeng: { name: '楼船军', tier: 1 },            // 吕蒙：统孙吴水军袭取荆州，改写三方局势（《三国志·吴书·吕蒙传》）。
   yingzhou_ying_d_muronghuang: { name: '黄龙兵', tier: 1 }, // 慕容皝：前燕都龙城，黄龙兵为其辽东经略与建国主力（《晋书·慕容皝载记》）。
   hejian_gongsunzan: { name: '白马义从', tier: 2 },      // 公孙瓒：亲统白马义从驰骋幽冀；上谷突骑归耿弇，不再错挂（《后汉书·公孙瓒传》）。
-  yangzhou_wangping: { name: '无当飞军', tier: 1 },      // 王平：统无当飞军，兴势之战拒曹爽大军（《三国志·蜀书·王平传》）。
+  yangzhou_wangping: { name: '无当飞军', tier: 2 },      // 王平：统无当飞军，兴势之战拒曹爽大军（《三国志·蜀书·王平传》）。
   huizhou_zhugeliang: { name: '元戎弩兵', tier: 2 },     // 诸葛亮：损益连弩称元戎，北伐军弩兵为战术特色（《三国志·蜀书·诸葛亮传》裴注《魏氏春秋》）。
   xianyu_hanxin: { name: '轻勇骑', tier: 2 },            // 韩信：井陉以二千轻骑袭赵垒，为背水阵决胜奇兵（《史记·淮阴侯列传》）。
   qu_d_quyi: { name: '先登营', tier: 2 },                // 麴义：界桥以八百先登伏强弩破白马义从（《后汉书·袁绍传》）。
@@ -484,7 +484,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   qingqiang_jiangwei: { name: '冉駹突骑', tier: 3 },     // 姜维：经营陇右、汶山羌胡地区，所统含冉駹等蜀边部众（《三国志·蜀书·姜维传》）。
   yueyi_zhangyi: { name: '牦牛戍锋', tier: 3 },          // 张嶷：镇越嶲、定牦牛道，南中戍兵为其本部（《三国志·蜀书·张嶷传》）。
   nanzhong_mazhong: { name: '兴古戍锋', tier: 3 },       // 马忠：镇南中、守兴古，所统南中戍兵（《三国志·蜀书·马忠传》）。
-  huaiyang_zhouyafu: { name: '细柳营', tier: 1 },        // 周亚夫：细柳营军纪著名，后统军平七国之乱（《史记·绛侯周勃世家》）。
+  huaiyang_zhouyafu: { name: '细柳营', tier: 3 },        // 周亚夫：细柳营军纪著名，后统军平七国之乱（《史记·绛侯周勃世家》）。
   ruzhou_sunjian: { name: '赤帻先锋', tier: 3 },         // 孙坚：赤帻为标识，常率先登陷阵（《三国志·吴书·孙破虏传》裴注《吴书》）。
   jiang_s_huanggai: { name: '零陵蒙冲', tier: 3 },       // 黄盖：镇零陵、领孙吴水军，赤壁献策火攻（《三国志·吴书·黄盖传》）。
   hao_d_weirui: { name: '钟离护卫', tier: 3 },           // 韦睿：钟离之战统梁军破魏，所部具水军与工事先筑特色（《梁书·韦睿传》）。
@@ -503,7 +503,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   kalan_suhela: { name: '萨珊边骑', tier: 4 },           // 苏赫拉：萨珊边军将领，不与苏伦的帕提亚铁骑混挂。
   hali_gedaerzi: { name: '萨洛尔弓骑', tier: 4 },        // 戈达尔兹：萨洛尔地方部族弓骑，避免与帕提亚铁骑同名异档。
   yingzhou_d2_licunxu: { name: '从马直', tier: 2 },      // 李存勖：亲军从马直，柏乡等役为突击主力；鸦儿军归李克用（《旧五代史·庄宗纪》）。
-  iyo_d_cunshangwuji: { name: '村上水军', tier: 1 },     // 村上武吉：能岛村上氏水军由其亲统，严岛等役为主力；毛利元就只取严岛伏兵，不混挂（《毛利家文书》）。
+  iyo_d_cunshangwuji: { name: '村上水军', tier: 3 },     // 村上武吉：能岛村上氏水军由其亲统，严岛等役为主力；毛利元就只取严岛伏兵，不混挂（《毛利家文书》）。
   qi_d_qijiguang: { name: '戚家军', tier: 1 },           // 戚继光：募义乌兵练成戚家军，台州九捷、东南平倭并长期转战南北，符合 v3 T1（《明史·戚继光传》）。
 
   // 🔴 [2026-10-26 主人令「名将最好一人一支精锐，一个精锐最好只给一个武将」]
@@ -532,7 +532,7 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   dizhou_wangyanzhang: { name: '龙骧军', tier: 2 },
   dang_d_zhuwen: { name: '厅子都', tier: 2 },
   ssangseong_cuiying: { name: '瀑池弩手', tier: 3 },
-  cai_lishuo: { name: '十八骑', tier: 2 },              // 石勒：起兵核心十八骑（《晋书·石勒载记》），旧档「汲桑所与」是叙述语，不作番号。
+  cai_lishuo: { name: '十八骑', tier: 3 },              // 石勒：起兵核心十八骑（《晋书·石勒载记》），旧档「汲桑所与」是叙述语，不作番号。
   nong2_nongzhigao: { name: '侬峒狼兵', tier: 3 },
   dongxu_mangruiti: { name: '金象陷阵', tier: 2 },
   guo_jixin: { name: '果州戍兵', tier: 4 },
