@@ -863,7 +863,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     adiyabeina: [
-        { generalId: 'gen_cleitus', cityId: 'city_salonica', generalName: '克雷图斯', portrait: '/assets/MACEDONIAN/gen_cleitus.png', eliteName: '马其顿骑兵', eliteTier: 2 },
     { generalId: 'adiyabeina_yizhatesi', factionId: 'adiyabeina', cityId: 'city_aerbeila', generalName: '伊扎特斯', portrait: '/assets/ORIE/adiyabeina_yizhatesi.png', eliteName: '阿尔贝拉战团', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 阿迪亚贝纳王，都阿尔贝拉（约瑟夫斯《犹太古史》）
     ],
     aertai: { generalId: 'gen_kuchlug', cityId: 'city_yeerdishi', generalName: '屈出律', portrait: '/assets/CENTRAL_ASIA/gen_kuchlug.png', eliteName: '阿尔泰骑兵', eliteTier: 4 },
@@ -1474,6 +1473,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe_erigius', factionId: 'maqidun', cityId: 'city_salonica', generalName: '埃里吉乌斯', portrait: '/assets/MACEDONIAN/bfe_erigius.png', eliteName: '希腊同盟骑', eliteTier: 4 },
         { generalId: 'maqidun_hephaistion', factionId: 'maqidun', cityId: 'city_salonica', generalName: '赫菲斯提昂', portrait: '/assets/MACEDONIAN/maqidun_hephaistion.png', eliteName: '马其顿骑兵', eliteTier: 2 },
         { generalId: 'maqidun_nearchos', factionId: 'maqidun', cityId: 'city_salonica', generalName: '尼阿库斯', portrait: '/assets/MACEDONIAN/maqidun_nearchos.png', eliteName: '马其顿矛兵', eliteTier: 4 },
+        { generalId: 'gen_cleitus', cityId: 'city_salonica', generalName: '克雷图斯', portrait: '/assets/MACEDONIAN/gen_cleitus.png', eliteName: '马其顿骑兵', eliteTier: 2 },   // 🔴 2026-11-05 马其顿骑兵中队长（阿利安《亚历山大远征记》），原误挂 adiyabeina 键
     ],
 
 
@@ -2394,7 +2394,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    bulabante: { generalId: 'bulabante_yuehanyishi', cityId: 'city_bulusaier', generalName: '约翰一世', portrait: '/assets/BURGUNDIANS/bulabante_yuehanyishi.png', eliteName: '勃艮第骑士', eliteTier: 2 },
+    bulabante: { generalId: 'bulabante_yuehanyishi', cityId: 'city_bulusaier', generalName: '约翰一世', portrait: '/assets/BURGUNDIANS/bulabante_yuehanyishi.png', eliteName: '布拉班特骑士', eliteTier: 2 },
 
 
 
