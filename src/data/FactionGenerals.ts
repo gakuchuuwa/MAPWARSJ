@@ -4571,7 +4571,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'yangshao_zhoubo', factionId: 'han_d', cityId: 'city_changan', generalName: '周勃', portrait: '/assets/CENTRAL/yangshao_zhoubo.png', eliteName: '汉北铁军', eliteTier: 3 },
+        { generalId: 'yangshao_zhoubo', factionId: 'han_d', cityId: 'city_changan', generalName: '周勃', portrait: '/assets/CENTRAL/yangshao_zhoubo.png', eliteName: '北军五校', eliteTier: 2 },
 
 
 
@@ -4677,7 +4677,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     { generalId: 'tang_zhanggongjin', factionId: 'tang', cityId: 'city_eyangling', generalName: '张公谨', portrait: '/assets/XIANBEI/tang_zhanggongjin.png', eliteName: '恶阳岭骁骑', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 定襄道行军副总管，出恶阳岭夜袭定襄
     { generalId: 'tang_luoyi', factionId: 'tang', cityId: 'city_ordos', generalName: '骆怡', portrait: '/assets/XIANBEI/tang_luoyi.png', eliteName: '宥州州兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 814—816 唐宥州刺史，州治延恩
     { generalId: 'tang_zhaorongguo', factionId: 'tang', cityId: 'city_changze', generalName: '赵荣国', portrait: '/assets/XIANBEI/tang_zhaorongguo.png', eliteName: '宥州州兵', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 825 唐宥州刺史，820 后州治长泽
-    { generalId: 'tang_baizhizhen', factionId: 'tang', cityId: 'city_guozhou', generalName: '白志贞', portrait: '/assets/BASHU/tang_baizhizhen.png', eliteName: '果州州兵', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 786—787 唐果州刺史，实任到镇
+    { generalId: 'tang_baizhizhen', factionId: 'tang', cityId: 'city_guozhou', generalName: '白志贞', portrait: '/assets/BASHU/tang_baizhizhen.png', eliteName: '神策军', eliteTier: 1 },   // 🔴 [2026-11-01 空据点补将] 786—787 唐果州刺史，实任到镇
     { generalId: 'tang_changhe', factionId: 'tang', cityId: 'city_zizhou', generalName: '常何', portrait: '/assets/BASHU/tang_changhe.png', eliteName: '资州府兵', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 647—652 唐资州刺史，州治盘石（《常何墓碑》）
     { generalId: 'tang_ligaoqian', factionId: 'tang', cityId: 'city_zizhou', generalName: '李高迁', portrait: '/assets/BASHU/tang_ligaoqian.png', eliteName: '资州州兵', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 654 前资州刺史，唐初从高祖起兵之将
     { generalId: 'tang_chendaci', factionId: 'tang', cityId: 'city_maozhou', generalName: '陈大慈', portrait: '/assets/BASHU/tang_chendaci.png', eliteName: '茂州羌兵', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 702 茂州都督，四战皆捷（《新唐书·吐蕃传》）
@@ -5200,7 +5200,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'wei2_hunjian', factionId: 'tang', cityId: 'city_fengtian', generalName: '浑瑊', portrait: '/assets/CENTRAL/wei2_hunjian.png', eliteName: '奉天行营', eliteTier: 2  },   // 按史：浑瑊为奉天行营兵马副元帅，奉天守城中流矢格斗不已（《旧唐书·卷一三四·浑瑊传》）
+        { generalId: 'wei2_hunjian', factionId: 'tang', cityId: 'city_fengtian', generalName: '浑瑊', portrait: '/assets/CENTRAL/wei2_hunjian.png', eliteName: '朔方军', eliteTier: 1  },   // 按史：浑瑊为奉天行营兵马副元帅，奉天守城中流矢格斗不已（《旧唐书·卷一三四·浑瑊传》）
 
 
 
@@ -5222,7 +5222,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'shanzhou_wangzhongsi', factionId: 'tang', cityId: 'city_lingzhou', generalName: '王忠嗣', portrait: '/assets/KHITAN/shanzhou_wangzhongsi.png', eliteName: '陇右骁骑', eliteTier: 1  },   // 按史：王忠嗣为朔方节度使（治灵州），频战青海、积石皆大克捷（《旧唐书·卷一〇三·王忠嗣传》）
-        { generalId: 'gaoliang_geshuhan', cityId: 'city_ledou', factionId: 'tang', generalName: '哥舒翰', portrait: '/assets/KHITAN/gaoliang_geshuhan.png', eliteName: '河曲雕骑', eliteTier: 3  },   // 按史：哥舒翰久镇河曲、陇右，积石军设伏破吐蕃；恢复旧档专属番号，河源军独归黑齿常之（《旧唐书·哥舒翰传》）
+        { generalId: 'gaoliang_geshuhan', cityId: 'city_ledou', factionId: 'tang', generalName: '哥舒翰', portrait: '/assets/KHITAN/gaoliang_geshuhan.png', eliteName: '陇右骁骑', eliteTier: 1  },   // 按史：哥舒翰久镇河曲、陇右，积石军设伏破吐蕃；恢复旧档专属番号，河源军独归黑齿常之（《旧唐书·哥舒翰传》）
 
 
 
@@ -5373,7 +5373,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'xuan_xuda', factionId: 'ming_d', cityId: 'city_beijing', generalName: '徐达', portrait: '/assets/WEI/xuan_xuda.png', eliteName: '明军锐士', eliteTier: 3 },
+        { generalId: 'xuan_xuda', factionId: 'ming_d', cityId: 'city_beijing', generalName: '徐达', portrait: '/assets/WEI/xuan_xuda.png', eliteName: '淮西子弟', eliteTier: 2 },
 
 
 
@@ -5614,7 +5614,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'chizhou_changyuchun', factionId: 'ming_d', cityId: 'city_datong2', generalName: '常遇春', portrait: '/assets/JIANGNAN/chizhou_changyuchun.png', eliteName: '五翼铁军', eliteTier: 3 },
+        { generalId: 'chizhou_changyuchun', factionId: 'ming_d', cityId: 'city_datong2', generalName: '常遇春', portrait: '/assets/JIANGNAN/chizhou_changyuchun.png', eliteName: '淮西子弟', eliteTier: 2 },
 
 
 
