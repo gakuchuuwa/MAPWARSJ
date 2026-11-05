@@ -1074,15 +1074,34 @@ export class PlayerHero {
         this.emitChange();
     }
 
-    // ── 战败停顿：立即回战略地图，然后原地等待 9 秒再移动（时长见 PLAYER_DEFEAT_HOLD_MS） ──
+    // ── 战败停顿：看完 3 秒残局（与胜仗同一条路）再回战略地图，原地停顿合计 9 秒（时长见 PLAYER_DEFEAT_HOLD_MS） ──
     /** 停顿截止时刻（Date.now() 口径）；≤ 现在 = 没在停顿 */
     private holdUntilMs = 0;
 
-    /** 随军战败 → 落地停顿（时长见 PLAYER_DEFEAT_HOLD_MS） */
+    /**
+     * 随军战败 → 落地停顿（时长见 PLAYER_DEFEAT_HOLD_MS）。
+     *
+     * 🔴 [2026-11-05 主人令「无论什么模式，战术结束后，无论战败还是胜利，都统一停 3 秒」]
+     *    原来这里第一句就是 `battleScene.exit()`：战败**当场**把战术画面收掉（实测距判负 0 毫秒），
+     *    而胜仗走的是残局待命 `FOLLOW_SWITCH_DELAY_MS`（3 秒）—— 于是「输就秒切、赢等 3 秒」。
+     *    现在战败也走同一条残局：`beginLinger()`（全军待命、旗帜继续飘）+ `beginLingerAfterDefeat(3 秒)`，
+     *    到期由 `BattleSceneLayer.tick` 统一 exit；玩家的停顿改为从「真正退出战术画面」算起
+     *    （扣掉这 3 秒），所以在战略地图上原地不动的总时长不变。
+     *
+     * 本方法在一次战败里会被重复调用 3~4 次（onHostBattleEnd / resetMerit / detach / update 军团覆灭），
+     * 所以已经在停顿中就不再重新计时，否则每多调一次就多等一轮。
+     */
     public holdAfterDefeat(): void {
-        // 先退战术场景，避免残局停留消耗玩家在战略地图上的等待时间。
-        (globalThis as any).window?.game?.battleScene?.exit();
-        this.holdUntilMs = Date.now() + PLAYER_DEFEAT_HOLD_MS;
+        const game = (globalThis as any).window?.game;
+        const battleScene = game?.battleScene;
+        const inTactic = battleScene?.isActive?.() === true;
+        const lingerMs = inTactic ? GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS : 0;
+        if (inTactic) {
+            game?.scene13War?.beginLinger?.();
+            battleScene.beginLingerAfterDefeat(lingerMs);
+        }
+        if (this.holdUntilMs > Date.now()) return;   // 已在停顿中：不重复计时
+        this.holdUntilMs = Date.now() + Math.max(0, PLAYER_DEFEAT_HOLD_MS - lingerMs);
     }
 
     /** 是否正处在战败停顿中（停顿期玩家不动） */

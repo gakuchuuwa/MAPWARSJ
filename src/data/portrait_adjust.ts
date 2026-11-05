@@ -7083,7 +7083,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -20
         },
         "/assets/BURMESE/luchuan_sirenfa.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": -17
         },
@@ -9863,8 +9863,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/CENTRAL/__闲置__wuzhou_14.png": {
-            "scale": 1.12,
-            "offsetX": 0,
+            "scale": 1.06,
+            "offsetX": 6,
             "offsetY": 10
         },
         "/assets/CENTRAL/__闲置__wuzhou_15.png": {
@@ -10636,6 +10636,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 25
+        },
+        "/assets/BYZANTINE/baizanting_peiteluonasi.png": {
+            "scale": 1.32,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/VIETNAMESE/yuenan_buibi.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/ROMA/bfe_gaius_livius.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 41
+        },
+        "/assets/JIANGNAN/han_liubiao.png": {
+            "scale": 1.26,
+            "offsetX": 26,
+            "offsetY": 9
+        },
+        "/assets/CENTRAL/bfe_chuzi.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": 17
         }
     },
     "folderGuides": {
