@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 沙盒模式：势力 id → 首都 cityId（1 势力 = 1 据点）。
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
@@ -786,7 +786,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'mori': 'city_yoshida',
 'uesugi': 'city_kasugayama',
 'takeda': 'city_tsutsujigasaki',
-'toyotomi': 'city_himeji',
+'toyotomi': 'city_osaka',
 'utsunomiya': 'city_utsunomiya',
 'nanchou': 'city_asuka',
 'nanbu_shi': 'city_genjo',

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -3610,6 +3610,8 @@ buildingStyle: 'TIBET', troops: 10000,
     //      · 江户城东北移 9km（35.68,139.76 → 35.75,139.8007）
     //    结果间距全部 ≥50km：镰仓↔箱根关 52.1 / 镰仓↔江户城 53.0 / 江户城↔箱根关 95.9。
     { id: 'city_kamakura', name: '镰仓', factionId: 'genji', lat: 35.3195, lng: 139.5503, type: 'medium_city', troops: 10000, region: 'JAPAN', buildingStyle: 'JAPAN' , note: '按 2026-10-25 标准：城居 6–10（日本学界主流）；Chandler 20（被认为过高） → 中城' },
+
+    { id: 'city_osaka', name: '大阪', factionId: 'toyotomi', lat: 34.6873, lng: 135.5262, type: 'medium_city', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '按 2026-10-25 标准：大坂城（丰臣政权首府/天下台所，1700 年町方 35.3 万＋武家约 38 万）→ 中城' },
 
     { id: 'city_fuwa', name: '不破关', factionId: 'toyotomi', lat: 35.3577, lng: 136.4602, type: 'pass', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '不破关＝律令三関之一（美浓不破の関，今关ケ原），守畿内东门 → 险要（2026-10-25 标准②）', mirror: true },
 

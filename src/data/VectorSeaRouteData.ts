@@ -13047,5 +13047,139 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "大阪-姬路城",
+                type: "sea",
+                id: "sea_city_osaka_city_himeji_20261105",
+                startConnection: "city_osaka",
+                endConnection: "city_himeji"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.5262, 34.6873],
+                    [135.38, 34.65],
+                    [135.24, 34.58],
+                    [135.04, 34.61],
+                    [134.97, 34.61],
+                    [134.67041, 34.7433],
+                    [134.6939, 34.8394]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大阪-能岛城",
+                type: "sea",
+                id: "sea_city_osaka_city_noshima_20261105",
+                startConnection: "city_osaka",
+                endConnection: "city_noshima"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.5262, 34.6873],
+                    [135.38, 34.65],
+                    [135.24, 34.58],
+                    [135.04, 34.61],
+                    [134.97, 34.61],
+                    [134.51523, 34.7292],
+                    [134.05799, 34.5339],
+                    [134.00574, 34.41824],
+                    [133.63495, 34.3321],
+                    [133.08109, 34.18238]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大阪-冈丰城",
+                type: "sea",
+                id: "sea_city_osaka_city_okafu_20261105",
+                startConnection: "city_osaka",
+                endConnection: "city_okafu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.5262, 34.6873],
+                    [135.38, 34.65],
+                    [135.20, 34.50],
+                    [134.98, 34.38],
+                    [134.98, 34.25],
+                    [134.98627, 33.87498],
+                    [134.89563, 33.79969],
+                    [134.23645, 33.10535],
+                    [133.5756, 33.5972]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大阪-骏府",
+                type: "sea",
+                id: "sea_city_osaka_city_junfucheng_20261105",
+                startConnection: "city_osaka",
+                endConnection: "city_junfucheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.5262, 34.6873],
+                    [135.38, 34.65],
+                    [135.20, 34.50],
+                    [134.98, 34.38],
+                    [134.98, 34.25],
+                    [134.98627, 33.87498],
+                    [135.2829, 33.47956],
+                    [135.88989, 33.32823],
+                    [136.99351, 34.16275],
+                    [137.16667, 33.91667],
+                    [137.33333, 34.25],
+                    [138.5, 34.25],
+                    [138.38, 34.97]
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大阪-江户城",
+                type: "sea",
+                id: "sea_city_osaka_city_edo_20261105",
+                startConnection: "city_osaka",
+                endConnection: "city_edo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [135.5262, 34.6873],
+                    [135.38, 34.65],
+                    [135.20, 34.50],
+                    [134.98, 34.38],
+                    [134.98, 34.25],
+                    [134.98627, 33.87498],
+                    [135.2829, 33.47956],
+                    [135.88989, 33.32823],
+                    [136.99351, 34.16275],
+                    [137.16667, 33.91667],
+                    [137.33333, 34.25],
+                    [138.5, 34.25],
+                    [138.86718, 34.45606],
+                    [139.19128, 34.6558],
+                    [139.3, 35.0],
+                    [139.63623, 35.0165],
+                    [139.79279, 35.23889],
+                    [139.68567, 35.3661],
+                    [139.84566, 35.49757],
+                    [139.8007, 35.75]
+                ]
+            }
+        }
     ]
 };

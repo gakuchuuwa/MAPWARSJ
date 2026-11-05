@@ -4773,9 +4773,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/LATIN/__多余__LATIN_01.png": {
-            "scale": 1.44,
+            "scale": 1.21,
             "offsetX": 0,
-            "offsetY": 58
+            "offsetY": 18
         },
         "/assets/SICILIANS/gen_roger_i.png": {
             "scale": 1,
@@ -7912,11 +7912,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/LATIN/lunbadi_alboin.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": -14
-        },
         "/assets/ORIE/kapaduoxiya_sabiktas.png": {
             "scale": 1.14,
             "offsetX": -9,
@@ -10606,6 +10601,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 9,
             "offsetY": -19
+        },
+        "/assets/LATIN/__闲置__LATIN_26.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/LATIN/lunbadi_alboin.png": {
+            "scale": 1.21,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/PERSIAN/__闲置__LATIN_26.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/JAPAN/__闲置__JAPAN_36.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/JAPAN/aeeff2a0-2cdb-4113-9407-e2b372fd0fcd.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/JAPAN/toyotomi_asai_chacha.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

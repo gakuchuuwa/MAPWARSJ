@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-11-03T14:58:49.976Z",
+ "generatedAt": "2026-11-05T01:42:53.390Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -16748,6 +16748,20 @@
    "reliefM": 62,
    "cliffs": 0,
    "top": "Dirt 3 47.7% · Water, Shallow 38% · Pine Forest 7% · Beach 3.9%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_osaka",
+   "file": "site_city_osaka.json",
+   "bytes": 320255,
+   "koppen": "Cfa",
+   "theme": "PALAEARCTIC_ASIA_TEMPERATE",
+   "water": "WorldCover",
+   "waterCells": 1235,
+   "waterPct": 8.6,
+   "reliefM": 121,
+   "cliffs": 0,
+   "top": "Dry Grass 76.4% · Water, Shallow 8.6% · Beach 6.7% · Forest, Autumn 4.8%",
    "verify": "ok"
   }
  ],

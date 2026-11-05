@@ -73,6 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
         void app.start()
             .then(() => registerMapwarWebMcpTools(app))
             .catch(showBootError);
+        // 即时战斗：`/?quickbattle=1`（quick-battle.html 跳过来），单独开一场战术模式对战
+        if (new URLSearchParams(location.search).has('quickbattle')) {
+            void import('./quickbattle/QuickBattle').then((m) => m.startQuickBattleMode(app)).catch(showBootError);
+        }
     } catch (err) {
         showBootError(err);
     }
