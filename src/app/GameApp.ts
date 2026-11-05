@@ -965,10 +965,12 @@ export class GameApp {
     }
 
     /** 🔴 [2026-10-23] 直播观众互动：观众发字替一方放计（F9 测试面板；控制台 `game.live.onChat('某某', '攻', true)`） */
-    public readonly live = new ViewerLive(this);
+    //  🔴 [2026-11-05 主人「直播控将选势力这套模式没必要上传到 mapwar.vercel.app」]
+    //     线上构建（PROD）不建弹幕控将三件套，也不建玩家乱入者（见 setupPlayer 开头）；本地开发照旧。
+    public readonly live: ViewerLive | null = import.meta.env.PROD ? null : new ViewerLive(this);
     /** 🔴 [2026-10-27] YouTube 单平台：官方聊天流、Super Chat 与持久账务。 */
-    private readonly liveLink = new YouTubeOfficialBridge(this.live);
-    private readonly livePanel = new ViewerLivePanel(this.live, this.liveLink);
+    private readonly liveLink: YouTubeOfficialBridge | null = this.live ? new YouTubeOfficialBridge(this.live) : null;
+    private readonly livePanel: ViewerLivePanel | null = this.live && this.liveLink ? new ViewerLivePanel(this.live, this.liveLink) : null;
 
     /**
      * 🔴 [2026-10-20 主人令「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代，
@@ -1000,6 +1002,8 @@ export class GameApp {
     }
 
     private setupPlayer(legionManager: LegionManager): void {
+        // 🔴 [2026-11-05] 线上不带玩家乱入者（选势力/投奔/官职 + 弹幕控将），只看各势力自己打
+        if (import.meta.env.PROD) return;
         const allCities = this.cityManager.getCities();
         if (allCities.length === 0) return;
         // 🔴 [2026-09-23 主人定「把玩家拉到附近」] 剧本模式：出生在当前这一场历史事件
@@ -1154,7 +1158,7 @@ export class GameApp {
             // 🔴 [2026-09-11 主人定 A 方案] 剧本军的真实历史目标（任务条显示用）
         });
         this.playerQuests = quests;
-        quests.onLiveJoinResolved = (res) => this.live.onJoinResolved(res);
+        quests.onLiveJoinResolved = (res) => this.live?.onJoinResolved(res);
 
         // 🔴 [2026-09-26 主人「我说的隐藏是最小化，你要把展开的UI按钮留着呀」]
         //    剧本期右下角 HUD 只**最小化一次**（只留那个展开按钮），之后主人自己点开就点开，不再被轮播按回去。
@@ -1176,15 +1180,15 @@ export class GameApp {
             setSpeed: (mult: number) => this.timeSystem.setSpeed(mult),
             getYear: () => this.timeSystem.getYear(),
             jumpToYear: (year: number) => this.jumpToYear(year),
-            hasViewerRename: () => this.live.hasActiveViewerRename(),
-            onVetoViewerRename: () => this.live.vetoPlayerName(),
+            hasViewerRename: () => this.live?.hasActiveViewerRename() ?? false,
+            onVetoViewerRename: () => this.live?.vetoPlayerName() ?? '',
             setCompanionPanelsExpanded: (expanded) => {
                 // 🔴 [2026-11-02 主人令「环球和航行模式，自动把控制，控将，军情，军团全部最小化」]
                 if (this.playerHero?.isTourMode()) {
                     this.cameraFollowUI.closeList();
                     this.brawlFeedPanel?.setExpanded(false);
                     this.gameTimeHUD?.setCollapsed(true, false);
-                    this.livePanel.setCollapsed(true);
+                    this.livePanel?.setCollapsed(true);
                     return;
                 }
                 // 🔴 [2026-09-24 主人定] 剧本期：军团/军情两块不显示（CSS 藏）也不展开（免得白刷列表）。
@@ -1222,8 +1226,8 @@ export class GameApp {
             },
         });
         this.playerScene13Control = new PlayerScene13Control(hero, this.scene13War, {
-            hasViewerRename: () => this.live.hasActiveViewerRename(),
-            vetoViewerRename: () => { this.live.vetoPlayerName(); },
+            hasViewerRename: () => this.live?.hasActiveViewerRename() ?? false,
+            vetoViewerRename: () => { this.live?.vetoPlayerName(); },
         });
 
         this.cameraFollowUI.setPlayerHero(hero);
@@ -1233,7 +1237,7 @@ export class GameApp {
             this.cameraFollowUI.closeList();
             this.brawlFeedPanel?.setExpanded(false);
             this.gameTimeHUD?.setCollapsed(true, false);
-            this.livePanel.setCollapsed(true);
+            this.livePanel?.setCollapsed(true);
         };
         let lastPlayMode = hero.playMode;
         hero.onChange(() => {

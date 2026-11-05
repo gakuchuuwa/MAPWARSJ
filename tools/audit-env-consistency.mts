@@ -81,7 +81,8 @@ function extractConst<T>(name: string): T {
     }
     throw new Error(`${name} 括号不配对`);
 }
-const CULTURE_TO_CATEGORY = extractConst<Record<string, string>>('CULTURE_TO_CATEGORY');
+// 生产方式：文化权重 × 地理门槛（与民生层同一模块）
+const { livelihoodCandidates, buildLivelihoodGeo } = await mod('src/world/environment/livelihoodCatalog.ts');
 const LIVELIHOOD_SPECS = extractConst<Record<string, { animals: string[] }>>('LIVELIHOOD_SPECS');
 
 // 战略森林掩膜（R = RESOLVE 群系编号，G = 树冠密度%），取值公式与 StrategicForestMask.ts 一致。
@@ -127,7 +128,7 @@ type Row = {
     koppen: string | null; biome: string; theme: string;
     strategicRealm: string; realmMismatch: boolean;
     badWild: string[]; forestCanopy: number; forestClash: string | null;
-    livelihood: string; livelihoodClash: boolean; badLivelihoodAnimals: string[];
+    livelihood: string; livelihoodClash: boolean; clashCats: string[]; badLivelihoodAnimals: string[];
 };
 const rows: Row[] = [];
 const seen: Record<string, number> = {}, seenWinter: Record<string, number> = {}, zoneCount: Record<string, number> = {};
@@ -161,22 +162,31 @@ for (const c of CITIES_V2 as any[]) {
         : potential > 0 && cover < FOREST_COVER_THRESHOLD / 2 && keep >= 0.95 ? '战略开阔·战术满林'
             : null;
 
-    const livelihood = CULTURE_TO_CATEGORY[style] ?? 'farming_dry';
-    const livelihoodClash = LIVELIHOOD_CLASH[livelihood]?.has(biome) ?? false;
+    // 与民生层 resolveCityGeo 同一取法：中心加 0.2°/0.4° 两圈取最大潜在森林度；山地按海拔近似（无 --dem 时当无山）
+    let potMax = forestPotentialAt(lat, lng) ?? 0;
+    for (const r of [0.2, 0.4]) for (let k = 0; k < 8; k++) {
+        const ang = (k / 8) * Math.PI * 2;
+        potMax = Math.max(potMax, forestPotentialAt(lat + Math.sin(ang) * r * 0.85, lng + Math.cos(ang) * r) ?? 0);
+    }
+    const geo = buildLivelihoodGeo(lat, lng, elev !== null && elev >= 600, potMax >= 0.5);
+    const cands = livelihoodCandidates(style, geo, lat, lng) as { cat: string; w: number }[];
+    const livelihood = cands.map((c) => c.cat).join('+');
+    const clashCats = cands.map((c) => c.cat).filter((cat) => LIVELIHOOD_CLASH[cat]?.has(biome));
+    const livelihoodClash = clashCats.length > 0;
     // 与 CityLifeAmbientLayer 取猎物同一口径：美洲文化换池，旧大陆只留鹿、野猪。
-    let animalPool = LIVELIHOOD_SPECS[livelihood]?.animals ?? [];
+    let animalPool = LIVELIHOOD_SPECS.forest_hunting?.animals ?? [];
     if (style === 'INCA') animalPool = ['LLAMA', 'ALPACA'];
     else if (style === 'MAPUCHE') animalPool = ['GUANACO', 'HORSE'];
     else if (style === 'AMERICA' || style === 'MAYANS' || style === 'TUPI') animalPool = ['TURKEY', 'DEER'];
     const isAmericas = ['MUISCA', 'MAYANS', 'TUPI', 'MAPUCHE', 'INCA', 'AMERICA'].includes(style);
     const preyPool = animalPool.filter((sp) => (isAmericas ? ['DEER', 'BOAR', 'TURKEY', 'GUANACO'] : ['DEER', 'BOAR']).includes(sp));
-    const lvAnimals = livelihood === 'forest_hunting' || livelihood === 'forest_logging' ? preyPool : [];
+    const lvAnimals = cands.some((c) => c.cat === 'forest_hunting' || c.cat === 'forest_logging') ? preyPool : [];
     const badLivelihoodAnimals = lvAnimals.filter((sp) => !animalNativeAt(sp, lat, lng, theme.baseTerrain));
 
     rows.push({
         id: c.id, name: c.name ?? c.id, lat, lng, style, koppen, biome, theme: theme.id,
         strategicRealm: realmKey, realmMismatch, badWild, forestCanopy: canopy, forestClash,
-        livelihood, livelihoodClash, badLivelihoodAnimals,
+        livelihood, livelihoodClash, clashCats, badLivelihoodAnimals,
     });
 }
 
@@ -202,9 +212,9 @@ console.log(sample(wildBad, (r) => ` ${r.strategicRealm}：${r.badWild.join('、
 console.log(`\n③ 森林：战略森林掩膜 vs 战术地貌 对不上：${pct(forestBad.length)}`);
 console.log('   ' + tally(forestBad.map((r) => `${r.forestClash}（${r.biome}）`)).map(([k, v]) => `${k}×${v}`).join('，'));
 console.log(sample(forestBad, (r) => ` 树冠 ${r.forestCanopy}% / 战术 ${r.biome}`));
-console.log(`\n④ 民生生计和当地气候明显不合：${pct(lvBad.length)}`);
-console.log('   ' + tally(lvBad.map((r) => `${r.livelihood}@${r.biome}`)).map(([k, v]) => `${k}×${v}`).join('，'));
-console.log(sample(lvBad, (r) => ` ${r.style} ${r.livelihood} / 柯本 ${r.koppen} → ${r.biome}`));
+console.log(`\n④ 民生生计（可抽到的任一种）和当地气候明显不合：${pct(lvBad.length)}`);
+console.log('   ' + tally(lvBad.flatMap((r) => r.clashCats.map((c) => `${c}@${r.biome}`))).map(([k, v]) => `${k}×${v}`).join('，'));
+console.log(sample(lvBad, (r) => ` ${r.style} ${r.clashCats.join('+')} / 柯本 ${r.koppen} → ${r.biome}`));
 console.log(`\n⑤ 猎场／伐木的野生猎物战术图不认：${pct(lvAnimBad.length)}`);
 console.log('   ' + tally(lvAnimBad.flatMap((r) => r.badLivelihoodAnimals)).map(([k, v]) => `${k}×${v}`).join('，'));
 console.log(sample(lvAnimBad, (r) => ` ${r.style}：${r.badLivelihoodAnimals.join('、')}`));
@@ -238,6 +248,27 @@ for (const c of CITIES_V2 as any[]) {
 }
 console.log(`\n⑧ 树种：战术战场的树不在本区树种表内的据点：${treeBad.length}（一致 ${treeOk}）`);
 if (treeBad.length) console.log('    ' + treeBad.slice(0, 8).join('\n    '));
+
+// ⑨ 各文化生产方式期望占比（文化权重 × 地理门槛，按该文化全部据点平均；渔业是否真有海由游戏里找渔场再定，这里按有海算）
+{
+    const { LIVELIHOOD_WEIGHTS, LIVELIHOOD_NAMES } = await mod('src/world/environment/livelihoodCatalog.ts');
+    const byStyle = new Map<string, { n: number; share: Record<string, number> }>();
+    for (const r of rows) {
+        const w = LIVELIHOOD_WEIGHTS[r.style] ?? { farming_dry: 1 };
+        const cats = r.livelihood.split('+');
+        const total = cats.reduce((a, c) => a + (w[c] ?? 1), 0);
+        const e = byStyle.get(r.style) ?? { n: 0, share: {} };
+        e.n++;
+        for (const c of cats) e.share[c] = (e.share[c] ?? 0) + (w[c] ?? 1) / total;
+        byStyle.set(r.style, e);
+    }
+    console.log('\n⑨ 各文化生产方式期望占比（据点数）：');
+    for (const [style, e] of [...byStyle].sort((a, b) => a[0].localeCompare(b[0]))) {
+        const parts = Object.entries(e.share).sort((a, b) => b[1] - a[1])
+            .map(([c, v]) => `${LIVELIHOOD_NAMES[c] ?? c}${Math.round((v / e.n) * 100)}%`);
+        console.log(`   ${style}（${e.n}）：${parts.join(' ')}`);
+    }
+}
 
 const jsonAt = process.argv.indexOf('--json');
 if (jsonAt > 0 && process.argv[jsonAt + 1]) {

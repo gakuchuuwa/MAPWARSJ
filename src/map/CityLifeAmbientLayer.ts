@@ -10,6 +10,12 @@ import { STRATEGIC_ACTOR_SCALE, STRATEGIC_SPRITE_SCALE, STRATEGIC_TREE_SCALE } f
 import { registerHumanPresence } from './strategicPresence';
 import { plantAllowedAt, plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
+import { envZoneAt } from '../world/environment/envZones';
+import { forestPotentialAt } from '../world/environment/forestModel';
+import {
+    buildLivelihoodGeo, livelihoodCandidates, pickLivelihood, NOMADIC_HERDER_CULTURES,
+    type LivelihoodCategory, type LivelihoodGeo,
+} from '../world/environment/livelihoodCatalog';
 
 /** 村民惊走野生动物的半径（度，zoom 9 ≈ 36px） */
 const VILLAGER_SCARE_RADIUS_DEG = 0.10;
@@ -19,6 +25,8 @@ const VILLAGER_SCARE_RADIUS_DEG = 0.10;
  *
  * 功能特性：
  *   1. 覆盖全部 67 个文化（农耕稻作、农耕旱作、草原游牧、丝路绿洲驼牧、高原畜牧、山林渔猎、海洋水网渔业、矿冶采集）。
+ *      🔴 2026-11-05 起每个据点的 1~4 组各按「文化权重 × 地理门槛」单独抽生产方式（src/world/environment/livelihoodCatalog.ts），
+ *      同一据点可以同时有种田、放牧、打鱼等多种。
  *   2. 渔猎民族据点周围强制覆盖四季树林与灌丛浆果植被（猎人、樵夫、采集者与林间鹿/野猪在树林灌丛间劳作；
  *      战时树林渐变为倒伏断木 FELLED_GENERIC、树桩 STUMP_GENERIC 与焦枯死树 DEAD_TREE）。
  *   3. 渔业严格在海中（绝不在陆地放渔夫）：在沿海海域生成 DE 渔船（SHP_FISHING_SHIP 撒网/往返航行）与海鱼群
@@ -53,17 +61,6 @@ interface StripStaticAsset {
     ready: boolean;
     lastUsed: number;
 }
-
-type LivelihoodCategory =
-    | 'farming_rice'
-    | 'farming_dry'
-    | 'nomadic_steppe'
-    | 'nomadic_oasis'
-    | 'highland_pastoral'
-    | 'forest_hunting'
-    | 'forest_logging'
-    | 'maritime_fishing'
-    | 'mining_foraging';
 
 interface LivelihoodSpec {
     category: LivelihoodCategory;
@@ -101,6 +98,7 @@ interface CityLifeActor {
     cityPos: Pt;
     isAnimal: boolean;
     isSeaFishing: boolean;     // 是否为海上渔船 + 鱼群（严格在海中）
+    livelihood?: LivelihoodCategory; // 本组抽到的生产方式（同城各组可以不同）
     fishResource: string;      // 海中伴生鱼群（DORADO_FISH / SALMON_FISH / TUNA_FISH / SHORE_FISH）
     groundResource?: string;   // 组合内采集物：果子／木材／矿石
     groundResourceLib?: 'SUCAI_RESOURCE' | 'SUCAI_NATURE';
@@ -188,6 +186,10 @@ const CULL_MARGIN_DEG = 0.5;
 // 自动乱斗镜头一直跟着正在打的仗，半径过大会让画面里的据点永远处于战火态、看不到民生。
 // 只把战场贴身（约 30 公里）内的据点算进去，被围城本身另由 siegeCityId 判定。
 const COMBAT_HIDE_RADIUS_DEG = 0.3;
+/** 潜在森林度达到此值才算「附近有林」，才允许狩猎 / 伐木 */
+const FOREST_POTENTIAL_MIN = 0.5;
+/** 森林掩膜没到时按环境区估「有林」 */
+const FOREST_ZONES_FALLBACK: ReadonlySet<string> = new Set(['WEU', 'CEU', 'NEB', 'SIB', 'NAM', 'SWM', 'NEO', 'SEA']);
 const FADE_TO_DAMAGE_SEC = 1.1;
 /** 生产方式（农田、牧场、猎场、渔场等）出现时的渐显时长（秒） */
 const PRODUCTION_FADE_IN_SEC = 1.5;
@@ -258,94 +260,10 @@ const LIVELIHOOD_SPECS: Record<LivelihoodCategory, LivelihoodSpec> = {
     },
 };
 
-const CULTURE_TO_CATEGORY: Readonly<Record<string, LivelihoodCategory>> = {
-    // 1. 农耕稻作与水网（12）—— 铺设 DE 水稻田四季图（rc2→rc3→rm1→rm2）
-    JIANGNAN: 'farming_rice',
-    HUGUANG: 'farming_rice',
-    BASHU: 'farming_rice',      // 成都平原都江堰水田稻作区（「水旱从人，不知饥馑」）
-    KOREA: 'farming_rice',      // 朝鲜半岛三南与汉江平原水田稻作（畓）
-    VIETNAMESE: 'farming_rice',
-    BENGALIS: 'farming_rice',
-    BURMESE: 'farming_rice',
-    KHMER: 'farming_rice',
-    PURU: 'farming_rice',
-    INDIA: 'farming_rice',
-    MUGHAL: 'farming_rice',     // 恒河—亚穆纳河冲积平原季风漫灌稻作区
-    DIANQIAN: 'farming_rice',   // 按史：滇黔坝子稻作与山地梯田农业，渔猎不作全域唯一主业
-
-    // 2. 农耕旱作与庄园（25）—— 铺设 DE 旱作农田四季图（fc2→fc3→fm1→fm2）
-    CENTRAL: 'farming_dry',
-    WEI: 'farming_dry',
-    FRANKS: 'farming_dry',
-    BURGUNDIANS: 'farming_dry',
-    BRITONS: 'farming_dry',
-    EAST: 'farming_dry',
-    SAXONS: 'farming_dry',
-    GERMANIC: 'farming_dry',
-    POLES: 'farming_dry',
-    SLAVIC: 'farming_dry',
-    BULGARIANS: 'farming_dry',
-    MAGYAR: 'farming_dry',
-    LATIN: 'farming_dry',
-    ROMA: 'farming_dry',
-    BYZANTINE: 'farming_dry',
-    SPARTANS: 'farming_dry',
-    GOTHS: 'farming_dry',       // 按史：哥特定居农牧社会，不按纯草原游牧处理
-    THRACIAN: 'farming_dry',    // 按史：色雷斯平原农业与山地畜牧并存，不按纯游牧处理
-    CELTS: 'farming_dry',       // 按史：凯尔特农业与畜牧为基础，山林渔猎不是全域唯一主业
-    GEORGIANS: 'farming_dry',   // 按史：高加索谷地农业、葡萄种植与山地畜牧并存
-    MUISCA: 'farming_dry',      // 按史：穆伊斯卡以玉米、马铃薯等高原农业为主，盐与祖母绿开采为副业
-    MAYANS: 'farming_dry',      // 玛雅玉米、豆类与南瓜农业
-    TUPI: 'farming_dry',        // 图皮木薯等林下轮作农业
-    MAPUCHE: 'farming_dry',     // 马普切玉米、马铃薯等农业
-    INCA: 'farming_dry',        // 印加梯田与高原农业
-
-    // 3. 草原游牧（7）—— 铺设 DE 牧场四季图（pc2→pc3→pm1→pm2）
-    MONGOL: 'nomadic_steppe',
-    MOBEI_MONGOL: 'nomadic_steppe',
-    YURT: 'nomadic_steppe',
-    XIANBEI: 'nomadic_steppe',
-    HUNS: 'nomadic_steppe',
-    CUMAN: 'nomadic_steppe',
-    TURKS: 'nomadic_steppe',
-
-    // 4. 丝路绿洲与荒原驼牧（8）—— 铺设 DE 牧场四季图（pc2→pc3→pm1→pm2）
-    HEXI: 'nomadic_oasis',
-    CENTRAL_ASIA: 'nomadic_oasis',
-    WESTERN: 'nomadic_oasis',
-    PERSIAN: 'nomadic_oasis',
-    SASANIAN: 'nomadic_oasis',
-    ORIE: 'nomadic_oasis',
-    BERBER: 'nomadic_oasis',
-    GURJARAS: 'nomadic_oasis',
-
-    // 5. 雪域高原畜牧（1）—— 铺设 DE 牧场四季图（pc2→pc3→pm1→pm2）
-    TIBET: 'highland_pastoral',
-
-    // 6. 山林渔猎与伐木（4）；东北固定渔猎，北美非山地固定渔猎，伐木文化只在山地伐木。
-    NORTHEAST: 'forest_hunting',
-    VARANGIANS: 'forest_logging',
-    AMERICA: 'forest_logging',
-    LITHUANIANS: 'forest_logging',
-
-    // 7. 海洋渔业与峡湾群岛（8）；只在找到真实海域时捕鱼，内陆恢复各文化农业。
-    JAPAN: 'maritime_fishing',
-    MALAY: 'maritime_fishing',
-    VIKINGS: 'maritime_fishing',
-    DANES: 'maritime_fishing',
-    PORTUGUESE: 'maritime_fishing',
-    GREECE: 'maritime_fishing',
-    ATHENIANS: 'maritime_fishing',
-    SICILIANS: 'maritime_fishing',
-
-    // 8. 山地矿冶（6）；只在山地采矿，非山地恢复农业，不把特色矿业当成全域唯一主业。
-    BOHEMIANS: 'mining_foraging',
-    ARMENIANS: 'mining_foraging',
-    AFRICA: 'mining_foraging',
-    ETHIOPIANS: 'mining_foraging',
-    SPANISH: 'mining_foraging',
-    MACEDONIAN: 'mining_foraging',
-};
+/**
+ * 🔴 2026-11-05 主人令「有的文化这9种可能都有……该如何符合历史安排」：原来的「一文化一种生产方式」表已删，
+ *   改为 src/world/environment/livelihoodCatalog.ts 的「文化权重 × 地理门槛」，每组单独抽。
+ */
 
 /**
  * 牧群按文化配种；每种组合仍固定三只，四畜种池按固定哈希起点连续取三只。
@@ -370,7 +288,27 @@ const PASTORAL_ANIMAL_POOLS: Readonly<Record<string, readonly string[]>> = {
     GURJARAS: ['CAMEL', 'GOAT', 'SHEEP'],
     // DE 无独立牦牛素材，COW_BLACK 仅作高原牦牛视觉代理；不再把野生盘羊当家畜放牧。
     TIBET: ['COW_BLACK', 'SHEEP', 'GOAT', 'HORSE'],
+    // 安第斯—南美南部：1492 年前只有羊驼／美洲驼可放
+    INCA: ['LLAMA', 'ALPACA'],
+    MUISCA: ['LLAMA', 'ALPACA'],
+    MAPUCHE: ['LLAMA', 'ALPACA'],
+    // 潘诺尼亚平原：马牛羊混牧
+    MAGYAR: ['HORSE', 'COW_BW', 'SHEEP'],
 };
+
+/** 定居文化的牧场畜种：本文化耕牛 + 绵羊 + 山羊（欧洲花斑牛、南欧黑牛、其余黄牛，与农田役畜同一口径） */
+function pastoralPoolFor(style: string, cat: LivelihoodCategory, lng: number): readonly string[] {
+    const special = PASTORAL_ANIMAL_POOLS[style];
+    if (cat === 'nomadic_oasis') {
+        // 驼牧组的畜种池里要有骆驼：素材 DROMEDARY 文件夹是双峰驼（中亚以东），CAMEL 是单峰驼（西亚北非）
+        const base = special ?? ['SHEEP', 'GOAT'];
+        if (base.includes('CAMEL') || base.includes('DROMEDARY')) return base;
+        return [lng >= 55 ? 'DROMEDARY' : 'CAMEL', ...base];
+    }
+    if (special) return special;
+    if (cat === 'highland_pastoral') return ['COW_BLACK', 'SHEEP', 'GOAT'];   // 旧大陆高原；羊驼只给上面的美洲文化
+    return [farmOxSpecies(style, 'farming_dry'), 'SHEEP', 'GOAT'];
+}
 
 /**
  * 🔴 2026-10-28 主人令「现在种田的四块田都是一个在耕作，太单一了，可以把其中一个随机养猪」：
@@ -592,7 +530,9 @@ export class CityLifeAmbientLayer {
     private prevActorsByCity = new Map<string, CityLifeActor[]>();
     private retireSeq = 0;
     private forestByCity = new Map<string, CityForestProp[]>();
-    private categoryByCity = new Map<string, LivelihoodCategory>();
+    private geoByCity = new Map<string, LivelihoodGeo>();
+    /** 树林几何按「据点｜狩猎或伐木」缓存（同一据点同一种林场年年同一位置）；forestByCity 只放本年布局实际要画的 */
+    private groveCache = new Map<string, CityForestProp[]>();
     private activeActors = new Map<string, CityLifeActor>();
     private endangeredCities = new Set<string>();
     private lastCombatScanMs = 0;
@@ -647,7 +587,14 @@ export class CityLifeAmbientLayer {
         map.on('resize', () => this.resize());
         if (!hasWorldBaseData()) {
             void loadWorldBaseData('/world/world-base.png').then((ok) => {
-                if (ok) this.forestByCity.clear();
+                // 冬雪数据到了：树丛四季树种要按雪线重取。树丛缓存清掉，已排好的布局按年度轮回同一套淡出重排
+                if (ok) {
+                    this.groveCache.clear();
+                    for (const a of this.activeActors.values()) a.retiring = true;
+                    this.prevActorsByCity.clear();
+                    this.actorsByCity.clear();
+                    this.placedPlots = [];
+                }
             });
         }
         // 🔴 [2026-10-28 修复镜头跟随晃动] 不在任何地图事件（含 move / moveend / zoom / viewreset）中单独调用 reposition()，
@@ -795,35 +742,41 @@ export class CityLifeAmbientLayer {
                     lng: cLng + Math.cos(angle) * radius,
                 });
                 if (kind === 'mountain') return true;
-                if (kind === 'plain') hasKnownLand = true;
+                if (kind === 'plain' || kind === 'sea') hasKnownLand = true;
             } catch {
                 // 地形瓦片未准备好时等待后续帧，不据此改变据点生产。
             }
         }
+        if (!hasKnownLand) LandSeaSystem.getSampler().scheduleFetch(cLat, cLng);
         return hasKnownLand ? false : null;
     }
 
-    /** 文化限定可选主业，地理只在首次成功判定时选定；之后永久锁定，不因瓦片重排改变。 */
-    private resolveCityCategory(city: CityDataV2): LivelihoodCategory | null {
-        const cached = this.categoryByCity.get(city.id);
+    /**
+     * 据点周边自然条件（只取一次、永久缓存）：环境区、有无山地、有无天然林。
+     * 山地瓦片没到返回 null（本帧不生成，下一帧再判）；森林掩膜没到时按环境区估，且不缓存，等掩膜到了再定。
+     */
+    private resolveCityGeo(city: CityDataV2): LivelihoodGeo | null {
+        const cached = this.geoByCity.get(city.id);
         if (cached) return cached;
-
-        const style: BuildingStyle = city.buildingStyle ?? 'CENTRAL';
-        const base = CULTURE_TO_CATEGORY[style] ?? 'farming_dry';
-        if (base !== 'forest_logging' && base !== 'mining_foraging') {
-            this.categoryByCity.set(city.id, base);
-            return base;
-        }
-
         const mountain = this.isMountainArea(city.lat, city.lng);
         if (mountain === null) return null;
-        const resolved = mountain
-            ? base
-            : base === 'forest_logging'
-                ? (style === 'AMERICA' ? 'forest_hunting' : 'farming_dry')
-                : 'farming_dry';
-        this.categoryByCity.set(city.id, resolved);
-        return resolved;
+        // 树林摆在据点外 0.1°~0.5°：中心加两圈取最大潜在森林度
+        let potential: number | null = forestPotentialAt(city.lat, city.lng);
+        if (potential !== null) {
+            for (const r of [0.2, 0.4]) {
+                for (let k = 0; k < 8; k++) {
+                    const ang = (k / 8) * Math.PI * 2;
+                    const p = forestPotentialAt(city.lat + Math.sin(ang) * r * 0.85, city.lng + Math.cos(ang) * r) ?? 0;
+                    if (p > potential) potential = p;
+                }
+            }
+        }
+        const forest = potential !== null
+            ? potential >= FOREST_POTENTIAL_MIN
+            : FOREST_ZONES_FALLBACK.has(envZoneAt(city.lat, city.lng));
+        const geo: LivelihoodGeo = buildLivelihoodGeo(city.lat, city.lng, mountain, forest);
+        if (potential !== null) this.geoByCity.set(city.id, geo);
+        return geo;
     }
 
     /**
@@ -960,19 +913,14 @@ export class CityLifeAmbientLayer {
         return null;
     }
 
-    /** 树林由文化固定：渔猎／伐木据点始终有，其他文化即使靠近山地也不临时追加。 */
-    private getOrCreateCityForest(city: CityDataV2): CityForestProp[] {
-        let list = this.forestByCity.get(city.id);
+    /** 林场树丛：只有本年布局里抽到狩猎 / 伐木的据点才有；几何按「据点｜林场种类」固定缓存。 */
+    private getOrCreateCityForest(city: CityDataV2, cat: 'forest_hunting' | 'forest_logging'): CityForestProp[] {
+        const cacheKey = `${city.id}|${cat}`;
+        let list = this.groveCache.get(cacheKey);
         if (list) return list;
         list = [];
 
         const style: BuildingStyle = city.buildingStyle ?? 'CENTRAL';
-        const cat = this.resolveCityCategory(city);
-        if (cat === null) return list;
-        if (cat !== 'forest_hunting' && cat !== 'forest_logging') {
-            this.forestByCity.set(city.id, list);
-            return list;
-        }
 
         const cLat = city.lat;
         const cLng = city.lng;
@@ -1003,7 +951,7 @@ export class CityLifeAmbientLayer {
 
             const pal = regionalizeGrovePalette(pickHuntingForestPalette(style, pos.lat, pos.lng, i), pos.lat, pos.lng, h3);
             list.push({
-                id: `${city.id}_forest_${i}`,
+                id: `${city.id}_${cat}_${i}`,
                 cityId: city.id,
                 pos,
                 springTree: pal.springTree,
@@ -1018,7 +966,7 @@ export class CityLifeAmbientLayer {
             });
         }
 
-        this.forestByCity.set(city.id, list);
+        this.groveCache.set(cacheKey, list);
         return list;
     }
 
@@ -1047,25 +995,23 @@ export class CityLifeAmbientLayer {
         const totalSlots = maxSlots === 1 ? 1 : 1 + Math.floor(strHash01(yk, 502) * maxSlots);
 
         const style: BuildingStyle = city.buildingStyle ?? 'CENTRAL';
-        const cat = this.resolveCityCategory(city);
-        if (cat === null) return list;
+        const geo = this.resolveCityGeo(city);
+        if (geo === null) return this.prevActorsByCity.get(city.id) ?? list;
         // 海陆瓦片没到时一律先不生成（不入缓存，下一帧再来），否则「未到」按陆处理，农田草场会永久落进海里。
         if (this.hasPendingLandSeaAround(city.lat, city.lng)) return this.prevActorsByCity.get(city.id) ?? list;
-        // 海洋文化只有找到真实海域才捕鱼；内陆据点按史固定为稻作或旱作，不再退化成采果子。
-        const landCat: LivelihoodCategory = cat === 'maritime_fishing'
-            ? (style === 'JAPAN' || style === 'MALAY' ? 'farming_rice' : 'farming_dry')
-            : cat;
-        const spec = LIVELIHOOD_SPECS[landCat];
-        const villagerPool = spec.villagers;
+        // 🔴 2026-11-05 主人令「有的文化这9种可能都有」：地理先去掉做不了的，剩下按文化权重每组各抽一次（见 livelihoodCatalog）。
+        const candidates = livelihoodCandidates(style, geo, city.lat, city.lng);
+        /** 本城这次找渔场失败过：后面各组不再抽渔业 */
+        const noFishing = new Set<LivelihoodCategory>();
 
-        let animalPool = spec.animals;
-        if (style === 'INCA') animalPool = ['LLAMA', 'ALPACA'];
-        else if (style === 'MAPUCHE') animalPool = ['GUANACO', 'HORSE'];
-        else if (style === 'AMERICA' || style === 'MAYANS' || style === 'TUPI') animalPool = ['TURKEY', 'DEER'];
+        // 猎物池（只给猎人用）：美洲文化换池
+        let preyAnimalPool = LIVELIHOOD_SPECS.forest_hunting.animals;
+        if (style === 'INCA') preyAnimalPool = ['LLAMA', 'ALPACA'];
+        else if (style === 'MAPUCHE') preyAnimalPool = ['GUANACO', 'HORSE'];
+        else if (style === 'AMERICA' || style === 'MAYANS' || style === 'TUPI') preyAnimalPool = ['TURKEY', 'DEER'];
 
         const cLat = city.lat;
         const cLng = city.lng;
-        const isColdWinter = Math.abs(cLat) >= LIVELIHOOD_SPECS[cat].winterRestAboveLat;
         const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, cLat, cLng, city.buildingStyle);
 
         const villagerPresets: WarDamagePreset[] = [
@@ -1077,8 +1023,9 @@ export class CityLifeAmbientLayer {
             ? ['SALMON_FISH', 'SHORE_FISH', 'TUNA_FISH']
             : ['DORADO_FISH', 'TUNA_FISH', 'SHORE_FISH', 'SALMON_FISH'];
 
-        // 树林只跟随已经固定为渔猎／伐木的据点，其他文化即使靠近山地也不临时追加。
-        const forestNodes = landCat === 'forest_hunting' || landCat === 'forest_logging' ? this.getOrCreateCityForest(city) : [];
+        // 树林只跟随本年抽到狩猎／伐木的组：第一组林场定下本城树丛（狩猎在远处外围、伐木环绕据点）
+        let forestKind: 'forest_hunting' | 'forest_logging' | null = null;
+        let forestNodes: CityForestProp[] = [];
 
         const newPlots: { x: number; y: number }[] = [];   // 本据点这次新放的地皮（提交时才进全局登记）
         // 🔴 2026-10-31「每田一只，随机，不要重复」：本据点本年已用过的农田畜种，各套农田之间不重样
@@ -1092,12 +1039,19 @@ export class CityLifeAmbientLayer {
 
             const baseAngle = (i / totalSlots) * Math.PI * 2 + (h3 - 0.5) * 0.7;
 
-            // 海洋文化同城各套都捕鱼；若附近完全没有海域，整城统一回落农业，绝不混搭。
-            const wantsSeaFishing = !isPass && cat === 'maritime_fishing';
+            // 本组的生产方式：按文化权重抽；抽到渔业但周围找不到渔场（找法是绕城一整圈），本城以后各组都不再抽渔业，本组重抽。
+            let slotCat: LivelihoodCategory = pickLivelihood(candidates, strHash01(yk, 7000 + i * 13), noFishing) ?? 'farming_dry';
+            let seaSpot: { homePos: Pt; gatePos: Pt } | null = null;
+            if (slotCat === 'maritime_fishing') {
+                seaSpot = this.findSeaFishingSpot(cLat, cLng, baseAngle, h4);
+                if (!seaSpot) {
+                    noFishing.add('maritime_fishing');
+                    slotCat = pickLivelihood(candidates, strHash01(yk, 7001 + i * 13), noFishing) ?? 'farming_dry';
+                }
+            }
+            const isColdWinter = Math.abs(cLat) >= LIVELIHOOD_SPECS[slotCat].winterRestAboveLat;
 
-            if (wantsSeaFishing) {
-                const seaSpot = this.findSeaFishingSpot(cLat, cLng, baseAngle, h4);
-                if (seaSpot) {
+            if (seaSpot) {
                     const facing = Math.floor(strHash01(yk, i * 17 + 5) * 8) % 8;
                     const phase = Math.floor(strHash01(yk, i * 17 + 6) * 1000);
                     const damageVariant = Math.floor(strHash01(yk, i * 17 + 7) * 100);
@@ -1117,6 +1071,7 @@ export class CityLifeAmbientLayer {
                         cityPos: { lat: cLat, lng: cLng },
                         isAnimal: false,
                         isSeaFishing: true,
+                        livelihood: 'maritime_fishing',
                         fishResource,
                         buildingResource,
                         buildingMirror,
@@ -1169,12 +1124,21 @@ export class CityLifeAmbientLayer {
                         });
                     }
                     continue;
-                }
-                // 沿海城市个别角度找不到渔场时宁可少一套，也不混入另一种生产。
-                continue;
             }
 
-            // 同一文化只从同一种生产工种中选择；农夫的男女差异不改变生产类型。
+            const landCat: LivelihoodCategory = slotCat === 'maritime_fishing' ? 'farming_dry' : slotCat;
+            const villagerPool = LIVELIHOOD_SPECS[landCat].villagers;
+            // 林场组：本城第一组林场定下树丛种类，后面的林场组共用这片树丛
+            let slotForest: CityForestProp[] = [];
+            if (landCat === 'forest_hunting' || landCat === 'forest_logging') {
+                if (!forestKind) {
+                    forestKind = landCat;
+                    forestNodes = this.getOrCreateCityForest(city, forestKind);
+                }
+                slotForest = forestNodes;
+            }
+
+            // 农夫的男女差异不改变生产类型。
             const dir = villagerPool[Math.floor(h2 * villagerPool.length) % villagerPool.length];
             const isFarmer = dir === 'VIL_MALE_FARMER' || dir === 'VIL_FEMALE_FARMER';
             const isPastoral = dir === 'VIL_MALE_SHEPHERD';
@@ -1199,8 +1163,8 @@ export class CityLifeAmbientLayer {
                 return cells.length >= maxCells;
             };
             // 林间工种围绕树林；农田、猎场与牧场都放到外围，避免压住据点。
-            if (!isFarmer && forestNodes.length > 0) {
-                const fn = forestNodes[(i * 2) % forestNodes.length];
+            if (!isFarmer && slotForest.length > 0) {
+                const fn = slotForest[(i * 2) % slotForest.length];
                 const cand = {
                     lat: fn.pos.lat + (h3 - 0.5) * 0.022,
                     lng: fn.pos.lng + (h4 - 0.5) * 0.026,
@@ -1290,7 +1254,12 @@ export class CityLifeAmbientLayer {
                             : 'DARK_HOUSE_AGE1';
                     }
                 } else if (dir === 'VIL_MALE_SHEPHERD') {
-                    buildingResource = ['DARK_PASTURE', 'YURT_A', 'YURT_B', 'YURT_C'][buildingVariant];
+                    // 游牧文化住毡帐营地；定居文化放牧是定居畜牧：牧场棚或本文化农舍，不画毡帐
+                    buildingResource = NOMADIC_HERDER_CULTURES.has(style)
+                        ? ['DARK_PASTURE', 'YURT_A', 'YURT_B', 'YURT_C'][buildingVariant]
+                        : buildingVariant < 2 || !deStyle || deStyle === 'YURT'
+                            ? 'DARK_PASTURE'
+                            : `${deStyle}_HOUSE_AGE2`;
                 } else if (dir === 'VIL_MALE_LUMBERJACK') {
                     buildingResource = buildingVariant % 2 === 0 ? 'GREEK_LUMBER_CAMP_AGE2' : 'THRACIAN_LUMBER_CAMP_AGE2';
                 } else if (dir === 'VIL_MALE_HUNTER' || dir === 'VIL_MALE_FORAGER') {
@@ -1307,6 +1276,7 @@ export class CityLifeAmbientLayer {
                 cityPos: { lat: cLat, lng: cLng },
                 isAnimal: false,
                 isSeaFishing: false,
+                livelihood: landCat,
                 fishResource: '',
                 groundResource,
                 groundResourceLib,
@@ -1502,17 +1472,14 @@ export class CityLifeAmbientLayer {
             }
         }
 
-        if (cat === 'maritime_fishing' && list.length === 0) {
-            // 确认附近没有可用渔场后，整城固定回落到该文化的农业，后续重排也不再改换。
-            this.categoryByCity.set(city.id, landCat);
-            return this.getOrCreateCityActors(city);
-        }
+        // 本年要画的树丛：只有抽到狩猎 / 伐木的年份才有
+        this.forestByCity.set(city.id, forestNodes);
 
         // 民生组合：1 个牧羊人固定带 4 只牲畜（四块草场一块一只）；1 个猎人固定带 1 只本地猎物。
         // 动物只在组合中央的两侧小范围真实往返，不与主人分散到据点不同位置。
         // 火鸡、原驼只产于美洲：旧大陆猎场只从鹿、野猪里抽。
         const isAmericas = ['MUISCA', 'MAYANS', 'TUPI', 'MAPUCHE', 'INCA', 'AMERICA'].includes(style);
-        const preyPool = animalPool.filter((dir) => (isAmericas ? ['DEER', 'BOAR', 'TURKEY', 'GUANACO'] : ['DEER', 'BOAR']).includes(dir));
+        const preyPool = preyAnimalPool.filter((dir) => (isAmericas ? ['DEER', 'BOAR', 'TURKEY', 'GUANACO'] : ['DEER', 'BOAR']).includes(dir));
         const groupLeaders = list.filter((actor) => actor.dir === 'VIL_MALE_SHEPHERD' || actor.dir === 'VIL_MALE_HUNTER');
         for (const leader of groupLeaders) {
             const isShepherd = leader.dir === 'VIL_MALE_SHEPHERD';
@@ -1522,7 +1489,7 @@ export class CityLifeAmbientLayer {
             const cellList = isShepherd
                 ? (leader.plotCells ?? [PLOT_LEADER_CELL])
                 : Array.from({ length: preyCount }, (_, k) => k);
-            const pastoralPool = PASTORAL_ANIMAL_POOLS[style] ?? LIVELIHOOD_SPECS[cat].animals;
+            const pastoralPool = pastoralPoolFor(style, leader.livelihood ?? 'nomadic_steppe', cLng);
             const pastoralOffset = Math.floor(strHash01(leader.id, 206) * pastoralPool.length) % pastoralPool.length;
             for (const j of cellList) {
                 let homePos: Pt | null = null;
@@ -2035,7 +2002,7 @@ export class CityLifeAmbientLayer {
 
         for (const city of visibleCities) {
             const actors = this.getOrCreateCityActors(city);
-            const forestProps = actors.length > 0 ? this.getOrCreateCityForest(city) : [];
+            const forestProps = actors.length > 0 ? (this.forestByCity.get(city.id) ?? []) : [];
             const cityInWar = this.endangeredCities.has(city.id);
             const citySeason = city.lat < -5 ? (season + 2) % 4 : season;
             const cityNextSeason = (citySeason + 1) % 4;
