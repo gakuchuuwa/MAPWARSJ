@@ -37,10 +37,10 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     phokis: { start: -357, end: -346, source: '狄奥多罗斯XVI.23–59：前357年福基斯人据德尔斐发动第三次神圣战争，前346年腓力二世解散其同盟。', note: '福基斯同盟此前长期存在，此处取独立自主阶段。' },
     wuguobu: { start: 1003, end: null, source: '维基百科『五国部』引《辽史·营卫志》：1003年五国部始朝贡辽圣宗、圣宗时归附；后为完颜部所并（不确定：并入金朝的确切年史无明文）。', note: '1037年辽罢五国酋帅、改设节度使。' },
     balti: { start: 1190, end: 1840, source: '维基百科『Baltistan／Maqpon dynasty』：马克彭王朝约1190年建于斯卡杜，1840年为道格拉军所并（不确定：起年为传说纪年）。' },
-    qingyuan_yijun: { start: 1283, end: 1284, source: '维基百科『欧南喜』引《元史》：至元二十年（1283）九月广东盐户起事，二十一年（1284）于清远称王后败于新会，欧南喜被俘磔杀。' },
-    zhenghe_yijun: { start: 1283, end: 1284, source: '维基百科『黄华 (元朝)』：至元二十年（1283）十月于政和再起，号头陀军、复宋祥兴年号，二十一年（1284）春赤岩寨破、自焚死。' },
+    // 🔴 [2026-11-05 按A执行] qingyuan_yijun（清远义军 1283–1284）已并入大元，存续年随本家删除
+    zhenghe_yijun: { start: 1283, end: 1284, source: '维基百科『黄华 (元朝)』：至元二十年（1283）十月于政和再起，号头陀军、又称畲军、复宋祥兴年号（祥兴五年），二十一年（1284）春赤岩寨破、自焚死。' },
     desheng: { start: 1465, end: 1466, source: '《明史·项忠传》：成化元年（1465）刘通于房县称汉王、建元德胜，成化二年（1466）兵败被擒杀。' },
-    wuzhou_yijun: { start: null, end: null, source: '不确定：汪文进据婺州仅见隋末群雄记事（约617–621年间），起讫年无明确史载。' },
+    // 🔴 [2026-11-05 按A执行] wuzhou_yijun（婺州义军 590–591）已并入隋国，存续年随本家删除
     zhangchu: { start: -209, end: -208, source: '《史记·陈涉世家》：秦二世元年（前209）陈胜于陈县称王、号张楚，次年为庄贾所杀，政权瓦解。' },
     pattani: { start: 1516, end: 1902, source: '维基百科『Sultanate of Pattani』：约1516年伊斯迈沙立国，1902年暹罗废其苏丹、正式并入版图。', note: '1785年后已为暹罗属邦，1902年废国。' },
     kilwa: { start: 957, end: 1513, source: '维基百科『Kilwa Sultanate』：据《基尔瓦编年史》约957年立国，1513年为葡萄牙人所毁。' },
@@ -473,13 +473,14 @@ export const FACTION_SPAN: Readonly<Record<string, FactionSpan>> = {
     xiwasi: { start: 1381, end: 1398, source: '维基「Kadi Burhan al-Din」：1381 年称苏丹据锡瓦斯，1398 年被白羊王朝所杀', note: '卡迪·布尔汉丁以锡瓦斯为都的安纳托利亚中部政权' },
     mengguqieke: { start: 1071, end: 1277, source: '维基「Mengujekids」：1071 至 1277 年，埃尔津詹、迪夫里伊两支', note: '门古切克王朝埃尔津詹支' },
     malwan: { start: 868, end: 930, source: '维基「Ibn Marwan al-Jilliqi」：868 年于梅里达起事，875 年建巴达霍斯，其家族至 930 年', note: '伊本·马尔万据梅里达—巴达霍斯的穆瓦拉德政权' },
+    sumuroyi: { start: 1649, end: 1650, source: '维基「Sumuroy Rebellion」：1649 年在萨马岛帕拉帕格起事，1650 年苏穆罗伊被部下所杀', note: '苏穆罗伊领导的萨马岛反西班牙起义' },
     gengshi: { start: 23, end: 25, source: '《后汉书·刘玄传》：23年刘玄称帝改元更始，25年为赤眉所灭', note: '与输入备注一致' },
     shierShijun: { start: 965, end: 968, source: '维基「十二使君之乱」：965年后交趾十二使君割据，968年丁部领统一建大瞿越', note: '与输入备注一致' },
     xishan: { start: 1778, end: 1802, source: '维基「西山朝」：1778年阮岳称帝建西山朝，1802年为阮福映所灭', note: '阮光缵1802年被俘' },
     malla: { start: 1484, end: 1768, source: '维基「加德满都王国」：马拉王朝1484年三子分国，1768年为廓尔喀普里特维·纳拉扬·沙阿攻灭', note: '普拉卡什·马拉为末代王' },
     // 🔴 [2026-11-04 按历史修复] shangdu（1328 两都之战的上都一方）不是政权，势力已并入大元(yuan_d)；wistahm（维斯塔姆本人割据）已并入萨珊(sashan)，两行存续年删除
     mihran: { start: 590, end: 591, source: '维基「巴赫拉姆六世」：590年米赫兰家族巴赫拉姆六世篡位，591年为霍斯劳二世所灭' },
-    dongyang: { start: 590, end: 591, source: '《隋书·来护儿传》：590年高智慧据越州反隋，来护儿破之，高智慧旋败亡' },
+    // 🔴 [2026-11-05 按A执行] dongyang（会稽义军 590–591）已并入隋国，存续年随本家删除
     yun: { start: null, end: -638, source: '《左传·襄公十四年》允姓之戎居瓜州；僖公二十二年（前638）秦晋迁之于伊川', note: '不确定：允戎始年无载；东迁后称陆浑之戎' },
     huangwang: { start: 880, end: 884, source: '维基「黄巢」：880年入长安称帝建国号大齐，884年败死狼虎谷', note: '🔴 [2026-11-04 按历史修复] 势力名由「黄王」（黄巢自称）改为国号「大齐」。' },
     yehe: { start: 1500, end: 1619, source: '维基「叶赫部」：16世纪初祝孔革据叶赫，1619年为努尔哈赤所灭', note: '起年为约数' },

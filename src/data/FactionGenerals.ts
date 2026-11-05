@@ -488,6 +488,9 @@ export interface FactionGeneral {
 
 
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
+    sumuroyi: [
+        { generalId: 'sumuroyi_sumuroy', factionId: 'sumuroyi', cityId: 'city_palapag', generalName: '苏穆罗伊', portrait: '/assets/MALAY/sumuroyi_sumuroy.png', eliteName: '萨马义勇', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 1649 年萨马岛起义领袖，帕拉帕格起事（生年为估算）；普将
+    ],
     xiwasi: [
         { generalId: 'xiwasi_burhandin', factionId: 'xiwasi', cityId: 'city_sivas', generalName: '布尔汉丁', portrait: '/assets/TURKS/xiwasi_burhandin.png', eliteName: '锡城突骑', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 卡迪布尔汉丁，1381 年起以锡瓦斯称苏丹，镇守并扩张安纳托利亚中部；普将，待核实实名敌帅胜绩
     ],
@@ -552,11 +555,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     balti: [
         { generalId: 'balti_alixieerhan', factionId: 'balti', cityId: 'city_puticheng', generalName: '阿里谢尔汗', portrait: '/assets/TIBET/balti_alixieerhan.png', eliteName: '巴尔蒂山兵', eliteTier: 2 },   // 🔴 [2026-11-01 补将·新建势力] 巴尔蒂斯坦马克彭王朝，都斯卡杜（Kharpocho 堡），屡抗莫卧儿（约1580–1625）
     ],
-    qingyuan_yijun: [
-        { generalId: 'qingyuan_yijun_ounanxi', factionId: 'qingyuan_yijun', cityId: 'city_qingyuan', generalName: '欧南喜', portrait: '/assets/JIANGNAN/qingyuan_yijun_ounanxi.png', eliteName: '清远盐军', eliteTier: 3 },   // 🔴 [2026-11-01 补将·新建势力] 至元二十一年在广州清远称王署官、据为根本，1284 兵败（维基「欧南喜」）
-    ],
+    // 🔴 [2026-11-05 按A执行] 原「清远义军」势力已删（欧南喜只「僭王号，伪署丞相、招讨」，史无国号），并入大元；武将改挂 yuan_d 组，据点仍是清远。
     zhenghe_yijun: [
-        { generalId: 'zhenghe_yijun_huanghua', factionId: 'zhenghe_yijun', cityId: 'city_zhenghe', generalName: '黄华', portrait: '/assets/JIANGNAN/zhenghe_yijun_huanghua.png', eliteName: '头陀军', eliteTier: 3 },   // 🔴 [2026-11-01 补将·新建势力] 至元二十年在政和起头陀军、复宋祥兴年号，据飞凤山，1284 赤岩寨破自焚
+        { generalId: 'zhenghe_yijun_huanghua', factionId: 'zhenghe_yijun', cityId: 'city_zhenghe', generalName: '黄华', portrait: '/assets/JIANGNAN/zhenghe_yijun_huanghua.png', eliteName: '畲民义军', eliteTier: 3 },   // 🔴 [2026-11-05 按A执行] 势力名改「头陀军」（史称：号头陀军、又称畲军），精锐随之改「畲民义军」避免与势力同名（番号须 3–6 字，故不取 2 字「畲军」；畲、汉民众纷纷归附，故称畲民义军）；至元二十年（1283）十月于政和再起、复宋祥兴年号，据飞凤山，1284 赤岩寨破自焚（《元史》）
     ],
     cueva: [
     { generalId: 'cueva_panjiyake', factionId: 'cueva', cityId: 'city_comagre', generalName: '潘基亚科', portrait: '/assets/MUISCA/cueva_panjiyake.png', eliteName: '库埃瓦弓手', eliteTier: 4 },   // 🔴 [2026-11-01 空据点补将] 1513 科马格雷酋长之子，告知巴尔沃亚南方有海
@@ -564,9 +565,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     desheng: [
         { generalId: 'desheng_liutong', factionId: 'desheng', cityId: 'city_yunyang', generalName: '刘通', portrait: '/assets/JIANGNAN/desheng_liutong.png', eliteName: '荆襄流民', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 明成化荆襄流民起义首领，据郧阳、称汉王、建元德胜（《明朝军事史》郧阳地区农民起义）
     ],
-    wuzhou_yijun: [
-        { generalId: 'wuzhou_wangwenjin', factionId: 'wuzhou_yijun', cityId: 'city_wuzhou', generalName: '汪文进', portrait: '/assets/JIANGNAN/wuzhou_wangwenjin.png', eliteName: '婺州乡兵', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 隋末据婺州，以蔡道人为司空拒守乐安（《隋朝军事史》：叛首汪文进以蔡道人为司空，拒守于乐安）
-    ],
+    // 🔴 [2026-11-05 按A执行] 原「婺州义军」势力已删（汪文进自称天子、史无国号），并入隋国；武将改挂 sui 组，据点仍是金华。
     zhangchu: [
         { generalId: 'zhangchu_chensheng', factionId: 'zhangchu', cityId: 'city_huaiyang', generalName: '陈胜', portrait: '/assets/CENTRAL/zhangchu_chensheng.png', eliteName: '大泽戍卒', eliteTier: 4 },   // 🔴 [2026-11-01 补将] 陈王都陈（宛丘即陈国故都），张楚政权立于陈（《史记·陈涉世家》）；文化随据点＝CENTRAL
     ],
@@ -3012,6 +3011,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     putaoya: [
+        { generalId: 'putaoya_duarte_coelho', factionId: 'putaoya', cityId: 'city_olinda', generalName: '杜阿尔特·科埃略', portrait: '/assets/PORTUGUESE/putaoya_duarte_coelho.png', eliteName: '伯南布哥兵', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 伯南布哥世袭领主，1537 年建奥林达并镇守至卒；普将
         { generalId: 'gen_geraldo_sem_pavor', factionId: 'putaoya', cityId: 'city_evora', generalName: '无畏者吉拉尔多', portrait: '/assets/PORTUGUESE/gen_geraldo_sem_pavor.png', eliteName: '夜袭突击队', eliteTier: 2 },   // 🔴 [2026-11-05 补将] 1165 年夜袭夺埃武拉并镇守（英文维基 Geraldo Geraldes）；先挂普将档
         // 🔴 [2026-11-04 主人令「按历史修复」] 原势力「亚速尔（yasuer，葡属大西洋群岛，非政权）」已删，西普里亚诺改挂葡萄牙；据点安格拉同步改归葡萄牙
         { factionId: 'putaoya', generalId: 'gen_cipriano_figueiredo', cityId: 'city_angra', generalName: '西普里亚诺', portrait: '/assets/PORTUGUESE/gen_cipriano_figueiredo.png' , legionName: '帝国时代葡萄牙风琴军团', eliteName: '特塞拉民团', eliteTier: 4 },
@@ -8528,6 +8528,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
         { generalId: 'yuan_d_hubilie', cityId: 'city_shangdu', generalName: '忽必烈', portrait: '/assets/XIANBEI/yuan_d_hubilie.png', eliteName: '蒙古骑兵', eliteTier: 3 },
+        { generalId: 'qingyuan_yijun_ounanxi', factionId: 'yuan_d', cityId: 'city_qingyuan', generalName: '欧南喜', portrait: '/assets/JIANGNAN/qingyuan_yijun_ounanxi.png', eliteName: '清远盐军', eliteTier: 3 },   // 🔴 [2026-11-05 按A执行] 至元二十年（1283）九月广东盐户起事，二十一年于清远「僭王号，伪署丞相、招讨」，史无国号，故并入大元（同势力史实内战）；据点仍是清远
 
 
 
@@ -12133,7 +12134,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     yue: [
         { generalId: 'yue_goujian', cityId: 'city_kuaiji', generalName: '勾践', portrait: '/assets/JIANGNAN/yue_goujian.png' , legionName: '先秦军团', eliteName: '越君子军', eliteTier: 2 },
-        { generalId: 'bfe_gao_zhihui', factionId: 'dongyang', cityId: 'city_kuaiji', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', eliteName: '江南郡兵', eliteTier: 4 },   // 2026-10-25 按史：隋越州反隋（同势力内战），原误挂越国
+        // 🔴 [2026-11-05 按A执行] 高智慧（原挂势力 dongyang 会稽义军）已改挂隋国，移至 sui 组
     ],
 
 
@@ -12174,6 +12175,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         { generalId: 'pinghai_laihuer', factionId: 'sui', cityId: 'city_piaoyujin', generalName: '来护儿', portrait: '/assets/WEI/pinghai_laihuer.png', eliteName: '隋军水师', eliteTier: 3 },
+        { generalId: 'wuzhou_wangwenjin', factionId: 'sui', cityId: 'city_wuzhou', generalName: '汪文进', portrait: '/assets/JIANGNAN/wuzhou_wangwenjin.png', eliteName: '婺州乡兵', eliteTier: 4 },   // 🔴 [2026-11-05 按A执行] 开皇十年（590）江南之乱据婺州、自称天子署置百官，史无国号，故并入隋国（同势力史实内战）；以蔡道人为司空拒守乐安（《资治通鉴》卷一七七）
+        { generalId: 'bfe_gao_zhihui', factionId: 'sui', cityId: 'city_kuaiji', generalName: '高智慧', portrait: '/assets/JIANGNAN/bfe_gao_zhihui.png', eliteName: '江南郡兵', eliteTier: 4 },   // 🔴 [2026-11-05 按A执行] 开皇十年（590）据越州反隋、自称天子设百官，史无国号，故并入隋国（史实内战）；据浙江东岸营垒，590–591 为来护儿、杨素所破
 
 
 
@@ -15945,6 +15948,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     xibanya: [
+        { generalId: 'xibanya_hurtado_mendoza', factionId: 'xibanya', cityId: 'city_concepcion', generalName: '赫塔多·门多萨', portrait: '/assets/SPANISH/xibanya_hurtado_mendoza.png', eliteName: '智利远征军', eliteTier: 3 },   // 🔴 [2026-11-05 补将] 智利总督，1557 年重建康塞普西翁并败劳塔罗余部（阿劳科战争）；普将
+        { generalId: 'xibanya_alvarado', factionId: 'xibanya', cityId: 'city_realejo', generalName: '阿尔瓦拉多', portrait: '/assets/SPANISH/xibanya_alvarado.png', eliteName: '征服者骑', eliteTier: 3 },   // 🔴 [2026-11-05 补将] 危地马拉总督，雷亚尔港造船备远征舰队（1540）；普将（待核实实名敌帅胜绩）
+        { generalId: 'xibanya_sarmiento', factionId: 'xibanya', cityId: 'city_felipe', generalName: '萨米恩托', portrait: '/assets/SPANISH/xibanya_sarmiento.png', eliteName: '殖民守军', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 1584 年率殖民者在麦哲伦海峡建菲利普王城并任总督；普将（殖民地饿毙）
         // 弗朗西斯科·埃尔南德斯·德·科尔多瓦（Francisco Hernández de Córdoba，约1475—1526）：西班牙征服者，1524年率军开拓尼加拉瓜地峡、建格拉纳达与莱昂城并驻防（按史：奥维耶多《西印第安通史》；无大战役大捷 → 普将）
         { generalId: 'xibanya_cordoba', factionId: 'xibanya', cityId: 'city_nicaragua', generalName: '科尔多瓦', portrait: '/assets/SPANISH/xibanya_cordoba.png', legionName: '帝国时代西班牙方阵军团', eliteName: '西班牙民兵', eliteTier: 4 },
         // 胡安·胡弗雷（Juan Jufré，1516—1578）：西班牙征服者、库约省总督，1562年翻越安第斯山重建并镇守门多萨城（按史：智利与库约殖民档案；无独立野战大捷 → 普将）
@@ -15976,7 +15982,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
                 // 加赖（胡安·德·加赖，1528–1583，拉普拉塔副总督，1580年重建布宜诺斯艾利斯定居点）→ 布宜诺斯艾利斯（SPANISH）
 { generalId: 'xibanya_jialai', factionId: 'xibanya', cityId: 'city_buenosaires', generalName: '加赖', portrait: '/assets/SPANISH/xibanya_jialai.png', eliteName: '西班牙民兵', eliteTier: 4 },
-{ generalId: 'xibanya_orellana', factionId: 'xibanya', cityId: 'city_lima', generalName: '弗朗西斯科', portrait: '/assets/SPANISH/xibanya_orellana.png', eliteName: '征服者火枪', eliteTier: 3 },
+{ generalId: 'xibanya_orellana', factionId: 'xibanya', cityId: 'city_guayaquil', generalName: '弗朗西斯科', portrait: '/assets/SPANISH/xibanya_orellana.png', eliteName: '征服者火枪', eliteTier: 3 },
         { generalId: 'xibanya_gonzalo', factionId: 'xibanya', cityId: 'city_lima', generalName: '贡萨洛', portrait: '/assets/SPANISH/xibanya_gonzalo.png', eliteName: '征服者骑', eliteTier: 3 },
     ],  // 利马·征服印加的西班牙征服者
 
@@ -17395,7 +17401,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     toyotomi: [
-        { generalId: 'toyotomi_asai_chacha', generalName: '浅井茶茶', portrait: '/assets/JAPAN/toyotomi_asai_chacha.png' }, // 🔴 [2026-11-05 依主人令改将] 大坂城实际主政者（淀殿），主持大坂城防与大坂之阵防御战（1583–1615 居大坂城）
+        { generalId: 'toyotomi_asai_chacha', factionId: 'toyotomi', cityId: 'city_osaka', generalName: '浅井茶茶', portrait: '/assets/JAPAN/toyotomi_asai_chacha.png', eliteName: '大坂浪人众', eliteTier: 4 }, // 🔴 [2026-11-05 主人令「丰臣家浅井茶茶，文化日本。请添加」] 补齐势力/据点/精锐：大坂城实际主政者（淀殿），1583–1615 居大坂城，主持 1615 大坂之阵守城；据点大阪（buildingStyle JAPAN）→ 文化 JAPAN；精锐「大坂浪人众」＝大坂之阵丰臣方以浪人众为守城骨干（《大坂之阵》诸书）
         { generalId: 'hashiba_fengchenxiuji', eliteName: '黄母衣众', eliteTier: 3, factionId: 'toyotomi', cityId: 'city_himeji', generalName: '丰臣秀吉', portrait: '/assets/JAPAN/hashiba_fengchenxiuji.png' },   // 按史：黄母衣众为秀吉马廻近卫与使番，具鲜明文化辨识度，但非独立战略野战主力，依 v3 定 T3。
         { generalId: 'gen_ishida_mitsunari', factionId: 'toyotomi', cityId: 'city_kyoto', generalName: '石田三成', portrait: '/assets/JAPAN/gen_ishida_mitsunari.png', eliteName: '佐和山众', eliteTier: 3 },
 
@@ -17440,11 +17446,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     ],
     oda: [
-        { generalId: 'owari_zhitianxinchang', generalName: '织田信长', portrait: '/assets/JAPAN/owari_zhitianxinchang.png' },
+        { generalId: 'oda_kukiyoshitaka', factionId: 'oda', cityId: 'city_toba', generalName: '九鬼嘉隆', portrait: '/assets/JAPAN/oda_kukiyoshitaka.png', eliteName: '九鬼水军', eliteTier: 2 },   // 🔴 [2026-11-05 补将] 志摩鸟羽城主，织田水军大将，木津川口铁甲船破毛利水军（1578）；先挂普将档
+        { generalId: 'owari_zhitianxinchang', factionId: 'oda', cityId: 'city_atsuta', generalName: '织田信长', portrait: '/assets/JAPAN/owari_zhitianxinchang.png', eliteName: '织田马廻众', eliteTier: 1 },   // 🔴 [2026-11-05 主人令「织田信长没有 cityId、没有文化，请修复」] 补势力/据点/精锐：织田家当主，据点取尾张宫宿（热田，city_atsuta，首战桶狭间即此城）；文化随据点＝JAPAN；精锐「织田马廻众」与势力远征精锐表 oda 同号同档（T1），即信长的母衣众·马廻亲卫（《信长公记》）
 
         { generalId: 'bfe_oda_nobuhide', factionId: 'oda', cityId: 'city_atsuta', generalName: '织田信秀', portrait: '/assets/JAPAN/bfe_oda_nobuhide.png', eliteName: '织田足轻', eliteTier: 4 },
     ],
     hojo: [
+        { generalId: 'hojo_shimizuyasuhide', factionId: 'hojo', cityId: 'city_shimoda', generalName: '清水康英', portrait: '/assets/JAPAN/hojo_shimizuyasuhide.png', eliteName: '伊豆水军', eliteTier: 4 },   // 🔴 [2026-11-05 补将] 北条家伊豆水军大将，1590 年守下田城抗丰臣水军（生卒年为主人令「编写大概」的估算）；普将
         { generalId: 'sagami_beitiaoshikang', factionId: 'hojo', cityId: 'city_hakone', generalName: '北条氏康', portrait: '/assets/JAPAN/sagami_beitiaoshikang.png', eliteName: '风魔党', eliteTier: 3 },
 
     ],

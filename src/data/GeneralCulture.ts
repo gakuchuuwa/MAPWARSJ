@@ -128,7 +128,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe_dian_chief': 'BASHU',   // 滇国｜苴兰｜据点 滇池
     'bfe_dou_jiande': 'CENTRAL',   // 赵国｜窦建德｜据点 邯郸
     'bfe_gaius_livius': 'ROMA',   // 罗马帝国｜李维乌斯｜据点 罗马城
-    'bfe_gao_zhihui': 'JIANGNAN',   // 越国｜高智慧｜据点 会稽
+    'bfe_gao_zhihui': 'JIANGNAN',   // 隋国｜高智慧｜据点 会稽（原挂会稽义军，2026-11-05 已并入隋国）
     'bfe_guangde': 'WESTERN',   // 尉迟｜广德｜据点 于阗
     'bfe_isaac_komnenos': 'BYZANTINE',   // 拜占庭｜伊萨克｜据点 君士坦丁堡
     'bfe_jaya_prakash': 'TIBET',   // 廓喀｜普拉卡什｜据点 加德满都
@@ -1123,7 +1123,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'otomo_d_lihuadaoxue': 'JAPAN',   // 大友｜立花道雪｜据点 太宰府
     'ouyang_ouyangwei': 'HUGUANG',   // 宋国｜欧阳頠｜据点 番禺
     'ouyue_zouyao': 'JIANGNAN',   // 瓯越｜驺摇｜据点 永嘉
-    'owari_zhitianxinchang': 'JAPAN',   // 织田｜织田信长｜据点 京都
+    'owari_zhitianxinchang': 'JAPAN',   // 织田家｜织田信长｜据点 宫宿（热田，city_atsuta）
     'paermila_zhinuobiya': 'ORIE',   // 帕尔米拉｜芝诺比娅｜据点 塔德莫尔
     'pagan_anulvtuo': 'BURMESE',   // 缅国｜阿奴律陀｜据点 蒲甘
     'paiwan_alugu': 'MALAY',   // 排湾｜阿禄古｜据点 牡丹社
@@ -1315,6 +1315,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tongma_taishici': 'JIANGNAN',   // 齐国｜太史慈｜据点 豫章
     'tongzhou_liuzhiyuan': 'WEI',   // 唐国｜刘知远｜据点 晋阳
     'totomi_jiujingzhongci': 'JAPAN',   // 德川｜酒井忠次｜据点 浜松城
+    'toyotomi_asai_chacha': 'JAPAN',   // 丰臣｜浅井茶茶（淀殿）｜据点 大阪
     'tsangpa_pengcuonanjie': 'TIBET',   // 藏巴汗｜彭措南杰｜据点 桑珠孜
     'tubo_lunmangre': 'TIBET',   // 吐蕃｜论莽热｜据点 逻些
     'tubo_muzheng': 'TIBET',   // 吐蕃｜木征｜据点 浇河
@@ -1895,6 +1896,13 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xiwasi_burhandin': 'TURKS',   // 布尔汉丁｜据点 锡瓦斯
     'mengguqieke_bahramshah': 'TURKS',   // 巴赫拉姆沙｜据点 埃尔津詹
     'malwan_ibn_marwan': 'ORIE',   // 伊本·马尔万｜据点 梅里达
+    'oda_kukiyoshitaka': 'JAPAN',   // 九鬼嘉隆｜据点 鸟羽
+    'putaoya_duarte_coelho': 'PORTUGUESE',   // 杜阿尔特·科埃略｜据点 奥林达
+    'xibanya_sarmiento': 'SPANISH',   // 萨米恩托｜据点 菲利普王城
+    'xibanya_alvarado': 'SPANISH',   // 阿尔瓦拉多｜据点 雷亚尔港
+    'xibanya_hurtado_mendoza': 'SPANISH',   // 赫塔多·门多萨｜据点 康塞普西翁
+    'hojo_shimizuyasuhide': 'JAPAN',   // 清水康英｜据点 下田
+    'sumuroyi_sumuroy': 'MALAY',   // 苏穆罗伊｜据点 帕拉帕格
     'han_d_sunang': 'CENTRAL',   // 孙卬｜据点 萧关
     'manzhou_d_sabusu': 'NORTHEAST',   // 萨布素｜据点 卜奎
     'manzhou_d_dongtianbi': 'BASHU',   // 董天弼｜据点 美诺寨

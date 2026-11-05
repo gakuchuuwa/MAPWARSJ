@@ -356,7 +356,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'chimei': '赤眉',
         'zhangchu': '张楚',   // 张楚·陈胜
         'desheng': '德胜',
-        'wuzhou_yijun': '婺义',
+        // 🔴 [2026-11-05 按A执行] 'wuzhou_yijun' 已并入隋国，旗号登记删除
     'gurkha': '廓喀',
 'xiadun': '夏顿',
     'kazakh': '哈萨',
@@ -605,10 +605,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'malla': '玛拉',
 // 🔴 [2026-11-04 主人令「按历史修复」] shangdu／wistahm 两个势力已删（都不是政权：两都之战的元内一方、萨珊末期权臣本人），并入大元／萨珊，旗号登记同时删除
 'mihran': '米赫',
-'dongyang': '会稽',   // 🔴 [2026-11-04 按历史修复] 势力改「会稽义军」，旗号「会稽」
+// 🔴 [2026-11-05 按A执行] 'dongyang'（会稽义军）已并入隋国，旗号登记删除
 'xiwasi': '锡瓦',
 'mengguqieke': '门古',
 'malwan': '马尔',
+'sumuroyi': '萨马',
     'yun': '允',
     'huangwang': '齐',  // 🔴 [2026-11-03] 黄巢国号大齐，不用姓
     'basha_d': '巴沙',
@@ -871,8 +872,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'phokis': '福基',   // 福基斯
     'wuguobu': '五部',   // 五国部（旗号不含「国」）
     'balti': '巴尔',   // 巴尔蒂
-    'qingyuan_yijun': '清远',   // 清远义军
-    'zhenghe_yijun': '政和',   // 政和义军
+    // 🔴 [2026-11-05 按A执行] 'qingyuan_yijun' 已并入大元，旗号登记删除
+    'zhenghe_yijun': '头陀',   // 头陀军（黄华：号头陀军、又称畲军；旗号取势力简称，不含「军」）
     'latin_empire': '拉丁',   // 拉丁帝国
     'anjou': '安茹',   // 安茹
     'pisa': '比萨',

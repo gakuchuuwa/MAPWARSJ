@@ -428,6 +428,19 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_sivas: -65,    // -65 约（庞培建大城 Megalopolis，后称塞巴斯泰亚，约数）
     city_erzincan: -400,    // -400 约（亚美尼亚 Eriza，约数）
     city_merida: -25,    // -25（奥古斯都建 Emerita Augusta）
+    city_toba: 1594,    // 1594（九鬼嘉隆筑鸟羽城，文禄三年）
+    city_olinda: 1537,    // 1537（杜阿尔特·科埃略建奥林达）
+    city_felipe: 1584,    // 1584（萨米恩托建 Rey Don Felipe，又称饥饿港 Puerto del Hambre）
+    city_realejo: 1532,    // 1532 约（El Realejo 建港年，约数）
+    city_concepcion: 1550,    // 1550（瓦尔迪维亚建 Concepción）
+    city_guayaquil: 1538,    // 1538（奥雷利亚纳建圣地亚哥-德瓜亚基尔）
+    city_valdivia: 1552,    // 1552（瓦尔迪维亚建 Valdivia）
+    city_shimoda: 1588,    // 1588 约（北条氏筑下田城，约数）
+    city_sofala: 900,    // 900 约（斯瓦希里黄金港，约数）
+    city_arica: 1541,    // 1541（西班牙人建 San Marcos de Arica）
+    city_palapag: 1600,    // 1600 约（萨马岛耶稣会传教点，约数）
+    city_kunlundao: 1702,    // 1702（英国东印度公司在昆仑岛筑堡，英文维基 Côn Đảo）
+    city_nikoba: 1756,    // 1756（丹麦在楠考里港建弗雷德里克纳格殖民地，英文维基 Danish Nicobar Islands）
     city_telabuzong: -756,    // 公元前756年米利都希腊殖民者建特拉佩祖斯（英文维基 Trabzon）
     city_amaxiya: -2000,      // 考古表明前2千纪赫梯人已在此定居，历经弗里吉亚、波斯，前4世纪末为本都王国都城（英文维基 Amasya）
     city_peierjiameng: -700,  // 前8世纪末已见定居遗存，前400/399年色诺芬《远征记》已载该城（英文维基 Pergamon）

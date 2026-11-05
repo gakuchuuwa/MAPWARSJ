@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 势力时代表（factionId → 年份段 → 四时代）。
  *
  * 🔴 2026-10-25 主人令：「武将有生卒登场年，势力有时代」「按史分年段」「这样能保证一个势力的人，都是一个军团」。
@@ -162,7 +162,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'chimei': [{ from: -9999, era: 'antiquity' }], // 赤眉
 'zhangchu': [{ from: -9999, era: 'antiquity' }], // 张楚
 'desheng': [{ from: -9999, era: 'castle' }], // 德胜（1465）
-'wuzhou_yijun': [{ from: -9999, era: 'feudal' }], // 婺州义军（隋末）
+    // 🔴 [2026-11-05 按A执行] 'wuzhou_yijun'（婺州义军）已并入隋国，时代随本家
     'choros': [{ from: -9999, era: 'castle' }], // 萨吾尔
     'chosokabe': [{ from: -9999, era: 'imperial' }], // 土佐
     'chuguo': [{ from: -9999, era: 'antiquity' }], // 楚国
@@ -513,10 +513,11 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'malla': [{ from: -9999, era: 'imperial' }], // 加德满都
     // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'（上都）与 'wistahm'（维斯塔姆）两个势力已删，并入大元／萨珊，时代随本家
     'mihran': [{ from: -9999, era: 'antiquity' }], // 米赫兰
-    'dongyang': [{ from: -9999, era: 'feudal' }], // 东扬
+    // 🔴 [2026-11-05 按A执行] 'dongyang'（会稽义军）已并入隋国，时代随本家
     'xiwasi': [{ from: -9999, era: 'castle' }], // 锡瓦斯苏丹国
     'mengguqieke': [{ from: -9999, era: 'castle' }], // 门古切克王朝
     'malwan': [{ from: -9999, era: 'feudal' }], // 马尔万政权
+    'sumuroyi': [{ from: -9999, era: 'imperial' }], // 萨马起义军
     'tiaodun_qishi': [{ from: -9999, era: 'castle' }], // 条顿骑士团
     'tiemuer': [{ from: -9999, era: 'castle' }], // 图兰
     'tokugawa': [{ from: -9999, era: 'imperial' }], // 德川
@@ -727,8 +728,8 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'phokis': [{ from: -9999, era: 'antiquity' }], // 福基斯
     'wuguobu': [{ from: -9999, era: 'feudal' }], // 五国部
     'balti': [{ from: -9999, era: 'imperial' }], // 巴尔蒂
-    'qingyuan_yijun': [{ from: -9999, era: 'castle' }], // 清远义军
-    'zhenghe_yijun': [{ from: -9999, era: 'castle' }], // 政和义军
+    // 🔴 [2026-11-05 按A执行] 'qingyuan_yijun'（清远义军）已并入大元，时代随本家
+    'zhenghe_yijun': [{ from: -9999, era: 'castle' }], // 头陀军（黄华 1283–1284）
     'latin_empire': [{ from: -9999, era: 'castle' }], // 拉丁帝国
     'anjou': [{ from: -9999, era: 'castle' }], // 安茹
     'pisa': [{ from: -9999, era: 'castle' }], // 比萨共和国

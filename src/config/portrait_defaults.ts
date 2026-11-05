@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 战斗 UI 立绘 — **三级分配规则（AGENTS.md §十三，AI 必读）**
  *
  * ① **武将**：专属立绘（文件存在）→ 政权专夹 → 据点/出兵文化区夹。
@@ -585,7 +585,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'malla': _zhongyuanPortraitPool,
     // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'／'wistahm' 势力已删，立绘池登记一并删除
     'mihran': _zhongyuanPortraitPool,
-    'dongyang': _zhongyuanPortraitPool,
+    // 🔴 [2026-11-05 按A执行] 'dongyang'（会稽义军）已并入隋国，立绘池登记删除
     'wei': _xianqinPortraitPool,
     'caowei': _zhongyuanPortraitPool,
     'xiezhou': _zhongyuanPortraitPool,

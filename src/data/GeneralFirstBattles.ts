@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将首次会面·历史经典战设定（GeneralFirstBattles）
  *
  * 规则：
@@ -3212,8 +3212,8 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 39.02,
         targetLng: 117.6,
         myTroops: 25000,
-        enemyFactionId: 'dongyang',   // 🔴 [2026-10-25 按史] 敌将势力对齐
-        enemyFactionName: '高智慧',
+        enemyFactionId: 'sui',   // 🔴 [2026-11-05 按A执行] 高智慧原势力 dongyang（会稽义军）已并入隋国，此处改为隋国；史实内战（来护儿·隋 vs 高智慧·隋），按 AGENTS §四.4「史实内战双方可同属一个势力」
+        enemyFactionName: '隋国',
         enemyGeneralId: 'bfe_gao_zhihui',
         enemyTroops: 35000,
         introLines: [

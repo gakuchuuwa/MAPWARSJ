@@ -1859,6 +1859,13 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'xiwasi_burhandin': 'castle', // 布尔汉丁
     'mengguqieke_bahramshah': 'castle', // 巴赫拉姆沙
     'malwan_ibn_marwan': 'feudal', // 伊本·马尔万
+    'oda_kukiyoshitaka': 'imperial', // 九鬼嘉隆
+    'putaoya_duarte_coelho': 'castle', // 杜阿尔特·科埃略
+    'xibanya_sarmiento': 'imperial', // 萨米恩托
+    'xibanya_alvarado': 'imperial', // 阿尔瓦拉多
+    'xibanya_hurtado_mendoza': 'imperial', // 赫塔多·门多萨
+    'hojo_shimizuyasuhide': 'imperial', // 清水康英
+    'sumuroyi_sumuroy': 'imperial', // 苏穆罗伊
     'han_d_sunang': 'antiquity', // 孙卬
     'tang_malin': 'feudal', // 马璘（补将）
     'tang_duanxiushi': 'feudal', // 段秀实（补将）

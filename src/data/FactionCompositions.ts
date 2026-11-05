@@ -1417,10 +1417,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代萨珊军团",
         legionType: "sub",
     },
-    "dongyang": {
-        legionName: "封建时代江淮军团",
-        legionType: "sub",
-    },
+    // 🔴 [2026-11-05 按A执行] "dongyang"（会稽义军）已并入隋国，编制指针删除（隋国军团按势力时代×据点文化自动判定）
     "xiwasi": {
         legionName: "城堡时代鲁姆塞尔柱军团",
         legionType: "sub",
@@ -1431,6 +1428,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "malwan": {
         legionName: "封建时代哈里发军团",
+        legionType: "sub",
+    },
+    "sumuroyi": {
+        legionName: "帝国时代马六甲军团",
         legionType: "sub",
     },
     "qiuchi": {

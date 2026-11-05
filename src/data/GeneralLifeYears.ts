@@ -599,6 +599,7 @@ liang_d_zhuyouning: { birth: 865, death: 903, kaoju: '推定' },  // 朱友宁�
     manzhou_nuerhachi: { birth: 1559, death: 1626 },       // 努尔哈赤
     date_d_yidazhengzong: { birth: 1567, death: 1636 },    // 伊达政宗
     sanada_d_zhentianxingcun: { birth: 1567, death: 1615 },// 真田幸村
+    toyotomi_asai_chacha: { birth: 1567, death: 1615 },     // 浅井茶茶（淀殿）：1567 生，1615 大坂城落自尽
     tujia_d_qinliangyu: { birth: 1574, death: 1648 },      // 秦良玉
     mao_wenlong_maowenlong: { birth: 1576, death: 1629 },  // 毛文龙
     zu_d_yuanchonghuan: { birth: 1584, death: 1630 },      // 袁崇焕
@@ -1853,7 +1854,7 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     tuoba_weijingxin: { birth: 470, death: 540, kaoju: '推定' },  // 韦敬欣
     zhangchu_chensheng: { birth: -240, death: -208, kaoju: '推定' },  // 陈胜，前208 被车夫庄贾杀害
     desheng_liutong: { birth: 1400, death: 1466, kaoju: '推定' },  // 刘通
-    wuzhou_wangwenjin: { birth: 570, death: 620, kaoju: '推定' },  // 汪文进
+    wuzhou_wangwenjin: { birth: 570, death: 590, kaoju: '推定' },  // 汪文进，开皇十年（590）江南之乱被史万岁平定后败亡（《资治通鉴》卷一七七）
     liusong_tanshao: { birth: 370, death: 430, kaoju: '推定' },  // 檀韶
     ming_d_wanghuazhen: { birth: 1565, death: 1632, kaoju: '推定' },  // 王化贞
     gaogouli_yangwanchun: { birth: 600, death: 650, kaoju: '推定' },  // 杨万春
@@ -1868,6 +1869,13 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     xiwasi_burhandin: { birth: 1345, death: 1398 },  // 布尔汉丁
     mengguqieke_bahramshah: { birth: 1150, death: 1225, kaoju: '推定' },  // 巴赫拉姆沙
     malwan_ibn_marwan: { birth: 828, death: 889, kaoju: '推定' },  // 伊本·马尔万
+    oda_kukiyoshitaka: { birth: 1542, death: 1600 },  // 九鬼嘉隆
+    putaoya_duarte_coelho: { birth: 1485, death: 1554 },  // 杜阿尔特·科埃略
+    xibanya_sarmiento: { birth: 1532, death: 1592 },  // 萨米恩托
+    xibanya_alvarado: { birth: 1485, death: 1541 },  // 阿尔瓦拉多
+    xibanya_hurtado_mendoza: { birth: 1535, death: 1609 },  // 赫塔多·门多萨
+    hojo_shimizuyasuhide: { birth: 1520, death: 1595, kaoju: '推定' },  // 清水康英
+    sumuroyi_sumuroy: { birth: 1620, death: 1650, kaoju: '推定' },  // 苏穆罗伊
     han_d_sunang: { birth: -230, death: -166, kaoju: '推定' },  // 孙卬
     tang_malin: { birth: 721, death: 777, kaoju: '推定' },  // 马璘
     tang_duanxiushi: { birth: 719, death: 783, kaoju: '推定' },  // 段秀实

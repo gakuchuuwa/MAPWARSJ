@@ -12628,28 +12628,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "大阪-姬路城",
-                type: "sea",
-                id: "sea_city_osaka_city_himeji_20261105",
-                startConnection: "city_osaka",
-                endConnection: "city_himeji"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [135.5262, 34.6873],
-                    [135.38, 34.65],
-                    [135.24, 34.58],
-                    [135.04, 34.61],
-                    [134.97, 34.61],
-                    [134.67041, 34.7433],
-                    [134.6939, 34.8394],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "大阪-冈丰城",
                 type: "sea",
                 id: "sea_city_osaka_city_okafu_20261105",
@@ -13390,6 +13368,74 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [129.703, 33.791],
                     [129.73488, 34.02455],
                     [129.2892, 34.2031],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "拉塔基亚-亚历山大",
+                type: "sea",
+                id: "sea_city_latajiya_city_yalishanda_1793850813682",
+                startConnection: "city_latajiya",
+                endConnection: "city_yalishanda"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [35.79, 35.52],
+                    [34.91667, 35.33333],
+                    [34.41667, 35],
+                    [34.41667, 34.66667],
+                    [34, 34.58333],
+                    [33.83333, 34.41667],
+                    [33.5, 34.41667],
+                    [33.45725, 34.50758],
+                    [33.04003, 34.50677],
+                    [32.8814, 34.5083],
+                    [31.76258, 34.51906],
+                    [31.72229, 34.45756],
+                    [31.5407, 34.18045],
+                    [31.32436, 33.85029],
+                    [31.17896, 33.62839],
+                    [30.78671, 32.96038],
+                    [30.766, 32.92511],
+                    [30.60975, 32.65901],
+                    [30.40838, 32.31607],
+                    [30.32611, 32.17597],
+                    [30.07251, 31.74408],
+                    [29.8925, 31.1975],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "拉塔基亚-罗得城",
+                type: "sea",
+                id: "sea_city_latajiya_city_rhodes_1793850826048",
+                startConnection: "city_latajiya",
+                endConnection: "city_rhodes"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [35.79, 35.52],
+                    [34.99157, 35.87376],
+                    [34.80612, 35.86689],
+                    [34.67849, 35.86217],
+                    [34.40477, 35.85203],
+                    [33.79933, 35.82961],
+                    [33.61787, 35.82288],
+                    [33, 35.8],
+                    [31.53935, 35.89738],
+                    [30.90509, 35.93966],
+                    [30, 36],
+                    [30.16667, 35.91667],
+                    [30, 35.75],
+                    [29, 35.75],
+                    [28.66667, 36.08333],
+                    [28.22, 36.44],
                 ]
             }
         },

@@ -42,7 +42,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     amago: { name: '新宫党', tier: 2 },   // 尼子｜统帅 尼子国久｜T2 乘 1.3｜尼子氏突击主力，吉田郡山道及出云战术王牌
     shimazu: { name: '示现流铁炮', tier: 1 },   // 岛津｜统帅 岛津义弘｜T1 乘 1.4｜钓野伏战术横扫九州，泗川战役大破数万联军
     mori: { name: '焙烙水军', tier: 1 },   // 毛利｜统帅 村上武吉｜T1 乘 1.4｜严岛合战、木津川口打破织田水军，称霸濑户
-    toyotomi: { name: '黄母衣众', tier: 1 },
+    toyotomi: { name: '黄母衣众', tier: 3 },   // 丰臣｜统帅 丰臣秀吉｜🔴 [2026-11-05 主人令「黄母衣众同号挂了 T1/T3 两档，五级制要求一号一档」] 按 v3 判定统一为 T3：马廻近卫与使番，非独立战略野战主力（原 T1 与武将条目 T3 冲突，已改）
     utsunomiya: { name: '纪清两党', tier: 2 },   // 宇都宫｜统帅 宇都宫公纲｜T2 乘 1.3｜坂东武者骁勇代表，楠木正成赞其战阵勇烈
     nanchou: { name: '楠木党', tier: 2 },   // 南朝｜统帅 楠木正成｜T2 乘 1.3｜千早城防卫战击退幕府大军，游击战术典范
     nanbu_shi: { name: '糠部产马', tier: 3 },   // 南部｜统帅 南部信直｜T3 乘 1.2｜陆奥名产战马与精锐轻骑，兵种特色独步奥羽

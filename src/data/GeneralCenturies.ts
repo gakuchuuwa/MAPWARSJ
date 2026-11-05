@@ -1013,6 +1013,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_minamoto_yoritomo': 12,                     // 源赖朝 · genji · 镰仓（1180年设幕府）
     'gonggu_gonggudaozhu': 15,                           // 麻利芝 · gonggu · 平良
     'hashiba_fengchenxiuji': 16,                         // 丰臣秀吉 · hashiba · 姬路城
+    'toyotomi_asai_chacha': 16,                          // 浅井茶茶（淀殿） · toyotomi · 大阪
     'higo_d_juchiwuguang': 14,                           // 菊池武光 · higo_d · 熊本
     'iga_d_baididanbo': 16,                              // 百地丹波 · iga_d · 名张
     'iyo_d_cunshangwuji': 16,                            // 村上武吉 · iyo_d · 松山
@@ -1530,6 +1531,13 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'xiwasi_burhandin': 14,   // 布尔汉丁
     'mengguqieke_bahramshah': 12,   // 巴赫拉姆沙
     'malwan_ibn_marwan': 9,   // 伊本·马尔万
+    'oda_kukiyoshitaka': 16,   // 九鬼嘉隆
+    'putaoya_duarte_coelho': 16,   // 杜阿尔特·科埃略
+    'xibanya_sarmiento': 16,   // 萨米恩托
+    'xibanya_alvarado': 16,   // 阿尔瓦拉多
+    'xibanya_hurtado_mendoza': 16,   // 赫塔多·门多萨
+    'hojo_shimizuyasuhide': 16,   // 清水康英
+    'sumuroyi_sumuroy': 17,   // 苏穆罗伊
     'han_d_sunang': -2,
     'tang_malin': 8,   // 马璘
     'tang_duanxiushi': 8,   // 段秀实

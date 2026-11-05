@@ -9013,7 +9013,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/JIANGNAN/bfe_gao_zhihui.png": {
-            "scale": 1.08,
+            "scale": 1.1,
             "offsetX": -13,
             "offsetY": 11
         },

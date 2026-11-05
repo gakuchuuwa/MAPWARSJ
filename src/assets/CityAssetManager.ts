@@ -284,7 +284,7 @@ export class CityAssetManager {
 'taiping': '太平',
         'zhangchu': '张楚',
         'desheng': '德胜',
-        'wuzhou_yijun': '婺义',
+        // 🔴 [2026-11-05 按A执行] 'wuzhou_yijun'（婺州义军）已并入隋国，旗面登记删除
         'hulumusi': '忽鲁',          // 2026-11-03 补登记（旧登记表缺口）
         'bolinixiya': '波利',
         'latin_empire': '拉丁',
@@ -295,8 +295,8 @@ export class CityAssetManager {
         'phokis': '福基',
         'wuguobu': '五部',
         'balti': '巴尔',
-        'qingyuan_yijun': '清远',
-        'zhenghe_yijun': '政和',
+        // 🔴 [2026-11-05 按A执行] 'qingyuan_yijun'（清远义军）已并入大元，旗面登记删除
+        'zhenghe_yijun': '头陀',
         'malindi': '林迪',
         'goto': '五岛',
         'omura': '大村',
@@ -495,10 +495,11 @@ export class CityAssetManager {
 'malla': '玛拉',
 // 🔴 [2026-11-04 主人令「按历史修复」] 'shangdu'／'wistahm' 两个势力已删（非政权），旗面登记一并删除
 'mihran': '米赫',
-'dongyang': '会稽',
+// 🔴 [2026-11-05 按A执行] 'dongyang'（会稽义军）已并入隋国，旗面登记删除
 'xiwasi': '锡瓦',
 'mengguqieke': '门古',
 'malwan': '马尔',
+'sumuroyi': '萨马',
         'yun': '允',
         'huangwang': '齐',
         'basha_d': '巴沙',
