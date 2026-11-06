@@ -24,7 +24,7 @@ type LandSeaKind = 'land' | 'sea';
 export class LandSeaSystem {
     private static sampler = new ElevationSampler();
     private static waterSampler = new WaterMaskSampler();
-    private static resultCache = new Map<string, boolean>();
+    private static resultCache = new Map<number, boolean>();
     private static readonly maxResultCache = 8000;
     private static mapBound = false;
 
@@ -82,12 +82,18 @@ export class LandSeaSystem {
         this.waterSampler.prefetchBounds(b.getNorth(), b.getSouth(), b.getWest(), b.getEast());
     }
 
-    private static cacheKey(lat: number, lng: number): string {
+    /**
+     * 结果缓存键（**数字，不是字符串**）。
+     * 🔴 [2026-11-06 修「玩家移动卡顿」] 原来是 `${zoom}/${tileX}/${tileY}:${pixelX},${pixelY}` ——
+     *    每次 isSeaAt 都新建一个字符串。植被重采样/动物/民生层一帧问几千个点，逐点拼串既吃 CPU
+     *    又制造垃圾（GC 顿挫）。zoom ≤ 14、瓦片 < 2^14、像素 < 2^8，压进一个整数后查表零分配。
+     */
+    private static cacheKey(lat: number, lng: number): number {
         const { tileX, tileY, pixelX, pixelY, zoom } = latLngToTilePixel(lat, lng);
-        return `${zoom}/${tileX}/${tileY}:${pixelX},${pixelY}`;
+        return (((zoom * 16384 + tileX) * 16384 + tileY) * 65536) + (pixelY * 256) + pixelX;
     }
 
-    private static rememberResult(key: string, isSea: boolean): boolean {
+    private static rememberResult(key: number, isSea: boolean): boolean {
         if (this.resultCache.size >= this.maxResultCache) {
             this.resultCache.clear();
         }

@@ -645,6 +645,8 @@ const RESAMPLE_CHUNK_PX = TREE_GRID_STEP * 4;
 const BLEND_PAINT_MIN_INTERVAL_MS = 33;
 /** 单次重建最多保留的树数（兼顾密林连冠咬合与大视口 60FPS 拖动流畅度） */
 const MAX_TREES_PER_RENDER = 5000;
+/** 采样格缓存上限（格数）：一屏 2560×1440 约 3000~6000 格，留几屏余量 */
+const CELL_CACHE_MAX = 30000;
 
 /** 四季 DE 风格林下阴翳基底离屏缓存（春0 夏1 秋2 冬3） */
 const UNDERBRUSH_CANVAS: (HTMLCanvasElement | null)[] = [null, null, null, null];
@@ -762,24 +764,29 @@ export class VegetationLayer {
         map.on('resize', this.onResize);
         window.addEventListener('land-sea-tiles-updated', this.onTerrainReady);
         window.addEventListener('strategic-rivers-ready', () => {
-            this.lastRenderKey = '';
+            this.invalidateCells();
+            this.scheduleRender();
+        });
+        // 道路编辑器开/关：道路可能被改过，林间走廊要按新路重算
+        window.addEventListener('toggle-editor-road', () => {
+            this.invalidateCells();
             this.scheduleRender();
         });
         this.resize();
         this.render();
         void loadStrategicForestMask().then((ready) => {
             if (!ready) return;
-            this.lastRenderKey = '';
+            this.invalidateCells();
             this.scheduleRender();
         });
         void loadLandUseMask().then((ready) => {
             if (!ready) return;
-            this.lastRenderKey = '';
+            this.invalidateCells();
             this.scheduleRender();
         });
         void loadWorldBaseData('/world/world-base.png').then((ready) => {
             if (!ready) return;
-            this.lastRenderKey = '';
+            this.invalidateCells();
             this.scheduleRender();
         });
         this.startSeasonBlendWatch();
@@ -1033,6 +1040,20 @@ export class VegetationLayer {
     }
 
     private lastTreeCount = 0;
+    /**
+     * 🔴 [2026-11-06 修「玩家在战略地图上移动卡顿」] 按采样格缓存的采样结果（键=格坐标，值=这一格长出的树）。
+     *   实测（主人实机 perf_doctor）：跟拍行军时 renderInner 单次 18ms、峰值 34ms、约 5 次/秒——
+     *   每次都把整窗几千格从头算一遍（环境区/森林/高程/水/道路河流吸附……），其实上一次大多算过了。
+     *   每格结果只取决于「格坐标 + 年 + 季 + 已加载的数据」，与镜头在哪无关（城市/道路/河流的
+     *   视口筛选窗 bounds.pad(0.48) 比采样窗大好几度，格子落在窗内时筛选结果不变）。
+     *   所以：缓存命中的格直接复用，只算新露出来的那一条边；年/季/数据变化时整表作废。
+     *   **任何一处判据拿到 null（瓦片未到）的格不入缓存**，下次照常重算，瓦片到了自然补上。
+     */
+    private cellCache = new Map<number, TreeDrawCommand[]>();
+    private cellCacheSig = '';
+    /** 数据版本号：森林/土地利用/世界底图/河流数据加载完成、道路编辑器开关时 +1，使格缓存作废 */
+    private cellDataEpoch = 0;
+    private invalidateCells(): void { this.cellDataEpoch++; this.lastRenderKey = ''; }
     /** 上一次采样有高程/水域瓦片没到（true = 新瓦片到了要重采样；开局为 true） */
     private lastRenderIncomplete = true;
 
@@ -1086,21 +1107,12 @@ export class VegetationLayer {
             'NORTHEAST', 'VARANGIANS', 'DIANQIAN', 'MAPUCHE',
             'TUPI', 'AMERICA', 'MAYANS', 'GEORGIANS',
         ]);
+        // 🔴 [2026-11-06] 格缓存签名：年/季/数据版本任一变化 → 整表作废（见 cellCache 注释）
+        const cellSig = `${gameYear}|${gameSeason}|${this.cellDataEpoch}`;
+        if (cellSig !== this.cellCacheSig) { this.cellCache.clear(); this.cellCacheSig = cellSig; }
+
         const paddedBounds = bounds.pad(0.48);
-        const visibleCities = CITIES_V2
-            .filter((city) => paddedBounds.contains([city.lat, city.lng]))
-            .map((city) => {
-                const wpt = this.map.project([city.lat, city.lng], SAMPLE_ZOOM);
-                const style = city.buildingStyle ?? '';
-                return {
-                    lat: city.lat,
-                    lng: city.lng,
-                    wx: wpt.x,
-                    wy: wpt.y,
-                    isForestHunting: FOREST_HUNTING_STYLES.has(style),
-                    isOasisCity: OASIS_STYLES.has(style) || (style === 'HEXI' && city.lng <= 107.0),
-                };
-            });
+        const visibleCities: Array<{ lat: number; lng: number; wx: number; wy: number; isForestHunting: boolean; isOasisCity: boolean }> = [];
 
         // 🔴 [2026-11-01 主人令「密林连冠成海 + 疏林/绿洲保持成簇 + 战略道路自动留出林间走廊，分布摆放学习 DE」]
         //    构建视口内战略道路的世界像素空间哈希桶（SAMPLE_ZOOM），密林遇到官道/山道自动退让，劈出清晰的林间行军走廊（如秦岭栈道、条顿堡林道）。
@@ -1109,50 +1121,113 @@ export class VegetationLayer {
         const rLatMax = paddedBounds.getNorth();
         const rLngMin = paddedBounds.getWest();
         const rLngMax = paddedBounds.getEast();
-        for (const feat of VECTOR_ROAD_DATA.features) {
-            const coords = feat.geometry?.coordinates;
-            if (!coords || coords.length < 2) continue;
-            const sy = feat.properties?.startYear;
-            const ey = feat.properties?.endYear;
-            if (sy !== undefined && gameYear < sy) continue;
-            if (ey !== undefined && gameYear > ey) continue;
-            let prevWpt: { x: number; y: number } | null = null;
-            let prevIn = false;
-            for (let k = 0; k < coords.length; k++) {
-                const [lng, lat] = coords[k];
-                const curIn = lat >= rLatMin && lat <= rLatMax && lng >= rLngMin && lng <= rLngMax;
-                if (!curIn && !prevIn) {
-                    prevWpt = null;
-                    prevIn = false;
-                    continue;
-                }
-                const wpt = this.map.project([lat, lng], SAMPLE_ZOOM);
-                if (prevWpt === null && k > 0) {
-                    const [pLng, pLat] = coords[k - 1];
-                    prevWpt = this.map.project([pLat, pLng], SAMPLE_ZOOM);
-                }
-                if (prevWpt !== null) {
-                    const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
-                    const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
-                    const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
-                    const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
-                    const seg: [number, number, number, number] = [prevWpt.x, prevWpt.y, wpt.x, wpt.y];
-                    for (let by = by0; by <= by1; by++) {
-                        for (let bx = bx0; bx <= bx1; bx++) {
-                            const key = `${bx},${by}`;
-                            let arr = roadBuckets.get(key);
-                            if (!arr) {
-                                arr = [];
-                                roadBuckets.set(key, arr);
+        const riverBuckets = new Map<string, Array<[number, number, number, number]>>();
+        // 🔴 [2026-11-06] 城市筛选与道路/河流分桶只在「本次真有没缓存的格要算」时才做（整窗命中缓存时一概跳过）
+        let ctxReady = false;
+        const ensureCtx = (): void => {
+            if (ctxReady) return;
+            ctxReady = true;
+            for (const city of CITIES_V2) {
+                if (!paddedBounds.contains([city.lat, city.lng])) continue;
+                const wpt = this.map.project([city.lat, city.lng], SAMPLE_ZOOM);
+                const style = city.buildingStyle ?? '';
+                visibleCities.push({
+                    lat: city.lat,
+                    lng: city.lng,
+                    wx: wpt.x,
+                    wy: wpt.y,
+                    isForestHunting: FOREST_HUNTING_STYLES.has(style),
+                    isOasisCity: OASIS_STYLES.has(style) || (style === 'HEXI' && city.lng <= 107.0),
+                });
+            }
+            for (const feat of VECTOR_ROAD_DATA.features) {
+                const coords = feat.geometry?.coordinates;
+                if (!coords || coords.length < 2) continue;
+                const sy = feat.properties?.startYear;
+                const ey = feat.properties?.endYear;
+                if (sy !== undefined && gameYear < sy) continue;
+                if (ey !== undefined && gameYear > ey) continue;
+                let prevWpt: { x: number; y: number } | null = null;
+                let prevIn = false;
+                for (let k = 0; k < coords.length; k++) {
+                    const [lng, lat] = coords[k];
+                    const curIn = lat >= rLatMin && lat <= rLatMax && lng >= rLngMin && lng <= rLngMax;
+                    if (!curIn && !prevIn) {
+                        prevWpt = null;
+                        prevIn = false;
+                        continue;
+                    }
+                    const wpt = this.map.project([lat, lng], SAMPLE_ZOOM);
+                    if (prevWpt === null && k > 0) {
+                        const [pLng, pLat] = coords[k - 1];
+                        prevWpt = this.map.project([pLat, pLng], SAMPLE_ZOOM);
+                    }
+                    if (prevWpt !== null) {
+                        const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
+                        const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
+                        const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
+                        const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
+                        const seg: [number, number, number, number] = [prevWpt.x, prevWpt.y, wpt.x, wpt.y];
+                        for (let by = by0; by <= by1; by++) {
+                            for (let bx = bx0; bx <= bx1; bx++) {
+                                const key = `${bx},${by}`;
+                                let arr = roadBuckets.get(key);
+                                if (!arr) {
+                                    arr = [];
+                                    roadBuckets.set(key, arr);
+                                }
+                                arr.push(seg);
                             }
-                            arr.push(seg);
                         }
                     }
+                    prevWpt = wpt;
+                    prevIn = curIn;
                 }
-                prevWpt = wpt;
-                prevIn = curIn;
             }
-        }
+            for (const entry of getStrategicRiverFeatures()) {
+                const [minLng, minLat, maxLng, maxLat] = entry.bbox;
+                if (maxLng < rLngMin || minLng > rLngMax || maxLat < rLatMin || minLat > rLatMax) continue;
+                for (const line of entry.lines) {
+                    if (line.length < 2) continue;
+                    let prevWpt: { x: number; y: number } | null = null;
+                    let prevIn = false;
+                    for (let k = 0; k < line.length; k++) {
+                        const [lng, lat] = line[k];
+                        const curIn = lat >= rLatMin && lat <= rLatMax && lng >= rLngMin && lng <= rLngMax;
+                        if (!curIn && !prevIn) {
+                            prevWpt = null;
+                            prevIn = false;
+                            continue;
+                        }
+                        const wpt = this.map.project([lat, lng], SAMPLE_ZOOM);
+                        if (prevWpt === null && k > 0) {
+                            const [pLng, pLat] = line[k - 1];
+                            prevWpt = this.map.project([pLat, pLng], SAMPLE_ZOOM);
+                        }
+                        if (prevWpt !== null) {
+                            const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
+                            const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
+                            const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
+                            const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
+                            const seg: [number, number, number, number] = [prevWpt.x, prevWpt.y, wpt.x, wpt.y];
+                            for (let by = by0; by <= by1; by++) {
+                                for (let bx = bx0; bx <= bx1; bx++) {
+                                    const key = `${bx},${by}`;
+                                    let arr = riverBuckets.get(key);
+                                    if (!arr) {
+                                        arr = [];
+                                        riverBuckets.set(key, arr);
+                                    }
+                                    arr.push(seg);
+                                }
+                            }
+                        }
+                        prevWpt = wpt;
+                        prevIn = curIn;
+                    }
+                }
+            }
+        };
         const nearestRoadHit = (tx: number, ty: number): { dSq: number; qx: number; qy: number } => {
             const segs = roadBuckets.get(`${Math.floor(tx / ROAD_BUCKET_PX)},${Math.floor(ty / ROAD_BUCKET_PX)}`);
             if (!segs) return { dSq: Infinity, qx: tx, qy: ty };
@@ -1182,50 +1257,6 @@ export class VegetationLayer {
         const distSqToRoad = (tx: number, ty: number): number => nearestRoadHit(tx, ty).dSq;
 
         // 🔴 [2026-11-02 ~ 2026-11-03 主人令「有森林的地方不需要放河边树，净空20px分开森林；没有森林的区域在道路或河道旁贴岸添加少量植被；沙漠少量或无，植被和地域对应」]
-        const riverBuckets = new Map<string, Array<[number, number, number, number]>>();
-        for (const entry of getStrategicRiverFeatures()) {
-            const [minLng, minLat, maxLng, maxLat] = entry.bbox;
-            if (maxLng < rLngMin || minLng > rLngMax || maxLat < rLatMin || minLat > rLatMax) continue;
-            for (const line of entry.lines) {
-                if (line.length < 2) continue;
-                let prevWpt: { x: number; y: number } | null = null;
-                let prevIn = false;
-                for (let k = 0; k < line.length; k++) {
-                    const [lng, lat] = line[k];
-                    const curIn = lat >= rLatMin && lat <= rLatMax && lng >= rLngMin && lng <= rLngMax;
-                    if (!curIn && !prevIn) {
-                        prevWpt = null;
-                        prevIn = false;
-                        continue;
-                    }
-                    const wpt = this.map.project([lat, lng], SAMPLE_ZOOM);
-                    if (prevWpt === null && k > 0) {
-                        const [pLng, pLat] = line[k - 1];
-                        prevWpt = this.map.project([pLat, pLng], SAMPLE_ZOOM);
-                    }
-                    if (prevWpt !== null) {
-                        const bx0 = Math.floor((Math.min(prevWpt.x, wpt.x) - CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
-                        const bx1 = Math.floor((Math.max(prevWpt.x, wpt.x) + CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
-                        const by0 = Math.floor((Math.min(prevWpt.y, wpt.y) - CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
-                        const by1 = Math.floor((Math.max(prevWpt.y, wpt.y) + CORRIDOR_DETECT_PX) / ROAD_BUCKET_PX);
-                        const seg: [number, number, number, number] = [prevWpt.x, prevWpt.y, wpt.x, wpt.y];
-                        for (let by = by0; by <= by1; by++) {
-                            for (let bx = bx0; bx <= bx1; bx++) {
-                                const key = `${bx},${by}`;
-                                let arr = riverBuckets.get(key);
-                                if (!arr) {
-                                    arr = [];
-                                    riverBuckets.set(key, arr);
-                                }
-                                arr.push(seg);
-                            }
-                        }
-                    }
-                    prevWpt = wpt;
-                    prevIn = curIn;
-                }
-            }
-        }
         const nearestRiverHit = (tx: number, ty: number): { dSq: number; qx: number; qy: number } => {
             const segs = riverBuckets.get(`${Math.floor(tx / ROAD_BUCKET_PX)},${Math.floor(ty / ROAD_BUCKET_PX)}`);
             if (!segs) return { dSq: Infinity, qx: tx, qy: ty };
@@ -1255,38 +1286,46 @@ export class VegetationLayer {
         const distSqToRiver = (tx: number, ty: number): number => nearestRiverHit(tx, ty).dSq;
 
         /** SAMPLE_ZOOM=9 下指定像素半径圆周上是否触及水域掩膜（用于宽阔大河、湖泊、水路岸线净空与无林区河岸判定） */
+        /** 判水（null=瓦片未到：按「不是水」放行，但标记本格不入缓存，瓦片到了再重算） */
+        const waterAt = (lat: number, lng: number): boolean => {
+            const w = waterSampler.isWaterSync(lat, lng);
+            if (w === null && waterSampler.isPendingSync(lat, lng)) cellIncomplete = true;
+            return w === true;
+        };
         const hasWaterWithinPx = (lat: number, lng: number, radiusPx: number): boolean => {
             const dLng = radiusPx * 0.002746582;
             const dLat = dLng * Math.max(0.15, Math.cos(lat * Math.PI / 180));
             const dLngD = dLng * 0.7071;
             const dLatD = dLat * 0.7071;
             return (
-                waterSampler.isWaterSync(lat + dLat, lng) === true ||
-                waterSampler.isWaterSync(lat - dLat, lng) === true ||
-                waterSampler.isWaterSync(lat, lng + dLng) === true ||
-                waterSampler.isWaterSync(lat, lng - dLng) === true ||
-                waterSampler.isWaterSync(lat + dLatD, lng + dLngD) === true ||
-                waterSampler.isWaterSync(lat + dLatD, lng - dLngD) === true ||
-                waterSampler.isWaterSync(lat - dLatD, lng + dLngD) === true ||
-                waterSampler.isWaterSync(lat - dLatD, lng - dLngD) === true
+                waterAt(lat + dLat, lng) ||
+                waterAt(lat - dLat, lng) ||
+                waterAt(lat, lng + dLng) ||
+                waterAt(lat, lng - dLng) ||
+                waterAt(lat + dLatD, lng + dLngD) ||
+                waterAt(lat + dLatD, lng - dLngD) ||
+                waterAt(lat - dLatD, lng + dLngD) ||
+                waterAt(lat - dLatD, lng - dLngD)
             );
         };
+        /** 本格是否用到了未就绪的瓦片（null 判据）——是则不入缓存 */
+        let cellIncomplete = false;
 
-        for (let gy = yMin; gy <= yMax; gy += TREE_GRID_STEP) {
-            for (let gx = xMin; gx <= xMax; gx += TREE_GRID_STEP) {
+        const sampleCell = (gx: number, gy: number, out: TreeDrawCommand[]): void => {
                 // 有机微抖动：打破网格机械感
                 const px = gx + TREE_GRID_STEP * 0.5 + (hash(gx, gy, 11) - 0.5) * (TREE_GRID_STEP * 0.65);
                 const py = gy + TREE_GRID_STEP * 0.5 + (hash(gx, gy, 12) - 0.5) * (TREE_GRID_STEP * 0.65);
                 const ptLatLng = this.map.unproject([px, py], SAMPLE_ZOOM);
-                if (ptLatLng.lat < -58 || ptLatLng.lat > 75) continue;
+                if (ptLatLng.lat < -58 || ptLatLng.lat > 75) return;
 
                 // 据点避让统一在 SAMPLE_ZOOM 世界像素坐标系下计算，彻底杜绝因平移/缩放亚像素取整导致的城周树木闪现
-                if (visibleCities.some((c) => Math.hypot(c.wx - px, c.wy - py) < (c.isForestHunting ? 34 : CITY_CLEAR_PX))) continue;
+                if (visibleCities.some((c) => Math.hypot(c.wx - px, c.wy - py) < (c.isForestHunting ? 34 : CITY_CLEAR_PX))) return;
 
                 const water = waterSampler.isWaterSync(ptLatLng.lat, ptLatLng.lng);
-                if (water === true || LandSeaSystem.isSeaAt(ptLatLng)) continue;
+                if (water === true || LandSeaSystem.isSeaAt(ptLatLng)) return;
                 if (water === null) {
                     waterNulls++;
+                    if (waterSampler.isPendingSync(ptLatLng.lat, ptLatLng.lng)) cellIncomplete = true;
                     waterSampler.scheduleFetch(ptLatLng.lat, ptLatLng.lng);
                 }
 
@@ -1302,9 +1341,10 @@ export class VegetationLayer {
                 const isHighPlateau = ptLatLng.lng >= 75 && ptLatLng.lng <= 105 && Math.abs(ptLatLng.lat) >= 26 && Math.abs(ptLatLng.lat) <= 40;
                 if (elev === null) {
                     missingTiles++;
-                    if (isHighPlateau) continue;
+                    cellIncomplete = true;
+                    if (isHighPlateau) return;
                 } else if (elev > treeLine || elev <= 0) {
-                    continue;
+                    return;
                 }
 
                 // 检查是否处于渔猎民族据点周围 0.36°（约 40km）林带内，或干旱区绿洲重镇周围 0.10°~0.28° 绿洲林带内
@@ -1420,10 +1460,10 @@ export class VegetationLayer {
                 }
 
                 if (specialEco.weight <= 0 && corridorBoost <= 0) {
-                    if (NON_VEGETATION_TILES.has(tile)) continue;
-                    if (forestBiome === 13) continue; // 荒漠生态群系坚决不长树
+                    if (NON_VEGETATION_TILES.has(tile)) return;
+                    if (forestBiome === 13) return; // 荒漠生态群系坚决不长树
                     // elev 可能为 null（上面「低地先放行」那条分支），按低地兜底取值，与该分支意图一致
-                    if (huntingCityBoost <= 0 && !isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) continue;
+                    if (huntingCityBoost <= 0 && !isStrategicForestArea(forestBiome, tile, elev ?? 250, ptLatLng.lat)) return;
                 }
 
                 let treeTile = specialEco.weight > 0 ? specialEco.effectiveTile : tile;
@@ -1439,9 +1479,9 @@ export class VegetationLayer {
                     naturalForestWeight,
                 );
                 // 🔴 [2026-10-21 ~ 2026-11-01 主人令「密林连冠成海 + 疏林/绿洲保持成簇 + 战略道路自动留出林间走廊，分布摆放学习 DE」]
-                if (clusterWeight < 0.18) continue;
-                if (corridorBoost <= 0 && clusterWeight < 0.32 && hash(gx, gy, 46) > (clusterWeight - 0.18) / 0.14) continue;   // 林缘软过渡
-                if (corridorBoost <= 0 && clusterWeight >= 0.32 && clusterWeight < 0.44 && hash(gx, gy, 47) > 0.85) continue;   // 林缘浅带偶有小林隙
+                if (clusterWeight < 0.18) return;
+                if (corridorBoost <= 0 && clusterWeight < 0.32 && hash(gx, gy, 46) > (clusterWeight - 0.18) / 0.14) return;   // 林缘软过渡
+                if (corridorBoost <= 0 && clusterWeight >= 0.32 && clusterWeight < 0.44 && hash(gx, gy, 47) > 0.85) return;   // 林缘浅带偶有小林隙
 
                 // 区分「郁闭密林」与「稀树草原/绿洲/无林区路边河边单株/山麓林缘」
                 const isSparseEco =
@@ -1496,6 +1536,7 @@ export class VegetationLayer {
                     //    2. 校验树根接地处（curPx, curPy）的海拔，<= 0m 直接剔除
                     //    3. 岸线安全边距检测（低海拔/近海区 8px 退让）：杜绝岸边悬崖林木半身探入海湾
                     const curWater = waterSampler.isWaterSync(curLatLng.lat, curLatLng.lng);
+                    if (curWater === null && waterSampler.isPendingSync(curLatLng.lat, curLatLng.lng)) cellIncomplete = true;
                     if (
                         curWater === true ||
                         LandSeaSystem.isSeaAt(curLatLng) ||
@@ -1507,7 +1548,8 @@ export class VegetationLayer {
                     const curElev = LandSeaSystem.getElevationAtMapPixel(
                         curPx, curPy, SAMPLE_ZOOM, curLatLng.lat, curLatLng.lng,
                     );
-                    if (curElev !== null && curElev <= 0) continue;
+                    if (curElev === null) cellIncomplete = true;
+                    else if (curElev <= 0) continue;
 
                     if (curElev === null || curElev < 80) {
                         const COAST_MARGIN_PX = 8;
@@ -1569,7 +1611,7 @@ export class VegetationLayer {
                     const jitter = 1;
                     const variant = Math.floor(hash(gx, gy, i * 37 + 89) * 100);
                     const wpt = this.map.project(curLatLng, SAMPLE_ZOOM);
-                    drawCommands.push({
+                    out.push({
                         lat: curLatLng.lat,
                         lng: curLatLng.lng,
                         jitter,
@@ -1583,6 +1625,33 @@ export class VegetationLayer {
                     });
                     placedInCell++;
                 }
+        };
+
+        const gStepKey = (v: number): number => Math.round(v / TREE_GRID_STEP);
+        for (let gy = yMin; gy <= yMax; gy += TREE_GRID_STEP) {
+            for (let gx = xMin; gx <= xMax; gx += TREE_GRID_STEP) {
+                const ck = (gStepKey(gx) + 50000) * 200000 + (gStepKey(gy) + 50000);   // 偏移防负坐标（反子午线外扩）
+                const cached = this.cellCache.get(ck);
+                if (cached) {
+                    for (const c of cached) drawCommands.push(c);
+                    continue;
+                }
+                ensureCtx();
+                cellIncomplete = false;
+                const out: TreeDrawCommand[] = [];
+                sampleCell(gx, gy, out);
+                for (const c of out) drawCommands.push(c);
+                if (!cellIncomplete) this.cellCache.set(ck, out);
+            }
+        }
+        // 缓存封顶：超出时丢掉离当前窗一个窗宽以外的格（跨大区移动后旧区不再占内存）
+        if (this.cellCache.size > CELL_CACHE_MAX) {
+            const spanX = xMax - xMin, spanY = yMax - yMin;
+            const kx0 = gStepKey(xMin - spanX), kx1 = gStepKey(xMax + spanX);
+            const ky0 = gStepKey(yMin - spanY), ky1 = gStepKey(yMax + spanY);
+            for (const ck of this.cellCache.keys()) {
+                const kx = Math.floor(ck / 200000) - 50000, ky = (ck % 200000) - 50000;
+                if (kx < kx0 || kx > kx1 || ky < ky0 || ky > ky1) this.cellCache.delete(ck);
             }
         }
 

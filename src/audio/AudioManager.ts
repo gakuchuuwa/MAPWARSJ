@@ -538,7 +538,9 @@ const BGM_REGION_GAIN: Record<string, number> = {
     bengalis_a: 0.684,  // -17.7 LUFS
     bengalis_b: 0.646,  // -17.2 LUFS
     gurjaras_a: 0.631,  // -17.0 LUFS
-    gurjaras_b: 0.794,  // -19.0 LUFS
+    // 🔴 [2026-11-06 主人令「拉贾斯坦口弦 Morchang [gurjaras_b]，把这个背景音乐删除，里面人说话，不能用。」]
+    //    gurjaras_b 已连同文件 public/bgm/gurjaras_b_bgm.aud 一并删除（曲中有真人说话，不能用作背景乐）；
+    //    GURJARAS 池由 3 首降为 2 首（de_GURJARAS 主题曲 + gurjaras_a），仍满足每文化 ≥2 首。
     germanic_a: 0.661,  // -17.4 LUFS
     vikings_a: 0.638,  // -17.1 LUFS
     franks_a: 0.610,  // -16.7 LUFS
@@ -716,7 +718,9 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     // 🔴 [2026-11-02 主人令「删除希腊布祖基琴 Hasapika [greece_a]」]
     //    greece_a 已连同 .aud 文件删除，GREECE 池由 3 首降为 2 首（GREECE + fallen_army）。
     GREECE: ['GREECE', 'fallen_army'],
-    GURJARAS: ['de_GURJARAS', 'gurjaras_a', 'gurjaras_b'],
+    // 🔴 [2026-11-06 主人令「拉贾斯坦口弦 Morchang [gurjaras_b]，把这个背景音乐删除，里面人说话，不能用。」]
+    //    gurjaras_b 已连同 .aud 文件删除，本文化池由 3 首降为 2 首（de_GURJARAS 主题曲 + gurjaras_a）。
+    GURJARAS: ['de_GURJARAS', 'gurjaras_a'],
     HUNS: ['de_HUNS', 'huns_a', 'huns_b'],
     INCA: ['de_INCA', 'ANDE', 'inca_a'],
     INDIA: ['de_INDIA', 'INDIA', 'india_a'],

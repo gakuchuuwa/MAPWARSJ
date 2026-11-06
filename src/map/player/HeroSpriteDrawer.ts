@@ -168,9 +168,14 @@ export class HeroSpriteDrawer {
         return cv;
     }
 
+    /** 名牌在中心点上方的距离（玩家人物、商队、商船共用同一套，模型更高时调用方自行再抬） */
+    public static labelLift(scale: number): number {
+        return this.BASE_H * scale + 6;
+    }
+
     /** 头顶名牌（兵模/商队/商船共用同一套金字描边缓存） */
     public static drawLabel(ctx: CanvasRenderingContext2D, center: { x: number; y: number }, name: string, scale: number): void {
-        const y = center.y - this.BASE_H * scale - 6;
+        const y = center.y - this.labelLift(scale);
         const fontPx = Math.max(10, Math.round(12 * Math.max(0.8, scale)));
         const sprite = this.getLabelSprite(name, fontPx);
         ctx.drawImage(sprite, center.x - sprite.width / 2, y - sprite.height + 2);

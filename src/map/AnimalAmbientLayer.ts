@@ -638,6 +638,12 @@ export class AnimalAmbientLayer {
      *    120MB 够同时装十几种（中位单种 9MB），跨大洲平移才会淘汰，重新加载也只是一次 HTTP。
      */
     private evictAssets(): void {
+        // 🔴 [2026-11-06 修「玩家移动卡顿」] 这道预算守卫原来**每帧**跑一遍 totalAssetBytes()：
+        //    83 种素材 × 各自方向图逐张读 naturalWidth/naturalHeight —— 每秒 60 次全表扫描，
+        //    而淘汰只在「跨大洲平移、素材累计超预算」时才真的发生。改成 1Hz 检查，行为不变。
+        const now = performance.now();
+        if (now - this.lastEvictAt < AnimalAmbientLayer.EVICT_INTERVAL_MS) return;
+        this.lastEvictAt = now;
         let bytes = this.totalAssetBytes();
         if (bytes <= AnimalAmbientLayer.ASSET_BUDGET_BYTES) return;
         const inUse = new Set<string>();
@@ -667,6 +673,15 @@ export class AnimalAmbientLayer {
      *   仍有上限：跨洲平移会淘汰久未用的物种，重下只是一次 HTTP。
      */
     private static readonly ASSET_BUDGET_BYTES = 256 * 1024 * 1024;
+    /** 预算检查间隔（ms）：淘汰是「跨区域才发生」的粗粒度动作，1Hz 完全够（见 evictAssets） */
+    private static readonly EVICT_INTERVAL_MS = 1000;
+    private lastEvictAt = 0;
+    /** 撒点扫描节流：结果只随「视口格范围 / 季节 / 年」变化，最快 SPAWN_SCAN_MS 重扫一次 */
+    private static readonly SPAWN_SCAN_MS = 200;
+    private spawnScanKey = '';
+    private spawnScanAt = 0;
+    /** 上一次扫描得出的「本屏应有哪些动物」（id 集合）；两次扫描之间沿用 */
+    private activeIds = new Set<string>();
 
     /** PerfDoctor 体检口子（private 在类外读不到） */
     public debugAssetCount(): number { return this.assets.size; }
@@ -681,117 +696,20 @@ export class AnimalAmbientLayer {
         const rowMin = Math.floor((sw.lat - CULL_MARGIN_DEG) / CELL_DEG);
         const rowMax = Math.floor((ne.lat + CULL_MARGIN_DEG) / CELL_DEG);
 
-        const activeIds = new Set<string>();
-
-        if (this.landVisible) {
-            for (let col = colMin; col <= colMax; col++) {
-                for (let row = rowMin; row <= rowMax; row++) {
-                    const lh = hash01(col, row, 1);
-                    const clat = (row + 0.5) * CELL_DEG;
-                    const clng = (col + 0.5) * CELL_DEG;
-                    // 🔴 2026-10-31 主人令「注意每个区域动物的数量」：出群概率乘环境区多寡系数（荒漠少、草原林地多）
-                    if (lh < LAND_DENSITY * ENV_ZONE_FAUNA_DENSITY[envZoneAt(clat, clng)]) {
-                        // 冬毛物种（白狼、雪兔）只在冬季进池：物种编进 id，换季时旧的渐隐、新的渐显
-                        const { land } = wildPoolAt(clat, clng, this.getSeason() === 3);
-                        if (land.length === 0) continue;
-                        let dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
-                        // 🔴 2026-10-31 主人令「冬眠动物到期不显示，来年随机换个位置渐显，一年一次」：
-                        //   熊类的落点按「年」取哈希 —— 每年春天都在**新位置**从透明渐显；冬季则整只渐隐退场。
-                        let yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
-                        const offLat = (hash01(col, row, 3 + yearSalt) - 0.5) * CELL_DEG * 0.8;
-                        const offLng = (hash01(col, row, 4 + yearSalt) - 0.5) * CELL_DEG * 0.8;
-                        const rawAnchor: Pt = { lat: clat + offLat, lng: clng + offLng };
-                        // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
-                        // 🔴 2026-11-01 主人令「据点周围不要放陆地动物」：出生点落在据点周围禁区内直接跳过，严禁挪到据点边缘聚拢
-                        if (this.isNearCity(rawAnchor, dir)) continue;
-                        // 🔴 冬眠物种在冬季连"活跃"都不算：不进 activeIds，场上那只就会自动渐隐消失
-                        if (isHibernating(dir, rawAnchor.lat, this.getSeason())) continue;
-                        let needsRiver = animalNeedsRiver(dir);
-                        let needsCoast = animalNeedsCoast(dir);
-                        let anchor: Pt | null = rawAnchor;
-                        const snapSeed = hash01(col, row, 13);
-                        if (needsRiver) {
-                            anchor = this.snapToRiverBank(rawAnchor, dir, snapSeed);
-                        } else if (needsCoast) {
-                            anchor = this.snapToCoast(rawAnchor, dir, snapSeed);
-                        }
-                        if (!anchor && (needsRiver || needsCoast)) {
-                            // 内陆无河／无海岸的格子抽到河岸或海岸物种时：若海陆瓦片已就绪且该格并非纯外海，改抽本区陆生物种，避免北极内陆苔原等平白少一半动物
-                            if (needsCoast && this.hasUnloadedTileNear(rawAnchor)) continue;
-                            const inland = land.filter((sp) => !animalNeedsCoast(sp) && !animalNeedsRiver(sp));
-                            if (inland.length === 0) continue;
-                            const fb = inland[Math.floor(hash01(col, row, 15) * inland.length) % inland.length];
-                            if (isHibernating(fb, rawAnchor.lat, this.getSeason())) continue;
-                            dir = fb;
-                            if (this.isNearCity(rawAnchor, dir)) continue;
-                            yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
-                            needsRiver = false;
-                            needsCoast = false;
-                            anchor = rawAnchor;
-                        }
-                        if (!needsRiver && !needsCoast && anchor) {
-                            if (this.isNearCity(anchor, dir)) continue;
-                            if (this.isWetBody(anchor, dir)) {
-                                anchor = this.snapToDryLand(anchor, dir, snapSeed);
-                            }
-                        }
-                        if (!anchor || this.isNearCity(anchor, dir)) continue;
-                        // 🔴 2026-10-31 主人令「群体成群出现，学习 DE」：一格抽中一种后按总表 herd 生成一整群，
-                        //    群员围着同一个群中心（home）错开站位；独行物种 herd 缺省 = 1 只，与原来一样。
-                        const herdSize = animalHerdSize(dir, hash01(col, row, 11));
-                        const herdKey = `${col},${row},${dir}`;
-                        const cosAnchor = Math.max(0.2, Math.cos((anchor.lat * Math.PI) / 180));
-                        for (let k = 0; k < herdSize; k++) {
-                            // 群员绕群中心错开：第 0 只站中心，其余按金角螺旋排开（间距约 HERD_SPREAD_DEG 的一半）
-                            const ang = k * 2.39996 + hash01(col, row, 12) * Math.PI * 2;
-                            const spread = (needsRiver || needsCoast) ? HERD_SPREAD_DEG * 0.45 : HERD_SPREAD_DEG;
-                            const rad = k === 0 ? 0 : spread * (0.35 + 0.25 * Math.sqrt(k));
-                            let pos: Pt | null = {
-                                lat: anchor.lat + Math.sin(ang) * rad * 0.7,
-                                lng: anchor.lng + (Math.cos(ang) * rad) / cosAnchor,
-                            };
-                            if (k > 0 && needsCoast && (this.isWetBody(pos, dir) || !this.isNearCoast(pos) || this.isNearCity(pos, dir))) {
-                                pos = this.snapToCoast(pos, dir, hash01(col, row, 13 + k));
-                            }
-                            if (!pos) continue;
-                            // 🔴 2026-10-31「大象进海了」：按体型判海（中心 + 四向），象身不许跨在岸线上
-                            // 🔴 淡水河岸物种（鳄鱼/凯门鳄/水蛇/水豚）：只放矢量河流岸边，不去海边
-                            if (
-                                this.isWetBody(pos, dir)
-                                || this.isNearCity(pos, dir)
-                                || (needsCoast && !this.isNearCoast(pos))
-                                || (needsRiver && (this.isNearCoast(pos) || !isNearStrategicRiver(pos.lat, pos.lng, RIVER_KEEP_KM)))
-                            ) continue;
-                            const id = herdSize > 1 ? `${herdKey},${k}` : herdKey;
-                            activeIds.add(id);
-                            // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
-                            if (this.entries.some((e) => e.id === id)) continue;
-                            const salt = yearSalt + k * 17;
-                            const facing = Math.floor(hash01(col, row, 6 + salt) * 8) % 8;
-                            const phase = Math.floor(hash01(col, row, 7 + salt) * 1000);
-                            this.loadAsset(dir, 'idle', false);
-                            if (!NO_WALK_SPECIES.has(dir)) this.loadAsset(dir, 'walk', false);
-                            if (!NO_RUN_SPECIES.has(dir)) this.loadAsset(dir, 'run', false);
-                            // 起始相位错开：不让整屏动物同时起步（决策计时器 0~3 秒随机）
-                            const seed = hash01(col, row, 9 + k * 17);
-                            this.entries.push({
-                                id, dir, pos, facing, phase, alpha: 0, fadingOut: false,
-                                home: herdSize > 1 ? { lat: anchor.lat, lng: anchor.lng } : { lat: pos.lat, lng: pos.lng },
-                                action: 'idle',
-                                timer: seed * 3,
-                                target: null,
-                                fleeTimer: 0,
-                                fleeDX: 0,
-                                fleeDY: 0,
-                                seaTimer: 0,
-                                recheck: 0,
-                                herd: herdSize > 1 ? herdKey : undefined,
-                            });
-                        }
-                    }
-                }
-            }
+        // 🔴 [2026-11-06 修「玩家在战略地图上移动有点卡顿」] 撒点扫描按「视口格范围 + 季节 + 年」缓存，
+        //   最快 SPAWN_SCAN_MS 一次。这段原来**每帧**把整屏格子扫一遍（每格 envZoneAt + wildPoolAt +
+        //   多次 isNearCity + 河/海岸吸附 + 逐只查重），实测动物层 2.7ms/帧（主人实机 perf_doctor，占一帧预算六分之一）
+        //   绝大部分在这里，而它的结果只随「镜头挪到新格子 / 换季 / 跨年」变化。
+        //   动物自己的走动、逃跑、渐显渐隐仍在下面逐帧推进，观感不变。
+        const scanKey = `${colMin},${colMax},${rowMin},${rowMax}|${this.getSeason()}|${this.getYear()}`;
+        const now = performance.now();
+        const needScan = scanKey !== this.spawnScanKey || now - this.spawnScanAt >= AnimalAmbientLayer.SPAWN_SCAN_MS;
+        if (needScan) {
+            this.spawnScanKey = scanKey;
+            this.spawnScanAt = now;
+            this.activeIds = this.collectActiveIds(colMin, colMax, rowMin, rowMax);
         }
+        const activeIds = this.activeIds;
 
         const FADE_DUR = 1.0; // 渐显/渐隐时长（秒）
         // 🔴 2026-10-31 主人令「军团或者玩家过来的时候也要逃跑」：每帧取一次威胁点（军团 + 跟随的玩家军团），
@@ -892,6 +810,128 @@ export class AnimalAmbientLayer {
                 e.home = { lat: info.sumLat / info.count, lng: info.sumLng / info.count };
             }
         }
+    }
+
+    /**
+     * 扫视口内所有格子，决定「本屏该有哪些动物」（按格子哈希确定性生成，顺带懒加载素材）。
+     * 🔴 [2026-11-06 修「玩家移动卡顿」] 由 updateLandEntries 按需调用 —— 视口格范围 / 季节 / 年 变了，
+     *    或距上次已 ≥ SPAWN_SCAN_MS。原来这段**每帧**跑，动物层 2.7ms/帧 绝大部分在这里。
+     */
+    private collectActiveIds(colMin: number, colMax: number, rowMin: number, rowMax: number): Set<string> {
+        const ids = new Set<string>();
+        const existingIds = new Set<string>();
+        for (const e of this.entries) existingIds.add(e.id);
+        if (this.landVisible) {
+            for (let col = colMin; col <= colMax; col++) {
+                for (let row = rowMin; row <= rowMax; row++) {
+                    const lh = hash01(col, row, 1);
+                    const clat = (row + 0.5) * CELL_DEG;
+                    const clng = (col + 0.5) * CELL_DEG;
+                    // 🔴 2026-10-31 主人令「注意每个区域动物的数量」：出群概率乘环境区多寡系数（荒漠少、草原林地多）
+                    if (lh < LAND_DENSITY * ENV_ZONE_FAUNA_DENSITY[envZoneAt(clat, clng)]) {
+                        // 冬毛物种（白狼、雪兔）只在冬季进池：物种编进 id，换季时旧的渐隐、新的渐显
+                        const { land } = wildPoolAt(clat, clng, this.getSeason() === 3);
+                        if (land.length === 0) continue;
+                        let dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
+                        // 🔴 2026-10-31 主人令「冬眠动物到期不显示，来年随机换个位置渐显，一年一次」：
+                        //   熊类的落点按「年」取哈希 —— 每年春天都在**新位置**从透明渐显；冬季则整只渐隐退场。
+                        let yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
+                        const offLat = (hash01(col, row, 3 + yearSalt) - 0.5) * CELL_DEG * 0.8;
+                        const offLng = (hash01(col, row, 4 + yearSalt) - 0.5) * CELL_DEG * 0.8;
+                        const rawAnchor: Pt = { lat: clat + offLat, lng: clng + offLng };
+                        // 🔴 [2026-10-31 主人令「能不能只在所在屏幕显示」] 取消「只在道路/海路/据点 30km 内」的可达掩膜，按视口显示
+                        // 🔴 2026-11-01 主人令「据点周围不要放陆地动物」：出生点落在据点周围禁区内直接跳过，严禁挪到据点边缘聚拢
+                        if (this.isNearCity(rawAnchor, dir)) continue;
+                        // 🔴 冬眠物种在冬季连"活跃"都不算：不进 activeIds，场上那只就会自动渐隐消失
+                        if (isHibernating(dir, rawAnchor.lat, this.getSeason())) continue;
+                        let needsRiver = animalNeedsRiver(dir);
+                        let needsCoast = animalNeedsCoast(dir);
+                        let anchor: Pt | null = rawAnchor;
+                        const snapSeed = hash01(col, row, 13);
+                        if (needsRiver) {
+                            anchor = this.snapToRiverBank(rawAnchor, dir, snapSeed);
+                        } else if (needsCoast) {
+                            anchor = this.snapToCoast(rawAnchor, dir, snapSeed);
+                        }
+                        if (!anchor && (needsRiver || needsCoast)) {
+                            // 内陆无河／无海岸的格子抽到河岸或海岸物种时：若海陆瓦片已就绪且该格并非纯外海，改抽本区陆生物种，避免北极内陆苔原等平白少一半动物
+                            if (needsCoast && this.hasUnloadedTileNear(rawAnchor)) continue;
+                            const inland = land.filter((sp) => !animalNeedsCoast(sp) && !animalNeedsRiver(sp));
+                            if (inland.length === 0) continue;
+                            const fb = inland[Math.floor(hash01(col, row, 15) * inland.length) % inland.length];
+                            if (isHibernating(fb, rawAnchor.lat, this.getSeason())) continue;
+                            dir = fb;
+                            if (this.isNearCity(rawAnchor, dir)) continue;
+                            yearSalt = HIBERNATORS.has(dir) ? this.getYear() * 131 : 0;
+                            needsRiver = false;
+                            needsCoast = false;
+                            anchor = rawAnchor;
+                        }
+                        if (!needsRiver && !needsCoast && anchor) {
+                            if (this.isNearCity(anchor, dir)) continue;
+                            if (this.isWetBody(anchor, dir)) {
+                                anchor = this.snapToDryLand(anchor, dir, snapSeed);
+                            }
+                        }
+                        if (!anchor || this.isNearCity(anchor, dir)) continue;
+                        // 🔴 2026-10-31 主人令「群体成群出现，学习 DE」：一格抽中一种后按总表 herd 生成一整群，
+                        //    群员围着同一个群中心（home）错开站位；独行物种 herd 缺省 = 1 只，与原来一样。
+                        const herdSize = animalHerdSize(dir, hash01(col, row, 11));
+                        const herdKey = `${col},${row},${dir}`;
+                        const cosAnchor = Math.max(0.2, Math.cos((anchor.lat * Math.PI) / 180));
+                        for (let k = 0; k < herdSize; k++) {
+                            // 群员绕群中心错开：第 0 只站中心，其余按金角螺旋排开（间距约 HERD_SPREAD_DEG 的一半）
+                            const ang = k * 2.39996 + hash01(col, row, 12) * Math.PI * 2;
+                            const spread = (needsRiver || needsCoast) ? HERD_SPREAD_DEG * 0.45 : HERD_SPREAD_DEG;
+                            const rad = k === 0 ? 0 : spread * (0.35 + 0.25 * Math.sqrt(k));
+                            let pos: Pt | null = {
+                                lat: anchor.lat + Math.sin(ang) * rad * 0.7,
+                                lng: anchor.lng + (Math.cos(ang) * rad) / cosAnchor,
+                            };
+                            if (k > 0 && needsCoast && (this.isWetBody(pos, dir) || !this.isNearCoast(pos) || this.isNearCity(pos, dir))) {
+                                pos = this.snapToCoast(pos, dir, hash01(col, row, 13 + k));
+                            }
+                            if (!pos) continue;
+                            // 🔴 2026-10-31「大象进海了」：按体型判海（中心 + 四向），象身不许跨在岸线上
+                            // 🔴 淡水河岸物种（鳄鱼/凯门鳄/水蛇/水豚）：只放矢量河流岸边，不去海边
+                            if (
+                                this.isWetBody(pos, dir)
+                                || this.isNearCity(pos, dir)
+                                || (needsCoast && !this.isNearCoast(pos))
+                                || (needsRiver && (this.isNearCoast(pos) || !isNearStrategicRiver(pos.lat, pos.lng, RIVER_KEEP_KM)))
+                            ) continue;
+                            const id = herdSize > 1 ? `${herdKey},${k}` : herdKey;
+                            ids.add(id);
+                            // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
+                            if (existingIds.has(id)) continue;
+                            const salt = yearSalt + k * 17;
+                            const facing = Math.floor(hash01(col, row, 6 + salt) * 8) % 8;
+                            const phase = Math.floor(hash01(col, row, 7 + salt) * 1000);
+                            this.loadAsset(dir, 'idle', false);
+                            if (!NO_WALK_SPECIES.has(dir)) this.loadAsset(dir, 'walk', false);
+                            if (!NO_RUN_SPECIES.has(dir)) this.loadAsset(dir, 'run', false);
+                            // 起始相位错开：不让整屏动物同时起步（决策计时器 0~3 秒随机）
+                            const seed = hash01(col, row, 9 + k * 17);
+                            existingIds.add(id);
+                            this.entries.push({
+                                id, dir, pos, facing, phase, alpha: 0, fadingOut: false,
+                                home: herdSize > 1 ? { lat: anchor.lat, lng: anchor.lng } : { lat: pos.lat, lng: pos.lng },
+                                action: 'idle',
+                                timer: seed * 3,
+                                target: null,
+                                fleeTimer: 0,
+                                fleeDX: 0,
+                                fleeDY: 0,
+                                seaTimer: 0,
+                                recheck: 0,
+                                herd: herdSize > 1 ? herdKey : undefined,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        return ids;
     }
 
     /** 危机来源：所有军团（含前锋与队尾探点）及玩家、商队、村民。60ms 缓存一次，行军靠近时零延迟触发受惊。 */

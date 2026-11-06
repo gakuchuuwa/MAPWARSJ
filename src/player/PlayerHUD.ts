@@ -12,7 +12,7 @@ import { uiPx, COMBAT_UI_TOKENS as T } from '../config/combat-ui-tokens';
 import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
 import { resolvePortraitSourceFacing } from '../config/portrait_defaults';
 import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
-import { preloadPlayerTourModels } from '../map/player/PlayerTourSpriteDrawer';
+import { preloadPlayerTourModels, TOUR_CARAVAN_CHOICES, TOUR_SHIP_CHOICES } from '../map/player/PlayerTourSpriteDrawer';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { toggleHorseStablePanel, horseBrief, horseStatusColor } from './HorseStablePanel';
 import { CityAssetManager } from '../assets/CityAssetManager';
@@ -633,7 +633,7 @@ export class PlayerHUD {
             //    点下去就是车/船，不会先闪一下人物兵模（素材没到之前由 GlobalUnitRenderer 暂用人物兵模顶着）
             if (next === 'globe' || next === 'sail') {
                 const pos = hero.getPosition();
-                preloadPlayerTourModels(pos.lat, pos.lng);
+                preloadPlayerTourModels(pos.lat, pos.lng, hero.tourCaravanDir, hero.tourShipDir);
             }
             // 自动/环球/航行＝镜头跟随玩家；休息＝取消跟随
             if (next === 'rest') this.deps.releaseCamera?.();
@@ -833,6 +833,68 @@ export class PlayerHUD {
 
         singleRow.appendChild(secRight);
         this.body.appendChild(singleRow);
+
+        // 🔴 [2026-11-06 主人令]「这些模型请可以在玩家面板中选择」：
+        //    环球模式的商队车、航行模式的商船各一格下拉；默认「随当地文化」自动换。
+        const tourRow = document.createElement('div');
+        tourRow.className = 'player-hud-single-row';
+        const tourSec = document.createElement('div');
+        tourSec.className = 'player-hud-section';
+        tourSec.style.cssText = 'display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:2px 8px;';
+        const mkTourSelect = (
+            icon: string,
+            kind: 'caravan' | 'ship',
+            choices: ReadonlyArray<{ dir: string; name: string }>,
+            current: string | null,
+            tip: string,
+        ): HTMLElement => {
+            const wrap = document.createElement('span');
+            wrap.style.cssText = 'display:inline-flex; align-items:center; gap:3px;';
+            const label = document.createElement('span');
+            label.textContent = icon;
+            label.title = tip;
+            label.style.cssText = 'font-size:11px; line-height:20px; color:#dfc28c;';
+            const sel = document.createElement('select');
+            sel.className = 'player-hud-select';
+            sel.style.cssText = `
+                max-width:118px; font-family:inherit; font-size:11px; font-weight:600; padding:1px 5px;
+                background:linear-gradient(180deg, rgba(42,34,24,0.94), rgba(24,19,14,0.96)); color:#f5e6c8;
+                border:1px solid rgba(212,175,55,0.42); border-radius:4px;
+                box-shadow:inset 0 1px 0 rgba(255,235,180,0.1), 0 1px 3px rgba(0,0,0,0.35);
+                outline:none; cursor:pointer; box-sizing:border-box; height:22px; margin:0 !important;
+            `;
+            sel.title = tip;
+            const auto = document.createElement('option');
+            auto.value = '';
+            auto.textContent = '随当地文化';
+            auto.style.cssText = 'background:#1e1812; color:#f5e6c8;';
+            sel.appendChild(auto);
+            for (const ch of choices) {
+                const o = document.createElement('option');
+                o.value = ch.dir;
+                o.textContent = ch.name;
+                o.style.cssText = 'background:#1e1812; color:#f5e6c8;';
+                sel.appendChild(o);
+            }
+            sel.value = current ?? '';
+            sel.addEventListener('change', () => {
+                const v = sel.value || null;
+                if (kind === 'caravan') hero.selectTourCaravanDir(v);
+                else hero.selectTourShipDir(v);
+                const p = hero.getPosition();
+                preloadPlayerTourModels(p.lat, p.lng, hero.tourCaravanDir, hero.tourShipDir);
+                this.refresh(true);
+            });
+            wrap.appendChild(label);
+            wrap.appendChild(sel);
+            return wrap;
+        };
+        tourSec.appendChild(mkTourSelect('🐪', 'caravan', TOUR_CARAVAN_CHOICES, hero.tourCaravanDir,
+            '环球/航行模式陆路上用的商队车模型（默认随当地文化自动换）'));
+        tourSec.appendChild(mkTourSelect('⛵', 'ship', TOUR_SHIP_CHOICES, hero.tourShipDir,
+            '环球/航行模式海上用的商船模型（默认随当地海域文化自动换）'));
+        tourRow.appendChild(tourSec);
+        this.body.appendChild(tourRow);
 
     }
 

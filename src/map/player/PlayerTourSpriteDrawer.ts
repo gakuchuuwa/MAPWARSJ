@@ -17,13 +17,33 @@
 import { OrientationSystem } from '../../core/OrientationSystem';
 import { NavalWakeDrawer } from '../legion/NavalWakeDrawer';
 import { playerTourCaravanDir, playerTourMerchantShipDir } from '../TradeTrafficLayer';
-import { STRATEGIC_ARMY_SCALE, STRATEGIC_SPRITE_SCALE } from '../strategicSpriteScale';
 import { HeroSpriteDrawer } from './HeroSpriteDrawer';
 
 type Pt = { lat: number; lng: number };
 
 /** 玩家环球形态：陆路＝商队车，海上＝商船 */
 export type PlayerTourKind = 'caravan' | 'ship';
+
+/**
+ * 玩家面板里可选的商队车／商船（🔴 [2026-11-06 主人令]「这些模型请可以在玩家面板中选择」）。
+ * 目录与 `public/SUCAI_TRADE/` 一一对应；面板里的「随当地文化」＝不选，按所在地文化自动换。
+ */
+export const TOUR_CARAVAN_CHOICES: ReadonlyArray<{ dir: string; name: string }> = [
+    { dir: 'TRADE_CART_ORIE', name: '丝路骆驼商车' },
+    { dir: 'TRADE_CART_WEST', name: '欧洲四轮马车' },
+    { dir: 'TRADE_CART_ASIA', name: '东亚黄牛货车' },
+    { dir: 'TRADE_CART_AFRI', name: '南亚水牛车' },
+    { dir: 'TRADE_CART_MESO', name: '美洲商车' },
+    { dir: 'MULE_CART', name: '骡驴驮车' },
+];
+
+export const TOUR_SHIP_CHOICES: ReadonlyArray<{ dir: string; name: string }> = [
+    { dir: 'JUNK', name: '中式帆船' },
+    { dir: 'MERCHANT_SHIP', name: '三角帆商船' },
+    { dir: 'TRADE_COG', name: '欧洲柯克船' },
+    { dir: 'TRANSPORT_SHIP', name: '远洋渡运船' },
+    { dir: 'CANOE', name: '独木舟' },
+];
 
 interface TourAsset {
     dir: string;
@@ -85,10 +105,18 @@ function ensureAsset(dir: string): TourAsset {
 }
 
 /**
- * 玩家当前该用哪套商队/商船皮肤：按所在地文化选定，走够 RELOOK_DEG 才重新判定。
- * 环境商队那套「均化轮换」不适用玩家 —— 玩家同一片文化区里始终是同一种车/船。
+ * 玩家当前该用哪套商队/商船皮肤：
+ *   ① 面板里手选了就用手选的那套（`override`）；
+ *   ② 否则按所在地文化选定，走够 RELOOK_DEG 才重新判定（环境商队那套「均化轮换」不适用玩家）。
  */
-export function resolvePlayerTourDir(kind: PlayerTourKind, lat: number, lng: number, key: string): string {
+export function resolvePlayerTourDir(
+    kind: PlayerTourKind,
+    lat: number,
+    lng: number,
+    key: string,
+    override?: string | null,
+): string {
+    if (override) return override;
     const prev = picks.get(key);
     if (prev && prev.kind === kind
         && Math.abs(prev.at.lat - lat) < RELOOK_DEG
@@ -101,9 +129,14 @@ export function resolvePlayerTourDir(kind: PlayerTourKind, lat: number, lng: num
 }
 
 /** 切到环球/航行前预热素材（不阻塞；没预热完就先用人物兵模顶着） */
-export function preloadPlayerTourModels(lat: number, lng: number): void {
-    ensureAsset(playerTourCaravanDir(lat, lng));
-    ensureAsset(playerTourMerchantShipDir(lat, lng));
+export function preloadPlayerTourModels(
+    lat: number,
+    lng: number,
+    caravanDir?: string | null,
+    shipDir?: string | null,
+): void {
+    ensureAsset(caravanDir || playerTourCaravanDir(lat, lng));
+    ensureAsset(shipDir || playerTourMerchantShipDir(lat, lng));
 }
 
 export interface PlayerTourDrawOptions {
@@ -120,6 +153,8 @@ export interface PlayerTourDrawOptions {
     scale: number;
     tick: number;
     name: string;
+    /** 玩家面板手选的素材目录；null/缺省 = 按所在地文化自动 */
+    overrideDir?: string | null;
     /** 水迹世界坐标 ↔ 屏幕坐标投影（与军团舰队同一套） */
     projection: {
         toWorld(point: { x: number; y: number }): { x: number; y: number };
@@ -130,7 +165,7 @@ export interface PlayerTourDrawOptions {
 export class PlayerTourSpriteDrawer {
     /** 画玩家商队/商船；素材没就绪返回 false（调用方退回人物兵模） */
     public static draw(ctx: CanvasRenderingContext2D, o: PlayerTourDrawOptions): boolean {
-        const dir = resolvePlayerTourDir(o.kind, o.to.lat, o.to.lng, o.key);
+        const dir = resolvePlayerTourDir(o.kind, o.to.lat, o.to.lng, o.key, o.overrideDir ?? null);
         const asset = ensureAsset(dir);
         if (!asset.ready) return false;
 
@@ -141,8 +176,11 @@ export class PlayerTourSpriteDrawer {
         const sheet = asset.sheets[idx];
         if (!box || !sheet || !sheet.complete || !sheet.naturalWidth) return false;
 
-        // 比例：军团基准 scale（0.80）→ 战略地图统一素材基准（0.40）
-        const px = o.scale * (STRATEGIC_SPRITE_SCALE / STRATEGIC_ARMY_SCALE);
+        // 🔴 [2026-11-06 主人报「商船模型大小和之前不一致」] 比例改成**与军团兵模／战船／玩家人物同一基准**：
+        //    DE 原生像素 × scale（zoom9 = 0.80；`LegionPhalanxDrawer.drawNaval` 的
+        //    `SPRITE_BASE_H(64) × scale × getNavalShipDrawScale(1.0) / 64` 就是这一条）。
+        //    原来这里乘了 STRATEGIC_SPRITE_SCALE/STRATEGIC_ARMY_SCALE = 0.5，等于只有战船的一半。
+        const px = o.scale;
         const animating = o.moving && asset.action === 'move' && asset.frames > 1;
         const frame = animating ? Math.floor(o.tick / 1000 * MOVE_ANIM_FPS) % asset.frames : 0;
 
@@ -172,7 +210,7 @@ export class PlayerTourSpriteDrawer {
                 ctx,
                 [{ x: o.center.x, y: o.center.y, r: 1, isAlive: true, dir: idx, rot, deg: d.deg, shipLen }],
                 idx,
-                px * 1.45,
+                o.scale,   // 与战船同一条水迹基准（drawNaval 传的就是 scale）
                 o.tick,
                 o.moving,
                 undefined,
@@ -193,8 +231,9 @@ export class PlayerTourSpriteDrawer {
             ctx.drawImage(sheet, frame * box.fw, 0, box.fw, box.fh, ax, ay, w, h);
         }
 
-        // 4. 头顶名牌
-        HeroSpriteDrawer.drawLabel(ctx, o.center, o.name, o.scale);
+        // 4. 头顶名牌（模型变高时名牌跟着抬高，别压在车顶/船帆上）
+        const lift = Math.max(0, box.hy * px - HeroSpriteDrawer.labelLift(o.scale));
+        HeroSpriteDrawer.drawLabel(ctx, { x: o.center.x, y: o.center.y - lift }, o.name, o.scale);
         return true;
     }
 

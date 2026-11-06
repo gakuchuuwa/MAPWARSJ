@@ -368,6 +368,9 @@ export interface PlayerSaveState {
     storyFlags?: string[];
     /** 🔴 [2026-10-22] 马厩：自己的马、谱系 */
     horses?: HorseStableSave;
+    /** 🔴 [2026-11-06 主人令] 面板手选的环球商队车 / 航行商船素材目录（null/缺省 = 随当地文化） */
+    tourCaravanDir?: string | null;
+    tourShipDir?: string | null;
 }
 
 /** Scene13 用的玩家布置（由 Scene13WarLayer.start 通过 window.game.playerHero 取） */
@@ -671,6 +674,25 @@ export class PlayerHero {
     public getTourModelKind(): 'caravan' | 'ship' | null {
         if (!this.isTourMode() || this.hostLegionId) return null;
         return this.army.isOnSea ? 'ship' : 'caravan';
+    }
+    /**
+     * 🔴 [2026-11-06 主人令]「这些模型请可以在玩家面板中选择」：
+     * 环球/航行模式的商队车与商船由玩家自己在面板里挑；null = 随当地文化自动换。
+     * 目录见 `PlayerTourSpriteDrawer.TOUR_CARAVAN_CHOICES / TOUR_SHIP_CHOICES`。
+     */
+    public tourCaravanDir: string | null = null;
+    public tourShipDir: string | null = null;
+    /** 当前该形态要用的手选素材（null = 自动） */
+    public getTourModelDir(kind: 'caravan' | 'ship'): string | null {
+        return kind === 'ship' ? this.tourShipDir : this.tourCaravanDir;
+    }
+    public selectTourCaravanDir(dir: string | null): void {
+        this.tourCaravanDir = dir || null;
+        this.emitChange();
+    }
+    public selectTourShipDir(dir: string | null): void {
+        this.tourShipDir = dir || null;
+        this.emitChange();
     }
     /** 清除战败/离队停顿倒计时（手动切换模式时立即响应，不干等 9 秒） */
     public clearHold(): void { this.holdUntilMs = 0; }
@@ -1936,6 +1958,8 @@ export class PlayerHero {
             storyDone: [...this.storyDone],
             storyFlags: [...this.storyFlags],
             horses: this.horses.toSave(),
+            tourCaravanDir: this.tourCaravanDir,
+            tourShipDir: this.tourShipDir,
         };
     }
 
@@ -1964,6 +1988,8 @@ export class PlayerHero {
         this.selectedShip = s.selectedShip ?? -1;
         this.storyDone = [...(s.storyDone ?? [])];
         this.storyFlags = [...(s.storyFlags ?? [])];
+        this.tourCaravanDir = s.tourCaravanDir || null;
+        this.tourShipDir = s.tourShipDir || null;
         this.horses.restore(s.horses);
         // 马系统之前的存档：梦醒只记了标记「初马」，读档时补上这匹马
         if (this.horses.isEmpty() && this.storyFlags.includes('初马')) this.giveFirstHorse();

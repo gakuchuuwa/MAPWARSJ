@@ -15,8 +15,17 @@ const TILE_TIMEOUT_MS = 8000;
 
 type TileLoadedListener = () => void;
 
-function tileCacheKey(zoom: number, x: number, y: number): string {
-    return `${zoom}/${x}/${y}`;
+/**
+ * 瓦片缓存键：**用数字，不用字符串**。
+ *
+ * 🔴 [2026-11-06 修「玩家移动卡顿」] 原实现是 `${zoom}/${x}/${y}` 模板字符串 ——
+ *    每次查询都新建一个字符串。植被重采样/动物/民生层一帧要查几千个点
+ *    （CPU Profile 实测 41 秒内 touchCache 1080ms、isWaterSync 1600ms，约 1000 万次调用），
+ *    等于每秒往堆里丢 25 万个临时字符串：既吃 CPU，又是 GC 顿挫的来源之一。
+ *    zoom ≤ 14、x/y < 2^14、像素 < 2^8，全部塞进一个安全整数里，查表不再分配。
+ */
+function tileCacheKey(zoom: number, x: number, y: number): number {
+    return (zoom * 16384 + x) * 16384 + y;
 }
 
 /**
@@ -32,9 +41,9 @@ export class WaterMaskSampler {
      * 仍然入缓存是刻意的：否则每次查询都会重新发起拉取，把坏瓦片反复拉个不停。
      * 查到 null 时 isWaterSync 返回 null，调用方回退到海拔判据。
      */
-    private readonly cache = new Map<string, Uint8Array | null>();
-    private readonly cacheOrder = new Set<string>();
-    private readonly pending = new Set<string>();
+    private readonly cache = new Map<number, Uint8Array | null>();
+    private readonly cacheOrder = new Set<number>();
+    private readonly pending = new Set<number>();
     /**
      * 🔴 [2026-09-02 主人「周围没据点反而卡，尤其海上/咸海/撒哈拉」] 取瓦片**失败**的负缓存。
      * 改前：ensureTile 失败只 console.warn + return false，`finally` 把 key 从 pending 删掉，
@@ -45,11 +54,21 @@ export class WaterMaskSampler {
      * 反过来，据点和军团多的地方是陆地核心区、瓦片齐全，命中缓存反而不卡 —— 与主人观察一致。
      * 失败后冷却 TILE_RETRY_COOLDOWN_MS 才允许重试（网络抖动仍能恢复，不会永久放弃）。
      */
-    private readonly failedAt = new Map<string, number>();
+    private readonly failedAt = new Map<number, number>();
     /** 已经警告过的 key：同一块瓦片只吼一次，别刷屏（console.warn 本身在热路径上也不便宜） */
-    private readonly warnedKeys = new Set<string>();
+    private readonly warnedKeys = new Set<number>();
     private readonly maxCacheTiles: number;
     private tileLoadedListeners = new Set<TileLoadedListener>();
+
+    /**
+     * 🔴 [2026-11-06] LRU 记账按**帧**去重：同一块瓦片在一帧内只 touch 一次。
+     *
+     * 植被重采样一帧会沿几千个像素问「是不是水」，其中绝大多数落在同一两块瓦片上；
+     * 逐点 `Set.delete + Set.add` 实测占 touchCache 全部耗时（41s / 1080ms），而对淘汰顺序
+     * 没有任何额外好处 —— 一帧内 touch 一次与一万次，LRU 顺序完全相同。
+     */
+    private touchStamp = -1;
+    private touchedThisFrame = new Set<number>();
 
     constructor(maxCacheTiles = 320) {
         this.maxCacheTiles = maxCacheTiles;
@@ -64,7 +83,15 @@ export class WaterMaskSampler {
         for (const listener of this.tileLoadedListeners) listener();
     }
 
-    private touchCache(key: string): void {
+    private touchCache(key: number): void {
+        // 同一帧同一块瓦片只记一次账（见 touchStamp 注释）
+        const stamp = Math.floor(performance.now() / 16);
+        if (stamp !== this.touchStamp) {
+            this.touchStamp = stamp;
+            this.touchedThisFrame.clear();
+        }
+        if (this.touchedThisFrame.has(key)) return;
+        this.touchedThisFrame.add(key);
         this.cacheOrder.delete(key);
         this.cacheOrder.add(key);
     }
@@ -79,6 +106,16 @@ export class WaterMaskSampler {
 
     hasTile(zoom: number, x: number, y: number): boolean {
         return this.cache.has(tileCacheKey(zoom, x, y));
+    }
+
+    /**
+     * 该点所在瓦片是否**还没到**（true = 还在等；false = 已缓存，含已知坏瓦片）。
+     * isWaterSync 返回 null 有两种情况：瓦片未到（会变）与坏瓦片（永远 null）——
+     * 植被层的格缓存只需在前一种情况下放弃缓存。
+     */
+    isPendingSync(lat: number, lng: number, zoom = DEM_ZOOM): boolean {
+        const { tileX, tileY } = latLngToTilePixel(lat, lng, zoom);
+        return !this.cache.has(tileCacheKey(zoom, tileX, tileY));
     }
 
     /**

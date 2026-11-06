@@ -2525,6 +2525,8 @@ export class GlobalUnitRenderer {
                 heroKey: string;
                 /** 🔴 [2026-11-06] 环球/航行模式下的商队车或商船（独行时才有值） */
                 getTourModelKind?(): 'caravan' | 'ship' | null;
+                /** 🔴 [2026-11-06] 玩家面板手选的商队/商船素材目录（null = 随当地文化） */
+                getTourModelDir?(kind: 'caravan' | 'ship'): string | null;
             } | undefined;
             const hostLegion = hero?.getHostLegion?.();
             const hostR = hostLegion?.getRenderer() ?? null;
@@ -2547,6 +2549,7 @@ export class GlobalUnitRenderer {
                     scale,
                     tick: Date.now(),
                     name: hero?.name ?? '探马者',
+                    overrideDir: hero?.getTourModelDir?.(tourKind) ?? null,
                     projection: {
                         toWorld: (point) => {
                             const ll = this.map.containerPointToLatLng(L.point(point.x, point.y));

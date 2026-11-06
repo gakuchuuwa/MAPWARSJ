@@ -131,7 +131,7 @@ export const BGM_TITLES: Record<string, string> = {
     goths_a: '条顿堡森林之战',
     goths_b: '战鼓 Horde',
     gurjaras_a: '卡玛查琴 Sakar Khan',
-    gurjaras_b: '拉贾斯坦口弦 Morchang',
+    // gurjaras_b「拉贾斯坦口弦 Morchang」已删除（2026-11-06 主人令：曲中有人说话，不能用）
     helmet_to_helmet: 'Helmet To Helmet(暂停)',
     hes_a_pirate: 'He\'s a Pirate(暂停)',
     holy_land_battle: '中东 Holy Land',

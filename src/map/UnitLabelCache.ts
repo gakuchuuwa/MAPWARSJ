@@ -24,7 +24,9 @@ if (typeof document !== 'undefined') document.fonts?.addEventListener('loadingdo
 export function drawUnitLabel(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, fill: string): void {
     ctx.fillStyle = fill;
     const ratio = window.devicePixelRatio || 1;
-    const key = JSON.stringify([text, ctx.font, ctx.strokeStyle, ctx.lineWidth, fill, ratio]);
+    // 🔴 [2026-11-06 修「玩家移动卡顿」] 键原来是 `JSON.stringify([...])`：每次调用都建数组 + 拼 JSON，
+    //    而这是**每帧每个军团**都要走的路（战场上一屏几十个单位）。改成一次模板拼接，查表逻辑不变。
+    const key = `${text}\u0001${ctx.font}\u0001${ctx.strokeStyle}\u0001${ctx.lineWidth}\u0001${fill}\u0001${ratio}`;
     let entry = entries.get(key);
     if (!entry) {
         const metrics = ctx.measureText(text);

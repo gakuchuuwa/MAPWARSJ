@@ -131,7 +131,7 @@ export const BGM_DURATIONS: Record<string, number> = {
     goths_a: 214,
     goths_b: 134,
     gurjaras_a: 154,
-    gurjaras_b: 130,
+    // gurjaras_b 已删除（2026-11-06 主人令：曲中有人说话，不能用作背景乐）
     helmet_to_helmet: 163,
     hes_a_pirate: 221,
     holy_land_battle: 136,
