@@ -10622,7 +10622,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/JAPAN/aeeff2a0-2cdb-4113-9407-e2b372fd0fcd.png": {
+        "/assets/JAPAN/__多余__JAPAN_01.png": {
             "scale": 1.23,
             "offsetX": 0,
             "offsetY": 0
