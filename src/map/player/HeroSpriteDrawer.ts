@@ -168,7 +168,8 @@ export class HeroSpriteDrawer {
         return cv;
     }
 
-    private static drawLabel(ctx: CanvasRenderingContext2D, center: { x: number; y: number }, name: string, scale: number): void {
+    /** 头顶名牌（兵模/商队/商船共用同一套金字描边缓存） */
+    public static drawLabel(ctx: CanvasRenderingContext2D, center: { x: number; y: number }, name: string, scale: number): void {
         const y = center.y - this.BASE_H * scale - 6;
         const fontPx = Math.max(10, Math.round(12 * Math.max(0.8, scale)));
         const sprite = this.getLabelSprite(name, fontPx);

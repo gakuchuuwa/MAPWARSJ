@@ -39,6 +39,7 @@ import {
 import { getCultureTier, resolveCityLegionComposition, type FormationMode } from '../types/CultureFormations';
 import { readSiegeGarrisonGeneralId } from '../combat/SiegeGarrisonTier';
 import { HeroSpriteDrawer } from './player/HeroSpriteDrawer'; // [2026-09-05 玩家] 单骑精灵
+import { PlayerTourSpriteDrawer } from './player/PlayerTourSpriteDrawer'; // [2026-11-06 玩家] 环球商队 / 航行商船
 import { isScriptPeriod } from '../events/scriptPeriod';
 
 /** [2026-08-10 编队外框] 命中查询结果：目标编队的位置 + 算它外框所需的全部参数 */
@@ -2522,10 +2523,47 @@ export class GlobalUnitRenderer {
                 factionId: string | null;
                 name: string;
                 heroKey: string;
+                /** 🔴 [2026-11-06] 环球/航行模式下的商队车或商船（独行时才有值） */
+                getTourModelKind?(): 'caravan' | 'ship' | null;
             } | undefined;
             const hostLegion = hero?.getHostLegion?.();
             const hostR = hostLegion?.getRenderer() ?? null;
             const isNaval = !this.isBattleScene13() && !!(unit.isOnSea || hostLegion?.isOnSea || hostR?.isOnSea);
+
+            // 🔴 [2026-11-06 主人令]「给项目中的玩家添加商队和商船模型，如果切换到环球旅行，和环球航行的模式的时候，
+            //    就自动切换到商队和商船的模式。」——独行（未入伍）且处于环球/航行模式时，玩家自己就是
+            //    商队车（陆路）/ 商船（海路），按所在地文化选车船；随军与 13 战场不换（那两处玩家是军团前排英雄兵模）。
+            //    素材没加载完时 draw 返回 false，照旧退回下面的人物兵模，玩家不会凭空消失。
+            const tourKind = hero?.getTourModelKind?.() ?? null;
+            if (tourKind && !hostR && !this.isBattleScene13()) {
+                const prevPos = unit.lastPosition && isValidMapCoord(unit.lastPosition) ? unit.lastPosition : unitPos;
+                const tourDrawn = PlayerTourSpriteDrawer.draw(ctx, {
+                    kind: tourKind,
+                    key: unit.id ?? 'player_hero',
+                    center: centerPoint,
+                    from: { lat: prevPos.lat, lng: prevPos.lng },
+                    to: { lat: unitPos.lat, lng: unitPos.lng },
+                    moving: !!unit.isMoving,
+                    scale,
+                    tick: Date.now(),
+                    name: hero?.name ?? '探马者',
+                    projection: {
+                        toWorld: (point) => {
+                            const ll = this.map.containerPointToLatLng(L.point(point.x, point.y));
+                            return { x: ll.lng, y: ll.lat };
+                        },
+                        toScreen: (point) => {
+                            const c = this.latLngToContainerPointSubpixel(point.y, point.x);
+                            return { x: c.x, y: c.y };
+                        },
+                    },
+                });
+                if (tourDrawn) {
+                    unit.isOnSea = tourKind === 'ship';
+                    unit.lastPosition = { lat: unitPos.lat, lng: unitPos.lng };
+                    return;
+                }
+            }
 
             if (hostR) {
                 if (!isNaval) {

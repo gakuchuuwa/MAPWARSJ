@@ -175,6 +175,12 @@ const AMERICAS_STYLES = new Set<string>([
     'AMERICA', 'ANDE', 'MAYANS', 'INCA', 'MUISCA', 'TUPI', 'MAPUCHE',
 ]);
 
+/** 6. 东亚·东南亚海域圈（环中国海、日本海、南洋马六甲）：中式帆船 JUNK 圈（船池与玩家海路皮肤共用） */
+const EAST_ASIA_STYLES = new Set<string>([
+    'CENTRAL', 'WEI', 'JIANGNAN', 'HUGUANG', 'BASHU', 'TIBET', 'NORTHEAST', 'KOREA',
+    'JAPAN', 'VIETNAMESE', 'KHMER', 'BURMESE', 'MALAY', 'MONGOL', 'XIANBEI', 'HEXI',
+]);
+
 /** 按当地历史文化与地理坐标，返回符合历史的陆路商队候选池并均化抽取 */
 function landAssetDir(lat: number, lng: number): string {
     const style = resolveLocalCulture(lat, lng);
@@ -238,12 +244,7 @@ function shipDir(lat: number, lng: number): string {
     }
 
     // 3. 东亚与东南亚海域（环中国海、日本海、南洋马六甲）：中式帆船 JUNK + 三角帆市舶船 + 渡运船 + 近岸独木舟
-    if (
-        style === 'CENTRAL' || style === 'WEI' || style === 'JIANGNAN' || style === 'HUGUANG'
-        || style === 'BASHU' || style === 'TIBET' || style === 'NORTHEAST' || style === 'KOREA'
-        || style === 'JAPAN' || style === 'VIETNAMESE' || style === 'KHMER' || style === 'BURMESE'
-        || style === 'MALAY' || style === 'MONGOL' || style === 'XIANBEI' || style === 'HEXI'
-    ) {
+    if (EAST_ASIA_STYLES.has(style)) {
         return pickBalanced(['JUNK', 'MERCHANT_SHIP', 'TRANSPORT_SHIP', 'CANOE'], shipUsageCount);
     }
 
@@ -259,6 +260,36 @@ function shipDir(lat: number, lng: number): string {
 
     // 6. 欧洲北海·波罗的海·大西洋：柯克货船 TRADE_COG + 商船 + 渡运船 + 峡湾内河轻舟
     return pickBalanced(['TRADE_COG', 'MERCHANT_SHIP', 'TRANSPORT_SHIP', 'CANOE'], shipUsageCount);
+}
+
+/**
+ * 🔴 [2026-11-06 主人令] 玩家「环球旅行 / 环球航行」模式的**商队车**皮肤。
+ *
+ * 与上面环境商队用的 `landAssetDir` 同一套地域文化判据，区别只有两条：
+ *   ① 只取**车辆**（骆驼商车 / 马车 / 黄牛货车 / 水牛车 / 美洲商车），绝不给玩家徒步的 MERCHANT_* 行商；
+ *   ② **确定性**：玩家在同一片文化区里始终是同一种车（环境商队才按出场次数均化轮换）。
+ * 玩家跨文化区才会换车（滞回在 `PlayerTourSpriteDrawer.resolvePlayerTourDir`）。
+ */
+export function playerTourCaravanDir(lat: number, lng: number): string {
+    const style = resolveLocalCulture(lat, lng);
+    if (AMERICAS_STYLES.has(style)) return 'TRADE_CART_MESO';   // 美洲原住民商车
+    if (SILK_CAMEL_STYLES.has(style)) return 'TRADE_CART_ORIE'; // 丝路骆驼商车
+    if (AFRI_IND_STYLES.has(style)) return 'TRADE_CART_AFRI';   // 南亚·东南亚·非洲水牛车
+    if (MED_ANT_STYLES.has(style) || EUROPE_STYLES.has(style)) return 'TRADE_CART_WEST'; // 地中海·欧洲四轮马车
+    return 'TRADE_CART_ASIA';                                   // 东亚黄牛货车
+}
+
+/**
+ * 🔴 [2026-11-06 主人令] 玩家「环球航行 / 环球旅行」海段的**商船**皮肤（确定性，同上一律）。
+ * 东亚海域＝中式帆船 JUNK（商队船），欧洲北海·大西洋＝柯克货船，地中海·印度洋＝三角帆大商船，
+ * 美洲海域＝前哥伦布独木舟（与当地商船池一致）。
+ */
+export function playerTourMerchantShipDir(lat: number, lng: number): string {
+    const style = resolveLocalCulture(lat, lng);
+    if (AMERICAS_STYLES.has(style)) return 'CANOE';
+    if (EAST_ASIA_STYLES.has(style)) return 'JUNK';
+    if (EUROPE_STYLES.has(style)) return 'TRADE_COG';
+    return 'MERCHANT_SHIP';
 }
 
 export class TradeTrafficLayer {

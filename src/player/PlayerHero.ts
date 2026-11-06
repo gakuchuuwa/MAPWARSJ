@@ -658,6 +658,20 @@ export class PlayerHero {
         this.emitChange();
     }
     public isTourMode(): boolean { return this.playMode === 'globe' || this.playMode === 'sail'; }
+    /**
+     * 🔴 [2026-11-06 主人令]「给项目中的玩家添加商队和商船模型，如果切换到环球旅行，和环球航行的模式的时候，
+     *    就自动切换到商队和商船的模式。」
+     *
+     * 环球/航行模式下的玩家形态（战略地图精灵由 `PlayerTourSpriteDrawer` 画）：
+     *   · globe（环球旅行）→ 陆路走商队车；对马海峡、大西洋、太平洋这些必须渡海的一段自动换商船；
+     *   · sail（环球航行）→ 海上商船；上岸去港口的短途走商队车。
+     * 随军时（`hostLegionId` 有值）返回 null：那时玩家是军团前排的英雄兵模，由军团统一画
+     * （2026-09-07 主人定「玩家加入势力后，海上只显示势力船只，不用显示玩家」同一口径）。
+     */
+    public getTourModelKind(): 'caravan' | 'ship' | null {
+        if (!this.isTourMode() || this.hostLegionId) return null;
+        return this.army.isOnSea ? 'ship' : 'caravan';
+    }
     /** 清除战败/离队停顿倒计时（手动切换模式时立即响应，不干等 9 秒） */
     public clearHold(): void { this.holdUntilMs = 0; }
     /** 切换到环球/航行后立即规划第一步（不等 1.5s 节流） */

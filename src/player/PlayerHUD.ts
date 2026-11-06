@@ -12,6 +12,7 @@ import { uiPx, COMBAT_UI_TOKENS as T } from '../config/combat-ui-tokens';
 import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
 import { resolvePortraitSourceFacing } from '../config/portrait_defaults';
 import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
+import { preloadPlayerTourModels } from '../map/player/PlayerTourSpriteDrawer';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { toggleHorseStablePanel, horseBrief, horseStatusColor } from './HorseStablePanel';
 import { CityAssetManager } from '../assets/CityAssetManager';
@@ -628,6 +629,12 @@ export class PlayerHUD {
             const idx = Math.max(0, modes.findIndex(([m]) => m === hero.playMode));
             const next = modes[(idx + 1) % modes.length][0];
             hero.setPlayMode(next);
+            // 🔴 [2026-11-06 主人令] 环球/航行＝玩家换成商队车、商船模型：先按当前所在文化预热素材，
+            //    点下去就是车/船，不会先闪一下人物兵模（素材没到之前由 GlobalUnitRenderer 暂用人物兵模顶着）
+            if (next === 'globe' || next === 'sail') {
+                const pos = hero.getPosition();
+                preloadPlayerTourModels(pos.lat, pos.lng);
+            }
             // 自动/环球/航行＝镜头跟随玩家；休息＝取消跟随
             if (next === 'rest') this.deps.releaseCamera?.();
             else this.deps.followCamera?.();
