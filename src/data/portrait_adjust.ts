@@ -10691,6 +10691,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 3
+        },
+        "/assets/JIANGNAN/song_dongxian.png": {
+            "scale": 1.2,
+            "offsetX": 1,
+            "offsetY": 4
+        },
+        "/assets/PERSIAN/kesaiya_kashtiliash.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 8
         }
     },
     "folderGuides": {

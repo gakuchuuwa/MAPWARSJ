@@ -79,7 +79,7 @@ import {
     RANGED_TYPES, WALL_GATE_STATS, deBuildingStats, SIGHT_MAP, DE_FORMATION_LAYOUT, LAYOUT,
     SIDE_LANES, COMMANDER_CELL, bldFootprintSide, DE_DYN_DIRS, REGION_BUILDING_STYLE,
     FACTION_BUILDING_STYLE,
-    marchFilesOf, marchFilesForSide, MARCH_SP, MARCH_SP_DEPTH_MAX, ROW_DEPTH, ROW_GAP, COL_SPACING, marchSpacingOf, marchDepthSpacingOf,
+    marchFilesOf, marchFilesForSide, MARCH_SP, MARCH_SP_DEPTH_MAX, ROW_DEPTH, ROW_PITCH, COL_SPACING, marchSpacingOf, marchDepthSpacingOf,
     UNIT_RADIUS, LOOP_WINDOW_IDLE_SEC,
 } from './scene13/Scene13UnitTables';
 
@@ -2733,25 +2733,12 @@ export class Scene13WarLayer {
             //    纵深与横向间隔彻底拉开，相邻方阵预留通行间隔，杜绝拥挤踩踏
             // 🔴 [2026-10-11 主人令「我要方阵，不要一条线」] 三排排距收紧（原 200~240 让全军摊得太开，像一条线）
             // 🔴 [2026-11-06 主人令「前中后三排前后间距可以再加大一点」→「我是说3档和4档的上下间距可以再减少一点」
-            //    →「要一样，都用一个数，用大的」]
-            //    排距不再写死 280，改成「本队实际纵深 ＋ 净空」，三排**等距**、净空统一用大的 200（ROW_GAP）。
-            //    纵深随每队排数走，所以攻方（10 排纵深 216px ⇒ 436）自动比守方（5 排 96px ⇒ 316）大，不会骑到前排背上。
-            const squadDepthOf = (f: 0 | 1): number => {
-                try {
-                    const sd = sides[f];
-                    const lanes = this.slotsOf(sd.region, sd.factionId, sd.generalId, sd.hasElite, f);
-                    let d = 0;
-                    for (const l of lanes) {
-                        const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / this.filesOfSide(l.key, f)));
-                        d = Math.max(d, (ranks - 1) * marchDepthSpacingOf(l.key) + 2 * this.radiusOf(l.key));
-                    }
-                    return d;
-                } catch { return 0; }
-            };
-            /** 三排等距的排距：本队实际纵深 ＋ 统一净空（不小于 ROW_DEPTH） */
-            const rowPitchOf = (f: 0 | 1): number => Math.max(ROW_DEPTH, squadDepthOf(f) + ROW_GAP);
-            // `depth` 只给「攻城距／攻城器械前移」这类整体估算用：取双方最大的排距
-            const depth = Math.max(ROW_DEPTH, rowPitchOf(0), rowPitchOf(1));
+            //    →「要一样，都用一个数，用大的」→「可能是我看错了，有点大了，都改为313试试」]
+            //    三排**等距、固定排距 313**（`ROW_PITCH`），不再写死 280、也不再按「本队纵深 ＋ 净空」现算。
+            /** 三排等距的排距（固定 313；ROW_DEPTH 只作下限兜底） */
+            const rowPitchOf = (_f: 0 | 1): number => Math.max(ROW_DEPTH, ROW_PITCH);
+            // `depth` 只给「攻城距／攻城器械前移」这类整体估算用
+            const depth = rowPitchOf(0);
             this.rowDepth = depth;
 
             // 🔴 [CC 裁定] 野战八方向出兵
