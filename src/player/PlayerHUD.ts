@@ -819,28 +819,8 @@ export class PlayerHUD {
             secRight.appendChild(sSel);
         }
 
-        // 收起按钮
-        const minBtn = document.createElement('button');
-        minBtn.type = 'button';
-        minBtn.textContent = this.minimized ? '▼' : '▲';
-        minBtn.title = this.minimized ? '展开' : '收起';
-        minBtn.style.cssText = 'display:none;';
-        minBtn.addEventListener('mouseenter', () => { minBtn.style.color = '#fffcee'; });
-        minBtn.addEventListener('mouseleave', () => { minBtn.style.color = '#dfc28c'; });
-        minBtn.addEventListener('click', () => this.toggleMinimize());
-        this.minimizeBtn = minBtn;
-        secRight.appendChild(minBtn);
-
-        singleRow.appendChild(secRight);
-        this.body.appendChild(singleRow);
-
-        // 🔴 [2026-11-06 主人令]「这些模型请可以在玩家面板中选择」：
-        //    环球模式的商队车、航行模式的商船各一格下拉；默认「随当地文化」自动换。
-        const tourRow = document.createElement('div');
-        tourRow.className = 'player-hud-single-row';
-        const tourSec = document.createElement('div');
-        tourSec.className = 'player-hud-section';
-        tourSec.style.cssText = 'display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:2px 8px;';
+        // 🔴 [2026-11-06 主人令]「这些模型请可以在玩家面板中选择」＋「玩家面板内容改为一行」：
+        //    环球模式的商队车、航行模式的商船各一格下拉，与陆战兵模／战船**同一行**（默认「随当地文化」）。
         const mkTourSelect = (
             icon: string,
             kind: 'caravan' | 'ship',
@@ -849,7 +829,7 @@ export class PlayerHUD {
             tip: string,
         ): HTMLElement => {
             const wrap = document.createElement('span');
-            wrap.style.cssText = 'display:inline-flex; align-items:center; gap:3px;';
+            wrap.style.cssText = 'display:inline-flex; align-items:center; gap:2px; flex-shrink:0;';
             const label = document.createElement('span');
             label.textContent = icon;
             label.title = tip;
@@ -857,7 +837,7 @@ export class PlayerHUD {
             const sel = document.createElement('select');
             sel.className = 'player-hud-select';
             sel.style.cssText = `
-                max-width:118px; font-family:inherit; font-size:11px; font-weight:600; padding:1px 5px;
+                max-width:104px; font-family:inherit; font-size:11px; font-weight:600; padding:1px 4px;
                 background:linear-gradient(180deg, rgba(42,34,24,0.94), rgba(24,19,14,0.96)); color:#f5e6c8;
                 border:1px solid rgba(212,175,55,0.42); border-radius:4px;
                 box-shadow:inset 0 1px 0 rgba(255,235,180,0.1), 0 1px 3px rgba(0,0,0,0.35);
@@ -889,12 +869,25 @@ export class PlayerHUD {
             wrap.appendChild(sel);
             return wrap;
         };
-        tourSec.appendChild(mkTourSelect('🐪', 'caravan', TOUR_CARAVAN_CHOICES, hero.tourCaravanDir,
+        secRight.appendChild(mkTourSelect('🐪', 'caravan', TOUR_CARAVAN_CHOICES, hero.tourCaravanDir,
             '环球/航行模式陆路上用的商队车模型（默认随当地文化自动换）'));
-        tourSec.appendChild(mkTourSelect('⛵', 'ship', TOUR_SHIP_CHOICES, hero.tourShipDir,
+        secRight.appendChild(mkTourSelect('⛵', 'ship', TOUR_SHIP_CHOICES, hero.tourShipDir,
             '环球/航行模式海上用的商船模型（默认随当地海域文化自动换）'));
-        tourRow.appendChild(tourSec);
-        this.body.appendChild(tourRow);
+
+        // 收起按钮
+        const minBtn = document.createElement('button');
+        minBtn.type = 'button';
+        minBtn.textContent = this.minimized ? '▼' : '▲';
+        minBtn.title = this.minimized ? '展开' : '收起';
+        minBtn.style.cssText = 'display:none;';
+        minBtn.addEventListener('mouseenter', () => { minBtn.style.color = '#fffcee'; });
+        minBtn.addEventListener('mouseleave', () => { minBtn.style.color = '#dfc28c'; });
+        minBtn.addEventListener('click', () => this.toggleMinimize());
+        this.minimizeBtn = minBtn;
+        secRight.appendChild(minBtn);
+
+        singleRow.appendChild(secRight);
+        this.body.appendChild(singleRow);
 
     }
 

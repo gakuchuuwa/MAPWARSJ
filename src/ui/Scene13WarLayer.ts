@@ -79,7 +79,7 @@ import {
     RANGED_TYPES, WALL_GATE_STATS, deBuildingStats, SIGHT_MAP, DE_FORMATION_LAYOUT, LAYOUT,
     SIDE_LANES, COMMANDER_CELL, bldFootprintSide, DE_DYN_DIRS, REGION_BUILDING_STYLE,
     FACTION_BUILDING_STYLE,
-    marchFilesOf, MARCH_SP, MARCH_SP_DEPTH_MAX, ROW_DEPTH, COL_SPACING, marchSpacingOf, marchDepthSpacingOf,
+    marchFilesOf, marchFilesForSide, MARCH_SP, MARCH_SP_DEPTH_MAX, ROW_DEPTH, ROW_GAP, COL_SPACING, marchSpacingOf, marchDepthSpacingOf,
     UNIT_RADIUS, LOOP_WINDOW_IDLE_SEC,
 } from './scene13/Scene13UnitTables';
 
@@ -1216,7 +1216,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-11-01 主人令「敌战计的增兵，请每两人就给一面旗帜，不然看不出是谁」]
             const bearer = ambush ? ((idx - 1) % 2 === 0) : (s.spawned % FLAG_EVERY === 0);
             const slotIdx = s.slotN++;
-            const files = marchFilesOf(s.key);
+            const files = this.filesOfSide(s.key, f);
             const sp = marchSpacingOf(s.key);
             const spDep = marchDepthSpacingOf(s.key);
             const dep = ((slotIdx / files) | 0) * spDep;
@@ -1933,7 +1933,7 @@ export class Scene13WarLayer {
         const heroPort = anchorPort;
         // 🔴 [2026-10-28 → 2026-10-30 主人令「把玩家的行为方式和普通士兵用一个逻辑，视为普通兵的行为」]
         // 玩家置于本队方阵第 2 排（rank 1）正中列真实槽位，与普通士兵共用完全相同的排阵格点、随机抖动(jx/jy)、守城城外标记(outside1)与城内驻守点(guardPost)
-        const files = marchFilesOf(heroPort.key);
+        const files = this.filesOfSide(heroPort.key, f);
         const sp = marchSpacingOf(heroPort.key);
         const spDep = marchDepthSpacingOf(heroPort.key);
         const heroDep = spDep;
@@ -2139,7 +2139,7 @@ export class Scene13WarLayer {
             m.lane = bestLane;
             const port = this.spawns[bestLane];
             if (port) {
-                const files = marchFilesOf(port.key);
+                const files = this.filesOfSide(port.key, m.f as 0 | 1);
                 const sp = marchSpacingOf(port.key);
                 const spDep = marchDepthSpacingOf(port.key);
                 m.dep = spDep;
@@ -2732,7 +2732,26 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
             //    纵深与横向间隔彻底拉开，相邻方阵预留通行间隔，杜绝拥挤踩踏
             // 🔴 [2026-10-11 主人令「我要方阵，不要一条线」] 三排排距收紧（原 200~240 让全军摊得太开，像一条线）
-            const depth = ROW_DEPTH;
+            // 🔴 [2026-11-06 主人令「前中后三排前后间距可以再加大一点」→「我是说3档和4档的上下间距可以再减少一点」
+            //    →「要一样，都用一个数，用大的」]
+            //    排距不再写死 280，改成「本队实际纵深 ＋ 净空」，三排**等距**、净空统一用大的 200（ROW_GAP）。
+            //    纵深随每队排数走，所以攻方（10 排纵深 216px ⇒ 436）自动比守方（5 排 96px ⇒ 316）大，不会骑到前排背上。
+            const squadDepthOf = (f: 0 | 1): number => {
+                try {
+                    const sd = sides[f];
+                    const lanes = this.slotsOf(sd.region, sd.factionId, sd.generalId, sd.hasElite, f);
+                    let d = 0;
+                    for (const l of lanes) {
+                        const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / this.filesOfSide(l.key, f)));
+                        d = Math.max(d, (ranks - 1) * marchDepthSpacingOf(l.key) + 2 * this.radiusOf(l.key));
+                    }
+                    return d;
+                } catch { return 0; }
+            };
+            /** 三排等距的排距：本队实际纵深 ＋ 统一净空（不小于 ROW_DEPTH） */
+            const rowPitchOf = (f: 0 | 1): number => Math.max(ROW_DEPTH, squadDepthOf(f) + ROW_GAP);
+            // `depth` 只给「攻城距／攻城器械前移」这类整体估算用：取双方最大的排距
+            const depth = Math.max(ROW_DEPTH, rowPitchOf(0), rowPitchOf(1));
             this.rowDepth = depth;
 
             // 🔴 [CC 裁定] 野战八方向出兵
@@ -2913,7 +2932,7 @@ export class Scene13WarLayer {
                         ? (this.deFormationCells(lanes2, mode)[idx] ?? LAYOUT[mode][idx])
                         : LAYOUT[mode][idx];
                 /** 一队列阵时的横宽（px）：(列数-1) × 本兵种列距 + 两侧半径 */
-                const laneWidthOf = (key: string) => (marchFilesOf(key) - 1) * marchSpacingOf(key) + 2 * this.radiusOf(key);
+                const laneWidthOf = (key: string) => (this.filesOfSide(key, side.f) - 1) * marchSpacingOf(key) + 2 * this.radiusOf(key);
                 const rowWidth = new Map<number, number>();
                 lanes2.forEach((lane, idx) => {
                     const w = laneWidthOf(lane.key);
@@ -2942,6 +2961,9 @@ export class Scene13WarLayer {
                         rowSpacing.set(cell.row, Math.max(rowSpacing.get(cell.row) ?? COL_SPACING, need));
                     });
                 }
+                // 🔴 [2026-11-06 主人令「要一样，都用一个数，用大的」] 三排等距排距（见 rowPitchOf）
+                const pitch = rowPitchOf(side.f);
+                const forwardOfRow = (row: number): number => (1 - row) * pitch;
                 lanes2.forEach((lane, idx) => {
                     const key = lane.key;
                     this.ensureType(key, side.f);
@@ -2955,7 +2977,7 @@ export class Scene13WarLayer {
                         const base = this.spawnBases[side.f];
                         const uFwd = this.advanceVec[side.f];
                         const uSide = this.sideVec[side.f];
-                        const forwardOffset = (1 - cell.row) * depth;
+                        const forwardOffset = forwardOfRow(cell.row);
                         // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
                         //    相邻方队横向间隔由局促的 110px 彻底拉开至 210~240px，方阵左右舒展不重叠
                         // 🔴 [2026-10-20 主人令「每队50人，正好5*10，怎么阵型不对呢？」→ 选方案一]
@@ -3923,6 +3945,17 @@ export class Scene13WarLayer {
         }
         this.deCellCache.set(cacheKey, out);
         return out;
+    }
+
+    /**
+     * 本方每队的「横向列数」（每队 50 人 = 列 × 排）。
+     * 🔴 [2026-11-06 主人令「把攻击方的方阵改为，每队是 10*5 的矩形横向方阵前进」]
+     *    攻方按屏幕横向取长边（口径在 `Scene13UnitTables.marchFilesForSide`），守方照旧 10 列。
+     *    **凡是用到列数的地方都走这里**（排阵 / 队列宽 / 领队打分 / 玩家入列 / 增兵归队），不然排数对不上。
+     */
+    private filesOfSide(key: string, f: 0 | 1): number {
+        const uF = this.advanceVec[f], uS = this.sideVec[f];
+        return marchFilesForSide(key, f, uF.x, uS.x);
     }
 
     /** 这一方有没有**真武将**：在场的据点武将，或只在这一仗出场的战场人物（不在生卒表里，在场闸对他们恒为 false） */
@@ -5080,7 +5113,8 @@ export class Scene13WarLayer {
                 //    ⇒ 攻城时每个兵各自扑向城门，十队方阵立刻散成一条横线（主人多张截图实锤）。
                 //    现在与野战同款：整队方块推进，到城墙下再散开接战。
                 const inMarch = this.deployT > 0;
-                const files = marchFilesOf(s.key);
+                // 🔴 [2026-11-06 主人令] 攻方每队的列数按屏幕横向取（每队 10 列 × 5 排 → 攻方 5 列 × 10 排，方阵横向）
+                const files = this.filesOfSide(s.key, s.f);
                 if (this.heroMan && this.heroMan.hp > 0 && this.heroMan.lane === s.lane && s.slotN === files + Math.floor(files / 2)) {
                     s.slotN++;
                 }
@@ -7935,7 +7969,7 @@ export class Scene13WarLayer {
             // 每批每口 50 个精灵（SIDE_CAP ÷ SIDE_LANES = 500 ÷ 10）→ 排数 = 50 ÷ 列数
             const sp = marchSpacingOf(m.key);
             const spDep = marchDepthSpacingOf(m.key);   // 与出兵排阵同一式（行距＝列距）
-            const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / marchFilesOf(m.key)));
+            const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / this.filesOfSide(m.key, m.f as 0 | 1)));
             const depC = ((ranks - 1) / 2) * spDep;
             const ey = m.slotY / sp;
             const ex = (m.dep - depC) / spDep;

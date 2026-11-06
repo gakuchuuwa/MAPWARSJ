@@ -771,6 +771,23 @@ export function marchFilesOf(key: string): number {
     return (popCostOf(key) >= 2 || isElephantOrChariotUnitKey(key)) ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
 }
 /**
+ * 🔴 [2026-11-06 主人令「现在双方每队是 5*10 的矩形纵向方阵。请把攻击方的方阵改为，每队是 10*5 的矩形横向方阵前进」]
+ *
+ * 屏幕 x 就是世界 x，所以「横向」＝ 世界 x 方向。一队 50 人 = 10×5，长边落在哪个轴上决定方阵在屏幕上是
+ * 横的（左右长）还是竖的（上下长）：
+ *   · 前进方向更贴屏幕横向（|fwd.x| ≥ |side.x|，如攻方从西往东打）⇒ 长边必须走**纵深**：
+ *     列数减半（10 → 5）、排数加倍（5 → 10），方阵就成了屏幕上的横向矩形；
+ *   · 横排方向更贴屏幕横向（南北向的仗）⇒ 长边本来就在屏幕上横着，列数照旧 10，不动。
+ * **只改攻方（sideF === 0）**；守方一律按 `marchFilesOf` 保持原样（主人只点了攻击方）。
+ * 同一方所有用到「列数」的地方（出兵口排阵、每队列宽、领队打分、玩家入列、增兵归队）都必须走这一个入口，
+ * 否则排数/列数对不上，方阵会参差。
+ */
+export function marchFilesForSide(key: string, sideF: 0 | 1, fwdX: number, sideX: number): number {
+    const base = marchFilesOf(key);
+    if (sideF !== 0) return base;
+    return Math.abs(fwdX) >= Math.abs(sideX) ? Math.max(1, Math.round(base / 2)) : base;
+}
+/**
  * 槽位间距基准（px）：步兵半径 8、骑兵 10，两两之和 16~20，24 够用。
  * 🔴 [2026-08-19 修] 原先这是**全兵种唯一常量**，注释写着「必须 ≥ 两兵半径之和
  *    （UNIT_RADIUS 最大档 20）」—— 但 20 是**半径本身**，两辆车的半径之和是 40，
@@ -781,8 +798,18 @@ export function marchFilesOf(key: string): number {
 export const MARCH_SP = 24;
 /** 列阵纵深方向的槽位间距上限（px），见使用处。 */
 export const MARCH_SP_DEPTH_MAX = 48;
-/** 🔴 [2026-10-14 主人令「排距、队距改成固定值……不再跟着窗口变」] 三排之间的排距（px）。原为「窗口宽×0.14，夹在 240~280」，取主人窗口下的 280 */
+/** 🔴 [2026-10-14 主人令「排距、队距改成固定值……不再跟着窗口变」] 三排之间的排距（px）。原为「窗口宽×0.14，夹在 240~280」，取主人窗口下的 280（现只作下限兜底，实际排距见 ROW_GAP_FRONT／ROW_GAP_BACK） */
 export const ROW_DEPTH = 280;
+/**
+ * 🔴 [2026-11-06 主人令「前中后三排前后间距可以再加大一点」→「我是说3档和4档的上下间距可以再减少一点」
+ *    →「要一样，都用一个数，用大的」]
+ *
+ * 三排**等距**：排距 ＝ 本队实际纵深 ＋ 净空，净空统一取**大的那个数** `ROW_GAP` = 200
+ * （原先是「前→中 200／中→后 40」两段，主人 2026-11-06 令改成同一个数）。
+ * 纵深随每队排数走：攻方 10 排纵深 216px ⇒ 排距 436；守方 5 排 96px ⇒ 排距 316。
+ * `ROW_DEPTH` 只作排距下限兜底。档位归属见 `types/LegionRowOrder`（前排＝2 档、中排＝3 档、后排＝4 档）。
+ */
+export const ROW_GAP = 200;
 /** 🔴 [2026-10-14 同上] 同一排相邻两队的队距（px）。原为「窗口高×0.8÷4，夹在 300~320」，取 300 */
 export const COL_SPACING = 300;
 /** 本兵种的列阵横向槽位间距（左右列距）：两倍半径 + 4px 余量，下限为 MARCH_SP（同一出兵口恒为同一兵种）。 */

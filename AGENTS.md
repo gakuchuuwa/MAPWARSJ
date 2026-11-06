@@ -144,6 +144,8 @@
 - 🔴 **两套排序与主将站位只有一处代码定义**：`src/types/LegionRowOrder.ts`（`ROW_PLACEMENT_ORDER` / `ROW_TIER_COUNT_ORDER` / `arrangeLegionRows` / `commanderRowOf`，`FORMATION_ROW_COUNTS` 也在这里）。战略方阵（`applyLegionCultureComposition`、`LegionPhalanxDrawer.withCommanderCell`）与战术（`Scene13WarLayer.slotsOf / formationModeOf`、`COMMANDER_CELL`）都读它；编制数据不合排序时运行时按它重排。审计：`npm run legion:row-order-audit`。
 - `light_riders` 已删，一律用 `light_cavalry`（素材保留）。
 - 军团不放攻城武器。
+- 🔴 **三排等距：排距＝本队实际纵深 ＋ 净空 200（2026-11-06 主人令「前中后三排前后间距可以再加大一点」→「我是说3档和4档的上下间距可以再减少一点」→「要一样，都用一个数，用大的」）**：2 档排（前）/3 档排（中）/4 档排（后）**等距**，净空统一 `ROW_GAP` = 200（曾经试过「中→后收小」两段制，主人当日改回等距）。纵深随每队排数走——攻方 10 排纵深 216px ⇒ 排距 436，守方 5 排 96px ⇒ 排距 316，所以攻方深方阵不会骑到前排背上。常量在 `src/ui/scene13/Scene13UnitTables.ts`（`ROW_GAP`／下限 `ROW_DEPTH`），落点在 `Scene13WarLayer.start` 的 `rowPitchOf / forwardOfRow`。
+- 🔴 **每队方阵 50 人＝10 列 × 5 排；攻方改成「屏幕横向 10 × 5」（2026-11-06 主人令「现在双方每队是 5\*10 的矩形纵向方阵。请把攻击方的方阵改为，每队是 10\*5 的矩形横向方阵前进」）**：屏幕 x＝世界 x，所以「横向」＝世界 x。攻方一队的长边一律落在屏幕上横着的那根轴上——前进方向更贴屏幕横向时，列数减半（10→5）、排数加倍（5→10），方阵在屏幕上是横向矩形；南北向的仗横排本来就横向，列数不动。**守方不动**（仍 10 列 × 5 排）。唯一入口 `marchFilesForSide`（`src/ui/scene13/Scene13UnitTables.ts`），战术层凡用到列数的地方（出兵口排阵、每队列宽、领队打分、玩家入列、增兵归队）都走 `Scene13WarLayer.filesOfSide`，否则排数/列数对不上、方阵参差。
 
 ### 3.6 行军海陆形态（陆军↔舰队）
 - 🔴 **海路段内形态恒定，海边掠过不换形态**（2026-10-24 主人「如果是海上，碰到一小点陆地就会变成陆军……除非了一大块陆地可以更换，如果只是海边过一下，没必要吧」）：走海路（路点 `sea` 标记）时一律保持海军；只有**脚下中心点**连续压在大块陆地上（累计 ≥ `SEA_FLIP_CONFIRM_DEG`≈22 公里；原地不动时以 ≥ `SEA_FLIP_CONFIRM_SEC` 3 秒兜底）才变陆军。港口城坐标（海路边端点吸附在城心）、中途港、沿岸岬角都算「一小点陆地」，不换形态。
