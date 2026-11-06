@@ -10686,6 +10686,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 13,
             "offsetY": -40
+        },
+        "/assets/SPANISH/xibanya_hurtado_mendoza.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 3
         }
     },
     "folderGuides": {
