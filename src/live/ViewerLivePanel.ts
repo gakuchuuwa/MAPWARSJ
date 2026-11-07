@@ -268,23 +268,24 @@ export class ViewerLivePanel {
         let mainRow: string;
         let joinGrid = '';
         if (this.duel) {
-            // 🔴 [2026-11-07] 即时战斗没有公共玩家：主行只说这一局能做什么（选边 / 下注 / 放计），不按官职铺开
-            const [stakeA, stakeD, stakeT] = this.live.getBetStakes();
-            const betState = this.live.isBetOpen() ? '开窗' : '封盘';
-            const betLine = `<span style="font-size:${f.main}px;">${b('押1')}/${b('押2')}/${b('押和')} 下注·${betState}`
-                + `<span style="font-size:${f.sub}px;color:#e0cfa9;"> 攻${b(String(stakeA))} 守${b(String(stakeD))} 和${b(String(stakeT))}</span></span>`;
+            const [stakeA, stakeD, stakeT] = s.bet.stakes;
+            const betState = s.bet.open ? '选阵/押注中' : '交战中';
+            const betLine = `<span style="font-size:${f.main}px;">${b('1')}乱入者 VS ${b('2')}维序者 · ${b('押1')}/${b('押2')}/${b('押平')} (${betState})`
+                + `<span style="font-size:${f.sub}px;color:#e0cfa9;"> 乱${b(String(stakeA))} 维${b(String(stakeD))} 平${b(String(stakeT))}</span></span>`;
             const castLine = `<span style="font-size:${f.main}px;">${b('攻 胜 敌 混 并 败')} 放计`
                 + `<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)})</span></span>`;
             mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${betLine}${sep}${castLine}${liveInfoPart}</div>`;
-        } else if (s.on && !civilian) {
-            const sixUi = allowedSixWordsForRank(s.hero.rankId);
+        } else if (s.on) {
+            const [stakeA, stakeD, stakeT] = s.bet.stakes;
+            const phaseText = s.bet.open
+                ? `⏳ 选阵/押注 ${b(`${Math.max(1, s.bet.remainSec)}秒`)}：发 ${b('1')}(乱入者)/${b('2')}(维序者) · ${b('押1 分')}/${b('押2 分')}/${b('押平 分')}`
+                : `⚔️ 乱入者(${s.counts[0]}人·押${b(String(stakeA))}) VS 维序者(${s.counts[1]}人·押${b(String(stakeD))})${stakeT > 0 ? `·平(押${b(String(stakeT))})` : ''}`;
             if (this.inScene13Bar) {
-                const castCompact = `<span style="font-size:${f.main}px;">📢 ${b(sixUi.words)}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${ORDERS_PER_CAST}分)</span> · ${b('技1')} · ${b(`名 名字 ${nextRename}`)}</span>`;
+                const castCompact = `<span style="font-size:${f.main}px;">${phaseText} ｜ 放计 ${b('攻 胜 敌 混 并 败')}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${ORDERS_PER_CAST}分)</span> · ${b(`名 名字 ${nextRename}`)}</span>`;
                 mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;">${castCompact}${liveInfoPart}</div>`;
             } else {
-                const castCmd = `<span style="font-size:${f.main}px;">${b(sixUi.words)} ${sixUi.label}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)}先后)</span></span>`;
-                const scoutCmd = `<span style="font-size:${f.main}px;">${b('技1')} 爆发技<span style="font-size:${f.sub}px;color:#e0cfa9;">(高分插队)</span></span>`;
-                mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${castCmd}${sep}${scoutCmd}${sep}${renameCmd}${liveInfoPart}</div>`;
+                const castCmd = `<span style="font-size:${f.main}px;">${phaseText}${sep}放计 ${b('攻 胜 敌 混 并 败')}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)})</span></span>`;
+                mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${castCmd}${sep}${renameCmd}${liveInfoPart}</div>`;
             }
         } else {
             let statePart: string;

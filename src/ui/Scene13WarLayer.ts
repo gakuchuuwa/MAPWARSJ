@@ -1909,11 +1909,12 @@ export class Scene13WarLayer {
                 heroStats: {
                     hp: fallbackStats.hp,
                     atk: fallbackStats.atk,
+                    meleeArmor: fallbackStats.meleeArmor,
+                    pierceArmor: fallbackStats.pierceArmor,
                     reload: fallbackStats.reload,
                     rng: fallbackStats.rng,
                     spd: fallbackStats.spd,
-                    mArm: fallbackStats.mArm,
-                    pArm: fallbackStats.pArm,
+                    bonus: { ...(fallbackStats.bonus ?? {}) },
                 },
                 unitKey: null,
                 control: 'none',
@@ -2115,10 +2116,8 @@ export class Scene13WarLayer {
             }
         }
 
-        // 🔴 [2026-10-27 主人问「战术开局镜头为什么不跟玩家」] 开局玩家站着不动，六档把他判成静止（档 6，不入选），
-        //    于是镜头先被入列中的兵抢走，又因「锁定到此人阵亡」再也换不回玩家。有玩家就开局直接锁玩家，
-        //    并把镜头立即对准他；他阵亡后才按六档换人。
-        this.camTier = 3;
+        // 开局尚未接战时默认镜头对准乱入者跟随推进；一旦场上有人交战，即按 4 档「正在交战」顺位锁定交战士兵直至其阵亡
+        this.camTier = -1;
         this.camWatchMan = null;
         this.userInteractingTimer = 0;
         this.tacticalPanX = (this.worldCX - hx) * this.tacticalZoom;
@@ -2393,73 +2392,51 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-11-07 主人定·镜头方案 A（双主角交替跟随）]
-     *   · 默认主镜头跟随【乱入者】（heroMan）；
-     *   · 当【乱入者】阵亡读秒（hp <= 0）或未交战而【维序者】（keeperMan）存活且正在交战时，镜头自动切去跟【维序者】；
-     *   · 若两人同时倒下，才退回六档跟随正在交战的主将队/士兵。
+     * 🔴 [2026-11-07 主人令·只保留正在交战的 4 个顺位]
+     * 镜头目标挑选先后顺序（只认 `m.foe !== null` 正在交战的士兵）：
+     *   0：正在交战的【乱入者】（heroMan）
+     *   1：正在交战的【维序者】（keeperMan）
+     *   2：正在交战的【主将队士兵】（离当前画面中心最近的一名）
+     *   3：正在交战的【普通士兵】（离当前画面中心最近的一名）
+     *   4：未交战（不进入锁定；全场无人交战的开局行军期默认跟【乱入者】走，一旦有人接战立即按 0～3 锁定交战士兵直至其阵亡）
      */
-    private pickActiveProtagonist(hero: WarMan): WarMan {
-        const keeper = this.keeperMan;
-        const heroAlive = hero.hp > 0 && this.men.includes(hero);
-        const keeperAlive = !!keeper && keeper.hp > 0 && this.men.includes(keeper);
-        if (!heroAlive && keeperAlive) return keeper!;
-        if (heroAlive && !hero.foe && keeperAlive && !!keeper!.foe) return keeper!;
-        return hero;
-    }
-
     private pickCamTarget(hero: WarMan): WarMan | null {
-        const activeRep = this.pickActiveProtagonist(hero);
-        const f = activeRep.f;
-        const repAlive = activeRep.hp > 0 && this.men.includes(activeRep);
-        // 档位：0 交战主角(乱入者/维序者) 1 交战主将队 2 交战士兵 3 移动主角 4 移动主将队 5 移动士兵；6 静止不入选
-        const isMoving = (m: WarMan): boolean => {
-            if ((m.stepMax ?? 0) > 0.05) return true;
-            return m.march && this.deployT <= 0
-                && Math.hypot(m.tx - m.x, m.ty - m.y) > LANE_TRACK_EPS;
-        };
-        const tierOf = (m: WarMan): number => {
-            if (m === activeRep) return m.foe ? 0 : (isMoving(m) ? 3 : 6);
-            const cmd = !!this.spawns[m.lane]?.commander;
-            if (m.foe) return cmd ? 1 : 2;
-            if (!isMoving(m)) return 6;
-            return cmd ? 4 : 5;
-        };
-        const eligible = (m: WarMan): boolean => m.hp > 0 && m.f === f && !m.siegeW && (!m.hero || m === activeRep)
-            && (m.hero || this.men.includes(m));
-        const isHeroTier = (t: number) => t === 0 || t === 3;
-        if (this.camTier >= 0) {
-            if (isHeroTier(this.camTier)) {
-                if (repAlive) return activeRep;
-            } else if (this.camWatchMan && eligible(this.camWatchMan)) {
-                return this.camWatchMan;
-            }
+        const watched = this.camWatchMan;
+        if (this.camTier >= 0 && watched && watched.hp > 0 && this.men.includes(watched)) {
+            return watched;
         }
 
-        let bestTier = repAlive ? tierOf(activeRep) : 6;
+        const keeper = this.keeperMan;
+        const tierOf = (m: WarMan): number => {
+            if (!m.foe) return 4;
+            if (m === hero) return 0;
+            if (keeper && m === keeper) return 1;
+            return this.spawns[m.lane]?.commander ? 2 : 3;
+        };
+        const eligible = (m: WarMan): boolean => m.hp > 0 && !m.siegeW && this.men.includes(m);
+
+        let bestTier = 4;
         for (const m of this.men) {
-            if (!eligible(m) || m.hero) continue;
+            if (!eligible(m)) continue;
             const t = tierOf(m);
             if (t < bestTier) bestTier = t;
         }
-        if (bestTier === 6) {
-            if (repAlive) {
-                this.camTier = 3;
-                this.camWatchMan = null;
-                return activeRep;
-            }
+        if (bestTier === 4) {
             this.resetCamFollow();
+            if (eligible(hero)) return hero;
+            if (keeper && eligible(keeper)) return keeper;
             return null;
         }
 
         const switched = this.deployT <= 0 && this.battleSec > 0.5;
         this.camTier = bestTier;
         if (switched) this.camSwitchLockTimer = CAM_HOLD_SEC;
-        if (isHeroTier(bestTier)) { this.camWatchMan = null; return activeRep; }
+
         const cx = this.worldCX - this.tacticalPanX / this.tacticalZoom;
         const cy = this.worldCY - this.tacticalPanY / this.tacticalZoom;
         let best: WarMan | null = null, bestD = Infinity;
         for (const m of this.men) {
-            if (!eligible(m) || m.hero || tierOf(m) !== bestTier) continue;
+            if (!eligible(m) || tierOf(m) !== bestTier) continue;
             const d = Math.hypot(m.x - cx, m.y - cy);
             if (d < bestD) { best = m; bestD = d; }
         }
@@ -2473,19 +2450,15 @@ export class Scene13WarLayer {
         this.camHoldT = 0;
     }
 
-    /** 有玩家时唯一的镜头目标仲裁入口：双主角（乱入者/维序者）交替优先；两人皆倒时退回六档。 */
+    /** 唯一的镜头目标仲裁入口：一旦锁定某名士兵（camWatchMan），固定以他为中心点直至他阵亡，绝不中途跳机位。 */
     private resolveHeroCamTarget(hero: WarMan, dt: number): WarMan | null {
-        const activeRep = this.pickActiveProtagonist(hero);
-        const repAlive = activeRep.hp > 0 && this.men.includes(activeRep);
         const watched = this.camWatchMan;
-        const watchingHero = this.camTier === 0 || this.camTier === 3;
-        const targetLost = this.camTier >= 0 && (watchingHero
-            ? !repAlive
-            : (repAlive || !watched || watched.hp <= 0 || !this.men.includes(watched)));
+        const targetLost = this.camTier >= 0 && (!watched || watched.hp <= 0 || !this.men.includes(watched));
         if (targetLost) {
-            this.camHoldT = repAlive ? 0.6 : CAM_HOLD_SEC;
+            // 当前锁定的士兵阵亡：在倒下位置平稳停留 CAM_HOLD_SEC（4.5 秒）后再按先后顺序锁定下一名士兵
+            this.camHoldT = CAM_HOLD_SEC;
             this.camWatchMan = null;
-            this.camTier = repAlive ? 3 : -1;
+            this.camTier = -1;
             if (this.deployT <= 0) this.camSwitchLockTimer = CAM_HOLD_SEC;
         }
         if (this.camHoldT > 0) {
@@ -3929,7 +3902,9 @@ export class Scene13WarLayer {
         this.playerCtlLanes.clear();
         this.heroInput = null;
         this.heroMan = null;
+        this.keeperMan = null;
         this.heroRespawnTimer = 0;
+        this.keeperRespawnTimer = 0;
         this.playerLiveSkillTimer = 0;
         this.playerLiveSkillCooldown = 0;
         this.playerSixFrenzyTimer = 0;
@@ -9346,11 +9321,13 @@ export class Scene13WarLayer {
             } else {
                 m.mvX = undefined; m.mvY = undefined;
             }
-            // 🔴 [2026-10-03 修·冲锋静止] 列阵推进中等待槽位不属于卡死堵路，不累加 stuckT
+            // 🔴 [2026-10-03 修·冲锋静止] 列阵推进中等待槽位不属于卡死堵路，不累加 stuckT；
+            //    🔴 [2026-11-07 修·开局镜头不跟乱入者] 列阵推进（!deploying && m.march）时士兵实际在走，
+            //       必须照实写入 stepMax（原先误置 0，且 m.x 已踏上 m.tx 导致 hypot(tx-x,ty-y)=0，isMoving 恒假，镜头在开局行军期完全不跟）
             if (deploying || m.march) {
                 m.stuckT = 0;
                 m.netT = 0;
-                m.stepMax = 0;
+                m.stepMax = deploying ? 0 : Math.max(Math.abs(m.x - m.prevX), Math.abs(m.y - m.prevY));
                 m.idlePose = false;
                 m.prevX = m.x; m.prevY = m.y;
                 continue;

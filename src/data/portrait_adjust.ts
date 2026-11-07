@@ -4607,7 +4607,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_108.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_01.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 4
@@ -6261,11 +6261,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 17
-        },
-        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_01.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": -15
         },
         "/assets/ARMENIANS/wulaertu_guo_saerdu.png": {
             "scale": 1,

@@ -16,7 +16,12 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'tan_d': 'city_cili',
     'wumeng': 'city_shimenguan',
     'boren': 'city_bodao',
-    'sou': 'city_leshan',
+    // 🔴 [2026-11-07 主人令「请修复势力」] 越嶲夷首府＝**邛都**（越嶲郡治，今西昌）：
+    //    越嶲夷王高定元驻邛都（《华阳国志·南中志》南中三叛：越嶲高定元、建宁雍闿、牂牁朱褒）。
+    //    原登记 city_leshan（乐山＝犍为郡南安）会让开局改旗把乐山从蜀汉手里抢给越嶲夷，
+    //    而乐山是蜀汉犍为太守何祗的驻地（《三国志·蜀书·杨洪传》附：何祗字君肃，官至犍为太守），
+    //    于是何祗在战场上被标成「越嶲夷」。乐山按 cities_v2 仍归蜀汉（shu）。
+    'sou': 'city_jianchang',
     'qiong': 'city_jianchang',
     'dongzu': 'city_leigong',
     'shengmiao': 'city_jiading',

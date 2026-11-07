@@ -459,7 +459,7 @@ export function render(this: Scene13WarLayer): void {
     }
 
     // ── [2026-09-05 → 2026-11-07 乱入者 VS 维序者] 双方代表头顶名牌 + 血条 ──
-    const drawRepTag = (rep: WarMan | null, label: string, textColor: string, barColor: string) => {
+    const drawRepTag = (rep: typeof this.heroMan, label: string, textColor: string, barColor: string) => {
         if (!rep || rep.hp <= 0) return;
         const maxHp = this.statsFor(rep.key, rep.f).hp || 1;
         const sx = rep.x;

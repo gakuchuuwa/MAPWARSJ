@@ -2794,14 +2794,16 @@ export class ViewerLive {
     }
     private request(id: string, name: string, word: string, eventId = '', pubMs = Date.now()): string {
         const now = Date.now();
-        // 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」] 即时战斗里按**观众自己选的边**入队，
-        //    不再被 playerSide 覆盖（这一局压根没有玩家）；没选过边的第一句话默认攻方，并回一句怎么选边。
-        const side: 0 | 1 = this.duel ? (this.sides.get(id) ?? 0) : (this.playerSideInBattle() ?? this.sides.get(id) ?? 0);
-        const unsubscribed = this.duel && !this.sides.has(id);
+        // 🔴 [2026-11-07 主人定·战术模式「乱入者 VS 维序者」]
+        //    按观众自己选的阵营入队（未显式选阵时默认站「乱入者」侧），两边各排各的队、互不阻塞。
+        const defaultSide: 0 | 1 = this.playerSideInBattle() ?? 0;
+        const unsubscribed = !this.sides.has(id);
+        const side: 0 | 1 = this.sides.get(id) ?? defaultSide;
         this.sides.set(id, side);
+        const repLabel = this.repNameOfSide(side);
         const a = this.acct(id, name);
         const avail = a.n - this.reservedOrders(id);
-        if (unsubscribed) this.notifyViewerVoice(id, `${name}，按攻方算，发 1 选攻方、2 选守方`);
+        if (unsubscribed) this.notifyViewerVoice(id, `${name}，默认按${repLabel}算，发 1 选乱入者、2 选维序者`);
         if (avail < ORDERS_PER_CAST) {
             this.wanted.set(id, word);
             this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', '积分不足');
@@ -2811,18 +2813,17 @@ export class ViewerLive {
         }
         // 入队时不提前扣分，等技能真正释放时再扣
         const item: QueuedCast = { uid: id, viewer: name, side, six: SIX_BY_WORD[word], word, paid: false, deducted: false };
-        // 六计固定积分、不涨价，严格按先后顺序（FIFO）入队
         this.queue.push(item);
         this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'queued');
         this.save();
-        // 排位按**本边队列**算（即时战斗两边各排各的）；普通模式就是整条队列
-        const laneQueue = this.duel ? this.queue.filter((q) => q.side === side) : this.queue;
-        const lastAt = this.duel ? this.lastFreeCastAtBySide[side] : this.lastFreeCastAt;
-        if (laneQueue.length > 1 || Date.now() - lastAt < FREE_CAST_GAP_MS) {
+        // 排位按本阵营队列算（乱入者与维序者各排各的）
+        const laneQueue = this.queue.filter((q) => q.side === side);
+        const lastAt = this.lastFreeCastAtBySide[side];
+        if (laneQueue.length > 1 || Date.now() - lastAt < FREE_CAST_GAP_MS || (this.war()?.getDeployRemainingSec?.() ?? 0) > 0) {
             const pos = laneQueue.indexOf(item) + 1;
-            this.notifyViewerVoice(id, `${name}，${word}计已排队第${pos}位，释放时再扣积分`);
+            this.notifyViewerVoice(id, `${name}，${word}计已排队第${pos}位，开战释放时再扣积分`);
         }
-        return this.note(`${name} 花 ${ORDERS_PER_CAST} 积分点了【${word}】，按先后排第 ${laneQueue.indexOf(item) + 1}`);
+        return this.note(`${name} 花 ${ORDERS_PER_CAST} 积分助【${repLabel}】点【${word}】，本阵排第 ${laneQueue.indexOf(item) + 1}`);
     }
     private credit(id: string, name: string, cents: number) {
         this.rollDay();
@@ -2840,11 +2841,13 @@ export class ViewerLive {
             this.battleStartedAtMs = Date.now();
             this.recentBattleCasts = [];
             this.wasActive = true;
+            // 进入战术模式立即开启 9 秒选阵/押注窗口（快速对决在选人阶段已提前开启）
+            if (!this.duel) {
+                this.beginBetRound();
+            }
             return true;
         }
         const hasBattleState = this.wasActive || this.queue.length > 0 || this.scoutQueue.length > 0 || this.wanted.size > 0
-            // 🔴 [2026-11-07] 即时战斗里观众在**选人画面那 30 秒**就能选边（此时还没开打）；
-            //    sides 若算作「战斗状态」，这一选边就会被当成「上一仗收尾」立刻清掉（实测：选完就丢）。
             || (!this.duel && this.sides.size > 0);
         if (hasBattleState && !active) {
             this.endBattle();
@@ -2859,28 +2862,28 @@ export class ViewerLive {
         this.checkEmperorCoerceValidity();
         const active = this.syncBattleLifecycle();
         if (!active) return;
+        // 战术模式开局 9 秒列阵倒计时结束时自动封盘，进入交战放计阶段
+        if (!this.duel && this.betOpen && (this.war()?.getDeployRemainingSec?.() ?? 0) <= 0) {
+            this.sealBetRound();
+        }
         this.tickScoutQueue();
         this.tickCastQueue();
     }
     /**
-     * 六计队列出队。
-     * 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」] 即时战斗里**两边各排各的队、各自 2 秒一计**：
-     *    原来是一条全局队列 + 一个全局 2 秒闸，一边人多的观众刷起来会把另一边的计全堵在队里进不去。
-     *    普通模式（战略局里公共玩家那一套）仍是原来的单队列 + 全局闸，行为不变。
+     * 六计队列出队（乱入者与维序者两边各排各的队、各自 2 秒一计）。
      */
     private tickCastQueue(): void {
         if (this.queue.length === 0) return;
-        const duel = this.duel;
-        const lanes: (0 | 1)[] = duel ? [0, 1] : [this.queue[0].side];
+        const lanes: (0 | 1)[] = [0, 1];
         for (const lane of lanes) {
-            const idx = duel ? this.queue.findIndex((q) => q.side === lane) : 0;
+            const idx = this.queue.findIndex((q) => q.side === lane);
             if (idx < 0) continue;
             const head = this.queue[idx];
-            const lastAt = duel ? this.lastFreeCastAtBySide[lane] : this.lastFreeCastAt;
+            const lastAt = this.lastFreeCastAtBySide[lane];
             if (Date.now() - lastAt < FREE_CAST_GAP_MS) continue;
-            const side: 0 | 1 = duel ? head.side : (this.playerSideInBattle() ?? head.side);
+            const side: 0 | 1 = head.side;
             const r = this.war()!.castViewerSkill(side, head.six, head.viewer, false);
-            if (r === 'wait' || r === 'closed') continue;   // 演出闸同时只放一计：另一边等下一 tick
+            if (r === 'wait' || r === 'closed') continue;   // 演出闸同时只放一计或开局9秒尚未结束：等下一 tick
             this.queue.splice(idx, 1);
             if (!head.paid && head.deducted === false) {
                 const a = this.acct(head.uid, head.viewer);
@@ -2896,13 +2899,12 @@ export class ViewerLive {
                 castAtMs: now,
             });
             this.save();
-            if (duel) this.lastFreeCastAtBySide[lane] = now;
-            else this.lastFreeCastAt = now;
+            this.lastFreeCastAtBySide[lane] = now;
+            this.lastFreeCastAt = now;
             const skillName = this.war()!.lastSkillNameOf(side);
-            speechAnnouncer.announceViewerSkill(head.viewer, this.sideFaction(side) || this.sideName(side), skillName, { syncNow: true });
-            this.note(duel
-                ? `${head.viewer} 助${this.sideName(side)}施展【${skillName}】`
-                : `${head.viewer} 助玩家施展【${skillName}】`);
+            const repLabel = this.repNameOfSide(side);
+            speechAnnouncer.announceViewerSkill(head.viewer, repLabel, skillName, { syncNow: true });
+            this.note(`${head.viewer} 助【${repLabel}】（${this.sideName(side)}）施展【${skillName}】`);
             this.report({ viewer: head.viewer, side, six: head.six, paid: false, outcome: 'cast', skillName });
             this.fulfillWanted(head.uid, head.viewer);
         }
@@ -2933,6 +2935,10 @@ export class ViewerLive {
     private endBattle(): void {
         const now = Date.now();
         const foughtMs = this.battleStartedAtMs > 0 ? now - this.battleStartedAtMs : 0;
+        // 若战斗未经过正常胜负回调而中途退出，原数退回本场尚未结算的押注积分
+        if (!this.duel && (this.betOpen || this.bets.size > 0)) {
+            this.refundBetRound();
+        }
         // 战斗收尾 6 秒内刚放出的技能（受直播画面延迟影响）：自动原数退回积分并语音告知
         for (const c of this.recentBattleCasts) {
             if (c.cost > 0 && now - c.castAtMs <= LATE_CAST_REFUND_WINDOW_MS) {
