@@ -1,4 +1,4 @@
-/**
+﻿/**
  * eventRules.ts —— 战场事件编辑器的**硬规则检查**（2026-09-19 主人令「把犯的错误设成必填项」）。
  *
  * 🔴🔴🔴 最高铁律（2026-09-19 主人怒斥定死）：**严禁擅自新建 / 添加任何东西**。
@@ -21,7 +21,8 @@ import { FACTIONS } from '../data/factions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { isBattlefieldCharacter, getBattlefieldCharacter } from '../data/BattlefieldCharacters';
-import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
+// 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 势力远征番号表已删，改查该势力武将自己的精锐
+import { getFactionEliteConfig } from '../data/ExpeditionLegions';
 import { stripBriefingAnchor } from '../player/JourneyBriefing';
 import { findDuplicateContent } from './copyDuplicate';
 import { forbiddenCityNamesIn } from '../data/scriptForbiddenCityNames';
@@ -186,8 +187,9 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
 
     // ⑥ 双方势力最好有精锐番号（战斗面板要显示番号标签）──────────────
     //    血训：阿斯瓦卡/马利/卡帕多细亚 三个战场势力长期没有番号 → 战斗中取不到精锐环加成。
+    //    🔴 [2026-11-07] 番号现在只来自武将条目：势力没有武将就等于没有番号，这条检查照旧报出来。
     for (const [label, fid] of [['攻方', d.attackerFactionId], ['守方', d.defenderFactionId]] as const) {
-        if (fid && FACTION_IDS.has(fid) && !getExpeditionEliteConfig(fid)) {
+        if (fid && FACTION_IDS.has(fid) && !getFactionEliteConfig(fid)) {
             warn(`${label}势力「${fid}」没有精锐番号 → 战斗中取不到精锐环加成、面板也无番号标签`);
         }
     }

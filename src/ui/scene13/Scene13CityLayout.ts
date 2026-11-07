@@ -16,6 +16,7 @@ import {
     SIEGE_CITY_BUILDING_SCALE, SIEGE_CASTLE_SCALE, SIEGE_WONDER_SCALE, siegeBuildingScale,
 } from './Scene13UnitTables';
 import { pickTree, type TreeSeason } from './TreeAssignment';
+import { syncTradeCartAnimals } from './Scene13Animals';
 import { DE_MAP_THEMES, type DeMapThemeId } from './Scene13DeMapThemes';
 import { deTerrainSeasonalTree, seasonalDeTree } from './Scene13DeTrees';
 import { localSeasonAtLat } from '../../world/environment/seasonalGround';
@@ -2489,6 +2490,11 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     }
 
     decloneBattlefieldRocks.call(this);
+    this.tacticalAnimals = syncTradeCartAnimals(
+        this.decorSprites,
+        this.tacticalAnimals,
+        (a) => this.ensureNatureAsset(a),
+    );
 }
 
 /** 各岩石素材的静态帧数表（_meta.json 尚未异步就绪时用于精确计算 frame % nFrames 视觉签名） */

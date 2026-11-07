@@ -13,7 +13,7 @@ import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_TILE_W
 import { pickTree, type TreeSeason } from './TreeAssignment';
 import { bareSandRejectsTree, deTerrainIsForest, deTerrainRollTreeAsset, seasonalDeTree, snowToPlainTree } from './Scene13DeTrees';
 import { deriveDeGroundTiles } from './Scene13DeGround';
-import { animalNativeAt, animalDeOf } from './Scene13Animals';
+import { animalNativeAt, animalDeOf, syncTradeCartAnimals } from './Scene13Animals';
 import { animalHerdSize } from '../../world/environment/animalCatalog';
 import { tacticalTreeKeepRatio } from '../../world/environment/forestModel';
 import { localSeasonAtLat } from '../../world/environment/seasonalGround';
@@ -1947,6 +1947,11 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     }
 
     glLayer.flushFoundation();
+    this.tacticalAnimals = syncTradeCartAnimals(
+        this.decorSprites,
+        this.tacticalAnimals,
+        (a) => this.ensureNatureAsset(a),
+    );
 }
 
 /**

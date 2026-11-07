@@ -68,7 +68,7 @@ import {
 } from '../combat/GeneralSkillCombat';
 import {getGeneralProfile} from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
-import { getCityEliteConfig, getLegionEliteLegionName, getCityEliteLegionName, getExpeditionEliteLegionName, getEliteTierDisplayName } from '../data/ExpeditionLegions';
+import { getCityEliteConfig, getLegionEliteLegionName, getCityEliteLegionName, getFactionEliteConfig, getEliteTierDisplayName } from '../data/ExpeditionLegions';
 import type { Army } from '../legion/Army';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
@@ -1807,7 +1807,7 @@ export class CombatUI {
 
         this.currentAttackerLegionName = attLegionName || '';
         this.currentAttackerEliteName = (init.attackerEliteName && init.attackerEliteName.trim())
-            || (init.attackerFactionId ? getExpeditionEliteLegionName(init.attackerFactionId) : '') || '';
+            || (init.attackerFactionId ? (getFactionEliteConfig(init.attackerFactionId)?.name ?? '') : '') || '';
         this.currentDefenderLegionName = defLegionName || '';
         // 🔴 [2026-10-21 主人令] 精锐跟着武将走（一将一精锐）：守城无在场武将 → 不显示精锐，改显示「XX据点驻军」
         //     defCityObj 已在上面取防守立绘时解析过，这里直接复用。
@@ -1815,7 +1815,7 @@ export class CombatUI {
             ? `${defCityObj?.name || init.defenderCityId}驻军` : '';
         this.currentDefenderEliteName = this.defenderGarrisonLabel ? '' : ((init.defenderEliteName && init.defenderEliteName.trim())
             || (init.defenderCityId ? getCityEliteLegionName(init.defenderCityId) : '')
-            || (init.defenderFactionId ? getExpeditionEliteLegionName(init.defenderFactionId) : '') || '');
+            || (init.defenderFactionId ? (getFactionEliteConfig(init.defenderFactionId)?.name ?? '') : '') || '');
 
 
 
@@ -6481,7 +6481,7 @@ export class CombatUI {
         const eliteName = (nameUnit.unitType === 'city')
             ? readSiegeGarrisonEliteName(nameUnit.getEntity?.())
             : (nameUnit.getEntity?.() ? getLegionEliteLegionName(nameUnit.getEntity()) : null);
-        const resolvedElite = eliteName ?? (nameUnit.factionId ? getExpeditionEliteLegionName(nameUnit.factionId) : null);
+        const resolvedElite = eliteName ?? (nameUnit.factionId ? (getFactionEliteConfig(nameUnit.factionId)?.name ?? null) : null);
         if (side === 'attacker') {
             if (legionName) this.currentAttackerLegionName = legionName;
             if (resolvedElite) this.currentAttackerEliteName = resolvedElite;

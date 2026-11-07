@@ -9,7 +9,7 @@ import { getFactionCultureRegion } from '../../config/portrait_defaults';
 //    —— 缺它俩会让 tsc 报 TS2304，运行到那行直接抛错。
 import { getCityRegion, getRegion } from '../../systems/RegionSystem';
 import { readSiegeGarrisonElite, readSiegeGarrisonEliteName } from '../../combat/SiegeGarrisonTier';
-import { getLegionEliteLegionName, getCityEliteLegionName, getExpeditionEliteLegionName } from '../../data/ExpeditionLegions';
+import { getLegionEliteLegionName, getCityEliteLegionName, getFactionEliteConfig } from '../../data/ExpeditionLegions';
 import {
     setGeneralSkillLegionManager,
     setOnTacticalSkillTriggered,
@@ -115,7 +115,9 @@ function regionalMeetsScene13Gate(attackers: Scene13GateUnit[], defenders: Scene
 }
 
 /**
- * [2026-09-19] 解析参战单位史实精锐番号（城池守军 > 军团精锐 > 势力精锐兜底）
+ * [2026-09-19] 解析参战单位史实精锐番号（城池守军 > 军团精锐 > 本势力武将精锐兜底）
+ * 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 原来最后一层是「势力远征番号表」，已整表删除；
+ *    这里改取该势力**武将自己的精锐**（getFactionEliteConfig），势力无将就没有精锐。
  */
 function resolveUnitEliteName(unit: {
     factionId: string | null;
@@ -136,7 +138,7 @@ function resolveUnitEliteName(unit: {
     const fromLegion = entity ? getLegionEliteLegionName(entity) : null;
     if (fromLegion) return fromLegion;
     if (unit.factionId) {
-        const fromFaction = getExpeditionEliteLegionName(unit.factionId);
+        const fromFaction = getFactionEliteConfig(unit.factionId)?.name;
         if (fromFaction) return fromFaction;
     }
     return null;

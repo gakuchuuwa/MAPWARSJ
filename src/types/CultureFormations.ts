@@ -38,7 +38,7 @@ import { getScriptFactionLegionName } from '../events/scriptPeriod';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { withCommander } from '../data/generalHeroUnits';
-import { getLegionEliteLegionName, getExpeditionEliteLegionName } from '../data/ExpeditionLegions';
+import { getLegionEliteLegionName, getFactionEliteConfig } from '../data/ExpeditionLegions';
 import { getGeneralEra } from '../data/FactionEra';
 import { getGeneralCulture } from '../data/GeneralCulture';
 import { getGeneralEraSubtagLegion } from '../data/GeneralEraSubtags';
@@ -1126,7 +1126,8 @@ function armyHasElite(army: LegionCompositionTarget): boolean {
     if (army.isElite) return true;
     const a = army as unknown as { getSourceCityId?: () => unknown };
     if (typeof a.getSourceCityId === 'function' && getLegionEliteLegionName(army as never) != null) return true;
-    return !!army.factionId && getExpeditionEliteLegionName(army.factionId) != null;
+    // 🔴 [2026-11-07 主人令] 势力远征番号表已删 → 改查该势力武将自己的精锐
+    return !!army.factionId && getFactionEliteConfig(army.factionId) != null;
 }
 
 /** 写入军团 cultureSlots / cultureScales / legionType / formationMode（武将与势力专属优先于文化区） */

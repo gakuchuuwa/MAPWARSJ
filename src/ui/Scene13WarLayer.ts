@@ -56,7 +56,7 @@ import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { getGeneralProfile } from '../data/GeneralSkills';
 import { getFactionGeneral, getFactionIdOfGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
-import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig, getGeneralEliteConfig, getEliteTierDisplayName } from '../data/ExpeditionLegions';
+import { CITY_ELITE_LEGIONS, getFactionEliteConfig, getCityEliteConfig, getGeneralEliteConfig, getEliteTierDisplayName } from '../data/ExpeditionLegions';
 import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, thirtySixStratagemSetOf, THIRTY_SIX_BY_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 import { getGameMode } from '../data/generalOnStage';
 
@@ -691,7 +691,8 @@ export class Scene13WarLayer {
                 if (cCfg) return cCfg.tier;
             }
             if (factionId) {
-                const fCfg = getExpeditionEliteConfig(factionId);
+                // 🔴 [2026-11-07] 势力远征番号表已删 → 取该势力武将自己的精锐档
+                const fCfg = getFactionEliteConfig(factionId);
                 if (fCfg) return fCfg.tier;
             }
             return null;
@@ -4506,23 +4507,27 @@ export class Scene13WarLayer {
                 }
                 const actMeta = m[actName] ?? m.idle ?? m.move;
                 const d = actMeta?.dirs?.[String(dirNum)] ?? actMeta?.dirs?.[dirNum] ?? actMeta?.dirs?.['0'] ?? actMeta?.dirs?.[0];
+                const isStaticTradeIdle = isTrade && actName === 'idle';
                 const finalMeta: NatureMeta = {
                     box_w: d?.fw ?? 40,
                     box_h: d?.fh ?? 40,
                     anchor_x: d?.hx ?? 20,
                     anchor_y: d?.hy ?? 35,
-                    frames: isTrade ? 1 : (actMeta?.frames ?? 1),
+                    frames: isStaticTradeIdle ? 1 : (actMeta?.frames ?? 1),
                     // 🔴 2026-10-31 主人报「尼斯湖水怪动作太快、动画没解析全」：
                     //    DE 原生 180 帧的水怪素材被降采样（src_frames=180），
                     //    仍按 15fps 播就是 DE 的倍增速；这里把原生帧数带上，播放端按比例还原速度。
-                    src_frames: isTrade ? 1 : (actMeta?.src_frames ?? actMeta?.frames ?? 1),
+                    src_frames: isStaticTradeIdle ? 1 : (actMeta?.src_frames ?? actMeta?.frames ?? 1),
                     // 多行网格（水怪 90 帧＝45 列 × 2 行，横条宽度才不超浏览器上限）
                     cols: actMeta?.cols ?? 0,
                 };
                 na.meta = finalMeta;
                 // 🔴 2026-10-31 主人问「尼斯湖水怪的动画帧数对吗」：DE 水怪只有一套动画，walk/run 与 idle 是同一份帧。
                 //    素材只留 idle_<dir>.png，三个动作共用同一张图（按 URL 复用同一 Image，三个动作只解码一份，省 3 倍内存）。
-                const fileAct = (m.sharedActions && !isTrade) ? 'idle' : actName;
+                // 🔴 2026-11-07 商贸车马（SUCAI_TRADE）驻留（idle）时复用 move_<dir>.png 首帧静态展示，逃跑（move）时播放完整 30 帧动画。
+                const fileAct = isTrade
+                    ? (m[actName] ? actName : (m.move ? 'move' : 'idle'))
+                    : (m.sharedActions ? 'idle' : actName);
                 const url = base + species + '/' + fileAct + '_' + dirNum + '.png';
                 let im = this.animalImgCache.get(url);
                 if (!im) {
@@ -4717,11 +4722,11 @@ export class Scene13WarLayer {
             const p = Math.min(1, s.collapse.t / s.collapse.dur);
             const animFrames = m.frames >= 200 ? 100 : m.frames;
             fr = Math.min(animFrames - 1, Math.floor(p * animFrames));
-        } else if (s.asset.startsWith('ANIMAL:') && m.frames > 1) {
+        } else if ((s.asset.startsWith('ANIMAL:') || s.asset.startsWith('TRADE:')) && m.frames > 1) {
             // 🔴 [2026-10-13 主人令「动物要会动」]
-            //    动物（鹿/狼/野猪/猛兽/牛羊/飞鸟等）按 DE 原生 15fps 节奏推进动作帧，
+            //    动物（鹿/狼/野猪/猛兽/牛羊/飞鸟等）与受惊奔逃的牛车/马车/货郎按 DE 原生节奏推进动作帧，
             //    叠加 s.frame 随机相位避免群体动物机械同步；其他植物/岩石/建筑保持静态。
-            // 🔴 [2026-10-15 主人令「加快移动频率」] 移动（walk/run）帧率提到 24fps 匹配提速后的奔跑，
+            // 🔴 [2026-10-15 主人令「加快移动频率」] 移动（walk/run/move）帧率提到 24fps 匹配提速后的奔跑，
             //    idle 仍按 15fps（吃草/甩尾慢节奏）。
             // 🔴 2026-10-31 主人报「尼斯湖水怪动作太快」：素材是**降采样**的（DE 原生 180 帧 → 每 2 帧抽 1 存 90 帧），
             //    直接按 15fps 播等于 2 倍速，所以按 frames/src_frames 把速度还原成 DE 原速
@@ -4731,7 +4736,7 @@ export class Scene13WarLayer {
             const act = s.asset.split('/')[1]?.split('_')[0];
             const srcFrames = m.src_frames ?? m.frames;
             const downsampled = srcFrames > m.frames;
-            const baseFps = downsampled ? 15 : ((act === 'walk' || act === 'run') ? 24 : 15);
+            const baseFps = downsampled ? 15 : ((act === 'walk' || act === 'run' || act === 'move') ? 24 : 15);
             const speedFactor = downsampled ? m.frames / srcFrames : 1;
             const fps = baseFps * speedFactor;
             fr = Math.floor(this.battleSec * fps + s.frame) % m.frames;
@@ -9644,7 +9649,19 @@ export class Scene13WarLayer {
                 const W = this.worldCX * 2, H = this.worldCY * 2;
                 return gl.isWaterAt(x, y, W, H) && !gl.isMoatAt(x, y, W, H);
             },
+            (x, y) => {
+                const gl = this.groundLayerGL;
+                if (!gl) return false;
+                const W = this.worldCX * 2, H = this.worldCY * 2;
+                return gl.isWaterAt(x, y, W, H) || gl.isMoatAt(x, y, W, H);
+            },
         );
+        for (let i = 0; i < this.tacticalAnimals.length; i++) {
+            const an = this.tacticalAnimals[i];
+            if (an.kind !== 'bird') {
+                an.sprite.lift = this.elevationLiftAt(an.x, an.y);
+            }
+        }
     }
 
     /** 设动物动作：素材没有的动作自动回退（run→walk→idle），绝不请求不存在的帧（否则整只不画） */
@@ -9653,7 +9670,10 @@ export class Scene13WarLayer {
         let act = want;
         if (!de.acts.includes(act)) act = de.acts.includes('walk') ? 'walk' : de.acts[0];
         an.action = act;
-        const asset = `ANIMAL:${an.species}/${act}_${an.dir}`;
+        const isTrade = an.species.startsWith('TRADE:');
+        const asset = isTrade
+            ? `${an.species}/${act === 'idle' ? 'idle' : 'move'}_${an.dir}`
+            : `ANIMAL:${an.species}/${act}_${an.dir}`;
         if (an.sprite.asset !== asset) an.sprite.asset = asset;
         this.ensureNatureAsset(asset);
     }

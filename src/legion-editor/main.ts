@@ -38,7 +38,8 @@ import { CompositionSlot, getDefaultScaleForUnitType } from '../types/LegionComp
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
 import { FACTION_GENERALS, getFactionGeneral } from '../data/FactionGenerals';
 import { getGeneralEra } from '../data/FactionEra';
-import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
+// 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 势力远征番号表已删，这里改取该势力武将自己的精锐
+import { getFactionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
 import { DE_UNIT_SOURCE_TYPE, DE_SOURCE_TYPE_LABEL, DE_SOURCE_TYPE_ORDER, type DeSourceType } from '../data/deUnitSourceTypes';
 import { getCombatPower, getPowerRefs, getLegionPower, invalidateCombatPowerCache } from '../data/CombatPower';
@@ -2040,8 +2041,8 @@ function buildRows(): void {
             generalName: getFactionGeneral(f.id)?.generalName,
             generalId: getFactionGeneral(f.id)?.generalId,
             buildingStyle: capCity?.buildingStyle,
-            eliteName: getExpeditionEliteConfig(f.id)?.name,
-            eliteTier: getExpeditionEliteConfig(f.id)?.tier,
+            eliteName: getFactionEliteConfig(f.id)?.name,
+            eliteTier: getFactionEliteConfig(f.id)?.tier,
             // 🔴 [2026-09-06] 势力没有专属军团名时，回退显示**所属文化区的军团名**。
             //    原来只读 localCustomCompositions（= FACTION_COMPOSITIONS），而走文化军团的势力
             //    压根不在那张表里 —— 于是「军团名」列一律显示「—」，编好的哥特文化军团看着像没保存
@@ -2277,7 +2278,7 @@ function buildGeneralLegionIndex(): void {
             const comp = legionName ? getLegionCompositionByName(legionName) : null;
             const slots = (comp?.slots ?? []).map(s => ({ ...s }));
             const era = getGeneralEra(g.generalId, factionId) as UnitAge | undefined;
-            const factionElite = getExpeditionEliteConfig(factionId);
+            const factionElite = getFactionEliteConfig(factionId);
             const hitRow = {
                 factionId,
                 factionName: faction.name,

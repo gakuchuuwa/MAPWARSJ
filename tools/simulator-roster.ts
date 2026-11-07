@@ -18,40 +18,9 @@ import { FACTIONS } from '../src/data/factions';
 import { STARTING_CAPITALS } from '../src/data/StartingCapitals';
 import { CITIES_V2 } from '../src/data/cities_v2';
 
-// 14 文化区精锐表
-import { JAPAN_EXPEDITION_ELITE_LEGIONS } from '../src/data/JapanExpeditionLegions';
-import { KOREA_EXPEDITION_ELITE_LEGIONS } from '../src/data/KoreaExpeditionLegions';
-import { NORTHEAST_EXPEDITION_ELITE_LEGIONS } from '../src/data/NortheastExpeditionLegions';
-import { STEPPE_EXPEDITION_ELITE_LEGIONS } from '../src/data/SteppeExpeditionLegions';
-import { WESTERN_EXPEDITION_ELITE_LEGIONS } from '../src/data/WesternExpeditionLegions';
-import { CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS } from '../src/data/CentralAsiaExpeditionLegions';
-import { TIBET_EXPEDITION_ELITE_LEGIONS } from '../src/data/TibetExpeditionLegions';
-import { DIANQIAN_EXPEDITION_ELITE_LEGIONS } from '../src/data/DianQianExpeditionLegions';
-import { LINGNAN_EXPEDITION_ELITE_LEGIONS } from '../src/data/LingnanExpeditionLegions';
-import { JIANGNAN_EXPEDITION_ELITE_LEGIONS } from '../src/data/JiangnanExpeditionLegions';
-import { NORTH_EXPEDITION_ELITE_LEGIONS } from '../src/data/NorthExpeditionLegions';
-import { CENTRAL_EXPEDITION_ELITE_LEGIONS } from '../src/data/CentralExpeditionLegions';
-import { BASHU_EXPEDITION_ELITE_LEGIONS } from '../src/data/BashuExpeditionLegions';
-import { HEXI_EXPEDITION_ELITE_LEGIONS } from '../src/data/HexiExpeditionLegions';
-
-type EliteEntry = { name: string; tier: 0 | 1 | 2 | 3 | 4 };
-
-const ALL_ELITE: Record<string, EliteEntry> = {
-    ...JAPAN_EXPEDITION_ELITE_LEGIONS,
-    ...KOREA_EXPEDITION_ELITE_LEGIONS,
-    ...NORTHEAST_EXPEDITION_ELITE_LEGIONS,
-    ...STEPPE_EXPEDITION_ELITE_LEGIONS,
-    ...WESTERN_EXPEDITION_ELITE_LEGIONS,
-    ...CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS,
-    ...TIBET_EXPEDITION_ELITE_LEGIONS,
-    ...DIANQIAN_EXPEDITION_ELITE_LEGIONS,
-    ...LINGNAN_EXPEDITION_ELITE_LEGIONS,
-    ...JIANGNAN_EXPEDITION_ELITE_LEGIONS,
-    ...NORTH_EXPEDITION_ELITE_LEGIONS,
-    ...CENTRAL_EXPEDITION_ELITE_LEGIONS,
-    ...BASHU_EXPEDITION_ELITE_LEGIONS,
-    ...HEXI_EXPEDITION_ELITE_LEGIONS,
-};
+// 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除
+//   原「14 文化区精锐表」（JAPAN_EXPEDITION_ELITE_LEGIONS 等 14 个 import + ALL_ELITE 合并）整段删除：
+//   区域 *ExpeditionLegions.ts 已不存在，精锐番号只写在各武将条目的 eliteName/eliteTier（FactionGenerals）。
 
 // ── 查询表 ──
 const factionName = new Map<string, string>();
@@ -118,14 +87,15 @@ generals.forEach((g, i) => {
 });
 
 // ══ T0 精锐清单 ══
+// 🔴 [2026-11-07 主人令] 远征番号系统已删：T0 番号改为从各武将条目的 eliteName/eliteTier 取（不再读区域番号文件）。
 type ERow = { legion: string; faction: string; capital: string; region: string; fid: string };
 const elites: ERow[] = [];
-for (const [fid, cfg] of Object.entries(ALL_ELITE)) {
-    if (cfg.tier !== 0) continue;
+for (const [fid, g] of Object.entries(FACTION_GENERALS)) {
+    if (g.eliteTier !== 0) continue;
     const capId = STARTING_CAPITALS[fid];
     const cap = capId ? cityById.get(capId) : undefined;
     elites.push({
-        legion: cfg.name,
+        legion: g.eliteName ?? '—',
         faction: fname(fid),
         capital: cap?.name ?? (capId ?? '—'),
         region: cap?.region ?? '—',

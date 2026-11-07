@@ -61,7 +61,7 @@
 <!-- 搁置 N+1：
 | 3b | `FactionGeneralPools.ts` | **A/B 多将（N+1）**时：出征池、守城专将、显示名、立绘夹 |
 -->
-| 5 | `*ExpeditionLegions.ts` | 要精锐时；写进**正确 15 区**文件 |
+| 5 | `FactionGenerals.ts` 的 `eliteName` / `eliteTier` | 要精锐时；写在该武将条目上（🔴 2026-11-07：各区域 `*ExpeditionLegions.ts` 势力番号表已整表删除） |
 | 6 | `cities_v2` 的 `region` + `note` | 文化区显式标注 + 史地备注 |
 | 7 | 道路 | 主人 VectorRoadEditor 手画（**AI 禁止**改 VectorRoadData） |
 

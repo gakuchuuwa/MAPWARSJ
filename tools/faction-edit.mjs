@@ -22,14 +22,10 @@ const report = [];
 const put = (f, text, note) => { writes.set(f, text); report.push(`${f}：${note}`); };
 
 const ID = `['"]?${from}['"]?`;
-// ① 单行表项：整行删除（含全部 *ExpeditionLegions.ts 精锐表）
+// ① 单行表项：整行删除
+//   🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除（原含各 *ExpeditionLegions.ts 精锐表与 readdir 扩展）
 const SINGLE_LINE_FILES = ['src/data/factions.ts', 'src/assets/CityAssetManager.ts', 'src/data/SandboxDisplayNames.ts', 'src/data/StartingCapitals.ts',
-  'src/config/portrait_defaults.ts', 'src/data/HistoricalFactionColors.ts', 'src/data/NorthExpeditionLegions.ts',
-  'src/data/SteppeExpeditionLegions.ts', 'src/data/PersianExpeditionLegions.ts', 'src/data/ExpeditionLegions.ts'];
-// [2026-10-23 扩展] 精锐番号分散在 34 个 *ExpeditionLegions.ts，全部纳入删除范围
-for (const f of fs.readdirSync(path.join(ROOT, 'src/data'))) {
-  if (/ExpeditionLegions\.ts$/.test(f) && !SINGLE_LINE_FILES.includes(`src/data/${f}`)) SINGLE_LINE_FILES.push(`src/data/${f}`);
-}
+  'src/config/portrait_defaults.ts', 'src/data/HistoricalFactionColors.ts'];
 for (const f of SINGLE_LINE_FILES) {
   if (!fs.existsSync(path.join(ROOT, f))) continue;
   const lines = read(f).split('\n'); let n = 0;

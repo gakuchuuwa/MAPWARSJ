@@ -1,6 +1,6 @@
 import { TAC_MAP_HALF_W, TAC_MAP_HALF_H } from './Scene13GroundLayerGL';
 import { DE_TILE_PX } from './Scene13CombatMath';
-import type { AnimalAction, AnimalDe, AnimalKind, TacticalAnimal, WarMan } from './Scene13Types';
+import type { AnimalAction, AnimalDe, AnimalKind, DecorSprite, TacticalAnimal, WarMan } from './Scene13Types';
 import { animalAllowedAt } from '../../world/environment/animalCatalog';
 
 /** DE 素材实际有的动作（本机 public/SUCAI_ANIMAL/<物种>/_meta.json 实测）。
@@ -101,6 +101,25 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
     ['CONDOR', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
     ['MACAW', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
     ['RAVEN', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],          // 渡鸦（DE a_bird_raven，此前借用游隼）
+
+    // ── 商贸牛车 / 马车 / 骆驼商车 / 骡车 / 货郎（军队靠近立即受惊驾车奔逃）──
+    ['TRADE:TRADE_CART_WEST', 'prey', 36, 62, 70, 0, 7, ANIMAL_ACTS.graze],       // 西方马车
+    ['TRADE:TRADE_CART_WEST_EMPTY', 'prey', 38, 65, 70, 0, 7, ANIMAL_ACTS.graze], // 西方空马车
+    ['TRADE:TRADE_CART_ASIA', 'prey', 28, 52, 70, 0, 7, ANIMAL_ACTS.graze],       // 亚洲水牛车/牛车
+    ['TRADE:TRADE_CART_ASIA_EMPTY', 'prey', 30, 55, 70, 0, 7, ANIMAL_ACTS.graze], // 亚洲空水牛车/牛车
+    ['TRADE:TRADE_CART_AFRI', 'prey', 28, 52, 70, 0, 7, ANIMAL_ACTS.graze],       // 非洲牛车
+    ['TRADE:TRADE_CART_AFRI_EMPTY', 'prey', 30, 55, 70, 0, 7, ANIMAL_ACTS.graze], // 非洲空牛车
+    ['TRADE:TRADE_CART_ORIE', 'prey', 34, 58, 70, 0, 7, ANIMAL_ACTS.graze],       // 东方骆驼商车
+    ['TRADE:TRADE_CART_ORIE_EMPTY', 'prey', 36, 62, 70, 0, 7, ANIMAL_ACTS.graze], // 东方空骆驼商车
+    ['TRADE:TRADE_CART_MESO', 'prey', 30, 54, 70, 0, 7, ANIMAL_ACTS.graze],       // 美洲货车
+    ['TRADE:TRADE_CART_MESO_EMPTY', 'prey', 32, 56, 70, 0, 7, ANIMAL_ACTS.graze], // 美洲空货车
+    ['TRADE:MULE_CART', 'prey', 32, 56, 70, 0, 7, ANIMAL_ACTS.graze],             // 骡车/马车
+    ['TRADE:MERCHANT_ASIA', 'prey', 28, 50, 40, 0, 7, ANIMAL_ACTS.graze],         // 东亚步行货郎
+    ['TRADE:MERCHANT_ORIE', 'prey', 28, 50, 40, 0, 7, ANIMAL_ACTS.graze],         // 中东步行货郎
+    ['TRADE:MERCHANT_WEST', 'prey', 28, 50, 40, 0, 7, ANIMAL_ACTS.graze],         // 西欧步行货郎
+    ['TRADE:MERCHANT_AFRI', 'prey', 28, 50, 40, 0, 7, ANIMAL_ACTS.graze],         // 非洲步行货郎
+    ['TRADE:MERCHANT_MESO', 'prey', 28, 50, 40, 0, 7, ANIMAL_ACTS.graze],         // 美洲步行货郎
+    ['TRADE:MERCHANT_ANT', 'prey', 28, 50, 40, 0, 7, ANIMAL_ACTS.graze],          // 古典步行货郎
 ];
 
 /** 表展开成查表 */
@@ -161,6 +180,8 @@ export function stepTacticalAnimals(
     setAnimalAction: (an: TacticalAnimal, want: AnimalAction) => void,
     /** 天然水域判定（不含护城河）：水生动物（aquatic）每步都必须落在这里 */
     isNaturalWater?: (x: number, y: number) => boolean,
+    /** 陆地禁行水体判定（含江河海湖与护城河）：陆生动物与牛车/马车逃跑时不冲进水里 */
+    isLandBlocked?: (x: number, y: number) => boolean,
 ): TacticalAnimal[] {
     if (!list.length) return list;
     const MARGIN = 120;
@@ -238,13 +259,20 @@ export function stepTacticalAnimals(
             continue;
         }
 
-        // ── 地面生灵：找最近的活人士兵 ──
+        // ── 地面生灵与牛车/马车/货郎：找最近的活人士兵 ──
+        const isTrade = an.species.startsWith('TRADE:');
         let near: WarMan | null = null;
         let nearD = Infinity;
+        let repX = 0, repY = 0;
         for (const m of men) {
             if (m.hp <= 0) continue;
             const d = Math.hypot(m.x - an.x, m.y - an.y);
             if (d < nearD) { nearD = d; near = m; }
+            if (isTrade && d < 360) {
+                const w = 1 / Math.max(36, d);
+                repX += ((an.x - m.x) / (d || 1)) * w;
+                repY += ((an.y - m.y) / (d || 1)) * w;
+            }
         }
 
         const canMove = de.acts.includes('walk');
@@ -256,15 +284,31 @@ export function stepTacticalAnimals(
             // ① 正在逃跑中：保持锁定的既定速度与朝向闭眼跑完，绝不被周围其他士兵拉扯方向
             fleeing = true;
             want = Math.hypot(an.vx, an.vy) > de.walk * 1.2 ? 'run' : 'walk';
-        } else if (canMove && near && nearD < Math.max(de.los, 220)) {
+        } else if (canMove && near && nearD < Math.max(de.los, isTrade ? 280 : 220)) {
             // ② 未在逃跑时受惊：单次触发逃跑，锁定朝向与时长（按 de.run × 倍率高速奔跑脱离）
             an.fleeTimer = FLEE_SEC;
             const fleeSpd = de.run * ANIMAL_FLEE_SPEED_MULT;
-            const dx = an.x - near.x, dy = an.y - near.y, d = Math.hypot(dx, dy) || 1;
-            an.vx = (dx / d) * fleeSpd;
-            an.vy = (dy / d) * fleeSpd;
-            an.fleeDX = dx / d;
-            an.fleeDY = dy / d;
+            let dx = (isTrade && (repX !== 0 || repY !== 0)) ? repX : (an.x - near.x);
+            let dy = (isTrade && (repX !== 0 || repY !== 0)) ? repY : (an.y - near.y);
+            let d = Math.hypot(dx, dy) || 1;
+            dx /= d;
+            dy /= d;
+            // 若正前方是水域或护城河，预先挑选偏转角避水奔逃
+            if (!an.aquatic && isLandBlocked) {
+                const baseAng = Math.atan2(dy, dx);
+                for (const off of [0, 0.45, -0.45, 0.9, -0.9, 1.35, -1.35, 1.8, -1.8]) {
+                    const ca = Math.cos(baseAng + off), sa = Math.sin(baseAng + off);
+                    if (!isLandBlocked(an.x + ca * 90, an.y + sa * 90)) {
+                        dx = ca;
+                        dy = sa;
+                        break;
+                    }
+                }
+            }
+            an.vx = dx * fleeSpd;
+            an.vy = dy * fleeSpd;
+            an.fleeDX = dx;
+            an.fleeDY = dy;
             an.dir = dir8(an.vx, an.vy);
             fleeing = true;
             want = fleeSpd > de.walk * 1.2 ? 'run' : 'walk';
@@ -284,7 +328,8 @@ export function stepTacticalAnimals(
                 an.wanderY = an.y;
                 an.idleTimer = 4 + Math.random() * 6;
             }
-        } else if (canMove) {
+        } else if (canMove && !isTrade) {
+            // 野生动物与家畜平时在窝边吃草踱步；牛车/马车/货郎在军队未来之前安静驻留原位，不穿墙乱逛
             const distHome = Math.hypot(an.x - an.homeX, an.y - an.homeY);
             if (distHome > (de.kind === 'livestock' ? HOME_LEASH : HOME_BACK)) {
                 mx = an.homeX - an.x;
@@ -365,6 +410,28 @@ export function stepTacticalAnimals(
                 an.idleTimer = 2 + Math.random() * 3;
                 want = 'idle';
             }
+        } else if (!an.aquatic && isLandBlocked && isLandBlocked(an.x, an.y) && !isLandBlocked(prevX, prevY)) {
+            // 陆生动物与牛车/马车：下一步若踏进江河/大海/护城河，退回岸上并沿河岸转向奔逃
+            an.x = prevX;
+            an.y = prevY;
+            if (fleeing) {
+                const base = Math.atan2(an.fleeDY, an.fleeDX);
+                const tries = [0.5, -0.5, 1.0, -1.0, 1.6, -1.6, 2.2, -2.2, Math.PI];
+                for (const t of tries) {
+                    const a = base + t;
+                    const nx = Math.cos(a), ny = Math.sin(a);
+                    if (!isLandBlocked(an.x + nx * 60, an.y + ny * 60)) {
+                        an.fleeDX = nx; an.fleeDY = ny;
+                        an.dir = dir8(nx, ny);
+                        break;
+                    }
+                }
+            } else {
+                an.wanderX = an.x;
+                an.wanderY = an.y;
+                an.idleTimer = 2 + Math.random() * 3;
+                want = 'idle';
+            }
         }
         an.sprite.x = an.x;
         an.sprite.y = an.y;
@@ -373,4 +440,70 @@ export function stepTacticalAnimals(
     }
 
     return list.some((a) => a.sprite.destroyed) ? list.filter((a) => !a.sprite.destroyed) : list;
+}
+
+const MIRROR_DIR8 = [6, 5, 4, 3, 2, 1, 0, 7] as const;
+
+/**
+ * 将战场上所有陆地商贸车马与货郎（`TRADE:TRADE_CART_*`、`TRADE:MULE_CART`、`TRADE:MERCHANT_*`）
+ * 纳入 `tacticalAnimals` 生态列表：平时原地驻留，一旦军队靠近立即像受惊动物一样驾车奔逃。
+ */
+export function syncTradeCartAnimals(
+    decorSprites: DecorSprite[],
+    tacticalAnimals: TacticalAnimal[],
+    ensureAsset: (asset: string) => void,
+): TacticalAnimal[] {
+    const decorSet = new Set(decorSprites);
+    const active = tacticalAnimals.filter((a) => decorSet.has(a.sprite) && !a.sprite.destroyed);
+    const registered = new Set<DecorSprite>(active.map((a) => a.sprite));
+
+    for (let i = 0; i < decorSprites.length; i++) {
+        const sp = decorSprites[i];
+        if (sp.destroyed || registered.has(sp)) continue;
+        if (!/^TRADE:(?:TRADE_CART_|MULE_CART|MERCHANT_)/.test(sp.asset)) continue;
+
+        const slashIdx = sp.asset.indexOf('/');
+        const species = slashIdx >= 0 ? sp.asset.slice(0, slashIdx) : sp.asset;
+        const actDirStr = slashIdx >= 0 ? sp.asset.slice(slashIdx + 1) : 'move_2';
+        const under = actDirStr.lastIndexOf('_');
+        let dir = under >= 0 ? (parseInt(actDirStr.slice(under + 1), 10) || 0) : 2;
+        dir = ((dir % 8) + 8) % 8;
+        if (sp.flip) {
+            dir = MIRROR_DIR8[dir] ?? dir;
+            sp.flip = false;
+        }
+        const de = animalDeOf(species);
+        const phase = (sp.frame || (i * 7)) % 30;
+        sp.frame = phase;
+        sp.asset = `${species}/idle_${dir}`;
+        ensureAsset(sp.asset);
+
+        active.push({
+            sprite: sp,
+            species,
+            kind: de.kind,
+            action: 'idle',
+            dir,
+            homeX: sp.x,
+            homeY: sp.y,
+            x: sp.x,
+            y: sp.y,
+            vx: 0,
+            vy: 0,
+            fleeTimer: 0,
+            fleeDX: 0,
+            fleeDY: 0,
+            idleTimer: 2 + (i % 4),
+            wanderX: sp.x,
+            wanderY: sp.y,
+            animPhase: phase,
+            hp: de.hp,
+            atkNext: 0,
+            flyX: sp.x,
+            flyY: sp.y,
+            hovering: false,
+        });
+        registered.add(sp);
+    }
+    return active;
 }

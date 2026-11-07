@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PlayerQuestSystem —— 据点对话与两层任务（2026-09-05 主人定）。
  *
  * 抵达据点 → 看城中武将在不在（据点锚定武将，且此刻没随军在外）→ 对话：
@@ -13,7 +13,7 @@ import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCity } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
-import { getCityEliteLegionName, getExpeditionEliteConfig } from '../data/ExpeditionLegions';
+import { getCityEliteLegionName, getFactionEliteConfig } from '../data/ExpeditionLegions';
 import { getFactionGeneral, getFactionIdOfGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { FACTIONS } from '../data/factions';
 import { GameConfig } from '../config/GameConfig';
@@ -2244,7 +2244,8 @@ export class PlayerQuestSystem {
                 enemyArmy.isElite = true;
                 // 🔴 [2026-10-24 修「攻方卡片挂守方精锐」] 经典战敌军由拟名／战场人物挂帅，没有武将精锐档案；
                 //    若按出身城兜底会拿被围城（守方）的精锐。与战场事件军团同一口径：番号按**本军势力**挂 eliteOverride。
-                const enemyElite = getExpeditionEliteConfig(enemyFactionId);
+                // 🔴 [2026-11-07 主人令] 势力远征番号表已删 → 取该势力武将自己的精锐（无将则没有番号）
+                const enemyElite = getFactionEliteConfig(enemyFactionId);
                 if (enemyElite) enemyArmy.eliteOverride = enemyElite;
                 if (enemyGeneralId) {
                     enemyArmy.generalId = enemyGeneralId;
@@ -2476,7 +2477,7 @@ export class PlayerQuestSystem {
         // 🔴 [2026-10-24 修「攻方卡片挂守方精锐」] 经典战敌军由拟名／战场人物挂帅，没有武将精锐档案；
         //    若按出身城兜底会拿被攻城（守方）的精锐（例：葡萄牙攻伊瓜苏，攻方卡片显示「传教区军」）。
         //    与战场事件军团同一口径：番号按**本军势力**挂 eliteOverride，精锐不随被攻的城。
-        const enemyElite = getExpeditionEliteConfig(fbState.enemyFactionId);
+        const enemyElite = getFactionEliteConfig(fbState.enemyFactionId);
         if (enemyElite) enemyArmy.eliteOverride = enemyElite;
         if (fbState.enemyGeneralId) enemyArmy.generalId = fbState.enemyGeneralId;
         if (fbState.enemyPortrait) enemyArmy.portraitPath = fbState.enemyPortrait;

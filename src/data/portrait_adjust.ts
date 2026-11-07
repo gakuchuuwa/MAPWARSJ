@@ -9403,7 +9403,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/CENTRAL/han_fengting.png": {
-            "scale": 1.09,
+            "scale": 1.11,
             "offsetX": 20,
             "offsetY": -6
         },
@@ -10766,6 +10766,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": -19,
             "offsetY": 25
+        },
+        "/assets/CENTRAL/liang_d_zhuyouning.png": {
+            "scale": 1.11,
+            "offsetX": 20,
+            "offsetY": -6
         }
     },
     "folderGuides": {

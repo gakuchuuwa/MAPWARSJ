@@ -22,9 +22,10 @@ import { markBattlefieldFought, isBattlefieldFought, setActiveBattleTitle } from
 import { matchesBattlefield } from '../data/Battlefields';
 import { findEventSite } from '../data/eventSites';
 import { isScriptPeriod } from './scriptPeriod';
-// 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] 精锐**按势力**取番号与档位：
-//    表就是 `factionId → { name, tier }`（各区 ExpeditionLegions），与据点无关。
-import { getExpeditionEliteConfig, type EliteTier } from '../data/ExpeditionLegions';
+// 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] 精锐**按势力**取番号与档位。
+// 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 原「势力远征番号表」（factionId → 番号）已整表删除；
+//    现在 `getFactionEliteConfig` 取的是该势力**武将自己的精锐**（无将则 null），不再另编势力番号。
+import { getFactionEliteConfig, type EliteTier } from '../data/ExpeditionLegions';
 
 export class HistoricalEventManager {
     private timeSystem: TimeSystem;
@@ -520,7 +521,7 @@ export class HistoricalEventManager {
             const reuseRec = reuse.generalId ? getGeneralRecordByGeneralId(reuse.generalId) : null;
             reuse.eliteOverride = (reuseRec?.eliteName
                 ? { name: reuseRec.eliteName, tier: (reuseRec.eliteTier ?? 0) as EliteTier }
-                : null) ?? getExpeditionEliteConfig(factionId) ?? null;
+                : null) ?? getFactionEliteConfig(factionId) ?? null;
             applyLegionCultureComposition(reuse, reuse.cultureRegion ?? undefined);
             reuse.scriptMarchExempt = true;
             reuse.isScriptArmy = true;
@@ -545,24 +546,16 @@ export class HistoricalEventManager {
         const legionGeneralId = isSiegeDefender ? null : generalId;
 
         // 🔴 [2026-09-19 主人怒斥「谁说的精锐是随据点挂的？？？凭什么不能挂战场？？？
-        //    「你别给我乱弄行不行」] **精锐挂在「势力」上，不是挂在据点上** —— 我之前
-        //    把「势力→番号」硬拐成「势力→首都城→番号」，还去给势力建据点当锚点，全是瞎弄。
-        //
-        //    读代码（不是读注释）得到的事实：
-        //      · `getExpeditionEliteLegionName(factionId)` / `getExpeditionEliteConfig(factionId)`
-        //        —— **直接按势力查番号**，表就是 `factionId → { name, tier }`（各区 ExpeditionLegions）。
-        //      · `getLegionEliteConfig(army)`（`ExpeditionLegions.ts:216`）只是**军营地上那条便捷路**：
-        //        `army.homeCityId ?? army.getSourceCityId()` → `getCityEliteConfig(cityId)`，
-        //        而 `CITY_ELITE_LEGIONS` 本身也是由 `STARTING_CAPITALS` 从**势力表**倒推出来的。
-        //        所以「按城查」与「按势力查」是同一张表的两个入口，城只是行军时的顺手指针。
-        //
-        //    → 战场军团**不走城这条路**：`sourceCityId` 一律留空，让 `getLegionEliteConfig`
-        //      返回 null，再由下面按**势力**把番号与档位直接写到这支军团上。
+        //    「你别给我乱弄行不行」] 战场军团不能借「据点精锐」去顶，番号要按这一方自己的将/势力给。
+        // 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 原「势力→番号」表（各区域 ExpeditionLegions）已整表删除，
+        //    精锐只剩两个真实来源：武将条目的 `eliteName/eliteTier`、以及据点武将自己的精锐（`CITY_ELITE_LEGIONS`）。
+        //    → 战场军团仍然**不挂城**：`sourceCityId` 一律留空，避免吃到别家据点的精锐；
+        //      番号先取本场武将自带的精锐，武将没有才取该势力武将自己的精锐（`getFactionEliteConfig`）。
         //      这样既不吃任何据点、也不牵动募兵（`markSpawnTierConsumed` 对守方本就不调）。
         const city = sourceCityId ? this.cityManager.getCity(sourceCityId) : null;
         const legionName = this.sideBaseLegionName(fb, side);
         // 🔴 不挂 `homeCityId`、不设 `sourceCityId`：军团只为这一仗而生、打完就班师，
-        //    既不该有本城（牵扯募兵/驻军口径），也不该借任何城去查番号（番号按势力给，见下）。
+        //    既不该有本城（牵扯募兵/驻军口径），也不该借任何城去查番号（番号按将/势力给，见下）。
         const army = this.legionManager.createLegion(
             stand, troops, factionId, legionName,
             undefined, undefined, undefined, legionGeneralId ?? undefined,
@@ -572,19 +565,17 @@ export class HistoricalEventManager {
 
         army.setTroops(troops);
         army.isElite = true;   // 13 战术层准入要求双方都有将 + 都有精锐
-        // 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] **番号按势力挂到这支战场军团上**：
-        //    `getExpeditionEliteConfig(factionId)` 的表就是 `factionId → { name, tier }`，
-        //    与据点毫无关系。名字写进军团名后缀，13 面板的番号标签读的就是它
-        //    （`CombatUI.getLegionEliteBadgeName` 优先取 `army.name`）；
-        //    档位（战力第三环）由 `getUnitEliteTier` → `getLegionEliteConfig(army)` 取不到时，
-        //    回落到名字匹配（`CultureCombat.ts:136` 有这条兜底：名字等于某番号名即按其 tier）。
-        // 🔴 [2026-09-23 主人定「军团只显示马其顿军团就行了」] 军团名只写军团名；番号按势力挂到 eliteOverride
+        // 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] 番号直接挂到这支战场军团上（eliteOverride），
+        //    与据点无关；13 面板的番号标签读它（`CombatUI.getLegionEliteBadgeName` 优先取 `army.name`），
+        //    档位（战力第三环）则由 `getUnitEliteTier` → `getLegionEliteConfig(army)` 读同一份 `eliteOverride`。
+        // 🔴 [2026-11-07] 势力远征番号表已删：武将没自带精锐时只退到「该势力武将自己的精锐」，不再编势力番号。
+        // 🔴 [2026-09-23 主人定「军团只显示马其顿军团就行了」] 军团名只写军团名；番号挂到 eliteOverride
         army.name = legionName;
         // 🔴 [2026-10-20 主人令「每个武将都要给安置据点」] 武将条目自带精锐优先（同 reuse 分支说明）
         const rec = legionGeneralId ? getGeneralRecordByGeneralId(legionGeneralId) : null;
         army.eliteOverride = (rec?.eliteName
             ? { name: rec.eliteName, tier: (rec.eliteTier ?? 0) as EliteTier }
-            : null) ?? getExpeditionEliteConfig(factionId) ?? null;
+            : null) ?? getFactionEliteConfig(factionId) ?? null;
         if (legionGeneralId && !army.generalId) army.generalId = legionGeneralId;
         applyLegionCultureComposition(army, army.cultureRegion ?? undefined);
         if (rec?.portrait) army.portraitPath = rec.portrait;

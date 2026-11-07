@@ -143,7 +143,8 @@ function markPortraitDevWrite(): void {
     portraitDevSuppressReloadUntil = Date.now() + 8000;
 }
 
-// batch-manager 连续写盘（batch-import → save-general → save-elite）
+// 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除 save-elite
+// batch-manager 连续写盘（batch-import → save-general）
 // 期间抑制 Vite full-reload，防止后续 API 调用被页面刷新打断
 let batchSaveSuppressReloadUntil = 0;
 function markBatchSaveWrite(): void {
@@ -343,7 +344,8 @@ export default defineConfig({
             configureServer(server) {
                 const origSend = server.ws.send.bind(server.ws);
                 // [2026-07-17 主人裁定] 批量/编辑器保存的整页刷新改为「窗口内拦截 + 窗口结束自动补发一次」：
-                //   - 窗口内仍拦截，保护连环写盘（batch-import → save-general → save-elite）不被刷新打断；
+                //   - 窗口内仍拦截，保护连环写盘（batch-import → save-general）不被刷新打断；
+                //     🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除 save-elite
                 //   - 窗口结束后自动补发 full-reload，编辑器改完即见，不再需要手动 F5；
                 //   - 连续保存会顺延窗口，最终只补发一次；
                 //   - 立绘 F2 窗口维持旧行为「只拦不补」：立绘调校常发生在追镜对局中，补刷会炸掉正在看的战斗。
@@ -1063,28 +1065,10 @@ export default defineConfig({
                 });
 
                 // ========================================================
-                // [NEW 2026-06-29] /api/save-elite
-                //   写入精锐番号到对应区域的 ExpeditionLegions 文件
+                // 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除
+                //   原 /api/save-elite（把精锐番号写回各区域 ExpeditionLegions 文件）整段删除：
+                //   区域番号文件已不存在，精锐番号只写在各武将条目的 eliteName/eliteTier（FactionGenerals）。
                 // ========================================================
-                server.middlewares.use('/api/save-elite', (req, res) => {
-                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
-                    let body = '';
-                    const bodyChunks: Buffer[] = [];
-                    req.on('data', (chunk) => collectBodyChunk(bodyChunks, chunk));
-                    req.on('end', () => {
-                        body = Buffer.concat(bodyChunks).toString('utf-8');
-                        try {
-                            const data = JSON.parse(body);
-                            const result = serverSaveEliteLegion(data);
-                            res.setHeader('Content-Type', 'application/json');
-                            res.end(JSON.stringify({ ok: true, ...result }));
-                        } catch (err: any) {
-                            res.statusCode = 500;
-                            res.setHeader('Content-Type', 'application/json');
-                            res.end(JSON.stringify({ ok: false, error: err.message }));
-                        }
-                    });
-                });
 
                 // ========================================================
                 // [NEW 2026-06-29] /api/validate-entities
@@ -2831,7 +2815,8 @@ function serverReplaceArrayBlock(text: string, keyword: string, keyName: string,
  *  'panjun': 'city_xxx', 整文件语法崩. 加冒号能严格限定为对象 key. */
 /** 定位对象 key 在文本中的起始下标, 支持两种写法:
  *   带引号 'key':  (StartingCapitals / SandboxDisplayNames)
- *   不带引号 key:  (FactionGenerals / GeneralSkills / *ExpeditionLegions)
+ *   不带引号 key:  (FactionGenerals / GeneralSkills)
+ *   🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除（原 *ExpeditionLegions 已不存在）
  *  返回 key 字符本身的下标; 找不到返回 -1。 */
 function findObjectKeyIdx(text: string, fromIdx: number, targetKey: string): number {
     const quoted = text.indexOf(`'${targetKey}':`, fromIdx);
@@ -3034,8 +3019,7 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
     let generalLifeYearsText = readIfExists(generalLifeYearsPath);
     let firstBattlesText = readIfExists(firstBattlesPath);
     let battlefieldCharsText = readIfExists(battlefieldCharsPath);
-    // 精锐区文件按需读取/累积修改: file 绝对路径 → 最新文本
-    const eliteEdits = new Map<string, string>();
+    // 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除（原 eliteEdits 精锐区文件累积表）
 
     const results: DeleteResult[] = [];
     // 只有真删过条目的附带文件才回写（没命中的不动，免得无谓触碰别的并行修改）
@@ -3130,19 +3114,9 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
                 }
             }
 
-            // [FIX 2026-07-01] 精锐区文件 (key=factionId), 14 区逐个查删, 累积到 eliteEdits
-            for (const [, rinfo] of Object.entries(REGION_TO_ELITE_FILE)) {
-                const efp = path.resolve(__dirname, 'src/data', rinfo.file);
-                let etext = eliteEdits.get(efp) ?? (fs.existsSync(efp) ? fs.readFileSync(efp, 'utf-8') : null);
-                if (etext == null) continue;
-                const ekw = etext.indexOf(rinfo.varName);
-                if (ekw === -1 || findObjectKeyIdx(etext, ekw, fId) === -1) continue; // 未命中: 不缓存(只写改过的)
-                try {
-                    etext = serverRemoveObjectKey(etext, rinfo.varName, fId);
-                    eliteEdits.set(efp, etext);
-                    results.push({ target: tag, file: rinfo.file, ok: true });
-                } catch (e: any) { results.push({ target: tag, file: rinfo.file, ok: false, error: e.message }); }
-            }
+            // 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除
+            //   原「精锐区文件 (key=factionId), 14 区逐个查删, 累积到 eliteEdits」整段删除：
+            //   区域番号文件已不存在，删势力不再有番号条目要清。
         }
 
         if (cId) {
@@ -3174,10 +3148,10 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
             fs.writeFileSync(camPath, camText, 'utf-8');
             fs.writeFileSync(sdnPath, sdnText, 'utf-8');
             fs.writeFileSync(roadsPath, roadsText, 'utf-8'); // [2026-05-30]
-            // [FIX 2026-07-01] 武将记录 / 档案 / 精锐 同步落盘
+            // [FIX 2026-07-01] 武将记录 / 档案 同步落盘
             fs.writeFileSync(factionGeneralsPath, factionGeneralsText, 'utf-8');
             fs.writeFileSync(generalSkillsPath, generalSkillsText, 'utf-8');
-            for (const [efp, etext] of eliteEdits) fs.writeFileSync(efp, etext, 'utf-8');
+            // 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除（原精锐区文件回写）
             // [FIX 2026-10-24] 附带登记表：只在真删过条目时回写
             const writeAttached = (label: string, fp: string, text: string): void => {
                 if (text && dirtyAttached.has(label)) fs.writeFileSync(fp, text, 'utf-8');
@@ -3191,7 +3165,7 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
             writeAttached('GeneralLifeYears.ts', generalLifeYearsPath, generalLifeYearsText);
             writeAttached('GeneralFirstBattles.ts', firstBattlesPath, firstBattlesText);
             writeAttached('BattlefieldCharacters.ts', battlefieldCharsPath, battlefieldCharsText);
-            console.log(`[BatchDelete] ✅ 写入完成 (含 FactionGenerals/GeneralSkills + ${eliteEdits.size} 精锐文件 + ${dirtyAttached.size} 附带表)`);
+            console.log(`[BatchDelete] ✅ 写入完成 (含 FactionGenerals/GeneralSkills + ${dirtyAttached.size} 附带表)`);
         } catch (err: any) {
             console.log(`[BatchDelete] ❌ 写入失败: ${err.message}`);
             for (const r of results) r.ok = false;
@@ -4488,75 +4462,9 @@ function serverCleanCanonicalForPortrait(canonicalPath: string, destWeb: string)
 // [NEW 2026-06-29] 实体批量管理 — 读/写/校验
 // ============================================================
 
-const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = {
-    SLAVIC: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },
-    GERMANIC: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },
-    LATIN: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },
-    INDIA: { file: 'IndiaExpeditionLegions.ts', varName: 'INDIA_EXPEDITION_ELITE_LEGIONS' },
-    BERBER: { file: 'BerberExpeditionLegions.ts', varName: 'BERBER_EXPEDITION_ELITE_LEGIONS' },
-    JAPAN: { file: 'JapanExpeditionLegions.ts', varName: 'JAPAN_EXPEDITION_ELITE_LEGIONS' },
-    KOREA: { file: 'KoreaExpeditionLegions.ts', varName: 'KOREA_EXPEDITION_ELITE_LEGIONS' },
-    NORTHEAST: { file: 'NortheastExpeditionLegions.ts', varName: 'NORTHEAST_EXPEDITION_ELITE_LEGIONS' },
-    STEPPE: { file: 'SteppeExpeditionLegions.ts', varName: 'STEPPE_EXPEDITION_ELITE_LEGIONS' },
-    SCYTHIANS: { file: 'ScythiansExpeditionLegions.ts', varName: 'SCYTHIANS_EXPEDITION_ELITE_LEGIONS' },
-    SRIVIJAYA: { file: 'SriVijayaExpeditionLegions.ts', varName: 'SRIVIJAYA_EXPEDITION_ELITE_LEGIONS' },
-    WESTERN: { file: 'WesternExpeditionLegions.ts', varName: 'WESTERN_EXPEDITION_ELITE_LEGIONS' },
-    CENTRAL_ASIA: { file: 'CentralAsiaExpeditionLegions.ts', varName: 'CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS' },
-    WEST_ASIA: { file: 'WestAsiaExpeditionLegions.ts', varName: 'WEST_ASIA_EXPEDITION_ELITE_LEGIONS' },
-    ORIE: { file: 'OrieExpeditionLegions.ts', varName: 'ORIE_EXPEDITION_ELITE_LEGIONS' },
-    TIBET: { file: 'TibetExpeditionLegions.ts', varName: 'TIBET_EXPEDITION_ELITE_LEGIONS' },
-    DIANQIAN: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },
-    LINGNAN: { file: 'LingnanExpeditionLegions.ts', varName: 'LINGNAN_EXPEDITION_ELITE_LEGIONS' },
-    JIANGNAN: { file: 'JiangnanExpeditionLegions.ts', varName: 'JIANGNAN_EXPEDITION_ELITE_LEGIONS' },
-    NORTH: { file: 'NorthExpeditionLegions.ts', varName: 'NORTH_EXPEDITION_ELITE_LEGIONS' },
-    CENTRAL: { file: 'CentralExpeditionLegions.ts', varName: 'CENTRAL_EXPEDITION_ELITE_LEGIONS' },
-    BASHU: { file: 'BashuExpeditionLegions.ts', varName: 'BASHU_EXPEDITION_ELITE_LEGIONS' },
-    HEXI: { file: 'HexiExpeditionLegions.ts', varName: 'HEXI_EXPEDITION_ELITE_LEGIONS' },
-    PURU: { file: 'PuruExpeditionLegions.ts', varName: 'PURU_EXPEDITION_ELITE_LEGIONS' },
-    AMERICA: { file: 'AmericaExpeditionLegions.ts', varName: 'AMERICA_EXPEDITION_ELITE_LEGIONS' },
-    ANDE: { file: 'AndeExpeditionLegions.ts', varName: 'ANDE_EXPEDITION_ELITE_LEGIONS' },
-    AFRICA: { file: 'AfricaExpeditionLegions.ts', varName: 'AFRICA_EXPEDITION_ELITE_LEGIONS' },
-    MALAY: { file: 'MalayExpeditionLegions.ts', varName: 'MALAY_EXPEDITION_ELITE_LEGIONS' },
-    EAST: { file: 'EastExpeditionLegions.ts', varName: 'EAST_EXPEDITION_ELITE_LEGIONS' },
-    GREEK: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },
-    THRACIAN: { file: 'ThracianExpeditionLegions.ts', varName: 'THRACIAN_EXPEDITION_ELITE_LEGIONS' },
-    PERSIAN: { file: 'PersianExpeditionLegions.ts', varName: 'PERSIAN_EXPEDITION_ELITE_LEGIONS' },
-    CUMAN: { file: 'CumanExpeditionLegions.ts', varName: 'CUMAN_EXPEDITION_ELITE_LEGIONS' },
-    BRITONS: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 GERMANIC 精锐文件
-    GOTHS: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 GERMANIC 精锐文件
-    HUNS: { file: 'SteppeExpeditionLegions.ts', varName: 'STEPPE_EXPEDITION_ELITE_LEGIONS' },  // 继承 STEPPE 精锐文件
-    TEUTONS: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 GERMANIC 精锐文件
-    VIKINGS: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
-    CELTS: { file: 'GermanicExpeditionLegions.ts', varName: 'GERMANIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 GERMANIC 精锐文件
-    ITALIANS: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
-    SICILIANS: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
-    BULGARIANS: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
-    MAGYAR: { file: 'SteppeExpeditionLegions.ts', varName: 'STEPPE_EXPEDITION_ELITE_LEGIONS' },  // 继承 STEPPE 精锐文件
-    LITHUANIANS: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
-    POLES: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
-    BOHEMIANS: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承 SLAVIC 精锐文件
-    BURGUNDIANS: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
-    SPANISH: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
-    PORTUGUESE: { file: 'LatinExpeditionLegions.ts', varName: 'LATIN_EXPEDITION_ELITE_LEGIONS' },  // 继承 LATIN 精锐文件
-    ETHIOPIANS: { file: 'AfricaExpeditionLegions.ts', varName: 'AFRICA_EXPEDITION_ELITE_LEGIONS' },  // 继承 AFRICA 精锐文件
-    BENGALIS: { file: 'IndiaExpeditionLegions.ts', varName: 'INDIA_EXPEDITION_ELITE_LEGIONS' },  // 继承 INDIA 精锐文件
-    GURJARAS: { file: 'IndiaExpeditionLegions.ts', varName: 'INDIA_EXPEDITION_ELITE_LEGIONS' },  // 继承 INDIA 精锐文件
-    PORUS: { file: 'PuruExpeditionLegions.ts', varName: 'PURU_EXPEDITION_ELITE_LEGIONS' },  // 继承 PURU 精锐文件
-    VIETNAMESE: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },  // 继承 DIANQIAN 精锐文件
-    KHMER: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },  // 继承 DIANQIAN 精锐文件
-    MAYANS: { file: 'AmericaExpeditionLegions.ts', varName: 'AMERICA_EXPEDITION_ELITE_LEGIONS' },  // 继承 AMERICA 精锐文件
-    MAPUCHE: { file: 'AndeExpeditionLegions.ts', varName: 'ANDE_EXPEDITION_ELITE_LEGIONS' },  // 继承 ANDE 精锐文件
-    MUISCA: { file: 'AndeExpeditionLegions.ts', varName: 'ANDE_EXPEDITION_ELITE_LEGIONS' },  // 继承 ANDE 精锐文件
-    TUPI: { file: 'AndeExpeditionLegions.ts', varName: 'ANDE_EXPEDITION_ELITE_LEGIONS' },  // 继承 ANDE 精锐文件
-    ARMENIANS: { file: 'CentralAsiaExpeditionLegions.ts', varName: 'CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS' },  // 继承 CENTRAL_ASIA 精锐文件
-    GEORGIANS: { file: 'CentralAsiaExpeditionLegions.ts', varName: 'CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS' },  // 继承 CENTRAL_ASIA 精锐文件
-    ATHENIANS: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },  // 继承 GREEK 精锐文件
-    SPARTANS: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },  // 继承 GREEK 精锐文件
-    MACEDONIANS: { file: 'GreekExpeditionLegions.ts', varName: 'GREEK_EXPEDITION_ELITE_LEGIONS' },  // 继承 GREEK 精锐文件
-    ACHAEMENIDS: { file: 'PersianExpeditionLegions.ts', varName: 'PERSIAN_EXPEDITION_ELITE_LEGIONS' },  // 继承 PERSIAN 精锐文件
-    BURMESE: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },  // 继承滇缅精锐文件
-    WALLACHIA: { file: 'SlavicExpeditionLegions.ts', varName: 'SLAVIC_EXPEDITION_ELITE_LEGIONS' },  // 继承斯拉夫精锐文件
-};
+// 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除
+//   原 REGION_TO_ELITE_FILE（区域 → { ExpeditionLegions 区域文件, EXPEDITION_ELITE_LEGIONS 常量 } 映射表）整表删除：
+//   各区域 *ExpeditionLegions.ts 已不存在，精锐番号只写在各武将条目的 eliteName/eliteTier（FactionGenerals）。
 
 /**
  * 🔴 [2026-09-11 主人需求] 据点编辑器：按 id 精确改写 `cities_v2.ts` 里**一座**据点的字段。
@@ -4817,6 +4725,10 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
     //     cities_v2.factionId 是**原主**，不等于势力；起义/土司/海寇这类「武将自带政权」的势力，
     //     名下据点只能从武将自己的 cityId 算，否则会被误报「0 据点」）。
     const allGenerals: Array<{ generalId: string; generalName: string; portrait: string; factionId: string; cityId: string }> = [];
+    // 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除
+    //   原「按 14 个区域 ExpeditionLegions 文件合并 elites」整段删除；精锐番号现只写在各武将条目的
+    //   eliteName/eliteTier，这里按武将所属势力收一条（仅供「缺精锐」校验用，region 字段保形置空）。
+    const elites: Record<string, { name: string; tier: number; region: string }> = {};
     {
         const fgKwIdx = fgText.indexOf('FACTION_GENERALS');
         const openIdx = fgKwIdx === -1 ? -1 : fgText.indexOf('= {', fgKwIdx);
@@ -4840,6 +4752,12 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
                 const gCityId = body.match(/cityId:\s*'([^']+)'/)?.[1] ?? '';
                 allGenerals.push({ generalId: g.generalId, generalName: g.generalName, portrait: g.portrait, factionId: fid, cityId: gCityId });
                 if (!generals[fid]) generals[fid] = { ...g, cityId: gCityId };
+                // 🔴 [2026-11-07 主人令] 远征番号系统已删：精锐取自武将条目本身（同名可重复，取该势力首位带番号的将）
+                const eliteName = body.match(/eliteName:\s*'([^']+)'/)?.[1];
+                if (eliteName && !elites[fid]) {
+                    const et = body.match(/eliteTier:\s*(\d)/)?.[1];
+                    elites[fid] = { name: eliteName, tier: et ? parseInt(et) : 0, region: '' };
+                }
             }
         };
         if (openIdx !== -1) {
@@ -4916,16 +4834,7 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         };
     }
 
-    // elites: merged from 14 files
-    const elites: Record<string, { name: string; tier: number; region: string }> = {};
-    for (const [region, info] of Object.entries(REGION_TO_ELITE_FILE)) {
-        const fp = path.resolve(__dirname, 'src/data', info.file);
-        if (!fs.existsSync(fp)) continue;
-        const txt = fs.readFileSync(fp, 'utf-8');
-        for (const m of txt.matchAll(/(\w+):\s*\{\s*name:\s*'([^']+)',\s*tier:\s*(\d)/g)) {
-            elites[m[1]] = { name: m[2], tier: parseInt(m[3]), region };
-        }
-    }
+    // 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除（原「elites: merged from 14 files」整段）
 
     // tactical/strategic skill catalogs for UI dropdowns
     // 战术技：ts_xxx 定义在 TacticalSkillCatalog.ts（非 GeneralSkills.ts）。
@@ -4995,7 +4904,8 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         eras[m[1]] = m[2];
     }
 
-    return { factions, cities, flags, capitals, factionColors, generals, allGenerals, profiles, elites, eras, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: Object.keys(REGION_TO_ELITE_FILE) };
+    return { factions, cities, flags, capitals, factionColors, generals, allGenerals, profiles, elites, eras, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: [] };
+    // 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除（原 regions 取自区域番号映射表，现为空）
 }
 
 /** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → 统一 /assets/.../x.png。
@@ -5195,51 +5105,9 @@ function serverSaveGeneral(data: {
     return results;
 }
 
-function serverSaveEliteLegion(data: {
-    factionId: string;
-    eliteName: string;
-    eliteTier: number;
-    region: string;
-}) {
-    const info = REGION_TO_ELITE_FILE[data.region];
-    if (!info) throw new Error(`未知区域: ${data.region}`);
-
-    // [FIX 2026-07-01] 精锐唯一性：先把该番号从「所有其它区文件」清掉。
-    //   根因——elites 在 entity-data 里按 14 区文件固定顺序合并、相同 factionId「后者覆盖前者」。
-    //   若一个番号同时存在于多个区文件（如 chen 同在 LINGNAN+JIANGNAN），保存到 cityRegion 后，
-    //   排在更后面的旧区文件仍会覆盖新值 → 表现为「保存成功却回退」。清掉其它区即可根治。
-    const cleanedFrom: string[] = [];
-    for (const [region, rinfo] of Object.entries(REGION_TO_ELITE_FILE)) {
-        if (region === data.region) continue;
-        const ofp = path.resolve(__dirname, 'src/data', rinfo.file);
-        if (!fs.existsSync(ofp)) continue;
-        let otext = fs.readFileSync(ofp, 'utf-8');
-        const okwIdx = otext.indexOf(rinfo.varName);
-        if (okwIdx === -1) continue;
-        if (findObjectKeyIdx(otext, okwIdx, data.factionId) === -1) continue;
-        otext = serverRemoveObjectKey(otext, rinfo.varName, data.factionId);
-        markBatchSaveWrite();
-        fs.writeFileSync(ofp, otext, 'utf-8');
-        cleanedFrom.push(rinfo.file);
-    }
-
-    const fp = path.resolve(__dirname, 'src/data', info.file);
-    let text = fs.readFileSync(fp, 'utf-8');
-
-    // 存在性判断用 findObjectKeyIdx（带词边界），避免 text.includes 把 `monong:` 误判成 `nong:` 等子串。
-    const kwIdx = text.indexOf(info.varName);
-    const exists = kwIdx !== -1 && findObjectKeyIdx(text, kwIdx, data.factionId) !== -1;
-    const line = `${data.factionId}: { name: '${data.eliteName}', tier: ${data.eliteTier} },`;
-    if (exists) {
-        text = serverReplaceObjectLine(text, info.varName, data.factionId, `    ${line}`);
-    } else {
-        text = serverInsertIntoStructure(text, info.varName, line, '    ');
-    }
-
-    markBatchSaveWrite();
-    fs.writeFileSync(fp, text, 'utf-8');
-    return { file: info.file, operation: exists ? 'replace' : 'insert', cleanedFrom };
-}
+// 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除
+//   原 serverSaveEliteLegion（把精锐番号写回区域 ExpeditionLegions 文件：跨区清重 → 替换/插入 → 落盘）
+//   整函数删除；区域番号文件已不存在，精锐番号只写在各武将条目的 eliteName/eliteTier（FactionGenerals）。
 
 /**
  * batch-manager 中允许武将佩戴、且必须至少有一名武将佩戴的战略技。
@@ -6059,17 +5927,9 @@ function serverValidateEntities(): {
         }
     }
 
-    // 13. 精锐名重复（仅完全同名）
-    const eliteEntries = Object.entries(data.elites) as [string, { name: string }][];
-    for (let i = 0; i < eliteEntries.length; i++) {
-        for (let j = i + 1; j < eliteEntries.length; j++) {
-            const [idA, eA] = eliteEntries[i], [idB, eB] = eliteEntries[j];
-            if (eA.name.length < 2 || eB.name.length < 2) continue;
-            if (eA.name === eB.name) {
-                issues.push({ level: 'error', msg: `精锐 "${eA.name}"(${idA}) 与 "${eB.name}"(${idB}) 完全同名` });
-            }
-        }
-    }
+    // 13. 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除
+    //   原「精锐名重复（仅完全同名）」检查依赖区域番号表；精锐番号现随武将（FactionGenerals.eliteName），
+    //   主人 2026-10-25 已定「精锐可以重复」——番号重名不再是错误，本项检查随之删除。
 
     // 14. 势力名重复（仅完全同名）
     for (let i = 0; i < data.factions.length; i++) {

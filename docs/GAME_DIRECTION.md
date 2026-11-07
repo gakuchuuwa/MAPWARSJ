@@ -323,7 +323,7 @@
 | **仅将领** | 有番号据点、&lt;4万 摇中「仅将领」 | 「{城名}军团」+ **名将脸**；**无**精锐环系数 |
 | **精锐 + 名将** | &lt;4万 摇中「精锐+将」，或 **≥4万**（必） | 番号 + 脸 + 精锐环系数 |
 
-- 配置：`GameConfig.LEGION_TIER` 四档概率；番号 [`ExpeditionLegions.ts`](../src/data/ExpeditionLegions.ts)；将领 [`FactionGenerals.ts`](../src/data/FactionGenerals.ts)。
+- 配置：`GameConfig.LEGION_TIER` 四档概率；番号＝该据点武将的 `eliteName/eliteTier`（查询入口 [`ExpeditionLegions.ts`](../src/data/ExpeditionLegions.ts)，2026-11-07 起不再有「势力番号表」）；将领 [`FactionGenerals.ts`](../src/data/FactionGenerals.ts)。
 - 分层：[`LegionManager.applyLegionTier`](../src/legion/LegionManager.ts) + `tickLegionTiers`（长到 4万 补精锐+将）。出生定档，精锐/将领**不降级**。
 - **精锐战力加成**：`isElite` 享精锐环（tier 表 1.5~1.1）；回援、收复和撤退与普通军团走同一套规则。
 - **生效**：[`GeneralSkillCombat.canUnitUseGeneralSkills`](../src/combat/GeneralSkillCombat.ts) 只看「带 generalId 且有档案」，**不要求跟随** → AI 名将同样触发；开局战术/战略**攻守双方各自结算**。

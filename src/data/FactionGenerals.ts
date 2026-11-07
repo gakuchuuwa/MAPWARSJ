@@ -4625,7 +4625,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'baiyang_mengtian', factionId: 'qin', cityId: 'city_fushi', generalName: '蒙恬', portrait: '/assets/CENTRAL/baiyang_mengtian.png', eliteName: '长城戍卒', eliteTier: 3 },   // 🔴 [2026-10-24 主人核定] 蒙恬＝秦上郡守将，长年驻节上郡肤施（统三十万北击匈奴、筑长城直道）→ 迁肤施；军团随中原文化自动取。🔴 [2026-11-02 主人令] 精锐改「长城军」（原「秦北军」T2 与权威表 GENERAL_ELITE_LEGIONS 的 T3 打架，本次统一为 T3）
+        { generalId: 'baiyang_mengtian', factionId: 'qin', cityId: 'city_fushi', generalName: '蒙恬', portrait: '/assets/CENTRAL/baiyang_mengtian.png', eliteName: '长城戍卒', eliteTier: 3 },   // 🔴 [2026-10-24 主人核定] 蒙恬＝秦上郡守将，长年驻节上郡肤施（统三十万北击匈奴、筑长城直道）→ 迁肤施；军团随中原文化自动取。🔴 [2026-11-02 主人令] 精锐改「长城军」（原「秦北军」T2 与旧精锐表的 T3 打架，本次统一为 T3；旧表 GENERAL_ELITE_LEGIONS 已于 2026-11-07 随远征番号一并删除）
 
 
 
@@ -8524,7 +8524,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'yuan_d_hubilie', cityId: 'city_shangdu', generalName: '忽必烈', portrait: '/assets/XIANBEI/yuan_d_hubilie.png', eliteName: '蒙古突骑', eliteTier: 2 },
+        // 🔴 [2026-11-07 按史] 忽必烈的亲军＝世祖自建的侍卫亲军（中统初立武卫军，至元元年改侍卫亲军、置都指挥使，八年分左、右、中三卫，十六年增前、后二卫）；
+        //    《元史·兵志二·宿卫》「中统三年…共领武卫军事…至元元年，改武卫为侍卫亲军」「至元十六年，以侍卫亲军创置前后二卫」，《元史·百官志》右卫条「中统三年，初置武卫」。
+        //    原「蒙古突骑」是泛称（2026-11-04 复核 C 类），且与蒙哥、伯颜、扩廓帖木儿共号；档位比照禁军「羽林军」T2。
+        { generalId: 'yuan_d_hubilie', cityId: 'city_shangdu', generalName: '忽必烈', portrait: '/assets/XIANBEI/yuan_d_hubilie.png', eliteName: '侍卫亲军', eliteTier: 2 },
         { generalId: 'qingyuan_yijun_ounanxi', factionId: 'yuan_d', cityId: 'city_qingyuan', generalName: '欧南喜', portrait: '/assets/JIANGNAN/qingyuan_yijun_ounanxi.png', eliteName: '清远盐军', eliteTier: 3 },   // 🔴 [2026-11-05 按A执行] 至元二十年（1283）九月广东盐户起事，二十一年于清远「僭王号，伪署丞相、招讨」，史无国号，故并入大元（同势力史实内战）；据点仍是清远
 
 

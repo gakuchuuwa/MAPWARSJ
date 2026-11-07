@@ -1,6 +1,8 @@
 // 新建势力工具（2026-10-23）：把一个 new-factions.json 里的势力逐项补进 9 张表
 // 用法：node tools/faction-add.mjs <new-factions.json> [--write]
-//   spec: [{ key, name, flag, capitalCityId, legionName, color, eliteName?, eliteTier?, portraitPool?, expeditionFile? }]
+//   spec: [{ key, name, flag, capitalCityId, legionName, color, eliteName?, eliteTier?, portraitPool? }]
+//   🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除 expeditionFile：
+//      精锐番号不再写区域 *ExpeditionLegions.ts，直接写在该势力武将条目的 eliteName/eliteTier（FactionGenerals）。
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -30,7 +32,7 @@ function insertBefore(f, startMarker, closeMarker, rows, note) {
 const q = (s) => `'${String(s).replace(/'/g, "\\'")}'`;
 const facRows = [], camRows = [], sbRows = [], capRows = [], colorRows = [], poolRows = [], compRows = [];
 const genRows = [];
-const expByFile = new Map();
+// 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除（原 expByFile：按区域番号文件收集精锐行）
 
 for (const n of spec) {
     if (!n.key || !n.name || !n.flag || !n.capitalCityId) { notes.push(`❌ 条目缺字段：${JSON.stringify(n)}`); errors++; continue; }
@@ -43,12 +45,8 @@ for (const n of spec) {
     if (n.legionName) compRows.push(`    "${n.key}": {\n        legionName: "${n.legionName}",\n        legionType: "sub",\n    },`);
     else { notes.push(`⚠ ${n.key} 没有 legionName，未写军团编制`); }
     genRows.push(`    ${n.key}: [],`);
-    if (n.eliteName) {
-        const ef = `src/data/${n.expeditionFile || 'CentralExpeditionLegions.ts'}`;
-        const arr = expByFile.get(ef) ?? [];
-        arr.push(`    ${n.key}: { name: ${q(n.eliteName)}, tier: ${Number(n.eliteTier ?? 4)} },`);
-        expByFile.set(ef, arr);
-    }
+    // 🔴 [2026-11-07 主人令] 远征番号系统已删：番号改由武将条目承载，本工具只提示，不再往区域番号文件写行。
+    if (n.eliteName) notes.push(`ℹ ${n.key} 精锐「${n.eliteName}」T${Number(n.eliteTier ?? 4)}：写进该势力武将条目的 eliteName/eliteTier`);
 }
 
 insertBefore('src/data/factions.ts', 'export const FACTIONS', '\n];', facRows, 'factions');
@@ -59,7 +57,7 @@ insertBefore('src/data/HistoricalFactionColors.ts', 'const _FIXED', '\n};', colo
 insertBefore('src/config/portrait_defaults.ts', 'const FACTION_PORTRAIT_POOLS', '\n};', poolRows, '立绘池');
 insertBefore('src/data/FactionCompositions.ts', 'export const FACTION_COMPOSITIONS', '\n};', compRows, '军团编制');
 insertBefore('src/data/FactionGenerals.ts', 'export const FACTION_GENERALS', '\n};', genRows, 'FactionGenerals 空块');
-for (const [ef, rows] of expByFile) insertBefore(ef, 'ELITE_LEGIONS', '\n};', rows, `精锐 ${path.basename(ef)}`);
+// 🔴 [2026-11-07 主人令] 远征番号系统已删，此处同步移除（原按区域文件插精锐行的 expByFile 循环）
 
 for (const n of notes) console.log(n);
 if (errors) { console.log(`❌ ${errors} 个错误，未写盘`); process.exit(2); }
