@@ -1741,6 +1741,33 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
 
         // 打散候选点顺序（不再按单一 flankScore 对称排序，避免城外建筑排成整齐队列）
         const shuffledHamlets = shuffle(hamletCandidates);
+        const wingBuildingOffsets: ReadonlyArray<readonly [number, number]> = [
+            [305, -58],
+            [-305, -58],
+            [295, 62],
+            [-295, 62],
+            [225, -155],
+            [-225, -155],
+            [225, 155],
+            [-225, 155],
+            [345, 12],
+            [-345, 12],
+        ];
+        const findOutskirtsCompanionSpot = (
+            baseX: number,
+            baseY: number,
+            asset: string,
+            offsets: ReadonlyArray<readonly [number, number]>,
+        ): { x: number; y: number } | null => {
+            for (const [dx, dy] of offsets) {
+                const px = baseX + dx, py = baseY + dy;
+                if (!isPointDryAndOpen(px, py) || isNearAnySpawn(px, py, 440)) continue;
+                if (canPlaceOutskirtsAt(asset, px, py)) {
+                    return { x: px, y: py };
+                }
+            }
+            return null;
+        };
 
         // ── (A) 附郭农庄 / 美洲聚落农田 / 游牧牧场（1~2 处，分散在不同方位，含磨坊/聚落/庄园/畜牧棚 + 农田/葡萄园/橄榄树/果丛 + 民居） ──
         const targetHamlets = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city')
@@ -1755,9 +1782,34 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         for (const cand of shuffledHamlets) {
             if (placedCenters.length >= targetHamlets) break;
             if (isTooCloseOrAligned(cand.x, cand.y, 680)) continue;
-            placedCenters.push({ x: cand.x, y: cand.y });
-
             const vx = cand.x, vy = cand.y;
+            if (!canPlaceOutskirtsAt(millAsset, vx, vy)) continue;
+            const fieldSide = mRnd() < 0.5 ? 1 : -1;
+            const diamondOffsets: ReadonlyArray<readonly [number, number]> = [
+                [fieldSide * 265, 25],
+                [fieldSide * 265, -155],
+                [fieldSide * 485, -65],
+                [fieldSide * 65, 175],
+                [-fieldSide * 65, 175],
+            ];
+            const houseOffsets: ReadonlyArray<readonly [number, number]> = [
+                [-fieldSide * 275, -45],
+                [-fieldSide * 255, 145],
+                [-fieldSide * 45, -185],
+                [fieldSide * 45, -185],
+                [-fieldSide * 335, 35],
+            ];
+            let validPlotsPreview = 0;
+            for (const [dx, dy] of diamondOffsets) {
+                if (isPointDryAndOpen(vx + dx, vy + dy) && canPlaceOutskirtsAt(plotAsset, vx + dx, vy + dy)) validPlotsPreview++;
+            }
+            let validHousesPreview = 0;
+            for (const [dx, dy] of houseOffsets) {
+                if (isPointDryAndOpen(vx + dx, vy + dy) && canPlaceOutskirtsAt(housePool[0], vx + dx, vy + dy)) validHousesPreview++;
+            }
+            if (validPlotsPreview < 2 || validHousesPreview < 2) continue;
+
+            placedCenters.push({ x: vx, y: vy });
             clearTreesInRadius(vx, vy, 280);
             gl.carveFoundation(vx, vy, W, H, 2.5);
 
@@ -1766,13 +1818,6 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             pushOutskirtsSprite(millAsset, vx, vy, 0.78 + mRnd() * 0.04, 0, mRnd() < 0.5, 0);
 
             // 2) 2~3 块散落农田 / 水稻田 / 牧草场贴片（距磨坊 ≥ 265px，彼此等轴间距 ≥ 260px，绝不挨着或叠压）
-            const fieldSide = mRnd() < 0.5 ? 1 : -1;
-            const diamondOffsets: ReadonlyArray<readonly [number, number]> = [
-                [fieldSide * 265, 25],
-                [fieldSide * 265, -155],
-                [fieldSide * 485, -65],
-                [fieldSide * 65, 175],
-            ];
             let plotsPlaced = 0;
             const maxPlots = this.defenderCityType === 'big_city' ? 3 : 2;
             for (const [dx, dy] of diamondOffsets) {
@@ -1789,12 +1834,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             }
 
             // 3) 另一侧围以 2 间同风格民居 / 茅屋 / 毡帐（距磨坊及彼此等轴间距均 ≥ 275px，绝不挨着）
-            const houseOffsets: ReadonlyArray<readonly [number, number]> = [
-                [-fieldSide * 275, -45],
-                [-fieldSide * 255, 145],
-                [-fieldSide * 45, -185],
-            ];
-            const houseCount = this.defenderCityType === 'big_city' ? 2 : 2;
+            const houseCount = 2;
             let hPlaced = 0;
             for (let hi = 0; hi < houseOffsets.length && hPlaced < houseCount; hi++) {
                 const hx = vx + houseOffsets[hi][0] + (mRnd() - 0.5) * 12;
@@ -1809,16 +1849,25 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
 
             // 4) 村口远端伴生果树/浆果与农庄推车（与磨坊和民居保持 ≥ 185px 净距）
             if (!isSnow) {
-                const bx = vx - fieldSide * 145, by = vy + 125;
-                if (isPointDryAndOpen(bx, by)) {
-                    const fAsset = (canUseOliveTree && mRnd() < 0.5)
-                        ? 'RESOURCE:OLIVE_TREE'
-                        : foragePool[Math.floor(mRnd() * foragePool.length)];
-                    pushOutskirtsSprite(fAsset, bx, by, 0.84, fAsset === 'RESOURCE:OLIVE_TREE' ? 0 : -6, mRnd() < 0.5, 0);
+                const fAsset = (canUseOliveTree && mRnd() < 0.5)
+                    ? 'RESOURCE:OLIVE_TREE'
+                    : foragePool[Math.floor(mRnd() * foragePool.length)];
+                const fSpot = findOutskirtsCompanionSpot(vx, vy, fAsset, [
+                    [-fieldSide * 155, 125],
+                    [fieldSide * 155, -125],
+                    [0, 155],
+                ]);
+                if (fSpot) {
+                    pushOutskirtsSprite(fAsset, fSpot.x, fSpot.y, 0.84, fAsset === 'RESOURCE:OLIVE_TREE' ? 0 : -6, mRnd() < 0.5, 0);
                 }
             }
-            if (isPointDryAndOpen(vx + fieldSide * 135, vy - 115)) {
-                pushOutskirtsSprite(villageCartAsset, vx + fieldSide * 135, vy - 115, 0.78, 0, mRnd() < 0.5, 0);
+            const vCartSpot = findOutskirtsCompanionSpot(vx, vy, villageCartAsset, [
+                [fieldSide * 145, -118],
+                [-fieldSide * 145, -118],
+                [0, -145],
+            ]);
+            if (vCartSpot) {
+                pushOutskirtsSprite(villageCartAsset, vCartSpot.x, vCartSpot.y, 0.78, 0, mRnd() < 0.5, 0);
             }
         }
 
@@ -1977,47 +2026,82 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             }
         }
 
-        // ── (E) 城郊前哨营塞（哨岗/木堡 + 保持 ≥ 275px 间距的本文化军营/营帐 + 拒马防线 + 战旗） ──
+        // ── (E) 城郊要塞/前哨军营组合（主堡/木堡/哨岗 + 驻军兵营/军帐 + 附属哨塔/军械铁匠铺 + 拒马防线 + 军需木桶 + 战旗，绝不单摆） ──
         outpostCandidates.sort(() => mRnd() - 0.5);
         const targetOutposts = (this.defenderCityType === 'big_city' || this.defenderCityType === 'pass') ? 2 : 1;
         const outpostPool = isNomadOutskirts
             ? ['BUILDING:OUTPOST']
-            : ['BUILDING:FORTIFIED_OUTPOST', 'BUILDING:OUTPOST', 'BUILDING:WOODEN_FORT'];
+            : ((deStyle === 'SLAV' || deStyle === 'EAST') && this.defenderCityType !== 'stockade')
+                ? ['BUILDING:POENARI_CASTLE', 'BUILDING:WOODEN_FORT', 'BUILDING:FORTIFIED_OUTPOST']
+                : ['BUILDING:FORTIFIED_OUTPOST', 'BUILDING:OUTPOST', 'BUILDING:WOODEN_FORT'];
         const campTentOutskirts = isGrecoRomanOutskirts
             ? 'BUILDING:GREEK_WAR_TENT'
             : isNomadOutskirts
                 ? 'BUILDING:YURT_A'
                 : isAmericasOutskirts
                     ? 'BUILDING:HUT_A'
-                    : 'BUILDING:CAMP_BARRACKS';
+                    : (this.defenderCityType === 'stockade' ? 'BUILDING:CAMP_BARRACKS' : `BUILDING:${deStyle}_BARRACKS_AGE2`);
+        const outpostAuxAsset = isNomadOutskirts
+            ? 'BUILDING:YURT_B'
+            : isAmericasOutskirts
+                ? 'BUILDING:OUTPOST'
+                : (this.defenderCityType === 'stockade' ? 'BUILDING:OUTPOST' : `BUILDING:${deStyle}_BLACKSMITH_AGE2`);
         let outpostsPlaced = 0;
         for (const oc of outpostCandidates) {
             if (outpostsPlaced >= targetOutposts) break;
             if (isTooCloseOrAligned(oc.x, oc.y, 620)) continue;
-            const opAsset = pickUniqueOutskirts(outpostPool);
-            if (!pushOutskirtsSprite(opAsset, oc.x, oc.y, 0.80, 0, mRnd() < 0.5, 0)) continue;
-            placedCenters.push({ x: oc.x, y: oc.y });
-            clearTreesInRadius(oc.x, oc.y, 210);
-            gl.carveFoundation(oc.x, oc.y, W, H, 1.6);
-            const tentX = oc.x - 275, tentY = oc.y - 52;
-            if (isPointDryAndOpen(tentX, tentY) && pushOutskirtsSprite(campTentOutskirts, tentX, tentY, 0.76, 0, mRnd() < 0.5, 0)) {
-                gl.carveFoundation(tentX, tentY, W, H, 1.3);
+            const opAsset = outpostPool[0];
+            if (!canPlaceOutskirtsAt(opAsset, oc.x, oc.y)) continue;
+            // 预验该中心点周围至少有 2 个可放置配套建筑的侧翼方向（保证城堡/要塞绝不孤零零单摆）
+            let validOutpostWings = 0;
+            for (const [dx, dy] of wingBuildingOffsets) {
+                const wx = oc.x + dx, wy = oc.y + dy;
+                if (isPointDryAndOpen(wx, wy) && !isNearAnySpawn(wx, wy, 440) && canPlaceOutskirtsAt(campTentOutskirts, wx, wy)) {
+                    validOutpostWings++;
+                    if (validOutpostWings >= 2) break;
+                }
             }
+            if (validOutpostWings < 2) continue;
+
+            const chosenOp = pickUniqueOutskirts(outpostPool);
+            const opScale = chosenOp === 'BUILDING:POENARI_CASTLE' ? 0.74 : 0.80;
+            if (!pushOutskirtsSprite(chosenOp, oc.x, oc.y, opScale, 0, mRnd() < 0.5, 0)) continue;
+            placedCenters.push({ x: oc.x, y: oc.y });
+            clearTreesInRadius(oc.x, oc.y, 260);
+            gl.carveFoundation(oc.x, oc.y, W, H, 1.8);
+            pushOutskirtsSprite('DECAL_PATH_2', oc.x, oc.y + 24, 0.94, -6, false, 0);
+
+            const tentSpot = findOutskirtsCompanionSpot(oc.x, oc.y, campTentOutskirts, wingBuildingOffsets);
+            if (tentSpot && pushOutskirtsSprite(campTentOutskirts, tentSpot.x, tentSpot.y, 0.76, 0, mRnd() < 0.5, 0)) {
+                clearTreesInRadius(tentSpot.x, tentSpot.y, 130);
+                gl.carveFoundation(tentSpot.x, tentSpot.y, W, H, 1.4);
+            }
+            const auxSpot = findOutskirtsCompanionSpot(oc.x, oc.y, outpostAuxAsset, wingBuildingOffsets);
+            if (auxSpot && pushOutskirtsSprite(outpostAuxAsset, auxSpot.x, auxSpot.y, 0.74, 0, mRnd() < 0.5, 0)) {
+                clearTreesInRadius(auxSpot.x, auxSpot.y, 125);
+                gl.carveFoundation(auxSpot.x, auxSpot.y, W, H, 1.4);
+            }
+
             const toAtkX = atkCen.x >= oc.x ? 1 : -1;
             const toAtkY = atkCen.y >= oc.y ? 1 : -1;
-            for (const [bxOff, byOff] of [[toAtkX * 175, toAtkY * 72], [toAtkX * 75, toAtkY * 135]] as const) {
+            for (const [bxOff, byOff] of [[toAtkX * 175, toAtkY * 72], [toAtkX * 75, toAtkY * 135], [toAtkX * 215, toAtkY * 18]] as const) {
                 const bx = oc.x + bxOff, by = oc.y + byOff;
                 if (isPointDryAndOpen(bx, by)) {
                     pushOutskirtsSprite('BATTLEFIELD:STAKE_BARRICADE', bx, by, 0.84, 0, toAtkX < 0, 0);
                 }
             }
-            if (isPointDryAndOpen(oc.x + 165, oc.y - 68)) {
-                pushOutskirtsSprite(pickUniqueOutskirts(flagPool), oc.x + 165, oc.y - 68, 0.82, 0, mRnd() < 0.5, 0);
+            const barrelSpot = findOutskirtsCompanionSpot(oc.x, oc.y, 'BARRELS', [[-toAtkX * 155, 42], [toAtkX * 155, -48], [0, -135]]);
+            if (barrelSpot) {
+                pushOutskirtsSprite('BARRELS', barrelSpot.x, barrelSpot.y, 0.78, 0, mRnd() < 0.5, 0);
+            }
+            const flagSpot = findOutskirtsCompanionSpot(oc.x, oc.y, flagPool[0], [[165, -68], [-165, -68], [0, 145]]);
+            if (flagSpot) {
+                pushOutskirtsSprite(pickUniqueOutskirts(flagPool), flagSpot.x, flagSpot.y, 0.82, 0, mRnd() < 0.5, 0);
             }
             outpostsPlaced++;
         }
 
-        // ── (F) 城郊功能院落（关厢商贸集镇 + 城郊名胜古刹院落，严格保持建筑最小间距不挨着） ──
+        // ── (F) 城郊功能院落（关厢商贸集镇配套组合 + 城郊名胜古刹院落配套组合，严禁单栋孤立摆放） ──
         if (this.defenderCityType !== 'pass') {
             const isJapanOutskirts = cultStyle === 'JAPAN';
             const defCityRec: any = this.defenderCityRecord();
@@ -2027,6 +2111,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 /^(EGYPT|NUBIA|AXUM|ETHIOPIA)$/.test(cultStyle)
                 || (outLat >= 10 && outLat <= 32 && outLng >= 24 && outLng <= 43)
             );
+            // 城堡 POENARI_CASTLE 归入 (E) 城郊要塞军营配套组合，不进宗教名胜池单摆
             const templeMonumentPool: string[] = isAmericasOutskirts
                 ? (deStyle === 'ANDE'
                     ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BUILDING:PAGAN_SHRINE', `BUILDING:${deStyle}_MONASTERY_AGE3`]
@@ -2075,7 +2160,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                                                 ? ['BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_HERO_SHRINE', 'BUILDING:SCEN_HALL_OF_HEROES']
                                                 : (deStyle === 'SLAV' || deStyle === 'EAST')
                                                     ? [
-                                                        'BUILDING:POENARI_CASTLE', 'BUILDING:SCEN_CASTLE_RUINS',
+                                                        'BUILDING:SCEN_CASTLE_RUINS',
                                                         'BUILDING:SCEN_CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
                                                     ]
                                                     : [
@@ -2091,9 +2176,19 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 for (const cand of shuffledHamlets) {
                     if (isTooCloseOrAligned(cand.x, cand.y, 680)) continue;
                     const sx = cand.x, sy = cand.y;
+                    // 预验该中心点周围至少有 2 个可放置配套建筑的侧翼方向（保证集市或名胜古刹绝不单独出现）
+                    let validSubWings = 0;
+                    for (const [dx, dy] of wingBuildingOffsets) {
+                        const wx = sx + dx, wy = sy + dy;
+                        if (isPointDryAndOpen(wx, wy) && !isNearAnySpawn(wx, wy, 440) && canPlaceOutskirtsAt(housePool[0], wx, wy)) {
+                            validSubWings++;
+                            if (validSubWings >= 2) break;
+                        }
+                    }
+                    if (validSubWings < 2) continue;
 
                     if (sk === 'suburban_trade_post') {
-                        // DE 关厢商贸集镇：集市与铁匠铺保持 ≥ 310px 等轴间距，绝不挨着
+                        // DE 关厢商贸集镇配套组合：市场 + 铁匠铺 + 1~2 间商铺民居 + 古道贴花 + 地毯/货桶 + 商车 + 货郎
                         const marketBld = isNomadOutskirts
                             ? 'BUILDING:YURT_A'
                             : (this.defenderCityType === 'stockade'
@@ -2106,42 +2201,84 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                                 : `BUILDING:${deStyle}_BLACKSMITH_${useAge3 ? 'AGE3' : 'AGE2'}`);
                         if (!pushOutskirtsSprite(pickUniqueOutskirts([marketBld]), sx, sy, 0.76, 0, mRnd() < 0.5, 0)) continue;
                         placedCenters.push({ x: sx, y: sy });
-                        clearTreesInRadius(sx, sy, 240);
-                        gl.carveFoundation(sx, sy, W, H, 2.0);
+                        clearTreesInRadius(sx, sy, 280);
+                        gl.carveFoundation(sx, sy, W, H, 2.2);
                         pushOutskirtsSprite('DECAL_PATH_2', sx - 20, sy + 20, 0.94, -6, false, 0);
                         pushOutskirtsSprite('DECAL_PATH_3', sx + 145, sy + 36, 0.92, -6, false, 0);
-                        const smX = sx + 305, smY = sy - 58;
-                        if (isPointDryAndOpen(smX, smY) && pushOutskirtsSprite(pickUniqueOutskirts([smithBld]), smX, smY, 0.74, 0, mRnd() < 0.5, 0)) {
-                            gl.carveFoundation(smX, smY, W, H, 1.5);
+
+                        const smSpot = findOutskirtsCompanionSpot(sx, sy, smithBld, wingBuildingOffsets);
+                        if (smSpot && pushOutskirtsSprite(pickUniqueOutskirts([smithBld]), smSpot.x, smSpot.y, 0.74, 0, mRnd() < 0.5, 0)) {
+                            clearTreesInRadius(smSpot.x, smSpot.y, 130);
+                            gl.carveFoundation(smSpot.x, smSpot.y, W, H, 1.5);
                         }
-                        if (isPointDryAndOpen(sx - 195, sy + 68)) {
-                            pushOutskirtsSprite(loadedCartAsset, sx - 195, sy + 68, 0.80, 0, mRnd() < 0.5, 0);
+                        let shopHousesPlaced = 0;
+                        for (let hi = 0; hi < wingBuildingOffsets.length && shopHousesPlaced < 2; hi++) {
+                            const [dx, dy] = wingBuildingOffsets[hi];
+                            const hx = sx + dx, hy = sy + dy;
+                            if (!isPointDryAndOpen(hx, hy) || isNearAnySpawn(hx, hy, 440)) continue;
+                            const hAsset = housePool[(hi + Math.floor(mRnd() * housePool.length)) % housePool.length];
+                            if (pushOutskirtsSprite(hAsset, hx, hy, 0.75, 0, mRnd() < 0.5, 0)) {
+                                clearTreesInRadius(hx, hy, 125);
+                                gl.carveFoundation(hx, hy, W, H, 1.4);
+                                shopHousesPlaced++;
+                            }
                         }
-                        if (isPointDryAndOpen(sx + 135, sy + 115)) {
-                            pushOutskirtsSprite(merchantAsset, sx + 135, sy + 115, 0.84, 0, mRnd() < 0.5, 0);
+                        const rugSpot = findOutskirtsCompanionSpot(sx, sy, 'RUGS', [[165, 82], [-165, 82], [0, 145]]);
+                        if (rugSpot) {
+                            pushOutskirtsSprite('RUGS', rugSpot.x, rugSpot.y, 0.84, -6, mRnd() < 0.5, Math.floor(mRnd() * 4));
+                        }
+                        const barrelSpot = findOutskirtsCompanionSpot(sx, sy, 'BARRELS', [[185, -45], [-185, -45], [0, -145]]);
+                        if (barrelSpot) {
+                            pushOutskirtsSprite('BARRELS', barrelSpot.x, barrelSpot.y, 0.78, 0, mRnd() < 0.5, 0);
+                        }
+                        const cartSpot = findOutskirtsCompanionSpot(sx, sy, loadedCartAsset, [[-195, 68], [195, 68], [-210, -45], [210, -45]]);
+                        if (cartSpot) {
+                            pushOutskirtsSprite(loadedCartAsset, cartSpot.x, cartSpot.y, 0.80, 0, mRnd() < 0.5, 0);
+                        }
+                        const merchSpot = findOutskirtsCompanionSpot(sx, sy, merchantAsset, [[135, 115], [-135, 115], [0, 165]]);
+                        if (merchSpot) {
+                            pushOutskirtsSprite(merchantAsset, merchSpot.x, merchSpot.y, 0.84, 0, mRnd() < 0.5, 0);
                         }
                     } else {
-                        // DE 城郊名胜古刹院落（主殿与牌坊/雕像/花坛严格拉开间距，绝不挨着）
+                        // DE 城郊名胜古刹院落配套组合（主殿/古塔/修道院 + 配套僧舍/偏殿/祭坛 + 石径 + 花坛 + 牌坊/雕像）
                         const tmAsset = pickUniqueOutskirts(templeMonumentPool);
                         const tmScale = /CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ/.test(tmAsset)
                             ? 0.68
                             : 0.78;
                         if (!pushOutskirtsSprite(tmAsset, sx, sy, tmScale, 0, mRnd() < 0.5, 0)) continue;
                         placedCenters.push({ x: sx, y: sy });
-                        clearTreesInRadius(sx, sy, 230);
+                        clearTreesInRadius(sx, sy, 260);
                         gl.carveFoundation(sx, sy, W, H, 2.0);
                         pushOutskirtsSprite('DECAL_PATH_4', sx, sy + 42, 0.92, -6, false, 0);
+
+                        const wingShrineAsset = isNomadOutskirts
+                            ? 'BUILDING:PAGAN_SHRINE'
+                            : isGrecoRomanOutskirts
+                                ? 'BUILDING:SCEN_HERO_SHRINE'
+                                : (!tmAsset.includes('MONASTERY') && this.defenderCityType !== 'stockade')
+                                    ? `BUILDING:${deStyle}_MONASTERY_AGE3`
+                                    : housePool[0];
+                        const wingSpot = findOutskirtsCompanionSpot(sx, sy, wingShrineAsset, wingBuildingOffsets);
+                        if (wingSpot && pushOutskirtsSprite(wingShrineAsset, wingSpot.x, wingSpot.y, 0.74, 0, mRnd() < 0.5, 0)) {
+                            clearTreesInRadius(wingSpot.x, wingSpot.y, 130);
+                            gl.carveFoundation(wingSpot.x, wingSpot.y, W, H, 1.5);
+                        }
                         if (!isSnow) {
-                            if (isPointDryAndOpen(sx - 195, sy + 72)) {
-                                pushOutskirtsSprite('FLOWERBED', sx - 195, sy + 72, 0.84, -6, false, 0);
+                            const fbLeft = findOutskirtsCompanionSpot(sx, sy, 'FLOWERBED', [[-195, 72], [-175, 92], [-215, 48]]);
+                            if (fbLeft) {
+                                pushOutskirtsSprite('FLOWERBED', fbLeft.x, fbLeft.y, 0.84, -6, false, 0);
                             }
-                            if (isPointDryAndOpen(sx + 195, sy + 72)) {
-                                pushOutskirtsSprite('FLOWERBED', sx + 195, sy + 72, 0.84, -6, true, 1);
+                            const fbRight = findOutskirtsCompanionSpot(sx, sy, 'FLOWERBED', [[195, 72], [175, 92], [215, 48]]);
+                            if (fbRight) {
+                                pushOutskirtsSprite('FLOWERBED', fbRight.x, fbRight.y, 0.84, -6, true, 1);
                             }
                         }
-                        if (isJapanOutskirts && tmAsset !== 'BUILDING:SCEN_BUDDHA_STATUE' && isPointDryAndOpen(sx, sy + 195)) {
-                            pushOutskirtsSprite('BUILDING:SCEN_TORII_GATE', sx, sy + 195, 0.76, 0, false, 0);
-                        } else if (isGrecoRomanOutskirts && isPointDryAndOpen(sx, sy + 185)) {
+                        if (isJapanOutskirts && tmAsset !== 'BUILDING:SCEN_BUDDHA_STATUE') {
+                            const toriiSpot = findOutskirtsCompanionSpot(sx, sy, 'BUILDING:SCEN_TORII_GATE', [[0, 195], [195, 92], [-195, 92]]);
+                            if (toriiSpot) {
+                                pushOutskirtsSprite('BUILDING:SCEN_TORII_GATE', toriiSpot.x, toriiSpot.y, 0.76, 0, false, 0);
+                            }
+                        } else if (isGrecoRomanOutskirts) {
                             const greekStatues = [
                                 'BUILDING:SCEN_STATUE_ALEXANDER',
                                 'BUILDING:SCEN_STATUE_HEPHAISTION',
@@ -2149,7 +2286,16 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                                 'BUILDING:SCEN_STATUE_ARES_MARBLE',
                                 'BUILDING:SCEN_STATUE_ARES_PAINTED',
                             ];
-                            pushOutskirtsSprite(pickUniqueOutskirts(greekStatues), sx, sy + 185, 0.78, 0, mRnd() < 0.5, 0);
+                            const stAsset = pickUniqueOutskirts(greekStatues);
+                            const stSpot = findOutskirtsCompanionSpot(sx, sy, stAsset, [[0, 185], [185, 88], [-185, 88]]);
+                            if (stSpot) {
+                                pushOutskirtsSprite(stAsset, stSpot.x, stSpot.y, 0.78, 0, mRnd() < 0.5, 0);
+                            }
+                        } else {
+                            const fSpot = findOutskirtsCompanionSpot(sx, sy, flagPool[0], [[0, 175], [175, 82], [-175, 82]]);
+                            if (fSpot) {
+                                pushOutskirtsSprite(pickUniqueOutskirts(flagPool), fSpot.x, fSpot.y, 0.80, 0, mRnd() < 0.5, 0);
+                            }
                         }
                     }
                     subPlaced++;

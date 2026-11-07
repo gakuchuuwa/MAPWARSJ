@@ -2617,8 +2617,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'yinggelan_littlejohn', factionId: 'yinggelan', cityId: 'city_norwich', generalName: '小约翰', portrait: '/assets/BRITONS/yinggelan_littlejohn.png', eliteName: '绿林棍手', eliteTier: 4 },
         { generalId: 'yinggelan_nottingham', factionId: 'yinggelan', cityId: 'city_norwich', generalName: '诺丁安的郡长', portrait: '/assets/BRITONS/yinggelan_nottingham.png', eliteName: '郡守卫队', eliteTier: 4 },
         { generalId: 'yinggelan_friartuck', factionId: 'yinggelan', cityId: 'city_norwich', generalName: '塔克修士', portrait: '/assets/BRITONS/yinggelan_friartuck.png', eliteName: '修士卫队', eliteTier: 4 },
-        { generalId: 'yinggelan_aethelfrith', factionId: 'yinggelan', cityId: 'city_bulunruike', generalName: '艾特尔弗里思', portrait: '/assets/SAXONS/yinggelan_aethelfrith.png', eliteName: '诺森卫队', eliteTier: 4 },
-        { generalId: 'yinggelan_tostig', factionId: 'yinggelan', cityId: 'city_magedebao', generalName: '托斯蒂格', portrait: '/assets/SAXONS/yinggelan_tostig.png', eliteName: '诺森斧兵', eliteTier: 4 },
+        { generalId: 'yinggelan_aethelfrith', factionId: 'yinggelan', cityId: 'city_york', generalName: '艾特尔弗里思', portrait: '/assets/SAXONS/yinggelan_aethelfrith.png', eliteName: '诺森卫队', eliteTier: 4 },   // 🔴 [2026-11-07 按史] 诺森布里亚王（593–616），并伯尼西亚与德伊勒，居约克（德伊勒核心，《盎格鲁-撒克逊编年史》）；原为凑萨克森文化放不伦瑞克（德国，非其驻地）→ 回约克，文化随据点 DANES
+        { generalId: 'yinggelan_tostig', factionId: 'yinggelan', cityId: 'city_york', generalName: '托斯蒂格', portrait: '/assets/SAXONS/yinggelan_tostig.png', eliteName: '诺森斧兵', eliteTier: 4 },   // 🔴 [2026-11-07 按史] 诺森布里亚伯爵（1055–1065），驻地约克；1066 与挪威王哈拉尔三世联军攻约克、战死斯坦福桥（《盎格鲁-撒克逊编年史》）→ 回约克，文化随据点 DANES（其军本就是挪威军）
         { generalId: 'gen_black_prince', factionId: 'yinggelan', cityId: 'city_lundun', generalName: '黑太子', portrait: '/assets/BRITONS/gen_black_prince.png', eliteName: '英格兰长弓', eliteTier: 1 },
     ],
 
@@ -7513,7 +7513,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     
         // 🔴 [2026-10-25 主人令「程名振史实该放营州（营州都督兼东夷都护），朝阳改为河朔文化」] 据点 长安→朝阳（唐营州，治柳城）；文化随据点＝河朔，军团按「封建×河朔」自动取，不再手写中原军团
-        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_wugucheng', generalName: '程名振', portrait: '/assets/KOREA/jilizhou_chengmingzhen.png', eliteName: '营州铁骑', eliteTier: 3  },   // 按史：程名振任营州都督兼东夷都护，镇营州（《旧唐书·卷八三·程务挺传附》）
+        { generalId: 'jilizhou_chengmingzhen', factionId: 'tang', cityId: 'city_chaoyang', generalName: '程名振', portrait: '/assets/KOREA/jilizhou_chengmingzhen.png', eliteName: '营州铁骑', eliteTier: 3  },   // 按史：程名振任营州都督兼东夷都护，镇营州（柳城＝朝阳，《旧唐书·卷八三·程务挺传附》）；🔴 [2026-11-07 主人令「武将应在符合历史的据点，跟着据点改文化」] 原 2026-10-31 为凑高句丽文化把他塞进乌骨城（高句丽城，非其驻地），按新令回营州；文化随据点＝漠南 XIANBEI，营州铁骑本为胡汉混编边骑，与漠南军团相合
 
 
 
@@ -8465,8 +8465,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'murong_murongke', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容恪', portrait: '/assets/XIANBEI/murong_murongke.png', eliteName: '慕容铁骑', eliteTier: 2 },
-        { generalId: 'dingzhou_d_murongchui', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容垂', portrait: '/assets/XIANBEI/dingzhou_d_murongchui.png', eliteName: '慕容铁骑', eliteTier: 2 },
+        { generalId: 'murong_murongke', factionId: 'murong', cityId: 'city_anyang', generalName: '慕容恪', portrait: '/assets/XIANBEI/murong_murongke.png', eliteName: '慕容铁骑', eliteTier: 2 },   // 🔴 [2026-11-07 按史] 前燕都邺（357 迁邺），慕容恪以太原王、太宰辅幼主慕容暐居邺（《晋书·慕容恪载记》）；邺归安阳 → 中原 CENTRAL，军团随据点
+        { generalId: 'dingzhou_d_murongchui', factionId: 'murong', cityId: 'city_zhongshan', generalName: '慕容垂', portrait: '/assets/XIANBEI/dingzhou_d_murongchui.png', eliteName: '慕容铁骑', eliteTier: 2 },   // 🔴 [2026-11-07 按史] 后燕 386 定都中山、慕容垂称帝于此（《晋书·慕容垂载记》）；中山 WEI 河朔，军团随据点（汉化后的河朔军制）
 
 
 
@@ -8476,7 +8476,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'xiongding_murongyong', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容永', portrait: '/assets/XIANBEI/xiongding_murongyong.png', eliteName: '慕容燕骑手', eliteTier: 4 },
+        { generalId: 'xiongding_murongyong', factionId: 'murong', cityId: 'city_shangdang', generalName: '慕容永', portrait: '/assets/XIANBEI/xiongding_murongyong.png', eliteName: '慕容燕骑手', eliteTier: 4 },   // 🔴 [2026-11-07 按史] 西燕 386–394 都长子，慕容永称帝于长子（《魏书·徒何慕容永传》）；长子＝上党 → CENTRAL，军团随据点
 
 
 
@@ -8495,9 +8495,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_87', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容评', portrait: '/assets/XIANBEI/bfe3_87.png', eliteName: '慕容燕骑手', eliteTier: 4 },
-        { generalId: 'bfe3_90', factionId: 'murong', cityId: 'city_jicheng', generalName: '慕容超', portrait: '/assets/XIANBEI/bfe3_90.png', eliteName: '慕容燕骑手', eliteTier: 4 },
-        { generalId: 'bfe_murongbao', factionId: 'murong', cityId: 'city_zhongshan', generalName: '慕容宝', portrait: '/assets/WEI/bfe_murongbao.png', eliteName: '中山铁骑', eliteTier: 3 },
+        { generalId: 'bfe3_87', factionId: 'murong', cityId: 'city_anyang', generalName: '慕容评', portrait: '/assets/XIANBEI/bfe3_87.png', eliteName: '慕容燕骑手', eliteTier: 4 },   // 🔴 [2026-11-07 按史] 前燕太傅慕容评居邺、370 潞川之败自邺出奔（《晋书·慕容暐载记》）；邺归安阳 → CENTRAL
+        { generalId: 'bfe3_90', factionId: 'murong', cityId: 'city_linzi', generalName: '慕容超', portrait: '/assets/XIANBEI/bfe3_90.png', eliteName: '慕容燕骑手', eliteTier: 4 },   // 🔴 [2026-11-07 按史] 南燕都广固（青州），慕容超 405–410 在位守广固；广固未单立城 → 锚最近据点临淄（同为青州齐地，约 40km）→ CENTRAL，军团随据点
+        { generalId: 'bfe_murongbao', factionId: 'murong', cityId: 'city_zhongshan', generalName: '慕容宝', portrait: '/assets/WEI/bfe_murongbao.png', eliteName: '中山铁骑', eliteTier: 3 },   // 🔴 [2026-11-07 按史] 后燕太子、396 即位于中山（《晋书·慕容宝载记》）；中山 WEI 河朔，军团随据点
     ],
 
 

@@ -235,10 +235,10 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'bfe3_83': 'BASHU',   // 蜀国｜李势｜据点 成都
     'bfe3_85': 'WEI',   // 后赵｜石琨｜据点 邢台
     'bfe3_86': 'GERMANIC',   // 莱茵兰｜克诺多马尔｜据点 美因茨
-    'bfe3_87': 'XIANBEI',   // 商国｜慕容评｜据点 安阳
+    'bfe3_87': 'CENTRAL',   // 商国｜慕容评｜据点 邺（安阳）
     'bfe3_88': 'CENTRAL',   // 商国｜苻融｜据点 安阳
     'bfe3_9': 'CENTRAL',   // 唐国｜王龁｜据点 长安
-    'bfe3_90': 'XIANBEI',   // 齐国｜慕容超｜据点 临淄
+    'bfe3_90': 'CENTRAL',   // 齐国｜慕容超｜据点 临淄（南燕都广固，锚最近）
     'bfe3_91': 'ROMA',   // 罗马帝国｜霍诺留｜据点 罗马
     'bfe3_92': 'BYZANTINE',   // 拜占庭｜阿内吉斯克鲁斯｜据点 君士坦丁堡
     'bing_liji': 'WEI',   // 唐国｜李勣｜据点 晋阳
@@ -347,7 +347,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'didao_wangshao': 'CENTRAL',   // 宋国｜王韶｜据点 狄道
     'dingling_weilu': 'MONGOL',   // 高车｜卫律｜据点 贝加尔
     'dingxiang_d_lijing': 'WEI',   // 李唐｜李靖｜据点 偏头关
-    'dingzhou_d_murongchui': 'XIANBEI',   // 慕容｜慕容垂｜据点 中山
+    'dingzhou_d_murongchui': 'WEI',   // 慕容｜慕容垂｜据点 中山（后燕都）
     'disidelusi_disidelusi': 'ROMA',   // 蒂斯德鲁斯｜蒂斯德鲁斯督造｜据点 杰姆
     'dixiang_wangmang': 'CENTRAL',   // 新国｜王莽｜据点 长安
     'dizhou_wangyanzhang': 'CENTRAL',   // 后梁｜王彦章｜据点 曲阜
@@ -576,7 +576,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_el_cid': 'SPANISH',   // 瓦伦西亚｜熙德｜据点 巴伦西亚
     'gen_eleanor': 'SICILIANS',   // 萨丁｜埃莱奥诺拉｜据点 奥里斯塔诺
     'gen_epaminondas': 'GREECE',   // 波奥蒂亚｜伊巴密浓达｜据点 底比斯
-    'gen_eric_bloodaxe': 'DANES',   // 约维克｜埃里克｜据点 约克
+    'gen_eric_bloodaxe': 'BRITONS',   // 约维克｜埃里克｜据点 约克（2026-11-07 约克建筑文化改 BRITONS，随据点）
     'gen_ezana': 'ETHIOPIANS',   // 埃塞俄比亚｜埃扎纳｜据点 阿克苏姆
     'gen_fasilides': 'ETHIOPIANS',   // 贡德尔朝｜法西里德｜据点 法西尔堡
     'gen_feng_sheng': 'HEXI',   // 大明｜冯胜｜据点 嘉峪关
@@ -897,7 +897,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'jieri_jieriwang': 'MUGHAL',   // 戒日帝国｜哈尔沙｜据点 曲女城
     'jilimi_takuna': 'NORTHEAST',   // 吉里｜塔库纳｜据点 囊哈儿
     'jilin_fujun': 'NORTHEAST',   // 大清｜富俊｜据点 宽城屯
-    'jilizhou_chengmingzhen': 'KOREA',   // 高句丽｜程名振｜据点 朝阳（唐营州，2026-10-25 主人令迁朝阳、文化河朔）
+    'jilizhou_chengmingzhen': 'XIANBEI',   // 唐朝｜程名振｜据点 朝阳（唐营州柳城，2026-11-07 回归史实驻地）
     'jiluo_d_douxian': 'CENTRAL',   // 汉国｜窦宪｜据点 洛阳
     'jin_xianzhen': 'CENTRAL',   // 晋国｜先轸｜据点 曲沃
     'jinan_tiexuan': 'CENTRAL',   // 大明｜铁铉｜据点 历下
@@ -1087,7 +1087,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'mu_lijiang_muzeng': 'BASHU',   // 大明｜木增｜据点 大研
     'muer_mujier': 'PERSIAN',   // 呼罗珊｜穆吉尔｜据点 马尔夫鲁德
     'muertan_naxierding': 'PURU',   // 木尔坦｜纳西尔丁｜据点 乌奇
-    'murong_murongke': 'XIANBEI',   // 慕容｜慕容恪｜据点 棘城
+    'murong_murongke': 'CENTRAL',   // 慕容｜慕容恪｜据点 邺（安阳）
     'mushi_muchong': 'CENTRAL',   // 齐国｜公孙五楼｜据点 临淄
     'muwaxide_yakubu': 'BERBER',   // 穆瓦希德｜雅库布曼苏尔｜据点 拉巴特
     'muxikani_muxikanuosi': 'PURU',   // 穆西卡尼｜穆西卡诺斯｜据点 阿罗尔
@@ -1450,7 +1450,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xining_yangyingju': 'HEXI',   // 汉国｜杨应琚｜据点 皋兰
     'xinjiang_maji': 'HUGUANG',   // 大明｜马塈｜据点 始安
     'xinluo_jinyuxin': 'KOREA',   // 新罗｜金庾信｜据点 金城
-    'xiongding_murongyong': 'XIANBEI',   // 慕容｜慕容永｜据点 长子
+    'xiongding_murongyong': 'CENTRAL',   // 慕容｜慕容永｜据点 长子（上党，西燕都）
     'xiongnu_maodun': 'XIANBEI',   // 匈奴｜冒顿｜据点 头曼城
     'xiongren_atila': 'HUNS',   // 匈人｜阿提拉｜据点 塞格德
     'xiongyati_yannuoshi': 'MAGYAR',   // 匈雅提｜匈雅提亚诺什｜据点 胡内多阿拉
@@ -1628,8 +1628,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'han_liubiao': 'HUGUANG',
     'feierganna_qutlugh': 'CENTRAL_ASIA',
     'wende_siegfried': 'GERMANIC',
-    'yinggelan_aethelfrith': 'SAXONS',
-    'yinggelan_tostig': 'SAXONS',
+    'yinggelan_aethelfrith': 'BRITONS',   // 英格兰｜艾特尔弗里思｜据点 约克（盎格鲁-撒克逊，BRITONS 文化）
+    'yinggelan_tostig': 'BRITONS',   // 英格兰｜托斯蒂格｜据点 约克（盎格鲁-撒克逊，BRITONS 文化）
     'nanchou_kitabatake': 'JAPAN',
     'sashan_shah': 'SASANIAN',
     'abasi_imam': 'ORIE',
@@ -1775,7 +1775,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'feilisidin_geliya': 'ORIE',
     'bfe_zhanghedu': 'WEI',
     'bfe_taobao': 'WEI',
-    'bfe_murongbao': 'WEI',
+    'bfe_murongbao': 'WEI',   // 慕容｜慕容宝｜据点 中山（后燕都）
     'bfe_xiangliang': 'CENTRAL',
     'bfe_liurenshan': 'CENTRAL',
     'bfe_ukita_hideie': 'JAPAN',

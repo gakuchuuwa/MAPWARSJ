@@ -60,7 +60,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'osman': [{ from: -9999, era: 'imperial' }], // 奥斯曼｜奥斯曼（1299–1453）＝城堡时代加齐突骑军团；1453 攻陷君士坦丁堡 → 帝国时代苏丹亲兵军团
     'bolan': [{ from: -9999, era: 'castle' }], // 波兰｜皮雅斯特早期（–1138）＝封建时代波兰尼军团；1138 分裂后—1569 → 城堡时代波兰王国军团；1569 卢布林联合 → 帝国时代波兰立陶宛军团
     'mazhaer': [{ from: -9999, era: 'castle' }], // 匈牙利｜阿尔帕德（–1000）＝封建时代马扎尔骑射军团；1000 圣斯蒂芬受洗—1526 → 城堡时代匈牙利王国军团；1526 莫哈奇之战后 → 帝国时代匈牙利军团
-    'yinggelan': [{ from: -9999, era: 'castle' }], // 英格兰｜盎格鲁-撒克逊（–1066）＝封建时代盎格鲁撒克逊军团；1066 诺曼征服—1485 → 城堡时代英格兰军团；1485 都铎 → 帝国时代英格兰军团
+    'yinggelan': [{ from: -9999, era: 'feudal' }, { from: 1067, era: 'castle' }, { from: 1500, era: 'imperial' }], // 英格兰｜盎格鲁-撒克逊（–1066）＝封建时代盎格鲁撒克逊军团；1067 诺曼征服—1500 → 城堡时代英格兰军团；1500 都铎以后 → 帝国时代英格兰军团 🔴 [2026-11-07 按注释军制史落地：原只挂一段 castle，与注释和史实都不符，艾特尔弗里思（617）、阿尔弗雷德（899）被错算成城堡时代]
     'falanji': [{ from: -9999, era: 'feudal' }], // 法兰克｜晚期古典（–476）＝古典军团；墨洛温—加洛林（476–1100）＝封建时代法兰克军团；1100 后卡佩骑士 → 城堡时代法兰西骑士军团
     'gaolu': [{ from: -9999, era: 'castle' }], // 法兰西（别名高卢）｜古典＝高卢战团（维钦托利）；476–1500＝城堡时代法兰西骑士军团；1500 后＝帝国法兰西军团
     'menggu_d': [{ from: -9999, era: 'castle' }], // 蒙古｜蒙古（含 10 世纪孛端察儿—元—北元）＝城堡时代漠南蒙古军团；1500 后（达延汗—喀尔喀/卫拉特）→ 帝国时代漠南蒙古军团
@@ -782,7 +782,17 @@ export function getGeneralEra(generalId: string | null | undefined, factionIdHin
     if (!generalId) return undefined;
     const fid = GENERAL_FACTION.get(generalId) ?? factionIdHint;
     const segs = fid ? FACTION_ERA[fid] : undefined;
-    if (segs && segs.length > 0) return segs[0].era;
+    if (segs && segs.length > 0) {
+        // 🔴 [2026-11-07 修] 本表头写明「武将落在哪一段＝经典战年→登场年」，原实现只取 segs[0]，
+        //    多段势力（英格兰：盎格鲁-撒克逊→诺曼→都铎）等于分段没生效。改为按年落段。
+        if (segs.length === 1) return segs[0].era;
+        const y = getGeneralEraYear(generalId);
+        if (y != null) {
+            const byYear = getFactionEraAt(fid, y);
+            if (byYear) return byYear;
+        }
+        return segs[0].era;
+    }
     return GENERAL_ERA[generalId];
 }
 

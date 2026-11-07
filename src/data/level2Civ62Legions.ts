@@ -381,14 +381,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代太行军团', civ: '河朔', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
         buildingStyle: 'WEI',
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
-        formationMode: 'crescent',
+        formationMode: 'balance_yoke',
         shipId: 'LOU_CHUAN',
-        commanderUnit: 'hero_caocao',
+        commanderUnit: 'hero_sunce',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝河朔（魏）城堡兵【虎豹骑·魏虎骑兵精锐】。
         slots: [
-            { type: 'white_feather_guard', count: 3 },
+            { type: 'white_feather_guard', count: 4 },
             { type: 'elite_tiger_cavalry', count: 2 },
-            { type: 'chukonu', count: 4 },
+            { type: 'xianbei_raider', count: 3 },
         ],
     },
     // ── 河朔 · 封建时代 · 封建时代北朝军团　（本次新建）────────────────

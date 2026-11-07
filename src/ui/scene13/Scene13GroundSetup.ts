@@ -854,10 +854,31 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     const roadMaxV = 3.2;
 
     const placedPts: Array<{ x: number; y: number }> = [];
+    const placedRelicItems: Array<{ x: number; y: number; r: number; isBld: boolean }> = [];
     const usedUniqueAssets = new Set<string>();
 
-    const isSafeSpot = (sx: number, sy: number, minGap = 440, centerRx = 460, centerRy = 310): boolean => {
-        if (sx < 300 || sx > VW - 300 || sy < 130 || sy > VH - 130) return false;
+    const relicRadiusOf = (asset: string): { r: number; isBld: boolean } => {
+        if (/^(?:DECAL_|RESOURCE:SALT_|RESOURCE:SULFUR_CRATER)/.test(asset)) return { r: 0, isBld: false };
+        if (/MARKET|MONASTERY|SETTLEMENT|FOLWARK|WOODEN_FORT|CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ|DOCK|SHIPYARD|POENARI_CASTLE/.test(asset)) {
+            return { r: 128, isBld: true };
+        }
+        if (/MILL|BLACKSMITH|HOUSE|HUT|YURT|LUMBER_CAMP|MINING_CAMP|CAMP_BARRACKS|GREEK_WAR_TENT|PAGODA|SHRINE|RUINS|TORII_GATE|OUTPOST|MADRASAH|MINARET|THOLOS|ARCH_OF_CONSTANTINE|SPHINX|PYRAMIDS|STONEHENGE|HALL_OF_HEROES|PASTURE|BARRACKS|STABLE|TOWER/.test(asset) && asset.startsWith('BUILDING:')) {
+            return { r: 98, isBld: true };
+        }
+        if (/^RESOURCE:(?:FARM|RFARM|PASTURE|VINEYARD|QUARRY)/.test(asset)) {
+            return { r: 88, isBld: true };
+        }
+        if (/^MINE_/.test(asset)) {
+            return { r: 20, isBld: false };
+        }
+        return { r: 34, isBld: false };
+    };
+    const MIN_RELIC_BLD_GAP = 48;
+    const MIN_RELIC_PROP_GAP = 20;
+
+    // 校验聚落中心或独立点位的基础地形与禁区（不含同聚落内部子建筑的自斥）
+    const isTerrainAndCorridorSafe = (sx: number, sy: number, centerRx = 460, centerRy = 310, edgePadX = 250, edgePadY = 115): boolean => {
+        if (sx < edgePadX || sx > VW - edgePadX || sy < edgePadY || sy > VH - edgePadY) return false;
         // 避开中央核心交战区（用椭圆代替整条横贯全图的水平禁带，允许左右远翼与四角在不同高度自由散布，打破水平排队）
         if (((sx - cx) / centerRx) ** 2 + ((sy - cy) / centerRy) ** 2 < 1.0) return false;
         // 攻城战避开城池、护城河及四门大道
@@ -883,13 +904,67 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             const perp = Math.abs(-rx0 * muy + ry0 * mux);
             if (along > -100 && along < mLen + 100 && perp < 350) return false;
         }
+        return true;
+    };
+
+    // 聚落主中心选点校验：不仅检查地形与走廊，还要求与其它聚落中心保持大间距且不排成呆板直线
+    const isSafeSpot = (sx: number, sy: number, minGap = 440, centerRx = 460, centerRy = 310): boolean => {
+        if (!isTerrainAndCorridorSafe(sx, sy, centerRx, centerRy, 300, 130)) return false;
         for (const p of placedPts) {
             if (Math.hypot(sx - p.x, (sy - p.y) * 1.3) < minGap) return false;
-            // 防呆板对齐：禁止在相近的水平高度 y 或相近的垂直列 x 上排成一排
+            // 防呆板对齐：禁止不同聚落中心在相近的水平高度 y 或相近的垂直列 x 上排成一排
             if (Math.abs(sy - p.y) < 85 && Math.abs(sx - p.x) < minGap * 1.6) return false;
             if (Math.abs(sx - p.x) < 95 && Math.abs(sy - p.y) < minGap * 1.4) return false;
         }
         return true;
+    };
+
+    // 聚落内部配套建筑/道具选点校验：不被本聚落中心 placedPts 的水平/垂直防对齐规则自斥，而是按真实建筑包围盒保持合理配套间距
+    const canPlaceRelicItemAt = (
+        asset: string,
+        sx: number,
+        sy: number,
+        centerRx = 430,
+        centerRy = 285,
+        parentAnchor?: { x: number; y: number; minIsoDist?: number },
+    ): boolean => {
+        if (!isTerrainAndCorridorSafe(sx, sy, centerRx, centerRy, 220, 105)) return false;
+        const { r, isBld } = relicRadiusOf(asset);
+        if (r <= 0) return true;
+        const isOre = /^MINE_/.test(asset);
+        for (const item of placedRelicItems) {
+            if (isOre && !item.isBld && item.r <= 22) continue;
+            const isoDist = Math.hypot(sx - item.x, (sy - item.y) * 1.55);
+            if (
+                !isBld
+                && parentAnchor
+                && Math.hypot(item.x - parentAnchor.x, item.y - parentAnchor.y) < 4
+            ) {
+                if (isoDist < (parentAnchor.minIsoDist ?? 92)) return false;
+                continue;
+            }
+            const minGap = (isBld && item.isBld) ? MIN_RELIC_BLD_GAP : MIN_RELIC_PROP_GAP;
+            if (isoDist < r + item.r + minGap) return false;
+        }
+        return true;
+    };
+
+    const findCompanionSpot = (
+        baseX: number,
+        baseY: number,
+        asset: string,
+        offsets: ReadonlyArray<readonly [number, number]>,
+        centerRx = 430,
+        centerRy = 285,
+        parentAnchor?: { x: number; y: number; minIsoDist?: number },
+    ): { x: number; y: number } | null => {
+        for (const [dx, dy] of offsets) {
+            const px = baseX + dx, py = baseY + dy;
+            if (canPlaceRelicItemAt(asset, px, py, centerRx, centerRy, parentAnchor)) {
+                return { x: px, y: py };
+            }
+        }
+        return null;
     };
 
     const pushRelic = (
@@ -903,6 +978,8 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         recordPt = true,
     ): void => {
         if (recordPt) placedPts.push({ x: sx, y: sy });
+        const { r, isBld } = relicRadiusOf(asset);
+        if (r > 0) placedRelicItems.push({ x: sx, y: sy, r, isBld });
         const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
         this.ensureNatureAsset(asset);
         this.decorSprites.push({
@@ -1051,13 +1128,16 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             const pt = pickRandomScatterSpot(460, 520, 340);
             if (!pt) continue;
             const wreckAsset = pickUniqueFromPool(siegeWrecks);
+            const anchor = { x: pt.x, y: pt.y, minIsoDist: 56 };
             pushRelic(rnd() < 0.55 ? 'DECAL_CRATER' : 'DECAL_CRACK', pt.x, pt.y + 6, rnd() < 0.5, 0.92, -6, 0, false);
             pushRelic(wreckAsset, pt.x, pt.y, rnd() < 0.5, 0.92, 0, 0, true);
-            if (isSafeSpot(pt.x + 48, pt.y + 20, 30, 480, 320)) {
-                pushRelic(pickUniqueFromPool(barricadePool), pt.x + 48, pt.y + 20, rnd() < 0.5, 0.88, 0, 0, false);
+            const bSpot = findCompanionSpot(pt.x, pt.y, 'BATTLEFIELD:BARRICADE_A', [[54, 22], [-54, 22], [48, -22], [-48, -22]], 480, 320, anchor);
+            if (bSpot) {
+                pushRelic(pickUniqueFromPool(barricadePool), bSpot.x, bSpot.y, rnd() < 0.5, 0.88, 0, 0, false);
             }
-            if (isSafeSpot(pt.x - 42, pt.y + 18, 30, 480, 320)) {
-                pushRelic(pickUniqueFromPool(corpsePool), pt.x - 42, pt.y + 18, rnd() < 0.5, 0.86, 0, 0, false);
+            const cSpot = findCompanionSpot(pt.x, pt.y, 'BATTLEFIELD:SKELETON_SOLDIER', [[-52, 20], [52, -20], [0, 38], [0, -38]], 480, 320, anchor);
+            if (cSpot) {
+                pushRelic(pickUniqueFromPool(corpsePool), cSpot.x, cSpot.y, rnd() < 0.5, 0.86, 0, 0, false);
             }
         }
         return;
@@ -1066,15 +1146,16 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     // ══════════════════════════════════════════════════════════════════════════
     // 野战地图（battleType !== 'siege'）：严格按 AoE2:DE RMS 与战役造景法则生成
     // 🔴 [2026-11-04 主人令「请按DE的摆法来设计地图。」「好的，世界各地文化的摆放也请注意。一律按DE的方式来。」]
+    // 🔴 [2026-11-07 主人令「战场上，就一个座城堡孤零零的在这里，不合适吧？还有市场也是。不要单独摆放，要组合摆放，要配套。」]
     //   1. 资源采集建筑严格依附自然资源（绝不悬空单摆）：
     //      · 伐木场（Lumber Camp / 美洲聚落 / 游牧骡车）必须紧贴真实树林簇边缘，林口配树桩与原木；无林则不放。
     //      · 采矿场（Mining Camp / 美洲聚落 / 游牧骡车）必须紧挨 4~5 格紧密拼合的金矿/石矿脉簇（Tile Clump）与采石坑。
     //      · 船坞（Dock / Shipyard）必须跨在水陆交界岸线上，水面停泊本文化舟船、近岸成簇生成鱼群与水生植物。
-    //   2. 建筑按「DE 功能聚落（Functional Compound）」成组有机布局，并严格对应世界各文明（零跨文化混搭）：
-    //      · 农庄村落（Farming Village）：1 座磨坊/聚落/庄园 + 紧贴的 3~4 块等距网格农田 + 2~3 间本文化民居 + 成簇浆果/果树 + 泥径。
-    //      · 路边商贸集镇（Trade Post）：古道贴花 + 集市与铁匠铺并立 + 门口地毯/货桶 + 道路上行进的本文化商队马车与货郎。
-    //      · 军事前哨营塞（Military Outpost）：哨岗/木堡 + 本文化营帐 + 朝向战场的弧形木栅拒马防线 + 战旗与火把。
-    //      · 宗教圣地院落（Sacred Shrine）：全图最多 1 处（佛像最多 1 尊），本文明修道院/古塔/大佛/遗迹居中 + 石径 + 对称花坛/雕像（鸟居仅限日本）。
+    //   2. 建筑严禁单独孤零零摆放，一律按「DE 功能聚落（Functional Compound）」成组配套布局（零跨文化混搭，选点不满足配套空间则换点）：
+    //      · 农庄村落（Farming Village）：1 座磨坊/聚落/庄园 + 3~4 块等距农田 + 2~3 间本文化民居 + 成簇浆果/果树 + 农车 + 泥径。
+    //      · 路边商贸集镇（Market Trade Compound）：集市 + 铁匠铺 + 1~2 间本文化商铺民居 + 古道贴花 + 地毯/货桶 + 满载与空商车 + 行进货郎。
+    //      · 要塞/城堡军营（Fortress / Castle Garrison Compound）：城堡/木堡/要塞 + 本文化兵营/军帐 + 哨塔/军械铺 + 弧形木栅拒马防线 + 军需木桶/辎重车 + 战旗与火把。
+    //      · 宗教圣地院落（Sacred Shrine Compound）：修道院/古塔/大佛/遗迹主建筑 + 配套僧舍/偏殿/祭坛 + 石径 + 对称花坛 + 牌坊/雕像。
     //   3. 古战场战损遗迹簇（本文明攻城器械残骸 + 焦土弹坑 + 破损拒马 + 白骨）集中在交战区外沿，不混入和平村落。
     // ══════════════════════════════════════════════════════════════════════════
     const isRiceRegion = !isNomad && !isAmericas && !isArid && !isSnow
@@ -1092,6 +1173,11 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                 : (isMiddleEast || isIndosphere || deStyle === 'AFRI' || deStyle === 'CEAS')
                     ? ['BUILDING:SCEN_FLAG_R']
                     : ['BUILDING:SCEN_FLAG_D', 'BUILDING:SCEN_FLAG_E', 'BUILDING:SCEN_FLAG_S', 'BUILDING:SCEN_FLAG_U'];
+    const culturalHousePool = isAmericas
+        ? ['BUILDING:HUT_A', 'BUILDING:HUT_B', 'BUILDING:HUT_C', 'BUILDING:DARK_HOUSE_AGE1']
+        : isNomad
+            ? ['BUILDING:YURT_B', 'BUILDING:YURT_C', 'BUILDING:YURT_D', 'BUILDING:YURT_E', 'BUILDING:YURT_F', 'BUILDING:YURT_G']
+            : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`, 'BUILDING:DARK_HOUSE_AGE1', 'BUILDING:HUT_A', 'BUILDING:HUT_B'];
 
     // ── 0. 野战远翼大山（高地/山地在远翼高台摆 1 座 DE 大山，避开中央交战区） ──
     if (elevM >= 350 || elevBand === 'mountain' || elevBand === 'alpine' || elevBand === 'high_alpine') {
@@ -1148,7 +1234,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                 [shuffledTrees[i], shuffledTrees[j]] = [shuffledTrees[j], shuffledTrees[i]];
             }
             const edgeOffsets: ReadonlyArray<readonly [number, number]> = [
-                [102, 38], [-102, 38], [102, -38], [-102, -38], [0, 72], [0, -72],
+                [135, 48], [-135, 48], [135, -48], [-135, -48], [0, 96], [0, -96],
             ];
             lumberSearch: for (const tr of shuffledTrees) {
                 // 确认该树属于成片树林簇（半径 220px 内至少有 3 棵树），不在孤立单棵散树旁建伐木场
@@ -1164,23 +1250,34 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                 for (const [ox, oy] of edgeOffsets) {
                     const lx = tr.x + ox, ly = tr.y + oy;
                     if (!isSafeSpot(lx, ly, 520, 480, 320)) continue;
-                    // 伐木场自身位置不能压在树林内部（距离最近树木 ≥ 68px，恰在林缘外 1.5 格）
-                    if (forestTrees.some((ft) => Math.hypot(ft.x - lx, (ft.y - ly) * 1.45) < 68)) continue;
+                    if (!canPlaceRelicItemAt(lumCampAsset, lx, ly, 480, 320)) continue;
+                    // 伐木场自身位置不能压在树林内部（距离最近树木 ≥ 76px，恰在林缘外 1.5 格）
+                    if (forestTrees.some((ft) => Math.hypot(ft.x - lx, (ft.y - ly) * 1.45) < 76)) continue;
 
                     glLayer.carveFoundation(lx, ly, VW, VH, 1.8);
                     pushRelic(lumCampAsset, lx, ly, ox < 0, 0.78, 0, 0, true);
-                    // 在伐木场与树林边缘之间的林口空地上集中摆放 2~3 个树桩与原木堆
-                    const midX = (lx + tr.x) * 0.5, midY = (ly + tr.y) * 0.5;
+                    const lumAnchor = { x: lx, y: ly, minIsoDist: 92 };
+                    // 在伐木场周围配套 1 间伐木工屋/木桶 + 林口树桩与原木堆
+                    const hutSpot = findCompanionSpot(lx, ly, culturalHousePool[0], [
+                        [ox >= 0 ? 235 : -235, -42],
+                        [ox >= 0 ? 225 : -225, 52],
+                        [0, oy >= 0 ? 155 : -155],
+                    ], 450, 300);
+                    if (hutSpot) {
+                        glLayer.carveFoundation(hutSpot.x, hutSpot.y, VW, VH, 1.4);
+                        pushRelic(culturalHousePool[Math.floor(rnd() * culturalHousePool.length)], hutSpot.x, hutSpot.y, rnd() < 0.5, 0.74, 0, 0, false);
+                    }
                     const cutOffsets: ReadonlyArray<readonly [number, number, boolean]> = [
-                        [16, -10, true],
-                        [-18, 12, false],
-                        [28, 14, true],
+                        [ox >= 0 ? -96 : 96, 26, true],
+                        [ox >= 0 ? -84 : 84, -32, false],
+                        [ox >= 0 ? 105 : -105, 38, true],
                     ];
                     for (const [cxOff, cyOff, isStump] of cutOffsets) {
-                        const sx0 = midX + cxOff, sy0 = midY + cyOff;
-                        if (isSafeSpot(sx0, sy0, 24, 440, 290)) {
-                            const pool = isStump ? stumpPool : felledPool;
-                            pushRelic(pool[Math.floor(rnd() * pool.length)], sx0, sy0, rnd() < 0.5, 0.82, 0, 0, false);
+                        const sx0 = lx + cxOff, sy0 = ly + cyOff;
+                        const pool = isStump ? stumpPool : felledPool;
+                        const cAsset = pool[Math.floor(rnd() * pool.length)];
+                        if (canPlaceRelicItemAt(cAsset, sx0, sy0, 440, 290, lumAnchor)) {
+                            pushRelic(cAsset, sx0, sy0, rnd() < 0.5, 0.82, 0, 0, false);
                         }
                     }
                     break lumberSearch;
@@ -1189,18 +1286,34 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         }
     }
 
-    // ── 2. DE 矿脉簇与采矿营地（4~5 格紧密相连的金矿/石矿簇 Tile Clump + 采石坑 + 紧邻矿脉的采矿场） ──
+    // ── 2. DE 矿脉簇与采矿营地（4~5 格紧密相连的金矿/石矿簇 Tile Clump + 采石坑 + 紧邻矿脉的采矿场 + 矿工营房/木桶） ──
     {
-        const mineSpot = pickRandomScatterSpot(560, 500, 340);
-        if (mineSpot) {
+        const campAsset = isAmericas
+            ? 'BUILDING:DARK_SETTLEMENT_AGE1'
+            : isNomad
+                ? 'TRADE:MULE_CART/move_6'
+                : (deStyle === 'GREEK' || deStyle === 'MEDI' || deStyle === 'WEST' || deStyle === 'ORIE' || deStyle === 'PERSIAN')
+                    ? 'BUILDING:GREEK_MINING_CAMP_AGE2'
+                    : 'BUILDING:THRACIAN_MINING_CAMP_AGE2';
+        const quarryAsset = rnd() < 0.5 ? 'RESOURCE:QUARRY' : 'RESOURCE:QUARRY_B';
+        for (let attempt = 0; attempt < 10; attempt++) {
+            const mineSpot = pickRandomScatterSpot(560, 500, 340);
+            if (!mineSpot) continue;
             const mx = mineSpot.x, my = mineSpot.y;
-            clearTreesInRadius(mx, my, 150);
-            glLayer.carveFoundation(mx, my, VW, VH, 2.0);
-            const oreAsset = rnd() < 0.55 ? 'MINE_GOLD' : 'MINE_STONE';
-            const quarryAsset = rnd() < 0.5 ? 'RESOURCE:QUARRY' : 'RESOURCE:QUARRY_B';
             const campSide = mx >= cx ? -1 : 1;
-            const campX = mx + campSide * 84;
-            const campY = my + 24;
+            const campSpot = findCompanionSpot(mx, my, campAsset, [
+                [campSide * 195, 36],
+                [-campSide * 195, 36],
+                [campSide * 185, -48],
+                [-campSide * 185, -48],
+            ], 440, 300);
+            if (!campSpot) continue;
+
+            clearTreesInRadius(mx, my, 210);
+            clearTreesInRadius(campSpot.x, campSpot.y, 140);
+            glLayer.carveFoundation(mx, my, VW, VH, 2.0);
+            glLayer.carveFoundation(campSpot.x, campSpot.y, VW, VH, 1.6);
+            const oreAsset = rnd() < 0.55 ? 'MINE_GOLD' : 'MINE_STONE';
 
             // DE 标准等距紧凑矿脉簇（4~5 块矿石紧挨成团，绝不单颗散放）
             const clumpOffsets: ReadonlyArray<readonly [number, number]> = [
@@ -1216,113 +1329,134 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                 const oy = my + clumpOffsets[ti][1];
                 pushRelic(oreAsset, ox, oy, (ti % 2 === 0), 0.90, 0, ti % 6, ti === 0);
             }
-            // 伴生采石坑紧贴矿脉后侧
-            if (isSafeSpot(mx - campSide * 48, my - 20, 28, 440, 300)) {
-                pushRelic(quarryAsset, mx - campSide * 48, my - 20, rnd() < 0.5, 0.84, -1, 0, false);
+            // 采矿营地（美洲为聚落，游牧为骡车）紧贴矿脉一侧
+            pushRelic(campAsset, campSpot.x, campSpot.y, campSpot.x < mx, 0.78, 0, 0, false);
+            // 伴生采石坑紧贴矿脉另一侧
+            const qSpot = findCompanionSpot(mx, my, quarryAsset, [
+                [-campSide * 185, -36],
+                [campSide * 185, -52],
+                [0, -118],
+                [0, 128],
+            ], 440, 300);
+            if (qSpot) {
+                pushRelic(quarryAsset, qSpot.x, qSpot.y, rnd() < 0.5, 0.84, -1, 0, false);
             }
-            // 采矿营地（美洲为聚落，游牧为骡车）紧贴矿脉一侧 1.5 格
-            if (isSafeSpot(campX, campY, 32, 440, 300)) {
-                glLayer.carveFoundation(campX, campY, VW, VH, 1.6);
-                const campAsset = isAmericas
-                    ? 'BUILDING:DARK_SETTLEMENT_AGE1'
-                    : isNomad
-                        ? 'TRADE:MULE_CART/move_6'
-                        : (deStyle === 'GREEK' || deStyle === 'MEDI' || deStyle === 'WEST' || deStyle === 'ORIE' || deStyle === 'PERSIAN')
-                            ? 'BUILDING:GREEK_MINING_CAMP_AGE2'
-                            : 'BUILDING:THRACIAN_MINING_CAMP_AGE2';
-                pushRelic(campAsset, campX, campY, campSide < 0, 0.78, 0, 0, false);
-                if (isSafeSpot(campX + campSide * 34, campY + 16, 24, 440, 300)) {
-                    pushRelic('BARRELS', campX + campSide * 34, campY + 16, rnd() < 0.5, 0.78, 0, 0, false);
-                }
+            const campAnchor = { x: campSpot.x, y: campSpot.y, minIsoDist: 88 };
+            const barrelSpot = findCompanionSpot(campSpot.x, campSpot.y, 'BARRELS', [
+                [campSide * 105, 28],
+                [-campSide * 105, 28],
+                [0, 68],
+            ], 440, 300, campAnchor);
+            if (barrelSpot) {
+                pushRelic('BARRELS', barrelSpot.x, barrelSpot.y, rnd() < 0.5, 0.78, 0, 0, false);
             }
+            break;
         }
     }
 
     // ── 3. DE 农庄村落聚落（1 座磨坊/聚落/庄园 + 紧贴的 3~4 块等距网格农田 + 2~3 间错落民居 + 成簇浆果丛/果树 + 农车） ──
     {
-        const villageSpot = pickRandomScatterSpot(620, 520, 350);
-        if (villageSpot) {
-            const vx = villageSpot.x, vy = villageSpot.y;
-            clearTreesInRadius(vx, vy, 210);
-            glLayer.carveFoundation(vx, vy, VW, VH, 2.6);
+        const plotAsset = isNomad
+            ? `RESOURCE:PASTURE_${seasonTag}`
+            : (isRiceRegion ? `RESOURCE:RFARM_${seasonTag}` : `RESOURCE:FARM_${seasonTag}`);
+        const millPool = isAmericas
+            ? ['BUILDING:SETTLEMENT', 'BUILDING:DARK_SETTLEMENT_AGE1']
+            : isNomad
+                ? ['BUILDING:DARK_PASTURE', 'BUILDING:YURT_A']
+                : deStyle === 'SLAV'
+                    ? ['BUILDING:FOLWARK', `BUILDING:${deStyle}_MILL_AGE2`, 'BUILDING:DARK_MILL_AGE1']
+                    : [`BUILDING:${deStyle}_MILL_AGE2`, `BUILDING:${deStyle}_MILL_AGE3`, 'BUILDING:DARK_MILL_AGE1'];
 
-            const plotAsset = isNomad
-                ? `RESOURCE:PASTURE_${seasonTag}`
-                : (isRiceRegion ? `RESOURCE:RFARM_${seasonTag}` : `RESOURCE:FARM_${seasonTag}`);
-            const millPool = isAmericas
-                ? ['BUILDING:SETTLEMENT', 'BUILDING:DARK_SETTLEMENT_AGE1']
-                : isNomad
-                    ? ['BUILDING:DARK_PASTURE', 'BUILDING:YURT_A']
-                    : deStyle === 'SLAV'
-                        ? ['BUILDING:FOLWARK', `BUILDING:${deStyle}_MILL_AGE2`, 'BUILDING:DARK_MILL_AGE1']
-                        : [`BUILDING:${deStyle}_MILL_AGE2`, `BUILDING:${deStyle}_MILL_AGE3`, 'BUILDING:DARK_MILL_AGE1'];
-            const housePool = isAmericas
-                ? ['BUILDING:HUT_A', 'BUILDING:HUT_B', 'BUILDING:HUT_C', 'BUILDING:DARK_HOUSE_AGE1']
-                : isNomad
-                    ? ['BUILDING:YURT_B', 'BUILDING:YURT_C', 'BUILDING:YURT_D', 'BUILDING:YURT_E', 'BUILDING:YURT_F', 'BUILDING:YURT_G']
-                    : [`BUILDING:${deStyle}_HOUSE_AGE2`, `BUILDING:${deStyle}_HOUSE_AGE3`, 'BUILDING:DARK_HOUSE_AGE1', 'BUILDING:HUT_A', 'BUILDING:HUT_B'];
+        for (let attempt = 0; attempt < 12; attempt++) {
+            const villageSpot = pickRandomScatterSpot(620, 520, 350);
+            if (!villageSpot) continue;
+            const vx = villageSpot.x, vy = villageSpot.y;
+            const fieldSide = rnd() < 0.5 ? 1 : -1;
+
+            // 先校验该选点能否同时放下至少 2 间配套民居与 2 块农田，确保磨坊绝不单摆
+            const houseCandOffsets: ReadonlyArray<readonly [number, number]> = [
+                [-fieldSide * 245, -42],
+                [-fieldSide * 225, 118],
+                [-fieldSide * 48, -158],
+                [fieldSide * 48, -158],
+                [-fieldSide * 315, 28],
+            ];
+            const farmCandOffsets: ReadonlyArray<readonly [number, number]> = [
+                [fieldSide * 235, 22],
+                [fieldSide * 235, -125],
+                [fieldSide * 415, -52],
+                [fieldSide * 58, 148],
+                [-fieldSide * 58, 148],
+            ];
+            let validHousesPreview = 0;
+            for (const [dx, dy] of houseCandOffsets) {
+                if (isTerrainAndCorridorSafe(vx + dx, vy + dy, 440, 290, 220, 105)) validHousesPreview++;
+            }
+            let validFarmsPreview = 0;
+            for (const [dx, dy] of farmCandOffsets) {
+                if (isTerrainAndCorridorSafe(vx + dx, vy + dy, 440, 290, 220, 105)) validFarmsPreview++;
+            }
+            if (validHousesPreview < 2 || validFarmsPreview < 2) continue;
+
+            clearTreesInRadius(vx, vy, 280);
+            glLayer.carveFoundation(vx, vy, VW, VH, 2.6);
 
             // 村心泥径贴花 + 磨坊/聚落居中
             pushRelic('DECAL_PATH_1', vx, vy + 10, rnd() < 0.5, 0.95, -6, 0, false);
             const millAsset = pickUniqueFromPool(millPool);
             pushRelic(millAsset, vx, vy, rnd() < 0.5, 0.78, 0, 0, true);
+            const millAnchor = { x: vx, y: vy, minIsoDist: 96 };
 
-            // 一侧按 DE 等距菱形网格紧密排列 3~4 块农田 / 牧场 / 葡萄园（田块相连成片，围绕磨坊耕作）
-            const fieldSide = rnd() < 0.5 ? 1 : -1;
-            const fx0 = vx + fieldSide * 78, fy0 = vy + 24;
-            const farmGrid: ReadonlyArray<readonly [number, number]> = [
-                [0, 0],
-                [64, 30],
-                [-60, 32],
-                [4, 62],
-            ];
-            const plotCount = 3 + (rnd() < 0.5 ? 1 : 0);
-            for (let fi = 0; fi < plotCount; fi++) {
-                const px = fx0 + farmGrid[fi][0];
-                const py = fy0 + farmGrid[fi][1];
-                if (!isSafeSpot(px, py, 28, 440, 290)) continue;
+            // 一侧按 DE 等距菱形网格排列 3~4 块农田 / 牧场 / 葡萄园
+            const targetPlots = 3 + (rnd() < 0.5 ? 1 : 0);
+            let plotsPlaced = 0;
+            for (const [dx, dy] of farmCandOffsets) {
+                if (plotsPlaced >= targetPlots) break;
+                const px = vx + dx, py = vy + dy;
+                const useVine = !isSnow && !isArid && !isNomad && !isAmericas && plotsPlaced === targetPlots - 1 && rnd() < 0.35;
+                const pAsset = useVine ? 'RESOURCE:VINEYARD' : plotAsset;
+                if (!canPlaceRelicItemAt(pAsset, px, py, 440, 290)) continue;
+                clearTreesInRadius(px, py, 120);
                 glLayer.carveFoundation(px, py, VW, VH, 1.4);
-                if (!isSnow && !isArid && !isNomad && !isAmericas && fi === plotCount - 1 && rnd() < 0.35) {
-                    pushRelic('RESOURCE:VINEYARD', px, py, rnd() < 0.5, 0.88, -1, 0, false);
-                } else {
-                    pushRelic(plotAsset, px, py, false, 0.98, -6, 0, false);
-                }
+                pushRelic(pAsset, px, py, rnd() < 0.5, useVine ? 0.88 : 0.98, useVine ? -1 : -6, 0, false);
+                plotsPlaced++;
             }
 
             // 另一侧围以 2~3 间同文化民居/茅屋/毡帐，组成有生活气息的自然村落
-            const houseOffsets: ReadonlyArray<readonly [number, number]> = [
-                [-fieldSide * 86, -28],
-                [-fieldSide * 142, 8],
-                [-fieldSide * 32, -58],
-            ];
-            const houseCount = 2 + (rnd() < 0.45 ? 1 : 0);
-            for (let hi = 0; hi < houseCount; hi++) {
-                const hx = vx + houseOffsets[hi][0] + (rnd() - 0.5) * 12;
-                const hy = vy + houseOffsets[hi][1] + (rnd() - 0.5) * 8;
-                if (!isSafeSpot(hx, hy, 32, 440, 290)) continue;
+            const targetHouses = 2 + (rnd() < 0.5 ? 1 : 0);
+            let housesPlaced = 0;
+            for (let hi = 0; hi < houseCandOffsets.length && housesPlaced < targetHouses; hi++) {
+                const hx = vx + houseCandOffsets[hi][0] + (rnd() - 0.5) * 10;
+                const hy = vy + houseCandOffsets[hi][1] + (rnd() - 0.5) * 6;
+                const hAsset = culturalHousePool[(hi + Math.floor(rnd() * culturalHousePool.length)) % culturalHousePool.length];
+                if (!canPlaceRelicItemAt(hAsset, hx, hy, 440, 290)) continue;
+                clearTreesInRadius(hx, hy, 125);
                 glLayer.carveFoundation(hx, hy, VW, VH, 1.4);
-                pushRelic(housePool[(hi + Math.floor(rnd() * housePool.length)) % housePool.length], hx, hy, rnd() < 0.5, 0.76, 0, 0, false);
+                pushRelic(hAsset, hx, hy, rnd() < 0.5, 0.76, 0, 0, false);
+                housesPlaced++;
             }
 
-            // 村口外缘伴生一簇 3 丛紧密聚拢的浆果丛（DE Forage Clump）或 2 棵橄榄果树
+            // 村口外缘伴生果树/浆果与农车
             if (!isSnow) {
-                const bx0 = vx - fieldSide * 92, by0 = vy + 48;
-                const bushBase = foragePool[Math.floor(rnd() * foragePool.length)];
-                const clumpPts: ReadonlyArray<readonly [number, number]> = [[0, 0], [28, 14], [-26, 14]];
-                for (let bi = 0; bi < clumpPts.length; bi++) {
-                    const bx = bx0 + clumpPts[bi][0], by = by0 + clumpPts[bi][1];
-                    if (!isSafeSpot(bx, by, 22, 430, 285)) continue;
-                    if ((isGrecoRoman || isMiddleEast) && bi === 0 && rnd() < 0.5) {
-                        pushRelic('RESOURCE:OLIVE_TREE', bx, by, rnd() < 0.5, 0.82, 0, Math.floor(rnd() * 12), false);
+                const bushSpot = findCompanionSpot(vx, vy, foragePool[0], [
+                    [-fieldSide * 135, 92],
+                    [fieldSide * 135, -92],
+                    [0, 125],
+                ], 430, 285, millAnchor);
+                if (bushSpot) {
+                    const bushBase = foragePool[Math.floor(rnd() * foragePool.length)];
+                    if ((isGrecoRoman || isMiddleEast) && rnd() < 0.5) {
+                        pushRelic('RESOURCE:OLIVE_TREE', bushSpot.x, bushSpot.y, rnd() < 0.5, 0.82, 0, Math.floor(rnd() * 12), false);
                     } else {
-                        pushRelic(bushBase, bx, by, (bi % 2 === 0), 0.84, -6, bi % 4, false);
+                        pushRelic(bushBase, bushSpot.x, bushSpot.y, rnd() < 0.5, 0.84, -6, 0, false);
                     }
                 }
             }
+            break;
         }
     }
 
-    // ── 4. DE 功能院落池（从「路边商贸驿站」「军事前哨营塞」「宗教圣地院落」三类完整 DE 聚落中随机选 2 处分置不同侧翼） ──
+    // ── 4. DE 功能院落池（从「路边商贸集镇」「要塞/城堡军营」「宗教圣地院落」三类完整配套聚落中选 2 处分置不同侧翼，严禁单栋孤立摆放） ──
     {
         const loadedCartAsset = isAmericas
             ? 'TRADE:TRADE_CART_MESO/move_2'
@@ -1354,7 +1488,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                             ? 'TRADE:MERCHANT_AFRI/move_4'
                             : 'TRADE:MERCHANT_ASIA/move_4';
 
-        // 严格按世界各文明划分宗教/遗迹地标池（绝不把埃及金字塔混入波斯/桑海，或把安第斯遗迹混入中美洲）
+        // 严格按世界各文明划分宗教/遗迹地标池（城堡 POENARI_CASTLE 归入军事要塞军营配套，不进宗教地标池单摆）
         const monumentPool: string[] = isAmericas
             ? (deStyle === 'ANDE'
                 ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BATTLEFIELD:ANDEAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE']
@@ -1414,7 +1548,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                                             ]
                                             : (deStyle === 'SLAV' || deStyle === 'EAST')
                                                 ? [
-                                                    'BUILDING:POENARI_CASTLE', 'BUILDING:SCEN_CASTLE_RUINS',
+                                                    'BUILDING:SCEN_CASTLE_RUINS',
                                                     'BUILDING:SCEN_CHURCH_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`,
                                                 ]
                                                 : [
@@ -1422,6 +1556,19 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                                                     'BUILDING:SCEN_CASTLE_RUINS', 'BUILDING:SCEN_CHURCH_RUINS', 'BUILDING:SCEN_MEDI_RUINS',
                                                     `BUILDING:${deStyle}_MONASTERY_AGE3`,
                                                 ];
+
+        const companionWingOffsets: ReadonlyArray<readonly [number, number]> = [
+            [265, -48],
+            [-265, -48],
+            [255, 58],
+            [-255, 58],
+            [195, -125],
+            [-195, -125],
+            [195, 125],
+            [-195, 125],
+            [315, 10],
+            [-315, 10],
+        ];
 
         type CompoundKind = 'trade_post_compound' | 'military_outpost_compound' | 'sacred_shrine_compound';
         const compoundKinds: CompoundKind[] = ['trade_post_compound', 'military_outpost_compound', 'sacred_shrine_compound'];
@@ -1433,121 +1580,213 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         let compoundsPlaced = 0;
         for (const cKind of compoundKinds) {
             if (compoundsPlaced >= 2) break;
-            const pt = pickRandomScatterSpot(640, 520, 350);
-            if (!pt) continue;
-            const sx = pt.x, sy = pt.y;
-            clearTreesInRadius(sx, sy, 175);
-            glLayer.carveFoundation(sx, sy, VW, VH, 2.2);
 
-            if (cKind === 'trade_post_compound') {
-                // DE 路边商贸驿站：古道贴花 + 集市与铁匠铺并立 + 门口地毯货桶 + 道路上行进的商车与货郎
-                pushRelic('DECAL_PATH_2', sx - 24, sy + 20, false, 0.96, -6, 0, false);
-                pushRelic('DECAL_PATH_3', sx + 48, sy + 36, false, 0.94, -6, 0, false);
-                const marketBld = isAmericas
-                    ? 'BUILDING:SETTLEMENT'
-                    : isNomad
-                        ? 'BUILDING:YURT_A'
-                        : `BUILDING:${deStyle}_MARKET_${rnd() < 0.5 ? 'AGE2' : 'AGE3'}`;
-                const smithBld = isAmericas
-                    ? 'BUILDING:DARK_SETTLEMENT_AGE1'
-                    : isNomad
+            for (let attempt = 0; attempt < 14; attempt++) {
+                const pt = pickRandomScatterSpot(640, 520, 350);
+                if (!pt) continue;
+                const sx = pt.x, sy = pt.y;
+                // 预验该中心点周围至少有 2 个可放置配套建筑的侧翼方向（保证城堡/要塞、市场、圣地绝不单独出现）
+                let validWingCount = 0;
+                for (const [dx, dy] of companionWingOffsets) {
+                    if (isTerrainAndCorridorSafe(sx + dx, sy + dy, 430, 285, 220, 105)) {
+                        validWingCount++;
+                        if (validWingCount >= 2) break;
+                    }
+                }
+                if (validWingCount < 2) continue;
+
+                clearTreesInRadius(sx, sy, 270);
+                glLayer.carveFoundation(sx, sy, VW, VH, 2.4);
+                const mainAnchor = { x: sx, y: sy, minIsoDist: 96 };
+
+                if (cKind === 'trade_post_compound') {
+                    // DE 路边商贸集镇配套组合：市场 + 铁匠铺 + 1~2 间商铺民居 + 古道贴花 + 地毯/货桶 + 满载与空商车 + 行进货郎
+                    const useAge3 = rnd() < 0.5;
+                    const marketBld = isAmericas
+                        ? 'BUILDING:SETTLEMENT'
+                        : isNomad
+                            ? 'BUILDING:YURT_A'
+                            : `BUILDING:${deStyle}_MARKET_${useAge3 ? 'AGE3' : 'AGE2'}`;
+                    const smithBld = isAmericas
+                        ? 'BUILDING:DARK_SETTLEMENT_AGE1'
+                        : isNomad
+                            ? 'BUILDING:YURT_B'
+                            : `BUILDING:${deStyle}_BLACKSMITH_${useAge3 ? 'AGE3' : 'AGE2'}`;
+                    pushRelic('DECAL_PATH_2', sx - 28, sy + 22, false, 0.96, -6, 0, false);
+                    pushRelic('DECAL_PATH_3', sx + 125, sy + 38, false, 0.94, -6, 0, false);
+                    pushRelic(pickUniqueFromPool([marketBld]), sx, sy, rnd() < 0.5, 0.76, 0, 0, true);
+
+                    // 必配 1：铁匠铺/工坊
+                    const smithSpot = findCompanionSpot(sx, sy, smithBld, companionWingOffsets, 430, 285);
+                    if (smithSpot) {
+                        clearTreesInRadius(smithSpot.x, smithSpot.y, 135);
+                        glLayer.carveFoundation(smithSpot.x, smithSpot.y, VW, VH, 1.6);
+                        pushRelic(pickUniqueFromPool([smithBld]), smithSpot.x, smithSpot.y, rnd() < 0.5, 0.74, 0, 0, false);
+                    }
+                    // 必配 2：1~2 间本文化商铺民居，围合成完整集市聚落
+                    let shopHousesPlaced = 0;
+                    for (const [dx, dy] of companionWingOffsets) {
+                        if (shopHousesPlaced >= 2) break;
+                        const hx = sx + dx, hy = sy + dy;
+                        const hAsset = culturalHousePool[(shopHousesPlaced + Math.floor(rnd() * culturalHousePool.length)) % culturalHousePool.length];
+                        if (!canPlaceRelicItemAt(hAsset, hx, hy, 430, 285)) continue;
+                        clearTreesInRadius(hx, hy, 125);
+                        glLayer.carveFoundation(hx, hy, VW, VH, 1.4);
+                        pushRelic(hAsset, hx, hy, rnd() < 0.5, 0.75, 0, 0, false);
+                        shopHousesPlaced++;
+                    }
+                    // 配套陈设：集市门口波斯地毯 + 铁匠铺旁货桶 + 满载商车 + 空商车/行商货郎
+                    const rugSpot = findCompanionSpot(sx, sy, 'RUGS', [[88, 56], [-88, 56], [0, 88]], 430, 285, mainAnchor);
+                    if (rugSpot) {
+                        pushRelic('RUGS', rugSpot.x, rugSpot.y, rnd() < 0.5, 0.84, -6, Math.floor(rnd() * 4), false);
+                    }
+                    const barrelSpot = findCompanionSpot(sx, sy, 'BARRELS', [[115, -24], [-115, -24], [128, 32], [-128, 32]], 430, 285, mainAnchor);
+                    if (barrelSpot) {
+                        pushRelic('BARRELS', barrelSpot.x, barrelSpot.y, rnd() < 0.5, 0.78, 0, 0, false);
+                    }
+                    const cartSpot = findCompanionSpot(sx, sy, loadedCartAsset, [[-145, 58], [145, 58], [-155, -28], [155, -28]], 430, 285, mainAnchor);
+                    if (cartSpot) {
+                        pushRelic(rnd() < 0.65 ? loadedCartAsset : emptyCartAsset, cartSpot.x, cartSpot.y, rnd() < 0.5, 0.82, 0, 0, false);
+                    }
+                    const merchAsset = isNomad ? 'TRADE:MULE_CART/move_2' : merchantAsset;
+                    const merchSpot = findCompanionSpot(sx, sy, merchAsset, [[115, 78], [-115, 78], [0, 112], [165, 22]], 430, 285, mainAnchor);
+                    if (merchSpot) {
+                        pushRelic(merchAsset, merchSpot.x, merchSpot.y, rnd() < 0.5, 0.84, 0, 0, false);
+                    }
+                } else if (cKind === 'military_outpost_compound') {
+                    // DE 要塞/城堡军营配套组合：主堡（城堡/木堡/要塞）+ 驻军兵营/军帐 + 哨塔/军械铺 + 弧形木栅拒马防线 + 军需木桶/辎重车 + 战旗与火把
+                    const fortPool = isNomad
+                        ? ['BUILDING:OUTPOST']
+                        : (deStyle === 'SLAV' || deStyle === 'EAST')
+                            ? ['BUILDING:POENARI_CASTLE', 'BUILDING:WOODEN_FORT', 'BUILDING:FORTIFIED_OUTPOST']
+                            : ['BUILDING:WOODEN_FORT', 'BUILDING:FORTIFIED_OUTPOST', 'BUILDING:OUTPOST'];
+                    const garrisonBarracksAsset = isGrecoRoman
+                        ? 'BUILDING:GREEK_WAR_TENT'
+                        : isNomad
+                            ? 'BUILDING:YURT_A'
+                            : isAmericas
+                                ? 'BUILDING:HUT_A'
+                                : (rnd() < 0.5 ? `BUILDING:${deStyle}_BARRACKS_AGE2` : 'BUILDING:CAMP_BARRACKS');
+                    const garrisonAuxAsset = isNomad
                         ? 'BUILDING:YURT_B'
-                        : `BUILDING:${deStyle}_BLACKSMITH_${rnd() < 0.5 ? 'AGE2' : 'AGE3'}`;
-                pushRelic(pickUniqueFromPool([marketBld]), sx, sy, rnd() < 0.5, 0.76, 0, 0, true);
-                if (isSafeSpot(sx + 88, sy - 28, 32, 440, 300)) {
-                    glLayer.carveFoundation(sx + 88, sy - 28, VW, VH, 1.5);
-                    pushRelic(pickUniqueFromPool([smithBld]), sx + 88, sy - 28, rnd() < 0.5, 0.74, 0, 0, false);
-                }
-                if (isSafeSpot(sx + 24, sy + 22, 24, 440, 300)) {
-                    pushRelic('RUGS', sx + 24, sy + 22, rnd() < 0.5, 0.84, -6, Math.floor(rnd() * 4), false);
-                }
-                if (isSafeSpot(sx + 68, sy - 6, 24, 440, 300)) {
-                    pushRelic('BARRELS', sx + 68, sy - 6, rnd() < 0.5, 0.78, 0, 0, false);
-                }
-                if (isSafeSpot(sx - 44, sy + 30, 28, 440, 300)) {
-                    pushRelic(rnd() < 0.65 ? loadedCartAsset : emptyCartAsset, sx - 44, sy + 30, rnd() < 0.5, 0.82, 0, 0, false);
-                }
-                if (isSafeSpot(sx + 18, sy + 46, 28, 440, 300)) {
-                    pushRelic(isNomad ? 'TRADE:MULE_CART/move_2' : merchantAsset, sx + 18, sy + 46, rnd() < 0.5, 0.84, 0, 0, false);
-                }
-            } else if (cKind === 'military_outpost_compound') {
-                // DE 军事前哨营塞：哨岗/木堡 + 本文化军营/营帐 + 朝向战场的弧形木栅拒马防线 + 战旗与火把
-                const fortPool = isNomad
-                    ? ['BUILDING:OUTPOST']
-                    : ['BUILDING:FORTIFIED_OUTPOST', 'BUILDING:OUTPOST', 'BUILDING:WOODEN_FORT'];
-                const campTentAsset = isGrecoRoman
-                    ? 'BUILDING:GREEK_WAR_TENT'
-                    : isNomad
-                        ? 'BUILDING:YURT_A'
                         : isAmericas
-                            ? 'BUILDING:HUT_A'
-                            : 'BUILDING:CAMP_BARRACKS';
-                const mainFort = pickUniqueFromPool(fortPool);
-                pushRelic(mainFort, sx, sy, rnd() < 0.5, 0.80, 0, 0, true);
-                if (isSafeSpot(sx - 66, sy - 22, 30, 440, 300)) {
-                    glLayer.carveFoundation(sx - 66, sy - 22, VW, VH, 1.4);
-                    pushRelic(campTentAsset, sx - 66, sy - 22, rnd() < 0.5, 0.76, 0, 0, false);
-                }
-                // 朝向战场中心一侧布置 2~3 段相连的木栅拒马工事
-                const toCenterX = cx >= sx ? 1 : -1;
-                const toCenterY = cy >= sy ? 1 : -1;
-                const palisadeOffsets: ReadonlyArray<readonly [number, number]> = [
-                    [toCenterX * 52, toCenterY * 26],
-                    [toCenterX * 22, toCenterY * 42],
-                    [toCenterX * 76, toCenterY * 6],
-                ];
-                for (let pi = 0; pi < palisadeOffsets.length; pi++) {
-                    const px = sx + palisadeOffsets[pi][0], py = sy + palisadeOffsets[pi][1];
-                    if (isSafeSpot(px, py, 22, 430, 290)) {
-                        pushRelic(
-                            pi === 1 ? 'BATTLEFIELD:BARRICADE_A' : 'BATTLEFIELD:STAKE_BARRICADE',
-                            px,
-                            py,
-                            toCenterX < 0,
-                            0.84,
-                            0,
-                            0,
-                            false,
-                        );
+                            ? 'BUILDING:OUTPOST'
+                            : (rnd() < 0.55 ? 'BUILDING:FORTIFIED_OUTPOST' : `BUILDING:${deStyle}_BLACKSMITH_AGE2`);
+                    const mainFort = pickUniqueFromPool(fortPool);
+                    const mainScale = mainFort === 'BUILDING:POENARI_CASTLE' ? 0.74 : 0.80;
+                    pushRelic('DECAL_PATH_2', sx, sy + 24, false, 0.95, -6, 0, false);
+                    pushRelic(mainFort, sx, sy, rnd() < 0.5, mainScale, 0, 0, true);
+
+                    // 必配 1：驻军营房 / 军帐
+                    const barracksSpot = findCompanionSpot(sx, sy, garrisonBarracksAsset, companionWingOffsets, 430, 285);
+                    if (barracksSpot) {
+                        clearTreesInRadius(barracksSpot.x, barracksSpot.y, 135);
+                        glLayer.carveFoundation(barracksSpot.x, barracksSpot.y, VW, VH, 1.6);
+                        pushRelic(garrisonBarracksAsset, barracksSpot.x, barracksSpot.y, rnd() < 0.5, 0.76, 0, 0, false);
                     }
-                }
-                if (isSafeSpot(sx + 28, sy - 14, 24, 440, 300)) {
-                    pushRelic(flagPool[Math.floor(rnd() * flagPool.length)], sx + 28, sy - 14, rnd() < 0.5, 0.82, 0, 0, false);
-                }
-                if (isSafeSpot(sx - 28, sy + 20, 24, 440, 300)) {
-                    pushRelic('BATTLEFIELD:TORCH_A', sx - 28, sy + 20, rnd() < 0.5, 0.84, 0, 0, false);
-                }
-            } else {
-                // DE 宗教圣地院落（全图最多 1 处，佛像最多 1 尊，绝不叠放两座高塔或两尊佛像）
-                const mAsset = pickUniqueFromPool(monumentPool);
-                const mScale = /AMPHITHEATRE|COLOSSEUM|ARCH_OF_CONSTANTINE|SANCHI_STUPA|CATHEDRAL|GREAT_PYRAMID|DOME_OF_THE_ROCK|GOL_GUMBAZ/.test(mAsset)
-                    ? 0.68
-                    : 0.80;
-                pushRelic('DECAL_PATH_4', sx, sy + 28, false, 0.92, -6, 0, false);
-                pushRelic(mAsset, sx, sy, rnd() < 0.5, mScale, 0, 0, true);
-                if (!isSnow) {
-                    if (isSafeSpot(sx - 46, sy + 22, 24, 440, 300)) {
-                        pushRelic('FLOWERBED', sx - 46, sy + 22, false, 0.84, -6, 0, false);
+                    // 必配 2：附属哨塔 / 军械铁匠铺 / 副帐（拱卫主城堡/要塞，绝不让城堡孤立）
+                    const auxSpot = findCompanionSpot(sx, sy, garrisonAuxAsset, companionWingOffsets, 430, 285);
+                    if (auxSpot) {
+                        clearTreesInRadius(auxSpot.x, auxSpot.y, 125);
+                        glLayer.carveFoundation(auxSpot.x, auxSpot.y, VW, VH, 1.5);
+                        pushRelic(garrisonAuxAsset, auxSpot.x, auxSpot.y, rnd() < 0.5, 0.75, 0, 0, false);
                     }
-                    if (isSafeSpot(sx + 46, sy + 22, 24, 440, 300)) {
-                        pushRelic('FLOWERBED', sx + 46, sy + 22, true, 0.84, -6, 1, false);
-                    }
-                }
-                // 神道鸟居（SCEN_TORII_GATE）严格仅限日本文化；希罗神庙前院配 1 尊古希腊英雄雕像
-                if (isJapan && mAsset !== 'BUILDING:SCEN_BUDDHA_STATUE' && isSafeSpot(sx, sy + 50, 28, 440, 300)) {
-                    pushRelic('BUILDING:SCEN_TORII_GATE', sx, sy + 50, false, 0.76, 0, 0, false);
-                } else if (isGrecoRoman && isSafeSpot(sx, sy + 46, 28, 440, 300)) {
-                    const greekStatues = [
-                        'BUILDING:SCEN_STATUE_ALEXANDER',
-                        'BUILDING:SCEN_STATUE_HEPHAISTION',
-                        'BUILDING:SCEN_STATUE_GREEK_HERO',
-                        'BUILDING:SCEN_STATUE_ARES_MARBLE',
-                        'BUILDING:SCEN_STATUE_ARES_PAINTED',
+                    // 朝向战场中心一侧布置 3 段相连的木栅拒马工事
+                    const toCenterX = cx >= sx ? 1 : -1;
+                    const toCenterY = cy >= sy ? 1 : -1;
+                    const palisadeOffsets: ReadonlyArray<readonly [number, number]> = [
+                        [toCenterX * 135, toCenterY * 54],
+                        [toCenterX * 62, toCenterY * 92],
+                        [toCenterX * 175, toCenterY * 14],
                     ];
-                    pushRelic(pickUniqueFromPool(greekStatues), sx, sy + 46, rnd() < 0.5, 0.78, 0, 0, false);
+                    for (let pi = 0; pi < palisadeOffsets.length; pi++) {
+                        const px = sx + palisadeOffsets[pi][0], py = sy + palisadeOffsets[pi][1];
+                        const pAsset = pi === 1 ? 'BATTLEFIELD:BARRICADE_A' : 'BATTLEFIELD:STAKE_BARRICADE';
+                        if (canPlaceRelicItemAt(pAsset, px, py, 420, 280, mainAnchor)) {
+                            pushRelic(pAsset, px, py, toCenterX < 0, 0.84, 0, 0, false);
+                        }
+                    }
+                    // 军需木桶、辎重车、战旗与火把
+                    const barrelSpot = findCompanionSpot(sx, sy, 'BARRELS', [[-toCenterX * 115, 28], [toCenterX * 115, -36], [0, -98]], 430, 285, mainAnchor);
+                    if (barrelSpot) {
+                        pushRelic('BARRELS', barrelSpot.x, barrelSpot.y, rnd() < 0.5, 0.78, 0, 0, false);
+                    }
+                    const cartSpot = findCompanionSpot(sx, sy, emptyCartAsset, [[-toCenterX * 148, -32], [-toCenterX * 138, 56]], 430, 285, mainAnchor);
+                    if (cartSpot) {
+                        pushRelic(emptyCartAsset, cartSpot.x, cartSpot.y, rnd() < 0.5, 0.80, 0, 0, false);
+                    }
+                    const flagAsset = flagPool[Math.floor(rnd() * flagPool.length)];
+                    const flagSpot = findCompanionSpot(sx, sy, flagAsset, [[toCenterX * 108, -34], [-toCenterX * 108, -34], [0, 96]], 430, 285, mainAnchor);
+                    if (flagSpot) {
+                        pushRelic(flagAsset, flagSpot.x, flagSpot.y, rnd() < 0.5, 0.82, 0, 0, false);
+                    }
+                    const torchSpot = findCompanionSpot(sx, sy, 'BATTLEFIELD:TORCH_A', [[toCenterX * 96, 46], [-toCenterX * 96, 46]], 430, 285, mainAnchor);
+                    if (torchSpot) {
+                        pushRelic('BATTLEFIELD:TORCH_A', torchSpot.x, torchSpot.y, rnd() < 0.5, 0.84, 0, 0, false);
+                    }
+                } else {
+                    // DE 宗教圣地院落配套组合：修道院/古塔/大佛/遗迹主建筑 + 配套僧舍/偏殿/祭坛 + 石径 + 对称花坛 + 鸟居/雕像/幡旗
+                    const mAsset = pickUniqueFromPool(monumentPool);
+                    const mScale = /AMPHITHEATRE|COLOSSEUM|ARCH_OF_CONSTANTINE|SANCHI_STUPA|CATHEDRAL|GREAT_PYRAMID|DOME_OF_THE_ROCK|GOL_GUMBAZ/.test(mAsset)
+                        ? 0.68
+                        : 0.80;
+                    pushRelic('DECAL_PATH_4', sx, sy + 28, false, 0.92, -6, 0, false);
+                    pushRelic(mAsset, sx, sy, rnd() < 0.5, mScale, 0, 0, true);
+
+                    // 必配附属建筑：配套僧舍/偏殿/祭坛（使宗教圣地形成完整院落，不孤零零单立）
+                    const shrineWingAsset = isNomad
+                        ? 'BUILDING:PAGAN_SHRINE'
+                        : isGrecoRoman
+                            ? 'BUILDING:SCEN_HERO_SHRINE'
+                            : (!mAsset.includes('MONASTERY') && !isNomad)
+                                ? `BUILDING:${deStyle}_MONASTERY_AGE3`
+                                : culturalHousePool[0];
+                    const wingSpot = findCompanionSpot(sx, sy, shrineWingAsset, companionWingOffsets, 430, 285);
+                    if (wingSpot) {
+                        clearTreesInRadius(wingSpot.x, wingSpot.y, 130);
+                        glLayer.carveFoundation(wingSpot.x, wingSpot.y, VW, VH, 1.5);
+                        pushRelic(shrineWingAsset, wingSpot.x, wingSpot.y, rnd() < 0.5, 0.74, 0, 0, false);
+                    }
+                    if (!isSnow) {
+                        const fbLeft = findCompanionSpot(sx, sy, 'FLOWERBED', [[-105, 48], [-125, 36], [-92, 64]], 430, 285, mainAnchor);
+                        if (fbLeft) {
+                            pushRelic('FLOWERBED', fbLeft.x, fbLeft.y, false, 0.84, -6, 0, false);
+                        }
+                        const fbRight = findCompanionSpot(sx, sy, 'FLOWERBED', [[105, 48], [125, 36], [92, 64]], 430, 285, mainAnchor);
+                        if (fbRight) {
+                            pushRelic('FLOWERBED', fbRight.x, fbRight.y, true, 0.84, -6, 1, false);
+                        }
+                    }
+                    // 神道鸟居（SCEN_TORII_GATE）严格仅限日本文化；希罗神庙前院配 1 尊古希腊英雄雕像；其余配祭祀幡旗
+                    if (isJapan && mAsset !== 'BUILDING:SCEN_BUDDHA_STATUE') {
+                        const toriiSpot = findCompanionSpot(sx, sy, 'BUILDING:SCEN_TORII_GATE', [[0, 145], [145, 72], [-145, 72]], 430, 285, mainAnchor);
+                        if (toriiSpot) {
+                            pushRelic('BUILDING:SCEN_TORII_GATE', toriiSpot.x, toriiSpot.y, false, 0.76, 0, 0, false);
+                        }
+                    } else if (isGrecoRoman) {
+                        const greekStatues = [
+                            'BUILDING:SCEN_STATUE_ALEXANDER',
+                            'BUILDING:SCEN_STATUE_HEPHAISTION',
+                            'BUILDING:SCEN_STATUE_GREEK_HERO',
+                            'BUILDING:SCEN_STATUE_ARES_MARBLE',
+                            'BUILDING:SCEN_STATUE_ARES_PAINTED',
+                        ];
+                        const stAsset = pickUniqueFromPool(greekStatues);
+                        const stSpot = findCompanionSpot(sx, sy, stAsset, [[0, 118], [125, 58], [-125, 58]], 430, 285, mainAnchor);
+                        if (stSpot) {
+                            pushRelic(stAsset, stSpot.x, stSpot.y, rnd() < 0.5, 0.78, 0, 0, false);
+                        }
+                    } else {
+                        const fAsset = flagPool[Math.floor(rnd() * flagPool.length)];
+                        const fSpot = findCompanionSpot(sx, sy, fAsset, [[0, 112], [118, 52], [-118, 52]], 430, 285, mainAnchor);
+                        if (fSpot) {
+                            pushRelic(fAsset, fSpot.x, fSpot.y, rnd() < 0.5, 0.80, 0, 0, false);
+                        }
+                    }
                 }
+                compoundsPlaced++;
+                break;
             }
-            compoundsPlaced++;
         }
     }
 
@@ -1685,10 +1924,12 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             if (!pt) continue;
             const decalAsset = pickUniqueFromPool(geoPool);
             const mainWreck = pickUniqueFromPool(siegeWrecks);
+            const wAnchor = { x: pt.x, y: pt.y, minIsoDist: 56 };
             pushRelic(decalAsset, pt.x, pt.y + 6, rnd() < 0.5, 0.90, -6, 0, false);
             pushRelic(mainWreck, pt.x, pt.y, rnd() < 0.5, 0.88, 0, 0, true);
-            if (isSafeSpot(pt.x + 44, pt.y + 18, 28, 450, 300)) {
-                pushRelic(pickUniqueFromPool(debrisCompanionPool), pt.x + 44, pt.y + 18, rnd() < 0.5, 0.86, 0, 0, false);
+            const compSpot = findCompanionSpot(pt.x, pt.y, 'BATTLEFIELD:BARRICADE_RUBBLE_A', [[54, 22], [-54, 22], [48, -20], [-48, -20]], 450, 300, wAnchor);
+            if (compSpot) {
+                pushRelic(pickUniqueFromPool(debrisCompanionPool), compSpot.x, compSpot.y, rnd() < 0.5, 0.86, 0, 0, false);
             }
         }
     }
