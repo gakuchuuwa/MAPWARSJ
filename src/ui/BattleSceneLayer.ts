@@ -29,8 +29,6 @@ export class BattleSceneLayer {
     private lingerUntil = 0;
     /** 本场 13 冻结着的战斗（BattleField 或 1v1 Battle）；退场时解冻，见 unfreezeScene13Battle */
     private frozenBattle: { scene13Frozen: boolean } | null = null;
-    /** 🔴 [2026-10-22] 小队模式：收场由判负回调负责，tick 不做「跟拍军团没仗了就退」的自愈判断 */
-    private manualEnd = false;
 
     public isLingering(): boolean {
         return this.lingerUntil > 0;
@@ -43,12 +41,11 @@ export class BattleSceneLayer {
      *  推翻 2026-08-09 的「进 13 不暂停」，理由：引擎给的 10~30 游戏秒装不下编队级演出
      *  （冲锋→接触→逐队阵亡），且大地图要快、战斗要慢的矛盾绑在一个时钟上无解。
      *  ⚠️ 用户自己按了暂停键的情况不接管（strategyPausedByScene=false），那是真暂停。 */
-    public enter(followUnitId?: string | null, opts?: { manualEnd?: boolean }): void {
+    public enter(followUnitId?: string | null): void {
         // 上一场淡出退场时面板还原是延后的（见 Scene13WarLayer.schedulePanelRestore）：新一场进场前必须先做掉
         (window as any).game?.scene13War?.flushPanelRestore?.();
         this.active = true;
         this.followUnitId = followUnitId ?? null;
-        this.manualEnd = opts?.manualEnd === true;
         // [2026-08-11 战败停留] 新战斗进场 → 取消残留的停留（上一场战败的 linger 不带到下一场）
         this.lingerUntil = 0;
         // 大战略暂停：仅在「本来没暂停」时接管，退场时原样还回去
@@ -69,12 +66,15 @@ export class BattleSceneLayer {
     }
 
     /**
-     * [2026-08-11 战败停留] 跟拍军团战败后：保持 13 画面（冻结待命）delayMs 毫秒，
-     * 期间镜头不切回 zoom8、不追新军团；到期由 tick 统一 exit（回 zoom8）。
-     * 与 CameraFollowUI 的 FOLLOW_SWITCH_DELAY_MS（切新军团延迟）同长，
-     * 这样「停留 5 秒 → 直接切新军团」一气呵成，不再先跳 ZOOM8 干等（主人 2026-08-11 实锤）。
+     * [2026-11-07 统一收敛] 战术战斗结束后的唯一战场停留入口（默认 3 秒 FOLLOW_SWITCH_DELAY_MS）：
+     * 联动 Scene13WarLayer.beginLinger()（全军待命、旗帜飘动、尸体渐隐），并启动退场倒计时；
+     * 幂等保护：本场已进入停留倒计时则不再重复刷新时长，到期由 tick() 统一 exit()。
      */
-    public beginLingerAfterDefeat(delayMs: number): void {
+    public beginLingerAfterDefeat(delayMs: number = GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS): void {
+        const game = (window as any).game;
+        game?.scene13War?.beginLinger?.();
+        if (!this.active) return;
+        if (this.lingerUntil > 0) return;
         this.lingerUntil = performance.now() + Math.max(0, delayMs);
     }
 
@@ -82,12 +82,12 @@ export class BattleSceneLayer {
     public tick(): void {
         if (!this.active) return;
 
-        // [2026-08-11 战败停留] 战败后保持 13 画面（冻结待命）到 lingerUntil 到期才真正退出。
-        // 到期时直接 exit（回 zoom8）；期间 tickFollowCamera 的 5 秒延迟由 GameAppLoop 放行驱动，
-        // 切新军团动作由 CameraFollowUI 完成，这里只管「何时退 13」。
-        if (this.lingerUntil > 0 && performance.now() >= this.lingerUntil) {
-            this.lingerUntil = 0;
-            this.exit();
+        // 战场停留倒计时：未到期则保持战术残局画面，到期统一 exit()
+        if (this.lingerUntil > 0) {
+            if (performance.now() >= this.lingerUntil) {
+                this.lingerUntil = 0;
+                this.exit();
+            }
             return;
         }
 
@@ -101,14 +101,6 @@ export class BattleSceneLayer {
             this.pauseHook.setPaused(true);
         }
 
-        // [2026-08-09 13锁死+自愈] 跟拍军团已无任何活跃战斗（攻城/野战/1v1 全查）→
-        // 战斗结束即退出场景，防 active 残留（攻城战结束此前无 exit 挂点，残留会让后续
-        // 普通战斗/地图渲染误入 13 模式——主人血训：13 与其他 zoom 完全隔离）。
-        // [2026-08-11 战败停留] 战败后（无活跃战斗 + 演出已停）不立即 exit：
-        // 保持 13 冻结画面 5 秒，让 tickFollowCamera 的延迟切换期间镜头留在战场。
-        // 🔴 [2026-10-22] 小队模式（故事块小仗）没有大地图上的战斗，收场由它自己的判负回调负责，
-        //    不能拿「跟拍军团还有没有仗」来判，否则一进场就被当成没仗打退出。
-        if (this.manualEnd) return;
         const game = (window as any).game;
         // 战斗结算可能先移除/切换当前跟拍军团；收尾必须继续认进场时保存的参战军团，
         // 否则 followedId 变空后会跳过残局待命与退场，战术场景永久停在最后一帧。
@@ -124,28 +116,10 @@ export class BattleSceneLayer {
                     && (b?.attacker?.id === followedId || b?.defender?.id === followedId),
             );
             if (!stillFieldFight && !still1v1) {
-                // 🔴 战败停留：战斗结束（无活跃战斗）→ 统一 5 秒停留再 exit，不管演出停没停。
-                // [2026-08-11 修复] 1v1/攻城战路径：演出判负只置 over 不置 active（Scene13WarLayer
-                //   判负段没有 stop），又没有外部钩子停演出（onRegionalBattleEnd 只管区域战）→
-                //   原 `if (!warStillActive)` 把「演出还 active」挡在停留外 → 判负 1 帧后直接
-                //   exit 闪退（主人实锤「一结束就没了」）。修复 = 演出还 active 时先
-                //   stop('战斗正常结束', true) 保留残局帧，再进入 5 秒停留；区域战路径
-                //   （onRegionalBattleEnd 已 stop + 已 linger）走到这里 lingerUntil>0，行为不变。
-                if (this.lingerUntil <= 0) {
-                    if (game?.scene13War?.isActive?.() === true) {
-                        game.scene13War.beginLinger();   // 残局待命 5 秒：士兵待命动作 + 旗帜继续飘，不是静止帧
-                    }
-                    this.beginLingerAfterDefeat(GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS);
-                    return;
-                }
-                if (performance.now() < this.lingerUntil) {
-                    return;
-                }
-                this.exit();
+                this.beginLingerAfterDefeat();
                 return;
             }
         }
-
     }
 
     /** 战斗结束 → 解除冻结并恢复大战略；战略地图镜头始终未被本场景改动。 */
@@ -154,7 +128,6 @@ export class BattleSceneLayer {
         this.active = false;
         this.lingerUntil = 0;
         this.followUnitId = null;
-        this.manualEnd = false;
         // [2026-08-11 13 v2] 自愈/外部终结路径：演出层一并停（正常结束走 onRegionalBattleEnd 停）
         (window as any).game?.scene13War?.stop?.('场景自愈退出');
         // 🔴 [2026-08-12 修永久冻结] 退场必须把引擎的冻结还回去。

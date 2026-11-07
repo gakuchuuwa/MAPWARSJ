@@ -1653,8 +1653,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "weijing_york": {
-        // 🔴 [2026-11-07 按史] 约克建筑文化改 BRITONS（罗马石城→盎格鲁-撒克逊→中世纪英格兰；维京约维克仅木构遗迹），
-        //    主将埃里克血斧（封建）实际军团＝封建 × BRITONS，指针随之对齐
+        // 🔴 [2026-11-07 按史] 约克建筑文化＝BRITONS（罗马石城墙→盎格鲁-撒克逊→中世纪英格兰；维京约维克仅木构遗迹），
+        //    主将埃里克血斧（封建）实际军团＝封建 × BRITONS，指针对齐
         legionName: "封建时代盎格鲁撒克逊军团",
         legionType: "sub",
     },

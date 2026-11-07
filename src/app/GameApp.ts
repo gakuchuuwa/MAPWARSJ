@@ -1145,9 +1145,8 @@ export class GameApp {
                         //    （单骑或随军的玩家本人），军团 id 对不上 → 直接 return → 13 永不收场，
                         //    画面就卡在尸横遍野的残局里。所以这里主动收一次场。
                         //    `beginLinger` 自带 `if (!this.active) return`，与通用路径重复触发也无害。
-                        this.scene13War?.beginLinger();
                         if (this.battleScene?.isActive?.()) {
-                            this.battleScene.beginLingerAfterDefeat(GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS);
+                            this.battleScene.beginLingerAfterDefeat();
                         } else {
                             this.battleScene?.exit();
                         }

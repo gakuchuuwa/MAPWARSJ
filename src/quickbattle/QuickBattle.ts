@@ -875,16 +875,13 @@ class QuickBattle {
             this.endByTimeLimit(a);
             return;
         }
-        // 引擎已结算、战术画面却没收：正常对局里是「跟随军团阵亡 → 镜头切到别的军团」才收场，
-        // 即时战斗地图上没有别的军团，会一直挂着（2026-11-05 实测攻方全灭后卡住）。
-        // 结算后等 6 秒（看残局），再按 GameAppCombatHooks.onRegionalBattleEnd 同一套调用收场。
+        // 引擎已结算：统一走 BattleSceneLayer.beginLingerAfterDefeat() 的 3 秒战场停留收场（20 秒兜底强退）
         if (!this.battleStillRunning(a)) {
             a.resolvedAt ??= performance.now();
             const waited = performance.now() - a.resolvedAt;
-            if (waited > 6000 && !a.lingerKicked) {
+            if (!a.lingerKicked) {
                 a.lingerKicked = true;
-                this.app.scene13War?.beginLinger();
-                if (this.app.battleScene?.isActive?.()) this.app.battleScene.beginLingerAfterDefeat(GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS);
+                this.app.battleScene?.beginLingerAfterDefeat();
             } else if (waited > 20000) {
                 try { this.app.scene13War?.stop('即时战斗收场'); } catch { /* 收场失败也要退出 */ }
                 try { this.app.battleScene?.exit(); } catch { /* 同上 */ }

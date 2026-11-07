@@ -2617,8 +2617,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'yinggelan_littlejohn', factionId: 'yinggelan', cityId: 'city_norwich', generalName: '小约翰', portrait: '/assets/BRITONS/yinggelan_littlejohn.png', eliteName: '绿林棍手', eliteTier: 4 },
         { generalId: 'yinggelan_nottingham', factionId: 'yinggelan', cityId: 'city_norwich', generalName: '诺丁安的郡长', portrait: '/assets/BRITONS/yinggelan_nottingham.png', eliteName: '郡守卫队', eliteTier: 4 },
         { generalId: 'yinggelan_friartuck', factionId: 'yinggelan', cityId: 'city_norwich', generalName: '塔克修士', portrait: '/assets/BRITONS/yinggelan_friartuck.png', eliteName: '修士卫队', eliteTier: 4 },
-        { generalId: 'yinggelan_aethelfrith', factionId: 'yinggelan', cityId: 'city_york', generalName: '艾特尔弗里思', portrait: '/assets/SAXONS/yinggelan_aethelfrith.png', eliteName: '诺森卫队', eliteTier: 4 },   // 🔴 [2026-11-07 按史] 诺森布里亚王（593–616），并伯尼西亚与德伊勒，居约克（德伊勒核心，《盎格鲁-撒克逊编年史》）；原为凑萨克森文化放不伦瑞克（德国，非其驻地）→ 回约克，文化随据点 DANES
-        { generalId: 'yinggelan_tostig', factionId: 'yinggelan', cityId: 'city_york', generalName: '托斯蒂格', portrait: '/assets/SAXONS/yinggelan_tostig.png', eliteName: '诺森斧兵', eliteTier: 4 },   // 🔴 [2026-11-07 按史] 诺森布里亚伯爵（1055–1065），驻地约克；1066 与挪威王哈拉尔三世联军攻约克、战死斯坦福桥（《盎格鲁-撒克逊编年史》）→ 回约克，文化随据点 DANES（其军本就是挪威军）
+        { generalId: 'yinggelan_aethelfrith', factionId: 'yinggelan', cityId: 'city_york', generalName: '艾特尔弗里思', portrait: '/assets/SAXONS/yinggelan_aethelfrith.png', eliteName: '诺森卫队', eliteTier: 4 },   // 按史：诺森布里亚王（593–617），并伯尼西亚与德伊勒，居约克（德伊勒核心，《盎格鲁-撒克逊编年史》）；文化随据点＝BRITONS（英格兰）
+        { generalId: 'yinggelan_tostig', factionId: 'yinggelan', cityId: 'city_york', generalName: '托斯蒂格', portrait: '/assets/SAXONS/yinggelan_tostig.png', eliteName: '诺森斧兵', eliteTier: 4 },   // 按史：诺森布里亚伯爵（1055–1065），驻地约克；1066 与挪威王哈拉尔三世联军攻约克、战死斯坦福桥（《盎格鲁-撒克逊编年史》）；文化随据点＝BRITONS（英格兰）
         { generalId: 'gen_black_prince', factionId: 'yinggelan', cityId: 'city_lundun', generalName: '黑太子', portrait: '/assets/BRITONS/gen_black_prince.png', eliteName: '英格兰长弓', eliteTier: 1 },
     ],
 

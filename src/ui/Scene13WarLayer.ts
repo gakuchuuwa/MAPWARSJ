@@ -9568,9 +9568,7 @@ export class Scene13WarLayer {
             // 胜负已定时先锁住残局与退场计时，再做战略结算，避免结算回调提前切图。
             // 停留期间士兵待命、旗帜继续飘；到期由 BattleSceneLayer.exit() 走现有画布渐变。
             this.beginLinger();
-            (window as any).game?.battleScene?.beginLingerAfterDefeat?.(
-                GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS,
-            );
+            (window as any).game?.battleScene?.beginLingerAfterDefeat?.();
             this.onDecision?.(
                 resultWinner,
                 { attacker: Math.round(alive[0] * this.troopsPerSprite), defender: Math.round(alive[1] * this.troopsPerSprite) },

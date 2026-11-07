@@ -1306,7 +1306,6 @@ export class PlayerHero {
         const inTactic = battleScene?.isActive?.() === true;
         const lingerMs = inTactic ? GameConfig.LEGION.FOLLOW_SWITCH_DELAY_MS : 0;
         if (inTactic) {
-            game?.scene13War?.beginLinger?.();
             battleScene.beginLingerAfterDefeat(lingerMs);
         }
         if (this.holdUntilMs > Date.now()) return;   // 已在停顿中：不重复计时
