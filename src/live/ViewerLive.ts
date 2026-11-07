@@ -392,7 +392,13 @@ export interface LiveCommandRecord {
         | 'pick_fief'
         | 'kingdom_name'
         | 'summon_general'
-        | 'coerce_faction';
+        | 'coerce_faction'
+        | 'duke_formation'
+        | 'duke_legion_name'
+        | 'duke_fief'
+        | 'king_faction_name'
+        | 'king_summon'
+        | 'emperor_coerce';
     params: string;
     pointsBid: number;
     publishedAtMs: number;
@@ -1101,6 +1107,50 @@ export class ViewerLive {
                 pickBid: this.portraitPicked?.bid ?? 0,
                 pickIndex: this.portraitPicked?.index ?? 0,
             },
+            duke: {
+                unlocked: this.dukeUnlocked(),
+                units: (this.app.playerHero?.learnedUnits ?? []).map((u, i) => ({ index: i + 1, unitKey: u.unitKey, unitName: u.unitName })),
+                customRows: this.app.playerHero?.customRowUnits ? [...this.app.playerHero.customRowUnits] : null,
+                formationBid: this.dukeFormationPicked?.bid ?? 0,
+                legionName: this.app.playerHero?.customLegionName ?? '',
+                legionNameBid: this.dukeLegionNameBid,
+                fiefCityName: (this.app.playerHero?.fiefCityId && this.app.cityManager?.getCity(this.app.playerHero.fiefCityId)?.name) || this.dukeFiefPicked?.cityName || '',
+                fiefBid: this.dukeFiefPicked?.bid ?? 0,
+                fiefCandidates: this.dukeUnlocked()
+                    ? this.dukeFiefCandidates().map((c) => ({ index: c.index, name: c.name, factionName: c.factionName, troops: c.troops }))
+                    : [],
+            },
+            king: (() => {
+                const three = this.checkKingThreeTimesLiege();
+                return {
+                    unlocked: this.kingUnlocked(),
+                    factionName: this.app.playerHero?.ownFactionName || '',
+                    flagChar: this.app.playerHero?.ownFlagChar || '',
+                    factionNameBid: this.kingFactionNameBid,
+                    threeTimesOk: three.ok,
+                    threeTimesText: three.text,
+                    summonCandidates: this.kingUnlocked() && three.ok
+                        ? this.kingSummonCandidates().map((g) => ({ index: g.index, generalName: g.generalName, troops: g.troops, cityName: g.cityName }))
+                        : [],
+                    summonBid: this.kingSummonPicked?.bid ?? 0,
+                    mergedCount: this.app.playerHero?.mergedGenerals?.length ?? 0,
+                };
+            })(),
+            emperor: {
+                unlocked: this.emperorUnlocked(),
+                cooldownSec: this.lastCoerceSuccessAt > 0
+                    ? Math.max(0, Math.ceil((this.lastCoerceSuccessAt + EMPEROR_COERCE_COOLDOWN_MS - Date.now()) / 1000))
+                    : 0,
+                coerceCandidates: this.emperorUnlocked()
+                    ? this.emperorCoerceCandidates().map((f) => ({ index: f.index, factionId: f.factionId, factionName: f.factionName, cities: f.cities, troops: f.troops }))
+                    : [],
+                activePool: this.emperorCoercePool
+                    ? { factionName: this.emperorCoercePool.factionName, totalPoints: this.emperorCoercePool.total, targetPoints: EMPEROR_COERCE_TARGET_POINTS }
+                    : null,
+            },
+            _marshalDummy: {
+                _unused: 0,
+            },
         };
     }
 
@@ -1585,6 +1635,789 @@ export class ViewerLive {
         this.notifyViewerVoice(t.uid, `你指定的目标【${t.cityName}】未开战即失效，${t.bid}积分已退回`, true);
     }
 
+    // ═══════════════════════════════════════════════════════════════════════════
+    // 七～九阶战略权限：公侯（duke）· 国王（king）· 皇帝（emperor）
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    private dukeUnlocked(): boolean {
+        return !!this.app.playerHero?.hasRankPrivilege('duke');
+    }
+
+    private kingUnlocked(): boolean {
+        return !!this.app.playerHero?.hasRankPrivilege('king');
+    }
+
+    private emperorUnlocked(): boolean {
+        return !!this.app.playerHero?.hasRankPrivilege('emperor');
+    }
+
+    /** 确保玩家自建独立势力（player_own）已在 FactionManager / 旗号表中注册并刷新地图旗字 */
+    private ensurePlayerOwnFactionRegistered(): void {
+        const hero = this.app.playerHero;
+        if (!hero) return;
+        const fid = PlayerHero.OWN_FACTION_ID;
+        const fname = hero.ownFactionName || `${hero.name}军`;
+        const flagChar = (hero.ownFlagChar || fname.slice(0, 1) || '将').slice(0, 1);
+        hero.ownFactionName = fname;
+        hero.ownFlagChar = flagChar;
+
+        const fm = (this.app as any).factionManager;
+        if (fm) {
+            if (!fm.getFaction(fid)) {
+                fm.addFaction({ id: fid, name: fname, color: '#FFD700' });
+            }
+            const fac = fm.getFaction(fid);
+            if (fac) {
+                fac.name = fname;
+                fac.color = '#FFD700';
+            }
+        }
+        SANDBOX_DISPLAY_NAMES[fid] = flagChar;
+        CityAssetManager.factionFlagMap[fid] = flagChar;
+        CityAssetManager.invalidateFlagTextCache(fid);
+        void CityAssetManager.ensureFactionFlag(fid);
+        this.app.cityManager?.getTerritorySystem?.()?.patchFactionFlagText?.(fid);
+    }
+
+    private dukeUnitsHint(name: string): string {
+        if (!this.dukeUnlocked()) {
+            return this.note(`${name}：组建三排亲军要资历达到公侯（52 胜）才开放`);
+        }
+        const hero = this.app.playerHero;
+        const list = hero?.learnedUnits ?? [];
+        if (list.length === 0) {
+            return this.note(`${name}：当前尚未收集到陆地兵模，升官或公侯击败新兵种军团后即可收集`);
+        }
+        const brief = list.slice(0, 12).map((u, i) => `${i + 1}.${u.unitName}`).join(' / ');
+        const more = list.length > 12 ? ` 等共${list.length}种` : '';
+        const floor = Math.max(DUKE_LEGION_MIN_BID, (this.dukeFormationPicked?.bid ?? 0) + 1);
+        const nameFloor = Math.max(DUKE_LEGION_NAME_MIN_BID, this.dukeLegionNameBid + 1);
+        return this.note(`已收兵模：${brief}${more}｜发「编 前排编号 中排编号 后排编号 ${floor}」组建三排军团；发「军 军团名 ${nameFloor}」命名亲军`);
+    }
+
+    private handleDukeCustomFormation(
+        id: string,
+        name: string,
+        rows: [number, number, number],
+        bidRaw: number | null,
+        eventId: string,
+        pubMs: number,
+    ): string {
+        const now = Date.now();
+        const cmdStr = `编 ${rows[0]} ${rows[1]} ${rows[2]}`;
+        if (!this.dukeUnlocked()) {
+            this.recordCmd(eventId, id, name, 'duke_formation', cmdStr, 0, pubMs, now, 'rejected', '资历未达公侯');
+            return this.note(`${name}：组建三排亲军要资历达到公侯才开放`);
+        }
+        if (this.battleOn()) {
+            this.recordCmd(eventId, id, name, 'duke_formation', cmdStr, 0, pubMs, now, 'rejected', '战斗进行中');
+            return this.note(`${name}：正在打仗，战后再调整三排亲军编成`);
+        }
+        const hero = this.app.playerHero;
+        const list = hero?.learnedUnits ?? [];
+        if (!hero || list.length === 0) {
+            return this.note(`${name}：当前还没有已收集的兵模`);
+        }
+        const [r1, r2, r3] = rows;
+        if (r1 < 1 || r1 > list.length || r2 < 1 || r2 > list.length || r3 < 1 || r3 > list.length) {
+            this.recordCmd(eventId, id, name, 'duke_formation', cmdStr, 0, pubMs, now, 'rejected', '兵模编号超出范围');
+            return this.note(`${name}：兵模编号须在 1~${list.length} 之间（发「兵」查看编号）`);
+        }
+        const floor = Math.max(DUKE_LEGION_MIN_BID, (this.dukeFormationPicked?.bid ?? 0) + 1);
+        const bid = bidRaw ?? floor;
+        if (bid < floor) {
+            this.recordCmd(eventId, id, name, 'duke_formation', cmdStr, bid, pubMs, now, 'rejected', `需出${floor}分以上`);
+            return this.note(`${name}：当前三排编成竞价已到 ${floor - 1} 分，改编需 ${floor} 分以上`);
+        }
+        if (bid > DUKE_LEGION_MAX_BID) {
+            return this.note(`${name}：编成单次出价上限 ${DUKE_LEGION_MAX_BID} 分`);
+        }
+        const a = this.acct(id, name);
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < bid) {
+            this.recordCmd(eventId, id, name, 'duke_formation', cmdStr, bid, pubMs, now, 'rejected', '积分不足');
+            return this.note(`${name}：组建三排军团需 ${bid} 积分，现有 ${avail}/${bid}`);
+        }
+        const prev = this.dukeFormationPicked;
+        if (prev) {
+            const pa = this.acct(prev.uid, prev.viewer);
+            pa.n = Math.min(ORDER_CAP, pa.n + prev.bid);
+        }
+        a.n -= bid;
+        const u1 = list[r1 - 1];
+        const u2 = list[r2 - 1];
+        const u3 = list[r3 - 1];
+        hero.customRowUnits = [u1.unitKey, u2.unitKey, u3.unitKey];
+        for (const u of [u1, u2, u3]) {
+            hero.peakStats = mergePlayerPeakFromUnit(hero.peakStats, u.unitKey);
+        }
+        hero.applyCustomLegionToArmy();
+        this.dukeFormationPicked = { uid: id, viewer: name, bid, rows: [r1, r2, r3], names: [u1.unitName, u2.unitName, u3.unitName] };
+        this.recordCmd(eventId, id, name, 'duke_formation', `${u1.unitName}/${u2.unitName}/${u3.unitName}`, bid, pubMs, now, 'executed');
+        this.save();
+        const refund = prev ? `（已退回 ${prev.viewer} 的 ${prev.bid} 积分）` : '';
+        this.notifyViewerVoice(id, `感谢${name}出${bid}积分，亲军三排编为${u1.unitName}、${u2.unitName}、${u3.unitName}`, true);
+        return this.note(`${name} 出 ${bid} 积分，组建三排亲军：前排【${u1.unitName}】·中排【${u2.unitName}】·后排【${u3.unitName}】${refund}`);
+    }
+
+    private handleDukeLegionName(
+        id: string,
+        name: string,
+        rawName: string,
+        bidRaw: number | null,
+        eventId: string,
+        pubMs: number,
+    ): string {
+        const now = Date.now();
+        if (!this.dukeUnlocked()) {
+            this.recordCmd(eventId, id, name, 'duke_legion_name', rawName, 0, pubMs, now, 'rejected', '资历未达公侯');
+            return this.note(`${name}：命名亲军军团要资历达到公侯才开放`);
+        }
+        const hero = this.app.playerHero;
+        if (!hero) return this.note(`${name}：玩家尚未就绪`);
+        const floor = Math.max(DUKE_LEGION_NAME_MIN_BID, this.dukeLegionNameBid + 1);
+        const bid = bidRaw ?? floor;
+        if (bid < floor) {
+            this.recordCmd(eventId, id, name, 'duke_legion_name', rawName, bid, pubMs, now, 'rejected', `需出${floor}分以上`);
+            return this.note(`${name}：当前军团名竞价已到 ${floor - 1} 分，改名需 ${floor} 分以上`);
+        }
+        if (bid > DUKE_LEGION_MAX_BID) {
+            return this.note(`${name}：单次出价上限 ${DUKE_LEGION_MAX_BID} 分`);
+        }
+        const mod = moderateLiveName(rawName);
+        if (!mod.ok) {
+            this.recordCmd(eventId, id, name, 'duke_legion_name', rawName, bid, pubMs, now, 'rejected', mod.reason);
+            return this.note(`${name}：${mod.reason}（未扣积分）`);
+        }
+        const a = this.acct(id, name);
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < bid) {
+            this.recordCmd(eventId, id, name, 'duke_legion_name', mod.name, bid, pubMs, now, 'rejected', '积分不足');
+            return this.note(`${name}：命名军团需 ${bid} 积分，现有 ${avail}/${bid}`);
+        }
+        a.n -= bid;
+        this.dukeLegionNameBid = bid;
+        hero.customLegionName = mod.name;
+        hero.applyCustomLegionToArmy();
+        this.recordCmd(eventId, id, name, 'duke_legion_name', mod.name, bid, pubMs, now, 'executed');
+        this.save();
+        this.notifyViewerVoice(id, `感谢${name}出${bid}积分，亲军军团命名为${mod.name}`, true);
+        return this.note(`${name} 出 ${bid} 积分，将玩家亲军命名为【${mod.name}】（下次改名需 ${bid + 1} 分起）`);
+    }
+
+    private dukeFiefCandidates(): { index: number; cityId: string; name: string; factionId: string; factionName: string; troops: number; distKm: number }[] {
+        const cm = this.app.cityManager;
+        const hero = this.app.playerHero;
+        if (!cm || !hero) return [];
+        const pos = hero.getPosition();
+        const liegeFid = (hero.factionId && hero.factionId !== PlayerHero.OWN_FACTION_ID)
+            ? hero.factionId
+            : hero.alliedFactionId;
+        const allCities = cm.getCities().filter((c) => cm.isCityVisible(c) && c.factionId !== PlayerHero.OWN_FACTION_ID);
+        const withDist = allCities.map((c) => {
+            const dLat = (c.latitude - pos.lat) * 111;
+            const dLng = (c.longitude - pos.lng) * 111 * Math.cos((pos.lat * Math.PI) / 180);
+            const distKm = Math.max(1, Math.round(Math.hypot(dLat, dLng)));
+            return {
+                cityId: c.id,
+                name: c.name,
+                factionId: c.factionId,
+                factionName: cm.getFactionName(c.factionId) || c.factionId,
+                troops: Math.round(c.troops || 0),
+                distKm,
+                isLiege: !!liegeFid && c.factionId === liegeFid,
+            };
+        });
+        const liegeList = withDist.filter((c) => c.isLiege).sort((a, b) => a.distKm - b.distKm);
+        const otherList = withDist.filter((c) => !c.isLiege).sort((a, b) => a.distKm - b.distKm);
+        const merged = [...(liegeList.length >= 2 ? liegeList.slice(0, 5) : []), ...otherList].slice(0, 8);
+        return merged.map((c, idx) => ({
+            index: idx + 1,
+            cityId: c.cityId,
+            name: c.name,
+            factionId: c.factionId,
+            factionName: c.factionName,
+            troops: c.troops,
+            distKm: c.distKm,
+        }));
+    }
+
+    private dukeFiefHint(name: string): string {
+        if (!this.dukeUnlocked()) {
+            return this.note(`${name}：选择根据地封邑要资历达到公侯（52 胜）才开放`);
+        }
+        const list = this.dukeFiefCandidates();
+        if (list.length === 0) return this.note(`${name}：当前没有可选的根据地据点`);
+        const floor = Math.max(DUKE_FIEF_MIN_BID, (this.dukeFiefPicked?.bid ?? 0) + 1);
+        const brief = list.map((c) => `${c.index}.${c.name}(${c.factionName}·${c.distKm}km)`).join(' / ');
+        return this.note(`可选根据地：${brief} —— 发「封1 ${floor}」竞拍封地（与原主公同盟立藩）`);
+    }
+
+    private handleDukeFief(
+        id: string,
+        name: string,
+        index: number,
+        bidRaw: number | null,
+        eventId: string,
+        pubMs: number,
+    ): string {
+        const now = Date.now();
+        if (!this.dukeUnlocked()) {
+            this.recordCmd(eventId, id, name, 'duke_fief', `封${index}`, 0, pubMs, now, 'rejected', '资历未达公侯');
+            return this.note(`${name}：择城封侯要资历达到公侯才开放`);
+        }
+        if (this.battleOn()) {
+            this.recordCmd(eventId, id, name, 'duke_fief', `封${index}`, 0, pubMs, now, 'rejected', '战斗进行中');
+            return this.note(`${name}：正在交战，战后再选择根据地`);
+        }
+        const list = this.dukeFiefCandidates();
+        const hit = list.find((c) => c.index === index);
+        if (!hit) {
+            this.recordCmd(eventId, id, name, 'duke_fief', `封${index}`, 0, pubMs, now, 'rejected', '编号不存在');
+            return this.note(`${name}：没有这个根据地编号，先发「封」看可选列表（1~${list.length}）`);
+        }
+        const floor = Math.max(DUKE_FIEF_MIN_BID, (this.dukeFiefPicked?.bid ?? 0) + 1);
+        const bid = bidRaw ?? floor;
+        if (bid < floor) {
+            this.recordCmd(eventId, id, name, 'duke_fief', `封${index}`, bid, pubMs, now, 'rejected', `需出${floor}分以上`);
+            return this.note(`${name}：当前根据地竞价已到 ${floor - 1} 分，改选需 ${floor} 分以上`);
+        }
+        if (bid > DUKE_FIEF_MAX_BID) {
+            return this.note(`${name}：选根据地单次上限 ${DUKE_FIEF_MAX_BID} 分`);
+        }
+        const a = this.acct(id, name);
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < bid) {
+            this.recordCmd(eventId, id, name, 'duke_fief', `封${index}`, bid, pubMs, now, 'rejected', '积分不足');
+            return this.note(`${name}：竞拍根据地需 ${bid} 积分，现有 ${avail}/${bid}`);
+        }
+        const prev = this.dukeFiefPicked;
+        if (prev) {
+            const pa = this.acct(prev.uid, prev.viewer);
+            pa.n = Math.min(ORDER_CAP, pa.n + prev.bid);
+        }
+        a.n -= bid;
+
+        const hero = this.app.playerHero!;
+        const cm = this.app.cityManager!;
+        if (hero.factionId && hero.factionId !== PlayerHero.OWN_FACTION_ID) {
+            hero.alliedFactionId = hero.factionId;
+        } else if (!hero.alliedFactionId && hit.factionId !== 'panshu') {
+            hero.alliedFactionId = hit.factionId;
+        }
+        this.ensurePlayerOwnFactionRegistered();
+        hero.fiefCityId = hit.cityId;
+        const targetCity = cm.getCity(hit.cityId);
+        if (targetCity) {
+            cm.updateCity(
+                hit.cityId,
+                {
+                    factionId: PlayerHero.OWN_FACTION_ID,
+                    troops: Math.max(targetCity.troops || 0, 20000),
+                },
+                { skipCaptureLog: true },
+            );
+        }
+        hero.factionId = PlayerHero.OWN_FACTION_ID;
+        const host = hero.getHostLegion();
+        if (host) {
+            host.setFactionId(PlayerHero.OWN_FACTION_ID);
+            hero.applyCustomLegionToArmy(host);
+        }
+        this.dukeFiefPicked = { uid: id, viewer: name, bid, cityId: hit.cityId, cityName: hit.name };
+        this.recordCmd(eventId, id, name, 'duke_fief', hit.cityId, bid, pubMs, now, 'executed');
+        this.save();
+        const allyName = hero.alliedFactionId ? (cm.getFactionName(hero.alliedFactionId) || hero.alliedFactionId) : '原主公';
+        const refund = prev ? `（已退回 ${prev.viewer} 的 ${prev.bid} 积分）` : '';
+        this.notifyViewerVoice(id, `感谢${name}出${bid}积分，以${hit.name}为根据地封侯建藩，与${allyName}结盟`, true);
+        return this.note(`${name} 出 ${bid} 积分，择【${hit.name}】为根据地，立独立同盟藩镇【${hero.ownFactionName}】（与【${allyName}】同盟互不侵犯）${refund}`);
+    }
+
+    private handleKingFactionName(
+        id: string,
+        name: string,
+        rawName: string,
+        flagChar: string,
+        bidRaw: number | null,
+        eventId: string,
+        pubMs: number,
+    ): string {
+        const now = Date.now();
+        if (!this.kingUnlocked()) {
+            this.recordCmd(eventId, id, name, 'king_faction_name', rawName, 0, pubMs, now, 'rejected', '资历未达国王');
+            return this.note(`${name}：建立势力名字与旗字要资历达到国王（82 胜）才开放`);
+        }
+        const hero = this.app.playerHero;
+        if (!hero) return this.note(`${name}：玩家尚未就绪`);
+        const floor = Math.max(KING_FACTION_NAME_MIN_BID, this.kingFactionNameBid + 1);
+        const bid = bidRaw ?? floor;
+        if (bid < floor) {
+            this.recordCmd(eventId, id, name, 'king_faction_name', rawName, bid, pubMs, now, 'rejected', `需出${floor}分以上`);
+            return this.note(`${name}：当前国号竞价已到 ${floor - 1} 分，改国号需 ${floor} 分以上`);
+        }
+        if (bid > KING_FACTION_NAME_MAX_BID) {
+            return this.note(`${name}：单次出价上限 ${KING_FACTION_NAME_MAX_BID} 分`);
+        }
+        const modName = moderateLiveName(rawName);
+        if (!modName.ok) {
+            this.recordCmd(eventId, id, name, 'king_faction_name', rawName, bid, pubMs, now, 'rejected', modName.reason);
+            return this.note(`${name}：${modName.reason}（未扣积分）`);
+        }
+        const modFlag = moderateLiveName(flagChar);
+        if (!modFlag.ok) {
+            this.recordCmd(eventId, id, name, 'king_faction_name', flagChar, bid, pubMs, now, 'rejected', modFlag.reason);
+            return this.note(`${name}：旗号文字不合规范（未扣积分）`);
+        }
+        const a = this.acct(id, name);
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < bid) {
+            this.recordCmd(eventId, id, name, 'king_faction_name', modName.name, bid, pubMs, now, 'rejected', '积分不足');
+            return this.note(`${name}：立国号需 ${bid} 积分，现有 ${avail}/${bid}`);
+        }
+        a.n -= bid;
+        this.kingFactionNameBid = bid;
+        const oneChar = [...modFlag.name.trim()][0] || [...modName.name][0] || '王';
+        hero.ownFactionName = modName.name;
+        hero.ownFlagChar = oneChar;
+        this.ensurePlayerOwnFactionRegistered();
+        this.recordCmd(eventId, id, name, 'king_faction_name', `${modName.name}(${oneChar})`, bid, pubMs, now, 'executed');
+        this.save();
+        this.notifyViewerVoice(id, `感谢${name}出${bid}积分，立国号为${modName.name}，旗号${oneChar}`, true);
+        return this.note(`${name} 出 ${bid} 积分，立国号【${modName.name}】、旗号【${oneChar}】（下次改国号需 ${bid + 1} 分起）`);
+    }
+
+    private getFactionCitiesAndTroops(factionId: string | null): { cities: number; troops: number } {
+        if (!factionId) return { cities: 0, troops: 0 };
+        const cm = this.app.cityManager;
+        const lm = this.app.legionManager;
+        const cities = cm?.getCitiesByFaction(factionId) ?? [];
+        const cityTroops = cities.reduce((s, c) => s + Math.max(0, c.troops || 0), 0);
+        const armies = (lm?.getArmies?.() ?? []).filter((a) => a.getFactionId() === factionId);
+        const armyTroops = armies.reduce((s, a) => s + Math.max(0, a.getTroops() || 0), 0);
+        return { cities: cities.length, troops: Math.round(cityTroops + armyTroops) };
+    }
+
+    /** 国王征召条件：本势力据点与总兵力均大于原主公势力的 3 倍（若主公已无城则自动满足） */
+    private checkKingThreeTimesLiege(): {
+        ok: boolean;
+        myCities: number;
+        myTroops: number;
+        liegeCities: number;
+        liegeTroops: number;
+        liegeName: string;
+        text: string;
+    } {
+        const hero = this.app.playerHero;
+        const cm = this.app.cityManager;
+        const myFid = hero?.fiefCityId ? PlayerHero.OWN_FACTION_ID : (hero?.factionId || PlayerHero.OWN_FACTION_ID);
+        const liegeFid = hero?.alliedFactionId && hero.alliedFactionId !== myFid ? hero.alliedFactionId : null;
+        const my = this.getFactionCitiesAndTroops(myFid);
+        const liege = this.getFactionCitiesAndTroops(liegeFid);
+        const liegeName = liegeFid ? (cm?.getFactionName(liegeFid) || liegeFid) : '旧主';
+        const ok = liege.cities === 0
+            ? (my.cities > 0 || my.troops > 0)
+            : (my.cities > liege.cities * 3 && my.troops > liege.troops * 3);
+        const text = liege.cities === 0
+            ? `本国 ${my.cities} 城/${my.troops} 兵（旧主已灭，满足条件）`
+            : `本国 ${my.cities} 城/${my.troops} 兵 vs ${liegeName} ${liege.cities} 城/${liege.troops} 兵（需 >3 倍）`;
+        return { ok, myCities: my.cities, myTroops: my.troops, liegeCities: liege.cities, liegeTroops: liege.troops, liegeName, text };
+    }
+
+    private kingSummonCandidates(): {
+        index: number;
+        generalId: string;
+        generalName: string;
+        cityId: string;
+        cityName: string;
+        troops: number;
+        activeArmyId: string | null;
+    }[] {
+        const hero = this.app.playerHero;
+        const cm = this.app.cityManager;
+        const lm = this.app.legionManager;
+        if (!hero || !cm) return [];
+        const host = hero.getHostLegion();
+        const myFid = hero.fiefCityId ? PlayerHero.OWN_FACTION_ID : (hero.factionId || PlayerHero.OWN_FACTION_ID);
+        const allowFactions = new Set<string>([myFid]);
+        if (hero.alliedFactionId) allowFactions.add(hero.alliedFactionId);
+        if (hero.factionId) allowFactions.add(hero.factionId);
+
+        const mergedSet = new Set(hero.mergedGenerals);
+        const armies = lm?.getArmies?.() ?? [];
+        const out: {
+            generalId: string;
+            generalName: string;
+            cityId: string;
+            cityName: string;
+            troops: number;
+            activeArmyId: string | null;
+        }[] = [];
+
+        // 1. 已在野外领兵且非主角当前所在军团的本势力/同盟名将
+        for (const a of armies) {
+            if (!allowFactions.has(a.getFactionId())) continue;
+            if (host && a.id === host.id) continue;
+            if (a.getIsInCombat()) continue;
+            const gid = a.generalId;
+            if (!gid || mergedSet.has(gid) || gid === host?.generalId) continue;
+            const g = getFactionGeneral(gid);
+            if (!g || !isGeneralOnStage(g.generalId)) continue;
+            if (a.getTroops() < GameConfig.LEGION.MIN_ARMY_SIZE) continue;
+            out.push({
+                generalId: g.generalId,
+                generalName: g.generalName,
+                cityId: (a as any).sourceCityId || g.cityId || '',
+                cityName: a.name,
+                troops: Math.round(a.getTroops()),
+                activeArmyId: a.id,
+            });
+        }
+
+        // 2. 在本国/同盟据点内驻守且满足出兵兵力条件（驻军 >= MIN_ARMY_SIZE + MIN_GARRISON）的在世武将
+        for (const city of cm.getCities()) {
+            if (!allowFactions.has(city.factionId)) continue;
+            const availTroops = Math.floor((city.troops || 0) - GameConfig.CITY.MIN_GARRISON);
+            if (availTroops < GameConfig.LEGION.MIN_ARMY_SIZE) continue;
+            const anchored = getCityAnchoredGenerals(city.id);
+            for (const g of anchored) {
+                if (!isGeneralOnStage(g.generalId)) continue;
+                if (mergedSet.has(g.generalId) || g.generalId === host?.generalId) continue;
+                if (out.some((x) => x.generalId === g.generalId)) continue;
+                const takeTroops = Math.max(GameConfig.LEGION.MIN_ARMY_SIZE, Math.min(availTroops, Math.floor((city.troops || 0) * 0.5)));
+                out.push({
+                    generalId: g.generalId,
+                    generalName: g.generalName,
+                    cityId: city.id,
+                    cityName: city.name,
+                    troops: takeTroops,
+                    activeArmyId: null,
+                });
+            }
+        }
+
+        return out.slice(0, 8).map((item, idx) => ({ index: idx + 1, ...item }));
+    }
+
+    private kingSummonHint(name: string): string {
+        if (!this.kingUnlocked()) {
+            return this.note(`${name}：征召武将合军要资历达到国王（82 胜）才开放`);
+        }
+        const three = this.checkKingThreeTimesLiege();
+        if (!three.ok) {
+            return this.note(`${name}：征召需据点与兵力均大于主公 3 倍（当前：${three.text}）`);
+        }
+        const list = this.kingSummonCandidates();
+        if (list.length === 0) {
+            return this.note(`${name}：当前没有符合出兵条件（据点可出征兵力≥${GameConfig.LEGION.MIN_ARMY_SIZE}）的本国武将可征召`);
+        }
+        const floor = Math.max(KING_SUMMON_MIN_BID, (this.kingSummonPicked?.bid ?? 0) + 1);
+        const brief = list.map((g) => `${g.index}.${g.generalName}(${g.cityName}·${g.troops}兵)`).join(' / ');
+        return this.note(`可征召合军武将：${brief} —— 发「召1 ${floor}」让该将领军并入主角军团（兵力相加）`);
+    }
+
+    private handleKingSummonGeneral(
+        id: string,
+        name: string,
+        index: number,
+        bidRaw: number | null,
+        eventId: string,
+        pubMs: number,
+    ): string {
+        const now = Date.now();
+        if (!this.kingUnlocked()) {
+            this.recordCmd(eventId, id, name, 'king_summon', `召${index}`, 0, pubMs, now, 'rejected', '资历未达国王');
+            return this.note(`${name}：征召武将合军要资历达到国王才开放`);
+        }
+        if (this.battleOn()) {
+            this.recordCmd(eventId, id, name, 'king_summon', `召${index}`, 0, pubMs, now, 'rejected', '战斗进行中');
+            return this.note(`${name}：正在打仗，战后再征召武将合军`);
+        }
+        const hero = this.app.playerHero;
+        const host = hero?.getHostLegion() ?? null;
+        if (!hero || !host) {
+            this.recordCmd(eventId, id, name, 'king_summon', `召${index}`, 0, pubMs, now, 'rejected', '主角未随军');
+            return this.note(`${name}：主角须在军团中才能接纳其他武将合军`);
+        }
+        const three = this.checkKingThreeTimesLiege();
+        if (!three.ok) {
+            this.recordCmd(eventId, id, name, 'king_summon', `召${index}`, 0, pubMs, now, 'rejected', '未满主公3倍');
+            return this.note(`${name}：尚未满足据点与兵力大于主公 3 倍（${three.text}）`);
+        }
+        const list = this.kingSummonCandidates();
+        const hit = list.find((g) => g.index === index);
+        if (!hit) {
+            this.recordCmd(eventId, id, name, 'king_summon', `召${index}`, 0, pubMs, now, 'rejected', '武将编号不存在');
+            return this.note(`${name}：没有这个编号，先发「召」看可征召武将列表`);
+        }
+        const floor = Math.max(KING_SUMMON_MIN_BID, (this.kingSummonPicked?.bid ?? 0) + 1);
+        const bid = bidRaw ?? floor;
+        if (bid < floor) {
+            this.recordCmd(eventId, id, name, 'king_summon', `召${index}`, bid, pubMs, now, 'rejected', `需出${floor}分以上`);
+            return this.note(`${name}：当前征召竞价需 ${floor} 分以上`);
+        }
+        if (bid > KING_SUMMON_MAX_BID) {
+            return this.note(`${name}：征召单次出价上限 ${KING_SUMMON_MAX_BID} 分`);
+        }
+        const a = this.acct(id, name);
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < bid) {
+            this.recordCmd(eventId, id, name, 'king_summon', `召${index}`, bid, pubMs, now, 'rejected', '积分不足');
+            return this.note(`${name}：征召武将需 ${bid} 积分，现有 ${avail}/${bid}`);
+        }
+        a.n -= bid;
+
+        let addedTroops = hit.troops;
+        if (hit.activeArmyId) {
+            const activeArmy = (this.app.legionManager?.getArmies?.() ?? []).find((x) => x.id === hit.activeArmyId);
+            if (activeArmy) {
+                addedTroops = Math.max(1000, Math.round(activeArmy.getTroops()));
+                this.app.legionManager?.removeArmy?.(activeArmy);
+            }
+        } else if (hit.cityId) {
+            const city = this.app.cityManager?.getCity(hit.cityId);
+            if (city) {
+                const maxTake = Math.max(0, (city.troops || 0) - GameConfig.CITY.MIN_GARRISON);
+                addedTroops = Math.min(hit.troops, maxTake);
+                this.app.cityManager?.updateCity(city.id, { troops: Math.max(GameConfig.CITY.MIN_GARRISON, (city.troops || 0) - addedTroops) });
+            }
+        }
+
+        const beforeTroops = Math.round(host.getTroops());
+        host.setTroops(beforeTroops + addedTroops);
+        if (!hero.mergedGenerals.includes(hit.generalId)) {
+            hero.mergedGenerals.push(hit.generalId);
+        }
+        this.kingSummonPicked = { uid: id, viewer: name, bid, generalId: hit.generalId, generalName: hit.generalName };
+        this.recordCmd(eventId, id, name, 'king_summon', `${hit.generalName}(+${addedTroops})`, bid, pubMs, now, 'executed');
+        this.save();
+        this.notifyViewerVoice(id, `感谢${name}出${bid}积分，征召${hit.generalName}率${addedTroops}兵合入大军`, true);
+        return this.note(`${name} 出 ${bid} 积分，征召名将【${hit.generalName}】率 ${addedTroops} 兵合入主角大军，总兵力升至 ${Math.round(host.getTroops())}`);
+    }
+
+    /** 皇帝威压候选：与本势力直接道路接壤、且据点与总兵力均小于本势力 1/10 的势力 */
+    private emperorCoerceCandidates(): {
+        index: number;
+        factionId: string;
+        factionName: string;
+        cities: number;
+        troops: number;
+    }[] {
+        const hero = this.app.playerHero;
+        const cm = this.app.cityManager;
+        if (!hero || !cm) return [];
+        const myFid = hero.fiefCityId ? PlayerHero.OWN_FACTION_ID : (hero.factionId || PlayerHero.OWN_FACTION_ID);
+        const my = this.getFactionCitiesAndTroops(myFid);
+        if (my.cities < 10 || my.troops < 10000) return [];
+
+        const myCities = cm.getCitiesByFaction(myFid);
+        const neighborFactions = new Set<string>();
+        for (const c of myCities) {
+            const connected = roadRegistry.getConnectedCities(c.id);
+            for (const cid of connected) {
+                const nb = cm.getCity(cid);
+                if (!nb || !nb.factionId) continue;
+                if (nb.factionId === myFid || nb.factionId === 'panshu' || nb.factionId === 'panjun') continue;
+                neighborFactions.add(nb.factionId);
+            }
+        }
+
+        const out: { factionId: string; factionName: string; cities: number; troops: number }[] = [];
+        for (const fid of neighborFactions) {
+            const st = this.getFactionCitiesAndTroops(fid);
+            if (st.cities <= 0) continue;
+            if (my.cities >= st.cities * 10 && my.troops >= st.troops * 10) {
+                out.push({
+                    factionId: fid,
+                    factionName: cm.getFactionName(fid) || fid,
+                    cities: st.cities,
+                    troops: st.troops,
+                });
+            }
+        }
+        out.sort((a, b) => a.troops - b.troops);
+        return out.slice(0, 8).map((f, idx) => ({ index: idx + 1, ...f }));
+    }
+
+    private emperorCoerceHint(name: string): string {
+        if (!this.emperorUnlocked()) {
+            return this.note(`${name}：威压邻国臣服要资历达到皇帝（120 胜）才开放`);
+        }
+        const now = Date.now();
+        if (this.lastCoerceSuccessAt > 0 && now - this.lastCoerceSuccessAt < EMPEROR_COERCE_COOLDOWN_MS) {
+            const leftMin = Math.ceil((this.lastCoerceSuccessAt + EMPEROR_COERCE_COOLDOWN_MS - now) / 60_000);
+            return this.note(`${name}：天子威压冷却中，还需约 ${leftMin} 分钟才能再次颁旨威压`);
+        }
+        if (this.emperorCoercePool) {
+            const p = this.emperorCoercePool;
+            return this.note(`正在众筹威压【${p.factionName}】进度 ${p.total}/${EMPEROR_COERCE_TARGET_POINTS} 分 —— 发「威1 10」追加积分`);
+        }
+        const list = this.emperorCoerceCandidates();
+        if (list.length === 0) {
+            return this.note(`${name}：当前没有「与本国领土直接接壤、且据点与兵力均小于我方 1/10」的势力可威压`);
+        }
+        const brief = list.map((f) => `${f.index}.${f.factionName}(${f.cities}城·${f.troops}兵)`).join(' / ');
+        return this.note(`可威压臣服邻国：${brief} —— 发「威1 20」众筹天子诏书（满 ${EMPEROR_COERCE_TARGET_POINTS} 分即刻臣服合军）`);
+    }
+
+    private refundEmperorCoercePool(reason: string): void {
+        const pool = this.emperorCoercePool;
+        if (!pool) return;
+        this.emperorCoercePool = null;
+        for (const [uid, c] of pool.contributors.entries()) {
+            const a = this.acct(uid, c.name);
+            a.n = Math.min(ORDER_CAP, a.n + c.amount);
+        }
+        this.save();
+        this.note(`威压【${pool.factionName}】未完成即中止（${reason}），已向 ${pool.contributors.size} 位观众全额退回 ${pool.total} 积分`);
+    }
+
+    private checkEmperorCoerceValidity(): void {
+        const pool = this.emperorCoercePool;
+        if (!pool) return;
+        const list = this.emperorCoerceCandidates();
+        const stillValid = list.some((f) => f.factionId === pool.factionId);
+        if (!stillValid) {
+            this.refundEmperorCoercePool('目标势力已灭亡或不再满足接壤/十倍差距条件');
+        }
+    }
+
+    private handleEmperorCoerce(
+        id: string,
+        name: string,
+        index: number,
+        amountRaw: number | null,
+        eventId: string,
+        pubMs: number,
+    ): string {
+        const now = Date.now();
+        if (!this.emperorUnlocked()) {
+            this.recordCmd(eventId, id, name, 'emperor_coerce', `威${index}`, 0, pubMs, now, 'rejected', '资历未达皇帝');
+            return this.note(`${name}：天子威压臣服要资历达到皇帝（120 胜）才开放`);
+        }
+        if (this.battleOn()) {
+            this.recordCmd(eventId, id, name, 'emperor_coerce', `威${index}`, 0, pubMs, now, 'rejected', '战斗进行中');
+            return this.note(`${name}：正在打仗，战后再颁旨威压`);
+        }
+        if (this.lastCoerceSuccessAt > 0 && now - this.lastCoerceSuccessAt < EMPEROR_COERCE_COOLDOWN_MS) {
+            const leftMin = Math.ceil((this.lastCoerceSuccessAt + EMPEROR_COERCE_COOLDOWN_MS - now) / 60_000);
+            this.recordCmd(eventId, id, name, 'emperor_coerce', `威${index}`, 0, pubMs, now, 'rejected', '威压冷却中');
+            return this.note(`${name}：天子威压冷却中（距上次不足 20 分钟），还需约 ${leftMin} 分钟`);
+        }
+        const list = this.emperorCoerceCandidates();
+        const hit = list.find((f) => f.index === index);
+        if (!hit && !this.emperorCoercePool) {
+            this.recordCmd(eventId, id, name, 'emperor_coerce', `威${index}`, 0, pubMs, now, 'rejected', '编号不存在');
+            return this.note(`${name}：没有这个候选编号，先发「威」查看可威压的接壤弱小势力`);
+        }
+        if (this.emperorCoercePool && hit && hit.factionId !== this.emperorCoercePool.factionId) {
+            this.recordCmd(eventId, id, name, 'emperor_coerce', `威${index}`, 0, pubMs, now, 'rejected', '已有正在威压的目标');
+            return this.note(`${name}：一次只能威压一个势力，当前正在众筹威压【${this.emperorCoercePool.factionName}】（${this.emperorCoercePool.total}/${EMPEROR_COERCE_TARGET_POINTS} 分）`);
+        }
+        const target = this.emperorCoercePool
+            ? { factionId: this.emperorCoercePool.factionId, factionName: this.emperorCoercePool.factionName }
+            : { factionId: hit!.factionId, factionName: hit!.factionName };
+
+        const needLeft = EMPEROR_COERCE_TARGET_POINTS - (this.emperorCoercePool?.total ?? 0);
+        const amount = Math.min(needLeft, amountRaw ?? EMPEROR_COERCE_MIN_CONTRIB);
+        if (amount < Math.min(EMPEROR_COERCE_MIN_CONTRIB, needLeft)) {
+            return this.note(`${name}：单次助力威压至少投 ${Math.min(EMPEROR_COERCE_MIN_CONTRIB, needLeft)} 积分`);
+        }
+        const a = this.acct(id, name);
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < amount) {
+            this.recordCmd(eventId, id, name, 'emperor_coerce', `威${index}`, amount, pubMs, now, 'rejected', '积分不足');
+            return this.note(`${name}：助力威压需 ${amount} 积分，现有 ${avail}/${amount}`);
+        }
+        a.n -= amount;
+        if (!this.emperorCoercePool) {
+            this.emperorCoercePool = {
+                factionId: target.factionId,
+                factionName: target.factionName,
+                total: 0,
+                contributors: new Map(),
+            };
+        }
+        const pool = this.emperorCoercePool!;
+        pool.total += amount;
+        const prevC = pool.contributors.get(id);
+        pool.contributors.set(id, { name, amount: (prevC?.amount ?? 0) + amount });
+        this.recordCmd(eventId, id, name, 'emperor_coerce', `${target.factionName}(+${amount})`, amount, pubMs, now, 'executed');
+
+        if (pool.total < EMPEROR_COERCE_TARGET_POINTS) {
+            this.save();
+            this.notifyViewerVoice(id, `感谢${name}投${amount}积分助威，威压${target.factionName}进度${pool.total}分`);
+            return this.note(`${name} 投 ${amount} 积分威压【${target.factionName}】，当前众筹 ${pool.total}/${EMPEROR_COERCE_TARGET_POINTS} 分`);
+        }
+
+        // 众筹满 100 分：目标势力全境臣服，符合出兵条件的武将与军团合入主角大军
+        const hero = this.app.playerHero!;
+        const cm = this.app.cityManager!;
+        const lm = this.app.legionManager;
+        const myFid = hero.fiefCityId ? PlayerHero.OWN_FACTION_ID : (hero.factionId || PlayerHero.OWN_FACTION_ID);
+        if (myFid === PlayerHero.OWN_FACTION_ID) {
+            this.ensurePlayerOwnFactionRegistered();
+        }
+        const host = hero.getHostLegion();
+        let mergedTroops = 0;
+        const mergedGenNames: string[] = [];
+
+        // 1. 野外该势力军团就地并入主角大军
+        for (const army of [...(lm?.getArmies?.() ?? [])]) {
+            if (army.getFactionId() !== target.factionId) continue;
+            if (host && army.id !== host.id) {
+                mergedTroops += Math.max(0, Math.round(army.getTroops()));
+                if (army.generalId && !hero.mergedGenerals.includes(army.generalId)) {
+                    hero.mergedGenerals.push(army.generalId);
+                    const g = getFactionGeneral(army.generalId);
+                    if (g) mergedGenNames.push(g.generalName);
+                }
+                lm?.removeArmy?.(army);
+            } else {
+                army.setFactionId(myFid);
+            }
+        }
+
+        // 2. 该势力所有据点归附，驻城符合出兵条件的在世武将率军合入主角大军
+        const targetCities = cm.getCitiesByFaction(target.factionId);
+        for (const c of targetCities) {
+            const anchored = getCityAnchoredGenerals(c.id).filter((g) => isGeneralOnStage(g.generalId));
+            const availTroops = Math.max(0, Math.floor((c.troops || 0) - GameConfig.CITY.MIN_GARRISON));
+            let cityDeduct = 0;
+            if (host && anchored.length > 0 && availTroops >= GameConfig.LEGION.MIN_ARMY_SIZE) {
+                cityDeduct = Math.max(GameConfig.LEGION.MIN_ARMY_SIZE, Math.floor(availTroops * 0.5));
+                mergedTroops += cityDeduct;
+                for (const g of anchored) {
+                    if (!hero.mergedGenerals.includes(g.generalId)) {
+                        hero.mergedGenerals.push(g.generalId);
+                        mergedGenNames.push(g.generalName);
+                    }
+                }
+            }
+            cm.updateCity(
+                c.id,
+                {
+                    factionId: myFid,
+                    troops: Math.max(GameConfig.CITY.MIN_GARRISON, (c.troops || 0) - cityDeduct),
+                },
+                { skipCaptureLog: true, noBattleSurrender: true },
+            );
+        }
+
+        if (host && mergedTroops > 0) {
+            host.setTroops(Math.round(host.getTroops()) + mergedTroops);
+        }
+
+        this.lastCoerceSuccessAt = now;
+        this.emperorCoercePool = null;
+        this.save();
+        const genStr = mergedGenNames.length > 0 ? `，名将【${mergedGenNames.slice(0, 4).join('、')}】率 ${mergedTroops} 兵合入主角大军` : (mergedTroops > 0 ? `，合入兵力 ${mergedTroops}` : '');
+        this.notifyViewerVoice(id, `天子诏书达成！邻国${target.factionName}举国臣服${genStr}`, true);
+        return this.note(`【天子威压达成】众筹满 ${EMPEROR_COERCE_TARGET_POINTS} 分，邻国【${target.factionName}】（${targetCities.length} 城）举国臣服归附${genStr}！`);
+    }
+
+    private _afterEmperorCoerceDummy(): void {
+    }
+
     private recordCmd(
         eventId: string,
         uid: string,
@@ -1992,6 +2825,7 @@ export class ViewerLive {
     private tick(): void {
         this.payPresence();
         this.checkMarshalTargetValidity();
+        this.checkEmperorCoerceValidity();
         const active = this.syncBattleLifecycle();
         if (!active) return;
         this.tickScoutQueue();

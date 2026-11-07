@@ -366,6 +366,24 @@ export class ViewerLivePanel {
                 ).join('');
                 rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">挑立绘·${esc(s.marshal.culture ?? '')}（${s.marshal.pickBid > 0 ? `现价${s.marshal.pickBid}分` : '10分起'}）：</span>${cells}`);
             }
+            if (s.duke.unlocked) {
+                const fiefInfo = s.duke.fiefCityName ? `根据地【${esc(s.duke.fiefCityName)}】` : '未封地';
+                const legionInfo = s.duke.legionName ? `亲军【${esc(s.duke.legionName)}】` : '亲军未命名';
+                rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">｜公侯（已收${s.duke.units.length}兵模·${fiefInfo}·${legionInfo}）：${b('兵')} 查兵模 · ${b('编 1 2 3 10')} 组三排 · ${b('军 名字 5')} 命名 · ${b('封')} / ${b('封1 30')} 择根据地</span>`);
+            }
+            if (s.king.unlocked) {
+                const kingInfo = s.king.factionName ? `国号【${esc(s.king.factionName)}】旗【${esc(s.king.flagChar)}】` : '未立国号';
+                const sumTag = s.king.threeTimesOk ? `${b('召')} / ${b('召1 30')} 征召名将合军(已合${s.king.mergedCount}将)` : `征召需>主公3倍(${esc(s.king.threeTimesText)})`;
+                rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">｜国王（${kingInfo}）：${b('国 国号 旗字 15')} 立国号旗字 · ${sumTag}</span>`);
+            }
+            if (s.emperor.unlocked) {
+                const empTag = s.emperor.activePool
+                    ? `众筹威压【${esc(s.emperor.activePool.factionName)}】${b(`${s.emperor.activePool.totalPoints}/${s.emperor.activePool.targetPoints}分`)}（发 ${b('威1 20')} 助力）`
+                    : (s.emperor.cooldownSec > 0
+                        ? `威压冷却 ${Math.ceil(s.emperor.cooldownSec / 60)} 分钟`
+                        : `${b('威')} / ${b('威1 20')} 众筹100分威压接壤1/10弱国臣服合军(可威压${s.emperor.coerceCandidates.length}国)`);
+                rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">｜皇帝：${empTag}</span>`);
+            }
             if (rows.length > 0) {
                 marshalGrid = `<div style="width:1232px;max-width:96vw;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:5px;margin:0 auto 5px;padding:4px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;">${rows.join('')}</div>`;
             }
