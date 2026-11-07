@@ -254,8 +254,8 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     melee_hit: sounds('battle', ['melee_hit_1', 'melee_hit_2', 'melee_hit_3', 'melee_hit_4', 'melee_hit_5', 'melee_hit_6', 'melee_hit_7', 'melee_hit_8', 'melee_hit_9', 'melee_hit_10', 'melee_hit_11', 'melee_hit_12'], 0.35, 150),
     // DE 刀剑金属招架碰撞声 Sword_Clank / Sword_Broad_Clank（wem 1031194429 等 5 源，-15 LUFS）
     sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.32, 320),
-    death_infantry: sounds('battle', ['death_infantry_1', 'death_infantry_2', 'death_infantry_3', 'death_infantry_4', 'death_infantry_5', 'death_infantry_6'], 0.4, 300),
-    death_horse: sounds('battle', ['death_horse_1', 'death_horse_2', 'death_horse_3', 'death_horse_4', 'death_horse_5'], 0.35, 400),
+    death_infantry: sounds('battle', ['death_infantry_1', 'death_infantry_2', 'death_infantry_3', 'death_infantry_4', 'death_infantry_5', 'death_infantry_6'], 0.32, 2400),
+    death_horse: sounds('battle', ['death_horse_1', 'death_horse_2', 'death_horse_3', 'death_horse_4', 'death_horse_5'], 0.30, 2800),
     // DE 守城箭塔/城堡/建筑火箭齐射声（PLAY_MISSILE_ARROW_TOWER_FLAME + WHOOSH_FLAME，-15 LUFS）
     tower_arrow_flame: sounds('battle', ['tower_arrow_flame_1', 'tower_arrow_flame_2', 'tower_arrow_flame_3'], 0.50, 450),
     // DE 僧侣/法术单位吟唱攻击声（PLAY_MONK_ATTACKING + PLAY_ATTACK_MONK_CONVERTING，-15 LUFS）

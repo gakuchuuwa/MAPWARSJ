@@ -7728,7 +7728,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/PERSIAN/ailan_shuteluke.png": {
-            "scale": 1.06,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": -3
         },

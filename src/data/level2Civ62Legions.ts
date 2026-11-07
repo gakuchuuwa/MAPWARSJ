@@ -1194,7 +1194,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'MONOREME',
         commanderUnit: 'hero_kingarthur',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_dafyddapgruffydd（主将队须为古典时代的英雄或精英兵）
         slots: [
-            { type: 'war_dog', count: 2 },
+            { type: 'elite_war_dog', count: 2 },
             { type: 'elite_woad_raider', count: 3 },
             { type: 'bowman', count: 4 },
         ],
@@ -1212,7 +1212,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_llywelynapgruffydd',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：凯尔特靛蓝突袭者（普通档）替链甲剑士。
         slots: [
-            { type: 'elite_war_dog', count: 2 },
+            { type: 'elite_woad_raider', count: 2 },
             { type: 'woad_raider', count: 3 },
             { type: 'elite_skirmisher', count: 4 },
         ],

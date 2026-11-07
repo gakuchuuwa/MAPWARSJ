@@ -4512,11 +4512,14 @@ function collectUnitUsage(): Map<string, string[]> {
 }
 
 // 🔴 [2026-10-28 主人令「【攻城】4 个兵模未被套用：巨型投石机（打包）、坏邻居、神之弓、战狼号巨型投石机 这四个不被套用，不算错误提示」]
+// 🔴 [2026-11-07 主人令「【步兵】1 个兵模未被套用：战犬（war_dog）… 狗不用报错」] 战犬一律不参与「未被套用」报错。
 const UNUSED_EXEMPT_UNIT_IDS = new Set([
     'trebuchet_packed',
     'bad_neighbor',
     'gods_own_sling',
     'warwolf_trebuchet',
+    'war_dog',
+    'elite_war_dog',
 ]);
 
 function computeCombatUnitCoverage(): { total: number; summary: string; unused: DeUnitDef[] } {

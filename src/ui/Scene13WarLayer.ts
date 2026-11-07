@@ -9681,8 +9681,6 @@ export class Scene13WarLayer {
             audioManager.play('elephant_die');
         } else if (isSiegeMachine || mk.includes('wagon') || mk.includes('chariot')) {
             audioManager.play('siege_destroyed');
-        } else {
-            audioManager.play(this.statsFor(m.key, m.f).cls === 'cav' ? 'death_horse' : 'death_infantry');
         }
         // 🔴 [DE 口径] 攻城器械（尤其攻城塔/赫勒波利斯）坍塌崩解：
         //    DE 原版建筑与高塔摧毁时，在原位瞬间爆发大团木构爆裂与冲天碎石烟尘（FX_TREBUCHET_SMOKE / FX_WALL_DUST）。
@@ -9702,6 +9700,9 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-27 主人令「败战计改为全为尸体」] 被「败」计折损的兵一律留尸体，不走留尸累加器（取代 10-21「溃逃不留尸」）
         const forceCorpse = (m as WarMan & { forceCorpse?: boolean }).forceCorpse === true;
         if (forceCorpse || this.takeCorpseSlot()) {
+            if (!mk.includes('elephant') && !mk.includes('wagon') && !mk.includes('chariot') && Math.random() < 0.35) {
+                audioManager.play(this.statsFor(m.key, m.f).cls === 'cav' ? 'death_horse' : 'death_infantry');
+            }
             // 尸体朝向随机：每具倒向不同方向，避免全部同朝向呆板（主人 2026-08-21 定）
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;
