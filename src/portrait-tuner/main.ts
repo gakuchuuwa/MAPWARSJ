@@ -730,12 +730,27 @@ function bindEvents(): void {
     });
 
     document.getElementById('pt-reload')!.addEventListener('click', () => {
-        loadAdjustFromServer()
-            .then(() => {
+        // 🔴 [2026-11-07 主人报「立绘名字和文件夹中不同步」] 旧版只重读调校表、**不重扫立绘目录**：
+        //   立绘目录是打开页面那一瞬间的快照，之后磁盘上 rename / 新增 / 删除（dev 启动的分类改名脚本、
+        //   F2 换图、外部改名、别的标签页绑图）一律看不到——网格里挂的还是旧文件名、文件夹下拉还是旧张数，
+        //   必须 F5 整页刷新才同步。这里连目录一起重扫，名字与张数一律以磁盘当前内容为准。
+        void serialize(async () => {
+            // 目录接口要把全库 1.5GB PNG 逐个算 MD5（实测 5～9 秒），先给个常驻提示，别让人以为按钮没反应
+            showSaveToast('⏳ 正在按磁盘重扫立绘目录（全库算哈希，约 5–9 秒）…', false, true);
+            try {
+                await loadCatalogFromServer();
+                await loadAdjustFromServer();
+                populateFolders();
                 loadDraftForSelected();
                 renderGrid();
-            })
-            .catch((err) => alert(String(err)));
+                const total = portraitCatalog.reduce((n, c) => n + c.images.length, 0);
+                showSaveToast(`✓ 已按磁盘重扫：${portraitCatalog.length} 个文件夹 / ${total} 张立绘`
+                    + `\n当前夹 ${selectedFolder} 已重读；若刚在磁盘上改过名，这里显示的就是新名字。`, false, true);
+            } catch (err) {
+                console.error('[PortraitTuner] 重新加载失败', err);
+                showSaveToast(`重新加载失败：${err instanceof Error ? err.message : String(err)}`, true);
+            }
+        });
     });
 
     window.addEventListener('keydown', (e) => {
@@ -1019,11 +1034,22 @@ async function bindSelectedImageToGeneralInner(): Promise<void> {
         els.bindStatus.style.color = '#8bbf7a';
         await loadGenerals();
         await loadCatalogFromServer();
+        // 🔴 [2026-11-07] 绑定会把源图改名/复制成 {势力key_拼音}.png，旧路径随之消失；
+        //   loadCatalogFromServer 发现当前选中项不在了，会回落到本夹第一张——
+        //   屏幕上突然换成另一张图，看着就像「名字和文件夹不同步」。绑定成功后直接指到新文件。
+        const boundPath = typeof result.portraitPath === 'string' ? result.portraitPath : '';
+        if (boundPath) {
+            selectedFolder = boundPath.replace(/\/[^/]+$/, '/');
+            selectedImage = boundPath;
+        }
         // 服务端绑定时已把源图调校迁移/同步到新路径——取回最新数据，防止本页后续保存把它覆盖掉
         await loadAdjustFromServer();
         loadDraftForSelected();
         populateFolders();
         renderGrid();
+        if (boundPath) {
+            document.getElementById(`card-${safeCardId(boundPath)}`)?.classList.add('is-active');
+        }
     } catch (e) {
         els.bindStatus.textContent = `✗ 绑定失败：${e instanceof Error ? e.message : String(e)}`;
         els.bindStatus.style.color = '#e08a7a';

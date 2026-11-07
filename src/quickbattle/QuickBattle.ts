@@ -644,7 +644,7 @@ class QuickBattle {
             kind: 'siege', attacker, defender: null, city: saved, att, def,
             placeName: target.name, phase: 'engaging', startedAt: performance.now(),
         };
-        this.focus(attacker, att.factionId, { lat: target.latitude, lng: target.longitude });
+        this.focus(attacker, { lat: target.latitude, lng: target.longitude });
         this.app.timeSystem.setPaused(false);
         const r = lm.triggerSiege(attacker, target);
         if (r === 'skipped') throw new Error('引擎拒绝了这次攻城');
@@ -670,7 +670,7 @@ class QuickBattle {
             kind: 'field', attacker, defender, city: null, att, def,
             placeName: spot.label, phase: 'engaging', startedAt: performance.now(),
         };
-        this.focus(attacker, att.factionId, spot.att);
+        this.focus(attacker, spot.att);
         this.app.timeSystem.setPaused(false);
         attacker.moveAlongPath([{ lat: spot.def.lat, lng: spot.def.lng }]);
         this.announce();
@@ -719,32 +719,23 @@ class QuickBattle {
     }
 
     /**
-     * 🔴 [2026-11-05 主人令「把探马者加入到攻击方，然后保持同样的跟随镜头」]
-     *    开战前探马者入攻方势力、入伍攻方军团（与游戏里投奔武将同一套 joinFaction + attachTo），
-     *    镜头跟玩家 —— 进战术模式后的跟拍与正常对局里「随军打仗」一模一样。
-     *    没有探马者（线上构建不建玩家）就退回跟拍攻方军团。
+     * 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」]
+     *    即时战斗里探马者**不再入伍**。原做法（2026-11-05「把探马者加入到攻击方」）会把玩家钉死在攻方：
+     *    Scene13WarLayer.getPlayerSide() 返回攻方 → ViewerLive 用 playerSide 覆盖观众自己的选边
+     *    （`playerSideInBattle() ?? sides.get(id) ?? 0`，以及口令里的「只能为玩家所在的攻方放计」），
+     *    守方观众一个字都放不出去；没有玩家的线上构建更是一条计都放不出（castViewerSkill 直接 closed）。
+     *    现在观众就是选边放计的看客，镜头照旧跟拍攻方军团。
      */
-    private focus(army: Army, factionId: string, at: { lat: number; lng: number }): void {
+    private focus(army: Army, at: { lat: number; lng: number }): void {
         const hero = this.app.playerHero;
-        let joined = false;
-        if (hero) {
-            try {
-                if (hero.getHostLegionId()) hero.detach();
-                hero.joinFaction(factionId, null, true);
-                hero.attachTo(army);
-                this.app.cameraFollowUI?.followPlayerByUser();
-                joined = hero.getHostLegionId() === army.id;
-            } catch (e) {
-                console.warn('[即时战斗] 探马者入伍攻方失败，改为跟拍攻方军团', e);
-            }
+        if (hero?.getHostLegionId()) {
+            try { hero.detach(); } catch (e) { console.warn('[即时战斗] 探马者离队失败', e); }
         }
-        if (!joined) {
-            try { this.app.cameraFollowUI?.setFollow(army.id, army.name); } catch { /* 镜头失败不影响开战 */ }
-        }
+        try { this.app.cameraFollowUI?.setFollow(army.id, army.name); } catch { /* 镜头失败不影响开战 */ }
         try { this.app.map.getLeafletMap().setView([at.lat, at.lng], 9, { animate: false }); } catch { /* 同上 */ }
     }
 
-    /** 打完：探马者离队（军团马上要撤） */
+    /** 打完：探马者离队（军团马上要撤）。2026-11-07 起探马者不入伍了，这里通常已是空操作，留着防旧状态残留 */
     private releaseHero(): void {
         const hero = this.app.playerHero;
         if (!hero?.getHostLegionId()) return;

@@ -105,6 +105,15 @@ export function parseJoinCommand(word: string): { index: number; query?: string;
     return { index: 0, query, bid };
 }
 
+/**
+ * 即时战斗（`?quickbattle=1`）＝只有战术模式的观战局（入口同 `app/UnattendedStream.isQuickBattleMode`）。
+ * 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」] 这个模式里没有公共玩家：
+ *    观众各选一边、六字全开，只受积分与排队限制（见 onChat / playerSixBlockReason / tickCastQueue）。
+ */
+function quickBattleModeOn(): boolean {
+    return new URLSearchParams(window.location.search).has('quickbattle');
+}
+
 /** 常见直播聊天机器人：它们在聊天里发消息，但不是观众 */
 const CHAT_BOT_NAMES = new Set(['nightbot', 'streamlabs', 'streamelements', 'moobot', 'fossabot', 'wizebot']);
 export function isChatBot(raw: string | undefined | null): boolean {
@@ -278,6 +287,10 @@ export class ViewerLive {
     private battleStartedAtMs = 0;
     private lastBattleEndedAtMs = 0;
     private lastFreeCastAt = 0;
+    /** 即时战斗两边各自的放出时刻（攻=0 / 守=1）；普通模式不用 */
+    private lastFreeCastAtBySide: [number, number] = [0, 0];
+    /** 本页是不是即时战斗观战局（构造时看一次 URL，免得每 tick 解析） */
+    private readonly duel = quickBattleModeOn();
     private wasActive = false;
     private day = '';
     private log: string[] = [];
@@ -420,7 +433,7 @@ export class ViewerLive {
                 return this.note(`${name}：${blocked}`);
             }
             const reqSide: 0 | 1 = combo[1] === '1' ? 0 : 1;
-            const playerSide = this.playerSideInBattle();
+            const playerSide = this.duel ? null : this.playerSideInBattle();
             if (playerSide !== null && reqSide !== playerSide) {
                 return this.note(`${name}：全体观众共同操作玩家，只能为玩家所在的${this.sideName(playerSide)}放计`);
             }
@@ -428,11 +441,14 @@ export class ViewerLive {
             word = combo[2];
         }
         if (word === '1' || word === '2') {
-            if (!this.battleOn()) return this.note(`${name}：现在没在打仗，等下一仗`);
-            const playerSide = this.playerSideInBattle();
+            // 🔴 [2026-11-07] 即时战斗：选边随时可发（选人画面那 30 秒没在打仗也算），下一仗按选的边生效
+            if (!this.battleOn() && !this.duel) return this.note(`${name}：现在没在打仗，等下一仗`);
+            const playerSide = this.duel ? null : this.playerSideInBattle();
             const side: 0 | 1 = playerSide ?? (word === '1' ? 0 : 1);
             this.joinSide(id, side);
-            return this.note(`${name} 已随玩家站在${this.sideName(side)}，直接发六计或 技3 即可`);
+            return this.note(this.duel
+                ? `${name} 已站到${word === '1' ? '攻方' : '守方'}，发六字（攻 胜 敌 混 并 败）放计`
+                : `${name} 已随玩家站在${this.sideName(side)}，直接发六计或 技3 即可`);
         }
         if (!SIX_BY_WORD[word]) return '';
         if (meta?.staleForBattle) {
@@ -852,12 +868,18 @@ export class ViewerLive {
     }
     private playerSkillBlockReason(): string | null {
         if (!this.battleOn()) return '现在没在打仗，等下一仗';
+        // 🔴 [2026-11-07] 即时战斗没有公共玩家，「技N」爆发技是玩家本人的技，这一局不开
+        if (this.duel) return '即时战斗里没有玩家技，直接发六字（攻 胜 敌 混 并 败）';
         const rank = this.app.playerHero?.getRank().id;
         if (!rank || rank === 'civilian') return '平民不能释放玩家技能，投靠武将成为斥候后开放';
         if (!this.war()?.hasPlayerHero()) return '玩家本人没有参加这一仗';
         return null;
     }
     private playerSixBlockReason(six: TacticalSixSet): string | null {
+        if (!this.battleOn()) return '现在没在打仗，等下一仗';
+        // 🔴 [2026-11-07 主人令「然后通过胜攻敌并混败六个字来释放技能」] 即时战斗里六字全开：
+        //    没有公共玩家，也就没有官阶阶梯（斥候攻胜 / 探马敌混 / 先锋将军并败），只受积分与排队限制。
+        if (this.duel) return null;
         const base = this.playerSkillBlockReason();
         if (base) return base;
         return sixUnlockBlockReason(this.app.playerHero?.getRank().id, six);
@@ -1005,10 +1027,14 @@ export class ViewerLive {
     }
     private request(id: string, name: string, word: string, eventId = '', pubMs = Date.now()): string {
         const now = Date.now();
-        const side: 0 | 1 = this.playerSideInBattle() ?? this.sides.get(id) ?? 0;
+        // 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」] 即时战斗里按**观众自己选的边**入队，
+        //    不再被 playerSide 覆盖（这一局压根没有玩家）；没选过边的第一句话默认攻方，并回一句怎么选边。
+        const side: 0 | 1 = this.duel ? (this.sides.get(id) ?? 0) : (this.playerSideInBattle() ?? this.sides.get(id) ?? 0);
+        const unsubscribed = this.duel && !this.sides.has(id);
         this.sides.set(id, side);
         const a = this.acct(id, name);
         const avail = a.n - this.reservedOrders(id);
+        if (unsubscribed) this.notifyViewerVoice(id, `${name}，按攻方算，发 1 选攻方、2 选守方`);
         if (avail < ORDERS_PER_CAST) {
             this.wanted.set(id, word);
             this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', '积分不足');
@@ -1022,11 +1048,14 @@ export class ViewerLive {
         this.queue.push(item);
         this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'queued');
         this.save();
-        if (this.queue.length > 1 || Date.now() - this.lastFreeCastAt < FREE_CAST_GAP_MS) {
-            const pos = this.queue.indexOf(item) + 1;
+        // 排位按**本边队列**算（即时战斗两边各排各的）；普通模式就是整条队列
+        const laneQueue = this.duel ? this.queue.filter((q) => q.side === side) : this.queue;
+        const lastAt = this.duel ? this.lastFreeCastAtBySide[side] : this.lastFreeCastAt;
+        if (laneQueue.length > 1 || Date.now() - lastAt < FREE_CAST_GAP_MS) {
+            const pos = laneQueue.indexOf(item) + 1;
             this.notifyViewerVoice(id, `${name}，${word}计已排队第${pos}位，释放时再扣积分`);
         }
-        return this.note(`${name} 花 ${ORDERS_PER_CAST} 积分点了【${word}】，按先后排第 ${this.queue.indexOf(item) + 1}`);
+        return this.note(`${name} 花 ${ORDERS_PER_CAST} 积分点了【${word}】，按先后排第 ${laneQueue.indexOf(item) + 1}`);
     }
     private credit(id: string, name: string, cents: number) {
         this.rollDay();
@@ -1046,7 +1075,10 @@ export class ViewerLive {
             this.wasActive = true;
             return true;
         }
-        const hasBattleState = this.wasActive || this.queue.length > 0 || this.scoutQueue.length > 0 || this.wanted.size > 0 || this.sides.size > 0;
+        const hasBattleState = this.wasActive || this.queue.length > 0 || this.scoutQueue.length > 0 || this.wanted.size > 0
+            // 🔴 [2026-11-07] 即时战斗里观众在**选人画面那 30 秒**就能选边（此时还没开打）；
+            //    sides 若算作「战斗状态」，这一选边就会被当成「上一仗收尾」立刻清掉（实测：选完就丢）。
+            || (!this.duel && this.sides.size > 0);
         if (hasBattleState && !active) {
             this.endBattle();
         }
@@ -1059,33 +1091,52 @@ export class ViewerLive {
         const active = this.syncBattleLifecycle();
         if (!active) return;
         this.tickScoutQueue();
+        this.tickCastQueue();
+    }
+    /**
+     * 六计队列出队。
+     * 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」] 即时战斗里**两边各排各的队、各自 2 秒一计**：
+     *    原来是一条全局队列 + 一个全局 2 秒闸，一边人多的观众刷起来会把另一边的计全堵在队里进不去。
+     *    普通模式（战略局里公共玩家那一套）仍是原来的单队列 + 全局闸，行为不变。
+     */
+    private tickCastQueue(): void {
         if (this.queue.length === 0) return;
-        const head = this.queue[0];
-        if (Date.now() - this.lastFreeCastAt < FREE_CAST_GAP_MS) return;
-        const side: 0 | 1 = this.playerSideInBattle() ?? head.side;
-        const r = this.war()!.castViewerSkill(side, head.six, head.viewer, false);
-        if (r === 'wait' || r === 'closed') return;
-        this.queue.shift();
-        if (!head.paid && head.deducted === false) {
-            const a = this.acct(head.uid, head.viewer);
-            a.n = Math.max(0, a.n - ORDERS_PER_CAST);
-            head.deducted = true;
+        const duel = this.duel;
+        const lanes: (0 | 1)[] = duel ? [0, 1] : [this.queue[0].side];
+        for (const lane of lanes) {
+            const idx = duel ? this.queue.findIndex((q) => q.side === lane) : 0;
+            if (idx < 0) continue;
+            const head = this.queue[idx];
+            const lastAt = duel ? this.lastFreeCastAtBySide[lane] : this.lastFreeCastAt;
+            if (Date.now() - lastAt < FREE_CAST_GAP_MS) continue;
+            const side: 0 | 1 = duel ? head.side : (this.playerSideInBattle() ?? head.side);
+            const r = this.war()!.castViewerSkill(side, head.six, head.viewer, false);
+            if (r === 'wait' || r === 'closed') continue;   // 演出闸同时只放一计：另一边等下一 tick
+            this.queue.splice(idx, 1);
+            if (!head.paid && head.deducted === false) {
+                const a = this.acct(head.uid, head.viewer);
+                a.n = Math.max(0, a.n - ORDERS_PER_CAST);
+                head.deducted = true;
+            }
+            const now = Date.now();
+            this.recentBattleCasts.push({
+                uid: head.uid,
+                viewer: head.viewer,
+                cost: ORDERS_PER_CAST,
+                label: `${head.word}计`,
+                castAtMs: now,
+            });
+            this.save();
+            if (duel) this.lastFreeCastAtBySide[lane] = now;
+            else this.lastFreeCastAt = now;
+            const skillName = this.war()!.lastSkillNameOf(side);
+            speechAnnouncer.announceViewerSkill(head.viewer, this.sideFaction(side) || this.sideName(side), skillName, { syncNow: true });
+            this.note(duel
+                ? `${head.viewer} 助${this.sideName(side)}施展【${skillName}】`
+                : `${head.viewer} 助玩家施展【${skillName}】`);
+            this.report({ viewer: head.viewer, side, six: head.six, paid: false, outcome: 'cast', skillName });
+            this.fulfillWanted(head.uid, head.viewer);
         }
-        const now = Date.now();
-        this.recentBattleCasts.push({
-            uid: head.uid,
-            viewer: head.viewer,
-            cost: ORDERS_PER_CAST,
-            label: `${head.word}计`,
-            castAtMs: now,
-        });
-        this.save();
-        this.lastFreeCastAt = now;
-        const skillName = this.war()!.lastSkillNameOf(side);
-        speechAnnouncer.announceViewerSkill(head.viewer, this.sideFaction(side) || this.sideName(side), skillName, { syncNow: true });
-        this.note(`${head.viewer} 助玩家施展【${skillName}】`);
-        this.report({ viewer: head.viewer, side, six: head.six, paid: false, outcome: 'cast', skillName });
-        this.fulfillWanted(head.uid, head.viewer);
     }
     private tickScoutQueue(): void {
         const head = this.scoutQueue[0];
@@ -1128,6 +1179,7 @@ export class ViewerLive {
         for (const q of this.queue) this.voidCast(q);
         this.queue = [];
         this.lastFreeCastAt = 0;
+        this.lastFreeCastAtBySide = [0, 0];
         this.lastBattleEndedAtMs = now;
         this.battleStartedAtMs = 0;
         this.sides.clear();

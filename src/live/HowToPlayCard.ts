@@ -8,7 +8,8 @@ const SHOW_MS = 10_000;
 const MIN_GAP_MS = 120_000;
 const FONT = "'Noto Serif SC', 'SimSun', serif";
 
-const LINES: [string, string][] = [
+/** 战略局直播（公共玩家那一套）：观众跟着玩家，六计按官阶逐级解锁 */
+const LINES_STREAM: [string, string][] = [
     ['说句话就在场', '发言每满 1 分钟 +1 分；在场每 2 分钟 +1 分'],
     ['第一次来', '送 3 分；每天回来再送 3 分；战术战结束 +1 分'],
     ['技1', '打仗时让主角爆发，出分高的先放'],
@@ -16,11 +17,25 @@ const LINES: [string, string][] = [
     ['名 新名字 1', '给主角改名'],
     ['积分', '查自己有多少分'],
 ];
+/**
+ * 即时战斗（`?quickbattle=1`）：没有公共玩家，观众**先选边站队**，再用六字给自己这边放计。
+ * 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」] 这张卡是唯一点名口令的地方，
+ *    两种模式的口令不同，不能混着给（战略局的「技1」在即时战斗里没有）。
+ */
+const LINES_DUEL: [string, string][] = [
+    ['1攻方 / 2守方', '先选边站队，30 秒开战前都能改'],
+    ['攻 胜 敌 混 并 败', '给自己这边放计，1 分一次，先到先放'],
+    ['说句话就在场', '发言每满 1 分钟 +1 分；在场每 2 分钟 +1 分'],
+    ['第一次来', '送 3 分；每天回来再送 3 分；战术战结束 +1 分'],
+    ['积分', '查自己有多少分'],
+];
 
 export class HowToPlayCard {
     private lastShownAt = -Infinity;
     private el: HTMLDivElement | null = null;
     private hideTimer = 0;
+    /** 即时战斗（只有战术模式、观众自选攻守）：口令表换成 LINES_DUEL */
+    private readonly duel = new URLSearchParams(window.location.search).has('quickbattle');
 
     public show(): void {
         const now = Date.now();
@@ -60,7 +75,7 @@ export class HowToPlayCard {
 
         const grid = document.createElement('div');
         grid.style.cssText = 'display:grid; grid-template-columns:repeat(3, auto); gap:5px 10px; align-items:center;';
-        for (const [cmd, desc] of LINES) {
+        for (const [cmd, desc] of (this.duel ? LINES_DUEL : LINES_STREAM)) {
             const pill = document.createElement('div');
             pill.style.cssText = `
                 display:inline-flex; align-items:baseline; gap:6px; font-size:13px; line-height:1.35; white-space:nowrap;

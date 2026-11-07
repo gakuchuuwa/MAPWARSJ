@@ -5998,7 +5998,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 24
         },
         "/assets/LATIN/safuyi_ameidi.png": {
-            "scale": 1.05,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 7
         },
@@ -10706,6 +10706,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": -28
+        },
+        "/assets/BERBER/__闲置__BERBER_01.png": {
+            "scale": 1.19,
+            "offsetX": 0,
+            "offsetY": 29
+        },
+        "/assets/BERBER/bfe_bomilcar.png": {
+            "scale": 1.17,
+            "offsetX": 3,
+            "offsetY": 48
+        },
+        "/assets/MAGYAR/saierweiya_xingeliqi.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 3
         }
     },
     "folderGuides": {

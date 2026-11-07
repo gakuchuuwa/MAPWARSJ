@@ -2189,13 +2189,26 @@ export default defineConfig({
                         res.end(JSON.stringify({ ok: false, error: '文件不存在' }));
                         return;
                     }
-                    const mtimeMs = fs.statSync(abs).mtimeMs;
+                    // 🔴 [2026-11-07 主人报「立绘名字和文件夹中不同步」]
+                    //   旧实现按 **文件 mtime** 判缓存新旧（cache.mtime >= png.mtime）。可是「换图」的两条主路径
+                    //   都会保留被换上来那张图原本的老时间戳：绑定（serverBindGeneralPortrait 用 renameSync 认领
+                    //   闲置图）、外部整文件覆盖/搬图（mtime 一起带过来）。于是新图 mtime 比缓存还老 →
+                    //   缓存永远判「没过期」→ 网格里同名文件一直显示旧画面（实测：阿齐兹换图后缩略图仍是上一张）。
+                    //   改为把「路径 + 文件大小 + mtime」一起算进缓存键：这三样任一变就换新键、重新生成，
+                    //   同名换图一定跟得上；同样内容重复请求仍命中缓存。
+                    const st = fs.statSync(abs);
                     const cacheDir = path.resolve(__dirname, '.cache', 'portrait-thumbs');
                     if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
-                    const cacheFile = path.join(cacheDir, crypto.createHash('md5').update(q).digest('hex') + '.webp');
-                    if (fs.existsSync(cacheFile) && fs.statSync(cacheFile).mtimeMs >= mtimeMs) {
+                    const cacheFile = path.join(
+                        cacheDir,
+                        crypto.createHash('md5').update(`${q}|${st.size}|${Math.round(st.mtimeMs)}`).digest('hex') + '.webp',
+                    );
+                    if (fs.existsSync(cacheFile)) {
                         res.setHeader('Content-Type', 'image/webp');
-                        res.setHeader('Cache-Control', 'public, max-age=3600');
+                        // 🔴 [2026-11-07] 网格 URL 只带 path，内容换了 URL 不变：若还发 max-age=3600，
+                        //   浏览器会自己再缓存一小时，于是「服务端已经是新图、页面上还是旧脸」——
+                        //   同一张卡上名字与画面对不上。开发工具一律 no-store，永远现取。
+                        res.setHeader('Cache-Control', 'no-store');
                         fs.createReadStream(cacheFile).pipe(res);
                         return;
                     }
@@ -2206,7 +2219,7 @@ export default defineConfig({
                         .then(() => {
                             fs.renameSync(cacheFile + '.tmp', cacheFile);
                             res.setHeader('Content-Type', 'image/webp');
-                            res.setHeader('Cache-Control', 'public, max-age=3600');
+                            res.setHeader('Cache-Control', 'no-store');
                             fs.createReadStream(cacheFile).pipe(res);
                         })
                         .catch((err: any) => {

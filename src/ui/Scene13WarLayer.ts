@@ -812,10 +812,13 @@ export class Scene13WarLayer {
     public castViewerSkill(side: 0 | 1, six: TacticalSixSet, viewerName: string, paid = false): 'cast' | 'wait' | 'closed' {
         if (!this.active || this.over) return 'closed';
         if (this.deployT > 0) return 'wait';
-        if (!this.playerSetup || !this.heroMan) return 'closed';
+        // 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」] 即时战斗（`?quickbattle=1`）里
+        //    探马者不入伍，本场没有 playerSetup / heroMan —— 那也要能放：落在**观众自己选的边**。
+        //    效果与武将放计一致（viewer 分支本来就不走官职缩放、不按名将差加成，两边完全对等）。
+        const hasPlayer = !!this.playerSetup && !!this.heroMan;
         // [2026-10-30 主人令「玩家阵亡不能放技能，复活直接放」] 阵亡期间六计留在队里不扣、不放，复活后照排队顺序放
-        if (this.heroMan.hp <= 0) return 'wait';
-        const targetSide: 0 | 1 = this.playerSetup.side ?? side;
+        if (hasPlayer && this.heroMan!.hp <= 0) return 'wait';
+        const targetSide: 0 | 1 = hasPlayer ? (this.playerSetup!.side ?? side) : side;
         const wallNow = performance.now();
         // 两计不许同时放：上一计大字没收尾、或语音此刻念不出来，就稍后再试，保证技效、大字、语音同刻
         if (wallNow < this.skillCastWallUntil || !this.skillVoiceReady(wallNow)) return 'wait';
@@ -1907,22 +1910,25 @@ export class Scene13WarLayer {
         const ctlPort = this.playerCtlLanes.size === 1
             ? mySpawns.find((s) => this.playerCtlLanes.has(s.lane))
             : undefined;
-        let anchorPort = (ctlPort && (matchKey(ctlPort.key, setup.heroKey) || matchKey(ctlPort.key, setup.unitKey)))
-            ? ctlPort
-            : squadSpawns.find((s) => s.key === setup.heroKey)
-                ?? (setup.unitKey ? squadSpawns.find((s) => s.key === setup.unitKey) : undefined)
-                ?? squadSpawns.find((s) => matchKey(s.key, setup.heroKey))
-                ?? (setup.unitKey ? squadSpawns.find((s) => matchKey(s.key, setup.unitKey)) : undefined)
-                ?? ctlPort
-                ?? mySpawns.find((s) => matchKey(s.key, setup.heroKey))
-                ?? (setup.unitKey ? mySpawns.find((s) => matchKey(s.key, setup.unitKey)) : undefined);
-        if (!anchorPort) {
-            const heroCls = WAR_TYPES[setup.heroKey]?.cls ?? (setup.unitKey ? WAR_TYPES[setup.unitKey]?.cls : undefined);
-            if (heroCls) {
-                anchorPort = squadSpawns.find((s) => WAR_TYPES[s.key]?.cls === heroCls)
-                    ?? mySpawns.find((s) => WAR_TYPES[s.key]?.cls === heroCls);
-            }
-        }
+        // 🔴 [2026-11-07 主人令「让玩家根据兵种，和同兵种同列，例如这局玩家的兵模是骑兵，那么所有的行为就和同队骑兵一致，可以吗？」
+        //     → 可以，照此办] 锚点按 **兵种** 挑口，顺序：
+        //    ① 同兵种（key 精确，含精锐名变体）的非主将队 → 主将队；
+        //    ② 同兵种类（cls：骑 cav / 步 melee / 远程 ranged）的非主将队 → 主将队；
+        //    ③ 玩家受控的那一口（探马只控一队时）；
+        //    ④ 中军（下面的兜底）。
+        //    改前 ctlPort 排在最前：受控队若不是玩家这一兵种，玩家会被拴在别的兵种的队列上
+        //    （骑兵被同队的弩兵领队拖着走，看着像在等后面的人）—— 与这条令相悖，故同兵种优先于受控口径。
+        const heroCls = WAR_TYPES[setup.heroKey]?.cls ?? (setup.unitKey ? WAR_TYPES[setup.unitKey]?.cls : undefined);
+        const sameCls = (s: { f: number; key: string }) => !!heroCls && s.f === f && WAR_TYPES[s.key]?.cls === heroCls;
+        let anchorPort = squadSpawns.find((s) => s.key === setup.heroKey)
+            ?? (setup.unitKey ? squadSpawns.find((s) => s.key === setup.unitKey) : undefined)
+            ?? squadSpawns.find((s) => matchKey(s.key, setup.heroKey))
+            ?? (setup.unitKey ? squadSpawns.find((s) => matchKey(s.key, setup.unitKey)) : undefined)
+            ?? mySpawns.find((s) => matchKey(s.key, setup.heroKey))
+            ?? (setup.unitKey ? mySpawns.find((s) => matchKey(s.key, setup.unitKey)) : undefined)
+            ?? squadSpawns.find(sameCls)
+            ?? mySpawns.find(sameCls)
+            ?? ctlPort;
         if (!anchorPort) {
             // 🔴 [2026-10-28 主人令「请挨着本军，或者放到军中」]
             // 未匹配到单队时优先中军（row 1 中心队伍），无则第一排中心队伍，确保玩家置于本军核心阵中
@@ -1946,9 +1952,15 @@ export class Scene13WarLayer {
         const heroPort = anchorPort;
         // 🔴 [2026-10-28 → 2026-10-30 主人令「把玩家的行为方式和普通士兵用一个逻辑，视为普通兵的行为」]
         // 玩家置于本队方阵第 2 排（rank 1）正中列真实槽位，与普通士兵共用完全相同的排阵格点、随机抖动(jx/jy)、守城城外标记(outside1)与城内驻守点(guardPost)
-        const files = this.filesOfSide(heroPort.key, f);
-        const sp = marchSpacingOf(heroPort.key);
-        const spDep = marchDepthSpacingOf(heroPort.key);
+        // 🔴 [2026-11-07 主人令「让玩家根据兵种，和同兵种同列，例如这局玩家的兵模是骑兵，那么所有的行为就和同队骑兵一致」]
+        //    格位（列数 / 列距 / 排距）一律按 **玩家自己的兵模兵种**（setup.heroKey）取，不按锚到的那一口的 key 取。
+        //    原来取 heroPort.key：锚到同兵种类别的另一支部队时（如本军编制里没有玩家这个兵种），
+        //    玩家会连格子都套用那一口的兵种（弩兵的列宽/排距），等于「行为跟着别人走」——
+        //    现在即使被并到别的口，格子与速度仍是玩家自己兵种的，只有站位借那一口的中轴。
+        const heroUnitKey = setup.heroKey;
+        const files = this.filesOfSide(heroUnitKey, f);
+        const sp = marchSpacingOf(heroUnitKey);
+        const spDep = marchDepthSpacingOf(heroUnitKey);
         const heroDep = spDep;
         const heroSlotY = (Math.floor(files / 2) - (files - 1) / 2) * sp;
         let uFwd = this.advanceVec[f];
