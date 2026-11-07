@@ -828,8 +828,8 @@ export class Scene13WarLayer {
         if (rep && rep.hp <= 0) return 'wait';
         const targetSide: 0 | 1 = side;
         const wallNow = performance.now();
-        // 两计不许同时放：上一计大字没收尾、或语音此刻念不出来，就稍后再试，保证技效、大字、语音同刻
-        if (wallNow < this.skillCastWallUntil || !this.skillVoiceReady(wallNow)) return 'wait';
+        // 两计不许同时放：上一计大字没收尾就稍后再试（战术模式六计只播 DE 音效，不再阻塞等待 TTS 语音）
+        if (wallNow < this.skillCastWallUntil) return 'wait';
         this.skillCastCooldown = Scene13WarLayer.SKILL_CAST_GAP_SEC;
         this.skillCastWallUntil = wallNow + Scene13WarLayer.SKILL_CAST_GAP_SEC * 1000;
         this.viewerCaster = { name: viewerName, paid };
@@ -956,7 +956,7 @@ export class Scene13WarLayer {
         // 集满的计只在交战中放（与战斗音景同一判据，连续 MELEE_QUIET_SEC 秒没交战才算停）；没交战就攒着，不浪费
         const engaged = this.engagedQuietSec < MELEE_QUIET_SEC;
         const anyFull = this.skillGauge[0] >= 100 || this.skillGauge[1] >= 100;
-        if (engaged && anyFull && this.skillCastCooldown <= 0 && wallNow >= this.skillCastWallUntil && this.skillVoiceReady(wallNow)) {
+        if (engaged && anyFull && this.skillCastCooldown <= 0 && wallNow >= this.skillCastWallUntil) {
             for (const f of [0, 1] as const) {
                 if (this.skillGauge[f] >= 100) {
                     this.skillGauge[f] = 0;
@@ -1730,6 +1730,7 @@ export class Scene13WarLayer {
                 this.skillCamY = vy;
                 this.skillCamFollowUnits = [];
             }
+            audioManager.playScene13SkillSfx('gongzhan', true);
             this.spawnSkillVfx(this.playerSetup.side, 'gongzhan', vx, vy, true, affected, []);
         }
         return 'cast';
@@ -2159,8 +2160,6 @@ export class Scene13WarLayer {
             return;
         }
         this.pushCorpse(victim);
-        // 🔴 [2026-10-22] 小队战：DE 阵亡声（骑兵马匹倒毙，其余步兵阵亡）
-        if (this.skirmish) audioManager.play(this.statsFor(victim.key, victim.f).cls === 'cav' ? 'death_horse' : 'death_infantry');
         if (killer && this.playerSetup && killer.f === this.playerSetup.side
             && (killer.hero || this.playerCtlLanes.has(killer.lane))) {
             this.playerKills++;
@@ -2755,11 +2754,8 @@ export class Scene13WarLayer {
             type: init.battleType ?? 'field',
         });
         this.attach();
-        // 🔴 [2026-10-02 主人定] 进战术模式不强制掐断当前 BGM（推翻 9-16 换场景强切歌，回归「BGM 完整循环播放、不被换场景强行掐断」铁律）
-        // 让大地图正听着的史诗 BGM 自然流淌进战术战场，彻底消除进场切歌造成的静音真空；仅在压根没有音乐在播时才起一首
-        if (!audioManager.isBgmPlaying()) {
-            audioManager.rerollBgm();
-        }
+        // 战术模式锁定使用 DE 官方背景音乐：若已在播放 DE 曲目则不打断，否则切入参战方文化的 DE 主题曲
+        audioManager.enterScene13Bgm(init.followedOnDefenderSide ? init.defenderRegion : init.attackerRegion);
         this.active = true;
         this.lingering = false;
         this.over = false;
@@ -3861,6 +3857,7 @@ export class Scene13WarLayer {
         this.active = false;
         // 接触交战音景随演出退场淡出（循环音，不停会一直响下去）。
         audioManager.stopSceneLoop('land_contact');
+        audioManager.exitScene13Bgm();
         // 退出战术模式继续播放当前 BGM，只在进入战术模式时切歌。
         this.spawns = [];
         this.men = [];
@@ -5164,10 +5161,12 @@ export class Scene13WarLayer {
                 proj: 'PROJ_FIRE_LANCER',
             });
         }
-        // 矛头喷火：DE 火矛炮口焰特效（沿朝向）
+        // 矛头喷火：DE 火矛炮口焰特效（沿朝向）+ DE 火器与喷火音效
         const ox = m.x + Math.cos(ang) * UNIT_PX * 0.5;
         const oy = m.y + Math.sin(ang) * UNIT_PX * 0.5 - UNIT_PX * 0.45;
         this.spawnFx('FX_MUZZLE_FIRELANCE', ox, oy, this.dir8(ax, ay));
+        audioManager.play('gun_fire');
+        audioManager.play('flamethrower_fire');
     }
 
     private dir8(dx: number, dy: number): number {
@@ -6731,6 +6730,7 @@ export class Scene13WarLayer {
             if ((m.x - baseX) ** 2 + (m.y - fireY) ** 2 <= effRange * effRange) inRange.push(m);
         }
         if (inRange.length === 0) return false;
+        audioManager.play('tower_arrow_flame');
         // 射口横向排开：占地边长（格）× 地图尺的 0.7 作为射口总宽，单个弓手居中
         const span = shooters > 1 ? bldFootprintSide(name) * DE_TILE_PX * 0.7 : 0;
         const startLift = this.elevationLiftAt(baseX, baseY);
@@ -7980,17 +7980,25 @@ export class Scene13WarLayer {
                     //    城门碰撞体沿门线只跨 ±80px，紧挨的墙段离门中心约 107px ⇒ 守军偏离门中线 30px 左右就离墙段 < 95px，
                     //    被当成「穿墙」弹回，只剩正中一条缝过得去 ⇒ 全挤在门口。
                     //    改为：看跨线处**离哪一件最近**——最近的是本方城门（守方能过）就放行；最近的是墙段且 < 95px 才挡。
+                    // 🔴 [2026-11-07 主人报「战术模式，险要攻城战中，防守军有的士兵会被卡在城门」]
+                    //    上一版只把「**还立着**的墙/门」放进候选：门一破就不再是候选，可破门口离两侧仍立着的墙只有 86~90px
+                    //    （险要的墙件间距约 107px，碰撞点沿门线只跨 ±72px）⇒ 破门口也被判成「穿墙」，整帧退回 prev。
+                    //    实测（探针 scratch/_probe_gate_stuck.mjs，居庸关破门后反攻）：113 个守军各被退回上千次、累计 6.3 万帧回弹，
+                    //    每帧「推出去 → 弹回来」，人全部堆在破门口不动 —— 就是主人看到的「卡在城门」。
+                    //    现改为：候选放进**所有**墙/门（塌的也算），最后看离得最近的那一件**还立着没有**：
+                    //      · 最近的是已破的门 / 已塌的墙段（都是洞）⇒ 放行（走洞不是穿墙）；
+                    //      · 最近的是还立着的墙段 ⇒ 照旧挡；
+                    //      · 最近的是还立着的城门 ⇒ 只有守方能过（攻方照旧挡）。
                     const mx = (px + m.prevX) / 2, my = (py + m.prevY) / 2;
                     let nearest: WarBuilding | null = null, nd2 = 95 * 95;
                     for (const w of this.wallGates) {
-                        if (!this.wallStanding(w)) continue;
                         const pts = w.extraSprites ? [w.sprite, ...w.extraSprites] : [w.sprite];
                         for (const s of pts) {
                             const d2 = (mx - s.x) ** 2 + (my - s.y) ** 2;
                             if (d2 < nd2) { nd2 = d2; nearest = w; }
                         }
                     }
-                    blockedCross = !!nearest && !(m.f === 1 && nearest.key === 'STONE_GATE');
+                    blockedCross = !!nearest && this.wallStanding(nearest) && !(m.f === 1 && nearest.key === 'STONE_GATE');
                     // 🔴 [2026-11-04 主人报「守军刷新出来会刷到墙里，不动的时候一直在闪」] 上一帧本就嵌在墙件碰撞框里的守军
                     //    （出生点压在墙上），被推出墙时可能跨过墙线 ⇒ 若照样弹回，就每帧「推出→弹回」卡在墙里闪。这种情况放行。
                     if (blockedCross && m.f === 1) {
@@ -8031,37 +8039,10 @@ export class Scene13WarLayer {
      * 淡入淡出由 AudioManager 的 startLoop/stopLoop 自带（FADE.loop），
      * 且两者互相撤销：淡出途中又接上近战，会当场回到正常音量，不会先静音再重来。
      */
-    private tickContactSfx(dt: number): void {
-        // 🔴 [2026-10-22 主人「开局小战役用的音效是我自己特质的大规模战场音效，这个不适用小战斗，你套DE的音效」]
-        //    小队模式（故事块小仗）不放这条大战场音景；只留 DE 原声（开战号角、放箭等事件音）
-        if (this.skirmish) {
-            if (this.contactSfxOn) {
-                this.contactSfxOn = false;
-                audioManager.stopSceneLoop('land_contact');
-            }
-            return;
-        }
-        // 🔴 [2026-10-02 主人定]「战术模式下，有一个我自己做的战斗音效。请提高他的音量和播报一致，但是不要和播报重叠播放。」
-        // 播报（战役播报、剧情解说或任何语音）进行中绝不播放战斗音效，彻底杜绝重叠播放
-        if (this.battleBriefingSpeaking || audioManager.isSpeechDucking() || speechAnnouncer.isSpeaking()) {
-            if (this.contactSfxOn) {
-                this.contactSfxOn = false;
-                audioManager.stopSceneLoop('land_contact');
-            }
-            return;
-        }
-
-        if (this.meleeContactCount > 0) {
-            this.meleeQuietSec = 0;
-            if (!this.contactSfxOn) {
-                this.contactSfxOn = true;
-                audioManager.startSceneLoop('land_contact');
-            }
-            return;
-        }
-        if (!this.contactSfxOn) return;
-        this.meleeQuietSec += dt;
-        if (this.meleeQuietSec >= MELEE_QUIET_SEC) {
+    private tickContactSfx(_dt: number): void {
+        // 战术模式全面采用 DE 原生事件音效（刀剑挥砍 melee_hit、兵刃碰撞 sword_clank、阵亡 death_infantry / death_horse 等），
+        // 停用自制的 land_contact 循环底噪。
+        if (this.contactSfxOn) {
             this.contactSfxOn = false;
             audioManager.stopSceneLoop('land_contact');
         }
@@ -8958,7 +8939,13 @@ export class Scene13WarLayer {
                         //    近战死绝、land_contact 淡出之后唯一还在动的那批兵，原先完全静音。
                         //    限流靠 AudioManager 的 cooldown（arrow_fire 700ms），这里不必自己数人。
                         if (!m.siegeW && !isFirearm) {
-                            audioManager.play(CASTER_TYPES.has(m.key) || proj === 'PROJ_GREEK_FIRE' ? 'flamethrower_fire' : 'arrow_fire');
+                            audioManager.play(
+                                CASTER_TYPES.has(m.key)
+                                    ? 'monk_cast'
+                                    : proj === 'PROJ_GREEK_FIRE'
+                                        ? 'flamethrower_fire'
+                                        : 'arrow_fire',
+                            );
                         }
                         // 开火点高度：步兵 = 胸口（UNIT_PX*0.45）；塔类攻城器械 = 塔顶弩机（见表头 MUZZLE_LIFT_BY_TYPE）。
                         const muzzleOver = MUZZLE_LIFT_BY_TYPE[m.key];
@@ -9126,8 +9113,9 @@ export class Scene13WarLayer {
                 }
                 if (isMeleeAttacking && !m.slashed && m.ph >= 3) {
                     m.slashed = true;
-                    // 🔴 [2026-10-22] 小队战：近战出手那一下放 DE 刀剑命中声（大战用主人自制的近战音景，不叠）
-                    if (this.skirmish) audioManager.play('melee_hit');
+                    // DE 原生近战音效：刀剑挥砍命中（melee_hit）+ 兵刃金属碰撞（sword_clank）
+                    audioManager.play('melee_hit');
+                    audioManager.play('sword_clank');
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
                     const contactX = m.x * 0.45 + foe.x * 0.55;
                     // 🔴 [2026-10-13 主人令「修」·刀光错位] 接触点的垂直基准必须与士兵/箭矢同一口径：
@@ -9668,6 +9656,8 @@ export class Scene13WarLayer {
             audioManager.play('elephant_die');
         } else if (isSiegeMachine || mk.includes('wagon') || mk.includes('chariot')) {
             audioManager.play('siege_destroyed');
+        } else {
+            audioManager.play(this.statsFor(m.key, m.f).cls === 'cav' ? 'death_horse' : 'death_infantry');
         }
         // 🔴 [DE 口径] 攻城器械（尤其攻城塔/赫勒波利斯）坍塌崩解：
         //    DE 原版建筑与高塔摧毁时，在原位瞬间爆发大团木构爆裂与冲天碎石烟尘（FX_TREBUCHET_SMOKE / FX_WALL_DUST）。

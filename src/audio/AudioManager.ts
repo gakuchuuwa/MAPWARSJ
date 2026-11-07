@@ -50,10 +50,13 @@ export type SoundKey =
     | 'elephant_die'
     | 'flamethrower_fire'
     | 'battle_horn'
-    // 🔴 [2026-10-22] 小队战（故事块小仗）用的 DE 原声：刀剑命中、步兵阵亡、马匹倒毙
+    // 🔴 [2026-10-22] DE 原声：刀剑命中、刀剑金属碰撞、步兵阵亡、马匹倒毙、箭塔火箭齐射、僧侣施法
     | 'melee_hit'
+    | 'sword_clank'
     | 'death_infantry'
     | 'death_horse'
+    | 'tower_arrow_flame'
+    | 'monk_cast'
     // 战略地图动态天气环境音效（DE 原版环境音 + 风雨雷电合成）
     | 'weather_storm_loop'
     | 'weather_rain_loop'
@@ -210,13 +213,8 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     // 陆战接触音景（主人 2026-08-19 提供 WAV，转 vorbis，66.9s）：两军接触起循环垫底、13 退场停。
     // 音量与播报完全对齐 (getSpeechVolume())，播报期间平滑淡出避让（音量降为 0），杜绝重叠播放。
     land_contact: sound('battle', 'land_contact', 1.0, 0),
-    // 🔴 [2026-09-11 主人定]「战术模式 30 秒的时候请用城墙倒塌.WAV 音效」
-    //    触发点唯一：Scene13WarLayer.collapseFrontWalls()（开战 30 秒保底随机塌一半城墙，
-    //    全片唯一的塌墙处）→ 每场只响一次。
-    //    音量 0.6 是响度对齐的结果：EBU R128 实测本文件 -14.7 LUFS，
-    //    而反复凿墙的 siege_impact_de -18.8 LUFS @0.62（折算 -22.9）——
-    //    塌墙是「一次性大事」，取 0.6 折算 -19.1，比凿墙撞击高约 3.8dB，进得了戏又不炸耳。
-    wall_collapse: sound('battle', 'wall_collapse', 0.6, 0),
+    // DE 城墙/石门崩塌碎石音效（Building_Rumble_01..03 + Building_Debris_01..03，-15 LUFS）
+    wall_collapse: sounds('battle', ['wall_collapse_1', 'wall_collapse_2', 'wall_collapse_3'], 0.65, 300),
     // 攻城武器（2026-08-24 主人：「战斗开始前 30 秒是攻城武器攻击，但是没有音效」）。
     // ⚠️ 素材是**借用**同一批 DE 战斗音效，不是攻城武器的原声——
     //    DE 的攻城音效封在 Wwise `.pck` 里（resources/wwise/Base.pck），
@@ -254,8 +252,14 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     //    对应关系与转换脚本：scratch/de_sfx_named/resolve_events.py。实测响度：刀剑 -26~-31 LUFS、阵亡 -28~-35、马 -25~-33。
     //    音量按「单发比放箭略低」压：几十人对砍，冷却 150ms 防糊成一片。
     melee_hit: sounds('battle', ['melee_hit_1', 'melee_hit_2', 'melee_hit_3', 'melee_hit_4', 'melee_hit_5', 'melee_hit_6', 'melee_hit_7', 'melee_hit_8', 'melee_hit_9', 'melee_hit_10', 'melee_hit_11', 'melee_hit_12'], 0.35, 150),
+    // DE 刀剑金属招架碰撞声 Sword_Clank / Sword_Broad_Clank（wem 1031194429 等 5 源，-15 LUFS）
+    sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.32, 320),
     death_infantry: sounds('battle', ['death_infantry_1', 'death_infantry_2', 'death_infantry_3', 'death_infantry_4', 'death_infantry_5', 'death_infantry_6'], 0.4, 300),
     death_horse: sounds('battle', ['death_horse_1', 'death_horse_2', 'death_horse_3', 'death_horse_4', 'death_horse_5'], 0.35, 400),
+    // DE 守城箭塔/城堡/建筑火箭齐射声（PLAY_MISSILE_ARROW_TOWER_FLAME + WHOOSH_FLAME，-15 LUFS）
+    tower_arrow_flame: sounds('battle', ['tower_arrow_flame_1', 'tower_arrow_flame_2', 'tower_arrow_flame_3'], 0.50, 450),
+    // DE 僧侣/法术单位吟唱攻击声（PLAY_MONK_ATTACKING + PLAY_ATTACK_MONK_CONVERTING，-15 LUFS）
+    monk_cast: sounds('battle', ['monk_cast_1', 'monk_cast_2', 'monk_cast_3'], 0.55, 600),
     // 动态天气环境音（战略地图与战术模式共用；DE 原版风浪雪漠环境音 + 雨声/雷鸣）
     // 🔴 [2026-11-04 主人令「天气音整体调大，战术也响」] 原 0.32~0.46：乘上主音量 0.5 × 音效层 0.7 后最响只有 BGM 的一半。
     //    现约翻倍，天气最强时与 BGM 0.30 同档（暴风雨最响、雾与风最轻）。
@@ -789,6 +793,31 @@ function branchPool(branch: string | null): string[] {
     return (BGM_POOL_MAP[branch] ?? []).filter((f) => AVAILABLE_BGM_FOLDERS.has(f));
 }
 
+/** 战术模式专用：全部 DE 官方背景音乐（62 首 `de_*` 文明主题曲 + `age_of_kings`） */
+const DE_BGM_FOLDERS: readonly string[] = Object.freeze(
+    BGM_ROTATION_FOLDERS.filter((f) => f.startsWith('de_') || f === 'age_of_kings'),
+);
+
+/** 67 文化分支 → 对应 DE 官方主题曲夹（无同名 `de_{分支}` 的分支映射至同源/近邻 DE 主题曲） */
+const CUSTOM_BRANCH_DE_BGM: Record<string, string> = {
+    HUGUANG: 'de_JIANGNAN',
+    HEXI: 'de_KHITAN',
+    GREECE: 'de_ATHENIANS',
+    TIBET: 'de_PURU',
+    WESTERN: 'de_CENTRAL_ASIA',
+    XIANBEI: 'de_MONGOL',
+};
+
+function deBgmForBranch(branch: string | null): string | null {
+    if (!branch) return null;
+    const direct = `de_${branch}`;
+    if (AVAILABLE_BGM_FOLDERS.has(direct)) return direct;
+    const mapped = CUSTOM_BRANCH_DE_BGM[branch];
+    if (mapped && AVAILABLE_BGM_FOLDERS.has(mapped)) return mapped;
+    const inPool = (BGM_POOL_MAP[branch] ?? []).find((f) => f.startsWith('de_') && AVAILABLE_BGM_FOLDERS.has(f));
+    return inPool ?? null;
+}
+
 function mergeSettings(raw: unknown): AudioSettings {
     const settings: AudioSettings = {
         enabled: DEFAULT_SETTINGS.enabled,
@@ -860,6 +889,8 @@ export class AudioManager {
      * 非 null 时：跟拍军团切换、进战术换曲都不换歌，这首放完重放同一首，直到选回自动。
      */
     private manualBgmFolder: string | null = null;
+    /** 战术模式（Scene13）期间锁定使用 DE 官方背景音乐曲池 */
+    private tacticalDeBgmActive = false;
     /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
     private wantedLoops = new Set<SoundKey>();
     /** 正在播放的一次性音效及其定义（暂停、主音量和语音闪避时同步处理）*/
@@ -1483,6 +1514,7 @@ export class AudioManager {
         //   无势力（cultureRegion 为 null）→ currentBgmPool 为空，走全库随机轮播。
         const branch = resolveBranch(cultureRegion);
         this.currentBgmPool = branchPool(branch);
+        if (this.tacticalDeBgmActive) return;
         this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
         // F3 手动选了曲 → 曲池照记（选回自动时生效），歌不换
         if (this.manualBgmFolder) {
@@ -1522,6 +1554,32 @@ export class AudioManager {
         if (!this.settings.enabled || !this.unlocked) return;
         if (this.manualBgmFolder) return;
         this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
+    }
+
+    /**
+     * 进入战术模式（Scene13）：背景音乐锁定为 DE 官方主题曲。
+     * 若当前正在播放的已经是 DE 曲目则不打断；若未播放或正在播非 DE 曲目，则切入参战方文化的 DE 主题曲。
+     */
+    public enterScene13Bgm(cultureRegion?: string | null): void {
+        this.tacticalDeBgmActive = true;
+        this.bgmShuffleQueue = [];
+        if (!this.settings.enabled || !this.unlocked || this.manualBgmFolder) return;
+        const isCurrentDe = this.currentBgmFolder.startsWith('de_') || this.currentBgmFolder === 'age_of_kings';
+        if (this.isBgmPlaying() && isCurrentDe) return;
+        const branch = resolveBranch(cultureRegion);
+        const preferredDe = deBgmForBranch(branch);
+        if (preferredDe && preferredDe !== this.currentBgmFolder) {
+            this.playBgmFolder(preferredDe);
+        } else {
+            this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
+        }
+    }
+
+    /** 退出战术模式（Scene13）：解除纯 DE 曲池锁定，不打断当前正在播放的 DE 音乐。 */
+    public exitScene13Bgm(): void {
+        if (!this.tacticalDeBgmActive) return;
+        this.tacticalDeBgmActive = false;
+        this.bgmShuffleQueue = [];
     }
 
     /** F3 下拉框的曲目表：全部可播曲目（已滤掉版权暂停曲），曲名取 BGM_TITLES，时长取 BGM_DURATIONS（0 = 未知） */
@@ -1661,9 +1719,11 @@ export class AudioManager {
      *  🔴 [2026-10-02 主人定] 剧本期（亚历山大东征）只洗西方歌曲池；乱斗才洗全部曲目。
      *  🔴 [2026-10-18 主人令] 两个池都要再滤掉 `PAUSED_BGM_FOLDERS`（版权主张暂停，文件保留）。 */
     private shuffledBgmFolders(): string[] {
-        // 🔴 [2026-10-18] 池内轮播：有当前分支曲池就用它；剧本期走西方池；否则回落全局池。
+        // 🔴 [2026-10-18] 池内轮播：战术模式锁定纯 DE 曲池；有当前分支曲池就用它；剧本期走西方池；否则回落全局池。
         let pool: readonly string[];
-        if (this.currentBgmPool.length > 0) {
+        if (this.tacticalDeBgmActive) {
+            pool = DE_BGM_FOLDERS;
+        } else if (this.currentBgmPool.length > 0) {
             pool = this.currentBgmPool;
         } else if (isScriptPeriod()) {
             pool = SCRIPT_WESTERN_BGM_FOLDERS;

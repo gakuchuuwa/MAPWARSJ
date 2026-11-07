@@ -1,4 +1,4 @@
-﻿import {FACTION_GENERALS, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
+import {FACTION_GENERALS, getFactionIdOfGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
 import { isBlankRebelFaction } from '../data/RebelFaction';
 import { FACTIONS } from '../data/factions';
 import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
@@ -4796,9 +4796,7 @@ export class CombatUI {
         // 占用统一 Cut-in 闸门（错开由 Scene13WarLayer 的游戏秒＋真实秒双闸保证，此处不再顺延，保持技效与大字同刻）
         this.skillCutInBusyUntil = Date.now() + CombatUI.SKILL_CUTIN_GAP_MS;
         audioManager.playScene13SkillSfx(sixSet, viewer !== undefined);
-        if (!viewer && _generalId) {
-            this.announceScene13GeneralSkillVoice(side, sixSet, displayName, _generalId, _skillId);
-        }
+        // 战术模式内武将自动释放六计只播 DE 六计专属音效 + 立绘大字 Cut-in，不再播放 TTS 语音播报（防遮盖 DE 战场音效及阻塞放计）
 
         const frame = this.sideElement(side, this.leftPortraitFrame, this.rightPortraitFrame);
         if (!frame) return;
