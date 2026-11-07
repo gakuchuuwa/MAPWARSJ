@@ -12,6 +12,7 @@ import { plantAllowedAt, plantTreeAt } from '../world/environment/plantCatalog';
 import { seasonalDeTree } from '../ui/scene13/Scene13DeTrees';
 import { envZoneAt } from '../world/environment/envZones';
 import { forestPotentialAt } from '../world/environment/forestModel';
+import { AmbientFrameGate } from './AmbientFrameGate';
 import {
     buildLivelihoodGeo, livelihoodCandidates, pickLivelihood, NOMADIC_HERDER_CULTURES,
     type LivelihoodCategory, type LivelihoodGeo,
@@ -518,6 +519,8 @@ export class CityLifeAmbientLayer {
     private ctx: CanvasRenderingContext2D;
     private running = false;
     private lastTime = 0;
+    /** 限帧闸：静止时 30 帧，缩放/大幅平移立刻重画（见 AmbientFrameGate） */
+    private readonly frameGate = new AmbientFrameGate();
     private nowMs = 0;
     private assets = new Map<string, SpriteSheetAsset>();
     private stripAssets = new Map<string, StripStaticAsset>();
@@ -2624,6 +2627,10 @@ export class CityLifeAmbientLayer {
 
     private tick(now: number): void {
         if (!this.running) return;
+        if (!this.frameGate.shouldRun(now, this.map)) {
+            requestAnimationFrame(this.tick.bind(this));
+            return;
+        }
         const dt = Math.min(0.1, this.lastTime > 0 ? (now - this.lastTime) / 1000 : 0.016);
         this.lastTime = now;
         this.nowMs = now;

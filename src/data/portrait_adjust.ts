@@ -1818,8 +1818,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/TIBET/tubo_songzanganbu.png": {
-            "scale": 1.09,
-            "offsetX": 7,
+            "scale": 1.05,
+            "offsetX": 14,
             "offsetY": 5
         },
         "/assets/TIBET/yangtong_chisongdezan.png": {
@@ -10781,6 +10781,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/JIANGNAN/bfe_coyett.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {

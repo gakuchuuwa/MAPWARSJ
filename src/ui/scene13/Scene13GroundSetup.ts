@@ -1049,7 +1049,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     const mapLat = defRec?.lat ?? this.centerLat ?? 30;
     const mapLng = defRec?.lng ?? this.centerLng ?? 110;
     const deStyle = this.buildingStyleFor(1);
-    const cultStyle = String(defRec?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? '');
+    const cultStyle = String(defRec?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? this.sideCulture?.[1] ?? this.sideCulture?.[0] ?? '');
     const baseTerrain = String(this.environmentPlan?.baseTerrain ?? 'gr2');
     const isSnow = glLayer.isIce || /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(baseTerrain);
     const isArid = /^(des|pal|qs|ds5|pal1)/i.test(baseTerrain);
@@ -1063,12 +1063,17 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     // 文化圈归类（严格遵守「美洲是聚落」与世界各地 DE 文明史实风貌，绝不跨文明混放）
     const isAmericas = deStyle === 'ANDE' || deStyle === 'MESO'
         || /^(AMERICA|ANDE|MAYANS|INCA|MUISCA|TUPI|MAPUCHE|CHIMU|TARASCAN|TAIRONA|TEHUELCHE|IROQUOIS|NORTHAM_IMPERIAL|SOUTHAM_IMPERIAL)$/.test(cultStyle);
+    const isTibet = /^(TIBET|TIBET_CASTLE|TIBET_IMPERIAL|YARLUNG)$/.test(cultStyle)
+        || /^(TIBET|TIBET_CASTLE|TIBET_IMPERIAL|YARLUNG)$/.test(String(this.sideCulture?.[1] ?? ''));
     const isNomad = !isAmericas && (deStyle === 'YURT'
+        || isTibet
         || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|HEXI|TIBET)$/.test(cultStyle));
     const isEastAsia = !isAmericas && !isNomad && (deStyle === 'ASIA'
         || /^(CENTRAL|WEI|JIANGNAN|HUGUANG|BASHU|NORTHEAST|KOREA|JAPAN)$/.test(cultStyle));
     const isJapan = cultStyle === 'JAPAN';
-    const isIndosphere = !isAmericas && (deStyle === 'INDI' || deStyle === 'PURU' || deStyle === 'SEAS'
+    // 🔴 [2026-11-08 主人问「西藏的战场放这个建筑，可以吗」] 西藏文化借用 PURU 粗石墙/民居代理，
+    //    绝不可归入印度/南亚文化圈（isIndosphere），严禁在西藏出现印度伊斯兰陵墓 GOL_GUMBAZ 或波罗的海异教神树祠 PAGAN_SHRINE
+    const isIndosphere = !isAmericas && !isNomad && !isTibet && (deStyle === 'INDI' || deStyle === 'PURU' || deStyle === 'SEAS'
         || /^(INDIA|PURU|BENGALIS|GURJARAS|BURMESE|KHMER|VIETNAMESE|MALAY|CHAMPA|JAVANESE|SIAMESE|MON|DIANQIAN)$/.test(cultStyle));
     const isGrecoRoman = !isAmericas && (deStyle === 'GREEK' || deStyle === 'THRACIAN' || deStyle === 'MEDI'
         || /^(ROMA|BYZANTINE|GREECE|GREEK|ATHENIANS|SPARTANS|MACEDONIAN|THRACIAN|SICILIANS|ITALIANS)$/.test(cultStyle));
@@ -1168,7 +1173,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     //      · 宗教圣地院落（Sacred Shrine Compound）：修道院/古塔/大佛/遗迹主建筑 + 配套僧舍/偏殿/祭坛 + 石径 + 对称花坛 + 牌坊/雕像。
     //   3. 古战场战损遗迹簇（本文明攻城器械残骸 + 焦土弹坑 + 破损拒马 + 白骨）集中在交战区外沿，不混入和平村落。
     // ══════════════════════════════════════════════════════════════════════════
-    const isRiceRegion = !isNomad && !isAmericas && !isArid && !isSnow
+    const isRiceRegion = !isNomad && !isTibet && !isAmericas && !isArid && !isSnow
         && (/^(JIANGNAN|HUGUANG|BASHU|KOREA|VIETNAMESE|BENGALIS|BURMESE|KHMER|PURU|INDIA|MUGHAL|DIANQIAN|JAPAN|MALAY|CHAMPA|JAVANESE|SIAMESE|MON)$/.test(cultStyle)
             || deStyle === 'SEAS' || deStyle === 'PURU' || deStyle === 'INDI');
     const foragePool = isAmericas || isIndosphere || deStyle === 'AFRI'
@@ -1505,6 +1510,12 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             ? (deStyle === 'ANDE'
                 ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BATTLEFIELD:ANDEAN_RUINS', `BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE']
                 : [`BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS'])
+            : isTibet
+                ? [
+                    'BUILDING:SCEN_BUDDHA_STATUE',
+                    'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_B', 'BUILDING:SCEN_PAGODA_C',
+                    'BUILDING:SCEN_PAGODA_D', 'BUILDING:SCEN_PAGODA_E',
+                ]
             : isEastAsia
                 ? [
                     'BUILDING:SCEN_BUDDHA_STATUE',
@@ -1746,13 +1757,15 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                     pushRelic(mAsset, sx, sy, rnd() < 0.5, mScale, 0, 0, true);
 
                     // 必配附属建筑：配套僧舍/偏殿/祭坛（使宗教圣地形成完整院落，不孤零零单立）
-                    const shrineWingAsset = isNomad
-                        ? 'BUILDING:PAGAN_SHRINE'
-                        : isGrecoRoman
-                            ? 'BUILDING:SCEN_HERO_SHRINE'
-                            : (!mAsset.includes('MONASTERY') && !isNomad)
-                                ? `BUILDING:${deStyle}_MONASTERY_AGE3`
-                                : culturalHousePool[0];
+                    const shrineWingAsset = isTibet
+                        ? (mAsset === 'BUILDING:SCEN_PAGODA_C' ? 'BUILDING:SCEN_BUDDHA_STATUE' : 'BUILDING:SCEN_PAGODA_C')
+                        : isNomad
+                            ? 'BUILDING:PAGAN_SHRINE'
+                            : isGrecoRoman
+                                ? 'BUILDING:SCEN_HERO_SHRINE'
+                                : (!mAsset.includes('MONASTERY') && !isNomad)
+                                    ? `BUILDING:${deStyle}_MONASTERY_AGE3`
+                                    : culturalHousePool[0];
                     const wingSpot = findCompanionSpot(sx, sy, shrineWingAsset, companionWingOffsets, 430, 285);
                     if (wingSpot) {
                         clearTreesInRadius(wingSpot.x, wingSpot.y, 130);

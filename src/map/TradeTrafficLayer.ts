@@ -11,6 +11,7 @@ import { OrientationSystem } from '../core/OrientationSystem';
 import { NavalWakeDrawer } from './legion/NavalWakeDrawer';
 import { STRATEGIC_SPRITE_SCALE } from './strategicSpriteScale';
 import { registerHumanPresence } from './strategicPresence';
+import { AmbientFrameGate } from './AmbientFrameGate';
 
 /** 商队经过时惊走野生动物的半径（度，zoom 9 ≈ 50px） */
 const CARAVAN_SCARE_RADIUS_DEG = 0.14;
@@ -313,6 +314,10 @@ export class TradeTrafficLayer {
     private lastFollowedId: string | null = null;
     private running = false;
     private lastTime = 0;
+    /** 限帧闸：静止时 30 帧，缩放/大幅平移立刻重画（见 AmbientFrameGate） */
+    private readonly frameGate = new AmbientFrameGate();
+    /** 画布上是否还有上一帧的内容；没有商队且已清空时整帧跳过清屏 */
+    private canvasDirty = true;
     private nowMs = 0;
     private idSeq = 0;
     private cityIndex: Map<string, Pt> | null = null;
@@ -595,6 +600,10 @@ export class TradeTrafficLayer {
             return;
         }
         if (!this.running) return;
+        if (!this.frameGate.shouldRun(now, this.map)) {
+            requestAnimationFrame(this.tick.bind(this));
+            return;
+        }
         const dt = Math.min(0.1, Math.max(0, (now - this.lastTime) / 1000));
         this.lastTime = now;
         this.nowMs = now;
@@ -657,8 +666,10 @@ export class TradeTrafficLayer {
 
     private draw(): void {
         const ctx = this.ctx;
+        if (this.caravans.length === 0 && !this.canvasDirty) return;   // 空画布：不挪、不清
         this.syncCanvas();   // 画布与本次绘制用同一镜头位置（见构造函数说明）
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvasDirty = this.caravans.length > 0;
         if (this.caravans.length === 0) return;
 
         const zoom = this.map.getZoom();

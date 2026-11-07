@@ -7,6 +7,7 @@ import { strategicActorScale } from './strategicSpriteScale';
 import { FAUNA_AREA_RATIO, WILD_LAND_PER_SQ_DEG, animalHerdSize, animalNeedsCoast, animalNeedsRiver, wildPoolAt } from '../world/environment/animalCatalog';
 import { ENV_ZONE_FAUNA_DENSITY, envZoneAt } from '../world/environment/envZones';
 import { collectHumanPresence } from './strategicPresence';
+import { AmbientFrameGate } from './AmbientFrameGate';
 import { isNearStrategicRiver, nearestStrategicRiver } from './StrategicRiverProximity';
 
 /**
@@ -475,6 +476,8 @@ export class AnimalAmbientLayer {
     private lastCellRange: string | null = null;
     private running = false;
     private lastTime = 0;
+    /** 限帧闸：静止时 30 帧，缩放/大幅平移立刻重画（见 AmbientFrameGate） */
+    private readonly frameGate = new AmbientFrameGate();
     private nowMs = 0;
 
     constructor(map: L.Map) {
@@ -1320,6 +1323,10 @@ export class AnimalAmbientLayer {
     // ── 每帧 ────────────────────────────────────────────────────────────
     private tick(now: number): void {
         if (!this.running) return;
+        if (!this.frameGate.shouldRun(now, this.map)) {
+            requestAnimationFrame(this.tick.bind(this));
+            return;
+        }
         const dt = Math.min(0.1, this.lastTime > 0 ? (now - this.lastTime) / 1000 : 0.016);
         this.lastTime = now;
         this.nowMs = now;

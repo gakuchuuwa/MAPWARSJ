@@ -123,6 +123,8 @@ export class WeatherLayer extends L.Layer {
     private rafId: number | null = null;
     private visible = true;
     private lastRenderAt = -Infinity;
+    /** 画布上是否还有上一帧的内容；无云团且已清空时整帧跳过清屏 */
+    private canvasDirty = true;
     private lastTickAt = -Infinity;
     private nextCellId = 1;
     private cells: WeatherCell[] = [];
@@ -563,16 +565,21 @@ export class WeatherLayer extends L.Layer {
     private render(now: number): void {
         if (!this.map || !this.ctx) return;
         const g = this.ctx;
-        this.syncCanvas();
         const cw = this.canvas.width;
         const ch = this.canvas.height;
-        g.clearRect(0, 0, cw, ch);
-
         const zoom = this.map.getZoom();
         if (zoom < MIN_ZOOM || zoom > MAX_ZOOM || this.cells.length === 0) {
+            // 空画布：清过一次之后就不再每帧挪画布、清屏
+            if (this.canvasDirty) {
+                g.clearRect(0, 0, cw, ch);
+                this.canvasDirty = false;
+            }
             audioManager.syncWeatherAudio(null, 0);
             return;
         }
+        this.syncCanvas();
+        g.clearRect(0, 0, cw, ch);
+        this.canvasDirty = true;
 
         const center = this.map.getCenter();
         const centerElevM = LandSeaSystem.getSampler().getElevationSync(center.lat, center.lng);

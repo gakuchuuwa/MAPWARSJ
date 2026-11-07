@@ -440,7 +440,21 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
     }
 }
 
+/**
+ * 🔴 [2026-11-08 减负：战略地图移动时风扇狂转] 主循环最短帧间隔（毫秒）。
+ * 高刷屏上 rAF 每秒回调 120~165 次，主循环（推演 + 跟拍 + 兵模层重画）原来每次都跑满。
+ * 间隔不足 9.5ms 的那一拍直接跳过 → 120Hz 屏跑 60 帧、144Hz 屏跑 72 帧、165Hz 屏约 82 帧，
+ * 每一帧间隔都相等（隔一拍跑一拍），不会像硬封 60 帧那样忽快忽慢；60/75/90/100Hz 屏不受影响。
+ * 推演全按 deltaTime 走，跳过的时长并入下一帧，游戏速度不变。
+ */
+const MAIN_LOOP_MIN_FRAME_MS = 9.5;
+
 export function tickGameAppFrame(app: GameApp, timestamp: number): void {
+    const sinceLast = timestamp - app.lastFrameTime;
+    if (sinceLast > 0 && sinceLast < MAIN_LOOP_MIN_FRAME_MS) {
+        app.animationFrameId = requestAnimationFrame((t) => app.gameLoop(t));
+        return;
+    }
     battleSceneTickedThisFrame = false;
     const rawDelta = (timestamp - app.lastFrameTime) / 1000;
     const deltaTime = clampFrameDelta(rawDelta);

@@ -27,6 +27,8 @@ export class CityCaptureRenderer {
     private ctx: CanvasRenderingContext2D;
     private activeEffects: CaptureEffect[] = [];
     private animationFrameId: number | null = null;
+    /** 画布上是否还有上一帧的烟雾；没有特效且已清空时整帧跳过清屏 */
+    private canvasDirty = true;
     // [PERF] Cache for pre-rendered gradient textures by color
     private textureCache: Map<string, HTMLCanvasElement> = new Map();
 
@@ -155,7 +157,16 @@ export class CityCaptureRenderer {
     }
 
     private draw() {
+        // 🔴 [2026-11-08 减负] 原来从开局起每帧清一次整屏画布，哪怕一座城都没在冒烟
+        if (this.activeEffects.length === 0) {
+            if (this.canvasDirty) {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.canvasDirty = false;
+            }
+            return;
+        }
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvasDirty = true;
 
         // 占城烟属于战略地图；独立战术场景（含战后 5 秒残局停留）期间不绘制。
         if ((window as any).game?.battleScene?.isActive?.() === true) return;

@@ -1229,7 +1229,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     ? 'TRADE:TRADE_CART_ORIE/move_2'
                     : (deStylePass === 'WEST' || deStylePass === 'EAST' || deStylePass === 'CEAS' || deStylePass === 'SLAV' || deStylePass === 'MEDI' || deStylePass === 'GREEK' || deStylePass === 'THRACIAN')
                         ? 'TRADE:TRADE_CART_WEST/move_2'
-                        : (deStylePass === 'AFRI' || deStylePass === 'INDI' || deStylePass === 'PURU' || deStylePass === 'SEAS')
+                        : ((deStylePass === 'AFRI' || deStylePass === 'INDI' || deStylePass === 'PURU' || deStylePass === 'SEAS') && styleKey !== 'TIBET')
                             ? 'TRADE:TRADE_CART_AFRI/move_2'
                             : 'TRADE:TRADE_CART_ASIA/move_2';
 
@@ -1316,7 +1316,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     ? 'TRADE:TRADE_CART_ORIE/move_2'
                     : (deStyleCity === 'WEST' || deStyleCity === 'EAST' || deStyleCity === 'CEAS' || deStyleCity === 'SLAV' || deStyleCity === 'MEDI' || deStyleCity === 'GREEK' || deStyleCity === 'THRACIAN')
                         ? 'TRADE:TRADE_CART_WEST/move_2'
-                        : (deStyleCity === 'AFRI' || deStyleCity === 'INDI' || deStyleCity === 'PURU' || deStyleCity === 'SEAS')
+                        : ((deStyleCity === 'AFRI' || deStyleCity === 'INDI' || deStyleCity === 'PURU' || deStyleCity === 'SEAS') && styleKey !== 'TIBET')
                             ? 'TRADE:TRADE_CART_AFRI/move_2'
                             : 'TRADE:TRADE_CART_ASIA/move_2';
             const urbanFlagAsset = deStyleCity === 'ASIA'
@@ -1408,7 +1408,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     //    纯视觉无碰撞，避开攻方主冲锋线、城门大道、护城河与出生营地
     {
         const deStyle = this.buildingStyleFor(1);
-        const cultStyle = String(defCityForInterior?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? '');
+        const cultStyle = String(defCityForInterior?.buildingStyle ?? this.environmentPlan?.buildingStyle ?? this.sideCulture?.[1] ?? this.sideCulture?.[0] ?? '');
         const seasonTag = isSnow
             ? 'WINTER'
             : (calSeason === 0 ? 'SPRING' : calSeason === 2 ? 'AUTUMN' : calSeason === 3 ? 'WINTER' : 'SUMMER');
@@ -1416,13 +1416,18 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         //    统一充当农田、林边、矿边的资源建筑，不放旧大陆磨坊/伐木场/采矿场。
         const isAmericasOutskirts = deStyle === 'ANDE' || deStyle === 'MESO'
             || /^(AMERICA|ANDE|MAYANS|INCA|MUISCA|TUPI|MAPUCHE|CHIMU|TARASCAN|TAIRONA|TEHUELCHE|IROQUOIS|NORTHAM_IMPERIAL|SOUTHAM_IMPERIAL)$/.test(cultStyle);
+        const isTibetOutskirts = /^(TIBET|TIBET_CASTLE|TIBET_IMPERIAL|YARLUNG)$/.test(cultStyle)
+            || /^(TIBET|TIBET_CASTLE|TIBET_IMPERIAL|YARLUNG)$/.test(String(this.sideCulture?.[1] ?? ''));
         const isNomadOutskirts = !isAmericasOutskirts && (isYurtOrNomadCity
+            || isTibetOutskirts
             || /^(MONGOL|MOBEI_MONGOL|XIANBEI|HUNS|CUMAN|TURKS|HEXI|TIBET)$/.test(cultStyle));
         const isSlavFolwark = !isAmericasOutskirts && !isNomadOutskirts
             && (deStyle === 'SLAV' || /^(POLES|SLAVIC|LITHUANIANS|BOHEMIANS)$/.test(cultStyle));
         const isEastAsiaOutskirts = !isAmericasOutskirts && !isNomadOutskirts
             && (deStyle === 'ASIA' || /^(CENTRAL|WEI|JIANGNAN|HUGUANG|BASHU|NORTHEAST|KOREA|JAPAN)$/.test(cultStyle));
-        const isIndosphereOutskirts = !isAmericasOutskirts
+        // 🔴 [2026-11-08 主人问「西藏的战场放这个建筑，可以吗」] 西藏据点城墙/民居借用 PURU 粗石代理，
+        //    绝不可因此归入印度/南亚文化圈（isIndosphereOutskirts），严禁在西藏出现印度伊斯兰陵墓 GOL_GUMBAZ 或波罗的海异教神树祠 PAGAN_SHRINE
+        const isIndosphereOutskirts = !isAmericasOutskirts && !isNomadOutskirts && !isTibetOutskirts
             && (deStyle === 'INDI' || deStyle === 'PURU' || deStyle === 'SEAS'
                 || /^(INDIA|PURU|BENGALIS|GURJARAS|BURMESE|KHMER|VIETNAMESE|MALAY|CHAMPA|JAVANESE|SIAMESE|MON|DIANQIAN)$/.test(cultStyle));
         const isGrecoRomanOutskirts = !isAmericasOutskirts
@@ -1431,7 +1436,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         const isMiddleEastOutskirts = !isAmericasOutskirts
             && (deStyle === 'ORIE' || deStyle === 'PERSIAN'
                 || /^(ORIE|WEST_ASIA|PERSIAN|SASANIAN|CENTRAL_ASIA|WESTERN|BERBER|MUGHAL|ARMENIANS|GEORGIANS)$/.test(cultStyle));
-        const isRiceOutskirts = !isNomadOutskirts && !isAmericasOutskirts && !isArid && !isSnow
+        const isRiceOutskirts = !isNomadOutskirts && !isTibetOutskirts && !isAmericasOutskirts && !isArid && !isSnow
             && (/^(JIANGNAN|HUGUANG|BASHU|KOREA|VIETNAMESE|BENGALIS|BURMESE|KHMER|PURU|INDIA|MUGHAL|DIANQIAN|JAPAN|MALAY|CHAMPA|JAVANESE|SIAMESE|MON)$/.test(cultStyle)
                 || deStyle === 'SEAS' || deStyle === 'PURU' || deStyle === 'INDI');
         const plotAsset = isNomadOutskirts
@@ -2144,6 +2149,12 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                 ? (deStyle === 'ANDE'
                     ? ['BUILDING:SCEN_ANDEAN_RUINS', 'BUILDING:PAGAN_SHRINE', `BUILDING:${deStyle}_MONASTERY_AGE3`]
                     : [`BUILDING:${deStyle}_MONASTERY_AGE3`, 'BUILDING:PAGAN_SHRINE', 'BUILDING:SCEN_ANCIENT_RUINS'])
+                : isTibetOutskirts
+                    ? [
+                        'BUILDING:SCEN_BUDDHA_STATUE',
+                        'BUILDING:SCEN_PAGODA_A', 'BUILDING:SCEN_PAGODA_B', 'BUILDING:SCEN_PAGODA_C',
+                        'BUILDING:SCEN_PAGODA_D', 'BUILDING:SCEN_PAGODA_E',
+                    ]
                 : isEastAsiaOutskirts
                     ? [
                         'BUILDING:SCEN_BUDDHA_STATUE',
@@ -2279,13 +2290,15 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                         gl.carveFoundation(sx, sy, W, H, 2.0);
                         pushOutskirtsSprite('DECAL_PATH_4', sx, sy + 42, 0.92, -6, false, 0);
 
-                        const wingShrineAsset = isNomadOutskirts
-                            ? 'BUILDING:PAGAN_SHRINE'
-                            : isGrecoRomanOutskirts
-                                ? 'BUILDING:SCEN_HERO_SHRINE'
-                                : (!tmAsset.includes('MONASTERY') && this.defenderCityType !== 'stockade')
-                                    ? `BUILDING:${deStyle}_MONASTERY_AGE3`
-                                    : housePool[0];
+                        const wingShrineAsset = isTibetOutskirts
+                            ? (tmAsset === 'BUILDING:SCEN_PAGODA_C' ? 'BUILDING:SCEN_BUDDHA_STATUE' : 'BUILDING:SCEN_PAGODA_C')
+                            : isNomadOutskirts
+                                ? 'BUILDING:PAGAN_SHRINE'
+                                : isGrecoRomanOutskirts
+                                    ? 'BUILDING:SCEN_HERO_SHRINE'
+                                    : (!tmAsset.includes('MONASTERY') && this.defenderCityType !== 'stockade')
+                                        ? `BUILDING:${deStyle}_MONASTERY_AGE3`
+                                        : housePool[0];
                         const wingSpot = findOutskirtsCompanionSpot(sx, sy, wingShrineAsset, wingBuildingOffsets);
                         if (wingSpot && pushOutskirtsSprite(wingShrineAsset, wingSpot.x, wingSpot.y, 0.74, 0, mRnd() < 0.5, 0)) {
                             clearTreesInRadius(wingSpot.x, wingSpot.y, 130);

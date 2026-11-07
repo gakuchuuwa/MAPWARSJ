@@ -3,6 +3,7 @@ import { perfDoctor } from '../debug/PerfDoctor';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { strategicActorScale } from './strategicSpriteScale';
+import { AmbientFrameGate } from './AmbientFrameGate';
 import { FAUNA_AREA_RATIO, WILD_LAND_PER_SQ_DEG } from '../world/environment/animalCatalog';
 
 /**
@@ -175,6 +176,10 @@ export class MarineLifeLayer extends L.Layer {
     private creatures: Creature[] = [];
     private nextCreatureId = 1;
     private rafId: number | null = null;
+    /** 限帧闸：静止时 30 帧，缩放/大幅平移立刻重画（见 AmbientFrameGate） */
+    private readonly frameGate = new AmbientFrameGate();
+    /** 画布上是否还有上一帧的内容；没有生物且已清空时整帧跳过清屏 */
+    private canvasDirty = true;
 
     constructor() {
         super();
@@ -194,16 +199,14 @@ export class MarineLifeLayer extends L.Layer {
         this.syncCanvas();
         void this.ensureAssets();
 
-        this.map.on('move', this.syncCanvas);
-        this.map.on('zoom', this.syncCanvas);
+        // 🔴 [2026-11-08] 不再在 move/zoom 事件里单独挪画布：改为 render() 绘制那一刻对齐（与动物层、商队层同一做法），
+        //    这样限帧跳过的帧里画布随地图 pane 一起平移，生物仍钉在海面上。
         this.map.on('resize', this.resize);
         this.rafId = requestAnimationFrame(this.tick);
         return this;
     }
 
     public onRemove(map: L.Map): this {
-        this.map?.off('move', this.syncCanvas);
-        this.map?.off('zoom', this.syncCanvas);
         this.map?.off('resize', this.resize);
         this.map = null;
         if (this.rafId !== null) cancelAnimationFrame(this.rafId);
@@ -278,6 +281,7 @@ export class MarineLifeLayer extends L.Layer {
     private tick = (now: number): void => {
         this.rafId = requestAnimationFrame(this.tick);
         if (!this.map || !this.ctx || !this.ready) return;
+        if (!this.frameGate.shouldRun(now, this.map)) return;
         const _t0 = performance.now();
         try {
             this.tickBody(now);
@@ -463,7 +467,10 @@ export class MarineLifeLayer extends L.Layer {
     private render(now = performance.now()): void {
         if (!this.map || !this.ctx) return;
         const g = this.ctx;
+        if (this.creatures.length === 0 && !this.canvasDirty) return;   // 空画布（内陆常态）：不挪、不清
+        this.syncCanvas();
         g.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvasDirty = this.creatures.length > 0;
         if (this.creatures.length === 0) return;
 
         const bounds = this.map.getBounds();
