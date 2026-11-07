@@ -165,6 +165,52 @@ export class AIController {
     }
 
     /**
+     * 🔴 [2026-11-07 主人令] 元帅权限：观众竞价指定的攻击目标（军团 ID → 目标城 ID）。
+     *   在 BT tick **之前**把它写进黑板：`HasTarget` 认作「已有目标」，`FindTarget` 就不会再另抽一个，
+     *   于是观众指定的目标不会被 AI 下一帧冲掉。目标失效（城没了／变成己方）或主角离队时，
+     *   由 `ViewerLive` 退款并调 `clearViewerTargetLock` 交回 AI。
+     */
+    private viewerTargetLocks = new Map<string, string>();
+
+    public lockViewerTarget(armyId: string, cityId: string): void {
+        if (!armyId || !cityId) return;
+        this.viewerTargetLocks.set(armyId, cityId);
+        const army = this.legionManager.getLegionById(armyId);
+        const context = this.armyContexts.get(armyId);
+        const city = this.cityManager.getCity(cityId);
+        if (!army || !context || !city || army.getIsInCombat()) return;
+        context.strategicTargetArmyId = null;
+        setStrategicTarget(context, city.id, { lat: city.latitude, lng: city.longitude });
+        army.setTargetCity(city);
+        army.stopMovement?.();
+    }
+
+    public clearViewerTargetLock(armyId: string): void {
+        this.viewerTargetLocks.delete(armyId);
+    }
+
+    public getViewerTargetLock(armyId: string): string | null {
+        return this.viewerTargetLocks.get(armyId) ?? null;
+    }
+
+    /** 每次 BT tick 前把观众锁重新写进黑板（防止上一帧的失败重抽把它冲掉） */
+    private applyViewerTargetLock(context: BTContext, army: Army): void {
+        const lockedId = this.viewerTargetLocks.get(army.id);
+        if (!lockedId) return;
+        const city = this.cityManager.getCity(lockedId);
+        if (!city || city.factionId === army.getFactionId()) {
+            this.viewerTargetLocks.delete(army.id);
+            return;
+        }
+        if (army.getIsInCombat()) return;
+        if (getStrategicTargetId(context) === lockedId) return;
+        context.strategicTargetArmyId = null;
+        setStrategicTarget(context, lockedId, { lat: city.latitude, lng: city.longitude });
+        army.setTargetCity(city);
+        army.stopMovement?.();
+    }
+
+    /**
      * 执行单个军团的行为树
      */
     private tickArmy(army: Army): void {
@@ -183,6 +229,8 @@ export class AIController {
         // 同步上下文（更新军队引用等）
         context.army = army;
         this.syncBlackboardTarget(context, army);
+        // 🔴 [2026-11-07] 元帅权限：观众竞价指定的目标优先于 AI 自选
+        this.applyViewerTargetLock(context, army);
 
         // 执行行为树
         const status = this.behaviorTree.tick(context);

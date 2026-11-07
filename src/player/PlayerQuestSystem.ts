@@ -1,4 +1,4 @@
-﻿/**
+/**
  * PlayerQuestSystem —— 据点对话与两层任务（2026-09-05 主人定）。
  *
  * 抵达据点 → 看城中武将在不在（据点锚定武将，且此刻没随军在外）→ 对话：
@@ -86,7 +86,12 @@ export function style62OfCity(c: City): string | null {
 
 export interface LiveJoinCandidate {
     index: number;
+    /** faction＝选势力（选中后随机点名武将）；general＝直接选武将 */
     kind: 'faction' | 'general';
+    /** 这条是不是「随机点名」条目（斥候的势力、先锋的全势力条目） */
+    randomPick: boolean;
+    /** 随机点名的范围：sameCulture＝只在该文化内挑人（斥候）；any＝该势力任一可出征武将（先锋） */
+    randomScope: 'sameCulture' | 'any';
     id: string;
     label: string;
     cityId: string;
@@ -4271,11 +4276,48 @@ export class PlayerQuestSystem {
         return Math.floor((city.troops || 0) * 0.9) >= GameConfig.LEGION.MIN_ARMY_SIZE;
     }
 
+    /** 某势力当前可出征的武将池（供「势力→武将随机点名」用）；culture 非空时只收该文化的据点。 */
+    private liveJoinFactionPool(
+        factionId: string,
+        culture: string | null,
+    ): Array<{ cityId: string; generalId: string; generalName: string }> {
+        const pool: Array<{ cityId: string; generalId: string; generalName: string }> = [];
+        for (const c of this.deps.cityManager.getCities()) {
+            if (!c.factionId) continue;
+            const ck = style62OfCity(c);
+            if (!ck) continue;
+            if (culture && ck !== culture) continue;
+            for (const g of getCityAnchoredGenerals(c.id)) {
+                if (!this.isGeneralSortieReady(c, g.generalId)) continue;
+                const rec = getGeneralRecordByGeneralId(g.generalId);
+                const fid = getFactionIdOfGeneral(g.generalId) || rec?.factionId || c.factionId;
+                if (fid !== factionId) continue;
+                pool.push({ cityId: c.id, generalId: g.generalId, generalName: rec?.generalName ?? g.generalName });
+            }
+        }
+        return pool;
+    }
+
+    /** 势力随机点名：没跟过的名将 → 名将 → 没跟过的 → 全池随机。 */
+    private pickRandomFactionGeneral(
+        pool: Array<{ cityId: string; generalId: string; generalName: string }>,
+    ): { cityId: string; generalId: string; generalName: string } | null {
+        if (pool.length === 0) return null;
+        const unvisitedFamous = pool.filter((x) => !this.visitedGenerals.has(x.generalId) && getGeneralProfile(x.generalId)?.tier === 'famous');
+        const famousPool = pool.filter((x) => getGeneralProfile(x.generalId)?.tier === 'famous');
+        const unvisitedPool = pool.filter((x) => !this.visitedGenerals.has(x.generalId));
+        const bestPool = unvisitedFamous.length > 0 ? unvisitedFamous : famousPool.length > 0 ? famousPool : unvisitedPool.length > 0 ? unvisitedPool : pool;
+        return bestPool[Math.floor(Math.random() * bestPool.length)];
+    }
+
     /**
-     * 离职期间可供直播观众竞价选择的投靠目标：
-     *   · 斥候：与上一次同文化的所有可出征势力；
-     *   · 探马：与上一次同文化的所有可出征武将；
-     *   · 先锋：全图可出征势力；将军及以上：全图可出征武将。
+     * 离职期间可供直播观众竞价选择的投靠目标。
+     * 🔴 [2026-11-07 主人令]「都是玩家只能选武将，就算选择势力，也要投靠武将」——落点永远是武将：
+     *   · 斥候：选**同文化的势力**，选中后在该势力里**随机点名**一名可出征武将；
+     *   · 探马：选**同文化的武将**，人是指定的；
+     *   · 先锋：同文化的武将（指定）＋ **全部势力的武将（随机点名）**；
+     *   · 将军及以上：**全图武将**（指定）。
+     * 档次一律按**资历**（`getPeakRank`，只升不降、只有新开一局才回平民）。
      */
     public getLiveJoinCandidates(allowWhileAttached = false): LiveJoinCandidate[] {
         const hero = this.deps.hero;
@@ -4284,28 +4326,46 @@ export class PlayerQuestSystem {
             this.cachedLiveCandidates = [];
             return [];
         }
-        // 离队后当前官职已重来（回平民），选去处的范围按资历（历史最高官职）
         const rankId = hero.getPeakRank().id;
         if (rankId === 'civilian') return [];
         const lastCulture = hero.getLastCulture();
+        const factionOnly = rankId === 'scout';                      // 斥候：只能选同文化势力（武将随机）
         const sameCultureOnly = rankId === 'scout' || rankId === 'outrider';
+        const globalRandom = rankId === 'vanguard';                  // 先锋：再加「全部势力·武将随机」
         if (sameCultureOnly && !lastCulture) return [];
-        const kind: 'faction' | 'general' = (rankId === 'scout' || rankId === 'vanguard') ? 'faction' : 'general';
         const cacheKey = `${rankId}|${lastCulture ?? '*'}`;
         if (this.cachedLiveCandidatesKey === cacheKey && this.cachedLiveCandidates.length > 0) {
             const stillValid = this.cachedLiveCandidates.filter((item) => {
+                if (item.randomPick) {
+                    return this.liveJoinFactionPool(item.factionId, item.randomScope === 'sameCulture' ? item.culture : null).length > 0;
+                }
                 const c = this.deps.cityManager.getCity(item.cityId);
                 return !!c && this.isGeneralSortieReady(c, item.generalId);
             });
             if (stillValid.length > 0) return stillValid;
         }
         const me = hero.getPosition();
-        const raw: Array<Omit<LiveJoinCandidate, 'index'> & { famous: boolean }> = [];
+        type Raw = {
+            kind: 'faction' | 'general';
+            randomPick: boolean;
+            randomScope: 'sameCulture' | 'any';
+            id: string;
+            label: string;
+            cityId: string;
+            cityName: string;
+            generalId: string;
+            generalName: string;
+            factionId: string;
+            factionName: string;
+            culture: string;
+            distKm: number;
+            famous: boolean;
+        };
+        const all: Raw[] = [];
         for (const c of this.deps.cityManager.getCities()) {
             if (!c.factionId) continue;
             const ck = style62OfCity(c);
             if (!ck) continue;
-            if (sameCultureOnly && ck !== lastCulture) continue;
             const d = me && Number.isFinite(me.lat)
                 ? PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude })
                 : 0;
@@ -4316,10 +4376,12 @@ export class PlayerQuestSystem {
                 const factionName = this.deps.cityManager.getFactionName(factionId) || factionId;
                 const generalName = rec?.generalName ?? g.generalName;
                 const famous = getGeneralProfile(g.generalId)?.tier === 'famous';
-                raw.push({
-                    kind,
-                    id: kind === 'faction' ? factionId : g.generalId,
-                    label: kind === 'faction' ? factionName : generalName,
+                all.push({
+                    kind: 'general',
+                    randomPick: false,
+                    randomScope: 'any',
+                    id: g.generalId,
+                    label: generalName,
                     cityId: c.id,
                     cityName: c.name,
                     generalId: g.generalId,
@@ -4332,36 +4394,69 @@ export class PlayerQuestSystem {
                 });
             }
         }
-        // 统计各势力当前可出征武将数（供先锋/斥候按「武将多的势力优先」排序）
-        const factionGenCount = new Map<string, number>();
-        for (const r of raw) {
-            factionGenCount.set(r.factionId, (factionGenCount.get(r.factionId) ?? 0) + 1);
+        const inCulture = lastCulture ? all.filter((r) => r.culture === lastCulture) : [];
+
+        // 势力级条目：一条势力一条（选中后随机点名）。斥候取同文化势力；先锋取同文化以外的全部势力。
+        const factionEntry = (factionId: string, members: Raw[]): Raw => {
+            const head = members[0];
+            return {
+                kind: 'faction',
+                randomPick: true,
+                randomScope: factionOnly ? 'sameCulture' : 'any',
+                id: factionId,
+                label: head.factionName,
+                cityId: head.cityId,
+                cityName: head.cityName,
+                generalId: '',
+                generalName: '',
+                factionId,
+                factionName: head.factionName,
+                culture: head.culture,
+                distKm: Math.min(...members.map((m) => m.distKm)),
+                famous: members.some((m) => m.famous),
+            };
+        };
+        const groupByFaction = (list: Raw[]): Raw[] => {
+            const map = new Map<string, Raw[]>();
+            for (const r of list) {
+                const arr = map.get(r.factionId);
+                if (arr) arr.push(r); else map.set(r.factionId, [r]);
+            }
+            return [...map.entries()].map(([fid, members]) => factionEntry(fid, members));
+        };
+
+        let pickedRaw: Raw[];
+        if (factionOnly) {
+            pickedRaw = groupByFaction(inCulture);
+        } else if (globalRandom) {
+            const otherFactions = lastCulture ? all.filter((r) => r.culture !== lastCulture) : all;
+            pickedRaw = [...inCulture, ...groupByFaction(otherFactions)];
+        } else {
+            pickedRaw = sameCultureOnly ? inCulture : all;
         }
-        // 🔴 [2026-10-29 主人定]
-        //   · 先锋（选势力）：优先显示上一次同文化势力 → 武将多的势力优先 → 距离近优先；
-        //   · 将军（选武将）：优先显示上一次同文化武将 → 优先名将 → 距离近优先。
-        raw.sort((a, b) => {
+
+        const factionGenCount = new Map<string, number>();
+        for (const r of all) factionGenCount.set(r.factionId, (factionGenCount.get(r.factionId) ?? 0) + 1);
+        // 同文化优先 → 武将多的势力优先（势力级）→ 名将优先 → 距离近优先
+        pickedRaw.sort((a, b) => {
             if (lastCulture) {
                 const aSame = a.culture === lastCulture;
                 const bSame = b.culture === lastCulture;
                 if (aSame !== bSame) return aSame ? -1 : 1;
             }
-            if (kind === 'faction') {
+            if (a.kind === 'faction' && b.kind === 'faction') {
                 const diffCnt = (factionGenCount.get(b.factionId) ?? 0) - (factionGenCount.get(a.factionId) ?? 0);
                 if (diffCnt !== 0) return diffCnt;
             }
             if (a.famous !== b.famous) return a.famous ? -1 : 1;
             return a.distKm - b.distKm;
         });
-        // 探马只显示同文化名将（无名将时兜底全部）；将军开放全图所有武将（同文化+名将排最前）
-        const famousOnly = rankId === 'outrider' ? raw.filter((r) => r.famous) : raw;
-        const baseList = famousOnly.length > 0 ? famousOnly : raw;
-        const sourceList = baseList;
         const seen = new Set<string>();
         const picked: LiveJoinCandidate[] = [];
-        for (const item of sourceList) {
-            if (seen.has(item.id)) continue;
-            seen.add(item.id);
+        for (const item of pickedRaw) {
+            const key = `${item.kind}:${item.id}`;
+            if (seen.has(key) || !item.id) continue;
+            seen.add(key);
             const { famous: _f, ...rest } = item;
             picked.push({ ...rest, index: picked.length + 1 });
         }
@@ -4404,36 +4499,16 @@ export class PlayerQuestSystem {
                     : `当前可出征名单中未找到「${q}」，请核对名字或发「投编号」`,
             };
         }
-        // 🔴 [2026-10-29 主人令] 斥候选的是同文化势力（若该势力在同文化下有多位武将，随机抽一位）；探马选的是同文化指定武将
+        // 🔴 [2026-11-07 主人令] 选势力＝在该势力里随机点名一名可出征武将；
+        //    斥候只点同文化的据点里的武将，先锋点该势力任意武将。
         let targetCityId = chosen.cityId;
         let targetGeneralId = chosen.generalId;
         let targetGeneralName = chosen.generalName;
-        if (chosen.kind === 'faction') {
-            const sameCultureOnly = rankId === 'scout' || rankId === 'outrider';
-            const factionPool: Array<{ cityId: string; generalId: string; generalName: string }> = [];
-            for (const c of this.deps.cityManager.getCities()) {
-                if (!c.factionId) continue;
-                const ck = style62OfCity(c);
-                if (!ck) continue;
-                if (sameCultureOnly && ck !== chosen.culture) continue;
-                for (const g of getCityAnchoredGenerals(c.id)) {
-                    if (!this.isGeneralSortieReady(c, g.generalId)) continue;
-                    const rec = getGeneralRecordByGeneralId(g.generalId);
-                    const fid = getFactionIdOfGeneral(g.generalId) || rec?.factionId || c.factionId;
-                    if (fid !== chosen.factionId) continue;
-                    factionPool.push({
-                        cityId: c.id,
-                        generalId: g.generalId,
-                        generalName: rec?.generalName ?? g.generalName,
-                    });
-                }
-            }
-            if (factionPool.length > 0) {
-                const unvisitedFamous = factionPool.filter((x) => !this.visitedGenerals.has(x.generalId) && getGeneralProfile(x.generalId)?.tier === 'famous');
-                const famousPool = factionPool.filter((x) => getGeneralProfile(x.generalId)?.tier === 'famous');
-                const unvisitedPool = factionPool.filter((x) => !this.visitedGenerals.has(x.generalId));
-                const bestPool = unvisitedFamous.length > 0 ? unvisitedFamous : famousPool.length > 0 ? famousPool : unvisitedPool.length > 0 ? unvisitedPool : factionPool;
-                const rnd = bestPool[Math.floor(Math.random() * bestPool.length)];
+        if (chosen.kind === 'faction' || chosen.randomPick) {
+            const culture = chosen.randomScope === 'sameCulture' ? chosen.culture : null;
+            const pool = this.liveJoinFactionPool(chosen.factionId, culture);
+            const rnd = this.pickRandomFactionGeneral(pool);
+            if (rnd) {
                 targetCityId = rnd.cityId;
                 targetGeneralId = rnd.generalId;
                 targetGeneralName = rnd.generalName;

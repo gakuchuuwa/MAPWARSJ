@@ -52,6 +52,7 @@ import {
     PLAYER_KILL_MERIT,
     PLAYER_BATTLE_MERIT_CAP,
     rankFor,
+    meritFloorForRank,
     type PlayerRank,
 } from './PlayerConfig';
 import { moderateLiveName } from '../live/LiveNameModeration';
@@ -371,6 +372,8 @@ export interface PlayerSaveState {
     /** 🔴 [2026-11-06 主人令] 面板手选的环球商队车 / 航行商船素材目录（null/缺省 = 随当地文化） */
     tourCaravanDir?: string | null;
     tourShipDir?: string | null;
+    /** 观众竞价选定的主角立绘（元帅权限）；缺省 = 还没选 */
+    livePortrait?: string | null;
 }
 
 /** Scene13 用的玩家布置（由 Scene13WarLayer.start 通过 window.game.playerHero 取） */
@@ -620,15 +623,19 @@ export class PlayerHero {
         this.lastCulture = culture;
         this.emitChange();
     }
-    /** 当前官职 = 本势力功劳定档；已投效势力保底斥候，离开势力回平民。 */
+    /**
+     * 🔴 [2026-11-07 主人令「都是看资历。不要让玩家从头玩。只有每次开局重新开头」]
+     *    当前官职 ＝ max（本势力功劳定档，资历）。资历只升不降，所以离队／战败／换势力
+     *    **都不会掉官**，只有「新开一局」才回到平民（`resetForNewGame`）。
+     */
     public getRank(): PlayerRank {
-        return rankFor(this.merit, this.factionId !== null);
+        const byMerit = rankFor(this.merit, this.factionId !== null);
+        const peak = PLAYER_RANKS.find((r) => r.id === this.peakRankId) ?? byMerit;
+        return PLAYER_RANKS.indexOf(peak) > PLAYER_RANKS.indexOf(byMerit) ? peak : byMerit;
     }
-    /** 资历：历史最高官职，只升不降；离队后观众选去处的范围按它定。 */
+    /** 资历：本局最高官职，只升不降；它同时就是当前官职（权限全按它）。 */
     public getPeakRank(): PlayerRank {
-        const current = this.getRank();
-        const peak = PLAYER_RANKS.find((r) => r.id === this.peakRankId) ?? current;
-        return PLAYER_RANKS.indexOf(peak) > PLAYER_RANKS.indexOf(current) ? peak : current;
+        return this.getRank();
     }
     private rememberRank(rank: PlayerRank): void {
         const nextIdx = PLAYER_RANKS.findIndex((r) => r.id === rank.id);
@@ -682,6 +689,19 @@ export class PlayerHero {
      */
     public tourCaravanDir: string | null = null;
     public tourShipDir: string | null = null;
+    /**
+     * 🔴 [2026-11-07 主人令]「元帅…可以挑选立绘：先选择文化，然后从该文化随机选择10张让玩家挑选」
+     *    观众竞价选定的主角立绘（`/assets/<文化>/*.png` 路径）。null = 还没选，面板不显示头像。
+     *    只存路径，不搬不复制任何立绘文件；换局/读档跟着存档走。
+     */
+    public livePortrait: string | null = null;
+    public getLivePortrait(): string | null { return this.livePortrait; }
+    public setLivePortrait(path: string | null): void {
+        const next = typeof path === 'string' && path.trim() ? path.trim() : null;
+        if (this.livePortrait === next) return;
+        this.livePortrait = next;
+        this.emitChange();
+    }
     /** 当前该形态要用的手选素材（null = 自动） */
     public getTourModelDir(kind: 'caravan' | 'ship'): string | null {
         return kind === 'ship' ? this.tourShipDir : this.tourCaravanDir;
@@ -1169,8 +1189,11 @@ export class PlayerHero {
     public resetMerit(reason: string = '随军战败'): void {
         const before = this.getRank();
         const prevMerit = this.merit;
-        this.merit = 0;
-        // 🔴 [2026-10-29 主人定] 离开势力功劳清零、官职重来；历史最高官职只当资历（管离队选去处）。
+        // 🔴 [2026-11-07 主人令「都是看资历。不要让玩家从头玩。只有每次开局重新开头」]
+        //    功劳清回**资历那一档的门槛**（不是 0），官职与一切权限按资历保留：
+        //    换势力既不用从斥候重爬，也不白送——升下一档仍要攒够差额。
+        const peakBefore = this.peakRankId;
+        this.merit = meritFloorForRank(peakBefore);
         this.factionId = null;
         this.army.setFactionId('');
         const rr = this.army.getRenderer();
@@ -1186,8 +1209,8 @@ export class PlayerHero {
         if (prevMerit > 0 || before.id !== 'civilian') {
             this.holdAfterDefeat?.();
             const peak = this.getPeakRank();
-            this.deps.notify(`💥 ${reason}！官职重来，资历【${peak.name}】保留`);
-            gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零、官职【${before.name}】重来，资历【${peak.name}】`);
+            this.deps.notify(`💥 ${reason}！功劳清零到资历门槛，官职【${before.name}】按资历保留`);
+            gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} → ${this.merit}（资历门槛）、官职【${before.name}】按资历保留（资历【${peak.name}】）`);
         }
         this.emitChange();
     }
@@ -1960,6 +1983,7 @@ export class PlayerHero {
             horses: this.horses.toSave(),
             tourCaravanDir: this.tourCaravanDir,
             tourShipDir: this.tourShipDir,
+            livePortrait: this.livePortrait,
         };
     }
 
@@ -1990,6 +2014,7 @@ export class PlayerHero {
         this.storyFlags = [...(s.storyFlags ?? [])];
         this.tourCaravanDir = s.tourCaravanDir || null;
         this.tourShipDir = s.tourShipDir || null;
+        this.livePortrait = typeof s.livePortrait === 'string' && s.livePortrait.trim() ? s.livePortrait.trim() : null;
         this.horses.restore(s.horses);
         // 马系统之前的存档：梦醒只记了标记「初马」，读档时补上这匹马
         if (this.horses.isEmpty() && this.storyFlags.includes('初马')) this.giveFirstHorse();

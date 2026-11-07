@@ -81,6 +81,15 @@ export function rankFor(merit: number, joinedFaction: boolean): PlayerRank {
     return meritIdx >= floorIdx ? byMerit : PLAYER_RANKS[floorIdx];
 }
 
+/**
+ * 🔴 [2026-11-07 主人令「都是看资历。不要让玩家从头玩。只有每次开局重新开头」]
+ *   某档官职需要的功劳门槛。离队／战败后功劳**不清到 0，而是回到资历那一档的门槛**，
+ *   于是「换势力」既不惩罚（不用从斥候重爬），也不白送（下一档仍要攒够差额）。
+ */
+export function meritFloorForRank(rankId: PlayerRankId): number {
+    return PLAYER_RANKS.find((r) => r.id === rankId)?.merit ?? 0;
+}
+
 export function nextRankAfter(rank: PlayerRank): PlayerRank | null {
     const idx = PLAYER_RANKS.findIndex((r) => r.id === rank.id);
     return PLAYER_RANKS[idx + 1] ?? null;

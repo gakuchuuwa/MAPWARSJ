@@ -458,16 +458,29 @@ export class PlayerHUD {
         secLeft.appendChild(rankSpan);
 
         const peakRank = hero.getPeakRank();
-        const peakScopeDesc = peakRank.id === 'civilian' ? '离队后就近寻访武将'
-            : peakRank.id === 'scout' ? '离队后可选同文化势力'
-            : peakRank.id === 'outrider' ? '离队后可选同文化名将'
-            : peakRank.id === 'vanguard' ? '离队后可选全图势力'
-            : '离队后可选全图武将';
+        // 🔴 [2026-11-07 主人令] 官职与权限一律按资历；离队/战败都不降，只有新开一局才从头开始
+        const peakScopeDesc = peakRank.id === 'civilian' ? '离队后自动寻访武将'
+            : peakRank.id === 'scout' ? '离队后可选同文化势力（武将随机）'
+            : peakRank.id === 'outrider' ? '离队后可选同文化武将（指定）'
+            : peakRank.id === 'vanguard' ? '离队后可选同文化武将＋全部势力（后者随机）'
+            : peakRank.id === 'general' ? '离队后可选全图武将（指定）'
+            : '离队后可选全图武将，并可竞价选攻击目标、挑立绘';
         const peakSpan = document.createElement('span');
         peakSpan.style.cssText = 'color:#c9b382; font-size:11px; white-space:nowrap;';
         peakSpan.title = `本局最高官职：${peakRank.name}（${peakScopeDesc}）`;
         peakSpan.textContent = `资历·${peakRank.title}`;
         secLeft.appendChild(peakSpan);
+
+        // 🔴 [2026-11-07 主人令] 元帅挑的立绘：观众花分选定的主角头像，选了就显示在这里
+        const portraitPath = hero.getLivePortrait?.() ?? null;
+        if (portraitPath) {
+            const face = document.createElement('img');
+            face.src = portraitPath;
+            face.alt = '主角立绘';
+            face.title = '主角立绘（元帅权限：观众竞价选定）';
+            face.style.cssText = 'width:26px; height:26px; object-fit:cover; object-position:center top; border-radius:4px; border:1px solid rgba(232,199,126,0.6); margin-left:6px;';
+            secLeft.appendChild(face);
+        }
 
         const powerSpan = document.createElement('span');
         powerSpan.style.cssText = 'color:#dfc28c; font-size:11px; white-space:nowrap;';

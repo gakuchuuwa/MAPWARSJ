@@ -330,7 +330,7 @@ export class ViewerLivePanel {
                 // 平民没有资历：只能改名，投奔武将后升斥候才开放技能
                 statePart = hint(`单骑寻访武将 · 入伍升斥候后可在战中释放技能`);
             } else if (civilian) {
-                statePart = hint(`正前往投奔目标 · 入伍后从斥候做起`);
+                statePart = hint(`正前往投奔目标 · 官职按资历保留，不从斥候重来`);
             } else if (s.hero.attached) {
                 statePart = hint('随军出征中 · 开战后可释放技能');
             } else {
@@ -339,7 +339,39 @@ export class ViewerLivePanel {
             mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${rankBadge}${sep}${statePart}${sep}${renameCmd}${liveInfoPart}</div>`;
         }
 
-        const nextHtml = platform + joinGrid + mainRow;
+        // 🔴 [2026-11-07 主人令] 元帅两权：竞价选军队攻击目标 / 挑立绘（先选文化，再从凑出的 10 张里挑）
+        let marshalGrid = '';
+        if (s.marshal.unlocked && !this.duel) {
+            const rows: string[] = [];
+            if (s.marshal.targets.length > 0 || s.marshal.targetLabel) {
+                const cells = s.marshal.targets.map((t) =>
+                    `<span title="发 目标${t.index} 出分" style="display:inline-flex;align-items:center;gap:3px;background:rgba(46,36,24,0.94);border:1px solid rgba(212,175,55,0.48);border-radius:4px;padding:1px 5px;font-size:${f.small}px;color:#f7ebd2;white-space:nowrap;">`
+                    + `<b style="color:#ffd700;">目标${t.index}</b>${esc(t.name)}<span style="color:#c9b382;">${esc(t.factionName)}·${t.distKm}km·兵${t.troops}</span></span>`,
+                ).join('');
+                const badge = s.marshal.targetLabel
+                    ? `<span style="color:#7cd4a0;font-weight:700;">（已定：${esc(s.marshal.targetLabel)} ${s.marshal.targetBid}分${s.marshal.targetLocked ? '·执行中' : '·待执行'}）</span>`
+                    : '';
+                rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">选攻击目标${badge}：</span>${cells}`);
+            }
+            if (s.marshal.pool.length === 0 && s.marshal.cultureList.length > 0) {
+                const cells = s.marshal.cultureList.map((c) =>
+                    `<span title="发 像${c.index}" style="background:rgba(46,36,24,0.94);border:1px solid rgba(212,175,55,0.48);border-radius:4px;padding:1px 5px;font-size:${f.small}px;color:#f7ebd2;white-space:nowrap;"><b style="color:#ffd700;">像${c.index}</b>${esc(c.culture)}<span style="color:#c9b382;">(${c.count}张)</span></span>`,
+                ).join('');
+                rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">挑立绘·先选文化（不花钱）：</span>${cells}`);
+            } else if (s.marshal.pool.length > 0) {
+                const cells = s.marshal.pool.map((p, i) =>
+                    `<span style="display:inline-flex;flex-direction:column;align-items:center;" title="发 图${i + 1} 出分">`
+                    + `<img src="${esc(p)}" alt="" style="width:30px;height:30px;object-fit:cover;object-position:center top;border-radius:3px;border:1px solid ${s.marshal.pickIndex === i + 1 ? '#7cd4a0' : 'rgba(212,175,55,0.5)'};display:block;" />`
+                    + `<b style="font-size:10px;color:#ffd700;line-height:11px;">图${i + 1}</b></span>`,
+                ).join('');
+                rows.push(`<span style="font-size:${f.small}px;color:#dfc28c;">挑立绘·${esc(s.marshal.culture ?? '')}（${s.marshal.pickBid > 0 ? `现价${s.marshal.pickBid}分` : '10分起'}）：</span>${cells}`);
+            }
+            if (rows.length > 0) {
+                marshalGrid = `<div style="width:1232px;max-width:96vw;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:5px;margin:0 auto 5px;padding:4px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;">${rows.join('')}</div>`;
+            }
+        }
+
+        const nextHtml = platform + joinGrid + marshalGrid + mainRow;
         if (this.lastBodyHtml !== nextHtml) {
             this.lastBodyHtml = nextHtml;
             this.body.innerHTML = nextHtml;
