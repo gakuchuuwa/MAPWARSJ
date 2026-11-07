@@ -10776,6 +10776,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 10,
             "offsetY": -37
+        },
+        "/assets/ORIE/abasi_muwafake.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {
