@@ -408,7 +408,7 @@ export class ViewerLivePanel {
         const cmdInput = document.createElement('input');
         cmdInput.placeholder = this.duel
             ? '输入弹幕口令回车发送（如：1 / 2 / 押1 5 / 攻）'
-            : '输入弹幕口令回车发送（如：名 龙骧 4 / 投1 3 / 技4 / 攻）';
+            : '输入弹幕口令回车发送（如：名 龙骧 4 / 投1 3 / 攻）';
         cmdInput.style.cssText = name.style.cssText;
         cmdInput.addEventListener('keydown', (e) => {
             e.stopPropagation();
@@ -467,13 +467,6 @@ export class ViewerLivePanel {
             doConnect();
         });
         ytRow.append(ytVideo, ytBtn);
-        /**
-         * 🔴 [2026-11-07 主人「这些是什么，无用请删除」]
-         *   「技N（玩家爆发技）」与「名…（改主角名）」「投…（投靠武将竞价）」都是**战略局公共玩家那一套**的测试按钮：
-         *   即时战斗里没有玩家、没有官职、没有投靠（`playerQuests` 也停了），点下去全是空操作，
-         *   已经在 castViewerSkill / playerSkillBlockReason 里被拒。所以这一页只留这一局真能用的按钮：
-         *   六字放计、1/2 选边、押注；战略局页原样保留。
-         */
         const modeRows: (HTMLElement | Node)[] = [row([...WORDS], send)];
         if (this.duel) {
             const sideLabel = document.createElement('div');
@@ -483,11 +476,6 @@ export class ViewerLivePanel {
             betLabel.textContent = '下注（用筹码，与放计积分分开）：';
             betLabel.style.cssText = 'color:#8fd3ff;font-size:12px;margin-bottom:2px;';
             modeRows.push(sideLabel, row(['1', '2'], send), betLabel, row(['押1 5', '押2 5', '押和 2'], send));
-        } else {
-            modeRows.push(
-                row(['技3', '技4', '技5'], send),
-                row(['名 龙骧 3', '名 虎贲 5', '投1 2', '投2 4'], send),
-            );
         }
         this.dev.append(
             ytLabel, ytStatus, ytRow, label, name, cmdInput,

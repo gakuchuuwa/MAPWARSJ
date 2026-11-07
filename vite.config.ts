@@ -4941,6 +4941,10 @@ function serverSaveGeneral(data: {
     defDisadvantageSkillId?: string;
     aptitude?: string;
     attackStyle?: 'attack' | 'defense' | 'balanced' | '';
+    // 🔴 [2026-11-07 主人令] 远征番号系统已删：精锐番号随武将条目走，由本接口一并写入 FactionGenerals
+    //   未传 = 保留旧值｜传空串 = 显式清除｜传值 = 覆盖
+    eliteName?: string;
+    eliteTier?: number;
 }) {
     if (data.attackStyle !== undefined && data.attackStyle !== ''
         && !['attack', 'defense', 'balanced'].includes(data.attackStyle)) {
@@ -4961,7 +4965,47 @@ function serverSaveGeneral(data: {
     const results: string[] = [];
 
     // FactionGenerals.ts
-    const fgLine = `${data.factionId}: { generalId: '${data.generalId}', generalName: '${data.generalName}', portrait: '${data.portrait}' },`;
+    // 🔴 [2026-11-07 主人令] 远征番号系统已删：精锐番号现只写在各武将条目的 eliteName/eliteTier 上，
+    //   所以保存武将必须「先读旧元素 → 合并」——旧实现整条只重写 generalId/generalName/portrait 三个字段，
+    //   batch-manager 存一次就会把 cityId / factionId / legionName / eliteName / eliteTier 静默抹掉（毁数据）。
+    const fgOldIdRe = serverEscapeRegExp(data.oldGeneralId || data.generalId);
+    /** 在给定文本里取「generalId === 旧 id」的那个元素原文（含花括号） */
+    const fgFindOldElement = (scope: string): string | undefined =>
+        scope.match(new RegExp(`\\{[^{}]*generalId:\\s*'${fgOldIdRe}'[^{}]*\\}`))?.[0];
+    /** 从元素原文里取字段值（单引号字符串或纯数字） */
+    const fgElementField = (body: string, name: string): string | undefined => {
+        const m = body.match(new RegExp(`(?:^|[,{\\s])${name}:\\s*(?:'([^']*)'|(\\d+))`));
+        if (!m) return undefined;
+        return m[1] !== undefined ? m[1] : m[2];
+    };
+    /** 档位只接受 0–4 的整数，其余一律视为「没传」 */
+    const fgValidTier = (v: unknown): number | undefined => {
+        const n = typeof v === 'number' ? v : parseInt(String(v ?? ''), 10);
+        return Number.isInteger(n) && n >= 0 && n <= 4 ? n : undefined;
+    };
+    /** 用新值 + 旧元素合并出一条 FactionGenerals 条目（不含势力键、不带行尾逗号） */
+    const fgBuildElement = (oldBody: string | undefined): string => {
+        const parts: string[] = [
+            `generalId: '${data.generalId}'`,
+            `generalName: '${data.generalName}'`,
+            `portrait: '${data.portrait}'`,
+        ];
+        // 旧元素里的据点／势力／军团原样保留（编辑面板不改这三项）
+        for (const name of ['cityId', 'factionId', 'legionName']) {
+            const v = oldBody ? fgElementField(oldBody, name) : undefined;
+            if (v) parts.push(`${name}: '${v}'`);
+        }
+        // 精锐：未传(undefined)=保留旧值｜传空串=显式清除｜传值=覆盖（tier 缺省沿用旧值，再缺省 2）
+        const oldName = oldBody ? fgElementField(oldBody, 'eliteName') : undefined;
+        const oldTier = oldBody ? fgElementField(oldBody, 'eliteTier') : undefined;
+        const eliteName = data.eliteName === undefined ? oldName : (String(data.eliteName).trim() || undefined);
+        if (eliteName) {
+            const tier = fgValidTier(data.eliteTier) ?? fgValidTier(oldTier) ?? 2;
+            parts.push(`eliteName: '${eliteName}'`);
+            parts.push(`eliteTier: ${tier}`);
+        }
+        return `{ ${parts.join(', ')} }`;
+    };
     const fgPoolIdx = (() => {
         const kw = fgText.indexOf('FACTION_GENERALS');
         const k = kw === -1 ? -1 : findObjectKeyIdx(fgText, kw, data.factionId);
@@ -4973,9 +5017,8 @@ function serverSaveGeneral(data: {
         // [BUGFIX 2026-09-25] 多将池（数组）：只换池里这一位武将那一个元素，其他武将原样保留
         const poolEnd = findObjectEntryEnd(fgText, fgPoolIdx);
         const pool = fgText.slice(fgPoolIdx, poolEnd);
-        const elem = `{ generalId: '${data.generalId}', generalName: '${data.generalName}', portrait: '${data.portrait}' },`;
-        const findId = data.oldGeneralId || data.generalId;
-        const re = new RegExp(`\\{\\s*generalId:\\s*'${findId}'[^{}]*\\},?`);
+        const elem = `${fgBuildElement(fgFindOldElement(pool))},`;
+        const re = new RegExp(`\\{\\s*generalId:\\s*'${fgOldIdRe}'[^{}]*\\},?`);
         let newPool: string;
         if (re.test(pool)) {
             newPool = pool.replace(re, elem);
@@ -4988,9 +5031,18 @@ function serverSaveGeneral(data: {
         }
         fgText = fgText.slice(0, fgPoolIdx) + newPool + fgText.slice(poolEnd);
     } else if (fgText.includes(`${data.factionId}:`)) {
+        // 单条：旧元素要先用「势力键 → 条目尾」框出来，才能按旧值合并（否则精锐/据点被抹）
+        const fgKw = fgText.indexOf('FACTION_GENERALS');
+        const fgKeyIdx = fgKw === -1 ? -1 : findObjectKeyIdx(fgText, fgKw, data.factionId);
+        const oldElem = fgKeyIdx === -1
+            ? undefined
+            : fgFindOldElement(fgText.slice(fgKeyIdx, findObjectEntryEnd(fgText, fgKeyIdx)));
+        const fgLine = `${data.factionId}: ${fgBuildElement(oldElem)},`;
         fgText = serverReplaceObjectLine(fgText, 'FACTION_GENERALS', data.factionId, `    ${fgLine}`);
         results.push('FactionGenerals.ts: replaced');
     } else {
+        // 新增武将：传了 eliteName 就一并写进去
+        const fgLine = `${data.factionId}: ${fgBuildElement(undefined)},`;
         fgText = serverInsertIntoStructure(fgText, 'FACTION_GENERALS', fgLine, '    ');
         results.push('FactionGenerals.ts: inserted');
     }

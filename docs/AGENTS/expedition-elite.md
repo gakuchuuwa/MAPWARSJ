@@ -1,4 +1,4 @@
-> # 🔴 铁律 · 兵种归属只看「子分类 + 文化区挨不挨着」
+﻿> # 🔴 铁律 · 兵种归属只看「子分类 + 文化区挨不挨着」
 >
 > 判断一个兵种能不能进某支军团，**只看两条**：
 >
@@ -99,7 +99,7 @@
 
 **替代规则**：下调某支 T0 前，本区须有合格接任番号（晋升或新收录）；改锚点须同步更新 `elite_tier_region_anchors.json`。（旧条文此处还写「且全区 T0 仍 ≥1」，与上条冲突，已删。）
 
-**审计**：`expedition:audit` 校验锚点仍为 tier:0，T0 数量**只报数不判定**；`expedition:triple-check` 三者防重。
+**审计**（2026-11-07 起，旧 `expedition:audit` / `expedition:triple-check` 已随系统删除）：`scratch/_audit_elite_caps_20261101.mts`（番号档位人数上限／同号多档／字数）＋`scratch/audit_elite_tiers.mts`（名将不得 T4、普将不得 T0）。
 
 ### 12.3.2 武将分级标准 · 终版（2026-10-25 主人新版·四闸）
 
@@ -187,18 +187,18 @@
 
 > **存量清理**：S③因敌制胜、S④威震华夏、S⑨以寡击众、S⑧固若金汤、S②因地制宜 等越界技**已从目录中删除**（`catalogs.ts` 注释）。引擎中对应死代码（`getStrategicTacticalSkillMult`、`getStrategicBattlePowerMultiplier` 的 switch 分支）不影响当前运行，视为待清理残留。
 
-**改远征数据前自检**（§12.1 再念一遍）：
+**改精锐/番号数据前自检**（2026-11-07 改：番号不再与旗号、据点名凑「三者防重」，番号只写在武将条目上）：
 
-- [ ] 旗号、据点名、番号 **两两不完全相同**（只查逐字相同；共享汉字不算违规）？
+- [ ] 番号写在该武将条目的 `eliteName` / `eliteTier` 上（不再有势力番号表、也不再选「精锐所属区」）？
 - [ ] 据点 `XX关/城/邑/州` 且旗号 = `XX` 已改据点旧称？
 - [ ] 势力 **非人名**、据点 **未大幅挪坐标**（±1–2 km 可选）？
-- [ ] `npm run expedition:triple-check` **零违规**？（存量违规须分批整改，**新增条目不得带违规**）
+- [ ] 跑 `scratch/_audit_elite_caps_20261101.mts` 与 `scratch/audit_elite_tiers.mts` 均为 0 问题？
 
 ### 12.4 与玩法的关系（摘要）
 
-- 解锁：跟拍军团 ≥ 4 万 + `canFactionLaunchExpedition(factionId)`（有番号映射）。
+- 解锁：跟拍军团 ≥ 4 万（🔴 2026-11-07：原「`canFactionLaunchExpedition(factionId)`＝有番号映射」的闸门随势力番号表一并删除，代码里已无此函数）。
 - 目标：15 文化中心（§七）；玩法细则见 `GAME_DIRECTION.md`「远征细则」。
-- 远征下令：军团名改为 **番号**；功成后保留番号，可再次远征。
+- 远征下令：军团名改为该将的 **番号**（武将条目 `eliteName`）；功成后保留番号，可再次远征。
 
 
 ---

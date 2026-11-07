@@ -3525,7 +3525,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     luosi: [
-    { generalId: 'luosi_siweinieerde', factionId: 'luosi', cityId: 'city_kiev', generalName: '斯维涅尔德', portrait: '/assets/SLAVIC/luosi_siweinieerde.png', eliteName: '德鲁日纳', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 971 多罗斯托隆守将（《列奥执事官史》）
+    { generalId: 'luosi_siweinieerde', factionId: 'luosi', cityId: 'city_jifu', generalName: '斯维涅尔德', portrait: '/assets/SLAVIC/luosi_siweinieerde.png', eliteName: '德鲁日纳', eliteTier: 3 },   // 🔴 [2026-11-01 空据点补将] 971 多罗斯托隆守将（《列奥执事官史》）｜🔴 [2026-11-07 修错 id] 据点原写 city_kiev，城库里基辅的 id 是 city_jifu（基辅罗斯都城），查无此城→他在游戏里出不了场；改回 city_jifu
         // 🔴 [2026-10-25 按史] 德米特里·亚历山德罗维奇（1250–1294，涅夫斯基之子，诺夫哥罗德王公 1276–1292）｜势力 罗斯｜据点 诺夫哥罗德（其王公驻地，SLAVIC 文化）｜普将｜精锐「诺夫战团」T4｜立绘留空
         { generalId: 'luosi_dmitry_aleksandrovich', factionId: 'luosi', cityId: 'city_nuofugeerdede', generalName: '德米特里', portrait: '/assets/SLAVIC/luosi_dmitry_aleksandrovich.png', eliteName: '诺夫战团', eliteTier: 4 },
         { generalId: 'luosi_svyatopolk', factionId: 'luosi', cityId: 'city_jifu', generalName: '斯维亚托波尔克', portrait: '/assets/SLAVIC/luosi_svyatopolk.png', eliteName: '罗斯扈从', eliteTier: 4 },   // 🔴 [2026-10-25 按史] 经典战敌将；基辅大公约980-1019，1019 阿尔塔河败死；据点基辅（SLAVIC）；用势力精锐瓦兰吉卫队

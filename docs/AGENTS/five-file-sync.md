@@ -70,7 +70,6 @@
 ```bash
 npm run add:check -- <据点名>    # 单点验收清单
 npm run faction:sync-audit
-npm run expedition:triple-check   # 有精锐时
 npm run city:spacing              # 新坐标时
 npm run city:dossier              # 刷新 scratch/city_dossier.json
 ```

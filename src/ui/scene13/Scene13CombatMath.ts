@@ -108,11 +108,11 @@ export const CITY_TYPE_GATE_FLOOR_SEC: Record<
     'big_city' | 'medium_city' | 'pass' | 'small_city' | 'stockade',
     { stone: number; fortified: number; wood: number }
 > = {
-    big_city: { stone: 26, fortified: 32, wood: 15 },
-    medium_city: { stone: 20, fortified: 24, wood: 12 },
-    pass: { stone: 20, fortified: 24, wood: 11 },
-    small_city: { stone: 14, fortified: 16, wood: 9 },
-    stockade: { stone: 8, fortified: 9, wood: 6 },
+    big_city: { stone: 45, fortified: 55, wood: 28 },
+    medium_city: { stone: 35, fortified: 42, wood: 22 },
+    pass: { stone: 35, fortified: 42, wood: 20 },
+    small_city: { stone: 25, fortified: 30, wood: 16 },
+    stockade: { stone: 16, fortified: 18, wood: 12 },
 };
 
 export const CITY_TYPE_BLD_FLOOR_MULT: Record<'big_city' | 'medium_city' | 'pass' | 'small_city' | 'stockade', number> = {

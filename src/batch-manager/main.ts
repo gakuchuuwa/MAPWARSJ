@@ -95,7 +95,6 @@ interface FactionRow {
     attackStyle?: 'attack' | 'defense' | 'balanced';
     eliteName?: string;
     eliteTier?: number;
-    eliteRegion?: string;
     /** 🔴 [2026-09-18] 势力表那一列：游戏实际采用的建筑风格（resolveCityDeBuildingStyle 的结果） */
     cityStyle?: string;
     cityRegion?: string;
@@ -684,7 +683,6 @@ function buildRows(): void {
             attackStyle: profile?.attackStyle,
             eliteName: elite?.name,
             eliteTier: elite?.tier,
-            eliteRegion: elite?.region,
             cityRegion: city?.region,
             cityBuildingStyle: city?.buildingStyle,
             // 🔴 [2026-09-18 主人定「据点只认建筑风格三级」] 势力表那一列改显示**游戏实际采用的建筑风格**
@@ -1052,12 +1050,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     const isNew = !row;
     const title = isNew ? '新增实体' : `编辑: ${row!.name}`;
 
-    // 精锐所属区回填：优先精英自己的区；据点 region 只在它确实是已知文化区时兜底
-    // （region 现在写的多为二/三层键，如 MONGOL/TIBET，不能当区用）
-    const currentRegion = row?.eliteRegion ?? (row?.cityRegion && REGION_LABELS[row.cityRegion] ? row.cityRegion : '') ?? '';
-    const regionOptions = (entityData?.regions ?? []).map(r =>
-        `<option value="${r}" ${r === currentRegion ? 'selected' : ''}>${REGION_LABELS[r] ?? r} (${r})</option>`
-    ).join('');
+    // 精锐番号随武将：不再有「精锐所属区/精锐文件」（2026-11-07 远征番号系统已删）
 
     if (isNew) {
         // ── New entity: quick-input mode ──
@@ -1136,22 +1129,17 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <p style="font-size:12px;color:#9a9080;margin:4px 0">战略技已全随机（2026-08-03 起名将战略技由运行时随机池分配，不写入档案）。</p>
           </div>
           <p style="font-size:12px;color:#9a9080;margin:4px 0">战术六槽提交时按<strong>六计各一</strong>自动配齐（攻守互补；仅 common 档）；不单独选「战术技」。</p>
-          <h3 style="margin-top:14px">③ 精锐（可选）</h3>
+          <h3 style="margin-top:14px">③ 精锐（可选，写在该武将条目上）</h3>
           <div class="form-row">
-            <label><span>番号名（留空则不建精锐）</span>${qInput('bm-quick-elite')}</label>
+            <label><span>番号名（留空则该将没有精锐）</span>${qInput('bm-quick-elite')}</label>
             <label><span>级别</span>
               <select id="bm-quick-elitetier" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
                 <option value="0">T0</option><option value="1">T1</option>
                 <option value="2" selected>T2</option><option value="3">T3</option><option value="4">T4</option>
               </select>
             </label>
-            <!-- 🔴 精锐文件按「区」分文件存放，这里单独选（它不是建筑风格，故不叫文化区） -->
-            <label><span>精锐所属区（写精锐文件用）</span>
-              <select id="bm-quick-eliteregion" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
-                <option value="">请选择</option>
-                ${regionOptions}
-              </select>
-            </label>
+            <!-- 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 原「精锐所属区（写精锐文件用）」已删：
+                 精锐番号只写在该武将条目的 eliteName/eliteTier（FactionGenerals），不再有按区存放的番号文件 -->
           </div>
 
           <div id="bm-quick-preview" class="bm-id-preview" style="margin-top:12px">
@@ -1175,7 +1163,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             'bm-quick-genname', 'bm-quick-elite']) {
             document.getElementById(id)!.addEventListener('input', () => updateQuickPreview());
         }
-        for (const id of ['bm-quick-wall', 'bm-quick-branch', 'bm-quick-custom', 'bm-quick-eliteregion', 'bm-quick-tier', 'bm-quick-tac', 'bm-quick-elitetier']) {
+        for (const id of ['bm-quick-wall', 'bm-quick-branch', 'bm-quick-custom', 'bm-quick-tier', 'bm-quick-tac', 'bm-quick-elitetier']) {
             document.getElementById(id)!.addEventListener('change', () => updateQuickPreview());
         }
 
@@ -1216,7 +1204,6 @@ async function openEditPanel(factionId: string | null): Promise<void> {
         const curWall = hStyle.base16;
         const curBranchKey = hStyle.branchKey ?? '';
         const isCustom = LAYER3_CUSTOM_GROUPS.some(g => g.branches.some(b => b.key === curBranchKey));
-        const eliteRegionCur = row!.eliteRegion ?? '';
         // 🔴 [2026-10-25 主人报「搜不到洪承畴」] 搜索命中的可能不是该势力第一位武将；
         //    本页保存链路只写第一位，这里必须明示，免得把「洪承畴」的数据看成面板里那位。
         const hitGeneral = searchHitGeneralId ? row!.allGenerals.find(g => g.id === searchHitGeneralId) : undefined;
@@ -1351,7 +1338,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             </label>
           </div>
 
-          <h3>③ 精锐番号</h3>
+          <h3>③ 精锐（写在该武将条目上）</h3>
           <div class="form-row">
             <label><span>番号名</span><input name="eliteName" value="${row!.eliteName ?? ''}" /></label>
             <label><span>级别</span>
@@ -1364,13 +1351,8 @@ async function openEditPanel(factionId: string | null): Promise<void> {
                 <option value="4" ${row!.eliteTier === 4 ? 'selected' : ''}>T4</option>
               </select>
             </label>
-            <!-- 🔴 精锐文件按「区」分文件存放，单独选（它不是建筑风格，故不叫文化区） -->
-            <label><span>精锐所属区（写精锐文件用）</span>
-              <select name="eliteRegion">
-                <option value="">请选择</option>
-                ${regionOptions}
-              </select>
-            </label>
+            <!-- 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 原「精锐所属区（写精锐文件用）」已删：
+                 精锐番号只写在该武将条目的 eliteName/eliteTier（FactionGenerals），不再有按区存放的番号文件 -->
           </div>
 
           <div class="form-actions">
@@ -1605,7 +1587,6 @@ function readQuickFields() {
         cityName: val('bm-quick-cname'),
         lat: parseFloat(val('bm-quick-lat')),
         lng: parseFloat(val('bm-quick-lng')),
-        region: val('bm-quick-eliteregion'),
         /** 🔴 [2026-09-18 主人定] 建筑风格三级：① 母体（写 buildingStyle）/ ② 62 / ③ 3（写 region，二/三层键） */
         wallStyle: val('bm-quick-wall'),
         branchStyle: val('bm-quick-branch'),
@@ -1743,10 +1724,7 @@ async function handleQuickSubmit(): Promise<void> {
         showToast('请选择建筑风格② 二级文明（62）或 ③ 三级自建（3）中的一种', true);
         return;
     }
-    if (f.eliteName && !f.region) {
-        showToast('建精锐要先选「精锐所属区」（写精锐文件用）', true);
-        return;
-    }
+    // 🔴 [2026-11-07] 精锐不再需要「所属区」：番号写在该武将条目上（eliteName/eliteTier）
 
     const ids = computeIds(f.factionName, f.cityName, f.genName);
     if (!ids.factionId || !ids.cityId) {
@@ -1867,6 +1845,10 @@ async function handleQuickSubmit(): Promise<void> {
                     defBalanceSkillId: sixSlots.defBalanceSkillId,
                     defDisadvantageSkillId: sixSlots.defDisadvantageSkillId,
                     aptitude: aptitude || undefined,
+                    // 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 精锐番号随武将：直接写进 FactionGenerals 条目，
+                    //    不再走「精锐文件 + 所属区」那一套（/api/save-elite 已删）
+                    eliteName: f.eliteName || undefined,
+                    eliteTier: f.eliteName ? f.eliteTier : undefined,
                 }),
             });
             const genData = await genRes.json();
@@ -1880,24 +1862,8 @@ async function handleQuickSubmit(): Promise<void> {
             }
         }
 
-        // Step 3: save elite (if provided)
-        if (f.eliteName) {
-            const eliteRes = await fetch('/api/save-elite', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    factionId: ids.factionId,
-                    eliteName: f.eliteName,
-                    eliteTier: f.eliteTier,
-                    region: f.region,   // 精锐所属区（精锐文件分区，非建筑风格）
-                }),
-            });
-            const eliteData = await eliteRes.json();
-            if (!eliteData.ok) {
-                showToast(`精锐保存失败: ${eliteData.error}`, true);
-                return;
-            }
-        }
+        // 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 原 Step 3「save elite」（写各区域 ExpeditionLegions 文件）
+        //    已整段删除：精锐番号上面随 /api/save-general 写进该武将条目（eliteName/eliteTier）。
 
         showToast(`✓ ${f.factionName} 添加成功 → ${ids.factionId}${randomNotes.length ? `（随机分配：${randomNotes.join('，')}）` : ''}`);
         await loadData();
@@ -1970,8 +1936,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
     const castleBranch = get('castleBranch');
     const customStyle = get('customStyle');
     const region = customStyle || castleBranch;
-    /** 精锐文件按区存放，单独取（不是建筑风格） */
-    const eliteRegion = get('eliteRegion');
+    // 🔴 [2026-11-07] 精锐番号随武将（eliteName/eliteTier 走 /api/save-general），不再有「精锐所属区」
 
     if (!factionName || !flagText || !cityName || isNaN(lat) || isNaN(lng)) {
         showToast('请填写完整的势力和据点信息', true);
@@ -2087,6 +2052,9 @@ async function handleFormSubmit(e: Event): Promise<void> {
                     aptitude: get('aptitude') || undefined,
                     attackStyle,
                     oldGeneralId: oldGeneralId || undefined,
+                    // 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 精锐番号随武将写进 FactionGenerals 条目
+                    eliteName: get('eliteName') || undefined,
+                    eliteTier: get('eliteName') ? (get('eliteTier') === '' ? undefined : parseInt(get('eliteTier'), 10)) : undefined,
                 }),
             });
             const genData = await genRes.json();
@@ -2096,34 +2064,8 @@ async function handleFormSubmit(e: Event): Promise<void> {
             }
         }
 
-        // Step 3: save elite (if provided, uses same region)
-        const eliteName = get('eliteName');
-        const eliteTier = get('eliteTier');
-
-        if (eliteName) {
-            if (!eliteRegion) {
-                showToast(`精锐保存失败: 请先选择精锐所属区（写精锐文件用）`, true);
-                return;
-            }
-            if (eliteTier === '') {
-                showToast(`精锐保存失败: 请选择精锐级别`, true);
-                return;
-            }
-            const eliteRes = await fetch('/api/save-elite', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    factionId, eliteName,
-                    eliteTier: parseInt(eliteTier),
-                    region: eliteRegion,
-                }),
-            });
-            const eliteData = await eliteRes.json();
-            if (!eliteData.ok) {
-                showToast(`精锐保存失败: ${eliteData.error}`, true);
-                return;
-            }
-        }
+        // 🔴 [2026-11-07 主人令「远征军团名…没用的删除」] 原 Step 3「save elite」（写各区域 ExpeditionLegions 文件、
+        //    还要先选「精锐所属区」）已整段删除：精锐番号上面随 /api/save-general 写进该武将条目。
 
         showToast(`✓ ${factionName} 保存成功 (${factionId})`);
         await loadData();

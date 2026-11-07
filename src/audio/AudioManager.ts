@@ -171,12 +171,12 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
     general_skill: sound('battle', 'general_skill', 0.45, 1800),
     // 战术六计释放音效（帝国时代2 DE 原版音效提取并按 -15 LUFS 校准）
-    skill_gongzhan: sounds('battle', ['skill_gongzhan_1', 'skill_gongzhan_2'], 0.85, 0),
-    skill_shengzhan: sounds('battle', ['skill_shengzhan_1', 'skill_shengzhan_2'], 0.85, 0),
-    skill_dizhan: sounds('battle', ['skill_dizhan_1', 'skill_dizhan_2'], 0.85, 0),
-    skill_hunzhan: sounds('battle', ['skill_hunzhan_1', 'skill_hunzhan_2'], 0.85, 0),
-    skill_bingzhan: sounds('battle', ['skill_bingzhan_1', 'skill_bingzhan_2'], 0.85, 0),
-    skill_baizhan: sounds('battle', ['skill_baizhan_1', 'skill_baizhan_2'], 0.85, 0),
+    skill_gongzhan: sounds('battle', ['skill_gongzhan_1', 'skill_gongzhan_2'], 1.0, 0),
+    skill_shengzhan: sounds('battle', ['skill_shengzhan_1', 'skill_shengzhan_2'], 1.0, 0),
+    skill_dizhan: sounds('battle', ['skill_dizhan_1', 'skill_dizhan_2'], 1.0, 0),
+    skill_hunzhan: sounds('battle', ['skill_hunzhan_1', 'skill_hunzhan_2'], 1.0, 0),
+    skill_bingzhan: sounds('battle', ['skill_bingzhan_1', 'skill_bingzhan_2'], 1.0, 0),
+    skill_baizhan: sounds('battle', ['skill_baizhan_1', 'skill_baizhan_2'], 1.0, 0),
     // 海战音效（2026-08-19：帝国时代2 DE 战斗音效，多源随机变奏）
     naval_arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.65, 250),
     naval_cannon_fire: sounds('battle', ['naval_cannon_fire_1', 'naval_cannon_fire_2', 'naval_cannon_fire_3', 'naval_cannon_fire_4', 'naval_cannon_fire_5', 'naval_cannon_fire_6'], 0.85, 400),
@@ -263,12 +263,12 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     // 动态天气环境音（战略地图与战术模式共用；DE 原版风浪雪漠环境音 + 雨声/雷鸣）
     // 🔴 [2026-11-04 主人令「天气音整体调大，战术也响」] 原 0.32~0.46：乘上主音量 0.5 × 音效层 0.7 后最响只有 BGM 的一半。
     //    现约翻倍，天气最强时与 BGM 0.30 同档（暴风雨最响、雾与风最轻）。
-    weather_storm_loop: sound('battle', 'weather_storm_loop', 0.85, 0),
-    weather_rain_loop: sound('battle', 'weather_rain_loop', 0.75, 0),
-    weather_blizzard_loop: sound('battle', 'weather_blizzard_loop', 0.80, 0),
-    weather_sandstorm_loop: sound('battle', 'weather_sandstorm_loop', 0.80, 0),
-    weather_fog_loop: sound('battle', 'weather_fog_loop', 0.65, 0),
-    weather_wind_loop: sound('battle', 'weather_wind_loop', 0.65, 0),
+    weather_storm_loop: sound('battle', 'weather_storm_loop', 0.90, 0),
+    weather_rain_loop: sound('battle', 'weather_rain_loop', 0.80, 0),
+    weather_blizzard_loop: sound('battle', 'weather_blizzard_loop', 0.90, 0),
+    weather_sandstorm_loop: sound('battle', 'weather_sandstorm_loop', 0.95, 0),
+    weather_fog_loop: sound('battle', 'weather_fog_loop', 0.70, 0),
+    weather_wind_loop: sound('battle', 'weather_wind_loop', 0.75, 0),
     weather_thunder: sounds('battle', ['weather_thunder_1', 'weather_thunder_2', 'weather_thunder_3'], 0.85, 2200),
     bgm_main: { category: 'bgm', sources: ['/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
@@ -993,15 +993,22 @@ export class AudioManager {
             }
             return;
         }
-        // 天气淡时原压到 0.15，几乎听不见；下限提到 0.35
-        const nextScale = Math.max(0.35, Math.min(1, strength * 1.4));
-        if (this.weatherLoopKey !== loopKey) {
+        // 天气淡时下限提到 0.55，确保沙尘暴、暴风雪等在气团边缘也能清晰听见
+        const nextScale = Math.max(0.55, Math.min(1, strength * 1.5));
+        const cachedAudio = this.loopCache.get(loopKey);
+        const needsStart =
+            this.weatherLoopKey !== loopKey ||
+            !this.wantedLoops.has(loopKey) ||
+            (this.unlocked && !this.gamePaused && cachedAudio !== undefined && cachedAudio.paused);
+        if (needsStart) {
             for (const k of allWeatherLoops) {
                 if (k !== loopKey) this.stopLoop(k);
             }
             this.weatherLoopKey = loopKey;
             this.weatherStrengthScale = nextScale;
-            this.startLoop(loopKey);
+            if (this.unlocked) {
+                this.startLoop(loopKey);
+            }
             return;
         }
         if (Math.abs(this.weatherStrengthScale - nextScale) >= 0.05) {
@@ -1024,6 +1031,9 @@ export class AudioManager {
             void this.ensureAudioElement(key, def);
         }
         this.reapplyFollowedLegionAudio();
+        if (this.weatherLoopKey) {
+            this.startLoop(this.weatherLoopKey);
+        }
         // [2026-08-12] BGM 补播：解锁前记下的那次请求在这里兑现。
         // 老注释写「BGM 不在解锁时自动启动，由 syncRegionBgm 在跟随军团后触发」——
         // 但跟拍军团在解锁前就定了，syncPortraitBgm 只在**切换军团**时才调，
@@ -1130,7 +1140,7 @@ export class AudioManager {
             baizhan: 'skill_baizhan',
         };
         // 释放音立刻起声：短音效若再淡入 200ms，最有辨识度的开头会被吃掉。
-        return this.play(keys[six], { fadeInMs: 0, volumeScale: playerCast ? 1 : 0.85 });
+        return this.play(keys[six], { fadeInMs: 0, volumeScale: 1 });
     }
 
     /** 跟拍军团释放武将技时的短音效（非跟拍军团不播） */

@@ -6619,9 +6619,9 @@ export class Scene13WarLayer {
                 ? (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? row.fortified
                     : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? row.wood
                         : row.stone)
-                : (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? 24
-                    : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? 11
-                        : 20);
+                : (b.maxHp >= WALL_GATE_STATS.FORTIFIED_GATE.hp ? 42
+                    : b.maxHp <= WALL_GATE_STATS.WOOD_WALL.hp ? 20
+                        : 35);
         }
         const minHp = b.maxHp * (1 - (this.battleSec - b.hitAt) / floorSec);
         if (b.hp < minHp) b.hp = minHp;

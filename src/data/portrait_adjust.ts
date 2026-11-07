@@ -10771,6 +10771,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 20,
             "offsetY": -6
+        },
+        "/assets/MONGOL/gen_furdan.png": {
+            "scale": 1.02,
+            "offsetX": 10,
+            "offsetY": -37
         }
     },
     "folderGuides": {
