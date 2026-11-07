@@ -822,13 +822,11 @@ export class Scene13WarLayer {
     public castViewerSkill(side: 0 | 1, six: TacticalSixSet, viewerName: string, paid = false): 'cast' | 'wait' | 'closed' {
         if (!this.active || this.over) return 'closed';
         if (this.deployT > 0) return 'wait';
-        // 🔴 [2026-11-07 主人令「观众起初可以选择攻击方或者是防守方」] 即时战斗（`?quickbattle=1`）里
-        //    探马者不入伍，本场没有 playerSetup / heroMan —— 那也要能放：落在**观众自己选的边**。
-        //    效果与武将放计一致（viewer 分支本来就不走官职缩放、不按名将差加成，两边完全对等）。
-        const hasPlayer = !!this.playerSetup && !!this.heroMan;
-        // [2026-10-30 主人令「玩家阵亡不能放技能，复活直接放」] 阵亡期间六计留在队里不扣、不放，复活后照排队顺序放
-        if (hasPlayer && this.heroMan!.hp <= 0) return 'wait';
-        const targetSide: 0 | 1 = hasPlayer ? (this.playerSetup!.side ?? side) : side;
+        // 🔴 [2026-11-07 主人定·战术模式「乱入者 VS 维序者」]
+        //    观众可站在乱入者或维序者任一侧释放六计；若己方代表（乱入者或维序者）正在阵亡读秒，则六计留在队列里等其复活后再放。
+        const rep = (this.playerSetup && side === this.playerSetup.side) ? this.heroMan : this.keeperMan;
+        if (rep && rep.hp <= 0) return 'wait';
+        const targetSide: 0 | 1 = side;
         const wallNow = performance.now();
         // 两计不许同时放：上一计大字没收尾、或语音此刻念不出来，就稍后再试，保证技效、大字、语音同刻
         if (wallNow < this.skillCastWallUntil || !this.skillVoiceReady(wallNow)) return 'wait';
@@ -1386,10 +1384,8 @@ export class Scene13WarLayer {
         const famousDiffMult = viewer !== null
             ? 1.0
             : (myFamous !== oppFamous ? (myFamous ? 1.5 : 0.5) : 1.0);
-        const isSelfBuffSix = six === 'gongzhan' || six === 'shengzhan';
-        const scopedControl = (isSelfBuffSix && viewer !== null && this.playerSetup && this.playerSetup.side === f && this.playerSetup.control !== 'all')
-            ? this.playerSetup.control
-            : null;
+        // 🔴 [2026-11-07 主人定·乱入者VS维序者] 观众积分释放六计两边完全对等（全军有效）
+        const scopedControl: Scene13PlayerSetup['control'] | null = null;
         const scopeRatio = scopedControl === 'none' ? (1 / 18) : scopedControl === 'one' ? (1 / 9) : scopedControl === 'front' ? (1 / 3) : 1;
         // 🔴 [2026-10-29 主人令「玩家释放的技能和武将的一样，只不过效果加倍，作用看官职」]
         //   范围越小加得越多：斥候 ×3、探马 ×2、先锋 ×1.5；将军全军与武将同档 ×1。
@@ -1669,18 +1665,30 @@ export class Scene13WarLayer {
      */
     private heroClickOrder: { x: number; y: number } | null = null;
     heroMan: WarMan | null = null;
+    /** 🔴 [2026-11-07 主人定·战术模式「乱入者 VS 维序者」] 敌方对峙代表士兵（维序者），属性同兵模、阵亡10秒重整 */
+    keeperMan: WarMan | null = null;
     /** 🔴 [2026-11-07] 玩家「还在不在本军阵里」的检查倒计时（见 keepHeroWithTroops） */
     private heroRejoinT = 0;
     /** 🔴 [2026-11-07] 玩家本轮检查确实被甩在阵外（本军活兵都不在 300px 内）：归队允许往回走，见 laneSlotTarget */
     private heroStranded = false;
+    private keeperStranded = false;
     /** 🔴 [2026-09-09 主人定] 玩家阵亡复活倒计时（秒；0=活着/未在倒计时） */
     private heroRespawnTimer = 0;
+    private keeperRespawnTimer = 0;
     /** 本场玩家（本人 + 受控编队）击杀精灵数 */
     private playerKills = 0;
 
     public hasPlayerHero(): boolean { return this.active && !!this.heroMan; }
     public getPlayerSide(): 0 | 1 | null {
         return (this.active && this.playerSetup && this.heroMan) ? this.playerSetup.side : null;
+    }
+    public getKeeperSide(): 0 | 1 | null {
+        const ps = this.getPlayerSide();
+        return ps !== null ? ((1 - ps) as 0 | 1) : null;
+    }
+    /** 开局 9 秒选阵/押注倒计时剩余秒数 */
+    public getDeployRemainingSec(): number {
+        return this.active && !this.over ? Math.max(0, this.deployT) : 0;
     }
 
     /** 直播玩家技能剩余秒数；与武将六计状态分表，不读也不写技能槽。 */
@@ -1869,7 +1877,11 @@ export class Scene13WarLayer {
         this.heroInput = null;
         this.heroClickOrder = null;
         this.heroMan = null;
+        this.keeperMan = null;
         this.heroRespawnTimer = 0;
+        this.keeperRespawnTimer = 0;
+        this.heroStranded = false;
+        this.keeperStranded = false;
         this.playerLiveSkillTimer = 0;
         this.playerLiveSkillCooldown = 0;
         this.playerSixFrenzyTimer = 0;
@@ -1880,9 +1892,35 @@ export class Scene13WarLayer {
         const game = (window as any).game;
         // 小队模式：玩家不在军中也能上场（故事块小仗多半发生在平民阶段）
         const skirmishSide = this.skirmish?.playerSide;
-        const setup: Scene13PlayerSetup | null = skirmishSide !== undefined
+        let setup: Scene13PlayerSetup | null = skirmishSide !== undefined
             ? game?.playerHero?.buildScene13SkirmishSetup?.(skirmishSide) ?? null
             : game?.playerHero?.buildScene13Setup?.(init.followedOnDefenderSide === true) ?? null;
+        // 🔴 [2026-11-07 主人定·战术模式「乱入者 VS 维序者」]
+        //    即便公共玩家在战略层尚未入伍或处于快速对决，进入战术模式也由双方各出一名普通士兵代表「乱入者」与「维序者」对峙。
+        if (!setup && !this.skirmish) {
+            const defSide: 0 | 1 = init.followedOnDefenderSide === true ? 1 : 0;
+            const sideSpawns = this.spawns.filter((s) => s.f === defSide && !s.commander);
+            const fallbackKey = sideSpawns[0]?.key ?? this.spawns.find((s) => s.f === defSide)?.key ?? 'light_infantry';
+            const fallbackStats = WAR_TYPES[fallbackKey] ?? WAR_TYPES.light_infantry;
+            setup = {
+                side: defSide,
+                heroKey: fallbackKey,
+                heroName: game?.playerHero?.name || '乱入者',
+                heroStats: {
+                    hp: fallbackStats.hp,
+                    atk: fallbackStats.atk,
+                    reload: fallbackStats.reload,
+                    rng: fallbackStats.rng,
+                    spd: fallbackStats.spd,
+                    mArm: fallbackStats.mArm,
+                    pArm: fallbackStats.pArm,
+                },
+                unitKey: null,
+                control: 'none',
+                onKill: () => {},
+                onHeroDown: () => {},
+            };
+        }
         if (!setup) return;
         const f = setup.side;
         const row0 = this.spawns.filter((s) => s.f === f && s.row === 0);
@@ -2017,6 +2055,66 @@ export class Scene13WarLayer {
         };
         this.heroMan = hero;
         this.men.push(hero);
+
+        // 🔴 [2026-11-07 主人定·战术模式「乱入者 VS 维序者」]
+        //    对立一方（1 - f）同样由一名普通士兵担任「维序者」，属性与所在分队兵模 100% 一致，置于对立阵营核心分队第 2 排正中列。
+        if (!this.skirmish) {
+            const ef = (1 - f) as 0 | 1;
+            const enemySpawns = this.spawns.filter((s) => s.f === ef);
+            const enemySquads = enemySpawns.filter((s) => !s.commander);
+            const eRow1 = enemySquads.filter((s) => s.row === 1);
+            const eRow0 = enemySquads.filter((s) => s.row === 0);
+            const ePool = eRow1.length ? eRow1 : (eRow0.length ? eRow0 : (enemySquads.length ? enemySquads : enemySpawns));
+            const eBase = this.spawnBases[ef] ?? (ePool[0] ? { x: ePool[0].x, y: ePool[0].y } : { x: this.worldCX, y: this.worldCY });
+            const keeperPort = ePool.length
+                ? ePool.reduce((best, s) => (Math.hypot(s.x - eBase.x, s.y - eBase.y) < Math.hypot(best.x - eBase.x, best.y - eBase.y) ? s : best), ePool[0])
+                : null;
+            if (keeperPort) {
+                const keeperKey = keeperPort.key;
+                this.ensureType(keeperKey, ef);
+                const kFiles = this.filesOfSide(keeperKey, ef);
+                const kSp = marchSpacingOf(keeperKey);
+                const kDep = marchDepthSpacingOf(keeperKey);
+                const kSlotY = (Math.floor(kFiles / 2) - (kFiles - 1) / 2) * kSp;
+                let kFwd = this.advanceVec[ef];
+                let kSide = this.sideVec[ef];
+                let kx = keeperPort.x - kFwd.x * kDep + kSide.x * kSlotY;
+                let ky = keeperPort.y - kFwd.y * kDep + kSide.y * kSlotY;
+                const keeperOutside = ef === 1 && this.battleType === 'siege' && !!this.deCity && keeperPort.outFwd !== undefined;
+                if (keeperOutside) {
+                    const B = this.defOutsideBase();
+                    kFwd = B.fwd;
+                    kSide = B.side;
+                    kx = B.x + B.fwd.x * (keeperPort.outFwd! - kDep) + B.side.x * (keeperPort.outSide! + kSlotY);
+                    ky = B.y + B.fwd.y * (keeperPort.outFwd! - kDep) + B.side.y * (keeperPort.outSide! + kSlotY);
+                    this.holdLanes.add(keeperPort.lane);
+                } else if (ef === 1 && this.battleType === 'siege' && this.deCity) {
+                    [kx, ky] = this.settleCitySpawn(kx, ky, keeperKey);
+                }
+                const kjx = (Math.random() - 0.5) * 2 * AIM_JITTER;
+                const kjy = (Math.random() - 0.5) * 2 * AIM_JITTER;
+                const keeper: WarMan = {
+                    f: ef, key: keeperKey, jx: kjx, jy: kjy, lane: keeperPort.lane, hero: true,
+                    zid: this.manSeq++,
+                    x: kx, y: ky, tx: kx, ty: ky,
+                    hp: this.heroMaxHp(keeperKey, ef),
+                    dir: this.dir8(kFwd.x, kFwd.y),
+                    ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
+                    fightT: 0, aimT: 0.033, lock: 0, atkSt: 0, atkFlip: false,
+                    prevX: kx, prevY: ky, anchorX: kx, anchorY: ky, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: ky,
+                    flag: false, fo: Math.random() * 600,
+                    march: inMarch && !keeperOutside, port: inMarch && !keeperOutside ? keeperPort : null, dep: kDep, slotY: kSlotY, pop: 0,
+                    outside1: keeperOutside || undefined,
+                    guardPost: (ef === 1 && this.battleType === 'siege' && !!this.deCity && !keeperOutside && !this.isDefenderGateDestroyed())
+                        ? { x: kx, y: ky }
+                        : undefined,
+                    claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
+                };
+                this.keeperMan = keeper;
+                this.men.push(keeper);
+            }
+        }
+
         // 🔴 [2026-10-27 主人问「战术开局镜头为什么不跟玩家」] 开局玩家站着不动，六档把他判成静止（档 6，不入选），
         //    于是镜头先被入列中的兵抢走，又因「锁定到此人阵亡」再也换不回玩家。有玩家就开局直接锁玩家，
         //    并把镜头立即对准他；他阵亡后才按六档换人。
@@ -2124,6 +2222,13 @@ export class Scene13WarLayer {
     }
 
     private heroDown(m: WarMan): void {
+        if (m === this.keeperMan) {
+            if (this.keeperRespawnTimer > 0) return;
+            m.hp = 0;
+            this.pushCorpse(m);
+            this.keeperRespawnTimer = 10;
+            return;
+        }
         if (this.heroRespawnTimer > 0) return; // 正在倒计时复活中，防重复触发
         m.hp = 0;
         this.pushCorpse(m);
@@ -2139,11 +2244,15 @@ export class Scene13WarLayer {
     /** 🔴 [2026-09-09 主人定] 阵亡 10 秒后复活：在本方后方重生并重置满血 */
     /**
      * 🔴 [2026-10-30 主人令「把玩家的行为方式和普通士兵用一个逻辑，视为普通兵的行为」]
-     * 普通士兵与本队同生共死，而玩家不死/会复活：当玩家原属分队在场普通兵全灭（或第二波在后方大本营刷新导致与玩家相隔千里）时，
-     * 自动将玩家并入离他最近、仍有在场普通兵存活的本方分队（同步 lane 与排阵槽位 dep/slotY），使玩家始终作为普通队员随队行动，绝不沦为无队游魂乱跑。
+     * 普通士兵与本队同生共死，而乱入者/维序者不死/会复活：当原属分队在场普通兵全灭（或第二波在后方大本营刷新导致相隔千里）时，
+     * 自动将其并入离自己最近、仍有在场普通兵存活的本方分队（同步 lane 与排阵槽位 dep/slotY），始终作为普通队员随队行动。
      */
     private syncHeroToLiveSquad(): void {
-        const m = this.heroMan;
+        this.syncRepToLiveSquad(this.heroMan, true);
+        this.syncRepToLiveSquad(this.keeperMan, false);
+    }
+
+    private syncRepToLiveSquad(m: WarMan | null, isPlayer: boolean): void {
         if (!m || m.hp <= 0 || this.marching || m.march || this.skirmish) return;
         const laneStats = new Map<number, { x: number; y: number; n: number }>();
         for (const u of this.men) {
@@ -2185,7 +2294,7 @@ export class Scene13WarLayer {
                 m.dep = spDep;
                 m.slotY = (Math.floor(files / 2) - (files - 1) / 2) * sp;
             }
-            if (this.playerSetup && this.playerSetup.control === 'one') {
+            if (isPlayer && this.playerSetup && this.playerSetup.control === 'one') {
                 this.rebuildPlayerCtlLanes(this.playerSetup);
             }
         }
@@ -2194,15 +2303,26 @@ export class Scene13WarLayer {
     private respawnHero(): void {
         const m = this.heroMan;
         if (!m || !this.playerSetup) return;
+        this.respawnRepUnit(m, true);
+        this.diagPush('heroRespawn', { sec: +this.battleSec.toFixed(1) });
+    }
+
+    private respawnKeeper(): void {
+        const m = this.keeperMan;
+        if (!m) return;
+        this.respawnRepUnit(m, false);
+    }
+
+    private respawnRepUnit(m: WarMan, isPlayer: boolean): void {
         // 优先在仍有在场本队士兵或仍有后备兵源的本方出兵口复活并归队
-        this.syncHeroToLiveSquad();
+        this.syncRepToLiveSquad(m, isPlayer);
         const _port = (m.lane >= 0 ? this.spawns[m.lane] : undefined) ?? this.spawnBases[m.f] ?? { x: this.worldCX, y: this.worldCY };
         const [x, y] = (m.f === 1 && this.battleType === 'siege' && this.deCity)
             ? this.settleCitySpawn(_port.x, _port.y, m.key)   // 城内复活不压墙、不进建筑
             : [_port.x, _port.y];
         m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
-        m.dir = this.dir8(this.advanceVec[m.f].x, this.advanceVec[m.f].y);   // 🔴 [2026-10-11 主人「复活点还保留旧13？全删」] 朝向随本方八方向推进向量，不再写死左右(2/6)
+        m.dir = this.dir8(this.advanceVec[m.f].x, this.advanceVec[m.f].y);
         m.foe = null; m.aimFoe = null; m.reservedFoe = null; m.lock = 0; m.st = 0; m.fightT = 0; m.stuckT = 0; m.kiting = false;
         m.noFoeSec = LANE_REGROUP_SEC;
         m.outside1 = undefined;
@@ -2210,53 +2330,35 @@ export class Scene13WarLayer {
             ? { x, y }
             : undefined;
         m.fadeT = 2; m.fadeMax = 2;
-        this.heroInput = null;
-        // 🔴 [2026-10-21 主人报「乱入者复活后有的时候不动」] 阵亡前点的地面令没走到就死了 → 复活后还挂着：
-        //    目标点已被上面重置成复活点，而「走到才清」比的是旧点地位置 ⇒ 永远清不掉、原地站死。复活一律作废。
-        this.heroClickOrder = null;
+        if (isPlayer) {
+            this.heroInput = null;
+            this.heroClickOrder = null;
+        }
         if (!this.men.includes(m)) {
             this.men.push(m);
         }
-        this.syncHeroToLiveSquad();
-        this.diagPush('heroRespawn', { sec: +this.battleSec.toFixed(1) });
+        this.syncRepToLiveSquad(m, isPlayer);
     }
 
-    /**
-     * 🔴 [2026-11-07 主人报「战术模式中，探马者不和其他军团站一起，请修复」]
-     * **玩家永远和本军站在一起**：每半秒查一次，只要本军活兵**一个都不在** HERO_STRAY_DIST（300px）内，
-     * 就把他并到离他最近、仍有活兵的那一队去，并同步该队的阵位（lane / dep / slotY，列阵推进期间连 port 一起换），
-     * 于是不管他是开场落到了空档、队里人被清光、还是被甩在后面，都会立刻归队，绝不一个人杵在空地上。
-     *
-     * 判据与既有口径一致（2026-10-30「把玩家的行为方式和普通士兵用一个逻辑」＋ syncHeroToLiveSquad
-     * 「绝不沦为无队游魂乱跑」），这里只是把「并入最近的活队」从**只在他阵亡复活时**做，
-     * 改成**整场随时**做：
-     *   · 他正在按键盘 / 点了地面还没走到 —— 不打断，玩家手操优先；
-     *   · 他正在和人交战（m.foe） —— 不算落单，身边没战友也正常（那是他冲在敌人堆里）；
-     *   · 小队模式（skirmish，故事块小仗本来就他一个人打） —— 整段不启用。
-     *
-     * 并入那一刻**只有在开场渐显期（deployT > 0，全军本就钉在出生点的淡入阶段）才直接落到阵位**，
-     * 其余时候只改阵位不改坐标，让他自己走进本队方阵（玩家不是瞬移的棋子）。
-     * 列阵推进期间（m.march）换队必须同时换 port：推进中的目标点＝「本口锚点 + 自己的槽位」，
-     * port 不换的话他会沿着旧口继续往前，等于没归队。
-     */
     private keepHeroWithTroops(): void {
-        const m = this.heroMan;
+        this.heroStranded = this.keepRepWithTroops(this.heroMan, true);
+        this.keeperStranded = this.keepRepWithTroops(this.keeperMan, false);
+    }
+
+    private keepRepWithTroops(m: WarMan | null, isPlayer: boolean): boolean {
         if (!this.active || this.over || !m || m.hp <= 0 || this.skirmish || !this.men.includes(m)) {
-            this.heroStranded = false;
-            return;
+            return false;
         }
         const f = m.f;
-        // 本军离他最近的活兵（不含本人、攻城武器、伏兵 lane<0 不算队）
         let nearest = Infinity;
         for (const u of this.men) {
             if (u === m || u.hp <= 0 || u.hero || u.f !== f || u.siegeW) continue;
             const d = Math.hypot(u.x - m.x, u.y - m.y);
             if (d < nearest) nearest = d;
         }
-        // 手操中 / 正在交战都不算「落单」：玩家手操优先，冲在敌人堆里身边没战友是正常的
-        this.heroStranded = nearest > HERO_STRAY_DIST && !this.heroInput && !this.heroClickOrder && !m.foe;
-        if (!this.heroStranded) return;
-        // 各队在场活兵的重心与平均出生纵深（dep 决定他在推进方阵里的前后排）
+        const manualBusy = isPlayer && (!!this.heroInput || !!this.heroClickOrder);
+        const stranded = nearest > HERO_STRAY_DIST && !manualBusy && !m.foe;
+        if (!stranded) return false;
         const stats = new Map<number, { x: number; y: number; n: number; dep: number }>();
         for (const u of this.men) {
             if (u.hp <= 0 || u.hero || u.f !== f || u.lane < 0 || u.siegeW) continue;
@@ -2264,81 +2366,95 @@ export class Scene13WarLayer {
             cur.x += u.x; cur.y += u.y; cur.dep += u.dep; cur.n++;
             stats.set(u.lane, cur);
         }
-        if (!stats.size) return;                             // 本军就剩他一个：无处可并，交给索敌兜底
+        if (!stats.size) return true;
         let bestLane = -1, bestD = Infinity;
         for (const [lane, st] of stats) {
             const d = Math.hypot(st.x / st.n - m.x, st.y / st.n - m.y);
             if (d < bestD) { bestD = d; bestLane = lane; }
         }
         const st = stats.get(bestLane);
-        if (!st) return;
+        if (!st) return true;
         m.lane = bestLane;
-        m.dep = Math.round(st.dep / st.n);   // 站到那一队方阵的中排
-        m.slotY = 0;                          // 正对中轴（两侧各一半，与普通兵同一套槽位）
+        m.dep = Math.round(st.dep / st.n);
+        m.slotY = 0;
         m.port = m.march ? (this.spawns[bestLane] ?? null) : null;
         m.stuckT = 0;
         m.netT = 0;
-        // 开场渐显期全军本来就钉在出生点，这一刻落位没人看得见 → 直接站进阵里
-        //   （用该队活兵的**重心**，此时他们都被钉在出生点，重心就是方阵正中；
-        //    别用「口 + 已推进距离」那一式：渐显期 adv 是 0，两式本来就重合，用重心更稳）
         if (this.deployT > 0) {
             let px = st.x / st.n, py = st.y / st.n;
             [px, py] = this.fieldBound(px, py);
             m.x = px; m.y = py; m.tx = px; m.ty = py;
             m.prevX = px; m.prevY = py;
-            m.anchorX = px; m.anchorY = py;   // 渐显期每帧的「钉回出生点」用的是 anchor，一起改
+            m.anchorX = px; m.anchorY = py;
             m.y0 = py;
         }
-        if (this.playerSetup && this.playerSetup.control === 'one') this.rebuildPlayerCtlLanes(this.playerSetup);
+        if (isPlayer && this.playerSetup && this.playerSetup.control === 'one') this.rebuildPlayerCtlLanes(this.playerSetup);
+        return true;
     }
 
     /**
-     * 🔴 [2026-10-26 主人令] 有乱入者时镜头跟谁，按六档优先：
-     *    交战的玩家 > 交战的主将队 > 交战的士兵 > 移动的玩家 > 移动的主将队 > 移动的士兵（均为本方）。
-     *    选中一员后锁定到他阵亡为止，再按六档挑下一员（兵取离镜头中心最近的）。全灭返回 null（镜头原地不动）。
+     * 🔴 [2026-11-07 主人定·镜头方案 A（双主角交替跟随）]
+     *   · 默认主镜头跟随【乱入者】（heroMan）；
+     *   · 当【乱入者】阵亡读秒（hp <= 0）或未交战而【维序者】（keeperMan）存活且正在交战时，镜头自动切去跟【维序者】；
+     *   · 若两人同时倒下，才退回六档跟随正在交战的主将队/士兵。
      */
+    private pickActiveProtagonist(hero: WarMan): WarMan {
+        const keeper = this.keeperMan;
+        const heroAlive = hero.hp > 0 && this.men.includes(hero);
+        const keeperAlive = !!keeper && keeper.hp > 0 && this.men.includes(keeper);
+        if (!heroAlive && keeperAlive) return keeper!;
+        if (heroAlive && !hero.foe && keeperAlive && !!keeper!.foe) return keeper!;
+        return hero;
+    }
+
     private pickCamTarget(hero: WarMan): WarMan | null {
-        const f = hero.f;
-        const heroAlive = hero.hp > 0;
-        // 档位：0 交战玩家 1 交战主将队 2 交战士兵 3 移动玩家 4 移动主将队 5 移动士兵；6 静止不入选
+        const activeRep = this.pickActiveProtagonist(hero);
+        const f = activeRep.f;
+        const repAlive = activeRep.hp > 0 && this.men.includes(activeRep);
+        // 档位：0 交战主角(乱入者/维序者) 1 交战主将队 2 交战士兵 3 移动主角 4 移动主将队 5 移动士兵；6 静止不入选
         const isMoving = (m: WarMan): boolean => {
             if ((m.stepMax ?? 0) > 0.05) return true;
             return m.march && this.deployT <= 0
                 && Math.hypot(m.tx - m.x, m.ty - m.y) > LANE_TRACK_EPS;
         };
         const tierOf = (m: WarMan): number => {
-            if (m.hero) return m.foe ? 0 : (isMoving(m) ? 3 : 6);
+            if (m === activeRep) return m.foe ? 0 : (isMoving(m) ? 3 : 6);
             const cmd = !!this.spawns[m.lane]?.commander;
             if (m.foe) return cmd ? 1 : 2;
             if (!isMoving(m)) return 6;
             return cmd ? 4 : 5;
         };
-        const eligible = (m: WarMan): boolean => m.hp > 0 && m.f === f && !m.siegeW && (!m.hero || m === hero)
+        const eligible = (m: WarMan): boolean => m.hp > 0 && m.f === f && !m.siegeW && (!m.hero || m === activeRep)
             && (m.hero || this.men.includes(m));
         const isHeroTier = (t: number) => t === 0 || t === 3;
-        // 🔴 [2026-10-27 主人令「能不能在一个人身上固定好，直至此人阵亡」] 锁定后不再按档换人：
-        //    盯的是玩家就一直跟玩家（玩家倒下才换），盯的是兵就一直跟这个兵（他死了 / 离场才换），
-        //    不管他停手、走动还是别人开打。六档只用于「锁定的人没了」时挑下一个。
         if (this.camTier >= 0) {
             if (isHeroTier(this.camTier)) {
-                if (heroAlive) return hero;
+                if (repAlive) return activeRep;
             } else if (this.camWatchMan && eligible(this.camWatchMan)) {
                 return this.camWatchMan;
             }
         }
 
-        let bestTier = heroAlive ? tierOf(hero) : 6;
+        let bestTier = repAlive ? tierOf(activeRep) : 6;
         for (const m of this.men) {
             if (!eligible(m) || m.hero) continue;
             const t = tierOf(m);
             if (t < bestTier) bestTier = t;
         }
-        if (bestTier === 6) { this.resetCamFollow(); return null; }
+        if (bestTier === 6) {
+            if (repAlive) {
+                this.camTier = 3;
+                this.camWatchMan = null;
+                return activeRep;
+            }
+            this.resetCamFollow();
+            return null;
+        }
 
         const switched = this.deployT <= 0 && this.battleSec > 0.5;
         this.camTier = bestTier;
         if (switched) this.camSwitchLockTimer = CAM_HOLD_SEC;
-        if (isHeroTier(bestTier)) { this.camWatchMan = null; return hero; }
+        if (isHeroTier(bestTier)) { this.camWatchMan = null; return activeRep; }
         const cx = this.worldCX - this.tacticalPanX / this.tacticalZoom;
         const cy = this.worldCY - this.tacticalPanY / this.tacticalZoom;
         let best: WarMan | null = null, bestD = Infinity;
@@ -2357,29 +2473,25 @@ export class Scene13WarLayer {
         this.camHoldT = 0;
     }
 
-    /** 有玩家时唯一的镜头目标仲裁入口：六档优先；当前目标失效立即解除手动停留（玩家交战不解除，见下）。 */
+    /** 有玩家时唯一的镜头目标仲裁入口：双主角（乱入者/维序者）交替优先；两人皆倒时退回六档。 */
     private resolveHeroCamTarget(hero: WarMan, dt: number): WarMan | null {
+        const activeRep = this.pickActiveProtagonist(hero);
+        const repAlive = activeRep.hp > 0 && this.men.includes(activeRep);
         const watched = this.camWatchMan;
         const watchingHero = this.camTier === 0 || this.camTier === 3;
         const targetLost = this.camTier >= 0 && (watchingHero
-            ? hero.hp <= 0
-            : !watched || watched.hp <= 0 || !this.men.includes(watched));
-        // 🔴 [2026-10-27 主人令「交战时无法拖拽镜头，不然我怎么检查地图」] 玩家交战不再清掉手动停留：
-        //    原来 hero.foe 为真时每帧清零，拖开的镜头立刻被拉回，交战中根本没法看图。现在拖拽后照样停留 9 秒；
-        //    当前盯的人阵亡仍立即恢复跟随。
+            ? !repAlive
+            : (repAlive || !watched || watched.hp <= 0 || !this.men.includes(watched)));
         if (targetLost) {
-            // 盯的目标（含玩家或士兵）阵亡：原地保底停留 CAM_HOLD_SEC（4.5 秒）再换下一个目标，防止连续切镜头。
-            this.camHoldT = CAM_HOLD_SEC;
+            this.camHoldT = repAlive ? 0.6 : CAM_HOLD_SEC;
             this.camWatchMan = null;
-            this.camTier = -1;
+            this.camTier = repAlive ? 3 : -1;
             if (this.deployT <= 0) this.camSwitchLockTimer = CAM_HOLD_SEC;
         }
         if (this.camHoldT > 0) {
             this.camHoldT -= dt;
             if (this.camHoldT > 0) return null;
         }
-        // 🔴 [2026-10-27 主人令「让计策镜头真正生效，放计时先去看落点几秒，再回到玩家」]
-        //    原来有六档目标就把计策计时清零 ⇒ 玩家活着时计策镜头实际 0 秒。现在计策优先，外层先看落点，看完再跟目标。
         return this.pickCamTarget(hero);
     }
 
@@ -2607,10 +2719,9 @@ export class Scene13WarLayer {
         let v = this.techStats[f].get(cacheKey);
         if (!v) {
             const current = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
-            const peak = playerHero ? this.playerSetup?.heroStats : undefined;
-            // 🔴 [2026-10-30 主人令「把玩家的行为方式和普通士兵用一个逻辑，视为普通兵的行为」]
-            // 玩家保留血/攻/防/装填/加成的峰值战斗力，但移速(spd)与射程(rng)严格按当前兵模的普通士兵数值，绝不因历史骑兵峰值移速或超远射程脱队乱跑
-            const base: WarType = peak ? { ...withPlayerPeakStats(current, peak), spd: current.spd, rng: current.rng } : current;
+            // 🔴 [2026-11-07 主人定「探马者和捣乱者（乱入者与维序者）都是其中一名士兵，属性同兵模属性，并无特殊能力」]
+            // 100% 沿用当前兵模与本方军团科技的普通士兵属性，不再叠加历史峰值超模数值。
+            const base: WarType = current;
             const side: 0 | 1 = f === 0 ? 0 : 1;
             const techs = selectLegionTechs(y, this.sideTechCulture(side), this.sideTechSeed(side));
             v = applyTechsToStats(base, key, techs, SIGHT_MAP[key] ?? 160);
@@ -5227,7 +5338,10 @@ export class Scene13WarLayer {
                 const inMarch = this.deployT > 0;
                 // 🔴 [2026-11-06 主人令] 攻方每队的列数按屏幕横向取（每队 10 列 × 5 排 → 攻方 5 列 × 10 排，方阵横向）
                 const files = this.filesOfSide(s.key, s.f);
-                if (this.heroMan && this.heroMan.hp > 0 && this.heroMan.lane === s.lane && s.slotN === files + Math.floor(files / 2)) {
+                if (s.slotN === files + Math.floor(files / 2) && (
+                    (this.heroMan && this.heroMan.hp > 0 && this.heroMan.lane === s.lane)
+                    || (this.keeperMan && this.keeperMan.hp > 0 && this.keeperMan.lane === s.lane)
+                )) {
                     s.slotN++;
                 }
                 const slotIdx = s.slotN++;
@@ -5286,9 +5400,11 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-14] 城外阵贴墙校正：defOutsideBase 按「每队 50 人」估最后一排，实际每队人数随队数、兵种人口而变
             //    （实测 9 队时有的队排到 6~7 排，最后一排压到墙上）⇒ 整批出生后按实际站位，沿墙的法线整体挪到「最后一人离墙外表面 DEF_WALL_GAP」。
             if (outsideMen.length) {
-                // 守城的玩家本人同在城外阵里（见 setupPlayerUnits），一起挪（🔴 [2026-10-28] 玩家既然属于城外守军，无论初始落点是否在城圈边缘均同步校正入阵，绝不被遗弃在城内）
+                // 守城的玩家本人 / 维序者同在城外阵里（见 setupPlayerUnits），一起挪（🔴 [2026-10-28] 无论初始落点是否在城圈边缘均同步校正入阵，绝不被遗弃在城内）
                 const hm = this.heroMan;
                 if (hm && hm.f === f && hm.hp > 0 && !outsideMen.includes(hm)) outsideMen.push(hm);
+                const km = this.keeperMan;
+                if (km && km.f === f && km.hp > 0 && !outsideMen.includes(km)) outsideMen.push(km);
                 const B = this.defOutsideBase(), F = B.fwd, C = this.deCityCenter;
                 let minP = Infinity;
                 for (const m of outsideMen) minP = Math.min(minP, (m.x - C.x) * F.x + (m.y - C.y) * F.y - this.radiusOf(m.key));
@@ -7632,7 +7748,7 @@ export class Scene13WarLayer {
         //    这两条是给**士兵**立的（2026-10-27「不要往回找队」，防的是锚点落后把整队拖回头），
         //    玩家不是整队的一份位移源，他归队的唯一目的就是「和本军站一起」——主人这一条令在先，
         //    所以要往回走就得让他走，否则他永远站在阵外那块空地上。
-        const stranded = m.hero === true && this.heroStranded;
+        const stranded = m.hero === true && (m === this.heroMan ? this.heroStranded : this.keeperStranded);
         // 领队自身的目标或本队队级目标在领队/本兵身后（如杀穿敌营后掉头回师）时，不套用正向防倒退阵型槽位，让队员直接走寻敌回师
         if (!stranded && ((leader.tx - leader.x) * uFwd.x + (leader.ty - leader.y) * uFwd.y < -20
             || (leader.tx - m.x) * uFwd.x + (leader.ty - m.y) * uFwd.y < -20)) return null;
@@ -7787,7 +7903,7 @@ export class Scene13WarLayer {
      *    不够，那样会掉进 aimAt 分支照样被改）。
      */
     private heroOrderPending(m: WarMan): boolean {
-        return m.hero === true && this.heroClickOrder !== null;
+        return m === this.heroMan && this.heroClickOrder !== null;
     }
 
     /**
@@ -8010,12 +8126,19 @@ export class Scene13WarLayer {
             }
         }
         this.spawnTick(dt);
-        // 🔴 [2026-09-09 主人定] 玩家阵亡 10 秒复活倒计时
+        // 🔴 [2026-09-09 主人定] 玩家 / 维序者阵亡 10 秒复活倒计时
         if (this.heroRespawnTimer > 0) {
             this.heroRespawnTimer -= dt;
             if (this.heroRespawnTimer <= 0) {
                 this.heroRespawnTimer = 0;
                 this.respawnHero();
+            }
+        }
+        if (this.keeperRespawnTimer > 0) {
+            this.keeperRespawnTimer -= dt;
+            if (this.keeperRespawnTimer <= 0) {
+                this.keeperRespawnTimer = 0;
+                this.respawnKeeper();
             }
         }
         // 🔴 [2026-08-29 主人需求] 城墙内侧箭塔开火（射程内最近攻方士兵 → 射箭 + 开火火花；纯视觉）
@@ -8192,9 +8315,9 @@ export class Scene13WarLayer {
                 }
             }
             // [2026-09-05 玩家] 玩家有键盘输入 → 本帧只走不打；受控编队「待命」= 不动、够得着照打
-            if (m.hero && this.stepHeroInput(m, dt)) continue;
+            if (m === this.heroMan && this.stepHeroInput(m, dt)) continue;
             // 玩家的点地面令：走到就作废（之后归队/索敌照旧接管）
-            if (m.hero && this.heroClickOrder) {
+            if (m === this.heroMan && this.heroClickOrder) {
                 const cd = Math.hypot(m.x - this.heroClickOrder.x, m.y - this.heroClickOrder.y);
                 if (cd <= ARRIVE_EPS) {
                     this.heroClickOrder = null;
@@ -8221,7 +8344,7 @@ export class Scene13WarLayer {
                 && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane);
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
-            const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane));
+            const holdCmd = this.playerCmd === 'hold' && (m === this.heroMan || this.playerCtlLanes.has(m.lane));
             if (holdCmd || isGuard) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f, m.hero === true);
             const stats = wt;
@@ -8486,7 +8609,7 @@ export class Scene13WarLayer {
                     } else {
                         m.aimT = (m.aimT ?? 0) - dt;
                         if (m.aimT <= 0) {
-                            const aim = (m.hero && this.playerCmd === 'hold')
+                            const aim = (m === this.heroMan && this.playerCmd === 'hold')
                                 ? null
                                 : (this.battleType !== 'siege' ? (() => { const [gx, gy] = standbyGoal(m); return this.leashPoint(m, { x: gx, y: gy }, SIGHT); })() : this.aimAt(m));
                             if (aim && !m.march) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
@@ -8504,7 +8627,7 @@ export class Scene13WarLayer {
                             // 🔴 [2026-09-09 主人报障「战术模式中玩家不会自动战斗」]
                             //    原来写死 `m.hero ? null`：玩家本人**永远不索敌**，只能键盘手操。
                             //    现在「自动」命令下本人照常索敌开打；「待命」下才不主动找目标。
-                            const aim = (m.hero && this.playerCmd === 'hold') ? null : this.aimAt(m);
+                            const aim = (m === this.heroMan && this.playerCmd === 'hold') ? null : this.aimAt(m);
                             // 🔴 [2026-10-11 主人报「战斗刚开始士兵全挤成一排」] 列阵推进期间（m.march）
                             //    **不拿寻敌结果覆盖阵位** —— 这正是本文件 2928 行写的口径「够不着不追」。
                             //    改前无条件覆盖 ⇒ 同一口 50 人奔向同一个点 ⇒ 一排。

@@ -16,7 +16,7 @@ export const HERO_DAMAGE_TAKEN = 1.0;
 //    只把玩家本人的**移速**倍率加回来（1.0 → 1.8，即 10-27 之前玩家一直用的那个值）：
 //    攻速、血量、免伤、出手伤害全部仍是 1.0，不动 10-27「跟最厉害的英雄差不多就行」那次的平衡结论。
 //    玩家移速 = 他自己当前兵模的移速 × 本倍率（不再按所在出兵口兵种移速算，见 Scene13WarLayer.step）。
-export const HERO_SPEED_MULT = 1.8;
+export const HERO_SPEED_MULT = 1.0;
 export const HERO_DAMAGE_MULT = 1.0;
 
 /**
@@ -168,7 +168,7 @@ export const FLAG_POLE_RATIO = 0.8;
 export const FLAG_POLE_LIFT = 0.4;
 export const BATCH_COOLDOWN = 2;
 export const FADE_IN = 0.5;
-export const DEPLOY_SECS = 2.5;
+export const DEPLOY_SECS = 9.0;
 export const DEPLOY_FADE = 2.0;
 export const ARRIVE_EPS = 8;
 export const MARCH_REL = 360;

@@ -148,25 +148,31 @@ function quickBattleModeOn(): boolean {
  *    三门下注照百家乐：押攻方（庄）1 赔 0.95、押守方（闲）1 赔 1、押和 1 赔 8；
  *    开和局时押庄/押闲的本金原数退回（百家乐的和局规则），只有押和的收 8 倍。
  */
+/**
+ * 🔴 [2026-11-07 主人定·战术模式「乱入者 VS 维序者」统一积分押注]
+ *    统一只用「积分」（orders）一本账：观众赢下押注的积分可直接用于战术模式放六计，或带回战略模式竞拍（选目标/封侯/立国）。
+ *    不显眼展示「庄/闲/和」，界面与播报统一使用「乱入者 / 维序者 / 平局」；
+ *    底层赔率沿用百家乐数学：押乱入者 1 赔 0.95、押维序者 1 赔 1、押平局 1 赔 8（平局时退还乱入者与维序者本金）。
+ */
 export type BetSide = 'att' | 'def' | 'draw';
 export const BET_BANKER_MULT = 0.95;
 export const BET_PLAYER_MULT = 1;
 export const BET_TIE_MULT = 8;
-/** 每局开窗时把**快输光的人**补足到这个数（原「补足到 10」：每局白送 10 = 老观众永远输不完，筹码彻底通胀） */
+/** 单场每位观众累计押注上限（防刷分通胀） */
+export const BET_MAX_PER_BATTLE = 20;
+/** 每局开窗时把快输光的人（<3分）补足到 3 积分 */
 export const BET_START_CHIPS = 3;
-/** 第一次下注的新人本金（给足一局能押几把，输光了靠每局补的 3 慢慢回） */
 export const BET_NEWCOMER_CHIPS = 10;
-/** 筹码库存封顶：赢到 60 就到顶，剩下的留给下注去消耗 */
-export const BET_CHIP_CAP = 60;
-export const BET_SIDE_NAMES: Readonly<Record<BetSide, string>> = { att: '攻方', def: '守方', draw: '和' };
+export const BET_CHIP_CAP = ORDER_CAP;
+export const BET_SIDE_NAMES: Readonly<Record<BetSide, string>> = { att: '乱入者', def: '维序者', draw: '平局' };
 
-/** 下注口令：押1 10 / 押2 5 / 押和 3 / 押攻 10 / 押守 5（不写数目＝1） */
+/** 下注口令：押1 5 / 押乱 5 / 押2 5 / 押维 5 / 押平 3（不写数目＝1） */
 export function parseBetCommand(word: string): { side: BetSide; amount: number } | null {
-    const m = word.match(/^(?:押|下注|买)\s*(攻|庄|守|闲|和|平|[12])\s*([1-9]\d*)?$/);
+    const m = word.match(/^(?:押|下注|买)\s*(乱入者|乱入|乱|维序者|维序|维|攻|庄|守|闲|和|平局|平|[12])\s*([1-9]\d*)?$/);
     if (!m) return null;
     const k = m[1];
-    const side: BetSide = (k === '攻' || k === '庄' || k === '1') ? 'att'
-        : (k === '守' || k === '闲' || k === '2') ? 'def' : 'draw';
+    const side: BetSide = (k === '1' || k.startsWith('乱') || k === '攻' || k === '庄') ? 'att'
+        : (k === '2' || k.startsWith('维') || k === '守' || k === '闲') ? 'def' : 'draw';
     const amount = m[2] !== undefined ? Number(m[2]) : 1;
     if (!Number.isSafeInteger(amount) || amount <= 0) return null;
     return { side, amount };
@@ -640,21 +646,20 @@ export class ViewerLive {
             this.onPayment(id, name, PRICE_PER_CAST, '测试打赏');
         }
 
-        // 0. 查自己的积分（聊天机器人看不到游戏账本，只能在画面上回 + 晓晓语音播报）
+        // 0. 查自己的积分（统一只用积分一本账）
         if (word === '积分' || word === '查分') {
-            const chips = this.chips.get(id)?.n ?? 0;
-            this.notifyViewerVoice(id, `${name}，你现有${acc.n}积分、${chips}筹码`);
-            return this.note(`${name} 现有 ${acc.n} 积分、${chips} 筹码（积分放计、筹码下注，两本账分开）`);
+            this.notifyViewerVoice(id, `${name}，你现有${acc.n}积分`);
+            return this.note(`${name} 现有 ${acc.n} 积分（押注、放计与战略竞拍通用）`);
         }
 
-        // 0.5 下注（百家乐式三门：押攻方/押守方/押和；用筹码，与放计积分分开）
+        // 0.5 押注（开局 9 秒窗口：押1/押乱、押2/押维、押平；统一用积分）
         const betCmd = parseBetCommand(word);
         if (betCmd) {
             return this.handleBetCommand(id, name, betCmd.side, betCmd.amount, eventId, pubMs);
         }
         if (/^(?:押|下注|买)\s*\S*$/.test(word)) {
-            this.notifyViewerVoice(id, `${name}，下注写法「押1 10」「押2 10」「押和 5」`);
-            return this.note(`${name}：下注写法「押1 10」（攻方）/「押2 10」（守方）/「押和 5」`);
+            this.notifyViewerVoice(id, `${name}，押注写法「押1 5」「押2 5」「押平 2」`);
+            return this.note(`${name}：押注写法「押1 5」（乱入者）/「押2 5」（维序者）/「押平 2」（单场上限 ${BET_MAX_PER_BATTLE} 分）`);
         }
 
         // 1. 玩家改名竞拍（平民起全阶段可用，整局持续抬价）
@@ -765,8 +770,8 @@ export class ViewerLive {
             return this.requestScout(id, name, scoutBid, eventId, pubMs);
         }
 
-        // 4. 玩家六计（固定 1 积分，不涨价，按先后顺序 FIFO；按官职阶梯解锁：斥候攻胜 / 探马+敌混 / 先锋将军+并败）
-        const combo = word.match(/^([12])\s*(\S+)$/);
+        // 4. 战术模式选阵（1/乱＝乱入者，2/维＝维序者）与六计释放（固定 1 积分，两边独立队列 FIFO）
+        const combo = word.match(/^(1|2|乱入者|乱入|乱|维序者|维序|维)\s*(\S+)$/);
         if (combo && SIX_BY_WORD[combo[2]]) {
             if (meta?.staleForBattle) {
                 this.recordCmd(eventId, id, name, 'skill_six', combo[2], ORDERS_PER_CAST, pubMs, now, 'rejected', '迟到于上一场战斗');
@@ -779,23 +784,17 @@ export class ViewerLive {
                 this.notifyViewerVoice(id, `${name}，${blocked}，未扣积分`);
                 return this.note(`${name}：${blocked}`);
             }
-            const reqSide: 0 | 1 = combo[1] === '1' ? 0 : 1;
-            const playerSide = this.duel ? null : this.playerSideInBattle();
-            if (playerSide !== null && reqSide !== playerSide) {
-                return this.note(`${name}：全体观众共同操作玩家，只能为玩家所在的${this.sideName(playerSide)}放计`);
-            }
-            this.joinSide(id, playerSide ?? reqSide);
+            const choice: '1' | '2' = (combo[1] === '1' || combo[1].startsWith('乱')) ? '1' : '2';
+            this.joinSide(id, this.repSideOfChoice(choice));
             word = combo[2];
         }
-        if (word === '1' || word === '2') {
-            // 🔴 [2026-11-07] 即时战斗：选边随时可发（选人画面那 30 秒没在打仗也算），下一仗按选的边生效
-            if (!this.battleOn() && !this.duel) return this.note(`${name}：现在没在打仗，等下一仗`);
-            const playerSide = this.duel ? null : this.playerSideInBattle();
-            const side: 0 | 1 = playerSide ?? (word === '1' ? 0 : 1);
+        if (/^(1|2|乱入者|乱入|乱|维序者|维序|维)$/.test(word)) {
+            if (!this.battleOn() && !this.duel) return this.note(`${name}：现在没在打仗，进入战术模式后可发 1(乱入者) 或 2(维序者) 选阵`);
+            const choice: '1' | '2' = (word === '1' || word.startsWith('乱')) ? '1' : '2';
+            const side: 0 | 1 = this.repSideOfChoice(choice);
+            const repLabel = choice === '1' ? '乱入者' : '维序者';
             this.joinSide(id, side);
-            return this.note(this.duel
-                ? `${name} 已站到${word === '1' ? '攻方' : '守方'}，发六字（攻 胜 敌 混 并 败）放计`
-                : `${name} 已随玩家站在${this.sideName(side)}，直接发六计或 技3 即可`);
+            return this.note(`${name} 已站到【${repLabel}】（${this.sideName(side)}），开局9秒可发「押${choice} 分」押注，开战发六字（攻 胜 敌 混 并 败）放计`);
         }
         if (!SIX_BY_WORD[word]) return '';
         if (meta?.staleForBattle) {
@@ -1033,6 +1032,12 @@ export class ViewerLive {
             coerceCandidates: { index: number; factionId: string; factionName: string; cities: number; troops: number }[];
             activePool: { factionName: string; totalPoints: number; targetPoints: number } | null;
         };
+        /** 战术模式 9 秒选阵/押注状态（乱入者 VS 维序者 / 平局） */
+        bet: {
+            open: boolean;
+            remainSec: number;
+            stakes: [number, number, number];
+        };
         _marshalDummy?: {
             _unused?: number;
         };
@@ -1044,8 +1049,10 @@ export class ViewerLive {
             .sort((x, y) => (y.n - x.n) || (y.lastEarn - x.lastEarn))
             .slice(0, 6)
             .map((a) => ({ name: a.name, n: a.n }));
+        const pSide: 0 | 1 = this.playerSideInBattle() ?? 0;
+        const kSide: 0 | 1 = (1 - pSide) as 0 | 1;
         let a = 0, d = 0;
-        for (const s of this.sides.values()) { if (s === 0) a++; else d++; }
+        for (const s of this.sides.values()) { if (s === pSide) a++; else d++; }
         const joinCandidates = (this.app.playerQuests?.getLiveJoinCandidates?.() ?? [])
             .map((c) => ({ index: c.index, label: c.label, kind: c.kind }));
         const rankId = this.app.playerHero?.getPeakRank().id;
@@ -1053,9 +1060,10 @@ export class ViewerLive {
             : rankId === 'outrider' ? '同文化武将（指定）'
                 : rankId === 'vanguard' ? '同文化武将（指定）＋全部势力（武将随机）'
                     : '全图武将（指定）';
+        const deployRem = Math.ceil(this.war()?.getDeployRemainingSec?.() ?? 0);
         return {
             on: this.battleOn(),
-            names: [this.sideName(0), this.sideName(1)],
+            names: [this.sideName(pSide), this.sideName(kSide)],
             counts: [a, d],
             queue: [
                 ...this.scoutQueue.map((q) => `${q.viewer} 玩家技 ${q.bid}分`),
@@ -1147,6 +1155,11 @@ export class ViewerLive {
                 activePool: this.emperorCoercePool
                     ? { factionName: this.emperorCoercePool.factionName, totalPoints: this.emperorCoercePool.total, targetPoints: EMPEROR_COERCE_TARGET_POINTS }
                     : null,
+            },
+            bet: {
+                open: this.betOpen,
+                remainSec: deployRem,
+                stakes: [...this.betStakes] as [number, number, number],
             },
             _marshalDummy: {
                 _unused: 0,
@@ -2456,23 +2469,25 @@ export class ViewerLive {
         if (typeof w.getPlayerSide === 'function') return w.getPlayerSide();
         return w.hasPlayerHero?.() ? 0 : null;
     }
+    /** 1(乱入者) / 2(维序者) 映射到本场战术模式的 0(攻方) / 1(守方) */
+    private repSideOfChoice(choice: '1' | '2'): 0 | 1 {
+        const pSide: 0 | 1 = this.playerSideInBattle() ?? 0;
+        return choice === '1' ? pSide : ((1 - pSide) as 0 | 1);
+    }
+    /** 本场战术模式的 0(攻方) / 1(守方) 对应的是乱入者还是维序者 */
+    private repNameOfSide(side: 0 | 1): string {
+        const pSide: 0 | 1 = this.playerSideInBattle() ?? 0;
+        return side === pSide ? '乱入者' : '维序者';
+    }
     private playerSkillBlockReason(): string | null {
         if (!this.battleOn()) return '现在没在打仗，等下一仗';
-        // 🔴 [2026-11-07] 即时战斗没有公共玩家，「技N」爆发技是玩家本人的技，这一局不开
-        if (this.duel) return '即时战斗里没有玩家技，直接发六字（攻 胜 敌 混 并 败）';
-        const rank = this.app.playerHero?.getRank().id;
-        if (!rank || rank === 'civilian') return '平民不能释放玩家技能，投靠武将成为斥候后开放';
-        if (!this.war()?.hasPlayerHero()) return '玩家本人没有参加这一仗';
-        return null;
+        // 🔴 [2026-11-07 主人定「探马者和捣乱者（乱入者与维序者）都是其中一名士兵，属性同兵模属性，并无特殊能力」]
+        return '战术模式为乱入者VS维序者对决，无个人特技，请发六字（攻 胜 敌 混 并 败）或开局9秒押注';
     }
-    private playerSixBlockReason(six: TacticalSixSet): string | null {
+    private playerSixBlockReason(_six: TacticalSixSet): string | null {
         if (!this.battleOn()) return '现在没在打仗，等下一仗';
-        // 🔴 [2026-11-07 主人令「然后通过胜攻敌并混败六个字来释放技能」] 即时战斗里六字全开：
-        //    没有公共玩家，也就没有官阶阶梯（斥候攻胜 / 探马敌混 / 先锋将军并败），只受积分与排队限制。
-        if (this.duel) return null;
-        const base = this.playerSkillBlockReason();
-        if (base) return base;
-        return sixUnlockBlockReason(this.app.playerHero?.getRank().id, six);
+        // 🔴 [2026-11-07 主人定·战术模式「乱入者 VS 维序者」] 双方观众皆可用 1 积分释放六计（攻 胜 敌 混 并 败）
+        return null;
     }
     private sideName(side: 0 | 1): string {
         return `${side === 0 ? '攻方' : '守方'}${this.sideFaction(side)}`;
@@ -2529,23 +2544,10 @@ export class ViewerLive {
     }
     private joinSide(id: string, side: 0 | 1): void { this.sides.set(id, side); this.save(); }
 
-    // ── 下注（百家乐式，第二本账） ──────────────────────────
-    /** 筹码账：第一次来下注的人给一份新人本金（之后只能靠每局补的 3 和赢回来的） */
-    private chipAcct(id: string, name: string): { name: string; n: number } {
-        let c = this.chips.get(id);
-        if (!c) {
-            c = { name, n: BET_NEWCOMER_CHIPS };
-            this.chips.set(id, c);
-        }
-        c.name = name;
-        return c;
-    }
-
+    // ── 押注（统一只用「积分」orders 一本账：乱入者 VS 维序者 / 平局） ──
     /**
-     * 每局开窗（回到选人画面时调）：清掉上一局注单。
-     * 🔴 [2026-11-07 主人令「让老玩家消耗更多，不要通胀」] 只给**快输光的人**补到 3：
-     *    原先是每局把每个在场者都补满 10 —— 等于每局白送 10，赢的留下、输的补满，筹码永远涨。
-     *    现在带着库存来的老观众一分不补，输掉的只能靠下一局那 3 点慢慢回，长期下注必定缩水（赔率本身就带抽水）。
+     * 每局开窗（进入战术模式开场 9 秒选阵/押注窗口，或快速对决选人期）：清掉上一局注单。
+     * 🔴 [2026-11-07 主人定·统一积分一本账] 只给在场积分不足 3 分的人保底补足到 3 积分，有余粮的老观众不补，杜绝刷分通胀。
      */
     public beginBetRound(): void {
         this.betOpen = true;
@@ -2553,23 +2555,23 @@ export class ViewerLive {
         this.bets.clear();
         if (this.isAccountingPage()) {
             for (const [id, name] of this.presentIds()) {
-                const c = this.chipAcct(id, name);
-                if (c.n < BET_START_CHIPS) c.n = BET_START_CHIPS;
+                const a = this.acct(id, name);
+                if (a.n < BET_START_CHIPS) a.n = BET_START_CHIPS;
             }
         }
         this.save();
-        this.note(`本局下注开着：押1 / 押2 / 押和（用筹码，和放计积分分开算），开战封盘`);
+        this.note(`⚔️ 乱入者 VS 维序者（9秒选阵/押注）：发 1(乱入者)/2(维序者) 选阵，发「押1 分」「押2 分」「押平 分」押注`);
     }
 
-    /** 开战封盘：之后不接注，等这一局结算 */
+    /** 9 秒倒计时结束，开战封盘：之后不再接注，进入交战放计阶段 */
     public sealBetRound(): void {
         if (!this.betOpen) return;
         this.betOpen = false;
         const [a, d, t] = this.betStakes;
         this.save();
         if (a + d + t <= 0) return;
-        this.note(`封盘：攻方 ${a} / 守方 ${d} / 和 ${t} 筹码`);
-        speechAnnouncer.announceViewerNotice(`封盘，攻方${a}注，守方${d}注，和${t}注`);
+        this.note(`押注截止：乱入者 ${a} / 维序者 ${d} / 平局 ${t} 积分，发六字（攻 胜 敌 混 并 败）助阵！`);
+        speechAnnouncer.announceViewerNotice(`押注截止，乱入者${a}分，维序者${d}分，平局${t}分`);
     }
 
     /** 下注窗口是否开着（面板用） */
@@ -2583,29 +2585,58 @@ export class ViewerLive {
         const sideName = BET_SIDE_NAMES[side];
         if (!this.betOpen) {
             this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'rejected', '已封盘');
-            this.notifyViewerVoice(id, `${name}，本局已封盘，下一局开战前再押`);
-            return this.note(`${name}：本局已封盘，等下一局开窗`);
+            this.notifyViewerVoice(id, `${name}，开局9秒押注已截止，请发六字放计或等下一仗`);
+            return this.note(`${name}：开局9秒押注已截止，当前可发 攻 胜 敌 混 并 败（1分）助阵`);
         }
-        const c = this.chipAcct(id, name);
-        if (c.n < amount) {
-            this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'rejected', '筹码不足');
-            this.notifyViewerVoice(id, `${name}，只剩${c.n}筹码，下不了${amount}`);
-            return this.note(`${name}：押${sideName}要 ${amount} 筹码，现有 ${c.n}`);
-        }
-        c.n -= amount;
         const list = this.bets.get(id) ?? [];
+        const myStaked = list.reduce((sum, b) => sum + b.amount, 0);
+        if (myStaked + amount > BET_MAX_PER_BATTLE) {
+            this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'rejected', `超过单场押注上限${BET_MAX_PER_BATTLE}`);
+            this.notifyViewerVoice(id, `${name}，单场最多押${BET_MAX_PER_BATTLE}积分`);
+            return this.note(`${name}：单场最多押 ${BET_MAX_PER_BATTLE} 积分（已押 ${myStaked} 分）`);
+        }
+        const a = this.acct(id, name);
+        const avail = a.n - this.reservedOrders(id);
+        if (avail < amount) {
+            this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'rejected', '积分不足');
+            this.notifyViewerVoice(id, `${name}，可用积分${avail}，不够押${amount}分`);
+            return this.note(`${name}：押【${sideName}】需 ${amount} 积分，现有可用 ${avail} 积分`);
+        }
+        a.n -= amount;
         list.push({ name, side, amount });
         this.bets.set(id, list);
         this.betStakes[side === 'att' ? 0 : side === 'def' ? 1 : 2] += amount;
+        // 押乱入者或维序者时，顺便把该观众的战术阵营切到对应一边，后续发六字直接助该方
+        if (side === 'att' || side === 'def') {
+            this.joinSide(id, this.repSideOfChoice(side === 'att' ? '1' : '2'));
+        }
         this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'queued');
         this.save();
-        this.note(`${name} 押${sideName} ${amount} 筹码（余 ${c.n}）`);
-        return `${name} 押${sideName} ${amount} 筹码，余 ${c.n}（攻方赔 0.95、守方赔 1、和赔 8）`;
+        this.note(`${name} 押【${sideName}】${amount} 积分（余 ${a.n} 分）`);
+        return `${name} 押【${sideName}】${amount} 积分，余 ${a.n} 分`;
     }
 
     /**
-     * 结算本局：开攻方 / 开守方 / 开和。
-     * 百家乐的和局规则：押攻/押守的本金原数退回，只有押和收 8 倍（本金另退）。
+     * 战术模式分出胜负回调（由 GameAppCombatHooks.startScene13War 的 onDecision 触发）：
+     * 将攻/守/平结果映射为 乱入者('att') / 维序者('def') / 平局('draw') 并结算积分。
+     */
+    public onTacticalBattleDecision(winner: 'attacker' | 'defender' | 'draw'): void {
+        if (this.duel) return; // 快速对决由 QuickBattle.ts 自行调用 settleBetRound
+        if (!this.betOpen && this.bets.size === 0) return;
+        let result: BetSide;
+        if (winner === 'draw') {
+            result = 'draw';
+        } else {
+            const winSide: 0 | 1 = winner === 'attacker' ? 0 : 1;
+            const pSide: 0 | 1 = this.playerSideInBattle() ?? 0;
+            result = winSide === pSide ? 'att' : 'def';
+        }
+        this.settleBetRound(result);
+    }
+
+    /**
+     * 结算本局：开乱入者('att') / 开维序者('def') / 开平局('draw')。
+     * 平局时：押乱入者与押维序者的本金全额退回，押平局按 1 赔 8 派彩（含退本金）。
      */
     public settleBetRound(result: BetSide): void {
         const stakes = this.betStakes[0] + this.betStakes[1] + this.betStakes[2];
@@ -2616,15 +2647,15 @@ export class ViewerLive {
             for (const b of list) {
                 if (result === 'draw') {
                     back += b.side === 'draw'
-                        ? b.amount + Math.floor(b.amount * BET_TIE_MULT)   // 押和：本金 + 8 倍
-                        : b.amount;                                        // 押庄/押闲：和局退本金
+                        ? b.amount + Math.floor(b.amount * BET_TIE_MULT)   // 押平局：本金 + 8 倍
+                        : b.amount;                                        // 押乱入者/维序者：平局退本金
                 } else if (b.side === result) {
                     back += b.amount + Math.floor(b.amount * (result === 'att' ? BET_BANKER_MULT : BET_PLAYER_MULT));
                 }
             }
             if (back <= 0) continue;
-            const c = this.chipAcct(id, list[0].name);
-            c.n = Math.min(BET_CHIP_CAP, c.n + back);
+            const a = this.acct(id, list[0].name);
+            a.n = Math.min(ORDER_CAP, a.n + back);
             winners++;
             payout += back;
         }
@@ -2634,25 +2665,25 @@ export class ViewerLive {
         this.betOpen = false;
         this.save();
         if (stakes <= 0) return;
-        this.note(`本局开${label}：${winners} 人中注，共得 ${payout} 筹码`);
-        speechAnnouncer.announceViewerNotice(`本局开${label}，${winners}人中注`);
+        this.note(`战局揭晓【${label}】：${winners} 人中注，共赢回 ${payout} 积分`);
+        speechAnnouncer.announceViewerNotice(`战局揭晓，${label}获胜，${winners}人赢得积分`);
     }
 
-    /** 这一局没打成（开战入口拒绝、两军没接上）：注单原数退回，不算输赢 */
+    /** 这一局中途退出未分胜负：注单原数退回积分，不算输赢 */
     public refundBetRound(): void {
         let back = 0;
         for (const [id, list] of this.bets) {
             const total = list.reduce((s, b) => s + b.amount, 0);
             if (total <= 0) continue;
-            const c = this.chipAcct(id, list[0].name);
-            c.n = Math.min(BET_CHIP_CAP, c.n + total);
+            const a = this.acct(id, list[0].name);
+            a.n = Math.min(ORDER_CAP, a.n + total);
             back += total;
         }
         this.bets.clear();
         this.betStakes = [0, 0, 0];
         this.betOpen = false;
         this.save();
-        if (back > 0) this.note(`这一局没打成，${back} 筹码已原数退回`);
+        if (back > 0) this.note(`本场未分胜负提前结束，${back} 押注积分已原数退回`);
     }
 
     /**

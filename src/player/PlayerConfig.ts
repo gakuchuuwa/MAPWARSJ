@@ -156,8 +156,9 @@ export function moveClassForHeroKey(heroKey: string): 'CAVALRY' | 'INFANTRY' | '
     if (/elephant/.test(heroKey)) return 'ELEPHANT';
     return WAR_TYPES[heroKey]?.cls === 'cav' ? 'CAVALRY' : 'INFANTRY';
 }
-// 🔴 [2026-10-22 主人「玩家在游戏中还是叫乱入者」] 默认称呼改为「探马者」（docs/探马/骨架.md 主人定：默认称呼探马者，玩家可自起名）
-export const PLAYER_HERO_NAME = '探马者';
+// 🔴 [2026-11-07 主人定「用乱入者VS维序者」] 玩家默认称呼改为「乱入者」，战术模式敌方对峙代表为「维序者」
+export const PLAYER_HERO_NAME = '乱入者';
+export const ORDER_KEEPER_NAME = '维序者';
 /**
  * 出生据点：**长安**（十三朝国都；关中核心）。
  *  🔴 [2026-09-15 主人定「开局画面改回长安」] 由佩拉改回长安。

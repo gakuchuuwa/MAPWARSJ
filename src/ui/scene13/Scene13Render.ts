@@ -458,28 +458,32 @@ export function render(this: Scene13WarLayer): void {
         ctx.restore();
     }
 
-    // ── [2026-09-05 玩家] 玩家头顶名牌 + 血条（画在人之上；镜像时反翻转让文字正向）──
-    if (this.heroMan && this.heroMan.hp > 0 && this.playerSetup) {
-        const h = this.heroMan;
-        const maxHp = this.statsFor(h.key, h.f).hp || 1;
-        const sx = h.x;
-        const sy = h.y - this.elevationLiftAt(h.x, h.y) - UNIT_PX * 1.25;
+    // ── [2026-09-05 → 2026-11-07 乱入者 VS 维序者] 双方代表头顶名牌 + 血条 ──
+    const drawRepTag = (rep: WarMan | null, label: string, textColor: string, barColor: string) => {
+        if (!rep || rep.hp <= 0) return;
+        const maxHp = this.statsFor(rep.key, rep.f).hp || 1;
+        const sx = rep.x;
+        const sy = rep.y - this.elevationLiftAt(rep.x, rep.y) - UNIT_PX * 1.25;
         ctx.save();
         ctx.font = "bold 13px 'Noto Serif SC','SimSun',serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'rgba(0,0,0,0.8)';
-        ctx.strokeText(this.playerSetup.heroName, sx, sy);
-        ctx.fillStyle = '#ffd27a';
-        ctx.fillText(this.playerSetup.heroName, sx, sy);
+        ctx.strokeText(label, sx, sy);
+        ctx.fillStyle = textColor;
+        ctx.fillText(label, sx, sy);
         const bw = 40, bh = 4;
         ctx.fillStyle = 'rgba(0,0,0,0.6)';
         ctx.fillRect(sx - bw / 2, sy + 2, bw, bh);
-        ctx.fillStyle = '#e04a3a';
-        ctx.fillRect(sx - bw / 2, sy + 2, bw * Math.max(0, Math.min(1, h.hp / maxHp)), bh);
+        ctx.fillStyle = barColor;
+        ctx.fillRect(sx - bw / 2, sy + 2, bw * Math.max(0, Math.min(1, rep.hp / maxHp)), bh);
         ctx.restore();
+    };
+    if (this.playerSetup) {
+        drawRepTag(this.heroMan, this.playerSetup.heroName || '乱入者', '#ffd27a', '#e04a3a');
     }
+    drawRepTag(this.keeperMan, '维序者', '#7ae0ff', '#3a9ee0');
 
     // 箭矢与火器弹丸画在人上面。🔴 2026-08-22 对齐 DE 本体：火药兵种（火枪手/苏丹亲兵/征服者/风琴炮）增加 DE 原版白烟弹线 (Unit 1648 Trail Smoke) 与枪口硝烟
     if (this.arrows.length) {

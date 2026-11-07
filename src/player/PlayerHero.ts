@@ -2116,7 +2116,8 @@ export class PlayerHero {
             ? s.rankId
             : rankFor(this.merit, !!s.factionId).id;
         this.rememberRank(rankFor(this.merit, !!s.factionId));
-        const checkedName = typeof s.playerName === 'string' ? moderateLiveName(s.playerName) : null;
+        const rawSavedName = typeof s.playerName === 'string' && s.playerName !== '探马者' ? s.playerName : PLAYER_HERO_NAME;
+        const checkedName = moderateLiveName(rawSavedName);
         this.rename(checkedName && checkedName.ok ? checkedName.name : PLAYER_HERO_NAME);
         this.lastCulture = typeof s.lastCulture === 'string' && s.lastCulture ? s.lastCulture : null;
         this.heroDowns = s.heroDowns ?? 0;

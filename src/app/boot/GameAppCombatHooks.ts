@@ -277,7 +277,7 @@ function startScene13War(
     const defenderFrom = resolveOrigin(defender, battleType === 'siege', center);
 
     const resolvedBattleBriefing = resolveHistoricalBattleBriefing(title, battleBriefing);
-    app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
+    app.scene13War.onDecision = (winner, survivors) => { (app as any).live?.onTacticalBattleDecision?.(winner); onDecision(winner, survivors); };   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
         attackerRegion: attRegion,
         defenderRegion: defRegion,

@@ -10756,6 +10756,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": -5
+        },
+        "/assets/BASHU/shu_hezhi.png": {
+            "scale": 1,
+            "offsetX": -11,
+            "offsetY": -29
         }
     },
     "folderGuides": {
