@@ -196,6 +196,8 @@ export function parsePortraitPickCommand(word: string): { index: number; bid: nu
 
 /** 立绘候选张数：主人定的 10 张 */
 export const MARSHAL_PORTRAIT_SLOTS = 10;
+/** 选出 10 张立绘后的选图保护期（毫秒）：期间尚未有人买图时，禁止别人用 0 分「像N」把正在看的池子刷掉 */
+export const MARSHAL_PORTRAIT_CULTURE_HOLD_MS = 45_000;
 /** 元帅·选目标竞价区间（起步值，上播按数据调） */
 export const MARSHAL_TARGET_MIN_BID = 30;
 export const MARSHAL_TARGET_MAX_BID = 300;
@@ -397,14 +399,14 @@ export class ViewerLive {
     /** 本局每人押了什么（uid → 注单，可多笔累加） */
     private bets = new Map<string, { name: string; side: BetSide; amount: number }[]>();
     // ── 元帅两权（2026-11-07 主人令；按资历曾达元帅开启）──
-    /** 已竞价成交的攻击目标（等着军团执行） */
-    private marshalTarget: { uid: string; viewer: string; bid: number; cityId: string; cityName: string; armyId: string } | null = null;
-    /** 整场直播只能改一次目标 */
-    private marshalTargetUsed = false;
+    /** 已竞价成交的攻击目标（等着军团执行；engaged=true 表示已实际发起对该城的攻城战） */
+    private marshalTarget: { uid: string; viewer: string; bid: number; cityId: string; cityName: string; armyId: string; enemyFactionId: string; engaged?: boolean } | null = null;
     /** 立绘：第一步选定的文化（不花钱，先到先改） */
     private portraitCulture: string | null = null;
     /** 该文化凑出的 10 张候选（路径） */
     private portraitPool: string[] = [];
+    /** 抽出 10 张候选的时刻（用于未成交前的选图保护期，防路人 0 分刷掉别人正在看的图） */
+    private portraitPoolAt = 0;
     /** 第二步成交的立绘（已生效） */
     private portraitPicked: { uid: string; viewer: string; bid: number; index: number; path: string; culture: string } | null = null;
     private wasActive = false;
@@ -459,9 +461,9 @@ export class ViewerLive {
         // 元帅两权按「本局」重来：新开一局才回到未使用
         if (this.marshalTarget) this.app.aiController?.clearViewerTargetLock?.(this.marshalTarget.armyId);
         this.marshalTarget = null;
-        this.marshalTargetUsed = false;
         this.portraitCulture = null;
         this.portraitPool = [];
+        this.portraitPoolAt = 0;
         this.portraitPicked = null;
         if (this.activeJoinBid) {
             this.acct(this.activeJoinBid.uid, this.activeJoinBid.viewer).n = Math.min(
@@ -1070,16 +1072,22 @@ export class ViewerLive {
     }
 
     /** 一个 67 文化的地质心（该文化全部据点的经纬度均值）——「相近文化」按它排距离 */
+    private cultureCentroidCache = new Map<string, { lat: number; lng: number } | null>();
     private cultureCentroid(culture: string): { lat: number; lng: number } | null {
+        const cached = this.cultureCentroidCache.get(culture);
+        if (cached !== undefined) return cached;
         const cm = this.app.cityManager;
-        if (!cm) return null;
         let n = 0, lat = 0, lng = 0;
-        for (const c of cm.getCities()) {
-            if (style62OfCity(c) !== culture) continue;
-            if (!Number.isFinite(c.latitude) || !Number.isFinite(c.longitude)) continue;
-            lat += c.latitude; lng += c.longitude; n++;
+        if (cm) {
+            for (const c of cm.getCities()) {
+                if (style62OfCity(c) !== culture) continue;
+                if (!Number.isFinite(c.latitude) || !Number.isFinite(c.longitude)) continue;
+                lat += c.latitude; lng += c.longitude; n++;
+            }
         }
-        return n > 0 ? { lat: lat / n, lng: lng / n } : null;
+        const out = n > 0 ? { lat: lat / n, lng: lng / n } : null;
+        this.cultureCentroidCache.set(culture, out);
+        return out;
     }
 
     /** 可选文化：离主角所在文化最近的、有立绘夹的文化（当前文化固定第 1 号） */
@@ -1173,14 +1181,26 @@ export class ViewerLive {
             this.recordCmd(eventId, id, name, 'pick_portrait', `像${index}`, 0, pubMs, now, 'rejected', '资历未达元帅');
             return this.note(`${name}：挑立绘要资历达到元帅才开放`);
         }
+        // 本局已经成交过一张 → 候选池冻结：不许用 0 分的「像N」把别人正在看、正在出价的池子刷掉
+        if (this.portraitPicked) {
+            this.recordCmd(eventId, id, name, 'pick_portrait', `像${index}`, 0, pubMs, now, 'rejected', '立绘已定，候选池冻结');
+            return this.note(`${name}：本局的立绘已经定过，候选池冻结。要换就发「图编号 出价」（当前 ${this.portraitPicked.bid} 分，出更高价可改）`);
+        }
+        // 刚抽出 10 张候选但还没人买图的保护期内，也不许用 0 分刷掉别人正在挑的图
+        if (this.portraitPool.length > 0 && now - this.portraitPoolAt < MARSHAL_PORTRAIT_CULTURE_HOLD_MS) {
+            const leftSec = Math.ceil((MARSHAL_PORTRAIT_CULTURE_HOLD_MS - (now - this.portraitPoolAt)) / 1000);
+            this.recordCmd(eventId, id, name, 'pick_portrait', `像${index}`, 0, pubMs, now, 'rejected', '选图保护期中');
+            return this.note(`${name}：文化【${this.portraitCulture}】10 张候选正在选图中（${leftSec}秒内无人出价才可换文化），直接发「图编号 出价」挑一张`);
+        }
         const list = this.portraitCultureList();
         const hit = list.find((c) => c.index === index);
         if (!hit) {
             this.recordCmd(eventId, id, name, 'pick_portrait', `像${index}`, 0, pubMs, now, 'rejected', '文化编号不存在');
-            return this.note(`${name}：没有这个文化编号，发「像查」看可选：${list.map((c) => `像${c.index}${c.culture}`).join(' ')}`);
+            return this.note(`${name}：没有这个文化编号，发「像」看可选：${list.map((c) => `像${c.index}${c.culture}`).join(' ')}`);
         }
         this.portraitCulture = hit.culture;
         this.portraitPool = this.portraitPoolFor(hit.culture);
+        this.portraitPoolAt = now;
         this.recordCmd(eventId, id, name, 'pick_portrait', `像${index}${hit.culture}`, 0, pubMs, now, 'executed');
         const note = this.portraitPool.length >= MARSHAL_PORTRAIT_SLOTS
             ? `（本文化 ${hit.count} 张，取 10 张）`
@@ -1281,7 +1301,8 @@ export class ViewerLive {
             pa.n = Math.min(ORDER_CAP, pa.n + prev.bid);
         }
         a.n -= bid;
-        this.marshalTarget = { uid: id, viewer: name, bid, cityId: hit.cityId, cityName: hit.name, armyId };
+        const enemyFactionId = this.app.cityManager?.getCity(hit.cityId)?.factionId ?? '';
+        this.marshalTarget = { uid: id, viewer: name, bid, cityId: hit.cityId, cityName: hit.name, armyId, enemyFactionId };
         this.app.aiController?.lockViewerTarget?.(armyId, hit.cityId);
         this.recordCmd(eventId, id, name, 'pick_target', hit.cityId, bid, pubMs, now, 'executed');
         this.save();
@@ -1290,31 +1311,63 @@ export class ViewerLive {
         return this.note(`${name} 出 ${bid} 积分，军团下一个攻击目标定为【${hit.name}】（${hit.factionName}·${hit.distKm}km·驻军${hit.troops}）${refund}`);
     }
 
-    /** 攻目标已由 AI 确认执行（锁生效）＝本场不再改 */
+    /** 开战后才锁定：军团**到达该目标城发起攻城**后不再受理改选；半路野战或尚未抵达前允许更高价改选 */
     private marshalTargetLocked(): boolean {
         const t = this.marshalTarget;
         if (!t) return false;
-        const info = this.app.aiController?.getArmyTargetInfo?.(t.armyId);
-        return info?.strategicCityId === t.cityId;
+        if (t.engaged) return true;
+        const army = this.app.playerHero?.getHostLegion?.() ?? null;
+        return !!army && army.id === t.armyId && army.getIsInCombat() && army.siegeTargetCityId === t.cityId;
     }
 
-    /** 目标失效（城没了／被自己人拿下／军团散了）→ 原数退回并解锁 */
+    /**
+     * 目标结算：
+     *   · 军团已到达该目标城发起攻城（engaged），待攻城结束（或城被本军拿下）→ **竞拍执行成功**，积分不退，解锁，可接着指定下一个目标；
+     *   · 尚未抵达开打前，城被第三方抢走／消失／军团半路解散或主角离队 → 原数退回。
+     */
     private checkMarshalTargetValidity(): void {
         const t = this.marshalTarget;
         if (!t) return;
-        const cm = this.app.cityManager;
-        const city = cm?.getCity(t.cityId);
+        const city = this.app.cityManager?.getCity(t.cityId);
         const army = this.app.playerHero?.getHostLegion?.() ?? null;
         const armyGone = !army || army.id !== t.armyId;
-        const noLongerEnemy = !city?.factionId || city.factionId === (army?.getFactionId?.() ?? '');
-        if (!armyGone && !noLongerEnemy) return;
+        const myFaction = army?.getFactionId?.() ?? '';
+
+        // 一旦军团正在围攻这座目标城，记下「已交战执行」
+        if (!armyGone && army.getIsInCombat() && army.siegeTargetCityId === t.cityId) {
+            t.engaged = true;
+            return;
+        }
+
+        // 1. 城已归我方
+        if (!armyGone && city?.factionId && myFaction && city.factionId === myFaction) {
+            this.app.aiController?.clearViewerTargetLock(t.armyId);
+            this.marshalTarget = null;
+            this.save();
+            this.note(`${t.viewer} 指定的目标【${t.cityName}】已拿下，${t.bid} 分不退；可以接着竞价指定下一个攻击目标`);
+            this.notifyViewerVoice(t.uid, `你指定的【${t.cityName}】已攻下，${t.bid}积分不退`, true);
+            return;
+        }
+
+        // 2. 已经对目标城发起过攻城战，现战斗已结束（即便攻城未克/撤退/全军覆没，指令也已实际执行，不退积分）
+        if (t.engaged) {
+            this.app.aiController?.clearViewerTargetLock(t.armyId);
+            this.marshalTarget = null;
+            this.save();
+            this.note(`${t.viewer} 指定的目标【${t.cityName}】攻城战已结束（指令已执行，${t.bid} 分不退）；可继续指定下一个目标`);
+            return;
+        }
+
+        const stillTarget = !armyGone && city?.factionId === t.enemyFactionId;
+        if (stillTarget) return;
         const a = this.acct(t.uid, t.viewer);
         a.n = Math.min(ORDER_CAP, a.n + t.bid);
-        this.app.aiController?.clearViewerTargetLock?.(t.armyId);
+        this.app.aiController?.clearViewerTargetLock(t.armyId);
         this.marshalTarget = null;
         this.save();
-        this.note(`${t.viewer} 指定的目标【${t.cityName}】已失效（${armyGone ? '军团已解散／主角离队' : '该城已不属于敌方'}），${t.bid} 积分原数退回`);
-        this.notifyViewerVoice(t.uid, `你指定的目标【${t.cityName}】已失效，${t.bid}积分已退回`, true);
+        const why = armyGone ? '未抵达目标前军团解散／主角离队' : !city ? '目标城已不存在' : '目标城已被其他势力抢先攻占';
+        this.note(`${t.viewer} 指定的目标【${t.cityName}】未及开战即失效（${why}），${t.bid} 积分原数退回`);
+        this.notifyViewerVoice(t.uid, `你指定的目标【${t.cityName}】未开战即失效，${t.bid}积分已退回`, true);
     }
 
     private recordCmd(

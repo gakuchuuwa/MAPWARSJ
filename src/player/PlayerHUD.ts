@@ -458,7 +458,8 @@ export class PlayerHUD {
         secLeft.appendChild(rankSpan);
 
         const peakRank = hero.getPeakRank();
-        // 🔴 [2026-11-07 主人令] 官职与权限一律按资历；离队/战败都不降，只有新开一局才从头开始
+        // 🔴 [2026-11-07 主人令定稿] 当前官职随功劳（离队／战败归 0 → 回平民，新势力从斥候重爬、重拿兵模）；
+        //    资历只升不降，**只管战略权限**（离队后能投靠谁、元帅指派目标与挑立绘）
         const peakScopeDesc = peakRank.id === 'civilian' ? '离队后自动寻访武将'
             : peakRank.id === 'scout' ? '离队后可选同文化势力（武将随机）'
             : peakRank.id === 'outrider' ? '离队后可选同文化武将（指定）'

@@ -133,6 +133,16 @@ import { render } from './scene13/Scene13Render';
  */
 /** 🔴 [2026-10-27 主人令「寻敌优先前方」] search 前方加权：横向距离按 ×1.5、身后距离按 ×2 计（正前方按原距离） */
 const SEARCH_LAT_K = 1.5;
+
+/**
+ * 🔴 [2026-11-07 主人报「战术模式中，探马者不和其他军团站一起，请修复」]
+ * 玩家（探马者）离本军多远就算「被甩出阵外」：本军活兵**一个都不在**这个圈里 ⇒ 并入最近的活队。
+ * 取 300：一排队距 375、同排队距 240~336（见 ROW_PITCH / COL_SPACING），
+ * 正常站在方阵里最近战友不会超过一个列距，300 绝不会误触；一旦落到阵外空地立刻算数。
+ */
+const HERO_STRAY_DIST = 300;
+/** 上面那条的检查周期（秒）：每半秒看一次，落单半秒就并队，不会来回抖 */
+const HERO_REJOIN_SEC = 0.5;
 const SEARCH_BACK_K = 2;
 const SKILL_FRENZY_SEC = 10;        // 【攻】振己威持续（10秒）
 const SKILL_FRENZY_DMG = 1.2;       // 【攻】伤害倍率（2026-11-07 主人令「先把攻战计改为1.2吧」）
@@ -1659,6 +1669,10 @@ export class Scene13WarLayer {
      */
     private heroClickOrder: { x: number; y: number } | null = null;
     heroMan: WarMan | null = null;
+    /** 🔴 [2026-11-07] 玩家「还在不在本军阵里」的检查倒计时（见 keepHeroWithTroops） */
+    private heroRejoinT = 0;
+    /** 🔴 [2026-11-07] 玩家本轮检查确实被甩在阵外（本军活兵都不在 300px 内）：归队允许往回走，见 laneSlotTarget */
+    private heroStranded = false;
     /** 🔴 [2026-09-09 主人定] 玩家阵亡复活倒计时（秒；0=活着/未在倒计时） */
     private heroRespawnTimer = 0;
     /** 本场玩家（本人 + 受控编队）击杀精灵数 */
@@ -1862,6 +1876,7 @@ export class Scene13WarLayer {
         this.playerSixShieldTimer = 0;
         this.playerSixPanicMaxTimer = 0;
         this.playerKills = 0;
+        this.heroRejoinT = 0;   // 🔴 [2026-11-07] 一开场就先查一次「玩家在不在本军阵里」
         const game = (window as any).game;
         // 小队模式：玩家不在军中也能上场（故事块小仗多半发生在平民阶段）
         const skirmishSide = this.skirmish?.playerSide;
@@ -2204,6 +2219,77 @@ export class Scene13WarLayer {
         }
         this.syncHeroToLiveSquad();
         this.diagPush('heroRespawn', { sec: +this.battleSec.toFixed(1) });
+    }
+
+    /**
+     * 🔴 [2026-11-07 主人报「战术模式中，探马者不和其他军团站一起，请修复」]
+     * **玩家永远和本军站在一起**：每半秒查一次，只要本军活兵**一个都不在** HERO_STRAY_DIST（300px）内，
+     * 就把他并到离他最近、仍有活兵的那一队去，并同步该队的阵位（lane / dep / slotY，列阵推进期间连 port 一起换），
+     * 于是不管他是开场落到了空档、队里人被清光、还是被甩在后面，都会立刻归队，绝不一个人杵在空地上。
+     *
+     * 判据与既有口径一致（2026-10-30「把玩家的行为方式和普通士兵用一个逻辑」＋ syncHeroToLiveSquad
+     * 「绝不沦为无队游魂乱跑」），这里只是把「并入最近的活队」从**只在他阵亡复活时**做，
+     * 改成**整场随时**做：
+     *   · 他正在按键盘 / 点了地面还没走到 —— 不打断，玩家手操优先；
+     *   · 他正在和人交战（m.foe） —— 不算落单，身边没战友也正常（那是他冲在敌人堆里）；
+     *   · 小队模式（skirmish，故事块小仗本来就他一个人打） —— 整段不启用。
+     *
+     * 并入那一刻**只有在开场渐显期（deployT > 0，全军本就钉在出生点的淡入阶段）才直接落到阵位**，
+     * 其余时候只改阵位不改坐标，让他自己走进本队方阵（玩家不是瞬移的棋子）。
+     * 列阵推进期间（m.march）换队必须同时换 port：推进中的目标点＝「本口锚点 + 自己的槽位」，
+     * port 不换的话他会沿着旧口继续往前，等于没归队。
+     */
+    private keepHeroWithTroops(): void {
+        const m = this.heroMan;
+        if (!this.active || this.over || !m || m.hp <= 0 || this.skirmish || !this.men.includes(m)) {
+            this.heroStranded = false;
+            return;
+        }
+        const f = m.f;
+        // 本军离他最近的活兵（不含本人、攻城武器、伏兵 lane<0 不算队）
+        let nearest = Infinity;
+        for (const u of this.men) {
+            if (u === m || u.hp <= 0 || u.hero || u.f !== f || u.siegeW) continue;
+            const d = Math.hypot(u.x - m.x, u.y - m.y);
+            if (d < nearest) nearest = d;
+        }
+        // 手操中 / 正在交战都不算「落单」：玩家手操优先，冲在敌人堆里身边没战友是正常的
+        this.heroStranded = nearest > HERO_STRAY_DIST && !this.heroInput && !this.heroClickOrder && !m.foe;
+        if (!this.heroStranded) return;
+        // 各队在场活兵的重心与平均出生纵深（dep 决定他在推进方阵里的前后排）
+        const stats = new Map<number, { x: number; y: number; n: number; dep: number }>();
+        for (const u of this.men) {
+            if (u.hp <= 0 || u.hero || u.f !== f || u.lane < 0 || u.siegeW) continue;
+            const cur = stats.get(u.lane) ?? { x: 0, y: 0, n: 0, dep: 0 };
+            cur.x += u.x; cur.y += u.y; cur.dep += u.dep; cur.n++;
+            stats.set(u.lane, cur);
+        }
+        if (!stats.size) return;                             // 本军就剩他一个：无处可并，交给索敌兜底
+        let bestLane = -1, bestD = Infinity;
+        for (const [lane, st] of stats) {
+            const d = Math.hypot(st.x / st.n - m.x, st.y / st.n - m.y);
+            if (d < bestD) { bestD = d; bestLane = lane; }
+        }
+        const st = stats.get(bestLane);
+        if (!st) return;
+        m.lane = bestLane;
+        m.dep = Math.round(st.dep / st.n);   // 站到那一队方阵的中排
+        m.slotY = 0;                          // 正对中轴（两侧各一半，与普通兵同一套槽位）
+        m.port = m.march ? (this.spawns[bestLane] ?? null) : null;
+        m.stuckT = 0;
+        m.netT = 0;
+        // 开场渐显期全军本来就钉在出生点，这一刻落位没人看得见 → 直接站进阵里
+        //   （用该队活兵的**重心**，此时他们都被钉在出生点，重心就是方阵正中；
+        //    别用「口 + 已推进距离」那一式：渐显期 adv 是 0，两式本来就重合，用重心更稳）
+        if (this.deployT > 0) {
+            let px = st.x / st.n, py = st.y / st.n;
+            [px, py] = this.fieldBound(px, py);
+            m.x = px; m.y = py; m.tx = px; m.ty = py;
+            m.prevX = px; m.prevY = py;
+            m.anchorX = px; m.anchorY = py;   // 渐显期每帧的「钉回出生点」用的是 anchor，一起改
+            m.y0 = py;
+        }
+        if (this.playerSetup && this.playerSetup.control === 'one') this.rebuildPlayerCtlLanes(this.playerSetup);
     }
 
     /**
@@ -7527,11 +7613,18 @@ export class Scene13WarLayer {
         if ((m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;   // 🔴 [2026-10-27] 玩家与士兵同一口径（原玩家免等）
         if (this.heroOrderPending(m)) return null;
         const uFwd = this.advanceVec[m.f];
+        // 🔴 [2026-11-07 主人报「战术模式中，探马者不和其他军团站一起」] **玩家本人例外**：
+        //    真被甩在阵外（本军活兵都不在 300px 内，见 keepHeroWithTroops）时，下面两道闸都不拦他 ——
+        //    ① 领队目标在身后就返回 null；② 槽位在身后一律 noBackStep、超距一律不回去。
+        //    这两条是给**士兵**立的（2026-10-27「不要往回找队」，防的是锚点落后把整队拖回头），
+        //    玩家不是整队的一份位移源，他归队的唯一目的就是「和本军站一起」——主人这一条令在先，
+        //    所以要往回走就得让他走，否则他永远站在阵外那块空地上。
+        const stranded = m.hero === true && this.heroStranded;
         // 领队自身的目标或本队队级目标在领队/本兵身后（如杀穿敌营后掉头回师）时，不套用正向防倒退阵型槽位，让队员直接走寻敌回师
-        if ((leader.tx - leader.x) * uFwd.x + (leader.ty - leader.y) * uFwd.y < -20
-            || (leader.tx - m.x) * uFwd.x + (leader.ty - m.y) * uFwd.y < -20) return null;
+        if (!stranded && ((leader.tx - leader.x) * uFwd.x + (leader.ty - leader.y) * uFwd.y < -20
+            || (leader.tx - m.x) * uFwd.x + (leader.ty - m.y) * uFwd.y < -20)) return null;
         const lt = !this.marching && !m.siegeW ? this.laneTargets.get(m.lane) : undefined;
-        if (lt && ((lt.x - leader.x) * uFwd.x + (lt.y - leader.y) * uFwd.y < -20
+        if (!stranded && lt && ((lt.x - leader.x) * uFwd.x + (lt.y - leader.y) * uFwd.y < -20
             || (lt.x - m.x) * uFwd.x + (lt.y - m.y) * uFwd.y < -20)) return null;
         const uSide = this.sideVec[m.f];
         const dDep = m.dep - leader.dep;
@@ -7545,6 +7638,7 @@ export class Scene13WarLayer {
         //   ② 槽位离自己超过 LANE_REGROUP_MAX_DIST ⇒ 不回去，返回 null 交给前方索敌兜底。
         //   ⚠️ 2026-10-03 那套「跟活动锚点必须连续跟随、不能用 8px 死区」的防颤抖算法一个字不动
         //      （返回的仍是同一套槽位坐标，只是方向/距离加了闸，见 LANE_TRACK_EPS 头注）。
+        if (stranded) return this.fieldBound(sx, sy);   // 玩家落单：槽位在哪就往哪走（含往回）
         if ((sx - m.x) ** 2 + (sy - m.y) ** 2 > LANE_REGROUP_MAX_DIST ** 2) return null;
         const [fx, fy] = this.noBackStep(m, sx, sy);
         return this.fieldBound(fx, fy);
@@ -9387,6 +9481,14 @@ export class Scene13WarLayer {
                 m.sepX = 0;
                 m.sepY = 0;
             }
+        }
+        // 🔴 [2026-11-07 主人报「战术模式中，探马者不和其他军团站一起」] 玩家与本军的归属检查放在最末尾：
+        //    这时本帧所有位移都已结算完，判定用的是真实站位；渐显期落位也已经在上面钉回 anchor 之后，
+        //    本方法改 anchor 不会被同帧覆盖。
+        this.heroRejoinT -= dt;
+        if (this.heroRejoinT <= 0) {
+            this.heroRejoinT = HERO_REJOIN_SEC;
+            this.keepHeroWithTroops();
         }
         this.updateTacticalAnimals(dt);
     }

@@ -4396,13 +4396,14 @@ export class PlayerQuestSystem {
         }
         const inCulture = lastCulture ? all.filter((r) => r.culture === lastCulture) : [];
 
-        // 势力级条目：一条势力一条（选中后随机点名）。斥候取同文化势力；先锋取同文化以外的全部势力。
-        const factionEntry = (factionId: string, members: Raw[]): Raw => {
+        // 势力级条目：一条势力一条（选中后随机点名）。
+        // 斥候＝同文化势力；先锋＝同文化势力（继承斥候）＋同文化以外的全部势力。
+        const factionEntry = (factionId: string, members: Raw[], scope: 'sameCulture' | 'any'): Raw => {
             const head = members[0];
             return {
                 kind: 'faction',
                 randomPick: true,
-                randomScope: factionOnly ? 'sameCulture' : 'any',
+                randomScope: scope,
                 id: factionId,
                 label: head.factionName,
                 cityId: head.cityId,
@@ -4416,21 +4417,26 @@ export class PlayerQuestSystem {
                 famous: members.some((m) => m.famous),
             };
         };
-        const groupByFaction = (list: Raw[]): Raw[] => {
+        const groupByFaction = (list: Raw[], scope: 'sameCulture' | 'any'): Raw[] => {
             const map = new Map<string, Raw[]>();
             for (const r of list) {
                 const arr = map.get(r.factionId);
                 if (arr) arr.push(r); else map.set(r.factionId, [r]);
             }
-            return [...map.entries()].map(([fid, members]) => factionEntry(fid, members));
+            return [...map.entries()].map(([fid, members]) => factionEntry(fid, members, scope));
         };
 
         let pickedRaw: Raw[];
         if (factionOnly) {
-            pickedRaw = groupByFaction(inCulture);
+            pickedRaw = groupByFaction(inCulture, 'sameCulture');
         } else if (globalRandom) {
+            // 先锋「拥有以上能力」：同文化武将（指定，上一阶的）+ 同文化势力（随机点名）+ 全势力（随机点名）
             const otherFactions = lastCulture ? all.filter((r) => r.culture !== lastCulture) : all;
-            pickedRaw = [...inCulture, ...groupByFaction(otherFactions)];
+            pickedRaw = [
+                ...inCulture,
+                ...groupByFaction(inCulture, 'sameCulture'),
+                ...groupByFaction(otherFactions, 'any'),
+            ];
         } else {
             pickedRaw = sameCultureOnly ? inCulture : all;
         }

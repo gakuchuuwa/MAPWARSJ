@@ -52,7 +52,6 @@ import {
     PLAYER_KILL_MERIT,
     PLAYER_BATTLE_MERIT_CAP,
     rankFor,
-    meritFloorForRank,
     type PlayerRank,
 } from './PlayerConfig';
 import { moderateLiveName } from '../live/LiveNameModeration';
@@ -624,18 +623,20 @@ export class PlayerHero {
         this.emitChange();
     }
     /**
-     * 🔴 [2026-11-07 主人令「都是看资历。不要让玩家从头玩。只有每次开局重新开头」]
-     *    当前官职 ＝ max（本势力功劳定档，资历）。资历只升不降，所以离队／战败／换势力
-     *    **都不会掉官**，只有「新开一局」才回到平民（`resetForNewGame`）。
+     * 🔴 [2026-11-07 主人令定稿] 两条线分开：
+     *   · **当前官职** ＝ 本势力功劳定档（`rankFor`）。离开势力／战败＝功劳归 0，官职回到平民，
+     *     入伍保底斥候；新势力里重新靠场次升官，**升一次重拿一次兵模**（含与旧势力重复的兵模）。
+     *   · **资历**（`getPeakRank`）只升不降，**只管战略权限**：离队后能投靠谁、元帅指派目标与挑立绘。
+     *   主人原话：「资历保留是为了观众可以继续有选择的权力，不用为了降职重来。」
      */
     public getRank(): PlayerRank {
-        const byMerit = rankFor(this.merit, this.factionId !== null);
-        const peak = PLAYER_RANKS.find((r) => r.id === this.peakRankId) ?? byMerit;
-        return PLAYER_RANKS.indexOf(peak) > PLAYER_RANKS.indexOf(byMerit) ? peak : byMerit;
+        return rankFor(this.merit, this.factionId !== null);
     }
-    /** 资历：本局最高官职，只升不降；它同时就是当前官职（权限全按它）。 */
+    /** 资历：本局最高官职，只升不降；只决定战略权限（投靠范围、元帅两权），不决定兵模与战力。 */
     public getPeakRank(): PlayerRank {
-        return this.getRank();
+        const current = this.getRank();
+        const peak = PLAYER_RANKS.find((r) => r.id === this.peakRankId) ?? current;
+        return PLAYER_RANKS.indexOf(peak) > PLAYER_RANKS.indexOf(current) ? peak : current;
     }
     private rememberRank(rank: PlayerRank): void {
         const nextIdx = PLAYER_RANKS.findIndex((r) => r.id === rank.id);
@@ -1189,11 +1190,9 @@ export class PlayerHero {
     public resetMerit(reason: string = '随军战败'): void {
         const before = this.getRank();
         const prevMerit = this.merit;
-        // 🔴 [2026-11-07 主人令「都是看资历。不要让玩家从头玩。只有每次开局重新开头」]
-        //    功劳清回**资历那一档的门槛**（不是 0），官职与一切权限按资历保留：
-        //    换势力既不用从斥候重爬，也不白送——升下一档仍要攒够差额。
-        const peakBefore = this.peakRankId;
-        this.merit = meritFloorForRank(peakBefore);
+        // 🔴 [2026-11-07 主人令定稿] **功劳真正归 0**、当前官职回平民（入伍再从斥候起），
+        //    目的是让玩家升官后**重拿兵模（含重复的）**；资历（peakRankId）不动，战略权限照旧。
+        this.merit = 0;
         this.factionId = null;
         this.army.setFactionId('');
         const rr = this.army.getRenderer();
@@ -1209,8 +1208,8 @@ export class PlayerHero {
         if (prevMerit > 0 || before.id !== 'civilian') {
             this.holdAfterDefeat?.();
             const peak = this.getPeakRank();
-            this.deps.notify(`💥 ${reason}！功劳清零到资历门槛，官职【${before.name}】按资历保留`);
-            gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} → ${this.merit}（资历门槛）、官职【${before.name}】按资历保留（资历【${peak.name}】）`);
+            this.deps.notify(`💥 ${reason}！功劳归零、官职回平民，资历【${peak.name}】保留（战略权限不变）`);
+            gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} → 0、当前官职【${before.name}】→ 平民，资历【${peak.name}】保留`);
         }
         this.emitChange();
     }
@@ -1406,13 +1405,18 @@ export class PlayerHero {
         const pool = [...landPool, ...shipPool, ...heroPool];
         if (!pool.length) return;
 
-        // 「已收到几种」只数**这个池子里的**，与别处收的互不干扰
+        // 「已收到几种」只数**这个池子里的**，与别处收的互不干扰。
+        // 🔴 [2026-11-07 主人令「目的是为了升官后重拿兵模，包括重复的」]
+        //    陆地/主将兵模改成**按势力算**：同一个兵种在别家收过，换到这家照样再收一张（收藏里就是两张，
+        //    各自记着来自哪个势力）。战船仍按全局算——`learnedShips` 是下标列表，重复登同一条船没有意义。
         const owns = (p: { key: string; ship: boolean }) => p.ship
             ? this.learnedShips.includes(p.key)
-            : this.learnedUnits.some((u) => u.unitKey === p.key);
+            : this.learnedUnits.some((u) => u.unitKey === p.key && u.factionId === this.factionId);
         const got = () => pool.filter(owns).length;
-        /** 本军团是否已拿到**陆地三排**里的一张（舰队不算）。 */
-        const hasLandOfLegion = () => this.learnedUnits.some((u) => landKeys.includes(u.unitKey));
+        /** 本军团（本势力）是否已拿到**陆地三排**里的一张（舰队不算）。 */
+        const hasLandOfLegion = () => this.learnedUnits.some(
+            (u) => u.factionId === this.factionId && landKeys.includes(u.unitKey),
+        );
 
         // 🔴 [2026-10-31 主人报「玩家加入李唐、侯君集势力后，怎么不给兵模呀」]
         //    病根：2026-10-30「三排 + 舰队 四张、四阶随机」把舰队也塞进了第一张卡 —— 入伙（斥候档）那一次
