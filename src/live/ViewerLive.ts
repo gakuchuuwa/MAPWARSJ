@@ -672,6 +672,35 @@ export class ViewerLive {
             return this.note(`${name}：改名格式为「名 新名字 积分」，当前需出 ${this.renameFloor() + 1} 积分以上`);
         }
 
+        // 1.5 观众阵营选择（默认维序者；发「投1 / 1 / 乱入者」永久成为乱入者，发「投2 / 2 / 维序者」切回维序者，投一次以后都是）
+        const campCombo = word.match(/^(?:投|选)?\s*(1|2|乱入者|乱入|乱|维序者|维序|维)\s*(\S+)$/);
+        if (campCombo && SIX_BY_WORD[campCombo[2]]) {
+            if (meta?.staleForBattle) {
+                this.recordCmd(eventId, id, name, 'skill_six', campCombo[2], ORDERS_PER_CAST, pubMs, now, 'rejected', '迟到于上一场战斗');
+                this.notifyViewerVoice(id, `${name}，上一仗刚结束，未扣积分`, true);
+                return this.note(`${name}：上一仗迟到口令已忽略，未扣积分`);
+            }
+            const blocked = this.playerSixBlockReason(SIX_BY_WORD[campCombo[2]]);
+            if (blocked) {
+                this.recordCmd(eventId, id, name, 'skill_six', campCombo[2], ORDERS_PER_CAST, pubMs, now, 'rejected', blocked);
+                this.notifyViewerVoice(id, `${name}，${blocked}，未扣积分`);
+                return this.note(`${name}：${blocked}`);
+            }
+            const choice: '1' | '2' = (campCombo[1] === '1' || campCombo[1].startsWith('乱')) ? '1' : '2';
+            this.setViewerCampChoice(id, choice);
+            word = campCombo[2];
+        } else if (/^(?:投|选)?\s*(1|2|乱入者|乱入|乱|维序者|维序|维)$/.test(word)) {
+            const choice: '1' | '2' = /^(?:投|选)?\s*(?:1|乱)/.test(word) ? '1' : '2';
+            this.setViewerCampChoice(id, choice);
+            const repLabel = choice === '1' ? '乱入者' : '维序者';
+            this.notifyViewerVoice(id, `${name}，已成为${repLabel}，以后每场自动助${repLabel}`);
+            if (this.battleOn() || this.duel) {
+                const side: 0 | 1 = this.repSideOfChoice(choice);
+                return this.note(`${name} 已成为【${repLabel}】（${this.sideName(side)}，投一次永久有效），开局9秒可发「押${choice} 分」押注，开战发六字（攻 胜 敌 混 并 败）放计`);
+            }
+            return this.note(`${name} 已成为【${repLabel}】（投一次永久有效，之后每场战斗自动助【${repLabel}】）`);
+        }
+
         // 2. 离职后战略地图投靠竞价（择落点永远是武将：斥候＝同文化势力→武将随机、探马＝同文化武将、
         //    先锋＝同文化武将＋全势力武将随机、将军起＝全图武将）
         const joinCmd = parseJoinCommand(word);
@@ -770,32 +799,7 @@ export class ViewerLive {
             return this.requestScout(id, name, scoutBid, eventId, pubMs);
         }
 
-        // 4. 战术模式选阵（1/乱＝乱入者，2/维＝维序者）与六计释放（固定 1 积分，两边独立队列 FIFO）
-        const combo = word.match(/^(1|2|乱入者|乱入|乱|维序者|维序|维)\s*(\S+)$/);
-        if (combo && SIX_BY_WORD[combo[2]]) {
-            if (meta?.staleForBattle) {
-                this.recordCmd(eventId, id, name, 'skill_six', combo[2], ORDERS_PER_CAST, pubMs, now, 'rejected', '迟到于上一场战斗');
-                this.notifyViewerVoice(id, `${name}，上一仗刚结束，未扣积分`, true);
-                return this.note(`${name}：上一仗迟到口令已忽略，未扣积分`);
-            }
-            const blocked = this.playerSixBlockReason(SIX_BY_WORD[combo[2]]);
-            if (blocked) {
-                this.recordCmd(eventId, id, name, 'skill_six', combo[2], ORDERS_PER_CAST, pubMs, now, 'rejected', blocked);
-                this.notifyViewerVoice(id, `${name}，${blocked}，未扣积分`);
-                return this.note(`${name}：${blocked}`);
-            }
-            const choice: '1' | '2' = (combo[1] === '1' || combo[1].startsWith('乱')) ? '1' : '2';
-            this.joinSide(id, this.repSideOfChoice(choice));
-            word = combo[2];
-        }
-        if (/^(1|2|乱入者|乱入|乱|维序者|维序|维)$/.test(word)) {
-            if (!this.battleOn() && !this.duel) return this.note(`${name}：现在没在打仗，进入战术模式后可发 1(乱入者) 或 2(维序者) 选阵`);
-            const choice: '1' | '2' = (word === '1' || word.startsWith('乱')) ? '1' : '2';
-            const side: 0 | 1 = this.repSideOfChoice(choice);
-            const repLabel = choice === '1' ? '乱入者' : '维序者';
-            this.joinSide(id, side);
-            return this.note(`${name} 已站到【${repLabel}】（${this.sideName(side)}），开局9秒可发「押${choice} 分」押注，开战发六字（攻 胜 敌 混 并 败）放计`);
-        }
+        // 4. 战术模式六计释放（固定 1 积分，按观众所属阵营：默认维序者，投过 1 则为乱入者，两边独立队列 FIFO）
         if (!SIX_BY_WORD[word]) return '';
         if (meta?.staleForBattle) {
             this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', '迟到于上一场战斗');
@@ -1052,7 +1056,12 @@ export class ViewerLive {
         const pSide: 0 | 1 = this.playerSideInBattle() ?? 0;
         const kSide: 0 | 1 = (1 - pSide) as 0 | 1;
         let a = 0, d = 0;
-        for (const s of this.sides.values()) { if (s === pSide) a++; else d++; }
+        const countIds = new Set<string>(this.presentIds().map(([id]) => id));
+        for (const id of this.sides.keys()) countIds.add(id);
+        for (const id of countIds) {
+            if (this.viewerCampChoice(id) === '1') a++;
+            else d++;
+        }
         const joinCandidates = (this.app.playerQuests?.getLiveJoinCandidates?.() ?? [])
             .map((c) => ({ index: c.index, label: c.label, kind: c.kind }));
         const rankId = this.app.playerHero?.getPeakRank().id;
@@ -2542,7 +2551,17 @@ export class ViewerLive {
         const k = this.grantPresent(PRESENCE_PAY);
         this.note(`在场 ${k} 人各 +${PRESENCE_PAY} 积分（每 ${PRESENCE_PAY_MS / 60_000} 分钟）`);
     }
-    private joinSide(id: string, side: 0 | 1): void { this.sides.set(id, side); this.save(); }
+    /**
+     * 观众所属阵营（持久化在 `this.sides`：1＝乱入者，0 或未设置＝维序者）：
+     * 🔴 [2026-11-07 主人定「把观众默认改为维序者，除非投1，才能成为乱入者，而且不用次次投，投一次，以后都是」]
+     */
+    private viewerCampChoice(id: string): '1' | '2' {
+        return this.sides.get(id) === 1 ? '1' : '2';
+    }
+    private setViewerCampChoice(id: string, choice: '1' | '2'): void {
+        this.sides.set(id, choice === '1' ? 1 : 0);
+        this.save();
+    }
 
     // ── 押注（统一只用「积分」orders 一本账：乱入者 VS 维序者 / 平局） ──
     /**
@@ -2560,7 +2579,7 @@ export class ViewerLive {
             }
         }
         this.save();
-        this.note(`⚔️ 乱入者 VS 维序者（9秒选阵/押注）：发 1(乱入者)/2(维序者) 选阵，发「押1 分」「押2 分」「押平 分」押注`);
+        this.note(`⚔️ 乱入者 VS 维序者（默认维序者，发 投1 成为乱入者，投一次永久有效；9秒押注：发「押1 分」「押2 分」「押平 分」）`);
     }
 
     /** 9 秒倒计时结束，开战封盘：之后不再接注，进入交战放计阶段 */
@@ -2606,10 +2625,6 @@ export class ViewerLive {
         list.push({ name, side, amount });
         this.bets.set(id, list);
         this.betStakes[side === 'att' ? 0 : side === 'def' ? 1 : 2] += amount;
-        // 押乱入者或维序者时，顺便把该观众的战术阵营切到对应一边，后续发六字直接助该方
-        if (side === 'att' || side === 'def') {
-            this.joinSide(id, this.repSideOfChoice(side === 'att' ? '1' : '2'));
-        }
         this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'queued');
         this.save();
         this.note(`${name} 押【${sideName}】${amount} 积分（余 ${a.n} 分）`);
@@ -2794,16 +2809,16 @@ export class ViewerLive {
     }
     private request(id: string, name: string, word: string, eventId = '', pubMs = Date.now()): string {
         const now = Date.now();
-        // 🔴 [2026-11-07 主人定·战术模式「乱入者 VS 维序者」]
-        //    按观众自己选的阵营入队（未显式选阵时默认站「乱入者」侧），两边各排各的队、互不阻塞。
-        const defaultSide: 0 | 1 = this.playerSideInBattle() ?? 0;
+        // 🔴 [2026-11-07 主人定「把观众默认改为维序者，除非投1，才能成为乱入者，而且不用次次投，投一次，以后都是」]
+        //    观众未投过 1 时一律按「维序者」入队；投过一次 1（投1/1/乱入者）后永久按「乱入者」入队。
         const unsubscribed = !this.sides.has(id);
-        const side: 0 | 1 = this.sides.get(id) ?? defaultSide;
-        this.sides.set(id, side);
-        const repLabel = this.repNameOfSide(side);
+        const choice = this.viewerCampChoice(id);
+        if (unsubscribed) this.sides.set(id, 0);
+        const side: 0 | 1 = this.repSideOfChoice(choice);
+        const repLabel = choice === '1' ? '乱入者' : '维序者';
         const a = this.acct(id, name);
         const avail = a.n - this.reservedOrders(id);
-        if (unsubscribed) this.notifyViewerVoice(id, `${name}，默认按${repLabel}算，发 1 选乱入者、2 选维序者`);
+        if (unsubscribed) this.notifyViewerVoice(id, `${name}，默认属维序者，发 投1 可成为乱入者`);
         if (avail < ORDERS_PER_CAST) {
             this.wanted.set(id, word);
             this.recordCmd(eventId, id, name, 'skill_six', word, ORDERS_PER_CAST, pubMs, now, 'rejected', '积分不足');
@@ -2847,8 +2862,7 @@ export class ViewerLive {
             }
             return true;
         }
-        const hasBattleState = this.wasActive || this.queue.length > 0 || this.scoutQueue.length > 0 || this.wanted.size > 0
-            || (!this.duel && this.sides.size > 0);
+        const hasBattleState = this.wasActive || this.queue.length > 0 || this.scoutQueue.length > 0 || this.wanted.size > 0;
         if (hasBattleState && !active) {
             this.endBattle();
         }
@@ -2957,7 +2971,6 @@ export class ViewerLive {
         this.lastFreeCastAtBySide = [0, 0];
         this.lastBattleEndedAtMs = now;
         this.battleStartedAtMs = 0;
-        this.sides.clear();
         this.wanted.clear();
         // 🔴 [2026-11-07 主人令「不要通胀」] 战术战奖励加了 10 分钟冷却：
         //    即时战斗每局 3～5 分钟，原来「每局结束在场各 +1」＝每局白送一分，一天能送出几百。

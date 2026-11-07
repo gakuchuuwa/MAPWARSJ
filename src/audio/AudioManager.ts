@@ -793,30 +793,7 @@ function branchPool(branch: string | null): string[] {
     return (BGM_POOL_MAP[branch] ?? []).filter((f) => AVAILABLE_BGM_FOLDERS.has(f));
 }
 
-/** 战术模式专用：全部 DE 官方背景音乐（62 首 `de_*` 文明主题曲 + `age_of_kings`） */
-const DE_BGM_FOLDERS: readonly string[] = Object.freeze(
-    BGM_ROTATION_FOLDERS.filter((f) => f.startsWith('de_') || f === 'age_of_kings'),
-);
 
-/** 67 文化分支 → 对应 DE 官方主题曲夹（无同名 `de_{分支}` 的分支映射至同源/近邻 DE 主题曲） */
-const CUSTOM_BRANCH_DE_BGM: Record<string, string> = {
-    HUGUANG: 'de_JIANGNAN',
-    HEXI: 'de_KHITAN',
-    GREECE: 'de_ATHENIANS',
-    TIBET: 'de_PURU',
-    WESTERN: 'de_CENTRAL_ASIA',
-    XIANBEI: 'de_MONGOL',
-};
-
-function deBgmForBranch(branch: string | null): string | null {
-    if (!branch) return null;
-    const direct = `de_${branch}`;
-    if (AVAILABLE_BGM_FOLDERS.has(direct)) return direct;
-    const mapped = CUSTOM_BRANCH_DE_BGM[branch];
-    if (mapped && AVAILABLE_BGM_FOLDERS.has(mapped)) return mapped;
-    const inPool = (BGM_POOL_MAP[branch] ?? []).find((f) => f.startsWith('de_') && AVAILABLE_BGM_FOLDERS.has(f));
-    return inPool ?? null;
-}
 
 function mergeSettings(raw: unknown): AudioSettings {
     const settings: AudioSettings = {
@@ -1567,8 +1544,8 @@ export class AudioManager {
     }
 
     /**
-     * 进入战术模式（Scene13）：严格锁定为参战方所属 67 文化的专属曲池（`BGM_POOL_MAP[branch]`），杜绝跨文化串歌。
-     * 若当前正在播放的曲目已属于该文化池则不打断；若不属于该文化池（或尚未播放），立即切入该文化的 DE 主题曲（或该文化池首曲）。
+     * 进入战术模式（Scene13）：按参战方所属 67 文化的专属曲池（`BGM_POOL_MAP[branch]`）随机轮播该文化的全部曲目。
+     * 若当前正在播放的曲目已属于该文化池则不打断；若不属于该文化池（或尚未播放），从该文化池内洗牌随机播放一首。
      */
     public enterScene13Bgm(cultureRegion?: string | null): void {
         const branch = resolveBranch(cultureRegion);
@@ -1577,12 +1554,7 @@ export class AudioManager {
         this.bgmShuffleQueue = [];
         if (!this.settings.enabled || !this.unlocked || this.manualBgmFolder) return;
         if (this.isBgmPlaying() && pool.length > 0 && pool.includes(this.currentBgmFolder)) return;
-        const preferredDe = deBgmForBranch(branch);
-        if (preferredDe && (pool.length === 0 || pool.includes(preferredDe))) {
-            this.playBgmFolder(preferredDe);
-        } else {
-            this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
-        }
+        this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
     }
 
     /** 退出战术模式（Scene13）：解除战术文化曲池锁定，不打断当前正在播放的音乐。 */

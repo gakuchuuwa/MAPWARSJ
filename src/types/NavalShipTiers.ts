@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 文化战船：每个文化圈一种代表战舰，按**史实**定，不为用光素材硬凑。
  *
  * 🔴 [2026-09-01 主人裁决] 定这张表只问一句话：**这个文化历史上开什么船**。
@@ -216,7 +216,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
         'INDIA_FEUDAL', 'INDIA_IMPERIAL',
     ] },
     { ship: 'DEMO_RAFT', why: '沿用内陆高原与绿洲各区当前实际使用的渡河木筏，补显式登记，不改变现用模型', regions: ['TIBET_CASTLE', 'TIBET_IMPERIAL', 'WESTERN_FEUDAL', 'WESTERN_CASTLE', 'WESTERN_IMPERIAL'] },
-    { ship: 'HULK', why: '沿用城堡日耳曼当前军团绑定的霍克船，补显式登记，不改变现用模型', regions: ['GERMANIC_CASTLE'] },
+    { ship: 'TRADE_COG', why: '🔴 [2026-11-07] 城堡日耳曼（北海—波罗的海）＝柯克船（cog），改用有帆的柯克船模型（原 HULK 是 DE 无帆空壳，项目本就禁用它当战船）', regions: ['GERMANIC_CASTLE'] },
     { ship: 'CARRACK', why: '沿用城堡拉丁当前军团绑定的卡拉克帆船，补显式登记，不改变现用模型', regions: ['LATIN_CASTLE'] },
     { ship: 'ANT_ELITE_GALLEY', why: '沿用古典孟加拉当前军团绑定的高级古典桨帆船，补显式登记，不改变现用模型', regions: ['BENGALIS_ANTIQUITY'] },
     { ship: 'ELITE_CANNON_GALLEON', why: '沿用帝国奥斯曼当前军团绑定的高级炮舰，补显式登记，不改变现用模型', regions: ['OTTOMAN_IMPERIAL'] },

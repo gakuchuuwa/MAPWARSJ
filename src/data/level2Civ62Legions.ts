@@ -949,7 +949,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'balance_yoke',
-        shipId: 'HULK',
+        shipId: 'TRADE_COG',
         commanderUnit: 'hero_ulrichvonjungingen',
         slots: [
             { type: 'elite_teutonic_knight', count: 4 },
@@ -1227,7 +1227,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'CELTS',
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
         formationMode: 'triangle',
-        shipId: 'HULK',
+        shipId: 'TRADE_COG',
         commanderUnit: 'hero_dafyddapgruffydd',
         slots: [
             { type: 'two_handed_swordsman', count: 2 },
@@ -1409,7 +1409,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'SAXONS',
         castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
         formationMode: 'fish_scale',
-        shipId: 'HULK',
+        shipId: 'TRADE_COG',
         commanderUnit: 'hero_kalfarnason',
         slots: [
             { type: 'elite_hearth_troop', count: 3 },

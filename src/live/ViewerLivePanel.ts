@@ -269,8 +269,8 @@ export class ViewerLivePanel {
         let joinGrid = '';
         if (this.duel) {
             const [stakeA, stakeD, stakeT] = s.bet.stakes;
-            const betState = s.bet.open ? '选阵/押注中' : '交战中';
-            const betLine = `<span style="font-size:${f.main}px;">${b('1')}乱入者 VS ${b('2')}维序者 · ${b('押1')}/${b('押2')}/${b('押平')} (${betState})`
+            const betState = s.bet.open ? '押注中' : '交战中';
+            const betLine = `<span style="font-size:${f.main}px;">默认${b('维序者')} · 发${b('投1')}成${b('乱入者')} · ${b('押1')}/${b('押2')}/${b('押平')} (${betState})`
                 + `<span style="font-size:${f.sub}px;color:#e0cfa9;"> 乱${b(String(stakeA))} 维${b(String(stakeD))} 平${b(String(stakeT))}</span></span>`;
             const castLine = `<span style="font-size:${f.main}px;">${b('攻 胜 敌 混 并 败')} 放计`
                 + `<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)})</span></span>`;
@@ -278,7 +278,7 @@ export class ViewerLivePanel {
         } else if (s.on) {
             const [stakeA, stakeD, stakeT] = s.bet.stakes;
             const phaseText = s.bet.open
-                ? `⏳ 选阵/押注 ${b(`${Math.max(1, s.bet.remainSec)}秒`)}：发 ${b('1')}(乱入者)/${b('2')}(维序者) · ${b('押1 分')}/${b('押2 分')}/${b('押平 分')}`
+                ? `⏳ 押注 ${b(`${Math.max(1, s.bet.remainSec)}秒`)}：默认维序者(发 ${b('投1')} 成乱入者) · ${b('押1 分')}/${b('押2 分')}/${b('押平 分')}`
                 : `⚔️ 乱入者(${s.counts[0]}人·押${b(String(stakeA))}) VS 维序者(${s.counts[1]}人·押${b(String(stakeD))})${stakeT > 0 ? `·平(押${b(String(stakeT))})` : ''}`;
             if (this.inScene13Bar) {
                 const castCompact = `<span style="font-size:${f.main}px;">${phaseText} ｜ 放计 ${b('攻 胜 敌 混 并 败')}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${ORDERS_PER_CAST}分)</span> · ${b(`名 名字 ${nextRename}`)}</span>`;
@@ -321,12 +321,12 @@ export class ViewerLivePanel {
                     const tagBorder = isPicked ? '1px solid rgba(124,212,160,0.45)' : '1px solid rgba(212,175,55,0.35)';
                     const tagColor = isPicked ? '#9ef5c2' : '#ffd700';
                     const nameColor = isPicked ? '#d6ffea' : '#f7ebd2';
-                    return `<span title="发 投${c.index} 或 投 ${esc(c.label)}" style="width:118px;height:25px;box-sizing:border-box;display:inline-flex;align-items:center;background:${boxBg};border:${boxBorder};border-radius:4px;box-shadow:${boxShadow};overflow:hidden;flex-shrink:0;">`
-                        + `<span style="width:36px;height:100%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:${tagBg};border-right:${tagBorder};color:${tagColor};font-size:12px;font-weight:800;letter-spacing:0.2px;">投${c.index}</span>`
+                    return `<span title="发 投${c.index} 或 投 ${esc(c.label)}" style="width:132px;height:25px;box-sizing:border-box;display:inline-flex;align-items:center;background:${boxBg};border:${boxBorder};border-radius:4px;box-shadow:${boxShadow};overflow:hidden;flex-shrink:0;">`
+                        + `<span style="min-width:48px;height:100%;padding:0 5px;box-sizing:border-box;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:${tagBg};border-right:${tagBorder};color:${tagColor};font-size:12px;font-weight:800;letter-spacing:0.2px;white-space:nowrap;">投${c.index}</span>`
                         + `<span style="flex:1;min-width:0;padding:0 5px;text-align:center;color:${nameColor};font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,0.85);">${esc(c.label)}</span>`
                         + `</span>`;
                 }).join('');
-                joinGrid = `<div style="width:1232px;max-width:96vw;height:37px;box-sizing:border-box;display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;gap:4px;margin:0 auto 5px;padding:5px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.65);">${cells}</div>`;
+                joinGrid = `<div style="width:1372px;max-width:96vw;height:37px;box-sizing:border-box;display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;gap:4px;margin:0 auto 5px;padding:5px 8px;background:linear-gradient(180deg, rgba(16,12,8,0.72) 0%, rgba(10,8,5,0.84) 100%);border:1px solid rgba(212,175,55,0.32);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,0.65);">${cells}</div>`;
             } else if (civilian && s.hero.peakRankId === 'civilian') {
                 // 平民没有资历：只能改名，投奔武将后升斥候才开放技能
                 statePart = hint(`单骑寻访武将 · 入伍升斥候后可在战中释放技能`);

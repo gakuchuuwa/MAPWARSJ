@@ -45,7 +45,8 @@ export const SAIL_DELTAS_BY_SHIP: Record<string, readonly SailDelta[]> = {
     DEMO_RAFT:            [{ part: 'boat_4', oy: -6 }],
 
     // ── 双桅/多桅 boat 系 ──
-    TRADE_COG:            [{ part: 'boat_3', oy: -23 }, { part: 'boat_4', oy: -15 }, { part: 'boat_5', oy: -23 }],
+    // 🔴 [2026-11-07 主人令「欧洲柯克船…游戏中没有，请添加」] TRADE_COG（柯克船）**已把帆烘进船体帧**（见 UnitAssets
+    //    `/SUCAI/COG/`，由 DE 柯克船壳 + WEST boat_4 帆按热点合成）→ 这里不再登记，否则会叠出两层帆。
     HEAVY_DEMO_SHIP:      [{ part: 'boat_2', oy: -32 }, { part: 'boat_4', oy: -12 }, { part: 'boat_6', oy: -32 }],
     HERO_STOERTEBEKER:    [{ part: 'boat_2', oy: -32 }, { part: 'boat_4', oy: -12 }, { part: 'boat_6', oy: -32 }],
     FIRE_GALLEY:          [{ part: 'boat_2', oy: -16 }, { part: 'boat_3', oy: -16 }, { part: 'boat_5', oy: -16 }, { part: 'boat_6', oy: -16 }],
