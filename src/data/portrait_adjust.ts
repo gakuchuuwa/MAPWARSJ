@@ -762,11 +762,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -9
         },
-        "/assets/CENTRAL/qianhui_baiyanhu.png": {
-            "scale": 0.89,
-            "offsetX": 0,
-            "offsetY": -8
-        },
         "/assets/BASHU/ran_d_ranshouzhong.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -7712,11 +7707,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/CENTRAL/__闲置__CENTRAL_65.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -28
-        },
         "/assets/JIANGNAN/zhengzhou_chenqingzhi.png": {
             "scale": 1.21,
             "offsetX": -7,
@@ -10701,6 +10691,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 8
+        },
+        "/assets/XIANBEI/han_d_wangbiao.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_72.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/CENTRAL/qianhui_baiyanhu.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -28
         }
     },
     "folderGuides": {
