@@ -1177,6 +1177,8 @@ export class ViewerLive {
     }
 
     private notifyViewerVoice(uid: string, text: string, force = false): void {
+        // 仅保留战略地图高价值竞价成交感谢语音（改名/选将/高阶竞价成交），日常口令回执、报错、查分、排队全部只走底栏文字，不播女声
+        if (!text.startsWith('感谢') && !text.startsWith('天子诏书达成')) return;
         const now = Date.now();
         if (!force) {
             const prev = this.lastVoiceNoticeAt.get(uid) ?? 0;
@@ -2917,7 +2919,6 @@ export class ViewerLive {
             this.lastFreeCastAt = now;
             const skillName = this.war()!.lastSkillNameOf(side);
             const repLabel = this.repNameOfSide(side);
-            speechAnnouncer.announceViewerSkill(head.viewer, repLabel, skillName, { syncNow: true });
             this.note(`${head.viewer} 助【${repLabel}】（${this.sideName(side)}）施展【${skillName}】`);
             this.report({ viewer: head.viewer, side, six: head.six, paid: false, outcome: 'cast', skillName });
             this.fulfillWanted(head.uid, head.viewer);
@@ -2942,7 +2943,6 @@ export class ViewerLive {
             castAtMs: Date.now(),
         });
         this.save();
-        speechAnnouncer.announceViewerSkill(head.viewer, '玩家', '玩家技');
         this.note(`${head.viewer} 出 ${head.bid} 积分，玩家技已释放`);
         this.fulfillWanted(head.uid, head.viewer);
     }

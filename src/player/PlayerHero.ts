@@ -1701,7 +1701,10 @@ export class PlayerHero {
         this.syncLearnedUnits();  // 退出势力：已学兵模**不回收**（终身奖励），这里只是刷新配额口径
         this.syncMoveProfile();   // 素材回官阶兜底形象（古典斥候骑兵，骑兵档）
         const rr = this.army.getRenderer();
-        if (rr) rr.factionId = undefined;
+        if (rr) {
+            rr.factionId = undefined;
+            rr.targetPos = null;
+        }
         this.deps.releaseCamera();
         this.emitChange();
     }
@@ -1897,8 +1900,33 @@ export class PlayerHero {
         // 锚点：军团正在去的城优先（追它的落脚点比追它的当前坐标更省路）
         const anchor: string | null = army.getTargetCity()?.id
             ?? roadRegistry.getNearestCityId(it.lat, it.lng)
+            ?? roadRegistry.getNearestCityId(it.lat, it.lng, 5)
+            ?? roadRegistry.getNearestCityId(it.lat, it.lng, 30)
             ?? null;
-        if (!anchor) return;
+        if (!anchor) {
+            this.chaseArmyId = null;
+            this.chaseGeneralName = null;
+            this.cancelTravel();
+            this.emitChange();
+            return;
+        }
+        const anchorCity = this.deps.cityManager.getCity(anchor);
+        if (anchorCity && getEuclideanDistance(me, { lat: anchorCity.latitude, lng: anchorCity.longitude }) <= PLAYER_CITY_ARRIVE_DIST) {
+            if (force || this.army.isIdle()) {
+                this.travelCityId = anchor;
+                this.travelPointLabel = null;
+                this.army.setTargetCity(null);
+                this.army.setOnArriveCallback(() => {});
+                const directPath = roadRegistry.findPathOnRoad(me, it);
+                const marchPts = (directPath && directPath.length >= 2)
+                    ? joinStartToRoadPolyline(me, directPath, GameConfig.ROAD.JOIN_EPS).slice(1)
+                    : [{ lat: it.lat, lng: it.lng }];
+                this.army.moveAlongPath(marchPts.map((p: any) => ({ lat: p.lat, lng: p.lng, sea: p.sea })));
+                this.deps.followCamera();
+                this.emitChange();
+            }
+            return;
+        }
         if (force || this.travelCityId !== anchor || this.army.isIdle()) {
             const keep = this.chaseArmyId;
             const ok = this.travelToCity(anchor, true);
@@ -1908,6 +1936,7 @@ export class PlayerHero {
             if (!ok) {
                 this.chaseArmyId = null;
                 this.chaseGeneralName = null;
+                this.cancelTravel();
                 this.emitChange();
             }
         }
@@ -2000,6 +2029,26 @@ export class PlayerHero {
             // 追将领：每帧续航（军团在动，锚点跟着变；够近了就会面）
             if (this.chaseArmyId) this.stepChase();
             this.stepTour();
+            // 自愈：若未追击、非环球模式，但 travelCityId / travelPointLabel 挂着而 army 却已处于 idle（例如半途中断或异步回调清掉了路径），
+            // 自动续走或清掉悬挂状态，防止 isTraveling() 恒为 true 导致玩家原地死锁
+            if (!this.chaseArmyId && !this.isTourMode() && this.army.isIdle()) {
+                if (this.travelCityId) {
+                    const targetCity = this.deps.cityManager.getCity(this.travelCityId);
+                    const pos = this.army.getPosition();
+                    if (targetCity && getEuclideanDistance(pos, { lat: targetCity.latitude, lng: targetCity.longitude }) <= PLAYER_CITY_ARRIVE_DIST) {
+                        this.handleArrive(this.travelCityId);
+                    } else {
+                        const ok = this.travelToCity(this.travelCityId, false, { allowNoGeneral: true });
+                        if (!ok) {
+                            this.cancelTravel();
+                            this.emitChange();
+                        }
+                    }
+                } else if (this.travelPointLabel) {
+                    this.cancelTravel();
+                    this.emitChange();
+                }
+            }
         }
         if (this.army.isOnSea) {
             // 🔴 [2026-09-09 修] 原来写死 MERCHANT_SHIP（商船），与「初始海上兵模是独木舟」的定案不符。
@@ -2018,6 +2067,7 @@ export class PlayerHero {
             r.isMoving = !this.isHeld() && this.army.isMarching();
             r.isAttacking = false;
             r.currentBattleType = null;
+            r.targetPos = null;
         }
     }
 

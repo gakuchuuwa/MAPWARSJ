@@ -1,4 +1,4 @@
-﻿/**
+/**
  * PlayerQuestSystem —— 据点对话与两层任务（2026-09-05 主人定）。
  *
  * 抵达据点 → 看城中武将在不在（据点锚定武将，且此刻没随军在外）→ 对话：
@@ -3394,6 +3394,7 @@ export class PlayerQuestSystem {
 
     // ── 跟踪 ──────────────────────────────────────────────
     public tick(): void {
+        if (this.deps.isScene13Active?.()) return;
         // 🔴 [2026-09-23 主人定]「只有等剧本都结束后，自动切换到乱斗模式。」
         //    剧本都结束 = 战场表里没有未打的战场（战场在战毕那一刻才标记打过，故此时已无战役在打）。
         //    切过去之后募兵（含推迟的开局首发）与 AI 寻敌随之恢复（二者都看 autoPlan）。
@@ -3452,7 +3453,12 @@ export class PlayerQuestSystem {
             } else if (targetCityId && !chaseArmyId && !headingFrontCity) {
                 // 🔴 [2026-09-09 主人定「如果武将出征，就直接去找出征的武将」]
                 //    玩家在前往据点的半路上（或刚手点据点），目标武将若已率军出征，当场改道直追其军团，不必先傻走到空城再转追。
-                const targetGen = this.pickCityGeneralForPlayer(targetCityId, { requireInCity: false, preferUnvisited: true });
+                const headingGen = this.headingTargetGeneralId
+                    ? getCityAnchoredGenerals(targetCityId).find(
+                        (g) => g.generalId === this.headingTargetGeneralId && isGeneralOnStage(g.generalId),
+                    ) ?? null
+                    : null;
+                const targetGen = headingGen ?? this.pickCityGeneralForPlayer(targetCityId, { requireInCity: false, preferUnvisited: true });
                 const marchingArmy = targetGen ? this.armyOfGeneral(targetGen.generalId) : null;
                 if (targetGen && marchingArmy) {
                     this.chaseCityId = targetCityId;

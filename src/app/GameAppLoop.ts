@@ -461,8 +461,8 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             const _tB = performance.now();
             app.cityManager.updateYear(app.timeSystem.getYear());
             const _tC = performance.now();
-            perfMonitor.noteAsyncWork('timeUpdate', _tB - _tA);
-            perfMonitor.noteAsyncWork('cityUpdateYear', _tC - _tB);
+            if (_tB - _tA >= 0.5) perfMonitor.noteAsyncWork('timeUpdate', _tB - _tA);
+            if (_tC - _tB >= 0.5) perfMonitor.noteAsyncWork('cityUpdateYear', _tC - _tB);
             perfMonitor.endTimer('calendar');
 
             if (app.historicalEventManager) {
