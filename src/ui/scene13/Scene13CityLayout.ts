@@ -1561,34 +1561,41 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         };
 
         // 🔴 [2026-11-04 主人令「设计一个最小间距，不要挨着」]
-        //    为所有城郊新增建筑、农田与道具建立统一的等轴半径包围盒与最小净距校验：
-        //    任意两栋建筑（或农田/矿点）之间必须保持充足净空（绝不挨着或叠压），违者自动跳过。
-        const placedOutskirtsItems: Array<{ x: number; y: number; r: number; isBld: boolean }> = [];
-        const outskirtsRadiusOf = (asset: string): { r: number; isBld: boolean } => {
-            if (/^DECAL_PATH/.test(asset)) return { r: 0, isBld: false };
+        // 🔴 [2026-11-07 主人令「田地之间要挨着，是不是更现实？」]
+        //    实体建筑之间保持充足净空（绝不挨着或叠压），而同一农庄的农田/水田/牧草场地块按 2×2 等距菱形网格紧挨成片（田连阡陌）。
+        const placedOutskirtsItems: Array<{ x: number; y: number; r: number; isBld: boolean; isFarm: boolean }> = [];
+        const outskirtsRadiusOf = (asset: string): { r: number; isBld: boolean; isFarm: boolean } => {
+            if (/^DECAL_PATH/.test(asset)) return { r: 0, isBld: false, isFarm: false };
             if (/MARKET|MONASTERY|SETTLEMENT|FOLWARK|WOODEN_FORT|CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ|DOCK|SHIPYARD|POENARI_CASTLE/.test(asset)) {
-                return { r: 135, isBld: true };
+                return { r: 135, isBld: true, isFarm: false };
             }
-            if (/MILL|BLACKSMITH|HOUSE|HUT|YURT|LUMBER_CAMP|MINING_CAMP|CAMP_BARRACKS|GREEK_WAR_TENT|PAGODA|SHRINE|RUINS|TORII_GATE|OUTPOST|MADRASAH|MINARET|THOLOS|ARCH_OF_CONSTANTINE|SPHINX|PYRAMIDS|STONEHENGE|HALL_OF_HEROES|PASTURE/.test(asset) && asset.startsWith('BUILDING:')) {
-                return { r: 105, isBld: true };
+            if (/MILL|BLACKSMITH|HOUSE|HUT|YURT|LUMBER_CAMP|MINING_CAMP|CAMP_BARRACKS|GREEK_WAR_TENT|PAGODA|SHRINE|RUINS|TORII_GATE|OUTPOST|MADRASAH|MINARET|THOLOS|ARCH_OF_CONSTANTINE|SPHINX|PYRAMIDS|STONEHENGE|HALL_OF_HEROES|PASTURE|BARRACKS|STABLE|TOWER/.test(asset) && asset.startsWith('BUILDING:')) {
+                return { r: 105, isBld: true, isFarm: false };
             }
-            if (/^RESOURCE:(?:FARM|RFARM|PASTURE|VINEYARD|QUARRY)/.test(asset)) {
-                return { r: 96, isBld: true };
+            if (/^RESOURCE:(?:FARM|RFARM|PASTURE)/.test(asset)) {
+                return { r: 80, isBld: true, isFarm: true };
+            }
+            if (/^RESOURCE:(?:VINEYARD|QUARRY)/.test(asset)) {
+                return { r: 90, isBld: true, isFarm: false };
             }
             if (/^MINE_/.test(asset)) {
-                return { r: 22, isBld: false };
+                return { r: 22, isBld: false, isFarm: false };
             }
-            return { r: 44, isBld: false };
+            return { r: 44, isBld: false, isFarm: false };
         };
         const MIN_OUTSKIRTS_BLD_GAP = 55;  // 任意两座建筑外缘之间的最小净空像素（中心等轴距 ≥ r1 + r2 + 55 ≈ 265~325px）
         const MIN_OUTSKIRTS_PROP_GAP = 28; // 建筑与装饰道具、或道具与道具之间的最小净空像素
 
         const canPlaceOutskirtsAt = (asset: string, px: number, py: number): boolean => {
-            const { r, isBld } = outskirtsRadiusOf(asset);
+            const { r, isBld, isFarm } = outskirtsRadiusOf(asset);
             if (r <= 0) return true;
             const isOre = /^MINE_/.test(asset);
             for (const item of placedOutskirtsItems) {
                 if (isOre && !item.isBld && item.r <= 24) continue; // 同矿脉簇内部矿石格允许拼合，但与采矿场/采石坑严格拉开
+                if (isFarm && item.isFarm) {
+                    if (Math.hypot(px - item.x, py - item.y) < 115) return false; // 田块之间贴边紧挨成片，仅防同格重叠
+                    continue;
+                }
                 const isoDist = Math.hypot(px - item.x, (py - item.y) * 1.55);
                 const minGap = (isBld && item.isBld) ? MIN_OUTSKIRTS_BLD_GAP : MIN_OUTSKIRTS_PROP_GAP;
                 if (isoDist < r + item.r + minGap) return false;
@@ -1606,9 +1613,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             frame = 0,
         ): boolean => {
             if (!canPlaceOutskirtsAt(asset, px, py)) return false;
-            const { r, isBld } = outskirtsRadiusOf(asset);
+            const { r, isBld, isFarm } = outskirtsRadiusOf(asset);
             if (r > 0) {
-                placedOutskirtsItems.push({ x: px, y: py, r, isBld });
+                placedOutskirtsItems.push({ x: px, y: py, r, isBld, isFarm });
             }
             this.ensureNatureAsset(asset);
             const sp: DecorSprite = {
@@ -1785,18 +1792,21 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             const vx = cand.x, vy = cand.y;
             if (!canPlaceOutskirtsAt(millAsset, vx, vy)) continue;
             const fieldSide = mRnd() < 0.5 ? 1 : -1;
+            // 🔴 [2026-11-07 主人令「田地之间要挨着，是不是更现实？」]
+            //    FARM / RFARM 贴图为 256×192 等距菱形（PASTURE 缩放到 0.66 后同尺寸），
+            //    沿菱形四边紧挨拼接的步进向量为 (Δx = ±114, Δy = ±86)，4 块田拼成严丝合缝的 2×2 连片农田。
             const diamondOffsets: ReadonlyArray<readonly [number, number]> = [
-                [fieldSide * 265, 25],
-                [fieldSide * 265, -155],
-                [fieldSide * 485, -65],
-                [fieldSide * 65, 175],
-                [-fieldSide * 65, 175],
+                [fieldSide * 205, 16],
+                [fieldSide * 319, 102],
+                [fieldSide * 319, -70],
+                [fieldSide * 433, 16],
+                [fieldSide * 205, 188],
+                [fieldSide * 205, -156],
             ];
             const houseOffsets: ReadonlyArray<readonly [number, number]> = [
                 [-fieldSide * 275, -45],
                 [-fieldSide * 255, 145],
                 [-fieldSide * 45, -185],
-                [fieldSide * 45, -185],
                 [-fieldSide * 335, 35],
             ];
             let validPlotsPreview = 0;
@@ -1807,7 +1817,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             for (const [dx, dy] of houseOffsets) {
                 if (isPointDryAndOpen(vx + dx, vy + dy) && canPlaceOutskirtsAt(housePool[0], vx + dx, vy + dy)) validHousesPreview++;
             }
-            if (validPlotsPreview < 2 || validHousesPreview < 2) continue;
+            if (validPlotsPreview < 3 || validHousesPreview < 2) continue;
 
             placedCenters.push({ x: vx, y: vy });
             clearTreesInRadius(vx, vy, 280);
@@ -1817,19 +1827,27 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             pushOutskirtsSprite('DECAL_PATH_1', vx, vy + 10, 0.95, -6, mRnd() < 0.5, 0);
             pushOutskirtsSprite(millAsset, vx, vy, 0.78 + mRnd() * 0.04, 0, mRnd() < 0.5, 0);
 
-            // 2) 2~3 块散落农田 / 水稻田 / 牧草场贴片（距磨坊 ≥ 265px，彼此等轴间距 ≥ 260px，绝不挨着或叠压）
+            // 2) 3~4 块连片农田 / 水稻田 / 牧草场贴片（按 2×2 等距菱形网格紧挨成片，田连阡陌）
             let plotsPlaced = 0;
-            const maxPlots = this.defenderCityType === 'big_city' ? 3 : 2;
+            const maxPlots = 4;
+            const plotScale = isNomadOutskirts ? 0.66 : 0.98;
             for (const [dx, dy] of diamondOffsets) {
                 if (plotsPlaced >= maxPlots) break;
                 const px = vx + dx, py = vy + dy;
                 if (!isPointDryAndOpen(px, py)) continue;
-                const pAsset = (canUseVineyard && plotsPlaced === maxPlots - 1 && mRnd() < 0.5)
-                    ? 'RESOURCE:VINEYARD'
-                    : plotAsset;
-                if (pushOutskirtsSprite(pAsset, px, py, pAsset === 'RESOURCE:VINEYARD' ? 0.90 : 1.0, pAsset === 'RESOURCE:VINEYARD' ? -1 : -6, false, 0)) {
+                if (pushOutskirtsSprite(plotAsset, px, py, plotScale, -6, false, 0)) {
+                    clearTreesInRadius(px, py, 120);
                     gl.carveFoundation(px, py, W, H, 1.4);
                     plotsPlaced++;
+                }
+            }
+            if (canUseVineyard) {
+                const vineSpot = findOutskirtsCompanionSpot(vx, vy, 'RESOURCE:VINEYARD', [
+                    [-fieldSide * 55, 165],
+                    [fieldSide * 55, -165],
+                ]);
+                if (vineSpot) {
+                    pushOutskirtsSprite('RESOURCE:VINEYARD', vineSpot.x, vineSpot.y, 0.88, -1, mRnd() < 0.5, 0);
                 }
             }
 

@@ -854,24 +854,27 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     const roadMaxV = 3.2;
 
     const placedPts: Array<{ x: number; y: number }> = [];
-    const placedRelicItems: Array<{ x: number; y: number; r: number; isBld: boolean }> = [];
+    const placedRelicItems: Array<{ x: number; y: number; r: number; isBld: boolean; isFarm: boolean }> = [];
     const usedUniqueAssets = new Set<string>();
 
-    const relicRadiusOf = (asset: string): { r: number; isBld: boolean } => {
-        if (/^(?:DECAL_|RESOURCE:SALT_|RESOURCE:SULFUR_CRATER)/.test(asset)) return { r: 0, isBld: false };
+    const relicRadiusOf = (asset: string): { r: number; isBld: boolean; isFarm: boolean } => {
+        if (/^(?:DECAL_|RESOURCE:SALT_|RESOURCE:SULFUR_CRATER)/.test(asset)) return { r: 0, isBld: false, isFarm: false };
         if (/MARKET|MONASTERY|SETTLEMENT|FOLWARK|WOODEN_FORT|CATHEDRAL|COLOSSEUM|AMPHITHEATRE|GREAT_PYRAMID|DOME_OF_THE_ROCK|SANCHI_STUPA|GOL_GUMBAZ|DOCK|SHIPYARD|POENARI_CASTLE/.test(asset)) {
-            return { r: 128, isBld: true };
+            return { r: 128, isBld: true, isFarm: false };
         }
         if (/MILL|BLACKSMITH|HOUSE|HUT|YURT|LUMBER_CAMP|MINING_CAMP|CAMP_BARRACKS|GREEK_WAR_TENT|PAGODA|SHRINE|RUINS|TORII_GATE|OUTPOST|MADRASAH|MINARET|THOLOS|ARCH_OF_CONSTANTINE|SPHINX|PYRAMIDS|STONEHENGE|HALL_OF_HEROES|PASTURE|BARRACKS|STABLE|TOWER/.test(asset) && asset.startsWith('BUILDING:')) {
-            return { r: 98, isBld: true };
+            return { r: 98, isBld: true, isFarm: false };
         }
-        if (/^RESOURCE:(?:FARM|RFARM|PASTURE|VINEYARD|QUARRY)/.test(asset)) {
-            return { r: 88, isBld: true };
+        if (/^RESOURCE:(?:FARM|RFARM|PASTURE)/.test(asset)) {
+            return { r: 76, isBld: true, isFarm: true };
+        }
+        if (/^RESOURCE:(?:VINEYARD|QUARRY)/.test(asset)) {
+            return { r: 84, isBld: true, isFarm: false };
         }
         if (/^MINE_/.test(asset)) {
-            return { r: 20, isBld: false };
+            return { r: 20, isBld: false, isFarm: false };
         }
-        return { r: 34, isBld: false };
+        return { r: 34, isBld: false, isFarm: false };
     };
     const MIN_RELIC_BLD_GAP = 48;
     const MIN_RELIC_PROP_GAP = 20;
@@ -929,11 +932,18 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         parentAnchor?: { x: number; y: number; minIsoDist?: number },
     ): boolean => {
         if (!isTerrainAndCorridorSafe(sx, sy, centerRx, centerRy, 220, 105)) return false;
-        const { r, isBld } = relicRadiusOf(asset);
+        const { r, isBld, isFarm } = relicRadiusOf(asset);
         if (r <= 0) return true;
         const isOre = /^MINE_/.test(asset);
         for (const item of placedRelicItems) {
             if (isOre && !item.isBld && item.r <= 22) continue;
+            // 🔴 [2026-11-07 主人令「田地之间要挨着，是不是更现实？」]
+            //    同一农庄的农田/水田/牧草场地块按 2×2 等距菱形网格紧挨成片（田连阡陌，中心距 ≈ 142px），
+            //    因此田块与田块之间允许贴边相接（仅防同格重叠 < 115px），但田块与磨坊/民居等实体建筑仍严格保持净距。
+            if (isFarm && item.isFarm) {
+                if (Math.hypot(sx - item.x, sy - item.y) < 115) return false;
+                continue;
+            }
             const isoDist = Math.hypot(sx - item.x, (sy - item.y) * 1.55);
             if (
                 !isBld
@@ -978,8 +988,8 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
         recordPt = true,
     ): void => {
         if (recordPt) placedPts.push({ x: sx, y: sy });
-        const { r, isBld } = relicRadiusOf(asset);
-        if (r > 0) placedRelicItems.push({ x: sx, y: sy, r, isBld });
+        const { r, isBld, isFarm } = relicRadiusOf(asset);
+        if (r > 0) placedRelicItems.push({ x: sx, y: sy, r, isBld, isFarm });
         const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
         this.ensureNatureAsset(asset);
         this.decorSprites.push({
@@ -1373,20 +1383,23 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             const vx = villageSpot.x, vy = villageSpot.y;
             const fieldSide = rnd() < 0.5 ? 1 : -1;
 
-            // 先校验该选点能否同时放下至少 2 间配套民居与 2 块农田，确保磨坊绝不单摆
+            // 先校验该选点能否同时放下至少 2 间配套民居与成片相连的农田块，确保磨坊绝不单摆、田块紧挨成片
             const houseCandOffsets: ReadonlyArray<readonly [number, number]> = [
                 [-fieldSide * 245, -42],
                 [-fieldSide * 225, 118],
                 [-fieldSide * 48, -158],
-                [fieldSide * 48, -158],
                 [-fieldSide * 315, 28],
             ];
+            // 🔴 [2026-11-07 主人令「田地之间要挨着，是不是更现实？」]
+            //    FARM / RFARM 贴图为 256×192 等距菱形（PASTURE 384×288 缩放到 0.66 后同尺寸），
+            //    沿菱形四边紧挨拼接的步进向量为 (Δx = ±114, Δy = ±86)，4 块田即可拼成严丝合缝的 2×2 连片农田。
             const farmCandOffsets: ReadonlyArray<readonly [number, number]> = [
-                [fieldSide * 235, 22],
-                [fieldSide * 235, -125],
-                [fieldSide * 415, -52],
-                [fieldSide * 58, 148],
-                [-fieldSide * 58, 148],
+                [fieldSide * 195, 16],
+                [fieldSide * 309, 102],
+                [fieldSide * 309, -70],
+                [fieldSide * 423, 16],
+                [fieldSide * 195, 188],
+                [fieldSide * 195, -156],
             ];
             let validHousesPreview = 0;
             for (const [dx, dy] of houseCandOffsets) {
@@ -1396,7 +1409,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             for (const [dx, dy] of farmCandOffsets) {
                 if (isTerrainAndCorridorSafe(vx + dx, vy + dy, 440, 290, 220, 105)) validFarmsPreview++;
             }
-            if (validHousesPreview < 2 || validFarmsPreview < 2) continue;
+            if (validHousesPreview < 2 || validFarmsPreview < 3) continue;
 
             clearTreesInRadius(vx, vy, 280);
             glLayer.carveFoundation(vx, vy, VW, VH, 2.6);
@@ -1407,18 +1420,17 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
             pushRelic(millAsset, vx, vy, rnd() < 0.5, 0.78, 0, 0, true);
             const millAnchor = { x: vx, y: vy, minIsoDist: 96 };
 
-            // 一侧按 DE 等距菱形网格排列 3~4 块农田 / 牧场 / 葡萄园
-            const targetPlots = 3 + (rnd() < 0.5 ? 1 : 0);
+            // 一侧按 DE 2×2 等距菱形网格紧密拼接 3~4 块连片农田 / 水田 / 牧草场（田连阡陌，田块挨着不留空隙）
+            const targetPlots = 4;
+            const plotScale = isNomad ? 0.66 : 0.98;
             let plotsPlaced = 0;
             for (const [dx, dy] of farmCandOffsets) {
                 if (plotsPlaced >= targetPlots) break;
                 const px = vx + dx, py = vy + dy;
-                const useVine = !isSnow && !isArid && !isNomad && !isAmericas && plotsPlaced === targetPlots - 1 && rnd() < 0.35;
-                const pAsset = useVine ? 'RESOURCE:VINEYARD' : plotAsset;
-                if (!canPlaceRelicItemAt(pAsset, px, py, 440, 290)) continue;
+                if (!canPlaceRelicItemAt(plotAsset, px, py, 440, 290)) continue;
                 clearTreesInRadius(px, py, 120);
                 glLayer.carveFoundation(px, py, VW, VH, 1.4);
-                pushRelic(pAsset, px, py, rnd() < 0.5, useVine ? 0.88 : 0.98, useVine ? -1 : -6, 0, false);
+                pushRelic(plotAsset, px, py, false, plotScale, -6, 0, false);
                 plotsPlaced++;
             }
 

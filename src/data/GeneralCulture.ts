@@ -1628,8 +1628,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'han_liubiao': 'CENTRAL',
     'feierganna_qutlugh': 'CENTRAL_ASIA',
     'wende_siegfried': 'GERMANIC',
-    'yinggelan_aethelfrith': 'SAXONS',   // 英格兰｜艾特尔弗里思｜据点 约克
-    'yinggelan_tostig': 'SAXONS',   // 英格兰｜托斯蒂格｜据点 约克
+    'yinggelan_aethelfrith': 'BRITONS',   // 英格兰｜艾特尔弗里思｜据点 约克
+    'yinggelan_tostig': 'BRITONS',   // 英格兰｜托斯蒂格｜据点 约克
     'nanchou_kitabatake': 'JAPAN',
     'sashan_shah': 'SASANIAN',
     'abasi_imam': 'ORIE',
@@ -1844,7 +1844,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'putaoya_almeida': 'PORTUGUESE',   // 阿尔梅达｜据点 科伦坡
     'putaoya_meineisaisi': 'PORTUGUESE',   // 梅内塞斯｜据点 休达
     'mazhaer_xiongyatilasiluo': 'MAGYAR',   // 匈雅提拉斯洛｜据点 胡内多阿拉
-    'luosi_siweinieerde': 'BULGARIANS',   // 斯维涅尔德｜据点 基辅（971 年多罗斯托隆是他的作战地，不是驻地）
+    'luosi_siweinieerde': 'SLAVIC',   // 斯维涅尔德｜据点 基辅（971 年多罗斯托隆是他的作战地，不是驻地）
     'eluosi_diguo_pashenkefu': 'SLAVIC',   // 帕什科夫｜据点 石勒喀堡
     'eluosi_diguo_bieketuofu': 'SLAVIC',   // 别克托夫｜据点 石勒喀堡
     'baizanting_likaliao': 'BYZANTINE',   // 利卡里奥｜据点 君士坦丁堡
