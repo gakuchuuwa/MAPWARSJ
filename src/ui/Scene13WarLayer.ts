@@ -135,9 +135,9 @@ import { render } from './scene13/Scene13Render';
 const SEARCH_LAT_K = 1.5;
 const SEARCH_BACK_K = 2;
 const SKILL_FRENZY_SEC = 10;        // 【攻】振己威持续（10秒）
-const SKILL_FRENZY_DMG = 1.5;       // 【攻】伤害倍率
-const SKILL_FRENZY_ATKSPD = 1.5;    // 【攻】攻速倍率
-const SKILL_FRENZY_MOVE = 1.5;      // 【攻】移速倍率（2026-11-04 主人令「移速改为1.5」）
+const SKILL_FRENZY_DMG = 1.2;       // 【攻】伤害倍率（2026-11-07 主人令「先把攻战计改为1.2吧」）
+const SKILL_FRENZY_ATKSPD = 1.2;    // 【攻】攻速倍率（2026-11-07 主人令改为 1.2）
+const SKILL_FRENZY_MOVE = 1.2;      // 【攻】移速倍率（2026-11-07 主人令改为 1.2）
 const SKILL_SHIELD_SEC = 10;        // 【胜】持续（10秒：释放瞬间回满血 + 10秒内无敌）
 const SKILL_SHIELD_TAKEN = 0;       // 【胜】受伤倍率（0＝无敌）
 const SKILL_PANIC_SEC = 10;         // 【混】乱敌阵持续（10秒，2026-11-03 主人令改 10 秒）
@@ -1364,6 +1364,15 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-30 主人令「当玩家探马的时候，混和敌的效果和将军一致。因为不是作用在自己身上。同理，先锋后，并，败的效果也和将军一致」]
         //   · 【攻·胜】作用在己方身上，按官职范围与倍率缩放（斥候本人×3 / 探马本队×2 / 先锋本排×1.5 / 将军全军×1）；
         //   · 【敌·混】（探马解锁）与【并·败】（先锋解锁）不作用在自己身上，解锁后效果直接与将军一致（100% 全军有效）。
+        // 🔴 [2026-11-07 主人定·名将VS普将六计效果差]
+        //   · 同级对战（名将VS名将、普将VS普将）：基准 ×1.0（即时三计 10%、持续三计 10秒）；
+        //   · 名将VS普将：名将释放效果 +50%（×1.5：即时三计 15%、持续三计 15秒），普将释放效果 -50%（×0.5：即时三计 5%、持续三计 5秒）；
+        //   · 单维缩放：持续类计策（胜、混、攻）仅缩放持续时间（胜战回血总量、混战掉血总量随时间等比缩放，每秒速率不变），杜绝时间×强度二次叠乘。
+        const myFamous = this.sideIsFamous[f];
+        const oppFamous = this.sideIsFamous[ef];
+        const famousDiffMult = viewer !== null
+            ? 1.0
+            : (myFamous !== oppFamous ? (myFamous ? 1.5 : 0.5) : 1.0);
         const isSelfBuffSix = six === 'gongzhan' || six === 'shengzhan';
         const scopedControl = (isSelfBuffSix && viewer !== null && this.playerSetup && this.playerSetup.side === f && this.playerSetup.control !== 'all')
             ? this.playerSetup.control
@@ -1388,8 +1397,8 @@ export class Scene13WarLayer {
         const vfxPoints: Scene13SkillVfxPoint[] = [];
         // 🔴 [2026-10-27 主人令「按三十六计史实」] 胜战计＝加防（以逸待劳）、敌战计＝偷袭（暗度陈仓），两计效果对调
         if (six === 'dizhan') {
-            const fullAddPop = Math.max(12, Math.round(this.initPool[f] * 0.10));
-            const minPop = scopedControl === 'none' ? 2 : scopedControl === 'one' ? 4 : scopedControl === 'front' ? 8 : 12;
+            const fullAddPop = Math.max(Math.round(12 * famousDiffMult), Math.round(this.initPool[f] * 0.10 * famousDiffMult));
+            const minPop = scopedControl === 'none' ? 2 : scopedControl === 'one' ? 4 : scopedControl === 'front' ? 8 : Math.round(12 * famousDiffMult);
             const addTotalPop = scopedControl === null ? fullAddPop : Math.max(minPop, Math.round(fullAddPop * scopeAmount));
             const allAnchors = ambushPts.length > 0 ? ambushPts : this.ambushAnchors(f);
             const anchorLimit = scopedControl === null ? allAnchors.length : (scopedControl === 'front' ? 3 : 1);
@@ -1405,7 +1414,7 @@ export class Scene13WarLayer {
             const customKeys = fastKey ? [fastKey] : undefined;
             this.spawnImmediateSkillReinforcements(f, addTotalPop, customKeys, vfxTargets, true, anchors);
         } else if (six === 'baizhan') {
-            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10));
+            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10 * famousDiffMult));
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 6 : 1;
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeAmount));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW && (m.defectInvulnTimer ?? 0) <= 0);
@@ -1426,18 +1435,21 @@ export class Scene13WarLayer {
             }
             if (scopedControl === null && quotaPop > 0) this.drainSidePool(ef, quotaPop, true, lastPickedKey);
         } else if (six === 'gongzhan') {
+            const frenzySec = SKILL_FRENZY_SEC * famousDiffMult;
             if (scopedControl === null) {
                 for (const m of this.men) if (m.f === f && m.hp > 0) vfxTargets.push(m);
-                this.skillFrenzyTimer[f] = SKILL_FRENZY_SEC;
+                this.skillFrenzyTimer[f] = frenzySec;
             } else {
                 for (const m of this.men) if (m.hp > 0 && this.playerLiveAffects(m)) vfxTargets.push(m);
                 this.playerSixFrenzyTimer = SKILL_FRENZY_SEC;
             }
         } else if (six === 'shengzhan') {
+            const shieldSec = SKILL_SHIELD_SEC * famousDiffMult;
             const allyLiving = this.men.filter((m) => m.f === f && m.hp > 0 && !m.siegeW);
             const livingPop = Math.max(1, allyLiving.reduce((sum, m) => sum + Math.max(1, m.pop || 1), 0));
-            const totalHealFrac = Math.min(1.0, Math.max(0.15, (this.initPool[f] * 0.10) / livingPop));
+            const baseHealFrac = Math.min(1.0, Math.max(0.15, (this.initPool[f] * 0.10) / livingPop));
             if (scopedControl === null) {
+                const totalHealFrac = Math.min(1.5, baseHealFrac * famousDiffMult);
                 this.skillPanicTimer[f] = 0;
                 for (const m of this.men) {
                     if (m.f === f && m.hp > 0) {
@@ -1446,19 +1458,19 @@ export class Scene13WarLayer {
                             const baseMaxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
                             const targetHp = Math.max(baseMaxHp, m.hp + baseMaxHp * totalHealFrac);
                             m.skillMaxHp = targetHp;
-                            m.skillHealPerSec = Math.max(0, (targetHp - m.hp) / SKILL_SHIELD_SEC);
+                            m.skillHealPerSec = Math.max(0, (targetHp - m.hp) / shieldSec);
                         }
                         vfxTargets.push(m);
                     }
                 }
-                this.skillShieldTimer[f] = SKILL_SHIELD_SEC;
+                this.skillShieldTimer[f] = shieldSec;
             } else {
                 for (const m of this.men) {
                     if (m.hp > 0 && this.playerLiveAffects(m)) {
                         m.playerPanicTimer = 0;
                         if (!m.siegeW) {
                             const baseMaxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
-                            const targetHp = Math.max(baseMaxHp, m.hp + baseMaxHp * totalHealFrac * boost);
+                            const targetHp = Math.max(baseMaxHp, m.hp + baseMaxHp * baseHealFrac * boost);
                             m.skillMaxHp = targetHp;
                             m.skillHealPerSec = Math.max(0, (targetHp - m.hp) / SKILL_SHIELD_SEC);
                         }
@@ -1476,11 +1488,12 @@ export class Scene13WarLayer {
             }
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
             const livingPop = Math.max(1, enemyLiving.reduce((sum, m) => sum + Math.max(1, m.pop || 1), 0));
-            const totalBleedFrac = Math.min(1.0, Math.max(0.10, (this.initPool[ef] * 0.10) / livingPop));
-            this.skillPanicBleedRate[ef] = totalBleedFrac / SKILL_PANIC_SEC;
+            const baseBleedFrac = Math.min(1.0, Math.max(0.10, (this.initPool[ef] * 0.10) / livingPop));
+            // 每秒掉血率恒定（基准 10秒掉10% = 1%/秒），名将控 15秒掉 15%、普将控 5秒掉 5%，不二次叠乘
+            this.skillPanicBleedRate[ef] = baseBleedFrac / SKILL_PANIC_SEC;
             if (scopedControl === null) {
                 for (const m of enemyLiving) { m.march = false; vfxTargets.push(m); }
-                this.skillPanicTimer[ef] = SKILL_PANIC_SEC;
+                this.skillPanicTimer[ef] = SKILL_PANIC_SEC * famousDiffMult;
             } else {
                 enemyLiving.sort((m1, m2) => ((m1.x - refX) ** 2 + (m1.y - refY) ** 2) - ((m2.x - refX) ** 2 + (m2.y - refY) ** 2));
                 const minCount = scopedControl === 'none' ? 3 : scopedControl === 'one' ? 8 : 20;
@@ -1531,7 +1544,7 @@ export class Scene13WarLayer {
                 }
             }
         } else if (six === 'bingzhan') {
-            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10));
+            const fullQuota = Math.max(1, Math.round(this.initPool[ef] * 0.10 * famousDiffMult));
             const minQuota = scopedControl === 'none' ? 1 : scopedControl === 'one' ? 2 : scopedControl === 'front' ? 4 : 1;
             let quotaPop = scopedControl === null ? fullQuota : Math.max(minQuota, Math.round(fullQuota * scopeAmount));
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW && !this.spawns[m.lane]?.commander);
