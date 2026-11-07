@@ -4608,9 +4608,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_108.png": {
-            "scale": 1.05,
+            "scale": 1.03,
             "offsetX": 0,
-            "offsetY": 3
+            "offsetY": 4
         },
         "/assets/WESTERN/khoja_apakehezhuo.png": {
             "scale": 1,
@@ -10708,9 +10708,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/BERBER/__闲置__BERBER_01.png": {
-            "scale": 1.19,
+            "scale": 1.14,
             "offsetX": 0,
-            "offsetY": 29
+            "offsetY": -2
         },
         "/assets/BERBER/bfe_bomilcar.png": {
             "scale": 1.17,
@@ -10721,6 +10721,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 0,
             "offsetY": 3
+        },
+        "/assets/BERBER/bfe_abdulaziz_crete.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/BERBER/muwaxide_axatafu.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/BERBER/muwaxide_yakubu.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/BERBER/gen_kusaila.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 39
+        },
+        "/assets/BERBER/gen_ali_ibn_yusuf.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 37
+        },
+        "/assets/BERBER/gen_abu_yahya.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": 38
+        },
+        "/assets/BERBER/buni_mathos.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {

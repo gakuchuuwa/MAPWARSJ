@@ -1,4 +1,4 @@
-﻿/**
+/**
  * MAPWAR 实体批量管理工具
  * 访问：http://localhost:5173/batch-manager.html
  *
@@ -7,6 +7,7 @@
 
 import { pinyin } from 'pinyin-pro';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { eliteNameViolation } from '../data/EliteNameRules';
 import type { GeneralEra } from '../data/GeneralEra';
 import { FACTION_ERA, getGeneralEra } from '../data/FactionEra';
 import { FACTIONS } from '../data/factions';
@@ -2360,7 +2361,7 @@ async function runSkillCoverageCheck(): Promise<void> {
     }
 }
 
-/** 名称审计（2026-08-03 主人定，2026-09-11 主人修订）：精锐 ≤5 字、旗号 1–2 字、武将/势力/据点 ≤9 字，均全局不重名。
+/** 名称审计（2026-08-03 主人定，2026-09-11 主人修订）：精锐番号字数按 EliteNameRules（2026-11-07：史源名不限、自拟 4–8 字）、旗号 1–2 字、武将/势力/据点 ≤9 字，均全局不重名。
  *  武将名分层标准：①本名/本名+序数（阿方索六世、腓特烈二世）——本身就是大众熟知叫法，用之；
  *  ②通用历史符号型称呼（成吉思汗、熙德、黑太子、巴巴罗萨）——大众比本名更熟且称呼已成通用名，用之；
  *  ③纯描述性绰号/封号（勇敢者、沉默者、救主、左贤王）——不像名字看不出是谁，必须用本名。 */
@@ -2368,7 +2369,6 @@ function runNameAudit(): void {
     if (!entityData) { showToast('数据未加载，请先刷新', true); return; }
     const ed = entityData; // 收窄引用（闭包内 entityData 不被 null 检查收窄）
     const problems: ValidationIssue[] = [];
-    const over5 = (s: string) => s.length > 6;  // 精锐番号 3–6 字（2026-11-04 主人改，原 ≤5）
     const over9 = (s: string) => s.length > 9;  // 武将/势力/据点 ≤9 字
     const facNameOf = (fid: string) => ed.factions.find(f => f.id === fid)?.name ?? fid;
 
@@ -2387,8 +2387,9 @@ function runNameAudit(): void {
     for (const [fid, e] of Object.entries(ed.elites)) {
         const n = e.name;
         if (!n) continue;
-        if ([...n].length < 3) problems.push({ level: 'error', msg: `精锐番号不足3字: "${n}"(${[...n].length}字) @ ${fid}（${facNameOf(fid)}）` });
-        if (over5(n)) problems.push({ level: 'error', msg: `精锐番号超6字: "${n}"(${n.length}字) @ ${fid}（${facNameOf(fid)}）` });
+        // 2026-11-07 主人令：史源名不限字数，自拟名 4–8 字（规则与判定都在 EliteNameRules）
+        const badEliteName = eliteNameViolation(n);
+        if (badEliteName) problems.push({ level: 'error', msg: `${badEliteName} @ ${fid}（${facNameOf(fid)}）` });
         if (eliteByName.has(n)) problems.push({ level: 'error', msg: `精锐番号重复: "${n}" @ ${fid}（${facNameOf(fid)}） 与 ${eliteByName.get(n)}` });
         else eliteByName.set(n, fid);
     }

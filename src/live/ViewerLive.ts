@@ -21,21 +21,34 @@ import { sixUnlockBlockReason } from '../player/PlayerLiveSkill';
 
 export const PRICE_PER_CAST = 100;
 export const ORDERS_PER_CAST = 1;
-export const ORDER_CAP = 9999;
+/**
+ * 🔴 [2026-11-07 主人令「积分筹码不要滥用，要给新人多一点机会，要让老玩家消耗更多，不要通胀」]
+ *    积分库存封顶 40（原 9999）：老观众攒到这儿就不再涨，通胀被硬压住；
+ *    放计一次 1 分，40 分够一个人在一晚上放 40 次，绰绰有余。
+ */
+export const ORDER_CAP = 40;
 export const MAX_SKILL_BID = 100;
 export const FREE_CAST_GAP_MS = 2000;
 const PRESENT_MS = 20 * 60_000;
-/** 在场发分：每隔这么久，在场的人各 +PRESENCE_PAY */
-const PRESENCE_PAY_MS = 2 * 60_000;
+/** 在场发分：每隔这么久，在场的人各 +PRESENCE_PAY（原 2 分钟 → 5 分钟：光挂着不该比说话更值钱） */
+const PRESENCE_PAY_MS = 5 * 60_000;
 const PRESENCE_PAY = 1;
-/** 发言参与加分冷却：每隔这么久在聊天室发言可得 +1 积分 */
-const CHAT_EARN_GAP_MS = 60_000;
+/** 发言参与加分冷却：每隔这么久在聊天室发言可得 +1 积分（原 1 分钟 → 3 分钟：一分钟一分等于一分钟一计） */
+const CHAT_EARN_GAP_MS = 3 * 60_000;
+/**
+ * 🔴 [2026-11-07 主人令「不要通胀」] **每天**靠发言/在场/点赞/订阅/在线新高能挣的积分上限。
+ *    新人礼包（首次来、每天回来）不计入；点赞订阅这些真实互动照给，但也算在这 15 分里。
+ *    按现在的价：15 分 = 15 计，够一个观众一晚上放得很爽；不给它设上限，挂十小时就能攒几百。
+ */
+const DAILY_EARN_CAP = 15;
 /** 战术模式战斗满这么久结束时，在场全员 +1 积分（过滤 10 秒非战术略过战） */
 const TACTICAL_BATTLE_REWARD_MIN_MS = 30_000;
-/** 第一次在本频道说话送的分（聊天只许订阅者发言 ⇒ 等于奖励新订阅的人马上能放一计） */
-const NEWCOMER_BONUS = 3;
+/** 战术战奖励的冷却：一局几分钟，每局都给等于每局白送一分（原每局都发） */
+const TACTICAL_REWARD_GAP_MS = 10 * 60_000;
+/** 第一次在本频道说话送的分（原 3 → 5：新来的人一句「押1 5」就够押一把、还剩两个计） */
+const NEWCOMER_BONUS = 5;
 /** 每天第一次说话送的分（老观众隔天回来） */
-const RETURN_BONUS = 3;
+const RETURN_BONUS = 2;
 /** 订阅涨 1，在场每人加的分（一计） */
 const SUB_BONUS = 3;
 const GOAL_BONUS_MAX = 3;
@@ -57,9 +70,10 @@ const SIX_BY_WORD: Record<string, TacticalSixSet> = {
 };
 const TRAD_TO_SIMP: Record<string, string> = {
     勝: '胜', 敵: '敌', 並: '并', 併: '并', 敗: '败', 戰: '战', 選: '选', 號: '号',
+    莊: '庄', 閒: '闲', 註: '注',
 };
 function normalizeCommand(text: string): string {
-    return text.normalize('NFKC').trim().replace(/[勝敵並併敗戰選號]/g, (c) => TRAD_TO_SIMP[c] ?? c);
+    return text.normalize('NFKC').trim().replace(/[勝敵並併敗戰選號莊閒註]/g, (c) => TRAD_TO_SIMP[c] ?? c);
 }
 
 /** 玩家爆发技口令：技3 / 技 3；数字就是这次出的积分。 */
@@ -112,6 +126,36 @@ export function parseJoinCommand(word: string): { index: number; query?: string;
  */
 function quickBattleModeOn(): boolean {
     return new URLSearchParams(window.location.search).has('quickbattle');
+}
+
+/**
+ * 🔴 [2026-11-07 主人令「添加一个下注积分，走百家乐的模式。和释放积分分开。一局定个时间，时间内战斗不结束，算和」]
+ *    下注是**第二本账**（筹码 chips），与放计用的积分（orders）完全分开：放计不能花筹码，下注不能花积分。
+ *    三门下注照百家乐：押攻方（庄）1 赔 0.95、押守方（闲）1 赔 1、押和 1 赔 8；
+ *    开和局时押庄/押闲的本金原数退回（百家乐的和局规则），只有押和的收 8 倍。
+ */
+export type BetSide = 'att' | 'def' | 'draw';
+export const BET_BANKER_MULT = 0.95;
+export const BET_PLAYER_MULT = 1;
+export const BET_TIE_MULT = 8;
+/** 每局开窗时把**快输光的人**补足到这个数（原「补足到 10」：每局白送 10 = 老观众永远输不完，筹码彻底通胀） */
+export const BET_START_CHIPS = 3;
+/** 第一次下注的新人本金（给足一局能押几把，输光了靠每局补的 3 慢慢回） */
+export const BET_NEWCOMER_CHIPS = 10;
+/** 筹码库存封顶：赢到 60 就到顶，剩下的留给下注去消耗 */
+export const BET_CHIP_CAP = 60;
+export const BET_SIDE_NAMES: Readonly<Record<BetSide, string>> = { att: '攻方', def: '守方', draw: '和' };
+
+/** 下注口令：押1 10 / 押2 5 / 押和 3 / 押攻 10 / 押守 5（不写数目＝1） */
+export function parseBetCommand(word: string): { side: BetSide; amount: number } | null {
+    const m = word.match(/^(?:押|下注|买)\s*(攻|庄|守|闲|和|平|[12])\s*([1-9]\d*)?$/);
+    if (!m) return null;
+    const k = m[1];
+    const side: BetSide = (k === '攻' || k === '庄' || k === '1') ? 'att'
+        : (k === '守' || k === '闲' || k === '2') ? 'def' : 'draw';
+    const amount = m[2] !== undefined ? Number(m[2]) : 1;
+    if (!Number.isSafeInteger(amount) || amount <= 0) return null;
+    return { side, amount };
 }
 
 /** 常见直播聊天机器人：它们在聊天里发消息，但不是观众 */
@@ -195,7 +239,7 @@ export interface LiveCommandRecord {
     eventId: string;
     uid: string;
     viewer: string;
-    commandType: 'skill_burst' | 'skill_six' | 'rename' | 'join_choice';
+    commandType: 'skill_burst' | 'skill_six' | 'rename' | 'join_choice' | 'bet';
     params: string;
     pointsBid: number;
     publishedAtMs: number;
@@ -210,8 +254,8 @@ export interface ViewerLedger {
     revision?: number;
     day: string;
     wallets: Record<string, { name: string; cents: number }>;
-    /** seen：最近一次说话（刷新页面后在场不断）；day：最近一次说话是哪天（每天第一次来送分） */
-    orders: Record<string, { name: string; n: number; seen?: number; day?: string }>;
+    /** seen：最近一次说话（刷新页面后在场不断）；day：最近一次说话是哪天（每天第一次来送分）；earned/earnDay：当天已挣的分（每日上限） */
+    orders: Record<string, { name: string; n: number; seen?: number; day?: string; earned?: number; earnDay?: string }>;
     handled: string[];
     queue?: ViewerQueuedCast[];
     scoutQueue?: ViewerQueuedScoutCast[];
@@ -225,6 +269,8 @@ export interface ViewerLedger {
     joinHighestBid?: number;
     joinLastLabel?: string;
     experimentalSupport?: ExperimentalSupportStats;
+    /** 下注筹码（第二本账，与 orders 分开）：每局开窗补足、赢下的留着 */
+    chips?: Record<string, { name: string; n: number }>;
 }
 
 export interface ViewerCastResult {
@@ -244,6 +290,10 @@ interface OrderAcct {
     lastEarn: number;
     /** 最近一次说话的日期（today() 格式）；空＝还没在聊天里说过话 */
     day: string;
+    /** 当天靠发言/在场/点赞等挣到的分（每日上限用） */
+    earned?: number;
+    /** earned 是哪天的（跨天清零） */
+    earnDay?: string;
 }
 const CN_NUM = ['零', '一', '两', '三', '四', '五', '六'];
 
@@ -286,11 +336,21 @@ export class ViewerLive {
     private battleId = 0;
     private battleStartedAtMs = 0;
     private lastBattleEndedAtMs = 0;
+    /** 上一次发「战术战结束在场 +1」的时刻（10 分钟冷却，防每局白送） */
+    private lastTacticalRewardAt = 0;
     private lastFreeCastAt = 0;
     /** 即时战斗两边各自的放出时刻（攻=0 / 守=1）；普通模式不用 */
     private lastFreeCastAtBySide: [number, number] = [0, 0];
     /** 本页是不是即时战斗观战局（构造时看一次 URL，免得每 tick 解析） */
     private readonly duel = quickBattleModeOn();
+    // ── 下注（百家乐式，第二本账）──
+    private chips = new Map<string, { name: string; n: number }>();
+    /** 本局下注窗口是否还开着（选人画面那 30 秒开着，开战封盘） */
+    private betOpen = false;
+    /** 本局三门的注额合计，仅用于播报与面板 */
+    private betStakes: [number, number, number] = [0, 0, 0];
+    /** 本局每人押了什么（uid → 注单，可多笔累加） */
+    private bets = new Map<string, { name: string; side: BetSide; amount: number }[]>();
     private wasActive = false;
     private day = '';
     private log: string[] = [];
@@ -336,6 +396,10 @@ export class ViewerLive {
         this.joinHighestBid = 0;
         this.joinLastLabel = '';
         this.prevJoinHighestBid = 0;
+        // 新一局：本局注单作废、窗口关掉（开战时会重开），筹码保留
+        this.bets.clear();
+        this.betStakes = [0, 0, 0];
+        this.betOpen = false;
         if (this.activeJoinBid) {
             this.acct(this.activeJoinBid.uid, this.activeJoinBid.viewer).n = Math.min(
                 ORDER_CAP,
@@ -381,8 +445,19 @@ export class ViewerLive {
 
         // 0. 查自己的积分（聊天机器人看不到游戏账本，只能在画面上回 + 晓晓语音播报）
         if (word === '积分' || word === '查分') {
-            this.notifyViewerVoice(id, `${name}，你现有${acc.n}积分`);
-            return this.note(`${name} 现有 ${acc.n} 积分`);
+            const chips = this.chips.get(id)?.n ?? 0;
+            this.notifyViewerVoice(id, `${name}，你现有${acc.n}积分、${chips}筹码`);
+            return this.note(`${name} 现有 ${acc.n} 积分、${chips} 筹码（积分放计、筹码下注，两本账分开）`);
+        }
+
+        // 0.5 下注（百家乐式三门：押攻方/押守方/押和；用筹码，与放计积分分开）
+        const betCmd = parseBetCommand(word);
+        if (betCmd) {
+            return this.handleBetCommand(id, name, betCmd.side, betCmd.amount, eventId, pubMs);
+        }
+        if (/^(?:押|下注|买)\s*\S*$/.test(word)) {
+            this.notifyViewerVoice(id, `${name}，下注写法「押1 10」「押2 10」「押和 5」`);
+            return this.note(`${name}：下注写法「押1 10」（攻方）/「押2 10」（守方）/「押和 5」`);
         }
 
         // 1. 玩家改名竞拍（平民起全阶段可用，整局持续抬价）
@@ -902,7 +977,7 @@ export class ViewerLive {
         this.rollDay();
         let a = this.orders.get(id);
         if (!a) {
-            a = { name, n: 0, seen: 0, lastEarn: 0, day: '' };
+            a = { name, n: 0, seen: 0, lastEarn: 0, day: '', earned: 0, earnDay: '' };
             this.orders.set(id, a);
         }
         a.name = name;
@@ -915,9 +990,18 @@ export class ViewerLive {
         a.day = t;
         this.lastChatEarnAt.set(id, Date.now());
         const bonus = isNew ? NEWCOMER_BONUS : RETURN_BONUS;
-        this.addOrders(id, name, bonus, true);
+        this.addGift(id, name, bonus);   // 礼包不计每日上限：新人进门就能玩
         this.note(isNew ? `欢迎 ${name} 入营，送 ${bonus} 积分` : `${name} 今日回营，送 ${bonus} 积分`);
         this.save();
+    }
+    /** 礼包加分：绕开每日上限（首次来 / 每天回来），但库存照样封在 ORDER_CAP */
+    private addGift(id: string, name: string, n: number): void {
+        const a = this.acct(id, name);
+        const before = a.n;
+        a.n = Math.max(a.n, Math.min(ORDER_CAP, a.n + n));
+        a.lastEarn = Date.now();
+        if (before < ORDERS_PER_CAST && a.n >= ORDERS_PER_CAST) this.note(`${name} 有 ${a.n} 积分，可以放计了`);
+        this.fulfillWanted(id, name);
     }
     /** 在场发分：每 PRESENCE_PAY_MS 一次，只在唯一记账页发（别的页面拿到的是账本副本） */
     private payPresence(): void {
@@ -930,10 +1014,147 @@ export class ViewerLive {
     }
     private joinSide(id: string, side: 0 | 1): void { this.sides.set(id, side); this.save(); }
 
+    // ── 下注（百家乐式，第二本账） ──────────────────────────
+    /** 筹码账：第一次来下注的人给一份新人本金（之后只能靠每局补的 3 和赢回来的） */
+    private chipAcct(id: string, name: string): { name: string; n: number } {
+        let c = this.chips.get(id);
+        if (!c) {
+            c = { name, n: BET_NEWCOMER_CHIPS };
+            this.chips.set(id, c);
+        }
+        c.name = name;
+        return c;
+    }
+
+    /**
+     * 每局开窗（回到选人画面时调）：清掉上一局注单。
+     * 🔴 [2026-11-07 主人令「让老玩家消耗更多，不要通胀」] 只给**快输光的人**补到 3：
+     *    原先是每局把每个在场者都补满 10 —— 等于每局白送 10，赢的留下、输的补满，筹码永远涨。
+     *    现在带着库存来的老观众一分不补，输掉的只能靠下一局那 3 点慢慢回，长期下注必定缩水（赔率本身就带抽水）。
+     */
+    public beginBetRound(): void {
+        this.betOpen = true;
+        this.betStakes = [0, 0, 0];
+        this.bets.clear();
+        if (this.isAccountingPage()) {
+            for (const [id, name] of this.presentIds()) {
+                const c = this.chipAcct(id, name);
+                if (c.n < BET_START_CHIPS) c.n = BET_START_CHIPS;
+            }
+        }
+        this.save();
+        this.note(`本局下注开着：押1 / 押2 / 押和（用筹码，和放计积分分开算），开战封盘`);
+    }
+
+    /** 开战封盘：之后不接注，等这一局结算 */
+    public sealBetRound(): void {
+        if (!this.betOpen) return;
+        this.betOpen = false;
+        const [a, d, t] = this.betStakes;
+        this.save();
+        if (a + d + t <= 0) return;
+        this.note(`封盘：攻方 ${a} / 守方 ${d} / 和 ${t} 筹码`);
+        speechAnnouncer.announceViewerNotice(`封盘，攻方${a}注，守方${d}注，和${t}注`);
+    }
+
+    /** 下注窗口是否开着（面板用） */
+    public isBetOpen(): boolean { return this.betOpen; }
+    public getBetStakes(): [number, number, number] { return [...this.betStakes] as [number, number, number]; }
+
+    private handleBetCommand(
+        id: string, name: string, side: BetSide, amount: number, eventId: string, pubMs: number,
+    ): string {
+        const now = Date.now();
+        const sideName = BET_SIDE_NAMES[side];
+        if (!this.betOpen) {
+            this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'rejected', '已封盘');
+            this.notifyViewerVoice(id, `${name}，本局已封盘，下一局开战前再押`);
+            return this.note(`${name}：本局已封盘，等下一局开窗`);
+        }
+        const c = this.chipAcct(id, name);
+        if (c.n < amount) {
+            this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'rejected', '筹码不足');
+            this.notifyViewerVoice(id, `${name}，只剩${c.n}筹码，下不了${amount}`);
+            return this.note(`${name}：押${sideName}要 ${amount} 筹码，现有 ${c.n}`);
+        }
+        c.n -= amount;
+        const list = this.bets.get(id) ?? [];
+        list.push({ name, side, amount });
+        this.bets.set(id, list);
+        this.betStakes[side === 'att' ? 0 : side === 'def' ? 1 : 2] += amount;
+        this.recordCmd(eventId, id, name, 'bet', `${sideName}${amount}`, amount, pubMs, now, 'queued');
+        this.save();
+        this.note(`${name} 押${sideName} ${amount} 筹码（余 ${c.n}）`);
+        return `${name} 押${sideName} ${amount} 筹码，余 ${c.n}（攻方赔 0.95、守方赔 1、和赔 8）`;
+    }
+
+    /**
+     * 结算本局：开攻方 / 开守方 / 开和。
+     * 百家乐的和局规则：押攻/押守的本金原数退回，只有押和收 8 倍（本金另退）。
+     */
+    public settleBetRound(result: BetSide): void {
+        const stakes = this.betStakes[0] + this.betStakes[1] + this.betStakes[2];
+        let winners = 0;
+        let payout = 0;
+        for (const [id, list] of this.bets) {
+            let back = 0;
+            for (const b of list) {
+                if (result === 'draw') {
+                    back += b.side === 'draw'
+                        ? b.amount + Math.floor(b.amount * BET_TIE_MULT)   // 押和：本金 + 8 倍
+                        : b.amount;                                        // 押庄/押闲：和局退本金
+                } else if (b.side === result) {
+                    back += b.amount + Math.floor(b.amount * (result === 'att' ? BET_BANKER_MULT : BET_PLAYER_MULT));
+                }
+            }
+            if (back <= 0) continue;
+            const c = this.chipAcct(id, list[0].name);
+            c.n = Math.min(BET_CHIP_CAP, c.n + back);
+            winners++;
+            payout += back;
+        }
+        const label = BET_SIDE_NAMES[result];
+        this.bets.clear();
+        this.betStakes = [0, 0, 0];
+        this.betOpen = false;
+        this.save();
+        if (stakes <= 0) return;
+        this.note(`本局开${label}：${winners} 人中注，共得 ${payout} 筹码`);
+        speechAnnouncer.announceViewerNotice(`本局开${label}，${winners}人中注`);
+    }
+
+    /** 这一局没打成（开战入口拒绝、两军没接上）：注单原数退回，不算输赢 */
+    public refundBetRound(): void {
+        let back = 0;
+        for (const [id, list] of this.bets) {
+            const total = list.reduce((s, b) => s + b.amount, 0);
+            if (total <= 0) continue;
+            const c = this.chipAcct(id, list[0].name);
+            c.n = Math.min(BET_CHIP_CAP, c.n + total);
+            back += total;
+        }
+        this.bets.clear();
+        this.betStakes = [0, 0, 0];
+        this.betOpen = false;
+        this.save();
+        if (back > 0) this.note(`这一局没打成，${back} 筹码已原数退回`);
+    }
+
+    /**
+     * 挣积分（发言 / 在场 / 点赞 / 订阅 / 在线新高）。
+     * 🔴 [2026-11-07 主人令「积分筹码不要滥用…不要通胀」] 每天最多挣 DAILY_EARN_CAP：
+     *    老观众挂一天也只能多 15 分，剩下的靠每天登录礼包和真实互动；新人礼包另走 addGift，不受此限。
+     */
     private addOrders(id: string, name: string, n: number, bulk = false): void {
         const a = this.acct(id, name);
+        const t = this.today();
+        if (a.earnDay !== t) { a.earnDay = t; a.earned = 0; }
+        const left = Math.max(0, DAILY_EARN_CAP - (a.earned ?? 0));
+        if (left <= 0) return;                       // 今天的份已经挣满，不再加
+        const give = Math.min(n, left);
         const before = a.n;
-        a.n = Math.max(a.n, Math.min(ORDER_CAP, a.n + n));
+        a.n = Math.max(a.n, Math.min(ORDER_CAP, a.n + give));
+        a.earned = (a.earned ?? 0) + give;
         a.lastEarn = Date.now();
         if (!bulk && before < ORDERS_PER_CAST && a.n >= ORDERS_PER_CAST) this.note(`${name} 攒够 ${ORDERS_PER_CAST} 积分，可以放计了`);
         this.fulfillWanted(id, name);
@@ -1184,7 +1405,11 @@ export class ViewerLive {
         this.battleStartedAtMs = 0;
         this.sides.clear();
         this.wanted.clear();
-        if (foughtMs >= TACTICAL_BATTLE_REWARD_MIN_MS && this.isAccountingPage()) {
+        // 🔴 [2026-11-07 主人令「不要通胀」] 战术战奖励加了 10 分钟冷却：
+        //    即时战斗每局 3～5 分钟，原来「每局结束在场各 +1」＝每局白送一分，一天能送出几百。
+        if (foughtMs >= TACTICAL_BATTLE_REWARD_MIN_MS && this.isAccountingPage()
+            && now - this.lastTacticalRewardAt >= TACTICAL_REWARD_GAP_MS) {
+            this.lastTacticalRewardAt = now;
             const k = this.grantPresent(1);
             if (k > 0) this.note(`本场战术战结束，在场 ${k} 人各 +1 积分`);
         }
@@ -1248,6 +1473,7 @@ export class ViewerLive {
             // 0 分但说过话的也留着：认得出「第一次来」，刷新页面后在场不断
             orders: Object.fromEntries([...this.orders].filter(([, a]) => a.n > 0 || a.day).map(([id, a]) => [id, {
                 name: a.name, n: a.n, ...(a.seen > 0 ? { seen: a.seen } : {}), ...(a.day ? { day: a.day } : {}),
+                ...(a.earned ? { earned: a.earned } : {}), ...(a.earnDay ? { earnDay: a.earnDay } : {}),
             }])),
             handled: [...this.handled],
             queue: this.queue.map((q) => ({ ...q })),
@@ -1262,6 +1488,9 @@ export class ViewerLive {
             joinHighestBid: this.joinHighestBid,
             joinLastLabel: this.joinLastLabel,
             experimentalSupport: { ...this.experimentalSupport },
+            chips: Object.fromEntries([...this.chips]
+                .filter(([, c]) => c.n > 0)
+                .map(([id, c]) => [id, { name: c.name, n: c.n }])),
         };
     }
 
@@ -1287,7 +1516,9 @@ export class ViewerLive {
             if (isChatBot(o.name)) continue;   // 修复前混进账本的机器人账号，读账本时清掉
             if (Number.isFinite(o.n) && (o.n > 0 || day)) {
                 const seen = Number.isFinite(o.seen) && Number(o.seen) > 0 ? Math.min(nowMs, Number(o.seen)) : 0;
-                this.orders.set(id, { name: String(o.name || '观众'), n: Math.min(ORDER_CAP, Math.max(0, Math.floor(o.n))), seen, lastEarn: 0, day });
+                const earned = Number.isFinite(o.earned) ? Math.max(0, Math.floor(Number(o.earned))) : 0;
+                const earnDay = typeof o.earnDay === 'string' ? o.earnDay : '';
+                this.orders.set(id, { name: String(o.name || '观众'), n: Math.min(ORDER_CAP, Math.max(0, Math.floor(o.n))), seen, lastEarn: 0, day, earned, earnDay });
             }
         }
         // 投靠目标只存在于这一页的游戏里：刷新或换页接管后，游戏里已没有这趟行程，账上挂着的出价原数退回
@@ -1358,6 +1589,14 @@ export class ViewerLive {
             && (SIX_BY_WORD[x[1]] || scoutBidOf(x[1]) !== null),
         ));
         this.scoutSeq = Number.isSafeInteger(ledger.scoutSeq) ? Math.max(0, Number(ledger.scoutSeq)) : 0;
+        // 下注筹码（第二本账）：跨页/刷新保留；注单只在本局有效，不进账本
+        this.chips.clear();
+        for (const [id, c] of Object.entries(ledger.chips ?? {})) {
+            const n = Number(c?.n);
+            if (Number.isFinite(n) && n > 0) {
+                this.chips.set(id, { name: String(c?.name || '观众'), n: Math.min(BET_CHIP_CAP, Math.floor(n)) });
+            }
+        }
         const topRename = this.renameHistory[this.renameHistory.length - 1];
         if (topRename) {
             const mod = moderateLiveName(topRename.appliedName);

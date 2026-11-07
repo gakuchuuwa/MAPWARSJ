@@ -36,7 +36,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     uesugi: { name: '毘沙門衆', tier: 3 },
     takeda: { name: '武田赤备', tier: 2 },
     oda: { name: '织田马廻众', tier: 1 },
-    // 🔴 [2026-11-01] 番号「赤备」只 2 字，不合「番号 3–6 字」红线（coverage/结构审计两处报）；正名「真田赤备」
+    // [2026-11-01] 番号「赤备」只 2 字，当时按「番号 3–6 字」判不合格；正名「真田赤备」（2026-11-07 起字数按 `EliteNameRules`：史源名不限、自拟 4–8 字）
     sanada: { name: '真田赤备', tier: 2 },   // 真田｜统帅 真田幸村｜T2 乘 1.3｜大坂夏之阵突入德川本阵，战术突击名垂青史
     tokugawa: { name: '旗本先手', tier: 0 },   // 德川｜统帅 德川家康｜T0 乘 1.5｜关原合战与大坂之阵终结战国，开创江户二百年
     amago: { name: '新宫党', tier: 2 },   // 尼子｜统帅 尼子国久｜T2 乘 1.3｜尼子氏突击主力，吉田郡山道及出云战术王牌

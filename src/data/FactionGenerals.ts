@@ -2739,7 +2739,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_julius_caesar', cityId: 'city_luoma', generalName: '恺撒', portrait: '/assets/ROMA/gen_julius_caesar.png', eliteName: '罗马第十骑士军团', eliteTier: 0 },
+        { generalId: 'gen_julius_caesar', cityId: 'city_luoma', generalName: '恺撒', portrait: '/assets/ROMA/gen_julius_caesar.png', eliteName: '第十骑士', eliteTier: 0 },   // 精锐改名（2026-11-07）：原「罗马第十骑士军团」8 字超长；史实番号 Legio X Equestris（第十骑士军团），恺撒高卢战争的头号军团，只留号码与特征
 
 
 
@@ -3239,7 +3239,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'falanji_baodewen', cityId: 'city_bali', generalName: '鲍德温九世', portrait: '/assets/FRANKS/falanji_baodewen.png', eliteName: '耶路撒冷王国军', eliteTier: 2 },
+        { generalId: 'falanji_baodewen', cityId: 'city_bali', generalName: '鲍德温九世', portrait: '/assets/FRANKS/falanji_baodewen.png', eliteName: '圣城王军', eliteTier: 2 },   // 精锐改名（2026-11-07）：原「耶路撒冷王国军」7 字超长；耶路撒冷王国通制王军，鲍德温九世、居伊、鲍德温四世、鲍德温一世四王共用（T2 上限 4 人，故不为凑一对一另编番号）
 
 
 
@@ -11887,7 +11887,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'erzhu_erzhurong', cityId: 'city_xiurongchuan', generalName: '尔朱荣', portrait: '/assets/WEI/erzhu_erzhurong.png', eliteName: '尔朱荣契胡亲军', eliteTier: 0 },
+        { generalId: 'erzhu_erzhurong', cityId: 'city_xiurongchuan', generalName: '尔朱荣', portrait: '/assets/WEI/erzhu_erzhurong.png', eliteName: '秀容契胡', eliteTier: 0 },   // 精锐改名（2026-11-07）：原「尔朱荣契胡亲军」8 字超长且带人名（播报会念成「尔朱荣亲率尔朱荣契胡亲军」）；尔朱荣据秀容川（即本据点）、部众为契胡，故取「秀容契胡」
 
 
 
@@ -13037,7 +13037,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'changshan_yangyanzhao', factionId: 'song', cityId: 'city_daomaguan', generalName: '杨延昭', portrait: '/assets/WEI/changshan_yangyanzhao.png', eliteName: '杨家将枪兵', eliteTier: 3 },
+        { generalId: 'changshan_yangyanzhao', factionId: 'song', cityId: 'city_daomaguan', generalName: '杨延昭', portrait: '/assets/WEI/changshan_yangyanzhao.png', eliteName: '倒马寒锋', eliteTier: 3 },   // 精锐改名（2026-11-07）：原「杨家将枪兵」既像兵种名、又是杨业一门的统称，不专属延昭；「倒马」＝据点倒马关，史载延昭守此一线、辽人惮之（《宋史·杨延昭传》），「寒锋」应北地戍边；4 字合 3–6 字规范，与 ExpeditionLegions 的旧档名一致（原先条目把它盖掉了）
 
 
 
@@ -13832,7 +13832,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    saipulusi: { generalId: 'saipulusi_juyi', cityId: 'city_nikexiya', generalName: '居伊', portrait: '/assets/FRANKS/saipulusi_juyi.png', eliteName: '耶路撒冷王国军', eliteTier: 2 },
+    saipulusi: { generalId: 'saipulusi_juyi', cityId: 'city_nikexiya', generalName: '居伊', portrait: '/assets/FRANKS/saipulusi_juyi.png', eliteName: '圣城王军', eliteTier: 2 },
 
 
 
@@ -14231,7 +14231,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_baodewen_iv', cityId: 'city_ake', generalName: '鲍德温四世', portrait: '/assets/FRANKS/gen_baodewen_iv.png', eliteName: '耶路撒冷王国军', eliteTier: 2 },
+        { generalId: 'gen_baodewen_iv', cityId: 'city_ake', generalName: '鲍德温四世', portrait: '/assets/FRANKS/gen_baodewen_iv.png', eliteName: '圣城王军', eliteTier: 2 },
 
 
 
@@ -14247,7 +14247,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'aosiruowen_baodewen', cityId: 'city_ake', generalName: '鲍德温一世', portrait: '/assets/FRANKS/aosiruowen_baodewen.png', eliteName: '耶路撒冷王国军', eliteTier: 2 },
+        { generalId: 'aosiruowen_baodewen', cityId: 'city_ake', generalName: '鲍德温一世', portrait: '/assets/FRANKS/aosiruowen_baodewen.png', eliteName: '圣城王军', eliteTier: 2 },
 
 
 
@@ -14586,7 +14586,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    mamuluke: { generalId: 'mamuluke_baibaisi', cityId: 'city_damasikusi', generalName: '拜巴尔斯', portrait: '/assets/ORIE/mamuluke_baibaisi.png', eliteName: '巴赫里马穆鲁克', eliteTier: 0 },
+    mamuluke: { generalId: 'mamuluke_baibaisi', cityId: 'city_damasikusi', generalName: '拜巴尔斯', portrait: '/assets/ORIE/mamuluke_baibaisi.png', eliteName: '巴赫里骑', eliteTier: 0 },   // 精锐改名（2026-11-07）：原「巴赫里马穆鲁克」7 字超长；拜巴尔斯出自 Bahriyya（河洲马穆鲁克）系，留音译、去长通称
 
 
 
@@ -15682,7 +15682,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'maidina_halide', cityId: 'city_maidina', generalName: '哈立德', portrait: '/assets/ORIE/maidina_halide.png', eliteName: '哈立德机动卫队', eliteTier: 0 },
+        { generalId: 'maidina_halide', cityId: 'city_maidina', generalName: '哈立德', portrait: '/assets/ORIE/maidina_halide.png', eliteName: '麦地那铁骑', eliteTier: 0 },   // 精锐改名（2026-11-07）：原「哈立德机动卫队」7 字超长、带人名与编制词「卫队」；据点麦地那，故取「麦地那铁骑」
 
 
 

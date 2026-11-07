@@ -209,6 +209,8 @@ interface ActiveBattle {
     retried?: boolean;
     /** 战术画布开始淡入（真正看得见）的时刻 */
     visibleAt?: number;
+    /** 本局到点判和（防重复收场） */
+    timedOut?: boolean;
 }
 
 /** 盖住战略地图的深色底：即时战斗里只看得到选人面板和战术画面 */
@@ -270,6 +272,8 @@ class QuickBattle {
         // 打开页面第一次出选择画面也倒计时 30 秒自动开局（主人：「不是让你设计30秒开局吗」）
         this.say(`${QuickBattle.AUTO_NEXT_SEC} 秒内可以选择，到时自动开局（不选＝随机）。`);
         this.startCountdown();
+        // 🔴 [2026-11-07] 下注窗口就在这 30 秒里开着（回到选择画面即开窗，开战封盘）
+        this.app.live?.beginBetRound?.();
         setInterval(() => this.watch(), 400);
         // 遮罩跟着战术画面走：选人、等进场、战术素材载入中、收场都盖住战略地图；战术画面开始淡入才撤。
         // 🔴 战术画布进场先全透明，等第一帧真正画出来（最多 10 秒）才淡入（Scene13WarLayer.entryFadePending）；
@@ -508,6 +512,13 @@ class QuickBattle {
     // 🔴 [2026-11-05 主人令「战斗结束后，回到选择画面，给30秒选择时间，30秒后自动再开一局，循环播放」]
 
     private static readonly AUTO_NEXT_SEC = 30;
+    /**
+     * 🔴 [2026-11-07 主人令「一局定个时间，时间内战斗不结束，算和」]
+     *    本局时限 5 分钟，从战术画面真正看得见算起；到点还没分出胜负就收场、判和（押和赔 8 倍）。
+     *    定 300 秒的依据：本机实测 74 局即时战斗，平均 106 秒，超过 300 秒的约一成——
+     *    正好让「和」有真实概率，赔率 8 倍既不过分也不至于永远开不出来。
+     */
+    private static readonly ROUND_LIMIT_MS = 300_000;
     private goBtn: HTMLButtonElement | null = null;
     private countdownTimer: number | null = null;
 
@@ -544,6 +555,9 @@ class QuickBattle {
             this.say(`开战失败：${msg}`, true);
             this.cleanup();
             this.panel.classList.remove('qb-hidden');
+            // 押在这一局上的筹码原数退回（这一仗没打成，不该白吃注），再把下一局的下注窗口打开
+            this.app.live?.refundBetRound?.();
+            this.app.live?.beginBetRound?.();
             this.startCountdown();
         }
     }
@@ -589,6 +603,8 @@ class QuickBattle {
         const att: Side = { factionId: attFactionId, general: attG, troops: randInt(lo, hi) };
         const def: Side = { factionId: defFactionId, general: defG, troops: randInt(lo, hi) };
 
+        // 🔴 [2026-11-07] 真正开打这一刻封盘：之后不再接注，等本局结算（攻/守/和）
+        this.app.live?.sealBetRound?.();
         this.clearWorldLegions();
         const switchedOn = this.forceTacticalOn();
         if (kind === 'siege') this.startSiege(att, def, city!);
@@ -851,6 +867,14 @@ class QuickBattle {
             a.visibleAt = performance.now();
             this.report('visible', a, { afterMs: Math.round(a.visibleAt - a.startedAt) });
         }
+        // 🔴 [2026-11-07 主人令「一局定个时间，时间内战斗不结束，算和」]
+        //    从战术画面真正看得见算起，满 5 分钟还没分胜负 → 收场判和（下注按和局结算）。
+        //    只判「引擎里这一仗还没结算」的情形：已经结算、正在演残局的，交给下面的正常收场。
+        if (!a.timedOut && a.visibleAt && this.battleStillRunning(a)
+            && performance.now() - a.visibleAt > QuickBattle.ROUND_LIMIT_MS) {
+            this.endByTimeLimit(a);
+            return;
+        }
         // 引擎已结算、战术画面却没收：正常对局里是「跟随军团阵亡 → 镜头切到别的军团」才收场，
         // 即时战斗地图上没有别的军团，会一直挂着（2026-11-05 实测攻方全灭后卡住）。
         // 结算后等 6 秒（看残局），再按 GameAppCombatHooks.onRegionalBattleEnd 同一套调用收场。
@@ -890,6 +914,34 @@ class QuickBattle {
             || cs.getActiveBattles().some((b) => !b.isOver && ids.some((id) => b.attacker.id === id || b.defender.id === id));
     }
 
+    /** 本局的赢家（下注结算用）：攻城看据点归谁，野战看谁还活着，都没了算和 */
+    private resultSide(a: ActiveBattle): 'att' | 'def' | 'draw' {
+        if (a.kind === 'siege') {
+            const owner = this.app.cityManager.getCity(a.city!.id)?.factionId;
+            return owner === a.att.factionId ? 'att' : 'def';
+        }
+        const attAlive = !a.attacker.isDestroyed && a.attacker.getTroops() > 0;
+        const defAlive = !!a.defender && !a.defender.isDestroyed && a.defender.getTroops() > 0;
+        if (attAlive && !defAlive) return 'att';
+        if (defAlive && !attAlive) return 'def';
+        return 'draw';
+    }
+
+    /** 🔴 [2026-11-07] 本局时间到还没分胜负：收场判和（押攻/押守退本金，押和赔 8 倍） */
+    private endByTimeLimit(a: ActiveBattle): void {
+        a.timedOut = true;
+        this.report('timeout', a, { limitMs: QuickBattle.ROUND_LIMIT_MS });
+        this.app.live?.settleBetRound?.('draw');
+        try { this.app.scene13War?.stop('本局时间到'); } catch { /* 收场失败也要退出 */ }
+        try { if (this.app.battleScene?.isActive?.()) this.app.battleScene.exit(); } catch { /* 同上 */ }
+        this.cleanup();
+        this.say(`本局时间到（${Math.round(QuickBattle.ROUND_LIMIT_MS / 60_000)} 分钟）未分胜负，算和。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局（不选＝随机）。`);
+        this.backdrop.say('');
+        this.panel.classList.remove('qb-hidden');
+        this.app.live?.beginBetRound?.();
+        this.startCountdown();
+    }
+
     private finish(fought: boolean): void {
         const a = this.active;
         if (!a) return;
@@ -904,12 +956,17 @@ class QuickBattle {
                 result = attAlive && !defAlive ? `攻方 ${a.att.general.generalName} 胜`
                     : defAlive && !attAlive ? `守方 ${a.def.general.generalName} 胜` : '胜负未分';
             }
+            // 🔴 [2026-11-07] 有结果的局按下注结算；「胜负未分」（双方都还在）算和
+            this.app.live?.settleBetRound?.(this.resultSide(a));
         }
         if (fought) this.report('finished', a, { result });
         this.cleanup();
         if (fought) this.say(`上一仗结果：${result}。${QuickBattle.AUTO_NEXT_SEC} 秒内可以重选，到时自动开下一局（不选＝随机）。`);
         this.backdrop.say('');
         this.panel.classList.remove('qb-hidden');
+        // 回到选人画面＝下一局的下注窗口打开（这一局没打成时，settle 没跑，注单要退）
+        if (!fought) this.app.live?.refundBetRound?.();
+        this.app.live?.beginBetRound?.();
         this.startCountdown();
     }
 

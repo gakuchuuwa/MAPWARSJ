@@ -258,6 +258,19 @@ function getFolderGuide(folder: string): PortraitFolderGuide {
     };
 }
 
+function getImageHashTag(path: string): string {
+    for (const cat of portraitCatalog) {
+        const found = cat.images.find((img) => img.path === path);
+        if (found?.hash) return found.hash.slice(0, 10);
+    }
+    return '';
+}
+
+function buildThumbUrl(path: string): string {
+    const v = getImageHashTag(path);
+    return `/api/portrait-thumb?path=${encodeURIComponent(path)}${v ? `&v=${v}` : ''}`;
+}
+
 function getFilteredImages(): string[] {
     const cat = portraitCatalog.find((c) => c.folder === selectedFolder);
     if (!cat) return [];
@@ -295,7 +308,7 @@ function renderGrid(): void {
             <div class="pt-grid-canvas-wrap">
               <div class="pt-grid-img-slot">
                 <div class="img-wrapper">
-                  <img src="/api/portrait-thumb?path=${encodeURIComponent(path)}" data-img-path="${path}" loading="lazy" decoding="async" />
+                  <img src="${buildThumbUrl(path)}" data-img-path="${path}" loading="lazy" decoding="async" />
                   <div class="pt-crosshair">
                     <div class="ch-face" style="left: ${ovalCx - ovalW / 2}%; top: ${ovalCy - ovalH / 2}%; width: ${ovalW}%; height: ${ovalH}%;"></div>
                     <div class="ch-top" style="top: ${topPct}%;"></div>
@@ -744,6 +757,10 @@ function bindEvents(): void {
                 loadDraftForSelected();
                 renderGrid();
                 const total = portraitCatalog.reduce((n, c) => n + c.images.length, 0);
+                await loadGenerals();
+                checkDuplicatePortraits();
+                await loadDuplicates();
+                updateBindPanel();
                 showSaveToast(`✓ 已按磁盘重扫：${portraitCatalog.length} 个文件夹 / ${total} 张立绘`
                     + `\n当前夹 ${selectedFolder} 已重读；若刚在磁盘上改过名，这里显示的就是新名字。`, false, true);
             } catch (err) {
@@ -974,7 +991,8 @@ function updateBindPanel(): void {
         ? `应属文件夹：<strong style="color:#f5d78e;">${gen.portraitFolder}</strong>（<code>/assets/${gen.portraitFolder}/</code> · ${gen.cultureLabel}${gen.cityName ? ` · ${gen.cityName}` : ''}）<br>当前立绘：<code>${gen.portrait || '(无)'}</code>`
         : '';
     if (gen?.portrait) {
-        els.genPortrait.innerHTML = `<img src="${gen.portrait}" alt="${gen.generalName}" />`;
+        const previewSrc = /^\/assets\/[^/]+\/[^/]+\.png$/i.test(gen.portrait) ? buildThumbUrl(gen.portrait) : gen.portrait;
+        els.genPortrait.innerHTML = `<img src="${previewSrc}" alt="${gen.generalName}" />`;
         els.genPortrait.classList.add('has-img');
     } else {
         els.genPortrait.innerHTML = '';
@@ -1050,6 +1068,9 @@ async function bindSelectedImageToGeneralInner(): Promise<void> {
         if (boundPath) {
             document.getElementById(`card-${safeCardId(boundPath)}`)?.classList.add('is-active');
         }
+        checkDuplicatePortraits();
+        await loadDuplicates();
+        updateBindPanel();
     } catch (e) {
         els.bindStatus.textContent = `✗ 绑定失败：${e instanceof Error ? e.message : String(e)}`;
         els.bindStatus.style.color = '#e08a7a';

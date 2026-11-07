@@ -27,6 +27,8 @@ export class ViewerLivePanel {
     private lastBodyHtml = '';
     private ytStatusEl: HTMLDivElement | null = null;
     private ytVideoInput: HTMLInputElement | null = null;
+    /** 即时战斗（`?quickbattle=1`）：观众自选攻守、六字放计、押注——主行不按官职显示 */
+    private readonly duel = new URLSearchParams(window.location.search).has('quickbattle');
 
     constructor(private readonly live: ViewerLive, private readonly link: YouTubeOfficialBridge) {
         const howTo = new HowToPlayCard();
@@ -126,7 +128,7 @@ export class ViewerLivePanel {
 
         this.root.style.cssText = `
             position:fixed; left:50%; bottom:0; top:auto; transform:translateX(-50%); transform-origin:bottom center;
-            z-index:10054; width:max-content; max-width:94vw; display:block;
+            z-index:${this.duel ? 20060 : 10054}; width:max-content; max-width:94vw; display:block;
             background:${bg}; border:${border}; border-radius:${radius};
             padding:${pad}; color:#f5e6c8; font-family:${FONT}; font-size:${FS.sub}px; line-height:1.35;
             box-shadow:${shadow};
@@ -265,7 +267,16 @@ export class ViewerLivePanel {
         const hint = (t: string) => `<span style="font-size:${f.sub}px;color:#dfc28c;">${t}</span>`;
         let mainRow: string;
         let joinGrid = '';
-        if (s.on && !civilian) {
+        if (this.duel) {
+            // 🔴 [2026-11-07] 即时战斗没有公共玩家：主行只说这一局能做什么（选边 / 下注 / 放计），不按官职铺开
+            const [stakeA, stakeD, stakeT] = this.live.getBetStakes();
+            const betState = this.live.isBetOpen() ? '开窗' : '封盘';
+            const betLine = `<span style="font-size:${f.main}px;">${b('押1')}/${b('押2')}/${b('押和')} 下注·${betState}`
+                + `<span style="font-size:${f.sub}px;color:#e0cfa9;"> 攻${b(String(stakeA))} 守${b(String(stakeD))} 和${b(String(stakeT))}</span></span>`;
+            const castLine = `<span style="font-size:${f.main}px;">${b('攻 胜 敌 混 并 败')} 放计`
+                + `<span style="font-size:${f.sub}px;color:#e0cfa9;">(${b(`${ORDERS_PER_CAST}分`)})</span></span>`;
+            mainRow = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;">${titleBadge}${sep}${betLine}${sep}${castLine}${liveInfoPart}</div>`;
+        } else if (s.on && !civilian) {
             const sixUi = allowedSixWordsForRank(s.hero.rankId);
             if (this.inScene13Bar) {
                 const castCompact = `<span style="font-size:${f.main}px;">📢 ${b(sixUi.words)}<span style="font-size:${f.sub}px;color:#e0cfa9;">(${ORDERS_PER_CAST}分)</span> · ${b('技1')} · ${b(`名 名字 ${nextRename}`)}</span>`;
@@ -344,7 +355,9 @@ export class ViewerLivePanel {
         name.value = '测试观众1';
         name.style.cssText = 'width:100%;box-sizing:border-box;margin-bottom:6px;background:#221a12;color:#f3e6c8;border:1px solid #6b5a3a;padding:3px 6px;';
         const cmdInput = document.createElement('input');
-        cmdInput.placeholder = '输入弹幕口令回车发送（如：名 龙骧 4 / 投1 3 / 技4 / 攻）';
+        cmdInput.placeholder = this.duel
+            ? '输入弹幕口令回车发送（如：1 / 2 / 押1 5 / 攻）'
+            : '输入弹幕口令回车发送（如：名 龙骧 4 / 投1 3 / 技4 / 攻）';
         cmdInput.style.cssText = name.style.cssText;
         cmdInput.addEventListener('keydown', (e) => {
             e.stopPropagation();
@@ -403,11 +416,31 @@ export class ViewerLivePanel {
             doConnect();
         });
         ytRow.append(ytVideo, ytBtn);
+        /**
+         * 🔴 [2026-11-07 主人「这些是什么，无用请删除」]
+         *   「技N（玩家爆发技）」与「名…（改主角名）」「投…（投靠武将竞价）」都是**战略局公共玩家那一套**的测试按钮：
+         *   即时战斗里没有玩家、没有官职、没有投靠（`playerQuests` 也停了），点下去全是空操作，
+         *   已经在 castViewerSkill / playerSkillBlockReason 里被拒。所以这一页只留这一局真能用的按钮：
+         *   六字放计、1/2 选边、押注；战略局页原样保留。
+         */
+        const modeRows: (HTMLElement | Node)[] = [row([...WORDS], send)];
+        if (this.duel) {
+            const sideLabel = document.createElement('div');
+            sideLabel.textContent = '即时战斗选边（1攻方 / 2守方）：';
+            sideLabel.style.cssText = 'color:#8fd3ff;font-size:12px;margin-bottom:2px;';
+            const betLabel = document.createElement('div');
+            betLabel.textContent = '下注（用筹码，与放计积分分开）：';
+            betLabel.style.cssText = 'color:#8fd3ff;font-size:12px;margin-bottom:2px;';
+            modeRows.push(sideLabel, row(['1', '2'], send), betLabel, row(['押1 5', '押2 5', '押和 2'], send));
+        } else {
+            modeRows.push(
+                row(['技3', '技4', '技5'], send),
+                row(['名 龙骧 3', '名 虎贲 5', '投1 2', '投2 4'], send),
+            );
+        }
         this.dev.append(
             ytLabel, ytStatus, ytRow, label, name, cmdInput,
-            row([...WORDS], send),
-            row(['技3', '技4', '技5'], send),
-            row(['名 龙骧 3', '名 虎贲 5', '投1 2', '投2 4'], send),
+            ...modeRows,
             row(['点赞+10', '订阅+1', '在线+5'], (w) => {
                 const g = this.live.snapshot().goal;
                 if (w === '点赞+10') {

@@ -2177,7 +2177,9 @@ export default defineConfig({
                     }
                     // [2026-08-30 卡顿修复] 网格用原图(1.1MB)当缩略图 → 一个文件夹 75 张 = 82MB 全量解码。
                     // 这里按需生成 765px 原宽 WebP（约 70KB，缩 16 倍），磁盘缓存，原图更新后自动失效。
-                    const q = new URL(req.url ?? '', 'http://x').searchParams.get('path') ?? '';
+                    const parsedUrl = new URL(req.url ?? '', 'http://x');
+                    const q = parsedUrl.searchParams.get('path') ?? '';
+                    const hasContentTag = Boolean(parsedUrl.searchParams.get('v'));
                     if (!/^\/assets\/[^/]+\/[^/]+\.png$/i.test(q)) {
                         res.statusCode = 400;
                         res.end(JSON.stringify({ ok: false, error: '非法图片路径' }));
@@ -2208,7 +2210,7 @@ export default defineConfig({
                         // 🔴 [2026-11-07] 网格 URL 只带 path，内容换了 URL 不变：若还发 max-age=3600，
                         //   浏览器会自己再缓存一小时，于是「服务端已经是新图、页面上还是旧脸」——
                         //   同一张卡上名字与画面对不上。开发工具一律 no-store，永远现取。
-                        res.setHeader('Cache-Control', 'no-store');
+                        res.setHeader('Cache-Control', hasContentTag ? 'private, max-age=3600' : 'no-store');
                         fs.createReadStream(cacheFile).pipe(res);
                         return;
                     }
@@ -2219,7 +2221,7 @@ export default defineConfig({
                         .then(() => {
                             fs.renameSync(cacheFile + '.tmp', cacheFile);
                             res.setHeader('Content-Type', 'image/webp');
-                            res.setHeader('Cache-Control', 'no-store');
+                            res.setHeader('Cache-Control', hasContentTag ? 'private, max-age=3600' : 'no-store');
                             fs.createReadStream(cacheFile).pipe(res);
                         })
                         .catch((err: any) => {
@@ -2311,7 +2313,9 @@ export default defineConfig({
                         res.setHeader('Content-Type', 'application/json');
                         res.end(JSON.stringify(obj));
                     };
-                    const q = new URL(req.url ?? '', 'http://x').searchParams.get('path') ?? '';
+                    const parsedUrl = new URL(req.url ?? '', 'http://x');
+                    const q = parsedUrl.searchParams.get('path') ?? '';
+                    const hasContentTag = Boolean(parsedUrl.searchParams.get('v'));
                     if (!/^\/assets\/[^/]+\/[^/]+\.png$/i.test(q)) {
                         send(400, { ok: false, reason: '非法图片路径' });
                         return;
