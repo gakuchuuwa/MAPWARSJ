@@ -544,7 +544,8 @@ export class LegionManager {
                 if (targetCity) {
                     // [FIX] targetCity 可能是旧引用（城市易手后 factionId 过期），每帧用 CityManager 最新数据校正
                     const latestTargetCity = this.cityManager.getCity(targetCity.id) || targetCity;
-                    const isHostile = latestTargetCity.factionId !== army.getFactionId() && latestTargetCity.id !== (army as any).lastDrawCityId;
+                    const isAllied = (globalThis as any).window?.game?.playerHero?.isAlliedPair?.(latestTargetCity.factionId, army.getFactionId()) === true;
+                    const isHostile = latestTargetCity.factionId !== army.getFactionId() && !isAllied && latestTargetCity.id !== (army as any).lastDrawCityId;
                     if (isHostile) {
                         const dist = getEuclideanDistance(newPos, { lat: latestTargetCity.latitude, lng: latestTargetCity.longitude });
                         // Arrival threshold
@@ -706,7 +707,7 @@ export class LegionManager {
             (army as any).lastDrawCityId = null;
         }
 
-        if (targetCity.factionId === army.getFactionId()) {
+        if (targetCity.factionId === army.getFactionId() || (globalThis as any).window?.game?.playerHero?.isAlliedPair?.(targetCity.factionId, army.getFactionId())) {
             army.setTargetCity(null);
             army.stopMovement(true);
             return 'siege';
@@ -819,7 +820,7 @@ export class LegionManager {
             if (army && (army as any).lastDrawCityId && entry.id === (army as any).lastDrawCityId) continue;
             const city = this.cityManager.getCity(entry.id);
             if (!city) continue;
-            if (!city.factionId || city.factionId === factionId) continue;
+            if (!city.factionId || city.factionId === factionId || (globalThis as any).window?.game?.playerHero?.isAlliedPair?.(city.factionId, factionId)) continue;
             // 🔴 [2026-10-21 主人报「子受卡住不能动了」] 百岁模式不打自己老家：军团随武将换了势力（子受＝商），
             //    出身据点仍属出身势力（牧野后朝歌归周）时，这座城不算拦路敌城——否则一出城就被 ZOC 钉在城下反复攻自己老家。
             if (

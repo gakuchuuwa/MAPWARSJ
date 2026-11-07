@@ -373,6 +373,14 @@ export interface PlayerSaveState {
     tourShipDir?: string | null;
     /** 观众竞价选定的主角立绘（元帅权限）；缺省 = 还没选 */
     livePortrait?: string | null;
+    /** 公侯/国王/皇帝：独立封邦势力名、旗号一字、主公同盟势力 ID、根据地据点 ID、自定义军团名与三排兵模、已合军武将 ID 列表 */
+    ownFactionName?: string;
+    ownFlagChar?: string;
+    alliedFactionId?: string | null;
+    fiefCityId?: string | null;
+    customLegionName?: string;
+    customRowUnits?: [string, string, string] | null;
+    mergedGenerals?: string[];
 }
 
 /** Scene13 用的玩家布置（由 Scene13WarLayer.start 通过 window.game.playerHero 取） */
@@ -701,6 +709,62 @@ export class PlayerHero {
         const next = typeof path === 'string' && path.trim() ? path.trim() : null;
         if (this.livePortrait === next) return;
         this.livePortrait = next;
+        this.emitChange();
+    }
+
+    // ── 公侯 / 国王 / 皇帝（第 7～9 阶战略权限状态） ─────────────────────
+    /** 玩家封侯自立时的专属势力 ID */
+    public static readonly OWN_FACTION_ID = 'player_own';
+    /** 玩家自建势力名字（国王阶观众竞拍可改，默认「探马军」） */
+    public ownFactionName: string = '探马军';
+    /** 玩家自建势力旗号单字（国王阶观众竞拍可改，默认「探」） */
+    public ownFlagChar: string = '探';
+    /** 封侯时绑定的原主公同盟势力 ID（互不攻伐；国王阶比较 3 倍实力用） */
+    public alliedFactionId: string | null = null;
+    /** 公侯根据地据点 ID */
+    public fiefCityId: string | null = null;
+    /** 公侯自定义军团名（观众竞拍可改） */
+    public customLegionName: string = '';
+    /** 公侯自定义三排兵模（前排/中坚/后排的 unitKey） */
+    public customRowUnits: [string, string, string] | null = null;
+    /** 国王/皇帝阶已征召合入本军的武将 ID 列表 */
+    public mergedGenerals: string[] = [];
+
+    /** 判断当前资历是否已达到指定官阶（战略权限解锁判据） */
+    public hasRankPrivilege(minRank: PlayerRankId): boolean {
+        const peakIdx = PLAYER_RANKS.findIndex((r) => r.id === this.getPeakRank().id);
+        const minIdx = PLAYER_RANKS.findIndex((r) => r.id === minRank);
+        return peakIdx >= 0 && minIdx >= 0 && peakIdx >= minIdx;
+    }
+
+    /** 判断两个势力是否为「玩家封邦 ↔ 原主公」同盟关系（同盟双方互不攻伐） */
+    public isAlliedPair(a?: string | null, b?: string | null): boolean {
+        if (!a || !b || a === b) return false;
+        if (!this.fiefCityId || !this.alliedFactionId) return false;
+        const own = PlayerHero.OWN_FACTION_ID;
+        return (a === own && b === this.alliedFactionId) || (b === own && a === this.alliedFactionId);
+    }
+
+    /** 全局静态便捷判断：供 AI 寻敌、野战、攻城判定同盟互不侵犯 */
+    public static areFactionsAllied(a?: string | null, b?: string | null): boolean {
+        if (!a || !b || a === b) return false;
+        const hero = (globalThis as any).window?.game?.playerHero as PlayerHero | undefined;
+        return hero?.isAlliedPair(a, b) === true;
+    }
+
+    /** 将公侯自定义军团名与三排兵模应用到当前随军军团 */
+    public applyCustomLegionToArmy(host?: Army | null): void {
+        const target = host ?? this.getHostLegion();
+        if (!target) return;
+        if (this.customLegionName) {
+            target.name = this.customLegionName;
+        }
+        if (this.customRowUnits) {
+            const [u0, u1, u2] = this.customRowUnits;
+            (target as any).customRowUnits = [u0, u1, u2];
+            const cmdKey = target.cultureSlots?.[9] ?? this.heroKey;
+            target.cultureSlots = [u0, u0, u0, u1, u1, u1, u2, u2, u2, cmdKey];
+        }
         this.emitChange();
     }
     /** 当前该形态要用的手选素材（null = 自动） */
@@ -1261,7 +1325,7 @@ export class PlayerHero {
     }
 
     /** 大地图战略战斗结算：随军军团战胜补满本场功劳（每胜一场正好一档）；战败离开势力、官职重来。 */
-    public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number): void {
+    public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number, opponent?: any): void {
         // 这一仗主角有没有亲身上战术战场（进 13 时由 buildScene13Setup 记下），结算后作废
         const fought = this.battleArmed;
         this.battleArmed = false;
@@ -1294,7 +1358,49 @@ export class PlayerHero {
         // 🔴 [2026-09-24 主人「删除这种无聊信息」] 只记战功，不弹「大捷！随军斩敌…记战功」
         void enemyKilled;
         if (fought) this.addBattleMerit(PLAYER_BATTLE_MERIT_CAP);
+        // 🔴 [2026-11-07 主人令「公侯…往后打败一个有新兵模的军队一次可以获得一个兵模」]
+        if (this.hasRankPrivilege('duke')) {
+            this.claimBattleSpoilUnit(opponent);
+        }
         this.battleMerit = 0;
+    }
+
+    /** 公侯战利品：打败敌军时，若敌军三排中有玩家尚未收集过的陆战兵模，随机缴获 1 个 */
+    private claimBattleSpoilUnit(opponent?: any): void {
+        if (!opponent) return;
+        const entity = typeof opponent.getEntity === 'function' ? opponent.getEntity() : opponent;
+        const rawSlots: string[] = [];
+        if (Array.isArray(entity?.cultureSlots) && entity.cultureSlots.length >= 9) {
+            rawSlots.push(entity.cultureSlots[0], entity.cultureSlots[3], entity.cultureSlots[6]);
+        } else {
+            const oppFactionId: string | undefined =
+                typeof opponent.getFactionId === 'function'
+                    ? opponent.getFactionId()
+                    : (entity?.factionId ?? opponent?.factionId);
+            if (oppFactionId) {
+                const fSlots = getFactionCompositionSlots(oppFactionId);
+                if (fSlots) {
+                    rawSlots.push(...fSlots.map((s) => s.type));
+                } else {
+                    const comp = getRegionLegionComposition(getFactionCultureRegion(oppFactionId));
+                    if (comp?.slots) rawSlots.push(...comp.slots.map((s) => s.type));
+                }
+            }
+        }
+        const candidates = Array.from(new Set(rawSlots)).filter(
+            (k) => !!k && !!WAR_TYPES[k] && !isShipUnitKey(k) && !this.learnedUnits.some((u) => u.unitKey === k),
+        );
+        if (candidates.length === 0) return;
+        const pickKey = candidates[Math.floor(Math.random() * candidates.length)];
+        const name = WAR_TYPES[pickKey]?.name ?? pickKey;
+        const oppFactionId: string =
+            (typeof opponent.getFactionId === 'function' ? opponent.getFactionId() : entity?.factionId) ||
+            this.factionId ||
+            PlayerHero.OWN_FACTION_ID;
+        this.learnedUnits.push({ unitKey: pickKey, unitName: name, factionId: oppFactionId, row: 0 });
+        this.peakStats = mergePlayerPeakFromUnit(this.peakStats, pickKey);
+        this.deps.notify(`🎁 公侯战利品：击败敌军缴获新兵模【${name}】`);
+        this.emitChange();
     }
 
     // ── 兵模收集（凑卡玩法核心，见 docs/AGENTS/player-rules-verbatim.md 第零节）──
@@ -1567,6 +1673,9 @@ export class PlayerHero {
         host.playerHostRankName = this.getRank().name;
         // 🔴 [2026-09-09 主人定] 加入军团即从该军团三排里取兵模并换上（见 docs/AGENTS/player-hero.md）
         this.onJoinLegion();
+        if (this.hasRankPrivilege('duke') && (this.customRowUnits || this.customLegionName)) {
+            this.applyCustomLegionToArmy(host);
+        }
         const p = host.getPosition();
         this.army.setPosition(p.lat, p.lng);
         this.deps.followCamera();
@@ -1988,6 +2097,13 @@ export class PlayerHero {
             tourCaravanDir: this.tourCaravanDir,
             tourShipDir: this.tourShipDir,
             livePortrait: this.livePortrait,
+            ownFactionName: this.ownFactionName,
+            ownFlagChar: this.ownFlagChar,
+            alliedFactionId: this.alliedFactionId,
+            fiefCityId: this.fiefCityId,
+            customLegionName: this.customLegionName,
+            customRowUnits: this.customRowUnits ? [...this.customRowUnits] : null,
+            mergedGenerals: [...this.mergedGenerals],
         };
     }
 
@@ -2019,6 +2135,15 @@ export class PlayerHero {
         this.tourCaravanDir = s.tourCaravanDir || null;
         this.tourShipDir = s.tourShipDir || null;
         this.livePortrait = typeof s.livePortrait === 'string' && s.livePortrait.trim() ? s.livePortrait.trim() : null;
+        this.ownFactionName = typeof s.ownFactionName === 'string' && s.ownFactionName.trim() ? s.ownFactionName.trim() : '探马军';
+        this.ownFlagChar = typeof s.ownFlagChar === 'string' && s.ownFlagChar.trim() ? s.ownFlagChar.trim().slice(0, 1) : '探';
+        this.alliedFactionId = typeof s.alliedFactionId === 'string' && s.alliedFactionId ? s.alliedFactionId : null;
+        this.fiefCityId = typeof s.fiefCityId === 'string' && s.fiefCityId ? s.fiefCityId : null;
+        this.customLegionName = typeof s.customLegionName === 'string' ? s.customLegionName.trim() : '';
+        this.customRowUnits = Array.isArray(s.customRowUnits) && s.customRowUnits.length === 3
+            ? [s.customRowUnits[0], s.customRowUnits[1], s.customRowUnits[2]]
+            : null;
+        this.mergedGenerals = Array.isArray(s.mergedGenerals) ? [...s.mergedGenerals] : [];
         this.horses.restore(s.horses);
         // 马系统之前的存档：梦醒只记了标记「初马」，读档时补上这匹马
         if (this.horses.isEmpty() && this.storyFlags.includes('初马')) this.giveFirstHorse();

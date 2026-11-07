@@ -144,7 +144,7 @@ export function tryEngageFieldBattle(
 
     for (const otherArmy of nearbyArmies) {
         if (otherArmy === army || otherArmy.isDestroyed || otherArmy.getTroops() <= 0) continue;
-        if (otherArmy.getFactionId() === army.getFactionId()) continue;
+        if (otherArmy.getFactionId() === army.getFactionId() || (globalThis as any).window?.game?.playerHero?.isAlliedPair?.(otherArmy.getFactionId(), army.getFactionId())) continue;
 
         // 🔴 [2026-09-11 主人定] 剧本行军豁免**必须判两边**：
         //    上面那道 gate 只挡住"剧本军主动开战"；敌军自己那一轮循环也会走到这里，
@@ -253,7 +253,7 @@ function startFieldBattleBetween(
 
     let attFaction = attackerPrimary.getFactionId();
     let defFaction = defenderPrimary.getFactionId();
-    if (!attFaction || !defFaction || attFaction === defFaction) return;
+    if (!attFaction || !defFaction || attFaction === defFaction || (globalThis as any).window?.game?.playerHero?.isAlliedPair?.(attFaction, defFaction)) return;
 
     // 🔴 [2026-10-26 主人令「有武将的，为什么是叛军？不对呀」] 播报里的势力名取**显示势力**：
     //    经典战「同势力→无字叛军 panshu 占位」时不许播成「叛军」，要播武将自己的势力（判定仍用 getFactionId）。

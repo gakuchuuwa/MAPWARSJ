@@ -263,7 +263,7 @@ export class TargetEvaluator {
         const scores: TargetScore[] = [];
 
         for (const city of cities) {
-            if (city.factionId === factionId) continue;
+            if (city.factionId === factionId || (globalThis as any).window?.game?.playerHero?.isAlliedPair?.(city.factionId, factionId)) continue;
             if (options?.excludeTargetIds?.has(city.id)) continue;
 
             const roadKm = roadDistances.get(city.id);

@@ -20,6 +20,18 @@ import { PLAYER_HERO_NAME, PLAYER_RANKS } from '../player/PlayerConfig';
 import { sixUnlockBlockReason } from '../player/PlayerLiveSkill';
 import { CULTURE66_PORTRAIT_POOLS } from '../config/portrait_defaults';
 import { style62OfCity } from '../player/PlayerQuestSystem';
+import { PlayerHero } from '../player/PlayerHero';
+import { mergePlayerPeakFromUnit } from '../player/PlayerGrowth';
+import { CityAssetManager } from '../assets/CityAssetManager';
+import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
+import { roadRegistry } from '../roads/RoadRegistry';
+import { FACTION_GENERALS, getFactionGeneral, type FactionGeneral } from '../data/FactionGenerals';
+import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
+import { isGeneralOnStage } from '../data/generalOnStage';
+import { getFactionLegionComposition } from '../types/CultureFormations';
+import { WAR_TYPES } from '../data/WarTypes';
+import { isShipUnitKey } from '../data/generalHeroUnits';
+import { GameConfig } from '../config/GameConfig';
 
 export const PRICE_PER_CAST = 100;
 export const ORDERS_PER_CAST = 1;
@@ -204,6 +216,87 @@ export const MARSHAL_TARGET_MAX_BID = 300;
 /** 元帅·挑立绘竞价区间 */
 export const MARSHAL_PORTRAIT_MIN_BID = 10;
 export const MARSHAL_PORTRAIT_MAX_BID = 200;
+/** 公侯/国王/皇帝（第 7～9 阶）竞价与众筹常量 */
+export const DUKE_LEGION_MIN_BID = 10;
+export const DUKE_LEGION_MAX_BID = 200;
+export const DUKE_LEGION_NAME_MIN_BID = 5;
+export const DUKE_LEGION_NAME_MAX_BID = 200;
+export const DUKE_FIEF_MIN_BID = 30;
+export const DUKE_FIEF_MAX_BID = 300;
+export const KING_FACTION_NAME_MIN_BID = 15;
+export const KING_FACTION_NAME_MAX_BID = 300;
+export const KING_SUMMON_MIN_BID = 30;
+export const KING_SUMMON_MAX_BID = 300;
+export const EMPEROR_COERCE_MIN_CONTRIB = 5;
+export const EMPEROR_COERCE_TARGET_POINTS = 100;
+export const EMPEROR_COERCE_COOLDOWN_MS = 20 * 60_000;
+
+/** 公侯·组建三排自定义军团口令：编 1 4 3 15 / 编 1 4 3（从已收兵模池中挑前/中/后三排） */
+export function parseCustomFormationCommand(word: string): { rows: [number, number, number]; bid: number | null } | null {
+    const m = word.match(/^编\s*([1-9]\d*)\s+([1-9]\d*)\s+([1-9]\d*)(?:\s+([1-9]\d*))?$/);
+    if (!m) return null;
+    const r0 = Number(m[1]), r1 = Number(m[2]), r2 = Number(m[3]);
+    const bid = m[4] !== undefined ? Number(m[4]) : null;
+    if (![r0, r1, r2].every((x) => Number.isSafeInteger(x) && x > 0)) return null;
+    if (bid !== null && (!Number.isSafeInteger(bid) || bid <= 0)) return null;
+    return { rows: [r0, r1, r2], bid };
+}
+
+/** 公侯·命名自定义军团口令：军 玄甲铁骑 10 / 军 玄甲铁骑 */
+export function parseLegionNameCommand(word: string): { rawName: string; bid: number | null } | null {
+    const m = word.match(/^军\s+([^\d\s]+?)\s*([1-9]\d*)?$/);
+    if (!m) return null;
+    const rawName = m[1].trim();
+    if (!rawName) return null;
+    const bid = m[2] !== undefined ? Number(m[2]) : null;
+    if (bid !== null && (!Number.isSafeInteger(bid) || bid <= 0)) return null;
+    return { rawName, bid };
+}
+
+/** 公侯·选定根据地据点（与主公结盟自立）口令：封2 30 / 封2 */
+export function parseFiefCommand(word: string): { index: number; bid: number | null } | null {
+    const m = word.match(/^封\s*([1-9]\d*)(?:\s+([1-9]\d*))?$/);
+    if (!m) return null;
+    const index = Number(m[1]);
+    const bid = m[2] !== undefined ? Number(m[2]) : null;
+    if (!Number.isSafeInteger(index) || index <= 0) return null;
+    if (bid !== null && (!Number.isSafeInteger(bid) || bid <= 0)) return null;
+    return { index, bid };
+}
+
+/** 国王·立国号与单字旗号口令：国 大秦 秦 20 / 国 大秦 20 / 国 大秦 秦 */
+export function parseKingdomNameCommand(word: string): { rawName: string; flagChar: string; bid: number | null } | null {
+    const m = word.match(/^国\s+([^\d\s]+)(?:\s+([^\d\s]))?(?:\s+([1-9]\d*))?$/);
+    if (!m) return null;
+    const rawName = m[1].trim();
+    if (!rawName) return null;
+    const flagChar = (m[2]?.trim() || Array.from(rawName)[0] || '探').slice(0, 1);
+    const bid = m[3] !== undefined ? Number(m[3]) : null;
+    if (bid !== null && (!Number.isSafeInteger(bid) || bid <= 0)) return null;
+    return { rawName, flagChar, bid };
+}
+
+/** 国王·征召本势力/同盟主公武将领军合入本军口令：召2 30 / 召2 */
+export function parseSummonGeneralCommand(word: string): { index: number; bid: number | null } | null {
+    const m = word.match(/^召\s*([1-9]\d*)(?:\s+([1-9]\d*))?$/);
+    if (!m) return null;
+    const index = Number(m[1]);
+    const bid = m[2] !== undefined ? Number(m[2]) : null;
+    if (!Number.isSafeInteger(index) || index <= 0) return null;
+    if (bid !== null && (!Number.isSafeInteger(bid) || bid <= 0)) return null;
+    return { index, bid };
+}
+
+/** 皇帝·众筹圣旨威压小于己方十倍的接壤弱国臣服口令：威1 20 / 威1 */
+export function parseCoerceFactionCommand(word: string): { index: number; amount: number } | null {
+    const m = word.match(/^威\s*([1-9]\d*)(?:\s+([1-9]\d*))?$/);
+    if (!m) return null;
+    const index = Number(m[1]);
+    const amount = m[2] !== undefined ? Number(m[2]) : EMPEROR_COERCE_MIN_CONTRIB;
+    if (!Number.isSafeInteger(index) || index <= 0) return null;
+    if (!Number.isSafeInteger(amount) || amount <= 0) return null;
+    return { index, amount };
+}
 
 /** 常见直播聊天机器人：它们在聊天里发消息，但不是观众 */
 const CHAT_BOT_NAMES = new Set(['nightbot', 'streamlabs', 'streamelements', 'moobot', 'fossabot', 'wizebot']);
@@ -286,7 +379,20 @@ export interface LiveCommandRecord {
     eventId: string;
     uid: string;
     viewer: string;
-    commandType: 'skill_burst' | 'skill_six' | 'rename' | 'join_choice' | 'bet' | 'pick_target' | 'pick_portrait';
+    commandType:
+        | 'skill_burst'
+        | 'skill_six'
+        | 'rename'
+        | 'join_choice'
+        | 'bet'
+        | 'pick_target'
+        | 'pick_portrait'
+        | 'custom_legion'
+        | 'legion_name'
+        | 'pick_fief'
+        | 'kingdom_name'
+        | 'summon_general'
+        | 'coerce_faction';
     params: string;
     pointsBid: number;
     publishedAtMs: number;
@@ -409,6 +515,19 @@ export class ViewerLive {
     private portraitPoolAt = 0;
     /** 第二步成交的立绘（已生效） */
     private portraitPicked: { uid: string; viewer: string; bid: number; index: number; path: string; culture: string } | null = null;
+    // ── 公侯 / 国王 / 皇帝（第 7～9 阶，按资历开启）──
+    private dukeFormationPicked: { uid: string; viewer: string; bid: number; rows: [number, number, number]; names: [string, string, string] } | null = null;
+    private dukeLegionNameBid = 0;
+    private dukeFiefPicked: { uid: string; viewer: string; bid: number; cityId: string; cityName: string } | null = null;
+    private kingFactionNameBid = 0;
+    private kingSummonPicked: { uid: string; viewer: string; bid: number; generalId: string; generalName: string } | null = null;
+    private emperorCoercePool: {
+        factionId: string;
+        factionName: string;
+        total: number;
+        contributors: Map<string, { name: string; amount: number }>;
+    } | null = null;
+    private lastCoerceSuccessAt = 0;
     private wasActive = false;
     private day = '';
     private log: string[] = [];
@@ -465,6 +584,13 @@ export class ViewerLive {
         this.portraitPool = [];
         this.portraitPoolAt = 0;
         this.portraitPicked = null;
+        this.dukeFormationPicked = null;
+        this.dukeLegionNameBid = 0;
+        this.dukeFiefPicked = null;
+        this.kingFactionNameBid = 0;
+        this.kingSummonPicked = null;
+        this.refundEmperorCoercePool('新开一局');
+        this.lastCoerceSuccessAt = 0;
         if (this.activeJoinBid) {
             this.acct(this.activeJoinBid.uid, this.activeJoinBid.viewer).n = Math.min(
                 ORDER_CAP,
@@ -561,8 +687,59 @@ export class ViewerLive {
         if (portraitPickCmd) {
             return this.handlePortraitPick(id, name, portraitPickCmd.index, portraitPickCmd.bid, eventId, pubMs);
         }
-        if (word === '像' || word === '图') {
-            return this.note(this.portraitHint(name));
+        // 2.6 公侯三权（列土封侯·自建三排亲军·战利品收兵模；按资历曾达公侯开启）
+        if (word === '兵' || word === '编') {
+            return this.note(this.dukeUnitsHint(name));
+        }
+        const formCmd = parseCustomFormationCommand(word);
+        if (formCmd) {
+            return this.handleDukeCustomFormation(id, name, formCmd.rows, formCmd.bid, eventId, pubMs);
+        }
+        const legionNameCmd = parseLegionNameCommand(word);
+        if (legionNameCmd) {
+            return this.handleDukeLegionName(id, name, legionNameCmd.rawName, legionNameCmd.bid, eventId, pubMs);
+        }
+        if (word === '军') {
+            const need = Math.max(DUKE_LEGION_NAME_MIN_BID, this.dukeLegionNameBid + 1);
+            return this.note(`${name}：公侯命名军团写法「军 军团名 积分」（需 ${need} 分起）`);
+        }
+        const fiefCmd = parseFiefCommand(word);
+        if (fiefCmd) {
+            return this.handleDukeFief(id, name, fiefCmd.index, fiefCmd.bid, eventId, pubMs);
+        }
+        if (/^封\s*\S*$/.test(word)) {
+            return this.note(this.dukeFiefHint(name));
+        }
+
+        // 2.7 国王两权（立国号旗字 ＋ 实力超主公三倍征召武将合军；按资历曾达国王开启）
+        const kingdomCmd = parseKingdomNameCommand(word);
+        if (kingdomCmd) {
+            return this.handleKingFactionName(id, name, kingdomCmd.rawName, kingdomCmd.flagChar, kingdomCmd.bid, eventId, pubMs);
+        }
+        if (word === '国') {
+            const need = Math.max(KING_FACTION_NAME_MIN_BID, this.kingFactionNameBid + 1);
+            return this.note(`${name}：国王立国号与旗字写法「国 势力名 旗字 积分」（如「国 大秦 秦 ${need}」，需 ${need} 分起）`);
+        }
+        const summonCmd = parseSummonGeneralCommand(word);
+        if (summonCmd) {
+            return this.handleKingSummonGeneral(id, name, summonCmd.index, summonCmd.bid, eventId, pubMs);
+        }
+        if (/^召\s*\S*$/.test(word)) {
+            return this.note(this.kingSummonHint(name));
+        }
+
+        // 2.8 皇帝特权（众筹圣旨威压小于己方十倍的接壤弱国臣服并合军；按资历曾达皇帝开启）
+        const coerceCmd = parseCoerceFactionCommand(word);
+        if (coerceCmd) {
+            return this.handleEmperorCoerce(id, name, coerceCmd.index, coerceCmd.amount, eventId, pubMs);
+        }
+        if (/^威\s*\S*$/.test(word)) {
+            return this.note(this.emperorCoerceHint(name));
+        }
+
+        if (word === '像' || word === '图') { return this.note(this.portraitHint(name));
+        }
+        if (false) {
         }
 
         // 3. 玩家爆发技（技3 / 技4…，高价先放，同价 FIFO）
@@ -818,6 +995,40 @@ export class ViewerLive {
             culture: string | null;
             pickBid: number;
             pickIndex: number;
+        };
+        /** 公侯（第7阶）：三排亲军编成、亲军命名、择城封侯 */
+        duke: {
+            unlocked: boolean;
+            units: { index: number; unitKey: string; unitName: string }[];
+            customRows: [string, string, string] | null;
+            formationBid: number;
+            legionName: string;
+            legionNameBid: number;
+            fiefCityName: string;
+            fiefBid: number;
+            fiefCandidates: { index: number; name: string; factionName: string; troops: number }[];
+        };
+        /** 国王（第8阶）：立国号旗字、据点兵力逾主公3倍征召本国名将合军 */
+        king: {
+            unlocked: boolean;
+            factionName: string;
+            flagChar: string;
+            factionNameBid: number;
+            threeTimesOk: boolean;
+            threeTimesText: string;
+            summonCandidates: { index: number; generalName: string; troops: number; cityName: string }[];
+            summonBid: number;
+            mergedCount: number;
+        };
+        /** 皇帝（第9阶）：众筹圣旨威压接壤且弱于自己10倍的势力臣服合军 */
+        emperor: {
+            unlocked: boolean;
+            cooldownSec: number;
+            coerceCandidates: { index: number; factionId: string; factionName: string; cities: number; troops: number }[];
+            activePool: { factionName: string; totalPoints: number; targetPoints: number } | null;
+        };
+        _marshalDummy?: {
+            _unused?: number;
         };
     } {
         // 排行只排在场的人（10 分钟内说过话）：不让几天前来过的人一直占着榜
@@ -1216,8 +1427,12 @@ export class ViewerLive {
             return this.note(`${name}：挑立绘要资历达到元帅才开放`);
         }
         if (!this.portraitCulture || this.portraitPool.length === 0) {
-            this.recordCmd(eventId, id, name, 'pick_portrait', `图${index}`, 0, pubMs, now, 'rejected', '还没选文化');
+            this.recordCmd(eventId, id, name, 'pick_portrait', `图${index}`, 0, pubMs, now, 'rejected', '还没选文化'); return this.note(this.portraitHint(name));
+        }
+        if (false) {
             return this.note(this.portraitHint(name));
+        }
+        if (false) {
         }
         const path = this.portraitPool[index - 1];
         if (!path) {

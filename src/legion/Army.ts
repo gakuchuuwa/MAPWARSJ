@@ -597,12 +597,26 @@ export class Army implements IBattleUnit {
      *    战术层每场按**当前**武将现算（Scene13WarLayer.slotsOf → withCommander）⇒ 两边主将队兵模对不上。
      *    改成访问器：凡赋值处一律走这里；还没烘焙过编制（cultureSlots 为 null，如构造期）不算。
      */
+    private applyCompositionAndPreserveCustom(): void {
+        if (!this.cultureSlots) return;
+        applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
+        const customRowUnits = (this as { customRowUnits?: [string, string, string] | null }).customRowUnits;
+        if (Array.isArray(customRowUnits) && customRowUnits.length === 3) {
+            const [u0, u1, u2] = customRowUnits;
+            const cmdKey = this.cultureSlots?.[9];
+            this.cultureSlots = cmdKey
+                ? [u0, u0, u0, u1, u1, u1, u2, u2, u2, cmdKey]
+                : [u0, u0, u0, u1, u1, u1, u2, u2, u2];
+            this.formationMode = 'square';
+        }
+    }
+
     private _generalId?: string;
     public get generalId(): string | undefined { return this._generalId; }
     public set generalId(v: string | undefined) {
         if (v === this._generalId) return;
         this._generalId = v;
-        if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
+        this.applyCompositionAndPreserveCustom();
         // 🔴 [2026-10-20 主人令「哪个武将登场，挂哪个势力的旗帜」] 换将即同步显示势力（旗/染色/名牌）
         this.syncDisplayFaction();
         this.syncGeneralFaction();
@@ -614,7 +628,7 @@ export class Army implements IBattleUnit {
     public set isElite(v: boolean) {
         if (this._isElite === v) return;
         this._isElite = v;
-        if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
+        this.applyCompositionAndPreserveCustom();
     }
     /** 解散标记（区别于战死 destroy）：disband() 设 true，removeArmy 据此判定是否触发战败冷却 */
     public wasDisbanded: boolean = false;
@@ -1610,7 +1624,7 @@ export class Army implements IBattleUnit {
         if (this._factionId === factionId) return;
         this._factionId = factionId;
         this.syncDisplayFaction();
-        if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
+        this.applyCompositionAndPreserveCustom();
     }
 
     public getTargetCity(): any {
@@ -1839,7 +1853,7 @@ export class Army implements IBattleUnit {
         // [2026-09-05 玩家] 若玩家随军入伍，结算战略战功
         const game = (window as any).game;
         if (game?.playerHero && game.playerHero.getHostLegionId() === this.id) {
-            game.playerHero.onHostBattleEnd(result, _enemyKilled);
+            game.playerHero.onHostBattleEnd(result, _enemyKilled, _opponent);
         }
 
         if (this.isDestroyed) return;

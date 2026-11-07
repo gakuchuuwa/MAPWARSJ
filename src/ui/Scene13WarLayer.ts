@@ -4071,6 +4071,19 @@ export class Scene13WarLayer {
         //    无将、或这位武将此刻不在场（百岁/剧本模式里只剩「XX将军」普通守军）⇒ 不追加第 10 口主将队。战场人物只在那一仗出场，照算有将。
         if (!this.hasStageGeneral(generalId)) generalId = null;
         try {
+            const hero = (window as any).game?.playerHero;
+            const hostArmy = hero?.getHostLegion?.();
+            const customRows: [string, string, string] | null = hero?.customRowUnits ?? null;
+            const isPlayerCustomSide = customRows && customRows.length === 3 && (
+                factionId === 'player_own'
+                || (hostArmy && hostArmy.getFactionId() === factionId && (hostArmy.generalId ?? null) === (generalId ?? null))
+            );
+            if (isPlayerCustomSide && customRows) {
+                const [u0, u1, u2] = customRows;
+                const cmdKey = hero?.heroKey && WAR_TYPES[hero.heroKey] ? hero.heroKey : u0;
+                const keys = [u0, u0, u0, u1, u1, u1, u2, u2, u2, cmdKey];
+                return keys.map((key) => ({ key: WAR_TYPES[key] ? key : 'light_infantry' }));
+            }
             // 🔴 [2026-10-21 主人令「防守的也是武将，武将是什么军团，就出什么军团」
             //    「如果守城时武将不在场、只剩普通守军，就看当时的年份+建筑风格找军团」]
             const garrison = sideF === 1 && this.battleType === 'siege'
