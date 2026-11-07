@@ -495,7 +495,7 @@ buildingStyle: 'JIANGNAN', troops: 10000, mirror: true,
 
     // ── 塞北与西域中城 ──
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 HUNS：郅支城：匈奴郅支单于西迁所筑（《汉书·陈汤传》），归匈人 HUNS
-    { id: 'city_zhizhicheng', name: '郅支城', factionId: 'xijue', lat: 42.906205, lng: 72.765198, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 匈奴郅支单于城（塔拉斯河）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_zhizhicheng', name: '郅支城', factionId: 'xijue', lat: 42.906205, lng: 72.765198, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 匈奴郅支单于城（塔拉斯河）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）。🔴 [2026-11-08 按史改判西域] 原 CENTRAL_ASIA（中亚）不符史籍：《汉书·陈汤传》记郅支单于西走康居、在康居东境筑城（都赖水／塔拉斯河），前 36 年陈汤、甘延寿破此城；康居是《汉书·西域传》的西域国，故郅支城属西域 → WESTERN；「中亚」是现代地理分区，不作判据' },
 
 
 
@@ -1368,7 +1368,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
-    { id: 'city_suiye', name: '碎叶', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 10000, region: 'KARA_KHITAN', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 唐碎叶城（今托克马克）；按 2026-10-25 标准：城居 2–3 → 小城' },
+    { id: 'city_suiye', name: '碎叶', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 10000, region: 'KARA_KHITAN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 唐碎叶城（今托克马克）；按 2026-10-25 标准：城居 2–3 → 小城。🔴 [2026-11-08 按史改判西域·主人令] 原 CENTRAL_ASIA（中亚）不符史籍口径：碎叶是唐安西四镇之一（安西都护府治所曾驻此），属西域；突骑施苏禄可汗牙帐亦在碎叶川（《旧唐书·突厥传》），故按史改 WESTERN（西域）；「中亚／七河」是现代地理分区，不作判据。注：西辽（哈剌契丹）后期以虎思斡耳朵为都，同在这一带，城归其手不改城本身的文化判法' },
 
 
     { id: 'city_nieduo', name: '孽多', factionId: 'xiaobolu', lat: 35.92, lng: 74.3, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 小勃律孽多城（今吉尔吉特—罕萨）；《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处；推算：城居 0.8 万（孽多，小勃律山城 0.8 万）→ 城寨' },
@@ -1746,7 +1746,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
     // ── 2026-05-26 新增：西域/中亚城池（14个）──
-    { id: 'city_talas', name: '怛罗斯', factionId: 'tujishi', lat: 42.885995, lng: 71.347961, type: 'small_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 塔拉斯河（七河）；🔴 [2026-11-07 第一步·只看据点] 锡尔河—塔拉斯河一带（七河／河中北缘），属 CENTRAL_ASIA 鞑靼区域，原 WESTERN 不符；推算：城居 1.5 万（怛罗斯，中亚商道城 1.5 万）→ 小城' },
+    { id: 'city_talas', name: '怛罗斯', factionId: 'tujishi', lat: 42.885995, lng: 71.347961, type: 'small_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 塔拉斯河（七河）；🔴 [2026-11-08 按史改判西域] 原按现代地理分区判 CENTRAL_ASIA（「七河／河中北缘属鞑靼区域」），史籍口径不符：《新唐书·西域传》列「怛罗斯城」，唐属安西都护府声教所及、突骑施故地，七五一年怛罗斯之战即在此；「中亚」是现代地理分区，不作判据，故改回 WESTERN（西域）。推算：城居 1.5 万（怛罗斯，商道城 1.5 万）→ 小城' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：布哈拉：粟特—布哈拉汗国，中亚
     { id: 'city_bukhara', name: '布哈拉', factionId: 'an', lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 10000, region: 'CENTRAL_ASIA_IMPERIAL', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 河中布哈拉；按 2026-10-25 标准：城居 8–12 → 中城' },

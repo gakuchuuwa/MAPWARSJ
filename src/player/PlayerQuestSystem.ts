@@ -2221,8 +2221,9 @@ export class PlayerQuestSystem {
             const defendedCity = targetCity ?? city;
             const cityGarrison = Math.min(1000, Math.max(1, Math.floor(myTroops * 0.1)));
             this.deps.cityManager.updateCity(defendedCity.id, { factionId: myFactionId, troops: cityGarrison }, { skipCaptureLog: true });
+            const updatedDefendedCity = this.deps.cityManager.getCity(defendedCity.id) ?? defendedCity;
             host.setTroops(Math.max(1, myTroops - cityGarrison));
-            (defendedCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
+            (updatedDefendedCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
             if (isOnTheSpot) {
                 host.setPosition(defendedCity.latitude, defendedCity.longitude);
             }
@@ -2265,10 +2266,11 @@ export class PlayerQuestSystem {
         } else if (targetCity) {
             const nextEnemyFaction = targetCity.factionId === myFactionId ? enemyFactionId : targetCity.factionId;
             this.deps.cityManager.updateCity(targetCity.id, { factionId: nextEnemyFaction, troops: enemyTroops }, { skipCaptureLog: true });
+            const updatedTargetCity = this.deps.cityManager.getCity(targetCity.id) ?? targetCity;
             if (enemyGeneralId) {
-                (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = enemyGeneralId;
+                (updatedTargetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = enemyGeneralId;
             }
-            (targetCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
+            (updatedTargetCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
             if (isOnTheSpot) {
                 const ring = Math.min(0.08, GameConfig.SIEGE.COMBAT_RADIUS * 0.6);
                 host.setPosition(targetCity.latitude, targetCity.longitude + ring);
@@ -2361,6 +2363,7 @@ export class PlayerQuestSystem {
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (!host || host.isDestroyed) return;
         const fbState = q.firstBattle;
+        if (fbState.engaged) return;
         host.scriptMarchExempt = false;
 
         if (fbState.battleType === 'field') {
@@ -2394,16 +2397,21 @@ export class PlayerQuestSystem {
             if (defendedCity && enemyArmy && !enemyArmy.isDestroyed) {
                 const cityGarrison = Math.min(1000, Math.max(1, Math.floor(fbState.myTroops * 0.1)));
                 this.deps.cityManager.updateCity(defendedCity.id, { factionId: host.getFactionId(), troops: cityGarrison }, { skipCaptureLog: true });
+                const updatedDefendedCity = this.deps.cityManager.getCity(defendedCity.id) ?? defendedCity;
+                (updatedDefendedCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
                 host.setTroops(Math.max(1, fbState.myTroops - cityGarrison));
-                const cPos = { lat: defendedCity.latitude, lng: defendedCity.longitude };
+                const cPos = { lat: updatedDefendedCity.latitude, lng: updatedDefendedCity.longitude };
                 if (getEuclideanDistance(host.getPosition(), cPos) > 0.04) {
                     host.setPosition(cPos.lat, cPos.lng);
                 }
                 enemyArmy.scriptMarchExempt = false;
-                enemyArmy.setTargetCity(defendedCity);
+                enemyArmy.setTargetCity(updatedDefendedCity);
                 const eDist = getEuclideanDistance(enemyArmy.getPosition(), cPos);
                 if (eDist <= 0.2 && !enemyArmy.getIsInCombat() && !host.getIsInCombat()) {
-                    this.deps.legionManager.triggerSiege?.(enemyArmy, defendedCity);
+                    this.deps.legionManager.triggerSiege?.(enemyArmy, updatedDefendedCity);
+                    if (enemyArmy.getIsInCombat() || host.getIsInCombat()) {
+                        fbState.engaged = true;
+                    }
                 } else if (eDist > 0.12 && !enemyArmy.isMarching()) {
                     enemyArmy.moveAlongPath([{ lat: cPos.lat, lng: cPos.lng }]);
                 }
@@ -2416,14 +2424,19 @@ export class PlayerQuestSystem {
                 const nextEnemyFaction = targetCity.factionId === host.getFactionId() ? fbState.enemyFactionId : targetCity.factionId;
                 const nextEnemyTroops = Math.max(targetCity.troops || 0, fbState.enemyTroops);
                 this.deps.cityManager.updateCity(targetCity.id, { factionId: nextEnemyFaction, troops: nextEnemyTroops }, { skipCaptureLog: true });
+                const updatedTargetCity = this.deps.cityManager.getCity(targetCity.id) ?? targetCity;
                 if (fbState.enemyGeneralId) {
-                    (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = fbState.enemyGeneralId;
+                    (updatedTargetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = fbState.enemyGeneralId;
                 }
-                host.setTargetCity(targetCity);
-                const cPos = { lat: targetCity.latitude, lng: targetCity.longitude };
+                (updatedTargetCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
+                host.setTargetCity(updatedTargetCity);
+                const cPos = { lat: updatedTargetCity.latitude, lng: updatedTargetCity.longitude };
                 const d = getEuclideanDistance(host.getPosition(), cPos);
                 if (d <= 0.2 && !host.getIsInCombat()) {
-                    this.deps.legionManager.triggerSiege?.(host, targetCity);
+                    this.deps.legionManager.triggerSiege?.(host, updatedTargetCity);
+                    if (host.getIsInCombat()) {
+                        fbState.engaged = true;
+                    }
                 } else if (d > 0.12) {
                     host.moveAlongPath([{ lat: cPos.lat, lng: cPos.lng }]);
                 }
@@ -3394,7 +3407,12 @@ export class PlayerQuestSystem {
 
     // ── 跟踪 ──────────────────────────────────────────────
     public tick(): void {
-        if (this.deps.isScene13Active?.()) return;
+        if (this.deps.isScene13Active?.()) {
+            if (this.quest?.kind === 'first_battle') {
+                this.tickFirstBattle(this.quest);
+            }
+            return;
+        }
         // 🔴 [2026-09-23 主人定]「只有等剧本都结束后，自动切换到乱斗模式。」
         //    剧本都结束 = 战场表里没有未打的战场（战场在战毕那一刻才标记打过，故此时已无战役在打）。
         //    切过去之后募兵（含推迟的开局首发）与 AI 寻敌随之恢复（二者都看 autoPlan）。

@@ -1,1903 +1,7672 @@
-export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
-
-import { getRegion, type RegionType } from '../systems/RegionSystem';
-import { extractPortraitFolder } from '../config/PortraitAdjust';
-import { toBase16, type Base16Culture } from '../systems/CultureBase16';
-import { ALL_BRANCHES_MAP, toCulture66 } from '../systems/CultureHierarchy';
-import { REGION_TO_BRANCH } from '../config/deCastleAssets';
-import { BGM_TITLES } from './bgmTitles';
-import { BGM_DURATIONS } from './bgmDurations';
-import { isScriptPeriod } from '../events/scriptPeriod';
-import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
-
-export type SoundKey =
-    | 'march_loop'
-    | 'cavalry_march_loop'
-    | 'player_march_loop'
-    | 'naval_march_loop'
-    | 'naval_battle_loop'
-    | 'battle_loop'
-    | 'battle_victory'
-    | 'battle_defeat'
-    | 'general_skill'
-    // 战术六计释放：玩家／观众正常响度，武将自己释放降低响度
-    | 'skill_gongzhan'
-    | 'skill_shengzhan'
-    | 'skill_dizhan'
-    | 'skill_hunzhan'
-    | 'skill_bingzhan'
-    | 'skill_baizhan'
-    // 海战音效（2026-08-19 加：帝国时代2 DE 战斗音效）
-    | 'naval_arrow_fire'
-    | 'naval_cannon_fire'
-    | 'naval_sink'
-    | 'naval_explode'
-    | 'naval_cannon_splash'
-    // 陆战音效（2026-08-19：帝国时代2 DE 陆战战斗音效）
-    | 'gun_fire'
-    | 'explosion'
-    // 🔴 [2026-09-16 主人「近战兵没有了也就没有音效了，应该加 DE 的射箭音效」]
-    | 'arrow_fire'
-    // 陆战接触音景（2026-08-19 主人提供：两军接触起循环垫底、13 退场停，66.9s）
-    | 'land_contact'
-    // 🔴 [2026-09-11 主人定]「战术模式 30 秒的时候用城墙倒塌.WAV 音效」
-    | 'wall_collapse'
-    | 'building_collapse'
-    | 'siege_impact'
-    | 'siege_launch'
-    | 'siege_destroyed'
-    | 'elephant_attack'
-    | 'elephant_die'
-    | 'flamethrower_fire'
-    | 'battle_horn'
-    // 🔴 [2026-10-22] DE 原声：刀剑命中、刀剑金属碰撞、步兵阵亡、马匹倒毙、箭塔火箭齐射、僧侣施法
-    | 'melee_hit'
-    | 'sword_clank'
-    | 'death_infantry'
-    | 'death_horse'
-    | 'tower_arrow_flame'
-    | 'monk_cast'
-    // 战略地图动态天气环境音效（DE 原版环境音 + 风雨雷电合成）
-    | 'weather_storm_loop'
-    | 'weather_rain_loop'
-    | 'weather_blizzard_loop'
-    | 'weather_sandstorm_loop'
-    | 'weather_fog_loop'
-    | 'weather_wind_loop'
-    | 'weather_thunder'
-    | 'bgm_main';
-
-interface SoundDefinition {
-    category: AudioCategory;
-    sources: string[];
-    volume?: number;
-    cooldownMs?: number;
-}
-
-export interface AudioSettings {
-    enabled: boolean;
-    masterVolume: number;
-    categoryVolume: Record<AudioCategory, number>;
-}
-
-/**
- * 🔴 [2026-09-16 主人定]「游戏中主要就三种：1 背景音乐、2 音效、3 播报。
- *                        不压可以吗，例如 1 小、2 中、3 大。」
- * 改为**静态分层**：三层各占一个固定音量，互不动态压低。
- * 之所以能这么做 —— 优先级靠**音量差**保证，不必靠闪避去实时抢：
- *      BGM 0.60  →  音效 0.70  →  播报 1.00
- *      音效比音乐高 +1.3dB，播报又比音效高 +3.1dB，比音乐高 +4.4dB。
- * 🔴 [2026-10-02 主人定] BGM 基准从 0.45 提至 0.60：让打底音乐更充盈，在战术播报时也能清晰听到旋律衬托。
- *
- * ⚠️ STORAGE_KEY 必须跟着升版号：旧版 v2 的设置存在 localStorage 里，
- *    不升版的话浏览器会拿旧值覆盖这里的新默认值，改了等于没改。
- */
-const STORAGE_KEY = 'mapwar_audio_settings_v3';
-const DEFAULT_SETTINGS: AudioSettings = {
-    enabled: true,
-    masterVolume: 0.5,
-    categoryVolume: {
-        // 2 音效（中）：界面/战斗/情报同一层
-        ui: 0.70,
-        battle: 0.70,
-        feed: 0.70,
-        // 1 背景音乐（小）：打底，充盈衬托
-        bgm: 0.60,
-    },
-};
-
-// ---- 混音闪避（ducking）：语音优先，音效与音乐打底衬托 ----
-// 播报响时音效/音乐压到低量衬托，不抢语音；无播报时各层正常。
-const DUCK = {
-    /**
-     * 🔴 [2026-09-16 主人定]「不压可以吗，例如 1 小、2 中、3 大」—— **闪避全线关闭**。
-     *
-     * 优先级改由**静态三层音量**保证（见 DEFAULT_SETTINGS / SPEECH_GAIN）：
-     *      BGM 0.60 < 音效 0.70 < 播报 1.00
-     * 播报比音乐高 +4.4dB、比音效高 +3.1dB，本来就压得住，不必再实时去压别人。
-     *
-     * 关掉的理由（主人报障两条，同一个根因）：
-     *   ·「背景音乐的音量总是忽高忽低」—— 军团常年行军，BGM 长期挂 50%，
-     *      进战斗掉 30%，没事又回 100%，在 1.0/0.85/0.5/0.35/0.3 之间来回跳。
-     *   ·「这个背景音乐的音量很小」—— 其实是那一刻正被行军压着，曲子本身标定是准的。
-     *
-     * 全部设为 1 = 任何情况下都不改变各层音量。要恢复某一路，把对应项改回小于 1 的值即可。
-     */
-    bgmUnderSpeech: 1,
-    bgmUnderSfx: 1,
-    bgmUnderMarch: 1,
-    bgmUnderBattleAmbience: 1,
-    sfxUnderSpeech: 1,
-} as const;
-/** 3 播报（大）：三层里最高的一层，比音效 0.70 高 +3.1dB、比音乐 0.60 高 +4.4dB。
- *  靠这个音量差压住另外两层，不再需要动态闪避。 */
-const SPEECH_GAIN = 1.0;
-
-// ---- 音量渐变时长（ms）：消除各路声音硬切的不适感 ----
-const FADE = {
-    /** 播报/音效闪避（duck）的音量渐变——更缓，消除硬切感 */
-    duck: 600,
-    /** 行军循环音的淡入淡出 */
-    loop: 600,
-    /** 自制战斗音景（land_contact / battle_loop / naval_battle_loop）平滑渐显 */
-    battleLoopIn: 1200,
-    /** 自制战斗音景（land_contact / battle_loop / naval_battle_loop）平滑渐隐 */
-    battleLoopOut: 1800,
-    /** 一次性音效淡入（武将技等） */
-    oneShot: 200,
-    /** BGM 换曲（切文化区/随机轮播）交叉淡入淡出 */
-    bgmCrossfade: 900,
-} as const;
-
-const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
-    march_loop: sound('battle', 'march_loop', 0.15, 0),
-    // 纯骑部队（草原/青藏/中亚）专用行军音效，与步骑 march_loop 分开
-    cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.18, 0),
-    // 🔴 [2026-09-11 主人定]「把这个改为玩家行军音效」——玩家（乱入者）**独骑**行军专用循环音。
-    //    素材：主人提供的 `玩家骑马.WAV`（44.1k 立体声 22.04s），转 vorbis → public/sfx/player_march_loop.aud。
-    //    音量 0.7 是**响度对齐**的结果，不是随手写的：EBU R128 实测
-    //      march_loop -12.8 LUFS @0.15 → 折算 -29.3；cavalry_march_loop -12.0 LUFS @0.18 → -26.9；
-    //      本文件 -24.3 LUFS（峰值 -0.0 dBFS，马蹄瞬态多、整体偏轻，比那两条低约 12dB）。
-    //    取 0.7 → 折算 -27.4，正好落在两条行军循环之间；照抄 0.18 会低 12dB，等于听不见。
-    player_march_loop: sound('battle', 'player_march_loop', 0.7, 0),
-    // 主人提供的“航海.WAV”：海军实际航行期间循环，停航/交战/取消跟拍时淡出。
-    // 原文件 EBU R128 -23.0 LUFS；0.55 后约 -28.2 LUFS，与现有三条行军循环响度相当。
-    naval_march_loop: sound('battle', 'naval_march_loop', 0.55, 0),
-    // 主人提供的“海战音效.WAV”：跟拍舰队交战期间循环，与航海行军音、陆战循环音互斥。
-    // 原文件 -14.1 LUFS，与 battle_loop 的 -13.7 LUFS 接近，沿用 0.7 保持战斗响度一致。
-    naval_battle_loop: sound('battle', 'naval_battle_loop', 0.7, 0),
-    battle_loop: sound('battle', 'battle_loop', 0.7, 0),
-    battle_victory: sound('battle', 'battle_victory', 0.5, 1800),
-    battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
-    general_skill: sound('battle', 'general_skill', 0.45, 1800),
-    // 战术六计释放音效（帝国时代2 DE 原版音效提取并按 -15 LUFS 校准）
-    skill_gongzhan: sounds('battle', ['skill_gongzhan_1', 'skill_gongzhan_2'], 1.0, 0),
-    skill_shengzhan: sounds('battle', ['skill_shengzhan_1', 'skill_shengzhan_2'], 1.0, 0),
-    skill_dizhan: sounds('battle', ['skill_dizhan_1', 'skill_dizhan_2'], 1.0, 0),
-    skill_hunzhan: sounds('battle', ['skill_hunzhan_1', 'skill_hunzhan_2'], 1.0, 0),
-    skill_bingzhan: sounds('battle', ['skill_bingzhan_1', 'skill_bingzhan_2'], 1.0, 0),
-    skill_baizhan: sounds('battle', ['skill_baizhan_1', 'skill_baizhan_2'], 1.0, 0),
-    // 海战音效（2026-08-19：帝国时代2 DE 战斗音效，多源随机变奏）
-    naval_arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.65, 250),
-    naval_cannon_fire: sounds('battle', ['naval_cannon_fire_1', 'naval_cannon_fire_2', 'naval_cannon_fire_3', 'naval_cannon_fire_4', 'naval_cannon_fire_5', 'naval_cannon_fire_6'], 0.85, 400),
-    naval_sink: sounds('battle', ['naval_sink_1', 'naval_sink_2', 'naval_sink_3', 'naval_sink_4', 'naval_sink_5', 'naval_sink_6'], 0.55, 0),
-    naval_explode: sounds('battle', ['naval_explode_1', 'naval_explode_2', 'naval_explode_3', 'naval_explode_4'], 0.7, 0),
-    naval_cannon_splash: sounds('battle', ['naval_cannon_splash_1', 'naval_cannon_splash_2', 'naval_cannon_splash_3', 'naval_cannon_splash_4'], 0.45, 250),
-    // 陆战音效（2026-08-19：帝国时代2 DE 陆战战斗音效，多源随机变奏）
-    gun_fire: sounds('battle', ['gun_fire_1', 'gun_fire_2', 'gun_fire_3', 'gun_fire_4', 'gun_fire_5', 'gun_fire_6'], 0.55, 150),   // 0.75→0.55：全表最高，且火器成排齐射时多发叠加
-    explosion: sounds('battle', ['explosion_1', 'explosion_2', 'explosion_3', 'explosion_4', 'explosion_5', 'explosion_6'], 0.65, 200),
-    // 陆战接触音景（主人 2026-08-19 提供 WAV，转 vorbis，66.9s）：**循环播放**，
-    // 两军接触起循环垫底、13 退场停。13 期间不播旧的 battle_loop（见 syncFollowedLegionAudio），
-    // 这条就是那块空缺的底噪；具体的刀剑/枪炮事件音效叠在它上面。
-    /**
-     * 🔴 [2026-09-16 主人定]「战术模式中，如果近战兵没有了，也就没有音效了，应该添加 DE 中的射箭音效」
-     *
-     * 起因：`land_contact`（近战接触音景）在近战兵死绝后会淡出（2026-09-15 主人自己定的），
-     * 而弓弩对射这一段**一个音效都没有** —— 攻城器械有 siege_launch、火器有 gun_fire，
-     * 唯独常规远程兵（弓/弩/标枪/飞斧…）射出去是全静音的。
-     *
-     * 素材直接复用海战那批 DE 箭矢发射声（`naval_arrow_fire_*`，同一批提取，本来就是弓弦+箭雨声），
-     * 不新提取；只是陆战的密度与海战完全不同，所以**单独开一条键**来配音量与冷却。
-     *
-     * 音量/冷却的实测标定（ffmpeg ebur128，与 siege_impact 那条注释同一套方法）：
-     *   · 素材本身 4 条平均 **-33.5 LUFS**，单条时长 **约 1.97s**（是一轮箭雨，不是单发）
-     *   · 冷却 700ms + 1.97s 时长 ⇒ 稳态约 **2.8 层重叠**（≈ +4.5dB）
-     *   · 0.48 折算单发 -39.9 LUFS，叠 2.8 层后约 **-35.4 LUFS**
-     *   · 对照：gun_fire -36.5、海战箭矢 -37.2、land_contact -21.4、siege_impact -23.0
-     *     → 比火器单发略高 1dB（这一段它是唯一的声音，得撑得住场），远低于近战底噪，不抢戏。
-     *   ⚠️ 冷却别往 250ms 调（海战那条的值）：陆战几十个弓手几乎每帧都在放箭，
-     *      250ms 会叠到 8 层，糊成一片白噪。要调手感就改这一行的两个数。
-     */
-    arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.48, 700),
-    // 🔴 [2026-10-02 主人定]「战术模式下，有一个我自己做的战斗音效。请提高他的音量和播报一致，但是不要和播报重叠播放。」
-    // 陆战接触音景（主人 2026-08-19 提供 WAV，转 vorbis，66.9s）：两军接触起循环垫底、13 退场停。
-    // 音量与播报完全对齐 (getSpeechVolume())，播报期间平滑淡出避让（音量降为 0），杜绝重叠播放。
-    land_contact: sound('battle', 'land_contact', 1.0, 0),
-    // DE 城墙/石门崩塌碎石音效（Building_Rumble_01..03 + Building_Debris_01..03，-15 LUFS）
-    wall_collapse: sounds('battle', ['wall_collapse_1', 'wall_collapse_2', 'wall_collapse_3'], 0.65, 300),
-    // 攻城武器（2026-08-24 主人：「战斗开始前 30 秒是攻城武器攻击，但是没有音效」）。
-    // ⚠️ 素材是**借用**同一批 DE 战斗音效，不是攻城武器的原声——
-    //    DE 的攻城音效封在 Wwise `.pck` 里（resources/wwise/Base.pck），
-    //    要 wwiser + vgmstream 解包才能拿到，见 scratch/wwiser。素材到位后只改这两行。
-    //   siege_impact = 冲车撞门 / 投石命中：低频重击闷响，借 explosion（DE 原声，音色同源）
-    //   siege_launch = 投石车配重砸下 / 弩炮弹射：借 naval_cannon_fire 的发射闷响
-    // 音量比火器低：攻城武器 4~6 个同时凿墙，冷却也拉长防止糊成一片。
-    // 🔴 siege_impact = **DE 原声**（主人 2026-08-24 从 52 个候选里听出来的：wem 453205371，
-    //    Custom Vorbis / 48kHz / 单声道 / 1.10s）。提取链路：
-    //      wwise/Base.pck (AKPK) → bnk 内嵌 wem (BKHD+DIDX) → vgmstream 解 Wwise Vorbis → ogg
-    //    DE **没有公开音效名字表**（dat 的 sound_id 全 -1、sounds.json 只有 49 条 UI 音、
-    //    社区 wwnames 没收录 AoE2 DE、按命名规律猜的 4428 个候选零匹配），
-    //    所以只能提取全部 6732 个再靠人耳指认。原始素材留在 scratch/de_audio/。
-    // 🔴 [2026-10-07 主人令「按这套官方对应关系为您直接换上」] DE 攻城原声（wwiser 从 bank00.txt 精确对应）
-    //    siege_impact = 冲车撞门 (wem 109308349, 229010215) + 石弹砸墙 (wem 241430262, 270594082, 453205371)
-    siege_impact: sounds('battle', ['siege_impact_1', 'siege_impact_2', 'siege_impact_3', 'siege_impact_4', 'siege_impact_de'], 0.62, 260),
-    //    siege_launch = 投石车/中投发射 (wem 37765250, 630102252) + 巨投配重抛石 (wem 425532147, 479664391)
-    siege_launch: sounds('battle', ['siege_launch_1', 'siege_launch_2', 'siege_launch_3', 'siege_launch_4'], 0.55, 350),
-    // DE 建筑坍塌轰鸣 Building_Large_Rumble (wem 997585020, 162929423, 357570649, 158448836，均值 -33.9 LUFS)
-    building_collapse: sounds('battle', ['building_collapse_1', 'building_collapse_2', 'building_collapse_3', 'building_collapse_4'], 0.78, 500),
-    // DE 攻城武器/战车被毁散架 Siege_Weapon_Destroyed (wem 576386269, 585964358, 127361390, 120049907, 451599220，均值 -23.8 LUFS)
-    siege_destroyed: sounds('battle', ['siege_destroyed_1', 'siege_destroyed_2', 'siege_destroyed_3', 'siege_destroyed_4', 'siege_destroyed_5'], 0.52, 600),
-    // DE 战象挥牙嘶鸣 War_Elephant_Attack (wem 1056783078, 577420749, 470969236, 738262577, 342379629，均值 -27.7 LUFS)
-    elephant_attack: sounds('battle', ['elephant_attack_1', 'elephant_attack_2', 'elephant_attack_3', 'elephant_attack_4', 'elephant_attack_5'], 0.65, 1200),
-    // DE 战象倒毙哀鸣 War_Elephant_Death (wem 72901919, 826665418, 489483560, 847663669, 531215225，均值 -31.8 LUFS)
-    elephant_die: sounds('battle', ['elephant_die_1', 'elephant_die_2', 'elephant_die_3', 'elephant_die_4', 'elephant_die_5'], 0.75, 800),
-    // DE 希腊火喷射 Flamethrower_Short (wem 10353045, 936975001, 62497673, 1069459394, 274178430，均值 -30.5 LUFS)
-    flamethrower_fire: sounds('battle', ['flamethrower_fire_1', 'flamethrower_fire_2', 'flamethrower_fire_3', 'flamethrower_fire_4', 'flamethrower_fire_5'], 0.65, 500),
-    // DE 战术开战冲锋号角 Charge Horn (wem 450474346，-26.8 LUFS)
-    battle_horn: sound('battle', 'battle_horn', 0.60, 3000),
-    // 🔴 [2026-10-22 主人「小战役…套DE的音效」「用逆向看看…不可能没有对应的标号」] DE 原声，按 dat 里的 Wwise 事件对上：
-    //    刀剑命中＝长剑兵/骑士攻击动画的帧音事件 542552093（dat 声音 619 mhit_longsword1）→ 12 个源 wem；
-    //    步兵阵亡＝死亡动画事件 2793609136（dat 声音 294 death1~6）→ 取前 6 个源；
-    //    马匹倒毙＝骑士死亡动画事件 190614743（dat 声音 410 hdeath）→ 比步兵多出的 5 个马声源。
-    //    对应关系与转换脚本：scratch/de_sfx_named/resolve_events.py。实测响度：刀剑 -26~-31 LUFS、阵亡 -28~-35、马 -25~-33。
-    //    音量按「单发比放箭略低」压：几十人对砍，冷却 150ms 防糊成一片。
-    melee_hit: sounds('battle', ['melee_hit_1', 'melee_hit_2', 'melee_hit_3', 'melee_hit_4', 'melee_hit_5', 'melee_hit_6', 'melee_hit_7', 'melee_hit_8', 'melee_hit_9', 'melee_hit_10', 'melee_hit_11', 'melee_hit_12'], 0.35, 150),
-    // DE 刀剑金属招架碰撞声 Sword_Clank / Sword_Broad_Clank（wem 1031194429 等 5 源，-15 LUFS）
-    sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.32, 320),
-    death_infantry: sounds('battle', ['death_infantry_1', 'death_infantry_2', 'death_infantry_3', 'death_infantry_4', 'death_infantry_5', 'death_infantry_6'], 0.32, 2400),
-    death_horse: sounds('battle', ['death_horse_1', 'death_horse_2', 'death_horse_3', 'death_horse_4', 'death_horse_5'], 0.30, 2800),
-    // DE 守城箭塔/城堡/建筑火箭齐射声（PLAY_MISSILE_ARROW_TOWER_FLAME + WHOOSH_FLAME，-15 LUFS）
-    tower_arrow_flame: sounds('battle', ['tower_arrow_flame_1', 'tower_arrow_flame_2', 'tower_arrow_flame_3'], 0.50, 450),
-    // DE 僧侣/法术单位吟唱攻击声（PLAY_MONK_ATTACKING + PLAY_ATTACK_MONK_CONVERTING，-15 LUFS）
-    monk_cast: sounds('battle', ['monk_cast_1', 'monk_cast_2', 'monk_cast_3'], 0.55, 600),
-    // 动态天气环境音（战略地图与战术模式共用；DE 原版风浪雪漠环境音 + 雨声/雷鸣）
-    // 🔴 [2026-11-04 主人令「天气音整体调大，战术也响」] 原 0.32~0.46：乘上主音量 0.5 × 音效层 0.7 后最响只有 BGM 的一半。
-    //    现约翻倍，天气最强时与 BGM 0.30 同档（暴风雨最响、雾与风最轻）。
-    weather_storm_loop: sound('battle', 'weather_storm_loop', 0.90, 0),
-    weather_rain_loop: sound('battle', 'weather_rain_loop', 0.80, 0),
-    weather_blizzard_loop: sound('battle', 'weather_blizzard_loop', 0.90, 0),
-    weather_sandstorm_loop: sound('battle', 'weather_sandstorm_loop', 0.95, 0),
-    weather_fog_loop: sound('battle', 'weather_fog_loop', 0.70, 0),
-    weather_wind_loop: sound('battle', 'weather_wind_loop', 0.75, 0),
-    weather_thunder: sounds('battle', ['weather_thunder_1', 'weather_thunder_2', 'weather_thunder_3'], 0.85, 2200),
-    bgm_main: { category: 'bgm', sources: ['/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
-};
-
-function sound(
-    category: AudioCategory,
-    fileName: string,
-    volume: number,
-    cooldownMs: number
-): SoundDefinition {
-    return {
-        category,
-        // 用 .aud 扩展名（非媒体扩展）规避 IDM/迅雷 等下载器按 .ogg 抓取
-        sources: [`/sfx/${fileName}.aud`],
-        volume,
-        cooldownMs,
-    };
-}
-
-/** 多源变奏音效：播放时从 sources 随机挑一个（海战开炮/沉没等） */
-function sounds(
-    category: AudioCategory,
-    fileNames: string[],
-    volume: number,
-    cooldownMs: number
-): SoundDefinition {
-    return {
-        category,
-        sources: fileNames.map((n) => `/sfx/${n}.aud`),
-        volume,
-        cooldownMs,
-    };
-}
-
-function clamp01(value: number): number {
-    if (!Number.isFinite(value)) return 0;
-    return Math.max(0, Math.min(1, value));
-}
-
-const BGM_FALLBACK_MAP: Record<string, string> = {
-    avg: 'CENTRAL',
-    inbox: 'CENTRAL',
-    portraits: 'CENTRAL',
-};
-
-/**
- * 🔴 [2026-10-18 主人令]「这几个音乐，是被我的项目中套用呢。在项目中暂停。」
- *    —— 下面这些曲子收到 YouTube 版权主张（Content ID），**在项目里暂停使用**：
- *      · BERBER            征服天堂 Conquest of Paradise（Vangelis）
- *      · hes_a_pirate      加勒比海盗 He's a Pirate（Klaus Badelt）
- *      · WEST_ASIA         出埃及记 Exodus（Las Lau）
- *      · victory           Victory - No Vocals No Choir（Two Steps From Hell）
- *      · GERMANIC          The Mass（ERA）
- *      · rock_house_jail   勇闯夺命岛 Rock House Jail（Nick Glennie-Smith / Harry Gregson-Williams / Hans Zimmer）
- *      · helmet_to_helmet  Brand X Music - Helmet To Helmet
- *      · manqing           满清·江山风雨情 / The Warlord（Wai Lap wu 胡伟立）
- *
- *    🔴 **暂停 ≠ 删除**：.aud 音频文件、`BGM_REGION_GAIN` 响度标定、`BASE16_BGM_MAP` 母体映射
- *    全部原样保留（主人「不要删除，只是不用了」），恢复时把本集合里对应那一行删掉即可。
- *    效果：选曲/轮播池会跳过它们（见 `AVAILABLE_BGM_FOLDERS` 与 `shuffledBgmFolders`），
- *    落到 `GENERIC_BGM_FALLBACK`（age_of_kings，帝国时代2主题，未收到主张）。
- *    ⚠️ 版权主张截图里第 1 条 `Intro` 不是本项目曲目（项目里没有这个 BGM 夹），故不在本表。
- */
-const PAUSED_BGM_FOLDERS = new Set<string>([
-    'BERBER',
-    'hes_a_pirate',
-    'WEST_ASIA',
-    'victory',
-    'GERMANIC',
-    'rock_house_jail',
-    'helmet_to_helmet',
-    'manqing',
-]);
-
-/**
- * BGM 响度补偿：把每首曲子拉平到 **-21.0 LUFS**（ITU-R BS.1770 综合响度，非 RMS）。
- * gain = 10^((-21.0 - 实测LUFS) / 20)，注释里的数字就是该文件的实测值。
- *
- * 🔴 **换过 BGM 文件就必须重跑 `npm run bgm:audit`**（tools/bgm_audit.mjs）。
- *    2026-08-19 实测发现：8-04 那轮校准之后，37 首里有 22 首被统一重压到 -18.0 LUFS，
- *    而本表还留着重压前的老增益 —— 那 22 首补偿后落在 -19.5~-16.8，最响的 STEPPE
- *    比基准响 4.2dB（约 1.6 倍振幅），就是主人听到的「有的大有的小」。
- *    表本身没错，是**文件换了表没跟着换**。审计脚本就是防这个的。
- */
-const BGM_REGION_GAIN: Record<string, number> = {
-    // [2026-09-12 主人「所有曲子音量肯定不一致吧，请统一一个音量大小」]
-    //    以下三首**原先压根不在表里** → 按 1.0 播放、无任何补偿（比其它曲响 3dB），现按实测 LUFS 补进表。
-    // 🔴 [2026-09-15 主人授权「只动最差的那 4 首」] DIANQIAN/pugan/zhaosong/TIBET 已**裁掉安静前奏**。
-    //    起因：整首平均响度本来就统一（37 首实测全落在 -21.0±0.45dB），但 BGM 是从头播的，
-    //    观众听到的是**前十几秒** —— 实测前15s 极差达 20.7dB，这 4 首是离群值：
-    //      DIANQIAN/pugan -39.5dB（几乎全无声）、zhaosong -29.5dB、TIBET -27.0dB。
-    //    裁切点由 ebur128 逐秒短时响度定（scratch/probe_bgm_intro_cut.cjs + try_bgm_cuts.cjs）：
-    //      DIANQIAN/pugan 裁 26s（前15s -39.1 → -21.4）、zhaosong 裁 37s（-29.4 → -22.8）、
-    //      TIBET 裁 20s（-27.0 → -22.4），全部进入其余 33 首的同一档（优于 -25dB）。
-    //    原文件备份在 `音乐素材/bgm_原始备份_20260915/*.orig`（这 4 首无母带，删备份即不可逆）。
-    BASHU: 0.708,      // 实测 -18.0 LUFS · 巴蜀
-    // 🔴 [2026-09-17 主人定「如果有重复的，就把东亚的那个删除」] DIANQIAN 已删：
-    //    它与 pugan 是**字节完全相同**的同一首（md5 c90cbcd…，9-15 的注释就写着「同曲 cp」）。
-    //    留着会让东南亚母体 MALAY 名存实亡 —— 那个池里只有 pugan 一首，等于东南亚放的是东亚的曲子。
-    //    删东亚这份、把曲子留给 MALAY；滇黔军团经 toBase16 归 CENTRAL，从东亚池另外 16 首里取，不受影响。
-    LINGNAN: 0.708,    // 实测 -18.0 LUFS · 岭南
-    CENTRAL: 0.56,  // -17.9 LUFS · （原 0.70，2026-09-25 主人要求降低一点，-2dB → 0.56）
-    CENTRAL_ASIA: 0.708,  // -18.0 LUFS
-    BERBER: 0.55,  // -15.8 LUFS · 征服天堂（2026-08-21 改派柏柏尔·原通用随机曲）
-    // 🔴 [2026-09-12 主人「有个曲子叫帝国时代2（把它音量大一点）」] 0.427 → **0.60**（≈ +3.0 dB）。
-    //    这首原文件是 -13.6 LUFS，比基准（-18.0）响 7.3dB，2026-08-04 被"大幅压低"到 0.427
-    //    拉平到基准 —— 主人听感就是它偏小。现在单独抬 3dB，落到约 **-16.6 LUFS**
-    //    （比多数曲子响约 1.4dB，仍低于最响的一档，不会盖过音效与播报）。
-    age_of_kings: 0.427,
-    fallen_army: 0.48,  // -16.6 LUFS · （原 0.603，2026-10-02 主人报音量略大，-2dB → 0.48）
-    shadow_assassin: 0.624,  // -16.9 LUFS · （2026-08-04 通用随机曲·暗影刺客）
-    GERMANIC: 0.596,  // -16.5 LUFS · （2026-08-04 新增 The Mass）
-    daming: 0.767,  // -18.7 LUFS · （2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
-    HEXI: 0.708,  // -18.0 LUFS
-    helmet_to_helmet: 0.676,  // -17.6 LUFS · （2026-08-04 通用随机曲）
-    hes_a_pirate: 0.7,  // -17.9 LUFS · （2026-08-04 通用随机曲）
-    INDIA: 0.708,  // -18.0 LUFS · = daming Nijamena（2026-08-04 印度首选）
-    JAPAN: 0.543,  // -15.7 LUFS · 幕府将军2 Ona Hei（2026-10-18 替换原信长之野望 OVERTURE，原文件备份 音乐素材/bgm_原始备份_20261018/）
-    JIANGNAN: 0.708,  // -18.0 LUFS
-    KOREA: 0.708,  // -18.0 LUFS
-    LATIN: 0.631,  // -17.0 LUFS · （2026-08-04 新增 Star Sky）
-    ezios_family: 0.380,  // -12.6 LUFS · 艾吉奥家族全版本合集（2009-2020）
-    // 🔴 [2026-09-16] 主人报「这首音量很小」，一度提到 0.85；随后查明真因是**闪避**
-    //    （军团常年行军 → BGM 长期挂在 50%），已在 DUCK 表取消音效三路的压低。
-    //    标定本身实测是准的（整首 I=-18.2 LUFS，0.716 正好拉到 -21.05），故回到标定值，
-    //    维持「37 首同一响度」。别再因为听感单独抬某一首，那会重新打破统一。
-    litang: 0.716,  // -18.1 LUFS
-
-    liuhan: 0.708,  // -18.0 LUFS
-    // 🔴 [2026-09-12 主人「江山风雨情的音量调大一点」] 0.708 → **1.00**（≈ +3.0 dB）。
-    //    《江山风雨情》是电视剧《康熙王朝》主题曲 → 对应本作「满清」这首（`manqing_bgm.aud`）。
-    //    ⚠️ 曲名在仓库里**没有显示名映射**，是主人按出处认的；若指的不是这首（例如「大明」daming），
-    //       说一声即可改回来/改那首。
-    manqing: 0.708,
-    NORTH: 0.716,  // -18.1 LUFS
-    NORTHEAST: 0.708,  // -18.0 LUFS
-    pugan: 0.718,  // -18.12 LUFS · 蒲甘（2026-09-15 裁前奏 26s 后重测）。原 DIANQIAN 与它同曲，2026-09-17 已删东亚那份
-    rock_house_jail: 0.724,  // -18.2 LUFS · （2026-08-04 通用随机曲）
-    SLAVIC: 0.684,  // -17.7 LUFS · （2026-08-04 新增 Hall om mig）
-    STEPPE: 0.708,  // -18.0 LUFS · 大幅提升
-    TIBET: 0.80,  // -18.01 LUFS · 千年的祈祷（2026-09-15 裁前奏 20s 后重测；2026-09-23 主人报略微偏轻，+1dB → 0.80）
-    WESTERN: 0.708,  // -18.0 LUFS
-    WEST_ASIA: 0.582,  // -16.3 LUFS · （2026-08-04 新增 出埃及记）
-    victory: 0.589,  // -16.4 LUFS · （2026-08-04 通用随机曲）
-    wuzhou: 0.7,  // -17.9 LUFS
-    xianqin: 0.708,  // -18.0 LUFS
-    zhaosong: 0.697,  // -17.87 LUFS · 兰陵王入阵曲（2026-09-15 裁前奏 37s 后重测）
-    // 🔴 [2026-09-17 主人定] 新增 3 首 BGM，补齐 16 母体：
-    ANDE: 0.596,      // 实测 -16.5 LUFS · 安第斯（梦之安魂曲 Lux Aeterna）
-    mohicans: 0.617,  // 实测 -16.8 LUFS · 安第斯（最后的莫西干人 Promentory）
-    // 🔴 [2026-10-02 主人令「BGM 不许是歌、要纯音乐」] 非洲这首**换了文件**：
-    //    原曲是 **Baba Yetu（Christopher Tin，索韦托福音合唱团，带人声的歌曲、商业版权作品）** → **已删除**；
-    //    换成**自己合成的非洲纯器乐**（djembe/dundun 鼓组 + kora 拨弦 + balafon 木琴 + 沙锤，**无任何人声**，
-    //    无版权问题、可复现可调）：生成器 `tools/africa_bgm_synth.mjs`，D 小调五声 · 104 BPM · 64 小节 ≈ 2:29。
-    //    前 5 秒实测 -17.7 LUFS、前 15 秒 -16.7 LUFS（**无安静前奏**，不会像 DIANQIAN/TIBET 那样开头听不见）。
-    AFRICA: 0.668,    // 实测 -17.5 LUFS · 非洲（自制纯器乐）
-    // 🔴 [2026-10-18 主人「幕府将军的曲子很好听，下载几个知名的作为日本背景音乐」]
-    //    幕府将军2（Total War: Shogun 2，Jeff van Dyck）4 首纯器乐战斗曲：
-    //    JAPAN 用最出名的 Ona Hei，另 3 首只进轮播池（无文化首选，与 victory 等通用随机曲同性质）。
-    //    ⚠️ SEGA 商业版权，与同日被版权主张暂停的 PAUSED_BGM_FOLDERS 7 首同风险，收到主张时照旧加进暂停集。
-    shogun_tsunami: 0.668,    // -17.5 LUFS · Tsunami
-    shogun_shinobue: 0.610,   // -16.7 LUFS · Battle of Shinobue
-    shogun_daimyo: 0.624,     // -16.9 LUFS · For The Daimyo!
-    // 🔴 [2026-10-18 主人「给每个文化设计曲子池」先补战斗风格纯器乐，4 空池各 3 首]
-    //    GERMANIC（西欧·维京）：
-    drakkar_drums: 0.638,     // -17.1 LUFS · Drums of Drakkar（维京战鼓）
-    viking_war_drums: 0.653,  // -17.3 LUFS · Viking War Drums（北欧战鼓）
-    furious_march: 0.569,     // -16.1 LUFS · Furious March to War（北欧行军战曲）
-    //    ORIE（中东·阿拉伯/奥斯曼）：
-    holy_land_battle: 0.603,  // -16.6 LUFS · Epic Middle-Eastern Battle Music - Holy Land
-    desert_war: 0.550,        // -15.8 LUFS · Desert War（阿拉伯战曲）
-    ottoman_drums: 0.582,     // -16.3 LUFS · Royal Drum Procession（奥斯曼战鼓）
-    //    THRACIAN（色雷斯·巴尔干）：
-    gaida_echoes: 0.676,      // -17.6 LUFS · Echoes Of The Gaida（保加利亚风笛）
-    thraco_dacian: 0.638,     // -17.1 LUFS · Thraco-Dacian Tribal Drums（色雷斯部落鼓）
-    bulgarian_war: 0.741,     // -18.4 LUFS · Bulgarian War Drums（保加利亚战鼓）
-    //    AMERICA（中美·阿兹特克/玛雅）：
-    aztec_war_drums: 0.582,   // -16.3 LUFS · Aztec Drums of War（阿兹特克战鼓）
-    mexica_ritual: 0.661,     // -17.4 LUFS · Aztec Warrior Ritual（墨西加战祭）
-    eagle_warrior: 0.684,     // -17.7 LUFS · Aztec Eagle Warrior War Drums（鹰武士战鼓）
-    // 🔴 [2026-10-18 主人定「按 62+4 文化设计曲子池」] 62 DE 文明主题曲（帝国时代2 DE，纯器乐短曲）+ 2 定制
-    //    DE 主题曲统一 `de_{分支}`；4 定制分支 TIBET/WESTERN 复用已有曲、GREECE/XIANBEI 新下载。
-    de_AFRICA: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_AMERICA: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_ARMENIANS: 0.977,  // -20.8 LUFS · DE 主题曲
-    de_ATHENIANS: 0.676,  // -17.6 LUFS · DE 主题曲
-    de_BASHU: 1.012,  // -21.1 LUFS · DE 主题曲
-    de_BENGALIS: 0.447,  // -14.0 LUFS · DE 主题曲
-    de_BERBER: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_BOHEMIANS: 0.582,  // -16.3 LUFS · DE 主题曲
-    de_BRITONS: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_BULGARIANS: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_BURGUNDIANS: 0.556,  // -15.9 LUFS · DE 主题曲
-    de_BURMESE: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_BYZANTINE: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_CELTS: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_CENTRAL: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_CENTRAL_ASIA: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_CUMAN: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_DANES: 0.398,  // -13.0 LUFS · DE 主题曲
-    de_ETHIOPIANS: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_FRANKS: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_GEORGIANS: 0.624,  // -16.9 LUFS · DE 主题曲
-    de_GERMANIC: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_GOTHS: 1.175,  // -22.4 LUFS · DE 主题曲
-    de_GURJARAS: 0.716,  // -18.1 LUFS · DE 主题曲
-    de_HUNS: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_INCA: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_INDIA: 0.550,  // -15.8 LUFS · DE 主题曲
-    de_JAPAN: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_JIANGNAN: 0.624,  // -16.9 LUFS · DE 主题曲
-    de_KHITAN: 0.422,  // -13.5 LUFS · DE 主题曲
-    de_KHMER: 1.148,  // -22.2 LUFS · DE 主题曲
-    de_KOREA: 1.148,  // -22.2 LUFS · DE 主题曲
-    de_LATIN: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_LITHUANIANS: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_MACEDONIAN: 0.442,  // -13.9 LUFS · DE 主题曲
-    de_MAGYAR: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_MALAY: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_MAPUCHE: 0.343,  // -11.7 LUFS · DE 主题曲
-    de_MAYANS: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_MONGOL: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_MUGHAL: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_MUISCA: 0.501,  // -15.0 LUFS · DE 主题曲
-    de_NORTHEAST: 0.457,  // -14.2 LUFS · DE 主题曲
-    de_ORIE: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_PERSIAN: 0.668,  // -17.5 LUFS · DE 主题曲
-    de_POLES: 1.349,  // -23.6 LUFS · DE 主题曲
-    de_PORTUGUESE: 1.148,  // -22.2 LUFS · DE 主题曲
-    de_PURU: 0.447,  // -14.0 LUFS · DE 主题曲
-    de_ROMA: 0.363,  // -12.2 LUFS · DE 主题曲
-    de_SASANIAN: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_SAXONS: 0.363,  // -12.2 LUFS · DE 主题曲
-    de_SICILIANS: 0.479,  // -14.6 LUFS · DE 主题曲
-    de_SLAVIC: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_SPANISH: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_SPARTANS: 0.589,  // -16.4 LUFS · DE 主题曲
-    de_THRACIAN: 0.543,  // -15.7 LUFS · DE 主题曲
-    de_TUPI: 0.457,  // -14.2 LUFS · DE 主题曲
-    de_TURKS: 1.135,  // -22.1 LUFS · DE 主题曲
-    de_VARANGIANS: 0.407,  // -13.2 LUFS · DE 主题曲
-    de_VIETNAMESE: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_VIKINGS: 1.122,  // -22.0 LUFS · DE 主题曲
-    de_WEI: 0.479,  // -14.6 LUFS · DE 主题曲
-    GREECE: 0.596,  // -16.5 LUFS · GREECE 定制曲
-    XIANBEI: 0.575,  // -16.2 LUFS · XIANBEI 定制曲
-    nobunaga: 0.708,  // -18.0 LUFS · 信长之野望 OVERTURE（2026-10-18 还原，与 Ona Hei 同池轮播）
-    western_b: 0.575,  // -16.2 LUFS
-    persian_b: 0.646,  // -17.2 LUFS
-    tibet_b: 0.750,  // -18.5 LUFS
-    puru_b: 0.668,  // -17.5 LUFS
-    // 🔴 [2026-10-18 主人定「按66文化分曲子，每文化≥3首、符合文化、各自独立」] 98 首新曲
-    korea_a: 0.646,  // -17.2 LUFS
-    bashu_a: 0.569,  // -16.1 LUFS
-    khitan_a: 0.631,  // -17.0 LUFS
-    mongol_a: 0.700,  // -17.9 LUFS
-    xianbei_a: 0.676,  // -17.6 LUFS
-    xianbei_b: 0.676,  // -17.6 LUFS
-    central_asia_a: 0.668,  // -17.5 LUFS
-    western_a: 0.603,  // -16.6 LUFS
-    cuman_a: 0.589,  // -16.4 LUFS
-    huns_a: 0.610,  // -16.7 LUFS
-    huns_b: 0.603,  // -16.6 LUFS
-    turks_a: 0.708,  // -18.0 LUFS
-    turks_b: 0.724,  // -18.2 LUFS
-    india_a: 0.724,  // -18.2 LUFS
-    // 🔴 [2026-10-26 主人令「藏族长号(喇嘛) [tibet_a]，删除。」] tibet_a 已删除：
-    //    文件 public/bgm/tibet_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.TIBET 同步移除（3 首 → 2 首，仍满足每文化 ≥2 首）。
-    mughal_a: 0.684,  // -17.7 LUFS
-    mughal_b: 0.700,  // -17.9 LUFS
-    bengalis_a: 0.684,  // -17.7 LUFS
-    bengalis_b: 0.646,  // -17.2 LUFS
-    gurjaras_a: 0.631,  // -17.0 LUFS
-    // 🔴 [2026-11-06 主人令「拉贾斯坦口弦 Morchang [gurjaras_b]，把这个背景音乐删除，里面人说话，不能用。」]
-    //    gurjaras_b 已连同文件 public/bgm/gurjaras_b_bgm.aud 一并删除（曲中有真人说话，不能用作背景乐）；
-    //    GURJARAS 池由 3 首降为 2 首（de_GURJARAS 主题曲 + gurjaras_a），仍满足每文化 ≥2 首。
-    germanic_a: 0.661,  // -17.4 LUFS
-    vikings_a: 0.638,  // -17.1 LUFS
-    franks_a: 0.610,  // -16.7 LUFS
-    franks_b: 0.716,  // -18.1 LUFS
-    burgundians_a: 0.631,  // -17.0 LUFS
-    burgundians_b: 0.692,  // -17.8 LUFS
-    britons_b: 0.676,  // -17.6 LUFS
-    celts_a: 0.708,  // -18.0 LUFS
-    celts_b: 0.603,  // -16.6 LUFS
-    goths_a: 0.684,  // -17.7 LUFS
-    goths_b: 0.603,  // -16.6 LUFS
-    saxons_a: 0.638,  // -17.1 LUFS
-    saxons_b: 0.700,  // -17.9 LUFS
-    danes_a: 0.624,  // -16.9 LUFS
-    danes_b: 0.610,  // -16.7 LUFS
-    varangians_a: 0.617,  // -16.8 LUFS
-    varangians_b: 0.661,  // -17.4 LUFS
-    slavic_a: 0.589,  // -16.4 LUFS
-    poles_a: 0.692,  // -17.8 LUFS
-    poles_b: 0.638,  // -17.1 LUFS
-    bohemians_a: 0.575,  // -16.2 LUFS
-    // 🔴 [2026-11-05 主人令「删除背景音乐，扬琴 捷克 [bohemians_b]」] bohemians_b 已删除：
-    //    文件 public/bgm/bohemians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.BOHEMIANS 同步移除（3 首 → 2 首）。
-    magyar_a: 0.617,  // -16.8 LUFS
-    magyar_b: 0.661,  // -17.4 LUFS
-    lithuanians_a: 0.708,  // -18.0 LUFS
-    // 🔴 [2026-10-18 主人令「把这个曲子删除」] lithuanians_b（立陶宛排箫 Skudučiai）已删除：
-    //    文件 public/bgm/lithuanians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.LITHUANIANS 同步移除。
-    bulgarians_a: 0.661,  // -17.4 LUFS
-    bulgarians_b: 0.653,  // -17.3 LUFS
-    byzantine_a: 0.750,  // -18.5 LUFS
-    byzantine_b: 0.676,  // -17.6 LUFS
-    armenians_a: 0.767,  // -18.7 LUFS
-    // 🔴 [2026-10-20 主人令「把亚美尼亚卡农琴 Kanun [armenians_b]删除。把这个曲子删除。」] armenians_b（亚美尼亚卡农琴 Kanun）已删除：
-    //    文件 public/bgm/armenians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.ARMENIANS 同步移除。
-    georgians_a: 0.716,  // -18.1 LUFS
-    georgians_b: 0.716,  // -18.1 LUFS
-    latin_a: 0.610,  // -16.7 LUFS
-    roma_a: 0.684,  // -17.7 LUFS
-    roma_b: 0.646,  // -17.2 LUFS
-    sicilians_a: 0.638,  // -17.1 LUFS
-    sicilians_b: 0.708,  // -18.0 LUFS
-    spanish_a: 0.692,  // -17.8 LUFS
-    spanish_b: 0.653,  // -17.3 LUFS
-    portuguese_a: 0.692,  // -17.8 LUFS
-    portuguese_b: 0.692,  // -17.8 LUFS
-    sasanian_a: 0.562,  // -16.0 LUFS
-    sasanian_b: 0.692,  // -17.8 LUFS
-    burmese_a: 0.741,  // -18.4 LUFS
-    africa_a: 0.684,  // -17.7 LUFS
-    khmer_a: 0.716,  // -18.1 LUFS
-    khmer_b: 0.700,  // -17.9 LUFS
-    // 🔴 [2026-10-18 主人令「删除，越南独弦琴 Dan Bau [vietnamese_a]」] vietnamese_a 已删除：
-    //    文件 public/bgm/vietnamese_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.VIETNAMESE 同步移除。
-    vietnamese_b: 0.668,  // -17.5 LUFS
-    // 🔴 [2026-11-02 主人令「马来加美兰 Joget [malay_a]删除这个背景音乐」] malay_a 已删除：
-    //    文件 public/bgm/malay_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.MALAY 同步移除。
-    malay_b: 0.708,  // -18.0 LUFS
-    berber_a: 0.603,  // -16.6 LUFS
-    berber_b: 0.700,  // -17.9 LUFS
-    ethiopians_a: 0.596,  // -16.5 LUFS
-    ethiopians_b: 0.653,  // -17.3 LUFS
-    inca_a: 0.676,  // -17.6 LUFS
-    athenians_a: 0.794,  // -19.0 LUFS
-    athenians_b: 0.708,  // -18.0 LUFS
-    spartans_a: 0.631,  // -17.0 LUFS
-    spartans_b: 0.668,  // -17.5 LUFS
-    macedonian_a: 0.631,  // -17.0 LUFS
-    macedonian_b: 0.668,  // -17.5 LUFS
-    mayans_b: 0.638,  // -17.1 LUFS
-    muisca_a: 0.700,  // -17.9 LUFS
-    muisca_b: 0.661,  // -17.4 LUFS
-    mapuche_a: 0.653,  // -17.3 LUFS
-    mapuche_b: 0.661,  // -17.4 LUFS
-    // 🔴 [2026-10-31 主人令「图皮竹笛 Takuapí [tupi_a] 删除这个曲子，有人说话，不能作为背景音乐」]
-    //    tupi_a 已连同 .aud 文件删除（曲子里有人声，不能当 BGM），TUPI 池剩 de_TUPI + tupi_b 两首。
-    tupi_b: 0.668,  // -17.5 LUFS
-};
-
-/**
- * 16 母体文化专属曲库池（2026-09-17 主人定）：
- * 将全游戏全部 40 首曲目完整划分入 16 套母体体系，
- * 使每个军团/武将无论出身何地，都能根据其所属母体播放自己文化的专属战歌。
- */
-export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
-    CENTRAL: [
-        // DIANQIAN 已于 2026-09-17 删除（与 pugan 同曲，曲子留给 MALAY），见 BGM_REGION_GAIN 处注释
-        'CENTRAL', 'JIANGNAN', 'BASHU', 'LINGNAN', 'HEXI', 'NORTH', 'NORTHEAST',
-        'JAPAN', 'KOREA', 'nobunaga', 'xianqin', 'liuhan', 'wuzhou',
-        'zhaosong', 'daming', 'manqing'
-    ],
-    STEPPE: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN'],
-    INDIA: ['INDIA'],
-    GERMANIC: ['GERMANIC', 'helmet_to_helmet', 'drakkar_drums', 'viking_war_drums', 'furious_march'],
-    PURU: ['TIBET', 'litang'],
-    ORIE: ['WEST_ASIA', 'BERBER', 'holy_land_battle', 'desert_war', 'ottoman_drums'],
-    LATIN: ['LATIN', 'victory', 'ezios_family'],
-    SLAVIC: ['SLAVIC'],
-    EAST: ['age_of_kings'],
-    PERSIAN: ['shadow_assassin'],
-    MALAY: ['pugan'],
-    GREEK: ['fallen_army'],
-    THRACIAN: ['rock_house_jail', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war'],
-    ANDE: ['ANDE', 'mohicans'],
-    AMERICA: ['hes_a_pirate', 'aztec_war_drums', 'mexica_ritual', 'eagle_warrior'],
-    AFRICA: ['AFRICA'],
-};
-
-/**
- * 随机轮播池：全部 BGM（文化区 + 势力专属 + 通用随机曲；folder 名 = 文化区/势力/曲名片）。
- * 主人 2026-08-04 定：首选 = 跟随军团立绘文件夹对应曲（文化区或势力夹，区域优先）；
- * 放完后不循环单曲，在全部曲目里洗牌随机轮播（不立刻重复同一首）；
- * 镜头进入新文化区/势力范围则区域优先立刻切歌。
- */
-/** 实际存在、完成响度标定、且**未被暂停**的曲目；随机池只允许从这里取，
- *  既避免抽到不存在的区域文件，也避免抽到 `PAUSED_BGM_FOLDERS`（2026-10-18 版权主张暂停）。 */
-const AVAILABLE_BGM_FOLDERS = new Set<string>(
-    Object.keys(BGM_REGION_GAIN).filter((folder) => !PAUSED_BGM_FOLDERS.has(folder)),
-);
-const BGM_ROTATION_FOLDERS: readonly string[] = Object.freeze([...AVAILABLE_BGM_FOLDERS]);
-const GENERIC_BGM_FALLBACK = 'age_of_kings';
-
-/**
- * 🔴 [2026-10-02 主人定「亚历山大的剧本的背景音乐只采用西方歌曲循环播放」]
- * 历史剧本期（亚历山大东征）专用轮播池：只放西方 / 地中海 / 中东史诗曲，不放中国、日本、蒙古、印度、南美曲。
- * 判据 = 曲目真实来源（西方电影 / 游戏 / 史诗配乐），不是 folder 名字：
- *   LATIN=Star Sky(TSFH)、WEST_ASIA=出埃及记、BERBER=征服天堂(Vangelis)、GERMANIC=The Mass(Era)、
- *   victory=Victory(TSFH)、rock_house_jail=勇闯夺命岛、fallen_army=Audiomachine、helmet_to_helmet=Brand X、
- *   hes_a_pirate=加勒比海盗(Hans Zimmer)、age_of_kings=帝国时代2主题。
- * 排除：shadow_assassin（暗影刺客·中国琵琶曲）、SLAVIC（北欧瑞典曲）、AFRICA（自制非洲器乐：鼓组+kora+木琴），
- *   以及全部中国 / 日本 / 朝鲜 / 草原 / 中亚 / 青藏 / 印度 / 东南亚 / 南美曲。
- */
-const SCRIPT_WESTERN_BGM_FOLDERS: readonly string[] = Object.freeze([
-    'LATIN', 'WEST_ASIA', 'BERBER', 'GERMANIC',
-    'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet',
-    'hes_a_pirate', 'age_of_kings', 'ezios_family',
-]);
-
-function resolveAvailableBgmFolder(folder: string): string {
-    // 没有对应文化曲时用无文化归属的游戏主题曲，不能拿中原音乐冒充其他文明。
-    return AVAILABLE_BGM_FOLDERS.has(folder) ? folder : GENERIC_BGM_FALLBACK;
-}
-
-/**
- * 🔴 [2026-10-18 主人定「按文化分曲子、各自独立、符合文化」]；2026-10-26 起 67 文化。
- * 🔴 [2026-10-20 主人定「每个文化至少 2 首」] 每池最低 **2 首**（原 2026-10-18「每个文化至少 3 首」旧标准作废）。
- * 每分支一个独立曲池（不再共享母体）：[专属主题曲] + [本文化自有曲]。
- */
-const BGM_POOL_MAP: Record<string, string[]> = {
-    AFRICA: ['de_AFRICA', 'AFRICA', 'africa_a'],
-    AMERICA: ['de_AMERICA', 'aztec_war_drums', 'mexica_ritual', 'eagle_warrior', 'mohicans'],
-    // 🔴 [2026-10-20 主人令「把亚美尼亚卡农琴 Kanun [armenians_b]删除。把这个曲子删除。」] armenians_b 已连同 .aud 文件删除，
-    //    本文化池由 3 首降为 2 首（de_ARMENIANS 主题曲 + armenians_a）。
-    ARMENIANS: ['de_ARMENIANS', 'armenians_a'],
-    ATHENIANS: ['de_ATHENIANS', 'athenians_a', 'athenians_b'],
-    BASHU: ['de_BASHU', 'BASHU', 'bashu_a'],
-    BENGALIS: ['de_BENGALIS', 'bengalis_a', 'bengalis_b'],
-    BERBER: ['de_BERBER', 'berber_a', 'berber_b'],
-    BOHEMIANS: ['de_BOHEMIANS', 'bohemians_a'],
-    BRITONS: ['de_BRITONS', 'britons_b'],
-    BULGARIANS: ['de_BULGARIANS', 'bulgarians_a', 'bulgarians_b'],
-    BURGUNDIANS: ['de_BURGUNDIANS', 'burgundians_a', 'burgundians_b'],
-    BURMESE: ['de_BURMESE', 'pugan', 'burmese_a'],
-    BYZANTINE: ['de_BYZANTINE', 'age_of_kings', 'byzantine_a', 'byzantine_b'],
-    CELTS: ['de_CELTS', 'celts_a', 'celts_b'],
-    CENTRAL: ['de_CENTRAL', 'CENTRAL', 'NORTH', 'daming', 'litang', 'liuhan', 'shadow_assassin'],
-    CENTRAL_ASIA: ['de_CENTRAL_ASIA', 'CENTRAL_ASIA', 'central_asia_a'],
-    CUMAN: ['de_CUMAN', 'cuman_a'],
-    DANES: ['de_DANES', 'furious_march', 'danes_a', 'danes_b'],
-    ETHIOPIANS: ['de_ETHIOPIANS', 'ethiopians_a', 'ethiopians_b'],
-    FRANKS: ['de_FRANKS', 'franks_a', 'franks_b'],
-    GEORGIANS: ['de_GEORGIANS', 'georgians_a', 'georgians_b'],
-    GERMANIC: ['de_GERMANIC', 'drakkar_drums', 'germanic_a'],
-    GOTHS: ['de_GOTHS', 'goths_a', 'goths_b'],
-    // 🔴 [2026-11-02 主人令「删除希腊布祖基琴 Hasapika [greece_a]」]
-    //    greece_a 已连同 .aud 文件删除，GREECE 池由 3 首降为 2 首（GREECE + fallen_army）。
-    GREECE: ['GREECE', 'fallen_army'],
-    // 🔴 [2026-11-06 主人令「拉贾斯坦口弦 Morchang [gurjaras_b]，把这个背景音乐删除，里面人说话，不能用。」]
-    //    gurjaras_b 已连同 .aud 文件删除，本文化池由 3 首降为 2 首（de_GURJARAS 主题曲 + gurjaras_a）。
-    GURJARAS: ['de_GURJARAS', 'gurjaras_a'],
-    HUNS: ['de_HUNS', 'huns_a', 'huns_b'],
-    INCA: ['de_INCA', 'ANDE', 'inca_a'],
-    INDIA: ['de_INDIA', 'INDIA', 'india_a'],
-    JAPAN: ['de_JAPAN', 'JAPAN', 'nobunaga', 'shogun_tsunami', 'shogun_shinobue', 'shogun_daimyo'],
-    JIANGNAN: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
-    HUGUANG: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
-    HEXI: ['de_KHITAN', 'HEXI', 'khitan_a'],   // 河西；曲目文件名沿用 DE 契丹素材
-    KHMER: ['de_KHMER', 'khmer_a', 'khmer_b'],
-    KOREA: ['de_KOREA', 'KOREA', 'korea_a'],
-    LATIN: ['de_LATIN', 'LATIN', 'ezios_family', 'latin_a'],
-    // 🔴 [2026-10-18 主人令「把这个曲子删除」] lithuanians_b（Skudučiai）已连同 .aud 文件删除，
-    //    本文化池由 3 首降为 2 首（de_LITHUANIANS 主题曲 + lithuanians_a）。
-    LITHUANIANS: ['de_LITHUANIANS', 'lithuanians_a'],
-    MACEDONIAN: ['de_MACEDONIAN', 'macedonian_a', 'macedonian_b'],
-    MAGYAR: ['de_MAGYAR', 'magyar_a', 'magyar_b'],
-    // 🔴 [2026-11-02 主人令] malay_a（马来加美兰 Joget）已连同 .aud 文件删除。
-    MALAY: ['de_MALAY', 'malay_b'],
-    MAPUCHE: ['de_MAPUCHE', 'mapuche_a', 'mapuche_b'],
-    MAYANS: ['de_MAYANS', 'mayans_b'],
-    MONGOL: ['de_MONGOL', 'STEPPE', 'mongol_a'],
-    MUGHAL: ['de_MUGHAL', 'mughal_a', 'mughal_b'],
-    MUISCA: ['de_MUISCA', 'muisca_a', 'muisca_b'],
-    NORTHEAST: ['de_NORTHEAST', 'NORTHEAST', 'xianqin'],
-    ORIE: ['de_ORIE', 'holy_land_battle', 'desert_war', 'ottoman_drums'],
-    PERSIAN: ['de_PERSIAN', 'persian_b'],
-    POLES: ['de_POLES', 'poles_a', 'poles_b'],
-    PORTUGUESE: ['de_PORTUGUESE', 'portuguese_a', 'portuguese_b'],
-    PURU: ['de_PURU', 'puru_b'],
-    ROMA: ['de_ROMA', 'roma_a', 'roma_b'],
-    SASANIAN: ['de_SASANIAN', 'sasanian_a', 'sasanian_b'],
-    SAXONS: ['de_SAXONS', 'saxons_a', 'saxons_b'],
-    SICILIANS: ['de_SICILIANS', 'sicilians_a', 'sicilians_b'],
-    SLAVIC: ['de_SLAVIC', 'SLAVIC', 'slavic_a'],
-    SPANISH: ['de_SPANISH', 'spanish_a', 'spanish_b'],
-    SPARTANS: ['de_SPARTANS', 'spartans_a', 'spartans_b'],
-    THRACIAN: ['de_THRACIAN', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war'],
-    // 🔴 [2026-10-26 主人令「藏族长号(喇嘛) [tibet_a]，删除。」] tibet_a 已连同 .aud 文件删除，
-    //    本文化池保留 2 首（TIBET 千年的祈祷 + tibet_b 藏传法铃·钹·号角）。
-    TIBET: ['TIBET', 'tibet_b'],
-    // 🔴 [2026-10-31 主人令「图皮竹笛 Takuapí [tupi_a] 删除这个曲子，有人说话」] tupi_a 已删，
-    //    本文化池由 3 首降为 2 首（de_TUPI 主题曲 + tupi_b 图皮瓜拉尼器乐）。
-    TUPI: ['de_TUPI', 'tupi_b'],
-    TURKS: ['de_TURKS', 'turks_a', 'turks_b'],
-    VARANGIANS: ['de_VARANGIANS', 'varangians_a', 'varangians_b'],
-    // 🔴 [2026-10-18 主人令] vietnamese_a（越南独弦琴 Dan Bau）已连同 .aud 文件删除，
-    //    本文化池由 3 首降为 2 首（de_VIETNAMESE 主题曲 + vietnamese_b）。
-    VIETNAMESE: ['de_VIETNAMESE', 'vietnamese_b'],
-    VIKINGS: ['de_VIKINGS', 'viking_war_drums', 'vikings_a'],
-    WEI: ['de_WEI', 'wuzhou', 'zhaosong'],
-    WESTERN: ['WESTERN', 'western_a', 'western_b'],
-    XIANBEI: ['XIANBEI', 'xianbei_a', 'xianbei_b'],
-};
-
-/** 任意文化码（66 分支 / 172 区 / 16 母体）→ 66 分支 key；未加入势力（null/空）返回 null */
-function resolveBranch(region: string | null | undefined): string | null {
-    if (!region || !region.trim()) return null;
-    const u = region.trim().toUpperCase();
-    const b = ALL_BRANCHES_MAP[u];
-    if (b) return b.key;
-    return toCulture66(u) || REGION_TO_BRANCH[u] || 'CENTRAL';
-}
-
-/** 分支 → 独立曲池（滤掉暂停曲）；无分支（未加入势力）返回空数组，交由 shuffledBgmFolders 走全库随机 */
-function branchPool(branch: string | null): string[] {
-    if (!branch) return [];
-    return (BGM_POOL_MAP[branch] ?? []).filter((f) => AVAILABLE_BGM_FOLDERS.has(f));
-}
-
-
-
-function mergeSettings(raw: unknown): AudioSettings {
-    const settings: AudioSettings = {
-        enabled: DEFAULT_SETTINGS.enabled,
-        masterVolume: DEFAULT_SETTINGS.masterVolume,
-        categoryVolume: { ...DEFAULT_SETTINGS.categoryVolume },
-    };
-
-    if (!raw || typeof raw !== 'object') return settings;
-    const data = raw as Partial<AudioSettings>;
-
-    if (typeof data.enabled === 'boolean') settings.enabled = data.enabled;
-    if (typeof data.masterVolume === 'number') settings.masterVolume = clamp01(data.masterVolume);
-
-    // categoryVolume（音效/音乐分层基准）无用户 UI，属代码固定配置，不从存档读取——
-    // 恒用 DEFAULT_SETTINGS.categoryVolume，避免旧存档里的 1.0 覆盖新基准（主人调音必生效）。
-    // 用户可调的只有 enabled 与 masterVolume，上面已从存档恢复。
-
-    return settings;
-}
-
-export class AudioManager {
-    private static instance: AudioManager | null = null;
-
-    private initialized = false;
-    private unlocked = false;
-    private gamePaused = false;
-    private settings: AudioSettings = mergeSettings(null);
-    private audioCache = new Map<SoundKey, HTMLAudioElement[]>();
-    private loopCache = new Map<SoundKey, HTMLAudioElement>();
-    private lastPlayedAt = new Map<SoundKey, number>();
-    private missingWarned = new Set<SoundKey>();
-    private followedAudioState: {
-        armyId: string | null;
-        marching: boolean;
-        inCombat: boolean;
-        isCavalry: boolean;
-        isNaval: boolean;
-        /** [2026-09-11] 跟拍对象是否玩家本人（独骑）——决定行军音走 player_march_loop */
-        isPlayer: boolean;
-        /** [2026-10-30] 此刻是否在战术模式（13）——交战中途进/出 13 也要重算战斗循环音 */
-        inScene13: boolean;
-    } = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false, inScene13: false };
-    /** 播报进行中：音效 + 音乐压低（优先级闪避） */
-    private speechDucking = false;
-    private bgmAudio: HTMLAudioElement | null = null;
-    /** 当前 BGM 专用 blob URL；换曲/停歌后立即释放，不进入长期对象 URL 缓存。 */
-    private bgmObjectUrl: string | null = null;
-    private currentBgmFolder: string = '';
-    private currentBgmSrc: string = '';
-    private failedBgmFolders = new Set<string>();
-    /** 镜头当前所在文化区对应的 BGM folder（区域优先：此值变化 = 立刻切歌）*/
-    private cameraRegionFolder: string = '';
-    /** 全部 BGM 随机轮播队列（洗牌袋，空了重洗）*/
-    private bgmShuffleQueue: string[] = [];
-    /** 当前跟随军团文化分支的曲池（62+4 分支 → 曲目列表；池内轮播）*/
-    private currentBgmPool: string[] = [];
-    /** BGM 异步加载令牌：切歌 / 停歌时自增，作废旧的 fetch 回调 */
-    private bgmLoadToken = 0;
-    /** 源路径 → blob 对象 URL（用 fetch 取 blob 绕开 IDM 等下载器按扩展名抓取）*/
-    private objectUrlCache = new Map<string, string>();
-    /**
-     * 最后一次 BGM 请求（无论当时成没成功）。解锁 / 重新启用音频后据此补播。
-     * 只留最后一次：BGM 本来就是「当前该放哪首」的单值状态，不是队列。
-     */
-    private lastBgmRequest: { portraitPath?: string; lat: number; lng: number; cultureRegion?: string | null } | null = null;
-    /**
-     * 🔴 [2026-11-04 主人要「F3 背景音乐做成下拉选项，可以自由选择音乐播放」]
-     * F3 手动选定的曲目夹；null = 自动（走原来的选曲逻辑）。
-     * 非 null 时：跟拍军团切换、进战术换曲都不换歌，这首放完重放同一首，直到选回自动。
-     */
-    private manualBgmFolder: string | null = null;
-    /** 战术模式（Scene13）期间锁定为参战军队所属 67 文化的专属曲池（防止串播其他文化曲目） */
-    private tacticalBgmPool: string[] = [];
-    /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
-    private wantedLoops = new Set<SoundKey>();
-    /** 正在播放的一次性音效及其定义（暂停、主音量和语音闪避时同步处理）*/
-    private activeOneShots = new Map<HTMLAudioElement, SoundDefinition>();
-    /** 每个音频元素正在进行的音量渐变（setInterval id）；再次调整时先撤销旧渐变 */
-    private volumeRamps = new Map<HTMLAudioElement, ReturnType<typeof setInterval>>();
-
-    public static getInstance(): AudioManager {
-        if (!AudioManager.instance) AudioManager.instance = new AudioManager();
-        return AudioManager.instance;
-    }
-
-    public initialize(): void {
-        if (this.initialized || typeof window === 'undefined') return;
-        this.initialized = true;
-        this.loadSettings();
-
-        const unlock = () => {
-            this.unlock();
-            window.removeEventListener('pointerdown', unlock);
-            window.removeEventListener('keydown', unlock);
-        };
-
-        window.addEventListener('pointerdown', unlock, { once: true, passive: true });
-        window.addEventListener('keydown', unlock, { once: true });
-
-        // 🔴 [2026-08-12 修「每次刷新都要点一下才有声」] 开局先乐观试一次，别干等手势。
-        //   浏览器自动播放策略：一次真实播放需要用户手势 **或** 本站媒体互动分够高
-        //   （Chrome MEI —— 常玩的站点会攒够）。攒够的情况下这一试就直接出声，用户什么都不用点。
-        //   这在开发期尤其要紧：改一次文件 → dev server 刷新页面 → 音频锁重新锁上 → 又要点一次。
-        void this.tryAutoUnlock();
-    }
-
-    /**
-     * 不靠用户手势地试探能否播放；成功才算解锁。
-     *
-     * 🔴 **必须真播一次来验证，不能直接把 unlocked 置 true**：置了但实际被拦，
-     *    手势监听器会被撤掉，声音就永远回不来了（比现在更糟）。
-     * 🔴 探针用 `volume = 0` 而不是 `muted = true`：Chrome 的策略只看 muted 属性，
-     *    静音元素**永远允许**自动播放 —— 拿它当探针会得到假通过。volume=0 仍算可发声媒体，
-     *    该拦的照样拦，所以它测的才是真结果。
-     */
-    private async tryAutoUnlock(): Promise<void> {
-        if (this.unlocked || !this.settings.enabled) return;
-        const key = (Object.keys(SOUND_DEFINITIONS) as SoundKey[])
-            .find((k) => SOUND_DEFINITIONS[k].category !== 'bgm');
-        if (!key) return;
-        const audio = await this.ensureAudioElement(key, SOUND_DEFINITIONS[key]);
-        if (!audio || this.unlocked) return;
-        const prevVolume = audio.volume;
-        try {
-            audio.volume = 0;
-            await audio.play();
-            audio.pause();
-            audio.currentTime = 0;
-            audio.volume = prevVolume;
-            this.unlock();          // 真的能播 → 走正常解锁（预取 SFX + 补播音效 + 补播 BGM）
-        } catch {
-            audio.volume = prevVolume;
-            // 被策略拦下 —— 什么都不做，等用户手势那条路兜底
-        }
-    }
-
-    /** 场景层的循环音效开关（13 演出用）。内部就是 startLoop/stopLoop，
-     * 只是把它们暴露给场景 —— 那两个原本只由 syncFollowedLegionAudio 驱动（行军/交战底噪），
-     * 而 13 有自己的节奏：接触才起、退场就停，跟大地图的跟拍状态无关。
-     * 幂等：重复 start 不会叠播（startLoop 内部判 audio.paused）。
-     */
-    public startSceneLoop(key: SoundKey): void {
-        this.startLoop(key);
-    }
-
-    public stopSceneLoop(key: SoundKey): void {
-        this.stopLoop(key);
-    }
-
-    /**
-     * 战略地图天气环境循环音同步：随当前视口主导天气气团的强度平滑起停与缩放音量，
-     * 战术模式（13）里同样照响（2026-11-04 主人令）。
-     */
-    private weatherLoopKey: SoundKey | null = null;
-    private weatherStrengthScale = 1;
-
-    public syncWeatherAudio(loopKey: SoundKey | null, strength: number): void {
-        const allWeatherLoops: SoundKey[] = [
-            'weather_storm_loop',
-            'weather_rain_loop',
-            'weather_blizzard_loop',
-            'weather_sandstorm_loop',
-            'weather_fog_loop',
-            'weather_wind_loop',
-        ];
-        // 🔴 [2026-11-04 主人令「战术也响」] 原进战术模式（13）一律静音；现战术里照响
-        //    （战略天气层在 13 前景时暂停，由 Scene13Render 每帧驱动同一套气团调用本函数，两边不抢）。
-        if (!this.settings.enabled || !loopKey || strength < 0.08) {
-            if (this.weatherLoopKey !== null) {
-                for (const k of allWeatherLoops) this.stopLoop(k);
-                this.weatherLoopKey = null;
-                this.weatherStrengthScale = 1;
-            }
-            return;
-        }
-        // 天气淡时下限提到 0.55，确保沙尘暴、暴风雪等在气团边缘也能清晰听见
-        const nextScale = Math.max(0.55, Math.min(1, strength * 1.5));
-        const cachedAudio = this.loopCache.get(loopKey);
-        const needsStart =
-            this.weatherLoopKey !== loopKey ||
-            !this.wantedLoops.has(loopKey) ||
-            (this.unlocked && !this.gamePaused && cachedAudio !== undefined && cachedAudio.paused);
-        if (needsStart) {
-            for (const k of allWeatherLoops) {
-                if (k !== loopKey) this.stopLoop(k);
-            }
-            this.weatherLoopKey = loopKey;
-            this.weatherStrengthScale = nextScale;
-            if (this.unlocked) {
-                this.startLoop(loopKey);
-            }
-            return;
-        }
-        if (Math.abs(this.weatherStrengthScale - nextScale) >= 0.05) {
-            this.weatherStrengthScale = nextScale;
-            const audio = this.loopCache.get(loopKey);
-            const def = SOUND_DEFINITIONS[loopKey];
-            if (audio && def && this.wantedLoops.has(loopKey) && !this.gamePaused) {
-                this.setVolume(audio, this.resolveVolume(def, loopKey), 250);
-            }
-        }
-    }
-
-    public unlock(): void {
-        if (this.unlocked) return;
-        this.unlocked = true;
-        // 预取所有 SFX 为 blob（非 bgm），让首次 play 同步命中缓存
-        for (const key of Object.keys(SOUND_DEFINITIONS) as SoundKey[]) {
-            const def = SOUND_DEFINITIONS[key];
-            if (def.category === 'bgm') continue;
-            void this.ensureAudioElement(key, def);
-        }
-        this.reapplyFollowedLegionAudio();
-        if (this.weatherLoopKey) {
-            this.startLoop(this.weatherLoopKey);
-        }
-        // [2026-08-12] BGM 补播：解锁前记下的那次请求在这里兑现。
-        // 老注释写「BGM 不在解锁时自动启动，由 syncRegionBgm 在跟随军团后触发」——
-        // 但跟拍军团在解锁前就定了，syncPortraitBgm 只在**切换军团**时才调，
-        // 于是那一次空转之后再没有下一次，整局无音乐。
-        this.flushPendingBgm();
-    }
-
-    /**
-     * 解锁 / 音频重新启用后，按最后一次请求补播 BGM。
-     * 🔴 不能依赖调用方再来一次：GameAppLoop 只在**切换跟拍军团**时才请求 BGM，
-     *    不换军团就永远没有下一次。
-     */
-    private flushPendingBgm(): void {
-        if (this.manualBgmFolder && this.settings.enabled && this.unlocked) {
-            this.playBgmFolder(this.manualBgmFolder);
-            return;
-        }
-        const req = this.lastBgmRequest;
-        if (!req) return;
-        // 🔴 [2026-09-17] cultureRegion 必须一起补回：漏了它，补播这一次就退回按坐标 getRegion 取曲，
-        //    「每个武将用自己文化的曲子」在**最关键的那一次**（解锁后的首播）失效。
-        this.syncPortraitBgm(req.portraitPath, req.lat, req.lng, req.cultureRegion);
-    }
-
-    /**
-     * fetch 源文件（.aud，实为 ogg 字节）→ 重标为 audio/ogg 的 blob → blob: 对象 URL。
-     * .aud 不在下载器监控扩展名内，fetch 不被 IDM/迅雷 抓取；
-     * blob: URL 无扩展名，<audio> 也不被抓取；重标 type 确保浏览器按 ogg 解码。
-     */
-    private async fetchObjectUrl(src: string, cache: boolean = true): Promise<string | null> {
-        const cached = cache ? this.objectUrlCache.get(src) : undefined;
-        if (cached) return cached;
-        try {
-            // 破缓存：加 ?ts 防止旧文件被浏览器磁盘缓存死咬
-            const cacheKey = `${src}?ts=${Date.now()}`;
-            const res = await fetch(cacheKey);
-            if (!res.ok) return null;
-            const buf = await res.arrayBuffer();
-            // Vite 对不存在的静态资源可能返回 200 + index.html。只看 res.ok 会把网页误标成
-            // audio/ogg，最终既播不出，也进不了 BGM 的 CENTRAL 回退分支。
-            if (buf.byteLength < 4) return null;
-            const magic = new Uint8Array(buf, 0, 4);
-            if (magic[0] !== 0x4f || magic[1] !== 0x67 || magic[2] !== 0x67 || magic[3] !== 0x53) {
-                return null; // OggS
-            }
-            const blob = new Blob([buf], { type: 'audio/ogg' });
-            const url = URL.createObjectURL(blob);
-            if (cache) this.objectUrlCache.set(src, url);
-            return url;
-        } catch {
-            return null;
-        }
-    }
-
-    public play(key: SoundKey, opts?: { fadeInMs?: number; volumeScale?: number }): boolean {
-        if (!this.settings.enabled || !this.unlocked) return false;
-
-        const definition = SOUND_DEFINITIONS[key];
-        if (!definition || this.isCoolingDown(key, definition.cooldownMs ?? 0)) return false;
-
-        // 游戏暂停时屏蔽所有非 bgm 音效
-        if (this.gamePaused && definition.category !== 'bgm') return false;
-
-        const baseAudio = this.getAudioElement(key, definition);
-        if (!baseAudio) return false;
-
-        const audio = baseAudio.cloneNode(true) as HTMLAudioElement;
-        const volumeScale = Math.max(0, Math.min(1, opts?.volumeScale ?? 1));
-        const targetVol = this.resolveVolume(definition, key) * volumeScale;
-        const fadeInMs = opts?.fadeInMs ?? 0;
-        audio.volume = fadeInMs > 0 ? 0 : targetVol;
-        audio.currentTime = 0;
-
-        this.lastPlayedAt.set(key, Date.now());
-
-        // 追踪在播克隆，暂停时一并停掉；播完自动移除
-        this.activeOneShots.set(audio, definition);
-        audio.addEventListener('ended', () => {
-            this.cancelVolumeRamp(audio);
-            this.activeOneShots.delete(audio);
-        }, { once: true });
-
-        void audio.play().catch((error) => {
-            this.cancelVolumeRamp(audio);
-            this.activeOneShots.delete(audio);
-            this.warnMissingOnce(key, error);
-        });
-
-        if (fadeInMs > 0) {
-            this.setVolume(audio, targetVol, fadeInMs);
-        }
-
-        return true;
-    }
-
-    /** 战术六计释放音效：按六计一一对应播放 DE 专属释放音。 */
-    public playScene13SkillSfx(six: TacticalSixSet, playerCast: boolean): boolean {
-        const keys: Record<TacticalSixSet, SoundKey> = {
-            gongzhan: 'skill_gongzhan',
-            shengzhan: 'skill_shengzhan',
-            dizhan: 'skill_dizhan',
-            hunzhan: 'skill_hunzhan',
-            bingzhan: 'skill_bingzhan',
-            baizhan: 'skill_baizhan',
-        };
-        // 释放音立刻起声：短音效若再淡入 200ms，最有辨识度的开头会被吃掉。
-        return this.play(keys[six], { fadeInMs: 0, volumeScale: 1 });
-    }
-
-    /** 跟拍军团释放武将技时的短音效（非跟拍军团不播） */
-    public playGeneralSkillSfx(unitId?: string | null): void {
-        if (!unitId || typeof window === 'undefined') return;
-        const followedId =
-            (window as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } }).game
-                ?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
-        if (!followedId || followedId !== unitId) return;
-        this.play('general_skill', { fadeInMs: FADE.oneShot });
-    }
-
-    /** 海战事件音效（沉没/开火等，非跟拍军团不播；返回是否实际播放） */
-    public playNavalSfx(unitId: string | null, key: SoundKey): boolean {
-        if (!unitId || typeof window === 'undefined') return false;
-        const followedId =
-            (window as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } }).game
-                ?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
-        if (!followedId || followedId !== unitId) return false;
-        return this.play(key);
-    }
-
-    public syncFollowedLegionAudio(state: {
-        armyId: string | null;
-        marching: boolean;
-        inCombat: boolean;
-        isCavalry?: boolean;
-        isNaval?: boolean;
-        /** 🔴 [2026-09-11 主人定] 跟拍对象就是玩家本人（乱入者独骑）→ 走玩家骑马音 */
-        isPlayer?: boolean;
-    }): void {
-        const isCavalry = state.isCavalry ?? false;
-        const isNaval = state.isNaval ?? false;
-        const isPlayer = state.isPlayer ?? false;
-        // 🔴 [2026-10-30 主人报「援军赶到后进了战术模式，但战斗音效不重计」]
-        //    原先缓存只比「在不在交战」：援军中途把这场仗拖进 13 时，跟随军团早已在交战，
-        //    状态判成没变就直接返回，战略层的 battle_loop 一路带进 13。13 开关也要进缓存比较。
-        //    ⚠️ 进 13 后 battle_loop 停掉，13 自己的交战音景 land_contact **只在两军近战接触时才响**
-        //    （Scene13WarLayer 接触判定驱动）；进场到接触前这段安静是设计如此，不是漏音效。
-        const inScene13 = (window as any).game?.scene13War?.isActive?.() === true;
-        if (
-            this.followedAudioState.armyId === state.armyId &&
-            this.followedAudioState.marching === state.marching &&
-            this.followedAudioState.inCombat === state.inCombat &&
-            this.followedAudioState.isCavalry === isCavalry &&
-            this.followedAudioState.isNaval === isNaval &&
-            this.followedAudioState.isPlayer === isPlayer &&
-            this.followedAudioState.inScene13 === inScene13
-        ) {
-            return;
-        }
-
-        this.followedAudioState = { ...state, isCavalry, isNaval, isPlayer, inScene13 };
-
-        // 四条行军循环音互斥：航海优先；陆上再按玩家独骑、纯骑军团、其他军团区分。
-        const marchKey: SoundKey = isNaval ? 'naval_march_loop'
-            : isPlayer ? 'player_march_loop'
-            : isCavalry ? 'cavalry_march_loop' : 'march_loop';
-        const otherMarchKeys = (['march_loop', 'cavalry_march_loop', 'player_march_loop', 'naval_march_loop'] as SoundKey[])
-            .filter((k) => k !== marchKey);
-
-        if (!state.armyId || !this.settings.enabled) {
-            for (const k of otherMarchKeys) this.stopLoop(k);
-            this.stopLoop(marchKey);
-            this.stopLoop('battle_loop');
-            this.stopLoop('naval_battle_loop');
-            return;
-        }
-
-        if (state.inCombat) {
-            for (const k of otherMarchKeys) this.stopLoop(k);
-            this.stopLoop(marchKey);
-            // 13 微观看由具体 DE 战斗音效驱动；战略层海战改播专用海战循环音。
-            if (inScene13) {
-                this.stopLoop('battle_loop');
-                this.stopLoop('naval_battle_loop');
-            } else if (isNaval) {
-                this.stopLoop('battle_loop');
-                this.startLoop('naval_battle_loop');
-            } else {
-                this.stopLoop('naval_battle_loop');
-                this.startLoop('battle_loop');
-            }
-            return;
-        }
-
-        this.stopLoop('battle_loop');
-        this.stopLoop('naval_battle_loop');
-        // 切换军团、上下船、上马下马或玩家独骑与随军互切时，先停掉其他行军音。
-        for (const k of otherMarchKeys) this.stopLoop(k);
-        if (state.marching) {
-            this.startLoop(marchKey);
-        } else {
-            this.stopLoop(marchKey);
-        }
-    }
-
-    public setEnabled(enabled: boolean): void {
-        this.settings.enabled = enabled;
-        if (!enabled) {
-            this.stopAllLoops();
-            this.stopBgm();
-        } else {
-            this.reapplyFollowedLegionAudio();
-            // [2026-08-12] BGM 同样要补播。老注释说「由 syncRegionBgm 在跟随军团时恢复」，
-            // 但不换军团就没有下一次请求 —— 关了音频再开，音乐就再也不响（与解锁那条同病）。
-            this.flushPendingBgm();
-        }
-        this.saveSettings();
-    }
-
-    public isEnabled(): boolean {
-        return this.settings.enabled;
-    }
-
-    public isUnlocked(): boolean {
-        return this.unlocked;
-    }
-
-    public setMasterVolume(volume: number): void {
-        this.settings.masterVolume = clamp01(volume);
-        this.refreshLoopVolumes();
-        this.saveSettings();
-    }
-
-    public getMasterVolume(): number {
-        return this.settings.masterVolume;
-    }
-
-    public setCategoryVolume(category: AudioCategory, volume: number): void {
-        this.settings.categoryVolume[category] = clamp01(volume);
-        this.refreshLoopVolumes();
-        this.saveSettings();
-    }
-
-    /** 播报开始/结束：开始时压低音效 + 音乐，结束恢复（优先级闪避） */
-    public setSpeechDucking(active: boolean): void {
-        if (this.speechDucking === active) return;
-        this.speechDucking = active;
-        // 🔴 [2026-10-02 → 2026-10-18 主人定] 播报时平滑避让战斗音效：开启时 600ms 渐隐，结束时 1000ms 渐显
-        const fadeDuration = active ? 600 : 1000;
-        this.refreshLoopVolumes(fadeDuration);
-    }
-
-    public isSpeechDucking(): boolean {
-        return this.speechDucking;
-    }
-
-    /** 🔴 [2026-10-02 主人定] 当前是否有 BGM 正在正常播放（用于场景切换时不打断在播音乐） */
-    public isBgmPlaying(): boolean {
-        return !!(this.bgmAudio && !this.bgmAudio.paused && this.currentBgmSrc !== '');
-    }
-
-    /** 播报有效音量（跟随主音量；TTS 感知偏轻，SPEECH_GAIN 补偿至与音效/音乐感知齐平） */
-    public getSpeechVolume(): number {
-        return clamp01(this.settings.masterVolume * SPEECH_GAIN);
-    }
-
-    /**
-     * 🔴 [2026-09-16 主人定]「有的背景音乐音量特别小，但我又不知道歌曲的名字」
-     * 当前 BGM 的实况 —— 调试面板（F3）拿它显示曲名与响度补偿，听到偏轻的曲子能当场认出是哪首。
-     *  · `gain` 就是 `BGM_REGION_GAIN` 里这首的补偿系数；**1.00 表示压根不在表里**（无补偿），
-     *    这类曲子通常就是听起来偏响或偏轻的那些，值得优先怀疑。
-     *  · `volume` 是 audio 元素此刻的真实音量（已含闪避：播报/音效/行军都会临时压低）。
-     */
-    public getBgmStatus(): {
-        track: string; folder: string; title: string; gain: number; inGainTable: boolean;
-        volume: number; paused: boolean; currentSec: number; durationSec: number;
-    } | null {
-        if (!this.currentBgmSrc) return null;
-        const folder = this.currentBgmFolder;
-        const file = this.currentBgmSrc.split('/').pop() ?? this.currentBgmSrc;
-        return {
-            track: decodeURIComponent(file),
-            folder,
-            title: BGM_TITLES[folder] ?? folder,
-            gain: BGM_REGION_GAIN[folder] ?? 1.0,
-            inGainTable: Object.prototype.hasOwnProperty.call(BGM_REGION_GAIN, folder),
-            volume: this.bgmAudio ? +this.bgmAudio.volume.toFixed(3) : 0,
-            paused: this.bgmAudio ? this.bgmAudio.paused : true,
-            currentSec: this.bgmAudio ? Math.floor(this.bgmAudio.currentTime) : 0,
-            durationSec: this.bgmAudio && Number.isFinite(this.bgmAudio.duration)
-                ? Math.floor(this.bgmAudio.duration) : 0,
-        };
-    }
-
-    public getSettings(): AudioSettings {
-        return {
-            enabled: this.settings.enabled,
-            masterVolume: this.settings.masterVolume,
-            categoryVolume: { ...this.settings.categoryVolume },
-        };
-    }
-
-    private loadSettings(): void {
-        try {
-            const saved = window.localStorage.getItem(STORAGE_KEY);
-            this.settings = saved ? mergeSettings(JSON.parse(saved)) : mergeSettings(null);
-        } catch {
-            this.settings = mergeSettings(null);
-        }
-    }
-
-    private saveSettings(): void {
-        if (typeof window === 'undefined') return;
-        try {
-            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.settings));
-        } catch {
-            // 音效设置丢失不应影响游戏运行。
-        }
-    }
-
-    private isCoolingDown(key: SoundKey, cooldownMs: number): boolean {
-        const lastPlayedAt = this.lastPlayedAt.get(key) ?? 0;
-        return cooldownMs > 0 && Date.now() - lastPlayedAt < cooldownMs;
-    }
-
-    /** 同步取缓存（多源随机挑一个）；未就绪则异步加载并返回 null（首播跳过，预取后即命中）*/
-    private getAudioElement(key: SoundKey, definition: SoundDefinition): HTMLAudioElement | null {
-        const cached = this.audioCache.get(key);
-        if (cached && cached.length > 0) {
-            return cached[Math.floor(Math.random() * cached.length)];
-        }
-        void this.ensureAudioElement(key, definition);
-        return null;
-    }
-
-    /** 异步：fetch 所有源 → 对象 URL → 缓存 Audio 元素数组（多源随机变奏） */
-    private async ensureAudioElement(
-        key: SoundKey,
-        definition: SoundDefinition,
-    ): Promise<HTMLAudioElement | null> {
-        const cached = this.audioCache.get(key);
-        if (cached && cached.length > 0) return cached[0];
-
-        const audios: HTMLAudioElement[] = [];
-        for (const source of definition.sources) {
-            const url = await this.fetchObjectUrl(source);
-            if (!url) {
-                this.warnMissingOnce(key, `fetch 失败: ${source}`);
-                continue;
-            }
-            const audio = new Audio();
-            audio.src = url;
-            audio.preload = 'auto';
-            audios.push(audio);
-        }
-        if (audios.length === 0) return null;
-        this.audioCache.set(key, audios);
-        return audios[0];
-    }
-
-    private startLoop(key: SoundKey): void {
-        if (!this.settings.enabled || !this.unlocked) return;
-
-        const definition = SOUND_DEFINITIONS[key];
-        if (!definition) return;
-
-        // 先记录「期望开启」意图（恢复时据此重启），即使暂停期间切换跟随军团也不丢失
-        this.wantedLoops.add(key);
-        // 音效循环启动 → 音乐随之平滑压低（打底）
-        if (definition.category !== 'bgm') this.updateBgmDuckVolume(FADE.duck);
-        // 暂停时只记意图、不实际播放（bgm 不受暂停影响）
-        if (this.gamePaused && definition.category !== 'bgm') return;
-
-        const isBattleAmbience = key === 'land_contact' || key === 'battle_loop' || key === 'naval_battle_loop';
-        const fadeInMs = isBattleAmbience ? FADE.battleLoopIn : FADE.loop;
-
-        void this.ensureLoopElement(key, definition).then((audio) => {
-            // 异步加载期间状态可能已变（停止跟拍/转入战斗/暂停），仅当仍被期望且未暂停时才播
-            if (!audio || !this.settings.enabled || !this.wantedLoops.has(key)) return;
-            if (this.gamePaused && definition.category !== 'bgm') return;
-            if (audio.paused) {
-                audio.volume = 0;
-                void audio.play().catch((error) => {
-                    this.warnMissingOnce(key, error);
-                });
-            }
-            this.setVolume(audio, this.resolveVolume(definition, key), fadeInMs);
-        });
-    }
-
-    private stopLoop(key: SoundKey): void {
-        this.wantedLoops.delete(key);
-        // 音效循环停止 → 音乐平滑恢复（若已无其他音效循环）
-        if (SOUND_DEFINITIONS[key]?.category !== 'bgm') this.updateBgmDuckVolume(FADE.duck);
-        const audio = this.loopCache.get(key);
-        if (!audio) return;
-        const isBattleAmbience = key === 'land_contact' || key === 'battle_loop' || key === 'naval_battle_loop';
-        const fadeOutMs = isBattleAmbience ? FADE.battleLoopOut : FADE.loop;
-        // 平滑淡出后再暂停；淡出途中若被 startLoop 重新期望，其 setVolume 会撤销本渐变、onDone 不触发
-        this.setVolume(audio, 0, fadeOutMs, () => {
-            if (this.wantedLoops.has(key)) return; // 淡出未完又被重新启动 → 不停
-            audio.pause();
-        });
-    }
-
-    private stopAllLoops(): void {
-        const keys = new Set<SoundKey>([...this.wantedLoops, ...this.loopCache.keys()]);
-        for (const key of keys) {
-            this.stopLoop(key);
-        }
-    }
-
-    /** 游戏暂停/恢复：暂停时停掉所有非 bgm 音效和循环音，恢复时重启循环音 */
-    public setGamePaused(paused: boolean): void {
-        this.gamePaused = paused;
-        if (paused) {
-            // 停掉所有非 bgm 循环音（保留 wantedLoops，恢复时据此重启）
-            for (const [key, audio] of this.loopCache.entries()) {
-                if (SOUND_DEFINITIONS[key]?.category !== 'bgm' && !audio.paused) {
-                    audio.pause();
-                }
-            }
-            // 停掉所有在播的一次性音效（一次性事件不恢复，直接丢弃）
-            for (const audio of this.activeOneShots.keys()) {
-                audio.pause();
-                this.cancelVolumeRamp(audio);
-            }
-            this.activeOneShots.clear();
-        } else {
-            // 恢复所有本应在播的非 bgm 循环音（可能暂停在半途音量，恢复时淡回正确音量）
-            for (const key of this.wantedLoops) {
-                const def = SOUND_DEFINITIONS[key];
-                if (!def || def.category === 'bgm') continue;
-                const audio = this.loopCache.get(key);
-                if (audio && audio.paused) {
-                    audio.volume = 0;
-                    void audio.play().catch(() => {});
-                    this.setVolume(audio, this.resolveVolume(def, key), FADE.loop);
-                }
-            }
-        }
-        // 暂停/恢复后音效循环有效性变化 → 平滑同步音乐闪避
-        this.updateBgmDuckVolume(FADE.duck);
-    }
-
-    public stopBgm(): void {
-        this.currentBgmFolder = '';
-        this.currentBgmSrc = '';
-        this.cameraRegionFolder = '';
-        this.bgmLoadToken++; // 作废任何在途加载
-        if (this.bgmAudio) {
-            this.cancelVolumeRamp(this.bgmAudio); // 撤销可能在进行的交叉淡化
-            this.bgmAudio.pause();
-            this.bgmAudio.removeAttribute('src');
-            this.bgmAudio.load();
-        }
-        if (this.bgmObjectUrl) URL.revokeObjectURL(this.bgmObjectUrl);
-        this.bgmAudio = null;
-        this.bgmObjectUrl = null;
-    }
-
-    /**
-     * 跟拍军团变了 / 解锁后补播时调一次。
-     * 🔴 [2026-09-25 主人令「『每个武将都用自己文化的曲子』这条作废，你认为怎么好就怎么弄」]
-     *    **BGM 一律走洗牌袋随机轮播**（覆盖全部 39 个曲目夹，每首都轮得到、不重播刚放完那首）：
-     *    · 开场那一首也从全库随机 —— 原来分两条「按人物定曲子」的路，实测都会把开场锁死：
-     *      ① 立绘夹专属 BGM（`portraitDir`，如 CENTRAL/LATIN/manqing…）→ 实测开局连开三局**全是 CENTRAL**
-     *         （`node scratch/_probe_bgm_branch.mjs` 打出：lastBgmRequest.portraitPath = /assets/CENTRAL/__闲置__CENTRAL_43.png
-     *         → cameraRegionFolder=CENTRAL → /bgm/CENTRAL_bgm.aud），主人听着就是「BGM 是固定的」；
-     *      ② 16 母体文化池（马其顿所在 LATIN 池只有两首）→ 每局也都是那两首之一。
-     *    · 保留不动的两条老规矩：**有歌在放就绝不打断**（applyCameraFolder，2026-09-16「都听到」）、
-     *      文件缺失回落 `GENERIC_BGM_FALLBACK`。
-     * 名字仍叫 syncPortraitBgm（调用方按跟拍军团的立绘/坐标发起请求），只是**不再用它们挑曲子**。
-     */
-    public syncPortraitBgm(portraitPath?: string, lat?: number, lng?: number, cultureRegion?: string | null): void {
-        if (lat === undefined || lng === undefined) return;
-        // 🔴 [2026-08-12 修「有时候整局没音乐」] 无论这次成不成功都把请求**记下来**，供解锁 /
-        //   重新启用音频后补播（flushPendingBgm）。
-        //   病根：BGM 只在跟拍军团切换的那一帧请求一次（GameAppLoop「followedId !== lastBgmFollowedId」），
-        //   而浏览器自动播放策略下，用户第一次点击/按键之前 unlocked=false —— 老代码在这里直接 return，
-        //   调用方却已经把 lastBgmFollowedId 写死了，于是**这个军团被换掉之前永远没有音乐**，
-        //   期间打的所有 13 战斗全程无 BGM。音效没这个病，因为 unlock() 里有 reapplyFollowedLegionAudio 补播。
-        //   ⚠️ [2026-09-17 恢复] 这段病根记录在 16 母体改造时被删掉了，它是 8-12 的血训，别再删。
-        this.lastBgmRequest = { portraitPath, lat, lng, cultureRegion };
-        if (!this.settings.enabled || !this.unlocked) return;
-
-        // 🔴 [2026-10-18 主人定「玩家加入哪个势力就播放哪个势力的曲子，没有加入势力就随机」]
-        //   有势力 → 该势力 66 文化曲池（若当前在播曲目不在该池内，立即交叉淡入切至该势力曲子）；
-        //   无势力（cultureRegion 为 null）→ currentBgmPool 为空，走全库随机轮播。
-        const branch = resolveBranch(cultureRegion);
-        this.currentBgmPool = branchPool(branch);
-        if (this.tacticalBgmPool.length > 0) return;
-        this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
-        // F3 手动选了曲 → 曲池照记（选回自动时生效），歌不换
-        if (this.manualBgmFolder) {
-            this.playBgmFolder(this.manualBgmFolder);
-            return;
-        }
-        if (
-            this.currentBgmPool.length > 0 &&
-            this.currentBgmFolder !== '' &&
-            !this.currentBgmPool.includes(this.currentBgmFolder)
-        ) {
-            this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
-            return;
-        }
-        this.applyCameraFolder(this.nextRotationFolder(this.currentBgmFolder));
-    }
-
-    /**
-     * ⚠️ [2026-09-25 核查] **全仓无调用方（死代码）**，且它按镜头文化区挑曲的做法已被上一条令作废 ——
-     * 保留原地但**别再接线**：要换曲走 `rerollBgm()` 或 `syncPortraitBgm()` 的洗牌袋。
-     */
-    public syncRegionBgm(lat: number, lng: number): void {
-        if (!this.settings.enabled || !this.unlocked) return;
-        const region = getRegion(lat, lng);
-        const mother = toBase16(region);
-        const pool = BASE16_BGM_MAP[mother];
-        const chosen = (pool && pool.length > 0) ? pool[Math.floor(Math.random() * pool.length)] : region;
-        this.applyCameraFolder(resolveAvailableBgmFolder(chosen));
-    }
-
-    /**
-     * 进入战术模式时换一首曲子；退出时继续播放当前曲目。
-     * 镜头跨文化区不打断音乐。
-     * 走洗牌袋取下一首（排除正在放的那首），与自然接力同一套轮播，保证每首都轮得到。
-     */
-    public rerollBgm(): void {
-        if (!this.settings.enabled || !this.unlocked) return;
-        if (this.manualBgmFolder) return;
-        this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
-    }
-
-    /**
-     * 进入战术模式（Scene13）：按参战方所属 67 文化的专属曲池（`BGM_POOL_MAP[branch]`）随机轮播该文化的全部曲目。
-     * 若当前正在播放的曲目已属于该文化池则不打断；若不属于该文化池（或尚未播放），从该文化池内洗牌随机播放一首。
-     */
-    public enterScene13Bgm(cultureRegion?: string | null): void {
-        const branch = resolveBranch(cultureRegion);
-        const pool = branchPool(branch);
-        this.tacticalBgmPool = pool;
-        this.bgmShuffleQueue = [];
-        if (!this.settings.enabled || !this.unlocked || this.manualBgmFolder) return;
-        if (this.isBgmPlaying() && pool.length > 0 && pool.includes(this.currentBgmFolder)) return;
-        this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
-    }
-
-    /** 退出战术模式（Scene13）：解除战术文化曲池锁定，不打断当前正在播放的音乐。 */
-    public exitScene13Bgm(): void {
-        if (this.tacticalBgmPool.length === 0) return;
-        this.tacticalBgmPool = [];
-        this.bgmShuffleQueue = [];
-    }
-
-    /** F3 下拉框的曲目表：全部可播曲目（已滤掉版权暂停曲），曲名取 BGM_TITLES，时长取 BGM_DURATIONS（0 = 未知） */
-    public getBgmTrackList(): { folder: string; title: string; durationSec: number }[] {
-        return BGM_ROTATION_FOLDERS.map((folder) => ({
-            folder,
-            title: BGM_TITLES[folder] ?? folder,
-            durationSec: BGM_DURATIONS[folder] ?? 0,
-        }));
-    }
-
-    /** F3 手动选定的曲目夹；null = 自动 */
-    public getManualBgmFolder(): string | null {
-        return this.manualBgmFolder;
-    }
-
-    /**
-     * F3 下拉框选曲。传曲目夹 = 立即切到这首并锁定；传 null = 选回自动。
-     * 选回自动时不打断正在放的这首（原逻辑「有歌在放就绝不打断」），
-     * 放完按当前曲池洗牌接力；若当前势力曲池不含这首，按原逻辑立即切回势力曲。
-     */
-    public setManualBgm(folder: string | null): void {
-        if (folder && !AVAILABLE_BGM_FOLDERS.has(folder)) return;
-        this.manualBgmFolder = folder;
-        this.bgmShuffleQueue = [];
-        if (!this.settings.enabled || !this.unlocked) return;
-        if (folder) {
-            this.playBgmFolder(folder);
-        } else {
-            this.flushPendingBgm();
-        }
-    }
-
-    /**
-     * 🔴 [2026-09-16 主人定]「所有背景音乐都要循环播放，这样才能都听到。不要被任何打断。」
-     *
-     * 原来是**区域优先**：镜头一跨文化区就立刻切歌。战场事件里玩家奔赴战场、镜头一路跨区，
-     * 曲子就被一路掐断，每首只放个开头 —— 主人报的「战场事件打断背景音乐」就是这条。
-     *
-     * 改为**只记录、不打断**：镜头换区只更新 cameraRegionFolder，当前这首照常放完；
-     * 放完由 `ended` 走洗牌袋接力下一首（覆盖全部曲目，每首都轮得到）。
-     * 只有在压根没歌在放时（开局、或被 stopBgm 清空）才立刻起一首。
-     *
-     * 代价说明白：音乐**不再与镜头所在文化区强对应**（在中原可能正放着拉丁曲）。
-     * 这是「都听到 + 不被打断」换来的，是主人明确要的取舍。
-     */
-    private applyCameraFolder(folderName: string): void {
-        this.cameraRegionFolder = folderName;
-        if (this.failedBgmFolders.has(folderName)) return;
-        // 有歌在放就绝不插手 —— 包括镜头刚换了文化区
-        if (this.bgmAudio && !this.bgmAudio.paused && this.currentBgmSrc !== '') return;
-        // 镜头文化区未变：仅当 BGM 被彻底停掉（currentBgmSrc 为空）才补播该区曲
-        if (this.currentBgmSrc === '' && !this.failedBgmFolders.has(folderName)) {
-            this.playBgmFolder(folderName);
-        }
-    }
-
-    /** 播放某文化区/势力夹 BGM；单曲不循环，放完在全部有效曲目中洗牌轮播。
-     *  集中目录：public/bgm/{folder}_bgm.aud（2026-08-04 集中管理，原分散各立绘夹） */
-    private playBgmFolder(folder: string): void {
-        folder = resolveAvailableBgmFolder(folder);
-        const src = `/bgm/${folder}_bgm.aud`;
-        // 同一首已在播 → 跳过（dedup 用逻辑路径，blob URL 无法比对）
-        if (this.currentBgmSrc === src && this.bgmAudio && !this.bgmAudio.paused) return;
-        this.currentBgmFolder = folder;
-        this.currentBgmSrc = src;
-        const token = ++this.bgmLoadToken;
-
-        // BGM 单曲体积远大于音效，不进入永久 objectUrlCache；旧曲交叉淡出后立即 revoke。
-        void this.fetchObjectUrl(src, false).then((url) => {
-            // 异步期间又切了歌 / 停了 BGM → 作废本次回调
-            if (token !== this.bgmLoadToken || !this.settings.enabled || !this.unlocked) {
-                if (url) URL.revokeObjectURL(url);
-                return;
-            }
-            if (!url) {
-                this.warnMissingOnce('bgm_main', `fetch 失败: ${src}`);
-                // 记录失败文件夹，避免每帧重试
-                this.failedBgmFolders.add(folder);
-                // 文件意外缺失/损坏 → 回落无文化归属的通用主题曲。
-                if (folder !== GENERIC_BGM_FALLBACK) this.playBgmFolder(GENERIC_BGM_FALLBACK);
-                return;
-            }
-            const oldAudio = this.bgmAudio;
-            const oldObjectUrl = this.bgmObjectUrl;
-            const audio = new Audio();
-            audio.src = url;
-            audio.loop = false; // 单曲不循环：放完随机轮播下一文化
-            audio.preload = 'auto';
-            const def = SOUND_DEFINITIONS['bgm_main'];
-            const regionGain = BGM_REGION_GAIN[folder] ?? 1.0;
-            const targetVol = (def ? this.resolveVolume(def) : 0.125) * regionGain;
-            audio.volume = 0; // 从 0 交叉淡入
-            audio.addEventListener(
-                'ended',
-                () => {
-                    // 已被区域切歌 / 停歌替换 → 不接力
-                    if (this.bgmAudio !== audio || !this.settings.enabled || !this.unlocked) return;
-                    this.playBgmFolder(this.manualBgmFolder ?? this.nextRotationFolder(folder));
-                },
-                { once: true },
-            );
-            this.bgmAudio = audio;
-            this.bgmObjectUrl = url;
-            void audio.play().catch((error) => {
-                this.warnMissingOnce('bgm_main', error);
-            });
-            // targetVol 已由 resolveVolume 按播报/行军/战斗状态完成闪避，不能再次强制归零。
-            this.setVolume(audio, targetVol, FADE.bgmCrossfade);
-            if (oldAudio) {
-                this.setVolume(oldAudio, 0, FADE.bgmCrossfade, () => {
-                    oldAudio.pause();
-                    oldAudio.removeAttribute('src');
-                    oldAudio.load();
-                    if (oldObjectUrl) URL.revokeObjectURL(oldObjectUrl);
-                });
-            } else if (oldObjectUrl) {
-                URL.revokeObjectURL(oldObjectUrl);
-            }
-        });
-    }
-
-    /** 洗牌袋取下一首 BGM folder；避免与刚放完的紧挨重复 */
-    private nextRotationFolder(exclude: string): string {
-        if (this.bgmShuffleQueue.length === 0) {
-            this.bgmShuffleQueue = this.shuffledBgmFolders();
-        }
-        let next = this.bgmShuffleQueue.shift()!;
-        if (next === exclude && this.bgmShuffleQueue.length > 0) {
-            this.bgmShuffleQueue.push(next);
-            next = this.bgmShuffleQueue.shift()!;
-        }
-        return next;
-    }
-
-    /** Fisher–Yates 洗牌全部实际存在且完成响度标定的 BGM folder。
-     *  🔴 [2026-10-02 主人定] 剧本期（亚历山大东征）只洗西方歌曲池；乱斗才洗全部曲目。
-     *  🔴 [2026-10-18 主人令] 两个池都要再滤掉 `PAUSED_BGM_FOLDERS`（版权主张暂停，文件保留）。 */
-    private shuffledBgmFolders(): string[] {
-        // 🔴 [2026-10-18] 池内轮播：战术模式锁定参战文化专属池；有当前分支曲池就用它；剧本期走西方池；否则回落全局池。
-        let pool: readonly string[];
-        if (this.tacticalBgmPool.length > 0) {
-            pool = this.tacticalBgmPool;
-        } else if (this.currentBgmPool.length > 0) {
-            pool = this.currentBgmPool;
-        } else if (isScriptPeriod()) {
-            pool = SCRIPT_WESTERN_BGM_FOLDERS;
-        } else {
-            pool = BGM_ROTATION_FOLDERS;
-        }
-        const arr = pool.filter((folder) => !PAUSED_BGM_FOLDERS.has(folder));
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    }
-
-    private reapplyFollowedLegionAudio(): void {
-        const state = { ...this.followedAudioState };
-        this.followedAudioState = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false, inScene13: false };
-        this.syncFollowedLegionAudio(state);
-    }
-
-    /** 刷新所有循环音 + BGM 到各自解析音量；durationMs>0 时平滑渐变（默认瞬时，供滑杆用） */
-    private refreshLoopVolumes(durationMs = 0): void {
-        for (const [key, audio] of this.loopCache.entries()) {
-            const definition = SOUND_DEFINITIONS[key];
-            // 已停(未在期望中)的循环音不要被 duck 渐变重新拉响；停音自己的淡出各管各的
-            if (!definition || !this.wantedLoops.has(key)) continue;
-            this.setVolume(audio, this.resolveVolume(definition, key), durationMs);
-        }
-        for (const [audio, definition] of this.activeOneShots.entries()) {
-            if (audio.paused || audio.ended) continue;
-            this.setVolume(audio, this.resolveVolume(definition), durationMs);
-        }
-        if (this.bgmAudio) {
-            const def = SOUND_DEFINITIONS['bgm_main'];
-            if (def) {
-                // 带 regionGain 响度补偿（与 playBgmFolder 一致），防主音量/分类音量调整时补偿丢失
-                const regionGain = BGM_REGION_GAIN[this.currentBgmFolder] ?? 1.0;
-                this.setVolume(this.bgmAudio, this.resolveVolume(def) * regionGain, durationMs);
-            }
-        }
-    }
-
-    private async ensureLoopElement(
-        key: SoundKey,
-        definition: SoundDefinition,
-    ): Promise<HTMLAudioElement | null> {
-        const cached = this.loopCache.get(key);
-        if (cached) return cached;
-
-        const source = definition.sources[0];
-        if (!source) return null;
-
-        const url = await this.fetchObjectUrl(source);
-        if (!url) {
-            this.warnMissingOnce(key, `fetch 失败: ${source}`);
-            return null;
-        }
-        const audio = new Audio();
-        audio.src = url;
-        audio.loop = true;
-        audio.preload = 'auto';
-        this.loopCache.set(key, audio);
-        return audio;
-    }
-
-    /**
-     * 把某音频元素的音量平滑过渡到 target（durationMs 内，smoothstep 缓动）。
-     * durationMs<=0 或差异极小 → 立即赋值。会先撤销该元素正在进行的渐变（新意图覆盖旧）。
-     * 用 setInterval 而非 requestAnimationFrame：后台标签页 rAF 被冻结会让音量卡在半路，
-     * setInterval 即便被节流也能按真实经过时间收敛到目标。
-     */
-    private setVolume(
-        audio: HTMLAudioElement,
-        target: number,
-        durationMs: number,
-        onDone?: () => void,
-    ): void {
-        const existing = this.volumeRamps.get(audio);
-        if (existing !== undefined) {
-            clearInterval(existing);
-            this.volumeRamps.delete(audio);
-        }
-        const clamped = clamp01(target);
-        const start = clamp01(audio.volume);
-        if (durationMs <= 0 || Math.abs(clamped - start) < 0.005) {
-            audio.volume = clamped;
-            onDone?.();
-            return;
-        }
-        const t0 = performance.now();
-        const id = setInterval(() => {
-            const p = Math.min(1, (performance.now() - t0) / durationMs);
-            const eased = p * p * (3 - 2 * p); // smoothstep
-            audio.volume = clamp01(start + (clamped - start) * eased);
-            if (p >= 1) {
-                clearInterval(id);
-                this.volumeRamps.delete(audio);
-                audio.volume = clamped;
-                onDone?.();
-            }
-        }, 25);
-        this.volumeRamps.set(audio, id);
-    }
-
-    /** 撤销某元素正在进行的音量渐变（不改当前音量），供硬停时清理 */
-    private cancelVolumeRamp(audio: HTMLAudioElement): void {
-        const existing = this.volumeRamps.get(audio);
-        if (existing !== undefined) {
-            clearInterval(existing);
-            this.volumeRamps.delete(audio);
-        }
-    }
-
-    private resolveVolume(definition: SoundDefinition, key?: SoundKey): number {
-        if (key === 'land_contact') {
-            // 🔴 [2026-10-02 主人定] 战术模式陆战接触音效音量提高到与播报一致 (1.0 * masterVolume)，
-            //    且不要和播报重叠播放（播报期间完全静音，播报结束后平滑淡入恢复）
-            if (this.speechDucking) return 0;
-            return clamp01(this.getSpeechVolume() * 0.85);
-        }
-        const categoryVolume = this.settings.categoryVolume[definition.category] ?? 1;
-        const weatherScale = (key && key.startsWith('weather_') && key.endsWith('_loop'))
-            ? this.weatherStrengthScale
-            : 1;
-        const base = this.settings.masterVolume * categoryVolume * (definition.volume ?? 1) * weatherScale;
-        return clamp01(base * this.duckFactor(definition.category, key));
-    }
-
-    /**
-     * 优先级闪避（ducking）：播报/音效同层互斥，音乐打底。
-     * - 音乐(bgm)：播报中压到 bgmUnderSpeech；仅音效循环(行军/战斗)时压到 bgmUnderSfx。
-     * - 音效(ui/battle/feed)：播报中静音（同层互斥：要么响播报，要么响音效）。
-     * - 播报本身走 SpeechAnnouncer(TTS)，不在此压低。
-     */
-    /**
-     * 🔴 [2026-09-16 主人报障「这个背景音乐的音量很小」]
-     * 当前 BGM 被压到多少、被谁压的 —— F3 面板显示它，好分清
-     * 「这首曲子本身轻」和「它正被行军/战斗/播报压着」。
-     * 分不清这两者就会去错地方：前者该调响度补偿，后者该调闪避档位。
-     */
-    public getBgmDuckInfo(): { factor: number; reason: string } {
-        if (this.speechDucking) return { factor: DUCK.bgmUnderSpeech, reason: '播报' };
-        if (this.wantedLoops.has('battle_loop') || this.wantedLoops.has('naval_battle_loop')) {
-            return { factor: DUCK.bgmUnderSfx, reason: '战斗' };
-        }
-        if (this.wantedLoops.has('land_contact')) {
-            return { factor: DUCK.bgmUnderBattleAmbience, reason: '13音景' };
-        }
-        if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')
-            || this.wantedLoops.has('player_march_loop') || this.wantedLoops.has('naval_march_loop')) {
-            return { factor: DUCK.bgmUnderMarch, reason: '行军' };
-        }
-        return { factor: 1, reason: '无' };
-    }
-
-    private duckFactor(category: AudioCategory, key?: SoundKey): number {
-        if (category === 'bgm') {
-            if (this.speechDucking) return DUCK.bgmUnderSpeech;
-            if (this.wantedLoops.has('battle_loop') || this.wantedLoops.has('naval_battle_loop')) return DUCK.bgmUnderSfx;   // 战斗：0.30 原样
-            // 🔴 [2026-08-19] land_contact（13 接触音景）必须在这里登记，否则它循环起来时
-            //    BGM 一点都不会被压 —— 本表只认列出来的 key，新增循环音不登记就是「静默失效」。
-            if (this.wantedLoops.has('land_contact')) return DUCK.bgmUnderBattleAmbience;  // 13 接触音景：0.85（少压一点，2026-09-02 由 0.60 上调）
-            if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')
-                || this.wantedLoops.has('player_march_loop') || this.wantedLoops.has('naval_march_loop')) {
-                return DUCK.bgmUnderMarch;                                        // 行军：0.50（GAKU 2026-08-04）
-            }
-            return 1;
-        }
-        // 🔴 [2026-10-02 主人定] 战术模式陆战接触音效播报期间静音避让，不与播报重叠播放
-        if (key === 'land_contact' && this.speechDucking) return 0;
-        // 音效层：ui / battle / feed——播报时静音，播报结束后恢复
-        return this.speechDucking ? DUCK.sfxUnderSpeech : 1;
-    }
-
-    /** 仅刷新 BGM 音量（音效循环起停时用，无需全量刷新）；durationMs>0 平滑渐变 */
-    private updateBgmDuckVolume(durationMs = 0): void {
-        if (!this.bgmAudio) return;
-        const def = SOUND_DEFINITIONS['bgm_main'];
-        if (def) {
-            // 必须带 regionGain 响度补偿（与 playBgmFolder 一致），否则音效起停会丢失补偿、BGM 响度跳变
-            const regionGain = BGM_REGION_GAIN[this.currentBgmFolder] ?? 1.0;
-            this.setVolume(this.bgmAudio, this.resolveVolume(def) * regionGain, durationMs);
-        }
-    }
-
-    private warnMissingOnce(key: SoundKey, error: unknown): void {
-        if (this.missingWarned.has(key)) return;
-        this.missingWarned.add(key);
-        if (import.meta.env.DEV) {
-            console.warn(`[AudioManager] 音效暂不可用: ${key}`, error);
-        }
-    }
-}
-
-export const audioManager = AudioManager.getInstance();
+export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
+
+
+
+
+
+
+
+import { getRegion, type RegionType } from '../systems/RegionSystem';
+
+
+
+import { extractPortraitFolder } from '../config/PortraitAdjust';
+
+
+
+import { toBase16, type Base16Culture } from '../systems/CultureBase16';
+
+
+
+import { ALL_BRANCHES_MAP, toCulture66 } from '../systems/CultureHierarchy';
+
+
+
+import { REGION_TO_BRANCH } from '../config/deCastleAssets';
+
+
+
+import { BGM_TITLES } from './bgmTitles';
+
+
+
+import { BGM_DURATIONS } from './bgmDurations';
+
+
+
+import { isScriptPeriod } from '../events/scriptPeriod';
+
+
+
+import type { TacticalSixSet } from '../data/TacticalSkillCatalog';
+
+
+
+
+
+
+
+export type SoundKey =
+
+
+
+    | 'march_loop'
+
+
+
+    | 'cavalry_march_loop'
+
+
+
+    | 'player_march_loop'
+
+
+
+    | 'naval_march_loop'
+
+
+
+    | 'naval_battle_loop'
+
+
+
+    | 'battle_loop'
+
+
+
+    | 'battle_victory'
+
+
+
+    | 'battle_defeat'
+
+
+
+    | 'general_skill'
+
+
+
+    // 战术六计释放：玩家／观众正常响度，武将自己释放降低响度
+
+
+
+    | 'skill_gongzhan'
+
+
+
+    | 'skill_shengzhan'
+
+
+
+    | 'skill_dizhan'
+
+
+
+    | 'skill_hunzhan'
+
+
+
+    | 'skill_bingzhan'
+
+
+
+    | 'skill_baizhan'
+
+
+
+    // 海战音效（2026-08-19 加：帝国时代2 DE 战斗音效）
+
+
+
+    | 'naval_arrow_fire'
+
+
+
+    | 'naval_cannon_fire'
+
+
+
+    | 'naval_sink'
+
+
+
+    | 'naval_explode'
+
+
+
+    | 'naval_cannon_splash'
+
+
+
+    // 陆战音效（2026-08-19：帝国时代2 DE 陆战战斗音效）
+
+
+
+    | 'gun_fire'
+
+
+
+    | 'explosion'
+
+
+
+    // 🔴 [2026-09-16 主人「近战兵没有了也就没有音效了，应该加 DE 的射箭音效」]
+
+
+
+    | 'arrow_fire'
+
+
+
+    // 陆战接触音景（2026-08-19 主人提供：两军接触起循环垫底、13 退场停，66.9s）
+
+
+
+    | 'land_contact'
+
+
+
+    // 🔴 [2026-09-11 主人定]「战术模式 30 秒的时候用城墙倒塌.WAV 音效」
+
+
+
+    | 'wall_collapse'
+
+
+
+    | 'building_collapse'
+
+
+
+    | 'siege_impact'
+
+
+
+    | 'siege_launch'
+
+
+
+    | 'siege_destroyed'
+
+
+
+    | 'elephant_attack'
+
+
+
+    | 'elephant_die'
+
+
+
+    | 'flamethrower_fire'
+
+
+
+    | 'battle_horn'
+
+
+
+    // 🔴 [2026-10-22] DE 原声：刀剑命中、刀剑金属碰撞、步兵阵亡、马匹倒毙、箭塔火箭齐射、僧侣施法
+
+
+
+    | 'melee_hit'
+
+
+
+    | 'sword_clank'
+
+
+
+    | 'death_infantry'
+
+
+
+    | 'death_horse'
+
+
+
+    | 'tower_arrow_flame'
+
+
+
+    | 'monk_cast'
+
+
+
+    // 战略地图动态天气环境音效（DE 原版环境音 + 风雨雷电合成）
+
+
+
+    | 'weather_storm_loop'
+
+
+
+    | 'weather_rain_loop'
+
+
+
+    | 'weather_blizzard_loop'
+
+
+
+    | 'weather_sandstorm_loop'
+
+
+
+    | 'weather_fog_loop'
+
+
+
+    | 'weather_wind_loop'
+
+
+
+    | 'weather_thunder'
+
+
+
+    | 'bgm_main';
+
+
+
+
+
+
+
+interface SoundDefinition {
+
+
+
+    category: AudioCategory;
+
+
+
+    sources: string[];
+
+
+
+    volume?: number;
+
+
+
+    cooldownMs?: number;
+
+
+
+}
+
+
+
+
+
+
+
+export interface AudioSettings {
+
+
+
+    enabled: boolean;
+
+
+
+    masterVolume: number;
+
+
+
+    categoryVolume: Record<AudioCategory, number>;
+
+
+
+}
+
+
+
+
+
+
+
+/**
+
+
+
+ * 🔴 [2026-09-16 主人定]「游戏中主要就三种：1 背景音乐、2 音效、3 播报。
+
+
+
+ *                        不压可以吗，例如 1 小、2 中、3 大。」
+
+
+
+ * 改为**静态分层**：三层各占一个固定音量，互不动态压低。
+
+
+
+ * 之所以能这么做 —— 优先级靠**音量差**保证，不必靠闪避去实时抢：
+
+
+
+ *      BGM 0.60  →  音效 0.70  →  播报 1.00
+
+
+
+ *      音效比音乐高 +1.3dB，播报又比音效高 +3.1dB，比音乐高 +4.4dB。
+
+
+
+ * 🔴 [2026-10-02 主人定] BGM 基准从 0.45 提至 0.60：让打底音乐更充盈，在战术播报时也能清晰听到旋律衬托。
+
+
+
+ *
+
+
+
+ * ⚠️ STORAGE_KEY 必须跟着升版号：旧版 v2 的设置存在 localStorage 里，
+
+
+
+ *    不升版的话浏览器会拿旧值覆盖这里的新默认值，改了等于没改。
+
+
+
+ */
+
+
+
+const STORAGE_KEY = 'mapwar_audio_settings_v3';
+
+
+
+const DEFAULT_SETTINGS: AudioSettings = {
+
+
+
+    enabled: true,
+
+
+
+    masterVolume: 0.5,
+
+
+
+    categoryVolume: {
+
+
+
+        // 2 音效（中）：界面/战斗/情报同一层
+
+
+
+        ui: 0.70,
+
+
+
+        battle: 0.70,
+
+
+
+        feed: 0.70,
+
+
+
+        // 1 背景音乐（小）：打底，充盈衬托
+
+
+
+        bgm: 0.60,
+
+
+
+    },
+
+
+
+};
+
+
+
+
+
+
+
+// ---- 混音闪避（ducking）：语音优先，音效与音乐打底衬托 ----
+
+
+
+// 播报响时音效/音乐压到低量衬托，不抢语音；无播报时各层正常。
+
+
+
+const DUCK = {
+
+
+
+    /**
+
+
+
+     * 🔴 [2026-09-16 主人定]「不压可以吗，例如 1 小、2 中、3 大」—— **闪避全线关闭**。
+
+
+
+     *
+
+
+
+     * 优先级改由**静态三层音量**保证（见 DEFAULT_SETTINGS / SPEECH_GAIN）：
+
+
+
+     *      BGM 0.60 < 音效 0.70 < 播报 1.00
+
+
+
+     * 播报比音乐高 +4.4dB、比音效高 +3.1dB，本来就压得住，不必再实时去压别人。
+
+
+
+     *
+
+
+
+     * 关掉的理由（主人报障两条，同一个根因）：
+
+
+
+     *   ·「背景音乐的音量总是忽高忽低」—— 军团常年行军，BGM 长期挂 50%，
+
+
+
+     *      进战斗掉 30%，没事又回 100%，在 1.0/0.85/0.5/0.35/0.3 之间来回跳。
+
+
+
+     *   ·「这个背景音乐的音量很小」—— 其实是那一刻正被行军压着，曲子本身标定是准的。
+
+
+
+     *
+
+
+
+     * 全部设为 1 = 任何情况下都不改变各层音量。要恢复某一路，把对应项改回小于 1 的值即可。
+
+
+
+     */
+
+
+
+    bgmUnderSpeech: 1,
+
+
+
+    bgmUnderSfx: 1,
+
+
+
+    bgmUnderMarch: 1,
+
+
+
+    bgmUnderBattleAmbience: 1,
+
+
+
+    sfxUnderSpeech: 1,
+
+
+
+} as const;
+
+
+
+/** 3 播报（大）：三层里最高的一层，比音效 0.70 高 +3.1dB、比音乐 0.60 高 +4.4dB。
+
+
+
+ *  靠这个音量差压住另外两层，不再需要动态闪避。 */
+
+
+
+const SPEECH_GAIN = 1.0;
+
+
+
+
+
+
+
+// ---- 音量渐变时长（ms）：消除各路声音硬切的不适感 ----
+
+
+
+const FADE = {
+
+
+
+    /** 播报/音效闪避（duck）的音量渐变——更缓，消除硬切感 */
+
+
+
+    duck: 600,
+
+
+
+    /** 行军循环音的淡入淡出 */
+
+
+
+    loop: 600,
+
+
+
+    /** 自制战斗音景（land_contact / battle_loop / naval_battle_loop）平滑渐显 */
+
+
+
+    battleLoopIn: 1200,
+
+
+
+    /** 自制战斗音景（land_contact / battle_loop / naval_battle_loop）平滑渐隐 */
+
+
+
+    battleLoopOut: 1800,
+
+
+
+    /** 一次性音效淡入（武将技等） */
+
+
+
+    oneShot: 200,
+
+
+
+    /** BGM 换曲（切文化区/随机轮播）交叉淡入淡出 */
+
+
+
+    bgmCrossfade: 900,
+
+
+
+} as const;
+
+
+
+
+
+
+
+const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
+
+
+
+    march_loop: sound('battle', 'march_loop', 0.15, 0),
+
+
+
+    // 纯骑部队（草原/青藏/中亚）专用行军音效，与步骑 march_loop 分开
+
+
+
+    cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.18, 0),
+
+
+
+    // 🔴 [2026-09-11 主人定]「把这个改为玩家行军音效」——玩家（乱入者）**独骑**行军专用循环音。
+
+
+
+    //    素材：主人提供的 `玩家骑马.WAV`（44.1k 立体声 22.04s），转 vorbis → public/sfx/player_march_loop.aud。
+
+
+
+    //    音量 0.7 是**响度对齐**的结果，不是随手写的：EBU R128 实测
+
+
+
+    //      march_loop -12.8 LUFS @0.15 → 折算 -29.3；cavalry_march_loop -12.0 LUFS @0.18 → -26.9；
+
+
+
+    //      本文件 -24.3 LUFS（峰值 -0.0 dBFS，马蹄瞬态多、整体偏轻，比那两条低约 12dB）。
+
+
+
+    //    取 0.7 → 折算 -27.4，正好落在两条行军循环之间；照抄 0.18 会低 12dB，等于听不见。
+
+
+
+    player_march_loop: sound('battle', 'player_march_loop', 0.7, 0),
+
+
+
+    // 主人提供的“航海.WAV”：海军实际航行期间循环，停航/交战/取消跟拍时淡出。
+
+
+
+    // 原文件 EBU R128 -23.0 LUFS；0.55 后约 -28.2 LUFS，与现有三条行军循环响度相当。
+
+
+
+    naval_march_loop: sound('battle', 'naval_march_loop', 0.55, 0),
+
+
+
+    // 主人提供的“海战音效.WAV”：跟拍舰队交战期间循环，与航海行军音、陆战循环音互斥。
+
+
+
+    // 原文件 -14.1 LUFS，与 battle_loop 的 -13.7 LUFS 接近，沿用 0.7 保持战斗响度一致。
+
+
+
+    naval_battle_loop: sound('battle', 'naval_battle_loop', 0.7, 0),
+
+
+
+    battle_loop: sound('battle', 'battle_loop', 0.7, 0),
+
+
+
+    battle_victory: sound('battle', 'battle_victory', 0.5, 1800),
+
+
+
+    battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
+
+
+
+    general_skill: sound('battle', 'general_skill', 0.45, 1800),
+
+
+
+    // 战术六计释放音效（帝国时代2 DE 原版音效提取并按 -15 LUFS 校准）
+
+
+
+    skill_gongzhan: sounds('battle', ['skill_gongzhan_1', 'skill_gongzhan_2'], 1.0, 0),
+
+
+
+    skill_shengzhan: sounds('battle', ['skill_shengzhan_1', 'skill_shengzhan_2'], 1.0, 0),
+
+
+
+    skill_dizhan: sounds('battle', ['skill_dizhan_1', 'skill_dizhan_2'], 1.0, 0),
+
+
+
+    skill_hunzhan: sounds('battle', ['skill_hunzhan_1', 'skill_hunzhan_2'], 1.0, 0),
+
+
+
+    skill_bingzhan: sounds('battle', ['skill_bingzhan_1', 'skill_bingzhan_2'], 1.0, 0),
+
+
+
+    skill_baizhan: sounds('battle', ['skill_baizhan_1', 'skill_baizhan_2'], 1.0, 0),
+
+
+
+    // 海战音效（2026-08-19：帝国时代2 DE 战斗音效，多源随机变奏）
+
+
+
+    naval_arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.65, 250),
+
+
+
+    naval_cannon_fire: sounds('battle', ['naval_cannon_fire_1', 'naval_cannon_fire_2', 'naval_cannon_fire_3', 'naval_cannon_fire_4', 'naval_cannon_fire_5', 'naval_cannon_fire_6'], 0.85, 400),
+
+
+
+    naval_sink: sounds('battle', ['naval_sink_1', 'naval_sink_2', 'naval_sink_3', 'naval_sink_4', 'naval_sink_5', 'naval_sink_6'], 0.55, 0),
+
+
+
+    naval_explode: sounds('battle', ['naval_explode_1', 'naval_explode_2', 'naval_explode_3', 'naval_explode_4'], 0.7, 0),
+
+
+
+    naval_cannon_splash: sounds('battle', ['naval_cannon_splash_1', 'naval_cannon_splash_2', 'naval_cannon_splash_3', 'naval_cannon_splash_4'], 0.45, 250),
+
+
+
+    // 陆战音效（2026-08-19：帝国时代2 DE 陆战战斗音效，多源随机变奏）
+
+
+
+    gun_fire: sounds('battle', ['gun_fire_1', 'gun_fire_2', 'gun_fire_3', 'gun_fire_4', 'gun_fire_5', 'gun_fire_6'], 0.55, 150),   // 0.75→0.55：全表最高，且火器成排齐射时多发叠加
+
+
+
+    explosion: sounds('battle', ['explosion_1', 'explosion_2', 'explosion_3', 'explosion_4', 'explosion_5', 'explosion_6'], 0.65, 200),
+
+
+
+    // 陆战接触音景（主人 2026-08-19 提供 WAV，转 vorbis，66.9s）：**循环播放**，
+
+
+
+    // 两军接触起循环垫底、13 退场停。13 期间不播旧的 battle_loop（见 syncFollowedLegionAudio），
+
+
+
+    // 这条就是那块空缺的底噪；具体的刀剑/枪炮事件音效叠在它上面。
+
+
+
+    /**
+
+
+
+     * 🔴 [2026-09-16 主人定]「战术模式中，如果近战兵没有了，也就没有音效了，应该添加 DE 中的射箭音效」
+
+
+
+     *
+
+
+
+     * 起因：`land_contact`（近战接触音景）在近战兵死绝后会淡出（2026-09-15 主人自己定的），
+
+
+
+     * 而弓弩对射这一段**一个音效都没有** —— 攻城器械有 siege_launch、火器有 gun_fire，
+
+
+
+     * 唯独常规远程兵（弓/弩/标枪/飞斧…）射出去是全静音的。
+
+
+
+     *
+
+
+
+     * 素材直接复用海战那批 DE 箭矢发射声（`naval_arrow_fire_*`，同一批提取，本来就是弓弦+箭雨声），
+
+
+
+     * 不新提取；只是陆战的密度与海战完全不同，所以**单独开一条键**来配音量与冷却。
+
+
+
+     *
+
+
+
+     * 音量/冷却的实测标定（ffmpeg ebur128，与 siege_impact 那条注释同一套方法）：
+
+
+
+     *   · 素材本身 4 条平均 **-33.5 LUFS**，单条时长 **约 1.97s**（是一轮箭雨，不是单发）
+
+
+
+     *   · 冷却 700ms + 1.97s 时长 ⇒ 稳态约 **2.8 层重叠**（≈ +4.5dB）
+
+
+
+     *   · 0.48 折算单发 -39.9 LUFS，叠 2.8 层后约 **-35.4 LUFS**
+
+
+
+     *   · 对照：gun_fire -36.5、海战箭矢 -37.2、land_contact -21.4、siege_impact -23.0
+
+
+
+     *     → 比火器单发略高 1dB（这一段它是唯一的声音，得撑得住场），远低于近战底噪，不抢戏。
+
+
+
+     *   ⚠️ 冷却别往 250ms 调（海战那条的值）：陆战几十个弓手几乎每帧都在放箭，
+
+
+
+     *      250ms 会叠到 8 层，糊成一片白噪。要调手感就改这一行的两个数。
+
+
+
+     */
+
+
+
+    arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.48, 700),
+
+
+
+    // 🔴 [2026-10-02 主人定]「战术模式下，有一个我自己做的战斗音效。请提高他的音量和播报一致，但是不要和播报重叠播放。」
+
+
+
+    // 陆战接触音景（主人 2026-08-19 提供 WAV，转 vorbis，66.9s）：两军接触起循环垫底、13 退场停。
+
+
+
+    // 音量与播报完全对齐 (getSpeechVolume())，播报期间平滑淡出避让（音量降为 0），杜绝重叠播放。
+
+
+
+    land_contact: sound('battle', 'land_contact', 0.70, 0),
+
+
+
+    // DE 城墙/石门崩塌碎石音效（Building_Rumble_01..03 + Building_Debris_01..03，-15 LUFS）
+
+
+
+    wall_collapse: sounds('battle', ['wall_collapse_1', 'wall_collapse_2', 'wall_collapse_3'], 0.65, 300),
+
+
+
+    // 攻城武器（2026-08-24 主人：「战斗开始前 30 秒是攻城武器攻击，但是没有音效」）。
+
+
+
+    // ⚠️ 素材是**借用**同一批 DE 战斗音效，不是攻城武器的原声——
+
+
+
+    //    DE 的攻城音效封在 Wwise `.pck` 里（resources/wwise/Base.pck），
+
+
+
+    //    要 wwiser + vgmstream 解包才能拿到，见 scratch/wwiser。素材到位后只改这两行。
+
+
+
+    //   siege_impact = 冲车撞门 / 投石命中：低频重击闷响，借 explosion（DE 原声，音色同源）
+
+
+
+    //   siege_launch = 投石车配重砸下 / 弩炮弹射：借 naval_cannon_fire 的发射闷响
+
+
+
+    // 音量比火器低：攻城武器 4~6 个同时凿墙，冷却也拉长防止糊成一片。
+
+
+
+    // 🔴 siege_impact = **DE 原声**（主人 2026-08-24 从 52 个候选里听出来的：wem 453205371，
+
+
+
+    //    Custom Vorbis / 48kHz / 单声道 / 1.10s）。提取链路：
+
+
+
+    //      wwise/Base.pck (AKPK) → bnk 内嵌 wem (BKHD+DIDX) → vgmstream 解 Wwise Vorbis → ogg
+
+
+
+    //    DE **没有公开音效名字表**（dat 的 sound_id 全 -1、sounds.json 只有 49 条 UI 音、
+
+
+
+    //    社区 wwnames 没收录 AoE2 DE、按命名规律猜的 4428 个候选零匹配），
+
+
+
+    //    所以只能提取全部 6732 个再靠人耳指认。原始素材留在 scratch/de_audio/。
+
+
+
+    // 🔴 [2026-10-07 主人令「按这套官方对应关系为您直接换上」] DE 攻城原声（wwiser 从 bank00.txt 精确对应）
+
+
+
+    //    siege_impact = 冲车撞门 (wem 109308349, 229010215) + 石弹砸墙 (wem 241430262, 270594082, 453205371)
+
+
+
+    siege_impact: sounds('battle', ['siege_impact_1', 'siege_impact_2', 'siege_impact_3', 'siege_impact_4', 'siege_impact_de'], 0.62, 260),
+
+
+
+    //    siege_launch = 投石车/中投发射 (wem 37765250, 630102252) + 巨投配重抛石 (wem 425532147, 479664391)
+
+
+
+    siege_launch: sounds('battle', ['siege_launch_1', 'siege_launch_2', 'siege_launch_3', 'siege_launch_4'], 0.55, 350),
+
+
+
+    // DE 建筑坍塌轰鸣 Building_Large_Rumble (wem 997585020, 162929423, 357570649, 158448836，均值 -33.9 LUFS)
+
+
+
+    building_collapse: sounds('battle', ['building_collapse_1', 'building_collapse_2', 'building_collapse_3', 'building_collapse_4'], 0.78, 500),
+
+
+
+    // DE 攻城武器/战车被毁散架 Siege_Weapon_Destroyed (wem 576386269, 585964358, 127361390, 120049907, 451599220，均值 -23.8 LUFS)
+
+
+
+    siege_destroyed: sounds('battle', ['siege_destroyed_1', 'siege_destroyed_2', 'siege_destroyed_3', 'siege_destroyed_4', 'siege_destroyed_5'], 0.52, 600),
+
+
+
+    // DE 战象挥牙嘶鸣 War_Elephant_Attack (wem 1056783078, 577420749, 470969236, 738262577, 342379629，均值 -27.7 LUFS)
+
+
+
+    elephant_attack: sounds('battle', ['elephant_attack_1', 'elephant_attack_2', 'elephant_attack_3', 'elephant_attack_4', 'elephant_attack_5'], 0.65, 1200),
+
+
+
+    // DE 战象倒毙哀鸣 War_Elephant_Death (wem 72901919, 826665418, 489483560, 847663669, 531215225，均值 -31.8 LUFS)
+
+
+
+    elephant_die: sounds('battle', ['elephant_die_1', 'elephant_die_2', 'elephant_die_3', 'elephant_die_4', 'elephant_die_5'], 0.75, 800),
+
+
+
+    // DE 希腊火喷射 Flamethrower_Short (wem 10353045, 936975001, 62497673, 1069459394, 274178430，均值 -30.5 LUFS)
+
+
+
+    flamethrower_fire: sounds('battle', ['flamethrower_fire_1', 'flamethrower_fire_2', 'flamethrower_fire_3', 'flamethrower_fire_4', 'flamethrower_fire_5'], 0.65, 500),
+
+
+
+    // DE 战术开战冲锋号角 Charge Horn (wem 450474346，-26.8 LUFS)
+
+
+
+    battle_horn: sound('battle', 'battle_horn', 0.60, 3000),
+
+
+
+    // 🔴 [2026-10-22 主人「小战役…套DE的音效」「用逆向看看…不可能没有对应的标号」] DE 原声，按 dat 里的 Wwise 事件对上：
+
+
+
+    //    刀剑命中＝长剑兵/骑士攻击动画的帧音事件 542552093（dat 声音 619 mhit_longsword1）→ 12 个源 wem；
+
+
+
+    //    步兵阵亡＝死亡动画事件 2793609136（dat 声音 294 death1~6）→ 取前 6 个源；
+
+
+
+    //    马匹倒毙＝骑士死亡动画事件 190614743（dat 声音 410 hdeath）→ 比步兵多出的 5 个马声源。
+
+
+
+    //    对应关系与转换脚本：scratch/de_sfx_named/resolve_events.py。实测响度：刀剑 -26~-31 LUFS、阵亡 -28~-35、马 -25~-33。
+
+
+
+    //    音量按「单发比放箭略低」压：几十人对砍，冷却 150ms 防糊成一片。
+
+
+
+    melee_hit: sounds('battle', ['melee_hit_1', 'melee_hit_2', 'melee_hit_3', 'melee_hit_4', 'melee_hit_5', 'melee_hit_6', 'melee_hit_7', 'melee_hit_8', 'melee_hit_9', 'melee_hit_10', 'melee_hit_11', 'melee_hit_12'], 0.35, 150),
+
+
+
+    // DE 刀剑金属招架碰撞声 Sword_Clank / Sword_Broad_Clank（wem 1031194429 等 5 源，-15 LUFS）
+
+
+
+    sword_clank: sounds('battle', ['sword_clank_1', 'sword_clank_2', 'sword_clank_3', 'sword_clank_4', 'sword_clank_5'], 0.32, 320),
+
+
+
+    death_infantry: sounds('battle', ['death_infantry_1', 'death_infantry_2', 'death_infantry_3', 'death_infantry_4', 'death_infantry_5', 'death_infantry_6'], 0.32, 2400),
+
+
+
+    death_horse: sounds('battle', ['death_horse_1', 'death_horse_2', 'death_horse_3', 'death_horse_4', 'death_horse_5'], 0.30, 2800),
+
+
+
+    // DE 守城箭塔/城堡/建筑火箭齐射声（PLAY_MISSILE_ARROW_TOWER_FLAME + WHOOSH_FLAME，-15 LUFS）
+
+
+
+    tower_arrow_flame: sounds('battle', ['tower_arrow_flame_1', 'tower_arrow_flame_2', 'tower_arrow_flame_3'], 0.50, 450),
+
+
+
+    // DE 僧侣/法术单位吟唱攻击声（PLAY_MONK_ATTACKING + PLAY_ATTACK_MONK_CONVERTING，-15 LUFS）
+
+
+
+    monk_cast: sounds('battle', ['monk_cast_1', 'monk_cast_2', 'monk_cast_3'], 0.55, 600),
+
+
+
+    // 动态天气环境音（战略地图与战术模式共用；DE 原版风浪雪漠环境音 + 雨声/雷鸣）
+
+
+
+    // 🔴 [2026-11-04 主人令「天气音整体调大，战术也响」] 原 0.32~0.46：乘上主音量 0.5 × 音效层 0.7 后最响只有 BGM 的一半。
+
+
+
+    //    现约翻倍，天气最强时与 BGM 0.30 同档（暴风雨最响、雾与风最轻）。
+
+
+
+    weather_storm_loop: sound('battle', 'weather_storm_loop', 0.90, 0),
+
+
+
+    weather_rain_loop: sound('battle', 'weather_rain_loop', 0.80, 0),
+
+
+
+    weather_blizzard_loop: sound('battle', 'weather_blizzard_loop', 0.90, 0),
+
+
+
+    weather_sandstorm_loop: sound('battle', 'weather_sandstorm_loop', 0.95, 0),
+
+
+
+    weather_fog_loop: sound('battle', 'weather_fog_loop', 0.70, 0),
+
+
+
+    weather_wind_loop: sound('battle', 'weather_wind_loop', 0.75, 0),
+
+
+
+    weather_thunder: sounds('battle', ['weather_thunder_1', 'weather_thunder_2', 'weather_thunder_3'], 0.85, 2200),
+
+
+
+    bgm_main: { category: 'bgm', sources: ['/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
+
+
+
+};
+
+
+
+
+
+
+
+function sound(
+
+
+
+    category: AudioCategory,
+
+
+
+    fileName: string,
+
+
+
+    volume: number,
+
+
+
+    cooldownMs: number
+
+
+
+): SoundDefinition {
+
+
+
+    return {
+
+
+
+        category,
+
+
+
+        // 用 .aud 扩展名（非媒体扩展）规避 IDM/迅雷 等下载器按 .ogg 抓取
+
+
+
+        sources: [`/sfx/${fileName}.aud`],
+
+
+
+        volume,
+
+
+
+        cooldownMs,
+
+
+
+    };
+
+
+
+}
+
+
+
+
+
+
+
+/** 多源变奏音效：播放时从 sources 随机挑一个（海战开炮/沉没等） */
+
+
+
+function sounds(
+
+
+
+    category: AudioCategory,
+
+
+
+    fileNames: string[],
+
+
+
+    volume: number,
+
+
+
+    cooldownMs: number
+
+
+
+): SoundDefinition {
+
+
+
+    return {
+
+
+
+        category,
+
+
+
+        sources: fileNames.map((n) => `/sfx/${n}.aud`),
+
+
+
+        volume,
+
+
+
+        cooldownMs,
+
+
+
+    };
+
+
+
+}
+
+
+
+
+
+
+
+function clamp01(value: number): number {
+
+
+
+    if (!Number.isFinite(value)) return 0;
+
+
+
+    return Math.max(0, Math.min(1, value));
+
+
+
+}
+
+
+
+
+
+
+
+const BGM_FALLBACK_MAP: Record<string, string> = {
+
+
+
+    avg: 'CENTRAL',
+
+
+
+    inbox: 'CENTRAL',
+
+
+
+    portraits: 'CENTRAL',
+
+
+
+};
+
+
+
+
+
+
+
+/**
+
+
+
+ * 🔴 [2026-10-18 主人令]「这几个音乐，是被我的项目中套用呢。在项目中暂停。」
+
+
+
+ *    —— 下面这些曲子收到 YouTube 版权主张（Content ID），**在项目里暂停使用**：
+
+
+
+ *      · BERBER            征服天堂 Conquest of Paradise（Vangelis）
+
+
+
+ *      · hes_a_pirate      加勒比海盗 He's a Pirate（Klaus Badelt）
+
+
+
+ *      · WEST_ASIA         出埃及记 Exodus（Las Lau）
+
+
+
+ *      · victory           Victory - No Vocals No Choir（Two Steps From Hell）
+
+
+
+ *      · GERMANIC          The Mass（ERA）
+
+
+
+ *      · rock_house_jail   勇闯夺命岛 Rock House Jail（Nick Glennie-Smith / Harry Gregson-Williams / Hans Zimmer）
+
+
+
+ *      · helmet_to_helmet  Brand X Music - Helmet To Helmet
+
+
+
+ *      · manqing           满清·江山风雨情 / The Warlord（Wai Lap wu 胡伟立）
+
+
+
+ *
+
+
+
+ *    🔴 **暂停 ≠ 删除**：.aud 音频文件、`BGM_REGION_GAIN` 响度标定、`BASE16_BGM_MAP` 母体映射
+
+
+
+ *    全部原样保留（主人「不要删除，只是不用了」），恢复时把本集合里对应那一行删掉即可。
+
+
+
+ *    效果：选曲/轮播池会跳过它们（见 `AVAILABLE_BGM_FOLDERS` 与 `shuffledBgmFolders`），
+
+
+
+ *    落到 `GENERIC_BGM_FALLBACK`（age_of_kings，帝国时代2主题，未收到主张）。
+
+
+
+ *    ⚠️ 版权主张截图里第 1 条 `Intro` 不是本项目曲目（项目里没有这个 BGM 夹），故不在本表。
+
+
+
+ */
+
+
+
+const PAUSED_BGM_FOLDERS = new Set<string>([
+
+
+
+    'BERBER',
+
+
+
+    'hes_a_pirate',
+
+
+
+    'WEST_ASIA',
+
+
+
+    'victory',
+
+
+
+    'GERMANIC',
+
+
+
+    'rock_house_jail',
+
+
+
+    'helmet_to_helmet',
+
+
+
+    'manqing',
+
+
+
+]);
+
+
+
+
+
+
+
+/**
+
+
+
+ * BGM 响度补偿：把每首曲子拉平到 **-21.0 LUFS**（ITU-R BS.1770 综合响度，非 RMS）。
+
+
+
+ * gain = 10^((-21.0 - 实测LUFS) / 20)，注释里的数字就是该文件的实测值。
+
+
+
+ *
+
+
+
+ * 🔴 **换过 BGM 文件就必须重跑 `npm run bgm:audit`**（tools/bgm_audit.mjs）。
+
+
+
+ *    2026-08-19 实测发现：8-04 那轮校准之后，37 首里有 22 首被统一重压到 -18.0 LUFS，
+
+
+
+ *    而本表还留着重压前的老增益 —— 那 22 首补偿后落在 -19.5~-16.8，最响的 STEPPE
+
+
+
+ *    比基准响 4.2dB（约 1.6 倍振幅），就是主人听到的「有的大有的小」。
+
+
+
+ *    表本身没错，是**文件换了表没跟着换**。审计脚本就是防这个的。
+
+
+
+ */
+
+
+
+const BGM_REGION_GAIN: Record<string, number> = {
+
+
+
+    // [2026-09-12 主人「所有曲子音量肯定不一致吧，请统一一个音量大小」]
+
+
+
+    //    以下三首**原先压根不在表里** → 按 1.0 播放、无任何补偿（比其它曲响 3dB），现按实测 LUFS 补进表。
+
+
+
+    // 🔴 [2026-09-15 主人授权「只动最差的那 4 首」] DIANQIAN/pugan/zhaosong/TIBET 已**裁掉安静前奏**。
+
+
+
+    //    起因：整首平均响度本来就统一（37 首实测全落在 -21.0±0.45dB），但 BGM 是从头播的，
+
+
+
+    //    观众听到的是**前十几秒** —— 实测前15s 极差达 20.7dB，这 4 首是离群值：
+
+
+
+    //      DIANQIAN/pugan -39.5dB（几乎全无声）、zhaosong -29.5dB、TIBET -27.0dB。
+
+
+
+    //    裁切点由 ebur128 逐秒短时响度定（scratch/probe_bgm_intro_cut.cjs + try_bgm_cuts.cjs）：
+
+
+
+    //      DIANQIAN/pugan 裁 26s（前15s -39.1 → -21.4）、zhaosong 裁 37s（-29.4 → -22.8）、
+
+
+
+    //      TIBET 裁 20s（-27.0 → -22.4），全部进入其余 33 首的同一档（优于 -25dB）。
+
+
+
+    //    原文件备份在 `音乐素材/bgm_原始备份_20260915/*.orig`（这 4 首无母带，删备份即不可逆）。
+
+
+
+    BASHU: 0.708,      // 实测 -18.0 LUFS · 巴蜀
+
+
+
+    // 🔴 [2026-09-17 主人定「如果有重复的，就把东亚的那个删除」] DIANQIAN 已删：
+
+
+
+    //    它与 pugan 是**字节完全相同**的同一首（md5 c90cbcd…，9-15 的注释就写着「同曲 cp」）。
+
+
+
+    //    留着会让东南亚母体 MALAY 名存实亡 —— 那个池里只有 pugan 一首，等于东南亚放的是东亚的曲子。
+
+
+
+    //    删东亚这份、把曲子留给 MALAY；滇黔军团经 toBase16 归 CENTRAL，从东亚池另外 16 首里取，不受影响。
+
+
+
+    LINGNAN: 0.708,    // 实测 -18.0 LUFS · 岭南
+
+
+
+    CENTRAL: 0.56,  // -17.9 LUFS · （原 0.70，2026-09-25 主人要求降低一点，-2dB → 0.56）
+
+
+
+    CENTRAL_ASIA: 0.708,  // -18.0 LUFS
+
+
+
+    BERBER: 0.55,  // -15.8 LUFS · 征服天堂（2026-08-21 改派柏柏尔·原通用随机曲）
+
+
+
+    // 🔴 [2026-09-12 主人「有个曲子叫帝国时代2（把它音量大一点）」] 0.427 → **0.60**（≈ +3.0 dB）。
+
+
+
+    //    这首原文件是 -13.6 LUFS，比基准（-18.0）响 7.3dB，2026-08-04 被"大幅压低"到 0.427
+
+
+
+    //    拉平到基准 —— 主人听感就是它偏小。现在单独抬 3dB，落到约 **-16.6 LUFS**
+
+
+
+    //    （比多数曲子响约 1.4dB，仍低于最响的一档，不会盖过音效与播报）。
+
+
+
+    age_of_kings: 0.427,
+
+
+
+    fallen_army: 0.48,  // -16.6 LUFS · （原 0.603，2026-10-02 主人报音量略大，-2dB → 0.48）
+
+
+
+    shadow_assassin: 0.624,  // -16.9 LUFS · （2026-08-04 通用随机曲·暗影刺客）
+
+
+
+    GERMANIC: 0.596,  // -16.5 LUFS · （2026-08-04 新增 The Mass）
+
+
+
+    daming: 0.767,  // -18.7 LUFS · （2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
+
+
+
+    HEXI: 0.708,  // -18.0 LUFS
+
+
+
+    helmet_to_helmet: 0.676,  // -17.6 LUFS · （2026-08-04 通用随机曲）
+
+
+
+    hes_a_pirate: 0.7,  // -17.9 LUFS · （2026-08-04 通用随机曲）
+
+
+
+    INDIA: 0.708,  // -18.0 LUFS · = daming Nijamena（2026-08-04 印度首选）
+
+
+
+    JAPAN: 0.543,  // -15.7 LUFS · 幕府将军2 Ona Hei（2026-10-18 替换原信长之野望 OVERTURE，原文件备份 音乐素材/bgm_原始备份_20261018/）
+
+
+
+    JIANGNAN: 0.708,  // -18.0 LUFS
+
+
+
+    KOREA: 0.708,  // -18.0 LUFS
+
+
+
+    LATIN: 0.631,  // -17.0 LUFS · （2026-08-04 新增 Star Sky）
+
+
+
+    ezios_family: 0.380,  // -12.6 LUFS · 艾吉奥家族全版本合集（2009-2020）
+
+
+
+    // 🔴 [2026-09-16] 主人报「这首音量很小」，一度提到 0.85；随后查明真因是**闪避**
+
+
+
+    //    （军团常年行军 → BGM 长期挂在 50%），已在 DUCK 表取消音效三路的压低。
+
+
+
+    //    标定本身实测是准的（整首 I=-18.2 LUFS，0.716 正好拉到 -21.05），故回到标定值，
+
+
+
+    //    维持「37 首同一响度」。别再因为听感单独抬某一首，那会重新打破统一。
+
+
+
+    litang: 0.716,  // -18.1 LUFS
+
+
+
+
+
+
+
+    liuhan: 0.708,  // -18.0 LUFS
+
+
+
+    // 🔴 [2026-09-12 主人「江山风雨情的音量调大一点」] 0.708 → **1.00**（≈ +3.0 dB）。
+
+
+
+    //    《江山风雨情》是电视剧《康熙王朝》主题曲 → 对应本作「满清」这首（`manqing_bgm.aud`）。
+
+
+
+    //    ⚠️ 曲名在仓库里**没有显示名映射**，是主人按出处认的；若指的不是这首（例如「大明」daming），
+
+
+
+    //       说一声即可改回来/改那首。
+
+
+
+    manqing: 0.708,
+
+
+
+    NORTH: 0.716,  // -18.1 LUFS
+
+
+
+    NORTHEAST: 0.708,  // -18.0 LUFS
+
+
+
+    pugan: 0.718,  // -18.12 LUFS · 蒲甘（2026-09-15 裁前奏 26s 后重测）。原 DIANQIAN 与它同曲，2026-09-17 已删东亚那份
+
+
+
+    rock_house_jail: 0.724,  // -18.2 LUFS · （2026-08-04 通用随机曲）
+
+
+
+    SLAVIC: 0.684,  // -17.7 LUFS · （2026-08-04 新增 Hall om mig）
+
+
+
+    STEPPE: 0.708,  // -18.0 LUFS · 大幅提升
+
+
+
+    TIBET: 0.80,  // -18.01 LUFS · 千年的祈祷（2026-09-15 裁前奏 20s 后重测；2026-09-23 主人报略微偏轻，+1dB → 0.80）
+
+
+
+    WESTERN: 0.708,  // -18.0 LUFS
+
+
+
+    WEST_ASIA: 0.582,  // -16.3 LUFS · （2026-08-04 新增 出埃及记）
+
+
+
+    victory: 0.589,  // -16.4 LUFS · （2026-08-04 通用随机曲）
+
+
+
+    wuzhou: 0.7,  // -17.9 LUFS
+
+
+
+    xianqin: 0.708,  // -18.0 LUFS
+
+
+
+    zhaosong: 0.697,  // -17.87 LUFS · 兰陵王入阵曲（2026-09-15 裁前奏 37s 后重测）
+
+
+
+    // 🔴 [2026-09-17 主人定] 新增 3 首 BGM，补齐 16 母体：
+
+
+
+    ANDE: 0.596,      // 实测 -16.5 LUFS · 安第斯（梦之安魂曲 Lux Aeterna）
+
+
+
+    mohicans: 0.617,  // 实测 -16.8 LUFS · 安第斯（最后的莫西干人 Promentory）
+
+
+
+    // 🔴 [2026-10-02 主人令「BGM 不许是歌、要纯音乐」] 非洲这首**换了文件**：
+
+
+
+    //    原曲是 **Baba Yetu（Christopher Tin，索韦托福音合唱团，带人声的歌曲、商业版权作品）** → **已删除**；
+
+
+
+    //    换成**自己合成的非洲纯器乐**（djembe/dundun 鼓组 + kora 拨弦 + balafon 木琴 + 沙锤，**无任何人声**，
+
+
+
+    //    无版权问题、可复现可调）：生成器 `tools/africa_bgm_synth.mjs`，D 小调五声 · 104 BPM · 64 小节 ≈ 2:29。
+
+
+
+    //    前 5 秒实测 -17.7 LUFS、前 15 秒 -16.7 LUFS（**无安静前奏**，不会像 DIANQIAN/TIBET 那样开头听不见）。
+
+
+
+    AFRICA: 0.668,    // 实测 -17.5 LUFS · 非洲（自制纯器乐）
+
+
+
+    // 🔴 [2026-10-18 主人「幕府将军的曲子很好听，下载几个知名的作为日本背景音乐」]
+
+
+
+    //    幕府将军2（Total War: Shogun 2，Jeff van Dyck）4 首纯器乐战斗曲：
+
+
+
+    //    JAPAN 用最出名的 Ona Hei，另 3 首只进轮播池（无文化首选，与 victory 等通用随机曲同性质）。
+
+
+
+    //    ⚠️ SEGA 商业版权，与同日被版权主张暂停的 PAUSED_BGM_FOLDERS 7 首同风险，收到主张时照旧加进暂停集。
+
+
+
+    shogun_tsunami: 0.668,    // -17.5 LUFS · Tsunami
+
+
+
+    shogun_shinobue: 0.610,   // -16.7 LUFS · Battle of Shinobue
+
+
+
+    shogun_daimyo: 0.624,     // -16.9 LUFS · For The Daimyo!
+
+
+
+    // 🔴 [2026-10-18 主人「给每个文化设计曲子池」先补战斗风格纯器乐，4 空池各 3 首]
+
+
+
+    //    GERMANIC（西欧·维京）：
+
+
+
+    drakkar_drums: 0.638,     // -17.1 LUFS · Drums of Drakkar（维京战鼓）
+
+
+
+    viking_war_drums: 0.653,  // -17.3 LUFS · Viking War Drums（北欧战鼓）
+
+
+
+    furious_march: 0.569,     // -16.1 LUFS · Furious March to War（北欧行军战曲）
+
+
+
+    //    ORIE（中东·阿拉伯/奥斯曼）：
+
+
+
+    holy_land_battle: 0.603,  // -16.6 LUFS · Epic Middle-Eastern Battle Music - Holy Land
+
+
+
+    desert_war: 0.550,        // -15.8 LUFS · Desert War（阿拉伯战曲）
+
+
+
+    ottoman_drums: 0.582,     // -16.3 LUFS · Royal Drum Procession（奥斯曼战鼓）
+
+
+
+    //    THRACIAN（色雷斯·巴尔干）：
+
+
+
+    gaida_echoes: 0.676,      // -17.6 LUFS · Echoes Of The Gaida（保加利亚风笛）
+
+
+
+    thraco_dacian: 0.638,     // -17.1 LUFS · Thraco-Dacian Tribal Drums（色雷斯部落鼓）
+
+
+
+    bulgarian_war: 0.741,     // -18.4 LUFS · Bulgarian War Drums（保加利亚战鼓）
+
+
+
+    //    AMERICA（中美·阿兹特克/玛雅）：
+
+
+
+    aztec_war_drums: 0.582,   // -16.3 LUFS · Aztec Drums of War（阿兹特克战鼓）
+
+
+
+    mexica_ritual: 0.661,     // -17.4 LUFS · Aztec Warrior Ritual（墨西加战祭）
+
+
+
+    eagle_warrior: 0.684,     // -17.7 LUFS · Aztec Eagle Warrior War Drums（鹰武士战鼓）
+
+
+
+    // 🔴 [2026-10-18 主人定「按 62+4 文化设计曲子池」] 62 DE 文明主题曲（帝国时代2 DE，纯器乐短曲）+ 2 定制
+
+
+
+    //    DE 主题曲统一 `de_{分支}`；4 定制分支 TIBET/WESTERN 复用已有曲、GREECE/XIANBEI 新下载。
+
+
+
+    de_AFRICA: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_AMERICA: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_ARMENIANS: 0.977,  // -20.8 LUFS · DE 主题曲
+
+
+
+    de_ATHENIANS: 0.676,  // -17.6 LUFS · DE 主题曲
+
+
+
+    de_BASHU: 1.012,  // -21.1 LUFS · DE 主题曲
+
+
+
+    de_BENGALIS: 0.447,  // -14.0 LUFS · DE 主题曲
+
+
+
+    de_BERBER: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_BOHEMIANS: 0.582,  // -16.3 LUFS · DE 主题曲
+
+
+
+    de_BRITONS: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_BULGARIANS: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_BURGUNDIANS: 0.556,  // -15.9 LUFS · DE 主题曲
+
+
+
+    de_BURMESE: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_BYZANTINE: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_CELTS: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_CENTRAL: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_CENTRAL_ASIA: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_CUMAN: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_DANES: 0.398,  // -13.0 LUFS · DE 主题曲
+
+
+
+    de_ETHIOPIANS: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_FRANKS: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_GEORGIANS: 0.624,  // -16.9 LUFS · DE 主题曲
+
+
+
+    de_GERMANIC: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_GOTHS: 1.175,  // -22.4 LUFS · DE 主题曲
+
+
+
+    de_GURJARAS: 0.716,  // -18.1 LUFS · DE 主题曲
+
+
+
+    de_HUNS: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_INCA: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_INDIA: 0.550,  // -15.8 LUFS · DE 主题曲
+
+
+
+    de_JAPAN: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_JIANGNAN: 0.624,  // -16.9 LUFS · DE 主题曲
+
+
+
+    de_KHITAN: 0.422,  // -13.5 LUFS · DE 主题曲
+
+
+
+    de_KHMER: 1.148,  // -22.2 LUFS · DE 主题曲
+
+
+
+    de_KOREA: 1.148,  // -22.2 LUFS · DE 主题曲
+
+
+
+    de_LATIN: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_LITHUANIANS: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_MACEDONIAN: 0.442,  // -13.9 LUFS · DE 主题曲
+
+
+
+    de_MAGYAR: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_MALAY: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_MAPUCHE: 0.343,  // -11.7 LUFS · DE 主题曲
+
+
+
+    de_MAYANS: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_MONGOL: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_MUGHAL: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_MUISCA: 0.501,  // -15.0 LUFS · DE 主题曲
+
+
+
+    de_NORTHEAST: 0.457,  // -14.2 LUFS · DE 主题曲
+
+
+
+    de_ORIE: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_PERSIAN: 0.668,  // -17.5 LUFS · DE 主题曲
+
+
+
+    de_POLES: 1.349,  // -23.6 LUFS · DE 主题曲
+
+
+
+    de_PORTUGUESE: 1.148,  // -22.2 LUFS · DE 主题曲
+
+
+
+    de_PURU: 0.447,  // -14.0 LUFS · DE 主题曲
+
+
+
+    de_ROMA: 0.363,  // -12.2 LUFS · DE 主题曲
+
+
+
+    de_SASANIAN: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_SAXONS: 0.363,  // -12.2 LUFS · DE 主题曲
+
+
+
+    de_SICILIANS: 0.479,  // -14.6 LUFS · DE 主题曲
+
+
+
+    de_SLAVIC: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_SPANISH: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_SPARTANS: 0.589,  // -16.4 LUFS · DE 主题曲
+
+
+
+    de_THRACIAN: 0.543,  // -15.7 LUFS · DE 主题曲
+
+
+
+    de_TUPI: 0.457,  // -14.2 LUFS · DE 主题曲
+
+
+
+    de_TURKS: 1.135,  // -22.1 LUFS · DE 主题曲
+
+
+
+    de_VARANGIANS: 0.407,  // -13.2 LUFS · DE 主题曲
+
+
+
+    de_VIETNAMESE: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_VIKINGS: 1.122,  // -22.0 LUFS · DE 主题曲
+
+
+
+    de_WEI: 0.479,  // -14.6 LUFS · DE 主题曲
+
+
+
+    GREECE: 0.596,  // -16.5 LUFS · GREECE 定制曲
+
+
+
+    XIANBEI: 0.575,  // -16.2 LUFS · XIANBEI 定制曲
+
+
+
+    nobunaga: 0.708,  // -18.0 LUFS · 信长之野望 OVERTURE（2026-10-18 还原，与 Ona Hei 同池轮播）
+
+
+
+    western_b: 0.575,  // -16.2 LUFS
+
+
+
+    persian_b: 0.646,  // -17.2 LUFS
+
+
+
+    tibet_b: 0.750,  // -18.5 LUFS
+
+
+
+    puru_b: 0.668,  // -17.5 LUFS
+
+
+
+    // 🔴 [2026-10-18 主人定「按66文化分曲子，每文化≥3首、符合文化、各自独立」] 98 首新曲
+
+
+
+    korea_a: 0.646,  // -17.2 LUFS
+
+
+
+    bashu_a: 0.569,  // -16.1 LUFS
+
+
+
+    khitan_a: 0.631,  // -17.0 LUFS
+
+
+
+    mongol_a: 0.700,  // -17.9 LUFS
+
+
+
+    xianbei_a: 0.676,  // -17.6 LUFS
+
+
+
+    xianbei_b: 0.676,  // -17.6 LUFS
+
+
+
+    central_asia_a: 0.668,  // -17.5 LUFS
+
+
+
+    western_a: 0.603,  // -16.6 LUFS
+
+
+
+    cuman_a: 0.589,  // -16.4 LUFS
+
+
+
+    huns_a: 0.610,  // -16.7 LUFS
+
+
+
+    huns_b: 0.603,  // -16.6 LUFS
+
+
+
+    turks_a: 0.708,  // -18.0 LUFS
+
+
+
+    turks_b: 0.724,  // -18.2 LUFS
+
+
+
+    india_a: 0.724,  // -18.2 LUFS
+
+
+
+    // 🔴 [2026-10-26 主人令「藏族长号(喇嘛) [tibet_a]，删除。」] tibet_a 已删除：
+
+
+
+    //    文件 public/bgm/tibet_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.TIBET 同步移除（3 首 → 2 首，仍满足每文化 ≥2 首）。
+
+
+
+    mughal_a: 0.684,  // -17.7 LUFS
+
+
+
+    mughal_b: 0.700,  // -17.9 LUFS
+
+
+
+    bengalis_a: 0.684,  // -17.7 LUFS
+
+
+
+    bengalis_b: 0.646,  // -17.2 LUFS
+
+
+
+    gurjaras_a: 0.631,  // -17.0 LUFS
+
+
+
+    // 🔴 [2026-11-06 主人令「拉贾斯坦口弦 Morchang [gurjaras_b]，把这个背景音乐删除，里面人说话，不能用。」]
+
+
+
+    //    gurjaras_b 已连同文件 public/bgm/gurjaras_b_bgm.aud 一并删除（曲中有真人说话，不能用作背景乐）；
+
+
+
+    //    GURJARAS 池由 3 首降为 2 首（de_GURJARAS 主题曲 + gurjaras_a），仍满足每文化 ≥2 首。
+
+
+
+    germanic_a: 0.661,  // -17.4 LUFS
+
+
+
+    vikings_a: 0.638,  // -17.1 LUFS
+
+
+
+    franks_a: 0.610,  // -16.7 LUFS
+
+
+
+    franks_b: 0.716,  // -18.1 LUFS
+
+
+
+    burgundians_a: 0.631,  // -17.0 LUFS
+
+
+
+    burgundians_b: 0.692,  // -17.8 LUFS
+
+
+
+    britons_b: 0.676,  // -17.6 LUFS
+
+
+
+    celts_a: 0.708,  // -18.0 LUFS
+
+
+
+    celts_b: 0.603,  // -16.6 LUFS
+
+
+
+    goths_a: 0.684,  // -17.7 LUFS
+
+
+
+    goths_b: 0.603,  // -16.6 LUFS
+
+
+
+    saxons_a: 0.638,  // -17.1 LUFS
+
+
+
+    saxons_b: 0.700,  // -17.9 LUFS
+
+
+
+    danes_a: 0.624,  // -16.9 LUFS
+
+
+
+    danes_b: 0.610,  // -16.7 LUFS
+
+
+
+    varangians_a: 0.617,  // -16.8 LUFS
+
+
+
+    varangians_b: 0.661,  // -17.4 LUFS
+
+
+
+    slavic_a: 0.589,  // -16.4 LUFS
+
+
+
+    poles_a: 0.692,  // -17.8 LUFS
+
+
+
+    poles_b: 0.638,  // -17.1 LUFS
+
+
+
+    bohemians_a: 0.575,  // -16.2 LUFS
+
+
+
+    // 🔴 [2026-11-05 主人令「删除背景音乐，扬琴 捷克 [bohemians_b]」] bohemians_b 已删除：
+
+
+
+    //    文件 public/bgm/bohemians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.BOHEMIANS 同步移除（3 首 → 2 首）。
+
+
+
+    magyar_a: 0.617,  // -16.8 LUFS
+
+
+
+    magyar_b: 0.661,  // -17.4 LUFS
+
+
+
+    lithuanians_a: 0.708,  // -18.0 LUFS
+
+
+
+    // 🔴 [2026-10-18 主人令「把这个曲子删除」] lithuanians_b（立陶宛排箫 Skudučiai）已删除：
+
+
+
+    //    文件 public/bgm/lithuanians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.LITHUANIANS 同步移除。
+
+
+
+    bulgarians_a: 0.661,  // -17.4 LUFS
+
+
+
+    bulgarians_b: 0.653,  // -17.3 LUFS
+
+
+
+    byzantine_a: 0.750,  // -18.5 LUFS
+
+
+
+    byzantine_b: 0.676,  // -17.6 LUFS
+
+
+
+    armenians_a: 0.767,  // -18.7 LUFS
+
+
+
+    // 🔴 [2026-10-20 主人令「把亚美尼亚卡农琴 Kanun [armenians_b]删除。把这个曲子删除。」] armenians_b（亚美尼亚卡农琴 Kanun）已删除：
+
+
+
+    //    文件 public/bgm/armenians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.ARMENIANS 同步移除。
+
+
+
+    georgians_a: 0.716,  // -18.1 LUFS
+
+
+
+    georgians_b: 0.716,  // -18.1 LUFS
+
+
+
+    latin_a: 0.610,  // -16.7 LUFS
+
+
+
+    roma_a: 0.684,  // -17.7 LUFS
+
+
+
+    roma_b: 0.646,  // -17.2 LUFS
+
+
+
+    sicilians_a: 0.638,  // -17.1 LUFS
+
+
+
+    sicilians_b: 0.708,  // -18.0 LUFS
+
+
+
+    spanish_a: 0.692,  // -17.8 LUFS
+
+
+
+    spanish_b: 0.653,  // -17.3 LUFS
+
+
+
+    portuguese_a: 0.692,  // -17.8 LUFS
+
+
+
+    portuguese_b: 0.692,  // -17.8 LUFS
+
+
+
+    sasanian_a: 0.562,  // -16.0 LUFS
+
+
+
+    sasanian_b: 0.692,  // -17.8 LUFS
+
+
+
+    burmese_a: 0.741,  // -18.4 LUFS
+
+
+
+    africa_a: 0.684,  // -17.7 LUFS
+
+
+
+    khmer_a: 0.716,  // -18.1 LUFS
+
+
+
+    khmer_b: 0.700,  // -17.9 LUFS
+
+
+
+    // 🔴 [2026-10-18 主人令「删除，越南独弦琴 Dan Bau [vietnamese_a]」] vietnamese_a 已删除：
+
+
+
+    //    文件 public/bgm/vietnamese_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.VIETNAMESE 同步移除。
+
+
+
+    vietnamese_b: 0.668,  // -17.5 LUFS
+
+
+
+    // 🔴 [2026-11-02 主人令「马来加美兰 Joget [malay_a]删除这个背景音乐」] malay_a 已删除：
+
+
+
+    //    文件 public/bgm/malay_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.MALAY 同步移除。
+
+
+
+    malay_b: 0.708,  // -18.0 LUFS
+
+
+
+    berber_a: 0.603,  // -16.6 LUFS
+
+
+
+    berber_b: 0.700,  // -17.9 LUFS
+
+
+
+    ethiopians_a: 0.596,  // -16.5 LUFS
+
+
+
+    ethiopians_b: 0.653,  // -17.3 LUFS
+
+
+
+    inca_a: 0.676,  // -17.6 LUFS
+
+
+
+    athenians_a: 0.794,  // -19.0 LUFS
+
+
+
+    athenians_b: 0.708,  // -18.0 LUFS
+
+
+
+    spartans_a: 0.631,  // -17.0 LUFS
+
+
+
+    spartans_b: 0.668,  // -17.5 LUFS
+
+
+
+    macedonian_a: 0.631,  // -17.0 LUFS
+
+
+
+    macedonian_b: 0.668,  // -17.5 LUFS
+
+
+
+    mayans_b: 0.638,  // -17.1 LUFS
+
+
+
+    muisca_a: 0.700,  // -17.9 LUFS
+
+
+
+    muisca_b: 0.661,  // -17.4 LUFS
+
+
+
+    mapuche_a: 0.653,  // -17.3 LUFS
+
+
+
+    mapuche_b: 0.661,  // -17.4 LUFS
+
+
+
+    // 🔴 [2026-10-31 主人令「图皮竹笛 Takuapí [tupi_a] 删除这个曲子，有人说话，不能作为背景音乐」]
+
+
+
+    //    tupi_a 已连同 .aud 文件删除（曲子里有人声，不能当 BGM），TUPI 池剩 de_TUPI + tupi_b 两首。
+
+
+
+    tupi_b: 0.668,  // -17.5 LUFS
+
+
+
+};
+
+
+
+
+
+
+
+/**
+
+
+
+ * 16 母体文化专属曲库池（2026-09-17 主人定）：
+
+
+
+ * 将全游戏全部 40 首曲目完整划分入 16 套母体体系，
+
+
+
+ * 使每个军团/武将无论出身何地，都能根据其所属母体播放自己文化的专属战歌。
+
+
+
+ */
+
+
+
+export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
+
+
+
+    CENTRAL: [
+
+
+
+        // DIANQIAN 已于 2026-09-17 删除（与 pugan 同曲，曲子留给 MALAY），见 BGM_REGION_GAIN 处注释
+
+
+
+        'CENTRAL', 'JIANGNAN', 'BASHU', 'LINGNAN', 'HEXI', 'NORTH', 'NORTHEAST',
+
+
+
+        'JAPAN', 'KOREA', 'nobunaga', 'xianqin', 'liuhan', 'wuzhou',
+
+
+
+        'zhaosong', 'daming', 'manqing'
+
+
+
+    ],
+
+
+
+    STEPPE: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN'],
+
+
+
+    INDIA: ['INDIA'],
+
+
+
+    GERMANIC: ['GERMANIC', 'helmet_to_helmet', 'drakkar_drums', 'viking_war_drums', 'furious_march'],
+
+
+
+    PURU: ['TIBET', 'litang'],
+
+
+
+    ORIE: ['WEST_ASIA', 'BERBER', 'holy_land_battle', 'desert_war', 'ottoman_drums'],
+
+
+
+    LATIN: ['LATIN', 'victory', 'ezios_family'],
+
+
+
+    SLAVIC: ['SLAVIC'],
+
+
+
+    EAST: ['age_of_kings'],
+
+
+
+    PERSIAN: ['shadow_assassin'],
+
+
+
+    MALAY: ['pugan'],
+
+
+
+    GREEK: ['fallen_army'],
+
+
+
+    THRACIAN: ['rock_house_jail', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war'],
+
+
+
+    ANDE: ['ANDE', 'mohicans'],
+
+
+
+    AMERICA: ['hes_a_pirate', 'aztec_war_drums', 'mexica_ritual', 'eagle_warrior'],
+
+
+
+    AFRICA: ['AFRICA'],
+
+
+
+};
+
+
+
+
+
+
+
+/**
+
+
+
+ * 随机轮播池：全部 BGM（文化区 + 势力专属 + 通用随机曲；folder 名 = 文化区/势力/曲名片）。
+
+
+
+ * 主人 2026-08-04 定：首选 = 跟随军团立绘文件夹对应曲（文化区或势力夹，区域优先）；
+
+
+
+ * 放完后不循环单曲，在全部曲目里洗牌随机轮播（不立刻重复同一首）；
+
+
+
+ * 镜头进入新文化区/势力范围则区域优先立刻切歌。
+
+
+
+ */
+
+
+
+/** 实际存在、完成响度标定、且**未被暂停**的曲目；随机池只允许从这里取，
+
+
+
+ *  既避免抽到不存在的区域文件，也避免抽到 `PAUSED_BGM_FOLDERS`（2026-10-18 版权主张暂停）。 */
+
+
+
+const AVAILABLE_BGM_FOLDERS = new Set<string>(
+
+
+
+    Object.keys(BGM_REGION_GAIN).filter((folder) => !PAUSED_BGM_FOLDERS.has(folder)),
+
+
+
+);
+
+
+
+const BGM_ROTATION_FOLDERS: readonly string[] = Object.freeze([...AVAILABLE_BGM_FOLDERS]);
+
+
+
+const GENERIC_BGM_FALLBACK = 'age_of_kings';
+
+
+
+
+
+
+
+/**
+
+
+
+ * 🔴 [2026-10-02 主人定「亚历山大的剧本的背景音乐只采用西方歌曲循环播放」]
+
+
+
+ * 历史剧本期（亚历山大东征）专用轮播池：只放西方 / 地中海 / 中东史诗曲，不放中国、日本、蒙古、印度、南美曲。
+
+
+
+ * 判据 = 曲目真实来源（西方电影 / 游戏 / 史诗配乐），不是 folder 名字：
+
+
+
+ *   LATIN=Star Sky(TSFH)、WEST_ASIA=出埃及记、BERBER=征服天堂(Vangelis)、GERMANIC=The Mass(Era)、
+
+
+
+ *   victory=Victory(TSFH)、rock_house_jail=勇闯夺命岛、fallen_army=Audiomachine、helmet_to_helmet=Brand X、
+
+
+
+ *   hes_a_pirate=加勒比海盗(Hans Zimmer)、age_of_kings=帝国时代2主题。
+
+
+
+ * 排除：shadow_assassin（暗影刺客·中国琵琶曲）、SLAVIC（北欧瑞典曲）、AFRICA（自制非洲器乐：鼓组+kora+木琴），
+
+
+
+ *   以及全部中国 / 日本 / 朝鲜 / 草原 / 中亚 / 青藏 / 印度 / 东南亚 / 南美曲。
+
+
+
+ */
+
+
+
+const SCRIPT_WESTERN_BGM_FOLDERS: readonly string[] = Object.freeze([
+
+
+
+    'LATIN', 'WEST_ASIA', 'BERBER', 'GERMANIC',
+
+
+
+    'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet',
+
+
+
+    'hes_a_pirate', 'age_of_kings', 'ezios_family',
+
+
+
+]);
+
+
+
+
+
+
+
+function resolveAvailableBgmFolder(folder: string): string {
+
+
+
+    // 没有对应文化曲时用无文化归属的游戏主题曲，不能拿中原音乐冒充其他文明。
+
+
+
+    return AVAILABLE_BGM_FOLDERS.has(folder) ? folder : GENERIC_BGM_FALLBACK;
+
+
+
+}
+
+
+
+
+
+
+
+/**
+
+
+
+ * 🔴 [2026-10-18 主人定「按文化分曲子、各自独立、符合文化」]；2026-10-26 起 67 文化。
+
+
+
+ * 🔴 [2026-10-20 主人定「每个文化至少 2 首」] 每池最低 **2 首**（原 2026-10-18「每个文化至少 3 首」旧标准作废）。
+
+
+
+ * 每分支一个独立曲池（不再共享母体）：[专属主题曲] + [本文化自有曲]。
+
+
+
+ */
+
+
+
+const BGM_POOL_MAP: Record<string, string[]> = {
+
+
+
+    AFRICA: ['de_AFRICA', 'AFRICA', 'africa_a'],
+
+
+
+    AMERICA: ['de_AMERICA', 'aztec_war_drums', 'mexica_ritual', 'eagle_warrior', 'mohicans'],
+
+
+
+    // 🔴 [2026-10-20 主人令「把亚美尼亚卡农琴 Kanun [armenians_b]删除。把这个曲子删除。」] armenians_b 已连同 .aud 文件删除，
+
+
+
+    //    本文化池由 3 首降为 2 首（de_ARMENIANS 主题曲 + armenians_a）。
+
+
+
+    ARMENIANS: ['de_ARMENIANS', 'armenians_a'],
+
+
+
+    ATHENIANS: ['de_ATHENIANS', 'athenians_a', 'athenians_b'],
+
+
+
+    BASHU: ['de_BASHU', 'BASHU', 'bashu_a'],
+
+
+
+    BENGALIS: ['de_BENGALIS', 'bengalis_a', 'bengalis_b'],
+
+
+
+    BERBER: ['de_BERBER', 'berber_a', 'berber_b'],
+
+
+
+    BOHEMIANS: ['de_BOHEMIANS', 'bohemians_a'],
+
+
+
+    BRITONS: ['de_BRITONS', 'britons_b'],
+
+
+
+    BULGARIANS: ['de_BULGARIANS', 'bulgarians_a', 'bulgarians_b'],
+
+
+
+    BURGUNDIANS: ['de_BURGUNDIANS', 'burgundians_a', 'burgundians_b'],
+
+
+
+    BURMESE: ['de_BURMESE', 'pugan', 'burmese_a'],
+
+
+
+    BYZANTINE: ['de_BYZANTINE', 'age_of_kings', 'byzantine_a', 'byzantine_b'],
+
+
+
+    CELTS: ['de_CELTS', 'celts_a', 'celts_b'],
+
+
+
+    CENTRAL: ['de_CENTRAL', 'CENTRAL', 'NORTH', 'daming', 'litang', 'liuhan', 'shadow_assassin'],
+
+
+
+    CENTRAL_ASIA: ['de_CENTRAL_ASIA', 'CENTRAL_ASIA', 'central_asia_a'],
+
+
+
+    CUMAN: ['de_CUMAN', 'cuman_a'],
+
+
+
+    DANES: ['de_DANES', 'furious_march', 'danes_a', 'danes_b'],
+
+
+
+    ETHIOPIANS: ['de_ETHIOPIANS', 'ethiopians_a', 'ethiopians_b'],
+
+
+
+    FRANKS: ['de_FRANKS', 'franks_a', 'franks_b'],
+
+
+
+    GEORGIANS: ['de_GEORGIANS', 'georgians_a', 'georgians_b'],
+
+
+
+    GERMANIC: ['de_GERMANIC', 'drakkar_drums', 'germanic_a'],
+
+
+
+    GOTHS: ['de_GOTHS', 'goths_a', 'goths_b'],
+
+
+
+    // 🔴 [2026-11-02 主人令「删除希腊布祖基琴 Hasapika [greece_a]」]
+
+
+
+    //    greece_a 已连同 .aud 文件删除，GREECE 池由 3 首降为 2 首（GREECE + fallen_army）。
+
+
+
+    GREECE: ['GREECE', 'fallen_army'],
+
+
+
+    // 🔴 [2026-11-06 主人令「拉贾斯坦口弦 Morchang [gurjaras_b]，把这个背景音乐删除，里面人说话，不能用。」]
+
+
+
+    //    gurjaras_b 已连同 .aud 文件删除，本文化池由 3 首降为 2 首（de_GURJARAS 主题曲 + gurjaras_a）。
+
+
+
+    GURJARAS: ['de_GURJARAS', 'gurjaras_a'],
+
+
+
+    HUNS: ['de_HUNS', 'huns_a', 'huns_b'],
+
+
+
+    INCA: ['de_INCA', 'ANDE', 'inca_a'],
+
+
+
+    INDIA: ['de_INDIA', 'INDIA', 'india_a'],
+
+
+
+    JAPAN: ['de_JAPAN', 'JAPAN', 'nobunaga', 'shogun_tsunami', 'shogun_shinobue', 'shogun_daimyo'],
+
+
+
+    JIANGNAN: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
+
+
+
+    HUGUANG: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
+
+
+
+    HEXI: ['de_KHITAN', 'HEXI', 'khitan_a'],   // 河西；曲目文件名沿用 DE 契丹素材
+
+
+
+    KHMER: ['de_KHMER', 'khmer_a', 'khmer_b'],
+
+
+
+    KOREA: ['de_KOREA', 'KOREA', 'korea_a'],
+
+
+
+    LATIN: ['de_LATIN', 'LATIN', 'ezios_family', 'latin_a'],
+
+
+
+    // 🔴 [2026-10-18 主人令「把这个曲子删除」] lithuanians_b（Skudučiai）已连同 .aud 文件删除，
+
+
+
+    //    本文化池由 3 首降为 2 首（de_LITHUANIANS 主题曲 + lithuanians_a）。
+
+
+
+    LITHUANIANS: ['de_LITHUANIANS', 'lithuanians_a'],
+
+
+
+    MACEDONIAN: ['de_MACEDONIAN', 'macedonian_a', 'macedonian_b'],
+
+
+
+    MAGYAR: ['de_MAGYAR', 'magyar_a', 'magyar_b'],
+
+
+
+    // 🔴 [2026-11-02 主人令] malay_a（马来加美兰 Joget）已连同 .aud 文件删除。
+
+
+
+    MALAY: ['de_MALAY', 'malay_b'],
+
+
+
+    MAPUCHE: ['de_MAPUCHE', 'mapuche_a', 'mapuche_b'],
+
+
+
+    MAYANS: ['de_MAYANS', 'mayans_b'],
+
+
+
+    MONGOL: ['de_MONGOL', 'STEPPE', 'mongol_a'],
+
+
+
+    MUGHAL: ['de_MUGHAL', 'mughal_a', 'mughal_b'],
+
+
+
+    MUISCA: ['de_MUISCA', 'muisca_a', 'muisca_b'],
+
+
+
+    NORTHEAST: ['de_NORTHEAST', 'NORTHEAST', 'xianqin'],
+
+
+
+    ORIE: ['de_ORIE', 'holy_land_battle', 'desert_war', 'ottoman_drums'],
+
+
+
+    PERSIAN: ['de_PERSIAN', 'persian_b'],
+
+
+
+    POLES: ['de_POLES', 'poles_a', 'poles_b'],
+
+
+
+    PORTUGUESE: ['de_PORTUGUESE', 'portuguese_a', 'portuguese_b'],
+
+
+
+    PURU: ['de_PURU', 'puru_b'],
+
+
+
+    ROMA: ['de_ROMA', 'roma_a', 'roma_b'],
+
+
+
+    SASANIAN: ['de_SASANIAN', 'sasanian_a', 'sasanian_b'],
+
+
+
+    SAXONS: ['de_SAXONS', 'saxons_a', 'saxons_b'],
+
+
+
+    SICILIANS: ['de_SICILIANS', 'sicilians_a', 'sicilians_b'],
+
+
+
+    SLAVIC: ['de_SLAVIC', 'SLAVIC', 'slavic_a'],
+
+
+
+    SPANISH: ['de_SPANISH', 'spanish_a', 'spanish_b'],
+
+
+
+    SPARTANS: ['de_SPARTANS', 'spartans_a', 'spartans_b'],
+
+
+
+    THRACIAN: ['de_THRACIAN', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war'],
+
+
+
+    // 🔴 [2026-10-26 主人令「藏族长号(喇嘛) [tibet_a]，删除。」] tibet_a 已连同 .aud 文件删除，
+
+
+
+    //    本文化池保留 2 首（TIBET 千年的祈祷 + tibet_b 藏传法铃·钹·号角）。
+
+
+
+    TIBET: ['TIBET', 'tibet_b'],
+
+
+
+    // 🔴 [2026-10-31 主人令「图皮竹笛 Takuapí [tupi_a] 删除这个曲子，有人说话」] tupi_a 已删，
+
+
+
+    //    本文化池由 3 首降为 2 首（de_TUPI 主题曲 + tupi_b 图皮瓜拉尼器乐）。
+
+
+
+    TUPI: ['de_TUPI', 'tupi_b'],
+
+
+
+    TURKS: ['de_TURKS', 'turks_a', 'turks_b'],
+
+
+
+    VARANGIANS: ['de_VARANGIANS', 'varangians_a', 'varangians_b'],
+
+
+
+    // 🔴 [2026-10-18 主人令] vietnamese_a（越南独弦琴 Dan Bau）已连同 .aud 文件删除，
+
+
+
+    //    本文化池由 3 首降为 2 首（de_VIETNAMESE 主题曲 + vietnamese_b）。
+
+
+
+    VIETNAMESE: ['de_VIETNAMESE', 'vietnamese_b'],
+
+
+
+    VIKINGS: ['de_VIKINGS', 'viking_war_drums', 'vikings_a'],
+
+
+
+    WEI: ['de_WEI', 'wuzhou', 'zhaosong'],
+
+
+
+    WESTERN: ['WESTERN', 'western_a', 'western_b'],
+
+
+
+    XIANBEI: ['XIANBEI', 'xianbei_a', 'xianbei_b'],
+
+
+
+};
+
+
+
+
+
+
+
+/** 任意文化码（66 分支 / 172 区 / 16 母体）→ 66 分支 key；未加入势力（null/空）返回 null */
+
+
+
+function resolveBranch(region: string | null | undefined): string | null {
+
+
+
+    if (!region || !region.trim()) return null;
+
+
+
+    const u = region.trim().toUpperCase();
+
+
+
+    const b = ALL_BRANCHES_MAP[u];
+
+
+
+    if (b) return b.key;
+
+
+
+    return toCulture66(u) || REGION_TO_BRANCH[u] || 'CENTRAL';
+
+
+
+}
+
+
+
+
+
+
+
+/** 分支 → 独立曲池（滤掉暂停曲）；无分支（未加入势力）返回空数组，交由 shuffledBgmFolders 走全库随机 */
+
+
+
+function branchPool(branch: string | null): string[] {
+
+
+
+    if (!branch) return [];
+
+
+
+    return (BGM_POOL_MAP[branch] ?? []).filter((f) => AVAILABLE_BGM_FOLDERS.has(f));
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function mergeSettings(raw: unknown): AudioSettings {
+
+
+
+    const settings: AudioSettings = {
+
+
+
+        enabled: DEFAULT_SETTINGS.enabled,
+
+
+
+        masterVolume: DEFAULT_SETTINGS.masterVolume,
+
+
+
+        categoryVolume: { ...DEFAULT_SETTINGS.categoryVolume },
+
+
+
+    };
+
+
+
+
+
+
+
+    if (!raw || typeof raw !== 'object') return settings;
+
+
+
+    const data = raw as Partial<AudioSettings>;
+
+
+
+
+
+
+
+    if (typeof data.enabled === 'boolean') settings.enabled = data.enabled;
+
+
+
+    if (typeof data.masterVolume === 'number') settings.masterVolume = clamp01(data.masterVolume);
+
+
+
+
+
+
+
+    // categoryVolume（音效/音乐分层基准）无用户 UI，属代码固定配置，不从存档读取——
+
+
+
+    // 恒用 DEFAULT_SETTINGS.categoryVolume，避免旧存档里的 1.0 覆盖新基准（主人调音必生效）。
+
+
+
+    // 用户可调的只有 enabled 与 masterVolume，上面已从存档恢复。
+
+
+
+
+
+
+
+    return settings;
+
+
+
+}
+
+
+
+
+
+
+
+export class AudioManager {
+
+
+
+    private static instance: AudioManager | null = null;
+
+
+
+
+
+
+
+    private initialized = false;
+
+
+
+    private unlocked = false;
+
+
+
+    private gamePaused = false;
+
+
+
+    private settings: AudioSettings = mergeSettings(null);
+
+
+
+    private audioCache = new Map<SoundKey, HTMLAudioElement[]>();
+
+
+
+    private loopCache = new Map<SoundKey, HTMLAudioElement>();
+
+
+
+    private lastPlayedAt = new Map<SoundKey, number>();
+
+
+
+    private missingWarned = new Set<SoundKey>();
+
+
+
+    private followedAudioState: {
+
+
+
+        armyId: string | null;
+
+
+
+        marching: boolean;
+
+
+
+        inCombat: boolean;
+
+
+
+        isCavalry: boolean;
+
+
+
+        isNaval: boolean;
+
+
+
+        /** [2026-09-11] 跟拍对象是否玩家本人（独骑）——决定行军音走 player_march_loop */
+
+
+
+        isPlayer: boolean;
+
+
+
+        /** [2026-10-30] 此刻是否在战术模式（13）——交战中途进/出 13 也要重算战斗循环音 */
+
+
+
+        inScene13: boolean;
+
+
+
+    } = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false, inScene13: false };
+
+
+
+    /** 播报进行中：音效 + 音乐压低（优先级闪避） */
+
+
+
+    private speechDucking = false;
+
+
+
+    private bgmAudio: HTMLAudioElement | null = null;
+
+
+
+    /** 当前 BGM 专用 blob URL；换曲/停歌后立即释放，不进入长期对象 URL 缓存。 */
+
+
+
+    private bgmObjectUrl: string | null = null;
+
+
+
+    private currentBgmFolder: string = '';
+
+
+
+    private currentBgmSrc: string = '';
+
+
+
+    private failedBgmFolders = new Set<string>();
+
+
+
+    /** 镜头当前所在文化区对应的 BGM folder（区域优先：此值变化 = 立刻切歌）*/
+
+
+
+    private cameraRegionFolder: string = '';
+
+
+
+    /** 全部 BGM 随机轮播队列（洗牌袋，空了重洗）*/
+
+
+
+    private bgmShuffleQueue: string[] = [];
+
+
+
+    /** 当前跟随军团文化分支的曲池（62+4 分支 → 曲目列表；池内轮播）*/
+
+
+
+    private currentBgmPool: string[] = [];
+
+
+
+    /** BGM 异步加载令牌：切歌 / 停歌时自增，作废旧的 fetch 回调 */
+
+
+
+    private bgmLoadToken = 0;
+
+
+
+    /** 源路径 → blob 对象 URL（用 fetch 取 blob 绕开 IDM 等下载器按扩展名抓取）*/
+
+
+
+    private objectUrlCache = new Map<string, string>();
+
+
+
+    /**
+
+
+
+     * 最后一次 BGM 请求（无论当时成没成功）。解锁 / 重新启用音频后据此补播。
+
+
+
+     * 只留最后一次：BGM 本来就是「当前该放哪首」的单值状态，不是队列。
+
+
+
+     */
+
+
+
+    private lastBgmRequest: { portraitPath?: string; lat: number; lng: number; cultureRegion?: string | null } | null = null;
+
+
+
+    /**
+
+
+
+     * 🔴 [2026-11-04 主人要「F3 背景音乐做成下拉选项，可以自由选择音乐播放」]
+
+
+
+     * F3 手动选定的曲目夹；null = 自动（走原来的选曲逻辑）。
+
+
+
+     * 非 null 时：跟拍军团切换、进战术换曲都不换歌，这首放完重放同一首，直到选回自动。
+
+
+
+     */
+
+
+
+    private manualBgmFolder: string | null = null;
+
+
+
+    /** 战术模式（Scene13）期间锁定为参战军队所属 67 文化的专属曲池（防止串播其他文化曲目） */
+
+
+
+    private tacticalBgmPool: string[] = [];
+
+
+
+    /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
+
+
+
+    private wantedLoops = new Set<SoundKey>();
+
+
+
+    /** 正在播放的一次性音效及其定义（暂停、主音量和语音闪避时同步处理）*/
+
+
+
+    private activeOneShots = new Map<HTMLAudioElement, SoundDefinition>();
+
+
+
+    /** 每个音频元素正在进行的音量渐变（setInterval id）；再次调整时先撤销旧渐变 */
+
+
+
+    private volumeRamps = new Map<HTMLAudioElement, ReturnType<typeof setInterval>>();
+
+
+
+
+
+
+
+    public static getInstance(): AudioManager {
+
+
+
+        if (!AudioManager.instance) AudioManager.instance = new AudioManager();
+
+
+
+        return AudioManager.instance;
+
+
+
+    }
+
+
+
+
+
+
+
+    public initialize(): void {
+
+
+
+        if (this.initialized || typeof window === 'undefined') return;
+
+
+
+        this.initialized = true;
+
+
+
+        this.loadSettings();
+
+
+
+
+
+
+
+        const unlock = () => {
+
+
+
+            this.unlock();
+
+
+
+            window.removeEventListener('pointerdown', unlock);
+
+
+
+            window.removeEventListener('keydown', unlock);
+
+
+
+        };
+
+
+
+
+
+
+
+        window.addEventListener('pointerdown', unlock, { once: true, passive: true });
+
+
+
+        window.addEventListener('keydown', unlock, { once: true });
+
+
+
+
+
+
+
+        // 🔴 [2026-08-12 修「每次刷新都要点一下才有声」] 开局先乐观试一次，别干等手势。
+
+
+
+        //   浏览器自动播放策略：一次真实播放需要用户手势 **或** 本站媒体互动分够高
+
+
+
+        //   （Chrome MEI —— 常玩的站点会攒够）。攒够的情况下这一试就直接出声，用户什么都不用点。
+
+
+
+        //   这在开发期尤其要紧：改一次文件 → dev server 刷新页面 → 音频锁重新锁上 → 又要点一次。
+
+
+
+        void this.tryAutoUnlock();
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 不靠用户手势地试探能否播放；成功才算解锁。
+
+
+
+     *
+
+
+
+     * 🔴 **必须真播一次来验证，不能直接把 unlocked 置 true**：置了但实际被拦，
+
+
+
+     *    手势监听器会被撤掉，声音就永远回不来了（比现在更糟）。
+
+
+
+     * 🔴 探针用 `volume = 0` 而不是 `muted = true`：Chrome 的策略只看 muted 属性，
+
+
+
+     *    静音元素**永远允许**自动播放 —— 拿它当探针会得到假通过。volume=0 仍算可发声媒体，
+
+
+
+     *    该拦的照样拦，所以它测的才是真结果。
+
+
+
+     */
+
+
+
+    private async tryAutoUnlock(): Promise<void> {
+
+
+
+        if (this.unlocked || !this.settings.enabled) return;
+
+
+
+        const key = (Object.keys(SOUND_DEFINITIONS) as SoundKey[])
+
+
+
+            .find((k) => SOUND_DEFINITIONS[k].category !== 'bgm');
+
+
+
+        if (!key) return;
+
+
+
+        const audio = await this.ensureAudioElement(key, SOUND_DEFINITIONS[key]);
+
+
+
+        if (!audio || this.unlocked) return;
+
+
+
+        const prevVolume = audio.volume;
+
+
+
+        try {
+
+
+
+            audio.volume = 0;
+
+
+
+            await audio.play();
+
+
+
+            audio.pause();
+
+
+
+            audio.currentTime = 0;
+
+
+
+            audio.volume = prevVolume;
+
+
+
+            this.unlock();          // 真的能播 → 走正常解锁（预取 SFX + 补播音效 + 补播 BGM）
+
+
+
+        } catch {
+
+
+
+            audio.volume = prevVolume;
+
+
+
+            // 被策略拦下 —— 什么都不做，等用户手势那条路兜底
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 场景层的循环音效开关（13 演出用）。内部就是 startLoop/stopLoop，
+
+
+
+     * 只是把它们暴露给场景 —— 那两个原本只由 syncFollowedLegionAudio 驱动（行军/交战底噪），
+
+
+
+     * 而 13 有自己的节奏：接触才起、退场就停，跟大地图的跟拍状态无关。
+
+
+
+     * 幂等：重复 start 不会叠播（startLoop 内部判 audio.paused）。
+
+
+
+     */
+
+
+
+    public startSceneLoop(key: SoundKey): void {
+
+
+
+        this.startLoop(key);
+
+
+
+    }
+
+
+
+
+
+
+
+    public stopSceneLoop(key: SoundKey): void {
+
+
+
+        this.stopLoop(key);
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 战略地图天气环境循环音同步：随当前视口主导天气气团的强度平滑起停与缩放音量，
+
+
+
+     * 战术模式（13）里同样照响（2026-11-04 主人令）。
+
+
+
+     */
+
+
+
+    private weatherLoopKey: SoundKey | null = null;
+
+
+
+    private weatherStrengthScale = 1;
+
+
+
+
+
+
+
+    public syncWeatherAudio(loopKey: SoundKey | null, strength: number): void {
+
+
+
+        const allWeatherLoops: SoundKey[] = [
+
+
+
+            'weather_storm_loop',
+
+
+
+            'weather_rain_loop',
+
+
+
+            'weather_blizzard_loop',
+
+
+
+            'weather_sandstorm_loop',
+
+
+
+            'weather_fog_loop',
+
+
+
+            'weather_wind_loop',
+
+
+
+        ];
+
+
+
+        // 🔴 [2026-11-04 主人令「战术也响」] 原进战术模式（13）一律静音；现战术里照响
+
+
+
+        //    （战略天气层在 13 前景时暂停，由 Scene13Render 每帧驱动同一套气团调用本函数，两边不抢）。
+
+
+
+        if (!this.settings.enabled || !loopKey || strength < 0.08) {
+
+
+
+            if (this.weatherLoopKey !== null) {
+
+
+
+                for (const k of allWeatherLoops) this.stopLoop(k);
+
+
+
+                this.weatherLoopKey = null;
+
+
+
+                this.weatherStrengthScale = 1;
+
+
+
+            }
+
+
+
+            return;
+
+
+
+        }
+
+
+
+        // 天气淡时下限提到 0.55，确保沙尘暴、暴风雪等在气团边缘也能清晰听见
+
+
+
+        const nextScale = Math.max(0.55, Math.min(1, strength * 1.5));
+
+
+
+        const cachedAudio = this.loopCache.get(loopKey);
+
+
+
+        const needsStart =
+
+
+
+            this.weatherLoopKey !== loopKey ||
+
+
+
+            !this.wantedLoops.has(loopKey) ||
+
+
+
+            (this.unlocked && !this.gamePaused && cachedAudio !== undefined && cachedAudio.paused);
+
+
+
+        if (needsStart) {
+
+
+
+            for (const k of allWeatherLoops) {
+
+
+
+                if (k !== loopKey) this.stopLoop(k);
+
+
+
+            }
+
+
+
+            this.weatherLoopKey = loopKey;
+
+
+
+            this.weatherStrengthScale = nextScale;
+
+
+
+            if (this.unlocked) {
+
+
+
+                this.startLoop(loopKey);
+
+
+
+            }
+
+
+
+            return;
+
+
+
+        }
+
+
+
+        if (Math.abs(this.weatherStrengthScale - nextScale) >= 0.05) {
+
+
+
+            this.weatherStrengthScale = nextScale;
+
+
+
+            const audio = this.loopCache.get(loopKey);
+
+
+
+            const def = SOUND_DEFINITIONS[loopKey];
+
+
+
+            if (audio && def && this.wantedLoops.has(loopKey) && !this.gamePaused) {
+
+
+
+                this.setVolume(audio, this.resolveVolume(def, loopKey), 250);
+
+
+
+            }
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    public unlock(): void {
+
+
+
+        if (this.unlocked) return;
+
+
+
+        this.unlocked = true;
+
+
+
+        // 预取所有 SFX 为 blob（非 bgm），让首次 play 同步命中缓存
+
+
+
+        for (const key of Object.keys(SOUND_DEFINITIONS) as SoundKey[]) {
+
+
+
+            const def = SOUND_DEFINITIONS[key];
+
+
+
+            if (def.category === 'bgm') continue;
+
+
+
+            void this.ensureAudioElement(key, def);
+
+
+
+        }
+
+
+
+        this.reapplyFollowedLegionAudio();
+
+
+
+        if (this.weatherLoopKey) {
+
+
+
+            this.startLoop(this.weatherLoopKey);
+
+
+
+        }
+
+
+
+        // [2026-08-12] BGM 补播：解锁前记下的那次请求在这里兑现。
+
+
+
+        // 老注释写「BGM 不在解锁时自动启动，由 syncRegionBgm 在跟随军团后触发」——
+
+
+
+        // 但跟拍军团在解锁前就定了，syncPortraitBgm 只在**切换军团**时才调，
+
+
+
+        // 于是那一次空转之后再没有下一次，整局无音乐。
+
+
+
+        this.flushPendingBgm();
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 解锁 / 音频重新启用后，按最后一次请求补播 BGM。
+
+
+
+     * 🔴 不能依赖调用方再来一次：GameAppLoop 只在**切换跟拍军团**时才请求 BGM，
+
+
+
+     *    不换军团就永远没有下一次。
+
+
+
+     */
+
+
+
+    private flushPendingBgm(): void {
+
+
+
+        if (this.manualBgmFolder && this.settings.enabled && this.unlocked) {
+
+
+
+            this.playBgmFolder(this.manualBgmFolder);
+
+
+
+            return;
+
+
+
+        }
+
+
+
+        const req = this.lastBgmRequest;
+
+
+
+        if (!req) return;
+
+
+
+        // 🔴 [2026-09-17] cultureRegion 必须一起补回：漏了它，补播这一次就退回按坐标 getRegion 取曲，
+
+
+
+        //    「每个武将用自己文化的曲子」在**最关键的那一次**（解锁后的首播）失效。
+
+
+
+        this.syncPortraitBgm(req.portraitPath, req.lat, req.lng, req.cultureRegion);
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * fetch 源文件（.aud，实为 ogg 字节）→ 重标为 audio/ogg 的 blob → blob: 对象 URL。
+
+
+
+     * .aud 不在下载器监控扩展名内，fetch 不被 IDM/迅雷 抓取；
+
+
+
+     * blob: URL 无扩展名，<audio> 也不被抓取；重标 type 确保浏览器按 ogg 解码。
+
+
+
+     */
+
+
+
+    private async fetchObjectUrl(src: string, cache: boolean = true): Promise<string | null> {
+
+
+
+        const cached = cache ? this.objectUrlCache.get(src) : undefined;
+
+
+
+        if (cached) return cached;
+
+
+
+        try {
+
+
+
+            // 破缓存：加 ?ts 防止旧文件被浏览器磁盘缓存死咬
+
+
+
+            const cacheKey = `${src}?ts=${Date.now()}`;
+
+
+
+            const res = await fetch(cacheKey);
+
+
+
+            if (!res.ok) return null;
+
+
+
+            const buf = await res.arrayBuffer();
+
+
+
+            // Vite 对不存在的静态资源可能返回 200 + index.html。只看 res.ok 会把网页误标成
+
+
+
+            // audio/ogg，最终既播不出，也进不了 BGM 的 CENTRAL 回退分支。
+
+
+
+            if (buf.byteLength < 4) return null;
+
+
+
+            const magic = new Uint8Array(buf, 0, 4);
+
+
+
+            if (magic[0] !== 0x4f || magic[1] !== 0x67 || magic[2] !== 0x67 || magic[3] !== 0x53) {
+
+
+
+                return null; // OggS
+
+
+
+            }
+
+
+
+            const blob = new Blob([buf], { type: 'audio/ogg' });
+
+
+
+            const url = URL.createObjectURL(blob);
+
+
+
+            if (cache) this.objectUrlCache.set(src, url);
+
+
+
+            return url;
+
+
+
+        } catch {
+
+
+
+            return null;
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    public play(key: SoundKey, opts?: { fadeInMs?: number; volumeScale?: number }): boolean {
+
+
+
+        if (!this.settings.enabled || !this.unlocked) return false;
+
+
+
+
+
+
+
+        const definition = SOUND_DEFINITIONS[key];
+
+
+
+        if (!definition || this.isCoolingDown(key, definition.cooldownMs ?? 0)) return false;
+
+
+
+
+
+
+
+        // 游戏暂停时屏蔽所有非 bgm 音效
+
+
+
+        if (this.gamePaused && definition.category !== 'bgm') return false;
+
+
+
+
+
+
+
+        const playFromBase = (base: HTMLAudioElement) => {
+
+
+
+            const audio = base.cloneNode(true) as HTMLAudioElement;
+
+
+
+            const volumeScale = Math.max(0, Math.min(1, opts?.volumeScale ?? 1));
+
+
+
+            const targetVol = this.resolveVolume(definition, key) * volumeScale;
+
+
+
+            const fadeInMs = opts?.fadeInMs ?? 0;
+
+
+
+            audio.volume = fadeInMs > 0 ? 0 : targetVol;
+
+
+
+            audio.currentTime = 0;
+
+
+
+
+
+
+
+            this.lastPlayedAt.set(key, Date.now());
+
+
+
+
+
+
+
+            // 追踪在播克隆，暂停时一并停掉；播完自动移除
+
+
+
+            this.activeOneShots.set(audio, definition);
+
+
+
+            audio.addEventListener('ended', () => {
+
+
+
+                this.cancelVolumeRamp(audio);
+
+
+
+                this.activeOneShots.delete(audio);
+
+
+
+            }, { once: true });
+
+
+
+
+
+
+
+            void audio.play().catch((error) => {
+
+
+
+                this.cancelVolumeRamp(audio);
+
+
+
+                this.activeOneShots.delete(audio);
+
+
+
+                this.warnMissingOnce(key, error);
+
+
+
+            });
+
+
+
+
+
+
+
+            if (fadeInMs > 0) {
+
+
+
+                this.setVolume(audio, targetVol, fadeInMs);
+
+
+
+            }
+
+
+
+        };
+
+
+
+
+
+
+
+        const baseAudio = this.getAudioElement(key, definition);
+
+
+
+        if (!baseAudio) {
+
+
+
+            if (key.startsWith('skill_')) {
+
+
+
+                void this.ensureAudioElement(key, definition).then((loaded) => {
+
+
+
+                    if (loaded && this.settings.enabled && !this.gamePaused) playFromBase(loaded);
+
+
+
+                });
+
+
+
+                return true;
+
+
+
+            }
+
+
+
+            return false;
+
+
+
+        }
+
+
+
+
+
+
+
+        playFromBase(baseAudio);
+
+
+
+        return true;
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 战术六计释放音效：按六计一一对应播放 DE 专属释放音。 */
+
+
+
+    public playScene13SkillSfx(six: TacticalSixSet, playerCast: boolean): boolean {
+
+
+
+        const keys: Record<TacticalSixSet, SoundKey> = {
+
+
+
+            gongzhan: 'skill_gongzhan',
+
+
+
+            shengzhan: 'skill_shengzhan',
+
+
+
+            dizhan: 'skill_dizhan',
+
+
+
+            hunzhan: 'skill_hunzhan',
+
+
+
+            bingzhan: 'skill_bingzhan',
+
+
+
+            baizhan: 'skill_baizhan',
+
+
+
+        };
+
+
+
+        // 释放音立刻起声：短音效若再淡入 200ms，最有辨识度的开头会被吃掉。
+
+
+
+        return this.play(keys[six], { fadeInMs: 0, volumeScale: 1 });
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 跟拍军团释放武将技时的短音效（非跟拍军团不播） */
+
+
+
+    public playGeneralSkillSfx(unitId?: string | null): void {
+
+
+
+        if (!unitId || typeof window === 'undefined') return;
+
+
+
+        const followedId =
+
+
+
+            (window as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } }).game
+
+
+
+                ?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
+
+
+
+        if (!followedId || followedId !== unitId) return;
+
+
+
+        this.play('general_skill', { fadeInMs: FADE.oneShot });
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 海战事件音效（沉没/开火等，非跟拍军团不播；返回是否实际播放） */
+
+
+
+    public playNavalSfx(unitId: string | null, key: SoundKey): boolean {
+
+
+
+        if (!unitId || typeof window === 'undefined') return false;
+
+
+
+        const followedId =
+
+
+
+            (window as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } }).game
+
+
+
+                ?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
+
+
+
+        if (!followedId || followedId !== unitId) return false;
+
+
+
+        return this.play(key);
+
+
+
+    }
+
+
+
+
+
+
+
+    public syncFollowedLegionAudio(state: {
+
+
+
+        armyId: string | null;
+
+
+
+        marching: boolean;
+
+
+
+        inCombat: boolean;
+
+
+
+        isCavalry?: boolean;
+
+
+
+        isNaval?: boolean;
+
+
+
+        /** 🔴 [2026-09-11 主人定] 跟拍对象就是玩家本人（乱入者独骑）→ 走玩家骑马音 */
+
+
+
+        isPlayer?: boolean;
+
+
+
+    }): void {
+
+
+
+        const isCavalry = state.isCavalry ?? false;
+
+
+
+        const isNaval = state.isNaval ?? false;
+
+
+
+        const isPlayer = state.isPlayer ?? false;
+
+
+
+        // 🔴 [2026-10-30 主人报「援军赶到后进了战术模式，但战斗音效不重计」]
+
+
+
+        //    原先缓存只比「在不在交战」：援军中途把这场仗拖进 13 时，跟随军团早已在交战，
+
+
+
+        //    状态判成没变就直接返回，战略层的 battle_loop 一路带进 13。13 开关也要进缓存比较。
+
+
+
+        //    ⚠️ 进 13 后 battle_loop 停掉，13 自己的交战音景 land_contact **只在两军近战接触时才响**
+
+
+
+        //    （Scene13WarLayer 接触判定驱动）；进场到接触前这段安静是设计如此，不是漏音效。
+
+
+
+        const inScene13 = (window as any).game?.scene13War?.isActive?.() === true;
+
+
+
+        if (
+
+
+
+            this.followedAudioState.armyId === state.armyId &&
+
+
+
+            this.followedAudioState.marching === state.marching &&
+
+
+
+            this.followedAudioState.inCombat === state.inCombat &&
+
+
+
+            this.followedAudioState.isCavalry === isCavalry &&
+
+
+
+            this.followedAudioState.isNaval === isNaval &&
+
+
+
+            this.followedAudioState.isPlayer === isPlayer &&
+
+
+
+            this.followedAudioState.inScene13 === inScene13
+
+
+
+        ) {
+
+
+
+            return;
+
+
+
+        }
+
+
+
+
+
+
+
+        this.followedAudioState = { ...state, isCavalry, isNaval, isPlayer, inScene13 };
+
+
+
+
+
+
+
+        // 四条行军循环音互斥：航海优先；陆上再按玩家独骑、纯骑军团、其他军团区分。
+
+
+
+        const marchKey: SoundKey = isNaval ? 'naval_march_loop'
+
+
+
+            : isPlayer ? 'player_march_loop'
+
+
+
+            : isCavalry ? 'cavalry_march_loop' : 'march_loop';
+
+
+
+        const otherMarchKeys = (['march_loop', 'cavalry_march_loop', 'player_march_loop', 'naval_march_loop'] as SoundKey[])
+
+
+
+            .filter((k) => k !== marchKey);
+
+
+
+
+
+
+
+        if (!state.armyId || !this.settings.enabled) {
+
+
+
+            for (const k of otherMarchKeys) this.stopLoop(k);
+
+
+
+            this.stopLoop(marchKey);
+
+
+
+            this.stopLoop('battle_loop');
+
+
+
+            this.stopLoop('naval_battle_loop');
+
+
+
+            return;
+
+
+
+        }
+
+
+
+
+
+
+
+        if (state.inCombat) {
+
+
+
+            for (const k of otherMarchKeys) this.stopLoop(k);
+
+
+
+            this.stopLoop(marchKey);
+
+
+
+            // 13 微观看由具体 DE 战斗音效驱动；战略层海战改播专用海战循环音。
+
+
+
+            if (inScene13) {
+
+
+
+                this.stopLoop('battle_loop');
+
+
+
+                this.stopLoop('naval_battle_loop');
+
+
+
+            } else if (isNaval) {
+
+
+
+                this.stopLoop('battle_loop');
+
+
+
+                this.startLoop('naval_battle_loop');
+
+
+
+            } else {
+
+
+
+                this.stopLoop('naval_battle_loop');
+
+
+
+                this.startLoop('battle_loop');
+
+
+
+            }
+
+
+
+            return;
+
+
+
+        }
+
+
+
+
+
+
+
+        this.stopLoop('battle_loop');
+
+
+
+        this.stopLoop('naval_battle_loop');
+
+
+
+        // 切换军团、上下船、上马下马或玩家独骑与随军互切时，先停掉其他行军音。
+
+
+
+        for (const k of otherMarchKeys) this.stopLoop(k);
+
+
+
+        if (state.marching) {
+
+
+
+            this.startLoop(marchKey);
+
+
+
+        } else {
+
+
+
+            this.stopLoop(marchKey);
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    public setEnabled(enabled: boolean): void {
+
+
+
+        this.settings.enabled = enabled;
+
+
+
+        if (!enabled) {
+
+
+
+            this.stopAllLoops();
+
+
+
+            this.stopBgm();
+
+
+
+        } else {
+
+
+
+            this.reapplyFollowedLegionAudio();
+
+
+
+            // [2026-08-12] BGM 同样要补播。老注释说「由 syncRegionBgm 在跟随军团时恢复」，
+
+
+
+            // 但不换军团就没有下一次请求 —— 关了音频再开，音乐就再也不响（与解锁那条同病）。
+
+
+
+            this.flushPendingBgm();
+
+
+
+        }
+
+
+
+        this.saveSettings();
+
+
+
+    }
+
+
+
+
+
+
+
+    public isEnabled(): boolean {
+
+
+
+        return this.settings.enabled;
+
+
+
+    }
+
+
+
+
+
+
+
+    public isUnlocked(): boolean {
+
+
+
+        return this.unlocked;
+
+
+
+    }
+
+
+
+
+
+
+
+    public setMasterVolume(volume: number): void {
+
+
+
+        this.settings.masterVolume = clamp01(volume);
+
+
+
+        this.refreshLoopVolumes();
+
+
+
+        this.saveSettings();
+
+
+
+    }
+
+
+
+
+
+
+
+    public getMasterVolume(): number {
+
+
+
+        return this.settings.masterVolume;
+
+
+
+    }
+
+
+
+
+
+
+
+    public setCategoryVolume(category: AudioCategory, volume: number): void {
+
+
+
+        this.settings.categoryVolume[category] = clamp01(volume);
+
+
+
+        this.refreshLoopVolumes();
+
+
+
+        this.saveSettings();
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 播报开始/结束：开始时压低音效 + 音乐，结束恢复（优先级闪避） */
+
+
+
+    public setSpeechDucking(active: boolean): void {
+
+
+
+        if (this.speechDucking === active) return;
+
+
+
+        this.speechDucking = active;
+
+
+
+        // 🔴 [2026-10-02 → 2026-10-18 主人定] 播报时平滑避让战斗音效：开启时 600ms 渐隐，结束时 1000ms 渐显
+
+
+
+        const fadeDuration = active ? 600 : 1000;
+
+
+
+        this.refreshLoopVolumes(fadeDuration);
+
+
+
+    }
+
+
+
+
+
+
+
+    public isSpeechDucking(): boolean {
+
+
+
+        return this.speechDucking;
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 🔴 [2026-10-02 主人定] 当前是否有 BGM 正在正常播放（用于场景切换时不打断在播音乐） */
+
+
+
+    public isBgmPlaying(): boolean {
+
+
+
+        return !!(this.bgmAudio && !this.bgmAudio.paused && this.currentBgmSrc !== '');
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 播报有效音量（跟随主音量；TTS 感知偏轻，SPEECH_GAIN 补偿至与音效/音乐感知齐平） */
+
+
+
+    public getSpeechVolume(): number {
+
+
+
+        return clamp01(this.settings.masterVolume * SPEECH_GAIN);
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 🔴 [2026-09-16 主人定]「有的背景音乐音量特别小，但我又不知道歌曲的名字」
+
+
+
+     * 当前 BGM 的实况 —— 调试面板（F3）拿它显示曲名与响度补偿，听到偏轻的曲子能当场认出是哪首。
+
+
+
+     *  · `gain` 就是 `BGM_REGION_GAIN` 里这首的补偿系数；**1.00 表示压根不在表里**（无补偿），
+
+
+
+     *    这类曲子通常就是听起来偏响或偏轻的那些，值得优先怀疑。
+
+
+
+     *  · `volume` 是 audio 元素此刻的真实音量（已含闪避：播报/音效/行军都会临时压低）。
+
+
+
+     */
+
+
+
+    public getBgmStatus(): {
+
+
+
+        track: string; folder: string; title: string; gain: number; inGainTable: boolean;
+
+
+
+        volume: number; paused: boolean; currentSec: number; durationSec: number;
+
+
+
+    } | null {
+
+
+
+        if (!this.currentBgmSrc) return null;
+
+
+
+        const folder = this.currentBgmFolder;
+
+
+
+        const file = this.currentBgmSrc.split('/').pop() ?? this.currentBgmSrc;
+
+
+
+        return {
+
+
+
+            track: decodeURIComponent(file),
+
+
+
+            folder,
+
+
+
+            title: BGM_TITLES[folder] ?? folder,
+
+
+
+            gain: BGM_REGION_GAIN[folder] ?? 1.0,
+
+
+
+            inGainTable: Object.prototype.hasOwnProperty.call(BGM_REGION_GAIN, folder),
+
+
+
+            volume: this.bgmAudio ? +this.bgmAudio.volume.toFixed(3) : 0,
+
+
+
+            paused: this.bgmAudio ? this.bgmAudio.paused : true,
+
+
+
+            currentSec: this.bgmAudio ? Math.floor(this.bgmAudio.currentTime) : 0,
+
+
+
+            durationSec: this.bgmAudio && Number.isFinite(this.bgmAudio.duration)
+
+
+
+                ? Math.floor(this.bgmAudio.duration) : 0,
+
+
+
+        };
+
+
+
+    }
+
+
+
+
+
+
+
+    public getSettings(): AudioSettings {
+
+
+
+        return {
+
+
+
+            enabled: this.settings.enabled,
+
+
+
+            masterVolume: this.settings.masterVolume,
+
+
+
+            categoryVolume: { ...this.settings.categoryVolume },
+
+
+
+        };
+
+
+
+    }
+
+
+
+
+
+
+
+    private loadSettings(): void {
+
+
+
+        try {
+
+
+
+            const saved = window.localStorage.getItem(STORAGE_KEY);
+
+
+
+            this.settings = saved ? mergeSettings(JSON.parse(saved)) : mergeSettings(null);
+
+
+
+        } catch {
+
+
+
+            this.settings = mergeSettings(null);
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    private saveSettings(): void {
+
+
+
+        if (typeof window === 'undefined') return;
+
+
+
+        try {
+
+
+
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.settings));
+
+
+
+        } catch {
+
+
+
+            // 音效设置丢失不应影响游戏运行。
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    private isCoolingDown(key: SoundKey, cooldownMs: number): boolean {
+
+
+
+        const lastPlayedAt = this.lastPlayedAt.get(key) ?? 0;
+
+
+
+        return cooldownMs > 0 && Date.now() - lastPlayedAt < cooldownMs;
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 同步取缓存（多源随机挑一个）；未就绪则异步加载并返回 null（首播跳过，预取后即命中）*/
+
+
+
+    private getAudioElement(key: SoundKey, definition: SoundDefinition): HTMLAudioElement | null {
+
+
+
+        const cached = this.audioCache.get(key);
+
+
+
+        if (cached && cached.length > 0) {
+
+
+
+            return cached[Math.floor(Math.random() * cached.length)];
+
+
+
+        }
+
+
+
+        void this.ensureAudioElement(key, definition);
+
+
+
+        return null;
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 异步：fetch 所有源 → 对象 URL → 缓存 Audio 元素数组（多源随机变奏） */
+
+
+
+    private async ensureAudioElement(
+
+
+
+        key: SoundKey,
+
+
+
+        definition: SoundDefinition,
+
+
+
+    ): Promise<HTMLAudioElement | null> {
+
+
+
+        const cached = this.audioCache.get(key);
+
+
+
+        if (cached && cached.length > 0) return cached[0];
+
+
+
+
+
+
+
+        const audios: HTMLAudioElement[] = [];
+
+
+
+        for (const source of definition.sources) {
+
+
+
+            const url = await this.fetchObjectUrl(source);
+
+
+
+            if (!url) {
+
+
+
+                this.warnMissingOnce(key, `fetch 失败: ${source}`);
+
+
+
+                continue;
+
+
+
+            }
+
+
+
+            const audio = new Audio();
+
+
+
+            audio.src = url;
+
+
+
+            audio.preload = 'auto';
+
+
+
+            audios.push(audio);
+
+
+
+        }
+
+
+
+        if (audios.length === 0) return null;
+
+
+
+        this.audioCache.set(key, audios);
+
+
+
+        return audios[0];
+
+
+
+    }
+
+
+
+
+
+
+
+    private startLoop(key: SoundKey): void {
+
+
+
+        if (!this.settings.enabled || !this.unlocked) return;
+
+
+
+
+
+
+
+        const definition = SOUND_DEFINITIONS[key];
+
+
+
+        if (!definition) return;
+
+
+
+
+
+
+
+        // 先记录「期望开启」意图（恢复时据此重启），即使暂停期间切换跟随军团也不丢失
+
+
+
+        this.wantedLoops.add(key);
+
+
+
+        // 音效循环启动 → 音乐随之平滑压低（打底）
+
+
+
+        if (definition.category !== 'bgm') this.updateBgmDuckVolume(FADE.duck);
+
+
+
+        // 暂停时只记意图、不实际播放（bgm 不受暂停影响）
+
+
+
+        if (this.gamePaused && definition.category !== 'bgm') return;
+
+
+
+
+
+
+
+        const isBattleAmbience = key === 'land_contact' || key === 'battle_loop' || key === 'naval_battle_loop';
+
+
+
+        const fadeInMs = isBattleAmbience ? FADE.battleLoopIn : FADE.loop;
+
+
+
+
+
+
+
+        void this.ensureLoopElement(key, definition).then((audio) => {
+
+
+
+            // 异步加载期间状态可能已变（停止跟拍/转入战斗/暂停），仅当仍被期望且未暂停时才播
+
+
+
+            if (!audio || !this.settings.enabled || !this.wantedLoops.has(key)) return;
+
+
+
+            if (this.gamePaused && definition.category !== 'bgm') return;
+
+
+
+            if (audio.paused) {
+
+
+
+                audio.volume = 0;
+
+
+
+                void audio.play().catch((error) => {
+
+
+
+                    this.warnMissingOnce(key, error);
+
+
+
+                });
+
+
+
+            }
+
+
+
+            this.setVolume(audio, this.resolveVolume(definition, key), fadeInMs);
+
+
+
+        });
+
+
+
+    }
+
+
+
+
+
+
+
+    private stopLoop(key: SoundKey): void {
+
+
+
+        this.wantedLoops.delete(key);
+
+
+
+        // 音效循环停止 → 音乐平滑恢复（若已无其他音效循环）
+
+
+
+        if (SOUND_DEFINITIONS[key]?.category !== 'bgm') this.updateBgmDuckVolume(FADE.duck);
+
+
+
+        const audio = this.loopCache.get(key);
+
+
+
+        if (!audio) return;
+
+
+
+        const isBattleAmbience = key === 'land_contact' || key === 'battle_loop' || key === 'naval_battle_loop';
+
+
+
+        const fadeOutMs = isBattleAmbience ? FADE.battleLoopOut : FADE.loop;
+
+
+
+        // 平滑淡出后再暂停；淡出途中若被 startLoop 重新期望，其 setVolume 会撤销本渐变、onDone 不触发
+
+
+
+        this.setVolume(audio, 0, fadeOutMs, () => {
+
+
+
+            if (this.wantedLoops.has(key)) return; // 淡出未完又被重新启动 → 不停
+
+
+
+            audio.pause();
+
+
+
+        });
+
+
+
+    }
+
+
+
+
+
+
+
+    private stopAllLoops(): void {
+
+
+
+        const keys = new Set<SoundKey>([...this.wantedLoops, ...this.loopCache.keys()]);
+
+
+
+        for (const key of keys) {
+
+
+
+            this.stopLoop(key);
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 游戏暂停/恢复：暂停时停掉所有非 bgm 音效和循环音，恢复时重启循环音 */
+
+
+
+    public setGamePaused(paused: boolean): void {
+
+
+
+        this.gamePaused = paused;
+
+
+
+        if (paused) {
+
+
+
+            // 停掉所有非 bgm 循环音（保留 wantedLoops，恢复时据此重启）
+
+
+
+            for (const [key, audio] of this.loopCache.entries()) {
+
+
+
+                if (SOUND_DEFINITIONS[key]?.category !== 'bgm' && !audio.paused) {
+
+
+
+                    audio.pause();
+
+
+
+                }
+
+
+
+            }
+
+
+
+            // 停掉所有在播的一次性音效（一次性事件不恢复，直接丢弃）
+
+
+
+            for (const audio of this.activeOneShots.keys()) {
+
+
+
+                audio.pause();
+
+
+
+                this.cancelVolumeRamp(audio);
+
+
+
+            }
+
+
+
+            this.activeOneShots.clear();
+
+
+
+        } else {
+
+
+
+            // 恢复所有本应在播的非 bgm 循环音（可能暂停在半途音量，恢复时淡回正确音量）
+
+
+
+            for (const key of this.wantedLoops) {
+
+
+
+                const def = SOUND_DEFINITIONS[key];
+
+
+
+                if (!def || def.category === 'bgm') continue;
+
+
+
+                const audio = this.loopCache.get(key);
+
+
+
+                if (audio && audio.paused) {
+
+
+
+                    audio.volume = 0;
+
+
+
+                    void audio.play().catch(() => {});
+
+
+
+                    this.setVolume(audio, this.resolveVolume(def, key), FADE.loop);
+
+
+
+                }
+
+
+
+            }
+
+
+
+        }
+
+
+
+        // 暂停/恢复后音效循环有效性变化 → 平滑同步音乐闪避
+
+
+
+        this.updateBgmDuckVolume(FADE.duck);
+
+
+
+    }
+
+
+
+
+
+
+
+    public stopBgm(): void {
+
+
+
+        this.currentBgmFolder = '';
+
+
+
+        this.currentBgmSrc = '';
+
+
+
+        this.cameraRegionFolder = '';
+
+
+
+        this.bgmLoadToken++; // 作废任何在途加载
+
+
+
+        if (this.bgmAudio) {
+
+
+
+            this.cancelVolumeRamp(this.bgmAudio); // 撤销可能在进行的交叉淡化
+
+
+
+            this.bgmAudio.pause();
+
+
+
+            this.bgmAudio.removeAttribute('src');
+
+
+
+            this.bgmAudio.load();
+
+
+
+        }
+
+
+
+        if (this.bgmObjectUrl) URL.revokeObjectURL(this.bgmObjectUrl);
+
+
+
+        this.bgmAudio = null;
+
+
+
+        this.bgmObjectUrl = null;
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 跟拍军团变了 / 解锁后补播时调一次。
+
+
+
+     * 🔴 [2026-09-25 主人令「『每个武将都用自己文化的曲子』这条作废，你认为怎么好就怎么弄」]
+
+
+
+     *    **BGM 一律走洗牌袋随机轮播**（覆盖全部 39 个曲目夹，每首都轮得到、不重播刚放完那首）：
+
+
+
+     *    · 开场那一首也从全库随机 —— 原来分两条「按人物定曲子」的路，实测都会把开场锁死：
+
+
+
+     *      ① 立绘夹专属 BGM（`portraitDir`，如 CENTRAL/LATIN/manqing…）→ 实测开局连开三局**全是 CENTRAL**
+
+
+
+     *         （`node scratch/_probe_bgm_branch.mjs` 打出：lastBgmRequest.portraitPath = /assets/CENTRAL/__闲置__CENTRAL_43.png
+
+
+
+     *         → cameraRegionFolder=CENTRAL → /bgm/CENTRAL_bgm.aud），主人听着就是「BGM 是固定的」；
+
+
+
+     *      ② 16 母体文化池（马其顿所在 LATIN 池只有两首）→ 每局也都是那两首之一。
+
+
+
+     *    · 保留不动的两条老规矩：**有歌在放就绝不打断**（applyCameraFolder，2026-09-16「都听到」）、
+
+
+
+     *      文件缺失回落 `GENERIC_BGM_FALLBACK`。
+
+
+
+     * 名字仍叫 syncPortraitBgm（调用方按跟拍军团的立绘/坐标发起请求），只是**不再用它们挑曲子**。
+
+
+
+     */
+
+
+
+    public syncPortraitBgm(portraitPath?: string, lat?: number, lng?: number, cultureRegion?: string | null): void {
+
+
+
+        if (lat === undefined || lng === undefined) return;
+
+
+
+        // 🔴 [2026-08-12 修「有时候整局没音乐」] 无论这次成不成功都把请求**记下来**，供解锁 /
+
+
+
+        //   重新启用音频后补播（flushPendingBgm）。
+
+
+
+        //   病根：BGM 只在跟拍军团切换的那一帧请求一次（GameAppLoop「followedId !== lastBgmFollowedId」），
+
+
+
+        //   而浏览器自动播放策略下，用户第一次点击/按键之前 unlocked=false —— 老代码在这里直接 return，
+
+
+
+        //   调用方却已经把 lastBgmFollowedId 写死了，于是**这个军团被换掉之前永远没有音乐**，
+
+
+
+        //   期间打的所有 13 战斗全程无 BGM。音效没这个病，因为 unlock() 里有 reapplyFollowedLegionAudio 补播。
+
+
+
+        //   ⚠️ [2026-09-17 恢复] 这段病根记录在 16 母体改造时被删掉了，它是 8-12 的血训，别再删。
+
+
+
+        this.lastBgmRequest = { portraitPath, lat, lng, cultureRegion };
+
+
+
+        if (!this.settings.enabled || !this.unlocked) return;
+
+
+
+
+
+
+
+        // 🔴 [2026-10-18 主人定「玩家加入哪个势力就播放哪个势力的曲子，没有加入势力就随机」]
+
+
+
+        //   有势力 → 该势力 66 文化曲池（若当前在播曲目不在该池内，立即交叉淡入切至该势力曲子）；
+
+
+
+        //   无势力（cultureRegion 为 null）→ currentBgmPool 为空，走全库随机轮播。
+
+
+
+        const branch = resolveBranch(cultureRegion);
+
+
+
+        this.currentBgmPool = branchPool(branch);
+
+
+
+        if (this.tacticalBgmPool.length > 0) return;
+
+
+
+        this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
+
+
+
+        // F3 手动选了曲 → 曲池照记（选回自动时生效），歌不换
+
+
+
+        if (this.manualBgmFolder) {
+
+
+
+            this.playBgmFolder(this.manualBgmFolder);
+
+
+
+            return;
+
+
+
+        }
+
+
+
+        if (
+
+
+
+            this.currentBgmPool.length > 0 &&
+
+
+
+            this.currentBgmFolder !== '' &&
+
+
+
+            !this.currentBgmPool.includes(this.currentBgmFolder)
+
+
+
+        ) {
+
+
+
+            this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
+
+
+
+            return;
+
+
+
+        }
+
+
+
+        this.applyCameraFolder(this.nextRotationFolder(this.currentBgmFolder));
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * ⚠️ [2026-09-25 核查] **全仓无调用方（死代码）**，且它按镜头文化区挑曲的做法已被上一条令作废 ——
+
+
+
+     * 保留原地但**别再接线**：要换曲走 `rerollBgm()` 或 `syncPortraitBgm()` 的洗牌袋。
+
+
+
+     */
+
+
+
+    public syncRegionBgm(lat: number, lng: number): void {
+
+
+
+        if (!this.settings.enabled || !this.unlocked) return;
+
+
+
+        const region = getRegion(lat, lng);
+
+
+
+        const mother = toBase16(region);
+
+
+
+        const pool = BASE16_BGM_MAP[mother];
+
+
+
+        const chosen = (pool && pool.length > 0) ? pool[Math.floor(Math.random() * pool.length)] : region;
+
+
+
+        this.applyCameraFolder(resolveAvailableBgmFolder(chosen));
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 进入战术模式时换一首曲子；退出时继续播放当前曲目。
+
+
+
+     * 镜头跨文化区不打断音乐。
+
+
+
+     * 走洗牌袋取下一首（排除正在放的那首），与自然接力同一套轮播，保证每首都轮得到。
+
+
+
+     */
+
+
+
+    public rerollBgm(): void {
+
+
+
+        if (!this.settings.enabled || !this.unlocked) return;
+
+
+
+        if (this.manualBgmFolder) return;
+
+
+
+        this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 进入战术模式（Scene13）：按参战方所属 67 文化的专属曲池（`BGM_POOL_MAP[branch]`）随机轮播该文化的全部曲目。
+
+
+
+     * 若当前正在播放的曲目已属于该文化池则不打断；若不属于该文化池（或尚未播放），从该文化池内洗牌随机播放一首。
+
+
+
+     */
+
+
+
+    public enterScene13Bgm(cultureRegion?: string | null): void {
+
+
+
+        const branch = resolveBranch(cultureRegion);
+
+
+
+        const pool = branchPool(branch);
+
+
+
+        this.tacticalBgmPool = pool;
+
+
+
+        this.bgmShuffleQueue = [];
+
+
+
+        if (!this.settings.enabled || !this.unlocked || this.manualBgmFolder) return;
+
+
+
+        if (this.isBgmPlaying() && pool.length > 0 && pool.includes(this.currentBgmFolder)) return;
+
+
+
+        this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 退出战术模式（Scene13）：解除战术文化曲池锁定，不打断当前正在播放的音乐。 */
+
+
+
+    public exitScene13Bgm(): void {
+
+
+
+        if (this.tacticalBgmPool.length === 0) return;
+
+
+
+        this.tacticalBgmPool = [];
+
+
+
+        this.bgmShuffleQueue = [];
+
+
+
+    }
+
+
+
+
+
+
+
+    /** F3 下拉框的曲目表：全部可播曲目（已滤掉版权暂停曲），曲名取 BGM_TITLES，时长取 BGM_DURATIONS（0 = 未知） */
+
+
+
+    public getBgmTrackList(): { folder: string; title: string; durationSec: number }[] {
+
+
+
+        return BGM_ROTATION_FOLDERS.map((folder) => ({
+
+
+
+            folder,
+
+
+
+            title: BGM_TITLES[folder] ?? folder,
+
+
+
+            durationSec: BGM_DURATIONS[folder] ?? 0,
+
+
+
+        }));
+
+
+
+    }
+
+
+
+
+
+
+
+    /** F3 手动选定的曲目夹；null = 自动 */
+
+
+
+    public getManualBgmFolder(): string | null {
+
+
+
+        return this.manualBgmFolder;
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * F3 下拉框选曲。传曲目夹 = 立即切到这首并锁定；传 null = 选回自动。
+
+
+
+     * 选回自动时不打断正在放的这首（原逻辑「有歌在放就绝不打断」），
+
+
+
+     * 放完按当前曲池洗牌接力；若当前势力曲池不含这首，按原逻辑立即切回势力曲。
+
+
+
+     */
+
+
+
+    public setManualBgm(folder: string | null): void {
+
+
+
+        if (folder && !AVAILABLE_BGM_FOLDERS.has(folder)) return;
+
+
+
+        this.manualBgmFolder = folder;
+
+
+
+        this.bgmShuffleQueue = [];
+
+
+
+        if (!this.settings.enabled || !this.unlocked) return;
+
+
+
+        if (folder) {
+
+
+
+            this.playBgmFolder(folder);
+
+
+
+        } else {
+
+
+
+            this.flushPendingBgm();
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 🔴 [2026-09-16 主人定]「所有背景音乐都要循环播放，这样才能都听到。不要被任何打断。」
+
+
+
+     *
+
+
+
+     * 原来是**区域优先**：镜头一跨文化区就立刻切歌。战场事件里玩家奔赴战场、镜头一路跨区，
+
+
+
+     * 曲子就被一路掐断，每首只放个开头 —— 主人报的「战场事件打断背景音乐」就是这条。
+
+
+
+     *
+
+
+
+     * 改为**只记录、不打断**：镜头换区只更新 cameraRegionFolder，当前这首照常放完；
+
+
+
+     * 放完由 `ended` 走洗牌袋接力下一首（覆盖全部曲目，每首都轮得到）。
+
+
+
+     * 只有在压根没歌在放时（开局、或被 stopBgm 清空）才立刻起一首。
+
+
+
+     *
+
+
+
+     * 代价说明白：音乐**不再与镜头所在文化区强对应**（在中原可能正放着拉丁曲）。
+
+
+
+     * 这是「都听到 + 不被打断」换来的，是主人明确要的取舍。
+
+
+
+     */
+
+
+
+    private applyCameraFolder(folderName: string): void {
+
+
+
+        this.cameraRegionFolder = folderName;
+
+
+
+        if (this.failedBgmFolders.has(folderName)) return;
+
+
+
+        // 有歌在放就绝不插手 —— 包括镜头刚换了文化区
+
+
+
+        if (this.bgmAudio && !this.bgmAudio.paused && this.currentBgmSrc !== '') return;
+
+
+
+        // 镜头文化区未变：仅当 BGM 被彻底停掉（currentBgmSrc 为空）才补播该区曲
+
+
+
+        if (this.currentBgmSrc === '' && !this.failedBgmFolders.has(folderName)) {
+
+
+
+            this.playBgmFolder(folderName);
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 播放某文化区/势力夹 BGM；单曲不循环，放完在全部有效曲目中洗牌轮播。
+
+
+
+     *  集中目录：public/bgm/{folder}_bgm.aud（2026-08-04 集中管理，原分散各立绘夹） */
+
+
+
+    private playBgmFolder(folder: string): void {
+
+
+
+        folder = resolveAvailableBgmFolder(folder);
+
+
+
+        const src = `/bgm/${folder}_bgm.aud`;
+
+
+
+        // 同一首已在播 → 跳过（dedup 用逻辑路径，blob URL 无法比对）
+
+
+
+        if (this.currentBgmSrc === src && this.bgmAudio && !this.bgmAudio.paused) return;
+
+
+
+        this.currentBgmFolder = folder;
+
+
+
+        this.currentBgmSrc = src;
+
+
+
+        const token = ++this.bgmLoadToken;
+
+
+
+
+
+
+
+        // BGM 单曲体积远大于音效，不进入永久 objectUrlCache；旧曲交叉淡出后立即 revoke。
+
+
+
+        void this.fetchObjectUrl(src, false).then((url) => {
+
+
+
+            // 异步期间又切了歌 / 停了 BGM → 作废本次回调
+
+
+
+            if (token !== this.bgmLoadToken || !this.settings.enabled || !this.unlocked) {
+
+
+
+                if (url) URL.revokeObjectURL(url);
+
+
+
+                return;
+
+
+
+            }
+
+
+
+            if (!url) {
+
+
+
+                this.warnMissingOnce('bgm_main', `fetch 失败: ${src}`);
+
+
+
+                // 记录失败文件夹，避免每帧重试
+
+
+
+                this.failedBgmFolders.add(folder);
+
+
+
+                // 文件意外缺失/损坏 → 回落无文化归属的通用主题曲。
+
+
+
+                if (folder !== GENERIC_BGM_FALLBACK) this.playBgmFolder(GENERIC_BGM_FALLBACK);
+
+
+
+                return;
+
+
+
+            }
+
+
+
+            const oldAudio = this.bgmAudio;
+
+
+
+            const oldObjectUrl = this.bgmObjectUrl;
+
+
+
+            const audio = new Audio();
+
+
+
+            audio.src = url;
+
+
+
+            audio.loop = false; // 单曲不循环：放完随机轮播下一文化
+
+
+
+            audio.preload = 'auto';
+
+
+
+            const def = SOUND_DEFINITIONS['bgm_main'];
+
+
+
+            const regionGain = BGM_REGION_GAIN[folder] ?? 1.0;
+
+
+
+            const targetVol = (def ? this.resolveVolume(def) : 0.125) * regionGain;
+
+
+
+            audio.volume = 0; // 从 0 交叉淡入
+
+
+
+            audio.addEventListener(
+
+
+
+                'ended',
+
+
+
+                () => {
+
+
+
+                    // 已被区域切歌 / 停歌替换 → 不接力
+
+
+
+                    if (this.bgmAudio !== audio || !this.settings.enabled || !this.unlocked) return;
+
+
+
+                    this.playBgmFolder(this.manualBgmFolder ?? this.nextRotationFolder(folder));
+
+
+
+                },
+
+
+
+                { once: true },
+
+
+
+            );
+
+
+
+            this.bgmAudio = audio;
+
+
+
+            this.bgmObjectUrl = url;
+
+
+
+            void audio.play().catch((error) => {
+
+
+
+                this.warnMissingOnce('bgm_main', error);
+
+
+
+            });
+
+
+
+            // targetVol 已由 resolveVolume 按播报/行军/战斗状态完成闪避，不能再次强制归零。
+
+
+
+            this.setVolume(audio, targetVol, FADE.bgmCrossfade);
+
+
+
+            if (oldAudio) {
+
+
+
+                this.setVolume(oldAudio, 0, FADE.bgmCrossfade, () => {
+
+
+
+                    oldAudio.pause();
+
+
+
+                    oldAudio.removeAttribute('src');
+
+
+
+                    oldAudio.load();
+
+
+
+                    if (oldObjectUrl) URL.revokeObjectURL(oldObjectUrl);
+
+
+
+                });
+
+
+
+            } else if (oldObjectUrl) {
+
+
+
+                URL.revokeObjectURL(oldObjectUrl);
+
+
+
+            }
+
+
+
+        });
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 洗牌袋取下一首 BGM folder；避免与刚放完的紧挨重复 */
+
+
+
+    private nextRotationFolder(exclude: string): string {
+
+
+
+        if (this.bgmShuffleQueue.length === 0) {
+
+
+
+            this.bgmShuffleQueue = this.shuffledBgmFolders();
+
+
+
+        }
+
+
+
+        let next = this.bgmShuffleQueue.shift()!;
+
+
+
+        if (next === exclude && this.bgmShuffleQueue.length > 0) {
+
+
+
+            this.bgmShuffleQueue.push(next);
+
+
+
+            next = this.bgmShuffleQueue.shift()!;
+
+
+
+        }
+
+
+
+        return next;
+
+
+
+    }
+
+
+
+
+
+
+
+    /** Fisher–Yates 洗牌全部实际存在且完成响度标定的 BGM folder。
+
+
+
+     *  🔴 [2026-10-02 主人定] 剧本期（亚历山大东征）只洗西方歌曲池；乱斗才洗全部曲目。
+
+
+
+     *  🔴 [2026-10-18 主人令] 两个池都要再滤掉 `PAUSED_BGM_FOLDERS`（版权主张暂停，文件保留）。 */
+
+
+
+    private shuffledBgmFolders(): string[] {
+
+
+
+        // 🔴 [2026-10-18] 池内轮播：战术模式锁定参战文化专属池；有当前分支曲池就用它；剧本期走西方池；否则回落全局池。
+
+
+
+        let pool: readonly string[];
+
+
+
+        if (this.tacticalBgmPool.length > 0) {
+
+
+
+            pool = this.tacticalBgmPool;
+
+
+
+        } else if (this.currentBgmPool.length > 0) {
+
+
+
+            pool = this.currentBgmPool;
+
+
+
+        } else if (isScriptPeriod()) {
+
+
+
+            pool = SCRIPT_WESTERN_BGM_FOLDERS;
+
+
+
+        } else {
+
+
+
+            pool = BGM_ROTATION_FOLDERS;
+
+
+
+        }
+
+
+
+        const arr = pool.filter((folder) => !PAUSED_BGM_FOLDERS.has(folder));
+
+
+
+        for (let i = arr.length - 1; i > 0; i--) {
+
+
+
+            const j = Math.floor(Math.random() * (i + 1));
+
+
+
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+
+
+
+        }
+
+
+
+        return arr;
+
+
+
+    }
+
+
+
+
+
+
+
+    private reapplyFollowedLegionAudio(): void {
+
+
+
+        const state = { ...this.followedAudioState };
+
+
+
+        this.followedAudioState = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false, isPlayer: false, inScene13: false };
+
+
+
+        this.syncFollowedLegionAudio(state);
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 刷新所有循环音 + BGM 到各自解析音量；durationMs>0 时平滑渐变（默认瞬时，供滑杆用） */
+
+
+
+    private refreshLoopVolumes(durationMs = 0): void {
+
+
+
+        for (const [key, audio] of this.loopCache.entries()) {
+
+
+
+            const definition = SOUND_DEFINITIONS[key];
+
+
+
+            // 已停(未在期望中)的循环音不要被 duck 渐变重新拉响；停音自己的淡出各管各的
+
+
+
+            if (!definition || !this.wantedLoops.has(key)) continue;
+
+
+
+            this.setVolume(audio, this.resolveVolume(definition, key), durationMs);
+
+
+
+        }
+
+
+
+        for (const [audio, definition] of this.activeOneShots.entries()) {
+
+
+
+            if (audio.paused || audio.ended) continue;
+
+
+
+            this.setVolume(audio, this.resolveVolume(definition), durationMs);
+
+
+
+        }
+
+
+
+        if (this.bgmAudio) {
+
+
+
+            const def = SOUND_DEFINITIONS['bgm_main'];
+
+
+
+            if (def) {
+
+
+
+                // 带 regionGain 响度补偿（与 playBgmFolder 一致），防主音量/分类音量调整时补偿丢失
+
+
+
+                const regionGain = BGM_REGION_GAIN[this.currentBgmFolder] ?? 1.0;
+
+
+
+                this.setVolume(this.bgmAudio, this.resolveVolume(def) * regionGain, durationMs);
+
+
+
+            }
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    private async ensureLoopElement(
+
+
+
+        key: SoundKey,
+
+
+
+        definition: SoundDefinition,
+
+
+
+    ): Promise<HTMLAudioElement | null> {
+
+
+
+        const cached = this.loopCache.get(key);
+
+
+
+        if (cached) return cached;
+
+
+
+
+
+
+
+        const source = definition.sources[0];
+
+
+
+        if (!source) return null;
+
+
+
+
+
+
+
+        const url = await this.fetchObjectUrl(source);
+
+
+
+        if (!url) {
+
+
+
+            this.warnMissingOnce(key, `fetch 失败: ${source}`);
+
+
+
+            return null;
+
+
+
+        }
+
+
+
+        const audio = new Audio();
+
+
+
+        audio.src = url;
+
+
+
+        audio.loop = true;
+
+
+
+        audio.preload = 'auto';
+
+
+
+        this.loopCache.set(key, audio);
+
+
+
+        return audio;
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 把某音频元素的音量平滑过渡到 target（durationMs 内，smoothstep 缓动）。
+
+
+
+     * durationMs<=0 或差异极小 → 立即赋值。会先撤销该元素正在进行的渐变（新意图覆盖旧）。
+
+
+
+     * 用 setInterval 而非 requestAnimationFrame：后台标签页 rAF 被冻结会让音量卡在半路，
+
+
+
+     * setInterval 即便被节流也能按真实经过时间收敛到目标。
+
+
+
+     */
+
+
+
+    private setVolume(
+
+
+
+        audio: HTMLAudioElement,
+
+
+
+        target: number,
+
+
+
+        durationMs: number,
+
+
+
+        onDone?: () => void,
+
+
+
+    ): void {
+
+
+
+        const existing = this.volumeRamps.get(audio);
+
+
+
+        if (existing !== undefined) {
+
+
+
+            clearInterval(existing);
+
+
+
+            this.volumeRamps.delete(audio);
+
+
+
+        }
+
+
+
+        const clamped = clamp01(target);
+
+
+
+        const start = clamp01(audio.volume);
+
+
+
+        if (durationMs <= 0 || Math.abs(clamped - start) < 0.005) {
+
+
+
+            audio.volume = clamped;
+
+
+
+            onDone?.();
+
+
+
+            return;
+
+
+
+        }
+
+
+
+        const t0 = performance.now();
+
+
+
+        const id = setInterval(() => {
+
+
+
+            const p = Math.min(1, (performance.now() - t0) / durationMs);
+
+
+
+            const eased = p * p * (3 - 2 * p); // smoothstep
+
+
+
+            audio.volume = clamp01(start + (clamped - start) * eased);
+
+
+
+            if (p >= 1) {
+
+
+
+                clearInterval(id);
+
+
+
+                this.volumeRamps.delete(audio);
+
+
+
+                audio.volume = clamped;
+
+
+
+                onDone?.();
+
+
+
+            }
+
+
+
+        }, 25);
+
+
+
+        this.volumeRamps.set(audio, id);
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 撤销某元素正在进行的音量渐变（不改当前音量），供硬停时清理 */
+
+
+
+    private cancelVolumeRamp(audio: HTMLAudioElement): void {
+
+
+
+        const existing = this.volumeRamps.get(audio);
+
+
+
+        if (existing !== undefined) {
+
+
+
+            clearInterval(existing);
+
+
+
+            this.volumeRamps.delete(audio);
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    private resolveVolume(definition: SoundDefinition, key?: SoundKey): number {
+
+
+
+        if (key === 'land_contact') {
+
+
+
+            // 🔴 [2026-10-02 主人定] 战术模式陆战接触音效音量提高到与播报一致 (1.0 * masterVolume)，
+
+
+
+            //    且不要和播报重叠播放（播报期间完全静音，播报结束后平滑淡入恢复）
+
+
+
+            if (this.speechDucking) return 0;
+
+
+
+            return clamp01(this.getSpeechVolume() * 0.70);
+
+
+
+        }
+
+
+
+        if (key && key.startsWith('skill_')) {
+
+
+
+            // 战术六计释放音效：响度高于陆战接触底噪（land_contact），避免被战场厮杀背景声掩盖
+
+
+
+            return clamp01(Math.max(0.85, this.getSpeechVolume() * 1.5));
+
+
+
+        }
+
+
+
+        const categoryVolume = this.settings.categoryVolume[definition.category] ?? 1;
+
+
+
+        const weatherScale = (key && key.startsWith('weather_') && key.endsWith('_loop'))
+
+
+
+            ? this.weatherStrengthScale
+
+
+
+            : 1;
+
+
+
+        const base = this.settings.masterVolume * categoryVolume * (definition.volume ?? 1) * weatherScale;
+
+
+
+        return clamp01(base * this.duckFactor(definition.category, key));
+
+
+
+    }
+
+
+
+
+
+
+
+    /**
+
+
+
+     * 优先级闪避（ducking）：播报/音效同层互斥，音乐打底。
+
+
+
+     * - 音乐(bgm)：播报中压到 bgmUnderSpeech；仅音效循环(行军/战斗)时压到 bgmUnderSfx。
+
+
+
+     * - 音效(ui/battle/feed)：播报中静音（同层互斥：要么响播报，要么响音效）。
+
+
+
+     * - 播报本身走 SpeechAnnouncer(TTS)，不在此压低。
+
+
+
+     */
+
+
+
+    /**
+
+
+
+     * 🔴 [2026-09-16 主人报障「这个背景音乐的音量很小」]
+
+
+
+     * 当前 BGM 被压到多少、被谁压的 —— F3 面板显示它，好分清
+
+
+
+     * 「这首曲子本身轻」和「它正被行军/战斗/播报压着」。
+
+
+
+     * 分不清这两者就会去错地方：前者该调响度补偿，后者该调闪避档位。
+
+
+
+     */
+
+
+
+    public getBgmDuckInfo(): { factor: number; reason: string } {
+
+
+
+        if (this.speechDucking) return { factor: DUCK.bgmUnderSpeech, reason: '播报' };
+
+
+
+        if (this.wantedLoops.has('battle_loop') || this.wantedLoops.has('naval_battle_loop')) {
+
+
+
+            return { factor: DUCK.bgmUnderSfx, reason: '战斗' };
+
+
+
+        }
+
+
+
+        if (this.wantedLoops.has('land_contact')) {
+
+
+
+            return { factor: DUCK.bgmUnderBattleAmbience, reason: '13音景' };
+
+
+
+        }
+
+
+
+        if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')
+
+
+
+            || this.wantedLoops.has('player_march_loop') || this.wantedLoops.has('naval_march_loop')) {
+
+
+
+            return { factor: DUCK.bgmUnderMarch, reason: '行军' };
+
+
+
+        }
+
+
+
+        return { factor: 1, reason: '无' };
+
+
+
+    }
+
+
+
+
+
+
+
+    private duckFactor(category: AudioCategory, key?: SoundKey): number {
+
+
+
+        if (category === 'bgm') {
+
+
+
+            if (this.speechDucking) return DUCK.bgmUnderSpeech;
+
+
+
+            if (this.wantedLoops.has('battle_loop') || this.wantedLoops.has('naval_battle_loop')) return DUCK.bgmUnderSfx;   // 战斗：0.30 原样
+
+
+
+            // 🔴 [2026-08-19] land_contact（13 接触音景）必须在这里登记，否则它循环起来时
+
+
+
+            //    BGM 一点都不会被压 —— 本表只认列出来的 key，新增循环音不登记就是「静默失效」。
+
+
+
+            if (this.wantedLoops.has('land_contact')) return DUCK.bgmUnderBattleAmbience;  // 13 接触音景：0.85（少压一点，2026-09-02 由 0.60 上调）
+
+
+
+            if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')
+
+
+
+                || this.wantedLoops.has('player_march_loop') || this.wantedLoops.has('naval_march_loop')) {
+
+
+
+                return DUCK.bgmUnderMarch;                                        // 行军：0.50（GAKU 2026-08-04）
+
+
+
+            }
+
+
+
+            return 1;
+
+
+
+        }
+
+
+
+        // 🔴 [2026-10-02 主人定] 战术模式陆战接触音效播报期间静音避让，不与播报重叠播放
+
+
+
+        if (key === 'land_contact' && this.speechDucking) return 0;
+
+
+
+        // 音效层：ui / battle / feed——播报时静音，播报结束后恢复
+
+
+
+        return this.speechDucking ? DUCK.sfxUnderSpeech : 1;
+
+
+
+    }
+
+
+
+
+
+
+
+    /** 仅刷新 BGM 音量（音效循环起停时用，无需全量刷新）；durationMs>0 平滑渐变 */
+
+
+
+    private updateBgmDuckVolume(durationMs = 0): void {
+
+
+
+        if (!this.bgmAudio) return;
+
+
+
+        const def = SOUND_DEFINITIONS['bgm_main'];
+
+
+
+        if (def) {
+
+
+
+            // 必须带 regionGain 响度补偿（与 playBgmFolder 一致），否则音效起停会丢失补偿、BGM 响度跳变
+
+
+
+            const regionGain = BGM_REGION_GAIN[this.currentBgmFolder] ?? 1.0;
+
+
+
+            this.setVolume(this.bgmAudio, this.resolveVolume(def) * regionGain, durationMs);
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    private warnMissingOnce(key: SoundKey, error: unknown): void {
+
+
+
+        if (this.missingWarned.has(key)) return;
+
+
+
+        this.missingWarned.add(key);
+
+
+
+        if (import.meta.env.DEV) {
+
+
+
+            console.warn(`[AudioManager] 音效暂不可用: ${key}`, error);
+
+
+
+        }
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+export const audioManager = AudioManager.getInstance();
+
+
+

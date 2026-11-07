@@ -5768,7 +5768,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/WESTERN/dayuzi_yinalechihei.png": {
-            "scale": 0.98,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -20
         },
