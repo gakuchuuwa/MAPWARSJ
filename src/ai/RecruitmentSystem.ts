@@ -24,7 +24,7 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, RegionType, isRegionCenter } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
-import { getCityAnchoredGeneral, getCityAnchoredGenerals } from '../data/CityGeneralBridge';
+import { getCityAnchoredGeneral, getCityAnchoredGenerals, getCityAnchoredGeneralsFast } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { compareGeneralsByPriority } from '../data/generalSelection';
@@ -240,9 +240,12 @@ export class RecruitmentSystem {
                         ? GameConfig.CITY.INTERIOR_RECRUIT_MULT
                         : 1;
                 const added = Math.floor(cfg.recruitPerSeason * recruitMult * postureMult);
-                city.troops = clampCityTroops(city.type, troops + added, culture66);
+                const nextTroops = clampCityTroops(city.type, troops + added, culture66);
+                if (nextTroops !== troops) {
+                    city.troops = nextTroops;
+                    this.pendingLabelCityIds.add(city.id);
+                }
             }
-            this.pendingLabelCityIds.add(city.id);
         }
     }
 
@@ -252,19 +255,28 @@ export class RecruitmentSystem {
         return Math.max(initial, this.getCityMinSpawnTroops(city) / 0.9);
     }
 
+    private adjacentCityCache = new Map<string, string[]>();
+
     /** 边境城：路网直连（战场节点穿过去）的据点里有别家势力（含叛军/无主）的城 */
     private isBorderCity(cityId: string, factionId: string, factionOf: Map<string, string>): boolean {
-        const seen = new Set<string>([cityId]);
-        const queue = [cityId];
-        while (queue.length > 0) {
-            const cur = queue.pop()!;
-            for (const n of roadRegistry.getConnectedCities(cur)) {
-                if (seen.has(n)) continue;
-                seen.add(n);
-                const f = factionOf.get(n);
-                if (f === undefined) queue.push(n); // 战场节点 → 接着往外找据点
-                else if (f !== factionId) return true;
+        let neighbors = this.adjacentCityCache.get(cityId);
+        if (!neighbors) {
+            neighbors = [];
+            const seen = new Set<string>([cityId]);
+            const queue = [cityId];
+            while (queue.length > 0) {
+                const cur = queue.pop()!;
+                for (const n of roadRegistry.getConnectedCities(cur)) {
+                    if (seen.has(n)) continue;
+                    seen.add(n);
+                    if (!factionOf.has(n)) queue.push(n); // 战场节点 → 接着往外找据点
+                    else neighbors.push(n);
+                }
             }
+            this.adjacentCityCache.set(cityId, neighbors);
+        }
+        for (let i = 0; i < neighbors.length; i++) {
+            if (factionOf.get(neighbors[i]) !== factionId) return true;
         }
         return false;
     }
@@ -355,23 +367,25 @@ export class RecruitmentSystem {
         const spawnTypes = GameConfig.LEGION.SPAWN_CITY_TYPES as readonly string[];
         const bounds = this.getCurrentViewportBounds();
         const candidates: SpawnCandidate[] = [];
+        const activeGenIds = this.legionManager.getActiveGeneralIds();
 
         for (const city of cities) {
             if (!city.factionId || city.factionId === 'panjun' || city.factionId === 'panshu') continue;
             if (!spawnTypes.includes(city.type)) continue;
-            if (this.cityHasActiveLegion(city.id)) continue;
+            if (city.spawnGeneralUsed) continue;
+            // 先判兵力线与冷却（O(1)），过滤掉不达标据点后再跑军团/武将查询
+            const baseArmySize = Math.floor((city.troops || 0) * 0.9);
+            const minTroops = this.getCityMinSpawnTroops(city);
+            if (baseArmySize < minTroops) continue;
+            if (isGeneralOnCooldown(city.id)) continue;
             if (this.isCityGarrisonCommitted(city.id)) continue;
-            // 锚定将战败冷却中或已被占用：该城暂不出兵。
-            if (city.spawnGeneralUsed || isGeneralOnCooldown(city.id) || !hasAvailableCityGeneral(city.id)) continue;
             // 🔴 [2026-10-18 主人定「没有武将的据点，不能去打别的据点」「没有武将不能出兵」]
             //    据点无武将或武将当前不在登场期（此时只有普通守军「XX将军」），不能出兵攻打别的据点。
-            const anchoredGenerals = getCityAnchoredGenerals(city.id);
+            const anchoredGenerals = getCityAnchoredGeneralsFast(city.id);
             if (!anchoredGenerals.some((g) => isGeneralOnStage(g.generalId))) continue;
-            // 计算征兵兵力（城市兵力的90%，据点保留 10% 驻军）
-            const baseArmySize = Math.floor((city.troops || 0) * 0.9);
+            if (!hasAvailableCityGeneral(city.id, activeGenIds)) continue;
+            if (this.cityHasActiveLegion(city.id)) continue;
             let armySize = baseArmySize;
-            const minTroops = this.getCityMinSpawnTroops(city);
-            if (armySize < minTroops) continue;
 
             const region = this.getCityRegion(city);
             const base16 = this.getCityBase16(city);
@@ -470,7 +484,7 @@ export class RecruitmentSystem {
 
     private cityHasActiveLegion(cityId: string): boolean {
         const anchoredGenIds = new Set(
-            getCityAnchoredGenerals(cityId)
+            getCityAnchoredGeneralsFast(cityId)
                 .filter((g) => isGeneralOnStage(g.generalId))
                 .map((g) => g.generalId),
         );
@@ -540,7 +554,8 @@ export class RecruitmentSystem {
                     )
                     : viewportEnemyCandidates;
             } else {
-                candidates = this.buildSpawnPlan(cities);
+                const remaining = Math.max(0, maxLegions - this.legionManager.getActiveLegionCount());
+                candidates = allCandidates.slice(0, remaining);
             }
         } else {
             // 全图谁兵多谁组建军团

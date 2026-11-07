@@ -1,6 +1,8 @@
 import {
     getCityGeneral,
+    getCityGeneralsRaw,
     getCityGeneralsResolved,
+    getRawGeneralByGeneralId,
     type FactionGeneral,
 } from './FactionGenerals';
 
@@ -16,13 +18,20 @@ export function getCityAnchoredGenerals(cityId: string | null | undefined): Fact
     return getCityGeneralsResolved(cityId);
 }
 
-/** 某位武将是否挂在该据点下（支持一个据点多武将） */
+/** 据点挂的全部武将（仅作 ID/在场判定用，不重复解析立绘路径与阶段名，零排序开销） */
+export function getCityAnchoredGeneralsFast(cityId: string | null | undefined): FactionGeneral[] {
+    return getCityGeneralsRaw(cityId);
+}
+
+/** 某位武将是否挂在该据点下（支持一个据点多武将；O(1) 索引直查） */
 export function isGeneralAnchoredAtCity(
     cityId: string | null | undefined,
     generalId: string | null | undefined,
 ): boolean {
     if (!cityId || !generalId) return false;
-    return getCityAnchoredGenerals(cityId).some((g) => g.generalId === generalId);
+    const raw = getRawGeneralByGeneralId(generalId);
+    if (raw) return raw.general.cityId === cityId;
+    return getCityGeneralsRaw(cityId).some((g) => g.generalId === generalId);
 }
 
 /** 据点守将（在场且不在 excludeGeneralIds 中的名将优先；谁占城谁得将） */

@@ -1207,14 +1207,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代爱尔兰军团', civ: '凯尔特', age: 'feudal', deStyle: 'WEST', region: 'CELTS' as RegionType,
         buildingStyle: 'CELTS',
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         shipId: 'GALLEY',
         commanderUnit: 'hero_llywelynapgruffydd',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：凯尔特靛蓝突袭者（普通档）替链甲剑士。
         slots: [
-            { type: 'elite_war_dog', count: 3 },
-            { type: 'woad_raider', count: 4 },
-            { type: 'elite_skirmisher', count: 2 },
+            { type: 'elite_war_dog', count: 2 },
+            { type: 'woad_raider', count: 3 },
+            { type: 'elite_skirmisher', count: 4 },
         ],
     },
     // ── 凯尔特 · 城堡时代 · 城堡时代盖尔军团　（本次新建）────────────────

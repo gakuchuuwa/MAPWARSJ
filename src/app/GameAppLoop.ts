@@ -516,7 +516,12 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
 
             perfMonitor.startTimer('recruitment');
             if (app.recruitmentSystem) {
-                app.recruitmentSystem.update(gameDelta);
+                if (import.meta.env.DEV) {
+                    perfDoctor.measure('RecruitmentSystem.update', () => app.recruitmentSystem!.update(gameDelta),
+                        'src/ai/RecruitmentSystem.ts:update');
+                } else {
+                    app.recruitmentSystem.update(gameDelta);
+                }
             }
             perfMonitor.endTimer('recruitment');
         } else if (app.battleScene?.isStrategyPausedByScene() && !app.combatUI?.isCorrectorOpen()) {
@@ -709,12 +714,13 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 syncFollowedLegionAudioFor(app);
             }
             app.cameraFollowUI.update();
-            // 🔴 [2026-10-18 主人定] 玩家加入哪个势力就播放哪个势力的曲子（66文化池），没有加入势力就全库随机
-            const playerFactionId = app.playerHero?.factionId ?? null;
-            if (playerFactionId !== lastBgmFactionId) {
-                lastBgmFactionId = playerFactionId;
-                const pos = app.playerHero?.getPosition() ?? { lat: 0, lng: 0 };
-                app.audioManager.syncPortraitBgm(undefined, pos.lat, pos.lng, resolveFactionCulture66(playerFactionId));
+            // 按玩家所属势力（未入伍则按当前跟随军团所属势力）的 67 文化曲池播放对应文化的背景音乐，杜绝东方军队播放西方曲目
+            const followedTarget = followedId ? resolveFollowTarget(app, followedId) : null;
+            const bgmFactionId = app.playerHero?.factionId ?? followedTarget?.getFactionId() ?? null;
+            if (bgmFactionId !== lastBgmFactionId) {
+                lastBgmFactionId = bgmFactionId;
+                const pos = app.playerHero?.getPosition() ?? followedTarget?.getPosition() ?? { lat: 0, lng: 0 };
+                app.audioManager.syncPortraitBgm(undefined, pos.lat, pos.lng, resolveFactionCulture66(bgmFactionId));
             }
             perfMonitor.endTimer('camera');
         }

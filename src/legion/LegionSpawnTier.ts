@@ -5,7 +5,7 @@ import {
     getLegionEliteLegionName,
     isCityGeneralEliteAnchor,
 } from '../data/ExpeditionLegions';
-import { getCityAnchoredGeneral, getCityAnchoredGenerals } from '../data/CityGeneralBridge';
+import { getCityAnchoredGeneral, getCityAnchoredGenerals, getCityAnchoredGeneralsFast } from '../data/CityGeneralBridge';
 import { getFactionGeneral } from '../data/FactionGenerals';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { shouldGeneralWaitInCityForFirstBattle } from '../data/GeneralFirstBattles';
@@ -63,12 +63,24 @@ function getExcludedGeneralIdsForSpawn(cityId?: string | null): ReadonlySet<stri
 }
 
 /** 该据点是否仍有未出征且可自由出征的在场武将（本城经典战待命武将留在城中等玩家，经典战打完后再自由出征） */
-export function hasAvailableCityGeneral(cityId: string | null | undefined): boolean {
+export function hasAvailableCityGeneral(
+    cityId: string | null | undefined,
+    precomputedActiveIds?: ReadonlySet<string>,
+): boolean {
     if (!cityId) return false;
-    const excludedIds = getExcludedGeneralIdsForSpawn(cityId);
-    return getCityAnchoredGenerals(cityId).some(
-        (g) => isGeneralOnStage(g.generalId) && !excludedIds.has(g.generalId),
-    );
+    const generals = getCityAnchoredGeneralsFast(cityId);
+    if (generals.length === 0) return false;
+    const activeIds = precomputedActiveIds ?? getActiveLegionGeneralIds();
+    const reserved = _reservedGeneralIdsProvider?.();
+    for (let i = 0; i < generals.length; i++) {
+        const gid = generals[i].generalId;
+        if (!isGeneralOnStage(gid)) continue;
+        if (activeIds.has(gid)) continue;
+        if (reserved?.has(gid)) continue;
+        if (shouldGeneralWaitInCityForFirstBattle(gid, cityId)) continue;
+        return true;
+    }
+    return false;
 }
 
 /** 仍可用的四档结果（等概率掷色）；generalFactionId = 据点锚定史料势力 */

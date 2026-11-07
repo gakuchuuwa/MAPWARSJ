@@ -2754,8 +2754,13 @@ export class Scene13WarLayer {
             type: init.battleType ?? 'field',
         });
         this.attach();
-        // 战术模式锁定使用 DE 官方背景音乐：若已在播放 DE 曲目则不打断，否则切入参战方文化的 DE 主题曲
-        audioManager.enterScene13Bgm(init.followedOnDefenderSide ? init.defenderRegion : init.attackerRegion);
+        // 战术模式严格按参战方所属 67 文化曲池播放背景音乐（若已在播该文化曲池内的曲子则不打断，否则切入该文化 DE 主题曲）
+        const tacGid = init.followedOnDefenderSide
+            ? (init.defenderGeneralId || (init.defenderFactionId ? getFactionGeneral(init.defenderFactionId)?.generalId : undefined))
+            : (init.attackerGeneralId || (init.attackerFactionId ? getFactionGeneral(init.attackerFactionId)?.generalId : undefined));
+        const tacCulture = (tacGid ? getGeneralCulture(tacGid) : undefined)
+            || (init.followedOnDefenderSide ? (init.defenderRegion ?? init.attackerRegion) : (init.attackerRegion ?? init.defenderRegion));
+        audioManager.enterScene13Bgm(tacCulture);
         this.active = true;
         this.lingering = false;
         this.over = false;
@@ -8039,10 +8044,33 @@ export class Scene13WarLayer {
      * 淡入淡出由 AudioManager 的 startLoop/stopLoop 自带（FADE.loop），
      * 且两者互相撤销：淡出途中又接上近战，会当场回到正常音量，不会先静音再重来。
      */
-    private tickContactSfx(_dt: number): void {
-        // 战术模式全面采用 DE 原生事件音效（刀剑挥砍 melee_hit、兵刃碰撞 sword_clank、阵亡 death_infantry / death_horse 等），
-        // 停用自制的 land_contact 循环底噪。
-        if (this.contactSfxOn) {
+    private tickContactSfx(dt: number): void {
+        if (this.skirmish) {
+            if (this.contactSfxOn) {
+                this.contactSfxOn = false;
+                audioManager.stopSceneLoop('land_contact');
+            }
+            return;
+        }
+        if (this.battleBriefingSpeaking || audioManager.isSpeechDucking() || speechAnnouncer.isSpeaking()) {
+            if (this.contactSfxOn) {
+                this.contactSfxOn = false;
+                audioManager.stopSceneLoop('land_contact');
+            }
+            return;
+        }
+
+        if (this.meleeContactCount > 0) {
+            this.meleeQuietSec = 0;
+            if (!this.contactSfxOn) {
+                this.contactSfxOn = true;
+                audioManager.startSceneLoop('land_contact');
+            }
+            return;
+        }
+        if (!this.contactSfxOn) return;
+        this.meleeQuietSec += dt;
+        if (this.meleeQuietSec >= MELEE_QUIET_SEC) {
             this.contactSfxOn = false;
             audioManager.stopSceneLoop('land_contact');
         }
@@ -9113,9 +9141,6 @@ export class Scene13WarLayer {
                 }
                 if (isMeleeAttacking && !m.slashed && m.ph >= 3) {
                     m.slashed = true;
-                    // DE 原生近战音效：刀剑挥砍命中（melee_hit）+ 兵刃金属碰撞（sword_clank）
-                    audioManager.play('melee_hit');
-                    audioManager.play('sword_clank');
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
                     const contactX = m.x * 0.45 + foe.x * 0.55;
                     // 🔴 [2026-10-13 主人令「修」·刀光错位] 接触点的垂直基准必须与士兵/箭矢同一口径：

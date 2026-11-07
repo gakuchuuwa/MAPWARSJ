@@ -66,8 +66,11 @@ export function latToDemGlobalY(lat: number, zoom = DEM_ZOOM): number {
     return yFrac * TERRARIUM_TILE_SIZE;
 }
 
-function tileCacheKey(zoom: number, x: number, y: number): string {
-    return `${zoom}/${x}/${y}`;
+/**
+ * 瓦片缓存键：用数字代替 `${zoom}/${x}/${y}` 模板字符串，消除高频采样时的字符串分配与 GC 压力。
+ */
+function tileCacheKey(zoom: number, x: number, y: number): number {
+    return (zoom * 16384 + x) * 16384 + y;
 }
 
 type TileLoadedListener = () => void;
@@ -76,9 +79,9 @@ type TileLoadedListener = () => void;
  * 拉取 Terrarium 瓦片并按像素查询海拔；瓦片 LRU 缓存供同步查询。
  */
 export class ElevationSampler {
-    private readonly cache = new Map<string, Uint8ClampedArray>();
-    private readonly cacheOrder = new Set<string>();
-    private readonly pending = new Set<string>();
+    private readonly cache = new Map<number, Uint8ClampedArray>();
+    private readonly cacheOrder = new Set<number>();
+    private readonly pending = new Set<number>();
     /**
      * 🔴 [2026-09-02 主人「周围没据点反而卡，尤其海上/咸海/撒哈拉」] 取瓦片**失败**的负缓存。
      * 改前：ensureTile 失败只 console.warn + return false，`finally` 把 key 从 pending 删掉，
@@ -89,11 +92,15 @@ export class ElevationSampler {
      * 反过来，据点和军团多的地方是陆地核心区、瓦片齐全，命中缓存反而不卡 —— 与主人观察一致。
      * 失败后冷却 TILE_RETRY_COOLDOWN_MS 才允许重试（网络抖动仍能恢复，不会永久放弃）。
      */
-    private readonly failedAt = new Map<string, number>();
+    private readonly failedAt = new Map<number, number>();
     /** 已经警告过的 key：同一块瓦片只吼一次，别刷屏（console.warn 本身在热路径上也不便宜） */
-    private readonly warnedKeys = new Set<string>();
+    private readonly warnedKeys = new Set<number>();
     private readonly maxCacheTiles: number;
     private tileLoadedListeners = new Set<TileLoadedListener>();
+
+    /** LRU 记账按帧去重：同一块瓦片在一帧内只 touch 一次（与 WaterMaskSampler 同口径） */
+    private touchStamp = -1;
+    private touchedThisFrame = new Set<number>();
 
     constructor(maxCacheTiles = 320) {
         this.maxCacheTiles = maxCacheTiles;
@@ -110,7 +117,14 @@ export class ElevationSampler {
         }
     }
 
-    private touchCache(key: string): void {
+    private touchCache(key: number): void {
+        const stamp = Math.floor(performance.now() / 16);
+        if (stamp !== this.touchStamp) {
+            this.touchStamp = stamp;
+            this.touchedThisFrame.clear();
+        }
+        if (this.touchedThisFrame.has(key)) return;
+        this.touchedThisFrame.add(key);
         this.cacheOrder.delete(key);
         this.cacheOrder.add(key);
     }
@@ -125,6 +139,21 @@ export class ElevationSampler {
 
     hasTile(zoom: number, x: number, y: number): boolean {
         return this.cache.has(tileCacheKey(zoom, x, y));
+    }
+
+    /** 该点所在瓦片是否仍在等待拉取（已缓存或处于失败冷却期内均返回 false） */
+    isPendingSync(lat: number, lng: number, zoom = DEM_ZOOM): boolean {
+        const { tileX, tileY } = latLngToTilePixel(lat, lng, zoom);
+        return this.isTilePending(zoom, tileX, tileY);
+    }
+
+    /** 该瓦片是否尚未就绪且不处于失败冷却期 */
+    isTilePending(zoom: number, tileX: number, tileY: number): boolean {
+        const key = tileCacheKey(zoom, tileX, tileY);
+        if (this.cache.has(key)) return false;
+        if (this.pending.has(key)) return true;
+        const failedTs = this.failedAt.get(key);
+        return failedTs === undefined || Date.now() - failedTs >= TILE_RETRY_COOLDOWN_MS;
     }
 
     getTileDataSync(zoom: number, tileX: number, tileY: number): Uint8ClampedArray | null {

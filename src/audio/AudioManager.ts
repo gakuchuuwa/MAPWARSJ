@@ -889,8 +889,8 @@ export class AudioManager {
      * 非 null 时：跟拍军团切换、进战术换曲都不换歌，这首放完重放同一首，直到选回自动。
      */
     private manualBgmFolder: string | null = null;
-    /** 战术模式（Scene13）期间锁定使用 DE 官方背景音乐曲池 */
-    private tacticalDeBgmActive = false;
+    /** 战术模式（Scene13）期间锁定为参战军队所属 67 文化的专属曲池（防止串播其他文化曲目） */
+    private tacticalBgmPool: string[] = [];
     /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
     private wantedLoops = new Set<SoundKey>();
     /** 正在播放的一次性音效及其定义（暂停、主音量和语音闪避时同步处理）*/
@@ -1514,7 +1514,7 @@ export class AudioManager {
         //   无势力（cultureRegion 为 null）→ currentBgmPool 为空，走全库随机轮播。
         const branch = resolveBranch(cultureRegion);
         this.currentBgmPool = branchPool(branch);
-        if (this.tacticalDeBgmActive) return;
+        if (this.tacticalBgmPool.length > 0) return;
         this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
         // F3 手动选了曲 → 曲池照记（选回自动时生效），歌不换
         if (this.manualBgmFolder) {
@@ -1557,28 +1557,28 @@ export class AudioManager {
     }
 
     /**
-     * 进入战术模式（Scene13）：背景音乐锁定为 DE 官方主题曲。
-     * 若当前正在播放的已经是 DE 曲目则不打断；若未播放或正在播非 DE 曲目，则切入参战方文化的 DE 主题曲。
+     * 进入战术模式（Scene13）：严格锁定为参战方所属 67 文化的专属曲池（`BGM_POOL_MAP[branch]`），杜绝跨文化串歌。
+     * 若当前正在播放的曲目已属于该文化池则不打断；若不属于该文化池（或尚未播放），立即切入该文化的 DE 主题曲（或该文化池首曲）。
      */
     public enterScene13Bgm(cultureRegion?: string | null): void {
-        this.tacticalDeBgmActive = true;
+        const branch = resolveBranch(cultureRegion);
+        const pool = branchPool(branch);
+        this.tacticalBgmPool = pool;
         this.bgmShuffleQueue = [];
         if (!this.settings.enabled || !this.unlocked || this.manualBgmFolder) return;
-        const isCurrentDe = this.currentBgmFolder.startsWith('de_') || this.currentBgmFolder === 'age_of_kings';
-        if (this.isBgmPlaying() && isCurrentDe) return;
-        const branch = resolveBranch(cultureRegion);
+        if (this.isBgmPlaying() && pool.length > 0 && pool.includes(this.currentBgmFolder)) return;
         const preferredDe = deBgmForBranch(branch);
-        if (preferredDe && preferredDe !== this.currentBgmFolder) {
+        if (preferredDe && (pool.length === 0 || pool.includes(preferredDe))) {
             this.playBgmFolder(preferredDe);
         } else {
             this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
         }
     }
 
-    /** 退出战术模式（Scene13）：解除纯 DE 曲池锁定，不打断当前正在播放的 DE 音乐。 */
+    /** 退出战术模式（Scene13）：解除战术文化曲池锁定，不打断当前正在播放的音乐。 */
     public exitScene13Bgm(): void {
-        if (!this.tacticalDeBgmActive) return;
-        this.tacticalDeBgmActive = false;
+        if (this.tacticalBgmPool.length === 0) return;
+        this.tacticalBgmPool = [];
         this.bgmShuffleQueue = [];
     }
 
@@ -1719,10 +1719,10 @@ export class AudioManager {
      *  🔴 [2026-10-02 主人定] 剧本期（亚历山大东征）只洗西方歌曲池；乱斗才洗全部曲目。
      *  🔴 [2026-10-18 主人令] 两个池都要再滤掉 `PAUSED_BGM_FOLDERS`（版权主张暂停，文件保留）。 */
     private shuffledBgmFolders(): string[] {
-        // 🔴 [2026-10-18] 池内轮播：战术模式锁定纯 DE 曲池；有当前分支曲池就用它；剧本期走西方池；否则回落全局池。
+        // 🔴 [2026-10-18] 池内轮播：战术模式锁定参战文化专属池；有当前分支曲池就用它；剧本期走西方池；否则回落全局池。
         let pool: readonly string[];
-        if (this.tacticalDeBgmActive) {
-            pool = DE_BGM_FOLDERS;
+        if (this.tacticalBgmPool.length > 0) {
+            pool = this.tacticalBgmPool;
         } else if (this.currentBgmPool.length > 0) {
             pool = this.currentBgmPool;
         } else if (isScriptPeriod()) {

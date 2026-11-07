@@ -10761,6 +10761,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": -5
+        },
+        "/assets/CELTS/bfe_dalriada_king.png": {
+            "scale": 1.22,
+            "offsetX": -19,
+            "offsetY": 25
         }
     },
     "folderGuides": {

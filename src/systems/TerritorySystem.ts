@@ -2167,8 +2167,8 @@ export class TerritorySystem {
             if (moveScaleTimer !== null) clearTimeout(moveScaleTimer);
             moveScaleTimer = setTimeout(() => {
                 moveScaleTimer = null;
-                // 新进入视野的 marker 尚未套 scale：即使缩放级别未变也须强制写一遍
-                this.updateCityScales(true);
+                // --city-scale 挂在父级 pane 上，新进入视野的 marker 自动继承，无需每 100ms 强制重写引发整棵 DOM 树样式失效
+                this.updateCityScales(false);
             }, 50);
         });
 

@@ -985,25 +985,30 @@ export class CameraFollowUI {
         return `<span style="margin-right:6px;">${icon}</span>${factionHtml}${subjectHtml}${actionHtml}`;
     }
 
+    private lastFollowBannerHtml = '';
+    private lastBannerCheckAt = 0;
+
     private restoreFollowBannerName(): void {
         if (!this.followedArmyId) return;
+        // 跟随玩家本人时横幅恒为 display:none，无需每帧重算与读写 DOM
+        if (this.isFollowingPlayer()) return;
+        const now = performance.now();
+        if (now - this.lastBannerCheckAt < 200) return;
+        this.lastBannerCheckAt = now;
+
         const text = document.getElementById('follow-banner-text');
         if (!text) return;
 
         let newHtml: string | null = null;
-        if (this.isFollowingPlayer()) {
-            const player = (window as any).game?.playerHero ?? this.playerHero;
-            if (player) {
-                newHtml = this.formatFollowBannerText(player, player.name || '探马者');
-            }
-        } else if (this.getArmiesFn) {
+        if (this.getArmiesFn) {
             const army = this.getArmiesFn().find((a) => a.id === this.followedArmyId);
             if (army) {
                 newHtml = this.formatFollowBannerText(army, army.name || this.followedArmyId);
             }
         }
 
-        if (newHtml && text.innerHTML !== newHtml) {
+        if (newHtml && this.lastFollowBannerHtml !== newHtml) {
+            this.lastFollowBannerHtml = newHtml;
             text.innerHTML = newHtml;
         }
     }
@@ -1026,7 +1031,10 @@ export class CameraFollowUI {
         }
 
         const text = document.getElementById('follow-banner-text');
-        if (text) text.innerHTML = label;
+        if (text) {
+            this.lastFollowBannerHtml = label;
+            text.innerHTML = label;
+        }
         if (this.followBanner) {
             const inScene13 = (window as any).game?.scene13War?.isActive?.() || (window as any).game?.battleScene?.isInBattle?.();
             const isHero = this.isFollowingPlayer();

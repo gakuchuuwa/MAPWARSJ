@@ -33,6 +33,28 @@ export class RiverOverlayLayer extends L.GridLayer {
     private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, completed: boolean, cacheKey: string }> = new Map();
     /** LRU 缓存已算好的水面瓦片像素与浪花点，平移/缩放回看瞬时上屏 */
     private tileCache: Map<string, WaterTileCacheEntry> = new Map();
+    /** 瓦片 putImageData 逐帧预算队列：跟拍跨越瓦片边界时 6~12 块瓦片同时到达，分摊到每帧 ≤2.5ms 避免单帧卡顿 */
+    private commitQueue: Array<() => void> = [];
+    private commitRaf = 0;
+
+    private enqueueTileCommit(fn: () => void): void {
+        this.commitQueue.push(fn);
+        if (!this.commitRaf) {
+            this.commitRaf = requestAnimationFrame(() => this.drainCommitQueue());
+        }
+    }
+
+    private drainCommitQueue(): void {
+        this.commitRaf = 0;
+        const deadline = performance.now() + 2.5;
+        while (this.commitQueue.length > 0) {
+            this.commitQueue.shift()!();
+            if (performance.now() >= deadline) break;
+        }
+        if (this.commitQueue.length > 0) {
+            this.commitRaf = requestAnimationFrame(() => this.drainCommitQueue());
+        }
+    }
 
     constructor(options?: L.GridLayerOptions) {
         super({
@@ -97,14 +119,15 @@ export class RiverOverlayLayer extends L.GridLayer {
             // Create ImageData
             // [FIX] Cast to any to avoid strict "ArrayBufferLike vs ArrayBuffer" TS error
             const imgData = new ImageData(data as any, 256, 256);
-            ctx.putImageData(imgData, 0, 0);
             this.cachePut(cacheKey, { imgData, waves: activeWaves, ripples: activeRipples });
-
-            // Mark done
-            if (!task.completed) {
-                task.completed = true;
-                done(undefined, tile);
-            }
+            this.enqueueTileCommit(() => {
+                if (!this.pendingTiles.has(id)) return;
+                ctx.putImageData(imgData, 0, 0);
+                if (!task.completed) {
+                    task.completed = true;
+                    done(undefined, tile);
+                }
+            });
         }
     }
 
@@ -250,13 +273,16 @@ export class RiverOverlayLayer extends L.GridLayer {
         if (cached) {
             this.tileCache.delete(cacheKey);
             this.tileCache.set(cacheKey, cached);
-            ctx.putImageData(cached.imgData, 0, 0);
             (tile as any)._coastalWaves = cached.waves;
             (tile as any)._seaRipples = cached.ripples;
             const reqId = this.msgIdCounter++;
             this.pendingTiles.set(reqId, { ctx, tile, done, completed: true, cacheKey });
             this.worker.postMessage({ rebindId: reqId, x: coords.x, y: coords.y, z: coords.z });
-            queueMicrotask(() => done(undefined, tile));
+            this.enqueueTileCommit(() => {
+                if (!this.pendingTiles.has(reqId)) return;
+                ctx.putImageData(cached.imgData, 0, 0);
+                done(undefined, tile);
+            });
             return tile;
         }
 

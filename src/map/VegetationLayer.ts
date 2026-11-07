@@ -691,8 +691,15 @@ export class VegetationLayer {
     private lastRenderAt = 0;
     private retryKey = '';
     private retryCount = 0;
+    private retryTimer: number | null = null;
 
     private terrainReadyTimer: number | null = null;
+    private ctxBounds: L.LatLngBounds | null = null;
+    private ctxYear = Number.NaN;
+    private ctxEpoch = -1;
+    private cachedVisibleCities: Array<{ lat: number; lng: number; wx: number; wy: number; isForestHunting: boolean; isOasisCity: boolean }> = [];
+    private cachedRoadBuckets = new Map<string, Array<[number, number, number, number]>>();
+    private cachedRiverBuckets = new Map<string, Array<[number, number, number, number]>>();
     /** 画布当前锚定的整数 Layer 坐标左上角，以及锚定时的整数 panePos */
     private canvasTopLeft: L.Point = L.point(0, 0);
     private paintedPaneX = Number.NaN;
@@ -1094,14 +1101,20 @@ export class VegetationLayer {
         if (key === this.lastRenderKey) return;
         this.lastRenderKey = key;
         this.lastRenderAt = performance.now();
+        if (this.retryTimer !== null) {
+            window.clearTimeout(this.retryTimer);
+            this.retryTimer = null;
+        }
         // 🔴 [2026-09-18 修消失] 禁止在此处提前 clearRect：旧树必须持续显示在画布上，直到 paint() 原子绘制新树！
 
         let missingTiles = 0;
         let waterNulls = 0;
+        let incompleteCells = 0;
         let pendingImages = 0;
         let drawnTrees = 0;
         const drawCommands: TreeDrawCommand[] = [];
         const waterSampler = LandSeaSystem.getWaterSampler();
+        const elevSampler = LandSeaSystem.getSampler();
 
         const FOREST_HUNTING_STYLES = new Set([
             'NORTHEAST', 'VARANGIANS', 'DIANQIAN', 'MAPUCHE',
@@ -1112,23 +1125,39 @@ export class VegetationLayer {
         if (cellSig !== this.cellCacheSig) { this.cellCache.clear(); this.cellCacheSig = cellSig; }
 
         const paddedBounds = bounds.pad(0.48);
-        const visibleCities: Array<{ lat: number; lng: number; wx: number; wy: number; isForestHunting: boolean; isOasisCity: boolean }> = [];
-
-        // 🔴 [2026-11-01 主人令「密林连冠成海 + 疏林/绿洲保持成簇 + 战略道路自动留出林间走廊，分布摆放学习 DE」]
-        //    构建视口内战略道路的世界像素空间哈希桶（SAMPLE_ZOOM），密林遇到官道/山道自动退让，劈出清晰的林间行军走廊（如秦岭栈道、条顿堡林道）。
-        const roadBuckets = new Map<string, Array<[number, number, number, number]>>();
-        const rLatMin = paddedBounds.getSouth();
-        const rLatMax = paddedBounds.getNorth();
-        const rLngMin = paddedBounds.getWest();
-        const rLngMax = paddedBounds.getEast();
-        const riverBuckets = new Map<string, Array<[number, number, number, number]>>();
-        // 🔴 [2026-11-06] 城市筛选与道路/河流分桶只在「本次真有没缓存的格要算」时才做（整窗命中缓存时一概跳过）
+        let visibleCities = this.cachedVisibleCities;
+        let roadBuckets = this.cachedRoadBuckets;
+        let riverBuckets = this.cachedRiverBuckets;
+        // 🔴 [2026-11-06] 城市筛选与道路/河流分桶只在「本次真有没缓存的格要算」时才做，且按扩圈视口（pad 0.90）复用缓存，
+        //    避免玩家连续行军跨 CHUNK 或瓦片到达补算时反复投影全图道路与河流折线。
         let ctxReady = false;
         const ensureCtx = (): void => {
             if (ctxReady) return;
             ctxReady = true;
+            if (
+                this.ctxBounds &&
+                this.ctxYear === gameYear &&
+                this.ctxEpoch === this.cellDataEpoch &&
+                this.ctxBounds.contains(paddedBounds)
+            ) {
+                return;
+            }
+            const buildBounds = bounds.pad(0.90);
+            this.ctxBounds = buildBounds;
+            this.ctxYear = gameYear;
+            this.ctxEpoch = this.cellDataEpoch;
+            visibleCities = [];
+            roadBuckets = new Map<string, Array<[number, number, number, number]>>();
+            riverBuckets = new Map<string, Array<[number, number, number, number]>>();
+            this.cachedVisibleCities = visibleCities;
+            this.cachedRoadBuckets = roadBuckets;
+            this.cachedRiverBuckets = riverBuckets;
+            const rLatMin = buildBounds.getSouth();
+            const rLatMax = buildBounds.getNorth();
+            const rLngMin = buildBounds.getWest();
+            const rLngMax = buildBounds.getEast();
             for (const city of CITIES_V2) {
-                if (!paddedBounds.contains([city.lat, city.lng])) continue;
+                if (!buildBounds.contains([city.lat, city.lng])) continue;
                 const wpt = this.map.project([city.lat, city.lng], SAMPLE_ZOOM);
                 const style = city.buildingStyle ?? '';
                 visibleCities.push({
@@ -1340,8 +1369,10 @@ export class VegetationLayer {
                 //    平原与已知低地丘陵先放行渲染，避免外网瓦片慢时整层树木被饿死/全图秃光。
                 const isHighPlateau = ptLatLng.lng >= 75 && ptLatLng.lng <= 105 && Math.abs(ptLatLng.lat) >= 26 && Math.abs(ptLatLng.lat) <= 40;
                 if (elev === null) {
-                    missingTiles++;
-                    cellIncomplete = true;
+                    if (elevSampler.isPendingSync(ptLatLng.lat, ptLatLng.lng, SAMPLE_ZOOM)) {
+                        missingTiles++;
+                        cellIncomplete = true;
+                    }
                     if (isHighPlateau) return;
                 } else if (elev > treeLine || elev <= 0) {
                     return;
@@ -1548,20 +1579,22 @@ export class VegetationLayer {
                     const curElev = LandSeaSystem.getElevationAtMapPixel(
                         curPx, curPy, SAMPLE_ZOOM, curLatLng.lat, curLatLng.lng,
                     );
-                    if (curElev === null) cellIncomplete = true;
-                    else if (curElev <= 0) continue;
+                    if (curElev === null) {
+                        if (elevSampler.isPendingSync(curLatLng.lat, curLatLng.lng, SAMPLE_ZOOM)) {
+                            missingTiles++;
+                            cellIncomplete = true;
+                        }
+                    } else if (curElev <= 0) continue;
 
                     if (curElev === null || curElev < 80) {
                         const COAST_MARGIN_PX = 8;
-                        const pE = this.map.unproject([curPx + COAST_MARGIN_PX, curPy], SAMPLE_ZOOM);
-                        const pW = this.map.unproject([curPx - COAST_MARGIN_PX, curPy], SAMPLE_ZOOM);
-                        const pS = this.map.unproject([curPx, curPy + COAST_MARGIN_PX], SAMPLE_ZOOM);
-                        const pN = this.map.unproject([curPx, curPy - COAST_MARGIN_PX], SAMPLE_ZOOM);
+                        const dLng = COAST_MARGIN_PX * 0.002746582;
+                        const dLat = dLng * Math.max(0.15, Math.cos(curLatLng.lat * Math.PI / 180));
                         if (
-                            LandSeaSystem.isSeaAt(pE) ||
-                            LandSeaSystem.isSeaAt(pW) ||
-                            LandSeaSystem.isSeaAt(pS) ||
-                            LandSeaSystem.isSeaAt(pN)
+                            LandSeaSystem.isSeaAt({ lat: curLatLng.lat, lng: curLatLng.lng + dLng }) ||
+                            LandSeaSystem.isSeaAt({ lat: curLatLng.lat, lng: curLatLng.lng - dLng }) ||
+                            LandSeaSystem.isSeaAt({ lat: curLatLng.lat - dLat, lng: curLatLng.lng }) ||
+                            LandSeaSystem.isSeaAt({ lat: curLatLng.lat + dLat, lng: curLatLng.lng })
                         ) {
                             continue;
                         }
@@ -1610,7 +1643,6 @@ export class VegetationLayer {
                     // DE 原生精灵帧内已自带不同高矮树形变体，严格保持 jitter = 1，不额外缩放破坏 DE 比例
                     const jitter = 1;
                     const variant = Math.floor(hash(gx, gy, i * 37 + 89) * 100);
-                    const wpt = this.map.project(curLatLng, SAMPLE_ZOOM);
                     out.push({
                         lat: curLatLng.lat,
                         lng: curLatLng.lng,
@@ -1619,8 +1651,8 @@ export class VegetationLayer {
                         assetNext,
                         variant,
                         inGrove: isDenseCanopy && placedInCell === 0,
-                        wx: wpt.x,
-                        wy: wpt.y,
+                        wx: curPx,
+                        wy: curPy,
                         posKey: `${Math.round(curLatLng.lat * 1e5)},${Math.round(curLatLng.lng * 1e5)}`,
                     });
                     placedInCell++;
@@ -1642,6 +1674,7 @@ export class VegetationLayer {
                 sampleCell(gx, gy, out);
                 for (const c of out) drawCommands.push(c);
                 if (!cellIncomplete) this.cellCache.set(ck, out);
+                else incompleteCells++;
             }
         }
         // 缓存封顶：超出时丢掉离当前窗一个窗宽以外的格（跨大区移动后旧区不再占内存）
@@ -1682,18 +1715,31 @@ export class VegetationLayer {
         drawnTrees = this.trees.length;
 
         this.lastTreeCount = drawnTrees;
-        this.lastRenderIncomplete = missingTiles > 0 || waterNulls > 0;
+        void waterNulls;
+        this.lastRenderIncomplete = incompleteCells > 0;
         // 🔴 [2026-11-02] 贴图未解码不再作废采样键：这些树已在 drawCommands 里，贴图一到 onTreeImageReady 会 paint 补画；
         //    原来只要有一张没到，下一次 moveend 就整层重采样一次（跟拍时 ≈ 每秒数次）。
         void pendingImages;
 
-        if (missingTiles > 0) {
+        // 🔴 [2026-11-07 修「玩家移动时植被重采样被 100ms moveend 连续打断重跑」]
+        //    不能在 renderInner 末尾同步把 lastRenderKey 清空并用 renderTimer 排延迟重试：
+        //    跟拍期间 panByThrottledMoveEnd 每 100ms 触发一次 moveend -> scheduleRender(0)，
+        //    会直接 cancel 掉延迟定时器并因 lastRenderKey==="" 立即重跑整层 renderInner（实测 20s 内跑 120 次、峰值 88.4ms）。
+        //    改为独立 retryTimer，且只在定时器到期时才清 lastRenderKey 重试。
+        if (incompleteCells > 0) {
             if (this.retryKey !== key) { this.retryKey = key; this.retryCount = 0; }
-            if (this.retryCount < 15) {
+            if (this.retryCount < 15 && this.retryTimer === null) {
                 this.retryCount++;
-                this.lastRenderKey = '';
-                this.scheduleRender(600 + this.retryCount * 300);
+                const retryDelay = 600 + this.retryCount * 300;
+                this.retryTimer = window.setTimeout(() => {
+                    this.retryTimer = null;
+                    if (!this.lastRenderIncomplete) return;
+                    this.lastRenderKey = '';
+                    this.scheduleRender(0);
+                }, retryDelay);
             }
+        } else {
+            this.retryCount = 0;
         }
     }
 

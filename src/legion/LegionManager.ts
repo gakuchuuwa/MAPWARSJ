@@ -3,6 +3,7 @@ import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/Expe
 import {
     getCityAnchoredGeneral,
     getCityAnchoredGenerals,
+    getCityAnchoredGeneralsFast,
     isGeneralAnchoredAtCity,
 } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
@@ -55,7 +56,7 @@ import {
 } from '../types/CultureFormations';
 import { gameLog } from '../utils/GameLogger';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
-import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getGeneralRecordByGeneralId, getRawGeneralByGeneralId } from '../data/FactionGenerals';
 import { FollowResupplySystem } from './FollowResupplySystem';
 import { tickDeploy } from './DeployGate';
 import { tickStuckLegionWatchdog } from '../debug/StuckLegionWatchdog';
@@ -367,7 +368,7 @@ export class LegionManager {
                 const city = this.cityManager.getCity(cityId);
                 // 🔴 [2026-10-21] 百岁模式军团随武将换了势力时，出身城仍属出身势力（子受＝商、朝歌＝周）也要算「已出征」，否则同一武将会被再掷一次
                 if (city && (city.factionId === army.getFactionId() || city.factionId === army.getHomeFactionId())) {
-                    const onStageGenerals = getCityAnchoredGenerals(city.id).filter((g) => isGeneralOnStage(g.generalId));
+                    const onStageGenerals = getCityAnchoredGeneralsFast(city.id).filter((g) => isGeneralOnStage(g.generalId));
                     const allGeneralsUsed =
                         onStageGenerals.length > 0 && onStageGenerals.every((g) => activeGenIds.has(g.generalId));
                     if (army.isElite) {
@@ -379,15 +380,15 @@ export class LegionManager {
                 }
             }
             if (army.generalId) {
-                for (const c of cities) {
-                    if (isGeneralAnchoredAtCity(c.id, army.generalId)) {
-                        const onStageGenerals = getCityAnchoredGenerals(c.id).filter((g) => isGeneralOnStage(g.generalId));
-                        const allGeneralsUsed =
-                            onStageGenerals.length > 0 && onStageGenerals.every((g) => activeGenIds.has(g.generalId));
-                        c.spawnGeneralUsed = allGeneralsUsed;
-                        if (onStageGenerals.length > 1) {
-                            c.spawnEliteUsed = allGeneralsUsed;
-                        }
+                const anchoredCityId = getRawGeneralByGeneralId(army.generalId)?.general.cityId;
+                const c = anchoredCityId ? this.cityManager.getCity(anchoredCityId) : undefined;
+                if (c) {
+                    const onStageGenerals = getCityAnchoredGeneralsFast(c.id).filter((g) => isGeneralOnStage(g.generalId));
+                    const allGeneralsUsed =
+                        onStageGenerals.length > 0 && onStageGenerals.every((g) => activeGenIds.has(g.generalId));
+                    c.spawnGeneralUsed = allGeneralsUsed;
+                    if (onStageGenerals.length > 1) {
+                        c.spawnEliteUsed = allGeneralsUsed;
                     }
                 }
             }

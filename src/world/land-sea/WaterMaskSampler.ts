@@ -109,13 +109,17 @@ export class WaterMaskSampler {
     }
 
     /**
-     * 该点所在瓦片是否**还没到**（true = 还在等；false = 已缓存，含已知坏瓦片）。
-     * isWaterSync 返回 null 有两种情况：瓦片未到（会变）与坏瓦片（永远 null）——
+     * 该点所在瓦片是否**还没到**（true = 还在等；false = 已缓存含已知坏瓦片，或处于失败冷却期）。
+     * isWaterSync 返回 null 有两种情况：瓦片未到（会变）与坏瓦片/拉取失败（冷却期内不会变）——
      * 植被层的格缓存只需在前一种情况下放弃缓存。
      */
     isPendingSync(lat: number, lng: number, zoom = DEM_ZOOM): boolean {
         const { tileX, tileY } = latLngToTilePixel(lat, lng, zoom);
-        return !this.cache.has(tileCacheKey(zoom, tileX, tileY));
+        const key = tileCacheKey(zoom, tileX, tileY);
+        if (this.cache.has(key)) return false;
+        if (this.pending.has(key)) return true;
+        const failedTs = this.failedAt.get(key);
+        return failedTs === undefined || Date.now() - failedTs >= TILE_RETRY_COOLDOWN_MS;
     }
 
     /**
