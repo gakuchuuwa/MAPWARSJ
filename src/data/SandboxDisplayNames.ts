@@ -385,7 +385,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'gaoche': '高车',
 
     // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
-'kala': '喀汗',
+'kala': '喀喇',   // 🔴 [2026-11-07 主人令「建立一个喀喇汗国」] 旗号＝势力简称前两字（原「喀汗」是截名凑字）
 'sogdian': '粟特',
     'suogediyana': '索格',
     'kangju': '康居',

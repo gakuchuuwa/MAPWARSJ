@@ -8268,8 +8268,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 经典战规则] 奥斯曼＝西喀喇汗末王（1212 撒马尔罕被花剌子模摩诃末攻灭）；西喀喇汗无独立势力，按其宗主西辽挂靠并报告；普将；封建×中亚＝封建时代河中军团；立绘留空
-        { generalId: 'xiliao_uthman', factionId: 'liao_d', cityId: 'city_suiye', generalName: '奥斯曼', portrait: '/assets/CENTRAL_ASIA/xiliao_uthman.png', eliteName: '大辽骑兵', eliteTier: 4 },
+        // （奥斯曼＝西喀喇汗末王，已移入 kala（喀喇汗国）块，见该势力条目）
     ],
 
 
@@ -9429,7 +9428,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    kala: { generalId: 'kala_satuke', cityId: 'city_shule', generalName: '萨图克', portrait: '/assets/WESTERN/kala_satuke.png', eliteName: '喀喇汗骑兵', eliteTier: 4 },
+    // 🔴 [2026-11-07 主人令「建立一个喀喇汗国」] 喀喇汗国（840–1212）各家可汗按史归本势力：
+    //    ① 萨图克·布格拉汗（?-955）＝喀喇汗国开国可汗，据点盘橐（疏勒，东支中心）｜普将｜精锐喀喇汗骑兵 T4
+    //    ② 奥斯曼（?-1212）＝西喀喇汗末王，据点撒马尔罕（西支都城，1212 为花剌子模摩诃末所灭）｜普将｜同号精锐
+    kala: [
+        { generalId: 'kala_satuke', cityId: 'city_shule', generalName: '萨图克', portrait: '/assets/WESTERN/kala_satuke.png', eliteName: '喀喇汗骑兵', eliteTier: 4 },
+        { generalId: 'xiliao_uthman', cityId: 'city_samaerhan', generalName: '奥斯曼', portrait: '/assets/CENTRAL_ASIA/xiliao_uthman.png', eliteName: '喀喇汗骑兵', eliteTier: 4 },
+    ],
 
 
 

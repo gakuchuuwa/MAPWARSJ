@@ -5687,7 +5687,7 @@ export class Scene13WarLayer {
      *  守方城门是否已被摧毁，或攻方使用并战计策反了城中守军（满足其一即解除城内驻守限制、发起攻击） */
     private isDefenderGateDestroyed(): boolean {
         if (this.defenderGarrisonDefected) return true;
-        if (this.wallGates.length === 0) return true;
+        if (this.wallGates.length === 0) return !this.siegeWithWalls;
         const gates = this.wallGates.filter(b => b.f === 1 && b.key === 'STONE_GATE');
         if (gates.length > 0) return gates.some(b => !this.wallStanding(b));
         return this.ringOpen();
@@ -6993,7 +6993,8 @@ export class Scene13WarLayer {
                 if (!ob || sp.obstructionDisabled || sp.destroyed || sp === goal.sprite) continue;
                 if (viaGate && this.gateSpriteSet?.has(sp)) continue;
                 const [ca, cb] = ab(sp.x, sp.y);
-                const ox = (ob.x + 0.25) * S, oy = (ob.y + 0.25) * S;   // 多留 0.25 地块 = 士兵身位
+                const wallOb = this.wallBySprite?.has(sp);
+                const ox = (wallOb ? 0.70 : ob.x + 0.25) * S, oy = (wallOb ? 0.70 : ob.y + 0.25) * S;   // 墙件用 0.70 格（相邻 1 格墙严封，险要双层墙 2 格夹道留出 3 小格通道）
                 for (let a = Math.floor(ca - ox); a <= Math.ceil(ca + ox); a++) {
                     for (let b = Math.floor(cb - oy); b <= Math.ceil(cb + oy); b++) {
                         if (Math.abs(a - ca) >= ox || Math.abs(b - cb) >= oy) continue;
@@ -7087,7 +7088,8 @@ export class Scene13WarLayer {
             if (!ob || sp.obstructionDisabled || sp.destroyed || this.gateSpriteSet?.has(sp)) continue;
             const dx = sp.x - cx, dy = sp.y - cy;
             const ca = (dx / TW + dy / TH) * S, cb = (dy / TH - dx / TW) * S;
-            const ox = (ob.x + 0.25) * S, oy = (ob.y + 0.25) * S;
+            const wallOb = this.wallBySprite?.has(sp);
+            const ox = (wallOb ? 0.70 : ob.x + 0.25) * S, oy = (wallOb ? 0.70 : ob.y + 0.25) * S;
             for (let a = Math.floor(ca - ox); a <= Math.ceil(ca + ox); a++) {
                 for (let b = Math.floor(cb - oy); b <= Math.ceil(cb + oy); b++) {
                     if (Math.abs(a - ca) >= ox || Math.abs(b - cb) >= oy) continue;
@@ -7096,7 +7098,7 @@ export class Scene13WarLayer {
                 }
             }
         }
-        // 门外终点与 gateExit 同一算法：从城中心指向城门的方向，再往外 120px
+        // 门外终点与 gateExit 同一算法：沿城门通道法线朝外（外圈门 110px，内圈门 54px 落入双墙夹道）
         const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         const ccx = cx + (am - bm) * (TW / 2), ccy = cy + (am + bm) * (TH / 2);
         const INF = 32767;
@@ -7107,8 +7109,11 @@ export class Scene13WarLayer {
         const wb0 = Math.floor((r.b0 - 6) * S) + R, wb1 = Math.ceil((r.b1 + 6) * S) + R;
         for (const g of this.wallGates) {
             if (g.key !== 'STONE_GATE') continue;
-            const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
-            const ox = g.x + vx / vl * 120 - cx, oy = g.y + vy / vl * 120 - cy;
+            const [gba, gbb] = this.tileAB(g.x, g.y);
+            const isOuterGate = Math.min(Math.abs(gba - r.a0), Math.abs(gba - r.a1), Math.abs(gbb - r.b0), Math.abs(gbb - r.b1)) < 1;
+            const outDist = isOuterGate ? 110 : 54;
+            const vn = this.gateOutwardNormal(g, ccx, ccy);
+            const ox = g.x + vn.x * outDist - cx, oy = g.y + vn.y * outDist - cy;
             const ga = Math.round((ox / TW + oy / TH) * S) + R, gb = Math.round((oy / TH - ox / TW) * S) + R;
             const dist = new Int16Array(N * N).fill(INF);
             let qh = 0, qt = 0;
@@ -7264,11 +7269,12 @@ export class Scene13WarLayer {
             }
         }
         if (cur() <= stop) return null;   // 已到中心附近，交还正常索敌
+        const minStop = Math.max(0, stop);
         for (let i = 0; i < look; i++) {
             const [bd, ba, bb] = best();
             if (bd >= cur()) break;
             a = ba; b = bb;
-            if (bd <= 3 * FLOW_SUB) break;
+            if (bd <= minStop) break;
         }
         const wa = (a - R) / FLOW_SUB, wb = (b - R) / FLOW_SUB;
         const wx = cx + (wa - wb) * (TW / 2), wy = cy + (wa + wb) * (TH / 2);
@@ -7343,24 +7349,31 @@ export class Scene13WarLayer {
         if (!r) return [x, y];
         const rad = this.radiusOf(key) / 40;
         let [a, b] = this.tileAB(x, y);
-        const M = 0.95 + rad + 0.3;
-        if (r.a1 - r.a0 > 2 * M) a = Math.min(r.a1 - M, Math.max(r.a0 + M, a));
-        if (r.b1 - r.b0 > 2 * M) b = Math.min(r.b1 - M, Math.max(r.b0 + M, b));
+        // 险要（pass）有内外双层城墙（间距 2 格），城内出兵必须夹在内城墙圈内侧，绝不落进双墙夹道或压上内墙
+        const inset = this.defenderCityType === 'pass' ? 2 : 0;
+        const M = inset + 0.75 + rad + 0.25;
+        const clampInner = (): void => {
+            if (r.a1 - r.a0 > 2 * M) a = Math.min(r.a1 - M, Math.max(r.a0 + M, a));
+            if (r.b1 - r.b0 > 2 * M) b = Math.min(r.b1 - M, Math.max(r.b0 + M, b));
+        };
+        clampInner();
+        const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         for (let pass = 0; pass < 4; pass++) {
             let moved = false;
             for (const sp of this.decorSprites) {
                 const ob = sp.obstruction;
-                if (sp.layer !== 'world' || !ob || sp.obstructionDisabled || sp.destroyed) continue;
+                if (sp.layer !== 'world' || !ob || sp.obstructionDisabled || sp.destroyed || this.gateSpriteSet?.has(sp)) continue;
+                const isWall = this.wallBySprite?.has(sp);
                 const [sa, sb] = this.tileAB(sp.x, sp.y);
                 const da = a - sa, db = b - sb;
-                const la = ob.x + rad + 0.05, lb = ob.y + rad + 0.05;
+                const la = (isWall ? 0.65 : ob.x) + rad + 0.05, lb = (isWall ? 0.65 : ob.y) + rad + 0.05;
                 if (Math.abs(da) >= la || Math.abs(db) >= lb) continue;
-                // 往离城心近的那一侧推（不往墙外推）
-                const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
-                if (la - Math.abs(da) < lb - Math.abs(db)) a = sa + (Math.abs(da) > 0.01 ? Math.sign(da) : Math.sign(am - sa) || 1) * la;
-                else b = sb + (Math.abs(db) > 0.01 ? Math.sign(db) : Math.sign(bm - sb) || 1) * lb;
+                // 墙件一律往城心侧推（严禁推向墙外或夹道）；院内建筑往最近侧推
+                if (la - Math.abs(da) < lb - Math.abs(db)) a = sa + (isWall ? (Math.sign(am - sa) || 1) : (Math.abs(da) > 0.01 ? Math.sign(da) : Math.sign(am - sa) || 1)) * la;
+                else b = sb + (isWall ? (Math.sign(bm - sb) || 1) : (Math.abs(db) > 0.01 ? Math.sign(db) : Math.sign(bm - sb) || 1)) * lb;
                 moved = true;
             }
+            clampInner();
             if (!moved) break;
         }
         return [this.worldCX + (a - b) * (TAC_TILE_W / 2), this.worldCY + (a + b) * (TAC_TILE_H / 2)];
@@ -7510,8 +7523,9 @@ export class Scene13WarLayer {
 
         const gd2 = (g.x - m.x) ** 2 + (g.y - m.y) ** 2;
         const aimD2 = (aim.x - m.x) ** 2 + (aim.y - m.y) ** 2;
-        // 守军已在城门口附近且目标就在身边（≤160px）⇒ 直接扑向目标接战，不走门外固定引导点
-        if (gd2 <= 150 * 150 && aimD2 <= 160 * 160) return aim;
+        const gn = this.gateOutwardNormal(g, ccx, ccy);
+        // 守军已走到外圈城门洞口处（!insideRing 且距门心 ≤85px）且目标就在身边（≤160px）⇒ 直接扑向目标接战
+        if (!this.insideRing(m.x, m.y) && gd2 <= 85 * 85 && aimD2 <= 160 * 160) return aim;
 
         const inWallRing = ma > r.a0 - 0.15 && ma < r.a1 + 0.15 && mb > r.b0 - 0.15 && mb < r.b1 + 0.15;
         const aimInside = this.insideRing(aim.x, aim.y);
@@ -7519,8 +7533,7 @@ export class Scene13WarLayer {
             // 目标在城内：已进城内则直奔目标；尚在城外或城门通道口则经城门往城内走入城
             if (this.insideRing(m.x, m.y)) return aim;
             if (!inWallRing && gd2 > 110 * 110) return { x: g.x, y: g.y };
-            const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
-            return { x: g.x - vx / vl * 90, y: g.y - vy / vl * 90 };
+            return { x: g.x - gn.x * 90, y: g.y - gn.y * 90 };
         }
         // 已出城墙圈外（!inWallRing）⇒ 直接奔城外目标，绝不在墙外再次触发出城引导
         if (!inWallRing) { m.exitViaGap = false; return aim; }
@@ -7533,22 +7546,32 @@ export class Scene13WarLayer {
             const exitSteps = this.fieldStepsAt(this.defExitFlow, m.x, m.y);
             const exitPt = Number.isFinite(exitSteps) ? this.fieldEndpoint(this.defExitFlow, m.x, m.y) : null;
             if (exitPt) {
-                const vx0 = g.x - ccx, vy0 = g.y - ccy, vl0 = Math.hypot(vx0, vy0) || 1;
-                const gOut = { x: g.x + vx0 / vl0 * 120, y: g.y + vy0 / vl0 * 120 };
+                const gOut = { x: g.x + gn.x * 110, y: g.y + gn.y * 110 };
                 const gSteps = gField ? this.fieldStepsAt(gField, m.x, m.y) : Infinity;
                 const gateTotal = (Number.isFinite(gSteps) ? gSteps * STEP_PX : Math.hypot(g.x - m.x, g.y - m.y)) + Math.hypot(aim.x - gOut.x, aim.y - gOut.y);
                 const gapTotal = exitSteps * STEP_PX + Math.hypot(aim.x - exitPt.x, aim.y - exitPt.y);
                 const useGap = m.exitViaGap ? gapTotal <= gateTotal : gapTotal < gateTotal * 0.85;
                 m.exitViaGap = useGap;
-                if (useGap) return this.flowWaypoint(m.x, m.y, this.defExitFlow, -1, 2, FLOW_SUB) ?? exitPt;
+                if (useGap) return this.flowWaypoint(m.x, m.y, this.defExitFlow, -1, 4 * FLOW_SUB, FLOW_SUB) ?? exitPt;
             }
         } else {
             m.exitViaGap = false;
         }
-        const wp = this.flowWaypoint(m.x, m.y, gField, -1, 2, FLOW_SUB);
+        const wp = this.flowWaypoint(m.x, m.y, gField, -1, 4 * FLOW_SUB, FLOW_SUB);
         if (wp) return wp;
-        const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
-        return { x: g.x + vx / vl * 90, y: g.y + vy / vl * 90 };
+        return { x: g.x + gn.x * 90, y: g.y + gn.y * 90 };
+    }
+
+    /** 城门通道朝向城外的单位法向量（严格垂直于该门所在墙面，避免矩形关隘或角门用径向向量斜撞门旁墙段） */
+    private gateOutwardNormal(g: WarBuilding, ccx: number, ccy: number): { x: number; y: number } {
+        const ex = g.extraSprites;
+        const dSign = (ex && ex.length >= 2)
+            ? (Math.sign(ex[ex.length - 1].y - ex[0].y) || -1)
+            : ((/_SE/.test(g.sprite.asset) ? 1 : -1) * (g.sprite.flip ? -1 : 1));
+        const nl = Math.hypot(TAC_TILE_W, TAC_TILE_H) || 1;
+        let nx = TAC_TILE_W / nl, ny = (-dSign * TAC_TILE_H) / nl;
+        if (nx * (g.x - ccx) + ny * (g.y - ccy) < 0) { nx = -nx; ny = -ny; }
+        return { x: nx, y: ny };
     }
 
     /**
@@ -7913,11 +7936,12 @@ export class Scene13WarLayer {
                 if (!isPanicked && m.f === 1 && this.gateSpriteSet?.has(object)) continue;   // 🔴 [2026-10-12] 守方从自己城门进出（混乱中不可穿墙/门）
                 if (!isPanicked && WALL_PASS_TYPES.has(m.key) && (this.wallBySprite?.has(object) || this.gateSpriteSet?.has(object))) continue;   // 🔴 [2026-10-13 主人令] 穿墙特种兵可以穿墙（混乱中不穿墙）
                 const obstruction = object.obstruction!;
+                const isWallObj = this.wallBySprite?.has(object);
                 const dx = px - object.x, dy = py - object.y;
                 const mapX = dx / TILE_W + dy / TILE_H;
                 const mapY = dy / TILE_H - dx / TILE_W;
-                const limitX = obstruction.x + unitTileRadius;
-                const limitY = obstruction.y + unitTileRadius;
+                const limitX = (isWallObj ? 0.58 : obstruction.x) + unitTileRadius;
+                const limitY = (isWallObj ? 0.58 : obstruction.y) + unitTileRadius;
                 if (pass === 0 && Math.abs(mapX) < limitX + 0.15 && Math.abs(mapY) < limitY + 0.15) {
                     if (object.obstructionReleaseAfterSec !== undefined) object.obstructionTouched = true;
                     // 单位已贴在墙/建筑碰撞边界（<= limit + 0.08）站桩攻击而不再产生穿透时，持续续期接触时间戳，防 0.35s / 1.5s 周期性断锁闪抖
@@ -8000,15 +8024,23 @@ export class Scene13WarLayer {
                     //      · 最近的是还立着的墙段 ⇒ 照旧挡；
                     //      · 最近的是还立着的城门 ⇒ 只有守方能过（攻方照旧挡）。
                     const mx = (px + m.prevX) / 2, my = (py + m.prevY) / 2;
-                    let nearest: WarBuilding | null = null, nd2 = 95 * 95;
+                    const PASS_R2 = 82 * 82;
+                    let onOpenPass = false;
+                    let nearStandingWall = false;
                     for (const w of this.wallGates) {
+                        const standing = this.wallStanding(w);
+                        const isPassable = !standing || (m.f === 1 && w.key === 'STONE_GATE');
                         const pts = w.extraSprites ? [w.sprite, ...w.extraSprites] : [w.sprite];
                         for (const s of pts) {
                             const d2 = (mx - s.x) ** 2 + (my - s.y) ** 2;
-                            if (d2 < nd2) { nd2 = d2; nearest = w; }
+                            if (d2 < PASS_R2) {
+                                if (isPassable) { onOpenPass = true; break; }
+                                nearStandingWall = true;
+                            }
                         }
+                        if (onOpenPass) break;
                     }
-                    blockedCross = !!nearest && this.wallStanding(nearest) && !(m.f === 1 && nearest.key === 'STONE_GATE');
+                    blockedCross = !onOpenPass && nearStandingWall;
                     // 🔴 [2026-11-04 主人报「守军刷新出来会刷到墙里，不动的时候一直在闪」] 上一帧本就嵌在墙件碰撞框里的守军
                     //    （出生点压在墙上），被推出墙时可能跨过墙线 ⇒ 若照样弹回，就每帧「推出→弹回」卡在墙里闪。这种情况放行。
                     if (blockedCross && m.f === 1) {

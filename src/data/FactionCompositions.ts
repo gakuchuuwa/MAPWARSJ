@@ -343,7 +343,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "oirat_ming": {
-        legionName: "帝国时代喀尔喀军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "sub",
     },
     "dzungar": {
@@ -367,7 +367,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "kaerka": {
-        legionName: "帝国时代喀尔喀军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "sub",
     },
     "wuzhumuqin": {
@@ -379,7 +379,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "buriat": {
-        legionName: "帝国时代喀尔喀军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "sub",
     },
     "huite": {

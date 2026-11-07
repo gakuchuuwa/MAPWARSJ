@@ -166,10 +166,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_ibrahimlodi',
+        commanderUnit: 'hero_cumanchief',
         slots: [
-            { type: 'elite_keshik', count: 2 },
-            { type: 'steppe_lancer', count: 3 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'elite_keshik', count: 3 },
             { type: 'hero_genghiskhan', count: 4 },
         ],
     },
@@ -763,7 +763,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_qutlugh',
+        commanderUnit: 'hero_ibrahimlodi',
         slots: [
             { type: 'steppe_lancer', count: 2 },
             { type: 'scythian_axe_cavalry', count: 3 },
@@ -777,12 +777,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（哈拉和林/库伦、额尔德尼召；额尔德尼召早期藏传佛教石墙白塔、土谢图汗早期石木行宫；漠北喀尔喀游牧骑兵、长矛复合弓破阵冲锋、大航海早期达延汗北疆铁骑大阵）
     //    英雄队（第 10 队·主将队）：hero_subotai / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代喀尔喀军团', civ: '漠北蒙古', age: 'imperial', deStyle: 'ASIA', region: 'STEPPE' as RegionType,
+        name: '帝国时代蒙古军团', civ: '漠北蒙古', age: 'imperial', deStyle: 'ASIA', region: 'STEPPE' as RegionType,
         buildingStyle: 'MONGOL',
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_subotai',
+        commanderUnit: 'hero_kotyankhan',
         slots: [
             { type: 'keshik', count: 2 },
             { type: 'elite_steppe_lancer', count: 3 },
@@ -4396,7 +4396,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'TIBET_CASTLE_AGE3', castleName: '吐蕃 藏式金顶宗堡',
         formationMode: 'echelon',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_subotai',
+        commanderUnit: 'hero_kotyankhan',
         slots: [
             { type: 'elite_liao_dao', count: 4 },
             { type: 'mangudai_elite', count: 3 },

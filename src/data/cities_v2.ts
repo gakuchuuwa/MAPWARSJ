@@ -499,7 +499,7 @@ buildingStyle: 'JIANGNAN', troops: 10000, mirror: true,
 
 
 
-    { id: 'city_chigucheng', name: '赤谷城', factionId: 'wusun', lat: 42.153304, lng: 77.585449, type: 'stockade', troops: 10000, region: 'WUSUN', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 乌孙赤谷城（伊塞克湖南）；伊犁河谷乌孙大昆弥都城，解忧公主和亲与大汉同盟战略支点；按 2026-10-25 标准：城居 查不到（<1） → 城寨' },
+    { id: 'city_chigucheng', name: '赤谷城', factionId: 'wusun', lat: 42.153304, lng: 77.585449, type: 'stockade', troops: 10000, region: 'WUSUN', buildingStyle: 'WESTERN', note: '🔴 [2026-11-07 按史补依据] 乌孙赤谷城（伊塞克湖南）；伊犁河谷乌孙大昆弥都城，解忧公主和亲与大汉同盟战略支点；按 2026-10-25 标准：城居 查不到（<1） → 城寨。🔴 [2026-11-07 按史改判文化] 原 CENTRAL_ASIA（中亚）是照现代地理分区判的，史籍口径不符：《汉书·西域传》「乌孙国……大昆弥治赤谷城」，乌孙是西域都护府辖下的西域行国，与康居、大宛同列西域；本库西域键的古典军团原名即「塞种军团」，正对乌孙—塞种这条印欧游牧。故改判 WESTERN（西域）' },
 
     { id: 'city_guishancheng', name: '贵山城', factionId: 'dayuan', lat: 41.290174, lng: 71.666565, type: 'small_city', region: 'WESTERN',
 buildingStyle: 'WESTERN', troops: 10000,
@@ -1556,7 +1556,7 @@ buildingStyle: 'MONGOL', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 喀尔喀库伦（今乌兰巴托）；库伦；土谢图小城；推算：城居 0.3 万（库伦，土谢图部聚落 0.3 万）→ 城寨',
     },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：固尔札（伊犁）：准噶尔汗庭所在，归鞑靼（中亚草原）
-    { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 清固尔札（今伊宁），伊犁；推算：城居 0.8 万（固尔札，准噶尔伊犁城 0.8 万）→ 城寨' },
+    { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '🔴 [2026-11-07 按史补依据] 清固尔札（今伊宁），伊犁；推算：城居 0.8 万（固尔札，准噶尔伊犁城 0.8 万）→ 城寨。🔴 [2026-11-07 按史重判文化] 原 CENTRAL_ASIA（中亚）不符：固尔札是准噶尔汗国王庭，蒙古语名「固尔札都纲」的王家寺院（汉俗称金顶寺）为藏传佛教格鲁派，居民为准噶尔（卫拉特蒙古）与伊犁回屯，主体不是中亚伊斯兰—突厥绿洲城（本库 CENTRAL_ASIA 键＝撒马尔罕／布哈拉／金帐那一系）；同区科布多（卫拉特）判 MONGOL，故改判 MONGOL（蒙古）。代理说明：本库无「卫拉特」键（不新增文化），帝国时代军团取 MONGOL 这一格＝「帝国时代喀尔喀军团」，名字属代理' },
 
     { id: 'city_yadong', name: '卓木', factionId: 'ganden', lat: 28.243709, lng: 89.376526, type: 'stockade', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
@@ -1735,7 +1735,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
     { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.78717, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 贝尔湖（明捕鱼儿海之战）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：和博克：准噶尔盆地牧地，归鞑靼（中亚草原）
-    { id: 'city_dzungar_basin', name: '和博克', factionId: 'choros', lat: 46.713523, lng: 85.68512, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', note: '🔴 [2026-11-07 按史补依据] 和布克赛尔（准噶尔）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）' },
+    { id: 'city_dzungar_basin', name: '和博克', factionId: 'choros', lat: 46.713523, lng: 85.68512, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MONGOL', note: '🔴 [2026-11-07 按史补依据] 和布克赛尔（准噶尔）；人口待考：≤1700 年城居人口查不到 → 按 2026-10-25 标准③末行「查不到人口 → 城寨」置城寨（2026-10-28 按史补注）；🔴 [2026-11-07 按史重判文化] 原 CENTRAL_ASIA 不符：和布克赛尔是准噶尔绰罗斯部（准噶尔核心氏族）的牧地，无伊斯兰—突厥绿洲城，居民为卫拉特蒙古、信仰藏传佛教；同区科布多（卫拉特）、固尔札（准噶尔王庭）判 MONGOL，故改判 MONGOL（蒙古）。代理说明：本库无「卫拉特」键，帝国时代军团取 MONGOL 这一格＝帝国时代喀尔喀军团，名字属代理' },
 
 
 
@@ -1993,8 +1993,8 @@ buildingStyle: 'NORTHEAST', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 渤海东康（绥芬河上游）；东康；肃慎小城',
     },
     { id: 'city_kanka', name: '康卡', factionId: 'kangju', lat: 40.832522, lng: 68.634338, type: 'stockade', region: 'WESTERN_FEUDAL',
-buildingStyle: 'CENTRAL_ASIA', troops: 10000,
-        note: '🔴 [2026-11-07 按史补依据] 康国城（撒马尔罕一带）；🔴 [2026-11-07 第一步·只看据点] 锡尔河—塔拉斯河一带（七河／河中北缘），属 CENTRAL_ASIA 鞑靼区域，原 WESTERN 不符；康卡；康居小城',
+buildingStyle: 'WESTERN', troops: 10000,
+        note: '🔴 [2026-11-07 按史补依据] 康国城（撒马尔罕一带）；🔴 [2026-11-07 按史改回西域] 原按现代地理分区判 CENTRAL_ASIA（「七河／河中北缘属鞑靼区域」），史籍口径不符：《汉书·西域传》有「康居国」，王治卑阗城，行国，属西域都护羁縻，与乌孙、大宛同列西域；「中亚」是现代地理分区、不是史书概念，不作判据。按 2026-11-07 主人令改回 WESTERN（西域）；康卡；康居小城',
     },
     { id: 'city_asuka', name: '千早城', factionId: 'nanchou', lat: 34.336668, lng: 135.689392, type: 'pass', region: 'JAPAN',
 buildingStyle: 'JAPAN', troops: 10000,
@@ -3033,7 +3033,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.53, lng: 114.32, type: 'medium_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN', mirror: true , note: '🔴 [2026-11-07 按史补依据] 三国武昌（今鄂州）；按 2026-10-25 标准：城居 5–8 → 中城' },
     { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'small_city', region: 'CENTRAL', buildingStyle: 'WEI', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 晋国曲沃邑（今曲沃），山西；🔴 [2026-11-07 第一步·只看据点] 晋—赵—魏故地（山西、河北南部，河朔三镇之魏博），属 WEI 河朔区域，原 CENTRAL 不符；晋国曲沃，太原让位柴周；推算：城居 1.5 万（曲沃，晋国别都，同期 1–2 万）→ 小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：塔城（塔尔巴哈台）：准噶尔牧地，归鞑靼（中亚草原）
-    { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746, lng: 82.983, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'CENTRAL_ASIA' , note: '🔴 [2026-11-07 按史补依据] 清塔尔巴哈台（准噶尔西）；推算：城居 0.5 万（塔城，清边城 0.5 万）→ 城寨' },
+    { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746, lng: 82.983, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL' , note: '🔴 [2026-11-07 按史补依据] 清塔尔巴哈台（准噶尔西）；推算：城居 0.5 万（塔城，清边城 0.5 万）→ 城寨。🔴 [2026-11-07 按史重判文化] 原 CENTRAL_ASIA 不符：塔尔巴哈台是准噶尔（卫拉特蒙古）西境牧地，1766 年清的绥靖城只是驻防点（驻满、索伦、察哈尔、厄鲁特兵），居民主体是准噶尔/厄鲁特蒙古，不是中亚伊斯兰—突厥绿洲城；同区科布多、固尔札、和布克赛尔同判 MONGOL，故改判 MONGOL（蒙古）。代理说明：本库无「卫拉特」键，帝国时代军团取 MONGOL 这一格＝帝国时代喀尔喀军团，名字属代理' },
 
 
 

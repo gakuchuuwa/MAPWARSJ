@@ -37,6 +37,16 @@ import { isMountainPass, EXCLUDED_PASS_IDS } from '../../systems/passMountainDec
  *    屏外排版量出每张图的矩形 → 建筑 / 城墙 / 城门入场为世界精灵（与士兵按脚点排序），
  *    城墙城门照旧可攻击、可破（WALL_GATE_STATS 同一套）；地基贴图留在 DOM 地基层。
  */
+const buildingMetaCache = new Map<string, Promise<any>>();
+function fetchBuildingMeta(dir: string): Promise<any> {
+    let p = buildingMetaCache.get(dir);
+    if (!p) {
+        p = fetch('/SUCAI_BUILDING/' + dir + '/_meta.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
+        buildingMetaCache.set(dir, p);
+    }
+    return p;
+}
+
 export function buildDeCity(this: Scene13WarLayer): void {
     const c = this.deCity;
     if (!c) return;
@@ -51,8 +61,7 @@ export function buildDeCity(this: Scene13WarLayer): void {
     }
     void measureStrategicCity(c).then(async (pieces) => {
         if (gen !== this.assetGen || this.deCity !== c) return;
-        const metas = await Promise.all(pieces.map((p) =>
-            fetch('/SUCAI_BUILDING/' + p.dir + '/_meta.json').then((r) => (r.ok ? r.json() : null)).catch(() => null)));
+        const metas = await Promise.all(pieces.map((p) => fetchBuildingMeta(p.dir)));
         if (gen !== this.assetGen || this.deCity !== c) return;
         const { x: cx, y: cy } = this.deCityCenter;
         const wonderSet = new Set<string>();

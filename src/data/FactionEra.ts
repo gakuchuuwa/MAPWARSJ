@@ -296,7 +296,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'kaernute': [{ from: -9999, era: 'antiquity' }], // 卡尔努特
     'kaga_d': [{ from: -9999, era: 'imperial' }], // 一向宗
     'kakizaki': [{ from: -9999, era: 'imperial' }], // 松前
-    'kala': [{ from: -9999, era: 'feudal' }], // 喀喇
+    'kala': [{ from: -9999, era: 'feudal' }, { from: 1050, era: 'castle' }], // 喀喇汗｜🔴 [2026-11-07 按史分段] 840–1050 部族征召军（萨图克一朝＝封建时代安西军团）；1050 后西支受塞尔柱影响行伊克塔／古拉姆，军制已变 → 城堡时代；末王奥斯曼 1212 撒马尔罕归此段
     'kalinga': [{ from: -9999, era: 'antiquity' }], // 羯陵伽
     'kaliya': [{ from: -9999, era: 'antiquity' }], // 卡里亚
     'kanan': [{ from: -9999, era: 'antiquity' }], // 推罗
