@@ -10756,6 +10756,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": -11,
             "offsetY": -29
+        },
+        "/assets/SASANIAN/sashan_beilusi.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {
