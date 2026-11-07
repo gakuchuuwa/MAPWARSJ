@@ -3966,8 +3966,7 @@ export class Scene13WarLayer {
      *    **凡是用到列数的地方都走这里**（排阵 / 队列宽 / 领队打分 / 玩家入列 / 增兵归队），不然排数对不上。
      */
     private filesOfSide(key: string, f: 0 | 1): number {
-        const uF = this.advanceVec[f], uS = this.sideVec[f];
-        return marchFilesForSide(key, f, uF.x, uS.x);
+        return marchFilesForSide(key, f);
     }
 
     /** 这一方有没有**真武将**：在场的据点武将，或只在这一仗出场的战场人物（不在生卒表里，在场闸对他们恒为 false） */
@@ -7230,7 +7229,7 @@ export class Scene13WarLayer {
         let rear = Infinity;
         for (const s of this.spawns) {
             if (s.f !== 1 || s.outFwd === undefined) continue;
-            const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / marchFilesOf(s.key)));
+            const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / this.filesOfSide(s.key, 1)));
             const depMax = (ranks - 1) * marchDepthSpacingOf(s.key);
             rear = Math.min(rear, s.outFwd - depMax - this.radiusOf(s.key));
         }

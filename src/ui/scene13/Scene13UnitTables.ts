@@ -782,10 +782,10 @@ export function marchFilesOf(key: string): number {
  * 同一方所有用到「列数」的地方（出兵口排阵、每队列宽、领队打分、玩家入列、增兵归队）都必须走这一个入口，
  * 否则排数/列数对不上，方阵会参差。
  */
-export function marchFilesForSide(key: string, sideF: 0 | 1, fwdX: number, sideX: number): number {
+export function marchFilesForSide(key: string, sideF: 0 | 1): number {
     const base = marchFilesOf(key);
     if (sideF !== 0) return base;
-    return Math.abs(fwdX) >= Math.abs(sideX) ? Math.max(1, Math.round(base / 2)) : base;
+    return Math.max(1, Math.round(base / 2));
 }
 /**
  * 槽位间距基准（px）：步兵半径 8、骑兵 10，两两之和 16~20，24 够用。

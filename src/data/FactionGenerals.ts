@@ -6517,7 +6517,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'lulin_liuxiu', factionId: 'han_d', cityId: 'city_kunyang', generalName: '刘秀', portrait: '/assets/CENTRAL/lulin_liuxiu.png', eliteName: '幽州突骑', eliteTier: 1 },
+        { generalId: 'lulin_liuxiu', factionId: 'han_d', cityId: 'city_kunyang', generalName: '刘秀', portrait: '/assets/CENTRAL/lulin_liuxiu.png', eliteName: '舂陵子弟', eliteTier: 1 },   // 精锐改名（2026-11-07）：昆阳之战刘秀率舂陵子弟突围（《后汉书·光武帝纪》），幽州突骑是后来渔阳上谷突骑（耿弇、吴汉所部），此时尚未归他
 
 
 
@@ -7039,7 +7039,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'weiyuan_d_niangengyao', factionId: 'manzhou_d', cityId: 'city_lanzhou', generalName: '年羹尧', portrait: '/assets/KHITAN/weiyuan_d_niangengyao.png', eliteName: '四川绿营', eliteTier: 1  },   // 按史：年羹尧平青海统川陕绿营督标（《清史稿·年羹尧传》）；移驻皋兰与清将杨应琚同城（青唐城专归秃发南凉）
+        { generalId: 'weiyuan_d_niangengyao', factionId: 'manzhou_d', cityId: 'city_lanzhou', generalName: '年羹尧', portrait: '/assets/KHITAN/weiyuan_d_niangengyao.png', eliteName: '川陕绿营', eliteTier: 1  },   // 精锐改名（2026-11-07）：原「四川绿营」与注释不符；年羹尧平青海统川陕绿营督标（《清史稿·年羹尧传》），与岳钟琪的四川绿营提标同属川陕绿营一军移驻皋兰与清将杨应琚同城（青唐城专归秃发南凉）
 
 
 
@@ -10730,7 +10730,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'champa_zhipenge', cityId: 'city_myson', generalName: '制蓬峨', portrait: '/assets/KHMER/champa_zhipenge.png', eliteName: '高棉战象', eliteTier: 2 },
+        { generalId: 'champa_zhipenge', cityId: 'city_myson', generalName: '制蓬峨', portrait: '/assets/KHMER/champa_zhipenge.png', eliteName: '占婆战象', eliteTier: 2 },   // 精锐拆分（2026-11-07）：原与真腊阇耶跋摩共用「高棉战象」，占婆（占族）与真腊（高棉族）不同民族，不许共用同一番号
 
 
 
@@ -13664,7 +13664,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    ahaomu: { generalId: 'ahaomu_laqite', cityId: 'city_geergang', generalName: '拉其特', portrait: '/assets/BENGALIS/ahaomu_laqite.png', eliteName: '孟加拉战象', eliteTier: 2 },
+    ahaomu: { generalId: 'ahaomu_laqite', cityId: 'city_geergang', generalName: '拉其特', portrait: '/assets/BENGALIS/ahaomu_laqite.png', eliteName: '阿豪姆战象', eliteTier: 2 },   // 精锐拆分（2026-11-07）：原与波罗王朝三名将共用「孟加拉战象」，但阿豪姆（阿萨姆傣族政权）与波罗（孟加拉人）不同民族，不许共用同一番号；阿豪姆军以象兵著称（拉其特·博尔普坎 1671 萨莱加特之战）
 
 
 

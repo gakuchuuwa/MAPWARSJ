@@ -2383,15 +2383,14 @@ function runNameAudit(): void {
     }
 
     // 精锐番号
-    const eliteByName = new Map<string, string>();
     for (const [fid, e] of Object.entries(ed.elites)) {
         const n = e.name;
         if (!n) continue;
         // 2026-11-07 主人令：史源名不限字数，自拟名 4–8 字（规则与判定都在 EliteNameRules）
         const badEliteName = eliteNameViolation(n);
         if (badEliteName) problems.push({ level: 'error', msg: `${badEliteName} @ ${fid}（${facNameOf(fid)}）` });
-        if (eliteByName.has(n)) problems.push({ level: 'error', msg: `精锐番号重复: "${n}" @ ${fid}（${facNameOf(fid)}） 与 ${eliteByName.get(n)}` });
-        else eliteByName.set(n, fid);
+        // 🔴 [2026-11-07 主人令「精锐名可重复…除了 T0，两个武将可以用一个精锐」] 不再查番号重名；
+        //    同一个番号带几个人由档位定（T0 1 人／T1 2／T2 4／T3 8／T4 8），人数超限由精锐审计报，不在这里拦。
     }
 
     // 势力名
