@@ -3052,7 +3052,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：巴里坤：天山北路，汉—准噶尔通道
-    { id: 'city_balikun', name: '巴里坤', factionId: 'pulei', lat: 43.6, lng: 93, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 汉蒲类地、清巴里坤（天山东段）；推算：城居 0.5 万（巴里坤，清边城 0.5 万）→ 城寨' },
+    { id: 'city_balikun', name: '巴里坤', factionId: 'han_d', lat: 43.6, lng: 93, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' , note: '🔴 [2026-11-07 按史补依据] 汉蒲类地、清巴里坤（天山东段）；推算：城居 0.5 万（巴里坤，清边城 0.5 万）→ 城寨' },
 
     { id: 'city_buergenjuntai', name: '布尔根', factionId: 'duerbote', lat: 46.09, lng: 91.53, type: 'pass', region: 'STEPPE_IMPERIAL', buildingStyle: 'MONGOL', troops: 10000,
         note: '🔴 [2026-11-07 按史补依据] 布尔根河（科布多南）；布尔根；乌梁海关隘',
@@ -3967,7 +3967,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_boergong', name: '博尔贡', factionId: 'nuowei', lat: 61.047, lng: 7.812, type: 'stockade', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '🔴 [2026-11-07 按史补依据] 挪威博尔贡；挪威松恩峡湾木板教堂；定级依据§6.2：中世纪人口无数字（木板教堂所在村落仅教堂+数座农庄），人口不足一万 → 按规则判城寨' },
     { id: 'city_beiergen', name: '卑尔根', factionId: 'nuowei', lat: 60.39, lng: 5.32, type: 'stockade', region: 'VIKINGS', buildingStyle: 'VIKINGS', troops: 10000, note: '🔴 [2026-11-07 按史补依据] 挪威卑尔根；卑尔根（Bergen）：挪威西岸海港，13–17 世纪挪威最大城与汉萨同盟四大商站之一（布吕根 Bryggen 码头，鳕鱼干贸易）；中世纪人口无确数，按「算不出一律城寨」。【建筑风格】挪威木构，故 VIKINGS' },
     { id: 'city_kanpeier', name: '坎佩尔', factionId: 'keernuwaye', lat: 47.995, lng: -4.103, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'BRITONS', note: '🔴 [2026-11-07 按史补依据] 布列塔尼坎佩尔；布列塔尼首府，圣科朗坦大教堂；推算：城居 2 万（都城/首府，同期同类都城 2 万）→ 小城' },
-    { id: 'city_waerna', name: '瓦尔纳', factionId: 'aodesuosi', lat: 43.214, lng: 27.915, type: 'stockade', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '🔴 [2026-11-07 按史补依据] 黑海西岸瓦尔纳；古奥德索斯城，黑海港；定级依据§6.2：城内2100–2300人（1515/1530）、5200–5500人（1597奥斯曼税册），未达1万但属城市→小城；推算：城居 0.5 万（瓦尔纳（奥德索斯），16 世纪约 0.5 万）→ 城寨' },
+    { id: 'city_waerna', name: '瓦尔纳', factionId: 'baojialiya', lat: 43.214, lng: 27.915, type: 'stockade', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '🔴 [2026-11-07 按史补依据] 黑海西岸瓦尔纳；古奥德索斯城，黑海港；定级依据§6.2：城内2100–2300人（1515/1530）、5200–5500人（1597奥斯曼税册），未达1万但属城市→小城；推算：城居 0.5 万（瓦尔纳（奥德索斯），16 世纪约 0.5 万）→ 城寨' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：杰姆（突尼斯）：罗马阿非利加行省，罗马古典
     { id: 'city_jiemu', name: '杰姆', factionId: 'luoma_diguo', lat: 35.296, lng: 10.706, type: 'small_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'ROMA', note: '🔴 [2026-11-07 按史补依据] 北非杰姆（罗马行省城）；杰姆圆形竞技斗兽要塞城（古罗马蒂斯德鲁斯），蒂斯德鲁斯军团驻防；杰姆（罗马时期 Thysdrus），城居 3–5 万 → 小城' },
     { id: 'city_yazide', name: '亚兹德', factionId: 'yilihanguo_d', lat: 31.897, lng: 54.356, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN' , note: '🔴 [2026-11-07 按史补依据] 法尔斯—亚兹德；推算：城居 1.5 万（亚兹德，伊朗内陆商道城 1–2 万）→ 小城' },

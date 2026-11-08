@@ -1107,7 +1107,6 @@ export const FACTIONS: Faction[] = [
 
     { id: 'yiwu', name: '伊吾' },
 
-    { id: 'pulei', name: '蒲类' },
 
     { id: 'duerbote', name: '杜尔伯特' },
     { id: 'kaerka', name: '喀尔喀' },
@@ -1624,7 +1623,6 @@ export const FACTIONS: Faction[] = [
     { id: 'yilisi', name: '埃利斯' },
     { id: 'nuowei', name: '挪威' },
     { id: 'keernuwaye', name: '康沃尔' },
-    { id: 'aodesuosi', name: '奥德索斯' },
 
     { id: 'wuer', name: '新苏美尔' },
 

@@ -996,7 +996,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "aquidan": {
-        legionName: "城堡时代法兰西骑士军团",
+        legionName: "封建时代法兰克军团",
         legionType: "sub",
     },
     "yinggelan": {
@@ -1849,10 +1849,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     // 🔴 [2026-11-01 按史] 甘州回鹘＝封建时代 × 河西文化（据点张掖 buildingStyle HEXI）→ 封建时代河西军团
-    "pulei": {
-        legionName: "古典时代西域军团",
-        legionType: "sub",
-    },
     "chuyue": {
         legionName: "封建时代图兰军团",
         legionType: "sub",
@@ -2515,10 +2511,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "sengjialuo": {
         legionName: "封建时代朱罗军团",
-        legionType: "region",
-    },
-    "aodesuosi": {
-        legionName: "古典时代色雷斯军团",
         legionType: "region",
     },
     "tomara_gwalior": {

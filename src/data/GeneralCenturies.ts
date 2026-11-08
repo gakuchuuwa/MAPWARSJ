@@ -1629,6 +1629,31 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'ayoubu_turanshah': 12,   // 图兰沙
     'bolinixiya_isokelekel': 17,   // 伊索克勒克尔
     'yinggelan_somers': 17,   // 萨默斯
+    // ── 2026-11-08 知名战敌将 ──
+    'ruidian_gustav': 17,
+    'luoma_catulus': -3,
+    'bfe_harold_godwinson': 11,
+    'bfe_mstislav_kiev': 13,
+    'bfe_galdan_tseren': 18,
+    'bfe_xiaotalin': 10,
+    'bfe_fu_rui': 4,
+    'bfe_alutai': 15,
+    'bfe_yao_shao': 5,
+    'bfe_chen_jingxuan': 9,
+    'bfe_tran_duc_tong': 14,
+    'bfe_wang_lin': 6,
+    'bfe_liu_shang': 1,
+    'bfe_shoni_yorihisa': 14,
+    'qin_huigong': -4,
+    'rouran_doulun': 5,
+    'xianbei_ruoluobaneng': 4,
+    'mowoer_ramsingh': 17,
+    'manding_mahmud_iii': 16,
+    'womaya_hubayra': 8,
+    'ladakh_dedannanjie': 17,
+    'yaqi_yisikanda': 17,   // 伊斯坎达尔 · yaqi · 亚齐
+    'malindi_bashiri': 15,   // 巴希里 · malindi · 马林迪
+    'aquidan_odo': 8,   // 奥多 · aquidan · 波尔多
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

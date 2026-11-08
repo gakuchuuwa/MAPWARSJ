@@ -35,7 +35,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'jiaohuangguo': [{ from: -9999, era: 'castle' }], // 教皇国｜756 丕平献土—1500＝城堡时代罗马教廷军团；1500 后＝帝国时代意大利军团
     'yalan': [{ from: -9999, era: 'antiquity' }], // 亚兰（大马士革王国）｜前 10 世纪–前 732＝古典时代近东军团
     // 🔴 [2026-10-25 补齐·主人令「每个势力都要有时代」] 这三家只有据点、没有武将，此前漏登记：
-    'aodesuosi': [{ from: -9999, era: 'antiquity' }], // 奥德索斯｜瓦尔纳旧称，希腊殖民城邦（前 6 世纪起）＝古典；势指针＝古典时代色雷斯军团
     'jienei': [{ from: -9999, era: 'feudal' }], // 杰内｜加纳—马里商路商城（8–13 世纪，加纳帝国期入封建段）；势指针＝封建时代加纳军团
     'ghana_diguo': [{ from: -9999, era: 'feudal' }], // 加纳帝国｜瓦加杜加纳（约 300–1200，8–11 世纪盛期，马宁）；势指针＝封建时代加纳军团
     'cueva': [{ from: -9999, era: 'imperial' }], // 库埃瓦｜巴拿马科马格雷酋邦（1510 巴尔沃亚到访）＝帝国段；势指针＝帝国时代格查武士军团
@@ -97,7 +96,7 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'aolisha': [{ from: -9999, era: 'castle' }], // 东恒伽
     'aolitai': [{ from: -9999, era: 'antiquity' }], // 奥里泰
     'aosiruowen': [{ from: -9999, era: 'antiquity' }], // 奥斯若恩
-    'aquidan': [{ from: -9999, era: 'castle' }], // 阿奎丹
+    'aquidan': [{ from: -9999, era: 'feudal' }], // 阿奎丹｜阿基坦公国（奥多 650–735，721 图卢兹之战）＝封建时代法兰克军团
     'arakan': [{ from: -9999, era: 'imperial' }], // 阿拉干
     'ashikaga': [{ from: -9999, era: 'castle' }], // 室町
     'yamato': [{ from: -9999, era: 'feudal' }], // 大和（大和朝廷·平安时代；坂上田村麻吕 758–811）
@@ -417,7 +416,6 @@ export const FACTION_ERA: Readonly<Record<string, readonly FactionEraSegment[]>>
     'pishan': [{ from: -9999, era: 'antiquity' }], // 皮山
     'pomeilaniya': [{ from: -9999, era: 'castle' }], // 波美拉尼亚
     'pufaerci': [{ from: -9999, era: 'castle' }], // 普法尔茨
-    'pulei': [{ from: -9999, era: 'antiquity' }], // 蒲类
     'puluowangsi': [{ from: -9999, era: 'castle' }], // 普罗旺斯
     'pusikefu_gongheguo': [{ from: -9999, era: 'castle' }], // 伟利卡亚
     // 🔴 [2026-11-01 补缺格] 骠族｜按史分段：古典＝骠国城邦期（毗湿奴城前 200–室利差罗 4–5 世纪为都）→ 476 起封建（室利差罗盛期至骠国 9 世纪）

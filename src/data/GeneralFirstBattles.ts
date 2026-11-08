@@ -140,6 +140,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 20000,
         enemyFactionId: 'ruidian_si',
         enemyFactionName: '瑞典',
+        enemyGeneralId: 'ruidian_gustav',
         enemyTroops: 15000,
         introLines: [
             { speaker: 'general', text: '瑞典狮子古斯塔夫率新教联军逼近纽伦堡，我军掘壕固守阿尔特费斯特古堡高地！瑞典人敢来强攻，必教其尸横山下！' },
@@ -10191,6 +10192,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         myTroops: 10000,
         enemyFactionId: 'luoma_diguo',
         enemyFactionName: '罗马共和国',
+        enemyGeneralId: 'luoma_catulus',
         enemyTroops: 10000,
         introLines: [
             { speaker: 'general', text: '罗马舰队封锁西西里，我自海尔克特山转据厄律克斯山，以万人扼守险要骚扰其后路！壮士，据山固守，让罗马人寸步难进！' },
@@ -11637,6 +11639,406 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
             { speaker: 'player', text: '愿随菊池将军决战筑后川，破少弐赖尚！' },
         ],
     },
+    // ── 🔴 [2026-11-08 主人令「分批补齐最后 18 位名将的知名战」] ──
+    // 第一批（中国先秦～魏晋十六国～唐归义军）
+    // #514 吴起 (-440 ~ -381) — 公元前389年阴晋之战（魏武卒以少胜多破秦惠公军；出处：《史记·孙子吴起列传》《吴子》）
+    wei_wuqi: {
+        generalId: 'wei_wuqi',
+        battleName: '阴晋之战',
+        battleYear: -389,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '阴晋',
+        targetCityId: 'city_tongguan',
+        targetLat: 34.54,
+        targetLng: 110.29,
+        myTroops: 15000,
+        enemyFactionId: 'qin',
+        enemyFactionName: '秦国',
+        enemyGeneralId: 'qin_huigong',
+        enemyTroops: 15000,
+        introLines: [
+            { speaker: 'general', text: '秦惠公倾国来争河西，自恃人众！我魏武卒衣三属之甲、操十二石之弩，严阵以待——壮士可愿随某陷阵击鼓，百战破秦？' },
+            { speaker: 'player', text: '愿随吴将军决战阴晋，大破秦军！' },
+        ],
+    },
+
+    // #515 张轨 (255 ~ 314) — 公元305年姑臧之战（破鲜卑若罗拔能奠定前凉基业；出处：《晋书·张轨传》）
+    liangzhou_zhanggui: {
+        generalId: 'liangzhou_zhanggui',
+        battleName: '姑臧之战',
+        battleYear: 305,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '姑臧郊外',
+        targetCityId: 'city_wuwei',
+        targetLat: 37.93,
+        targetLng: 102.64,
+        myTroops: 15000,
+        enemyFactionId: 'xianbei',
+        enemyFactionName: '鲜卑',
+        enemyGeneralId: 'xianbei_ruoluobaneng',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '鲜卑大人若罗拔能率众十万寇掠姑臧，河西震动！凉州大马横行天下，壮士可愿随老夫率精骑出击，阵斩敌酋、保安河西？' },
+            { speaker: 'player', text: '愿随张刺史决战姑臧，大破鲜卑敌军！' },
+        ],
+    },
+
+    // #516 刘聪 (275 ~ 318) — 公元311年洛阳之战（攻拔西晋都城洛阳；出处：《晋书·刘聪载记》）
+    shizhou_liucong: {
+        generalId: 'shizhou_liucong',
+        battleName: '洛阳之战',
+        battleYear: 311,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '洛阳',
+        targetCityId: 'city_luoyang',
+        targetLat: 34.62,
+        targetLng: 112.45,
+        myTroops: 20000,
+        enemyFactionId: 'dongjin',
+        enemyFactionName: '西晋',
+        enemyGeneralId: 'bfe_wangyan',
+        enemyTroops: 15000,
+        introLines: [
+            { speaker: 'general', text: '司马氏骨肉相残、洛阳空虚！我汉赵铁骑已合围京师十二门，壮士可愿随朕登城破阵，一举问鼎中原？' },
+            { speaker: 'player', text: '愿随陛下共赴洛阳之战，攻拔晋都！' },
+        ],
+    },
+
+    // #517 盖嘉运 (685 ~ 745) — 公元739年碎叶水之战（大破突骑施黑姓可汗、擒交河公主；出处：《旧唐书·玄宗纪》《资治通鉴》卷二一四）
+    sai_gaijiayun: {
+        generalId: 'sai_gaijiayun',
+        battleName: '碎叶水之战',
+        battleYear: 739,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '碎叶水',
+        targetCityId: 'city_talas',
+        targetLat: 42.886,
+        targetLng: 71.348,
+        myTroops: 18000,
+        enemyFactionId: 'tujishi',
+        enemyFactionName: '突骑施',
+        enemyGeneralId: 'tujishi_sulukehan',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '突骑施连年侵扰安西四镇，某统汉蕃精骑夜渡细叶川直捣敌帐！壮士可愿随本节度使纵马冲阵，扬大唐天威于葱岭以西？' },
+            { speaker: 'player', text: '愿随盖公出击碎叶水，大破突骑施敌军！' },
+        ],
+    },
+
+    // #518 张议潮 (799 ~ 872) — 公元848年沙州收复战（率众起义驱逐吐蕃守将、收复瓜沙十一州；出处：《资治通鉴》卷二四九）
+    shazhou_zhangyichao: {
+        generalId: 'shazhou_zhangyichao',
+        battleName: '沙州收复战',
+        battleYear: 848,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '沙州城',
+        targetCityId: 'city_dunhuang',
+        targetLat: 40.14,
+        targetLng: 94.66,
+        myTroops: 15000,
+        enemyFactionId: 'tubo',
+        enemyFactionName: '吐蕃',
+        enemyGeneralId: 'duomi_lunkongre',
+        enemyTroops: 15000,
+        introLines: [
+            { speaker: 'general', text: '河西陷蕃百余年，父老日夜北望长安！今吐蕃内乱，某率沙州义勇披甲举事，壮士可愿随我夺回城门，重升大唐旌旗？' },
+            { speaker: 'player', text: '愿随张公起兵光复沙州，驱逐吐蕃守军！' },
+        ],
+    },
+
+    // 第二批（北方游牧·中亚·青藏·明清）
+    // #519 阿伏至罗 (440 ~ 503) — 公元487年高车反击柔然之战（率部十万西迁自号候娄匐勒，大破柔然豆仑可汗；出处：《魏书·高车传》）
+    gaoche_afuzhiluo: {
+        generalId: 'gaoche_afuzhiluo',
+        battleName: '高车反击柔然之战',
+        battleYear: 487,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '阿尔泰山南麓',
+        targetCityId: 'city_saierwusu',
+        targetLat: 44.819,
+        targetLng: 106.801,
+        myTroops: 16000,
+        enemyFactionId: 'rouran',
+        enemyFactionName: '柔然',
+        enemyGeneralId: 'rouran_doulun',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '柔然可汗豆仑穷兵黩武，驱我部族充作前驱！我高车十万控弦已自立于金山之阳，壮士，随我回马迎战，击碎柔然追兵！' },
+            { speaker: 'player', text: '愿随大天子迎击柔然，大破豆仑可汗！' },
+        ],
+    },
+
+    // #520 药罗葛菩萨 (590 ~ 640) — 公元627年马鬣山之战（以五千骑破东突厥十万大军，威震漠北；出处：《旧唐书·迴纥传》）
+    yaoluoge_yaoluogepusa: {
+        generalId: 'yaoluoge_yaoluogepusa',
+        battleName: '马鬣山之战',
+        battleYear: 627,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '马鬣山',
+        targetCityId: 'city_yanran',
+        targetLat: 46.277,
+        targetLng: 102.802,
+        myTroops: 15000,
+        enemyFactionId: 'tujue',
+        enemyFactionName: '突厥',
+        enemyGeneralId: 'tujue_xielikehan',
+        enemyTroops: 15000,
+        introLines: [
+            { speaker: 'general', text: '突厥颉利可汗遣重兵十万来讨，欺我回纥人少！某身先士卒射必洞胸，勇士们，张满硬弓随本俟利发冲锋，追奔至天山！' },
+            { speaker: 'player', text: '愿随菩萨将军决战马鬣山，大破突厥敌军！' },
+        ],
+    },
+
+    // #521 绰儿马罕 (1190 ~ 1241) — 公元1231年击灭扎兰丁之战（率探马赤军西征追击花剌子模末代沙阿；出处：《元史》《史集》）
+    ogodei_chuoermahan: {
+        generalId: 'ogodei_chuoermahan',
+        battleName: '击灭扎兰丁之战',
+        battleYear: 1231,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '迪亚巴克尔山谷',
+        targetCityId: 'city_nixibisi',
+        targetLat: 37.07,
+        targetLng: 41.22,
+        myTroops: 20000,
+        enemyFactionId: 'huarazim',
+        enemyFactionName: '花剌子模',
+        enemyGeneralId: 'huarazim_jalal',
+        enemyTroops: 16000,
+        introLines: [
+            { speaker: 'general', text: '扎兰丁孤穷流窜数年犹作困兽斗！大汗旨意斩草除根，蒙古铁骑漫山遍野如疾风骤雨，壮士，随某搜山合围彻底擒杀！' },
+            { speaker: 'player', text: '愿随绰儿马罕将军共赴击灭扎兰丁之战，大破花剌子模敌军！' },
+        ],
+    },
+
+    // #522 哈斯木 (1445 ~ 1521) — 公元1510年乌勒套之战（诱敌深入大破乌兹别克汗昔班尼；出处：《拉失德史》）
+    kazakh_hasimu: {
+        generalId: 'kazakh_hasimu',
+        battleName: '乌勒套之战',
+        battleYear: 1510,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '乌勒套山原',
+        targetCityId: 'city_turkestan',
+        targetLat: 43.297,
+        targetLng: 68.27,
+        myTroops: 18000,
+        enemyFactionId: 'an',
+        enemyFactionName: '乌兹别克',
+        enemyGeneralId: 'an_xibanni',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '昔班尼汗恃强北犯我钦察草原，不知严冬大漠皆我伏兵之地！哈萨克勇士们，随本汗回师突袭，将敌军驱出锡尔河！' },
+            { speaker: 'player', text: '愿随哈斯木汗决战乌勒套，大破昔班尼军！' },
+        ],
+    },
+
+    // #523 张献忠 (1606 ~ 1647) — 公元1640年竹菌坪之战（阵斩川兵总兵张令、击破秦良玉援军入蜀；出处：《明史·秦良玉传》）
+    daxi_ming_zhangxianzhong: {
+        generalId: 'daxi_ming_zhangxianzhong',
+        battleName: '竹菌坪之战',
+        battleYear: 1640,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '巫山竹菌坪',
+        targetCityId: 'city_shizhu',
+        targetLat: 30.0,
+        targetLng: 108.11,
+        myTroops: 20000,
+        enemyFactionId: 'ming_d',
+        enemyFactionName: '大明',
+        enemyGeneralId: 'tujia_d_qinliangyu',
+        enemyTroops: 15000,
+        introLines: [
+            { speaker: 'general', text: '明军扼守夔门竹菌坪阻我入川之路！我大西军老营劲骑四面环攻，壮士，随老子冲垮山隘，踏破川东席卷全蜀！' },
+            { speaker: 'player', text: '愿随大西王猛攻竹菌坪，大破明军！' },
+        ],
+    },
+
+    // #524 甘丹才旺 (1650 ~ 1695) — 公元1679年拉达克之战（率蒙藏联军大破拉达克王德丹南杰，收复阿里三围；出处：《五世达赖喇嘛传》）
+    ali_gandancaiwang: {
+        generalId: 'ali_gandancaiwang',
+        battleName: '拉达克之战',
+        battleYear: 1679,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '日土宗郊外',
+        targetCityId: 'city_rituzong',
+        targetLat: 33.367,
+        targetLng: 79.706,
+        myTroops: 16000,
+        enemyFactionId: 'ladakh',
+        enemyFactionName: '玛域',
+        enemyGeneralId: 'ladakh_dedannanjie',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '拉达克王侵扰我阿里寺院疆土！某奉甘丹颇章之命统和硕特精骑西征，勇士，跃马扬刀随我连拔敌堡，底定玛域！' },
+            { speaker: 'player', text: '愿随甘丹才旺将军西征拉达克，大破敌军！' },
+        ],
+    },
+
+    // #525 海兰察 (1740 ~ 1793) — 公元1792年廓尔喀阳布决战（与福康安翻越喜马拉雅连破六隘直逼阳布；出处：《清史稿·海兰察传》）
+    xingan_hailancha: {
+        generalId: 'xingan_hailancha',
+        battleName: '廓尔喀阳布决战',
+        battleYear: 1792,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '加德满都甲尔木山梁',
+        targetCityId: 'city_kathmandu',
+        targetLat: 27.715138,
+        targetLng: 85.185242,
+        myTroops: 15000,
+        enemyFactionId: 'gurkha',
+        enemyFactionName: '廓喀',
+        enemyGeneralId: 'gurkha_baduersaye',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '廓尔喀蛮勇犯我西藏后藏扎什伦布！索伦额真提大刀翻越喜马拉雅绝壁连破六隘，壮士，随超勇侯冲锋，迫敌称臣纳贡！' },
+            { speaker: 'player', text: '愿随海兰察将军共赴廓尔喀阳布决战，大破廓喀敌军！' },
+        ],
+    },
+
+    // 第三批（南亚·西亚·非洲·美洲）
+    // #526 曼苏尔 (714 ~ 775) — 公元750年瓦西特围城战（率军围攻倭马亚王朝伊拉克总督胡拜拉，彻底肃清残敌；出处：塔巴里《历代先知与帝王史》）
+    abasi_mansuer: {
+        generalId: 'abasi_mansuer',
+        battleName: '瓦西特围城战',
+        battleYear: 750,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '瓦西特',
+        targetCityId: 'city_babilun',
+        targetLat: 32.5425,
+        targetLng: 44.4211,
+        myTroops: 20000,
+        enemyFactionId: 'womaya',
+        enemyFactionName: '倭马亚',
+        enemyGeneralId: 'womaya_hubayra',
+        enemyTroops: 16000,
+        introLines: [
+            { speaker: 'general', text: '倭马亚残部总督胡拜拉据守瓦西特孤城，妄图复辟伪朝！阿拔斯黑旗已遮蔽两河，勇士，随我合围攻城，奠定帝国百年基业！' },
+            { speaker: 'player', text: '愿随曼苏尔共赴瓦西特围城战，肃清倭马亚敌军！' },
+        ],
+    },
+
+    // #527 拉金德拉一世 (971 ~ 1044) — 公元1025年三佛齐远征战（率朱罗海军远征马六甲海峡与巨港；出处：坦贾武尔神庙碑铭）
+    zhuluo_lajindela: {
+        generalId: 'zhuluo_lajindela',
+        battleName: '三佛齐远征战',
+        battleYear: 1025,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '巨港',
+        targetCityId: 'city_sanfoqi',
+        targetLat: -2.99,
+        targetLng: 104.75,
+        myTroops: 20000,
+        enemyFactionId: 'sanfoqi',
+        enemyFactionName: '三佛齐',
+        enemyGeneralId: 'gen_sangrama_vijayottungavarman',
+        enemyTroops: 16000,
+        introLines: [
+            { speaker: 'general', text: '三佛齐扼住马六甲海峡，阻断我朱罗商路。我已集结舰队渡海南征，你可愿随我远征？' },
+            { speaker: 'player', text: '愿随陛下扬帆南下，攻陷巨港，擒其国王！' },
+        ],
+    },
+
+    // #528 阿斯基亚 (1443 ~ 1538) — 公元1501年迪亚拉之战（大破马里帝国吞并西部行省；出处：《苏丹史》Tarikh al-Sudan）
+    songhai_askia_muhammad: {
+        generalId: 'songhai_askia_muhammad',
+        battleName: '迪亚拉之战',
+        battleYear: 1501,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '迪亚拉',
+        targetCityId: 'city_niani',
+        targetLat: 11.4,
+        targetLng: -8.5,
+        myTroops: 20000,
+        enemyFactionId: 'manding',
+        enemyFactionName: '马里',
+        enemyGeneralId: 'manding_mahmud_iii',
+        enemyTroops: 16000,
+        introLines: [
+            { speaker: 'general', text: '旧马里帝国气数已尽，尼日尔河两岸当归我桑海一统！精锐骑兵与步战勇士已列阵迪亚拉，随阿斯基亚冲锋，开拓西非大帝国！' },
+            { speaker: 'player', text: '愿随阿斯基亚共赴迪亚拉之战，大破马里敌军！' },
+        ],
+    },
+
+    // #529 拉其特 (1622 ~ 1672) — 公元1671年萨莱哈特之战（率阿洪姆水军于布拉马普特拉河大破莫卧儿大军；出处：《阿洪姆编年史》Buranjis）
+    ahaomu_laqite: {
+        generalId: 'ahaomu_laqite',
+        battleName: '萨莱哈特之战',
+        battleYear: 1671,
+        battleType: 'field',
+        role: 'defender',
+        targetName: '萨莱哈特江面',
+        targetCityId: 'city_geergang',
+        targetLat: 27.479,
+        targetLng: 94.8889,
+        myTroops: 15000,
+        enemyFactionId: 'mowoer',
+        enemyFactionName: '莫卧儿帝国',
+        enemyGeneralId: 'mowoer_ramsingh',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '莫卧儿统帅拉姆辛格率战舰铁骑溯江进犯阿萨姆！哪怕老夫抱病在身，亦当横刀立于船头，勇士们，随我迎头痛击莫卧儿水师！' },
+            { speaker: 'player', text: '愿随拉其特将军共守萨莱哈特，大破莫卧儿敌军！' },
+        ],
+    },
+
+    // #530 亨利摩根 (1635 ~ 1688) — 公元1668年波多韦洛之战（率私掠舰队夜袭攻克西班牙中美重镇波多韦洛；出处：Exquemelin《美洲海盗史》）
+    yinggelan_henlimogen: {
+        generalId: 'yinggelan_henlimogen',
+        battleName: '波多韦洛之战',
+        battleYear: 1668,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '波多韦洛要塞',
+        targetCityId: 'city_portobelo',
+        targetLat: 9.5544,
+        targetLng: -79.6644,
+        myTroops: 12000,
+        enemyFactionId: 'xibanya',
+        enemyFactionName: '西班牙',
+        enemyGeneralId: 'xingelana_beierweierde',
+        enemyTroops: 16000,
+        introLines: [
+            { speaker: 'general', text: '波多韦洛三座坚堡守卫着西班牙人的银舰队宝库！乘夜色弃舟登岸、云梯突袭，伙计们，随摩根舰长拔下圣地亚哥堡！' },
+            { speaker: 'player', text: '愿随摩根将军夜袭波多韦洛，攻破西班牙守军！' },
+        ],
+    },
+
+    // #531 阿迦穆罕默德 (1742 ~ 1797) — 公元1795年克尔察尼西之战（率卡扎尔大军进军高加索大破格鲁吉亚王埃雷克莱二世；出处：《卡扎尔史》）
+    bfe_agha_mohammad: {
+        generalId: 'bfe_agha_mohammad',
+        battleName: '克尔察尼西之战',
+        battleYear: 1795,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '第比利斯郊外',
+        targetCityId: 'city_dibilisi',
+        targetLat: 41.72,
+        targetLng: 44.79,
+        myTroops: 20000,
+        enemyFactionId: 'gelujiya',
+        enemyFactionName: '格鲁吉亚',
+        enemyGeneralId: 'gelujiya_erekle_ii',
+        enemyTroops: 14000,
+        introLines: [
+            { speaker: 'general', text: '格鲁吉亚王背弃宗主私通北国，孤已一统伊朗高原，岂容高加索裂土！卡扎尔铁骑听令，踏平克尔察尼西高地，攻入第比利斯！' },
+            { speaker: 'player', text: '愿随阿迦穆罕默德共赴克尔察尼西之战，大破格鲁吉亚敌军！' },
+        ],
+    },
+
 };
 
 export function getGeneralFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {

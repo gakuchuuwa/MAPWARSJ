@@ -1977,6 +1977,31 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'bolinixiya_isokelekel': 'imperial',   // 伊索克勒克尔
     'yinggelan_somers': 'castle',   // 萨默斯
     'toyotomi_asai_chacha': 'imperial',
+    // ── 2026-11-08 知名战敌将（值＝势力时代）──
+    'ruidian_gustav': 'imperial',
+    'luoma_catulus': 'antiquity',
+    'bfe_harold_godwinson': 'castle',
+    'bfe_mstislav_kiev': 'feudal',
+    'bfe_galdan_tseren': 'imperial',
+    'bfe_xiaotalin': 'feudal',
+    'bfe_fu_rui': 'antiquity',
+    'bfe_alutai': 'castle',
+    'bfe_yao_shao': 'antiquity',
+    'bfe_chen_jingxuan': 'feudal',
+    'bfe_tran_duc_tong': 'castle',
+    'bfe_wang_lin': 'feudal',
+    'bfe_liu_shang': 'antiquity',
+    'bfe_shoni_yorihisa': 'castle',
+    'qin_huigong': 'antiquity',
+    'rouran_doulun': 'antiquity',
+    'xianbei_ruoluobaneng': 'antiquity',
+    'mowoer_ramsingh': 'imperial',
+    'manding_mahmud_iii': 'castle',
+    'womaya_hubayra': 'feudal',
+    'ladakh_dedannanjie': 'imperial',
+    'yaqi_yisikanda': 'imperial',
+    'malindi_bashiri': 'castle',
+    'aquidan_odo': 'feudal',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

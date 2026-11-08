@@ -8,6 +8,22 @@
         "--mcp"
       ],
       "alwaysLoad": true
+    },
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--executablePath", "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "--isolated",
+        "--memoryDebugging",
+        "--experimentalVision",
+        "--workspace", "C:\\MAPWARSJ",
+        "--viewport", "1920x1080",
+        "--no-usage-statistics",
+        "--no-performance-crux"
+      ]
     }
   }
 }

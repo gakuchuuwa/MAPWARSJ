@@ -1936,6 +1936,31 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zubu_mogusi': 'MONGOL',   // 阻卜｜磨古斯｜据点 特尔浑
     'zuo_d_wufu': 'BASHU',   // 李唐｜吴复｜据点 清溪关
     'zuraid_yasir': 'ORIE',   // 祖拉伊德｜亚西尔｜据点 亚丁
+    // ── 2026-11-08 知名战敌将（据点文化一致）──
+    'ruidian_gustav': 'VIKINGS',
+    'luoma_catulus': 'ROMA',
+    'bfe_harold_godwinson': 'BRITONS',
+    'bfe_mstislav_kiev': 'SLAVIC',
+    'bfe_galdan_tseren': 'MONGOL',
+    'bfe_xiaotalin': 'XIANBEI',
+    'bfe_fu_rui': 'CENTRAL',
+    'bfe_alutai': 'XIANBEI',
+    'bfe_yao_shao': 'CENTRAL',
+    'bfe_chen_jingxuan': 'BASHU',
+    'bfe_tran_duc_tong': 'VIETNAMESE',
+    'bfe_wang_lin': 'JIANGNAN',
+    'bfe_liu_shang': 'CENTRAL',
+    'bfe_shoni_yorihisa': 'JAPAN',
+    'qin_huigong': 'CENTRAL',
+    'rouran_doulun': 'MONGOL',
+    'xianbei_ruoluobaneng': 'XIANBEI',
+    'mowoer_ramsingh': 'MUGHAL',
+    'manding_mahmud_iii': 'AFRICA',
+    'womaya_hubayra': 'ORIE',
+    'ladakh_dedannanjie': 'TIBET',
+    'yaqi_yisikanda': 'MALAY',   // 亚齐苏丹国｜伊斯坎达尔｜据点 亚齐
+    'malindi_bashiri': 'ETHIOPIANS',   // 马林迪苏丹国｜巴希里｜据点 马林迪
+    'aquidan_odo': 'FRANKS',   // 阿奎丹｜奥多｜据点 波尔多
 };
 
 /** 武将的建筑文化；表里没有返回 undefined */

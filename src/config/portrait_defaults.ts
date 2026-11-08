@@ -473,7 +473,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'naiman': _caoyuanPortraitPool,
     'oirat_ming': _caoyuanPortraitPool,
     'ongut': _caoyuanPortraitPool,
-    'pulei': _caoyuanPortraitPool,
     'rouran': _caoyuanPortraitPool,
     'shatuo': _caoyuanPortraitPool,
     'shiwei': _caoyuanPortraitPool,

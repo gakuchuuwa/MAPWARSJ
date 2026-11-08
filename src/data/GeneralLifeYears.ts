@@ -1991,6 +1991,30 @@ xihai_d_fuyun: { birth: 550, death: 635, kaoju: '推定' },  // 伏允（吐谷�
     ayoubu_turanshah: { birth: 1130, death: 1180, debut: 1164, kaoju: '推定' },   // 图兰沙（萨拉丁长兄，卒1180，1173–1174远征也门萨那）
     bolinixiya_isokelekel: { birth: 1580, death: 1640, debut: 1610, kaoju: '推定' }, // 伊索克勒克尔（波纳佩征服者，推翻南马都尔绍德雷尔王朝）
     yinggelan_somers: { birth: 1554, death: 1610, debut: 1595 },                     // 乔治·萨默斯（1554–1610，百慕大开拓者）
+    // ── 2026-11-08 知名战敌将 ──
+    ruidian_gustav: { birth: 1594, death: 1632, kaoju: '推定' },
+    luoma_catulus: { birth: -280, death: -220, kaoju: '推定' },
+    bfe_harold_godwinson: { birth: 1022, death: 1066, kaoju: '推定' },
+    bfe_mstislav_kiev: { birth: 1156, death: 1223, kaoju: '推定' },
+    bfe_galdan_tseren: { birth: 1695, death: 1745, kaoju: '推定' },
+    bfe_xiaotalin: { birth: 950, death: 1004, kaoju: '推定' },
+    bfe_fu_rui: { birth: 350, death: 384, kaoju: '推定' },
+    bfe_alutai: { birth: 1370, death: 1434, kaoju: '推定' },
+    bfe_yao_shao: { birth: 355, death: 417, kaoju: '推定' },
+    bfe_chen_jingxuan: { birth: 835, death: 893, kaoju: '推定' },
+    bfe_tran_duc_tong: { birth: 1337, death: 1377, kaoju: '推定' },
+    bfe_wang_lin: { birth: 526, death: 573, kaoju: '推定' },
+    bfe_liu_shang: { birth: -5, death: 47, kaoju: '推定' },
+    bfe_shoni_yorihisa: { birth: 1294, death: 1372, kaoju: '推定' },
+    qin_huigong: { birth: -430, death: -387, kaoju: '推定' },
+    rouran_doulun: { birth: 460, death: 492, kaoju: '推定' },
+    xianbei_ruoluobaneng: { birth: 250, death: 305, kaoju: '推定' },
+    mowoer_ramsingh: { birth: 1635, death: 1688, kaoju: '推定' },
+    manding_mahmud_iii: { birth: 1470, death: 1535, kaoju: '推定' },
+    womaya_hubayra: { birth: 695, death: 750, kaoju: '推定' },
+    ladakh_dedannanjie: { birth: 1630, death: 1694, kaoju: '推定' },
+    malindi_bashiri: { birth: 1450, death: 1515, debut: 1498, kaoju: '推定' },  // 巴希里（马林迪苏丹国）
+    aquidan_odo: { birth: 650, death: 735, debut: 721, kaoju: '推定' },  // 奥多（阿奎丹）
 };
 
 /** 生年（未收录返回 null） */
