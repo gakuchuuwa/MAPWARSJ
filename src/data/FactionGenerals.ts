@@ -4896,7 +4896,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     
-        { generalId: 'loufan_xuerengui', factionId: 'tang', cityId: 'city_fushi', generalName: '薛仁贵', portrait: '/assets/WEI/loufan_xuerengui.png', eliteName: '代州铁骑', eliteTier: 3  },   // 按史：薛仁贵检校代州都督，率代州兵云州破突厥元珍（《旧唐书·卷八三·薛仁贵传》）
+        { generalId: 'loufan_xuerengui', factionId: 'tang', cityId: 'city_fushi', generalName: '薛仁贵', portrait: '/assets/WEI/loufan_xuerengui.png', eliteName: '逻娑道行军', eliteTier: 2  },   // 🔴 [2026-11-08 主人令「薛仁贵的精锐不对，请按历史修复」] 咸亨元年（670）薛仁贵为**逻娑道行军大总管**率军击吐蕃，大非川之战即本将首战（《旧唐书·卷八三·薛仁贵传》「又以仁贵为逻娑道行军大总管」）。旧「代州铁骑」出自其晚年检校代州都督（682 云州破突厥），是自拟番号、非史载军号；按史改为本将亲统的行军道番号，档位随唐军诸「XX道行军」定 T2（通漠道/神丘道/当弥道/昆丘道同档）
 
 
 

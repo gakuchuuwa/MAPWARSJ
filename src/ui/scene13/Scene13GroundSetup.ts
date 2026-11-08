@@ -1818,7 +1818,21 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
     // ── 5. DE 岸线渡口船坞、近岸鱼群簇与远岸浅滩沉船礁石（仅在有河流/海洋的地图依水生成） ──
     {
         const N = glLayer.data?.width ?? 120;
-        const shoreSpots: Array<{ x: number; y: number; waterX: number; waterY: number }> = [];
+        const isSeaBattle = this.environmentPlan?.waterKind === 'sea';
+        const cosMapLat = Math.max(0.25, Math.cos(mapLat * Math.PI / 180));
+        const WHALE_OFFSHORE_DIRS: ReadonlyArray<readonly [number, number]> = [
+            [0, 0], [1, 0], [0.707, 0.707], [0, 1], [-0.707, 0.707],
+            [-1, 0], [-0.707, -0.707], [0, -1], [0.707, -0.707],
+        ];
+        // 🔴 [2026-11-08 主人令「河边放一个搁浅的海鲸鱼不合适吧，看看DE是如何摆放的。请照着摆放。请组合摆放。」]
+        //    1) 严禁在江河/内湖岸边摆放搁浅海鲸鱼（BEACHED_WHALE）或活鲸（RESOURCE:WHALE）：
+        //       两者仅在濒临远岸深海（canSpawnDeepSeaWhaleOrNessie 为真）的海洋战场（waterKind === 'sea'）才允许出现；
+        //    2) 严禁孤零零单摆一个搁浅物/船坞：一律按 DE 战役海岸/河滩组合造景成套摆放。
+        const allowOceanWhale = isSeaBattle && WHALE_OFFSHORE_DIRS.some(([dy, dx]) =>
+            canSpawnDeepSeaWhaleOrNessie(mapLat + dy * 0.65, mapLng + (dx * 0.65) / cosMapLat),
+        );
+
+        const shoreSpots: Array<{ x: number; y: number; waterX: number; waterY: number; landX: number; landY: number }> = [];
         for (let gy = 6; gy <= N - 6; gy += 3) {
             for (let gx = 6; gx <= N - 6; gx += 3) {
                 const wDens = glLayer.getWaterDensityAt(gx, gy);
@@ -1827,27 +1841,33 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                 if (Math.abs(pt.y - cy) < 280) continue;
                 if (this.spawns.some((sp) => Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.4) < 420)) continue;
                 let wPt: { x: number; y: number } | null = null;
-                let hasLand = false;
+                let lPt: { x: number; y: number } | null = null;
                 for (const [dx, dy] of [[-2, 0], [2, 0], [0, -2], [0, 2]] as const) {
                     const nd = glLayer.getWaterDensityAt(gx + dx, gy + dy);
                     if (nd >= 0.52 && !wPt) wPt = glLayer.cellToScreen(gx + 0.5 + dx, gy + 0.5 + dy, VW, VH);
-                    if (nd <= 0.12) hasLand = true;
+                    if (nd <= 0.12 && !lPt) lPt = glLayer.cellToScreen(gx + 0.5 + dx, gy + 0.5 + dy, VW, VH);
                 }
-                if (wPt && hasLand) {
-                    shoreSpots.push({ x: pt.x, y: pt.y, waterX: wPt.x, waterY: wPt.y });
+                if (wPt && lPt) {
+                    shoreSpots.push({ x: pt.x, y: pt.y, waterX: wPt.x, waterY: wPt.y, landX: lPt.x, landY: lPt.y });
                 }
             }
         }
         if (shoreSpots.length > 0) {
             shoreSpots.sort(() => rnd() - 0.5);
-            const aquaticPool = this.environmentPlan?.waterKind === 'sea'
-                ? ['RESOURCE:DORADO_FISH', 'RESOURCE:MARLIN_FISH', 'RESOURCE:TUNA_FISH', 'RESOURCE:SNAPPER_FISH', 'RESOURCE:SHORE_FISH', 'RESOURCE:BOX_TURTLES', 'RESOURCE:DOLPHIN', 'RESOURCE:WHALE', 'RESOURCE:OYSTERS']
+            const aquaticPool = isSeaBattle
+                ? [
+                    'RESOURCE:DORADO_FISH', 'RESOURCE:MARLIN_FISH', 'RESOURCE:TUNA_FISH',
+                    'RESOURCE:SNAPPER_FISH', 'RESOURCE:SHORE_FISH', 'RESOURCE:BOX_TURTLES',
+                    'RESOURCE:DOLPHIN', 'RESOURCE:OYSTERS',
+                    ...(allowOceanWhale ? ['RESOURCE:WHALE'] : []),
+                ]
                 : ['RESOURCE:SALMON_FISH', 'RESOURCE:PERCH_FISH', 'RESOURCE:SHORE_FISH', 'RESOURCE:BOX_TURTLES', 'RESOURCE:WATER_LILY'];
 
-            // (5a) 岸线渡口船坞 + 停泊本文化舟船 + 近岸成簇鱼群（古希腊/色雷斯造船厂仅限古典地中海，其余文明严格使用本文化 DOCK_AGE2）
+            // (5a) DE 渡口船坞码头聚落组合：船坞/造船厂 + 岸上渔夫小屋 + 码头货桶 + 停泊本文化舟船 + 近岸芦苇/海藻 + 双鱼群簇
             if (!isNomad) {
                 const ferrySpot = shoreSpots[0];
-                clearTreesInRadius(ferrySpot.x, ferrySpot.y, 120);
+                clearTreesInRadius(ferrySpot.x, ferrySpot.y, 130);
+                clearTreesInRadius(ferrySpot.landX, ferrySpot.landY, 110);
                 const dockPool = deStyle === 'YURT'
                     ? ['BUILDING:ASIA_DOCK_AGE2']
                     : isGrecoRoman
@@ -1861,6 +1881,7 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                             ? ['TRADE:TRADE_COG/idle_2', 'TRADE:MERCHANT_SHIP/idle_2', 'TRADE:TRANSPORT_SHIP/idle_2']
                             : ['TRADE:MERCHANT_SHIP/idle_2', 'TRADE:TRANSPORT_SHIP/idle_2', 'TRADE:CANOE/idle_2'];
                 pushRelic(pickUniqueFromPool(dockPool), ferrySpot.x, ferrySpot.y, rnd() < 0.5, 0.78, 0, 0, true);
+                // 停泊舟船
                 pushRelic(
                     pickUniqueFromPool(boatPool),
                     (ferrySpot.x + ferrySpot.waterX) * 0.5,
@@ -1871,38 +1892,175 @@ export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13Gr
                     0,
                     false,
                 );
+                // 岸上配套：码头货桶 + 渔夫民居（若有干陆空位）
+                pushRelic('BARRELS', (ferrySpot.x + ferrySpot.landX) * 0.5 + 24, (ferrySpot.y + ferrySpot.landY) * 0.5 + 10, rnd() < 0.5, 0.76, 0, 0, false);
+                if (canPlaceRelicItemAt(culturalHousePool[0], ferrySpot.landX, ferrySpot.landY, 420, 280)) {
+                    glLayer.carveFoundation(ferrySpot.landX, ferrySpot.landY, VW, VH, 1.3);
+                    pushRelic(culturalHousePool[Math.floor(rnd() * culturalHousePool.length)], ferrySpot.landX, ferrySpot.landY, rnd() < 0.5, 0.74, 0, 0, false);
+                }
+                // 浅水岸线植被（河岸芦苇 REEDS / 海岸海带 KELP_SEAWEEDS）+ 成簇鱼群
+                pushRelic(
+                    isSeaBattle ? 'KELP_SEAWEEDS' : 'REEDS',
+                    (ferrySpot.x + ferrySpot.waterX) * 0.5 - 38,
+                    (ferrySpot.y + ferrySpot.waterY) * 0.5 + 18,
+                    rnd() < 0.5,
+                    0.84,
+                    -1,
+                    Math.floor(rnd() * 8),
+                    false,
+                );
                 const fish1 = pickUniqueFromPool(aquaticPool);
                 pushRelic(fish1, ferrySpot.waterX, ferrySpot.waterY, false, fish1 === 'RESOURCE:WHALE' ? 0.72 : 0.85, fish1 === 'RESOURCE:WATER_LILY' || fish1 === 'RESOURCE:OYSTERS' ? -6 : -1, Math.floor(rnd() * 12), false);
+                const fish2 = pickUniqueFromPool(aquaticPool);
+                pushRelic(fish2, ferrySpot.waterX - 42, ferrySpot.waterY + 20, false, fish2 === 'RESOURCE:WHALE' ? 0.72 : 0.82, fish2 === 'RESOURCE:WATER_LILY' || fish2 === 'RESOURCE:OYSTERS' ? -6 : -1, Math.floor(rnd() * 12), false);
             }
 
-            // (5b) 远岸浅滩沉船残骸 + 海中礁石 + 伴生鱼群
-            const wreckPool = isAmericas
-                ? ['BATTLEFIELD:SHIPWRECK_A', 'BATTLEFIELD:SHIPWRECK_B', 'BATTLEFIELD:BEACHED_WHALE']
-                : [
-                    'BATTLEFIELD:GALLEY_WRECK',
-                    'BATTLEFIELD:CATAPULT_SHIP_WRECK',
-                    'BATTLEFIELD:TRADE_SHIP_WRECK',
-                    'BATTLEFIELD:SHIPWRECK_A',
-                    'BATTLEFIELD:SHIPWRECK_B',
-                    'BATTLEFIELD:LEVIATHAN_WRECK',
-                    'BATTLEFIELD:BEACHED_WHALE',
-                ];
+            // (5b) DE 海岸/河滩浅滩组合造景（严格区分海洋与内陆江河，且成组配套摆放，绝不单摆一只鲸鱼或一截残骸）
+            const wreckPool = isSeaBattle
+                ? (isAmericas
+                    ? [
+                        'BATTLEFIELD:SHIPWRECK_A',
+                        'BATTLEFIELD:SHIPWRECK_B',
+                        ...(allowOceanWhale ? ['BATTLEFIELD:BEACHED_WHALE'] : []),
+                    ]
+                    : [
+                        'BATTLEFIELD:GALLEY_WRECK',
+                        'BATTLEFIELD:CATAPULT_SHIP_WRECK',
+                        'BATTLEFIELD:TRADE_SHIP_WRECK',
+                        'BATTLEFIELD:SHIPWRECK_A',
+                        'BATTLEFIELD:SHIPWRECK_B',
+                        'BATTLEFIELD:LEVIATHAN_WRECK',
+                        ...(allowOceanWhale ? ['BATTLEFIELD:BEACHED_WHALE'] : []),
+                    ])
+                : (isAmericas
+                    ? ['BATTLEFIELD:SHIPWRECK_A', 'BATTLEFIELD:SHIPWRECK_B']
+                    : ['BATTLEFIELD:SHIPWRECK_A', 'BATTLEFIELD:SHIPWRECK_B', 'BATTLEFIELD:TRADE_SHIP_WRECK', 'BATTLEFIELD:GALLEY_WRECK']);
+
             let wrecksPlaced = 0;
             for (let si = 1; si < shoreSpots.length && wrecksPlaced < 1; si++) {
                 const ws = shoreSpots[si];
                 if (placedPts.some((p) => Math.hypot(p.x - ws.x, (p.y - ws.y) * 1.4) < 520)) continue;
                 const wAsset = pickUniqueFromPool(wreckPool);
-                pushRelic(wAsset, ws.x, ws.y, rnd() < 0.5, 0.85, 0, 0, true);
-                pushRelic(
-                    rnd() < 0.5 ? 'RESOURCE:SEA_ROCK1' : 'RESOURCE:SEA_ROCK2',
-                    ws.waterX,
-                    ws.waterY,
-                    rnd() < 0.5,
-                    0.82,
-                    0,
-                    Math.floor(rnd() * 4),
-                    false,
-                );
+                const alongX = ws.waterY - ws.y;
+                const alongY = -(ws.waterX - ws.x) * 0.5;
+                const aLen = Math.hypot(alongX, alongY) || 1;
+                const tx = alongX / aLen;
+                const ty = alongY / aLen;
+
+                if (wAsset === 'BATTLEFIELD:BEACHED_WHALE') {
+                    // DE 远洋海滩搁浅鲸群组合：主搁浅巨鲸 + 伴生幼鲸 + 巨兽白骨 + 岸际礁石 + 海藻/牡蛎礁 + 伴生鱼群
+                    const mainDir = Math.floor(rnd() * 8);
+                    pushRelic('BATTLEFIELD:BEACHED_WHALE', ws.x, ws.y, false, 0.86, 0, mainDir, true);
+                    const subDir = (mainDir + (rnd() < 0.5 ? 1 : 7)) % 8;
+                    pushRelic(
+                        'BATTLEFIELD:BEACHED_WHALE',
+                        ws.x + tx * 88 + (ws.x - ws.waterX) * 0.18,
+                        ws.y + ty * 44 + (ws.y - ws.waterY) * 0.18,
+                        false,
+                        0.68,
+                        0,
+                        subDir,
+                        false,
+                    );
+                    pushRelic(
+                        'BATTLEFIELD:ANIMAL_SKELETON',
+                        ws.x - tx * 76 + (ws.landX - ws.x) * 0.35,
+                        ws.y - ty * 38 + (ws.landY - ws.y) * 0.35,
+                        rnd() < 0.5,
+                        0.84,
+                        0,
+                        0,
+                        false,
+                    );
+                    // 岸际礁石与海带/牡蛎礁
+                    pushRelic(
+                        rnd() < 0.5 ? 'RESOURCE:SEA_ROCK1' : 'RESOURCE:SEA_ROCK2',
+                        (ws.x + ws.waterX) * 0.5 - tx * 52,
+                        (ws.y + ws.waterY) * 0.5 - ty * 26,
+                        rnd() < 0.5,
+                        0.82,
+                        0,
+                        Math.floor(rnd() * 4),
+                        false,
+                    );
+                    pushRelic(
+                        'RESOURCE:OYSTERS',
+                        (ws.x + ws.waterX) * 0.5 + tx * 46,
+                        (ws.y + ws.waterY) * 0.5 + ty * 24,
+                        rnd() < 0.5,
+                        0.82,
+                        -6,
+                        0,
+                        false,
+                    );
+                    pushRelic(
+                        'KELP_SEAWEEDS',
+                        ws.waterX - tx * 34,
+                        ws.waterY - ty * 18,
+                        rnd() < 0.5,
+                        0.85,
+                        -1,
+                        Math.floor(rnd() * 16),
+                        false,
+                    );
+                } else {
+                    // DE 沉船浅滩组合：主沉船残骸 + 伴生次级破船壳/折断木排 + 散落木桶物资 + 撞击暗礁 + 芦苇/水草 + 伴生鱼群
+                    pushRelic(wAsset, ws.x, ws.y, rnd() < 0.5, 0.85, 0, 0, true);
+                    const subWreck = wAsset === 'BATTLEFIELD:SHIPWRECK_A' ? 'BATTLEFIELD:SHIPWRECK_B' : 'BATTLEFIELD:SHIPWRECK_A';
+                    pushRelic(
+                        subWreck,
+                        (ws.x + ws.waterX) * 0.5 + tx * 76,
+                        (ws.y + ws.waterY) * 0.5 + ty * 38,
+                        rnd() < 0.5,
+                        0.74,
+                        0,
+                        0,
+                        false,
+                    );
+                    // 冲上浅滩的散落货桶与破碎木料
+                    pushRelic(
+                        'BARRELS',
+                        (ws.x + ws.landX) * 0.5 - tx * 44,
+                        (ws.y + ws.landY) * 0.5 - ty * 22,
+                        rnd() < 0.5,
+                        0.76,
+                        0,
+                        0,
+                        false,
+                    );
+                    pushRelic(
+                        'BATTLEFIELD:FENCE_RUBBLE',
+                        (ws.x + ws.landX) * 0.5 + tx * 48,
+                        (ws.y + ws.landY) * 0.5 + ty * 24,
+                        rnd() < 0.5,
+                        0.80,
+                        0,
+                        Math.floor(rnd() * 5),
+                        false,
+                    );
+                    // 肇事浅滩暗礁 + 岸边芦苇/海藻
+                    pushRelic(
+                        rnd() < 0.5 ? 'RESOURCE:SEA_ROCK1' : 'RESOURCE:SEA_ROCK2',
+                        ws.waterX,
+                        ws.waterY,
+                        rnd() < 0.5,
+                        0.82,
+                        0,
+                        Math.floor(rnd() * 4),
+                        false,
+                    );
+                    pushRelic(
+                        isSeaBattle ? 'KELP_SEAWEEDS' : 'REEDS',
+                        (ws.x + ws.waterX) * 0.5 - tx * 58,
+                        (ws.y + ws.waterY) * 0.5 - ty * 28,
+                        rnd() < 0.5,
+                        0.84,
+                        -1,
+                        Math.floor(rnd() * 8),
+                        false,
+                    );
+                }
+
                 const aqAsset = pickUniqueFromPool(aquaticPool);
                 pushRelic(
                     aqAsset,

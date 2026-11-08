@@ -311,6 +311,15 @@ const SKILL_PANIC_MOVE = 1.1;       // 【混】混乱中移速倍率（2026-11-
 
 const SKILL_DEFECT_INVULN_SEC = 3;  // 【并】倒戈士兵倒戈后无敌秒数（2026-11-03 主人令「并战计的倒戈士兵增加+3秒的倒戈后无敌。」）
 
+/**
+ * 🔴 [2026-11-08 主人令「法术兵释放的频率请降低」]
+ * 法术兵（CASTER_TYPES 里的僧侣/祭司/传教士/异教徒…，**不含英雄**）的施法周期倍率。
+ * 基础 reload 是 2.0s（WAR_TYPES），×2.0 ⇒ 每 4 秒一次。
+ * 只拉长「出手锁定 / 攻击动画 / 施法音效」的周期；伤害仍按连续 DPS 结算（见下方 dps 行），
+ * 所以兵种战力不变，只是不再满屏甩法术。
+ */
+const CASTER_RELOAD_MULT = 2.0;
+
 
 
 // 🔴 [2026-10-27 主人令「为了避免 AI 武将随便乱放，只作为释放顺序……不附加效果，只是技能本身效果。就是不要克制了」]
@@ -9237,7 +9246,7 @@ export class Scene13WarLayer {
 
             // FENCE_RUBBLE（DE b_scen_fence_rubble）仅 5 帧（500×60px，对应 NE/SE/CORNER/GATE/POST 五向），加载 frames.png 按朝向切片。
 
-            const useFenceStrip = isBattlefield && name === 'FENCE_RUBBLE';
+            const useFenceStrip = isBattlefield && (name === 'FENCE_RUBBLE' || name === 'BEACHED_WHALE');
 
             const file = isBattlefield ? (useFenceStrip ? 'frames.png' : 'preview.png') : (isAnim ? 'frames.png' : (isBuilding ? 'preview.png' : 'frames.png'));
 
@@ -17933,7 +17942,9 @@ export class Scene13WarLayer {
 
                 const frenzyAtkSpd = this.frenzyAtkSpdMul(m);
 
-                const reloadTime = (stats.reload || 2.0) / (heroRate * frenzyAtkSpd);
+                // 🔴 [2026-11-08 主人令「法术兵释放的频率请降低」] 法术兵（非英雄）施法周期 × CASTER_RELOAD_MULT；
+                //    只改出手/动画/音效的节奏，不改伤害（伤害是连续 DPS，见本函数下方的 dps 行）。
+                const reloadTime = (stats.reload || 2.0) * (CASTER_TYPES.has(m.key) && !m.hero ? CASTER_RELOAD_MULT : 1) / (heroRate * frenzyAtkSpd);
 
                 if (m.lock <= 0) {
 

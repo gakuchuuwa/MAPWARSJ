@@ -4208,7 +4208,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/TIBET/shaodang_mitang.png": {
-            "scale": 1.07,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": 4
         },
@@ -10791,6 +10791,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 29,
             "offsetY": 10
+        },
+        "/assets/ROMA/aitiliusi.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/SLAVIC/bfe_chelyadnin.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {
