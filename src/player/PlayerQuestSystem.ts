@@ -2086,6 +2086,9 @@ export class PlayerQuestSystem {
         });
     }
 
+    /** 已在远距本城「前往会合」接任务时播报过背景的武将（抵达前线开打时不再重复念第二遍） */
+    private spokenFirstBattleBgGenerals = new Set<string>();
+
     /** 玩家出发去远距经典战的接任务点（攻城＝被攻的城；野战＝战场坐标） */
     private travelToFirstBattleFront(generalId: string): void {
         this.deps.closeDialogue();
@@ -2102,6 +2105,11 @@ export class PlayerQuestSystem {
                 () => this.onArriveFirstBattleFront(generalId),
             );
         if (ok) {
+            const bg = getFirstBattleBackground(generalId);
+            if (bg && !this.spokenFirstBattleBgGenerals.has(generalId)) {
+                this.spokenFirstBattleBgGenerals.add(generalId);
+                this.deps.announceBriefing?.(bg);
+            }
             this.emitChange();
             return;
         }
@@ -2158,10 +2166,13 @@ export class PlayerQuestSystem {
         // 🔴 [2026-11-09 主人令「应该从接取任务的时候开始播报，就不要再播报其他的了」]
         //    玩家一点「随某将军奔赴某战」＝接取任务，这一刻就念该战的历史背景（语音 ＋ 下方字幕条，
         //    走 `announceBriefing` 的 S 级长段解说：略慢语速、期间不被打断）。
-        //    本场首战的三势开战句由 `LegionFieldBattle` / `SiegeManager` 两处跳过，不再叠第二段声音。
-        const firstBattleBackground = getFirstBattleBackground(g.generalId);
-        if (firstBattleBackground) {
-            this.deps.announceBriefing?.(firstBattleBackground);
+        //    本场首战的三势开战句与战果结算句由 `LegionFieldBattle` / `SiegeManager` / `GameApp` 跳过，不再叠第二段声音。
+        if (!this.spokenFirstBattleBgGenerals.has(g.generalId)) {
+            const firstBattleBackground = getFirstBattleBackground(g.generalId);
+            if (firstBattleBackground) {
+                this.spokenFirstBattleBgGenerals.add(g.generalId);
+                this.deps.announceBriefing?.(firstBattleBackground);
+            }
         }
 
         const myFactionId = getFactionIdOfGeneral(g.generalId) || existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;

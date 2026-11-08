@@ -10801,6 +10801,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/MONGOL/yuan_d_tuotuo.png": {
+            "scale": 1.04,
+            "offsetX": 2,
+            "offsetY": 0
         }
     },
     "folderGuides": {

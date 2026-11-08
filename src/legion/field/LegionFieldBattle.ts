@@ -394,7 +394,7 @@ function startFieldBattleBetween(
         const endFollowedId = window.game?.cameraFollowUI?.getFollowedArmyId?.()
             ?? window.game?.playerHero?.getHostLegionId?.()
             ?? followedFieldId;
-        if (!endFollowedId) return;
+        if (!endFollowedId || firstBattleHero) return;
         const endOnAtt = attLegions.some((l) => l.id === endFollowedId);
         const endOnDef = defLegions.some((l) => l.id === endFollowedId);
         if (!endOnAtt && !endOnDef) return; // 中途编入的援军走通用覆没语音（其标记为默认 'siege'）

@@ -1167,7 +1167,7 @@ export class SiegeManager {
                     ?? initialFollowedIdForSpeech;
                 const failDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
                 const failSpeechTaken = followedIdFail === army.id;
-                if (failSpeechTaken) {
+                if (failSpeechTaken && !isFirstBattleSiege) {
                     const failAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
                         ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
                     const failR = battleField.getInitialAttDefRatio();
@@ -1448,7 +1448,8 @@ export class SiegeManager {
         // 🔴 [2026-11-09 主人令「应该从接取任务的时候开始播报，就不要再播报其他的了」]
         //    名将经典战在接取任务时已念过这一战的历史背景（攻城战 / 防守战各按其类型写），
         //    这一场不再播开战三势句，免得同一仗两个声音。普通攻城照旧播。
-        const skipFirstBattleStartSpeech = !!(army as { isFirstBattleMarch?: boolean }).isFirstBattleMarch
+        const skipFirstBattleStartSpeech = isFirstBattleSiege
+            || !!(army as { isFirstBattleMarch?: boolean }).isFirstBattleMarch
             || !!(army as { firstBattleTitle?: string }).firstBattleTitle;
         if (followedIdForSpeech === army.id && !skipFirstBattleStartSpeech) {
             const siegeAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
@@ -1473,31 +1474,33 @@ export class SiegeManager {
         }
 
         // [语音播报] 跟随军团作为援军参战（开战时卷入的附近友军）
-        for (const legion of [...nearbyDefenderLegions, ...nearbyAttackerLegions]) {
-            if (followedIdForSpeech !== legion.id) continue;
-            const isAttacker = nearbyAttackerLegions.includes(legion);
-            const unit = (isAttacker ? attackerUnits : defenderUnits).find((u) => u.generalId === legion.generalId)
-                ?? null;
-            const genRec = legion.generalId ? getGeneralRecordByGeneralId(legion.generalId) : null;
-            // 援军加入的势：攻方用 attJu，守方用 defJu（取反）
-            const reinfR = isAttacker ? r : (1 / Math.max(r, 0.001));
-            const reinfJu: CaptureJu = reinfR > 1.5 ? 'advantage' : reinfR < 0.67 ? 'disadvantage' : 'balance';
-            speechAnnouncer.announceReinforcementJoin({
-                factionId: legion.getFactionId(),
-                generalId: legion.generalId ?? null,
-                generalName: genRec?.generalName ?? null,
-                eliteName: getLegionEliteLegionName(legion),
-                side: isAttacker ? 'attacker' : 'defender',
-                cityName: targetCity.name,
-                ju: reinfJu,
-                battleSkillId: unit?.battleOverriddenSkillId ?? null,
-            });
+        if (!skipFirstBattleStartSpeech) {
+            for (const legion of [...nearbyDefenderLegions, ...nearbyAttackerLegions]) {
+                if (followedIdForSpeech !== legion.id) continue;
+                const isAttacker = nearbyAttackerLegions.includes(legion);
+                const unit = (isAttacker ? attackerUnits : defenderUnits).find((u) => u.generalId === legion.generalId)
+                    ?? null;
+                const genRec = legion.generalId ? getGeneralRecordByGeneralId(legion.generalId) : null;
+                // 援军加入的势：攻方用 attJu，守方用 defJu（取反）
+                const reinfR = isAttacker ? r : (1 / Math.max(r, 0.001));
+                const reinfJu: CaptureJu = reinfR > 1.5 ? 'advantage' : reinfR < 0.67 ? 'disadvantage' : 'balance';
+                speechAnnouncer.announceReinforcementJoin({
+                    factionId: legion.getFactionId(),
+                    generalId: legion.generalId ?? null,
+                    generalName: genRec?.generalName ?? null,
+                    eliteName: getLegionEliteLegionName(legion),
+                    side: isAttacker ? 'attacker' : 'defender',
+                    cityName: targetCity.name,
+                    ju: reinfJu,
+                    battleSkillId: unit?.battleOverriddenSkillId ?? null,
+                });
+            }
         }
 
         // 战斗结束 = 事件结束（战后动作在后台运行）
         battleField.onBattleComplete = (winnerFactionId) => {
             siegeLog(`✅ [Siege] Battle complete. Winner: ${winnerFactionId}`);
-            if (battleField.isDraw) {
+            if (battleField.isDraw && !skipFirstBattleStartSpeech) {
                 const followedIdDraw = window.game?.cameraFollowUI?.getFollowedArmyId?.()
                     ?? window.game?.playerHero?.getHostLegionId?.()
                     ?? initialFollowedIdForSpeech;
