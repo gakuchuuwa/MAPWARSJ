@@ -82,21 +82,16 @@ export class GameConfig {
         DISBAND_TROOP_THRESHOLD: 5000,
         /** 兵力低于此值时进攻锚点改用本城（弱兵收缩防线，回程补兵） */
         HOME_ANCHOR_TROOP_THRESHOLD: 20000,
-        /** 沙盒地图上同时存在的军团硬上限（16 种建筑风格母体，每个母体 1 支，共 16 支，2026-09-19 主人定）。
-         *  军情面板滑条仍可在 10–99 实时调整。 */
-        MAX_ACTIVE_LEGIONS: 16,
-        // [2026-08-07 删] REGION_BASELINE_LEGIONS / VIEWPORT_SPAWN_QUOTA —— 全项目零引用的死配置。
-        //   文化区保底数（≥1）写死在 RecruitmentSystem.buildSpawnPlan，
-        //   同屏保底数（<2）写死在 RecruitmentSystem.trySpawnLegions，改这两个常量不会有任何效果。
+        /** 沙盒地图上同时存在的军团硬上限（军情面板滑条仍可在 10–99 实时调整） */
+        MAX_ACTIVE_LEGIONS: 24,
         /** 首次出兵错峰：每隔 N ms 放行一批，让军团陆续登场而非同帧爆出 */
         INITIAL_SPAWN_INTERVAL_MS: 200,
         /** 首次出兵错峰：每批最多生成几支 */
         INITIAL_SPAWN_PER_TICK: 1,
-        /** 开局集结待命时长 (ms)：首发军团全部生成后在都城列阵不动，到点选定跟随军团 + 全军同时拔营。
-         *  2026-08-19 主人定 5 秒。改成 0 = 关闭集结、退回「生成即开拔」。 */
+        /** 开局集结待命时长 (ms)：首发军团全部生成后在都城列阵不动，到点选定跟随军团 + 全军同时拔营。 */
         INITIAL_DEPLOY_HOLD_MS: 5000,
         /** 每季（季度）最多新组建军团数（季末 trySpawnLegions） */
-        MAX_LEGIONS_SPAWN_PER_SEASON: 1,
+        MAX_LEGIONS_SPAWN_PER_SEASON: 2,
         /** 军团战败后尸体/阵亡动画保留时长 (ms) */
         CORPSE_DISPLAY_MS: 15000,
         /** 尸体消失前最后 N ms 逐渐淡出（0 = 不淡出，直接消失） */
